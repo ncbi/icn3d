@@ -2,7 +2,7 @@
 
 ## iCn3D
 
-"I see in 3D" (iCn3D) Structure Viewer is a WebGL-based 3D viewer using three.js and jquery. It is based on the 3D styles of [GLMol](http://webglmol.osdn.jp/index-en.html) and [iView](http://istar.cse.cuhk.edu.hk/iview/). Here are some of the added features: picking atoms, selecting residues, shiny material for displaying, improved labeling, saving state, etc.
+"I see in 3D" (iCn3D) Structure Viewer is a WebGL-based 3D viewer using three.js and jquery. It is based on the 3D styles of [GLmol](http://webglmol.osdn.jp/index-en.html) and [iview](http://istar.cse.cuhk.edu.hk/iview/). Here are some of the added features: picking atoms, selecting residues, shiny material for displaying, improved labeling, saving state, etc.
 
 We provided two versions of iCn3D widgets: [simple interface](index.html?mmdbid=2por) and [advanced interface](full.html?mmdbid=2por). Both widgets can be easily added to web pages.
 
