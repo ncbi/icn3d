@@ -1,3 +1,9 @@
+/*
+ * THIS IS A MODIFIED COPY OF THE FILE FROM
+ * https://github.com/HongjianLi/istar,
+ * forked from commit 248108789e74822f4925b34b72f7e210367bc0e7 (3/23/2015).
+ */
+
 /*! surface.js
  * This is a JavaScript implementation of the EDTSurf algorithm.
  * It was developed by Takanori Nakane and revised by Hongjian Li.
