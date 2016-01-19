@@ -1,0 +1,37 @@
+{
+  "name": "icn3d",
+  "version": "1.0.0",
+  "description": "iCn3D Structure Viewer",
+  "main": "index.html",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ncbi/icn3d.git"
+  },
+  "keywords": [
+    "ncbi"
+  ],
+  "author": "NCBI",
+  "license": "SEE LICENSE IN LICENSE",
+  "bugs": {
+    "url": "https://github.com/ncbi/icn3d/issues"
+  },
+  "homepage": "https://github.com/ncbi/icn3d#readme",
+  "dependencies": {
+    "jquery": "~2.1.3",
+    "jquery-ui": "components/jqueryui.git#1.11.4",
+    "three": "~0.71.1"
+  },
+  "devDependencies": {
+    "del": "^2.2.0",
+    "gulp": "^3.9.0",
+    "gulp-concat": "^2.6.0",
+    "gulp-dom": "^0.7.4",
+    "gulp-help": "^1.6.1",
+    "gulp-rename": "^1.2.2",
+    "gulp-uglify": "^1.5.1",
+    "gulp-zip": "^3.1.0"
+  }
+}
