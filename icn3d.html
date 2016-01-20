@@ -53,18 +53,23 @@ body {font-family: Verdana, Arial, Helvetica, sans-serif;}
 <UL>
 <LI><A HREF="#WhatIs">What is iCn3D Structure Viewer?</A></LI>
     <OL>
-    <LI><A HREF="index.html?mmdbid=2por">Default simple interface</A></LI>
-    <LI><A HREF="full.html?mmdbid=2por">Advanced interface</A></LI>
+    <LI><A HREF="https://www.ncbi.nlm.nih.gov/Structure/icn3d/simple.html?mmdbid=2por">Default simple interface</A></LI>
+    <LI><A HREF="https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?mmdbid=2por">Advanced interface</A></LI>
     </OL>
     <br/>
 <LI><A HREF="#HowToUse">How to use iCn3D Structure Viewer in your html page</A></LI>
-    <OL>
-    <LI><A HREF="#HowToUseStep1">Include three.js and jQuery javascript libraries in the &#60;head&#62; of your html page</A></LI>
-    <LI><A HREF="#HowToUseStep2">Position the widget with an html div</A></LI>
-    <LI><A HREF="#HowToUseStep3">Initialize the widget with desired parameters</A></LI>
-    <LI><A HREF="#HowToUseStep4">Hint for rotating/translating/zooming the 3D structure</A></LI>
-    <LI><A HREF="#HowToUseStep5">Hint for recovering a crashed page</A></LI>
-    </OL>
+	<ul>
+	<li><A HREF="#embedIframe">Embed using IFrame</A></li>
+	<li><A HREF="#embedJS">Embed using Javascript</A><br/>
+		<OL>
+		<LI><A HREF="#HowToUseStep1">Include three.js and jQuery javascript libraries in the &#60;head&#62; of your html page</A></LI>
+		<LI><A HREF="#HowToUseStep2">Position the widget with an html div</A></LI>
+		<LI><A HREF="#HowToUseStep3">Initialize the widget with desired parameters</A></LI>
+		<LI><A HREF="#HowToUseStep4">Hint for rotating/translating/zooming the 3D structure</A></LI>
+		<LI><A HREF="#HowToUseStep5">Hint for recovering a crashed page</A></LI>
+		</OL>
+	</li>
+	</ul>
 <br/>
 <LI><A HREF="#commands">Commands in URLs and scripts for the advanced interface</A>
     <UL>
@@ -274,7 +279,7 @@ body {font-family: Verdana, Arial, Helvetica, sans-serif;}
 
 "I see in 3D" (iCn3D) Structure Viewer is a WebGL-based 3D viewer using Three.js and jQuery. It is based on the 3D styles of <a href="http://webglmol.osdn.jp/index-en.html">GLmol</a> and <a href="http://istar.cse.cuhk.edu.hk/iview/">iview</a>. Here are some of the added features: picking atoms, selecting residues, shiny material for displaying, improved labeling, saving state, etc.<br/>
 <br/>
-We provided two versions of iCn3D widgets: <A HREF="index.html?mmdbid=2por">simple interface</A> and <A HREF="full.html?mmdbid=2por">advanced interface</A>. Both widgets can be easily added to web pages.
+We provided two versions of iCn3D widgets: <A HREF="https://www.ncbi.nlm.nih.gov/Structure/icn3d/simple.html?mmdbid=2por">simple interface</A> and <A HREF="https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?mmdbid=2por">advanced interface</A>. Both widgets can be easily added to web pages.
 <ol>
 <li>The simple interface has the minimum javascript code for the interface and is easy to understand. It has the basic features to change color and styles.
 <li>The advanced interface has a library for the interface and is more complicated to understand. It has many features.
@@ -305,7 +310,24 @@ We provided two versions of iCn3D widgets: <A HREF="index.html?mmdbid=2por">simp
 
 <A NAME="HowToUse"></A>
 <h2>How to use iCn3D Structure Viewer in your html page:<img SRC="https://www.ncbi.nlm.nih.gov/Structure/IMG/spacer.gif" width="25" height="1" border="0"><A HREF="#Top"><img SRC="https://www.ncbi.nlm.nih.gov/Structure/IMG/arrowup_blue.gif" width="12" height="12" border="0" alt="back to top"></A></h2>
-<p>To embed iCn3D Structure Viewer in your own HTML page, simply follow these 3 steps:</p>
+<ul>
+<li><a name="embedIframe"></a><b>Embed using IFrame</b><br/>
+<p>To embed iCn3D Structure Viewer in your own HTML page using iFrame, simply add the following to your page:<br/>
+&lt;iframe src="https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?mmdbid=2por&width=300&height=300&showmenu=0&rotate=0" width="320" height="320" style="border:none"&gt;&lt;/iframe&gt;<br/>
+<br/>
+Both "simple.html" and "full.html" accept the following input IDs. You can also add commands in the URL as described <a href="#commandsUrl">here</a>.<br/>
+<div class="indent">
+<b>pdbid</b>: PDB ID, e.g., <a href="https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?pdbid=2por">https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?pdbid=2por</a><br/>
+<b>mmcif</b>: mmCIF ID, e.g., <a href="https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?mmcif=2por">https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?mmcif=2por</a><br/>
+<b>mmdbid</b>: NCBI MMDB ID, e.g., <a href="https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?mmdbid=2por">https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?mmdbid=2por</a><br/>
+<b>gi</b>: NCBI protein gi number, e.g., <a href="https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?gi=827343227">https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?gi=827343227</a><br/>
+<b>cid</b>: PubChem Compound ID, e.g., <a href="https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?cid=2244">https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?cid=2244</a><br/>
+</div>
+</p>
+</li>
+<li><a name="embedJS"></a><b>Embed using Javascript</b><br/>
+
+<p>To embed iCn3D Structure Viewer in your own HTML page using Javascript, simply follow these 3 steps:</p>
 
 <ol>
     <li><A NAME="HowToUseStep1"></A><B>Include three.js and jQuery javascript libraries in the &lt;head&gt; of your html page. "surface.min.js" is used for showing molecular surface. jQuery can be any version. "three.js" had better be the recent version r71 since it can make the 3D style shiny. "simple_ui_all.min.js" combines the simple ui and core javacript files together. "full_ui_all.min.js" combines the advanced ui and core javacript files together.</B></li>
@@ -420,6 +442,9 @@ We provided two versions of iCn3D widgets: <A HREF="index.html?mmdbid=2por">simp
     </div>
 
 </ol>
+</li>
+</ul>
+
 <!-- =========== END_HOW_TO_USE_ICN3D_WIDGET_3_STEPS ============= -->
 
 <HR>
@@ -1176,3 +1201,4 @@ Toggle on and off the current selection.
 
 </body>
 </html>
+
