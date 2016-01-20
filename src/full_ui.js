@@ -215,7 +215,9 @@ iCn3DUI.prototype = {
 
            me.setLogCommand('load pdb ' + me.cfg.pdbid, true);
 
-           me.downloadPdb(me.cfg.pdbid);
+           var protocol = document.location.protocol;
+
+           me.downloadPdb(me.cfg.pdbid, protocol);
         }
         else if(me.cfg.mmdbid !== undefined) {
            me.inputid = me.cfg.mmdbid;
@@ -514,9 +516,15 @@ iCn3DUI.prototype = {
       }
     },
 
-    downloadPdb: function (pdbid) { var me = this;
+    downloadPdb: function (pdbid, protocol) { var me = this;
        //var uri = "http://www.rcsb.org/pdb/files/" + pdbid + ".pdb";
-       var uri = "https://www.ncbi.nlm.nih.gov/Structure/mmcifparser/mmcifparser.cgi?pdbid=" + pdbid;
+       var uri
+       if(protocol === 'http:') {
+		   uri = "http://www.ncbi.nlm.nih.gov/Structure/mmcifparser/mmcifparser.cgi?pdbid=" + pdbid;
+	   }
+	   else {
+           uri = "https://www.ncbi.nlm.nih.gov/Structure/mmcifparser/mmcifparser.cgi?pdbid=" + pdbid;
+	   }
 
        me.icn3d.bCid = undefined;
 
