@@ -9,7 +9,7 @@ We provided two versions of iCn3D widgets: [simple interface](index.html?mmdbid=
 1. The simple interface has the minimum javascript code for the interface and is easy to understand. It has the basic features to change color and styles.
 2. The advanced interface has a library for the interface and is more complicated to understand. It has many features.
 
-
+  
 ## Usage
 
 Please see the [help page](icn3d.html) to embed iCn3D in your page.
