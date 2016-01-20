@@ -12,7 +12,7 @@ We provided two versions of iCn3D widgets: [simple interface](https://www.ncbi.n
   
 ## Usage
 
-iCn3D URL accepts the following IDs:<br/>
+iCn3D page accepts the following IDs:<br/>
 <b>pdbid</b>: PDB ID, e.g., [https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?pdbid=2por](https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?pdbid=2por)<br/>
 <b>mmcif</b>: mmCIF ID, e.g., [https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?mmcif=2por](https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?mmcif=2por)<br/>
 <b>mmdbid</b>: NCBI MMDB ID, e.g., [https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?mmdbid=2por](https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?mmdbid=2por)<br/>
