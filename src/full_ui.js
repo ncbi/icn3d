@@ -519,11 +519,11 @@ iCn3DUI.prototype = {
     downloadPdb: function (pdbid, protocol) { var me = this;
        //var uri = "http://www.rcsb.org/pdb/files/" + pdbid + ".pdb";
        var uri
-       if(protocol === 'http:') {
-		   uri = "http://www.ncbi.nlm.nih.gov/Structure/mmcifparser/mmcifparser.cgi?pdbid=" + pdbid;
+       if(protocol === 'https:') {
+		   uri = "https://www.ncbi.nlm.nih.gov/Structure/mmcifparser/mmcifparser.cgi?pdbid=" + pdbid;
 	   }
 	   else {
-           uri = "https://www.ncbi.nlm.nih.gov/Structure/mmcifparser/mmcifparser.cgi?pdbid=" + pdbid;
+           uri = "http://www.rcsb.org/pdb/files/" + pdbid + ".pdb";
 	   }
 
        me.icn3d.bCid = undefined;
