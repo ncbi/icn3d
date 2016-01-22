@@ -215,9 +215,7 @@ iCn3DUI.prototype = {
 
            me.setLogCommand('load pdb ' + me.cfg.pdbid, true);
 
-           var protocol = document.location.protocol;
-
-           me.downloadPdb(me.cfg.pdbid, protocol);
+           me.downloadPdb(me.cfg.pdbid);
         }
         else if(me.cfg.mmdbid !== undefined) {
            me.inputid = me.cfg.mmdbid;
@@ -516,10 +514,10 @@ iCn3DUI.prototype = {
       }
     },
 
-    downloadPdb: function (pdbid, protocol) { var me = this;
-       // Use PDB service in development, NCBI in production
-       var uri = (window && window.location &&
-                  window.location.hostname == "www.ncbi.nlm.nih.gov") ?
+    downloadPdb: function (pdbid) { var me = this;
+       // The PDB service doesn't support https, so use our reverse-proxy
+       // service when using https
+       var uri = (document.location.protocol !== "https:") ?
            "http://www.rcsb.org/pdb/files/" + pdbid + ".pdb" :
            "https://www.ncbi.nlm.nih.gov/Structure/mmcifparser/" +
               "mmcifparser.cgi?pdbid=" + pdbid;
