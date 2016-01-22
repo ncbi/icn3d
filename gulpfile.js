@@ -61,7 +61,7 @@ gulp.task('surface',
 // Helper function to create a gulp task to concatenate and minify
 // simple and full
 function make_js_task(name, src) {
-    gulp.task("src_js_" + name, 
+    gulp.task("src-js-" + name, 
       'Concat and minify the ' + name + ' javascript',
       ['clean'], 
       function() {
@@ -125,7 +125,7 @@ gulp.task('html',
 gulp.task('dist',
   'Prepare all the distribution files (except the .zip).',
   ['libs', 'copy', 'surface', 
-   'src_js_simple', 'src_js_full', 'html']);
+   'src-js-simple', 'src-js-full', 'html']);
 
 gulp.task('zip', 
   'Zip up the dist into icn3d-<version>.zip',
@@ -156,11 +156,11 @@ var gh_pages_files = [
   'lib/**',
 ].map(function(f) { return 'dist/' + f; });
 
-gulp.task('gh_pages',
+gulp.task('gh-pages',
   'Deploy project to GitHub pages',
   ['dist'],
   function () {
     return gulp.src(gh_pages_files, { base: 'dist' })
-      .pipe(gh_pages())
+      .pipe(gh_pages({origin: "git@github.com:Klortho/icn3d.git"}))
   });
 
