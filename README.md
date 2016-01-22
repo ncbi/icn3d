@@ -66,7 +66,8 @@ You should then be able to see the help page from http://localhost:8080/icn3d.ht
 Run `gulp help` to get a list of the available tasks.
 
 
-
 ## Change log
 
 This is a beta release. Please send all comments to wangjiy@ncbi.nlm.nih.gov. 
+
+

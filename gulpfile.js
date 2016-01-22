@@ -3,6 +3,7 @@ var gulp = require('gulp-help')(require('gulp'));
 var concat = require('gulp-concat');
 var del = require('del');
 var dom  = require('gulp-dom');
+var gh_pages = require('gulp-gh-pages');
 var rename = require('gulp-rename');
 var uglify = require('gulp-uglify');
 var zip = require('gulp-zip');
@@ -60,7 +61,7 @@ gulp.task('surface',
 // Helper function to create a gulp task to concatenate and minify
 // simple and full
 function make_js_task(name, src) {
-    gulp.task("src_js_" + name, 
+    gulp.task("src-js-" + name, 
       'Concat and minify the ' + name + ' javascript',
       ['clean'], 
       function() {
@@ -87,7 +88,6 @@ var common_js = [
 make_js_task("simple", common_js.concat("src/simple_ui.js"));
 make_js_task("full", common_js.concat("src/full_ui.js"));
 
-
 gulp.task('html', 
   'Rewrite the link and script tags in the html',
   ['clean'], 
@@ -110,7 +110,7 @@ gulp.task('html',
                 else if (src_file == "src/surface.js")
                     new_src = "surface.min.js";
                 else if (m = src_file.match(/^src\/(.*_ui)\.js/))
-                    new_src = m[1] + "_all.js";
+                    new_src = m[1] + "_all.min.js";
                 else {
                     e.parentNode.removeChild(e);
                     set_attr = false;
@@ -122,10 +122,14 @@ gulp.task('html',
         .pipe(gulp.dest(dist));
   });
 
+gulp.task('dist',
+  'Prepare all the distribution files (except the .zip).',
+  ['libs', 'copy', 'surface', 
+   'src-js-simple', 'src-js-full', 'html']);
+
 gulp.task('zip', 
   'Zip up the dist into icn3d-<version>.zip',
-  ['libs', 'copy', 'surface', 
-   'src_js_simple', 'src_js_full', 'html'],
+  ['dist'],
   function() {
     return gulp.src('./dist/**')
       .pipe(rename(function(path) {
@@ -137,7 +141,28 @@ gulp.task('zip',
 
 
 gulp.task('default', 
-  'The default task runs everything',
+  'The default task creates the distribution files and the .zip ' +
+  'from scratch',
   ['zip']
 );
+
+var gh_pages_files = [
+  'LICENSE', 
+  'README.md',
+  'index.html',
+  'icn3d.html',
+  '*.min.js',
+  '*.css',
+  'lib/**',
+].map(function(f) { return 'dist/' + f; });
+
+gulp.task('gh-pages',
+  'Deploy project to GitHub pages',
+  ['dist'],
+  function () {
+    return gulp.src(gh_pages_files, { base: 'dist' })
+      .pipe(gh_pages({
+        origin: "github",
+      }))
+  });
 
