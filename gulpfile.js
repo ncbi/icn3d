@@ -158,9 +158,11 @@ var gh_pages_files = [
 
 gulp.task('gh-pages',
   'Deploy project to GitHub pages',
-  ['dist'],
+  //['dist'],
   function () {
     return gulp.src(gh_pages_files, { base: 'dist' })
-      .pipe(gh_pages({origin: "git@github.com:Klortho/icn3d.git"}))
+      .pipe(gh_pages({
+        remoteUrl: "git@github.com:Klortho/icn3d.git",
+      }))
   });
 
