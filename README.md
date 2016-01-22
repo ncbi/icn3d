@@ -23,7 +23,7 @@ iCn3D page accepts the following IDs:
 Please see the [help page](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d.html) for more details.
 
 
-## Third party Libraries used
+## Third-party libraries used
 
 * **[JQuery and JQuery UI](https://jquery.com/)**: used as a general tool to write Javascript code. Some JQuery UI features are used.
 * **[Three.js](http://threejs.org/)**: used to set up the 3D view.
