@@ -2,31 +2,28 @@
 <html>
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-<meta content="text/html; charset=utf-8" http-equiv="Content-Type" /><meta name="description" content="iCn3D Structure Viewer" /><meta name="ncbi_db" content="structure" /><meta name="keywords" content="NCBI, Structure, iCn3D, 3D, Viewer" /><meta name="robots" content="index,follow,noarchive" />
+<meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
+<meta name="description" content="iCn3D Structure Viewer" />
+<meta name="ncbi_db" content="structure" />
+<meta name="keywords" content="NCBI, Structure, iCn3D, 3D, Viewer" />
+<meta name="robots" content="index,follow,noarchive" />
 <title>iCn3D Structure Viewer</title>
 
-  <link rel="stylesheet" href="https://www.ncbi.nlm.nih.gov/Structure/icn3d/jquery-ui.1.11.4.min.css">
-  <link rel="stylesheet" href="https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d_simple_ui.css">
+  <link rel="stylesheet"
+    href="node_modules/jquery-ui/themes/ui-lightness/jquery-ui.min.css">
+  <link rel="stylesheet" href="src/icn3d_simple_ui.css">
+  <script src="node_modules/jquery/dist/jquery.min.js"></script>
+  <script src="node_modules/jquery-ui/jquery-ui.min.js"></script>
+  <script src="node_modules/three/three.min.js"></script>
+  <script src="src/surface.js"></script>
+  <script src="src/Detector.js"></script>
+  <script src="src/CanvasRenderer.js"></script>
+  <script src="src/TrackballControls.js"></script>
+  <script src="src/OrthographicTrackballControls.js"></script>
+  <script src="src/Projector.js"></script>
+  <script src="src/icn3d.js"></script>
+  <script src="src/simple_ui.js"></script>
 
-  <script src="https://www.ncbi.nlm.nih.gov/Structure/icn3d/jquery-1.10.2.min.js"></script>
-  <script src="https://www.ncbi.nlm.nih.gov/Structure/icn3d/jquery-ui.1.11.4.min.js"></script>
-
-  <script src="https://www.ncbi.nlm.nih.gov/Structure/icn3d/three_r71.min.js"></script>
-  <script src="https://www.ncbi.nlm.nih.gov/Structure/icn3d/surface.min.js"></script>
-
-  <script src="https://www.ncbi.nlm.nih.gov/Structure/icn3d/simple_ui_all.min.js"></script>
-
-  <!--script src="https://www.ncbi.nlm.nih.gov/Structure/icn3d/Detector.js"></script>
-  <script src="https://www.ncbi.nlm.nih.gov/Structure/icn3d/CanvasRenderer.js"></script>
-
-  <script src="https://www.ncbi.nlm.nih.gov/Structure/icn3d/TrackballControls.js"></script>
-  <script src="https://www.ncbi.nlm.nih.gov/Structure/icn3d/OrthographicTrackballControls.js"></script>
-  <script src="https://www.ncbi.nlm.nih.gov/Structure/icn3d/Projector.js"></script>
-
-  <script src="https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d.js"></script>
-  <script src="https://www.ncbi.nlm.nih.gov/Structure/icn3d/simple_ui.js"></script-->
-
-<!-- format this page-->
 <style type="text/css">
 pre { white-space: pre-wrap; }
 A { text-decoration: none;}
@@ -53,8 +50,8 @@ body {font-family: Verdana, Arial, Helvetica, sans-serif;}
 <UL>
 <LI><A HREF="#WhatIs">What is iCn3D Structure Viewer?</A></LI>
     <OL>
-    <LI><A HREF="https://www.ncbi.nlm.nih.gov/Structure/icn3d/simple.html?mmdbid=2por">Default simple interface</A></LI>
-    <LI><A HREF="https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?mmdbid=2por">Advanced interface</A></LI>
+    <LI><A HREF="index.html?mmdbid=2por">Default simple interface</A></LI>
+    <LI><A HREF="full.html?mmdbid=2por">Advanced interface</A></LI>
     </OL>
     <br/>
 <LI><A HREF="#HowToUse">How to use iCn3D Structure Viewer in your html page</A></LI>
@@ -279,7 +276,7 @@ body {font-family: Verdana, Arial, Helvetica, sans-serif;}
 
 "I see in 3D" (iCn3D) Structure Viewer is a WebGL-based 3D viewer using Three.js and jQuery. It is based on the 3D styles of <a href="http://webglmol.osdn.jp/index-en.html">GLmol</a> and <a href="http://istar.cse.cuhk.edu.hk/iview/">iview</a>. Here are some of the added features: picking atoms, selecting residues, shiny material for displaying, improved labeling, saving state, etc.<br/>
 <br/>
-We provided two versions of iCn3D widgets: <A HREF="https://www.ncbi.nlm.nih.gov/Structure/icn3d/simple.html?mmdbid=2por">simple interface</A> and <A HREF="https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?mmdbid=2por">advanced interface</A>. Both widgets can be easily added to web pages.
+We provided two versions of iCn3D widgets: <A HREF="index.html?mmdbid=2por">simple interface</A> and <A HREF="full.html?mmdbid=2por">advanced interface</A>. Both widgets can be easily added to web pages.
 <ol>
 <li>The simple interface has the minimum javascript code for the interface and is easy to understand. It has the basic features to change color and styles.
 <li>The advanced interface has a library for the interface and is more complicated to understand. It has many features.
@@ -313,15 +310,15 @@ We provided two versions of iCn3D widgets: <A HREF="https://www.ncbi.nlm.nih.gov
 <ul>
 <li><a name="embedIframe"></a><b>Embed using IFrame</b><br/>
 <p>To embed iCn3D Structure Viewer in your own HTML page using iFrame, simply add the following to your page:<br/>
-&lt;iframe src="https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?mmdbid=2por&width=300&height=300&showmenu=0&rotate=0" width="320" height="320" style="border:none"&gt;&lt;/iframe&gt;<br/>
+&lt;iframe src="full.html?mmdbid=2por&width=300&height=300&showmenu=0&rotate=0" width="320" height="320" style="border:none"&gt;&lt;/iframe&gt;<br/>
 <br/>
-Both "simple.html" and "full.html" accept the following input IDs. You can also add commands in the URL as described <a href="#commandsUrl">here</a>.<br/>
+Both "index.html" and "full.html" accept the following input IDs. You can also add commands in the URL as described <a href="#commandsUrl">here</a>.<br/>
 <div class="indent">
-<b>pdbid</b>: PDB ID, e.g., <a href="https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?pdbid=2por">https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?pdbid=2por</a><br/>
-<b>mmcif</b>: mmCIF ID, e.g., <a href="https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?mmcif=2por">https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?mmcif=2por</a><br/>
-<b>mmdbid</b>: NCBI MMDB ID, e.g., <a href="https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?mmdbid=2por">https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?mmdbid=2por</a><br/>
-<b>gi</b>: NCBI protein gi number, e.g., <a href="https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?gi=827343227">https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?gi=827343227</a><br/>
-<b>cid</b>: PubChem Compound ID, e.g., <a href="https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?cid=2244">https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?cid=2244</a><br/>
+<b>pdbid</b>: PDB ID, e.g., <a href="full.html?pdbid=2por">full.html?pdbid=2por</a><br/>
+<b>mmcif</b>: mmCIF ID, e.g., <a href="full.html?mmcif=2por">full.html?mmcif=2por</a><br/>
+<b>mmdbid</b>: NCBI MMDB ID, e.g., <a href="full.html?mmdbid=2por">full.html?mmdbid=2por</a><br/>
+<b>gi</b>: NCBI protein gi number, e.g., <a href="full.html?gi=827343227">full.html?gi=827343227</a><br/>
+<b>cid</b>: PubChem Compound ID, e.g., <a href="full.html?cid=2244">full.html?cid=2244</a><br/>
 </div>
 </p>
 </li>
@@ -452,7 +449,7 @@ Both "simple.html" and "full.html" accept the following input IDs. You can also 
 <A NAME="commands"></A>
 <h2>Commands in URLs and scripts for the advanced interface<img SRC="https://www.ncbi.nlm.nih.gov/Structure/IMG/spacer.gif" width="25" height="1" border="0"><A HREF="#Top"><img SRC="https://www.ncbi.nlm.nih.gov/Structure/IMG/arrowup_blue.gif" width="12" height="12" border="0" alt="back to top"></A></h2>
 <a name="commandsUrl"></a><b>Commands in URLs</b> <A HREF="#Top"><span class="top">&nbsp;&nbsp;&nbsp;</span></A><br/>
-Besides the "Script/Log" section, commands can also be attached to the url parameter "command". Several commands can be concatenated with the separator ";". Here is one example: <a href="https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?mmdbid=1kq2&command=select :1-20; color green">https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?mmdbid=1kq2&command=select :1-20; color green</a>.<br/>
+Besides the "Script/Log" section, commands can also be attached to the url parameter "command". Several commands can be concatenated with the separator ";". Here is one example: <a href="full.html?mmdbid=1kq2&command=select :1-20; color green">full.html?mmdbid=1kq2&command=select :1-20; color green</a>.<br/>
 <br/>
 <b>Commands</b><br/>
 <a name="file"></a><b>1. File</b> <A HREF="#Top"><span class="top">&nbsp;&nbsp;&nbsp;</span></A><br/>

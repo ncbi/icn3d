@@ -4,7 +4,7 @@
 
 "I see in 3D" (iCn3D) Structure Viewer is a WebGL-based 3D viewer using three.js and jquery. It is based on the 3D styles of [GLmol](http://webglmol.osdn.jp/index-en.html) and [iview](http://istar.cse.cuhk.edu.hk/iview/). Here are some of the added features: picking atoms, selecting residues, shiny material for displaying, improved labeling, saving state, etc.
 
-We provided two versions of iCn3D widgets: [simple interface](index.html?mmdbid=2por) and [advanced interface](full.html?mmdbid=2por). Both widgets can be easily added to web pages.
+We provided two versions of iCn3D widgets: [simple interface](https://www.ncbi.nlm.nih.gov/Structure/icn3d/index.html?mmdbid=2por) and [advanced interface](https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?mmdbid=2por). Both widgets can be easily added to web pages.
 
 1. The simple interface has the minimum javascript code for the interface and is easy to understand. It has the basic features to change color and styles.
 2. The advanced interface has a library for the interface and is more complicated to understand. It has many features.
@@ -12,7 +12,15 @@ We provided two versions of iCn3D widgets: [simple interface](index.html?mmdbid=
   
 ## Usage
 
-Please see the [help page](icn3d.html) to embed iCn3D in your page.
+iCn3D page accepts the following IDs:
+
+* <b>pdbid</b>: PDB ID, e.g., [https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?pdbid=2por](https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?pdbid=2por)
+* <b>mmcif</b>: mmCIF ID, e.g., [https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?mmcif=2por](https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?mmcif=2por)
+* <b>mmdbid</b>: NCBI MMDB ID, e.g., [https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?mmdbid=2por](https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?mmdbid=2por)
+* <b>gi</b>: NCBI protein gi number, [https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?gi=827343227](https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?gi=827343227)
+* <b>cid</b>: PubChem Compound ID, e.g., [https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?cid=2244](https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?cid=2244)
+
+Please see the [help page](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d.html) for more details.
 
 
 ## Third party Libraries used
