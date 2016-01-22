@@ -517,14 +517,12 @@ iCn3DUI.prototype = {
     },
 
     downloadPdb: function (pdbid, protocol) { var me = this;
-       //var uri = "http://www.rcsb.org/pdb/files/" + pdbid + ".pdb";
-       var uri
-       if(protocol === 'https:') {
-		   uri = "https://www.ncbi.nlm.nih.gov/Structure/mmcifparser/mmcifparser.cgi?pdbid=" + pdbid;
-	   }
-	   else {
-           uri = "http://www.rcsb.org/pdb/files/" + pdbid + ".pdb";
-	   }
+       // Use PDB service in development, NCBI in production
+       var uri = (window && window.location &&
+                  window.location.hostname == "www.ncbi.nlm.nih.gov") ?
+           "http://www.rcsb.org/pdb/files/" + pdbid + ".pdb" :
+           "https://www.ncbi.nlm.nih.gov/Structure/mmcifparser/" +
+              "mmcifparser.cgi?pdbid=" + pdbid;
 
        me.icn3d.bCid = undefined;
 

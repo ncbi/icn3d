@@ -27,7 +27,8 @@
 
     // separating the GET parameters from the current URL
     if(document.URL.indexOf("?") === -1) {
-      alert("Please include '?pdbid=1GPK,2POR,...' in your url");
+      window.location = "icn3d.html";
+      //alert("Please include '?pdbid=1GPK,2POR,...' in your url");
     }
 
     var getParams = document.URL.split("?");
