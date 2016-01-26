@@ -37,9 +37,15 @@ Please see the [help page](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d.ht
 
 ## Building
 
-You should be able to run this out-of-the-box after cloning it, as long as you're attempting to view the files through a web server.
+If you want to work with the development version, then you'll need to use the Node.js build tools. We recommend using [nvm](https://github.com/creationix/nvm) (Node version manager). First, install that per the instructions in that README file, and then install the latest LTS version of Node.js, with, for example,
 
-To build the concatenated, minified files, make sure you have Node.js and npm installed, and then perform the following setup steps in your working copy of icn3d. 
+```
+nvm install 4.2.2
+nvm alias default 4.2.2   #=> Use this as default from now on
+node --version            #=> expect "v4.2.2"
+```
+
+Next, clone this repository, and then perform the following setup steps in your working copy of icn3d. 
 
 ```
 npm install -g gulp
@@ -54,16 +60,25 @@ You only have to perform the above steps once, to set up your working directory.
 gulp
 ```
 
-Then, serve the site from an HTTP server, to test it. If you don't have one readily available, one option is to install the `http-server` app, and run it, with:
+Then, serve the site from an HTTP server, to test it. If you don't have one readily available, you could uses the `http-server` app, with:
 
 ```
 npm install -g http-server
 http-server
 ```
 
-You should then be able to see the help page from http://localhost:8080/icn3d.html.
+Then point your browser at http://localhost:8080/icn3d.html.
 
 Run `gulp help` to get a list of the available tasks.
+
+A special task "gh-pages" will build the distribution files, and then push
+them to GitHub pages. Make sure, in your working clone, that you define a 
+remote named "github" that points to a repo on GitHub that you have write
+permission to, and then enter
+
+```
+gulp gh-pages
+```
 
 
 ## Change log
