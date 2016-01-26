@@ -1,3 +1,9 @@
+/*
+ * THIS IS A MODIFIED COPY OF THE FILE FROM
+ * https://github.com/HongjianLi/istar,
+ * forked from commit 248108789e74822f4925b34b72f7e210367bc0e7 (3/23/2015).
+ */
+
 /*! surface.js
  * This is a JavaScript implementation of the EDTSurf algorithm.
  * It was developed by Takanori Nakane and revised by Hongjian Li.
@@ -10,7 +16,7 @@
  *
  * EDTSurf
  * http://zhanglab.ccmb.med.umich.edu/EDTSurf
- * Dong Xu and Yang Zhang. Generating Triangulated Macromolecular Surme.faces
+ * Dong Xu and Yang Zhang. Generating Triangulated Macromolecular Surfaces
  * by Euclidean Distance Transform. PLoS ONE, 4(12):e8140, 2009.
  * Dong Xu, Hua Li and Yang Zhang. Protein Depth Calculation and the Use
  * for Improving Accuracy of Protein Fold Recognition.
@@ -654,7 +660,7 @@ var ProteinSurface = function (data) {
                 }
             }
         }
-        //Face3
+        //face3
         for (i = 0; i < me.pLength - 1; ++i) {
             for (j = 0; j < 1; ++j) {
                 for (k = 0; k < me.pHeight - 1; ++k) {
