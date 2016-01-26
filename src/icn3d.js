@@ -1510,21 +1510,17 @@ iCn3D.prototype = {
               var firstPos = j.indexOf('_');
               var lastPos = j.lastIndexOf('_');
               var structure = j.substr(0, firstPos);
-              var chain = j.substr(firstPos + 1, lastPos - firstPos - 1);
-              var resi = j.substr(lastPos + 1);
+              var chain_resi = j.substr(firstPos + 1, lastPos - firstPos - 1);
+              lastPos = chain_resi.lastIndexOf('_');
+              var chain = chain_resi.substr(0, lastPos);
+              var resi = chain_resi.substr(lastPos + 1);
 
               // remove those hydrogen bonds in the same residue
               //if(parseInt(atom.resi) !== parseInt(other_chain_resi_atom[2])) {
                 this.hbondpoints.push(atom.coord);
                 this.hbondpoints.push(atomHbond[j].coord);
 
-                for(var k in this.residues[structure + "_" + chain + "_" + resi]) {
-                  //if(!this.atoms[i].het) {
-                    //this.atoms[i].style = 'sphere';
-
-                    this.highlightAtoms[k] = 1;
-                  //}
-                }
+                this.highlightAtoms = this.unionHash(this.highlightAtoms, this.residues[structure + "_" + chain + "_" + resi]);
               //}
             } // end of for (var j in atomHbond) {
 
@@ -2953,6 +2949,10 @@ iCn3D.prototype = {
             transparent: true,
         }));
         this.mdl.add(mesh);
+
+        // remove the reference
+        geo = null;
+
         // do not add surface to raycasting objects for picking
     },
 
@@ -4037,7 +4037,15 @@ iCn3D.prototype = {
     rebuildScene: function (options) {
         jQuery.extend(this.options, options);
 
-        this.scene = new THREE.Scene();
+        if(this.scene !== undefined) {
+            for(var i = this.scene.children.length - 1; i >= 0; i--) {
+                 var obj = this.scene.children[i];
+                 this.scene.remove(obj);
+            }
+        }
+        else {
+            this.scene = new THREE.Scene();
+        }
 
         this.directionalLight = new THREE.DirectionalLight(0xFFFFFF, 1.2);
 
@@ -4056,7 +4064,18 @@ iCn3D.prototype = {
         this.scene.add(this.directionalLight);
         this.scene.add(ambientLight);
 
-        this.mdl = new THREE.Object3D();
+        if(this.mdl !== undefined) {
+            for(var i = this.mdl.children.length - 1; i >= 0; i--) {
+                 var obj = this.mdl.children[i];
+                 this.mdl.remove(obj);
+            }
+
+            this.options.rotationcenter = "nochange";
+        }
+        else {
+            this.mdl = new THREE.Object3D();
+        }
+
         this.scene.add(this.mdl);
 
         // related to picking
