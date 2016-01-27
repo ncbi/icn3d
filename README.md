@@ -35,6 +35,9 @@ See the [help page](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d.html) for
 * **[iview](http://istar.cse.cuhk.edu.hk/iview/)**: iCn3D is mainly based on iview.
 * **[GLmol](http://webglmol.osdn.jp/index-en.html)**: Some features (such as drawing cartoons for nucleotides) are from GLmol.
 
+## Download
+
+The complete version with all libraries can be downloaded from [https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-0.9.0-dev.zip](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-0.9.0-dev.zip)
 
 ## Building
 
