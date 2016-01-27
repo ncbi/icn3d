@@ -539,12 +539,13 @@ iCn3DUI.prototype = {
               if($("#" + me.pre + "log")) $("#" + me.pre + "log").show();
           },
           success: function(data) {
-              me.loadPdbData(data);
+              me.loadPdbData(data, pdbid);
           }
        });
     },
 
-    loadPdbData: function(data) { var me = this;
+    loadPdbData: function(data, pdbid) {
+        var me = this;
         me.icn3d.loadPDB(data);
 
         me.pmid = me.icn3d.pmid;
