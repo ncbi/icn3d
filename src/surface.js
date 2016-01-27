@@ -21,34 +21,40 @@
  * Dong Xu, Hua Li and Yang Zhang. Protein Depth Calculation and the Use
  * for Improving Accuracy of Protein Fold Recognition.
  * Journal of Computational Biology, 20(10):805-816, 2013.
+
+ * by Jiyao Wang
+ * modified variable scope to avoid memory leak
+ * corected from "if (stype == 3) {// vdw" to "if (stype == 1) {// vdw"
+
  */
 
-
-// corected from "if (stype == 3) {// vdw" to "if (stype == 1) {// vdw" by JW
-
 var ProteinSurface = function (data) {
-    var ptranx, ptrany, ptranz;
-    var boxLength = 128;
-    var probeRadius = 1.4, scaleFactor = 1;
-    var pHeight, pWidth, pLength;
-    var cutRadius;
-    var vp;
-    var vertnumber, facenumber;
-    var pminx, pminy, pminz, pmaxx, pmaxy, pmaxz;
-    var rasrad = [1.90, 1.88, 1.63, 1.48, 1.78, 1.2, 1.87, 1.96, 1.63, 0.74, 1.8, 1.48, 1.2];//liang
-    //             Calpha   c    n    o    s   h   p   Cbeta  ne  fe  other ox  hx
-    var depty = new Array(13), widxz = new Array(13);
-    var fixsf = 2;
-    var faces, verts
-    var nb = [[1, 0, 0], [-1, 0, 0], [0, 1, 0], [0, -1, 0], [0, 0, 1], [0, 0, -1], [1, 1, 0], [1, -1, 0], [-1, 1, 0], [-1, -1, 0], [1, 0, 1], [1, 0, -1], [-1, 0, 1], [-1, 0, -1], [0, 1, 1], [0, 1, -1], [0, -1, 1], [0, -1, -1], [1, 1, 1], [1, 1, -1], [1, -1, 1], [-1, 1, 1], [1, -1, -1], [-1, -1, 1], [-1, 1, -1], [-1, -1, -1]];
+    var me = this;
 
-    var Vector3 = function (x, y, z) {
+    //me.ptranx, me.ptrany, me.ptranz;
+    me.boxLength = 128;
+    me.probeRadius = 1.4;
+    me.scaleFactor = 1;
+    //me.pHeight, me.pWidth, me.pLength;
+    //me.cutRadius;
+    //me.vp;
+    //me.vertnumber, me.facenumber;
+    //me.pminx, me.pminy, me.pminz, me.pmaxx, me.pmaxy, me.pmaxz;
+    me.rasrad = [1.90, 1.88, 1.63, 1.48, 1.78, 1.2, 1.87, 1.96, 1.63, 0.74, 1.8, 1.48, 1.2];//liang
+    //             Calpha   c    n    o    s   h   p   Cbeta  ne  fe  other ox  hx
+    me.depty = new Array(13);
+    me.widxz = new Array(13);
+    me.fixsf = 2;
+    //me.faces, me.verts;
+    me.nb = [[1, 0, 0], [-1, 0, 0], [0, 1, 0], [0, -1, 0], [0, 0, 1], [0, 0, -1], [1, 1, 0], [1, -1, 0], [-1, 1, 0], [-1, -1, 0], [1, 0, 1], [1, 0, -1], [-1, 0, 1], [-1, 0, -1], [0, 1, 1], [0, 1, -1], [0, -1, 1], [0, -1, -1], [1, 1, 1], [1, 1, -1], [1, -1, 1], [-1, 1, 1], [1, -1, -1], [-1, -1, 1], [-1, 1, -1], [-1, -1, -1]];
+
+    me.Vector3 = function (x, y, z) {
         this.x = x;
         this.y = y;
         this.z = z;
     };
 
-    var Face3 = function (a, b, c) {
+    me.Face3 = function (a, b, c) {
         this.a = a;
         this.b = b;
         this.c = c;
@@ -56,49 +62,49 @@ var ProteinSurface = function (data) {
 
     this.initparm = function (pmin, pmax, btype) {
         var margin = 2.5;
-        pminx = pmin.x, pmaxx = pmax.x;
-        pminy = pmin.y, pmaxy = pmax.y;
-        pminz = pmin.z, pmaxz = pmax.z;
+        me.pminx = pmin.x, me.pmaxx = pmax.x;
+        me.pminy = pmin.y, me.pmaxy = pmax.y;
+        me.pminz = pmin.z, me.pmaxz = pmax.z;
 
         if (btype) {
-            pminx -= margin; pminy -= margin; pminz -= margin;
-            pmaxx += margin; pmaxy += margin; pmaxz += margin;
+            me.pminx -= margin; me.pminy -= margin; me.pminz -= margin;
+            me.pmaxx += margin; me.pmaxy += margin; me.pmaxz += margin;
         } else {
-            pminx -= probeRadius + margin;
-            pminy -= probeRadius + margin;
-            pminz -= probeRadius + margin;
-            pmaxx += probeRadius + margin;
-            pmaxy += probeRadius + margin;
-            pmaxz += probeRadius + margin;
+            me.pminx -= me.probeRadius + margin;
+            me.pminy -= me.probeRadius + margin;
+            me.pminz -= me.probeRadius + margin;
+            me.pmaxx += me.probeRadius + margin;
+            me.pmaxy += me.probeRadius + margin;
+            me.pmaxz += me.probeRadius + margin;
         }
 
-        ptranx = -pminx;
-        ptrany = -pminy;
-        ptranz = -pminz;
-        scaleFactor = pmaxx - pminx;
-        if ((pmaxy - pminy) > scaleFactor) scaleFactor = pmaxy - pminy;
-        if ((pmaxz - pminz) > scaleFactor) scaleFactor = pmaxz - pminz;
-        scaleFactor = (boxLength - 1.0) / scaleFactor;
+        me.ptranx = -me.pminx;
+        me.ptrany = -me.pminy;
+        me.ptranz = -me.pminz;
+        me.scaleFactor = me.pmaxx - me.pminx;
+        if ((me.pmaxy - me.pminy) > me.scaleFactor) me.scaleFactor = me.pmaxy - me.pminy;
+        if ((me.pmaxz - me.pminz) > me.scaleFactor) me.scaleFactor = me.pmaxz - me.pminz;
+        me.scaleFactor = (me.boxLength - 1.0) / me.scaleFactor;
 
-        boxLength = Math.floor(boxLength * fixsf / scaleFactor);
-        scaleFactor = fixsf;
+        me.boxLength = Math.floor(me.boxLength * me.fixsf / me.scaleFactor);
+        me.scaleFactor = me.fixsf;
         var threshbox = 180; // maximum possible boxsize
-        if (boxLength > threshbox) {
-            sfthresh = threshbox / boxLength;
-            boxLength = Math.floor(threshbox);
-            scaleFactor = scaleFactor * sfthresh;
+        if (me.boxLength > threshbox) {
+            sfthresh = threshbox / me.boxLength;
+            me.boxLength = Math.floor(threshbox);
+            me.scaleFactor = me.scaleFactor * sfthresh;
         }
 
-        pLength = Math.ceil(scaleFactor * (pmaxx - pminx)) + 1;
-        pWidth = Math.ceil(scaleFactor * (pmaxy - pminy)) + 1;
-        pHeight = Math.ceil(scaleFactor * (pmaxz - pminz)) + 1;
-        if (pLength > boxLength) pLength = boxLength;
-        if (pWidth > boxLength) pWidth = boxLength;
-        if (pHeight > boxLength) pHeight = boxLength;
+        me.pLength = Math.ceil(me.scaleFactor * (me.pmaxx - me.pminx)) + 1;
+        me.pWidth = Math.ceil(me.scaleFactor * (me.pmaxy - me.pminy)) + 1;
+        me.pHeight = Math.ceil(me.scaleFactor * (me.pmaxz - me.pminz)) + 1;
+        if (me.pLength > me.boxLength) me.pLength = me.boxLength;
+        if (me.pWidth > me.boxLength) me.pWidth = me.boxLength;
+        if (me.pHeight > me.boxLength) me.pHeight = me.boxLength;
         this.boundingatom(btype);
-        cutRadis = probeRadius * scaleFactor;
+        cutRadis = me.probeRadius * me.scaleFactor;
 
-        vp = new Array(pLength * pWidth * pHeight);
+        me.vp = new Array(me.pLength * me.pWidth * me.pHeight);
     };
 
     this.boundingatom = function (btype) {
@@ -106,20 +112,20 @@ var ProteinSurface = function (data) {
         var txz, tdept, sradius, idx;
 
         for (var i = 0; i < 13; ++i) {
-            if (!btype) tradius[i] = rasrad[i] * scaleFactor + 0.5;
-            else tradius[i] = (rasrad[i] + probeRadius) * scaleFactor + 0.5;
+            if (!btype) tradius[i] = me.rasrad[i] * me.scaleFactor + 0.5;
+            else tradius[i] = (me.rasrad[i] + me.probeRadius) * me.scaleFactor + 0.5;
 
             sradius = tradius[i] * tradius[i];
-            widxz[i] = Math.floor(tradius[i]) + 1;
-            depty[i] = new Array(widxz[i] * widxz[i]);
+            me.widxz[i] = Math.floor(tradius[i]) + 1;
+            me.depty[i] = new Array(me.widxz[i] * me.widxz[i]);
             indx = 0;
-            for (j = 0; j < widxz[i]; ++j) {
-                for (k = 0; k < widxz[i]; ++k) {
+            for (j = 0; j < me.widxz[i]; ++j) {
+                for (k = 0; k < me.widxz[i]; ++k) {
                     txz = j * j + k * k;
-                    if (txz > sradius) depty[i][indx] = -1; // outside
+                    if (txz > sradius) me.depty[i][indx] = -1; // outside
                     else {
                         tdept = Math.sqrt(sradius - txz);
-                        depty[i][indx] = Math.floor(tdept);
+                        me.depty[i][indx] = Math.floor(tdept);
                     }
                     indx++;
                 }
@@ -128,69 +134,69 @@ var ProteinSurface = function (data) {
     }
 
     this.fillvoxels = function (atoms) { //(int seqinit,int seqterm,bool atomtype,atom* proseq,bool bcolor)
-        for (var i = 0, lim = vp.length; i < lim; ++i) {
-            vp[i] = { inout: false, isdone: false, isbound: false, distance: -1, atomid: -1 };
+        for (var i = 0, lim = me.vp.length; i < lim; ++i) {
+            me.vp[i] = { inout: false, isdone: false, isbound: false, distance: -1, atomid: -1 };
         }
 
         for (i in atoms) {
             this.fillAtom(atoms[i], atoms);
         }
 
-        for (i = 0, lim = vp.length; i < lim; ++i)
-            if (vp[i].inout) vp[i].isdone = true;
+        for (i = 0, lim = me.vp.length; i < lim; ++i)
+            if (me.vp[i].inout) me.vp[i].isdone = true;
 
-        this.vp = vp;
-        for (var i = 0, lim = vp.length; i < lim; ++i) {
-            if (vp[i].inout) vp[i].isdone = true;
+        //this.vp = me.vp;
+        for (var i = 0, lim = me.vp.length; i < lim; ++i) {
+            if (me.vp[i].inout) me.vp[i].isdone = true;
         }
     };
 
     this.fillAtom = function (atom, atoms) {
         var cx, cy, cz, ox, oy, oz;
-        cx = Math.floor(0.5 + scaleFactor * (atom.coord.x + ptranx));
-        cy = Math.floor(0.5 + scaleFactor * (atom.coord.y + ptrany));
-        cz = Math.floor(0.5 + scaleFactor * (atom.coord.z + ptranz));
+        cx = Math.floor(0.5 + me.scaleFactor * (atom.coord.x + me.ptranx));
+        cy = Math.floor(0.5 + me.scaleFactor * (atom.coord.y + me.ptrany));
+        cz = Math.floor(0.5 + me.scaleFactor * (atom.coord.z + me.ptranz));
 
         var at = this.getAtomType(atom);
         var nind = 0;
         var cnt = 0;
 
-        for (i = 0; i < widxz[at]; ++i) {
-            for (j = 0; j < widxz[at]; ++j) {
-                if (depty[at][nind] != -1) {
+        for (i = 0; i < me.widxz[at]; ++i) {
+            for (j = 0; j < me.widxz[at]; ++j) {
+                if (me.depty[at][nind] != -1) {
                     for (ii = -1; ii < 2; ++ii) {
                         for (jj = -1; jj < 2; ++jj) {
                             for (kk = -1; kk < 2; ++kk) {
                                 if (ii != 0 && jj != 0 && kk != 0) {
                                     mi = ii * i;
                                     mk = kk * j;
-                                    for (k = 0; k <= depty[at][nind]; ++k) {
+                                    for (k = 0; k <= me.depty[at][nind]; ++k) {
                                         mj = k * jj;
                                         si = cx + mi;
                                         sj = cy + mj;
                                         sk = cz + mk;
-                                        if (si < 0 || sj < 0 || sk < 0 || si >= pLength || sj >= pWidth || sk >= pHeight) continue;
-                                        var vpSISJSK = vp[si * pWidth * pHeight + sj * pHeight + sk];
+                                        if (si < 0 || sj < 0 || sk < 0 || si >= me.pLength || sj >= me.pWidth || sk >= me.pHeight) continue;
+                                        var vpSISJSK = me.vp[si * me.pWidth * me.pHeight + sj * me.pHeight + sk];
                                         if (false) { // !bcolor
                                             vpSISJSK.inout = true;
-                                        } else { // color 
+                                        } else { // color
                                             if (vpSISJSK.inout == false) {
                                                 vpSISJSK.inout = true;
                                                 vpSISJSK.atomid = atom.serial;
                                             } else if (vpSISJSK.inout) {
                                                 var atom2 = atoms[vpSISJSK.atomid];
-                                                ox = Math.floor(0.5 + scaleFactor * (atom2.coord.x + ptranx));
-                                                oy = Math.floor(0.5 + scaleFactor * (atom2.coord.y + ptrany));
-                                                oz = Math.floor(0.5 + scaleFactor * (atom2.coord.z + ptranz));
+                                                ox = Math.floor(0.5 + me.scaleFactor * (atom2.coord.x + me.ptranx));
+                                                oy = Math.floor(0.5 + me.scaleFactor * (atom2.coord.y + me.ptrany));
+                                                oz = Math.floor(0.5 + me.scaleFactor * (atom2.coord.z + me.ptranz));
                                                 if (mi * mi + mj * mj + mk * mk < ox * ox + oy * oy + oz * oz)
                                                     vpSISJSK.atomid = atom.serial;
                                             }
                                         }
                                     }//k
                                 }//if
-                            }//kk   
+                            }//kk
                         }//jj
-                    }//ii       
+                    }//ii
                 }//if
                 nind++;
             }//j
@@ -198,7 +204,7 @@ var ProteinSurface = function (data) {
     };
 
     this.fillvoxelswaals = function (atoms) {
-        for (var i = 0, lim = vp.length; i < lim; ++i) vp[i].isdone = false;
+        for (var i = 0, lim = me.vp.length; i < lim; ++i) me.vp[i].isdone = false;
 
         for (i in atoms) {
             this.fillAtomWaals(atoms[i], atoms);
@@ -207,28 +213,28 @@ var ProteinSurface = function (data) {
 
     this.fillAtomWaals = function (atom, atoms) {
         var cx, cy, cz, ox, oy, oz, nind = 0;
-        cx = Math.floor(0.5 + scaleFactor * (atom.coord.x + ptranx));
-        cy = Math.floor(0.5 + scaleFactor * (atom.coord.y + ptrany));
-        cz = Math.floor(0.5 + scaleFactor * (atom.coord.z + ptranz));
+        cx = Math.floor(0.5 + me.scaleFactor * (atom.coord.x + me.ptranx));
+        cy = Math.floor(0.5 + me.scaleFactor * (atom.coord.y + me.ptrany));
+        cz = Math.floor(0.5 + me.scaleFactor * (atom.coord.z + me.ptranz));
 
         var at = this.getAtomType(atom);
 
-        for (i = 0; i < widxz[at]; ++i) {
-            for (j = 0; j < widxz[at]; ++j) {
-                if (depty[at][nind] != -1) {
+        for (i = 0; i < me.widxz[at]; ++i) {
+            for (j = 0; j < me.widxz[at]; ++j) {
+                if (me.depty[at][nind] != -1) {
                     for (ii = -1; ii < 2; ++ii) {
                         for (jj = -1; jj < 2; ++jj) {
                             for (kk = -1; kk < 2; ++kk) {
                                 if (ii != 0 && jj != 0 && kk != 0) {
                                     mi = ii * i;
                                     mk = kk * j;
-                                    for (k = 0; k <= depty[at][nind]; ++k) {
+                                    for (k = 0; k <= me.depty[at][nind]; ++k) {
                                         mj = k * jj;
                                         si = cx + mi;
                                         sj = cy + mj;
                                         sk = cz + mk;
                                         if (si < 0 || sj < 0 || sk < 0) continue;
-                                        var vpSISJSK = vp[si * pWidth * pHeight + sj * pHeight + sk];
+                                        var vpSISJSK = me.vp[si * me.pWidth * me.pHeight + sj * me.pHeight + sk];
                                         if (false) {//(!bcolor) FIXME
                                             vpSISJSK.isdone = true;
                                             continue;
@@ -240,16 +246,16 @@ var ProteinSurface = function (data) {
                                             }
                                             else if (vpSISJSK != undefined && vpSISJSK.isdone) {
                                                 var atom2 = atoms[vpSISJSK.atomid];
-                                                ox = Math.floor(0.5 + scaleFactor * (atom2.coord.x + ptranx));
-                                                oy = Math.floor(0.5 + scaleFactor * (atom2.coord.y + ptrany));
-                                                oz = Math.floor(0.5 + scaleFactor * (atom2.coord.z + ptranz));
+                                                ox = Math.floor(0.5 + me.scaleFactor * (atom2.coord.x + me.ptranx));
+                                                oy = Math.floor(0.5 + me.scaleFactor * (atom2.coord.y + me.ptrany));
+                                                oz = Math.floor(0.5 + me.scaleFactor * (atom2.coord.z + me.ptranz));
                                                 if (mi * mi + mj * mj + mk * mk < ox * ox + oy * oy + oz * oz)
                                                     vpSISJSK.atomid = atom.serial;
                                             }
                                         }//else
                                     }//k
                                 }//if
-                            }//kk   
+                            }//kk
                         }//jj
                     }//ii
                 }//if
@@ -276,20 +282,20 @@ var ProteinSurface = function (data) {
     };
 
     this.buildboundary = function () {
-        vp = this.vp;
-        for (i = 0; i < pLength; ++i) {
-            for (j = 0; j < pHeight; ++j) {
-                for (k = 0; k < pWidth; ++k) {
-                    var vpIJK = vp[i * pWidth * pHeight + k * pHeight + j];
+        //me.vp = this.vp;
+        for (i = 0; i < me.pLength; ++i) {
+            for (j = 0; j < me.pHeight; ++j) {
+                for (k = 0; k < me.pWidth; ++k) {
+                    var vpIJK = me.vp[i * me.pWidth * me.pHeight + k * me.pHeight + j];
                     if (vpIJK.inout) {
                         var flagbound = false;
                         var ii = 0;
                         while (!flagbound && ii < 26) {
-                            var ti = i + nb[ii][0], tj = j + nb[ii][2], tk = k + nb[ii][1];
-                            if (ti > -1 && ti < pLength
-                                && tk > -1 && tk < pWidth
-                                && tj > -1 && tj < pHeight
-                                && !vp[ti * pWidth * pHeight + tk * pHeight + tj].inout) {
+                            var ti = i + me.nb[ii][0], tj = j + me.nb[ii][2], tk = k + me.nb[ii][1];
+                            if (ti > -1 && ti < me.pLength
+                                && tk > -1 && tk < me.pWidth
+                                && tj > -1 && tj < me.pHeight
+                                && !me.vp[ti * me.pWidth * me.pHeight + tk * me.pHeight + tj].inout) {
                                 vpIJK.isbound = true;
                                 flagbound = true;
                             }
@@ -307,21 +313,21 @@ var ProteinSurface = function (data) {
         totalsurfacevox = 0;
         totalinnervox = 0;
 
-        var boundPoint = new Array(pLength);
-        for (var i = 0; i < pLength; ++i) {
-            var a = new Array(pWidth);
-            for (var j = 0; j < pWidth; ++j) {
-                var b = new Array(pHeight);
-                for (var k = 0; k < pHeight; ++k) b[k] = { ix: 0, iy: 0, iz: 0 };
+        var boundPoint = new Array(me.pLength);
+        for (var i = 0; i < me.pLength; ++i) {
+            var a = new Array(me.pWidth);
+            for (var j = 0; j < me.pWidth; ++j) {
+                var b = new Array(me.pHeight);
+                for (var k = 0; k < me.pHeight; ++k) b[k] = { ix: 0, iy: 0, iz: 0 };
                 a[j] = b;
             }
             boundPoint[i] = a;
         }
 
-        for (i = 0; i < pLength; ++i) {
-            for (j = 0; j < pWidth; ++j) {
-                for (k = 0; k < pHeight; ++k) {
-                    var vpIJK = vp[i * pWidth * pHeight + j * pHeight + k];
+        for (i = 0; i < me.pLength; ++i) {
+            for (j = 0; j < me.pWidth; ++j) {
+                for (k = 0; k < me.pHeight; ++k) {
+                    var vpIJK = me.vp[i * me.pWidth * me.pHeight + j * me.pHeight + k];
                     vpIJK.isdone = false;
                     if (vpIJK.inout) {
                         if (vpIJK.isbound) {
@@ -343,10 +349,10 @@ var ProteinSurface = function (data) {
         outarray = new Array();
         var positin = 0, positout = 0;
 
-        for (i = 0; i < pLength; ++i) {
-            for (j = 0; j < pWidth; ++j) {
-                for (k = 0; k < pHeight; ++k) {
-                    var vpIJK = vp[i * pWidth * pHeight + j * pHeight + k];
+        for (i = 0; i < me.pLength; ++i) {
+            for (j = 0; j < me.pWidth; ++j) {
+                for (k = 0; k < me.pHeight; ++k) {
+                    var vpIJK = me.vp[i * me.pWidth * me.pHeight + j * me.pHeight + k];
                     if (vpIJK.isbound) {
                         inarray.push({ ix: i, iy: j, iz: k });
                         positin++;
@@ -361,7 +367,7 @@ var ProteinSurface = function (data) {
             positin = 0;
             inarray = [];
             for (i = 0; i < positout; ++i) {
-                var vptmp = vp[pWidth * pHeight * outarray[i].ix + pHeight * outarray[i].iy + outarray[i].iz];
+                var vptmp = me.vp[me.pWidth * me.pHeight * outarray[i].ix + me.pHeight * outarray[i].iy + outarray[i].iz];
                 vptmp.isbound = false;
                 if (vptmp.distance <= 1.02 * cutRadis) {
                     inarray.push({ ix: outarray[i].ix, iy: outarray[i].iy, iz: outarray[i].iz });
@@ -373,12 +379,12 @@ var ProteinSurface = function (data) {
             }
         } while (positin != 0);
 
-        var cutsf = scaleFactor - 0.5;
+        var cutsf = me.scaleFactor - 0.5;
         if (cutsf < 0) cutsf = 0;
-        for (i = 0; i < pLength; ++i) {
-            for (j = 0; j < pWidth; ++j) {
-                for (k = 0; k < pHeight; ++k) {
-                    var vpIJK = vp[i * pWidth * pHeight + j * pHeight + k];
+        for (i = 0; i < me.pLength; ++i) {
+            for (j = 0; j < me.pWidth; ++j) {
+                for (k = 0; k < me.pHeight; ++k) {
+                    var vpIJK = me.vp[i * me.pWidth * me.pHeight + j * me.pHeight + k];
                     vpIJK.isbound = false;
                     //ses solid
                     if (vpIJK.inout) {
@@ -386,7 +392,7 @@ var ProteinSurface = function (data) {
                             vpIJK.isbound = true;
                             //new add
                             //                  if (vpIJK.isdone)
-                            //                  VPIJK.atomid=vp[boundPoint[i][j][k].ix][boundPoint[i][j][k].iy][boundPoint[i][j][k].iz].atomid;
+                            //                  vpIJK.atomid=me.vp[boundPoint[i][j][k].ix][boundPoint[i][j][k].iy][boundPoint[i][j][k].iz].atomid;
                         }
                     }
                 }
@@ -410,17 +416,17 @@ var ProteinSurface = function (data) {
             tz = inarray[i].iz;
 
             for (var j = 0; j < 6; ++j) {
-                tnv.ix = tx + nb[j][0];
-                tnv.iy = ty + nb[j][1];
-                tnv.iz = tz + nb[j][2];
-                var vpTNV = vp[tnv.ix * pWidth * pHeight + pHeight * tnv.iy + tnv.iz];
-                if (tnv.ix < pLength && tnv.ix > -1 &&
-                    tnv.iy < pWidth && tnv.iy > -1 &&
-                    tnv.iz < pHeight && tnv.iz > -1 &&
+                tnv.ix = tx + me.nb[j][0];
+                tnv.iy = ty + me.nb[j][1];
+                tnv.iz = tz + me.nb[j][2];
+                var vpTNV = me.vp[tnv.ix * me.pWidth * me.pHeight + me.pHeight * tnv.iy + tnv.iz];
+                if (tnv.ix < me.pLength && tnv.ix > -1 &&
+                    tnv.iy < me.pWidth && tnv.iy > -1 &&
+                    tnv.iz < me.pHeight && tnv.iz > -1 &&
                     vpTNV.inout && !vpTNV.isdone) {
-                    boundPoint[tnv.ix][tnv.iy][tz + nb[j][2]].ix = boundPoint[tx][ty][tz].ix;
-                    boundPoint[tnv.ix][tnv.iy][tz + nb[j][2]].iy = boundPoint[tx][ty][tz].iy;
-                    boundPoint[tnv.ix][tnv.iy][tz + nb[j][2]].iz = boundPoint[tx][ty][tz].iz;
+                    boundPoint[tnv.ix][tnv.iy][tz + me.nb[j][2]].ix = boundPoint[tx][ty][tz].ix;
+                    boundPoint[tnv.ix][tnv.iy][tz + me.nb[j][2]].iy = boundPoint[tx][ty][tz].iy;
+                    boundPoint[tnv.ix][tnv.iy][tz + me.nb[j][2]].iz = boundPoint[tx][ty][tz].iz;
                     dx = tnv.ix - boundPoint[tx][ty][tz].ix;
                     dy = tnv.iy - boundPoint[tx][ty][tz].iy;
                     dz = tnv.iz - boundPoint[tx][ty][tz].iz;
@@ -430,9 +436,9 @@ var ProteinSurface = function (data) {
                     vpTNV.isbound = true;
                     outarray.push({ ix: tnv.ix, iy: tnv.iy, iz: tnv.iz });
                     positout++;
-                } else if (tnv.ix < pLength && tnv.ix > -1 &&
-                          tnv.iy < pWidth && tnv.iy > -1 &&
-                          tnv.iz < pHeight && tnv.iz > -1 &&
+                } else if (tnv.ix < me.pLength && tnv.ix > -1 &&
+                          tnv.iy < me.pWidth && tnv.iy > -1 &&
+                          tnv.iz < me.pHeight && tnv.iz > -1 &&
                           vpTNV.inout && vpTNV.isdone) {
                     dx = tnv.ix - boundPoint[tx][ty][tz].ix;
                     dy = tnv.iy - boundPoint[tx][ty][tz].iy;
@@ -459,18 +465,18 @@ var ProteinSurface = function (data) {
             ty = inarray[i].iy;
             tz = inarray[i].iz;
             for (j = 6; j < 18; ++j) {
-                tnv.ix = tx + nb[j][0];
-                tnv.iy = ty + nb[j][1];
-                tnv.iz = tz + nb[j][2];
-                var vpTNV = vp[tnv.ix * pWidth * pHeight + pHeight * tnv.iy + tnv.iz];
+                tnv.ix = tx + me.nb[j][0];
+                tnv.iy = ty + me.nb[j][1];
+                tnv.iz = tz + me.nb[j][2];
+                var vpTNV = me.vp[tnv.ix * me.pWidth * me.pHeight + me.pHeight * tnv.iy + tnv.iz];
 
-                if (tnv.ix < pLength && tnv.ix > -1 &&
-                    tnv.iy < pWidth && tnv.iy > -1 &&
-                    tnv.iz < pHeight && tnv.iz > -1 &&
+                if (tnv.ix < me.pLength && tnv.ix > -1 &&
+                    tnv.iy < me.pWidth && tnv.iy > -1 &&
+                    tnv.iz < me.pHeight && tnv.iz > -1 &&
                     vpTNV.inout && !vpTNV.isdone) {
-                    boundPoint[tnv.ix][tnv.iy][tz + nb[j][2]].ix = boundPoint[tx][ty][tz].ix;
-                    boundPoint[tnv.ix][tnv.iy][tz + nb[j][2]].iy = boundPoint[tx][ty][tz].iy;
-                    boundPoint[tnv.ix][tnv.iy][tz + nb[j][2]].iz = boundPoint[tx][ty][tz].iz;
+                    boundPoint[tnv.ix][tnv.iy][tz + me.nb[j][2]].ix = boundPoint[tx][ty][tz].ix;
+                    boundPoint[tnv.ix][tnv.iy][tz + me.nb[j][2]].iy = boundPoint[tx][ty][tz].iy;
+                    boundPoint[tnv.ix][tnv.iy][tz + me.nb[j][2]].iz = boundPoint[tx][ty][tz].iz;
                     dx = tnv.ix - boundPoint[tx][ty][tz].ix;
                     dy = tnv.iy - boundPoint[tx][ty][tz].iy;
                     dz = tnv.iz - boundPoint[tx][ty][tz].iz;
@@ -480,9 +486,9 @@ var ProteinSurface = function (data) {
                     vpTNV.isbound = true;
                     outarray.push({ ix: tnv.ix, iy: tnv.iy, iz: tnv.iz });
                     positout++;
-                } else if (tnv.ix < pLength && tnv.ix > -1 &&
-                           tnv.iy < pWidth && tnv.iy > -1 &&
-                           tnv.iz < pHeight && tnv.iz > -1 &&
+                } else if (tnv.ix < me.pLength && tnv.ix > -1 &&
+                           tnv.iy < me.pWidth && tnv.iy > -1 &&
+                           tnv.iz < me.pHeight && tnv.iz > -1 &&
                            vpTNV.inout && vpTNV.isdone) {
                     dx = tnv.ix - boundPoint[tx][ty][tz].ix;
                     dy = tnv.iy - boundPoint[tx][ty][tz].iy;
@@ -508,18 +514,18 @@ var ProteinSurface = function (data) {
             ty = inarray[i].iy;
             tz = inarray[i].iz;
             for (j = 18; j < 26; ++j) {
-                tnv.ix = tx + nb[j][0];
-                tnv.iy = ty + nb[j][1];
-                tnv.iz = tz + nb[j][2];
-                var vpTNV = vp[tnv.ix * pWidth * pHeight + pHeight * tnv.iy + tnv.iz];
+                tnv.ix = tx + me.nb[j][0];
+                tnv.iy = ty + me.nb[j][1];
+                tnv.iz = tz + me.nb[j][2];
+                var vpTNV = me.vp[tnv.ix * me.pWidth * me.pHeight + me.pHeight * tnv.iy + tnv.iz];
 
-                if (tnv.ix < pLength && tnv.ix > -1 &&
-                    tnv.iy < pWidth && tnv.iy > -1 &&
-                    tnv.iz < pHeight && tnv.iz > -1 &&
+                if (tnv.ix < me.pLength && tnv.ix > -1 &&
+                    tnv.iy < me.pWidth && tnv.iy > -1 &&
+                    tnv.iz < me.pHeight && tnv.iz > -1 &&
                     vpTNV.inout && !vpTNV.isdone) {
-                    boundPoint[tnv.ix][tnv.iy][tz + nb[j][2]].ix = boundPoint[tx][ty][tz].ix;
-                    boundPoint[tnv.ix][tnv.iy][tz + nb[j][2]].iy = boundPoint[tx][ty][tz].iy;
-                    boundPoint[tnv.ix][tnv.iy][tz + nb[j][2]].iz = boundPoint[tx][ty][tz].iz;
+                    boundPoint[tnv.ix][tnv.iy][tz + me.nb[j][2]].ix = boundPoint[tx][ty][tz].ix;
+                    boundPoint[tnv.ix][tnv.iy][tz + me.nb[j][2]].iy = boundPoint[tx][ty][tz].iy;
+                    boundPoint[tnv.ix][tnv.iy][tz + me.nb[j][2]].iz = boundPoint[tx][ty][tz].iz;
                     dx = tnv.ix - boundPoint[tx][ty][tz].ix;
                     dy = tnv.iy - boundPoint[tx][ty][tz].iy;
                     dz = tnv.iz - boundPoint[tx][ty][tz].iz;
@@ -529,9 +535,9 @@ var ProteinSurface = function (data) {
                     vpTNV.isbound = true;
                     outarray.push({ ix: tnv.ix, iy: tnv.iy, iz: tnv.iz });
                     positout++;
-                } else if (tnv.ix < pLength && tnv.ix > -1 &&
-                           tnv.iy < pWidth && tnv.iy > -1 &&
-                           tnv.iz < pHeight && tnv.iz > -1 &&
+                } else if (tnv.ix < me.pLength && tnv.ix > -1 &&
+                           tnv.iy < me.pWidth && tnv.iy > -1 &&
+                           tnv.iz < me.pHeight && tnv.iz > -1 &&
                            vpTNV.inout && vpTNV.isdone) {
                     dx = tnv.ix - boundPoint[tx][ty][tz].ix;
                     dy = tnv.iy - boundPoint[tx][ty][tz].iy;
@@ -555,53 +561,53 @@ var ProteinSurface = function (data) {
     };
 
     this.marchingcube = function (stype) {
-        for (var i = 0, lim = vp.length; i < lim; ++i) {
+        for (var i = 0, lim = me.vp.length; i < lim; ++i) {
             // should be 1: VDW, 2: SES, 3: SAS, 4: MS Commented by JW
             if (stype == 1) {// vdw
-                vp[i].isbound = false;
+                me.vp[i].isbound = false;
             } else if (stype == 4) { // ses
-                vp[i].isdone = false;
-                if (vp[i].isbound) vp[i].isdone = true;
-                vp[i].isbound = false;
+                me.vp[i].isdone = false;
+                if (me.vp[i].isbound) me.vp[i].isdone = true;
+                me.vp[i].isbound = false;
             } else if (stype == 2) {// after vdw
-                if (vp[i].isbound && vp[i].isdone) vp[i].isbound = false;
-                else if (vp[i].isbound && !vp[i].isdone) vp[i].isdone = true;
+                if (me.vp[i].isbound && me.vp[i].isdone) me.vp[i].isbound = false;
+                else if (me.vp[i].isbound && !me.vp[i].isdone) me.vp[i].isdone = true;
             } else if (stype == 3) { //sas
-                vp[i].isbound = false;
+                me.vp[i].isbound = false;
             }
         }
 
-        var vertseq = new Array(pLength);
-        for (var i = 0; i < pLength; ++i) {
-            var a = new Array(pWidth);
-            for (var j = 0; j < pWidth; ++j) {
-                var b = new Array(pHeight);
-                for (var k = 0; k < pHeight; ++k) b[k] = -1;
+        var vertseq = new Array(me.pLength);
+        for (var i = 0; i < me.pLength; ++i) {
+            var a = new Array(me.pWidth);
+            for (var j = 0; j < me.pWidth; ++j) {
+                var b = new Array(me.pHeight);
+                for (var k = 0; k < me.pHeight; ++k) b[k] = -1;
                 a[j] = b;
             }
             vertseq[i] = a;
         }
-        vertnumber = 0, facenumber = 0;
-        verts = new Array();//(4 * (pHeight * pLength + pWidth * pLength + pHeight * pWidth)); // CHECK: Is this enough?
-        //   for (var i = 0, lim = verts.length; i < lim; ++i) verts[i] = new Vector3(0, 0, 0);
-        faces = new Array();//12 * (pHeight * pLength + pWidth * pLength + pHeight * pWidth)); // CHECK! 4
-        // for (var i = 0, lim = faces.length; i < lim; ++i) faces[i] = new Face3(0, 0, 0);
+        me.vertnumber = 0, me.facenumber = 0;
+        me.verts = new Array();//(4 * (me.pHeight * me.pLength + me.pWidth * me.pLength + me.pHeight * me.pWidth)); // CHECK: Is this enough?
+        //   for (var i = 0, lim = me.verts.length; i < lim; ++i) me.verts[i] = new me.Vector3(0, 0, 0);
+        me.faces = new Array();//12 * (me.pHeight * me.pLength + me.pWidth * me.pLength + me.pHeight * me.pWidth)); // CHECK! 4
+        // for (var i = 0, lim = me.faces.length; i < lim; ++i) me.faces[i] = new me.Face3(0, 0, 0);
 
         var sumtype, ii, jj, kk;
         var tp = new Array(6); for (var i = 0; i < 6; ++i) tp[i] = new Array(3);
 
         //face1
         for (i = 0; i < 1; ++i) {
-            for (j = 0; j < pWidth - 1; ++j) {
-                for (k = 0; k < pHeight - 1; ++k) {
-                    var vp000 = vp[pWidth * pHeight * i + pHeight * j + k].isdone,
-                            vp001 = vp[pWidth * pHeight * i + pHeight * j + k + 1].isdone,
-                            vp010 = vp[pWidth * pHeight * i + pHeight * (j + 1) + k].isdone,
-                            vp011 = vp[pWidth * pHeight * i + pHeight * (j + 1) + k + 1].isdone,
-                            vp100 = vp[pWidth * pHeight * (i + 1) + pHeight * j + k].isdone,
-                            vp101 = vp[pWidth * pHeight * (i + 1) + pHeight * j + k + 1].isdone,
-                            vp110 = vp[pWidth * pHeight * (i + 1) + pHeight * (j + 1) + k].isdone,
-                            vp111 = vp[pWidth * pHeight * (i + 1) + pHeight * (j + 1) + k + 1].isdone;
+            for (j = 0; j < me.pWidth - 1; ++j) {
+                for (k = 0; k < me.pHeight - 1; ++k) {
+                    var vp000 = me.vp[me.pWidth * me.pHeight * i + me.pHeight * j + k].isdone,
+                            vp001 = me.vp[me.pWidth * me.pHeight * i + me.pHeight * j + k + 1].isdone,
+                            vp010 = me.vp[me.pWidth * me.pHeight * i + me.pHeight * (j + 1) + k].isdone,
+                            vp011 = me.vp[me.pWidth * me.pHeight * i + me.pHeight * (j + 1) + k + 1].isdone,
+                            vp100 = me.vp[me.pWidth * me.pHeight * (i + 1) + me.pHeight * j + k].isdone,
+                            vp101 = me.vp[me.pWidth * me.pHeight * (i + 1) + me.pHeight * j + k + 1].isdone,
+                            vp110 = me.vp[me.pWidth * me.pHeight * (i + 1) + me.pHeight * (j + 1) + k].isdone,
+                            vp111 = me.vp[me.pWidth * me.pHeight * (i + 1) + me.pHeight * (j + 1) + k + 1].isdone;
 
                     if (vp000 && vp010 && vp011 && vp001) {
                         tp[0][0] = i; tp[0][1] = j; tp[0][2] = k;
@@ -610,15 +616,15 @@ var ProteinSurface = function (data) {
                         tp[3][0] = i; tp[3][1] = j; tp[3][2] = k + 1;
                         for (ii = 0; ii < 4; ++ii) {
                             if (vertseq[tp[ii][0]][tp[ii][1]][tp[ii][2]] == -1) {
-                                vertseq[tp[ii][0]][tp[ii][1]][tp[ii][2]] = vertnumber;
-                                verts.push(new Vector3(tp[ii][0], tp[ii][1], tp[ii][2]));
-                                vertnumber++;
+                                vertseq[tp[ii][0]][tp[ii][1]][tp[ii][2]] = me.vertnumber;
+                                me.verts.push(new me.Vector3(tp[ii][0], tp[ii][1], tp[ii][2]));
+                                me.vertnumber++;
                             }
                         }
-                        faces.push(new Face3(vertseq[tp[0][0]][tp[0][1]][tp[0][2]], vertseq[tp[2][0]][tp[2][1]][tp[2][2]], vertseq[tp[1][0]][tp[1][1]][tp[1][2]]));
-                        facenumber++;
-                        faces.push(new Face3(vertseq[tp[0][0]][tp[0][1]][tp[0][2]], vertseq[tp[3][0]][tp[3][1]][tp[3][2]], vertseq[tp[2][0]][tp[2][1]][tp[2][2]]));
-                        facenumber++;
+                        me.faces.push(new me.Face3(vertseq[tp[0][0]][tp[0][1]][tp[0][2]], vertseq[tp[2][0]][tp[2][1]][tp[2][2]], vertseq[tp[1][0]][tp[1][1]][tp[1][2]]));
+                        me.facenumber++;
+                        me.faces.push(new me.Face3(vertseq[tp[0][0]][tp[0][1]][tp[0][2]], vertseq[tp[3][0]][tp[3][1]][tp[3][2]], vertseq[tp[2][0]][tp[2][1]][tp[2][2]]));
+                        me.facenumber++;
                     }
                     else if ((vp000 && vp010 && vp011)
                             || (vp010 && vp011 && vp001)
@@ -643,25 +649,25 @@ var ProteinSurface = function (data) {
                         }
                         for (ii = 0; ii < 3; ++ii) {
                             if (vertseq[tp[ii][0]][tp[ii][1]][tp[ii][2]] == -1) {
-                                vertseq[tp[ii][0]][tp[ii][1]][tp[ii][2]] = vertnumber;
-                                verts.push(new Vector3(tp[ii][0], tp[ii][1], tp[ii][2]));
-                                vertnumber++;
+                                vertseq[tp[ii][0]][tp[ii][1]][tp[ii][2]] = me.vertnumber;
+                                me.verts.push(new me.Vector3(tp[ii][0], tp[ii][1], tp[ii][2]));
+                                me.vertnumber++;
                             }
                         }
-                        faces.push(new Face3(vertseq[tp[0][0]][tp[0][1]][tp[0][2]], vertseq[tp[2][0]][tp[2][1]][tp[2][2]], vertseq[tp[1][0]][tp[1][1]][tp[1][2]]));
-                        facenumber++;
+                        me.faces.push(new me.Face3(vertseq[tp[0][0]][tp[0][1]][tp[0][2]], vertseq[tp[2][0]][tp[2][1]][tp[2][2]], vertseq[tp[1][0]][tp[1][1]][tp[1][2]]));
+                        me.facenumber++;
                     }
                 }
             }
         }
         //face3
-        for (i = 0; i < pLength - 1; ++i) {
+        for (i = 0; i < me.pLength - 1; ++i) {
             for (j = 0; j < 1; ++j) {
-                for (k = 0; k < pHeight - 1; ++k) {
-                    var vp000 = vp[pWidth * pHeight * i + pHeight * j + k].isdone,
-                            vp001 = vp[pWidth * pHeight * i + pHeight * j + k + 1].isdone,
-                            vp100 = vp[pWidth * pHeight * (i + 1) + pHeight * j + k].isdone,
-                            vp101 = vp[pWidth * pHeight * (i + 1) + pHeight * j + k + 1].isdone;
+                for (k = 0; k < me.pHeight - 1; ++k) {
+                    var vp000 = me.vp[me.pWidth * me.pHeight * i + me.pHeight * j + k].isdone,
+                            vp001 = me.vp[me.pWidth * me.pHeight * i + me.pHeight * j + k + 1].isdone,
+                            vp100 = me.vp[me.pWidth * me.pHeight * (i + 1) + me.pHeight * j + k].isdone,
+                            vp101 = me.vp[me.pWidth * me.pHeight * (i + 1) + me.pHeight * j + k + 1].isdone;
 
                     if (vp000 && vp100 && vp101 && vp001) {
                         tp[0][0] = i; tp[0][1] = j; tp[0][2] = k;
@@ -670,15 +676,15 @@ var ProteinSurface = function (data) {
                         tp[3][0] = i; tp[3][1] = j; tp[3][2] = k + 1;
                         for (ii = 0; ii < 4; ++ii) {
                             if (vertseq[tp[ii][0]][tp[ii][1]][tp[ii][2]] == -1) {
-                                vertseq[tp[ii][0]][tp[ii][1]][tp[ii][2]] = vertnumber;
-                                verts.push(new Vector3(tp[ii][0], tp[ii][1], tp[ii][2]));
-                                vertnumber++;
+                                vertseq[tp[ii][0]][tp[ii][1]][tp[ii][2]] = me.vertnumber;
+                                me.verts.push(new me.Vector3(tp[ii][0], tp[ii][1], tp[ii][2]));
+                                me.vertnumber++;
                             }
                         }
-                        faces.push(new Face3(vertseq[tp[0][0]][tp[0][1]][tp[0][2]], vertseq[tp[1][0]][tp[1][1]][tp[1][2]], vertseq[tp[2][0]][tp[2][1]][tp[2][2]]));
-                        facenumber++;
-                        faces.push(new Face3(vertseq[tp[0][0]][tp[0][1]][tp[0][2]], vertseq[tp[2][0]][tp[2][1]][tp[2][2]], vertseq[tp[3][0]][tp[3][1]][tp[3][2]]));
-                        facenumber++;
+                        me.faces.push(new me.Face3(vertseq[tp[0][0]][tp[0][1]][tp[0][2]], vertseq[tp[1][0]][tp[1][1]][tp[1][2]], vertseq[tp[2][0]][tp[2][1]][tp[2][2]]));
+                        me.facenumber++;
+                        me.faces.push(new me.Face3(vertseq[tp[0][0]][tp[0][1]][tp[0][2]], vertseq[tp[2][0]][tp[2][1]][tp[2][2]], vertseq[tp[3][0]][tp[3][1]][tp[3][2]]));
+                        me.facenumber++;
                     } else if ((vp000 && vp100 && vp101)
                               || (vp100 && vp101 && vp001)
                               || (vp101 && vp001 && vp000)
@@ -703,25 +709,25 @@ var ProteinSurface = function (data) {
                         }
                         for (ii = 0; ii < 3; ++ii) {
                             if (vertseq[tp[ii][0]][tp[ii][1]][tp[ii][2]] == -1) {
-                                vertseq[tp[ii][0]][tp[ii][1]][tp[ii][2]] = vertnumber;
-                                verts.push(new Vector3(tp[ii][0], tp[ii][1], tp[ii][2]));
-                                vertnumber++;
+                                vertseq[tp[ii][0]][tp[ii][1]][tp[ii][2]] = me.vertnumber;
+                                me.verts.push(new me.Vector3(tp[ii][0], tp[ii][1], tp[ii][2]));
+                                me.vertnumber++;
                             }
                         }
-                        faces.push(new Face3(vertseq[tp[0][0]][tp[0][1]][tp[0][2]], vertseq[tp[1][0]][tp[1][1]][tp[1][2]], vertseq[tp[2][0]][tp[2][1]][tp[2][2]]));
-                        facenumber++;
+                        me.faces.push(new me.Face3(vertseq[tp[0][0]][tp[0][1]][tp[0][2]], vertseq[tp[1][0]][tp[1][1]][tp[1][2]], vertseq[tp[2][0]][tp[2][1]][tp[2][2]]));
+                        me.facenumber++;
                     }
                 }
             }
         }
         //face5
-        for (i = 0; i < pLength - 1; ++i) {
-            for (j = 0; j < pWidth - 1; ++j) {
+        for (i = 0; i < me.pLength - 1; ++i) {
+            for (j = 0; j < me.pWidth - 1; ++j) {
                 for (k = 0; k < 1; ++k) {
-                    var vp000 = vp[pWidth * pHeight * i + pHeight * j + k].isdone,
-                            vp010 = vp[pWidth * pHeight * i + pHeight * (j + 1) + k].isdone,
-                            vp100 = vp[pWidth * pHeight * (i + 1) + pHeight * j + k].isdone,
-                            vp110 = vp[pWidth * pHeight * (i + 1) + pHeight * (j + 1) + k].isdone;
+                    var vp000 = me.vp[me.pWidth * me.pHeight * i + me.pHeight * j + k].isdone,
+                            vp010 = me.vp[me.pWidth * me.pHeight * i + me.pHeight * (j + 1) + k].isdone,
+                            vp100 = me.vp[me.pWidth * me.pHeight * (i + 1) + me.pHeight * j + k].isdone,
+                            vp110 = me.vp[me.pWidth * me.pHeight * (i + 1) + me.pHeight * (j + 1) + k].isdone;
 
                     if (vp000 && vp100 && vp110 && vp010) {
                         tp[0][0] = i; tp[0][1] = j; tp[0][2] = k;
@@ -730,15 +736,15 @@ var ProteinSurface = function (data) {
                         tp[3][0] = i; tp[3][1] = j + 1; tp[3][2] = k;
                         for (ii = 0; ii < 4; ++ii) {
                             if (vertseq[tp[ii][0]][tp[ii][1]][tp[ii][2]] == -1) {
-                                vertseq[tp[ii][0]][tp[ii][1]][tp[ii][2]] = vertnumber;
-                                verts.push(new Vector3(tp[ii][0], tp[ii][1], tp[ii][2]));
-                                vertnumber++;
+                                vertseq[tp[ii][0]][tp[ii][1]][tp[ii][2]] = me.vertnumber;
+                                me.verts.push(new me.Vector3(tp[ii][0], tp[ii][1], tp[ii][2]));
+                                me.vertnumber++;
                             }
                         }
-                        faces.push(new Face3(vertseq[tp[0][0]][tp[0][1]][tp[0][2]], vertseq[tp[2][0]][tp[2][1]][tp[2][2]], vertseq[tp[1][0]][tp[1][1]][tp[1][2]]));
-                        facenumber++;
-                        faces.push(new Face3(vertseq[tp[0][0]][tp[0][1]][tp[0][2]], vertseq[tp[3][0]][tp[3][1]][tp[3][2]], vertseq[tp[2][0]][tp[2][1]][tp[2][2]]));
-                        facenumber++;
+                        me.faces.push(new me.Face3(vertseq[tp[0][0]][tp[0][1]][tp[0][2]], vertseq[tp[2][0]][tp[2][1]][tp[2][2]], vertseq[tp[1][0]][tp[1][1]][tp[1][2]]));
+                        me.facenumber++;
+                        me.faces.push(new me.Face3(vertseq[tp[0][0]][tp[0][1]][tp[0][2]], vertseq[tp[3][0]][tp[3][1]][tp[3][2]], vertseq[tp[2][0]][tp[2][1]][tp[2][2]]));
+                        me.facenumber++;
                     } else if ((vp000 && vp100 && vp110)
                               || (vp100 && vp110 && vp010)
                               || (vp110 && vp010 && vp000)
@@ -763,25 +769,25 @@ var ProteinSurface = function (data) {
                         }
                         for (ii = 0; ii < 3; ++ii) {
                             if (vertseq[tp[ii][0]][tp[ii][1]][tp[ii][2]] == -1) {
-                                vertseq[tp[ii][0]][tp[ii][1]][tp[ii][2]] = vertnumber;
-                                verts.push(new Vector3(tp[ii][0], tp[ii][1], tp[ii][2]));
-                                vertnumber++;
+                                vertseq[tp[ii][0]][tp[ii][1]][tp[ii][2]] = me.vertnumber;
+                                me.verts.push(new me.Vector3(tp[ii][0], tp[ii][1], tp[ii][2]));
+                                me.vertnumber++;
                             }
                         }
-                        faces.push(new Face3(vertseq[tp[0][0]][tp[0][1]][tp[0][2]], vertseq[tp[2][0]][tp[2][1]][tp[2][2]], vertseq[tp[1][0]][tp[1][1]][tp[1][2]]));
-                        facenumber++;
+                        me.faces.push(new me.Face3(vertseq[tp[0][0]][tp[0][1]][tp[0][2]], vertseq[tp[2][0]][tp[2][1]][tp[2][2]], vertseq[tp[1][0]][tp[1][1]][tp[1][2]]));
+                        me.facenumber++;
                     }
                 }
             }
         }
         //face2
-        for (i = pLength - 1; i < pLength; ++i) {
-            for (j = 0; j < pWidth - 1; ++j) {
-                for (k = 0; k < pHeight - 1; ++k) {
-                    var vp000 = vp[pWidth * pHeight * i + pHeight * j + k].isdone,
-                            vp001 = vp[pWidth * pHeight * i + pHeight * j + k + 1].isdone,
-                            vp010 = vp[pWidth * pHeight * i + pHeight * (j + 1) + k].isdone,
-                            vp011 = vp[pWidth * pHeight * i + pHeight * (j + 1) + k + 1].isdone;
+        for (i = me.pLength - 1; i < me.pLength; ++i) {
+            for (j = 0; j < me.pWidth - 1; ++j) {
+                for (k = 0; k < me.pHeight - 1; ++k) {
+                    var vp000 = me.vp[me.pWidth * me.pHeight * i + me.pHeight * j + k].isdone,
+                            vp001 = me.vp[me.pWidth * me.pHeight * i + me.pHeight * j + k + 1].isdone,
+                            vp010 = me.vp[me.pWidth * me.pHeight * i + me.pHeight * (j + 1) + k].isdone,
+                            vp011 = me.vp[me.pWidth * me.pHeight * i + me.pHeight * (j + 1) + k + 1].isdone;
 
                     if (vp000 && vp010 && vp011
                        && vp001) {
@@ -791,15 +797,15 @@ var ProteinSurface = function (data) {
                         tp[3][0] = i; tp[3][1] = j; tp[3][2] = k + 1;
                         for (ii = 0; ii < 4; ++ii) {
                             if (vertseq[tp[ii][0]][tp[ii][1]][tp[ii][2]] == -1) {
-                                vertseq[tp[ii][0]][tp[ii][1]][tp[ii][2]] = vertnumber;
-                                verts.push(new Vector3(tp[ii][0], tp[ii][1], tp[ii][2]));
-                                vertnumber++;
+                                vertseq[tp[ii][0]][tp[ii][1]][tp[ii][2]] = me.vertnumber;
+                                me.verts.push(new me.Vector3(tp[ii][0], tp[ii][1], tp[ii][2]));
+                                me.vertnumber++;
                             }
                         }
-                        faces.push(new Face3(vertseq[tp[0][0]][tp[0][1]][tp[0][2]], vertseq[tp[1][0]][tp[1][1]][tp[1][2]], vertseq[tp[2][0]][tp[2][1]][tp[2][2]]));
-                        facenumber++;
-                        faces.push(new Face3(vertseq[tp[0][0]][tp[0][1]][tp[0][2]], vertseq[tp[2][0]][tp[2][1]][tp[2][2]], vertseq[tp[3][0]][tp[3][1]][tp[3][2]]));
-                        facenumber++;
+                        me.faces.push(new me.Face3(vertseq[tp[0][0]][tp[0][1]][tp[0][2]], vertseq[tp[1][0]][tp[1][1]][tp[1][2]], vertseq[tp[2][0]][tp[2][1]][tp[2][2]]));
+                        me.facenumber++;
+                        me.faces.push(new me.Face3(vertseq[tp[0][0]][tp[0][1]][tp[0][2]], vertseq[tp[2][0]][tp[2][1]][tp[2][2]], vertseq[tp[3][0]][tp[3][1]][tp[3][2]]));
+                        me.facenumber++;
                     }
                     else if ((vp000 && vp010 && vp011)
                             || (vp010 && vp011 && vp001)
@@ -827,27 +833,26 @@ var ProteinSurface = function (data) {
                         }
                         for (ii = 0; ii < 3; ++ii) {
                             if (vertseq[tp[ii][0]][tp[ii][1]][tp[ii][2]] == -1) {
-                                vertseq[tp[ii][0]][tp[ii][1]][tp[ii][2]] = vertnumber;
-                                verts.push(new Vector3(tp[ii][0], tp[ii][1], tp[ii][2]));
-                                vertnumber++;
+                                vertseq[tp[ii][0]][tp[ii][1]][tp[ii][2]] = me.vertnumber;
+                                me.verts.push(new me.Vector3(tp[ii][0], tp[ii][1], tp[ii][2]));
+                                me.vertnumber++;
                             }
                         }
-                        faces.push(new Face3(vertseq[tp[0][0]][tp[0][1]][tp[0][2]], vertseq[tp[1][0]][tp[1][1]][tp[1][2]], vertseq[tp[2][0]][tp[2][1]][tp[2][2]]));
-                        facenumber++;
+                        me.faces.push(new me.Face3(vertseq[tp[0][0]][tp[0][1]][tp[0][2]], vertseq[tp[1][0]][tp[1][1]][tp[1][2]], vertseq[tp[2][0]][tp[2][1]][tp[2][2]]));
+                        me.facenumber++;
                     }
 
                 }
             }
         }
         //face4
-        for (i = 0; i < pLength - 1; ++i) {
-            for (j = pWidth - 1; j < pWidth; ++j) {
-                for (k = 0; k < pHeight - 1; ++k) {
-                    var vp000 = vp[pWidth * pHeight * i + pHeight * j + k].isdone,
-                            vp001 = vp[pWidth * pHeight * i + pHeight * j + k + 1].isdone,
-                            vp100 = vp[pWidth * pHeight * (i + 1) + pHeight * j + k].isdone,
-                            vp101 = vp[pWidth * pHeight * (i + 1) + pHeight * j + k + 1].isdone;
-
+        for (i = 0; i < me.pLength - 1; ++i) {
+            for (j = me.pWidth - 1; j < me.pWidth; ++j) {
+                for (k = 0; k < me.pHeight - 1; ++k) {
+                    var vp000 = me.vp[me.pWidth * me.pHeight * i + me.pHeight * j + k].isdone,
+                            vp001 = me.vp[me.pWidth * me.pHeight * i + me.pHeight * j + k + 1].isdone,
+                            vp100 = me.vp[me.pWidth * me.pHeight * (i + 1) + me.pHeight * j + k].isdone,
+                            vp101 = me.vp[me.pWidth * me.pHeight * (i + 1) + me.pHeight * j + k + 1].isdone;
                     if (vp000 && vp100 && vp101 && vp001) {
                         tp[0][0] = i; tp[0][1] = j; tp[0][2] = k;
                         tp[1][0] = i + 1; tp[1][1] = j; tp[1][2] = k;
@@ -855,15 +860,15 @@ var ProteinSurface = function (data) {
                         tp[3][0] = i; tp[3][1] = j; tp[3][2] = k + 1;
                         for (ii = 0; ii < 4; ++ii) {
                             if (vertseq[tp[ii][0]][tp[ii][1]][tp[ii][2]] == -1) {
-                                vertseq[tp[ii][0]][tp[ii][1]][tp[ii][2]] = vertnumber;
-                                verts.push(new Vector3(tp[ii][0], tp[ii][1], tp[ii][2]));
-                                vertnumber++;
+                                vertseq[tp[ii][0]][tp[ii][1]][tp[ii][2]] = me.vertnumber;
+                                me.verts.push(new me.Vector3(tp[ii][0], tp[ii][1], tp[ii][2]));
+                                me.vertnumber++;
                             }
                         }
-                        faces.push(new Face3(vertseq[tp[0][0]][tp[0][1]][tp[0][2]], vertseq[tp[2][0]][tp[2][1]][tp[2][2]], vertseq[tp[1][0]][tp[1][1]][tp[1][2]]));
-                        facenumber++;
-                        faces.push(new Face3(vertseq[tp[0][0]][tp[0][1]][tp[0][2]], vertseq[tp[3][0]][tp[3][1]][tp[3][2]], vertseq[tp[2][0]][tp[2][1]][tp[2][2]]));
-                        facenumber++;
+                        me.faces.push(new me.Face3(vertseq[tp[0][0]][tp[0][1]][tp[0][2]], vertseq[tp[2][0]][tp[2][1]][tp[2][2]], vertseq[tp[1][0]][tp[1][1]][tp[1][2]]));
+                        me.facenumber++;
+                        me.faces.push(new me.Face3(vertseq[tp[0][0]][tp[0][1]][tp[0][2]], vertseq[tp[3][0]][tp[3][1]][tp[3][2]], vertseq[tp[2][0]][tp[2][1]][tp[2][2]]));
+                        me.facenumber++;
                     }
                     else if ((vp000 && vp100 && vp101)
                             || (vp100 && vp101 && vp001)
@@ -891,26 +896,26 @@ var ProteinSurface = function (data) {
                         }
                         for (ii = 0; ii < 3; ++ii) {
                             if (vertseq[tp[ii][0]][tp[ii][1]][tp[ii][2]] == -1) {
-                                vertseq[tp[ii][0]][tp[ii][1]][tp[ii][2]] = vertnumber;
-                                verts.push(new Vector3(tp[ii][0], tp[ii][1], tp[ii][2]));
-                                vertnumber++;
+                                vertseq[tp[ii][0]][tp[ii][1]][tp[ii][2]] = me.vertnumber;
+                                me.verts.push(new me.Vector3(tp[ii][0], tp[ii][1], tp[ii][2]));
+                                me.vertnumber++;
                             }
                         }
-                        faces.push(new Face3(vertseq[tp[0][0]][tp[0][1]][tp[0][2]], vertseq[tp[2][0]][tp[2][1]][tp[2][2]], vertseq[tp[1][0]][tp[1][1]][tp[1][2]]));
-                        facenumber++;
+                        me.faces.push(new me.Face3(vertseq[tp[0][0]][tp[0][1]][tp[0][2]], vertseq[tp[2][0]][tp[2][1]][tp[2][2]], vertseq[tp[1][0]][tp[1][1]][tp[1][2]]));
+                        me.facenumber++;
                     }
 
                 }
             }
         }
         //face6
-        for (i = 0; i < pLength - 1; ++i) {
-            for (j = 0; j < pWidth - 1; ++j) {
-                for (k = pHeight - 1; k < pHeight; ++k) {
-                    var vp000 = vp[pWidth * pHeight * i + pHeight * j + k].isdone,
-                            vp010 = vp[pWidth * pHeight * i + pHeight * (j + 1) + k].isdone,
-                            vp100 = vp[pWidth * pHeight * (i + 1) + pHeight * j + k].isdone,
-                            vp110 = vp[pWidth * pHeight * (i + 1) + pHeight * (j + 1) + k].isdone;
+        for (i = 0; i < me.pLength - 1; ++i) {
+            for (j = 0; j < me.pWidth - 1; ++j) {
+                for (k = me.pHeight - 1; k < me.pHeight; ++k) {
+                    var vp000 = me.vp[me.pWidth * me.pHeight * i + me.pHeight * j + k].isdone,
+                            vp010 = me.vp[me.pWidth * me.pHeight * i + me.pHeight * (j + 1) + k].isdone,
+                            vp100 = me.vp[me.pWidth * me.pHeight * (i + 1) + me.pHeight * j + k].isdone,
+                            vp110 = me.vp[me.pWidth * me.pHeight * (i + 1) + me.pHeight * (j + 1) + k].isdone;
 
                     if (vp000 && vp100 && vp110
                        && vp010) {
@@ -920,15 +925,15 @@ var ProteinSurface = function (data) {
                         tp[3][0] = i; tp[3][1] = j + 1; tp[3][2] = k;
                         for (ii = 0; ii < 4; ++ii) {
                             if (vertseq[tp[ii][0]][tp[ii][1]][tp[ii][2]] == -1) {
-                                vertseq[tp[ii][0]][tp[ii][1]][tp[ii][2]] = vertnumber;
-                                verts.push(new Vector3(tp[ii][0], tp[ii][1], tp[ii][2]));
-                                vertnumber++;
+                                vertseq[tp[ii][0]][tp[ii][1]][tp[ii][2]] = me.vertnumber;
+                                me.verts.push(new me.Vector3(tp[ii][0], tp[ii][1], tp[ii][2]));
+                                me.vertnumber++;
                             }
                         }
-                        faces.push(new Face3(vertseq[tp[0][0]][tp[0][1]][tp[0][2]], vertseq[tp[1][0]][tp[1][1]][tp[1][2]], vertseq[tp[2][0]][tp[2][1]][tp[2][2]]));
-                        facenumber++;
-                        faces.push(new Face3(vertseq[tp[0][0]][tp[0][1]][tp[0][2]], vertseq[tp[2][0]][tp[2][1]][tp[2][2]], vertseq[tp[3][0]][tp[3][1]][tp[3][2]]));
-                        facenumber++;
+                        me.faces.push(new me.Face3(vertseq[tp[0][0]][tp[0][1]][tp[0][2]], vertseq[tp[1][0]][tp[1][1]][tp[1][2]], vertseq[tp[2][0]][tp[2][1]][tp[2][2]]));
+                        me.facenumber++;
+                        me.faces.push(new me.Face3(vertseq[tp[0][0]][tp[0][1]][tp[0][2]], vertseq[tp[2][0]][tp[2][1]][tp[2][2]], vertseq[tp[3][0]][tp[3][1]][tp[3][2]]));
+                        me.facenumber++;
                     }
                     else if ((vp000 && vp100 && vp110)
                             || (vp100 && vp110 && vp010)
@@ -956,35 +961,35 @@ var ProteinSurface = function (data) {
                         }
                         for (ii = 0; ii < 3; ++ii) {
                             if (vertseq[tp[ii][0]][tp[ii][1]][tp[ii][2]] == -1) {
-                                vertseq[tp[ii][0]][tp[ii][1]][tp[ii][2]] = vertnumber;
-                                verts.push(new Vector3(tp[ii][0], tp[ii][1], tp[ii][2]));
-                                vertnumber++;
+                                vertseq[tp[ii][0]][tp[ii][1]][tp[ii][2]] = me.vertnumber;
+                                me.verts.push(new me.Vector3(tp[ii][0], tp[ii][1], tp[ii][2]));
+                                me.vertnumber++;
                             }
                         }
-                        faces.push(new Face3(vertseq[tp[0][0]][tp[0][1]][tp[0][2]], vertseq[tp[1][0]][tp[1][1]][tp[1][2]], vertseq[tp[2][0]][tp[2][1]][tp[2][2]]));
-                        facenumber++;
+                        me.faces.push(new me.Face3(vertseq[tp[0][0]][tp[0][1]][tp[0][2]], vertseq[tp[1][0]][tp[1][1]][tp[1][2]], vertseq[tp[2][0]][tp[2][1]][tp[2][2]]));
+                        me.facenumber++;
                     }
                 }
             }
         }
-        for (i = 0; i < pLength - 1; ++i) {
-            for (j = 0; j < pWidth - 1; ++j) {
-                for (k = 0; k < pHeight - 1; ++k) {
-                    var vp000 = vp[pWidth * pHeight * i + pHeight * j + k].isdone,
-                    vp001 = vp[pWidth * pHeight * i + pHeight * j + k + 1].isdone,
-                    vp010 = vp[pWidth * pHeight * i + pHeight * (j + 1) + k].isdone,
-                    vp011 = vp[pWidth * pHeight * i + pHeight * (j + 1) + k + 1].isdone,
-                    vp100 = vp[pWidth * pHeight * (i + 1) + pHeight * j + k].isdone,
-                    vp101 = vp[pWidth * pHeight * (i + 1) + pHeight * j + k + 1].isdone,
-                    vp110 = vp[pWidth * pHeight * (i + 1) + pHeight * (j + 1) + k].isdone,
-                    vp111 = vp[pWidth * pHeight * (i + 1) + pHeight * (j + 1) + k + 1].isdone;
+        for (i = 0; i < me.pLength - 1; ++i) {
+            for (j = 0; j < me.pWidth - 1; ++j) {
+                for (k = 0; k < me.pHeight - 1; ++k) {
+                    var vp000 = me.vp[me.pWidth * me.pHeight * i + me.pHeight * j + k].isdone,
+                    vp001 = me.vp[me.pWidth * me.pHeight * i + me.pHeight * j + k + 1].isdone,
+                    vp010 = me.vp[me.pWidth * me.pHeight * i + me.pHeight * (j + 1) + k].isdone,
+                    vp011 = me.vp[me.pWidth * me.pHeight * i + me.pHeight * (j + 1) + k + 1].isdone,
+                    vp100 = me.vp[me.pWidth * me.pHeight * (i + 1) + me.pHeight * j + k].isdone,
+                    vp101 = me.vp[me.pWidth * me.pHeight * (i + 1) + me.pHeight * j + k + 1].isdone,
+                    vp110 = me.vp[me.pWidth * me.pHeight * (i + 1) + me.pHeight * (j + 1) + k].isdone,
+                    vp111 = me.vp[me.pWidth * me.pHeight * (i + 1) + me.pHeight * (j + 1) + k + 1].isdone;
 
 
                     var sumtype = 0;
                     for (ii = 0; ii < 2; ++ii) {
                         for (jj = 0; jj < 2; ++jj) {
                             for (kk = 0; kk < 2; ++kk) {
-                                if (vp[pWidth * pHeight * (i + ii) + pHeight * (j + jj) + k + kk].isdone) sumtype++;
+                                if (me.vp[me.pWidth * me.pHeight * (i + ii) + me.pHeight * (j + jj) + k + kk].isdone) sumtype++;
                             }
                         }
                     }
@@ -1136,13 +1141,13 @@ var ProteinSurface = function (data) {
                             }//64
                             for (ii = 0; ii < 3; ++ii) {
                                 if (vertseq[tp[ii][0]][tp[ii][1]][tp[ii][2]] == -1) {
-                                    vertseq[tp[ii][0]][tp[ii][1]][tp[ii][2]] = vertnumber;
-                                    verts.push(new Vector3(tp[ii][0], tp[ii][1], tp[ii][2]));
-                                    vertnumber++;
+                                    vertseq[tp[ii][0]][tp[ii][1]][tp[ii][2]] = me.vertnumber;
+                                    me.verts.push(new me.Vector3(tp[ii][0], tp[ii][1], tp[ii][2]));
+                                    me.vertnumber++;
                                 }
                             }
-                            faces.push(new Face3(vertseq[tp[0][0]][tp[0][1]][tp[0][2]], vertseq[tp[1][0]][tp[1][1]][tp[1][2]], vertseq[tp[2][0]][tp[2][1]][tp[2][2]]));
-                            facenumber++;
+                            me.faces.push(new me.Face3(vertseq[tp[0][0]][tp[0][1]][tp[0][2]], vertseq[tp[1][0]][tp[1][1]][tp[1][2]], vertseq[tp[2][0]][tp[2][1]][tp[2][2]]));
+                            me.facenumber++;
                         }//no5 24
                     }//total3
                     else if (sumtype == 4) { // CHECK
@@ -1202,15 +1207,15 @@ var ProteinSurface = function (data) {
                             }
                             for (ii = 0; ii < 4; ++ii) {
                                 if (vertseq[tp[ii][0]][tp[ii][1]][tp[ii][2]] == -1) {
-                                    vertseq[tp[ii][0]][tp[ii][1]][tp[ii][2]] = vertnumber;
-                                    verts.push(new Vector3(tp[ii][0], tp[ii][1], tp[ii][2]));
-                                    vertnumber++;
+                                    vertseq[tp[ii][0]][tp[ii][1]][tp[ii][2]] = me.vertnumber;
+                                    me.verts.push(new me.Vector3(tp[ii][0], tp[ii][1], tp[ii][2]));
+                                    me.vertnumber++;
                                 }
                             }
-                            faces.push(new Face3(vertseq[tp[0][0]][tp[0][1]][tp[0][2]], vertseq[tp[1][0]][tp[1][1]][tp[1][2]], vertseq[tp[2][0]][tp[2][1]][tp[2][2]]));
-                            facenumber++;
-                            faces.push(new Face3(vertseq[tp[0][0]][tp[0][1]][tp[0][2]], vertseq[tp[2][0]][tp[2][1]][tp[2][2]], vertseq[tp[3][0]][tp[3][1]][tp[3][2]]));
-                            facenumber++;
+                            me.faces.push(new me.Face3(vertseq[tp[0][0]][tp[0][1]][tp[0][2]], vertseq[tp[1][0]][tp[1][1]][tp[1][2]], vertseq[tp[2][0]][tp[2][1]][tp[2][2]]));
+                            me.facenumber++;
+                            me.faces.push(new me.Face3(vertseq[tp[0][0]][tp[0][1]][tp[0][2]], vertseq[tp[2][0]][tp[2][1]][tp[2][2]], vertseq[tp[3][0]][tp[3][1]][tp[3][2]]));
+                            me.facenumber++;
                         }//no.8 6
 
                         else if ((vp000 && vp100 && vp110 && vp011)//11
@@ -1359,13 +1364,13 @@ var ProteinSurface = function (data) {
                             }//64
                             for (ii = 0; ii < 3; ++ii) {
                                 if (vertseq[tp[ii][0]][tp[ii][1]][tp[ii][2]] == -1) {
-                                    vertseq[tp[ii][0]][tp[ii][1]][tp[ii][2]] = vertnumber;
-                                    verts.push(new Vector3(tp[ii][0], tp[ii][1], tp[ii][2]));
-                                    vertnumber++;
+                                    vertseq[tp[ii][0]][tp[ii][1]][tp[ii][2]] = me.vertnumber;
+                                    me.verts.push(new me.Vector3(tp[ii][0], tp[ii][1], tp[ii][2]));
+                                    me.vertnumber++;
                                 }
                             }
-                            faces.push(new Face3(vertseq[tp[0][0]][tp[0][1]][tp[0][2]], vertseq[tp[1][0]][tp[1][1]][tp[1][2]], vertseq[tp[2][0]][tp[2][1]][tp[2][2]]));
-                            facenumber++;
+                            me.faces.push(new me.Face3(vertseq[tp[0][0]][tp[0][1]][tp[0][2]], vertseq[tp[1][0]][tp[1][1]][tp[1][2]], vertseq[tp[2][0]][tp[2][1]][tp[2][2]]));
+                            me.facenumber++;
 
                         }//no12 24
                         else if ((vp000 && vp011
@@ -1434,13 +1439,13 @@ var ProteinSurface = function (data) {
                             }//8
                             for (ii = 0; ii < 3; ++ii) {
                                 if (vertseq[tp[ii][0]][tp[ii][1]][tp[ii][2]] == -1) {
-                                    vertseq[tp[ii][0]][tp[ii][1]][tp[ii][2]] = vertnumber;
-                                    verts.push(new Vector3(tp[ii][0], tp[ii][1], tp[ii][2]));
-                                    vertnumber++;
+                                    vertseq[tp[ii][0]][tp[ii][1]][tp[ii][2]] = me.vertnumber;
+                                    me.verts.push(new me.Vector3(tp[ii][0], tp[ii][1], tp[ii][2]));
+                                    me.vertnumber++;
                                 }
                             }
-                            faces.push(new Face3(vertseq[tp[0][0]][tp[0][1]][tp[0][2]], vertseq[tp[1][0]][tp[1][1]][tp[1][2]], vertseq[tp[2][0]][tp[2][1]][tp[2][2]]));
-                            facenumber++;
+                            me.faces.push(new me.Face3(vertseq[tp[0][0]][tp[0][1]][tp[0][2]], vertseq[tp[1][0]][tp[1][1]][tp[1][2]], vertseq[tp[2][0]][tp[2][1]][tp[2][2]]));
+                            me.facenumber++;
                         }// no.9 8
                         else if ((vp000 && vp100
                                  && vp110 && vp001)
@@ -1552,15 +1557,15 @@ var ProteinSurface = function (data) {
                             }//12
                             for (ii = 0; ii < 4; ++ii) {
                                 if (vertseq[tp[ii][0]][tp[ii][1]][tp[ii][2]] == -1) {
-                                    vertseq[tp[ii][0]][tp[ii][1]][tp[ii][2]] = vertnumber;
-                                    verts.push(new Vector3(tp[ii][0], tp[ii][1], tp[ii][2]));
-                                    vertnumber++;
+                                    vertseq[tp[ii][0]][tp[ii][1]][tp[ii][2]] = me.vertnumber;
+                                    me.verts.push(new me.Vector3(tp[ii][0], tp[ii][1], tp[ii][2]));
+                                    me.vertnumber++;
                                 }
                             }
-                            faces.push(new Face3(vertseq[tp[0][0]][tp[0][1]][tp[0][2]], vertseq[tp[1][0]][tp[1][1]][tp[1][2]], vertseq[tp[2][0]][tp[2][1]][tp[2][2]]));
-                            facenumber++;
-                            faces.push(new Face3(vertseq[tp[0][0]][tp[0][1]][tp[0][2]], vertseq[tp[2][0]][tp[2][1]][tp[2][2]], vertseq[tp[3][0]][tp[3][1]][tp[3][2]]));
-                            facenumber++;
+                            me.faces.push(new me.Face3(vertseq[tp[0][0]][tp[0][1]][tp[0][2]], vertseq[tp[1][0]][tp[1][1]][tp[1][2]], vertseq[tp[2][0]][tp[2][1]][tp[2][2]]));
+                            me.facenumber++;
+                            me.faces.push(new me.Face3(vertseq[tp[0][0]][tp[0][1]][tp[0][2]], vertseq[tp[2][0]][tp[2][1]][tp[2][2]], vertseq[tp[3][0]][tp[3][1]][tp[3][2]]));
+                            me.facenumber++;
                         }//no.11 12
                         else if ((vp000 && vp100
                                  && vp010 && vp101)
@@ -1672,15 +1677,15 @@ var ProteinSurface = function (data) {
                             }//12
                             for (ii = 0; ii < 4; ++ii) {
                                 if (vertseq[tp[ii][0]][tp[ii][1]][tp[ii][2]] == -1) {
-                                    vertseq[tp[ii][0]][tp[ii][1]][tp[ii][2]] = vertnumber;
-                                    verts.push(new Vector3(tp[ii][0], tp[ii][1], tp[ii][2]));
-                                    vertnumber++;
+                                    vertseq[tp[ii][0]][tp[ii][1]][tp[ii][2]] = me.vertnumber;
+                                    me.verts.push(new me.Vector3(tp[ii][0], tp[ii][1], tp[ii][2]));
+                                    me.vertnumber++;
                                 }
                             }
-                            faces.push(new Face3(vertseq[tp[0][0]][tp[0][1]][tp[0][2]], vertseq[tp[1][0]][tp[1][1]][tp[1][2]], vertseq[tp[2][0]][tp[2][1]][tp[2][2]]));
-                            facenumber++;
-                            faces.push(new Face3(vertseq[tp[0][0]][tp[0][1]][tp[0][2]], vertseq[tp[2][0]][tp[2][1]][tp[2][2]], vertseq[tp[3][0]][tp[3][1]][tp[3][2]]));
-                            facenumber++;
+                            me.faces.push(new me.Face3(vertseq[tp[0][0]][tp[0][1]][tp[0][2]], vertseq[tp[1][0]][tp[1][1]][tp[1][2]], vertseq[tp[2][0]][tp[2][1]][tp[2][2]]));
+                            me.facenumber++;
+                            me.faces.push(new me.Face3(vertseq[tp[0][0]][tp[0][1]][tp[0][2]], vertseq[tp[2][0]][tp[2][1]][tp[2][2]], vertseq[tp[3][0]][tp[3][1]][tp[3][2]]));
+                            me.facenumber++;
                         }//no.14 12
                     }//total4
                     else if (sumtype == 5) {
@@ -1734,13 +1739,13 @@ var ProteinSurface = function (data) {
                             }//8
                             for (ii = 0; ii < 3; ++ii) {
                                 if (vertseq[tp[ii][0]][tp[ii][1]][tp[ii][2]] == -1) {
-                                    vertseq[tp[ii][0]][tp[ii][1]][tp[ii][2]] = vertnumber;
-                                    verts.push(new Vector3(tp[ii][0], tp[ii][1], tp[ii][2]));
-                                    vertnumber++;
+                                    vertseq[tp[ii][0]][tp[ii][1]][tp[ii][2]] = me.vertnumber;
+                                    me.verts.push(new me.Vector3(tp[ii][0], tp[ii][1], tp[ii][2]));
+                                    me.vertnumber++;
                                 }
                             }
-                            faces.push(new Face3(vertseq[tp[0][0]][tp[0][1]][tp[0][2]], vertseq[tp[1][0]][tp[1][1]][tp[1][2]], vertseq[tp[2][0]][tp[2][1]][tp[2][2]]));
-                            facenumber++;
+                            me.faces.push(new me.Face3(vertseq[tp[0][0]][tp[0][1]][tp[0][2]], vertseq[tp[1][0]][tp[1][1]][tp[1][2]], vertseq[tp[2][0]][tp[2][1]][tp[2][2]]));
+                            me.facenumber++;
                         }//no.7 8
                         else if ((!vp000 && !vp100 && !vp110)
                                 || (!vp000 && !vp010 && !vp110)
@@ -1912,15 +1917,15 @@ var ProteinSurface = function (data) {
                             }//64
                             for (ii = 0; ii < 4; ++ii) {
                                 if (vertseq[tp[ii][0]][tp[ii][1]][tp[ii][2]] == -1) {
-                                    vertseq[tp[ii][0]][tp[ii][1]][tp[ii][2]] = vertnumber;
-                                    verts.push(new Vector3(tp[ii][0], tp[ii][1], tp[ii][2]));
-                                    vertnumber++;
+                                    vertseq[tp[ii][0]][tp[ii][1]][tp[ii][2]] = me.vertnumber;
+                                    me.verts.push(new me.Vector3(tp[ii][0], tp[ii][1], tp[ii][2]));
+                                    me.vertnumber++;
                                 }
                             }
-                            faces.push(new Face3(vertseq[tp[0][0]][tp[0][1]][tp[0][2]], vertseq[tp[1][0]][tp[1][1]][tp[1][2]], vertseq[tp[2][0]][tp[2][1]][tp[2][2]]));
-                            facenumber++;
-                            faces.push(new Face3(vertseq[tp[0][0]][tp[0][1]][tp[0][2]], vertseq[tp[2][0]][tp[2][1]][tp[2][2]], vertseq[tp[3][0]][tp[3][1]][tp[3][2]]));
-                            facenumber++;
+                            me.faces.push(new me.Face3(vertseq[tp[0][0]][tp[0][1]][tp[0][2]], vertseq[tp[1][0]][tp[1][1]][tp[1][2]], vertseq[tp[2][0]][tp[2][1]][tp[2][2]]));
+                            me.facenumber++;
+                            me.faces.push(new me.Face3(vertseq[tp[0][0]][tp[0][1]][tp[0][2]], vertseq[tp[2][0]][tp[2][1]][tp[2][2]], vertseq[tp[3][0]][tp[3][1]][tp[3][2]]));
+                            me.facenumber++;
                         }//no5 24
                         else if ((!vp000 && !vp100 && !vp111)//1
                                 || (!vp010 && !vp110 && !vp001)//2
@@ -2024,17 +2029,17 @@ var ProteinSurface = function (data) {
                             }//12
                             for (ii = 0; ii < 5; ++ii) {
                                 if (vertseq[tp[ii][0]][tp[ii][1]][tp[ii][2]] == -1) {
-                                    vertseq[tp[ii][0]][tp[ii][1]][tp[ii][2]] = vertnumber;
-                                    verts.push(new Vector3(tp[ii][0], tp[ii][1], tp[ii][2]));
-                                    vertnumber++;
+                                    vertseq[tp[ii][0]][tp[ii][1]][tp[ii][2]] = me.vertnumber;
+                                    me.verts.push(new me.Vector3(tp[ii][0], tp[ii][1], tp[ii][2]));
+                                    me.vertnumber++;
                                 }
                             }
-                            faces.push(new Face3(vertseq[tp[0][0]][tp[0][1]][tp[0][2]], vertseq[tp[1][0]][tp[1][1]][tp[1][2]], vertseq[tp[2][0]][tp[2][1]][tp[2][2]]));
-                            facenumber++;
-                            faces.push(new Face3(vertseq[tp[0][0]][tp[0][1]][tp[0][2]], vertseq[tp[2][0]][tp[2][1]][tp[2][2]], vertseq[tp[3][0]][tp[3][1]][tp[3][2]]));
-                            facenumber++;
-                            faces.push(new Face3(vertseq[tp[2][0]][tp[2][1]][tp[2][2]], vertseq[tp[4][0]][tp[4][1]][tp[4][2]], vertseq[tp[3][0]][tp[3][1]][tp[3][2]]));
-                            facenumber++;
+                            me.faces.push(new me.Face3(vertseq[tp[0][0]][tp[0][1]][tp[0][2]], vertseq[tp[1][0]][tp[1][1]][tp[1][2]], vertseq[tp[2][0]][tp[2][1]][tp[2][2]]));
+                            me.facenumber++;
+                            me.faces.push(new me.Face3(vertseq[tp[0][0]][tp[0][1]][tp[0][2]], vertseq[tp[2][0]][tp[2][1]][tp[2][2]], vertseq[tp[3][0]][tp[3][1]][tp[3][2]]));
+                            me.facenumber++;
+                            me.faces.push(new me.Face3(vertseq[tp[2][0]][tp[2][1]][tp[2][2]], vertseq[tp[4][0]][tp[4][1]][tp[4][2]], vertseq[tp[3][0]][tp[3][1]][tp[3][2]]));
+                            me.facenumber++;
 
                         }//no.6 12-1
                         else if ((!vp000 && !vp100 && !vp011)//1
@@ -2139,17 +2144,17 @@ var ProteinSurface = function (data) {
                             }//12
                             for (ii = 0; ii < 5; ++ii) {
                                 if (vertseq[tp[ii][0]][tp[ii][1]][tp[ii][2]] == -1) {
-                                    vertseq[tp[ii][0]][tp[ii][1]][tp[ii][2]] = vertnumber;
-                                    verts.push(new Vector3(tp[ii][0], tp[ii][1], tp[ii][2]));
-                                    vertnumber++;
+                                    vertseq[tp[ii][0]][tp[ii][1]][tp[ii][2]] = me.vertnumber;
+                                    me.verts.push(new me.Vector3(tp[ii][0], tp[ii][1], tp[ii][2]));
+                                    me.vertnumber++;
                                 }
                             }
-                            faces.push(new Face3(vertseq[tp[0][0]][tp[0][1]][tp[0][2]], vertseq[tp[1][0]][tp[1][1]][tp[1][2]], vertseq[tp[2][0]][tp[2][1]][tp[2][2]]));
-                            facenumber++;
-                            faces.push(new Face3(vertseq[tp[0][0]][tp[0][1]][tp[0][2]], vertseq[tp[2][0]][tp[2][1]][tp[2][2]], vertseq[tp[3][0]][tp[3][1]][tp[3][2]]));
-                            facenumber++;
-                            faces.push(new Face3(vertseq[tp[0][0]][tp[0][1]][tp[0][2]], vertseq[tp[4][0]][tp[4][1]][tp[4][2]], vertseq[tp[1][0]][tp[1][1]][tp[1][2]]));
-                            facenumber++;
+                            me.faces.push(new me.Face3(vertseq[tp[0][0]][tp[0][1]][tp[0][2]], vertseq[tp[1][0]][tp[1][1]][tp[1][2]], vertseq[tp[2][0]][tp[2][1]][tp[2][2]]));
+                            me.facenumber++;
+                            me.faces.push(new me.Face3(vertseq[tp[0][0]][tp[0][1]][tp[0][2]], vertseq[tp[2][0]][tp[2][1]][tp[2][2]], vertseq[tp[3][0]][tp[3][1]][tp[3][2]]));
+                            me.facenumber++;
+                            me.faces.push(new me.Face3(vertseq[tp[0][0]][tp[0][1]][tp[0][2]], vertseq[tp[4][0]][tp[4][1]][tp[4][2]], vertseq[tp[1][0]][tp[1][1]][tp[1][2]]));
+                            me.facenumber++;
                         }//no.6 12-2
 
                     }//total5
@@ -2241,16 +2246,16 @@ var ProteinSurface = function (data) {
                             }//12
                             for (ii = 0; ii < 4; ++ii) {
                                 if (vertseq[tp[ii][0]][tp[ii][1]][tp[ii][2]] == -1) {
-                                    vertseq[tp[ii][0]][tp[ii][1]][tp[ii][2]] = vertnumber;
-                                    verts.push(new Vector3(tp[ii][0], tp[ii][1], tp[ii][2]));
-                                    vertnumber++;
+                                    vertseq[tp[ii][0]][tp[ii][1]][tp[ii][2]] = me.vertnumber;
+                                    me.verts.push(new me.Vector3(tp[ii][0], tp[ii][1], tp[ii][2]));
+                                    me.vertnumber++;
                                 }
                             }
-                            faces.push(new Face3(vertseq[tp[0][0]][tp[0][1]][tp[0][2]], vertseq[tp[1][0]][tp[1][1]][tp[1][2]], vertseq[tp[2][0]][tp[2][1]][tp[2][2]]));
-                            facenumber++;
-                            faces.push(new Face3(vertseq[tp[0][0]][tp[0][1]][tp[0][2]], vertseq[tp[2][0]][tp[2][1]][tp[2][2]], vertseq[tp[3][0]][tp[3][1]][tp[3][2]]));
-                            facenumber++;
-                        }//no.2 12  
+                            me.faces.push(new me.Face3(vertseq[tp[0][0]][tp[0][1]][tp[0][2]], vertseq[tp[1][0]][tp[1][1]][tp[1][2]], vertseq[tp[2][0]][tp[2][1]][tp[2][2]]));
+                            me.facenumber++;
+                            me.faces.push(new me.Face3(vertseq[tp[0][0]][tp[0][1]][tp[0][2]], vertseq[tp[2][0]][tp[2][1]][tp[2][2]], vertseq[tp[3][0]][tp[3][1]][tp[3][2]]));
+                            me.facenumber++;
+                        }//no.2 12
 
                         else if ((!vp000 && !vp111)
                                 || (!vp100 && !vp011)
@@ -2290,15 +2295,15 @@ var ProteinSurface = function (data) {
                             }//4
                             for (ii = 0; ii < 6; ++ii) {
                                 if (vertseq[tp[ii][0]][tp[ii][1]][tp[ii][2]] == -1) {
-                                    vertseq[tp[ii][0]][tp[ii][1]][tp[ii][2]] = vertnumber;
-                                    verts.push(new Vector3(tp[ii][0], tp[ii][1], tp[ii][2]));
-                                    vertnumber++;
+                                    vertseq[tp[ii][0]][tp[ii][1]][tp[ii][2]] = me.vertnumber;
+                                    me.verts.push(new me.Vector3(tp[ii][0], tp[ii][1], tp[ii][2]));
+                                    me.vertnumber++;
                                 }
                             }
-                            faces.push(new Face3(vertseq[tp[0][0]][tp[0][1]][tp[0][2]], vertseq[tp[1][0]][tp[1][1]][tp[1][2]], vertseq[tp[2][0]][tp[2][1]][tp[2][2]]));
-                            facenumber++;
-                            faces.push(new Face3(vertseq[tp[3][0]][tp[3][1]][tp[3][2]], vertseq[tp[4][0]][tp[4][1]][tp[4][2]], vertseq[tp[5][0]][tp[5][1]][tp[5][2]]));
-                            facenumber++;
+                            me.faces.push(new me.Face3(vertseq[tp[0][0]][tp[0][1]][tp[0][2]], vertseq[tp[1][0]][tp[1][1]][tp[1][2]], vertseq[tp[2][0]][tp[2][1]][tp[2][2]]));
+                            me.facenumber++;
+                            me.faces.push(new me.Face3(vertseq[tp[3][0]][tp[3][1]][tp[3][2]], vertseq[tp[4][0]][tp[4][1]][tp[4][2]], vertseq[tp[5][0]][tp[5][1]][tp[5][2]]));
+                            me.facenumber++;
                         }//no.4 4
 
                         else if ((!vp000 && !vp101)
@@ -2387,15 +2392,15 @@ var ProteinSurface = function (data) {
                             }//12
                             for (ii = 0; ii < 4; ++ii) {
                                 if (vertseq[tp[ii][0]][tp[ii][1]][tp[ii][2]] == -1) {
-                                    vertseq[tp[ii][0]][tp[ii][1]][tp[ii][2]] = vertnumber;
-                                    verts.push(new Vector3(tp[ii][0], tp[ii][1], tp[ii][2]));
-                                    vertnumber++;
+                                    vertseq[tp[ii][0]][tp[ii][1]][tp[ii][2]] = me.vertnumber;
+                                    me.verts.push(new me.Vector3(tp[ii][0], tp[ii][1], tp[ii][2]));
+                                    me.vertnumber++;
                                 }
                             }
-                            faces.push(new Face3(vertseq[tp[0][0]][tp[0][1]][tp[0][2]], vertseq[tp[1][0]][tp[1][1]][tp[1][2]], vertseq[tp[2][0]][tp[2][1]][tp[2][2]]));
-                            facenumber++;
-                            faces.push(new Face3(vertseq[tp[0][0]][tp[0][1]][tp[0][2]], vertseq[tp[2][0]][tp[2][1]][tp[2][2]], vertseq[tp[3][0]][tp[3][1]][tp[3][2]]));
-                            facenumber++;
+                            me.faces.push(new me.Face3(vertseq[tp[0][0]][tp[0][1]][tp[0][2]], vertseq[tp[1][0]][tp[1][1]][tp[1][2]], vertseq[tp[2][0]][tp[2][1]][tp[2][2]]));
+                            me.facenumber++;
+                            me.faces.push(new me.Face3(vertseq[tp[0][0]][tp[0][1]][tp[0][2]], vertseq[tp[2][0]][tp[2][1]][tp[2][2]], vertseq[tp[3][0]][tp[3][1]][tp[3][2]]));
+                            me.facenumber++;
                         }//no.3 12
 
                     }//total6
@@ -2443,125 +2448,125 @@ var ProteinSurface = function (data) {
                         }//8
                         for (ii = 0; ii < 3; ++ii) {
                             if (vertseq[tp[ii][0]][tp[ii][1]][tp[ii][2]] == -1) {
-                                vertseq[tp[ii][0]][tp[ii][1]][tp[ii][2]] = vertnumber;
-                                verts.push(new Vector3(tp[ii][0], tp[ii][1], tp[ii][2]));
-                                vertnumber++;
+                                vertseq[tp[ii][0]][tp[ii][1]][tp[ii][2]] = me.vertnumber;
+                                me.verts.push(new me.Vector3(tp[ii][0], tp[ii][1], tp[ii][2]));
+                                me.vertnumber++;
                             }
                         }
-                        faces.push(new Face3(vertseq[tp[0][0]][tp[0][1]][tp[0][2]], vertseq[tp[1][0]][tp[1][1]][tp[1][2]], vertseq[tp[2][0]][tp[2][1]][tp[2][2]]));
-                        facenumber++;
+                        me.faces.push(new me.Face3(vertseq[tp[0][0]][tp[0][1]][tp[0][2]], vertseq[tp[1][0]][tp[1][1]][tp[1][2]], vertseq[tp[2][0]][tp[2][1]][tp[2][2]]));
+                        me.facenumber++;
                     }//total7
 
                 }//every ijk
             }//j
         }//i
-        this.faces = faces;
-        this.verts = verts;
-        for (i = 0; i < vertnumber; ++i) {
-            verts[i].atomid = vp[verts[i].x * pWidth * pHeight + pHeight * verts[i].y + verts[i].z].atomid;
+        //me.faces = me.faces;
+        //me.verts = me.verts;
+        for (i = 0; i < me.vertnumber; ++i) {
+            me.verts[i].atomid = me.vp[me.verts[i].x * me.pWidth * me.pHeight + me.pHeight * me.verts[i].y + me.verts[i].z].atomid;
         }
     };
 
     this.laplaciansmooth = function (numiter) {
-        var tps = new Array(vertnumber);
-        for (var i = 0; i < vertnumber; ++i) tps[i] = { x: 0, y: 0, z: 0 };
+        var tps = new Array(me.vertnumber);
+        for (var i = 0; i < me.vertnumber; ++i) tps[i] = { x: 0, y: 0, z: 0 };
         var vertdeg = new Array(20);
         var flagvert;
-        for (var i = 0; i < 20; ++i) vertdeg[i] = new Array(vertnumber);
-        for (var i = 0; i < vertnumber; ++i) vertdeg[0][i] = 0;
-        for (var i = 0; i < facenumber; ++i) {
+        for (var i = 0; i < 20; ++i) vertdeg[i] = new Array(me.vertnumber);
+        for (var i = 0; i < me.vertnumber; ++i) vertdeg[0][i] = 0;
+        for (var i = 0; i < me.facenumber; ++i) {
             flagvert = true;
-            for (var j = 0; j < vertdeg[0][faces[i].a]; ++j) {
-                if (faces[i].b == vertdeg[j + 1][faces[i].a]) {
+            for (var j = 0; j < vertdeg[0][me.faces[i].a]; ++j) {
+                if (me.faces[i].b == vertdeg[j + 1][me.faces[i].a]) {
                     flagvert = false;
                     break;
                 }
             }
             if (flagvert) {
-                vertdeg[0][faces[i].a]++;
-                vertdeg[vertdeg[0][faces[i].a]][faces[i].a] = faces[i].b;
+                vertdeg[0][me.faces[i].a]++;
+                vertdeg[vertdeg[0][me.faces[i].a]][me.faces[i].a] = me.faces[i].b;
             }
             flagvert = true;
-            for (var j = 0; j < vertdeg[0][faces[i].a]; ++j) {
-                if (faces[i].c == vertdeg[j + 1][faces[i].a]) {
+            for (var j = 0; j < vertdeg[0][me.faces[i].a]; ++j) {
+                if (me.faces[i].c == vertdeg[j + 1][me.faces[i].a]) {
                     flagvert = false;
                     break;
                 }
             }
             if (flagvert) {
-                vertdeg[0][faces[i].a]++;
-                vertdeg[vertdeg[0][faces[i].a]][faces[i].a] = faces[i].c;
+                vertdeg[0][me.faces[i].a]++;
+                vertdeg[vertdeg[0][me.faces[i].a]][me.faces[i].a] = me.faces[i].c;
             }
             //b
             flagvert = true;
-            for (j = 0; j < vertdeg[0][faces[i].b]; ++j) {
-                if (faces[i].a == vertdeg[j + 1][faces[i].b]) {
+            for (j = 0; j < vertdeg[0][me.faces[i].b]; ++j) {
+                if (me.faces[i].a == vertdeg[j + 1][me.faces[i].b]) {
                     flagvert = false;
                     break;
                 }
             }
             if (flagvert) {
-                vertdeg[0][faces[i].b]++;
-                vertdeg[vertdeg[0][faces[i].b]][faces[i].b] = faces[i].a;
+                vertdeg[0][me.faces[i].b]++;
+                vertdeg[vertdeg[0][me.faces[i].b]][me.faces[i].b] = me.faces[i].a;
             }
             flagvert = true;
-            for (j = 0 ; j < vertdeg[0][faces[i].b]; ++j) {
-                if (faces[i].c == vertdeg[j + 1][faces[i].b]) {
+            for (j = 0 ; j < vertdeg[0][me.faces[i].b]; ++j) {
+                if (me.faces[i].c == vertdeg[j + 1][me.faces[i].b]) {
                     flagvert = false;
                     break;
                 }
             }
             if (flagvert) {
-                vertdeg[0][faces[i].b]++;
-                vertdeg[vertdeg[0][faces[i].b]][faces[i].b] = faces[i].c;
+                vertdeg[0][me.faces[i].b]++;
+                vertdeg[vertdeg[0][me.faces[i].b]][me.faces[i].b] = me.faces[i].c;
             }
             //c
             flagvert = true;
-            for (j = 0; j < vertdeg[0][faces[i].c]; ++j) {
-                if (faces[i].a == vertdeg[j + 1][faces[i].c]) {
+            for (j = 0; j < vertdeg[0][me.faces[i].c]; ++j) {
+                if (me.faces[i].a == vertdeg[j + 1][me.faces[i].c]) {
                     flagvert = false;
                     break;
                 }
             }
             if (flagvert) {
-                vertdeg[0][faces[i].c]++;
-                vertdeg[vertdeg[0][faces[i].c]][faces[i].c] = faces[i].a;
+                vertdeg[0][me.faces[i].c]++;
+                vertdeg[vertdeg[0][me.faces[i].c]][me.faces[i].c] = me.faces[i].a;
             }
             flagvert = true;
-            for (j = 0; j < vertdeg[0][faces[i].c]; ++j) {
-                if (faces[i].b == vertdeg[j + 1][faces[i].c]) {
+            for (j = 0; j < vertdeg[0][me.faces[i].c]; ++j) {
+                if (me.faces[i].b == vertdeg[j + 1][me.faces[i].c]) {
                     flagvert = false;
                     break;
                 }
             }
             if (flagvert) {
-                vertdeg[0][faces[i].c]++;
-                vertdeg[vertdeg[0][faces[i].c]][faces[i].c] = faces[i].b;
+                vertdeg[0][me.faces[i].c]++;
+                vertdeg[vertdeg[0][me.faces[i].c]][me.faces[i].c] = me.faces[i].b;
             }
         }
 
         var wt = 1.00;
         var wt2 = 0.50;
         var ssign;
-        var outwt = 0.75 / (scaleFactor + 3.5); //area-preserving
+        var outwt = 0.75 / (me.scaleFactor + 3.5); //area-preserving
         for (var k = 0; k < numiter; ++k) {
-            for (var i = 0; i < vertnumber; ++i) {
+            for (var i = 0; i < me.vertnumber; ++i) {
                 if (vertdeg[0][i] < 3) {
-                    tps[i].x = verts[i].x;
-                    tps[i].y = verts[i].y;
-                    tps[i].z = verts[i].z;
+                    tps[i].x = me.verts[i].x;
+                    tps[i].y = me.verts[i].y;
+                    tps[i].z = me.verts[i].z;
                 } else if (vertdeg[0][i] == 3 || vertdeg[0][i] == 4) {
                     tps[i].x = 0;
                     tps[i].y = 0;
                     tps[i].z = 0;
                     for (j = 0; j < vertdeg[0][i]; ++j) {
-                        tps[i].x += verts[vertdeg[j + 1][i]].x;
-                        tps[i].y += verts[vertdeg[j + 1][i]].y;
-                        tps[i].z += verts[vertdeg[j + 1][i]].z;
+                        tps[i].x += me.verts[vertdeg[j + 1][i]].x;
+                        tps[i].y += me.verts[vertdeg[j + 1][i]].y;
+                        tps[i].z += me.verts[vertdeg[j + 1][i]].z;
                     }
-                    tps[i].x += wt2 * verts[i].x;
-                    tps[i].y += wt2 * verts[i].y;
-                    tps[i].z += wt2 * verts[i].z;
+                    tps[i].x += wt2 * me.verts[i].x;
+                    tps[i].y += wt2 * me.verts[i].y;
+                    tps[i].z += wt2 * me.verts[i].z;
                     tps[i].x /= wt2 + vertdeg[0][i];
                     tps[i].y /= wt2 + vertdeg[0][i];
                     tps[i].z /= wt2 + vertdeg[0][i];
@@ -2570,40 +2575,40 @@ var ProteinSurface = function (data) {
                     tps[i].y = 0;
                     tps[i].z = 0;
                     for (var j = 0; j < vertdeg[0][i]; ++j) {
-                        tps[i].x += verts[vertdeg[j + 1][i]].x;
-                        tps[i].y += verts[vertdeg[j + 1][i]].y;
-                        tps[i].z += verts[vertdeg[j + 1][i]].z;
+                        tps[i].x += me.verts[vertdeg[j + 1][i]].x;
+                        tps[i].y += me.verts[vertdeg[j + 1][i]].y;
+                        tps[i].z += me.verts[vertdeg[j + 1][i]].z;
                     }
-                    tps[i].x += wt * verts[i].x;
-                    tps[i].y += wt * verts[i].y;
-                    tps[i].z += wt * verts[i].z;
+                    tps[i].x += wt * me.verts[i].x;
+                    tps[i].y += wt * me.verts[i].y;
+                    tps[i].z += wt * me.verts[i].z;
                     tps[i].x /= wt + vertdeg[0][i];
                     tps[i].y /= wt + vertdeg[0][i];
                     tps[i].z /= wt + vertdeg[0][i];
                 }
             }
-            for (var i = 0; i < vertnumber; ++i) {
-                verts[i].x = tps[i].x;
-                verts[i].y = tps[i].y;
-                verts[i].z = tps[i].z;
+            for (var i = 0; i < me.vertnumber; ++i) {
+                me.verts[i].x = tps[i].x;
+                me.verts[i].y = tps[i].y;
+                me.verts[i].z = tps[i].z;
             }
             /*  computenorm();
-            for (var i = 0; i < vertnumber; ++i) {
-                if (verts[i].inout) ssign = 1; else ssign = -1;
-                verts[i].x += ssign * outwt * verts[i].pn.x;
-                verts[i].y += ssign * outwt * verts[i].pn.y;
-                verts[i].z += ssign * outwt * verts[i].pn.z;
+            for (var i = 0; i < me.vertnumber; ++i) {
+                if (me.verts[i].inout) ssign = 1; else ssign = -1;
+                me.verts[i].x += ssign * outwt * me.verts[i].pn.x;
+                me.verts[i].y += ssign * outwt * me.verts[i].pn.y;
+                me.verts[i].z += ssign * outwt * me.verts[i].pn.z;
             }*/
         }
     };
 
     this.transformVertices = function () {
-        var vertices = this.verts;
-        var scaleFactorInverse = 1 / scaleFactor;
-        for (var i = 0; i < vertnumber; ++i) {
-            vertices[i].x = vertices[i].x * scaleFactorInverse - ptranx;
-            vertices[i].y = vertices[i].y * scaleFactorInverse - ptrany;
-            vertices[i].z = vertices[i].z * scaleFactorInverse - ptranz;
+        var vertices = me.verts;
+        var scaleFactorInverse = 1 / me.scaleFactor;
+        for (var i = 0; i < me.vertnumber; ++i) {
+            vertices[i].x = vertices[i].x * scaleFactorInverse - me.ptranx;
+            vertices[i].y = vertices[i].y * scaleFactorInverse - me.ptrany;
+            vertices[i].z = vertices[i].z * scaleFactorInverse - me.ptranz;
         }
     };
 
@@ -2617,8 +2622,8 @@ var ProteinSurface = function (data) {
     laplaciansmooth(1);
     transformVertices();
     return {
-        verts: verts,
-        faces: faces,
+        verts: me.verts,
+        faces: me.faces,
     };
 };
 

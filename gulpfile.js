@@ -12,15 +12,15 @@ var dist = 'dist';
 var base_name = 'icn3d-' + package.version;
 
 
-gulp.task('clean', 
+gulp.task('clean',
   'Removes the dist directory, for a clean build',
   function () {
     return del([dist]);
   });
 
-gulp.task('libs', 
+gulp.task('libs',
   'Copy library files (css and js) into dist/libs',
-  ['clean'], 
+  ['clean'],
   function() {
     return gulp.src([
             "node_modules/jquery-ui/themes/ui-lightness/**",
@@ -31,24 +31,23 @@ gulp.task('libs',
         .pipe(gulp.dest(dist + '/lib'));
   });
 
-gulp.task('copy', 
+gulp.task('copy',
   'Copies several files as-is into dist, including source css and ' +
   'various metadata files.',
-  ['clean'], 
+  ['clean'],
   function () {
     return gulp.src([
             "src/icn3d_simple_ui.css",
             "src/icn3d_full_ui.css",
             'LICENSE',
             'README.md',
-            'icn3d.html',
         ])
         .pipe(gulp.dest(dist));
   });
 
-gulp.task('surface', 
+gulp.task('surface',
   'surface.js is special; push both minified and non-minified into dist',
-  ['clean'], 
+  ['clean'],
   function() {
     return gulp.src("src/surface.js")
         .pipe(gulp.dest(dist))
@@ -61,9 +60,9 @@ gulp.task('surface',
 // Helper function to create a gulp task to concatenate and minify
 // simple and full
 function make_js_task(name, src) {
-    gulp.task("src-js-" + name, 
+    gulp.task("src-js-" + name,
       'Concat and minify the ' + name + ' javascript',
-      ['clean'], 
+      ['clean'],
       function() {
         return gulp.src(src)
             .pipe(concat(name + '_ui_all.js'))
@@ -88,11 +87,11 @@ var common_js = [
 make_js_task("simple", common_js.concat("src/simple_ui.js"));
 make_js_task("full", common_js.concat("src/full_ui.js"));
 
-gulp.task('html', 
+gulp.task('html',
   'Rewrite the link and script tags in the html',
-  ['clean'], 
+  ['clean'],
   function() {
-    return gulp.src(['index.html', 'full.html'])
+    return gulp.src(['index.html', 'full.html', 'icn3d.html'])
         .pipe(dom(function() {
             var elems = this.querySelectorAll(
                 "script[src],link[rel='stylesheet']");
@@ -101,7 +100,7 @@ gulp.task('html',
                 var src_attr = (e.tagName == "SCRIPT") ? "src" : "href";
                 var src_file = e.getAttribute(src_attr);
 
-                var new_src, m, 
+                var new_src, m,
                     set_attr = true;
                 if (m = src_file.match(/^node_modules\/.*\/(.*)/))
                     new_src = "lib/" + m[1];
@@ -124,10 +123,10 @@ gulp.task('html',
 
 gulp.task('dist',
   'Prepare all the distribution files (except the .zip).',
-  ['libs', 'copy', 'surface', 
+  ['libs', 'copy', 'surface',
    'src-js-simple', 'src-js-full', 'html']);
 
-gulp.task('zip', 
+gulp.task('zip',
   'Zip up the dist into icn3d-<version>.zip',
   ['dist'],
   function() {
@@ -140,17 +139,18 @@ gulp.task('zip',
   });
 
 
-gulp.task('default', 
+gulp.task('default',
   'The default task creates the distribution files and the .zip ' +
   'from scratch',
   ['zip']
 );
 
 var gh_pages_files = [
-  'LICENSE', 
+  'LICENSE',
   'README.md',
   'index.html',
   'icn3d.html',
+  'full.html',
   '*.min.js',
   '*.css',
   'lib/**',
@@ -163,6 +163,7 @@ gulp.task('gh-pages',
     return gulp.src(gh_pages_files, { base: 'dist' })
       .pipe(gh_pages({
         origin: "github",
+        cacheDir: ".gh-pages",
       }))
   });
 
