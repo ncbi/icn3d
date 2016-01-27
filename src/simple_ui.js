@@ -277,8 +277,12 @@ var show3DStructure = function(cfg) {
     }
 
     function downloadPdb(pdbid) {
-       //var uri = "http://www.rcsb.org/pdb/files/" + pdbid + ".pdb";
-       var uri = "https://www.ncbi.nlm.nih.gov/Structure/mmcifparser/mmcifparser.cgi?pdbid=" + pdbid;
+       // The PDB service doesn't support https, so use our reverse-proxy
+       // service when using https
+       var uri = (document.location.protocol !== "https:") ?
+           "http://www.rcsb.org/pdb/files/" + pdbid + ".pdb" :
+           "https://www.ncbi.nlm.nih.gov/Structure/mmcifparser/" +
+              "mmcifparser.cgi?pdbid=" + pdbid;
 
        icn3d.bCid = undefined;
 
