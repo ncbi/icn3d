@@ -539,12 +539,12 @@ iCn3DUI.prototype = {
               if($("#" + me.pre + "log")) $("#" + me.pre + "log").show();
           },
           success: function(data) {
-              me.loadPdbData(data, pdbid);
+              me.loadPdbData(data);
           }
        });
     },
 
-    loadPdbData: function(data, pdbid) {
+    loadPdbData: function(data) {
         var me = this;
         me.icn3d.loadPDB(data);
 
@@ -554,8 +554,8 @@ iCn3DUI.prototype = {
             $("#" + me.pre + "alternateWrapper").hide();
         }
 
-        me.icn3d.inputid.idtype = "pdbid";
-        me.icn3d.inputid.id = pdbid;
+        //me.icn3d.inputid.idtype = "pdbid";
+        //me.icn3d.inputid.id = pdbid;
 
         me.icn3d.setAtomStyleByOptions(me.options);
         me.icn3d.setColorByOptions(me.options, me.icn3d.atoms);
@@ -649,8 +649,8 @@ iCn3DUI.prototype = {
               }
             }
 
-            me.icn3d.inputid.idtype = "mmcif";
-            me.icn3d.inputid.id = mmcif;
+            //me.icn3d.inputid.idtype = "mmcif";
+            //me.icn3d.inputid.id = mmcif;
 
             me.icn3d.setAtomStyleByOptions(me.options);
             me.icn3d.setColorByOptions(me.options, me.icn3d.atoms);
@@ -745,8 +745,8 @@ iCn3DUI.prototype = {
                     $("#" + me.pre + "alternateWrapper").hide();
                 }
 
-                me.icn3d.inputid.idtype = "alignment";
-                me.icn3d.inputid.id = align;
+                //me.icn3d.inputid.idtype = "alignment";
+                //me.icn3d.inputid.id = align;
 
                 me.icn3d.setAtomStyleByOptions(me.options);
                 // use the original color from cgi output
@@ -798,8 +798,8 @@ iCn3DUI.prototype = {
               alert('The SDF of CID ' + cid + ' has the wrong format...');
             }
             else {
-              me.icn3d.inputid.idtype = "cid";
-              me.icn3d.inputid.id = cid;
+              //me.icn3d.inputid.idtype = "cid";
+              //me.icn3d.inputid.id = cid;
 
               me.icn3d.setAtomStyleByOptions(me.options);
               me.icn3d.setColorByOptions(me.options, me.icn3d.atoms);
@@ -983,8 +983,8 @@ iCn3DUI.prototype = {
                     if($("#" + me.pre + "alternateWrapper") !== null) $("#" + me.pre + "alternateWrapper").hide();
                 }
 
-                me.icn3d.inputid.idtype = "mmdbid";
-                me.icn3d.inputid.id = id;
+                //me.icn3d.inputid.idtype = "mmdbid";
+                //me.icn3d.inputid.id = id;
 
                 me.icn3d.setAtomStyleByOptions(me.options);
                 // use the original color from cgi output
@@ -1007,8 +1007,8 @@ iCn3DUI.prototype = {
                 var id = (data.pdbId !== undefined) ? data.pdbId : data.mmdbId;
                 me.loadAtomDataIn(data, id, 'mmdbid');
 
-                me.icn3d.inputid.idtype = "mmdbid";
-                me.icn3d.inputid.id = id;
+                //me.icn3d.inputid.idtype = "mmdbid";
+                //me.icn3d.inputid.id = id;
 
                 me.options['nucleotides'] = 'phosphorus lines';
 

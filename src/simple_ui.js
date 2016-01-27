@@ -298,8 +298,8 @@ var show3DStructure = function(cfg) {
           success: function(data) {
             icn3d.loadPDB(data);
 
-            icn3d.inputid.idtype = "pdbid";
-            icn3d.inputid.id = pdbid;
+            //icn3d.inputid.idtype = "pdbid";
+            //icn3d.inputid.id = pdbid;
 
             icn3d.setAtomStyleByOptions(options);
             icn3d.setColorByOptions(options, icn3d.atoms);
@@ -349,8 +349,8 @@ var show3DStructure = function(cfg) {
             {
                 loadAtomDataIn(data, data.mmcif, 'mmcif');
 
-                icn3d.inputid.idtype = "mmcif";
-                icn3d.inputid.id = mmcif;
+                //icn3d.inputid.idtype = "mmcif";
+                //icn3d.inputid.id = mmcif;
 
                 icn3d.setAtomStyleByOptions(options);
                 icn3d.setColorByOptions(options, icn3d.atoms);
@@ -425,8 +425,8 @@ var show3DStructure = function(cfg) {
             {
                 loadAtomDataIn(data, undefined, 'align', seqalign);
 
-                icn3d.inputid.idtype = "alignment";
-                icn3d.inputid.id = align;
+                //icn3d.inputid.idtype = "alignment";
+                //icn3d.inputid.id = align;
 
                 icn3d.setAtomStyleByOptions(options);
                 // use the original color from cgi output
@@ -460,8 +460,8 @@ var show3DStructure = function(cfg) {
               alert('The SDF of CID ' + cid + ' has the wrong format...');
             }
             else {
-              icn3d.inputid.idtype = "cid";
-              icn3d.inputid.id = cid;
+              //icn3d.inputid.idtype = "cid";
+              //icn3d.inputid.id = cid;
 
               icn3d.setAtomStyleByOptions(options);
               icn3d.setColorByOptions(options, icn3d.atoms);
@@ -623,8 +623,8 @@ var show3DStructure = function(cfg) {
                 var id = (data.pdbId !== undefined) ? data.pdbId : data.mmdbId;
                 loadAtomDataIn(data, id, 'mmdbid');
 
-                icn3d.inputid.idtype = "mmdbid";
-                icn3d.inputid.id = id;
+                //icn3d.inputid.idtype = "mmdbid";
+                //icn3d.inputid.id = id;
 
                 icn3d.setAtomStyleByOptions(options);
                 // use the original color from cgi output
@@ -645,8 +645,8 @@ var show3DStructure = function(cfg) {
                 var id = (data.pdbId !== undefined) ? data.pdbId : data.mmdbId;
                 loadAtomDataIn(data, id, 'mmdbid');
 
-                icn3d.inputid.idtype = "mmdbid";
-                icn3d.inputid.id = id;
+                //icn3d.inputid.idtype = "mmdbid";
+                //icn3d.inputid.id = id;
 
                 options['nucleotides'] = 'phosphorus lines';
 
