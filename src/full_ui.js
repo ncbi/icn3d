@@ -1,5 +1,5 @@
 /*! full_ui.js
- * @author Jiyao Wang
+ * @author Jiyao Wang / https://github.com/ncbi/icn3d
  * UI with full features of iCn3D
  */
 
@@ -52,10 +52,10 @@ var iCn3DUI = function(cfg) {
     me.options = {};
     me.options['camera']             = 'perspective';        //perspective, orthographic
     me.options['background']         = 'black';              //black, grey, white
-    me.options['color']              = 'spectrum';           //spectrum, chain, secondary structure, B factor, residue, polarity, atom, white, grey, red, green, blue, magenta, yellow, cyan, pink, lightgreen, brown, yellowtint, gold
+    me.options['color']              = 'spectrum';           //spectrum, secondary structure, charge, chain, residue, atom, red, green, blue, magenta, yellow, cyan, white, grey, custom
     me.options['sidechains']         = 'nothing';            //lines, stick, ball & stick, sphere, nothing
     me.options['secondary']          = 'ribbon';             //ribbon, strand, cylinder & plate, C alpha trace, B factor tube, lines, stick, ball & stick, sphere, nothing
-    me.options['surface']            = 'Van der Waals surface';    //Van der Waals surface, solvent excluded surface, solvent accessible surface, molecular surface, nothing
+    me.options['surface']            = 'nothing';    //Van der Waals surface, solvent excluded surface, solvent accessible surface, molecular surface, nothing
     me.options['opacity']            = '0.8';                //1.0, 0.9, 0.8, 0.7, 0.6, 0.5
     me.options['wireframe']          = 'no';                 //yes, no
     me.options['ligands']            = 'stick';              //lines, stick, ball & stick, sphere
@@ -66,13 +66,14 @@ var iCn3DUI = function(cfg) {
     me.options['lines']                   = 'no';                 //yes, no
     me.options['rotationcenter']     = 'molecule center';    //molecule center, pick center, display center
     me.options['axis']               = 'no';                 //yes, no
-    me.options['picking']               = 'residue';                 //no, atom, residue
+    me.options['picking']            = 'residue';                 //no, atom, residue, strand
     me.options['nucleotides']        = 'phosphorus trace';   //nucleotide cartoon, phosphorus trace, lines, stick, ball & stick, sphere, nothing
 
     me.options['surfaceregion']      = 'nothing';            //nothing, all, sphere
 
     if(me.cfg.cid !== undefined) {
         me.options['picking'] = 'atom';
+        me.options['ligands'] = 'ball & stick';
     }
 
     me.modifyIcn3d();
@@ -101,10 +102,17 @@ iCn3DUI.prototype = {
               var residueid = atom.structure + '_' + atom.chain + '_' + atom.resi;
               this.highlightAtoms = this.residues[residueid];
           }
+          else if(this.picking === 3) {
+              this.selectStrandHelixFromAtom(atom);
+          }
 
           this.addHighlightObjects();
 
-          if(this.picking === 2) {
+          if(this.picking === 1) {
+              me.removeSeqChainBkgd();
+              me.removeSeqResidueBkgd();
+          }
+          else if(this.picking === 2) {
               // highlight the sequence background
               var idArray = this.id.split('_'); // id: div0_canvas
               me.pre = idArray[0] + "_";
@@ -120,9 +128,26 @@ iCn3DUI.prototype = {
                 $("#" + me.pre + pickedResidue).addClass('highlightSeq');
               }
           }
-          else if(this.picking === 1) {
+          else if(this.picking === 3) {
+              // highlight the sequence background
+              var idArray = this.id.split('_'); // id: div0_canvas
+              me.pre = idArray[0] + "_";
+
+              var firstAtom = this.getFirstAtomObj(this.highlightAtoms);
+              var lastAtom = this.getLastAtomObj(this.highlightAtoms);
+
+              me.clearSelection();
+
               me.removeSeqChainBkgd();
               me.removeSeqResidueBkgd();
+
+              for(var i = firstAtom.resi; i <= lastAtom.resi; ++i) {
+                  var pickedResidue = atom.structure + '_' + atom.chain + '_' + i;
+
+                  if($("#" + me.pre + pickedResidue).length !== 0) {
+                    $("#" + me.pre + pickedResidue).addClass('highlightSeq');
+                    }
+              }
           }
 
           var transformation = {};
@@ -344,11 +369,22 @@ iCn3DUI.prototype = {
       var options2 = {};
       options2[id] = value;
 
+      // remember the options
+      me.icn3d.options[id] = value;
+
       if(id === 'color') {
           me.icn3d.setColorByOptions(options2, me.icn3d.highlightAtoms);
-      }
 
-      me.icn3d.draw(options2);
+          me.icn3d.draw(options2);
+      }
+      else if(id === 'surface' || id === 'opacity' || id === 'wireframe') {
+          me.icn3d.removeSurfaces();
+          me.icn3d.applySurfaceOptions();
+          me.icn3d.render();
+      }
+      else {
+          me.icn3d.draw(options2);
+      }
     },
 
     setStyle: function (selectionType, style) { var me = this;
@@ -472,42 +508,45 @@ iCn3DUI.prototype = {
     },
 
     renderStructure: function (bInitial) {  var me = this;
-      var structuresHtml = me.setStructureMenu(bInitial);
-      var chainsHtml = me.setChainMenu(bInitial);
-      var alignChainsHtml = me.getAlignChainSelections();
-      var definedResiduesHtml = me.setResidueMenu();
-      var definedAtomsHtml = me.setAtomMenu();
-
-      if($("#" + me.pre + "structureid")) $("#" + me.pre + "structureid").html(structuresHtml);
-      if($("#" + me.pre + "chainid")) $("#" + me.pre + "chainid").html(chainsHtml);
-      if($("#" + me.pre + "alignChainid")) $("#" + me.pre + "alignChainid").html(alignChainsHtml);
-      if($("#" + me.pre + "customResidues")) $("#" + me.pre + "customResidues").html(definedResiduesHtml);
-
-      if($("#" + me.pre + "structureid2")) $("#" + me.pre + "structureid2").html(structuresHtml);
-      if($("#" + me.pre + "chainid2")) $("#" + me.pre + "chainid2").html(chainsHtml);
-      if($("#" + me.pre + "alignChainid2")) $("#" + me.pre + "alignChainid2").html(alignChainsHtml);
-      if($("#" + me.pre + "customResidues2")) $("#" + me.pre + "customResidues2").html(definedResiduesHtml);
-
-      if($("#" + me.pre + "customAtoms")) $("#" + me.pre + "customAtoms").html(definedAtomsHtml);
-
-      var seqObj = me.getSequencesAnnotations(Object.keys(me.icn3d.chains));
-      if($("#" + me.pre + "dl_sequence")) {
-          $("#" + me.pre + "dl_sequence").html(seqObj.sequencesHtml);
-            $("#" + me.pre + "dl_sequence").width(me.RESIDUE_WIDTH * seqObj.maxSeqCnt + 200);
-      }
-
-      seqObj = me.getAlignSequencesAnnotations(Object.keys(me.icn3d.alignChains));
-      if($("#" + me.pre + "dl_sequence2")) {
-          $("#" + me.pre + "dl_sequence2").html(seqObj.sequencesHtml);
-            $("#" + me.pre + "dl_sequence2").width(me.RESIDUE_WIDTH * seqObj.maxSeqCnt + 200);
-      }
-
       if(bInitial) {
-        me.icn3d.draw(me.options);
+          me.icn3d.draw(me.options);
       }
       else {
-        me.icn3d.draw();
+          me.icn3d.draw();
       }
+
+      // display the structure right away. load the menus and sequences later
+      setTimeout(function(){
+          var structuresHtml = me.setStructureMenu(bInitial);
+          var chainsHtml = me.setChainMenu(bInitial);
+          var alignChainsHtml = me.getAlignChainSelections();
+          var definedResiduesHtml = me.setResidueMenu();
+          var definedAtomsHtml = me.setAtomMenu();
+
+          if($("#" + me.pre + "structureid")) $("#" + me.pre + "structureid").html(structuresHtml);
+          if($("#" + me.pre + "chainid")) $("#" + me.pre + "chainid").html(chainsHtml);
+          if($("#" + me.pre + "alignChainid")) $("#" + me.pre + "alignChainid").html(alignChainsHtml);
+          if($("#" + me.pre + "customResidues")) $("#" + me.pre + "customResidues").html(definedResiduesHtml);
+
+          if($("#" + me.pre + "structureid2")) $("#" + me.pre + "structureid2").html(structuresHtml);
+          if($("#" + me.pre + "chainid2")) $("#" + me.pre + "chainid2").html(chainsHtml);
+          if($("#" + me.pre + "alignChainid2")) $("#" + me.pre + "alignChainid2").html(alignChainsHtml);
+          if($("#" + me.pre + "customResidues2")) $("#" + me.pre + "customResidues2").html(definedResiduesHtml);
+
+          if($("#" + me.pre + "customAtoms")) $("#" + me.pre + "customAtoms").html(definedAtomsHtml);
+
+          var seqObj = me.getSequencesAnnotations(Object.keys(me.icn3d.chains));
+          if($("#" + me.pre + "dl_sequence")) {
+              $("#" + me.pre + "dl_sequence").html(seqObj.sequencesHtml);
+                $("#" + me.pre + "dl_sequence").width(me.RESIDUE_WIDTH * seqObj.maxSeqCnt + 200);
+          }
+
+          seqObj = me.getAlignSequencesAnnotations(Object.keys(me.icn3d.alignChains));
+          if($("#" + me.pre + "dl_sequence2")) {
+              $("#" + me.pre + "dl_sequence2").html(seqObj.sequencesHtml);
+                $("#" + me.pre + "dl_sequence2").width(me.RESIDUE_WIDTH * seqObj.maxSeqCnt + 200);
+          }
+        }, 0);
 
       if(me.cfg.command !== undefined) {
           me.loadScript(me.cfg.command);
@@ -517,16 +556,21 @@ iCn3DUI.prototype = {
     downloadPdb: function (pdbid) { var me = this;
        // The PDB service doesn't support https, so use our reverse-proxy
        // service when using https
-       var uri = (document.location.protocol !== "https:") ?
-           "http://www.rcsb.org/pdb/files/" + pdbid + ".pdb" :
-           "https://www.ncbi.nlm.nih.gov/Structure/mmcifparser/" +
-              "mmcifparser.cgi?pdbid=" + pdbid;
+       var uri, dataType;
+       if(document.location.protocol !== "https:") {
+           uri = "http://www.rcsb.org/pdb/files/" + pdbid + ".pdb";
+           dataType = "text";
+       }
+       else {
+           uri = "https://www.ncbi.nlm.nih.gov/Structure/mmcifparser/mmcifparser.cgi?jsonp=t&pdbid=" + pdbid;
+           dataType = "jsonp";
+       }
 
        me.icn3d.bCid = undefined;
 
        $.ajax({
           url: uri,
-          dataType: 'text',
+          dataType: dataType,
           cache: true,
           beforeSend: function() {
               if($("#" + me.pre + "wait")) $("#" + me.pre + "wait").show();
@@ -539,7 +583,12 @@ iCn3DUI.prototype = {
               if($("#" + me.pre + "log")) $("#" + me.pre + "log").show();
           },
           success: function(data) {
-              me.loadPdbData(data);
+              if(document.location.protocol !== "https:") {
+                  me.loadPdbData(data);
+              }
+              else {
+                  me.loadPdbData(data.data);
+              }
           }
        });
     },
@@ -911,6 +960,14 @@ iCn3DUI.prototype = {
             me.icn3d.atoms[from].bondOrder.push(order);
             me.icn3d.atoms[to].bonds.push(from);
             me.icn3d.atoms[to].bondOrder.push(order);
+            if(order == 2) {
+				me.icn3d.doublebonds[from + '_' + to] = 1;
+				me.icn3d.doublebonds[to + '_' + from] = 1;
+			}
+			else if(order == 3) {
+				me.icn3d.triplebonds[from + '_' + to] = 1;
+				me.icn3d.triplebonds[to + '_' + from] = 1;
+			}
         }
 
         var pmin = new THREE.Vector3( 9999, 9999, 9999);
@@ -1442,6 +1499,10 @@ iCn3DUI.prototype = {
               if (atm.bonds.length === 0) me.icn3d.ions[serial] = 1;
 
               me.icn3d.het = true;
+            }
+
+            if(atm.resn.charAt(0) !== ' ' && atm.resn.charAt(1) === ' ') {
+              atm.resn = atm.resn.charAt(0);
             }
 
             // double check
@@ -2949,26 +3010,26 @@ iCn3DUI.prototype = {
           }
 
           if(i === steps - 1) {
-				me.icn3d.bRender = true;
+                me.icn3d.bRender = true;
 
-				var commandTransformation = me.icn3d.commands[steps-1].split('|||');
+                var commandTransformation = me.icn3d.commands[steps-1].split('|||');
 
-				if(commandTransformation.length == 2) {
-					var transformation = JSON.parse(commandTransformation[1]);
+                if(commandTransformation.length == 2) {
+                    var transformation = JSON.parse(commandTransformation[1]);
 
-					me.icn3d._zoomFactor = transformation.factor;
+                    me.icn3d._zoomFactor = transformation.factor;
 
-					me.icn3d.mouseChange.x = transformation.mouseChange.x;
-					me.icn3d.mouseChange.y = transformation.mouseChange.y;
+                    me.icn3d.mouseChange.x = transformation.mouseChange.x;
+                    me.icn3d.mouseChange.y = transformation.mouseChange.y;
 
-					me.icn3d.quaternion._x = transformation.quaternion._x;
-					me.icn3d.quaternion._y = transformation.quaternion._y;
-					me.icn3d.quaternion._z = transformation.quaternion._z;
-					me.icn3d.quaternion._w = transformation.quaternion._w;
-				}
+                    me.icn3d.quaternion._x = transformation.quaternion._x;
+                    me.icn3d.quaternion._y = transformation.quaternion._y;
+                    me.icn3d.quaternion._z = transformation.quaternion._z;
+                    me.icn3d.quaternion._w = transformation.quaternion._w;
+                }
 
-				me.icn3d.draw();
-		  }
+                me.icn3d.draw();
+          }
       }
     },
 
@@ -3071,12 +3132,16 @@ iCn3DUI.prototype = {
       else if(command.indexOf('set picking off') !== -1) {
         me.icn3d.picking = 0;
         me.icn3d.options['picking'] = 'no';
-        me.icn3d.draw(undefined, undefined);
+        me.icn3d.draw();
         me.icn3d.removeHighlightObjects();
       }
       else if(command.indexOf('set picking residue') !== -1) {
         me.icn3d.picking = 2;
         me.icn3d.options['picking'] = 'residue';
+      }
+      else if(command.indexOf('set picking strand') !== -1) {
+        me.icn3d.picking = 3;
+        me.icn3d.options['picking'] = 'strand';
       }
       else if(command.indexOf('pickatom') !== -1) {
         var atomid = parseInt(command.substr(command.lastIndexOf(' ') + 1));
@@ -3120,6 +3185,12 @@ iCn3DUI.prototype = {
       else if(command.indexOf('set surface opacity') !== -1) {
         var value = command.substr(command.lastIndexOf(' ') + 1);
         me.options['opacity'] = value;
+      }
+      else if(command.indexOf('set surface neighbors on') !== -1) {
+        me.icn3d.bConsiderNeighbors = true;
+      }
+      else if(command.indexOf('set surface neighbors off') !== -1) {
+        me.icn3d.bConsiderNeighbors = false;
       }
       else if(command.indexOf('set surface') !== -1) {
         var value = command.substr(12);
@@ -3354,10 +3425,12 @@ iCn3DUI.prototype = {
         html += "                <li>Picking";
         html += "                  <ul>";
         if(me.cfg.cid === undefined) {
+            html += "                      <li><input type='radio' name='" + me.pre + "menu2_picking' id='" + me.pre + "menu2_pickingStrand'><label for='" + me.pre + "menu2_pickingStrand'>Strand/Helix</label></li>";
             html += "                      <li><input type='radio' name='" + me.pre + "menu2_picking' id='" + me.pre + "menu2_pickingResidue' checked><label for='" + me.pre + "menu2_pickingResidue'>Residue</label></li>";
             html += "                      <li><input type='radio' name='" + me.pre + "menu2_picking' id='" + me.pre + "menu2_pickingYes'><label for='" + me.pre + "menu2_pickingYes'>Atom</label></li>";
         }
         else {
+            html += "                      <li><input type='radio' name='" + me.pre + "menu2_picking' id='" + me.pre + "menu2_pickingStrand'><label for='" + me.pre + "menu2_pickingStrand'>Strand/Helix</label></li>";
             html += "                      <li><input type='radio' name='" + me.pre + "menu2_picking' id='" + me.pre + "menu2_pickingResidue'><label for='" + me.pre + "menu2_pickingResidue'>Residue</label></li>";
             html += "                      <li><input type='radio' name='" + me.pre + "menu2_picking' id='" + me.pre + "menu2_pickingYes' checked><label for='" + me.pre + "menu2_pickingYes'>Atom</label></li>";
         }
@@ -3438,17 +3511,30 @@ iCn3DUI.prototype = {
             html += "                      <li><input type='radio' name='" + me.pre + "menu3_nucl' id='" + me.pre + "menu3_nuclNothing'><label for='" + me.pre + "menu3_nuclNothing'>Hide</label></li>";
             html += "                  </ul>";
             html += "                </li>";
-        }
 
-        html += "                <li>Ligands";
-        html += "                  <ul>";
-        html += "                      <li><input type='radio' name='" + me.pre + "menu3_ligands' id='" + me.pre + "menu3_ligandsLines'><label for='" + me.pre + "menu3_ligandsLines'>Lines</label></li>";
-        html += "                      <li><input type='radio' name='" + me.pre + "menu3_ligands' id='" + me.pre + "menu3_ligandsStick' checked><label for='" + me.pre + "menu3_ligandsStick'>Stick</label></li>";
-        html += "                      <li><input type='radio' name='" + me.pre + "menu3_ligands' id='" + me.pre + "menu3_ligandsBallstick'><label for='" + me.pre + "menu3_ligandsBallstick'>Ball and Stick</label></li>";
-        html += "                      <li><input type='radio' name='" + me.pre + "menu3_ligands' id='" + me.pre + "menu3_ligandsSphere'><label for='" + me.pre + "menu3_ligandsSphere'>Sphere</label></li>";
-        html += "                      <li><input type='radio' name='" + me.pre + "menu3_ligands' id='" + me.pre + "menu3_ligandsNothing'><label for='" + me.pre + "menu3_ligandsNothing'>Hide</label></li>";
-        html += "                  </ul>";
-        html += "                </li>";
+			html += "                <li>Ligands";
+			html += "                  <ul>";
+			html += "                      <li><input type='radio' name='" + me.pre + "menu3_ligands' id='" + me.pre + "menu3_ligandsLines'><label for='" + me.pre + "menu3_ligandsLines'>Lines</label></li>";
+			html += "                      <li><input type='radio' name='" + me.pre + "menu3_ligands' id='" + me.pre + "menu3_ligandsStick' checked><label for='" + me.pre + "menu3_ligandsStick'>Stick</label></li>";
+			html += "                      <li><input type='radio' name='" + me.pre + "menu3_ligands' id='" + me.pre + "menu3_ligandsBallstick'><label for='" + me.pre + "menu3_ligandsBallstick'>Ball and Stick</label></li>";
+			html += "                      <li><input type='radio' name='" + me.pre + "menu3_ligands' id='" + me.pre + "menu3_ligandsSphere'><label for='" + me.pre + "menu3_ligandsSphere'>Sphere</label></li>";
+			html += "                      <li><input type='radio' name='" + me.pre + "menu3_ligands' id='" + me.pre + "menu3_ligandsNothing'><label for='" + me.pre + "menu3_ligandsNothing'>Hide</label></li>";
+			html += "                  </ul>";
+			html += "                </li>";
+        }
+        else {
+			html += "                <li>Ligands";
+			html += "                  <ul>";
+			html += "                      <li><input type='radio' name='" + me.pre + "menu3_ligands' id='" + me.pre + "menu3_ligandsLines'><label for='" + me.pre + "menu3_ligandsLines'>Lines</label></li>";
+			html += "                      <li><input type='radio' name='" + me.pre + "menu3_ligands' id='" + me.pre + "menu3_ligandsStick'><label for='" + me.pre + "menu3_ligandsStick'>Stick</label></li>";
+			html += "                      <li><input type='radio' name='" + me.pre + "menu3_ligands' id='" + me.pre + "menu3_ligandsBallstick' checked><label for='" + me.pre + "menu3_ligandsBallstick'>Ball and Stick</label></li>";
+			html += "                      <li><input type='radio' name='" + me.pre + "menu3_ligands' id='" + me.pre + "menu3_ligandsSphere'><label for='" + me.pre + "menu3_ligandsSphere'>Sphere</label></li>";
+			html += "                      <li><input type='radio' name='" + me.pre + "menu3_ligands' id='" + me.pre + "menu3_ligandsNothing'><label for='" + me.pre + "menu3_ligandsNothing'>Hide</label></li>";
+			html += "                  </ul>";
+			html += "                </li>";
+		}
+
+
         html += "                <li>Ions";
         html += "                  <ul>";
         html += "                      <li><input type='radio' name='" + me.pre + "menu3_ions' id='" + me.pre + "menu3_ionsSphere' checked><label for='" + me.pre + "menu3_ionsSphere'>Sphere</label></li>";
@@ -3485,11 +3571,11 @@ iCn3DUI.prototype = {
             else {
                 html += "                <li><input type='radio' name='" + me.pre + "menu4_color' id='" + me.pre + "menu4_colorSpectrum' checked><label for='" + me.pre + "menu4_colorSpectrum'>Spectrum</label></li>";
             }
-            html += "                <li><input type='radio' name='" + me.pre + "menu4_color' id='" + me.pre + "menu4_colorChain'><label for='" + me.pre + "menu4_colorChain'>Chain</label></li>";
             html += "                <li><input type='radio' name='" + me.pre + "menu4_color' id='" + me.pre + "menu4_colorSS'><label for='" + me.pre + "menu4_colorSS'>Secondary</label></li>";
-            html += "                <li><input type='radio' name='" + me.pre + "menu4_color' id='" + me.pre + "menu4_colorBfactor'><label for='" + me.pre + "menu4_colorBfactor'>B Factor</label></li>";
+            html += "                <li><input type='radio' name='" + me.pre + "menu4_color' id='" + me.pre + "menu4_colorCharge'><label for='" + me.pre + "menu4_colorCharge'>Charge</label></li>";
+            //html += "                <li><input type='radio' name='" + me.pre + "menu4_color' id='" + me.pre + "menu4_colorBfactor'><label for='" + me.pre + "menu4_colorBfactor'>B Factor</label></li>";
+            html += "                <li><input type='radio' name='" + me.pre + "menu4_color' id='" + me.pre + "menu4_colorChain'><label for='" + me.pre + "menu4_colorChain'>Chain</label></li>";
             html += "                <li><input type='radio' name='" + me.pre + "menu4_color' id='" + me.pre + "menu4_colorResidue'><label for='" + me.pre + "menu4_colorResidue'>Residue</label></li>";
-            html += "                <li><input type='radio' name='" + me.pre + "menu4_color' id='" + me.pre + "menu4_colorPolarity'><label for='" + me.pre + "menu4_colorPolarity'>Polarity</label></li>";
             html += "                <li><input type='radio' name='" + me.pre + "menu4_color' id='" + me.pre + "menu4_colorAtom'><label for='" + me.pre + "menu4_colorAtom'>Atom</label></li>";
         }
         else {
@@ -3522,19 +3608,13 @@ iCn3DUI.prototype = {
         html += "              <h3>Surface</h3>";
         html += "              <div>";
         html += "              <ul class='menu'>";
-        html += "                <li>Show Surface";
-        html += "                  <ul>";
-        html += "                      <li><input type='radio' name='" + me.pre + "menu5_showsurface' id='" + me.pre + "menu5_showsurfaceYes'><label for='" + me.pre + "menu5_showsurfaceYes'>Yes</label></li>";
-        html += "                      <li><input type='radio' name='" + me.pre + "menu5_showsurface' id='" + me.pre + "menu5_showsurfaceNo' checked><label for='" + me.pre + "menu5_showsurfaceNo'>No</label></li>";
-        html += "                  </ul>";
-        html += "                </li>";
         html += "                <li>Type";
         html += "                  <ul>";
-        html += "                      <li><input type='radio' name='" + me.pre + "menu5_surface' id='" + me.pre + "menu5_surfaceVDW' checked><label for='" + me.pre + "menu5_surfaceVDW'>Van der Waals</label></li>";
-        html += "                      <li><input type='radio' name='" + me.pre + "menu5_surface' id='" + me.pre + "menu5_surfaceSES'><label for='" + me.pre + "menu5_surfaceSES'>Solvent Excluded</label></li>";
+        html += "                      <li><input type='radio' name='" + me.pre + "menu5_surface' id='" + me.pre + "menu5_surfaceVDW'><label for='" + me.pre + "menu5_surfaceVDW'>Van der Waals</label></li>";
+        html += "                      <li><input type='radio' name='" + me.pre + "menu5_surface' id='" + me.pre + "menu5_surfaceSES'><label for='" + me.pre + "menu5_surfaceSES'>Molecular Surface</label></li>";
         html += "                      <li><input type='radio' name='" + me.pre + "menu5_surface' id='" + me.pre + "menu5_surfaceSAS'><label for='" + me.pre + "menu5_surfaceSAS'>Solvent Accessible</label></li>";
-        html += "                      <li><input type='radio' name='" + me.pre + "menu5_surface' id='" + me.pre + "menu5_surfaceMolecular'><label for='" + me.pre + "menu5_surfaceMolecular'>Molecular Surface</label></li>";
-        html += "                      <li><input type='radio' name='" + me.pre + "menu5_surface' id='" + me.pre + "menu5_surfaceNothing'><label for='" + me.pre + "menu5_surfaceNothing'>Hide</label></li>";
+//        html += "                      <li><input type='radio' name='" + me.pre + "menu5_surface' id='" + me.pre + "menu5_surfaceMolecular'><label for='" + me.pre + "menu5_surfaceMolecular'>Molecular Surface</label></li>";
+        html += "                      <li><input type='radio' name='" + me.pre + "menu5_surface' id='" + me.pre + "menu5_surfaceNothing' checked><label for='" + me.pre + "menu5_surfaceNothing'>Hide</label></li>";
         html += "                  </ul>";
         html += "                </li>";
         html += "                <li>Opacity";
@@ -3553,6 +3633,15 @@ iCn3DUI.prototype = {
         html += "                      <li><input type='radio' name='" + me.pre + "menu5_wireframe' id='" + me.pre + "menu5_wireframeNo' checked><label for='" + me.pre + "menu5_wireframeNo'>No</label></li>";
         html += "                  </ul>";
         html += "                </li>";
+
+        html += "                <li>Neighbors";
+        html += "                  <ul>";
+        html += "                      <li><input type='radio' name='" + me.pre + "menu5_neighbors' id='" + me.pre + "menu5_neighborsYes'><label for='" + me.pre + "menu5_neighborsYes'>Yes</label></li>";
+        html += "                      <li><input type='radio' name='" + me.pre + "menu5_neighbors' id='" + me.pre + "menu5_neighborsNo' checked><label for='" + me.pre + "menu5_neighborsNo'>No</label></li>";
+        html += "                  </ul>";
+        html += "                </li>";
+
+
         html += "              </ul>";
         html += "              </div>";
         html += "          </accordion>";
@@ -4296,6 +4385,20 @@ iCn3DUI.prototype = {
         });
     },
 
+    clickMenu2_pickingNo: function() { var me = this;
+        $("#" + me.pre + "menu2_pickingNo").click(function (e) {
+           //e.preventDefault();
+
+           //setOption('picking', 'no');
+           me.icn3d.picking = 0;
+           me.icn3d.options['picking'] = 'no';
+           me.setLogCommand('set picking off', true);
+
+           me.icn3d.draw();
+           me.icn3d.removeHighlightObjects();
+        });
+    },
+
     clickMenu2_pickingYes: function() { var me = this;
         $("#" + me.pre + "menu2_pickingYes").click(function (e) {
            //e.preventDefault();
@@ -4307,28 +4410,25 @@ iCn3DUI.prototype = {
         });
     },
 
-    clickMenu2_pickingNo: function() { var me = this;
-        $("#" + me.pre + "menu2_pickingNo").click(function (e) {
-           //e.preventDefault();
-
-           //setOption('picking', 'no');
-           me.icn3d.picking = 0;
-           me.icn3d.options['picking'] = 'no';
-           me.setLogCommand('set picking off', true);
-
-           me.icn3d.draw(undefined, undefined);
-           me.icn3d.removeHighlightObjects();
-        });
-    },
-
     clickMenu2_pickingResidue: function() { var me = this;
         $("#" + me.pre + "menu2_pickingResidue").click(function (e) {
            //e.preventDefault();
 
            //setOption('picking', 'yes');
            me.icn3d.picking = 2;
-           me.icn3d.options['picking'] = 'atom';
+           me.icn3d.options['picking'] = 'residue';
            me.setLogCommand('set picking residue', true);
+        });
+    },
+
+    clickMenu2_pickingStrand: function() { var me = this;
+        $("#" + me.pre + "menu2_pickingStrand").click(function (e) {
+           //e.preventDefault();
+
+           //setOption('picking', 'yes');
+           me.icn3d.picking = 3;
+           me.icn3d.options['picking'] = 'strand';
+           me.setLogCommand('set picking strand', true);
         });
     },
 
@@ -4629,6 +4729,7 @@ iCn3DUI.prototype = {
         });
     },
 
+/*
     clickMenu4_colorBfactor: function() { var me = this;
         $("#" + me.pre + "menu4_colorBfactor").click(function (e) {
            //e.preventDefault();
@@ -4637,6 +4738,7 @@ iCn3DUI.prototype = {
            me.setLogCommand('color B factor', true);
         });
     },
+*/
 
     clickMenu4_colorResidue: function() { var me = this;
         $("#" + me.pre + "menu4_colorResidue").click(function (e) {
@@ -4647,12 +4749,12 @@ iCn3DUI.prototype = {
         });
     },
 
-    clickMenu4_colorPolarity: function() { var me = this;
-        $("#" + me.pre + "menu4_colorPolarity").click(function (e) {
+    clickMenu4_colorCharge: function() { var me = this;
+        $("#" + me.pre + "menu4_colorCharge").click(function (e) {
            //e.preventDefault();
 
-           me.setOption('color', 'polarity');
-           me.setLogCommand('color polarity', true);
+           me.setOption('color', 'charge');
+           me.setLogCommand('color charge', true);
         });
     },
 
@@ -4746,21 +4848,26 @@ iCn3DUI.prototype = {
     },
 
     // menu 5
-    clickMenu5_showsurfaceYes: function() { var me = this;
-        $("#" + me.pre + "menu5_showsurfaceYes").click(function (e) {
+    clickMenu5_neighborsYes: function() { var me = this;
+        $("#" + me.pre + "menu5_neighborsYes").click(function (e) {
            //e.preventDefault();
 
-           me.setOption('showsurface', 'yes');
-           me.setLogCommand('set surface on', true);
+           me.icn3d.bConsiderNeighbors = true;
+
+           me.icn3d.draw();
+
+           me.setLogCommand('set surface neighbors on', true);
         });
     },
 
-    clickMenu5_showsurfaceNo: function() { var me = this;
-        $("#" + me.pre + "menu5_showsurfaceNo").click(function (e) {
+    clickMenu5_neighborsNo: function() { var me = this;
+        $("#" + me.pre + "menu5_neighborsNo").click(function (e) {
            //e.preventDefault();
 
-           me.setOption('showsurface', 'no');
-           me.setLogCommand('set surface off', true);
+           me.icn3d.bConsiderNeighbors = false;
+           me.icn3d.draw();
+
+           me.setLogCommand('set surface neighbors off', true);
         });
     },
 
@@ -5792,6 +5899,8 @@ iCn3DUI.prototype = {
 
                me.setLogCommand('load pdb file ' + $("#" + me.pre + "pdbfile").val(), false);
 
+               //me.icn3d.bLoadpdbfile= true;
+
                me.loadPdbData(dataStr);
              };
 
@@ -6156,6 +6265,7 @@ iCn3DUI.prototype = {
         me.clickMenu2_pickingYes();
         me.clickMenu2_pickingNo();
         me.clickMenu2_pickingResidue();
+        me.clickMenu2_pickingStrand();
         me.clickMenu2_aroundsphere();
         me.clickMenu2_select_chain();
         me.clickMenu3_proteinRibbon();
@@ -6189,9 +6299,9 @@ iCn3DUI.prototype = {
         me.clickMenu4_colorSpectrum();
         me.clickMenu4_colorChain();
         me.clickMenu4_colorSS();
-        me.clickMenu4_colorBfactor();
+        //me.clickMenu4_colorBfactor();
         me.clickMenu4_colorResidue();
-        me.clickMenu4_colorPolarity();
+        me.clickMenu4_colorCharge();
         me.clickMenu4_colorAtom();
         me.clickMenu4_colorRed();
         me.clickMenu4_colorGreen();
@@ -6202,8 +6312,8 @@ iCn3DUI.prototype = {
         me.clickMenu4_colorWhite();
         me.clickMenu4_colorGrey();
         me.clickMenu4_colorCustom();
-        me.clickMenu5_showsurfaceYes();
-        me.clickMenu5_showsurfaceNo();
+        me.clickMenu5_neighborsYes();
+        me.clickMenu5_neighborsNo();
         me.clickMenu5_surfaceVDW();
         me.clickMenu5_surfaceSES();
         me.clickMenu5_surfaceSAS();
