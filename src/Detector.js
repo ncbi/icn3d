@@ -1,5 +1,11 @@
-/*! The file full_ui_all.js contains the following files: Detector.js, CanvasRenderer.js, TrackballControls.js, OrthographicTrackballControls.js, Projector.js, marchingcube.js, ProteinSurface4.js, setupsurface.js, icn3d.js, and full_ui.js.
- * The file simple_ui_all.js contains the following files: Detector.js, CanvasRenderer.js, TrackballControls.js, OrthographicTrackballControls.js, Projector.js, marchingcube.js, ProteinSurface4.js, setupsurface.js, icn3d.js, and simple_ui.js.
+/*! The file full_ui_all.js contains the following files: Detector.js,
+ * CanvasRenderer.js, TrackballControls.js, OrthographicTrackballControls.js,
+ * Projector.js, marchingcube.js, ProteinSurface4.js, setupsurface.js, icn3d.js,
+ * and full_ui.js.
+ * The file simple_ui_all.js contains the following files: Detector.js,
+ * CanvasRenderer.js, TrackballControls.js, OrthographicTrackballControls.js,
+ * Projector.js, marchingcube.js, ProteinSurface4.js, setupsurface.js, icn3d.js,
+ * and simple_ui.js.
  */
 
 /*! Detector.js from http://threejs.org/
