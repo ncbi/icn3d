@@ -2,11 +2,11 @@
 
 ## iCn3D
 
-"I see in 3D" (iCn3D) Structure Viewer is a WebGL-based 3D viewer using three.js and jquery. It is based on the 3D styles of [GLmol](http://webglmol.osdn.jp/index-en.html) and [iview](http://istar.cse.cuhk.edu.hk/iview/). Here are some of the added features: picking atoms, selecting residues, shiny material for displaying, improved labeling, saving state, etc.
+"I see in 3D" (iCn3D) Structure Viewer is a WebGL-based 3D viewer using three.js and jquery. It is based on the 3D styles of [iview](http://istar.cse.cuhk.edu.hk/iview/) and [GLmol](http://webglmol.osdn.jp/index-en.html), and the surface generation of [3Dmol](http://3dmol.csb.pitt.edu/). Some of the added/improved features include: picking atoms by mouse, selecting residues on 3D structure or 1D sequence, shiny material for displaying, labeling, saving state, going back and forward, showing highlight with different colors, adding arrows to beta sheets, passing commands in url, sequence window, double bonds for chemicals, full-featured UI, etc.
 
 We provided two versions of iCn3D widgets: [simple interface](https://www.ncbi.nlm.nih.gov/Structure/icn3d/index.html?mmdbid=2por) and [advanced interface](https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?mmdbid=2por). 
 
-1. The simple interface has the minimum javascript code for the interface and is easy to understand. It has the basic features to change color and styles.
+1. The simple interface has the minimum javascript code for the interface and is easy to understand. It has the basic features such as changing color and styles.
 2. The advanced interface has a library for the interface and is more complicated to understand. It has many features.
 
 Either of these widgets could be easily added to your own web pages. Please see the [help page](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d.html) for more details.
@@ -33,11 +33,16 @@ See the [help page](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d.html) for
 ## Tools based on
 
 * **[iview](http://istar.cse.cuhk.edu.hk/iview/)**: iCn3D is mainly based on iview.
-* **[GLmol](http://webglmol.osdn.jp/index-en.html)**: Some features (such as drawing cartoons for nucleotides) are from GLmol.
+* **[GLmol](http://webglmol.osdn.jp/index-en.html)**: Drawing cartoon of nucleotides is from GLmol.
+* **[3Dmol](http://3dmol.csb.pitt.edu/)**: The surface generation and labeling are from 3Dmol.
 
 ## Download
 
-The complete version with all libraries can be downloaded from [https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-0.9.0-dev.zip](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-0.9.0-dev.zip)
+The complete version with all libraries can be downloaded from [https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-0.9.1-dev.zip](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-0.9.1-dev.zip)
+
+## Contact
+
+Please send all comments to wangjiy@ncbi.nlm.nih.gov. 
 
 ## Building
 
@@ -87,6 +92,6 @@ gulp gh-pages
 
 ## Change log
 
-This is a beta release. Please send all comments to wangjiy@ncbi.nlm.nih.gov. 
+The beta version icn3d-0.9.1-dev was release on Feb 9, 2016. The surface generation was switched from the iview version (surface.js) to the more efficient 3Dmol version (ProteinSurface4.js and marchingcube.js).
 
-
+The beta version icn3d-0.9.0-dev was release on Jan 17, 2016. 

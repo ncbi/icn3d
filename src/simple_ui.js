@@ -1,5 +1,5 @@
 /*! simple_ui.js
- * @author Jiyao Wang
+ * @author Jiyao Wang / https://github.com/ncbi/icn3d
  * simple UI of iCn3D
  */
 
@@ -95,29 +95,40 @@ var show3DStructure = function(cfg) {
         html += "<option value='nothing'>hide</option>";
         html += "</select>";
         html += "</div>";
-    }
 
-    html += "<div class='option'>";
-    html += "<b>&nbsp;&nbsp;Ligands</b>";
-    html += "<select id='" + pre + "ligands'>";
-    html += "<option value='lines'>lines</option>";
-    html += "<option value='stick' selected>stick</option>";
-    html += "<option value='ball & stick'>ball and stick</option>";
-    html += "<option value='sphere'>sphere</option>";
-    html += "<option value='nothing'>hide</option>";
-    html += "</select>";
-    html += "</div>";
+		html += "<div class='option'>";
+		html += "<b>&nbsp;&nbsp;Ligands</b>";
+		html += "<select id='" + pre + "ligands'>";
+		html += "<option value='lines'>lines</option>";
+		html += "<option value='stick' selected>stick</option>";
+		html += "<option value='ball & stick'>ball and stick</option>";
+		html += "<option value='sphere'>sphere</option>";
+		html += "<option value='nothing'>hide</option>";
+		html += "</select>";
+		html += "</div>";
+    }
+    else {
+		html += "<div class='option'>";
+		html += "<b>&nbsp;&nbsp;Ligands</b>";
+		html += "<select id='" + pre + "ligands'>";
+		html += "<option value='lines'>lines</option>";
+		html += "<option value='stick'>stick</option>";
+		html += "<option value='ball & stick' selected>ball and stick</option>";
+		html += "<option value='sphere'>sphere</option>";
+		html += "<option value='nothing'>hide</option>";
+		html += "</select>";
+		html += "</div>";
+	}
 
     html += "<div class='option'>";
     html += "<b>&nbsp;&nbsp;Color</b>";
     html += "<select id='" + pre + "color'>";
     if(cfg.cid === undefined) {
         html += "<option value='spectrum' selected>spectrum</option>";
-        html += "<option value='chain'>chain</option>";
         html += "<option value='secondary structure'>secondary structure</option>";
-        html += "<option value='B factor'>B factor</option>";
+        html += "<option value='charge'>charge</option>";
+        html += "<option value='chain'>chain</option>";
         html += "<option value='residue'>residue</option>";
-        html += "<option value='polarity'>polarity</option>";
     }
     html += "<option value='atom'>atom</option>";
     html += "<option value='red'>red</option>";
@@ -222,6 +233,7 @@ var show3DStructure = function(cfg) {
 
     if(cfg.cid !== undefined) {
         options['picking'] = 'atom';
+        options['ligands'] = 'ball & stick';
     }
 
     icn3d.cloneHash(options, icn3d.options);
@@ -279,10 +291,15 @@ var show3DStructure = function(cfg) {
     function downloadPdb(pdbid) {
        // The PDB service doesn't support https, so use our reverse-proxy
        // service when using https
-       var uri = (document.location.protocol !== "https:") ?
-           "http://www.rcsb.org/pdb/files/" + pdbid + ".pdb" :
-           "https://www.ncbi.nlm.nih.gov/Structure/mmcifparser/" +
-              "mmcifparser.cgi?pdbid=" + pdbid;
+       var uri, dataType;
+       if(document.location.protocol !== "https:") {
+           uri = "http://www.rcsb.org/pdb/files/" + pdbid + ".pdb";
+           dataType = "text";
+       }
+       else {
+           uri = "https://www.ncbi.nlm.nih.gov/Structure/mmcifparser/mmcifparser.cgi?jsonp=t&pdbid=" + pdbid;
+           dataType = "jsonp";
+       }
 
        icn3d.bCid = undefined;
 
@@ -291,12 +308,17 @@ var show3DStructure = function(cfg) {
 
        $.ajax({
           url: uri,
-          dataType: 'text',
+          dataType: dataType,
           cache: true,
           beforeSend: function() { $("#" + pre + "wait").show(); $("#" + pre + "canvas").hide(); },
           complete: function() { $("#" + pre + "wait").hide(); $("#" + pre + "canvas").show(); },
           success: function(data) {
-            icn3d.loadPDB(data);
+			if(document.location.protocol !== "https:") {
+				icn3d.loadPDB(data);
+			}
+			else {
+				icn3d.loadPDB(data.data);
+			}
 
             //icn3d.inputid.idtype = "pdbid";
             //icn3d.inputid.id = pdbid;
@@ -564,6 +586,15 @@ var show3DStructure = function(cfg) {
             icn3d.atoms[from].bondOrder.push(order);
             icn3d.atoms[to].bonds.push(from);
             icn3d.atoms[to].bondOrder.push(order);
+
+            if(order == 2) {
+				icn3d.doublebonds[from + '_' + to] = 1;
+				icn3d.doublebonds[to + '_' + from] = 1;
+			}
+			else if(order == 3) {
+				icn3d.triplebonds[from + '_' + to] = 1;
+				icn3d.triplebonds[to + '_' + from] = 1;
+			}
         }
 
         var pmin = new THREE.Vector3( 9999, 9999, 9999);

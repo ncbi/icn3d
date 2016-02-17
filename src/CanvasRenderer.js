@@ -1,4 +1,4 @@
-/*! CanvasRenderer.js
+/*! CanvasRenderer.js from http://threejs.org/
  * @author mrdoob / http://mrdoob.com/
  */
 

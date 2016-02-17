@@ -45,18 +45,6 @@ gulp.task('copy',
         .pipe(gulp.dest(dist));
   });
 
-gulp.task('surface',
-  'surface.js is special; push both minified and non-minified into dist',
-  ['clean'],
-  function() {
-    return gulp.src("src/surface.js")
-        .pipe(gulp.dest(dist))
-        .pipe(uglify())
-        .pipe(rename({ extname: '.min.js' }))
-        .pipe(gulp.dest(dist));
-  });
-
-
 // Helper function to create a gulp task to concatenate and minify
 // simple and full
 function make_js_task(name, src) {
@@ -80,6 +68,9 @@ var common_js = [
     "src/TrackballControls.js",
     "src/OrthographicTrackballControls.js",
     "src/Projector.js",
+    "src/marchingcube.js",
+    "src/ProteinSurface4.js",
+    "src/setupsurface.js",
     "src/icn3d.js",
 ];
 
@@ -106,8 +97,6 @@ gulp.task('html',
                     new_src = "lib/" + m[1];
                 else if (m = src_file.match(/^src\/(.*\.css)$/))
                     new_src = m[1];
-                else if (src_file == "src/surface.js")
-                    new_src = "surface.min.js";
                 else if (m = src_file.match(/^src\/(.*_ui)\.js/))
                     new_src = m[1] + "_all.min.js";
                 else {
@@ -123,7 +112,7 @@ gulp.task('html',
 
 gulp.task('dist',
   'Prepare all the distribution files (except the .zip).',
-  ['libs', 'copy', 'surface',
+  ['libs', 'copy',
    'src-js-simple', 'src-js-full', 'html']);
 
 gulp.task('zip',

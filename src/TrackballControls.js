@@ -1,4 +1,4 @@
-/*! TrackballControls.js from three.js
+/*! TrackballControls.js from http://threejs.org/
  * @author Eberhard Graether / http://egraether.com/
  * @author Mark Lundin  / http://mark-lundin.com
  * modified by Jiyao Wang
