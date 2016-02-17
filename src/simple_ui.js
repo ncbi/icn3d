@@ -96,29 +96,29 @@ var show3DStructure = function(cfg) {
         html += "</select>";
         html += "</div>";
 
-		html += "<div class='option'>";
-		html += "<b>&nbsp;&nbsp;Ligands</b>";
-		html += "<select id='" + pre + "ligands'>";
-		html += "<option value='lines'>lines</option>";
-		html += "<option value='stick' selected>stick</option>";
-		html += "<option value='ball & stick'>ball and stick</option>";
-		html += "<option value='sphere'>sphere</option>";
-		html += "<option value='nothing'>hide</option>";
-		html += "</select>";
-		html += "</div>";
+        html += "<div class='option'>";
+        html += "<b>&nbsp;&nbsp;Ligands</b>";
+        html += "<select id='" + pre + "ligands'>";
+        html += "<option value='lines'>lines</option>";
+        html += "<option value='stick' selected>stick</option>";
+        html += "<option value='ball & stick'>ball and stick</option>";
+        html += "<option value='sphere'>sphere</option>";
+        html += "<option value='nothing'>hide</option>";
+        html += "</select>";
+        html += "</div>";
     }
     else {
-		html += "<div class='option'>";
-		html += "<b>&nbsp;&nbsp;Ligands</b>";
-		html += "<select id='" + pre + "ligands'>";
-		html += "<option value='lines'>lines</option>";
-		html += "<option value='stick'>stick</option>";
-		html += "<option value='ball & stick' selected>ball and stick</option>";
-		html += "<option value='sphere'>sphere</option>";
-		html += "<option value='nothing'>hide</option>";
-		html += "</select>";
-		html += "</div>";
-	}
+        html += "<div class='option'>";
+        html += "<b>&nbsp;&nbsp;Ligands</b>";
+        html += "<select id='" + pre + "ligands'>";
+        html += "<option value='lines'>lines</option>";
+        html += "<option value='stick'>stick</option>";
+        html += "<option value='ball & stick' selected>ball and stick</option>";
+        html += "<option value='sphere'>sphere</option>";
+        html += "<option value='nothing'>hide</option>";
+        html += "</select>";
+        html += "</div>";
+    }
 
     html += "<div class='option'>";
     html += "<b>&nbsp;&nbsp;Color</b>";
@@ -313,12 +313,12 @@ var show3DStructure = function(cfg) {
           beforeSend: function() { $("#" + pre + "wait").show(); $("#" + pre + "canvas").hide(); },
           complete: function() { $("#" + pre + "wait").hide(); $("#" + pre + "canvas").show(); },
           success: function(data) {
-			if(document.location.protocol !== "https:") {
-				icn3d.loadPDB(data);
-			}
-			else {
-				icn3d.loadPDB(data.data);
-			}
+            if(document.location.protocol !== "https:") {
+                icn3d.loadPDB(data);
+            }
+            else {
+                icn3d.loadPDB(data.data);
+            }
 
             //icn3d.inputid.idtype = "pdbid";
             //icn3d.inputid.id = pdbid;
@@ -588,13 +588,13 @@ var show3DStructure = function(cfg) {
             icn3d.atoms[to].bondOrder.push(order);
 
             if(order == 2) {
-				icn3d.doublebonds[from + '_' + to] = 1;
-				icn3d.doublebonds[to + '_' + from] = 1;
-			}
-			else if(order == 3) {
-				icn3d.triplebonds[from + '_' + to] = 1;
-				icn3d.triplebonds[to + '_' + from] = 1;
-			}
+                icn3d.doublebonds[from + '_' + to] = 1;
+                icn3d.doublebonds[to + '_' + from] = 1;
+            }
+            else if(order == 3) {
+                icn3d.triplebonds[from + '_' + to] = 1;
+                icn3d.triplebonds[to + '_' + from] = 1;
+            }
         }
 
         var pmin = new THREE.Vector3( 9999, 9999, 9999);

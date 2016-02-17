@@ -994,7 +994,7 @@ iCn3D.prototype = {
 
         this.residueId2Name = {}; // molecule_chain_resi -> one letter abbreviation
 
-        this.moleculeTitle = "";
+        //this.moleculeTitle = "";
 
         this.atoms = {};
         this.displayAtoms = {};
@@ -1057,10 +1057,14 @@ iCn3D.prototype = {
             var record = line.substr(0, 6);
 
             if (record === 'HEADER') {
-                var name = line.substr(10, 40);
+                //var name = line.substr(10, 40);
                 var id = line.substr(62, 4);
 
-                this.moleculeTitle = name.trim() + " (" + id + ")";
+                this.moleculeTitle = '';
+
+            } else if (record === 'TITLE ') {
+                var name = line.substr(10);
+                this.moleculeTitle += name.trim() + " ";
 
             } else if (record === 'HELIX ') {
                 var startChain = line.substr(19, 1);
@@ -1234,7 +1238,7 @@ iCn3D.prototype = {
                 else if(this.atoms[serial].ss === 'sheet') {
                     secondarys = 'E';
                 }
-                else if(!this.atoms[serial].het) {
+                else if(!this.atoms[serial].het && this.residueColors.hasOwnProperty(this.atoms[serial].resn.toUpperCase()) ) {
                     secondarys = 'C';
                 }
 
@@ -1411,10 +1415,13 @@ iCn3D.prototype = {
         if (this.maxD < 25) this.maxD = 25;
     },
 
-    cloneHash: function(from, to) {
+    cloneHash: function(from) {
+      var to = {};
       for(var i in from) {
         to[i] = from[i];
       }
+
+      return to;
     },
 
     residueName2Abbr: function(residueName) {
@@ -1728,76 +1735,76 @@ iCn3D.prototype = {
             this.createRepresentationSub(atoms, function (atom0) {
                 me.createSphere(atom0, atomR, !scale, scale, bHighlight);
             }, function (atom0, atom1) {
-				var mp = atom0.coord.clone().add(atom1.coord).multiplyScalar(0.5);
-				var pair = atom0.serial + '_' + atom1.serial;
+                var mp = atom0.coord.clone().add(atom1.coord).multiplyScalar(0.5);
+                var pair = atom0.serial + '_' + atom1.serial;
 
-				if(me.doublebonds.hasOwnProperty(pair)) { // show double bond
-					var a0, a1, a2;
-					if(atom0.bonds.length > atom1.bonds.length) {
-						a0 = atom0.serial;
-						a1 = atom0.bonds[0];
-						a2 = atom0.bonds[1];
-					}
-					else {
-						a0 = atom1.serial;
-						a1 = atom1.bonds[0];
-						a2 = atom1.bonds[1];
-					}
+                if(me.doublebonds.hasOwnProperty(pair)) { // show double bond
+                    var a0, a1, a2;
+                    if(atom0.bonds.length > atom1.bonds.length) {
+                        a0 = atom0.serial;
+                        a1 = atom0.bonds[0];
+                        a2 = atom0.bonds[1];
+                    }
+                    else {
+                        a0 = atom1.serial;
+                        a1 = atom1.bonds[0];
+                        a2 = atom1.bonds[1];
+                    }
 
-					var v1 = me.atoms[a0].coord.clone();
-					v1.sub(me.atoms[a1].coord);
-					var v2 = me.atoms[a0].coord.clone();
-					v2.sub(me.atoms[a2].coord);
+                    var v1 = me.atoms[a0].coord.clone();
+                    v1.sub(me.atoms[a1].coord);
+                    var v2 = me.atoms[a0].coord.clone();
+                    v2.sub(me.atoms[a2].coord);
 
-					v1.cross(v2);
+                    v1.cross(v2);
 
-					var v0 = atom1.coord.clone();
-					v0.sub(atom0.coord);
+                    var v0 = atom1.coord.clone();
+                    v0.sub(atom0.coord);
 
-					v0.cross(v1).normalize().multiplyScalar(0.2);
+                    v0.cross(v1).normalize().multiplyScalar(0.2);
 
-					if (atom0.color === atom1.color) {
-						me.createCylinder(atom0.coord.clone().add(v0), atom1.coord.clone().add(v0), me.cylinderRadius * 0.3, atom0.color, bHighlight);
-						me.createCylinder(atom0.coord.clone().sub(v0), atom1.coord.clone().sub(v0), me.cylinderRadius * 0.3, atom0.color, bHighlight);
-					} else {
-						me.createCylinder(atom0.coord.clone().add(v0), mp.clone().add(v0), me.cylinderRadius * 0.3, atom0.color, bHighlight);
-						me.createCylinder(atom1.coord.clone().add(v0), mp.clone().add(v0), me.cylinderRadius * 0.3, atom1.color, bHighlight);
+                    if (atom0.color === atom1.color) {
+                        me.createCylinder(atom0.coord.clone().add(v0), atom1.coord.clone().add(v0), me.cylinderRadius * 0.3, atom0.color, bHighlight);
+                        me.createCylinder(atom0.coord.clone().sub(v0), atom1.coord.clone().sub(v0), me.cylinderRadius * 0.3, atom0.color, bHighlight);
+                    } else {
+                        me.createCylinder(atom0.coord.clone().add(v0), mp.clone().add(v0), me.cylinderRadius * 0.3, atom0.color, bHighlight);
+                        me.createCylinder(atom1.coord.clone().add(v0), mp.clone().add(v0), me.cylinderRadius * 0.3, atom1.color, bHighlight);
 
-						me.createCylinder(atom0.coord.clone().sub(v0), mp.clone().sub(v0), me.cylinderRadius * 0.3, atom0.color, bHighlight);
-						me.createCylinder(atom1.coord.clone().sub(v0), mp.clone().sub(v0), me.cylinderRadius * 0.3, atom1.color, bHighlight);
-					}
-				}
-				else if(me.triplebonds.hasOwnProperty(pair)) { // show triple bond
-					var random = new THREE.Vector3(Math.random(),Math.random(),Math.random());
-					var v = atom1.coord.clone();
-					v.sub(atom0.coord);
+                        me.createCylinder(atom0.coord.clone().sub(v0), mp.clone().sub(v0), me.cylinderRadius * 0.3, atom0.color, bHighlight);
+                        me.createCylinder(atom1.coord.clone().sub(v0), mp.clone().sub(v0), me.cylinderRadius * 0.3, atom1.color, bHighlight);
+                    }
+                }
+                else if(me.triplebonds.hasOwnProperty(pair)) { // show triple bond
+                    var random = new THREE.Vector3(Math.random(),Math.random(),Math.random());
+                    var v = atom1.coord.clone();
+                    v.sub(atom0.coord);
 
-					var c = random.clone();
-					c.cross(v).normalize().multiplyScalar(0.3);
+                    var c = random.clone();
+                    c.cross(v).normalize().multiplyScalar(0.3);
 
-					if (atom0.color === atom1.color) {
-						me.createCylinder(atom0.coord, atom1.coord, me.cylinderRadius * 0.2, atom0.color, bHighlight);
-						me.createCylinder(atom0.coord.clone().add(c), atom1.coord.clone().add(c), me.cylinderRadius * 0.2, atom0.color, bHighlight);
-						me.createCylinder(atom0.coord.clone().sub(c), atom1.coord.clone().sub(c), me.cylinderRadius * 0.2, atom0.color, bHighlight);
-					} else {
-						me.createCylinder(atom0.coord, mp, me.cylinderRadius * 0.2, atom0.color, bHighlight);
-						me.createCylinder(atom1.coord, mp, me.cylinderRadius * 0.2, atom1.color, bHighlight);
+                    if (atom0.color === atom1.color) {
+                        me.createCylinder(atom0.coord, atom1.coord, me.cylinderRadius * 0.2, atom0.color, bHighlight);
+                        me.createCylinder(atom0.coord.clone().add(c), atom1.coord.clone().add(c), me.cylinderRadius * 0.2, atom0.color, bHighlight);
+                        me.createCylinder(atom0.coord.clone().sub(c), atom1.coord.clone().sub(c), me.cylinderRadius * 0.2, atom0.color, bHighlight);
+                    } else {
+                        me.createCylinder(atom0.coord, mp, me.cylinderRadius * 0.2, atom0.color, bHighlight);
+                        me.createCylinder(atom1.coord, mp, me.cylinderRadius * 0.2, atom1.color, bHighlight);
 
-						me.createCylinder(atom0.coord.clone().add(c), mp.clone().add(c), me.cylinderRadius * 0.2, atom0.color, bHighlight);
-						me.createCylinder(atom1.coord.clone().add(c), mp.clone().add(c), me.cylinderRadius * 0.2, atom1.color, bHighlight);
+                        me.createCylinder(atom0.coord.clone().add(c), mp.clone().add(c), me.cylinderRadius * 0.2, atom0.color, bHighlight);
+                        me.createCylinder(atom1.coord.clone().add(c), mp.clone().add(c), me.cylinderRadius * 0.2, atom1.color, bHighlight);
 
-						me.createCylinder(atom0.coord.clone().sub(c), mp.clone().sub(c), me.cylinderRadius * 0.2, atom0.color, bHighlight);
-						me.createCylinder(atom1.coord.clone().sub(c), mp.clone().sub(c), me.cylinderRadius * 0.2, atom1.color, bHighlight);
-					}
-				}
-				else {
-					if (atom0.color === atom1.color) {
-						me.createCylinder(atom0.coord, atom1.coord, bondR, atom0.color, bHighlight);
-					} else {
-						me.createCylinder(atom0.coord, mp, bondR, atom0.color, bHighlight);
-						me.createCylinder(atom1.coord, mp, bondR, atom1.color, bHighlight);
-					}
-				}
+                        me.createCylinder(atom0.coord.clone().sub(c), mp.clone().sub(c), me.cylinderRadius * 0.2, atom0.color, bHighlight);
+                        me.createCylinder(atom1.coord.clone().sub(c), mp.clone().sub(c), me.cylinderRadius * 0.2, atom1.color, bHighlight);
+                    }
+                }
+                else {
+                    if (atom0.color === atom1.color) {
+                        me.createCylinder(atom0.coord, atom1.coord, bondR, atom0.color, bHighlight);
+                    } else {
+                        me.createCylinder(atom0.coord, mp, bondR, atom0.color, bHighlight);
+                        me.createCylinder(atom1.coord, mp, bondR, atom1.color, bHighlight);
+                    }
+                }
             });
         }
         else if(bHighlight === 2) {
@@ -2456,7 +2463,7 @@ iCn3D.prototype = {
             var firstAtom, lastAtom;
             var index = 0, length = Object.keys(atoms).length;
 
-            this.cloneHash(atoms, atomsAdjust);
+            atomsAdjust = this.cloneHash(atoms);
             for(var serial in atoms) {
               currChain = atoms[serial].structure + '_' + atoms[serial].chain;
               currResi = parseInt(atoms[serial].resi);
@@ -2498,13 +2505,13 @@ iCn3D.prototype = {
                 }
 
                 // add one extra residue for coils between strands/helix
-                if(bHighlight === 1 && firstAtom.ss === 'coil') {
+                if(this.picking === 3 && bHighlight === 1 && firstAtom.ss === 'coil') {
                         var residueid = firstAtom.structure + '_' + firstAtom.chain + '_' + (firstAtom.resi - 1);
                         if(this.residues.hasOwnProperty(residueid)) {
-							atomsAdjust = this.unionHash(atomsAdjust, this.hash2Atoms(this.residues[residueid]));
-							atoms = this.unionHash(atoms, this.hash2Atoms(this.residues[residueid]));
-						}
-				}
+                            atomsAdjust = this.unionHash(atomsAdjust, this.hash2Atoms(this.residues[residueid]));
+                            atoms = this.unionHash(atoms, this.hash2Atoms(this.residues[residueid]));
+                        }
+                }
 
                 // fill the end
                 var endResi = lastAtom.resi;
@@ -2530,13 +2537,13 @@ iCn3D.prototype = {
                 }
 
                 // add one extra residue for coils between strands/helix
-                if(bHighlight === 1 && lastAtom.ss === 'coil') {
+                if(this.picking === 3 && bHighlight === 1 && lastAtom.ss === 'coil') {
                         var residueid = lastAtom.structure + '_' + lastAtom.chain + '_' + (lastAtom.resi + 1);
                         if(this.residues.hasOwnProperty(residueid)) {
-							atomsAdjust = this.unionHash(atomsAdjust, this.hash2Atoms(this.residues[residueid]));
-							atoms = this.unionHash(atoms, this.hash2Atoms(this.residues[residueid]));
-						}
-				}
+                            atomsAdjust = this.unionHash(atomsAdjust, this.hash2Atoms(this.residues[residueid]));
+                            atoms = this.unionHash(atoms, this.hash2Atoms(this.residues[residueid]));
+                        }
+                }
 
                 // reset notshow
                 if(lastAtom.notshow) lastAtom.notshow = undefined;
@@ -2873,11 +2880,16 @@ iCn3D.prototype = {
         this.createTube(tubeAtoms, 'CA', 0.3, bHighlight);
     },
 
-    createStrandBrick: function (brick, color, thickness) {
+    createStrandBrick: function (brick, color, thickness, bHighlight) {
         var num = this.strandDIV;
         var div = this.axisDIV;
         var doNotSmoothen = false;
         var helixSheetWidth = this.helixSheetWidth;
+
+        if(bHighlight === 2) {
+            thickness *= 1.5;
+            helixSheetWidth *= 1.5;
+        }
 
         var points = {}; for (var k = 0; k < num; ++k) points[k] = [];
         var colors = [];
@@ -2900,7 +2912,7 @@ iCn3D.prototype = {
                 points[j].push(v);
             }
         }
-        this.createStrip(points[0], points[num - 1], colors, div, thickness);
+        this.createStrip(points[0], points[num - 1], colors, div, thickness, bHighlight);
     },
 
     // modified from iview (http://istar.cse.cuhk.edu.hk/iview/)
@@ -3351,6 +3363,19 @@ iCn3D.prototype = {
         sprite.scale.set(16*factor, 8*factor, 1.0);
 
         return sprite;
+/*
+    var material1 = new THREE.MeshBasicMaterial( { map: texture, side: THREE.DoubleSide } );
+    material1.transparent = true;
+
+    var mesh1 = new THREE.Mesh(
+        new THREE.PlaneGeometry(this.WIDTH, this.HEIGHT),
+        material1
+    );
+
+//    mesh1.position.set(position.x + 10,position.y,position.z);
+
+    return mesh1;
+*/
     },
 
     // http://stackoverflow.com/questions/5623838/rgb-to-hex-and-hex-to-rgb
@@ -3825,7 +3850,7 @@ iCn3D.prototype = {
         }
     },
 
-    drawHelixBrick: function(molid2ss, molid2color) {
+    drawHelixBrick: function(molid2ss, molid2color, bHighlight) {
         for(var molid in molid2ss) {
           for(var j = 0, jl = molid2ss[molid].length; j < jl; ++j) {
             if(molid2ss[molid][j].type === 'helix') {
@@ -3835,7 +3860,7 @@ iCn3D.prototype = {
               var p0 = new THREE.Vector3(molid2ss[molid][j].coords[0].x, molid2ss[molid][j].coords[0].y, molid2ss[molid][j].coords[0].z);
               var p1 = new THREE.Vector3(molid2ss[molid][j].coords[1].x, molid2ss[molid][j].coords[1].y, molid2ss[molid][j].coords[1].z);
 
-              this.createCylinder(p0, p1, radius, color);
+              this.createCylinder(p0, p1, radius, color, bHighlight);
             }
 
             else if(molid2ss[molid][j].type === 'brick') {
@@ -3848,7 +3873,7 @@ iCn3D.prototype = {
               // create strands with any width and thickness
               var brick = molid2ss[molid][j];
               var color = molid2color[molid];
-              this.createStrandBrick(brick, color, this.thickness);
+              this.createStrandBrick(brick, color, this.thickness, bHighlight);
             }
             else if(molid2ss[molid][j].type === 'coil') {
                  var points = [], colors = [], radii = [];
@@ -3976,6 +4001,10 @@ iCn3D.prototype = {
                 break;
             case 'molecular surface':
                 this.createSurfaceRepresentation(currAtoms, 4, options.wireframe, options.opacity);
+                break;
+            case 'nothing':
+                // remove surfaces
+                this.removeSurfaces();
                 break;
         }
 
@@ -4383,6 +4412,8 @@ iCn3D.prototype = {
         if(bPrevColor === undefined || bPrevColor) this.applyPrevColor();
 
         if(this.bSSOnly) this.drawHelixBrick(this.molid2ss, this.molid2color);
+        // highlight the helices and bricks
+        //if(this.bSSOnly) this.drawHelixBrick(this.molid2ss, this.molid2color, this.bHighlight);
 
         if(this.bAssembly) this.drawSymmetryMates2();
 
@@ -4390,6 +4421,10 @@ iCn3D.prototype = {
         if(this.highlightAtoms !== undefined && Object.keys(this.highlightAtoms).length > 0 && Object.keys(this.highlightAtoms).length < Object.keys(this.displayAtoms).length) {
             this.removeHighlightObjects();
             this.addHighlightObjects(undefined, false);
+        }
+        else {
+            //this.removeSurfaces(); // called in this.removeHighlightObjects
+            this.applySurfaceOptions();    // called in this.addHighlightObjects
         }
 
         if(this.bRender === true) {
@@ -4638,7 +4673,7 @@ iCn3D.prototype = {
 
        this.prevHighlightObjects = [];
 
-       this.removeSurfaces();
+       //this.removeSurfaces();
 
        //this.render();
     },

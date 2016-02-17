@@ -92,6 +92,6 @@ gulp gh-pages
 
 ## Change log
 
-The beta version icn3d-0.9.1-dev was release on Feb 9, 2016. The surface generation was switched from the iview version (surface.js) to the more efficient 3Dmol version (ProteinSurface4.js and marchingcube.js).
+The beta version [icn3d-0.9.1-dev](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-0.9.1-dev.zip) was release on Feb 9, 2016. The surface generation was switched from the iview version (surface.js) to the more efficient 3Dmol version (ProteinSurface4.js and marchingcube.js).
 
-The beta version icn3d-0.9.0-dev was release on Jan 17, 2016. 
+The beta version [icn3d-0.9.0-dev](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-0.9.0-dev.zip) was release on Jan 17, 2016. 
