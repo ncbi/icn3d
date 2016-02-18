@@ -717,13 +717,13 @@ iCn3DUI.prototype = {
     },
 
     downloadAlignment: function (align) { var me = this;
-        var url = "https://www.ncbi.nlm.nih.gov/Structure/vastpp/vastpp.cgi?cmd=c&w3d&ids=" + align;
-        var url2 = "https://www.ncbi.nlm.nih.gov/Structure/vastpp/vastpp.cgi?cmd=c1&d&ids=" + align;
+        //var url = "https://www.ncbi.nlm.nih.gov/Structure/vastpp/vastpp.cgi?cmd=c&w3d&ids=" + align;
+        //var url2 = "https://www.ncbi.nlm.nih.gov/Structure/vastpp/vastpp.cgi?cmd=c1&d&ids=" + align;
 
-        //var alignArray = me.cfg.align.split(',');
-        //var ids_str = (alignArray.length === 2? 'uids=' : 'ids=') + align;
-        //var url = '/Structure/vastplusdev/vastplus.cgi?cmd=c&w3d&' + ids_str;
-        //var url2 = '/Structure/vastplusdev/vastplus.cgi?cmd=c1&d&' + ids_str;
+        var alignArray = me.cfg.align.split(',');
+        var ids_str = (alignArray.length === 2? 'uids=' : 'ids=') + align;
+        var url = 'https://structuredev24.be-md.ncbi.nlm.nih.gov/Structure/vastplusdev/vastplus.cgi?cmd=c&w3d&' + ids_str;
+        var url2 = 'https://structuredev24.be-md.ncbi.nlm.nih.gov/Structure/vastplusdev/vastplus.cgi?cmd=c1&d&' + ids_str;
 
         if(me.cfg.inpara !== undefined) {
           url += me.cfg.inpara;
@@ -1431,15 +1431,15 @@ iCn3DUI.prototype = {
 
               me.icn3d.moleculeTitle +=  "<a href=\"https://www.ncbi.nlm.nih.gov/structure/?term=" + structure.pdbid.toUpperCase() + "\" target=\"_blank\" style=\"color: #DDD;\">" + structure.pdbid.toUpperCase() + "</a>";
 
-              me.pmid += structure.descr.pubmedid;
+              if(structure.descr !== undefined) me.pmid += structure.descr.pubmedid;
               if(i === 0) {
                   me.icn3d.moleculeTitle += " and ";
-                  me.pmid += "_";
+                  if(structure.descr !== undefined) me.pmid += "_";
               }
           }
         }
         else { // mmdbid or mmcif
-              me.icn3d.moleculeTitle += data.descr.name;
+              if(data.descr !== undefined) me.icn3d.moleculeTitle += data.descr.name;
         }
 
         var molid2chain = {}; // for "mmdbid"
