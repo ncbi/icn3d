@@ -68,10 +68,10 @@ body {font-family: Verdana, Arial, Helvetica, sans-serif;}
     </li>
     </ul>
 <br>
-<li><a href="#commands">Commands in URLs and scripts for the advanced interface</a>
-    <ul>
-        <li><a href="#commandsUrl">Commands in URLs</a></li>
-        <li>Commands<table>
+<li><a href="#parameters">URL parameters for the advanced interface</a>
+</li><br>
+<li><a href="#commands">Commands for the advanced interface</a>
+    <table>
         <tbody><tr>
         <td>1. <a href="#file">File</a>&nbsp;&nbsp;</td>
         <td>2. <a href="#select">Select</a>&nbsp;&nbsp;</td>
@@ -81,8 +81,8 @@ body {font-family: Verdana, Arial, Helvetica, sans-serif;}
         <td>5. <a href="#surface">Surface</a>&nbsp;&nbsp;</td>
         <td>6. <a href="#other">Other</a>&nbsp;&nbsp;</td>
         </tr>
-        </tbody></table></li>
-    </ul>
+        </tbody>
+    </table>
 </li><br>
 <li><a href="#DataStructure">Data Structure</a></li><br>
 <li><a href="#DisplayOptions">Display Options</a></li><br>
@@ -313,15 +313,6 @@ We provided two versions of iCn3D widgets: <a href="index.html?mmdbid=2por">simp
 <p>To embed iCn3D Structure Viewer in your own HTML page using iFrame, simply add the following to your page:
 </p><div class="indent"><code>&lt;iframe src="http://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?mmdbid=2por&amp;width=300&amp;height=300&amp;showmenu=0&amp;rotate=0" width="320" height="320" style="border:none"&gt;&lt;/iframe&gt;</code></div>
 
-<p>Both "index.html" and "full.html" accept the following input IDs. You can also add commands in the URL as described <a href="#commandsUrl">here</a>.<br>
-</p><div class="indent">
-<b>pdbid</b>: PDB ID, e.g., <a href="full.html?pdbid=2por">?pdbid=2por</a><br>
-<b>mmcif</b>: mmCIF ID, e.g., <a href="full.html?mmcif=2por">?mmcif=2por</a><br>
-<b>mmdbid</b>: NCBI MMDB ID, e.g., <a href="full.html?mmdbid=2por">?mmdbid=2por</a><br>
-<b>gi</b>: NCBI protein gi number, e.g., <a href="full.html?gi=827343227">?gi=827343227</a><br>
-<b>cid</b>: PubChem Compound ID, e.g., <a href="full.html?cid=2244">?cid=2244</a><br>
-</div>
-<p></p>
 </li>
 <li><a name="embedJS"></a><b>Embed with CSS and Javascript on NCBI servers</b><br>
 
@@ -437,12 +428,28 @@ We provided two versions of iCn3D widgets: <a href="index.html?mmdbid=2por">simp
 
 <hr>
 
+<a name="parameters"></a>
+<h2>URL parameters for the advanced interface<img src="https://www.ncbi.nlm.nih.gov/Structure/IMG/spacer.gif" width="25" height="1" border="0"><a href="#Top"><img src="https://www.ncbi.nlm.nih.gov/Structure/IMG/arrowup_blue.gif" width="12" height="12" border="0" alt="back to top"></a></h2>
+<table><tr valign='top'><th>Parameter</th><th>Simple interface<br/>(index.html)</th><th>Advanced interface<br/>(full.html)</th><th>Description</th></tr>
+<tr valign='top'><td>pdbid</td><td>Yes</td><td>Yes</td><td>PDB ID, e.g., <a href="full.html?pdbid=2por">?pdbid=2por</a></td></tr>
+<tr valign='top'><td>mmcif</td><td>Yes</td><td>Yes</td><td>mmCIF ID, e.g., <a href="full.html?mmcif=2por">?mmcif=2por</a></td></tr>
+<tr valign='top'><td>mmdbid</td><td>Yes</td><td>Yes</td><td>NCBI MMDB ID, e.g., <a href="full.html?mmdbid=2por">?mmdbid=2por</a></td></tr>
+<tr valign='top'><td>gi</td><td>Yes</td><td>Yes</td><td>NCBI protein gi number, e.g., <a href="full.html?gi=827343227">?gi=827343227</a></td></tr>
+<tr valign='top'><td>cid</td><td>Yes</td><td>Yes</td><td>PubChem Compound ID, e.g., <a href="full.html?cid=2244">?cid=2244</a></td></tr>
+<tr valign='top'><td>width</td><td>Yes</td><td>Yes</td><td>Width of the structure image. It can be percentage such as '100%', or pixel values such as 400. The default is '100%'.</td></tr>
+<tr valign='top'><td>height</td><td>Yes</td><td>Yes</td><td>Height of the structure image. It can be percentage such as '100%', or pixel values such as 400. The default is '100%'.</td></tr>
+<tr valign='top'><td>resize</td><td>Yes</td><td>Yes</td><td>Set "true" or "1" to resize the image when the container is resized. The default is "true".</td></tr>
+<tr valign='top'><td>rotate</td><td>Yes</td><td>Yes</td><td>Set "right", "left", "up", or "down" to rotate the structure when it is  displayed at the beginning. The default is "right".</td></tr>
+
+<tr valign='top'><td>showmenu</td><td>No</td><td>Yes</td><td>Set "true" or "1" to show the menus and buttons at the top of the structure canvas. The default is "true".</td></tr>
+<tr valign='top'><td>showseq</td><td>No</td><td>Yes</td><td>Set "true" or "1" to show the sequence window. The default is "false".</td></tr>
+<tr valign='top'><td><a name="commandsUrl"></a>command</td><td>No</td><td>Yes</td><td>Besides the "Script/Log" section, commands can also be attached to the url parameter "command". Several commands can be concatenated with the separator ";", e.g., <a href="full.html?mmdbid=1kq2&amp;command=select :1-20; color green">full.html?mmdbid=1kq2&amp;command=select :1-20; color green</a>.</td></tr>
+</table>
+
+<hr>
+
 <a name="commands"></a>
-<h2>Commands in URLs and scripts for the advanced interface<img src="https://www.ncbi.nlm.nih.gov/Structure/IMG/spacer.gif" width="25" height="1" border="0"><a href="#Top"><img src="https://www.ncbi.nlm.nih.gov/Structure/IMG/arrowup_blue.gif" width="12" height="12" border="0" alt="back to top"></a></h2>
-<a name="commandsUrl"></a><b>Commands in URLs</b> <a href="#Top"><span class="top">&nbsp;&nbsp;&nbsp;</span></a><br>
-Besides the "Script/Log" section, commands can also be attached to the url parameter "command". Several commands can be concatenated with the separator ";". Here is one example: <a href="full.html?mmdbid=1kq2&amp;command=select :1-20; color green">full.html?mmdbid=1kq2&amp;command=select :1-20; color green</a>.<br>
-<br>
-<b>Commands</b><br>
+<h2>Commands for the advanced interface<img src="https://www.ncbi.nlm.nih.gov/Structure/IMG/spacer.gif" width="25" height="1" border="0"><a href="#Top"><img src="https://www.ncbi.nlm.nih.gov/Structure/IMG/arrowup_blue.gif" width="12" height="12" border="0" alt="back to top"></a></h2>
 <a name="file"></a><b>1. File</b> <a href="#Top"><span class="top">&nbsp;&nbsp;&nbsp;</span></a><br>
 <table>
 <tbody><tr><td colspan="2">a) Retrieve by ID</td></tr>

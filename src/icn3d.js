@@ -969,7 +969,7 @@ iCn3D.prototype = {
         this.structures = {}; // molecule name -> array of chains
         this.chains = {}; // molecule_chain name -> array of residues
         this.residues = {}; // molecule_chain_resi name -> atom hash
-        this.secondarys = {}; // molecule_chain_resi name -> secondary structure: 'C', 'H', or 'E'
+        this.secondaries = {}; // molecule_chain_resi name -> secondary structure: 'C', 'H', or 'E'
         this.alignChains = {}; // molecule_chain name -> atom hash
 
         this.chainsSeq = {}; // molecule_chain name -> array of sequence
@@ -1151,7 +1151,7 @@ iCn3D.prototype = {
                 }
             } else if (record === 'ATOM  ' || record === 'HETATM') {
                 var alt = line.substr(16, 1);
-                //if (alt === "B") continue;
+                if (alt === "B") continue;
 
                 // "CA" has to appear before "O". Otherwise the cartoon of secondary structure will have breaks
                 // Concatenation of two pdbs will have several atoms for the same serial
@@ -1231,18 +1231,18 @@ iCn3D.prototype = {
                 chainNum = moleculeNum + "_" + chain;
                 residueNum = chainNum + "_" + resi;
 
-                var secondarys = '-';
+                var secondaries = '-';
                 if(this.atoms[serial].ss === 'helix') {
-                    secondarys = 'H';
+                    secondaries = 'H';
                 }
                 else if(this.atoms[serial].ss === 'sheet') {
-                    secondarys = 'E';
+                    secondaries = 'E';
                 }
                 else if(!this.atoms[serial].het && this.residueColors.hasOwnProperty(this.atoms[serial].resn.toUpperCase()) ) {
-                    secondarys = 'C';
+                    secondaries = 'C';
                 }
 
-                this.secondarys[residueNum] = secondarys;
+                this.secondaries[residueNum] = secondaries;
 
                 // different residue
                 if(residueNum !== prevResidueNum) {
@@ -1282,7 +1282,7 @@ iCn3D.prototype = {
                           if(resi % 10 === 0) numberStr = resi.toString();
 
                         this.chainsAnno[chainNum][0].push(numberStr);
-                        this.chainsAnno[chainNum][1].push(secondarys);
+                        this.chainsAnno[chainNum][1].push(secondaries);
                         this.chainsAnnoTitle[chainNum][0].push("");
                         this.chainsAnnoTitle[chainNum][1].push("SS");
                     }
@@ -1297,7 +1297,7 @@ iCn3D.prototype = {
                           if(resi % 10 === 0) numberStr = resi.toString();
 
                         this.chainsAnno[chainNum][0].push(numberStr);
-                        this.chainsAnno[chainNum][1].push(secondarys);
+                        this.chainsAnno[chainNum][1].push(secondaries);
                     }
                 }
 
@@ -2709,8 +2709,8 @@ iCn3D.prototype = {
                             for (var j = 0, numM1Inv2 = 2 / (num - 1); j < num; ++j) {
                                 var delta = -1 + numM1Inv2 * j;
                                 var v = new THREE.Vector3(prevCoorCA.x + prevCO.x * delta, prevCoorCA.y + prevCO.y * delta, prevCoorCA.z + prevCO.z * delta);
-                                //if (!doNotSmoothen && ss === 'sheet') v.smoothen = true;
-                                if (!doNotSmoothen && ss !== 'coil') v.smoothen = true;
+                                if (!doNotSmoothen && ss === 'sheet') v.smoothen = true;
+                                //if (!doNotSmoothen && ss !== 'coil') v.smoothen = true;
                                 points[j].push(v);
                             }
 
@@ -2772,7 +2772,8 @@ iCn3D.prototype = {
                             for (var j = 0, numM1Inv2 = 2 / (num - 1); j < num; ++j) {
                                 var delta = -1 + numM1Inv2 * j;
                                 var v = new THREE.Vector3(currentCA.x + prevCO.x * delta, currentCA.y + prevCO.y * delta, currentCA.z + prevCO.z * delta);
-                                if (!doNotSmoothen && ss !== 'coil') v.smoothen = true;
+                                if (!doNotSmoothen && ss === 'sheet') v.smoothen = true;
+                                //if (!doNotSmoothen && ss !== 'coil') v.smoothen = true;
                                 points[j].push(v);
                             }
 

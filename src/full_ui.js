@@ -462,7 +462,14 @@ iCn3DUI.prototype = {
                 height = bExpandDialog ? 'auto' : $( window ).height() - me.LESSHEIGHT - 2*me.MENU_HEIGHT;
                 width = bExpandDialog ? 'auto' : 0.5 * $( window ).width() - me.LESSWIDTH;
 
-                var position ={ my: "left top", at: "right top", of: "#" + me.pre + "canvas", collision: "none" };
+                //var position={ my: "left top", at: "right top", of: "#" + me.pre + "canvas", collision: "none" };
+                var position;
+                if(me.cfg.showmenu) {
+                	position ={ my: "left top", at: "right top+80", of: "#" + me.pre + "viewer", collision: "none" };
+				}
+				else {
+					position ={ my: "left top", at: "right top", of: "#" + me.pre + "viewer", collision: "none" };
+				}
 
                 // disable resize
                 me.cfg.resize = false;
@@ -528,9 +535,9 @@ iCn3DUI.prototype = {
       }
 
       // display the structure right away. load the menus and sequences later
-      if(me.cfg.showmenu === undefined || me.cfg.showmenu) {
+      if(me.cfg.showmenu === undefined || me.cfg.showmenu || me.cfg.showseq || me.cfg.showalignseq) {
         setTimeout(function(){
-          me.selectAllUpdateMenuSeq(bInitial);
+          me.selectAllUpdateMenuSeq(bInitial, false);
         }, 0);
       }
 
@@ -601,6 +608,8 @@ iCn3DUI.prototype = {
         me.showTitle();
 
         if(me.cfg.rotate !== undefined) me.rotateStructure(me.cfg.rotate, true);
+
+        if(me.cfg.showseq !== undefined && me.cfg.showseq) me.openDialog(me.pre + 'dl_selectresidues', 'Select residues in sequences with coordinates');
 
         if(me.deferred !== undefined) me.deferred.resolve(); if(me.deferred2 !== undefined) me.deferred2.resolve();
     },
@@ -697,6 +706,8 @@ iCn3DUI.prototype = {
 
             if(me.cfg.rotate !== undefined) me.rotateStructure(me.cfg.rotate, true);
 
+            if(me.cfg.showseq !== undefined && me.cfg.showseq) me.openDialog(me.pre + 'dl_selectresidues', 'Select residues in sequences with coordinates');
+
             if(me.deferred !== undefined) me.deferred.resolve(); if(me.deferred2 !== undefined) me.deferred2.resolve();
         }
         else {
@@ -706,13 +717,13 @@ iCn3DUI.prototype = {
     },
 
     downloadAlignment: function (align) { var me = this;
-//        var url = "https://www.ncbi.nlm.nih.gov/Structure/vastpp/vastpp.cgi?cmd=c&w3d&ids=" + align;
-//        var url2 = "https://www.ncbi.nlm.nih.gov/Structure/vastpp/vastpp.cgi?cmd=c1&d&ids=" + align;
+        var url = "https://www.ncbi.nlm.nih.gov/Structure/vastpp/vastpp.cgi?cmd=c&w3d&ids=" + align;
+        var url2 = "https://www.ncbi.nlm.nih.gov/Structure/vastpp/vastpp.cgi?cmd=c1&d&ids=" + align;
 
-        var alignArray = me.cfg.align.split(',');
-        var ids_str = (alignArray.length === 2? 'uids=' : 'ids=') + align;
-        var url = 'https://structuredev24.be-md.ncbi.nlm.nih.gov/Structure/vastplusdev/vastplus.cgi?cmd=c&w3d&' + ids_str;
-        var url2 = 'https://structuredev24.be-md.ncbi.nlm.nih.gov/Structure/vastplusdev/vastplus.cgi?cmd=c1&d&' + ids_str;
+        //var alignArray = me.cfg.align.split(',');
+        //var ids_str = (alignArray.length === 2? 'uids=' : 'ids=') + align;
+        //var url = '/Structure/vastplusdev/vastplus.cgi?cmd=c&w3d&' + ids_str;
+        //var url2 = '/Structure/vastplusdev/vastplus.cgi?cmd=c1&d&' + ids_str;
 
         if(me.cfg.inpara !== undefined) {
           url += me.cfg.inpara;
@@ -801,7 +812,9 @@ iCn3DUI.prototype = {
                 if(me.cfg.rotate !== undefined) me.rotateStructure(me.cfg.rotate, true);
 
                 // by default, open the seq alignment window
-                if(me.cfg.bShowSeqByDefault !== undefined && me.cfg.bShowSeqByDefault) me.openDialog(me.pre + 'dl_alignment', 'Select residues in aligned sequences');
+                if(me.cfg.showalignseq !== undefined && me.cfg.showalignseq) me.openDialog(me.pre + 'dl_alignment', 'Select residues in aligned sequences');
+
+                if(me.cfg.showseq !== undefined && me.cfg.showseq) me.openDialog(me.pre + 'dl_selectresidues', 'Select residues in sequences with coordinates');
 
                 if(me.deferred !== undefined) me.deferred.resolve(); if(me.deferred2 !== undefined) me.deferred2.resolve();
             }
@@ -1336,6 +1349,8 @@ iCn3DUI.prototype = {
 
             }
 
+            if(me.cfg.showseq !== undefined && me.cfg.showseq) me.openDialog(me.pre + 'dl_selectresidues', 'Select residues in sequences with coordinates');
+
             if(me.deferred !== undefined) me.deferred.resolve(); if(me.deferred2 !== undefined) me.deferred2.resolve();
 
             if(data.atoms === undefined && data.molid2rescount === undefined) {
@@ -1493,19 +1508,19 @@ iCn3DUI.prototype = {
                 atm.structure = mmdb_id;
             }
 
-            var secondarys = '-';
+            var secondaries = '-';
             if(atm.ss === 'helix') {
-                secondarys = 'H';
+                secondaries = 'H';
             }
             else if(atm.ss === 'sheet') {
-                secondarys = 'E';
+                secondaries = 'E';
             }
             else if(!atm.het && me.icn3d.residueColors.hasOwnProperty(atm.resn.toUpperCase()) ) {
             //else if(!atm.het) {
-                secondarys = 'C';
+                secondaries = 'C';
             }
 
-            me.icn3d.secondarys[atm.structure + '_' + atm.chain + '_' + atm.resi] = secondarys;
+            me.icn3d.secondaries[atm.structure + '_' + atm.chain + '_' + atm.resi] = secondaries;
 
             pmin.min(atm.coord);
             pmax.max(atm.coord);
@@ -1597,7 +1612,7 @@ iCn3DUI.prototype = {
 
               me.icn3d.chainsSeq[chainid].push(resObject);
               me.icn3d.chainsAnno[chainid][0].push(numberStr);
-              me.icn3d.chainsAnno[chainid][1].push(secondarys);
+              me.icn3d.chainsAnno[chainid][1].push(secondaries);
               me.icn3d.chainsAnnoTitle[chainid][0].push('');
               me.icn3d.chainsAnnoTitle[chainid][1].push('SS');
 
@@ -1719,7 +1734,7 @@ iCn3DUI.prototype = {
                       }
                   }
                   else {
-                      color = '#CCC';
+                      color = '#000';
                   }
 
                   // chain1
@@ -1780,8 +1795,13 @@ iCn3DUI.prototype = {
                     }
 
                   var residueid = chainid1 + '_' + id2aligninfo[j].resi;
-                  var ss = me.icn3d.secondarys[residueid];
-                  me.icn3d.alignChainsAnno[chainid1][0].push(ss);
+                  var ss = me.icn3d.secondaries[residueid];
+                  if(ss !== undefined) {
+					  me.icn3d.alignChainsAnno[chainid1][0].push(ss);
+				  }
+				  else {
+					  me.icn3d.alignChainsAnno[chainid1][0].push('-');
+				  }
 
                   var symbol = '.';
                   if(alignIndex % 5 === 0) symbol = '*';
@@ -1930,7 +1950,7 @@ iCn3DUI.prototype = {
       return html;
     },
 
-    getSequencesAnnotations: function (chainArray, bUpdateHighlightAtoms, residueArray) { var me = this;
+    getSequencesAnnotations: function (chainArray, bUpdateHighlightAtoms, residueArray, bShowHighlight) { var me = this;
       var sequencesHtml = "<b>Sequences with coordinates:</b> (drag/click to select, drag/click again to deselect, click \"Stop Selection\" to stop the current selection)<br/><button style='white-space:nowrap;' class='" + me.pre + "stopselection'>Stop Selection</button> <button style='white-space:nowrap;' class='" + me.pre + "outputselection'>Output Selection</button><br/>";
       if(me.icn3d.moleculeTitle !== "") sequencesHtml += "<br/><b>Title:</b> " + me.icn3d.moleculeTitle + "<br/><br/>";
 
@@ -1971,7 +1991,7 @@ iCn3DUI.prototype = {
 
             var classForAlign = "class='residue'"; // used to identify a residue when clicking a residue in sequence
 
-            if( bHighlightChain || (residueArray !== undefined && residueArray.indexOf(resiId) !== -1) ) {
+            if( (bShowHighlight === undefined || bShowHighlight) && ( bHighlightChain || (residueArray !== undefined && residueArray.indexOf(resiId) !== -1) ) ) {
                 classForAlign = "class='residue highlightSeq'";
             }
 
@@ -4153,7 +4173,7 @@ iCn3DUI.prototype = {
         return html;
     },
 
-    selectAllUpdateMenuSeq: function(bInitial) { var me = this;
+    selectAllUpdateMenuSeq: function(bInitial, bShowHighlight) { var me = this;
           var structuresHtml = me.setStructureMenu(bInitial);
           var chainsHtml = me.setChainMenu(bInitial);
           var alignChainsHtml = me.getAlignChainSelections();
@@ -4175,7 +4195,7 @@ iCn3DUI.prototype = {
            //var residueArray = this.getResiduesUpdateHighlight(Object.keys(me.icn3d.chains));
            //var seqObj = me.getSequencesAnnotations(Object.keys(me.icn3d.chains), false, residueArray);
 
-           var seqObj = me.getSequencesAnnotations(Object.keys(me.icn3d.chains));
+           var seqObj = me.getSequencesAnnotations(Object.keys(me.icn3d.chains), undefined, undefined, bShowHighlight);
 
            $("#" + me.pre + "dl_sequence").html(seqObj.sequencesHtml);
            $("#" + me.pre + "dl_sequence").width(me.RESIDUE_WIDTH * seqObj.maxSeqCnt + 200);
