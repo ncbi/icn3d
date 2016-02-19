@@ -68,10 +68,10 @@ body {font-family: Verdana, Arial, Helvetica, sans-serif;}
     </li>
     </ul>
 <br>
-<li><a href="#commands">Commands in URLs and scripts for the advanced interface</a>
-    <ul>
-        <li><a href="#commandsUrl">Commands in URLs</a></li>
-        <li>Commands<table>
+<li><a href="#parameters">URL parameters for the advanced interface</a>
+</li><br>
+<li><a href="#commands">Commands for the advanced interface</a>
+    <table>
         <tbody><tr>
         <td>1. <a href="#file">File</a>&nbsp;&nbsp;</td>
         <td>2. <a href="#select">Select</a>&nbsp;&nbsp;</td>
@@ -81,8 +81,8 @@ body {font-family: Verdana, Arial, Helvetica, sans-serif;}
         <td>5. <a href="#surface">Surface</a>&nbsp;&nbsp;</td>
         <td>6. <a href="#other">Other</a>&nbsp;&nbsp;</td>
         </tr>
-        </tbody></table></li>
-    </ul>
+        </tbody>
+    </table>
 </li><br>
 <li><a href="#DataStructure">Data Structure</a></li><br>
 <li><a href="#DisplayOptions">Display Options</a></li><br>
@@ -275,7 +275,7 @@ body {font-family: Verdana, Arial, Helvetica, sans-serif;}
 <a name="WhatIs"></a>
 <h2>What is iCn3D Structure Viewer?<img src="https://www.ncbi.nlm.nih.gov/Structure/IMG/spacer.gif" width="25" height="1" border="0"><a href="#Top"><img src="https://www.ncbi.nlm.nih.gov/Structure/IMG/arrowup_blue.gif" width="12" height="12" border="0" alt="back to top"></a></h2>
 
-"I see in 3D" (iCn3D) Structure Viewer is a WebGL-based 3D viewer using Three.js and jQuery. It is based on the 3D styles of <a href="http://webglmol.osdn.jp/index-en.html">GLmol</a> and <a href="http://istar.cse.cuhk.edu.hk/iview/">iview</a>. Here are some of the added features: picking atoms, selecting residues, shiny material for displaying, improved labeling, saving state, etc.<br>
+"I see in 3D" (iCn3D) Structure Viewer is a WebGL-based 3D viewer using Three.js and jQuery. It is based on the 3D styles of <a href="http://istar.cse.cuhk.edu.hk/iview/">iview</a> and <a href="http://webglmol.osdn.jp/index-en.html">GLmol</a>, and the surface generation of <a href="http://3dmol.csb.pitt.edu/">3Dmol</a>. Some of the added/improved features include: picking atoms by mouse, selecting residues on 3D structure or 1D sequence, shiny material for displaying, labeling, saving state, going back and forward, showing highlight with different colors, adding arrows to beta sheets, passing commands in url, sequence window, double bonds for chemicals, full-featured UI, etc. The source code of iCn3D is available at GitHub: <a href="https://github.com/ncbi/icn3d">https://github.com/ncbi/icn3d</a>.<br>
 <br>
 We provided two versions of iCn3D widgets: <a href="index.html?mmdbid=2por">simple interface</a> and <a href="full.html?mmdbid=2por">advanced interface</a>. Both widgets can be easily added to web pages.
 <ol>
@@ -313,15 +313,6 @@ We provided two versions of iCn3D widgets: <a href="index.html?mmdbid=2por">simp
 <p>To embed iCn3D Structure Viewer in your own HTML page using iFrame, simply add the following to your page:
 </p><div class="indent"><code>&lt;iframe src="http://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?mmdbid=2por&amp;width=300&amp;height=300&amp;showmenu=0&amp;rotate=0" width="320" height="320" style="border:none"&gt;&lt;/iframe&gt;</code></div>
 
-<p>Both "index.html" and "full.html" accept the following input IDs. You can also add commands in the URL as described <a href="#commandsUrl">here</a>.<br>
-</p><div class="indent">
-<b>pdbid</b>: PDB ID, e.g., <a href="full.html?pdbid=2por">?pdbid=2por</a><br>
-<b>mmcif</b>: mmCIF ID, e.g., <a href="full.html?mmcif=2por">?mmcif=2por</a><br>
-<b>mmdbid</b>: NCBI MMDB ID, e.g., <a href="full.html?mmdbid=2por">?mmdbid=2por</a><br>
-<b>gi</b>: NCBI protein gi number, e.g., <a href="full.html?gi=827343227">?gi=827343227</a><br>
-<b>cid</b>: PubChem Compound ID, e.g., <a href="full.html?cid=2244">?cid=2244</a><br>
-</div>
-<p></p>
 </li>
 <li><a name="embedJS"></a><b>Embed with CSS and Javascript on NCBI servers</b><br>
 
@@ -437,12 +428,28 @@ We provided two versions of iCn3D widgets: <a href="index.html?mmdbid=2por">simp
 
 <hr>
 
+<a name="parameters"></a>
+<h2>URL parameters for the advanced interface<img src="https://www.ncbi.nlm.nih.gov/Structure/IMG/spacer.gif" width="25" height="1" border="0"><a href="#Top"><img src="https://www.ncbi.nlm.nih.gov/Structure/IMG/arrowup_blue.gif" width="12" height="12" border="0" alt="back to top"></a></h2>
+<table><tr valign='top'><th>Parameter</th><th>Simple interface<br/>(index.html)</th><th>Advanced interface<br/>(full.html)</th><th>Description</th></tr>
+<tr valign='top'><td>pdbid</td><td>Yes</td><td>Yes</td><td>PDB ID, e.g., <a href="full.html?pdbid=2por">?pdbid=2por</a></td></tr>
+<tr valign='top'><td>mmcif</td><td>Yes</td><td>Yes</td><td>mmCIF ID, e.g., <a href="full.html?mmcif=2por">?mmcif=2por</a></td></tr>
+<tr valign='top'><td>mmdbid</td><td>Yes</td><td>Yes</td><td>NCBI MMDB ID, e.g., <a href="full.html?mmdbid=2por">?mmdbid=2por</a></td></tr>
+<tr valign='top'><td>gi</td><td>Yes</td><td>Yes</td><td>NCBI protein gi number, e.g., <a href="full.html?gi=827343227">?gi=827343227</a></td></tr>
+<tr valign='top'><td>cid</td><td>Yes</td><td>Yes</td><td>PubChem Compound ID, e.g., <a href="full.html?cid=2244">?cid=2244</a></td></tr>
+<tr valign='top'><td>width</td><td>Yes</td><td>Yes</td><td>Width of the structure image. It can be percentage such as '100%', or pixel values such as 400. The default is '100%'.</td></tr>
+<tr valign='top'><td>height</td><td>Yes</td><td>Yes</td><td>Height of the structure image. It can be percentage such as '100%', or pixel values such as 400. The default is '100%'.</td></tr>
+<tr valign='top'><td>resize</td><td>Yes</td><td>Yes</td><td>Set "true" or "1" to resize the image when the container is resized. The default is "true".</td></tr>
+<tr valign='top'><td>rotate</td><td>Yes</td><td>Yes</td><td>Set "right", "left", "up", or "down" to rotate the structure when it is  displayed at the beginning. The default is "right".</td></tr>
+
+<tr valign='top'><td>showmenu</td><td>No</td><td>Yes</td><td>Set "true" or "1" to show the menus and buttons at the top of the structure canvas. The default is "true".</td></tr>
+<tr valign='top'><td>showseq</td><td>No</td><td>Yes</td><td>Set "true" or "1" to show the sequence window. The default is "false".</td></tr>
+<tr valign='top'><td><a name="commandsUrl"></a>command</td><td>No</td><td>Yes</td><td>Besides the "Script/Log" section, commands can also be attached to the url parameter "command". Several commands can be concatenated with the separator ";", e.g., <a href="full.html?mmdbid=1kq2&amp;command=select :1-20; color green">full.html?mmdbid=1kq2&amp;command=select :1-20; color green</a>.</td></tr>
+</table>
+
+<hr>
+
 <a name="commands"></a>
-<h2>Commands in URLs and scripts for the advanced interface<img src="https://www.ncbi.nlm.nih.gov/Structure/IMG/spacer.gif" width="25" height="1" border="0"><a href="#Top"><img src="https://www.ncbi.nlm.nih.gov/Structure/IMG/arrowup_blue.gif" width="12" height="12" border="0" alt="back to top"></a></h2>
-<a name="commandsUrl"></a><b>Commands in URLs</b> <a href="#Top"><span class="top">&nbsp;&nbsp;&nbsp;</span></a><br>
-Besides the "Script/Log" section, commands can also be attached to the url parameter "command". Several commands can be concatenated with the separator ";". Here is one example: <a href="full.html?mmdbid=1kq2&amp;command=select :1-20; color green">full.html?mmdbid=1kq2&amp;command=select :1-20; color green</a>.<br>
-<br>
-<b>Commands</b><br>
+<h2>Commands for the advanced interface<img src="https://www.ncbi.nlm.nih.gov/Structure/IMG/spacer.gif" width="25" height="1" border="0"><a href="#Top"><img src="https://www.ncbi.nlm.nih.gov/Structure/IMG/arrowup_blue.gif" width="12" height="12" border="0" alt="back to top"></a></h2>
 <a name="file"></a><b>1. File</b> <a href="#Top"><span class="top">&nbsp;&nbsp;&nbsp;</span></a><br>
 <table>
 <tbody><tr><td colspan="2">a) Retrieve by ID</td></tr>
@@ -519,7 +526,6 @@ a) In the dialog Select -&gt; Select -&gt; by Command, users can use selection s
 "@CA,C" uses "@" to indicate atom selection.<br>
 <br>
 b) Partial definition is allowed, e.g., ":1-10" selects all residue IDs 1-10 in all chains.<br>
-Wild card * can be used to select all.<br>
 Different selections can be concatenated using semicolon, e.g., ":1-10; :Lys" selects all residue IDs 1-10 and all Lys residues.<br>
 </div>
 <br>
@@ -633,8 +639,9 @@ Different selections can be concatenated using semicolon, e.g., ":1-10; :Lys" se
 <tr><td><span class="indent">Show:</span></td>            <td>hbonds [hbond threshold in angstrom]</td></tr>
 <tr><td><span class="indent">Hide:</span></td>            <td>set hbonds off</td></tr>
 
-<tr><td colspan="2"><br>g) Other -&gt; Custom Labels</td></tr>
-<tr><td><span class="indent">Show:</span></td>            <td>add label [label text] | x [x] y [y] z [z] | size [label size] | color [#FF0000] | background [#FFFFFF]</td></tr>
+<tr><td colspan="2"><br>g) Other -&gt; Label</td></tr>
+<tr><td><span class="indent">Label Residues:</span></td>            <td>add residue labels</td></tr>
+<tr><td><span class="indent">Custom Label:</span></td>            <td>add label [label text] | x [x] y [y] z [z] | size [label size] | color [#FF0000] | background [#FFFFFF]</td></tr>
 <tr><td><span class="indent">Hide:</span></td>            <td>set labels off</td></tr>
 
 <tr><td colspan="2"><br>h) Other -&gt; Distance</td></tr>
@@ -743,7 +750,7 @@ Different selections can be concatenated using semicolon, e.g., ":1-10; :Lys" se
           options['color']              = 'spectrum';           //spectrum, secondary structure, charge, chain, residue, atom, red, green, blue, magenta, yellow, cyan, white, grey, custom
           options['secondary']          = 'ribbon';             //ribbon, strand, cylinder &amp; plate, C alpha trace, B factor tube, lines, stick, ball &amp; stick, sphere, nothing
           options['nucleotides']        = 'phosphorus trace';   //cartoon, phosphorus trace, lines, stick, ball &amp; stick, sphere, nothing
-          options['ligands']            = 'stick';              //line, stick, ball &amp; stick, sphere
+          options['ligands']            = 'stick';              //line, stick, ball &amp; stick, sphere, nothing
           options['water']              = 'nothing';            //sphere, dot, nothing
           options['ions']               = 'sphere';             //sphere, dot, nothing
           options['surface']            = 'nothing';            //Van der Waals surface, solvent excluded surface, solvent accessible surface, molecular surface, nothing
@@ -965,8 +972,8 @@ Zoom out the structure at certain ratio, e.g., 0.1 is a reasonable value. <br>
 
 <span style="font-weight:bold; font-size:1.2em;">Hash Operations</span> <a href="#Top"><span class="top">&nbsp;&nbsp;&nbsp;</span></a><br>
 <br>
-<a name="cloneHash"></a><b>cloneHash(fromHash, toHash)</b> <a href="#Top"><span class="top">&nbsp;&nbsp;&nbsp;</span></a><br>
-Clone a hash from one hash to another hash.<br>
+<a name="cloneHash"></a><b>cloneHash(fromHash)</b> <a href="#Top"><span class="top">&nbsp;&nbsp;&nbsp;</span></a><br>
+Clone the "fromHash" and return the cloned hash.<br>
 <br>
 <a name="excludeHash"></a><b>excludeHash(includeAtoms, excludeAtoms)</b> <a href="#Top"><span class="top">&nbsp;&nbsp;&nbsp;</span></a><br>
 Get atoms in "includeAtoms", but not in "excludeAtoms". The returned hash has atom index as key and 1 as value.<br>
@@ -1057,7 +1064,7 @@ Go forward one step. Basically the commands are sequentially executed, but with 
 Set the commands before the browser crashed. These commands are used to restore your previous state by refreshing the crashed page. It works in Chrome, Firefox, and Internet Explorer in PC, but not Safari nor Mac.
 
 <br><br><a name="getSequencesAnnotations"></a><b>getSequencesAnnotations(chainArray, bUpdateHighlightAtoms, residueArray)</b> <a href="#Top"><span class="top">&nbsp;&nbsp;&nbsp;</span></a><br>
-Set up the sequence display with the input array of chains "chainArray". The residues in "residueArray" will be highlighted. "bUpdateHighlightAtoms" is a flag to update the highlight atoms or not.
+Set up the sequence display with all the sequences. Either chains in "chainArray" or residues in "residueArray" will be highlighted. "bUpdateHighlightAtoms" is a flag to update the highlight atoms or not.
 
 <br><br><a name="hideMenu"></a><b>hideMenu(width, height)</b> <a href="#Top"><span class="top">&nbsp;&nbsp;&nbsp;</span></a><br>
 Hide the menu at the top and just show the canvas. "width" and "height" are the width and height of the canvas.

@@ -58,7 +58,13 @@
     if(width === undefined) width = '100%';
     if(height === undefined) height = '100%';
 
-    var resize = true;
+    var resize = params.resize;
+    if(resize === undefined || resize == 'true' || resize == '1') {
+      resize = true;
+    }
+    else if(resize == 'false' || resize == '0') {
+      resize = false;
+    }
 
     var showmenu = params.showmenu;
     if(showmenu === undefined || showmenu == 'true' || showmenu == '1') {
@@ -66,6 +72,23 @@
     }
     else if(showmenu == 'false' || showmenu == '0') {
       showmenu = false;
+    }
+
+    var showseq = params.showseq;
+    if(showseq == 'true' || showseq == '1') {
+      showseq = true;
+    }
+    else if(showseq === undefined || showseq == 'false' || showseq == '0') {
+      showseq = false;
+    }
+
+    // for alignment
+    var showalignseq = params.showalignseq;
+    if(showalignseq == 'true' || showalignseq == '1') {
+      showalignseq = true;
+    }
+    else if(showalignseq === undefined || showalignseq == 'false' || showalignseq == '0') {
+      showalignseq = false;
     }
 
     var rotate = params.rotate;
@@ -97,6 +120,7 @@
               resize: resize,
               rotate: rotate,
               showmenu: showmenu,
+              showseq: showseq,
               command: command
           };
           cfg[idName] = idArray[i];
@@ -113,20 +137,18 @@
       if(mmdbid !== undefined) setupViewer('mmdbid', mmdbid);
       if(gi !== undefined) setupViewer('gi', gi);
 
-
-      var bShowSeqByDefault = params.seq;
-
       // e.g., align=103701,1,4,68563,1,167 [mmdbid1,biounit,molecule,mmdbid2,biounit,molecule]
       if(align !== undefined) {
           var cfg = {
               divid: 'div0',
               inpara: inpara,
-              bShowSeqByDefault: bShowSeqByDefault,
               width: width,
               height: height,
               resize: resize,
               rotate: rotate,
               showmenu: showmenu,
+              showseq: showseq,
+              showalignseq: showalignseq,
               align: align,
               command: command
           };

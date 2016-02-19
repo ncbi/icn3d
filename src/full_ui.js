@@ -58,7 +58,7 @@ var iCn3DUI = function(cfg) {
     me.options['surface']            = 'nothing';    //Van der Waals surface, solvent excluded surface, solvent accessible surface, molecular surface, nothing
     me.options['opacity']            = '0.8';                //1.0, 0.9, 0.8, 0.7, 0.6, 0.5
     me.options['wireframe']          = 'no';                 //yes, no
-    me.options['ligands']            = 'stick';              //lines, stick, ball & stick, sphere
+    me.options['ligands']            = 'stick';              //lines, stick, ball & stick, sphere, nothing
     me.options['water']              = 'nothing';            //sphere, dot, nothing
     me.options['ions']               = 'sphere';             //sphere, dot, nothing
     me.options['hbonds']             = 'no';                 //yes, no
@@ -214,7 +214,7 @@ iCn3DUI.prototype = {
 
         //me.deferred = undefined; // sequential calls
 
-        me.icn3d.cloneHash(me.options, me.icn3d.options);
+        me.icn3d.options = me.icn3d.cloneHash(me.options);
 
         me.STATENUMBER = me.icn3d.commands.length;
 
@@ -233,10 +233,10 @@ iCn3DUI.prototype = {
             }
         }
 
+        me.icn3d.moleculeTitle = '';
+
         if(me.cfg.pdbid !== undefined) {
            me.inputid = me.cfg.pdbid;
-
-           me.icn3d.moleculeTitle = 'PDB ID ' + me.cfg.pdbid;
 
            me.setLogCommand('load pdb ' + me.cfg.pdbid, true);
 
@@ -245,16 +245,19 @@ iCn3DUI.prototype = {
         else if(me.cfg.mmdbid !== undefined) {
            me.inputid = me.cfg.mmdbid;
 
-            me.icn3d.moleculeTitle = 'MMDB ID ' + me.cfg.mmdbid;
+            //if(!isNaN(me.cfg.mmdbid)) {
+            //    me.icn3d.moleculeTitle = 'MMDB ' + me.cfg.mmdbid.toUpperCase() + '; ';
+            //}
 
             me.setLogCommand('load mmdb ' + me.cfg.mmdbid, true);
 
             me.downloadMmdb(me.cfg.mmdbid);
         }
         else if(me.cfg.gi !== undefined) {
-           me.inputid = me.cfg.gi;
+           // use the mmdb ID as inputid
+           //me.inputid = me.cfg.gi;
 
-            me.icn3d.moleculeTitle = 'Protein gi ' + me.cfg.mmdbid;
+            //me.icn3d.moleculeTitle = 'Protein gi ' + me.cfg.gi + '; ';
 
             me.setLogCommand('load gi ' + me.cfg.gi, true);
 
@@ -272,18 +275,21 @@ iCn3DUI.prototype = {
         else if(me.cfg.mmcif !== undefined) {
            me.inputid = me.cfg.mmcif;
 
-            me.icn3d.moleculeTitle = 'mmCIF ' + me.cfg.mmcif;
+            //me.icn3d.moleculeTitle = 'mmCIF ' + me.cfg.mmcif.toUpperCase();
 
             me.setLogCommand('load mmcif ' + me.cfg.mmcif, true);
 
             me.downloadMmcif(me.cfg.mmcif);
         }
         else if(me.cfg.align !== undefined) {
-            var alignArray = me.cfg.align.split(','); // e.g., 103701,1,4,68563,1,167 [mmdbid1,biounit,molecule,mmdbid2,biounit,molecule]
+            var alignArray = me.cfg.align.split(','); // e.g., 6 IDs: 103701,1,4,68563,1,167 [mmdbid1,biounit,molecule,mmdbid2,biounit,molecule], or 2IDs: 103701,68563 [mmdbid1,mmdbid2]
 
-            me.inputid = alignArray[0] + "_" + alignArray[3];
-
-            me.icn3d.moleculeTitle = 'Structure Alignment of MMDB ID ' + alignArray[0] + ' (BioUnit ' + alignArray[1] + ', Molecule ' + alignArray[2] + ') and MMDB ID ' + alignArray[3] + ' (BioUnit ' + alignArray[4] + ', Molecule ' + alignArray[5] + ')';
+            if(alignArray.length === 6) {
+                me.inputid = alignArray[0] + "_" + alignArray[3];
+            }
+            else if(alignArray.length === 2) {
+                me.inputid = alignArray[0] + "_" + alignArray[1];
+            }
 
             me.setLogCommand('load alignment ' + me.cfg.align, true);
 
@@ -336,6 +342,8 @@ iCn3DUI.prototype = {
       if($("#" + me.pre + "commandlog")[0] !== undefined) $("#" + me.pre + "commandlog")[0].style.display = "none";
       if($("#" + me.pre + "selection")[0] !== undefined) $("#" + me.pre + "selection")[0].style.display = "none";
 
+      if($("#" + me.pre + "title")[0] !== undefined) $("#" + me.pre + "title")[0].style.display = "none";
+
       $("#" + me.pre + "viewer").width(width).height(height);
       $("#" + me.pre + "canvas").width(width).height(height);
     },
@@ -345,6 +353,8 @@ iCn3DUI.prototype = {
       if($("#" + me.pre + "menuLogSection")[0] !== undefined) $("#" + me.pre + "menuLogSection")[0].style.display = "block";
       if($("#" + me.pre + "commandlog")[0] !== undefined) $("#" + me.pre + "commandlog")[0].style.display = "block";
       if($("#" + me.pre + "selection")[0] !== undefined) $("#" + me.pre + "selection")[0].style.display = "block";
+
+      if($("#" + me.pre + "title")[0] !== undefined) $("#" + me.pre + "title")[0].style.display = "block";
 
       var heightTmp = parseInt(height) + me.EXTRAHEIGHT;
       $("#" + me.pre + "viewer").width(width).height(heightTmp);
@@ -366,16 +376,17 @@ iCn3DUI.prototype = {
     },
 
     setOption: function (id, value) { var me = this;
-      var options2 = {};
-      options2[id] = value;
+      //var options2 = {};
+      //options2[id] = value;
 
       // remember the options
       me.icn3d.options[id] = value;
 
       if(id === 'color') {
-          me.icn3d.setColorByOptions(options2, me.icn3d.highlightAtoms);
+          me.icn3d.setColorByOptions(me.icn3d.options, me.icn3d.highlightAtoms);
 
-          me.icn3d.draw(options2);
+          //me.icn3d.draw(options2);
+          me.icn3d.draw();
       }
       else if(id === 'surface' || id === 'opacity' || id === 'wireframe') {
           me.icn3d.removeSurfaces();
@@ -383,7 +394,8 @@ iCn3DUI.prototype = {
           me.icn3d.render();
       }
       else {
-          me.icn3d.draw(options2);
+          //me.icn3d.draw(options2);
+          me.icn3d.draw();
       }
     },
 
@@ -450,7 +462,14 @@ iCn3DUI.prototype = {
                 height = bExpandDialog ? 'auto' : $( window ).height() - me.LESSHEIGHT - 2*me.MENU_HEIGHT;
                 width = bExpandDialog ? 'auto' : 0.5 * $( window ).width() - me.LESSWIDTH;
 
-                var position ={ my: "left top", at: "right top", of: "#" + me.pre + "canvas", collision: "none" };
+                //var position={ my: "left top", at: "right top", of: "#" + me.pre + "canvas", collision: "none" };
+                var position;
+                if(me.cfg.showmenu) {
+                	position ={ my: "left top", at: "right top+80", of: "#" + me.pre + "viewer", collision: "none" };
+				}
+				else {
+					position ={ my: "left top", at: "right top", of: "#" + me.pre + "viewer", collision: "none" };
+				}
 
                 // disable resize
                 me.cfg.resize = false;
@@ -516,37 +535,11 @@ iCn3DUI.prototype = {
       }
 
       // display the structure right away. load the menus and sequences later
-      setTimeout(function(){
-          var structuresHtml = me.setStructureMenu(bInitial);
-          var chainsHtml = me.setChainMenu(bInitial);
-          var alignChainsHtml = me.getAlignChainSelections();
-          var definedResiduesHtml = me.setResidueMenu();
-          var definedAtomsHtml = me.setAtomMenu();
-
-          if($("#" + me.pre + "structureid")) $("#" + me.pre + "structureid").html(structuresHtml);
-          if($("#" + me.pre + "chainid")) $("#" + me.pre + "chainid").html(chainsHtml);
-          if($("#" + me.pre + "alignChainid")) $("#" + me.pre + "alignChainid").html(alignChainsHtml);
-          if($("#" + me.pre + "customResidues")) $("#" + me.pre + "customResidues").html(definedResiduesHtml);
-
-          if($("#" + me.pre + "structureid2")) $("#" + me.pre + "structureid2").html(structuresHtml);
-          if($("#" + me.pre + "chainid2")) $("#" + me.pre + "chainid2").html(chainsHtml);
-          if($("#" + me.pre + "alignChainid2")) $("#" + me.pre + "alignChainid2").html(alignChainsHtml);
-          if($("#" + me.pre + "customResidues2")) $("#" + me.pre + "customResidues2").html(definedResiduesHtml);
-
-          if($("#" + me.pre + "customAtoms")) $("#" + me.pre + "customAtoms").html(definedAtomsHtml);
-
-          var seqObj = me.getSequencesAnnotations(Object.keys(me.icn3d.chains));
-          if($("#" + me.pre + "dl_sequence")) {
-              $("#" + me.pre + "dl_sequence").html(seqObj.sequencesHtml);
-                $("#" + me.pre + "dl_sequence").width(me.RESIDUE_WIDTH * seqObj.maxSeqCnt + 200);
-          }
-
-          seqObj = me.getAlignSequencesAnnotations(Object.keys(me.icn3d.alignChains));
-          if($("#" + me.pre + "dl_sequence2")) {
-              $("#" + me.pre + "dl_sequence2").html(seqObj.sequencesHtml);
-                $("#" + me.pre + "dl_sequence2").width(me.RESIDUE_WIDTH * seqObj.maxSeqCnt + 200);
-          }
+      if(me.cfg.showmenu === undefined || me.cfg.showmenu || me.cfg.showseq || me.cfg.showalignseq) {
+        setTimeout(function(){
+          me.selectAllUpdateMenuSeq(bInitial, false);
         }, 0);
+      }
 
       if(me.cfg.command !== undefined) {
           me.loadScript(me.cfg.command);
@@ -595,6 +588,7 @@ iCn3DUI.prototype = {
 
     loadPdbData: function(data) {
         var me = this;
+
         me.icn3d.loadPDB(data);
 
         me.pmid = me.icn3d.pmid;
@@ -611,7 +605,11 @@ iCn3DUI.prototype = {
 
         me.renderStructure(true);
 
+        me.showTitle();
+
         if(me.cfg.rotate !== undefined) me.rotateStructure(me.cfg.rotate, true);
+
+        if(me.cfg.showseq !== undefined && me.cfg.showseq) me.openDialog(me.pre + 'dl_selectresidues', 'Select residues in sequences with coordinates');
 
         if(me.deferred !== undefined) me.deferred.resolve(); if(me.deferred2 !== undefined) me.deferred2.resolve();
     },
@@ -708,6 +706,8 @@ iCn3DUI.prototype = {
 
             if(me.cfg.rotate !== undefined) me.rotateStructure(me.cfg.rotate, true);
 
+            if(me.cfg.showseq !== undefined && me.cfg.showseq) me.openDialog(me.pre + 'dl_selectresidues', 'Select residues in sequences with coordinates');
+
             if(me.deferred !== undefined) me.deferred.resolve(); if(me.deferred2 !== undefined) me.deferred2.resolve();
         }
         else {
@@ -719,6 +719,12 @@ iCn3DUI.prototype = {
     downloadAlignment: function (align) { var me = this;
         var url = "https://www.ncbi.nlm.nih.gov/Structure/vastpp/vastpp.cgi?cmd=c&w3d&ids=" + align;
         var url2 = "https://www.ncbi.nlm.nih.gov/Structure/vastpp/vastpp.cgi?cmd=c1&d&ids=" + align;
+
+        //var alignArray = me.cfg.align.split(',');
+        //var ids_str = (alignArray.length === 2? 'uids=' : 'ids=') + align;
+        //var url = '/Structure/vastplusdev/vastplus.cgi?cmd=c&w3d&' + ids_str;
+        //var url2 = '/Structure/vastplusdev/vastplus.cgi?cmd=c1&d&' + ids_str;
+
         if(me.cfg.inpara !== undefined) {
           url += me.cfg.inpara;
           url2 += me.cfg.inpara;
@@ -806,7 +812,9 @@ iCn3DUI.prototype = {
                 if(me.cfg.rotate !== undefined) me.rotateStructure(me.cfg.rotate, true);
 
                 // by default, open the seq alignment window
-                if(me.cfg.bShowSeqByDefault !== undefined && me.cfg.bShowSeqByDefault) me.openDialog(me.pre + 'dl_alignment', 'Select residues in aligned sequences');
+                if(me.cfg.showalignseq !== undefined && me.cfg.showalignseq) me.openDialog(me.pre + 'dl_alignment', 'Select residues in aligned sequences');
+
+                if(me.cfg.showseq !== undefined && me.cfg.showseq) me.openDialog(me.pre + 'dl_selectresidues', 'Select residues in sequences with coordinates');
 
                 if(me.deferred !== undefined) me.deferred.resolve(); if(me.deferred2 !== undefined) me.deferred2.resolve();
             }
@@ -961,13 +969,13 @@ iCn3DUI.prototype = {
             me.icn3d.atoms[to].bonds.push(from);
             me.icn3d.atoms[to].bondOrder.push(order);
             if(order == 2) {
-				me.icn3d.doublebonds[from + '_' + to] = 1;
-				me.icn3d.doublebonds[to + '_' + from] = 1;
-			}
-			else if(order == 3) {
-				me.icn3d.triplebonds[from + '_' + to] = 1;
-				me.icn3d.triplebonds[to + '_' + from] = 1;
-			}
+                me.icn3d.doublebonds[from + '_' + to] = 1;
+                me.icn3d.doublebonds[to + '_' + from] = 1;
+            }
+            else if(order == 3) {
+                me.icn3d.triplebonds[from + '_' + to] = 1;
+                me.icn3d.triplebonds[to + '_' + from] = 1;
+            }
         }
 
         var pmin = new THREE.Vector3( 9999, 9999, 9999);
@@ -1004,7 +1012,32 @@ iCn3DUI.prototype = {
 
         if (me.icn3d.maxD < 25) me.icn3d.maxD = 25;
 
+        me.showTitle();
+
         return true;
+    },
+
+    showTitle: function() { var me = this;
+        if(me.icn3d.moleculeTitle !== undefined && me.icn3d.moleculeTitle !== '') {
+            var title = me.icn3d.moleculeTitle;
+
+            var url = me.getLinkToStructureSummary();
+
+            if(me.cfg.cid !== undefined) {
+                $("#" + me.pre + "title").html("<a href='" + url + "' target='_blank' style='color:#DDD'>" + title + "</a>");
+            }
+            else if(me.cfg.align !== undefined) {
+                $("#" + me.pre + "title").html(title);
+            }
+            else {
+                if(me.icn3d.moleculeTitle.length > 50) title = me.icn3d.moleculeTitle.substr(0, 50) + "...";
+
+                $("#" + me.pre + "title").html(title + " (PDB ID <a href='" + url + "' target='_blank' style='color:#DDD'>" + me.inputid.toUpperCase() + "</a>)");
+            }
+        }
+        else {
+            $("#" + me.pre + "title").html("");
+        }
     },
 
     downloadMmdb: function (mmdbid) { var me = this;
@@ -1067,13 +1100,14 @@ iCn3DUI.prototype = {
                 //me.icn3d.inputid.idtype = "mmdbid";
                 //me.icn3d.inputid.id = id;
 
-                me.options['nucleotides'] = 'phosphorus lines';
+                var options2 = me.icn3d.cloneHash(me.options);
+                options2['nucleotides'] = 'phosphorus lines';
 
                 //me.options['color'] = 'spectrum';
 
-                me.icn3d.setAtomStyleByOptions(me.options);
+                me.icn3d.setAtomStyleByOptions(options2);
                 // use the original color from cgi output
-                me.icn3d.setColorByOptions(me.options, me.icn3d.atoms, true);
+                me.icn3d.setColorByOptions(options2, me.icn3d.atoms, true);
 
                 var molid2rescount = data.molid2rescount;
                 var molid2color = {}, chain2molid = {}, molid2chain = {};
@@ -1315,6 +1349,8 @@ iCn3DUI.prototype = {
 
             }
 
+            if(me.cfg.showseq !== undefined && me.cfg.showseq) me.openDialog(me.pre + 'dl_selectresidues', 'Select residues in sequences with coordinates');
+
             if(me.deferred !== undefined) me.deferred.resolve(); if(me.deferred2 !== undefined) me.deferred2.resolve();
 
             if(data.atoms === undefined && data.molid2rescount === undefined) {
@@ -1348,6 +1384,8 @@ iCn3DUI.prototype = {
                var end = linkStr.indexOf('</Id>');
                var mmdbid = linkStr.substr(start + 4, end - start - 4);
 
+               me.inputid = mmdbid;
+
                me.downloadMmdb(mmdbid);
              }
            }
@@ -1373,6 +1411,9 @@ iCn3DUI.prototype = {
 
         if(type === 'align') {
           //serial2structure
+          me.pmid = "";
+          me.icn3d.moleculeTitle = 'Structure Alignment of ';
+
           for (var i = 0, il = data.aligned_structures.length; i < il; ++i) {
               var structure = data.aligned_structures[i];
 
@@ -1387,7 +1428,18 @@ iCn3DUI.prototype = {
                   serial2structure[j] = pdbidTmp.toString();
                   mmdbid2pdbid[mmdbidTmp] = pdbidTmp;
               }
+
+              me.icn3d.moleculeTitle +=  "<a href=\"https://www.ncbi.nlm.nih.gov/structure/?term=" + structure.pdbid.toUpperCase() + "\" target=\"_blank\" style=\"color: #DDD;\">" + structure.pdbid.toUpperCase() + "</a>";
+
+              if(structure.descr !== undefined) me.pmid += structure.descr.pubmedid;
+              if(i === 0) {
+                  me.icn3d.moleculeTitle += " and ";
+                  if(structure.descr !== undefined) me.pmid += "_";
+              }
           }
+        }
+        else { // mmdbid or mmcif
+              if(data.descr !== undefined) me.icn3d.moleculeTitle += data.descr.name;
         }
 
         var molid2chain = {}; // for "mmdbid"
@@ -1456,18 +1508,19 @@ iCn3DUI.prototype = {
                 atm.structure = mmdb_id;
             }
 
-            var secondarys = '-';
+            var secondaries = '-';
             if(atm.ss === 'helix') {
-                secondarys = 'H';
+                secondaries = 'H';
             }
             else if(atm.ss === 'sheet') {
-                secondarys = 'E';
+                secondaries = 'E';
             }
-            else if(!atm.het) {
-                secondarys = 'C';
+            else if(!atm.het && me.icn3d.residueColors.hasOwnProperty(atm.resn.toUpperCase()) ) {
+            //else if(!atm.het) {
+                secondaries = 'C';
             }
 
-            me.icn3d.secondarys[atm.structure + '_' + atm.chain + '_' + atm.resi] = secondarys;
+            me.icn3d.secondaries[atm.structure + '_' + atm.chain + '_' + atm.resi] = secondaries;
 
             pmin.min(atm.coord);
             pmax.max(atm.coord);
@@ -1559,7 +1612,7 @@ iCn3DUI.prototype = {
 
               me.icn3d.chainsSeq[chainid].push(resObject);
               me.icn3d.chainsAnno[chainid][0].push(numberStr);
-              me.icn3d.chainsAnno[chainid][1].push(secondarys);
+              me.icn3d.chainsAnno[chainid][1].push(secondaries);
               me.icn3d.chainsAnnoTitle[chainid][0].push('');
               me.icn3d.chainsAnnoTitle[chainid][1].push('SS');
 
@@ -1681,7 +1734,7 @@ iCn3DUI.prototype = {
                       }
                   }
                   else {
-                      color = '#CCC';
+                      color = '#000';
                   }
 
                   // chain1
@@ -1742,8 +1795,13 @@ iCn3DUI.prototype = {
                     }
 
                   var residueid = chainid1 + '_' + id2aligninfo[j].resi;
-                  var ss = me.icn3d.secondarys[residueid];
-                  me.icn3d.alignChainsAnno[chainid1][0].push(ss);
+                  var ss = me.icn3d.secondaries[residueid];
+                  if(ss !== undefined) {
+					  me.icn3d.alignChainsAnno[chainid1][0].push(ss);
+				  }
+				  else {
+					  me.icn3d.alignChainsAnno[chainid1][0].push('-');
+				  }
 
                   var symbol = '.';
                   if(alignIndex % 5 === 0) symbol = '*';
@@ -1759,6 +1817,8 @@ iCn3DUI.prototype = {
           } // end for(var i
           seqalign = {};
         } // if(align
+
+        me.showTitle();
 
         data = {};
     },
@@ -1890,15 +1950,25 @@ iCn3DUI.prototype = {
       return html;
     },
 
-    getSequencesAnnotations: function (chainArray, bUpdateHighlightAtoms, residueArray) { var me = this;
-      var sequencesHtml = (me.icn3d.moleculeTitle === "") ? "<b>Sequences with coordinates:</b>" : "<b>Sequences of " + me.icn3d.moleculeTitle + " with coordinates: </b>";
-      sequencesHtml += " (click to select, click again to deselect, click \"Stop Selection\" to stop the current selection)<br/><button style='white-space:nowrap;' class='" + me.pre + "stopselection'>Stop Selection</button> <button style='white-space:nowrap;' class='" + me.pre + "outputselection'>Output Selection</button><br/>";
+    getSequencesAnnotations: function (chainArray, bUpdateHighlightAtoms, residueArray, bShowHighlight) { var me = this;
+      var sequencesHtml = "<b>Sequences with coordinates:</b> (drag/click to select, drag/click again to deselect, click \"Stop Selection\" to stop the current selection)<br/><button style='white-space:nowrap;' class='" + me.pre + "stopselection'>Stop Selection</button> <button style='white-space:nowrap;' class='" + me.pre + "outputselection'>Output Selection</button><br/>";
+      if(me.icn3d.moleculeTitle !== "") sequencesHtml += "<br/><b>Title:</b> " + me.icn3d.moleculeTitle + "<br/><br/>";
 
       var maxSeqCnt = 0;
-      for(var i in chainArray) {
-          i = chainArray[i];
 
-          if(bUpdateHighlightAtoms === undefined || bUpdateHighlightAtoms) {
+      var chainHash = {};
+      if(chainArray !== undefined) {
+          for(var i = 0, il = chainArray.length; i < il; ++i) {
+              chainHash[chainArray[i]] = 1;
+          }
+      }
+
+      //for(var i in chainArray) {
+      //    i = chainArray[i];
+      for(var i in me.icn3d.chains) {
+          var bHighlightChain = (chainArray !== undefined && chainHash.hasOwnProperty(i)) ? true : false;
+
+          if( bHighlightChain && (bUpdateHighlightAtoms === undefined || bUpdateHighlightAtoms) ) {
               me.icn3d.highlightAtoms = me.icn3d.unionHash(me.icn3d.highlightAtoms, me.icn3d.chains[i]);
           }
 
@@ -1915,12 +1985,13 @@ iCn3DUI.prototype = {
           seqHtml += "<span class='residueNum' title='starting residue number'>" + me.icn3d.chainsSeq[i][0].resi + "</span>";
 
           var maxResi = parseInt(me.icn3d.chainsSeq[i][0].resi);
+
           for(var k=0, kl=seqLength; k < kl; ++k) {
             var resiId = structure + "_" + chain + "_" + me.icn3d.chainsSeq[i][k].resi;
 
             var classForAlign = "class='residue'"; // used to identify a residue when clicking a residue in sequence
 
-            if(residueArray !== undefined && residueArray.indexOf(resiId) !== -1) {
+            if( (bShowHighlight === undefined || bShowHighlight) && ( bHighlightChain || (residueArray !== undefined && residueArray.indexOf(resiId) !== -1) ) ) {
                 classForAlign = "class='residue highlightSeq'";
             }
 
@@ -1969,14 +2040,23 @@ iCn3DUI.prototype = {
 
     getAlignSequencesAnnotations: function (alignChainArray, bUpdateHighlightAtoms, residueArray) { var me = this;
       var sequencesHtml = "<b>Aligned Sequences:</b>";
-      sequencesHtml += " (click to select, click again to deselect, click \"Stop Selection\" to stop the current selection)<br/><button style='white-space:nowrap;' class='" + me.pre + "stopselection'>Stop Selection</button> <button style='white-space:nowrap;' class='" + me.pre + "outputselection'>Output Selection</button><br/>";
+      sequencesHtml += " (drag/click to select, drag/click again to deselect, click \"Stop Selection\" to stop the current selection)<br/><button style='white-space:nowrap;' class='" + me.pre + "stopselection'>Stop Selection</button> <button style='white-space:nowrap;' class='" + me.pre + "outputselection'>Output Selection</button><br/>";
 
       var maxSeqCnt = 0;
 
-      for(var i in alignChainArray) {
-          i = alignChainArray[i];
+      var chainHash = {};
+      if(alignChainArray !== undefined) {
+          for(var i = 0, il = alignChainArray.length; i < il; ++i) {
+              chainHash[alignChainArray[i]] = 1;
+          }
+      }
 
-          if(bUpdateHighlightAtoms === undefined || bUpdateHighlightAtoms) {
+      //for(var i in alignChainArray) {
+      //    i = alignChainArray[i];
+      for(var i in me.icn3d.alignChains) {
+          var bHighlightChain = (alignChainArray !== undefined && chainHash.hasOwnProperty(i)) ? true : false;
+
+          if( bHighlightChain && (bUpdateHighlightAtoms === undefined || bUpdateHighlightAtoms) ) {
               me.icn3d.highlightAtoms = me.icn3d.unionHash(me.icn3d.highlightAtoms, me.icn3d.alignChains[i]);
           }
 
@@ -1990,6 +2070,8 @@ iCn3DUI.prototype = {
           var chain = i.substr(dashPos + 1);
 
           seqHtml += "<span class='residueNum' title='starting residue number'>" + me.icn3d.alignChainsSeq[i][0].resi + "</span>";
+          var bHighlightChain = (alignChainArray !== undefined && chainHash.hasOwnProperty(i)) ? true : false;
+
           for(var k=0, kl=seqLength; k < kl; ++k) {
             // resiId is empty if it's gap
             var resiId = 'N/A', resIdFull = '', color = '#000';
@@ -2004,7 +2086,7 @@ iCn3DUI.prototype = {
 
             var classForAlign = "class='residue'"; // used to identify a residue when clicking a residue in sequence
 
-            if(me.icn3d.alignChainsSeq[i][k].aligned === 2 && residueArray !== undefined && resIdFull !== '' && residueArray.indexOf(resIdFull) !== -1) {
+            if( bHighlightChain || (me.icn3d.alignChainsSeq[i][k].aligned === 2 && residueArray !== undefined && resIdFull !== '' && residueArray.indexOf(resIdFull) !== -1) ) {
                 classForAlign = "class='residue highlightSeq'";
             }
 
@@ -2076,10 +2158,8 @@ iCn3DUI.prototype = {
        }
     },
 
-    changeStructureid: function (moleculeArray) { var me = this;
+    changeStructureid: function (moleculeArray, bUpdateHighlight) { var me = this;
        me.icn3d.removeHighlightObjects();
-
-       me.icn3d.highlightAtoms = {};
 
        // reset alternate structure
        me.ALTERNATE_STRUCTURE = Object.keys(me.icn3d.structures).indexOf(moleculeArray[0]);
@@ -2102,23 +2182,43 @@ iCn3DUI.prototype = {
        $("#" + me.pre + "chainid").html(chainsHtml);
        $("#" + me.pre + "chainid2").html(chainsHtml);
 
-       var residueArray = [];
-       for(var residue in me.icn3d.residues) {
-          var dashPos = residue.indexOf('_');
-          var molecule = residue.substr(0, dashPos);
-
-          if(moleculeArray.toString().toLowerCase().indexOf(molecule.toLowerCase()) !== -1) {
-            residueArray.push(residue);
-            me.icn3d.highlightAtoms = me.icn3d.unionHash(me.icn3d.highlightAtoms, me.icn3d.residues[residue]);
-          }
+       var chainArray = [];
+       for(var i = 0, il=moleculeArray.length; i < il; ++i) {
+           chainArray = chainArray.concat(me.icn3d.structures[moleculeArray[i]]);
        }
 
-       var seqObj = me.getSequencesAnnotations(Object.keys(me.icn3d.chains), false, residueArray);
+       if(bUpdateHighlight === undefined || bUpdateHighlight) me.icn3d.highlightAtoms = {};
+
+       //var residueArray = this.getResiduesUpdateHighlight(chainArray, bUpdateHighlight);
+       //var seqObj = me.getSequencesAnnotations(Object.keys(me.icn3d.chains), false, residueArray);
+       var seqObj = me.getSequencesAnnotations(Object.keys(me.icn3d.chains));
 
        $("#" + me.pre + "dl_sequence").html(seqObj.sequencesHtml);
        $("#" + me.pre + "dl_sequence").width(me.RESIDUE_WIDTH * seqObj.maxSeqCnt + 200);
 
        me.icn3d.addHighlightObjects();
+    },
+
+    getResiduesUpdateHighlight: function (chainArray, bUpdateHighlight) { var me = this;
+       var residueArray = [];
+
+       var chainHash = {};
+       for(var i = 0, il = chainArray.length; i < il; ++i) {
+           chainHash[chainArray[i]] = 1;
+       }
+
+       for(var residue in me.icn3d.residues) {
+          var dashPos = residue.lastIndexOf('_');
+          var chain = residue.substr(0, dashPos);
+
+          //if(chainArray.toString().toLowerCase().indexOf(chain.toLowerCase()) !== -1) {
+          if(chainHash.hasOwnProperty(chain)) {
+            residueArray.push(residue);
+            if(bUpdateHighlight === undefined || bUpdateHighlight) me.icn3d.highlightAtoms = me.icn3d.unionHash(me.icn3d.highlightAtoms, me.icn3d.residues[residue]);
+          }
+       }
+
+       return residueArray;
     },
 
     changeChainid: function (chainArray) { var me = this;
@@ -2140,20 +2240,10 @@ iCn3DUI.prototype = {
        // log the selection
        if(chainArray !== null) me.setLogCommand('select chain ' + chainArray.toString(), true);
 
-       //var seqObj = me.getSequencesAnnotations(chainArray);
+       var seqObj = me.getSequencesAnnotations(chainArray);
 
-       var residueArray = [];
-       for(var residue in me.icn3d.residues) {
-          var dashPos = residue.lastIndexOf('_');
-          var chain = residue.substr(0, dashPos);
-
-          if(chainArray.toString().toLowerCase().indexOf(chain.toLowerCase()) !== -1) {
-            residueArray.push(residue);
-            me.icn3d.highlightAtoms = me.icn3d.unionHash(me.icn3d.highlightAtoms, me.icn3d.residues[residue]);
-          }
-       }
-
-       var seqObj = me.getSequencesAnnotations(Object.keys(me.icn3d.chains), false, residueArray);
+       //var residueArray = this.getResiduesUpdateHighlight(chainArray);
+       //var seqObj = me.getSequencesAnnotations(Object.keys(me.icn3d.chains), false, residueArray);
 
        $("#" + me.pre + "dl_sequence").html(seqObj.sequencesHtml);
        $("#" + me.pre + "dl_sequence").width(me.RESIDUE_WIDTH * seqObj.maxSeqCnt + 200);
@@ -2180,20 +2270,10 @@ iCn3DUI.prototype = {
        // log the selection
        if(alignChainArray !== null) me.setLogCommand('select alignChain ' + alignChainArray.toString(), true);
 
-       //var seqObj = me.getAlignSequencesAnnotations(alignChainArray);
+       var seqObj = me.getAlignSequencesAnnotations(alignChainArray);
 
-       var residueArray = [];
-       for(var residue in me.icn3d.residues) {
-          var dashPos = residue.lastIndexOf('_');
-          var chain = residue.substr(0, dashPos);
-
-          if(alignChainArray.toString().toLowerCase().indexOf(chain.toLowerCase()) !== -1) {
-            residueArray.push(residue);
-            me.icn3d.highlightAtoms = me.icn3d.unionHash(me.icn3d.highlightAtoms, me.icn3d.residues[residue]);
-          }
-       }
-
-       var seqObj = me.getAlignSequencesAnnotations(Object.keys(me.icn3d.alignChains), false, residueArray);
+       //var residueArray = this.getResiduesUpdateHighlight(alignChainArray);
+       //var seqObj = me.getAlignSequencesAnnotations(Object.keys(me.icn3d.alignChains), false, residueArray);
 
        $("#" + me.pre + "dl_sequence2").html(seqObj.sequencesHtml);
        $("#" + me.pre + "dl_sequence2").width(me.RESIDUE_WIDTH * seqObj.maxSeqCnt + 200);
@@ -2230,12 +2310,12 @@ iCn3DUI.prototype = {
 
        sequencesHtml += "<b>Annotation(s):</b> Previously selected residues<br/>";
 
-       var chainArray = [];
-       for(var chain in me.icn3d.chains) {
-           chainArray.push(chain);
-       }
+       //var chainArray = [];
+       //for(var chain in me.icn3d.chains) {
+       //    chainArray.push(chain);
+       //}
 
-       var seqObj = me.getSequencesAnnotations(chainArray, false, residueArray);
+       var seqObj = me.getSequencesAnnotations(undefined, true, residueArray);
        $("#" + me.pre + "dl_sequence").html(sequencesHtml + seqObj.sequencesHtml);
        $("#" + me.pre + "dl_sequence").width(me.RESIDUE_WIDTH * seqObj.maxSeqCnt + 200);
 
@@ -2258,7 +2338,7 @@ iCn3DUI.prototype = {
 
        $("#" + me.pre + "customAtoms").val("");
 
-       sequencesHtml += " (click to select, click again to deselect, click \"Stop Selection\" to stop the current selection)<br/><button style='white-space:nowrap;' class='" + me.pre + "stopselection'>Stop Selection</button> <button style='white-space:nowrap;' class='" + me.pre + "outputselection'>Output Selection</button><br/>";
+       sequencesHtml += " (drag/click to select, drag/click again to deselect, click \"Stop Selection\" to stop the current selection)<br/><button style='white-space:nowrap;' class='" + me.pre + "stopselection'>Stop Selection</button> <button style='white-space:nowrap;' class='" + me.pre + "outputselection'>Output Selection</button><br/>";
        var sequencesHtml = "";
 
        //var maxSeqCnt = 0;
@@ -2284,12 +2364,12 @@ iCn3DUI.prototype = {
 
        sequencesHtml += "<b>Annotation(s):</b> " + annoTmp + "<br/>";
 
-       var chainArray = [];
-       for(var chain in me.icn3d.chains) {
-            chainArray.push(chain);
-       }
+       //var chainArray = [];
+       //for(var chain in me.icn3d.chains) {
+       //     chainArray.push(chain);
+       //}
 
-       var seqObj = me.getSequencesAnnotations(chainArray, false, Object.keys(allResidues));
+       var seqObj = me.getSequencesAnnotations(undefined, true, Object.keys(allResidues));
        $("#" + me.pre + "dl_sequence").html(sequencesHtml + seqObj.sequencesHtml);
        $("#" + me.pre + "dl_sequence").width(me.RESIDUE_WIDTH * seqObj.maxSeqCnt + 200);
 
@@ -2317,7 +2397,7 @@ iCn3DUI.prototype = {
        $("#" + me.pre + "command_name").val("");
        $("#" + me.pre + "command_desc").val("");
 
-       sequencesHtml += " (click to select, click again to deselect, click \"Stop Selection\" to stop the current selection)<br/><button style='white-space:nowrap;' class='" + me.pre + "stopselection'>Stop Selection</button> <button style='white-space:nowrap;' class='" + me.pre + "outputselection'>Output Selection</button><br/>";
+       sequencesHtml += " (drag/click to select, drag/click again to deselect, click \"Stop Selection\" to stop the current selection)<br/><button style='white-space:nowrap;' class='" + me.pre + "stopselection'>Stop Selection</button> <button style='white-space:nowrap;' class='" + me.pre + "outputselection'>Output Selection</button><br/>";
        var sequencesHtml = "";
 
        //var maxSeqCnt = 0;
@@ -2352,15 +2432,14 @@ iCn3DUI.prototype = {
 
        sequencesHtml += "<b>Annotation(s):</b> " + annoTmp + "<br/>";
 
-       var chainArray = [];
-       for(var chain in me.icn3d.chains) {
-            chainArray.push(chain);
-       }
+       //var chainArray = [];
+       //for(var chain in me.icn3d.chains) {
+       //     chainArray.push(chain);
+       //}
 
-       var seqObj = me.getSequencesAnnotations(chainArray, false, Object.keys(allResidues));
+       var seqObj = me.getSequencesAnnotations(undefined, true, Object.keys(allResidues));
        $("#" + me.pre + "dl_sequence").html(sequencesHtml + seqObj.sequencesHtml);
        $("#" + me.pre + "dl_sequence").width(me.RESIDUE_WIDTH * seqObj.maxSeqCnt + 200);
-
 
      // fill the dialog
      me.icn3d.highlightAtoms = {};
@@ -2397,11 +2476,13 @@ iCn3DUI.prototype = {
     showSelection: function (id) { var me = this;
        me.icn3d.displayAtoms = {};
 
-       me.icn3d.cloneHash(me.icn3d.highlightAtoms, me.icn3d.displayAtoms);
+       me.icn3d.displayAtoms = me.icn3d.cloneHash(me.icn3d.highlightAtoms);
 
        var options2 = {};
        //show selected rotationcenter
        options2['rotationcenter'] = 'display center';
+
+       me.icn3d.setAtomStyleByOptions(me.options);
 
        me.icn3d.draw(options2);
     },
@@ -2647,8 +2728,9 @@ iCn3DUI.prototype = {
 
     // between the highlighted and the rest atoms
     showHbonds: function (threshold) { var me = this;
-        var options2 = {};
-        options2["hbonds"] = "yes";
+        //var options2 = {};
+        //options2["hbonds"] = "yes";
+        me.icn3d.options["hbonds"] = "yes";
 
         var select = 'hbonds ' + threshold;
 
@@ -2685,7 +2767,8 @@ iCn3DUI.prototype = {
 
             me.changeCustomResidues(nameArray);
 
-            me.icn3d.draw(options2);
+            //me.icn3d.draw(options2);
+            me.icn3d.draw();
         }
     },
 
@@ -2709,6 +2792,31 @@ iCn3DUI.prototype = {
         me.icn3d.removeHighlightObjects();
 
         //me.icn3d.draw();
+    },
+
+    addResiudeLabels: function () { var me = this;
+        var size = 40;
+        var background = "#CCCCCC";
+
+        for(var i in me.icn3d.highlightAtoms) {
+            var atom = me.icn3d.atoms[i];
+
+            if(atom.het) continue;
+            if(atom.name !== 'CA' && atom.name !== 'P') continue;
+
+            var label = {}; // Each label contains 'position', 'text', 'color', 'background'
+
+            label.position = atom.coord;
+
+            label.text = me.icn3d.residueName2Abbr(atom.resn);
+            label.size = size;
+            label.color = "#" + atom.color.getHexString();
+            label.background = background;
+
+            me.icn3d.labels.push(label);
+        }
+
+        me.icn3d.removeHighlightObjects();
     },
 
     addLine: function (x1, y1, z1, x2, y2, z2, color, dashed) { var me = this;
@@ -2846,6 +2954,9 @@ iCn3DUI.prototype = {
     alternateStructures: function () { var me = this;
         me.icn3d.displayAtoms = {};
 
+        var highlightAtomsCount = Object.keys(me.icn3d.highlightAtoms).length;
+        var allAtomsCount = Object.keys(me.icn3d.atoms).length;
+
         var moleculeArray = Object.keys(me.icn3d.structures);
         for(var i = 0, il = moleculeArray.length; i < il; ++i) {
             var structure = moleculeArray[i];
@@ -2855,18 +2966,25 @@ iCn3DUI.prototype = {
                     me.icn3d.displayAtoms = me.icn3d.unionHash(me.icn3d.displayAtoms, me.icn3d.chains[chain]);
                 }
 
-                var moleculeArray = [];
-                moleculeArray.push(structure);
+                // change structure menu only when all atom are selected
+                if(highlightAtomsCount === allAtomsCount) {
+                    var moleculeArray = [];
+                    moleculeArray.push(structure);
 
-                me.changeStructureid(moleculeArray);
-                var structuresHtml = me.setStructureMenu(false, moleculeArray);
-                $("#" + me.pre + "structureid").html(structuresHtml);
-                $("#" + me.pre + "structureid2").html(structuresHtml);
+                    me.changeStructureid(moleculeArray, false); // do not update highlightAtoms
+                    var structuresHtml = me.setStructureMenu(false, moleculeArray);
+                    $("#" + me.pre + "structureid").html(structuresHtml);
+                    $("#" + me.pre + "structureid2").html(structuresHtml);
+                }
 
                 //me.ALTERNATE_STRUCTURE = structure;
                 me.ALTERNATE_STRUCTURE = i;
                 break;
             }
+        }
+
+        if(highlightAtomsCount < allAtomsCount) {
+            me.icn3d.displayAtoms = me.icn3d.intersectHash(me.icn3d.displayAtoms, me.icn3d.highlightAtoms);
         }
 
         me.icn3d.draw();
@@ -3169,22 +3287,24 @@ iCn3DUI.prototype = {
       }
       else if(command.indexOf('color') !== -1) {
         var color = command.substr(command.indexOf(' ') + 1);
-        var options2 = {};
-        options2['color'] = color;
+        //var options2 = {};
+        //options2['color'] = color;
+        me.icn3d.options['color'] = color;
 
-        me.icn3d.setColorByOptions(options2, me.icn3d.highlightAtoms);
+        //me.icn3d.setColorByOptions(options2, me.icn3d.highlightAtoms);
+        me.icn3d.setColorByOptions(me.icn3d.options, me.icn3d.highlightAtoms);
 
         //me.icn3d.draw();
       }
       else if(command.indexOf('set surface wireframe on') !== -1) {
-        me.options['wireframe'] = 'yes';
+        me.icn3d.options['wireframe'] = 'yes';
       }
       else if(command.indexOf('set surface wireframe off') !== -1) {
-        me.options['wireframe'] = 'no';
+        me.icn3d.options['wireframe'] = 'no';
       }
       else if(command.indexOf('set surface opacity') !== -1) {
         var value = command.substr(command.lastIndexOf(' ') + 1);
-        me.options['opacity'] = value;
+        me.icn3d.options['opacity'] = value;
       }
       else if(command.indexOf('set surface neighbors on') !== -1) {
         me.icn3d.bConsiderNeighbors = true;
@@ -3195,21 +3315,21 @@ iCn3DUI.prototype = {
       else if(command.indexOf('set surface') !== -1) {
         var value = command.substr(12);
 
-        me.options['surface'] = value;
+        me.icn3d.options['surface'] = value;
       }
       else if(command.indexOf('set camera') !== -1) {
         var value = command.substr(command.lastIndexOf(' ') + 1);
-        me.options['camera'] = value;
+        me.icn3d.options['camera'] = value;
       }
       else if(command.indexOf('set background') !== -1) {
         var value = command.substr(command.lastIndexOf(' ') + 1);
-        me.options['background'] = value;
+        me.icn3d.options['background'] = value;
       }
       else if(command.indexOf('set axis on') !== -1) {
-        me.options['axis'] = 'yes';
+        me.icn3d.options['axis'] = 'yes';
       }
       else if(command.indexOf('set axis off') !== -1) {
-        me.options['axis'] = 'no';
+        me.icn3d.options['axis'] = 'no';
       }
       else if(command.indexOf('reset') !== -1) {
         location.reload();
@@ -3232,7 +3352,31 @@ iCn3DUI.prototype = {
         var paraArray = command.split(' | ');
         var text = paraArray[0].substr(paraArray[0].lastIndexOf(' ') + 1);
 
-        me.addLabel(text, size, color, background);
+        var positionArray = paraArray[1].split(' ');
+        var x = position[1], y = position[3], z = position[5];
+
+        var size = paraArray[2].substr(paraArray[2].lastIndexOf(' ') + 1);
+        var color = paraArray[3].substr(paraArray[3].lastIndexOf(' ') + 1);
+        var background = paraArray[4].substr(paraArray[4].lastIndexOf(' ') + 1);
+
+        me.addLabel(text, x,y,z, size, color, background);
+        me.icn3d.draw();
+      }
+      else if(command.indexOf('add residue labels') !== -1) {
+        me.addResiudeLabels();
+
+       var options2 = {};
+       options2['secondary'] = 'nothing';
+       options2['nucleotides'] = 'nothing';
+       options2['ligands'] = 'nothing';
+       options2['water'] = 'nothing';
+       options2['ions'] = 'nothing';
+
+       //me.icn3d.setAtomStyleByOptions(options2);
+
+       me.icn3d.options['labels'] = 'yes';
+
+        //me.icn3d.draw(options2);
         me.icn3d.draw();
       }
       else if(command.indexOf('add line') !== -1) {
@@ -3277,16 +3421,16 @@ iCn3DUI.prototype = {
         me.showHbonds(threshold);
       }
       else if(command.indexOf('set hbonds off') !== -1) {
-        me.options["hbonds"] = "no";
-        me.icn3d.draw(me.options);
+        me.icn3d.options["hbonds"] = "no";
+        me.icn3d.draw();
         }
       else if(command.indexOf('set lines off') !== -1) {
-        me.options["lines"] = "no";
-        me.icn3d.draw(me.options);
+        me.icn3d.options["lines"] = "no";
+        me.icn3d.draw();
         }
       else if(command.indexOf('set labels off') !== -1) {
-        me.options["labels"] = "no";
-        me.icn3d.draw(me.options);
+        me.icn3d.options["labels"] = "no";
+        me.icn3d.draw();
         }
       else if(command.indexOf('back') !== -1) {
          me.back();
@@ -3386,7 +3530,7 @@ iCn3DUI.prototype = {
         html += "                <li><span id='" + me.pre + "menu1_exportCanvas' class='link'>Export Image</span></li>";
         html += "                <li>Links";
         html += "                  <ul>";
-        html += "                    <li><span id='" + me.pre + "menu1_link_structure' class='link'>Search Structure</span></li>";
+        html += "                    <li><span id='" + me.pre + "menu1_link_structure' class='link'>Structure Summary</span></li>";
         html += "                    <li><span id='" + me.pre + "menu1_link_vast' class='link'>Find Similar Structures</span></li>";
         html += "                    <li><span id='" + me.pre + "menu1_link_pubmed' class='link'>Literature</span></li>";
         html += "                  </ul>";
@@ -3413,7 +3557,7 @@ iCn3DUI.prototype = {
         html += "                      <li><input type='radio' name='" + me.pre + "menu2_select' id='" + me.pre + "menu2_selectcomplement'><label for='" + me.pre + "menu2_selectcomplement'>Complement</label></li>";
         html += "                      <li><input type='radio' name='" + me.pre + "menu2_select' id='" + me.pre + "menu2_aroundsphere'><label for='" + me.pre + "menu2_aroundsphere'>Custom Sphere</label></li>";
         if(me.cfg.cid === undefined) {
-            html += "                      <li><input type='radio' name='" + me.pre + "menu2_select' id='" + me.pre + "menu2_selectresidues'><label for='" + me.pre + "menu2_selectresidues'>Sequences</label></li>";
+            html += "                      <li><input type='radio' name='" + me.pre + "menu2_select' id='" + me.pre + "menu2_selectresidues'><label for='" + me.pre + "menu2_selectresidues'>Sequence</label></li>";
         }
         if(me.cfg.align !== undefined) {
             html += "                      <li><input type='radio' name='" + me.pre + "menu2_select' id='" + me.pre + "menu2_alignment'><label for='" + me.pre + "menu2_alignment'>Aligned Seq.</label></li>";
@@ -3512,27 +3656,27 @@ iCn3DUI.prototype = {
             html += "                  </ul>";
             html += "                </li>";
 
-			html += "                <li>Ligands";
-			html += "                  <ul>";
-			html += "                      <li><input type='radio' name='" + me.pre + "menu3_ligands' id='" + me.pre + "menu3_ligandsLines'><label for='" + me.pre + "menu3_ligandsLines'>Lines</label></li>";
-			html += "                      <li><input type='radio' name='" + me.pre + "menu3_ligands' id='" + me.pre + "menu3_ligandsStick' checked><label for='" + me.pre + "menu3_ligandsStick'>Stick</label></li>";
-			html += "                      <li><input type='radio' name='" + me.pre + "menu3_ligands' id='" + me.pre + "menu3_ligandsBallstick'><label for='" + me.pre + "menu3_ligandsBallstick'>Ball and Stick</label></li>";
-			html += "                      <li><input type='radio' name='" + me.pre + "menu3_ligands' id='" + me.pre + "menu3_ligandsSphere'><label for='" + me.pre + "menu3_ligandsSphere'>Sphere</label></li>";
-			html += "                      <li><input type='radio' name='" + me.pre + "menu3_ligands' id='" + me.pre + "menu3_ligandsNothing'><label for='" + me.pre + "menu3_ligandsNothing'>Hide</label></li>";
-			html += "                  </ul>";
-			html += "                </li>";
+            html += "                <li>Ligands";
+            html += "                  <ul>";
+            html += "                      <li><input type='radio' name='" + me.pre + "menu3_ligands' id='" + me.pre + "menu3_ligandsLines'><label for='" + me.pre + "menu3_ligandsLines'>Lines</label></li>";
+            html += "                      <li><input type='radio' name='" + me.pre + "menu3_ligands' id='" + me.pre + "menu3_ligandsStick' checked><label for='" + me.pre + "menu3_ligandsStick'>Stick</label></li>";
+            html += "                      <li><input type='radio' name='" + me.pre + "menu3_ligands' id='" + me.pre + "menu3_ligandsBallstick'><label for='" + me.pre + "menu3_ligandsBallstick'>Ball and Stick</label></li>";
+            html += "                      <li><input type='radio' name='" + me.pre + "menu3_ligands' id='" + me.pre + "menu3_ligandsSphere'><label for='" + me.pre + "menu3_ligandsSphere'>Sphere</label></li>";
+            html += "                      <li><input type='radio' name='" + me.pre + "menu3_ligands' id='" + me.pre + "menu3_ligandsNothing'><label for='" + me.pre + "menu3_ligandsNothing'>Hide</label></li>";
+            html += "                  </ul>";
+            html += "                </li>";
         }
         else {
-			html += "                <li>Ligands";
-			html += "                  <ul>";
-			html += "                      <li><input type='radio' name='" + me.pre + "menu3_ligands' id='" + me.pre + "menu3_ligandsLines'><label for='" + me.pre + "menu3_ligandsLines'>Lines</label></li>";
-			html += "                      <li><input type='radio' name='" + me.pre + "menu3_ligands' id='" + me.pre + "menu3_ligandsStick'><label for='" + me.pre + "menu3_ligandsStick'>Stick</label></li>";
-			html += "                      <li><input type='radio' name='" + me.pre + "menu3_ligands' id='" + me.pre + "menu3_ligandsBallstick' checked><label for='" + me.pre + "menu3_ligandsBallstick'>Ball and Stick</label></li>";
-			html += "                      <li><input type='radio' name='" + me.pre + "menu3_ligands' id='" + me.pre + "menu3_ligandsSphere'><label for='" + me.pre + "menu3_ligandsSphere'>Sphere</label></li>";
-			html += "                      <li><input type='radio' name='" + me.pre + "menu3_ligands' id='" + me.pre + "menu3_ligandsNothing'><label for='" + me.pre + "menu3_ligandsNothing'>Hide</label></li>";
-			html += "                  </ul>";
-			html += "                </li>";
-		}
+            html += "                <li>Ligands";
+            html += "                  <ul>";
+            html += "                      <li><input type='radio' name='" + me.pre + "menu3_ligands' id='" + me.pre + "menu3_ligandsLines'><label for='" + me.pre + "menu3_ligandsLines'>Lines</label></li>";
+            html += "                      <li><input type='radio' name='" + me.pre + "menu3_ligands' id='" + me.pre + "menu3_ligandsStick'><label for='" + me.pre + "menu3_ligandsStick'>Stick</label></li>";
+            html += "                      <li><input type='radio' name='" + me.pre + "menu3_ligands' id='" + me.pre + "menu3_ligandsBallstick' checked><label for='" + me.pre + "menu3_ligandsBallstick'>Ball and Stick</label></li>";
+            html += "                      <li><input type='radio' name='" + me.pre + "menu3_ligands' id='" + me.pre + "menu3_ligandsSphere'><label for='" + me.pre + "menu3_ligandsSphere'>Sphere</label></li>";
+            html += "                      <li><input type='radio' name='" + me.pre + "menu3_ligands' id='" + me.pre + "menu3_ligandsNothing'><label for='" + me.pre + "menu3_ligandsNothing'>Hide</label></li>";
+            html += "                  </ul>";
+            html += "                </li>";
+        }
 
 
         html += "                <li>Ions";
@@ -3673,9 +3817,10 @@ iCn3DUI.prototype = {
             html += "                  </ul>";
             html += "                </li>";
         }
-        html += "                <li>Custom Labels";
+        html += "                <li>Label";
         html += "                  <ul>";
-        html += "                      <li><input type='radio' name='" + me.pre + "menu6_addlabel' id='" + me.pre + "menu6_addlabelYes'><label for='" + me.pre + "menu6_addlabelYes'>Show</label></li>";
+        html += "                      <li><input type='radio' name='" + me.pre + "menu6_addlabel' id='" + me.pre + "menu6_addlabelResidues'><label for='" + me.pre + "menu6_addlabelResidues'>Label Residues</label></li>";
+        html += "                      <li><input type='radio' name='" + me.pre + "menu6_addlabel' id='" + me.pre + "menu6_addlabelYes'><label for='" + me.pre + "menu6_addlabelYes'>Custom Label</label></li>";
         html += "                      <li><input type='radio' name='" + me.pre + "menu6_addlabel' id='" + me.pre + "menu6_addlabelNo' checked><label for='" + me.pre + "menu6_addlabelNo'>Hide</label></li>";
         html += "                  </ul>";
         html += "                </li>";
@@ -3769,6 +3914,9 @@ iCn3DUI.prototype = {
 
         html += me.setTools();
 
+        // show title at the top left corner
+        html += "  <div id='" + me.pre + "title' class='commandTitle' style='position:absolute; z-index:1; float:left; display:table-row; margin: 85px 0px 0px 5px; color: #DDD'></div>";
+
         html += "  <div id='" + me.pre + "viewer' style='width:100%; height:100%; background-color: #ddd;'>";
         html += "   <div id='" + me.pre + "menuLogSection'>";
         html += "    <div style='height: " + me.MENU_HEIGHT + "px;'></div>";
@@ -3811,8 +3959,8 @@ iCn3DUI.prototype = {
         }
 
         html += "<div id='" + me.pre + "dl_command'>";
-        html += "  <table><tr><td valign='top'><table>";
-        html += "<tr><td align='right'><b>Select (<a href='https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d.html#selectb' target='_blank'><span title='click to see how to select'>Hint</span></a>):</b></td><td><input type='text' id='" + me.pre + "command' placeholder='#[structures].[chains]:[residues]@[atoms]' size='30'></td></tr>";
+        html += "  <table width='500'><tr><td valign='top'><table>";
+        html += "<tr><td align='right'><b>Select:</b></td><td><input type='text' id='" + me.pre + "command' placeholder='#[structures].[chains]:[residues]@[atoms]' size='30'></td></tr>";
         html += "<tr><td align='right'><b>Name:</b></td><td><input type='text' id='" + me.pre + "command_name' placeholder='my_selection' size='30'></td></tr>";
         html += "<tr><td align='right'><b>Description:</b></td><td><input type='text' id='" + me.pre + "command_desc' placeholder='description about my selection' size='30'></td></tr>";
         html += "<tr><td colspan='2' align='center'><button id='" + me.pre + "command_apply'><b>Apply</b></button></td></tr>";
@@ -3828,7 +3976,9 @@ iCn3DUI.prototype = {
         html += "    <button id='" + me.pre + "show_selected_atom'><span style='white-space:nowrap'><b>Display Selection</b></span></button>";
         html += "  </div></td></tr>";
 
-        html += "  <tr><td colspan='3'>(Script format: select [select] | name [name] | description [description])</td></tr></table>";
+        //html += "  <tr><td colspan='3'>One line command: select [my_select] | name [my_name] | description [my_description], e.g., select :1-10 | name residue1-20 | description residues 1-20 in all chains<br/><br/></td></tr>";
+
+        html += "  <tr><td colspan='3'><a href='https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d.html#selectb' target='_blank'><span title='click to see how to select'>Hint</span></a>: <br/>Users can define \"select\" command similar to Chimera. For example, in the selection \"#1,2,3.A,B,C:5-10,Lys,ligands@CA,C\":<br/>\"#1,2,3\" uses \"#\" to indicate structure selection.<br/>\".A,B,C\" uses \".\" to indicate chain selection.<br/>\":5-10,Lys,ligands\" uses \":\" to indicate residue selection. Residue could be predefined names: 'proteins', 'nucleotides', 'ligands', 'ions', and 'water'.<br/>\"@CA,C\" uses \"@\" to indicate atom selection.<br/><br/>Partial definition is allowed, e.g., \":1-10\" selects all residue IDs 1-10 in all chains.<br/><br/>Different selections can be concatenated using semicolon, e.g., \":1-10; :Lys\" selects all residue IDs 1-10 and all Lys residues.</td></tr></table>";
 
         html += "</div>";
 
@@ -3992,11 +4142,11 @@ iCn3DUI.prototype = {
         var seqName;
         if(me.cfg.align !== undefined) {
             //seqName = (me.isMobile()) ? 'Aligned<br/>Seq.' : 'Aligned<br/>Sequences';
-            seqName = 'Aligned<br/>Seq.';
+            seqName = 'Aligned<br/>Sequence';
         }
         else {
             //seqName = (me.isMobile()) ? 'Seq.' : 'Sequences';
-            seqName = 'Sequ-<br/>ence';
+            seqName = 'View<br/>Sequence';
         }
 
         if(me.cfg.cid === undefined) {
@@ -4023,18 +4173,56 @@ iCn3DUI.prototype = {
         return html;
     },
 
+    selectAllUpdateMenuSeq: function(bInitial, bShowHighlight) { var me = this;
+          var structuresHtml = me.setStructureMenu(bInitial);
+          var chainsHtml = me.setChainMenu(bInitial);
+          var alignChainsHtml = me.getAlignChainSelections();
+          var definedResiduesHtml = me.setResidueMenu();
+          var definedAtomsHtml = me.setAtomMenu();
+
+          if($("#" + me.pre + "structureid")) $("#" + me.pre + "structureid").html(structuresHtml);
+          if($("#" + me.pre + "chainid")) $("#" + me.pre + "chainid").html(chainsHtml);
+          if($("#" + me.pre + "alignChainid")) $("#" + me.pre + "alignChainid").html(alignChainsHtml);
+          if($("#" + me.pre + "customResidues")) $("#" + me.pre + "customResidues").html(definedResiduesHtml);
+
+          if($("#" + me.pre + "structureid2")) $("#" + me.pre + "structureid2").html(structuresHtml);
+          if($("#" + me.pre + "chainid2")) $("#" + me.pre + "chainid2").html(chainsHtml);
+          if($("#" + me.pre + "alignChainid2")) $("#" + me.pre + "alignChainid2").html(alignChainsHtml);
+          if($("#" + me.pre + "customResidues2")) $("#" + me.pre + "customResidues2").html(definedResiduesHtml);
+
+          if($("#" + me.pre + "customAtoms")) $("#" + me.pre + "customAtoms").html(definedAtomsHtml);
+
+           //var residueArray = this.getResiduesUpdateHighlight(Object.keys(me.icn3d.chains));
+           //var seqObj = me.getSequencesAnnotations(Object.keys(me.icn3d.chains), false, residueArray);
+
+           var seqObj = me.getSequencesAnnotations(Object.keys(me.icn3d.chains), undefined, undefined, bShowHighlight);
+
+           $("#" + me.pre + "dl_sequence").html(seqObj.sequencesHtml);
+           $("#" + me.pre + "dl_sequence").width(me.RESIDUE_WIDTH * seqObj.maxSeqCnt + 200);
+
+           if(me.cfg.align !== undefined) {
+               //residueArray = this.getResiduesUpdateHighlight(Object.keys(me.icn3d.alignChains));
+
+               //seqObj = me.getAlignSequencesAnnotations(Object.keys(me.icn3d.alignChains), false, residueArray);
+
+               seqObj = me.getAlignSequencesAnnotations(Object.keys(me.icn3d.alignChains));
+
+               $("#" + me.pre + "dl_sequence2").html(seqObj.sequencesHtml);
+               $("#" + me.pre + "dl_sequence2").width(me.RESIDUE_WIDTH * seqObj.maxSeqCnt + 200);
+           }
+    },
+
     selectAll: function() { var me = this;
            me.icn3d.highlightAtoms = {};
 
            for(var i in me.icn3d.chains) {
                me.icn3d.highlightAtoms = me.icn3d.unionHash(me.icn3d.highlightAtoms, me.icn3d.chains[i]);
+               me.icn3d.displayAtoms = me.icn3d.unionHash(me.icn3d.displayAtoms, me.icn3d.chains[i]);
            }
 
            me.icn3d.removeHighlightObjects();
 
-           var seqObj = me.getSequencesAnnotations(Object.keys(me.icn3d.chains));
-           $("#" + me.pre + "dl_sequence").html(seqObj.sequencesHtml);
-           $("#" + me.pre + "dl_sequence").width(me.RESIDUE_WIDTH * seqObj.maxSeqCnt + 200);
+           me.selectAllUpdateMenuSeq(true);
 
            me.icn3d.addHighlightObjects();
     },
@@ -4053,18 +4241,18 @@ iCn3DUI.prototype = {
                }
 
                me.icn3d.highlightAtoms = {};
-               me.icn3d.cloneHash(complement, me.icn3d.highlightAtoms);
+               me.icn3d.highlightAtoms = me.icn3d.cloneHash(complement);
 
                me.icn3d.removeHighlightObjects();
 
                var sequencesHtml = "<b>Annotation(s):</b> Complement of the current selection<br/>";
 
-               var chainArray = [];
-               for(var chain in me.icn3d.chains) {
-                   chainArray.push(chain);
-               }
+               //var chainArray = [];
+               //for(var chain in me.icn3d.chains) {
+               //    chainArray.push(chain);
+               //}
 
-               var seqObj = me.getSequencesAnnotations(chainArray, false, Object.keys(residuesHash));
+               var seqObj = me.getSequencesAnnotations(undefined, true, Object.keys(residuesHash));
                $("#" + me.pre + "dl_sequence").html(sequencesHtml + seqObj.sequencesHtml);
                $("#" + me.pre + "dl_sequence").width(me.RESIDUE_WIDTH * seqObj.maxSeqCnt + 200);
 
@@ -4092,6 +4280,23 @@ iCn3DUI.prototype = {
             }
 
             me.saveFile(me.inputid + '_residues.txt', 'residue', output);
+    },
+
+    getLinkToStructureSummary: function(bLog) { var me = this;
+           var idArray = me.inputid.split('_');
+
+           var url = (me.cfg.cid !== undefined) ? "https://www.ncbi.nlm.nih.gov/pccompound/?term=" : "https://www.ncbi.nlm.nih.gov/structure/?term=";
+
+           if(idArray.length === 1) {
+               url += me.inputid;
+               if(bLog !== undefined && bLog) me.setLogCommand("link to Structure Summary " + me.inputid + ": " + url, false);
+           }
+           else if(idArray.length === 2) {
+               url += idArray[0] + " OR " + idArray[1];
+               if(bLog !== undefined && bLog) me.setLogCommand("link to structures " + idArray[0] + " and " + idArray[1] + ": " + url, false);
+           }
+
+           return url;
     },
 
     isMobile: function() {
@@ -4297,11 +4502,7 @@ iCn3DUI.prototype = {
     clickMenu1_link_structure: function() { var me = this;
         $("#" + me.pre + "menu1_link_structure").click(function (e) {
            //e.preventDefault();
-
-           var url = "https://www.ncbi.nlm.nih.gov/structure/?term=" + me.inputid;
-
-
-           me.setLogCommand("link to search structure " + me.inputid + ": " + url, false);
+           var url = me.getLinkToStructureSummary(true);
 
            //me.exportState();
            window.open(url, '_blank');
@@ -4312,9 +4513,23 @@ iCn3DUI.prototype = {
         $("#" + me.pre + "menu1_link_vast").click(function (e) {
            //e.preventDefault();
 
-           var url = "https://www.ncbi.nlm.nih.gov/Structure/vastplus/vastplus.cgi?uid=" + me.inputid;
+           if(me.cfg.cid !== undefined) {
+                   url = "https://www.ncbi.nlm.nih.gov/pccompound?LinkName=pccompound_pccompound_3d&from_uid=" + me.inputid;
+                   me.setLogCommand("link to compounds with structure similar to CID " + me.inputid + ": " + url, false);
+           }
+           else {
+               var idArray = me.inputid.split('_');
 
-           me.setLogCommand("link to structures similar to " + me.inputid + ": " + url, false);
+               var url;
+               if(idArray.length === 1) {
+                   url = "https://www.ncbi.nlm.nih.gov/Structure/vastplus/vastplus.cgi?uid=" + me.inputid;
+                   me.setLogCommand("link to structures similar to " + me.inputid + ": " + url, false);
+               }
+               else if(idArray.length === 2) {
+                   url = "https://www.ncbi.nlm.nih.gov/Structure/vastplus/vastplus.cgi?uid=" + idArray[0];
+                   me.setLogCommand("link to structures similar to " + idArray[0] + ": " + url, false);
+               }
+           }
 
            window.open(url, '_blank');
         });
@@ -4326,15 +4541,43 @@ iCn3DUI.prototype = {
 
            var url;
            if(me.pmid !== undefined) {
-               url = "https://www.ncbi.nlm.nih.gov/pubmed/" + me.pmid;
+               var idArray = me.pmid.split('_');
+
+               var url;
+               if(idArray.length === 1) {
+                   url = "https://www.ncbi.nlm.nih.gov/pubmed/" + me.pmid;
+                   me.setLogCommand("link to PubMed ID " + me.pmid + ": " + url, false);
+               }
+               else if(idArray.length === 2) {
+                   url = "https://www.ncbi.nlm.nih.gov/pubmed/?term=" + idArray[0] + " OR " + idArray[1];
+                   me.setLogCommand("link to PubMed IDs " + idArray[0] + ", " + idArray[1] + ": " + url, false);
+               }
+
+               window.open(url, '_blank');
+           }
+           else if(isNaN(me.inputid)) {
+               var idArray = me.inputid.split('_');
+
+               var url;
+               if(idArray.length === 1) {
+                   url = "https://www.ncbi.nlm.nih.gov/pubmed/?term=" + me.inputid;
+                   me.setLogCommand("link to literature about PDB " + me.inputid + ": " + url, false);
+               }
+               else if(idArray.length === 2) {
+                   url = "https://www.ncbi.nlm.nih.gov/pubmed/?term=" + idArray[0] + " OR " + idArray[1];
+                   me.setLogCommand("link to literature about PDB " + idArray[0] + " OR " + idArray[1] + ": " + url, false);
+               }
+
+               window.open(url, '_blank');
            }
            else {
-               url = "https://www.ncbi.nlm.nih.gov/pubmed/?term=" + me.inputid;
+               if(me.cfg.cid !== undefined) {
+                   alert("No literature information is available for this compound in the SDF file.");
+               }
+               else {
+                   alert("No literature information is available for this structure.");
+               }
            }
-
-           me.setLogCommand("link to literature about " + me.inputid + ": " + url, false);
-
-           window.open(url, '_blank');
         });
     },
 
@@ -5009,6 +5252,30 @@ iCn3DUI.prototype = {
         });
     },
 
+    clickMenu6_addlabelResidues: function() { var me = this;
+        $("#" + me.pre + "menu6_addlabelResidues").click(function (e) {
+           //e.preventDefault();
+
+           me.setLogCommand('add residue labels', true);
+
+           me.addResiudeLabels();
+
+           var options2 = {};
+
+           options2['secondary'] = 'nothing';
+           options2['nucleotides'] = 'nothing';
+           options2['ligands'] = 'nothing';
+           options2['water'] = 'nothing';
+           options2['ions'] = 'nothing';
+
+           //me.icn3d.setAtomStyleByOptions(options2);
+
+           me.icn3d.options['labels'] = 'yes';
+           //me.icn3d.draw(options2);
+           me.icn3d.draw();
+        });
+    },
+
     clickMenu6_addlabelYes: function() { var me = this;
         $("#" + me.pre + "menu6_addlabelYes").click(function (e) {
            //e.preventDefault();
@@ -5031,8 +5298,10 @@ iCn3DUI.prototype = {
            var select = "set labels off";
            me.setLogCommand(select, true);
 
-            me.options["labels"] = "no";
-            me.icn3d.draw(me.options);
+           me.icn3d.labels = [];
+
+            me.icn3d.options["labels"] = "no";
+            me.icn3d.draw();
 
         });
     },
@@ -5059,8 +5328,10 @@ iCn3DUI.prototype = {
            var select = "set lines off";
            me.setLogCommand(select, true);
 
-            me.options["lines"] = "no";
-            me.icn3d.draw(me.options);
+            me.icn3d.lines = [];
+
+            me.icn3d.options["lines"] = "no";
+            me.icn3d.draw();
         });
     },
 
@@ -5203,9 +5474,12 @@ iCn3DUI.prototype = {
            var select = "set hbonds off";
            me.setLogCommand(select, true);
 
-            me.options["hbonds"] = "no";
-            me.options["lines"] = "no";
-            me.icn3d.draw(me.options);
+            me.icn3d.options["hbonds"] = "no";
+            me.icn3d.options["lines"] = "no";
+
+            me.icn3d.lines = [];
+
+            me.icn3d.draw();
         });
     },
 
@@ -5230,8 +5504,7 @@ iCn3DUI.prototype = {
                             me.removeSeqChainBkgd();
                             me.removeSeqResidueBkgd();
 
-                          me.icn3d.removeHighlightObjects();
-                          me.icn3d.highlightAtoms = {};
+                          //me.icn3d.removeHighlightObjects();
 
                           me.SELECT_RESIDUE = true;
                           me.selectedResidues = {};
@@ -5256,18 +5529,16 @@ iCn3DUI.prototype = {
                         if(!$(this).hasClass('highlightSeq')) {
                           //atom.color = me.icn3d.atomPrevColors[i];
 
-                          delete me.icn3d.highlightAtoms[i];
+                          //delete me.icn3d.highlightAtoms[i];
+                          me.icn3d.highlightAtoms[i] = undefined;
                           me.selectedResidues[residueid] = undefined;
                         }
                     }
+
+                      me.icn3d.removeHighlightObjects();
+                      me.icn3d.addHighlightObjects();
                   }
               });
-
-              var options2 = {};
-              //options2['color'] = 'custom';
-
-              //me.icn3d.draw(options2, false);
-              me.icn3d.addHighlightObjects();
 
               // reset original color
               //me.icn3d.setColorByOptions(me.options, me.icn3d.atoms);
@@ -5334,8 +5605,7 @@ iCn3DUI.prototype = {
                             me.removeSeqChainBkgd();
                             me.removeSeqResidueBkgd();
 
-                          me.icn3d.removeHighlightObjects();
-                          me.icn3d.highlightAtoms = {};
+                          //me.icn3d.removeHighlightObjects();
 
                           me.SELECT_RESIDUE = true;
                           me.selectedResidues = {};
@@ -5364,14 +5634,13 @@ iCn3DUI.prototype = {
                           me.selectedResidues[residueid] = undefined;
                         }
                     }
+
+                    me.icn3d.removeHighlightObjects();
+                    me.icn3d.addHighlightObjects();
                   }
               });
 
-              var options2 = {};
-              //options2['color'] = 'custom';
-
-              //me.icn3d.draw(options2, false);
-              me.icn3d.addHighlightObjects();
+              //me.icn3d.addHighlightObjects();
 
               // reset original color
               //me.icn3d.setColorByOptions(me.options, me.icn3d.atoms);
@@ -5470,7 +5739,7 @@ iCn3DUI.prototype = {
               }
           //});
 
-          var options2 = {};
+          //var options2 = {};
           //options2['color'] = 'custom';
 
           //me.icn3d.draw(options2, false);
@@ -5900,6 +6169,7 @@ iCn3DUI.prototype = {
                me.setLogCommand('load pdb file ' + $("#" + me.pre + "pdbfile").val(), false);
 
                //me.icn3d.bLoadpdbfile= true;
+               me.icn3d.moleculeTitle = "";
 
                me.loadPdbData(dataStr);
              };
@@ -5973,9 +6243,9 @@ iCn3DUI.prototype = {
     //         me.icn3d.picking = 0;
              me.icn3d.pickpair = false;
 
-             var options2 = {};
-             options2['labels'] = 'yes';
-             me.icn3d.draw(options2);
+             //var options2 = {};
+             me.icn3d.options['labels'] = 'yes';
+             me.icn3d.draw();
            }
         });
     },
@@ -6013,10 +6283,10 @@ iCn3DUI.prototype = {
     //         me.icn3d.picking = 0;
              me.icn3d.pickpair = false;
 
-             var options2 = {};
-             options2['labels'] = 'yes';
-             options2['lines'] = 'yes';
-             me.icn3d.draw(options2);
+             //var options2 = {};
+             me.icn3d.options['labels'] = 'yes';
+             me.icn3d.options['lines'] = 'yes';
+             me.icn3d.draw();
            }
         });
     },
@@ -6039,6 +6309,7 @@ iCn3DUI.prototype = {
 
             if(me.icn3d.prevHighlightObjects.length > 0) { // remove
                 me.icn3d.removeHighlightObjects();
+                me.icn3d.render();
             }
             else { // add
                 me.icn3d.addHighlightObjects();
@@ -6329,6 +6600,7 @@ iCn3DUI.prototype = {
         me.clickMenu5_wireframeNo();
         me.clickMenu6_assemblyYes();
         me.clickMenu6_assemblyNo();
+        me.clickMenu6_addlabelResidues();
         me.clickMenu6_addlabelYes();
         me.clickMenu6_addlabelNo();
         me.clickMenu6_distanceYes();

@@ -57,7 +57,13 @@
     if(width === undefined) width = '100%';
     if(height === undefined) height = '100%';
 
-    var resize = true;
+    var resize = params.resize;
+    if(resize === undefined || resize == 'true' || resize == '1') {
+      resize = true;
+    }
+    else if(resize == 'false' || resize == '0') {
+      resize = false;
+    }
 
     $( document ).ready(function() {
       function setupViewer(idName, idValue) {
@@ -66,7 +72,7 @@
         var idArray = idValue.replace(/\s/g, '').split(',');
 
         if(idArray.length > 1) {
-          resize = false;
+          //resize = false;
 
           if(width.indexOf('%') != -1) {
             width = 400;
