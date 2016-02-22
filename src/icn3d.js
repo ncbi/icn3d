@@ -3313,7 +3313,7 @@ iCn3D.prototype = {
         var fontsize = parameters.hasOwnProperty("fontsize") ? parameters["fontsize"] : 18;
         var borderThickness = parameters.hasOwnProperty("borderThickness") ? parameters["borderThickness"] : 4;
 
-        var a = 1.0;
+        var a = parameters.hasOwnProperty("alpha") ? parameters["alpha"] : 1.0;
         var borderColor = parameters.hasOwnProperty("borderColor") ? this.hexToRgb(parameters["borderColor"], a) : { r:0, g:0, b:0, a:1.0 };
         var backgroundColor = parameters.hasOwnProperty("backgroundColor") ? this.hexToRgb(parameters["backgroundColor"], a) : { r:0, g:0, b:0, a:0.5 };
 
@@ -3328,6 +3328,11 @@ iCn3D.prototype = {
         var metrics = context.measureText( message );
         var textWidth = metrics.width;
 
+        var width = textWidth + 2*borderThickness;
+        var height = fontsize + 2*borderThickness;
+        canvas.width = width;
+        canvas.height = height;
+
         var radius = context.measureText( "M" ).width;
 
         // background color
@@ -3336,13 +3341,18 @@ iCn3D.prototype = {
         context.strokeStyle = "rgba(" + borderColor.r + "," + borderColor.g + "," + borderColor.b + "," + borderColor.a + ")";
 
         context.lineWidth = borderThickness;
-        this.roundRect(context, borderThickness/2, borderThickness/2, (textWidth + borderThickness) * 1.1, fontsize*1.4 + borderThickness, radius * 0.3);
-        // 1.4 is extra height factor for text below baseline: g,j,p,q.
+        this.roundRect(context, 0, 0, width, height, radius * 0.3);
+
+        // need to redefine again
+        context.font = "Bold " + fontsize + "px " + fontface;
+
+        context.textAlign = "center";
+        context.textBaseline = "middle";
 
         context.fillStyle = "rgba("+textColor.r+", "+textColor.g+", "+textColor.b+", 1.0)";
         context.strokeStyle = "rgba("+textColor.r+", "+textColor.g+", "+textColor.b+", 1.0)";
 
-        context.fillText( message, borderThickness + fontsize*0.1, fontsize + borderThickness);
+        context.fillText( message, width * 0.5, height * 0.5);
 
         // canvas contents will be used for a texture
         var texture = new THREE.Texture(canvas)
@@ -3358,27 +3368,12 @@ iCn3D.prototype = {
         } );
 
         var sprite = new THREE.Sprite( spriteMaterial );
-        //sprite.scale.set(4, 2, 1.0);
-        //sprite.scale.set(1, 1, 1);
 
         var factor = this.maxD / 100;
 
-        sprite.scale.set(16*factor, 8*factor, 1.0);
+        sprite.scale.set(4*factor, 2*factor, 1.0);
 
         return sprite;
-/*
-    var material1 = new THREE.MeshBasicMaterial( { map: texture, side: THREE.DoubleSide } );
-    material1.transparent = true;
-
-    var mesh1 = new THREE.Mesh(
-        new THREE.PlaneGeometry(this.WIDTH, this.HEIGHT),
-        material1
-    );
-
-//    mesh1.position.set(position.x + 10,position.y,position.z);
-
-    return mesh1;
-*/
     },
 
     // http://stackoverflow.com/questions/5623838/rgb-to-hex-and-hex-to-rgb
