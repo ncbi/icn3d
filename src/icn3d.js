@@ -1000,6 +1000,7 @@ iCn3D.prototype = {
         this.displayAtoms = {};
         this.highlightAtoms = {};
         this.proteins = {};
+        this.sidechains = {};
         this.nucleotides = {};
         this.nucleotidesP = {};
         //this.proteinsnucleotides = {};
@@ -1371,6 +1372,7 @@ iCn3D.prototype = {
               else {
                 this.proteins[atom.serial] = 1;
                 if (atom.name === 'CA') this.calphas[atom.serial] = 1;
+                if (atom.name !== 'N' && atom.name !== 'CA' && atom.name !== 'C' && atom.name !== 'O') this.sidechains[atom.serial] = 1;
               }
             }
             else if(atom.het) {
@@ -2047,7 +2049,7 @@ iCn3D.prototype = {
 
     createLines: function(lines) { // show extra lines, not used for picking, so no this.objects
        if(lines !== undefined) {
-         for(var i in lines) {
+         for(var i = 0, il = lines.length; i < il; ++i) {
            var line = lines[i];
 
            var p1 = line.position1;
@@ -3270,7 +3272,7 @@ iCn3D.prototype = {
 
           // skip itself
           var bItself = 1;
-          for(var j in matArray) {
+          for(var j = 0, jl = matArray.length; j < jl; ++j) {
             if(j == 0 || j == 5 || j == 10) {
               if(parseInt(1000*matArray[j]) != 1000) bItself = 0;
             }
@@ -3311,7 +3313,7 @@ iCn3D.prototype = {
         var fontsize = parameters.hasOwnProperty("fontsize") ? parameters["fontsize"] : 18;
         var borderThickness = parameters.hasOwnProperty("borderThickness") ? parameters["borderThickness"] : 4;
 
-        var a = 1.0;
+        var a = parameters.hasOwnProperty("alpha") ? parameters["alpha"] : 1.0;
         var borderColor = parameters.hasOwnProperty("borderColor") ? this.hexToRgb(parameters["borderColor"], a) : { r:0, g:0, b:0, a:1.0 };
         var backgroundColor = parameters.hasOwnProperty("backgroundColor") ? this.hexToRgb(parameters["backgroundColor"], a) : { r:0, g:0, b:0, a:0.5 };
 
@@ -3326,6 +3328,11 @@ iCn3D.prototype = {
         var metrics = context.measureText( message );
         var textWidth = metrics.width;
 
+        var width = textWidth + 2*borderThickness;
+        var height = fontsize + 2*borderThickness;
+        canvas.width = width;
+        canvas.height = height;
+
         var radius = context.measureText( "M" ).width;
 
         // background color
@@ -3334,13 +3341,18 @@ iCn3D.prototype = {
         context.strokeStyle = "rgba(" + borderColor.r + "," + borderColor.g + "," + borderColor.b + "," + borderColor.a + ")";
 
         context.lineWidth = borderThickness;
-        this.roundRect(context, borderThickness/2, borderThickness/2, (textWidth + borderThickness) * 1.1, fontsize*1.4 + borderThickness, radius * 0.3);
-        // 1.4 is extra height factor for text below baseline: g,j,p,q.
+        this.roundRect(context, 0, 0, width, height, radius * 0.3);
+
+        // need to redefine again
+        context.font = "Bold " + fontsize + "px " + fontface;
+
+        context.textAlign = "center";
+        context.textBaseline = "middle";
 
         context.fillStyle = "rgba("+textColor.r+", "+textColor.g+", "+textColor.b+", 1.0)";
         context.strokeStyle = "rgba("+textColor.r+", "+textColor.g+", "+textColor.b+", 1.0)";
 
-        context.fillText( message, borderThickness + fontsize*0.1, fontsize + borderThickness);
+        context.fillText( message, width * 0.5, height * 0.5);
 
         // canvas contents will be used for a texture
         var texture = new THREE.Texture(canvas)
@@ -3356,27 +3368,12 @@ iCn3D.prototype = {
         } );
 
         var sprite = new THREE.Sprite( spriteMaterial );
-        //sprite.scale.set(4, 2, 1.0);
-        //sprite.scale.set(1, 1, 1);
 
         var factor = this.maxD / 100;
 
-        sprite.scale.set(16*factor, 8*factor, 1.0);
+        sprite.scale.set(3*factor, 3*factor, 1.0);
 
         return sprite;
-/*
-    var material1 = new THREE.MeshBasicMaterial( { map: texture, side: THREE.DoubleSide } );
-    material1.transparent = true;
-
-    var mesh1 = new THREE.Mesh(
-        new THREE.PlaneGeometry(this.WIDTH, this.HEIGHT),
-        material1
-    );
-
-//    mesh1.position.set(position.x + 10,position.y,position.z);
-
-    return mesh1;
-*/
     },
 
     // http://stackoverflow.com/questions/5623838/rgb-to-hex-and-hex-to-rgb
@@ -3579,6 +3576,9 @@ iCn3D.prototype = {
             }
         }
 
+        atoms1 = {};
+        atoms2 = {};
+
         return results;
     },
 
@@ -3592,11 +3592,18 @@ iCn3D.prototype = {
             }
         }
 
+        includeAtoms = {};
+        excludeAtoms = {};
+
         return results;
     },
 
     unionHash: function(atoms1, atoms2) {
-        return jQuery.extend({}, atoms1, atoms2);
+        var results = jQuery.extend({}, atoms1, atoms2);
+        atoms1 = {};
+        atoms2 = {};
+
+        return results;
     },
 
     intersectHash2Atoms: function(atoms1, atoms2) {
@@ -3617,6 +3624,8 @@ iCn3D.prototype = {
         for(var i in hash) {
           atoms[i] = this.atoms[i];
         }
+
+        hash = {};
 
         return atoms;
     },
@@ -4121,6 +4130,11 @@ iCn3D.prototype = {
 
         this.setStyle2Atoms(atoms);
 
+        var currentCalphas = {};
+        if(this.options['sidechains'] !== 'nothing') {
+            currentCalphas = this.intersectHash(atoms, this.calphas);
+        }
+
         for(var style in this.style2atoms) {
           // 13 styles: ribbon, strand, cylinder & plate, nucleotide cartoon, phosphorus trace, C alpha trace, B factor tube, lines, stick, ball & stick, sphere, dot, nothing
           atomHash = this.style2atoms[style];
@@ -4152,6 +4166,11 @@ iCn3D.prototype = {
             this.createTube(this.hash2Atoms(atomHash), 'CA', null, bHighlight);
           }
           else if(style === 'lines') {
+            // add calpha to the side chains for better connectivity
+            if(this.options['sidechains'] === 'lines') {
+                atomHash = this.unionHash(atomHash, currentCalphas);
+            }
+
             if(bHighlight === 1) {
                 this.createStickRepresentation(this.hash2Atoms(atomHash), 0.1, 0.1, undefined, bHighlight);
             }
@@ -4160,9 +4179,19 @@ iCn3D.prototype = {
             }
           }
           else if(style === 'stick') {
+            // add calpha to the side chains for better connectivity
+            if(this.options['sidechains'] === 'stick') {
+                atomHash = this.unionHash(atomHash, currentCalphas);
+            }
+
             this.createStickRepresentation(this.hash2Atoms(atomHash), this.cylinderRadius, this.cylinderRadius, undefined, bHighlight);
           }
           else if(style === 'ball & stick') {
+            // add calpha to the side chains for better connectivity
+            if(this.options['sidechains'] === 'ball & stick') {
+                atomHash = this.unionHash(atomHash, currentCalphas);
+            }
+
             this.createStickRepresentation(this.hash2Atoms(atomHash), this.cylinderRadius, this.cylinderRadius * 0.5, 0.3, bHighlight);
           }
           else if(style === 'sphere') {
@@ -4216,15 +4245,16 @@ iCn3D.prototype = {
 
     // set atom style when loading a structure
     setAtomStyleByOptions: function (options) {
-        if (options.sidechains !== undefined) {
-            for(var i in this.proteins) {
-              this.atoms[i].style = options.sidechains.toLowerCase();
-            }
-        }
-
         if (options.secondary !== undefined) {
             for(var i in this.proteins) {
               this.atoms[i].style = options.secondary.toLowerCase();
+            }
+        }
+
+        // side chain overwrite th erotein style
+        if (options.sidechains !== undefined) {
+            for(var i in this.sidechains) {
+              this.atoms[i].style = options.sidechains.toLowerCase();
             }
         }
 
