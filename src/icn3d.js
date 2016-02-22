@@ -3371,7 +3371,7 @@ iCn3D.prototype = {
 
         var factor = this.maxD / 100;
 
-        sprite.scale.set(4*factor, 2*factor, 1.0);
+        sprite.scale.set(2*factor, 2*factor, 1.0);
 
         return sprite;
     },
