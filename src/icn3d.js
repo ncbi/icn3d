@@ -1000,6 +1000,7 @@ iCn3D.prototype = {
         this.displayAtoms = {};
         this.highlightAtoms = {};
         this.proteins = {};
+        this.sidechains = {};
         this.nucleotides = {};
         this.nucleotidesP = {};
         //this.proteinsnucleotides = {};
@@ -1371,6 +1372,7 @@ iCn3D.prototype = {
               else {
                 this.proteins[atom.serial] = 1;
                 if (atom.name === 'CA') this.calphas[atom.serial] = 1;
+                if (atom.name !== 'N' && atom.name !== 'CA' && atom.name !== 'C' && atom.name !== 'O') this.sidechains[atom.serial] = 1;
               }
             }
             else if(atom.het) {
@@ -2047,7 +2049,7 @@ iCn3D.prototype = {
 
     createLines: function(lines) { // show extra lines, not used for picking, so no this.objects
        if(lines !== undefined) {
-         for(var i in lines) {
+         for(var i = 0, il = lines.length; i < il; ++i) {
            var line = lines[i];
 
            var p1 = line.position1;
@@ -3270,7 +3272,7 @@ iCn3D.prototype = {
 
           // skip itself
           var bItself = 1;
-          for(var j in matArray) {
+          for(var j = 0, jl = matArray.length; j < jl; ++j) {
             if(j == 0 || j == 5 || j == 10) {
               if(parseInt(1000*matArray[j]) != 1000) bItself = 0;
             }
@@ -3579,6 +3581,9 @@ iCn3D.prototype = {
             }
         }
 
+        atoms1 = {};
+        atoms2 = {};
+
         return results;
     },
 
@@ -3592,11 +3597,18 @@ iCn3D.prototype = {
             }
         }
 
+        includeAtoms = {};
+        excludeAtoms = {};
+
         return results;
     },
 
     unionHash: function(atoms1, atoms2) {
-        return jQuery.extend({}, atoms1, atoms2);
+        var results = jQuery.extend({}, atoms1, atoms2);
+        atoms1 = {};
+        atoms2 = {};
+
+        return results;
     },
 
     intersectHash2Atoms: function(atoms1, atoms2) {
@@ -3617,6 +3629,8 @@ iCn3D.prototype = {
         for(var i in hash) {
           atoms[i] = this.atoms[i];
         }
+
+        hash = {};
 
         return atoms;
     },
@@ -4121,6 +4135,11 @@ iCn3D.prototype = {
 
         this.setStyle2Atoms(atoms);
 
+        var currentCalphas = {};
+        if(this.options['sidechains'] !== 'nothing') {
+            currentCalphas = this.intersectHash(atoms, this.calphas);
+        }
+
         for(var style in this.style2atoms) {
           // 13 styles: ribbon, strand, cylinder & plate, nucleotide cartoon, phosphorus trace, C alpha trace, B factor tube, lines, stick, ball & stick, sphere, dot, nothing
           atomHash = this.style2atoms[style];
@@ -4152,6 +4171,11 @@ iCn3D.prototype = {
             this.createTube(this.hash2Atoms(atomHash), 'CA', null, bHighlight);
           }
           else if(style === 'lines') {
+            // add calpha to the side chains for better connectivity
+            if(this.options['sidechains'] === 'lines') {
+                atomHash = this.unionHash(atomHash, currentCalphas);
+            }
+
             if(bHighlight === 1) {
                 this.createStickRepresentation(this.hash2Atoms(atomHash), 0.1, 0.1, undefined, bHighlight);
             }
@@ -4160,9 +4184,19 @@ iCn3D.prototype = {
             }
           }
           else if(style === 'stick') {
+            // add calpha to the side chains for better connectivity
+            if(this.options['sidechains'] === 'stick') {
+                atomHash = this.unionHash(atomHash, currentCalphas);
+            }
+
             this.createStickRepresentation(this.hash2Atoms(atomHash), this.cylinderRadius, this.cylinderRadius, undefined, bHighlight);
           }
           else if(style === 'ball & stick') {
+            // add calpha to the side chains for better connectivity
+            if(this.options['sidechains'] === 'ball & stick') {
+                atomHash = this.unionHash(atomHash, currentCalphas);
+            }
+
             this.createStickRepresentation(this.hash2Atoms(atomHash), this.cylinderRadius, this.cylinderRadius * 0.5, 0.3, bHighlight);
           }
           else if(style === 'sphere') {
@@ -4216,15 +4250,16 @@ iCn3D.prototype = {
 
     // set atom style when loading a structure
     setAtomStyleByOptions: function (options) {
-        if (options.sidechains !== undefined) {
-            for(var i in this.proteins) {
-              this.atoms[i].style = options.sidechains.toLowerCase();
-            }
-        }
-
         if (options.secondary !== undefined) {
             for(var i in this.proteins) {
               this.atoms[i].style = options.secondary.toLowerCase();
+            }
+        }
+
+        // side chain overwrite th erotein style
+        if (options.sidechains !== undefined) {
+            for(var i in this.sidechains) {
+              this.atoms[i].style = options.sidechains.toLowerCase();
             }
         }
 

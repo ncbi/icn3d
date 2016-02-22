@@ -68,7 +68,7 @@ var show3DStructure = function(cfg) {
 
     if(cfg.cid === undefined) {
         html += "<div class='option'>";
-        html += "<b>&nbsp;&nbsp;Secondary Structure</b>";
+        html += "<b>&nbsp;&nbsp;Protein</b>";
         html += "<select id='" + pre + "secondary'>";
         html += "<option value='ribbon' selected>ribbon</option>";
         html += "<option value='strand'>strand</option>";
@@ -80,6 +80,17 @@ var show3DStructure = function(cfg) {
         html += "<option value='ball & stick'>ball and stick</option>";
         html += "<option value='sphere'>sphere</option>";
         html += "<option value='nothing'>hide</option>";
+        html += "</select>";
+        html += "</div>";
+
+        html += "<div class='option'>";
+        html += "<b>&nbsp;&nbsp;Side Chains</b>";
+        html += "<select id='" + pre + "sidechains'>";
+        html += "<option value='lines'>lines</option>";
+        html += "<option value='stick'>stick</option>";
+        html += "<option value='ball & stick'>ball and stick</option>";
+        html += "<option value='sphere'>sphere</option>";
+        html += "<option value='nothing' selected>no</option>";
         html += "</select>";
         html += "</div>";
 
@@ -141,7 +152,7 @@ var show3DStructure = function(cfg) {
     html += "</div>";
 
     html += "<div class='option'>";
-    html += "&nbsp;&nbsp;<button class='enablepick'>Picking</button> <button class='disablepick'>No Picking</button>";
+    html += "&nbsp;&nbsp;<button id='" + pre + "enablepick'>Picking</button> <button id='" + pre + "disablepick'>No Picking</button>";
     html += "</div>";
 
     html += "<div class='option'>";
@@ -236,7 +247,7 @@ var show3DStructure = function(cfg) {
         options['ligands'] = 'ball & stick';
     }
 
-    icn3d.cloneHash(options, icn3d.options);
+    icn3d.options = icn3d.cloneHash(options);
 
     loadStructure();
 
@@ -326,7 +337,7 @@ var show3DStructure = function(cfg) {
             icn3d.setAtomStyleByOptions(options);
             icn3d.setColorByOptions(options, icn3d.atoms);
 
-            icn3d.draw(options);
+            icn3d.draw();
 
             if(cfg.rotate !== undefined && cfg.rotate) rotateStructure('right');
           }
@@ -377,7 +388,7 @@ var show3DStructure = function(cfg) {
                 icn3d.setAtomStyleByOptions(options);
                 icn3d.setColorByOptions(options, icn3d.atoms);
 
-                icn3d.draw(options);
+                icn3d.draw();
 
                 if(cfg.rotate !== undefined && cfg.rotate) rotateStructure('right');
             }
@@ -454,7 +465,7 @@ var show3DStructure = function(cfg) {
                 // use the original color from cgi output
                 icn3d.setColorByOptions(options, icn3d.atoms, true);
 
-                icn3d.draw(options);
+                icn3d.draw();
 
                 if(cfg.rotate !== undefined && cfg.rotate) rotateStructure('right');
             }
@@ -488,7 +499,7 @@ var show3DStructure = function(cfg) {
               icn3d.setAtomStyleByOptions(options);
               icn3d.setColorByOptions(options, icn3d.atoms);
 
-              icn3d.draw(options);
+              icn3d.draw();
 
               if(cfg.rotate !== undefined && cfg.rotate) rotateStructure('right');
             }
@@ -661,7 +672,7 @@ var show3DStructure = function(cfg) {
                 // use the original color from cgi output
                 icn3d.setColorByOptions(options, icn3d.atoms, true);
 
-                icn3d.draw(options);
+                icn3d.draw();
 
                 if(cfg.rotate !== undefined && cfg.rotate) rotateStructure('right');
             }
@@ -679,13 +690,14 @@ var show3DStructure = function(cfg) {
                 //icn3d.inputid.idtype = "mmdbid";
                 //icn3d.inputid.id = id;
 
-                options['nucleotides'] = 'phosphorus lines';
+                var options2 = icn3d.cloneHash(me.options);
+                options2['nucleotides'] = 'phosphorus lines';
 
                 //options['color'] = 'spectrum';
 
-                icn3d.setAtomStyleByOptions(options);
+                icn3d.setAtomStyleByOptions(options2);
                 // use the original color from cgi output
-                icn3d.setColorByOptions(options, icn3d.atoms, true);
+                icn3d.setColorByOptions(options2, icn3d.atoms, true);
 
                 var molid2rescount = data.molid2rescount;
                 var molid2color = {}, chain2molid = {}, molid2chain = {};
@@ -897,7 +909,7 @@ var show3DStructure = function(cfg) {
                 icn3d.molid2ss = molid2ss;
                 icn3d.molid2color = molid2color;
 
-                icn3d.draw(options);
+                icn3d.draw();
 
                 if(cfg.rotate !== undefined && cfg.rotate) rotateStructure('right');
 
@@ -1036,6 +1048,7 @@ var show3DStructure = function(cfg) {
                   icn3d.proteins[serial] = 1;
 
                   if (atm.name === 'CA') icn3d.calphas[serial] = 1;
+                  if (atm.name !== 'N' && atm.name !== 'CA' && atm.name !== 'C' && atm.name !== 'O') icn3d.sidechains[serial] = 1;
                 }
                 else if (atm.mt === 'n') {
                   icn3d.nucleotides[serial] = 1;
@@ -1285,14 +1298,13 @@ var show3DStructure = function(cfg) {
 
     function setColor(id, value)
     {
-      var options2 = {};
-      options2[id] = value;
+      icn3d.options[id] = value;
 
       selectAll();
 
-      icn3d.setColorByOptions(options2, icn3d.atoms);
+      icn3d.setColorByOptions(icn3d.options, icn3d.atoms);
 
-      icn3d.draw(options2);
+      icn3d.draw();
     }
 
     function setStyle(selectionType, style)
@@ -1306,7 +1318,7 @@ var show3DStructure = function(cfg) {
               atoms = icn3d.intersectHash(icn3d.highlightAtoms, icn3d.proteins);
               break;
           case 'sidechains':
-              atoms = icn3d.intersectHash(icn3d.highlightAtoms, icn3d.proteins);
+              atoms = icn3d.intersectHash(icn3d.highlightAtoms, icn3d.sidechains);
               break;
           case 'nucleotides':
               atoms = icn3d.intersectHash(icn3d.highlightAtoms, icn3d.nucleotides);
@@ -1326,11 +1338,13 @@ var show3DStructure = function(cfg) {
         icn3d.atoms[i].style = style;
       }
 
-      icn3d.draw(options);
+      icn3d.options[selectionType] = style;
+
+      icn3d.draw();
     }
 
-    $('.enablepick').click(function(e) {
-       e.preventDefault();
+    $("#" + pre + "enablepick").click(function(e) {
+       //e.preventDefault();
 
        if(cfg.cid !== undefined) {
            icn3d.picking = 1;
@@ -1342,18 +1356,24 @@ var show3DStructure = function(cfg) {
        }
     });
 
-    $('.disablepick').click(function(e) {
-       e.preventDefault();
+    $("#" + pre + "disablepick").click(function(e) {
+       //e.preventDefault();
 
        icn3d.picking = 0;
        icn3d.options['picking'] = 'no';
-       icn3d.draw(undefined, undefined, false);
+       icn3d.draw(undefined, false);
        icn3d.removeHighlightObjects();
 
     });
 
+    $("#" + pre + "secondary").change(function(e) {
+       //e.preventDefault();
+
+       $("#" + pre + "sidechains").val("nothing");
+    });
+
     $("#" + pre + "reset").click(function (e) {
-        e.preventDefault();
+        //e.preventDefault();
 
         loadStructure();
     });
@@ -1376,7 +1396,7 @@ var show3DStructure = function(cfg) {
     });
 
     $("#" + pre + "filter").click(function (e) {
-        e.preventDefault();
+        //e.preventDefault();
 
         var ckbxes = document.getElementsByName(pre + "filter_ckbx");
 
@@ -1434,7 +1454,7 @@ var show3DStructure = function(cfg) {
 
         icn3d.setWidthHeight($( window ).width() - 20, $( window ).height() - 20);
 
-        icn3d.draw(options);
+        icn3d.draw();
 
         // do not change the colors, i.e., use the previous colors
         //options['color'] = 'custom';
