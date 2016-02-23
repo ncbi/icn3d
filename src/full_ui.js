@@ -1367,7 +1367,7 @@ iCn3DUI.prototype = {
         var mmdbid;
 
         // get mmdbid from gi
-        var uri = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/elink.fcgi?dbfrom=protein&db=structure&linkname=protein_structure&id=" + gi;
+        var uri = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/elink.fcgi?dbfrom=protein&db=structure&linkname=protein_structure_direct&id=" + gi;
 
         me.icn3d.bCid = undefined;
 
@@ -1749,7 +1749,8 @@ iCn3DUI.prototype = {
                   resObject.resi = id2aligninfo[j].resi;
                   resObject.resn = id2aligninfo[j].resn;
                   resObject.aligned = aligned;
-                  resObject.color = color;
+                  // resi will be empty if there is no coordinates
+                  resObject.color = (isNaN(resObject.resi)) ? '#ccc' : color;
 
                   me.icn3d.alignChainsSeq[chainid1].push(resObject);
 
@@ -1767,7 +1768,8 @@ iCn3DUI.prototype = {
                   resObject.resi = resi;
                   resObject.resn = resn;
                   resObject.aligned = aligned;
-                  resObject.color = color;
+                  // resi will be empty if there is no coordinates
+                  resObject.color = (isNaN(resObject.resi)) ? '#ccc' : color;
 
                   me.icn3d.alignChainsSeq[chainid2].push(resObject);
 
