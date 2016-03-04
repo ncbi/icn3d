@@ -38,7 +38,7 @@ See the [help page](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d.html) for
 
 ## Download
 
-The complete version with all libraries can be downloaded from [https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-0.9.1-dev.zip](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-0.9.1-dev.zip)
+The complete version with all libraries can be downloaded from [https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-0.9.2-dev.zip](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-0.9.2-dev.zip)
 
 ## Contact
 
@@ -91,6 +91,8 @@ gulp gh-pages
 
 
 ## Change log
+
+The beta version [icn3d-0.9.2-dev](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-0.9.2-dev.zip) was release on March 4, 2016. CSS namespace was added. The file simple_ui.js was reorganized to share some codes with full_ui.js. A "Schematic" style was added to show one letter residue name in the C-alpha (for protein) or phosphorus (for nucleotide) position.
 
 The beta version [icn3d-0.9.1-dev](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-0.9.1-dev.zip) was release on Feb 9, 2016. The surface generation was switched from the iview version (surface.js) to the more efficient 3Dmol version (ProteinSurface4.js and marchingcube.js).
 

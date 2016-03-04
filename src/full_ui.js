@@ -54,7 +54,7 @@ var iCn3DUI = function(cfg) {
     me.options['background']         = 'black';              //black, grey, white
     me.options['color']              = 'spectrum';           //spectrum, secondary structure, charge, chain, residue, atom, red, green, blue, magenta, yellow, cyan, white, grey, custom
     me.options['sidechains']         = 'nothing';            //lines, stick, ball & stick, sphere, nothing
-    me.options['secondary']          = 'ribbon';             //ribbon, strand, cylinder & plate, C alpha trace, B factor tube, lines, stick, ball & stick, sphere, nothing
+    me.options['secondary']          = 'ribbon';             //ribbon, strand, cylinder & plate, c alpha trace, b factor tube, lines, stick, ball & stick, sphere, nothing
     me.options['surface']            = 'nothing';    //Van der Waals surface, solvent excluded surface, solvent accessible surface, molecular surface, nothing
     me.options['opacity']            = '0.8';                //1.0, 0.9, 0.8, 0.7, 0.6, 0.5
     me.options['wireframe']          = 'no';                 //yes, no
@@ -125,7 +125,7 @@ iCn3DUI.prototype = {
               me.removeSeqResidueBkgd();
 
               if($("#" + me.pre + pickedResidue).length !== 0) {
-                $("#" + me.pre + pickedResidue).addClass('highlightSeq');
+                $("#" + me.pre + pickedResidue).addClass('icn3d-highlightSeq');
               }
           }
           else if(this.picking === 3) {
@@ -145,7 +145,7 @@ iCn3DUI.prototype = {
                   var pickedResidue = atom.structure + '_' + atom.chain + '_' + i;
 
                   if($("#" + me.pre + pickedResidue).length !== 0) {
-                    $("#" + me.pre + pickedResidue).addClass('highlightSeq');
+                    $("#" + me.pre + pickedResidue).addClass('icn3d-highlightSeq');
                     }
               }
           }
@@ -266,7 +266,14 @@ iCn3DUI.prototype = {
         else if(me.cfg.cid !== undefined) {
            me.inputid = me.cfg.cid;
 
-            me.icn3d.moleculeTitle = 'PubChem CID ' + me.cfg.cid;
+		   var url = "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/cid/" + me.inputid + "/description/jsonp";
+		   $.ajax({
+			  url: url,
+			  dataType: 'jsonp',
+			  success: function(data) {
+				  if(data.InformationList !== undefined && data.InformationList.Information !== undefined) me.icn3d.moleculeTitle = data.InformationList.Information[0].Title;
+			  }
+		   });
 
             me.setLogCommand('load cid ' + me.cfg.cid, true);
 
@@ -548,1286 +555,6 @@ iCn3DUI.prototype = {
       }, 0);
     },
 
-    downloadPdb: function (pdbid) { var me = this;
-       // The PDB service doesn't support https, so use our reverse-proxy
-       // service when using https
-       var uri, dataType;
-       if(document.location.protocol !== "https:") {
-           uri = "http://www.rcsb.org/pdb/files/" + pdbid + ".pdb";
-           dataType = "text";
-       }
-       else {
-           uri = "https://www.ncbi.nlm.nih.gov/Structure/mmcifparser/mmcifparser.cgi?jsonp=t&pdbid=" + pdbid;
-           dataType = "jsonp";
-       }
-
-       me.icn3d.bCid = undefined;
-
-       $.ajax({
-          url: uri,
-          dataType: dataType,
-          cache: true,
-          beforeSend: function() {
-              if($("#" + me.pre + "wait")) $("#" + me.pre + "wait").show();
-              if($("#" + me.pre + "canvas")) $("#" + me.pre + "canvas").hide();
-              if($("#" + me.pre + "log")) $("#" + me.pre + "log").hide();
-          },
-          complete: function() {
-              if($("#" + me.pre + "wait")) $("#" + me.pre + "wait").hide();
-              if($("#" + me.pre + "canvas")) $("#" + me.pre + "canvas").show();
-              if($("#" + me.pre + "log")) $("#" + me.pre + "log").show();
-          },
-          success: function(data) {
-              if(document.location.protocol !== "https:") {
-                  me.loadPdbData(data);
-              }
-              else {
-                  me.loadPdbData(data.data);
-              }
-          }
-       });
-    },
-
-    loadPdbData: function(data) {
-        var me = this;
-
-        me.icn3d.loadPDB(data);
-
-        me.pmid = me.icn3d.pmid;
-
-        if(me.cfg.align === undefined && Object.keys(me.icn3d.structures).length == 1) {
-            $("#" + me.pre + "alternateWrapper").hide();
-        }
-
-        //me.icn3d.inputid.idtype = "pdbid";
-        //me.icn3d.inputid.id = pdbid;
-
-        me.icn3d.setAtomStyleByOptions(me.options);
-        me.icn3d.setColorByOptions(me.options, me.icn3d.atoms);
-
-        me.renderStructure(true);
-
-        me.showTitle();
-
-        if(me.cfg.rotate !== undefined) me.rotateStructure(me.cfg.rotate, true);
-
-        if(me.cfg.showseq !== undefined && me.cfg.showseq) me.openDialog(me.pre + 'dl_selectresidues', 'Select residues in sequences with coordinates');
-
-        if(me.deferred !== undefined) me.deferred.resolve(); if(me.deferred2 !== undefined) me.deferred2.resolve();
-    },
-
-    rotateStructure: function (direction, bInitial) { var me = this;
-        if(me.icn3d.bStopRotate) return false;
-
-        if(bInitial !== undefined && bInitial) {
-            if(direction === 'left') {
-              me.ROTATION_DIRECTION = 'left';
-            }
-            else if(direction === 'right') {
-              me.ROTATION_DIRECTION = 'right';
-            }
-            else if(direction === 'up') {
-              me.ROTATION_DIRECTION = 'up';
-            }
-            else if(direction === 'down') {
-              me.ROTATION_DIRECTION = 'down';
-            }
-            else {
-              return false;
-            }
-        }
-
-        if(direction === 'left' && me.ROTATION_DIRECTION === 'left') {
-          me.icn3d.rotateLeft(5);
-        }
-        else if(direction === 'right' && me.ROTATION_DIRECTION === 'right') {
-          me.icn3d.rotateRight(5);
-        }
-        else if(direction === 'up' && me.ROTATION_DIRECTION === 'up') {
-          me.icn3d.rotateUp(5);
-        }
-        else if(direction === 'down' && me.ROTATION_DIRECTION === 'down') {
-          me.icn3d.rotateDown(5);
-        }
-        else {
-          return false;
-        }
-
-        setTimeout(function(){ me.rotateStructure(direction); }, 1000);
-    },
-
-    downloadMmcif: function (mmcif) { var me = this;
-        var url = "https://www.ncbi.nlm.nih.gov/Structure/mmcifparser/mmcifparser.cgi?mmcif=" + mmcif;
-        me.icn3d.bCid = undefined;
-
-       $.ajax({
-          url: url,
-          dataType: 'jsonp',
-          cache: true,
-          beforeSend: function() {
-              if($("#" + me.pre + "wait")) $("#" + me.pre + "wait").show();
-              if($("#" + me.pre + "canvas")) $("#" + me.pre + "canvas").hide();
-              if($("#" + me.pre + "log")) $("#" + me.pre + "log").hide();
-          },
-          complete: function() {
-              if($("#" + me.pre + "wait")) $("#" + me.pre + "wait").hide();
-              if($("#" + me.pre + "canvas")) $("#" + me.pre + "canvas").show();
-              if($("#" + me.pre + "log")) $("#" + me.pre + "log").show();
-          },
-          success: function(data) {
-                me.loadMmcifData(data);
-          }
-        });
-    },
-
-    loadMmcifData: function(data) { var me = this;
-        if (data.atoms !== undefined) {
-            me.loadAtomDataIn(data, data.mmcif, 'mmcif');
-
-            if(me.cfg.align === undefined && Object.keys(me.icn3d.structures).length == 1) {
-                $("#" + me.pre + "alternateWrapper").hide();
-            }
-
-            // load assembly info
-            var assembly = data.assembly;
-            for(var i = 0, il = assembly.length; i < il; ++i) {
-              if (me.icn3d.biomtMatrices[i] == undefined) me.icn3d.biomtMatrices[i] = new THREE.Matrix4().identity();
-
-              for(var j = 0, jl = assembly[i].length; j < jl; ++j) {
-                me.icn3d.biomtMatrices[i].elements[j] = assembly[i][j];
-              }
-            }
-
-            //me.icn3d.inputid.idtype = "mmcif";
-            //me.icn3d.inputid.id = mmcif;
-
-            me.icn3d.setAtomStyleByOptions(me.options);
-            me.icn3d.setColorByOptions(me.options, me.icn3d.atoms);
-
-            me.renderStructure(true);
-
-            if(me.cfg.rotate !== undefined) me.rotateStructure(me.cfg.rotate, true);
-
-            if(me.cfg.showseq !== undefined && me.cfg.showseq) me.openDialog(me.pre + 'dl_selectresidues', 'Select residues in sequences with coordinates');
-
-            if(me.deferred !== undefined) me.deferred.resolve(); if(me.deferred2 !== undefined) me.deferred2.resolve();
-        }
-        else {
-            alert('invalid atoms data.');
-            return false;
-        }
-    },
-
-    downloadAlignment: function (align) { var me = this;
-        var url = "https://www.ncbi.nlm.nih.gov/Structure/vastpp/vastpp.cgi?cmd=c&w3d&ids=" + align;
-        var url2 = "https://www.ncbi.nlm.nih.gov/Structure/vastpp/vastpp.cgi?cmd=c1&d&ids=" + align;
-
-        //var alignArray = me.cfg.align.split(',');
-        //var ids_str = (alignArray.length === 2? 'uids=' : 'ids=') + align;
-        //var url = '/Structure/vastplusdev/vastplus.cgi?cmd=c&w3d&' + ids_str;
-        //var url2 = '/Structure/vastplusdev/vastplus.cgi?cmd=c1&d&' + ids_str;
-
-        if(me.cfg.inpara !== undefined) {
-          url += me.cfg.inpara;
-          url2 += me.cfg.inpara;
-        }
-
-        me.icn3d.bCid = undefined;
-
-        // define for 'align' only
-        me.icn3d.pdbid_chain2title = {};
-
-        var request = $.ajax({
-           url: url2,
-           //dataType: 'json',
-           dataType: 'jsonp',
-           //jsonp: 'jpf',
-           cache: true,
-          beforeSend: function() {
-              if($("#" + me.pre + "wait")) $("#" + me.pre + "wait").show();
-              if($("#" + me.pre + "canvas")) $("#" + me.pre + "canvas").hide();
-              if($("#" + me.pre + "log")) $("#" + me.pre + "log").hide();
-          },
-          complete: function() {
-              if($("#" + me.pre + "wait")) $("#" + me.pre + "wait").hide();
-              if($("#" + me.pre + "canvas")) $("#" + me.pre + "canvas").show();
-              if($("#" + me.pre + "log")) $("#" + me.pre + "log").show();
-          }
-        });
-
-        var seqalign = {};
-
-        var chained = request.then(function( data ) {
-            seqalign = data.seqalign;
-
-            var index = 0;
-            for(var mmdbid in data) {
-                if(index < 2) {
-                    var pdbid = data[mmdbid].pdbid;
-                    //me.icn3d.mmdbid2pdbid[mmdbid] = pdbid;
-
-                    var molecule = data[mmdbid].molecule;
-                    for(var molname in molecule) {
-                        var chain = molecule[molname].chain;
-                        me.icn3d.pdbid_chain2title[pdbid + '_' + chain] = molecule[molname].name;
-                    }
-                }
-
-                ++index;
-            }
-
-            return $.ajax({
-               url: url,
-               dataType: 'jsonp',
-               //jsonp: 'jpf',
-               cache: true,
-              beforeSend: function() {
-                  if($("#" + me.pre + "wait")) $("#" + me.pre + "wait").show();
-                  if($("#" + me.pre + "canvas")) $("#" + me.pre + "canvas").hide();
-                  if($("#" + me.pre + "log")) $("#" + me.pre + "log").hide();
-              },
-              complete: function() {
-                  if($("#" + me.pre + "wait")) $("#" + me.pre + "wait").hide();
-                  if($("#" + me.pre + "canvas")) $("#" + me.pre + "canvas").show();
-                  if($("#" + me.pre + "log")) $("#" + me.pre + "log").show();
-              }
-            });
-        });
-
-        chained.done(function( data ) {
-            if (data.atoms !== undefined) {
-                me.loadAtomDataIn(data, undefined, 'align', seqalign);
-
-                if(me.cfg.align === undefined && Object.keys(me.icn3d.structures).length == 1) {
-                    $("#" + me.pre + "alternateWrapper").hide();
-                }
-
-                //me.icn3d.inputid.idtype = "alignment";
-                //me.icn3d.inputid.id = align;
-
-                me.icn3d.setAtomStyleByOptions(me.options);
-                // use the original color from cgi output
-                me.icn3d.setColorByOptions(me.options, me.icn3d.atoms, true);
-
-                me.renderStructure(true);
-
-                if(me.cfg.rotate !== undefined) me.rotateStructure(me.cfg.rotate, true);
-
-                // by default, open the seq alignment window
-                if(me.cfg.showalignseq !== undefined && me.cfg.showalignseq) me.openDialog(me.pre + 'dl_alignment', 'Select residues in aligned sequences');
-
-                if(me.cfg.showseq !== undefined && me.cfg.showseq) me.openDialog(me.pre + 'dl_selectresidues', 'Select residues in sequences with coordinates');
-
-                if(me.deferred !== undefined) me.deferred.resolve(); if(me.deferred2 !== undefined) me.deferred2.resolve();
-            }
-            else {
-                alert('invalid atoms data.');
-                return false;
-            }
-        });
-    },
-
-    downloadCid: function (cid) { var me = this;
-        var uri = "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/cid/" + cid + "/record/SDF/?record_type=3d&response_type=display";
-
-        me.icn3d.bCid = true;
-
-        $.ajax({
-          url: uri,
-          dataType: 'text',
-          cache: true,
-          beforeSend: function() {
-              if($("#" + me.pre + "wait")) $("#" + me.pre + "wait").show();
-              if($("#" + me.pre + "canvas")) $("#" + me.pre + "canvas").hide();
-              if($("#" + me.pre + "log")) $("#" + me.pre + "log").hide();
-          },
-          complete: function() {
-              if($("#" + me.pre + "wait")) $("#" + me.pre + "wait").hide();
-              if($("#" + me.pre + "canvas")) $("#" + me.pre + "canvas").show();
-              if($("#" + me.pre + "log")) $("#" + me.pre + "log").show();
-          },
-          success: function(data) {
-            var bResult = me.loadCidAtomData(data);
-
-            if(me.cfg.align === undefined && Object.keys(me.icn3d.structures).length == 1) {
-                $("#" + me.pre + "alternateWrapper").hide();
-            }
-
-            if(!bResult) {
-              alert('The SDF of CID ' + cid + ' has the wrong format...');
-            }
-            else {
-              //me.icn3d.inputid.idtype = "cid";
-              //me.icn3d.inputid.id = cid;
-
-              me.icn3d.setAtomStyleByOptions(me.options);
-              me.icn3d.setColorByOptions(me.options, me.icn3d.atoms);
-
-              me.renderStructure(true);
-
-              if(me.cfg.rotate !== undefined) me.rotateStructure(me.cfg.rotate, true);
-
-              if(me.deferred !== undefined) me.deferred.resolve(); if(me.deferred2 !== undefined) me.deferred2.resolve();
-            }
-          }
-        })
-        .fail(function() {
-            alert( "This CID may not have 3D structure..." );
-        });
-    },
-
-    loadCidAtomData: function (data) { var me = this;
-        var lines = data.split('\n');
-        if (lines.length < 4) return false;
-
-        me.icn3d.init();
-
-        var structure = '1';
-        var chain = 'A';
-        var resi = 1;
-        var resn = 'LIG';
-
-        var moleculeNum = structure;
-        var chainNum = structure + '_' + chain;
-        var residueNum = chainNum + '_' + resi;
-
-        var atomCount = parseInt(lines[3].substr(0, 3));
-        if (isNaN(atomCount) || atomCount <= 0) return false;
-
-        var bondCount = parseInt(lines[3].substr(3, 3));
-        var offset = 4;
-        if (lines.length < offset + atomCount + bondCount) return false;
-
-        var start = 0;
-        var end = atomCount;
-        var i, line;
-        var AtomHash = {};
-        for (i = start; i < end; i++) {
-            line = lines[offset];
-            offset++;
-
-            var serial = i;
-
-            var x = parseFloat(line.substr(0, 10));
-            var y = parseFloat(line.substr(10, 10));
-            var z = parseFloat(line.substr(20, 10));
-            var coord = new THREE.Vector3(x, y, z);
-
-            var name = line.substr(31, 3).replace(/ /g, "");
-
-            var atomDetails = {
-                het: true,              // optional, used to determine ligands, water, ions, etc
-                serial: serial,         // required, unique atom id
-                name: name,             // required, atom name
-                resn: resn,             // optional, used to determine protein or nucleotide
-                structure: structure,   // optional, used to identify structure
-                chain: chain,           // optional, used to identify chain
-                resi: resi,             // optional, used to identify residue ID
-                coord: coord,           // required, used to draw 3D shape
-                b: 0,                   // optional, used to draw B-factor tube
-                elem: name,             // optional, used to determine hydrogen bond
-                bonds: [],              // required, used to connect atoms
-                ss: 'coil',             // optional, used to show secondary structures
-                ssbegin: false,         // optional, used to show the beginning of secondary structures
-                ssend: false,           // optional, used to show the end of secondary structures
-
-                bondOrder: []           // optional, specific for chemicals
-            };
-
-            me.icn3d.atoms[serial] = atomDetails;
-            AtomHash[serial] = 1;
-        }
-
-        me.icn3d.displayAtoms = AtomHash;
-        me.icn3d.highlightAtoms= AtomHash;
-        me.icn3d.structures[moleculeNum] = [chainNum]; //AtomHash;
-        me.icn3d.chains[chainNum] = AtomHash;
-        me.icn3d.residues[residueNum] = AtomHash;
-
-        me.icn3d.residueId2Name[residueNum] = resn;
-
-        if(me.icn3d.chainsSeq[chainNum] === undefined) me.icn3d.chainsSeq[chainNum] = [];
-        if(me.icn3d.chainsAnno[chainNum] === undefined ) me.icn3d.chainsAnno[chainNum] = [];
-        if(me.icn3d.chainsAnno[chainNum][0] === undefined ) me.icn3d.chainsAnno[chainNum][0] = [];
-        if(me.icn3d.chainsAnnoTitle[chainNum] === undefined ) me.icn3d.chainsAnnoTitle[chainNum] = [];
-        if(me.icn3d.chainsAnnoTitle[chainNum][0] === undefined ) me.icn3d.chainsAnnoTitle[chainNum][0] = [];
-
-          var resObject = {};
-          resObject.resi = resi;
-          resObject.name = resn;
-
-        me.icn3d.chainsSeq[chainNum].push(resObject);
-        me.icn3d.chainsAnno[chainNum][0].push(resi);
-        me.icn3d.chainsAnnoTitle[chainNum][0].push('');
-
-        for (i = 0; i < bondCount; i++) {
-            line = lines[offset];
-            offset++;
-            var from = parseInt(line.substr(0, 3)) - 1 + start;
-            var to = parseInt(line.substr(3, 3)) - 1 + start;
-            var order = parseInt(line.substr(6, 3));
-            me.icn3d.atoms[from].bonds.push(to);
-            me.icn3d.atoms[from].bondOrder.push(order);
-            me.icn3d.atoms[to].bonds.push(from);
-            me.icn3d.atoms[to].bondOrder.push(order);
-            if(order == 2) {
-                me.icn3d.doublebonds[from + '_' + to] = 1;
-                me.icn3d.doublebonds[to + '_' + from] = 1;
-            }
-            else if(order == 3) {
-                me.icn3d.triplebonds[from + '_' + to] = 1;
-                me.icn3d.triplebonds[to + '_' + from] = 1;
-            }
-        }
-
-        var pmin = new THREE.Vector3( 9999, 9999, 9999);
-        var pmax = new THREE.Vector3(-9999,-9999,-9999);
-        var psum = new THREE.Vector3();
-        var cnt = 0;
-        // assign atoms
-        for (var i in me.icn3d.atoms) {
-            var atom = me.icn3d.atoms[i];
-            var coord = atom.coord;
-            psum.add(coord);
-            pmin.min(coord);
-            pmax.max(coord);
-            ++cnt;
-
-            if(atom.het) {
-              if($.inArray(atom.elem, me.icn3d.ionsArray) !== -1) {
-                me.icn3d.ions[atom.serial] = 1;
-              }
-              else {
-                me.icn3d.ligands[atom.serial] = 1;
-              }
-            }
-        } // end of for
-
-
-        me.icn3d.pmin = pmin;
-        me.icn3d.pmax = pmax;
-
-        me.icn3d.cnt = cnt;
-
-        me.icn3d.maxD = me.icn3d.pmax.distanceTo(me.icn3d.pmin);
-        me.icn3d.center = psum.multiplyScalar(1.0 / me.icn3d.cnt);
-
-        if (me.icn3d.maxD < 25) me.icn3d.maxD = 25;
-
-        me.showTitle();
-
-        return true;
-    },
-
-    showTitle: function() { var me = this;
-        if(me.icn3d.moleculeTitle !== undefined && me.icn3d.moleculeTitle !== '') {
-            var title = me.icn3d.moleculeTitle;
-
-            var url = me.getLinkToStructureSummary();
-
-            if(me.cfg.cid !== undefined) {
-                $("#" + me.pre + "title").html("<a href='" + url + "' target='_blank' style='color:#DDD'>" + title + "</a>");
-            }
-            else if(me.cfg.align !== undefined) {
-                $("#" + me.pre + "title").html(title);
-            }
-            else {
-                if(me.icn3d.moleculeTitle.length > 50) title = me.icn3d.moleculeTitle.substr(0, 50) + "...";
-
-                $("#" + me.pre + "title").html(title + " (PDB ID <a href='" + url + "' target='_blank' style='color:#DDD'>" + me.inputid.toUpperCase() + "</a>)");
-            }
-        }
-        else {
-            $("#" + me.pre + "title").html("");
-        }
-    },
-
-    downloadMmdb: function (mmdbid) { var me = this;
-       var url = "https://www.ncbi.nlm.nih.gov/Structure/mmdb/mmdb_strview.cgi?program=w3d&uid=" + mmdbid;
-
-       me.icn3d.bCid = undefined;
-
-       if(me.cfg.inpara !== undefined) {
-         url += me.cfg.inpara;
-       }
-
-       $.ajax({
-          url: url,
-          dataType: 'jsonp',
-          cache: true,
-          beforeSend: function() {
-              if($("#" + me.pre + "wait")) $("#" + me.pre + "wait").show();
-              if($("#" + me.pre + "canvas")) $("#" + me.pre + "canvas").hide();
-              if($("#" + me.pre + "log")) $("#" + me.pre + "log").hide();
-          },
-          complete: function() {
-              if($("#" + me.pre + "wait")) $("#" + me.pre + "wait").hide();
-              if($("#" + me.pre + "canvas")) $("#" + me.pre + "canvas").show();
-              if($("#" + me.pre + "log")) $("#" + me.pre + "log").show();
-          },
-          success: function(data) {
-            if ((me.cfg.inpara !== undefined && me.cfg.inpara.indexOf('mols=') != -1) || (data.atomcount <= data.threshold && data.atoms !== undefined) ) {
-                // small structure with all atoms
-                var id = (data.pdbId !== undefined) ? data.pdbId : data.mmdbId;
-                me.loadAtomDataIn(data, id, 'mmdbid');
-
-                if(me.cfg.align === undefined && Object.keys(me.icn3d.structures).length == 1) {
-                    if($("#" + me.pre + "alternateWrapper") !== null) $("#" + me.pre + "alternateWrapper").hide();
-                }
-
-                //me.icn3d.inputid.idtype = "mmdbid";
-                //me.icn3d.inputid.id = id;
-
-                me.icn3d.setAtomStyleByOptions(me.options);
-                // use the original color from cgi output
-                me.icn3d.setColorByOptions(me.options, me.icn3d.atoms, true);
-
-                me.renderStructure(true);
-
-                if(me.cfg.rotate !== undefined) me.rotateStructure(me.cfg.rotate, true);
-
-                //if(me.deferred !== undefined) me.deferred.resolve(); if(me.deferred2 !== undefined) me.deferred2.resolve();
-            }
-
-            if(me.cfg.inpara !== undefined && me.cfg.inpara.indexOf('mols=') == -1 && data.atomcount > data.threshold && data.molid2rescount !== undefined) {
-                var labelsize = 40;
-
-                // large struture with helix/brick, phosphorus, and ligand info
-                me.icn3d.bSSOnly = true;
-
-                // load atom info
-                var id = (data.pdbId !== undefined) ? data.pdbId : data.mmdbId;
-                me.loadAtomDataIn(data, id, 'mmdbid');
-
-                //me.icn3d.inputid.idtype = "mmdbid";
-                //me.icn3d.inputid.id = id;
-
-                var options2 = me.icn3d.cloneHash(me.options);
-                options2['nucleotides'] = 'phosphorus lines';
-
-                //me.options['color'] = 'spectrum';
-
-                me.icn3d.setAtomStyleByOptions(options2);
-                // use the original color from cgi output
-                me.icn3d.setColorByOptions(options2, me.icn3d.atoms, true);
-
-                var molid2rescount = data.molid2rescount;
-                var molid2color = {}, chain2molid = {}, molid2chain = {};
-
-                var html = "<table width='100%'><tr><td></td><th>#</th><th align='center'>Chain</th><th align='center'>Residue Count</th></tr>";
-
-                var index = 1;
-                for(var i in molid2rescount) {
-                  var color = '#' + ( '000000' + molid2rescount[i].color.toString( 16 ) ).slice( - 6 );
-                  html += "<tr style='color:" + color + "'><td><input type='checkbox' name='" + me.pre + "filter_ckbx' value='" + i + "'/></td><td align='center'>" + index + "</td><td align='center'>" + molid2rescount[i].chain + "</td><td align='center'>" + molid2rescount[i].resCount + "</td></tr>";
-
-                  molid2color[i] = color;
-                  var chain = id + '_' + molid2rescount[i].chain;
-                  chain2molid[chain] = i;
-                  molid2chain[i] = chain;
-                  ++index;
-                }
-
-                if(Object.keys(me.icn3d.ligands).length > 0) {
-                  html += "<tr><td><input type='checkbox' name='" + me.pre + "filter_ckbx' value='ligands'/></td><td align='center'>" + index + "</td><td align='center'>Ligands</td><td align='center'>" + Object.keys(me.icn3d.ligands).length + " atoms</td></tr>";
-                }
-
-                html += "</table>";
-
-                 // add labels for each RNA/DNA molecule
-                 // hash of molid to label object
-                 var labels = {};
-
-                 for(var i in me.icn3d.chains) {
-                     var label = {}; // Each label contains 'position', 'text', 'color', 'background'
-
-                     var position = me.icn3d.centerAtoms(me.icn3d.hash2Atoms(me.icn3d.chains[i])).center;
-                     label.position = position;
-
-                     var chain = i.substr(i.indexOf('_') + 1);
-                     label.text = chain;
-                     label.size = labelsize;
-                     label.color = molid2color[chain2molid[i]];
-                     label.background = "#FFFFFF";
-
-                     labels[chain2molid[i]] = label;
-                 }
-
-                // get brick and helix info to draw secondary structure for the coarse 3D view
-                molid2ss = {}; // hash of molid -> array of object
-                for(var i in data.helix) {
-                  for(var j = 0, jl = data.helix[i].length; j < jl; ++j) {
-                    var helix = data.helix[i][j];
-
-                    var resiCoords = {};
-
-                    resiCoords.type = 'helix';
-                    resiCoords.startResi = helix.from;
-                    resiCoords.endResi = helix.to;
-
-                    // helix from and to coords are switched
-                    resiCoords.coords = [];
-                    resiCoords.coords.push(helix.end);
-                    resiCoords.coords.push(helix.start);
-
-                    if(molid2ss[i] === undefined) molid2ss[i] = [];
-                    molid2ss[i].push(resiCoords);
-                  }
-                }
-
-                for(var i in data.brick) {
-                  for(var j = 0, jl = data.brick[i].length; j < jl; ++j) {
-                    var brick = data.brick[i][j];
-
-                    var resiCoords = {};
-
-                    resiCoords.type = 'brick';
-                    resiCoords.startResi = brick.from;
-                    resiCoords.endResi = brick.to;
-
-                    // coords
-                    resiCoords.coords = [];
-                    var start = {}, end = {}, direction = {};
-
-                    start.x = 0.25 * (brick['000'][0] + brick['010'][0] + brick['011'][0] + brick['001'][0]);
-                    start.y = 0.25 * (brick['000'][1] + brick['010'][1] + brick['011'][1] + brick['001'][1]);
-                    start.z = 0.25 * (brick['000'][2] + brick['010'][2] + brick['011'][2] + brick['001'][2]);
-
-                    end.x = 0.25 * (brick['100'][0] + brick['110'][0] + brick['111'][0] + brick['101'][0]);
-                    end.y = 0.25 * (brick['100'][1] + brick['110'][1] + brick['111'][1] + brick['101'][1]);
-                    end.z = 0.25 * (brick['100'][2] + brick['110'][2] + brick['111'][2] + brick['101'][2]);
-
-                    direction.x = brick['010'][0] - brick['000'][0];
-                    direction.y = brick['010'][1] - brick['000'][1];
-                    direction.z = brick['010'][2] - brick['000'][2];
-
-                    resiCoords.coords.push(start);
-                    resiCoords.coords.push(end);
-                    resiCoords.coords.push(direction);
-
-                    if(molid2ss[i] === undefined) molid2ss[i] = [];
-                    molid2ss[i].push(resiCoords);
-                  }
-                }
-
-                // sort the arrays
-                for(var i in molid2ss) {
-                    molid2ss[i].sort(function(a, b) {
-                        return parseFloat(a.startResi) - parseFloat(b.startResi);
-                    });
-                }
-
-                // set the center and maxD
-                if(me.icn3d.cnt !== 0) {
-                    var pmin = me.icn3d.pmin;
-                    var pmax = me.icn3d.pmax;
-                    var psum = me.icn3d.center.multiplyScalar(me.icn3d.cnt);
-                    var cnt = me.icn3d.cnt;
-                }
-                else {
-                    var pmin = new THREE.Vector3( 9999, 9999, 9999);
-                    var pmax = new THREE.Vector3(-9999,-9999,-9999);
-                    var psum = new THREE.Vector3();
-                    var cnt = 0;
-                }
-
-                for(var i in molid2ss) {
-                    var pminMolid = new THREE.Vector3( 9999, 9999, 9999);
-                    var pmaxMolid = new THREE.Vector3(-9999,-9999,-9999);
-                    var psumMolid = new THREE.Vector3();
-                    var cntMolid= 0;
-
-                    for(var j = 0, jl = molid2ss[i].length; j < jl; ++j) {
-                        var coord = molid2ss[i][j].coords[0];
-                        pmin.min(coord);
-                        pmax.max(coord);
-                        psum.add(coord);
-
-                        pminMolid.min(coord);
-                        pmaxMolid.max(coord);
-                        psumMolid.add(coord);
-
-                        ++cnt;
-                        ++cntMolid;
-
-                        coord = molid2ss[i][j].coords[1];
-                        pmin.min(coord);
-                        pmax.max(coord);
-                        psum.add(coord);
-
-                        pminMolid.min(coord);
-                        pmaxMolid.max(coord);
-                        psumMolid.add(coord);
-
-                        ++cnt;
-                        ++cntMolid;
-                    }
-
-                    var centerMolid = psumMolid.multiplyScalar(1.0 / cntMolid);
-
-
-                     // add labels for each protein molecule
-                     var label = {}; // Each label contains 'position', 'text', 'color', 'background'
-
-                     var position = new THREE.Vector3();
-                     position.x = centerMolid.x;
-                     position.y = centerMolid.y;
-                     position.z = centerMolid.z;
-
-                     label.position = position;
-
-                     var chain = molid2chain[i];
-                     label.text = chain.substr(chain.indexOf('_') + 1);
-                     label.size = labelsize;
-                     label.color = molid2color[i];
-                     label.background = "#FFFFFF";
-
-                     labels[i] = label;
-                }
-                me.icn3d.maxD = pmax.distanceTo(pmin);
-                me.icn3d.center = psum.multiplyScalar(1.0 / cnt);
-
-                // set the start and end of coils
-                for(var i in molid2ss) {
-                    // skip the first one since its end is the start of the first coil
-                    for(var j = 1, jl = molid2ss[i].length; j < jl; ++j) {
-                        var resiCoords = {};
-
-                        resiCoords.type = 'coil';
-                        resiCoords.startResi = molid2ss[i][j-1].endResi;
-                        resiCoords.endResi = molid2ss[i][j].startResi;
-
-                        resiCoords.coords = [];
-                        resiCoords.coords.push(molid2ss[i][j-1].coords[1]);
-                        resiCoords.coords.push(molid2ss[i][j].coords[0]);
-
-                        //if(molid2ss[i] === undefined) molid2ss[i] = [];
-                        molid2ss[i].push(resiCoords);
-                    }
-                }
-
-                // sort the arrays
-                //for(var i in molid2ss) {
-                //    molid2ss[i].sort(function(a, b) {
-                //        return parseFloat(a.startResi) - parseFloat(b.startResi);
-                //    });
-                //}
-
-                // draw labels
-                // there might be too many labels
-                //me.options['labels'] = 'add labels';
-                me.icn3d.savedLabels = labels;
-
-                me.icn3d.molid2ss = molid2ss;
-                me.icn3d.molid2color = molid2color;
-
-                me.renderStructure(true);
-
-                if(me.cfg.rotate !== undefined) me.rotateStructure(me.cfg.rotate, true);
-
-                //if(me.deferred !== undefined) me.deferred.resolve(); if(me.deferred2 !== undefined) me.deferred2.resolve();
-
-                // show the dialog to select structures
-                $( "#" + me.pre + "dl_filter_table" ).html(html);
-
-                var title = "Select chains to display";
-
-                var width = 250, height = (me.isMobile()) ? 'auto' : 200;
-
-                var position = { my: "left top", at: "left+10 top+93", of: "#" + me.pre + "canvas", collision: "none" };
-
-                window.dialog = $( "#" + me.pre + "dl_filter" ).dialog({
-                  autoOpen: true,
-                  title: title,
-                  height: height,
-                  width: width,
-                  modal: false,
-                  position: position
-                });
-
-                $(".ui-dialog .ui-button span")
-                  .removeClass("ui-icon-closethick")
-                  .addClass("ui-icon-close");
-
-            }
-
-            if(me.cfg.showseq !== undefined && me.cfg.showseq) me.openDialog(me.pre + 'dl_selectresidues', 'Select residues in sequences with coordinates');
-
-            if(me.deferred !== undefined) me.deferred.resolve(); if(me.deferred2 !== undefined) me.deferred2.resolve();
-
-            if(data.atoms === undefined && data.molid2rescount === undefined) {
-                alert('invalid MMDB data.');
-                return false;
-            }
-          }
-        });
-    },
-
-    downloadGi: function (gi) { var me = this;
-        var mmdbid;
-
-        // get mmdbid from gi
-        var uri = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/elink.fcgi?dbfrom=protein&db=structure&linkname=protein_structure_direct&id=" + gi;
-
-        me.icn3d.bCid = undefined;
-
-        me.setLogCommand("load gi " + gi, false);
-
-        $.ajax({
-           url: uri,
-           dataType: 'text',
-           success: function(data) {
-             if(data.indexOf('<Link>') === -1) {
-               alert("There are no MMDB IDs available for the gi " + gi);
-             }
-             else {
-               var linkStr = data.substr(data.indexOf('<Link>'));
-               var start = linkStr.indexOf('<Id>');
-               var end = linkStr.indexOf('</Id>');
-               var mmdbid = linkStr.substr(start + 4, end - start - 4);
-
-               me.inputid = mmdbid;
-
-               me.downloadMmdb(mmdbid);
-             }
-           }
-        });
-    },
-
-    loadAtomDataIn: function (data, id, type, seqalign) { var me = this;
-        me.icn3d.init();
-
-        var pmin = new THREE.Vector3( 9999, 9999, 9999);
-        var pmax = new THREE.Vector3(-9999,-9999,-9999);
-        var psum = new THREE.Vector3();
-
-        var atoms = data.atoms;
-
-        var serial = 0;
-        var prevResi = 0;
-
-        var serial2structure = {}; // for "align" only
-        var mmdbid2pdbid = {}; // for "align" only
-
-        me.pmid = data.pubmedid;
-
-        if(type === 'align') {
-          //serial2structure
-          me.pmid = "";
-          me.icn3d.moleculeTitle = 'Structure Alignment of ';
-
-          for (var i = 0, il = data.aligned_structures.length; i < il; ++i) {
-              var structure = data.aligned_structures[i];
-
-              if(i === 1) {
-                  me.icn3d.secondId = structure.pdbid; // set the second pdbid to add indent in the structure and chain menus
-                  //me.ALTERNATE_STRUCTURE = me.icn3d.secondId;
-              }
-
-              for(var j = structure.range[0]; j <= structure.range[1]; ++j) {
-                  var pdbidTmp = structure.pdbid;
-                  var mmdbidTmp = structure.mmdbid;
-                  serial2structure[j] = pdbidTmp.toString();
-                  mmdbid2pdbid[mmdbidTmp] = pdbidTmp;
-              }
-
-              me.icn3d.moleculeTitle +=  "<a href=\"https://www.ncbi.nlm.nih.gov/structure/?term=" + structure.pdbid.toUpperCase() + "\" target=\"_blank\" style=\"color: #DDD;\">" + structure.pdbid.toUpperCase() + "</a>";
-
-              if(structure.descr !== undefined) me.pmid += structure.descr.pubmedid;
-              if(i === 0) {
-                  me.icn3d.moleculeTitle += " and ";
-                  if(structure.descr !== undefined) me.pmid += "_";
-              }
-          }
-        }
-        else { // mmdbid or mmcif
-              if(data.descr !== undefined) me.icn3d.moleculeTitle += data.descr.name;
-        }
-
-        var molid2chain = {}; // for "mmdbid"
-        var pdbid_molid2chain = {}; // for "align"
-        if(type === 'mmdbid' || type === 'align') {
-          //molid2chain
-          if(type === 'mmdbid') {
-              if(data.molid2chain !== undefined) {
-                  for (var molid in data.molid2chain) {
-                      molid2chain[molid] = data.molid2chain[molid].chain;
-                  }
-              }
-          }
-          else if(type === 'align') {
-              if(data.molid2chain !== undefined) {
-                  for (var mmdbid in data.molid2chain) {
-                    for (var molid in data.molid2chain[mmdbid]) {
-                      pdbid_molid2chain[mmdbid2pdbid[mmdbid] + '_' + molid] = data.molid2chain[mmdbid][molid].chain;
-                      }
-                  }
-              }
-          }
-        }
-
-        var atomid2serial = {};
-        var prevStructureNum = '', prevChainNum = '', prevResidueNum = '';
-        var structureNum = '', chainNum = '', residueNum = '';
-        for (var i in atoms) {
-            ++serial;
-
-            atomid2serial[i] = serial;
-
-            var atm = atoms[i];
-            atm.serial = serial;
-
-            var mmdb_id;
-
-            if(type === 'mmdbid' || type === 'mmcif') {
-              mmdb_id = id; // here mmdb_id is pdbid or mmcif id
-            }
-            else if(type === 'align') {
-              mmdb_id = serial2structure[serial]; // here mmdb_id is pdbid
-            }
-
-            if(atm.chain === undefined && (type === 'mmdbid' || type === 'align')) {
-                if(type === 'mmdbid') {
-                  var molid = atm.ids.m;
-                  atm.chain = (molid2chain[molid] === undefined) ? 'Misc' : molid2chain[molid];
-                }
-                else if(type === 'align') {
-                  var molid = atm.ids.m;
-                  atm.chain = (pdbid_molid2chain[mmdb_id + '_' + molid] === undefined) ? 'Misc' : pdbid_molid2chain[mmdb_id + '_' + molid];
-                }
-            }
-            else {
-              atm.chain = (atm.chain === '') ? 'Misc' : atm.chain;
-            }
-
-            atm.resi = parseInt(atm.resi); // has to be integer
-
-            if(atm.color !== undefined) atm.color = new THREE.Color(atm.color);
-            atm.coord = new THREE.Vector3(atm.coord.x, atm.coord.y, atm.coord.z);
-
-            // mmcif has pre-assigned structure in mmcifparser.cgi output
-            if(type === 'mmdbid' || type === 'align') {
-                atm.structure = mmdb_id;
-            }
-
-            var secondaries = '-';
-            if(atm.ss === 'helix') {
-                secondaries = 'H';
-            }
-            else if(atm.ss === 'sheet') {
-                secondaries = 'E';
-            }
-            else if(!atm.het && me.icn3d.residueColors.hasOwnProperty(atm.resn.toUpperCase()) ) {
-            //else if(!atm.het) {
-                secondaries = 'C';
-            }
-
-            me.icn3d.secondaries[atm.structure + '_' + atm.chain + '_' + atm.resi] = secondaries;
-
-            pmin.min(atm.coord);
-            pmax.max(atm.coord);
-            psum.add(atm.coord);
-
-            if (atm.mt === 'p' || atm.mt === 'n')
-            {
-                if (atm.mt === 'p') {
-                  me.icn3d.proteins[serial] = 1;
-
-                  if (atm.name === 'CA') me.icn3d.calphas[serial] = 1;
-                  if (atm.name !== 'N' && atm.name !== 'CA' && atm.name !== 'C' && atm.name !== 'O') me.icn3d.sidechains[serial] = 1;
-                }
-                else if (atm.mt === 'n') {
-                  me.icn3d.nucleotides[serial] = 1;
-
-                  if (atm.name == 'P') me.icn3d.nucleotidesP[serial] = 1;
-                }
-
-                me.icn3d.het = false;
-            }
-            else if (atm.mt === 's') { // solvent
-              me.icn3d.water[serial] = 1;
-
-              me.icn3d.het = true;
-            }
-            else if (atm.mt === 'l') { // ligands and ions
-              me.icn3d.ligands[serial] = 1;
-
-              if (atm.bonds.length === 0) me.icn3d.ions[serial] = 1;
-
-              me.icn3d.het = true;
-            }
-
-            if(atm.resn.charAt(0) !== ' ' && atm.resn.charAt(1) === ' ') {
-              atm.resn = atm.resn.charAt(0);
-            }
-
-            // double check
-            if (atm.resn == 'HOH') me.icn3d.water[serial] = 1
-
-            me.icn3d.atoms[serial] = atm;
-            me.icn3d.displayAtoms[serial] = 1;
-            me.icn3d.highlightAtoms[serial] = 1;
-
-            // chain level
-            var chainid = atm.structure + '_' + atm.chain;
-            if (me.icn3d.chains[chainid] === undefined) me.icn3d.chains[chainid] = {};
-            me.icn3d.chains[chainid][serial] = 1;
-
-            // residue level
-            var residueid = atm.structure + '_' + atm.chain + '_' + atm.resi;
-            if (me.icn3d.residues[residueid] === undefined) me.icn3d.residues[residueid] = {};
-            me.icn3d.residues[residueid][serial] = 1;
-
-            structureNum = atm.structure;
-            chainNum = structureNum + '_' + atm.chain;
-            residueNum = chainNum + '_' + atm.resi;
-
-            // different residue
-            if(residueNum !== prevResidueNum) {
-                // different chain
-                if(chainNum !== prevChainNum) {
-                    if(serial !== 1) {
-                        if(me.icn3d.structures[prevStructureNum] === undefined) me.icn3d.structures[prevStructureNum] = [];
-                        me.icn3d.structures[prevStructureNum].push(prevChainNum);
-                    }
-                }
-            }
-
-            var oneLetterRes = me.icn3d.residueName2Abbr(atm.resn.substr(0, 3));
-
-            me.icn3d.residueId2Name[residueid] = oneLetterRes;
-
-            if(atm.resi != prevResi) {
-              if(me.icn3d.chainsSeq[chainid] === undefined) me.icn3d.chainsSeq[chainid] = [];
-              if(me.icn3d.chainsAnno[chainid] === undefined ) me.icn3d.chainsAnno[chainid] = [];
-              if(me.icn3d.chainsAnno[chainid][0] === undefined ) me.icn3d.chainsAnno[chainid][0] = [];
-              if(me.icn3d.chainsAnno[chainid][1] === undefined ) me.icn3d.chainsAnno[chainid][1] = [];
-              if(me.icn3d.chainsAnnoTitle[chainid] === undefined ) me.icn3d.chainsAnnoTitle[chainid] = [];
-              if(me.icn3d.chainsAnnoTitle[chainid][0] === undefined ) me.icn3d.chainsAnnoTitle[chainid][0] = [];
-              if(me.icn3d.chainsAnnoTitle[chainid][1] === undefined ) me.icn3d.chainsAnnoTitle[chainid][1] = [];
-
-              var resObject = {};
-              resObject.resi = atm.resi;
-              resObject.name = oneLetterRes;
-
-              var numberStr = '';
-              if(atm.resi % 10 === 0) numberStr = atm.resi.toString();
-
-              me.icn3d.chainsSeq[chainid].push(resObject);
-              me.icn3d.chainsAnno[chainid][0].push(numberStr);
-              me.icn3d.chainsAnno[chainid][1].push(secondaries);
-              me.icn3d.chainsAnnoTitle[chainid][0].push('');
-              me.icn3d.chainsAnnoTitle[chainid][1].push('SS');
-
-              if(type === 'mmdbid' || type === 'align') {
-                    me.icn3d.chainsColor[chainid] = atm.color;
-              }
-            }
-
-            prevResi = atm.resi;
-
-            prevStructureNum = structureNum;
-            prevChainNum = chainNum;
-            prevResidueNum = residueNum;
-        }
-
-        // remove the reference
-        data.atoms = {};
-
-        // add the last residue set
-        if(me.icn3d.structures[structureNum] === undefined) me.icn3d.structures[structureNum] = [];
-        me.icn3d.structures[structureNum].push(chainNum);
-
-        // update bonds info
-        if(type !== 'mmcif') {
-        for (var i in me.icn3d.atoms) {
-            var bondLength = (me.icn3d.atoms[i].bonds === undefined) ? 0 : me.icn3d.atoms[i].bonds.length;
-
-            for(var j = 0; j < bondLength; ++j) {
-                me.icn3d.atoms[i].bonds[j] = atomid2serial[me.icn3d.atoms[i].bonds[j]];
-            }
-        }
-        }
-
-        me.icn3d.cnt = serial;
-
-        me.icn3d.pmin = pmin;
-        me.icn3d.pmax = pmax;
-        me.icn3d.maxD = pmax.distanceTo(pmin);
-        me.icn3d.center = psum.multiplyScalar(1.0 / me.icn3d.cnt);
-
-        if (me.icn3d.maxD < 25) me.icn3d.maxD = 25;
-
-        // set up sequence alignment
-        if(type === 'align' && seqalign !== undefined) {
-          //loadSeqAlignment
-          for (var i = 0, il = seqalign.length; i < il; ++i) {
-              // first sequence
-              var alignData = seqalign[i][0];
-              var mmdbid1 = data.aligned_structures[0].pdbid;
-              var molid1 = alignData.mid;
-
-              var chain1 = pdbid_molid2chain[mmdbid1 + '_' + molid1];
-              var chainid1 = mmdbid1 + '_' + chain1;
-
-              var id2aligninfo = {};
-              var start = alignData.mseq.length, end = -1;
-              for(var j = 0, jl = alignData.mseq.length; j < jl; ++j) {
-                  // 0: internal resi id, 1: pdb resi id, 2: resn, 3: aligned or not
-                  //var id = alignData.mseq[j][0];
-                  var resi = alignData.mseq[j][1];
-                  var resn = (alignData.mseq[j][2] === '~') ? '-' : alignData.mseq[j][2];
-                  var aligned = alignData.mseq[j][3]; // 0 or 1
-
-                  if(aligned == 1) {
-                      if(j < start) start = j;
-                      if(j > end) end = j;
-                  }
-
-                  id2aligninfo[j] = {"resi": resi, "resn": resn, "aligned": aligned};
-              }
-
-              // second sequence
-              alignData = seqalign[i][1];
-              var mmdbid2 = data.aligned_structures[1].pdbid;
-              var molid2 = alignData.sid;
-
-              var chain2 = pdbid_molid2chain[mmdbid2 + '_' + molid2];
-              var chainid2 = mmdbid2 + '_' + chain2;
-
-              // annoation title for the master seq only
-              if(me.icn3d.alignChainsAnnoTitle[chainid1] === undefined ) me.icn3d.alignChainsAnnoTitle[chainid1] = [];
-              if(me.icn3d.alignChainsAnnoTitle[chainid1][0] === undefined ) me.icn3d.alignChainsAnnoTitle[chainid1][0] = [];
-              if(me.icn3d.alignChainsAnnoTitle[chainid1][1] === undefined ) me.icn3d.alignChainsAnnoTitle[chainid1][1] = [];
-              if(me.icn3d.alignChainsAnnoTitle[chainid1][2] === undefined ) me.icn3d.alignChainsAnnoTitle[chainid1][2] = [];
-              if(me.icn3d.alignChainsAnnoTitle[chainid1][3] === undefined ) me.icn3d.alignChainsAnnoTitle[chainid1][3] = [];
-              if(me.icn3d.alignChainsAnnoTitle[chainid1][4] === undefined ) me.icn3d.alignChainsAnnoTitle[chainid1][4] = [];
-              if(me.icn3d.alignChainsAnnoTitle[chainid1][5] === undefined ) me.icn3d.alignChainsAnnoTitle[chainid1][5] = [];
-              if(me.icn3d.alignChainsAnnoTitle[chainid1][6] === undefined ) me.icn3d.alignChainsAnnoTitle[chainid1][6] = [];
-
-              // two annotations without titles
-              me.icn3d.alignChainsAnnoTitle[chainid1][0].push("SS");
-              me.icn3d.alignChainsAnnoTitle[chainid1][1].push("");
-              me.icn3d.alignChainsAnnoTitle[chainid1][2].push("");
-              // empty line
-              me.icn3d.alignChainsAnnoTitle[chainid1][3].push("");
-              // 2nd chain title
-              me.icn3d.alignChainsAnnoTitle[chainid1][4].push(chainid2);
-              // master chain title
-              me.icn3d.alignChainsAnnoTitle[chainid1][5].push(chainid1);
-              // empty line
-              me.icn3d.alignChainsAnnoTitle[chainid1][6].push("");
-
-              var alignIndex = 1;
-              //for(var j = 0, jl = alignData.sseq.length; j < jl; ++j) {
-              for(var j = start; j <= end; ++j) {
-                  // 0: internal resi id, 1: pdb resi id, 2: resn, 3: aligned or not
-                  //var id = alignData.sseq[j][0];
-                  var resi = alignData.sseq[j][1];
-                  var resn = (alignData.sseq[j][2] === '~') ? '-' : alignData.sseq[j][2];
-                  var aligned = id2aligninfo[j].aligned + alignData.sseq[j][3]; // 0 or 2
-
-                  var color;
-                  if(aligned === 2) { // aligned
-                      if(id2aligninfo[j].resn === resn) {
-                          color = '#F00';
-                      }
-                      else {
-                          color = '#00F';
-                      }
-                  }
-                  else {
-                      color = '#000';
-                  }
-
-                  // chain1
-                  if(me.icn3d.alignChainsSeq[chainid1] === undefined) me.icn3d.alignChainsSeq[chainid1] = [];
-
-                  var resObject = {};
-                  resObject.mmdbid = mmdbid1;
-                  resObject.chain = chain1;
-                  resObject.resi = id2aligninfo[j].resi;
-                  resObject.resn = id2aligninfo[j].resn;
-                  resObject.aligned = aligned;
-                  // resi will be empty if there is no coordinates
-                  resObject.color = (isNaN(resObject.resi)) ? '#ccc' : color;
-
-                  me.icn3d.alignChainsSeq[chainid1].push(resObject);
-
-                  if(!isNaN(id2aligninfo[j].resi)) {
-                      if(me.icn3d.alignChains[chainid1] === undefined) me.icn3d.alignChains[chainid1] = {};
-                      $.extend(me.icn3d.alignChains[chainid1], me.icn3d.residues[chainid1 + '_' + id2aligninfo[j].resi] );
-                  }
-
-                  // chain2
-                  if(me.icn3d.alignChainsSeq[chainid2] === undefined) me.icn3d.alignChainsSeq[chainid2] = [];
-
-                  resObject = {};
-                  resObject.mmdbid = mmdbid2;
-                  resObject.chain = chain2;
-                  resObject.resi = resi;
-                  resObject.resn = resn;
-                  resObject.aligned = aligned;
-                  // resi will be empty if there is no coordinates
-                  resObject.color = (isNaN(resObject.resi)) ? '#ccc' : color;
-
-                  me.icn3d.alignChainsSeq[chainid2].push(resObject);
-
-                  if(!isNaN(resi)) {
-                      if(me.icn3d.alignChains[chainid2] === undefined) me.icn3d.alignChains[chainid2] = {};
-                      $.extend(me.icn3d.alignChains[chainid2], me.icn3d.residues[chainid2 + '_' + resi] );
-                  }
-
-                  // annotation is for the master seq only
-                  if(me.icn3d.alignChainsAnno[chainid1] === undefined ) me.icn3d.alignChainsAnno[chainid1] = [];
-                  if(me.icn3d.alignChainsAnno[chainid1][0] === undefined ) me.icn3d.alignChainsAnno[chainid1][0] = [];
-                  if(me.icn3d.alignChainsAnno[chainid1][1] === undefined ) me.icn3d.alignChainsAnno[chainid1][1] = [];
-                  if(me.icn3d.alignChainsAnno[chainid1][2] === undefined ) me.icn3d.alignChainsAnno[chainid1][2] = [];
-                  if(j === start) {
-                      // empty line
-                      if(me.icn3d.alignChainsAnno[chainid1][3] === undefined ) me.icn3d.alignChainsAnno[chainid1][3] = [];
-                      // 2nd chain title
-                      if(me.icn3d.alignChainsAnno[chainid1][4] === undefined ) me.icn3d.alignChainsAnno[chainid1][4] = [];
-                      // master chain title
-                      if(me.icn3d.alignChainsAnno[chainid1][5] === undefined ) me.icn3d.alignChainsAnno[chainid1][5] = [];
-                      // empty line
-                      if(me.icn3d.alignChainsAnno[chainid1][6] === undefined ) me.icn3d.alignChainsAnno[chainid1][6] = [];
-
-                      me.icn3d.alignChainsAnno[chainid1][3].push('');
-                      me.icn3d.alignChainsAnno[chainid1][4].push(me.icn3d.pdbid_chain2title[chainid2]);
-                      me.icn3d.alignChainsAnno[chainid1][5].push(me.icn3d.pdbid_chain2title[chainid1]);
-                      me.icn3d.alignChainsAnno[chainid1][6].push('');
-                    }
-
-                  var residueid = chainid1 + '_' + id2aligninfo[j].resi;
-                  var ss = me.icn3d.secondaries[residueid];
-                  if(ss !== undefined) {
-                      me.icn3d.alignChainsAnno[chainid1][0].push(ss);
-                  }
-                  else {
-                      me.icn3d.alignChainsAnno[chainid1][0].push('-');
-                  }
-
-                  var symbol = '.';
-                  if(alignIndex % 5 === 0) symbol = '*';
-                  if(alignIndex % 10 === 0) symbol = '|';
-                  me.icn3d.alignChainsAnno[chainid1][1].push(symbol); // symbol: | for 10th, * for 5th, . for rest
-
-                  var numberStr = '';
-                  if(alignIndex % 10 === 0) numberStr = alignIndex.toString();
-                  me.icn3d.alignChainsAnno[chainid1][2].push(numberStr); // symbol: 10, 20, etc, empty for rest
-
-                  ++alignIndex;
-              } // end for(var j
-          } // end for(var i
-          seqalign = {};
-        } // if(align
-
-        me.showTitle();
-
-        data = {};
-    },
-
     setStructureMenu: function (bInitial, moleculeArray) { var me = this;
       var html = "";
 
@@ -1984,18 +711,17 @@ iCn3DUI.prototype = {
           var structure = i.substr(0, dashPos);
           var chain = i.substr(dashPos + 1);
 
-          //seqHtml += "<span class='residueNum' title='starting residue number'>" + me.icn3d.chainsAnno[i][0][0] + "</span>";
-          seqHtml += "<span class='residueNum' title='starting residue number'>" + me.icn3d.chainsSeq[i][0].resi + "</span>";
+          seqHtml += "<span class='icn3d-residueNum' title='starting residue number'>" + me.icn3d.chainsSeq[i][0].resi + "</span>";
 
           var maxResi = parseInt(me.icn3d.chainsSeq[i][0].resi);
 
           for(var k=0, kl=seqLength; k < kl; ++k) {
             var resiId = structure + "_" + chain + "_" + me.icn3d.chainsSeq[i][k].resi;
 
-            var classForAlign = "class='residue'"; // used to identify a residue when clicking a residue in sequence
+            var classForAlign = "class='icn3d-residue'"; // used to identify a residue when clicking a residue in sequence
 
             if( (bShowHighlight === undefined || bShowHighlight) && ( bHighlightChain || (residueArray !== undefined && residueArray.indexOf(resiId) !== -1) ) ) {
-                classForAlign = "class='residue highlightSeq'";
+                classForAlign = "class='icn3d-residue icn3d-highlightSeq'";
             }
 
             var residueName = (me.icn3d.chainsSeq[i][k].name.length === 1) ? me.icn3d.chainsSeq[i][k].name : me.icn3d.chainsSeq[i][k].name.trim().substr(0, 1).toLowerCase();
@@ -2008,40 +734,37 @@ iCn3DUI.prototype = {
             }
           }
 
-          //seqHtml += "<span class='residueNum' title='ending residue number'>" + me.icn3d.chainsAnno[i][0][seqLength-1] + "</span>";
-          //seqHtml += "<span class='residueNum' title='ending residue number'>" + me.icn3d.chainsSeq[i][seqLength-1].resi + "</span>";
-          seqHtml += "<span class='residueNum' title='ending residue number'>" + maxResi + "</span>";
+          seqHtml += "<span class='icn3d-residueNum' title='ending residue number'>" + maxResi + "</span>";
 
           var annoLength = (me.icn3d.chainsAnno[i] !== undefined) ? me.icn3d.chainsAnno[i].length : 0;
 
           for(var j=0, jl=annoLength; j < jl; ++j) {
             resiHtmlArray[j] = "";
 
-            resiHtmlArray[j] += "<span class='residueNum'></span>"; // a spot corresponding to the starting and ending residue number
+            resiHtmlArray[j] += "<span class='icn3d-residueNum'></span>"; // a spot corresponding to the starting and ending residue number
             for(var k=0, kl=me.icn3d.chainsAnno[i][j].length; k < kl; ++k) {
               var text = me.icn3d.chainsAnno[i][j][k];
 
               resiHtmlArray[j] += "<span>" + text + "</span>";
             }
-            resiHtmlArray[j] += "<span class='residueNum'></span>"; // a spot corresponding to the starting and ending residue number
+            resiHtmlArray[j] += "<span class='icn3d-residueNum'></span>"; // a spot corresponding to the starting and ending residue number
           }
 
           for(var j=0, jl=annoLength; j < jl; ++j) {
-            //sequencesHtml += "<div class='residueLine' style='white-space:nowrap;'><div class='seqTitle' chain='" + i + "' anno='" + j + "'>" + me.icn3d.chainsAnnoTitle[i][j][0] + " </div>" + resiHtmlArray[j] + "<br/></div>";
-            sequencesHtml += "<div class='residueLine' style='white-space:nowrap;'><div class='annoTitle' chain='" + i + "' anno='" + j + "'>" + me.icn3d.chainsAnnoTitle[i][j][0] + " </div>" + resiHtmlArray[j] + "<br/></div>";
+            sequencesHtml += "<div class='icn3d-residueLine' style='white-space:nowrap;'><div class='icn3d-annoTitle' chain='" + i + "' anno='" + j + "'>" + me.icn3d.chainsAnnoTitle[i][j][0] + " </div>" + resiHtmlArray[j] + "<br/></div>";
           }
 
           var color = (me.icn3d.chainsColor[i] !== undefined) ? '#' + me.icn3d.chainsColor[i].getHexString() : '#000000';
 
           var chainidTmp = i; title = (me.icn3d.pdbid_chain2title !== undefined) ? me.icn3d.pdbid_chain2title[i] : '';
 
-          sequencesHtml += '<div class="seqTitle" chain="' + i + '" anno="sequence" style="color:' + color + '" title="' + title + '">' + chainidTmp + ' </div><span class="seqLine" style="color:' + color + '">' + seqHtml + '</span><br/>';
+          sequencesHtml += '<div class="icn3d-seqTitle" chain="' + i + '" anno="sequence" style="color:' + color + '" title="' + title + '">' + chainidTmp + ' </div><span class="icn3d-seqLine" style="color:' + color + '">' + seqHtml + '</span><br/>';
       }
 
       return {"sequencesHtml": sequencesHtml, "maxSeqCnt":maxSeqCnt};
     },
 
-    getAlignSequencesAnnotations: function (alignChainArray, bUpdateHighlightAtoms, residueArray) { var me = this;
+    getAlignSequencesAnnotations: function (alignChainArray, bUpdateHighlightAtoms, residueArray, bShowHighlight) { var me = this;
       var sequencesHtml = "<b>Aligned Sequences:</b>";
       sequencesHtml += " (drag/click to select, drag/click again to deselect, click \"Stop Selection\" to stop the current selection)<br/><button style='white-space:nowrap;' class='" + me.pre + "stopselection'>Stop Selection</button> <button style='white-space:nowrap;' class='" + me.pre + "outputselection'>Output Selection</button><br/>";
 
@@ -2070,7 +793,7 @@ iCn3DUI.prototype = {
           var structure = i.substr(0, dashPos);
           var chain = i.substr(dashPos + 1);
 
-          seqHtml += "<span class='residueNum' title='starting residue number'>" + me.icn3d.alignChainsSeq[i][0].resi + "</span>";
+          seqHtml += "<span class='icn3d-residueNum' title='starting residue number'>" + me.icn3d.alignChainsSeq[i][0].resi + "</span>";
           var bHighlightChain = (alignChainArray !== undefined && chainHash.hasOwnProperty(i)) ? true : false;
 
           for(var k=0, kl=seqLength; k < kl; ++k) {
@@ -2082,29 +805,26 @@ iCn3DUI.prototype = {
                 color = me.icn3d.alignChainsSeq[i][k].color;
             }
 
-            //var classForAlign = "class='residue'"; // used to identify a residue when clicking a residue in sequence
-            //if(me.icn3d.alignChainsSeq[i][k].aligned === 2) classForAlign = "class='residue alignSeq'";
+            var classForAlign = "class='icn3d-residue'"; // used to identify a residue when clicking a residue in sequence
 
-            var classForAlign = "class='residue'"; // used to identify a residue when clicking a residue in sequence
-
-            if( bHighlightChain || (me.icn3d.alignChainsSeq[i][k].aligned === 2 && residueArray !== undefined && resIdFull !== '' && residueArray.indexOf(resIdFull) !== -1) ) {
-                classForAlign = "class='residue highlightSeq'";
+            if( (bShowHighlight === undefined || bShowHighlight) && (bHighlightChain || (me.icn3d.alignChainsSeq[i][k].aligned === 2 && residueArray !== undefined && resIdFull !== '' && residueArray.indexOf(resIdFull) !== -1) ) ) {
+                classForAlign = "class='icn3d-residue icn3d-highlightSeq'";
             }
 
             seqHtml += "<span id='" + me.pre + resIdFull + "' " + classForAlign + " style='color:" + color + "'>" + me.icn3d.alignChainsSeq[i][k].resn + "</span>";
           }
-          seqHtml += "<span class='residueNum' title='ending residue number'>" + me.icn3d.alignChainsSeq[i][seqLength-1].resi + "</span>";
+          seqHtml += "<span class='icn3d-residueNum' title='ending residue number'>" + me.icn3d.alignChainsSeq[i][seqLength-1].resi + "</span>";
 
           var annoLength = (me.icn3d.alignChainsAnno[i] !== undefined) ? me.icn3d.alignChainsAnno[i].length : 0;
 
           for(var j=0, jl=annoLength; j < jl; ++j) {
             resiHtmlArray[j] = "";
 
-            resiHtmlArray[j] += "<span class='residueNum'></span>"; // a spot corresponding to the starting and ending residue number
+            resiHtmlArray[j] += "<span class='icn3d-residueNum'></span>"; // a spot corresponding to the starting and ending residue number
             for(var k=0, kl=me.icn3d.alignChainsAnno[i][j].length; k < kl; ++k) {
               resiHtmlArray[j] += "<span>" + me.icn3d.alignChainsAnno[i][j][k] + "</span>";
             }
-            resiHtmlArray[j] += "<span class='residueNum'></span>"; // a spot corresponding to the starting and ending residue number
+            resiHtmlArray[j] += "<span class='icn3d-residueNum'></span>"; // a spot corresponding to the starting and ending residue number
           }
 
           var color = (me.icn3d.chainsColor[i] !== undefined) ? '#' + me.icn3d.chainsColor[i].getHexString() : '#000000';
@@ -2113,10 +833,10 @@ iCn3DUI.prototype = {
 
           // add markers and residue numbers
           for(var j=annoLength-1; j >= 0; --j) {
-            sequencesHtml += "<div class='residueLine' style='white-space:nowrap;'><div class='seqTitle' chain='" + i + "' anno='" + j + "'>" + me.icn3d.alignChainsAnnoTitle[i][j][0] + "</div>" + resiHtmlArray[j] + "<br/></div>";
+            sequencesHtml += "<div class='icn3d-residueLine' style='white-space:nowrap;'><div class='icn3d-seqTitle' chain='" + i + "' anno='" + j + "'>" + me.icn3d.alignChainsAnnoTitle[i][j][0] + "</div>" + resiHtmlArray[j] + "<br/></div>";
           }
 
-          sequencesHtml += '<div class="seqTitle" chain="' + i + '" anno="sequence" style="color:' + color + '" title="' + title + '">' + chainidTmp + ' </div><span class="seqLine" style="color:' + color + '">' + seqHtml + '</span><br/>';
+          sequencesHtml += '<div class="icn3d-seqTitle" chain="' + i + '" anno="sequence" style="color:' + color + '" title="' + title + '">' + chainidTmp + ' </div><span class="icn3d-seqLine" style="color:' + color + '">' + seqHtml + '</span><br/>';
       }
 
       return {"sequencesHtml": sequencesHtml, "maxSeqCnt":maxSeqCnt};
@@ -2798,31 +1518,6 @@ iCn3DUI.prototype = {
         //me.icn3d.draw();
     },
 
-    addResiudeLabels: function () { var me = this;
-        var size = 40;
-        var background = "#CCCCCC";
-
-        for(var i in me.icn3d.highlightAtoms) {
-            var atom = me.icn3d.atoms[i];
-
-            if(atom.het) continue;
-            if(atom.name !== 'CA' && atom.name !== 'P') continue;
-
-            var label = {}; // Each label contains 'position', 'text', 'color', 'background'
-
-            label.position = atom.coord;
-
-            label.text = me.icn3d.residueName2Abbr(atom.resn);
-            label.size = size;
-            label.color = "#" + atom.color.getHexString();
-            label.background = background;
-
-            me.icn3d.labels.push(label);
-        }
-
-        me.icn3d.removeHighlightObjects();
-    },
-
     addLine: function (x1, y1, z1, x2, y2, z2, color, dashed) { var me = this;
         var line = {}; // Each line contains 'position1', 'position2', 'color', and a boolean of 'dashed'
         line.position1 = new THREE.Vector3(x1, y1, z1);
@@ -3049,65 +1744,6 @@ iCn3DUI.prototype = {
 //        var url = 'data:text;charset=utf-8,' + encodeURIComponent(me.icn3d.commands.join('\n'));
 //        window.open(url, '_blank');
 //    },
-
-    isIE: function() { var me = this;
-        //http://stackoverflow.com/questions/19999388/check-if-user-is-using-ie-with-jquery
-        var ua = window.navigator.userAgent;
-        var msie = ua.indexOf("MSIE ");
-
-        if (msie > 0 || !!navigator.userAgent.match(/Trident.*rv\:11\./))      // If Internet Explorer
-            return true;
-        else                 // If another browser, return 0
-            return false;
-    },
-
-    saveFile: function(filename, type, text) { var me = this;
-        //Save file
-        if(me.isIE()) { // IE
-            if(window.navigator.msSaveBlob){
-                if(type === 'text') {
-                    var dataStr = me.icn3d.commands.join('\n');
-                    var data = decodeURIComponent(dataStr);
-
-                    var blob = new Blob([data],{ type: "text/html;charset=utf-8;"});
-                    navigator.msSaveBlob(blob, filename);
-                }
-                else if(type === 'png') {
-                   me.icn3d.render();
-                   var blob = me.icn3d.renderer.domElement.msToBlob();
-
-                    navigator.msSaveBlob(blob, filename);
-                }
-                else if(type === 'residue') {
-                    var dataStr = text;
-                    var data = decodeURIComponent(dataStr);
-
-                    var blob = new Blob([data],{ type: "text/html;charset=utf-8;"});
-                    navigator.msSaveBlob(blob, filename);
-                }
-            }
-        }
-        else {
-            var data;
-
-            if(type === 'text') {
-                var dataStr = me.icn3d.commands.join('\n');
-                data = "data:text;charset=utf-8," + encodeURIComponent(dataStr);
-            }
-            else if(type === 'png') {
-               me.icn3d.render();
-               var dataStr = me.icn3d.renderer.domElement.toDataURL('image/png');
-
-                data = dataStr;
-            }
-            else if(type === 'residue') {
-                var dataStr = text;
-                data = "data:text;charset=utf-8," + encodeURIComponent(dataStr);
-            }
-
-            window.open(data, '_blank');
-        }
-    },
 
     loadScript: function (dataStr, bAddCommands) { var me = this;
       me.icn3d.bRender = false;
@@ -3364,6 +2000,7 @@ iCn3DUI.prototype = {
         var size = paraArray[2].substr(paraArray[2].lastIndexOf(' ') + 1);
         var color = paraArray[3].substr(paraArray[3].lastIndexOf(' ') + 1);
         var background = paraArray[4].substr(paraArray[4].lastIndexOf(' ') + 1);
+        if(background === '0' || background === '') background = undefined;
 
         me.addLabel(text, x,y,z, size, color, background);
         me.icn3d.draw();
@@ -3371,16 +2008,24 @@ iCn3DUI.prototype = {
       else if(command.indexOf('add residue labels') !== -1) {
         me.addResiudeLabels();
 
+        me.icn3d.options['labels'] = 'yes';
+
+        me.icn3d.draw();
+      }
+      else if(command.indexOf('add residue topology') !== -1) {
        var options2 = {};
-       options2['secondary'] = 'nothing';
-       options2['nucleotides'] = 'nothing';
+       options2['secondary'] = 'c alpha trace';
+       options2['nucleotides'] = 'phosphorus trace';
        options2['ligands'] = 'nothing';
        options2['water'] = 'nothing';
        options2['ions'] = 'nothing';
 
-       //me.icn3d.setAtomStyleByOptions(options2);
+       me.icn3d.setAtomStyleByOptions(options2);
 
-       me.icn3d.options['labels'] = 'yes';
+        var bTopology = true;
+        me.addResiudeLabels(bTopology);
+
+        me.icn3d.options['labels'] = 'yes';
 
         //me.icn3d.draw(options2);
         me.icn3d.draw();
@@ -3504,419 +2149,26 @@ iCn3DUI.prototype = {
 
         html += "    <td valign='top'>";
         html += "    <div style='float:left; margin:10px 5px 0px 5px;'>";
-        html += "          <span id='" + me.pre + "back' class='ui-icon ui-icon-arrowthick-1-w middleIcon link' title='Step backward'></span>";
+        html += "          <span id='" + me.pre + "back' class='ui-icon ui-icon-arrowthick-1-w icn3d-middleIcon icn3d-link' title='Step backward'></span>";
         html += "    </div>";
         html += "    </td>";
 
         html += "    <td valign='top'>";
         html += "    <div style='float:left; margin:10px 5px 0px 5px;'>";
-        html += "          <span id='" + me.pre + "forward' class='ui-icon ui-icon-arrowthick-1-e middleIcon link' title='Step forward'></span>";
+        html += "          <span id='" + me.pre + "forward' class='ui-icon ui-icon-arrowthick-1-e icn3d-middleIcon icn3d-link' title='Step forward'></span>";
         html += "    </div>";
         html += "    </td>";
 
-        html += "    <td valign='top'>";
-        html += "    <div style='float:left;'>";
-        html += "          <accordion id='" + me.pre + "accordion1'>";
-        html += "              <h3>File</h3>";
-        html += "              <div>";
-        html += "              <ul class='menu'>";
-        html += "                <li>Retrieve by ID";
-        html += "                  <ul>";
-        html += "                    <li><span id='" + me.pre + "menu1_pdbid' class='link'>PDB ID</span></li>";
-        html += "                    <li><span id='" + me.pre + "menu1_mmcifid' class='link'>mmCIF ID</span></li>";
-        html += "                    <li><span id='" + me.pre + "menu1_mmdbid' class='link'>MMDB ID</span></li>";
-        //html += "                    <li><span id='" + me.pre + "menu1_term' class='link'>Search MMDB term</span></li>";
-        html += "                    <li><span id='" + me.pre + "menu1_gi' class='link'>gi</span></li>";
-        html += "                    <li><span id='" + me.pre + "menu1_cid' class='link'>PubChem CID</span></li>";
-        html += "                  </ul>";
-        html += "                </li>";
-        html += "                <li><span id='" + me.pre + "menu1_pdbfile' class='link'>Open PDB File</span></li>";
-        html += "                <li><span id='" + me.pre + "menu1_state' class='link'>Open State/Script</span></li>";
-        html += "                <li><span id='" + me.pre + "menu1_exportState' class='link'>Export State<br/></span></li>";
-        html += "                <li><span id='" + me.pre + "menu1_exportCanvas' class='link'>Export Image</span></li>";
-        html += "                <li>Links";
-        html += "                  <ul>";
-        html += "                    <li><span id='" + me.pre + "menu1_link_structure' class='link'>Structure Summary</span></li>";
-        html += "                    <li><span id='" + me.pre + "menu1_link_vast' class='link'>Find Similar Structures</span></li>";
-        html += "                    <li><span id='" + me.pre + "menu1_link_pubmed' class='link'>Literature</span></li>";
-        html += "                  </ul>";
-        html += "                </li>";
-        html += "              </ul>";
-        html += "              </div>";
-        html += "          </accordion>";
-        html += "    </div>";
-        html += "    </td>";
-
-        html += "    <td valign='top'>";
-        html += "    <div style='float:left;'>";
-        html += "          <accordion id='" + me.pre + "accordion2'>";
-        html += "              <h3>Select</h3>";
-        html += "              <div>";
-        html += "              <ul class='menu'>";
-
-        html += "                <li>Select";
-        html += "                  <ul>";
-        if(me.cfg.cid === undefined) {
-            html += "                      <li><input type='radio' name='" + me.pre + "menu2_select' id='" + me.pre + "menu2_select_chain'><label for='" + me.pre + "menu2_select_chain'>Structure/Chain</label></li>";
-        }
-        html += "                      <li><input type='radio' name='" + me.pre + "menu2_select' id='" + me.pre + "menu2_selectall'><label for='" + me.pre + "menu2_selectall'>All</label></li>";
-        html += "                      <li><input type='radio' name='" + me.pre + "menu2_select' id='" + me.pre + "menu2_selectcomplement'><label for='" + me.pre + "menu2_selectcomplement'>Complement</label></li>";
-        html += "                      <li><input type='radio' name='" + me.pre + "menu2_select' id='" + me.pre + "menu2_aroundsphere'><label for='" + me.pre + "menu2_aroundsphere'>Custom Sphere</label></li>";
-        if(me.cfg.cid === undefined) {
-            html += "                      <li><input type='radio' name='" + me.pre + "menu2_select' id='" + me.pre + "menu2_selectresidues'><label for='" + me.pre + "menu2_selectresidues'>Sequence</label></li>";
-        }
-        if(me.cfg.align !== undefined) {
-            html += "                      <li><input type='radio' name='" + me.pre + "menu2_select' id='" + me.pre + "menu2_alignment'><label for='" + me.pre + "menu2_alignment'>Aligned Seq.</label></li>";
-        }
-        html += "                      <li><input type='radio' name='" + me.pre + "menu2_select' id='" + me.pre + "menu2_command'><label for='" + me.pre + "menu2_command'>by Command</label></li>";
-        html += "                  </ul>";
-        html += "                </li>";
-
-        html += "                <li>Picking";
-        html += "                  <ul>";
-        if(me.cfg.cid === undefined) {
-            html += "                      <li><input type='radio' name='" + me.pre + "menu2_picking' id='" + me.pre + "menu2_pickingStrand'><label for='" + me.pre + "menu2_pickingStrand'>Strand/Helix</label></li>";
-            html += "                      <li><input type='radio' name='" + me.pre + "menu2_picking' id='" + me.pre + "menu2_pickingResidue' checked><label for='" + me.pre + "menu2_pickingResidue'>Residue</label></li>";
-            html += "                      <li><input type='radio' name='" + me.pre + "menu2_picking' id='" + me.pre + "menu2_pickingYes'><label for='" + me.pre + "menu2_pickingYes'>Atom</label></li>";
-        }
-        else {
-            html += "                      <li><input type='radio' name='" + me.pre + "menu2_picking' id='" + me.pre + "menu2_pickingStrand'><label for='" + me.pre + "menu2_pickingStrand'>Strand/Helix</label></li>";
-            html += "                      <li><input type='radio' name='" + me.pre + "menu2_picking' id='" + me.pre + "menu2_pickingResidue'><label for='" + me.pre + "menu2_pickingResidue'>Residue</label></li>";
-            html += "                      <li><input type='radio' name='" + me.pre + "menu2_picking' id='" + me.pre + "menu2_pickingYes' checked><label for='" + me.pre + "menu2_pickingYes'>Atom</label></li>";
-        }
-
-        html += "                      <li><input type='radio' name='" + me.pre + "menu2_picking' id='" + me.pre + "menu2_pickingNo'><label for='" + me.pre + "menu2_pickingNo'>Off</label></li>";
-        html += "                  </ul>";
-        html += "                </li>";
-
-        html += "                <li>Display";
-        html += "                  <ul>";
-        if(me.cfg.align !== undefined) {
-            html += "                      <li><input type='radio' name='" + me.pre + "menu2_display' id='" + me.pre + "menu2_alternate'><label for='" + me.pre + "menu2_alternate'>Alternate Structures</label></li>";
-        }
-        html += "                      <li><input type='radio' name='" + me.pre + "menu2_display' id='" + me.pre + "menu2_toggle'><label for='" + me.pre + "menu2_toggle'>Toggle Selection</label></li>";
-        html += "                      <li><input type='radio' name='" + me.pre + "menu2_display' id='" + me.pre + "menu2_show_selected'><label for='" + me.pre + "menu2_show_selected'>Display Selection</label></li>";
-        html += "                      <li><input type='radio' name='" + me.pre + "menu2_display' id='" + me.pre + "toggleHighlight2'><label for='" + me.pre + "toggleHighlight2'>Toggle Highlight</label></li>";
-        html += "                  </ul>";
-        html += "                </li>";
-
-        html += "                    <li>Highlight Color";
-        html += "                      <ul>";
-        html += "                        <li><input type='radio' name='" + me.pre + "menu2_hl_color' id='" + me.pre + "menu2_hl_colorYellow' checked><label for='" + me.pre + "menu2_hl_colorYellow'>Yellow</label></li>";
-        html += "                        <li><input type='radio' name='" + me.pre + "menu2_hl_color' id='" + me.pre + "menu2_hl_colorGreen'><label for='" + me.pre + "menu2_hl_colorGreen'>Green</label></li>";
-        html += "                        <li><input type='radio' name='" + me.pre + "menu2_hl_color' id='" + me.pre + "menu2_hl_colorRed'><label for='" + me.pre + "menu2_hl_colorRed'>Red</label></li>";
-        html += "                      </ul>";
-        html += "                    </li>";
-        html += "                    <li>Highlight Style";
-        html += "                      <ul>";
-
-        if(Detector.webgl) {
-            html += "                        <li><input type='radio' name='" + me.pre + "menu2_hl_style' id='" + me.pre + "menu2_hl_styleOutline' checked><label for='" + me.pre + "menu2_hl_styleOutline'>Outline</label></li>";
-            html += "                        <li><input type='radio' name='" + me.pre + "menu2_hl_style' id='" + me.pre + "menu2_hl_styleObject'><label for='" + me.pre + "menu2_hl_styleObject'>3D Objects</label></li>";
-        }
-        else {
-            html += "                        <li><input type='radio' name='" + me.pre + "menu2_hl_style' id='" + me.pre + "menu2_hl_styleOutline'><label for='" + me.pre + "menu2_hl_styleOutline'>Outline</label></li>";
-            html += "                        <li><input type='radio' name='" + me.pre + "menu2_hl_style' id='" + me.pre + "menu2_hl_styleObject' checked><label for='" + me.pre + "menu2_hl_styleObject'>3D Objects</label></li>";
-        }
-        html += "                      </ul>";
-        html += "                    </li>";
-
-        html += "              </ul>";
-        html += "              </div>";
-        html += "          </accordion>";
-        html += "    </div>";
-        html += "    </td>";
-
-        html += "    <td valign='top'>";
-        html += "    <div style='float:left;'>";
-        html += "          <accordion id='" + me.pre + "accordion3'>";
-        html += "              <h3>Style</h3>";
-        html += "              <div>";
-        html += "              <ul class='menu'>";
-
-        if(me.cfg.cid === undefined) {
-            html += "                <li>Protein";
-            html += "                  <ul>";
-            html += "                      <li><input type='radio' name='" + me.pre + "menu3_protein' id='" + me.pre + "menu3_proteinRibbon' checked><label for='" + me.pre + "menu3_proteinRibbon'>Ribbon</label></li>";
-            html += "                      <li><input type='radio' name='" + me.pre + "menu3_protein' id='" + me.pre + "menu3_proteinStrand'><label for='" + me.pre + "menu3_proteinStrand'>Strand</label></li>";
-            html += "                      <li><input type='radio' name='" + me.pre + "menu3_protein' id='" + me.pre + "menu3_proteinCylinder'><label for='" + me.pre + "menu3_proteinCylinder'>Cylinder and Plate</label></li>";
-            html += "                      <li><input type='radio' name='" + me.pre + "menu3_protein' id='" + me.pre + "menu3_proteinCalpha'><label for='" + me.pre + "menu3_proteinCalpha'>C alpha Trace</label></li>";
-            html += "                      <li><input type='radio' name='" + me.pre + "menu3_protein' id='" + me.pre + "menu3_proteinBfactor'><label for='" + me.pre + "menu3_proteinBfactor'>B Factor Tube</label></li>";
-            html += "                      <li><input type='radio' name='" + me.pre + "menu3_protein' id='" + me.pre + "menu3_proteinLines'><label for='" + me.pre + "menu3_proteinLines'>Lines</label></li>";
-            html += "                      <li><input type='radio' name='" + me.pre + "menu3_protein' id='" + me.pre + "menu3_proteinStick'><label for='" + me.pre + "menu3_proteinStick'>Stick</label></li>";
-            html += "                      <li><input type='radio' name='" + me.pre + "menu3_protein' id='" + me.pre + "menu3_proteinBallstick'><label for='" + me.pre + "menu3_proteinBallstick'>Ball and Stick</label></li>";
-            html += "                      <li><input type='radio' name='" + me.pre + "menu3_protein' id='" + me.pre + "menu3_proteinSphere'><label for='" + me.pre + "menu3_proteinSphere'>Sphere</label></li>";
-            html += "                      <li><input type='radio' name='" + me.pre + "menu3_protein' id='" + me.pre + "menu3_proteinNothing'><label for='" + me.pre + "menu3_proteinNothing'>Hide</label></li>";
-            html += "                  </ul>";
-            html += "                </li>";
-
-            html += "                <li>Side Chains";
-            html += "                  <ul>";
-            html += "                      <li><input type='radio' name='" + me.pre + "menu3_sidechains' id='" + me.pre + "menu3_sidechainsLines'><label for='" + me.pre + "menu3_sidechainsLines'>Lines</label></li>";
-            html += "                      <li><input type='radio' name='" + me.pre + "menu3_sidechains' id='" + me.pre + "menu3_sidechainsStick'><label for='" + me.pre + "menu3_sidechainsStick'>Stick</label></li>";
-            html += "                      <li><input type='radio' name='" + me.pre + "menu3_sidechains' id='" + me.pre + "menu3_sidechainsBallstick'><label for='" + me.pre + "menu3_sidechainsBallstick'>Ball and Stick</label></li>";
-            html += "                      <li><input type='radio' name='" + me.pre + "menu3_sidechains' id='" + me.pre + "menu3_sidechainsSphere'><label for='" + me.pre + "menu3_sidechainsSphere'>Sphere</label></li>";
-            html += "                      <li><input type='radio' name='" + me.pre + "menu3_sidechains' id='" + me.pre + "menu3_sidechainsNothing' checked><label for='" + me.pre + "menu3_sidechainsNothing'>Hide</label></li>";
-            html += "                  </ul>";
-            html += "                </li>";
-
-            html += "                <li>Nucleotides";
-            html += "                  <ul>";
-            html += "                      <li><input type='radio' name='" + me.pre + "menu3_nucl' id='" + me.pre + "menu3_nuclCartoon'><label for='" + me.pre + "menu3_nuclCartoon'>Cartoon</label></li>";
-            html += "                      <li><input type='radio' name='" + me.pre + "menu3_nucl' id='" + me.pre + "menu3_nuclPhos' checked><label for='" + me.pre + "menu3_nuclPhos'>Phosphorus Trace</label></li>";
-            html += "                      <li><input type='radio' name='" + me.pre + "menu3_nucl' id='" + me.pre + "menu3_nuclLines'><label for='" + me.pre + "menu3_nuclLines'>Lines</label></li>";
-            html += "                      <li><input type='radio' name='" + me.pre + "menu3_nucl' id='" + me.pre + "menu3_nuclStick'><label for='" + me.pre + "menu3_nuclStick'>Stick</label></li>";
-            html += "                      <li><input type='radio' name='" + me.pre + "menu3_nucl' id='" + me.pre + "menu3_nuclBallstick'><label for='" + me.pre + "menu3_nuclBallstick'>Ball and Stick</label></li>";
-            html += "                      <li><input type='radio' name='" + me.pre + "menu3_nucl' id='" + me.pre + "menu3_nuclSphere'><label for='" + me.pre + "menu3_nuclSphere'>Sphere</label></li>";
-            html += "                      <li><input type='radio' name='" + me.pre + "menu3_nucl' id='" + me.pre + "menu3_nuclNothing'><label for='" + me.pre + "menu3_nuclNothing'>Hide</label></li>";
-            html += "                  </ul>";
-            html += "                </li>";
-
-            html += "                <li>Ligands";
-            html += "                  <ul>";
-            html += "                      <li><input type='radio' name='" + me.pre + "menu3_ligands' id='" + me.pre + "menu3_ligandsLines'><label for='" + me.pre + "menu3_ligandsLines'>Lines</label></li>";
-            html += "                      <li><input type='radio' name='" + me.pre + "menu3_ligands' id='" + me.pre + "menu3_ligandsStick' checked><label for='" + me.pre + "menu3_ligandsStick'>Stick</label></li>";
-            html += "                      <li><input type='radio' name='" + me.pre + "menu3_ligands' id='" + me.pre + "menu3_ligandsBallstick'><label for='" + me.pre + "menu3_ligandsBallstick'>Ball and Stick</label></li>";
-            html += "                      <li><input type='radio' name='" + me.pre + "menu3_ligands' id='" + me.pre + "menu3_ligandsSphere'><label for='" + me.pre + "menu3_ligandsSphere'>Sphere</label></li>";
-            html += "                      <li><input type='radio' name='" + me.pre + "menu3_ligands' id='" + me.pre + "menu3_ligandsNothing'><label for='" + me.pre + "menu3_ligandsNothing'>Hide</label></li>";
-            html += "                  </ul>";
-            html += "                </li>";
-        }
-        else {
-            html += "                <li>Ligands";
-            html += "                  <ul>";
-            html += "                      <li><input type='radio' name='" + me.pre + "menu3_ligands' id='" + me.pre + "menu3_ligandsLines'><label for='" + me.pre + "menu3_ligandsLines'>Lines</label></li>";
-            html += "                      <li><input type='radio' name='" + me.pre + "menu3_ligands' id='" + me.pre + "menu3_ligandsStick'><label for='" + me.pre + "menu3_ligandsStick'>Stick</label></li>";
-            html += "                      <li><input type='radio' name='" + me.pre + "menu3_ligands' id='" + me.pre + "menu3_ligandsBallstick' checked><label for='" + me.pre + "menu3_ligandsBallstick'>Ball and Stick</label></li>";
-            html += "                      <li><input type='radio' name='" + me.pre + "menu3_ligands' id='" + me.pre + "menu3_ligandsSphere'><label for='" + me.pre + "menu3_ligandsSphere'>Sphere</label></li>";
-            html += "                      <li><input type='radio' name='" + me.pre + "menu3_ligands' id='" + me.pre + "menu3_ligandsNothing'><label for='" + me.pre + "menu3_ligandsNothing'>Hide</label></li>";
-            html += "                  </ul>";
-            html += "                </li>";
-        }
-
-
-        html += "                <li>Ions";
-        html += "                  <ul>";
-        html += "                      <li><input type='radio' name='" + me.pre + "menu3_ions' id='" + me.pre + "menu3_ionsSphere' checked><label for='" + me.pre + "menu3_ionsSphere'>Sphere</label></li>";
-        html += "                      <li><input type='radio' name='" + me.pre + "menu3_ions' id='" + me.pre + "menu3_ionsDot'><label for='" + me.pre + "menu3_ionsDot'>Dot</label></li>";
-        html += "                      <li><input type='radio' name='" + me.pre + "menu3_ions' id='" + me.pre + "menu3_ionsNothing'><label for='" + me.pre + "menu3_ionsNothing'>Hide</label></li>";
-        html += "                  </ul>";
-        html += "                </li>";
-
-        html += "                <li>Water";
-        html += "                  <ul>";
-        html += "                      <li><input type='radio' name='" + me.pre + "menu3_water' id='" + me.pre + "menu3_waterSphere'><label for='" + me.pre + "menu3_waterSphere'>Sphere</label></li>";
-        html += "                      <li><input type='radio' name='" + me.pre + "menu3_water' id='" + me.pre + "menu3_waterDot'><label for='" + me.pre + "menu3_waterDot'>Dot</label></li>";
-        html += "                      <li><input type='radio' name='" + me.pre + "menu3_water' id='" + me.pre + "menu3_waterNothing' checked><label for='" + me.pre + "menu3_waterNothing'>Hide</label></li>";
-        html += "                  </ul>";
-        html += "                </li>";
-
-        html += "              </ul>";
-        html += "              </div>";
-        html += "          </accordion>";
-        html += "    </div>";
-        html += "    </td>";
-
-        html += "    <td valign='top'>";
-        html += "    <div style='float:left;'>";
-        html += "          <accordion id='" + me.pre + "accordion4'>";
-        html += "              <h3>Color</h3>";
-        html += "              <div>";
-        html += "              <ul class='menu'>";
-
-        if(me.cfg.cid === undefined) {
-            if(me.cfg.mmdbid !== undefined) {
-                html += "                <li><input type='radio' name='" + me.pre + "menu4_color' id='" + me.pre + "menu4_colorSpectrum'><label for='" + me.pre + "menu4_colorSpectrum'>Spectrum</label></li>";
-            }
-            else {
-                html += "                <li><input type='radio' name='" + me.pre + "menu4_color' id='" + me.pre + "menu4_colorSpectrum' checked><label for='" + me.pre + "menu4_colorSpectrum'>Spectrum</label></li>";
-            }
-            html += "                <li><input type='radio' name='" + me.pre + "menu4_color' id='" + me.pre + "menu4_colorSS'><label for='" + me.pre + "menu4_colorSS'>Secondary</label></li>";
-            html += "                <li><input type='radio' name='" + me.pre + "menu4_color' id='" + me.pre + "menu4_colorCharge'><label for='" + me.pre + "menu4_colorCharge'>Charge</label></li>";
-            //html += "                <li><input type='radio' name='" + me.pre + "menu4_color' id='" + me.pre + "menu4_colorBfactor'><label for='" + me.pre + "menu4_colorBfactor'>B Factor</label></li>";
-            html += "                <li><input type='radio' name='" + me.pre + "menu4_color' id='" + me.pre + "menu4_colorChain'><label for='" + me.pre + "menu4_colorChain'>Chain</label></li>";
-            html += "                <li><input type='radio' name='" + me.pre + "menu4_color' id='" + me.pre + "menu4_colorResidue'><label for='" + me.pre + "menu4_colorResidue'>Residue</label></li>";
-            html += "                <li><input type='radio' name='" + me.pre + "menu4_color' id='" + me.pre + "menu4_colorAtom'><label for='" + me.pre + "menu4_colorAtom'>Atom</label></li>";
-        }
-        else {
-            html += "                <li><input type='radio' name='" + me.pre + "menu4_color' id='" + me.pre + "menu4_colorAtom' checked><label for='" + me.pre + "menu4_colorAtom'>Atom</label></li>";
-        }
-
-        html += "                <li>-</li>";
-        html += "                <li>Unicolor";
-        html += "                  <ul>";
-        html += "                    <li><input type='radio' name='" + me.pre + "menu4_color' id='" + me.pre + "menu4_colorRed'><label for='" + me.pre + "menu4_colorRed'>Red</label></li>";
-        html += "                    <li><input type='radio' name='" + me.pre + "menu4_color' id='" + me.pre + "menu4_colorGreen'><label for='" + me.pre + "menu4_colorGreen'>Green</label></li>";
-        html += "                    <li><input type='radio' name='" + me.pre + "menu4_color' id='" + me.pre + "menu4_colorBlue'><label for='" + me.pre + "menu4_colorBlue'>Blue</label></li>";
-        html += "                    <li><input type='radio' name='" + me.pre + "menu4_color' id='" + me.pre + "menu4_colorMagenta'><label for='" + me.pre + "menu4_colorMagenta'>Magenta</label></li>";
-        html += "                    <li><input type='radio' name='" + me.pre + "menu4_color' id='" + me.pre + "menu4_colorYellow'><label for='" + me.pre + "menu4_colorYellow'>Yellow</label></li>";
-        html += "                    <li><input type='radio' name='" + me.pre + "menu4_color' id='" + me.pre + "menu4_colorCyan'><label for='" + me.pre + "menu4_colorCyan'>Cyan</label></li>";
-        html += "                    <li><input type='radio' name='" + me.pre + "menu4_color' id='" + me.pre + "menu4_colorWhite'><label for='" + me.pre + "menu4_colorWhite'>White</label></li>";
-        html += "                    <li><input type='radio' name='" + me.pre + "menu4_color' id='" + me.pre + "menu4_colorGrey'><label for='" + me.pre + "menu4_colorGrey'>Grey</label></li>";
-        html += "                  </ul>";
-        html += "                <li>-</li>";
-        html += "                <li><input type='radio' name='" + me.pre + "menu4_color' id='" + me.pre + "menu4_colorCustom'><label for='" + me.pre + "menu4_colorCustom'>Custom</label></li>";
-        html += "              </ul>";
-        html += "              </div>";
-        html += "          </accordion>";
-        html += "    </div>";
-        html += "    </td>";
-
-        html += "    <td valign='top'>";
-        html += "    <div style='float:left;'>";
-        html += "          <accordion id='" + me.pre + "accordion5'>";
-        html += "              <h3>Surface</h3>";
-        html += "              <div>";
-        html += "              <ul class='menu'>";
-        html += "                <li>Type";
-        html += "                  <ul>";
-        html += "                      <li><input type='radio' name='" + me.pre + "menu5_surface' id='" + me.pre + "menu5_surfaceVDW'><label for='" + me.pre + "menu5_surfaceVDW'>Van der Waals</label></li>";
-        html += "                      <li><input type='radio' name='" + me.pre + "menu5_surface' id='" + me.pre + "menu5_surfaceSES'><label for='" + me.pre + "menu5_surfaceSES'>Molecular Surface</label></li>";
-        html += "                      <li><input type='radio' name='" + me.pre + "menu5_surface' id='" + me.pre + "menu5_surfaceSAS'><label for='" + me.pre + "menu5_surfaceSAS'>Solvent Accessible</label></li>";
-//        html += "                      <li><input type='radio' name='" + me.pre + "menu5_surface' id='" + me.pre + "menu5_surfaceMolecular'><label for='" + me.pre + "menu5_surfaceMolecular'>Molecular Surface</label></li>";
-        html += "                      <li><input type='radio' name='" + me.pre + "menu5_surface' id='" + me.pre + "menu5_surfaceNothing' checked><label for='" + me.pre + "menu5_surfaceNothing'>Hide</label></li>";
-        html += "                  </ul>";
-        html += "                </li>";
-        html += "                <li>Opacity";
-        html += "                  <ul>";
-        html += "                      <li><input type='radio' name='" + me.pre + "menu5_opacity' id='" + me.pre + "menu5_opacity10'><label for='" + me.pre + "menu5_opacity10'>1.0</label></li>";
-        html += "                      <li><input type='radio' name='" + me.pre + "menu5_opacity' id='" + me.pre + "menu5_opacity09'><label for='" + me.pre + "menu5_opacity09'>0.9</label></li>";
-        html += "                      <li><input type='radio' name='" + me.pre + "menu5_opacity' id='" + me.pre + "menu5_opacity08' checked><label for='" + me.pre + "menu5_opacity08'>0.8</label></li>";
-        html += "                      <li><input type='radio' name='" + me.pre + "menu5_opacity' id='" + me.pre + "menu5_opacity07'><label for='" + me.pre + "menu5_opacity07'>0.7</label></li>";
-        html += "                      <li><input type='radio' name='" + me.pre + "menu5_opacity' id='" + me.pre + "menu5_opacity06'><label for='" + me.pre + "menu5_opacity06'>0.6</label></li>";
-        html += "                      <li><input type='radio' name='" + me.pre + "menu5_opacity' id='" + me.pre + "menu5_opacity05'><label for='" + me.pre + "menu5_opacity05'>0.5</label></li>";
-        html += "                  </ul>";
-        html += "                </li>";
-        html += "                <li>Wireframe";
-        html += "                  <ul>";
-        html += "                      <li><input type='radio' name='" + me.pre + "menu5_wireframe' id='" + me.pre + "menu5_wireframeYes'><label for='" + me.pre + "menu5_wireframeYes'>Yes</label></li>";
-        html += "                      <li><input type='radio' name='" + me.pre + "menu5_wireframe' id='" + me.pre + "menu5_wireframeNo' checked><label for='" + me.pre + "menu5_wireframeNo'>No</label></li>";
-        html += "                  </ul>";
-        html += "                </li>";
-
-        html += "                <li>Neighbors";
-        html += "                  <ul>";
-        html += "                      <li><input type='radio' name='" + me.pre + "menu5_neighbors' id='" + me.pre + "menu5_neighborsYes'><label for='" + me.pre + "menu5_neighborsYes'>Yes</label></li>";
-        html += "                      <li><input type='radio' name='" + me.pre + "menu5_neighbors' id='" + me.pre + "menu5_neighborsNo' checked><label for='" + me.pre + "menu5_neighborsNo'>No</label></li>";
-        html += "                  </ul>";
-        html += "                </li>";
-
-
-        html += "              </ul>";
-        html += "              </div>";
-        html += "          </accordion>";
-        html += "    </div>";
-        html += "    </td>";
-
-        html += "    <td valign='top'>";
-        html += "    <div style='float:left;'>";
-        html += "          <accordion id='" + me.pre + "accordion6'>";
-        html += "              <h3>Other</h3>";
-        html += "              <div>";
-        html += "              <ul class='menu'>";
-        html += "                <li><span id='" + me.pre + "reset' class='link'>Reset</span></li>";
-        //html += "                <li><span id='" + me.pre + "menu6_pickcenter' class='link'>Center on Picked Atom</span></li>";
-        html += "                <li><span id='" + me.pre + "menu6_selectedcenter' class='link'>Zoom in Selection</span></li>";
-        html += "                <li><span id='" + me.pre + "menu6_back' class='link'>Back</span></li>";
-        html += "                <li><span id='" + me.pre + "menu6_forward' class='link'>Forward</span></li>";
-        if(me.cfg.cid === undefined) {
-            html += "                <li>Assembly";
-            html += "                  <ul>";
-            html += "                      <li><input type='radio' name='" + me.pre + "menu6_assembly' id='" + me.pre + "menu6_assemblyYes'><label for='" + me.pre + "menu6_assemblyYes'>Yes</label></li>";
-            html += "                      <li><input type='radio' name='" + me.pre + "menu6_assembly' id='" + me.pre + "menu6_assemblyNo' checked><label for='" + me.pre + "menu6_assemblyNo'>No</label></li>";
-            html += "                  </ul>";
-            html += "                </li>";
-            html += "                <li>H-bonds to selection";
-            html += "                  <ul>";
-            html += "                      <li><input type='radio' name='" + me.pre + "menu6_hbonds' id='" + me.pre + "menu6_hbondsYes'><label for='" + me.pre + "menu6_hbondsYes'>Show</label></li>";
-            html += "                      <li><input type='radio' name='" + me.pre + "menu6_hbonds' id='" + me.pre + "menu6_hbondsNo' checked><label for='" + me.pre + "menu6_hbondsNo'>Hide</label></li>";
-            html += "                  </ul>";
-            html += "                </li>";
-        }
-        html += "                <li>Label";
-        html += "                  <ul>";
-
-        if(me.cfg.cid === undefined) {
-            html += "                      <li><input type='radio' name='" + me.pre + "menu6_addlabel' id='" + me.pre + "menu6_addlabelResidues'><label for='" + me.pre + "menu6_addlabelResidues'>Label Residues</label></li>";
-        }
-        html += "                      <li><input type='radio' name='" + me.pre + "menu6_addlabel' id='" + me.pre + "menu6_addlabelYes'><label for='" + me.pre + "menu6_addlabelYes'>Custom Label</label></li>";
-        html += "                      <li><input type='radio' name='" + me.pre + "menu6_addlabel' id='" + me.pre + "menu6_addlabelNo' checked><label for='" + me.pre + "menu6_addlabelNo'>Hide</label></li>";
-        html += "                  </ul>";
-        html += "                </li>";
-        html += "                <li>Distance";
-        html += "                  <ul>";
-        html += "                      <li><input type='radio' name='" + me.pre + "menu6_distance' id='" + me.pre + "menu6_distanceYes'><label for='" + me.pre + "menu6_distanceYes'>Show</label></li>";
-        html += "                      <li><input type='radio' name='" + me.pre + "menu6_distance' id='" + me.pre + "menu6_distanceNo' checked><label for='" + me.pre + "menu6_distanceNo'>Hide</label></li>";
-        html += "                  </ul>";
-        html += "                </li>";
-        html += "                <li>Auto Rotation";
-        html += "                  <ul>";
-        html += "                      <li><span id='" + me.pre + "menu6_rotateleft' class='link'>Rotate Left</span></li>";
-        html += "                      <li><span id='" + me.pre + "menu6_rotateright' class='link'>Rotate Right</span></li>";
-        html += "                      <li><span id='" + me.pre + "menu6_rotateup' class='link'>Rotate Up</span></li>";
-        html += "                      <li><span id='" + me.pre + "menu6_rotatedown' class='link'>Rotate Down</span></li>";
-        html += "                  </ul>";
-        html += "                </li>";
-        html += "                <li>Camera";
-        html += "                  <ul>";
-        html += "                      <li><input type='radio' name='" + me.pre + "menu6_camera' id='" + me.pre + "menu6_cameraPers' checked><label for='" + me.pre + "menu6_cameraPers'>Perspective</label></li>";
-        html += "                      <li><input type='radio' name='" + me.pre + "menu6_camera' id='" + me.pre + "menu6_cameraOrth'><label for='" + me.pre + "menu6_cameraOrth'>Orthographic</label></li>";
-        html += "                  </ul>";
-        html += "                </li>";
-        html += "                <li>Background";
-        html += "                  <ul>";
-        html += "                      <li><input type='radio' name='" + me.pre + "menu6_bkgd' id='" + me.pre + "menu6_bkgdBlack' checked><label for='" + me.pre + "menu6_bkgdBlack'>Black</label></li>";
-        html += "                      <li><input type='radio' name='" + me.pre + "menu6_bkgd' id='" + me.pre + "menu6_bkgdGrey'><label for='" + me.pre + "menu6_bkgdGrey'>Grey</label></li>";
-        html += "                      <li><input type='radio' name='" + me.pre + "menu6_bkgd' id='" + me.pre + "menu6_bkgdWhite'><label for='" + me.pre + "menu6_bkgdWhite'>White</label></li>";
-        html += "                  </ul>";
-        html += "                </li>";
-        html += "                <li>XYZ-axes";
-        html += "                  <ul>";
-        html += "                      <li><input type='radio' name='" + me.pre + "menu6_showaxis' id='" + me.pre + "menu6_showaxisYes'><label for='" + me.pre + "menu6_showaxisYes'>Show</label></li>";
-        html += "                      <li><input type='radio' name='" + me.pre + "menu6_showaxis' id='" + me.pre + "menu6_showaxisNo' checked><label for='" + me.pre + "menu6_showaxisNo'>Hide</label></li>";
-        html += "                  </ul>";
-        html += "                </li>";
-        html += "                <li>Transform Hint";
-        html += "                  <ul>";
-        html += "                    <li>Rotate";
-        html += "                        <ul>";
-        html += "                            <li>Left Mouse</li>";
-        html += "                            <li>Key L: Left</li>";
-        html += "                            <li>Key J: Right</li>";
-        html += "                            <li>Key I: Up</li>";
-        html += "                            <li>Key M: Down</li>";
-        html += "                        </ul>";
-        html += "                    </li>";
-        html += "                    <li>Zoom";
-        html += "                        <ul>";
-        html += "                            <li>Middle Mouse</li>";
-        html += "                            <li>Left Mouse + Shift</li>";
-        html += "                            <li>Key Z: Zoom in</li>";
-        html += "                            <li>Key X: Zoom out</li>";
-        html += "                        </ul>";
-        html += "                    </li>";
-        html += "                    <li>Translate";
-        html += "                        <ul>";
-        html += "                            <li>Right Mouse</li>";
-        html += "                            <li>Left Mouse + Ctrl</li>";
-        html += "                            <li>Arrow Left: Left</li>";
-        html += "                            <li>Arrow Right: Right</li>";
-        html += "                            <li>Arrow Up: Up</li>";
-        html += "                            <li>Arrow Down: Down</li>";
-        html += "                        </ul>";
-        html += "                    </li>";
-        html += "                  </ul>";
-        html += "                </li>";
-        html += "                <li><a href='https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d.html' target='_blank'>Help</a></li>";
-        html += "              </ul>";
-        html += "              </div>";
-        html += "          </accordion>";
-        html += "    </div>";
-        html += "    </td>";
+        html += "    <td valign='top'>" + me.setMenu1() + "</td>";
+        html += "    <td valign='top'>" + me.setMenu2() + "</td>";
+        html += "    <td valign='top'>" + me.setMenu3() + "</td>";
+        html += "    <td valign='top'>" + me.setMenu4() + "</td>";
+        html += "    <td valign='top'>" + me.setMenu5() + "</td>";
+        html += "    <td valign='top'>" + me.setMenu6() + "</td>";
 
         html += "    <td valign='top'>";
         html += "    <div style='float:left; margin:10px 5px 0px 5px;'>";
-        html += "    <a href='https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d.html' target='_blank'><span class='ui-icon ui-icon-help middleIcon link' title='click to see the help page'></span></a>";
+        html += "    <a href='https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d.html' target='_blank'><span class='ui-icon ui-icon-help icn3d-middleIcon icn3d-link' title='click to see the help page'></span></a>";
         html += "    </div>";
         html += "    </td>";
 
@@ -3925,16 +2177,12 @@ iCn3DUI.prototype = {
         html += "  </div>";
 
         // separate for the log box
-        html += "  <div id='" + me.pre + "commandlog' style='position:absolute; z-index:555; float:left; display:table-row; margin: 3px 0px 0px " + me.MENU_WIDTH + "px;'>";
-
-        html += "    <div style='float:left' class='commandTitle'>Script/Log (<a href='https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d.html#commands' target='_blank'><span title='click to see all commands'>Hint</span></a>)</div><br/>";
-        html += "    <textarea id='" + me.pre + "logtext' rows='3' cols='40'></textarea>";
-        html += "  </div>";
+        html += me.setCommandLog();
 
         html += me.setTools();
 
         // show title at the top left corner
-        html += "  <div id='" + me.pre + "title' class='commandTitle' style='position:absolute; z-index:1; float:left; display:table-row; margin: 85px 0px 0px 5px; color: #DDD'></div>";
+        html += "  <div id='" + me.pre + "title' class='icn3d-commandTitle' style='position:absolute; z-index:1; float:left; display:table-row; margin: 85px 0px 0px 5px; color: #DDD'></div>";
 
         html += "  <div id='" + me.pre + "viewer' style='width:100%; height:100%; background-color: #ddd;'>";
         html += "   <div id='" + me.pre + "menuLogSection'>";
@@ -3950,159 +2198,9 @@ iCn3DUI.prototype = {
 
         html += "</div>";
 
-        html += "<!-- dialog will not be part of the form -->";
-        html += "<div id='" + me.pre + "allselections' class='hidden'>";
+        html += me.setDialogs();
 
-        // filter for large structure
-        html += "<div id='" + me.pre + "dl_filter' style='overflow:auto; position:relative;'>";
-        //html += "  <div>This large structure contains more than 50,000 atoms. Please select some structures/chains below to display.</div>";
-        //html += "  <input style='position:absolute; top:8px; left:15px;' type='checkbox' id='" + me.pre + "filter_ckbx_all'/>";
-        html += "  <div style='text-align:center; margin-bottom:10px;'><button id='" + me.pre + "filter'><span style='white-space:nowrap'><b>Show Structure</b></span></button>";
-        html += "<button id='" + me.pre + "label_3d_diagram' style='margin-left:10px;'><span style='white-space:nowrap'><b>Show Labels</b></span></button></div>";
-        html += "  <div id='" + me.pre + "dl_filter_table' class='box'>";
-        html += "  </div>";
-        html += "</div>";
-
-        html += "<div id='" + me.pre + "dl_selectresidues'>";
-
-        html += "  <div id='" + me.pre + "dl_sequence' class='dl_sequence'>";
-        html += "  </div>";
-
-        html += "</div>";
-
-        if(me.cfg.align !== undefined) {
-          html += "<div id='" + me.pre + "dl_alignment'>";
-          html += "  <div id='" + me.pre + "dl_sequence2' class='dl_sequence'>";
-          html += "  </div>";
-          html += "</div>";
-        }
-
-        html += "<div id='" + me.pre + "dl_command'>";
-        html += "  <table width='500'><tr><td valign='top'><table>";
-        html += "<tr><td align='right'><b>Select:</b></td><td><input type='text' id='" + me.pre + "command' placeholder='#[structures].[chains]:[residues]@[atoms]' size='30'></td></tr>";
-        html += "<tr><td align='right'><b>Name:</b></td><td><input type='text' id='" + me.pre + "command_name' placeholder='my_selection' size='30'></td></tr>";
-        html += "<tr><td align='right'><b>Description:</b></td><td><input type='text' id='" + me.pre + "command_desc' placeholder='description about my selection' size='30'></td></tr>";
-        html += "<tr><td colspan='2' align='center'><button id='" + me.pre + "command_apply'><b>Apply</b></button></td></tr>";
-        html += "  </table></td>";
-
-        html += "  <td valign='top'><div>";
-        html += "    <b>Atom Selection(s):</b> <br/>";
-        html += "    <select id='" + me.pre + "customAtoms' multiple size='3' style='min-width:100px;'>";
-        html += "    </select>";
-        html += "  </td>";
-
-        html += "  <td valign='top'><div>";
-        html += "    <button id='" + me.pre + "show_selected_atom'><span style='white-space:nowrap'><b>Display Selection</b></span></button>";
-        html += "  </div></td></tr>";
-
-        //html += "  <tr><td colspan='3'>One line command: select [my_select] | name [my_name] | description [my_description], e.g., select :1-10 | name residue1-20 | description residues 1-20 in all chains<br/><br/></td></tr>";
-
-        html += "  <tr><td colspan='3'><a href='https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d.html#selectb' target='_blank'><span title='click to see how to select'>Hint</span></a>: <br/>Users can define \"select\" command similar to Chimera. For example, in the selection \"#1,2,3.A,B,C:5-10,Lys,ligands@CA,C\":<br/>\"#1,2,3\" uses \"#\" to indicate structure selection.<br/>\".A,B,C\" uses \".\" to indicate chain selection.<br/>\":5-10,Lys,ligands\" uses \":\" to indicate residue selection. Residue could be predefined names: 'proteins', 'nucleotides', 'ligands', 'ions', and 'water'.<br/>\"@CA,C\" uses \"@\" to indicate atom selection.<br/><br/>Partial definition is allowed, e.g., \":1-10\" selects all residue IDs 1-10 in all chains.<br/><br/>Different selections can be concatenated using semicolon, e.g., \":1-10; :Lys\" selects all residue IDs 1-10 and all Lys residues.</td></tr></table>";
-
-        html += "</div>";
-
-        html += "<div id='" + me.pre + "dl_pdbid'>";
-        html += "PDB ID: <input type='text' id='" + me.pre + "pdbid' value='2POR' size=8> ";
-        html += "<button id='" + me.pre + "reload_pdb'>Load</button>";
-        html += "</div>";
-
-        html += "<div id='" + me.pre + "dl_pdbfile'>";
-        html += "PDB File: <input type='file' id='" + me.pre + "pdbfile' value='2POR' size=8> ";
-        html += "<button id='" + me.pre + "reload_pdbfile'>Load</button>";
-        html += "</div>";
-
-        html += "<div id='" + me.pre + "dl_mmcifid'>";
-        html += "mmCIF ID: <input type='text' id='" + me.pre + "mmcifid' value='2POR' size=8> ";
-        html += "<button id='" + me.pre + "reload_mmcif'>Load</button>";
-        html += "</div>";
-
-        html += "<div id='" + me.pre + "dl_mmdbid'>";
-        html += "MMDB ID: <input type='text' id='" + me.pre + "mmdbid' value='2POR' size=8> ";
-        html += "<button id='" + me.pre + "reload_mmdb'>Load</button>";
-        html += "</div>";
-
-        html += "<div id='" + me.pre + "dl_gi'>";
-        html += "Protein gi: <input type='text' id='" + me.pre + "gi' value='827343227' size=8> ";
-        html += "<button id='" + me.pre + "reload_gi'>Load</button>";
-        html += "</div>";
-
-        html += "<div id='" + me.pre + "dl_cid'>";
-        html += "PubChem CID: <input type='text' id='" + me.pre + "cid' value='2244' size=8> ";
-        html += "<button id='" + me.pre + "reload_cid'>Load</button>";
-        html += "</div>";
-
-        html += "<div id='" + me.pre + "dl_state'>";
-        html += "State file: <input type='file' id='" + me.pre + "state'><br/>";
-        html += "<button id='" + me.pre + "reload_state' style='margin-top: 6px;'>Load</button>";
-        html += "</div>";
-
-        html += "<div id='" + me.pre + "dl_color'>";
-        html += "Custom Color: <input type='text' id='" + me.pre + "color' value='#FF0000' size=8> ";
-        html += "<button id='" + me.pre + "applycustomcolor'>Apply</button>";
-        html += "</div>";
-
-        html += "<div id='" + me.pre + "dl_hbonds'>";
-        html += "  <span style='white-space:nowrap;'>Threshold: <select id='" + me.pre + "hbondthreshold'>";
-        html += "  <option value='3.2'>3.2</option>";
-        html += "  <option value='3.3'>3.3</option>";
-        html += "  <option value='3.4'>3.4</option>";
-        html += "  <option value='3.5' selected>3.5</option>";
-        html += "  <option value='3.6'>3.6</option>";
-        html += "  <option value='3.7'>3.7</option>";
-        html += "  <option value='3.8'>3.8</option>";
-        html += "  <option value='3.9'>3.9</option>";
-        html += "  <option value='4.0'>4.0</option>";
-        html += "  </select> &#197;</span><br/>";
-        html += "  <span style='white-space:nowrap'><button id='" + me.pre + "applyhbonds'>Display</button></span>";
-        html += "</div>";
-
-        html += "<div id='" + me.pre + "dl_aroundsphere'";
-        html += "  <span style='white-space:nowrap'>1. Sphere with a radius: <input type='text' id='" + me.pre + "radius_aroundsphere' value='5' size='2'> &#197;</span><br/>";
-        html += "  <span style='white-space:nowrap'>2. <button id='" + me.pre + "applypick_aroundsphere'>Display</button> the sphere around currently selected atoms</span>";
-        html += "</div>";
-
-        html += "<div id='" + me.pre + "dl_select_chain'>";
-
-        html += "    <table><tr valign='center'>";
-
-        html += "        <td valign='top'><b>Structure:</b><br/>";
-        html += "        <select id='" + me.pre + "structureid2' multiple size='3' style='min-width:50px;'>";
-        html += "        </select></td>";
-
-        html += "        <td valign='top'><b>Chain:</b><br/>";
-        html += "        <select id='" + me.pre + "chainid2' multiple size='3' style='min-width:50px;'>";
-        html += "        </select></td>";
-
-        if(me.cfg.align !== undefined) {
-            html += "        <td valign='top'><b>Aligned:</b><br/>";
-            html += "        <select id='" + me.pre + "alignChainid2' multiple size='3' style='min-width:50px;'>";
-            html += "        </select></td>";
-        }
-
-        html += "        <td valign='top'><b>Custom:</b><br/>";
-        html += "        <select id='" + me.pre + "customResidues2' multiple size='3' style='min-width:50px;'>";
-        html += "        </select></td>";
-
-        html += "    </tr></table>";
-
-        html += "</div>";
-
-        html += "<div id='" + me.pre + "dl_addlabel'>";
-        html += "1. Text: <input type='text' id='" + me.pre + "labeltext' value='Text' size=4><br/>";
-        html += "2. Size: <input type='text' id='" + me.pre + "labelsize' value='40' size=4><br/>";
-        html += "3. Color: <input type='text' id='" + me.pre + "labelcolor' value='#ffff00' size=4><br/>";
-        html += "4. Background: <input type='text' id='" + me.pre + "labelbkgd' value='#cccccc' size=4><br/>";
-        html += "<span style='white-space:nowrap'>5. Pick TWO atoms</span><br/>";
-        html += "<span style='white-space:nowrap'>6. <button id='" + me.pre + "applypick_labels'>Display</button></span>";
-        html += "</div>";
-
-        html += "<div id='" + me.pre + "dl_distance'>";
-        html += "  <span style='white-space:nowrap'>1. Pick TWO atoms</span><br/>";
-        html += "  <span style='white-space:nowrap'>2. <button id='" + me.pre + "applypick_measuredistance'>Display</button></span>";
-        html += "</div>";
-
-        html += "</div>";
-        html += "<!--/form-->";
+		html += me.setCustomDialogs();
 
         $( "#" + id).html(html);
 
@@ -4126,6 +2224,611 @@ iCn3DUI.prototype = {
         $("#" + me.pre + "accordion6").hover( function(){ $("#" + me.pre + "accordion6 div").css("display", "block"); }, function(){ $("#" + me.pre + "accordion6 div").css("display", "none"); } );
     },
 
+	setMenu1: function() { var me = this;
+		var html = "";
+
+		html += "    <div style='float:left;'>";
+		html += "          <accordion id='" + me.pre + "accordion1'>";
+		html += "              <h3>File</h3>";
+		html += "              <div>";
+		html += "              <ul class='menu'>";
+		html += "                <li>Retrieve by ID";
+		html += "                  <ul>";
+		html += "                    <li><span id='" + me.pre + "menu1_pdbid' class='icn3d-link'>PDB ID</span></li>";
+		html += "                    <li><span id='" + me.pre + "menu1_mmcifid' class='icn3d-link'>mmCIF ID</span></li>";
+		html += "                    <li><span id='" + me.pre + "menu1_mmdbid' class='icn3d-link'>MMDB ID</span></li>";
+		//html += "                    <li><span id='" + me.pre + "menu1_term' class='icn3d-link'>Search MMDB term</span></li>";
+		html += "                    <li><span id='" + me.pre + "menu1_gi' class='icn3d-link'>gi</span></li>";
+		html += "                    <li><span id='" + me.pre + "menu1_cid' class='icn3d-link'>PubChem CID</span></li>";
+		html += "                  </ul>";
+		html += "                </li>";
+		html += "                <li><span id='" + me.pre + "menu1_pdbfile' class='icn3d-link'>Open PDB File</span></li>";
+		html += "                <li><span id='" + me.pre + "menu1_state' class='icn3d-link'>Open State/Script</span></li>";
+		html += "                <li><span id='" + me.pre + "menu1_exportState' class='icn3d-link'>Export State<br/></span></li>";
+		html += "                <li><span id='" + me.pre + "menu1_exportCanvas' class='icn3d-link'>Export Image</span></li>";
+		html += "                <li>Links";
+		html += "                  <ul>";
+		html += "                    <li><span id='" + me.pre + "menu1_link_structure' class='icn3d-link'>Structure Summary</span></li>";
+		html += "                    <li><span id='" + me.pre + "menu1_link_vast' class='icn3d-link'>Find Similar Structures</span></li>";
+		html += "                    <li><span id='" + me.pre + "menu1_link_pubmed' class='icn3d-link'>Literature</span></li>";
+		html += "                  </ul>";
+		html += "                </li>";
+		html += "              </ul>";
+		html += "              </div>";
+		html += "          </accordion>";
+		html += "    </div>";
+
+		return html;
+	},
+
+	setMenu2: function() { var me = this;
+		var html = "";
+
+		html += "    <div style='float:left;'>";
+		html += "          <accordion id='" + me.pre + "accordion2'>";
+		html += "              <h3>Select</h3>";
+		html += "              <div>";
+		html += "              <ul class='menu'>";
+
+		html += "                <li>Select";
+		html += "                  <ul>";
+		if(me.cfg.cid === undefined) {
+		    html += "                      <li><input type='radio' name='" + me.pre + "menu2_select' id='" + me.pre + "menu2_select_chain'><label for='" + me.pre + "menu2_select_chain'>Structure/Chain</label></li>";
+		}
+		html += "                      <li><input type='radio' name='" + me.pre + "menu2_select' id='" + me.pre + "menu2_selectall'><label for='" + me.pre + "menu2_selectall'>All</label></li>";
+		html += "                      <li><input type='radio' name='" + me.pre + "menu2_select' id='" + me.pre + "menu2_selectcomplement'><label for='" + me.pre + "menu2_selectcomplement'>Complement</label></li>";
+		html += "                      <li><input type='radio' name='" + me.pre + "menu2_select' id='" + me.pre + "menu2_aroundsphere'><label for='" + me.pre + "menu2_aroundsphere'>Custom Sphere</label></li>";
+		if(me.cfg.cid === undefined) {
+		    html += "                      <li><input type='radio' name='" + me.pre + "menu2_select' id='" + me.pre + "menu2_selectresidues'><label for='" + me.pre + "menu2_selectresidues'>Sequence</label></li>";
+		}
+		if(me.cfg.align !== undefined) {
+		    html += "                      <li><input type='radio' name='" + me.pre + "menu2_select' id='" + me.pre + "menu2_alignment'><label for='" + me.pre + "menu2_alignment'>Aligned Seq.</label></li>";
+		}
+		html += "                      <li><input type='radio' name='" + me.pre + "menu2_select' id='" + me.pre + "menu2_command'><label for='" + me.pre + "menu2_command'>by Command</label></li>";
+		html += "                  </ul>";
+		html += "                </li>";
+
+		html += "                <li>Picking";
+		html += "                  <ul>";
+		if(me.cfg.cid === undefined) {
+		    html += "                      <li><input type='radio' name='" + me.pre + "menu2_picking' id='" + me.pre + "menu2_pickingStrand'><label for='" + me.pre + "menu2_pickingStrand'>Strand/Helix</label></li>";
+		    html += "                      <li><input type='radio' name='" + me.pre + "menu2_picking' id='" + me.pre + "menu2_pickingResidue' checked><label for='" + me.pre + "menu2_pickingResidue'>Residue</label></li>";
+		    html += "                      <li><input type='radio' name='" + me.pre + "menu2_picking' id='" + me.pre + "menu2_pickingYes'><label for='" + me.pre + "menu2_pickingYes'>Atom</label></li>";
+		}
+		else {
+		    html += "                      <li><input type='radio' name='" + me.pre + "menu2_picking' id='" + me.pre + "menu2_pickingStrand'><label for='" + me.pre + "menu2_pickingStrand'>Strand/Helix</label></li>";
+		    html += "                      <li><input type='radio' name='" + me.pre + "menu2_picking' id='" + me.pre + "menu2_pickingResidue'><label for='" + me.pre + "menu2_pickingResidue'>Residue</label></li>";
+		    html += "                      <li><input type='radio' name='" + me.pre + "menu2_picking' id='" + me.pre + "menu2_pickingYes' checked><label for='" + me.pre + "menu2_pickingYes'>Atom</label></li>";
+		}
+
+		html += "                      <li><input type='radio' name='" + me.pre + "menu2_picking' id='" + me.pre + "menu2_pickingNo'><label for='" + me.pre + "menu2_pickingNo'>Off</label></li>";
+		html += "                  </ul>";
+		html += "                </li>";
+
+		html += "                <li>Display";
+		html += "                  <ul>";
+		if(me.cfg.align !== undefined) {
+		    html += "                      <li><input type='radio' name='" + me.pre + "menu2_display' id='" + me.pre + "menu2_alternate'><label for='" + me.pre + "menu2_alternate'>Alternate Structures</label></li>";
+		}
+		html += "                      <li><input type='radio' name='" + me.pre + "menu2_display' id='" + me.pre + "menu2_toggle'><label for='" + me.pre + "menu2_toggle'>Toggle Selection</label></li>";
+		html += "                      <li><input type='radio' name='" + me.pre + "menu2_display' id='" + me.pre + "menu2_show_selected'><label for='" + me.pre + "menu2_show_selected'>Display Selection</label></li>";
+		html += "                      <li><input type='radio' name='" + me.pre + "menu2_display' id='" + me.pre + "toggleHighlight2'><label for='" + me.pre + "toggleHighlight2'>Toggle Highlight</label></li>";
+		html += "                  </ul>";
+		html += "                </li>";
+
+		html += "                    <li>Highlight Color";
+		html += "                      <ul>";
+		html += "                        <li><input type='radio' name='" + me.pre + "menu2_hl_color' id='" + me.pre + "menu2_hl_colorYellow' checked><label for='" + me.pre + "menu2_hl_colorYellow'>Yellow</label></li>";
+		html += "                        <li><input type='radio' name='" + me.pre + "menu2_hl_color' id='" + me.pre + "menu2_hl_colorGreen'><label for='" + me.pre + "menu2_hl_colorGreen'>Green</label></li>";
+		html += "                        <li><input type='radio' name='" + me.pre + "menu2_hl_color' id='" + me.pre + "menu2_hl_colorRed'><label for='" + me.pre + "menu2_hl_colorRed'>Red</label></li>";
+		html += "                      </ul>";
+		html += "                    </li>";
+		html += "                    <li>Highlight Style";
+		html += "                      <ul>";
+
+		if(Detector.webgl) {
+		    html += "                        <li><input type='radio' name='" + me.pre + "menu2_hl_style' id='" + me.pre + "menu2_hl_styleOutline' checked><label for='" + me.pre + "menu2_hl_styleOutline'>Outline</label></li>";
+		    html += "                        <li><input type='radio' name='" + me.pre + "menu2_hl_style' id='" + me.pre + "menu2_hl_styleObject'><label for='" + me.pre + "menu2_hl_styleObject'>3D Objects</label></li>";
+		}
+		else {
+		    html += "                        <li><input type='radio' name='" + me.pre + "menu2_hl_style' id='" + me.pre + "menu2_hl_styleOutline'><label for='" + me.pre + "menu2_hl_styleOutline'>Outline</label></li>";
+		    html += "                        <li><input type='radio' name='" + me.pre + "menu2_hl_style' id='" + me.pre + "menu2_hl_styleObject' checked><label for='" + me.pre + "menu2_hl_styleObject'>3D Objects</label></li>";
+		}
+		html += "                      </ul>";
+		html += "                    </li>";
+
+		html += "              </ul>";
+		html += "              </div>";
+		html += "          </accordion>";
+		html += "    </div>";
+
+		return html;
+	},
+
+	setMenu3: function() { var me = this;
+		var html = "";
+
+		html += "    <div style='float:left;'>";
+		html += "          <accordion id='" + me.pre + "accordion3'>";
+		html += "              <h3>Style</h3>";
+		html += "              <div>";
+		html += "              <ul class='menu'>";
+
+		if(me.cfg.cid === undefined) {
+		    html += "                <li>Protein";
+		    html += "                  <ul>";
+		    html += "                      <li><input type='radio' name='" + me.pre + "menu3_protein' id='" + me.pre + "menu3_proteinRibbon' checked><label for='" + me.pre + "menu3_proteinRibbon'>Ribbon</label></li>";
+		    html += "                      <li><input type='radio' name='" + me.pre + "menu3_protein' id='" + me.pre + "menu3_proteinStrand'><label for='" + me.pre + "menu3_proteinStrand'>Strand</label></li>";
+		    html += "                      <li><input type='radio' name='" + me.pre + "menu3_protein' id='" + me.pre + "menu3_proteinCylinder'><label for='" + me.pre + "menu3_proteinCylinder'>Cylinder and Plate</label></li>";
+
+		    html += "                      <li><input type='radio' name='" + me.pre + "menu3_protein' id='" + me.pre + "menu6_addlabelResidueTopology'><label for='" + me.pre + "menu6_addlabelResidueTopology'>Schematic</label></li>";
+
+		    html += "                      <li><input type='radio' name='" + me.pre + "menu3_protein' id='" + me.pre + "menu3_proteinCalpha'><label for='" + me.pre + "menu3_proteinCalpha'>C Alpha Trace</label></li>";
+		    html += "                      <li><input type='radio' name='" + me.pre + "menu3_protein' id='" + me.pre + "menu3_proteinBfactor'><label for='" + me.pre + "menu3_proteinBfactor'>B Factor Tube</label></li>";
+		    html += "                      <li><input type='radio' name='" + me.pre + "menu3_protein' id='" + me.pre + "menu3_proteinLines'><label for='" + me.pre + "menu3_proteinLines'>Lines</label></li>";
+		    html += "                      <li><input type='radio' name='" + me.pre + "menu3_protein' id='" + me.pre + "menu3_proteinStick'><label for='" + me.pre + "menu3_proteinStick'>Stick</label></li>";
+		    html += "                      <li><input type='radio' name='" + me.pre + "menu3_protein' id='" + me.pre + "menu3_proteinBallstick'><label for='" + me.pre + "menu3_proteinBallstick'>Ball and Stick</label></li>";
+		    html += "                      <li><input type='radio' name='" + me.pre + "menu3_protein' id='" + me.pre + "menu3_proteinSphere'><label for='" + me.pre + "menu3_proteinSphere'>Sphere</label></li>";
+		    html += "                      <li><input type='radio' name='" + me.pre + "menu3_protein' id='" + me.pre + "menu3_proteinNothing'><label for='" + me.pre + "menu3_proteinNothing'>Hide</label></li>";
+		    html += "                  </ul>";
+		    html += "                </li>";
+
+		    html += "                <li>Side Chains";
+		    html += "                  <ul>";
+		    html += "                      <li><input type='radio' name='" + me.pre + "menu3_sidechains' id='" + me.pre + "menu3_sidechainsLines'><label for='" + me.pre + "menu3_sidechainsLines'>Lines</label></li>";
+		    html += "                      <li><input type='radio' name='" + me.pre + "menu3_sidechains' id='" + me.pre + "menu3_sidechainsStick'><label for='" + me.pre + "menu3_sidechainsStick'>Stick</label></li>";
+		    html += "                      <li><input type='radio' name='" + me.pre + "menu3_sidechains' id='" + me.pre + "menu3_sidechainsBallstick'><label for='" + me.pre + "menu3_sidechainsBallstick'>Ball and Stick</label></li>";
+		    html += "                      <li><input type='radio' name='" + me.pre + "menu3_sidechains' id='" + me.pre + "menu3_sidechainsSphere'><label for='" + me.pre + "menu3_sidechainsSphere'>Sphere</label></li>";
+		    html += "                      <li><input type='radio' name='" + me.pre + "menu3_sidechains' id='" + me.pre + "menu3_sidechainsNothing' checked><label for='" + me.pre + "menu3_sidechainsNothing'>Hide</label></li>";
+		    html += "                  </ul>";
+		    html += "                </li>";
+
+		    html += "                <li>Nucleotides";
+		    html += "                  <ul>";
+		    html += "                      <li><input type='radio' name='" + me.pre + "menu3_nucl' id='" + me.pre + "menu3_nuclCartoon'><label for='" + me.pre + "menu3_nuclCartoon'>Cartoon</label></li>";
+		    html += "                      <li><input type='radio' name='" + me.pre + "menu3_nucl' id='" + me.pre + "menu3_nuclPhos' checked><label for='" + me.pre + "menu3_nuclPhos'>Phosphorus Trace</label></li>";
+		    html += "                      <li><input type='radio' name='" + me.pre + "menu3_nucl' id='" + me.pre + "menu3_nuclLines'><label for='" + me.pre + "menu3_nuclLines'>Lines</label></li>";
+		    html += "                      <li><input type='radio' name='" + me.pre + "menu3_nucl' id='" + me.pre + "menu3_nuclStick'><label for='" + me.pre + "menu3_nuclStick'>Stick</label></li>";
+		    html += "                      <li><input type='radio' name='" + me.pre + "menu3_nucl' id='" + me.pre + "menu3_nuclBallstick'><label for='" + me.pre + "menu3_nuclBallstick'>Ball and Stick</label></li>";
+		    html += "                      <li><input type='radio' name='" + me.pre + "menu3_nucl' id='" + me.pre + "menu3_nuclSphere'><label for='" + me.pre + "menu3_nuclSphere'>Sphere</label></li>";
+		    html += "                      <li><input type='radio' name='" + me.pre + "menu3_nucl' id='" + me.pre + "menu3_nuclNothing'><label for='" + me.pre + "menu3_nuclNothing'>Hide</label></li>";
+		    html += "                  </ul>";
+		    html += "                </li>";
+
+		    html += "                <li>Ligands";
+		    html += "                  <ul>";
+		    html += "                      <li><input type='radio' name='" + me.pre + "menu3_ligands' id='" + me.pre + "menu3_ligandsLines'><label for='" + me.pre + "menu3_ligandsLines'>Lines</label></li>";
+		    html += "                      <li><input type='radio' name='" + me.pre + "menu3_ligands' id='" + me.pre + "menu3_ligandsStick' checked><label for='" + me.pre + "menu3_ligandsStick'>Stick</label></li>";
+		    html += "                      <li><input type='radio' name='" + me.pre + "menu3_ligands' id='" + me.pre + "menu3_ligandsBallstick'><label for='" + me.pre + "menu3_ligandsBallstick'>Ball and Stick</label></li>";
+		    html += "                      <li><input type='radio' name='" + me.pre + "menu3_ligands' id='" + me.pre + "menu3_ligandsSphere'><label for='" + me.pre + "menu3_ligandsSphere'>Sphere</label></li>";
+		    html += "                      <li><input type='radio' name='" + me.pre + "menu3_ligands' id='" + me.pre + "menu3_ligandsNothing'><label for='" + me.pre + "menu3_ligandsNothing'>Hide</label></li>";
+		    html += "                  </ul>";
+		    html += "                </li>";
+		}
+		else {
+		    html += "                <li>Ligands";
+		    html += "                  <ul>";
+		    html += "                      <li><input type='radio' name='" + me.pre + "menu3_ligands' id='" + me.pre + "menu3_ligandsLines'><label for='" + me.pre + "menu3_ligandsLines'>Lines</label></li>";
+		    html += "                      <li><input type='radio' name='" + me.pre + "menu3_ligands' id='" + me.pre + "menu3_ligandsStick'><label for='" + me.pre + "menu3_ligandsStick'>Stick</label></li>";
+		    html += "                      <li><input type='radio' name='" + me.pre + "menu3_ligands' id='" + me.pre + "menu3_ligandsBallstick' checked><label for='" + me.pre + "menu3_ligandsBallstick'>Ball and Stick</label></li>";
+		    html += "                      <li><input type='radio' name='" + me.pre + "menu3_ligands' id='" + me.pre + "menu3_ligandsSphere'><label for='" + me.pre + "menu3_ligandsSphere'>Sphere</label></li>";
+		    html += "                      <li><input type='radio' name='" + me.pre + "menu3_ligands' id='" + me.pre + "menu3_ligandsNothing'><label for='" + me.pre + "menu3_ligandsNothing'>Hide</label></li>";
+		    html += "                  </ul>";
+		    html += "                </li>";
+		}
+
+
+		html += "                <li>Ions";
+		html += "                  <ul>";
+		html += "                      <li><input type='radio' name='" + me.pre + "menu3_ions' id='" + me.pre + "menu3_ionsSphere' checked><label for='" + me.pre + "menu3_ionsSphere'>Sphere</label></li>";
+		html += "                      <li><input type='radio' name='" + me.pre + "menu3_ions' id='" + me.pre + "menu3_ionsDot'><label for='" + me.pre + "menu3_ionsDot'>Dot</label></li>";
+		html += "                      <li><input type='radio' name='" + me.pre + "menu3_ions' id='" + me.pre + "menu3_ionsNothing'><label for='" + me.pre + "menu3_ionsNothing'>Hide</label></li>";
+		html += "                  </ul>";
+		html += "                </li>";
+
+		html += "                <li>Water";
+		html += "                  <ul>";
+		html += "                      <li><input type='radio' name='" + me.pre + "menu3_water' id='" + me.pre + "menu3_waterSphere'><label for='" + me.pre + "menu3_waterSphere'>Sphere</label></li>";
+		html += "                      <li><input type='radio' name='" + me.pre + "menu3_water' id='" + me.pre + "menu3_waterDot'><label for='" + me.pre + "menu3_waterDot'>Dot</label></li>";
+		html += "                      <li><input type='radio' name='" + me.pre + "menu3_water' id='" + me.pre + "menu3_waterNothing' checked><label for='" + me.pre + "menu3_waterNothing'>Hide</label></li>";
+		html += "                  </ul>";
+		html += "                </li>";
+
+		html += "              </ul>";
+		html += "              </div>";
+		html += "          </accordion>";
+		html += "    </div>";
+
+		return html;
+	},
+
+	setMenu4: function() { var me = this;
+		var html = "";
+
+		html += "    <div style='float:left;'>";
+		html += "          <accordion id='" + me.pre + "accordion4'>";
+		html += "              <h3>Color</h3>";
+		html += "              <div>";
+		html += "              <ul class='menu'>";
+
+		if(me.cfg.cid === undefined) {
+		    if(me.cfg.mmdbid !== undefined) {
+			html += "                <li><input type='radio' name='" + me.pre + "menu4_color' id='" + me.pre + "menu4_colorSpectrum'><label for='" + me.pre + "menu4_colorSpectrum'>Spectrum</label></li>";
+		    }
+		    else {
+			html += "                <li><input type='radio' name='" + me.pre + "menu4_color' id='" + me.pre + "menu4_colorSpectrum' checked><label for='" + me.pre + "menu4_colorSpectrum'>Spectrum</label></li>";
+		    }
+		    html += "                <li><input type='radio' name='" + me.pre + "menu4_color' id='" + me.pre + "menu4_colorSS'><label for='" + me.pre + "menu4_colorSS'>Secondary</label></li>";
+		    html += "                <li><input type='radio' name='" + me.pre + "menu4_color' id='" + me.pre + "menu4_colorCharge'><label for='" + me.pre + "menu4_colorCharge'>Charge</label></li>";
+		    //html += "                <li><input type='radio' name='" + me.pre + "menu4_color' id='" + me.pre + "menu4_colorBfactor'><label for='" + me.pre + "menu4_colorBfactor'>B Factor</label></li>";
+		    html += "                <li><input type='radio' name='" + me.pre + "menu4_color' id='" + me.pre + "menu4_colorChain'><label for='" + me.pre + "menu4_colorChain'>Chain</label></li>";
+		    html += "                <li><input type='radio' name='" + me.pre + "menu4_color' id='" + me.pre + "menu4_colorResidue'><label for='" + me.pre + "menu4_colorResidue'>Residue</label></li>";
+		    html += "                <li><input type='radio' name='" + me.pre + "menu4_color' id='" + me.pre + "menu4_colorAtom'><label for='" + me.pre + "menu4_colorAtom'>Atom</label></li>";
+		}
+		else {
+		    html += "                <li><input type='radio' name='" + me.pre + "menu4_color' id='" + me.pre + "menu4_colorAtom' checked><label for='" + me.pre + "menu4_colorAtom'>Atom</label></li>";
+		}
+
+		html += "                <li>-</li>";
+		html += "                <li>Unicolor";
+		html += "                  <ul>";
+		html += "                    <li><input type='radio' name='" + me.pre + "menu4_color' id='" + me.pre + "menu4_colorRed'><label for='" + me.pre + "menu4_colorRed'>Red</label></li>";
+		html += "                    <li><input type='radio' name='" + me.pre + "menu4_color' id='" + me.pre + "menu4_colorGreen'><label for='" + me.pre + "menu4_colorGreen'>Green</label></li>";
+		html += "                    <li><input type='radio' name='" + me.pre + "menu4_color' id='" + me.pre + "menu4_colorBlue'><label for='" + me.pre + "menu4_colorBlue'>Blue</label></li>";
+		html += "                    <li><input type='radio' name='" + me.pre + "menu4_color' id='" + me.pre + "menu4_colorMagenta'><label for='" + me.pre + "menu4_colorMagenta'>Magenta</label></li>";
+		html += "                    <li><input type='radio' name='" + me.pre + "menu4_color' id='" + me.pre + "menu4_colorYellow'><label for='" + me.pre + "menu4_colorYellow'>Yellow</label></li>";
+		html += "                    <li><input type='radio' name='" + me.pre + "menu4_color' id='" + me.pre + "menu4_colorCyan'><label for='" + me.pre + "menu4_colorCyan'>Cyan</label></li>";
+		html += "                    <li><input type='radio' name='" + me.pre + "menu4_color' id='" + me.pre + "menu4_colorWhite'><label for='" + me.pre + "menu4_colorWhite'>White</label></li>";
+		html += "                    <li><input type='radio' name='" + me.pre + "menu4_color' id='" + me.pre + "menu4_colorGrey'><label for='" + me.pre + "menu4_colorGrey'>Grey</label></li>";
+		html += "                  </ul>";
+		html += "                <li>-</li>";
+		html += "                <li><input type='radio' name='" + me.pre + "menu4_color' id='" + me.pre + "menu4_colorCustom'><label for='" + me.pre + "menu4_colorCustom'>Custom</label></li>";
+		html += "              </ul>";
+		html += "              </div>";
+		html += "          </accordion>";
+		html += "    </div>";
+
+		return html;
+	},
+
+	setMenu5: function() { var me = this;
+		var html = "";
+
+		html += "    <div style='float:left;'>";
+		html += "          <accordion id='" + me.pre + "accordion5'>";
+		html += "              <h3>Surface</h3>";
+		html += "              <div>";
+		html += "              <ul class='menu'>";
+		html += "                <li>Type";
+		html += "                  <ul>";
+		html += "                      <li><input type='radio' name='" + me.pre + "menu5_surface' id='" + me.pre + "menu5_surfaceVDW'><label for='" + me.pre + "menu5_surfaceVDW'>Van der Waals</label></li>";
+		html += "                      <li><input type='radio' name='" + me.pre + "menu5_surface' id='" + me.pre + "menu5_surfaceSES'><label for='" + me.pre + "menu5_surfaceSES'>Molecular Surface</label></li>";
+		html += "                      <li><input type='radio' name='" + me.pre + "menu5_surface' id='" + me.pre + "menu5_surfaceSAS'><label for='" + me.pre + "menu5_surfaceSAS'>Solvent Accessible</label></li>";
+	//        html += "                      <li><input type='radio' name='" + me.pre + "menu5_surface' id='" + me.pre + "menu5_surfaceMolecular'><label for='" + me.pre + "menu5_surfaceMolecular'>Molecular Surface</label></li>";
+		html += "                      <li><input type='radio' name='" + me.pre + "menu5_surface' id='" + me.pre + "menu5_surfaceNothing' checked><label for='" + me.pre + "menu5_surfaceNothing'>Hide</label></li>";
+		html += "                  </ul>";
+		html += "                </li>";
+		html += "                <li>Opacity";
+		html += "                  <ul>";
+		html += "                      <li><input type='radio' name='" + me.pre + "menu5_opacity' id='" + me.pre + "menu5_opacity10'><label for='" + me.pre + "menu5_opacity10'>1.0</label></li>";
+		html += "                      <li><input type='radio' name='" + me.pre + "menu5_opacity' id='" + me.pre + "menu5_opacity09'><label for='" + me.pre + "menu5_opacity09'>0.9</label></li>";
+		html += "                      <li><input type='radio' name='" + me.pre + "menu5_opacity' id='" + me.pre + "menu5_opacity08' checked><label for='" + me.pre + "menu5_opacity08'>0.8</label></li>";
+		html += "                      <li><input type='radio' name='" + me.pre + "menu5_opacity' id='" + me.pre + "menu5_opacity07'><label for='" + me.pre + "menu5_opacity07'>0.7</label></li>";
+		html += "                      <li><input type='radio' name='" + me.pre + "menu5_opacity' id='" + me.pre + "menu5_opacity06'><label for='" + me.pre + "menu5_opacity06'>0.6</label></li>";
+		html += "                      <li><input type='radio' name='" + me.pre + "menu5_opacity' id='" + me.pre + "menu5_opacity05'><label for='" + me.pre + "menu5_opacity05'>0.5</label></li>";
+		html += "                  </ul>";
+		html += "                </li>";
+		html += "                <li>Wireframe";
+		html += "                  <ul>";
+		html += "                      <li><input type='radio' name='" + me.pre + "menu5_wireframe' id='" + me.pre + "menu5_wireframeYes'><label for='" + me.pre + "menu5_wireframeYes'>Yes</label></li>";
+		html += "                      <li><input type='radio' name='" + me.pre + "menu5_wireframe' id='" + me.pre + "menu5_wireframeNo' checked><label for='" + me.pre + "menu5_wireframeNo'>No</label></li>";
+		html += "                  </ul>";
+		html += "                </li>";
+
+		html += "                <li>Neighbors";
+		html += "                  <ul>";
+		html += "                      <li><input type='radio' name='" + me.pre + "menu5_neighbors' id='" + me.pre + "menu5_neighborsYes'><label for='" + me.pre + "menu5_neighborsYes'>Yes</label></li>";
+		html += "                      <li><input type='radio' name='" + me.pre + "menu5_neighbors' id='" + me.pre + "menu5_neighborsNo' checked><label for='" + me.pre + "menu5_neighborsNo'>No</label></li>";
+		html += "                  </ul>";
+		html += "                </li>";
+
+
+		html += "              </ul>";
+		html += "              </div>";
+		html += "          </accordion>";
+		html += "    </div>";
+
+		return html;
+	},
+
+	setMenu6: function() { var me = this;
+		var html = "";
+
+		html += "    <div style='float:left;'>";
+		html += "          <accordion id='" + me.pre + "accordion6'>";
+		html += "              <h3>Other</h3>";
+		html += "              <div>";
+		html += "              <ul class='menu'>";
+		html += "                <li><span id='" + me.pre + "reset' class='icn3d-link'>Reset</span></li>";
+		//html += "                <li><span id='" + me.pre + "menu6_pickcenter' class='icn3d-link'>Center on Picked Atom</span></li>";
+		html += "                <li><span id='" + me.pre + "menu6_selectedcenter' class='icn3d-link'>Zoom in Selection</span></li>";
+		html += "                <li><span id='" + me.pre + "menu6_back' class='icn3d-link'>Back</span></li>";
+		html += "                <li><span id='" + me.pre + "menu6_forward' class='icn3d-link'>Forward</span></li>";
+		if(me.cfg.cid === undefined) {
+		    html += "                <li>Assembly";
+		    html += "                  <ul>";
+		    html += "                      <li><input type='radio' name='" + me.pre + "menu6_assembly' id='" + me.pre + "menu6_assemblyYes'><label for='" + me.pre + "menu6_assemblyYes'>Yes</label></li>";
+		    html += "                      <li><input type='radio' name='" + me.pre + "menu6_assembly' id='" + me.pre + "menu6_assemblyNo' checked><label for='" + me.pre + "menu6_assemblyNo'>No</label></li>";
+		    html += "                  </ul>";
+		    html += "                </li>";
+		    html += "                <li>H-bonds to selection";
+		    html += "                  <ul>";
+		    html += "                      <li><input type='radio' name='" + me.pre + "menu6_hbonds' id='" + me.pre + "menu6_hbondsYes'><label for='" + me.pre + "menu6_hbondsYes'>Show</label></li>";
+		    html += "                      <li><input type='radio' name='" + me.pre + "menu6_hbonds' id='" + me.pre + "menu6_hbondsNo' checked><label for='" + me.pre + "menu6_hbondsNo'>Hide</label></li>";
+		    html += "                  </ul>";
+		    html += "                </li>";
+		}
+		html += "                <li>Label";
+		html += "                  <ul>";
+
+		html += "                      <li><input type='radio' name='" + me.pre + "menu6_addlabel' id='" + me.pre + "menu6_addlabelYes'><label for='" + me.pre + "menu6_addlabelYes'>Custom Label</label></li>";
+		if(me.cfg.cid === undefined) {
+		    html += "                      <li><input type='radio' name='" + me.pre + "menu6_addlabel' id='" + me.pre + "menu6_addlabelResidues'><label for='" + me.pre + "menu6_addlabelResidues'>Residues</label></li>";
+		}
+		html += "                      <li><input type='radio' name='" + me.pre + "menu6_addlabel' id='" + me.pre + "menu6_addlabelNo' checked><label for='" + me.pre + "menu6_addlabelNo'>Hide</label></li>";
+		html += "                  </ul>";
+		html += "                </li>";
+		html += "                <li>Distance";
+		html += "                  <ul>";
+		html += "                      <li><input type='radio' name='" + me.pre + "menu6_distance' id='" + me.pre + "menu6_distanceYes'><label for='" + me.pre + "menu6_distanceYes'>Show</label></li>";
+		html += "                      <li><input type='radio' name='" + me.pre + "menu6_distance' id='" + me.pre + "menu6_distanceNo' checked><label for='" + me.pre + "menu6_distanceNo'>Hide</label></li>";
+		html += "                  </ul>";
+		html += "                </li>";
+		html += "                <li>Auto Rotation";
+		html += "                  <ul>";
+		html += "                      <li><span id='" + me.pre + "menu6_rotateleft' class='icn3d-link'>Rotate Left</span></li>";
+		html += "                      <li><span id='" + me.pre + "menu6_rotateright' class='icn3d-link'>Rotate Right</span></li>";
+		html += "                      <li><span id='" + me.pre + "menu6_rotateup' class='icn3d-link'>Rotate Up</span></li>";
+		html += "                      <li><span id='" + me.pre + "menu6_rotatedown' class='icn3d-link'>Rotate Down</span></li>";
+		html += "                  </ul>";
+		html += "                </li>";
+		html += "                <li>Camera";
+		html += "                  <ul>";
+		html += "                      <li><input type='radio' name='" + me.pre + "menu6_camera' id='" + me.pre + "menu6_cameraPers' checked><label for='" + me.pre + "menu6_cameraPers'>Perspective</label></li>";
+		html += "                      <li><input type='radio' name='" + me.pre + "menu6_camera' id='" + me.pre + "menu6_cameraOrth'><label for='" + me.pre + "menu6_cameraOrth'>Orthographic</label></li>";
+		html += "                  </ul>";
+		html += "                </li>";
+		html += "                <li>Background";
+		html += "                  <ul>";
+		html += "                      <li><input type='radio' name='" + me.pre + "menu6_bkgd' id='" + me.pre + "menu6_bkgdBlack' checked><label for='" + me.pre + "menu6_bkgdBlack'>Black</label></li>";
+		html += "                      <li><input type='radio' name='" + me.pre + "menu6_bkgd' id='" + me.pre + "menu6_bkgdGrey'><label for='" + me.pre + "menu6_bkgdGrey'>Grey</label></li>";
+		html += "                      <li><input type='radio' name='" + me.pre + "menu6_bkgd' id='" + me.pre + "menu6_bkgdWhite'><label for='" + me.pre + "menu6_bkgdWhite'>White</label></li>";
+		html += "                  </ul>";
+		html += "                </li>";
+		html += "                <li>XYZ-axes";
+		html += "                  <ul>";
+		html += "                      <li><input type='radio' name='" + me.pre + "menu6_showaxis' id='" + me.pre + "menu6_showaxisYes'><label for='" + me.pre + "menu6_showaxisYes'>Show</label></li>";
+		html += "                      <li><input type='radio' name='" + me.pre + "menu6_showaxis' id='" + me.pre + "menu6_showaxisNo' checked><label for='" + me.pre + "menu6_showaxisNo'>Hide</label></li>";
+		html += "                  </ul>";
+		html += "                </li>";
+		html += "                <li>Transform Hint";
+		html += "                  <ul>";
+		html += "                    <li>Rotate";
+		html += "                        <ul>";
+		html += "                            <li>Left Mouse</li>";
+		html += "                            <li>Key L: Left</li>";
+		html += "                            <li>Key J: Right</li>";
+		html += "                            <li>Key I: Up</li>";
+		html += "                            <li>Key M: Down</li>";
+		html += "                        </ul>";
+		html += "                    </li>";
+		html += "                    <li>Zoom";
+		html += "                        <ul>";
+		html += "                            <li>Middle Mouse</li>";
+		html += "                            <li>Left Mouse + Shift</li>";
+		html += "                            <li>Key Z: Zoom in</li>";
+		html += "                            <li>Key X: Zoom out</li>";
+		html += "                        </ul>";
+		html += "                    </li>";
+		html += "                    <li>Translate";
+		html += "                        <ul>";
+		html += "                            <li>Right Mouse</li>";
+		html += "                            <li>Left Mouse + Ctrl</li>";
+		html += "                            <li>Arrow Left: Left</li>";
+		html += "                            <li>Arrow Right: Right</li>";
+		html += "                            <li>Arrow Up: Up</li>";
+		html += "                            <li>Arrow Down: Down</li>";
+		html += "                        </ul>";
+		html += "                    </li>";
+		html += "                  </ul>";
+		html += "                </li>";
+		html += "                <li><a href='https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d.html' target='_blank'>Help</a></li>";
+		html += "              </ul>";
+		html += "              </div>";
+		html += "          </accordion>";
+		html += "    </div>";
+
+		return html;
+	},
+
+	setCommandLog: function() { var me = this;
+		var html = "";
+
+		html += "  <div id='" + me.pre + "commandlog' style='position:absolute; z-index:555; float:left; display:table-row; margin: 3px 0px 0px " + me.MENU_WIDTH + "px;'>";
+
+		html += "    <div style='float:left' class='icn3d-commandTitle'>Script/Log (<a href='https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d.html#commands' target='_blank'><span title='click to see all commands'>Hint</span></a>)</div><br/>";
+		html += "    <textarea id='" + me.pre + "logtext' rows='3' cols='40'></textarea>";
+		html += "  </div>";
+
+		return html;
+	},
+
+	setDialogs: function() { var me = this;
+		var html = "";
+
+		html += "<!-- dialog will not be part of the form -->";
+		html += "<div id='" + me.pre + "allselections' class='icn3d-hidden'>";
+
+		// filter for large structure
+		html += "<div id='" + me.pre + "dl_filter' style='overflow:auto; position:relative;'>";
+		//html += "  <div>This large structure contains more than 50,000 atoms. Please select some structures/chains below to display.</div>";
+		//html += "  <input style='position:absolute; top:8px; left:15px;' type='checkbox' id='" + me.pre + "filter_ckbx_all'/>";
+		html += "  <div style='text-align:center; margin-bottom:10px;'><button id='" + me.pre + "filter'><span style='white-space:nowrap'><b>Show Structure</b></span></button>";
+		html += "<button id='" + me.pre + "label_3d_diagram' style='margin-left:10px;'><span style='white-space:nowrap'><b>Show Labels</b></span></button></div>";
+		html += "  <div id='" + me.pre + "dl_filter_table' class='icn3d-box'>";
+		html += "  </div>";
+		html += "</div>";
+
+		html += "<div id='" + me.pre + "dl_selectresidues'>";
+
+		html += "  <div id='" + me.pre + "dl_sequence' class='icn3d-dl_sequence'>";
+		html += "  </div>";
+
+		html += "</div>";
+
+		if(me.cfg.align !== undefined) {
+		  html += "<div id='" + me.pre + "dl_alignment'>";
+		  html += "  <div id='" + me.pre + "dl_sequence2' class='icn3d-dl_sequence'>";
+		  html += "  </div>";
+		  html += "</div>";
+		}
+
+		html += "<div id='" + me.pre + "dl_command'>";
+		html += "  <table width='500'><tr><td valign='top'><table>";
+		html += "<tr><td align='right'><b>Select:</b></td><td><input type='text' id='" + me.pre + "command' placeholder='#[structures].[chains]:[residues]@[atoms]' size='30'></td></tr>";
+		html += "<tr><td align='right'><b>Name:</b></td><td><input type='text' id='" + me.pre + "command_name' placeholder='my_selection' size='30'></td></tr>";
+		html += "<tr><td align='right'><b>Description:</b></td><td><input type='text' id='" + me.pre + "command_desc' placeholder='description about my selection' size='30'></td></tr>";
+		html += "<tr><td colspan='2' align='center'><button id='" + me.pre + "command_apply'><b>Apply</b></button></td></tr>";
+		html += "  </table></td>";
+
+		html += "  <td valign='top'><div>";
+		html += "    <b>Atom Selection(s):</b> <br/>";
+		html += "    <select id='" + me.pre + "customAtoms' multiple size='3' style='min-width:100px;'>";
+		html += "    </select>";
+		html += "  </td>";
+
+		html += "  <td valign='top'><div>";
+		html += "    <button id='" + me.pre + "show_selected_atom'><span style='white-space:nowrap'><b>Display Selection</b></span></button>";
+		html += "  </div></td></tr>";
+
+		//html += "  <tr><td colspan='3'>One line command: select [my_select] | name [my_name] | description [my_description], e.g., select :1-10 | name residue1-20 | description residues 1-20 in all chains<br/><br/></td></tr>";
+
+		html += "  <tr><td colspan='3'><a href='https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d.html#selectb' target='_blank'><span title='click to see how to select'>Hint</span></a>: <br/>Users can define \"select\" command similar to Chimera. For example, in the selection \"#1,2,3.A,B,C:5-10,Lys,ligands@CA,C\":<br/>\"#1,2,3\" uses \"#\" to indicate structure selection.<br/>\".A,B,C\" uses \".\" to indicate chain selection.<br/>\":5-10,Lys,ligands\" uses \":\" to indicate residue selection. Residue could be predefined names: 'proteins', 'nucleotides', 'ligands', 'ions', and 'water'.<br/>\"@CA,C\" uses \"@\" to indicate atom selection.<br/><br/>Partial definition is allowed, e.g., \":1-10\" selects all residue IDs 1-10 in all chains.<br/><br/>Different selections can be concatenated using semicolon, e.g., \":1-10; :Lys\" selects all residue IDs 1-10 and all Lys residues.</td></tr></table>";
+
+		html += "</div>";
+
+		html += "<div id='" + me.pre + "dl_pdbid'>";
+		html += "PDB ID: <input type='text' id='" + me.pre + "pdbid' value='2POR' size=8> ";
+		html += "<button id='" + me.pre + "reload_pdb'>Load</button>";
+		html += "</div>";
+
+		html += "<div id='" + me.pre + "dl_pdbfile'>";
+		html += "PDB File: <input type='file' id='" + me.pre + "pdbfile' value='2POR' size=8> ";
+		html += "<button id='" + me.pre + "reload_pdbfile'>Load</button>";
+		html += "</div>";
+
+		html += "<div id='" + me.pre + "dl_mmcifid'>";
+		html += "mmCIF ID: <input type='text' id='" + me.pre + "mmcifid' value='2POR' size=8> ";
+		html += "<button id='" + me.pre + "reload_mmcif'>Load</button>";
+		html += "</div>";
+
+		html += "<div id='" + me.pre + "dl_mmdbid'>";
+		html += "MMDB ID: <input type='text' id='" + me.pre + "mmdbid' value='2POR' size=8> ";
+		html += "<button id='" + me.pre + "reload_mmdb'>Load</button>";
+		html += "</div>";
+
+		html += "<div id='" + me.pre + "dl_gi'>";
+		html += "Protein gi: <input type='text' id='" + me.pre + "gi' value='827343227' size=8> ";
+		html += "<button id='" + me.pre + "reload_gi'>Load</button>";
+		html += "</div>";
+
+		html += "<div id='" + me.pre + "dl_cid'>";
+		html += "PubChem CID: <input type='text' id='" + me.pre + "cid' value='2244' size=8> ";
+		html += "<button id='" + me.pre + "reload_cid'>Load</button>";
+		html += "</div>";
+
+		html += "<div id='" + me.pre + "dl_state'>";
+		html += "State file: <input type='file' id='" + me.pre + "state'><br/>";
+		html += "<button id='" + me.pre + "reload_state' style='margin-top: 6px;'>Load</button>";
+		html += "</div>";
+
+		html += "<div id='" + me.pre + "dl_color'>";
+		html += "Custom Color: <input type='text' id='" + me.pre + "color' value='#FF0000' size=8> ";
+		html += "<button id='" + me.pre + "applycustomcolor'>Apply</button>";
+		html += "</div>";
+
+		html += "<div id='" + me.pre + "dl_hbonds'>";
+		html += "  <span style='white-space:nowrap;'>Threshold: <select id='" + me.pre + "hbondthreshold'>";
+		html += "  <option value='3.2'>3.2</option>";
+		html += "  <option value='3.3'>3.3</option>";
+		html += "  <option value='3.4'>3.4</option>";
+		html += "  <option value='3.5' selected>3.5</option>";
+		html += "  <option value='3.6'>3.6</option>";
+		html += "  <option value='3.7'>3.7</option>";
+		html += "  <option value='3.8'>3.8</option>";
+		html += "  <option value='3.9'>3.9</option>";
+		html += "  <option value='4.0'>4.0</option>";
+		html += "  </select> &#197;</span><br/>";
+		html += "  <span style='white-space:nowrap'><button id='" + me.pre + "applyhbonds'>Display</button></span>";
+		html += "</div>";
+
+		html += "<div id='" + me.pre + "dl_aroundsphere'";
+		html += "  <span style='white-space:nowrap'>1. Sphere with a radius: <input type='text' id='" + me.pre + "radius_aroundsphere' value='5' size='2'> &#197;</span><br/>";
+		html += "  <span style='white-space:nowrap'>2. <button id='" + me.pre + "applypick_aroundsphere'>Display</button> the sphere around currently selected atoms</span>";
+		html += "</div>";
+
+		html += "<div id='" + me.pre + "dl_select_chain'>";
+
+		html += "    <table><tr valign='center'>";
+
+		html += "        <td valign='top'><b>Structure:</b><br/>";
+		html += "        <select id='" + me.pre + "structureid2' multiple size='3' style='min-width:50px;'>";
+		html += "        </select></td>";
+
+		html += "        <td valign='top'><b>Chain:</b><br/>";
+		html += "        <select id='" + me.pre + "chainid2' multiple size='3' style='min-width:50px;'>";
+		html += "        </select></td>";
+
+		if(me.cfg.align !== undefined) {
+		    html += "        <td valign='top'><b>Aligned:</b><br/>";
+		    html += "        <select id='" + me.pre + "alignChainid2' multiple size='3' style='min-width:50px;'>";
+		    html += "        </select></td>";
+		}
+
+		html += "        <td valign='top'><b>Custom:</b><br/>";
+		html += "        <select id='" + me.pre + "customResidues2' multiple size='3' style='min-width:50px;'>";
+		html += "        </select></td>";
+
+		html += "    </tr></table>";
+
+		html += "</div>";
+
+		html += "<div id='" + me.pre + "dl_addlabel'>";
+		html += "1. Text: <input type='text' id='" + me.pre + "labeltext' value='Text' size=4><br/>";
+		html += "2. Size: <input type='text' id='" + me.pre + "labelsize' value='40' size=4><br/>";
+		html += "3. Color: <input type='text' id='" + me.pre + "labelcolor' value='#ffff00' size=4><br/>";
+		html += "4. Background: <input type='text' id='" + me.pre + "labelbkgd' value='#cccccc' size=4><br/>";
+		html += "<span style='white-space:nowrap'>5. Pick TWO atoms</span><br/>";
+		html += "<span style='white-space:nowrap'>6. <button id='" + me.pre + "applypick_labels'>Display</button></span>";
+		html += "</div>";
+
+		html += "<div id='" + me.pre + "dl_distance'>";
+		html += "  <span style='white-space:nowrap'>1. Pick TWO atoms</span><br/>";
+		html += "  <span style='white-space:nowrap'>2. <button id='" + me.pre + "applypick_measuredistance'>Display</button></span>";
+		html += "</div>";
+
+		html += "</div>";
+		html += "<!--/form-->";
+
+		return html;
+	},
+
+	setCustomDialogs: function() { var me = this;
+		var html = "";
+
+		return html;
+	},
+
     setTools: function() { var me = this;
         // second row
         var html = "";
@@ -4134,29 +2837,29 @@ iCn3DUI.prototype = {
         html += "    <table style='margin-top: 3px;'><tr valign='center'>";
 
         if(me.cfg.cid === undefined) {
-            html += "        <td valign='top'><span class='commandTitle'>Structure:</span><br/>";
+            html += "        <td valign='top'><span class='icn3d-commandTitle'>Structure:</span><br/>";
             html += "        <div style='margin-top:-3px;'><select id='" + me.pre + "structureid' multiple size='1' style='min-width:50px;'>";
             html += "        </select></div></td>";
 
             if(me.cfg.align !== undefined) {
-                html += "        <td valign='top'><span class='commandTitle'>Aligned:</span><br/>";
+                html += "        <td valign='top'><span class='icn3d-commandTitle'>Aligned:</span><br/>";
                 html += "        <div style='margin-top:-3px;'><select id='" + me.pre + "alignChainid' multiple size='1' style='min-width:50px;'>";
                 html += "        </select></div></td>";
             }
             else {
-                html += "        <td valign='top'><span class='commandTitle'>Chain:</span><br/>";
+                html += "        <td valign='top'><span class='icn3d-commandTitle'>Chain:</span><br/>";
                 html += "        <div style='margin-top:-3px;'><select id='" + me.pre + "chainid' multiple size='1' style='min-width:50px;'>";
                 html += "        </select></div></td>";
             }
         }
 
-        html += "        <td valign='top'><span class='commandTitle'>Custom:</span><br/>";
+        html += "        <td valign='top'><span class='icn3d-commandTitle'>Custom:</span><br/>";
         html += "        <div style='margin-top:-3px;'><select id='" + me.pre + "customResidues' multiple size='1' style='min-width:50px;'>";
         html += "        </select></div></td>";
 
         var buttonStyle = me.isMobile() ? 'none' : 'button';
 
-        html += "      <td valign='top'><div style='margin:3px 0px 0px 10px;'><button style='-webkit-appearance:" + buttonStyle + "; height:36px;' id='" + me.pre + "selectall'><span style='white-space:nowrap' class='commandTitle' title='Select all atoms'>Select<br/>All</span></button></div></td>";
+        html += "      <td valign='top'><div style='margin:3px 0px 0px 10px;'><button style='-webkit-appearance:" + buttonStyle + "; height:36px;' id='" + me.pre + "selectall'><span style='white-space:nowrap' class='icn3d-commandTitle' title='Select all atoms'>Select<br/>All</span></button></div></td>";
 
         var seqName;
         if(me.cfg.align !== undefined) {
@@ -4169,21 +2872,21 @@ iCn3DUI.prototype = {
         }
 
         if(me.cfg.cid === undefined) {
-            html += "      <td valign='top'><div style='margin:3px 0px 0px 10px;'><button style='-webkit-appearance:" + buttonStyle + "; height:36px;' id='" + me.pre + "show_sequences'><span style='white-space:nowrap' class='commandTitle' title='Show the sequences of the selected structure'>" + seqName + "</span></button></div></td>";
+            html += "      <td valign='top'><div style='margin:3px 0px 0px 10px;'><button style='-webkit-appearance:" + buttonStyle + "; height:36px;' id='" + me.pre + "show_sequences'><span style='white-space:nowrap' class='icn3d-commandTitle' title='Show the sequences of the selected structure'>" + seqName + "</span></button></div></td>";
 
             //if(me.cfg.align !== undefined) {
-            html += "      <td valign='top'><div id='" + me.pre + "alternateWrapper' style='margin:3px 0px 0px 10px;'><button style='-webkit-appearance:" + buttonStyle + "; height:36px;' id='" + me.pre + "alternate'><span style='white-space:nowrap' class='commandTitle' title='Alternate the structures'>Alternate<br/>Selection</span></button></div></td>";
+            html += "      <td valign='top'><div id='" + me.pre + "alternateWrapper' style='margin:3px 0px 0px 10px;'><button style='-webkit-appearance:" + buttonStyle + "; height:36px;' id='" + me.pre + "alternate'><span style='white-space:nowrap' class='icn3d-commandTitle' title='Alternate the structures'>Alternate<br/>Selection</span></button></div></td>";
             //}
         }
 
-//        html += "      <td valign='top'><div style='margin:3px 0px 0px 10px;'><button id='" + me.pre + "toggle'><span style='white-space:nowrap' class='commandTitle' title='Toggle the selected atoms on and off'>Toggle<br/>Selection</span></button></div></td>";
+//        html += "      <td valign='top'><div style='margin:3px 0px 0px 10px;'><button id='" + me.pre + "toggle'><span style='white-space:nowrap' class='icn3d-commandTitle' title='Toggle the selected atoms on and off'>Toggle<br/>Selection</span></button></div></td>";
 
-        html += "      <td valign='top'><div style='margin:3px 0px 0px 10px;'><button style='-webkit-appearance:" + buttonStyle + "; height:36px;' id='" + me.pre + "show_selected'><span style='white-space:nowrap' class='commandTitle' title='Display the selected atoms ONLY'>Display<br/>Selection</span></button></div></td>";
+        html += "      <td valign='top'><div style='margin:3px 0px 0px 10px;'><button style='-webkit-appearance:" + buttonStyle + "; height:36px;' id='" + me.pre + "show_selected'><span style='white-space:nowrap' class='icn3d-commandTitle' title='Display the selected atoms ONLY'>Display<br/>Selection</span></button></div></td>";
 
-        html += "      <td valign='top'><div style='margin:3px 0px 0px 10px;'><button style='-webkit-appearance:" + buttonStyle + "; height:36px;' id='" + me.pre + "zoomin_selection'><span style='white-space:nowrap' class='commandTitle' title='Center on the selected atoms and zoom in'>Zoom in<br/>Selection</span></button></div></td>";
+        html += "      <td valign='top'><div style='margin:3px 0px 0px 10px;'><button style='-webkit-appearance:" + buttonStyle + "; height:36px;' id='" + me.pre + "zoomin_selection'><span style='white-space:nowrap' class='icn3d-commandTitle' title='Center on the selected atoms and zoom in'>Zoom in<br/>Selection</span></button></div></td>";
 
         if(me.cfg.align === undefined) {
-            html += "      <td valign='top'><div style='margin:3px 0px 0px 10px;'><button style='-webkit-appearance:" + buttonStyle + "; height:36px;' id='" + me.pre + "toggleHighlight'><span style='white-space:nowrap' class='commandTitle' title='Turn on and off the 3D highlight in the viewer'>Toggle<br/>Highlight</span></button></div></td>";
+            html += "      <td valign='top'><div style='margin:3px 0px 0px 10px;'><button style='-webkit-appearance:" + buttonStyle + "; height:36px;' id='" + me.pre + "toggleHighlight'><span style='white-space:nowrap' class='icn3d-commandTitle' title='Turn on and off the 3D highlight in the viewer'>Toggle<br/>Highlight</span></button></div></td>";
         }
 
         html += "    </tr></table>";
@@ -4224,7 +2927,7 @@ iCn3DUI.prototype = {
 
                //seqObj = me.getAlignSequencesAnnotations(Object.keys(me.icn3d.alignChains), false, residueArray);
 
-               seqObj = me.getAlignSequencesAnnotations(Object.keys(me.icn3d.alignChains));
+               seqObj = me.getAlignSequencesAnnotations(Object.keys(me.icn3d.alignChains), undefined, undefined, bShowHighlight);
 
                $("#" + me.pre + "dl_sequence2").html(seqObj.sequencesHtml);
                $("#" + me.pre + "dl_sequence2").width(me.RESIDUE_WIDTH * seqObj.maxSeqCnt + 200);
@@ -4301,42 +3004,6 @@ iCn3DUI.prototype = {
             }
 
             me.saveFile(me.inputid + '_residues.txt', 'residue', output);
-    },
-
-    getLinkToStructureSummary: function(bLog) { var me = this;
-           var idArray = me.inputid.split('_');
-
-           var url = (me.cfg.cid !== undefined) ? "https://www.ncbi.nlm.nih.gov/pccompound/?term=" : "https://www.ncbi.nlm.nih.gov/structure/?term=";
-
-           if(idArray.length === 1) {
-               url += me.inputid;
-               if(bLog !== undefined && bLog) me.setLogCommand("link to Structure Summary " + me.inputid + ": " + url, false);
-           }
-           else if(idArray.length === 2) {
-               url += idArray[0] + " OR " + idArray[1];
-               if(bLog !== undefined && bLog) me.setLogCommand("link to structures " + idArray[0] + " and " + idArray[1] + ": " + url, false);
-           }
-
-           return url;
-    },
-
-    isMobile: function() {
-        return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-    },
-
-    isMac: function() {
-        return /Mac/i.test(navigator.userAgent);
-    },
-
-    isSessionStorageSupported: function() {
-      var testKey = 'test';
-      try {
-        sessionStorage.setItem(testKey, '1');
-        sessionStorage.removeItem(testKey);
-        return true;
-      } catch (error) {
-        return false;
-      }
     },
 
     saveCommandsToSession: function() { var me = this;
@@ -4744,8 +3411,8 @@ iCn3DUI.prototype = {
         $("#" + me.pre + "menu3_proteinCalpha").click(function (e) {
            //e.preventDefault();
 
-           me.setStyle('protein', 'C alpha trace');
-           me.setLogCommand('style protein C alpha trace', true);
+           me.setStyle('protein', 'c alpha trace');
+           me.setLogCommand('style protein c alpha trace', true);
         });
     },
 
@@ -4753,8 +3420,8 @@ iCn3DUI.prototype = {
         $("#" + me.pre + "menu3_proteinBfactor").click(function (e) {
            //e.preventDefault();
 
-           me.setStyle('protein', 'B factor tube');
-           me.setLogCommand('style protein B factor tube', true);
+           me.setStyle('protein', 'b factor tube');
+           me.setLogCommand('style protein b factor tube', true);
         });
     },
 
@@ -5045,8 +3712,8 @@ iCn3DUI.prototype = {
         $("#" + me.pre + "menu4_colorBfactor").click(function (e) {
            //e.preventDefault();
 
-           me.setOption('color', 'B factor');
-           me.setLogCommand('color B factor', true);
+           me.setOption('color', 'b factor');
+           me.setLogCommand('color b factor', true);
         });
     },
 */
@@ -5328,15 +3995,29 @@ iCn3DUI.prototype = {
 
            me.addResiudeLabels();
 
+           me.icn3d.options['labels'] = 'yes';
+           me.icn3d.draw();
+        });
+    },
+
+    clickMenu6_addlabelResidueTopology: function() { var me = this;
+        $("#" + me.pre + "menu6_addlabelResidueTopology").click(function (e) {
+           //e.preventDefault();
+
+           me.setLogCommand('add residue topology', true);
+
            var options2 = {};
 
-           options2['secondary'] = 'nothing';
-           options2['nucleotides'] = 'nothing';
+		   options2['secondary'] = 'c alpha trace';
+		   options2['nucleotides'] = 'phosphorus trace';
            options2['ligands'] = 'nothing';
            options2['water'] = 'nothing';
            options2['ions'] = 'nothing';
 
-           //me.icn3d.setAtomStyleByOptions(options2);
+           me.icn3d.setAtomStyleByOptions(options2);
+
+           var bTopology = true;
+           me.addResiudeLabels(bTopology);
 
            me.icn3d.options['labels'] = 'yes';
            //me.icn3d.draw(options2);
@@ -5419,6 +4100,8 @@ iCn3DUI.prototype = {
            me.setLogCommand('rotate left', true);
 
            me.icn3d.bStopRotate = false;
+           me.icn3d.rotateCount = 0;
+           me.icn3d.rotateCountMax = 6000;
            me.ROTATION_DIRECTION = 'left';
 
            me.rotateStructure('left');
@@ -5432,6 +4115,8 @@ iCn3DUI.prototype = {
            me.setLogCommand('rotate right', true);
 
            me.icn3d.bStopRotate = false;
+           me.icn3d.rotateCount = 0;
+           me.icn3d.rotateCountMax = 6000;
            me.ROTATION_DIRECTION = 'right';
 
            me.rotateStructure('right');
@@ -5445,6 +4130,8 @@ iCn3DUI.prototype = {
            me.setLogCommand('rotate up', true);
 
            me.icn3d.bStopRotate = false;
+           me.icn3d.rotateCount = 0;
+           me.icn3d.rotateCountMax = 6000;
            me.ROTATION_DIRECTION = 'up';
 
            me.rotateStructure('up');
@@ -5458,6 +4145,8 @@ iCn3DUI.prototype = {
            me.setLogCommand('rotate down', true);
 
            me.icn3d.bStopRotate = false;
+           me.icn3d.rotateCount = 0;
+           me.icn3d.rotateCountMax = 6000;
            me.ROTATION_DIRECTION = 'down';
 
            me.rotateStructure('down');
@@ -6295,6 +4984,7 @@ iCn3DUI.prototype = {
            var size = $("#" + me.pre + "labelsize" ).val();
            var color = $("#" + me.pre + "labelcolor" ).val();
            var background = $("#" + me.pre + "labelbkgd" ).val();
+           if(background === '0' || background === '') background = undefined;
 
            if(me.icn3d.pickedatom === undefined || me.icn3d.pickedatom2 === undefined) {
              alert("Please pick another atom");
@@ -6674,6 +5364,7 @@ iCn3DUI.prototype = {
         me.clickMenu6_assemblyYes();
         me.clickMenu6_assemblyNo();
         me.clickMenu6_addlabelResidues();
+        me.clickMenu6_addlabelResidueTopology();
         me.clickMenu6_addlabelYes();
         me.clickMenu6_addlabelNo();
         me.clickMenu6_distanceYes();
@@ -6730,3 +5421,1442 @@ iCn3DUI.prototype = {
       // add custom events here
     }
   };
+
+/*! The following are shared by full_ui.js and simple_ui.js */
+
+    iCn3DUI.prototype.addResiudeLabels = function (bTopology) { var me = this;
+        var size = 40;
+        var background = "#CCCCCC";
+        if(bTopology) {
+			size = 20;
+			//background = undefined;
+		}
+
+        for(var i in me.icn3d.highlightAtoms) {
+            var atom = me.icn3d.atoms[i];
+
+            if(atom.het) continue;
+            if(atom.name !== 'CA' && atom.name !== 'P') continue;
+
+            var label = {}; // Each label contains 'position', 'text', 'color', 'background'
+
+            label.position = atom.coord;
+
+            label.bTopology = 0;
+            if(bTopology) label.bTopology = 1;
+
+            label.text = me.icn3d.residueName2Abbr(atom.resn);
+            label.size = size;
+
+            label.color = "#" + atom.color.getHexString();
+            label.background = background;
+
+            me.icn3d.labels.push(label);
+        }
+
+        me.icn3d.removeHighlightObjects();
+    };
+
+    iCn3DUI.prototype.rotateStructure = function (direction, bInitial) { var me = this;
+        if(me.icn3d.bStopRotate) return false;
+        if(me.icn3d.rotateCount > me.icn3d.rotateCountMax) return false;
+        ++me.icn3d.rotateCount;
+
+        if(bInitial !== undefined && bInitial) {
+            if(direction === 'left') {
+              me.ROTATION_DIRECTION = 'left';
+            }
+            else if(direction === 'right') {
+              me.ROTATION_DIRECTION = 'right';
+            }
+            else if(direction === 'up') {
+              me.ROTATION_DIRECTION = 'up';
+            }
+            else if(direction === 'down') {
+              me.ROTATION_DIRECTION = 'down';
+            }
+            else {
+              return false;
+            }
+        }
+
+        if(direction === 'left' && me.ROTATION_DIRECTION === 'left') {
+          me.icn3d.rotateLeft(1);
+        }
+        else if(direction === 'right' && me.ROTATION_DIRECTION === 'right') {
+          me.icn3d.rotateRight(1);
+        }
+        else if(direction === 'up' && me.ROTATION_DIRECTION === 'up') {
+          me.icn3d.rotateUp(1);
+        }
+        else if(direction === 'down' && me.ROTATION_DIRECTION === 'down') {
+          me.icn3d.rotateDown(1);
+        }
+        else {
+          return false;
+        }
+
+        setTimeout(function(){ me.rotateStructure(direction); }, 100);
+    };
+
+    iCn3DUI.prototype.showTitle = function() { var me = this;
+        if(me.icn3d.moleculeTitle !== undefined && me.icn3d.moleculeTitle !== '') {
+            var title = me.icn3d.moleculeTitle;
+
+            var url = me.getLinkToStructureSummary();
+
+            if(me.cfg.cid !== undefined) {
+                $("#" + me.pre + "title").html(title + " (PubChem CID <a href='" + url + "' target='_blank' style='color:#DDD'>" + me.inputid.toUpperCase() + "</a>)");
+            }
+            else if(me.cfg.align !== undefined) {
+                $("#" + me.pre + "title").html(title);
+            }
+            else {
+                if(me.icn3d.moleculeTitle.length > 50) title = me.icn3d.moleculeTitle.substr(0, 50) + "...";
+
+                $("#" + me.pre + "title").html(title + " (PDB ID <a href='" + url + "' target='_blank' style='color:#DDD'>" + me.inputid.toUpperCase() + "</a>)");
+            }
+        }
+        else {
+            $("#" + me.pre + "title").html("");
+        }
+    };
+
+    iCn3DUI.prototype.getLinkToStructureSummary = function(bLog) { var me = this;
+           var idArray = me.inputid.split('_');
+
+           var url = (me.cfg.cid !== undefined) ? "https://www.ncbi.nlm.nih.gov/pccompound/?term=" : "https://www.ncbi.nlm.nih.gov/structure/?term=";
+
+           if(idArray.length === 1) {
+               url += me.inputid;
+               if(bLog !== undefined && bLog) me.setLogCommand("link to Structure Summary " + me.inputid + ": " + url, false);
+           }
+           else if(idArray.length === 2) {
+               url += idArray[0] + " OR " + idArray[1];
+               if(bLog !== undefined && bLog) me.setLogCommand("link to structures " + idArray[0] + " and " + idArray[1] + ": " + url, false);
+           }
+
+           return url;
+    },
+
+    iCn3DUI.prototype.isIE = function() { var me = this;
+        //http://stackoverflow.com/questions/19999388/check-if-user-is-using-ie-with-jquery
+        var ua = window.navigator.userAgent;
+        var msie = ua.indexOf("MSIE ");
+
+        if (msie > 0 || !!navigator.userAgent.match(/Trident.*rv\:11\./))      // If Internet Explorer
+            return true;
+        else                 // If another browser, return 0
+            return false;
+    };
+
+    iCn3DUI.prototype.saveFile = function(filename, type, text) { var me = this;
+        //Save file
+        if(me.isIE()) { // IE
+            if(window.navigator.msSaveBlob){
+                if(type === 'text') {
+                    var dataStr = me.icn3d.commands.join('\n');
+                    var data = decodeURIComponent(dataStr);
+
+                    var blob = new Blob([data],{ type: "text/html;charset=utf-8;"});
+                    navigator.msSaveBlob(blob, filename);
+                }
+                else if(type === 'png') {
+                   me.icn3d.render();
+                   var blob = me.icn3d.renderer.domElement.msToBlob();
+
+                    navigator.msSaveBlob(blob, filename);
+                }
+                else if(type === 'residue') {
+                    var dataStr = text;
+                    var data = decodeURIComponent(dataStr);
+
+                    var blob = new Blob([data],{ type: "text/html;charset=utf-8;"});
+                    navigator.msSaveBlob(blob, filename);
+                }
+            }
+        }
+        else {
+            var data;
+
+            if(type === 'text') {
+                var dataStr = me.icn3d.commands.join('\n');
+                data = "data:text;charset=utf-8," + encodeURIComponent(dataStr);
+            }
+            else if(type === 'png') {
+               me.icn3d.render();
+               var dataStr = me.icn3d.renderer.domElement.toDataURL('image/png');
+
+                data = dataStr;
+            }
+            else if(type === 'residue') {
+                var dataStr = text;
+                data = "data:text;charset=utf-8," + encodeURIComponent(dataStr);
+            }
+
+            window.open(data, '_blank');
+        }
+    };
+
+    iCn3DUI.prototype.isMobile = function() {
+        return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    };
+
+    iCn3DUI.prototype.isMac = function() {
+        return /Mac/i.test(navigator.userAgent);
+    };
+
+    iCn3DUI.prototype.isSessionStorageSupported = function() {
+      var testKey = 'test';
+      try {
+        sessionStorage.setItem(testKey, '1');
+        sessionStorage.removeItem(testKey);
+        return true;
+      } catch (error) {
+        return false;
+      }
+    };
+
+/*! parsers */
+
+    iCn3DUI.prototype.downloadPdb = function (pdbid) { var me = this;
+       // The PDB service doesn't support https, so use our reverse-proxy
+       // service when using https
+       var uri, dataType;
+       if(document.location.protocol !== "https:") {
+           uri = "http://www.rcsb.org/pdb/files/" + pdbid + ".pdb";
+           dataType = "text";
+       }
+       else {
+           uri = "https://www.ncbi.nlm.nih.gov/Structure/mmcifparser/mmcifparser.cgi?jsonp=t&pdbid=" + pdbid;
+           dataType = "jsonp";
+       }
+
+       me.icn3d.bCid = undefined;
+
+       $.ajax({
+          url: uri,
+          dataType: dataType,
+          cache: true,
+          beforeSend: function() {
+              if($("#" + me.pre + "wait")) $("#" + me.pre + "wait").show();
+              if($("#" + me.pre + "canvas")) $("#" + me.pre + "canvas").hide();
+              if($("#" + me.pre + "log")) $("#" + me.pre + "log").hide();
+          },
+          complete: function() {
+              if($("#" + me.pre + "wait")) $("#" + me.pre + "wait").hide();
+              if($("#" + me.pre + "canvas")) $("#" + me.pre + "canvas").show();
+              if($("#" + me.pre + "log")) $("#" + me.pre + "log").show();
+          },
+          success: function(data) {
+              if(document.location.protocol !== "https:") {
+                  me.loadPdbData(data);
+              }
+              else {
+                  me.loadPdbData(data.data);
+              }
+          }
+       });
+    };
+
+    iCn3DUI.prototype.loadPdbData = function(data) {
+        var me = this;
+
+        me.icn3d.loadPDB(data);
+
+        me.pmid = me.icn3d.pmid;
+
+        if(me.cfg.align === undefined && Object.keys(me.icn3d.structures).length == 1) {
+            $("#" + me.pre + "alternateWrapper").hide();
+        }
+
+        //me.icn3d.inputid.idtype = "pdbid";
+        //me.icn3d.inputid.id = pdbid;
+
+        me.icn3d.setAtomStyleByOptions(me.options);
+        me.icn3d.setColorByOptions(me.options, me.icn3d.atoms);
+
+        me.renderStructure(true);
+
+        me.showTitle();
+
+        if(me.cfg.rotate !== undefined) me.rotateStructure(me.cfg.rotate, true);
+
+        if(me.cfg.showseq !== undefined && me.cfg.showseq) me.openDialog(me.pre + 'dl_selectresidues', 'Select residues in sequences with coordinates');
+
+        if(me.deferred !== undefined) me.deferred.resolve(); if(me.deferred2 !== undefined) me.deferred2.resolve();
+    };
+
+    iCn3DUI.prototype.downloadMmcif = function (mmcif) { var me = this;
+        var url = "https://www.ncbi.nlm.nih.gov/Structure/mmcifparser/mmcifparser.cgi?mmcif=" + mmcif;
+        me.icn3d.bCid = undefined;
+
+       $.ajax({
+          url: url,
+          dataType: 'jsonp',
+          cache: true,
+          beforeSend: function() {
+              if($("#" + me.pre + "wait")) $("#" + me.pre + "wait").show();
+              if($("#" + me.pre + "canvas")) $("#" + me.pre + "canvas").hide();
+              if($("#" + me.pre + "log")) $("#" + me.pre + "log").hide();
+          },
+          complete: function() {
+              if($("#" + me.pre + "wait")) $("#" + me.pre + "wait").hide();
+              if($("#" + me.pre + "canvas")) $("#" + me.pre + "canvas").show();
+              if($("#" + me.pre + "log")) $("#" + me.pre + "log").show();
+          },
+          success: function(data) {
+                me.loadMmcifData(data);
+          }
+        });
+    };
+
+    iCn3DUI.prototype.loadMmcifData = function(data) { var me = this;
+        if (data.atoms !== undefined) {
+            me.loadAtomDataIn(data, data.mmcif, 'mmcif');
+
+            if(me.cfg.align === undefined && Object.keys(me.icn3d.structures).length == 1) {
+                $("#" + me.pre + "alternateWrapper").hide();
+            }
+
+            // load assembly info
+            var assembly = data.assembly;
+            for(var i = 0, il = assembly.length; i < il; ++i) {
+              if (me.icn3d.biomtMatrices[i] == undefined) me.icn3d.biomtMatrices[i] = new THREE.Matrix4().identity();
+
+              for(var j = 0, jl = assembly[i].length; j < jl; ++j) {
+                me.icn3d.biomtMatrices[i].elements[j] = assembly[i][j];
+              }
+            }
+
+            //me.icn3d.inputid.idtype = "mmcif";
+            //me.icn3d.inputid.id = mmcif;
+
+            me.icn3d.setAtomStyleByOptions(me.options);
+            me.icn3d.setColorByOptions(me.options, me.icn3d.atoms);
+
+            me.renderStructure(true);
+
+            if(me.cfg.rotate !== undefined) me.rotateStructure(me.cfg.rotate, true);
+
+            if(me.cfg.showseq !== undefined && me.cfg.showseq) me.openDialog(me.pre + 'dl_selectresidues', 'Select residues in sequences with coordinates');
+
+            if(me.deferred !== undefined) me.deferred.resolve(); if(me.deferred2 !== undefined) me.deferred2.resolve();
+        }
+        else {
+            alert('invalid atoms data.');
+            return false;
+        }
+    };
+
+    iCn3DUI.prototype.downloadAlignment = function (align) { var me = this;
+        var url = "https://www.ncbi.nlm.nih.gov/Structure/vastpp/vastpp.cgi?cmd=c&w3d&ids=" + align;
+        var url2 = "https://www.ncbi.nlm.nih.gov/Structure/vastpp/vastpp.cgi?cmd=c1&d&ids=" + align;
+
+        //var alignArray = me.cfg.align.split(',');
+        //var ids_str = (alignArray.length === 2? 'uids=' : 'ids=') + align;
+        //var url = '/Structure/vastplusdev/vastplus.cgi?cmd=c&w3d&' + ids_str;
+        //var url2 = '/Structure/vastplusdev/vastplus.cgi?cmd=c1&d&' + ids_str;
+
+        if(me.cfg.inpara !== undefined) {
+          url += me.cfg.inpara;
+          url2 += me.cfg.inpara;
+        }
+
+        me.icn3d.bCid = undefined;
+
+        // define for 'align' only
+        me.icn3d.pdbid_chain2title = {};
+
+        var request = $.ajax({
+           url: url2,
+           //dataType: 'json',
+           dataType: 'jsonp',
+           //jsonp: 'jpf',
+           cache: true,
+          beforeSend: function() {
+              if($("#" + me.pre + "wait")) $("#" + me.pre + "wait").show();
+              if($("#" + me.pre + "canvas")) $("#" + me.pre + "canvas").hide();
+              if($("#" + me.pre + "log")) $("#" + me.pre + "log").hide();
+          },
+          complete: function() {
+              if($("#" + me.pre + "wait")) $("#" + me.pre + "wait").hide();
+              if($("#" + me.pre + "canvas")) $("#" + me.pre + "canvas").show();
+              if($("#" + me.pre + "log")) $("#" + me.pre + "log").show();
+          }
+        });
+
+        var seqalign = {};
+
+        var chained = request.then(function( data ) {
+            seqalign = data.seqalign;
+
+            var index = 0;
+            for(var mmdbid in data) {
+                if(index < 2) {
+                    var pdbid = data[mmdbid].pdbid;
+                    //me.icn3d.mmdbid2pdbid[mmdbid] = pdbid;
+
+                    var molecule = data[mmdbid].molecule;
+                    for(var molname in molecule) {
+                        var chain = molecule[molname].chain;
+                        me.icn3d.pdbid_chain2title[pdbid + '_' + chain] = molecule[molname].name;
+                    }
+                }
+
+                ++index;
+            }
+
+            return $.ajax({
+               url: url,
+               dataType: 'jsonp',
+               //jsonp: 'jpf',
+               cache: true,
+              beforeSend: function() {
+                  if($("#" + me.pre + "wait")) $("#" + me.pre + "wait").show();
+                  if($("#" + me.pre + "canvas")) $("#" + me.pre + "canvas").hide();
+                  if($("#" + me.pre + "log")) $("#" + me.pre + "log").hide();
+              },
+              complete: function() {
+                  if($("#" + me.pre + "wait")) $("#" + me.pre + "wait").hide();
+                  if($("#" + me.pre + "canvas")) $("#" + me.pre + "canvas").show();
+                  if($("#" + me.pre + "log")) $("#" + me.pre + "log").show();
+              }
+            });
+        });
+
+        chained.done(function( data ) {
+            if (data.atoms !== undefined) {
+                me.loadAtomDataIn(data, undefined, 'align', seqalign);
+
+                if(me.cfg.align === undefined && Object.keys(me.icn3d.structures).length == 1) {
+                    $("#" + me.pre + "alternateWrapper").hide();
+                }
+
+                //me.icn3d.inputid.idtype = "alignment";
+                //me.icn3d.inputid.id = align;
+
+                me.icn3d.setAtomStyleByOptions(me.options);
+                // use the original color from cgi output
+                me.icn3d.setColorByOptions(me.options, me.icn3d.atoms, true);
+
+                me.renderStructure(true);
+
+                if(me.cfg.rotate !== undefined) me.rotateStructure(me.cfg.rotate, true);
+
+                // by default, open the seq alignment window
+                if(me.cfg.showalignseq !== undefined && me.cfg.showalignseq) me.openDialog(me.pre + 'dl_alignment', 'Select residues in aligned sequences');
+
+                if(me.cfg.showseq !== undefined && me.cfg.showseq) me.openDialog(me.pre + 'dl_selectresidues', 'Select residues in sequences with coordinates');
+
+                if(me.deferred !== undefined) me.deferred.resolve(); if(me.deferred2 !== undefined) me.deferred2.resolve();
+            }
+            else {
+                alert('invalid atoms data.');
+                return false;
+            }
+        });
+    };
+
+    iCn3DUI.prototype.downloadCid = function (cid) { var me = this;
+        var uri = "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/cid/" + cid + "/record/SDF/?record_type=3d&response_type=display";
+
+        me.icn3d.bCid = true;
+
+        $.ajax({
+          url: uri,
+          dataType: 'text',
+          cache: true,
+          beforeSend: function() {
+              if($("#" + me.pre + "wait")) $("#" + me.pre + "wait").show();
+              if($("#" + me.pre + "canvas")) $("#" + me.pre + "canvas").hide();
+              if($("#" + me.pre + "log")) $("#" + me.pre + "log").hide();
+          },
+          complete: function() {
+              if($("#" + me.pre + "wait")) $("#" + me.pre + "wait").hide();
+              if($("#" + me.pre + "canvas")) $("#" + me.pre + "canvas").show();
+              if($("#" + me.pre + "log")) $("#" + me.pre + "log").show();
+          },
+          success: function(data) {
+            var bResult = me.loadCidAtomData(data);
+
+            if(me.cfg.align === undefined && Object.keys(me.icn3d.structures).length == 1) {
+                $("#" + me.pre + "alternateWrapper").hide();
+            }
+
+            if(!bResult) {
+              alert('The SDF of CID ' + cid + ' has the wrong format...');
+            }
+            else {
+              //me.icn3d.inputid.idtype = "cid";
+              //me.icn3d.inputid.id = cid;
+
+              me.icn3d.setAtomStyleByOptions(me.options);
+              me.icn3d.setColorByOptions(me.options, me.icn3d.atoms);
+
+              me.renderStructure(true);
+
+              if(me.cfg.rotate !== undefined) me.rotateStructure(me.cfg.rotate, true);
+
+              if(me.deferred !== undefined) me.deferred.resolve(); if(me.deferred2 !== undefined) me.deferred2.resolve();
+            }
+          }
+        })
+        .fail(function() {
+            alert( "This CID may not have 3D structure..." );
+        });
+    };
+
+    iCn3DUI.prototype.loadCidAtomData = function (data) { var me = this;
+        var lines = data.split('\n');
+        if (lines.length < 4) return false;
+
+        me.icn3d.init();
+
+        var structure = '1';
+        var chain = 'A';
+        var resi = 1;
+        var resn = 'LIG';
+
+        var moleculeNum = structure;
+        var chainNum = structure + '_' + chain;
+        var residueNum = chainNum + '_' + resi;
+
+        var atomCount = parseInt(lines[3].substr(0, 3));
+        if (isNaN(atomCount) || atomCount <= 0) return false;
+
+        var bondCount = parseInt(lines[3].substr(3, 3));
+        var offset = 4;
+        if (lines.length < offset + atomCount + bondCount) return false;
+
+        var start = 0;
+        var end = atomCount;
+        var i, line;
+        var AtomHash = {};
+        for (i = start; i < end; i++) {
+            line = lines[offset];
+            offset++;
+
+            var serial = i;
+
+            var x = parseFloat(line.substr(0, 10));
+            var y = parseFloat(line.substr(10, 10));
+            var z = parseFloat(line.substr(20, 10));
+            var coord = new THREE.Vector3(x, y, z);
+
+            var name = line.substr(31, 3).replace(/ /g, "");
+
+            var atomDetails = {
+                het: true,              // optional, used to determine ligands, water, ions, etc
+                serial: serial,         // required, unique atom id
+                name: name,             // required, atom name
+                resn: resn,             // optional, used to determine protein or nucleotide
+                structure: structure,   // optional, used to identify structure
+                chain: chain,           // optional, used to identify chain
+                resi: resi,             // optional, used to identify residue ID
+                coord: coord,           // required, used to draw 3D shape
+                b: 0,                   // optional, used to draw B-factor tube
+                elem: name,             // optional, used to determine hydrogen bond
+                bonds: [],              // required, used to connect atoms
+                ss: 'coil',             // optional, used to show secondary structures
+                ssbegin: false,         // optional, used to show the beginning of secondary structures
+                ssend: false,           // optional, used to show the end of secondary structures
+
+                bondOrder: []           // optional, specific for chemicals
+            };
+
+            me.icn3d.atoms[serial] = atomDetails;
+            AtomHash[serial] = 1;
+        }
+
+        me.icn3d.displayAtoms = AtomHash;
+        me.icn3d.highlightAtoms= AtomHash;
+        me.icn3d.structures[moleculeNum] = [chainNum]; //AtomHash;
+        me.icn3d.chains[chainNum] = AtomHash;
+        me.icn3d.residues[residueNum] = AtomHash;
+
+        me.icn3d.residueId2Name[residueNum] = resn;
+
+        if(me.icn3d.chainsSeq[chainNum] === undefined) me.icn3d.chainsSeq[chainNum] = [];
+        if(me.icn3d.chainsAnno[chainNum] === undefined ) me.icn3d.chainsAnno[chainNum] = [];
+        if(me.icn3d.chainsAnno[chainNum][0] === undefined ) me.icn3d.chainsAnno[chainNum][0] = [];
+        if(me.icn3d.chainsAnnoTitle[chainNum] === undefined ) me.icn3d.chainsAnnoTitle[chainNum] = [];
+        if(me.icn3d.chainsAnnoTitle[chainNum][0] === undefined ) me.icn3d.chainsAnnoTitle[chainNum][0] = [];
+
+          var resObject = {};
+          resObject.resi = resi;
+          resObject.name = resn;
+
+        me.icn3d.chainsSeq[chainNum].push(resObject);
+        me.icn3d.chainsAnno[chainNum][0].push(resi);
+        me.icn3d.chainsAnnoTitle[chainNum][0].push('');
+
+        for (i = 0; i < bondCount; i++) {
+            line = lines[offset];
+            offset++;
+            var from = parseInt(line.substr(0, 3)) - 1 + start;
+            var to = parseInt(line.substr(3, 3)) - 1 + start;
+            var order = parseInt(line.substr(6, 3));
+            me.icn3d.atoms[from].bonds.push(to);
+            me.icn3d.atoms[from].bondOrder.push(order);
+            me.icn3d.atoms[to].bonds.push(from);
+            me.icn3d.atoms[to].bondOrder.push(order);
+            if(order == 2) {
+                me.icn3d.doublebonds[from + '_' + to] = 1;
+                me.icn3d.doublebonds[to + '_' + from] = 1;
+            }
+            else if(order == 3) {
+                me.icn3d.triplebonds[from + '_' + to] = 1;
+                me.icn3d.triplebonds[to + '_' + from] = 1;
+            }
+        }
+
+        var pmin = new THREE.Vector3( 9999, 9999, 9999);
+        var pmax = new THREE.Vector3(-9999,-9999,-9999);
+        var psum = new THREE.Vector3();
+        var cnt = 0;
+        // assign atoms
+        for (var i in me.icn3d.atoms) {
+            var atom = me.icn3d.atoms[i];
+            var coord = atom.coord;
+            psum.add(coord);
+            pmin.min(coord);
+            pmax.max(coord);
+            ++cnt;
+
+            if(atom.het) {
+              if($.inArray(atom.elem, me.icn3d.ionsArray) !== -1) {
+                me.icn3d.ions[atom.serial] = 1;
+              }
+              else {
+                me.icn3d.ligands[atom.serial] = 1;
+              }
+            }
+        } // end of for
+
+
+        me.icn3d.pmin = pmin;
+        me.icn3d.pmax = pmax;
+
+        me.icn3d.cnt = cnt;
+
+        me.icn3d.maxD = me.icn3d.pmax.distanceTo(me.icn3d.pmin);
+        me.icn3d.center = psum.multiplyScalar(1.0 / me.icn3d.cnt);
+
+        if (me.icn3d.maxD < 25) me.icn3d.maxD = 25;
+
+        me.showTitle();
+
+        return true;
+    };
+
+    iCn3DUI.prototype.downloadMmdb = function (mmdbid) { var me = this;
+       var url = "https://www.ncbi.nlm.nih.gov/Structure/mmdb/mmdb_strview.cgi?program=w3d&uid=" + mmdbid;
+
+       me.icn3d.bCid = undefined;
+
+       if(me.cfg.inpara !== undefined) {
+         url += me.cfg.inpara;
+       }
+
+       $.ajax({
+          url: url,
+          dataType: 'jsonp',
+          cache: true,
+          beforeSend: function() {
+              if($("#" + me.pre + "wait")) $("#" + me.pre + "wait").show();
+              if($("#" + me.pre + "canvas")) $("#" + me.pre + "canvas").hide();
+              if($("#" + me.pre + "log")) $("#" + me.pre + "log").hide();
+          },
+          complete: function() {
+              if($("#" + me.pre + "wait")) $("#" + me.pre + "wait").hide();
+              if($("#" + me.pre + "canvas")) $("#" + me.pre + "canvas").show();
+              if($("#" + me.pre + "log")) $("#" + me.pre + "log").show();
+          },
+          success: function(data) {
+            var id = (data.pdbId !== undefined) ? data.pdbId : data.mmdbId;
+            me.inputid = id;
+
+            if ((me.cfg.inpara !== undefined && me.cfg.inpara.indexOf('mols=') != -1) || (data.atomcount <= data.threshold && data.atoms !== undefined) ) {
+                // small structure with all atoms
+                // show surface options
+                $("#" + me.pre + "accordion5").show();
+
+                me.loadAtomDataIn(data, id, 'mmdbid');
+
+                if(me.cfg.align === undefined && Object.keys(me.icn3d.structures).length == 1) {
+                    if($("#" + me.pre + "alternateWrapper") !== null) $("#" + me.pre + "alternateWrapper").hide();
+                }
+
+                //me.icn3d.inputid.idtype = "mmdbid";
+                //me.icn3d.inputid.id = id;
+
+                me.icn3d.setAtomStyleByOptions(me.options);
+                // use the original color from cgi output
+                me.icn3d.setColorByOptions(me.options, me.icn3d.atoms, true);
+
+                me.renderStructure(true);
+
+                if(me.cfg.rotate !== undefined) me.rotateStructure(me.cfg.rotate, true);
+
+                //if(me.deferred !== undefined) me.deferred.resolve(); if(me.deferred2 !== undefined) me.deferred2.resolve();
+            }
+
+            if(me.cfg.inpara !== undefined && me.cfg.inpara.indexOf('mols=') == -1 && data.atomcount > data.threshold && data.molid2rescount !== undefined) {
+				// hide surface option
+				$("#" + me.pre + "accordion5").hide();
+
+                var labelsize = 40;
+
+                // large struture with helix/brick, phosphorus, and ligand info
+                me.icn3d.bSSOnly = true;
+
+                // load atom info
+                me.loadAtomDataIn(data, id, 'mmdbid');
+
+                //me.icn3d.inputid.idtype = "mmdbid";
+                //me.icn3d.inputid.id = id;
+
+                var options2 = me.icn3d.cloneHash(me.options);
+                options2['nucleotides'] = 'phosphorus lines';
+
+                //me.options['color'] = 'spectrum';
+
+                me.icn3d.setAtomStyleByOptions(options2);
+                // use the original color from cgi output
+                me.icn3d.setColorByOptions(options2, me.icn3d.atoms, true);
+
+                var molid2rescount = data.molid2rescount;
+                var molid2color = {}, chain2molid = {}, molid2chain = {};
+
+                var html = "<table width='100%'><tr><td></td><th>#</th><th align='center'>Chain</th><th align='center'>Residue Count</th></tr>";
+
+                var index = 1;
+                for(var i in molid2rescount) {
+                  var color = '#' + ( '000000' + molid2rescount[i].color.toString( 16 ) ).slice( - 6 );
+                  html += "<tr style='color:" + color + "'><td><input type='checkbox' name='" + me.pre + "filter_ckbx' value='" + i + "'/></td><td align='center'>" + index + "</td><td align='center'>" + molid2rescount[i].chain + "</td><td align='center'>" + molid2rescount[i].resCount + "</td></tr>";
+
+                  molid2color[i] = color;
+                  var chain = id + '_' + molid2rescount[i].chain;
+                  chain2molid[chain] = i;
+                  molid2chain[i] = chain;
+                  ++index;
+                }
+
+                if(Object.keys(me.icn3d.ligands).length > 0) {
+                  html += "<tr><td><input type='checkbox' name='" + me.pre + "filter_ckbx' value='ligands'/></td><td align='center'>" + index + "</td><td align='center'>Ligands</td><td align='center'>" + Object.keys(me.icn3d.ligands).length + " atoms</td></tr>";
+                }
+
+                html += "</table>";
+
+                 // add labels for each RNA/DNA molecule
+                 // hash of molid to label object
+                 var labels = {};
+
+                 for(var i in me.icn3d.chains) {
+                     var label = {}; // Each label contains 'position', 'text', 'color', 'background'
+
+                     var position = me.icn3d.centerAtoms(me.icn3d.hash2Atoms(me.icn3d.chains[i])).center;
+                     label.position = position;
+
+                     var chain = i.substr(i.indexOf('_') + 1);
+                     label.text = chain;
+                     label.size = labelsize;
+                     label.color = molid2color[chain2molid[i]];
+                     label.background = "#FFFFFF";
+
+                     labels[chain2molid[i]] = label;
+                 }
+
+                // get brick and helix info to draw secondary structure for the coarse 3D view
+                molid2ss = {}; // hash of molid -> array of object
+                for(var i in data.helix) {
+                  for(var j = 0, jl = data.helix[i].length; j < jl; ++j) {
+                    var helix = data.helix[i][j];
+
+                    var resiCoords = {};
+
+                    resiCoords.type = 'helix';
+                    resiCoords.startResi = helix.from;
+                    resiCoords.endResi = helix.to;
+
+                    // helix from and to coords are switched
+                    resiCoords.coords = [];
+                    resiCoords.coords.push(helix.end);
+                    resiCoords.coords.push(helix.start);
+
+                    if(molid2ss[i] === undefined) molid2ss[i] = [];
+                    molid2ss[i].push(resiCoords);
+                  }
+                }
+
+                for(var i in data.brick) {
+                  for(var j = 0, jl = data.brick[i].length; j < jl; ++j) {
+                    var brick = data.brick[i][j];
+
+                    var resiCoords = {};
+
+                    resiCoords.type = 'brick';
+                    resiCoords.startResi = brick.from;
+                    resiCoords.endResi = brick.to;
+
+                    // coords
+                    resiCoords.coords = [];
+                    var start = {}, end = {}, direction = {};
+
+                    start.x = 0.25 * (brick['000'][0] + brick['010'][0] + brick['011'][0] + brick['001'][0]);
+                    start.y = 0.25 * (brick['000'][1] + brick['010'][1] + brick['011'][1] + brick['001'][1]);
+                    start.z = 0.25 * (brick['000'][2] + brick['010'][2] + brick['011'][2] + brick['001'][2]);
+
+                    end.x = 0.25 * (brick['100'][0] + brick['110'][0] + brick['111'][0] + brick['101'][0]);
+                    end.y = 0.25 * (brick['100'][1] + brick['110'][1] + brick['111'][1] + brick['101'][1]);
+                    end.z = 0.25 * (brick['100'][2] + brick['110'][2] + brick['111'][2] + brick['101'][2]);
+
+                    direction.x = brick['010'][0] - brick['000'][0];
+                    direction.y = brick['010'][1] - brick['000'][1];
+                    direction.z = brick['010'][2] - brick['000'][2];
+
+                    resiCoords.coords.push(start);
+                    resiCoords.coords.push(end);
+                    resiCoords.coords.push(direction);
+
+                    if(molid2ss[i] === undefined) molid2ss[i] = [];
+                    molid2ss[i].push(resiCoords);
+                  }
+                }
+
+                // sort the arrays
+                for(var i in molid2ss) {
+                    molid2ss[i].sort(function(a, b) {
+                        return parseFloat(a.startResi) - parseFloat(b.startResi);
+                    });
+                }
+
+                // set the center and maxD
+                if(me.icn3d.cnt !== 0) {
+                    var pmin = me.icn3d.pmin;
+                    var pmax = me.icn3d.pmax;
+                    var psum = me.icn3d.center.multiplyScalar(me.icn3d.cnt);
+                    var cnt = me.icn3d.cnt;
+                }
+                else {
+                    var pmin = new THREE.Vector3( 9999, 9999, 9999);
+                    var pmax = new THREE.Vector3(-9999,-9999,-9999);
+                    var psum = new THREE.Vector3();
+                    var cnt = 0;
+                }
+
+                for(var i in molid2ss) {
+                    var pminMolid = new THREE.Vector3( 9999, 9999, 9999);
+                    var pmaxMolid = new THREE.Vector3(-9999,-9999,-9999);
+                    var psumMolid = new THREE.Vector3();
+                    var cntMolid= 0;
+
+                    for(var j = 0, jl = molid2ss[i].length; j < jl; ++j) {
+                        var coord = molid2ss[i][j].coords[0];
+                        pmin.min(coord);
+                        pmax.max(coord);
+                        psum.add(coord);
+
+                        pminMolid.min(coord);
+                        pmaxMolid.max(coord);
+                        psumMolid.add(coord);
+
+                        ++cnt;
+                        ++cntMolid;
+
+                        coord = molid2ss[i][j].coords[1];
+                        pmin.min(coord);
+                        pmax.max(coord);
+                        psum.add(coord);
+
+                        pminMolid.min(coord);
+                        pmaxMolid.max(coord);
+                        psumMolid.add(coord);
+
+                        ++cnt;
+                        ++cntMolid;
+                    }
+
+                    var centerMolid = psumMolid.multiplyScalar(1.0 / cntMolid);
+
+
+                     // add labels for each protein molecule
+                     var label = {}; // Each label contains 'position', 'text', 'color', 'background'
+
+                     var position = new THREE.Vector3();
+                     position.x = centerMolid.x;
+                     position.y = centerMolid.y;
+                     position.z = centerMolid.z;
+
+                     label.position = position;
+
+                     var chain = molid2chain[i];
+                     label.text = chain.substr(chain.indexOf('_') + 1);
+                     label.size = labelsize;
+                     label.color = molid2color[i];
+                     label.background = "#FFFFFF";
+
+                     labels[i] = label;
+                }
+                me.icn3d.maxD = pmax.distanceTo(pmin);
+                me.icn3d.center = psum.multiplyScalar(1.0 / cnt);
+
+                // set the start and end of coils
+                for(var i in molid2ss) {
+                    // skip the first one since its end is the start of the first coil
+                    for(var j = 1, jl = molid2ss[i].length; j < jl; ++j) {
+                        var resiCoords = {};
+
+                        resiCoords.type = 'coil';
+                        resiCoords.startResi = molid2ss[i][j-1].endResi;
+                        resiCoords.endResi = molid2ss[i][j].startResi;
+
+                        resiCoords.coords = [];
+                        resiCoords.coords.push(molid2ss[i][j-1].coords[1]);
+                        resiCoords.coords.push(molid2ss[i][j].coords[0]);
+
+                        //if(molid2ss[i] === undefined) molid2ss[i] = [];
+                        molid2ss[i].push(resiCoords);
+                    }
+                }
+
+                // sort the arrays
+                //for(var i in molid2ss) {
+                //    molid2ss[i].sort(function(a, b) {
+                //        return parseFloat(a.startResi) - parseFloat(b.startResi);
+                //    });
+                //}
+
+                // draw labels
+                // there might be too many labels
+                //me.options['labels'] = 'add labels';
+                me.icn3d.savedLabels = labels;
+
+                me.icn3d.molid2ss = molid2ss;
+                me.icn3d.molid2color = molid2color;
+
+                me.renderStructure(true);
+
+                if(me.cfg.rotate !== undefined) me.rotateStructure(me.cfg.rotate, true);
+
+                //if(me.deferred !== undefined) me.deferred.resolve(); if(me.deferred2 !== undefined) me.deferred2.resolve();
+
+                // show the dialog to select structures
+                $( "#" + me.pre + "dl_filter_table" ).html(html);
+
+                var title = "Select chains to display";
+
+                var width = 250, height = (me.isMobile()) ? 'auto' : 200;
+
+                var position = { my: "left top", at: "left+10 top+93", of: "#" + me.pre + "canvas", collision: "none" };
+
+                window.dialog = $( "#" + me.pre + "dl_filter" ).dialog({
+                  autoOpen: true,
+                  title: title,
+                  height: height,
+                  width: width,
+                  modal: false,
+                  position: position
+                });
+
+                $(".ui-dialog .ui-button span")
+                  .removeClass("ui-icon-closethick")
+                  .addClass("ui-icon-close");
+
+            }
+
+            if(me.cfg.showseq !== undefined && me.cfg.showseq) me.openDialog(me.pre + 'dl_selectresidues', 'Select residues in sequences with coordinates');
+
+            if(me.deferred !== undefined) me.deferred.resolve(); if(me.deferred2 !== undefined) me.deferred2.resolve();
+
+            if(data.atoms === undefined && data.molid2rescount === undefined) {
+                alert('invalid MMDB data.');
+                return false;
+            }
+          }
+        });
+    };
+
+    iCn3DUI.prototype.downloadGi = function (gi) { var me = this;
+        var mmdbid;
+
+        // get mmdbid from gi
+        var uri = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/elink.fcgi?dbfrom=protein&db=structure&linkname=protein_structure_direct&id=" + gi;
+
+        me.icn3d.bCid = undefined;
+
+        me.setLogCommand("load gi " + gi, false);
+
+        $.ajax({
+           url: uri,
+           dataType: 'text',
+           success: function(data) {
+             if(data.indexOf('<Link>') === -1) {
+               alert("There are no MMDB IDs available for the gi " + gi);
+             }
+             else {
+               var linkStr = data.substr(data.indexOf('<Link>'));
+               var start = linkStr.indexOf('<Id>');
+               var end = linkStr.indexOf('</Id>');
+               var mmdbid = linkStr.substr(start + 4, end - start - 4);
+
+               me.inputid = mmdbid;
+
+               me.downloadMmdb(mmdbid);
+             }
+           }
+        });
+    };
+
+    iCn3DUI.prototype.loadAtomDataIn = function (data, id, type, seqalign) { var me = this;
+        me.icn3d.init();
+
+        var pmin = new THREE.Vector3( 9999, 9999, 9999);
+        var pmax = new THREE.Vector3(-9999,-9999,-9999);
+        var psum = new THREE.Vector3();
+
+        var atoms = data.atoms;
+
+        var serial = 0;
+        var prevResi = 0;
+
+        var serial2structure = {}; // for "align" only
+        var mmdbid2pdbid = {}; // for "align" only
+
+        me.pmid = data.pubmedid;
+
+        if(type === 'align') {
+          //serial2structure
+          me.pmid = "";
+          me.icn3d.moleculeTitle = 'Structure Alignment of ';
+
+          for (var i = 0, il = data.aligned_structures.length; i < il; ++i) {
+              var structure = data.aligned_structures[i];
+
+              if(i === 1) {
+                  me.icn3d.secondId = structure.pdbid; // set the second pdbid to add indent in the structure and chain menus
+                  //me.ALTERNATE_STRUCTURE = me.icn3d.secondId;
+              }
+
+              for(var j = structure.range[0]; j <= structure.range[1]; ++j) {
+                  var pdbidTmp = structure.pdbid;
+                  var mmdbidTmp = structure.mmdbid;
+                  serial2structure[j] = pdbidTmp.toString();
+                  mmdbid2pdbid[mmdbidTmp] = pdbidTmp;
+              }
+
+              me.icn3d.moleculeTitle +=  "<a href=\"https://www.ncbi.nlm.nih.gov/structure/?term=" + structure.pdbid.toUpperCase() + "\" target=\"_blank\" style=\"color: #DDD;\">" + structure.pdbid.toUpperCase() + "</a>";
+
+              if(structure.descr !== undefined) me.pmid += structure.descr.pubmedid;
+              if(i === 0) {
+                  me.icn3d.moleculeTitle += " and ";
+                  if(structure.descr !== undefined) me.pmid += "_";
+              }
+          }
+        }
+        else { // mmdbid or mmcif
+              if(data.descr !== undefined) me.icn3d.moleculeTitle += data.descr.name;
+        }
+
+        var molid2chain = {}; // for "mmdbid"
+        var pdbid_molid2chain = {}; // for "align"
+        if(type === 'mmdbid' || type === 'align') {
+          //molid2chain
+          if(type === 'mmdbid') {
+              if(data.molid2chain !== undefined) {
+                  for (var molid in data.molid2chain) {
+                      molid2chain[molid] = data.molid2chain[molid].chain;
+                  }
+              }
+          }
+          else if(type === 'align') {
+              if(data.molid2chain !== undefined) {
+                  for (var mmdbid in data.molid2chain) {
+                    for (var molid in data.molid2chain[mmdbid]) {
+                      pdbid_molid2chain[mmdbid2pdbid[mmdbid] + '_' + molid] = data.molid2chain[mmdbid][molid].chain;
+                      }
+                  }
+              }
+          }
+        }
+
+        var atomid2serial = {};
+        var prevStructureNum = '', prevChainNum = '', prevResidueNum = '';
+        var structureNum = '', chainNum = '', residueNum = '';
+        for (var i in atoms) {
+            ++serial;
+
+            atomid2serial[i] = serial;
+
+            var atm = atoms[i];
+            atm.serial = serial;
+
+            var mmdb_id;
+
+            if(type === 'mmdbid' || type === 'mmcif') {
+              mmdb_id = id; // here mmdb_id is pdbid or mmcif id
+            }
+            else if(type === 'align') {
+              mmdb_id = serial2structure[serial]; // here mmdb_id is pdbid
+            }
+
+            if(atm.chain === undefined && (type === 'mmdbid' || type === 'align')) {
+                if(type === 'mmdbid') {
+                  var molid = atm.ids.m;
+                  atm.chain = (molid2chain[molid] === undefined) ? 'Misc' : molid2chain[molid];
+                }
+                else if(type === 'align') {
+                  var molid = atm.ids.m;
+                  atm.chain = (pdbid_molid2chain[mmdb_id + '_' + molid] === undefined) ? 'Misc' : pdbid_molid2chain[mmdb_id + '_' + molid];
+                }
+            }
+            else {
+              atm.chain = (atm.chain === '') ? 'Misc' : atm.chain;
+            }
+
+            atm.resi = parseInt(atm.resi); // has to be integer
+
+            if(atm.color !== undefined) atm.color = new THREE.Color(atm.color);
+            atm.coord = new THREE.Vector3(atm.coord.x, atm.coord.y, atm.coord.z);
+
+            // mmcif has pre-assigned structure in mmcifparser.cgi output
+            if(type === 'mmdbid' || type === 'align') {
+                atm.structure = mmdb_id;
+            }
+
+            var secondaries = '-';
+            if(atm.ss === 'helix') {
+                secondaries = 'H';
+            }
+            else if(atm.ss === 'sheet') {
+                secondaries = 'E';
+            }
+            else if(atm.ss === 'coil') {
+                secondaries = 'C';
+            }
+            else if(!atm.het && me.icn3d.residueColors.hasOwnProperty(atm.resn.toUpperCase()) ) {
+            //else if(!atm.het) {
+                secondaries = 'C';
+            }
+
+            me.icn3d.secondaries[atm.structure + '_' + atm.chain + '_' + atm.resi] = secondaries;
+
+            pmin.min(atm.coord);
+            pmax.max(atm.coord);
+            psum.add(atm.coord);
+
+            if (atm.mt === 'p' || atm.mt === 'n')
+            {
+                if (atm.mt === 'p') {
+                  me.icn3d.proteins[serial] = 1;
+
+                  if (atm.name === 'CA') me.icn3d.calphas[serial] = 1;
+                  if (atm.name !== 'N' && atm.name !== 'CA' && atm.name !== 'C' && atm.name !== 'O') me.icn3d.sidechains[serial] = 1;
+                }
+                else if (atm.mt === 'n') {
+                  me.icn3d.nucleotides[serial] = 1;
+
+                  if (atm.name == 'P') me.icn3d.nucleotidesP[serial] = 1;
+                }
+
+                me.icn3d.het = false;
+            }
+            else if (atm.mt === 's') { // solvent
+              me.icn3d.water[serial] = 1;
+
+              me.icn3d.het = true;
+            }
+            else if (atm.mt === 'l') { // ligands and ions
+              me.icn3d.ligands[serial] = 1;
+
+              //if (atm.bonds.length === 0) me.icn3d.ions[serial] = 1;
+              if (atm.elem === atm.resn) me.icn3d.ions[serial] = 1;
+
+              me.icn3d.het = true;
+            }
+
+            if(atm.resn.charAt(0) !== ' ' && atm.resn.charAt(1) === ' ') {
+              atm.resn = atm.resn.charAt(0);
+            }
+
+            // double check
+            if (atm.resn == 'HOH') me.icn3d.water[serial] = 1
+
+            me.icn3d.atoms[serial] = atm;
+            me.icn3d.displayAtoms[serial] = 1;
+            me.icn3d.highlightAtoms[serial] = 1;
+
+            // chain level
+            var chainid = atm.structure + '_' + atm.chain;
+            if (me.icn3d.chains[chainid] === undefined) me.icn3d.chains[chainid] = {};
+            me.icn3d.chains[chainid][serial] = 1;
+
+            // residue level
+            var residueid = atm.structure + '_' + atm.chain + '_' + atm.resi;
+            if (me.icn3d.residues[residueid] === undefined) me.icn3d.residues[residueid] = {};
+            me.icn3d.residues[residueid][serial] = 1;
+
+            structureNum = atm.structure;
+            chainNum = structureNum + '_' + atm.chain;
+            residueNum = chainNum + '_' + atm.resi;
+
+            // different residue
+            if(residueNum !== prevResidueNum) {
+                // different chain
+                if(chainNum !== prevChainNum) {
+                    if(serial !== 1) {
+                        if(me.icn3d.structures[prevStructureNum] === undefined) me.icn3d.structures[prevStructureNum] = [];
+                        me.icn3d.structures[prevStructureNum].push(prevChainNum);
+                    }
+                }
+            }
+
+            var oneLetterRes = me.icn3d.residueName2Abbr(atm.resn.substr(0, 3));
+
+            me.icn3d.residueId2Name[residueid] = oneLetterRes;
+
+            if(atm.resi != prevResi) {
+              if(me.icn3d.chainsSeq[chainid] === undefined) me.icn3d.chainsSeq[chainid] = [];
+              if(me.icn3d.chainsAnno[chainid] === undefined ) me.icn3d.chainsAnno[chainid] = [];
+              if(me.icn3d.chainsAnno[chainid][0] === undefined ) me.icn3d.chainsAnno[chainid][0] = [];
+              if(me.icn3d.chainsAnno[chainid][1] === undefined ) me.icn3d.chainsAnno[chainid][1] = [];
+              if(me.icn3d.chainsAnnoTitle[chainid] === undefined ) me.icn3d.chainsAnnoTitle[chainid] = [];
+              if(me.icn3d.chainsAnnoTitle[chainid][0] === undefined ) me.icn3d.chainsAnnoTitle[chainid][0] = [];
+              if(me.icn3d.chainsAnnoTitle[chainid][1] === undefined ) me.icn3d.chainsAnnoTitle[chainid][1] = [];
+
+              var resObject = {};
+              resObject.resi = atm.resi;
+              resObject.name = oneLetterRes;
+
+              var numberStr = '';
+              if(atm.resi % 10 === 0) numberStr = atm.resi.toString();
+
+              me.icn3d.chainsSeq[chainid].push(resObject);
+              me.icn3d.chainsAnno[chainid][0].push(numberStr);
+              me.icn3d.chainsAnno[chainid][1].push(secondaries);
+              me.icn3d.chainsAnnoTitle[chainid][0].push('');
+              me.icn3d.chainsAnnoTitle[chainid][1].push('SS');
+
+              if(type === 'mmdbid' || type === 'align') {
+                    me.icn3d.chainsColor[chainid] = atm.color;
+              }
+            }
+
+            prevResi = atm.resi;
+
+            prevStructureNum = structureNum;
+            prevChainNum = chainNum;
+            prevResidueNum = residueNum;
+        }
+
+        // remove the reference
+        data.atoms = {};
+
+        // add the last residue set
+        if(me.icn3d.structures[structureNum] === undefined) me.icn3d.structures[structureNum] = [];
+        me.icn3d.structures[structureNum].push(chainNum);
+
+        // update bonds info
+        if(type !== 'mmcif') {
+        for (var i in me.icn3d.atoms) {
+            var bondLength = (me.icn3d.atoms[i].bonds === undefined) ? 0 : me.icn3d.atoms[i].bonds.length;
+
+            for(var j = 0; j < bondLength; ++j) {
+                me.icn3d.atoms[i].bonds[j] = atomid2serial[me.icn3d.atoms[i].bonds[j]];
+            }
+        }
+        }
+
+        me.icn3d.cnt = serial;
+
+        me.icn3d.pmin = pmin;
+        me.icn3d.pmax = pmax;
+        me.icn3d.maxD = pmax.distanceTo(pmin);
+        me.icn3d.center = psum.multiplyScalar(1.0 / me.icn3d.cnt);
+
+        if (me.icn3d.maxD < 25) me.icn3d.maxD = 25;
+
+        // set up sequence alignment
+        if(type === 'align' && seqalign !== undefined) {
+          //loadSeqAlignment
+          var alignedAtoms = {};
+          for (var i = 0, il = seqalign.length; i < il; ++i) {
+              // first sequence
+              var alignData = seqalign[i][0];
+              var mmdbid1 = data.aligned_structures[0].pdbid;
+              var molid1 = alignData.mid;
+
+              var chain1 = pdbid_molid2chain[mmdbid1 + '_' + molid1];
+              var chainid1 = mmdbid1 + '_' + chain1;
+
+              var id2aligninfo = {};
+              var start = alignData.mseq.length, end = -1;
+              for(var j = 0, jl = alignData.mseq.length; j < jl; ++j) {
+                  // 0: internal resi id, 1: pdb resi id, 2: resn, 3: aligned or not
+                  //var id = alignData.mseq[j][0];
+                  var resi = alignData.mseq[j][1];
+                  var resn = (alignData.mseq[j][2] === '~') ? '-' : alignData.mseq[j][2];
+                  var aligned = alignData.mseq[j][3]; // 0 or 1
+
+                  if(aligned == 1) {
+                      if(j < start) start = j;
+                      if(j > end) end = j;
+                  }
+
+                  id2aligninfo[j] = {"resi": resi, "resn": resn, "aligned": aligned};
+              }
+
+              // second sequence
+              alignData = seqalign[i][1];
+              var mmdbid2 = data.aligned_structures[1].pdbid;
+              var molid2 = alignData.sid;
+
+              var chain2 = pdbid_molid2chain[mmdbid2 + '_' + molid2];
+              var chainid2 = mmdbid2 + '_' + chain2;
+
+              // annoation title for the master seq only
+              if(me.icn3d.alignChainsAnnoTitle[chainid1] === undefined ) me.icn3d.alignChainsAnnoTitle[chainid1] = [];
+              if(me.icn3d.alignChainsAnnoTitle[chainid1][0] === undefined ) me.icn3d.alignChainsAnnoTitle[chainid1][0] = [];
+              if(me.icn3d.alignChainsAnnoTitle[chainid1][1] === undefined ) me.icn3d.alignChainsAnnoTitle[chainid1][1] = [];
+              if(me.icn3d.alignChainsAnnoTitle[chainid1][2] === undefined ) me.icn3d.alignChainsAnnoTitle[chainid1][2] = [];
+              if(me.icn3d.alignChainsAnnoTitle[chainid1][3] === undefined ) me.icn3d.alignChainsAnnoTitle[chainid1][3] = [];
+              if(me.icn3d.alignChainsAnnoTitle[chainid1][4] === undefined ) me.icn3d.alignChainsAnnoTitle[chainid1][4] = [];
+              if(me.icn3d.alignChainsAnnoTitle[chainid1][5] === undefined ) me.icn3d.alignChainsAnnoTitle[chainid1][5] = [];
+              if(me.icn3d.alignChainsAnnoTitle[chainid1][6] === undefined ) me.icn3d.alignChainsAnnoTitle[chainid1][6] = [];
+
+              // two annotations without titles
+              me.icn3d.alignChainsAnnoTitle[chainid1][0].push("SS");
+              me.icn3d.alignChainsAnnoTitle[chainid1][1].push("");
+              me.icn3d.alignChainsAnnoTitle[chainid1][2].push("");
+              // empty line
+              me.icn3d.alignChainsAnnoTitle[chainid1][3].push("");
+              // 2nd chain title
+              me.icn3d.alignChainsAnnoTitle[chainid1][4].push(chainid2);
+              // master chain title
+              me.icn3d.alignChainsAnnoTitle[chainid1][5].push(chainid1);
+              // empty line
+              me.icn3d.alignChainsAnnoTitle[chainid1][6].push("");
+
+              var alignIndex = 1;
+              //for(var j = 0, jl = alignData.sseq.length; j < jl; ++j) {
+              for(var j = start; j <= end; ++j) {
+                  // 0: internal resi id, 1: pdb resi id, 2: resn, 3: aligned or not
+                  //var id = alignData.sseq[j][0];
+                  var resi = alignData.sseq[j][1];
+                  var resn = (alignData.sseq[j][2] === '~') ? '-' : alignData.sseq[j][2];
+                  var aligned = id2aligninfo[j].aligned + alignData.sseq[j][3]; // 0 or 2
+
+                  var color;
+                  if(aligned === 2) { // aligned
+                      if(id2aligninfo[j].resn === resn) {
+                          color = '#F00';
+                      }
+                      else {
+                          color = '#00F';
+                      }
+
+                      alignedAtoms = me.icn3d.unionHash(alignedAtoms, me.icn3d.residues[chainid1 + '_' + id2aligninfo[j].resi]);
+                      alignedAtoms = me.icn3d.unionHash(alignedAtoms, me.icn3d.residues[chainid2 + '_' + resi]);
+                  }
+                  else {
+                      color = '#000';
+                  }
+
+                  // chain1
+                  if(me.icn3d.alignChainsSeq[chainid1] === undefined) me.icn3d.alignChainsSeq[chainid1] = [];
+
+                  var resObject = {};
+                  resObject.mmdbid = mmdbid1;
+                  resObject.chain = chain1;
+                  resObject.resi = id2aligninfo[j].resi;
+                  resObject.resn = id2aligninfo[j].resn;
+                  resObject.aligned = aligned;
+                  // resi will be empty if there is no coordinates
+                  resObject.color = (resObject.resi === '') ? '#ccc' : color;
+
+                  me.icn3d.alignChainsSeq[chainid1].push(resObject);
+
+                  if(id2aligninfo[j].resi !== '') {
+                      if(me.icn3d.alignChains[chainid1] === undefined) me.icn3d.alignChains[chainid1] = {};
+                      $.extend(me.icn3d.alignChains[chainid1], me.icn3d.residues[chainid1 + '_' + id2aligninfo[j].resi] );
+                  }
+
+                  // chain2
+                  if(me.icn3d.alignChainsSeq[chainid2] === undefined) me.icn3d.alignChainsSeq[chainid2] = [];
+
+                  resObject = {};
+                  resObject.mmdbid = mmdbid2;
+                  resObject.chain = chain2;
+                  resObject.resi = resi;
+                  resObject.resn = resn;
+                  resObject.aligned = aligned;
+                  // resi will be empty if there is no coordinates
+                  resObject.color = (resObject.resi === '') ? '#ccc' : color;
+
+                  me.icn3d.alignChainsSeq[chainid2].push(resObject);
+
+                  if(resObject.resi !== '') {
+                      if(me.icn3d.alignChains[chainid2] === undefined) me.icn3d.alignChains[chainid2] = {};
+                      $.extend(me.icn3d.alignChains[chainid2], me.icn3d.residues[chainid2 + '_' + resi] );
+                  }
+
+                  // annotation is for the master seq only
+                  if(me.icn3d.alignChainsAnno[chainid1] === undefined ) me.icn3d.alignChainsAnno[chainid1] = [];
+                  if(me.icn3d.alignChainsAnno[chainid1][0] === undefined ) me.icn3d.alignChainsAnno[chainid1][0] = [];
+                  if(me.icn3d.alignChainsAnno[chainid1][1] === undefined ) me.icn3d.alignChainsAnno[chainid1][1] = [];
+                  if(me.icn3d.alignChainsAnno[chainid1][2] === undefined ) me.icn3d.alignChainsAnno[chainid1][2] = [];
+                  if(j === start) {
+                      // empty line
+                      if(me.icn3d.alignChainsAnno[chainid1][3] === undefined ) me.icn3d.alignChainsAnno[chainid1][3] = [];
+                      // 2nd chain title
+                      if(me.icn3d.alignChainsAnno[chainid1][4] === undefined ) me.icn3d.alignChainsAnno[chainid1][4] = [];
+                      // master chain title
+                      if(me.icn3d.alignChainsAnno[chainid1][5] === undefined ) me.icn3d.alignChainsAnno[chainid1][5] = [];
+                      // empty line
+                      if(me.icn3d.alignChainsAnno[chainid1][6] === undefined ) me.icn3d.alignChainsAnno[chainid1][6] = [];
+
+                      me.icn3d.alignChainsAnno[chainid1][3].push('');
+                      me.icn3d.alignChainsAnno[chainid1][4].push(me.icn3d.pdbid_chain2title[chainid2]);
+                      me.icn3d.alignChainsAnno[chainid1][5].push(me.icn3d.pdbid_chain2title[chainid1]);
+                      me.icn3d.alignChainsAnno[chainid1][6].push('');
+                    }
+
+                  var residueid = chainid1 + '_' + id2aligninfo[j].resi;
+                  var ss = me.icn3d.secondaries[residueid];
+                  if(ss !== undefined) {
+                      me.icn3d.alignChainsAnno[chainid1][0].push(ss);
+                  }
+                  else {
+                      me.icn3d.alignChainsAnno[chainid1][0].push('-');
+                  }
+
+                  var symbol = '.';
+                  if(alignIndex % 5 === 0) symbol = '*';
+                  if(alignIndex % 10 === 0) symbol = '|';
+                  me.icn3d.alignChainsAnno[chainid1][1].push(symbol); // symbol: | for 10th, * for 5th, . for rest
+
+                  var numberStr = '';
+                  if(alignIndex % 10 === 0) numberStr = alignIndex.toString();
+                  me.icn3d.alignChainsAnno[chainid1][2].push(numberStr); // symbol: 10, 20, etc, empty for rest
+
+                  ++alignIndex;
+              } // end for(var j
+          } // end for(var i
+
+          // assign white color to all unaligned atoms
+          var color = new THREE.Color("#FFFFFF");
+          for(var i in me.icn3d.atoms) {
+			  if(!alignedAtoms.hasOwnProperty(i)) {
+				  me.icn3d.atoms[i].color = color;
+			  }
+		  }
+
+          seqalign = {};
+        } // if(align
+
+        me.showTitle();
+
+        data = {};
+    };
+
