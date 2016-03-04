@@ -148,7 +148,6 @@ body {font-family: Verdana, Arial, Helvetica, sans-serif;}
 </td>
 
 <td valign="top">
-<a href="#rotateStructure">rotateStructure</a><br>
 <a href="#rotateUp">rotateUp</a><br>
 <a href="#saveFile">saveFile</a><br>
 
@@ -433,7 +432,7 @@ We provided two versions of iCn3D widgets: <a href="index.html?mmdbid=2por">simp
 <table><tr valign='top'><th>Parameter</th><th>Simple interface<br/>(index.html)</th><th>Advanced interface<br/>(full.html)</th><th>Description</th></tr>
 <tr valign='top'><td>pdbid</td><td>Yes</td><td>Yes</td><td>PDB ID, e.g., <a href="full.html?pdbid=2por">?pdbid=2por</a></td></tr>
 <tr valign='top'><td>mmcif</td><td>Yes</td><td>Yes</td><td>mmCIF ID, e.g., <a href="full.html?mmcif=2por">?mmcif=2por</a></td></tr>
-<tr valign='top'><td>mmdbid</td><td>Yes</td><td>Yes</td><td>NCBI MMDB ID, e.g., <a href="full.html?mmdbid=2por">?mmdbid=2por</a></td></tr>
+<tr valign='top'><td>mmdbid</td><td>Yes</td><td>Yes</td><td>NCBI MMDB ID or PDB ID, e.g., <a href="full.html?mmdbid=2por">?mmdbid=2por</a></td></tr>
 <tr valign='top'><td>gi</td><td>Yes</td><td>Yes</td><td>NCBI protein gi number, e.g., <a href="full.html?gi=827343227">?gi=827343227</a></td></tr>
 <tr valign='top'><td>cid</td><td>Yes</td><td>Yes</td><td>PubChem Compound ID, e.g., <a href="full.html?cid=2244">?cid=2244</a></td></tr>
 <tr valign='top'><td>width</td><td>Yes</td><td>Yes</td><td>Width of the structure image. It can be percentage such as '100%', or pixel values such as 400. The default is '100%'.</td></tr>
@@ -536,8 +535,8 @@ Different selections can be concatenated using semicolon, e.g., ":1-10; :Lys" se
 <tr><td><span class="indent">ribbon:</span></td>             <td>style protein ribbon</td></tr>
 <tr><td><span class="indent">strand:</span></td>             <td>style protein strand</td></tr>
 <tr><td><span class="indent">cylinder &amp; plate:</span></td>   <td>style protein cylinder &amp; plate</td></tr>
-<tr><td><span class="indent">C alpha trace:</span></td>      <td>style protein C alpha trace</td></tr>
-<tr><td><span class="indent">B factor tube:</span></td>      <td>style protein B factor tube</td></tr>
+<tr><td><span class="indent">c alpha trace:</span></td>      <td>style protein c alpha trace</td></tr>
+<tr><td><span class="indent">b factor tube:</span></td>      <td>style protein b factor tube</td></tr>
 <tr><td><span class="indent">lines:</span></td>              <td>style protein lines</td></tr>
 <tr><td><span class="indent">stick:</span></td>              <td>style protein stick</td></tr>
 <tr><td><span class="indent">ball &amp; stick:</span></td>       <td>style protein ball &amp; stick</td></tr>
@@ -695,7 +694,7 @@ Different selections can be concatenated using semicolon, e.g., ":1-10; :Lys" se
 
         color: color,           // optional, used to assign atom color, default is grey
         style: style,           // optional, used to assign atom style as one of 13 styles: ribbon, strand, cylinder &amp; plate, nucleotide cartoon,
-                                //     phosphorus trace, C alpha trace, B factor tube, lines, stick, ball &amp; stick, sphere, dot, nothing
+                                //     phosphorus trace, c alpha trace, b factor tube, lines, stick, ball &amp; stick, sphere, dot, nothing
         het: false,             // optional, used to determine ligands, water, ions, etc
         resn: resn,             // optional, used to determine protein or nucleotide
         b: b,                   // optional, used to draw B-factor tube
@@ -716,16 +715,16 @@ Different selections can be concatenated using semicolon, e.g., ":1-10; :Lys" se
         center: psum.multiplyScalar(1.0 / cnt);  // REQUIRED, center position of the structure
 
         highlightAtoms: {}; // OPTIONAL, atoms used to highlight: atom index -&gt; 1
-        structures: {};     // OPTIONAL, molecule name -&gt; array of chains
-        chains: {};         // OPTIONAL, molecule_chain name-&gt; (atom index -&gt; 1)
-        residues: {};       // OPTIONAL, molecule_chain_resi name-&gt; (atom index -&gt; 1)
+        structures: {};     // OPTIONAL, structure name -&gt; array of chains
+        chains: {};         // OPTIONAL, structure_chain name-&gt; (atom index -&gt; 1)
+        residues: {};       // OPTIONAL, structure_chain_resi name-&gt; (atom index -&gt; 1)
 
-        chainsSeq: {};      // OPTIONAL, molecule_chain name -&gt; array of residue object: {"name":[residue name], "resi": [residue number]}
-        chainsAnno: {};     // OPTIONAL, molecule_chain name -&gt; array of annotation
+        chainsSeq: {};      // OPTIONAL, structure_chain name -&gt; array of residue object: {"name":[residue name], "resi": [residue number]}
+        chainsAnno: {};     // OPTIONAL, structure_chain name -&gt; array of annotation
         chainsAnnoTitle: [];// the title for the array of annotation.
         moleculeTitle: "";  // OPTIONAL, ID and name
         hbondpoints: [];    // OPTIONAL, array of positions for hydrogen bond
-        residueId2Name: {}; // OPTIONAL, molecule_chain_resi -&gt; one letter abbreviation
+        residueId2Name: {}; // OPTIONAL, structure_chain_resi -&gt; one letter abbreviation
 
         proteins: {};       // OPTIONAL, proteins: atom index -&gt; 1
         calphas: {};        // OPTIONAL, protein C alphas: atom index -&gt; 1
@@ -748,7 +747,7 @@ Different selections can be concatenated using semicolon, e.g., ":1-10; :Lys" se
           options['camera']             = 'perspective';        //perspective, orthographic
           options['background']         = 'black';              //black, grey, white
           options['color']              = 'spectrum';           //spectrum, secondary structure, charge, chain, residue, atom, red, green, blue, magenta, yellow, cyan, white, grey, custom
-          options['secondary']          = 'ribbon';             //ribbon, strand, cylinder &amp; plate, C alpha trace, B factor tube, lines, stick, ball &amp; stick, sphere, nothing
+          options['secondary']          = 'ribbon';             //ribbon, strand, cylinder &amp; plate, c alpha trace, b factor tube, lines, stick, ball &amp; stick, sphere, nothing
           options['sidechains']         = 'nothing';            //lines, stick, ball &amp; stick, sphere, nothing
           options['nucleotides']        = 'phosphorus trace';   //cartoon, phosphorus trace, lines, stick, ball &amp; stick, sphere, nothing
           options['ligands']            = 'stick';              //line, stick, ball &amp; stick, sphere, nothing
@@ -909,10 +908,6 @@ Rotate the structure certain degree to the left, e.g., 5 degree. <br>
 <br>
 <a name="rotateRight"></a><b>rotateRight(degree)</b> <a href="#Top"><span class="top">&nbsp;&nbsp;&nbsp;</span></a><br>
 Rotate the structure certain degree to the right, e.g., 5 degree. <br>
-<br>
-
-<a name="rotateStructure"></a><b>rorotateStructure()</b> <a href="#Top"><span class="top">&nbsp;&nbsp;&nbsp;</span></a><br>
-Rotate the structure automatically when the structure is loaded. <br>
 <br>
 
 <a name="rotateUp"></a><b>rotateUp(degree)</b> <a href="#Top"><span class="top">&nbsp;&nbsp;&nbsp;</span></a><br>
@@ -1148,8 +1143,8 @@ Select the complement of the current selection.
 <br><br><a name="setAtomMenu"></a><b>setAtomMenu(commandname)</b> <a href="#Top"><span class="top">&nbsp;&nbsp;&nbsp;</span></a><br>
 Set the atom menu from the saved selection with a defined name "commandname".
 
-<br><br><a name="setChainMenu"></a><b>setChainMenu(bInitial, moleculeArray)</b> <a href="#Top"><span class="top">&nbsp;&nbsp;&nbsp;</span></a><br>
-Set the chain menu from the selected structure menu. "bInitial" is a flag for the initial loading. "moleculeArray" is the array of selected structures.
+<br><br><a name="setChainMenu"></a><b>setChainMenu(bInitial, structureArray)</b> <a href="#Top"><span class="top">&nbsp;&nbsp;&nbsp;</span></a><br>
+Set the chain menu from the selected structure menu. "bInitial" is a flag for the initial loading. "structureArray" is the array of selected structures.
 
 <br><br><a name="setLogCommand"></a><b>setLogCommand(command, bSetCommand)</b> <a href="#Top"><span class="top">&nbsp;&nbsp;&nbsp;</span></a><br>
 Show the input command in log. If "bSetCommand" is true, the command will be saved in the state file as well.
@@ -1160,8 +1155,8 @@ Modify the <a href="#DisplayOptions">display options</a>, e.g., setOption('color
 <br><br><a name="setResidueMenu"></a><b>setResidueMenu(commandname)</b> <a href="#Top"><span class="top">&nbsp;&nbsp;&nbsp;</span></a><br>
 Set the residue menu from the saved selection with a defined name "commandname".
 
-<br><br><a name="setStructureMenu"></a><b>setStructureMenu(bInitial, moleculeArray)</b> <a href="#Top"><span class="top">&nbsp;&nbsp;&nbsp;</span></a><br>
-Set the highlightAtoms from the selected structures. "bInitial" is a flag for the initial loading. "moleculeArray" is the array of selected structures.
+<br><br><a name="setStructureMenu"></a><b>setStructureMenu(bInitial, structureArray)</b> <a href="#Top"><span class="top">&nbsp;&nbsp;&nbsp;</span></a><br>
+Set the highlightAtoms from the selected structures. "bInitial" is a flag for the initial loading. "structureArray" is the array of selected structures.
 
 <br><br><a name="setStyle"></a><b>setStyle(selectionType, style)</b> <a href="#Top"><span class="top">&nbsp;&nbsp;&nbsp;</span></a><br>
 Set the styles of predefined "protein", "nucleotides", etc.

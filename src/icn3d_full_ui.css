@@ -4,39 +4,32 @@
 .ui-dialog .ui-dialog-titlebar { padding: 0px 1em 2px 1em; }
 
 accordion {font-size: 14px!important; z-index:1999; }
-//  accordion .ui-icon {display:none;}
 accordion h3 {width: 60px; font-size: 14px!important;}
 accordion > ul {width: 60px;}
 accordion ul ul {width: 160px;}
 accordion ul li {cursor:default!important; white-space:nowrap;}
-accordion ul .link, div .link, accordion li input, accordion li label, button {cursor:pointer!important; } 
+accordion ul .icn3d-link, div .icn3d-link, accordion li input, accordion li label, button {cursor:pointer!important; } 
 
-//.menutext { display:inline-block; width:100%;}
-//a .menutext { text-decoration: none; }
-
-.dl_sequence {background: white; padding-left:10px;}
-.highlightSeq {background-color: #FFFF00;}
+.icn3d-dl_sequence {background: white; padding-left:10px;}
+.icn3d-highlightSeq {background-color: #FFFF00;}
 
 // used to identify a residue when clicking a residue in sequence
-.residue {font-weight:regular;} 
-.residueNum {color: #00FF00; width:30px!important;}
+.icn3d-residue {font-weight:regular;} 
+.icn3d-residueNum {color: #00FF00; width:30px!important;}
 
-.dl_sequence span {display:inline-block; font-size:11px; width:10px;}
+.icn3d-dl_sequence span {display:inline-block; font-size:11px; width:10px;}
 
 button, select, input { font-size: 10px; }
 
-.hidden {display: none;}
-.shown {display: block;}
+.icn3d-hidden {display: none;}
+.icn3d-shown {display: block;}
 
-.seqTitle, .seqTitle2, .annoTitle {display:inline-block; font-size:11px; font-weight:bold; width:60px!important;}
-.seqLine {white-space:nowrap;}
+.icn3d-seqTitle, .icn3d-seqTitle2, .icn3d-annoTitle {display:inline-block; font-size:11px; font-weight:bold; width:60px!important;}
+.icn3d-seqLine {white-space:nowrap;}
 
-#command {z-index:999999; }
-.commandTitle  {font-size: 12px; font-weight:bold; font-family: Verdana, Arial, Helvetica, sans-serif; color: #666666;}
+.icn3d-commandTitle  {font-size: 12px; font-weight:bold; font-family: Verdana, Arial, Helvetica, sans-serif; color: #666666;}
 
-#log {z-index:999999; }
+.icn3d-middleIcon {opacity: 1.0}
+.icn3d-endIcon {opacity: 0.5}
 
-.middleIcon {opacity: 1.0}
-.endIcon {opacity: 0.5}
-
-.box {border-top: solid 1px #ccc; border-right: solid 1px #ccc; border-bottom: solid 1px #ccc; border-left: solid 1px #ccc; padding: 5px;}
+.icn3d-box {border-top: solid 1px #ccc; border-right: solid 1px #ccc; border-bottom: solid 1px #ccc; border-left: solid 1px #ccc; padding: 5px;}

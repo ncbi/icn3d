@@ -35,6 +35,7 @@ if (typeof jQuery === 'undefined') { throw new Error('iCn3D requires jQuery') }
 var iCn3D = function (id) {
     this.REVISION = '1';
     this.id = id;
+
     this.container = $('#' + id);
 
     this.overdraw = 0;
@@ -966,20 +967,20 @@ iCn3D.prototype = {
     },
 
     init: function () {
-        this.structures = {}; // molecule name -> array of chains
-        this.chains = {}; // molecule_chain name -> array of residues
-        this.residues = {}; // molecule_chain_resi name -> atom hash
-        this.secondaries = {}; // molecule_chain_resi name -> secondary structure: 'C', 'H', or 'E'
-        this.alignChains = {}; // molecule_chain name -> atom hash
+        this.structures = {}; // structure name -> array of chains
+        this.chains = {}; // structure_chain name -> array of residues
+        this.residues = {}; // structure_chain_resi name -> atom hash
+        this.secondaries = {}; // structure_chain_resi name -> secondary structure: 'C', 'H', or 'E'
+        this.alignChains = {}; // structure_chain name -> atom hash
 
-        this.chainsSeq = {}; // molecule_chain name -> array of sequence
-        this.chainsColor = {}; // molecule_chain name -> color, show chain color in sequence display for mmdbid and align input
-        this.chainsAnno = {}; // molecule_chain name -> array of array of annotations, such as residue number
-        this.chainsAnnoTitle = {}; // molecule_chain name -> array of array of annotation title
+        this.chainsSeq = {}; // structure_chain name -> array of sequence
+        this.chainsColor = {}; // structure_chain name -> color, show chain color in sequence display for mmdbid and align input
+        this.chainsAnno = {}; // structure_chain name -> array of array of annotations, such as residue number
+        this.chainsAnnoTitle = {}; // structure_chain name -> array of array of annotation title
 
-        this.alignChainsSeq = {}; // molecule_chain name -> array of residue object: {mmdbid, chain, resi, resn, aligned}
-        this.alignChainsAnno = {}; // molecule_chain name -> array of array of annotations, such as residue number
-        this.alignChainsAnnoTitle = {}; // molecule_chain name -> array of array of annotation title
+        this.alignChainsSeq = {}; // structure_chain name -> array of residue object: {mmdbid, chain, resi, resn, aligned}
+        this.alignChainsAnno = {}; // structure_chain name -> array of array of annotations, such as residue number
+        this.alignChainsAnnoTitle = {}; // structure_chain name -> array of array of annotation title
 
         this.displayAtoms = {}; // show selected atoms
         this.highlightAtoms = {}; // used to change color or dislay type for certain atoms
@@ -992,7 +993,7 @@ iCn3D.prototype = {
         this.definedNames2Descr = {}; // custom defined selection name -> description
         this.definedNames2Command = {}; // custom defined selection name -> command
 
-        this.residueId2Name = {}; // molecule_chain_resi -> one letter abbreviation
+        this.residueId2Name = {}; // structure_chain_resi -> one letter abbreviation
 
         //this.moleculeTitle = "";
 
@@ -1018,7 +1019,7 @@ iCn3D.prototype = {
 
         this.atomPrevColors = {};
 
-        this.style2atoms = {}; // style -> atom hash, 13 styles: ribbon, strand, cylinder & plate, nucleotide cartoon, phosphorus trace, C alpha trace, B factor tube, lines, stick, ball & stick, sphere, dot, nothing
+        this.style2atoms = {}; // style -> atom hash, 13 styles: ribbon, strand, cylinder & plate, nucleotide cartoon, phosphorus trace, c alpha trace, b factor tube, lines, stick, ball & stick, sphere, dot, nothing
         this.labels = []; // a list of labels. Each label contains 'position', 'text', 'size', 'color', 'background'
         this.lines = []; // a list of solid or dashed lines. Each line contains 'position1', 'position2', 'color', and a boolean of 'dashed'
 
@@ -1026,6 +1027,9 @@ iCn3D.prototype = {
 
         this.biomtMatrices = [];
         this.bAssembly = false;
+
+        this.rotateCount = 0;
+        this.rotateCountMax = 30;
     },
 
     // modified from iview (http://istar.cse.cuhk.edu.hk/iview/)
@@ -1238,6 +1242,9 @@ iCn3D.prototype = {
                 }
                 else if(this.atoms[serial].ss === 'sheet') {
                     secondaries = 'E';
+                }
+                else if(this.atoms[serial].ss === 'coil') {
+                    secondaries = 'C';
                 }
                 else if(!this.atoms[serial].het && this.residueColors.hasOwnProperty(this.atoms[serial].resn.toUpperCase()) ) {
                     secondaries = 'C';
@@ -3311,14 +3318,31 @@ iCn3D.prototype = {
         if ( parameters === undefined ) parameters = {};
         var fontface = parameters.hasOwnProperty("fontface") ? parameters["fontface"] : "Arial";
         var fontsize = parameters.hasOwnProperty("fontsize") ? parameters["fontsize"] : 18;
-        var borderThickness = parameters.hasOwnProperty("borderThickness") ? parameters["borderThickness"] : 4;
 
         var a = parameters.hasOwnProperty("alpha") ? parameters["alpha"] : 1.0;
-        var borderColor = parameters.hasOwnProperty("borderColor") ? this.hexToRgb(parameters["borderColor"], a) : { r:0, g:0, b:0, a:1.0 };
-        var backgroundColor = parameters.hasOwnProperty("backgroundColor") ? this.hexToRgb(parameters["backgroundColor"], a) : { r:0, g:0, b:0, a:0.5 };
 
-        a = 1.0;
-        var textColor = parameters.hasOwnProperty("textColor") ? this.hexToRgb(parameters["textColor"], a) : { r:255, g:255, b:0, a:1.0 };
+        var bBkgd = true;
+        var bTopology = false;
+        if(parameters.hasOwnProperty("bTopology") &&  parameters["bTopology"]) {
+			bTopology = true;
+		}
+
+        var backgroundColor, borderColor, borderThickness;
+        if(parameters.hasOwnProperty("backgroundColor") &&  parameters["backgroundColor"] !== undefined) {
+			//backgroundColor = parameters.hasOwnProperty("backgroundColor") ? this.hexToRgb(parameters["backgroundColor"], a) : { r:0, g:0, b:0, a:0.5 };
+			backgroundColor = this.hexToRgb(parameters["backgroundColor"], a);
+			borderColor = parameters.hasOwnProperty("borderColor") ? this.hexToRgb(parameters["borderColor"], a) : { r:0, g:0, b:0, a:1.0 };
+			borderThickness = parameters.hasOwnProperty("borderThickness") ? parameters["borderThickness"] : 4;
+		}
+		else {
+			bBkgd = false;
+			backgroundColor = undefined;
+			borderColor = undefined;
+			borderThickness = 0;
+		}
+
+        var textAlpha = 1.0;
+        var textColor = parameters.hasOwnProperty("textColor") ? this.hexToRgb(parameters["textColor"], textAlpha) : { r:255, g:255, b:0, a:1.0 };
 
         var canvas = document.createElement('canvas');
 
@@ -3330,18 +3354,37 @@ iCn3D.prototype = {
 
         var width = textWidth + 2*borderThickness;
         var height = fontsize + 2*borderThickness;
+        if(bTopology) {
+			if(width > height) {
+				height = width;
+			}
+			else {
+				width = height
+			}
+		}
         canvas.width = width;
         canvas.height = height;
 
         var radius = context.measureText( "M" ).width;
 
-        // background color
-        context.fillStyle   = "rgba(" + backgroundColor.r + "," + backgroundColor.g + "," + backgroundColor.b + "," + backgroundColor.a + ")";
-        // border color
-        context.strokeStyle = "rgba(" + borderColor.r + "," + borderColor.g + "," + borderColor.b + "," + borderColor.a + ")";
+        var factor = 3 * this.maxD / 100;
 
-        context.lineWidth = borderThickness;
-        this.roundRect(context, 0, 0, width, height, radius * 0.3);
+        if(bBkgd) {
+			// background color
+			context.fillStyle   = "rgba(" + backgroundColor.r + "," + backgroundColor.g + "," + backgroundColor.b + "," + backgroundColor.a + ")";
+			// border color
+			context.strokeStyle = "rgba(" + borderColor.r + "," + borderColor.g + "," + borderColor.b + "," + borderColor.a + ")";
+
+			context.lineWidth = borderThickness;
+
+			if(bTopology) {
+				var r = width * 0.35;
+				this.circle(context, 0, 0, width, height, r);
+			}
+			else {
+				this.roundRect(context, 0, 0, width, height, radius * 0.3);
+			}
+		}
 
         // need to redefine again
         context.font = "Bold " + fontsize + "px " + fontface;
@@ -3369,9 +3412,7 @@ iCn3D.prototype = {
 
         var sprite = new THREE.Sprite( spriteMaterial );
 
-        var factor = this.maxD / 100;
-
-        sprite.scale.set(3*factor, 3*factor, 1.0);
+        sprite.scale.set(1.5*factor, factor, 1.0);
 
         return sprite;
     },
@@ -3404,17 +3445,39 @@ iCn3D.prototype = {
         ctx.stroke();
     },
 
+    circle: function (ctx, x, y, w, h, r) {
+        ctx.beginPath();
+        ctx.arc(x+w/2, y+h/2, r, 0, 2*Math.PI, true);
+        ctx.closePath();
+        ctx.fill();
+        ctx.stroke();
+    },
+
     // modified from iview (http://istar.cse.cuhk.edu.hk/iview/)
     createLabelRepresentation: function (labels) {
         for (var i in labels) {
             var label = labels[i];
             // make sure fontsize is a number
 
-            var labelsize = (label.size) ? label.size : this.LABELSIZE;
-            var labelcolor = (label.color) ? label.color : '#ffff00';
-            var labelbackground = (label.background) ? label.background : '#cccccc';
+            var labelsize = (label.size !== undefined) ? label.size : this.LABELSIZE;
+            var labelcolor = (label.color !== undefined) ? label.color : '#ffff00';
+            var labelbackground = (label.background !== undefined) ? label.background : '#cccccc';
+            var labelalpha = (label.alpha !== undefined) ? label.alpha : 1.0;
+            //var labelbackground = (label.background) ? label.background : '#cccccc';
+            // if label.background is undefined, no background will be drawn
+            labelbackground = label.background;
 
-            var bb = this.makeTextSprite(label.text, {fontsize: parseInt(labelsize), textColor: labelcolor, borderColor: labelbackground, backgroundColor: labelbackground});
+            if(labelcolor !== undefined && labelbackground !== undefined && labelcolor.toLowerCase() === labelbackground.toLowerCase()) {
+				labelcolor = "#888888";
+			}
+
+			var bb;
+			if(label.bTopology !== undefined && label.bTopology) {
+				bb = this.makeTextSprite(label.text, {fontsize: parseInt(labelsize), textColor: labelcolor, borderColor: labelbackground, backgroundColor: labelbackground, alpha: labelalpha, bTopology: 1});
+			}
+			else {
+				bb = this.makeTextSprite(label.text, {fontsize: parseInt(labelsize), textColor: labelcolor, borderColor: labelbackground, backgroundColor: labelbackground, alpha: labelalpha, bTopology: 0});
+			}
 
             //bb.position.copy(labelpositions[i]);
             bb.position.set(label.position.x, label.position.y, label.position.z);
@@ -3722,7 +3785,7 @@ iCn3D.prototype = {
 
                 break;
 /*
-            case 'B factor':
+            case 'b factor':
                 var firstAtom = this.getFirstAtomObj(this.atoms);
                 if (!this.middB && firstAtom.b !== undefined) {
                     var minB = 1000, maxB = -1000;
@@ -4070,7 +4133,7 @@ iCn3D.prototype = {
                     var prevResidueid = atom.structure + '_' + atom.chain + '_' + parseInt(atom.resi - 1);
                     var nextResidueid = atom.structure + '_' + atom.chain + '_' + parseInt(atom.resi + 1);
 
-                    //ribbon, strand, cylinder & plate, nucleotide cartoon, phosphorus trace, C alpha trace, B factor tube, lines, stick, ball & stick, sphere, dot
+                    //ribbon, strand, cylinder & plate, nucleotide cartoon, phosphorus trace, c alpha trace, b factor tube, lines, stick, ball & stick, sphere, dot
 
                     if(atom.style === 'cylinder & plate' && atom.ss === 'helix') { // no way to highlight part of cylinder
                         for(var i in this.residues[residueid]) {
@@ -4079,7 +4142,7 @@ iCn3D.prototype = {
                             this.createBox(atom, undefined, undefined, scale, undefined, bHighlight);
                         }
                     }
-                    else if( (atom.style === 'ribbon' && atom.ss === 'coil') || (atom.style === 'strand' && atom.ss === 'coil') || atom.style === 'phosphorus trace' || atom.style === 'C alpha trace' || atom.style === 'B factor tube' || (atom.style === 'cylinder & plate' && atom.ss !== 'helix') ) {
+                    else if( (atom.style === 'ribbon' && atom.ss === 'coil') || (atom.style === 'strand' && atom.ss === 'coil') || atom.style === 'phosphorus trace' || atom.style === 'c alpha trace' || atom.style === 'b factor tube' || (atom.style === 'cylinder & plate' && atom.ss !== 'helix') ) {
                         var bAddResidue = false;
                         // add the next residue with same style
                         if(!bAddResidue && this.residues.hasOwnProperty(nextResidueid)) {
@@ -4136,7 +4199,7 @@ iCn3D.prototype = {
         }
 
         for(var style in this.style2atoms) {
-          // 13 styles: ribbon, strand, cylinder & plate, nucleotide cartoon, phosphorus trace, C alpha trace, B factor tube, lines, stick, ball & stick, sphere, dot, nothing
+          // 13 styles: ribbon, strand, cylinder & plate, nucleotide cartoon, phosphorus trace, c alpha trace, b factor tube, lines, stick, ball & stick, sphere, dot, nothing
           atomHash = this.style2atoms[style];
 
           if(style === 'ribbon') {
@@ -4159,10 +4222,10 @@ iCn3D.prototype = {
           else if(style === 'phosphorus lines') {
             this.createCylinderCurve(this.hash2Atoms(atomHash), 'P', 0.2, true, bHighlight);
           }
-          else if(style === 'C alpha trace') {
+          else if(style === 'c alpha trace') {
             this.createCylinderCurve(this.hash2Atoms(atomHash), 'CA', 0.2, false, bHighlight);
           }
-          else if(style === 'B factor tube') {
+          else if(style === 'b factor tube') {
             this.createTube(this.hash2Atoms(atomHash), 'CA', null, bHighlight);
           }
           else if(style === 'lines') {
@@ -4245,39 +4308,46 @@ iCn3D.prototype = {
 
     // set atom style when loading a structure
     setAtomStyleByOptions: function (options) {
+		var selectedAtoms;
         if (options.secondary !== undefined) {
-            for(var i in this.proteins) {
+			selectedAtoms = this.intersectHash(this.highlightAtoms, this.proteins);
+            for(var i in selectedAtoms) {
               this.atoms[i].style = options.secondary.toLowerCase();
             }
         }
 
         // side chain overwrite th erotein style
         if (options.sidechains !== undefined) {
-            for(var i in this.sidechains) {
+			selectedAtoms = this.intersectHash(this.highlightAtoms, this.sidechains);
+            for(var i in selectedAtoms) {
               this.atoms[i].style = options.sidechains.toLowerCase();
             }
         }
 
         if (options.ligands !== undefined) {
-            for(var i in this.ligands) {
+			selectedAtoms = this.intersectHash(this.highlightAtoms, this.ligands);
+            for(var i in selectedAtoms) {
               this.atoms[i].style = options.ligands.toLowerCase();
             }
         }
 
         if (options.ions !== undefined) {
-            for(var i in this.ions) {
+			selectedAtoms = this.intersectHash(this.highlightAtoms, this.ions);
+            for(var i in selectedAtoms) {
               this.atoms[i].style = options.ions.toLowerCase();
             }
         }
 
         if (options.water !== undefined) {
-            for(var i in this.water) {
+			selectedAtoms = this.intersectHash(this.highlightAtoms, this.water);
+            for(var i in selectedAtoms) {
               this.atoms[i].style = options.water.toLowerCase();
             }
         }
 
         if (options.nucleotides !== undefined) {
-            for(var i in this.nucleotides) {
+			selectedAtoms = this.intersectHash(this.highlightAtoms, this.nucleotides);
+            for(var i in selectedAtoms) {
               this.atoms[i].style = options.nucleotides.toLowerCase();
             }
         }

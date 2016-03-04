@@ -1,7 +1,7 @@
 <!DOCTYPE html><html lang="en"><head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <title>iCn3D Struture Viewer</title>
+  <title>iCn3D Structure Viewer</title>
 </head>
 <body>
   <div id="div0"></div>
@@ -65,6 +65,11 @@
       resize = false;
     }
 
+    var rotate = params.rotate;
+    if(rotate === undefined) {
+      rotate = 'right';
+    }
+
     $( document ).ready(function() {
       function setupViewer(idName, idValue) {
         var maxStructure = 1; // show max 1 structures
@@ -87,11 +92,13 @@
               width: width,
               height: height,
               resize: resize,
-              rotate: true
+              rotate: rotate
           };
           cfg[idName] = idArray[i];
 
-          show3DStructure(cfg);
+          var icn3dui = new iCn3DUI(cfg);
+
+          icn3dui.show3DStructure();
         }
       }
 
@@ -103,15 +110,19 @@
 
       // e.g., align=103701,1,4,68563,1,167 [mmdbid1,biounit,molecule,mmdbid2,biounit,molecule]
       if(align !== undefined) {
-          show3DStructure({
+          var cfg = {
               divid: 'div0',
               inpara: inpara,
               width: width,
               height: height,
               resize: resize,
-              rotate: true,
+              rotate: rotate,
               align: align
-          });
+          };
+
+          var icn3dui = new iCn3DUI(cfg);
+
+          icn3dui.show3DStructure();
       }
 
     }); // document ready

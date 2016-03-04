@@ -3,15 +3,16 @@
 .ui-dialog .ui-button { width: 12px; height:12px; margin: -5px 0px 0px 0px;}
 .ui-dialog .ui-dialog-titlebar { padding: 0px 1em 2px 1em; }
 
-.tabBox input, .tabBox select, .tabBox button, .tabBox textarea{border: 1px solid white; background-color: black; color: white;}
-.tabBox option {background-color: black; color: white;}
+.icn3d-tabBox input, .icn3d-tabBox select, .icn3d-tabBox button, .icn3d-tabBox textarea{border: 1px solid white; background-color: black; color: white;}
+.icn3d-tabBox option {background-color: black; color: white;}
 
-.tabBox {position: absolute; left: 10px; top:20px; padding: 0px; color: white; width: 300px; z-index:1;}
-.bottomTab {background-color: black; border: 2px solid white; color: white; padding: 5px 10px 5px 10px; margin: 0px; border-radius: 10px 10px 0px 0px; -webkit-border-radius: 10px 10px 0px 0px; -moz-border-radius: 10px 10px 0px 0px;}
-.insideTab {width: 100%; height: 0px; background-color: rgba(0, 0, 0, 0.5);}
-.option {font-size: 90%; float:left; width:100%; margin-top:6px;}
+.icn3d-tabBox {position: absolute; left: 10px; top:20px; padding: 0px; color: white; width: 300px; z-index:1;}
+.icn3d-bottomTab {background-color: black; border: 2px solid white; color: white; padding: 5px 10px 5px 10px; margin: 0px; border-radius: 10px 10px 0px 0px; -webkit-border-radius: 10px 10px 0px 0px; -moz-border-radius: 10px 10px 0px 0px;}
+.icn3d-insideTab {width: 100%; height: 0px; background-color: rgba(0, 0, 0, 0.5);}
+.icn3d-option {font-size: 90%; float:left; width:100%; margin-top:6px;}
+.icn3d-insideTab div.option b {color: white!important;}
 
-.hidden {display: none;}
-.shown {display: block;}
+.icn3d-hidden {display: none;}
+.icn3d-shown {display: block;}
 
-.box {border-top: solid 1px #ccc; border-right: solid 1px #ccc; border-bottom: solid 1px #ccc; border-left: solid 1px #ccc; padding: 5px;}
+.icn3d-box {border-top: solid 1px #ccc; border-right: solid 1px #ccc; border-bottom: solid 1px #ccc; border-left: solid 1px #ccc; padding: 5px;}
