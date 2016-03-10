@@ -109,6 +109,7 @@ var iCn3D = function (id) {
 
     // these variables will not be cleared for each structure
     this.commands = []; // a list of commands, ordered by the operation steps. Each operation will be converted into a command. this command list can be used to go backward and forward.
+    this.optionsHistory = []; // a list of options corresponding to this.commands.
     this.logs = []; // a list of comands and other logs, ordered by the operation steps.
 
     this.bRender = true; // a flag to turn off rendering when loading state file
@@ -141,7 +142,7 @@ var iCn3D = function (id) {
         background: 'black',
         color: 'spectrum',
         sidechains: 'nothing',
-        secondary: 'cylinder & plate',
+        proteins: 'cylinder & plate',
         surface: 'nothing',
         wireframe: 'no',
         opacity: '0.8',
@@ -3322,27 +3323,28 @@ iCn3D.prototype = {
         var a = parameters.hasOwnProperty("alpha") ? parameters["alpha"] : 1.0;
 
         var bBkgd = true;
-        var bTopology = false;
-        if(parameters.hasOwnProperty("bTopology") &&  parameters["bTopology"]) {
-			bTopology = true;
-		}
+        var bSchematic = false;
+        if(parameters.hasOwnProperty("bSchematic") &&  parameters["bSchematic"]) {
+            bSchematic = true;
+        }
 
         var backgroundColor, borderColor, borderThickness;
         if(parameters.hasOwnProperty("backgroundColor") &&  parameters["backgroundColor"] !== undefined) {
-			//backgroundColor = parameters.hasOwnProperty("backgroundColor") ? this.hexToRgb(parameters["backgroundColor"], a) : { r:0, g:0, b:0, a:0.5 };
-			backgroundColor = this.hexToRgb(parameters["backgroundColor"], a);
-			borderColor = parameters.hasOwnProperty("borderColor") ? this.hexToRgb(parameters["borderColor"], a) : { r:0, g:0, b:0, a:1.0 };
-			borderThickness = parameters.hasOwnProperty("borderThickness") ? parameters["borderThickness"] : 4;
-		}
-		else {
-			bBkgd = false;
-			backgroundColor = undefined;
-			borderColor = undefined;
-			borderThickness = 0;
-		}
+            //backgroundColor = parameters.hasOwnProperty("backgroundColor") ? this.hexToRgb(parameters["backgroundColor"], a) : { r:0, g:0, b:0, a:0.5 };
+            backgroundColor = this.hexToRgb(parameters["backgroundColor"], a);
+
+            borderColor = parameters.hasOwnProperty("borderColor") ? this.hexToRgb(parameters["borderColor"], a) : { r:0, g:0, b:0, a:1.0 };
+            borderThickness = parameters.hasOwnProperty("borderThickness") ? parameters["borderThickness"] : 4;
+        }
+        else {
+            bBkgd = false;
+            backgroundColor = undefined;
+            borderColor = undefined;
+            borderThickness = 0;
+        }
 
         var textAlpha = 1.0;
-        var textColor = parameters.hasOwnProperty("textColor") ? this.hexToRgb(parameters["textColor"], textAlpha) : { r:255, g:255, b:0, a:1.0 };
+        var textColor = parameters.hasOwnProperty("textColor") &&  parameters["textColor"] !== undefined ? this.hexToRgb(parameters["textColor"], textAlpha) : { r:255, g:255, b:0, a:1.0 };
 
         var canvas = document.createElement('canvas');
 
@@ -3354,14 +3356,14 @@ iCn3D.prototype = {
 
         var width = textWidth + 2*borderThickness;
         var height = fontsize + 2*borderThickness;
-        if(bTopology) {
-			if(width > height) {
-				height = width;
-			}
-			else {
-				width = height
-			}
-		}
+        if(bSchematic) {
+            if(width > height) {
+                height = width;
+            }
+            else {
+                width = height
+            }
+        }
         canvas.width = width;
         canvas.height = height;
 
@@ -3370,21 +3372,21 @@ iCn3D.prototype = {
         var factor = 3 * this.maxD / 100;
 
         if(bBkgd) {
-			// background color
-			context.fillStyle   = "rgba(" + backgroundColor.r + "," + backgroundColor.g + "," + backgroundColor.b + "," + backgroundColor.a + ")";
-			// border color
-			context.strokeStyle = "rgba(" + borderColor.r + "," + borderColor.g + "," + borderColor.b + "," + borderColor.a + ")";
+            // background color
+            context.fillStyle   = "rgba(" + backgroundColor.r + "," + backgroundColor.g + "," + backgroundColor.b + "," + backgroundColor.a + ")";
+            // border color
+            context.strokeStyle = "rgba(" + borderColor.r + "," + borderColor.g + "," + borderColor.b + "," + borderColor.a + ")";
 
-			context.lineWidth = borderThickness;
+            context.lineWidth = borderThickness;
 
-			if(bTopology) {
-				var r = width * 0.35;
-				this.circle(context, 0, 0, width, height, r);
-			}
-			else {
-				this.roundRect(context, 0, 0, width, height, radius * 0.3);
-			}
-		}
+            if(bSchematic) {
+                var r = width * 0.35;
+                this.circle(context, 0, 0, width, height, r);
+            }
+            else {
+                this.roundRect(context, 0, 0, width, height, radius * 0.3);
+            }
+        }
 
         // need to redefine again
         context.font = "Bold " + fontsize + "px " + fontface;
@@ -3468,16 +3470,16 @@ iCn3D.prototype = {
             labelbackground = label.background;
 
             if(labelcolor !== undefined && labelbackground !== undefined && labelcolor.toLowerCase() === labelbackground.toLowerCase()) {
-				labelcolor = "#888888";
-			}
+                labelcolor = "#888888";
+            }
 
-			var bb;
-			if(label.bTopology !== undefined && label.bTopology) {
-				bb = this.makeTextSprite(label.text, {fontsize: parseInt(labelsize), textColor: labelcolor, borderColor: labelbackground, backgroundColor: labelbackground, alpha: labelalpha, bTopology: 1});
-			}
-			else {
-				bb = this.makeTextSprite(label.text, {fontsize: parseInt(labelsize), textColor: labelcolor, borderColor: labelbackground, backgroundColor: labelbackground, alpha: labelalpha, bTopology: 0});
-			}
+            var bb;
+            if(label.bSchematic !== undefined && label.bSchematic) {
+                bb = this.makeTextSprite(label.text, {fontsize: parseInt(labelsize), textColor: labelcolor, borderColor: labelbackground, backgroundColor: labelbackground, alpha: labelalpha, bSchematic: 1});
+            }
+            else {
+                bb = this.makeTextSprite(label.text, {fontsize: parseInt(labelsize), textColor: labelcolor, borderColor: labelbackground, backgroundColor: labelbackground, alpha: labelalpha, bSchematic: 0});
+            }
 
             //bb.position.copy(labelpositions[i]);
             bb.position.set(label.position.x, label.position.y, label.position.z);
@@ -4308,53 +4310,56 @@ iCn3D.prototype = {
 
     // set atom style when loading a structure
     setAtomStyleByOptions: function (options) {
-		var selectedAtoms;
-        if (options.secondary !== undefined) {
-			selectedAtoms = this.intersectHash(this.highlightAtoms, this.proteins);
+        if(options === undefined) options = this.options;
+
+        var selectedAtoms;
+
+        if (options.proteins !== undefined) {
+            selectedAtoms = this.intersectHash(this.highlightAtoms, this.proteins);
             for(var i in selectedAtoms) {
-              this.atoms[i].style = options.secondary.toLowerCase();
+              this.atoms[i].style = options.proteins.toLowerCase();
             }
         }
 
         // side chain overwrite th erotein style
         if (options.sidechains !== undefined) {
-			selectedAtoms = this.intersectHash(this.highlightAtoms, this.sidechains);
+            selectedAtoms = this.intersectHash(this.highlightAtoms, this.sidechains);
             for(var i in selectedAtoms) {
               this.atoms[i].style = options.sidechains.toLowerCase();
             }
         }
 
         if (options.ligands !== undefined) {
-			selectedAtoms = this.intersectHash(this.highlightAtoms, this.ligands);
+            selectedAtoms = this.intersectHash(this.highlightAtoms, this.ligands);
             for(var i in selectedAtoms) {
               this.atoms[i].style = options.ligands.toLowerCase();
             }
         }
 
         if (options.ions !== undefined) {
-			selectedAtoms = this.intersectHash(this.highlightAtoms, this.ions);
+            selectedAtoms = this.intersectHash(this.highlightAtoms, this.ions);
             for(var i in selectedAtoms) {
               this.atoms[i].style = options.ions.toLowerCase();
             }
         }
 
         if (options.water !== undefined) {
-			selectedAtoms = this.intersectHash(this.highlightAtoms, this.water);
+            selectedAtoms = this.intersectHash(this.highlightAtoms, this.water);
             for(var i in selectedAtoms) {
               this.atoms[i].style = options.water.toLowerCase();
             }
         }
 
         if (options.nucleotides !== undefined) {
-			selectedAtoms = this.intersectHash(this.highlightAtoms, this.nucleotides);
+            selectedAtoms = this.intersectHash(this.highlightAtoms, this.nucleotides);
             for(var i in selectedAtoms) {
               this.atoms[i].style = options.nucleotides.toLowerCase();
             }
         }
     },
 
-    rebuildScene: function (options) {
-        jQuery.extend(this.options, options);
+    rebuildScene: function (options) { var me = this;
+        jQuery.extend(me.options, options);
 
         if(this.scene !== undefined) {
             for(var i = this.scene.children.length - 1; i >= 0; i--) {
@@ -4814,7 +4819,8 @@ iCn3D.prototype = {
                this.setCamera();
        }
 
-//       this.applyTransformation(this._zoomFactor, this.mouseChange, this.quaternion);
-       this.render();
+       //this.applyTransformation(this._zoomFactor, this.mouseChange, this.quaternion);
+       //this.render();
+       this.draw();
     }
 };

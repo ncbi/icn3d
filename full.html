@@ -1,7 +1,12 @@
 <!DOCTYPE html><html lang="en"><head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <title>iCn3D Structure Viewer</title>
+<meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+<meta name="description" content="iCn3D Structure Viewer">
+<meta name="ncbi_db" content="structure">
+<meta name="keywords" content="NCBI, Structure, iCn3D, 3D, Viewer, WebGL, three.js, sequence, chemical">
+<meta name="robots" content="index,follow,noarchive">
+<title>iCn3D Structure Viewer</title>
 </head>
 <body>
   <div id="div0"></div>
@@ -37,9 +42,9 @@
 
     // for mmdb structures, pass the parameters after the first "&" sign
     var inpara = "";
-    var ampPos = document.URL.indexOf("&");
+    var ampPos = document.URL.indexOf("?");
     if(ampPos !== -1) {
-      inpara = document.URL.substr(ampPos);
+      inpara = "&" + document.URL.substr(ampPos + 1);
     }
 
     var gi = params.gi;

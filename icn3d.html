@@ -155,7 +155,6 @@ body {font-family: Verdana, Arial, Helvetica, sans-serif;}
 <a href="#setCamera">setCamera</a><br>
 <a href="#setColorByOptions">setColorByOptions</a><br>
 
-<a href="#setStylesForAtoms">setStylesForAtoms</a><br>
 <a href="#setOutlineColor">setOutlineColor</a><br>
 
 <a href="#showPicking">showPicking</a><br>
@@ -532,16 +531,16 @@ Different selections can be concatenated using semicolon, e.g., ":1-10; :Lys" se
 <a name="style"></a><b>3. Style</b> <a href="#Top"><span class="top">&nbsp;&nbsp;&nbsp;</span></a><br>
 <table>
 <tbody><tr><td colspan="2">a) Style -&gt; Protein</td></tr>
-<tr><td><span class="indent">ribbon:</span></td>             <td>style protein ribbon</td></tr>
-<tr><td><span class="indent">strand:</span></td>             <td>style protein strand</td></tr>
-<tr><td><span class="indent">cylinder &amp; plate:</span></td>   <td>style protein cylinder &amp; plate</td></tr>
-<tr><td><span class="indent">c alpha trace:</span></td>      <td>style protein c alpha trace</td></tr>
-<tr><td><span class="indent">b factor tube:</span></td>      <td>style protein b factor tube</td></tr>
-<tr><td><span class="indent">lines:</span></td>              <td>style protein lines</td></tr>
-<tr><td><span class="indent">stick:</span></td>              <td>style protein stick</td></tr>
-<tr><td><span class="indent">ball &amp; stick:</span></td>       <td>style protein ball &amp; stick</td></tr>
-<tr><td><span class="indent">sphere:</span></td>             <td>style protein sphere</td></tr>
-<tr><td><span class="indent">hide:</span></td>            <td>style protein nothing</td></tr>
+<tr><td><span class="indent">ribbon:</span></td>             <td>style proteins ribbon</td></tr>
+<tr><td><span class="indent">strand:</span></td>             <td>style proteins strand</td></tr>
+<tr><td><span class="indent">cylinder &amp; plate:</span></td>   <td>style proteins cylinder &amp; plate</td></tr>
+<tr><td><span class="indent">c alpha trace:</span></td>      <td>style proteins c alpha trace</td></tr>
+<tr><td><span class="indent">b factor tube:</span></td>      <td>style proteins b factor tube</td></tr>
+<tr><td><span class="indent">lines:</span></td>              <td>style proteins lines</td></tr>
+<tr><td><span class="indent">stick:</span></td>              <td>style proteins stick</td></tr>
+<tr><td><span class="indent">ball &amp; stick:</span></td>       <td>style proteins ball &amp; stick</td></tr>
+<tr><td><span class="indent">sphere:</span></td>             <td>style proteins sphere</td></tr>
+<tr><td><span class="indent">hide:</span></td>            <td>style proteins nothing</td></tr>
 
 <tr><td colspan="2"><br>b) Style -&gt; Nucleotides</td></tr>
 <tr><td><span class="indent">nucleotide cartoon:</span></td> <td>style nucleotides nucleotide cartoon</td></tr>
@@ -598,9 +597,8 @@ Different selections can be concatenated using semicolon, e.g., ":1-10; :Lys" se
 <table>
 <tbody><tr><td colspan="2"><br>a) Surface -&gt; Type</td></tr>
 <tr><td><span class="indent">Van der Waals surface:</span></td>      <td>set surface Van der Waals surface</td></tr>
-<tr><td><span class="indent">solvent excluded surface:</span></td>   <td>set surface solvent excluded surface</td></tr>
-<tr><td><span class="indent">solvent accessible surface:</span></td> <td>set surface solvent accessible surface</td></tr>
 <tr><td><span class="indent">molecular surface:</span></td>          <td>set surface molecular surface</td></tr>
+<tr><td><span class="indent">solvent accessible surface:</span></td> <td>set surface solvent accessible surface</td></tr>
 <tr><td><span class="indent">hide:</span></td>                    <td>set surface nothing</td></tr>
 
 <tr><td colspan="2"><br>b) Surface -&gt; Opacity</td></tr>
@@ -753,7 +751,7 @@ Different selections can be concatenated using semicolon, e.g., ":1-10; :Lys" se
           options['ligands']            = 'stick';              //line, stick, ball &amp; stick, sphere, nothing
           options['water']              = 'nothing';            //sphere, dot, nothing
           options['ions']               = 'sphere';             //sphere, dot, nothing
-          options['surface']            = 'nothing';            //Van der Waals surface, solvent excluded surface, solvent accessible surface, molecular surface, nothing
+          options['surface']            = 'nothing';            //Van der Waals surface, molecular surface, solvent accessible surface, nothing
           options['opacity']            = '0.8';                //1.0, 0.9, 0.8, 0.7, 0.6, 0.5
           options['wireframe']          = 'no';                 //yes, no
           options['hbonds']             = 'no';                 //yes, no
@@ -761,7 +759,6 @@ Different selections can be concatenated using semicolon, e.g., ":1-10; :Lys" se
           options['lines']              = 'no';                 //yes, no
           options['axis']               = 'no';                 //yes, no
           options['picking']            = 'atom';               //no, atom, residue, strand
-          options['surfaceregion']      = 'nothing';            //nothing, all, sphere
       </pre>
     </li>
     </ul>
@@ -860,7 +857,7 @@ Create sticks for "atoms". "bondR" is the radius of the sticks. "atomR" is the r
 Create the style of ribbon or strand for "atoms". "num" means how many lines define the curve. "num" is 2 for ribbon and 6 for strand. "div" means how many points are used to smooth the curve. It's typically 5. "coilWidth" is the width of curve for coil. "helixSheetWidth" is the width of curve for helix or sheet. "doNotSmoothen" is a flag to smooth the curve or not. "thickness" is the thickness of the curve. "bHighlight" is an option to draw the highlight for these atoms. The highlight could be outlines with bHighlight=1 and 3D objects with bHighlight=2 as mentioned <a href="#bHighlight">above</a>.<br>
 <br>
 <a name="createSurfaceRepresentation"></a><b>createSurfaceRepresentation(atoms, type, wireframe, opacity)</b> <a href="#Top"><span class="top">&nbsp;&nbsp;&nbsp;</span></a><br>
-Create surface for "atoms". "type" can be 1 (Van der Waals surface), 2 (solvent excluded surface), 3 (solvent accessible surface), and 4 (molecular surface). "wireframe" is a boolean to determine whether to show the surface as a mesh. "opacity" is a value between 0 and 1. "1" means not transparent at all. "0" means 100% transparent.<br>
+Create surface for "atoms". "type" can be 1 (Van der Waals surface), 2 (molecular surface), and 3 (solvent accessible surface). "wireframe" is a boolean to determine whether to show the surface as a mesh. "opacity" is a value between 0 and 1. "1" means not transparent at all. "0" means 100% transparent.<br>
 <br>
 <a name="createTube"></a><b>createTube(atoms, atomName, radius, bHighlight)</b> <a href="#Top"><span class="top">&nbsp;&nbsp;&nbsp;</span></a><br>
 Create tubes for "atoms" with certain "atomName". "radius" is the radius of the tubes. "bHighlight" is an option to draw the highlight for these atoms. The highlight could be outlines with bHighlight=1 and 3D objects with bHighlight=2 as mentioned <a href="#bHighlight">above</a>.<br>
@@ -929,10 +926,6 @@ Set the camera according to the size of the structure.<br>
 
 <a name="setColorByOptions"></a><b>setColorByOptions(options, atoms)</b> <a href="#Top"><span class="top">&nbsp;&nbsp;&nbsp;</span></a><br>
 Set atom color according to the definition in options (options.color).<br>
-<br>
-
-<a name="setStylesForAtoms"></a><b>setStylesForAtoms(options, atoms)</b> <a href="#Top"><span class="top">&nbsp;&nbsp;&nbsp;</span></a><br>
-Set the display styles for "atoms" according to the input "options" for sidechains, secondary, nucleotides, ligands, water, and ions as shown <a href="#rebuildScene">above</a>.<br>
 <br>
 
 <a name="setOutlineColor"></a><b>setOutlineColor(colorStr)</b> <a href="#Top"><span class="top">&nbsp;&nbsp;&nbsp;</span></a><br>
