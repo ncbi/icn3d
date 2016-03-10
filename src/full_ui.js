@@ -54,8 +54,8 @@ var iCn3DUI = function(cfg) {
     me.options['background']         = 'black';              //black, grey, white
     me.options['color']              = 'spectrum';           //spectrum, secondary structure, charge, chain, residue, atom, red, green, blue, magenta, yellow, cyan, white, grey, custom
     me.options['sidechains']         = 'nothing';            //lines, stick, ball & stick, sphere, nothing
-    me.options['secondary']          = 'ribbon';             //ribbon, strand, cylinder & plate, c alpha trace, b factor tube, lines, stick, ball & stick, sphere, nothing
-    me.options['surface']            = 'nothing';    //Van der Waals surface, solvent excluded surface, solvent accessible surface, molecular surface, nothing
+    me.options['proteins']          = 'ribbon';             //ribbon, strand, cylinder & plate, c alpha trace, b factor tube, lines, stick, ball & stick, sphere, nothing
+    me.options['surface']            = 'nothing';             //Van der Waals surface, molecular surface, solvent accessible surface, nothing
     me.options['opacity']            = '0.8';                //1.0, 0.9, 0.8, 0.7, 0.6, 0.5
     me.options['wireframe']          = 'no';                 //yes, no
     me.options['ligands']            = 'stick';              //lines, stick, ball & stick, sphere, nothing
@@ -69,14 +69,18 @@ var iCn3DUI = function(cfg) {
     me.options['picking']            = 'residue';                 //no, atom, residue, strand
     me.options['nucleotides']        = 'phosphorus trace';   //nucleotide cartoon, phosphorus trace, lines, stick, ball & stick, sphere, nothing
 
-    me.options['surfaceregion']      = 'nothing';            //nothing, all, sphere
-
     if(me.cfg.cid !== undefined) {
         me.options['picking'] = 'atom';
         me.options['ligands'] = 'ball & stick';
     }
+    else if(me.cfg.align !== undefined) {
+        me.options['picking'] = 'atom';
+        me.options['proteins'] = 'c alpha trace';
+    }
 
     me.modifyIcn3d();
+
+    me.bAddCommands = true;
 
 };
 
@@ -153,10 +157,21 @@ iCn3DUI.prototype = {
           var transformation = {};
           transformation.factor = this._zoomFactor;
           transformation.mouseChange = this.mouseChange;
-          transformation.quaternion = this.quaternion;
-          //this.transformation.push(transformation);
+          //transformation.quaternion = this.quaternion;
+          transformation.quaternion = {};
+          transformation.quaternion._x = parseInt(this.quaternion._x * 1000) / 1000;
+          transformation.quaternion._y = parseInt(this.quaternion._y * 1000) / 1000;
+          transformation.quaternion._z = parseInt(this.quaternion._z * 1000) / 1000;
+          transformation.quaternion._w = parseInt(this.quaternion._w * 1000) / 1000;
 
-          this.commands.push('pickatom ' + atom.serial + '|||' + JSON.stringify(transformation));
+          if(me.bAddCommands) {
+              this.commands.push('pickatom ' + atom.serial + '|||' + JSON.stringify(transformation));
+              this.optionsHistory.push(this.cloneHash(this.options));
+
+              if(me.isSessionStorageSupported()) me.saveCommandsToSession();
+
+              me.STATENUMBER = this.commands.length;
+          }
 
           this.logs.push('pickatom ' + atom.serial + ' (chain: ' + atom.structure + '_' + atom.chain + ', residue: ' + atom.resn + ', number: ' + atom.resi + ', atom: ' + atom.name + ')');
           if ( $( "#" + me.pre + "logtext" ).length )  {
@@ -171,7 +186,9 @@ iCn3DUI.prototype = {
       me.deferred = $.Deferred(function() {
         if(me.isSessionStorageSupported()) me.getCommandsBeforeCrash();
 
-        var width = window.innerWidth, height = window.innerHeight;
+        //var width = window.innerWidth, height = window.innerHeight;
+        var width = $( window ).width();
+        var height = $( window ).height();
 
         if(me.cfg.width.toString().indexOf('%') !== -1) {
           width = width * me.cfg.width.substr(0, me.cfg.width.toString().indexOf('%')) / 100.0 - me.LESSWIDTH;
@@ -266,14 +283,14 @@ iCn3DUI.prototype = {
         else if(me.cfg.cid !== undefined) {
            me.inputid = me.cfg.cid;
 
-		   var url = "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/cid/" + me.inputid + "/description/jsonp";
-		   $.ajax({
-			  url: url,
-			  dataType: 'jsonp',
-			  success: function(data) {
-				  if(data.InformationList !== undefined && data.InformationList.Information !== undefined) me.icn3d.moleculeTitle = data.InformationList.Information[0].Title;
-			  }
-		   });
+           var url = "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/cid/" + me.inputid + "/description/jsonp";
+           $.ajax({
+              url: url,
+              dataType: 'jsonp',
+              success: function(data) {
+                  if(data.InformationList !== undefined && data.InformationList.Information !== undefined) me.icn3d.moleculeTitle = data.InformationList.Information[0].Title;
+              }
+           });
 
             me.setLogCommand('load cid ' + me.cfg.cid, true);
 
@@ -326,12 +343,12 @@ iCn3DUI.prototype = {
 
     // remove highlight of chains
     removeSeqChainBkgd: function(currChain) {
-        $( ".seqTitle" ).each(function( index ) {
+        $( ".icn3d-seqTitle" ).each(function( index ) {
           if(currChain === undefined) {
-              $( this ).removeClass('highlightSeq');
+              $( this ).removeClass('icn3d-highlightSeq');
           }
           else {
-              if($(this).attr('chain') !== currChain) $( this ).removeClass('highlightSeq');
+              if($(this).attr('chain') !== currChain) $( this ).removeClass('icn3d-highlightSeq');
           }
         });
     },
@@ -339,7 +356,7 @@ iCn3DUI.prototype = {
     // remove all highlighted residue color
     removeSeqResidueBkgd: function() {
         $( ".residue" ).each(function( index ) {
-          $( this ).removeClass('highlightSeq');
+          $( this ).removeClass('icn3d-highlightSeq');
         });
     },
 
@@ -409,7 +426,7 @@ iCn3DUI.prototype = {
     setStyle: function (selectionType, style) { var me = this;
       var atoms = {};
       switch (selectionType) {
-          case 'protein':
+          case 'proteins':
               atoms = me.icn3d.intersectHash(me.icn3d.highlightAtoms, me.icn3d.proteins);
               break;
           case 'sidechains':
@@ -439,18 +456,44 @@ iCn3DUI.prototype = {
     },
 
     setLogCommand: function (str, bSetCommand) { var me = this;
+
       var transformation = {};
       transformation.factor = me.icn3d._zoomFactor;
       transformation.mouseChange = me.icn3d.mouseChange;
-      transformation.quaternion = me.icn3d.quaternion;
-      //me.icn3d.transformation.push(transformation);
+
+      //transformation.quaternion = me.icn3d.quaternion;
+      transformation.quaternion = {};
+      transformation.quaternion._x = parseInt(me.icn3d.quaternion._x * 1000) / 1000;
+      transformation.quaternion._y = parseInt(me.icn3d.quaternion._y * 1000) / 1000;
+      transformation.quaternion._z = parseInt(me.icn3d.quaternion._z * 1000) / 1000;
+      transformation.quaternion._w = parseInt(me.icn3d.quaternion._w * 1000) / 1000;
 
       if(bSetCommand) {
-        me.icn3d.commands.push(str + '|||' + JSON.stringify(transformation));
+          // save the command only when it's not a history command, i.e., not in the process of going back and forth
+          if(me.bAddCommands) {
+            me.icn3d.commands.push(str + '|||' + JSON.stringify(transformation));
 
-        if(me.isSessionStorageSupported()) me.saveCommandsToSession();
+            me.icn3d.optionsHistory.push(me.icn3d.cloneHash(me.icn3d.options));
 
-        me.STATENUMBER = me.icn3d.commands.length;
+            if(me.isSessionStorageSupported()) me.saveCommandsToSession();
+
+            me.STATENUMBER = me.icn3d.commands.length;
+          }
+          // If a new command was called, remove the forward commands and push to the command array
+          else if(!me.bAddCommands && me.STATENUMBER < me.icn3d.commands.length) {
+              var oldCommand = me.icn3d.commands[me.STATENUMBER - 1];
+              var pos = oldCommand.indexOf('|||');
+              if(str !== oldCommand.substr(0, pos)) {
+                me.icn3d.commands = me.icn3d.commands.slice(0, me.STATENUMBER);
+
+                me.icn3d.commands.push(str + '|||' + JSON.stringify(transformation));
+                me.icn3d.optionsHistory.push(me.icn3d.cloneHash(me.icn3d.options));
+
+                if(me.isSessionStorageSupported()) me.saveCommandsToSession();
+
+                me.STATENUMBER = me.icn3d.commands.length;
+              }
+          }
       }
 
       me.icn3d.logs.push(str);
@@ -465,11 +508,17 @@ iCn3DUI.prototype = {
         var bExpandDialog = me.isMac() && !me.isMobile();
 
         if(id === me.pre + 'dl_selectresidues' || id === me.pre + 'dl_alignment') {
-            if($( window ).width() > $( window ).height() ) {
-                me.resizeCanvas(0.5 * $( window ).width(), $( window ).height() - me.LESSHEIGHT);
+			//window_width = window.innerWidth;
+			//window_height = window.innerHeight;
 
-                height = bExpandDialog ? 'auto' : $( window ).height() - me.LESSHEIGHT - 2*me.MENU_HEIGHT;
-                width = bExpandDialog ? 'auto' : 0.5 * $( window ).width() - me.LESSWIDTH;
+			window_width = $( window ).width();
+			window_height = $( window ).height();
+
+            if(window_width > window_height ) {
+                me.resizeCanvas(0.5 * window_width, window_height - me.LESSHEIGHT);
+
+                height = bExpandDialog ? 'auto' : window_height - me.LESSHEIGHT - 2*me.MENU_HEIGHT;
+                width = bExpandDialog ? 'auto' : 0.5 * window_width - me.LESSWIDTH;
 
                 //var position={ my: "left top", at: "right top", of: "#" + me.pre + "canvas", collision: "none" };
                 var position;
@@ -492,15 +541,15 @@ iCn3DUI.prototype = {
                   position: position,
                   close: function(e) {
                       me.cfg.resize = true;
-                      me.resizeCanvas($( window ).width() - me.LESSWIDTH, $( window ).height() - me.LESSHEIGHT);
+                      me.resizeCanvas(window_width - me.LESSWIDTH, window_height - me.LESSHEIGHT);
                   }
                 });
             }
             else {
-                if(me.isMobile()) me.resizeCanvas($( window ).width() - me.LESSWIDTH, $( window ).height() - me.LESSHEIGHT - 30);
+                if(me.isMobile()) me.resizeCanvas(window_width - me.LESSWIDTH, window_height - me.LESSHEIGHT - 30);
 
                 height = bExpandDialog ? 'auto' : 250;
-                width = bExpandDialog ? 'auto' : $( window ).width() - me.LESSWIDTH;
+                width = bExpandDialog ? 'auto' : window_width - me.LESSWIDTH;
 
                 var position ={ my: "left top", at: "left bottom-30", of: "#" + me.pre + "canvas", collision: "none" };
 
@@ -1610,6 +1659,9 @@ iCn3DUI.prototype = {
     back: function () { var me = this;
       me.STATENUMBER--;
 
+      // do not add to the array me.icn3d.commands
+      me.bAddCommands = false;
+
       if(me.STATENUMBER < 1) {
         me.STATENUMBER = 1;
       }
@@ -1622,6 +1674,9 @@ iCn3DUI.prototype = {
 
     forward: function () { var me = this;
       me.STATENUMBER++;
+
+      // do not add to the array me.icn3d.commands
+      me.bAddCommands = false;
 
       if(me.STATENUMBER > me.icn3d.commands.length) {
         me.STATENUMBER = me.icn3d.commands.length;
@@ -1693,28 +1748,28 @@ iCn3DUI.prototype = {
 
     adjustIcon: function () { var me = this;
       if(me.STATENUMBER === 1) {
-        if($("#" + me.pre + "back").hasClass('middleIcon')) {
-          $("#" + me.pre + "back").toggleClass('middleIcon');
-          $("#" + me.pre + "back").toggleClass('endIcon');
+        if($("#" + me.pre + "back").hasClass('icn3d-middleIcon')) {
+          $("#" + me.pre + "back").toggleClass('icn3d-middleIcon');
+          $("#" + me.pre + "back").toggleClass('icn3d-endIcon');
         }
       }
       else {
-        if($("#" + me.pre + "back").hasClass('endIcon')) {
-          $("#" + me.pre + "back").toggleClass('middleIcon');
-          $("#" + me.pre + "back").toggleClass('endIcon');
+        if($("#" + me.pre + "back").hasClass('icn3d-endIcon')) {
+          $("#" + me.pre + "back").toggleClass('icn3d-middleIcon');
+          $("#" + me.pre + "back").toggleClass('icn3d-endIcon');
         }
       }
 
       if(me.STATENUMBER === me.icn3d.commands.length) {
-        if($("#" + me.pre + "forward").hasClass('middleIcon')) {
-          $("#" + me.pre + "forward").toggleClass('middleIcon');
-          $("#" + me.pre + "forward").toggleClass('endIcon');
+        if($("#" + me.pre + "forward").hasClass('icn3d-middleIcon')) {
+          $("#" + me.pre + "forward").toggleClass('icn3d-middleIcon');
+          $("#" + me.pre + "forward").toggleClass('icn3d-endIcon');
         }
       }
       else {
-        if($("#" + me.pre + "forward").hasClass('endIcon')) {
-          $("#" + me.pre + "forward").toggleClass('middleIcon');
-          $("#" + me.pre + "forward").toggleClass('endIcon');
+        if($("#" + me.pre + "forward").hasClass('icn3d-endIcon')) {
+          $("#" + me.pre + "forward").toggleClass('icn3d-middleIcon');
+          $("#" + me.pre + "forward").toggleClass('icn3d-endIcon');
         }
       }
     },
@@ -1726,17 +1781,17 @@ iCn3DUI.prototype = {
       $("#" + id2).toggleClass('ui-icon-plus');
       $("#" + id2).toggleClass('ui-icon-minus');
 
-      $("#" + id1).toggleClass('shown');
-      $("#" + id1).toggleClass('hidden');
+      $("#" + id1).toggleClass('icn3d-shown');
+      $("#" + id1).toggleClass('icn3d-hidden');
 
-      $("#" + id2).toggleClass('shown');
-      $("#" + id2).toggleClass('hidden');
+      $("#" + id2).toggleClass('icn3d-shown');
+      $("#" + id2).toggleClass('icn3d-hidden');
 
-      $("#" + id3).toggleClass('shown');
-      $("#" + id3).toggleClass('hidden');
+      $("#" + id3).toggleClass('icn3d-shown');
+      $("#" + id3).toggleClass('icn3d-hidden');
 
-      $("#" + id4).toggleClass('shown');
-      $("#" + id4).toggleClass('hidden');
+      $("#" + id4).toggleClass('icn3d-shown');
+      $("#" + id4).toggleClass('icn3d-hidden');
     },
 
 //    exportState: function() { var me = this;
@@ -1745,7 +1800,7 @@ iCn3DUI.prototype = {
 //        window.open(url, '_blank');
 //    },
 
-    loadScript: function (dataStr, bAddCommands) { var me = this;
+    loadScript: function (dataStr) { var me = this;
       me.icn3d.bRender = false;
 
       dataStr = dataStr.replace(/;/g, '\n')
@@ -1754,24 +1809,45 @@ iCn3DUI.prototype = {
 
       me.STATENUMBER = me.icn3d.commands.length;
 
-      me.execCommands(me.STATENUMBER, bAddCommands);
+      me.execCommands(me.STATENUMBER);
     },
 
-    execCommandsBase: function (start, end, bAddCommands, steps) { var me = this;
+    execCommandsBase: function (start, end, steps) { var me = this;
       for(var i=start; i <= end; ++i) {
           if(me.icn3d.commands[i].indexOf('load') !== -1) {
-              $.when(me.applyCommandLoad(me.icn3d.commands[i], bAddCommands)).then(function() {
-                  me.execCommandsBase(i + 1, end, bAddCommands, steps);
-              });
-              return;
+              if(end === 0 && start === end) {
+                  $.when(me.applyCommandLoad(me.icn3d.commands[i])).then(function() {
+                    me.icn3d.bRender = true;
+
+                    // end of all commands
+                    if(1 === me.icn3d.commands.length) me.bAddCommands = true;
+                    me.renderFinalStep(steps);
+                  });
+                  return;
+              }
+              else {
+                  $.when(me.applyCommandLoad(me.icn3d.commands[i])).then(function() {
+                      me.execCommandsBase(i + 1, end, steps);
+                  });
+                  return;
+              }
           }
           else {
-              me.applyCommand(me.icn3d.commands[i], bAddCommands);
+              me.applyCommand(me.icn3d.commands[i]);
           }
 
           if(i === steps - 1) {
                 me.icn3d.bRender = true;
 
+                  // end of all commands
+                  if(i + 1 === me.icn3d.commands.length) me.bAddCommands = true;
+
+                  me.renderFinalStep(steps);
+          }
+      }
+    },
+
+    renderFinalStep: function(steps) { var me = this;
                 var commandTransformation = me.icn3d.commands[steps-1].split('|||');
 
                 if(commandTransformation.length == 2) {
@@ -1788,18 +1864,44 @@ iCn3DUI.prototype = {
                     me.icn3d.quaternion._w = transformation.quaternion._w;
                 }
 
-                me.icn3d.draw();
-          }
-      }
+                var currHighlightAtoms = me.icn3d.cloneHash(me.icn3d.highlightAtoms);
+
+                // assign styles using the options at that stage
+                me.icn3d.highlightAtoms = me.icn3d.atoms;
+                me.icn3d.setAtomStyleByOptions(me.icn3d.optionsHistory[steps - 1]);
+
+                // set the highlightAtom back
+                me.icn3d.highlightAtoms = me.icn3d.cloneHash(currHighlightAtoms);
+
+                if(me.icn3d.optionsHistory.length >= steps) {
+                    var pickingOption = me.icn3d.optionsHistory[steps - 1].picking;
+                    if(pickingOption === 'no') {
+                        me.icn3d.picking = 0;
+                    }
+                    else if(pickingOption === 'atom') {
+                        me.icn3d.picking = 1;
+                    }
+                    else if(pickingOption === 'residue') {
+                        me.icn3d.picking = 2;
+                    }
+                    else if(pickingOption === 'strand') {
+                        me.icn3d.picking = 3;
+                    }
+
+                    me.icn3d.draw(me.icn3d.optionsHistory[steps - 1]);
+                }
+                else {
+                    me.icn3d.draw();
+                }
     },
 
-    execCommands: function (steps, bAddCommands) { var me = this;
+    execCommands: function (steps) { var me = this;
         me.icn3d.bRender = false;
-        me.execCommandsBase(0, steps-1, bAddCommands, steps);
+        me.execCommandsBase(0, steps-1, steps);
     },
 
-    applyCommandLoad: function (commandStr, bAddCommands) { var me = this;
-      if(bAddCommands !== undefined && bAddCommands) me.setLogCommand(commandStr, true);
+    applyCommandLoad: function (commandStr) { var me = this;
+      me.bAddCommands = false;
 
       // chain functions together
       me.deferred2 = $.Deferred(function() {
@@ -1835,8 +1937,8 @@ iCn3DUI.prototype = {
       return me.deferred2;
     },
 
-    applyCommand: function (commandStr, bAddCommands) { var me = this;
-      if(bAddCommands !== undefined && bAddCommands) me.setLogCommand(commandStr, true);
+    applyCommand: function (commandStr) { var me = this;
+      me.bAddCommands = false;
 
       var commandTransformation = commandStr.split('|||');
 
@@ -1908,11 +2010,13 @@ iCn3DUI.prototype = {
 
         me.icn3d.pickedatom = me.icn3d.atoms[atomid];
 
+        me.icn3d.showPicking(me.icn3d.pickedatom);
+
         // highlight the sequence background
-        var pickedResidue = me.icn3d.pickedatom.structure + '_' + me.icn3d.pickedatom.chain + '_' + me.icn3d.pickedatom.resi;
-        if($("#" + me.pre + pickedResidue).length !== 0) {
-          $("#" + me.pre + pickedResidue).toggleClass('highlightSeq');
-        }
+        //var pickedResidue = me.icn3d.pickedatom.structure + '_' + me.icn3d.pickedatom.chain + '_' + me.icn3d.pickedatom.resi;
+        //if($("#" + me.pre + pickedResidue).length !== 0) {
+        //  $("#" + me.pre + pickedResidue).toggleClass('icn3d-highlightSeq');
+        //}
       }
       else if(command.indexOf('select zone cutoff') !== -1) {
         var radius = command.substr(command.lastIndexOf(' ') + 1);
@@ -1927,7 +2031,7 @@ iCn3DUI.prototype = {
 
         me.setStyle(selectionType, style);
       }
-      else if(command.indexOf('color') !== -1) {
+      else if(command.indexOf('color') === 0) {
         var color = command.substr(command.indexOf(' ') + 1);
         //var options2 = {};
         //options2['color'] = color;
@@ -1990,42 +2094,45 @@ iCn3DUI.prototype = {
       else if(command.indexOf('set assembly off') !== -1) {
         me.icn3d.bAssembly = false;
       }
-      else if(command.indexOf('add label') !== -1) {
-        var paraArray = command.split(' | ');
-        var text = paraArray[0].substr(paraArray[0].lastIndexOf(' ') + 1);
+      else if(commandOri.indexOf('add label') !== -1) {
+        var paraArray = commandOri.split(' | ');
+        //var text = paraArray[0].substr(paraArray[0].lastIndexOf(' ') + 1);
+        var text = paraArray[0].substr(('add label').length + 1);
 
         var positionArray = paraArray[1].split(' ');
-        var x = position[1], y = position[3], z = position[5];
+        var x = positionArray[1], y = positionArray[3], z = positionArray[5];
 
         var size = paraArray[2].substr(paraArray[2].lastIndexOf(' ') + 1);
         var color = paraArray[3].substr(paraArray[3].lastIndexOf(' ') + 1);
         var background = paraArray[4].substr(paraArray[4].lastIndexOf(' ') + 1);
-        if(background === '0' || background === '') background = undefined;
+        if(size === '0' || size === '' || size === 'undefined') size = undefined;
+        if(color === '0' || color === '' || color === 'undefined') color = undefined;
+        if(background === '0' || background === '' || background === 'undefined') background = undefined;
 
         me.addLabel(text, x,y,z, size, color, background);
         me.icn3d.draw();
       }
       else if(command.indexOf('add residue labels') !== -1) {
-        me.addResiudeLabels();
-
         me.icn3d.options['labels'] = 'yes';
+
+        me.addResiudeLabels();
 
         me.icn3d.draw();
       }
-      else if(command.indexOf('add residue topology') !== -1) {
+      else if(command.indexOf('add residue schematic') !== -1) {
        var options2 = {};
-       options2['secondary'] = 'c alpha trace';
+       options2['proteins'] = 'c alpha trace';
        options2['nucleotides'] = 'phosphorus trace';
        options2['ligands'] = 'nothing';
        options2['water'] = 'nothing';
        options2['ions'] = 'nothing';
 
+        me.icn3d.options['labels'] = 'yes';
+
        me.icn3d.setAtomStyleByOptions(options2);
 
-        var bTopology = true;
-        me.addResiudeLabels(bTopology);
-
-        me.icn3d.options['labels'] = 'yes';
+        var bSchematic = true;
+        me.addResiudeLabels(bSchematic);
 
         //me.icn3d.draw(options2);
         me.icn3d.draw();
@@ -2037,7 +2144,7 @@ iCn3DUI.prototype = {
         var color = paraArray[3].substr(paraArray[3].lastIndexOf(' ') + 1);
         var dashed = paraArray[4].substr(paraArray[4].lastIndexOf(' ') + 1) === 'true' ? true : false;
 
-        me.addLine(p1Array[0], p1Array[1], p1Array[2], p2Array[0], p2Array[1], p2Array[2], color, dashed);
+        me.addLine(p1Array[1], p1Array[3], p1Array[5], p2Array[1], p2Array[3], p2Array[5], color, dashed);
       }
       else if(command.indexOf('zoom selection') !== -1) {
         me.icn3d.zoominSelection();
@@ -2200,7 +2307,7 @@ iCn3DUI.prototype = {
 
         html += me.setDialogs();
 
-		html += me.setCustomDialogs();
+        html += me.setCustomDialogs();
 
         $( "#" + id).html(html);
 
@@ -2224,610 +2331,631 @@ iCn3DUI.prototype = {
         $("#" + me.pre + "accordion6").hover( function(){ $("#" + me.pre + "accordion6 div").css("display", "block"); }, function(){ $("#" + me.pre + "accordion6 div").css("display", "none"); } );
     },
 
-	setMenu1: function() { var me = this;
-		var html = "";
-
-		html += "    <div style='float:left;'>";
-		html += "          <accordion id='" + me.pre + "accordion1'>";
-		html += "              <h3>File</h3>";
-		html += "              <div>";
-		html += "              <ul class='menu'>";
-		html += "                <li>Retrieve by ID";
-		html += "                  <ul>";
-		html += "                    <li><span id='" + me.pre + "menu1_pdbid' class='icn3d-link'>PDB ID</span></li>";
-		html += "                    <li><span id='" + me.pre + "menu1_mmcifid' class='icn3d-link'>mmCIF ID</span></li>";
-		html += "                    <li><span id='" + me.pre + "menu1_mmdbid' class='icn3d-link'>MMDB ID</span></li>";
-		//html += "                    <li><span id='" + me.pre + "menu1_term' class='icn3d-link'>Search MMDB term</span></li>";
-		html += "                    <li><span id='" + me.pre + "menu1_gi' class='icn3d-link'>gi</span></li>";
-		html += "                    <li><span id='" + me.pre + "menu1_cid' class='icn3d-link'>PubChem CID</span></li>";
-		html += "                  </ul>";
-		html += "                </li>";
-		html += "                <li><span id='" + me.pre + "menu1_pdbfile' class='icn3d-link'>Open PDB File</span></li>";
-		html += "                <li><span id='" + me.pre + "menu1_state' class='icn3d-link'>Open State/Script</span></li>";
-		html += "                <li><span id='" + me.pre + "menu1_exportState' class='icn3d-link'>Export State<br/></span></li>";
-		html += "                <li><span id='" + me.pre + "menu1_exportCanvas' class='icn3d-link'>Export Image</span></li>";
-		html += "                <li>Links";
-		html += "                  <ul>";
-		html += "                    <li><span id='" + me.pre + "menu1_link_structure' class='icn3d-link'>Structure Summary</span></li>";
-		html += "                    <li><span id='" + me.pre + "menu1_link_vast' class='icn3d-link'>Find Similar Structures</span></li>";
-		html += "                    <li><span id='" + me.pre + "menu1_link_pubmed' class='icn3d-link'>Literature</span></li>";
-		html += "                  </ul>";
-		html += "                </li>";
-		html += "              </ul>";
-		html += "              </div>";
-		html += "          </accordion>";
-		html += "    </div>";
-
-		return html;
-	},
-
-	setMenu2: function() { var me = this;
-		var html = "";
-
-		html += "    <div style='float:left;'>";
-		html += "          <accordion id='" + me.pre + "accordion2'>";
-		html += "              <h3>Select</h3>";
-		html += "              <div>";
-		html += "              <ul class='menu'>";
-
-		html += "                <li>Select";
-		html += "                  <ul>";
-		if(me.cfg.cid === undefined) {
-		    html += "                      <li><input type='radio' name='" + me.pre + "menu2_select' id='" + me.pre + "menu2_select_chain'><label for='" + me.pre + "menu2_select_chain'>Structure/Chain</label></li>";
-		}
-		html += "                      <li><input type='radio' name='" + me.pre + "menu2_select' id='" + me.pre + "menu2_selectall'><label for='" + me.pre + "menu2_selectall'>All</label></li>";
-		html += "                      <li><input type='radio' name='" + me.pre + "menu2_select' id='" + me.pre + "menu2_selectcomplement'><label for='" + me.pre + "menu2_selectcomplement'>Complement</label></li>";
-		html += "                      <li><input type='radio' name='" + me.pre + "menu2_select' id='" + me.pre + "menu2_aroundsphere'><label for='" + me.pre + "menu2_aroundsphere'>Custom Sphere</label></li>";
-		if(me.cfg.cid === undefined) {
-		    html += "                      <li><input type='radio' name='" + me.pre + "menu2_select' id='" + me.pre + "menu2_selectresidues'><label for='" + me.pre + "menu2_selectresidues'>Sequence</label></li>";
-		}
-		if(me.cfg.align !== undefined) {
-		    html += "                      <li><input type='radio' name='" + me.pre + "menu2_select' id='" + me.pre + "menu2_alignment'><label for='" + me.pre + "menu2_alignment'>Aligned Seq.</label></li>";
-		}
-		html += "                      <li><input type='radio' name='" + me.pre + "menu2_select' id='" + me.pre + "menu2_command'><label for='" + me.pre + "menu2_command'>by Command</label></li>";
-		html += "                  </ul>";
-		html += "                </li>";
-
-		html += "                <li>Picking";
-		html += "                  <ul>";
-		if(me.cfg.cid === undefined) {
-		    html += "                      <li><input type='radio' name='" + me.pre + "menu2_picking' id='" + me.pre + "menu2_pickingStrand'><label for='" + me.pre + "menu2_pickingStrand'>Strand/Helix</label></li>";
-		    html += "                      <li><input type='radio' name='" + me.pre + "menu2_picking' id='" + me.pre + "menu2_pickingResidue' checked><label for='" + me.pre + "menu2_pickingResidue'>Residue</label></li>";
-		    html += "                      <li><input type='radio' name='" + me.pre + "menu2_picking' id='" + me.pre + "menu2_pickingYes'><label for='" + me.pre + "menu2_pickingYes'>Atom</label></li>";
-		}
-		else {
-		    html += "                      <li><input type='radio' name='" + me.pre + "menu2_picking' id='" + me.pre + "menu2_pickingStrand'><label for='" + me.pre + "menu2_pickingStrand'>Strand/Helix</label></li>";
-		    html += "                      <li><input type='radio' name='" + me.pre + "menu2_picking' id='" + me.pre + "menu2_pickingResidue'><label for='" + me.pre + "menu2_pickingResidue'>Residue</label></li>";
-		    html += "                      <li><input type='radio' name='" + me.pre + "menu2_picking' id='" + me.pre + "menu2_pickingYes' checked><label for='" + me.pre + "menu2_pickingYes'>Atom</label></li>";
-		}
-
-		html += "                      <li><input type='radio' name='" + me.pre + "menu2_picking' id='" + me.pre + "menu2_pickingNo'><label for='" + me.pre + "menu2_pickingNo'>Off</label></li>";
-		html += "                  </ul>";
-		html += "                </li>";
-
-		html += "                <li>Display";
-		html += "                  <ul>";
-		if(me.cfg.align !== undefined) {
-		    html += "                      <li><input type='radio' name='" + me.pre + "menu2_display' id='" + me.pre + "menu2_alternate'><label for='" + me.pre + "menu2_alternate'>Alternate Structures</label></li>";
-		}
-		html += "                      <li><input type='radio' name='" + me.pre + "menu2_display' id='" + me.pre + "menu2_toggle'><label for='" + me.pre + "menu2_toggle'>Toggle Selection</label></li>";
-		html += "                      <li><input type='radio' name='" + me.pre + "menu2_display' id='" + me.pre + "menu2_show_selected'><label for='" + me.pre + "menu2_show_selected'>Display Selection</label></li>";
-		html += "                      <li><input type='radio' name='" + me.pre + "menu2_display' id='" + me.pre + "toggleHighlight2'><label for='" + me.pre + "toggleHighlight2'>Toggle Highlight</label></li>";
-		html += "                  </ul>";
-		html += "                </li>";
-
-		html += "                    <li>Highlight Color";
-		html += "                      <ul>";
-		html += "                        <li><input type='radio' name='" + me.pre + "menu2_hl_color' id='" + me.pre + "menu2_hl_colorYellow' checked><label for='" + me.pre + "menu2_hl_colorYellow'>Yellow</label></li>";
-		html += "                        <li><input type='radio' name='" + me.pre + "menu2_hl_color' id='" + me.pre + "menu2_hl_colorGreen'><label for='" + me.pre + "menu2_hl_colorGreen'>Green</label></li>";
-		html += "                        <li><input type='radio' name='" + me.pre + "menu2_hl_color' id='" + me.pre + "menu2_hl_colorRed'><label for='" + me.pre + "menu2_hl_colorRed'>Red</label></li>";
-		html += "                      </ul>";
-		html += "                    </li>";
-		html += "                    <li>Highlight Style";
-		html += "                      <ul>";
-
-		if(Detector.webgl) {
-		    html += "                        <li><input type='radio' name='" + me.pre + "menu2_hl_style' id='" + me.pre + "menu2_hl_styleOutline' checked><label for='" + me.pre + "menu2_hl_styleOutline'>Outline</label></li>";
-		    html += "                        <li><input type='radio' name='" + me.pre + "menu2_hl_style' id='" + me.pre + "menu2_hl_styleObject'><label for='" + me.pre + "menu2_hl_styleObject'>3D Objects</label></li>";
-		}
-		else {
-		    html += "                        <li><input type='radio' name='" + me.pre + "menu2_hl_style' id='" + me.pre + "menu2_hl_styleOutline'><label for='" + me.pre + "menu2_hl_styleOutline'>Outline</label></li>";
-		    html += "                        <li><input type='radio' name='" + me.pre + "menu2_hl_style' id='" + me.pre + "menu2_hl_styleObject' checked><label for='" + me.pre + "menu2_hl_styleObject'>3D Objects</label></li>";
-		}
-		html += "                      </ul>";
-		html += "                    </li>";
-
-		html += "              </ul>";
-		html += "              </div>";
-		html += "          </accordion>";
-		html += "    </div>";
-
-		return html;
-	},
-
-	setMenu3: function() { var me = this;
-		var html = "";
-
-		html += "    <div style='float:left;'>";
-		html += "          <accordion id='" + me.pre + "accordion3'>";
-		html += "              <h3>Style</h3>";
-		html += "              <div>";
-		html += "              <ul class='menu'>";
-
-		if(me.cfg.cid === undefined) {
-		    html += "                <li>Protein";
-		    html += "                  <ul>";
-		    html += "                      <li><input type='radio' name='" + me.pre + "menu3_protein' id='" + me.pre + "menu3_proteinRibbon' checked><label for='" + me.pre + "menu3_proteinRibbon'>Ribbon</label></li>";
-		    html += "                      <li><input type='radio' name='" + me.pre + "menu3_protein' id='" + me.pre + "menu3_proteinStrand'><label for='" + me.pre + "menu3_proteinStrand'>Strand</label></li>";
-		    html += "                      <li><input type='radio' name='" + me.pre + "menu3_protein' id='" + me.pre + "menu3_proteinCylinder'><label for='" + me.pre + "menu3_proteinCylinder'>Cylinder and Plate</label></li>";
-
-		    html += "                      <li><input type='radio' name='" + me.pre + "menu3_protein' id='" + me.pre + "menu6_addlabelResidueTopology'><label for='" + me.pre + "menu6_addlabelResidueTopology'>Schematic</label></li>";
-
-		    html += "                      <li><input type='radio' name='" + me.pre + "menu3_protein' id='" + me.pre + "menu3_proteinCalpha'><label for='" + me.pre + "menu3_proteinCalpha'>C Alpha Trace</label></li>";
-		    html += "                      <li><input type='radio' name='" + me.pre + "menu3_protein' id='" + me.pre + "menu3_proteinBfactor'><label for='" + me.pre + "menu3_proteinBfactor'>B Factor Tube</label></li>";
-		    html += "                      <li><input type='radio' name='" + me.pre + "menu3_protein' id='" + me.pre + "menu3_proteinLines'><label for='" + me.pre + "menu3_proteinLines'>Lines</label></li>";
-		    html += "                      <li><input type='radio' name='" + me.pre + "menu3_protein' id='" + me.pre + "menu3_proteinStick'><label for='" + me.pre + "menu3_proteinStick'>Stick</label></li>";
-		    html += "                      <li><input type='radio' name='" + me.pre + "menu3_protein' id='" + me.pre + "menu3_proteinBallstick'><label for='" + me.pre + "menu3_proteinBallstick'>Ball and Stick</label></li>";
-		    html += "                      <li><input type='radio' name='" + me.pre + "menu3_protein' id='" + me.pre + "menu3_proteinSphere'><label for='" + me.pre + "menu3_proteinSphere'>Sphere</label></li>";
-		    html += "                      <li><input type='radio' name='" + me.pre + "menu3_protein' id='" + me.pre + "menu3_proteinNothing'><label for='" + me.pre + "menu3_proteinNothing'>Hide</label></li>";
-		    html += "                  </ul>";
-		    html += "                </li>";
-
-		    html += "                <li>Side Chains";
-		    html += "                  <ul>";
-		    html += "                      <li><input type='radio' name='" + me.pre + "menu3_sidechains' id='" + me.pre + "menu3_sidechainsLines'><label for='" + me.pre + "menu3_sidechainsLines'>Lines</label></li>";
-		    html += "                      <li><input type='radio' name='" + me.pre + "menu3_sidechains' id='" + me.pre + "menu3_sidechainsStick'><label for='" + me.pre + "menu3_sidechainsStick'>Stick</label></li>";
-		    html += "                      <li><input type='radio' name='" + me.pre + "menu3_sidechains' id='" + me.pre + "menu3_sidechainsBallstick'><label for='" + me.pre + "menu3_sidechainsBallstick'>Ball and Stick</label></li>";
-		    html += "                      <li><input type='radio' name='" + me.pre + "menu3_sidechains' id='" + me.pre + "menu3_sidechainsSphere'><label for='" + me.pre + "menu3_sidechainsSphere'>Sphere</label></li>";
-		    html += "                      <li><input type='radio' name='" + me.pre + "menu3_sidechains' id='" + me.pre + "menu3_sidechainsNothing' checked><label for='" + me.pre + "menu3_sidechainsNothing'>Hide</label></li>";
-		    html += "                  </ul>";
-		    html += "                </li>";
-
-		    html += "                <li>Nucleotides";
-		    html += "                  <ul>";
-		    html += "                      <li><input type='radio' name='" + me.pre + "menu3_nucl' id='" + me.pre + "menu3_nuclCartoon'><label for='" + me.pre + "menu3_nuclCartoon'>Cartoon</label></li>";
-		    html += "                      <li><input type='radio' name='" + me.pre + "menu3_nucl' id='" + me.pre + "menu3_nuclPhos' checked><label for='" + me.pre + "menu3_nuclPhos'>Phosphorus Trace</label></li>";
-		    html += "                      <li><input type='radio' name='" + me.pre + "menu3_nucl' id='" + me.pre + "menu3_nuclLines'><label for='" + me.pre + "menu3_nuclLines'>Lines</label></li>";
-		    html += "                      <li><input type='radio' name='" + me.pre + "menu3_nucl' id='" + me.pre + "menu3_nuclStick'><label for='" + me.pre + "menu3_nuclStick'>Stick</label></li>";
-		    html += "                      <li><input type='radio' name='" + me.pre + "menu3_nucl' id='" + me.pre + "menu3_nuclBallstick'><label for='" + me.pre + "menu3_nuclBallstick'>Ball and Stick</label></li>";
-		    html += "                      <li><input type='radio' name='" + me.pre + "menu3_nucl' id='" + me.pre + "menu3_nuclSphere'><label for='" + me.pre + "menu3_nuclSphere'>Sphere</label></li>";
-		    html += "                      <li><input type='radio' name='" + me.pre + "menu3_nucl' id='" + me.pre + "menu3_nuclNothing'><label for='" + me.pre + "menu3_nuclNothing'>Hide</label></li>";
-		    html += "                  </ul>";
-		    html += "                </li>";
-
-		    html += "                <li>Ligands";
-		    html += "                  <ul>";
-		    html += "                      <li><input type='radio' name='" + me.pre + "menu3_ligands' id='" + me.pre + "menu3_ligandsLines'><label for='" + me.pre + "menu3_ligandsLines'>Lines</label></li>";
-		    html += "                      <li><input type='radio' name='" + me.pre + "menu3_ligands' id='" + me.pre + "menu3_ligandsStick' checked><label for='" + me.pre + "menu3_ligandsStick'>Stick</label></li>";
-		    html += "                      <li><input type='radio' name='" + me.pre + "menu3_ligands' id='" + me.pre + "menu3_ligandsBallstick'><label for='" + me.pre + "menu3_ligandsBallstick'>Ball and Stick</label></li>";
-		    html += "                      <li><input type='radio' name='" + me.pre + "menu3_ligands' id='" + me.pre + "menu3_ligandsSphere'><label for='" + me.pre + "menu3_ligandsSphere'>Sphere</label></li>";
-		    html += "                      <li><input type='radio' name='" + me.pre + "menu3_ligands' id='" + me.pre + "menu3_ligandsNothing'><label for='" + me.pre + "menu3_ligandsNothing'>Hide</label></li>";
-		    html += "                  </ul>";
-		    html += "                </li>";
-		}
-		else {
-		    html += "                <li>Ligands";
-		    html += "                  <ul>";
-		    html += "                      <li><input type='radio' name='" + me.pre + "menu3_ligands' id='" + me.pre + "menu3_ligandsLines'><label for='" + me.pre + "menu3_ligandsLines'>Lines</label></li>";
-		    html += "                      <li><input type='radio' name='" + me.pre + "menu3_ligands' id='" + me.pre + "menu3_ligandsStick'><label for='" + me.pre + "menu3_ligandsStick'>Stick</label></li>";
-		    html += "                      <li><input type='radio' name='" + me.pre + "menu3_ligands' id='" + me.pre + "menu3_ligandsBallstick' checked><label for='" + me.pre + "menu3_ligandsBallstick'>Ball and Stick</label></li>";
-		    html += "                      <li><input type='radio' name='" + me.pre + "menu3_ligands' id='" + me.pre + "menu3_ligandsSphere'><label for='" + me.pre + "menu3_ligandsSphere'>Sphere</label></li>";
-		    html += "                      <li><input type='radio' name='" + me.pre + "menu3_ligands' id='" + me.pre + "menu3_ligandsNothing'><label for='" + me.pre + "menu3_ligandsNothing'>Hide</label></li>";
-		    html += "                  </ul>";
-		    html += "                </li>";
-		}
-
-
-		html += "                <li>Ions";
-		html += "                  <ul>";
-		html += "                      <li><input type='radio' name='" + me.pre + "menu3_ions' id='" + me.pre + "menu3_ionsSphere' checked><label for='" + me.pre + "menu3_ionsSphere'>Sphere</label></li>";
-		html += "                      <li><input type='radio' name='" + me.pre + "menu3_ions' id='" + me.pre + "menu3_ionsDot'><label for='" + me.pre + "menu3_ionsDot'>Dot</label></li>";
-		html += "                      <li><input type='radio' name='" + me.pre + "menu3_ions' id='" + me.pre + "menu3_ionsNothing'><label for='" + me.pre + "menu3_ionsNothing'>Hide</label></li>";
-		html += "                  </ul>";
-		html += "                </li>";
-
-		html += "                <li>Water";
-		html += "                  <ul>";
-		html += "                      <li><input type='radio' name='" + me.pre + "menu3_water' id='" + me.pre + "menu3_waterSphere'><label for='" + me.pre + "menu3_waterSphere'>Sphere</label></li>";
-		html += "                      <li><input type='radio' name='" + me.pre + "menu3_water' id='" + me.pre + "menu3_waterDot'><label for='" + me.pre + "menu3_waterDot'>Dot</label></li>";
-		html += "                      <li><input type='radio' name='" + me.pre + "menu3_water' id='" + me.pre + "menu3_waterNothing' checked><label for='" + me.pre + "menu3_waterNothing'>Hide</label></li>";
-		html += "                  </ul>";
-		html += "                </li>";
-
-		html += "              </ul>";
-		html += "              </div>";
-		html += "          </accordion>";
-		html += "    </div>";
-
-		return html;
-	},
-
-	setMenu4: function() { var me = this;
-		var html = "";
-
-		html += "    <div style='float:left;'>";
-		html += "          <accordion id='" + me.pre + "accordion4'>";
-		html += "              <h3>Color</h3>";
-		html += "              <div>";
-		html += "              <ul class='menu'>";
-
-		if(me.cfg.cid === undefined) {
-		    if(me.cfg.mmdbid !== undefined) {
-			html += "                <li><input type='radio' name='" + me.pre + "menu4_color' id='" + me.pre + "menu4_colorSpectrum'><label for='" + me.pre + "menu4_colorSpectrum'>Spectrum</label></li>";
-		    }
-		    else {
-			html += "                <li><input type='radio' name='" + me.pre + "menu4_color' id='" + me.pre + "menu4_colorSpectrum' checked><label for='" + me.pre + "menu4_colorSpectrum'>Spectrum</label></li>";
-		    }
-		    html += "                <li><input type='radio' name='" + me.pre + "menu4_color' id='" + me.pre + "menu4_colorSS'><label for='" + me.pre + "menu4_colorSS'>Secondary</label></li>";
-		    html += "                <li><input type='radio' name='" + me.pre + "menu4_color' id='" + me.pre + "menu4_colorCharge'><label for='" + me.pre + "menu4_colorCharge'>Charge</label></li>";
-		    //html += "                <li><input type='radio' name='" + me.pre + "menu4_color' id='" + me.pre + "menu4_colorBfactor'><label for='" + me.pre + "menu4_colorBfactor'>B Factor</label></li>";
-		    html += "                <li><input type='radio' name='" + me.pre + "menu4_color' id='" + me.pre + "menu4_colorChain'><label for='" + me.pre + "menu4_colorChain'>Chain</label></li>";
-		    html += "                <li><input type='radio' name='" + me.pre + "menu4_color' id='" + me.pre + "menu4_colorResidue'><label for='" + me.pre + "menu4_colorResidue'>Residue</label></li>";
-		    html += "                <li><input type='radio' name='" + me.pre + "menu4_color' id='" + me.pre + "menu4_colorAtom'><label for='" + me.pre + "menu4_colorAtom'>Atom</label></li>";
-		}
-		else {
-		    html += "                <li><input type='radio' name='" + me.pre + "menu4_color' id='" + me.pre + "menu4_colorAtom' checked><label for='" + me.pre + "menu4_colorAtom'>Atom</label></li>";
-		}
-
-		html += "                <li>-</li>";
-		html += "                <li>Unicolor";
-		html += "                  <ul>";
-		html += "                    <li><input type='radio' name='" + me.pre + "menu4_color' id='" + me.pre + "menu4_colorRed'><label for='" + me.pre + "menu4_colorRed'>Red</label></li>";
-		html += "                    <li><input type='radio' name='" + me.pre + "menu4_color' id='" + me.pre + "menu4_colorGreen'><label for='" + me.pre + "menu4_colorGreen'>Green</label></li>";
-		html += "                    <li><input type='radio' name='" + me.pre + "menu4_color' id='" + me.pre + "menu4_colorBlue'><label for='" + me.pre + "menu4_colorBlue'>Blue</label></li>";
-		html += "                    <li><input type='radio' name='" + me.pre + "menu4_color' id='" + me.pre + "menu4_colorMagenta'><label for='" + me.pre + "menu4_colorMagenta'>Magenta</label></li>";
-		html += "                    <li><input type='radio' name='" + me.pre + "menu4_color' id='" + me.pre + "menu4_colorYellow'><label for='" + me.pre + "menu4_colorYellow'>Yellow</label></li>";
-		html += "                    <li><input type='radio' name='" + me.pre + "menu4_color' id='" + me.pre + "menu4_colorCyan'><label for='" + me.pre + "menu4_colorCyan'>Cyan</label></li>";
-		html += "                    <li><input type='radio' name='" + me.pre + "menu4_color' id='" + me.pre + "menu4_colorWhite'><label for='" + me.pre + "menu4_colorWhite'>White</label></li>";
-		html += "                    <li><input type='radio' name='" + me.pre + "menu4_color' id='" + me.pre + "menu4_colorGrey'><label for='" + me.pre + "menu4_colorGrey'>Grey</label></li>";
-		html += "                  </ul>";
-		html += "                <li>-</li>";
-		html += "                <li><input type='radio' name='" + me.pre + "menu4_color' id='" + me.pre + "menu4_colorCustom'><label for='" + me.pre + "menu4_colorCustom'>Custom</label></li>";
-		html += "              </ul>";
-		html += "              </div>";
-		html += "          </accordion>";
-		html += "    </div>";
-
-		return html;
-	},
-
-	setMenu5: function() { var me = this;
-		var html = "";
-
-		html += "    <div style='float:left;'>";
-		html += "          <accordion id='" + me.pre + "accordion5'>";
-		html += "              <h3>Surface</h3>";
-		html += "              <div>";
-		html += "              <ul class='menu'>";
-		html += "                <li>Type";
-		html += "                  <ul>";
-		html += "                      <li><input type='radio' name='" + me.pre + "menu5_surface' id='" + me.pre + "menu5_surfaceVDW'><label for='" + me.pre + "menu5_surfaceVDW'>Van der Waals</label></li>";
-		html += "                      <li><input type='radio' name='" + me.pre + "menu5_surface' id='" + me.pre + "menu5_surfaceSES'><label for='" + me.pre + "menu5_surfaceSES'>Molecular Surface</label></li>";
-		html += "                      <li><input type='radio' name='" + me.pre + "menu5_surface' id='" + me.pre + "menu5_surfaceSAS'><label for='" + me.pre + "menu5_surfaceSAS'>Solvent Accessible</label></li>";
-	//        html += "                      <li><input type='radio' name='" + me.pre + "menu5_surface' id='" + me.pre + "menu5_surfaceMolecular'><label for='" + me.pre + "menu5_surfaceMolecular'>Molecular Surface</label></li>";
-		html += "                      <li><input type='radio' name='" + me.pre + "menu5_surface' id='" + me.pre + "menu5_surfaceNothing' checked><label for='" + me.pre + "menu5_surfaceNothing'>Hide</label></li>";
-		html += "                  </ul>";
-		html += "                </li>";
-		html += "                <li>Opacity";
-		html += "                  <ul>";
-		html += "                      <li><input type='radio' name='" + me.pre + "menu5_opacity' id='" + me.pre + "menu5_opacity10'><label for='" + me.pre + "menu5_opacity10'>1.0</label></li>";
-		html += "                      <li><input type='radio' name='" + me.pre + "menu5_opacity' id='" + me.pre + "menu5_opacity09'><label for='" + me.pre + "menu5_opacity09'>0.9</label></li>";
-		html += "                      <li><input type='radio' name='" + me.pre + "menu5_opacity' id='" + me.pre + "menu5_opacity08' checked><label for='" + me.pre + "menu5_opacity08'>0.8</label></li>";
-		html += "                      <li><input type='radio' name='" + me.pre + "menu5_opacity' id='" + me.pre + "menu5_opacity07'><label for='" + me.pre + "menu5_opacity07'>0.7</label></li>";
-		html += "                      <li><input type='radio' name='" + me.pre + "menu5_opacity' id='" + me.pre + "menu5_opacity06'><label for='" + me.pre + "menu5_opacity06'>0.6</label></li>";
-		html += "                      <li><input type='radio' name='" + me.pre + "menu5_opacity' id='" + me.pre + "menu5_opacity05'><label for='" + me.pre + "menu5_opacity05'>0.5</label></li>";
-		html += "                  </ul>";
-		html += "                </li>";
-		html += "                <li>Wireframe";
-		html += "                  <ul>";
-		html += "                      <li><input type='radio' name='" + me.pre + "menu5_wireframe' id='" + me.pre + "menu5_wireframeYes'><label for='" + me.pre + "menu5_wireframeYes'>Yes</label></li>";
-		html += "                      <li><input type='radio' name='" + me.pre + "menu5_wireframe' id='" + me.pre + "menu5_wireframeNo' checked><label for='" + me.pre + "menu5_wireframeNo'>No</label></li>";
-		html += "                  </ul>";
-		html += "                </li>";
-
-		html += "                <li>Neighbors";
-		html += "                  <ul>";
-		html += "                      <li><input type='radio' name='" + me.pre + "menu5_neighbors' id='" + me.pre + "menu5_neighborsYes'><label for='" + me.pre + "menu5_neighborsYes'>Yes</label></li>";
-		html += "                      <li><input type='radio' name='" + me.pre + "menu5_neighbors' id='" + me.pre + "menu5_neighborsNo' checked><label for='" + me.pre + "menu5_neighborsNo'>No</label></li>";
-		html += "                  </ul>";
-		html += "                </li>";
-
-
-		html += "              </ul>";
-		html += "              </div>";
-		html += "          </accordion>";
-		html += "    </div>";
-
-		return html;
-	},
-
-	setMenu6: function() { var me = this;
-		var html = "";
-
-		html += "    <div style='float:left;'>";
-		html += "          <accordion id='" + me.pre + "accordion6'>";
-		html += "              <h3>Other</h3>";
-		html += "              <div>";
-		html += "              <ul class='menu'>";
-		html += "                <li><span id='" + me.pre + "reset' class='icn3d-link'>Reset</span></li>";
-		//html += "                <li><span id='" + me.pre + "menu6_pickcenter' class='icn3d-link'>Center on Picked Atom</span></li>";
-		html += "                <li><span id='" + me.pre + "menu6_selectedcenter' class='icn3d-link'>Zoom in Selection</span></li>";
-		html += "                <li><span id='" + me.pre + "menu6_back' class='icn3d-link'>Back</span></li>";
-		html += "                <li><span id='" + me.pre + "menu6_forward' class='icn3d-link'>Forward</span></li>";
-		if(me.cfg.cid === undefined) {
-		    html += "                <li>Assembly";
-		    html += "                  <ul>";
-		    html += "                      <li><input type='radio' name='" + me.pre + "menu6_assembly' id='" + me.pre + "menu6_assemblyYes'><label for='" + me.pre + "menu6_assemblyYes'>Yes</label></li>";
-		    html += "                      <li><input type='radio' name='" + me.pre + "menu6_assembly' id='" + me.pre + "menu6_assemblyNo' checked><label for='" + me.pre + "menu6_assemblyNo'>No</label></li>";
-		    html += "                  </ul>";
-		    html += "                </li>";
-		    html += "                <li>H-bonds to selection";
-		    html += "                  <ul>";
-		    html += "                      <li><input type='radio' name='" + me.pre + "menu6_hbonds' id='" + me.pre + "menu6_hbondsYes'><label for='" + me.pre + "menu6_hbondsYes'>Show</label></li>";
-		    html += "                      <li><input type='radio' name='" + me.pre + "menu6_hbonds' id='" + me.pre + "menu6_hbondsNo' checked><label for='" + me.pre + "menu6_hbondsNo'>Hide</label></li>";
-		    html += "                  </ul>";
-		    html += "                </li>";
-		}
-		html += "                <li>Label";
-		html += "                  <ul>";
-
-		html += "                      <li><input type='radio' name='" + me.pre + "menu6_addlabel' id='" + me.pre + "menu6_addlabelYes'><label for='" + me.pre + "menu6_addlabelYes'>Custom Label</label></li>";
-		if(me.cfg.cid === undefined) {
-		    html += "                      <li><input type='radio' name='" + me.pre + "menu6_addlabel' id='" + me.pre + "menu6_addlabelResidues'><label for='" + me.pre + "menu6_addlabelResidues'>Residues</label></li>";
-		}
-		html += "                      <li><input type='radio' name='" + me.pre + "menu6_addlabel' id='" + me.pre + "menu6_addlabelNo' checked><label for='" + me.pre + "menu6_addlabelNo'>Hide</label></li>";
-		html += "                  </ul>";
-		html += "                </li>";
-		html += "                <li>Distance";
-		html += "                  <ul>";
-		html += "                      <li><input type='radio' name='" + me.pre + "menu6_distance' id='" + me.pre + "menu6_distanceYes'><label for='" + me.pre + "menu6_distanceYes'>Show</label></li>";
-		html += "                      <li><input type='radio' name='" + me.pre + "menu6_distance' id='" + me.pre + "menu6_distanceNo' checked><label for='" + me.pre + "menu6_distanceNo'>Hide</label></li>";
-		html += "                  </ul>";
-		html += "                </li>";
-		html += "                <li>Auto Rotation";
-		html += "                  <ul>";
-		html += "                      <li><span id='" + me.pre + "menu6_rotateleft' class='icn3d-link'>Rotate Left</span></li>";
-		html += "                      <li><span id='" + me.pre + "menu6_rotateright' class='icn3d-link'>Rotate Right</span></li>";
-		html += "                      <li><span id='" + me.pre + "menu6_rotateup' class='icn3d-link'>Rotate Up</span></li>";
-		html += "                      <li><span id='" + me.pre + "menu6_rotatedown' class='icn3d-link'>Rotate Down</span></li>";
-		html += "                  </ul>";
-		html += "                </li>";
-		html += "                <li>Camera";
-		html += "                  <ul>";
-		html += "                      <li><input type='radio' name='" + me.pre + "menu6_camera' id='" + me.pre + "menu6_cameraPers' checked><label for='" + me.pre + "menu6_cameraPers'>Perspective</label></li>";
-		html += "                      <li><input type='radio' name='" + me.pre + "menu6_camera' id='" + me.pre + "menu6_cameraOrth'><label for='" + me.pre + "menu6_cameraOrth'>Orthographic</label></li>";
-		html += "                  </ul>";
-		html += "                </li>";
-		html += "                <li>Background";
-		html += "                  <ul>";
-		html += "                      <li><input type='radio' name='" + me.pre + "menu6_bkgd' id='" + me.pre + "menu6_bkgdBlack' checked><label for='" + me.pre + "menu6_bkgdBlack'>Black</label></li>";
-		html += "                      <li><input type='radio' name='" + me.pre + "menu6_bkgd' id='" + me.pre + "menu6_bkgdGrey'><label for='" + me.pre + "menu6_bkgdGrey'>Grey</label></li>";
-		html += "                      <li><input type='radio' name='" + me.pre + "menu6_bkgd' id='" + me.pre + "menu6_bkgdWhite'><label for='" + me.pre + "menu6_bkgdWhite'>White</label></li>";
-		html += "                  </ul>";
-		html += "                </li>";
-		html += "                <li>XYZ-axes";
-		html += "                  <ul>";
-		html += "                      <li><input type='radio' name='" + me.pre + "menu6_showaxis' id='" + me.pre + "menu6_showaxisYes'><label for='" + me.pre + "menu6_showaxisYes'>Show</label></li>";
-		html += "                      <li><input type='radio' name='" + me.pre + "menu6_showaxis' id='" + me.pre + "menu6_showaxisNo' checked><label for='" + me.pre + "menu6_showaxisNo'>Hide</label></li>";
-		html += "                  </ul>";
-		html += "                </li>";
-		html += "                <li>Transform Hint";
-		html += "                  <ul>";
-		html += "                    <li>Rotate";
-		html += "                        <ul>";
-		html += "                            <li>Left Mouse</li>";
-		html += "                            <li>Key L: Left</li>";
-		html += "                            <li>Key J: Right</li>";
-		html += "                            <li>Key I: Up</li>";
-		html += "                            <li>Key M: Down</li>";
-		html += "                        </ul>";
-		html += "                    </li>";
-		html += "                    <li>Zoom";
-		html += "                        <ul>";
-		html += "                            <li>Middle Mouse</li>";
-		html += "                            <li>Left Mouse + Shift</li>";
-		html += "                            <li>Key Z: Zoom in</li>";
-		html += "                            <li>Key X: Zoom out</li>";
-		html += "                        </ul>";
-		html += "                    </li>";
-		html += "                    <li>Translate";
-		html += "                        <ul>";
-		html += "                            <li>Right Mouse</li>";
-		html += "                            <li>Left Mouse + Ctrl</li>";
-		html += "                            <li>Arrow Left: Left</li>";
-		html += "                            <li>Arrow Right: Right</li>";
-		html += "                            <li>Arrow Up: Up</li>";
-		html += "                            <li>Arrow Down: Down</li>";
-		html += "                        </ul>";
-		html += "                    </li>";
-		html += "                  </ul>";
-		html += "                </li>";
-		html += "                <li><a href='https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d.html' target='_blank'>Help</a></li>";
-		html += "              </ul>";
-		html += "              </div>";
-		html += "          </accordion>";
-		html += "    </div>";
-
-		return html;
-	},
-
-	setCommandLog: function() { var me = this;
-		var html = "";
-
-		html += "  <div id='" + me.pre + "commandlog' style='position:absolute; z-index:555; float:left; display:table-row; margin: 3px 0px 0px " + me.MENU_WIDTH + "px;'>";
-
-		html += "    <div style='float:left' class='icn3d-commandTitle'>Script/Log (<a href='https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d.html#commands' target='_blank'><span title='click to see all commands'>Hint</span></a>)</div><br/>";
-		html += "    <textarea id='" + me.pre + "logtext' rows='3' cols='40'></textarea>";
-		html += "  </div>";
-
-		return html;
-	},
-
-	setDialogs: function() { var me = this;
-		var html = "";
-
-		html += "<!-- dialog will not be part of the form -->";
-		html += "<div id='" + me.pre + "allselections' class='icn3d-hidden'>";
-
-		// filter for large structure
-		html += "<div id='" + me.pre + "dl_filter' style='overflow:auto; position:relative;'>";
-		//html += "  <div>This large structure contains more than 50,000 atoms. Please select some structures/chains below to display.</div>";
-		//html += "  <input style='position:absolute; top:8px; left:15px;' type='checkbox' id='" + me.pre + "filter_ckbx_all'/>";
-		html += "  <div style='text-align:center; margin-bottom:10px;'><button id='" + me.pre + "filter'><span style='white-space:nowrap'><b>Show Structure</b></span></button>";
-		html += "<button id='" + me.pre + "label_3d_diagram' style='margin-left:10px;'><span style='white-space:nowrap'><b>Show Labels</b></span></button></div>";
-		html += "  <div id='" + me.pre + "dl_filter_table' class='icn3d-box'>";
-		html += "  </div>";
-		html += "</div>";
-
-		html += "<div id='" + me.pre + "dl_selectresidues'>";
-
-		html += "  <div id='" + me.pre + "dl_sequence' class='icn3d-dl_sequence'>";
-		html += "  </div>";
-
-		html += "</div>";
-
-		if(me.cfg.align !== undefined) {
-		  html += "<div id='" + me.pre + "dl_alignment'>";
-		  html += "  <div id='" + me.pre + "dl_sequence2' class='icn3d-dl_sequence'>";
-		  html += "  </div>";
-		  html += "</div>";
-		}
-
-		html += "<div id='" + me.pre + "dl_command'>";
-		html += "  <table width='500'><tr><td valign='top'><table>";
-		html += "<tr><td align='right'><b>Select:</b></td><td><input type='text' id='" + me.pre + "command' placeholder='#[structures].[chains]:[residues]@[atoms]' size='30'></td></tr>";
-		html += "<tr><td align='right'><b>Name:</b></td><td><input type='text' id='" + me.pre + "command_name' placeholder='my_selection' size='30'></td></tr>";
-		html += "<tr><td align='right'><b>Description:</b></td><td><input type='text' id='" + me.pre + "command_desc' placeholder='description about my selection' size='30'></td></tr>";
-		html += "<tr><td colspan='2' align='center'><button id='" + me.pre + "command_apply'><b>Apply</b></button></td></tr>";
-		html += "  </table></td>";
-
-		html += "  <td valign='top'><div>";
-		html += "    <b>Atom Selection(s):</b> <br/>";
-		html += "    <select id='" + me.pre + "customAtoms' multiple size='3' style='min-width:100px;'>";
-		html += "    </select>";
-		html += "  </td>";
-
-		html += "  <td valign='top'><div>";
-		html += "    <button id='" + me.pre + "show_selected_atom'><span style='white-space:nowrap'><b>Display Selection</b></span></button>";
-		html += "  </div></td></tr>";
-
-		//html += "  <tr><td colspan='3'>One line command: select [my_select] | name [my_name] | description [my_description], e.g., select :1-10 | name residue1-20 | description residues 1-20 in all chains<br/><br/></td></tr>";
-
-		html += "  <tr><td colspan='3'><a href='https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d.html#selectb' target='_blank'><span title='click to see how to select'>Hint</span></a>: <br/>Users can define \"select\" command similar to Chimera. For example, in the selection \"#1,2,3.A,B,C:5-10,Lys,ligands@CA,C\":<br/>\"#1,2,3\" uses \"#\" to indicate structure selection.<br/>\".A,B,C\" uses \".\" to indicate chain selection.<br/>\":5-10,Lys,ligands\" uses \":\" to indicate residue selection. Residue could be predefined names: 'proteins', 'nucleotides', 'ligands', 'ions', and 'water'.<br/>\"@CA,C\" uses \"@\" to indicate atom selection.<br/><br/>Partial definition is allowed, e.g., \":1-10\" selects all residue IDs 1-10 in all chains.<br/><br/>Different selections can be concatenated using semicolon, e.g., \":1-10; :Lys\" selects all residue IDs 1-10 and all Lys residues.</td></tr></table>";
-
-		html += "</div>";
-
-		html += "<div id='" + me.pre + "dl_pdbid'>";
-		html += "PDB ID: <input type='text' id='" + me.pre + "pdbid' value='2POR' size=8> ";
-		html += "<button id='" + me.pre + "reload_pdb'>Load</button>";
-		html += "</div>";
-
-		html += "<div id='" + me.pre + "dl_pdbfile'>";
-		html += "PDB File: <input type='file' id='" + me.pre + "pdbfile' value='2POR' size=8> ";
-		html += "<button id='" + me.pre + "reload_pdbfile'>Load</button>";
-		html += "</div>";
-
-		html += "<div id='" + me.pre + "dl_mmcifid'>";
-		html += "mmCIF ID: <input type='text' id='" + me.pre + "mmcifid' value='2POR' size=8> ";
-		html += "<button id='" + me.pre + "reload_mmcif'>Load</button>";
-		html += "</div>";
-
-		html += "<div id='" + me.pre + "dl_mmdbid'>";
-		html += "MMDB ID: <input type='text' id='" + me.pre + "mmdbid' value='2POR' size=8> ";
-		html += "<button id='" + me.pre + "reload_mmdb'>Load</button>";
-		html += "</div>";
-
-		html += "<div id='" + me.pre + "dl_gi'>";
-		html += "Protein gi: <input type='text' id='" + me.pre + "gi' value='827343227' size=8> ";
-		html += "<button id='" + me.pre + "reload_gi'>Load</button>";
-		html += "</div>";
-
-		html += "<div id='" + me.pre + "dl_cid'>";
-		html += "PubChem CID: <input type='text' id='" + me.pre + "cid' value='2244' size=8> ";
-		html += "<button id='" + me.pre + "reload_cid'>Load</button>";
-		html += "</div>";
-
-		html += "<div id='" + me.pre + "dl_state'>";
-		html += "State file: <input type='file' id='" + me.pre + "state'><br/>";
-		html += "<button id='" + me.pre + "reload_state' style='margin-top: 6px;'>Load</button>";
-		html += "</div>";
-
-		html += "<div id='" + me.pre + "dl_color'>";
-		html += "Custom Color: <input type='text' id='" + me.pre + "color' value='#FF0000' size=8> ";
-		html += "<button id='" + me.pre + "applycustomcolor'>Apply</button>";
-		html += "</div>";
-
-		html += "<div id='" + me.pre + "dl_hbonds'>";
-		html += "  <span style='white-space:nowrap;'>Threshold: <select id='" + me.pre + "hbondthreshold'>";
-		html += "  <option value='3.2'>3.2</option>";
-		html += "  <option value='3.3'>3.3</option>";
-		html += "  <option value='3.4'>3.4</option>";
-		html += "  <option value='3.5' selected>3.5</option>";
-		html += "  <option value='3.6'>3.6</option>";
-		html += "  <option value='3.7'>3.7</option>";
-		html += "  <option value='3.8'>3.8</option>";
-		html += "  <option value='3.9'>3.9</option>";
-		html += "  <option value='4.0'>4.0</option>";
-		html += "  </select> &#197;</span><br/>";
-		html += "  <span style='white-space:nowrap'><button id='" + me.pre + "applyhbonds'>Display</button></span>";
-		html += "</div>";
-
-		html += "<div id='" + me.pre + "dl_aroundsphere'";
-		html += "  <span style='white-space:nowrap'>1. Sphere with a radius: <input type='text' id='" + me.pre + "radius_aroundsphere' value='5' size='2'> &#197;</span><br/>";
-		html += "  <span style='white-space:nowrap'>2. <button id='" + me.pre + "applypick_aroundsphere'>Display</button> the sphere around currently selected atoms</span>";
-		html += "</div>";
-
-		html += "<div id='" + me.pre + "dl_select_chain'>";
-
-		html += "    <table><tr valign='center'>";
-
-		html += "        <td valign='top'><b>Structure:</b><br/>";
-		html += "        <select id='" + me.pre + "structureid2' multiple size='3' style='min-width:50px;'>";
-		html += "        </select></td>";
-
-		html += "        <td valign='top'><b>Chain:</b><br/>";
-		html += "        <select id='" + me.pre + "chainid2' multiple size='3' style='min-width:50px;'>";
-		html += "        </select></td>";
-
-		if(me.cfg.align !== undefined) {
-		    html += "        <td valign='top'><b>Aligned:</b><br/>";
-		    html += "        <select id='" + me.pre + "alignChainid2' multiple size='3' style='min-width:50px;'>";
-		    html += "        </select></td>";
-		}
-
-		html += "        <td valign='top'><b>Custom:</b><br/>";
-		html += "        <select id='" + me.pre + "customResidues2' multiple size='3' style='min-width:50px;'>";
-		html += "        </select></td>";
-
-		html += "    </tr></table>";
-
-		html += "</div>";
-
-		html += "<div id='" + me.pre + "dl_addlabel'>";
-		html += "1. Text: <input type='text' id='" + me.pre + "labeltext' value='Text' size=4><br/>";
-		html += "2. Size: <input type='text' id='" + me.pre + "labelsize' value='40' size=4><br/>";
-		html += "3. Color: <input type='text' id='" + me.pre + "labelcolor' value='#ffff00' size=4><br/>";
-		html += "4. Background: <input type='text' id='" + me.pre + "labelbkgd' value='#cccccc' size=4><br/>";
-		html += "<span style='white-space:nowrap'>5. Pick TWO atoms</span><br/>";
-		html += "<span style='white-space:nowrap'>6. <button id='" + me.pre + "applypick_labels'>Display</button></span>";
-		html += "</div>";
-
-		html += "<div id='" + me.pre + "dl_distance'>";
-		html += "  <span style='white-space:nowrap'>1. Pick TWO atoms</span><br/>";
-		html += "  <span style='white-space:nowrap'>2. <button id='" + me.pre + "applypick_measuredistance'>Display</button></span>";
-		html += "</div>";
-
-		html += "</div>";
-		html += "<!--/form-->";
-
-		return html;
-	},
-
-	setCustomDialogs: function() { var me = this;
-		var html = "";
-
-		return html;
-	},
+    setMenu1: function() { var me = this;
+        var html = "";
+
+        html += "    <div style='float:left;'>";
+        html += "          <accordion id='" + me.pre + "accordion1'>";
+        html += "              <h3>File</h3>";
+        html += "              <div>";
+        html += "              <ul class='menu'>";
+        html += "                <li>Retrieve by ID";
+        html += "                  <ul>";
+        html += "                    <li><span id='" + me.pre + "menu1_pdbid' class='icn3d-link'>PDB ID</span></li>";
+        html += "                    <li><span id='" + me.pre + "menu1_mmcifid' class='icn3d-link'>mmCIF ID</span></li>";
+        html += "                    <li><span id='" + me.pre + "menu1_mmdbid' class='icn3d-link'>MMDB ID</span></li>";
+        //html += "                    <li><span id='" + me.pre + "menu1_term' class='icn3d-link'>Search MMDB term</span></li>";
+        html += "                    <li><span id='" + me.pre + "menu1_gi' class='icn3d-link'>gi</span></li>";
+        html += "                    <li><span id='" + me.pre + "menu1_cid' class='icn3d-link'>PubChem CID</span></li>";
+        html += "                  </ul>";
+        html += "                </li>";
+        html += "                <li><span id='" + me.pre + "menu1_pdbfile' class='icn3d-link'>Open PDB File</span></li>";
+        html += "                <li><span id='" + me.pre + "menu1_state' class='icn3d-link'>Open State/Script</span></li>";
+        html += "                <li><span id='" + me.pre + "menu1_exportState' class='icn3d-link'>Export State<br/></span></li>";
+        html += "                <li><span id='" + me.pre + "menu1_exportCanvas' class='icn3d-link'>Export Image</span></li>";
+        html += "                <li>Links";
+        html += "                  <ul>";
+        html += "                    <li><span id='" + me.pre + "menu1_link_structure' class='icn3d-link'>Structure Summary</span></li>";
+        html += "                    <li><span id='" + me.pre + "menu1_link_vast' class='icn3d-link'>Find Similar Structures</span></li>";
+        html += "                    <li><span id='" + me.pre + "menu1_link_pubmed' class='icn3d-link'>Literature</span></li>";
+        html += "                  </ul>";
+        html += "                </li>";
+        html += "              </ul>";
+        html += "              </div>";
+        html += "          </accordion>";
+        html += "    </div>";
+
+        return html;
+    },
+
+    setMenu2: function() { var me = this;
+        var html = "";
+
+        html += "    <div style='float:left;'>";
+        html += "          <accordion id='" + me.pre + "accordion2'>";
+        html += "              <h3>Select</h3>";
+        html += "              <div>";
+        html += "              <ul class='menu'>";
+
+        html += "                <li>Select";
+        html += "                  <ul>";
+        if(me.cfg.cid === undefined) {
+            html += "                      <li><input type='radio' name='" + me.pre + "menu2_select' id='" + me.pre + "menu2_select_chain'><label for='" + me.pre + "menu2_select_chain'>Structure/Chain</label></li>";
+        }
+        html += "                      <li><input type='radio' name='" + me.pre + "menu2_select' id='" + me.pre + "menu2_selectall'><label for='" + me.pre + "menu2_selectall'>All</label></li>";
+        html += "                      <li><input type='radio' name='" + me.pre + "menu2_select' id='" + me.pre + "menu2_selectcomplement'><label for='" + me.pre + "menu2_selectcomplement'>Complement</label></li>";
+        html += "                      <li><input type='radio' name='" + me.pre + "menu2_select' id='" + me.pre + "menu2_aroundsphere'><label for='" + me.pre + "menu2_aroundsphere'>Custom Sphere</label></li>";
+        if(me.cfg.cid === undefined) {
+            html += "                      <li><input type='radio' name='" + me.pre + "menu2_select' id='" + me.pre + "menu2_selectresidues'><label for='" + me.pre + "menu2_selectresidues'>Sequence</label></li>";
+        }
+        if(me.cfg.align !== undefined) {
+            html += "                      <li><input type='radio' name='" + me.pre + "menu2_select' id='" + me.pre + "menu2_alignment'><label for='" + me.pre + "menu2_alignment'>Aligned Seq.</label></li>";
+        }
+        html += "                      <li><input type='radio' name='" + me.pre + "menu2_select' id='" + me.pre + "menu2_command'><label for='" + me.pre + "menu2_command'>by Command</label></li>";
+        html += "                  </ul>";
+        html += "                </li>";
+
+        html += "                <li>Picking";
+        html += "                  <ul>";
+        if(me.cfg.cid === undefined) {
+            html += "                      <li><input type='radio' name='" + me.pre + "menu2_picking' id='" + me.pre + "menu2_pickingStrand'><label for='" + me.pre + "menu2_pickingStrand'>Strand/Helix</label></li>";
+            html += "                      <li><input type='radio' name='" + me.pre + "menu2_picking' id='" + me.pre + "menu2_pickingResidue' checked><label for='" + me.pre + "menu2_pickingResidue'>Residue</label></li>";
+            html += "                      <li><input type='radio' name='" + me.pre + "menu2_picking' id='" + me.pre + "menu2_pickingYes'><label for='" + me.pre + "menu2_pickingYes'>Atom</label></li>";
+        }
+        else {
+            html += "                      <li><input type='radio' name='" + me.pre + "menu2_picking' id='" + me.pre + "menu2_pickingStrand'><label for='" + me.pre + "menu2_pickingStrand'>Strand/Helix</label></li>";
+            html += "                      <li><input type='radio' name='" + me.pre + "menu2_picking' id='" + me.pre + "menu2_pickingResidue'><label for='" + me.pre + "menu2_pickingResidue'>Residue</label></li>";
+            html += "                      <li><input type='radio' name='" + me.pre + "menu2_picking' id='" + me.pre + "menu2_pickingYes' checked><label for='" + me.pre + "menu2_pickingYes'>Atom</label></li>";
+        }
+
+        html += "                      <li><input type='radio' name='" + me.pre + "menu2_picking' id='" + me.pre + "menu2_pickingNo'><label for='" + me.pre + "menu2_pickingNo'>Off</label></li>";
+        html += "                  </ul>";
+        html += "                </li>";
+
+        html += "                <li>Display";
+        html += "                  <ul>";
+        if(me.cfg.align !== undefined) {
+            html += "                      <li><input type='radio' name='" + me.pre + "menu2_display' id='" + me.pre + "menu2_alternate'><label for='" + me.pre + "menu2_alternate'>Alternate Structures</label></li>";
+        }
+        html += "                      <li><input type='radio' name='" + me.pre + "menu2_display' id='" + me.pre + "menu2_toggle'><label for='" + me.pre + "menu2_toggle'>Toggle Selection</label></li>";
+        html += "                      <li><input type='radio' name='" + me.pre + "menu2_display' id='" + me.pre + "menu2_show_selected'><label for='" + me.pre + "menu2_show_selected'>Display Selection</label></li>";
+        html += "                      <li><input type='radio' name='" + me.pre + "menu2_display' id='" + me.pre + "toggleHighlight2'><label for='" + me.pre + "toggleHighlight2'>Toggle Highlight</label></li>";
+        html += "                  </ul>";
+        html += "                </li>";
+
+        html += "                    <li>Highlight Color";
+        html += "                      <ul>";
+        html += "                        <li><input type='radio' name='" + me.pre + "menu2_hl_color' id='" + me.pre + "menu2_hl_colorYellow' checked><label for='" + me.pre + "menu2_hl_colorYellow'>Yellow</label></li>";
+        html += "                        <li><input type='radio' name='" + me.pre + "menu2_hl_color' id='" + me.pre + "menu2_hl_colorGreen'><label for='" + me.pre + "menu2_hl_colorGreen'>Green</label></li>";
+        html += "                        <li><input type='radio' name='" + me.pre + "menu2_hl_color' id='" + me.pre + "menu2_hl_colorRed'><label for='" + me.pre + "menu2_hl_colorRed'>Red</label></li>";
+        html += "                      </ul>";
+        html += "                    </li>";
+        html += "                    <li>Highlight Style";
+        html += "                      <ul>";
+
+        if(Detector.webgl) {
+            html += "                        <li><input type='radio' name='" + me.pre + "menu2_hl_style' id='" + me.pre + "menu2_hl_styleOutline' checked><label for='" + me.pre + "menu2_hl_styleOutline'>Outline</label></li>";
+            html += "                        <li><input type='radio' name='" + me.pre + "menu2_hl_style' id='" + me.pre + "menu2_hl_styleObject'><label for='" + me.pre + "menu2_hl_styleObject'>3D Objects</label></li>";
+        }
+        else {
+            html += "                        <li><input type='radio' name='" + me.pre + "menu2_hl_style' id='" + me.pre + "menu2_hl_styleOutline'><label for='" + me.pre + "menu2_hl_styleOutline'>Outline</label></li>";
+            html += "                        <li><input type='radio' name='" + me.pre + "menu2_hl_style' id='" + me.pre + "menu2_hl_styleObject' checked><label for='" + me.pre + "menu2_hl_styleObject'>3D Objects</label></li>";
+        }
+        html += "                      </ul>";
+        html += "                    </li>";
+
+        html += "              </ul>";
+        html += "              </div>";
+        html += "          </accordion>";
+        html += "    </div>";
+
+        return html;
+    },
+
+    setMenu3: function() { var me = this;
+        var html = "";
+
+        html += "    <div style='float:left;'>";
+        html += "          <accordion id='" + me.pre + "accordion3'>";
+        html += "              <h3>Style</h3>";
+        html += "              <div>";
+        html += "              <ul class='menu'>";
+
+        if(me.cfg.cid === undefined) {
+            if(me.cfg.align !== undefined) {
+                html += "                <li>Proteins";
+                html += "                  <ul>";
+                html += "                      <li><input type='radio' name='" + me.pre + "menu3_proteins' id='" + me.pre + "menu3_proteinsRibbon'><label for='" + me.pre + "menu3_proteinsRibbon'>Ribbon</label></li>";
+                html += "                      <li><input type='radio' name='" + me.pre + "menu3_proteins' id='" + me.pre + "menu3_proteinsStrand'><label for='" + me.pre + "menu3_proteinsStrand'>Strand</label></li>";
+                html += "                      <li><input type='radio' name='" + me.pre + "menu3_proteins' id='" + me.pre + "menu3_proteinsCylinder'><label for='" + me.pre + "menu3_proteinsCylinder'>Cylinder and Plate</label></li>";
+
+                html += "                      <li><input type='radio' name='" + me.pre + "menu3_proteins' id='" + me.pre + "menu6_addlabelResidueSchematic'><label for='" + me.pre + "menu6_addlabelResidueSchematic'>Schematic</label></li>";
+
+                html += "                      <li><input type='radio' name='" + me.pre + "menu3_proteins' id='" + me.pre + "menu3_proteinsCalpha' checked><label for='" + me.pre + "menu3_proteinsCalpha'>C Alpha Trace</label></li>";
+                html += "                      <li><input type='radio' name='" + me.pre + "menu3_proteins' id='" + me.pre + "menu3_proteinsBfactor'><label for='" + me.pre + "menu3_proteinsBfactor'>B Factor Tube</label></li>";
+                html += "                      <li><input type='radio' name='" + me.pre + "menu3_proteins' id='" + me.pre + "menu3_proteinsLines'><label for='" + me.pre + "menu3_proteinsLines'>Lines</label></li>";
+                html += "                      <li><input type='radio' name='" + me.pre + "menu3_proteins' id='" + me.pre + "menu3_proteinsStick'><label for='" + me.pre + "menu3_proteinsStick'>Stick</label></li>";
+                html += "                      <li><input type='radio' name='" + me.pre + "menu3_proteins' id='" + me.pre + "menu3_proteinsBallstick'><label for='" + me.pre + "menu3_proteinsBallstick'>Ball and Stick</label></li>";
+                html += "                      <li><input type='radio' name='" + me.pre + "menu3_proteins' id='" + me.pre + "menu3_proteinsSphere'><label for='" + me.pre + "menu3_proteinsSphere'>Sphere</label></li>";
+                html += "                      <li><input type='radio' name='" + me.pre + "menu3_proteins' id='" + me.pre + "menu3_proteinsNothing'><label for='" + me.pre + "menu3_proteinsNothing'>Hide</label></li>";
+                html += "                  </ul>";
+                html += "                </li>";
+            }
+            else {
+                html += "                <li>Protein";
+                html += "                  <ul>";
+                html += "                      <li><input type='radio' name='" + me.pre + "menu3_proteins' id='" + me.pre + "menu3_proteinsRibbon' checked><label for='" + me.pre + "menu3_proteinsRibbon'>Ribbon</label></li>";
+                html += "                      <li><input type='radio' name='" + me.pre + "menu3_proteins' id='" + me.pre + "menu3_proteinsStrand'><label for='" + me.pre + "menu3_proteinsStrand'>Strand</label></li>";
+                html += "                      <li><input type='radio' name='" + me.pre + "menu3_proteins' id='" + me.pre + "menu3_proteinsCylinder'><label for='" + me.pre + "menu3_proteinsCylinder'>Cylinder and Plate</label></li>";
+
+                html += "                      <li><input type='radio' name='" + me.pre + "menu3_proteins' id='" + me.pre + "menu6_addlabelResidueSchematic'><label for='" + me.pre + "menu6_addlabelResidueSchematic'>Schematic</label></li>";
+
+                html += "                      <li><input type='radio' name='" + me.pre + "menu3_proteins' id='" + me.pre + "menu3_proteinsCalpha'><label for='" + me.pre + "menu3_proteinsCalpha'>C Alpha Trace</label></li>";
+                html += "                      <li><input type='radio' name='" + me.pre + "menu3_proteins' id='" + me.pre + "menu3_proteinsBfactor'><label for='" + me.pre + "menu3_proteinsBfactor'>B Factor Tube</label></li>";
+                html += "                      <li><input type='radio' name='" + me.pre + "menu3_proteins' id='" + me.pre + "menu3_proteinsLines'><label for='" + me.pre + "menu3_proteinsLines'>Lines</label></li>";
+                html += "                      <li><input type='radio' name='" + me.pre + "menu3_proteins' id='" + me.pre + "menu3_proteinsStick'><label for='" + me.pre + "menu3_proteinsStick'>Stick</label></li>";
+                html += "                      <li><input type='radio' name='" + me.pre + "menu3_proteins' id='" + me.pre + "menu3_proteinsBallstick'><label for='" + me.pre + "menu3_proteinsBallstick'>Ball and Stick</label></li>";
+                html += "                      <li><input type='radio' name='" + me.pre + "menu3_proteins' id='" + me.pre + "menu3_proteinsSphere'><label for='" + me.pre + "menu3_proteinsSphere'>Sphere</label></li>";
+                html += "                      <li><input type='radio' name='" + me.pre + "menu3_proteins' id='" + me.pre + "menu3_proteinsNothing'><label for='" + me.pre + "menu3_proteinsNothing'>Hide</label></li>";
+                html += "                  </ul>";
+                html += "                </li>";
+            }
+
+            html += "                <li>Side Chains";
+            html += "                  <ul>";
+            html += "                      <li><input type='radio' name='" + me.pre + "menu3_sidechains' id='" + me.pre + "menu3_sidechainsLines'><label for='" + me.pre + "menu3_sidechainsLines'>Lines</label></li>";
+            html += "                      <li><input type='radio' name='" + me.pre + "menu3_sidechains' id='" + me.pre + "menu3_sidechainsStick'><label for='" + me.pre + "menu3_sidechainsStick'>Stick</label></li>";
+            html += "                      <li><input type='radio' name='" + me.pre + "menu3_sidechains' id='" + me.pre + "menu3_sidechainsBallstick'><label for='" + me.pre + "menu3_sidechainsBallstick'>Ball and Stick</label></li>";
+            html += "                      <li><input type='radio' name='" + me.pre + "menu3_sidechains' id='" + me.pre + "menu3_sidechainsSphere'><label for='" + me.pre + "menu3_sidechainsSphere'>Sphere</label></li>";
+            html += "                      <li><input type='radio' name='" + me.pre + "menu3_sidechains' id='" + me.pre + "menu3_sidechainsNothing' checked><label for='" + me.pre + "menu3_sidechainsNothing'>Hide</label></li>";
+            html += "                  </ul>";
+            html += "                </li>";
+
+            html += "                <li>Nucleotides";
+            html += "                  <ul>";
+            html += "                      <li><input type='radio' name='" + me.pre + "menu3_nucl' id='" + me.pre + "menu3_nuclCartoon'><label for='" + me.pre + "menu3_nuclCartoon'>Cartoon</label></li>";
+            html += "                      <li><input type='radio' name='" + me.pre + "menu3_nucl' id='" + me.pre + "menu3_nuclPhos' checked><label for='" + me.pre + "menu3_nuclPhos'>Phosphorus Trace</label></li>";
+            html += "                      <li><input type='radio' name='" + me.pre + "menu3_nucl' id='" + me.pre + "menu3_nuclLines'><label for='" + me.pre + "menu3_nuclLines'>Lines</label></li>";
+            html += "                      <li><input type='radio' name='" + me.pre + "menu3_nucl' id='" + me.pre + "menu3_nuclStick'><label for='" + me.pre + "menu3_nuclStick'>Stick</label></li>";
+            html += "                      <li><input type='radio' name='" + me.pre + "menu3_nucl' id='" + me.pre + "menu3_nuclBallstick'><label for='" + me.pre + "menu3_nuclBallstick'>Ball and Stick</label></li>";
+            html += "                      <li><input type='radio' name='" + me.pre + "menu3_nucl' id='" + me.pre + "menu3_nuclSphere'><label for='" + me.pre + "menu3_nuclSphere'>Sphere</label></li>";
+            html += "                      <li><input type='radio' name='" + me.pre + "menu3_nucl' id='" + me.pre + "menu3_nuclNothing'><label for='" + me.pre + "menu3_nuclNothing'>Hide</label></li>";
+            html += "                  </ul>";
+            html += "                </li>";
+
+            html += "                <li>Ligands";
+            html += "                  <ul>";
+            html += "                      <li><input type='radio' name='" + me.pre + "menu3_ligands' id='" + me.pre + "menu3_ligandsLines'><label for='" + me.pre + "menu3_ligandsLines'>Lines</label></li>";
+            html += "                      <li><input type='radio' name='" + me.pre + "menu3_ligands' id='" + me.pre + "menu3_ligandsStick' checked><label for='" + me.pre + "menu3_ligandsStick'>Stick</label></li>";
+            html += "                      <li><input type='radio' name='" + me.pre + "menu3_ligands' id='" + me.pre + "menu3_ligandsBallstick'><label for='" + me.pre + "menu3_ligandsBallstick'>Ball and Stick</label></li>";
+            html += "                      <li><input type='radio' name='" + me.pre + "menu3_ligands' id='" + me.pre + "menu3_ligandsSphere'><label for='" + me.pre + "menu3_ligandsSphere'>Sphere</label></li>";
+            html += "                      <li><input type='radio' name='" + me.pre + "menu3_ligands' id='" + me.pre + "menu3_ligandsNothing'><label for='" + me.pre + "menu3_ligandsNothing'>Hide</label></li>";
+            html += "                  </ul>";
+            html += "                </li>";
+        }
+        else {
+            html += "                <li>Ligands";
+            html += "                  <ul>";
+            html += "                      <li><input type='radio' name='" + me.pre + "menu3_ligands' id='" + me.pre + "menu3_ligandsLines'><label for='" + me.pre + "menu3_ligandsLines'>Lines</label></li>";
+            html += "                      <li><input type='radio' name='" + me.pre + "menu3_ligands' id='" + me.pre + "menu3_ligandsStick'><label for='" + me.pre + "menu3_ligandsStick'>Stick</label></li>";
+            html += "                      <li><input type='radio' name='" + me.pre + "menu3_ligands' id='" + me.pre + "menu3_ligandsBallstick' checked><label for='" + me.pre + "menu3_ligandsBallstick'>Ball and Stick</label></li>";
+            html += "                      <li><input type='radio' name='" + me.pre + "menu3_ligands' id='" + me.pre + "menu3_ligandsSphere'><label for='" + me.pre + "menu3_ligandsSphere'>Sphere</label></li>";
+            html += "                      <li><input type='radio' name='" + me.pre + "menu3_ligands' id='" + me.pre + "menu3_ligandsNothing'><label for='" + me.pre + "menu3_ligandsNothing'>Hide</label></li>";
+            html += "                  </ul>";
+            html += "                </li>";
+        }
+
+
+        html += "                <li>Ions";
+        html += "                  <ul>";
+        html += "                      <li><input type='radio' name='" + me.pre + "menu3_ions' id='" + me.pre + "menu3_ionsSphere' checked><label for='" + me.pre + "menu3_ionsSphere'>Sphere</label></li>";
+        html += "                      <li><input type='radio' name='" + me.pre + "menu3_ions' id='" + me.pre + "menu3_ionsDot'><label for='" + me.pre + "menu3_ionsDot'>Dot</label></li>";
+        html += "                      <li><input type='radio' name='" + me.pre + "menu3_ions' id='" + me.pre + "menu3_ionsNothing'><label for='" + me.pre + "menu3_ionsNothing'>Hide</label></li>";
+        html += "                  </ul>";
+        html += "                </li>";
+
+        html += "                <li>Water";
+        html += "                  <ul>";
+        html += "                      <li><input type='radio' name='" + me.pre + "menu3_water' id='" + me.pre + "menu3_waterSphere'><label for='" + me.pre + "menu3_waterSphere'>Sphere</label></li>";
+        html += "                      <li><input type='radio' name='" + me.pre + "menu3_water' id='" + me.pre + "menu3_waterDot'><label for='" + me.pre + "menu3_waterDot'>Dot</label></li>";
+        html += "                      <li><input type='radio' name='" + me.pre + "menu3_water' id='" + me.pre + "menu3_waterNothing' checked><label for='" + me.pre + "menu3_waterNothing'>Hide</label></li>";
+        html += "                  </ul>";
+        html += "                </li>";
+
+        html += "              </ul>";
+        html += "              </div>";
+        html += "          </accordion>";
+        html += "    </div>";
+
+        return html;
+    },
+
+    setMenu4: function() { var me = this;
+        var html = "";
+
+        html += "    <div style='float:left;'>";
+        html += "          <accordion id='" + me.pre + "accordion4'>";
+        html += "              <h3>Color</h3>";
+        html += "              <div>";
+        html += "              <ul class='menu'>";
+
+        if(me.cfg.cid === undefined) {
+            if(me.cfg.mmdbid !== undefined) {
+            html += "                <li><input type='radio' name='" + me.pre + "menu4_color' id='" + me.pre + "menu4_colorSpectrum'><label for='" + me.pre + "menu4_colorSpectrum'>Spectrum</label></li>";
+            }
+            else {
+            html += "                <li><input type='radio' name='" + me.pre + "menu4_color' id='" + me.pre + "menu4_colorSpectrum' checked><label for='" + me.pre + "menu4_colorSpectrum'>Spectrum</label></li>";
+            }
+            html += "                <li><input type='radio' name='" + me.pre + "menu4_color' id='" + me.pre + "menu4_colorSS'><label for='" + me.pre + "menu4_colorSS'>Secondary</label></li>";
+            html += "                <li><input type='radio' name='" + me.pre + "menu4_color' id='" + me.pre + "menu4_colorCharge'><label for='" + me.pre + "menu4_colorCharge'>Charge</label></li>";
+            //html += "                <li><input type='radio' name='" + me.pre + "menu4_color' id='" + me.pre + "menu4_colorBfactor'><label for='" + me.pre + "menu4_colorBfactor'>B Factor</label></li>";
+            html += "                <li><input type='radio' name='" + me.pre + "menu4_color' id='" + me.pre + "menu4_colorChain'><label for='" + me.pre + "menu4_colorChain'>Chain</label></li>";
+            html += "                <li><input type='radio' name='" + me.pre + "menu4_color' id='" + me.pre + "menu4_colorResidue'><label for='" + me.pre + "menu4_colorResidue'>Residue</label></li>";
+            html += "                <li><input type='radio' name='" + me.pre + "menu4_color' id='" + me.pre + "menu4_colorAtom'><label for='" + me.pre + "menu4_colorAtom'>Atom</label></li>";
+        }
+        else {
+            html += "                <li><input type='radio' name='" + me.pre + "menu4_color' id='" + me.pre + "menu4_colorAtom' checked><label for='" + me.pre + "menu4_colorAtom'>Atom</label></li>";
+        }
+
+        html += "                <li>-</li>";
+        html += "                <li>Unicolor";
+        html += "                  <ul>";
+        html += "                    <li><input type='radio' name='" + me.pre + "menu4_color' id='" + me.pre + "menu4_colorRed'><label for='" + me.pre + "menu4_colorRed'>Red</label></li>";
+        html += "                    <li><input type='radio' name='" + me.pre + "menu4_color' id='" + me.pre + "menu4_colorGreen'><label for='" + me.pre + "menu4_colorGreen'>Green</label></li>";
+        html += "                    <li><input type='radio' name='" + me.pre + "menu4_color' id='" + me.pre + "menu4_colorBlue'><label for='" + me.pre + "menu4_colorBlue'>Blue</label></li>";
+        html += "                    <li><input type='radio' name='" + me.pre + "menu4_color' id='" + me.pre + "menu4_colorMagenta'><label for='" + me.pre + "menu4_colorMagenta'>Magenta</label></li>";
+        html += "                    <li><input type='radio' name='" + me.pre + "menu4_color' id='" + me.pre + "menu4_colorYellow'><label for='" + me.pre + "menu4_colorYellow'>Yellow</label></li>";
+        html += "                    <li><input type='radio' name='" + me.pre + "menu4_color' id='" + me.pre + "menu4_colorCyan'><label for='" + me.pre + "menu4_colorCyan'>Cyan</label></li>";
+        html += "                    <li><input type='radio' name='" + me.pre + "menu4_color' id='" + me.pre + "menu4_colorWhite'><label for='" + me.pre + "menu4_colorWhite'>White</label></li>";
+        html += "                    <li><input type='radio' name='" + me.pre + "menu4_color' id='" + me.pre + "menu4_colorGrey'><label for='" + me.pre + "menu4_colorGrey'>Grey</label></li>";
+        html += "                  </ul>";
+        html += "                <li>-</li>";
+        html += "                <li><input type='radio' name='" + me.pre + "menu4_color' id='" + me.pre + "menu4_colorCustom'><label for='" + me.pre + "menu4_colorCustom'>Custom</label></li>";
+        html += "              </ul>";
+        html += "              </div>";
+        html += "          </accordion>";
+        html += "    </div>";
+
+        return html;
+    },
+
+    setMenu5: function() { var me = this;
+        var html = "";
+
+        html += "    <div style='float:left;'>";
+        html += "          <accordion id='" + me.pre + "accordion5'>";
+        html += "              <h3>Surface</h3>";
+        html += "              <div>";
+        html += "              <ul class='menu'>";
+        html += "                <li>Type";
+        html += "                  <ul>";
+        html += "                      <li><input type='radio' name='" + me.pre + "menu5_surface' id='" + me.pre + "menu5_surfaceVDW'><label for='" + me.pre + "menu5_surfaceVDW'>Van der Waals</label></li>";
+        html += "                      <li><input type='radio' name='" + me.pre + "menu5_surface' id='" + me.pre + "menu5_surfaceMolecular'><label for='" + me.pre + "menu5_surfaceMolecular'>Molecular Surface</label></li>";
+        html += "                      <li><input type='radio' name='" + me.pre + "menu5_surface' id='" + me.pre + "menu5_surfaceSAS'><label for='" + me.pre + "menu5_surfaceSAS'>Solvent Accessible</label></li>";
+    //        html += "                      <li><input type='radio' name='" + me.pre + "menu5_surface' id='" + me.pre + "menu5_surfaceMolecular'><label for='" + me.pre + "menu5_surfaceMolecular'>Molecular Surface</label></li>";
+        html += "                      <li><input type='radio' name='" + me.pre + "menu5_surface' id='" + me.pre + "menu5_surfaceNothing' checked><label for='" + me.pre + "menu5_surfaceNothing'>Hide</label></li>";
+        html += "                  </ul>";
+        html += "                </li>";
+        html += "                <li>Opacity";
+        html += "                  <ul>";
+        html += "                      <li><input type='radio' name='" + me.pre + "menu5_opacity' id='" + me.pre + "menu5_opacity10'><label for='" + me.pre + "menu5_opacity10'>1.0</label></li>";
+        html += "                      <li><input type='radio' name='" + me.pre + "menu5_opacity' id='" + me.pre + "menu5_opacity09'><label for='" + me.pre + "menu5_opacity09'>0.9</label></li>";
+        html += "                      <li><input type='radio' name='" + me.pre + "menu5_opacity' id='" + me.pre + "menu5_opacity08' checked><label for='" + me.pre + "menu5_opacity08'>0.8</label></li>";
+        html += "                      <li><input type='radio' name='" + me.pre + "menu5_opacity' id='" + me.pre + "menu5_opacity07'><label for='" + me.pre + "menu5_opacity07'>0.7</label></li>";
+        html += "                      <li><input type='radio' name='" + me.pre + "menu5_opacity' id='" + me.pre + "menu5_opacity06'><label for='" + me.pre + "menu5_opacity06'>0.6</label></li>";
+        html += "                      <li><input type='radio' name='" + me.pre + "menu5_opacity' id='" + me.pre + "menu5_opacity05'><label for='" + me.pre + "menu5_opacity05'>0.5</label></li>";
+        html += "                  </ul>";
+        html += "                </li>";
+        html += "                <li>Wireframe";
+        html += "                  <ul>";
+        html += "                      <li><input type='radio' name='" + me.pre + "menu5_wireframe' id='" + me.pre + "menu5_wireframeYes'><label for='" + me.pre + "menu5_wireframeYes'>Yes</label></li>";
+        html += "                      <li><input type='radio' name='" + me.pre + "menu5_wireframe' id='" + me.pre + "menu5_wireframeNo' checked><label for='" + me.pre + "menu5_wireframeNo'>No</label></li>";
+        html += "                  </ul>";
+        html += "                </li>";
+
+        html += "                <li>Neighbors";
+        html += "                  <ul>";
+        html += "                      <li><input type='radio' name='" + me.pre + "menu5_neighbors' id='" + me.pre + "menu5_neighborsYes'><label for='" + me.pre + "menu5_neighborsYes'>Yes</label></li>";
+        html += "                      <li><input type='radio' name='" + me.pre + "menu5_neighbors' id='" + me.pre + "menu5_neighborsNo' checked><label for='" + me.pre + "menu5_neighborsNo'>No</label></li>";
+        html += "                  </ul>";
+        html += "                </li>";
+
+
+        html += "              </ul>";
+        html += "              </div>";
+        html += "          </accordion>";
+        html += "    </div>";
+
+        return html;
+    },
+
+    setMenu6: function() { var me = this;
+        var html = "";
+
+        html += "    <div style='float:left;'>";
+        html += "          <accordion id='" + me.pre + "accordion6'>";
+        html += "              <h3>Other</h3>";
+        html += "              <div>";
+        html += "              <ul class='menu'>";
+        html += "                <li><span id='" + me.pre + "reset' class='icn3d-link'>Reset</span></li>";
+        //html += "                <li><span id='" + me.pre + "menu6_pickcenter' class='icn3d-link'>Center on Picked Atom</span></li>";
+        html += "                <li><span id='" + me.pre + "menu6_selectedcenter' class='icn3d-link'>Zoom in Selection</span></li>";
+        html += "                <li><span id='" + me.pre + "menu6_back' class='icn3d-link'>Back</span></li>";
+        html += "                <li><span id='" + me.pre + "menu6_forward' class='icn3d-link'>Forward</span></li>";
+        if(me.cfg.cid === undefined) {
+            html += "                <li>Assembly";
+            html += "                  <ul>";
+            html += "                      <li><input type='radio' name='" + me.pre + "menu6_assembly' id='" + me.pre + "menu6_assemblyYes'><label for='" + me.pre + "menu6_assemblyYes'>Yes</label></li>";
+            html += "                      <li><input type='radio' name='" + me.pre + "menu6_assembly' id='" + me.pre + "menu6_assemblyNo' checked><label for='" + me.pre + "menu6_assemblyNo'>No</label></li>";
+            html += "                  </ul>";
+            html += "                </li>";
+            html += "                <li>H-bonds to selection";
+            html += "                  <ul>";
+            html += "                      <li><input type='radio' name='" + me.pre + "menu6_hbonds' id='" + me.pre + "menu6_hbondsYes'><label for='" + me.pre + "menu6_hbondsYes'>Show</label></li>";
+            html += "                      <li><input type='radio' name='" + me.pre + "menu6_hbonds' id='" + me.pre + "menu6_hbondsNo' checked><label for='" + me.pre + "menu6_hbondsNo'>Hide</label></li>";
+            html += "                  </ul>";
+            html += "                </li>";
+        }
+        html += "                <li>Label";
+        html += "                  <ul>";
+
+        html += "                      <li><input type='radio' name='" + me.pre + "menu6_addlabel' id='" + me.pre + "menu6_addlabelYes'><label for='" + me.pre + "menu6_addlabelYes'>Custom Label</label></li>";
+        if(me.cfg.cid === undefined) {
+            html += "                      <li><input type='radio' name='" + me.pre + "menu6_addlabel' id='" + me.pre + "menu6_addlabelResidues'><label for='" + me.pre + "menu6_addlabelResidues'>Residues</label></li>";
+        }
+        html += "                      <li><input type='radio' name='" + me.pre + "menu6_addlabel' id='" + me.pre + "menu6_addlabelNo' checked><label for='" + me.pre + "menu6_addlabelNo'>Hide</label></li>";
+        html += "                  </ul>";
+        html += "                </li>";
+        html += "                <li>Distance";
+        html += "                  <ul>";
+        html += "                      <li><input type='radio' name='" + me.pre + "menu6_distance' id='" + me.pre + "menu6_distanceYes'><label for='" + me.pre + "menu6_distanceYes'>Show</label></li>";
+        html += "                      <li><input type='radio' name='" + me.pre + "menu6_distance' id='" + me.pre + "menu6_distanceNo' checked><label for='" + me.pre + "menu6_distanceNo'>Hide</label></li>";
+        html += "                  </ul>";
+        html += "                </li>";
+        html += "                <li>Auto Rotation";
+        html += "                  <ul>";
+        html += "                      <li><span id='" + me.pre + "menu6_rotateleft' class='icn3d-link'>Rotate Left</span></li>";
+        html += "                      <li><span id='" + me.pre + "menu6_rotateright' class='icn3d-link'>Rotate Right</span></li>";
+        html += "                      <li><span id='" + me.pre + "menu6_rotateup' class='icn3d-link'>Rotate Up</span></li>";
+        html += "                      <li><span id='" + me.pre + "menu6_rotatedown' class='icn3d-link'>Rotate Down</span></li>";
+        html += "                  </ul>";
+        html += "                </li>";
+        html += "                <li>Camera";
+        html += "                  <ul>";
+        html += "                      <li><input type='radio' name='" + me.pre + "menu6_camera' id='" + me.pre + "menu6_cameraPers' checked><label for='" + me.pre + "menu6_cameraPers'>Perspective</label></li>";
+        html += "                      <li><input type='radio' name='" + me.pre + "menu6_camera' id='" + me.pre + "menu6_cameraOrth'><label for='" + me.pre + "menu6_cameraOrth'>Orthographic</label></li>";
+        html += "                  </ul>";
+        html += "                </li>";
+        html += "                <li>Background";
+        html += "                  <ul>";
+        html += "                      <li><input type='radio' name='" + me.pre + "menu6_bkgd' id='" + me.pre + "menu6_bkgdBlack' checked><label for='" + me.pre + "menu6_bkgdBlack'>Black</label></li>";
+        html += "                      <li><input type='radio' name='" + me.pre + "menu6_bkgd' id='" + me.pre + "menu6_bkgdGrey'><label for='" + me.pre + "menu6_bkgdGrey'>Grey</label></li>";
+        html += "                      <li><input type='radio' name='" + me.pre + "menu6_bkgd' id='" + me.pre + "menu6_bkgdWhite'><label for='" + me.pre + "menu6_bkgdWhite'>White</label></li>";
+        html += "                  </ul>";
+        html += "                </li>";
+        html += "                <li>XYZ-axes";
+        html += "                  <ul>";
+        html += "                      <li><input type='radio' name='" + me.pre + "menu6_showaxis' id='" + me.pre + "menu6_showaxisYes'><label for='" + me.pre + "menu6_showaxisYes'>Show</label></li>";
+        html += "                      <li><input type='radio' name='" + me.pre + "menu6_showaxis' id='" + me.pre + "menu6_showaxisNo' checked><label for='" + me.pre + "menu6_showaxisNo'>Hide</label></li>";
+        html += "                  </ul>";
+        html += "                </li>";
+        html += "                <li>Transform Hint";
+        html += "                  <ul>";
+        html += "                    <li>Rotate";
+        html += "                        <ul>";
+        html += "                            <li>Left Mouse</li>";
+        html += "                            <li>Key L: Left</li>";
+        html += "                            <li>Key J: Right</li>";
+        html += "                            <li>Key I: Up</li>";
+        html += "                            <li>Key M: Down</li>";
+        html += "                        </ul>";
+        html += "                    </li>";
+        html += "                    <li>Zoom";
+        html += "                        <ul>";
+        html += "                            <li>Middle Mouse</li>";
+        html += "                            <li>Left Mouse + Shift</li>";
+        html += "                            <li>Key Z: Zoom in</li>";
+        html += "                            <li>Key X: Zoom out</li>";
+        html += "                        </ul>";
+        html += "                    </li>";
+        html += "                    <li>Translate";
+        html += "                        <ul>";
+        html += "                            <li>Right Mouse</li>";
+        html += "                            <li>Left Mouse + Ctrl</li>";
+        html += "                            <li>Arrow Left: Left</li>";
+        html += "                            <li>Arrow Right: Right</li>";
+        html += "                            <li>Arrow Up: Up</li>";
+        html += "                            <li>Arrow Down: Down</li>";
+        html += "                        </ul>";
+        html += "                    </li>";
+        html += "                  </ul>";
+        html += "                </li>";
+        html += "                <li><a href='https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d.html' target='_blank'>Help</a></li>";
+        html += "              </ul>";
+        html += "              </div>";
+        html += "          </accordion>";
+        html += "    </div>";
+
+        return html;
+    },
+
+    setCommandLog: function() { var me = this;
+        var html = "";
+
+        html += "  <div id='" + me.pre + "commandlog' style='position:absolute; z-index:555; float:left; display:table-row; margin: 3px 0px 0px " + me.MENU_WIDTH + "px;'>";
+
+        html += "    <div style='float:left' class='icn3d-commandTitle'>Script/Log (<a href='https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d.html#commands' target='_blank'><span title='click to see all commands'>Hint</span></a>)</div><br/>";
+        html += "    <textarea id='" + me.pre + "logtext' rows='3' cols='40'></textarea>";
+        html += "  </div>";
+
+        return html;
+    },
+
+    setDialogs: function() { var me = this;
+        var html = "";
+
+        html += "<!-- dialog will not be part of the form -->";
+        html += "<div id='" + me.pre + "allselections' class='icn3d-hidden'>";
+
+        // filter for large structure
+        html += "<div id='" + me.pre + "dl_filter' style='overflow:auto; position:relative;'>";
+        //html += "  <div>This large structure contains more than 50,000 atoms. Please select some structures/chains below to display.</div>";
+        //html += "  <input style='position:absolute; top:8px; left:15px;' type='checkbox' id='" + me.pre + "filter_ckbx_all'/>";
+        html += "  <div style='text-align:center; margin-bottom:10px;'><button id='" + me.pre + "filter'><span style='white-space:nowrap'><b>Show Structure</b></span></button>";
+        html += "<button id='" + me.pre + "label_3d_diagram' style='margin-left:10px;'><span style='white-space:nowrap'><b>Show Labels</b></span></button></div>";
+        html += "  <div id='" + me.pre + "dl_filter_table' class='icn3d-box'>";
+        html += "  </div>";
+        html += "</div>";
+
+        html += "<div id='" + me.pre + "dl_selectresidues'>";
+
+        html += "  <div id='" + me.pre + "dl_sequence' class='icn3d-dl_sequence'>";
+        html += "  </div>";
+
+        html += "</div>";
+
+        if(me.cfg.align !== undefined) {
+          html += "<div id='" + me.pre + "dl_alignment'>";
+          html += "  <div id='" + me.pre + "dl_sequence2' class='icn3d-dl_sequence'>";
+          html += "  </div>";
+          html += "</div>";
+        }
+
+        html += "<div id='" + me.pre + "dl_command'>";
+        html += "  <table width='500'><tr><td valign='top'><table>";
+        html += "<tr><td align='right'><b>Select:</b></td><td><input type='text' id='" + me.pre + "command' placeholder='#[structures].[chains]:[residues]@[atoms]' size='30'></td></tr>";
+        html += "<tr><td align='right'><b>Name:</b></td><td><input type='text' id='" + me.pre + "command_name' placeholder='my_selection' size='30'></td></tr>";
+        html += "<tr><td align='right'><b>Description:</b></td><td><input type='text' id='" + me.pre + "command_desc' placeholder='description about my selection' size='30'></td></tr>";
+        html += "<tr><td colspan='2' align='center'><button id='" + me.pre + "command_apply'><b>Apply</b></button></td></tr>";
+        html += "  </table></td>";
+
+        html += "  <td valign='top'><div>";
+        html += "    <b>Atom Selection(s):</b> <br/>";
+        html += "    <select id='" + me.pre + "customAtoms' multiple size='3' style='min-width:100px;'>";
+        html += "    </select>";
+        html += "  </td>";
+
+        html += "  <td valign='top'><div>";
+        html += "    <button id='" + me.pre + "show_selected_atom'><span style='white-space:nowrap'><b>Display Selection</b></span></button>";
+        html += "  </div></td></tr>";
+
+        //html += "  <tr><td colspan='3'>One line command: select [my_select] | name [my_name] | description [my_description], e.g., select :1-10 | name residue1-20 | description residues 1-20 in all chains<br/><br/></td></tr>";
+
+        html += "  <tr><td colspan='3'><a href='https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d.html#selectb' target='_blank'><span title='click to see how to select'>Hint</span></a>: <br/>Users can define \"select\" command similar to Chimera. For example, in the selection \"#1,2,3.A,B,C:5-10,Lys,ligands@CA,C\":<br/>\"#1,2,3\" uses \"#\" to indicate structure selection.<br/>\".A,B,C\" uses \".\" to indicate chain selection.<br/>\":5-10,Lys,ligands\" uses \":\" to indicate residue selection. Residue could be predefined names: 'proteins', 'nucleotides', 'ligands', 'ions', and 'water'.<br/>\"@CA,C\" uses \"@\" to indicate atom selection.<br/><br/>Partial definition is allowed, e.g., \":1-10\" selects all residue IDs 1-10 in all chains.<br/><br/>Different selections can be concatenated using semicolon, e.g., \":1-10; :Lys\" selects all residue IDs 1-10 and all Lys residues.</td></tr></table>";
+
+        html += "</div>";
+
+        html += "<div id='" + me.pre + "dl_pdbid'>";
+        html += "PDB ID: <input type='text' id='" + me.pre + "pdbid' value='2POR' size=8> ";
+        html += "<button id='" + me.pre + "reload_pdb'>Load</button>";
+        html += "</div>";
+
+        html += "<div id='" + me.pre + "dl_pdbfile'>";
+        html += "PDB File: <input type='file' id='" + me.pre + "pdbfile' value='2POR' size=8> ";
+        html += "<button id='" + me.pre + "reload_pdbfile'>Load</button>";
+        html += "</div>";
+
+        html += "<div id='" + me.pre + "dl_mmcifid'>";
+        html += "mmCIF ID: <input type='text' id='" + me.pre + "mmcifid' value='2POR' size=8> ";
+        html += "<button id='" + me.pre + "reload_mmcif'>Load</button>";
+        html += "</div>";
+
+        html += "<div id='" + me.pre + "dl_mmdbid'>";
+        html += "MMDB ID: <input type='text' id='" + me.pre + "mmdbid' value='2POR' size=8> ";
+        html += "<button id='" + me.pre + "reload_mmdb'>Load</button>";
+        html += "</div>";
+
+        html += "<div id='" + me.pre + "dl_gi'>";
+        html += "Protein gi: <input type='text' id='" + me.pre + "gi' value='827343227' size=8> ";
+        html += "<button id='" + me.pre + "reload_gi'>Load</button>";
+        html += "</div>";
+
+        html += "<div id='" + me.pre + "dl_cid'>";
+        html += "PubChem CID: <input type='text' id='" + me.pre + "cid' value='2244' size=8> ";
+        html += "<button id='" + me.pre + "reload_cid'>Load</button>";
+        html += "</div>";
+
+        html += "<div id='" + me.pre + "dl_state'>";
+        html += "State file: <input type='file' id='" + me.pre + "state'><br/>";
+        html += "<button id='" + me.pre + "reload_state' style='margin-top: 6px;'>Load</button>";
+        html += "</div>";
+
+        html += "<div id='" + me.pre + "dl_color'>";
+        html += "Custom Color: <input type='text' id='" + me.pre + "color' value='#FF0000' size=8> ";
+        html += "<button id='" + me.pre + "applycustomcolor'>Apply</button>";
+        html += "</div>";
+
+        html += "<div id='" + me.pre + "dl_hbonds'>";
+        html += "  <span style='white-space:nowrap;'>Threshold: <select id='" + me.pre + "hbondthreshold'>";
+        html += "  <option value='3.2'>3.2</option>";
+        html += "  <option value='3.3'>3.3</option>";
+        html += "  <option value='3.4'>3.4</option>";
+        html += "  <option value='3.5' selected>3.5</option>";
+        html += "  <option value='3.6'>3.6</option>";
+        html += "  <option value='3.7'>3.7</option>";
+        html += "  <option value='3.8'>3.8</option>";
+        html += "  <option value='3.9'>3.9</option>";
+        html += "  <option value='4.0'>4.0</option>";
+        html += "  </select> &#197;</span><br/>";
+        html += "  <span style='white-space:nowrap'><button id='" + me.pre + "applyhbonds'>Display</button></span>";
+        html += "</div>";
+
+        html += "<div id='" + me.pre + "dl_aroundsphere'";
+        html += "  <span style='white-space:nowrap'>1. Sphere with a radius: <input type='text' id='" + me.pre + "radius_aroundsphere' value='5' size='2'> &#197;</span><br/>";
+        html += "  <span style='white-space:nowrap'>2. <button id='" + me.pre + "applypick_aroundsphere'>Display</button> the sphere around currently selected atoms</span>";
+        html += "</div>";
+
+        html += "<div id='" + me.pre + "dl_select_chain'>";
+
+        html += "    <table><tr valign='center'>";
+
+        html += "        <td valign='top'><b>Structure:</b><br/>";
+        html += "        <select id='" + me.pre + "structureid2' multiple size='3' style='min-width:50px;'>";
+        html += "        </select></td>";
+
+        html += "        <td valign='top'><b>Chain:</b><br/>";
+        html += "        <select id='" + me.pre + "chainid2' multiple size='3' style='min-width:50px;'>";
+        html += "        </select></td>";
+
+        if(me.cfg.align !== undefined) {
+            html += "        <td valign='top'><b>Aligned:</b><br/>";
+            html += "        <select id='" + me.pre + "alignChainid2' multiple size='3' style='min-width:50px;'>";
+            html += "        </select></td>";
+        }
+
+        html += "        <td valign='top'><b>Custom:</b><br/>";
+        html += "        <select id='" + me.pre + "customResidues2' multiple size='3' style='min-width:50px;'>";
+        html += "        </select></td>";
+
+        html += "    </tr></table>";
+
+        html += "</div>";
+
+        html += "<div id='" + me.pre + "dl_addlabel'>";
+        html += "1. Text: <input type='text' id='" + me.pre + "labeltext' value='Text' size=4><br/>";
+        html += "2. Size: <input type='text' id='" + me.pre + "labelsize' value='40' size=4><br/>";
+        html += "3. Color: <input type='text' id='" + me.pre + "labelcolor' value='#ffff00' size=4><br/>";
+        html += "4. Background: <input type='text' id='" + me.pre + "labelbkgd' value='#cccccc' size=4><br/>";
+        html += "<span style='white-space:nowrap'>5. Pick TWO atoms</span><br/>";
+        html += "<span style='white-space:nowrap'>6. <button id='" + me.pre + "applypick_labels'>Display</button></span>";
+        html += "</div>";
+
+        html += "<div id='" + me.pre + "dl_distance'>";
+        html += "  <span style='white-space:nowrap'>1. Pick TWO atoms</span><br/>";
+        html += "  <span style='white-space:nowrap'>2. <button id='" + me.pre + "applypick_measuredistance'>Display</button></span>";
+        html += "</div>";
+
+        html += "</div>";
+        html += "<!--/form-->";
+
+        return html;
+    },
+
+    setCustomDialogs: function() { var me = this;
+        var html = "";
+
+        return html;
+    },
 
     setTools: function() { var me = this;
         // second row
@@ -3380,93 +3508,94 @@ iCn3DUI.prototype = {
     },
 
     // menu 3
-    clickMenu3_proteinRibbon: function() { var me = this;
-        $("#" + me.pre + "menu3_proteinRibbon").click(function (e) {
+    clickmenu3_proteinsRibbon: function() { var me = this;
+        $("#" + me.pre + "menu3_proteinsRibbon").click(function (e) {
            //e.preventDefault();
 
-           me.setStyle('protein', 'ribbon');
-           me.setLogCommand('style protein ribbon', true);
+           me.setStyle('proteins', 'ribbon');
+           me.setLogCommand('style proteins ribbon', true);
         });
     },
 
-    clickMenu3_proteinStrand: function() { var me = this;
-        $("#" + me.pre + "menu3_proteinStrand").click(function (e) {
+    clickmenu3_proteinsStrand: function() { var me = this;
+        $("#" + me.pre + "menu3_proteinsStrand").click(function (e) {
            //e.preventDefault();
 
-           me.setStyle('protein', 'strand');
-           me.setLogCommand('style protein strand', true);
+           me.setStyle('proteins', 'strand');
+
+           me.setLogCommand('style proteins strand', true);
         });
     },
 
-    clickMenu3_proteinCylinder: function() { var me = this;
-        $("#" + me.pre + "menu3_proteinCylinder").click(function (e) {
+    clickmenu3_proteinsCylinder: function() { var me = this;
+        $("#" + me.pre + "menu3_proteinsCylinder").click(function (e) {
            //e.preventDefault();
 
-           me.setStyle('protein', 'cylinder & plate');
-           me.setLogCommand('style protein cylinder & plate', true);
+           me.setStyle('proteins', 'cylinder & plate');
+           me.setLogCommand('style proteins cylinder & plate', true);
         });
     },
 
-    clickMenu3_proteinCalpha: function() { var me = this;
-        $("#" + me.pre + "menu3_proteinCalpha").click(function (e) {
+    clickmenu3_proteinsCalpha: function() { var me = this;
+        $("#" + me.pre + "menu3_proteinsCalpha").click(function (e) {
            //e.preventDefault();
 
-           me.setStyle('protein', 'c alpha trace');
-           me.setLogCommand('style protein c alpha trace', true);
+           me.setStyle('proteins', 'c alpha trace');
+           me.setLogCommand('style proteins c alpha trace', true);
         });
     },
 
-    clickMenu3_proteinBfactor: function() { var me = this;
-        $("#" + me.pre + "menu3_proteinBfactor").click(function (e) {
+    clickmenu3_proteinsBfactor: function() { var me = this;
+        $("#" + me.pre + "menu3_proteinsBfactor").click(function (e) {
            //e.preventDefault();
 
-           me.setStyle('protein', 'b factor tube');
-           me.setLogCommand('style protein b factor tube', true);
+           me.setStyle('proteins', 'b factor tube');
+           me.setLogCommand('style proteins b factor tube', true);
         });
     },
 
-    clickMenu3_proteinLines: function() { var me = this;
-        $("#" + me.pre + "menu3_proteinLines").click(function (e) {
+    clickmenu3_proteinsLines: function() { var me = this;
+        $("#" + me.pre + "menu3_proteinsLines").click(function (e) {
            //e.preventDefault();
 
-           me.setStyle('protein', 'lines');
-           me.setLogCommand('style protein lines', true);
+           me.setStyle('proteins', 'lines');
+           me.setLogCommand('style proteins lines', true);
         });
     },
 
-    clickMenu3_proteinStick: function() { var me = this;
-        $("#" + me.pre + "menu3_proteinStick").click(function (e) {
+    clickmenu3_proteinsStick: function() { var me = this;
+        $("#" + me.pre + "menu3_proteinsStick").click(function (e) {
            //e.preventDefault();
 
-           me.setStyle('protein', 'stick');
-           me.setLogCommand('style protein stick', true);
+           me.setStyle('proteins', 'stick');
+           me.setLogCommand('style proteins stick', true);
         });
     },
 
-    clickMenu3_proteinBallstick: function() { var me = this;
-        $("#" + me.pre + "menu3_proteinBallstick").click(function (e) {
+    clickmenu3_proteinsBallstick: function() { var me = this;
+        $("#" + me.pre + "menu3_proteinsBallstick").click(function (e) {
            //e.preventDefault();
 
-           me.setStyle('protein', 'ball & stick');
-           me.setLogCommand('style protein ball & stick', true);
+           me.setStyle('proteins', 'ball & stick');
+           me.setLogCommand('style proteins ball & stick', true);
         });
     },
 
-    clickMenu3_proteinSphere: function() { var me = this;
-        $("#" + me.pre + "menu3_proteinSphere").click(function (e) {
+    clickmenu3_proteinsSphere: function() { var me = this;
+        $("#" + me.pre + "menu3_proteinsSphere").click(function (e) {
            //e.preventDefault();
 
-           me.setStyle('protein', 'sphere');
-           me.setLogCommand('style protein sphere', true);
+           me.setStyle('proteins', 'sphere');
+           me.setLogCommand('style proteins sphere', true);
         });
     },
 
-    clickMenu3_proteinNothing: function() { var me = this;
-        $("#" + me.pre + "menu3_proteinNothing").click(function (e) {
+    clickmenu3_proteinsNothing: function() { var me = this;
+        $("#" + me.pre + "menu3_proteinsNothing").click(function (e) {
            //e.preventDefault();
 
-           me.setStyle('protein', 'nothing');
-           me.setLogCommand('style protein nothing', true);
+           me.setStyle('proteins', 'nothing');
+           me.setLogCommand('style proteins nothing', true);
         });
     },
 
@@ -3858,6 +3987,7 @@ iCn3DUI.prototype = {
         });
     },
 
+/*
     clickMenu5_surfaceSES: function() { var me = this;
         $("#" + me.pre + "menu5_surfaceSES").click(function (e) {
            //e.preventDefault();
@@ -3866,7 +3996,7 @@ iCn3DUI.prototype = {
            me.setLogCommand('set surface solvent excluded surface', true);
         });
     },
-
+*/
     clickMenu5_surfaceSAS: function() { var me = this;
         $("#" + me.pre + "menu5_surfaceSAS").click(function (e) {
            //e.preventDefault();
@@ -3880,7 +4010,8 @@ iCn3DUI.prototype = {
         $("#" + me.pre + "menu5_surfaceMolecular").click(function (e) {
            //e.preventDefault();
 
-           me.setOption('surface', 'molecular surface');
+           //me.setOption('surface', 'molecular surface');
+           me.setOption('surface', 'solvent excluded surface');
            me.setLogCommand('set surface molecular surface', true);
         });
     },
@@ -3990,36 +4121,36 @@ iCn3DUI.prototype = {
     clickMenu6_addlabelResidues: function() { var me = this;
         $("#" + me.pre + "menu6_addlabelResidues").click(function (e) {
            //e.preventDefault();
+           me.icn3d.options['labels'] = 'yes';
 
            me.setLogCommand('add residue labels', true);
 
            me.addResiudeLabels();
 
-           me.icn3d.options['labels'] = 'yes';
            me.icn3d.draw();
         });
     },
 
-    clickMenu6_addlabelResidueTopology: function() { var me = this;
-        $("#" + me.pre + "menu6_addlabelResidueTopology").click(function (e) {
+    clickMenu6_addlabelResidueSchematic: function() { var me = this;
+        $("#" + me.pre + "menu6_addlabelResidueSchematic").click(function (e) {
            //e.preventDefault();
+           me.icn3d.options['labels'] = 'yes';
 
-           me.setLogCommand('add residue topology', true);
+           me.setLogCommand('add residue schematic', true);
 
            var options2 = {};
 
-		   options2['secondary'] = 'c alpha trace';
-		   options2['nucleotides'] = 'phosphorus trace';
+           options2['proteins'] = 'c alpha trace';
+           options2['nucleotides'] = 'phosphorus trace';
            options2['ligands'] = 'nothing';
            options2['water'] = 'nothing';
            options2['ions'] = 'nothing';
 
            me.icn3d.setAtomStyleByOptions(options2);
 
-           var bTopology = true;
-           me.addResiudeLabels(bTopology);
+           var bSchematic = true;
+           me.addResiudeLabels(bSchematic);
 
-           me.icn3d.options['labels'] = 'yes';
            //me.icn3d.draw(options2);
            me.icn3d.draw();
         });
@@ -4031,6 +4162,7 @@ iCn3DUI.prototype = {
 
            me.openDialog(me.pre + 'dl_addlabel', 'Add custom labels');
            me.icn3d.picking = 1;
+           me.icn3d.options['picking'] = 'atom';
            me.icn3d.pickpair = true;
            me.icn3d.pickedatomNum = 0;
         });
@@ -4044,12 +4176,13 @@ iCn3DUI.prototype = {
            me.icn3d.pickpair = false;
            //me.icn3d.pickedatomNum = 0;
 
+            me.icn3d.options["labels"] = "no";
+
            var select = "set labels off";
            me.setLogCommand(select, true);
 
            me.icn3d.labels = [];
 
-            me.icn3d.options["labels"] = "no";
             me.icn3d.draw();
 
         });
@@ -4061,6 +4194,7 @@ iCn3DUI.prototype = {
 
            me.openDialog(me.pre + 'dl_distance', 'Measure the distance of atoms');
            me.icn3d.picking = 1;
+           me.icn3d.options['picking'] = 'atom';
            me.icn3d.pickpair = true;
            me.icn3d.pickedatomNum = 0;
         });
@@ -4074,12 +4208,13 @@ iCn3DUI.prototype = {
            me.icn3d.pickpair = false;
            //me.icn3d.pickedatomNum = 0;
 
+            me.icn3d.options["lines"] = "no";
+
            var select = "set lines off";
            me.setLogCommand(select, true);
 
             me.icn3d.lines = [];
 
-            me.icn3d.options["lines"] = "no";
             me.icn3d.draw();
         });
     },
@@ -4228,11 +4363,11 @@ iCn3DUI.prototype = {
         $("#" + me.pre + "menu6_hbondsNo").click(function (e) {
            //e.preventDefault();
 
-           var select = "set hbonds off";
-           me.setLogCommand(select, true);
-
             me.icn3d.options["hbonds"] = "no";
             me.icn3d.options["lines"] = "no";
+
+           var select = "set hbonds off";
+           me.setLogCommand(select, true);
 
             me.icn3d.lines = [];
 
@@ -4270,10 +4405,10 @@ iCn3DUI.prototype = {
                           me.commandname = "seq_" + id.substr(id.indexOf('_') + 1);
                       }
 
-                    $(this).toggleClass('highlightSeq');
+                    $(this).toggleClass('icn3d-highlightSeq');
 
                     var residueid = id.substr(id.indexOf('_') + 1);
-                    if($(this).hasClass('highlightSeq')) {
+                    if($(this).hasClass('icn3d-highlightSeq')) {
                       //atom.color = new THREE.Color(0xFFFF00);
 
                       me.selectAResidue(residueid, me.commandname);
@@ -4283,7 +4418,7 @@ iCn3DUI.prototype = {
                     for (var i in me.icn3d.residues[residueid]) {
                         var atom = me.icn3d.atoms[i];
 
-                        if(!$(this).hasClass('highlightSeq')) {
+                        if(!$(this).hasClass('icn3d-highlightSeq')) {
                           //atom.color = me.icn3d.atomPrevColors[i];
 
                           //delete me.icn3d.highlightAtoms[i];
@@ -4309,21 +4444,21 @@ iCn3DUI.prototype = {
               // select annotation title
               $(".ui-selected", this).each(function() {
                   var currChain = $(this).attr('chain');
-                  if($(this).hasClass('seqTitle')) {
+                  if($(this).hasClass('icn3d-seqTitle')) {
                     me.SELECT_RESIDUE = false;
                     me.setLogCommand('select residue ' + Object.keys(me.selectedResidues), true);
 
                     me.removeSeqChainBkgd(currChain);
                     me.removeSeqResidueBkgd();
 
-                    $(this).toggleClass('highlightSeq');
+                    $(this).toggleClass('icn3d-highlightSeq');
 
                     var chainid = $(this).attr('chain');
                     //var anno = $(this).attr('anno'); // annotation ids are from 0 to number of annotations. "anno" is "sequence" for the sequence line
                     //var commanddesc = $(this).text() + " (" + chainid + ")";
                     var commandname = "seq_" + $(this).text().trim();
 
-                    if($(this).hasClass('highlightSeq')) {
+                    if($(this).hasClass('icn3d-highlightSeq')) {
                         var command = 'select chain ' + chainid;
                         me.selectAChain(chainid, commandname);
                         me.setLogCommand(command, true);
@@ -4371,10 +4506,10 @@ iCn3DUI.prototype = {
                           me.commandname = "alignSeq_" + id.substr(id.indexOf('_') + 1);
                       }
 
-                    $(this).toggleClass('highlightSeq');
+                    $(this).toggleClass('icn3d-highlightSeq');
 
                     var residueid = id.substr(id.indexOf('_') + 1);
-                    if($(this).hasClass('highlightSeq')) {
+                    if($(this).hasClass('icn3d-highlightSeq')) {
                       //atom.color = new THREE.Color(0xFFFF00);
 
                       me.selectAResidue(residueid, me.commandname);
@@ -4384,7 +4519,7 @@ iCn3DUI.prototype = {
                     for (var i in me.icn3d.residues[residueid]) {
                         var atom = me.icn3d.atoms[i];
 
-                        if(!$(this).hasClass('highlightSeq')) {
+                        if(!$(this).hasClass('icn3d-highlightSeq')) {
                           //atom.color = me.icn3d.atomPrevColors[i];
 
                           delete me.icn3d.highlightAtoms[i];
@@ -4411,21 +4546,21 @@ iCn3DUI.prototype = {
               // select annotation title
               $(".ui-selected", this).each(function() {
                   var currChain = $(this).attr('chain');
-                  if($(this).hasClass('seqTitle')) {
+                  if($(this).hasClass('icn3d-seqTitle')) {
                     me.SELECT_RESIDUE = false;
                     me.setLogCommand('select residue ' + Object.keys(me.selectedResidues), true);
 
                     me.removeSeqChainBkgd(currChain);
                     me.removeSeqResidueBkgd();
 
-                    $(this).toggleClass('highlightSeq');
+                    $(this).toggleClass('icn3d-highlightSeq');
 
                     var chainid = $(this).attr('chain');
                     //var anno = $(this).attr('anno'); // annotation ids are from 0 to number of annotations. "anno" is "sequence" for the sequence line
                     //var commanddesc = $(this).text() + " (" + chainid + ")";
                     var commanddesc = "alignSeq_" + $(this).text().trim();
 
-                    if($(this).hasClass('highlightSeq')) {
+                    if($(this).hasClass('icn3d-highlightSeq')) {
                         me.selectAAlignChain(chainid, commanddesc);
                         me.setLogCommand('select alignChain ' + chainid, true);
                     }
@@ -4446,7 +4581,7 @@ iCn3DUI.prototype = {
     },
 
     selectSequenceMobile: function() { var me = this;
-      $("#" + me.pre + "dl_sequence").add("#" + me.pre + "dl_sequence2").on('click', '.residue', function(e) {
+      $("#" + me.pre + "dl_sequence").add("#" + me.pre + "dl_sequence2").on('click', '.icn3d-residue', function(e) {
           $("#" + me.pre + "chainid").val("");
           $("#" + me.pre + "structureid").val("");
 
@@ -4473,10 +4608,10 @@ iCn3DUI.prototype = {
                       me.commandname = "seq_" + id.substr(id.indexOf('_') + 1);
                   }
 
-                $(this).toggleClass('highlightSeq');
+                $(this).toggleClass('icn3d-highlightSeq');
 
                 var residueid = id.substr(id.indexOf('_') + 1);
-                if($(this).hasClass('highlightSeq')) {
+                if($(this).hasClass('icn3d-highlightSeq')) {
                   //atom.color = new THREE.Color(0xFFFF00);
 
                   me.selectAResidue(residueid, me.commandname);
@@ -4486,7 +4621,7 @@ iCn3DUI.prototype = {
                 for (var i in me.icn3d.residues[residueid]) {
                     var atom = me.icn3d.atoms[i];
 
-                    if(!$(this).hasClass('highlightSeq')) {
+                    if(!$(this).hasClass('icn3d-highlightSeq')) {
                       //atom.color = me.icn3d.atomPrevColors[i];
 
                       delete me.icn3d.highlightAtoms[i];
@@ -4505,7 +4640,7 @@ iCn3DUI.prototype = {
     },
 
     selectChainMobile: function() { var me = this;
-      $("#" + me.pre + "dl_sequence").on('click', '.seqTitle', function(e) {
+      $("#" + me.pre + "dl_sequence").on('click', '.icn3d-seqTitle', function(e) {
           $("#" + me.pre + "chainid").val("");
           $("#" + me.pre + "structureid").val("");
 
@@ -4521,14 +4656,14 @@ iCn3DUI.prototype = {
             me.removeSeqResidueBkgd();
 
             // select annotation title
-            $(this).toggleClass('highlightSeq');
+            $(this).toggleClass('icn3d-highlightSeq');
 
             var chainid = $(this).attr('chain');
             //var anno = $(this).attr('anno'); // annotation ids are from 0 to number of annotations. "anno" is "sequence" for the sequence line
             //var commanddesc = $(this).text() + " (" + chainid + ")";
             var commandname = "seq_" + $(this).text().trim();
 
-            if($(this).hasClass('highlightSeq')) {
+            if($(this).hasClass('icn3d-highlightSeq')) {
                 var command = 'select chain ' + chainid;
                 me.selectAChain(chainid, commandname);
                 me.setLogCommand(command, true);
@@ -4544,7 +4679,7 @@ iCn3DUI.prototype = {
             }
       });
 
-      $("#" + me.pre + "dl_sequence2").on('click', '.seqTitle', function(e) {
+      $("#" + me.pre + "dl_sequence2").on('click', '.icn3d-seqTitle', function(e) {
           $("#" + me.pre + "chainid").val("");
           $("#" + me.pre + "structureid").val("");
 
@@ -4560,14 +4695,14 @@ iCn3DUI.prototype = {
             me.removeSeqResidueBkgd();
 
             // select annotation title
-            $(this).toggleClass('highlightSeq');
+            $(this).toggleClass('icn3d-highlightSeq');
 
             var chainid = $(this).attr('chain');
             //var anno = $(this).attr('anno'); // annotation ids are from 0 to number of annotations. "anno" is "sequence" for the sequence line
             //var commanddesc = $(this).text() + " (" + chainid + ")";
             var commanddesc = "alignSeq_" + $(this).text().trim();
 
-            if($(this).hasClass('highlightSeq')) {
+            if($(this).hasClass('icn3d-highlightSeq')) {
                 me.selectAAlignChain(chainid, commanddesc);
                 me.setLogCommand('select alignChain ' + chainid, true);
             }
@@ -4893,8 +5028,10 @@ iCn3DUI.prototype = {
 
                me.setLogCommand('load state file ' + file, false);
 
-               var bAddCommands = true;
-               me.loadScript(dataStr, bAddCommands);
+               me.icn3d.commands = [];
+               me.icn3d.optionsHistory = [];
+
+               me.loadScript(dataStr);
              };
 
              reader.readAsText(file);
@@ -4984,7 +5121,7 @@ iCn3DUI.prototype = {
            var size = $("#" + me.pre + "labelsize" ).val();
            var color = $("#" + me.pre + "labelcolor" ).val();
            var background = $("#" + me.pre + "labelbkgd" ).val();
-           if(background === '0' || background === '') background = undefined;
+           if(background === '0' || background === '' || background === 'undefined') background = undefined;
 
            if(me.icn3d.pickedatom === undefined || me.icn3d.pickedatom2 === undefined) {
              alert("Please pick another atom");
@@ -4994,6 +5131,8 @@ iCn3DUI.prototype = {
              var y = (me.icn3d.pickedatom.coord.y + me.icn3d.pickedatom2.coord.y) / 2;
              var z = (me.icn3d.pickedatom.coord.z + me.icn3d.pickedatom2.coord.z) / 2;
 
+             me.icn3d.options['labels'] = 'yes';
+
              me.setLogCommand('add label ' + text + ' | x ' + x  + ' y ' + y + ' z ' + z + ' | size ' + size + ' | color ' + color + ' | background ' + background, true);
 
              me.addLabel(text, x, y, z, size, color, background);
@@ -5002,7 +5141,6 @@ iCn3DUI.prototype = {
              me.icn3d.pickpair = false;
 
              //var options2 = {};
-             me.icn3d.options['labels'] = 'yes';
              me.icn3d.draw();
            }
         });
@@ -5017,6 +5155,9 @@ iCn3DUI.prototype = {
              alert("Please pick another atom");
            }
            else {
+             me.icn3d.options['labels'] = 'yes';
+             me.icn3d.options['lines'] = 'yes';
+
              var distance = parseInt(me.icn3d.pickedatom.coord.distanceTo(me.icn3d.pickedatom2.coord) * 10) / 10;
 
              var text = distance.toString() + " A";
@@ -5042,8 +5183,6 @@ iCn3DUI.prototype = {
              me.icn3d.pickpair = false;
 
              //var options2 = {};
-             me.icn3d.options['labels'] = 'yes';
-             me.icn3d.options['lines'] = 'yes';
              me.icn3d.draw();
            }
         });
@@ -5103,6 +5242,11 @@ iCn3DUI.prototype = {
                   //me.icn3d.transformation.push(transformation);
 
                 me.icn3d.commands.push(lastCommand + '|||' + JSON.stringify(transformation));
+                me.icn3d.optionsHistory.push(me.icn3d.cloneHash(me.icn3d.options));
+
+                if(me.isSessionStorageSupported()) me.saveCommandsToSession();
+
+                me.STATENUMBER = me.icn3d.commands.length;
 
                 me.applyCommand(lastCommand + '|||' + JSON.stringify(transformation));
 
@@ -5229,6 +5373,9 @@ iCn3DUI.prototype = {
     windowResize: function() { var me = this;
         if(me.cfg.resize !== undefined && me.cfg.resize && !me.isMobile() ) {
             $(window).resize(function() {
+                //var width = window.innerWidth - me.LESSWIDTH;
+                //var height = window.innerHeight - me.LESSHEIGHT;
+
                 var width = $( window ).width() - me.LESSWIDTH;
                 var height = $( window ).height() - me.LESSHEIGHT;
 
@@ -5297,16 +5444,16 @@ iCn3DUI.prototype = {
         me.clickMenu2_pickingStrand();
         me.clickMenu2_aroundsphere();
         me.clickMenu2_select_chain();
-        me.clickMenu3_proteinRibbon();
-        me.clickMenu3_proteinStrand();
-        me.clickMenu3_proteinCylinder();
-        me.clickMenu3_proteinCalpha();
-        me.clickMenu3_proteinBfactor();
-        me.clickMenu3_proteinLines();
-        me.clickMenu3_proteinStick();
-        me.clickMenu3_proteinBallstick();
-        me.clickMenu3_proteinSphere();
-        me.clickMenu3_proteinNothing();
+        me.clickmenu3_proteinsRibbon();
+        me.clickmenu3_proteinsStrand();
+        me.clickmenu3_proteinsCylinder();
+        me.clickmenu3_proteinsCalpha();
+        me.clickmenu3_proteinsBfactor();
+        me.clickmenu3_proteinsLines();
+        me.clickmenu3_proteinsStick();
+        me.clickmenu3_proteinsBallstick();
+        me.clickmenu3_proteinsSphere();
+        me.clickmenu3_proteinsNothing();
         me.clickMenu3_sidechainsLines();
         me.clickMenu3_sidechainsStick();
         me.clickMenu3_sidechainsBallstick();
@@ -5349,9 +5496,9 @@ iCn3DUI.prototype = {
         me.clickMenu5_neighborsYes();
         me.clickMenu5_neighborsNo();
         me.clickMenu5_surfaceVDW();
-        me.clickMenu5_surfaceSES();
+        //me.clickMenu5_surfaceSES();
         me.clickMenu5_surfaceSAS();
-        me.clickMenu5_surfaceSAS();
+        me.clickMenu5_surfaceMolecular();
         me.clickMenu5_surfaceNothing();
         me.clickMenu5_opacity10();
         me.clickMenu5_opacity09();
@@ -5364,7 +5511,7 @@ iCn3DUI.prototype = {
         me.clickMenu6_assemblyYes();
         me.clickMenu6_assemblyNo();
         me.clickMenu6_addlabelResidues();
-        me.clickMenu6_addlabelResidueTopology();
+        me.clickMenu6_addlabelResidueSchematic();
         me.clickMenu6_addlabelYes();
         me.clickMenu6_addlabelNo();
         me.clickMenu6_distanceYes();
@@ -5424,13 +5571,13 @@ iCn3DUI.prototype = {
 
 /*! The following are shared by full_ui.js and simple_ui.js */
 
-    iCn3DUI.prototype.addResiudeLabels = function (bTopology) { var me = this;
+    iCn3DUI.prototype.addResiudeLabels = function (bSchematic) { var me = this;
         var size = 40;
         var background = "#CCCCCC";
-        if(bTopology) {
-			size = 20;
-			//background = undefined;
-		}
+        if(bSchematic) {
+            size = 20;
+            //background = undefined;
+        }
 
         for(var i in me.icn3d.highlightAtoms) {
             var atom = me.icn3d.atoms[i];
@@ -5442,8 +5589,8 @@ iCn3DUI.prototype = {
 
             label.position = atom.coord;
 
-            label.bTopology = 0;
-            if(bTopology) label.bTopology = 1;
+            label.bSchematic = 0;
+            if(bSchematic) label.bSchematic = 1;
 
             label.text = me.icn3d.residueName2Abbr(atom.resn);
             label.size = size;
@@ -6103,8 +6250,8 @@ iCn3DUI.prototype = {
             }
 
             if(me.cfg.inpara !== undefined && me.cfg.inpara.indexOf('mols=') == -1 && data.atomcount > data.threshold && data.molid2rescount !== undefined) {
-				// hide surface option
-				$("#" + me.pre + "accordion5").hide();
+                // hide surface option
+                $("#" + me.pre + "accordion5").hide();
 
                 var labelsize = 40;
 
@@ -6847,10 +6994,10 @@ iCn3DUI.prototype = {
           // assign white color to all unaligned atoms
           var color = new THREE.Color("#FFFFFF");
           for(var i in me.icn3d.atoms) {
-			  if(!alignedAtoms.hasOwnProperty(i)) {
-				  me.icn3d.atoms[i].color = color;
-			  }
-		  }
+              if(!alignedAtoms.hasOwnProperty(i)) {
+                  me.icn3d.atoms[i].color = color;
+              }
+          }
 
           seqalign = {};
         } // if(align

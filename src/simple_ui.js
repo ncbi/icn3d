@@ -54,8 +54,8 @@ var iCn3DUI = function(cfg) {
     me.options['background']         = 'black';              //black, grey, white
     me.options['color']              = 'spectrum';           //spectrum, secondary structure, charge, chain, residue, atom, red, green, blue, magenta, yellow, cyan, white, grey, custom
     me.options['sidechains']         = 'nothing';            //lines, stick, ball & stick, sphere, nothing
-    me.options['secondary']          = 'ribbon';             //ribbon, strand, cylinder & plate, c alpha trace, b factor tube, lines, stick, ball & stick, sphere, nothing
-    me.options['surface']            = 'nothing';    //Van der Waals surface, solvent excluded surface, solvent accessible surface, molecular surface, nothing
+    me.options['proteins']          = 'ribbon';             //ribbon, strand, cylinder & plate, c alpha trace, b factor tube, lines, stick, ball & stick, sphere, nothing
+    me.options['surface']            = 'nothing';             //Van der Waals surface, molecular surface, solvent accessible surface, nothing
     me.options['opacity']            = '0.8';                //1.0, 0.9, 0.8, 0.7, 0.6, 0.5
     me.options['wireframe']          = 'no';                 //yes, no
     me.options['ligands']            = 'stick';              //lines, stick, ball & stick, sphere, nothing
@@ -91,237 +91,238 @@ iCn3DUI.prototype = {
 
     modifyIcn3dShowPicking: function() {var me = this;
         iCn3D.prototype.showPicking = function(atom) {
-	      this.removeHighlightObjects();
+          this.removeHighlightObjects();
 
-	      this.highlightAtoms = {};
-	      if(this.picking === 1) {
-	          this.highlightAtoms[atom.serial] = 1;
-	       }
-	      else if(this.picking === 2) {
-	        var residueid = atom.structure + '_' + atom.chain + '_' + atom.resi;
-	        this.highlightAtoms = this.residues[residueid];
-	      }
+          this.highlightAtoms = {};
+          if(this.picking === 1) {
+              this.highlightAtoms[atom.serial] = 1;
+           }
+          else if(this.picking === 2) {
+            var residueid = atom.structure + '_' + atom.chain + '_' + atom.resi;
+            this.highlightAtoms = this.residues[residueid];
+          }
 
-	      this.addHighlightObjects();
+          this.addHighlightObjects();
 
-	      //var text = '#' + atom.structure + '.' + atom.chain + ':' + atom.resi + '@' + atom.name;
-	      //var residueText = '.' + atom.chain + ':' + atom.resi;
-	      var residueText = atom.resn + atom.resi;
+          //var text = '#' + atom.structure + '.' + atom.chain + ':' + atom.resi + '@' + atom.name;
+          //var residueText = '.' + atom.chain + ':' + atom.resi;
+          var residueText = atom.resn + atom.resi;
 
-	      var text;
-	      if(me.cfg.cid !== undefined) {
-	          text = atom.name;
-	      }
-	      else {
-	          text = residueText + '@' + atom.name;
-	      }
+          var text;
+          if(me.cfg.cid !== undefined) {
+              text = atom.name;
+          }
+          else {
+              text = residueText + '@' + atom.name;
+          }
 
-	      var labels = [];
-	      var label = {};
-	      label.position = atom.coord;
+          var labels = [];
+          var label = {};
+          label.position = atom.coord;
 
-	      if(this.picking === 1) {
-	        label.text = text;
-	      }
-	      else if(this.picking === 2) {
-	        label.text = residueText;
-	      }
+          if(this.picking === 1) {
+            label.text = text;
+          }
+          else if(this.picking === 2) {
+            label.text = residueText;
+          }
 
-	      label.background = "#CCCCCC";
+          label.background = "#CCCCCC";
 
-	      labels.push(label);
+          labels.push(label);
 
-	      //http://www.johannes-raida.de/tutorials/three.js/tutorial13/tutorial13.htm
-	      this.createLabelRepresentation(labels);
-	    };
-	},
+          //http://www.johannes-raida.de/tutorials/three.js/tutorial13/tutorial13.htm
+          this.createLabelRepresentation(labels);
+        };
+    },
 
     // ======= functions start==============
     // show3DStructure is the main function to show 3D structure
     show3DStructure: function() { var me = this;
-		var html = me.setHtml();
+        var html = me.setHtml();
 
-		$( "#" + me.divid).html(html);
+        $( "#" + me.divid).html(html);
 
-		var width = window.innerWidth, height = window.innerHeight;
+        var width = window.innerWidth, height = window.innerHeight;
+        //var width = $( window ).width(), height = $( window ).height();
 
-		if(me.cfg.width.toString().indexOf('%') !== -1) {
-		  width = width * (me.cfg.width).substr(0, me.cfg.width.toString().indexOf('%')) / 100.0 - 20;
-		}
-		else {
-		  width = me.cfg.width;
-		}
+        if(me.cfg.width.toString().indexOf('%') !== -1) {
+          width = width * (me.cfg.width).substr(0, me.cfg.width.toString().indexOf('%')) / 100.0 - 20;
+        }
+        else {
+          width = me.cfg.width;
+        }
 
-		if(me.cfg.height.toString().indexOf('%') !== -1) {
-		  height = height * (me.cfg.height).substr(0, me.cfg.height.toString().indexOf('%')) / 100.0 - 20;
-		}
-		else {
-		  height = me.cfg.height;
-		}
+        if(me.cfg.height.toString().indexOf('%') !== -1) {
+          height = height * (me.cfg.height).substr(0, me.cfg.height.toString().indexOf('%')) / 100.0 - 20;
+        }
+        else {
+          height = me.cfg.height;
+        }
 
-		$("#" + me.pre + "viewer").width(width).height(height);
-		$("#" + me.pre + "canvas").width(width).height(height);
+        $("#" + me.pre + "viewer").width(width).height(height);
+        $("#" + me.pre + "canvas").width(width).height(height);
 
-		if(parseInt(width) <= 200) {
-		  $("#" + me.pre + "toolbox").hide();
-		}
+        if(parseInt(width) <= 200) {
+          $("#" + me.pre + "toolbox").hide();
+        }
 
         me.allEventFunctions();
 
         me.allCustomEvents();
 
-		me.icn3d = new iCn3D(me.pre + 'canvas');
+        me.icn3d = new iCn3D(me.pre + 'canvas');
 
-		if(me.cfg.bCalphaOnly !== undefined) me.icn3d.bCalphaOnly = me.cfg.bCalphaOnly;
+        if(me.cfg.bCalphaOnly !== undefined) me.icn3d.bCalphaOnly = me.cfg.bCalphaOnly;
 
-		me.loadStructure();
-	},
+        me.loadStructure();
+    },
 
-	setHtml: function() { var me = this;
-		var html = "";
+    setHtml: function() { var me = this;
+        var html = "";
 
-	    html += "<div id='" + me.pre + "viewer' style='position:relative; width:100%; height:100%;'>";
-	    html += "<!--div style='height:18px'></div-->";
-	    html += "<div id='" + me.pre + "title' style='position:absolute; top:20px; left:80px; color: white;'></div>";
+        html += "<div id='" + me.pre + "viewer' style='position:relative; width:100%; height:100%;'>";
+        html += "<!--div style='height:18px'></div-->";
+        html += "<div id='" + me.pre + "title' style='position:absolute; top:20px; left:80px; color: white;'></div>";
 
-	    html += "<div id='" + me.pre + "wait' style='width:100%; height: 100%; background-color: rgba(0,0,0, 0.8);'><div style='padding-top:25%; text-align: center; font-size: 2em; color: #FFFF00;'>Loading the structure...</div></div>";
+        html += "<div id='" + me.pre + "wait' style='width:100%; height: 100%; background-color: rgba(0,0,0, 0.8);'><div style='padding-top:25%; text-align: center; font-size: 2em; color: #FFFF00;'>Loading the structure...</div></div>";
 
-	    html += "<canvas id='" + me.pre + "canvas' style='width:100%; height:100%;'>Your browser does not support WebGL.</canvas>";
+        html += "<canvas id='" + me.pre + "canvas' style='width:100%; height:100%; background-color: #000;'>Your browser does not support WebGL.</canvas>";
 
-	    html += "<div class='icn3d-tabBox' id='" + me.pre + "toolbox'>";
-	    html += "<span class='icn3d-bottomTab'>Tools</span>";
-	    html += "<div class='icn3d-insideTab' style='overflow: auto;'>";
-	    html += "<form action='' id='" + me.pre + "paraform' method='POST'>";
+        html += "<div class='icn3d-tabBox' id='" + me.pre + "toolbox'>";
+        html += "<span class='icn3d-bottomTab'>Tools</span>";
+        html += "<div class='icn3d-insideTab' style='overflow: auto;'>";
+        html += "<form action='' id='" + me.pre + "paraform' method='POST'>";
 
-	    if(me.cfg.cid === undefined) {
-		html += "<div class='icn3d-option'>";
-		html += "<b>&nbsp;&nbsp;Protein&nbsp;</b>";
-		html += "<select id='" + me.pre + "secondary'>";
-		html += "<option value='ribbon' selected>Ribbon</option>";
-		html += "<option value='strand'>Strand</option>";
-		html += "<option value='cylinder & plate'>Cylinder and Plate</option>";
-		html += "<option value='schematic'>Schematic</option>";
-		html += "<option value='c alpha trace'>C Alpha Trace</option>";
-		html += "<option value='b factor tube'>B Factor Tube</option>";
-		html += "<option value='lines'>Lines</option>";
-		html += "<option value='stick'>Stick</option>";
-		html += "<option value='ball & stick'>Ball and Stick</option>";
-		html += "<option value='sphere'>Sphere</option>";
-		html += "<option value='nothing'>Hide</option>";
-		html += "</select>";
-		html += "</div>";
+        if(me.cfg.cid === undefined) {
+        html += "<div class='icn3d-option'>";
+        html += "<b>&nbsp;&nbsp;Proteins&nbsp;</b>";
+        html += "<select id='" + me.pre + "proteins'>";
+        html += "<option value='ribbon' selected>Ribbon</option>";
+        html += "<option value='strand'>Strand</option>";
+        html += "<option value='cylinder & plate'>Cylinder and Plate</option>";
+        html += "<option value='schematic'>Schematic</option>";
+        html += "<option value='c alpha trace'>C Alpha Trace</option>";
+        html += "<option value='b factor tube'>B Factor Tube</option>";
+        html += "<option value='lines'>Lines</option>";
+        html += "<option value='stick'>Stick</option>";
+        html += "<option value='ball & stick'>Ball and Stick</option>";
+        html += "<option value='sphere'>Sphere</option>";
+        html += "<option value='nothing'>Hide</option>";
+        html += "</select>";
+        html += "</div>";
 
-		html += "<div class='icn3d-option'>";
-		html += "<b>&nbsp;&nbsp;Side Chains&nbsp;</b>";
-		html += "<select id='" + me.pre + "sidechains'>";
-		html += "<option value='lines'>Lines</option>";
-		html += "<option value='stick'>Stick</option>";
-		html += "<option value='ball & stick'>Ball and Stick</option>";
-		html += "<option value='sphere'>Sphere</option>";
-		html += "<option value='nothing' selected>Hide</option>";
-		html += "</select>";
-		html += "</div>";
+        html += "<div class='icn3d-option'>";
+        html += "<b>&nbsp;&nbsp;Side Chains&nbsp;</b>";
+        html += "<select id='" + me.pre + "sidechains'>";
+        html += "<option value='lines'>Lines</option>";
+        html += "<option value='stick'>Stick</option>";
+        html += "<option value='ball & stick'>Ball and Stick</option>";
+        html += "<option value='sphere'>Sphere</option>";
+        html += "<option value='nothing' selected>Hide</option>";
+        html += "</select>";
+        html += "</div>";
 
-		html += "<div class='icn3d-option'>";
-		html += "<b>&nbsp;&nbsp;Nucleotides&nbsp;</b>";
-		html += "<select id='" + me.pre + "nucleotides'>";
-		html += "<option value='nucleotide cartoon'>Cartoon</option>";
-		html += "<option value='phosphorus trace' selected>Phosphorus Trace</option>";
-		html += "<option value='lines'>Lines</option>";
-		html += "<option value='stick'>Stick</option>";
-		html += "<option value='ball & stick'>Ball and Stick</option>";
-		html += "<option value='sphere'>Sphere</option>";
-		html += "<option value='nothing'>Hide</option>";
-		html += "</select>";
-		html += "</div>";
+        html += "<div class='icn3d-option'>";
+        html += "<b>&nbsp;&nbsp;Nucleotides&nbsp;</b>";
+        html += "<select id='" + me.pre + "nucleotides'>";
+        html += "<option value='nucleotide cartoon'>Cartoon</option>";
+        html += "<option value='phosphorus trace' selected>Phosphorus Trace</option>";
+        html += "<option value='lines'>Lines</option>";
+        html += "<option value='stick'>Stick</option>";
+        html += "<option value='ball & stick'>Ball and Stick</option>";
+        html += "<option value='sphere'>Sphere</option>";
+        html += "<option value='nothing'>Hide</option>";
+        html += "</select>";
+        html += "</div>";
 
-		html += "<div class='icn3d-option'>";
-		html += "<b>&nbsp;&nbsp;Ligands&nbsp;</b>";
-		html += "<select id='" + me.pre + "ligands'>";
-		html += "<option value='lines'>Lines</option>";
-		html += "<option value='stick' selected>Stick</option>";
-		html += "<option value='ball & stick'>Ball and Stick</option>";
-		html += "<option value='sphere'>Sphere</option>";
-		html += "<option value='nothing'>Hide</option>";
-		html += "</select>";
-		html += "</div>";
-	    }
-	    else {
-		html += "<div class='icn3d-option'>";
-		html += "<b>&nbsp;&nbsp;Ligands&nbsp;</b>";
-		html += "<select id='" + me.pre + "ligands'>";
-		html += "<option value='lines'>Lines</option>";
-		html += "<option value='stick'>Stick</option>";
-		html += "<option value='ball & stick' selected>Ball and Stick</option>";
-		html += "<option value='sphere'>Sphere</option>";
-		html += "<option value='nothing'>Hide</option>";
-		html += "</select>";
-		html += "</div>";
-	    }
+        html += "<div class='icn3d-option'>";
+        html += "<b>&nbsp;&nbsp;Ligands&nbsp;</b>";
+        html += "<select id='" + me.pre + "ligands'>";
+        html += "<option value='lines'>Lines</option>";
+        html += "<option value='stick' selected>Stick</option>";
+        html += "<option value='ball & stick'>Ball and Stick</option>";
+        html += "<option value='sphere'>Sphere</option>";
+        html += "<option value='nothing'>Hide</option>";
+        html += "</select>";
+        html += "</div>";
+        }
+        else {
+        html += "<div class='icn3d-option'>";
+        html += "<b>&nbsp;&nbsp;Ligands&nbsp;</b>";
+        html += "<select id='" + me.pre + "ligands'>";
+        html += "<option value='lines'>Lines</option>";
+        html += "<option value='stick'>Stick</option>";
+        html += "<option value='ball & stick' selected>Ball and Stick</option>";
+        html += "<option value='sphere'>Sphere</option>";
+        html += "<option value='nothing'>Hide</option>";
+        html += "</select>";
+        html += "</div>";
+        }
 
-	    html += "<div class='icn3d-option'>";
-	    html += "<b>&nbsp;&nbsp;Color&nbsp;</b>";
-	    html += "<select id='" + me.pre + "color'>";
-	    if(me.cfg.cid === undefined) {
-		html += "<option value='spectrum' selected>Spectrum</option>";
-		html += "<option value='secondary structure'>Secondary Structure</option>";
-		html += "<option value='charge'>Charge</option>";
-		html += "<option value='chain'>Chain</option>";
-		html += "<option value='residue'>Residue</option>";
-	    }
-	    html += "<option value='atom'>Atom</option>";
-	    html += "<option value='red'>Red</option>";
-	    html += "<option value='green'>Green</option>";
-	    html += "<option value='blue'>Blue</option>";
-	    html += "<option value='magenta'>Magenta</option>";
-	    html += "<option value='yellow'>Yellow</option>";
-	    html += "<option value='cyan'>Cyan</option>";
-	    html += "</select>";
-	    html += "</div>";
+        html += "<div class='icn3d-option'>";
+        html += "<b>&nbsp;&nbsp;Color&nbsp;</b>";
+        html += "<select id='" + me.pre + "color'>";
+        if(me.cfg.cid === undefined) {
+        html += "<option value='spectrum' selected>Spectrum</option>";
+        html += "<option value='secondary structure'>Secondary Structure</option>";
+        html += "<option value='charge'>Charge</option>";
+        html += "<option value='chain'>Chain</option>";
+        html += "<option value='residue'>Residue</option>";
+        }
+        html += "<option value='atom'>Atom</option>";
+        html += "<option value='red'>Red</option>";
+        html += "<option value='green'>Green</option>";
+        html += "<option value='blue'>Blue</option>";
+        html += "<option value='magenta'>Magenta</option>";
+        html += "<option value='yellow'>Yellow</option>";
+        html += "<option value='cyan'>Cyan</option>";
+        html += "</select>";
+        html += "</div>";
 
-	    html += "<div class='icn3d-option'>";
-	    html += "&nbsp;&nbsp;<button id='" + me.pre + "enablepick'>Picking</button> <button id='" + me.pre + "disablepick'>No Picking</button>";
-	    html += "</div>";
+        html += "<div class='icn3d-option'>";
+        html += "&nbsp;&nbsp;<button id='" + me.pre + "enablepick'>Picking</button> <button id='" + me.pre + "disablepick'>No Picking</button>";
+        html += "</div>";
 
-	    html += "<div class='icn3d-option'>";
-	    html += "&nbsp;&nbsp;<button id='" + me.pre + "reset'>Reset</button>";
-	    html += "</div>";
+        html += "<div class='icn3d-option'>";
+        html += "&nbsp;&nbsp;<button id='" + me.pre + "reset'>Reset</button>";
+        html += "</div>";
 
-	    html += "</form>";
-	    html += "</div>";
-	    html += "</div>";
+        html += "</form>";
+        html += "</div>";
+        html += "</div>";
 
-	    html += "</div>";
+        html += "</div>";
 
-	    html += "<!-- dialog will not be part of the form -->";
-	    html += "<div id='" + me.pre + "allselections' class='icn3d-hidden'>";
+        html += "<!-- dialog will not be part of the form -->";
+        html += "<div id='" + me.pre + "allselections' class='icn3d-hidden'>";
 
-	    // filter for large structure
-	    html += "<div id='" + me.pre + "dl_filter' style='overflow:auto; position:relative'>";
-	    //html += "  <div>This large structure contains more than 50,000 atoms. Please select some structures/chains below to display.</div>";
-	    //html += "  <input style='position:absolute; top:13px; left:20px;' type='checkbox' id='" + me.pre + "filter_ckbx_all'/>";
-	    html += "  <div style='text-align:center; margin-bottom:10px;'><button id='" + me.pre + "filter'><span style='white-space:nowrap'><b>Show Structure</b></span></button>";
-	    html += "<button id='" + me.pre + "label_3d_diagram' style='margin-left:10px;'><span style='white-space:nowrap'><b>Show Labels</b></span></button></div>";
-	    html += "  <div id='" + me.pre + "dl_filter_table' class='icn3d-box'>";
-	    html += "  </div>";
-	    html += "</div>";
+        // filter for large structure
+        html += "<div id='" + me.pre + "dl_filter' style='overflow:auto; position:relative'>";
+        //html += "  <div>This large structure contains more than 50,000 atoms. Please select some structures/chains below to display.</div>";
+        //html += "  <input style='position:absolute; top:13px; left:20px;' type='checkbox' id='" + me.pre + "filter_ckbx_all'/>";
+        html += "  <div style='text-align:center; margin-bottom:10px;'><button id='" + me.pre + "filter'><span style='white-space:nowrap'><b>Show Structure</b></span></button>";
+        html += "<button id='" + me.pre + "label_3d_diagram' style='margin-left:10px;'><span style='white-space:nowrap'><b>Show Labels</b></span></button></div>";
+        html += "  <div id='" + me.pre + "dl_filter_table' class='icn3d-box'>";
+        html += "  </div>";
+        html += "</div>";
 
-	    html += "</div>";
+        html += "</div>";
 
-	    return html;
-	},
+        return html;
+    },
 
     loadStructure: function() { var me = this;
-		me.icn3d.moleculeTitle = '';
+        me.icn3d.moleculeTitle = '';
 
         if(me.cfg.pdbid !== undefined) {
-			 me.inputid = me.cfg.pdbid;
+             me.inputid = me.cfg.pdbid;
              var pdbid = me.cfg.pdbid.toLowerCase(); // http://www.rcsb.org/pdb/files/1gpk.pdb only allow lower case
 
              me.downloadPdb(pdbid);
         }
         else if(me.cfg.mmdbid !== undefined) {
-			me.inputid = me.cfg.mmdbid;
+            me.inputid = me.cfg.mmdbid;
             me.downloadMmdb(me.cfg.mmdbid);
         }
         else if(me.cfg.gi !== undefined) {
@@ -352,24 +353,24 @@ iCn3DUI.prototype = {
            });
         }
         else if(me.cfg.cid !== undefined) {
-		   me.inputid = me.cfg.cid;
-		   var url = "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/cid/" + me.cfg.cid + "/description/jsonp";
-		   $.ajax({
-			  url: url,
-			  dataType: 'jsonp',
-			  success: function(data) {
-				  if(data.InformationList !== undefined && data.InformationList.Information !== undefined) me.icn3d.moleculeTitle = data.InformationList.Information[0].Title;
-			  }
-		   });
+           me.inputid = me.cfg.cid;
+           var url = "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/cid/" + me.cfg.cid + "/description/jsonp";
+           $.ajax({
+              url: url,
+              dataType: 'jsonp',
+              success: function(data) {
+                  if(data.InformationList !== undefined && data.InformationList.Information !== undefined) me.icn3d.moleculeTitle = data.InformationList.Information[0].Title;
+              }
+           });
 
             me.downloadCid(me.cfg.cid);
         }
         else if(me.cfg.mmcif !== undefined) {
-			me.inputid = me.cfg.mmcif;
+            me.inputid = me.cfg.mmcif;
             me.downloadMmcif(me.cfg.mmcif);
         }
         else if(me.cfg.align !== undefined) {
-			me.inputid = me.cfg.align;
+            me.inputid = me.cfg.align;
             me.downloadAlignment(me.cfg.align);
         }
         else {
@@ -378,13 +379,13 @@ iCn3DUI.prototype = {
     },
 
     renderStructure: function(bInitial) { var me = this;
-    	if(bInitial) {
-			me.icn3d.draw(me.options);
-		}
-		else {
-			me.icn3d.draw();
-		}
-	},
+        if(bInitial) {
+            me.icn3d.draw(me.options);
+        }
+        else {
+            me.icn3d.draw();
+        }
+    },
 
     selectAll: function() { var me = this;
           // select all atoms again
@@ -409,7 +410,7 @@ iCn3DUI.prototype = {
       me.selectAll();
 
       switch (selectionType) {
-          case 'secondary':
+          case 'proteins':
               atoms = me.icn3d.intersectHash(me.icn3d.highlightAtoms, me.icn3d.proteins);
               break;
           case 'sidechains':
@@ -430,207 +431,212 @@ iCn3DUI.prototype = {
       }
 
       if(style === 'schematic') {
-			var options2 = {};
-			options2['secondary'] = 'c alpha trace';
-			options2['nucleotides'] = 'phosphorus trace';
-			options2['ligands'] = 'nothing';
-			options2['water'] = 'nothing';
-			options2['ions'] = 'nothing';
+            var options2 = {};
+            options2['proteins'] = 'c alpha trace';
+            options2['nucleotides'] = 'phosphorus trace';
+            options2['ligands'] = 'nothing';
+            options2['water'] = 'nothing';
+            options2['ions'] = 'nothing';
 
-			me.icn3d.setAtomStyleByOptions(options2);
+            me.icn3d.setAtomStyleByOptions(options2);
 
-			var bTopology = true;
-			me.addResiudeLabels(bTopology);
+            var bTopology = true;
+            me.addResiudeLabels(bTopology);
 
-			me.icn3d.options['labels'] = 'yes';
+            me.icn3d.options['labels'] = 'yes';
 
-			me.icn3d.draw();
-	  }
-	  else {
-		  for(var i in atoms) {
-			me.icn3d.atoms[i].style = style;
-		  }
+            me.icn3d.draw();
+      }
+      else {
+          for(var i in atoms) {
+            me.icn3d.atoms[i].style = style;
+          }
 
-		  me.icn3d.options[selectionType] = style;
+          me.icn3d.options[selectionType] = style;
 
-		  if(selectionType === 'secondary' && style === 'nothing') {
-				me.icn3d.labels = [];
-				me.icn3d.options["labels"] = "no";
-		  }
+          if(selectionType === 'proteins' && style === 'nothing') {
+                me.icn3d.labels = [];
+                me.icn3d.options["labels"] = "no";
+          }
 
-		  me.icn3d.draw();
-	  }
+          me.icn3d.draw();
+      }
     },
 
-	clickTab: function() { var me = this;
-		$('.icn3d-bottomTab').click(function (e) {
-		   var height = $(".icn3d-insideTab").height();
-		   if(height === 0) {
-			 $(".icn3d-insideTab").height(200);
-		   }
-		   else {
-			 $(".icn3d-insideTab").height(0);
-		   }
-		});
-	},
+    clickTab: function() { var me = this;
+        $('.icn3d-bottomTab').click(function (e) {
+           var height = $(".icn3d-insideTab").height();
+           if(height === 0) {
+             $(".icn3d-insideTab").height(200);
+           }
+           else {
+             $(".icn3d-insideTab").height(0);
+           }
+        });
+    },
 
-	clickPicking: function() { var me = this;
-		$("#" + me.pre + "enablepick").click(function(e) {
-		   e.preventDefault();
+    clickPicking: function() { var me = this;
+        $("#" + me.pre + "enablepick").click(function(e) {
+           e.preventDefault();
 
-		   if(me.cfg.cid !== undefined) {
-			   me.icn3d.picking = 1;
-			   me.icn3d.options['picking'] = 'atom';
-		   }
-		   else {
-			   me.icn3d.picking = 2;
-			   me.icn3d.options['picking'] = 'residue';
-		   }
+           if(me.cfg.cid !== undefined) {
+               me.icn3d.picking = 1;
+               me.icn3d.options['picking'] = 'atom';
+           }
+           else {
+               me.icn3d.picking = 2;
+               me.icn3d.options['picking'] = 'residue';
+           }
 
-		});
-	},
+        });
+    },
 
-	clickNoPicking: function() { var me = this;
-		$("#" + me.pre + "disablepick").click(function(e) {
-		   e.preventDefault();
+    clickNoPicking: function() { var me = this;
+        $("#" + me.pre + "disablepick").click(function(e) {
+           e.preventDefault();
 
-		   me.icn3d.picking = 0;
-		   me.icn3d.options['picking'] = 'no';
-		   me.icn3d.draw(undefined, false);
-		   me.icn3d.removeHighlightObjects();
+           me.icn3d.picking = 0;
+           me.icn3d.options['picking'] = 'no';
+           me.icn3d.draw(undefined, false);
+           me.icn3d.removeHighlightObjects();
 
-		});
-	},
+        });
+    },
 
-	changeProteinStyle: function() { var me = this;
-		$("#" + me.pre + "secondary").change(function(e) {
-		   e.preventDefault();
+    changeProteinStyle: function() { var me = this;
+        $("#" + me.pre + "proteins").change(function(e) {
+           e.preventDefault();
 
-		   $("#" + me.pre + "sidechains").val("nothing");
-		});
-	},
+           $("#" + me.pre + "sidechains").val("nothing");
+        });
+    },
 
-	clickReset: function() { var me = this;
-		$("#" + me.pre + "reset").click(function (e) {
-			e.preventDefault();
+    clickReset: function() { var me = this;
+        $("#" + me.pre + "reset").click(function (e) {
+            e.preventDefault();
 
-			me.loadStructure();
-		});
-	},
+            me.loadStructure();
+        });
+    },
 
-	showSubsets: function() { var me = this;
-		$("#" + me.pre + "filter").click(function (e) {
-			e.preventDefault();
+    showSubsets: function() { var me = this;
+        $("#" + me.pre + "filter").click(function (e) {
+            e.preventDefault();
 
-			var ckbxes = document.getElementsByName(pre + "filter_ckbx");
+            var ckbxes = document.getElementsByName(pre + "filter_ckbx");
 
-			var mols = "";
+            var mols = "";
 
-			var ligandFlag = "&het=0";
-			for(var i = 0, il = ckbxes.length; i < il; ++i) { // skip the first "all" checkbox
-			  if(ckbxes[i].checked) {
-				  if(ckbxes[i].value == 'ligands') {
-					  ligandFlag = "&het=2";
-				  }
-				  else {
-					  mols += ckbxes[i].value + ",";
-				   }
-			  }
-			}
+            var ligandFlag = "&het=0";
+            for(var i = 0, il = ckbxes.length; i < il; ++i) { // skip the first "all" checkbox
+              if(ckbxes[i].checked) {
+                  if(ckbxes[i].value == 'ligands') {
+                      ligandFlag = "&het=2";
+                  }
+                  else {
+                      mols += ckbxes[i].value + ",";
+                   }
+              }
+            }
 
-			// have to choose one
-			if(mols == "") {
-				mols = ckbxes[0].value
-			}
+            // have to choose one
+            if(mols == "") {
+                mols = ckbxes[0].value
+            }
 
-			var url = document.URL + "&mols=" + mols + "&complexity=2" + ligandFlag;
+            var url = document.URL + "&mols=" + mols + "&complexity=2" + ligandFlag;
 
-			window.open(url, '_self');
-		});
-	},
+            window.open(url, '_self');
+        });
+    },
 
-	labelSubsets: function() { var me = this;
-		$("#" + me.pre + "label_3d_diagram").click(function (e) {
-			e.preventDefault();
+    labelSubsets: function() { var me = this;
+        $("#" + me.pre + "label_3d_diagram").click(function (e) {
+            e.preventDefault();
 
-			var ckbxes = document.getElementsByName(me.pre + "filter_ckbx");
+            var ckbxes = document.getElementsByName(me.pre + "filter_ckbx");
 
-			var mols = "";
+            var mols = "";
 
-			var labels = [];
+            var labels = [];
 
-			for(var i = 0, il = ckbxes.length; i < il; ++i) { // skip the first "all" checkbox
-			  if(ckbxes[i].checked) {
-				if(ckbxes[i].value != 'ligands') labels.push(me.icn3d.savedLabels[ckbxes[i].value]);
-			  }
-			}
+            for(var i = 0, il = ckbxes.length; i < il; ++i) { // skip the first "all" checkbox
+              if(ckbxes[i].checked) {
+                if(ckbxes[i].value != 'ligands') labels.push(me.icn3d.savedLabels[ckbxes[i].value]);
+              }
+            }
 
-			me.icn3d.labels = labels;
+            me.icn3d.labels = labels;
 
-			me.icn3d.createLabelRepresentation(me.icn3d.labels);
+            me.icn3d.createLabelRepresentation(me.icn3d.labels);
 
-			me.icn3d.render();
-		});
-	},
+            me.icn3d.render();
+        });
+    },
 
-	windowResize: function() { var me = this;
-		if(me.cfg.resize !== undefined && me.cfg.resize && !/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ) {
-		$(window).resize(function() {
-		  if(me.cfg.resize !== undefined && me.cfg.resize) {
-			$("#" + me.pre + "canvas").width($( window ).width() - 20).height($( window ).height() - 20);
-			$("#" + me.pre + "viewer").width($( window ).width() - 20).height($( window ).height() - 20);
+    windowResize: function() { var me = this;
+        if(me.cfg.resize !== undefined && me.cfg.resize && !/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ) {
+        $(window).resize(function() {
+          if(me.cfg.resize !== undefined && me.cfg.resize) {
+			var width = window.innerWidth();
+			var height = window.innerHeight();
 
-			me.icn3d.setWidthHeight($( window ).width() - 20, $( window ).height() - 20);
+			//var width = $( window ).width();
+			//var height = $( window ).height();
 
-			me.icn3d.draw();
+            $("#" + me.pre + "canvas").width(width - 20).height(height - 20);
+            $("#" + me.pre + "viewer").width(width - 20).height(height - 20);
 
-			// do not change the colors, i.e., use the previous colors
-			//options['color'] = 'custom';
-		  }
-		});
-		}
-	},
+            me.icn3d.setWidthHeight(width - 20, height - 20);
 
-	changeSelection: function() { var me = this;
-		['color', 'sidechains', 'secondary', 'ligands', 'water', 'ions', 'nucleotides'].forEach(function (opt) {
-			$('#' + me.pre + opt).change(function (e) {
-				if(opt === 'color') {
-				  me.setColor(opt, $('#' + me.pre + opt).val());
-				}
-				else {
-				  me.setStyle(opt, $('#' + me.pre + opt).val());
-				}
-			});
-		});
-	},
+            me.icn3d.draw();
 
-	allEventFunctions: function() { var me = this;
-		me.clickTab();
-		me.clickPicking();
-		me.clickNoPicking();
-		me.changeProteinStyle();
-		me.clickReset();
-		me.showSubsets();
-		me.labelSubsets();
-		me.windowResize();
-		me.changeSelection();
-	},
+            // do not change the colors, i.e., use the previous colors
+            //options['color'] = 'custom';
+          }
+        });
+        }
+    },
+
+    changeSelection: function() { var me = this;
+        ['color', 'sidechains', 'proteins', 'ligands', 'water', 'ions', 'nucleotides'].forEach(function (opt) {
+            $('#' + me.pre + opt).change(function (e) {
+                if(opt === 'color') {
+                  me.setColor(opt, $('#' + me.pre + opt).val());
+                }
+                else {
+                  me.setStyle(opt, $('#' + me.pre + opt).val());
+                }
+            });
+        });
+    },
+
+    allEventFunctions: function() { var me = this;
+        me.clickTab();
+        me.clickPicking();
+        me.clickNoPicking();
+        me.changeProteinStyle();
+        me.clickReset();
+        me.showSubsets();
+        me.labelSubsets();
+        me.windowResize();
+        me.changeSelection();
+    },
 
     allCustomEvents: function() { var me = this;
       // add custom events here
     }
 };
 
-
 /*! The following are shared by full_ui.js and simple_ui.js */
 
-    iCn3DUI.prototype.addResiudeLabels = function (bTopology) { var me = this;
+    iCn3DUI.prototype.addResiudeLabels = function (bSchematic) { var me = this;
         var size = 40;
         var background = "#CCCCCC";
-        if(bTopology) {
-			size = 20;
-			//background = undefined;
-		}
+        if(bSchematic) {
+            size = 20;
+            //background = undefined;
+        }
 
         for(var i in me.icn3d.highlightAtoms) {
             var atom = me.icn3d.atoms[i];
@@ -642,8 +648,8 @@ iCn3DUI.prototype = {
 
             label.position = atom.coord;
 
-            label.bTopology = 0;
-            if(bTopology) label.bTopology = 1;
+            label.bSchematic = 0;
+            if(bSchematic) label.bSchematic = 1;
 
             label.text = me.icn3d.residueName2Abbr(atom.resn);
             label.size = size;
@@ -950,13 +956,13 @@ iCn3DUI.prototype = {
     };
 
     iCn3DUI.prototype.downloadAlignment = function (align) { var me = this;
-        //var url = "https://www.ncbi.nlm.nih.gov/Structure/vastpp/vastpp.cgi?cmd=c&w3d&ids=" + align;
-        //var url2 = "https://www.ncbi.nlm.nih.gov/Structure/vastpp/vastpp.cgi?cmd=c1&d&ids=" + align;
+        var url = "https://www.ncbi.nlm.nih.gov/Structure/vastpp/vastpp.cgi?cmd=c&w3d&ids=" + align;
+        var url2 = "https://www.ncbi.nlm.nih.gov/Structure/vastpp/vastpp.cgi?cmd=c1&d&ids=" + align;
 
-        var alignArray = me.cfg.align.split(',');
-        var ids_str = (alignArray.length === 2? 'uids=' : 'ids=') + align;
-        var url = 'https://structuredev24.be-md.ncbi.nlm.nih.gov/Structure/vastplusdev/vastplus.cgi?cmd=c&w3d&' + ids_str;
-        var url2 = 'https://structuredev24.be-md.ncbi.nlm.nih.gov/Structure/vastplusdev/vastplus.cgi?cmd=c1&d&' + ids_str;
+        //var alignArray = me.cfg.align.split(',');
+        //var ids_str = (alignArray.length === 2? 'uids=' : 'ids=') + align;
+        //var url = '/Structure/vastplusdev/vastplus.cgi?cmd=c&w3d&' + ids_str;
+        //var url2 = '/Structure/vastplusdev/vastplus.cgi?cmd=c1&d&' + ids_str;
 
         if(me.cfg.inpara !== undefined) {
           url += me.cfg.inpara;
@@ -1303,8 +1309,8 @@ iCn3DUI.prototype = {
             }
 
             if(me.cfg.inpara !== undefined && me.cfg.inpara.indexOf('mols=') == -1 && data.atomcount > data.threshold && data.molid2rescount !== undefined) {
-				// hide surface option
-				$("#" + me.pre + "accordion5").hide();
+                // hide surface option
+                $("#" + me.pre + "accordion5").hide();
 
                 var labelsize = 40;
 
@@ -1770,7 +1776,8 @@ iCn3DUI.prototype = {
             else if (atm.mt === 'l') { // ligands and ions
               me.icn3d.ligands[serial] = 1;
 
-              if (atm.bonds.length === 0) me.icn3d.ions[serial] = 1;
+              //if (atm.bonds.length === 0) me.icn3d.ions[serial] = 1;
+              if (atm.elem === atm.resn) me.icn3d.ions[serial] = 1;
 
               me.icn3d.het = true;
             }
@@ -2046,10 +2053,10 @@ iCn3DUI.prototype = {
           // assign white color to all unaligned atoms
           var color = new THREE.Color("#FFFFFF");
           for(var i in me.icn3d.atoms) {
-			  if(!alignedAtoms.hasOwnProperty(i)) {
-				  me.icn3d.atoms[i].color = color;
-			  }
-		  }
+              if(!alignedAtoms.hasOwnProperty(i)) {
+                  me.icn3d.atoms[i].color = color;
+              }
+          }
 
           seqalign = {};
         } // if(align
@@ -2058,5 +2065,3 @@ iCn3DUI.prototype = {
 
         data = {};
     };
-
-

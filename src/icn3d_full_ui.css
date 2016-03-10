@@ -30,6 +30,7 @@ button, select, input { font-size: 10px; }
 .icn3d-commandTitle  {font-size: 12px; font-weight:bold; font-family: Verdana, Arial, Helvetica, sans-serif; color: #666666;}
 
 .icn3d-middleIcon {opacity: 1.0}
-.icn3d-endIcon {opacity: 0.5}
+.icn3d-endIcon {opacity: 0.2}
 
 .icn3d-box {border-top: solid 1px #ccc; border-right: solid 1px #ccc; border-bottom: solid 1px #ccc; border-left: solid 1px #ccc; padding: 5px;}
+
