@@ -54,7 +54,7 @@ var iCn3DUI = function(cfg) {
     me.options['background']         = 'black';              //black, grey, white
     me.options['color']              = 'spectrum';           //spectrum, secondary structure, charge, chain, residue, atom, red, green, blue, magenta, yellow, cyan, white, grey, custom
     me.options['sidechains']         = 'nothing';            //lines, stick, ball & stick, sphere, nothing
-    me.options['proteins']          = 'ribbon';             //ribbon, strand, cylinder & plate, c alpha trace, b factor tube, lines, stick, ball & stick, sphere, nothing
+    me.options['proteins']          = 'ribbon';             //ribbon, strand, cylinder & plate, schematic, c alpha trace, b factor tube, lines, stick, ball & stick, sphere, nothing
     me.options['surface']            = 'nothing';             //Van der Waals surface, molecular surface, solvent accessible surface, nothing
     me.options['opacity']            = '0.8';                //1.0, 0.9, 0.8, 0.7, 0.6, 0.5
     me.options['wireframe']          = 'no';                 //yes, no
@@ -62,12 +62,14 @@ var iCn3DUI = function(cfg) {
     me.options['water']              = 'nothing';            //sphere, dot, nothing
     me.options['ions']               = 'sphere';             //sphere, dot, nothing
     me.options['hbonds']             = 'no';                 //yes, no
-    me.options['labels']             = 'no';                 //yes, no
-    me.options['lines']                   = 'no';                 //yes, no
+    //me.options['labels']             = 'no';                 //yes, no
+    //me.options['lines']                   = 'no';                 //yes, no
     me.options['rotationcenter']     = 'molecule center';    //molecule center, pick center, display center
     me.options['axis']               = 'no';                 //yes, no
+    me.options['fog']               = 'no';                 //yes, no
+    me.options['slab']               = 'no';                 //yes, no
     me.options['picking']            = 'residue';                 //no, atom, residue, strand
-    me.options['nucleotides']        = 'phosphorus trace';   //nucleotide cartoon, phosphorus trace, lines, stick, ball & stick, sphere, nothing
+    me.options['nucleotides']        = 'phosphorus trace';   //nucleotide cartoon, phosphorus trace, schematic, lines, stick, ball & stick, sphere, nothing
 
     me.options['surfaceregion']      = 'nothing';            //nothing, all, sphere
 
@@ -203,6 +205,7 @@ iCn3DUI.prototype = {
         html += "<option value='cylinder & plate'>Cylinder and Plate</option>";
         html += "<option value='schematic'>Schematic</option>";
         html += "<option value='c alpha trace'>C Alpha Trace</option>";
+        html += "<option value='schematic'>Schematic</option>";
         html += "<option value='b factor tube'>B Factor Tube</option>";
         html += "<option value='lines'>Lines</option>";
         html += "<option value='stick'>Stick</option>";
@@ -228,6 +231,7 @@ iCn3DUI.prototype = {
         html += "<select id='" + me.pre + "nucleotides'>";
         html += "<option value='nucleotide cartoon'>Cartoon</option>";
         html += "<option value='phosphorus trace' selected>Phosphorus Trace</option>";
+        html += "<option value='schematic'>Schematic</option>";
         html += "<option value='lines'>Lines</option>";
         html += "<option value='stick'>Stick</option>";
         html += "<option value='ball & stick'>Ball and Stick</option>";
@@ -365,16 +369,16 @@ iCn3DUI.prototype = {
 
             me.downloadCid(me.cfg.cid);
         }
-        else if(me.cfg.mmcif !== undefined) {
-            me.inputid = me.cfg.mmcif;
-            me.downloadMmcif(me.cfg.mmcif);
+        else if(me.cfg.mmcifid !== undefined) {
+            me.inputid = me.cfg.mmcifid;
+            me.downloadMmcif(me.cfg.mmcifid);
         }
         else if(me.cfg.align !== undefined) {
             me.inputid = me.cfg.align;
             me.downloadAlignment(me.cfg.align);
         }
         else {
-            alert("Please input a gi, MMDB ID, PDB ID, CID, or mmCIF...");
+            alert("Please input a gi, MMDB ID, PDB ID, CID, or mmCIF ID...");
         }
     },
 
@@ -430,37 +434,13 @@ iCn3DUI.prototype = {
               break;
       }
 
-      if(style === 'schematic') {
-            var options2 = {};
-            options2['proteins'] = 'c alpha trace';
-            options2['nucleotides'] = 'phosphorus trace';
-            options2['ligands'] = 'nothing';
-            options2['water'] = 'nothing';
-            options2['ions'] = 'nothing';
-
-            me.icn3d.setAtomStyleByOptions(options2);
-
-            var bTopology = true;
-            me.addResiudeLabels(bTopology);
-
-            me.icn3d.options['labels'] = 'yes';
-
-            me.icn3d.draw();
+      for(var i in atoms) {
+        me.icn3d.atoms[i].style = style;
       }
-      else {
-          for(var i in atoms) {
-            me.icn3d.atoms[i].style = style;
-          }
 
-          me.icn3d.options[selectionType] = style;
+      me.icn3d.options[selectionType] = style;
 
-          if(selectionType === 'proteins' && style === 'nothing') {
-                me.icn3d.labels = [];
-                me.icn3d.options["labels"] = "no";
-          }
-
-          me.icn3d.draw();
-      }
+      me.icn3d.draw();
     },
 
     clickTab: function() { var me = this;
@@ -550,39 +530,15 @@ iCn3DUI.prototype = {
         });
     },
 
-    labelSubsets: function() { var me = this;
-        $("#" + me.pre + "label_3d_diagram").click(function (e) {
-            e.preventDefault();
-
-            var ckbxes = document.getElementsByName(me.pre + "filter_ckbx");
-
-            var mols = "";
-
-            var labels = [];
-
-            for(var i = 0, il = ckbxes.length; i < il; ++i) { // skip the first "all" checkbox
-              if(ckbxes[i].checked) {
-                if(ckbxes[i].value != 'ligands') labels.push(me.icn3d.savedLabels[ckbxes[i].value]);
-              }
-            }
-
-            me.icn3d.labels = labels;
-
-            me.icn3d.createLabelRepresentation(me.icn3d.labels);
-
-            me.icn3d.render();
-        });
-    },
-
     windowResize: function() { var me = this;
         if(me.cfg.resize !== undefined && me.cfg.resize && !/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ) {
         $(window).resize(function() {
           if(me.cfg.resize !== undefined && me.cfg.resize) {
-			var width = window.innerWidth();
-			var height = window.innerHeight();
+            var width = window.innerWidth();
+            var height = window.innerHeight();
 
-			//var width = $( window ).width();
-			//var height = $( window ).height();
+            //var width = $( window ).width();
+            //var height = $( window ).height();
 
             $("#" + me.pre + "canvas").width(width - 20).height(height - 20);
             $("#" + me.pre + "viewer").width(width - 20).height(height - 20);
@@ -618,7 +574,7 @@ iCn3DUI.prototype = {
         me.changeProteinStyle();
         me.clickReset();
         me.showSubsets();
-        me.labelSubsets();
+        me.clickHighlight_3d_diagram();
         me.windowResize();
         me.changeSelection();
     },
@@ -630,37 +586,42 @@ iCn3DUI.prototype = {
 
 /*! The following are shared by full_ui.js and simple_ui.js */
 
-    iCn3DUI.prototype.addResiudeLabels = function (bSchematic) { var me = this;
-        var size = 40;
-        var background = "#CCCCCC";
-        if(bSchematic) {
-            size = 20;
-            //background = undefined;
-        }
+    iCn3DUI.prototype.clickHighlight_3d_diagram = function() { var me = this;
+        $("#" + me.pre + "highlight_3d_diagram").click(function (e) {
+           //e.preventDefault();
+           me.icn3d.removeHighlightObjects();
 
-        for(var i in me.icn3d.highlightAtoms) {
-            var atom = me.icn3d.atoms[i];
+           var ckbxes = document.getElementsByName(me.pre + "filter_ckbx");
 
-            if(atom.het) continue;
-            if(atom.name !== 'CA' && atom.name !== 'P') continue;
+           var mols = "";
 
-            var label = {}; // Each label contains 'position', 'text', 'color', 'background'
+           //if(me.icn3d.labels['custom'] === undefined) me.icn3d.labels['custom'] = [];
+           var molid2ssTmp = {}, molid2colorTmp = {};
 
-            label.position = atom.coord;
+           me.icn3d.highlightAtoms = {};
+           for(var i = 0, il = ckbxes.length; i < il; ++i) { // skip the first "all" checkbox
+             if(ckbxes[i].checked && ckbxes[i].value != 'ligands') {
+               //me.icn3d.labels['custom'].push(me.icn3d.savedLabels[ckbxes[i].value]);
+               var value = ckbxes[i].value;
+               var chain = ckbxes[i].getAttribute('chain');
 
-            label.bSchematic = 0;
-            if(bSchematic) label.bSchematic = 1;
+               if(me.icn3d.molid2ss.hasOwnProperty(value)) { // condensed view
+                   molid2ssTmp[value] = me.icn3d.molid2ss[value];
+                   molid2colorTmp[value] = me.icn3d.molid2color[value];
+               }
+               else { // all atom view
+                   me.icn3d.highlightAtoms = me.icn3d.unionHash(me.icn3d.highlightAtoms, me.icn3d.chains[chain]);
+               }
+             }
+           }
 
-            label.text = me.icn3d.residueName2Abbr(atom.resn);
-            label.size = size;
+           //me.icn3d.createLabelRepresentation(me.icn3d.labels);
 
-            label.color = "#" + atom.color.getHexString();
-            label.background = background;
+           me.icn3d.drawHelixBrick(molid2ssTmp, molid2colorTmp, me.icn3d.bHighlight); // condensed view
+           me.icn3d.addHighlightObjects(undefined, false); // all atom view
 
-            me.icn3d.labels.push(label);
-        }
-
-        me.icn3d.removeHighlightObjects();
+           me.icn3d.render();
+        });
     };
 
     iCn3DUI.prototype.rotateStructure = function (direction, bInitial) { var me = this;
@@ -882,7 +843,7 @@ iCn3DUI.prototype = {
         me.icn3d.setAtomStyleByOptions(me.options);
         me.icn3d.setColorByOptions(me.options, me.icn3d.atoms);
 
-        me.renderStructure(true);
+        me.renderStructure();
 
         me.showTitle();
 
@@ -893,8 +854,8 @@ iCn3DUI.prototype = {
         if(me.deferred !== undefined) me.deferred.resolve(); if(me.deferred2 !== undefined) me.deferred2.resolve();
     };
 
-    iCn3DUI.prototype.downloadMmcif = function (mmcif) { var me = this;
-        var url = "https://www.ncbi.nlm.nih.gov/Structure/mmcifparser/mmcifparser.cgi?mmcif=" + mmcif;
+    iCn3DUI.prototype.downloadMmcif = function (mmcifid) { var me = this;
+        var url = "https://www.ncbi.nlm.nih.gov/Structure/mmcifparser/mmcifparser.cgi?mmcif=" + mmcifid;
         me.icn3d.bCid = undefined;
 
        $.ajax({
@@ -919,7 +880,7 @@ iCn3DUI.prototype = {
 
     iCn3DUI.prototype.loadMmcifData = function(data) { var me = this;
         if (data.atoms !== undefined) {
-            me.loadAtomDataIn(data, data.mmcif, 'mmcif');
+            me.loadAtomDataIn(data, data.mmcif, 'mmcifid');
 
             if(me.cfg.align === undefined && Object.keys(me.icn3d.structures).length == 1) {
                 $("#" + me.pre + "alternateWrapper").hide();
@@ -935,13 +896,10 @@ iCn3DUI.prototype = {
               }
             }
 
-            //me.icn3d.inputid.idtype = "mmcif";
-            //me.icn3d.inputid.id = mmcif;
-
             me.icn3d.setAtomStyleByOptions(me.options);
             me.icn3d.setColorByOptions(me.options, me.icn3d.atoms);
 
-            me.renderStructure(true);
+            me.renderStructure();
 
             if(me.cfg.rotate !== undefined) me.rotateStructure(me.cfg.rotate, true);
 
@@ -1046,7 +1004,7 @@ iCn3DUI.prototype = {
                 // use the original color from cgi output
                 me.icn3d.setColorByOptions(me.options, me.icn3d.atoms, true);
 
-                me.renderStructure(true);
+                me.renderStructure();
 
                 if(me.cfg.rotate !== undefined) me.rotateStructure(me.cfg.rotate, true);
 
@@ -1100,7 +1058,7 @@ iCn3DUI.prototype = {
               me.icn3d.setAtomStyleByOptions(me.options);
               me.icn3d.setColorByOptions(me.options, me.icn3d.atoms);
 
-              me.renderStructure(true);
+              me.renderStructure();
 
               if(me.cfg.rotate !== undefined) me.rotateStructure(me.cfg.rotate, true);
 
@@ -1301,7 +1259,7 @@ iCn3DUI.prototype = {
                 // use the original color from cgi output
                 me.icn3d.setColorByOptions(me.options, me.icn3d.atoms, true);
 
-                me.renderStructure(true);
+                me.renderStructure();
 
                 if(me.cfg.rotate !== undefined) me.rotateStructure(me.cfg.rotate, true);
 
@@ -1340,10 +1298,10 @@ iCn3DUI.prototype = {
                 var index = 1;
                 for(var i in molid2rescount) {
                   var color = '#' + ( '000000' + molid2rescount[i].color.toString( 16 ) ).slice( - 6 );
-                  html += "<tr style='color:" + color + "'><td><input type='checkbox' name='" + me.pre + "filter_ckbx' value='" + i + "'/></td><td align='center'>" + index + "</td><td align='center'>" + molid2rescount[i].chain + "</td><td align='center'>" + molid2rescount[i].resCount + "</td></tr>";
+                  var chain = id + '_' + molid2rescount[i].chain;
+                  html += "<tr style='color:" + color + "'><td><input type='checkbox' name='" + me.pre + "filter_ckbx' value='" + i + "' chain='" + chain + "'/></td><td align='center'>" + index + "</td><td align='center'>" + molid2rescount[i].chain + "</td><td align='center'>" + molid2rescount[i].resCount + "</td></tr>";
 
                   molid2color[i] = color;
-                  var chain = id + '_' + molid2rescount[i].chain;
                   chain2molid[chain] = i;
                   molid2chain[i] = chain;
                   ++index;
@@ -1355,6 +1313,7 @@ iCn3DUI.prototype = {
 
                 html += "</table>";
 
+/*
                  // add labels for each RNA/DNA molecule
                  // hash of molid to label object
                  var labels = {};
@@ -1373,6 +1332,7 @@ iCn3DUI.prototype = {
 
                      labels[chain2molid[i]] = label;
                  }
+*/
 
                 // get brick and helix info to draw secondary structure for the coarse 3D view
                 molid2ss = {}; // hash of molid -> array of object
@@ -1486,7 +1446,7 @@ iCn3DUI.prototype = {
 
                     var centerMolid = psumMolid.multiplyScalar(1.0 / cntMolid);
 
-
+/*
                      // add labels for each protein molecule
                      var label = {}; // Each label contains 'position', 'text', 'color', 'background'
 
@@ -1504,6 +1464,7 @@ iCn3DUI.prototype = {
                      label.background = "#FFFFFF";
 
                      labels[i] = label;
+*/
                 }
                 me.icn3d.maxD = pmax.distanceTo(pmin);
                 me.icn3d.center = psum.multiplyScalar(1.0 / cnt);
@@ -1537,12 +1498,12 @@ iCn3DUI.prototype = {
                 // draw labels
                 // there might be too many labels
                 //me.options['labels'] = 'add labels';
-                me.icn3d.savedLabels = labels;
+//                me.icn3d.savedLabels = labels;
 
                 me.icn3d.molid2ss = molid2ss;
                 me.icn3d.molid2color = molid2color;
 
-                me.renderStructure(true);
+                me.renderStructure();
 
                 if(me.cfg.rotate !== undefined) me.rotateStructure(me.cfg.rotate, true);
 
@@ -1661,7 +1622,7 @@ iCn3DUI.prototype = {
               }
           }
         }
-        else { // mmdbid or mmcif
+        else { // mmdbid or mmcifid
               if(data.descr !== undefined) me.icn3d.moleculeTitle += data.descr.name;
         }
 
@@ -1700,7 +1661,7 @@ iCn3DUI.prototype = {
 
             var mmdb_id;
 
-            if(type === 'mmdbid' || type === 'mmcif') {
+            if(type === 'mmdbid' || type === 'mmcifid') {
               mmdb_id = id; // here mmdb_id is pdbid or mmcif id
             }
             else if(type === 'align') {
@@ -1864,7 +1825,7 @@ iCn3DUI.prototype = {
         me.icn3d.structures[structureNum].push(chainNum);
 
         // update bonds info
-        if(type !== 'mmcif') {
+        if(type !== 'mmcifid') {
         for (var i in me.icn3d.atoms) {
             var bondLength = (me.icn3d.atoms[i].bonds === undefined) ? 0 : me.icn3d.atoms[i].bonds.length;
 
@@ -2065,3 +2026,4 @@ iCn3DUI.prototype = {
 
         data = {};
     };
+
