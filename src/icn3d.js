@@ -156,6 +156,8 @@ var iCn3D = function (id) {
         lines: 'no',
         rotationcenter: 'molecule center',
         axis: 'no',
+        fog: 'no',
+        slab: 'no',
         picking: 'no',
         nucleotides: 'nucleotide cartoon'
     };
@@ -1020,9 +1022,11 @@ iCn3D.prototype = {
 
         this.atomPrevColors = {};
 
-        this.style2atoms = {}; // style -> atom hash, 13 styles: ribbon, strand, cylinder & plate, nucleotide cartoon, phosphorus trace, c alpha trace, b factor tube, lines, stick, ball & stick, sphere, dot, nothing
-        this.labels = []; // a list of labels. Each label contains 'position', 'text', 'size', 'color', 'background'
-        this.lines = []; // a list of solid or dashed lines. Each line contains 'position1', 'position2', 'color', and a boolean of 'dashed'
+        this.style2atoms = {}; // style -> atom hash, 13 styles: ribbon, strand, cylinder & plate, nucleotide cartoon, phosphorus trace, schematic, c alpha trace, b factor tube, lines, stick, ball & stick, sphere, dot, nothing
+        this.labels = {};     // hash of name -> a list of labels. Each label contains 'position', 'text', 'size', 'color', 'background'
+                            // label name could be custom, residue, schmatic, distance
+        this.lines = {};     // hash of name -> a list of solid or dashed lines. Each line contains 'position1', 'position2', 'color', and a boolean of 'dashed'
+                            // line name could be custom, hbond, distance
 
         this.inputid = {"idtype": undefined, "id":undefined}; // support pdbid, mmdbid
 
@@ -1031,6 +1035,25 @@ iCn3D.prototype = {
 
         this.rotateCount = 0;
         this.rotateCountMax = 30;
+    },
+
+    ReinitAfterLoad: function () {
+        this.displayAtoms = this.cloneHash(this.atoms); // show selected atoms
+        this.highlightAtoms = this.cloneHash(this.atoms); // used to change color or dislay type for certain atoms
+
+        this.prevHighlightObjects = [];
+        this.prevSurfaces = [];
+
+        //this.hbonds = {};
+        this.hbondpoints = [];
+
+        this.labels = {};     // hash of name -> a list of labels. Each label contains 'position', 'text', 'size', 'color', 'background'
+                            // label name could be custom, residue, schmatic, distance
+        this.lines = {};     // hash of name -> a list of solid or dashed lines. Each line contains 'position1', 'position2', 'color', and a boolean of 'dashed'
+                            // line name could be custom, hbond, distance
+
+        this.biomtMatrices = [];
+        this.bAssembly = false;
     },
 
     // modified from iview (http://istar.cse.cuhk.edu.hk/iview/)
@@ -2057,25 +2080,28 @@ iCn3D.prototype = {
 
     createLines: function(lines) { // show extra lines, not used for picking, so no this.objects
        if(lines !== undefined) {
-         for(var i = 0, il = lines.length; i < il; ++i) {
-           var line = lines[i];
+         for(var name in lines) {
+             var lineArray = lines[name];
+             for(var i = 0, il = lineArray.length; i < il; ++i) {
+               var line = lineArray[i];
 
-           var p1 = line.position1;
-           var p2 = line.position2;
+               var p1 = line.position1;
+               var p2 = line.position2;
 
-           var colorHex;
-           if(line.color) { // #FF0000
-              var color = /^\#([0-9a-f]{6})$/i.exec( line.color );
-              colorHex = parseInt( color[ 1 ], 16 );
-           }
-           else {
-              colorHex = 0xffff00;
-           }
+               var colorHex;
+               if(line.color) { // #FF0000
+                  var color = /^\#([0-9a-f]{6})$/i.exec( line.color );
+                  colorHex = parseInt( color[ 1 ], 16 );
+               }
+               else {
+                  colorHex = 0xffff00;
+               }
 
-           var dashed = (line.dashed) ? line.dashed : false;
-           var dashSize = 0.3;
+               var dashed = (line.dashed) ? line.dashed : false;
+               var dashSize = 0.3;
 
-           this.mdl.add(this.createSingleLine( p1, p2, colorHex, dashed, dashSize ));
+               this.mdl.add(this.createSingleLine( p1, p2, colorHex, dashed, dashSize ));
+             }
          }
        }
 
@@ -2704,7 +2730,13 @@ iCn3D.prototype = {
                             var O;
                             if(atom.name === 'O') {
                                 O = prevCoorO.clone();
-                                O.sub(prevCoorCA);
+                                if(prevCoorCA !== null && prevCoorCA !== undefined) {
+                                    O.sub(prevCoorCA);
+                                }
+                                else {
+                                    prevCoorCA = prevCoorO.clone();
+                                    O = new THREE.Vector3(Math.random(),Math.random(),Math.random());
+                                }
                             }
                             else if(this.bCalphaOnly && atom.name === 'CA') {
                                 O = new THREE.Vector3(Math.random(),Math.random(),Math.random());
@@ -3457,34 +3489,38 @@ iCn3D.prototype = {
 
     // modified from iview (http://istar.cse.cuhk.edu.hk/iview/)
     createLabelRepresentation: function (labels) {
-        for (var i in labels) {
-            var label = labels[i];
-            // make sure fontsize is a number
+        for(var name in labels) {
+            var labelArray = labels[name];
 
-            var labelsize = (label.size !== undefined) ? label.size : this.LABELSIZE;
-            var labelcolor = (label.color !== undefined) ? label.color : '#ffff00';
-            var labelbackground = (label.background !== undefined) ? label.background : '#cccccc';
-            var labelalpha = (label.alpha !== undefined) ? label.alpha : 1.0;
-            //var labelbackground = (label.background) ? label.background : '#cccccc';
-            // if label.background is undefined, no background will be drawn
-            labelbackground = label.background;
+            for (var i = 0, il = labelArray.length; i < il; ++i) {
+                var label = labelArray[i];
+                // make sure fontsize is a number
 
-            if(labelcolor !== undefined && labelbackground !== undefined && labelcolor.toLowerCase() === labelbackground.toLowerCase()) {
-                labelcolor = "#888888";
+                var labelsize = (label.size !== undefined) ? label.size : this.LABELSIZE;
+                var labelcolor = (label.color !== undefined) ? label.color : '#ffff00';
+                var labelbackground = (label.background !== undefined) ? label.background : '#cccccc';
+                var labelalpha = (label.alpha !== undefined) ? label.alpha : 1.0;
+                //var labelbackground = (label.background) ? label.background : '#cccccc';
+                // if label.background is undefined, no background will be drawn
+                labelbackground = label.background;
+
+                if(labelcolor !== undefined && labelbackground !== undefined && labelcolor.toLowerCase() === labelbackground.toLowerCase()) {
+                    labelcolor = "#888888";
+                }
+
+                var bb;
+                if(label.bSchematic !== undefined && label.bSchematic) {
+                    bb = this.makeTextSprite(label.text, {fontsize: parseInt(labelsize), textColor: labelcolor, borderColor: labelbackground, backgroundColor: labelbackground, alpha: labelalpha, bSchematic: 1});
+                }
+                else {
+                    bb = this.makeTextSprite(label.text, {fontsize: parseInt(labelsize), textColor: labelcolor, borderColor: labelbackground, backgroundColor: labelbackground, alpha: labelalpha, bSchematic: 0});
+                }
+
+                //bb.position.copy(labelpositions[i]);
+                bb.position.set(label.position.x, label.position.y, label.position.z);
+                this.mdl.add(bb);
+                // do not add labels to objects for picking
             }
-
-            var bb;
-            if(label.bSchematic !== undefined && label.bSchematic) {
-                bb = this.makeTextSprite(label.text, {fontsize: parseInt(labelsize), textColor: labelcolor, borderColor: labelbackground, backgroundColor: labelbackground, alpha: labelalpha, bSchematic: 1});
-            }
-            else {
-                bb = this.makeTextSprite(label.text, {fontsize: parseInt(labelsize), textColor: labelcolor, borderColor: labelbackground, backgroundColor: labelbackground, alpha: labelalpha, bSchematic: 0});
-            }
-
-            //bb.position.copy(labelpositions[i]);
-            bb.position.set(label.position.x, label.position.y, label.position.z);
-            this.mdl.add(bb);
-            // do not add labels to objects for picking
         }
     },
 
@@ -3729,6 +3765,7 @@ iCn3D.prototype = {
     },
 
     setColorByOptions: function (options, atoms, bUseInputColor) {
+     if(options !== undefined) {
       if(bUseInputColor !== undefined && bUseInputColor) {
         for (var i in atoms) {
             var atom = this.atoms[i];
@@ -3916,6 +3953,7 @@ iCn3D.prototype = {
                 break;
         }
       }
+       }
     },
 
     updateChainsColor: function (atom) {
@@ -3970,14 +4008,10 @@ iCn3D.prototype = {
         if(options === undefined) options = this.options;
 
         //common part options
-        if (options.labels.toLowerCase() === 'yes') {
-            this.createLabelRepresentation(this.labels);
-        }
+        // labels
+        this.createLabelRepresentation(this.labels);
 
-        if (options.lines.toLowerCase() === 'yes') {
-            this.createLines(this.lines);
-        }
-
+        // lines
         if (options.hbonds.toLowerCase() === 'yes') {
             var color = '#FFFFFF';
             if(options.background.toLowerCase() !== "black") {
@@ -3993,10 +4027,19 @@ iCn3D.prototype = {
                 line.color = color;
                 line.dashed = true;
 
-                this.lines.push(line);
+                if(this.lines['hbond'] === undefined) this.lines['hbond'] = [];
+                this.lines['hbond'].push(line);
              }
 
             this.createLines(this.lines);
+        }
+        else {
+            this.createLines(this.lines);
+        }
+
+        // surfaces
+        for(var i = 0, il = this.prevSurfaces.length; i < il; ++i) {
+            this.mdl.add(this.prevSurfaces[i]);
         }
 
         switch (options.rotationcenter.toLowerCase()) {
@@ -4068,21 +4111,20 @@ iCn3D.prototype = {
             case 'van der waals surface':
                 this.createSurfaceRepresentation(currAtoms, 1, options.wireframe, options.opacity);
                 break;
-            case 'solvent excluded surface':
-                this.createSurfaceRepresentation(currAtoms, 2, options.wireframe, options.opacity);
-                break;
+//            case 'solvent excluded surface':
+//                this.createSurfaceRepresentation(currAtoms, 2, options.wireframe, options.opacity);
+//                break;
             case 'solvent accessible surface':
                 this.createSurfaceRepresentation(currAtoms, 3, options.wireframe, options.opacity);
                 break;
             case 'molecular surface':
-                this.createSurfaceRepresentation(currAtoms, 4, options.wireframe, options.opacity);
+                this.createSurfaceRepresentation(currAtoms, 2, options.wireframe, options.opacity);
                 break;
             case 'nothing':
                 // remove surfaces
                 this.removeSurfaces();
                 break;
         }
-
     },
 
     applyDisplayOptions: function (options, atoms, bHighlight) { // atoms: hash of key -> 1
@@ -4135,7 +4177,7 @@ iCn3D.prototype = {
                     var prevResidueid = atom.structure + '_' + atom.chain + '_' + parseInt(atom.resi - 1);
                     var nextResidueid = atom.structure + '_' + atom.chain + '_' + parseInt(atom.resi + 1);
 
-                    //ribbon, strand, cylinder & plate, nucleotide cartoon, phosphorus trace, c alpha trace, b factor tube, lines, stick, ball & stick, sphere, dot
+                    //ribbon, strand, cylinder & plate, nucleotide cartoon, phosphorus trace, schematic, c alpha trace, b factor tube, lines, stick, ball & stick, sphere, dot
 
                     if(atom.style === 'cylinder & plate' && atom.ss === 'helix') { // no way to highlight part of cylinder
                         for(var i in this.residues[residueid]) {
@@ -4144,7 +4186,7 @@ iCn3D.prototype = {
                             this.createBox(atom, undefined, undefined, scale, undefined, bHighlight);
                         }
                     }
-                    else if( (atom.style === 'ribbon' && atom.ss === 'coil') || (atom.style === 'strand' && atom.ss === 'coil') || atom.style === 'phosphorus trace' || atom.style === 'c alpha trace' || atom.style === 'b factor tube' || (atom.style === 'cylinder & plate' && atom.ss !== 'helix') ) {
+                    else if( (atom.style === 'ribbon' && atom.ss === 'coil') || (atom.style === 'strand' && atom.ss === 'coil') || atom.style === 'phosphorus trace' || atom.style === 'schematic' || atom.style === 'c alpha trace' || atom.style === 'b factor tube' || (atom.style === 'cylinder & plate' && atom.ss !== 'helix') ) {
                         var bAddResidue = false;
                         // add the next residue with same style
                         if(!bAddResidue && this.residues.hasOwnProperty(nextResidueid)) {
@@ -4200,8 +4242,11 @@ iCn3D.prototype = {
             currentCalphas = this.intersectHash(atoms, this.calphas);
         }
 
+        // remove schematic labels
+        this.labels['schematic'] = [];
+
         for(var style in this.style2atoms) {
-          // 13 styles: ribbon, strand, cylinder & plate, nucleotide cartoon, phosphorus trace, c alpha trace, b factor tube, lines, stick, ball & stick, sphere, dot, nothing
+          // 14 styles: ribbon, strand, cylinder & plate, nucleotide cartoon, phosphorus trace, schematic, c alpha trace, b factor tube, lines, stick, ball & stick, sphere, dot, nothing
           atomHash = this.style2atoms[style];
 
           if(style === 'ribbon') {
@@ -4223,6 +4268,15 @@ iCn3D.prototype = {
           }
           else if(style === 'phosphorus lines') {
             this.createCylinderCurve(this.hash2Atoms(atomHash), 'P', 0.2, true, bHighlight);
+          }
+          else if(style === 'schematic') {
+            //this.options['labels'] = 'yes';
+
+            this.addResiudeLabels(this.hash2Atoms(atomHash), true);
+
+            this.createCylinderCurve(this.hash2Atoms(atomHash), 'P', 0.2, false, bHighlight);
+            this.createCylinderCurve(this.hash2Atoms(atomHash), 'CA', 0.2, false, bHighlight);
+
           }
           else if(style === 'c alpha trace') {
             this.createCylinderCurve(this.hash2Atoms(atomHash), 'CA', 0.2, false, bHighlight);
@@ -4321,7 +4375,7 @@ iCn3D.prototype = {
             }
         }
 
-        // side chain overwrite th erotein style
+        // side chain overwrite the protein style
         if (options.sidechains !== undefined) {
             selectedAtoms = this.intersectHash(this.highlightAtoms, this.sidechains);
             for(var i in selectedAtoms) {
@@ -4360,6 +4414,9 @@ iCn3D.prototype = {
 
     rebuildScene: function (options) { var me = this;
         jQuery.extend(me.options, options);
+
+        this.camera_z = -this.maxD * 2;
+
 
         if(this.scene !== undefined) {
             for(var i = this.scene.children.length - 1; i >= 0; i--) {
@@ -4415,7 +4472,20 @@ iCn3D.prototype = {
 
         var background = this.backgroundColors[this.options.background.toLowerCase()];
         this.renderer.setClearColor(background);
-//        this.scene.fog = new THREE.Fog(background, 100, 200);
+        // apply fog
+        if(this.options['fog'] === 'yes') {
+            if(this.options['camera'] === 'perspective') {        //perspective, orthographic
+                this.scene.fog = new THREE.Fog(background, this.maxD * 2, this.maxD * 2.4);
+            }
+            else if(this.options['camera'] === 'orthographic') {
+                this.scene.fog = new THREE.FogExp2(background, 2);
+                this.scene.fog.near = this.maxD * 2;
+                this.scene.fog.far = this.maxD * 2.4;
+            }
+        }
+        else {
+            this.scene.fog = undefined;
+        }
 
         this.perspectiveCamera = new THREE.PerspectiveCamera(20, this.container.whratio, 0.1, 10000);
         this.perspectiveCamera.position.set(0, 0, this.camera_z);
@@ -4431,12 +4501,6 @@ iCn3D.prototype = {
         };
 
         this.setCamera();
-
-//        if (this.camera === this.perspectiveCamera){
-//            this.scene.fog.near = this.camera.near + 0.4 * (this.camera.far - this.camera.near);
-//            if (this.scene.fog.near > center) this.scene.fog.near = center;
-//            this.scene.fog.far = this.camera.far;
-//        }
 
         this.applyDisplayOptions(this.options, this.displayAtoms);
 
@@ -4454,6 +4518,14 @@ iCn3D.prototype = {
               this.camera.position.z = -this.maxD * 2; // forperspective, the z positionshould be large enough to see the whole molecule
             }
 
+            if(this.options['slab'] === 'yes') {
+                this.camera.near = this.maxD * 2;
+            }
+            else {
+                this.camera.near = 0.1;
+            }
+            this.camera.far = 10000;
+
             this.controls = new THREE.TrackballControls( this.camera, document.getElementById(this.id), this );
         }
         else if (this.camera === this.orthographicCamera){
@@ -4464,11 +4536,23 @@ iCn3D.prototype = {
             this.camera.bottom = -this.camera.right /this.container.whratio;
 
             if(this.camera_z > 0) {
-              this.camera.near = 10000;
+              if(this.options['slab'] === 'yes') {
+                  this.camera.near = -this.maxD * 2;
+              }
+              else {
+                this.camera.near = 0;
+              }
+
               this.camera.far = -10000;
             }
             else {
-              this.camera.near = -10000;
+              if(this.options['slab'] === 'yes') {
+                  this.camera.near = this.maxD * 2;
+              }
+              else {
+                this.camera.near = 0;
+              }
+
               this.camera.far = 10000;
             }
 
@@ -4527,10 +4611,6 @@ iCn3D.prototype = {
         if(this.highlightAtoms !== undefined && Object.keys(this.highlightAtoms).length > 0 && Object.keys(this.highlightAtoms).length < Object.keys(this.displayAtoms).length) {
             this.removeHighlightObjects();
             this.addHighlightObjects(undefined, false);
-        }
-        else {
-            //this.removeSurfaces(); // called in this.removeHighlightObjects
-            this.applySurfaceOptions();    // called in this.addHighlightObjects
         }
 
         if(this.bRender === true) {
@@ -4789,8 +4869,6 @@ iCn3D.prototype = {
 
        this.applyDisplayOptions(this.options, this.intersectHash(this.highlightAtoms, this.displayAtoms), this.bHighlight);
 
-       this.applySurfaceOptions();
-
 //       this.applyTransformation(this._zoomFactor, this.mouseChange, this.quaternion);
        if(bRender === undefined || bRender) this.render();
     },
@@ -4822,5 +4900,52 @@ iCn3D.prototype = {
        //this.applyTransformation(this._zoomFactor, this.mouseChange, this.quaternion);
        //this.render();
        this.draw();
+    },
+
+    addResiudeLabels: function (atoms, bSchematic) {
+        var size = 40;
+        var background = "#CCCCCC";
+        if(bSchematic) {
+            size = 20;
+            //background = undefined;
+        }
+
+        var atomsHash = this.intersectHash(this.highlightAtoms, atoms);
+
+        if(bSchematic) {
+            if(this.labels['schematic'] === undefined) this.labels['schematic'] = [];
+        }
+        else {
+            if(this.labels['residue'] === undefined) this.labels['residue'] = [];
+        }
+
+        for(var i in atomsHash) {
+            var atom = this.atoms[i];
+
+            if(atom.het) continue;
+            if(atom.name !== 'CA' && atom.name !== 'P') continue;
+
+            var label = {}; // Each label contains 'position', 'text', 'color', 'background'
+
+            label.position = atom.coord;
+
+            label.bSchematic = 0;
+            if(bSchematic) label.bSchematic = 1;
+
+            label.text = this.residueName2Abbr(atom.resn);
+            label.size = size;
+
+            label.color = "#" + atom.color.getHexString();
+            label.background = background;
+
+            if(bSchematic) {
+                this.labels['schematic'].push(label);
+            }
+            else {
+                this.labels['residue'].push(label);
+            }
+        }
+
+        this.removeHighlightObjects();
     }
 };

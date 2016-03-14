@@ -16,7 +16,7 @@ Either of these widgets could be easily added to your own web pages. Please see 
 iCn3D page accepts the following IDs:
 
 * <b>pdbid</b>: PDB ID, e.g., [https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?pdbid=2por](https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?pdbid=2por)
-* <b>mmcif</b>: mmCIF ID, e.g., [https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?mmcif=2por](https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?mmcif=2por)
+* <b>mmcifid</b>: mmCIF ID, e.g., [https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?mmcifid=2por](https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?mmcifid=2por)
 * <b>mmdbid</b>: NCBI MMDB ID, e.g., [https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?mmdbid=2por](https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?mmdbid=2por)
 * <b>gi</b>: NCBI protein gi number, [https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?gi=827343227](https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?gi=827343227)
 * <b>cid</b>: PubChem Compound ID, e.g., [https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?cid=2244](https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?cid=2244)
@@ -38,7 +38,7 @@ See the [help page](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d.html) for
 
 ## Download
 
-The complete version with all libraries can be downloaded from [https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-0.9.3-dev.zip](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-0.9.3-dev.zip)
+The complete version with all libraries can be downloaded from [https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-0.9.4-dev.zip](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-0.9.4-dev.zip)
 
 ## Contact
 
@@ -91,6 +91,8 @@ gulp gh-pages
 
 
 ## Change log
+
+The beta version [icn3d-0.9.4-dev](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-0.9.4-dev.zip) was release on March 14, 2016. Added "Fog" and "Slab" features.
 
 The beta version [icn3d-0.9.3-dev](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-0.9.3-dev.zip) was release on March 9, 2016. Improved the following features: "Back" and "Forward" button, Export State, Open State.
 

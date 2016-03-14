@@ -285,14 +285,18 @@ We provided two versions of iCn3D widgets: <a href="index.html?mmdbid=2por">simp
 
   <script type="text/javascript">
     jQuery( document ).ready(function() {
-        show3DStructure({
+        var cfg = {
             divid: 'icn3dwrap',
             width: 400,
             height: 400,
             resize: false,
             rotate: true,
-            mmcif: '2por'
-        });
+            mmcifid: '2por'
+        };
+
+		var icn3dui = new iCn3DUI(cfg);
+
+		icn3dui.show3DStructure();
     });
   </script>
 
@@ -346,16 +350,19 @@ We provided two versions of iCn3D widgets: <a href="index.html?mmdbid=2por">simp
     <li><a name="HowToUseStep3"></a><b>Initialize the widget with desired parameters:</b></li>
     <ul><li>Simple UI:<br>
     <pre>  &lt;script type="text/javascript"&gt;
-  $( document ).ready(function() {
-      show3DStructure({
-          divid: 'icn3dwrap',
-          width: 400,
-          height: 400,
-          resize: false,
-          rotate: true,
-          pdbid: '2por'
-      });
-  });&lt;/script&gt;
+	$( document ).ready(function() {
+	  var cfg = {
+		  divid: 'icn3dwrap',
+		  width: 400,
+		  height: 400,
+		  resize: false,
+		  rotate: true,
+		  pdbid: '2por'
+	  };
+
+	  var icn3dui = new iCn3DUI(cfg);
+	  icn3dui.show3DStructure();
+	});&lt;/script&gt;
     </pre>
     </li>
     <li>Advanced UI:<br>
@@ -430,7 +437,7 @@ We provided two versions of iCn3D widgets: <a href="index.html?mmdbid=2por">simp
 <h2>URL parameters for the advanced interface<img src="https://www.ncbi.nlm.nih.gov/Structure/IMG/spacer.gif" width="25" height="1" border="0"><a href="#Top"><img src="https://www.ncbi.nlm.nih.gov/Structure/IMG/arrowup_blue.gif" width="12" height="12" border="0" alt="back to top"></a></h2>
 <table><tr valign='top'><th>Parameter</th><th>Simple interface<br/>(index.html)</th><th>Advanced interface<br/>(full.html)</th><th>Description</th></tr>
 <tr valign='top'><td>pdbid</td><td>Yes</td><td>Yes</td><td>PDB ID, e.g., <a href="full.html?pdbid=2por">?pdbid=2por</a></td></tr>
-<tr valign='top'><td>mmcif</td><td>Yes</td><td>Yes</td><td>mmCIF ID, e.g., <a href="full.html?mmcif=2por">?mmcif=2por</a></td></tr>
+<tr valign='top'><td>mmcifid</td><td>Yes</td><td>Yes</td><td>mmCIF ID, e.g., <a href="full.html?mmcifid=2por">?mmcifid=2por</a></td></tr>
 <tr valign='top'><td>mmdbid</td><td>Yes</td><td>Yes</td><td>NCBI MMDB ID or PDB ID, e.g., <a href="full.html?mmdbid=2por">?mmdbid=2por</a></td></tr>
 <tr valign='top'><td>gi</td><td>Yes</td><td>Yes</td><td>NCBI protein gi number, e.g., <a href="full.html?gi=827343227">?gi=827343227</a></td></tr>
 <tr valign='top'><td>cid</td><td>Yes</td><td>Yes</td><td>PubChem Compound ID, e.g., <a href="full.html?cid=2244">?cid=2244</a></td></tr>
@@ -534,6 +541,7 @@ Different selections can be concatenated using semicolon, e.g., ":1-10; :Lys" se
 <tr><td><span class="indent">ribbon:</span></td>             <td>style proteins ribbon</td></tr>
 <tr><td><span class="indent">strand:</span></td>             <td>style proteins strand</td></tr>
 <tr><td><span class="indent">cylinder &amp; plate:</span></td>   <td>style proteins cylinder &amp; plate</td></tr>
+<tr><td><span class="indent">schematic:</span></td>      	 <td>style proteins schematic</td></tr>
 <tr><td><span class="indent">c alpha trace:</span></td>      <td>style proteins c alpha trace</td></tr>
 <tr><td><span class="indent">b factor tube:</span></td>      <td>style proteins b factor tube</td></tr>
 <tr><td><span class="indent">lines:</span></td>              <td>style proteins lines</td></tr>
@@ -545,6 +553,7 @@ Different selections can be concatenated using semicolon, e.g., ":1-10; :Lys" se
 <tr><td colspan="2"><br>b) Style -&gt; Nucleotides</td></tr>
 <tr><td><span class="indent">nucleotide cartoon:</span></td> <td>style nucleotides nucleotide cartoon</td></tr>
 <tr><td><span class="indent">phosphorus trace:</span></td>   <td>style nucleotides phosphorus trace</td></tr>
+<tr><td><span class="indent">schematic:</span></td>   		 <td>style nucleotides schematic</td></tr>
 <tr><td><span class="indent">lines:</span></td>              <td>style nucleotides lines</td></tr>
 <tr><td><span class="indent">stick:</span></td>              <td>style nucleotides stick</td></tr>
 <tr><td><span class="indent">ball &amp; stick:</span></td>       <td>style nucleotides ball &amp; stick</td></tr>
@@ -661,12 +670,20 @@ Different selections can be concatenated using semicolon, e.g., ":1-10; :Lys" se
 <tr><td><span class="indent">grey:</span></td>               <td>set background grey</td></tr>
 <tr><td><span class="indent">white:</span></td>              <td>set background white</td></tr>
 
-<tr><td colspan="2"><br>l) Other -&gt; XYZ-axes</td></tr>
+<tr><td colspan="2"><br>l) Other -&gt; Fog</td></tr>
+<tr><td><span class="indent">yes:</span></td>                <td>set fog on</td></tr>
+<tr><td><span class="indent">no:</span></td>                 <td>set fog off</td></tr>
+
+<tr><td colspan="2"><br>m) Other -&gt; Slab</td></tr>
+<tr><td><span class="indent">yes:</span></td>                <td>set slab on</td></tr>
+<tr><td><span class="indent">no:</span></td>                 <td>set slab off</td></tr>
+
+<tr><td colspan="2"><br>n) Other -&gt; XYZ-axes</td></tr>
 <tr><td><span class="indent">yes:</span></td>                <td>set axis on</td></tr>
 <tr><td><span class="indent">no:</span></td>                 <td>set axis off</td></tr>
 
-<tr><td>m) Other -&gt; Transform Hint:</td>      <td>[no command available]</td></tr>
-<tr><td>n) Other -&gt; Help:</td>      <td>[no command available]</td></tr>
+<tr><td>o) Other -&gt; Transform Hint:</td>      <td>[no command available]</td></tr>
+<tr><td>p) Other -&gt; Help:</td>      <td>[no command available]</td></tr>
 </tbody></table>
 
 <br>
@@ -692,7 +709,7 @@ Different selections can be concatenated using semicolon, e.g., ":1-10; :Lys" se
 
         color: color,           // optional, used to assign atom color, default is grey
         style: style,           // optional, used to assign atom style as one of 13 styles: ribbon, strand, cylinder &amp; plate, nucleotide cartoon,
-                                //     phosphorus trace, c alpha trace, b factor tube, lines, stick, ball &amp; stick, sphere, dot, nothing
+                                //     phosphorus trace, schematic, c alpha trace, b factor tube, lines, stick, ball &amp; stick, sphere, dot, nothing
         het: false,             // optional, used to determine ligands, water, ions, etc
         resn: resn,             // optional, used to determine protein or nucleotide
         b: b,                   // optional, used to draw B-factor tube
@@ -745,9 +762,9 @@ Different selections can be concatenated using semicolon, e.g., ":1-10; :Lys" se
           options['camera']             = 'perspective';        //perspective, orthographic
           options['background']         = 'black';              //black, grey, white
           options['color']              = 'spectrum';           //spectrum, secondary structure, charge, chain, residue, atom, red, green, blue, magenta, yellow, cyan, white, grey, custom
-          options['secondary']          = 'ribbon';             //ribbon, strand, cylinder &amp; plate, c alpha trace, b factor tube, lines, stick, ball &amp; stick, sphere, nothing
+          options['proteins']           = 'ribbon';             //ribbon, strand, cylinder &amp; plate, schematic, c alpha trace, b factor tube, lines, stick, ball &amp; stick, sphere, nothing
           options['sidechains']         = 'nothing';            //lines, stick, ball &amp; stick, sphere, nothing
-          options['nucleotides']        = 'phosphorus trace';   //cartoon, phosphorus trace, lines, stick, ball &amp; stick, sphere, nothing
+          options['nucleotides']        = 'phosphorus trace';   //cartoon, phosphorus trace, schematic, lines, stick, ball &amp; stick, sphere, nothing
           options['ligands']            = 'stick';              //line, stick, ball &amp; stick, sphere, nothing
           options['water']              = 'nothing';            //sphere, dot, nothing
           options['ions']               = 'sphere';             //sphere, dot, nothing
@@ -755,9 +772,9 @@ Different selections can be concatenated using semicolon, e.g., ":1-10; :Lys" se
           options['opacity']            = '0.8';                //1.0, 0.9, 0.8, 0.7, 0.6, 0.5
           options['wireframe']          = 'no';                 //yes, no
           options['hbonds']             = 'no';                 //yes, no
-          options['labels']             = 'no';                 //yes, no
-          options['lines']              = 'no';                 //yes, no
           options['axis']               = 'no';                 //yes, no
+          options['fog']                = 'no';                 //yes, no
+          options['slab']               = 'no';                 //yes, no
           options['picking']            = 'atom';               //no, atom, residue, strand
       </pre>
     </li>
@@ -1034,8 +1051,8 @@ Ajax call was used to get the atom data from the PubChem "cid". This function wa
 <br><br><a name="downloadGi"></a><b>downloadGi(gi)</b> <a href="#Top"><span class="top">&nbsp;&nbsp;&nbsp;</span></a><br>
 Ajax call was used to get the atom data from the NCBI "gi". This function was deferred so that it can be chained together with other deferred functions for sequential execution. Note that only one structure corresponding to the gi will be shown. If there is no structures available for the gi, a warning message will be shown.
 
-<br><br><a name="downloadMmcif"></a><b>downloadMmcif(mmcif)</b> <a href="#Top"><span class="top">&nbsp;&nbsp;&nbsp;</span></a><br>
-Ajax call was used to get the atom data from the "mmcif". This function was deferred so that it can be chained together with other deferred functions for sequential execution.
+<br><br><a name="downloadMmcif"></a><b>downloadMmcif(mmcifid)</b> <a href="#Top"><span class="top">&nbsp;&nbsp;&nbsp;</span></a><br>
+Ajax call was used to get the atom data from the "mmcifid". This function was deferred so that it can be chained together with other deferred functions for sequential execution.
 
 
 <br><br><a name="downloadMmdb"></a><b>downloadMmdb(mmdbid)</b> <a href="#Top"><span class="top">&nbsp;&nbsp;&nbsp;</span></a><br>
@@ -1071,7 +1088,7 @@ Determine whether it i a mobile device.
 Determine whether Session Storage is supported in your browser. Session Storage is not suported in Safari.
 
 <br><br><a name="loadAtomDataIn"></a><b>loadAtomDataIn(data, id, type)</b> <a href="#Top"><span class="top">&nbsp;&nbsp;&nbsp;</span></a><br>
-This function was used to parse atom "data" to set up <a href="#DataInputs">parameters for the 3D viewer</a>. "type" is mmcif or mmdbid. "id" is the MMDB ID or mmCIF ID.
+This function was used to parse atom "data" to set up <a href="#DataInputs">parameters for the 3D viewer</a>. "type" is mmcifid or mmdbid. "id" is the MMDB ID or mmCIF ID.
 
 <br><br><a name="loadCidAtomData"></a><b>loadCidAtomData(data)</b> <a href="#Top"><span class="top">&nbsp;&nbsp;&nbsp;</span></a><br>
 Atom "data" from SDF file was parsed to set up <a href="#DataInputs">parameters for the 3D viewer</a>. The deferred parameter was resolved after the parsing so that other javascript code can be executed.
