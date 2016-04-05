@@ -34,3 +34,8 @@ button, select, input { font-size: 10px; }
 
 .icn3d-box {border-top: solid 1px #ccc; border-right: solid 1px #ccc; border-bottom: solid 1px #ccc; border-left: solid 1px #ccc; padding: 5px;}
 
+// sequence alignent, 'cons' means aligned and conserved, 'ncons' means aligned and not conserved, 'nalign' means not aligned
+.icn3d-cons {text-decoration: underline;}
+.icn3d-ncons {text-decoration: underline;}
+.icn3d-nalign {} // {font-style: italic;}
+

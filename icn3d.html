@@ -50,20 +50,22 @@ body {font-family: Verdana, Arial, Helvetica, sans-serif;}
 <ul>
 <li><a href="#WhatIs">What is iCn3D Structure Viewer?</a></li>
     <ol>
-    <li><a href="index.html?mmdbid=2por">Default simple interface</a></li>
+    <li><a href="index.html?mmdbid=2por">Default basic interface</a></li>
     <li><a href="full.html?mmdbid=2por">Advanced interface</a></li>
     </ol>
     <br>
 <li><a href="#HowToUse">How to use iCn3D Structure Viewer in your html page</a></li>
     <ul>
-    <li><a href="#embedIframe">Embed using IFrame</a></li>
+    <li><a href="#embedIframe">Embed using iframe</a></li>
     <li><a href="#embedJS">Embed using Javascript</a><br>
         <ol>
         <li><a href="#HowToUseStep1">Include three.js and jQuery javascript libraries in the &lt;head&gt; of your html page</a></li>
         <li><a href="#HowToUseStep2">Position the widget with an html div</a></li>
         <li><a href="#HowToUseStep3">Initialize the widget with desired parameters</a></li>
         <li><a href="#HowToUseStep4">Hint for rotating/translating/zooming the 3D structure</a></li>
-        <li><a href="#HowToUseStep5">Hint for recovering a crashed page</a></li>
+        <li><a href="#HowToUseStep5">Hint for picking 3D structure and selecting sequences</a></li>
+        <li><a href="#HowToUseStep6">Hint for recovering a crashed page</a></li>
+        <li><a href="#HowToUseStep7">Hint for turning on scroll bars in Mac</a></li>
         </ol>
     </li>
     </ul>
@@ -109,8 +111,8 @@ body {font-family: Verdana, Arial, Helvetica, sans-serif;}
 
 <table><tbody><tr>
 <td valign="top">
-
 <a href="#addHighlightObjects">addHighlightObjects</a><br>
+<a href="#addResiudeLabels">addResiudeLabels</a><br>
 <a href="#applyDisplayOptions">applyDisplayOptions</a><br>
 <a href="#applyOtherOptions">applyOtherOptions</a><br>
 <a href="#applySurfaceOptions">applySurfaceOptions</a><br>
@@ -118,6 +120,7 @@ body {font-family: Verdana, Arial, Helvetica, sans-serif;}
 <a href="#buildAxes">buildAxes</a><br>
 <a href="#calculateLigandHbonds">calculateLigandHbonds</a><br>
 <a href="#centerAtoms">centerAtoms</a><br>
+<a href="#createBox">createBox</a><br>
 <a href="#createCylinderCurve">createCylinderCurve</a><br>
 <a href="#createCylinderHelix">createCylinderHelix</a><br>
 <a href="#createLabelRepresentation">createLabelRepresentation</a><br>
@@ -126,47 +129,54 @@ body {font-family: Verdana, Arial, Helvetica, sans-serif;}
 <a href="#createSphereRepresentation">createSphereRepresentation</a><br>
 <a href="#createStickRepresentation">createStickRepresentation</a><br>
 <a href="#createStrand">createStrand</a><br>
+<a href="#createStrandBrick">createStrandBrick</a><br>
+<a href="#createSurfaceRepresentation">createSurfaceRepresentation</a><br>
+<a href="#createTube">createTube</a><br>
 </td>
 
 <td valign="top">
-<a href="#createSurfaceRepresentation">createSurfaceRepresentation</a><br>
-<a href="#createTube">createTube</a><br>
 <a href="#draw">draw</a><br>
 <a href="#drawCartoonNucleicAcid">drawCartoonNucleicAcid</a><br>
+<a href="#drawHelixBrick">drawHelixBrick</a><br>
 <a href="#drawNucleicAcidStick">drawNucleicAcidStick</a><br>
+<a href="#drawSymmetryMates2">drawSymmetryMates2</a><br>
 <a href="#exportCanvas">exportCanvas</a><br>
 <a href="#getAtomsWithinAtom">getAtomsWithinAtom</a><br>
+<a href="#getExtent">getExtent</a><br>
+<a href="#getFirstAtomObj">getFirstAtomObj</a><br>
+<a href="#getLastAtomObj">getLastAtomObj</a><br>
+<a href="#hasCovalentBond">hasCovalentBond</a><br>
 <a href="#init">init</a><br>
 <a href="#loadPDB">loadPDB</a><br>
 <a href="#rebuildScene">rebuildScene</a><br>
+<a href="#reinitAfterLoad">reinitAfterLoad</a><br>
 <a href="#render">render</a><br>
 <a href="#removeHighlightObjects">removeHighlightObjects</a><br>
+<a href="#removeSurfaces">removeSurfaces</a><br>
 <a href="#residueName2Abbr">residueName2Abbr</a><br>
 <a href="#rotateDown">rotateDown</a><br>
 <a href="#rotateLeft">rotateLeft</a><br>
-<a href="#rotateRight">rotateRight</a><br>
 </td>
 
 <td valign="top">
+<a href="#rotateRight">rotateRight</a><br>
 <a href="#rotateUp">rotateUp</a><br>
 <a href="#saveFile">saveFile</a><br>
-
+<a href="#selectStrandHelixFromAtom">selectStrandHelixFromAtom</a><br>
 <a href="#setAtomStyleByOptions">setAtomStyleByOptions</a><br>
 <a href="#setCamera">setCamera</a><br>
 <a href="#setColorByOptions">setColorByOptions</a><br>
-
 <a href="#setOutlineColor">setOutlineColor</a><br>
-
+<a href="#setRotationCenter">setRotationCenter</a><br>
+<a href="#setStyle2Atoms">setStyle2Atoms</a><br>
+<a href="#setWidthHeight">setWidthHeight</a><br>
 <a href="#showPicking">showPicking</a><br>
-
 <a href="#translateDown">translateDown</a><br>
 <a href="#translateLeft">translateLeft</a><br>
 <a href="#translateRight">translateRight</a><br>
 <a href="#translateUp">translateUp</a><br>
-
 <a href="#zoomIn">zoomIn</a><br>
 <a href="#zoominSelection">zoominSelection</a><br>
-
 <a href="#zoomOut">zoomOut</a><br>
 </td>
 
@@ -193,36 +203,55 @@ body {font-family: Verdana, Arial, Helvetica, sans-serif;}
 <table>
 <tbody><tr>
 <td valign="top">
+<span style="font-weight:bold; font-size:1.2em;">Options</span><br>
+<a href="#bAddCommands">bAddCommands</a><br>
+<a href="#bAddLogs">bAddLogs</a><br>
+<a href="#bNotLoadStructure">bNotLoadStructure</a><br>
+<a href="#cfg">cfg</a><br>
+<a href="#options">options</a><br>
+<a href="#pre">pre</a><br>
+</td>
+
+<td valign="top">
+<span style="font-weight:bold; font-size:1.2em;">Methods</span><br>
+
+<table><tbody><tr>
+<td valign="top">
 <a href="#addCustomSelection">addCustomSelection</a><br>
 <a href="#addLabel">addLabel</a><br>
 <a href="#addLine">addLine</a><br>
 <a href="#allCustomEvents">allCustomEvents</a><br>
 <a href="#allEventFunctions">allEventFunctions</a><br>
 <a href="#alternateStructures">alternateStructures</a><br>
+<a href="#applyCommand">applyCommand</a><br>
+<a href="#applyCommandLoad">applyCommandLoad</a><br>
 <a href="#back">back</a><br>
+<a href="#changeAlignChainid">changeAlignChainid</a><br>
 <a href="#changeChainid">changeChainid</a><br>
 <a href="#changeCustomAtoms">changeCustomAtoms</a><br>
 <a href="#changeCustomResidues">changeCustomResidues</a><br>
 <a href="#changeResidueid">changeResidueid</a><br>
 <a href="#changeStructureid">changeStructureid</a><br>
 <a href="#clearSelection">clearSelection</a><br>
-</td><td valign="top">
 <a href="#downloadCid">downloadCid</a><br>
 <a href="#downloadGi">downloadGi</a><br>
 <a href="#downloadMmcif">downloadMmcif</a><br>
 <a href="#downloadMmdb">downloadMmdb</a><br>
 <a href="#downloadPdb">downloadPdb</a><br>
+</td><td valign="top">
+<a href="#execCommands">execCommands</a><br>
 <a href="#forward">forward</a><br>
+<a href="#getAlignSequencesAnnotations">getAlignSequencesAnnotations</a><br>
 <a href="#getCommandsBeforeCrash">getCommandsBeforeCrash</a><br>
+<a href="#getResiduesUpdateHighlight">getResiduesUpdateHighlight</a><br>
 <a href="#getSequencesAnnotations">getSequencesAnnotations</a><br>
 <a href="#hideMenu">hideMenu</a><br>
 <a href="#isIE">isIE</a><br>
 <a href="#isMac">isMac</a><br>
 <a href="#isMobile">isMobile</a><br>
-</td><td valign="top">
 <a href="#isSessionStorageSupported">isSessionStorageSupported</a><br>
 <a href="#loadAtomDataIn">loadAtomDataIn</a><br>
-<a href="#loadCidAtomData">loadCidAtomData</a><br>
+<a href="#loadSdfAtomData">loadSdfAtomData</a><br>
 <a href="#loadMmcifData">loadMmcifData</a><br>
 <a href="#loadPdbData">loadPdbData</a><br>
 <a href="#loadScript">loadScript</a><br>
@@ -231,22 +260,36 @@ body {font-family: Verdana, Arial, Helvetica, sans-serif;}
 <a href="#openDialog">openDialog</a><br>
 <a href="#outputSelection">outputSelection</a><br>
 <a href="#pickCustomSphere">pickCustomSphere</a><br>
-<a href="#removeSeqChainBkgd">removeSeqChainBkgd</a><br>
 </td><td valign="top">
+<a href="#removeSeqChainBkgd">removeSeqChainBkgd</a><br>
 <a href="#removeSeqResidueBkgd">removeSeqResidueBkgd</a><br>
+<a href="#renderFinalStep">renderFinalStep</a><br>
 <a href="#renderStructure">renderStructure</a><br>
 <a href="#resizeCanvas">resizeCanvas</a><br>
 <a href="#rotateStructure">rotateStructure</a><br>
+<a href="#saveCommandsToSession">saveCommandsToSession</a><br>
 <a href="#saveFile">saveFile</a><br>
+<a href="#selectAAlignChain">selectAAlignChain</a><br>
 <a href="#selectAChain">selectAChain</a><br>
 <a href="#selectAll">selectAll</a><br>
+<a href="#selectAllUpdateMenuSeq">selectAllUpdateMenuSeq</a><br>
 <a href="#selectAResidue">selectAResidue</a><br>
 <a href="#selectByCommand">selectByCommand</a><br>
 <a href="#selectComplement">selectComplement</a><br>
+<a href="#setAlignChainMenu">setAlignChainMenu</a><br>
 <a href="#setAtomMenu">setAtomMenu</a><br>
 <a href="#setChainMenu">setChainMenu</a><br>
-</td><td valign="top">
+<a href="#setCustomDialogs">setCustomDialogs</a><br>
+<a href="#setDialogs">setDialogs</a><br>
 <a href="#setLogCommand">setLogCommand</a><br>
+</td><td valign="top">
+<a href="#setLogWindow">setLogWindow</a><br>
+<a href="#setMenu1">setMenu1</a><br>
+<a href="#setMenu2">setMenu2</a><br>
+<a href="#setMenu3">setMenu3</a><br>
+<a href="#setMenu4">setMenu4</a><br>
+<a href="#setMenu5">setMenu5</a><br>
+<a href="#setMenu6">setMenu6</a><br>
 <a href="#setResidueMenu">setResidueMenu</a><br>
 <a href="#setOption">setOption</a><br>
 <a href="#setStructureMenu">setStructureMenu</a><br>
@@ -257,7 +300,12 @@ body {font-family: Verdana, Arial, Helvetica, sans-serif;}
 <a href="#showHbonds">showHbonds</a><br>
 <a href="#showMenu">showMenu</a><br>
 <a href="#showSelection">showSelection</a><br>
+<a href="#showTitle">showTitle</a><br>
 <a href="#toggleSelection">toggleSelection</a><br>
+<a href="#updateMenus">updateMenus</a><br>
+<a href="#updateSeqWinForCurrentAtoms">updateSeqWinForCurrentAtoms</a><br>
+</tr></tbody></table>
+
 </td>
 </tr>
 </tbody></table>
@@ -273,11 +321,11 @@ body {font-family: Verdana, Arial, Helvetica, sans-serif;}
 <a name="WhatIs"></a>
 <h2>What is iCn3D Structure Viewer?<img src="https://www.ncbi.nlm.nih.gov/Structure/IMG/spacer.gif" width="25" height="1" border="0"><a href="#Top"><img src="https://www.ncbi.nlm.nih.gov/Structure/IMG/arrowup_blue.gif" width="12" height="12" border="0" alt="back to top"></a></h2>
 
-"I see in 3D" (iCn3D) Structure Viewer is a WebGL-based 3D viewer using Three.js and jQuery. It is based on the 3D styles of <a href="http://istar.cse.cuhk.edu.hk/iview/">iview</a> and <a href="http://webglmol.osdn.jp/index-en.html">GLmol</a>, and the surface generation of <a href="http://3dmol.csb.pitt.edu/">3Dmol</a>. Some of the added/improved features include: picking atoms by mouse, selecting residues on 3D structure or 1D sequence, shiny material for displaying, labeling, saving state, going back and forward, showing highlight with different colors, adding arrows to beta sheets, passing commands in url, sequence window, double bonds for chemicals, full-featured UI, etc. The source code of iCn3D is available at GitHub: <a href="https://github.com/ncbi/icn3d">https://github.com/ncbi/icn3d</a>.<br>
+"I see in 3D" (iCn3D) Structure Viewer is a WebGL-based 3D viewer using Three.js and jQuery. It is based on the 3D styles of <a href="http://istar.cse.cuhk.edu.hk/iview/">iview</a> and <a href="https://en.osdn.jp/projects/webglmol/">GLmol</a>, and the surface generation of <a href="http://3dmol.csb.pitt.edu/">3Dmol</a>. Some of the added/improved features include: picking atoms by mouse, selecting residues on 3D structure or 1D sequence, shiny material for displaying, labeling, saving state, going back and forward, showing highlight with different colors, adding arrows to beta sheets, passing commands in url, sequence window, double bonds for chemicals, full-featured UI, etc. The source code of iCn3D is available at GitHub: <a href="https://github.com/ncbi/icn3d">https://github.com/ncbi/icn3d</a>.<br>
 <br>
-We provided two versions of iCn3D widgets: <a href="index.html?mmdbid=2por">simple interface</a> and <a href="full.html?mmdbid=2por">advanced interface</a>. Both widgets can be easily added to web pages.
+We provided two versions of iCn3D widgets: <a href="index.html?mmdbid=2por">basic interface</a> and <a href="full.html?mmdbid=2por">advanced interface</a>. Both widgets can be easily added to web pages.
 <ol>
-<li>The simple interface has the minimum javascript code for the interface and is easy to understand. It has the basic features to change color and styles.
+<li>The basic interface has the minimum javascript code for the interface and is easy to understand. It has the basic features to change color and styles.
 </li><li>The advanced interface has a library for the interface and is more complicated to understand. It has many features.
 </li></ol>
 
@@ -290,8 +338,8 @@ We provided two versions of iCn3D widgets: <a href="index.html?mmdbid=2por">simp
             width: 400,
             height: 400,
             resize: false,
-            rotate: true,
-            mmcifid: '2por'
+            rotate: 'right',
+            pdbid: '2por'
         };
 
 		var icn3dui = new iCn3DUI(cfg);
@@ -311,8 +359,8 @@ We provided two versions of iCn3D widgets: <a href="index.html?mmdbid=2por">simp
 <a name="HowToUse"></a>
 <h2>How to use iCn3D Structure Viewer in your html page:<img src="https://www.ncbi.nlm.nih.gov/Structure/IMG/spacer.gif" width="25" height="1" border="0"><a href="#Top"><img src="https://www.ncbi.nlm.nih.gov/Structure/IMG/arrowup_blue.gif" width="12" height="12" border="0" alt="back to top"></a></h2>
 <ul>
-<li><a name="embedIframe"></a><b>Embed using IFrame</b><br>
-<p>To embed iCn3D Structure Viewer in your own HTML page using iFrame, simply add the following to your page:
+<li><a name="embedIframe"></a><b>Embed using iframe</b><br>
+<p>To embed iCn3D Structure Viewer in your own HTML page using iframe, simply add the following to your page:
 </p><div class="indent"><code>&lt;iframe src="http://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?mmdbid=2por&amp;width=300&amp;height=300&amp;showmenu=0&amp;rotate=0" width="320" height="320" style="border:none"&gt;&lt;/iframe&gt;</code></div>
 
 </li>
@@ -323,7 +371,7 @@ We provided two versions of iCn3D widgets: <a href="index.html?mmdbid=2por">simp
 <ol>
     <li><a name="HowToUseStep1"></a><b>Include the CSS and JavaScript libraries in the &lt;head&gt; of your html page, as shown here.</b></li>
     <ul><li>
-      <p>Simple UI:</p>
+      <p>Basic UI:</p>
     <pre>&lt;link rel="stylesheet" href="https://www.ncbi.nlm.nih.gov/Structure/icn3d/lib/jquery-ui.min.css"&gt;
 &lt;link rel="stylesheet" href="https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d_simple_ui.css"&gt;
 &lt;script src="https://www.ncbi.nlm.nih.gov/Structure/icn3d/lib/jquery.min.js"&gt;&lt;/script&gt;
@@ -348,7 +396,7 @@ We provided two versions of iCn3D widgets: <a href="index.html?mmdbid=2por">simp
 
 
     <li><a name="HowToUseStep3"></a><b>Initialize the widget with desired parameters:</b></li>
-    <ul><li>Simple UI:<br>
+    <ul><li>Basic UI:<br>
     <pre>  &lt;script type="text/javascript"&gt;
 	$( document ).ready(function() {
 	  var cfg = {
@@ -356,7 +404,7 @@ We provided two versions of iCn3D widgets: <a href="index.html?mmdbid=2por">simp
 		  width: 400,
 		  height: 400,
 		  resize: false,
-		  rotate: true,
+		  rotate: 'right',
 		  pdbid: '2por'
 	  };
 
@@ -373,7 +421,7 @@ We provided two versions of iCn3D widgets: <a href="index.html?mmdbid=2por">simp
               width: '100%',
               height: '100%',
               resize: true,
-              rotate: true,
+              rotate: 'right',
               showmenu: true
           };
           cfg['pdbid'] = '2por';
@@ -421,8 +469,20 @@ We provided two versions of iCn3D widgets: <a href="index.html?mmdbid=2por">simp
     </ul>
     <br>
 
-    <li><a name="HowToUseStep5"></a><b>Hint for recovering a crashed page:</b></li>
+    <li><a name="HowToUseStep5"></a><b>Hint for picking 3D structure and selecting sequences:</b></li>
+    <div>To pick an atom/residue/strand in the 3D structure, hold "Ctrl" key and use mouse to pick. To add more selection to the current selection, hold "Shift" key and use mouse to pick. To change the selected residue to the strand/chain/structure containing the residue, hold "Ctrl" key and press the up/down arrow. <br/>
+    <br/>
+    To select residues in the sequence window, drag with mouse or touch to select residues. Drag or touch again to deselect residues. To add more selection to the current selection, hold "Shift" key and select more.<br/>
+    <br/>
+    To save the current selection (either on structure or on sequence), open the sequence window, specify the name and description for the selection, and click \"Save Selection\".
+    </div>
+
+    <li><a name="HowToUseStep6"></a><b>Hint for recovering a crashed page:</b></li>
     <div>If for some reason the 3D viewer crashes, you can refresh the same crashed page to get the saved commands and recover your previous state by loading the commands at File -&gt; Open State/Script. This is done by using session storage. It works in Chrome, Firefox, and Internet Explorer in PC, but not Safari nor Mac.
+    </div>
+
+    <li><a name="HowToUseStep7"></a><b>Hint for turning on scroll bars in Mac:</b></li>
+    <div>If you are using Macintosh computer and need to scroll in the sequence dialog, you can turn on the scroll bars as follows: Systems preferences -> GENERAL -> show scroll bars -> check "always".
     </div>
 
 </ol>
@@ -435,12 +495,14 @@ We provided two versions of iCn3D widgets: <a href="index.html?mmdbid=2por">simp
 
 <a name="parameters"></a>
 <h2>URL parameters for the advanced interface<img src="https://www.ncbi.nlm.nih.gov/Structure/IMG/spacer.gif" width="25" height="1" border="0"><a href="#Top"><img src="https://www.ncbi.nlm.nih.gov/Structure/IMG/arrowup_blue.gif" width="12" height="12" border="0" alt="back to top"></a></h2>
-<table><tr valign='top'><th>Parameter</th><th>Simple interface<br/>(index.html)</th><th>Advanced interface<br/>(full.html)</th><th>Description</th></tr>
+<table><tr valign='top'><th>Parameter</th><th>Basic interface<br/>(index.html)</th><th>Advanced interface<br/>(full.html)</th><th>Description</th></tr>
 <tr valign='top'><td>pdbid</td><td>Yes</td><td>Yes</td><td>PDB ID, e.g., <a href="full.html?pdbid=2por">?pdbid=2por</a></td></tr>
 <tr valign='top'><td>mmcifid</td><td>Yes</td><td>Yes</td><td>mmCIF ID, e.g., <a href="full.html?mmcifid=2por">?mmcifid=2por</a></td></tr>
 <tr valign='top'><td>mmdbid</td><td>Yes</td><td>Yes</td><td>NCBI MMDB ID or PDB ID, e.g., <a href="full.html?mmdbid=2por">?mmdbid=2por</a></td></tr>
 <tr valign='top'><td>gi</td><td>Yes</td><td>Yes</td><td>NCBI protein gi number, e.g., <a href="full.html?gi=827343227">?gi=827343227</a></td></tr>
 <tr valign='top'><td>cid</td><td>Yes</td><td>Yes</td><td>PubChem Compound ID, e.g., <a href="full.html?cid=2244">?cid=2244</a></td></tr>
+<tr valign='top'><td>align</td><td>Yes</td><td>Yes</td><td>Two PDB IDs or MMDB IDs for structure alignment, e.g., <a href="full.html?align=1hho,4n7n">?align=1hho,4n7n</a></td></tr>
+
 <tr valign='top'><td>width</td><td>Yes</td><td>Yes</td><td>Width of the structure image. It can be percentage such as '100%', or pixel values such as 400. The default is '100%'.</td></tr>
 <tr valign='top'><td>height</td><td>Yes</td><td>Yes</td><td>Height of the structure image. It can be percentage such as '100%', or pixel values such as 400. The default is '100%'.</td></tr>
 <tr valign='top'><td>resize</td><td>Yes</td><td>Yes</td><td>Set "true" or "1" to resize the image when the container is resized. The default is "true".</td></tr>
@@ -448,6 +510,7 @@ We provided two versions of iCn3D widgets: <a href="index.html?mmdbid=2por">simp
 
 <tr valign='top'><td>showmenu</td><td>No</td><td>Yes</td><td>Set "true" or "1" to show the menus and buttons at the top of the structure canvas. The default is "true".</td></tr>
 <tr valign='top'><td>showseq</td><td>No</td><td>Yes</td><td>Set "true" or "1" to show the sequence window. The default is "false".</td></tr>
+<tr valign='top'><td>showalignseq</td><td>No</td><td>Yes</td><td>Set "true" or "1" to show the aligned sequence window. The default is "false".</td></tr>
 <tr valign='top'><td><a name="commandsUrl"></a>command</td><td>No</td><td>Yes</td><td>Besides the "Script/Log" section, commands can also be attached to the url parameter "command". Several commands can be concatenated with the separator ";", e.g., <a href="full.html?mmdbid=1kq2&amp;command=select :1-20; color green">full.html?mmdbid=1kq2&amp;command=select :1-20; color green</a>.</td></tr>
 </table>
 
@@ -457,22 +520,31 @@ We provided two versions of iCn3D widgets: <a href="index.html?mmdbid=2por">simp
 <h2>Commands for the advanced interface<img src="https://www.ncbi.nlm.nih.gov/Structure/IMG/spacer.gif" width="25" height="1" border="0"><a href="#Top"><img src="https://www.ncbi.nlm.nih.gov/Structure/IMG/arrowup_blue.gif" width="12" height="12" border="0" alt="back to top"></a></h2>
 <a name="file"></a><b>1. File</b> <a href="#Top"><span class="top">&nbsp;&nbsp;&nbsp;</span></a><br>
 <table>
-<tbody><tr><td colspan="2">a) Retrieve by ID</td></tr>
+<tbody>
+<tr><td colspan="2">a) Retrieve by ID</td></tr>
 <tr><td><span class="indent">PDB ID:</span></td>           <td>load pdb [1GPK]</td></tr>
-<tr><td><span class="indent">mmCIF ID:</span></td>         <td>load mmcif [1GPK]</td></tr>
 <tr><td><span class="indent">MMDB ID:</span></td>          <td>load mmdb [1GPK]</td></tr>
 <tr><td><span class="indent">gi:</span></td>               <td>load gi [827343227]</td></tr>
 <tr><td><span class="indent">PubChem CID:</span></td>              <td>load cid [1GPK]</td></tr>
 
-<tr><td>b) Open PDB File:</td>              <td>[no command available]</td></tr>
+<tr><td colspan="2">b) Open File</td></tr>
+<tr><td><span class="indent">PDB File:</span></td>            <td>[no command available]</td></tr>
+<tr><td><span class="indent">mmCIF File:</span></td>          <td>[no command available]</td></tr>
+<tr><td><span class="indent">Mol2 File:</span></td>          <td>[no command available]</td></tr>
+<tr><td><span class="indent">SDF File:</span></td>          <td>[no command available]</td></tr>
+<tr><td><span class="indent">XYZ File:</span></td>          <td>[no command available]</td></tr>
+<tr><td><span class="indent">State/Script File:</span></td>   <td>[no command available]</td></tr>
 
-<tr><td>c) Open State:</td>         <td>[no command available]</td></tr>
-<tr><td>d) Export State:</td>       <td>[no command available]</td></tr>
-<tr><td>e) Export Image:</td>       <td>[no command available]</td></tr>
+<tr><td colspan="2">c) Export File</td></tr>
+<tr><td><span class="indent">State File:</span></td>            <td>[no command available]</td></tr>
+<tr><td><span class="indent">PNG Image File:</span></td>          <td>[no command available]</td></tr>
+<tr><td><span class="indent">Chain/Residue Counts:</span></td>   <td>[no command available]</td></tr>
 
-<tr><td colspan="2">f) Links</td></tr>
+<tr><td>d) Share Link:</td>         <td>[no command available]</td></tr>
 
-<tr><td><span class="indent">Search Structure:</span></td>          <td>[no command available]</td></tr>
+<tr><td colspan="2">e) Links</td></tr>
+
+<tr><td><span class="indent">Structure Summary:</span></td>          <td>[no command available]</td></tr>
 <tr><td><span class="indent">Find Similar Structures:</span></td>   <td>[no command available]</td></tr>
 <tr><td><span class="indent">Literature:</span></td>                <td>[no command available]</td></tr>
 
@@ -501,14 +573,14 @@ We provided two versions of iCn3D widgets: <a href="index.html?mmdbid=2por">simp
 <tr><td><span class="indent">Display Selection:</span></td>  <td>show selection</td></tr>
 
 <tr><td colspan="2"><br>b) Select -&gt; Picking</td></tr>
-<tr><td><span class="indent">Strand/Helix:</span></td>  <td>set picking strand</td></tr>
-<tr><td><span class="indent">Residue:</span></td>  <td>set picking residue</td></tr>
-<tr><td><span class="indent">Atom:</span></td>     <td>set picking atom</td></tr>
-<tr><td><span class="indent">Pick:</span></td>     <td>pickatom [atom.serial]</td></tr>
-<tr><td><span class="indent">Off:</span></td>        <td>set picking off</td></tr>
+<tr><td><span class="indent">Strand/Helix (Ctrl):</span></td>  <td>set picking strand</td></tr>
+<tr><td><span class="indent">Residue (Ctrl):</span></td>  <td>set picking residue</td></tr>
+<tr><td><span class="indent">Atom (Ctrl):</span></td>     <td>set picking atom</td></tr>
+<tr><td><span class="indent">Pick (Ctrl):</span></td>     <td>pickatom [atom.serial]</td></tr>
+<!--<tr><td><span class="indent">Off:</span></td>        <td>set picking off</td></tr>-->
 
 <tr><td colspan="2"><br>c) Select -&gt; Display</td></tr>
-<tr><td><span class="indent">Toggle Selection:</span></td>   <td>toggle selection</td></tr>
+<!--<tr><td><span class="indent">Toggle Selection:</span></td>   <td>toggle selection</td></tr>-->
 <tr><td><span class="indent">Display Selection:</span></td>  <td>show selection</td></tr>
 <tr><td><span class="indent">Toggle Highlight:</span></td>      <td>toggle highlight</td></tr>
 
@@ -537,42 +609,50 @@ Different selections can be concatenated using semicolon, e.g., ":1-10; :Lys" se
 
 <a name="style"></a><b>3. Style</b> <a href="#Top"><span class="top">&nbsp;&nbsp;&nbsp;</span></a><br>
 <table>
-<tbody><tr><td colspan="2">a) Style -&gt; Protein</td></tr>
+<tbody>
+<tr><td colspan="2">a) Style -&gt; Protein</td></tr>
 <tr><td><span class="indent">ribbon:</span></td>             <td>style proteins ribbon</td></tr>
 <tr><td><span class="indent">strand:</span></td>             <td>style proteins strand</td></tr>
-<tr><td><span class="indent">cylinder &amp; plate:</span></td>   <td>style proteins cylinder &amp; plate</td></tr>
+<tr><td><span class="indent">cylinder and plate:</span></td>   <td>style proteins cylinder and plate</td></tr>
 <tr><td><span class="indent">schematic:</span></td>      	 <td>style proteins schematic</td></tr>
 <tr><td><span class="indent">c alpha trace:</span></td>      <td>style proteins c alpha trace</td></tr>
 <tr><td><span class="indent">b factor tube:</span></td>      <td>style proteins b factor tube</td></tr>
 <tr><td><span class="indent">lines:</span></td>              <td>style proteins lines</td></tr>
 <tr><td><span class="indent">stick:</span></td>              <td>style proteins stick</td></tr>
-<tr><td><span class="indent">ball &amp; stick:</span></td>       <td>style proteins ball &amp; stick</td></tr>
+<tr><td><span class="indent">ball and stick:</span></td>       <td>style proteins ball and stick</td></tr>
 <tr><td><span class="indent">sphere:</span></td>             <td>style proteins sphere</td></tr>
 <tr><td><span class="indent">hide:</span></td>            <td>style proteins nothing</td></tr>
 
-<tr><td colspan="2"><br>b) Style -&gt; Nucleotides</td></tr>
+<tr><td colspan="2">b) Style -&gt; Side Chains</td></tr>
+<tr><td><span class="indent">lines:</span></td>              <td>style sidechains lines</td></tr>
+<tr><td><span class="indent">stick:</span></td>              <td>style sidechains stick</td></tr>
+<tr><td><span class="indent">ball and stick:</span></td>       <td>style sidechains ball and stick</td></tr>
+<tr><td><span class="indent">sphere:</span></td>             <td>style sidechains sphere</td></tr>
+<tr><td><span class="indent">hide:</span></td>            <td>style sidechains nothing</td></tr>
+
+<tr><td colspan="2"><br>c) Style -&gt; Nucleotides</td></tr>
 <tr><td><span class="indent">nucleotide cartoon:</span></td> <td>style nucleotides nucleotide cartoon</td></tr>
 <tr><td><span class="indent">phosphorus trace:</span></td>   <td>style nucleotides phosphorus trace</td></tr>
 <tr><td><span class="indent">schematic:</span></td>   		 <td>style nucleotides schematic</td></tr>
 <tr><td><span class="indent">lines:</span></td>              <td>style nucleotides lines</td></tr>
 <tr><td><span class="indent">stick:</span></td>              <td>style nucleotides stick</td></tr>
-<tr><td><span class="indent">ball &amp; stick:</span></td>       <td>style nucleotides ball &amp; stick</td></tr>
+<tr><td><span class="indent">ball and stick:</span></td>       <td>style nucleotides ball and stick</td></tr>
 <tr><td><span class="indent">sphere:</span></td>             <td>style nucleotides sphere</td></tr>
 <tr><td><span class="indent">hide:</span></td>            <td>style nucleotides nothing</td></tr>
 
-<tr><td colspan="2"><br>c) Style -&gt; Ligands</td></tr>
+<tr><td colspan="2"><br>d) Style -&gt; Ligands</td></tr>
 <tr><td><span class="indent">lines:</span></td>              <td>style ligands lines</td></tr>
 <tr><td><span class="indent">stick:</span></td>              <td>style ligands stick</td></tr>
-<tr><td><span class="indent">ball &amp; stick:</span></td>       <td>style ligands ball &amp; stick</td></tr>
+<tr><td><span class="indent">ball and stick:</span></td>       <td>style ligands ball and stick</td></tr>
 <tr><td><span class="indent">sphere:</span></td>             <td>style ligands sphere</td></tr>
 <tr><td><span class="indent">hide:</span></td>            <td>style ligands nothing</td></tr>
 
-<tr><td colspan="2"><br>d) Style -&gt; Ions</td></tr>
+<tr><td colspan="2"><br>e) Style -&gt; Ions</td></tr>
 <tr><td><span class="indent">sphere:</span></td>             <td>style ions sphere</td></tr>
 <tr><td><span class="indent">dot:</span></td>                <td>style ions dot</td></tr>
 <tr><td><span class="indent">hide:</span></td>            <td>style ions nothing</td></tr>
 
-<tr><td colspan="2"><br>e) Style -&gt; Water</td></tr>
+<tr><td colspan="2"><br>f) Style -&gt; Water</td></tr>
 <tr><td><span class="indent">sphere:</span></td>             <td>style water sphere</td></tr>
 <tr><td><span class="indent">dot:</span></td>                <td>style water dot</td></tr>
 <tr><td><span class="indent">hide:</span></td>            <td>style water nothing</td></tr>
@@ -631,59 +711,64 @@ Different selections can be concatenated using semicolon, e.g., ":1-10; :Lys" se
 <table>
 <tbody><tr><td>a) Other -&gt; Reset:</td>     <td>reset</td></tr>
 
-<tr><td>b) Other -&gt; Zoom in Selection:</td>     <td>zoom selection</td></tr>
+<tr><td>b) Other -&gt; Reset Orien.:</td>     <td>reset orientation</td></tr>
 
-<tr><td>c) Other -&gt; Back:</td>     <td>back</td></tr>
+<tr><td>c) Other -&gt; Center:</td>     <td>center selection</td></tr>
 
-<tr><td>d) Other -&gt; Forward:</td>     <td>forward</td></tr>
+<tr><td>d) Other -&gt; Zoom in:</td>     <td>zoom selection</td></tr>
 
-<tr><td colspan="2"><br>e) Other -&gt; Assembly</td></tr>
+<tr><td>e) Other -&gt; Back:</td>     <td>back</td></tr>
+
+<tr><td>f) Other -&gt; Forward:</td>     <td>forward</td></tr>
+
+<tr><td colspan="2"><br>g) Other -&gt; Assembly</td></tr>
 <tr><td><span class="indent">yes:</span></td>                <td>set assembly on</td></tr>
 <tr><td><span class="indent">no:</span></td>                 <td>set assembly off</td></tr>
 
-<tr><td colspan="2"><br>f) Other -&gt; H-bonds</td></tr>
+<tr><td colspan="2"><br>h) Other -&gt; H-bonds</td></tr>
 <tr><td><span class="indent">Show:</span></td>            <td>hbonds [hbond threshold in angstrom]</td></tr>
 <tr><td><span class="indent">Hide:</span></td>            <td>set hbonds off</td></tr>
 
-<tr><td colspan="2"><br>g) Other -&gt; Label</td></tr>
-<tr><td><span class="indent">Label Residues:</span></td>            <td>add residue labels</td></tr>
-<tr><td><span class="indent">Custom Label:</span></td>            <td>add label [label text] | x [x] y [y] z [z] | size [label size] | color [#FF0000] | background [#FFFFFF]</td></tr>
+<tr><td colspan="2"><br>i) Other -&gt; Label</td></tr>
+<tr><td><span class="indent">by Picking:</span></td>            <td>add label [label text] | x [x] y [y] z [z] | size [label size] | color [#FF0000] | background [#FFFFFF]</td></tr>
+<tr><td><span class="indent">by Selection:</span></td>            <td>add label [label text] | size [label size] | color [#FF0000] | background [#FFFFFF]</td></tr>
+<tr><td><span class="indent">by Residues:</span></td>            <td>add residue labels</td></tr>
 <tr><td><span class="indent">Hide:</span></td>            <td>set labels off</td></tr>
 
-<tr><td colspan="2"><br>h) Other -&gt; Distance</td></tr>
+<tr><td colspan="2"><br>j) Other -&gt; Distance</td></tr>
 <tr><td rowspan="2"><span class="indent">Show:</span></td>            <td>add label [label text] | x [x] y [y] z [z] | size [label size] | color [#FF0000] | background [#FFFFFF]</td></tr>
 <tr>                                                               <td>add line | x1 [x1] y1 [y1] z1 [z1] | x2 [x2] y2 [y2] z2 [z2] | color [#FFFF00] | dashed [true]</td></tr>
 <tr><td><span class="indent">Hide:</span></td>            <td>set lines off</td></tr>
 
-<tr><td colspan="2"><br>i) Other -&gt; Auto Rotation</td></tr>
+<tr><td colspan="2"><br>k) Other -&gt; Auto Rotation</td></tr>
 <tr><td><span class="indent">Rotate Left:</span></td>              <td>rotate left</td></tr>
 <tr><td><span class="indent">Rotate Right:</span></td>              <td>rotate right</td></tr>
 <tr><td><span class="indent">Rotate Up:</span></td>              <td>rotate up</td></tr>
 <tr><td><span class="indent">Rotate Down:</span></td>              <td>rotate down</td></tr>
 
-<tr><td colspan="2"><br>j) Other -&gt; Camera</td></tr>
+<tr><td colspan="2"><br>l) Other -&gt; Camera</td></tr>
 <tr><td><span class="indent">perspective:</span></td>        <td>set camera perspective</td></tr>
 <tr><td><span class="indent">orthographic:</span></td>       <td>set camera orthographic</td></tr>
 
-<tr><td colspan="2"><br>k) Other -&gt; Background</td></tr>
+<tr><td colspan="2"><br>m) Other -&gt; Background</td></tr>
 <tr><td><span class="indent">black:</span></td>              <td>set background black</td></tr>
 <tr><td><span class="indent">grey:</span></td>               <td>set background grey</td></tr>
 <tr><td><span class="indent">white:</span></td>              <td>set background white</td></tr>
 
-<tr><td colspan="2"><br>l) Other -&gt; Fog</td></tr>
+<tr><td colspan="2"><br>n) Other -&gt; Fog</td></tr>
 <tr><td><span class="indent">yes:</span></td>                <td>set fog on</td></tr>
 <tr><td><span class="indent">no:</span></td>                 <td>set fog off</td></tr>
 
-<tr><td colspan="2"><br>m) Other -&gt; Slab</td></tr>
+<tr><td colspan="2"><br>o) Other -&gt; Slab</td></tr>
 <tr><td><span class="indent">yes:</span></td>                <td>set slab on</td></tr>
 <tr><td><span class="indent">no:</span></td>                 <td>set slab off</td></tr>
 
-<tr><td colspan="2"><br>n) Other -&gt; XYZ-axes</td></tr>
+<tr><td colspan="2"><br>p) Other -&gt; XYZ-axes</td></tr>
 <tr><td><span class="indent">yes:</span></td>                <td>set axis on</td></tr>
 <tr><td><span class="indent">no:</span></td>                 <td>set axis off</td></tr>
 
-<tr><td>o) Other -&gt; Transform Hint:</td>      <td>[no command available]</td></tr>
-<tr><td>p) Other -&gt; Help:</td>      <td>[no command available]</td></tr>
+<tr><td>q) Other -&gt; Transform Hint:</td>      <td>[no command available]</td></tr>
+<tr><td>r) Other -&gt; Help:</td>      <td>[no command available]</td></tr>
 </tbody></table>
 
 <br>
@@ -708,8 +793,8 @@ Different selections can be concatenated using semicolon, e.g., ":1-10; :Lys" se
         bonds: [],              // required, used to connect atoms
 
         color: color,           // optional, used to assign atom color, default is grey
-        style: style,           // optional, used to assign atom style as one of 13 styles: ribbon, strand, cylinder &amp; plate, nucleotide cartoon,
-                                //     phosphorus trace, schematic, c alpha trace, b factor tube, lines, stick, ball &amp; stick, sphere, dot, nothing
+        style: style,           // optional, used to assign atom style as one of 13 styles: ribbon, strand, cylinder and; plate, nucleotide cartoon,
+                                //     phosphorus trace, schematic, c alpha trace, b factor tube, lines, stick, ball and stick, sphere, dot, nothing
         het: false,             // optional, used to determine ligands, water, ions, etc
         resn: resn,             // optional, used to determine protein or nucleotide
         b: b,                   // optional, used to draw B-factor tube
@@ -730,7 +815,7 @@ Different selections can be concatenated using semicolon, e.g., ":1-10; :Lys" se
         center: psum.multiplyScalar(1.0 / cnt);  // REQUIRED, center position of the structure
 
         highlightAtoms: {}; // OPTIONAL, atoms used to highlight: atom index -&gt; 1
-        structures: {};     // OPTIONAL, structure name -&gt; array of chains
+        structures: {};     // OPTIONAL, structure name -&gt; array of chain IDs
         chains: {};         // OPTIONAL, structure_chain name-&gt; (atom index -&gt; 1)
         residues: {};       // OPTIONAL, structure_chain_resi name-&gt; (atom index -&gt; 1)
 
@@ -761,11 +846,14 @@ Different selections can be concatenated using semicolon, e.g., ":1-10; :Lys" se
       <pre>          var options = {};
           options['camera']             = 'perspective';        //perspective, orthographic
           options['background']         = 'black';              //black, grey, white
-          options['color']              = 'spectrum';           //spectrum, secondary structure, charge, chain, residue, atom, red, green, blue, magenta, yellow, cyan, white, grey, custom
-          options['proteins']           = 'ribbon';             //ribbon, strand, cylinder &amp; plate, schematic, c alpha trace, b factor tube, lines, stick, ball &amp; stick, sphere, nothing
-          options['sidechains']         = 'nothing';            //lines, stick, ball &amp; stick, sphere, nothing
-          options['nucleotides']        = 'phosphorus trace';   //cartoon, phosphorus trace, schematic, lines, stick, ball &amp; stick, sphere, nothing
-          options['ligands']            = 'stick';              //line, stick, ball &amp; stick, sphere, nothing
+          options['color']              = 'spectrum';           //spectrum, secondary structure, charge, chain, residue, atom,
+          														// red, green, blue, magenta, yellow, cyan, white, grey, custom
+          options['proteins']           = 'ribbon';             //ribbon, strand, cylinder and plate, schematic, c alpha trace,
+          														// b factor tube, lines, stick, ball and stick, sphere, nothing
+          options['sidechains']         = 'nothing';            //lines, stick, ball and stick, sphere, nothing
+          options['nucleotides']        = 'phosphorus trace';   //cartoon, phosphorus trace, schematic, lines, stick,
+          														// ball and stick, sphere, nothing
+          options['ligands']            = 'stick';              //line, stick, ball and stick, schematic, sphere, nothing
           options['water']              = 'nothing';            //sphere, dot, nothing
           options['ions']               = 'sphere';             //sphere, dot, nothing
           options['surface']            = 'nothing';            //Van der Waals surface, molecular surface, solvent accessible surface, nothing
@@ -828,6 +916,13 @@ If its value is 1, picking any atom will select the atom. If its value is 2, pic
 <a name="addHighlightObjects"></a><b>addHighlightObjects(color)</b> <a href="#Top"><span class="top">&nbsp;&nbsp;&nbsp;</span></a><br>
 Show the highlight for the selected atoms: <a href="#highlightAtoms">highlightAtoms</a>. The highlight color is defined as "new THREE.Color()".<br>
 <br>
+
+<a name="addResiudeLabels"></a><b>addResiudeLabels(atoms, bSchematic)</b> <a href="#Top"><span class="top">&nbsp;&nbsp;&nbsp;</span></a><br>
+Add labels for all residues containing the input "atoms". The labels are one-letter residue abbreviations. If "bSchematic" is true, the labels are in circles. Otherwise, they are in round-corner rectangles.<br>
+<br>
+
+addResiudeLabels: function (atoms, bSchematic) {
+
 <a name="applyDisplayOptions"></a><b>applyDisplayOptions(options, atoms)</b> <a href="#Top"><span class="top">&nbsp;&nbsp;&nbsp;</span></a><br>
 Apply style options to a certain set of atoms.<br>
 <br>
@@ -848,6 +943,9 @@ Set up hydrogen bonds between ligand and protein/nucleotide in the same structur
 <br>
 <a name="centerAtoms"></a><b>centerAtoms(atoms)</b> <a href="#Top"><span class="top">&nbsp;&nbsp;&nbsp;</span></a><br>
 Return the center of a set of "atoms". The vale is a THREE.Vector3() (see three.js).<br>
+<br>
+<a name="createBox"></a><b>createBox(atom, defaultRadius, forceDefault, scale, color, bHighlight)</b> <a href="#Top"><span class="top">&nbsp;&nbsp;&nbsp;</span></a><br>
+Create a cube for "atom" with the "defaultRadius". "forceDefault" means to use the default radius. "scale" means scale on the radius. "color" means the color of the cube. "bHighlight" is an option to draw the highlight for the atom.<br>
 <br>
 <a name="createCylinderCurve"></a><b>createCylinderCurve(atoms, atomName, radius, bLines, bHighlight)</b> <a href="#Top"><span class="top">&nbsp;&nbsp;&nbsp;</span></a><br>
 Create small cylinders (thick lines) for "atomName" in "atoms". "radius" is radius of the small cylinders. "bLine" is an option to show the cylinders as lines. "bHighlight" is an option to draw the highlight for these atoms. The highlight could be outlines with bHighlight=1 and 3D objects with bHighlight=2 as mentioned <a href="#bHighlight">above</a>.<br>
@@ -873,6 +971,9 @@ Create sticks for "atoms". "bondR" is the radius of the sticks. "atomR" is the r
 <a name="createStrand"></a><b>createStrand(atoms, num, div, fill, coilWidth, helixSheetWidth, doNotSmoothen, thickness, bHighlight)</b> <a href="#Top"><span class="top">&nbsp;&nbsp;&nbsp;</span></a><br>
 Create the style of ribbon or strand for "atoms". "num" means how many lines define the curve. "num" is 2 for ribbon and 6 for strand. "div" means how many points are used to smooth the curve. It's typically 5. "coilWidth" is the width of curve for coil. "helixSheetWidth" is the width of curve for helix or sheet. "doNotSmoothen" is a flag to smooth the curve or not. "thickness" is the thickness of the curve. "bHighlight" is an option to draw the highlight for these atoms. The highlight could be outlines with bHighlight=1 and 3D objects with bHighlight=2 as mentioned <a href="#bHighlight">above</a>.<br>
 <br>
+<a name="createStrandBrick"></a><b>createStrandBrick(brick, color, thickness, bHighlight)</b> <a href="#Top"><span class="top">&nbsp;&nbsp;&nbsp;</span></a><br>
+Use a box to represent a strand. "brick" contains the start and end point coordinates. The color and thickness of the box are defined by "color" and "thickness". The width of the box is the default strand width. "bHighlight" is an option to draw the highlight for the box. <br>
+<br>
 <a name="createSurfaceRepresentation"></a><b>createSurfaceRepresentation(atoms, type, wireframe, opacity)</b> <a href="#Top"><span class="top">&nbsp;&nbsp;&nbsp;</span></a><br>
 Create surface for "atoms". "type" can be 1 (Van der Waals surface), 2 (molecular surface), and 3 (solvent accessible surface). "wireframe" is a boolean to determine whether to show the surface as a mesh. "opacity" is a value between 0 and 1. "1" means not transparent at all. "0" means 100% transparent.<br>
 <br>
@@ -885,14 +986,32 @@ Draw the 3D structure. It rebuilds scene, applies previous color, applies the tr
 <a name="drawCartoonNucleicAcid"></a><b>drawCartoonNucleicAcid(atoms, div, thickness, bHighlight)</b> <a href="#Top"><span class="top">&nbsp;&nbsp;&nbsp;</span></a><br>
 Create curves for nucleotide "atoms". "div" means how many points are used to smooth the curve. It's typically 5. "thickness" is the thickness of the curve. "bHighlight" is an option to draw the highlight for these atoms. The highlight could be outlines with bHighlight=1 and 3D objects with bHighlight=2 as mentioned <a href="#bHighlight">above</a>.<br>
 <br>
+<a name="drawHelixBrick"></a><b>drawHelixBrick(molid2ss, molid2color, bHighlight)</b> <a href="#Top"><span class="top">&nbsp;&nbsp;&nbsp;</span></a><br>
+For a large structure, a cylinder was drawn for each helix based on the pre-calculated start and end coordinates. A flat box was drawn for each strand based on the pre-calculated  start and end coordinated. "molid2ss" defines the coordinates for each chain. "molid2color" defines the color for each chain. "bHighlight" is an option to draw the highlight for the cylinders and boxes.<br>
+<br>
 <a name="drawNucleicAcidStick"></a><b>drawNucleicAcidStick(atoms, bHighlight)</b> <a href="#Top"><span class="top">&nbsp;&nbsp;&nbsp;</span></a><br>
 Create sticks between two nucleotide curves for nucleotide "atoms". "bHighlight" is an option to draw the highlight for these atoms. The highlight could be outlines with bHighlight=1 and 3D objects with bHighlight=2 as mentioned <a href="#bHighlight">above</a>.<br>
+<br>
+<a name="drawSymmetryMates2"></a><b>drawSymmetryMates2()</b> <a href="#Top"><span class="top">&nbsp;&nbsp;&nbsp;</span></a><br>
+Draw the biological unit assembly using the matrix.<br>
 <br>
 <a name="exportCanvas"></a><b>exportCanvas()</b> <a href="#Top"><span class="top">&nbsp;&nbsp;&nbsp;</span></a><br>
 Export the current view as a PNG file.<br>
 <br>
 <a name="getAtomsWithinAtom"></a><b>getAtomsWithinAtom(allAtoms, targetAtoms, distance)</b> <a href="#Top"><span class="top">&nbsp;&nbsp;&nbsp;</span></a><br>
 This function returns atoms within a certain "distance" (in angstrom) from the "targetAtoms". The returned atoms are stored in a hash with atom indices  as keys and 1 as values. Only those atoms in "allAtoms" are considered.<br>
+<br>
+<a name="getExtent"></a><b>getExtent(atomlist)</b> <a href="#Top"><span class="top">&nbsp;&nbsp;&nbsp;</span></a><br>
+For a list of atoms, return an array containing three coordinates: minimum x- y- z- values, maximum x- y- z- values, and average x- y- z- values.<br>
+<br>
+<a name="getFirstAtomObj"></a><b>getFirstAtomObj(atomsHash)</b> <a href="#Top"><span class="top">&nbsp;&nbsp;&nbsp;</span></a><br>
+Return the first atom in the atom hash, which has the atom serial number as the key.<br>
+<br>
+<a name="getLastAtomObj"></a><b>getLastAtomObj(atomsHash)</b> <a href="#Top"><span class="top">&nbsp;&nbsp;&nbsp;</span></a><br>
+Return the last atom in the atom hash, which has the atom serial number as the key.<br>
+<br>
+<a name="hasCovalentBond"></a><b>hasCovalentBond(atom1, atom2)</b> <a href="#Top"><span class="top">&nbsp;&nbsp;&nbsp;</span></a><br>
+Determine whether atom1 and atom2 have covalent bond.<br>
 <br>
 <a name="init"></a><b>init()</b> <a href="#Top"><span class="top">&nbsp;&nbsp;&nbsp;</span></a><br>
 When you first load a structure, call this function to empty previous settings.<br>
@@ -902,12 +1021,22 @@ This PDB parser feeds the viewer with the content of a PDB file, pdbData.<br>
 <br>
 <a name="rebuildScene"></a><b>rebuildScene(options)</b> <a href="#Top"><span class="top">&nbsp;&nbsp;&nbsp;</span></a><br>
 This core function sets up the scene and display the structure according to the input options (shown <a href="#DisplayOptions">above</a>), which is a hash containing values for different keys. <br>
+
+<br>
+<a name="reinitAfterLoad"></a><b>reinitAfterLoad()</b> <a href="#Top"><span class="top">&nbsp;&nbsp;&nbsp;</span></a><br>
+Reset parameters for displaying the loaded structure.<br>
+
+
 <br>
 <a name="render"></a><b>render()</b> <a href="#Top"><span class="top">&nbsp;&nbsp;&nbsp;</span></a><br>
 Render the scene and objects into pixels.<br>
 <br>
 <a name="removeHighlightObjects"></a><b>removeHighlightObjects()</b> <a href="#Top"><span class="top">&nbsp;&nbsp;&nbsp;</span></a><br>
 Remove the highlight. The atom selection does not change.<br>
+<br>
+
+<a name="removeSurfaces"></a><b>removeSurfaces()</b> <a href="#Top"><span class="top">&nbsp;&nbsp;&nbsp;</span></a><br>
+Remove previously drawn surfaces.<br>
 <br>
 
 <a name="residueName2Abbr"></a><b>residueName2Abbr(residueName)</b> <a href="#Top"><span class="top">&nbsp;&nbsp;&nbsp;</span></a><br>
@@ -932,6 +1061,9 @@ Rotate the structure certain degree to the top, e.g., 5 degree. <br>
 Save the state file or the image file with "filename". "type" is either "text" for state file or "png" for image file.<br>
 <br>
 
+<a name="selectStrandHelixFromAtom"></a><b>selectStrandHelixFromAtom(atom)</b> <a href="#Top"><span class="top">&nbsp;&nbsp;&nbsp;</span></a><br>
+For an "atom", select all atoms in the same strand, helix, or coil.<br>
+<br>
 
 <a name="setAtomStyleByOptions"></a><b>setAtomStyleByOptions(options)</b> <a href="#Top"><span class="top">&nbsp;&nbsp;&nbsp;</span></a><br>
 Set atom style according to the definition in options (options.secondaryStructure, etc).<br>
@@ -948,6 +1080,20 @@ Set atom color according to the definition in options (options.color).<br>
 <a name="setOutlineColor"></a><b>setOutlineColor(colorStr)</b> <a href="#Top"><span class="top">&nbsp;&nbsp;&nbsp;</span></a><br>
 Set the outline color when highlighting atoms. The available options are "yellow", "green", and "red". <br>
 <br>
+
+<a name="setRotationCenter"></a><b>setRotationCenter(coord)</b> <a href="#Top"><span class="top">&nbsp;&nbsp;&nbsp;</span></a><br>
+Set the center at the position with coordinated "coord". <br>
+<br>
+
+<a name="setStyle2Atoms"></a><b>setStyle2Atoms(atomlist)</b> <a href="#Top"><span class="top">&nbsp;&nbsp;&nbsp;</span></a><br>
+For a list of atoms, set the hash with style as key and atom serial as value. <br>
+<br>
+
+<a name="setWidthHeight"></a><b>setWidthHeight(width, height)</b> <a href="#Top"><span class="top">&nbsp;&nbsp;&nbsp;</span></a><br>
+Set the width and height of the canvas. <br>
+<br>
+
+
 
 <a name="showPicking"></a><b>showPicking(atom)</b> <a href="#Top"><span class="top">&nbsp;&nbsp;&nbsp;</span></a><br>
 Define actions when an atom is picked. By default, the atom information (#[structure id].[chain id]:[residue number]@[atom name]) is displayed.<br>
@@ -1006,6 +1152,31 @@ Get the union of two hashes "atoms1" and "atoms2". The returned hash has atom in
     <a name="UIAPIs"></a>
     <h2>API Documents of the advanced UI library iCn3DUI<img src="https://www.ncbi.nlm.nih.gov/Structure/IMG/spacer.gif" width="25" height="1" border="0"><a href="#Top"><img src="https://www.ncbi.nlm.nih.gov/Structure/IMG/arrowup_blue.gif" width="12" height="12" border="0" alt="back to top"></a></h2>
 
+<span style="font-weight:bold; font-size:1.2em;">Options</span> <a href="#Top"><span class="top">&nbsp;&nbsp;&nbsp;</span></a><br>
+<br>
+<a name="cfg"></a><b>cfg</b> <a href="#Top"><span class="top">&nbsp;&nbsp;&nbsp;</span></a><br>
+A hash containing all input parameters.<br>
+<br>
+<a name="pre"></a><b>pre</b> <a href="#Top"><span class="top">&nbsp;&nbsp;&nbsp;</span></a><br>
+A prefix for all custom html element id. It ensures all html elements have specific ids, even when multiple iCn3D viewers are shown together.<br>
+<br>
+<a name="options"></a><b>options</b> <a href="#Top"><span class="top">&nbsp;&nbsp;&nbsp;</span></a><br>
+The default display options as shown <a href="#DisplayOptions">above</a>.<br>
+<br>
+<a name="bAddCommands"></a><b>bAddCommands</b> <a href="#Top"><span class="top">&nbsp;&nbsp;&nbsp;</span></a><br>
+A flag to determine whether to add current step into the command history.<br>
+<br>
+<a name="bAddLogs"></a><b>bAddLogs</b> <a href="#Top"><span class="top">&nbsp;&nbsp;&nbsp;</span></a><br>
+A flag to determine whether to add current step into the log window.<br>
+<br>
+<a name="bNotLoadStructure"></a><b>bNotLoadStructure</b> <a href="#Top"><span class="top">&nbsp;&nbsp;&nbsp;</span></a><br>
+A flag to determine whether to load the coordinates of the structure. When resetting the view, it is true so that the coordinates of the structure will not be loaded again.<br>
+<br>
+
+
+<span style="font-weight:bold; font-size:1.2em;">Methods</span> <a href="#Top"><span class="top">&nbsp;&nbsp;&nbsp;</span></a><br>
+<br>
+
 <a name="addCustomSelection"></a><b>addCustomSelection(residueArray, atomArray, commandname, commanddesc, command, bResidue)</b> <a href="#Top"><span class="top">&nbsp;&nbsp;&nbsp;</span></a><br>
 Define a custom selection based on the array of residues ("residueArray") and atoms ("atomArray"). The custom selection is defined by the "command" with the name "commandname" and the description "commanddesc". If "bResidue" is true, the custom selection is based on residues. Otherwise, the custom selection is based on atoms and does not show up in the residue menu.
 
@@ -1024,8 +1195,18 @@ Hold all functions related to click events.
 <br><br><a name="alternateStructures"></a><b>alternateStructures()</b> <a href="#Top"><span class="top">&nbsp;&nbsp;&nbsp;</span></a><br>
 Show structures one by one.
 
+<br><br><a name="applyCommand"></a><b>applyCommand(command)</b> <a href="#Top"><span class="top">&nbsp;&nbsp;&nbsp;</span></a><br>
+Execute a command. If the command is to load a structure, use the API "applyCommandLoad".
+
+<br><br><a name="applyCommandLoad"></a><b>applyCommandLoad(command)</b> <a href="#Top"><span class="top">&nbsp;&nbsp;&nbsp;</span></a><br>
+Execute the command to load a structure. This step is different from the rest steps since it has to finish before the rest steps start.
+
 <br><br><a name="back"></a><b>back()</b> <a href="#Top"><span class="top">&nbsp;&nbsp;&nbsp;</span></a><br>
 Go back one step. Basically the commands are sequentially executed, but with one less step.
+
+
+<br><br><a name="changeAlignChainid"></a><b>changeAlignChainid(alignChainArray)</b> <a href="#Top"><span class="top">&nbsp;&nbsp;&nbsp;</span></a><br>
+When you select in the aligned chain menu, highlightAtoms are set up based on the selected aligned chains "alignChainArray". The corresponding residues are highlighted in the sequence dialog and in the 3D structure.
 
 <br><br><a name="changeChainid"></a><b>changeChainid(chainArray)</b> <a href="#Top"><span class="top">&nbsp;&nbsp;&nbsp;</span></a><br>
 When you select in the chain menu, highlightAtoms are set up based on the selected chains "chainArray". The corresponding residues are highlighted in the sequence dialog and in the 3D structure.
@@ -1039,8 +1220,8 @@ HighlightAtoms are set up based on the selected custom names "nameArray" in the 
 <br><br><a name="changeResidueid"></a><b>changeResidueid(residueArray)</b> <a href="#Top"><span class="top">&nbsp;&nbsp;&nbsp;</span></a><br>
 HighlightAtoms are set up based on the selected residues "residueArray". The corresponding residues are highlighted in the sequence dialog and in the 3D structure.
 
-<br><br><a name="changeStructureid"></a><b>changeStructureid(structureArray)</b> <a href="#Top"><span class="top">&nbsp;&nbsp;&nbsp;</span></a><br>
-When you select in the structure menu, highlightAtoms are set up based on the selected structures "structureArray". The corresponding residues are highlighted in the sequence dialog and in the 3D structure.
+<br><br><a name="changeStructureid"></a><b>changeStructureid(structureArray, bUpdateHighlight, bUpdateSequence)</b> <a href="#Top"><span class="top">&nbsp;&nbsp;&nbsp;</span></a><br>
+When you select in the structure menu, highlightAtoms are set up based on the selected structures "structureArray". If "bUpdateHighlight" is true, the corresponding residues are highlighted in the sequence dialog and in the 3D structure. If "bUpdateSequence" is true, the sequences in the dialog are updated.
 
 <br><br><a name="clearSelection"></a><b>clearSelection()</b> <a href="#Top"><span class="top">&nbsp;&nbsp;&nbsp;</span></a><br>
 Clear the "Structure", "Chain", and "Custom" dropdown menu.
@@ -1063,14 +1244,24 @@ Ajax call was used to get the atom data from the NCBI "mmdbid". This function wa
 <br><br><a name="downloadPdb"></a><b>downloadPdb(pdbid)</b> <a href="#Top"><span class="top">&nbsp;&nbsp;&nbsp;</span></a><br>
 Ajax call was used to get the atom data from the "pdbid". This function was deferred so that it can be chained together with other deferred functions for sequential execution. A wrapper was added to support both http and https.
 
+<br><br><a name="execCommands"></a><b>execCommands(steps)</b> <a href="#Top"><span class="top">&nbsp;&nbsp;&nbsp;</span></a><br>
+Execute a list of commands. "steps" is the total number of commands.
+
+
 <br><br><a name="forward"></a><b>forward()</b> <a href="#Top"><span class="top">&nbsp;&nbsp;&nbsp;</span></a><br>
 Go forward one step. Basically the commands are sequentially executed, but with one more step.
+
+<br><br><a name="getAlignSequencesAnnotations"></a><b>getAlignSequencesAnnotations(alignChainArray, bUpdateHighlightAtoms, residueArray, bShowHighlight)</b> <a href="#Top"><span class="top">&nbsp;&nbsp;&nbsp;</span></a><br>
+Set up the sequence display with the aligned sequences. Either chains in "alignChainArray" or residues in "residueArray" will be highlighted. "bUpdateHighlightAtoms" is a flag to update the highlight atoms or not. "bShowHighlight" is a flag to show highlight or not.
 
 <br><br><a name="getCommandsBeforeCrash"></a><b>getCommandsBeforeCrash()</b> <a href="#Top"><span class="top">&nbsp;&nbsp;&nbsp;</span></a><br>
 Set the commands before the browser crashed. These commands are used to restore your previous state by refreshing the crashed page. It works in Chrome, Firefox, and Internet Explorer in PC, but not Safari nor Mac.
 
-<br><br><a name="getSequencesAnnotations"></a><b>getSequencesAnnotations(chainArray, bUpdateHighlightAtoms, residueArray)</b> <a href="#Top"><span class="top">&nbsp;&nbsp;&nbsp;</span></a><br>
-Set up the sequence display with all the sequences. Either chains in "chainArray" or residues in "residueArray" will be highlighted. "bUpdateHighlightAtoms" is a flag to update the highlight atoms or not.
+<br><br><a name="getResiduesUpdateHighlight"></a><b>getResiduesUpdateHighlight(chainArray, bUpdateHighlight)</b> <a href="#Top"><span class="top">&nbsp;&nbsp;&nbsp;</span></a><br>
+Get residues from "chainArray". "bUpdateHighlight" is a flag to update the highlighted atoms "highlightAtoms".
+
+<br><br><a name="getSequencesAnnotations"></a><b>getSequencesAnnotations(chainArray, bUpdateHighlightAtoms, residueArray, bShowHighlight)</b> <a href="#Top"><span class="top">&nbsp;&nbsp;&nbsp;</span></a><br>
+Set up the sequence display with all the sequences. Either chains in "chainArray" or residues in "residueArray" will be highlighted. "bUpdateHighlightAtoms" is a flag to update the highlight atoms or not. "bShowHighlight" is a flag to show highlight or not.
 
 <br><br><a name="hideMenu"></a><b>hideMenu(width, height)</b> <a href="#Top"><span class="top">&nbsp;&nbsp;&nbsp;</span></a><br>
 Hide the menu at the top and just show the canvas. "width" and "height" are the width and height of the canvas.
@@ -1085,12 +1276,12 @@ Determine whether it is a Mac.
 Determine whether it i a mobile device.
 
 <br><br><a name="isSessionStorageSupported"></a><b>isSessionStorageSupported()</b> <a href="#Top"><span class="top">&nbsp;&nbsp;&nbsp;</span></a><br>
-Determine whether Session Storage is supported in your browser. Session Storage is not suported in Safari.
+Determine whether Session Storage is supported in your browser. Session Storage is not supported in Safari.
 
 <br><br><a name="loadAtomDataIn"></a><b>loadAtomDataIn(data, id, type)</b> <a href="#Top"><span class="top">&nbsp;&nbsp;&nbsp;</span></a><br>
 This function was used to parse atom "data" to set up <a href="#DataInputs">parameters for the 3D viewer</a>. "type" is mmcifid or mmdbid. "id" is the MMDB ID or mmCIF ID.
 
-<br><br><a name="loadCidAtomData"></a><b>loadCidAtomData(data)</b> <a href="#Top"><span class="top">&nbsp;&nbsp;&nbsp;</span></a><br>
+<br><br><a name="loadSdfAtomData"></a><b>loadSdfAtomData(data)</b> <a href="#Top"><span class="top">&nbsp;&nbsp;&nbsp;</span></a><br>
 Atom "data" from SDF file was parsed to set up <a href="#DataInputs">parameters for the 3D viewer</a>. The deferred parameter was resolved after the parsing so that other javascript code can be executed.
 
 <br><br><a name="loadMmcifData"></a><b>loadMmcifData(data)</b> <a href="#Top"><span class="top">&nbsp;&nbsp;&nbsp;</span></a><br>
@@ -1123,6 +1314,9 @@ Remove the background of the highlighted chain in the sequence dialog.
 <br><br><a name="removeSeqResidueBkgd"></a><b>removeSeqResidueBkgd()</b> <a href="#Top"><span class="top">&nbsp;&nbsp;&nbsp;</span></a><br>
 Remove the background of the highlighted residues in the sequence dialog.
 
+<br><br><a name="renderFinalStep"></a><b>renderFinalStep(steps)</b> <a href="#Top"><span class="top">&nbsp;&nbsp;&nbsp;</span></a><br>
+When reading a list of commands, apply transformation at the last step.
+
 <br><br><a name="renderStructure"></a><b>renderStructure()</b> <a href="#Top"><span class="top">&nbsp;&nbsp;&nbsp;</span></a><br>
 Update the dropdown menu and show the structure by calling the function "draw()".
 
@@ -1132,14 +1326,24 @@ Resize the canvas with the defined "width" and "height".
 <br><br><a name="rotateStructure"></a><b>rotateStructure(direction)</b> <a href="#Top"><span class="top">&nbsp;&nbsp;&nbsp;</span></a><br>
 Rotate the structure in one of the directions: "left", "right", "up", and "down".
 
+
+<br><br><a name="saveCommandsToSession"></a><b>saveCommandsToSession()</b> <a href="#Top"><span class="top">&nbsp;&nbsp;&nbsp;</span></a><br>
+Save the command history to session storage so that the viewer can show the previous state when refreshing the same page.
+
 <br><br><a name="saveFile"></a><b>saveFile(filename, type)</b> <a href="#Top"><span class="top">&nbsp;&nbsp;&nbsp;</span></a><br>
 If the browser is IE, save the image ("type" is png) or the commands ("type" is txt) with the "filename". Otherwise, display the image or commands in the browser.
+
+<br><br><a name="selectAAlignChain"></a><b>selectAAlignChain(alignChainid, commandname)</b> <a href="#Top"><span class="top">&nbsp;&nbsp;&nbsp;</span></a><br>
+Select an aligned chain with the chain id "alignChainid" in the sequence dialog and save it as a custom selection with the name "commandname".
 
 <br><br><a name="selectAChain"></a><b>selectAChain(chainid, commandname)</b> <a href="#Top"><span class="top">&nbsp;&nbsp;&nbsp;</span></a><br>
 Select a chain with the chain id "chainid" in the sequence dialog and save it as a custom selection with the name "commandname".
 
 <br><br><a name="selectAll"></a><b>selectAll()</b> <a href="#Top"><span class="top">&nbsp;&nbsp;&nbsp;</span></a><br>
 Select all atom in the structures.
+
+<br><br><a name="selectAllUpdateMenuSeq"></a><b>selectAllUpdateMenuSeq(bInitial, bShowHighlight)</b> <a href="#Top"><span class="top">&nbsp;&nbsp;&nbsp;</span></a><br>
+Select all atoms in the initial load with "bInitial" set as true. Update the menus "Structure", "Chain", and "Custom". Update the highlight in the sequence window. "bShowHighlight" means whether to highlight the structure in the viewer.
 
 <br><br><a name="selectAResidue"></a><b>selectAResidue(residueid, commandname)</b> <a href="#Top"><span class="top">&nbsp;&nbsp;&nbsp;</span></a><br>
 Select a residue with the residue id "residueid" in the sequence dialog and save it as a custom selection with the name "commandname".
@@ -1150,14 +1354,45 @@ Set a custom selection with the "command", its name "commandname" and its descri
 <br><br><a name="selectComplement"></a><b>selectComplement()</b> <a href="#Top"><span class="top">&nbsp;&nbsp;&nbsp;</span></a><br>
 Select the complement of the current selection.
 
+<br><br><a name="setAlignChainMenu"></a><b>setAlignChainMenu(bInitial)</b> <a href="#Top"><span class="top">&nbsp;&nbsp;&nbsp;</span></a><br>
+Set the aligned chain menu. "bInitial" is a flag for the initial loading.
+
 <br><br><a name="setAtomMenu"></a><b>setAtomMenu(commandname)</b> <a href="#Top"><span class="top">&nbsp;&nbsp;&nbsp;</span></a><br>
 Set the atom menu from the saved selection with a defined name "commandname".
 
 <br><br><a name="setChainMenu"></a><b>setChainMenu(bInitial, structureArray)</b> <a href="#Top"><span class="top">&nbsp;&nbsp;&nbsp;</span></a><br>
 Set the chain menu from the selected structure menu. "bInitial" is a flag for the initial loading. "structureArray" is the array of selected structures.
 
+<br><br><a name="setCustomDialogs"></a><b>setCustomDialogs()</b> <a href="#Top"><span class="top">&nbsp;&nbsp;&nbsp;</span></a><br>
+A placeholder for all custom dialogs.
+
+<br><br><a name="setDialogs"></a><b>setDialogs()</b> <a href="#Top"><span class="top">&nbsp;&nbsp;&nbsp;</span></a><br>
+Set the html for all popup dialogs.
+
 <br><br><a name="setLogCommand"></a><b>setLogCommand(command, bSetCommand)</b> <a href="#Top"><span class="top">&nbsp;&nbsp;&nbsp;</span></a><br>
 Show the input command in log. If "bSetCommand" is true, the command will be saved in the state file as well.
+
+<br><br><a name="setLogWindow"></a><b>setLogWindow()</b> <a href="#Top"><span class="top">&nbsp;&nbsp;&nbsp;</span></a><br>
+Set the textarea for the log output.
+
+<br><br><a name="setMenu1"></a><b>setMenu1()</b> <a href="#Top"><span class="top">&nbsp;&nbsp;&nbsp;</span></a><br>
+Set the menu "File" at the top of the viewer.
+
+<br><br><a name="setMenu2"></a><b>setMenu2()</b> <a href="#Top"><span class="top">&nbsp;&nbsp;&nbsp;</span></a><br>
+Set the menu "Select" at the top of the viewer.
+
+<br><br><a name="setMenu3"></a><b>setMenu3()</b> <a href="#Top"><span class="top">&nbsp;&nbsp;&nbsp;</span></a><br>
+Set the menu "Style" at the top of the viewer.
+
+<br><br><a name="setMenu4"></a><b>setMen4()</b> <a href="#Top"><span class="top">&nbsp;&nbsp;&nbsp;</span></a><br>
+Set the menu "Color" at the top of the viewer.
+
+<br><br><a name="setMenu5"></a><b>setMenu5()</b> <a href="#Top"><span class="top">&nbsp;&nbsp;&nbsp;</span></a><br>
+Set the menu "Surface" at the top of the viewer.
+
+<br><br><a name="setMenu6"></a><b>setMenu6()</b> <a href="#Top"><span class="top">&nbsp;&nbsp;&nbsp;</span></a><br>
+Set the menu "Other" at the top of the viewer.
+
 
 <br><br><a name="setOption"></a><b>setOption(id, value)</b> <a href="#Top"><span class="top">&nbsp;&nbsp;&nbsp;</span></a><br>
 Modify the <a href="#DisplayOptions">display options</a>, e.g., setOption('color', 'green')
@@ -1189,8 +1424,20 @@ Show the menu at the top and the canvas. "width" and "height" are the width and 
 <br><br><a name="showSelection"></a><b>showSelection()</b> <a href="#Top"><span class="top">&nbsp;&nbsp;&nbsp;</span></a><br>
 Show the selection.
 
+<br><br><a name="showTitle"></a><b>showTitle()</b> <a href="#Top"><span class="top">&nbsp;&nbsp;&nbsp;</span></a><br>
+Show the title and PDB ID of the PDB structure at the beginning of the viewer.
+
+
+
 <br><br><a name="toggleSelection"></a><b>toggleSelection()</b> <a href="#Top"><span class="top">&nbsp;&nbsp;&nbsp;</span></a><br>
 Toggle on and off the current selection.
+
+<br><br><a name="updateMenus"></a><b>updateMenus(bInitial)</b> <a href="#Top"><span class="top">&nbsp;&nbsp;&nbsp;</span></a><br>
+Update the selection in the menus "Structure", "Chain", and "Custom". "bInitial" is a flag for the initial load.
+
+<br><br><a name="updateSeqWinForCurrentAtoms"></a><b>updateSeqWinForCurrentAtoms()</b> <a href="#Top"><span class="top">&nbsp;&nbsp;&nbsp;</span></a><br>
+Update the sequence window for the currently selected atoms.
+
 
 
 <br>
