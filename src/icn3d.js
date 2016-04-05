@@ -80,6 +80,7 @@ var iCn3D = function (id) {
 
     // picking
     this.picking = 1; // 0: no picking, 1: picking on atoms, 2: picking on residues, 3: picking on strand/helix/coil
+    this.highlightlevel = 1; // 1: highlight on atoms, 2: highlight on residues, 3: highlight on strand/helix/coil 4: highlight on chain 5: highlight on structure
 
     this.pickpair = false; // used for picking pair of atoms for label and distance
     this.pickedatomNum = 0;
@@ -87,9 +88,13 @@ var iCn3D = function (id) {
     this.pickedatom = undefined;
     this.pickedatom2 = undefined;
 
+    this.bShiftKey = false; // if true, union selections in sequence window or on 3D structure
+
     this.bStopRotate = false; // by default, do not stop the possible automatic rotation
     this.bCalphaOnly = false; // by default the input has both Calpha and O, used for drawing strands. If atoms have Calpha only, the orientation of the strands is random
     this.bSSOnly = false; // a flag to turn on when only helix and bricks are available to draw 3D diagram
+
+    this.bAllAtoms = true; // no need to adjust atom for strand style
 
     this.bConsiderNeighbors = false; // a flag to show surface considering the neighboring atoms or not
 
@@ -142,7 +147,7 @@ var iCn3D = function (id) {
         background: 'black',
         color: 'spectrum',
         sidechains: 'nothing',
-        proteins: 'cylinder & plate',
+        proteins: 'cylinder and plate',
         surface: 'nothing',
         wireframe: 'no',
         opacity: '0.8',
@@ -158,7 +163,7 @@ var iCn3D = function (id) {
         axis: 'no',
         fog: 'no',
         slab: 'no',
-        picking: 'no',
+        picking: 'residue',
         nucleotides: 'nucleotide cartoon'
     };
 
@@ -171,9 +176,23 @@ var iCn3D = function (id) {
         e.preventDefault();
     });
 
+    me.switchHighlightLevel();
+
     // key event has to use the document because it requires teh focus
     me.typetext = false;
+
+    //http://unixpapa.com/js/key.html
+    $(document).bind('keyup', function (e) {
+      if(e.keyCode === 16) { // shiftKey
+          me.bShiftKey = false;
+      }
+    });
+
     $(document).bind('keydown', function (e) {
+      if(e.shiftKey) {
+          me.bShiftKey = true;
+      }
+
       if (!me.controls) return;
 
       me.bStopRotate = true;
@@ -319,7 +338,7 @@ var iCn3D = function (id) {
 
           me.controls.update(para);
         }
-        else if(e.keyCode === 38 ) { // arrow up, translate up
+        else if(e.keyCode === 38 && !e.ctrlKey) { // arrow up, translate up
           e.preventDefault();
           var mouseChange = new THREE.Vector2(0,0);
 
@@ -331,7 +350,7 @@ var iCn3D = function (id) {
 
           me.controls.update(para);
         }
-        else if(e.keyCode === 40 ) { // arrow down, translate down
+        else if(e.keyCode === 40 && !e.ctrlKey) { // arrow down, translate down
           e.preventDefault();
           var mouseChange = new THREE.Vector2(0,0);
 
@@ -366,7 +385,9 @@ var iCn3D = function (id) {
         me.isDragging = true;
 
         // see ref http://soledadpenades.com/articles/three-js-tutorials/object-picking/
-        if(me.picking) {
+        if(me.picking && e.ctrlKey) {
+              me.highlightlevel = me.picking;
+
             me.mouse.x = ( (x - me.container.offset().left) / me.container.width() ) * 2 - 1;
             me.mouse.y = - ( (y - me.container.offset().top) / me.container.height() ) * 2 + 1;
 
@@ -988,6 +1009,8 @@ iCn3D.prototype = {
         this.displayAtoms = {}; // show selected atoms
         this.highlightAtoms = {}; // used to change color or dislay type for certain atoms
 
+        this.pickedAtomList = {}; // used to switch among different highlight levels
+
         this.prevHighlightObjects = [];
         this.prevSurfaces = [];
 
@@ -998,7 +1021,7 @@ iCn3D.prototype = {
 
         this.residueId2Name = {}; // structure_chain_resi -> one letter abbreviation
 
-        //this.moleculeTitle = "";
+        this.moleculeTitle = "";
 
         this.atoms = {};
         this.displayAtoms = {};
@@ -1019,10 +1042,11 @@ iCn3D.prototype = {
 
         this.doublebonds = {};
         this.triplebonds = {};
+        this.aromaticbonds = {};
 
         this.atomPrevColors = {};
 
-        this.style2atoms = {}; // style -> atom hash, 13 styles: ribbon, strand, cylinder & plate, nucleotide cartoon, phosphorus trace, schematic, c alpha trace, b factor tube, lines, stick, ball & stick, sphere, dot, nothing
+        this.style2atoms = {}; // style -> atom hash, 13 styles: ribbon, strand, cylinder and plate, nucleotide cartoon, phosphorus trace, schematic, c alpha trace, b factor tube, lines, stick, ball and stick, sphere, dot, nothing
         this.labels = {};     // hash of name -> a list of labels. Each label contains 'position', 'text', 'size', 'color', 'background'
                             // label name could be custom, residue, schmatic, distance
         this.lines = {};     // hash of name -> a list of solid or dashed lines. Each line contains 'position1', 'position2', 'color', and a boolean of 'dashed'
@@ -1037,7 +1061,7 @@ iCn3D.prototype = {
         this.rotateCountMax = 30;
     },
 
-    ReinitAfterLoad: function () {
+    reinitAfterLoad: function () {
         this.displayAtoms = this.cloneHash(this.atoms); // show selected atoms
         this.highlightAtoms = this.cloneHash(this.atoms); // used to change color or dislay type for certain atoms
 
@@ -1080,6 +1104,8 @@ iCn3D.prototype = {
         var prevRecord = '';
 
         var oriSerial2NewSerial = {};
+
+        var chainMissingResidueArray = {};
 
         for (var i in lines) {
             var line = lines[i];
@@ -1161,8 +1187,9 @@ iCn3D.prototype = {
 
                 this.hbondpoints.push(new THREE.Vector3(ligand_x, ligand_y, ligand_z));
                 this.hbondpoints.push(new THREE.Vector3(protein_x, protein_y, protein_z));
-            } else if (record === 'REMARK') { // from GLMol
+            } else if (record === 'REMARK') {
                  var type = parseInt(line.substr(7, 3));
+                 // from GLMol
                  if (type == 350 && line.substr(13, 5) == 'BIOMT') {
                     var n = parseInt(line[18]) - 1;
                     var m = parseInt(line.substr(21, 2));
@@ -1171,6 +1198,24 @@ iCn3D.prototype = {
                     this.biomtMatrices[m].elements[n + 4] = parseFloat(line.substr(34, 9));
                     this.biomtMatrices[m].elements[n + 8] = parseFloat(line.substr(44, 9));
                     this.biomtMatrices[m].elements[n + 12] = parseFloat(line.substr(54, 10));
+                 }
+                 // missing residues
+                 else if (type == 465 && line.substr(18, 1) == ' ' && line.substr(20, 1) == ' ' && line.substr(21, 1) != 'S') {
+                    var resn = line.substr(15, 3);
+                    var chain = line.substr(19, 1);
+                    var resi = parseInt(line.substr(21, 5));
+
+                    var structure = parseInt(line.substr(13, 1));
+                    if(line.substr(13, 1) == ' ') structure = 1;
+
+                    var chainNum = structure + '_' + chain;
+
+                    if(chainMissingResidueArray[chainNum] === undefined) chainMissingResidueArray[chainNum] = [];
+                    var resObject = {};
+                    resObject.resi = resi;
+                    resObject.name = this.residueName2Abbr(resn).toLowerCase();
+
+                    chainMissingResidueArray[chainNum].push(resObject);
                  }
             } else if (record === 'ENDMDL') {
                 ++moleculeNum;
@@ -1268,10 +1313,10 @@ iCn3D.prototype = {
                     secondaries = 'E';
                 }
                 else if(this.atoms[serial].ss === 'coil') {
-                    secondaries = 'C';
+                    secondaries = 'c';
                 }
                 else if(!this.atoms[serial].het && this.residueColors.hasOwnProperty(this.atoms[serial].resn.toUpperCase()) ) {
-                    secondaries = 'C';
+                    secondaries = 'c';
                 }
 
                 this.secondaries[residueNum] = secondaries;
@@ -1357,6 +1402,75 @@ iCn3D.prototype = {
 
                 //this.lastTerSerial = parseInt(line.substr(6, 5));
             }
+        }
+
+        // adjust sequences
+        for(var chainNum in this.chainsSeq) {
+            if(chainMissingResidueArray[chainNum] === undefined) continue;
+
+            var A = this.chainsSeq[chainNum];
+            var A2 = this.chainsAnno[chainNum][0];
+            var A3 = this.chainsAnno[chainNum][1];
+            var B = chainMissingResidueArray[chainNum];
+
+            var m = A.length;
+            var n = B.length;
+
+            var C = new Array(m + n);
+            var C2 = new Array(m + n);
+            var C3 = new Array(m + n);
+
+            // http://www.algolist.net/Algorithms/Merge/Sorted_arrays
+            // m - size of A
+            // n - size of B
+            // size of C array must be equal or greater than m + n
+              var i, j, k;
+              i = 0;
+              j = 0;
+              k = 0;
+              while (i < m && j < n) {
+                    if (A[i].resi <= B[j].resi) {
+                          C[k] = A[i];
+                          C2[k] = A2[i];
+                          C3[k] = A3[i];
+                          i++;
+                    } else {
+                          C[k] = B[j];
+                          if(B[j].resi % 10 === 0) {
+                              C2[k] = B[j].resi.toString();
+                          }
+                          else {
+                              C2[k] = '';
+                          }
+                          C3[k] = '-';
+                          j++;
+                    }
+                    k++;
+              }
+              if (i < m) {
+                    for (var p = i; p < m; p++) {
+                          C[k] = A[p];
+                          C2[k] = A2[p];
+                          C3[k] = A3[p];
+                          k++;
+                    }
+              } else {
+                    for (var p = j; p < n; p++) {
+                          C[k] = B[p];
+                          if(B[p].resi % 10 === 0) {
+                              C2[k] = B[p].resi.toString();
+                          }
+                          else {
+                              C2[k] = '';
+                          }
+                          C3[k] = '-';
+                          k++;
+                    }
+              }
+
+            this.chainsSeq[chainNum] = C;
+            this.chainsAnno[chainNum][0] = C2;
+            this.chainsAnno[chainNum][1] = C3;
         }
 
         // remove the reference
@@ -1465,27 +1579,39 @@ iCn3D.prototype = {
 
       switch(residueName) {
         case '  A':
-          //return 'nA';
           return 'A';
           break;
         case '  C':
-          //return 'nC';
           return 'C';
           break;
         case '  G':
-          //return 'nG';
           return 'G';
           break;
         case '  T':
-          //return 'nT';
           return 'T';
           break;
         case '  U':
-          //return 'nU';
           return 'U';
           break;
         case '  I':
-          //return 'nI';
+          return 'I';
+          break;
+        case ' DA':
+          return 'A';
+          break;
+        case ' DC':
+          return 'C';
+          break;
+        case ' DG':
+          return 'G';
+          break;
+        case ' DT':
+          return 'T';
+          break;
+        case ' DU':
+          return 'U';
+          break;
+        case ' DI':
           return 'I';
           break;
         case 'ALA':
@@ -1551,7 +1677,14 @@ iCn3D.prototype = {
         case 'SEC':
           return 'U';
           break;
-        case 'PYL':
+//        case 'PYL':
+//          return 'O';
+//          break;
+
+        case 'HOH':
+          return 'O';
+          break;
+        case 'WAT':
           return 'O';
           break;
 
@@ -1642,7 +1775,7 @@ iCn3D.prototype = {
             }
           var color = this.highlightColor;
 
-          mesh = new THREE.Mesh(this.sphereGeometry, new THREE.MeshPhongMaterial({ transparent: true, opacity: 0.5, metal: false, overdraw: this.overdraw, specular: this.fractionOfColor, shininess: 30, emissive: 0x000000, color: color }));
+          mesh = new THREE.Mesh(this.sphereGeometry, new THREE.MeshPhongMaterial({ transparent: true, opacity: 0.5, overdraw: this.overdraw, specular: this.fractionOfColor, shininess: 30, emissive: 0x000000, color: color }));
         }
         else if(bHighlight === 1) {
           mesh = new THREE.Mesh(this.sphereGeometry, this.matShader);
@@ -1650,7 +1783,7 @@ iCn3D.prototype = {
         else {
           var color = atom.color;
 
-          mesh = new THREE.Mesh(this.sphereGeometry, new THREE.MeshPhongMaterial({ metal: false, overdraw: this.overdraw, specular: this.fractionOfColor, shininess: 30, emissive: 0x000000, color: color }));
+          mesh = new THREE.Mesh(this.sphereGeometry, new THREE.MeshPhongMaterial({ overdraw: this.overdraw, specular: this.fractionOfColor, shininess: 30, emissive: 0x000000, color: color }));
         }
 
         mesh.scale.x = mesh.scale.y = mesh.scale.z = forceDefault ? defaultRadius : (this.vdwRadii[atom.elem] || defaultRadius) * (scale ? scale : 1);
@@ -1675,12 +1808,12 @@ iCn3D.prototype = {
         if(bHighlight) {
             if(color === undefined) color = this.highlightColor;
 
-              mesh = new THREE.Mesh(this.boxGeometry, new THREE.MeshPhongMaterial({ transparent: true, opacity: 0.5, metal: false, overdraw: this.overdraw, specular: this.fractionOfColor, shininess: 30, emissive: 0x000000, color: color }));
+              mesh = new THREE.Mesh(this.boxGeometry, new THREE.MeshPhongMaterial({ transparent: true, opacity: 0.5, overdraw: this.overdraw, specular: this.fractionOfColor, shininess: 30, emissive: 0x000000, color: color }));
         }
         else {
             if(color === undefined) color = atom.color;
 
-              mesh = new THREE.Mesh(this.boxGeometry, new THREE.MeshPhongMaterial({ metal: false, overdraw: this.overdraw, specular: this.fractionOfColor, shininess: 30, emissive: 0x000000, color: color }));
+              mesh = new THREE.Mesh(this.boxGeometry, new THREE.MeshPhongMaterial({ overdraw: this.overdraw, specular: this.fractionOfColor, shininess: 30, emissive: 0x000000, color: color }));
         }
 
         mesh.scale.x = mesh.scale.y = mesh.scale.z = forceDefault ? defaultRadius : (this.vdwRadii[atom.elem] || defaultRadius) * (scale ? scale : 1);
@@ -1701,7 +1834,7 @@ iCn3D.prototype = {
         var mesh;
 
         if(bHighlight === 2) {
-          mesh = new THREE.Mesh(this.cylinderGeometry, new THREE.MeshPhongMaterial({ transparent: true, opacity: 0.5, metal: false, overdraw: this.overdraw, specular: this.fractionOfColor, shininess: 30, emissive: 0x000000, color: color }));
+          mesh = new THREE.Mesh(this.cylinderGeometry, new THREE.MeshPhongMaterial({ transparent: true, opacity: 0.5, overdraw: this.overdraw, specular: this.fractionOfColor, shininess: 30, emissive: 0x000000, color: color }));
 
           radius *= 1.5;
         }
@@ -1710,7 +1843,7 @@ iCn3D.prototype = {
           //mesh = new THREE.Mesh(this.cylinderGeometry, this.matShader);
         }
         else {
-          mesh = new THREE.Mesh(this.cylinderGeometry, new THREE.MeshPhongMaterial({ metal: false, overdraw: this.overdraw, specular: this.fractionOfColor, shininess: 30, emissive: 0x000000, color: color }));
+          mesh = new THREE.Mesh(this.cylinderGeometry, new THREE.MeshPhongMaterial({ overdraw: this.overdraw, specular: this.fractionOfColor, shininess: 30, emissive: 0x000000, color: color }));
         }
 
         mesh.position.copy(p0).add(p1).multiplyScalar(0.5);
@@ -1761,8 +1894,9 @@ iCn3D.prototype = {
     },
 
     // modified from iview (http://istar.cse.cuhk.edu.hk/iview/)
-    createStickRepresentation: function (atoms, atomR, bondR, scale, bHighlight) {
+    createStickRepresentation: function (atoms, atomR, bondR, scale, bHighlight, bSchematic) {
         var me = this;
+        var factor = (bSchematic !== undefined && bSchematic) ? atomR / me.cylinderRadius : 1;
 
         if(bHighlight !== 2) {
             this.createRepresentationSub(atoms, function (atom0) {
@@ -1794,17 +1928,139 @@ iCn3D.prototype = {
                     var v0 = atom1.coord.clone();
                     v0.sub(atom0.coord);
 
-                    v0.cross(v1).normalize().multiplyScalar(0.2);
+                    v0.cross(v1).normalize().multiplyScalar(0.2 * factor);
 
                     if (atom0.color === atom1.color) {
-                        me.createCylinder(atom0.coord.clone().add(v0), atom1.coord.clone().add(v0), me.cylinderRadius * 0.3, atom0.color, bHighlight);
-                        me.createCylinder(atom0.coord.clone().sub(v0), atom1.coord.clone().sub(v0), me.cylinderRadius * 0.3, atom0.color, bHighlight);
+                        me.createCylinder(atom0.coord.clone().add(v0), atom1.coord.clone().add(v0), me.cylinderRadius * factor * 0.3, atom0.color, bHighlight);
+                        me.createCylinder(atom0.coord.clone().sub(v0), atom1.coord.clone().sub(v0), me.cylinderRadius * factor * 0.3, atom0.color, bHighlight);
                     } else {
-                        me.createCylinder(atom0.coord.clone().add(v0), mp.clone().add(v0), me.cylinderRadius * 0.3, atom0.color, bHighlight);
-                        me.createCylinder(atom1.coord.clone().add(v0), mp.clone().add(v0), me.cylinderRadius * 0.3, atom1.color, bHighlight);
+                        me.createCylinder(atom0.coord.clone().add(v0), mp.clone().add(v0), me.cylinderRadius * factor * 0.3, atom0.color, bHighlight);
+                        me.createCylinder(atom1.coord.clone().add(v0), mp.clone().add(v0), me.cylinderRadius * factor * 0.3, atom1.color, bHighlight);
 
-                        me.createCylinder(atom0.coord.clone().sub(v0), mp.clone().sub(v0), me.cylinderRadius * 0.3, atom0.color, bHighlight);
-                        me.createCylinder(atom1.coord.clone().sub(v0), mp.clone().sub(v0), me.cylinderRadius * 0.3, atom1.color, bHighlight);
+                        me.createCylinder(atom0.coord.clone().sub(v0), mp.clone().sub(v0), me.cylinderRadius * factor * 0.3, atom0.color, bHighlight);
+                        me.createCylinder(atom1.coord.clone().sub(v0), mp.clone().sub(v0), me.cylinderRadius * factor * 0.3, atom1.color, bHighlight);
+                    }
+                }
+                else if(me.aromaticbonds.hasOwnProperty(pair)) { // show aromatic bond
+                    var a0, a1, a2;
+                    if(atom0.bonds.length > atom1.bonds.length) {
+                        a0 = atom0.serial;
+                        a1 = atom0.bonds[0];
+                        a2 = atom0.bonds[1];
+                    }
+                    else {
+                        a0 = atom1.serial;
+                        a1 = atom1.bonds[0];
+                        a2 = atom1.bonds[1];
+                    }
+
+                    var v1 = me.atoms[a0].coord.clone();
+                    v1.sub(me.atoms[a1].coord);
+                    var v2 = me.atoms[a0].coord.clone();
+                    v2.sub(me.atoms[a2].coord);
+
+                    v1.cross(v2);
+
+                    var v0 = atom1.coord.clone();
+                    v0.sub(atom0.coord);
+
+                    v0.cross(v1).normalize().multiplyScalar(0.2 * factor);
+
+                    // find an aromatic neighbor
+                    var aromaticNeighbor = 0;
+                    for(var i = 0, il = atom0.bondOrder.length; i < il; ++i) {
+                        if(atom0.bondOrder[i] === '1.5' && atom0.bonds[i] !== atom1.serial) {
+                            aromaticNeighbor = atom0.bonds[i];
+                        }
+                    }
+
+                    var dashed = "add";
+                    if(aromaticNeighbor === 0 ) { // no neighbor found, atom order does not matter
+                        dashed = "add";
+                    }
+                    else {
+                        // calculate the angle between atom1, atom0add, atomNeighbor and the angle atom1, atom0sub, atomNeighbor
+                        var atom0add = atom0.coord.clone().add(v0);
+                        var atom0sub = atom0.coord.clone().sub(v0);
+
+                        var a = atom1.coord.clone().sub(atom0add).normalize();
+                        var b = me.atoms[aromaticNeighbor].coord.clone().sub(atom0add).normalize();
+
+                        var c = atom1.coord.clone().sub(atom0sub).normalize();
+                        var d = me.atoms[aromaticNeighbor].coord.clone().sub(atom0sub).normalize();
+
+                        var angleadd = Math.acos(a.dot(b));
+                        var anglesub = Math.acos(c.dot(d));
+
+                        if(angleadd < anglesub) {
+                            dashed = 'sub';
+                        }
+                        else {
+                            dashed = 'add';
+                        }
+                    }
+
+                    if (atom0.color === atom1.color) {
+                        //me.createCylinder(atom0.coord.clone().add(v0), atom1.coord.clone().add(v0), me.cylinderRadius * 0.3, atom0.color, bHighlight);
+                        //me.createCylinder(atom0.coord.clone().sub(v0), atom1.coord.clone().sub(v0), me.cylinderRadius * 0.3, atom0.color, bHighlight);
+
+                        var base, step;
+                        if(dashed === 'add') {
+                            me.createCylinder(atom0.coord.clone().sub(v0), atom1.coord.clone().sub(v0), me.cylinderRadius * factor * 0.3, atom0.color, bHighlight);
+
+                            base = atom0.coord.clone().add(v0);
+                            step = atom1.coord.clone().add(v0).sub(base).multiplyScalar(1.0/11);
+                        }
+                        else {
+                            me.createCylinder(atom0.coord.clone().add(v0), atom1.coord.clone().add(v0), me.cylinderRadius * factor * 0.3, atom0.color, bHighlight);
+
+                            base = atom0.coord.clone().sub(v0);
+                            step = atom1.coord.clone().sub(v0).sub(base).multiplyScalar(1.0/11);
+                        }
+
+                        for(var i = 0; i <= 10; ++i) {
+                            if(i % 2 == 0) {
+                                var pos1 = base.clone().add(step.clone().multiplyScalar(i));
+                                var pos2 = base.clone().add(step.clone().multiplyScalar(i + 1));
+                                me.createCylinder(pos1, pos2, me.cylinderRadius * factor * 0.3, atom0.color, bHighlight);
+                            }
+                        }
+
+                    } else {
+                        //me.createCylinder(atom0.coord.clone().add(v0), mp.clone().add(v0), me.cylinderRadius * 0.3, atom0.color, bHighlight);
+                        //me.createCylinder(atom1.coord.clone().add(v0), mp.clone().add(v0), me.cylinderRadius * 0.3, atom1.color, bHighlight);
+
+                        //me.createCylinder(atom0.coord.clone().sub(v0), mp.clone().sub(v0), me.cylinderRadius * 0.3, atom0.color, bHighlight);
+                        //me.createCylinder(atom1.coord.clone().sub(v0), mp.clone().sub(v0), me.cylinderRadius * 0.3, atom1.color, bHighlight);
+
+                        var base, step;
+                        if(dashed === 'add') {
+                            me.createCylinder(atom0.coord.clone().sub(v0), mp.clone().sub(v0), me.cylinderRadius * factor * 0.3, atom0.color, bHighlight);
+                            me.createCylinder(atom1.coord.clone().sub(v0), mp.clone().sub(v0), me.cylinderRadius * factor * 0.3, atom1.color, bHighlight);
+
+                            base = atom0.coord.clone().add(v0);
+                            step = atom1.coord.clone().add(v0).sub(base).multiplyScalar(1.0/11);
+                        }
+                        else {
+                            me.createCylinder(atom0.coord.clone().add(v0), mp.clone().add(v0), me.cylinderRadius * factor * 0.3, atom0.color, bHighlight);
+                            me.createCylinder(atom1.coord.clone().add(v0), mp.clone().add(v0), me.cylinderRadius * factor * 0.3, atom1.color, bHighlight);
+
+                            base = atom0.coord.clone().sub(v0);
+                            step = atom1.coord.clone().sub(v0).sub(base).multiplyScalar(1.0/11);
+                        }
+
+                        for(var i = 0; i <= 10; ++i) {
+                            if(i % 2 == 0) {
+                                var pos1 = base.clone().add(step.clone().multiplyScalar(i));
+                                var pos2 = base.clone().add(step.clone().multiplyScalar(i + 1));
+                                if(i < 5) {
+                                    me.createCylinder(pos1, pos2, me.cylinderRadius * factor * 0.3, atom0.color, bHighlight);
+                                }
+                                else {
+                                    me.createCylinder(pos1, pos2, me.cylinderRadius * factor * 0.3, atom1.color, bHighlight);
+                                }
+                            }
+                        }
                     }
                 }
                 else if(me.triplebonds.hasOwnProperty(pair)) { // show triple bond
@@ -1813,21 +2069,21 @@ iCn3D.prototype = {
                     v.sub(atom0.coord);
 
                     var c = random.clone();
-                    c.cross(v).normalize().multiplyScalar(0.3);
+                    c.cross(v).normalize().multiplyScalar(0.3 * factor);
 
                     if (atom0.color === atom1.color) {
-                        me.createCylinder(atom0.coord, atom1.coord, me.cylinderRadius * 0.2, atom0.color, bHighlight);
-                        me.createCylinder(atom0.coord.clone().add(c), atom1.coord.clone().add(c), me.cylinderRadius * 0.2, atom0.color, bHighlight);
-                        me.createCylinder(atom0.coord.clone().sub(c), atom1.coord.clone().sub(c), me.cylinderRadius * 0.2, atom0.color, bHighlight);
+                        me.createCylinder(atom0.coord, atom1.coord, me.cylinderRadius * factor * 0.2, atom0.color, bHighlight);
+                        me.createCylinder(atom0.coord.clone().add(c), atom1.coord.clone().add(c), me.cylinderRadius * factor * 0.2, atom0.color, bHighlight);
+                        me.createCylinder(atom0.coord.clone().sub(c), atom1.coord.clone().sub(c), me.cylinderRadius * factor * 0.2, atom0.color, bHighlight);
                     } else {
-                        me.createCylinder(atom0.coord, mp, me.cylinderRadius * 0.2, atom0.color, bHighlight);
-                        me.createCylinder(atom1.coord, mp, me.cylinderRadius * 0.2, atom1.color, bHighlight);
+                        me.createCylinder(atom0.coord, mp, me.cylinderRadius * factor * 0.2, atom0.color, bHighlight);
+                        me.createCylinder(atom1.coord, mp, me.cylinderRadius * factor * 0.2, atom1.color, bHighlight);
 
-                        me.createCylinder(atom0.coord.clone().add(c), mp.clone().add(c), me.cylinderRadius * 0.2, atom0.color, bHighlight);
-                        me.createCylinder(atom1.coord.clone().add(c), mp.clone().add(c), me.cylinderRadius * 0.2, atom1.color, bHighlight);
+                        me.createCylinder(atom0.coord.clone().add(c), mp.clone().add(c), me.cylinderRadius * factor * 0.2, atom0.color, bHighlight);
+                        me.createCylinder(atom1.coord.clone().add(c), mp.clone().add(c), me.cylinderRadius * factor * 0.2, atom1.color, bHighlight);
 
-                        me.createCylinder(atom0.coord.clone().sub(c), mp.clone().sub(c), me.cylinderRadius * 0.2, atom0.color, bHighlight);
-                        me.createCylinder(atom1.coord.clone().sub(c), mp.clone().sub(c), me.cylinderRadius * 0.2, atom1.color, bHighlight);
+                        me.createCylinder(atom0.coord.clone().sub(c), mp.clone().sub(c), me.cylinderRadius * factor * 0.2, atom0.color, bHighlight);
+                        me.createCylinder(atom1.coord.clone().sub(c), mp.clone().sub(c), me.cylinderRadius * factor * 0.2, atom1.color, bHighlight);
                     }
                 }
                 else {
@@ -1968,6 +2224,10 @@ iCn3D.prototype = {
             pos.push(points.length - 1);
         }
 
+        savedPoints = [];
+        savedPos = [];
+        points = [];
+
         points_positions = [];
 
         points_positions.push(ret);
@@ -1983,6 +2243,9 @@ iCn3D.prototype = {
         positions.push(positionIndex);
 
         this.prepareStrand(divPoints, positions, width, colors, div, undefined, bHighlight, bRibbon, num, pointsCA, prevCOArray, false, bShowArray);
+
+        divPoints = [];
+        positions = [];
     },
 
     // modified from iview (http://istar.cse.cuhk.edu.hk/iview/)
@@ -1998,19 +2261,10 @@ iCn3D.prototype = {
         }
         if (points.length === 0) return;
 
-        var geo = new THREE.Geometry();
-
-        if(bHighlight === 2 && bRibbon) {
-            for (var i = 0, divInv = 1 / div; i < points.length; ++i) {
-                // shift the highlight a little bit to avoid the overlap with ribbon
-                points[i].addScalar(0.6); // this.thickness is 0.4
-                geo.vertices.push(points[i]);
-                geo.colors.push(new THREE.Color(colors[i === 0 ? 0 : Math.round((i - 1) * divInv)]));
-            }
-        }
-        else if(bHighlight === 1) {
+        if(bHighlight === 1) {
             var radius = this.coilWidth / 2;
-            var radiusSegments = 32;
+            //var radiusSegments = 8;
+            var radiusSegments = 4; // save memory
             var closed = false;
 
             if(points.length > 1) {
@@ -2035,6 +2289,8 @@ iCn3D.prototype = {
 
                             this.prevHighlightObjects.push(mesh);
 
+                            geometry0 = null;
+
                             currPoints = [];
                         }
 
@@ -2042,6 +2298,8 @@ iCn3D.prototype = {
 
                         prevPos = currPos;
                     }
+
+                    currPoints = [];
                 }
                 else {
                     var geometry0 = new THREE.TubeGeometry(
@@ -2058,24 +2316,40 @@ iCn3D.prototype = {
                     this.mdl.add(mesh);
 
                     this.prevHighlightObjects.push(mesh);
+
+                    geometry0 = null;
                 }
             }
         }
         else {
-            for (var i = 0, divInv = 1 / div; i < points.length; ++i) {
-                geo.vertices.push(points[i]);
-                geo.colors.push(new THREE.Color(colors[i === 0 ? 0 : Math.round((i - 1) * divInv)]));
+            var geo = new THREE.Geometry();
+
+            if(bHighlight === 2 && bRibbon) {
+                for (var i = 0, divInv = 1 / div; i < points.length; ++i) {
+                    // shift the highlight a little bit to avoid the overlap with ribbon
+                    points[i].addScalar(0.6); // this.thickness is 0.4
+                    geo.vertices.push(points[i]);
+                    geo.colors.push(new THREE.Color(colors[i === 0 ? 0 : Math.round((i - 1) * divInv)]));
+                }
+            }
+            else {
+                for (var i = 0, divInv = 1 / div; i < points.length; ++i) {
+                    geo.vertices.push(points[i]);
+                    geo.colors.push(new THREE.Color(colors[i === 0 ? 0 : Math.round((i - 1) * divInv)]));
+                }
+            }
+
+            var line = new THREE.Line(geo, new THREE.LineBasicMaterial({ linewidth: width, vertexColors: true }), THREE.LineStrip);
+            this.mdl.add(line);
+            if(bHighlight === 2) {
+                this.prevHighlightObjects.push(line);
+            }
+            else {
+                this.objects.push(line);
             }
         }
 
-        var line = new THREE.Line(geo, new THREE.LineBasicMaterial({ linewidth: width, vertexColors: true }), THREE.LineStrip);
-        this.mdl.add(line);
-        if(bHighlight === 2) {
-            this.prevHighlightObjects.push(line);
-        }
-        else {
-            this.objects.push(line);
-        }
+        points = null;
     },
 
     createLines: function(lines) { // show extra lines, not used for picking, so no this.objects
@@ -2228,7 +2502,15 @@ iCn3D.prototype = {
         }
 
         // draw the arrow
-        for(var i = 0, il = positions.length; i < il; ++i) points[i] = [];
+        //for(var i = 0, il = positions.length; i < il; ++i) points[i] = [];
+
+        for(var i in points) {
+            for(var j = 0, jl = points[i].length; j < jl; ++j) {
+                points[i][j] = null;
+            }
+            points[i] = [];
+        }
+
         colorsTmp = [];
 
         posIndex = [];
@@ -2265,6 +2547,8 @@ iCn3D.prototype = {
             //}
         }
 
+        pointsCASmooth = [];
+
         colorsTmp.push(colors[colors.length - 2]);
         colorsTmp.push(colors[colors.length - 1]);
 
@@ -2274,6 +2558,15 @@ iCn3D.prototype = {
         else {
             this.createCurveSub(points[0], width, colorsTmp, div, bHighlight, bRibbon, true, undefined, posIndex);
         }
+
+        for(var i in points) {
+            for(var j = 0, jl = points[i].length; j < jl; ++j) {
+                points[i][j] = null;
+            }
+            points[i] = [];
+        }
+
+        points = {};
     },
 
     createStripArrow: function (p0, p1, colors, div, thickness, bHighlight, num, start, end, pointsCA, prevCOArray, bShowArray) {
@@ -2285,6 +2578,9 @@ iCn3D.prototype = {
         positions.push(end);
 
         this.prepareStrand(divPoints, positions, undefined, colors, div, thickness, bHighlight, undefined, num, pointsCA, prevCOArray, true, bShowArray);
+
+        divPoints = [];
+        positions = [];
     },
 
     // modified from iview (http://istar.cse.cuhk.edu.hk/iview/)
@@ -2297,58 +2593,12 @@ iCn3D.prototype = {
         }
         if (p0.length < 2) return;
 
-        var geo = new THREE.Geometry();
-        var vs = geo.vertices, fs = geo.faces;
-        var axis, p0v, p1v, a0v, a1v;
-        for (var i = 0, lim = p0.length; i < lim; ++i) {
-            vs.push(p0v = p0[i]); // 0
-            vs.push(p0v); // 1
-            vs.push(p1v = p1[i]); // 2
-            vs.push(p1v); // 3
-            if (i < lim - 1) {
-                axis = p1[i].clone().sub(p0[i]).cross(p0[i + 1].clone().sub(p0[i])).normalize().multiplyScalar(thickness);
-            }
-            vs.push(a0v = p0[i].clone().add(axis)); // 4
-            vs.push(a0v); // 5
-            vs.push(a1v = p1[i].clone().add(axis)); // 6
-            vs.push(a1v); // 7
-        }
-        var faces = [[0, 2, -6, -8], [-4, -2, 6, 4], [7, 3, -5, -1], [-3, -7, 1, 5]];
-
-        for (var i = 1, lim = p0.length, divInv = 1 / div; i < lim; ++i) {
-            var offset = 8 * i;
-            var color = new THREE.Color(colors[Math.round((i - 1) * divInv)]);
-            for (var j = 0; j < 4; ++j) {
-                fs.push(new THREE.Face3(offset + faces[j][0], offset + faces[j][1], offset + faces[j][2], undefined, color));
-                fs.push(new THREE.Face3(offset + faces[j][3], offset + faces[j][0], offset + faces[j][2], undefined, color));
-            }
-        }
-        var vsize = vs.length - 8; // Cap
-        for (var i = 0; i < 4; ++i) {
-            vs.push(vs[i * 2]);
-            vs.push(vs[vsize + i * 2]);
-        };
-        vsize += 8;
-        fs.push(new THREE.Face3(vsize, vsize + 2, vsize + 6, undefined, fs[0].color));
-        fs.push(new THREE.Face3(vsize + 4, vsize, vsize + 6, undefined, fs[0].color));
-        fs.push(new THREE.Face3(vsize + 1, vsize + 5, vsize + 7, undefined, fs[fs.length - 3].color));
-        fs.push(new THREE.Face3(vsize + 3, vsize + 1, vsize + 7, undefined, fs[fs.length - 3].color));
-        geo.computeFaceNormals();
-        geo.computeVertexNormals(false);
-
-        var mesh;
-
-        if(bHighlight === 2) {
-          mesh = new THREE.Mesh(geo, new THREE.MeshPhongMaterial({ transparent: true, opacity: 0.5, metal: false, overdraw: this.overdraw, specular: this.fractionOfColor, shininess: 30, emissive: 0x000000, vertexColors: THREE.FaceColors, side: THREE.DoubleSide }));
-
-          this.mdl.add(mesh);
-          this.prevHighlightObjects.push(mesh);
-        }
-        else if(bHighlight === 1) {
+        if(bHighlight === 1) {
             //mesh = new THREE.Mesh(geo, this.matShader);
 
             var radius = this.coilWidth / 2;
-            var radiusSegments = 32;
+            //var radiusSegments = 8;
+            var radiusSegments = 4; // save memory
             var closed = false;
 
             if(positions !== undefined) {
@@ -2373,6 +2623,8 @@ iCn3D.prototype = {
 
                         this.prevHighlightObjects.push(mesh);
 
+                        geometry0 = null;
+
                         // second tube
                         var geometry1 = new THREE.TubeGeometry(
                             new THREE.SplineCurve3(currP1), // path
@@ -2387,6 +2639,8 @@ iCn3D.prototype = {
 
                         this.prevHighlightObjects.push(mesh);
 
+                        geometry1 = null;
+
                         currP0 = [];
                         currP1 = [];
                     }
@@ -2396,6 +2650,9 @@ iCn3D.prototype = {
 
                     prevPos = currPos;
                 }
+
+                currP0 = [];
+                currP1 = [];
             }
             else {
                 // first tube
@@ -2412,6 +2669,8 @@ iCn3D.prototype = {
 
                 this.prevHighlightObjects.push(mesh);
 
+                geometry0 = null;
+
                 // second tube
                 var geometry1 = new THREE.TubeGeometry(
                     new THREE.SplineCurve3(p1), // path
@@ -2425,51 +2684,68 @@ iCn3D.prototype = {
                 this.mdl.add(mesh);
 
                 this.prevHighlightObjects.push(mesh);
+
+                geometry1 = null;
             }
         }
         else {
-          mesh = new THREE.Mesh(geo, new THREE.MeshPhongMaterial({ metal: false, overdraw: this.overdraw, specular: this.fractionOfColor, shininess: 30, emissive: 0x000000, vertexColors: THREE.FaceColors, side: THREE.DoubleSide }));
+            var geo = new THREE.Geometry();
+            var vs = geo.vertices, fs = geo.faces;
+            var axis, p0v, p1v, a0v, a1v;
+            for (var i = 0, lim = p0.length; i < lim; ++i) {
+                vs.push(p0v = p0[i]); // 0
+                vs.push(p0v); // 1
+                vs.push(p1v = p1[i]); // 2
+                vs.push(p1v); // 3
+                if (i < lim - 1) {
+                    axis = p1[i].clone().sub(p0[i]).cross(p0[i + 1].clone().sub(p0[i])).normalize().multiplyScalar(thickness);
+                }
+                vs.push(a0v = p0[i].clone().add(axis)); // 4
+                vs.push(a0v); // 5
+                vs.push(a1v = p1[i].clone().add(axis)); // 6
+                vs.push(a1v); // 7
+            }
+            var faces = [[0, 2, -6, -8], [-4, -2, 6, 4], [7, 3, -5, -1], [-3, -7, 1, 5]];
 
-          this.mdl.add(mesh);
-          this.objects.push(mesh);
+            for (var i = 1, lim = p0.length, divInv = 1 / div; i < lim; ++i) {
+                var offset = 8 * i;
+                var color = new THREE.Color(colors[Math.round((i - 1) * divInv)]);
+                for (var j = 0; j < 4; ++j) {
+                    fs.push(new THREE.Face3(offset + faces[j][0], offset + faces[j][1], offset + faces[j][2], undefined, color));
+                    fs.push(new THREE.Face3(offset + faces[j][3], offset + faces[j][0], offset + faces[j][2], undefined, color));
+                }
+            }
+            var vsize = vs.length - 8; // Cap
+            for (var i = 0; i < 4; ++i) {
+                vs.push(vs[i * 2]);
+                vs.push(vs[vsize + i * 2]);
+            };
+            vsize += 8;
+            fs.push(new THREE.Face3(vsize, vsize + 2, vsize + 6, undefined, fs[0].color));
+            fs.push(new THREE.Face3(vsize + 4, vsize, vsize + 6, undefined, fs[0].color));
+            fs.push(new THREE.Face3(vsize + 1, vsize + 5, vsize + 7, undefined, fs[fs.length - 3].color));
+            fs.push(new THREE.Face3(vsize + 3, vsize + 1, vsize + 7, undefined, fs[fs.length - 3].color));
+            geo.computeFaceNormals();
+            geo.computeVertexNormals(false);
+
+            var mesh;
+
+            if(bHighlight === 2) {
+              mesh = new THREE.Mesh(geo, new THREE.MeshPhongMaterial({ transparent: true, opacity: 0.5, overdraw: this.overdraw, specular: this.fractionOfColor, shininess: 30, emissive: 0x000000, vertexColors: THREE.FaceColors, side: THREE.DoubleSide }));
+
+              this.mdl.add(mesh);
+              this.prevHighlightObjects.push(mesh);
+            }
+            else {
+              mesh = new THREE.Mesh(geo, new THREE.MeshPhongMaterial({ overdraw: this.overdraw, specular: this.fractionOfColor, shininess: 30, emissive: 0x000000, vertexColors: THREE.FaceColors, side: THREE.DoubleSide }));
+
+              this.mdl.add(mesh);
+              this.objects.push(mesh);
+            }
         }
-    },
 
-    createBrick: function (brickArray, color) {
-        var geo = new THREE.Geometry();
-
-        // https://www.packtpub.com/books/content/working-basic-components-make-threejs-scene
-        // https://developer.mozilla.org/en-US/docs/Web/API/WebGL_API/Tutorial/Creating_3D_objects_using_WebGL
-        for (var i = 0, lim = brickArray.length; i < lim; ++i) {
-            // brickArray: 000, 001, 010, 011, 100, 101, 110, 111
-            geo.vertices.push(new THREE.Vector3(brickArray[i][0], brickArray[i][1], brickArray[i][2]));
-        }
-
-        geo.faces = [
-            new THREE.Face3(1,5,7, undefined, color),
-            new THREE.Face3(1,7,3, undefined, color),
-            new THREE.Face3(0,2,6, undefined, color),
-            new THREE.Face3(0,6,4, undefined, color),
-            new THREE.Face3(2,3,7, undefined, color),
-            new THREE.Face3(2,7,6, undefined, color),
-            new THREE.Face3(0,4,5, undefined, color),
-            new THREE.Face3(0,5,1, undefined, color),
-            new THREE.Face3(4,6,7, undefined, color),
-            new THREE.Face3(4,7,5, undefined, color),
-            new THREE.Face3(0,1,3, undefined, color),
-            new THREE.Face3(0,3,2, undefined, color)
-
-        ];
-
-        geo.computeFaceNormals();
-        geo.computeVertexNormals(false);
-
-        var mesh;
-
-        mesh = new THREE.Mesh(geo, new THREE.MeshPhongMaterial({ metal: false, overdraw: this.overdraw, specular: this.fractionOfColor, shininess: 30, emissive: 0x000000, vertexColors: THREE.FaceColors, side: THREE.DoubleSide }));
-
-        this.mdl.add(mesh);
-        this.objects.push(mesh);
+        p0 = null;
+        p1 = null;
     },
 
     getFirstAtomObj: function(atomsHash) {
@@ -2494,7 +2770,7 @@ iCn3D.prototype = {
         // include the whole sheet or helix when highlighting
         var atomsAdjust = {};
 
-        if(bHighlight === 1 || bHighlight === 2) {
+        if( (bHighlight === 1 || bHighlight === 2) && !this.bAllAtoms) {
             var currChain, currResi, currAtom, prevChain, prevResi, prevAtom;
             var firstAtom, lastAtom;
             var index = 0, length = Object.keys(atoms).length;
@@ -2628,7 +2904,7 @@ iCn3D.prototype = {
         var pointsCA = [];
         var prevCOArray = [];
         var bShowArray = [];
-        var colors = [], colorsArrow = [];
+        var colors = [];
         var currentChain, currentResi, currentCA = null, currentO = null, currentColor = null, prevCoorCA = null, prevCoorO = null, prevColor = null;
         var prevCO = null, ss = null, ssend = false, atomid = null, prevAtomid = null, prevResi = null;
         var strandWidth, bSheetSegment = false, bHelixSegment = false;
@@ -2659,10 +2935,10 @@ iCn3D.prototype = {
           }
         //}
 
-        var atomsObj = this.hash2Atoms(atomsAdjust); // when highlight, draw whole beta sheet and use bShowArray to show the highlight part
+        // when highlight, draw whole beta sheet and use bShowArray to show the highlight part
         var residueHash = {};
-        for(var i in atomsObj) {
-            var atom = atomsObj[i];
+        for(var i in atomsAdjust) {
+            var atom = atomsAdjust[i];
 
             residueid = atom.structure + '_' + atom.chain + '_' + atom.resi;
             residueHash[residueid] = 1;
@@ -2682,13 +2958,16 @@ iCn3D.prototype = {
                             tubeAtoms[i] = atom;
                         }
 
-                        currentCA = atom.coord.clone();
+                        //currentCA = atom.coord.clone();
+                        currentCA = atom.coord;
                         currentColor = atom.color;
                     }
 
                     if (atom.name === 'O' || (this.bCalphaOnly && atom.name === 'CA')) {
-                        if(atom.name === 'O') currentO = atom.coord.clone();
-
+                        if(atom.name === 'O') {
+                            //currentO = atom.coord.clone();
+                            currentO = atom.coord;
+                        }
                         // smoothen each coil, helix and sheet separately. The joint residue has to be included both in the previous and next segment
                         var bSameChain = true;
                         if (currentChain !== atom.chain || currentResi + 1 !== atom.resi) {
@@ -2861,6 +3140,7 @@ iCn3D.prototype = {
                             }
                             //var points = {};
                             for (var k = 0; k < num; ++k) points[k] = [];
+
                             colors = [];
                             pointsCA = [];
                             prevCOArray = [];
@@ -2921,6 +3201,9 @@ iCn3D.prototype = {
 
         //if(fill) this.createTube(tubeAtoms, 'CA', 0.3, bHighlight);
         this.createTube(tubeAtoms, 'CA', 0.3, bHighlight);
+
+        tubeAtoms = {};
+        points = {};
     },
 
     createStrandBrick: function (brick, color, thickness, bHighlight) {
@@ -3021,7 +3304,7 @@ iCn3D.prototype = {
 
         var mesh;
         if(bHighlight === 2) {
-          mesh = new THREE.Mesh(geo, new THREE.MeshPhongMaterial({ transparent: true, opacity: 0.5, metal: false, overdraw: this.overdraw, specular: this.fractionOfColor, shininess: 30, emissive: 0x000000, vertexColors: THREE.FaceColors, side: THREE.DoubleSide }));
+          mesh = new THREE.Mesh(geo, new THREE.MeshPhongMaterial({ transparent: true, opacity: 0.5, overdraw: this.overdraw, specular: this.fractionOfColor, shininess: 30, emissive: 0x000000, vertexColors: THREE.FaceColors, side: THREE.DoubleSide }));
         }
         else if(bHighlight === 1) {
           mesh = new THREE.Mesh(geo, this.matShader);
@@ -3030,7 +3313,7 @@ iCn3D.prototype = {
           //mesh.quaternion = this.quaternion;
         }
         else {
-          mesh = new THREE.Mesh(geo, new THREE.MeshPhongMaterial({ metal: false, overdraw: this.overdraw, specular: this.fractionOfColor, shininess: 30, emissive: 0x000000, vertexColors: THREE.FaceColors, side: THREE.DoubleSide }));
+          mesh = new THREE.Mesh(geo, new THREE.MeshPhongMaterial({ overdraw: this.overdraw, specular: this.fractionOfColor, shininess: 30, emissive: 0x000000, vertexColors: THREE.FaceColors, side: THREE.DoubleSide }));
         }
 
         this.mdl.add(mesh);
@@ -3202,7 +3485,7 @@ iCn3D.prototype = {
              }
              start = null; end = null;
           }
-          if (atom.name === 'O3\'') start = atom;
+          if (atom.name === 'O3\'' || atom.name === 'O3*') start = atom;
           if (atom.resn === '  A' || atom.resn === '  G' || atom.resn === ' DA' || atom.resn === ' DG') {
              if (atom.name === 'N1')  end = atom; //  N1(AG), N3(CTU)
           } else if (atom.name === 'N3') {
@@ -3240,8 +3523,8 @@ iCn3D.prototype = {
           var atom = atomlist[i];
           if (atom === undefined) continue;
 
-          if ((atom.name === 'O3\'' || atom.name === 'OP2') && !atom.het) {
-             if (atom.name === 'O3\'') { // to connect 3' end. FIXME: better way to do?
+          if ((atom.name === 'O3\'' || atom.name === 'OP2' || atom.name === 'O3*' || atom.name === 'O2P') && !atom.het) {
+             if (atom.name === 'O3\'' || atom.name === 'O3*') { // to connect 3' end. FIXME: better way to do?
                 if (currentChain !== atom.chain || currentResi + 1 !== atom.resi) {
                    if (currentO3 && prevOO) {
                       for (j = 0; j < num; j++) {
@@ -3267,7 +3550,8 @@ iCn3D.prototype = {
                     colors.push(atom.color);
                 }
 
-             } else { // OP2
+             }
+             else if (atom.name === 'OP2' || atom.name === 'O2P') {
                 if (!currentO3) {prevOO = null; continue;} // for 5' phosphate (e.g. 3QX3)
                 var O = new THREE.Vector3(atom.coord.x, atom.coord.y, atom.coord.z);
                 O.sub(currentO3);
@@ -3286,6 +3570,7 @@ iCn3D.prototype = {
              }
           }
        }
+
        if (currentO3 && prevOO) {
           for (j = 0; j < num; j++) {
              var delta = -1 + 2 / (num - 1) * j;
@@ -3348,6 +3633,7 @@ iCn3D.prototype = {
     // new: http://stackoverflow.com/questions/23514274/three-js-2d-text-sprite-labels
     // old: http://stemkoski.github.io/Three.js/Sprite-Text-Labels.html
     makeTextSprite: function ( message, parameters ) {
+
         if ( parameters === undefined ) parameters = {};
         var fontface = parameters.hasOwnProperty("fontface") ? parameters["fontface"] : "Arial";
         var fontsize = parameters.hasOwnProperty("fontsize") ? parameters["fontsize"] : 18;
@@ -3358,6 +3644,8 @@ iCn3D.prototype = {
         var bSchematic = false;
         if(parameters.hasOwnProperty("bSchematic") &&  parameters["bSchematic"]) {
             bSchematic = true;
+
+            fontsize = 40;
         }
 
         var backgroundColor, borderColor, borderThickness;
@@ -3381,27 +3669,39 @@ iCn3D.prototype = {
         var canvas = document.createElement('canvas');
 
         var context = canvas.getContext('2d');
+
         context.font = "Bold " + fontsize + "px " + fontface;
 
         var metrics = context.measureText( message );
+
         var textWidth = metrics.width;
 
         var width = textWidth + 2*borderThickness;
         var height = fontsize + 2*borderThickness;
+
         if(bSchematic) {
             if(width > height) {
                 height = width;
             }
             else {
-                width = height
+                width = height;
             }
         }
-        canvas.width = width;
-        canvas.height = height;
+
+        var textLengthThreshold = 6;
+        var factor = 15 * this.maxD / 100;
+
+        // define width and height will make long text be squashed, but make the label to appear at the exact location
+        if(bSchematic || message.length <= textLengthThreshold) {
+            canvas.width = width;
+            canvas.height = height;
+
+            factor = 3 * this.maxD / 100;
+        }
+
+        context.clearRect(0, 0, width, height);
 
         var radius = context.measureText( "M" ).width;
-
-        var factor = 3 * this.maxD / 100;
 
         if(bBkgd) {
             // background color
@@ -3416,7 +3716,9 @@ iCn3D.prototype = {
                 this.circle(context, 0, 0, width, height, r);
             }
             else {
-                this.roundRect(context, 0, 0, width, height, radius * 0.3);
+                //var r = radius * 0.3;
+                var r = (message.length <= textLengthThreshold) ? height * 0.5 : 0;
+                this.roundRect(context, 0, 0, width, height, r);
             }
         }
 
@@ -3446,7 +3748,13 @@ iCn3D.prototype = {
 
         var sprite = new THREE.Sprite( spriteMaterial );
 
-        sprite.scale.set(1.5*factor, factor, 1.0);
+        var expandWidthFactor = 1.5;
+        if(bSchematic) {
+            sprite.scale.set(factor, factor, 1.0);
+        }
+        else {
+            sprite.scale.set(expandWidthFactor * factor, factor, 1.0);
+        }
 
         return sprite;
     },
@@ -3510,7 +3818,26 @@ iCn3D.prototype = {
 
                 var bb;
                 if(label.bSchematic !== undefined && label.bSchematic) {
+                    var bLigandInProtein = false;
+                    if(Object.keys(this.proteins).length + Object.keys(this.nucleotides).length > 0) {
+                        var firstAtom = this.getFirstAtomObj(this.highlightAtoms);
+                        if(this.ligands.hasOwnProperty(firstAtom.serial)) {
+                            bLigandInProtein = true;
+                        }
+                    }
+
+                    var tmpMaxD = this.maxD;
+                    if(bLigandInProtein) {
+                        this.maxD = 50;
+                        this.setCamera();
+                    }
+
                     bb = this.makeTextSprite(label.text, {fontsize: parseInt(labelsize), textColor: labelcolor, borderColor: labelbackground, backgroundColor: labelbackground, alpha: labelalpha, bSchematic: 1});
+
+                    if(bLigandInProtein) {
+                        this.maxD = tmpMaxD;
+                        this.setCamera();
+                    }
                 }
                 else {
                     bb = this.makeTextSprite(label.text, {fontsize: parseInt(labelsize), textColor: labelcolor, borderColor: labelbackground, backgroundColor: labelbackground, alpha: labelalpha, bSchematic: 0});
@@ -4134,8 +4461,9 @@ iCn3D.prototype = {
         var singletonResidueHash = {};
         var atomsObj = {};
         var residueid;
+
         //if(bHighlight === 1 || bHighlight === 2) {
-        if(bHighlight === 1) {
+        if(bHighlight === 1 && Object.keys(atoms).length < Object.keys(this.atoms).length) {
             atomsObj = this.hash2Atoms(atoms);
 
             for(var i in atomsObj) {
@@ -4177,16 +4505,16 @@ iCn3D.prototype = {
                     var prevResidueid = atom.structure + '_' + atom.chain + '_' + parseInt(atom.resi - 1);
                     var nextResidueid = atom.structure + '_' + atom.chain + '_' + parseInt(atom.resi + 1);
 
-                    //ribbon, strand, cylinder & plate, nucleotide cartoon, phosphorus trace, schematic, c alpha trace, b factor tube, lines, stick, ball & stick, sphere, dot
+                    //ribbon, strand, cylinder and plate, nucleotide cartoon, phosphorus trace, schematic, c alpha trace, b factor tube, lines, stick, ball and stick, sphere, dot
 
-                    if(atom.style === 'cylinder & plate' && atom.ss === 'helix') { // no way to highlight part of cylinder
+                    if(atom.style === 'cylinder and plate' && atom.ss === 'helix') { // no way to highlight part of cylinder
                         for(var i in this.residues[residueid]) {
                             var atom = this.atoms[i];
                             var scale = 1.0;
                             this.createBox(atom, undefined, undefined, scale, undefined, bHighlight);
                         }
                     }
-                    else if( (atom.style === 'ribbon' && atom.ss === 'coil') || (atom.style === 'strand' && atom.ss === 'coil') || atom.style === 'phosphorus trace' || atom.style === 'schematic' || atom.style === 'c alpha trace' || atom.style === 'b factor tube' || (atom.style === 'cylinder & plate' && atom.ss !== 'helix') ) {
+                    else if( (atom.style === 'ribbon' && atom.ss === 'coil') || (atom.style === 'strand' && atom.ss === 'coil') || atom.style === 'phosphorus trace' || atom.style === 'schematic' || atom.style === 'c alpha trace' || atom.style === 'b factor tube' || (atom.style === 'cylinder and plate' && atom.ss !== 'helix') ) {
                         var bAddResidue = false;
                         // add the next residue with same style
                         if(!bAddResidue && this.residues.hasOwnProperty(nextResidueid)) {
@@ -4233,9 +4561,13 @@ iCn3D.prototype = {
                     }
                 } // end for
             } // end else {
+
+            atomsObj = {};
         } // end if(bHighlight === 1)
 
         this.setStyle2Atoms(atoms);
+
+        this.bAllAtoms = (Object.keys(atoms).length === Object.keys(this.atoms).length);
 
         var currentCalphas = {};
         if(this.options['sidechains'] !== 'nothing') {
@@ -4245,8 +4577,10 @@ iCn3D.prototype = {
         // remove schematic labels
         this.labels['schematic'] = [];
 
+        var ligandSchematicRadius = this.cylinderRadius * 0.5;
+
         for(var style in this.style2atoms) {
-          // 14 styles: ribbon, strand, cylinder & plate, nucleotide cartoon, phosphorus trace, schematic, c alpha trace, b factor tube, lines, stick, ball & stick, sphere, dot, nothing
+          // 14 styles: ribbon, strand, cylinder and plate, nucleotide cartoon, phosphorus trace, schematic, c alpha trace, b factor tube, lines, stick, ball and stick, sphere, dot, nothing
           atomHash = this.style2atoms[style];
 
           if(style === 'ribbon') {
@@ -4255,7 +4589,7 @@ iCn3D.prototype = {
           else if(style === 'strand') {
               this.createStrand(this.hash2Atoms(atomHash), null, null, null, null, null, false, undefined, bHighlight);
           }
-          else if(style === 'cylinder & plate') {
+          else if(style === 'cylinder and plate') {
             this.createCylinderHelix(this.hash2Atoms(atomHash), 1.6, bHighlight);
           }
           else if(style === 'nucleotide cartoon') {
@@ -4272,11 +4606,22 @@ iCn3D.prototype = {
           else if(style === 'schematic') {
             //this.options['labels'] = 'yes';
 
-            this.addResiudeLabels(this.hash2Atoms(atomHash), true);
+            // either proteins, nucleotides, or ligands
+            var firstAtom = this.getFirstAtomObj(atomHash);
 
-            this.createCylinderCurve(this.hash2Atoms(atomHash), 'P', 0.2, false, bHighlight);
-            this.createCylinderCurve(this.hash2Atoms(atomHash), 'CA', 0.2, false, bHighlight);
+            //if(firstAtom.het) { // ligands
+            if(this.residues.hasOwnProperty(firstAtom.structure + '_' + firstAtom.chain + '_' + firstAtom.resi)) { // ligands
+                this.addNonCarbonAtomLabels(this.hash2Atoms(atomHash));
 
+                bSchematic = true;
+                this.createStickRepresentation(this.hash2Atoms(atomHash), ligandSchematicRadius, ligandSchematicRadius, undefined, bHighlight, bSchematic);
+            }
+            else { // nucleotides or proteins
+                this.addResiudeLabels(this.hash2Atoms(atomHash), true);
+
+                this.createCylinderCurve(this.hash2Atoms(atomHash), 'P', 0.2, false, bHighlight);
+                this.createCylinderCurve(this.hash2Atoms(atomHash), 'CA', 0.2, false, bHighlight);
+            }
           }
           else if(style === 'c alpha trace') {
             this.createCylinderCurve(this.hash2Atoms(atomHash), 'CA', 0.2, false, bHighlight);
@@ -4305,9 +4650,9 @@ iCn3D.prototype = {
 
             this.createStickRepresentation(this.hash2Atoms(atomHash), this.cylinderRadius, this.cylinderRadius, undefined, bHighlight);
           }
-          else if(style === 'ball & stick') {
+          else if(style === 'ball and stick') {
             // add calpha to the side chains for better connectivity
-            if(this.options['sidechains'] === 'ball & stick') {
+            if(this.options['sidechains'] === 'ball and stick') {
                 atomHash = this.unionHash(atomHash, currentCalphas);
             }
 
@@ -4764,6 +5109,8 @@ iCn3D.prototype = {
         var firstAtom = atom;
         var lastAtom = atom;
 
+        var atomsHash = {};
+
         // fill the beginning
         var beginResi = firstAtom.resi;
         for(var i = firstAtom.resi - 1; i > 0; --i) {
@@ -4783,7 +5130,7 @@ iCn3D.prototype = {
 
         for(var i = beginResi; i <= firstAtom.resi; ++i) {
             var residueid = firstAtom.structure + '_' + firstAtom.chain + '_' + i;
-            this.highlightAtoms = this.unionHash(this.highlightAtoms, this.hash2Atoms(this.residues[residueid]));
+            atomsHash = this.unionHash(atomsHash, this.hash2Atoms(this.residues[residueid]));
         }
 
         // fill the end
@@ -4806,26 +5153,39 @@ iCn3D.prototype = {
 
         for(var i = lastAtom.resi + 1; i <= endResi; ++i) {
             var residueid = lastAtom.structure + '_' + lastAtom.chain + '_' + i;
-            this.highlightAtoms = this.unionHash(this.highlightAtoms, this.hash2Atoms(this.residues[residueid]));
+            atomsHash = this.unionHash(atomsHash, this.hash2Atoms(this.residues[residueid]));
         }
+
+        return atomsHash;
     },
 
-    showPicking: function(atom) {
-      this.removeHighlightObjects();
+    showPickingBase: function(atom) {
+      if(!this.bShiftKey) this.removeHighlightObjects();
 
-      this.highlightAtoms = {};
+      this.pickedAtomList = {};
       if(this.picking === 1) {
-        this.highlightAtoms[atom.serial] = 1;
-        }
+        this.pickedAtomList[atom.serial] = 1;
+      }
       else if(this.picking === 2) {
         var residueid = atom.structure + '_' + atom.chain + '_' + atom.resi;
-        this.highlightAtoms = this.residues[residueid];
+        this.pickedAtomList = this.residues[residueid];
       }
       else if(this.picking === 3) {
-        this.selectStrandHelixFromAtom(atom);
+        this.pickedAtomList = this.selectStrandHelixFromAtom(atom);
+      }
+
+      if(!this.bShiftKey) {
+          this.highlightAtoms = this.cloneHash(this.pickedAtomList);
+      }
+      else {
+          this.highlightAtoms = this.unionHash(this.highlightAtoms, this.pickedAtomList);
       }
 
       this.addHighlightObjects();
+    },
+
+    showPicking: function(atom) {
+      this.showPickingBase(atom);
 
       //var text = '#' + atom.structure + '.' + atom.chain + ':' + atom.resi + '@' + atom.name;
       var residueText = '.' + atom.chain + ':' + atom.resi;
@@ -4864,10 +5224,11 @@ iCn3D.prototype = {
        //this.render();
     },
 
-    addHighlightObjects: function (color, bRender) {
+    addHighlightObjects: function (color, bRender, atomsHash) {
        if(color === undefined) color = this.highlightColor;
+       if(atomsHash === undefined) atomsHash = this.highlightAtoms;
 
-       this.applyDisplayOptions(this.options, this.intersectHash(this.highlightAtoms, this.displayAtoms), this.bHighlight);
+       this.applyDisplayOptions(this.options, this.intersectHash(atomsHash, this.displayAtoms), this.bHighlight);
 
 //       this.applyTransformation(this._zoomFactor, this.mouseChange, this.quaternion);
        if(bRender === undefined || bRender) this.render();
@@ -4875,11 +5236,19 @@ iCn3D.prototype = {
 
     removeSurfaces: function () {
        // remove prevous highlight
-       for(var i in this.prevSurfaces) {
+       for(var i = 0, il = this.prevSurfaces.length; i < il; ++i) {
            this.mdl.remove(this.prevSurfaces[i]);
        }
 
        this.prevSurfaces = [];
+    },
+
+    removeLastSurface: function () {
+       // remove prevous highlight
+       if(this.prevSurfaces.length > 0) {
+           this.mdl.remove(this.prevSurfaces[this.prevSurfaces.length - 1]);
+           this.prevSurfaces.slice(this.prevSurfaces.length - 1, 1);
+       }
     },
 
     zoominSelection: function() {
@@ -4902,13 +5271,84 @@ iCn3D.prototype = {
        this.draw();
     },
 
-    addResiudeLabels: function (atoms, bSchematic) {
-        var size = 40;
-        var background = "#CCCCCC";
-        if(bSchematic) {
-            size = 20;
-            //background = undefined;
+    centerSelection: function() {
+       // center on the highlightAtoms if more than one residue is selected
+       if(Object.keys(this.highlightAtoms).length > 1) {
+               var centerAtomsResults = this.centerAtoms(this.hash2Atoms(this.highlightAtoms));
+               //this.maxD = centerAtomsResults.maxD;
+               //if (this.maxD < 25) this.maxD = 25;
+
+               this.mdl.position.add(this.center).sub(centerAtomsResults.center);
+
+               this.center = centerAtomsResults.center;
+
+               // reset cameara
+               this.setCamera();
+       }
+
+       //this.applyTransformation(this._zoomFactor, this.mouseChange, this.quaternion);
+       //this.render();
+       this.draw();
+    },
+
+    resetOrientation: function() {
+        if(this.commands.length > 0) {
+            var commandTransformation = this.commands[0].split('|||');
+
+            if(commandTransformation.length == 2) {
+                var transformation = JSON.parse(commandTransformation[1]);
+
+                this._zoomFactor = transformation.factor;
+
+                this.mouseChange.x = transformation.mouseChange.x;
+                this.mouseChange.y = transformation.mouseChange.y;
+
+                this.quaternion._x = transformation.quaternion._x;
+                this.quaternion._y = transformation.quaternion._y;
+                this.quaternion._z = transformation.quaternion._z;
+                this.quaternion._w = transformation.quaternion._w;
+
+                this.draw();
+            }
         }
+    },
+
+    addNonCarbonAtomLabels: function (atoms) {
+        var size = 18;
+        var background = "#FFFFFF";
+
+        var atomsHash = this.intersectHash(this.highlightAtoms, atoms);
+
+        if(this.labels['schematic'] === undefined) this.labels['schematic'] = [];
+
+        for(var i in atomsHash) {
+            var atom = this.atoms[i];
+
+            //if(!atom.het) continue;
+            if(!this.residues.hasOwnProperty(atom.structure + '_' + atom.chain + '_' + atom.resi)) continue;
+            if(atom.elem === 'C') continue;
+
+            var label = {}; // Each label contains 'position', 'text', 'color', 'background'
+
+            label.position = atom.coord;
+
+            label.bSchematic = 1;
+
+            label.text = atom.elem;
+            label.size = size;
+
+            label.color = "#" + atom.color.getHexString();
+            label.background = background;
+
+            this.labels['schematic'].push(label);
+        }
+
+        this.removeHighlightObjects();
+    },
+
+    addResiudeLabels: function (atoms, bSchematic) {
+        var size = 18;
+        var background = "#CCCCCC";
 
         var atomsHash = this.intersectHash(this.highlightAtoms, atoms);
 
@@ -4947,5 +5387,129 @@ iCn3D.prototype = {
         }
 
         this.removeHighlightObjects();
+    },
+
+    switchHighlightLevelBase: function() { var me = this;
+      $(document).bind('keydown', function (e) {
+        if(e.keyCode === 38 && e.ctrlKey) { // ctrl + arrow up, select upper level of atoms
+          e.preventDefault();
+
+          if(!me.bShiftKey) me.removeHighlightObjects();
+
+          if(me.highlightlevel === 1) { // atom -> residue
+              me.highlightlevel = 2;
+
+              var firstAtom = me.getFirstAtomObj(me.pickedAtomList);
+
+              if(!me.bShiftKey) {
+                  me.highlightAtoms = me.cloneHash(me.residues[firstAtom.structure + '_' + firstAtom.chain + '_' + firstAtom.resi]);
+            }
+            else {
+                me.highlightAtoms = me.unionHash(me.highlightAtoms, me.residues[firstAtom.structure + '_' + firstAtom.chain + '_' + firstAtom.resi]);
+            }
+          }
+          else if(me.highlightlevel === 2) { // residue -> strand
+              me.highlightlevel = 3;
+
+              var firstAtom = me.getFirstAtomObj(me.pickedAtomList);
+              if(!me.bShiftKey) {
+                  me.highlightAtoms = me.cloneHash(me.selectStrandHelixFromAtom(firstAtom));
+            }
+            else {
+                me.highlightAtoms = me.unionHash(me.highlightAtoms, me.selectStrandHelixFromAtom(firstAtom));
+            }
+          }
+          else if(me.highlightlevel === 3) { // strand -> chain
+              me.highlightlevel = 4;
+
+              var firstAtom = me.getFirstAtomObj(me.pickedAtomList);
+              if(!me.bShiftKey) {
+                  me.highlightAtoms = me.cloneHash(me.chains[firstAtom.structure + '_' + firstAtom.chain]);
+            }
+            else {
+                me.highlightAtoms = me.unionHash(me.highlightAtoms, me.chains[firstAtom.structure + '_' + firstAtom.chain]);
+            }
+          }
+          else if(me.highlightlevel === 4 || me.highlightlevel === 5) { // chain -> structure
+              me.highlightlevel = 5;
+
+              var firstAtom = me.getFirstAtomObj(me.pickedAtomList);
+
+              if(!me.bShiftKey) me.highlightAtoms = {};
+              var chainArray = me.structures[firstAtom.structure];
+              for(var i = 0, il = chainArray.length; i < il; ++i) {
+                  me.highlightAtoms = me.unionHash(me.highlightAtoms, me.chains[chainArray[i]]);
+            }
+          }
+
+          me.addHighlightObjects();
+        }
+        else if(e.keyCode === 40 && e.ctrlKey) { // ctrl + arrow down, select down level of atoms
+          e.preventDefault();
+
+          me.removeHighlightObjects();
+
+          if( (me.highlightlevel === 2 || me.highlightlevel === 1) && Object.keys(me.pickedAtomList).length === 1) { // residue -> atom
+              me.highlightlevel = 1;
+
+              me.highlightAtoms = me.cloneHash(me.pickedAtomList);
+              if(!me.bShiftKey) {
+                  me.highlightAtoms = me.cloneHash(me.pickedAtomList);
+            }
+            else {
+                me.highlightAtoms = me.unionHash(me.highlightAtoms, me.pickedAtomList);
+            }
+          }
+          else if(me.highlightlevel === 3) { // strand -> residue
+            var residueHash = {};
+
+            for(var i in me.pickedAtomList) {
+                residueid = me.atoms[i].structure + '_' + me.atoms[i].chain + '_' + me.atoms[i].resi;
+                residueHash[residueid] = 1;
+            }
+
+            if(Object.keys(residueHash).length === 1) {
+                me.highlightlevel = 2;
+
+                var firstAtom = me.getFirstAtomObj(me.pickedAtomList);
+                if(!me.bShiftKey) {
+                    me.highlightAtoms = me.cloneHash(me.residues[firstAtom.structure + '_' + firstAtom.chain + '_' + firstAtom.resi]);
+                }
+                else {
+                    me.highlightAtoms = me.unionHash(me.highlightAtoms, me.residues[firstAtom.structure + '_' + firstAtom.chain + '_' + firstAtom.resi]);
+                }
+            }
+          }
+          else if(me.highlightlevel === 4) { // chain -> strand
+              me.highlightlevel = 3;
+
+              var firstAtom = me.getFirstAtomObj(me.pickedAtomList);
+              if(!me.bShiftKey) {
+                  me.highlightAtoms = me.cloneHash(me.selectStrandHelixFromAtom(firstAtom));
+            }
+            else {
+                me.highlightAtoms = me.unionHash(me.highlightAtoms, me.selectStrandHelixFromAtom(firstAtom));
+            }
+          }
+          else if(me.highlightlevel === 5) { // structure -> chain
+              me.highlightlevel = 4;
+
+              var firstAtom = me.getFirstAtomObj(me.pickedAtomList);
+              if(!me.bShiftKey) {
+                  me.highlightAtoms = me.cloneHash(me.chains[firstAtom.structure + '_' + firstAtom.chain]);
+            }
+            else {
+                me.highlightAtoms = me.unionHash(me.highlightAtoms, me.chains[firstAtom.structure + '_' + firstAtom.chain]);
+            }
+          }
+
+          me.addHighlightObjects();
+        }
+      });
+    },
+
+    switchHighlightLevel: function() { var me = this;
+        this.switchHighlightLevelBase();
     }
+
 };
