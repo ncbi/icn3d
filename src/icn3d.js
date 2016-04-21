@@ -88,7 +88,8 @@ var iCn3D = function (id) {
     this.pickedatom = undefined;
     this.pickedatom2 = undefined;
 
-    this.bShiftKey = false; // if true, union selections in sequence window or on 3D structure
+    this.bCtrlKey = false; // if true, union selection on sequence window or on 3D structure
+    this.bShiftKey = false; // if true, select a range on 3D structure
 
     this.bStopRotate = false; // by default, do not stop the possible automatic rotation
     this.bCalphaOnly = false; // by default the input has both Calpha and O, used for drawing strands. If atoms have Calpha only, the orientation of the strands is random
@@ -107,6 +108,7 @@ var iCn3D = function (id) {
     };
 
     this.maxD = 500; // size of the molecule
+    this.oriMaxD = this.maxD; // size of the molecule
     //this.camera_z = -150;
 
     //this.camera_z = this.maxD * 2; // when zooming in, it gets dark if the camera is in front
@@ -186,11 +188,17 @@ var iCn3D = function (id) {
       if(e.keyCode === 16) { // shiftKey
           me.bShiftKey = false;
       }
+      if(e.keyCode === 17) { // ctrlKey
+          me.bCtrlKey = false;
+      }
     });
 
     $(document).bind('keydown', function (e) {
       if(e.shiftKey) {
           me.bShiftKey = true;
+      }
+      if(e.ctrlKey) {
+          me.bCtrlKey = true;
       }
 
       if (!me.controls) return;
@@ -312,6 +320,7 @@ var iCn3D = function (id) {
           me.controls.update(para);
         }
 
+/*
         // translate
         else if(e.keyCode === 37 ) { // <-, translate left
           e.preventDefault();
@@ -362,7 +371,7 @@ var iCn3D = function (id) {
 
           me.controls.update(para);
         }
-
+*/
         me.render();
       }
     });
@@ -385,7 +394,7 @@ var iCn3D = function (id) {
         me.isDragging = true;
 
         // see ref http://soledadpenades.com/articles/three-js-tutorials/object-picking/
-        if(me.picking && e.ctrlKey) {
+        if(me.picking && (e.altKey || e.ctrlKey || e.shiftKey) ) {
               me.highlightlevel = me.picking;
 
             me.mouse.x = ( (x - me.container.offset().left) / me.container.width() ) * 2 - 1;
@@ -902,31 +911,8 @@ iCn3D.prototype = {
 
     defaultResidueColor: new THREE.Color(0xBEA06E),
 
-    //polarityColors: {
     chargeColors: {
-/*
-        ARG: new THREE.Color(0xCC0000),
-        HIS: new THREE.Color(0xCC0000),
-        LYS: new THREE.Color(0xCC0000),
-        ASP: new THREE.Color(0xCC0000),
-        GLU: new THREE.Color(0xCC0000),
-        SER: new THREE.Color(0xCC0000),
-        THR: new THREE.Color(0xCC0000),
-        ASN: new THREE.Color(0xCC0000),
-        GLN: new THREE.Color(0xCC0000),
-        TYR: new THREE.Color(0xCC0000),
-        GLY: new THREE.Color(0x00CCCC),
-        PRO: new THREE.Color(0x00CCCC),
-        ALA: new THREE.Color(0x00CCCC),
-        VAL: new THREE.Color(0x00CCCC),
-        LEU: new THREE.Color(0x00CCCC),
-        ILE: new THREE.Color(0x00CCCC),
-        MET: new THREE.Color(0x00CCCC),
-        PHE: new THREE.Color(0x00CCCC),
-        CYS: new THREE.Color(0x00CCCC),
-        TRP: new THREE.Color(0x00CCCC),
-*/
-
+// charged residues
         '  G': new THREE.Color(0xFF0000),
         '  A': new THREE.Color(0xFF0000),
         '  T': new THREE.Color(0xFF0000),
@@ -951,20 +937,72 @@ iCn3D.prototype = {
         LYS: new THREE.Color(0x0000FF),
         ASP: new THREE.Color(0xFF0000),
         GLU: new THREE.Color(0xFF0000),
-        HIS: new THREE.Color(0x888888),
-        SER: new THREE.Color(0x888888),
-        THR: new THREE.Color(0x888888),
-        ASN: new THREE.Color(0x888888),
-        GLN: new THREE.Color(0x888888),
-        TYR: new THREE.Color(0x888888),
+
+// hydrophobic
         GLY: new THREE.Color(0x888888),
         PRO: new THREE.Color(0x888888),
         ALA: new THREE.Color(0x888888),
         VAL: new THREE.Color(0x888888),
         LEU: new THREE.Color(0x888888),
         ILE: new THREE.Color(0x888888),
-        MET: new THREE.Color(0x888888),
         PHE: new THREE.Color(0x888888),
+
+// polar
+        HIS: new THREE.Color(0x888888),
+        SER: new THREE.Color(0x888888),
+        THR: new THREE.Color(0x888888),
+        ASN: new THREE.Color(0x888888),
+        GLN: new THREE.Color(0x888888),
+        TYR: new THREE.Color(0x888888),
+        MET: new THREE.Color(0x888888),
+        CYS: new THREE.Color(0x888888),
+        TRP: new THREE.Color(0x888888)
+    },
+
+    hydrophobicColors: {
+// charged residues
+        '  G': new THREE.Color(0x888888),
+        '  A': new THREE.Color(0x888888),
+        '  T': new THREE.Color(0x888888),
+        '  C': new THREE.Color(0x888888),
+        '  U': new THREE.Color(0x888888),
+        ' DG': new THREE.Color(0x888888),
+        ' DA': new THREE.Color(0x888888),
+        ' DT': new THREE.Color(0x888888),
+        ' DC': new THREE.Color(0x888888),
+        ' DU': new THREE.Color(0x888888),
+          G: new THREE.Color(0x888888),
+          A: new THREE.Color(0x888888),
+          T: new THREE.Color(0x888888),
+          C: new THREE.Color(0x888888),
+          U: new THREE.Color(0x888888),
+         DG: new THREE.Color(0x888888),
+         DA: new THREE.Color(0x888888),
+         DT: new THREE.Color(0x888888),
+         DC: new THREE.Color(0x888888),
+         DU: new THREE.Color(0x888888),
+        ARG: new THREE.Color(0x888888),
+        LYS: new THREE.Color(0x888888),
+        ASP: new THREE.Color(0x888888),
+        GLU: new THREE.Color(0x888888),
+
+// hydrophobic
+        GLY: new THREE.Color(0x00FF00),
+        PRO: new THREE.Color(0x00FF00),
+        ALA: new THREE.Color(0x00FF00),
+        VAL: new THREE.Color(0x00FF00),
+        LEU: new THREE.Color(0x00FF00),
+        ILE: new THREE.Color(0x00FF00),
+        PHE: new THREE.Color(0x00FF00),
+
+// polar
+        HIS: new THREE.Color(0x888888),
+        SER: new THREE.Color(0x888888),
+        THR: new THREE.Color(0x888888),
+        ASN: new THREE.Color(0x888888),
+        GLN: new THREE.Color(0x888888),
+        TYR: new THREE.Color(0x888888),
+        MET: new THREE.Color(0x888888),
         CYS: new THREE.Color(0x888888),
         TRP: new THREE.Color(0x888888)
     },
@@ -1107,13 +1145,15 @@ iCn3D.prototype = {
 
         var chainMissingResidueArray = {};
 
+        var id = 'P_ID';
+
         for (var i in lines) {
             var line = lines[i];
             var record = line.substr(0, 6);
 
             if (record === 'HEADER') {
                 //var name = line.substr(10, 40);
-                var id = line.substr(62, 4);
+                id = line.substr(62, 4);
 
                 this.moleculeTitle = '';
 
@@ -1252,13 +1292,15 @@ iCn3D.prototype = {
                 var resn = line.substr(17, 3);
                 var coord = new THREE.Vector3(x, y, z);
 
+                var structure = (moleculeNum === 1) ? id : id + moleculeNum.toString();
+
                 var atomDetails = {
                     het: record[0] === 'H', // optional, used to determine ligands, water, ions, etc
                     serial: serial,         // required, unique atom id
                     name: atom,             // required, atom name
                     alt: alt,               // optional, some alternative coordinates
                     resn: resn,             // optional, used to determine protein or nucleotide
-                    structure: moleculeNum,   // optional, used to identify structure
+                    structure: structure,   // optional, used to identify structure
                     chain: chain,           // optional, used to identify chain
                     resi: resi,             // optional, used to identify residue ID
                     //insc: line.substr(26, 1),
@@ -1302,7 +1344,7 @@ iCn3D.prototype = {
                   }
                 }
 
-                chainNum = moleculeNum + "_" + chain;
+                chainNum = structure + "_" + chain;
                 residueNum = chainNum + "_" + resi;
 
                 var secondaries = '-';
@@ -1338,8 +1380,8 @@ iCn3D.prototype = {
 
                         chainsTmp = {};
 
-                        if(this.structures[moleculeNum.toString()] === undefined) this.structures[moleculeNum.toString()] = [];
-                        this.structures[moleculeNum.toString()].push(chainNum);
+                        if(this.structures[structure.toString()] === undefined) this.structures[structure.toString()] = [];
+                        this.structures[structure.toString()].push(chainNum);
 
                         if(this.chainsSeq[chainNum] === undefined) this.chainsSeq[chainNum] = [];
                         if(this.chainsAnno[chainNum] === undefined ) this.chainsAnno[chainNum] = [];
@@ -1560,6 +1602,9 @@ iCn3D.prototype = {
         this.center = psum.multiplyScalar(1.0 / this.cnt);
 
         if (this.maxD < 25) this.maxD = 25;
+
+        this.oriMaxD = this.maxD;
+        this.oriCenter = this.center.clone();
     },
 
     cloneHash: function(from) {
@@ -1830,34 +1875,63 @@ iCn3D.prototype = {
 
     // modified from iview (http://istar.cse.cuhk.edu.hk/iview/)
     createCylinder: function (p0, p1, radius, color, bHighlight) {
-
         var mesh;
+        if(bHighlight === 1) {
+            // the outline is too thin for proteins
+            if(this.maxD < 50) {
+                mesh = new THREE.Mesh(this.cylinderGeometryOutline, this.matShader);
 
-        if(bHighlight === 2) {
-          mesh = new THREE.Mesh(this.cylinderGeometry, new THREE.MeshPhongMaterial({ transparent: true, opacity: 0.5, overdraw: this.overdraw, specular: this.fractionOfColor, shininess: 30, emissive: 0x000000, color: color }));
+                mesh.position.copy(p0).add(p1).multiplyScalar(0.5);
+                mesh.matrixAutoUpdate = false;
+                mesh.lookAt(p0);
+                mesh.updateMatrix();
 
-          radius *= 1.5;
-        }
-        else if(bHighlight === 1) {
-          mesh = new THREE.Mesh(this.cylinderGeometryOutline, this.matShader);
-          //mesh = new THREE.Mesh(this.cylinderGeometry, this.matShader);
-        }
-        else {
-          mesh = new THREE.Mesh(this.cylinderGeometry, new THREE.MeshPhongMaterial({ overdraw: this.overdraw, specular: this.fractionOfColor, shininess: 30, emissive: 0x000000, color: color }));
-        }
+                mesh.matrix.multiply(new THREE.Matrix4().makeScale(radius, radius, p0.distanceTo(p1))).multiply(new THREE.Matrix4().makeRotationX(Math.PI * 0.5));
+            }
+            else {
+                var radius = this.coilWidth * 0.5;
+                var radiusSegments = 8; // save memory
+                var closed = false;
+                var p = [p0, p1];
 
-        mesh.position.copy(p0).add(p1).multiplyScalar(0.5);
-        mesh.matrixAutoUpdate = false;
-        mesh.lookAt(p0);
-        mesh.updateMatrix();
+                var geometry = new THREE.TubeGeometry(
+                    new THREE.SplineCurve3(p), // path
+                    p.length, // segments
+                    radius,
+                    radiusSegments,
+                    closed
+                );
 
-        mesh.matrix.multiply(new THREE.Matrix4().makeScale(radius, radius, p0.distanceTo(p1))).multiply(new THREE.Matrix4().makeRotationX(Math.PI * 0.5));
-        this.mdl.add(mesh);
-        if(bHighlight === 1 || bHighlight === 2) {
+                mesh = new THREE.Mesh(geometry, this.matShader);
+            }
+
+            this.mdl.add(mesh);
+
             this.prevHighlightObjects.push(mesh);
         }
         else {
-            this.objects.push(mesh);
+            if(bHighlight === 2) {
+              mesh = new THREE.Mesh(this.cylinderGeometry, new THREE.MeshPhongMaterial({ transparent: true, opacity: 0.5, overdraw: this.overdraw, specular: this.fractionOfColor, shininess: 30, emissive: 0x000000, color: color }));
+
+              radius *= 1.5;
+            }
+            else {
+              mesh = new THREE.Mesh(this.cylinderGeometry, new THREE.MeshPhongMaterial({ overdraw: this.overdraw, specular: this.fractionOfColor, shininess: 30, emissive: 0x000000, color: color }));
+            }
+
+            mesh.position.copy(p0).add(p1).multiplyScalar(0.5);
+            mesh.matrixAutoUpdate = false;
+            mesh.lookAt(p0);
+            mesh.updateMatrix();
+
+            mesh.matrix.multiply(new THREE.Matrix4().makeScale(radius, radius, p0.distanceTo(p1))).multiply(new THREE.Matrix4().makeRotationX(Math.PI * 0.5));
+            this.mdl.add(mesh);
+            if(bHighlight === 2) {
+                this.prevHighlightObjects.push(mesh);
+            }
+            else {
+                this.objects.push(mesh);
+            }
         }
     },
 
@@ -2760,6 +2834,16 @@ iCn3D.prototype = {
         var lastIndex = atomKeys[atomKeys.length - 1];
 
         return this.atoms[lastIndex];
+    },
+
+    getResiduesFromAtoms: function(atomsHash) {
+        var residuesHash = {};
+        for(var i in atomsHash) {
+            var residueid = this.atoms[i].structure + '_' + this.atoms[i].chain + '_' + this.atoms[i].resi;
+            residuesHash[residueid] = 1;
+        }
+
+        return residuesHash;
     },
 
     // significantly modified from iview (http://istar.cse.cuhk.edu.hk/iview/)
@@ -4091,6 +4175,20 @@ iCn3D.prototype = {
         }
     },
 
+    applyOriginalColor: function () {
+        for (var i in this.atoms) {
+            var atom = this.atoms[i];
+            var chainid = atom.structure + '_' + atom.chain;
+
+            if(this.chainsColor.hasOwnProperty(chainid)) {
+                atom.color = this.chainsColor[chainid];
+            }
+            else {
+                atom.color = this.atomColors[atom.elem];
+            }
+        }
+    },
+
     setColorByOptions: function (options, atoms, bUseInputColor) {
      if(options !== undefined) {
       if(bUseInputColor !== undefined && bUseInputColor) {
@@ -4186,7 +4284,18 @@ iCn3D.prototype = {
                 for (var i in atoms) {
                     var atom = this.atoms[i];
 
-                    atom.color = atom.het ? this.atomColors[atom.elem] || this.defaultAtomColor : this.chargeColors[atom.resn] || this.defaultResidueColor;
+                    //atom.color = atom.het ? this.atomColors[atom.elem] || this.defaultAtomColor : this.chargeColors[atom.resn] || this.defaultResidueColor;
+                    atom.color = atom.het ? this.defaultAtomColor : this.chargeColors[atom.resn] || this.defaultResidueColor;
+
+                    this.atomPrevColors[i] = atom.color;
+                }
+                break;
+            case 'hydrophobic':
+                for (var i in atoms) {
+                    var atom = this.atoms[i];
+
+                    //atom.color = atom.het ? this.atomColors[atom.elem] || this.defaultAtomColor : this.chargeColors[atom.resn] || this.defaultResidueColor;
+                    atom.color = atom.het ? this.defaultAtomColor : this.hydrophobicColors[atom.resn] || this.defaultResidueColor;
 
                     this.atomPrevColors[i] = atom.color;
                 }
@@ -4197,6 +4306,31 @@ iCn3D.prototype = {
                     atom.color = this.atomColors[atom.elem] || this.defaultAtomColor;
 
                     this.atomPrevColors[i] = atom.color;
+                }
+                break;
+
+            case 'conserved':
+                for (var i in atoms) {
+                    var atom = this.atoms[i];
+                    atom.color = this.defaultAtomColor;
+
+                    this.atomPrevColors[i] = atom.color;
+                }
+
+                for(var chainid in this.alignChainsSeq) {
+                    var resObjectArray = this.alignChainsSeq[chainid];
+
+                    for(var i = 0, il = resObjectArray.length; i < il; ++i) {
+                        var residueid = chainid + '_' + resObjectArray[i].resi;
+
+                        for(var j in this.residues[residueid]) {
+                            if(atoms.hasOwnProperty(j)) {
+                                var color = new THREE.Color(resObjectArray[i].color);
+                                this.atoms[j].color = color;
+                                this.atomPrevColors[j] = color;
+                            }
+                        }
+                    }
                 }
                 break;
 
@@ -4610,7 +4744,7 @@ iCn3D.prototype = {
             var firstAtom = this.getFirstAtomObj(atomHash);
 
             //if(firstAtom.het) { // ligands
-            if(this.residues.hasOwnProperty(firstAtom.structure + '_' + firstAtom.chain + '_' + firstAtom.resi)) { // ligands
+            if(this.ligands.hasOwnProperty(firstAtom.serial)) { // ligands
                 this.addNonCarbonAtomLabels(this.hash2Atoms(atomHash));
 
                 bSchematic = true;
@@ -4953,9 +5087,10 @@ iCn3D.prototype = {
         if(this.bAssembly) this.drawSymmetryMates2();
 
         // show the highlightAtoms
-        if(this.highlightAtoms !== undefined && Object.keys(this.highlightAtoms).length > 0 && Object.keys(this.highlightAtoms).length < Object.keys(this.displayAtoms).length) {
+        //if(this.highlightAtoms !== undefined && Object.keys(this.highlightAtoms).length > 0 && Object.keys(this.highlightAtoms).length < Object.keys(this.displayAtoms).length) {
+        if(this.highlightAtoms !== undefined && Object.keys(this.highlightAtoms).length > 0 && Object.keys(this.highlightAtoms).length < Object.keys(this.atoms).length) {
             this.removeHighlightObjects();
-            this.addHighlightObjects(undefined, false);
+            if(this.bShowHighlight === undefined || this.bShowHighlight) this.addHighlightObjects(undefined, false);
         }
 
         if(this.bRender === true) {
@@ -5160,7 +5295,7 @@ iCn3D.prototype = {
     },
 
     showPickingBase: function(atom) {
-      if(!this.bShiftKey) this.removeHighlightObjects();
+      if(!this.bShiftKey && !this.bCtrlKey) this.removeHighlightObjects();
 
       this.pickedAtomList = {};
       if(this.picking === 1) {
@@ -5174,11 +5309,25 @@ iCn3D.prototype = {
         this.pickedAtomList = this.selectStrandHelixFromAtom(atom);
       }
 
-      if(!this.bShiftKey) {
+      if(!this.bShiftKey && !this.bCtrlKey) {
           this.highlightAtoms = this.cloneHash(this.pickedAtomList);
       }
       else {
-          this.highlightAtoms = this.unionHash(this.highlightAtoms, this.pickedAtomList);
+        if(this.bShiftKey) { // select a range
+            var prevStart = this.getFirstAtomObj(this.highlightAtoms).serial;
+            var prevEnd = this.getLastAtomObj(this.highlightAtoms).serial;
+            var currStart = this.getFirstAtomObj(this.pickedAtomList).serial;
+            var currEnd = this.getLastAtomObj(this.pickedAtomList).serial;
+
+            var startSerial = (prevEnd < currStart) ? prevEnd : currEnd;
+            var endSerial = (prevEnd < currStart) ? currStart : prevStart;
+
+            for(var i = startSerial + 1; i < endSerial; ++i) {
+                this.highlightAtoms[i] = 1;
+            }
+        }
+
+        this.highlightAtoms = this.unionHash(this.highlightAtoms, this.pickedAtomList);
       }
 
       this.addHighlightObjects();
@@ -5308,6 +5457,10 @@ iCn3D.prototype = {
                 this.quaternion._z = transformation.quaternion._z;
                 this.quaternion._w = transformation.quaternion._w;
 
+                //reset this.maxD
+                this.maxD = this.oriMaxD;
+                this.center = this.oriCenter.clone();
+
                 this.draw();
             }
         }
@@ -5359,31 +5512,39 @@ iCn3D.prototype = {
             if(this.labels['residue'] === undefined) this.labels['residue'] = [];
         }
 
+        var prevReidueID = '';
         for(var i in atomsHash) {
             var atom = this.atoms[i];
 
             if(atom.het) continue;
-            if(atom.name !== 'CA' && atom.name !== 'P') continue;
+            //if(atom.name !== 'CA' && atom.name !== 'P') continue;
 
             var label = {}; // Each label contains 'position', 'text', 'color', 'background'
 
-            label.position = atom.coord;
+            var currReidueID = atom.structure + '_' + atom.chain + '_' + atom.resi;
 
-            label.bSchematic = 0;
-            if(bSchematic) label.bSchematic = 1;
+            if(atom.name === 'CA' || atom.name === 'P' || this.water.hasOwnProperty(atom.serial) || this.ions.hasOwnProperty(atom.serial) || (this.ligands.hasOwnProperty(atom.serial) && currReidueID !== prevReidueID) ) {
+                label.position = atom.coord;
 
-            label.text = this.residueName2Abbr(atom.resn);
-            label.size = size;
+                label.bSchematic = 0;
+                if(bSchematic) label.bSchematic = 1;
 
-            label.color = "#" + atom.color.getHexString();
-            label.background = background;
+                label.text = this.residueName2Abbr(atom.resn);
+                label.size = size;
 
-            if(bSchematic) {
-                this.labels['schematic'].push(label);
+                var atomColorStr = atom.color.getHexString().toUpperCase();
+                label.color = (atomColorStr === "CCCCCC" || atomColorStr === "C8C8C8") ? "#888888" : "#" + atomColorStr;
+                label.background = background;
+
+                if(bSchematic) {
+                    this.labels['schematic'].push(label);
+                }
+                else {
+                    this.labels['residue'].push(label);
+                }
             }
-            else {
-                this.labels['residue'].push(label);
-            }
+
+            prevReidueID = currReidueID;
         }
 
         this.removeHighlightObjects();
@@ -5391,17 +5552,18 @@ iCn3D.prototype = {
 
     switchHighlightLevelBase: function() { var me = this;
       $(document).bind('keydown', function (e) {
-        if(e.keyCode === 38 && e.ctrlKey) { // ctrl + arrow up, select upper level of atoms
+        //if(e.keyCode === 38 && e.ctrlKey) { // ctrl + arrow up, select upper level of atoms
+        if(e.keyCode === 38) { // arrow up, select upper level of atoms
           e.preventDefault();
 
-          if(!me.bShiftKey) me.removeHighlightObjects();
+          if(!me.bShiftKey && !me.bCtrlKey) me.removeHighlightObjects();
 
           if(me.highlightlevel === 1) { // atom -> residue
               me.highlightlevel = 2;
 
               var firstAtom = me.getFirstAtomObj(me.pickedAtomList);
 
-              if(!me.bShiftKey) {
+              if(!me.bShiftKey && !me.bCtrlKey) {
                   me.highlightAtoms = me.cloneHash(me.residues[firstAtom.structure + '_' + firstAtom.chain + '_' + firstAtom.resi]);
             }
             else {
@@ -5412,7 +5574,7 @@ iCn3D.prototype = {
               me.highlightlevel = 3;
 
               var firstAtom = me.getFirstAtomObj(me.pickedAtomList);
-              if(!me.bShiftKey) {
+              if(!me.bShiftKey && !me.bCtrlKey) {
                   me.highlightAtoms = me.cloneHash(me.selectStrandHelixFromAtom(firstAtom));
             }
             else {
@@ -5423,7 +5585,7 @@ iCn3D.prototype = {
               me.highlightlevel = 4;
 
               var firstAtom = me.getFirstAtomObj(me.pickedAtomList);
-              if(!me.bShiftKey) {
+              if(!me.bShiftKey && !me.bCtrlKey) {
                   me.highlightAtoms = me.cloneHash(me.chains[firstAtom.structure + '_' + firstAtom.chain]);
             }
             else {
@@ -5435,7 +5597,7 @@ iCn3D.prototype = {
 
               var firstAtom = me.getFirstAtomObj(me.pickedAtomList);
 
-              if(!me.bShiftKey) me.highlightAtoms = {};
+              if(!me.bShiftKey && !me.bCtrlKey) me.highlightAtoms = {};
               var chainArray = me.structures[firstAtom.structure];
               for(var i = 0, il = chainArray.length; i < il; ++i) {
                   me.highlightAtoms = me.unionHash(me.highlightAtoms, me.chains[chainArray[i]]);
@@ -5444,7 +5606,8 @@ iCn3D.prototype = {
 
           me.addHighlightObjects();
         }
-        else if(e.keyCode === 40 && e.ctrlKey) { // ctrl + arrow down, select down level of atoms
+        //else if(e.keyCode === 40 && e.ctrlKey) { // ctrl + arrow down, select down level of atoms
+        else if(e.keyCode === 40) { // arrow down, select down level of atoms
           e.preventDefault();
 
           me.removeHighlightObjects();
@@ -5453,7 +5616,7 @@ iCn3D.prototype = {
               me.highlightlevel = 1;
 
               me.highlightAtoms = me.cloneHash(me.pickedAtomList);
-              if(!me.bShiftKey) {
+              if(!me.bShiftKey && !me.bCtrlKey) {
                   me.highlightAtoms = me.cloneHash(me.pickedAtomList);
             }
             else {
@@ -5472,7 +5635,7 @@ iCn3D.prototype = {
                 me.highlightlevel = 2;
 
                 var firstAtom = me.getFirstAtomObj(me.pickedAtomList);
-                if(!me.bShiftKey) {
+                if(!me.bShiftKey && !me.bCtrlKey) {
                     me.highlightAtoms = me.cloneHash(me.residues[firstAtom.structure + '_' + firstAtom.chain + '_' + firstAtom.resi]);
                 }
                 else {
@@ -5484,7 +5647,7 @@ iCn3D.prototype = {
               me.highlightlevel = 3;
 
               var firstAtom = me.getFirstAtomObj(me.pickedAtomList);
-              if(!me.bShiftKey) {
+              if(!me.bShiftKey && !me.bCtrlKey) {
                   me.highlightAtoms = me.cloneHash(me.selectStrandHelixFromAtom(firstAtom));
             }
             else {
@@ -5495,7 +5658,7 @@ iCn3D.prototype = {
               me.highlightlevel = 4;
 
               var firstAtom = me.getFirstAtomObj(me.pickedAtomList);
-              if(!me.bShiftKey) {
+              if(!me.bShiftKey && !me.bCtrlKey) {
                   me.highlightAtoms = me.cloneHash(me.chains[firstAtom.structure + '_' + firstAtom.chain]);
             }
             else {

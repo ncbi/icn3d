@@ -432,11 +432,11 @@ THREE.OrthographicTrackballControls = function ( object, domElement, icn3d ) {
 
             _this._state = STATE.ROTATE;
 
-        } else if ( (event.keyCode === _this.keys[ STATE.ZOOM ] || event.shiftKey) && !_this.noZoom ) {
+        } else if ( (event.keyCode === _this.keys[ STATE.ZOOM ]) && !_this.noZoom ) {
 
             _this._state = STATE.ZOOM;
 
-        } else if ( (event.keyCode === _this.keys[ STATE.PAN ] || event.ctrlKey) && !_this.noPan ) {
+        } else if ( (event.keyCode === _this.keys[ STATE.PAN ]) && !_this.noPan ) {
 
             _this._state = STATE.PAN;
 

@@ -27,6 +27,7 @@ gulp.task('libs',
             "node_modules/jquery/dist/jquery.min.js",
             "node_modules/jquery-ui/jquery-ui.min.js",
             "node_modules/three/three.min.js",
+            "node_modules/three/three_v71.min.js",
         ])
         .pipe(gulp.dest(dist + '/lib'));
   });
@@ -37,12 +38,34 @@ gulp.task('copy',
   ['clean'],
   function () {
     return gulp.src([
-            "src/icn3d_simple_ui.css",
-            "src/icn3d_full_ui.css",
             'LICENSE',
-            'README.md',
+            'README.md'
         ])
         .pipe(gulp.dest(dist));
+  });
+
+gulp.task('copy-rename1',
+  'Copy and rename css files',
+  ['clean'],
+  function () {
+    return gulp.src([
+            "src/icn3d_simple_ui.css"
+        ])
+        .pipe(gulp.dest(dist))
+		.pipe(rename('icn3d_simple_ui_' + package.version + '.css'))
+		.pipe(gulp.dest(dist));
+  });
+
+gulp.task('copy-rename2',
+  'Copy and rename css files',
+  ['clean'],
+  function () {
+    return gulp.src([
+            "src/icn3d_full_ui.css"
+        ])
+        .pipe(gulp.dest(dist))
+		.pipe(rename('icn3d_full_ui_' + package.version + '.css'))
+		.pipe(gulp.dest(dist));
   });
 
 // Helper function to create a gulp task to concatenate and minify
@@ -57,6 +80,8 @@ function make_js_task(name, src) {
             .pipe(gulp.dest(dist))
             .pipe(uglify())
             .pipe(rename({ extname: '.min.js' }))
+            .pipe(gulp.dest(dist))
+            .pipe(rename(name + '_ui_all_' + package.version + '.min.js'))
             .pipe(gulp.dest(dist));
       });
 }
@@ -112,7 +137,7 @@ gulp.task('html',
 
 gulp.task('dist',
   'Prepare all the distribution files (except the .zip).',
-  ['libs', 'copy',
+  ['libs', 'copy', 'copy-rename1', 'copy-rename2',
    'src-js-simple', 'src-js-full', 'html']);
 
 gulp.task('zip',

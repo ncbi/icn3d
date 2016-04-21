@@ -15,7 +15,7 @@ accordion ul .icn3d-link, div .icn3d-link, accordion li input, accordion li labe
 
 // used to identify a residue when clicking a residue in sequence
 .icn3d-residue {font-weight:regular;} 
-.icn3d-residueNum {color: #00FF00; width:30px!important;}
+.icn3d-residueNum {color: #00FF00; width:30px!important; text-align:center;}
 
 .icn3d-dl_sequence span {display:inline-block; font-size:11px; width:10px;}
 
@@ -35,7 +35,7 @@ button, select, input { font-size: 10px; }
 .icn3d-box {border-top: solid 1px #ccc; border-right: solid 1px #ccc; border-bottom: solid 1px #ccc; border-left: solid 1px #ccc; padding: 5px;}
 
 // sequence alignent, 'cons' means aligned and conserved, 'ncons' means aligned and not conserved, 'nalign' means not aligned
-.icn3d-cons {text-decoration: underline;}
-.icn3d-ncons {text-decoration: underline;}
+.icn3d-cons {}
+.icn3d-ncons {}
 .icn3d-nalign {} // {font-style: italic;}
 
