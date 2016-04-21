@@ -431,11 +431,11 @@ THREE.TrackballControls = function ( object, domElement, icn3d ) {
 
             _this._state = _this.STATE.ROTATE;
 
-        } else if ( (event.keyCode === _this.keys[ _this.STATE.ZOOM ] || event.shiftKey) && !_this.noZoom ) {
+        } else if ( (event.keyCode === _this.keys[ _this.STATE.ZOOM ]) && !_this.noZoom ) {
 
             _this._state = _this.STATE.ZOOM;
 
-        } else if ( (event.keyCode === _this.keys[ _this.STATE.PAN ] || event.ctrlKey) && !_this.noPan ) {
+        } else if ( (event.keyCode === _this.keys[ _this.STATE.PAN ]) && !_this.noPan ) {
 
             _this._state = _this.STATE.PAN;
 
