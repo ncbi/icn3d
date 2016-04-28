@@ -188,16 +188,16 @@ var iCn3D = function (id) {
       if(e.keyCode === 16) { // shiftKey
           me.bShiftKey = false;
       }
-      if(e.keyCode === 17) { // ctrlKey
+      if(e.keyCode === 17 || e.keyCode === 224) { // ctrlKey or apple command key
           me.bCtrlKey = false;
       }
     });
 
     $(document).bind('keydown', function (e) {
-      if(e.shiftKey) {
+      if(e.shiftKey || e.keyCode === 16) {
           me.bShiftKey = true;
       }
-      if(e.ctrlKey) {
+      if(e.ctrlKey || e.keyCode === 17 || e.keyCode === 224) {
           me.bCtrlKey = true;
       }
 
@@ -394,8 +394,8 @@ var iCn3D = function (id) {
         me.isDragging = true;
 
         // see ref http://soledadpenades.com/articles/three-js-tutorials/object-picking/
-        if(me.picking && (e.altKey || e.ctrlKey || e.shiftKey) ) {
-              me.highlightlevel = me.picking;
+        if(me.picking && (e.altKey || e.ctrlKey || e.shiftKey || e.keyCode === 16 || e.keyCode === 17 || e.keyCode === 224) ) {
+            me.highlightlevel = me.picking;
 
             me.mouse.x = ( (x - me.container.offset().left) / me.container.width() ) * 2 - 1;
             me.mouse.y = - ( (y - me.container.offset().top) / me.container.height() ) * 2 + 1;
@@ -5320,14 +5320,35 @@ iCn3D.prototype = {
             var currEnd = this.getLastAtomObj(this.pickedAtomList).serial;
 
             var startSerial = (prevEnd < currStart) ? prevEnd : currEnd;
-            var endSerial = (prevEnd < currStart) ? currStart : prevStart;
+            var endSerial = (prevEnd < currStart) ? currEnd + 1 : prevStart;
 
-            for(var i = startSerial + 1; i < endSerial; ++i) {
-                this.highlightAtoms[i] = 1;
+            // select the range in the same chain
+            var prevChainid = '';
+            if(prevEnd < currStart) {
+                for(var i = startSerial + 1; i < endSerial; ++i) {
+                    var chainid = this.atoms[i].structure + '_' + this.atoms[i].chain;
+
+                    if(i !== startSerial + 1 && chainid !== prevChainid) break;
+
+                    this.highlightAtoms[i] = 1;
+
+                    prevChainid = chainid;
+                }
+            }
+            else {
+                for(var i = endSerial - 1; i > startSerial; --i) {
+                    var chainid = this.atoms[i].structure + '_' + this.atoms[i].chain;
+
+                    if(i !== endSerial - 1 && chainid !== prevChainid) break;
+
+                    this.highlightAtoms[i] = 1;
+
+                    prevChainid = chainid;
+                }
             }
         }
 
-        this.highlightAtoms = this.unionHash(this.highlightAtoms, this.pickedAtomList);
+        if(this.bCtrlKey) this.highlightAtoms = this.unionHash(this.highlightAtoms, this.pickedAtomList);
       }
 
       this.addHighlightObjects();

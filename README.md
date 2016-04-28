@@ -2,7 +2,7 @@
 
 ## iCn3D
 
-"I see in 3D" (iCn3D) Structure Viewer is a WebGL-based 3D viewer using Three.js and jQuery. It is based on the 3D styles of [iview](http://istar.cse.cuhk.edu.hk/iview/) and [GLmol](https://en.osdn.jp/projects/webglmol/), and the surface generation of [3Dmol](http://3dmol.csb.pitt.edu/). Some of the added/improved features include: picking atoms by mouse, selecting residues on 3D structure or 1D sequence, shiny material for displaying, labeling, saving state, going back and forward, showing highlight with different colors, adding arrows to beta sheets, passing commands in url, sequence window, double bonds for chemicals, full-featured UI, etc.
+"I see in 3D" (iCn3D) Structure Viewer is a WebGL-based 3D viewer using Three.js and jQuery. It is based on the 3D styles of [iview](http://istar.cse.cuhk.edu.hk/iview/) and [GLmol](https://en.osdn.jp/projects/webglmol/), and the surface generation of [3Dmol](http://3dmol.csb.pitt.edu/). iCn3D has a feature-rich user interface and allows users to: use a url or a state file to capture the custom display of 3D structures, define custom atom sets, show both 3D structure and 1D sequence together and select residues on both of them, display custom labeling, go back and forth to different stage, show highlight, etc. iCn3D can also show the aligned 3D structures by providing two PDB IDs or MMDB IDs, whose alignment has been pre-calculated at NCBI.  
 
 We provided two versions of iCn3D widgets: [basic interface](https://www.ncbi.nlm.nih.gov/Structure/icn3d/index.html?mmdbid=2por) and [advanced interface](https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?mmdbid=2por). 
 
@@ -10,6 +10,8 @@ We provided two versions of iCn3D widgets: [basic interface](https://www.ncbi.nl
 2. The advanced interface has a library for the interface and is more complicated to understand. It has many features.
 
 Either of these widgets could be easily added to your own web pages. Please see the [help page](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d.html) for more details.
+
+<b>Complete package</b> of iCn3D including Three.js and jQuery can be downloaded from [https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-1.0.zip](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-1.0.zip). The "Download ZIP" link in this page does not include these third-party libraries. 
 
 ## Usage
 
@@ -36,14 +38,6 @@ See the [help page](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d.html) for
 * **[iview](http://istar.cse.cuhk.edu.hk/iview/)**: iCn3D is mainly based on iview.
 * **[GLmol](https://en.osdn.jp/projects/webglmol/)**: Drawing cartoon of nucleotides is from GLmol.
 * **[3Dmol](http://3dmol.csb.pitt.edu/)**: The surface generation and labeling are from 3Dmol.
-
-## Download
-
-The complete version with all libraries can be downloaded from [https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-0.9.6-dev.zip](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-0.9.6-dev.zip)
-
-## Contact
-
-Please send all comments to wangjiy@ncbi.nlm.nih.gov. 
 
 ## Building
 
@@ -90,7 +84,6 @@ permission to, and then enter
 gulp gh-pages
 ```
 
-
 ## Change log
 
 The beta version [icn3d-0.9.0-dev](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-0.9.0-dev.zip) was release on Jan 17, 2016. 
@@ -106,3 +99,9 @@ The beta version [icn3d-0.9.4-dev](https://www.ncbi.nlm.nih.gov/Structure/icn3d/
 The beta version [icn3d-0.9.5-dev](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-0.9.5-dev.zip) was release on April 4, 2016. Enabled to import Mol2, SDF, XYZ, PDB, and mmCIF files. Added "Schematic" style for ligands. Improved the coordination between picking on 3D structure and selection on sequences.
 
 The beta version [icn3d-0.9.6-dev](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-0.9.6-dev.zip) was release on April 21, 2016. Enabled to export and import selection file where each custom sets of atoms are defined. Javascript files and CSS files are versioned. Developers can use the default latest version or specify the specific version in their pages.
+
+The production version [icn3d-1.0](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-1.0.zip) was release on April 28, 2016. 
+
+## Contact
+
+Please send all comments to wangjiy@ncbi.nlm.nih.gov. 

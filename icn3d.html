@@ -48,11 +48,50 @@ body {font-family: Verdana, Arial, Helvetica, sans-serif;}
 <!-- ============= TABLE_OF_CONTENTS ============= -->
 
 <ul>
-<li><a href="#WhatIs">What is iCn3D Structure Viewer?</a></li>
+<!--li><a href="#WhatIs">What is iCn3D Structure Viewer?</a></li>
     <ol>
     <li><a href="index.html?mmdbid=2por">Default basic interface</a></li>
     <li><a href="full.html?mmdbid=2por">Advanced interface</a></li>
-    </ol>
+    </ol-->
+
+<!-- =========== WHAT_IS_THE_ICN3D_WIDGET ============= -->
+
+<!--a name="WhatIs"></a>
+<h2>What is iCn3D Structure Viewer?<img src="https://www.ncbi.nlm.nih.gov/Structure/IMG/spacer.gif" width="25" height="1" border="0"><a href="#Top"><img src="https://www.ncbi.nlm.nih.gov/Structure/IMG/arrowup_blue.gif" width="12" height="12" border="0" alt="back to top"></a></h2-->
+
+<li>What is iCn3D Structure Viewer?</li>
+<br/>
+"I see in 3D" (iCn3D) Structure Viewer is a WebGL-based 3D viewer using Three.js and jQuery. It is based on the 3D styles of <a href="http://istar.cse.cuhk.edu.hk/iview/">iview</a> and <a href="https://en.osdn.jp/projects/webglmol/">GLmol</a>, and the surface generation of <a href="http://3dmol.csb.pitt.edu/">3Dmol</a>. iCn3D has a feature-rich user interface and allows users to: use a url or a state file to capture the custom display of 3D structures, define custom atom sets, show both 3D structure and 1D sequence together and select residues on both of them, display custom labeling, go back and forth to different stage, show highlight, etc. iCn3D can also show the aligned 3D structures by providing two PDB IDs or MMDB IDs, whose alignment has been pre-calculated at NCBI. The source code of iCn3D is available at GitHub: <a href="https://github.com/ncbi/icn3d">https://github.com/ncbi/icn3d</a>.<br>
+<br>
+We provided two versions of iCn3D widgets: <a href="index.html?mmdbid=2por">basic interface</a> and <a href="full.html?mmdbid=2por">advanced interface</a>. Both widgets can be easily added to web pages.
+<ol>
+<li>The basic interface has the minimum javascript code for the interface and is easy to understand. It has the basic features to change color and styles.
+</li><li>The advanced interface has a library for the interface and is more complicated to understand. It has many features.
+</li></ol>
+
+<br/>
+
+  <div id="icn3dwrap"></div>
+
+  <script type="text/javascript">
+    jQuery( document ).ready(function() {
+        var cfg = {
+            divid: 'icn3dwrap',
+            width: 400,
+            height: 400,
+            resize: false,
+            rotate: 'right',
+            pdbid: '2por'
+        };
+
+		var icn3dui = new iCn3DUI(cfg);
+
+		icn3dui.show3DStructure();
+    });
+  </script>
+
+<!-- =========== END_WHAT_IS_THE_ICN3D_WIDGET ============= -->
+
     <br>
 <li><a href="#HowToUse">How to use iCn3D Structure Viewer in your html page</a></li>
     <ul>
@@ -332,41 +371,6 @@ body {font-family: Verdana, Arial, Helvetica, sans-serif;}
 
 <!-- =========== END_TABLE_OF_CONTENTS ============= -->
 
-<!-- =========== WHAT_IS_THE_ICN3D_WIDGET ============= -->
-
-<a name="WhatIs"></a>
-<h2>What is iCn3D Structure Viewer?<img src="https://www.ncbi.nlm.nih.gov/Structure/IMG/spacer.gif" width="25" height="1" border="0"><a href="#Top"><img src="https://www.ncbi.nlm.nih.gov/Structure/IMG/arrowup_blue.gif" width="12" height="12" border="0" alt="back to top"></a></h2>
-
-"I see in 3D" (iCn3D) Structure Viewer is a WebGL-based 3D viewer using Three.js and jQuery. It is based on the 3D styles of <a href="http://istar.cse.cuhk.edu.hk/iview/">iview</a> and <a href="https://en.osdn.jp/projects/webglmol/">GLmol</a>, and the surface generation of <a href="http://3dmol.csb.pitt.edu/">3Dmol</a>. Some of the added/improved features include: picking atoms by mouse, selecting residues on 3D structure or 1D sequence, shiny material for displaying, labeling, saving state, going back and forward, showing highlight with different colors, adding arrows to beta sheets, passing commands in url, sequence window, double bonds for chemicals, full-featured UI, etc. The source code of iCn3D is available at GitHub: <a href="https://github.com/ncbi/icn3d">https://github.com/ncbi/icn3d</a>.<br>
-<br>
-We provided two versions of iCn3D widgets: <a href="index.html?mmdbid=2por">basic interface</a> and <a href="full.html?mmdbid=2por">advanced interface</a>. Both widgets can be easily added to web pages.
-<ol>
-<li>The basic interface has the minimum javascript code for the interface and is easy to understand. It has the basic features to change color and styles.
-</li><li>The advanced interface has a library for the interface and is more complicated to understand. It has many features.
-</li></ol>
-
-  <div id="icn3dwrap"></div>
-
-  <script type="text/javascript">
-    jQuery( document ).ready(function() {
-        var cfg = {
-            divid: 'icn3dwrap',
-            width: 400,
-            height: 400,
-            resize: false,
-            rotate: 'right',
-            pdbid: '2por'
-        };
-
-		var icn3dui = new iCn3DUI(cfg);
-
-		icn3dui.show3DStructure();
-    });
-  </script>
-
-<hr>
-
-<!-- =========== END_WHAT_IS_THE_ICN3D_WIDGET ============= -->
 
 <!-- =========== HOW_TO_USE_ICN3D_WIDGET_3_STEPS ============= -->
 
@@ -682,12 +686,13 @@ In the dialog Select -&gt; Advanced, users can use simple specification to selec
 <a name="color"></a><b>4. Color</b> <a href="#Top"><span class="top">&nbsp;&nbsp;&nbsp;</span></a><br>
 <table>
 <tbody><tr><td colspan="2">a)</td></tr>
-<tr><td>Color -&gt; spectrum:</td>  <td>color spectrum</td></tr>
-<tr><td>Color -&gt; secondary structure:</td> <td>color secondary structure</td></tr>
-<tr><td>Color -&gt; charge:</td>  <td>color charge</td></tr>
-<tr><td>Color -&gt; chain:</td>     <td>color chain</td></tr>
-<tr><td>Color -&gt; residue:</td>   <td>color residue</td></tr>
-<tr><td>Color -&gt; atom:</td>  <td>color atom</td></tr>
+<tr><td>Color -&gt; Spectrum:</td>  <td>color spectrum</td></tr>
+<tr><td>Color -&gt; Secondary Structure:</td> <td>color secondary structure</td></tr>
+<tr><td>Color -&gt; Charge:</td>  <td>color charge</td></tr>
+<tr><td>Color -&gt; Hydrophobic:</td>  <td>color hydrophobic</td></tr>
+<tr><td>Color -&gt; Chain:</td>     <td>color chain</td></tr>
+<tr><td>Color -&gt; Residue:</td>   <td>color residue</td></tr>
+<tr><td>Color -&gt; Atom:</td>  <td>color atom</td></tr>
 
 <tr><td colspan="2"><br>b) Color -&gt; Unicolor</td></tr>
 <tr><td><span class="indent">red:</span></td>                <td>color red</td></tr>
@@ -867,7 +872,7 @@ In the dialog Select -&gt; Advanced, users can use simple specification to selec
       <pre>          var options = {};
           options['camera']             = 'perspective';        //perspective, orthographic
           options['background']         = 'black';              //black, grey, white
-          options['color']              = 'spectrum';           //spectrum, secondary structure, charge, chain, residue, atom,
+          options['color']              = 'spectrum';           //spectrum, secondary structure, charge, hydrophobic, chain, residue, atom,
           														// red, green, blue, magenta, yellow, cyan, white, grey, custom
           options['proteins']           = 'ribbon';             //ribbon, strand, cylinder and plate, schematic, c alpha trace,
           														// b factor tube, lines, stick, ball and stick, sphere, nothing

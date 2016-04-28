@@ -585,7 +585,7 @@ iCn3DUI.prototype = {
               me.bInitial = false;
           }
           else {
-              me.updateMenus(false);
+              me.updateMenus(me.bInitial);
               me.updateSeqWinForCurrentAtoms();
 
               me.bInitial = false;
@@ -702,13 +702,14 @@ iCn3DUI.prototype = {
           html += "<option value='" + chain + "' " + selected + ">" + indent + chain + "</option>";
 
           if(selected === " selected") me.icn3d.highlightAtoms = me.icn3d.unionHash(me.icn3d.highlightAtoms, me.icn3d.chains[chain]);
-        }
 
-        if(bInitial) {
-              // Initially, add chains into the menu "atom selections"
-              me.icn3d.definedNames2Atoms[chain] = Object.keys(me.icn3d.chains[chain]);
-              me.icn3d.definedNames2Descr[chain] = chain;
-              me.icn3d.definedNames2Command[chain] = 'select chain ' + chain;
+            if(bInitial) {
+                  // Initially, add chains into the menu "atom selections"
+                  me.icn3d.definedNames2Atoms[chain] = Object.keys(me.icn3d.chains[chain]);
+                  me.icn3d.definedNames2Descr[chain] = chain;
+                  me.icn3d.definedNames2Command[chain] = 'select chain ' + chain;
+            }
+
         }
       }
       else {
@@ -1557,6 +1558,7 @@ iCn3DUI.prototype = {
 
              var prevChain = '', chain, prevResi = 0, resi, lastDashPos, firstDashPos, struturePart, chainPart;
              var startResi;
+             var bMultipleStructures = (Object.keys(me.icn3d.structures).length == 1) ? false : true;
              for(var j = 0, jl = residueArraySorted.length; j < jl; ++j) {
                  var residueid = residueArraySorted[j];
 
@@ -1571,10 +1573,20 @@ iCn3DUI.prototype = {
                  if(prevChain !== chain) {
                      if(j > 0) {
                          if(prevResi === startResi) {
-                             spec += '#' + struturePart + '.' + chainPart + ':' + startResi + ' or ';
+                             if(bMultipleStructures) {
+                                 spec += '#' + struturePart + '.' + chainPart + ':' + startResi + ' or ';
+                             }
+                             else {
+                                 spec += '.' + chainPart + ':' + startResi + ' or ';
+                             }
                          }
                          else {
-                             spec += '#' + struturePart + '.' + chainPart + ':' + startResi + '-' + prevResi + ' or ';
+                             if(bMultipleStructures) {
+                                 spec += '#' + struturePart + '.' + chainPart + ':' + startResi + '-' + prevResi + ' or ';
+                             }
+                             else {
+                                 spec += '.' + chainPart + ':' + startResi + '-' + prevResi + ' or ';
+                             }
                          }
                      }
 
@@ -1583,10 +1595,20 @@ iCn3DUI.prototype = {
                  else if(prevChain === chain) {
                      if(resi !== prevResi + 1) {
                          if(prevResi === startResi) {
-                             spec += '#' + struturePart + '.' + chainPart + ':' + startResi + ' or ';
+                             if(bMultipleStructures) {
+                                 spec += '#' + struturePart + '.' + chainPart + ':' + startResi + ' or ';
+                             }
+                             else {
+                                 spec += '.' + chainPart + ':' + startResi + ' or ';
+                             }
                          }
                          else {
-                             spec += '#' + struturePart + '.' + chainPart + ':' + startResi + '-' + prevResi + ' or ';
+                             if(bMultipleStructures) {
+                                 spec += '#' + struturePart + '.' + chainPart + ':' + startResi + '-' + prevResi + ' or ';
+                             }
+                             else {
+                                 spec += '.' + chainPart + ':' + startResi + '-' + prevResi + ' or ';
+                             }
                          }
 
                          startResi = resi;
@@ -1603,10 +1625,20 @@ iCn3DUI.prototype = {
              chainPart = prevChain.substr(firstDashPos + 1);
 
              if(prevResi === startResi) {
-                 spec += '#' + struturePart + '.' + chainPart + ':' + startResi;
+                 if(bMultipleStructures) {
+                     spec += '#' + struturePart + '.' + chainPart + ':' + startResi;
+                 }
+                 else {
+                     spec += '.' + chainPart + ':' + startResi;
+                 }
              }
              else {
-                 spec += '#' + struturePart + '.' + chainPart + ':' + startResi + '-' + prevResi;
+                 if(bMultipleStructures) {
+                     spec += '#' + struturePart + '.' + chainPart + ':' + startResi + '-' + prevResi;
+                 }
+                 else {
+                     spec += '.' + chainPart + ':' + startResi + '-' + prevResi;
+                 }
              }
          }
 
@@ -2596,11 +2628,26 @@ iCn3DUI.prototype = {
       //else if(command.indexOf('show saved atoms') !== -1) {
       //  me.showSelection('customAtoms');
       //}
-      else if(command.indexOf('select') !== -1 && command.indexOf('name') !== -1 && command.indexOf('description') !== -1) {
+      //else if(command.indexOf('select') !== -1 && command.indexOf('name') !== -1 && command.indexOf('description') !== -1) {
+      else if(command.indexOf('select') !== -1 && command.indexOf('name') !== -1) {
         var paraArray = commandOri.split(' | '); // atom names might be case-sensitive
-        var select = paraArray[0].substr(paraArray[0].indexOf(' ') + 1);
-        var commandname = paraArray[1].substr(paraArray[1].indexOf(' ') + 1);
-        var commanddesc = paraArray[2].substr(paraArray[2].indexOf(' ') + 1);
+
+        var select = '', commandname = '', commanddesc = '';
+        for (var i = 0, il = paraArray.length; i < il; ++i) {
+            var para = paraArray[i];
+
+            if(para.indexOf('select') !== -1) {
+                select = para.substr(para.indexOf(' ') + 1);
+            }
+            else if(para.indexOf('name') !== -1) {
+                commandname = para.substr(para.indexOf(' ') + 1);
+            }
+            else if(para.indexOf('description') !== -1) {
+                commanddesc = para.substr(para.indexOf(' ') + 1);
+            }
+        }
+
+        if(paraArray.length < 3) commanddesc = commandname;
 
         me.selectByCommand(select, commandname, commanddesc);
 
@@ -2616,7 +2663,12 @@ iCn3DUI.prototype = {
             commanddesc = paraArray[2].substr(paraArray[2].indexOf(' ') + 1);
         }
 
-        me.selectBySpec(select, commandname, commanddesc);
+        if(select.indexOf(' or ') !== -1) { // "select " command without " | name"
+            me.selectByCommand(select, commandname, commanddesc);
+        }
+        else { // only single query from selectByCommand()
+            me.selectBySpec(select, commandname, commanddesc);
+        }
 
         //bShowLog = false;
       }
@@ -2743,9 +2795,11 @@ iCn3DUI.prototype = {
       else if(command.indexOf('toggle highlight') !== -1) {
         if(me.icn3d.prevHighlightObjects.length > 0) { // remove
             me.icn3d.removeHighlightObjects();
+            me.icn3d.bShowHighlight = false;
         }
         else { // add
             me.icn3d.addHighlightObjects();
+            me.icn3d.bShowHighlight = true;
         }
       }
       else if(command.indexOf('set assembly on') !== -1) {
@@ -3034,7 +3088,7 @@ iCn3DUI.prototype = {
         html += "                    <li><span id='" + me.pre + "menu1_selection' class='icn3d-link'>Selection File</span></li>";
         html += "                  </ul>";
         html += "                </li>";
-        html += "                <li>Export File";
+        html += "                <li>Save File";
         html += "                  <ul>";
         html += "                    <li><span id='" + me.pre + "menu1_exportState' class='icn3d-link'>State File<br/></span></li>";
         html += "                    <li><span id='" + me.pre + "menu1_exportSelections' class='icn3d-link'>Selection File</span></li>";
@@ -4418,7 +4472,7 @@ iCn3DUI.prototype = {
         $("#" + me.pre + "menu2_command").click(function (e) {
            //e.preventDefault();
 
-           me.openDialog(me.pre + 'dl_command', 'Use command to define selections');
+           me.openDialog(me.pre + 'dl_command', 'Advanced set selection');
         });
     },
 
@@ -6053,8 +6107,10 @@ iCn3DUI.prototype = {
            e.preventDefault();
 
            var select = $("#" + me.pre + "command").val();
-           var commandname = $("#" + me.pre + "command_name").val().replace(/\s+/g, '_');
-           var commanddesc = $("#" + me.pre + "command_desc").val();
+           //var commandname = $("#" + me.pre + "command_name").val().replace(/[#.:@,;]/g, '_').replace(/\s+/g, '_');
+           //var commanddesc = $("#" + me.pre + "command_desc").val().replace(/[#.:@,;]/g, '_').replace(/\s+/g, '_');
+           var commandname = $("#" + me.pre + "command_name").val().replace(/;/g, '_').replace(/\s+/g, '_');
+           var commanddesc = $("#" + me.pre + "command_desc").val().replace(/;/g, '_').replace(/\s+/g, '_');
 
            me.setLogCommand('select ' + select + ' | name ' + commandname + ' | description ' + commanddesc, true);
 
@@ -7134,7 +7190,11 @@ iCn3DUI.prototype = {
         if(me.isIE()) { // IE
             if(window.navigator.msSaveBlob){
                 if(type === 'command') {
-                    var dataStr = me.icn3d.commands.join('\n');
+                    //var dataStr = me.icn3d.commands.join('\n');
+                    var dataStr = '';
+                    for(var i = 0, il = me.icn3d.commands.length; i < il; ++i) {
+                        dataStr += me.icn3d.commands[i].trim() + '\n';
+                    }
                     var data = decodeURIComponent(dataStr);
 
                     var blob = new Blob([data],{ type: "text;charset=utf-8;"});
@@ -7166,7 +7226,11 @@ iCn3DUI.prototype = {
             var data;
 
             if(type === 'command') {
-                var dataStr = me.icn3d.commands.join('\n');
+                //var dataStr = me.icn3d.commands.join('\n');
+                var dataStr = '';
+                for(var i = 0, il = me.icn3d.commands.length; i < il; ++i) {
+                    dataStr += me.icn3d.commands[i].trim() + '\n';
+                }
                 data = "data:text;charset=utf-8," + encodeURIComponent(dataStr);
             }
             else if(type === 'png') {
@@ -8261,6 +8325,9 @@ iCn3DUI.prototype = {
               if(bGi) {
                   alert("This gi " + mmdbid + " has no corresponding 3D structure...");
               }
+              else {
+                  alert("This mmdbid " + mmdbid + " has no corresponding 3D structure...");
+              }
 
               return false;
           },
@@ -8591,7 +8658,7 @@ iCn3DUI.prototype = {
         if(type === 'align') {
           //serial2structure
           me.pmid = "";
-          var refinedStr = (me.cfg.inpara.indexOf('atype=1') !== -1) ? 'Refined ' : '';
+          var refinedStr = (me.cfg.inpara.indexOf('atype=1') !== -1) ? 'Invariant Core ' : '';
           me.icn3d.moleculeTitle = refinedStr + 'Structure Alignment of ';
 
           for (var i = 0, il = data.aligned_structures.length; i < il; ++i) {
