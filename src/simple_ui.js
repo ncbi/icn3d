@@ -764,7 +764,11 @@ iCn3DUI.prototype = {
         if(me.isIE()) { // IE
             if(window.navigator.msSaveBlob){
                 if(type === 'command') {
-                    var dataStr = me.icn3d.commands.join('\n');
+                    //var dataStr = me.icn3d.commands.join('\n');
+                    var dataStr = '';
+                    for(var i = 0, il = me.icn3d.commands.length; i < il; ++i) {
+                        dataStr += me.icn3d.commands[i].trim() + '\n';
+                    }
                     var data = decodeURIComponent(dataStr);
 
                     var blob = new Blob([data],{ type: "text;charset=utf-8;"});
@@ -796,7 +800,11 @@ iCn3DUI.prototype = {
             var data;
 
             if(type === 'command') {
-                var dataStr = me.icn3d.commands.join('\n');
+                //var dataStr = me.icn3d.commands.join('\n');
+                var dataStr = '';
+                for(var i = 0, il = me.icn3d.commands.length; i < il; ++i) {
+                    dataStr += me.icn3d.commands[i].trim() + '\n';
+                }
                 data = "data:text;charset=utf-8," + encodeURIComponent(dataStr);
             }
             else if(type === 'png') {
@@ -1891,6 +1899,9 @@ iCn3DUI.prototype = {
               if(bGi) {
                   alert("This gi " + mmdbid + " has no corresponding 3D structure...");
               }
+              else {
+                  alert("This mmdbid " + mmdbid + " has no corresponding 3D structure...");
+              }
 
               return false;
           },
@@ -2221,7 +2232,7 @@ iCn3DUI.prototype = {
         if(type === 'align') {
           //serial2structure
           me.pmid = "";
-          var refinedStr = (me.cfg.inpara.indexOf('atype=1') !== -1) ? 'Refined ' : '';
+          var refinedStr = (me.cfg.inpara.indexOf('atype=1') !== -1) ? 'Invariant Core ' : '';
           me.icn3d.moleculeTitle = refinedStr + 'Structure Alignment of ';
 
           for (var i = 0, il = data.aligned_structures.length; i < il; ++i) {
