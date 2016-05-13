@@ -21,7 +21,7 @@
   "homepage": "https://github.com/ncbi/icn3d#readme",
   "dependencies": {
     "jquery": "~2.1.4",
-    "jquery-ui-bundle": "^1.11.4",
+    "jquery-ui": "components/jqueryui.git#1.11.4",
     "three": "~0.71.1"
   },
   "devDependencies": {
