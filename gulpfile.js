@@ -27,7 +27,7 @@ gulp.task('libs',
             "node_modules/jquery/dist/jquery.min.js",
             "node_modules/jquery-ui/jquery-ui.min.js",
             "node_modules/three/three.min.js",
-            "node_modules/three/three_v71.min.js",
+            "node_modules/three/three_0.71.1.min.js",
         ])
         .pipe(gulp.dest(dist + '/lib'));
   });
