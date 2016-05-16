@@ -11,7 +11,7 @@ We provided two versions of iCn3D widgets: [basic interface](https://www.ncbi.nl
 
 Either of these widgets could be easily added to your own web pages. Please see the [help page](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d.html) for more details.
 
-<b>Complete package</b> of iCn3D including Three.js and jQuery can be downloaded from [https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-1.0.zip](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-1.0.zip). The "Download ZIP" link in this page does not include these third-party libraries. 
+<b>Complete package</b> of iCn3D including Three.js and jQuery can be downloaded from [https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-1.0.1.zip](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-1.0.1.zip). The "Download ZIP" link in this page does not include these third-party libraries. 
 
 ## Usage
 
@@ -86,21 +86,7 @@ gulp gh-pages
 
 ## Change log
 
-The beta version [icn3d-0.9.0-dev](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-0.9.0-dev.zip) was release on Jan 17, 2016. 
-
-The beta version [icn3d-0.9.1-dev](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-0.9.1-dev.zip) was release on Feb 9, 2016. The surface generation was switched from the iview version (surface.js) to the more efficient 3Dmol version (ProteinSurface4.js and marchingcube.js).
-
-The beta version [icn3d-0.9.2-dev](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-0.9.2-dev.zip) was release on March 4, 2016. CSS namespace was added. The file simple_ui.js was reorganized to share some codes with full_ui.js. A "Schematic" style was added to show one letter residue name in the C-alpha (for protein) or phosphorus (for nucleotide) position.
-
-The beta version [icn3d-0.9.3-dev](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-0.9.3-dev.zip) was release on March 9, 2016. Improved the following features: "Back" and "Forward" button, Export State, Open State.
-
-The beta version [icn3d-0.9.4-dev](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-0.9.4-dev.zip) was release on March 14, 2016. Added "Fog" and "Slab" features.
-
-The beta version [icn3d-0.9.5-dev](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-0.9.5-dev.zip) was release on April 4, 2016. Enabled to import Mol2, SDF, XYZ, PDB, and mmCIF files. Added "Schematic" style for ligands. Improved the coordination between picking on 3D structure and selection on sequences.
-
-The beta version [icn3d-0.9.6-dev](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-0.9.6-dev.zip) was release on April 21, 2016. Enabled to export and import selection file where each custom sets of atoms are defined. Javascript files and CSS files are versioned. Developers can use the default latest version or specify the specific version in their pages.
-
-The production version [icn3d-1.0](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-1.0.zip) was release on April 28, 2016. 
+The production version [icn3d-1.0.1](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-1.0.1.zip) was release on May 16, 2016. All previous releases can be found at the [help page](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d.html#log).
 
 ## Contact
 

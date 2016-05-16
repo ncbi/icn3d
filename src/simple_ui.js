@@ -727,7 +727,19 @@ iCn3DUI.prototype = {
 
     iCn3DUI.prototype.getLinkToStructureSummary = function(bLog) { var me = this;
 
-           var url = (me.cfg.cid !== undefined) ? "https://www.ncbi.nlm.nih.gov/pccompound/?term=" : "https://www.ncbi.nlm.nih.gov/structure/?term=";
+           var url = "https://www.ncbi.nlm.nih.gov/structure/?term=";
+
+           if(me.cfg.cid !== undefined) {
+               url = "https://www.ncbi.nlm.nih.gov/pccompound/?term=";
+           }
+           else {
+               if(me.inputid.indexOf(",") !== -1) {
+                   url = "https://www.ncbi.nlm.nih.gov/structure/?term=";
+               }
+               else {
+                   url = "https://www.ncbi.nlm.nih.gov/Structure/mmdb/mmdbsrv.cgi?uid=";
+               }
+           }
 
            if(me.inputid === undefined) {
                url = "https://www.ncbi.nlm.nih.gov/pccompound/?term=" + me.moleculeTitle;
@@ -1900,7 +1912,7 @@ iCn3DUI.prototype = {
                   alert("This gi " + mmdbid + " has no corresponding 3D structure...");
               }
               else {
-                  alert("This mmdbid " + mmdbid + " has no corresponding 3D structure...");
+                  alert("This mmdbid " + mmdbid + " with the parameters " + me.cfg.inpara + " has no corresponding 3D structure...");
               }
 
               return false;
@@ -2250,7 +2262,7 @@ iCn3DUI.prototype = {
                   mmdbid2pdbid[mmdbidTmp] = pdbidTmp;
               }
 
-              me.icn3d.moleculeTitle +=  "<a href=\"https://www.ncbi.nlm.nih.gov/structure/?term=" + structure.pdbid.toUpperCase() + "\" target=\"_blank\" style=\"color: " + me.GREYD + ";\">" + structure.pdbid.toUpperCase() + "</a>";
+              me.icn3d.moleculeTitle +=  "<a href=\"https://www.ncbi.nlm.nih.gov/Structure/mmdb/mmdbsrv.cgi?uid=" + structure.pdbid.toUpperCase() + "\" target=\"_blank\" style=\"color: " + me.GREYD + ";\">" + structure.pdbid.toUpperCase() + "</a>";
 
               if(structure.descr !== undefined) me.pmid += structure.descr.pubmedid;
               if(i === 0) {
@@ -2274,7 +2286,7 @@ iCn3DUI.prototype = {
               if(data.molid2chain !== undefined) {
                   var chainHash = {}; // there may have different chains with the same names in assembly
                   for (var molid in data.molid2chain) {
-                      var chain = data.molid2chain[molid].chain;
+                      var chain = data.molid2chain[molid].chain.trim(); // some space at the beginning
                       if(chainHash[chain] === undefined) {
                           chainHash[chain] = 1;
                       }
@@ -2291,7 +2303,7 @@ iCn3DUI.prototype = {
                   for (var mmdbid in data.molid2chain) {
                     var chainNameHash = {}; // chain name may be the same in assembly
                     for (var molid in data.molid2chain[mmdbid]) {
-                      var chainName = data.molid2chain[mmdbid][molid].chain;
+                      var chainName = data.molid2chain[mmdbid][molid].chain.trim();
                       if(chainNameHash[chainName] === undefined) {
                           chainNameHash[chainName] = 1;
                       }
@@ -2320,7 +2332,7 @@ iCn3DUI.prototype = {
                   for (var mmdbid in data.molid2chain) {
                     var chainNameHash = {}; // chain name may be the same in assembly
                     for (var molid in data.molid2chain[mmdbid]) {
-                      var chainName = data.molid2chain[mmdbid][molid].chain;
+                      var chainName = data.molid2chain[mmdbid][molid].chain.trim();
                       if(chainNameHash[chainName] === undefined) {
                           chainNameHash[chainName] = 1;
                       }
@@ -2500,7 +2512,7 @@ iCn3DUI.prototype = {
 
             atm.resi = parseInt(atm.resi); // has to be integer
 
-            // modify resi icne MMDB used the same resi as in PDB where resi is not continuous
+            // modify resi since MMDB used the same resi as in PDB where resi is not continuous
             // No need to modify mmcif resi
             if(type === 'mmdbid') {
                 oldResi = atm.resi;
@@ -2513,7 +2525,7 @@ iCn3DUI.prototype = {
                     ++missingResIndex;
                 }
 
-                if(atm.resi !== prevOldResi) {
+                if(atm.resi !== prevOldResi || molid !== prevMolid) {
                     atm.resi = prevResi + 1;
                 }
                 else {
@@ -2551,10 +2563,13 @@ iCn3DUI.prototype = {
               me.icn3d.het = true;
             }
             else if (atm.mt === 'l') { // ligands and ions
-              me.icn3d.ligands[serial] = 1;
-
               //if (atm.bonds.length === 0) me.icn3d.ions[serial] = 1;
-              if (atm.elem === atm.resn) me.icn3d.ions[serial] = 1;
+              if (atm.elem === atm.resn) {
+                  me.icn3d.ions[serial] = 1;
+              }
+              else {
+                  me.icn3d.ligands[serial] = 1;
+              }
 
               me.icn3d.het = true;
             }
@@ -2612,7 +2627,7 @@ iCn3DUI.prototype = {
                 secondaries = 'c';
             }
 
-            if(atm.resi != prevResi) {
+            if( atm.resi != prevResi || molid != prevMolid ) { // mmdbid 2por has different molid, same resi
               if(me.icn3d.chainsSeq[chainid] === undefined) {
                   me.icn3d.chainsSeq[chainid] = [];
                   bChainSeqSet = false;
@@ -2639,7 +2654,7 @@ iCn3DUI.prototype = {
                   if(atm.resi % 10 === 0) numberStr = atm.resi.toString();
 
                   me.icn3d.chainsSeq[chainid].push(resObject);
-                    me.icn3d.chainsAnno[chainid][0].push(numberStr);
+                  me.icn3d.chainsAnno[chainid][0].push(numberStr);
                   me.icn3d.chainsAnno[chainid][1].push(secondaries);
               }
 
