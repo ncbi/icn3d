@@ -180,7 +180,7 @@ var iCn3D = function (id) {
 
     me.switchHighlightLevel();
 
-    // key event has to use the document because it requires teh focus
+    // key event has to use the document because it requires the focus
     me.typetext = false;
 
     //http://unixpapa.com/js/key.html
@@ -188,7 +188,7 @@ var iCn3D = function (id) {
       if(e.keyCode === 16) { // shiftKey
           me.bShiftKey = false;
       }
-      if(e.keyCode === 17 || e.keyCode === 224) { // ctrlKey or apple command key
+      if(e.keyCode === 17 || e.keyCode === 224 || e.keyCode === 91) { // ctrlKey or apple command key
           me.bCtrlKey = false;
       }
     });
@@ -197,7 +197,7 @@ var iCn3D = function (id) {
       if(e.shiftKey || e.keyCode === 16) {
           me.bShiftKey = true;
       }
-      if(e.ctrlKey || e.keyCode === 17 || e.keyCode === 224) {
+      if(e.ctrlKey || e.keyCode === 17 || e.keyCode === 224 || e.keyCode === 91) {
           me.bCtrlKey = true;
       }
 
@@ -394,7 +394,7 @@ var iCn3D = function (id) {
         me.isDragging = true;
 
         // see ref http://soledadpenades.com/articles/three-js-tutorials/object-picking/
-        if(me.picking && (e.altKey || e.ctrlKey || e.shiftKey || e.keyCode === 16 || e.keyCode === 17 || e.keyCode === 224) ) {
+        if(me.picking && (e.altKey || e.ctrlKey || e.shiftKey || e.keyCode === 16 || e.keyCode === 17 || e.keyCode === 224 || e.keyCode === 91) ) {
             me.highlightlevel = me.picking;
 
             me.mouse.x = ( (x - me.container.offset().left) / me.container.width() ) * 2 - 1;
@@ -5090,7 +5090,8 @@ iCn3D.prototype = {
         //if(this.highlightAtoms !== undefined && Object.keys(this.highlightAtoms).length > 0 && Object.keys(this.highlightAtoms).length < Object.keys(this.displayAtoms).length) {
         if(this.highlightAtoms !== undefined && Object.keys(this.highlightAtoms).length > 0 && Object.keys(this.highlightAtoms).length < Object.keys(this.atoms).length) {
             this.removeHighlightObjects();
-            if(this.bShowHighlight === undefined || this.bShowHighlight) this.addHighlightObjects(undefined, false);
+            //if(this.bShowHighlight === undefined || this.bShowHighlight) this.addHighlightObjects(undefined, false);
+            if(this.bShowHighlight === undefined || this.bShowHighlight) this.addHighlightObjects();
         }
 
         if(this.bRender === true) {
@@ -5098,7 +5099,6 @@ iCn3D.prototype = {
           this.render();
         }
     },
-
 
     // zoom
     zoomIn: function (normalizedFactor) { // 0.1
@@ -5307,6 +5307,13 @@ iCn3D.prototype = {
       }
       else if(this.picking === 3) {
         this.pickedAtomList = this.selectStrandHelixFromAtom(atom);
+      }
+
+      if(this.picking === 0) {
+          this.bShowHighlight = false;
+      }
+      else {
+            this.bShowHighlight = true;
       }
 
       if(!this.bShiftKey && !this.bCtrlKey) {

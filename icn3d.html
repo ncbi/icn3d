@@ -101,11 +101,15 @@ We provided two versions of iCn3D widgets: <a href="index.html?mmdbid=2por">basi
         <li><a href="#HowToUseStep1">Include three.js and jQuery javascript libraries in the &lt;head&gt; of your html page</a></li>
         <li><a href="#HowToUseStep2">Position the widget with an html div</a></li>
         <li><a href="#HowToUseStep3">Initialize the widget with desired parameters</a></li>
+        </ol>
+    </li>
+    <li><a href="#hints">Hints for using iCn3D</a><br>
+        <ul>
         <li><a href="#HowToUseStep4">Hint for rotating/translating/zooming the 3D structure</a></li>
         <li><a href="#HowToUseStep5">Hint for picking 3D structure and selecting sequences</a></li>
         <li><a href="#HowToUseStep6">Hint for recovering a crashed page</a></li>
         <li><a href="#HowToUseStep7">Hint for turning on scroll bars in Mac</a></li>
-        </ol>
+        </ul>
     </li>
     </ul>
 <br>
@@ -365,6 +369,8 @@ We provided two versions of iCn3D widgets: <a href="index.html?mmdbid=2por">basi
 </tr>
 </tbody></table>
 
+<li><a href="#log">Change Log</a></li>
+
 </ul>
 
 <hr>
@@ -456,7 +462,10 @@ We provided two versions of iCn3D widgets: <a href="index.html?mmdbid=2por">basi
   &lt;/script&gt;</pre>
     </li>
     </ul>
+</ol>
 
+<li><a name="hints"></a><b>Hints for using iCn3D</b><br>
+  <ul>
     <li><a name="HowToUseStep4"></a><b>Hint for rotating/translating/zooming the 3D structure:</b></li>
     <ul>
       <li>Rotate
@@ -503,7 +512,7 @@ We provided two versions of iCn3D widgets: <a href="index.html?mmdbid=2por">basi
     <div>If you are using Macintosh computer and need to scroll in the sequence dialog, you can turn on the scroll bars as follows: Systems preferences -> GENERAL -> show scroll bars -> check "always".
     </div>
 
-</ol>
+</ul>
 </li>
 </ul>
 
@@ -529,7 +538,7 @@ We provided two versions of iCn3D widgets: <a href="index.html?mmdbid=2por">basi
 <tr valign='top'><td>showmenu</td><td>No</td><td>Yes</td><td>Set "true" or "1" to show the menus and buttons at the top of the structure canvas. The default is "true".</td></tr>
 <tr valign='top'><td>showseq</td><td>No</td><td>Yes</td><td>Set "true" or "1" to show the sequence window. The default is "false".</td></tr>
 <tr valign='top'><td>showalignseq</td><td>No</td><td>Yes</td><td>Set "true" or "1" to show the aligned sequence window. The default is "false".</td></tr>
-<tr valign='top'><td><a name="commandsUrl"></a>command</td><td>No</td><td>Yes</td><td>Besides the "Script/Log" section, commands can also be attached to the url parameter "command". Several commands can be concatenated with the separator ";", e.g., <a href="full.html?mmdbid=1kq2&amp;command=select :1-20; color green">full.html?mmdbid=1kq2&amp;command=select :1-20; color green</a>.</td></tr>
+<tr valign='top'><td><a name="commandsUrl"></a>command</td><td>No</td><td>Yes</td><td>Besides the "Script/Log" section, commands can also be attached to the url parameter "command". Several commands can be concatenated with the separator ";", e.g., <a href="full.html?mmdbid=3gvu&command=select .A:38-40 or .A:42 or .A:45 or .A:61 or .A:63 or .A:77-78 or .A:82 or .A:91 or .A:107-108 or .A:110 or .A:114 or .A:162 or .A:172-173; style proteins stick; color atom; set surface Van der Waals surface; add label ATP-binding Site | size 18 | color #0000ff | background #cccccc | type custom; select .STI; color green; toggle highlight">full.html?mmdbid=3gvu&amp;command=select .A:38-40 or .A:42 or .A:45 or .A:61 or .A:63 or .A:77-78 or .A:82 or .A:91 or .A:107-108 or .A:110 or .A:114 or .A:162 or .A:172-173; style proteins stick; color atom; set surface Van der Waals surface; add label ATP-binding Site | size 18 | color #0000ff | background #cccccc | type custom; select .STI; color green; toggle highlight</a>.</td></tr>
 </table>
 
 <hr>
@@ -1466,8 +1475,43 @@ Update the sequence window for the currently selected atoms.
 
 
 
-<br>
+<br><br>
 
+<hr>
+
+<a name="log"></a>
+<h2>Change Log:<img src="https://www.ncbi.nlm.nih.gov/Structure/IMG/spacer.gif" width="25" height="1" border="0"><a href="#Top"><img src="https://www.ncbi.nlm.nih.gov/Structure/IMG/arrowup_blue.gif" width="12" height="12" border="0" alt="back to top"></a></h2>
+
+The production version <a href="https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-1.0.0.zip">icn3d-1.0.1</a> was release on May 16, 2016.
+<br><br>
+
+The production version <a href="https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-1.0.0.zip">icn3d-1.0.0</a> was release on April 28, 2016.
+<br><br>
+
+The beta version <a href="https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-0.9.6-dev.zip">icn3d-0.9.6-dev</a> was release on April 21, 2016. Enabled to export and import selection file where each custom sets of atoms are defined. Javascript files and CSS files are versioned. Developers can use the default latest version or specify the specific version in their pages.
+<br><br>
+
+The beta version <a href="https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-0.9.5-dev.zip">icn3d-0.9.5-dev</a> was release on April 4, 2016. Enabled to import Mol2, SDF, XYZ, PDB, and mmCIF files. Added "Schematic" style for ligands. Improved the coordination between picking on 3D structure and selection on sequences.
+<br><br>
+
+The beta version <a href="https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-0.9.4-dev.zip">icn3d-0.9.4-dev</a> was release on March 14, 2016. Added "Fog" and "Slab" features.
+<br><br>
+
+The beta version <a href="https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-0.9.3-dev.zip">icn3d-0.9.3-dev</a> was release on March 9, 2016. Improved the following features: "Back" and "Forward" button, Export State, Open State.
+<br><br>
+
+The beta version <a href="https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-0.9.2-dev.zip">icn3d-0.9.2-dev</a> was release on March 4, 2016. CSS namespace was added. The file simple_ui.js was reorganized to share some codes with full_ui.js. A "Schematic" style was added to show one letter residue name in the C-alpha (for protein) or phosphorus (for nucleotide) position.
+<br><br>
+
+The beta version <a href="https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-0.9.2-dev.zip">icn3d-0.9.2-dev</a> was release on March 4, 2016. CSS namespace was added. The file simple_ui.js was reorganized to share some codes with full_ui.js. A "Schematic" style was added to show one letter residue name in the C-alpha (for protein) or phosphorus (for nucleotide) position.
+<br><br>
+
+The beta version <a href="https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-0.9.1-dev.zip">icn3d-0.9.1-dev</a> was release on Feb 9, 2016. The surface generation was switched from the iview version (surface.js) to the more efficient 3Dmol version (ProteinSurface4.js and marchingcube.js).
+<br><br>
+
+The beta version <a href="https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-0.9.0-dev.zip">icn3d-0.9.0-dev</a> was release on Jan 17, 2016.
+
+<br>
 
 <!-- ======================= END_EXAMPLES ======================= -->
 
