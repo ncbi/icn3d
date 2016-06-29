@@ -785,38 +785,35 @@ iCn3DUI.prototype = {
       var selected = bInitial ? " selected" : "";
 
       if(moleculeArray === undefined) {
-        for(var chain in me.icn3d.domains) {
-          for(var domain in chain){
-            var domainid = chain + "_" + domain;
-            html += "<option value='" + domainid + "' " + selected + ">" + domainid + "</option>";
-            if(selected === " selected") me.icn3d.highlightAtoms = me.icn3d.unionHash(me.icn3d.highlightAtoms, me.icn3d.domains[chain][domain]);
+        $.each(me.icn3d.domains, function(structure_chain, domains) {
+          $.each(domains, function(domain, residues) {
+            html += "<option value='" + domain + "' " + selected + ">" + domain + "</option>";
+            if(selected === " selected") me.icn3d.highlightAtoms = me.icn3d.unionHash(me.icn3d.highlightAtoms, me.icn3d.domains[structure_chain][domain]);
 
             if(bInitial) {
               // Initially, add domains into the menu "atom selections"
               
-              me.icn3d.definedNames2Atoms[domainid] = Object.keys(me.icn3d.domains[chain][domain]);
-              me.icn3d.definedNames2Descr[domainid] = domainid;
-              me.icn3d.definedNames2Command[domainid] = 'select domain ' + domainid;
+              me.icn3d.definedNames2Atoms[domain] = Object.keys(me.icn3d.domains[structure_chain][domain]);
+              me.icn3d.definedNames2Descr[domain] = domain;
+              me.icn3d.definedNames2Command[domain] = 'select domain ' + domain;
             }
-          }
-        }
+          });
+        });
       }
       else {
-        for(var chain in me.icn3d.domains) {
-          var dashPos = chain.indexOf('_');
-          var molecule = chain.substr(0, dashPos);
-
-          for(var domain in chain){
+        $.each(me.icn3d.domains, function(structure_chain, domains) {
+          $.each(domains, function(domain, residues) {
+            var domainid = structure_chain + "_d" + domain;
             if(moleculeArray !== null && moleculeArray.toString().toLowerCase().indexOf(molecule.toLowerCase()) !== -1) {
-              html += "<option value='" + chain + "_" + domain + "' selected>" + chain + "_" + domain + "</option>";
+              html += "<option value='" + domain + "' selected>" + domain + "</option>";
 
               me.icn3d.highlightAtoms = me.icn3d.unionHash(me.icn3d.highlightAtoms, me.icn3d.chains[chain]);
             }
             else {
-              html += "<option value='" + chain + "_" + domain + "'>" + chain + "_" + domain + "</option>";
+              html += "<option value='" + domain + "'>" + domain + "</option>";
             }
-          }
-        }
+          });
+        });
       }
 
       return html;
@@ -1262,10 +1259,12 @@ iCn3DUI.prototype = {
        // clear custom defined residues;
        $("#" + me.pre + "structureid").val("");
        $("#" + me.pre + "alignChainid").val("");
+       $("#" + me.pre + "domainid").val("");
        $("#" + me.pre + "customResidues").val("");
 
        $("#" + me.pre + "structureid2").val("");
        $("#" + me.pre + "alignChainid2").val("");
+       $("#" + me.pre + "domainid2").val("");
        $("#" + me.pre + "customResidues2").val("");
 
        $("#" + me.pre + "customAtoms").val("");
@@ -1332,6 +1331,54 @@ iCn3DUI.prototype = {
        $("#" + me.pre + "dl_sequence").width(me.RESIDUE_WIDTH * seqObj.maxSeqCnt + 200);
 
        me.icn3d.addHighlightObjects();
+    },
+
+    changeDomainid: function (domainArray) { var me = this;
+      me.icn3d.removeHighlightObjects();
+      me.icn3d.highlightAtoms = {};
+      // clear custom defined residues;
+      $("#" + me.pre + "structureid").val("");
+      $("#" + me.pre + "alignChainid").val("");
+      $("#" + me.pre + "chainid").val("");
+      $("#" + me.pre + "customResidues").val("");
+      $("#" + me.pre + "structureid2").val("");
+      $("#" + me.pre + "alignChainid2").val("");
+      $("#" + me.pre + "chainid2").val("");
+      $("#" + me.pre + "customResidues2").val("");
+      $("#" + me.pre + "customAtoms").val("");
+      // log the selection
+      if(domainArray !== null) me.setLogCommand('select domain ' + domainArray.toString(), true);
+      var residueArray = [];
+
+      $.each(me.icn3d.domains, function(structure_chain, domains) {
+        $.each(domains, function(domain, residues) {
+          $.each(domainArray, function( i, selected_domain ) {
+            if (domain == selected_domain) {
+              $.each(residues, function(resi, atoms) {
+                residueArray.push(resi);
+              });
+            }
+          });
+        });
+      });
+
+      // log the selection
+      if(residueArray !== null) me.setLogCommand('select residue ' + me.residueids2spec(residueArray), true);
+      var sequencesHtml = "";
+      for(var j = 0, jl = residueArray.length; j < jl; ++j) {
+          me.icn3d.highlightAtoms = me.icn3d.unionHash(me.icn3d.highlightAtoms, me.icn3d.residues[residueArray[j]]);
+      }
+      sequencesHtml += "<b>Annotation(s):</b> Previously selected domains<br/>";
+      
+      var seqObj = me.getSequencesAnnotations(undefined, true, residueArray);
+      $("#" + me.pre + "dl_sequence").html(sequencesHtml + seqObj.sequencesHtml);
+      $("#" + me.pre + "dl_sequence").width(me.RESIDUE_WIDTH * seqObj.maxSeqCnt + 200);
+      if(me.cfg.align !== undefined) {
+          seqObj = me.getAlignSequencesAnnotations(undefined, true, residueArray);
+          $("#" + me.pre + "dl_sequence2").html(sequencesHtml + seqObj.sequencesHtml);
+          $("#" + me.pre + "dl_sequence2").width(me.RESIDUE_WIDTH * seqObj.maxSeqCnt + 200);
+      }
+      me.icn3d.addHighlightObjects();
     },
 
     changeResidueid: function (residueArray) { var me = this;
@@ -1629,7 +1676,6 @@ iCn3DUI.prototype = {
              var bMultipleStructures = (Object.keys(me.icn3d.structures).length == 1) ? false : true;
              for(var j = 0, jl = residueArraySorted.length; j < jl; ++j) {
                  var residueid = residueArraySorted[j];
-
                  lastDashPos = residueid.lastIndexOf('_');
                  chain = residueid.substr(0, lastDashPos);
                  resi = parseInt(residueid.substr(lastDashPos+1));
@@ -2230,21 +2276,21 @@ iCn3DUI.prototype = {
 
         //if(Object.keys(me.icn3d.highlightAtoms).length === Object.keys(me.icn3d.displayAtoms).length) me.icn3d.highlightAtoms = {};
         me.icn3d.highlightAtoms = {};
-        for(var chain in me.icn3d.domains) { // get residue number
-          for(var domian in chain){
-            for(var residue in domain){
-              var value = residue.name;
 
+        $.each(me.icn3d.domains, function(structure_chain, domains) {
+          $.each(domains, function(domain, residues) {
+            $.each(residues, function(residue, atoms) {
+              var value = residue.name;
               if(value !== '' && value !== '-') {
                 residueArray.push(residue);
-                for(var j in me.icn3d.residues[residue]) {
-                  atomArray.push(j);
-                  me.icn3d.highlightAtoms[j] = 1;
-                }
+                $.each(atoms, function(idx, atom) {
+                  atomArray.push(atom);
+                  me.icn3d.highlightAtoms[atom] = 1;
+                });
               }
-            }
-          }
-        }
+            });
+          });
+        });
 
         me.addCustomSelection(residueArray, atomArray, commandname, commandname, command, true);
 
@@ -2708,6 +2754,12 @@ iCn3DUI.prototype = {
       else if(commandOri.indexOf('select alignChain') !== -1) {
         var idArray = commandOri.substr(commandOri.lastIndexOf(' ') + 1).split(',');
         if(idArray !== null) me.changeAlignChainid(idArray);
+
+        //bShowLog = false;
+      }
+      else if(commandOri.indexOf('select domain') !== -1) {
+        var idArray = commandOri.substr(commandOri.lastIndexOf(' ') + 1).split(',');
+        if(idArray !== null) me.changeDomainid(idArray);
 
         //bShowLog = false;
       }
@@ -6150,6 +6202,40 @@ iCn3DUI.prototype = {
         });
     },
 
+    clickDomainid: function() { var me = this;
+        $("#" + me.pre + "domainid").change(function(e) {
+           //e.preventDefault();
+
+           var domainArray = $(this).val();
+           $("#" + me.pre + "domainid2").val("");
+
+           me.changeDomainid(domainArray);
+        });
+
+        $("#" + me.pre + "domainid2").change(function(e) {
+           //e.preventDefault();
+
+           var domainArray = $(this).val();
+           $("#" + me.pre + "domainid").val("");
+
+           me.changeDomainid(domainArray);
+        });
+
+        $("#" + me.pre + "domainid").focus(function(e) {
+           //e.preventDefault();
+           if(me.isMobile()) {
+               $("#" + me.pre + "domainid").val("");
+           }
+
+           $(this).attr('size', $("#" + me.pre + "domainid option").length);
+        });
+
+        $("#" + me.pre + "domainid").blur(function(e) {
+           //e.preventDefault();
+           $(this).attr('size', 1);
+        });
+    },
+
     clickCustomResidues: function() { var me = this;
         $("#" + me.pre + "customResidues").change(function(e) {
            //e.preventDefault();
@@ -7167,6 +7253,7 @@ iCn3DUI.prototype = {
         me.clickStructureid();
         me.clickChainid();
         me.clickAlignChainid();
+        me.clickDomainid();
         me.clickCustomResidues();
         me.clickCustomAtoms();
         me.clickShow_selected();
@@ -8540,6 +8627,21 @@ iCn3DUI.prototype = {
                 // use the original color from cgi output
                 me.icn3d.setColorByOptions(me.options, me.icn3d.atoms, true);
 
+                //Load domain info
+                $.each(data["domains"], function (chain_num, domains){
+                  var chain_id = id+'_'+data["molid2chain"][chain_num]["chain"];
+                  me.icn3d.domains[chain_id] = {}
+                  $.each(domains, function (domain_num, residues){
+                    var domain_id = chain_id+'_d'+domain_num;
+                    me.icn3d.domains[chain_id][domain_id] = {};
+                    for (var pos=residues[0][0]; pos<=residues[0][1]; pos++){
+                      var residue_id = chain_id+'_'+pos;
+                      var resi = me.icn3d.residues[residue_id];
+                      me.icn3d.domains[chain_id][domain_id][residue_id] = resi;
+                    }
+                  });
+                });
+
                 me.renderStructure();
 
                 if(me.cfg.rotate !== undefined) me.rotateStructure(me.cfg.rotate, true);
@@ -8744,6 +8846,21 @@ iCn3DUI.prototype = {
                     }
                 }
 
+                //Load domain info
+                $.each(data["domains"], function (chain_num, domains){
+                  var chain_id = id+'_'+data["molid2chain"][chain_num]["chain"];
+                  me.icn3d.domains[chain_id] = {}
+                  $.each(domains, function (domain_num, residues){
+                    var domain_id = chain_id+'_d'+domain_num;
+                    me.icn3d.domains[chain_id][domain_id] = {};
+                    for (var pos=residues[0][0]; pos<=residues[0][1]; pos++){
+                      var residue_id = chain_id+'_'+pos;
+                      var resi = me.icn3d.residues[residue_id];
+                      me.icn3d.domains[chain_id][domain_id][residue_id] = resi;
+                    }
+                  });
+                });
+
                 // sort the arrays
                 //for(var i in molid2ss) {
                 //    molid2ss[i].sort(function(a, b) {
@@ -8788,6 +8905,9 @@ iCn3DUI.prototype = {
     };
 
     iCn3DUI.prototype.downloadDomainInfo = function(gi, structure, chain_id) { var me = this;
+        /*This is an older method to donwload domain info. However, you need to all of the gis for every chain.
+        The data might not be the same as the other method, which needs to be checked.
+        */
         var url;
         if(gi === undefined && !gi) {
             return false;
@@ -8815,8 +8935,6 @@ iCn3DUI.prototype = {
           },
           success: function(data) {
             var data = data["data"][0];
-            console.log(data);
-            console.log(chain_id);
             if (!(structure+'_'+chain_id in me.icn3d.domains)){
               me.icn3d.domains[structure+'_'+chain_id] = {};
             }
@@ -8830,12 +8948,11 @@ iCn3DUI.prototype = {
               var to = domain["locs"][0]["segs"][0]["to"];
               for (var pos=from; pos<=to; pos++){
                 var resi = me.icn3d.residues[structure+'_'+chain_id+'_'+pos];
-                console.log(resi);
                 chain[structure+'_'+chain_id+'_d'+i][structure+'_'+chain_id+'_'+pos] = resi;
               }
               
             }
-            console.log(me.icn3d.domains);
+            
             me.updateMenus(false);
           }
         });
@@ -8876,11 +8993,6 @@ iCn3DUI.prototype = {
         me.icn3d.bCid = undefined;
         var bGi = true;
         me.downloadMmdb(gi, bGi);
-
-        //Load in domain info. GI is split for each chain, so we need to get the correct GIs, and iterate over structures and chains
-        //var structure = me.icn3d.structures.keys()[0];
-        console.log(me.icn3d.structures);
-        me.downloadDomainInfo(gi, "1BQU", "A");
     };
 
     iCn3DUI.prototype.loadAtomDataIn = function (data, id, type, seqalign) { var me = this;
