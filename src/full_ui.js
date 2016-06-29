@@ -188,7 +188,7 @@ iCn3DUI.prototype = {
               me.STATENUMBER = this.commands.length;
           }
 
-          this.logs.push('pickatom ' + atom.serial + ' (chain: ' + atom.structure + '_' + atom.chain + ', residue: ' + atom.resn + ', number: ' + atom.resi + ', atom: ' + atom.name + ')');
+          this.logs.push('pickatom ' + atom.serial + ' (chain: ' + atom.structure + '_' + atom.chain + ', domain: ' + atom.structure + '_' + atom.chain + atom.domain + 'residue:' + atom.resn + ', number: ' + atom.resi + ', atom: ' + atom.name + ')');
           if ( $( "#" + me.pre + "logtext" ).length )  {
             $("#" + me.pre + "logtext").val("> " + this.logs.join("\n> ") + "\n> ").scrollTop($("#" + me.pre + "logtext")[0].scrollHeight);
           }
@@ -359,11 +359,13 @@ iCn3DUI.prototype = {
         $("#" + me.pre + "chainid").val("");
         $("#" + me.pre + "structureid").val("");
         $("#" + me.pre + "alignChainid").val("");
+        $("#" + me.pre + "domainid").val("");
         $("#" + me.pre + "customResidues").val("");
 
         $("#" + me.pre + "chainid2").val("");
         $("#" + me.pre + "structureid2").val("");
         $("#" + me.pre + "alignChainid2").val("");
+        $("#" + me.pre + "domainid2").val("");
         $("#" + me.pre + "customResidues2").val("");
 
         $("#" + me.pre + "customAtoms").val("");
@@ -777,6 +779,46 @@ iCn3DUI.prototype = {
       return html;
     },
 
+    setDomainMenu: function (bInitial, moleculeArray) { var me = this;
+      var html = "";
+
+      var selected = bInitial ? " selected" : "";
+
+      if(moleculeArray === undefined) {
+        $.each(me.icn3d.domains, function(structure_chain, domains) {
+          $.each(domains, function(domain, residues) {
+            html += "<option value='" + domain + "' " + selected + ">" + domain + "</option>";
+            if(selected === " selected") me.icn3d.highlightAtoms = me.icn3d.unionHash(me.icn3d.highlightAtoms, me.icn3d.domains[structure_chain][domain]);
+
+            if(bInitial) {
+              // Initially, add domains into the menu "atom selections"
+              
+              me.icn3d.definedNames2Atoms[domain] = Object.keys(me.icn3d.domains[structure_chain][domain]);
+              me.icn3d.definedNames2Descr[domain] = domain;
+              me.icn3d.definedNames2Command[domain] = 'select domain ' + domain;
+            }
+          });
+        });
+      }
+      else {
+        $.each(me.icn3d.domains, function(structure_chain, domains) {
+          $.each(domains, function(domain, residues) {
+            var domainid = structure_chain + "_d" + domain;
+            if(moleculeArray !== null && moleculeArray.toString().toLowerCase().indexOf(molecule.toLowerCase()) !== -1) {
+              html += "<option value='" + domain + "' selected>" + domain + "</option>";
+
+              me.icn3d.highlightAtoms = me.icn3d.unionHash(me.icn3d.highlightAtoms, me.icn3d.chains[chain]);
+            }
+            else {
+              html += "<option value='" + domain + "'>" + domain + "</option>";
+            }
+          });
+        });
+      }
+
+      return html;
+    },
+
     setResidueMenu: function (commandname) { var me = this;
       var html = "";
 
@@ -794,9 +836,11 @@ iCn3DUI.prototype = {
       if(bSelected) {
           $("#" + me.pre + "chainid").val("");
           $("#" + me.pre + "structureid").val("");
+          $("#" + me.pre + "domainid").val("");
 
           $("#" + me.pre + "chainid2").val("");
           $("#" + me.pre + "structureid2").val("");
+          $("#" + me.pre + "domainid2").val("");
       }
 
       return html;
@@ -824,9 +868,11 @@ iCn3DUI.prototype = {
       if(bSelected) {
           $("#" + me.pre + "chainid").val("");
           $("#" + me.pre + "structureid").val("");
+          $("#" + me.pre + "domainid").val("");
 
           $("#" + me.pre + "chainid2").val("");
           $("#" + me.pre + "structureid2").val("");
+          $("#" + me.pre + "domainid2").val("");
       }
 
       return html;
@@ -1131,10 +1177,12 @@ iCn3DUI.prototype = {
        // clear custom defined residues
        $("#" + me.pre + "chainid").val("");
        $("#" + me.pre + "alignChainid").val("");
+       $("#" + me.pre + "domainid").val("");
        $("#" + me.pre + "customResidues").val("");
 
        $("#" + me.pre + "chainid2").val("");
        $("#" + me.pre + "alignChainid2").val("");
+       $("#" + me.pre + "domainid2").val("");
        $("#" + me.pre + "customResidues2").val("");
 
        $("#" + me.pre + "customAtoms").val("");
@@ -1149,6 +1197,10 @@ iCn3DUI.prototype = {
        var alignChainsHtml = me.setAlignChainMenu(false, moleculeArray);
        $("#" + me.pre + "alignChainid").html(alignChainsHtml);
        $("#" + me.pre + "alignChainid2").html(alignChainsHtml);
+
+       var domainsHtml = me.setDomainMenu(false, moleculeArray);
+       $("#" + me.pre + "domainid").html(domainsHtml);
+       $("#" + me.pre + "domianid2").html(domainsHtml);
 
        var chainArray = [];
        for(var i = 0, il=moleculeArray.length; i < il; ++i) {
@@ -1207,10 +1259,12 @@ iCn3DUI.prototype = {
        // clear custom defined residues;
        $("#" + me.pre + "structureid").val("");
        $("#" + me.pre + "alignChainid").val("");
+       $("#" + me.pre + "domainid").val("");
        $("#" + me.pre + "customResidues").val("");
 
        $("#" + me.pre + "structureid2").val("");
        $("#" + me.pre + "alignChainid2").val("");
+       $("#" + me.pre + "domainid2").val("");
        $("#" + me.pre + "customResidues2").val("");
 
        $("#" + me.pre + "customAtoms").val("");
@@ -1244,10 +1298,12 @@ iCn3DUI.prototype = {
        // clear custom defined residues;
        $("#" + me.pre + "structureid").val("");
        $("#" + me.pre + "chainid").val("");
+       $("#" + me.pre + "domainid").val("");
        $("#" + me.pre + "customResidues").val("");
 
        $("#" + me.pre + "structureid2").val("");
        $("#" + me.pre + "chainid2").val("");
+       $("#" + me.pre + "domainid2").val("");
        $("#" + me.pre + "customResidues2").val("");
 
        $("#" + me.pre + "customAtoms").val("");
@@ -1277,6 +1333,54 @@ iCn3DUI.prototype = {
        me.icn3d.addHighlightObjects();
     },
 
+    changeDomainid: function (domainArray) { var me = this;
+      me.icn3d.removeHighlightObjects();
+      me.icn3d.highlightAtoms = {};
+      // clear custom defined residues;
+      $("#" + me.pre + "structureid").val("");
+      $("#" + me.pre + "alignChainid").val("");
+      $("#" + me.pre + "chainid").val("");
+      $("#" + me.pre + "customResidues").val("");
+      $("#" + me.pre + "structureid2").val("");
+      $("#" + me.pre + "alignChainid2").val("");
+      $("#" + me.pre + "chainid2").val("");
+      $("#" + me.pre + "customResidues2").val("");
+      $("#" + me.pre + "customAtoms").val("");
+      // log the selection
+      if(domainArray !== null) me.setLogCommand('select domain ' + domainArray.toString(), true);
+      var residueArray = [];
+
+      $.each(me.icn3d.domains, function(structure_chain, domains) {
+        $.each(domains, function(domain, residues) {
+          $.each(domainArray, function( i, selected_domain ) {
+            if (domain == selected_domain) {
+              $.each(residues, function(resi, atoms) {
+                residueArray.push(resi);
+              });
+            }
+          });
+        });
+      });
+
+      // log the selection
+      if(residueArray !== null) me.setLogCommand('select residue ' + me.residueids2spec(residueArray), true);
+      var sequencesHtml = "";
+      for(var j = 0, jl = residueArray.length; j < jl; ++j) {
+          me.icn3d.highlightAtoms = me.icn3d.unionHash(me.icn3d.highlightAtoms, me.icn3d.residues[residueArray[j]]);
+      }
+      sequencesHtml += "<b>Annotation(s):</b> Previously selected domains<br/>";
+      
+      var seqObj = me.getSequencesAnnotations(undefined, true, residueArray);
+      $("#" + me.pre + "dl_sequence").html(sequencesHtml + seqObj.sequencesHtml);
+      $("#" + me.pre + "dl_sequence").width(me.RESIDUE_WIDTH * seqObj.maxSeqCnt + 200);
+      if(me.cfg.align !== undefined) {
+          seqObj = me.getAlignSequencesAnnotations(undefined, true, residueArray);
+          $("#" + me.pre + "dl_sequence2").html(sequencesHtml + seqObj.sequencesHtml);
+          $("#" + me.pre + "dl_sequence2").width(me.RESIDUE_WIDTH * seqObj.maxSeqCnt + 200);
+      }
+      me.icn3d.addHighlightObjects();
+    },
+
     changeResidueid: function (residueArray) { var me = this;
        me.icn3d.removeHighlightObjects();
 
@@ -1286,11 +1390,13 @@ iCn3DUI.prototype = {
        $("#" + me.pre + "structureid").val("");
        $("#" + me.pre + "chainid").val("");
        $("#" + me.pre + "alignChainid").val("");
+       $("#" + me.pre + "domainid").val("");
        $("#" + me.pre + "customResidues").val("");
 
        $("#" + me.pre + "structureid2").val("");
        $("#" + me.pre + "chainid2").val("");
        $("#" + me.pre + "alignChainid2").val("");
+       $("#" + me.pre + "domainid2").val("");
        $("#" + me.pre + "customResidues2").val("");
 
        $("#" + me.pre + "customAtoms").val("");
@@ -1333,10 +1439,12 @@ iCn3DUI.prototype = {
        // clear molecule and chain
        $("#" + me.pre + "chainid").val("");
        $("#" + me.pre + "alignChainid").val("");
+       $("#" + me.pre + "domainid").val("");
        $("#" + me.pre + "structureid").val("");
 
        $("#" + me.pre + "chainid2").val("");
        $("#" + me.pre + "alignChainid2").val("");
+       $("#" + me.pre + "domainid").val("");
        $("#" + me.pre + "structureid2").val("");
 
        $("#" + me.pre + "customAtoms").val("");
@@ -1393,6 +1501,7 @@ iCn3DUI.prototype = {
        // clear molecule and chain
        $("#" + me.pre + "chainid").val("");
        $("#" + me.pre + "alignChainid").val("");
+       $("#" + me.pre + "domainid").val("");
        $("#" + me.pre + "structureid").val("");
        $("#" + me.pre + "customResidues").val("");
 
@@ -1400,6 +1509,7 @@ iCn3DUI.prototype = {
        $("#" + me.pre + "alignChainid2").val("");
        $("#" + me.pre + "structureid2").val("");
        $("#" + me.pre + "customResidues2").val("");
+       $("#" + me.pre + "domainid2").val("");
 
        // clear commmand
        $("#" + me.pre + "command").val("");
@@ -1566,7 +1676,6 @@ iCn3DUI.prototype = {
              var bMultipleStructures = (Object.keys(me.icn3d.structures).length == 1) ? false : true;
              for(var j = 0, jl = residueArraySorted.length; j < jl; ++j) {
                  var residueid = residueArraySorted[j];
-
                  lastDashPos = residueid.lastIndexOf('_');
                  chain = residueid.substr(0, lastDashPos);
                  resi = parseInt(residueid.substr(lastDashPos+1));
@@ -2157,6 +2266,37 @@ iCn3DUI.prototype = {
         me.icn3d.addHighlightObjects();
     },
 
+    selectADomain: function (domainid, commandname) { var me = this;
+        var commandname = commandname.replace(/\s/g, '');
+        var command = 'select domain ' + domainid;
+
+        var residueArray = [], atomArray = [];
+
+        me.icn3d.removeHighlightObjects();
+
+        //if(Object.keys(me.icn3d.highlightAtoms).length === Object.keys(me.icn3d.displayAtoms).length) me.icn3d.highlightAtoms = {};
+        me.icn3d.highlightAtoms = {};
+
+        $.each(me.icn3d.domains, function(structure_chain, domains) {
+          $.each(domains, function(domain, residues) {
+            $.each(residues, function(residue, atoms) {
+              var value = residue.name;
+              if(value !== '' && value !== '-') {
+                residueArray.push(residue);
+                $.each(atoms, function(idx, atom) {
+                  atomArray.push(atom);
+                  me.icn3d.highlightAtoms[atom] = 1;
+                });
+              }
+            });
+          });
+        });
+
+        me.addCustomSelection(residueArray, atomArray, commandname, commandname, command, true);
+
+        me.icn3d.addHighlightObjects();
+    },
+
     selectAResidue: function (residueid, commandname) { var me = this;
         var commandname = commandname.replace(/\s/g, '');
         var select = "select residue " + residueid;
@@ -2614,6 +2754,12 @@ iCn3DUI.prototype = {
       else if(commandOri.indexOf('select alignChain') !== -1) {
         var idArray = commandOri.substr(commandOri.lastIndexOf(' ') + 1).split(',');
         if(idArray !== null) me.changeAlignChainid(idArray);
+
+        //bShowLog = false;
+      }
+      else if(commandOri.indexOf('select domain') !== -1) {
+        var idArray = commandOri.substr(commandOri.lastIndexOf(' ') + 1).split(',');
+        if(idArray !== null) me.changeDomainid(idArray);
 
         //bShowLog = false;
       }
@@ -3761,6 +3907,10 @@ iCn3DUI.prototype = {
         html += "        <select id='" + me.pre + "chainid2' multiple size='3' style='min-width:50px;'>";
         html += "        </select></td>";
 
+        html += "        <td valign='top'><b>Domains:</b><br/>";
+        html += "        <select id='" + me.pre + "domainid2' multiple size='3' style='min-width:50px;'>";
+        html += "        </select></td>";
+
         if(me.cfg.align !== undefined) {
             html += "        <td valign='top'><b>Aligned:</b><br/>";
             html += "        <select id='" + me.pre + "alignChainid2' multiple size='3' style='min-width:50px;'>";
@@ -3831,6 +3981,10 @@ iCn3DUI.prototype = {
                 html += "        <div style='margin-top:-3px;'><select id='" + me.pre + "chainid' multiple size='1' style='min-width:50px;'>";
                 html += "        </select></div></td>";
             }
+
+            html += "        <td valign='top'><span class='icn3d-commandTitle'>Domain:</span><br/>";
+            html += "        <div style='margin-top:-3px;'><select id='" + me.pre + "domainid' multiple size='1' style='min-width:50px;'>";
+            html += "        </select></div></td>";
         }
 
         html += "        <td valign='top'><span class='icn3d-commandTitle'>Custom:</span><br/>";
@@ -3875,17 +4029,20 @@ iCn3DUI.prototype = {
       var structuresHtml = me.setStructureMenu(bInitial);
       var chainsHtml = me.setChainMenu(bInitial);
       var alignChainsHtml = me.setAlignChainMenu(bInitial);
+      var domainsHtml = me.setDomainMenu(bInitial);
       var definedResiduesHtml = me.setResidueMenu();
       var definedAtomsHtml = me.setAtomMenu();
 
       if($("#" + me.pre + "structureid")) $("#" + me.pre + "structureid").html(structuresHtml);
       if($("#" + me.pre + "chainid")) $("#" + me.pre + "chainid").html(chainsHtml);
       if($("#" + me.pre + "alignChainid")) $("#" + me.pre + "alignChainid").html(alignChainsHtml);
+      if($("#" + me.pre + "domainid")) $("#" + me.pre + "domainid").html(domainsHtml);
       if($("#" + me.pre + "customResidues")) $("#" + me.pre + "customResidues").html(definedResiduesHtml);
 
       if($("#" + me.pre + "structureid2")) $("#" + me.pre + "structureid2").html(structuresHtml);
       if($("#" + me.pre + "chainid2")) $("#" + me.pre + "chainid2").html(chainsHtml);
       if($("#" + me.pre + "alignChainid2")) $("#" + me.pre + "alignChainid2").html(alignChainsHtml);
+      if($("#" + me.pre + "domainid2")) $("#" + me.pre + "domainid2").html(domainsHtml);
       if($("#" + me.pre + "customResidues2")) $("#" + me.pre + "customResidues2").html(definedResiduesHtml);
 
       if($("#" + me.pre + "customAtoms")) $("#" + me.pre + "customAtoms").html(definedAtomsHtml);
@@ -4558,6 +4715,14 @@ iCn3DUI.prototype = {
         });
     },
 
+    clickMenu2_select_domain: function() { var me = this;
+        $("#" + me.pre + "menu2_select_domain").click(function (e) {
+           //e.preventDefault();
+
+           me.openDialog(me.pre + 'dl_select_domain', 'Select Structural Domain');
+        });
+    },
+
     // menu 3
     clickmenu3_proteinsRibbon: function() { var me = this;
         $("#" + me.pre + "menu3_proteinsRibbon").click(function (e) {
@@ -4902,6 +5067,15 @@ iCn3DUI.prototype = {
 
            me.setOption('color', 'chain');
            me.setLogCommand('color chain', true);
+        });
+    },
+
+    clickMenu4_colorDomain: function() { var me = this;
+        $("#" + me.pre + "menu4_colorDomain").click(function (e) {
+           //e.preventDefault();
+
+           me.setOption('color', 'domain');
+           me.setLogCommand('color domain', true);
         });
     },
 
@@ -5535,9 +5709,11 @@ iCn3DUI.prototype = {
               var bAlign = false
 
               $("#" + me.pre + "chainid").val("");
+              $("#" + me.pre + "domainid").val("");
               $("#" + me.pre + "structureid").val("");
 
               $("#" + me.pre + "chainid2").val("");
+              $("#" + me.pre + "domainid2").val("");
               $("#" + me.pre + "structureid2").val("");
 
               if(me.bSelectResidue === false) {
@@ -5582,9 +5758,11 @@ iCn3DUI.prototype = {
               me.icn3d.addHighlightObjects();
 
               $("#" + me.pre + "chainid").val("");
+              $("#" + me.pre + "domainid").val("");
               $("#" + me.pre + "structureid").val("");
 
               $("#" + me.pre + "chainid2").val("");
+              $("#" + me.pre + "domainid").val("");
               $("#" + me.pre + "structureid2").val("");
 
               // select annotation title
@@ -5629,10 +5807,11 @@ iCn3DUI.prototype = {
               // reset original color
               //me.icn3d.setColorByOptions(me.options, me.icn3d.atoms);
 
-              $("#" + me.pre + "chainid").val("");
+              $("#" + me.pre + "domainid").val("");
               $("#" + me.pre + "structureid").val("");
 
               $("#" + me.pre + "chainid2").val("");
+              $("#" + me.pre + "domainid2").val("");
               $("#" + me.pre + "structureid2").val("");
 
               if(me.bSelectAlignResidue === false) {
@@ -5678,9 +5857,11 @@ iCn3DUI.prototype = {
               me.icn3d.addHighlightObjects();
 
               $("#" + me.pre + "chainid").val("");
+              $("#" + me.pre + "domainid").val("");
               $("#" + me.pre + "structureid").val("");
 
               $("#" + me.pre + "chainid2").val("");
+              $("#" + me.pre + "domainid1").val("");
               $("#" + me.pre + "structureid2").val("");
 
               // select annotation title
@@ -5722,9 +5903,11 @@ iCn3DUI.prototype = {
     selectSequenceMobile: function() { var me = this;
       $("#" + me.pre + "dl_sequence").on('click', '.icn3d-residue', function(e) {
           $("#" + me.pre + "chainid").val("");
+          $("#" + me.pre + "domainid").val("");
           $("#" + me.pre + "structureid").val("");
 
           $("#" + me.pre + "chainid2").val("");
+          $("#" + me.pre + "domainid2").val("");
           $("#" + me.pre + "structureid2").val("");
 
           // select residues
@@ -5779,9 +5962,11 @@ iCn3DUI.prototype = {
 
       $("#" + me.pre + "dl_sequence2").on('click', '.icn3d-residue', function(e) {
           $("#" + me.pre + "chainid").val("");
+          $("#" + me.pre + "domainid").val("");
           $("#" + me.pre + "structureid").val("");
 
           $("#" + me.pre + "chainid2").val("");
+          $("#" + me.pre + "domainid2").val("");
           $("#" + me.pre + "structureid2").val("");
 
           // select residues
@@ -5838,9 +6023,11 @@ iCn3DUI.prototype = {
     selectChainMobile: function() { var me = this;
       $("#" + me.pre + "dl_sequence").on('click', '.icn3d-seqTitle', function(e) {
           $("#" + me.pre + "chainid").val("");
+          $("#" + me.pre + "domainid").val("");
           $("#" + me.pre + "structureid").val("");
 
           $("#" + me.pre + "chainid2").val("");
+          $("#" + me.pre + "domainid1").val("");
           $("#" + me.pre + "structureid2").val("");
 
             var currChain = $(this).attr('chain');
@@ -5876,9 +6063,11 @@ iCn3DUI.prototype = {
 
       $("#" + me.pre + "dl_sequence2").on('click', '.icn3d-seqTitle', function(e) {
           $("#" + me.pre + "chainid").val("");
+          $("#" + me.pre + "domainid").val("");
           $("#" + me.pre + "structureid").val("");
 
           $("#" + me.pre + "chainid2").val("");
+          $("#" + me.pre + "domainid2").val("");
           $("#" + me.pre + "structureid2").val("");
 
             var currChain = $(this).attr('chain');
@@ -6008,6 +6197,40 @@ iCn3DUI.prototype = {
         });
 
         $("#" + me.pre + "alignChainid").blur(function(e) {
+           //e.preventDefault();
+           $(this).attr('size', 1);
+        });
+    },
+
+    clickDomainid: function() { var me = this;
+        $("#" + me.pre + "domainid").change(function(e) {
+           //e.preventDefault();
+
+           var domainArray = $(this).val();
+           $("#" + me.pre + "domainid2").val("");
+
+           me.changeDomainid(domainArray);
+        });
+
+        $("#" + me.pre + "domainid2").change(function(e) {
+           //e.preventDefault();
+
+           var domainArray = $(this).val();
+           $("#" + me.pre + "domainid").val("");
+
+           me.changeDomainid(domainArray);
+        });
+
+        $("#" + me.pre + "domainid").focus(function(e) {
+           //e.preventDefault();
+           if(me.isMobile()) {
+               $("#" + me.pre + "domainid").val("");
+           }
+
+           $(this).attr('size', $("#" + me.pre + "domainid option").length);
+        });
+
+        $("#" + me.pre + "domainid").blur(function(e) {
            //e.preventDefault();
            $(this).attr('size', 1);
         });
@@ -7030,6 +7253,7 @@ iCn3DUI.prototype = {
         me.clickStructureid();
         me.clickChainid();
         me.clickAlignChainid();
+        me.clickDomainid();
         me.clickCustomResidues();
         me.clickCustomAtoms();
         me.clickShow_selected();
@@ -7845,6 +8069,7 @@ iCn3DUI.prototype = {
                         resn: resn,             // optional, used to determine protein or nucleotide
                         structure: structure,   // optional, used to identify structure
                         chain: chain,           // optional, used to identify chain
+                        domain: domain,         // optional, used to identify domain
                         resi: resi,             // optional, used to identify residue ID
                         coord: coord,           // required, used to draw 3D shape
                         b: 0,                   // optional, used to draw B-factor tube
@@ -8052,6 +8277,7 @@ iCn3DUI.prototype = {
                     resn: resn,             // optional, used to determine protein or nucleotide
                     structure: structure,   // optional, used to identify structure
                     chain: chain,           // optional, used to identify chain
+                    domain: domain,         // optional, used to identify domain
                     resi: resi,             // optional, used to identify residue ID
                     coord: coord,           // required, used to draw 3D shape
                     b: 0,                   // optional, used to draw B-factor tube
@@ -8278,6 +8504,7 @@ iCn3DUI.prototype = {
                 resn: resn,             // optional, used to determine protein or nucleotide
                 structure: structure,   // optional, used to identify structure
                 chain: chain,           // optional, used to identify chain
+                domain: domain,         // optional, used to identify domain
                 resi: resi,             // optional, used to identify residue ID
                 coord: coord,           // required, used to draw 3D shape
                 b: 0,                   // optional, used to draw B-factor tube
@@ -8399,6 +8626,21 @@ iCn3DUI.prototype = {
                 me.icn3d.setAtomStyleByOptions(me.options);
                 // use the original color from cgi output
                 me.icn3d.setColorByOptions(me.options, me.icn3d.atoms, true);
+
+                //Load domain info
+                $.each(data["domains"], function (chain_num, domains){
+                  var chain_id = id+'_'+data["molid2chain"][chain_num]["chain"];
+                  me.icn3d.domains[chain_id] = {}
+                  $.each(domains, function (domain_num, residues){
+                    var domain_id = chain_id+'_d'+domain_num;
+                    me.icn3d.domains[chain_id][domain_id] = {};
+                    for (var pos=residues[0][0]; pos<=residues[0][1]; pos++){
+                      var residue_id = chain_id+'_'+pos;
+                      var resi = me.icn3d.residues[residue_id];
+                      me.icn3d.domains[chain_id][domain_id][residue_id] = resi;
+                    }
+                  });
+                });
 
                 me.renderStructure();
 
@@ -8604,6 +8846,21 @@ iCn3DUI.prototype = {
                     }
                 }
 
+                //Load domain info
+                $.each(data["domains"], function (chain_num, domains){
+                  var chain_id = id+'_'+data["molid2chain"][chain_num]["chain"];
+                  me.icn3d.domains[chain_id] = {}
+                  $.each(domains, function (domain_num, residues){
+                    var domain_id = chain_id+'_d'+domain_num;
+                    me.icn3d.domains[chain_id][domain_id] = {};
+                    for (var pos=residues[0][0]; pos<=residues[0][1]; pos++){
+                      var residue_id = chain_id+'_'+pos;
+                      var resi = me.icn3d.residues[residue_id];
+                      me.icn3d.domains[chain_id][domain_id][residue_id] = resi;
+                    }
+                  });
+                });
+
                 // sort the arrays
                 //for(var i in molid2ss) {
                 //    molid2ss[i].sort(function(a, b) {
@@ -8647,6 +8904,60 @@ iCn3DUI.prototype = {
         });
     };
 
+    iCn3DUI.prototype.downloadDomainInfo = function(gi, structure, chain_id) { var me = this;
+        /*This is an older method to donwload domain info. However, you need to all of the gis for every chain.
+        The data might not be the same as the other method, which needs to be checked.
+        */
+        var url;
+        if(gi === undefined && !gi) {
+            return false;
+        }
+
+        url = "https://www.ncbi.nlm.nih.gov/Structure/cdannots/cdannots.fcgi?fmt&queries=" + gi;
+
+        $.ajax({
+          url: url,
+          dataType: 'jsonp',
+          cache: true,
+          beforeSend: function() {
+            if($("#" + me.pre + "wait")) $("#" + me.pre + "wait").show();
+            if($("#" + me.pre + "canvas")) $("#" + me.pre + "canvas").hide();
+            if($("#" + me.pre + "commandlog")) $("#" + me.pre + "commandlog").hide();
+          },
+          complete: function() {
+            if($("#" + me.pre + "wait")) $("#" + me.pre + "wait").hide();
+            if($("#" + me.pre + "canvas")) $("#" + me.pre + "canvas").show();
+            if($("#" + me.pre + "commandlog")) $("#" + me.pre + "commandlog").show();
+          },
+          error: function(xhr, textStatus, errorThrown){
+            alert("This gi " + mmdbid + " has no corresponding domain information...");
+            return false;
+          },
+          success: function(data) {
+            var data = data["data"][0];
+            if (!(structure+'_'+chain_id in me.icn3d.domains)){
+              me.icn3d.domains[structure+'_'+chain_id] = {};
+            }
+            for(var i in data["doms"]) {
+              var chain = me.icn3d.domains[structure+'_'+chain_id];
+              if (!(structure+'_'+chain_id+'_d'+i in chain)){
+                chain[structure+'_'+chain_id+'_d'+i] = {};
+              }
+              var domain = data["doms"][i];
+              var from = domain["locs"][0]["segs"][0]["from"];
+              var to = domain["locs"][0]["segs"][0]["to"];
+              for (var pos=from; pos<=to; pos++){
+                var resi = me.icn3d.residues[structure+'_'+chain_id+'_'+pos];
+                chain[structure+'_'+chain_id+'_d'+i][structure+'_'+chain_id+'_'+pos] = resi;
+              }
+              
+            }
+            
+            me.updateMenus(false);
+          }
+        });
+    }; 
+
     iCn3DUI.prototype.downloadGi = function (gi) { var me = this;
 /*
         var mmdbid;
@@ -8682,7 +8993,6 @@ iCn3DUI.prototype = {
         me.icn3d.bCid = undefined;
         var bGi = true;
         me.downloadMmdb(gi, bGi);
-
     };
 
     iCn3DUI.prototype.loadAtomDataIn = function (data, id, type, seqalign) { var me = this;
