@@ -3,9 +3,9 @@
 <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
 <meta name="description" content="iCn3D Structure Viewer">
 <meta name="ncbi_db" content="structure">
-<meta name="keywords" content="NCBI, Structure, iCn3D, 3D, Viewer, WebGL, three.js, sequence, chemical">
+<meta name="keywords" content="NCBI, Structure, JavaScript, iCn3D, 3D, Viewer, WebGL, three.js, sequence, chemical">
 <meta name="robots" content="index,follow,noarchive">
-<title>iCn3D Structure Viewer</title>
+<title>iCn3D: Web-based 3D Structure Viewer</title>
 
   <link rel="stylesheet"
     href="node_modules/jquery-ui/themes/ui-lightness/jquery-ui.min.css">
@@ -21,6 +21,7 @@
   <script src="src/marchingcube.js"></script>
   <script src="src/ProteinSurface4.js"></script>
   <script src="src/setupsurface.js"></script>
+  <script src="src/mmtf.js"></script>
   <script src="src/icn3d.js"></script>
   <script src="src/simple_ui.js"></script>
 
@@ -287,6 +288,7 @@ We provided two versions of iCn3D widgets: <a href="index.html?mmdbid=2por">basi
 <a href="#downloadGi">downloadGi</a><br>
 <a href="#downloadMmcif">downloadMmcif</a><br>
 <a href="#downloadMmdb">downloadMmdb</a><br>
+<a href="#downloadMmcif">downloadMmcif</a><br>
 <a href="#downloadPdb">downloadPdb</a><br>
 </div>
 
@@ -523,12 +525,14 @@ We provided two versions of iCn3D widgets: <a href="index.html?mmdbid=2por">basi
 <a name="parameters"></a>
 <h2>URL parameters for the advanced interface<img src="https://www.ncbi.nlm.nih.gov/Structure/IMG/spacer.gif" width="25" height="1" border="0"><a href="#Top"><img src="https://www.ncbi.nlm.nih.gov/Structure/IMG/arrowup_blue.gif" width="12" height="12" border="0" alt="back to top"></a></h2>
 <table><tr valign='top'><th>Parameter</th><th>Basic interface<br/>(index.html)</th><th>Advanced interface<br/>(full.html)</th><th>Description</th></tr>
+<tr valign='top'><td>mmtfid</td><td>Yes</td><td>Yes</td><td>MMTF ID, e.g., <a href="full.html?mmtfid=2por">?mmtfid=2por</a></td></tr>
 <tr valign='top'><td>pdbid</td><td>Yes</td><td>Yes</td><td>PDB ID, e.g., <a href="full.html?pdbid=2por">?pdbid=2por</a></td></tr>
 <tr valign='top'><td>mmcifid</td><td>Yes</td><td>Yes</td><td>mmCIF ID, e.g., <a href="full.html?mmcifid=2por">?mmcifid=2por</a></td></tr>
 <tr valign='top'><td>mmdbid</td><td>Yes</td><td>Yes</td><td>NCBI MMDB ID or PDB ID, e.g., <a href="full.html?mmdbid=2por">?mmdbid=2por</a></td></tr>
 <tr valign='top'><td>gi</td><td>Yes</td><td>Yes</td><td>NCBI protein gi number, e.g., <a href="full.html?gi=827343227">?gi=827343227</a></td></tr>
 <tr valign='top'><td>cid</td><td>Yes</td><td>Yes</td><td>PubChem Compound ID, e.g., <a href="full.html?cid=2244">?cid=2244</a></td></tr>
 <tr valign='top'><td>align</td><td>Yes</td><td>Yes</td><td>Two PDB IDs or MMDB IDs for structure alignment, e.g., <a href="full.html?align=1hho,4n7n">?align=1hho,4n7n</a></td></tr>
+<tr valign='top'><td>url</td><td>Yes</td><td>Yes</td><td>Use the url (encoded) to retrieve the 3D structure. The url requires another parameter "type", e.g., <a href="full.html?type=pdb&url=https%3A%2F%2Ffiles.rcsb.org%2Fview%2F1gpk.pdb">?type=pdb&url=https%3A%2F%2Ffiles.rcsb.org%2Fview%2F1gpk.pdb</a></td></tr>
 
 <tr valign='top'><td>width</td><td>Yes</td><td>Yes</td><td>Width of the structure image. It can be percentage such as '100%', or pixel values such as 400. The default is '100%'.</td></tr>
 <tr valign='top'><td>height</td><td>Yes</td><td>Yes</td><td>Height of the structure image. It can be percentage such as '100%', or pixel values such as 400. The default is '100%'.</td></tr>
@@ -549,6 +553,7 @@ We provided two versions of iCn3D widgets: <a href="index.html?mmdbid=2por">basi
 <table>
 <tbody>
 <tr><td colspan="2">a) Retrieve by ID</td></tr>
+<tr><td><span class="indent">MMTF ID:</span></td>           <td>load mmtf [1GPK]</td></tr>
 <tr><td><span class="indent">PDB ID:</span></td>           <td>load pdb [1GPK]</td></tr>
 <tr><td><span class="indent">MMDB ID:</span></td>          <td>load mmdb [1GPK]</td></tr>
 <tr><td><span class="indent">gi:</span></td>               <td>load gi [827343227]</td></tr>
@@ -560,7 +565,9 @@ We provided two versions of iCn3D widgets: <a href="index.html?mmdbid=2por">basi
 <tr><td><span class="indent">Mol2 File:</span></td>          <td>[no command available]</td></tr>
 <tr><td><span class="indent">SDF File:</span></td>          <td>[no command available]</td></tr>
 <tr><td><span class="indent">XYZ File:</span></td>          <td>[no command available]</td></tr>
+<tr><td><span class="indent">URL:</span></td>          <td>[no command available]</td></tr>
 <tr><td><span class="indent">State/Script File:</span></td>   <td>[no command available]</td></tr>
+<tr><td><span class="indent">Selection File:</span></td>   <td>[no command available]</td></tr>
 
 <tr><td colspan="2">c) Export File</td></tr>
 <tr><td><span class="indent">State File:</span></td>            <td>[no command available]</td></tr>
@@ -637,6 +644,11 @@ In the dialog Select -&gt; Advanced, users can use simple specification to selec
 <ul>
 <li>Users can select multiple items in "All Selections".<br/>
 <li>Different selections can be unioned (with "<b>or</b>", default), intersected (with "<b>and</b>"), or negated (with "<b>not</b>"). For example, ":1-10 or :Lys" selects all residues 1-10 and all Lys residues. ":1-10 and :Lys" selects all Lys residues in the range of residue number 1-10. ":1-10 or not :Lys" selects all residues 1-10, which are not Lys residues.
+</ul>
+<b>Full commands in url or command window:</b>
+<ul>
+<li>Select without saving the set: select #1,2,3.A,B,C:5-10,Lys,ligands@CA,C<br/>
+<li>Select and save: select #1,2,3.A,B,C:5-10,Lys,ligands@CA,C | name my_name | description my_description
 </ul>
 </div>
 <br>
@@ -1276,6 +1288,9 @@ Ajax call was used to get the atom data from the NCBI "mmdbid". This function wa
 
 <br><br>Atom "data" from MMDB file was parsed to set up <a href="#DataInputs">parameters for the 3D viewer</a> by calling the function loadAtomDataIn. The deferred parameter was resolved after the parsing so that other javascript code can be executed.
 
+<br><br><a name="downloadMmtf"></a><b>downloadMmtf(mmtfid)</b> <a href="#Top"><span class="top">&nbsp;&nbsp;&nbsp;</span></a><br>
+MMTF is a new binary data format besides the previous PDB and mmCIF formats for 3D structures. The JavaScript APIs at <a href="http://mmtf.rcsb.org/">http://mmtf.rcsb.org/</a> was used to load and parse the data.
+
 <br><br><a name="downloadPdb"></a><b>downloadPdb(pdbid)</b> <a href="#Top"><span class="top">&nbsp;&nbsp;&nbsp;</span></a><br>
 Ajax call was used to get the atom data from the "pdbid". This function was deferred so that it can be chained together with other deferred functions for sequential execution. A wrapper was added to support both http and https.
 
@@ -1482,7 +1497,10 @@ Update the sequence window for the currently selected atoms.
 <a name="log"></a>
 <h2>Change Log:<img src="https://www.ncbi.nlm.nih.gov/Structure/IMG/spacer.gif" width="25" height="1" border="0"><a href="#Top"><img src="https://www.ncbi.nlm.nih.gov/Structure/IMG/arrowup_blue.gif" width="12" height="12" border="0" alt="back to top"></a></h2>
 
-The production version <a href="https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-1.0.0.zip">icn3d-1.0.1</a> was release on May 16, 2016.
+The production version <a href="https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-1.1.0.zip">icn3d-1.1.0</a> was release on July 14, 2016. The new binary MMTF file format was supported. A new "Analysis" menu was added with an option to show disulfide bonds. Users can also input data from a url, either through the UI or through a encoded url parameter "?type=pdb&url=...", e.g., <a href="https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?type=pdb&url=https%3A%2F%2Ffiles.rcsb.org%2Fview%2F1gpk.pdb">https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?type=pdb&url=https%3A%2F%2Ffiles.rcsb.org%2Fview%2F1gpk.pdb</a>.
+<br><br>
+
+The production version <a href="https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-1.0.1.zip">icn3d-1.0.1</a> was release on May 16, 2016.
 <br><br>
 
 The production version <a href="https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-1.0.0.zip">icn3d-1.0.0</a> was release on April 28, 2016.

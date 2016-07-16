@@ -3,8 +3,11 @@
 .ui-dialog .ui-button { width: 12px; height:12px; margin: -5px 0px 0px 0px;}
 .ui-dialog .ui-dialog-titlebar { padding: 0px 1em 2px 1em; }
 
+.ui-accordion .ui-accordion-icons { padding-left: 0; text-align: center; }
+
 accordion {font-size: 14px!important; z-index:1999; }
 accordion h3 {width: 60px; font-size: 14px!important;}
+accordion h3 > .ui-icon { display: none !important; }
 accordion > ul {width: 60px;}
 accordion ul ul {width: 160px;}
 accordion ul li {cursor:default!important; white-space:nowrap;}
