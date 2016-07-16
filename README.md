@@ -38,8 +38,8 @@ See the [help page](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d.html) for
 
 ## Tools based on
 
-* **[iview](http://istar.cse.cuhk.edu.hk/iview/)**: iCn3D is mainly based on iview.
-* **[GLmol](https://en.osdn.jp/projects/webglmol/)**: Drawing cartoon of nucleotides is from GLmol.
+* **[iview](http://istar.cse.cuhk.edu.hk/iview/)**: The drawing of 3D objects is mainly based on iview.
+* **[GLmol](https://en.osdn.jp/projects/webglmol/)**: The drawing of nucleotides cartoon is from GLmol.
 * **[3Dmol](http://3dmol.csb.pitt.edu/)**: The surface generation and labeling are from 3Dmol.
 
 ## Building
