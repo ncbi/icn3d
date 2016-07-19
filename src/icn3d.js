@@ -40,6 +40,8 @@ var iCn3D = function (id) {
 
     this.overdraw = 0;
 
+    this.bDrawn = false;
+
     this.bHighlight = 1; // undefined: no highlight, 1: highlight by outline, 2: highlight by 3D object
 
     if(Detector.webgl){
@@ -99,6 +101,8 @@ var iCn3D = function (id) {
 
     this.bConsiderNeighbors = false; // a flag to show surface considering the neighboring atoms or not
 
+    this.bShowCrossResidueBond = false;
+
     this.effects = {
         //'anaglyph': new THREE.AnaglyphEffect(this.renderer),
         //'parallax barrier': new THREE.ParallaxBarrierEffect(this.renderer),
@@ -111,8 +115,8 @@ var iCn3D = function (id) {
     this.oriMaxD = this.maxD; // size of the molecule
     //this.camera_z = -150;
 
-    //this.camera_z = this.maxD * 2; // when zooming in, it gets dark if the camera is in front
-    this.camera_z = -this.maxD * 2;
+    this.camera_z = this.maxD * 2; // when zooming in, it gets dark if the camera is in front
+    //this.camera_z = -this.maxD * 2;
 
     // these variables will not be cleared for each structure
     this.commands = []; // a list of commands, ordered by the operation steps. Each operation will be converted into a command. this command list can be used to go backward and forward.
@@ -159,6 +163,8 @@ var iCn3D = function (id) {
         //labels: 'no',
         //effect: 'none',
         hbonds: 'no',
+        ssbonds: 'no',
+        ncbonds: 'no',
         labels: 'no',
         lines: 'no',
         rotationcenter: 'molecule center',
@@ -394,7 +400,7 @@ var iCn3D = function (id) {
         me.isDragging = true;
 
         // see ref http://soledadpenades.com/articles/three-js-tutorials/object-picking/
-        if(me.picking && (e.altKey || e.ctrlKey || e.shiftKey || e.keyCode === 16 || e.keyCode === 17 || e.keyCode === 224 || e.keyCode === 91) ) {
+        if(me.picking && (e.altKey || e.ctrlKey || e.shiftKey || e.keyCode === 18 || e.keyCode === 16 || e.keyCode === 17 || e.keyCode === 224 || e.keyCode === 91) ) {
             me.highlightlevel = me.picking;
 
             me.mouse.x = ( (x - me.container.offset().left) / me.container.width() ) * 2 - 1;
@@ -591,7 +597,7 @@ iCn3D.prototype = {
     // added nucleotides and ions
     nucleotidesArray: ['  G', '  A', '  T', '  C', '  U', ' DG', ' DA', ' DT', ' DC', ' DU'],
 
-    ionsArray: [' NA', ' MG', ' AL', ' CA', ' TI', ' MN', ' FE', ' NI', ' CU', ' ZN', ' AG', ' BA', '  F', ' CL', ' BR', '  I'],
+    ionsArray: ['  K', ' NA', ' MG', ' AL', ' CA', ' TI', ' MN', ' FE', ' NI', ' CU', ' ZN', ' AG', ' BA', '  F', ' CL', ' BR', '  I'],
 
     vdwRadii: { // Hu, S.Z.; Zhou, Z.H.; Tsai, K.R. Acta Phys.-Chim. Sin., 2003, 19:1073.
          H: 1.08,
@@ -1013,7 +1019,8 @@ iCn3D.prototype = {
          coil: new THREE.Color(0x6080FF),
     },
 
-    defaultBondColor: new THREE.Color(0x2194D6),
+    //defaultBondColor: new THREE.Color(0x2194D6),
+    defaultBondColor: new THREE.Color(0xBBBBBB), // cross residue bonds
 
     surfaces: {
         1: undefined,
@@ -1030,7 +1037,7 @@ iCn3D.prototype = {
 
     init: function () {
         this.structures = {}; // structure name -> array of chains
-        this.chains = {}; // structure_chain name -> array of residues
+        this.chains = {}; // structure_chain name -> atom hash
         this.residues = {}; // structure_chain_resi name -> atom hash
         this.secondaries = {}; // structure_chain_resi name -> secondary structure: 'C', 'H', or 'E'
         this.alignChains = {}; // structure_chain name -> atom hash
@@ -1077,6 +1084,8 @@ iCn3D.prototype = {
 
         //this.hbonds = {};
         this.hbondpoints = [];
+        this.ssbondpoints = []; // disulfide bonds
+        this.ncbondpoints = []; // non-covalent bonds
 
         this.doublebonds = {};
         this.triplebonds = {};
@@ -1088,7 +1097,7 @@ iCn3D.prototype = {
         this.labels = {};     // hash of name -> a list of labels. Each label contains 'position', 'text', 'size', 'color', 'background'
                             // label name could be custom, residue, schmatic, distance
         this.lines = {};     // hash of name -> a list of solid or dashed lines. Each line contains 'position1', 'position2', 'color', and a boolean of 'dashed'
-                            // line name could be custom, hbond, distance
+                            // line name could be custom, hbond, ssbond, ncbond, distance
 
         this.inputid = {"idtype": undefined, "id":undefined}; // support pdbid, mmdbid
 
@@ -1108,11 +1117,13 @@ iCn3D.prototype = {
 
         //this.hbonds = {};
         this.hbondpoints = [];
+        this.ssbondpoints = [];
+        this.ncbondpoints = [];
 
         this.labels = {};     // hash of name -> a list of labels. Each label contains 'position', 'text', 'size', 'color', 'background'
                             // label name could be custom, residue, schmatic, distance
         this.lines = {};     // hash of name -> a list of solid or dashed lines. Each line contains 'position1', 'position2', 'color', and a boolean of 'dashed'
-                            // line name could be custom, hbond, distance
+                            // line name could be custom, hbond, ssbond, ncbond, distance
 
         this.biomtMatrices = [];
         this.bAssembly = false;
@@ -1227,6 +1238,18 @@ iCn3D.prototype = {
 
                 this.hbondpoints.push(new THREE.Vector3(ligand_x, ligand_y, ligand_z));
                 this.hbondpoints.push(new THREE.Vector3(protein_x, protein_y, protein_z));
+            } else if (record === 'SSBOND') {
+                //SSBOND   1 CYS E   48    CYS E   51                          2555
+                var chain1 = line.substr(15, 1);
+                var resi1 = line.substr(17, 4).replace(/ /g, "");
+                var resid1 = id + '_' + chain1 + '_' + resi1;
+
+                var chain2 = line.substr(29, 1);
+                var resi2 = line.substr(31, 4).replace(/ /g, "");
+                var resid2 = id + '_' + chain2 + '_' + resi2;
+
+                this.ssbondpoints.push(resid1);
+                this.ssbondpoints.push(resid2);
             } else if (record === 'REMARK') {
                  var type = parseInt(line.substr(7, 3));
                  // from GLMol
@@ -1523,6 +1546,7 @@ iCn3D.prototype = {
         this.chains[chainNum] = this.unionHash2Atoms(this.chains[chainNum], chainsTmp);
 
         var curChain, curResi, curInsc, curResAtoms = [], me = this;
+        // refresh for atoms in each residue
         var refreshBonds = function (f) {
             var n = curResAtoms.length;
             for (var j = 0; j < n; ++j) {
@@ -1566,7 +1590,7 @@ iCn3D.prototype = {
               if(atom.resn === 'HOH' || atom.resn === 'WAT') {
                 this.water[atom.serial] = 1;
               }
-              else if($.inArray(atom.resn, this.ionsArray) !== -1) {
+              else if($.inArray(atom.resn, this.ionsArray) !== -1 || atom.elem.trim() === atom.resn.trim()) {
                 this.ions[atom.serial] = 1;
               }
               else {
@@ -1576,6 +1600,7 @@ iCn3D.prototype = {
 
             //if (!(curChain === atom.chain && curResi === atom.resi && curInsc === atom.insc)) {
             if (!(curChain === atom.chain && curResi === atom.resi)) {
+                // a new residue, add the residue-residue bond beides the regular bonds
                 refreshBonds(function (atom0) {
                     if (((atom0.name === 'C' && atom.name === 'N') || (atom0.name === 'O3\'' && atom.name === 'P')) && me.hasCovalentBond(atom0, atom)) {
                         atom0.bonds.push(atom.serial);
@@ -1590,6 +1615,7 @@ iCn3D.prototype = {
             curResAtoms.push(atom);
         } // end of for
 
+        // last residue
         refreshBonds();
 
         this.pmin = pmin;
@@ -1781,26 +1807,64 @@ iCn3D.prototype = {
               // output hydrogen bonds
               //var other_chain_resi_atom = j.split('_');
               // some chain may have underline
-              var firstPos = j.indexOf('_');
-              var lastPos = j.lastIndexOf('_');
-              var structure = j.substr(0, firstPos);
-              var chain_resi = j.substr(firstPos + 1, lastPos - firstPos - 1);
-              lastPos = chain_resi.lastIndexOf('_');
-              var chain = chain_resi.substr(0, lastPos);
-              var resi = chain_resi.substr(lastPos + 1);
+//              var firstPos = j.indexOf('_');
+//              var lastPos = j.lastIndexOf('_');
+//              var structure = j.substr(0, firstPos);
+//              var chain_resi = j.substr(firstPos + 1, lastPos - firstPos - 1);
+//              lastPos = chain_resi.lastIndexOf('_');
+//              var chain = chain_resi.substr(0, lastPos);
+//              var resi = chain_resi.substr(lastPos + 1);
 
               // remove those hydrogen bonds in the same residue
               //if(parseInt(atom.resi) !== parseInt(other_chain_resi_atom[2])) {
                 this.hbondpoints.push(atom.coord);
                 this.hbondpoints.push(atomHbond[j].coord);
 
-                this.highlightAtoms = this.unionHash(this.highlightAtoms, this.residues[structure + "_" + chain + "_" + resi]);
+                this.highlightAtoms = this.unionHash(this.highlightAtoms, this.residues[atom.structure + "_" + atom.chain + "_" + atom.resi]);
+                this.highlightAtoms = this.unionHash(this.highlightAtoms, this.residues[atomHbond[j].structure + "_" + atomHbond[j].chain + "_" + atomHbond[j].resi]);
               //}
             } // end of for (var j in atomHbond) {
 
             //atomHbond[chain_resi_atom] = atom;
           }
         } // end of for (var i in ligands) {
+    },
+
+    // get non-covalent bonds (ncbonds) between selection and the rest atoms
+    calculateNonCovalentBonds: function (rest, selection) {
+       if(Object.keys(selection).length === 0 || Object.keys(rest).length === 0) return;
+
+       // http://proteopedia.org/wiki/index.php/Salt_bridges
+       // http://www.ncbi.nlm.nih.gov/pmc/articles/PMC3069487/
+       var saltbridgelength = 4;
+
+       var allatoms1 = this.unionHash(selection, rest);
+       var minRest = this.getNeighboringAtoms(allatoms1, selection, saltbridgelength);
+
+       var allatoms2 = this.unionHash(selection, minRest);
+       var minSelection = this.getNeighboringAtoms(allatoms2, minRest, saltbridgelength);
+
+       this.highlightAtoms = {};
+
+       var maxDistSq = saltbridgelength * saltbridgelength;
+
+       for(var i in minSelection) {
+           var oriAtom = minSelection[i];
+
+           for (var j in minRest) {
+              var atom = minRest[j];
+
+              var atomDistSq = (atom.coord.x - oriAtom.coord.x) * (atom.coord.x - oriAtom.coord.x) + (atom.coord.y - oriAtom.coord.y) * (atom.coord.y - oriAtom.coord.y) + (atom.coord.z - oriAtom.coord.z) * (atom.coord.z - oriAtom.coord.z);
+
+              // non hydrogen bonds
+              if(atomDistSq < maxDistSq && atom.elem !== "N" && atom.elem !== "O" && atom.elem !== "F" && oriAtom.elem !== "N" && oriAtom.elem !== "O" && oriAtom.elem !== "F") {
+                this.ncbondpoints.push(atom.coord);
+                this.ncbondpoints.push(oriAtom.coord);
+
+                this.highlightAtoms = this.unionHash(this.highlightAtoms, this.residues[atom.structure + "_" + atom.chain + "_" + atom.resi]);
+              }
+          }
+       }
     },
 
     // modified from iview (http://istar.cse.cuhk.edu.hk/iview/)
@@ -1935,7 +1999,7 @@ iCn3D.prototype = {
         }
     },
 
-    // from iview (http://istar.cse.cuhk.edu.hk/iview/)
+/*
     createRepresentationSub: function (atoms, f0, f01) {
         var ged = new THREE.Geometry();
         for (var i in atoms) {
@@ -1947,6 +2011,31 @@ iCn3D.prototype = {
 
                 f01 && f01(atom0, atom1);
             }
+        }
+    },
+*/
+
+    // from iview (http://istar.cse.cuhk.edu.hk/iview/)
+    createRepresentationSub: function (atoms, f0, f01) {
+        var ged = new THREE.Geometry();
+        for (var i in atoms) {
+            var atom0 = atoms[i];
+            f0 && f0(atom0);
+            for (var j in atom0.bonds) {
+                var atom1 = this.atoms[atom0.bonds[j]];
+                if (atom1 === undefined || atom1.serial < atom0.serial) continue;
+                if (atom1.chain === atom0.chain && ((atom1.resi === atom0.resi) || (atom0.name === 'C' && atom1.name === 'N') || (atom0.name === 'O3\'' && atom1.name === 'P'))) {
+                    f01 && f01(atom0, atom1);
+                } else {
+                    ged.vertices.push(atom0.coord);
+                    ged.vertices.push(atom1.coord);
+                }
+            }
+        }
+        if (ged.vertices.length && this.bShowCrossResidueBond) {
+            ged.computeLineDistances();
+            //this.mdl.add(new THREE.Line(ged, new THREE.LineDashedMaterial({ linewidth: this.linewidth, color: this.defaultBondColor, dashSize: 0.25, gapSize: 0.125 }), THREE.LinePieces));
+            this.mdl.add(new THREE.Line(ged, new THREE.LineDashedMaterial({ linewidth: this.linewidth, color: this.defaultBondColor, dashSize: 0.3, gapSize: 0.15 }), THREE.LinePieces));
         }
     },
 
@@ -1981,15 +2070,19 @@ iCn3D.prototype = {
 
                 if(me.doublebonds.hasOwnProperty(pair)) { // show double bond
                     var a0, a1, a2;
-                    if(atom0.bonds.length > atom1.bonds.length) {
+                    if(atom0.bonds.length > atom1.bonds.length && atom0.bonds.length > 1) {
                         a0 = atom0.serial;
                         a1 = atom0.bonds[0];
                         a2 = atom0.bonds[1];
                     }
-                    else {
+                    //else {
+                    else if(atom1.bonds.length > 1) {
                         a0 = atom1.serial;
                         a1 = atom1.bonds[0];
                         a2 = atom1.bonds[1];
+                    }
+                    else {
+                        return;
                     }
 
                     var v1 = me.atoms[a0].coord.clone();
@@ -2017,15 +2110,18 @@ iCn3D.prototype = {
                 }
                 else if(me.aromaticbonds.hasOwnProperty(pair)) { // show aromatic bond
                     var a0, a1, a2;
-                    if(atom0.bonds.length > atom1.bonds.length) {
+                    if(atom0.bonds.length > atom1.bonds.length && atom0.bonds.length > 1) {
                         a0 = atom0.serial;
                         a1 = atom0.bonds[0];
                         a2 = atom0.bonds[1];
                     }
-                    else {
+                    else if(atom1.bonds.length > 1) {
                         a0 = atom1.serial;
                         a1 = atom1.bonds[0];
                         a2 = atom1.bonds[1];
+                    }
+                    else {
+                        return;
                     }
 
                     var v1 = me.atoms[a0].coord.clone();
@@ -3582,6 +3678,32 @@ iCn3D.prototype = {
                             new THREE.Vector3(end.coord.x, end.coord.y, end.coord.z), 0.3, start.color, bHighlight);
     },
 
+    isPhosphorusOnly: function(atomlist) {
+          var bPhosphorusOnly = false;
+
+          var index = 0, testLength = 30;
+          var bOtherAtoms = false;
+          for(var i in atomlist) {
+            if(index < testLength) {
+              if(atomlist[i].name !== 'P') {
+                bOtherAtoms = true;
+                break;
+              }
+            }
+            else {
+              break;
+            }
+
+            ++index;
+          }
+
+          if(!bOtherAtoms) {
+            bPhosphorusOnly = true;
+          }
+
+          return bPhosphorusOnly;
+    },
+
     // modified from GLmol (http://webglmol.osdn.jp/index-en.html)
     drawCartoonNucleicAcid: function(atomlist, div, thickness, bHighlight) {
        this.drawStrandNucleicAcid(atomlist, 2, div, true, undefined, thickness, bHighlight);
@@ -3935,8 +4057,7 @@ iCn3D.prototype = {
         }
     },
 
-    // modified from iview (http://istar.cse.cuhk.edu.hk/iview/)
-    getAtomsWithinAtom: function(atomlist, atomlistTarget, distance) {
+    getNeighboringAtoms: function(atomlist, atomlistTarget, distance) {
        var extent = this.getExtent(atomlistTarget);
 
        var targetRadiusSq1 = (extent[2][0] - extent[0][0]) * (extent[2][0] - extent[0][0]) + (extent[2][1] - extent[0][1]) * (extent[2][1] - extent[0][1]) + (extent[2][2] - extent[0][2]) * (extent[2][2] - extent[0][2]);
@@ -3967,6 +4088,13 @@ iCn3D.prototype = {
           //}
        }
 
+       return neighbors;
+    },
+
+    // modified from iview (http://istar.cse.cuhk.edu.hk/iview/)
+    getAtomsWithinAtom: function(atomlist, atomlistTarget, distance) {
+       var neighbors = this.getNeighboringAtoms(atomlist, atomlistTarget, distance);
+
        var ret = {};
        for(var i in atomlistTarget) {
            var oriAtom = atomlistTarget[i];
@@ -3977,7 +4105,7 @@ iCn3D.prototype = {
 
               var atomDistSq = (atom.coord.x - oriAtom.coord.x) * (atom.coord.x - oriAtom.coord.x) + (atom.coord.y - oriAtom.coord.y) * (atom.coord.y - oriAtom.coord.y) + (atom.coord.z - oriAtom.coord.z) * (atom.coord.z - oriAtom.coord.z);
 
-              maxDistSq = (radius + distance) * (radius + distance);
+              var maxDistSq = (radius + distance) * (radius + distance);
 
               if(atomDistSq < maxDistSq) {
                   ret[atom.serial] = atom;
@@ -4056,7 +4184,7 @@ iCn3D.prototype = {
         var mat;
 
         if(dashed) {
-            mat = new THREE.LineDashedMaterial({ linewidth: 1, color: colorHex, dashSize: dashSize, gapSize: dashSize });
+            mat = new THREE.LineDashedMaterial({ linewidth: 1, color: colorHex, dashSize: dashSize, gapSize: 0.5*dashSize });
         } else {
             mat = new THREE.LineBasicMaterial({ linewidth: 1, color: colorHex });
         }
@@ -4473,26 +4601,99 @@ iCn3D.prototype = {
         this.createLabelRepresentation(this.labels);
 
         // lines
-        if (options.hbonds.toLowerCase() === 'yes') {
-            var color = '#FFFFFF';
-            if(options.background.toLowerCase() !== "black") {
-              color = '#000000';
+        if (options.hbonds.toLowerCase() === 'yes' || options.ncbonds.toLowerCase() === 'yes') {
+            var color;
+            var points;
+
+            if(options.hbonds.toLowerCase() === 'yes') {
+                //color = '#FFFFFF';
+                //if(options.background.toLowerCase() !== "black") {
+                //  color = '#000000';
+                //}
+                color = '#00FF00';
+                points = this.hbondpoints;
+            }
+            else if(options.ncbonds.toLowerCase() === 'yes') {
+                color = '#0000FF';
+                points = this.ncbondpoints;
             }
 
-             for (var i = 0, lim = Math.floor(this.hbondpoints.length / 2); i < lim; i++) {
-                var p1 = this.hbondpoints[2 * i], p2 = this.hbondpoints[2 * i + 1];
-
+             for (var i = 0, lim = Math.floor(points.length / 2); i < lim; i++) {
                 var line = {};
-                line.position1 = this.hbondpoints[2 * i];
-                line.position2 = this.hbondpoints[2 * i + 1];
+                line.position1 = points[2 * i];
+                line.position2 = points[2 * i + 1];
                 line.color = color;
                 line.dashed = true;
 
-                if(this.lines['hbond'] === undefined) this.lines['hbond'] = [];
-                this.lines['hbond'].push(line);
+                if(options.hbonds.toLowerCase() === 'yes') {
+                  if(this.lines['hbond'] === undefined) this.lines['hbond'] = [];
+                  this.lines['hbond'].push(line);
+                }
+                else if(options.ncbonds.toLowerCase() === 'yes') {
+                  if(this.lines['ncbond'] === undefined) this.lines['ncbond'] = [];
+                  this.lines['ncbond'].push(line);
+                }
              }
 
             this.createLines(this.lines);
+        }
+        else if (options.ssbonds.toLowerCase() === 'yes') {
+            var color = '#FFFF00';
+            var colorObj = new THREE.Color(0xFFFF00);
+
+             for (var i = 0, lim = Math.floor(this.ssbondpoints.length / 2); i < lim; i++) {
+                var res1 = this.ssbondpoints[2 * i], res2 = this.ssbondpoints[2 * i + 1];
+
+                var line = {};
+                line.color = color;
+                line.dashed = true;
+
+                var bFound = false;
+                for(var j in this.residues[res1]) {
+                    if(this.atoms[j].name === 'SG') {
+                        line.position1 = this.atoms[j].coord;
+                        bFound = true;
+                        break;
+                    }
+                }
+
+                if(!bFound) {
+                    for(var j in this.residues[res1]) {
+                        if(this.atoms[j].name === 'CA') {
+                            line.position1 = this.atoms[j].coord;
+                            bFound = true;
+                            break;
+                        }
+                    }
+                }
+
+                bFound = false;
+                for(var j in this.residues[res2]) {
+                    if(this.atoms[j].name === 'SG') {
+                        line.position2 = this.atoms[j].coord;
+                        bFound = true;
+                        break;
+                    }
+                }
+
+                if(!bFound) {
+                    for(var j in this.residues[res2]) {
+                        if(this.atoms[j].name === 'CA') {
+                            line.position2 = this.atoms[j].coord;
+                            bFound = true;
+                            break;
+                        }
+                    }
+                }
+
+                if(this.lines['ssbond'] === undefined) this.lines['ssbond'] = [];
+                this.lines['ssbond'].push(line);
+
+                // create bonds for disulfide bonds
+                this.createCylinder(line.position1, line.position2, this.cylinderRadius * 0.5, colorObj);
+             }
+
+            //this.createLines(this.lines);
         }
         else {
             this.createLines(this.lines);
@@ -4705,7 +4906,8 @@ iCn3D.prototype = {
 
         var currentCalphas = {};
         if(this.options['sidechains'] !== 'nothing') {
-            currentCalphas = this.intersectHash(atoms, this.calphas);
+            //currentCalphas = this.intersectHash(atoms, this.calphas);
+            currentCalphas = this.intersectHash(this.highlightAtoms, this.calphas);
         }
 
         // remove schematic labels
@@ -4727,9 +4929,16 @@ iCn3D.prototype = {
             this.createCylinderHelix(this.hash2Atoms(atomHash), 1.6, bHighlight);
           }
           else if(style === 'nucleotide cartoon') {
-            this.drawCartoonNucleicAcid(this.hash2Atoms(atomHash), null, this.thickness, bHighlight);
+            var bPhosphorusOnly = this.isPhosphorusOnly(this.hash2Atoms(atomHash));
 
-            if(bHighlight !== 2) this.drawNucleicAcidStick(this.hash2Atoms(atomHash), bHighlight);
+            if(bPhosphorusOnly) {
+                this.createCylinderCurve(this.hash2Atoms(atomHash), 'P', 0.2, false, bHighlight);
+            }
+            else {
+                this.drawCartoonNucleicAcid(this.hash2Atoms(atomHash), null, this.thickness, bHighlight);
+
+                if(bHighlight !== 2) this.drawNucleicAcidStick(this.hash2Atoms(atomHash), bHighlight);
+            }
           }
           else if(style === 'phosphorus trace') {
             this.createCylinderCurve(this.hash2Atoms(atomHash), 'P', 0.2, false, bHighlight);
@@ -4894,7 +5103,8 @@ iCn3D.prototype = {
     rebuildScene: function (options) { var me = this;
         jQuery.extend(me.options, options);
 
-        this.camera_z = -this.maxD * 2;
+        this.camera_z = this.maxD * 2;
+        //this.camera_z = -this.maxD * 2;
 
 
         if(this.scene !== undefined) {
@@ -5075,10 +5285,13 @@ iCn3D.prototype = {
         this.mdl.position.sub(coord);
     },
 
-    draw: function (options, bPrevColor) {
-        this.rebuildScene(options);
+    //draw: function (options, bPrevColor) {
+    draw: function () {
+        //this.rebuildScene(options);
+        this.rebuildScene();
 
-        if(bPrevColor === undefined || bPrevColor) this.applyPrevColor();
+        //if(bPrevColor === undefined || bPrevColor) this.applyPrevColor();
+        this.applyPrevColor();
 
         if(this.bSSOnly) this.drawHelixBrick(this.molid2ss, this.molid2color);
         // highlight the helices and bricks
@@ -5087,7 +5300,6 @@ iCn3D.prototype = {
         if(this.bAssembly) this.drawSymmetryMates2();
 
         // show the highlightAtoms
-        //if(this.highlightAtoms !== undefined && Object.keys(this.highlightAtoms).length > 0 && Object.keys(this.highlightAtoms).length < Object.keys(this.displayAtoms).length) {
         if(this.highlightAtoms !== undefined && Object.keys(this.highlightAtoms).length > 0 && Object.keys(this.highlightAtoms).length < Object.keys(this.atoms).length) {
             this.removeHighlightObjects();
             //if(this.bShowHighlight === undefined || this.bShowHighlight) this.addHighlightObjects(undefined, false);
@@ -5098,6 +5310,9 @@ iCn3D.prototype = {
           this.applyTransformation(this._zoomFactor, this.mouseChange, this.quaternion);
           this.render();
         }
+
+        // reset to hide the side chain
+        this.options['sidechains'] = 'nothing';
     },
 
     // zoom
@@ -5319,43 +5534,17 @@ iCn3D.prototype = {
       if(!this.bShiftKey && !this.bCtrlKey) {
           this.highlightAtoms = this.cloneHash(this.pickedAtomList);
       }
-      else {
-        if(this.bShiftKey) { // select a range
-            var prevStart = this.getFirstAtomObj(this.highlightAtoms).serial;
-            var prevEnd = this.getLastAtomObj(this.highlightAtoms).serial;
-            var currStart = this.getFirstAtomObj(this.pickedAtomList).serial;
-            var currEnd = this.getLastAtomObj(this.pickedAtomList).serial;
+      else if(this.bShiftKey) { // select a range
+            this.highlightAtoms = this.unionHash(this.highlightAtoms, this.pickedAtomList);
+            var firstAtom = this.getFirstAtomObj(this.highlightAtoms);
+            var lastAtom = this.getLastAtomObj(this.highlightAtoms);
 
-            var startSerial = (prevEnd < currStart) ? prevEnd : currEnd;
-            var endSerial = (prevEnd < currStart) ? currEnd + 1 : prevStart;
-
-            // select the range in the same chain
-            var prevChainid = '';
-            if(prevEnd < currStart) {
-                for(var i = startSerial + 1; i < endSerial; ++i) {
-                    var chainid = this.atoms[i].structure + '_' + this.atoms[i].chain;
-
-                    if(i !== startSerial + 1 && chainid !== prevChainid) break;
-
-                    this.highlightAtoms[i] = 1;
-
-                    prevChainid = chainid;
-                }
+            for(var i = firstAtom.serial; i <= lastAtom.serial; ++i) {
+                this.highlightAtoms[i] = 1;
             }
-            else {
-                for(var i = endSerial - 1; i > startSerial; --i) {
-                    var chainid = this.atoms[i].structure + '_' + this.atoms[i].chain;
-
-                    if(i !== endSerial - 1 && chainid !== prevChainid) break;
-
-                    this.highlightAtoms[i] = 1;
-
-                    prevChainid = chainid;
-                }
-            }
-        }
-
-        if(this.bCtrlKey) this.highlightAtoms = this.unionHash(this.highlightAtoms, this.pickedAtomList);
+      }
+      else if(this.bCtrlKey) {
+          this.highlightAtoms = this.unionHash(this.highlightAtoms, this.pickedAtomList);
       }
 
       this.addHighlightObjects();

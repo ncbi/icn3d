@@ -96,6 +96,7 @@ var common_js = [
     "src/marchingcube.js",
     "src/ProteinSurface4.js",
     "src/setupsurface.js",
+    "src/mmtf.js",
     "src/icn3d.js",
 ];
 

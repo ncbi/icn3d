@@ -4,9 +4,9 @@
 <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
 <meta name="description" content="iCn3D Structure Viewer">
 <meta name="ncbi_db" content="structure">
-<meta name="keywords" content="NCBI, Structure, iCn3D, 3D, Viewer, WebGL, three.js, sequence, chemical">
+<meta name="keywords" content="NCBI, Structure, JavaScript, iCn3D, 3D, Viewer, WebGL, three.js, sequence, chemical">
 <meta name="robots" content="index,follow,noarchive">
-<title>iCn3D Structure Viewer</title>
+<title>iCn3D: Web-based 3D Structure Viewer</title>
 </head>
 <body>
   <div id="div0"></div>
@@ -25,33 +25,41 @@
   <script src="src/marchingcube.js"></script>
   <script src="src/ProteinSurface4.js"></script>
   <script src="src/setupsurface.js"></script>
+  <script src="src/mmtf.js"></script>
   <script src="src/icn3d.js"></script>
   <script src="src/full_ui.js"></script>
 
   <script type="text/javascript">
 
     // separating the GET parameters from the current URL
-    if(document.URL.indexOf("?") === -1) {
-      alert("Please include '?pdbid=1GPK,2POR,...' in your url");
+    var bNopara = false;
+    var ampPos = document.URL.indexOf("?");
+    if(ampPos === -1) {
+    //  alert("Please include '?pdbid=1GPK,2POR,...' in your url");
+    	bNopara = true;
     }
 
     var getParams = document.URL.split("?");
     // transforming the GET parameters into a dictionnary
     var search = getParams[getParams.length - 1];
-    var params = JSON.parse('{"' + decodeURI(search).replace(/"/g, '\\"').replace(/&/g, '","').replace(/=/g,'":"') + '"}');
-
-    // for mmdb structures, pass the parameters after the first "&" sign
+    var params = {};
     var inpara = "";
-    var ampPos = document.URL.indexOf("?");
-    if(ampPos !== -1) {
-      inpara = "&" + document.URL.substr(ampPos + 1);
+
+    if(!bNopara) {
+    	params = JSON.parse('{"' + decodeURI(search).replace(/"/g, '\\"').replace(/&/g, '","').replace(/=/g,'":"') + '"}');
+
+    	// for mmdb structures, pass the parameters after the first "&" sign
+      	inpara = "&" + document.URL.substr(ampPos + 1);
     }
 
     var gi = params.gi;
     var mmdbid = params.mmdbid;
+    var mmtfid = params.mmtfid;
     var pdbid = params.pdbid;
     var cid = params.cid;
     var mmcifid = params.mmcifid;
+    var urlname = params.url;
+    var urltype = (params.type === undefined) ? 'pdb' : params.type;
 
     var align = params.align;
 
@@ -77,6 +85,14 @@
     }
     else if(showmenu == 'false' || showmenu == '0') {
       showmenu = false;
+    }
+
+    var showcommand = params.showcommand;
+    if(showcommand === undefined || showcommand == 'true' || showcommand == '1') {
+      showcommand = true;
+    }
+    else if(showcommand == 'false' || showcommand == '0') {
+      showcommand = false;
     }
 
     var showseq = params.showseq;
@@ -125,25 +141,44 @@
               resize: resize,
               rotate: rotate,
               showmenu: showmenu,
+              showcommand: showcommand,
               showseq: showseq,
               command: command
           };
-          cfg[idName] = idArray[i];
+          if(idName !== '') cfg[idName] = idArray[i];
 
           var icn3dui = new iCn3DUI(cfg);
 
           icn3dui.show3DStructure();
+
+          if(idName === '') $("#div" + i + "_wait").hide();
         }
       }
 
-      if(pdbid !== undefined) setupViewer('pdbid', pdbid);
-      if(cid !== undefined) setupViewer('cid', cid);
-      if(mmcifid !== undefined) setupViewer('mmcifid', mmcifid);
-      if(mmdbid !== undefined) setupViewer('mmdbid', mmdbid);
-      if(gi !== undefined) setupViewer('gi', gi);
-
+      if(mmtfid !== undefined) {
+      	setupViewer('mmtfid', mmtfid);
+      }
+      else if(pdbid !== undefined) {
+      	setupViewer('pdbid', pdbid);
+      }
+      else if(cid !== undefined) {
+      	setupViewer('cid', cid);
+      }
+      else if(mmcifid !== undefined) {
+      	setupViewer('mmcifid', mmcifid);
+      }
+      else if(mmdbid !== undefined) {
+      	setupViewer('mmdbid', mmdbid);
+      }
+      else if(gi !== undefined) {
+      	setupViewer('gi', gi);
+      }
+      else if(urlname !== undefined) {
+        urlname = decodeURIComponent(urlname);
+      	setupViewer('url', urltype + '|' + urlname);
+      }
       // e.g., align=103701,1,4,68563,1,167 [mmdbid1,biounit,molecule,mmdbid2,biounit,molecule]
-      if(align !== undefined) {
+      else if(align !== undefined) {
           var cfg = {
               divid: 'div0',
               inpara: inpara,
@@ -152,6 +187,7 @@
               resize: resize,
               rotate: rotate,
               showmenu: showmenu,
+              showcommand: showcommand,
               showseq: showseq,
               showalignseq: showalignseq,
               align: align,
@@ -162,6 +198,9 @@
 
           icn3dui.show3DStructure();
       }
+      else {
+      	setupViewer('', '');
+      }
 
     }); // document ready
 
@@ -170,3 +209,4 @@
 
 
 </body></html>
+
