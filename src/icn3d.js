@@ -2070,15 +2070,19 @@ iCn3D.prototype = {
 
                 if(me.doublebonds.hasOwnProperty(pair)) { // show double bond
                     var a0, a1, a2;
-                    if(atom0.bonds.length > atom1.bonds.length) {
+                    if(atom0.bonds.length > atom1.bonds.length && atom0.bonds.length > 1) {
                         a0 = atom0.serial;
                         a1 = atom0.bonds[0];
                         a2 = atom0.bonds[1];
                     }
-                    else {
+                    //else {
+                    else if(atom1.bonds.length > 1) {
                         a0 = atom1.serial;
                         a1 = atom1.bonds[0];
                         a2 = atom1.bonds[1];
+                    }
+                    else {
+                        return;
                     }
 
                     var v1 = me.atoms[a0].coord.clone();
@@ -2106,15 +2110,18 @@ iCn3D.prototype = {
                 }
                 else if(me.aromaticbonds.hasOwnProperty(pair)) { // show aromatic bond
                     var a0, a1, a2;
-                    if(atom0.bonds.length > atom1.bonds.length) {
+                    if(atom0.bonds.length > atom1.bonds.length && atom0.bonds.length > 1) {
                         a0 = atom0.serial;
                         a1 = atom0.bonds[0];
                         a2 = atom0.bonds[1];
                     }
-                    else {
+                    else if(atom1.bonds.length > 1) {
                         a0 = atom1.serial;
                         a1 = atom1.bonds[0];
                         a2 = atom1.bonds[1];
+                    }
+                    else {
+                        return;
                     }
 
                     var v1 = me.atoms[a0].coord.clone();
@@ -3695,7 +3702,7 @@ iCn3D.prototype = {
           }
 
           return bPhosphorusOnly;
-	},
+    },
 
     // modified from GLmol (http://webglmol.osdn.jp/index-en.html)
     drawCartoonNucleicAcid: function(atomlist, div, thickness, bHighlight) {
@@ -4922,16 +4929,16 @@ iCn3D.prototype = {
             this.createCylinderHelix(this.hash2Atoms(atomHash), 1.6, bHighlight);
           }
           else if(style === 'nucleotide cartoon') {
-			var bPhosphorusOnly = this.isPhosphorusOnly(this.hash2Atoms(atomHash));
+            var bPhosphorusOnly = this.isPhosphorusOnly(this.hash2Atoms(atomHash));
 
-			if(bPhosphorusOnly) {
-				this.createCylinderCurve(this.hash2Atoms(atomHash), 'P', 0.2, false, bHighlight);
-			}
-			else {
-				this.drawCartoonNucleicAcid(this.hash2Atoms(atomHash), null, this.thickness, bHighlight);
+            if(bPhosphorusOnly) {
+                this.createCylinderCurve(this.hash2Atoms(atomHash), 'P', 0.2, false, bHighlight);
+            }
+            else {
+                this.drawCartoonNucleicAcid(this.hash2Atoms(atomHash), null, this.thickness, bHighlight);
 
-				if(bHighlight !== 2) this.drawNucleicAcidStick(this.hash2Atoms(atomHash), bHighlight);
-			}
+                if(bHighlight !== 2) this.drawNucleicAcidStick(this.hash2Atoms(atomHash), bHighlight);
+            }
           }
           else if(style === 'phosphorus trace') {
             this.createCylinderCurve(this.hash2Atoms(atomHash), 'P', 0.2, false, bHighlight);

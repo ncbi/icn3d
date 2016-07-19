@@ -7877,8 +7877,6 @@ iCn3DUI.prototype = {
                 var pmax = new THREE.Vector3(-9999,-9999,-9999);
                 var psum = new THREE.Vector3();
 
-                //console.log(mmtfData);
-
                 var id = mmtfData.structureId;
 
                 me.icn3d.moleculeTitle = mmtfData.title;
@@ -8141,7 +8139,8 @@ iCn3DUI.prototype = {
                         //var from = bondData.atomIndex1 + 1;
                         //var to = bondData.atomIndex2 + 1;
 
-                        if(from !== undefined && to !== undefined) { // some alt atoms were skipped
+                        //if(from !== undefined && to !== undefined) { // some alt atoms were skipped
+                        if(oriindex2serial.hasOwnProperty(bondData.atomIndex1) && oriindex2serial.hasOwnProperty(bondData.atomIndex2)) { // some alt atoms were skipped
                             me.icn3d.atoms[from].bonds.push(to);
                             me.icn3d.atoms[to].bonds.push(from);
 
@@ -8150,11 +8149,12 @@ iCn3DUI.prototype = {
 
                                 me.icn3d.atoms[from].bondOrder.push(order);
                                 me.icn3d.atoms[to].bondOrder.push(order);
-                                if(order == '2') {
+
+                                if(order === 2) {
                                     me.icn3d.doublebonds[from + '_' + to] = 1;
                                     me.icn3d.doublebonds[to + '_' + from] = 1;
                                 }
-                                else if(order == '3') {
+                                else if(order === 3) {
                                     me.icn3d.triplebonds[from + '_' + to] = 1;
                                     me.icn3d.triplebonds[to + '_' + from] = 1;
                                 }
