@@ -278,7 +278,7 @@ iCn3DUI.prototype = {
             me.icn3d.moleculeTitle = "";
             me.inputid = undefined;
 
-            me.setLogCommand('load a ' + type + ' file from the url ' + url, false);
+            me.setLogCommand('load url ' + url + ' | type ' + type, true);
 
             me.downloadUrl(url, type);
         }
@@ -563,11 +563,8 @@ iCn3DUI.prototype = {
               jQuery.extend(me.icn3d.options, me.options);
               me.icn3d.draw();
 
-              me.icn3d.bRender = true;
-
-              //var bAddPrevCommand = false;
-              //me.loadScript(me.cfg.command, bAddPrevCommand);
-              me.loadScript(me.cfg.command);
+              //me.icn3d.bRender = true;
+              //me.loadScript(me.cfg.command);
           }
           else {
               //me.icn3d.draw(me.options);
@@ -595,7 +592,6 @@ iCn3DUI.prototype = {
           //if(me.cfg.command === undefined && (me.cfg.showmenu === undefined || me.cfg.showmenu || me.cfg.showseq || me.cfg.showalignseq) ) {
           if(Object.keys(me.icn3d.highlightAtoms).length === Object.keys(me.icn3d.atoms).length && (me.cfg.showmenu === undefined || me.cfg.showmenu || me.cfg.showseq || me.cfg.showalignseq) ) {
               me.selectAllUpdateMenuSeq(me.bInitial, false);
-              me.bInitial = false;
           }
           else {
               //me.updateMenus(me.bInitial);
@@ -603,10 +599,15 @@ iCn3DUI.prototype = {
               me.updateMenus(false);
 
               me.updateSeqWinForCurrentAtoms();
-
-              me.bInitial = false;
           }
 //      }, 0);
+
+      if(me.bInitial && me.cfg.command !== undefined && me.cfg.command !== '') {
+              me.icn3d.bRender = true;
+              me.loadScript(me.cfg.command);
+       }
+
+       me.bInitial = false;
     },
 
     setStructureMenu: function (bInitial, moleculeArray) { var me = this;
@@ -2006,6 +2007,7 @@ iCn3DUI.prototype = {
         //var options2 = {};
         //options2["hbonds"] = "yes";
         me.icn3d.options["hbonds"] = "yes";
+        me.icn3d.options["water"] = "dot";
 
         var select = 'hbonds ' + threshold;
 
@@ -2016,7 +2018,6 @@ iCn3DUI.prototype = {
                complement[i] = me.icn3d.atoms[i];
            }
        }
-
 
         var firstAtom = me.icn3d.getFirstAtomObj(me.icn3d.highlightAtoms);
 
@@ -2046,8 +2047,6 @@ iCn3DUI.prototype = {
 
             // show side chains for the selected atoms
             me.setStyle('sidechains', 'ball and stick');
-            me.setStyle('water', 'dot');
-            //me.setLogCommand('style sidechains ball and stick', true);
 
             //me.icn3d.draw();
         }
@@ -2129,21 +2128,23 @@ iCn3DUI.prototype = {
             }
         }
 
-        var commandname = 'ssbonds';
-        var commanddesc = 'all atoms that have disulfide bonds';
-        me.addCustomSelection(Object.keys(residues), atomArray, commandname, commanddesc, select, true);
+        if(atomArray.length > 0) {
+            var commandname = 'ssbonds';
+            var commanddesc = 'all atoms that have disulfide bonds';
+            me.addCustomSelection(Object.keys(residues), atomArray, commandname, commanddesc, select, true);
 
-        var nameArray = [commandname];
+            var nameArray = [commandname];
 
-        me.changeCustomResidues(nameArray);
+            me.changeCustomResidues(nameArray);
 
-        me.saveSelectionIfSelected();
+            me.saveSelectionIfSelected();
 
-        // show side chains for the selected atoms
-        me.setStyle('sidechains', 'ball and stick');
-        //me.setLogCommand('style sidechains ball and stick', true);
+            // show side chains for the selected atoms
+            me.setStyle('sidechains', 'ball and stick');
+            //me.setLogCommand('style sidechains ball and stick', true);
 
-        //me.icn3d.draw();
+            //me.icn3d.draw();
+        }
     },
 
     addLabel: function (text, x, y, z, size, color, background, type) { var me = this;
@@ -2461,13 +2462,15 @@ iCn3DUI.prototype = {
       var preCommands = [];
       if(me.icn3d.commands.length > 0) preCommands[0] = me.icn3d.commands[0];
 
+/*
       me.icn3d.commands = preCommands.concat(dataStr.split('\n'));
       me.STATENUMBER = me.icn3d.commands.length;
 
       me.execCommands(me.STATENUMBER);
+*/
 
-/*
       me.icn3d.commands = dataStr.split('\n');
+      me.STATENUMBER = me.icn3d.commands.length;
 
       if(bStatefile !== undefined && bStatefile) {
           me.icn3d.commands = preCommands.concat(me.icn3d.commands);
@@ -2481,7 +2484,6 @@ iCn3DUI.prototype = {
           me.icn3d.commands = preCommands.concat(me.icn3d.commands);
           me.STATENUMBER = me.icn3d.commands.length;
       }
-*/
     },
 
     loadSelection: function (dataStr) { var me = this;
@@ -2637,8 +2639,8 @@ iCn3DUI.prototype = {
 
         var loadStr = load_parameters[0];
         if(load_parameters.length > 1) {
-            var firstSpacePos = load_parameters[1].indexOf(' ');
-            me.cfg.inpara = load_parameters[1].substr(firstSpacePos + 1);
+            var firstSpacePos = load_parameters[load_parameters.length - 1].indexOf(' ');
+            me.cfg.inpara = load_parameters[load_parameters.length - 1].substr(firstSpacePos + 1);
 
 /*
             // remove &mmdbid=
@@ -2662,33 +2664,45 @@ iCn3DUI.prototype = {
 
         // load pdb, mmcif, mmdb, cid
         var id = loadStr.substr(loadStr.lastIndexOf(' ') + 1);
-        if(command.indexOf('mmtf') !== -1) {
+        if(command.indexOf('load mmtf') !== -1) {
           me.downloadMmtf(id);
           me.cfg.mmtfid = id;
         }
-        else if(command.indexOf('pdb') !== -1) {
+        else if(command.indexOf('load pdb') !== -1) {
           me.downloadPdb(id);
           me.cfg.pdbid = id;
         }
-        else if(command.indexOf('mmcif') !== -1) {
+        else if(command.indexOf('load mmcif') !== -1) {
           me.downloadMmcif(id);
           me.cfg.mmcifid = id;
         }
-        else if(command.indexOf('mmdb') !== -1) {
+        else if(command.indexOf('load mmdb') !== -1) {
           me.downloadMmdb(id);
           me.cfg.mmdbid = id;
         }
-        else if(command.indexOf('gi') !== -1) {
+        else if(command.indexOf('load gi') !== -1) {
           me.downloadGi(id);
           me.cfg.gi = id;
         }
-        else if(command.indexOf('cid') !== -1) {
+        else if(command.indexOf('load cid') !== -1) {
           me.downloadCid(id);
           me.cfg.cid = id;
         }
-        else if(command.indexOf('align') !== -1) {
+        else if(command.indexOf('load align') !== -1) {
           me.downloadAlignment(id);
           me.cfg.align = id;
+        }
+        else if(command.indexOf('load url') !== -1) {
+            var typeStr = load_parameters[1]; // type pdb
+            var pos = (typeStr !== undefined) ? typeStr.indexOf('type ') : -1;
+            var type = 'pdb';
+
+            if(pos !== -1) {
+                type = typeStr.substr(pos + 5);
+            }
+
+            me.downloadUrl(id, type);
+            me.cfg.url = id;
         }
       }
       me.bAddCommands = true;
@@ -3025,7 +3039,7 @@ iCn3DUI.prototype = {
          me.rotateStructure('down');
       }
       else if(command.indexOf('hbonds') !== -1) {
-        var threshold = command.substr(command.lastIndexOf(' ') + 1);
+        var threshold = command.substr(command.indexOf(' ') + 1);
 
         me.showHbonds(threshold);
       }
@@ -3252,7 +3266,7 @@ iCn3DUI.prototype = {
         html += "                    <li><span id='" + me.pre + "menu1_mol2file' class='icn3d-link'>Mol2 File</span></li>";
         html += "                    <li><span id='" + me.pre + "menu1_sdffile' class='icn3d-link'>SDF File</span></li>";
         html += "                    <li><span id='" + me.pre + "menu1_xyzfile' class='icn3d-link'>XYZ File</span></li>";
-        html += "                    <li><span id='" + me.pre + "menu1_urlfile' class='icn3d-link'>Url</span></li>";
+        html += "                    <li><span id='" + me.pre + "menu1_urlfile' class='icn3d-link'>Url (Same Host) </span></li>";
         html += "                    <li>-</li>";
         html += "                    <li><span id='" + me.pre + "menu1_state' class='icn3d-link'>State/Script File</span></li>";
         html += "                    <li><span id='" + me.pre + "menu1_selection' class='icn3d-link'>Selection File</span></li>";
@@ -3907,8 +3921,8 @@ iCn3DUI.prototype = {
         html += "<option value='mol2'>mol2</option>";
         html += "<option value='sdf'>sdf</option>";
         html += "<option value='xyz'>xyz</option>";
-        html += "</select>";
-        html += "URL: <input type='text' id='" + me.pre + "urlfile' size=8> ";
+        html += "</select><br/>";
+        html += "URL in the same host: <input type='text' id='" + me.pre + "urlfile' size=20><br/> ";
         html += "<button id='" + me.pre + "reload_urlfile'>Load</button>";
         html += "</div>";
 
@@ -4422,7 +4436,7 @@ iCn3DUI.prototype = {
         $("#" + me.pre + "menu1_urlfile").click(function(e) {
            //e.preventDefault();
 
-           me.openDialog(me.pre + 'dl_urlfile', 'Please specify the file type and URL');
+           me.openDialog(me.pre + 'dl_urlfile', 'Load data by URL');
         });
     },
 
@@ -7115,9 +7129,14 @@ iCn3DUI.prototype = {
 
                 me.STATENUMBER = me.icn3d.commands.length;
 
-                me.applyCommand(lastCommand + '|||' + JSON.stringify(transformation));
+                if(lastCommand.indexOf('load') !== -1) {
+                    me.applyCommandLoad(lastCommand);
+                }
+                else {
+                    me.applyCommand(lastCommand + '|||' + JSON.stringify(transformation));
+                }
 
-                  me.saveSelectionIfSelected();
+                me.saveSelectionIfSelected();
                 //me.renderStructure();
                 me.icn3d.draw();
               }
@@ -7739,35 +7758,16 @@ iCn3DUI.prototype = {
 /*! parsers */
 
     iCn3DUI.prototype.downloadPdb = function (pdbid) { var me = this;
-       // The PDB service doesn't support https, so use our reverse-proxy
-       // service when using https
-       var uri, dataType;
+       var url, dataType;
 
-/*
-       if(document.location.protocol !== "https:") {
-           //uri = "http://www.rcsb.org/pdb/files/" + pdbid + ".pdb";
-           uri = "http://files.rcsb.org/view/" + pdbid + ".pdb";
-
-           dataType = "text";
-       }
-       else {
-           //uri = "https://www.ncbi.nlm.nih.gov/Structure/mmcifparser/mmcifparser.cgi?jsonp=t&pdbid=" + pdbid;
-           //dataType = "jsonp";
-           var url = document.location.href;
-           url = url.replace('https', 'http');
-           window.open(url, '_self');
-           return;
-       }
-*/
-
-       uri = "https://files.rcsb.org/view/" + pdbid + ".pdb";
+       url = "https://files.rcsb.org/view/" + pdbid + ".pdb";
 
        dataType = "text";
 
        me.icn3d.bCid = undefined;
 
        $.ajax({
-          url: uri,
+          url: url,
           dataType: dataType,
           cache: true,
           beforeSend: function() {
@@ -7797,6 +7797,8 @@ iCn3DUI.prototype = {
        var dataType = "text";
 
        me.icn3d.bCid = undefined;
+
+       //var url = 'https://www.ncbi.nlm.nih.gov/Structure/mmcifparser/mmcifparser.cgi?dataurl=' + encodeURIComponent(url);
 
        $.ajax({
           url: url,
@@ -8225,26 +8227,17 @@ iCn3DUI.prototype = {
 
 
     iCn3DUI.prototype.downloadMmcif = function (mmcifid) { var me = this;
-        // The PDB service doesn't support https, so use our reverse-proxy
-        // service when using https
-        var url;
-        if(document.location.protocol !== "https:") {
-            //url = "http://www.rcsb.org/pdb/files/" + mmcifid + ".cif";
-            url = "http://files.rcsb.org/view/" + mmcifid + ".cif";
-        }
-        else {
-            //url = "https://www.ncbi.nlm.nih.gov/Structure/mmcifparser/mmcifparser.cgi?jsonp=t&mmcifid=" + mmcifid;
-            url = document.location.href;
-            url = url.replace('https', 'http');
-            window.open(url, '_self');
-            return;
-        }
+       var url, dataType;
 
-        me.icn3d.bCid = undefined;
+       url = "https://files.rcsb.org/view/" + mmcifid + ".cif";
+
+       dataType = "text";
+
+       me.icn3d.bCid = undefined;
 
        $.ajax({
           url: url,
-          dataType: 'text',
+          dataType: dataType,
           cache: true,
           beforeSend: function() {
               if($("#" + me.pre + "wait")) $("#" + me.pre + "wait").show();
@@ -8257,7 +8250,7 @@ iCn3DUI.prototype = {
               if($("#" + me.pre + "commandlog")) $("#" + me.pre + "commandlog").show();
           },
           success: function(data) {
-               url = "//www.ncbi.nlm.nih.gov/Structure/mmcifparser/mmcifparser.cgi";
+               url = "//dev.ncbi.nlm.nih.gov/Structure/mmcifparser/mmcifparser.cgi";
 
                $.ajax({
                   url: url,
@@ -10004,30 +9997,34 @@ iCn3DUI.prototype = {
         if(type === 'mmdbid') {
             var disulfideArray = data.disulfides;
 
-            for(var i = 0, il = disulfideArray.length; i < il; ++i) {
-                var serial1 = disulfideArray[i][0].ca;
-                var serial2 = disulfideArray[i][1].ca;
+            if(disulfideArray !== undefined) {
+				for(var i = 0, il = disulfideArray.length; i < il; ++i) {
+					var serial1 = disulfideArray[i][0].ca;
+					var serial2 = disulfideArray[i][1].ca;
 
-                var atom1 = me.icn3d.atoms[serial1];
-                var atom2 = me.icn3d.atoms[serial2];
+					var atom1 = me.icn3d.atoms[serial1];
+					var atom2 = me.icn3d.atoms[serial2];
 
-                var resid1 = atom1.structure + '_' + atom1.chain + '_' + atom1.resi;
-                var resid2 = atom2.structure + '_' + atom2.chain + '_' + atom2.resi;
+					var resid1 = atom1.structure + '_' + atom1.chain + '_' + atom1.resi;
+					var resid2 = atom2.structure + '_' + atom2.chain + '_' + atom2.resi;
 
-                me.icn3d.ssbondpoints.push(resid1);
-                me.icn3d.ssbondpoints.push(resid2);
-            }
+					me.icn3d.ssbondpoints.push(resid1);
+					me.icn3d.ssbondpoints.push(resid2);
+				}
+			}
         }
         else if(type === 'mmcifid') {
             var disulfideArray = data.disulfides;
 
-            for(var i = 0, il = disulfideArray.length; i < il; ++i) {
-                var resid1 = disulfideArray[i][0];
-                var resid2 = disulfideArray[i][1];
+            if(disulfideArray !== undefined) {
+				for(var i = 0, il = disulfideArray.length; i < il; ++i) {
+					var resid1 = disulfideArray[i][0];
+					var resid2 = disulfideArray[i][1];
 
-                me.icn3d.ssbondpoints.push(resid1);
-                me.icn3d.ssbondpoints.push(resid2);
-            }
+					me.icn3d.ssbondpoints.push(resid1);
+					me.icn3d.ssbondpoints.push(resid2);
+				}
+			}
         }
 
         // set up sequence alignment
