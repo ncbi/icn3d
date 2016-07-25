@@ -1115,17 +1115,16 @@ iCn3D.prototype = {
         this.prevHighlightObjects = [];
         this.prevSurfaces = [];
 
-        //this.hbonds = {};
-        this.hbondpoints = [];
-        this.ssbondpoints = [];
-        this.ncbondpoints = [];
+        //this.hbondpoints = [];
+        //this.ssbondpoints = [];
+        //this.ncbondpoints = [];
 
         this.labels = {};     // hash of name -> a list of labels. Each label contains 'position', 'text', 'size', 'color', 'background'
                             // label name could be custom, residue, schmatic, distance
         this.lines = {};     // hash of name -> a list of solid or dashed lines. Each line contains 'position1', 'position2', 'color', and a boolean of 'dashed'
                             // line name could be custom, hbond, ssbond, ncbond, distance
 
-        this.biomtMatrices = [];
+        //this.biomtMatrices = [];
         this.bAssembly = false;
     },
 
@@ -3791,7 +3790,6 @@ iCn3D.prototype = {
 
     drawSymmetryMates2: function() {
        if (this.biomtMatrices === undefined) return;
-
        var cnt = 1; // itself
        var centerSum = this.center.clone();
 
@@ -5309,10 +5307,10 @@ iCn3D.prototype = {
         if(this.bRender === true) {
           this.applyTransformation(this._zoomFactor, this.mouseChange, this.quaternion);
           this.render();
-        }
 
-        // reset to hide the side chain
-        this.options['sidechains'] = 'nothing';
+          // reset to hide the side chain
+          this.options['sidechains'] = 'nothing';
+        }
     },
 
     // zoom

@@ -11,7 +11,7 @@ We provided two versions of iCn3D widgets: [basic interface](https://www.ncbi.nl
 
 Either of these widgets could be easily added to your own web pages. Please see the [help page](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d.html) for more details.
 
-<b>Complete package</b> of iCn3D including Three.js and jQuery can be downloaded from [https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-1.1.0.zip](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-1.1.0.zip). The "Download ZIP" link in this page does not include these third-party libraries. 
+<b>Complete package</b> of iCn3D including Three.js and jQuery can be downloaded from [https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-1.1.1.zip](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-1.1.1.zip). The "Download ZIP" link in this page does not include these third-party libraries. 
 
 ## Usage
 
@@ -89,7 +89,11 @@ gulp gh-pages
 
 ## Change log
 
+The production version [icn3d-1.1.1](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-1.1.1.zip) was release on July 25, 2016. Some bugs were fixed.
+
 The production version [icn3d-1.1.0](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-1.1.0.zip) was release on July 18, 2016. The new binary MMTF file format was supported. A new "Analysis" menu was added with an option to show disulfide bonds. Users can also input data from a url, either through the UI or through a encoded url parameter "?type=pdb&url=...", e.g., <a href="https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?type=pdb&url=https%3A%2F%2Ffiles.rcsb.org%2Fview%2F1gpk.pdb">https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?type=pdb&url=https%3A%2F%2Ffiles.rcsb.org%2Fview%2F1gpk.pdb</a>.
+
+All previous releases can be found at the [help page](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d.html#log).
 
 ## Contact
 

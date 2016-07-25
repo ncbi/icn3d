@@ -883,35 +883,16 @@ iCn3DUI.prototype = {
 /*! parsers */
 
     iCn3DUI.prototype.downloadPdb = function (pdbid) { var me = this;
-       // The PDB service doesn't support https, so use our reverse-proxy
-       // service when using https
-       var uri, dataType;
+       var url, dataType;
 
-/*
-       if(document.location.protocol !== "https:") {
-           //uri = "http://www.rcsb.org/pdb/files/" + pdbid + ".pdb";
-           uri = "http://files.rcsb.org/view/" + pdbid + ".pdb";
-
-           dataType = "text";
-       }
-       else {
-           //uri = "https://www.ncbi.nlm.nih.gov/Structure/mmcifparser/mmcifparser.cgi?jsonp=t&pdbid=" + pdbid;
-           //dataType = "jsonp";
-           var url = document.location.href;
-           url = url.replace('https', 'http');
-           window.open(url, '_self');
-           return;
-       }
-*/
-
-       uri = "https://files.rcsb.org/view/" + pdbid + ".pdb";
+       url = "https://files.rcsb.org/view/" + pdbid + ".pdb";
 
        dataType = "text";
 
        me.icn3d.bCid = undefined;
 
        $.ajax({
-          url: uri,
+          url: url,
           dataType: dataType,
           cache: true,
           beforeSend: function() {
@@ -941,6 +922,8 @@ iCn3DUI.prototype = {
        var dataType = "text";
 
        me.icn3d.bCid = undefined;
+
+       //var url = 'https://www.ncbi.nlm.nih.gov/Structure/mmcifparser/mmcifparser.cgi?dataurl=' + encodeURIComponent(url);
 
        $.ajax({
           url: url,
@@ -1369,26 +1352,17 @@ iCn3DUI.prototype = {
 
 
     iCn3DUI.prototype.downloadMmcif = function (mmcifid) { var me = this;
-        // The PDB service doesn't support https, so use our reverse-proxy
-        // service when using https
-        var url;
-        if(document.location.protocol !== "https:") {
-            //url = "http://www.rcsb.org/pdb/files/" + mmcifid + ".cif";
-            url = "http://files.rcsb.org/view/" + mmcifid + ".cif";
-        }
-        else {
-            //url = "https://www.ncbi.nlm.nih.gov/Structure/mmcifparser/mmcifparser.cgi?jsonp=t&mmcifid=" + mmcifid;
-            url = document.location.href;
-            url = url.replace('https', 'http');
-            window.open(url, '_self');
-            return;
-        }
+       var url, dataType;
 
-        me.icn3d.bCid = undefined;
+       url = "https://files.rcsb.org/view/" + mmcifid + ".cif";
+
+       dataType = "text";
+
+       me.icn3d.bCid = undefined;
 
        $.ajax({
           url: url,
-          dataType: 'text',
+          dataType: dataType,
           cache: true,
           beforeSend: function() {
               if($("#" + me.pre + "wait")) $("#" + me.pre + "wait").show();
@@ -1401,7 +1375,7 @@ iCn3DUI.prototype = {
               if($("#" + me.pre + "commandlog")) $("#" + me.pre + "commandlog").show();
           },
           success: function(data) {
-               url = "//www.ncbi.nlm.nih.gov/Structure/mmcifparser/mmcifparser.cgi";
+               url = "//dev.ncbi.nlm.nih.gov/Structure/mmcifparser/mmcifparser.cgi";
 
                $.ajax({
                   url: url,
@@ -3148,30 +3122,34 @@ iCn3DUI.prototype = {
         if(type === 'mmdbid') {
             var disulfideArray = data.disulfides;
 
-            for(var i = 0, il = disulfideArray.length; i < il; ++i) {
-                var serial1 = disulfideArray[i][0].ca;
-                var serial2 = disulfideArray[i][1].ca;
+            if(disulfideArray !== undefined) {
+				for(var i = 0, il = disulfideArray.length; i < il; ++i) {
+					var serial1 = disulfideArray[i][0].ca;
+					var serial2 = disulfideArray[i][1].ca;
 
-                var atom1 = me.icn3d.atoms[serial1];
-                var atom2 = me.icn3d.atoms[serial2];
+					var atom1 = me.icn3d.atoms[serial1];
+					var atom2 = me.icn3d.atoms[serial2];
 
-                var resid1 = atom1.structure + '_' + atom1.chain + '_' + atom1.resi;
-                var resid2 = atom2.structure + '_' + atom2.chain + '_' + atom2.resi;
+					var resid1 = atom1.structure + '_' + atom1.chain + '_' + atom1.resi;
+					var resid2 = atom2.structure + '_' + atom2.chain + '_' + atom2.resi;
 
-                me.icn3d.ssbondpoints.push(resid1);
-                me.icn3d.ssbondpoints.push(resid2);
-            }
+					me.icn3d.ssbondpoints.push(resid1);
+					me.icn3d.ssbondpoints.push(resid2);
+				}
+			}
         }
         else if(type === 'mmcifid') {
             var disulfideArray = data.disulfides;
 
-            for(var i = 0, il = disulfideArray.length; i < il; ++i) {
-                var resid1 = disulfideArray[i][0];
-                var resid2 = disulfideArray[i][1];
+            if(disulfideArray !== undefined) {
+				for(var i = 0, il = disulfideArray.length; i < il; ++i) {
+					var resid1 = disulfideArray[i][0];
+					var resid2 = disulfideArray[i][1];
 
-                me.icn3d.ssbondpoints.push(resid1);
-                me.icn3d.ssbondpoints.push(resid2);
-            }
+					me.icn3d.ssbondpoints.push(resid1);
+					me.icn3d.ssbondpoints.push(resid2);
+				}
+			}
         }
 
         // set up sequence alignment
