@@ -97,12 +97,26 @@ var common_js = [
     "src/ProteinSurface4.js",
     "src/setupsurface.js",
     "src/mmtf.js",
-    "src/icn3d.js",
+    "src/icn3d/icn3d.js",
+    "src/icn3d/loadpdb.js",
+    "src/icn3d/drawing.js",
+    "src/icn3d/display.js",
+    "src/icn3d/other.js"
+];
+
+var common_uijs = [
+    "src/icn3dui/common.js",
+    "src/icn3dui/parsers/mmcif_mmdb_parser.js",
+    "src/icn3dui/parsers/mmtf_parser.js",
+    "src/icn3dui/parsers/mol2_parser.js",
+    "src/icn3dui/parsers/pdb_parser.js",
+    "src/icn3dui/parsers/sdf_parser.js",
+    "src/icn3dui/parsers/xyz_parser.js"
 ];
 
 // Create the gulp tasks for simple and full:
-make_js_task("simple", common_js.concat("src/simple_ui.js"));
-make_js_task("full", common_js.concat("src/full_ui.js"));
+make_js_task("simple", common_js.concat("src/icn3dui/simple_ui.js").concat(common_uijs));
+make_js_task("full", common_js.concat("src/icn3dui/full_ui.js").concat(common_uijs));
 
 gulp.task('html',
   'Rewrite the link and script tags in the html',

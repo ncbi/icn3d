@@ -112,6 +112,14 @@
       showalignseq = false;
     }
 
+    var show2d = params.show2d;
+    if(show2d == 'true' || show2d == '1') {
+      show2d = true;
+    }
+    else if(show2d === undefined || show2d == 'false' || show2d == '0') {
+      show2d = false;
+    }
+
     var rotate = params.rotate;
     if(rotate === undefined) {
       rotate = 'right';
@@ -143,6 +151,7 @@
               showmenu: showmenu,
               showcommand: showcommand,
               showseq: showseq,
+              show2d: show2d,
               command: command
           };
           if(idName !== '') cfg[idName] = idArray[i];
@@ -190,6 +199,7 @@
               showcommand: showcommand,
               showseq: showseq,
               showalignseq: showalignseq,
+              show2d: show2d,
               align: align,
               command: command
           };

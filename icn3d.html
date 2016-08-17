@@ -9,7 +9,7 @@
 
   <link rel="stylesheet"
     href="node_modules/jquery-ui/themes/ui-lightness/jquery-ui.min.css">
-  <link rel="stylesheet" href="src/icn3d_simple_ui.css">
+  <link rel="stylesheet" href="src/icn3d_full_ui.css">
   <script src="node_modules/jquery/dist/jquery.min.js"></script>
   <script src="node_modules/jquery-ui/jquery-ui.min.js"></script>
   <script src="node_modules/three/three.min.js"></script>
@@ -23,7 +23,7 @@
   <script src="src/setupsurface.js"></script>
   <script src="src/mmtf.js"></script>
   <script src="src/icn3d.js"></script>
-  <script src="src/simple_ui.js"></script>
+  <script src="src/full_ui.js"></script>
 
 <style type="text/css">
 pre { white-space: pre-wrap; }
@@ -62,7 +62,7 @@ body {font-family: Verdana, Arial, Helvetica, sans-serif;}
 
 <li>What is iCn3D Structure Viewer?</li>
 <br/>
-"I see in 3D" (iCn3D) Structure Viewer is a WebGL-based 3D viewer using Three.js and jQuery. It is based on the 3D styles of <a href="http://istar.cse.cuhk.edu.hk/iview/">iview</a> and <a href="https://en.osdn.jp/projects/webglmol/">GLmol</a>, and the surface generation of <a href="http://3dmol.csb.pitt.edu/">3Dmol</a>. iCn3D has a feature-rich user interface and allows users to: use a url or a state file to capture the custom display of 3D structures, define custom atom sets, show both 3D structure and 1D sequence together and select residues on both of them, display custom labeling, go back and forth to different stage, show highlight, etc. iCn3D can also show the aligned 3D structures by providing two PDB IDs or MMDB IDs, whose alignment has been pre-calculated at NCBI. The source code of iCn3D is available at GitHub: <a href="https://github.com/ncbi/icn3d">https://github.com/ncbi/icn3d</a>.<br>
+"I see in 3D" (iCn3D) Structure Viewer is a WebGL-based 3D viewer using Three.js and jQuery. It is based on the 3D styles of <a href="http://istar.cse.cuhk.edu.hk/iview/">iview</a> and <a href="https://en.osdn.jp/projects/webglmol/">GLmol</a>, and the surface generation of <a href="http://3dmol.csb.pitt.edu/">3Dmol</a>. iCn3D has a feature-rich user interface and allows users to: use a url or a state file to capture the custom display of 3D structures, define custom atom sets, show 3D structure, 2D interactions, and 1D sequence together and select residues on all of them, display custom labeling, go back and forth to different stage, show highlight, etc. iCn3D can also show the aligned 3D structures by providing two PDB IDs or MMDB IDs, whose alignment has been pre-calculated at NCBI. The source code of iCn3D is available at GitHub: <a href="https://github.com/ncbi/icn3d">https://github.com/ncbi/icn3d</a>.<br>
 <br>
 We provided two versions of iCn3D widgets: <a href="index.html?mmdbid=2por">basic interface</a> and <a href="full.html?mmdbid=2por">advanced interface</a>. Both widgets can be easily added to web pages.
 <ol>
@@ -72,22 +72,26 @@ We provided two versions of iCn3D widgets: <a href="index.html?mmdbid=2por">basi
 
 <br/>
 
-  <div id="icn3dwrap"></div>
+  <div id="icn3dwrap" style="width:810px!important; height:510px!important; background-color:#DDDDDD;"></div>
 
   <script type="text/javascript">
     jQuery( document ).ready(function() {
-        var cfg = {
-            divid: 'icn3dwrap',
-            width: 400,
-            height: 400,
-            resize: false,
-            rotate: 'right',
-            pdbid: '2por'
-        };
+          var cfg = {
+              divid: 'icn3dwrap',
+              width: 800,
+              height: 400,
+              resize: false,
+              rotate: 'right',
+              showmenu: 1,
+              showcommand: 1,
+              showseq: 1,
+              show2d: 1,
+              mmdbid: '2por'
+          };
 
-		var icn3dui = new iCn3DUI(cfg);
+          var icn3dui = new iCn3DUI(cfg);
 
-		icn3dui.show3DStructure();
+          icn3dui.show3DStructure();
     });
   </script>
 
@@ -125,6 +129,7 @@ We provided two versions of iCn3D widgets: <a href="index.html?mmdbid=2por">basi
         <td>3. <a href="#style">Style</a>&nbsp;&nbsp;</td>
         <td>4. <a href="#color">Color</a>&nbsp;&nbsp;</td>
         <td>5. <a href="#surface">Surface</a>&nbsp;&nbsp;</td>
+        <td>6. <a href="#analysis">Analysis</a>&nbsp;&nbsp;</td>
         <td>6. <a href="#other">Other</a>&nbsp;&nbsp;</td>
         </tr>
         </tbody>
@@ -525,10 +530,10 @@ We provided two versions of iCn3D widgets: <a href="index.html?mmdbid=2por">basi
 <a name="parameters"></a>
 <h2>URL parameters for the advanced interface<img src="https://www.ncbi.nlm.nih.gov/Structure/IMG/spacer.gif" width="25" height="1" border="0"><a href="#Top"><img src="https://www.ncbi.nlm.nih.gov/Structure/IMG/arrowup_blue.gif" width="12" height="12" border="0" alt="back to top"></a></h2>
 <table><tr valign='top'><th>Parameter</th><th>Basic interface<br/>(index.html)</th><th>Advanced interface<br/>(full.html)</th><th>Description</th></tr>
+<tr valign='top'><td>mmdbid</td><td>Yes</td><td>Yes</td><td>NCBI MMDB ID or PDB ID, e.g., <a href="full.html?mmdbid=2por&showseq=1&show2d=1">?mmdbid=2por&showseq=1&show2d=1</a></td></tr>
 <tr valign='top'><td>mmtfid</td><td>Yes</td><td>Yes</td><td>MMTF ID, e.g., <a href="full.html?mmtfid=2por">?mmtfid=2por</a></td></tr>
 <tr valign='top'><td>pdbid</td><td>Yes</td><td>Yes</td><td>PDB ID, e.g., <a href="full.html?pdbid=2por">?pdbid=2por</a></td></tr>
 <tr valign='top'><td>mmcifid</td><td>Yes</td><td>Yes</td><td>mmCIF ID, e.g., <a href="full.html?mmcifid=2por">?mmcifid=2por</a></td></tr>
-<tr valign='top'><td>mmdbid</td><td>Yes</td><td>Yes</td><td>NCBI MMDB ID or PDB ID, e.g., <a href="full.html?mmdbid=2por">?mmdbid=2por</a></td></tr>
 <tr valign='top'><td>gi</td><td>Yes</td><td>Yes</td><td>NCBI protein gi number, e.g., <a href="full.html?gi=827343227">?gi=827343227</a></td></tr>
 <tr valign='top'><td>cid</td><td>Yes</td><td>Yes</td><td>PubChem Compound ID, e.g., <a href="full.html?cid=2244">?cid=2244</a></td></tr>
 <tr valign='top'><td>align</td><td>Yes</td><td>Yes</td><td>Two PDB IDs or MMDB IDs for structure alignment, e.g., <a href="full.html?align=1hho,4n7n">?align=1hho,4n7n</a></td></tr>
@@ -542,6 +547,7 @@ We provided two versions of iCn3D widgets: <a href="index.html?mmdbid=2por">basi
 <tr valign='top'><td>showmenu</td><td>No</td><td>Yes</td><td>Set "true" or "1" to show the menus and buttons at the top of the structure canvas. The default is "true".</td></tr>
 <tr valign='top'><td>showseq</td><td>No</td><td>Yes</td><td>Set "true" or "1" to show the sequence window. The default is "false".</td></tr>
 <tr valign='top'><td>showalignseq</td><td>No</td><td>Yes</td><td>Set "true" or "1" to show the aligned sequence window. The default is "false".</td></tr>
+<tr valign='top'><td>show2d</td><td>No</td><td>Yes</td><td>Set "true" or "1" to show the 2D interaction. The default is "false".</td></tr>
 <tr valign='top'><td><a name="commandsUrl"></a>command</td><td>No</td><td>Yes</td><td>Besides the "Script/Log" section, commands can also be attached to the url parameter "command". Several commands can be concatenated with the separator ";", e.g., <a href="full.html?mmdbid=3gvu&command=select .A:38-40 or .A:42 or .A:45 or .A:61 or .A:63 or .A:77-78 or .A:82 or .A:91 or .A:107-108 or .A:110 or .A:114 or .A:162 or .A:172-173; style proteins stick; color atom; set surface Van der Waals surface; add label ATP-binding Site | size 18 | color #0000ff | background #cccccc | type custom; select .STI; color green; toggle highlight">full.html?mmdbid=3gvu&amp;command=select .A:38-40 or .A:42 or .A:45 or .A:61 or .A:63 or .A:77-78 or .A:82 or .A:91 or .A:107-108 or .A:110 or .A:114 or .A:162 or .A:172-173; style proteins stick; color atom; set surface Van der Waals surface; add label ATP-binding Site | size 18 | color #0000ff | background #cccccc | type custom; select .STI; color green; toggle highlight</a>.</td></tr>
 </table>
 
@@ -555,11 +561,15 @@ We provided two versions of iCn3D widgets: <a href="index.html?mmdbid=2por">basi
 <tr><td colspan="2">a) Retrieve by ID</td></tr>
 <tr><td><span class="indent">MMTF ID:</span></td>           <td>load mmtf [1GPK]</td></tr>
 <tr><td><span class="indent">PDB ID:</span></td>           <td>load pdb [1GPK]</td></tr>
+<tr><td><span class="indent">mmCIF ID:</span></td>          <td>load mmcif [1GPK]</td></tr>
 <tr><td><span class="indent">MMDB ID:</span></td>          <td>load mmdb [1GPK]</td></tr>
 <tr><td><span class="indent">gi:</span></td>               <td>load gi [827343227]</td></tr>
 <tr><td><span class="indent">PubChem CID:</span></td>              <td>load cid [1GPK]</td></tr>
 
-<tr><td colspan="2">b) Open File</td></tr>
+<tr><td colspan="2">b) Align</td></tr>
+<tr><td><span class="indent">MMDB ID:</span></td>           <td>load alignment [1HHO,4N7N]</td></tr>
+
+<tr><td colspan="2">c) Open File</td></tr>
 <tr><td><span class="indent">PDB File:</span></td>            <td>[no command available]</td></tr>
 <tr><td><span class="indent">mmCIF File:</span></td>          <td>[no command available]</td></tr>
 <tr><td><span class="indent">Mol2 File:</span></td>          <td>[no command available]</td></tr>
@@ -569,15 +579,15 @@ We provided two versions of iCn3D widgets: <a href="index.html?mmdbid=2por">basi
 <tr><td><span class="indent">State/Script File:</span></td>   <td>[no command available]</td></tr>
 <tr><td><span class="indent">Selection File:</span></td>   <td>[no command available]</td></tr>
 
-<tr><td colspan="2">c) Export File</td></tr>
+<tr><td colspan="2">d) Save File</td></tr>
 <tr><td><span class="indent">State File:</span></td>            <td>[no command available]</td></tr>
 <tr><td><span class="indent">PNG Image File:</span></td>          <td>[no command available]</td></tr>
 <tr><td><span class="indent">All Selections:</span></td>   <td>[no command available]</td></tr>
 <tr><td><span class="indent">Residue Counts:</span></td>   <td>[no command available]</td></tr>
 
-<tr><td>d) Share Link:</td>         <td>[no command available]</td></tr>
+<tr><td>e) Share Link:</td>         <td>[no command available]</td></tr>
 
-<tr><td colspan="2">e) Links</td></tr>
+<tr><td colspan="2">f) Links</td></tr>
 
 <tr><td><span class="indent">Structure Summary:</span></td>          <td>[no command available]</td></tr>
 <tr><td><span class="indent">Find Similar Structures:</span></td>   <td>[no command available]</td></tr>
@@ -588,26 +598,27 @@ We provided two versions of iCn3D widgets: <a href="index.html?mmdbid=2por">basi
 <a name="select"></a><b>2. Select</b> <a href="#Top"><span class="top">&nbsp;&nbsp;&nbsp;</span></a><br>
 <table>
 <tbody><tr><td colspan="2">a) Select -&gt; Select</td></tr>
-<tr><td colspan="2">a1) Structure/Chain</td></tr>
+<tr><td colspan="2">a1) Advanced Selection</td></tr>
+<tr><td><span class="indent">Save Selection:</span></td>              <td>select [command] | name [commandname] | description [command description]</td></tr>
+<tr><td><span class="indent">All Selections:</span></td>    <td>select saved atoms [name1,name2]</td></tr>
+
+<tr><td colspan="2">a2) by Distance</td></tr>
+<tr><td><span class="indent">Display:</span></td>            <td>select zone cutoff [cutoff in angstrom]</td></tr>
+
+<tr><td>a3) Complement:</td>     <td>select complement</td></tr>
+
+<tr><td colspan="2">a4) Defined Sets</td></tr>
 <tr><td><span class="indent">Structures:</span></td>  <td>select structure [1,2]</td></tr>
 <tr><td><span class="indent">Chains:</span></td>      <td>select chain [1_A,1_B]</td></tr>
 <tr><td><span class="indent">Custom:</span></td>       <td>select saved selection [name1,name2]</td></tr>
 
-<tr><td>a2) All:</td>     <td>select all</td></tr>
+<tr><td>a5) All:</td>     <td>select all</td></tr>
 
-<tr><td>a3) Complement:</td>     <td>select complement</td></tr>
+<tr><td>a6) Sequences</td>         <td>[no command available]</td></tr>
 
-<tr><td colspan="2">a4) Custom Sphere</td></tr>
-<tr><td><span class="indent">Display:</span></td>            <td>select zone cutoff [cutoff in angstrom]</td></tr>
+<tr><td>a7) Interactions</td>         <td>[no command available]</td></tr>
 
-<tr><td>a5) Sequences</td>         <td>[no command available]</td></tr>
-
-<tr><td colspan="2">a6) Advanced Selection</td></tr>
-<tr><td><span class="indent">Save Selection:</span></td>              <td>select [command] | name [commandname] | description [command description]</td></tr>
-<tr><td><span class="indent">Atom Selections:</span></td>    <td>select saved atoms [name1,name2]</td></tr>
-<tr><td><span class="indent">Display Selection:</span></td>  <td>show selection</td></tr>
-
-<tr><td colspan="2"><br>b) Select -&gt; Picking</td></tr>
+<tr><td colspan="2"><br>b) Select -&gt; Picking with "Alt" + Click</td></tr>
 <tr><td><span class="indent">Strand/Helix (Alt):</span></td>  <td>set picking strand</td></tr>
 <tr><td><span class="indent">Residue (Alt):</span></td>  <td>set picking residue</td></tr>
 <tr><td><span class="indent">Atom (Alt):</span></td>     <td>set picking atom</td></tr>
@@ -749,12 +760,43 @@ In the dialog Select -&gt; Advanced, users can use simple specification to selec
 <tr><td><span class="indent">Yes</span></td>                 <td>set surface wireframe on</td></tr>
 <tr><td><span class="indent">No</span></td>                  <td>set surface wireframe off</td></tr>
 
-<tr><td colspan="2">a) Surface -&gt; Neighbors</td></tr>
+<tr><td colspan="2">d) Surface -&gt; Neighbors</td></tr>
 <tr><td><span class="indent">Yes:</span></td>                <td>set surface neighbors on</td></tr>
 <tr><td><span class="indent">No:</span></td>                 <td>set surface neighbors off</td></tr>
 </tbody></table>
 <br>
-<a name="other"></a><b>6. Other</b> <a href="#Top"><span class="top">&nbsp;&nbsp;&nbsp;</span></a><br>
+<a name="analysis"></a><b>6. Analysis</b> <a href="#Top"><span class="top">&nbsp;&nbsp;&nbsp;</span></a><br>
+<table>
+<tbody><tr><td colspan="2"><br>a) Analysis -&gt; Distance</td></tr>
+<tr><td rowspan="2"><span class="indent">Measure:</span></td>            <td>add label [label text] | x [x] y [y] z [z] | size [label size] | color [#FF0000] | background [#FFFFFF]</td></tr>
+<tr>                                                               <td>add line | x1 [x1] y1 [y1] z1 [z1] | x2 [x2] y2 [y2] z2 [z2] | color [#FFFF00] | dashed [true]</td></tr>
+<tr><td><span class="indent">Hide:</span></td>            <td>set lines off</td></tr>
+
+<tr><td colspan="2"><br>b) Analysis -&gt; Label</td></tr>
+<tr><td><span class="indent">by Picking Atoms:</span></td>            <td>add label [label text] | x [x] y [y] z [z] | size [label size] | color [#FF0000] | background [#FFFFFF]</td></tr>
+<tr><td><span class="indent">per Selection:</span></td>            <td>add label [label text] | size [label size] | color [#FF0000] | background [#FFFFFF]</td></tr>
+<tr><td><span class="indent">per Residue:</span></td>            <td>add residue labels</td></tr>
+<tr><td><span class="indent">Remove:</span></td>            <td>set labels off</td></tr>
+
+<tr><td colspan="2"><br>c) Analysis -&gt; H-bonds to Selection</td></tr>
+<tr><td><span class="indent">Show:</span></td>            <td>hbonds [hbond threshold in angstrom]</td></tr>
+<tr><td><span class="indent">Hide:</span></td>            <td>set hbonds off</td></tr>
+
+<tr><td colspan="2"><br>d) Analysis -&gt; Disulfide Bonds</td></tr>
+<tr><td><span class="indent">Show:</span></td>            <td>disulfide bonds</td></tr>
+<tr><td><span class="indent">Hide:</span></td>            <td>set disulfide bonds off</td></tr>
+
+<tr><td colspan="2"><br>e) Analysis -&gt; Cross-Linkages</td></tr>
+<tr><td><span class="indent">Show:</span></td>            <td>cross linkage</td></tr>
+<tr><td><span class="indent">Hide:</span></td>            <td>set cross linkage off</td></tr>
+
+<tr><td colspan="2">f) Analysis -&gt; Assembly (PDB, mmCIF, or MMTF files only)</td></tr>
+<tr><td><span class="indent">yes:</span></td>                <td>set assembly on</td></tr>
+<tr><td><span class="indent">no:</span></td>                 <td>set assembly off</td></tr>
+
+</tbody></table>
+<br>
+<a name="other"></a><b>7. Other</b> <a href="#Top"><span class="top">&nbsp;&nbsp;&nbsp;</span></a><br>
 <table>
 <tbody><tr><td>a) Other -&gt; Reset:</td>     <td>reset</td></tr>
 
@@ -762,66 +804,39 @@ In the dialog Select -&gt; Advanced, users can use simple specification to selec
 
 <tr><td>c) Other -&gt; Center:</td>     <td>center selection</td></tr>
 
-<tr><td>d) Other -&gt; Zoom in:</td>     <td>zoom selection</td></tr>
+<tr><td>d) Other -&gt; Back:</td>     <td>back</td></tr>
 
-<tr><td>e) Other -&gt; Back:</td>     <td>back</td></tr>
+<tr><td>e) Other -&gt; Forward:</td>     <td>forward</td></tr>
 
-<tr><td>f) Other -&gt; Forward:</td>     <td>forward</td></tr>
-
-<tr><td colspan="2"><br>g) Other -&gt; Assembly</td></tr>
-<tr><td><span class="indent">yes:</span></td>                <td>set assembly on</td></tr>
-<tr><td><span class="indent">no:</span></td>                 <td>set assembly off</td></tr>
-
-<tr><td colspan="2"><br>h) Other -&gt; H-bonds</td></tr>
-<tr><td><span class="indent">Show:</span></td>            <td>hbonds [hbond threshold in angstrom]</td></tr>
-<tr><td><span class="indent">Hide:</span></td>            <td>set hbonds off</td></tr>
-
-<tr><td colspan="2"><br>i) Other -&gt; Label</td></tr>
-<tr><td><span class="indent">by Picking:</span></td>            <td>add label [label text] | x [x] y [y] z [z] | size [label size] | color [#FF0000] | background [#FFFFFF]</td></tr>
-<tr><td><span class="indent">by Selection:</span></td>            <td>add label [label text] | size [label size] | color [#FF0000] | background [#FFFFFF]</td></tr>
-<tr><td><span class="indent">by Residues:</span></td>            <td>add residue labels</td></tr>
-<tr><td><span class="indent">Hide:</span></td>            <td>set labels off</td></tr>
-
-<tr><td colspan="2"><br>j) Other -&gt; Distance</td></tr>
-<tr><td rowspan="2"><span class="indent">Show:</span></td>            <td>add label [label text] | x [x] y [y] z [z] | size [label size] | color [#FF0000] | background [#FFFFFF]</td></tr>
-<tr>                                                               <td>add line | x1 [x1] y1 [y1] z1 [z1] | x2 [x2] y2 [y2] z2 [z2] | color [#FFFF00] | dashed [true]</td></tr>
-<tr><td><span class="indent">Hide:</span></td>            <td>set lines off</td></tr>
-
-<tr><td colspan="2"><br>k) Other -&gt; Auto Rotation</td></tr>
+<tr><td colspan="2"><br>f) Other -&gt; Auto Rotation</td></tr>
 <tr><td><span class="indent">Rotate Left:</span></td>              <td>rotate left</td></tr>
 <tr><td><span class="indent">Rotate Right:</span></td>              <td>rotate right</td></tr>
 <tr><td><span class="indent">Rotate Up:</span></td>              <td>rotate up</td></tr>
 <tr><td><span class="indent">Rotate Down:</span></td>              <td>rotate down</td></tr>
 
-<tr><td colspan="2"><br>l) Other -&gt; Camera</td></tr>
+<tr><td colspan="2"><br>g) Other -&gt; Camera</td></tr>
 <tr><td><span class="indent">perspective:</span></td>        <td>set camera perspective</td></tr>
 <tr><td><span class="indent">orthographic:</span></td>       <td>set camera orthographic</td></tr>
 
-<tr><td colspan="2"><br>m) Other -&gt; Background</td></tr>
+<tr><td colspan="2"><br>h) Other -&gt; Background</td></tr>
 <tr><td><span class="indent">black:</span></td>              <td>set background black</td></tr>
 <tr><td><span class="indent">grey:</span></td>               <td>set background grey</td></tr>
 <tr><td><span class="indent">white:</span></td>              <td>set background white</td></tr>
 
-<tr><td colspan="2"><br>n) Other -&gt; Fog</td></tr>
+<tr><td colspan="2"><br>i) Other -&gt; Fog</td></tr>
 <tr><td><span class="indent">yes:</span></td>                <td>set fog on</td></tr>
 <tr><td><span class="indent">no:</span></td>                 <td>set fog off</td></tr>
 
-<tr><td colspan="2"><br>o) Other -&gt; Slab</td></tr>
+<tr><td colspan="2"><br>j) Other -&gt; Slab</td></tr>
 <tr><td><span class="indent">yes:</span></td>                <td>set slab on</td></tr>
 <tr><td><span class="indent">no:</span></td>                 <td>set slab off</td></tr>
 
-<tr><td colspan="2"><br>p) Other -&gt; XYZ-axes</td></tr>
+<tr><td colspan="2"><br>k) Other -&gt; XYZ-axes</td></tr>
 <tr><td><span class="indent">yes:</span></td>                <td>set axis on</td></tr>
 <tr><td><span class="indent">no:</span></td>                 <td>set axis off</td></tr>
 
-<tr><td>q) Other -&gt; Transform Hint:</td>      <td>[no command available]</td></tr>
-<tr><td>r) Other -&gt; Help:</td>      <td>[no command available]</td></tr>
-</tbody></table>
-
-<br>
-<a name="other"></a><b>7. Sequence Dialog</b> <a href="#Top"><span class="top">&nbsp;&nbsp;&nbsp;</span></a><br>
-<table>
-<tbody><tr><td>Output Selection:</td>     <td>output selection</td></tr>
+<tr><td>l) Other -&gt; Transform Hint:</td>      <td>[no command available]</td></tr>
+<tr><td>m) Other -&gt; Help:</td>      <td>[no command available]</td></tr>
 </tbody></table>
 
 <hr>
@@ -907,6 +922,7 @@ In the dialog Select -&gt; Advanced, users can use simple specification to selec
           options['opacity']            = '0.8';                //1.0, 0.9, 0.8, 0.7, 0.6, 0.5
           options['wireframe']          = 'no';                 //yes, no
           options['hbonds']             = 'no';                 //yes, no
+          options['ssbonds']            = 'no';                 //yes, no
           options['axis']               = 'no';                 //yes, no
           options['fog']                = 'no';                 //yes, no
           options['slab']               = 'no';                 //yes, no
@@ -1497,7 +1513,10 @@ Update the sequence window for the currently selected atoms.
 <a name="log"></a>
 <h2>Change Log:<img src="https://www.ncbi.nlm.nih.gov/Structure/IMG/spacer.gif" width="25" height="1" border="0"><a href="#Top"><img src="https://www.ncbi.nlm.nih.gov/Structure/IMG/arrowup_blue.gif" width="12" height="12" border="0" alt="back to top"></a></h2>
 
-The production version [icn3d-1.1.1](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-1.1.1.zip) was release on July 25, 2016. Some bugs were fixed.
+The production version <a href="https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-1.2.0.zip">icn3d-1.2.0</a> was release on August 17, 2016. The dialog of 2D interactions was added to show the interactions among different chains. Both the nodes (chains) and lines (interactions) can be selected. Secondary structures will be calculated if the input PDB file has no defined secondary structure information. The previous files src/icn3d.js, src/full_ui.js, and src/simple_ui.js were separated into small files.
+<br><br>
+
+The production version <a href="https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-1.1.1.zip">icn3d-1.1.1</a> was release on July 25, 2016. Some bugs were fixed.
 <br><br>
 
 The production version <a href="https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-1.1.0.zip">icn3d-1.1.0</a> was release on July 18, 2016. The new binary MMTF file format was supported. A new "Analysis" menu was added with an option to show disulfide bonds. Users can also input data from a url, either through the UI or through a encoded url parameter "?type=pdb&url=...", e.g., <a href="https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?type=pdb&url=https%3A%2F%2Ffiles.rcsb.org%2Fview%2F1gpk.pdb">https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?type=pdb&url=https%3A%2F%2Ffiles.rcsb.org%2Fview%2F1gpk.pdb</a>.
