@@ -21,7 +21,8 @@ accordion ul .icn3d-link, div .icn3d-link, accordion li input, accordion li labe
 .icn3d-residueNum {color: #00FF00; width:30px!important; text-align:center;}
 
 .icn3d-dl_sequence span {display:inline-block; font-size:11px; width:10px;}
-
+.icn3d-dl_2ddiagram {min-width: 150px!important; min-height: 150px!important;}
+ 
 button, select, input { font-size: 10px; }
 
 .icn3d-hidden {display: none;}
@@ -42,3 +43,13 @@ button, select, input { font-size: 10px; }
 .icn3d-ncons {}
 .icn3d-nalign {} // {font-style: italic;}
 
+.icn3d-node {cursor:pointer!important; } 
+.icn3d-interaction {cursor:pointer!important; } 
+
+.ui-dialog .ui-resizable-se {
+    width: 14px;
+    height: 14px;
+    right: 3px;
+    bottom: 3px;
+    background-position: -80px -224px;
+}
