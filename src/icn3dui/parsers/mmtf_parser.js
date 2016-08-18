@@ -7,7 +7,10 @@
        if(document.location.protocol === "https:") {
            var url = document.location.href;
            url = url.replace('https', 'http');
-           window.open(url, '_self');
+           //window.open(url, '_self');
+
+           alert("For now, MMTF files can ONLY be retrieved by http protocol, not https. Thus MMTF format can NOT work in NCBI pages, which are https only now. Please check back later.");
+
            return;
        }
 

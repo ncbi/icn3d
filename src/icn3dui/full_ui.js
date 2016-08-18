@@ -1760,6 +1760,7 @@ iCn3DUI.prototype = {
            }
            else {
              atomStr = testStr.substr(atPos + 1);
+             testStr = testStr.substr(0, atPos);
            }
 
            if(colonPos === -1) {
@@ -1767,6 +1768,7 @@ iCn3DUI.prototype = {
            }
            else {
              residueStr = testStr.substr(colonPos + 1);
+             testStr = testStr.substr(0, colonPos);
            }
 
            if(periodPos === -1) {
@@ -1774,6 +1776,7 @@ iCn3DUI.prototype = {
            }
            else {
              chainStr = testStr.substr(periodPos + 1);
+             testStr = testStr.substr(0, periodPos);
            }
 
            if(poundPos === -1) {
@@ -1781,6 +1784,7 @@ iCn3DUI.prototype = {
            }
            else {
              moleculeStr = testStr.substr(poundPos + 1);
+             testStr = testStr.substr(0, poundPos);
            }
 
            if(atomStr !== '*') {
