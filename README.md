@@ -11,7 +11,7 @@ We provided two versions of iCn3D widgets: [basic interface](https://www.ncbi.nl
 
 Either of these widgets could be easily added to your own web pages. Please see the [help page](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d.html) for more details.
 
-<b>Complete package</b> of iCn3D including Three.js and jQuery can be downloaded from [https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-1.2.0.zip](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-1.2.0.zip). The "Download ZIP" link in this page does not include these third-party libraries. 
+<b>Complete package</b> of iCn3D including Three.js and jQuery can be downloaded from [https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-1.2.1.zip](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-1.2.1.zip). The "Download ZIP" link in this page does not include these third-party libraries. 
 
 ## Usage
 
@@ -88,6 +88,8 @@ gulp gh-pages
 ```
 
 ## Change log
+
+The production version [icn3d-1.2.1](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-1.2.1.zip) was release on August 18, 2016. Some bugs were fixed.
 
 The production version [icn3d-1.2.0](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-1.2.0.zip) was release on August 17, 2016. The dialog of 2D interactions was added to show the interactions among different chains. Both the nodes (chains) and lines (interactions) can be selected. Secondary structures will be calculated if the input PDB file has no defined secondary structure information. The previous files src/icn3d.js, src/full_ui.js, and src/simple_ui.js were separated into small files.
 

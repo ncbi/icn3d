@@ -233,17 +233,8 @@
         // lines
         //if (options.hbonds.toLowerCase() === 'yes' || options.ncbonds.toLowerCase() === 'yes') {
 		if (options.hbonds.toLowerCase() === 'yes') {
-            var color;
-            var points;
-
-            if(options.hbonds.toLowerCase() === 'yes') {
-                color = '#00FF00';
-                points = this.hbondpoints;
-            }
-            //else if(options.ncbonds.toLowerCase() === 'yes') {
-            //    color = '#0000FF';
-            //    points = this.ncbondpoints;
-            //}
+            var color = '#00FF00';
+            var points = this.hbondpoints;
 
              for (var i = 0, lim = Math.floor(points.length / 2); i < lim; i++) {
                 var line = {};
@@ -252,19 +243,14 @@
                 line.color = color;
                 line.dashed = true;
 
-                if(options.hbonds.toLowerCase() === 'yes') {
-                  if(this.lines['hbond'] === undefined) this.lines['hbond'] = [];
-                  this.lines['hbond'].push(line);
-                }
-                //else if(options.ncbonds.toLowerCase() === 'yes') {
-                //  if(this.lines['ncbond'] === undefined) this.lines['ncbond'] = [];
-                //  this.lines['ncbond'].push(line);
-                //}
+                if(this.lines['hbond'] === undefined) this.lines['hbond'] = [];
+                this.lines['hbond'].push(line);
              }
 
-            this.createLines(this.lines);
+            //this.createLines(this.lines);
         }
-        else if (options.ssbonds.toLowerCase() === 'yes') {
+
+        if (options.ssbonds.toLowerCase() === 'yes') {
             var color = '#FFFF00';
             var colorObj = new THREE.Color(0xFFFF00);
 
@@ -320,9 +306,8 @@
                 this.createCylinder(line.position1, line.position2, this.cylinderRadius * 0.5, colorObj);
              }
         }
-        else {
-            this.createLines(this.lines);
-        }
+
+        this.createLines(this.lines);
 
         // surfaces
         for(var i = 0, il = this.prevSurfaces.length; i < il; ++i) {
