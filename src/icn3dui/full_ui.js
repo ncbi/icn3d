@@ -1139,12 +1139,14 @@ iCn3DUI.prototype = {
               //$("#" + me.pre + "dl_2ddiagram g[chainid1=" + me.lineArray2d[1] + "][chainid2=" + me.lineArray2d[0] + "] line").attr('stroke', me.ORANGE);
           //}
       }
+
+      // update the previously highlisghted atoms for switching between all and selection
+      me.icn3d.prevHighlightAtoms = me.icn3d.cloneHash(me.icn3d.highlightAtoms);
+
+      me.setMode('selection');
     },
 
     changeStructureid: function (moleculeArray, bUpdateHighlight, bUpdateSequence) { var me = this;
-       me.icn3d.removeHighlightObjects();
-       me.remove2DHighlight();
-
        // reset alternate structure
        me.ALTERNATE_STRUCTURE = Object.keys(me.icn3d.structures).indexOf(moleculeArray[0]);
 
@@ -1178,22 +1180,36 @@ iCn3DUI.prototype = {
        if(bUpdateHighlight === undefined || bUpdateHighlight) me.icn3d.highlightAtoms = {};
 
        if(bUpdateSequence === undefined || bUpdateSequence) {
-           var seqObj = me.getSequencesAnnotations(chainArray);
-
-           $("#" + me.pre + "dl_sequence").html(seqObj.sequencesHtml);
-           $("#" + me.pre + "dl_sequence").width(me.RESIDUE_WIDTH * seqObj.maxSeqCnt + 200);
-
-           if(me.cfg.align !== undefined) {
-               seqObj = me.getAlignSequencesAnnotations(chainArray);
-
-               $("#" + me.pre + "dl_sequence2").html(seqObj.sequencesHtml);
-               $("#" + me.pre + "dl_sequence2").width(me.RESIDUE_WIDTH * seqObj.maxSeqCnt + 200);
-           }
+		   me.highlightChains(chainArray);
        }
+       else {
+       	   me.icn3d.removeHighlightObjects();
+       	   me.remove2DHighlight();
 
-       me.icn3d.addHighlightObjects();
-       me.add2DHighlight(chainArray);
+		   me.icn3d.addHighlightObjects();
+		   me.add2DHighlight(chainArray);
+	   }
     },
+
+    highlightChains: function(chainArray) { var me = this;
+	   var seqObj = me.getSequencesAnnotations(chainArray);
+
+	   $("#" + me.pre + "dl_sequence").html(seqObj.sequencesHtml);
+	   $("#" + me.pre + "dl_sequence").width(me.RESIDUE_WIDTH * seqObj.maxSeqCnt + 200);
+
+	   if(me.cfg.align !== undefined) {
+		   seqObj = me.getAlignSequencesAnnotations(chainArray);
+
+		   $("#" + me.pre + "dl_sequence2").html(seqObj.sequencesHtml);
+		   $("#" + me.pre + "dl_sequence2").width(me.RESIDUE_WIDTH * seqObj.maxSeqCnt + 200);
+	   }
+
+       me.icn3d.removeHighlightObjects();
+       me.remove2DHighlight();
+
+	   me.icn3d.addHighlightObjects();
+	   me.add2DHighlight(chainArray);
+	},
 
     getResiduesUpdateHighlight: function (chainArray, bUpdateHighlight) { var me = this;
        var residueArray = [];
@@ -1218,9 +1234,6 @@ iCn3DUI.prototype = {
     },
 
     changeChainid: function (chainArray) { var me = this;
-       me.icn3d.removeHighlightObjects();
-       me.remove2DHighlight();
-
        me.icn3d.highlightAtoms = {};
 
        // clear custom defined residues;
@@ -1237,20 +1250,7 @@ iCn3DUI.prototype = {
        // log the selection
        if(chainArray !== null) me.setLogCommand('select chain ' + chainArray.toString(), true);
 
-       var seqObj = me.getSequencesAnnotations(chainArray);
-
-       $("#" + me.pre + "dl_sequence").html(seqObj.sequencesHtml);
-       $("#" + me.pre + "dl_sequence").width(me.RESIDUE_WIDTH * seqObj.maxSeqCnt + 200);
-
-       if(me.cfg.align !== undefined) {
-           seqObj = me.getAlignSequencesAnnotations(chainArray);
-
-           $("#" + me.pre + "dl_sequence2").html(seqObj.sequencesHtml);
-           $("#" + me.pre + "dl_sequence2").width(me.RESIDUE_WIDTH * seqObj.maxSeqCnt + 200);
-       }
-
-       me.icn3d.addHighlightObjects();
-       me.add2DHighlight(chainArray);
+       me.highlightChains(chainArray);
     },
 
     changeAlignChainid: function (alignChainArray) { var me = this;
@@ -1294,9 +1294,6 @@ iCn3DUI.prototype = {
     },
 
     changeResidueid: function (residueArray) { var me = this;
-       me.icn3d.removeHighlightObjects();
-       me.remove2DHighlight();
-
        me.icn3d.highlightAtoms = {};
 
        // clear custom defined residues;
@@ -1323,14 +1320,23 @@ iCn3DUI.prototype = {
 
        sequencesHtml += "<b>Annotation(s):</b> Previously selected residues<br/>";
 
+       me.highlightResidues(residueArray, sequencesHtml);
+    },
+
+    highlightResidues: function(residueArray, prevHtml) { var me = this;
+       if(prevHtml === undefined) prevHtml = "";
+
+       me.icn3d.removeHighlightObjects();
+       me.remove2DHighlight();
+
        var seqObj = me.getSequencesAnnotations(undefined, true, residueArray);
-       $("#" + me.pre + "dl_sequence").html(sequencesHtml + seqObj.sequencesHtml);
+       $("#" + me.pre + "dl_sequence").html(prevHtml + seqObj.sequencesHtml);
        $("#" + me.pre + "dl_sequence").width(me.RESIDUE_WIDTH * seqObj.maxSeqCnt + 200);
 
        if(me.cfg.align !== undefined) {
            seqObj = me.getAlignSequencesAnnotations(undefined, true, residueArray);
 
-           $("#" + me.pre + "dl_sequence2").html(sequencesHtml + seqObj.sequencesHtml);
+           $("#" + me.pre + "dl_sequence2").html(prevHtml + seqObj.sequencesHtml);
            $("#" + me.pre + "dl_sequence2").width(me.RESIDUE_WIDTH * seqObj.maxSeqCnt + 200);
        }
 
@@ -1346,12 +1352,9 @@ iCn3DUI.prototype = {
        }
 
        me.add2DHighlight(Object.keys(chainHash));
-    },
+	},
 
     changeCustomResidues: function (nameArray) { var me = this;
-       me.icn3d.removeHighlightObjects();
-       me.remove2DHighlight();
-
        me.icn3d.highlightAtoms = {};
 
        // clear molecule and chain
@@ -1386,34 +1389,10 @@ iCn3DUI.prototype = {
 
        sequencesHtml += "<b>Annotation(s):</b> " + annoTmp + "<br/>";
 
-       var seqObj = me.getSequencesAnnotations(undefined, true, Object.keys(allResidues));
-       $("#" + me.pre + "dl_sequence").html(sequencesHtml + seqObj.sequencesHtml);
-       $("#" + me.pre + "dl_sequence").width(me.RESIDUE_WIDTH * seqObj.maxSeqCnt + 200);
-
-       if(me.cfg.align !== undefined) {
-           seqObj = me.getAlignSequencesAnnotations(undefined, true, Object.keys(allResidues));
-
-           $("#" + me.pre + "dl_sequence2").html(sequencesHtml + seqObj.sequencesHtml);
-           $("#" + me.pre + "dl_sequence2").width(me.RESIDUE_WIDTH * seqObj.maxSeqCnt + 200);
-       }
-
-       me.icn3d.addHighlightObjects();
-
-       var chainHash = {};
-       for(var residueid in allResidues) {
-           var pos = residueid.lastIndexOf('_');
-           var chainid = residueid.substr(0, pos);
-
-           chainHash[chainid] = 1;
-       }
-
-       me.add2DHighlight(Object.keys(chainHash));
+       me.highlightResidues(Object.keys(allResidues), sequencesHtml);
     },
 
     changeCustomAtoms: function (nameArray) { var me = this;
-       me.icn3d.removeHighlightObjects();
-       me.remove2DHighlight();
-
        me.icn3d.highlightAtoms = {};
 
        // clear molecule and chain
@@ -1461,19 +1440,6 @@ iCn3DUI.prototype = {
          }
        } // outer for
 
-       sequencesHtml += "<b>Annotation(s):</b> " + annoTmp + "<br/>";
-
-       var seqObj = me.getSequencesAnnotations(undefined, true, Object.keys(allResidues));
-       $("#" + me.pre + "dl_sequence").html(sequencesHtml + seqObj.sequencesHtml);
-       $("#" + me.pre + "dl_sequence").width(me.RESIDUE_WIDTH * seqObj.maxSeqCnt + 200);
-
-       if(me.cfg.align !== undefined) {
-           seqObj = me.getAlignSequencesAnnotations(undefined, true, Object.keys(allResidues));
-
-           $("#" + me.pre + "dl_sequence2").html(sequencesHtml + seqObj.sequencesHtml);
-           $("#" + me.pre + "dl_sequence2").width(me.RESIDUE_WIDTH * seqObj.maxSeqCnt + 200);
-       }
-
      // fill the dialog
      me.icn3d.highlightAtoms = {};
      for(var i = 0, il = nameArray.length; i < il; ++i) {
@@ -1507,17 +1473,9 @@ iCn3DUI.prototype = {
 
      } // outer for
 
-       me.icn3d.addHighlightObjects();
+       sequencesHtml += "<b>Annotation(s):</b> " + annoTmp + "<br/>";
 
-       var chainHash = {};
-       for(var residueid in allResidues) {
-           var pos = residueid.lastIndexOf('_');
-           var chainid = residueid.substr(0, pos);
-
-           chainHash[chainid] = 1;
-       }
-
-       me.add2DHighlight(Object.keys(chainHash));
+       me.highlightResidues(Object.keys(allResidues), sequencesHtml);
     },
 
     exportCustomAtoms: function () { var me = this;
@@ -2942,10 +2900,16 @@ iCn3DUI.prototype = {
 
       else if(command.indexOf('select all') !== -1) {
          me.selectAll();
-         me.icn3d.addHighlightObjects();
+         //me.icn3d.addHighlightObjects();
       }
       else if(command.indexOf('clear all') !== -1) {
          me.selectAll();
+      }
+      else if(command.indexOf('set mode all') !== -1) {
+         me.setModeAndDisplay('all');
+      }
+      else if(command.indexOf('set mode selection') !== -1) {
+         me.setModeAndDisplay('selection');
       }
       else if(command.indexOf('select complement') !== -1) {
          me.selectComplement();
@@ -3248,7 +3212,7 @@ iCn3DUI.prototype = {
 
         html += "    <div style='float:left;'>";
         html += "          <accordion id='" + me.pre + "accordion3'>";
-        html += "              <h3>Style</h3>";
+        html += "              <h3 id='" + me.pre + "style'>Style</h3>";
         html += "              <div>";
         html += "              <ul class='menu'>";
 
@@ -3369,7 +3333,7 @@ iCn3DUI.prototype = {
 
         html += "    <div style='float:left;'>";
         html += "          <accordion id='" + me.pre + "accordion4'>";
-        html += "              <h3>Color</h3>";
+        html += "              <h3 id='" + me.pre + "color'>Color</h3>";
         html += "              <div>";
         html += "              <ul class='menu'>";
 
@@ -3424,7 +3388,7 @@ iCn3DUI.prototype = {
 
         html += "    <div style='float:left;'>";
         html += "          <accordion id='" + me.pre + "accordion5'>";
-        html += "              <h3>Surface</h3>";
+        html += "              <h3 id='" + me.pre + "surface'>Surface</h3>";
         html += "              <div>";
         html += "              <ul class='menu'>";
         html += "                <li>Type";
@@ -3872,6 +3836,9 @@ iCn3DUI.prototype = {
         html += "  <div id='" + me.pre + "selection' style='position:absolute; z-index:555; float:left; display:table-row; margin: 32px 0px 0px 3px;'>";
         html += "    <table style='margin-top: 3px; width:100px;'><tr valign='center'>";
 
+        html += "        <td valign='top'><div class='icn3d-commandTitle' style='min-width:40px; margin-top: 24px;'><span id='" + me.pre + "modeall' title='All atoms are used when changing the style, color, or surface'>All</span><span id='" + me.pre + "modeselection' class='icn3d-modeselection' style='display:none;' title='Only selected atoms are used when changing the style, color, or surface'>Selection</span></div>";
+        html += "        <label class='icn3d-switch'><input id='" + me.pre + "modeswitch' type='checkbox'><div class='icn3d-slider icn3d-round' style='width:34px; height:18px; margin: 12px 0px 0px 3px;'></div></label></td>";
+
         if(me.cfg.cid === undefined) {
             html += "        <td valign='top'><span class='icn3d-commandTitle'>Structure:</span><br/>";
             html += "        <div style='margin-top:-3px;'><select id='" + me.pre + "structureid' multiple size='1' style='min-width:50px;'>";
@@ -3913,7 +3880,7 @@ iCn3DUI.prototype = {
 
         html += "      <td valign='top'><div style='margin:3px 0px 0px 10px;'><button style='-webkit-appearance:" + buttonStyle + "; height:36px;' id='" + me.pre + "toggleHighlight'><span style='white-space:nowrap' class='icn3d-commandTitle' title='Turn on and off the 3D highlight in the viewer'>Toggle<br/>Highlight</span></button></div></td>";
 
-        html += "      <td valign='top'><div style='margin:3px 0px 0px 10px;'><button style='-webkit-appearance:" + buttonStyle + "; height:36px;' id='" + me.pre + "clearall'><span style='white-space:nowrap' class='icn3d-commandTitle' title='Clear all selections'>Clear<br/>All</span></button></div></td>";
+        //html += "      <td valign='top'><div style='margin:3px 0px 0px 10px;'><button style='-webkit-appearance:" + buttonStyle + "; height:36px;' id='" + me.pre + "clearall'><span style='white-space:nowrap' class='icn3d-commandTitle' title='Clear all selections'>Clear<br/>All</span></button></div></td>";
 
         html += "      <td valign='top'><div style='margin:3px 0px 0px 10px;'><button style='-webkit-appearance:" + buttonStyle + "; height:36px;' id='" + me.pre + "resetorientation'><span style='white-space:nowrap' class='icn3d-commandTitle' title='Reset Orientation'>Reset<br/>Orientation</span></button></div></td>";
 
@@ -3976,6 +3943,8 @@ iCn3DUI.prototype = {
            me.bSelectAlignResidue = false;
 
            me.selectAllUpdateMenuSeq(true, false);
+
+           me.setMode('all');
     },
 
     selectComplement: function() { var me = this;
@@ -3994,26 +3963,9 @@ iCn3DUI.prototype = {
            me.icn3d.highlightAtoms = {};
            me.icn3d.highlightAtoms = me.icn3d.cloneHash(complement);
 
-           me.icn3d.removeHighlightObjects();
-           me.remove2DHighlight();
-
            var sequencesHtml = "<b>Annotation(s):</b> Complement of the current selection<br/>";
 
-           var seqObj = me.getSequencesAnnotations(undefined, true, Object.keys(residuesHash));
-           $("#" + me.pre + "dl_sequence").html(sequencesHtml + seqObj.sequencesHtml);
-           $("#" + me.pre + "dl_sequence").width(me.RESIDUE_WIDTH * seqObj.maxSeqCnt + 200);
-
-           me.icn3d.addHighlightObjects();
-
-           var chainHash = {};
-           for(var residueid in residuesHash) {
-               var pos = residueid.lastIndexOf('_');
-               var chainid = residueid.substr(0, pos);
-
-               chainHash[chainid] = 1;
-           }
-
-           me.add2DHighlight(Object.keys(chainHash));
+           me.highlightResidues(Object.keys(residuesHash), sequencesHtml);
     },
 
     updateSeqWinForCurrentAtoms: function(bShowHighlight) { var me = this;
@@ -4463,7 +4415,8 @@ iCn3DUI.prototype = {
 
            me.selectAll();
 
-           me.icn3d.addHighlightObjects();
+           //me.icn3d.addHighlightObjects();
+           me.icn3d.draw();
 
         });
 
@@ -5342,7 +5295,81 @@ iCn3DUI.prototype = {
         });
     },
 
+    setMode: function(mode) { var me = this;
+    	if(mode === 'all') { // mode all
+			// set text
+			$("#" + me.pre + "modeall").show();
+			$("#" + me.pre + "modeselection").hide();
+
+			$("#" + me.pre + "modeswitch")[0].checked = false;
+
+			if($("#" + me.pre + "style").hasClass('icn3d-modeselection')) $("#" + me.pre + "style").removeClass('icn3d-modeselection');
+			if($("#" + me.pre + "color").hasClass('icn3d-modeselection')) $("#" + me.pre + "color").removeClass('icn3d-modeselection');
+			if($("#" + me.pre + "surface").hasClass('icn3d-modeselection')) $("#" + me.pre + "surface").removeClass('icn3d-modeselection');
+		}
+		else { // mode selection
+			// set text
+			$("#" + me.pre + "modeall").hide();
+			$("#" + me.pre + "modeselection").show();
+
+			$("#" + me.pre + "modeswitch")[0].checked = true;
+
+			if(!$("#" + me.pre + "style").hasClass('icn3d-modeselection')) $("#" + me.pre + "style").addClass('icn3d-modeselection');
+			if(!$("#" + me.pre + "color").hasClass('icn3d-modeselection')) $("#" + me.pre + "color").addClass('icn3d-modeselection');
+			if(!$("#" + me.pre + "surface").hasClass('icn3d-modeselection')) $("#" + me.pre + "surface").addClass('icn3d-modeselection');
+		}
+	},
+
+    setModeAndDisplay: function(mode) { var me = this;
+    	if(mode === 'all') { // mode all
+			me.setMode('all');
+
+			// remember previous selection
+			me.icn3d.prevHighlightAtoms = me.icn3d.cloneHash(me.icn3d.highlightAtoms);
+
+           // select all
+           me.setLogCommand("set mode all", true);
+
+           me.selectAll();
+
+           me.icn3d.draw();
+		}
+		else { // mode selection
+			me.setMode('selection');
+
+			// get the previous highlightAtoms
+			if(me.icn3d.prevHighlightAtoms !== undefined) {
+				me.icn3d.highlightAtoms = me.icn3d.cloneHash(me.icn3d.prevHighlightAtoms);
+			}
+			else {
+				me.selectAll();
+			}
+
+            me.setLogCommand("set mode selection", true);
+
+			// select highlightAtoms
+			var residueHash = {};
+			for(var i in me.icn3d.highlightAtoms) {
+				var resid = me.icn3d.atoms[i].structure + '_' + me.icn3d.atoms[i].chain + '_' + me.icn3d.atoms[i].resi;
+				residueHash[resid] = 1;
+			}
+
+			me.highlightResidues(Object.keys(residueHash));
+		}
+	},
+
     // other
+    clickModeswitch: function() { var me = this;
+        $("#" + me.pre + "modeswitch").click(function (e) {
+			if($("#" + me.pre + "modeswitch")[0].checked) { // mode: selection
+				me.setModeAndDisplay('selection');
+			}
+			else { // mode: all
+				me.setModeAndDisplay('all');
+			}
+        });
+    },
+
     clickSeqOrAlignSeq: function() { var me = this;
         $("#" + me.pre + "dl_sequence").click(function (e) {
            me.bAlignSeq = false;
@@ -5590,7 +5617,7 @@ iCn3DUI.prototype = {
                     me.setLogCommand('select alignChain ' + chainid, true);
                 }
                 else {
-                    me.selectAAlignChain(chainid, commandname);
+                    me.selectAChain(chainid, commandname);
                     me.setLogCommand('select chain ' + chainid, true);
                 }
             }
@@ -6307,6 +6334,8 @@ iCn3DUI.prototype = {
 
             me.renderFinalStep(1);
 
+            me.setMode('all');
+
             me.removeSeqChainBkgd();
             me.removeSeqResidueBkgd();
         });
@@ -6521,6 +6550,8 @@ iCn3DUI.prototype = {
 
     click2Ddiagram: function() { var me = this;
         $("#" + me.pre + "dl_2ddiagram").on("click", ".icn3d-node", function(e) {
+			me.setMode('selection');
+
             me.bClickInteraction = false;
 
             var chainid = $(this).attr('chainid');
@@ -6586,6 +6617,8 @@ iCn3DUI.prototype = {
         });
 
         $("#" + me.pre + "dl_2ddiagram").on("click", ".icn3d-interaction", function(e) {
+			me.setMode('selection');
+
             me.bClickInteraction = true;
 
             var chainid1 = $(this).attr('chainid1');
@@ -6751,6 +6784,8 @@ iCn3DUI.prototype = {
 
     // ===== events end
     allEventFunctions: function() { var me = this;
+        me.clickModeswitch();
+
         me.clickSeqOrAlignSeq();
 
         if(! me.isMobile()) {
