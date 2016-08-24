@@ -2,7 +2,7 @@
 
 ## iCn3D
 
-"I see in 3D" (iCn3D) Structure Viewer is a WebGL-based 3D viewer using Three.js and jQuery. It is based on the 3D styles of [iview](http://istar.cse.cuhk.edu.hk/iview/) and [GLmol](https://en.osdn.jp/projects/webglmol/), and the surface generation of [3Dmol](http://3dmol.csb.pitt.edu/). iCn3D has a feature-rich user interface and allows users to: use a url or a state file to capture the custom display of 3D structures, define custom atom sets, show 3D structure, 2D interactions, and 1D sequence together and select residues on all of them, display custom labeling, go back and forth to different stage, show highlight, etc. iCn3D can also show the aligned 3D structures by providing two PDB IDs or MMDB IDs, whose alignment has been pre-calculated at NCBI.  
+"I see in 3D" (iCn3D) Structure Viewer is a WebGL-based 3D viewer using Three.js and jQuery. It is based on the 3D styles of [iview](http://istar.cse.cuhk.edu.hk/iview/) and [GLmol](https://webglmol.osdn.jp/index-en.html), and the surface generation of [3Dmol](https://3dmol.csb.pitt.edu/). iCn3D has a feature-rich user interface and allows users to: use a url or a state file to capture the custom display of 3D structures, define custom atom sets, show 3D structure, 2D interactions, and 1D sequence together and select residues on all of them, display custom labeling, go back and forth to different stage, show highlight, etc. iCn3D can also show the aligned 3D structures by providing two PDB IDs or MMDB IDs, whose alignment has been pre-calculated at NCBI.  
 
 We provided two versions of iCn3D widgets: [basic interface](https://www.ncbi.nlm.nih.gov/Structure/icn3d/index.html?mmdbid=2por) and [advanced interface](https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?mmdbid=2por). 
 
@@ -11,7 +11,7 @@ We provided two versions of iCn3D widgets: [basic interface](https://www.ncbi.nl
 
 Either of these widgets could be easily added to your own web pages. Please see the [help page](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d.html) for more details.
 
-<b>Complete package</b> of iCn3D including Three.js and jQuery can be downloaded from [https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-1.2.1.zip](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-1.2.1.zip). The "Download ZIP" link in this page does not include these third-party libraries. 
+<b>Complete package</b> of iCn3D including Three.js and jQuery can be downloaded from [https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-1.2.2.zip](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-1.2.2.zip). The "Download ZIP" link in this page does not include these third-party libraries. 
 
 ## Usage
 
@@ -39,8 +39,8 @@ See the [help page](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d.html) for
 ## Tools based on
 
 * **[iview](http://istar.cse.cuhk.edu.hk/iview/)**: The drawing of 3D objects is mainly based on iview.
-* **[GLmol](https://en.osdn.jp/projects/webglmol/)**: The drawing of nucleotides cartoon is from GLmol.
-* **[3Dmol](http://3dmol.csb.pitt.edu/)**: The surface generation and labeling are from 3Dmol.
+* **[GLmol](https://webglmol.osdn.jp/index-en.html)**: The drawing of nucleotides cartoon is from GLmol.
+* **[3Dmol](https://3dmol.csb.pitt.edu/)**: The surface generation and labeling are from 3Dmol.
 
 ## Building
 
@@ -74,7 +74,7 @@ npm install -g http-server
 http-server
 ```
 
-Then point your browser at http://localhost:8080/icn3d.html.
+Then point your browser at https://localhost:8080/icn3d.html.
 
 Run `gulp help` to get a list of the available tasks.
 
@@ -88,6 +88,8 @@ gulp gh-pages
 ```
 
 ## Change log
+
+The production version [icn3d-1.2.2](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-1.2.2.zip) was release on August 24, 2016. Added a switch button to switch between all atoms and selected atoms. When the mode is "selected atoms", the switch and the text "selection" next to it are colored in orange. The menu "Style", "Color", and "Surface" are colored in orange and only apply to selected atoms.
 
 The production version [icn3d-1.2.1](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-1.2.1.zip) was release on August 18, 2016. Some bugs were fixed.
 
