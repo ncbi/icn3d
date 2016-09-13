@@ -3513,6 +3513,14 @@ iCn3DUI.prototype = {
         html += "              <ul class='menu'>";
         html += "                <li><span id='" + me.pre + "reset' class='icn3d-link'>Reset</span></li>";
         html += "                <li><span id='" + me.pre + "menu6_resetorientation' class='icn3d-link'>Reset Orien.</span></li>";
+
+        html += "                <li>Display Mode";
+        html += "                  <ul>";
+        html += "                      <li><span id='" + me.pre + "menu6_modeall' class='icn3d-link'>Apply style, color, <br/>surface to all atoms</span></li>";
+        html += "                      <li><span id='" + me.pre + "menu6_modeselection' class='icn3d-link'>Apply style, color, <br/>surface only to selection</span></li>";
+        html += "                  </ul>";
+        html += "                </li>";
+
         html += "                <li><span id='" + me.pre + "menu6_center' class='icn3d-link'>Center</span></li>";
         html += "                <li><span id='" + me.pre + "menu6_back' class='icn3d-link'>Backward</span></li>";
         html += "                <li><span id='" + me.pre + "menu6_forward' class='icn3d-link'>Forward</span></li>";
@@ -3836,8 +3844,8 @@ iCn3DUI.prototype = {
         html += "  <div id='" + me.pre + "selection' style='position:absolute; z-index:555; float:left; display:table-row; margin: 32px 0px 0px 3px;'>";
         html += "    <table style='margin-top: 3px; width:100px;'><tr valign='center'>";
 
-        html += "        <td valign='top'><div class='icn3d-commandTitle' style='min-width:40px; margin-top: 24px;'><span id='" + me.pre + "modeall' title='All atoms are used when changing the style, color, or surface'>All</span><span id='" + me.pre + "modeselection' class='icn3d-modeselection' style='display:none;' title='Only selected atoms are used when changing the style, color, or surface'>Selection</span></div>";
-        html += "        <label class='icn3d-switch'><input id='" + me.pre + "modeswitch' type='checkbox'><div class='icn3d-slider icn3d-round' style='width:34px; height:18px; margin: 12px 0px 0px 3px;'></div></label></td>";
+        html += "        <td valign='top'><div class='icn3d-commandTitle' style='min-width:40px; margin-top: 24px; white-space: nowrap;'><span id='" + me.pre + "modeall' title='Style, color, and surface menu options will be applied to all atoms in the structure'>All atoms</span><span id='" + me.pre + "modeselection' class='icn3d-modeselection' style='display:none;' title='Style, color, and surface menu options will be applied only to selected atoms'>Selection</span></div>";
+        html += "        <label class='icn3d-switch'><input id='" + me.pre + "modeswitch' type='checkbox'><div class='icn3d-slider icn3d-round' style='width:34px; height:18px; margin: 12px 0px 0px 3px;' title='Left (\"All atoms\"): Style, color, and surface menu options will be applied to all atoms in the structure&#13;Right (\"Selection\"): Style, color, and surface menu options will be applied only to selected atoms'></div></label></td>";
 
         if(me.cfg.cid === undefined) {
             html += "        <td valign='top'><span class='icn3d-commandTitle'>Structure:</span><br/>";
@@ -5367,6 +5375,14 @@ iCn3DUI.prototype = {
 			else { // mode: all
 				me.setModeAndDisplay('all');
 			}
+        });
+
+        $("#" + me.pre + "menu6_modeall").click(function (e) {
+			me.setModeAndDisplay('all');
+        });
+
+        $("#" + me.pre + "menu6_modeselection").click(function (e) {
+			me.setModeAndDisplay('selection');
         });
     },
 
