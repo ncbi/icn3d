@@ -2,18 +2,6 @@
     // Contributors: Jiyao Wang, Alexander Rose, Peter Rose
     // requires the library mmtf.js
     iCn3DUI.prototype.downloadMmtf = function (mmtfid) { var me = this;
-       // The MMTF service doesn't support https, use http instead
-       var uri, dataType;
-       if(document.location.protocol === "https:") {
-           var url = document.location.href;
-           url = url.replace('https', 'http');
-           //window.open(url, '_self');
-
-           alert("For now, MMTF files can ONLY be retrieved by http protocol, not https. Thus MMTF format can NOT work in NCBI pages, which are https only now. Please check back later.");
-
-           return;
-       }
-
         MMTF.fetch(
             mmtfid,
             // onLoad callback
@@ -50,6 +38,7 @@
 
                 var prevSS = 'coil';
                 var prevChain = '';
+                var prevResi = 0;
 
                 var serial = 0;
 
@@ -90,7 +79,7 @@
                         }
 
                         // no residue can be both ssbegin and ssend in DSSP calculated secondary structures
-                        var bSetPrevResidue = 0; // 0: no need to reset, 1: reset previous residue to "ssbegin = true", 2: reset previous residue to "ssend = true"
+                        var bSetPrevSsend = false;
 
                         if(chain !== prevChain) {
                             // new chain
@@ -102,6 +91,16 @@
                                 ssbegin = false;
                                 ssend = false;
                             }
+
+                            // set up the end of previous chain
+                            if(prevSS !== 'coil') {
+								var prevResid = structure + '_' + prevChain + '_' + prevResi.toString();
+
+								for(var i in me.icn3d.residues[prevResid]) {
+									me.icn3d.atoms[i].ssbegin = false;
+									me.icn3d.atoms[i].ssend = true;
+								}
+							}
                         }
                         else if(ss !== prevSS) {
                             if(prevSS === 'coil') {
@@ -109,12 +108,12 @@
                                 ssend = false;
                             }
                             else if(ss === 'coil') {
-                                bSetPrevResidue = 2;
+                                bSetPrevSsend = true;
                                 ssbegin = false;
                                 ssend = false;
                             }
                             else if( (prevSS === 'sheet' && ss === 'helix') || (prevSS === 'helix' && ss === 'sheet')) {
-                                bSetPrevResidue = 1;
+                                bSetPrevSsend = true;
                                 ssbegin = true;
                                 ssend = false;
                             }
@@ -124,14 +123,7 @@
                                 ssend = false;
                         }
 
-                        if(bSetPrevResidue == 1) { //1: reset previous residue to "ssbegin = true"
-                            var prevResid = structure + '_' + chain + '_' + (resi - 1).toString();
-                            for(var i in me.icn3d.residues[prevResid]) {
-                                me.icn3d.atoms[i].ssbegin = true;
-                                me.icn3d.atoms[i].ssend = false;
-                            }
-                        }
-                        else if(bSetPrevResidue == 2) { //2: reset previous residue to "ssend = true"
+                        if(bSetPrevSsend) {
                             var prevResid = structure + '_' + chain + '_' + (resi - 1).toString();
                             for(var i in me.icn3d.residues[prevResid]) {
                                 me.icn3d.atoms[i].ssbegin = false;
@@ -141,6 +133,7 @@
 
                         prevSS = ss;
                         prevChain = chain;
+                        prevResi = resi;
 
                         het = false;
                         bProtein = false;
