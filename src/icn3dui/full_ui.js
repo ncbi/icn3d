@@ -30,7 +30,6 @@ var iCn3DUI = function(cfg) {
 
     me.ROTATION_DIRECTION = 'right';
     me.bHideSelection = true;
-    me.ALTERNATE_STRUCTURE = -1;
 
     me.EXTRAHEIGHT = 2.8*me.MENU_HEIGHT;
     if(me.cfg.showmenu != undefined && me.cfg.showmenu == false) {
@@ -200,10 +199,10 @@ iCn3DUI.prototype = {
 
           $(document).bind('keydown', function (e) {
             if(e.keyCode === 38) { // arrow up, select upper level of atoms
-                me.updateSeqWinForCurrentAtoms();
+                me.updateSeqWin2DWinForCurrentAtoms();
             }
             else if(e.keyCode === 40) { // arrow down, select down level of atoms
-                me.updateSeqWinForCurrentAtoms();
+                me.updateSeqWin2DWinForCurrentAtoms();
             }
           });
         };
@@ -427,7 +426,15 @@ iCn3DUI.prototype = {
 
     saveSelectionIfSelected: function (id, value) { var me = this;
           if(me.bSelectResidue || me.bSelectAlignResidue) {
-              me.saveSelection();
+              var name = $("#" + me.pre + "seq_command_name").val().replace(/\s+/g, '_');
+              var description = $("#" + me.pre + "seq_command_desc").val();
+
+              if(name === "") {
+                name = $("#" + me.pre + "alignseq_command_name").val().replace(/\s+/g, '_');
+                description = $("#" + me.pre + "alignseq_command_desc").val();
+			  }
+
+              if(name !== "") me.saveSelection(name, description);
 
               me.bSelectResidue = false;
               me.bSelectAlignResidue = false;
@@ -450,7 +457,7 @@ iCn3DUI.prototype = {
           me.icn3d.draw();
 
             setTimeout(function(){
-              me.updateSeqWinForCurrentAtoms(false);
+              me.updateSeqWin2DWinForCurrentAtoms(false);
             }, 0);
       }
       else if(id === 'surface' || id === 'opacity' || id === 'wireframe') {
@@ -473,6 +480,9 @@ iCn3DUI.prototype = {
               break;
           case 'sidechains':
               atoms = me.icn3d.intersectHash(me.icn3d.highlightAtoms, me.icn3d.sidechains);
+              calpha_atoms = me.icn3d.intersectHash(me.icn3d.highlightAtoms, me.icn3d.calphas);
+              // include calphas
+              atoms = me.icn3d.unionHash(atoms, calpha_atoms);
               break;
           case 'nucleotides':
               atoms = me.icn3d.intersectHash(me.icn3d.highlightAtoms, me.icn3d.nucleotides);
@@ -488,9 +498,17 @@ iCn3DUI.prototype = {
               break;
       }
 
-      for(var i in atoms) {
-        me.icn3d.atoms[i].style = style;
-      }
+      // draw sidechains separatedly
+      if(selectionType === 'sidechains') {
+		  for(var i in atoms) {
+			me.icn3d.atoms[i].style2 = style;
+		  }
+	  }
+	  else {
+		  for(var i in atoms) {
+			me.icn3d.atoms[i].style = style;
+		  }
+	  }
 
       me.icn3d.options[selectionType] = style;
 
@@ -597,7 +615,7 @@ iCn3DUI.prototype = {
               if(me.bInitial) me.setProteinsNucleotidesLigands();
               me.updateMenus(false);
 
-              me.updateSeqWinForCurrentAtoms();
+              me.updateSeqWin2DWinForCurrentAtoms();
           }
 //      }, 0);
 
@@ -1127,9 +1145,30 @@ iCn3DUI.prototype = {
     add2DHighlight: function(chainArray2d) { var me = this;
       if(!me.bClickInteraction && chainArray2d !== undefined) {
           for(var i = 0, il = chainArray2d.length; i < il; ++i) {
-              $("#" + me.pre + "dl_2ddiagram g[chainid=" + chainArray2d[i] + "] rect").attr('stroke', me.ORANGE);
-              $("#" + me.pre + "dl_2ddiagram g[chainid=" + chainArray2d[i] + "] circle").attr('stroke', me.ORANGE);
-              $("#" + me.pre + "dl_2ddiagram g[chainid=" + chainArray2d[i] + "] polygon").attr('stroke', me.ORANGE);
+			  var hlatoms = me.icn3d.intersectHash(me.icn3d.chains[chainArray2d[i]], me.icn3d.highlightAtoms);
+			  var ratio = 1.0 * Object.keys(hlatoms).length / Object.keys(me.icn3d.chains[chainArray2d[i]]).length;
+
+              var firstAtom = me.icn3d.getFirstAtomObj(hlatoms);
+              if(me.icn3d.alignChains[chainArray2d[i]] !== undefined) {
+              	  var alignedAtoms = me.icn3d.intersectHash(me.icn3d.alignChains[chainArray2d[i]], hlatoms);
+              	  if(Object.keys(alignedAtoms).length > 0) firstAtom = me.icn3d.getFirstAtomObj(alignedAtoms);
+		  	  }
+              var color = (firstAtom.color !== undefined) ? '#' + firstAtom.color.getHexString() : '#FFFFFF';
+
+			  var target = $("#" + me.pre + "dl_2ddiagram g[chainid=" + chainArray2d[i] + "] rect[class='icn3d-hlnode']");
+			  var base = $("#" + me.pre + "dl_2ddiagram g[chainid=" + chainArray2d[i] + "] rect[class='icn3d-basenode']");
+			  me.highlightNode('rect', target, base, ratio);
+			  $(target).attr('fill', color);
+
+			  target = $("#" + me.pre + "dl_2ddiagram g[chainid=" + chainArray2d[i] + "] circle[class='icn3d-hlnode']");
+			  base = $("#" + me.pre + "dl_2ddiagram g[chainid=" + chainArray2d[i] + "] circle[class='icn3d-basenode']");
+			  me.highlightNode('circle', target, base, ratio);
+			  $(target).attr('fill', color);
+
+			  target = $("#" + me.pre + "dl_2ddiagram g[chainid=" + chainArray2d[i] + "] polygon[class='icn3d-hlnode']");
+			  base = $("#" + me.pre + "dl_2ddiagram g[chainid=" + chainArray2d[i] + "] polygon[class='icn3d-basenode']");
+			  me.highlightNode('polygon', target, base, ratio);
+			  $(target).attr('fill', color);
           }
       }
       else if(me.bClickInteraction && me.lineArray2d !== undefined) {
@@ -1148,7 +1187,7 @@ iCn3DUI.prototype = {
 
     changeStructureid: function (moleculeArray, bUpdateHighlight, bUpdateSequence) { var me = this;
        // reset alternate structure
-       me.ALTERNATE_STRUCTURE = Object.keys(me.icn3d.structures).indexOf(moleculeArray[0]);
+       me.icn3d.ALTERNATE_STRUCTURE = Object.keys(me.icn3d.structures).indexOf(moleculeArray[0]);
 
        // clear custom defined residues
        $("#" + me.pre + "chainid").val("");
@@ -1880,7 +1919,7 @@ iCn3DUI.prototype = {
            }
        }  // for (i
 
-       if(bDisplay === undefined || bDisplay) me.updateSeqWinForCurrentAtoms();
+       if(bDisplay === undefined || bDisplay) me.updateSeqWin2DWinForCurrentAtoms();
 
        if(commandname !== "") {
            me.addCustomSelection(Object.keys(residueHash), Object.keys(atomHash), commandname, commanddesc, select, bSelectResidues);
@@ -2249,39 +2288,6 @@ iCn3DUI.prototype = {
         me.icn3d.draw();
     },
 
-    alternateStructures: function () { var me = this;
-        me.icn3d.displayAtoms = {};
-
-        var highlightAtomsCount = Object.keys(me.icn3d.highlightAtoms).length;
-        var allAtomsCount = Object.keys(me.icn3d.atoms).length;
-
-        var moleculeArray = Object.keys(me.icn3d.structures);
-        for(var i = 0, il = moleculeArray.length; i < il; ++i) {
-            var structure = moleculeArray[i];
-            if(i > me.ALTERNATE_STRUCTURE || (me.ALTERNATE_STRUCTURE === il - 1 && i === 0) ) {
-                for(var k in me.icn3d.structures[structure]) {
-                    var chain = me.icn3d.structures[structure][k];
-                    me.icn3d.displayAtoms = me.icn3d.unionHash(me.icn3d.displayAtoms, me.icn3d.chains[chain]);
-                }
-
-                me.ALTERNATE_STRUCTURE = i;
-                break;
-            }
-        }
-
-        if(highlightAtomsCount < allAtomsCount) {
-            me.icn3d.displayAtoms = me.icn3d.intersectHash(me.icn3d.displayAtoms, me.icn3d.highlightAtoms);
-
-            me.icn3d.bShowHighlight = false;
-            me.icn3d.options['rotationcenter'] = 'highlight center';
-        }
-
-        me.icn3d.draw();
-
-        me.icn3d.bShowHighlight = true;
-        me.icn3d.options['rotationcenter'] = 'molecule center';
-    },
-
     adjustIcon: function () { var me = this;
       if(me.STATENUMBER === 1) {
         if($("#" + me.pre + "back").hasClass('icn3d-middleIcon')) {
@@ -2462,14 +2468,14 @@ iCn3DUI.prototype = {
                             me.icn3d.applyOriginalColor();
                         }
 
-                        me.updateSeqWinForCurrentAtoms();
+                        me.updateSeqWin2DWinForCurrentAtoms();
 
                         //me.icn3d.draw(me.icn3d.optionsHistory[steps - 1]);
                         jQuery.extend(me.icn3d.options, me.icn3d.optionsHistory[steps - 1]);
                         me.icn3d.draw();
                     }
                     else {
-                        me.updateSeqWinForCurrentAtoms();
+                        me.updateSeqWin2DWinForCurrentAtoms();
 
                         me.icn3d.draw();
                     }
@@ -2576,7 +2582,11 @@ iCn3DUI.prototype = {
       }
       else if(commandOri.indexOf('select chain') !== -1) {
         var idArray = commandOri.substr(commandOri.lastIndexOf(' ') + 1).split(',');
-        if(idArray !== null) me.changeChainid(idArray);
+
+        //if(idArray !== null) me.changeChainid(idArray);
+        for(var i = 0, il = idArray.length; i < il; ++i) {
+        	me.selectAChain(idArray[i], idArray[i]);
+		}
       }
       else if(commandOri.indexOf('select interaction') !== -1) {
         var idArray = commandOri.substr(commandOri.lastIndexOf(' ') + 1).split(',');
@@ -2584,7 +2594,11 @@ iCn3DUI.prototype = {
       }
       else if(commandOri.indexOf('select alignChain') !== -1) {
         var idArray = commandOri.substr(commandOri.lastIndexOf(' ') + 1).split(',');
-        if(idArray !== null) me.changeAlignChainid(idArray);
+
+        //if(idArray !== null) me.changeAlignChainid(idArray);
+        for(var i = 0, il = idArray.length; i < il; ++i) {
+        	me.selectAAlignChain(idArray[i], "align_" + idArray[i]);
+		}
       }
       else if(commandOri.indexOf('select residue') !== -1) {
         var idArray = commandOri.substr(commandOri.lastIndexOf(' ') + 1).split(',');
@@ -2684,7 +2698,7 @@ iCn3DUI.prototype = {
 
         me.icn3d.setColorByOptions(me.icn3d.options, me.icn3d.highlightAtoms);
 
-        me.updateSeqWinForCurrentAtoms();
+        me.updateSeqWin2DWinForCurrentAtoms();
       }
       else if(command.indexOf('set surface wireframe on') !== -1) {
         me.icn3d.options['wireframe'] = 'yes';
@@ -2982,7 +2996,7 @@ iCn3DUI.prototype = {
 
         html += "    <td valign='top'>";
         html += "    <div style='float:left; margin:10px 5px 0px 5px;'>";
-        html += "    <a href='https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d.html' target='_blank'><span class='ui-icon ui-icon-help icn3d-middleIcon icn3d-link' title='click to see the help page'></span></a>";
+        html += "    <a href='https://www.ncbi.nlm.nih.gov/Structure/icn3d/docs/icn3d_help.html' target='_blank'><span class='ui-icon ui-icon-help icn3d-middleIcon icn3d-link' title='click to see the help page'></span></a>";
         html += "    </div>";
         html += "    </td>";
 
@@ -3589,7 +3603,7 @@ iCn3DUI.prototype = {
         html += "                    </li>";
         html += "                  </ul>";
         html += "                </li>";
-        html += "                <li><a href='https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d.html' target='_blank'>Help</a></li>";
+        html += "                <li><a href='https://www.ncbi.nlm.nih.gov/Structure/icn3d/docs/icn3d_help.html' target='_blank'>Help</a></li>";
         html += "              </ul>";
         html += "              </div>";
         html += "          </accordion>";
@@ -3976,7 +3990,7 @@ iCn3DUI.prototype = {
            me.highlightResidues(Object.keys(residuesHash), sequencesHtml);
     },
 
-    updateSeqWinForCurrentAtoms: function(bShowHighlight) { var me = this;
+    updateSeqWin2DWinForCurrentAtoms: function(bShowHighlight) { var me = this;
            var residuesHash = me.icn3d.getResiduesFromAtoms(me.icn3d.highlightAtoms);
 
            var seqObj = me.getSequencesAnnotations(undefined, false, Object.keys(residuesHash), bShowHighlight);
@@ -3989,6 +4003,17 @@ iCn3DUI.prototype = {
                $("#" + me.pre + "dl_sequence2").html(seqObj.sequencesHtml);
                $("#" + me.pre + "dl_sequence2").width(me.RESIDUE_WIDTH * seqObj.maxSeqCnt + 200);
            }
+
+           // update 2D window
+           var chainsHash = {};
+           for(var i in me.icn3d.highlightAtoms) {
+			   var atom = me.icn3d.atoms[i];
+			   var chainid = atom.structure + "_" + atom.chain;
+
+			   chainsHash[chainid] = 1;
+		   }
+
+		   me.add2DHighlight(Object.keys(chainsHash));
     },
 
     outputSelection: function() { var me = this;
@@ -4124,7 +4149,7 @@ iCn3DUI.prototype = {
     clickAlternate: function() { var me = this;
         $("#" + me.pre + "alternate").add("#" + me.pre + "menu2_alternate").click(function(e) {
            me.setLogCommand("alternate structures", false);
-           me.alternateStructures();
+           me.icn3d.alternateStructures();
         });
     },
 
@@ -4286,15 +4311,20 @@ iCn3DUI.prototype = {
 
            url += inparaWithoutCommand.substr(1) + '&command=';
 
+		   var transformation = {};
+		   transformation.factor = me.icn3d._zoomFactor;
+		   transformation.mouseChange = me.icn3d.mouseChange;
+		   transformation.quaternion = me.icn3d.quaternion;
+
            for(var i = 1, il = me.icn3d.commands.length; i < il; ++i) {
                var command_tf = me.icn3d.commands[i].split('|||');
 
                if(i === il - 1) {
-                   var transformation = (command_tf.length > 1) ? ('|||' + command_tf[1]) : '';
+                   //var transformation = (command_tf.length > 1) ? ('|||' + command_tf[1]) : '';
                    if(i !== 1) {
                        url += '; ';
                    }
-                   url += command_tf[0] + transformation;
+                   url += command_tf[0] + '|||' + JSON.stringify(transformation);
                }
                else if(i === 1) {
                    url += command_tf[0];
@@ -5386,18 +5416,28 @@ iCn3DUI.prototype = {
         });
     },
 
-    clickSeqOrAlignSeq: function() { var me = this;
-        $("#" + me.pre + "dl_sequence").click(function (e) {
-           me.bAlignSeq = false;
-        });
-        $("#" + me.pre + "dl_sequence2").click(function (e) {
-           me.bAlignSeq = true;
-        });
-    },
+    removeSelection: function() { var me = this;
+		  me.removeSeqChainBkgd();
+		  me.removeSeqResidueBkgd();
+
+		  me.selectedResidues = {};
+		  me.icn3d.highlightAtoms = {};
+
+		  me.icn3d.removeHighlightObjects();
+
+		  me.remove2DHighlight();
+	},
 
     selectSequenceNonMobile: function() { var me = this;
       $("#" + me.pre + "dl_sequence").add("#" + me.pre + "dl_sequence2").selectable({
           stop: function() {
+			  if($(this).attr('id') === me.pre + "dl_sequence") {
+				  me.bAlignSeq = false;
+			  }
+			  else if($(this).attr('id') === me.pre + "dl_sequence2") {
+				  me.bAlignSeq = true;
+			  }
+
               $("#" + me.pre + "chainid").val("");
               $("#" + me.pre + "structureid").val("");
 
@@ -5405,15 +5445,7 @@ iCn3DUI.prototype = {
               $("#" + me.pre + "structureid2").val("");
 
               if(me.bSelectResidue === false) {
-                  me.removeSeqChainBkgd();
-                  me.removeSeqResidueBkgd();
-
-                  me.selectedResidues = {};
-                  me.icn3d.highlightAtoms = {};
-
-                  me.icn3d.removeHighlightObjects();
-
-                  me.remove2DHighlight();
+                  me.removeSelection();
               }
 
               // select residues
@@ -5521,6 +5553,13 @@ iCn3DUI.prototype = {
 
     selectSequenceMobile: function() { var me = this;
       $("#" + me.pre + "dl_sequence").add("#" + me.pre + "dl_sequence2").on('click', '.icn3d-residue', function(e) {
+		  if($(this).attr('id') === me.pre + "dl_sequence") {
+			  me.bAlignSeq = false;
+		  }
+		  else if($(this).attr('id') === me.pre + "dl_sequence2") {
+			  me.bAlignSeq = true;
+		  }
+
           $("#" + me.pre + "chainid").val("");
           $("#" + me.pre + "structureid").val("");
 
@@ -5536,14 +5575,7 @@ iCn3DUI.prototype = {
                   if(id.substr(0, 5) === 'align') id = id.substr(5);
 
                   if( (!me.bAlignSeq && me.bSelectResidue === false) || (me.bAlignSeq && me.bSelectAlignResidue === false) ) {
-                      me.removeSeqChainBkgd();
-                      me.removeSeqResidueBkgd();
-
-                      me.selectedResidues = {};
-                      me.icn3d.highlightAtoms = {};
-
-                      me.icn3d.removeHighlightObjects();
-                      me.remove2DHighlight();
+                      me.removeSelection();
 
                       if(me.bAlignSeq) {
                           me.bSelectAlignResidue = true;
@@ -5597,6 +5629,13 @@ iCn3DUI.prototype = {
 
     selectChainMobile: function() { var me = this;
       $("#" + me.pre + "dl_sequence").add("#" + me.pre + "dl_sequence2").on('click', '.icn3d-seqTitle', function(e) {
+		  if($(this).attr('id') === me.pre + "dl_sequence") {
+			  me.bAlignSeq = false;
+		  }
+		  else if($(this).attr('id') === me.pre + "dl_sequence2") {
+			  me.bAlignSeq = true;
+		  }
+
           $("#" + me.pre + "chainid").val("");
           $("#" + me.pre + "structureid").val("");
 
@@ -6372,15 +6411,15 @@ iCn3DUI.prototype = {
             }
             else { // add
                 me.icn3d.addHighlightObjects();
-                me.updateSeqWinForCurrentAtoms();
-
+                me.updateSeqWin2DWinForCurrentAtoms();
+/*
                 var chainHash = {};
                 for(var i in me.icn3d.highlightAtoms) {
                     var chainid = me.icn3d.atoms[i].structure + '_' + me.icn3d.atoms[i].chain;
                     chainHash[chainid] = 1;
                 }
                 me.add2DHighlight(Object.keys(chainHash));
-
+*/
                 me.bSelectResidue = true;
             }
     },
@@ -6508,17 +6547,13 @@ iCn3DUI.prototype = {
         });
     },
 
-    saveSelection: function() { var me = this;
-            me.bSelectResidue = false;
-            var name = $("#" + me.pre + "seq_command_name").val().replace(/\s+/g, '_');
-            var description = $("#" + me.pre + "seq_command_desc").val();
-
-            if(Object.keys(me.selectedResidues).length === 0) {
+    saveSelection: function(name, description) { var me = this;
+            //if(Object.keys(me.selectedResidues).length === 0) {
                 for(var i in me.icn3d.highlightAtoms) {
                     var residueid = me.icn3d.atoms[i].structure + '_' + me.icn3d.atoms[i].chain + '_' + me.icn3d.atoms[i].resi;
                     me.selectedResidues[residueid] = 1;
                 }
-            }
+            //}
 
             me.setLogCommand('select ' + me.residueids2spec(Object.keys(me.selectedResidues)) + ' | name ' + name + ' | description ' + description, true);
 
@@ -6529,7 +6564,12 @@ iCn3DUI.prototype = {
 
     clickSeqSaveSelection: function() { var me = this;
         $(document).on("click", "#" + me.pre + "seq_saveselection", function(e) {
-           me.saveSelection();
+           me.bSelectResidue = false;
+
+           var name = $("#" + me.pre + "seq_command_name").val().replace(/\s+/g, '_');
+           var description = $("#" + me.pre + "seq_command_desc").val();
+
+           me.saveSelection(name, description);
         });
     },
 
@@ -6540,6 +6580,8 @@ iCn3DUI.prototype = {
             var name = $("#" + me.pre + "alignseq_command_name").val().replace(/\s+/g, '_');
             var description = $("#" + me.pre + "alignseq_command_desc").val();
 
+            me.saveSelection(name, description);
+/*
             if(Object.keys(me.selectedResidues).length === 0) {
                 for(var i in me.icn3d.highlightAtoms) {
                     var residueid = me.icn3d.atoms[i].structure + '_' + me.icn3d.atoms[i].chain + '_' + me.icn3d.atoms[i].resi;
@@ -6552,6 +6594,7 @@ iCn3DUI.prototype = {
             me.selectResidueList(me.selectedResidues, name, description);
 
             me.updateSelectionNameDesc();
+*/
         });
     },
 
@@ -6564,6 +6607,36 @@ iCn3DUI.prototype = {
         });
     },
 
+	highlightNode: function(type, highlight, base, ratio) { var me = this;
+	    if(ratio < 0.2) ratio = 0.2;
+
+    	if(type === 'rect') {
+            $(highlight).attr('stroke', me.ORANGE);
+            var x = Number($(base).attr('x'));
+            var y = Number($(base).attr('y'));
+            var width = Number($(base).attr('width'));
+            var height = Number($(base).attr('height'));
+            $(highlight).attr('x', x + width / 2.0 * (1 - ratio));
+            $(highlight).attr('y', y + height / 2.0 * (1 - ratio));
+            $(highlight).attr('width', width * ratio);
+            $(highlight).attr('height', height * ratio);
+    	}
+    	else if(type === 'circle') {
+            $(highlight).attr('stroke', me.ORANGE);
+            $(highlight).attr('r', Number($(base).attr('r')) * ratio);
+		}
+		else if(type === 'polygon') {
+            $(highlight).attr('stroke', me.ORANGE);
+            var x = Number($(base).attr('x0'));
+            var y = Number($(base).attr('y1'));
+            var x0 = Number($(base).attr('x0'));
+            var y0 = Number($(base).attr('y0'));
+            var x1 = Number($(base).attr('x1'));
+            var y1 = Number($(base).attr('y1'));
+            $(highlight).attr('points', x0 + ", " + (y+(y0-y)*ratio).toString() + ", " + (x+(x1-x)*ratio).toString() + ", " + y1 + ", " + x0 + ", " + (y-(y0-y)*ratio).toString() + ", " + (x-(x1-x)*ratio).toString() + ", " + y1);
+		}
+	},
+
     click2Ddiagram: function() { var me = this;
         $("#" + me.pre + "dl_2ddiagram").on("click", ".icn3d-node", function(e) {
 			me.setMode('selection');
@@ -6574,12 +6647,27 @@ iCn3DUI.prototype = {
 
             // clear all nodes
             if(!me.icn3d.bCtrlKey && !me.icn3d.bShiftKey) {
-                me.remove2DHighlight();
+                me.removeSelection();
             }
 
-            $(this).find('rect').attr('stroke', me.ORANGE);
-            $(this).find('circle').attr('stroke', me.ORANGE);
-            $(this).find('polygon').attr('stroke', me.ORANGE);
+            //$(this).find('rect').attr('stroke', me.ORANGE);
+            //$(this).find('circle').attr('stroke', me.ORANGE);
+            //$(this).find('polygon').attr('stroke', me.ORANGE);
+
+			var ratio = 1.0;
+			if(me.icn3d.alignChains[chainid] !== undefined) ratio = 1.0 * Object.keys(me.icn3d.alignChains[chainid]).length / Object.keys(me.icn3d.chains[chainid]).length;
+
+			var target = $(this).find("rect[class='icn3d-hlnode']");
+			var base = $(this).find("rect[class='icn3d-basenode']");
+			me.highlightNode('rect', target, base, ratio);
+
+			target = $(this).find("circle[class='icn3d-hlnode']");
+			base = $(this).find("circle[class='icn3d-basenode']");
+            me.highlightNode('circle', target, base, ratio);
+
+			target = $(this).find("polygon[class='icn3d-hlnode']");
+			base = $(this).find("polygon[class='icn3d-basenode']");
+			me.highlightNode('polygon', target, base, ratio);
 
             // highlight on 3D structure
             me.icn3d.removeHighlightObjects();
@@ -6683,7 +6771,7 @@ iCn3DUI.prototype = {
             me.icn3d.addHighlightObjects();
 
 
-            me.updateSeqWinForCurrentAtoms(true);
+            me.updateSeqWin2DWinForCurrentAtoms(true);
     },
 
     selectInteractionAtoms: function (chainid1, chainid2) {   var me = this; // me.icn3d.pickedatom is set already
@@ -6801,8 +6889,6 @@ iCn3DUI.prototype = {
     // ===== events end
     allEventFunctions: function() { var me = this;
         me.clickModeswitch();
-
-        me.clickSeqOrAlignSeq();
 
         if(! me.isMobile()) {
             me.selectSequenceNonMobile();

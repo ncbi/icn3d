@@ -436,9 +436,10 @@
     };
 
     // modified from iview (http://istar.cse.cuhk.edu.hk/iview/)
-    iCn3D.prototype.subdivide = function (_points, DIV, bShowArray, bHighlight) { // Catmull-Rom subdivision
+    iCn3D.prototype.subdivide = function (_points, _colors, DIV, bShowArray, bHighlight) { // Catmull-Rom subdivision
         var ret = [];
         var pos = [];
+        var color = [];
 
         var points = new Array(); // Smoothing test
         points.push(_points[0]);
@@ -450,6 +451,7 @@
 
         var savedPoints = [];
         var savedPos = [];
+        var savedColor = [];
         for (var i = -1, size = points.length, DIVINV = 1 / DIV; i <= size - 3; ++i) {
             var p0 = points[i === -1 ? 0 : i];
             var p1 = points[i + 1], p2 = points[i + 2];
@@ -458,14 +460,16 @@
             var v1 = p3.clone().sub(p1).multiplyScalar(0.5);
 
             //if(i > -1 && bHighlight && bShowArray !== undefined && bShowArray[i + 1]) {
-            if(i > -1 && bShowArray !== undefined && bShowArray[i + 1]) {
+            if(i > -1 && (bShowArray === undefined || bShowArray[i + 1]) ) {
                 // get from previous i for the first half of residue
                 ret = ret.concat(savedPoints);
                 pos = pos.concat(savedPos);
+                color = color.concat(savedColor);
             }
 
             savedPoints = [];
             savedPos = [];
+            savedColor = [];
 
             for (var j = 0; j < DIV; ++j) {
                 var t = DIVINV * j;
@@ -481,12 +485,14 @@
                 if(!bShowArray) {
                     ret.push(new THREE.Vector3(x, y, z));
                     pos.push(i + 1);
+                    color.push(_colors[i+1]);
                 }
                 else {
                     if(bShowArray[i + 1]) {
                         if(j <= parseInt((DIV) / 2) ) {
                             ret.push(new THREE.Vector3(x, y, z));
                             pos.push(bShowArray[i + 1]);
+                            color.push(_colors[i+1]);
                         }
                     }
 
@@ -494,6 +500,7 @@
                         if(j > parseInt((DIV) / 2) ) {
                             savedPoints.push(new THREE.Vector3(x, y, z));
                             savedPos.push(bShowArray[i + 2]);
+                            savedColor.push(_colors[i+2]);
                         }
                     }
                 } // end else
@@ -505,20 +512,24 @@
             //if(bHighlight) {
                 ret = ret.concat(savedPoints);
                 pos = pos.concat(savedPos);
+                color = color.concat(savedColor);
             //}
 
             ret.push(points[points.length - 1]);
             pos.push(points.length - 1);
+            color.push(_colors[points.length - 1]);
         }
 
         savedPoints = [];
         savedPos = [];
+        savedColor = [];
         points = [];
 
         points_positions = [];
 
         points_positions.push(ret);
         points_positions.push(pos);
+        points_positions.push(color);
 
         return points_positions;
     };
@@ -541,7 +552,9 @@
         div = div || 5;
         var points;
         if(!bNoSmoothen) {
-            points = this.subdivide(_points, div, bShowArray, bHighlight)[0];
+			var points_colors = this.subdivide(_points, colors, div, bShowArray, bHighlight);
+            points = points_colors[0];
+            colors = points_colors[2];
         }
         else {
             points = _points;
@@ -614,13 +627,15 @@
                     // shift the highlight a little bit to avoid the overlap with ribbon
                     points[i].addScalar(0.6); // this.thickness is 0.4
                     geo.vertices.push(points[i]);
-                    geo.colors.push(new THREE.Color(colors[i === 0 ? 0 : Math.round((i - 1) * divInv)]));
+                    //geo.colors.push(new THREE.Color(colors[i === 0 ? 0 : Math.round((i - 1) * divInv)]));
+                    geo.colors.push(new THREE.Color(colors[i]));
                 }
             }
             else {
                 for (var i = 0, divInv = 1 / div; i < points.length; ++i) {
                     geo.vertices.push(points[i]);
-                    geo.colors.push(new THREE.Color(colors[i === 0 ? 0 : Math.round((i - 1) * divInv)]));
+                    //geo.colors.push(new THREE.Color(colors[i === 0 ? 0 : Math.round((i - 1) * divInv)]));
+                    geo.colors.push(new THREE.Color(colors[i]));
                 }
             }
 
@@ -738,6 +753,10 @@
             return;
         }
 
+        var colorsLastTwo = [];
+        colorsLastTwo.push(colors[colors.length - 2]);
+        colorsLastTwo.push(colors[colors.length - 1]);
+
         div = div || this.axisDIV;
         var numM1Inv2 = 2 / (num - 1);
         var delta, lastCAIndex, lastPrevCOIndex, v;
@@ -746,13 +765,17 @@
         for(var i = 0, il = positions.length; i < il; ++i) points[i] = [];
 
         // smooth C-alpha
-        var pointsCASmooth = this.subdivide(pointsCA, div)[0]; // get all smoothen points, do not use 'bShowArray'
+        var points_colors = this.subdivide(pointsCA, colors, div);
+        var pointsCASmooth = points_colors[0]; // get all smoothen points, do not use 'bShowArray'
+        //colors = points_colors[2];
+
         if(pointsCASmooth.length === 1) {
             return;
         }
 
         // draw the sheet without the last residue
         // use the sheet coord for n-2 residues
+        var colorsTmp = [];
         for (var i = 0, il = pointsCA.length - 2; i < il; ++i) {
             for(var index = 0, indexl = positions.length; index < indexl; ++index) {
                 points[index].push(divPoints[index][i]);
@@ -771,22 +794,26 @@
         }
 
         var posIndex = [];
+        var results;
         for(var i = 0, il = positions.length; i < il; ++i) {
-            var results = this.subdivide(points[i], div, bShowArray, bHighlight);
+            results = this.subdivide(points[i], colorsTmp, div, bShowArray, bHighlight);
             points[i] = results[0];
+            colors = results[2];
             if(i === 0) {
                 posIndex = results[1];
             }
         }
 
         if(bStrip) {
-            this.createStrip(points[0], points[1], colorsTmp, div, thickness, bHighlight, true, undefined, posIndex);
+            //this.createStrip(points[0], points[1], colorsTmp, div, thickness, bHighlight, true, undefined, posIndex);
+            this.createStrip(points[0], points[1], colors, div, thickness, bHighlight, true, undefined, posIndex);
         }
         else {
-            this.createCurveSub(points[0], width, colorsTmp, div, bHighlight, bRibbon, true, undefined, posIndex);
+            //this.createCurveSub(points[0], width, colorsTmp, div, bHighlight, bRibbon, true, undefined, posIndex);
+            this.createCurveSub(points[0], width, colors, div, bHighlight, bRibbon, true, undefined, posIndex);
         }
 
-        // draw the arrow
+        // refresh memory
         for(var i in points) {
             for(var j = 0, jl = points[i].length; j < jl; ++j) {
                 points[i][j] = null;
@@ -794,6 +821,7 @@
             points[i] = [];
         }
 
+        // draw the arrow
         colorsTmp = [];
 
         posIndex = [];
@@ -811,6 +839,7 @@
                     var v = new THREE.Vector3(pointsCASmooth[i+j].x + prevCOArray[oriIndex].x * delta, pointsCASmooth[i+j].y + prevCOArray[oriIndex].y * delta, pointsCASmooth[i+j].z + prevCOArray[oriIndex].z * delta);
                     v.smoothen = true;
                     points[index].push(v);
+                    colorsTmp.push(colorsLastTwo[0]);
                     if(index === 0) posIndex.push(pos);
                 }
             }
@@ -825,14 +854,15 @@
                 var v = new THREE.Vector3(pointsCASmooth[lastCAIndex].x + prevCOArray[lastPrevCOIndex].x * delta, pointsCASmooth[lastCAIndex].y + prevCOArray[lastPrevCOIndex].y * delta, pointsCASmooth[lastCAIndex].z + prevCOArray[lastPrevCOIndex].z * delta);
                 v.smoothen = true;
                 points[index].push(v);
+                colorsTmp.push(colorsLastTwo[1]);
                 if(index === 0) posIndex.push(lastCAIndex);
             //}
         }
 
         pointsCASmooth = [];
 
-        colorsTmp.push(colors[colors.length - 2]);
-        colorsTmp.push(colors[colors.length - 1]);
+        //colorsTmp.push(colors[colors.length - 2]);
+        //colorsTmp.push(colors[colors.length - 1]);
 
         if(bStrip) {
             this.createStrip(points[0], points[1], colorsTmp, div, thickness, bHighlight, true, undefined, posIndex);
@@ -870,8 +900,11 @@
         if (p0.length < 2) return;
         div = div || this.axisDIV;
         if(!bNoSmoothen) {
-            p0 = this.subdivide(p0, div, bShowArray, bHighlight)[0];
-            p1 = this.subdivide(p1, div, bShowArray, bHighlight)[0];
+			var points_colors0 = this.subdivide(p0, colors, div, bShowArray, bHighlight);
+			var points_colors1 = this.subdivide(p1, colors, div, bShowArray, bHighlight);
+            p0 = points_colors0[0];
+            p1 = points_colors1[0];
+            colors = points_colors0[2];
         }
         if (p0.length < 2) return;
 
@@ -991,7 +1024,8 @@
 
             for (var i = 1, lim = p0.length, divInv = 1 / div; i < lim; ++i) {
                 var offset = 8 * i;
-                var color = new THREE.Color(colors[Math.round((i - 1) * divInv)]);
+                //var color = new THREE.Color(colors[Math.round((i - 1) * divInv)]);
+                var color = new THREE.Color(colors[i - 1]);
                 for (var j = 0; j < 4; ++j) {
                     fs.push(new THREE.Face3(offset + faces[j][0], offset + faces[j][1], offset + faces[j][2], undefined, color));
                     fs.push(new THREE.Face3(offset + faces[j][3], offset + faces[j][0], offset + faces[j][2], undefined, color));
@@ -1038,7 +1072,8 @@
         // include the whole sheet or helix when highlighting
         var atomsAdjust = {};
 
-        if( (bHighlight === 1 || bHighlight === 2) && !this.bAllAtoms) {
+        //if( (bHighlight === 1 || bHighlight === 2) && !this.bAllAtoms) {
+        if( !this.bAllAtoms) {
             var currChain, currResi, currAtom, prevChain, prevResi, prevAtom;
             var firstAtom, lastAtom;
             var index = 0, length = Object.keys(atoms).length;
@@ -1484,7 +1519,10 @@
         var circleDiv = this.tubeDIV, axisDiv = this.axisDIV;
         var circleDivInv = 1 / circleDiv, axisDivInv = 1 / axisDiv;
         var geo = new THREE.Geometry();
-        var points = this.subdivide(_points, axisDiv)[0];
+        var points_colors = this.subdivide(_points, colors, axisDiv);
+        var points = points_colors[0];
+        colors = points_colors[2];
+
         var prevAxis1 = new THREE.Vector3(), prevAxis2;
         for (var i = 0, lim = points.length; i < lim; ++i) {
             var r, idx = (i - 1) * axisDivInv;
@@ -1517,7 +1555,8 @@
         }
         var offset = 0;
         for (var i = 0, lim = points.length - 1; i < lim; ++i) {
-            var c = new THREE.Color(colors[Math.round((i - 1) * axisDivInv)]);
+            //var c = new THREE.Color(colors[Math.round((i - 1) * axisDivInv)]);
+            var c = new THREE.Color(colors[i]);
 
             var reg = 0;
             var r1 = geo.vertices[offset].clone().sub(geo.vertices[offset + circleDiv]).lengthSq();
@@ -1556,10 +1595,11 @@
     iCn3D.prototype.createTube = function (atoms, atomName, radius, bHighlight) {
         var points = [], colors = [], radii = [];
         var currentChain, currentResi;
+        var index = 0;
         for (var i in atoms) {
             var atom = atoms[i];
             if ((atom.name === atomName) && !atom.het) {
-                if (currentChain !== atom.chain || currentResi + 1 !== atom.resi) {
+                if (index > 0 && (currentChain !== atom.chain || currentResi + 1 !== atom.resi) ) {
                     if(bHighlight !== 2) this.createTubeSub(points, colors, radii, bHighlight);
                     points = []; colors = []; radii = [];
                 }
@@ -1575,6 +1615,8 @@
                 if(bHighlight === 2 && !atom.ssbegin) {
                     this.createBox(atom, undefined, undefined, scale, undefined, bHighlight);
                 }
+
+                ++index;
             }
         }
         if(bHighlight !== 2) this.createTubeSub(points, colors, radii, bHighlight);

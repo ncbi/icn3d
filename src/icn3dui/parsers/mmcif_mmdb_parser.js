@@ -143,12 +143,12 @@
             // set me.icn3d.pdbid_molid2chain and me.icn3d.chainsColor
             me.icn3d.pdbid_molid2chain = {};
             me.icn3d.chainsColor = {};
-            me.mmdbidArray = [];
+            //me.mmdbidArray = [];
             for(var i in data) {
 				if(i === 'seqalign') continue;
 
 				var pdbid = (data[i].pdbid !== undefined) ? data[i].pdbid : i;
-				me.mmdbidArray.push(pdbid);
+				//me.mmdbidArray.push(pdbid); // here two molecules are in alphabatic order, themaster molecule could not be the first one
 
 				var chainNameHash = {}; // chain name may be the same in assembly
 				for(var molid in data[i].molecule) {
@@ -195,11 +195,14 @@
                 var molid1 = seqalign[i][0].mid;
                 var molid2 = seqalign[i][1].sid;
 
-                var colorIndex = i % colorLength;
-                var colorStr = "#" + me.icn3d.stdChainColors[colorIndex].getHexString();
+                //var colorIndex = i % colorLength;
+                //var colorStr = "#" + me.icn3d.stdChainColors[colorIndex].getHexString();
 
-                me.alignmolid2color[0][molid1] = colorStr;
-                me.alignmolid2color[1][molid2] = colorStr;
+                //me.alignmolid2color[0][molid1] = colorStr;
+                //me.alignmolid2color[1][molid2] = colorStr;
+
+                me.alignmolid2color[0][molid1] = (i+1).toString();
+                me.alignmolid2color[1][molid2] = (i+1).toString();
             }
 
             return $.ajax({
@@ -228,11 +231,103 @@
                     $("#" + me.pre + "alternateWrapper").hide();
                 }
 
+/*
                 me.icn3d.setAtomStyleByOptions(me.options);
                 // change the default color to "Identity"
                 me.icn3d.setColorByOptions(me.options, me.icn3d.atoms);
 
+//                me.icn3d.bRender = false;
                 me.renderStructure();
+*/
+
+                // for alignment, show aligned residues, ligands, and ions
+                var displayAtoms = {};
+                for(var alignChain in me.icn3d.alignChains) {
+					displayAtoms = me.icn3d.unionHash(displayAtoms, me.icn3d.alignChains[alignChain]);
+				}
+
+                var residuesHash = {}, chains = {};
+                for(var i in displayAtoms) {
+					var atom = me.icn3d.atoms[i];
+
+					var chainid = atom.structure + '_' + atom.chain;
+					var resid = chainid + '_' + atom.resi;
+					residuesHash[resid] = 1;
+					chains[chainid] = 1;
+				}
+
+				var commandname = 'aligned_protein';
+				var commanddescr = 'aligned protein and nucleotides';
+				var select = "select " + me.residueids2spec(Object.keys(residuesHash));
+
+				me.addCustomSelection(Object.keys(residuesHash), Object.keys(displayAtoms), commandname, commanddescr, select, true);
+
+				var atoms1 = {}, atoms = {};
+
+				atoms1 = me.icn3d.getAtomsWithinAtom(me.icn3d.ligands, displayAtoms, 0);
+				atoms = me.icn3d.unionHash(atoms,  atoms1);
+
+				atoms1 = me.icn3d.getAtomsWithinAtom(me.icn3d.ions, displayAtoms, 0);
+				atoms = me.icn3d.unionHash(atoms,  atoms1);
+
+				atoms1 = me.icn3d.getAtomsWithinAtom(me.icn3d.water, displayAtoms, 0);
+				atoms = me.icn3d.unionHash(atoms,  atoms1);
+
+                residuesHash = {};
+                for(var i in atoms) {
+					var atom = me.icn3d.atoms[i];
+
+					var resid = atom.structure + '_' + atom.chain + '_' + atom.resi;
+					residuesHash[resid] = 1;
+				}
+
+				commandname = 'aligned_ligands';
+				commanddescr = 'ligands located inside the aligned structures';
+				select = "select " + me.residueids2spec(Object.keys(residuesHash));
+
+				me.addCustomSelection(Object.keys(residuesHash), Object.keys(atoms), commandname, commanddescr, select, true);
+
+				//expand to all atoms in the ligands
+				var residues = {};
+				for(var i in atoms) {
+					var atom = me.icn3d.atoms[i];
+					var chainid = atom.structure + '_' + atom.chain;
+					var resid = chainid + '_' + atom.resi;
+
+					residues[resid] = 1;
+					chains[chainid] = 1;
+				}
+
+				atoms = {};
+				for(var resid in residues) {
+					atoms = me.icn3d.unionHash(atoms,  me.icn3d.residues[resid]);
+				}
+
+				displayAtoms = me.icn3d.unionHash(displayAtoms,  atoms);
+
+
+//                me.setMode('all');
+
+                me.icn3d.setAtomStyleByOptions(me.options);
+                // change the default color to "Identity"
+                me.icn3d.setColorByOptions(me.options, me.icn3d.atoms);
+
+//                me.icn3d.bRender = false;
+                me.renderStructure();
+
+/*
+				me.icn3d.displayAtoms = me.icn3d.cloneHash(displayAtoms);
+				me.icn3d.highlightAtoms = me.icn3d.cloneHash(displayAtoms);
+
+				if(Object.keys(displayAtoms).length < Object.keys(me.icn3d.atoms).length) {
+					me.setMode('selection');
+
+					me.updateSeqWinForCurrentAtoms(true);
+				}
+
+				me.icn3d.bRender = true;
+				me.icn3d.draw();
+*/
 
                 if(me.cfg.rotate !== undefined) me.rotateStructure(me.cfg.rotate, true);
 
@@ -244,7 +339,12 @@
                 }
 
                 //var mmdbidArray = me.inputid.split('_');
-                me.set2DDiagramsForAlign(me.mmdbidArray[0].toUpperCase(), me.mmdbidArray[1].toUpperCase());
+                var mmdbidArray = [];
+                for(var i = 0, il = data.aligned_structures.length; i < il; ++i) {
+					mmdbidArray.push(data.aligned_structures[i].pdbid);
+				}
+
+                me.set2DDiagramsForAlign(mmdbidArray[0].toUpperCase(), mmdbidArray[1].toUpperCase(), chains);
 
                 // by default, open the seq alignment window
                 if(me.cfg.show2d !== undefined && me.cfg.show2d) me.openDialog(me.pre + 'dl_2ddiagram', 'Interactions');
@@ -261,7 +361,7 @@
         });
     };
 
-    iCn3DUI.prototype.set2DDiagramsForAlign = function (mmdbid1, mmdbid2) { var me = this;
+    iCn3DUI.prototype.set2DDiagramsForAlign = function (mmdbid1, mmdbid2, chains) { var me = this;
 	   var url1="https://www.ncbi.nlm.nih.gov/Structure/mmdb/mmdb_strview.cgi?uid="+mmdbid1+"&format=json&intrac=3";
 	   var url2="https://www.ncbi.nlm.nih.gov/Structure/mmdb/mmdb_strview.cgi?uid="+mmdbid2+"&format=json&intrac=3";
 
@@ -285,6 +385,8 @@
        request2.done(function( data ) {
             me.draw2Ddiagram(data, mmdbid2, 1);
             if(me.cfg.show2d !== undefined && me.cfg.show2d) me.openDialog(me.pre + 'dl_2ddiagram', 'Interactions');
+
+//            me.add2DHighlight(Object.keys(chains));
        });
 
 //		var request1 = me.download2Ddiagram(mmdbid1, 0);
@@ -703,40 +805,43 @@
         html += "<b>" + mmdbid.toUpperCase() + "</b><br/>";
 
         html += "<svg viewBox='0,0,150,150'>";
-          var strokecolor = '#000000';
-          var strokewidth = '2';
-          var textcolor = '#000000';
-          var fontsize = '14';
-          var smallfontsize = '9';
-          var adjustx = 0, adjusty = 4, smalladjustx = 1, smalladjusty = 2;
+        var strokecolor = '#000000';
+        var strokewidth = '1';
+        var linestrokewidth = '2';
+        var textcolor = '#000000';
+        var fontsize = '10';
+        var smallfontsize = '8';
+        var adjustx = 0, adjusty = 4, smalladjustx = 1, smalladjusty = 2, halfLetHigh = 6;
 
-          var posHash = {};
-          var lines = [];
+        var posHash = {};
+        var lines = [];
 
-          var nodeHtml = "";
+        var nodeHtml = "";
 
-          for(var molid in data.intrac) {
+        for(var molid in data.intrac) {
             var diagram = data.intrac[molid];
             var color = "#FFFFFF";
+            var oricolor = molid2color[molid];
+            var alignNum = "";
             if(structureIndex !== undefined && structureIndex === 0) {
                 if(me.alignmolid2color[0].hasOwnProperty(molid)) {
-                    color = me.alignmolid2color[0][molid];
+                    //color = me.alignmolid2color[0][molid];
+                    alignNum = me.alignmolid2color[0][molid];
+                    oricolor = "#FF0000";
                 }
                 else {
-                    color = "#FFFFFF";
-                }
+                	oricolor = "#FFFFFF";
+				}
             }
             else if(structureIndex !== undefined && structureIndex === 1) {
                 if(me.alignmolid2color[1].hasOwnProperty(molid)) {
-                    color = me.alignmolid2color[1][molid];
+                    //color = me.alignmolid2color[1][molid];
+                    alignNum = me.alignmolid2color[1][molid];
+                    oricolor = "#FF0000";
                 }
                 else {
-                    color = "#FFFFFF";
-                }
-            }
-            else {
-                //color = me.icn3d.molid2color[molid];
-                color = molid2color[molid];
+                	oricolor = "#FFFFFF";
+				}
             }
 
             var chainid;
@@ -761,13 +866,17 @@
                 chainid = 'Misc';
             }
 
-            if(color === undefined) {
-                color = '#FFFFFF';
+            if(oricolor === undefined) {
+                oricolor = '#FFFFFF';
             }
 
             for(var i = 0, il = diagram.intrac.length; i < il; ++i) {
                 lines.push([molid, diagram.intrac[i] ]);
             }
+
+			var ratio = 1.0;
+			if(me.icn3d.alignChains[chainid] !== undefined) ratio = 1.0 * Object.keys(me.icn3d.alignChains[chainid]).length / Object.keys(me.icn3d.chains[chainid]).length;
+			if(ratio < 0.2) ratio = 0.2;
 
             if(diagram.shape === 'rect') {
                 var x = diagram.coords[0][0] * factor;
@@ -777,9 +886,16 @@
 
                 nodeHtml += "<g class='icn3d-node' chainid='" + chainid + "' >";
                 nodeHtml += "<title>Chain " + oriChain + ": " + chainname + "</title>";
-                nodeHtml += "<rect x='" + x + "' y='" + y + "' width='" + width + "' height='" + height + "' fill='" + color + "' stroke-width='" + strokewidth + "' stroke='" + strokecolor + "' />";
+                // place holder
+                nodeHtml += "<rect class='icn3d-basenode' x='" + x + "' y='" + y + "' width='" + width + "' height='" + height + "' fill='" + color + "' stroke-width='" + strokewidth + "' stroke='" + strokecolor + "' />";
+                // highlight
+                nodeHtml += "<rect class='icn3d-hlnode' x='" + (x + width / 2.0 * (1 - ratio)).toString() + "' y='" + (y + height / 2.0 * (1 - ratio)).toString() + "' width='" + (width * ratio).toString() + "' height='" + (height * ratio).toString() + "' fill='" + oricolor + "' stroke-width='" + strokewidth + "' stroke='" + strokecolor + "' />";
 
-                nodeHtml += "<text x='" + (x + width / 2 - adjustx).toString() + "' y='" + (y + height / 2 + adjusty).toString() + "' style='fill:" + textcolor + "; font-size:" + fontsize + "; text-anchor:middle' >" + chain + "</text></g>";
+                nodeHtml += "<text x='" + (x + width / 2 - adjustx).toString() + "' y='" + (y + height / 2 + adjusty).toString() + "' style='fill:" + textcolor + "; font-size:" + fontsize + "; text-anchor:middle' >" + chain + "</text>";
+
+                if(alignNum !== "") nodeHtml += "<text x='" + (x + width / 2 - adjustx).toString() + "' y='" + (y + height + adjusty + halfLetHigh).toString() + "' style='fill:" + oricolor + "; font-size:" + smallfontsize + "; font-weight:bold; text-anchor:middle' >" + alignNum + "</text>";
+
+                nodeHtml += "</g>";
 
                 posHash[molid] = [x + width/2, y + height/2];
             }
@@ -790,9 +906,15 @@
 
                 nodeHtml += "<g class='icn3d-node' chainid='" + chainid + "' >";
                 nodeHtml += "<title>Chain " + oriChain + ": " + chainname + "</title>";
-                nodeHtml += "<circle cx='" + x + "' cy='" + y + "' r='" + r + "' fill='" + color + "' stroke-width='" + strokewidth + "' stroke='" + strokecolor + "' class='icn3d-node' chainid='" + chainid + "' />";
+                nodeHtml += "<circle class='icn3d-basenode' cx='" + x + "' cy='" + y + "' r='" + r + "' fill='" + color + "' stroke-width='" + strokewidth + "' stroke='" + strokecolor + "' class='icn3d-node' chainid='" + chainid + "' />";
 
-                nodeHtml += "<text x='" + (x - adjustx).toString() + "' y='" + (y + adjusty).toString() + "' style='fill:" + textcolor + "; font-size:" + fontsize + "; text-anchor:middle' >" + chain + "</text></g>";
+                nodeHtml += "<circle class='icn3d-hlnode' cx='" + x + "' cy='" + y + "' r='" + (r * ratio).toString() + "' fill='" + oricolor + "' stroke-width='" + strokewidth + "' stroke='" + strokecolor + "' />";
+
+                nodeHtml += "<text x='" + (x - adjustx).toString() + "' y='" + (y + adjusty).toString() + "' style='fill:" + textcolor + "; font-size:" + fontsize + "; text-anchor:middle' >" + chain + "</text>";
+
+                if(alignNum !== "") nodeHtml += "<text x='" + (x - adjustx).toString() + "' y='" + (y + r + adjusty + halfLetHigh).toString() + "' style='fill:" + oricolor + "; font-size:" + smallfontsize + "; font-weight:bold; text-anchor:middle' >" + alignNum + "</text>";
+
+                nodeHtml += "</g>";
 
                 posHash[molid] = [x, y];
             }
@@ -806,11 +928,20 @@
                 var x3 = diagram.coords[3][0] * factor;
                 var y3 = diagram.coords[3][1] * factor;
 
+                var x = x0, y = y1;
+
+
                 nodeHtml += "<g class='icn3d-node' chainid='" + chainid + "' >";
                 nodeHtml += "<title>Chain " + oriChain + ": " + chainname + "</title>";
-                nodeHtml += "<polygon points='" + x0 + ", " + y0 + "," + x1 + ", " + y1 + "," + x2 + ", " + y2 + "," + x3 + ", " + y3 + "' fill='" + color + "' stroke-width='" + strokewidth + "' stroke='" + strokecolor + "' />";
+                nodeHtml += "<polygon class='icn3d-basenode' points='" + x0 + ", " + y0 + "," + x1 + ", " + y1 + "," + x2 + ", " + y2 + "," + x3 + ", " + y3 + "' x0='" + x0 + "' y0='" + y0 + "' x1='" + x1 + "' y1='" + y1 + "' fill='" + color + "' stroke-width='" + strokewidth + "' stroke='" + strokecolor + "' />";
 
-                nodeHtml += "<text x='" + (x0 + smalladjustx).toString() + "' y='" + (y1 + smalladjusty).toString() + "' style='fill:" + textcolor + "; font-size:" + smallfontsize + "; text-anchor:middle' >" + chain + "</text></g>";
+                nodeHtml += "<polygon class='icn3d-hlnode' points='" + x0 + ", " + (y+(y0-y)*ratio).toString() + "," + (x+(x1-x)*ratio).toString() + ", " + y1 + "," + x0 + ", " + (y-(y0-y)*ratio).toString() + "," + (x-(x1-x)*ratio).toString() + ", " + y1 + "' fill='" + oricolor + "' stroke-width='" + strokewidth + "' stroke='" + strokecolor + "' />";
+
+                nodeHtml += "<text x='" + (x0 + smalladjustx).toString() + "' y='" + (y1 + smalladjusty).toString() + "' style='fill:" + textcolor + "; font-size:" + smallfontsize + "; text-anchor:middle' >" + chain + "</text>";
+
+                if(alignNum !== "") nodeHtml += "<text x='" + (x0 + smalladjustx).toString() + "' y='" + (y0 + smalladjusty + halfLetHigh).toString() + "' style='fill:" + oricolor + "; font-size:" + smallfontsize + "; font-weight:bold; text-anchor:middle' >" + alignNum + "</text>";
+
+                nodeHtml += "</g>";
 
                 posHash[molid] = [x0, y1];
             }
@@ -838,16 +969,16 @@
             if(me.icn3d.bSSOnly) { // the condensed view with only secondary structure information
                 html += "<g chainid1='" + chainid1 + "' chainid2='" + chainid2 + "' >";
                 html += "<title>Interactions NOT shown in the condensed view</title>";
-                html += "<line x1='" + x1 + "' y1='" + y1 + "' x2='" + x2 + "' y2='" + y2 + "' stroke='" + strokecolor + "' stroke-width='" + strokewidth + "' /></g>";
+                html += "<line x1='" + x1 + "' y1='" + y1 + "' x2='" + x2 + "' y2='" + y2 + "' stroke='" + strokecolor + "' stroke-width='" + linestrokewidth + "' /></g>";
             }
             else {
                 html += "<g class='icn3d-interaction' chainid1='" + chainid1 + "' chainid2='" + chainid2 + "' >";
                 html += "<title>Interaction of chain " + chain1 + " with chain " + chain2 + "</title>";
-                html += "<line x1='" + x1 + "' y1='" + y1 + "' x2='" + xMiddle + "' y2='" + yMiddle + "' stroke='" + strokecolor + "' stroke-width='" + strokewidth + "' /></g>";
+                html += "<line x1='" + x1 + "' y1='" + y1 + "' x2='" + xMiddle + "' y2='" + yMiddle + "' stroke='" + strokecolor + "' stroke-width='" + linestrokewidth + "' /></g>";
 
                 html += "<g class='icn3d-interaction' chainid1='" + chainid2 + "' chainid2='" + chainid1 + "' >";
                 html += "<title>Interaction of chain " + chain2 + " with chain " + chain1 + "</title>";
-                html += "<line x1='" + xMiddle + "' y1='" + yMiddle + "' x2='" + x2 + "' y2='" + y2 + "' stroke='" + strokecolor + "' stroke-width='" + strokewidth + "' /></g>";
+                html += "<line x1='" + xMiddle + "' y1='" + yMiddle + "' x2='" + x2 + "' y2='" + y2 + "' stroke='" + strokecolor + "' stroke-width='" + linestrokewidth + "' /></g>";
             }
         }
 

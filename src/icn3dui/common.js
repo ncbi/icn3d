@@ -177,7 +177,19 @@ if (!$.ui.dialog.prototype._makeDraggableBase) {
                 if(type === 'command') {
                     var dataStr = '';
                     for(var i = 0, il = me.icn3d.commands.length; i < il; ++i) {
-                        dataStr += me.icn3d.commands[i].trim() + '\n';
+						var command = me.icn3d.commands[i].trim();
+                        if(i == il - 1) {
+						   var command_tf = command.split('|||');
+
+						   var transformation = {};
+						   transformation.factor = me.icn3d._zoomFactor;
+						   transformation.mouseChange = me.icn3d.mouseChange;
+						   transformation.quaternion = me.icn3d.quaternion;
+
+						   command = command_tf[0] + '|||' + JSON.stringify(transformation);
+						}
+
+						dataStr += command + '\n';
                     }
                     var data = decodeURIComponent(dataStr);
 
@@ -213,7 +225,19 @@ if (!$.ui.dialog.prototype._makeDraggableBase) {
                 //var dataStr = me.icn3d.commands.join('\n');
                 var dataStr = '';
                 for(var i = 0, il = me.icn3d.commands.length; i < il; ++i) {
-                    dataStr += me.icn3d.commands[i].trim() + '\n';
+					var command = me.icn3d.commands[i].trim();
+					if(i == il - 1) {
+					   var command_tf = command.split('|||');
+
+					   var transformation = {};
+					   transformation.factor = me.icn3d._zoomFactor;
+					   transformation.mouseChange = me.icn3d.mouseChange;
+					   transformation.quaternion = me.icn3d.quaternion;
+
+					   command = command_tf[0] + '|||' + JSON.stringify(transformation);
+					}
+
+                    dataStr += command + '\n';
                 }
                 data = "data:text;charset=utf-8," + encodeURIComponent(dataStr);
             }
