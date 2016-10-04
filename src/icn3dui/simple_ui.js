@@ -529,7 +529,7 @@ iCn3DUI.prototype = {
         $("#" + me.pre + "help").click(function (e) {
             e.preventDefault();
 
-            window.open('https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d.html', '_blank');
+            window.open('https://www.ncbi.nlm.nih.gov/Structure/icn3d/docs/icn3d_help.html', '_blank');
         });
     },
 

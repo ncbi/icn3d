@@ -33,7 +33,7 @@
 if (typeof jQuery === 'undefined') { throw new Error('iCn3D requires jQuery') }
 
 var iCn3D = function (id) {
-    this.REVISION = '1';
+    this.REVISION = '1.2';
     this.id = id;
 
     this.container = $('#' + id);
@@ -45,6 +45,8 @@ var iCn3D = function (id) {
     this.bSecondaryStructure = false;
 
     this.bHighlight = 1; // undefined: no highlight, 1: highlight by outline, 2: highlight by 3D object
+
+    this.ALTERNATE_STRUCTURE = -1;
 
     if(Detector.webgl){
         this.renderer = new THREE.WebGLRenderer({
@@ -240,6 +242,7 @@ var iCn3D = function (id) {
 
           para.update = true;
           me.controls.update(para);
+          me.render();
         }
         else if(e.keyCode === 88 ) { // X
           var para = {};
@@ -261,6 +264,7 @@ var iCn3D = function (id) {
 
           para.update = true;
           me.controls.update(para);
+          me.render();
         }
 
         // rotate
@@ -278,6 +282,7 @@ var iCn3D = function (id) {
           para.update = true;
 
           me.controls.update(para);
+          me.render();
         }
         else if(e.keyCode === 74 ) { // J, rotate right
           var axis = new THREE.Vector3(0,1,0);
@@ -293,6 +298,7 @@ var iCn3D = function (id) {
           para.update = true;
 
           me.controls.update(para);
+          me.render();
         }
         else if(e.keyCode === 73 ) { // I, rotate up
           var axis = new THREE.Vector3(1,0,0);
@@ -308,6 +314,7 @@ var iCn3D = function (id) {
           para.update = true;
 
           me.controls.update(para);
+          me.render();
         }
         else if(e.keyCode === 77 ) { // M, rotate down
           var axis = new THREE.Vector3(1,0,0);
@@ -323,9 +330,13 @@ var iCn3D = function (id) {
           para.update = true;
 
           me.controls.update(para);
+          me.render();
         }
 
-        me.render();
+        else if(e.keyCode === 65 ) { // A, alternate
+           me.alternateStructures();
+        }
+
       }
     });
 

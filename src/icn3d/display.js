@@ -513,11 +513,10 @@
 
         this.bAllAtoms = (Object.keys(atoms).length === Object.keys(this.atoms).length);
 
-        var currentCalphas = {};
-        if(this.options['sidechains'] !== 'nothing') {
-            //currentCalphas = this.intersectHash(atoms, this.calphas);
-            currentCalphas = this.intersectHash(this.highlightAtoms, this.calphas);
-        }
+//        var currentCalphas = {};
+//        if(this.options['sidechains'] !== 'nothing') {
+//            currentCalphas = this.intersectHash(this.highlightAtoms, this.calphas);
+//        }
 
         // remove schematic labels
         this.labels['schematic'] = [];
@@ -581,9 +580,9 @@
           }
           else if(style === 'lines') {
             // add calpha to the side chains for better connectivity
-            if(this.options['sidechains'] === 'lines') {
-                atomHash = this.unionHash(atomHash, currentCalphas);
-            }
+//            if(this.options['sidechains'] === 'lines') {
+//                atomHash = this.unionHash(atomHash, currentCalphas);
+//            }
 
             if(bHighlight === 1) {
                 this.createStickRepresentation(this.hash2Atoms(atomHash), 0.1, 0.1, undefined, bHighlight);
@@ -594,17 +593,17 @@
           }
           else if(style === 'stick') {
             // add calpha to the side chains for better connectivity
-            if(this.options['sidechains'] === 'stick') {
-                atomHash = this.unionHash(atomHash, currentCalphas);
-            }
+//            if(this.options['sidechains'] === 'stick') {
+//                atomHash = this.unionHash(atomHash, currentCalphas);
+//            }
 
             this.createStickRepresentation(this.hash2Atoms(atomHash), this.cylinderRadius, this.cylinderRadius, undefined, bHighlight);
           }
           else if(style === 'ball and stick') {
             // add calpha to the side chains for better connectivity
-            if(this.options['sidechains'] === 'ball and stick') {
-                atomHash = this.unionHash(atomHash, currentCalphas);
-            }
+//            if(this.options['sidechains'] === 'ball and stick') {
+//                atomHash = this.unionHash(atomHash, currentCalphas);
+//            }
 
             this.createStickRepresentation(this.hash2Atoms(atomHash), this.cylinderRadius, this.cylinderRadius * 0.5, 0.3, bHighlight);
           }
@@ -650,6 +649,11 @@
             if(this.style2atoms[this.atoms[i].style] === undefined) this.style2atoms[this.atoms[i].style] = {};
 
             this.style2atoms[this.atoms[i].style][i] = 1;
+
+            // side chains
+            if(this.style2atoms[this.atoms[i].style2] === undefined) this.style2atoms[this.atoms[i].style2] = {};
+
+            this.style2atoms[this.atoms[i].style2][i] = 1;
           }
     };
 
@@ -875,7 +879,41 @@
           this.render();
 
           // reset to hide the side chain
-          this.options['sidechains'] = 'nothing';
+          //this.options['sidechains'] = 'nothing';
         }
     };
+
+    iCn3D.prototype.alternateStructures = function () {
+        this.displayAtoms = {};
+
+        var highlightAtomsCount = Object.keys(this.highlightAtoms).length;
+        var allAtomsCount = Object.keys(this.atoms).length;
+
+        var moleculeArray = Object.keys(this.structures);
+        for(var i = 0, il = moleculeArray.length; i < il; ++i) {
+            var structure = moleculeArray[i];
+            if(i > this.ALTERNATE_STRUCTURE || (this.ALTERNATE_STRUCTURE === il - 1 && i === 0) ) {
+                for(var k in this.structures[structure]) {
+                    var chain = this.structures[structure][k];
+                    this.displayAtoms = this.unionHash(this.displayAtoms, this.chains[chain]);
+                }
+
+                this.ALTERNATE_STRUCTURE = i;
+                break;
+            }
+        }
+
+        if(highlightAtomsCount < allAtomsCount) {
+            this.displayAtoms = this.intersectHash(this.displayAtoms, this.highlightAtoms);
+
+            this.bShowHighlight = false;
+            this.options['rotationcenter'] = 'highlight center';
+        }
+
+        this.draw();
+
+        this.bShowHighlight = true;
+        this.options['rotationcenter'] = 'molecule center';
+    };
+
 

@@ -216,6 +216,8 @@
     };
 
     iCn3D.prototype.getNeighboringAtoms = function(atomlist, atomlistTarget, distance) {
+	   var me = this;
+
        var extent = this.getExtent(atomlistTarget);
 
        var targetRadiusSq1 = (extent[2][0] - extent[0][0]) * (extent[2][0] - extent[0][0]) + (extent[2][1] - extent[0][1]) * (extent[2][1] - extent[0][1]) + (extent[2][2] - extent[0][2]) * (extent[2][2] - extent[0][2]);
@@ -227,7 +229,8 @@
 
        var neighbors = {};
        for (var i in atomlist) {
-          var atom = atomlist[i];
+          //var atom = atomlist[i];
+          var atom = me.atoms[i];
 
           // exclude the target atoms
           if(atom.serial in atomlistTarget) continue;
@@ -251,11 +254,14 @@
 
     // modified from iview (http://istar.cse.cuhk.edu.hk/iview/)
     iCn3D.prototype.getAtomsWithinAtom = function(atomlist, atomlistTarget, distance) {
+	   var me = this;
+
        var neighbors = this.getNeighboringAtoms(atomlist, atomlistTarget, distance);
 
        var ret = {};
        for(var i in atomlistTarget) {
-           var oriAtom = atomlistTarget[i];
+           //var oriAtom = atomlistTarget[i];
+           var oriAtom = me.atoms[i];
            var radius = this.vdwRadii[oriAtom.elem] || this.defaultRadius;
 
            for (var j in neighbors) {
@@ -276,12 +282,15 @@
 
     // from iview (http://istar.cse.cuhk.edu.hk/iview/)
     iCn3D.prototype.getExtent = function(atomlist) {
+	   var me = this;
+
        var xmin = ymin = zmin = 9999;
        var xmax = ymax = zmax = -9999;
        var xsum = ysum = zsum = cnt = 0;
        var i;
        for (i in atomlist) {
-          var atom = atomlist[i];
+          //var atom = atomlist[i];
+          var atom = me.atoms[i];
           cnt++;
           xsum += atom.coord.x; ysum += atom.coord.y; zsum += atom.coord.z;
 
