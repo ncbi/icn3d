@@ -11,7 +11,7 @@ We provided two versions of iCn3D widgets: [basic interface](https://www.ncbi.nl
 
 Either of these widgets could be easily added to your own web pages. Please see the [help page](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d.html) for more details.
 
-<b>Complete package</b> of iCn3D including Three.js and jQuery can be downloaded from [https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-1.3.1.zip](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-1.3.1.zip). The "Download ZIP" link in this page does not include these third-party libraries. 
+<b>Complete package</b> of iCn3D including Three.js and jQuery can be downloaded from [https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-1.3.2.zip](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-1.3.2.zip). The "Download ZIP" link in this page does not include these third-party libraries. 
 
 ## Usage
 
@@ -88,6 +88,8 @@ gulp gh-pages
 ```
 
 ## Change log
+
+The production version [icn3d-1.3.2](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-1.3.2.zip) was release on October 18, 2016. The atom specification in "Advanced set selection" was modified to use "$" instead of "#" in front of structure IDs. This modification avoids to the problem of showing multiple "#" in the urls of "Share Link".
 
 The production version [icn3d-1.3.1](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-1.3.1.zip) was release on October 4, 2016. Partial diplay of helices or beta-sheets are enabled. The side chains, if displayed, are connected to C-alphas.
 
