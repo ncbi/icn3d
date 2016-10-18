@@ -6,6 +6,7 @@
             mmtfid,
             // onLoad callback
             function( mmtfData ){
+console.log("mmtfData: " + JSON.stringify(mmtfData));
 
                 me.icn3d.init();
 

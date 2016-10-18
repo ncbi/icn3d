@@ -334,9 +334,12 @@
                 if(me.icn3d.bSSOnly) {
                     me.html2ddiagram = "<div style='width:150px'><b>Nodes</b>: chains</div><br/>";
                 }
+                else if(me.cfg.align !== undefined) {
+                    me.html2ddiagram = "<div style='width:150px'><b>Nodes</b>: chains<br/><b>Lines</b>: interactions (4 &#197;)<br/><b>Numbers in red</b>: aligned chains</div><br/>";
+                }
                 else {
                     me.html2ddiagram = "<div style='width:150px'><b>Nodes</b>: chains<br/><b>Lines</b>: interactions (4 &#197;)</div><br/>";
-                }
+				}
 
                 //var mmdbidArray = me.inputid.split('_');
                 var mmdbidArray = [];
@@ -818,6 +821,8 @@
 
         var nodeHtml = "";
 
+		var alignedAtomArray = [];
+
         for(var molid in data.intrac) {
             var diagram = data.intrac[molid];
             var color = "#FFFFFF";
@@ -875,7 +880,17 @@
             }
 
 			var ratio = 1.0;
-			if(me.icn3d.alignChains[chainid] !== undefined) ratio = 1.0 * Object.keys(me.icn3d.alignChains[chainid]).length / Object.keys(me.icn3d.chains[chainid]).length;
+			if(me.icn3d.alignChains[chainid] !== undefined) {
+				//ratio = 1.0 * Object.keys(me.icn3d.alignChains[chainid]).length / Object.keys(me.icn3d.chains[chainid]).length;
+				var alignedAtomCnt = 0;
+				for(var i in me.icn3d.alignChains[chainid]) {
+					var colorStr = me.icn3d.atoms[i].color.getHexString().toUpperCase();
+					if(colorStr === 'FF0000' || colorStr === '00FF00') {
+						++alignedAtomCnt;
+					}
+				}
+				ratio = 1.0 * alignedAtomCnt / Object.keys(me.icn3d.chains[chainid]).length;
+			}
 			if(ratio < 0.2) ratio = 0.2;
 
             if(diagram.shape === 'rect') {

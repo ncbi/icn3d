@@ -1157,18 +1157,25 @@ iCn3DUI.prototype = {
 
 			  var target = $("#" + me.pre + "dl_2ddiagram g[chainid=" + chainArray2d[i] + "] rect[class='icn3d-hlnode']");
 			  var base = $("#" + me.pre + "dl_2ddiagram g[chainid=" + chainArray2d[i] + "] rect[class='icn3d-basenode']");
-			  me.highlightNode('rect', target, base, ratio);
-			  $(target).attr('fill', color);
+			  if(target !== undefined) {
+				  me.highlightNode('rect', target, base, ratio);
+			      $(target).attr('fill', color);
+			  }
 
 			  target = $("#" + me.pre + "dl_2ddiagram g[chainid=" + chainArray2d[i] + "] circle[class='icn3d-hlnode']");
 			  base = $("#" + me.pre + "dl_2ddiagram g[chainid=" + chainArray2d[i] + "] circle[class='icn3d-basenode']");
-			  me.highlightNode('circle', target, base, ratio);
-			  $(target).attr('fill', color);
+			  if(target !== undefined) {
+			  	  me.highlightNode('circle', target, base, ratio);
+			  	  $(target).attr('fill', color);
+			  }
 
 			  target = $("#" + me.pre + "dl_2ddiagram g[chainid=" + chainArray2d[i] + "] polygon[class='icn3d-hlnode']");
 			  base = $("#" + me.pre + "dl_2ddiagram g[chainid=" + chainArray2d[i] + "] polygon[class='icn3d-basenode']");
-			  me.highlightNode('polygon', target, base, ratio);
-			  $(target).attr('fill', color);
+
+			  if(target !== undefined) {
+			      me.highlightNode('polygon', target, base, ratio);
+			      $(target).attr('fill', color);
+			  }
           }
       }
       else if(me.bClickInteraction && me.lineArray2d !== undefined) {
@@ -1587,7 +1594,7 @@ iCn3DUI.prototype = {
                      if(j > 0) {
                          if(prevResi === startResi) {
                              if(bMultipleStructures) {
-                                 spec += '#' + struturePart + '.' + chainPart + ':' + startResi + ' or ';
+                                 spec += '$' + struturePart + '.' + chainPart + ':' + startResi + ' or ';
                              }
                              else {
                                  spec += '.' + chainPart + ':' + startResi + ' or ';
@@ -1595,7 +1602,7 @@ iCn3DUI.prototype = {
                          }
                          else {
                              if(bMultipleStructures) {
-                                 spec += '#' + struturePart + '.' + chainPart + ':' + startResi + '-' + prevResi + ' or ';
+                                 spec += '$' + struturePart + '.' + chainPart + ':' + startResi + '-' + prevResi + ' or ';
                              }
                              else {
                                  spec += '.' + chainPart + ':' + startResi + '-' + prevResi + ' or ';
@@ -1609,7 +1616,7 @@ iCn3DUI.prototype = {
                      if(resi !== prevResi + 1) {
                          if(prevResi === startResi) {
                              if(bMultipleStructures) {
-                                 spec += '#' + struturePart + '.' + chainPart + ':' + startResi + ' or ';
+                                 spec += '$' + struturePart + '.' + chainPart + ':' + startResi + ' or ';
                              }
                              else {
                                  spec += '.' + chainPart + ':' + startResi + ' or ';
@@ -1617,7 +1624,7 @@ iCn3DUI.prototype = {
                          }
                          else {
                              if(bMultipleStructures) {
-                                 spec += '#' + struturePart + '.' + chainPart + ':' + startResi + '-' + prevResi + ' or ';
+                                 spec += '$' + struturePart + '.' + chainPart + ':' + startResi + '-' + prevResi + ' or ';
                              }
                              else {
                                  spec += '.' + chainPart + ':' + startResi + '-' + prevResi + ' or ';
@@ -1639,7 +1646,7 @@ iCn3DUI.prototype = {
 
              if(prevResi === startResi) {
                  if(bMultipleStructures) {
-                     spec += '#' + struturePart + '.' + chainPart + ':' + startResi;
+                     spec += '$' + struturePart + '.' + chainPart + ':' + startResi;
                  }
                  else {
                      spec += '.' + chainPart + ':' + startResi;
@@ -1647,7 +1654,7 @@ iCn3DUI.prototype = {
              }
              else {
                  if(bMultipleStructures) {
-                     spec += '#' + struturePart + '.' + chainPart + ':' + startResi + '-' + prevResi;
+                     spec += '$' + struturePart + '.' + chainPart + ':' + startResi + '-' + prevResi;
                  }
                  else {
                      spec += '.' + chainPart + ':' + startResi + '-' + prevResi;
@@ -1736,15 +1743,15 @@ iCn3DUI.prototype = {
 
        var bSelectResidues = true;
        for(var i = 0, il=commandArray.length; i < il; ++i) {
-           //#1,2,3.A,B,C:5-10,LYS,ligands@CA,C
-           // #1,2,3: Structure
+           //$1,2,3.A,B,C:5-10,LYS,ligands@CA,C
+           // $1,2,3: Structure
            // .A,B,C: chain
            // :5-10,LYS,ligands: residues, could be 'proteins', 'nucleotides', 'ligands', 'ions', and 'water'
            // @CA,C: atoms
            // wild card * can be used to select all
            var currHighlightAtoms = {};
 
-           var poundPos = commandArray[i].indexOf('#');
+           var poundPos = commandArray[i].indexOf('$');
            var periodPos = commandArray[i].indexOf('.');
            var colonPos = commandArray[i].indexOf(':');
            var atPos = commandArray[i].indexOf('@');
@@ -2637,7 +2644,7 @@ iCn3DUI.prototype = {
 
         me.selectByCommand(select, commandname, commanddesc);
       }
-      else if(command.indexOf('select #') !== -1 || command.indexOf('select .') !== -1 || command.indexOf('select :') !== -1 || command.indexOf('select @') !== -1) {
+      else if(command.indexOf('select $') !== -1 || command.indexOf('select .') !== -1 || command.indexOf('select :') !== -1 || command.indexOf('select @') !== -1) {
         var paraArray = commandOri.split(' | '); // atom names might be case-sensitive
 
         var select = paraArray[0].substr(paraArray[0].indexOf(' ') + 1);
@@ -3183,7 +3190,7 @@ iCn3DUI.prototype = {
         html += "                <li>Display";
         html += "                  <ul>";
         if(me.cfg.align !== undefined) {
-            html += "                      <li><input type='radio' name='" + me.pre + "menu2_display' id='" + me.pre + "menu2_alternate'><label for='" + me.pre + "menu2_alternate'>Alternate Selection</label></li>";
+            html += "                      <li><input type='radio' name='" + me.pre + "menu2_display' id='" + me.pre + "menu2_alternate'><label for='" + me.pre + "menu2_alternate'>Alternate (Key \"a\")</label></li>";
         }
 
         html += "                      <li><input type='radio' name='" + me.pre + "menu2_display' id='" + me.pre + "menu2_show_selected'><label for='" + me.pre + "menu2_show_selected'>Display Selection</label></li>";
@@ -3656,7 +3663,7 @@ iCn3DUI.prototype = {
 
         html += "<div id='" + me.pre + "dl_command'>";
         html += "  <table width='500'><tr><td valign='top'><table>";
-        html += "<tr><td align='right'><b>Select:</b></td><td><input type='text' id='" + me.pre + "command' placeholder='#[structures].[chains]:[residues]@[atoms]' size='30'></td></tr>";
+        html += "<tr><td align='right'><b>Select:</b></td><td><input type='text' id='" + me.pre + "command' placeholder='$[structures].[chains]:[residues]@[atoms]' size='30'></td></tr>";
         html += "<tr><td align='right'><b>Name:</b></td><td><input type='text' id='" + me.pre + "command_name' placeholder='my_selection' size='30'></td></tr>";
         html += "<tr><td align='right'><b>Description:</b></td><td><input type='text' id='" + me.pre + "command_desc' placeholder='description about my selection' size='30'></td></tr>";
         html += "<tr><td colspan='2' align='center'><button id='" + me.pre + "command_apply'><b>Save Selection</b></button></td></tr>";
@@ -3670,9 +3677,9 @@ iCn3DUI.prototype = {
 
         html += "  </td></tr>";
 
-        html += "  <tr><td colspan='2'><a href='https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d.html#selectb' target='_blank'><span title='click to see how to select'><b>Hint</b></span></a>: <br/>";
-        html += "  <b>Specification:</b> In the selection \"#1,2,3.A,B,C:5-10,Lys,ligands@CA,C\":";
-        html += "  <ul><li>\"#1,2,3\" uses \"#\" to indicate structure selection.<br/>";
+        html += "  <tr><td colspan='2'><a href='https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d.html$selectb' target='_blank'><span title='click to see how to select'><b>Hint</b></span></a>: <br/>";
+        html += "  <b>Specification:</b> In the selection \"$1,2,3.A,B,C:5-10,Lys,ligands@CA,C\":";
+        html += "  <ul><li>\"$1,2,3\" uses \"$\" to indicate structure selection.<br/>";
         html += "  <li>\".A,B,C\" uses \".\" to indicate chain selection.<br/>";
         html += "  <li>\":5-10,Lys,ligands\" uses \":\" to indicate residue selection. Residue could be predefined names: \"proteins\", \"nucleotides\", \"ligands\", \"ions\", and \"water\".<br/>";
         html += "  <li>\"@CA,C\" uses \"@\" to indicate atom selection.<br/>";
@@ -3681,8 +3688,8 @@ iCn3DUI.prototype = {
         html += "  <ul><li>Users can select multiple items in \"All Selections\" above.<br/>";
         html += "  <li>Different selections can be unioned (with \"<b>or</b>\", default), intersected (with \"<b>and</b>\"), or negated (with \"<b>not</b>\"). For example, \":1-10 or :Lys\" selects all residues 1-10 and all Lys residues. \":1-10 and :Lys\" selects all Lys residues in the range of residue number 1-10. \":1-10 or not :Lys\" selects all residues 1-10, which are not Lys residues.</ul>";
         html += "  <b>Full commands in url or command window:</b>";
-        html += "  <ul><li>Select without saving the set: select #1,2,3.A,B,C:5-10,Lys,ligands@CA,C<br/>";
-        html += "  <li>Select and save: select #1,2,3.A,B,C:5-10,Lys,ligands@CA,C | name my_name | description my_description</ul>";
+        html += "  <ul><li>Select without saving the set: select $1,2,3.A,B,C:5-10,Lys,ligands@CA,C<br/>";
+        html += "  <li>Select and save: select $1,2,3.A,B,C:5-10,Lys,ligands@CA,C | name my_name | description my_description</ul>";
         html += "  </td></tr></table>";
 
         html += "</div>";
@@ -3767,7 +3774,7 @@ iCn3DUI.prototype = {
         html += "</div>";
 
         html += "<div id='" + me.pre + "dl_color'>";
-        html += "Custom Color: <input type='text' id='" + me.pre + "color' value='#FF0000' size=8> ";
+        html += "Custom Color: <input type='text' id='" + me.pre + "color' value='FF0000' size=8> ";
         html += "<button id='" + me.pre + "applycustomcolor'>Apply</button>";
         html += "</div>";
 
@@ -3820,8 +3827,8 @@ iCn3DUI.prototype = {
         html += "<div id='" + me.pre + "dl_addlabel'>";
         html += "1. Text: <input type='text' id='" + me.pre + "labeltext' value='Text' size=4><br/>";
         html += "2. Size: <input type='text' id='" + me.pre + "labelsize' value='18' size=4 maxlength=2><br/>";
-        html += "3. Color: <input type='text' id='" + me.pre + "labelcolor' value='#ffff00' size=4><br/>";
-        html += "4. Background: <input type='text' id='" + me.pre + "labelbkgd' value='#cccccc' size=4><br/>";
+        html += "3. Color: <input type='text' id='" + me.pre + "labelcolor' value='ffff00' size=4><br/>";
+        html += "4. Background: <input type='text' id='" + me.pre + "labelbkgd' value='cccccc' size=4><br/>";
         html += "<span style='white-space:nowrap'>5. Pick TWO atoms while holding \"Alt\" key</span><br/>";
         html += "<span style='white-space:nowrap'>6. <button id='" + me.pre + "applypick_labels'>Display</button></span>";
         html += "</div>";
@@ -3829,8 +3836,8 @@ iCn3DUI.prototype = {
         html += "<div id='" + me.pre + "dl_addlabelselection'>";
         html += "1. Text: <input type='text' id='" + me.pre + "labeltext2' value='Text' size=4><br/>";
         html += "2. Size: <input type='text' id='" + me.pre + "labelsize2' value='18' size=4 maxlength=2><br/>";
-        html += "3. Color: <input type='text' id='" + me.pre + "labelcolor2' value='#ffff00' size=4><br/>";
-        html += "4. Background: <input type='text' id='" + me.pre + "labelbkgd2' value='#cccccc' size=4><br/>";
+        html += "3. Color: <input type='text' id='" + me.pre + "labelcolor2' value='ffff00' size=4><br/>";
+        html += "4. Background: <input type='text' id='" + me.pre + "labelbkgd2' value='cccccc' size=4><br/>";
         html += "<span style='white-space:nowrap'>5. <button id='" + me.pre + "applyselection_labels'>Display</button></span>";
         html += "</div>";
 
@@ -3895,7 +3902,7 @@ iCn3DUI.prototype = {
                 html += "      <td valign='top'><div style='margin:3px 0px 0px 10px;'><button style='-webkit-appearance:" + buttonStyle + "; height:36px;' id='" + me.pre + "show_2ddiagram'><span style='white-space:nowrap' class='icn3d-commandTitle' title='Show the interactions of the structure'>View<br/>Interactions</span></button></div></td>";
             }
 
-            html += "      <td valign='top'><div id='" + me.pre + "alternateWrapper' style='margin:3px 0px 0px 10px;'><button style='-webkit-appearance:" + buttonStyle + "; height:36px;' id='" + me.pre + "alternate'><span style='white-space:nowrap' class='icn3d-commandTitle' title='Alternate the structures'>Alternate<br/>Selection</span></button></div></td>";
+            html += "      <td valign='top'><div id='" + me.pre + "alternateWrapper' style='margin:3px 0px 0px 10px;'><button style='-webkit-appearance:" + buttonStyle + "; height:36px;' id='" + me.pre + "alternate'><span style='white-space:nowrap' class='icn3d-commandTitle' title='Alternate the structures'>Alternate<br/>(Key \"a\")</span></button></div></td>";
         }
 
         html += "      <td valign='top'><div style='margin:3px 0px 0px 10px;'><button style='-webkit-appearance:" + buttonStyle + "; height:36px;' id='" + me.pre + "show_selected'><span style='white-space:nowrap' class='icn3d-commandTitle' title='Display ONLY the selected atoms'>Display Only<br/>Selection</span></button></div></td>";
