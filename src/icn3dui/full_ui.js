@@ -2796,6 +2796,46 @@ iCn3DUI.prototype = {
         var text = paraArray[0].substr(('add label').length + 1);
 
         // add label Text | x 40.45 y 24.465000000000003 z 53.48 | size 40 | color #ffff00 | background #cccccc | type custom
+        var x,y,z, size, color, background, type;
+        for(var i = 1, il = paraArray.length; i < il; ++i) {
+			var wordArray = paraArray[i].split(' ');
+
+			var bPosition = false;
+			if(wordArray[0] == 'x') {
+				bPosition = true;
+				x = wordArray[1];
+				y = wordArray[3];
+				z = wordArray[5];
+			}
+			else if(wordArray[0] == 'size') {
+				size = paraArray[i].substr(paraArray[i].lastIndexOf(' ') + 1);
+			}
+			else if(wordArray[0] == 'color') {
+				color = paraArray[i].substr(paraArray[i].lastIndexOf(' ') + 1);
+			}
+			else if(wordArray[0] == 'background') {
+				background = paraArray[i].substr(paraArray[i].lastIndexOf(' ') + 1);
+			}
+			else if(wordArray[0] == 'type') {
+				type = paraArray[i].substr(paraArray[i].lastIndexOf(' ') + 1);
+			}
+
+			if(!bPosition) {
+			  var position = me.icn3d.centerAtoms(me.icn3d.hash2Atoms(me.icn3d.highlightAtoms));
+			  x = position.center.x;
+			  y = position.center.y;
+			  z = position.center.z;
+			}
+		}
+
+		if(size === '0' || size === '' || size === 'undefined') size = undefined;
+		if(color === '0' || color === '' || color === 'undefined') color = undefined;
+		if(background === '0' || background === '' || background === 'undefined') background = undefined;
+
+		me.addLabel(text, x,y,z, size, color, background, type);
+		me.icn3d.draw();
+
+/*
         if(paraArray.length == 6) { // specified position
             var positionArray = paraArray[1].split(' ');
             var x = positionArray[1], y = positionArray[3], z = positionArray[5];
@@ -2811,7 +2851,7 @@ iCn3DUI.prototype = {
             me.addLabel(text, x,y,z, size, color, background, type);
             me.icn3d.draw();
         }
-        else if(paraArray.length == 5) { // position is the center of the current selection
+        else { // if(paraArray.length == 5) { // position is the center of the current selection
             var position = me.icn3d.centerAtoms(me.icn3d.hash2Atoms(me.icn3d.highlightAtoms));
             var x = position.center.x;
             var y = position.center.y;
@@ -2828,6 +2868,7 @@ iCn3DUI.prototype = {
             me.addLabel(text, x,y,z, size, color, background, type);
             me.icn3d.draw();
         }
+*/
       }
       else if(command.indexOf('add residue labels') !== -1) {
         me.icn3d.addResiudeLabels(me.icn3d.highlightAtoms);
@@ -3565,6 +3606,7 @@ iCn3DUI.prototype = {
         html += "                      <li><input type='radio' name='" + me.pre + "menu6_bkgd' id='" + me.pre + "menu6_bkgdBlack' checked><label for='" + me.pre + "menu6_bkgdBlack'>Black</label></li>";
         html += "                      <li><input type='radio' name='" + me.pre + "menu6_bkgd' id='" + me.pre + "menu6_bkgdGrey'><label for='" + me.pre + "menu6_bkgdGrey'>Grey</label></li>";
         html += "                      <li><input type='radio' name='" + me.pre + "menu6_bkgd' id='" + me.pre + "menu6_bkgdWhite'><label for='" + me.pre + "menu6_bkgdWhite'>White</label></li>";
+        html += "                      <li><input type='radio' name='" + me.pre + "menu6_bkgd' id='" + me.pre + "menu6_bkgdTransparent'><label for='" + me.pre + "menu6_bkgdTransparent'>Transparent</label></li>";
         html += "                  </ul>";
         html += "                </li>";
         html += "                <li>Fog";
@@ -5225,6 +5267,13 @@ iCn3DUI.prototype = {
         $("#" + me.pre + "menu6_bkgdWhite").click(function (e) {
            me.setOption('background', 'white');
            me.setLogCommand('set background white', true);
+        });
+    },
+
+    clickMenu6_bkgdTransparent: function() { var me = this;
+        $("#" + me.pre + "menu6_bkgdTransparent").click(function (e) {
+           me.setOption('background', 'transparent');
+           me.setLogCommand('set background transparent', true);
         });
     },
 
@@ -7039,6 +7088,7 @@ iCn3DUI.prototype = {
         me.clickMenu6_bkgdBlack();
         me.clickMenu6_bkgdGrey();
         me.clickMenu6_bkgdWhite();
+        me.clickMenu6_bkgdTransparent();
         me.clickMenu6_showfogYes();
         me.clickMenu6_showfogNo();
         me.clickMenu6_showslabYes();

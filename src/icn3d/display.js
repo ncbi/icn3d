@@ -749,7 +749,12 @@
         this.mouse = new THREE.Vector2();
 
         var background = this.backgroundColors[this.options.background.toLowerCase()];
-        this.renderer.setClearColor(background);
+        if(this.options.background.toLowerCase() === 'transparent') {
+        	this.renderer.setClearColor(background, 0);
+		}
+		else {
+			this.renderer.setClearColor(background, 1);
+		}
         // apply fog
         if(this.options['fog'] === 'yes') {
             if(this.options['camera'] === 'perspective') {        //perspective, orthographic
