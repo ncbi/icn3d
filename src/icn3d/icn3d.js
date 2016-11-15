@@ -52,7 +52,8 @@ var iCn3D = function (id) {
         this.renderer = new THREE.WebGLRenderer({
             canvas: this.container.get(0),
             antialias: true,
-            preserveDrawingBuffer: true
+            preserveDrawingBuffer: true,
+            alpha: true
         });
 
         this.overdraw = 0;
@@ -844,6 +845,7 @@ iCn3D.prototype = {
         black: new THREE.Color(0x000000),
          grey: new THREE.Color(0xCCCCCC),
         white: new THREE.Color(0xFFFFFF),
+        transparent: new THREE.Color(0x000000)
     },
 
     residueColors: {

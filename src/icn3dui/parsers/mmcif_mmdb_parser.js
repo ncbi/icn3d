@@ -22,7 +22,7 @@
               if($("#" + me.pre + "commandlog")) $("#" + me.pre + "commandlog").show();
           },
           success: function(data) {
-               url = "//www.ncbi.nlm.nih.gov/Structure/mmcifparser/mmcifparser.cgi";
+               url = "https://www.ncbi.nlm.nih.gov/Structure/mmcifparser/mmcifparser.cgi";
 
                $.ajax({
                   url: url,
@@ -399,10 +399,10 @@
     iCn3DUI.prototype.downloadMmdb = function (mmdbid, bGi) { var me = this;
        var url;
        if(bGi !== undefined && bGi) {
-           url = "https://www.ncbi.nlm.nih.gov/Structure/mmdb/mmdb_strview.cgi?program=w3d&seq=1&gi=" + mmdbid;
+           url = "https://www.ncbi.nlm.nih.gov/Structure/mmdb/mmdb_strview.cgi?program=w3d&seq=1&b&gi=" + mmdbid;
        }
        else {
-           url = "https://www.ncbi.nlm.nih.gov/Structure/mmdb/mmdb_strview.cgi?program=w3d&seq=1&uid=" + mmdbid;
+           url = "https://www.ncbi.nlm.nih.gov/Structure/mmdb/mmdb_strview.cgi?program=w3d&seq=1&b&uid=" + mmdbid;
        }
 
        me.icn3d.bCid = undefined;
@@ -1238,6 +1238,9 @@
             // modify resi since MMDB used the same resi as in PDB where resi is not continuous
             // No need to modify mmcif resi
             if(type === 'mmdbid') {
+				// bfactor
+				atm.b = (atm.b.length > 0) ? atm.b[0] : 1;
+
                 oldResi = atm.resi;
 
                 if(atm.resi !== prevOldResi && atm.resi !== prevOldResi + 1 && chainMissingResArray[atm.chain] !== undefined && chainMissingResArray[atm.chain][missingResIndex] !== undefined && atm.resi === chainMissingResArray[atm.chain][missingResIndex][1]) {
