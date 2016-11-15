@@ -2583,6 +2583,11 @@ iCn3DUI.prototype = {
       if(command.indexOf('export state file') !== -1) { // last step to update transformation
         // the last transformation will be applied
       }
+      else if(command.indexOf('export canvas') !== -1) {
+        setTimeout(function(){
+		              me.saveFile('canvas.png', 'png');
+            }, 500);
+      }
       else if(commandOri.indexOf('select structure') !== -1) {
         var idArray = commandOri.substr(commandOri.lastIndexOf(' ') + 1).split(',');
         if(idArray !== null) me.changeStructureid(idArray);
