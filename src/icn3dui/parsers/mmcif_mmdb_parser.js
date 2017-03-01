@@ -99,9 +99,13 @@
         }
 
         var alignArray = align.split(',');
-        var ids_str = (alignArray.length === 2? 'uids=' : 'ids=') + align;
+        //var ids_str = (alignArray.length === 2? 'uids=' : 'ids=') + align;
+        var ids_str = 'ids=' + align;
+        //var url = 'https://www.ncbi.nlm.nih.gov/Structure/vastplus/vastplus.cgi?cmd=c&w3d&' + ids_str;
+        //var url2 = 'https://www.ncbi.nlm.nih.gov/Structure/vastplus/vastplus.cgi?cmd=c1&d&' + ids_str;
+
         var url = 'https://www.ncbi.nlm.nih.gov/Structure/vastplus/vastplus.cgi?cmd=c&w3d&' + ids_str;
-        var url2 = 'https://www.ncbi.nlm.nih.gov/Structure/vastplus/vastplus.cgi?cmd=c1&d&' + ids_str;
+        var url2 = 'https://www.ncbi.nlm.nih.gov/Structure/vastplus/vastplus.cgi?cmd=c1&d=1&' + ids_str;
 
         if(me.cfg.inpara !== undefined) {
           url += me.cfg.inpara;
@@ -144,15 +148,18 @@
             me.icn3d.pdbid_molid2chain = {};
             me.icn3d.chainsColor = {};
             //me.mmdbidArray = [];
-            for(var i in data) {
-				if(i === 'seqalign') continue;
+            //for(var i in data) {
+			for(var i = 0, il = 2; i < il; ++i) {
+				//if(i === 'seqalign') continue;
+				var mmdbTmp = data['aligned_structures'][0][i];
 
-				var pdbid = (data[i].pdbid !== undefined) ? data[i].pdbid : i;
+				//var pdbid = (data[i].pdbid !== undefined) ? data[i].pdbid : i;
+				var pdbid = (mmdbTmp.pdb_id !== undefined) ? mmdbTmp.pdb_id : mmdbTmp.mmdb_id;
 				//me.mmdbidArray.push(pdbid); // here two molecules are in alphabatic order, themaster molecule could not be the first one
 
 				var chainNameHash = {}; // chain name may be the same in assembly
-				for(var molid in data[i].molecule) {
-				  var chainName = data[i].molecule[molid].chain.trim();
+				for(var molid in mmdbTmp.molecules) {
+				  var chainName = mmdbTmp.molecules[molid].chain.trim();
 				  if(chainNameHash[chainName] === undefined) {
 					  chainNameHash[chainName] = 1;
 				  }
@@ -164,25 +171,28 @@
 
 				  me.icn3d.pdbid_molid2chain[pdbid + '_' + molid] = finalChain;
 
-				  if(data[i].molecule[molid].kind === 'p' || data[i].molecule[molid].kind === 'n') {
+				  if(mmdbTmp.molecules[molid].kind === 'p' || mmdbTmp.molecules[molid].kind === 'n') {
 					  me.icn3d.chainsColor[pdbid + '_' + finalChain] = new THREE.Color(me.GREY8);
 				  }
 				}
 			}
 
-            var index = 0;
-            for(var mmdbid in data) {
-                if(index < 2) {
-                    var pdbid = data[mmdbid].pdbid;
+            //var index = 0;
+            //for(var mmdbid in data) {
+			for(var i = 0, il = 2; i < il; ++i) {
+                //if(index < 2) {
+					var mmdbTmp = data['aligned_structures'][0][i];
 
-                    var molecule = data[mmdbid].molecule;
+                    var pdbid = mmdbTmp.pdb_id;
+
+                    var molecule = mmdbTmp.molecules;
                     for(var molname in molecule) {
                         var chain = molecule[molname].chain;
                         me.icn3d.pdbid_chain2title[pdbid + '_' + chain] = molecule[molname].name;
                     }
-                }
+                //}
 
-                ++index;
+                //++index;
             }
 
             // get the color for each aligned chain pair
@@ -192,8 +202,8 @@
             var colorLength = me.icn3d.stdChainColors.length;
 
             for(var i = 0, il = seqalign.length; i < il; ++i) {
-                var molid1 = seqalign[i][0].mid;
-                var molid2 = seqalign[i][1].sid;
+                var molid1 = seqalign[i][0].molecule_id;
+                var molid2 = seqalign[i][1].molecule_id;
 
                 //var colorIndex = i % colorLength;
                 //var colorStr = "#" + me.icn3d.stdChainColors[colorIndex].getHexString();
@@ -343,8 +353,8 @@
 
                 //var mmdbidArray = me.inputid.split('_');
                 var mmdbidArray = [];
-                for(var i = 0, il = data.aligned_structures.length; i < il; ++i) {
-					mmdbidArray.push(data.aligned_structures[i].pdbid);
+                for(var i = 0, il = data.aligned_structures[0].length; i < il; ++i) {
+					mmdbidArray.push(data.aligned_structures[0][i].pdb_id);
 				}
 
                 me.set2DDiagramsForAlign(mmdbidArray[0].toUpperCase(), mmdbidArray[1].toUpperCase(), chains);
@@ -1038,21 +1048,21 @@
           var refinedStr = (me.cfg.inpara.indexOf('atype=1') !== -1) ? 'Invariant Core ' : '';
           me.icn3d.moleculeTitle = refinedStr + 'Structure Alignment of ';
 
-          for (var i = 0, il = data.aligned_structures.length; i < il; ++i) {
-              var structure = data.aligned_structures[i];
+          for (var i = 0, il = data.aligned_structures[0].length; i < il; ++i) {
+              var structure = data.aligned_structures[0][i];
 
               if(i === 1) {
-                  me.icn3d.secondId = structure.pdbid; // set the second pdbid to add indent in the structure and chain menus
+                  me.icn3d.secondId = structure.pdb_id; // set the second pdbid to add indent in the structure and chain menus
               }
 
-              for(var j = structure.range[0]; j <= structure.range[1]; ++j) {
-                  var pdbidTmp = structure.pdbid;
-                  var mmdbidTmp = structure.mmdbid;
+              for(var j = structure.atom_range[0]; j <= structure.atom_range[1]; ++j) {
+                  var pdbidTmp = structure.pdb_id;
+                  var mmdbidTmp = structure.mmdb_id;
                   serial2structure[j] = pdbidTmp.toString();
                   mmdbid2pdbid[mmdbidTmp] = pdbidTmp;
               }
 
-              me.icn3d.moleculeTitle +=  "<a href=\"https://www.ncbi.nlm.nih.gov/Structure/mmdb/mmdbsrv.cgi?uid=" + structure.pdbid.toUpperCase() + "\" target=\"_blank\" style=\"color: " + me.GREYD + ";\">" + structure.pdbid.toUpperCase() + "</a>";
+              me.icn3d.moleculeTitle +=  "<a href=\"https://www.ncbi.nlm.nih.gov/Structure/mmdb/mmdbsrv.cgi?uid=" + structure.pdb_id.toUpperCase() + "\" target=\"_blank\" style=\"color: " + me.GREYD + ";\">" + structure.pdb_id.toUpperCase() + "</a>";
 
               if(structure.descr !== undefined) me.pmid += structure.descr.pubmedid;
               if(i === 0) {
@@ -1266,6 +1276,19 @@
 				me.mmdbMolidResid2mmdbChainResi[mmdb_id + '_' + atm.ids.m + '_' + atm.ids.r] = mmdb_id + '_' + atm.chain + '_' + atm.resi;
             }
 
+            // Dachuan's later modification caused this change
+/*
+            if(type === 'align') {
+				atm.coord.x = parseFloat(atm.coord.x);
+				atm.coord.y = parseFloat(atm.coord.y);
+				atm.coord.z = parseFloat(atm.coord.z);
+
+				for(var i = 0, il = atm.bonds.length; i < il; ++i) {
+					atm.bonds[i] = parseInt(atm.bonds[i]);
+				}
+			}
+*/
+
             pmin.min(atm.coord);
             pmax.max(atm.coord);
             psum.add(atm.coord);
@@ -1469,8 +1492,8 @@
         if(type === 'align' && seqalign !== undefined) {
           //loadSeqAlignment
           var alignedAtoms = {};
-          var mmdbid1 = data.aligned_structures[0].pdbid;
-          var mmdbid2 = data.aligned_structures[1].pdbid;
+          var mmdbid1 = data.aligned_structures[0][0].pdb_id;
+          var mmdbid2 = data.aligned_structures[0][1].pdb_id;
 
           var conservedName1 = mmdbid1 + '_cons', nonConservedName1 = mmdbid1 + '_ncons', notAlignedName1 = mmdbid1 + '_nalign';
           var conservedName2 = mmdbid2 + '_cons', nonConservedName2 = mmdbid2 + '_ncons', notAlignedName2 = mmdbid2 + '_nalign';
@@ -1481,21 +1504,21 @@
           for (var i = 0, il = seqalign.length; i < il; ++i) {
               // first sequence
               var alignData = seqalign[i][0];
-              var molid1 = alignData.mid;
+              var molid1 = alignData.molecule_id;
 
               var chain1 = me.icn3d.pdbid_molid2chain[mmdbid1 + '_' + molid1];
               var chainid1 = mmdbid1 + '_' + chain1;
 
               var id2aligninfo = {};
-              var start = alignData.mseq.length, end = -1;
-              for(var j = 0, jl = alignData.mseq.length; j < jl; ++j) {
+              var start = alignData.sequence.length, end = -1;
+              for(var j = 0, jl = alignData.sequence.length; j < jl; ++j) {
                   // 0: internal resi id, 1: pdb resi id, 2: resn, 3: aligned or not
-                  var resi = alignData.mseq[j][1];
-                  var resn = (alignData.mseq[j][2] === '~') ? '-' : alignData.mseq[j][2];
+                  var resi = alignData.sequence[j][1];
+                  var resn = (alignData.sequence[j][2] === '~') ? '-' : alignData.sequence[j][2];
                   // not aligned residues also Uppercase, but italic using css
                   resn = resn.toUpperCase();
 
-                  var aligned = alignData.mseq[j][3]; // 0 or 1
+                  var aligned = alignData.sequence[j][3]; // 0 or 1
 
                   if(aligned == 1) {
                       if(j < start) start = j;
@@ -1507,7 +1530,7 @@
 
               // second sequence
               alignData = seqalign[i][1];
-              var molid2 = alignData.sid;
+              var molid2 = alignData.molecule_id;
 
               var chain2 = me.icn3d.pdbid_molid2chain[mmdbid2 + '_' + molid2];
               var chainid2 = mmdbid2 + '_' + chain2;
@@ -1537,12 +1560,12 @@
               //for(var j = 0, jl = alignData.sseq.length; j < jl; ++j) {
               for(var j = start; j <= end; ++j) {
                   // 0: internal resi id, 1: pdb resi id, 2: resn, 3: aligned or not
-                  var resi = alignData.sseq[j][1];
-                  var resn = (alignData.sseq[j][2] === '~') ? '-' : alignData.sseq[j][2];
+                  var resi = alignData.sequence[j][1];
+                  var resn = (alignData.sequence[j][2] === '~') ? '-' : alignData.sequence[j][2];
                   // not aligned residues also Uppercase, but italic using css
                   resn = resn.toUpperCase();
 
-                  var aligned = id2aligninfo[j].aligned + alignData.sseq[j][3]; // 0 or 2
+                  var aligned = id2aligninfo[j].aligned + alignData.sequence[j][3]; // 0 or 2
 
                   var color, classname;
                   if(aligned === 2) { // aligned

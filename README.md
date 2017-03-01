@@ -89,6 +89,8 @@ gulp gh-pages
 
 ## Change log
 
+The production version [icn3d-1.3.4](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-1.3.4.zip) was release on March 1, 2017. The backend of structure alignment was updated.
+
 The production version [icn3d-1.3.3](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-1.3.3.zip) was release on November 15, 2016. Now users can save the image with "transparent" background using a single url, e.g., [https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?mmdbid=2por&width=300&height=300&command=set%20background%20transparent;%20export%20canvas](https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?mmdbid=2por&width=300&height=300&command=set%20background%20transparent;%20export%20canvas).
 
 The production version [icn3d-1.3.2](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-1.3.2.zip) was release on October 18, 2016. The atom specification in "Advanced set selection" was modified to use "$" instead of "#" in front of structure IDs. This modification avoids to the problem of showing multiple "#" in the urls of "Share Link".
