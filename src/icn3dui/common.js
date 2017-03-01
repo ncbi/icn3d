@@ -136,7 +136,8 @@ if (!$.ui.dialog.prototype._makeDraggableBase) {
                    url = "https://www.ncbi.nlm.nih.gov/structure/?term=";
                }
                else {
-                   url = "https://www.ncbi.nlm.nih.gov/Structure/mmdb/mmdbsrv.cgi?uid=";
+                   //url = "https://www.ncbi.nlm.nih.gov/Structure/mmdb/mmdbsrv.cgi?uid=";
+                   url = "https://www.ncbi.nlm.nih.gov/Structure/pdb/";
                }
            }
 
