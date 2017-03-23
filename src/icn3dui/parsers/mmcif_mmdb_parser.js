@@ -1501,7 +1501,7 @@
 
         // set up sequence alignment
         // display the structure right away. load the menus and sequences later
-        //setTimeout(function(){
+        setTimeout(function(){
         if(type === 'align' && seqalign !== undefined) {
           //loadSeqAlignment
           var alignedAtoms = {};
@@ -1597,7 +1597,7 @@
                           nconsHash2[chainid2 + '_' + resi] = 1;
                       }
 
-                      //alignedAtoms = me.icn3d.unionHash
+                      // expensive and thus remove
                       //alignedAtoms = me.icn3d.unionHash(alignedAtoms, me.icn3d.residues[chainid1 + '_' + id2aligninfo[j].resi]);
                       //alignedAtoms = me.icn3d.unionHash(alignedAtoms, me.icn3d.residues[chainid2 + '_' + resi]);
                   }
@@ -1714,9 +1714,9 @@
 */
           seqalign = {};
         } // if(align
-//        }, 0); // execute later
 
         me.showTitle();
 
-        //data = {};
+        data = {};
+        }, 0); // execute later
     };
