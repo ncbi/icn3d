@@ -1501,7 +1501,7 @@
 
         // set up sequence alignment
         // display the structure right away. load the menus and sequences later
-        setTimeout(function(){
+//        setTimeout(function(){
         if(type === 'align' && seqalign !== undefined) {
           //loadSeqAlignment
           var alignedAtoms = {};
@@ -1718,5 +1718,5 @@
         me.showTitle();
 
         data = {};
-        }, 0); // execute later
+//        }, 0); // execute later
     };
