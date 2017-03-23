@@ -605,7 +605,7 @@ iCn3DUI.prototype = {
       if(me.cfg.showseq !== undefined && me.cfg.showseq) me.openDialog(me.pre + 'dl_selectresidues', 'Select residues in sequences');
 
       // display the structure right away. load the menus and sequences later
-//      setTimeout(function(){
+      setTimeout(function(){
           //if(me.cfg.command === undefined && (me.cfg.showmenu === undefined || me.cfg.showmenu || me.cfg.showseq || me.cfg.showalignseq) ) {
           if(Object.keys(me.icn3d.highlightAtoms).length === Object.keys(me.icn3d.atoms).length && (me.cfg.showmenu === undefined || me.cfg.showmenu || me.cfg.showseq || me.cfg.showalignseq || me.cfg.show2d) ) {
               me.selectAllUpdateMenuSeq(me.bInitial, false);
@@ -617,7 +617,7 @@ iCn3DUI.prototype = {
 
               me.updateSeqWin2DWinForCurrentAtoms();
           }
-//      }, 0);
+      }, 0);
 
       if(me.bInitial && me.cfg.command !== undefined && me.cfg.command !== '') {
               me.icn3d.bRender = true;
@@ -2602,7 +2602,20 @@ iCn3DUI.prototype = {
       }
       else if(commandOri.indexOf('select interaction') !== -1) {
         var idArray = commandOri.substr(commandOri.lastIndexOf(' ') + 1).split(',');
-        if(idArray !== null) me.selectInteraction(idArray[0], idArray[1]);
+        if(idArray !== null) {
+			var mmdbid = idArray[0].split('_')[0];
+
+			var url="https://www.ncbi.nlm.nih.gov/Structure/mmdb/mmdb_strview.cgi?uid="+mmdbid+"&format=json&intrac=3";
+			$.ajax({
+				url: url,
+				dataType: 'jsonp',
+				success: function( data ) {
+					me.draw2Ddiagram(data, mmdbid, 0, false);
+
+					me.selectInteraction(idArray[0], idArray[1]);
+				}
+			});
+		}
       }
       else if(commandOri.indexOf('select alignChain') !== -1) {
         var idArray = commandOri.substr(commandOri.lastIndexOf(' ') + 1).split(',');

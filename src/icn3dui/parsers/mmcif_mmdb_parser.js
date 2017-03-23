@@ -104,8 +104,8 @@
         //var url = 'https://www.ncbi.nlm.nih.gov/Structure/vastplus/vastplus.cgi?cmd=c&w3d&' + ids_str;
         //var url2 = 'https://www.ncbi.nlm.nih.gov/Structure/vastplus/vastplus.cgi?cmd=c1&d&' + ids_str;
 
-        var url = 'https://www.ncbi.nlm.nih.gov/Structure/vastplus/vastplus.cgi?cmd=c&w3d&' + ids_str;
-        var url2 = 'https://www.ncbi.nlm.nih.gov/Structure/vastplus/vastplus.cgi?cmd=c1&d=1&' + ids_str;
+        var url = 'https://www.ncbi.nlm.nih.gov/Structure/vastplus/vastplus.cgi?cmd=c&w3d&' + ids_str + '&v=1.3.4';
+        var url2 = 'https://www.ncbi.nlm.nih.gov/Structure/vastplus/vastplus.cgi?cmd=c1&d=1&' + ids_str + '&v=1.3.4';
 
         if(me.cfg.inpara !== undefined) {
           url += me.cfg.inpara;
@@ -117,12 +117,14 @@
         // define for 'align' only
         me.icn3d.pdbid_chain2title = {};
 
-        me.chainids2resids = {}; // me.chainids2resids[chainid1][chainid2] = [resid, resid]
+        if(me.chainids2resids === undefined) me.chainids2resids = {}; // me.chainids2resids[chainid1][chainid2] = [resid, resid]
 
         var request = $.ajax({
            url: url2,
            dataType: 'jsonp',
-           cache: true,
+           cache: true
+/*
+           ,
           beforeSend: function() {
               if($("#" + me.pre + "wait")) $("#" + me.pre + "wait").show();
               if($("#" + me.pre + "canvas")) $("#" + me.pre + "canvas").hide();
@@ -133,6 +135,7 @@
               if($("#" + me.pre + "canvas")) $("#" + me.pre + "canvas").show();
               if($("#" + me.pre + "commandlog")) $("#" + me.pre + "commandlog").show();
           }
+*/
         });
 
         var seqalign = {};
@@ -272,6 +275,8 @@
 
 				me.addCustomSelection(Object.keys(residuesHash), Object.keys(displayAtoms), commandname, commanddescr, select, true);
 
+// expensive to generate "aligned_ligands"
+/*
 				var atoms1 = {}, atoms = {};
 
 				atoms1 = me.icn3d.getAtomsWithinAtom(me.icn3d.ligands, displayAtoms, 0);
@@ -314,7 +319,7 @@
 				}
 
 				displayAtoms = me.icn3d.unionHash(displayAtoms,  atoms);
-
+*/
 
 //                me.setMode('all');
 
@@ -357,7 +362,9 @@
 					mmdbidArray.push(data.aligned_structures[0][i].pdb_id);
 				}
 
-                me.set2DDiagramsForAlign(mmdbidArray[0].toUpperCase(), mmdbidArray[1].toUpperCase(), chains);
+                setTimeout(function(){
+                	me.set2DDiagramsForAlign(mmdbidArray[0].toUpperCase(), mmdbidArray[1].toUpperCase());
+                }, 0);
 
                 // by default, open the seq alignment window
                 if(me.cfg.show2d !== undefined && me.cfg.show2d) me.openDialog(me.pre + 'dl_2ddiagram', 'Interactions');
@@ -374,7 +381,7 @@
         });
     };
 
-    iCn3DUI.prototype.set2DDiagramsForAlign = function (mmdbid1, mmdbid2, chains) { var me = this;
+    iCn3DUI.prototype.set2DDiagramsForAlign = function (mmdbid1, mmdbid2) { var me = this;
 	   var url1="https://www.ncbi.nlm.nih.gov/Structure/mmdb/mmdb_strview.cgi?uid="+mmdbid1+"&format=json&intrac=3";
 	   var url2="https://www.ncbi.nlm.nih.gov/Structure/mmdb/mmdb_strview.cgi?uid="+mmdbid2+"&format=json&intrac=3";
 
@@ -421,7 +428,7 @@
          url += me.cfg.inpara;
        }
 
-       me.chainids2resids = {}; // me.chainids2resids[chainid1][chainid2] = [resid, resid]
+       if(me.chainids2resids === undefined) me.chainids2resids = {}; // me.chainids2resids[chainid1][chainid2] = [resid, resid]
 
        $.ajax({
           url: url,
@@ -697,7 +704,9 @@
 
             me.html2ddiagram = "<div style='width:150px'><b>Nodes</b>: chains<br/><b>Lines</b>: interactions (4 &#197;)</div><br/>";
 
-            me.download2Ddiagram(me.inputid.toUpperCase());
+            setTimeout(function(){
+            	me.download2Ddiagram(me.inputid.toUpperCase());
+            }, 0);
 
             //if(me.cfg.show2d !== undefined && me.cfg.show2d) me.openDialog(me.pre + 'dl_2ddiagram', 'Interactions');
             if(me.cfg.showseq !== undefined && me.cfg.showseq) me.openDialog(me.pre + 'dl_selectresidues', 'Select residues in sequences');
@@ -733,7 +742,7 @@
 
     // draw 2D diagram for MMDB ID
     // Used as a reference the work at 2016 ISMB hackathon: https://github.com/NCBI-Hackathons/3D_2D_Rep_Structure
-    iCn3DUI.prototype.draw2Ddiagram = function(data, mmdbid, structureIndex) { var me = this;
+    iCn3DUI.prototype.draw2Ddiagram = function(data, mmdbid, structureIndex, bDraw) { var me = this;
         // reduce the size from 300 to 150
         var factor = 0.5;
 
@@ -839,7 +848,7 @@
             var oricolor = molid2color[molid];
             var alignNum = "";
             if(structureIndex !== undefined && structureIndex === 0) {
-                if(me.alignmolid2color[0].hasOwnProperty(molid)) {
+                if(me.alignmolid2color !== undefined && me.alignmolid2color[0].hasOwnProperty(molid)) {
                     //color = me.alignmolid2color[0][molid];
                     alignNum = me.alignmolid2color[0][molid];
                     oricolor = "#FF0000";
@@ -849,7 +858,7 @@
 				}
             }
             else if(structureIndex !== undefined && structureIndex === 1) {
-                if(me.alignmolid2color[1].hasOwnProperty(molid)) {
+                if(me.alignmolid2color !== undefined && me.alignmolid2color[1].hasOwnProperty(molid)) {
                     //color = me.alignmolid2color[1][molid];
                     alignNum = me.alignmolid2color[1][molid];
                     oricolor = "#FF0000";
@@ -1013,9 +1022,11 @@
 
           html += "</div>";
 
-        me.html2ddiagram += html;
+        if(bDraw === undefined || bDraw) {
+			me.html2ddiagram += html;
 
-        $("#" + me.pre + "dl_2ddiagram").html(me.html2ddiagram);
+			$("#" + me.pre + "dl_2ddiagram").html(me.html2ddiagram);
+		}
     };
 
     iCn3DUI.prototype.downloadGi = function (gi) { var me = this;
@@ -1489,6 +1500,8 @@
         }
 
         // set up sequence alignment
+        // display the structure right away. load the menus and sequences later
+//        setTimeout(function(){
         if(type === 'align' && seqalign !== undefined) {
           //loadSeqAlignment
           var alignedAtoms = {};
@@ -1584,8 +1597,9 @@
                           nconsHash2[chainid2 + '_' + resi] = 1;
                       }
 
-                      alignedAtoms = me.icn3d.unionHash(alignedAtoms, me.icn3d.residues[chainid1 + '_' + id2aligninfo[j].resi]);
-                      alignedAtoms = me.icn3d.unionHash(alignedAtoms, me.icn3d.residues[chainid2 + '_' + resi]);
+                      // expensive and thus remove
+                      //alignedAtoms = me.icn3d.unionHash(alignedAtoms, me.icn3d.residues[chainid1 + '_' + id2aligninfo[j].resi]);
+                      //alignedAtoms = me.icn3d.unionHash(alignedAtoms, me.icn3d.residues[chainid2 + '_' + resi]);
                   }
                   else {
                       color = me.GREY8;
@@ -1689,6 +1703,7 @@
             me.selectResidueList(nalignHash2, notAlignedName2, notAlignedName2);
           }
 
+/*
           // assign grey color to all unaligned atoms
           var color = new THREE.Color(me.GREYB);
           for(var i in me.icn3d.atoms) {
@@ -1696,11 +1711,12 @@
                   me.icn3d.atoms[i].color = color;
               }
           }
-
+*/
           seqalign = {};
         } // if(align
 
         me.showTitle();
 
         data = {};
+//        }, 0); // execute later
     };

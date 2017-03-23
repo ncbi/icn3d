@@ -9,7 +9,8 @@
 .icn3d-tabBox {position: absolute; left: 10px; top:20px; padding: 0px; color: white; width: 300px; z-index:1;}
 .icn3d-bottomTab {background-color: black; border: 2px solid white; color: white; padding: 5px 10px 5px 10px; margin: 0px; border-radius: 10px 10px 0px 0px; -webkit-border-radius: 10px 10px 0px 0px; -moz-border-radius: 10px 10px 0px 0px;}
 .icn3d-insideTab {width: 100%; height: 0px; background-color: rgba(0, 0, 0, 0.5);}
-.icn3d-option {font-size: 90%; float:left; width:100%; margin-top:6px;}
+//.icn3d-option {font-size: 90%; float:left; width:100%; margin-top:6px;}
+.icn3d-option {font-size: 90%; margin-top:6px;}
 .icn3d-insideTab div.option b {color: white!important;}
 
 .icn3d-hidden {display: none;}

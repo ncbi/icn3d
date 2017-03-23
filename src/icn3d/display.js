@@ -511,7 +511,11 @@
 
         this.setStyle2Atoms(atoms);
 
-        this.bAllAtoms = (Object.keys(atoms).length === Object.keys(this.atoms).length);
+        //this.bAllAtoms = (Object.keys(atoms).length === Object.keys(this.atoms).length);
+        this.bAllAtoms = false;
+        if(atoms && atoms !== undefined ) {
+			this.bAllAtoms = (Object.keys(atoms).length === Object.keys(this.atoms).length);
+		}
 
 //        var currentCalphas = {};
 //        if(this.options['sidechains'] !== 'nothing') {
@@ -519,7 +523,7 @@
 //        }
 
         // remove schematic labels
-        this.labels['schematic'] = [];
+        if(this.labels && this.labels !== undefined) this.labels['schematic'] = [];
 
         var ligandSchematicRadius = this.cylinderRadius * 0.5;
 
