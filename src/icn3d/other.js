@@ -382,6 +382,12 @@
     };
 
     iCn3D.prototype.unionHash = function(atoms1, atoms2) {
+        jQuery.extend(atoms1, atoms2);
+
+        return atoms1;
+    };
+
+    iCn3D.prototype.unionHashNotInPlace = function(atoms1, atoms2) {
         var results = jQuery.extend({}, atoms1, atoms2);
         atoms1 = {};
         atoms2 = {};
