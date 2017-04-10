@@ -267,7 +267,10 @@
                     // different chain
                     if(chainNum !== prevChainNum) {
                         // a chain could be separated in two sections
-                        if(serial !== 1) this.chains[prevChainNum] = this.unionHash2Atoms(this.chains[prevChainNum], chainsTmp);
+                        if(serial !== 1) {
+							//this.chains[prevChainNum] = this.unionHash2Atoms(this.chains[prevChainNum], chainsTmp);
+							this.chains[prevChainNum] = this.unionHash(this.chains[prevChainNum], chainsTmp);
+						}
 
                         chainsTmp = {};
 

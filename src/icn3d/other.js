@@ -382,9 +382,12 @@
     };
 
     iCn3D.prototype.unionHash = function(atoms1, atoms2) {
-        jQuery.extend(atoms1, atoms2);
+		// The commented-out version has a problem: atom1 became undefined.
+        //jQuery.extend(atoms1, atoms2);
 
-        return atoms1;
+        //return atoms1;
+
+        return this.unionHashNotInPlace(atoms1, atoms2);
     };
 
     iCn3D.prototype.unionHashNotInPlace = function(atoms1, atoms2) {
