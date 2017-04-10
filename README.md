@@ -11,7 +11,7 @@ We provided two versions of iCn3D widgets: [basic interface](https://www.ncbi.nl
 
 Either of these widgets could be easily added to your own web pages. Please see the [help page](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d.html) for more details.
 
-<b>Complete package</b> of iCn3D including Three.js and jQuery can be downloaded from [https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-1.3.5.zip](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-1.3.5.zip). The "Download ZIP" link in this page does not include these third-party libraries. 
+<b>Complete package</b> of iCn3D including Three.js and jQuery can be downloaded from [https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-1.3.6.zip](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-1.3.6.zip). The "Download ZIP" link in this page does not include these third-party libraries. 
 
 ## Usage
 
@@ -88,6 +88,8 @@ gulp gh-pages
 ```
 
 ## Change log
+
+The production version [icn3d-1.3.6](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-1.3.6.zip) was release on April 10, 2017. A bug introduced in the version of icn3d-1.3.5 was fixed in the function unionHash. 
 
 The production version [icn3d-1.3.5](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-1.3.5.zip) was release on March 23, 2017. The codes were optimized to show 3D structures as soon as possible. Vast+ structure alignment was optimized as well. 
 

@@ -1153,7 +1153,7 @@ iCn3DUI.prototype = {
               	  var alignedAtoms = me.icn3d.intersectHash(me.icn3d.alignChains[chainArray2d[i]], hlatoms);
               	  if(Object.keys(alignedAtoms).length > 0) firstAtom = me.icn3d.getFirstAtomObj(alignedAtoms);
 		  	  }
-              var color = (firstAtom.color !== undefined) ? '#' + firstAtom.color.getHexString() : '#FFFFFF';
+              var color = (firstAtom !== undefined && firstAtom.color !== undefined) ? '#' + firstAtom.color.getHexString() : '#FFFFFF';
 
 			  var target = $("#" + me.pre + "dl_2ddiagram g[chainid=" + chainArray2d[i] + "] rect[class='icn3d-hlnode']");
 			  var base = $("#" + me.pre + "dl_2ddiagram g[chainid=" + chainArray2d[i] + "] rect[class='icn3d-basenode']");
