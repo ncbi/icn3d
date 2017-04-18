@@ -89,6 +89,8 @@ gulp gh-pages
 
 ## Change log
 
+The production version [icn3d-1.3.7](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-1.3.7.zip) was release on April 18, 2017. A bug in the output order of commands was fixed.  
+
 The production version [icn3d-1.3.6](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-1.3.6.zip) was release on April 10, 2017. A bug introduced in the version of icn3d-1.3.5 was fixed in the function unionHash. 
 
 The production version [icn3d-1.3.5](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-1.3.5.zip) was release on March 23, 2017. The codes were optimized to show 3D structures as soon as possible. Vast+ structure alignment was optimized as well. 

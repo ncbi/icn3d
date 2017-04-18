@@ -358,6 +358,9 @@ iCn3DUI.prototype = {
 
             me.downloadAlignment(me.cfg.align);
         }
+        else if(me.cfg.command !== undefined) {
+        	me.loadScript(me.cfg.command);
+		}
         else {
             alert("Please use the \"File\" menu to retrieve a structure of interest or to display a local file.");
         }
@@ -2519,6 +2522,9 @@ iCn3DUI.prototype = {
         if(load_parameters.length > 1) {
             var firstSpacePos = load_parameters[load_parameters.length - 1].indexOf(' ');
             me.cfg.inpara = load_parameters[load_parameters.length - 1].substr(firstSpacePos + 1);
+            if(me.cfg.inpara === 'undefined') {
+				me.cfg.inpara = '';
+			}
         }
 
         // load pdb, mmcif, mmdb, cid
@@ -4163,8 +4169,9 @@ iCn3DUI.prototype = {
 
     clickToggle: function() { var me = this;
         $("#" + me.pre + "toggle").add("#" + me.pre + "menu2_toggle").click(function(e) {
-           me.setLogCommand("toggle selection", true);
+           //me.setLogCommand("toggle selection", true);
            me.toggleSelection();
+           me.setLogCommand("toggle selection", true);
         });
     },
 
@@ -4215,8 +4222,9 @@ iCn3DUI.prototype = {
 
     clickAlternate: function() { var me = this;
         $("#" + me.pre + "alternate").add("#" + me.pre + "menu2_alternate").click(function(e) {
-           me.setLogCommand("alternate structures", false);
+           //me.setLogCommand("alternate structures", false);
            me.icn3d.alternateStructures();
+           me.setLogCommand("alternate structures", false);
         });
     },
 
@@ -4376,19 +4384,27 @@ iCn3DUI.prototype = {
            if(me.cfg.inpara !== undefined) pos = me.cfg.inpara.indexOf('&command=');
            var inparaWithoutCommand = (pos !== -1 ) ? me.cfg.inpara.substr(0, pos) : me.cfg.inpara;
 
-           url += inparaWithoutCommand.substr(1) + '&command=';
+           var start = 0;
+           if(inparaWithoutCommand !== undefined) {
+             url += inparaWithoutCommand.substr(1) + '&command=';
+             start = 1;
+		   }
+		   else {
+			 url += 'command=';
+			 start = 0;
+		   }
 
 		   var transformation = {};
 		   transformation.factor = me.icn3d._zoomFactor;
 		   transformation.mouseChange = me.icn3d.mouseChange;
 		   transformation.quaternion = me.icn3d.quaternion;
 
-           for(var i = 1, il = me.icn3d.commands.length; i < il; ++i) {
+           for(var i = start, il = me.icn3d.commands.length; i < il; ++i) {
                var command_tf = me.icn3d.commands[i].split('|||');
 
                if(i === il - 1) {
                    //var transformation = (command_tf.length > 1) ? ('|||' + command_tf[1]) : '';
-                   if(i !== 1) {
+                   if(i !== 1 && i !== 0) {
                        url += '; ';
                    }
                    url += command_tf[0] + '|||' + JSON.stringify(transformation);
@@ -5107,11 +5123,12 @@ iCn3DUI.prototype = {
 
     clickMenu6_addlabelResidues: function() { var me = this;
         $("#" + me.pre + "menu6_addlabelResidues").click(function (e) {
-           me.setLogCommand('add residue labels', true);
+           //me.setLogCommand('add residue labels', true);
 
            me.icn3d.addResiudeLabels(me.icn3d.highlightAtoms);
 
-             me.saveSelectionIfSelected();
+           me.saveSelectionIfSelected();
+           me.setLogCommand('add residue labels', true);
            me.icn3d.draw();
         });
     },
@@ -5178,25 +5195,28 @@ iCn3DUI.prototype = {
 
     clickmenu2_selectedcenter: function() { var me = this;
         $("#" + me.pre + "menu2_selectedcenter").add("#" + me.pre + "zoomin_selection").click(function (e) {
-           me.setLogCommand('zoom selection', true);
+           //me.setLogCommand('zoom selection', true);
 
            me.icn3d.zoominSelection();
+           me.setLogCommand('zoom selection', true);
         });
     },
 
     clickMenu6_center: function() { var me = this;
         $("#" + me.pre + "menu6_center").click(function (e) {
-           me.setLogCommand('center selection', true);
+           //me.setLogCommand('center selection', true);
 
            me.icn3d.centerSelection();
+           me.setLogCommand('center selection', true);
         });
     },
 
     clickMenu6_resetorientation: function() { var me = this;
         $("#" + me.pre + "menu6_resetorientation").add("#" + me.pre + "resetorientation").click(function (e) {
-           me.setLogCommand('reset orientation', true);
+           //me.setLogCommand('reset orientation', true);
 
            me.icn3d.resetOrientation();
+           me.setLogCommand('reset orientation', true);
         });
     },
 
@@ -5854,9 +5874,10 @@ iCn3DUI.prototype = {
 
            if(nameArray !== null) {
              // log the selection
-             me.setLogCommand('select saved selection ' + nameArray.toString(), true);
+             //me.setLogCommand('select saved selection ' + nameArray.toString(), true);
 
              me.changeCustomResidues(nameArray);
+             me.setLogCommand('select saved selection ' + nameArray.toString(), true);
            }
         });
 
@@ -5866,9 +5887,10 @@ iCn3DUI.prototype = {
 
            if(nameArray !== null) {
              // log the selection
-             me.setLogCommand('select saved selection ' + nameArray.toString(), true);
+             //me.setLogCommand('select saved selection ' + nameArray.toString(), true);
 
              me.changeCustomResidues(nameArray);
+             me.setLogCommand('select saved selection ' + nameArray.toString(), true);
            }
         });
 
@@ -5891,9 +5913,10 @@ iCn3DUI.prototype = {
 
            if(nameArray !== null) {
              // log the selection
-             me.setLogCommand('select saved atoms ' + nameArray.toString(), true);
+             //me.setLogCommand('select saved atoms ' + nameArray.toString(), true);
 
              me.changeCustomAtoms(nameArray);
+             me.setLogCommand('select saved atoms ' + nameArray.toString(), true);
            }
         });
 
@@ -5904,9 +5927,10 @@ iCn3DUI.prototype = {
 
     clickShow_selected: function() { var me = this;
         $("#" + me.pre + "show_selected").add("#" + me.pre + "menu2_show_selected").click(function(e) {
-           me.setLogCommand("show selection", true);
+           //me.setLogCommand("show selection", true);
 
            me.showSelection();
+           me.setLogCommand("show selection", true);
         });
     },
 
@@ -5932,8 +5956,9 @@ iCn3DUI.prototype = {
         $("#" + me.pre + "show_selected_atom").click(function(e) {
            e.preventDefault();
 
-           me.setLogCommand("show selection", true);
+           //me.setLogCommand("show selection", true);
            me.showSelection();
+           me.setLogCommand("show selection", true);
         });
     },
 
@@ -5945,9 +5970,10 @@ iCn3DUI.prototype = {
            var commandname = $("#" + me.pre + "command_name").val().replace(/;/g, '_').replace(/\s+/g, '_');
            var commanddesc = $("#" + me.pre + "command_desc").val().replace(/;/g, '_').replace(/\s+/g, '_');
 
-           me.setLogCommand('select ' + select + ' | name ' + commandname + ' | description ' + commanddesc, true);
+           //me.setLogCommand('select ' + select + ' | name ' + commandname + ' | description ' + commanddesc, true);
 
            me.selectByCommand(select, commandname, commanddesc);
+           me.setLogCommand('select ' + select + ' | name ' + commandname + ' | description ' + commanddesc, true);
         });
     },
 
@@ -6106,9 +6132,10 @@ iCn3DUI.prototype = {
              reader.onload = function (e) {
                var dataStr = e.target.result; // or = reader.result;
 
-               me.setLogCommand('load selection file ' + $("#" + me.pre + "selectionfile").val(), false);
+               //me.setLogCommand('load selection file ' + $("#" + me.pre + "selectionfile").val(), false);
 
                me.loadSelection(dataStr);
+               me.setLogCommand('load selection file ' + $("#" + me.pre + "selectionfile").val(), false);
              };
 
              reader.readAsText(file);
@@ -6340,9 +6367,10 @@ iCn3DUI.prototype = {
             var radius = $("#" + me.pre + "radius_aroundsphere").val();
 
                var select = "select zone cutoff " + radius;
-               me.setLogCommand(select, true);
+               //me.setLogCommand(select, true);
 
                me.pickCustomSphere(radius);
+               me.setLogCommand(select, true);
         });
     },
 
@@ -6354,9 +6382,10 @@ iCn3DUI.prototype = {
            var threshold = $("#" + me.pre + "hbondthreshold" ).val();
 
            var select = "hbonds " + threshold;
-           me.setLogCommand(select, true);
+           //me.setLogCommand(select, true);
 
            me.showHbonds(threshold);
+           me.setLogCommand(select, true);
         });
     },
 
@@ -6379,12 +6408,13 @@ iCn3DUI.prototype = {
              var y = (me.icn3d.pickedatom.coord.y + me.icn3d.pickedatom2.coord.y) / 2;
              var z = (me.icn3d.pickedatom.coord.z + me.icn3d.pickedatom2.coord.z) / 2;
 
-             me.setLogCommand('add label ' + text + ' | x ' + x  + ' y ' + y + ' z ' + z + ' | size ' + size + ' | color ' + color + ' | background ' + background + ' | type custom', true);
+             //me.setLogCommand('add label ' + text + ' | x ' + x  + ' y ' + y + ' z ' + z + ' | size ' + size + ' | color ' + color + ' | background ' + background + ' | type custom', true);
 
              me.addLabel(text, x, y, z, size, color, background, 'custom');
 
              me.icn3d.pickpair = false;
 
+             me.setLogCommand('add label ' + text + ' | x ' + x  + ' y ' + y + ' z ' + z + ' | size ' + size + ' | color ' + color + ' | background ' + background + ' | type custom', true);
              me.icn3d.draw();
            }
         });
@@ -6406,10 +6436,11 @@ iCn3DUI.prototype = {
              var y = position.center.y;
              var z = position.center.z;
 
-             me.setLogCommand('add label ' + text + ' | size ' + size + ' | color ' + color + ' | background ' + background + ' | type custom', true);
+             //me.setLogCommand('add label ' + text + ' | size ' + size + ' | color ' + color + ' | background ' + background + ' | type custom', true);
 
              me.addLabel(text, x, y, z, size, color, background, 'custom');
 
+             me.setLogCommand('add label ' + text + ' | size ' + size + ' | color ' + color + ' | background ' + background + ' | type custom', true);
              me.icn3d.draw();
         });
     },
@@ -6433,7 +6464,7 @@ iCn3DUI.prototype = {
              var y = (me.icn3d.pickedatom.coord.y + me.icn3d.pickedatom2.coord.y) / 2;
              var z = (me.icn3d.pickedatom.coord.z + me.icn3d.pickedatom2.coord.z) / 2;
 
-             me.setLogCommand('add label ' + text + ' | x ' + x  + ' y ' + y + ' z ' + z + ' | size ' + size + ' | color ' + color + ' | background ' + background + ' | type distance', true);
+             //me.setLogCommand('add label ' + text + ' | x ' + x  + ' y ' + y + ' z ' + z + ' | size ' + size + ' | color ' + color + ' | background ' + background + ' | type distance', true);
 
              me.addLabel(text, x, y, z, size, color, background, 'distance');
 
@@ -6446,6 +6477,8 @@ iCn3DUI.prototype = {
 
              me.icn3d.pickpair = false;
 
+             me.setLogCommand('add label ' + text + ' | x ' + x  + ' y ' + y + ' z ' + z + ' | size ' + size + ' | color ' + color + ' | background ' + background + ' | type distance', true);
+
              me.icn3d.draw();
            }
         });
@@ -6453,7 +6486,7 @@ iCn3DUI.prototype = {
 
     clickReset: function() { var me = this;
         $("#" + me.pre + "reset").click(function (e) {
-            me.setLogCommand("reset", true);
+            //me.setLogCommand("reset", true);
 
             //reset me.icn3d.maxD
             me.icn3d.maxD = me.icn3d.oriMaxD;
@@ -6465,13 +6498,15 @@ iCn3DUI.prototype = {
 
             me.setMode('all');
 
+            me.setLogCommand("reset", true);
+
             me.removeSeqChainBkgd();
             me.removeSeqResidueBkgd();
         });
     },
 
     toggleHighlight: function() { var me = this;
-            me.setLogCommand("toggle highlight", true);
+            //me.setLogCommand("toggle highlight", true);
 
             if(me.icn3d.prevHighlightObjects.length > 0) { // remove
                 me.icn3d.removeHighlightObjects();
@@ -6496,10 +6531,12 @@ iCn3DUI.prototype = {
 */
                 me.bSelectResidue = true;
             }
+
+            me.setLogCommand("toggle highlight", true);
     },
 
     clearHighlight: function() { var me = this;
-            me.setLogCommand("clear selection", true);
+            //me.setLogCommand("clear selection", true);
 
             //if(me.icn3d.prevHighlightObjects.length > 0) { // remove
                 me.icn3d.removeHighlightObjects();
@@ -6511,6 +6548,7 @@ iCn3DUI.prototype = {
 
                 me.bSelectResidue = false;
             //}
+            me.setLogCommand("clear selection", true);
     },
 
     clickToggleHighlight: function() { var me = this;
@@ -6629,11 +6667,13 @@ iCn3DUI.prototype = {
                 }
             //}
 
-            me.setLogCommand('select ' + me.residueids2spec(Object.keys(me.selectedResidues)) + ' | name ' + name + ' | description ' + description, true);
+            //me.setLogCommand('select ' + me.residueids2spec(Object.keys(me.selectedResidues)) + ' | name ' + name + ' | description ' + description, true);
 
             me.selectResidueList(me.selectedResidues, name, description);
 
             me.updateSelectionNameDesc();
+
+            me.setLogCommand('select ' + me.residueids2spec(Object.keys(me.selectedResidues)) + ' | name ' + name + ' | description ' + description, true);
     },
 
     clickSeqSaveSelection: function() { var me = this;
