@@ -46,11 +46,15 @@
                 var het, bProtein, bNucleotide;
                 var elem, atomName, coord, b, alt;
 
+                var bModifyResi = false;
+
                 var callbackDict = {
                     onModel: function( modelData ){
                         structure = (modelData.modelIndex === 0) ? id : id + (modelData.modelIndex + 1).toString();
                     },
                     onChain: function( chainData ){
+						bModifyResi = false;
+
                         chain = chainData.chainName; // or chainData.chainId
                         var chainid = structure + '_' + chain;
 
@@ -66,6 +70,12 @@
                     onGroup: function( groupData ){
                         resn = groupData.groupName;
                         resi = groupData.groupId;
+
+                        if(resi == prevResi || bModifyResi) {
+							bModifyResi = true;
+							resi = prevResi + 1; // for residue insertion code
+						}
+
                         var resid = structure + '_' + chain + '_' + resi;
 
                         if(groupData.secStruct === 0 || groupData.secStruct === 2 || groupData.secStruct === 4) {

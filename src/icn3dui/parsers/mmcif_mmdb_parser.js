@@ -1152,7 +1152,7 @@
         var structureNum = '', chainNum = '', residueNum = '';
         var currContinueSeq = '';
         var oldResi, prevOldResi = -999;
-        prevResi = 0; // continuous from 1 for each chain
+        var prevResi = 0; // continuous from 1 for each chain
         var missingResIndex = 0;
         var bChainSeqSet = true;
 
@@ -1254,7 +1254,8 @@
 
             var oneLetterRes = me.icn3d.residueName2Abbr(atm.resn.substr(0, 3));
 
-            atm.resi = parseInt(atm.resi); // has to be integer
+            //atm.resi = parseInt(atm.resi); // has to be integer
+            atm.resi = atm.ids.r; // corrected for residue insertion code
 
             // modify resi since MMDB used the same resi as in PDB where resi is not continuous
             // No need to modify mmcif resi
@@ -1272,7 +1273,11 @@
                     ++missingResIndex;
                 }
 
-                if(atm.resi !== prevOldResi || molid !== prevMolid) {
+                //if(atm.resi !== prevOldResi || molid !== prevMolid) {
+                if(molid !== prevMolid) {
+					atm.resi = atm.resi; // don't change the assigned resi
+				}
+                else if(atm.resi !== prevOldResi) {
                     atm.resi = prevResi + 1;
                 }
                 else {
