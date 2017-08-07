@@ -15,9 +15,10 @@
         var serial = 0;
 
         var moleculeNum = 1;
-        var chainNum, residueNum;
-        var prevChainNum = '', prevResidueNum = '';
+        var chainNum, residueNum, oriResidueNum;
+        var prevChainNum = '', prevResidueNum = '', prevOriResidueNum = '', prevResi = 0;
         var prevRecord = '';
+        var bModifyResi = false;
 
         var oriSerial2NewSerial = {};
 
@@ -156,7 +157,8 @@
                 }
             } else if (record === 'ATOM  ' || record === 'HETATM') {
                 var alt = line.substr(16, 1);
-                if (alt === "B") continue;
+                //if (alt === "B") continue;
+                if (alt !== " " && alt !== "A") continue;
 
                 // "CA" has to appear before "O". Otherwise the cartoon of secondary structure will have breaks
                 // Concatenation of two pdbs will have several atoms for the same serial
@@ -173,7 +175,32 @@
                 var chain = line.substr(21, 1);
                 if(chain === '') chain = 1;
 
-                var resi = parseInt(line.substr(22, 4));
+                chainNum = structure + "_" + chain;
+                if(chainNum !== prevChainNum) {
+					prevResi = 0;
+					bModifyResi = false;
+				}
+
+                //var oriResi = line.substr(22, 4).trim();
+                var oriResi = line.substr(22, 5).trim();
+                oriResidueNum = chainNum + "_" + oriResi;
+                if(oriResidueNum !== prevOriResidueNum) {
+					if(bModifyResi) {
+					  ++prevResi;
+					}
+					else {
+					  prevResi = (chainNum !== prevChainNum) ? 0 : parseInt(prevResidueNum.substr(prevResidueNum.lastIndexOf("_") + 1));
+				    }
+				}
+
+                var resi = parseInt(oriResi);
+                if(oriResi != resi || bModifyResi) { // e.g., 99A and 99
+                  bModifyResi = true;
+                  resi = (prevResi == 0) ? resi : prevResi + 1;
+				}
+
+                residueNum = chainNum + "_" + resi;
+
                 var atom = line.substr(12, 4).replace(/ /g, '');
                 var chain_resi = chain + "_" + resi;
 
@@ -234,9 +261,6 @@
                     this.atoms[serial].ssend = true;
                   }
                 }
-
-                chainNum = structure + "_" + chain;
-                residueNum = chainNum + "_" + resi;
 
                 var secondaries = '-';
                 if(this.atoms[serial].ss === 'helix') {
@@ -321,6 +345,7 @@
 
                 prevChainNum = chainNum;
                 prevResidueNum = residueNum;
+                prevOriResidueNum = oriResidueNum;
 
             } else if (record === 'CONECT') {
                 var from = parseInt(line.substr(6, 5));

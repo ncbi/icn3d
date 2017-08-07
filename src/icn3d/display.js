@@ -211,6 +211,16 @@
             case 'custom':
                 // do the coloring separately
                 break;
+
+            default: // the "#" was missed in order to make sharelink work
+				for (var i in atoms) {
+					var atom = this.atoms[i];
+					atom.color = new THREE.Color().setStyle("#" + options.color.toLowerCase());
+
+					this.atomPrevColors[i] = atom.color;
+				}
+
+				break;
         }
       }
        }

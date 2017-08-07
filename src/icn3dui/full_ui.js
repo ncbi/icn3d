@@ -408,7 +408,8 @@ iCn3DUI.prototype = {
       if($("#" + me.pre + "commandlog")[0] !== undefined) $("#" + me.pre + "commandlog")[0].style.display = "none";
       if($("#" + me.pre + "selection")[0] !== undefined) $("#" + me.pre + "selection")[0].style.display = "none";
 
-      if($("#" + me.pre + "title")[0] !== undefined) $("#" + me.pre + "title")[0].style.display = "none";
+	  //if($("#" + me.pre + "title")[0] !== undefined) $("#" + me.pre + "title")[0].style.display = "none";
+	  $("#" + me.pre + "title")[0].style.margin = "10px 0 0 10px";
 
       $("#" + me.pre + "viewer").width(width).height(height);
       $("#" + me.pre + "canvas").width(width).height(height);
@@ -3550,6 +3551,10 @@ iCn3DUI.prototype = {
         if(me.cfg.cid === undefined) {
             html += "                <li>-</li>";
 
+        	if(me.cfg.mmdbid !== undefined) {
+				html += "                <li><span id='" + me.pre + "menu6_exportInteraction' class='icn3d-link'>Interaction <br>Residues<br/></span></li>";
+			}
+
             html += "                <li>H-Bonds to<br/>Selection";
             html += "                  <ul>";
             html += "                      <li><input type='radio' name='" + me.pre + "menu6_hbonds' id='" + me.pre + "menu6_hbondsYes'><label for='" + me.pre + "menu6_hbondsYes'>Show</label></li>";
@@ -3840,7 +3845,7 @@ iCn3DUI.prototype = {
         html += "</div>";
 
         html += "<div id='" + me.pre + "dl_color'>";
-        html += "Custom Color: <input type='text' id='" + me.pre + "color' value='FF0000' size=8> ";
+        html += "Custom Color: <input type='text' id='" + me.pre + "customcolor' value='FF0000' size=8> ";
         html += "<button id='" + me.pre + "applycustomcolor'>Apply</button>";
         html += "</div>";
 
@@ -4321,6 +4326,27 @@ iCn3DUI.prototype = {
            me.setLogCommand("export state file", false);
 
            me.saveFile(me.inputid + '_statefile.txt', 'command');
+        });
+    },
+
+    clickMenu6_exportInteraction: function() { var me = this;
+        $("#" + me.pre + "menu6_exportInteraction").click(function (e) {
+           me.setLogCommand("export interactions", false);
+
+           var text = '<b>Interacting residues</b>:<br/><table border=1 cellpadding=0 cellspacing=0><tr><th>Base Chain: Residues</th><th>Interacting Chain</th></tr>';
+
+		   //me.chainids2resids[fisrtChainid][secondChainid].push(resid);
+		   for(var fisrtChainid in me.chainids2resids) {
+			   for(var secondChainid in me.chainids2resids[fisrtChainid]) {
+				   text += '<tr><td>' + fisrtChainid + ': ';
+				   text += me.residueids2spec(me.chainids2resids[fisrtChainid][secondChainid]);
+				   text += '</td><td>' + secondChainid + '</td></tr>';
+			   }
+		   }
+
+           text += '</table><br/>';
+
+           me.saveFile(me.inputid + '_interactions.html', 'html', text);
         });
     },
 
@@ -6354,8 +6380,8 @@ iCn3DUI.prototype = {
            e.preventDefault();
            dialog.dialog( "close" );
 
-           me.setOption("color", $("#" + me.pre + "color").val());
-           me.setLogCommand("color " + $("#" + me.pre + "color").val(), true);
+           me.setOption("color", $("#" + me.pre + "customcolor").val());
+           me.setLogCommand("color " + $("#" + me.pre + "customcolor").val(), true);
         });
     },
 
@@ -7039,6 +7065,7 @@ iCn3DUI.prototype = {
         me.clickMenu1_state();
         me.clickMenu1_selection();
         me.clickMenu1_exportState();
+        me.clickMenu6_exportInteraction();
         me.clickMenu1_exportCanvas();
         me.clickMenu1_exportCounts();
         me.clickMenu1_exportSelections();
