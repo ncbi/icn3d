@@ -1259,9 +1259,9 @@
 
             // modify resi since MMDB used the same resi as in PDB where resi is not continuous
             // No need to modify mmcif resi
-            if(type === 'mmdbid') {
+            if(type === 'mmdbid' || type === 'align') {
 				// bfactor
-				atm.b = (atm.b.length > 0) ? atm.b[0] : 1;
+				if(type === 'mmdbid') atm.b = (atm.b.length > 0) ? atm.b[0] : 1;
 
                 oldResi = atm.resi;
 
@@ -1274,20 +1274,23 @@
                 }
 
                 //if(atm.resi !== prevOldResi || molid !== prevMolid) {
+                //    atm.resi = prevResi + 1;
+				//}
                 if(molid !== prevMolid) {
 					atm.resi = atm.resi; // don't change the assigned resi
 				}
                 else if(atm.resi !== prevOldResi) {
                     atm.resi = prevResi + 1;
                 }
+
                 else {
                     atm.resi = prevResi;
                 }
 
                 prevOldResi = oldResi;
-            }
+//            }
 
-            if(type === 'mmdbid' || type === 'align') {
+//            if(type === 'mmdbid' || type === 'align') {
 				// set me.mmdbMolidResid2mmdbChainResi
 				me.mmdbMolidResid2mmdbChainResi[mmdb_id + '_' + atm.ids.m + '_' + atm.ids.r] = mmdb_id + '_' + atm.chain + '_' + atm.resi;
             }
@@ -1531,7 +1534,8 @@
               var start = alignData.sequence.length, end = -1;
               for(var j = 0, jl = alignData.sequence.length; j < jl; ++j) {
                   // 0: internal resi id, 1: pdb resi id, 2: resn, 3: aligned or not
-                  var resi = alignData.sequence[j][1];
+                  //var resi = alignData.sequence[j][1];
+                  var resi = alignData.sequence[j][0];
                   var resn = (alignData.sequence[j][2] === '~') ? '-' : alignData.sequence[j][2];
                   // not aligned residues also Uppercase, but italic using css
                   resn = resn.toUpperCase();
@@ -1578,7 +1582,8 @@
               //for(var j = 0, jl = alignData.sseq.length; j < jl; ++j) {
               for(var j = start; j <= end; ++j) {
                   // 0: internal resi id, 1: pdb resi id, 2: resn, 3: aligned or not
-                  var resi = alignData.sequence[j][1];
+                  //var resi = alignData.sequence[j][1];
+                  var resi = alignData.sequence[j][0];
                   var resn = (alignData.sequence[j][2] === '~') ? '-' : alignData.sequence[j][2];
                   // not aligned residues also Uppercase, but italic using css
                   resn = resn.toUpperCase();

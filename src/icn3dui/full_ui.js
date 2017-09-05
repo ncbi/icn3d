@@ -3969,7 +3969,7 @@ iCn3DUI.prototype = {
                 html += "      <td valign='top'><div style='margin:3px 0px 0px 10px;'><button style='-webkit-appearance:" + buttonStyle + "; height:36px;' id='" + me.pre + "show_alignsequences'><span style='white-space:nowrap' class='icn3d-commandTitle' title='Show the sequences of the aligned structures'>Aligned<br/>Sequence</span></button></div></td>";
             }
 
-            if(me.cfg.mmdbid !== undefined || me.cfg.align !== undefined) {
+            if(me.cfg.mmdbid !== undefined || me.cfg.gi !== undefined || me.cfg.align !== undefined) {
                 html += "      <td valign='top'><div style='margin:3px 0px 0px 10px;'><button style='-webkit-appearance:" + buttonStyle + "; height:36px;' id='" + me.pre + "show_2ddiagram'><span style='white-space:nowrap' class='icn3d-commandTitle' title='Show the interactions of the structure'>View<br/>Interactions</span></button></div></td>";
             }
 
