@@ -89,6 +89,8 @@ gulp gh-pages
 
 ## Change log
 
+The production version [icn3d-1.3.10](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-1.3.10.zip) was release on October 27, 2017. The "Save File" issue in Chrome 60 and after was fixed.  
+
 The production version [icn3d-1.3.9](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-1.3.9.zip) was release on September 5, 2017. The handling of residues with insertion codes was fixed in structure alignment.  
 
 The production version [icn3d-1.3.8](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-1.3.8.zip) was release on August 7, 2017. The handling of residues with insertion codes was fixed.  
