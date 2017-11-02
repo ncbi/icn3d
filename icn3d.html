@@ -541,10 +541,11 @@ We provided two versions of iCn3D widgets: <a href="index.html?mmdbid=2por">basi
 <tr valign='top'><td>align</td><td>Yes</td><td>Yes</td><td>Two PDB IDs or MMDB IDs for structure alignment, e.g., <a href="full.html?align=1hho,4n7n">?align=1hho,4n7n</a></td></tr>
 <tr valign='top'><td>url</td><td>Yes</td><td>Yes</td><td>Use the url (encoded) to retrieve the 3D structure. The url requires another parameter "type", e.g., <a href="full.html?type=pdb&url=https%3A%2F%2Ffiles.rcsb.org%2Fview%2F1gpk.pdb">?type=pdb&url=https%3A%2F%2Ffiles.rcsb.org%2Fview%2F1gpk.pdb</a></td></tr>
 
-<tr valign='top'><td>width</td><td>Yes</td><td>Yes</td><td>Width of the structure image. It can be percentage such as '100%', or pixel values such as 400. The default is '100%'.</td></tr>
-<tr valign='top'><td>height</td><td>Yes</td><td>Yes</td><td>Height of the structure image. It can be percentage such as '100%', or pixel values such as 400. The default is '100%'.</td></tr>
+<tr valign='top'><td>width</td><td>Yes</td><td>Yes</td><td>Width of the structure image. It can be percentage such as '100%', or pixel values such as 400. The default is "100%".</td></tr>
+<tr valign='top'><td>height</td><td>Yes</td><td>Yes</td><td>Height of the structure image. It can be percentage such as '100%', or pixel values such as 400. The default is "100%".</td></tr>
 <tr valign='top'><td>resize</td><td>Yes</td><td>Yes</td><td>Set "true" or "1" to resize the image when the container is resized. The default is "true".</td></tr>
 <tr valign='top'><td>rotate</td><td>Yes</td><td>Yes</td><td>Set "right", "left", "up", or "down" to rotate the structure when it is  displayed at the beginning. The default is "right".</td></tr>
+<tr valign='top'><td>maxatomcnt</td><td>Yes</td><td>Yes</td><td>Maximum number of atoms to show all atoms. Above this threshold, an intermediate selection page will pop up to select subsections for display. The default is "100000".</td></tr>
 
 <tr valign='top'><td>showmenu</td><td>No</td><td>Yes</td><td>Set "false" or "0" to hide the menus and buttons at the top of the structure canvas. The default is "true".</td></tr>
 <tr valign='top'><td>showseq</td><td>No</td><td>Yes</td><td>Set "true" or "1" to show the sequence window. The default is "false".</td></tr>
@@ -826,6 +827,7 @@ In the dialog Select -&gt; Advanced, users can use simple specification to selec
 <tr><td><span class="indent">orthographic:</span></td>       <td>set camera orthographic</td></tr>
 
 <tr><td colspan="2"><br>h) Other -&gt; Background</td></tr>
+<tr><td><span class="indent">transparent:</span></td>              <td>set background transparent</td></tr>
 <tr><td><span class="indent">black:</span></td>              <td>set background black</td></tr>
 <tr><td><span class="indent">grey:</span></td>               <td>set background grey</td></tr>
 <tr><td><span class="indent">white:</span></td>              <td>set background white</td></tr>
@@ -914,7 +916,7 @@ In the dialog Select -&gt; Advanced, users can use simple specification to selec
     <li><b>Default values and possible choices of display options</b>
       <pre>          var options = {};
           options['camera']             = 'perspective';        //perspective, orthographic
-          options['background']         = 'black';              //black, grey, white
+          options['background']         = 'transparent';        //transparent, black, grey, white
           options['color']              = 'spectrum';           //spectrum, secondary structure, charge, hydrophobic, chain, residue, atom,
                                                                 // red, green, blue, magenta, yellow, cyan, white, grey, custom
           options['proteins']           = 'ribbon';             //ribbon, strand, cylinder and plate, schematic, c alpha trace,
@@ -1520,8 +1522,14 @@ Update the sequence window for the currently selected atoms.
 <a name="log"></a>
 <h2>Change Log:<img src="https://www.ncbi.nlm.nih.gov/Structure/IMG/spacer.gif" width="25" height="1" border="0"><a href="#Top"><img src="https://www.ncbi.nlm.nih.gov/Structure/IMG/arrowup_blue.gif" width="12" height="12" border="0" alt="back to top"></a></h2>
 
+<<<<<<< HEAD
+The production version <a href="https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-1.4.0.zip">icn3d-1.4.0</a> was release on November 2, 2017. The rendering speed has been significantly improved by using the Imposter shaders from NGL Viewer. A bug in "Share Link" was fixed.
+
+The production version <a href="https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-1.3.10.zip">icn3d-1.3.10</a> was release on October 27, 2017. The "Save File" issue in Chrome 60 and after was fixed.
+=======
 The production version <a href="https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-1.3.10.zip">icn3d-1.3.10</a> was release on October 27, 2017. The "Save File" issue in Chrome 60 and after was fixed.
 <br><br>
+>>>>>>> 155df831078d5c640c63e0d6b4b857120feb18e3
 
 The production version <a href="https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-1.3.9.zip">icn3d-1.3.9</a> was release on September 5, 2017. The handling of residues with insertion codes was fixed in structure alignment.
 <br><br>
