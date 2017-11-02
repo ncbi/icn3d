@@ -1,14 +1,6 @@
 {
   "name": "icn3d",
-<<<<<<< HEAD
-  "version": "1.4.0",
-=======
-<<<<<<< HEAD
-  "version": "1.4.0",
-=======
   "version": "1.3.10",
->>>>>>> 155df831078d5c640c63e0d6b4b857120feb18e3
->>>>>>> 5c19917bf1c8c423036bb411016bc755bd4524ed
   "description": "iCn3D Structure Viewer",
   "main": "index.html",
   "scripts": {
@@ -30,7 +22,7 @@
   "dependencies": {
     "jquery": "~2.1.4",
     "jquery-ui": "components/jqueryui.git#1.11.4",
-    "three": "~0.80.0"
+    "three": "~0.71.1"
   },
   "devDependencies": {
     "del": "^2.2.0",

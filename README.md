@@ -2,7 +2,7 @@
 
 ## iCn3D
 
-"I see in 3D" (iCn3D) Structure Viewer is a WebGL-based 3D viewer using Three.js and jQuery. It is based on the 3D styles of [iview](http://istar.cse.cuhk.edu.hk/iview/) and [GLmol](https://webglmol.osdn.jp/index-en.html), and the surface generation of [3Dmol](https://3dmol.csb.pitt.edu/). iCn3D has a feature-rich user interface and allows users to: use a url or a state file to capture the custom display of 3D structures, define custom atom sets, show 3D structure, 2D interactions, and 1D sequence together and select residues on all of them, display custom labeling, go back and forth to different stage, show highlight, etc. iCn3D can also show the aligned 3D structures by providing two PDB IDs or MMDB IDs, whose alignment has been pre-calculated at NCBI.  
+"I see in 3D" (iCn3D) Structure Viewer is a WebGL-based 3D viewer using Three.js and jQuery. It is based on the 3D styles of [iview](http://istar.cse.cuhk.edu.hk/iview/) and [GLmol](https://webglmol.osdn.jp/index-en.html), the surface generation of [3Dmol](https://3dmol.csb.pitt.edu/), and the Imposter shaders of [NGL Viewer] (https://github.com/arose/ngl). iCn3D has a feature-rich user interface and allows users to: use a url or a state file to capture the custom display of 3D structures, define custom atom sets, show 3D structure, 2D interactions, and 1D sequence together and select residues on all of them, display custom labeling, go back and forth to different stage, show highlight, etc. iCn3D can also show the aligned 3D structures by providing two PDB IDs or MMDB IDs, whose alignment has been pre-calculated at NCBI.  
 
 We provided two versions of iCn3D widgets: [basic interface](https://www.ncbi.nlm.nih.gov/Structure/icn3d/index.html?mmdbid=2por) and [advanced interface](https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?mmdbid=2por). 
 
@@ -11,7 +11,7 @@ We provided two versions of iCn3D widgets: [basic interface](https://www.ncbi.nl
 
 Either of these widgets could be easily added to your own web pages. Please see the [help page](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d.html) for more details.
 
-<b>Complete package</b> of iCn3D including Three.js and jQuery can be downloaded from [https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-1.3.9.zip](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-1.3.9.zip). The "Download ZIP" link in this page does not include these third-party libraries. 
+<b>Complete package</b> of iCn3D including Three.js and jQuery can be downloaded from [https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-1.4.0.zip](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-1.4.0.zip). The "Download ZIP" link in this page does not include these third-party libraries. 
 
 ## Usage
 
@@ -41,6 +41,7 @@ See the [help page](https://www.ncbi.nlm.nih.gov/Structure/icn3d/docs/icn3d_help
 * **[iview](http://istar.cse.cuhk.edu.hk/iview/)**: The drawing of 3D objects is mainly based on iview.
 * **[GLmol](https://webglmol.osdn.jp/index-en.html)**: The drawing of nucleotides cartoon is from GLmol.
 * **[3Dmol](https://3dmol.csb.pitt.edu/)**: The surface generation and labeling are from 3Dmol.
+* **[NGL Viewer](https://github.com/arose/ngl)**: The Imposter shaders are from NGL Viewer.
 
 ## Building
 
@@ -88,26 +89,15 @@ gulp gh-pages
 ```
 
 ## Change log
+The production version [icn3d-1.4.0](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-1.4.0.zip) was release on November 2, 2017. The rendering speed has been significantly improved by using the Imposter shaders from NGL Viewer. A bug in "Share Link" was fixed.
+
+The production version [icn3d-1.3.10](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-1.3.10.zip) was release on October 27, 2017. The "Save File" issue in Chrome 60 and after was fixed.  
 
 The production version [icn3d-1.3.10](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-1.3.10.zip) was release on October 27, 2017. The "Save File" issue in Chrome 60 and after was fixed.  
 
 The production version [icn3d-1.3.9](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-1.3.9.zip) was release on September 5, 2017. The handling of residues with insertion codes was fixed in structure alignment.  
 
 The production version [icn3d-1.3.8](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-1.3.8.zip) was release on August 7, 2017. The handling of residues with insertion codes was fixed.  
-
-The production version [icn3d-1.3.7](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-1.3.7.zip) was release on April 18, 2017. A bug in the output order of commands was fixed.  
-
-The production version [icn3d-1.3.6](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-1.3.6.zip) was release on April 10, 2017. A bug introduced in the version of icn3d-1.3.5 was fixed in the function unionHash. 
-
-The production version [icn3d-1.3.5](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-1.3.5.zip) was release on March 23, 2017. The codes were optimized to show 3D structures as soon as possible. Vast+ structure alignment was optimized as well. 
-
-The production version [icn3d-1.3.4](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-1.3.4.zip) was release on March 1, 2017. The backend of structure alignment was updated.
-
-The production version [icn3d-1.3.3](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-1.3.3.zip) was release on November 15, 2016. Now users can save the image with "transparent" background using a single url, e.g., [https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?mmdbid=2por&width=300&height=300&command=set%20background%20transparent;%20export%20canvas](https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?mmdbid=2por&width=300&height=300&command=set%20background%20transparent;%20export%20canvas).
-
-The production version [icn3d-1.3.2](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-1.3.2.zip) was release on October 18, 2016. The atom specification in "Advanced set selection" was modified to use "$" instead of "#" in front of structure IDs. This modification avoids to the problem of showing multiple "#" in the urls of "Share Link".
-
-The production version [icn3d-1.3.1](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-1.3.1.zip) was release on October 4, 2016. Partial diplay of helices or beta-sheets are enabled. The side chains, if displayed, are connected to C-alphas.
 
 All previous releases can be found at the [API page](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d.html#log).
 

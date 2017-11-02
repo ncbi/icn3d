@@ -51,7 +51,7 @@ var iCn3DUI = function(cfg) {
 
     me.options = {};
     me.options['camera']             = 'perspective';        //perspective, orthographic
-    me.options['background']         = 'black';              //black, grey, white
+    me.options['background']         = 'transparent';        //transparent, black, grey, white
     me.options['color']              = 'spectrum';           //spectrum, secondary structure, charge, hydrophobic, conserved, chain, residue, atom, red, green, blue, magenta, yellow, cyan, white, grey, custom
     me.options['sidechains']         = 'nothing';            //lines, stick, ball and stick, sphere, nothing
     me.options['proteins']          = 'ribbon';             //ribbon, strand, cylinder and plate, schematic, c alpha trace, b factor tube, lines, stick, ball and stick, sphere, nothing
@@ -2611,7 +2611,7 @@ iCn3DUI.prototype = {
         var idArray = commandOri.substr(commandOri.lastIndexOf(' ') + 1).split(',');
         if(idArray !== null) {
 			var mmdbid = idArray[0].split('_')[0];
-
+/*
 			var url="https://www.ncbi.nlm.nih.gov/Structure/mmdb/mmdb_strview.cgi?uid="+mmdbid+"&format=json&intrac=3";
 			$.ajax({
 				url: url,
@@ -2619,9 +2619,11 @@ iCn3DUI.prototype = {
 				success: function( data ) {
 					me.draw2Ddiagram(data, mmdbid, 0, false);
 
-					me.selectInteraction(idArray[0], idArray[1]);
+					//me.selectInteraction(idArray[0], idArray[1]);
 				}
 			});
+*/
+			me.selectInteraction(idArray[0], idArray[1]);
 		}
       }
       else if(commandOri.indexOf('select alignChain') !== -1) {
@@ -3632,10 +3634,10 @@ iCn3DUI.prototype = {
         html += "                </li>";
         html += "                <li>Background";
         html += "                  <ul>";
-        html += "                      <li><input type='radio' name='" + me.pre + "menu6_bkgd' id='" + me.pre + "menu6_bkgdBlack' checked><label for='" + me.pre + "menu6_bkgdBlack'>Black</label></li>";
+        html += "                      <li><input type='radio' name='" + me.pre + "menu6_bkgd' id='" + me.pre + "menu6_bkgdTransparent' checked><label for='" + me.pre + "menu6_bkgdTransparent'>Transparent</label></li>";
+        html += "                      <li><input type='radio' name='" + me.pre + "menu6_bkgd' id='" + me.pre + "menu6_bkgdBlack'><label for='" + me.pre + "menu6_bkgdBlack'>Black</label></li>";
         html += "                      <li><input type='radio' name='" + me.pre + "menu6_bkgd' id='" + me.pre + "menu6_bkgdGrey'><label for='" + me.pre + "menu6_bkgdGrey'>Grey</label></li>";
         html += "                      <li><input type='radio' name='" + me.pre + "menu6_bkgd' id='" + me.pre + "menu6_bkgdWhite'><label for='" + me.pre + "menu6_bkgdWhite'>White</label></li>";
-        html += "                      <li><input type='radio' name='" + me.pre + "menu6_bkgd' id='" + me.pre + "menu6_bkgdTransparent'><label for='" + me.pre + "menu6_bkgdTransparent'>Transparent</label></li>";
         html += "                  </ul>";
         html += "                </li>";
         html += "                <li>Fog";
@@ -6534,7 +6536,7 @@ iCn3DUI.prototype = {
     toggleHighlight: function() { var me = this;
             //me.setLogCommand("toggle highlight", true);
 
-            if(me.icn3d.prevHighlightObjects.length > 0) { // remove
+            if(me.icn3d.prevHighlightObjects.length > 0 || me.icn3d.prevHighlightObjects_ghost.length > 0) { // remove
                 me.icn3d.removeHighlightObjects();
                 me.remove2DHighlight();
                 me.icn3d.render();
@@ -6918,22 +6920,6 @@ iCn3DUI.prototype = {
         var radius = 4;
 
     	// Method 1. calculated on the fly
-/*
-        var atomlistTarget = {};
-
-        for(var i in me.icn3d.highlightAtoms) {
-          atomlistTarget[i] = me.icn3d.atoms[i];
-        }
-
-        // select all atom, not just displayed atoms
-
-        // find atoms in chainid2, which interact with chainid1
-        //var atomsChainid2 = me.icn3d.getAtomsWithinAtom(me.icn3d.hash2Atoms(me.icn3d.chains[chainid2]), me.icn3d.hash2Atoms(me.icn3d.chains[chainid1]), radius);
-        // find atoms in chainid1, which interact with atomsChainid2
-        //var atomsChainid1 = me.icn3d.getAtomsWithinAtom(me.icn3d.hash2Atoms(me.icn3d.chains[chainid1]), atomsChainid2, radius);
-
-        //me.icn3d.highlightAtoms = me.icn3d.unionHash(atomsChainid1, atomsChainid2);
-
         // find atoms in chainid1, which interact with chainid2
         var atomsChainid1 = me.icn3d.getAtomsWithinAtom(me.icn3d.hash2Atoms(me.icn3d.chains[chainid1]), me.icn3d.hash2Atoms(me.icn3d.chains[chainid2]), radius);
 
@@ -6950,11 +6936,11 @@ iCn3DUI.prototype = {
         }
 
         var residueArray = Object.keys(residues);
-*/
 
 
-        // Method 2. Retrieved from the cgi
-        var residueArray = me.chainids2resids[chainid1][chainid2];
+        // Method 2. Retrieved from the cgi (This has problems in sharelink where the data from ajax is async)
+//        var residueArray = me.chainids2resids[chainid1][chainid2];
+
         me.icn3d.highlightAtoms = {};
         var atomArray = [];
         for(var i = 0, il = residueArray.length; i < il; ++i) {
