@@ -47,7 +47,7 @@ var iCn3DUI = function(cfg) {
 
     me.options = {};
     me.options['camera']             = 'perspective';        //perspective, orthographic
-    me.options['background']         = 'black';              //black, grey, white
+    me.options['background']         = 'transparent';              //transparent, black, grey, white
     me.options['color']              = 'spectrum';           //spectrum, secondary structure, charge, chain, residue, atom, red, green, blue, magenta, yellow, cyan, white, grey, custom
     me.options['sidechains']         = 'nothing';            //lines, stick, ball and stick, sphere, nothing
     me.options['proteins']          = 'ribbon';             //ribbon, strand, cylinder and plate, schematic, c alpha trace, b factor tube, lines, stick, ball and stick, sphere, nothing

@@ -414,12 +414,14 @@
     };
 
     iCn3DUI.prototype.downloadMmdb = function (mmdbid, bGi) { var me = this;
+       var maxatomcnt = (me.cfg.maxatomcnt === undefined) ? 50000 : me.cfg.maxatomcnt;
+
        var url;
        if(bGi !== undefined && bGi) {
-           url = "https://www.ncbi.nlm.nih.gov/Structure/mmdb/mmdb_strview.cgi?program=w3d&seq=1&b&gi=" + mmdbid;
+           url = "https://www.ncbi.nlm.nih.gov/Structure/mmdb/mmdb_strview.cgi?program=w3d&seq=1&b&complexity=3&gi=" + mmdbid + "&ath=" + maxatomcnt;
        }
        else {
-           url = "https://www.ncbi.nlm.nih.gov/Structure/mmdb/mmdb_strview.cgi?program=w3d&seq=1&b&uid=" + mmdbid;
+           url = "https://www.ncbi.nlm.nih.gov/Structure/mmdb/mmdb_strview.cgi?program=w3d&seq=1&b&complexity=3&uid=" + mmdbid + "&ath=" + maxatomcnt;
        }
 
        me.icn3d.bCid = undefined;
@@ -501,7 +503,8 @@
             me.icn3d.chain2molid = chain2molid;
             me.icn3d.molid2chain = molid2chain;
 
-            if ((me.cfg.inpara !== undefined && me.cfg.inpara.indexOf('mols=') != -1) || (data.atomcount <= data.threshold && data.atoms !== undefined) ) {
+            //if ((me.cfg.inpara !== undefined && me.cfg.inpara.indexOf('mols=') != -1) || (data.atomcount <= data.threshold && data.atoms !== undefined) ) {
+            if ((me.cfg.inpara !== undefined && me.cfg.inpara.indexOf('mols=') != -1) || (data.atomcount <= maxatomcnt && data.atoms !== undefined) ) {
                 // small structure with all atoms
                 // show surface options
                 $("#" + me.pre + "accordion5").show();
@@ -521,7 +524,8 @@
                 if(me.cfg.rotate !== undefined) me.rotateStructure(me.cfg.rotate, true);
             }
 
-            if(me.cfg.inpara !== undefined && me.cfg.inpara.indexOf('mols=') == -1 && data.atomcount > data.threshold && data.molid2rescount !== undefined) {
+            //if(me.cfg.inpara !== undefined && me.cfg.inpara.indexOf('mols=') == -1 && data.atomcount > data.threshold && data.molid2rescount !== undefined) {
+            if(me.cfg.inpara !== undefined && me.cfg.inpara.indexOf('mols=') == -1 && data.atomcount > maxatomcnt && data.molid2rescount !== undefined) {
                 // hide surface option
                 $("#" + me.pre + "accordion5").hide();
 

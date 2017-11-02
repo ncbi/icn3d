@@ -173,8 +173,8 @@ if (!$.ui.dialog.prototype._makeDraggableBase) {
 
     iCn3DUI.prototype.saveFile = function(filename, type, text) { var me = this;
         //Save file
-        if(me.isIE()) { // IE
-            if(window.navigator.msSaveBlob){
+        var blob;
+//        if(me.isIE() && window.navigator.msSaveBlob){
                 if(type === 'command') {
                     var dataStr = '';
                     for(var i = 0, il = me.icn3d.commands.length; i < il; ++i) {
@@ -194,30 +194,43 @@ if (!$.ui.dialog.prototype._makeDraggableBase) {
                     }
                     var data = decodeURIComponent(dataStr);
 
-                    var blob = new Blob([data],{ type: "text;charset=utf-8;"});
-                    navigator.msSaveBlob(blob, filename);
+                    blob = new Blob([data],{ type: "text;charset=utf-8;"});
                 }
                 else if(type === 'png') {
-                   me.icn3d.render();
-                   var blob = me.icn3d.renderer.domElement.msToBlob();
+                    me.icn3d.render();
+                    if(me.isIE()) {
+                    	blob = me.icn3d.renderer.domElement.msToBlob();
+					}
+					else {
+                    	me.icn3d.renderer.domElement.toBlob(function(data) {
+							blob = data;
 
-                    navigator.msSaveBlob(blob, filename);
+							var link = document.createElement('a');
+							link.href = window.URL.createObjectURL(blob);
+							link.setAttribute('download', filename);
+							document.body.appendChild(link);
+							link.click();
+							document.body.removeChild(link);
+						});
+
+						return;
+					}
                 }
                 else if(type === 'html') {
                     var dataStr = text;
                     var data = decodeURIComponent(dataStr);
 
-                    var blob = new Blob([data],{ type: "text/html;charset=utf-8;"});
-                    navigator.msSaveBlob(blob, filename);
+                    blob = new Blob([data],{ type: "text/html;charset=utf-8;"});
                 }
                 else if(type === 'text') {
                     var dataStr = text;
                     var data = decodeURIComponent(dataStr);
 
-                    var blob = new Blob([data],{ type: "text;charset=utf-8;"});
-                    navigator.msSaveBlob(blob, filename);
+                    blob = new Blob([data],{ type: "text;charset=utf-8;"});
                 }
-            }
+
+                //navigator.msSaveBlob(blob, filename);
+/*
         }
         else {
             var data;
@@ -259,6 +272,21 @@ if (!$.ui.dialog.prototype._makeDraggableBase) {
 
             window.open(data, '_blank');
         }
+*/
+
+		//https://github.com/mholt/PapaParse/issues/175
+		//IE11 & Edge
+		if(me.isIE() && window.navigator.msSaveBlob){
+			navigator.msSaveBlob(blob, filename);
+		} else {
+			//In FF link must be added to DOM to be clicked
+			var link = document.createElement('a');
+			link.href = window.URL.createObjectURL(blob);
+			link.setAttribute('download', filename);
+			document.body.appendChild(link);
+			link.click();
+			document.body.removeChild(link);
+		}
     };
 
     iCn3DUI.prototype.isMobile = function() {

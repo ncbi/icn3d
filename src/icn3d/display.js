@@ -327,20 +327,22 @@
         switch (options.rotationcenter.toLowerCase()) {
             case 'molecule center':
                 // move the molecule to the origin
-                if(this.center !== undefined) this.mdl.position.sub(this.center);
+                if(this.center !== undefined) {
+					this.setRotationCenter(this.center);
+				}
                 break;
             case 'pick center':
                 if(this.pickedatom !== undefined) {
-                  this.mdl.position.sub(this.pickedatom.coord);
+                  this.setRotationCenter(this.pickedatom.coord);
                 }
                 break;
             case 'display center':
                 var center = this.centerAtoms(this.displayAtoms).center;
-                this.mdl.position.sub(center);
+                this.setRotationCenter(center);
                 break;
             case 'highlight center':
                 var center = this.centerAtoms(this.highlightAtoms).center;
-                this.mdl.position.sub(center);
+                this.setRotationCenter(center);
                 break;
         }
         switch (options.axis.toLowerCase()) {
@@ -409,7 +411,7 @@
         }
     };
 
-    iCn3D.prototype.applyDisplayOptions = function (options, atoms, bHighlight) { // atoms: hash of key -> 1
+    iCn3D.prototype.applyDisplayOptions = function (options, atoms, bHighlight) { var me = this; // atoms: hash of key -> 1
         if(options === undefined) options = this.options;
 
         var residueHash = {};
@@ -656,6 +658,413 @@
         } // end for loop
     };
 
+    iCn3D.prototype.getShader = function (name) { var me = this;
+      var shaderText = $NGL_shaderTextHash[name];
+      var reInclude = /#include\s+(\S+)/gmi;
+
+      shaderText = shaderText.replace( reInclude, function( match, p1 ){
+
+            var chunk;
+            if(THREE.ShaderChunk.hasOwnProperty(p1)) {
+				chunk = THREE.ShaderChunk[ p1 ];
+			}
+
+            return chunk ? chunk : "";
+
+      } );
+
+      return shaderText;
+	};
+
+    iCn3D.prototype.createImpostorShaderCylinder = function (shaderName) { var me = this;
+		  var shaderMaterial =
+			new THREE.ShaderMaterial({
+			  defines: me.defines,
+			  uniforms:  me.uniforms,
+			  vertexShader:   me.getShader(shaderName + ".vert"),
+			  fragmentShader: me.getShader(shaderName + ".frag"),
+			  depthTest: true,
+			  depthWrite: true,
+			  needsUpdate: true,
+			  lights: true
+		  });
+
+		  shaderMaterial.extensions.fragDepth = true;
+
+		var positions = new Float32Array( me.positionArray );
+		var colors = new Float32Array( me.colorArray );
+		var positions2 = new Float32Array( me.position2Array );
+		var colors2 = new Float32Array( me.color2Array );
+		var radii = new Float32Array( me.radiusArray );
+
+/*
+		// hyperball
+		var mapping = new Float32Array([
+			-1.0, -1.0, -1.0,
+			 1.0, -1.0, -1.0,
+			 1.0, -1.0,  1.0,
+			-1.0, -1.0,  1.0,
+			-1.0,  1.0, -1.0,
+			 1.0,  1.0, -1.0,
+			 1.0,  1.0,  1.0,
+			-1.0,  1.0,  1.0
+		]);
+
+		var mappingIndices = new Uint16Array([
+			0, 1, 2,
+			0, 2, 3,
+			1, 5, 6,
+			1, 6, 2,
+			4, 6, 5,
+			4, 7, 6,
+			0, 7, 4,
+			0, 3, 7,
+			0, 5, 1,
+			0, 4, 5,
+			3, 2, 6,
+			3, 6, 7
+		]);
+
+		var mappingIndicesSize = 36;
+		var mappingType = "v3";
+		var mappingSize = 8;
+		var mappingItemSize = 3;
+*/
+
+		// cylinder
+		var mapping = new Float32Array([
+			-1.0,  1.0, -1.0,
+			-1.0, -1.0, -1.0,
+			 1.0,  1.0, -1.0,
+			 1.0,  1.0,  1.0,
+			 1.0, -1.0, -1.0,
+			 1.0, -1.0,  1.0
+		]);
+
+		var mappingIndices = new Uint16Array([
+			0, 1, 2,
+			1, 4, 2,
+			2, 4, 3,
+			4, 5, 3
+		]);
+
+		var mappingIndicesSize = 12;
+		var mappingType = "v3";
+		var mappingSize = 6;
+		var mappingItemSize = 3;
+
+
+		var count = positions.length / 3;
+
+		var data = {
+			"position1": positions,
+			"color": colors,
+			"position2": positions2,
+			"color2": colors2,
+			"radius": radii
+		};
+
+		//MappedBuffer
+		var attributeSize = count * mappingSize;
+
+		var n = count * mappingIndicesSize;
+		var TypedArray = attributeSize > 65535 ? Uint32Array : Uint16Array;
+		var index = new TypedArray( n );
+
+			//makeIndex();
+		var ix, it;
+
+		for( var v = 0; v < count; v++ ) {
+			ix = v * mappingIndicesSize;
+			it = v * mappingSize;
+
+			index.set( mappingIndices, ix );
+
+			for( var s = 0; s < mappingIndicesSize; ++s ){
+				index[ ix + s ] += it;
+			}
+		}
+
+
+		var geometry = new THREE.BufferGeometry();
+
+		// buffer.js
+		var dynamic = true;
+
+		if( index ){
+			geometry.setIndex(
+				new THREE.BufferAttribute( index, 1 )
+			);
+			geometry.getIndex().setDynamic( dynamic );
+		}
+
+		// add attributes from buffer.js
+		var itemSize = {
+			"f": 1, "v2": 2, "v3": 3, "c": 3
+		};
+
+		var attributeData = {
+			"position1": { type: "v3", value: null },
+			"color": { type: "v3", value: null },
+			"position2": { type: "v3", value: null },
+			"color2": { type: "v3", value: null },
+			"radius": { type: "f", value: null },
+			"mapping": { type: mappingType, value: null }
+		};
+
+		for( var name in attributeData ){
+
+			var buf;
+			var a = attributeData[ name ];
+
+
+			//if( a.value ){
+			//	if( attributeSize * itemSize[ a.type ] !== a.value.length ){
+			//		Log.error( "attribute value has wrong length", name );
+			//	}
+			//	buf = a.value;
+			//}else{
+
+				buf = new Float32Array(
+					attributeSize * itemSize[ a.type ]
+				);
+
+		  	//}
+
+			geometry.addAttribute(
+				name,
+				new THREE.BufferAttribute( buf, itemSize[ a.type ] )
+					.setDynamic( dynamic )
+			);
+
+		}
+
+		// set attributes from mapped-buffer.js
+		var attributes = geometry.attributes;
+
+		var a, d, itemSize2, array, i, j;
+
+		for( var name in data ){
+
+			d = data[ name ];
+			a = attributes[ name ];
+			itemSize2 = a.itemSize;
+			array = a.array;
+
+			for( var k = 0; k < count; ++k ) {
+
+				n = k * itemSize2;
+				i = n * mappingSize;
+
+				for( var l = 0; l < mappingSize; ++l ) {
+
+					j = i + ( itemSize2 * l );
+
+					for( var m = 0; m < itemSize2; ++m ) {
+
+						array[ j + m ] = d[ n + m ];
+
+					}
+
+				}
+
+			}
+
+			a.needsUpdate = true;
+
+		}
+
+		// makemapping
+		var aMapping = geometry.attributes.mapping.array;
+
+		for( var v = 0; v < count; v++ ) {
+			aMapping.set( mapping, v * mappingItemSize * mappingSize );
+		}
+
+
+	    var mesh = new THREE.Mesh(geometry, shaderMaterial);
+
+	    // important: https://stackoverflow.com/questions/21184061/mesh-suddenly-disappears-in-three-js-clipping
+	    // You are moving the camera in the CPU. You are moving the vertices of the plane in the GPU
+	    mesh.frustumCulled = false;
+
+        mesh.scale.x = mesh.scale.y = mesh.scale.z = 1.0;
+
+		//mesh.position.copy(atom.coord);
+
+		//mesh.onBeforeRender = me.onBeforeRender;
+
+		this.mdlImpostor.add(mesh);
+
+        //this.objects.push(mesh);
+    };
+
+    iCn3D.prototype.createImpostorShaderSphere = function (shaderName) { var me = this;
+	  var shaderMaterial =
+		new THREE.ShaderMaterial({
+		  defines: me.defines,
+		  uniforms:  me.uniforms,
+		  vertexShader:   me.getShader(shaderName + ".vert"),
+		  fragmentShader: me.getShader(shaderName + ".frag"),
+		  depthTest: true,
+		  depthWrite: true,
+		  needsUpdate: true,
+		  lights: true
+	  });
+
+	  shaderMaterial.extensions.fragDepth = true;
+
+		var positions = new Float32Array( me.positionArraySphere );
+		var colors = new Float32Array( me.colorArraySphere );
+		var radii = new Float32Array( me.radiusArraySphere );
+
+		// sphere
+		var mapping = new Float32Array([
+			-1.0,  1.0,
+			-1.0, -1.0,
+			 1.0,  1.0,
+			 1.0, -1.0
+		]);
+
+		var mappingIndices = new Uint16Array([
+			0, 1, 2,
+			1, 3, 2
+		]);
+
+		var mappingIndicesSize = 6;
+		var mappingType = "v2";
+		var mappingSize = 4;
+		var mappingItemSize = 2;
+
+		var count = positions.length / 3;
+
+		var data = {
+			"position": positions,
+			"color": colors,
+			"radius": radii
+		};
+
+		//MappedBuffer
+		var attributeSize = count * mappingSize;
+
+		var n = count * mappingIndicesSize;
+		var TypedArray = attributeSize > 65535 ? Uint32Array : Uint16Array;
+		var index = new TypedArray( n );
+
+			//makeIndex();
+		var ix, it;
+
+		for( var v = 0; v < count; v++ ) {
+			ix = v * mappingIndicesSize;
+			it = v * mappingSize;
+
+			index.set( mappingIndices, ix );
+
+			for( var s = 0; s < mappingIndicesSize; ++s ){
+				index[ ix + s ] += it;
+			}
+		}
+
+
+		var geometry = new THREE.BufferGeometry();
+
+		// buffer.js
+		var dynamic = true;
+
+		if( index ){
+			geometry.setIndex(
+				new THREE.BufferAttribute( index, 1 )
+			);
+			geometry.getIndex().setDynamic( dynamic );
+		}
+
+		// add attributes from buffer.js
+		var itemSize = {
+			"f": 1, "v2": 2, "v3": 3, "c": 3
+		};
+
+		var attributeData = {
+			"position": { type: "v3", value: null },
+			"color": { type: "v3", value: null },
+			"radius": { type: "f", value: null },
+			"mapping": { type: mappingType, value: null }
+		};
+
+		for( var name in attributeData ){
+
+			var buf;
+			var a = attributeData[ name ];
+
+				buf = new Float32Array(
+					attributeSize * itemSize[ a.type ]
+				);
+
+			geometry.addAttribute(
+				name,
+				new THREE.BufferAttribute( buf, itemSize[ a.type ] )
+					.setDynamic( dynamic )
+			);
+
+		}
+
+		// set attributes from mapped-buffer.js
+		var attributes = geometry.attributes;
+
+		var a, d, itemSize2, array, i, j;
+
+		for( var name in data ){
+
+			d = data[ name ];
+			a = attributes[ name ];
+			itemSize2 = a.itemSize;
+			array = a.array;
+
+			for( var k = 0; k < count; ++k ) {
+
+				n = k * itemSize2;
+				i = n * mappingSize;
+
+				for( var l = 0; l < mappingSize; ++l ) {
+
+					j = i + ( itemSize2 * l );
+
+					for( var m = 0; m < itemSize2; ++m ) {
+
+						array[ j + m ] = d[ n + m ];
+
+					}
+
+				}
+
+			}
+
+			a.needsUpdate = true;
+
+		}
+
+		// makemapping
+		var aMapping = geometry.attributes.mapping.array;
+
+		for( var v = 0; v < count; v++ ) {
+			aMapping.set( mapping, v * mappingItemSize * mappingSize );
+		}
+
+	    var mesh = new THREE.Mesh(geometry, shaderMaterial);
+
+	    // important: https://stackoverflow.com/questions/21184061/mesh-suddenly-disappears-in-three-js-clipping
+	    // You are moving the camera in the CPU. You are moving the vertices of the plane in the GPU
+	    mesh.frustumCulled = false;
+
+		mesh.scale.x = mesh.scale.y = mesh.scale.z = 1;
+		//mesh.position.copy(atom.coord);
+
+		//mesh.onBeforeRender = me.onBeforeRender;
+
+		this.mdlImpostor.add(mesh);
+
+        //this.objects.push(mesh);
+    };
+
     iCn3D.prototype.setStyle2Atoms = function (atoms) {
           this.style2atoms = {};
 
@@ -738,7 +1147,18 @@
             this.scene = new THREE.Scene();
         }
 
-        this.directionalLight = new THREE.DirectionalLight(0xFFFFFF, 1.2);
+        if(this.scene_ghost !== undefined) {
+            for(var i = this.scene_ghost.children.length - 1; i >= 0; i--) {
+                 var obj = this.scene_ghost.children[i];
+                 this.scene_ghost.remove(obj);
+            }
+        }
+        else {
+            this.scene_ghost = new THREE.Scene();
+        }
+
+        //this.directionalLight = new THREE.DirectionalLight(0xFFFFFF, 1.2);
+        this.directionalLight = new THREE.DirectionalLight(0xFFFFFF, 1.0);
 
         if(this.camera_z > 0) {
           this.directionalLight.position.set(0, 0, 1);
@@ -747,17 +1167,33 @@
           this.directionalLight.position.set(0, 0, -1);
         }
 
-        var ambientLight = new THREE.AmbientLight(0x202020);
+        //var ambientLight = new THREE.AmbientLight(0x202020);
+        //var ambientLight = new THREE.AmbientLight(0xdddddd, 0.2);
+        var ambientLight = new THREE.AmbientLight(0x404040);
 
         this.scene.add(this.directionalLight);
         this.scene.add(ambientLight);
 
-        this.mdl = new THREE.Object3D();
+        //this.group = new THREE.Object3D();  // regular display
 
-        this.scene.add(this.mdl);
+        this.mdl = new THREE.Object3D();  // regular display
+        //this.mdlPicking = new THREE.Object3D();  // picking display
+        this.mdlImpostor = new THREE.Object3D();  // Impostor display
+
+		//this.scene.add(this.mdlPicking);
+		this.scene.add(this.mdl);
+		this.scene.add(this.mdlImpostor);
+
+		// highlight on impostors
+        this.mdl_ghost = new THREE.Object3D();  // Impostor display
+		this.scene_ghost.add(this.mdl_ghost);
+
+        //this.scene_ghost.add(this.directionalLight);
+        //this.scene_ghost.add(ambientLight);
 
         // related to picking
         this.objects = []; // define objects for picking, not all elements are used for picking
+        this.objects_ghost = []; // define objects for picking, not all elements are used for picking
         this.raycaster = new THREE.Raycaster();
         this.projector = new THREE.Projector();
         this.mouse = new THREE.Vector2();
@@ -802,6 +1238,9 @@
         this.applyDisplayOptions(this.options, this.displayAtoms);
 
         this.applyOtherOptions();
+
+		//https://stackoverflow.com/questions/15726560/three-js-raycaster-intersection-empty-when-objects-not-part-of-scene
+		me.scene_ghost.updateMatrixWorld(true);
     };
 
     iCn3D.prototype.setCamera = function() {
@@ -872,20 +1311,107 @@
 
         this.renderer.setPixelRatio( window.devicePixelRatio ); // r71
         this.renderer.render(this.scene, this.camera);
+        //this.renderer.render(this.scene_ghost, this.camera);
     };
 
     iCn3D.prototype.setRotationCenter = function (coord) {
+        //this.mdlPicking.position.sub(coord);
         this.mdl.position.sub(coord);
+        this.mdlImpostor.position.sub(coord);
+
+        this.mdl_ghost.position.sub(coord);
+
     };
 
-    iCn3D.prototype.draw = function () {
+    iCn3D.prototype.drawImpostorShader = function () { var me = this;
+		var modelViewMatrix = new THREE.Uniform( new THREE.Matrix4() )
+				.onUpdate( function( object ){
+					this.value.copy( object.modelViewMatrix );
+		} );
+
+		var modelViewMatrixInverse = new THREE.Uniform( new THREE.Matrix4() )
+				.onUpdate( function( object ){
+					this.value.getInverse( object.modelViewMatrix );
+		} );
+
+		var modelViewMatrixInverseTranspose = new THREE.Uniform( new THREE.Matrix4() )
+				.onUpdate( function( object ){
+					this.value.getInverse( object.modelViewMatrix ).transpose();
+		} );
+
+		var modelViewProjectionMatrix = new THREE.Uniform( new THREE.Matrix4() )
+				.onUpdate( function( object ){
+					this.value.multiplyMatrices( me.camera.projectionMatrix, object.modelViewMatrix );
+		} );
+
+		var modelViewProjectionMatrixInverse = new THREE.Uniform( new THREE.Matrix4() )
+				.onUpdate( function( object ){
+					var tmpMatrix = new THREE.Matrix4();
+					tmpMatrix.multiplyMatrices(me.camera.projectionMatrix, object.modelViewMatrix);
+					this.value.getInverse(tmpMatrix);
+		} );
+
+		var projectionMatrix = new THREE.Uniform( new THREE.Matrix4() )
+				.onUpdate( function(  ){
+					this.value.copy( me.camera.projectionMatrix );
+		} );
+
+		var projectionMatrixInverse = new THREE.Uniform( new THREE.Matrix4() )
+				.onUpdate( function(  ){
+					this.value.getInverse( me.camera.projectionMatrix );
+		} );
+
+		this.uniforms = THREE.UniformsUtils.merge([
+		  THREE.UniformsLib.common,
+		  {
+			modelViewMatrix: modelViewMatrix,
+			modelViewMatrixInverse: modelViewMatrixInverse,
+			modelViewMatrixInverseTranspose: modelViewMatrixInverseTranspose,
+			modelViewProjectionMatrix: modelViewProjectionMatrix,
+			modelViewProjectionMatrixInverse: modelViewProjectionMatrixInverse,
+			projectionMatrix: projectionMatrix,
+			projectionMatrixInverse: projectionMatrixInverse,
+			//ambientLightColor: { type: "v3", value: [0.25, 0.25, 0.25] },
+			diffuse: { type: "v3", value: [1.0, 1.0, 1.0] },
+			emissive: { type: "v3", value: [0.0,0.0,0.0] },
+			roughness: { type: "f", value: 0.5 }, // 0.4
+			metalness: { type: "f", value: 0.3 }, // 0.5
+			opacity: { type: "f", value: 1.0 },
+			nearClip: { type: "f", value: 0.1 },
+			ortho: { type: "f", value: 0.0 },
+			shrink: { type: "f", value: 0.13 }
+          },
+      	  THREE.UniformsLib.ambient,
+      	  THREE.UniformsLib.lights
+    	]);
+
+		this.defines = {
+			USE_COLOR: 1,
+			//PICKING: 1,
+			NEAR_CLIP: 1,
+			CAP: 1
+		};
+
+		this.createImpostorShaderSphere("SphereImpostor");
+		this.createImpostorShaderCylinder("CylinderImpostor");
+		//this.createImpostorShaderCylinder("HyperballStickImpostor");
+	};
+
+    iCn3D.prototype.draw = function () { var me = this;
         this.rebuildScene();
+
+        // Impostor display using the saved arrays
+        if(this.bImpostor) {
+			this.drawImpostorShader();
+		}
 
         this.applyPrevColor();
 
         if(this.bSSOnly) this.drawHelixBrick(this.molid2ss, this.molid2color);
 
-        if(this.bAssembly) this.drawSymmetryMates2();
+        if(this.bAssembly) {
+			this.drawSymmetryMates2();
+		}
 
         // show the highlightAtoms
         if(this.highlightAtoms !== undefined && Object.keys(this.highlightAtoms).length > 0 && Object.keys(this.highlightAtoms).length < Object.keys(this.atoms).length) {
@@ -899,8 +1425,22 @@
 
           // reset to hide the side chain
           //this.options['sidechains'] = 'nothing';
-        }
+		}
+
+        this.clearImpostors();
     };
+
+    iCn3D.prototype.clearImpostors = function () {
+		this.positionArray = [];
+		this.colorArray = [];
+		this.position2Array = [];
+		this.color2Array = [];
+		this.radiusArray = [];
+
+		this.positionArraySphere = [];
+		this.colorArraySphere = [];
+		this.radiusArraySphere = [];
+	};
 
     iCn3D.prototype.alternateStructures = function () {
         this.displayAtoms = {};
