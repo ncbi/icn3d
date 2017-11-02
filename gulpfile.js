@@ -27,7 +27,7 @@ gulp.task('libs',
             "node_modules/jquery/dist/jquery.min.js",
             "node_modules/jquery-ui/jquery-ui.min.js",
             "node_modules/three/three.min.js",
-            "node_modules/three/three_0.71.1.min.js",
+            "node_modules/three/three_0.87.0.min.js",
         ])
         .pipe(gulp.dest(dist + '/lib'));
   });
@@ -97,6 +97,13 @@ var common_js = [
     "src/ProteinSurface4.js",
     "src/setupsurface.js",
     "src/mmtf.js",
+    "src/shader/NGL_Shaders.js",
+    "src/shader/SphereImpostor.frag",
+    "src/shader/SphereImpostor.vert",
+    "src/shader/CylinderImpostor.frag",
+    "src/shader/CylinderImpostor.vert",
+    "src/shader/HyperballStickImpostor.frag",
+    "src/shader/HyperballStickImpostor.vert",
     "src/icn3d/icn3d.js",
     "src/icn3d/loadpdb.js",
     "src/icn3d/drawing.js",

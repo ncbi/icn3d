@@ -6,6 +6,8 @@
         if(forceDefault === undefined) forceDefault = false;
         if(scale === undefined) scale = 1.0;
 
+        var radius = (this.vdwRadii[atom.elem] || defaultRadius);
+
         if(bHighlight === 2) {
           if(scale > 0.9) { // sphere
             scale = 1.5;
@@ -16,25 +18,64 @@
           var color = this.highlightColor;
 
           mesh = new THREE.Mesh(this.sphereGeometry, new THREE.MeshPhongMaterial({ transparent: true, opacity: 0.5, overdraw: this.overdraw, specular: this.fractionOfColor, shininess: 30, emissive: 0x000000, color: color }));
+
+          mesh.scale.x = mesh.scale.y = mesh.scale.z = forceDefault ? defaultRadius :  radius * (scale ? scale : 1);
+          mesh.position.copy(atom.coord);
+          this.mdl.add(mesh);
         }
         else if(bHighlight === 1) {
           mesh = new THREE.Mesh(this.sphereGeometry, this.matShader);
+
+          mesh.scale.x = mesh.scale.y = mesh.scale.z = forceDefault ? defaultRadius :  radius * (scale ? scale : 1);
+          mesh.position.copy(atom.coord);
+          mesh.renderOrder = this.renderOrderPicking;
+          //this.mdlPicking.add(mesh);
+          this.mdl.add(mesh);
         }
         else {
           var color = atom.color;
 
           mesh = new THREE.Mesh(this.sphereGeometry, new THREE.MeshPhongMaterial({ overdraw: this.overdraw, specular: this.fractionOfColor, shininess: 30, emissive: 0x000000, color: color }));
+          mesh.scale.x = mesh.scale.y = mesh.scale.z = forceDefault ? defaultRadius :  radius * (scale ? scale : 1);
+          mesh.position.copy(atom.coord);
+
+          if(this.bImpostor) {
+              this.positionArraySphere.push(atom.coord.x);
+              this.positionArraySphere.push(atom.coord.y);
+              this.positionArraySphere.push(atom.coord.z);
+
+              this.colorArraySphere.push(atom.color.r);
+              this.colorArraySphere.push(atom.color.g);
+              this.colorArraySphere.push(atom.color.b);
+
+              var realRadius = forceDefault ? defaultRadius :  radius * (scale ? scale : 1);
+              this.radiusArraySphere.push(realRadius);
+
+              this.mdl_ghost.add(mesh);
+          }
+          else {
+              this.mdl.add(mesh);
+          }
         }
 
-        mesh.scale.x = mesh.scale.y = mesh.scale.z = forceDefault ? defaultRadius : (this.vdwRadii[atom.elem] || defaultRadius) * (scale ? scale : 1);
-        mesh.position.copy(atom.coord);
-        this.mdl.add(mesh);
-        if(bHighlight === 1 || bHighlight === 2) {
-            this.prevHighlightObjects.push(mesh);
-        }
-        else {
-            this.objects.push(mesh);
-        }
+        //this.mdl.add(mesh);
+
+		if(bHighlight === 1 || bHighlight === 2) {
+			if(this.bImpostor) {
+				this.prevHighlightObjects_ghost.push(mesh);
+			}
+			else {
+				this.prevHighlightObjects.push(mesh);
+			}
+		}
+		else {
+			if(this.bImpostor) {
+				this.objects_ghost.push(mesh);
+			}
+			else {
+				this.objects.push(mesh);
+			}
+		}
     };
 
     // used for highlight
@@ -69,39 +110,20 @@
     };
 
     // modified from iview (http://istar.cse.cuhk.edu.hk/iview/)
-    iCn3D.prototype.createCylinder = function (p0, p1, radius, color, bHighlight) {
+    iCn3D.prototype.createCylinder = function (p0, p1, radius, color, bHighlight, color2) {
         var mesh;
         if(bHighlight === 1) {
-//            if(this.maxD < 50) {
-                mesh = new THREE.Mesh(this.cylinderGeometryOutline, this.matShader);
+            mesh = new THREE.Mesh(this.cylinderGeometryOutline, this.matShader);
 
-                mesh.position.copy(p0).add(p1).multiplyScalar(0.5);
-                mesh.matrixAutoUpdate = false;
-                mesh.lookAt(p0);
-                mesh.updateMatrix();
+            mesh.position.copy(p0).add(p1).multiplyScalar(0.5);
+            mesh.matrixAutoUpdate = false;
+            mesh.lookAt(p0);
+            mesh.updateMatrix();
 
-                mesh.matrix.multiply(new THREE.Matrix4().makeScale(radius, radius, p0.distanceTo(p1))).multiply(new THREE.Matrix4().makeRotationX(Math.PI * 0.5));
+            mesh.matrix.multiply(new THREE.Matrix4().makeScale(radius, radius, p0.distanceTo(p1))).multiply(new THREE.Matrix4().makeRotationX(Math.PI * 0.5));
 
-/*
-            }
-            else {
-                var radius = this.coilWidth * 0.5;
-                var radiusSegments = 8; // save memory
-                var closed = false;
-                var p = [p0, p1];
-
-                var geometry = new THREE.TubeGeometry(
-                    new THREE.SplineCurve3(p), // path
-                    p.length, // segments
-                    radius,
-                    radiusSegments,
-                    closed
-                );
-
-                mesh = new THREE.Mesh(geometry, this.matShader);
-            }
-*/
-
+            mesh.renderOrder = this.renderOrderPicking;
+            //this.mdlPicking.add(mesh);
             this.mdl.add(mesh);
 
             this.prevHighlightObjects.push(mesh);
@@ -116,19 +138,61 @@
               mesh = new THREE.Mesh(this.cylinderGeometry, new THREE.MeshPhongMaterial({ overdraw: this.overdraw, specular: this.fractionOfColor, shininess: 30, emissive: 0x000000, color: color }));
             }
 
-            mesh.position.copy(p0).add(p1).multiplyScalar(0.5);
-            mesh.matrixAutoUpdate = false;
-            mesh.lookAt(p0);
-            mesh.updateMatrix();
+			mesh.position.copy(p0).add(p1).multiplyScalar(0.5);
+			mesh.matrixAutoUpdate = false;
+			mesh.lookAt(p0);
+			mesh.updateMatrix();
 
-            mesh.matrix.multiply(new THREE.Matrix4().makeScale(radius, radius, p0.distanceTo(p1))).multiply(new THREE.Matrix4().makeRotationX(Math.PI * 0.5));
-            this.mdl.add(mesh);
-            if(bHighlight === 2) {
-                this.prevHighlightObjects.push(mesh);
+			mesh.matrix.multiply(new THREE.Matrix4().makeScale(radius, radius, p0.distanceTo(p1))).multiply(new THREE.Matrix4().makeRotationX(Math.PI * 0.5));
+
+            if(this.bImpostor) {
+              this.positionArray.push(p0.x);
+              this.positionArray.push(p0.y);
+              this.positionArray.push(p0.z);
+
+              this.colorArray.push(color.r);
+              this.colorArray.push(color.g);
+              this.colorArray.push(color.b);
+
+              this.position2Array.push(p1.x);
+              this.position2Array.push(p1.y);
+              this.position2Array.push(p1.z);
+
+              if(color2 !== undefined) {
+				  this.color2Array.push(color2.r);
+				  this.color2Array.push(color2.g);
+				  this.color2Array.push(color2.b);
+			  }
+			  else {
+				  this.color2Array.push(color.r);
+				  this.color2Array.push(color.g);
+				  this.color2Array.push(color.b);
+			  }
+
+              this.radiusArray.push(radius);
+
+              this.mdl_ghost.add(mesh);
             }
             else {
-                this.objects.push(mesh);
+                this.mdl.add(mesh);
             }
+
+			if(bHighlight === 2) {
+				if(this.bImpostor) {
+					this.prevHighlightObjects_ghost.push(mesh);
+				}
+				else {
+					this.prevHighlightObjects.push(mesh);
+				}
+			}
+			else {
+				if(this.bImpostor) {
+					this.objects_ghost.push(mesh);
+				}
+				else {
+					this.objects.push(mesh);
+				}
+			}
         }
     };
 
@@ -189,7 +253,7 @@
 
         if(bHighlight !== 2) {
             this.createRepresentationSub(atoms, function (atom0) {
-                me.createSphere(atom0, atomR, !scale, scale, bHighlight);
+					me.createSphere(atom0, atomR, !scale, scale, bHighlight);
             }, function (atom0, atom1) {
                 var mp = atom0.coord.clone().add(atom1.coord).multiplyScalar(0.5);
                 var pair = atom0.serial + '_' + atom1.serial;
@@ -227,11 +291,17 @@
                         me.createCylinder(atom0.coord.clone().add(v0), atom1.coord.clone().add(v0), me.cylinderRadius * factor * 0.3, atom0.color, bHighlight);
                         me.createCylinder(atom0.coord.clone().sub(v0), atom1.coord.clone().sub(v0), me.cylinderRadius * factor * 0.3, atom0.color, bHighlight);
                     } else {
-                        me.createCylinder(atom0.coord.clone().add(v0), mp.clone().add(v0), me.cylinderRadius * factor * 0.3, atom0.color, bHighlight);
-                        me.createCylinder(atom1.coord.clone().add(v0), mp.clone().add(v0), me.cylinderRadius * factor * 0.3, atom1.color, bHighlight);
+						if(me.bImpostor) {
+                            me.createCylinder(atom0.coord.clone().add(v0), atom1.coord.clone().add(v0), me.cylinderRadius * factor * 0.3, atom0.color, bHighlight, atom1.color);
+                            me.createCylinder(atom0.coord.clone().sub(v0), atom1.coord.clone().sub(v0), me.cylinderRadius * factor * 0.3, atom0.color, bHighlight, atom1.color);
+						}
+						else {
+							me.createCylinder(atom0.coord.clone().add(v0), mp.clone().add(v0), me.cylinderRadius * factor * 0.3, atom0.color, bHighlight);
+							me.createCylinder(atom1.coord.clone().add(v0), mp.clone().add(v0), me.cylinderRadius * factor * 0.3, atom1.color, bHighlight);
 
-                        me.createCylinder(atom0.coord.clone().sub(v0), mp.clone().sub(v0), me.cylinderRadius * factor * 0.3, atom0.color, bHighlight);
-                        me.createCylinder(atom1.coord.clone().sub(v0), mp.clone().sub(v0), me.cylinderRadius * factor * 0.3, atom1.color, bHighlight);
+							me.createCylinder(atom0.coord.clone().sub(v0), mp.clone().sub(v0), me.cylinderRadius * factor * 0.3, atom0.color, bHighlight);
+							me.createCylinder(atom1.coord.clone().sub(v0), mp.clone().sub(v0), me.cylinderRadius * factor * 0.3, atom1.color, bHighlight);
+						}
                     }
                 }
                 else if(me.aromaticbonds.hasOwnProperty(pair)) { // show aromatic bond
@@ -363,22 +433,34 @@
                         me.createCylinder(atom0.coord.clone().add(c), atom1.coord.clone().add(c), me.cylinderRadius * factor * 0.2, atom0.color, bHighlight);
                         me.createCylinder(atom0.coord.clone().sub(c), atom1.coord.clone().sub(c), me.cylinderRadius * factor * 0.2, atom0.color, bHighlight);
                     } else {
-                        me.createCylinder(atom0.coord, mp, me.cylinderRadius * factor * 0.2, atom0.color, bHighlight);
-                        me.createCylinder(atom1.coord, mp, me.cylinderRadius * factor * 0.2, atom1.color, bHighlight);
+						if(me.bImpostor) {
+                            me.createCylinder(atom0.coord, atom1.coord, me.cylinderRadius * factor * 0.2, atom0.color, bHighlight, atom1.color);
+                            me.createCylinder(atom0.coord.clone().add(c), atom1.coord.clone().add(c), me.cylinderRadius * factor * 0.2, atom0.color, bHighlight, atom1.color);
+                            me.createCylinder(atom0.coord.clone().sub(c), atom1.coord.clone().sub(c), me.cylinderRadius * factor * 0.2, atom0.color, bHighlight, atom1.color);
+						}
+						else {
+							me.createCylinder(atom0.coord, mp, me.cylinderRadius * factor * 0.2, atom0.color, bHighlight);
+							me.createCylinder(atom1.coord, mp, me.cylinderRadius * factor * 0.2, atom1.color, bHighlight);
 
-                        me.createCylinder(atom0.coord.clone().add(c), mp.clone().add(c), me.cylinderRadius * factor * 0.2, atom0.color, bHighlight);
-                        me.createCylinder(atom1.coord.clone().add(c), mp.clone().add(c), me.cylinderRadius * factor * 0.2, atom1.color, bHighlight);
+							me.createCylinder(atom0.coord.clone().add(c), mp.clone().add(c), me.cylinderRadius * factor * 0.2, atom0.color, bHighlight);
+							me.createCylinder(atom1.coord.clone().add(c), mp.clone().add(c), me.cylinderRadius * factor * 0.2, atom1.color, bHighlight);
 
-                        me.createCylinder(atom0.coord.clone().sub(c), mp.clone().sub(c), me.cylinderRadius * factor * 0.2, atom0.color, bHighlight);
-                        me.createCylinder(atom1.coord.clone().sub(c), mp.clone().sub(c), me.cylinderRadius * factor * 0.2, atom1.color, bHighlight);
+							me.createCylinder(atom0.coord.clone().sub(c), mp.clone().sub(c), me.cylinderRadius * factor * 0.2, atom0.color, bHighlight);
+							me.createCylinder(atom1.coord.clone().sub(c), mp.clone().sub(c), me.cylinderRadius * factor * 0.2, atom1.color, bHighlight);
+						}
                     }
                 }
                 else {
                     if (atom0.color === atom1.color) {
                         me.createCylinder(atom0.coord, atom1.coord, bondR, atom0.color, bHighlight);
                     } else {
-                        me.createCylinder(atom0.coord, mp, bondR, atom0.color, bHighlight);
-                        me.createCylinder(atom1.coord, mp, bondR, atom1.color, bHighlight);
+						if(me.bImpostor) {
+							me.createCylinder(atom0.coord, atom1.coord, bondR, atom0.color, bHighlight, atom1.color);
+						}
+						else {
+							me.createCylinder(atom0.coord, mp, bondR, atom0.color, bHighlight);
+							me.createCylinder(atom1.coord, mp, bondR, atom1.color, bHighlight);
+						}
                     }
                 }
             });
@@ -414,14 +496,13 @@
         if(bHighlight !== 2) {
             var line;
             if(bHighlight === 1) {
-                // outline didn't work for lines
+                // highlight didn't work for lines
                 //line = new THREE.Mesh(geo, this.matShader);
             }
             else {
                 line = new THREE.Line(geo, new THREE.LineBasicMaterial({ linewidth: this.linewidth, vertexColors: true }), THREE.LinePieces);
+                this.mdl.add(line);
             }
-
-            this.mdl.add(line);
 
             if(bHighlight === 1) {
                 this.prevHighlightObjects.push(line);
@@ -552,7 +633,7 @@
         div = div || 5;
         var points;
         if(!bNoSmoothen) {
-			var points_colors = this.subdivide(_points, colors, div, bShowArray, bHighlight);
+            var points_colors = this.subdivide(_points, colors, div, bShowArray, bHighlight);
             points = points_colors[0];
             colors = points_colors[2];
         }
@@ -585,6 +666,8 @@
                             );
 
                             mesh = new THREE.Mesh(geometry0, this.matShader);
+                            mesh.renderOrder = this.renderOrderPicking;
+                            //this.mdlPicking.add(mesh);
                             this.mdl.add(mesh);
 
                             this.prevHighlightObjects.push(mesh);
@@ -611,6 +694,8 @@
                     );
 
                     mesh = new THREE.Mesh(geometry0, this.matShader);
+                    mesh.renderOrder = this.renderOrderPicking;
+                    //this.mdlPicking.add(mesh);
                     this.mdl.add(mesh);
 
                     this.prevHighlightObjects.push(mesh);
@@ -688,12 +773,15 @@
         var currentChain, currentResi;
         var i;
         var points = [], colors = [], radii = [];
+
+        var maxDistance = 6.0; // max residue-residue (or nucleitide-nucleitide) distance allowed
+
         for (i in atoms) {
             var atom = atoms[i];
             if (atom.het) continue;
             if (atom.name !== atomName) continue;
 
-            if (start !== null && currentChain === atom.chain && currentResi + 1 === atom.resi) {
+            if (start !== null && currentChain === atom.chain && currentResi + 1 === atom.resi && Math.abs(start.coord.x - atom.coord.x) < maxDistance && Math.abs(start.coord.y - atom.coord.y) < maxDistance && Math.abs(start.coord.z - atom.coord.z) < maxDistance ) {
                 var middleCoord = start.coord.clone().add(atom.coord).multiplyScalar(0.5);
 
                 if(!bHighlight) {
@@ -724,7 +812,7 @@
 
             if(bHighlight === 2) this.createBox(atom, undefined, undefined, undefined, undefined, bHighlight);
         }
-        if (start !== null && currentChain === atom.chain && currentResi + 1 === atom.resi) {
+        if (start !== null && currentChain === atom.chain && currentResi + 1 === atom.resi && Math.abs(start.coord.x - atom.coord.x) < maxDistance && Math.abs(start.coord.y - atom.coord.y) < maxDistance && Math.abs(start.coord.z - atom.coord.z) < maxDistance ) {
             var middleCoord = start.coord.add(atom.coord).multiplyScalar(0.5);
             if(!bHighlight) {
                 if(bLines) {
@@ -900,8 +988,8 @@
         if (p0.length < 2) return;
         div = div || this.axisDIV;
         if(!bNoSmoothen) {
-			var points_colors0 = this.subdivide(p0, colors, div, bShowArray, bHighlight);
-			var points_colors1 = this.subdivide(p1, colors, div, bShowArray, bHighlight);
+            var points_colors0 = this.subdivide(p0, colors, div, bShowArray, bHighlight);
+            var points_colors1 = this.subdivide(p1, colors, div, bShowArray, bHighlight);
             p0 = points_colors0[0];
             p1 = points_colors1[0];
             colors = points_colors0[2];
@@ -934,6 +1022,8 @@
                         );
 
                         mesh = new THREE.Mesh(geometry0, this.matShader);
+                        mesh.renderOrder = this.renderOrderPicking;
+                        //this.mdlPicking.add(mesh);
                         this.mdl.add(mesh);
 
                         this.prevHighlightObjects.push(mesh);
@@ -950,6 +1040,8 @@
                         );
 
                         mesh = new THREE.Mesh(geometry1, this.matShader);
+                        mesh.renderOrder = this.renderOrderPicking;
+                        //this.mdlPicking.add(mesh);
                         this.mdl.add(mesh);
 
                         this.prevHighlightObjects.push(mesh);
@@ -980,6 +1072,8 @@
                 );
 
                 mesh = new THREE.Mesh(geometry0, this.matShader);
+                mesh.renderOrder = this.renderOrderPicking;
+                //this.mdlPicking.add(mesh);
                 this.mdl.add(mesh);
 
                 this.prevHighlightObjects.push(mesh);
@@ -996,6 +1090,8 @@
                 );
 
                 mesh = new THREE.Mesh(geometry1, this.matShader);
+                mesh.renderOrder = this.renderOrderPicking;
+                //this.mdlPicking.add(mesh);
                 this.mdl.add(mesh);
 
                 this.prevHighlightObjects.push(mesh);
@@ -1574,15 +1670,19 @@
         var mesh;
         if(bHighlight === 2) {
           mesh = new THREE.Mesh(geo, new THREE.MeshPhongMaterial({ transparent: true, opacity: 0.5, overdraw: this.overdraw, specular: this.fractionOfColor, shininess: 30, emissive: 0x000000, vertexColors: THREE.FaceColors, side: THREE.DoubleSide }));
+          this.mdl.add(mesh);
         }
         else if(bHighlight === 1) {
           mesh = new THREE.Mesh(geo, this.matShader);
+          mesh.renderOrder = this.renderOrderPicking;
+          //this.mdlPicking.add(mesh);
+          this.mdl.add(mesh);
         }
         else {
           mesh = new THREE.Mesh(geo, new THREE.MeshPhongMaterial({ overdraw: this.overdraw, specular: this.fractionOfColor, shininess: 30, emissive: 0x000000, vertexColors: THREE.FaceColors, side: THREE.DoubleSide }));
+          this.mdl.add(mesh);
         }
 
-        this.mdl.add(mesh);
         if(bHighlight === 1 || bHighlight === 2) {
             this.prevHighlightObjects.push(mesh);
         }
@@ -1596,10 +1696,12 @@
         var points = [], colors = [], radii = [];
         var currentChain, currentResi;
         var index = 0;
+        var prevAtom;
+
         for (var i in atoms) {
             var atom = atoms[i];
             if ((atom.name === atomName) && !atom.het) {
-                if (index > 0 && (currentChain !== atom.chain || currentResi + 1 !== atom.resi) ) {
+                if (index > 0 && (currentChain !== atom.chain || currentResi + 1 !== atom.resi || Math.abs(atom.coord.x - prevAtom.coord.x) > 6.0 || Math.abs(atom.coord.y - prevAtom.coord.y) > 6.0 || Math.abs(atom.coord.z - prevAtom.coord.z) > 6.0) ) {
                     if(bHighlight !== 2) this.createTubeSub(points, colors, radii, bHighlight);
                     points = []; colors = []; radii = [];
                 }
@@ -1617,6 +1719,8 @@
                 }
 
                 ++index;
+
+                prevAtom = atom;
             }
         }
         if(bHighlight !== 2) this.createTubeSub(points, colors, radii, bHighlight);
@@ -1905,11 +2009,26 @@
           var symmetryMate = this.mdl.clone();
           symmetryMate.applyMatrix(mat);
 
+          this.mdl.add(symmetryMate);
+
+          symmetryMate = this.mdlImpostor.clone();
+          symmetryMate.applyMatrix(mat);
+
+          this.mdlImpostor.add(symmetryMate);
+
+          //symmetryMate = this.mdlPicking.clone();
+          //symmetryMate.applyMatrix(mat);
+
+          //this.mdlPicking.add(symmetryMate);
+
+          symmetryMate = this.mdl_ghost.clone();
+          symmetryMate.applyMatrix(mat);
+
+          this.mdl_ghost.add(symmetryMate);
+
           var center = this.center.clone();
           center.applyMatrix4(mat);
           centerSum.add(center);
-
-          this.mdl.add(symmetryMate);
 
           ++cnt;
        }
@@ -1917,7 +2036,12 @@
        this.maxD *= Math.sqrt(cnt);
        //this.center = centerSum.multiplyScalar(1.0 / cnt);
 
-       this.mdl.position.add(this.center).sub(centerSum.multiplyScalar(1.0 / cnt));
+	   // recenter the mdl* caused the impostor shifted somehow!!! disable the centering for now
+//       this.mdl.position.add(this.center).sub(centerSum.multiplyScalar(1.0 / cnt));
+//       this.mdlImpostor.position.add(this.center).sub(centerSum.multiplyScalar(1.0 / cnt));
+       //this.mdlPicking.position.add(this.center).sub(centerSum.multiplyScalar(1.0 / cnt));
+
+//       this.mdl_ghost.position.add(this.center).sub(centerSum.multiplyScalar(1.0 / cnt));
 
        // reset cameara
        this.setCamera();
@@ -2039,6 +2163,9 @@
             depthWrite: !frontOfTarget
         } );
 
+        //https://stackoverflow.com/questions/29421702/threejs-texture
+        spriteMaterial.map.minFilter = THREE.LinearFilter;
+
         var sprite = new THREE.Sprite( spriteMaterial );
 
         var expandWidthFactor = 1.5;
@@ -2121,12 +2248,12 @@
                     }
                 }
                 else {
-					if(label.text.length === 1) {
-						bb = this.makeTextSprite(label.text, {fontsize: parseInt(labelsize), textColor: labelcolor, borderColor: labelbackground, backgroundColor: labelbackground, alpha: labelalpha, bSchematic: 1});
-					}
-					else {
-                    	bb = this.makeTextSprite(label.text, {fontsize: parseInt(labelsize), textColor: labelcolor, borderColor: labelbackground, backgroundColor: labelbackground, alpha: labelalpha, bSchematic: 0});
-					}
+                    if(label.text.length === 1) {
+                        bb = this.makeTextSprite(label.text, {fontsize: parseInt(labelsize), textColor: labelcolor, borderColor: labelbackground, backgroundColor: labelbackground, alpha: labelalpha, bSchematic: 1});
+                    }
+                    else {
+                        bb = this.makeTextSprite(label.text, {fontsize: parseInt(labelsize), textColor: labelcolor, borderColor: labelbackground, backgroundColor: labelbackground, alpha: labelalpha, bSchematic: 0});
+                    }
                 }
 
                 bb.position.set(label.position.x, label.position.y, label.position.z);

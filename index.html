@@ -79,6 +79,11 @@
       rotate = 'right';
     }
 
+    var maxatomcnt = params.maxatomcnt;
+    if(maxatomcnt === undefined) {
+      maxatomcnt = 100000;
+    }
+
     $( document ).ready(function() {
       function setupViewer(idName, idValue) {
         var maxStructure = 5; // show max 5 structures
@@ -101,6 +106,7 @@
               width: width,
               height: height,
               resize: resize,
+              maxatomcnt: maxatomcnt,
               rotate: rotate
           };
           cfg[idName] = idArray[i];
@@ -132,6 +138,7 @@
               height: height,
               resize: resize,
               rotate: rotate,
+              maxatomcnt: maxatomcnt,
               align: align
           };
 

@@ -711,12 +711,23 @@
     };
 
     iCn3D.prototype.removeHighlightObjects = function () {
+//console.log("remove highlight");
        // remove prevous highlight
        for(var i in this.prevHighlightObjects) {
+           //this.mdlPicking.remove(this.prevHighlightObjects[i]);
            this.mdl.remove(this.prevHighlightObjects[i]);
        }
 
        this.prevHighlightObjects = [];
+
+       // remove prevous highlight
+       for(var i in this.prevHighlightObjects_ghost) {
+           //this.mdlPicking.remove(this.prevHighlightObjects_ghost[i]);
+           this.mdl.remove(this.prevHighlightObjects_ghost[i]);
+       }
+
+       this.prevHighlightObjects_ghost = [];
+
     };
 
     iCn3D.prototype.addHighlightObjects = function (color, bRender, atomsHash) {
@@ -753,6 +764,9 @@
                if (this.maxD < 25) this.maxD = 25;
 
                this.mdl.position.add(this.center).sub(centerAtomsResults.center);
+               //this.mdlPicking.position.add(this.center).sub(centerAtomsResults.center);
+               this.mdlImpostor.position.add(this.center).sub(centerAtomsResults.center);
+               this.mdl_ghost.position.add(this.center).sub(centerAtomsResults.center);
 
                this.center = centerAtomsResults.center;
 
@@ -769,6 +783,9 @@
                var centerAtomsResults = this.centerAtoms(this.hash2Atoms(this.highlightAtoms));
 
                this.mdl.position.add(this.center).sub(centerAtomsResults.center);
+               //this.mdlPicking.position.add(this.center).sub(centerAtomsResults.center);
+               this.mdlImpostor.position.add(this.center).sub(centerAtomsResults.center);
+               this.mdl_ghost.position.add(this.center).sub(centerAtomsResults.center);
 
                this.center = centerAtomsResults.center;
 

@@ -45,6 +45,7 @@ var iCn3D = function (id) {
     this.bSecondaryStructure = false;
 
     this.bHighlight = 1; // undefined: no highlight, 1: highlight by outline, 2: highlight by 3D object
+    this.renderOrderPicking = -1; // less than 0, the default order
 
     this.ALTERNATE_STRUCTURE = -1;
 
@@ -75,6 +76,24 @@ var iCn3D = function (id) {
     this.matShader = this.setOutlineColor('yellow');
     this.fractionOfColor = new THREE.Color(0.1, 0.1, 0.1);
 
+    // Impostor shaders
+    this.bImpostor = true;
+    this.bExtFragDepth = this.renderer.extensions.get( "EXT_frag_depth" );
+    if(!this.bExtFragDepth) this.bImpostor = false;
+
+		// cylinder impostor
+	this.positionArray = new Array();
+	this.colorArray = new Array();
+
+	this.position2Array = new Array();
+	this.color2Array = new Array();
+
+	this.radiusArray = new Array();
+
+		// sphere impostor
+	this.positionArraySphere = new Array();
+	this.colorArraySphere = new Array();
+	this.radiusArraySphere = new Array();
 
     // adjust the size
     this.WIDTH = this.container.width(), this.HEIGHT = this.container.height();
@@ -152,7 +171,7 @@ var iCn3D = function (id) {
 
     this.options = {
         camera: 'perspective',
-        background: 'black',
+        background: 'transparent',
         color: 'spectrum',
         sidechains: 'nothing',
         proteins: 'cylinder and plate',
@@ -401,9 +420,13 @@ var iCn3D = function (id) {
             }
 
             var intersects = me.raycaster.intersectObjects( me.objects ); // not all "mdl" group will be used for picking
+
+            var bFound = false;
+
+            var position = me.mdl.position;
             if ( intersects.length > 0 ) {
                 // the intersections are sorted so that the closest point is the first one.
-                intersects[ 0 ].point.sub(me.mdl.position); // mdl.position was moved to the original (0,0,0) after reading the molecule coordinates. The raycasting was done based on the original. The positio of the ooriginal should be substracted.
+                intersects[ 0 ].point.sub(position); // mdl.position was moved to the original (0,0,0) after reading the molecule coordinates. The raycasting was done based on the original. The positio of the ooriginal should be substracted.
 
                 var threshold = 0.5;
                 var atom = me.getAtomsFromPosition(intersects[ 0 ].point, threshold); // the second parameter is the distance threshold. The first matched atom will be returned. Use 1 angstrom, not 2 angstrom. If it's 2 angstrom, other atom will be returned.
@@ -414,6 +437,7 @@ var iCn3D = function (id) {
                 }
 
                 if(atom) {
+					bFound = true;
                     if(me.pickpair) {
                       if(me.pickedatomNum % 2 === 0) {
                         me.pickedatom = atom;
@@ -434,6 +458,45 @@ var iCn3D = function (id) {
                     console.log("No atoms were found in 10 andstrom range");
                 }
             } // end if
+
+            if(!bFound) {
+				intersects = me.raycaster.intersectObjects( me.objects_ghost ); // not all "mdl" group will be used for picking
+
+				position = me.mdl_ghost.position;
+				if ( intersects.length > 0 ) {
+					// the intersections are sorted so that the closest point is the first one.
+					intersects[ 0 ].point.sub(position); // mdl.position was moved to the original (0,0,0) after reading the molecule coordinates. The raycasting was done based on the original. The positio of the ooriginal should be substracted.
+
+					var threshold = 0.5;
+					var atom = me.getAtomsFromPosition(intersects[ 0 ].point, threshold); // the second parameter is the distance threshold. The first matched atom will be returned. Use 1 angstrom, not 2 angstrom. If it's 2 angstrom, other atom will be returned.
+
+					while(!atom && threshold < 10) {
+						threshold = threshold + 0.5;
+						atom = me.getAtomsFromPosition(intersects[ 0 ].point, threshold);
+					}
+
+					if(atom) {
+						if(me.pickpair) {
+						  if(me.pickedatomNum % 2 === 0) {
+							me.pickedatom = atom;
+						  }
+						  else {
+							me.pickedatom2 = atom;
+						  }
+
+						  ++me.pickedatomNum;
+						}
+						else {
+						  me.pickedatom = atom;
+						}
+
+						  me.showPicking(atom);
+					}
+					else {
+						console.log("No atoms were found in 10 andstrom range");
+					}
+				} // end if
+			}
         }
 
         me.controls.handleResize();
@@ -544,10 +607,18 @@ iCn3D.prototype = {
 
     // modified from iview (http://istar.cse.cuhk.edu.hk/iview/)
     setWidthHeight: function(width, height) {
-        this.renderer.setSize(width, height);
+        //this.renderer.setSize(width, height);
 
-        this.container.widthInv  = 1 / width;
-        this.container.heightInv = 1 / height;
+		//antialiasing by render twice large:
+		//https://stackoverflow.com/questions/17224795/antialiasing-not-working-in-three-js
+		this.renderer.setSize(width*2, height*2);
+		this.renderer.domElement.style.width = width + "px";
+		this.renderer.domElement.style.height = height + "px";
+		this.renderer.domElement.width = width*2;
+		this.renderer.domElement.height = height*2;
+
+        this.container.widthInv  = 1 / (2*width);
+        this.container.heightInv = 1 / (2*height);
         this.container.whratio = width / height;
     },
 
@@ -1069,6 +1140,7 @@ iCn3D.prototype = {
         this.highlightAtoms = this.cloneHash(this.atoms); // used to change color or dislay type for certain atoms
 
         this.prevHighlightObjects = [];
+        this.prevHighlightObjects_ghost = [];
         this.prevSurfaces = [];
 
         this.labels = {};   // hash of name -> a list of labels. Each label contains 'position', 'text', 'size', 'color', 'background'
