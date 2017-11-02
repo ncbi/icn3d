@@ -711,7 +711,7 @@
     };
 
     iCn3D.prototype.removeHighlightObjects = function () {
-console.log("remove highlight");
+//console.log("remove highlight");
        // remove prevous highlight
        for(var i in this.prevHighlightObjects) {
            //this.mdlPicking.remove(this.prevHighlightObjects[i]);

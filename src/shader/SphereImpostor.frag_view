@@ -1,0 +1,817 @@
+1: #extension GL_EXT_frag_depth : enable
+2: precision highp float;
+3: precision highp int;
+4: #define SHADER_NAME ShaderMaterial
+5: #define USE_COLOR 1
+6: #define NEAR_CLIP 1
+7: #define CAP 1
+8: #define GAMMA_FACTOR 2
+9: #define NUM_CLIPPING_PLANES 0
+10: uniform mat4 viewMatrix;
+11: uniform vec3 cameraPosition;
+12: #define TONE_MAPPING
+13: #define saturate(a) clamp( a, 0.0, 1.0 )
+14: uniform float toneMappingExposure;
+15: uniform float toneMappingWhitePoint;
+16: vec3 LinearToneMapping( vec3 color ) {
+17:   return toneMappingExposure * color;
+18: }
+19: vec3 ReinhardToneMapping( vec3 color ) {
+20:   color *= toneMappingExposure;
+21:   return saturate( color / ( vec3( 1.0 ) + color ) );
+22: }
+23: #define Uncharted2Helper( x ) max( ( ( x * ( 0.15 * x + 0.10 * 0.50 ) + 0.20 * 0.02 ) / ( x * ( 0.15 * x + 0.50 ) + 0.20 * 0.30 ) ) - 0.02 / 0.30, vec3( 0.0 ) )
+24: vec3 Uncharted2ToneMapping( vec3 color ) {
+25:   color *= toneMappingExposure;
+26:   return saturate( Uncharted2Helper( color ) / Uncharted2Helper( vec3( toneMappingWhitePoint ) ) );
+27: }
+28: vec3 OptimizedCineonToneMapping( vec3 color ) {
+29:   color *= toneMappingExposure;
+30:   color = max( vec3( 0.0 ), color - 0.004 );
+31:   return pow( ( color * ( 6.2 * color + 0.5 ) ) / ( color * ( 6.2 * color + 1.7 ) + 0.06 ), vec3( 2.2 ) );
+32: }
+33: 
+34: vec3 toneMapping( vec3 color ) { return LinearToneMapping( color ); }
+35: 
+36: vec4 LinearToLinear( in vec4 value ) {
+37:   return value;
+38: }
+39: vec4 GammaToLinear( in vec4 value, in float gammaFactor ) {
+40:   return vec4( pow( value.xyz, vec3( gammaFactor ) ), value.w );
+41: }
+42: vec4 LinearToGamma( in vec4 value, in float gammaFactor ) {
+43:   return vec4( pow( value.xyz, vec3( 1.0 / gammaFactor ) ), value.w );
+44: }
+45: vec4 sRGBToLinear( in vec4 value ) {
+46:   return vec4( mix( pow( value.rgb * 0.9478672986 + vec3( 0.0521327014 ), vec3( 2.4 ) ), value.rgb * 0.0773993808, vec3( lessThanEqual( value.rgb, vec3( 0.04045 ) ) ) ), value.w );
+47: }
+48: vec4 LinearTosRGB( in vec4 value ) {
+49:   return vec4( mix( pow( value.rgb, vec3( 0.41666 ) ) * 1.055 - vec3( 0.055 ), value.rgb * 12.92, vec3( lessThanEqual( value.rgb, vec3( 0.0031308 ) ) ) ), value.w );
+50: }
+51: vec4 RGBEToLinear( in vec4 value ) {
+52:   return vec4( value.rgb * exp2( value.a * 255.0 - 128.0 ), 1.0 );
+53: }
+54: vec4 LinearToRGBE( in vec4 value ) {
+55:   float maxComponent = max( max( value.r, value.g ), value.b );
+56:   float fExp = clamp( ceil( log2( maxComponent ) ), -128.0, 127.0 );
+57:   return vec4( value.rgb / exp2( fExp ), ( fExp + 128.0 ) / 255.0 );
+58: }
+59: vec4 RGBMToLinear( in vec4 value, in float maxRange ) {
+60:   return vec4( value.xyz * value.w * maxRange, 1.0 );
+61: }
+62: vec4 LinearToRGBM( in vec4 value, in float maxRange ) {
+63:   float maxRGB = max( value.x, max( value.g, value.b ) );
+64:   float M      = clamp( maxRGB / maxRange, 0.0, 1.0 );
+65:   M            = ceil( M * 255.0 ) / 255.0;
+66:   return vec4( value.rgb / ( M * maxRange ), M );
+67: }
+68: vec4 RGBDToLinear( in vec4 value, in float maxRange ) {
+69:     return vec4( value.rgb * ( ( maxRange / 255.0 ) / value.a ), 1.0 );
+70: }
+71: vec4 LinearToRGBD( in vec4 value, in float maxRange ) {
+72:     float maxRGB = max( value.x, max( value.g, value.b ) );
+73:     float D      = max( maxRange / maxRGB, 1.0 );
+74:     D            = min( floor( D ) / 255.0, 1.0 );
+75:     return vec4( value.rgb * ( D * ( 255.0 / maxRange ) ), D );
+76: }
+77: const mat3 cLogLuvM = mat3( 0.2209, 0.3390, 0.4184, 0.1138, 0.6780, 0.7319, 0.0102, 0.1130, 0.2969 );
+78: vec4 LinearToLogLuv( in vec4 value )  {
+79:   vec3 Xp_Y_XYZp = value.rgb * cLogLuvM;
+80:   Xp_Y_XYZp = max(Xp_Y_XYZp, vec3(1e-6, 1e-6, 1e-6));
+81:   vec4 vResult;
+82:   vResult.xy = Xp_Y_XYZp.xy / Xp_Y_XYZp.z;
+83:   float Le = 2.0 * log2(Xp_Y_XYZp.y) + 127.0;
+84:   vResult.w = fract(Le);
+85:   vResult.z = (Le - (floor(vResult.w*255.0))/255.0)/255.0;
+86:   return vResult;
+87: }
+88: const mat3 cLogLuvInverseM = mat3( 6.0014, -2.7008, -1.7996, -1.3320, 3.1029, -5.7721, 0.3008, -1.0882, 5.6268 );
+89: vec4 LogLuvToLinear( in vec4 value ) {
+90:   float Le = value.z * 255.0 + value.w;
+91:   vec3 Xp_Y_XYZp;
+92:   Xp_Y_XYZp.y = exp2((Le - 127.0) / 2.0);
+93:   Xp_Y_XYZp.z = Xp_Y_XYZp.y / value.y;
+94:   Xp_Y_XYZp.x = value.x * Xp_Y_XYZp.z;
+95:   vec3 vRGB = Xp_Y_XYZp.rgb * cLogLuvInverseM;
+96:   return vec4( max(vRGB, 0.0), 1.0 );
+97: }
+98: 
+99: vec4 mapTexelToLinear( vec4 value ) { return GammaToLinear( value, float( GAMMA_FACTOR ) ); }
+100: vec4 envMapTexelToLinear( vec4 value ) { return GammaToLinear( value, float( GAMMA_FACTOR ) ); }
+101: vec4 emissiveMapTexelToLinear( vec4 value ) { return GammaToLinear( value, float( GAMMA_FACTOR ) ); }
+102: vec4 linearToOutputTexel( vec4 value ) { return LinearToGamma( value, float( GAMMA_FACTOR ) ); }
+103: 
+104: #define STANDARD
+105: #define IMPOSTOR
+106: 
+107: uniform vec3 diffuse;
+108: uniform vec3 emissive;
+109: uniform float roughness;
+110: uniform float metalness;
+111: uniform float opacity;
+112: uniform float nearClip;
+113: uniform mat4 projectionMatrix;
+114: uniform float ortho;
+115: 
+116: // uniform vec3 specular;
+117: // uniform float shininess;
+118: 
+119: varying float vRadius;
+120: varying float vRadiusSq;
+121: varying vec3 vPoint;
+122: varying vec3 vPointViewPosition;
+123: 
+124: #ifdef PICKING
+125:     uniform float objectId;
+126:     varying vec3 vPickingColor;
+127: #else
+128:     #define PI 3.14159265359
+129: #define PI2 6.28318530718
+130: #define RECIPROCAL_PI 0.31830988618
+131: #define RECIPROCAL_PI2 0.15915494
+132: #define LOG2 1.442695
+133: #define EPSILON 1e-6
+134: #define saturate(a) clamp( a, 0.0, 1.0 )
+135: #define whiteCompliment(a) ( 1.0 - saturate( a ) )
+136: float pow2( const in float x ) { return x*x; }
+137: float pow3( const in float x ) { return x*x*x; }
+138: float pow4( const in float x ) { float x2 = x*x; return x2*x2; }
+139: float average( const in vec3 color ) { return dot( color, vec3( 0.3333 ) ); }
+140: highp float rand( const in vec2 uv ) {
+141: 	const highp float a = 12.9898, b = 78.233, c = 43758.5453;
+142: 	highp float dt = dot( uv.xy, vec2( a,b ) ), sn = mod( dt, PI );
+143: 	return fract(sin(sn) * c);
+144: }
+145: struct IncidentLight {
+146: 	vec3 color;
+147: 	vec3 direction;
+148: 	bool visible;
+149: };
+150: struct ReflectedLight {
+151: 	vec3 directDiffuse;
+152: 	vec3 directSpecular;
+153: 	vec3 indirectDiffuse;
+154: 	vec3 indirectSpecular;
+155: };
+156: struct GeometricContext {
+157: 	vec3 position;
+158: 	vec3 normal;
+159: 	vec3 viewDir;
+160: };
+161: vec3 transformDirection( in vec3 dir, in mat4 matrix ) {
+162: 	return normalize( ( matrix * vec4( dir, 0.0 ) ).xyz );
+163: }
+164: vec3 inverseTransformDirection( in vec3 dir, in mat4 matrix ) {
+165: 	return normalize( ( vec4( dir, 0.0 ) * matrix ).xyz );
+166: }
+167: vec3 projectOnPlane(in vec3 point, in vec3 pointOnPlane, in vec3 planeNormal ) {
+168: 	float distance = dot( planeNormal, point - pointOnPlane );
+169: 	return - distance * planeNormal + point;
+170: }
+171: float sideOfPlane( in vec3 point, in vec3 pointOnPlane, in vec3 planeNormal ) {
+172: 	return sign( dot( point - pointOnPlane, planeNormal ) );
+173: }
+174: vec3 linePlaneIntersect( in vec3 pointOnLine, in vec3 lineDirection, in vec3 pointOnPlane, in vec3 planeNormal ) {
+175: 	return lineDirection * ( dot( planeNormal, pointOnPlane - pointOnLine ) / dot( planeNormal, lineDirection ) ) + pointOnLine;
+176: }
+177: 
+178:     #ifdef USE_COLOR
+179: 	varying vec3 vColor;
+180: #endif
+181: 
+182:     #ifdef USE_FOG
+183: 	uniform vec3 fogColor;
+184: 	#ifdef FOG_EXP2
+185: 		uniform float fogDensity;
+186: 	#else
+187: 		uniform float fogNear;
+188: 		uniform float fogFar;
+189: 	#endif
+190: #endif
+191:     bool testLightInRange( const in float lightDistance, const in float cutoffDistance ) {
+192: 	return any( bvec2( cutoffDistance == 0.0, lightDistance < cutoffDistance ) );
+193: }
+194: float punctualLightIntensityToIrradianceFactor( const in float lightDistance, const in float cutoffDistance, const in float decayExponent ) {
+195: 		if( decayExponent > 0.0 ) {
+196: #if defined ( PHYSICALLY_CORRECT_LIGHTS )
+197: 			float distanceFalloff = 1.0 / max( pow( lightDistance, decayExponent ), 0.01 );
+198: 			float maxDistanceCutoffFactor = pow2( saturate( 1.0 - pow4( lightDistance / cutoffDistance ) ) );
+199: 			return distanceFalloff * maxDistanceCutoffFactor;
+200: #else
+201: 			return pow( saturate( -lightDistance / cutoffDistance + 1.0 ), decayExponent );
+202: #endif
+203: 		}
+204: 		return 1.0;
+205: }
+206: vec3 BRDF_Diffuse_Lambert( const in vec3 diffuseColor ) {
+207: 	return RECIPROCAL_PI * diffuseColor;
+208: }
+209: vec3 F_Schlick( const in vec3 specularColor, const in float dotLH ) {
+210: 	float fresnel = exp2( ( -5.55473 * dotLH - 6.98316 ) * dotLH );
+211: 	return ( 1.0 - specularColor ) * fresnel + specularColor;
+212: }
+213: float G_GGX_Smith( const in float alpha, const in float dotNL, const in float dotNV ) {
+214: 	float a2 = pow2( alpha );
+215: 	float gl = dotNL + sqrt( a2 + ( 1.0 - a2 ) * pow2( dotNL ) );
+216: 	float gv = dotNV + sqrt( a2 + ( 1.0 - a2 ) * pow2( dotNV ) );
+217: 	return 1.0 / ( gl * gv );
+218: }
+219: float G_GGX_SmithCorrelated( const in float alpha, const in float dotNL, const in float dotNV ) {
+220: 	float a2 = pow2( alpha );
+221: 	float gv = dotNL * sqrt( a2 + ( 1.0 - a2 ) * pow2( dotNV ) );
+222: 	float gl = dotNV * sqrt( a2 + ( 1.0 - a2 ) * pow2( dotNL ) );
+223: 	return 0.5 / max( gv + gl, EPSILON );
+224: }
+225: float D_GGX( const in float alpha, const in float dotNH ) {
+226: 	float a2 = pow2( alpha );
+227: 	float denom = pow2( dotNH ) * ( a2 - 1.0 ) + 1.0;
+228: 	return RECIPROCAL_PI * a2 / pow2( denom );
+229: }
+230: vec3 BRDF_Specular_GGX( const in IncidentLight incidentLight, const in GeometricContext geometry, const in vec3 specularColor, const in float roughness ) {
+231: 	float alpha = pow2( roughness );
+232: 	vec3 halfDir = normalize( incidentLight.direction + geometry.viewDir );
+233: 	float dotNL = saturate( dot( geometry.normal, incidentLight.direction ) );
+234: 	float dotNV = saturate( dot( geometry.normal, geometry.viewDir ) );
+235: 	float dotNH = saturate( dot( geometry.normal, halfDir ) );
+236: 	float dotLH = saturate( dot( incidentLight.direction, halfDir ) );
+237: 	vec3 F = F_Schlick( specularColor, dotLH );
+238: 	float G = G_GGX_SmithCorrelated( alpha, dotNL, dotNV );
+239: 	float D = D_GGX( alpha, dotNH );
+240: 	return F * ( G * D );
+241: }
+242: vec3 BRDF_Specular_GGX_Environment( const in GeometricContext geometry, const in vec3 specularColor, const in float roughness ) {
+243: 	float dotNV = saturate( dot( geometry.normal, geometry.viewDir ) );
+244: 	const vec4 c0 = vec4( - 1, - 0.0275, - 0.572, 0.022 );
+245: 	const vec4 c1 = vec4( 1, 0.0425, 1.04, - 0.04 );
+246: 	vec4 r = roughness * c0 + c1;
+247: 	float a004 = min( r.x * r.x, exp2( - 9.28 * dotNV ) ) * r.x + r.y;
+248: 	vec2 AB = vec2( -1.04, 1.04 ) * a004 + r.zw;
+249: 	return specularColor * AB.x + AB.y;
+250: }
+251: float G_BlinnPhong_Implicit( ) {
+252: 	return 0.25;
+253: }
+254: float D_BlinnPhong( const in float shininess, const in float dotNH ) {
+255: 	return RECIPROCAL_PI * ( shininess * 0.5 + 1.0 ) * pow( dotNH, shininess );
+256: }
+257: vec3 BRDF_Specular_BlinnPhong( const in IncidentLight incidentLight, const in GeometricContext geometry, const in vec3 specularColor, const in float shininess ) {
+258: 	vec3 halfDir = normalize( incidentLight.direction + geometry.viewDir );
+259: 	float dotNH = saturate( dot( geometry.normal, halfDir ) );
+260: 	float dotLH = saturate( dot( incidentLight.direction, halfDir ) );
+261: 	vec3 F = F_Schlick( specularColor, dotLH );
+262: 	float G = G_BlinnPhong_Implicit( );
+263: 	float D = D_BlinnPhong( shininess, dotNH );
+264: 	return F * ( G * D );
+265: }
+266: float GGXRoughnessToBlinnExponent( const in float ggxRoughness ) {
+267: 	return ( 2.0 / pow2( ggxRoughness + 0.0001 ) - 2.0 );
+268: }
+269: float BlinnExponentToGGXRoughness( const in float blinnExponent ) {
+270: 	return sqrt( 2.0 / ( blinnExponent + 2.0 ) );
+271: }
+272: 
+273:     uniform vec3 ambientLightColor;
+274: vec3 getAmbientLightIrradiance( const in vec3 ambientLightColor ) {
+275: 	vec3 irradiance = ambientLightColor;
+276: 	#ifndef PHYSICALLY_CORRECT_LIGHTS
+277: 		irradiance *= PI;
+278: 	#endif
+279: 	return irradiance;
+280: }
+281: #if 1 > 0
+282: 	struct DirectionalLight {
+283: 		vec3 direction;
+284: 		vec3 color;
+285: 		int shadow;
+286: 		float shadowBias;
+287: 		float shadowRadius;
+288: 		vec2 shadowMapSize;
+289: 	};
+290: 	uniform DirectionalLight directionalLights[ 1 ];
+291: 	void getDirectionalDirectLightIrradiance( const in DirectionalLight directionalLight, const in GeometricContext geometry, out IncidentLight directLight ) {
+292: 		directLight.color = directionalLight.color;
+293: 		directLight.direction = directionalLight.direction;
+294: 		directLight.visible = true;
+295: 	}
+296: #endif
+297: #if 0 > 0
+298: 	struct PointLight {
+299: 		vec3 position;
+300: 		vec3 color;
+301: 		float distance;
+302: 		float decay;
+303: 		int shadow;
+304: 		float shadowBias;
+305: 		float shadowRadius;
+306: 		vec2 shadowMapSize;
+307: 	};
+308: 	uniform PointLight pointLights[ 0 ];
+309: 	void getPointDirectLightIrradiance( const in PointLight pointLight, const in GeometricContext geometry, out IncidentLight directLight ) {
+310: 		vec3 lVector = pointLight.position - geometry.position;
+311: 		directLight.direction = normalize( lVector );
+312: 		float lightDistance = length( lVector );
+313: 		if ( testLightInRange( lightDistance, pointLight.distance ) ) {
+314: 			directLight.color = pointLight.color;
+315: 			directLight.color *= punctualLightIntensityToIrradianceFactor( lightDistance, pointLight.distance, pointLight.decay );
+316: 			directLight.visible = true;
+317: 		} else {
+318: 			directLight.color = vec3( 0.0 );
+319: 			directLight.visible = false;
+320: 		}
+321: 	}
+322: #endif
+323: #if 0 > 0
+324: 	struct SpotLight {
+325: 		vec3 position;
+326: 		vec3 direction;
+327: 		vec3 color;
+328: 		float distance;
+329: 		float decay;
+330: 		float coneCos;
+331: 		float penumbraCos;
+332: 		int shadow;
+333: 		float shadowBias;
+334: 		float shadowRadius;
+335: 		vec2 shadowMapSize;
+336: 	};
+337: 	uniform SpotLight spotLights[ 0 ];
+338: 	void getSpotDirectLightIrradiance( const in SpotLight spotLight, const in GeometricContext geometry, out IncidentLight directLight  ) {
+339: 		vec3 lVector = spotLight.position - geometry.position;
+340: 		directLight.direction = normalize( lVector );
+341: 		float lightDistance = length( lVector );
+342: 		float angleCos = dot( directLight.direction, spotLight.direction );
+343: 		if ( all( bvec2( angleCos > spotLight.coneCos, testLightInRange( lightDistance, spotLight.distance ) ) ) ) {
+344: 			float spotEffect = smoothstep( spotLight.coneCos, spotLight.penumbraCos, angleCos );
+345: 			directLight.color = spotLight.color;
+346: 			directLight.color *= spotEffect * punctualLightIntensityToIrradianceFactor( lightDistance, spotLight.distance, spotLight.decay );
+347: 			directLight.visible = true;
+348: 		} else {
+349: 			directLight.color = vec3( 0.0 );
+350: 			directLight.visible = false;
+351: 		}
+352: 	}
+353: #endif
+354: #if 0 > 0
+355: 	struct HemisphereLight {
+356: 		vec3 direction;
+357: 		vec3 skyColor;
+358: 		vec3 groundColor;
+359: 	};
+360: 	uniform HemisphereLight hemisphereLights[ 0 ];
+361: 	vec3 getHemisphereLightIrradiance( const in HemisphereLight hemiLight, const in GeometricContext geometry ) {
+362: 		float dotNL = dot( geometry.normal, hemiLight.direction );
+363: 		float hemiDiffuseWeight = 0.5 * dotNL + 0.5;
+364: 		vec3 irradiance = mix( hemiLight.groundColor, hemiLight.skyColor, hemiDiffuseWeight );
+365: 		#ifndef PHYSICALLY_CORRECT_LIGHTS
+366: 			irradiance *= PI;
+367: 		#endif
+368: 		return irradiance;
+369: 	}
+370: #endif
+371: #if defined( USE_ENVMAP ) && defined( PHYSICAL )
+372: 	vec3 getLightProbeIndirectIrradiance( const in GeometricContext geometry, const in int maxMIPLevel ) {
+373: 		#ifdef DOUBLE_SIDED
+374: 	float flipNormal = ( float( gl_FrontFacing ) * 2.0 - 1.0 );
+375: #else
+376: 	float flipNormal = 1.0;
+377: #endif
+378: 
+379: 		vec3 worldNormal = inverseTransformDirection( geometry.normal, viewMatrix );
+380: 		#ifdef ENVMAP_TYPE_CUBE
+381: 			vec3 queryVec = flipNormal * vec3( flipEnvMap * worldNormal.x, worldNormal.yz );
+382: 			#ifdef TEXTURE_LOD_EXT
+383: 				vec4 envMapColor = textureCubeLodEXT( envMap, queryVec, float( maxMIPLevel ) );
+384: 			#else
+385: 				vec4 envMapColor = textureCube( envMap, queryVec, float( maxMIPLevel ) );
+386: 			#endif
+387: 			envMapColor.rgb = envMapTexelToLinear( envMapColor ).rgb;
+388: 		#elif defined( ENVMAP_TYPE_CUBE_UV )
+389: 			vec3 queryVec = flipNormal * vec3( flipEnvMap * worldNormal.x, worldNormal.yz );
+390: 			vec4 envMapColor = textureCubeUV( queryVec, 1.0 );
+391: 		#else
+392: 			vec4 envMapColor = vec4( 0.0 );
+393: 		#endif
+394: 		return PI * envMapColor.rgb * envMapIntensity;
+395: 	}
+396: 	float getSpecularMIPLevel( const in float blinnShininessExponent, const in int maxMIPLevel ) {
+397: 		float maxMIPLevelScalar = float( maxMIPLevel );
+398: 		float desiredMIPLevel = maxMIPLevelScalar - 0.79248 - 0.5 * log2( pow2( blinnShininessExponent ) + 1.0 );
+399: 		return clamp( desiredMIPLevel, 0.0, maxMIPLevelScalar );
+400: 	}
+401: 	vec3 getLightProbeIndirectRadiance( const in GeometricContext geometry, const in float blinnShininessExponent, const in int maxMIPLevel ) {
+402: 		#ifdef ENVMAP_MODE_REFLECTION
+403: 			vec3 reflectVec = reflect( -geometry.viewDir, geometry.normal );
+404: 		#else
+405: 			vec3 reflectVec = refract( -geometry.viewDir, geometry.normal, refractionRatio );
+406: 		#endif
+407: 		#ifdef DOUBLE_SIDED
+408: 	float flipNormal = ( float( gl_FrontFacing ) * 2.0 - 1.0 );
+409: #else
+410: 	float flipNormal = 1.0;
+411: #endif
+412: 
+413: 		reflectVec = inverseTransformDirection( reflectVec, viewMatrix );
+414: 		float specularMIPLevel = getSpecularMIPLevel( blinnShininessExponent, maxMIPLevel );
+415: 		#ifdef ENVMAP_TYPE_CUBE
+416: 			vec3 queryReflectVec = flipNormal * vec3( flipEnvMap * reflectVec.x, reflectVec.yz );
+417: 			#ifdef TEXTURE_LOD_EXT
+418: 				vec4 envMapColor = textureCubeLodEXT( envMap, queryReflectVec, specularMIPLevel );
+419: 			#else
+420: 				vec4 envMapColor = textureCube( envMap, queryReflectVec, specularMIPLevel );
+421: 			#endif
+422: 			envMapColor.rgb = envMapTexelToLinear( envMapColor ).rgb;
+423: 		#elif defined( ENVMAP_TYPE_CUBE_UV )
+424: 			vec3 queryReflectVec = flipNormal * vec3( flipEnvMap * reflectVec.x, reflectVec.yz );
+425: 			vec4 envMapColor = textureCubeUV(queryReflectVec, BlinnExponentToGGXRoughness(blinnShininessExponent));
+426: 		#elif defined( ENVMAP_TYPE_EQUIREC )
+427: 			vec2 sampleUV;
+428: 			sampleUV.y = saturate( flipNormal * reflectVec.y * 0.5 + 0.5 );
+429: 			sampleUV.x = atan( flipNormal * reflectVec.z, flipNormal * reflectVec.x ) * RECIPROCAL_PI2 + 0.5;
+430: 			#ifdef TEXTURE_LOD_EXT
+431: 				vec4 envMapColor = texture2DLodEXT( envMap, sampleUV, specularMIPLevel );
+432: 			#else
+433: 				vec4 envMapColor = texture2D( envMap, sampleUV, specularMIPLevel );
+434: 			#endif
+435: 			envMapColor.rgb = envMapTexelToLinear( envMapColor ).rgb;
+436: 		#elif defined( ENVMAP_TYPE_SPHERE )
+437: 			vec3 reflectView = flipNormal * normalize( ( viewMatrix * vec4( reflectVec, 0.0 ) ).xyz + vec3( 0.0,0.0,1.0 ) );
+438: 			#ifdef TEXTURE_LOD_EXT
+439: 				vec4 envMapColor = texture2DLodEXT( envMap, reflectView.xy * 0.5 + 0.5, specularMIPLevel );
+440: 			#else
+441: 				vec4 envMapColor = texture2D( envMap, reflectView.xy * 0.5 + 0.5, specularMIPLevel );
+442: 			#endif
+443: 			envMapColor.rgb = envMapTexelToLinear( envMapColor ).rgb;
+444: 		#endif
+445: 		return envMapColor.rgb * envMapIntensity;
+446: 	}
+447: #endif
+448: 
+449:     // include lights_phong_pars_fragment
+450:     struct PhysicalMaterial {
+451: 	vec3	diffuseColor;
+452: 	float	specularRoughness;
+453: 	vec3	specularColor;
+454: 	#ifndef STANDARD
+455: 		float clearCoat;
+456: 		float clearCoatRoughness;
+457: 	#endif
+458: };
+459: #define MAXIMUM_SPECULAR_COEFFICIENT 0.16
+460: #define DEFAULT_SPECULAR_COEFFICIENT 0.04
+461: float clearCoatDHRApprox( const in float roughness, const in float dotNL ) {
+462: 	return DEFAULT_SPECULAR_COEFFICIENT + ( 1.0 - DEFAULT_SPECULAR_COEFFICIENT ) * ( pow( 1.0 - dotNL, 5.0 ) * pow( 1.0 - roughness, 2.0 ) );
+463: }
+464: void RE_Direct_Physical( const in IncidentLight directLight, const in GeometricContext geometry, const in PhysicalMaterial material, inout ReflectedLight reflectedLight ) {
+465: 	float dotNL = saturate( dot( geometry.normal, directLight.direction ) );
+466: 	vec3 irradiance = dotNL * directLight.color;
+467: 	#ifndef PHYSICALLY_CORRECT_LIGHTS
+468: 		irradiance *= PI;
+469: 	#endif
+470: 	#ifndef STANDARD
+471: 		float clearCoatDHR = material.clearCoat * clearCoatDHRApprox( material.clearCoatRoughness, dotNL );
+472: 	#else
+473: 		float clearCoatDHR = 0.0;
+474: 	#endif
+475: 	reflectedLight.directSpecular += ( 1.0 - clearCoatDHR ) * irradiance * BRDF_Specular_GGX( directLight, geometry, material.specularColor, material.specularRoughness );
+476: 	reflectedLight.directDiffuse += ( 1.0 - clearCoatDHR ) * irradiance * BRDF_Diffuse_Lambert( material.diffuseColor );
+477: 	#ifndef STANDARD
+478: 		reflectedLight.directSpecular += irradiance * material.clearCoat * BRDF_Specular_GGX( directLight, geometry, vec3( DEFAULT_SPECULAR_COEFFICIENT ), material.clearCoatRoughness );
+479: 	#endif
+480: }
+481: void RE_IndirectDiffuse_Physical( const in vec3 irradiance, const in GeometricContext geometry, const in PhysicalMaterial material, inout ReflectedLight reflectedLight ) {
+482: 	reflectedLight.indirectDiffuse += irradiance * BRDF_Diffuse_Lambert( material.diffuseColor );
+483: }
+484: void RE_IndirectSpecular_Physical( const in vec3 radiance, const in vec3 clearCoatRadiance, const in GeometricContext geometry, const in PhysicalMaterial material, inout ReflectedLight reflectedLight ) {
+485: 	#ifndef STANDARD
+486: 		float dotNV = saturate( dot( geometry.normal, geometry.viewDir ) );
+487: 		float dotNL = dotNV;
+488: 		float clearCoatDHR = material.clearCoat * clearCoatDHRApprox( material.clearCoatRoughness, dotNL );
+489: 	#else
+490: 		float clearCoatDHR = 0.0;
+491: 	#endif
+492: 	reflectedLight.indirectSpecular += ( 1.0 - clearCoatDHR ) * radiance * BRDF_Specular_GGX_Environment( geometry, material.specularColor, material.specularRoughness );
+493: 	#ifndef STANDARD
+494: 		reflectedLight.indirectSpecular += clearCoatRadiance * material.clearCoat * BRDF_Specular_GGX_Environment( geometry, vec3( DEFAULT_SPECULAR_COEFFICIENT ), material.clearCoatRoughness );
+495: 	#endif
+496: }
+497: #define RE_Direct				RE_Direct_Physical
+498: #define RE_IndirectDiffuse		RE_IndirectDiffuse_Physical
+499: #define RE_IndirectSpecular		RE_IndirectSpecular_Physical
+500: #define Material_BlinnShininessExponent( material )   GGXRoughnessToBlinnExponent( material.specularRoughness )
+501: #define Material_ClearCoat_BlinnShininessExponent( material )   GGXRoughnessToBlinnExponent( material.clearCoatRoughness )
+502: float computeSpecularOcclusion( const in float dotNV, const in float ambientOcclusion, const in float roughness ) {
+503: 	return saturate( pow( dotNV + ambientOcclusion, exp2( - 16.0 * roughness - 1.0 ) ) - 1.0 + ambientOcclusion );
+504: }
+505: 
+506: #endif
+507: 
+508: bool flag2 = false;
+509: bool interior = false;
+510: vec3 cameraPos;
+511: vec3 cameraNormal;
+512: 
+513: // vec4 poly_color = gl_Color;
+514: //   if(uf_use_border_hinting == 1.0)
+515: //   {
+516: //     vec3 wc_eye_dir = normalize(wc_sp_pt);
+517: //     float n_dot_e   = abs(dot(wc_sp_nrml,wc_eye_dir));
+518: //     float alpha     = max(uf_border_color_start_cosine - n_dot_e,0.0)/uf_border_color_start_cosine;
+519: //     poly_color      = mix(gl_Color,uf_border_color,0.75*alpha);
+520: //   }
+521: //   color += (diff + amb)*poly_color + spec*gl_FrontMaterial.specular;
+522: 
+523: // Calculate depth based on the given camera position.
+524: float calcDepth( in vec3 cameraPos ){
+525:     vec2 clipZW = cameraPos.z * projectionMatrix[2].zw + projectionMatrix[3].zw;
+526:     return 0.5 + 0.5 * clipZW.x / clipZW.y;
+527: }
+528: 
+529: float calcClip( vec3 cameraPos ){
+530:     return dot( vec4( cameraPos, 1.0 ), vec4( 0.0, 0.0, 1.0, nearClip - 0.5 ) );
+531: }
+532: 
+533: bool Impostor( out vec3 cameraPos, out vec3 cameraNormal ){
+534: 
+535:     vec3 cameraSpherePos = -vPointViewPosition;
+536:     cameraSpherePos.z += vRadius;
+537: 
+538:     vec3 rayOrigin = mix( vec3( 0.0, 0.0, 0.0 ), vPoint, ortho );
+539:     vec3 rayDirection = mix( normalize( vPoint ), vec3( 0.0, 0.0, 1.0 ), ortho );
+540:     vec3 cameraSphereDir = mix( cameraSpherePos, rayOrigin - cameraSpherePos, ortho );
+541: 
+542:     float B = dot( rayDirection, cameraSphereDir );
+543:     float det = B * B + vRadiusSq - dot( cameraSphereDir, cameraSphereDir );
+544: 
+545:     if( det < 0.0 ){
+546:         discard;
+547:         return false;
+548:     }else{
+549:         float sqrtDet = sqrt( det );
+550:         float posT = mix( B + sqrtDet, B + sqrtDet, ortho );
+551:         float negT = mix( B - sqrtDet, sqrtDet - B, ortho );
+552: 
+553:         cameraPos = rayDirection * negT + rayOrigin;
+554: 
+555:         #ifdef NEAR_CLIP
+556:             if( calcDepth( cameraPos ) <= 0.0 ){
+557:                 cameraPos = rayDirection * posT + rayOrigin;
+558:                 interior = true;
+559:                 return false;
+560:             }else if( calcClip( cameraPos ) > 0.0 ){
+561:                 cameraPos = rayDirection * posT + rayOrigin;
+562:                 interior = true;
+563:                 flag2 = true;
+564:                 return false;
+565:             }else{
+566:                 cameraNormal = normalize( cameraPos - cameraSpherePos );
+567:             }
+568:         #else
+569:             if( calcDepth( cameraPos ) <= 0.0 ){
+570:                 cameraPos = rayDirection * posT + rayOrigin;
+571:                 interior = true;
+572:                 return false;
+573:             }else{
+574:                 cameraNormal = normalize( cameraPos - cameraSpherePos );
+575:             }
+576:         #endif
+577: 
+578:         return true;
+579:     }
+580: 
+581:     return false; // ensure that each control flow has a return
+582: 
+583: }
+584: 
+585: void main(void){
+586: 
+587:     // vec3 specular = vec3( 1.0, 1.0, 1.0 );
+588:     // float specularStrength = 1.0;
+589:     // float shininess = 1.0;
+590: 
+591:     bool flag = Impostor( cameraPos, cameraNormal );
+592: 
+593:     #ifdef NEAR_CLIP
+594:         if( calcClip( cameraPos ) > 0.0 )
+595:             discard;
+596:     #endif
+597: 
+598:     // FIXME not compatible with custom clipping plane
+599:     //Set the depth based on the new cameraPos.
+600:     gl_FragDepthEXT = calcDepth( cameraPos );
+601:     if( !flag ){
+602: 
+603:         // clamp to near clipping plane and add a tiny value to
+604:         // make spheres with a greater radius occlude smaller ones
+605:         #ifdef NEAR_CLIP
+606:             if( flag2 ){
+607:                 gl_FragDepthEXT = max( 0.0, calcDepth( vec3( - ( nearClip - 0.5 ) ) ) + ( 0.0000001 / vRadius ) );
+608:             }else if( gl_FragDepthEXT >= 0.0 ){
+609:                 gl_FragDepthEXT = 0.0 + ( 0.0000001 / vRadius );
+610:             }
+611:         #else
+612:             if( gl_FragDepthEXT >= 0.0 ){
+613:                 gl_FragDepthEXT = 0.0 + ( 0.0000001 / vRadius );
+614:             }
+615:         #endif
+616: 
+617:     }
+618: 
+619:     // bugfix (mac only?)
+620:     if (gl_FragDepthEXT < 0.0)
+621:         discard;
+622:     if (gl_FragDepthEXT > 1.0)
+623:         discard;
+624: 
+625:     #ifdef PICKING
+626: 
+627:         gl_FragColor = vec4( vPickingColor, objectId );
+628: 
+629:     #else
+630: 
+631:         // vec3 specColor = vColor;  // vec3( 1.0, 1.0, 1.0 );
+632:         // vec3 lightDir = vec3( 0.0, 0.0, 1.0 );
+633:         // vec3 vNormal = cameraNormal;
+634: 
+635:         // float lambertian = max(dot(lightDir,vNormal), 0.0);
+636:         // float specular = 0.0;
+637: 
+638:         // if(lambertian > 0.0) {
+639: 
+640:         //     vec3 reflectDir = reflect(-lightDir, vNormal);
+641:         //     vec3 viewDir = normalize(-cameraPos);
+642: 
+643:         //     float specAngle = max(dot(reflectDir, viewDir), 0.0);
+644:         //     specular = pow(specAngle, 4.0);
+645: 
+646:         //     // the exponent controls the shininess (try mode 2)
+647:         //     specular = pow(specAngle, 16.0);
+648: 
+649:         //     // according to the rendering equation we would need to multiply
+650:         //     // with the the 'lambertian', but this has little visual effect
+651:         //     specular *= lambertian;
+652: 
+653: 
+654:         // }
+655: 
+656:         // gl_FragColor = vec4( lambertian*vColor + specular*specColor, opacity );
+657: 
+658:         //
+659: 
+660:         vec3 vNormal = cameraNormal;
+661:         vec3 vViewPosition = -cameraPos;
+662: 
+663:         vec4 diffuseColor = vec4( diffuse, opacity );
+664:         ReflectedLight reflectedLight = ReflectedLight( vec3( 0.0 ), vec3( 0.0 ), vec3( 0.0 ), vec3( 0.0 ) );
+665:         vec3 totalEmissiveLight = emissive;
+666: 
+667:         #ifdef USE_COLOR
+668: 	diffuseColor.rgb *= vColor;
+669: #endif
+670:         float roughnessFactor = roughness;
+671: #ifdef USE_ROUGHNESSMAP
+672: 	vec4 texelRoughness = texture2D( roughnessMap, vUv );
+673: 	roughnessFactor *= texelRoughness.r;
+674: #endif
+675: 
+676:         float metalnessFactor = metalness;
+677: #ifdef USE_METALNESSMAP
+678: 	vec4 texelMetalness = texture2D( metalnessMap, vUv );
+679: 	metalnessFactor *= texelMetalness.r;
+680: #endif
+681: 
+682:         #ifdef DOUBLE_SIDED
+683: 	float flipNormal = ( float( gl_FrontFacing ) * 2.0 - 1.0 );
+684: #else
+685: 	float flipNormal = 1.0;
+686: #endif
+687: 
+688:         #ifdef FLAT_SHADED
+689: 	vec3 fdx = vec3( dFdx( vViewPosition.x ), dFdx( vViewPosition.y ), dFdx( vViewPosition.z ) );
+690: 	vec3 fdy = vec3( dFdy( vViewPosition.x ), dFdy( vViewPosition.y ), dFdy( vViewPosition.z ) );
+691: 	vec3 normal = normalize( cross( fdx, fdy ) );
+692: #else
+693: 	vec3 normal = normalize( vNormal ) * flipNormal;
+694: #endif
+695: #ifdef USE_NORMALMAP
+696: 	normal = perturbNormal2Arb( -vViewPosition, normal );
+697: #elif defined( USE_BUMPMAP )
+698: 	normal = perturbNormalArb( -vViewPosition, normal, dHdxy_fwd() );
+699: #endif
+700: 
+701:         if( interior ){
+702:             normal = vec3( 0.0, 0.0, 0.4 );
+703:         }
+704: 
+705:         // include lights_phong_fragment
+706:         PhysicalMaterial material;
+707: material.diffuseColor = diffuseColor.rgb * ( 1.0 - metalnessFactor );
+708: material.specularRoughness = clamp( roughnessFactor, 0.04, 1.0 );
+709: #ifdef STANDARD
+710: 	material.specularColor = mix( vec3( DEFAULT_SPECULAR_COEFFICIENT ), diffuseColor.rgb, metalnessFactor );
+711: #else
+712: 	material.specularColor = mix( vec3( MAXIMUM_SPECULAR_COEFFICIENT * pow2( reflectivity ) ), diffuseColor.rgb, metalnessFactor );
+713: 	material.clearCoat = saturate( clearCoat );	material.clearCoatRoughness = clamp( clearCoatRoughness, 0.04, 1.0 );
+714: #endif
+715: 
+716:         
+717: GeometricContext geometry;
+718: geometry.position = - vViewPosition;
+719: geometry.normal = normal;
+720: geometry.viewDir = normalize( vViewPosition );
+721: IncidentLight directLight;
+722: #if ( 0 > 0 ) && defined( RE_Direct )
+723: 	PointLight pointLight;
+724: 	for ( int i = 0; i < 0; i ++ ) {
+725: 		pointLight = pointLights[ i ];
+726: 		getPointDirectLightIrradiance( pointLight, geometry, directLight );
+727: 		#ifdef USE_SHADOWMAP
+728: 		directLight.color *= all( bvec2( pointLight.shadow, directLight.visible ) ) ? getPointShadow( pointShadowMap[ i ], pointLight.shadowMapSize, pointLight.shadowBias, pointLight.shadowRadius, vPointShadowCoord[ i ] ) : 1.0;
+729: 		#endif
+730: 		RE_Direct( directLight, geometry, material, reflectedLight );
+731: 	}
+732: #endif
+733: #if ( 0 > 0 ) && defined( RE_Direct )
+734: 	SpotLight spotLight;
+735: 	for ( int i = 0; i < 0; i ++ ) {
+736: 		spotLight = spotLights[ i ];
+737: 		getSpotDirectLightIrradiance( spotLight, geometry, directLight );
+738: 		#ifdef USE_SHADOWMAP
+739: 		directLight.color *= all( bvec2( spotLight.shadow, directLight.visible ) ) ? getShadow( spotShadowMap[ i ], spotLight.shadowMapSize, spotLight.shadowBias, spotLight.shadowRadius, vSpotShadowCoord[ i ] ) : 1.0;
+740: 		#endif
+741: 		RE_Direct( directLight, geometry, material, reflectedLight );
+742: 	}
+743: #endif
+744: #if ( 1 > 0 ) && defined( RE_Direct )
+745: 	DirectionalLight directionalLight;
+746: 	for ( int i = 0; i < 1; i ++ ) {
+747: 		directionalLight = directionalLights[ i ];
+748: 		getDirectionalDirectLightIrradiance( directionalLight, geometry, directLight );
+749: 		#ifdef USE_SHADOWMAP
+750: 		directLight.color *= all( bvec2( directionalLight.shadow, directLight.visible ) ) ? getShadow( directionalShadowMap[ i ], directionalLight.shadowMapSize, directionalLight.shadowBias, directionalLight.shadowRadius, vDirectionalShadowCoord[ i ] ) : 1.0;
+751: 		#endif
+752: 		RE_Direct( directLight, geometry, material, reflectedLight );
+753: 	}
+754: #endif
+755: #if defined( RE_IndirectDiffuse )
+756: 	vec3 irradiance = getAmbientLightIrradiance( ambientLightColor );
+757: 	#ifdef USE_LIGHTMAP
+758: 		vec3 lightMapIrradiance = texture2D( lightMap, vUv2 ).xyz * lightMapIntensity;
+759: 		#ifndef PHYSICALLY_CORRECT_LIGHTS
+760: 			lightMapIrradiance *= PI;
+761: 		#endif
+762: 		irradiance += lightMapIrradiance;
+763: 	#endif
+764: 	#if ( 0 > 0 )
+765: 		for ( int i = 0; i < 0; i ++ ) {
+766: 			irradiance += getHemisphereLightIrradiance( hemisphereLights[ i ], geometry );
+767: 		}
+768: 	#endif
+769: 	#if defined( USE_ENVMAP ) && defined( PHYSICAL ) && defined( ENVMAP_TYPE_CUBE_UV )
+770: 	 	irradiance += getLightProbeIndirectIrradiance( geometry, 8 );
+771: 	#endif
+772: 	RE_IndirectDiffuse( irradiance, geometry, material, reflectedLight );
+773: #endif
+774: #if defined( USE_ENVMAP ) && defined( RE_IndirectSpecular )
+775: 	vec3 radiance = getLightProbeIndirectRadiance( geometry, Material_BlinnShininessExponent( material ), 8 );
+776: 	#ifndef STANDARD
+777: 		vec3 clearCoatRadiance = getLightProbeIndirectRadiance( geometry, Material_ClearCoat_BlinnShininessExponent( material ), 8 );
+778: 	#else
+779: 		vec3 clearCoatRadiance = vec3( 0.0 );
+780: 	#endif
+781: 		
+782: 	RE_IndirectSpecular( radiance, clearCoatRadiance, geometry, material, reflectedLight );
+783: #endif
+784: 
+785: 
+786:         vec3 outgoingLight = reflectedLight.directDiffuse + reflectedLight.indirectDiffuse + reflectedLight.directSpecular + reflectedLight.indirectSpecular + totalEmissiveLight;
+787: 
+788:         gl_FragColor = vec4( outgoingLight, diffuseColor.a );
+789: 
+790:         #ifdef PREMULTIPLIED_ALPHA
+791: 	gl_FragColor.rgb *= gl_FragColor.a;
+792: #endif
+793: 
+794:         #if defined( TONE_MAPPING )
+795:   gl_FragColor.rgb = toneMapping( gl_FragColor.rgb );
+796: #endif
+797: 
+798:           gl_FragColor = linearToOutputTexel( gl_FragColor );
+799: 
+800:         #ifdef USE_FOG
+801: 	#ifdef USE_LOGDEPTHBUF_EXT
+802: 		float depth = gl_FragDepthEXT / gl_FragCoord.w;
+803: 	#else
+804: 		float depth = gl_FragCoord.z / gl_FragCoord.w;
+805: 	#endif
+806: 	#ifdef FOG_EXP2
+807: 		float fogFactor = whiteCompliment( exp2( - fogDensity * fogDensity * depth * depth * LOG2 ) );
+808: 	#else
+809: 		float fogFactor = smoothstep( fogNear, fogFar, depth );
+810: 	#endif
+811: 	gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor );
+812: #endif
+813: 
+814: 
+815:     #endif
+816: 
+817: }

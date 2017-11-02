@@ -1,0 +1,191 @@
+1: precision highp float;
+2: precision highp int;
+3: #define SHADER_NAME ShaderMaterial
+4: #define USE_COLOR 1
+5: #define NEAR_CLIP 1
+6: #define CAP 1
+7: #define VERTEX_TEXTURES
+8: #define GAMMA_FACTOR 2
+9: #define MAX_BONES 1019
+10: #define NUM_CLIPPING_PLANES 0
+11: uniform mat4 modelMatrix;
+12: uniform mat4 modelViewMatrix;
+13: uniform mat4 projectionMatrix;
+14: uniform mat4 viewMatrix;
+15: uniform mat3 normalMatrix;
+16: uniform vec3 cameraPosition;
+17: attribute vec3 position;
+18: attribute vec3 normal;
+19: attribute vec2 uv;
+20: #ifdef USE_COLOR
+21: 	attribute vec3 color;
+22: #endif
+23: #ifdef USE_MORPHTARGETS
+24: 	attribute vec3 morphTarget0;
+25: 	attribute vec3 morphTarget1;
+26: 	attribute vec3 morphTarget2;
+27: 	attribute vec3 morphTarget3;
+28: 	#ifdef USE_MORPHNORMALS
+29: 		attribute vec3 morphNormal0;
+30: 		attribute vec3 morphNormal1;
+31: 		attribute vec3 morphNormal2;
+32: 		attribute vec3 morphNormal3;
+33: 	#else
+34: 		attribute vec3 morphTarget4;
+35: 		attribute vec3 morphTarget5;
+36: 		attribute vec3 morphTarget6;
+37: 		attribute vec3 morphTarget7;
+38: 	#endif
+39: #endif
+40: #ifdef USE_SKINNING
+41: 	attribute vec4 skinIndex;
+42: 	attribute vec4 skinWeight;
+43: #endif
+44: 
+45: uniform mat4 projectionMatrixInverse;
+46: uniform float nearClip;
+47: 
+48: varying float vRadius;
+49: varying float vRadiusSq;
+50: varying vec3 vPoint;
+51: varying vec3 vPointViewPosition;
+52: 
+53: attribute vec2 mapping;
+54: attribute float radius;
+55: 
+56: #ifdef PICKING
+57:     
+58:     attribute float primitiveId;
+59:     varying vec3 vPickingColor;
+60: #else
+61:     #ifdef USE_COLOR
+62: 	varying vec3 vColor;
+63: #endif
+64: #endif
+65: 
+66: //include matrix_scale
+67: float matrixScale( in mat4 m ){
+68:     vec4 r = m[ 0 ];
+69:     return sqrt( r[ 0 ] * r[ 0 ] + r[ 1 ] * r[ 1 ] + r[ 2 ] * r[ 2 ] );
+70: }
+71: 
+72: const mat4 D = mat4(
+73:     1.0, 0.0, 0.0, 0.0,
+74:     0.0, 1.0, 0.0, 0.0,
+75:     0.0, 0.0, 1.0, 0.0,
+76:     0.0, 0.0, 0.0, -1.0
+77: );
+78: 
+79: mat4 transpose( in mat4 inMatrix ) {
+80:     vec4 i0 = inMatrix[0];
+81:     vec4 i1 = inMatrix[1];
+82:     vec4 i2 = inMatrix[2];
+83:     vec4 i3 = inMatrix[3];
+84: 
+85:     mat4 outMatrix = mat4(
+86:         vec4(i0.x, i1.x, i2.x, i3.x),
+87:         vec4(i0.y, i1.y, i2.y, i3.y),
+88:         vec4(i0.z, i1.z, i2.z, i3.z),
+89:         vec4(i0.w, i1.w, i2.w, i3.w)
+90:     );
+91:     return outMatrix;
+92: }
+93: 
+94: //------------------------------------------------------------------------------
+95: // Compute point size and center using the technique described in:
+96: // 'GPU-Based Ray-Casting of Quadratic Surfaces'
+97: // by Christian Sigg, Tim Weyrich, Mario Botsch, Markus Gross.
+98: //
+99: // Code based on
+100: /*=========================================================================
+101: 
+102:  Program:   Visualization Toolkit
+103:  Module:    Quadrics_fs.glsl and Quadrics_vs.glsl
+104: 
+105:  Copyright (c) Ken Martin, Will Schroeder, Bill Lorensen
+106:  All rights reserved.
+107:  See Copyright.txt or http://www.kitware.com/Copyright.htm for details.
+108: 
+109:  This software is distributed WITHOUT ANY WARRANTY; without even
+110:  the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+111:  PURPOSE.  See the above copyright notice for more information.
+112: 
+113:  =========================================================================*/
+114: 
+115: // .NAME Quadrics_fs.glsl and Quadrics_vs.glsl
+116: // .SECTION Thanks
+117: // <verbatim>
+118: //
+119: //  This file is part of the PointSprites plugin developed and contributed by
+120: //
+121: //  Copyright (c) CSCS - Swiss National Supercomputing Centre
+122: //                EDF - Electricite de France
+123: //
+124: //  John Biddiscombe, Ugo Varetto (CSCS)
+125: //  Stephane Ploix (EDF)
+126: //
+127: // </verbatim>
+128: //
+129: // Contributions by Alexander Rose
+130: // - ported to WebGL
+131: // - adapted to work with quads
+132: void ComputePointSizeAndPositionInClipCoordSphere(){
+133: 
+134:     vec2 xbc;
+135:     vec2 ybc;
+136: 
+137:     mat4 T = mat4(
+138:         radius, 0.0, 0.0, 0.0,
+139:         0.0, radius, 0.0, 0.0,
+140:         0.0, 0.0, radius, 0.0,
+141:         position.x, position.y, position.z, 1.0
+142:     );
+143: 
+144:     mat4 R = transpose( projectionMatrix * modelViewMatrix * T );
+145:     float A = dot( R[ 3 ], D * R[ 3 ] );
+146:     float B = -2.0 * dot( R[ 0 ], D * R[ 3 ] );
+147:     float C = dot( R[ 0 ], D * R[ 0 ] );
+148:     xbc[ 0 ] = ( -B - sqrt( B * B - 4.0 * A * C ) ) / ( 2.0 * A );
+149:     xbc[ 1 ] = ( -B + sqrt( B * B - 4.0 * A * C ) ) / ( 2.0 * A );
+150:     float sx = abs( xbc[ 0 ] - xbc[ 1 ] ) * 0.5;
+151: 
+152:     A = dot( R[ 3 ], D * R[ 3 ] );
+153:     B = -2.0 * dot( R[ 1 ], D * R[ 3 ] );
+154:     C = dot( R[ 1 ], D * R[ 1 ] );
+155:     ybc[ 0 ] = ( -B - sqrt( B * B - 4.0 * A * C ) ) / ( 2.0 * A );
+156:     ybc[ 1 ] = ( -B + sqrt( B * B - 4.0 * A * C ) ) / ( 2.0 * A );
+157:     float sy = abs( ybc[ 0 ] - ybc[ 1 ]  ) * 0.5;
+158: 
+159:     gl_Position.xy = vec2( 0.5 * ( xbc.x + xbc.y ), 0.5 * ( ybc.x + ybc.y ) );
+160:     gl_Position.xy -= mapping * vec2( sx, sy );
+161:     gl_Position.xy *= gl_Position.w;
+162: 
+163: }
+164: 
+165: void main(void){
+166: 
+167:     #ifdef PICKING
+168:         vPickingColor = unpackColor( primitiveId );
+169:     #else
+170:         #ifdef USE_COLOR
+171: 	vColor.xyz = color.xyz;
+172: #endif
+173:     #endif
+174: 
+175:     //vRadius = radius * matrixScale( modelViewMatrix );
+176:     vRadius = radius;
+177: 
+178:     vec4 mvPosition = modelViewMatrix * vec4( position, 1.0 );
+179:     // avoid clipping, added again in fragment shader
+180:     mvPosition.z -= vRadius;
+181: 
+182:     gl_Position = projectionMatrix * vec4( mvPosition.xyz, 1.0 );
+183:     ComputePointSizeAndPositionInClipCoordSphere();
+184: 
+185: 
+186:     vRadiusSq = vRadius * vRadius;
+187:     vec4 vPoint4 = projectionMatrixInverse * gl_Position;
+188:     vPoint = vPoint4.xyz / vPoint4.w;
+189:     vPointViewPosition = -mvPosition.xyz / mvPosition.w;
+190: 
+191: }

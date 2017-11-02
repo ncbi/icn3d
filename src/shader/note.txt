@@ -1,0 +1,5 @@
+diffuseColor.rgb: white
+vColor
+reflectedLight.directDiffuse: black
+reflectedLight.indirectDiffuse: white
+reflectedLight.directSpecular, reflectedLight.indirectSpecular: black

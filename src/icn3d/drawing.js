@@ -2163,6 +2163,7 @@
             depthWrite: !frontOfTarget
         } );
 
+        //https://stackoverflow.com/questions/29421702/threejs-texture
         spriteMaterial.map.minFilter = THREE.LinearFilter;
 
         var sprite = new THREE.Sprite( spriteMaterial );
