@@ -76,6 +76,10 @@ var iCn3D = function (id) {
     this.matShader = this.setOutlineColor('yellow');
     this.fractionOfColor = new THREE.Color(0.1, 0.1, 0.1);
 
+    // mobile has a problem when the scaleFactor is 2.0
+    // the scaleFactor improve the image quality
+    this.scaleFactor = 1.5;
+
     // Impostor shaders
     this.bImpostor = true;
     this.bExtFragDepth = this.renderer.extensions.get( "EXT_frag_depth" );
@@ -611,14 +615,14 @@ iCn3D.prototype = {
 
 		//antialiasing by render twice large:
 		//https://stackoverflow.com/questions/17224795/antialiasing-not-working-in-three-js
-		this.renderer.setSize(width*2, height*2);
+		this.renderer.setSize(width*this.scaleFactor, height*this.scaleFactor);
 		this.renderer.domElement.style.width = width + "px";
 		this.renderer.domElement.style.height = height + "px";
-		this.renderer.domElement.width = width*2;
-		this.renderer.domElement.height = height*2;
+		this.renderer.domElement.width = width*this.scaleFactor;
+		this.renderer.domElement.height = height*this.scaleFactor;
 
-        this.container.widthInv  = 1 / (2*width);
-        this.container.heightInv = 1 / (2*height);
+        this.container.widthInv  = 1 / (this.scaleFactor*width);
+        this.container.heightInv = 1 / (this.scaleFactor*height);
         this.container.whratio = width / height;
     },
 
