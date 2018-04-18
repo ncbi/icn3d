@@ -1,0 +1,171 @@
+.icn3d-text {font-family: Verdana, Arial, Helvetica, sans-serif; font-size:12px;}
+
+.ui-dialog { font-size: 12px;}
+.ui-dialog .ui-dialog-title { font-size: 16px; height: 18px; }
+.ui-dialog .ui-button { width: 12px; height:12px; margin: -5px 0px 0px 0px;}
+.ui-dialog .ui-dialog-titlebar { padding: 0px 1em 2px 1em; }
+
+.ui-accordion .ui-accordion-icons { padding-left: 0; text-align: center; }
+
+.icn3d-menu {float:left; width:110px;}
+accordion {font-size: 14px!important; z-index:1999; }
+accordion h3 {width: 100px; font-size: 14px!important;}
+accordion h3 > .ui-icon { display: none !important; }
+accordion > ul {width: 60px;}
+accordion ul ul {width: 160px;}
+accordion ul li {cursor:default!important; white-space:nowrap;}
+//accordion ul .icn3d-link, div .icn3d-link, accordion li input, accordion li label, button {cursor:pointer!important; } 
+.icn3d-link, accordion li input, accordion li label, button {cursor:pointer!important; } 
+.icn3d-blue {color:blue!important;}
+
+//.icn3d-dl_sequence {background: white; padding-left:10px;}
+.icn3d-dl_sequence {background: white;}
+.icn3d-highlightSeq {background-color: #FFFF00;}
+.icn3d-highlightSeqBox {border:3px solid #FFA500;}
+
+// used to identify a residue when clicking a residue in sequence
+.icn3d-residue {font-weight:regular;} 
+.icn3d-residueNum {color: green; width:40px!important; text-align:center; white-space:nowrap;}
+
+.icn3d-dl_sequence span {display:inline-block; font-size:11px; width:10px; text-align:center;}
+.icn3d-dl_2ddgm {} //{min-width: 150px!important; min-height: 150px!important;}
+.icn3d-chemical {width:30px!important;} 
+ 
+button, select, input { font-size: 10px; }
+
+.icn3d-hidden {display: none;}
+.icn3d-shown {display: block;}
+
+.icn3d-seqTitle, .icn3d-seqTitle2, .icn3d-annoTitle {display:inline-block; font-size:11px; font-weight:bold; width:60px;}
+.icn3d-annotation {white-space: nowrap;}
+.icn3d-annotation .icn3d-seqTitle, .icn3d-annotation .icn3d-seqTitle2, .icn3d-annotation .icn3d-annoTitle {display:inline-block; font-size:11px; font-weight:bold; width:120px;}
+.icn3d-seqLine {white-space:nowrap;}
+.icn3d-annoLargeTitle {font-size:14px; font-weight:bold; background-color: #DDDDDD;}
+.icn3d-large {font-size:14px; font-weight:bold;}
+
+.icn3d-dialog {font-family: Verdana, Arial, Helvetica, sans-serif; color: #666666;}
+.icn3d-commandTitle  {font-size: 12px; font-weight:bold; font-family: Verdana, Arial, Helvetica, sans-serif; color: #666666;}
+.icn3d-modeselection  {color: #f8b84e!important;}
+//.icn3d-viewselection  {color: #800000!important;}
+.icn3d-viewselection  {color: #f8b84e!important;}
+
+.icn3d-middleIcon {opacity: 1.0}
+.icn3d-endIcon {opacity: 0.2}
+
+.icn3d-box {border: solid 1px #ccc; padding: 5px; margin: 5px;}
+
+// sequence alignent, 'cons' means aligned and conserved, 'ncons' means aligned and not conserved, 'nalign' means not aligned
+.icn3d-cons {}
+.icn3d-ncons {}
+.icn3d-nalign {} // {font-style: italic;}
+
+.icn3d-node {cursor:pointer!important; } 
+.icn3d-interaction {cursor:pointer!important; } 
+
+.ui-dialog .ui-resizable-se {
+    width: 14px;
+    height: 14px;
+    right: 3px;
+    bottom: 3px;
+    background-position: -80px -224px;
+}
+
+.ui-menu-icon {
+    float: right;
+}
+
+// toggle button: http://www.w3schools.com/howto/howto_css_switch.asp
+.icn3d-switch {
+  position: relative;
+  display: inline-block;
+  width: 33px;
+  height: 18px;
+}
+
+.icn3d-switch input {display:none;}
+
+.icn3d-slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+.icn3d-slider:before {
+  position: absolute;
+  content: "";
+  height: 13px;
+  width: 13px;
+  left: 4px;
+  bottom: 3px;
+  background-color: white;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+input:checked + .icn3d-slider {
+  background-color: #f8b84e;
+}
+
+input:focus + .icn3d-slider {
+  box-shadow: 0 0 1px #f8b84e;
+}
+
+input:checked + .icn3d-slider:before {
+  -webkit-transform: translateX(13px);
+  -ms-transform: translateX(13px);
+  transform: translateX(13px);
+}
+
+.icn3d-slider.icn3d-round {
+  border-radius: 18px;
+}
+
+.icn3d-slider.icn3d-round:before {
+  border-radius: 50%;
+}
+
+// jquery UI 1.12.1
+// for jquery tooltip
+label {
+  display: inline-block;
+  width: 200px; // 5em;
+}
+
+.snptip {
+  max-height: 150px;
+  overflow:auto;
+}
+
+.ui-widget {
+  font-family: Arial,Helvetica,sans-serif;
+  font-size: 12px!important; // 0.9em is a little too large
+}
+.ui-menu-item {
+  position: relative;
+  padding: 3px 1em 3px .4em;
+}
+
+.icn3d-clinvar {color:green; font-size:12px; font-weight:bold;}
+.icn3d-clinvar-path {color:purple; font-size:12px; font-weight:bold;}
+
+//.icn3d-sheet {background-image: linear-gradient(transparent, transparent 25%, #FFC800 25%, #FFC800 75%, transparent 75%, transparent 100%);} 
+.icn3d-sheet {background-image: linear-gradient(transparent, transparent 20%, #FFC800 20%, #FFC800 70%, transparent 70%, transparent 100%);} 
+.icn3d-sheet2 {background-image: url("ssimages/tri.png"); background-size: contain; background-repeat: no-repeat;}
+
+.icn3d-helix {background-image: url("ssimages/helix.png"); background-size: contain; background-repeat: no-repeat;}
+.icn3d-helix2 {background-image: url("ssimages/helix2.png"); background-size: contain; background-repeat: no-repeat;}
+
+.icn3d-coil {background-image: linear-gradient(transparent, transparent 45%, #6080FF 45%, #6080FF 55%, transparent 55%, transparent 100%);} 
+.icn3d-other {background-image: linear-gradient(transparent, transparent 45%, #DDDDDD 45%, #DDDDDD 55%, transparent 55%, transparent 100%);} 
+
+.icn3d-helix-color {color: #FF0080;}
+.icn3d-sheet-color {color: #FFC800;}
+
+.icn3d-fixed-pos {position:fixed;}
+//.icn3d-space-title {width:160px; display:inline-block;}
