@@ -3,7 +3,7 @@
  * @author Jiyao Wang / https://github.com/ncbi/icn3d
  *
  * iCn3D has been developed based on iview (http://istar.cse.cuhk.edu.hk/iview/). The following new features has been added so far.
- * 1. Allowed users to pick atoms, both in perspective and orthographics camera. To make this work, the methods of rotation, translation and zooming have been dramatically changed and used libraries from three.js. The picking allows users to pick atoms, add labels, choose a new rotation center, etc.
+ * 1. Allowed users to pick atoms, both in perspective and orthographics camera. To make this work, the methods of rotation, translation and zooming have been dramatically changed and used libraries from three.js. The pk allows users to pick atoms, add labels, choose a new rotation center, etc.
  * 2. Allowed users to select residues based on structure, chain, sequence, etc. Users can also define their own subset and save the selection.
  * 3. Used THREE.MeshPhongMaterial to make surface shiny.
  * 4. Improved the labeling mechanism.
@@ -16,13 +16,13 @@
  * 11. An interactive UI was provided for all these features.
  *
  * iCn3D used the following standard libraries. We can easily adopt the new versions of these libraries.
- * 1. jquery and jquery ui. Jquery ui is used for show the menu at the top.
+ * 1. jquery and jquery ui. Jquery ui is used for show the mn at the top.
  * 2. Recent version of Three.js.
  *
  * Files in #3-9 are combined in one file: full_ui_all.min.js.
  *
  * 3. The rotation, translation operation libraries from Three.js: TrackballControls.js and OrthographicTrackballControls.js.
- * 4. Projector.js from Three.js for the picking.
+ * 4. Projector.js from Three.js for the pk.
  * 5. Canvas render library: CanvasRenderer.js. This is used when WebGL render is no working in the browser.
  * 6. A library to detect whether WebGL is working in the browser: Detector.js.
  * 7. The surface generation of 3Dmol (http://3dmol.csb.pitt.edu/): marchingcube.js, ProteinSurface4.js, and setupsurface.js.
@@ -60,6 +60,8 @@ var iCn3D = function (id) {
         this.overdraw = 0;
     }
     else {
+        alert("Currently your web browser has a problem on WebGL. If you are using Chrome, open a new tab for the same URL and WebGL may work again.");
+/*
         alert("Currently your web browser has a problem on WebGL, and CanvasRenderer instead of WebGLRenderer is used. If you are using Chrome, open a new tab for the same URL and WebGL may work again.");
 
         this.renderer = new THREE.CanvasRenderer({
@@ -71,33 +73,40 @@ var iCn3D = function (id) {
 
         // only WebGL support outlines using ShaderMaterial
         this.bHighlight = 2;
+*/
     }
 
     this.matShader = this.setOutlineColor('yellow');
-    this.fractionOfColor = new THREE.Color(0.1, 0.1, 0.1);
+    this.frac = new THREE.Color(0.1, 0.1, 0.1);
 
     // mobile has a problem when the scaleFactor is 2.0
     // the scaleFactor improve the image quality
     this.scaleFactor = 1.5;
 
     // Impostor shaders
-    this.bImpostor = true;
+    this.bImpo = true;
     this.bExtFragDepth = this.renderer.extensions.get( "EXT_frag_depth" );
-    if(!this.bExtFragDepth) this.bImpostor = false;
+    if(!this.bExtFragDepth) {
+        this.bImpo = false;
+        console.log('EXT_frag_depth is NOT supported. All spheres and cylinders are drawn using geometry.');
+    }
+    else {
+        console.log('EXT_frag_depth is supported. All spheres and cylinders are drawn using shaders.');
+    }
 
-		// cylinder impostor
-	this.positionArray = new Array();
-	this.colorArray = new Array();
+        // cylinder impostor
+    this.posArray = new Array();
+    this.colorArray = new Array();
 
-	this.position2Array = new Array();
-	this.color2Array = new Array();
+    this.pos2Array = new Array();
+    this.color2Array = new Array();
 
-	this.radiusArray = new Array();
+    this.radiusArray = new Array();
 
-		// sphere impostor
-	this.positionArraySphere = new Array();
-	this.colorArraySphere = new Array();
-	this.radiusArraySphere = new Array();
+        // sphere impostor
+    this.posArraySphere = new Array();
+    this.colorArraySphere = new Array();
+    this.radiusArraySphere = new Array();
 
     // adjust the size
     this.WIDTH = this.container.width(), this.HEIGHT = this.container.height();
@@ -105,22 +114,22 @@ var iCn3D = function (id) {
 
     this.axis = false;  // used to turn on and off xyz axes
 
-    // picking
-    this.picking = 1; // 0: no picking, 1: picking on atoms, 2: picking on residues, 3: picking on strand/helix/coil
+    // pk
+    this.pk = 1; // 0: no pk, 1: pk on atoms, 2: pk on residues, 3: pk on strand/helix/coil, 4: pk on chain
     this.highlightlevel = 1; // 1: highlight on atoms, 2: highlight on residues, 3: highlight on strand/helix/coil 4: highlight on chain 5: highlight on structure
 
-    this.pickpair = false; // used for picking pair of atoms for label and distance
-    this.pickedatomNum = 0;
+    this.pickpair = false; // used for pk pair of atoms for label and distance
+    this.pAtomNum = 0;
 
-    this.pickedatom = undefined;
-    this.pickedatom2 = undefined;
+    this.pAtom = undefined;
+    this.pAtom2 = undefined;
 
-    this.bCtrlKey = false; // if true, union selection on sequence window or on 3D structure
-    this.bShiftKey = false; // if true, select a range on 3D structure
+    this.bCtrl = false; // if true, union selection on sequence window or on 3D structure
+    this.bShift = false; // if true, select a range on 3D structure
 
     this.bStopRotate = false; // by default, do not stop the possible automatic rotation
     this.bCalphaOnly = false; // by default the input has both Calpha and O, used for drawing strands. If atoms have Calpha only, the orientation of the strands is random
-    this.bSSOnly = false; // a flag to turn on when only helix and bricks are available to draw 3D diagram
+//    this.bSSOnly = false; // a flag to turn on when only helix and bricks are available to draw 3D dgm
 
     this.bAllAtoms = true; // no need to adjust atom for strand style
 
@@ -138,56 +147,65 @@ var iCn3D = function (id) {
 
     this.maxD = 500; // size of the molecule
     this.oriMaxD = this.maxD; // size of the molecule
-    //this.camera_z = -150;
+    //this.cam_z = -150;
 
-    this.camera_z = this.maxD * 2; // when zooming in, it gets dark if the camera is in front
-    //this.camera_z = -this.maxD * 2;
+    this.cam_z = this.maxD * 2; // when zooming in, it gets dark if the camera is in front
+    //this.cam_z = -this.maxD * 2;
 
     // these variables will not be cleared for each structure
     this.commands = []; // a list of commands, ordered by the operation steps. Each operation will be converted into a command. this command list can be used to go backward and forward.
-    this.optionsHistory = []; // a list of options corresponding to this.commands.
+    this.optsHistory = []; // a list of options corresponding to this.commands.
     this.logs = []; // a list of comands and other logs, ordered by the operation steps.
 
     this.bRender = true; // a flag to turn off rendering when loading state file
 
     // Default values
-    this.highlightColor = new THREE.Color(0xFFFF00);
+    this.hColor = new THREE.Color(0xFFFF00);
 
     this.sphereGeometry = new THREE.SphereGeometry(1, 32, 32);
     this.boxGeometry = new THREE.BoxGeometry(1, 1, 1);
     this.cylinderGeometry = new THREE.CylinderGeometry(1, 1, 1, 32, 1);
     this.cylinderGeometryOutline = new THREE.CylinderGeometry(1, 1, 1, 32, 1, true);
-    this.sphereRadius = 1.5;
-    this.cylinderRadius = 0.4;
-    this.linewidth = 1;
-    this.curveWidth = 3;
-    this.helixSheetWidth = 1.3;
-    this.coilWidth = 0.3;
-    this.thickness = 0.4;
     this.axisDIV = 5; // 3
     this.strandDIV = 6;
     this.tubeDIV = 8;
-
-    this.LABELSIZE = 40;
-
     this.nucleicAcidStrandDIV = 6; //4;
-    this.nucleicAcidWidth = 0.8;
 
-    this.options = {
+    this.linewidth = 1;
+    this.hlLineRadius = 0.1; // style line, highlight
+    //this.curveWidth = 3;
+
+    this.lineRadius = 0.1; // hbonds, distance lines
+    this.coilWidth = 0.4; // style cartoon-coil
+    this.cylinderRadius = 0.4; // style stick
+    this.traceRadius = 0.4; //0.2; // c alpha trace, nucleotide stick
+    this.dotSphereScale = 0.3; // style ball and stick, dot
+    this.sphereRadius = 1.5; // style sphere
+    this.cylinderHelixRadius = 1.6; // style sylinder and plate
+
+    this.ribbonthickness = 0.4; // style ribbon, nucleotide cartoon, stand thickness
+    this.helixSheetWidth = 1.3; // style ribbon, nucleotide cartoon, stand thickness
+    this.nucleicAcidWidth = 0.8; // nucleotide cartoon
+
+    this.LABELSIZE = 30;
+
+    this.opts = {
         camera: 'perspective',
         background: 'transparent',
-        color: 'spectrum',
-        sidechains: 'nothing',
+        color: 'chain',
+        sidec: 'nothing',
         proteins: 'cylinder and plate',
+        nucleotides: 'nucleotide cartoon',
         surface: 'nothing',
         wireframe: 'no',
         opacity: '0.8',
-        ligands: 'stick',
+        chemicals: 'stick',
         water: 'nothing',
         ions: 'sphere',
         //labels: 'no',
         //effect: 'none',
         hbonds: 'no',
+        //stabilizer: 'no',
         ssbonds: 'no',
         //ncbonds: 'no',
         labels: 'no',
@@ -196,8 +214,9 @@ var iCn3D = function (id) {
         axis: 'no',
         fog: 'no',
         slab: 'no',
-        picking: 'residue',
-        nucleotides: 'nucleotide cartoon'
+        pk: 'residue',
+        nucleotides: 'nucleotide cartoon',
+        chemicalbinding: 'hide'
     };
 
     this._zoomFactor = 1.0;
@@ -205,7 +224,7 @@ var iCn3D = function (id) {
     this.quaternion = new THREE.Quaternion(0,0,0,1);
 
     var me = this;
-    this.container.bind('contextmenu', function (e) {
+    this.container.bind('contextmn', function (e) {
         e.preventDefault();
     });
 
@@ -217,42 +236,42 @@ var iCn3D = function (id) {
     //http://unixpapa.com/js/key.html
     $(document).bind('keyup', function (e) {
       if(e.keyCode === 16) { // shiftKey
-          me.bShiftKey = false;
+          me.bShift = false;
       }
       if(e.keyCode === 17 || e.keyCode === 224 || e.keyCode === 91) { // ctrlKey or apple command key
-          me.bCtrlKey = false;
+          me.bCtrl = false;
       }
+    });
+
+    $('input[type=text], textarea').focus(function() {
+        me.typetext = true;
+    });
+
+    $('input[type=text], textarea').blur(function() {
+        me.typetext = false;
     });
 
     $(document).bind('keydown', function (e) {
       if(e.shiftKey || e.keyCode === 16) {
-          me.bShiftKey = true;
+          me.bShift = true;
       }
       if(e.ctrlKey || e.keyCode === 17 || e.keyCode === 224 || e.keyCode === 91) {
-          me.bCtrlKey = true;
+          me.bCtrl = true;
       }
 
       if (!me.controls) return;
 
       me.bStopRotate = true;
 
-      $('input, textarea').focus(function() {
-        me.typetext = true;
-      });
-
-      $('input, textarea').blur(function() {
-        me.typetext = false;
-      });
-
       if(!me.typetext) {
         // zoom
         if(e.keyCode === 90 ) { // Z
           var para = {};
 
-          if(me.camera === me.perspectiveCamera) { // perspective
+          if(me.cam === me.perspectiveCamera) { // perspective
             para._zoomFactor = 0.9;
           }
-          else if(me.camera === me.orthographicCamera) {  // orthographics
+          else if(me.cam === me.orthographicCamera) {  // orthographics
             if(me._zoomFactor < 0.1) {
               me._zoomFactor = 0.1;
             }
@@ -260,7 +279,7 @@ var iCn3D = function (id) {
               me._zoomFactor = 1;
             }
 
-            para._zoomFactor = me._zoomFactor * 0.9;
+            para._zoomFactor = me._zoomFactor * 0.8;
             if(para._zoomFactor < 0.1) para._zoomFactor = 0.1;
           }
 
@@ -271,19 +290,20 @@ var iCn3D = function (id) {
         else if(e.keyCode === 88 ) { // X
           var para = {};
 
-          if(me.camera === me.perspectiveCamera) { // perspective
-            para._zoomFactor = 1.1;
+          if(me.cam === me.perspectiveCamera) { // perspective
+            //para._zoomFactor = 1.1;
+            para._zoomFactor = 1.03;
           }
-          else if(me.camera === me.orthographicCamera) {  // orthographics
-            if(me._zoomFactor > 20) {
-              me._zoomFactor = 20;
+          else if(me.cam === me.orthographicCamera) {  // orthographics
+            if(me._zoomFactor > 10) {
+              me._zoomFactor = 10;
             }
             else if(me._zoomFactor < 1) {
               me._zoomFactor = 1;
             }
 
-            para._zoomFactor = me._zoomFactor * 1.03;
-            if(para._zoomFactor > 20) para._zoomFactor = 20;
+            para._zoomFactor = me._zoomFactor * 1.01;
+            if(para._zoomFactor > 10) para._zoomFactor = 10;
           }
 
           para.update = true;
@@ -296,69 +316,29 @@ var iCn3D = function (id) {
           var axis = new THREE.Vector3(0,1,0);
           var angle = -5.0 / 180.0 * Math.PI;
 
-          axis.applyQuaternion( me.camera.quaternion ).normalize();
-
-          var quaternion = new THREE.Quaternion();
-          quaternion.setFromAxisAngle( axis, -angle );
-
-          var para = {};
-          para.quaternion = quaternion;
-          para.update = true;
-
-          me.controls.update(para);
-          me.render();
+          me.setRotation(axis, angle);
         }
         else if(e.keyCode === 74 ) { // J, rotate right
           var axis = new THREE.Vector3(0,1,0);
           var angle = 5.0 / 180.0 * Math.PI;
 
-          axis.applyQuaternion( me.camera.quaternion ).normalize();
-
-          var quaternion = new THREE.Quaternion();
-          quaternion.setFromAxisAngle( axis, -angle );
-
-          var para = {};
-          para.quaternion = quaternion;
-          para.update = true;
-
-          me.controls.update(para);
-          me.render();
+          me.setRotation(axis, angle);
         }
         else if(e.keyCode === 73 ) { // I, rotate up
           var axis = new THREE.Vector3(1,0,0);
           var angle = -5.0 / 180.0 * Math.PI;
 
-          axis.applyQuaternion( me.camera.quaternion ).normalize();
-
-          var quaternion = new THREE.Quaternion();
-          quaternion.setFromAxisAngle( axis, -angle );
-
-          var para = {};
-          para.quaternion = quaternion;
-          para.update = true;
-
-          me.controls.update(para);
-          me.render();
+          me.setRotation(axis, angle);
         }
         else if(e.keyCode === 77 ) { // M, rotate down
           var axis = new THREE.Vector3(1,0,0);
           var angle = 5.0 / 180.0 * Math.PI;
 
-          axis.applyQuaternion( me.camera.quaternion ).normalize();
-
-          var quaternion = new THREE.Quaternion();
-          quaternion.setFromAxisAngle( axis, -angle );
-
-          var para = {};
-          para.quaternion = quaternion;
-          para.update = true;
-
-          me.controls.update(para);
-          me.render();
+          me.setRotation(axis, angle);
         }
 
         else if(e.keyCode === 65 ) { // A, alternate
-           me.alternateStructures();
+           if(Object.keys(me.structures) > 1) me.alternateStructures();
         }
 
       }
@@ -381,9 +361,9 @@ var iCn3D = function (id) {
         }
         me.isDragging = true;
 
-        // see ref http://soledadpenades.com/articles/three-js-tutorials/object-picking/
-        if(me.picking && (e.altKey || e.ctrlKey || e.shiftKey || e.keyCode === 18 || e.keyCode === 16 || e.keyCode === 17 || e.keyCode === 224 || e.keyCode === 91) ) {
-            me.highlightlevel = me.picking;
+        // see ref http://soledadpenades.com/articles/three-js-tutorials/object-pk/
+        if(me.pk && (e.altKey || e.ctrlKey || e.shiftKey || e.keyCode === 18 || e.keyCode === 16 || e.keyCode === 17 || e.keyCode === 224 || e.keyCode === 91) ) {
+            me.highlightlevel = me.pk;
 
             me.mouse.x = ( (x - me.container.offset().left) / me.container.width() ) * 2 - 1;
             me.mouse.y = - ( (y - me.container.offset().top) / me.container.height() ) * 2 + 1;
@@ -392,7 +372,7 @@ var iCn3D = function (id) {
             mouse3.x = me.mouse.x;
             mouse3.y = me.mouse.y;
             //mouse3.z = 0.5;
-            if(this.camera_z > 0) {
+            if(this.cam_z > 0) {
               mouse3.z = -1.0; // between -1 to 1. The z positio of mouse in the real world should be between the camera and the target."-1" worked in our case.
             }
             else {
@@ -400,30 +380,30 @@ var iCn3D = function (id) {
             }
 
             // similar to setFromCamera() except mouse3.z is the opposite sign from the value in setFromCamera()
-            if(me.camera === me.perspectiveCamera) { // perspective
-                if(this.camera_z > 0) {
+            if(me.cam === me.perspectiveCamera) { // perspective
+                if(this.cam_z > 0) {
                   mouse3.z = -1.0;
                 }
                 else {
                   mouse3.z = 1.0;
                 }
-                //me.projector.unprojectVector( mouse3, me.camera );  // works for all versions
-                mouse3.unproject(me.camera );  // works for all versions
-                me.raycaster.set(me.camera.position, mouse3.sub(me.camera.position).normalize()); // works for all versions
+                //me.projector.unprojectVector( mouse3, me.cam );  // works for all versions
+                mouse3.unproject(me.cam );  // works for all versions
+                me.raycaster.set(me.cam.position, mouse3.sub(me.cam.position).normalize()); // works for all versions
             }
-            else if(me.camera === me.orthographicCamera) {  // orthographics
-                if(this.camera_z > 0) {
+            else if(me.cam === me.orthographicCamera) {  // orthographics
+                if(this.cam_z > 0) {
                   mouse3.z = 1.0;
                 }
                 else {
                   mouse3.z = -1.0;
                 }
-                //me.projector.unprojectVector( mouse3, me.camera );  // works for all versions
-                mouse3.unproject(me.camera );  // works for all versions
-                me.raycaster.set(mouse3, new THREE.Vector3(0,0,-1).transformDirection( me.camera.matrixWorld )); // works for all versions
+                //me.projector.unprojectVector( mouse3, me.cam );  // works for all versions
+                mouse3.unproject(me.cam );  // works for all versions
+                me.raycaster.set(mouse3, new THREE.Vector3(0,0,-1).transformDirection( me.cam.matrixWorld )); // works for all versions
             }
 
-            var intersects = me.raycaster.intersectObjects( me.objects ); // not all "mdl" group will be used for picking
+            var intersects = me.raycaster.intersectObjects( me.objects ); // not all "mdl" group will be used for pk
 
             var bFound = false;
 
@@ -441,19 +421,19 @@ var iCn3D = function (id) {
                 }
 
                 if(atom) {
-					bFound = true;
+                    bFound = true;
                     if(me.pickpair) {
-                      if(me.pickedatomNum % 2 === 0) {
-                        me.pickedatom = atom;
+                      if(me.pAtomNum % 2 === 0) {
+                        me.pAtom = atom;
                       }
                       else {
-                        me.pickedatom2 = atom;
+                        me.pAtom2 = atom;
                       }
 
-                      ++me.pickedatomNum;
+                      ++me.pAtomNum;
                     }
                     else {
-                      me.pickedatom = atom;
+                      me.pAtom = atom;
                     }
 
                       me.showPicking(atom);
@@ -464,43 +444,43 @@ var iCn3D = function (id) {
             } // end if
 
             if(!bFound) {
-				intersects = me.raycaster.intersectObjects( me.objects_ghost ); // not all "mdl" group will be used for picking
+                intersects = me.raycaster.intersectObjects( me.objects_ghost ); // not all "mdl" group will be used for pk
 
-				position = me.mdl_ghost.position;
-				if ( intersects.length > 0 ) {
-					// the intersections are sorted so that the closest point is the first one.
-					intersects[ 0 ].point.sub(position); // mdl.position was moved to the original (0,0,0) after reading the molecule coordinates. The raycasting was done based on the original. The positio of the ooriginal should be substracted.
+                position = me.mdl_ghost.position;
+                if ( intersects.length > 0 ) {
+                    // the intersections are sorted so that the closest point is the first one.
+                    intersects[ 0 ].point.sub(position); // mdl.position was moved to the original (0,0,0) after reading the molecule coordinates. The raycasting was done based on the original. The positio of the ooriginal should be substracted.
 
-					var threshold = 0.5;
-					var atom = me.getAtomsFromPosition(intersects[ 0 ].point, threshold); // the second parameter is the distance threshold. The first matched atom will be returned. Use 1 angstrom, not 2 angstrom. If it's 2 angstrom, other atom will be returned.
+                    var threshold = 0.5;
+                    var atom = me.getAtomsFromPosition(intersects[ 0 ].point, threshold); // the second parameter is the distance threshold. The first matched atom will be returned. Use 1 angstrom, not 2 angstrom. If it's 2 angstrom, other atom will be returned.
 
-					while(!atom && threshold < 10) {
-						threshold = threshold + 0.5;
-						atom = me.getAtomsFromPosition(intersects[ 0 ].point, threshold);
-					}
+                    while(!atom && threshold < 10) {
+                        threshold = threshold + 0.5;
+                        atom = me.getAtomsFromPosition(intersects[ 0 ].point, threshold);
+                    }
 
-					if(atom) {
-						if(me.pickpair) {
-						  if(me.pickedatomNum % 2 === 0) {
-							me.pickedatom = atom;
-						  }
-						  else {
-							me.pickedatom2 = atom;
-						  }
+                    if(atom) {
+                        if(me.pickpair) {
+                          if(me.pAtomNum % 2 === 0) {
+                            me.pAtom = atom;
+                          }
+                          else {
+                            me.pAtom2 = atom;
+                          }
 
-						  ++me.pickedatomNum;
-						}
-						else {
-						  me.pickedatom = atom;
-						}
+                          ++me.pAtomNum;
+                        }
+                        else {
+                          me.pAtom = atom;
+                        }
 
-						  me.showPicking(atom);
-					}
-					else {
-						console.log("No atoms were found in 10 andstrom range");
-					}
-				} // end if
-			}
+                          me.showPicking(atom);
+                    }
+                    else {
+                        console.log("No atoms were found in 10 andstrom range");
+                    }
+                } // end if
+            }
         }
 
         me.controls.handleResize();
@@ -544,6 +524,20 @@ var iCn3D = function (id) {
 iCn3D.prototype = {
 
     constructor: iCn3D,
+
+    setRotation: function(axis, angle) { var me = this;
+          axis.applyQuaternion( me.cam.quaternion ).normalize();
+
+          var quaternion = new THREE.Quaternion();
+          quaternion.setFromAxisAngle( axis, -angle );
+
+          var para = {};
+          para.quaternion = quaternion;
+          para.update = true;
+
+          me.controls.update(para);
+          me.render();
+    },
 
     setOutlineColor: function(colorStr) {
         // outline using ShaderMaterial: http://jsfiddle.net/Eskel/g593q/9/
@@ -613,13 +607,13 @@ iCn3D.prototype = {
     setWidthHeight: function(width, height) {
         //this.renderer.setSize(width, height);
 
-		//antialiasing by render twice large:
-		//https://stackoverflow.com/questions/17224795/antialiasing-not-working-in-three-js
-		this.renderer.setSize(width*this.scaleFactor, height*this.scaleFactor);
-		this.renderer.domElement.style.width = width + "px";
-		this.renderer.domElement.style.height = height + "px";
-		this.renderer.domElement.width = width*this.scaleFactor;
-		this.renderer.domElement.height = height*this.scaleFactor;
+        //antialiasing by render twice large:
+        //https://stackoverflow.com/questions/17224795/antialiasing-not-working-in-three-js
+        this.renderer.setSize(width*this.scaleFactor, height*this.scaleFactor);
+        this.renderer.domElement.style.width = width + "px";
+        this.renderer.domElement.style.height = height + "px";
+        this.renderer.domElement.width = width*this.scaleFactor;
+        this.renderer.domElement.height = height*this.scaleFactor;
 
         this.container.widthInv  = 1 / (this.scaleFactor*width);
         this.container.heightInv = 1 / (this.scaleFactor*height);
@@ -887,6 +881,14 @@ iCn3D.prototype = {
     defaultAtomColor: new THREE.Color(0xCCCCCC),
 
     stdChainColors: [
+            // first 6 colors from MMDB
+            new THREE.Color(0xFF00FF),
+            new THREE.Color(0x0000FF),
+            new THREE.Color(0x996633),
+            new THREE.Color(0x00FF99),
+            new THREE.Color(0xFF9900),
+            new THREE.Color(0xFF6666),
+
             new THREE.Color(0x32CD32),
             new THREE.Color(0x1E90FF),
             new THREE.Color(0xFA8072),
@@ -962,40 +964,40 @@ iCn3D.prototype = {
         ' DT': new THREE.Color(0xFF0000),
         ' DC': new THREE.Color(0xFF0000),
         ' DU': new THREE.Color(0xFF0000),
-          G: new THREE.Color(0xFF0000),
-          A: new THREE.Color(0xFF0000),
-          T: new THREE.Color(0xFF0000),
-          C: new THREE.Color(0xFF0000),
-          U: new THREE.Color(0xFF0000),
-         DG: new THREE.Color(0xFF0000),
-         DA: new THREE.Color(0xFF0000),
-         DT: new THREE.Color(0xFF0000),
-         DC: new THREE.Color(0xFF0000),
-         DU: new THREE.Color(0xFF0000),
-        ARG: new THREE.Color(0x0000FF),
-        LYS: new THREE.Color(0x0000FF),
-        ASP: new THREE.Color(0xFF0000),
-        GLU: new THREE.Color(0xFF0000),
+          'G': new THREE.Color(0xFF0000),
+          'A': new THREE.Color(0xFF0000),
+          'T': new THREE.Color(0xFF0000),
+          'C': new THREE.Color(0xFF0000),
+          'U': new THREE.Color(0xFF0000),
+         'DG': new THREE.Color(0xFF0000),
+         'DA': new THREE.Color(0xFF0000),
+         'DT': new THREE.Color(0xFF0000),
+         'DC': new THREE.Color(0xFF0000),
+         'DU': new THREE.Color(0xFF0000),
+        'ARG': new THREE.Color(0x0000FF),
+        'LYS': new THREE.Color(0x0000FF),
+        'ASP': new THREE.Color(0xFF0000),
+        'GLU': new THREE.Color(0xFF0000),
 
 // hydrophobic
-        GLY: new THREE.Color(0x888888),
-        PRO: new THREE.Color(0x888888),
-        ALA: new THREE.Color(0x888888),
-        VAL: new THREE.Color(0x888888),
-        LEU: new THREE.Color(0x888888),
-        ILE: new THREE.Color(0x888888),
-        PHE: new THREE.Color(0x888888),
+        'GLY': new THREE.Color(0x888888),
+        'PRO': new THREE.Color(0x888888),
+        'ALA': new THREE.Color(0x888888),
+        'VAL': new THREE.Color(0x888888),
+        'LEU': new THREE.Color(0x888888),
+        'ILE': new THREE.Color(0x888888),
+        'PHE': new THREE.Color(0x888888),
 
 // polar
-        HIS: new THREE.Color(0x888888),
-        SER: new THREE.Color(0x888888),
-        THR: new THREE.Color(0x888888),
-        ASN: new THREE.Color(0x888888),
-        GLN: new THREE.Color(0x888888),
-        TYR: new THREE.Color(0x888888),
-        MET: new THREE.Color(0x888888),
-        CYS: new THREE.Color(0x888888),
-        TRP: new THREE.Color(0x888888)
+        'HIS': new THREE.Color(0x888888),
+        'SER': new THREE.Color(0x888888),
+        'THR': new THREE.Color(0x888888),
+        'ASN': new THREE.Color(0x888888),
+        'GLN': new THREE.Color(0x888888),
+        'TYR': new THREE.Color(0x888888),
+        'MET': new THREE.Color(0x888888),
+        'CYS': new THREE.Color(0x888888),
+        'TRP': new THREE.Color(0x888888)
     },
 
     hydrophobicColors: {
@@ -1010,46 +1012,47 @@ iCn3D.prototype = {
         ' DT': new THREE.Color(0x888888),
         ' DC': new THREE.Color(0x888888),
         ' DU': new THREE.Color(0x888888),
-          G: new THREE.Color(0x888888),
-          A: new THREE.Color(0x888888),
-          T: new THREE.Color(0x888888),
-          C: new THREE.Color(0x888888),
-          U: new THREE.Color(0x888888),
-         DG: new THREE.Color(0x888888),
-         DA: new THREE.Color(0x888888),
-         DT: new THREE.Color(0x888888),
-         DC: new THREE.Color(0x888888),
-         DU: new THREE.Color(0x888888),
-        ARG: new THREE.Color(0x888888),
-        LYS: new THREE.Color(0x888888),
-        ASP: new THREE.Color(0x888888),
-        GLU: new THREE.Color(0x888888),
+          'G': new THREE.Color(0x888888),
+          'A': new THREE.Color(0x888888),
+          'T': new THREE.Color(0x888888),
+          'C': new THREE.Color(0x888888),
+          'U': new THREE.Color(0x888888),
+         'DG': new THREE.Color(0x888888),
+         'DA': new THREE.Color(0x888888),
+         'DT': new THREE.Color(0x888888),
+         'DC': new THREE.Color(0x888888),
+         'DU': new THREE.Color(0x888888),
+        'ARG': new THREE.Color(0x888888),
+        'LYS': new THREE.Color(0x888888),
+        'ASP': new THREE.Color(0x888888),
+        'GLU': new THREE.Color(0x888888),
 
 // hydrophobic
-        GLY: new THREE.Color(0x00FF00),
-        PRO: new THREE.Color(0x00FF00),
-        ALA: new THREE.Color(0x00FF00),
-        VAL: new THREE.Color(0x00FF00),
-        LEU: new THREE.Color(0x00FF00),
-        ILE: new THREE.Color(0x00FF00),
-        PHE: new THREE.Color(0x00FF00),
+        'GLY': new THREE.Color(0x00FF00),
+        'PRO': new THREE.Color(0x00FF00),
+        'ALA': new THREE.Color(0x00FF00),
+        'VAL': new THREE.Color(0x00FF00),
+        'LEU': new THREE.Color(0x00FF00),
+        'ILE': new THREE.Color(0x00FF00),
+        'PHE': new THREE.Color(0x00FF00),
 
 // polar
-        HIS: new THREE.Color(0x888888),
-        SER: new THREE.Color(0x888888),
-        THR: new THREE.Color(0x888888),
-        ASN: new THREE.Color(0x888888),
-        GLN: new THREE.Color(0x888888),
-        TYR: new THREE.Color(0x888888),
-        MET: new THREE.Color(0x888888),
-        CYS: new THREE.Color(0x888888),
-        TRP: new THREE.Color(0x888888)
+        'HIS': new THREE.Color(0x888888),
+        'SER': new THREE.Color(0x888888),
+        'THR': new THREE.Color(0x888888),
+        'ASN': new THREE.Color(0x888888),
+        'GLN': new THREE.Color(0x888888),
+        'TYR': new THREE.Color(0x888888),
+        'MET': new THREE.Color(0x888888),
+        'CYS': new THREE.Color(0x888888),
+        'TRP': new THREE.Color(0x888888)
     },
 
     ssColors: {
         helix: new THREE.Color(0xFF0080),
         sheet: new THREE.Color(0xFFC800),
-         coil: new THREE.Color(0x6080FF),
+        //sheet: new THREE.Color(0x008000),
+         coil: new THREE.Color(0x6080FF)
     },
 
     //defaultBondColor: new THREE.Color(0x2194D6),
@@ -1073,50 +1076,52 @@ iCn3D.prototype = {
         this.chains = {}; // structure_chain name -> atom hash
         this.residues = {}; // structure_chain_resi name -> atom hash
         this.secondaries = {}; // structure_chain_resi name -> secondary structure: 'c', 'H', or 'E'
-        this.alignChains = {}; // structure_chain name -> atom hash
+        this.alnChains = {}; // structure_chain name -> atom hash
 
         this.chainsSeq = {}; // structure_chain name -> array of sequence
         this.chainsColor = {}; // structure_chain name -> color, show chain color in sequence display for mmdbid and align input
-        this.chainsAnno = {}; // structure_chain name -> array of array of annotations, such as residue number
-        this.chainsAnnoTitle = {}; // structure_chain name -> array of array of annotation title
+        this.chainsAn = {}; // structure_chain name -> array of annotations, such as residue number
+        this.chainsAnTitle = {}; // structure_chain name -> array of annotation title
 
-        this.alignChainsSeq = {}; // structure_chain name -> array of residue object: {mmdbid, chain, resi, resn, aligned}
-        this.alignChainsAnno = {}; // structure_chain name -> array of array of annotations, such as residue number
-        this.alignChainsAnnoTitle = {}; // structure_chain name -> array of array of annotation title
+        this.alnChainsSeq = {}; // structure_chain name -> array of residue object: {mmdbid, chain, resi, resn, aligned}
+        this.alnChainsAnno = {}; // structure_chain name -> array of annotations, such as residue number
+        this.alnChainsAnTtl = {}; // structure_chain name -> array of annotation title
 
-        this.displayAtoms = {}; // show selected atoms
-        this.highlightAtoms = {}; // used to change color or dislay type for certain atoms
+        this.dAtoms = {}; // show selected atoms
+        this.hAtoms = {}; // used to change color or dislay type for certain atoms
 
         this.pickedAtomList = {}; // used to switch among different highlight levels
 
         this.prevHighlightObjects = [];
+        this.prevHighlightObjects_ghost = [];
         this.prevSurfaces = [];
 
-        this.definedNames2Residues = {}; // custom defined selection name -> residue array
-        this.definedNames2Atoms = {}; // custom defined selection name -> atom array
-        this.definedNames2Descr = {}; // custom defined selection name -> description
-        this.definedNames2Command = {}; // custom defined selection name -> command
+        this.defNames2Residues = {}; // custom defined selection name -> residue array
+        this.defNames2Atoms = {}; // custom defined selection name -> atom array
+        this.defNames2Descr = {}; // custom defined selection name -> description
+        this.defNames2Command = {}; // custom defined selection name -> command
 
         this.residueId2Name = {}; // structure_chain_resi -> one letter abbreviation
 
-        this.moleculeTitle = "";
+        this.molTitle = "";
 
         this.atoms = {};
-        this.displayAtoms = {};
-        this.highlightAtoms = {};
+        this.dAtoms = {};
+        this.hAtoms = {};
         this.proteins = {};
-        this.sidechains = {};
+        this.sidec = {};
         this.nucleotides = {};
-        this.nucleotidesP = {};
+        this.nucleotidesO3 = {};
 
-        this.ligands = {};
+        this.chemicals = {};
         this.ions = {};
         this.water = {};
         this.calphas = {};
 
-        this.hbondpoints = [];
-        this.ssbondpoints = []; // disulfide bonds
-        //this.ncbondpoints = []; // non-covalent bonds
+        this.hbondpnts = [];
+        this.stabilizerpnts = [];
+        this.ssbondpnts = {}; // disulfide bonds for each structure
+        //this.ncbondpnts = []; // non-covalent bonds
 
         this.doublebonds = {};
         this.triplebonds = {};
@@ -1124,7 +1129,7 @@ iCn3D.prototype = {
 
         this.atomPrevColors = {};
 
-        this.style2atoms = {}; // style -> atom hash, 13 styles: ribbon, strand, cylinder and plate, nucleotide cartoon, phosphorus trace, schematic, c alpha trace, b factor tube, lines, stick, ball and stick, sphere, dot, nothing
+        this.style2atoms = {}; // style -> atom hash, 13 styles: ribbon, strand, cylinder and plate, nucleotide cartoon, o3 trace, schematic, c alpha trace, b factor tube, lines, stick, ball and stick, sphere, dot, nothing
         this.labels = {};     // hash of name -> a list of labels. Each label contains 'position', 'text', 'size', 'color', 'background'
                             // label name could be custom, residue, schmatic, distance
         this.lines = {};     // hash of name -> a list of solid or dashed lines. Each line contains 'position1', 'position2', 'color', and a boolean of 'dashed'
@@ -1136,12 +1141,12 @@ iCn3D.prototype = {
         this.bAssembly = false;
 
         this.rotateCount = 0;
-        this.rotateCountMax = 30;
+        this.rotateCountMax = 20;
     },
 
     reinitAfterLoad: function () {
-        this.displayAtoms = this.cloneHash(this.atoms); // show selected atoms
-        this.highlightAtoms = this.cloneHash(this.atoms); // used to change color or dislay type for certain atoms
+        this.dAtoms = this.cloneHash(this.atoms); // show selected atoms
+        this.hAtoms = this.cloneHash(this.atoms); // used to change color or dislay type for certain atoms
 
         this.prevHighlightObjects = [];
         this.prevHighlightObjects_ghost = [];

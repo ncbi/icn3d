@@ -10,12 +10,22 @@
             var atom = this.atoms[i];
             var chainid = atom.structure + '_' + atom.chain;
 
-            if(this.chainsColor.hasOwnProperty(chainid)) {
-                atom.color = this.chainsColor[chainid];
+            if(this.chnsColor.hasOwnProperty(chainid)) {
+                atom.color = this.chnsColor[chainid];
             }
             else {
-                atom.color = this.atomColors[atom.elem];
+                //atom.color = this.atomColors[atom.elem];
+                break;
             }
+        }
+    };
+
+    iCn3D.prototype.setAtmClr = function(atoms, hex) {
+        for (var i in atoms) {
+            var atom = this.atoms[i];
+            atom.color = new THREE.Color().setHex(hex);
+
+            this.atomPrevColors[i] = atom.color;
         }
     };
 
@@ -63,7 +73,7 @@
 
                     atom.color = this.stdChainColors[index];
 
-                    if(Object.keys(this.chainsColor).length > 0) this.updateChainsColor(atom);
+                    if(Object.keys(this.chnsColor).length > 0) this.updateChainsColor(atom);
                     this.atomPrevColors[i] = atom.color;
 
                     prevChain = atom.chain;
@@ -124,13 +134,13 @@
                     this.atomPrevColors[i] = atom.color;
                 }
 
-                for(var chainid in this.alignChainsSeq) {
-                    var resObjectArray = this.alignChainsSeq[chainid];
+                for(var chainid in this.alnChnsSeq) {
+                    var resObjectArray = this.alnChnsSeq[chainid];
 
                     for(var i = 0, il = resObjectArray.length; i < il; ++i) {
                         var residueid = chainid + '_' + resObjectArray[i].resi;
 
-                        for(var j in this.residues[residueid]) {
+                        for(var j in this.resds[residueid]) {
                             if(atoms.hasOwnProperty(j)) {
                                 var color = new THREE.Color(resObjectArray[i].color);
                                 this.atoms[j].color = color;
@@ -142,99 +152,232 @@
                 break;
 
             case 'white':
-                for (var i in atoms) {
-                    var atom = this.atoms[i];
-                    atom.color = new THREE.Color().setHex(0xFFFFFF);
-
-                    this.atomPrevColors[i] = atom.color;
-                }
+                this.setAtmClr(atoms, 0xFFFFFF);
                 break;
 
             case 'grey':
-                for (var i in atoms) {
-                    var atom = this.atoms[i];
-                    atom.color = new THREE.Color().setHex(0x888888);
-
-                    this.atomPrevColors[i] = atom.color;
-                }
+                this.setAtmClr(atoms, 0x888888);
                 break;
-
 
             case 'red':
-                for (var i in atoms) {
-                    var atom = this.atoms[i];
-                    atom.color = new THREE.Color().setHex(0xFF0000);
-
-                    this.atomPrevColors[i] = atom.color;
-                }
+                this.setAtmClr(atoms, 0xFF0000);
                 break;
             case 'green':
-                for (var i in atoms) {
-                    var atom = this.atoms[i];
-                    atom.color = new THREE.Color().setHex(0x00FF00);
-
-                    this.atomPrevColors[i] = atom.color;
-                }
+                this.setAtmClr(atoms, 0x00FF00);
                 break;
             case 'blue':
-                for (var i in atoms) {
-                    var atom = this.atoms[i];
-                    atom.color = new THREE.Color().setHex(0x0000FF);
-
-                    this.atomPrevColors[i] = atom.color;
-                }
+                this.setAtmClr(atoms, 0x0000FF);
                 break;
             case 'magenta':
-                for (var i in atoms) {
-                    var atom = this.atoms[i];
-                    atom.color = new THREE.Color().setHex(0xFF00FF);
-
-                    this.atomPrevColors[i] = atom.color;
-                }
+                this.setAtmClr(atoms, 0xFF00FF);
                 break;
             case 'yellow':
-                for (var i in atoms) {
-                    var atom = this.atoms[i];
-                    atom.color = new THREE.Color().setHex(0xFFFF00);
-
-                    this.atomPrevColors[i] = atom.color;
-                }
+                this.setAtmClr(atoms, 0xFFFF00);
                 break;
             case 'cyan':
-                for (var i in atoms) {
-                    var atom = this.atoms[i];
-                    atom.color = new THREE.Color().setHex(0x00FFFF);
-
-                    this.atomPrevColors[i] = atom.color;
-                }
+                this.setAtmClr(atoms, 0x00FFFF);
                 break;
             case 'custom':
                 // do the coloring separately
                 break;
 
             default: // the "#" was missed in order to make sharelink work
-				for (var i in atoms) {
-					var atom = this.atoms[i];
-					atom.color = new THREE.Color().setStyle("#" + options.color.toLowerCase());
+                for (var i in atoms) {
+                    var atom = this.atoms[i];
+                    atom.color = new THREE.Color().setStyle("#" + options.color.toLowerCase());
 
-					this.atomPrevColors[i] = atom.color;
-				}
+                    this.atomPrevColors[i] = atom.color;
+                }
 
-				break;
+                break;
         }
       }
-       }
+     }
     };
 
     iCn3D.prototype.updateChainsColor = function (atom) {
         var chainid = atom.structure + '_' + atom.chain;
-        if(this.chainsColor[chainid] !== undefined) {  // for mmdbid and align input
-            this.chainsColor[chainid] = atom.color;
+        if(this.chnsColor[chainid] !== undefined) {  // for mmdbid and align input
+            this.chnsColor[chainid] = atom.color;
         }
     };
 
+    iCn3D.prototype.applyLigandbindingOptions = function (options) {
+        if(options === undefined) options = this.opts;
+
+        // display mode
+        if (options.ligandbinding === 'show') {
+            var startAtoms;
+            if(this.ligs !== undefined && Object.keys(this.ligs).length > 0) { // show ligand-protein interaction
+                startAtoms = this.hash2Atoms(this.ligs);
+            }
+
+            // find atoms in chainid1, which interact with chainid2
+            var radius = 4;
+
+            if(startAtoms !== undefined) {
+                var targetAtoms = this.getAtomsWithinAtom(this.atoms, startAtoms, radius);
+
+                var residueHash = {};
+
+                // draw sidec for these residues
+                for(var i in targetAtoms) {
+                  if(startAtoms.hasOwnProperty(i)) continue;
+                  residueHash[this.atoms[i].structure + '_' + this.atoms[i].chain + '_' + this.atoms[i].resi] = 1;
+                }
+
+                var residueArray = Object.keys(residueHash);
+                for(var i = 0, il = residueArray.length; i < il; ++i) {
+                    for(var j in this.resds[residueArray[i]]) {
+                        // all atoms should be shown for hbonds
+                        this.atoms[j].style2 = 'stick';
+                    }
+                }
+
+                // show hydrogens
+                var threshold = 3.5;
+                this.opts["hbonds"] = "yes";
+                //this.opts["water"] = "dot";
+
+                if(Object.keys(targetAtoms).length > 0) {
+                    this.calculateLigandHbonds(startAtoms, targetAtoms, parseFloat(threshold) );
+                }
+
+                // zoom in on the atoms
+                this.zoominSelection( this.unionHash(startAtoms, targetAtoms) );
+
+                this.opts['fog'] = 'yes';
+            }
+        }
+        else if (options.ligandbinding === 'hide') {
+            // truen off hdonds
+            this.hideHbonds();
+
+            // center on the atoms
+            this.zoominSelection(this.atoms);
+
+            this.opts['fog'] = 'no';
+        }
+    };
+
+    iCn3D.prototype.hideHbonds = function () {
+            this.opts["hbonds"] = "no";
+            if(this.lines === undefined) this.lines = {};
+            this.lines['hbond'] = [];
+            this.hbondpnts = [];
+
+            for(var i in this.atoms) {
+                this.atoms[i].style2 = 'nothing';
+            }
+
+            for(var i in this.sidec) {
+                this.atoms[i].style2 = this.opts["sidec"];
+            }
+
+            for(var i in this.water) {
+                this.atoms[i].style = this.opts["water"];
+            }
+    };
+
+    iCn3D.prototype.applySsbondsOptions = function (options) {
+        if(options === undefined) options = this.opts;
+
+        if (options.ssbonds.toLowerCase() === 'yes' && this.ssbondpnts !== undefined) {
+          var color = '#FFFF00';
+          var colorObj = new THREE.Color(0xFFFF00);
+
+          var structureArray = Object.keys(this.strucs);
+          var start, end;
+
+          if(this.bAlternate) {
+              start = this.ALTERNATE_STRUCTURE;
+              end = this.ALTERNATE_STRUCTURE + 1;
+          }
+          else {
+              start = 0;
+              end = structureArray.length;
+          }
+
+          this.lines['ssbond'] = [];
+
+          for(var s = start, sl = end; s < sl; ++s) {
+              var structure = structureArray[s];
+
+              if(this.ssbondpnts[structure] === undefined) continue;
+
+              for(var i = 0, lim = Math.floor(this.ssbondpnts[structure].length / 2); i < lim; i++) {
+                var res1 = this.ssbondpnts[structure][2 * i], res2 = this.ssbondpnts[structure][2 * i + 1];
+
+                var line = {};
+                line.color = color;
+                line.dashed = true;
+
+                var bFound = false;
+                for(var j in this.resds[res1]) {
+                    if(this.atoms[j].name === 'SG') {
+                        line.position1 = this.atoms[j].coord;
+                        bFound = true;
+                        break;
+                    }
+                }
+
+                if(!bFound) {
+                    for(var j in this.resds[res1]) {
+                        if(this.atoms[j].name === 'CA') {
+                            line.position1 = this.atoms[j].coord;
+                            bFound = true;
+                            break;
+                        }
+                    }
+                }
+
+                bFound = false;
+                for(var j in this.resds[res2]) {
+                    if(this.atoms[j].name === 'SG') {
+                        line.position2 = this.atoms[j].coord;
+                        bFound = true;
+                        break;
+                    }
+                }
+
+                if(!bFound) {
+                    for(var j in this.resds[res2]) {
+                        if(this.atoms[j].name === 'CA') {
+                            line.position2 = this.atoms[j].coord;
+                            bFound = true;
+                            break;
+                        }
+                    }
+                }
+
+                //if(this.lines['ssbond'] === undefined) this.lines['ssbond'] = [];
+                this.lines['ssbond'].push(line);
+
+                // create bonds for disulfide bonds
+                //this.createCylinder(line.position1, line.position2, this.cylinderRadius * 0.5, colorObj);
+                // make disulfide bonds slightly larger in case they were define already in MMDB
+                this.createCylinder(line.position1, line.position2, this.cylinderRadius * 1.1, colorObj);
+
+                // show ball and stick for these two residues
+                var residueAtoms = this.unionHash(this.resds[res1], this.resds[res2]);
+
+                // show side chains for the selected atoms
+                var atoms = this.intHash(residueAtoms, this.sidec);
+                var calpha_atoms = this.intHash(residueAtoms, this.calphas);
+                // include calphas
+                atoms = this.unionHash(atoms, calpha_atoms);
+
+                // draw sidec separatedly
+                for(var j in atoms) {
+                  this.atoms[j].style2 = 'stick';
+                }
+              } // for(var i = 0,
+          } // for(var s = 0,
+        } // if (options.ssbonds.toLowerCase() === 'yes'
+    };
+
     iCn3D.prototype.applyOtherOptions = function (options) {
-        if(options === undefined) options = this.options;
+        if(options === undefined) options = this.opts;
 
         //common part options
         // labels
@@ -242,14 +385,14 @@
 
         // lines
         //if (options.hbonds.toLowerCase() === 'yes' || options.ncbonds.toLowerCase() === 'yes') {
-		if (options.hbonds.toLowerCase() === 'yes') {
+        if (options.hbonds.toLowerCase() === 'yes') {
             var color = '#00FF00';
-            var points = this.hbondpoints;
+            var pnts = this.hbondpnts;
 
-             for (var i = 0, lim = Math.floor(points.length / 2); i < lim; i++) {
+             for (var i = 0, lim = Math.floor(pnts.length / 2); i < lim; i++) {
                 var line = {};
-                line.position1 = points[2 * i];
-                line.position2 = points[2 * i + 1];
+                line.position1 = pnts[2 * i];
+                line.position2 = pnts[2 * i + 1];
                 line.color = color;
                 line.dashed = true;
 
@@ -260,88 +403,50 @@
             //this.createLines(this.lines);
         }
 
-        if (options.ssbonds.toLowerCase() === 'yes') {
-            var color = '#FFFF00';
-            var colorObj = new THREE.Color(0xFFFF00);
-
-             for (var i = 0, lim = Math.floor(this.ssbondpoints.length / 2); i < lim; i++) {
-                var res1 = this.ssbondpoints[2 * i], res2 = this.ssbondpoints[2 * i + 1];
-
+        if (options.hbondsin.toLowerCase() === 'yes') {
+            var color = '#FFFFFF';
+            var pnts = this.hbondinpnts;
+            for (var i = 0, lim = Math.floor(pnts.length / 2); i < lim; i++) {
                 var line = {};
+                line.position1 = pnts[2 * i];
+                line.position2 = pnts[2 * i + 1];
                 line.color = color;
-                line.dashed = true;
+                line.dashed = false; // if true, there will be too many cylinders in the dashed lines
 
-                var bFound = false;
-                for(var j in this.residues[res1]) {
-                    if(this.atoms[j].name === 'SG') {
-                        line.position1 = this.atoms[j].coord;
-                        bFound = true;
-                        break;
-                    }
-                }
+                if(this.lines['hbondin'] === undefined) this.lines['hbondin'] = [];
+                this.lines['hbondin'].push(line);
+            }
 
-                if(!bFound) {
-                    for(var j in this.residues[res1]) {
-                        if(this.atoms[j].name === 'CA') {
-                            line.position1 = this.atoms[j].coord;
-                            bFound = true;
-                            break;
-                        }
-                    }
-                }
-
-                bFound = false;
-                for(var j in this.residues[res2]) {
-                    if(this.atoms[j].name === 'SG') {
-                        line.position2 = this.atoms[j].coord;
-                        bFound = true;
-                        break;
-                    }
-                }
-
-                if(!bFound) {
-                    for(var j in this.residues[res2]) {
-                        if(this.atoms[j].name === 'CA') {
-                            line.position2 = this.atoms[j].coord;
-                            bFound = true;
-                            break;
-                        }
-                    }
-                }
-
-                if(this.lines['ssbond'] === undefined) this.lines['ssbond'] = [];
-                this.lines['ssbond'].push(line);
-
-                // create bonds for disulfide bonds
-                this.createCylinder(line.position1, line.position2, this.cylinderRadius * 0.5, colorObj);
-             }
+            //this.createLines(this.lines);
         }
 
         this.createLines(this.lines);
 
         // surfaces
-        for(var i = 0, il = this.prevSurfaces.length; i < il; ++i) {
-            this.mdl.add(this.prevSurfaces[i]);
+        if(this.prevSurfaces !== undefined) {
+            for(var i = 0, il = this.prevSurfaces.length; i < il; ++i) {
+                this.mdl.add(this.prevSurfaces[i]);
+            }
         }
 
         switch (options.rotationcenter.toLowerCase()) {
             case 'molecule center':
                 // move the molecule to the origin
                 if(this.center !== undefined) {
-					this.setRotationCenter(this.center);
-				}
+                    this.setRotationCenter(this.center);
+                }
                 break;
             case 'pick center':
-                if(this.pickedatom !== undefined) {
-                  this.setRotationCenter(this.pickedatom.coord);
+                if(this.pAtom !== undefined) {
+                  this.setRotationCenter(this.pAtom.coord);
                 }
                 break;
             case 'display center':
-                var center = this.centerAtoms(this.displayAtoms).center;
+                var center = this.centerAtoms(this.dAtoms).center;
                 this.setRotationCenter(center);
                 break;
             case 'highlight center':
-                var center = this.centerAtoms(this.highlightAtoms).center;
+                var center = this.centerAtoms(this.hAtoms).center;
                 this.setRotationCenter(center);
                 break;
         }
@@ -356,24 +461,24 @@
                 this.axis = false;
                 break;
         }
-        switch (options.picking.toLowerCase()) {
+        switch (options.pk.toLowerCase()) {
             case 'atom':
-                this.picking = 1;
+                this.pk = 1;
                 break;
             case 'no':
-                this.picking = 0;
+                this.pk = 0;
                 break;
             case 'residue':
-                this.picking = 2;
+                this.pk = 2;
                 break;
             case 'strand':
-                this.picking = 3;
+                this.pk = 3;
                 break;
         }
     };
 
     iCn3D.prototype.applySurfaceOptions = function (options) {
-        if(options === undefined) options = this.options;
+        if(options === undefined) options = this.opts;
 
         //switch (options.wireframe.toLowerCase()) {
         switch (options.wireframe) {
@@ -387,9 +492,12 @@
 
         options.opacity = parseFloat(options.opacity);
 
-        var currAtoms = {};
+        var atoms, currAtoms;
 
-        currAtoms = this.hash2Atoms(this.highlightAtoms);
+        // only show the surface for atoms which are displaying
+        atoms = this.intHash(this.dAtoms, this.hAtoms);
+
+        currAtoms = this.hash2Atoms(atoms);
 
         switch (options.surface.toLowerCase()) {
             case 'van der waals surface':
@@ -404,6 +512,15 @@
             case 'molecular surface':
                 this.createSurfaceRepresentation(currAtoms, 2, options.wireframe, options.opacity);
                 break;
+            case 'van der waals surface with context':
+                this.createSurfaceRepresentation(currAtoms, 1, options.wireframe, options.opacity);
+                break;
+            case 'solvent accessible surface with context':
+                this.createSurfaceRepresentation(currAtoms, 3, options.wireframe, options.opacity);
+                break;
+            case 'molecular surface with context':
+                this.createSurfaceRepresentation(currAtoms, 2, options.wireframe, options.opacity);
+                break;
             case 'nothing':
                 // remove surfaces
                 this.removeSurfaces();
@@ -412,7 +529,7 @@
     };
 
     iCn3D.prototype.applyDisplayOptions = function (options, atoms, bHighlight) { var me = this; // atoms: hash of key -> 1
-        if(options === undefined) options = this.options;
+        if(options === undefined) options = this.opts;
 
         var residueHash = {};
         var singletonResidueHash = {};
@@ -444,7 +561,7 @@
             }
 
             // show the only atom in a transparent box
-            if(Object.keys(atomsObj).length === 1 && Object.keys(this.residues[residueid]).length > 1
+            if(Object.keys(atomsObj).length === 1 && Object.keys(this.resds[residueid]).length > 1
                   && atomsObj[Object.keys(atomsObj)[0]].style !== 'sphere' && atomsObj[Object.keys(atomsObj)[0]].style !== 'dot') {
                 if(this.bCid === undefined || !this.bCid) {
                     for(var i in atomsObj) {
@@ -457,27 +574,27 @@
             else {
                 // if only one residue, add the next residue in order to show highlight
                 for(var residueid in singletonResidueHash) {
-                    var atom = this.getFirstAtomObj(this.residues[residueid]);
+                    var atom = this.getFirstAtomObj(this.resds[residueid]);
                     var prevResidueid = atom.structure + '_' + atom.chain + '_' + parseInt(atom.resi - 1);
                     var nextResidueid = atom.structure + '_' + atom.chain + '_' + parseInt(atom.resi + 1);
 
-                    //ribbon, strand, cylinder and plate, nucleotide cartoon, phosphorus trace, schematic, c alpha trace, b factor tube, lines, stick, ball and stick, sphere, dot
+                    //ribbon, strand, cylinder and plate, nucleotide cartoon, o3 trace, schematic, c alpha trace, b factor tube, lines, stick, ball and stick, sphere, dot
 
                     if(atom.style === 'cylinder and plate' && atom.ss === 'helix') { // no way to highlight part of cylinder
-                        for(var i in this.residues[residueid]) {
+                        for(var i in this.resds[residueid]) {
                             var atom = this.atoms[i];
                             var scale = 1.0;
                             this.createBox(atom, undefined, undefined, scale, undefined, bHighlight);
                         }
                     }
-                    else if( (atom.style === 'ribbon' && atom.ss === 'coil') || (atom.style === 'strand' && atom.ss === 'coil') || atom.style === 'phosphorus trace' || atom.style === 'schematic' || atom.style === 'c alpha trace' || atom.style === 'b factor tube' || (atom.style === 'cylinder and plate' && atom.ss !== 'helix') ) {
+                    else if( (atom.style === 'ribbon' && atom.ss === 'coil') || (atom.style === 'strand' && atom.ss === 'coil') || atom.style === 'o3 trace' || atom.style === 'schematic' || atom.style === 'c alpha trace' || atom.style === 'b factor tube' || (atom.style === 'cylinder and plate' && atom.ss !== 'helix') ) {
                         var bAddResidue = false;
                         // add the next residue with same style
-                        if(!bAddResidue && this.residues.hasOwnProperty(nextResidueid)) {
-                            var index2 = Object.keys(this.residues[nextResidueid])[0];
-                            var atom2 = this.hash2Atoms(this.residues[nextResidueid])[index2];
+                        if(!bAddResidue && this.resds.hasOwnProperty(nextResidueid)) {
+                            var index2 = Object.keys(this.resds[nextResidueid])[0];
+                            var atom2 = this.hash2Atoms(this.resds[nextResidueid])[index2];
                             if( (atom.style === atom2.style && !atom2.ssbegin) || atom2.ssbegin) {
-                                var residueAtoms = this.residues[nextResidueid];
+                                var residueAtoms = this.resds[nextResidueid];
                                 atoms = this.unionHash(atoms, residueAtoms);
 
                                 bAddResidue = true;
@@ -492,11 +609,11 @@
                         }
 
                         // add the previous residue with same style
-                        if(!bAddResidue && this.residues.hasOwnProperty(prevResidueid)) {
-                            var index2 = Object.keys(this.residues[prevResidueid])[0];
-                            var atom2 = this.hash2Atoms(this.residues[prevResidueid])[index2];
+                        if(!bAddResidue && this.resds.hasOwnProperty(prevResidueid)) {
+                            var index2 = Object.keys(this.resds[prevResidueid])[0];
+                            var atom2 = this.hash2Atoms(this.resds[prevResidueid])[index2];
                             if(atom.style === atom2.style) {
-                                atoms = this.unionHash(atoms, this.residues[prevResidueid]);
+                                atoms = this.unionHash(atoms, this.resds[prevResidueid]);
 
                                 bAddResidue = true;
                             }
@@ -505,11 +622,11 @@
                     else if( (atom.style === 'ribbon' && atom.ss !== 'coil' && atom.ssend) || (atom.style === 'strand' && atom.ss !== 'coil' && atom.ssend)) {
                         var bAddResidue = false;
                         // add the next residue with same style
-                        if(!bAddResidue && this.residues.hasOwnProperty(nextResidueid)) {
-                            var index2 = Object.keys(this.residues[nextResidueid])[0];
-                            var atom2 = this.hash2Atoms(this.residues[nextResidueid])[index2];
+                        if(!bAddResidue && this.resds.hasOwnProperty(nextResidueid)) {
+                            var index2 = Object.keys(this.resds[nextResidueid])[0];
+                            var atom2 = this.hash2Atoms(this.resds[nextResidueid])[index2];
                             //if(atom.style === atom2.style && !atom2.ssbegin) {
-                                atoms = this.unionHash(atoms, this.residues[nextResidueid]);
+                                atoms = this.unionHash(atoms, this.resds[nextResidueid]);
 
                                 bAddResidue = true;
                             //}
@@ -526,12 +643,12 @@
         //this.bAllAtoms = (Object.keys(atoms).length === Object.keys(this.atoms).length);
         this.bAllAtoms = false;
         if(atoms && atoms !== undefined ) {
-			this.bAllAtoms = (Object.keys(atoms).length === Object.keys(this.atoms).length);
-		}
+            this.bAllAtoms = (Object.keys(atoms).length === Object.keys(this.atoms).length);
+        }
 
 //        var currentCalphas = {};
-//        if(this.options['sidechains'] !== 'nothing') {
-//            currentCalphas = this.intersectHash(this.highlightAtoms, this.calphas);
+//        if(this.opts['sidec'] !== 'nothing') {
+//            currentCalphas = this.intHash(this.hAtoms, this.calphas);
 //        }
 
         // remove schematic labels
@@ -540,8 +657,9 @@
         var ligandSchematicRadius = this.cylinderRadius * 0.5;
 
         for(var style in this.style2atoms) {
-          // 14 styles: ribbon, strand, cylinder and plate, nucleotide cartoon, phosphorus trace, schematic, c alpha trace, b factor tube, lines, stick, ball and stick, sphere, dot, nothing
+          // 14 styles: ribbon, strand, cylinder and plate, nucleotide cartoon, o3 trace, schematic, c alpha trace, b factor tube, lines, stick, ball and stick, sphere, dot, nothing
           atomHash = this.style2atoms[style];
+          var bPhosphorusOnly = this.isPhosphorusOnly(this.hash2Atoms(atomHash));
 
           if(style === 'ribbon') {
               this.createStrand(this.hash2Atoms(atomHash), 2, undefined, true, undefined, undefined, false, this.thickness, bHighlight);
@@ -550,13 +668,11 @@
               this.createStrand(this.hash2Atoms(atomHash), null, null, null, null, null, false, undefined, bHighlight);
           }
           else if(style === 'cylinder and plate') {
-            this.createCylinderHelix(this.hash2Atoms(atomHash), 1.6, bHighlight);
+            this.createCylinderHelix(this.hash2Atoms(atomHash), this.cylinderHelixRadius, bHighlight);
           }
           else if(style === 'nucleotide cartoon') {
-            var bPhosphorusOnly = this.isPhosphorusOnly(this.hash2Atoms(atomHash));
-
             if(bPhosphorusOnly) {
-                this.createCylinderCurve(this.hash2Atoms(atomHash), 'P', 0.2, false, bHighlight);
+                this.createCylinderCurve(this.hash2Atoms(atomHash), ["P"], this.cylinderRadius, false, bHighlight);
             }
             else {
                 this.drawCartoonNucleicAcid(this.hash2Atoms(atomHash), null, this.thickness, bHighlight);
@@ -564,97 +680,66 @@
                 if(bHighlight !== 2) this.drawNucleicAcidStick(this.hash2Atoms(atomHash), bHighlight);
             }
           }
-          else if(style === 'phosphorus trace') {
-            this.createCylinderCurve(this.hash2Atoms(atomHash), 'P', 0.2, false, bHighlight);
+          else if(style === 'o3 trace') {
+            if(bPhosphorusOnly) {
+                this.createCylinderCurve(this.hash2Atoms(atomHash), ["P"], this.cylinderRadius, false, bHighlight);
+            }
+            else {
+                this.createCylinderCurve(this.hash2Atoms(atomHash), ["O3'", "O3*"], this.cylinderRadius, false, bHighlight);
+            }
           }
-          else if(style === 'phosphorus lines') {
-            this.createCylinderCurve(this.hash2Atoms(atomHash), 'P', 0.2, true, bHighlight);
-          }
+          //else if(style === 'phosphorus lines') {
+          //  this.createCylinderCurve(this.hash2Atoms(atomHash), ["O3'", "O3*"], 0.2, true, bHighlight);
+          //}
           else if(style === 'schematic') {
-            // either proteins, nucleotides, or ligands
+            // either prtns, nucleotides, or ligands
             var firstAtom = this.getFirstAtomObj(atomHash);
 
             //if(firstAtom.het) { // ligands
-            if(this.ligands.hasOwnProperty(firstAtom.serial)) { // ligands
+            if(this.ligs.hasOwnProperty(firstAtom.serial)) { // ligands
                 this.addNonCarbonAtomLabels(this.hash2Atoms(atomHash));
 
                 bSchematic = true;
                 this.createStickRepresentation(this.hash2Atoms(atomHash), ligandSchematicRadius, ligandSchematicRadius, undefined, bHighlight, bSchematic);
             }
-            else { // nucleotides or proteins
+            else { // nucleotides or prtns
                 this.addResiudeLabels(this.hash2Atoms(atomHash), true);
 
-                this.createCylinderCurve(this.hash2Atoms(atomHash), 'P', 0.2, false, bHighlight);
-                this.createCylinderCurve(this.hash2Atoms(atomHash), 'CA', 0.2, false, bHighlight);
+                if(bPhosphorusOnly) {
+                    this.createCylinderCurve(this.hash2Atoms(atomHash), ["P"], this.cylinderRadius, false, bHighlight);
+                }
+                else {
+                    this.createCylinderCurve(this.hash2Atoms(atomHash), ["O3'", "O3*"], this.cylinderRadius, false, bHighlight);
+                }
+                this.createCylinderCurve(this.hash2Atoms(atomHash), ['CA'], this.cylinderRadius, false, bHighlight);
             }
           }
           else if(style === 'c alpha trace') {
-            this.createCylinderCurve(this.hash2Atoms(atomHash), 'CA', 0.2, false, bHighlight);
+            this.createCylinderCurve(this.hash2Atoms(atomHash), ['CA'], this.cylinderRadius, false, bHighlight);
           }
           else if(style === 'b factor tube') {
             this.createTube(this.hash2Atoms(atomHash), 'CA', null, bHighlight);
           }
           else if(style === 'lines') {
-            // add calpha to the side chains for better connectivity
-//            if(this.options['sidechains'] === 'lines') {
-//                atomHash = this.unionHash(atomHash, currentCalphas);
-//            }
-
             if(bHighlight === 1) {
-                this.createStickRepresentation(this.hash2Atoms(atomHash), 0.1, 0.1, undefined, bHighlight);
+                this.createStickRepresentation(this.hash2Atoms(atomHash), this.hlLineRadius, this.hlLineRadius, undefined, bHighlight);
             }
             else {
                 this.createLineRepresentation(this.hash2Atoms(atomHash), bHighlight);
             }
           }
           else if(style === 'stick') {
-            // add calpha to the side chains for better connectivity
-//            if(this.options['sidechains'] === 'stick') {
-//                atomHash = this.unionHash(atomHash, currentCalphas);
-//            }
-
             this.createStickRepresentation(this.hash2Atoms(atomHash), this.cylinderRadius, this.cylinderRadius, undefined, bHighlight);
           }
           else if(style === 'ball and stick') {
-            // add calpha to the side chains for better connectivity
-//            if(this.options['sidechains'] === 'ball and stick') {
-//                atomHash = this.unionHash(atomHash, currentCalphas);
-//            }
-
-            this.createStickRepresentation(this.hash2Atoms(atomHash), this.cylinderRadius, this.cylinderRadius * 0.5, 0.3, bHighlight);
+            this.createStickRepresentation(this.hash2Atoms(atomHash), this.cylinderRadius, this.cylinderRadius * 0.5, this.dotSphereScale, bHighlight);
           }
           else if(style === 'sphere') {
             this.createSphereRepresentation(this.hash2Atoms(atomHash), this.sphereRadius, undefined, undefined, bHighlight);
           }
           else if(style === 'dot') {
-            this.createSphereRepresentation(this.hash2Atoms(atomHash), this.sphereRadius, false, 0.3, bHighlight);
+            this.createSphereRepresentation(this.hash2Atoms(atomHash), this.sphereRadius, false, this.dotSphereScale, bHighlight);
           }
-
-          // do not show highlight if structure is not shown
-          /*
-          else { // structure not shown, show the highlight
-            if(bHighlight === 2) bHighlight === 1;
-
-            if(bHighlight === 1) {
-                var atoms = this.hash2Atoms(atomHash);
-                var nonHetAtoms = {};
-                for(var i in atoms) {
-                    var atom = atoms[i];
-                    if(atom.het) {
-                        var scale = 1.0;
-                        this.createBox(atom, undefined, undefined, scale, undefined, bHighlight);
-                    }
-                    else {
-                        nonHetAtoms[i] = atom;
-                    }
-                }
-
-                if(Object.keys(nonHetAtoms).length > 0) {
-                    this.createStrand(nonHetAtoms, null, null, null, null, null, false, undefined, bHighlight);
-                }
-            }
-          }
-          */
         } // end for loop
     };
 
@@ -666,401 +751,360 @@
 
             var chunk;
             if(THREE.ShaderChunk.hasOwnProperty(p1)) {
-				chunk = THREE.ShaderChunk[ p1 ];
-			}
+                chunk = THREE.ShaderChunk[ p1 ];
+            }
 
             return chunk ? chunk : "";
 
       } );
 
       return shaderText;
-	};
+    };
 
     iCn3D.prototype.createImpostorShaderCylinder = function (shaderName) { var me = this;
-		  var shaderMaterial =
-			new THREE.ShaderMaterial({
-			  defines: me.defines,
-			  uniforms:  me.uniforms,
-			  vertexShader:   me.getShader(shaderName + ".vert"),
-			  fragmentShader: me.getShader(shaderName + ".frag"),
-			  depthTest: true,
-			  depthWrite: true,
-			  needsUpdate: true,
-			  lights: true
-		  });
+          var shaderMaterial =
+            new THREE.ShaderMaterial({
+              defines: me.defines,
+              uniforms:  me.uniforms,
+              vertexShader:   me.getShader(shaderName + ".vert"),
+              fragmentShader: me.getShader(shaderName + ".frag"),
+              depthTest: true,
+              depthWrite: true,
+              needsUpdate: true,
+              lights: true
+          });
 
-		  shaderMaterial.extensions.fragDepth = true;
+          shaderMaterial.extensions.fragDepth = true;
 
-		var positions = new Float32Array( me.positionArray );
-		var colors = new Float32Array( me.colorArray );
-		var positions2 = new Float32Array( me.position2Array );
-		var colors2 = new Float32Array( me.color2Array );
-		var radii = new Float32Array( me.radiusArray );
+        var positions = new Float32Array( me.posArray );
+        var colors = new Float32Array( me.colorArray );
+        var positions2 = new Float32Array( me.pos2Array );
+        var colors2 = new Float32Array( me.color2Array );
+        var radii = new Float32Array( me.radiusArray );
 
-/*
-		// hyperball
-		var mapping = new Float32Array([
-			-1.0, -1.0, -1.0,
-			 1.0, -1.0, -1.0,
-			 1.0, -1.0,  1.0,
-			-1.0, -1.0,  1.0,
-			-1.0,  1.0, -1.0,
-			 1.0,  1.0, -1.0,
-			 1.0,  1.0,  1.0,
-			-1.0,  1.0,  1.0
-		]);
+        // cylinder
+        var mapping = new Float32Array([
+            -1.0,  1.0, -1.0,
+            -1.0, -1.0, -1.0,
+             1.0,  1.0, -1.0,
+             1.0,  1.0,  1.0,
+             1.0, -1.0, -1.0,
+             1.0, -1.0,  1.0
+        ]);
 
-		var mappingIndices = new Uint16Array([
-			0, 1, 2,
-			0, 2, 3,
-			1, 5, 6,
-			1, 6, 2,
-			4, 6, 5,
-			4, 7, 6,
-			0, 7, 4,
-			0, 3, 7,
-			0, 5, 1,
-			0, 4, 5,
-			3, 2, 6,
-			3, 6, 7
-		]);
+        var mappingIndices = new Uint16Array([
+            0, 1, 2,
+            1, 4, 2,
+            2, 4, 3,
+            4, 5, 3
+        ]);
 
-		var mappingIndicesSize = 36;
-		var mappingType = "v3";
-		var mappingSize = 8;
-		var mappingItemSize = 3;
-*/
-
-		// cylinder
-		var mapping = new Float32Array([
-			-1.0,  1.0, -1.0,
-			-1.0, -1.0, -1.0,
-			 1.0,  1.0, -1.0,
-			 1.0,  1.0,  1.0,
-			 1.0, -1.0, -1.0,
-			 1.0, -1.0,  1.0
-		]);
-
-		var mappingIndices = new Uint16Array([
-			0, 1, 2,
-			1, 4, 2,
-			2, 4, 3,
-			4, 5, 3
-		]);
-
-		var mappingIndicesSize = 12;
-		var mappingType = "v3";
-		var mappingSize = 6;
-		var mappingItemSize = 3;
+        var mappingIndicesSize = 12;
+        var mappingType = "v3";
+        var mappingSize = 6;
+        var mappingItemSize = 3;
 
 
-		var count = positions.length / 3;
+        var count = positions.length / 3;
 
-		var data = {
-			"position1": positions,
-			"color": colors,
-			"position2": positions2,
-			"color2": colors2,
-			"radius": radii
-		};
+        var data = {
+            "position1": positions,
+            "color": colors,
+            "position2": positions2,
+            "color2": colors2,
+            "radius": radii
+        };
 
-		//MappedBuffer
-		var attributeSize = count * mappingSize;
+        //MappedBuffer
+        var attributeSize = count * mappingSize;
 
-		var n = count * mappingIndicesSize;
-		var TypedArray = attributeSize > 65535 ? Uint32Array : Uint16Array;
-		var index = new TypedArray( n );
+        var n = count * mappingIndicesSize;
+        var TypedArray = attributeSize > 65535 ? Uint32Array : Uint16Array;
+        var index = new TypedArray( n );
 
-			//makeIndex();
-		var ix, it;
+            //makeIndex();
+        var ix, it;
 
-		for( var v = 0; v < count; v++ ) {
-			ix = v * mappingIndicesSize;
-			it = v * mappingSize;
+        for( var v = 0; v < count; v++ ) {
+            ix = v * mappingIndicesSize;
+            it = v * mappingSize;
 
-			index.set( mappingIndices, ix );
+            index.set( mappingIndices, ix );
 
-			for( var s = 0; s < mappingIndicesSize; ++s ){
-				index[ ix + s ] += it;
-			}
-		}
-
-
-		var geometry = new THREE.BufferGeometry();
-
-		// buffer.js
-		var dynamic = true;
-
-		if( index ){
-			geometry.setIndex(
-				new THREE.BufferAttribute( index, 1 )
-			);
-			geometry.getIndex().setDynamic( dynamic );
-		}
-
-		// add attributes from buffer.js
-		var itemSize = {
-			"f": 1, "v2": 2, "v3": 3, "c": 3
-		};
-
-		var attributeData = {
-			"position1": { type: "v3", value: null },
-			"color": { type: "v3", value: null },
-			"position2": { type: "v3", value: null },
-			"color2": { type: "v3", value: null },
-			"radius": { type: "f", value: null },
-			"mapping": { type: mappingType, value: null }
-		};
-
-		for( var name in attributeData ){
-
-			var buf;
-			var a = attributeData[ name ];
+            for( var s = 0; s < mappingIndicesSize; ++s ){
+                index[ ix + s ] += it;
+            }
+        }
 
 
-			//if( a.value ){
-			//	if( attributeSize * itemSize[ a.type ] !== a.value.length ){
-			//		Log.error( "attribute value has wrong length", name );
-			//	}
-			//	buf = a.value;
-			//}else{
+        var geometry = new THREE.BufferGeometry();
 
-				buf = new Float32Array(
-					attributeSize * itemSize[ a.type ]
-				);
+        // buffer.js
+        var dynamic = true;
 
-		  	//}
+        if( index ){
+            geometry.setIndex(
+                new THREE.BufferAttribute( index, 1 )
+            );
+            geometry.getIndex().setDynamic( dynamic );
+        }
 
-			geometry.addAttribute(
-				name,
-				new THREE.BufferAttribute( buf, itemSize[ a.type ] )
-					.setDynamic( dynamic )
-			);
+        // add attributes from buffer.js
+        var itemSize = {
+            "f": 1, "v2": 2, "v3": 3, "c": 3
+        };
 
-		}
+        var attributeData = {
+            "position1": { type: "v3", value: null },
+            "color": { type: "v3", value: null },
+            "position2": { type: "v3", value: null },
+            "color2": { type: "v3", value: null },
+            "radius": { type: "f", value: null },
+            "mapping": { type: mappingType, value: null }
+        };
 
-		// set attributes from mapped-buffer.js
-		var attributes = geometry.attributes;
+        for( var name in attributeData ){
 
-		var a, d, itemSize2, array, i, j;
-
-		for( var name in data ){
-
-			d = data[ name ];
-			a = attributes[ name ];
-			itemSize2 = a.itemSize;
-			array = a.array;
-
-			for( var k = 0; k < count; ++k ) {
-
-				n = k * itemSize2;
-				i = n * mappingSize;
-
-				for( var l = 0; l < mappingSize; ++l ) {
-
-					j = i + ( itemSize2 * l );
-
-					for( var m = 0; m < itemSize2; ++m ) {
-
-						array[ j + m ] = d[ n + m ];
-
-					}
-
-				}
-
-			}
-
-			a.needsUpdate = true;
-
-		}
-
-		// makemapping
-		var aMapping = geometry.attributes.mapping.array;
-
-		for( var v = 0; v < count; v++ ) {
-			aMapping.set( mapping, v * mappingItemSize * mappingSize );
-		}
+            var buf;
+            var a = attributeData[ name ];
 
 
-	    var mesh = new THREE.Mesh(geometry, shaderMaterial);
+            //if( a.value ){
+            //    if( attributeSize * itemSize[ a.type ] !== a.value.length ){
+            //        Log.error( "attribute value has wrong length", name );
+            //    }
+            //    buf = a.value;
+            //}else{
 
-	    // important: https://stackoverflow.com/questions/21184061/mesh-suddenly-disappears-in-three-js-clipping
-	    // You are moving the camera in the CPU. You are moving the vertices of the plane in the GPU
-	    mesh.frustumCulled = false;
+                buf = new Float32Array(
+                    attributeSize * itemSize[ a.type ]
+                );
+
+              //}
+
+            geometry.addAttribute(
+                name,
+                new THREE.BufferAttribute( buf, itemSize[ a.type ] )
+                    .setDynamic( dynamic )
+            );
+
+        }
+
+        // set attributes from mapped-buffer.js
+        var attributes = geometry.attributes;
+
+        var a, d, itemSize2, array, i, j;
+
+        for( var name in data ){
+
+            d = data[ name ];
+            a = attributes[ name ];
+            itemSize2 = a.itemSize;
+            array = a.array;
+
+            for( var k = 0; k < count; ++k ) {
+
+                n = k * itemSize2;
+                i = n * mappingSize;
+
+                for( var l = 0; l < mappingSize; ++l ) {
+
+                    j = i + ( itemSize2 * l );
+
+                    for( var m = 0; m < itemSize2; ++m ) {
+
+                        array[ j + m ] = d[ n + m ];
+
+                    }
+
+                }
+
+            }
+
+            a.needsUpdate = true;
+
+        }
+
+        // makemapping
+        var aMapping = geometry.attributes.mapping.array;
+
+        for( var v = 0; v < count; v++ ) {
+            aMapping.set( mapping, v * mappingItemSize * mappingSize );
+        }
+
+
+        var mesh = new THREE.Mesh(geometry, shaderMaterial);
+
+        // important: https://stackoverflow.com/questions/21184061/mesh-suddenly-disappears-in-three-js-clipping
+        // You are moving the camera in the CPU. You are moving the vertices of the plane in the GPU
+        mesh.frustumCulled = false;
 
         mesh.scale.x = mesh.scale.y = mesh.scale.z = 1.0;
 
-		//mesh.position.copy(atom.coord);
-
-		//mesh.onBeforeRender = me.onBeforeRender;
-
-		this.mdlImpostor.add(mesh);
+        this.mdlImpostor.add(mesh);
 
         //this.objects.push(mesh);
     };
 
     iCn3D.prototype.createImpostorShaderSphere = function (shaderName) { var me = this;
-	  var shaderMaterial =
-		new THREE.ShaderMaterial({
-		  defines: me.defines,
-		  uniforms:  me.uniforms,
-		  vertexShader:   me.getShader(shaderName + ".vert"),
-		  fragmentShader: me.getShader(shaderName + ".frag"),
-		  depthTest: true,
-		  depthWrite: true,
-		  needsUpdate: true,
-		  lights: true
-	  });
+      var shaderMaterial =
+        new THREE.ShaderMaterial({
+          defines: me.defines,
+          uniforms:  me.uniforms,
+          vertexShader:   me.getShader(shaderName + ".vert"),
+          fragmentShader: me.getShader(shaderName + ".frag"),
+          depthTest: true,
+          depthWrite: true,
+          needsUpdate: true,
+          lights: true
+      });
 
-	  shaderMaterial.extensions.fragDepth = true;
+      shaderMaterial.extensions.fragDepth = true;
 
-		var positions = new Float32Array( me.positionArraySphere );
-		var colors = new Float32Array( me.colorArraySphere );
-		var radii = new Float32Array( me.radiusArraySphere );
+        var positions = new Float32Array( me.posArraySphere );
+        var colors = new Float32Array( me.colorArraySphere );
+        var radii = new Float32Array( me.radiusArraySphere );
 
-		// sphere
-		var mapping = new Float32Array([
-			-1.0,  1.0,
-			-1.0, -1.0,
-			 1.0,  1.0,
-			 1.0, -1.0
-		]);
+        // sphere
+        var mapping = new Float32Array([
+            -1.0,  1.0,
+            -1.0, -1.0,
+             1.0,  1.0,
+             1.0, -1.0
+        ]);
 
-		var mappingIndices = new Uint16Array([
-			0, 1, 2,
-			1, 3, 2
-		]);
+        var mappingIndices = new Uint16Array([
+            0, 1, 2,
+            1, 3, 2
+        ]);
 
-		var mappingIndicesSize = 6;
-		var mappingType = "v2";
-		var mappingSize = 4;
-		var mappingItemSize = 2;
+        var mappingIndicesSize = 6;
+        var mappingType = "v2";
+        var mappingSize = 4;
+        var mappingItemSize = 2;
 
-		var count = positions.length / 3;
+        var count = positions.length / 3;
 
-		var data = {
-			"position": positions,
-			"color": colors,
-			"radius": radii
-		};
+        var data = {
+            "position": positions,
+            "color": colors,
+            "radius": radii
+        };
 
-		//MappedBuffer
-		var attributeSize = count * mappingSize;
+        //MappedBuffer
+        var attributeSize = count * mappingSize;
 
-		var n = count * mappingIndicesSize;
-		var TypedArray = attributeSize > 65535 ? Uint32Array : Uint16Array;
-		var index = new TypedArray( n );
+        var n = count * mappingIndicesSize;
+        var TypedArray = attributeSize > 65535 ? Uint32Array : Uint16Array;
+        var index = new TypedArray( n );
 
-			//makeIndex();
-		var ix, it;
+            //makeIndex();
+        var ix, it;
 
-		for( var v = 0; v < count; v++ ) {
-			ix = v * mappingIndicesSize;
-			it = v * mappingSize;
+        for( var v = 0; v < count; v++ ) {
+            ix = v * mappingIndicesSize;
+            it = v * mappingSize;
 
-			index.set( mappingIndices, ix );
+            index.set( mappingIndices, ix );
 
-			for( var s = 0; s < mappingIndicesSize; ++s ){
-				index[ ix + s ] += it;
-			}
-		}
+            for( var s = 0; s < mappingIndicesSize; ++s ){
+                index[ ix + s ] += it;
+            }
+        }
 
 
-		var geometry = new THREE.BufferGeometry();
+        var geometry = new THREE.BufferGeometry();
 
-		// buffer.js
-		var dynamic = true;
+        // buffer.js
+        var dynamic = true;
 
-		if( index ){
-			geometry.setIndex(
-				new THREE.BufferAttribute( index, 1 )
-			);
-			geometry.getIndex().setDynamic( dynamic );
-		}
+        if( index ){
+            geometry.setIndex(
+                new THREE.BufferAttribute( index, 1 )
+            );
+            geometry.getIndex().setDynamic( dynamic );
+        }
 
-		// add attributes from buffer.js
-		var itemSize = {
-			"f": 1, "v2": 2, "v3": 3, "c": 3
-		};
+        // add attributes from buffer.js
+        var itemSize = {
+            "f": 1, "v2": 2, "v3": 3, "c": 3
+        };
 
-		var attributeData = {
-			"position": { type: "v3", value: null },
-			"color": { type: "v3", value: null },
-			"radius": { type: "f", value: null },
-			"mapping": { type: mappingType, value: null }
-		};
+        var attributeData = {
+            "position": { type: "v3", value: null },
+            "color": { type: "v3", value: null },
+            "radius": { type: "f", value: null },
+            "mapping": { type: mappingType, value: null }
+        };
 
-		for( var name in attributeData ){
+        for( var name in attributeData ){
 
-			var buf;
-			var a = attributeData[ name ];
+            var buf;
+            var a = attributeData[ name ];
 
-				buf = new Float32Array(
-					attributeSize * itemSize[ a.type ]
-				);
+                buf = new Float32Array(
+                    attributeSize * itemSize[ a.type ]
+                );
 
-			geometry.addAttribute(
-				name,
-				new THREE.BufferAttribute( buf, itemSize[ a.type ] )
-					.setDynamic( dynamic )
-			);
+            geometry.addAttribute(
+                name,
+                new THREE.BufferAttribute( buf, itemSize[ a.type ] )
+                    .setDynamic( dynamic )
+            );
 
-		}
+        }
 
-		// set attributes from mapped-buffer.js
-		var attributes = geometry.attributes;
+        // set attributes from mapped-buffer.js
+        var attributes = geometry.attributes;
 
-		var a, d, itemSize2, array, i, j;
+        var a, d, itemSize2, array, i, j;
 
-		for( var name in data ){
+        for( var name in data ){
 
-			d = data[ name ];
-			a = attributes[ name ];
-			itemSize2 = a.itemSize;
-			array = a.array;
+            d = data[ name ];
+            a = attributes[ name ];
+            itemSize2 = a.itemSize;
+            array = a.array;
 
-			for( var k = 0; k < count; ++k ) {
+            for( var k = 0; k < count; ++k ) {
 
-				n = k * itemSize2;
-				i = n * mappingSize;
+                n = k * itemSize2;
+                i = n * mappingSize;
 
-				for( var l = 0; l < mappingSize; ++l ) {
+                for( var l = 0; l < mappingSize; ++l ) {
 
-					j = i + ( itemSize2 * l );
+                    j = i + ( itemSize2 * l );
 
-					for( var m = 0; m < itemSize2; ++m ) {
+                    for( var m = 0; m < itemSize2; ++m ) {
 
-						array[ j + m ] = d[ n + m ];
+                        array[ j + m ] = d[ n + m ];
 
-					}
+                    }
 
-				}
+                }
 
-			}
+            }
 
-			a.needsUpdate = true;
+            a.needsUpdate = true;
 
-		}
+        }
 
-		// makemapping
-		var aMapping = geometry.attributes.mapping.array;
+        // makemapping
+        var aMapping = geometry.attributes.mapping.array;
 
-		for( var v = 0; v < count; v++ ) {
-			aMapping.set( mapping, v * mappingItemSize * mappingSize );
-		}
+        for( var v = 0; v < count; v++ ) {
+            aMapping.set( mapping, v * mappingItemSize * mappingSize );
+        }
 
-	    var mesh = new THREE.Mesh(geometry, shaderMaterial);
+        var mesh = new THREE.Mesh(geometry, shaderMaterial);
 
-	    // important: https://stackoverflow.com/questions/21184061/mesh-suddenly-disappears-in-three-js-clipping
-	    // You are moving the camera in the CPU. You are moving the vertices of the plane in the GPU
-	    mesh.frustumCulled = false;
+        // important: https://stackoverflow.com/questions/21184061/mesh-suddenly-disappears-in-three-js-clipping
+        // You are moving the camera in the CPU. You are moving the vertices of the plane in the GPU
+        mesh.frustumCulled = false;
 
-		mesh.scale.x = mesh.scale.y = mesh.scale.z = 1;
-		//mesh.position.copy(atom.coord);
+        mesh.scale.x = mesh.scale.y = mesh.scale.z = 1;
 
-		//mesh.onBeforeRender = me.onBeforeRender;
-
-		this.mdlImpostor.add(mesh);
+        this.mdlImpostor.add(mesh);
 
         //this.objects.push(mesh);
     };
@@ -1082,48 +1126,48 @@
 
     // set atom style when loading a structure
     iCn3D.prototype.setAtomStyleByOptions = function (options) {
-        if(options === undefined) options = this.options;
+        if(options === undefined) options = this.opts;
 
         var selectedAtoms;
 
-        if (options.proteins !== undefined) {
-            selectedAtoms = this.intersectHash(this.highlightAtoms, this.proteins);
+        if (options.prtns !== undefined) {
+            selectedAtoms = this.intHash(this.hAtoms, this.prtns);
             for(var i in selectedAtoms) {
-              this.atoms[i].style = options.proteins.toLowerCase();
+              this.atoms[i].style = options.prtns.toLowerCase();
             }
         }
 
         // side chain overwrite the protein style
-        if (options.sidechains !== undefined) {
-            selectedAtoms = this.intersectHash(this.highlightAtoms, this.sidechains);
+        if (options.sidec !== undefined) {
+            selectedAtoms = this.intHash(this.hAtoms, this.sidec);
             for(var i in selectedAtoms) {
-              this.atoms[i].style = options.sidechains.toLowerCase();
+              this.atoms[i].style = options.sidec.toLowerCase();
             }
         }
 
         if (options.ligands !== undefined) {
-            selectedAtoms = this.intersectHash(this.highlightAtoms, this.ligands);
+            selectedAtoms = this.intHash(this.hAtoms, this.ligs);
             for(var i in selectedAtoms) {
               this.atoms[i].style = options.ligands.toLowerCase();
             }
         }
 
         if (options.ions !== undefined) {
-            selectedAtoms = this.intersectHash(this.highlightAtoms, this.ions);
+            selectedAtoms = this.intHash(this.hAtoms, this.ions);
             for(var i in selectedAtoms) {
               this.atoms[i].style = options.ions.toLowerCase();
             }
         }
 
         if (options.water !== undefined) {
-            selectedAtoms = this.intersectHash(this.highlightAtoms, this.water);
+            selectedAtoms = this.intHash(this.hAtoms, this.water);
             for(var i in selectedAtoms) {
               this.atoms[i].style = options.water.toLowerCase();
             }
         }
 
         if (options.nucleotides !== undefined) {
-            selectedAtoms = this.intersectHash(this.highlightAtoms, this.nucleotides);
+            selectedAtoms = this.intHash(this.hAtoms, this.nclts);
             for(var i in selectedAtoms) {
               this.atoms[i].style = options.nucleotides.toLowerCase();
             }
@@ -1131,10 +1175,10 @@
     };
 
     iCn3D.prototype.rebuildScene = function (options) { var me = this;
-        jQuery.extend(me.options, options);
+        jQuery.extend(me.opts, options);
 
-        this.camera_z = this.maxD * 2;
-        //this.camera_z = -this.maxD * 2;
+        this.cam_z = this.maxD * 2;
+        //this.cam_z = -this.maxD * 2;
 
 
         if(this.scene !== undefined) {
@@ -1160,7 +1204,7 @@
         //this.directionalLight = new THREE.DirectionalLight(0xFFFFFF, 1.2);
         this.directionalLight = new THREE.DirectionalLight(0xFFFFFF, 1.0);
 
-        if(this.camera_z > 0) {
+        if(this.cam_z > 0) {
           this.directionalLight.position.set(0, 0, 1);
         }
         else {
@@ -1177,112 +1221,132 @@
         //this.group = new THREE.Object3D();  // regular display
 
         this.mdl = new THREE.Object3D();  // regular display
-        //this.mdlPicking = new THREE.Object3D();  // picking display
+        //this.mdlPicking = new THREE.Object3D();  // pk display
         this.mdlImpostor = new THREE.Object3D();  // Impostor display
 
-		//this.scene.add(this.mdlPicking);
-		this.scene.add(this.mdl);
-		this.scene.add(this.mdlImpostor);
+        //this.scene.add(this.mdlPicking);
+        this.scene.add(this.mdl);
+        this.scene.add(this.mdlImpostor);
 
-		// highlight on impostors
+        // highlight on impostors
         this.mdl_ghost = new THREE.Object3D();  // Impostor display
-		this.scene_ghost.add(this.mdl_ghost);
+        this.scene_ghost.add(this.mdl_ghost);
 
         //this.scene_ghost.add(this.directionalLight);
         //this.scene_ghost.add(ambientLight);
 
-        // related to picking
-        this.objects = []; // define objects for picking, not all elements are used for picking
-        this.objects_ghost = []; // define objects for picking, not all elements are used for picking
+        // related to pk
+        this.objects = []; // define objects for pk, not all elements are used for pk
+        this.objects_ghost = []; // define objects for pk, not all elements are used for pk
         this.raycaster = new THREE.Raycaster();
         this.projector = new THREE.Projector();
         this.mouse = new THREE.Vector2();
 
-        var background = this.backgroundColors[this.options.background.toLowerCase()];
-        if(this.options.background.toLowerCase() === 'transparent') {
-        	this.renderer.setClearColor(background, 0);
-		}
-		else {
-			this.renderer.setClearColor(background, 1);
-		}
+        var background = this.backgroundColors[this.opts.background.toLowerCase()];
+        if(this.opts.background.toLowerCase() === 'transparent') {
+            this.renderer.setClearColor(background, 0);
+        }
+        else {
+            this.renderer.setClearColor(background, 1);
+        }
+
+        this.perspectiveCamera = new THREE.PerspectiveCamera(20, this.container.whratio, 0.1, 10000);
+        this.perspectiveCamera.position.set(0, 0, this.cam_z);
+        this.perspectiveCamera.lookAt(new THREE.Vector3(0, 0, 0));
+
+        this.orthographicCamera = new THREE.OrthographicCamera();
+        this.orthographicCamera.position.set(0, 0, this.cam_z);
+        this.orthographicCamera.lookAt(new THREE.Vector3(0, 0, 0));
+
+        this.cams = {
+            perspective: this.perspectiveCamera,
+            orthographic: this.orthographicCamera,
+        };
+
+//        this.setCamera();
+
+        if(this.bSkipLigandbinding === undefined || !this.bSkipLigandbinding) this.applyLigandbindingOptions();
+        this.bSkipLigandbinding = true;
+
+        // show disulfide bonds, set side chains
+        this.applySsbondsOptions();
+
+        this.applyDisplayOptions(this.opts, this.dAtoms);
+
+        this.applyOtherOptions();
+
+        this.setFog();
+
+        this.setCamera();
+
+        //https://stackoverflow.com/questions/15726560/three-js-raycaster-intersection-empty-when-objects-not-part-of-scene
+        me.scene_ghost.updateMatrixWorld(true);
+    };
+
+    iCn3D.prototype.setFog = function() {
+        var background = this.backgroundColors[this.opts.background.toLowerCase()];
+
         // apply fog
-        if(this.options['fog'] === 'yes') {
-            if(this.options['camera'] === 'perspective') {        //perspective, orthographic
-                this.scene.fog = new THREE.Fog(background, this.maxD * 2, this.maxD * 2.4);
+        if(this.opts['fog'] === 'yes') {
+            if(this.opts['camera'] === 'perspective') {        //perspective, orthographic
+                //this.scene.fog = new THREE.Fog(background, this.cam_z, this.cam_z + 0.5 * this.maxD);
+                //this.scene.fog = new THREE.Fog(background, 2 * this.maxD, 2.5 * this.maxD);
+                this.scene.fog = new THREE.Fog(background, 2 * this.maxD, 3 * this.maxD);
             }
-            else if(this.options['camera'] === 'orthographic') {
+            else if(this.opts['camera'] === 'orthographic') {
                 this.scene.fog = new THREE.FogExp2(background, 2);
-                this.scene.fog.near = this.maxD * 2;
-                this.scene.fog.far = this.maxD * 2.4;
+                //this.scene.fog.near = this.cam_z;
+                //this.scene.fog.far = this.cam_z + 0.5 * this.maxD;
+                this.scene.fog.near = 2 * this.maxD;
+                //this.scene.fog.far = 2.5 * this.maxD;
+                this.scene.fog.far = 3 * this.maxD;
             }
         }
         else {
             this.scene.fog = undefined;
         }
-
-        this.perspectiveCamera = new THREE.PerspectiveCamera(20, this.container.whratio, 0.1, 10000);
-        this.perspectiveCamera.position.set(0, 0, this.camera_z);
-        this.perspectiveCamera.lookAt(new THREE.Vector3(0, 0, 0));
-
-        this.orthographicCamera = new THREE.OrthographicCamera();
-        this.orthographicCamera.position.set(0, 0, this.camera_z);
-        this.orthographicCamera.lookAt(new THREE.Vector3(0, 0, 0));
-
-        this.cameras = {
-            perspective: this.perspectiveCamera,
-            orthographic: this.orthographicCamera,
-        };
-
-        this.setCamera();
-
-        this.applyDisplayOptions(this.options, this.displayAtoms);
-
-        this.applyOtherOptions();
-
-		//https://stackoverflow.com/questions/15726560/three-js-raycaster-intersection-empty-when-objects-not-part-of-scene
-		me.scene_ghost.updateMatrixWorld(true);
     };
 
     iCn3D.prototype.setCamera = function() {
-        this.camera = this.cameras[this.options.camera.toLowerCase()];
+        this.cam = this.cams[this.opts.camera.toLowerCase()];
 
-        if(this.camera === this.perspectiveCamera) {
-            if(this.camera_z > 0) {
-              this.camera.position.z = this.maxD * 2; // forperspective, the z positionshould be large enough to see the whole molecule
+        if(this.cam === this.perspectiveCamera) {
+            if(this.cam_z > 0) {
+              this.cam.position.z = this.maxD * 2; // forperspective, the z positionshould be large enough to see the whole molecule
             }
             else {
-              this.camera.position.z = -this.maxD * 2; // forperspective, the z positionshould be large enough to see the whole molecule
+              this.cam.position.z = -this.maxD * 2; // forperspective, the z positionshould be large enough to see the whole molecule
             }
 
-            if(this.options['slab'] === 'yes') {
-                this.camera.near = this.maxD * 2;
+            if(this.opts['slab'] === 'yes') {
+                this.cam.near = this.maxD * 2;
             }
             else {
-                this.camera.near = 0.1;
+                this.cam.near = 0.1;
             }
-            this.camera.far = 10000;
+            this.cam.far = 10000;
 
-            this.controls = new THREE.TrackballControls( this.camera, document.getElementById(this.id), this );
+            this.controls = new THREE.TrackballControls( this.cam, document.getElementById(this.id), this );
         }
-        else if (this.camera === this.orthographicCamera){
-            this.camera.right = this.maxD/2 * 2.5;
-            this.camera.left = -this.camera.right;
-            this.camera.top = this.camera.right /this.container.whratio;
-            this.camera.bottom = -this.camera.right /this.container.whratio;
+        else if (this.cam === this.orthographicCamera){
+            this.cam.right = this.maxD/2 * 2.5;
+            this.cam.left = -this.cam.right;
+            this.cam.top = this.cam.right /this.container.whratio;
+            this.cam.bottom = -this.cam.right /this.container.whratio;
 
-              if(this.options['slab'] === 'yes') {
-                  this.camera.near = this.maxD * 2;
+              if(this.opts['slab'] === 'yes') {
+                  this.cam.near = this.maxD * 2;
               }
               else {
-                this.camera.near = 0;
+                this.cam.near = 0;
               }
 
-              this.camera.far = 10000;
+              this.cam.far = 10000;
 
-            this.controls = new THREE.OrthographicTrackballControls( this.camera, document.getElementById(this.id), this );
+            this.controls = new THREE.OrthographicTrackballControls( this.cam, document.getElementById(this.id), this );
         }
 
-        this.camera.updateProjectionMatrix();
+        this.cam.updateProjectionMatrix();
     };
 
     iCn3D.prototype.applyTransformation = function (_zoomFactor, mouseChange, quaternion) {
@@ -1304,117 +1368,152 @@
     };
 
     iCn3D.prototype.render = function () {
-        this.directionalLight.position.copy(this.camera.position);
+        this.directionalLight.position.copy(this.cam.position);
 
         this.renderer.gammaInput = true
         this.renderer.gammaOutput = true
 
         this.renderer.setPixelRatio( window.devicePixelRatio ); // r71
-        this.renderer.render(this.scene, this.camera);
-        //this.renderer.render(this.scene_ghost, this.camera);
+        this.renderer.render(this.scene, this.cam);
+        //this.renderer.render(this.scene_ghost, this.cam);
     };
 
     iCn3D.prototype.setRotationCenter = function (coord) {
+       this.mdl.position.set(0,0,0);
+       this.mdlImpostor.position.set(0,0,0);
+       this.mdl_ghost.position.set(0,0,0);
+
         //this.mdlPicking.position.sub(coord);
         this.mdl.position.sub(coord);
         this.mdlImpostor.position.sub(coord);
-
         this.mdl_ghost.position.sub(coord);
-
     };
 
     iCn3D.prototype.drawImpostorShader = function () { var me = this;
-		var modelViewMatrix = new THREE.Uniform( new THREE.Matrix4() )
-				.onUpdate( function( object ){
-					this.value.copy( object.modelViewMatrix );
-		} );
+        var modelViewMatrix = new THREE.Uniform( new THREE.Matrix4() )
+                .onUpdate( function( object ){
+                    this.value.copy( object.modelViewMatrix );
+        } );
 
-		var modelViewMatrixInverse = new THREE.Uniform( new THREE.Matrix4() )
-				.onUpdate( function( object ){
-					this.value.getInverse( object.modelViewMatrix );
-		} );
+        var modelViewMatrixInverse = new THREE.Uniform( new THREE.Matrix4() )
+                .onUpdate( function( object ){
+                    this.value.getInverse( object.modelViewMatrix );
+        } );
 
-		var modelViewMatrixInverseTranspose = new THREE.Uniform( new THREE.Matrix4() )
-				.onUpdate( function( object ){
-					this.value.getInverse( object.modelViewMatrix ).transpose();
-		} );
+        var modelViewMatrixInverseTranspose = new THREE.Uniform( new THREE.Matrix4() )
+                .onUpdate( function( object ){
+                    this.value.getInverse( object.modelViewMatrix ).transpose();
+        } );
 
-		var modelViewProjectionMatrix = new THREE.Uniform( new THREE.Matrix4() )
-				.onUpdate( function( object ){
-					this.value.multiplyMatrices( me.camera.projectionMatrix, object.modelViewMatrix );
-		} );
+        var modelViewProjectionMatrix = new THREE.Uniform( new THREE.Matrix4() )
+                .onUpdate( function( object ){
+                    this.value.multiplyMatrices( me.cam.projectionMatrix, object.modelViewMatrix );
+        } );
 
-		var modelViewProjectionMatrixInverse = new THREE.Uniform( new THREE.Matrix4() )
-				.onUpdate( function( object ){
-					var tmpMatrix = new THREE.Matrix4();
-					tmpMatrix.multiplyMatrices(me.camera.projectionMatrix, object.modelViewMatrix);
-					this.value.getInverse(tmpMatrix);
-		} );
+        var modelViewProjectionMatrixInverse = new THREE.Uniform( new THREE.Matrix4() )
+                .onUpdate( function( object ){
+                    var tmpMatrix = new THREE.Matrix4();
+                    tmpMatrix.multiplyMatrices(me.cam.projectionMatrix, object.modelViewMatrix);
+                    this.value.getInverse(tmpMatrix);
+        } );
 
-		var projectionMatrix = new THREE.Uniform( new THREE.Matrix4() )
-				.onUpdate( function(  ){
-					this.value.copy( me.camera.projectionMatrix );
-		} );
+        var projectionMatrix = new THREE.Uniform( new THREE.Matrix4() )
+                .onUpdate( function(  ){
+                    this.value.copy( me.cam.projectionMatrix );
+        } );
 
-		var projectionMatrixInverse = new THREE.Uniform( new THREE.Matrix4() )
-				.onUpdate( function(  ){
-					this.value.getInverse( me.camera.projectionMatrix );
-		} );
+        var projectionMatrixInverse = new THREE.Uniform( new THREE.Matrix4() )
+                .onUpdate( function(  ){
+                    this.value.getInverse( me.cam.projectionMatrix );
+        } );
 
-		this.uniforms = THREE.UniformsUtils.merge([
-		  THREE.UniformsLib.common,
-		  {
-			modelViewMatrix: modelViewMatrix,
-			modelViewMatrixInverse: modelViewMatrixInverse,
-			modelViewMatrixInverseTranspose: modelViewMatrixInverseTranspose,
-			modelViewProjectionMatrix: modelViewProjectionMatrix,
-			modelViewProjectionMatrixInverse: modelViewProjectionMatrixInverse,
-			projectionMatrix: projectionMatrix,
-			projectionMatrixInverse: projectionMatrixInverse,
-			//ambientLightColor: { type: "v3", value: [0.25, 0.25, 0.25] },
-			diffuse: { type: "v3", value: [1.0, 1.0, 1.0] },
-			emissive: { type: "v3", value: [0.0,0.0,0.0] },
-			roughness: { type: "f", value: 0.5 }, // 0.4
-			metalness: { type: "f", value: 0.3 }, // 0.5
-			opacity: { type: "f", value: 1.0 },
-			nearClip: { type: "f", value: 0.1 },
-			ortho: { type: "f", value: 0.0 },
-			shrink: { type: "f", value: 0.13 }
+        var background = this.backgroundColors[this.opts.background.toLowerCase()];
+        var near = 2 * this.maxD;
+        //var far = 2.5 * this.maxD;
+        var far = 3 * this.maxD;
+
+        this.uniforms = THREE.UniformsUtils.merge([
+          THREE.UniformsLib.common,
+          {
+            modelViewMatrix: modelViewMatrix,
+            modelViewMatrixInverse: modelViewMatrixInverse,
+            modelViewMatrixInverseTranspose: modelViewMatrixInverseTranspose,
+            modelViewProjectionMatrix: modelViewProjectionMatrix,
+            modelViewProjectionMatrixInverse: modelViewProjectionMatrixInverse,
+            projectionMatrix: projectionMatrix,
+            projectionMatrixInverse: projectionMatrixInverse,
+            //ambientLightColor: { type: "v3", value: [0.25, 0.25, 0.25] },
+            diffuse: { type: "v3", value: [1.0, 1.0, 1.0] },
+            emissive: { type: "v3", value: [0.0,0.0,0.0] },
+            roughness: { type: "f", value: 0.5 }, // 0.4
+            metalness: { type: "f", value: 0.3 }, // 0.5
+            opacity: { type: "f", value: 1.0 },
+            nearClip: { type: "f", value: 0.1 },
+            ortho: { type: "f", value: 0.0 },
+            shrink: { type: "f", value: 0.13 },
+            fogColor: { type: "v3", value: [background.r, background.g, background.b] },
+            fogNear: { type: "f", value: near },
+            fogFar: { type: "f", value: far },
+            fogDensity: { type: "f", value: 2.0 }
           },
-      	  THREE.UniformsLib.ambient,
-      	  THREE.UniformsLib.lights
-    	]);
+            THREE.UniformsLib.ambient,
+            THREE.UniformsLib.lights
+        ]);
 
-		this.defines = {
-			USE_COLOR: 1,
-			//PICKING: 1,
-			NEAR_CLIP: 1,
-			CAP: 1
-		};
+        /*
+        //fog_pars_fragment
+        #ifdef USE_FOG
+            uniform vec3 fogColor;
+            #ifdef FOG_EXP2
+                uniform float fogDensity;
+            #else
+                uniform float fogNear;
+                uniform float fogFar;
+            #endif
+        #endif
+        */
 
-		this.createImpostorShaderSphere("SphereImpostor");
-		this.createImpostorShaderCylinder("CylinderImpostor");
-		//this.createImpostorShaderCylinder("HyperballStickImpostor");
-	};
+        this.defines = {
+            USE_COLOR: 1,
+            //PICKING: 1,
+            NEAR_CLIP: 1,
+            CAP: 1
+        };
+
+        if(this.opts['fog'] === 'yes') {
+            this.defines['USE_FOG'] = 1;
+            if(this.opts['camera'] === 'orthographic') {
+                this.defines['FOG_EXP2'] = 1;
+            }
+        }
+
+        if(this.bExtFragDepth) {
+            this.defines['USE_LOGDEPTHBUF_EXT'] = 1;
+        }
+
+        this.createImpostorShaderSphere("SphereImpostor");
+        this.createImpostorShaderCylinder("CylinderImpostor");
+        //this.createImpostorShaderCylinder("HyperballStickImpostor");
+    };
 
     iCn3D.prototype.draw = function () { var me = this;
         this.rebuildScene();
 
         // Impostor display using the saved arrays
-        if(this.bImpostor) {
-			this.drawImpostorShader();
-		}
+        if(this.bImpo) {
+            this.drawImpostorShader();
+        }
 
         this.applyPrevColor();
 
-        if(this.bSSOnly) this.drawHelixBrick(this.molid2ss, this.molid2color);
+        //if(this.bSSOnly) this.drawHelixBrick(this.molid2ss, this.molid2color);
 
         if(this.bAssembly) {
-			this.drawSymmetryMates2();
-		}
+            this.drawSymmetryMates2();
+        }
 
-        // show the highlightAtoms
-        if(this.highlightAtoms !== undefined && Object.keys(this.highlightAtoms).length > 0 && Object.keys(this.highlightAtoms).length < Object.keys(this.atoms).length) {
+        // show the hAtoms
+        if(this.hAtoms !== undefined && Object.keys(this.hAtoms).length > 0 && Object.keys(this.hAtoms).length < Object.keys(this.atoms).length) {
             this.removeHighlightObjects();
             if(this.bShowHighlight === undefined || this.bShowHighlight) this.addHighlightObjects();
         }
@@ -1424,37 +1523,38 @@
           this.render();
 
           // reset to hide the side chain
-          //this.options['sidechains'] = 'nothing';
-		}
+          //this.opts['sidec'] = 'nothing';
+        }
 
         this.clearImpostors();
     };
 
     iCn3D.prototype.clearImpostors = function () {
-		this.positionArray = [];
-		this.colorArray = [];
-		this.position2Array = [];
-		this.color2Array = [];
-		this.radiusArray = [];
+        this.posArray = [];
+        this.colorArray = [];
+        this.pos2Array = [];
+        this.color2Array = [];
+        this.radiusArray = [];
 
-		this.positionArraySphere = [];
-		this.colorArraySphere = [];
-		this.radiusArraySphere = [];
-	};
+        this.posArraySphere = [];
+        this.colorArraySphere = [];
+        this.radiusArraySphere = [];
+    };
 
+    // change the display atom when alternating
     iCn3D.prototype.alternateStructures = function () {
-        this.displayAtoms = {};
+        this.dAtoms = {};
 
-        var highlightAtomsCount = Object.keys(this.highlightAtoms).length;
+        var hAtomsCount = Object.keys(this.hAtoms).length;
         var allAtomsCount = Object.keys(this.atoms).length;
 
-        var moleculeArray = Object.keys(this.structures);
+        var moleculeArray = Object.keys(this.strucs);
         for(var i = 0, il = moleculeArray.length; i < il; ++i) {
             var structure = moleculeArray[i];
             if(i > this.ALTERNATE_STRUCTURE || (this.ALTERNATE_STRUCTURE === il - 1 && i === 0) ) {
-                for(var k in this.structures[structure]) {
-                    var chain = this.structures[structure][k];
-                    this.displayAtoms = this.unionHash(this.displayAtoms, this.chains[chain]);
+                for(var k in this.strucs[structure]) {
+                    var chain = this.strucs[structure][k];
+                    this.dAtoms = this.unionHash(this.dAtoms, this.chns[chain]);
                 }
 
                 this.ALTERNATE_STRUCTURE = i;
@@ -1462,17 +1562,19 @@
             }
         }
 
-        if(highlightAtomsCount < allAtomsCount) {
-            this.displayAtoms = this.intersectHash(this.displayAtoms, this.highlightAtoms);
+        if(hAtomsCount < allAtomsCount) {
+            this.dAtoms = this.intHash(this.dAtoms, this.hAtoms);
 
             this.bShowHighlight = false;
-            this.options['rotationcenter'] = 'highlight center';
+            this.opts['rotationcenter'] = 'highlight center';
         }
+
+        // also alternating the surfaces
+        this.removeSurfaces();
+        this.applySurfaceOptions();
 
         this.draw();
 
         this.bShowHighlight = true;
-        this.options['rotationcenter'] = 'molecule center';
+        this.opts['rotationcenter'] = 'molecule center';
     };
-
-

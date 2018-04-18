@@ -24,12 +24,26 @@ gulp.task('libs',
   function() {
     return gulp.src([
             "node_modules/jquery-ui/themes/ui-lightness/**",
+            "node_modules/jquery/dist/jquery-3.2.1.min.js",
             "node_modules/jquery/dist/jquery.min.js",
+            "node_modules/jquery-ui/jquery-ui-1.12.1.min.js",
             "node_modules/jquery-ui/jquery-ui.min.js",
-            "node_modules/three/three.min.js",
+            "node_modules/jquery-ui/jquery-ui-1.12.1.min.css",
+            "node_modules/jquery-ui/jquery-ui.min.css",
             "node_modules/three/three_0.80.0.min.js",
+            "node_modules/three/three.min.js"
         ])
         .pipe(gulp.dest(dist + '/lib'));
+  });
+
+gulp.task('ssimages',
+  'Copy images to show secondary structures into dist/ssimages',
+  ['clean'],
+  function() {
+    return gulp.src([
+            "ssimages/**"
+        ])
+        .pipe(gulp.dest(dist + '/ssimages'));
   });
 
 gulp.task('copy',
@@ -49,11 +63,11 @@ gulp.task('copy-rename1',
   ['clean'],
   function () {
     return gulp.src([
-            "src/icn3d_simple_ui.css"
+            "css/icn3d_simple_ui.css"
         ])
         .pipe(gulp.dest(dist))
-		.pipe(rename('icn3d_simple_ui_' + package.version + '.css'))
-		.pipe(gulp.dest(dist));
+        .pipe(rename('icn3d_simple_ui_' + package.version + '.css'))
+        .pipe(gulp.dest(dist));
   });
 
 gulp.task('copy-rename2',
@@ -61,11 +75,11 @@ gulp.task('copy-rename2',
   ['clean'],
   function () {
     return gulp.src([
-            "src/icn3d_full_ui.css"
+            "css/icn3d_full_ui.css"
         ])
         .pipe(gulp.dest(dist))
-		.pipe(rename('icn3d_full_ui_' + package.version + '.css'))
-		.pipe(gulp.dest(dist));
+        .pipe(rename('icn3d_full_ui_' + package.version + '.css'))
+        .pipe(gulp.dest(dist));
   });
 
 // Helper function to create a gulp task to concatenate and minify
@@ -88,42 +102,71 @@ function make_js_task(name, src) {
 
 // These source JavaScript files are common to both simple and full
 var common_js = [
-    "src/Detector.js",
-    "src/CanvasRenderer.js",
-    "src/TrackballControls.js",
-    "src/OrthographicTrackballControls.js",
+    "src/utils/Detector.js",
+    "src/trackball/TrackballControls.js",
+    "src/trackball/OrthographicTrackballControls.js",
     "src/Projector.js",
-    "src/marchingcube.js",
-    "src/ProteinSurface4.js",
-    "src/setupsurface.js",
     "src/mmtf.js",
     "src/shader/NGL_Shaders.js",
     "src/shader/SphereImpostor.frag",
     "src/shader/SphereImpostor.vert",
     "src/shader/CylinderImpostor.frag",
     "src/shader/CylinderImpostor.vert",
-    "src/shader/HyperballStickImpostor.frag",
-    "src/shader/HyperballStickImpostor.vert",
     "src/icn3d/icn3d.js",
     "src/icn3d/loadpdb.js",
     "src/icn3d/drawing.js",
-    "src/icn3d/display.js",
+    "src/icn3d/display_common.js",
     "src/icn3d/other.js"
 ];
 
+var simple_js = [
+    "src/icn3d/display_simple.js"
+];
+
+var full_js = [
+    "src/utils/dynamic_links.js",
+    "src/utils/canvas-to-blob.js",
+    "src/utils/FileSaver.js",
+    "src/surface/marchingcube.js",
+    "src/surface/ProteinSurface4.js",
+    "src/surface/setupsurface.js",
+    "src/icn3d/drawing_full.js",
+    "src/icn3d/display_full.js",
+    "src/icn3d/other_full.js"
+];
+
 var common_uijs = [
-    "src/icn3dui/common.js",
+    "src/icn3dui/common_full_simple.js",
     "src/icn3dui/parsers/mmcif_mmdb_parser.js",
     "src/icn3dui/parsers/mmtf_parser.js",
-    "src/icn3dui/parsers/mol2_parser.js",
     "src/icn3dui/parsers/pdb_parser.js",
-    "src/icn3dui/parsers/sdf_parser.js",
-    "src/icn3dui/parsers/xyz_parser.js"
+    "src/icn3dui/parsers/sdf_parser.js"
+];
+
+
+var full_uijs = [
+    "src/icn3dui/3dprint/stl.js",
+    "src/icn3dui/3dprint/vrml.js",
+    "src/icn3dui/3dprint/threedprint.js",
+    "src/icn3dui/parsers/mmcif_mmdb_parser_align.js",
+    "src/icn3dui/parsers/mol2_parser.js",
+    "src/icn3dui/parsers/xyz_parser.js",
+    "src/icn3dui/annotations/annotations.js",
+    "src/icn3dui/annotations/addtrack.js",
+    "src/icn3dui/selection/selection.js",
+    "src/icn3dui/selection/advanced.js",
+    "src/icn3dui/selection/sets.js",
+    "src/icn3dui/selection/commands.js",
+    "src/icn3dui/highlight/hl_sequence.js",
+    "src/icn3dui/highlight/hl_update.js",
+    "src/icn3dui/html/set_html.js",
+    "src/icn3dui/html/dialogs.js",
+    "src/icn3dui/twoddiagram.js",
 ];
 
 // Create the gulp tasks for simple and full:
-make_js_task("simple", common_js.concat("src/icn3dui/simple_ui.js").concat(common_uijs));
-make_js_task("full", common_js.concat("src/icn3dui/full_ui.js").concat(common_uijs));
+make_js_task("simple", common_js.concat(simple_js).concat("src/icn3dui/simple_ui.js").concat(common_uijs));
+make_js_task("full", common_js.concat(full_js).concat("src/icn3dui/full_ui.js").concat(common_uijs).concat(full_uijs));
 
 gulp.task('html',
   'Rewrite the link and script tags in the html',
@@ -140,12 +183,14 @@ gulp.task('html',
 
                 var new_src, m,
                     set_attr = true;
-                if (m = src_file.match(/^node_modules\/.*\/(.*)/))
-                    new_src = "lib/" + m[1];
-                else if (m = src_file.match(/^src\/(.*\.css)$/))
+                if (m = src_file.match(/^(.*firebase.*)$/))
                     new_src = m[1];
-                else if (m = src_file.match(/^src\/(.*_ui)\.js/))
-                    new_src = m[1] + "_all.min.js";
+                else if (m = src_file.match(/^lib\/(.*)/))
+                    new_src = "lib/" + m[1];
+                else if (m = src_file.match(/^(.*)\.css$/))
+                    new_src = m[1] + "_" + package.version + ".css";
+                else if (m = src_file.match(/^(.*_ui.*)\.min\.js/))
+                    new_src = m[1] + "_" + package.version + ".min.js";
                 else {
                     e.parentNode.removeChild(e);
                     set_attr = false;
@@ -159,7 +204,7 @@ gulp.task('html',
 
 gulp.task('dist',
   'Prepare all the distribution files (except the .zip).',
-  ['libs', 'copy', 'copy-rename1', 'copy-rename2',
+  ['libs', 'ssimages', 'copy', 'copy-rename1', 'copy-rename2',
    'src-js-simple', 'src-js-full', 'html']);
 
 gulp.task('zip',

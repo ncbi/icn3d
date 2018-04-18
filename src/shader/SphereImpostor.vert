@@ -11,7 +11,7 @@ $NGL_shaderTextHash['SphereImpostor.vert'] = ["uniform mat4 projectionMatrixInve
 "attribute float radius;",
 "",
 "#ifdef PICKING",
-"    #include unpack_color",
+"    #include unpack_clr",
 "    attribute float primitiveId;",
 "    varying vec3 vPickingColor;",
 "#else",
