@@ -11,23 +11,12 @@
 <body>
   <div id="div0"></div>
 
-  <link rel="stylesheet"
-    href="node_modules/jquery-ui/themes/ui-lightness/jquery-ui.min.css">
-  <link rel="stylesheet" href="src/icn3d_simple_ui.css">
-  <script src="node_modules/jquery/dist/jquery.min.js"></script>
-  <script src="node_modules/jquery-ui/jquery-ui.min.js"></script>
-  <script src="node_modules/three/three.min.js"></script>
-  <script src="src/Detector.js"></script>
-  <script src="src/CanvasRenderer.js"></script>
-  <script src="src/TrackballControls.js"></script>
-  <script src="src/OrthographicTrackballControls.js"></script>
-  <script src="src/Projector.js"></script>
-  <script src="src/marchingcube.js"></script>
-  <script src="src/ProteinSurface4.js"></script>
-  <script src="src/setupsurface.js"></script>
-  <script src="src/mmtf.js"></script>
-  <script src="src/icn3d.js"></script>
-  <script src="src/simple_ui.js"></script>
+  <link rel="stylesheet" href="lib/jquery-ui-1.12.1.min.css">
+  <link rel="stylesheet" href="icn3d_simple_ui.css">
+  <script src="lib/jquery-3.2.1.min.js"></script>
+  <script src="lib/jquery-ui-1.12.1.min.js"></script>
+  <script src="lib/three_0.80.0.min.js"></script>
+  <script src="simple_ui_all.min.js"></script>
 
   <script type="text/javascript">
 
@@ -39,7 +28,15 @@
     var getParams = document.URL.split("?");
     // transforming the GET parameters into a dictionnary
     var search = getParams[getParams.length - 1];
-    var params = JSON.parse('{"' + decodeURI(search).replace(/"/g, '\\"').replace(/&/g, '","').replace(/=/g,'":"') + '"}');
+    //var params = JSON.parse('{"' + decodeURIComponent(search).replace(/"/g, '\\"').replace(/&/g, '","').replace(/=/g,'":"') + '"}');
+    var params = {};
+    var decodeSearch = decodeURIComponent(search);
+
+    var hashes = decodeSearch.split('&');
+    for (var i = 0; i < hashes.length; i++) {
+        hash = hashes[i].split('=');
+        params[hash[0].trim()] = (hash[1] !== undefined) ? hash[1].trim() : undefined;
+    }
 
     // for mmdb structures, pass the parameters after the first "&" sign
     var inpara = "";
@@ -79,11 +76,6 @@
       rotate = 'right';
     }
 
-    var maxatomcnt = params.maxatomcnt;
-    if(maxatomcnt === undefined) {
-      maxatomcnt = 100000;
-    }
-
     $( document ).ready(function() {
       function setupViewer(idName, idValue) {
         var maxStructure = 5; // show max 5 structures
@@ -99,6 +91,11 @@
           }
         }
 
+        var options = {};
+
+        //Options are available at: https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d.html#DisplayOptions
+        //options['proteins'] = 'sphere';
+
         for(var i = 0, il = idArray.length; i < il && i < maxStructure; ++i) {
           var cfg = {
               divid: 'div' + i,
@@ -106,10 +103,11 @@
               width: width,
               height: height,
               resize: resize,
-              maxatomcnt: maxatomcnt,
               rotate: rotate
           };
           cfg[idName] = idArray[i];
+
+          if(Object.keys(options).length > 0) cfg['options'] = options;
 
           var icn3dui = new iCn3DUI(cfg);
 
@@ -126,7 +124,7 @@
       if(term !== undefined) setupViewer('term', term);
       if(urlname !== undefined) {
         urlname = decodeURIComponent(urlname);
-      	setupViewer('url', urltype + '|' + urlname);
+          setupViewer('url', urltype + '|' + urlname);
       }
 
       // e.g., align=103701,1,4,68563,1,167 [mmdbid1,biounit,molecule,mmdbid2,biounit,molecule]
@@ -138,7 +136,6 @@
               height: height,
               resize: resize,
               rotate: rotate,
-              maxatomcnt: maxatomcnt,
               align: align
           };
 
