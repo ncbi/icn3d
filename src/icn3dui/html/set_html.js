@@ -1158,7 +1158,7 @@ iCn3DUI.prototype.setSequenceGuide = function (suffix, bShown) { var me = this;
 
      sequencesHtml += "<div style='min-width:200px; display:inline-block;'><b>Selection:</b> Name: <input type='text' id='" + me.pre + "seq_command_name" + suffix + "' value='seq_" + index + "' size='5'> &nbsp;&nbsp;Description: <input type='text' id='" + me.pre + "seq_command_desc" + suffix + "' value='seq_desc_" + index + "' size='10'> &nbsp;&nbsp;<button style='white-space:nowrap;' id='" + me.pre + "seq_saveselection" + suffix + "'>Save</button> <button style='white-space:nowrap; margin-left:20px;' id='" + me.pre + "seq_clearselection" + suffix + "'>Clear</button></div><br/>";
 
-     sequencesHtml += "<div id='" + me.pre + "seqguide" + suffix + "' style='display:none;' class='icn3d-box'>";
+     sequencesHtml += "<div id='" + me.pre + "seqguide" + suffix + "' style='display:none; white-space:normal;' class='icn3d-box'>";
  }
 
   if(!me.isMobile()) {

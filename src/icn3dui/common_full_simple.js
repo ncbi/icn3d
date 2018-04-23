@@ -267,7 +267,8 @@ iCn3DUI.prototype.saveFile = function(filename, type, text) { var me = this;
                     var text = "\nShare Link: " + url;
                     blob = me.getBlobFromBufferAndText(arrayBuffer, text);
 
-                    if(window.navigator.msSaveBlob) navigator.msSaveBlob(blob, filename);
+                    //if(window.navigator.msSaveBlob) navigator.msSaveBlob(blob, filename);
+                    saveAs(blob, filename);
 
                     return;
                 };
@@ -287,7 +288,8 @@ iCn3DUI.prototype.saveFile = function(filename, type, text) { var me = this;
                         var text = "\nShare Link: " + url;
                         blob = me.getBlobFromBufferAndText(arrayBuffer, text);
 
-                        me.createLinkForBlob(blob, filename);
+                        //me.createLinkForBlob(blob, filename);
+                        saveAs(blob, filename);
 
                         return;
                     };
@@ -297,12 +299,8 @@ iCn3DUI.prototype.saveFile = function(filename, type, text) { var me = this;
                 else {
                     blob = data;
 
-                    var link = document.createElement('a');
-                    link.href = window.URL.createObjectURL(blob);
-                    link.setAttribute('download', filename);
-                    document.body.appendChild(link);
-                    link.click();
-                    document.body.removeChild(link);
+                    //me.createLinkForBlob(blob, filename);
+                    saveAs(blob, filename);
 
                     return;
                 }
