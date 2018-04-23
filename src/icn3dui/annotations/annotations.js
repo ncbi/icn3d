@@ -259,6 +259,8 @@ iCn3DUI.prototype.setAlternativeSeq = function(chnid, chnidBase) { var me = this
     //if(me.icn3d.chainsSeq[chnid] !== undefined) {
     var resArray = me.icn3d.chainsSeq[chnid];
 
+    me.giSeq[chnid] = [];
+
     for(var i = 0, il = resArray.length; i < il; ++i) {
         var res = resArray[i].name;
         me.giSeq[chnid][i] = res;
@@ -1455,7 +1457,7 @@ iCn3DUI.prototype.showCddSite = function(chnid, chnidBase) {
                 html += htmlTmp;
                 html2 += htmlTmp;
 
-                html2 += '<div id="' + me.pre + chnid + '_' + acc + '_' + r + '_cddseq" style="display:none" class="icn3d-box">' + defline + ' (<a href="https://www.ncbi.nlm.nih.gov/Structure/cdd/cddsrv.cgi?uid=' + acc + '" target="_blank" class="icn3d-blue">open details view...</a>)</div>';
+                html2 += '<div id="' + me.pre + chnid + '_' + acc + '_' + r + '_cddseq" style="display:none; white-space:normal;" class="icn3d-box">' + defline + ' (<a href="https://www.ncbi.nlm.nih.gov/Structure/cdd/cddsrv.cgi?uid=' + acc + '" target="_blank" class="icn3d-blue">open details view...</a>)</div>';
             } // for(var r = 0,
         }
 
@@ -1582,7 +1584,7 @@ iCn3DUI.prototype.showDomain = function(chnid, chnidBase) { var me = this;
     var pdbid = chnidBase.substr(0, chnid.indexOf('_'));
 
     // show 3D domains
-    var url = "https://www.ncbi.nlm.nih.gov/Structure/mmdb/mmdb_strview_test.cgi?program=icn3d&domain&molinfor&uid=" + pdbid;
+    var url = "https://www.ncbi.nlm.nih.gov/Structure/mmdb/mmdb_strview.cgi?v=2&program=icn3d&domain&molinfor&uid=" + pdbid;
 
     if(me.mmdb_data !== undefined) {
         me.showDomainWithData(chnid, me.mmdb_data);
@@ -1661,12 +1663,26 @@ iCn3DUI.prototype.showDomainWithData = function(chnid, data) { var me = this;
             var title = (fulltitle.length > 17) ? fulltitle.substr(0,17) + '...' : fulltitle;
 
             var subdomainArray = domainArray[index].intervals;
+
+            // remove duplicate, e.g., at https://www.ncbi.nlm.nih.gov/Structure/mmdb/mmdb_strview.cgi?v=2&program=icn3d&domain&molinfor&uid=1itw
+            var domainHash = {};
+
             var fromArray = [], toArray = [];
             var resiHash = {};
             var resCnt = 0
             for(var i = 0, il = subdomainArray.length; i < il; ++i) {
                 var domainFrom = parseInt(subdomainArray[i][0]) - 1; // 1-based
                 var domainTo = parseInt(subdomainArray[i][1]) - 1;
+
+                domainStr = domainFrom + "," + domainTo;
+
+                if(domainHash.hasOwnProperty(domainStr)) {
+                    continue; // do nothing for duplicates, e.g, PDBID 1ITW
+                }
+                else {
+                    domainHash[domainStr] = 1;
+                }
+
                 fromArray.push(domainFrom);
                 toArray.push(domainTo);
                 resCnt += domainTo - domainFrom + 1;

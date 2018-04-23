@@ -116,6 +116,9 @@
       showseq = false;
     }
 
+    // backward compatible with showseq
+    showanno = showanno || showseq;
+
     // for alignment
     var showalignseq = params.showalignseq;
     if(showalignseq == 'true' || showalignseq == '1') {
@@ -177,7 +180,6 @@
               showmenu: showmenu,
               showcommand: showcommand,
               showanno: showanno,
-              showseq: showseq,
               show2d: show2d,
               showsets: showsets,
               command: command
@@ -228,7 +230,6 @@
               showmenu: showmenu,
               showcommand: showcommand,
               showanno: showanno,
-              showseq: showseq,
               showalignseq: showalignseq,
               show2d: show2d,
               showsets: showsets,

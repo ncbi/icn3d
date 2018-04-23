@@ -221,7 +221,7 @@ iCn3DUI.prototype.addStabilizer = function () { var me = this;
         } // end of for (var i
 
         // 2. add stabilizer for chemicals/ions and proteins
-        var maxDistance = 4; // connect within 4 angstrom
+        var maxDistance = 6; // connect within 6 angstrom, use 6 since some proteins such as 1FFK_A has large distance between residues
 
         //displayed residues
         var displayResidueHash = {};
@@ -277,6 +277,7 @@ iCn3DUI.prototype.addStabilizer = function () { var me = this;
         }
 
         var residueArray = Object.keys(residueHash);
+
         if(me.icn3d.pairArray === undefined) me.icn3d.pairArray = [];
         for(var i = 0, il = residueArray.length; i < il; ++i) {
             var residueid = residueArray[i];
