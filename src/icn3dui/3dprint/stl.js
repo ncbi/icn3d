@@ -1,3 +1,7 @@
+/**
+ * @author Jiyao Wang <wangjiy@ncbi.nlm.nih.gov> / https://github.com/ncbi/icn3d
+ */
+
 // generate a binary STL file for 3D printing
 // https://en.wikipedia.org/wiki/STL_(file_format)#Binary_STL
 /*

@@ -1,3 +1,7 @@
+/**
+ * @author Jiyao Wang <wangjiy@ncbi.nlm.nih.gov> / https://github.com/ncbi/icn3d
+ */
+
 iCn3DUI.prototype.showSets = function() { var me = this;
     me.openDialog(me.pre + 'dl_definedsets', 'Select Sets');
     $("#" + me.pre + "atomsCustom").resizable();

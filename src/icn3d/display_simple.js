@@ -1,3 +1,7 @@
+/**
+ * @author Jiyao Wang <wangjiy@ncbi.nlm.nih.gov> / https://github.com/ncbi/icn3d
+ */
+
 iCn3D.prototype.rebuildScene = function (options) { var me = this;
     this.rebuildSceneBase(options);
 

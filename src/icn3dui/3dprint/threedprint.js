@@ -1,3 +1,7 @@
+/**
+ * @author Jiyao Wang <wangjiy@ncbi.nlm.nih.gov> / https://github.com/ncbi/icn3d
+ */
+
 iCn3DUI.prototype.setThichknessFor3Dprint = function(  ){ var me = this;
     me.icn3d.lineRadius = 0.6; //0.1; // hbonds, distance lines
     me.icn3d.coilWidth = 1.0; //0.4; // style cartoon-coil

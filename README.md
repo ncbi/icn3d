@@ -77,6 +77,8 @@ gulp
 ```
 
 ## Change log
+The production version [icn3d-2.0.2](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.0.2.zip) was release on April 30, 2018. Reset WebGLRenderer when WebGL context is lost in Internet Explore 11. 
+
 The production version [icn3d-2.0.1](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.0.1.zip) was release on April 23, 2018. The bug about extra 3D domains in the "Sequences & Annotations" window was fixed. The stabilizers for 3D printing were improved. 
 
 The production version [icn3d-2.0.0](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.0.0.zip) was release on April 17, 2018. By clicking the menu "Windows: View Sequences & Annotations", users can view all kinds of annotations: ClinVar, SNPs, CDD domains, 3D domains, binding sites, interactions, and custom tracks. Users can click the menu "View: Chemical Binding" to show the chemical binding sites. Users can also export files for 3D printing at the menu "File: 3D Printing: VRML (Color, W/ Stabilizers)".

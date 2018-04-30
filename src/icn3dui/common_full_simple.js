@@ -1,3 +1,7 @@
+/**
+ * @author Jiyao Wang <wangjiy@ncbi.nlm.nih.gov> / https://github.com/ncbi/icn3d
+ */
+
 /*! The following are shared by full_ui.js and simple_ui.js */
 
 if (typeof jQuery === 'undefined') { throw new Error('iCn3DUI requires jQuery') }
@@ -108,7 +112,9 @@ iCn3DUI.prototype.showTitle = function() { var me = this;
 
             if(me.icn3d.molTitle.length > 40) title = me.icn3d.molTitle.substr(0, 40) + "...";
 
-            $("#" + me.pre + "title").html("PDB ID <a href='" + url + "' target='_blank' style='color:" + me.GREYD + "'>" + me.inputid.toUpperCase() + "</a>: " + title);
+            var asymmetricStr = (me.asuAtomCount !== undefined) ? " (Asymmetric Unit)" : "";
+
+            $("#" + me.pre + "title").html("PDB ID <a href='" + url + "' target='_blank' style='color:" + me.GREYD + "'>" + me.inputid.toUpperCase() + "</a>" + asymmetricStr + ": " + title);
         }
     }
     else {
@@ -384,6 +390,32 @@ iCn3DUI.prototype.resizeCanvas = function (width, height, bForceResize, bDraw) {
         me.icn3d.draw();
     }
   }
+};
+
+iCn3DUI.prototype.handleContextLost = function() { var me = this;
+    //https://www.khronos.org/webgl/wiki/HandlingContextLost
+    // 1 add a lost context handler and tell it to prevent the default behavior
+
+    var canvas = $("#" + me.pre + "canvas")[0];
+    canvas.addEventListener("webglcontextlost", function(event) {
+        event.preventDefault();
+    }, false);
+
+    // 2 re-setup all your WebGL state and re-create all your WebGL resources when the context is restored.
+    canvas.addEventListener("webglcontextrestored", function(event) {
+        // IE11 error: WebGL content is taking too long to render on your GPU. Temporarily switching to software rendering.
+        console.log("WebGL context was lost. Reset WebGLRenderer and launch iCn3D again.");
+
+        me.icn3d.renderer = new THREE.WebGLRenderer({
+            canvas: me.icn3d.container.get(0),
+            antialias: true,
+            preserveDrawingBuffer: true,
+            alpha: true
+        });
+
+        me.icn3d.draw();
+
+    }, false);
 };
 
 iCn3DUI.prototype.windowResize = function() { var me = this;

@@ -1,6 +1,5 @@
-/*! simple_ui.js
- * @author Jiyao Wang / https://github.com/ncbi/me.icn3d
- * simple UI of me.icn3d
+/**
+ * @author Jiyao Wang <wangjiy@ncbi.nlm.nih.gov> / https://github.com/ncbi/icn3d
  */
 
 var iCn3DUI = function(cfg) {
@@ -163,6 +162,8 @@ iCn3DUI.prototype = {
 
         me.icn3d = new iCn3D(me.pre + 'canvas');
         if(!me.isMobile()) me.icn3d.scaleFactor = 2.0;
+
+        me.handleContextLost();
 
         if(me.cfg.bCalphaOnly !== undefined) me.icn3d.bCalphaOnly = me.cfg.bCalphaOnly;
 

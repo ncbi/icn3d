@@ -1,3 +1,7 @@
+/**
+ * @author Jiyao Wang <wangjiy@ncbi.nlm.nih.gov> / https://github.com/ncbi/icn3d
+ */
+
 iCn3DUI.prototype.clickCommand_apply = function() { var me = this;
     $("#" + me.pre + "command_apply").click(function(e) {
        e.preventDefault();

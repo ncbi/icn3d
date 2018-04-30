@@ -1,3 +1,7 @@
+/**
+ * @author Jiyao Wang <wangjiy@ncbi.nlm.nih.gov> / https://github.com/ncbi/icn3d
+ */
+
 iCn3DUI.prototype.selectResidues = function(id, that) { var me = this;
   if(id !== undefined && id !== '') {
     // add "align_" in front of id so that full sequence and aligned sequence will not conflict

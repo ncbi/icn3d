@@ -1,10 +1,13 @@
+/**
+ * @author Jiyao Wang <wangjiy@ncbi.nlm.nih.gov> / https://github.com/ncbi/icn3d
+ */
 
 //http://gun.teipir.gr/VRML-amgem/spec/part1/examples.html
 iCn3DUI.prototype.saveVrmlFile = function(  ){ var me = this;
     if(Object.keys(me.icn3d.dAtoms).length > 50000) {
-		alert('Please select a subset of the structures to display, then save the structures for 3D printing...');
-		return [''];
-	}
+        alert('Please select a subset of the structures to display, then save the structures for 3D printing...');
+        return [''];
+    }
 
     me.prepareFor3Dprint();
 

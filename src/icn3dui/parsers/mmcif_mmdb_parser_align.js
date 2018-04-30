@@ -1,3 +1,7 @@
+/**
+ * @author Jiyao Wang <wangjiy@ncbi.nlm.nih.gov> / https://github.com/ncbi/icn3d
+ */
+
 iCn3DUI.prototype.downloadAlignment = function (align) { var me = this;
     me.opts['proteins'] = 'c alpha trace';
     me.icn3d.opts['proteins'] = 'c alpha trace';

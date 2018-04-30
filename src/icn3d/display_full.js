@@ -1,3 +1,7 @@
+/**
+ * @author Jiyao Wang <wangjiy@ncbi.nlm.nih.gov> / https://github.com/ncbi/icn3d
+ */
+
 iCn3D.prototype.applyPrevColor = function () {
     for (var i in this.atoms) {
         var atom = this.atoms[i];

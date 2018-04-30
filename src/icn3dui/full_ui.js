@@ -1,6 +1,5 @@
-/*! full_ui.js
- * @author Jiyao Wang / https://github.com/ncbi/icn3d
- * UI with full features of iCn3D
+/**
+ * @author Jiyao Wang <wangjiy@ncbi.nlm.nih.gov> / https://github.com/ncbi/icn3d
  */
 
 // make dialog movable outside of the window
@@ -278,6 +277,8 @@ iCn3DUI.prototype = {
 
         me.icn3d = new iCn3D(me.pre + 'canvas');
         if(!me.isMobile()) me.icn3d.scaleFactor = 2.0;
+
+        me.handleContextLost();
 
         me.icn3d.setWidthHeight(width, height);
 
@@ -3584,7 +3585,6 @@ iCn3DUI.prototype = {
             me.icn3d.reinitAfterLoad();
 
             me.renderFinalStep(1);
-
             me.setMode('all');
 
             me.setLogCmd("reset", true);

@@ -1,33 +1,5 @@
-/*! icn3d.js
- * Mainly based on iview. Drawing cartoon of nucleotides is from GLmol. Surface generation and labeling are from 3Dmol. All these functions are labeled with the source names.
- * @author Jiyao Wang / https://github.com/ncbi/icn3d
- *
- * iCn3D has been developed based on iview (http://istar.cse.cuhk.edu.hk/iview/). The following new features has been added so far.
- * 1. Allowed users to pick atoms, both in perspective and orthographics camera. To make this work, the methods of rotation, translation and zooming have been dramatically changed and used libraries from three.js. The pk allows users to pick atoms, add labels, choose a new rotation center, etc.
- * 2. Allowed users to select residues based on structure, chain, sequence, etc. Users can also define their own subset and save the selection.
- * 3. Used THREE.MeshPhongMaterial to make surface shiny.
- * 4. Improved the labeling mechanism.
- * 5. Enabled to save the current state and open the state later. This is done by saving the comand history. Thus users can also go backward or forward to different states.
- * 6. Two kind of highlight mechanisms were provided: 2D outline or 3D objects.
- * 7. Added arrows to the end of beta sheets.
- * 8. Commands can be added to urls to show the final display.
- * 9. 3D structure correlates with sequence window.
- * 10. Added double bonds and triple bonds display for chemicals.
- * 11. An interactive UI was provided for all these features.
- *
- * iCn3D used the following standard libraries. We can easily adopt the new versions of these libraries.
- * 1. jquery and jquery ui. Jquery ui is used for show the mn at the top.
- * 2. Recent version of Three.js.
- *
- * Files in #3-9 are combined in one file: full_ui_all.min.js.
- *
- * 3. The rotation, translation operation libraries from Three.js: TrackballControls.js and OrthographicTrackballControls.js.
- * 4. Projector.js from Three.js for the pk.
- * 5. Canvas render library: CanvasRenderer.js. This is used when WebGL render is no working in the browser.
- * 6. A library to detect whether WebGL is working in the browser: Detector.js.
- * 7. The surface generation of 3Dmol (http://3dmol.csb.pitt.edu/): marchingcube.js, ProteinSurface4.js, and setupsurface.js.
- * 8. The 3D drawing library: icn3d.js
- * 9. Advanced UI library for iCn3D: full_ui.js.
+/**
+ * @author Jiyao Wang <wangjiy@ncbi.nlm.nih.gov> / https://github.com/ncbi/icn3d
  */
 
 if (typeof jQuery === 'undefined') { throw new Error('iCn3D requires jQuery') }

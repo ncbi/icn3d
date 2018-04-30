@@ -1,3 +1,7 @@
+/**
+ * @author Jiyao Wang <wangjiy@ncbi.nlm.nih.gov> / https://github.com/ncbi/icn3d
+ */
+
 iCn3DUI.prototype.update2DdgmContent = function () { var me = this;
    // update 2D diagram to show just the displayed parts
    var html2ddgm = '';
