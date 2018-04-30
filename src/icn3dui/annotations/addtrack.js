@@ -1,3 +1,7 @@
+/**
+ * @author Jiyao Wang <wangjiy@ncbi.nlm.nih.gov> / https://github.com/ncbi/icn3d
+ */
+
 iCn3DUI.prototype.addTrack = function() { var me = this;
     $(document).on('click', ".addtrack", function(e) {
       e.stopImmediatePropagation();

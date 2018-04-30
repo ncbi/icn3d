@@ -1,3 +1,7 @@
+/**
+ * @author Jiyao Wang <wangjiy@ncbi.nlm.nih.gov> / https://github.com/ncbi/icn3d
+ */
+
 iCn3DUI.prototype.loadScript = function (dataStr, bStatefile) { var me = this;
   // allow the "loading structure..." message to be shown while loading script
   me.bCommandLoad = true;
@@ -105,7 +109,7 @@ iCn3DUI.prototype.execCommandsBase = function (start, end, steps) { var me = thi
         ) { // the command may have "|||{"factor"...
           var strArray = me.icn3d.commands[i].split("|||");
           if(me.bAjaxCddSite === undefined || !me.bAjaxCddSite) {
-              $.when(me.applyCommandAnnotationsAndCddSite(strArray[0])).then(function() {
+              $.when(me.applyCommandAnnotationsAndCddSite(strArray[0].trim())).then(function() {
                   me.execCommandsBase(i + 1, end, steps);
               });
           }
@@ -120,7 +124,7 @@ iCn3DUI.prototype.execCommandsBase = function (start, end, steps) { var me = thi
           var strArray = me.icn3d.commands[i].split("|||");
 
           if(me.bAjaxSnpClinvar === undefined || !me.bAjaxSnpClinvar) {
-              $.when(me.applyCommandSnpClinvar(strArray[0])).then(function() {
+              $.when(me.applyCommandSnpClinvar(strArray[0].trim())).then(function() {
                   me.execCommandsBase(i + 1, end, steps);
               });
           }
@@ -132,8 +136,9 @@ iCn3DUI.prototype.execCommandsBase = function (start, end, steps) { var me = thi
       }
       else if(me.icn3d.commands[i].trim().indexOf('set annotation 3ddomain') == 0) { // the command may have "|||{"factor"...
           var strArray = me.icn3d.commands[i].split("|||");
-          if(me.bAjax3ddomain === undefined || !me.bAjax3ddomain) {
-              $.when(me.applyCommand3ddomain(strArray[0])).then(function() {
+
+          if(me.mmdb_data === undefined && (me.bAjax3ddomain === undefined || !me.bAjax3ddomain)) {
+              $.when(me.applyCommand3ddomain(strArray[0].trim())).then(function() {
                   me.execCommandsBase(i + 1, end, steps);
               });
           }
@@ -145,13 +150,13 @@ iCn3DUI.prototype.execCommandsBase = function (start, end, steps) { var me = thi
       }
       else if(me.icn3d.commands[i].trim().indexOf('set annotation all') == 0) { // the command may have "|||{"factor"...
           var strArray = me.icn3d.commands[i].split("|||");
-          //$.when(me.applyCommandAnnotationsAndCddSite(strArray[0]))
-          //  .then(me.applyCommandSnpClinvar(strArray[0]))
+          //$.when(me.applyCommandAnnotationsAndCddSite(strArray[0].trim()))
+          //  .then(me.applyCommandSnpClinvar(strArray[0].trim()))
 
           if( (me.bAjaxSnpClinvar === undefined || !me.bAjaxSnpClinvar)
-            && (me.bAjax3ddomain === undefined || !me.bAjax3ddomain) ) {
-              $.when(me.applyCommandSnpClinvar(strArray[0]))
-                .then(me.applyCommand3ddomain(strArray[0]))
+            && (me.bAjax3ddomain === undefined || !me.bAjax3ddomain || me.mmdb_data === undefined) ) {
+              $.when(me.applyCommandSnpClinvar(strArray[0].trim()))
+                .then(me.applyCommand3ddomain(strArray[0].trim()))
                 .then(function() {
                   me.setAnnoTabAll();
 
@@ -159,15 +164,15 @@ iCn3DUI.prototype.execCommandsBase = function (start, end, steps) { var me = thi
               });
           }
           else if(me.bAjaxSnpClinvar === undefined || !me.bAjaxSnpClinvar) {
-              $.when(me.applyCommandSnpClinvar(strArray[0]))
+              $.when(me.applyCommandSnpClinvar(strArray[0].trim()))
                 .then(function() {
                   me.setAnnoTabAll();
 
                   me.execCommandsBase(i + 1, end, steps);
               });
           }
-          else if(me.bAjax3ddomain === undefined || !me.bAjax3ddomain) {
-              $.when(me.applyCommand3ddomain(strArray[0]))
+          else if(me.bAjax3ddomain === undefined || !me.bAjax3ddomain || me.mmdb_data === undefined) {
+              $.when(me.applyCommand3ddomain(strArray[0].trim()))
                 .then(function() {
                   me.setAnnoTabAll();
 
@@ -186,7 +191,7 @@ iCn3DUI.prototype.execCommandsBase = function (start, end, steps) { var me = thi
           var strArray = me.icn3d.commands[i].split("|||");
 
           if(me.b2DShown === undefined || !me.b2DShown) {
-              $.when(me.applyCommandViewinteraction(strArray[0])).then(function() {
+              $.when(me.applyCommandViewinteraction(strArray[0].trim())).then(function() {
                   me.execCommandsBase(i + 1, end, steps);
               });
           }
@@ -235,7 +240,8 @@ iCn3DUI.prototype.renderFinalStep = function(steps) { var me = this;
     }
 
     // simple if all atoms are modified
-    if( me.cfg.command === undefined && (steps === 1 || (Object.keys(me.icn3d.hAtoms).length === Object.keys(me.icn3d.atoms).length) || (me.icn3d.optsHistory[steps - 1] !== undefined && me.icn3d.optsHistory[steps - 1].hasOwnProperty('hlatomcount') && me.icn3d.optsHistory[steps - 1].hlatomcount === Object.keys(me.icn3d.atoms).length) ) ) {
+    //if( me.cfg.command === undefined && (steps === 1 || (Object.keys(me.icn3d.hAtoms).length === Object.keys(me.icn3d.atoms).length) || (me.icn3d.optsHistory[steps - 1] !== undefined && me.icn3d.optsHistory[steps - 1].hasOwnProperty('hlatomcount') && me.icn3d.optsHistory[steps - 1].hlatomcount === Object.keys(me.icn3d.atoms).length) ) ) {
+    if( (steps === 1 || (Object.keys(me.icn3d.hAtoms).length === Object.keys(me.icn3d.atoms).length) || (me.icn3d.optsHistory[steps - 1] !== undefined && me.icn3d.optsHistory[steps - 1].hasOwnProperty('hlatomcount') && me.icn3d.optsHistory[steps - 1].hlatomcount === Object.keys(me.icn3d.atoms).length) ) ) {
         // assign styles and color using the options at that stage
         me.icn3d.setAtomStyleByOptions(me.icn3d.optsHistory[steps - 1]);
         me.icn3d.setColorByOptions(me.icn3d.optsHistory[steps - 1], me.icn3d.hAtoms);
@@ -738,7 +744,7 @@ iCn3DUI.prototype.applyCommand = function (commandStr) { var me = this;
     me.renderFinalStep(1);
 
     // need to render
-    me.render();
+    me.icn3d.render();
   }
   else if(command === 'reset orientation') {
     me.icn3d.resetOrientation();

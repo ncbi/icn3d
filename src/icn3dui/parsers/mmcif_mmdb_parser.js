@@ -1,3 +1,7 @@
+/**
+ * @author Jiyao Wang <wangjiy@ncbi.nlm.nih.gov> / https://github.com/ncbi/icn3d
+ */
+
 iCn3DUI.prototype.showLoading = function () { var me = this;
       if($("#" + me.pre + "wait")) $("#" + me.pre + "wait").show();
       if($("#" + me.pre + "canvas")) $("#" + me.pre + "canvas").hide();
@@ -115,7 +119,7 @@ iCn3DUI.prototype.loadMmcifData = function(data) { var me = this;
 
 iCn3DUI.prototype.downloadMmdb = function (mmdbid, bGi) { var me = this;
    //var maxatomcnt = (me.cfg.maxatomcnt === undefined) ? 50000 : me.cfg.maxatomcnt;
-   var maxatomcnt = 90000; // the cgi timed out if maxatomcnt is larger than 90000
+   var maxatomcnt = 100000; // asymmetric unit (buidx=0) will be returned if above this threshold
 
    var url;
 /*
@@ -128,10 +132,10 @@ iCn3DUI.prototype.downloadMmdb = function (mmdbid, bGi) { var me = this;
 */
 
    if(bGi !== undefined && bGi) {
-       url = "https://www.ncbi.nlm.nih.gov/Structure/mmdb/mmdb_strview.cgi?v=2&program=icn3d&b&gi=" + mmdbid;
+       url = "https://www.ncbi.nlm.nih.gov/Structure/mmdb/mmdb_strview.cgi?v=2&program=icn3d&b&gi=" + mmdbid + "&ath=" + maxatomcnt;
    }
    else {
-       url = "https://www.ncbi.nlm.nih.gov/Structure/mmdb/mmdb_strview.cgi?v=2&program=icn3d&b&uid=" + mmdbid;
+       url = "https://www.ncbi.nlm.nih.gov/Structure/mmdb/mmdb_strview.cgi?v=2&program=icn3d&b&uid=" + mmdbid + "&ath=" + maxatomcnt;
    }
 
    me.icn3d.bCid = undefined;
@@ -164,6 +168,8 @@ iCn3DUI.prototype.downloadMmdb = function (mmdbid, bGi) { var me = this;
 
         var id = (data.pdbId !== undefined) ? data.pdbId : data.mmdbId;
         me.inputid = id;
+
+        me.asuAtomCount = data.asuAtomCount;
 
         // get molid2color = {}, chain2molid = {}, molid2chain = {};
         var labelsize = 40;

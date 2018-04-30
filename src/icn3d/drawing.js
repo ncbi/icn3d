@@ -1,3 +1,7 @@
+/**
+ * @author Jiyao Wang <wangjiy@ncbi.nlm.nih.gov> / https://github.com/ncbi/icn3d
+ */
+
 // modified from iview (http://istar.cse.cuhk.edu.hk/iview/)
 iCn3D.prototype.createSphere = function (atom, defaultRadius, forceDefault, scale, bHighlight) {
     var mesh;
@@ -184,7 +188,7 @@ iCn3D.prototype.createRepresentationSub = function (atoms, f0, f01) {
         for (var j in atom0.bonds) {
             var atom1 = this.atoms[atom0.bonds[j]];
             if (atom1 === undefined || atom1.serial < atom0.serial) continue;
-            if (atom1.chain === atom0.chain && ((atom1.resi === atom0.resi) || (atom0.name === 'C' && atom1.name === 'N') || (atom0.name === 'O3\'' && atom1.name === 'P') || (atom0.name === 'SG' && atom1.name === 'SG'))) {
+            if (atom1.chain === atom0.chain && ((atom1.resi === atom0.resi) || (atom0.name === 'C' && atom1.name === 'N') || (atom0.name === 'O3\'' && atom1.name === 'P') || (atom0.name === 'O3*' && atom1.name === 'P') || (atom0.name === 'SG' && atom1.name === 'SG'))) {
                 f01 && f01(atom0, atom1);
             } else {
                 //ged.vertices.push(atom0.coord);

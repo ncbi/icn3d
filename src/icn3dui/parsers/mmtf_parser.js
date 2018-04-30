@@ -1,3 +1,7 @@
+/**
+ * @author Jiyao Wang <wangjiy@ncbi.nlm.nih.gov> / https://github.com/ncbi/icn3d
+ */
+
 // from the 2016 NCBI hackathon in Orlando: https://github.com/NCBI-Hackathons/iCN3D-MMTF
 // Contributors: Jiyao Wang, Alexander Rose, Peter Rose
 // requires the library mmtf.js

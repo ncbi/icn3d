@@ -1,3 +1,7 @@
+/**
+ * @author Jiyao Wang <wangjiy@ncbi.nlm.nih.gov> / https://github.com/ncbi/icn3d
+ */
+
 // modified from iview (http://istar.cse.cuhk.edu.hk/iview/)
 iCn3D.prototype.loadPDB = function (src) {
     var helices = [], sheets = [];
@@ -394,12 +398,14 @@ iCn3D.prototype.loadPDB = function (src) {
 
         if(this.ssbondpnts[structure] === undefined) this.ssbondpnts[structure] = [];
 
-        for(var j = 0, jl = this.ssbondpnts[id].length; j < jl; ++j) {
-            var ori_resid = this.ssbondpnts[id][j];
-            var pos = ori_resid.indexOf('_');
-            var resid = structure + ori_resid.substr(pos);
+        if(this.ssbondpnts[id] !== undefined) {
+            for(var j = 0, jl = this.ssbondpnts[id].length; j < jl; ++j) {
+                var ori_resid = this.ssbondpnts[id][j];
+                var pos = ori_resid.indexOf('_');
+                var resid = structure + ori_resid.substr(pos);
 
-            this.ssbondpnts[structure].push(resid);
+                this.ssbondpnts[structure].push(resid);
+            }
         }
     }
 

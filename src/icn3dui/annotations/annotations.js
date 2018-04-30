@@ -1,3 +1,7 @@
+/**
+ * @author Jiyao Wang <wangjiy@ncbi.nlm.nih.gov> / https://github.com/ncbi/icn3d
+ */
+
 iCn3DUI.prototype.showAnnotations = function() { var me = this;
     me.openDialog(me.pre + 'dl_selectannotations', 'Sequences and Annotations');
 
@@ -1325,6 +1329,8 @@ iCn3DUI.prototype.showSnpClinvar = function(chnid, chnidBase) {
         }
 
         console.log( "No SNP data were found for the protein " + chnid + "..." );
+
+        if(me.deferredSnpClinvar !== undefined) me.deferredSnpClinvar.resolve();
         return;
       }
     });
@@ -1575,6 +1581,8 @@ iCn3DUI.prototype.showCddSite = function(chnid, chnidBase) {
         }
 
         console.log( "No CDD data were found for the protein " + chnid + "..." );
+
+        if(me.deferredAnnoCddSite !== undefined) me.deferredAnnoCddSite.resolve();
         return;
       }
     });
@@ -1623,6 +1631,8 @@ iCn3DUI.prototype.showDomain = function(chnid, chnidBase) { var me = this;
             }
 
             console.log( "No 3D domain data were found for the protein " + chnid + "..." );
+
+            if(me.deferred3ddomain !== undefined) me.deferred3ddomain.resolve();
             return;
           }
         });

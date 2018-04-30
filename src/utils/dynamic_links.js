@@ -1,3 +1,7 @@
+/**
+ * @author Jiyao Wang <wangjiy@ncbi.nlm.nih.gov> / https://github.com/ncbi/icn3d
+ */
+
     //https://firebase.google.com/docs/dynamic-links/rest
 
     // Initialize Firebase
@@ -10,4 +14,4 @@
     messagingSenderId: "842979336421"
     };
     firebase.initializeApp(config);
-    
+

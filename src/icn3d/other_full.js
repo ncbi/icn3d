@@ -1,3 +1,7 @@
+/**
+ * @author Jiyao Wang <wangjiy@ncbi.nlm.nih.gov> / https://github.com/ncbi/icn3d
+ */
+
 // get hbonds between "molecule" and "chemical"
 iCn3D.prototype.calculateChemicalHbonds = function (molecule, chemicals, threshold) {
     if(Object.keys(molecule).length === 0 || Object.keys(chemicals).length === 0) return;
