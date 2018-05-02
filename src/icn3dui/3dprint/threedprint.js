@@ -3,21 +3,6 @@
  */
 
 iCn3DUI.prototype.setThichknessFor3Dprint = function(  ){ var me = this;
-/*
-    me.icn3d.lineRadius = 0.6; //0.1; // hbonds, distance lines
-    me.icn3d.coilWidth = 1.0; //0.4; // style cartoon-coil
-    me.icn3d.cylinderRadius = 0.8; //0.4; // style stick
-    me.icn3d.traceRadius = 0.8; //0.4; // style c alpha trace, nucleotide stick
-    me.icn3d.dotSphereScale = 0.6; //0.3; // style ball and stick, dot
-
-    me.icn3d.sphereRadius = 1.5; // style sphere
-    //me.icn3d.cylinderHelixRadius = 1.6; // style sylinder and plate
-
-    me.icn3d.ribbonthickness = 0.8; //0.4; // style ribbon, nucleotide cartoon, stand thickness
-    me.icn3d.helixSheetWidth = 2.0; //1.3; // style ribbon, stand thickness
-    me.icn3d.nucleicAcidWidth = 1.2; //0.8; // nucleotide cartoon
-*/
-
     me.icn3d.lineRadius = 1; //0.1; // hbonds, distance lines
     me.icn3d.coilWidth = 1.2; //0.4; // style cartoon-coil
     me.icn3d.cylinderRadius = 0.8; //0.4; // style stick

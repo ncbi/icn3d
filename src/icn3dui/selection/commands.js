@@ -62,8 +62,6 @@ iCn3DUI.prototype.execCommands = function (start, end, steps) { var me = this;
 
 iCn3DUI.prototype.execCommandsBase = function (start, end, steps) { var me = this;
   for(var i=start; i <= end; ++i) {
-console.log(i + " me.icn3d.commands[i]: " + me.icn3d.commands[i]);
-
       if(me.icn3d.commands[i].indexOf('load') !== -1) {
           if(end === 0 && start === end) {
               if(me.bNotLoadStructure) {

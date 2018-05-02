@@ -477,8 +477,6 @@ iCn3DUI.prototype = {
     },
 
     setStyle: function (selectionType, style) { var me = this;
-console.log("setStyle atoms: " + Object.keys(me.icn3d.atoms).length + " hl atoms: " + Object.keys(me.icn3d.hAtoms).length);
-
       var atoms = {};
       switch (selectionType) {
           case 'proteins':

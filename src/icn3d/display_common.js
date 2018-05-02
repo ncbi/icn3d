@@ -760,8 +760,6 @@ iCn3D.prototype.setAtomStyleByOptions = function (options) {
           this.atoms[i].style = options.nucleotides.toLowerCase();
         }
     }
-console.log("setAtomStyleByOptions atoms: " + Object.keys(this.atoms).length + " selectedAtoms: " + Object.keys(selectedAtoms).length);
-
 };
 
 iCn3D.prototype.rebuildSceneBase = function (options) { var me = this;
