@@ -241,10 +241,14 @@ iCn3DUI.prototype.renderFinalStep = function(steps) { var me = this;
 
     // simple if all atoms are modified
     //if( me.cfg.command === undefined && (steps === 1 || (Object.keys(me.icn3d.hAtoms).length === Object.keys(me.icn3d.atoms).length) || (me.icn3d.optsHistory[steps - 1] !== undefined && me.icn3d.optsHistory[steps - 1].hasOwnProperty('hlatomcount') && me.icn3d.optsHistory[steps - 1].hlatomcount === Object.keys(me.icn3d.atoms).length) ) ) {
-    if( (steps === 1 || (Object.keys(me.icn3d.hAtoms).length === Object.keys(me.icn3d.atoms).length) || (me.icn3d.optsHistory[steps - 1] !== undefined && me.icn3d.optsHistory[steps - 1].hasOwnProperty('hlatomcount') && me.icn3d.optsHistory[steps - 1].hlatomcount === Object.keys(me.icn3d.atoms).length) ) ) {
-        // assign styles and color using the options at that stage
-        me.icn3d.setAtomStyleByOptions(me.icn3d.optsHistory[steps - 1]);
-        me.icn3d.setColorByOptions(me.icn3d.optsHistory[steps - 1], me.icn3d.hAtoms);
+    if(steps === 1
+      || (Object.keys(me.icn3d.hAtoms).length === Object.keys(me.icn3d.atoms).length)
+      || (me.icn3d.optsHistory[steps - 1] !== undefined && me.icn3d.optsHistory[steps - 1].hasOwnProperty('hlatomcount') && me.icn3d.optsHistory[steps - 1].hlatomcount === Object.keys(me.icn3d.atoms).length) ) {
+        if(steps === 1) {
+            // assign styles and color using the options at that stage
+            me.icn3d.setAtomStyleByOptions(me.icn3d.optsHistory[steps - 1]);
+            me.icn3d.setColorByOptions(me.icn3d.optsHistory[steps - 1], me.icn3d.hAtoms);
+        }
 
         if(me.icn3d.optsHistory.length >= steps) {
             var pkOption = me.icn3d.optsHistory[steps - 1].pk;
@@ -1067,12 +1071,13 @@ iCn3DUI.prototype.applyCommand = function (commandStr) { var me = this;
         else if(para.indexOf('name') !== -1) {
             commandname = para.substr(para.indexOf(' ') + 1);
         }
-        else if(para.indexOf('description') !== -1) {
-            commanddesc = para.substr(para.indexOf(' ') + 1);
-        }
+//        else if(para.indexOf('description') !== -1) {
+//            commanddesc = para.substr(para.indexOf(' ') + 1);
+//        }
     }
 
-    if(paraArray.length < 3) commanddesc = commandname;
+//    if(paraArray.length < 3) commanddesc = commandname;
+    commanddesc = commandname;
 
     me.selectByCommand(select, commandname, commanddesc);
   }
@@ -1081,8 +1086,12 @@ iCn3DUI.prototype.applyCommand = function (commandStr) { var me = this;
 
     var select = paraArray[0].substr(paraArray[0].indexOf(' ') + 1);
     var commandname = '', commanddesc = '';
-    if(paraArray.length === 3) {
+
+    if(paraArray.length > 1) {
         commandname = paraArray[1].substr(paraArray[1].indexOf(' ') + 1);
+    }
+
+    if(paraArray.length > 2) {
         commanddesc = paraArray[2].substr(paraArray[2].indexOf(' ') + 1);
     }
 

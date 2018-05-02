@@ -6,6 +6,12 @@ iCn3DUI.prototype.showSets = function() { var me = this;
     me.openDialog(me.pre + 'dl_definedsets', 'Select Sets');
     $("#" + me.pre + "atomsCustom").resizable();
 
+    if(me.bSetChainsAdvancedMenu === undefined || !me.bSetChainsAdvancedMenu) {
+       me.setPredefinedInMenu();
+
+       me.bSetChainsAdvancedMenu = true;
+    }
+
     me.updateHlMenus();
 };
 
@@ -80,7 +86,7 @@ iCn3DUI.prototype.changeCustomAtoms = function (nameArray, bUpdateHlMenus) { var
    // clear commmand
    $("#" + me.pre + "command").val("");
    $("#" + me.pre + "command_name").val("");
-   $("#" + me.pre + "command_desc").val("");
+   //$("#" + me.pre + "command_desc").val("");
 
    // update the commands in the dialog
    for(var i = 0, il = nameArray.length; i < il; ++i) {
@@ -96,7 +102,7 @@ iCn3DUI.prototype.changeCustomAtoms = function (nameArray, bUpdateHlMenus) { var
        if(i === 0) {
          $("#" + me.pre + "command").val(atomCommand);
          $("#" + me.pre + "command_name").val(nameArray[i]);
-         $("#" + me.pre + "command_desc").val(atomTitle);
+         //$("#" + me.pre + "command_desc").val(atomTitle);
        }
        else {
          var prevValue = $("#" + me.pre + "command").val();
@@ -105,8 +111,8 @@ iCn3DUI.prototype.changeCustomAtoms = function (nameArray, bUpdateHlMenus) { var
          var prevValue = $("#" + me.pre + "command_name").val();
          $("#" + me.pre + "command_name").val(prevValue + " or " + nameArray[i]);
 
-         var prevValue = $("#" + me.pre + "command_desc").val();
-         $("#" + me.pre + "command_desc").val(prevValue + " or " + atomTitle);
+         //var prevValue = $("#" + me.pre + "command_desc").val();
+         //$("#" + me.pre + "command_desc").val(prevValue + " or " + atomTitle);
        }
 
        if(atomArray !== undefined) {

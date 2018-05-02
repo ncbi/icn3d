@@ -166,7 +166,7 @@ var iCn3D = function (id) {
         background: 'transparent',
         color: 'chain',
         sidec: 'nothing',
-        proteins: 'cylinder and plate',
+        proteins: 'ribbon',
         nucleotides: 'nucleotide cartoon',
         surface: 'nothing',
         wireframe: 'no',

@@ -8,12 +8,11 @@ iCn3DUI.prototype.clickCommand_apply = function() { var me = this;
 
        var select = $("#" + me.pre + "command").val();
        var commandname = $("#" + me.pre + "command_name").val().replace(/;/g, '_').replace(/\s+/g, '_');
-       var commanddesc = $("#" + me.pre + "command_desc").val().replace(/;/g, '_').replace(/\s+/g, '_');
+       //var commanddesc = $("#" + me.pre + "command_desc").val().replace(/;/g, '_').replace(/\s+/g, '_');
 
+       me.selectByCommand(select, commandname, commandname);
        //me.setLogCmd('select ' + select + ' | name ' + commandname + ' | description ' + commanddesc, true);
-
-       me.selectByCommand(select, commandname, commanddesc);
-       me.setLogCmd('select ' + select + ' | name ' + commandname + ' | description ' + commanddesc, true);
+       me.setLogCmd('select ' + select + ' | name ' + commandname, true);
     });
 };
 
@@ -207,7 +206,8 @@ iCn3DUI.prototype.selectBySpec = function (select, commandname, commanddesc, bDi
                  }
                  else {
                      // if not exit previously, "and" operation will remove this one
-                     if(!residueHash.hasOwnProperty(residueId)) residueHash[residueId] = undefined;
+                     //if(!residueHash.hasOwnProperty(residueId)) residueHash[residueId] = undefined;
+                     if(!residueHash.hasOwnProperty(residueId)) delete residueHash[residueId];
                  }
 
                  for(var m in me.icn3d.residues[residueId]) {
@@ -218,7 +218,8 @@ iCn3DUI.prototype.selectBySpec = function (select, commandname, commanddesc, bDi
                      }
                      else {
                          //if(!currHighlightAtoms.hasOwnProperty(m)) currHighlightAtoms[m] = undefined;
-                         if(!atomHash.hasOwnProperty(m)) atomHash[m] = undefined;
+                         //if(!atomHash.hasOwnProperty(m)) atomHash[m] = undefined;
+                         if(!atomHash.hasOwnProperty(m)) delete atomHash[m];
                      }
                    }
                  }
@@ -244,7 +245,8 @@ iCn3DUI.prototype.selectBySpec = function (select, commandname, commanddesc, bDi
                      }
                      else {
                          var residTmp = molecule_chain + '_' + me.icn3d.atoms[m].resi;
-                         if(!residueHash.hasOwnProperty(residTmp)) residueHash[residTmp] = undefined;
+                         //if(!residueHash.hasOwnProperty(residTmp)) residueHash[residTmp] = undefined;
+                         if(!residueHash.hasOwnProperty(residTmp)) delete residueHash[residTmp];
                      }
 
                      if(atomStr === '*' || atomStr === me.icn3d.atoms[m].name) {
@@ -254,7 +256,8 @@ iCn3DUI.prototype.selectBySpec = function (select, commandname, commanddesc, bDi
                          }
                          else {
                              //if(!currHighlightAtoms.hasOwnProperty(m)) currHighlightAtoms[m] = undefined;
-                             if(!atomHash.hasOwnProperty(m)) atomHash[m] = undefined;
+                             //if(!atomHash.hasOwnProperty(m)) atomHash[m] = undefined;
+                             if(!atomHash.hasOwnProperty(m)) delete atomHash[m];
                          }
                      }
 
@@ -295,7 +298,8 @@ iCn3DUI.prototype.selectBySpec = function (select, commandname, commanddesc, bDi
                              residueHash[residueId] = 1;
                          }
                          else {
-                             if(!residueHash.hasOwnProperty(residueId)) residueHash[residueId] = undefined;
+                             //if(!residueHash.hasOwnProperty(residueId)) residueHash[residueId] = undefined;
+                             if(!residueHash.hasOwnProperty(residueId)) delete residueHash[residueId];
                          }
 
                          for(var m in me.icn3d.residues[residueId]) {
@@ -306,7 +310,8 @@ iCn3DUI.prototype.selectBySpec = function (select, commandname, commanddesc, bDi
                              }
                              else {
                                  //if(!currHighlightAtoms.hasOwnProperty(m)) currHighlightAtoms[m] = undefined;
-                                 if(!atomHash.hasOwnProperty(m)) atomHash[m] = undefined;
+                                 //if(!atomHash.hasOwnProperty(m)) atomHash[m] = undefined;
+                                 if(!atomHash.hasOwnProperty(m)) delete atomHash[m];
                              }
                            }
                          }

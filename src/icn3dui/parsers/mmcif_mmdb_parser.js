@@ -132,10 +132,10 @@ iCn3DUI.prototype.downloadMmdb = function (mmdbid, bGi) { var me = this;
 */
 
    if(bGi !== undefined && bGi) {
-       url = "https://www.ncbi.nlm.nih.gov/Structure/mmdb/mmdb_strview.cgi?v=2&program=icn3d&b&gi=" + mmdbid + "&ath=" + maxatomcnt;
+       url = "https://www.ncbi.nlm.nih.gov/Structure/mmdb/mmdb_strview.cgi?v=2&program=icn3d&b&gi=" + mmdbid;
    }
    else {
-       url = "https://www.ncbi.nlm.nih.gov/Structure/mmdb/mmdb_strview.cgi?v=2&program=icn3d&b&uid=" + mmdbid + "&ath=" + maxatomcnt;
+       url = "https://www.ncbi.nlm.nih.gov/Structure/mmdb/mmdb_strview.cgi?v=2&program=icn3d&b&uid=" + mmdbid;
    }
 
    me.icn3d.bCid = undefined;

@@ -147,8 +147,10 @@ iCn3DUI.prototype.saveSelection = function(name, description) { var me = this;
     me.selectedResidues = {};
 
     for(var i in me.icn3d.hAtoms) {
+      if(me.icn3d.hAtoms[i] !== undefined) {
         var residueid = me.icn3d.atoms[i].structure + '_' + me.icn3d.atoms[i].chain + '_' + me.icn3d.atoms[i].resi;
         me.selectedResidues[residueid] = 1;
+      }
     }
 
     me.selectResidueList(me.selectedResidues, name, description);
@@ -156,7 +158,8 @@ iCn3DUI.prototype.saveSelection = function(name, description) { var me = this;
 
     me.updateSelectionNameDesc();
 
-    me.setLogCmd('select ' + me.residueids2spec(Object.keys(me.selectedResidues)) + ' | name ' + name + ' | description ' + description, true);
+    //me.setLogCmd('select ' + me.residueids2spec(Object.keys(me.selectedResidues)) + ' | name ' + name + ' | description ' + description, true);
+    me.setLogCmd('select ' + me.residueids2spec(Object.keys(me.selectedResidues)) + ' | name ' + name, true);
 };
 
 iCn3DUI.prototype.removeSelection = function() { var me = this;
@@ -188,13 +191,13 @@ iCn3DUI.prototype.updateSelectionNameDesc = function() { var me = this;
     var numDef = Object.keys(me.icn3d.defNames2Residues).length + Object.keys(me.icn3d.defNames2Atoms).length;
 
     $("#" + me.pre + "seq_command_name").val("seq_" + numDef);
-    $("#" + me.pre + "seq_command_desc").val("seq_desc_" + numDef);
+    //$("#" + me.pre + "seq_command_desc").val("seq_desc_" + numDef);
 
     $("#" + me.pre + "seq_command_name2").val("seq_" + numDef);
-    $("#" + me.pre + "seq_command_desc2").val("seq_desc_" + numDef);
+    //$("#" + me.pre + "seq_command_desc2").val("seq_desc_" + numDef);
 
     $("#" + me.pre + "alignseq_command_name").val("alseq_" + numDef);
-    $("#" + me.pre + "alignseq_command_desc").val("alseq_desc_" + numDef);
+    //$("#" + me.pre + "alignseq_command_desc").val("alseq_desc_" + numDef);
 };
 
 iCn3DUI.prototype.selectAChain = function (chainid, commandname, bAlign, bUnion) { var me = this;
@@ -280,9 +283,9 @@ iCn3DUI.prototype.selectResidueList = function (residueHash, commandname, comman
 
     var oriResidueArray = Object.keys(residueHash);
 
-    if( (me.icn3d.defNames2Atoms === undefined || !me.icn3d.defNames2Atoms.hasOwnProperty(commandname)) && (me.icn3d.defNames2Residues === undefined || !me.icn3d.defNames2Residues.hasOwnProperty(commandname)) ) {
+    //if( (me.icn3d.defNames2Atoms === undefined || !me.icn3d.defNames2Atoms.hasOwnProperty(commandname)) && (me.icn3d.defNames2Residues === undefined || !me.icn3d.defNames2Residues.hasOwnProperty(commandname)) ) {
         me.addCustomSelection(oriResidueArray, commandname, commanddescr, select, true);
-    }
+    //}
 
     if(bUpdateHighlight === undefined || bUpdateHighlight) me.updateHlAll(Object.keys(me.menuHlHash), undefined, bUnion);
   }

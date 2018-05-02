@@ -40,9 +40,11 @@ iCn3DUI.prototype.selectResidues = function(id, that) { var me = this;
         }
         else {
             for (var i in me.icn3d.residues[residueid]) {
-              me.icn3d.hAtoms[i] = undefined;
+              //me.icn3d.hAtoms[i] = undefined;
+              delete me.icn3d.hAtoms[i];
             }
-            me.selectedResidues[residueid] = undefined;
+            //me.selectedResidues[residueid] = undefined;
+            delete me.selectedResidues[residueid];
 
             me.icn3d.removeHlObjects();
         }
@@ -223,7 +225,8 @@ iCn3DUI.prototype.selectTitle = function(that) { var me = this;
                     me.icn3d.draw();
 
                     //me.setLogCmd('select ' + commandname, true);
-                    me.setLogCmd('select ' + me.residueids2spec(Object.keys(residueidHash)) + ' | name ' + commandname + ' | description ' + commanddescr, true);
+                    //me.setLogCmd('select ' + me.residueids2spec(Object.keys(residueidHash)) + ' | name ' + commandname + ' | description ' + commanddescr, true);
+                    me.setLogCmd('select ' + me.residueids2spec(Object.keys(residueidHash)) + ' | name ' + commandname, true);
                 } // if($(that).attr('gi') !== undefined) {
             } // if($(that).hasClass('icn3d-highlightSeq')) {
         } // if(!me.bAnnotations) {
