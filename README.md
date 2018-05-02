@@ -19,7 +19,7 @@ We provided two types of iCn3D widgets: [basic interface](https://www.ncbi.nlm.n
 
 Either of these widgets could be easily added to your own web pages. Please see the [help page](https://www.ncbi.nlm.nih.gov/Structure/icn3d/docs/icn3d_help.html#HowToUse) for more details.
 
-<b>Complete package</b> of iCn3D including Three.js and jQuery can be downloaded from [https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.0.2.zip](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.0.2.zip). The "Download ZIP" link in this page does not include third-party libraries. 
+<b>Complete package</b> of iCn3D including Three.js and jQuery can be downloaded from [https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.0.3.zip](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.0.3.zip). The "Download ZIP" link in this page does not include third-party libraries. 
 
 ## Usage
 
@@ -77,6 +77,8 @@ gulp
 ```
 
 ## Change log
+The production version [icn3d-2.0.3](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.0.3.zip) was release on May 2, 2018. Removed the "Description" field when saving a set of atoms. This made "Share Link" URL shorter. Made the size of stabilizer thicker for 3D printing.
+
 The production version [icn3d-2.0.2](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.0.2.zip) was release on April 30, 2018. Reset WebGLRenderer when WebGL context is lost in Internet Explore 11. 
 
 The production version [icn3d-2.0.1](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.0.1.zip) was release on April 23, 2018. The bug about extra 3D domains in the "Sequences & Annotations" window was fixed. The stabilizers for 3D printing were improved. 

@@ -206,12 +206,6 @@ iCn3DUI.prototype.updateHl2D = function(chainArray2d) { var me = this;
 iCn3DUI.prototype.updateHlMenus = function(commandnameArray) { var me = this;
     if(commandnameArray === undefined) commandnameArray = [];
 
-    if(me.bSetChainsAdvancedMenu === undefined || !me.bSetChainsAdvancedMenu) {
-       me.setPredefinedInMenu();
-
-       me.bSetChainsAdvancedMenu = true;
-    }
-
     var definedAtomsHtml = me.setAtomMenu(commandnameArray);
 
     if($("#" + me.pre + "atomsCustom").length) {
@@ -258,6 +252,29 @@ iCn3DUI.prototype.setPredefinedInMenu = function() { var me = this;
 
         me.selectResidueList(me.nalignHash1, me.notAlignedName1, me.notAlignedName1, false, false);
         me.selectResidueList(me.nalignHash2, me.notAlignedName2, me.notAlignedName2, false, false);
+
+        // for alignment, show aligned residues, chemicals, and ions
+        var dAtoms = {};
+        for(var alignChain in me.icn3d.alnChains) {
+            dAtoms = me.icn3d.unionHash(dAtoms, me.icn3d.alnChains[alignChain]);
+        }
+
+        var residuesHash = {}, chains = {};
+        for(var i in dAtoms) {
+            var atom = me.icn3d.atoms[i];
+
+            var chainid = atom.structure + '_' + atom.chain;
+            var resid = chainid + '_' + atom.resi;
+            residuesHash[resid] = 1;
+            chains[chainid] = 1;
+        }
+
+        var commandname = 'aligned_protein';
+        var commanddescr = 'aligned protein and nucleotides';
+        var select = "select " + me.residueids2spec(Object.keys(residuesHash));
+
+        //me.addCustomSelection(Object.keys(residuesHash), Object.keys(dAtoms), commandname, commanddescr, select, true);
+        me.addCustomSelection(Object.keys(residuesHash), commandname, commanddescr, select, true);
       }
 };
 

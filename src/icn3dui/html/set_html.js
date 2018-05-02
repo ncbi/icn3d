@@ -847,7 +847,7 @@ iCn3DUI.prototype.setDialogs = function() { var me = this;
     html += "  <table width='500'><tr><td valign='top'><table>";
     html += "<tr><td align='right'><b>Select:</b></td><td><input type='text' id='" + me.pre + "command' placeholder='$[structures].[chains]:[residues]@[atoms]' size='30'></td></tr>";
     html += "<tr><td align='right'><b>Name:</b></td><td><input type='text' id='" + me.pre + "command_name' placeholder='my_selection' size='30'></td></tr>";
-    html += "<tr><td align='right'><b>Description:</b></td><td><input type='text' id='" + me.pre + "command_desc' placeholder='description about my selection' size='30'></td></tr>";
+    //html += "<tr><td align='right'><b>Description:</b></td><td><input type='text' id='" + me.pre + "command_desc' placeholder='description about my selection' size='30'></td></tr>";
     html += "<tr><td colspan='2' align='center'><button id='" + me.pre + "command_apply'><b>Save Selection</b></button></td></tr>";
     html += "  </table></td>";
 
@@ -870,7 +870,8 @@ iCn3DUI.prototype.setDialogs = function() { var me = this;
     html += "  <li>Different selections can be unioned (with \"<b>or</b>\", default), intersected (with \"<b>and</b>\"), or negated (with \"<b>not</b>\"). For example, \":1-10 or :K\" selects all residues 1-10 and all Lys residues. \":1-10 and :K\" selects all Lys residues in the range of residue number 1-10. \":1-10 or not :K\" selects all residues 1-10, which are not Lys residues.</ul>";
     html += "  <b>Full commands in url or command window:</b>";
     html += "  <ul><li>Select without saving the set: select $1HHO,4N7N.A,B,C:5-10,KRDE,chemicals@CA,C<br/>";
-    html += "  <li>Select and save: select $1HHO,4N7N.A,B,C:5-10,KRDE,chemicals@CA,C | name my_name | description my_description</ul>";
+    //html += "  <li>Select and save: select $1HHO,4N7N.A,B,C:5-10,KRDE,chemicals@CA,C | name my_name | description my_description</ul>";
+    html += "  <li>Select and save: select $1HHO,4N7N.A,B,C:5-10,KRDE,chemicals@CA,C | name my_name</ul>";
 
     html += "</div>";
 
@@ -1017,14 +1018,14 @@ iCn3DUI.prototype.setDialogs = function() { var me = this;
     html += "</div>";
 
     html += "<div id='" + me.pre + "dl_thickness'>";
-    html += "<b>Line Radius</b>: <input type='text' id='" + me.pre + "linerad' value='0.6' size=4>&nbsp;&nbsp;&nbsp;(for stabilizers, hydrogen bonds, distance lines, default 0.1)<br/>";
-    html += "<b>Coil Radius</b>: <input type='text' id='" + me.pre + "coilrad' value='1.0' size=4>&nbsp;&nbsp;&nbsp;(for coils, default 0.4)<br/>";
+    html += "<b>Line Radius</b>: <input type='text' id='" + me.pre + "linerad' value='1' size=4>&nbsp;&nbsp;&nbsp;(for stabilizers, hydrogen bonds, distance lines, default 0.1)<br/>";
+    html += "<b>Coil Radius</b>: <input type='text' id='" + me.pre + "coilrad' value='1.2' size=4>&nbsp;&nbsp;&nbsp;(for coils, default 0.4)<br/>";
     html += "<b>Stick Radius</b>: <input type='text' id='" + me.pre + "stickrad' value='0.8' size=4>&nbsp;&nbsp;&nbsp;(for sticks, default 0.4)<br/>";
-    html += "<b>Trace Radius</b>: <input type='text' id='" + me.pre + "tracerad' value='0.8' size=4>&nbsp;&nbsp;&nbsp;(for C alpha trace, O3' trace, default 0.2)<br/>";
+    html += "<b>Trace Radius</b>: <input type='text' id='" + me.pre + "tracerad' value='1' size=4>&nbsp;&nbsp;&nbsp;(for C alpha trace, O3' trace, default 0.2)<br/>";
 
-    html += "<b>Ribbon Thickness</b>: <input type='text' id='" + me.pre + "ribbonthick' value='0.8' size=4>&nbsp;&nbsp;&nbsp;(for helix and sheet ribbons, nucleotide ribbons, default 0.4)<br/>";
+    html += "<b>Ribbon Thickness</b>: <input type='text' id='" + me.pre + "ribbonthick' value='1' size=4>&nbsp;&nbsp;&nbsp;(for helix and sheet ribbons, nucleotide ribbons, default 0.4)<br/>";
     html += "<b>Protein Ribbon Width</b>: <input type='text' id='" + me.pre + "prtribbonwidth' value='2.0' size=4>&nbsp;&nbsp;&nbsp;(for helix and sheet ribbons, default 1.3)<br/>";
-    html += "<b>Nucleotide Ribbon Width</b>: <input type='text' id='" + me.pre + "nucleotideribbonwidth' value='1.2' size=4>&nbsp;&nbsp;&nbsp;(for nucleotide ribbons, default 0.8)<br/>";
+    html += "<b>Nucleotide Ribbon Width</b>: <input type='text' id='" + me.pre + "nucleotideribbonwidth' value='1.4' size=4>&nbsp;&nbsp;&nbsp;(for nucleotide ribbons, default 0.8)<br/>";
 
     html += "<b>Ball Scale</b>: <input type='text' id='" + me.pre + "ballscale' value='0.6' size=4>&nbsp;&nbsp;&nbsp;(for styles 'Ball and Stick' and 'Dot', default 0.3)<br/>";
 
@@ -1072,7 +1073,7 @@ iCn3DUI.prototype.setDialogs = function() { var me = this;
     var index = (me.icn3d) ? Object.keys(me.icn3d.defNames2Atoms).length : 1;
     var suffix = '';
     html += "Name: <input type='text' id='" + me.pre + "seq_command_name" + suffix + "' value='seq_" + index + "' size='5'> <br>";
-    html += "Description: <input type='text' id='" + me.pre + "seq_command_desc" + suffix + "' value='seq_desc_" + index + "' size='10'> <br>";
+    //html += "Description: <input type='text' id='" + me.pre + "seq_command_desc" + suffix + "' value='seq_desc_" + index + "' size='10'> <br>";
     html += "<button style='white-space:nowrap;' id='" + me.pre + "seq_saveselection" + suffix + "'>Save</button> <button style='white-space:nowrap; margin-left:20px;' id='" + me.pre + "seq_clearselection" + suffix + "'>Clear</button><br/><br/>";
     html += "</div>";
 
@@ -1160,7 +1161,8 @@ iCn3DUI.prototype.setSequenceGuide = function (suffix, bShown) { var me = this;
  else {
      sequencesHtml += '<div style="width:20px; margin-left:3px; display:inline-block;"><span id="' + me.pre + 'seqguide' + suffix + '_expand" class="ui-icon ui-icon-plus icn3d-expand icn3d-link" style="width:15px;" title="Expand"></span><span id="' + me.pre + 'seqguide' + suffix + '_shrink" class="ui-icon ui-icon-minus icn3d-shrink icn3d-link" style="display:none; width:15px;" title="Shrink"></span></div> ';
 
-     sequencesHtml += "<div style='min-width:200px; display:inline-block;'><b>Selection:</b> Name: <input type='text' id='" + me.pre + "seq_command_name" + suffix + "' value='seq_" + index + "' size='5'> &nbsp;&nbsp;Description: <input type='text' id='" + me.pre + "seq_command_desc" + suffix + "' value='seq_desc_" + index + "' size='10'> &nbsp;&nbsp;<button style='white-space:nowrap;' id='" + me.pre + "seq_saveselection" + suffix + "'>Save</button> <button style='white-space:nowrap; margin-left:20px;' id='" + me.pre + "seq_clearselection" + suffix + "'>Clear</button></div><br/>";
+     //sequencesHtml += "<div style='min-width:200px; display:inline-block;'><b>Selection:</b> Name: <input type='text' id='" + me.pre + "seq_command_name" + suffix + "' value='seq_" + index + "' size='5'> &nbsp;&nbsp;Description: <input type='text' id='" + me.pre + "seq_command_desc" + suffix + "' value='seq_desc_" + index + "' size='10'> &nbsp;&nbsp;<button style='white-space:nowrap;' id='" + me.pre + "seq_saveselection" + suffix + "'>Save</button> <button style='white-space:nowrap; margin-left:20px;' id='" + me.pre + "seq_clearselection" + suffix + "'>Clear</button></div><br/>";
+     sequencesHtml += "<div style='min-width:200px; display:inline-block;'><b>Selection:</b> Name: <input type='text' id='" + me.pre + "seq_command_name" + suffix + "' value='seq_" + index + "' size='5'> &nbsp;&nbsp;<button style='white-space:nowrap;' id='" + me.pre + "seq_saveselection" + suffix + "'>Save</button> <button style='white-space:nowrap; margin-left:20px;' id='" + me.pre + "seq_clearselection" + suffix + "'>Clear</button></div><br/>";
 
      sequencesHtml += "<div id='" + me.pre + "seqguide" + suffix + "' style='display:none; white-space:normal;' class='icn3d-box'>";
  }
@@ -1205,7 +1207,8 @@ iCn3DUI.prototype.getAlignSequencesAnnotations = function (alignChainArray, bUpd
         sequencesHtml = "<b>Select Aligned Sequences:</b> touch to select, touch again to deselect, multiple selection is allowed without Ctrl key, click \"Save Selection\" to save the current selection.<br/>";
   }
 
-  sequencesHtml += "<div style='min-width:200px;'><b>Selection:</b> Name: <input type='text' id='" + me.pre + "alignseq_command_name' value='alseq_" + Object.keys(me.icn3d.defNames2Atoms).length + "' size='10'> &nbsp;&nbsp;Description: <input type='text' id='" + me.pre + "alignseq_command_desc' value='alseq_desc_" + Object.keys(me.icn3d.defNames2Atoms).length + "' size='20'> <button style='white-space:nowrap;' id='" + me.pre + "alignseq_saveselection'>Save</button> <button style='white-space:nowrap; margin-left:20px;' id='" + me.pre + "alignseq_clearselection'>Clear</button></div><br/>";
+  //sequencesHtml += "<div style='min-width:200px;'><b>Selection:</b> Name: <input type='text' id='" + me.pre + "alignseq_command_name' value='alseq_" + Object.keys(me.icn3d.defNames2Atoms).length + "' size='10'> &nbsp;&nbsp;Description: <input type='text' id='" + me.pre + "alignseq_command_desc' value='alseq_desc_" + Object.keys(me.icn3d.defNames2Atoms).length + "' size='20'> <button style='white-space:nowrap;' id='" + me.pre + "alignseq_saveselection'>Save</button> <button style='white-space:nowrap; margin-left:20px;' id='" + me.pre + "alignseq_clearselection'>Clear</button></div><br/>";
+  sequencesHtml += "<div style='min-width:200px;'><b>Selection:</b> Name: <input type='text' id='" + me.pre + "alignseq_command_name' value='alseq_" + Object.keys(me.icn3d.defNames2Atoms).length + "' size='10'> &nbsp;&nbsp;<button style='white-space:nowrap;' id='" + me.pre + "alignseq_saveselection'>Save</button> <button style='white-space:nowrap; margin-left:20px;' id='" + me.pre + "alignseq_clearselection'>Clear</button></div><br/>";
 
   sequencesHtml += resCategories + scroll + "<br/>";
 

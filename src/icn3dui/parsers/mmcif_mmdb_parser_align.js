@@ -143,29 +143,6 @@ iCn3DUI.prototype.downloadAlignment = function (align) { var me = this;
                 $("#" + me.pre + "alternateWrapper").hide();
             }
 
-            // for alignment, show aligned residues, chemicals, and ions
-            var dAtoms = {};
-            for(var alignChain in me.icn3d.alnChains) {
-                dAtoms = me.icn3d.unionHash(dAtoms, me.icn3d.alnChains[alignChain]);
-            }
-
-            var residuesHash = {}, chains = {};
-            for(var i in dAtoms) {
-                var atom = me.icn3d.atoms[i];
-
-                var chainid = atom.structure + '_' + atom.chain;
-                var resid = chainid + '_' + atom.resi;
-                residuesHash[resid] = 1;
-                chains[chainid] = 1;
-            }
-
-            var commandname = 'aligned_protein';
-            var commanddescr = 'aligned protein and nucleotides';
-            var select = "select " + me.residueids2spec(Object.keys(residuesHash));
-
-            //me.addCustomSelection(Object.keys(residuesHash), Object.keys(dAtoms), commandname, commanddescr, select, true);
-            me.addCustomSelection(Object.keys(residuesHash), commandname, commanddescr, select, true);
-
             // show all
             var allAtoms = {};
             for(var i in me.icn3d.atoms) {
@@ -177,7 +154,6 @@ iCn3DUI.prototype.downloadAlignment = function (align) { var me = this;
             me.icn3d.setAtomStyleByOptions(me.opts);
             // change the default color to "Identity"
             me.icn3d.setColorByOptions(me.opts, me.icn3d.atoms);
-
             me.renderStructure();
 
             if(me.cfg.rotate !== undefined) me.rotStruc(me.cfg.rotate, true);

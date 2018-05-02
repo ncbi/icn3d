@@ -326,7 +326,8 @@ iCn3D.prototype.applyDisplayOptions = function (options, atoms, bHighlight) { va
     var chemicalSchematicRadius = this.cylinderRadius * 0.5;
 
     // remove schematic labels
-    if(this.labels !== undefined) this.labels['schematic'] = undefined;
+    //if(this.labels !== undefined) this.labels['schematic'] = undefined;
+    if(this.labels !== undefined) delete this.labels['schematic'];
 
     for(var style in this.style2atoms) {
       // 14 styles: ribbon, strand, cylinder and plate, nucleotide cartoon, o3 trace, schematic, c alpha trace, b factor tube, lines, stick, ball and stick, sphere, dot, nothing
@@ -681,10 +682,13 @@ iCn3D.prototype.setStyle2Atoms = function (atoms) {
         this.style2atoms[this.atoms[i].style][i] = 1;
 
         // side chains
-        if(this.style2atoms[this.atoms[i].style2] === undefined) this.style2atoms[this.atoms[i].style2] = {};
+        if(this.atoms[i].style2 !== undefined && this.atoms[i].style2 !== 'nothing') {
+            if(this.style2atoms[this.atoms[i].style2] === undefined) this.style2atoms[this.atoms[i].style2] = {};
 
-        this.style2atoms[this.atoms[i].style2][i] = 1;
+            this.style2atoms[this.atoms[i].style2][i] = 1;
+        }
       }
+
 /*
       for(var i in this.atoms) {
           if(atoms.hasOwnProperty(i)) {
@@ -718,14 +722,14 @@ iCn3D.prototype.setAtomStyleByOptions = function (options) {
         }
     }
 
-    // side chain overwrite the protein style
-    if (options.sidec !== undefined) {
+    // side chain use style2
+    if (options.sidec !== undefined && options.sidec !== 'nothing') {
         selectedAtoms = this.intHash(this.hAtoms, this.sidec);
         //var sidec_calpha = this.unionHash(this.calphas, this.sidec);
         //selectedAtoms = this.intHash(this.hAtoms, sidec_calpha);
 
         for(var i in selectedAtoms) {
-          this.atoms[i].style = options.sidec.toLowerCase();
+          this.atoms[i].style2 = options.sidec.toLowerCase();
         }
     }
 
@@ -756,6 +760,8 @@ iCn3D.prototype.setAtomStyleByOptions = function (options) {
           this.atoms[i].style = options.nucleotides.toLowerCase();
         }
     }
+console.log("setAtomStyleByOptions atoms: " + Object.keys(this.atoms).length + " selectedAtoms: " + Object.keys(selectedAtoms).length);
+
 };
 
 iCn3D.prototype.rebuildSceneBase = function (options) { var me = this;
@@ -827,6 +833,7 @@ iCn3D.prototype.rebuildSceneBase = function (options) { var me = this;
     this.mouse = new THREE.Vector2();
 
     var background = this.backgroundColors[this.opts.background.toLowerCase()];
+
     if(this.opts.background.toLowerCase() === 'transparent') {
         this.renderer.setClearColor(background, 0);
     }

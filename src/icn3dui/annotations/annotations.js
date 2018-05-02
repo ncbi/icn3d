@@ -1330,6 +1330,8 @@ iCn3DUI.prototype.showSnpClinvar = function(chnid, chnidBase) {
 
         console.log( "No SNP data were found for the protein " + chnid + "..." );
 
+        me.bAjaxSnpClinvar = true;
+
         if(me.deferredSnpClinvar !== undefined) me.deferredSnpClinvar.resolve();
         return;
       }
@@ -1582,6 +1584,8 @@ iCn3DUI.prototype.showCddSite = function(chnid, chnidBase) {
 
         console.log( "No CDD data were found for the protein " + chnid + "..." );
 
+        me.bAjaxCddSite = true;
+
         if(me.deferredAnnoCddSite !== undefined) me.deferredAnnoCddSite.resolve();
         return;
       }
@@ -1631,6 +1635,8 @@ iCn3DUI.prototype.showDomain = function(chnid, chnidBase) { var me = this;
             }
 
             console.log( "No 3D domain data were found for the protein " + chnid + "..." );
+
+            me.bAjax3ddomain = true;
 
             if(me.deferred3ddomain !== undefined) me.deferred3ddomain.resolve();
             return;

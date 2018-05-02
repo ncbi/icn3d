@@ -429,14 +429,14 @@ iCn3DUI.prototype = {
     saveSelectionIfSelected: function (id, value) { var me = this;
       if(me.bSelectResidue || me.bSelectAlignResidue) {
           var name = $("#" + me.pre + "seq_command_name2").val().replace(/\s+/g, '_');
-          var description = $("#" + me.pre + "seq_command_desc2").val();
+          //var description = $("#" + me.pre + "seq_command_desc2").val();
 
           if(name === "") {
             name = $("#" + me.pre + "alignseq_command_name").val().replace(/\s+/g, '_');
-            description = $("#" + me.pre + "alignseq_command_desc").val();
+            //description = $("#" + me.pre + "alignseq_command_desc").val();
           }
 
-          if(name !== "") me.saveSelection(name, description);
+          if(name !== "") me.saveSelection(name, name);
 
           me.bSelectResidue = false;
           me.bSelectAlignResidue = false;
@@ -477,6 +477,8 @@ iCn3DUI.prototype = {
     },
 
     setStyle: function (selectionType, style) { var me = this;
+console.log("setStyle atoms: " + Object.keys(me.icn3d.atoms).length + " hl atoms: " + Object.keys(me.icn3d.hAtoms).length);
+
       var atoms = {};
       switch (selectionType) {
           case 'proteins':
@@ -1875,6 +1877,7 @@ iCn3DUI.prototype = {
     clkMn2_definedsets: function() { var me = this;
         $("#" + me.pre + "mn2_definedsets").add("#" + me.pre + "definedsets").click(function (e) {
            me.showSets();
+
            me.setLogCmd('defined sets', true);
         });
     },
@@ -2943,7 +2946,8 @@ iCn3DUI.prototype = {
            var commanddesc = select;
 
            me.selectByCommand(select, commandname, commanddesc);
-           me.setLogCmd('select ' + select + ' | name ' + commandname + ' | description ' + commanddesc, true);
+           //me.setLogCmd('select ' + select + ' | name ' + commandname + ' | description ' + commanddesc, true);
+           me.setLogCmd('select ' + select + ' | name ' + commandname, true);
         });
     },
 
@@ -3703,9 +3707,9 @@ iCn3DUI.prototype = {
            me.bSelectResidue = false;
 
            var name = $("#" + me.pre + "seq_command_name").val().replace(/\s+/g, '_');
-           var description = $("#" + me.pre + "seq_command_desc").val();
+           //var description = $("#" + me.pre + "seq_command_desc").val();
 
-           me.saveSelection(name, description);
+           me.saveSelection(name, name);
         });
 
         $(document).on("click", "#" + me.pre + "seq_saveselection2", function(e) {
@@ -3714,9 +3718,9 @@ iCn3DUI.prototype = {
            me.bSelectResidue = false;
 
            var name = $("#" + me.pre + "seq_command_name2").val().replace(/\s+/g, '_');
-           var description = $("#" + me.pre + "seq_command_desc2").val();
+           //var description = $("#" + me.pre + "seq_command_desc2").val();
 
-           me.saveSelection(name, description);
+           me.saveSelection(name, name);
         });
     },
 
@@ -3726,9 +3730,9 @@ iCn3DUI.prototype = {
             me.bSelectAlignResidue = false;
 
             var name = $("#" + me.pre + "alignseq_command_name").val().replace(/\s+/g, '_');
-            var description = $("#" + me.pre + "alignseq_command_desc").val();
+            //var description = $("#" + me.pre + "alignseq_command_desc").val();
 
-            me.saveSelection(name, description);
+            me.saveSelection(name, name);
         });
     },
 
