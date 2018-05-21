@@ -1,3 +1,7 @@
+/**
+ * @author Jiyao Wang <wangjiy@ncbi.nlm.nih.gov> / https://github.com/ncbi/icn3d
+ */
+
 iCn3D.prototype.setParametersForShader = function () { var me = this;
     var modelViewMatrix = new THREE.Uniform( new THREE.Matrix4() )
             .onUpdate( function( object ){
