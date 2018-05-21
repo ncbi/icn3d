@@ -80,6 +80,72 @@ iCn3DUI.prototype.downloadMmcif = function (mmcifid) { var me = this;
     });
 };
 
+iCn3DUI.prototype.downloadMmcifSymmetry = function (mmcifid) { var me = this;
+  // chain functions together
+  me.deferredSymmetry = $.Deferred(function() {
+      me.downloadMmcifSymmetryBase(mmcifid);
+  }); // end of me.deferred = $.Deferred(function() {
+
+  return me.deferredSymmetry.promise();
+};
+
+iCn3DUI.prototype.downloadMmcifSymmetryBase = function (mmcifid) { var me = this;
+   var url, dataType;
+
+   url = "https://files.rcsb.org/header/" + mmcifid + ".cif";
+
+   dataType = "text";
+
+   me.icn3d.bCid = undefined;
+
+   $.ajax({
+      url: url,
+      dataType: dataType,
+      cache: true,
+      tryCount : 0,
+      retryLimit : 1,
+      success: function(data) {
+           url = "https://www.ncbi.nlm.nih.gov/Structure/mmcifparser/mmcifparser.cgi";
+
+           $.ajax({
+              url: url,
+              type: 'POST',
+              data : {'mmcifheader': data},
+              dataType: 'jsonp',
+              cache: true,
+              tryCount : 0,
+              retryLimit : 1,
+              success: function(data) {
+                  me.loadMmcifSymmetry(data);
+
+                  if(me.deferredSymmetry !== undefined) me.deferredSymmetry.resolve();
+              },
+              error : function(xhr, textStatus, errorThrown ) {
+                this.tryCount++;
+                if (this.tryCount <= this.retryLimit) {
+                    //try again
+                    $.ajax(this);
+                    return;
+                }
+
+                if(me.deferredSymmetry !== undefined) me.deferredSymmetry.resolve();
+                return;
+              }
+            });
+      },
+      error : function(xhr, textStatus, errorThrown ) {
+        this.tryCount++;
+        if (this.tryCount <= this.retryLimit) {
+            //try again
+            $.ajax(this);
+            return;
+        }
+
+        return;
+      }
+    });
+};
+
 iCn3DUI.prototype.loadMmcifData = function(data) { var me = this;
     if (data.atoms !== undefined) {
         me.icn3d.init();
@@ -100,6 +166,15 @@ iCn3DUI.prototype.loadMmcifData = function(data) { var me = this;
           }
         }
 
+        if(me.icn3d.biomtMatrices !== undefined && me.icn3d.biomtMatrices.length > 1) {
+            $("#" + me.pre + "assemblyWrapper").show();
+
+            me.icn3d.asuCnt = me.icn3d.biomtMatrices.length;
+        }
+        else {
+            $("#" + me.pre + "assemblyWrapper").hide();
+        }
+
         me.icn3d.setAtomStyleByOptions(me.opts);
         me.icn3d.setColorByOptions(me.opts, me.icn3d.atoms);
 
@@ -115,6 +190,51 @@ iCn3DUI.prototype.loadMmcifData = function(data) { var me = this;
         alert('invalid atoms data.');
         return false;
     }
+};
+
+iCn3DUI.prototype.loadMmcifSymmetry = function(data) { var me = this;
+    //if(me.cfg.align === undefined && Object.keys(me.icn3d.structures).length == 1) {
+    //    $("#" + me.pre + "alternateWrapper").hide();
+    //}
+
+    // load assembly info
+    var assembly = data.assembly;
+    var pmatrix = data.pmatrix;
+
+//    var pmatrixMat4 = new THREE.Matrix4();
+//    pmatrixMat4.fromArray(pmatrix);
+
+//console.log("pmatrix: " + JSON.stringify(pmatrix));
+
+    for(var i = 0, il = assembly.length; i < il; ++i) {
+//console.log("i: " + i + " matrix1: " + JSON.stringify(assembly[i]));
+
+      //var pmatrixInverseMat4 = new THREE.Matrix4();
+      //pmatrixInverseMat4.getInverse(pmatrixMat4);
+
+      var mat4 = new THREE.Matrix4();
+      mat4.fromArray(assembly[i]);
+
+      //pmatrixInverseMat4.multiply(mat4).multiply(pmatrixMat4);
+//      mat4.multiplyMatrices(pmatrixMat4, mat4);
+
+//console.log("mat4.elements: " + JSON.stringify(mat4.elements));
+
+/*
+      if (me.icn3d.biomtMatrices[i] == undefined) me.icn3d.biomtMatrices[i] = new THREE.Matrix4().identity();
+
+      for(var j = 0, jl = assembly[i].length; j < jl; ++j) {
+        //me.icn3d.biomtMatrices[i].elements[j] = assembly[i][j];
+        //me.icn3d.biomtMatrices[i].elements[j] = pmatrixInverseMat4.elements[j];
+        me.icn3d.biomtMatrices[i].elements[j] = mat4.elements[j];
+      }
+*/
+
+      me.icn3d.biomtMatrices[i] = mat4;
+    }
+//console.log("me.icn3d.biomtMatrices: " + JSON.stringify(me.icn3d.biomtMatrices));
+
+    me.icn3d.asuCnt = me.icn3d.biomtMatrices.length;
 };
 
 iCn3DUI.prototype.downloadMmdb = function (mmdbid, bGi) { var me = this;
@@ -159,6 +279,11 @@ iCn3DUI.prototype.downloadMmdb = function (mmdbid, bGi) { var me = this;
           me.hideLoading();
       },
       success: function(data) {
+        if(data.atoms === undefined && data.molid2rescount === undefined) {
+            alert('invalid MMDB data.');
+            return false;
+        }
+
         me.icn3d.init();
 
         // used in download2Ddgm()
@@ -168,8 +293,6 @@ iCn3DUI.prototype.downloadMmdb = function (mmdbid, bGi) { var me = this;
 
         var id = (data.pdbId !== undefined) ? data.pdbId : data.mmdbId;
         me.inputid = id;
-
-        me.asuAtomCount = data.asuAtomCount;
 
         // get molid2color = {}, chain2molid = {}, molid2chain = {};
         var labelsize = 40;
@@ -216,48 +339,30 @@ iCn3DUI.prototype.downloadMmdb = function (mmdbid, bGi) { var me = this;
         me.icn3d.molid2chain = molid2chain;
 
         //if ((me.cfg.inpara !== undefined && me.cfg.inpara.indexOf('mols=') != -1) || (data.atomcount <= maxatomcnt && data.atoms !== undefined) ) {
-            // small structure with all atoms
-            // show surface options
-            $("#" + me.pre + "accordion5").show();
+        // small structure with all atoms
+        // show surface options
+        $("#" + me.pre + "accordion5").show();
 
-            me.loadAtomDataIn(data, id, 'mmdbid');
+        me.loadAtomDataIn(data, id, 'mmdbid');
 
-            if(me.cfg.align === undefined && Object.keys(me.icn3d.structures).length == 1) {
-                if($("#" + me.pre + "alternateWrapper") !== null) $("#" + me.pre + "alternateWrapper").hide();
-            }
+        // "asuAtomCount" is defined when: 1) atom count is over the threshold 2) buidx=1 3) asu atom count is smaller than biological unit atom count
+        me.bAssemblyUseAsu = (data.asuAtomCount !== undefined) ? true : false;
 
-            me.icn3d.setAtomStyleByOptions(me.opts);
-            // use the original color from cgi output
-            me.icn3d.setColorByOptions(me.opts, me.icn3d.atoms, true);
+        if(me.bAssemblyUseAsu) { // set up symmetric matrices
+            $("#" + me.pre + "assemblyWrapper").show();
+            me.icn3d.bAssembly = true;
 
-            me.renderStructure();
+            //me.downloadMmcifSymmetry(id);
 
-            if(me.cfg.rotate !== undefined) me.rotStruc(me.cfg.rotate, true);
-        //}
-
-        me.html2ddgm = '';
-
-/*
-        setTimeout(function(){
-            me.download2Ddgm(me.inputid.toUpperCase());
-        }, 0);
-
-        //if(me.cfg.show2d !== undefined && me.cfg.show2d) me.openDialog(me.pre + 'dl_2ddgm', 'Interactions');
-*/
-
-        if(me.cfg.show2d !== undefined && me.cfg.show2d) {
-            me.openDialog(me.pre + 'dl_2ddgm', 'Interactions');
-            me.download2Ddgm(me.inputid.toUpperCase());
-            //me.download2Ddgm(Object.keys(me.icn3d.structures)[0].toUpperCase());
+            $.when(me.downloadMmcifSymmetry(id)).then(function() {
+                me.downloadMmdbPart2();
+            });
         }
+        else {
+            $("#" + me.pre + "assemblyWrapper").hide();
+            me.icn3d.bAssembly = false;
 
-        //if(me.cfg.showseq !== undefined && me.cfg.showseq) me.openDialog(me.pre + 'dl_selectresidues', 'Select residues in sequences');
-
-        if(me.deferred !== undefined) me.deferred.resolve(); if(me.deferred2 !== undefined) me.deferred2.resolve();
-
-        if(data.atoms === undefined && data.molid2rescount === undefined) {
-            alert('invalid MMDB data.');
-            return false;
+            me.downloadMmdbPart2();
         }
       },
       error : function(xhr, textStatus, errorThrown ) {
@@ -278,6 +383,28 @@ iCn3DUI.prototype.downloadMmdb = function (mmdbid, bGi) { var me = this;
         return;
       } // success
     }); // ajax
+};
+
+iCn3DUI.prototype.downloadMmdbPart2 = function () { var me = this;
+    me.icn3d.setAtomStyleByOptions(me.opts);
+    // use the original color from cgi output
+    me.icn3d.setColorByOptions(me.opts, me.icn3d.atoms, true);
+
+    me.renderStructure();
+    if(me.cfg.rotate !== undefined) me.rotStruc(me.cfg.rotate, true);
+
+    me.html2ddgm = '';
+    if(me.cfg.show2d !== undefined && me.cfg.show2d) {
+        me.openDialog(me.pre + 'dl_2ddgm', 'Interactions');
+        me.download2Ddgm(me.inputid.toUpperCase());
+        //me.download2Ddgm(Object.keys(me.icn3d.structures)[0].toUpperCase());
+    }
+
+    if(me.cfg.align === undefined && Object.keys(me.icn3d.structures).length == 1) {
+        if($("#" + me.pre + "alternateWrapper") !== null) $("#" + me.pre + "alternateWrapper").hide();
+    }
+
+    if(me.deferred !== undefined) me.deferred.resolve(); if(me.deferred2 !== undefined) me.deferred2.resolve();
 };
 
 iCn3DUI.prototype.downloadGi = function (gi) { var me = this;

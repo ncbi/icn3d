@@ -5,6 +5,15 @@
 iCn3DUI.prototype.showAnnotations = function() { var me = this;
     me.openDialog(me.pre + 'dl_selectannotations', 'Sequences and Annotations');
 
+    // add note about assembly
+    if( (me.bAssemblyNote === undefined || !me.bAssemblyNote) && me.icn3d.asuCnt !== undefined ) {
+        var html = "     <br><div id='" + me.pre + "assembly_note' style='margin-left:5px;'><span class='icn3d-annoLargeTitle'>Assembly Tips:</span> Only the asymmetric unit is shown in the sequence window.<br>Click \"Assembly\" in the menu \"View\" to switch between asymmetric unit and biological assembly (<b>" + me.icn3d.asuCnt + "</b> asymmetric unit).</div>";
+
+        $("#" + me.pre + "dl_annotations_tabs").append(html);
+
+        me.bAssemblyNote = true;
+    }
+
     if(me.bAnnoShown === undefined || !me.bAnnoShown) {
         //me.setLogCmd("view annotations", true);
 
@@ -86,7 +95,7 @@ iCn3DUI.prototype.showAnnotations = function() { var me = this;
                             continue;
                         }
                         else {
-                            var name = resObj.name;
+                            var name = resObj.name.trim();
 
                             if(chemical_set[name] === undefined) chemical_set[name] = [];
                             chemical_set[name].push(resid);
@@ -1914,7 +1923,7 @@ iCn3DUI.prototype.showInteraction_base = function(chnid, chnidBase) {
 //            var pos = me.icn3d.chainsSeq[chnid][i - me.matchedPos[chnid] ].resi;
               var pos = (i >= me.matchedPos[chnid] && i - me.matchedPos[chnid] < me.icn3d.chainsSeq[chnid].length) ? me.icn3d.chainsSeq[chnid][i - me.matchedPos[chnid]].resi : me.baseResi[chnid] + 1 + i;
 
-              html += '<span id="' + pre + '_' + me.pre + chnid + '_' + pos + '" title="' + c + pos + '" class="icn3d-residue">' + cFull + '</span>';
+              html += '<span id="' + pre + '_' + me.pre + chnid + '_' + pos + '" title="' + cFull + pos + '" class="icn3d-residue">' + c + '</span>';
 
                 var emptyWidth = parseInt(me.seqAnnWidth * i / me.maxAnnoLength - prevEmptyWidth - prevLineWidth);
                 if(emptyWidth < 0) emptyWidth = 0;
@@ -2224,7 +2233,9 @@ iCn3DUI.prototype.showAnnoSelectedChains = function () {   var me = this;
         }
 
         var atom = me.icn3d.getFirstAtomObj(me.icn3d.chains[chainid]);
-        $("#" + me.pre + "anno_" + atom.resn).show();
+        var oneLetterRes = me.icn3d.residueName2Abbr(atom.resn.substr(0, 3));
+
+        $("#" + me.pre + "anno_" + oneLetterRes).show();
     }
 };
 

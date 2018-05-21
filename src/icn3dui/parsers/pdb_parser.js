@@ -92,6 +92,15 @@ iCn3DUI.prototype.loadPdbData = function(data) {
 
       me.icn3d.loadPDB(data); // defined in the core library
 
+      if(me.icn3d.biomtMatrices !== undefined && me.icn3d.biomtMatrices.length > 1) {
+        $("#" + me.pre + "assemblyWrapper").show();
+
+        me.icn3d.asuCnt = me.icn3d.biomtMatrices.length;
+      }
+      else {
+        $("#" + me.pre + "assemblyWrapper").hide();
+      }
+
       var bCalphaOnly = me.icn3d.isCalphaPhosOnly(me.icn3d.hash2Atoms(me.icn3d.proteins), 'CA');
 
       var calphaonly = (bCalphaOnly) ? '1' : '0';

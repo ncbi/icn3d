@@ -465,7 +465,8 @@ iCn3DUI.prototype = {
               me.icn3d.removeLastSurface();
           }
           me.icn3d.applySurfaceOptions();
-          me.icn3d.render();
+          //me.icn3d.render();
+          me.icn3d.draw(); // to make surface work in assembly
       }
       else if(id === 'chemicalbinding') {
           me.icn3d.bSkipChemicalbinding = false;

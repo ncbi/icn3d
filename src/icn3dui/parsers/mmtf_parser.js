@@ -25,14 +25,25 @@ iCn3DUI.prototype.downloadMmtf = function (mmtfid) { var me = this;
             if(mmtfData.bioAssemblyList[0].transformList.length > 1) {
                 me.icn3d.biomtMatrices = [];
                 for(var i = 0, il = mmtfData.bioAssemblyList[0].transformList.length; i < il; ++i) {
-                    var biomt = new THREE.Matrix4().identity();
+                    //var biomt = new THREE.Matrix4().identity();
 
-                    for(var j = 0, jl = mmtfData.bioAssemblyList[0].transformList[i].matrix.length; j < jl; ++j) {
-                        biomt.elements[j] = mmtfData.bioAssemblyList[0].transformList[i].matrix[j];
-                    }
+                    //for(var j = 0, jl = mmtfData.bioAssemblyList[0].transformList[i].matrix.length; j < jl; ++j) {
+                        //biomt.elements[j] = mmtfData.bioAssemblyList[0].transformList[i].matrix[j];
+                    //}
+
+                    var biomt = new THREE.Matrix4().fromArray(mmtfData.bioAssemblyList[0].transformList[i].matrix).transpose();
 
                     me.icn3d.biomtMatrices.push(biomt);
                 }
+            }
+
+            if(me.icn3d.biomtMatrices !== undefined && me.icn3d.biomtMatrices.length > 1) {
+                $("#" + me.pre + "assemblyWrapper").show();
+
+                me.icn3d.asuCnt = me.icn3d.biomtMatrices.length;
+            }
+            else {
+                $("#" + me.pre + "assemblyWrapper").hide();
             }
 
             var oriindex2serial = {};

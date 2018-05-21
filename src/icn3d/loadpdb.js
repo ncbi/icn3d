@@ -132,7 +132,8 @@ iCn3D.prototype.loadPDB = function (src) {
              // from GLMol
              if (type == 350 && line.substr(13, 5) == 'BIOMT') {
                 var n = parseInt(line[18]) - 1;
-                var m = parseInt(line.substr(21, 2));
+                //var m = parseInt(line.substr(21, 2));
+                var m = parseInt(line.substr(21, 2)) - 1; // start from 1
                 if (this.biomtMatrices[m] == undefined) this.biomtMatrices[m] = new THREE.Matrix4().identity();
                 this.biomtMatrices[m].elements[n] = parseFloat(line.substr(24, 9));
                 this.biomtMatrices[m].elements[n + 4] = parseFloat(line.substr(34, 9));

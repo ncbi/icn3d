@@ -373,11 +373,13 @@ iCn3DUI.prototype.setMenu2b = function() { var me = this;
         html += "    </ul>";
         html += "  </li>";
 
-        if(me.cfg.mmtfid !== undefined || me.cfg.pdbid !== undefined || me.cfg.mmcifid !== undefined) {
-          html += "  <li><span>Assembly</span>";
+        if(me.cfg.mmtfid !== undefined || me.cfg.pdbid !== undefined || me.cfg.mmcifid !== undefined || me.cfg.mmdbid !== undefined) {
+          html += "  <li id='" + me.pre + "assemblyWrapper'><span>Assembly</span>";
           html += "    <ul>";
-          html += me.getRadio('mn6_assembly', 'mn6_assemblyYes', 'Yes');
-          html += me.getRadio('mn6_assembly', 'mn6_assemblyNo', 'No', true);
+
+          html += me.getRadio('mn6_assembly', 'mn6_assemblyYes', 'Biological Assembly', true);
+          html += me.getRadio('mn6_assembly', 'mn6_assemblyNo', 'Asymmetric Unit');
+
           html += "    </ul>";
           html += "  </li>";
         }
@@ -1137,6 +1139,9 @@ iCn3DUI.prototype.setDialogs = function() { var me = this;
 //    html += "    </tr></table>";
 
     html += "    <div id='" + me.pre + "seqguide_wrapper' style='display:none'><br>" + me.setSequenceGuide("2") + "</div>";
+
+    // add note about assembly
+    //html = "     <div id='" + me.pre + "assembly_note' class='icn3d-annoLargeTitle'><br>Only the asymmetric unit is shown in the sequence window.</div>";
 
     html += "    </div><br/><hr><br>";
 

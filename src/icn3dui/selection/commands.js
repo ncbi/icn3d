@@ -108,12 +108,16 @@ iCn3DUI.prototype.execCommandsBase = function (start, end, steps) { var me = thi
         //|| me.icn3d.commands[i].trim().indexOf('set annotation site') == 0
         ) { // the command may have "|||{"factor"...
           var strArray = me.icn3d.commands[i].split("|||");
-          if(me.bAjaxCddSite === undefined || !me.bAjaxCddSite) {
+          if(Object.keys(me.icn3d.proteins).length > 0 && (me.bAjaxCddSite === undefined || !me.bAjaxCddSite) ) {
               $.when(me.applyCommandAnnotationsAndCddSite(strArray[0].trim())).then(function() {
                   me.execCommandsBase(i + 1, end, steps);
               });
           }
           else {
+              if(Object.keys(me.icn3d.proteins).length == 0) {
+                  me.applyCommandAnnotationsAndCddSiteBase(strArray[0].trim());
+              }
+
               me.execCommandsBase(i + 1, end, steps);
           }
 
@@ -123,12 +127,16 @@ iCn3DUI.prototype.execCommandsBase = function (start, end, steps) { var me = thi
         || me.icn3d.commands[i].trim().indexOf('set annotation snp') == 0) { // the command may have "|||{"factor"...
           var strArray = me.icn3d.commands[i].split("|||");
 
-          if(me.bAjaxSnpClinvar === undefined || !me.bAjaxSnpClinvar) {
+          if(Object.keys(me.icn3d.proteins).length > 0 && (me.bAjaxSnpClinvar === undefined || !me.bAjaxSnpClinvar) ) {
               $.when(me.applyCommandSnpClinvar(strArray[0].trim())).then(function() {
                   me.execCommandsBase(i + 1, end, steps);
               });
           }
           else {
+              if(Object.keys(me.icn3d.proteins).length == 0) {
+                  me.applyCommandSnpClinvar(strArray[0].trim());
+              }
+
               me.execCommandsBase(i + 1, end, steps);
           }
 
@@ -137,12 +145,16 @@ iCn3DUI.prototype.execCommandsBase = function (start, end, steps) { var me = thi
       else if(me.icn3d.commands[i].trim().indexOf('set annotation 3ddomain') == 0) { // the command may have "|||{"factor"...
           var strArray = me.icn3d.commands[i].split("|||");
 
-          if(me.mmdb_data === undefined && (me.bAjax3ddomain === undefined || !me.bAjax3ddomain)) {
+          if(Object.keys(me.icn3d.proteins).length > 0 && me.mmdb_data === undefined && (me.bAjax3ddomain === undefined || !me.bAjax3ddomain)) {
               $.when(me.applyCommand3ddomain(strArray[0].trim())).then(function() {
                   me.execCommandsBase(i + 1, end, steps);
               });
           }
           else {
+              if(Object.keys(me.icn3d.proteins).length == 0) {
+                  me.applyCommand3ddomain(strArray[0].trim());
+              }
+
               me.execCommandsBase(i + 1, end, steps);
           }
 
@@ -153,7 +165,7 @@ iCn3DUI.prototype.execCommandsBase = function (start, end, steps) { var me = thi
           //$.when(me.applyCommandAnnotationsAndCddSite(strArray[0].trim()))
           //  .then(me.applyCommandSnpClinvar(strArray[0].trim()))
 
-          if( (me.bAjaxSnpClinvar === undefined || !me.bAjaxSnpClinvar)
+          if( Object.keys(me.icn3d.proteins).length > 0 && (me.bAjaxSnpClinvar === undefined || !me.bAjaxSnpClinvar)
             && (me.bAjax3ddomain === undefined || !me.bAjax3ddomain || me.mmdb_data === undefined) ) {
               $.when(me.applyCommandSnpClinvar(strArray[0].trim()))
                 .then(me.applyCommand3ddomain(strArray[0].trim()))
@@ -163,7 +175,7 @@ iCn3DUI.prototype.execCommandsBase = function (start, end, steps) { var me = thi
                   me.execCommandsBase(i + 1, end, steps);
               });
           }
-          else if(me.bAjaxSnpClinvar === undefined || !me.bAjaxSnpClinvar) {
+          else if(Object.keys(me.icn3d.proteins).length > 0 && (me.bAjaxSnpClinvar === undefined || !me.bAjaxSnpClinvar) ) {
               $.when(me.applyCommandSnpClinvar(strArray[0].trim()))
                 .then(function() {
                   me.setAnnoTabAll();
@@ -171,7 +183,7 @@ iCn3DUI.prototype.execCommandsBase = function (start, end, steps) { var me = thi
                   me.execCommandsBase(i + 1, end, steps);
               });
           }
-          else if(me.bAjax3ddomain === undefined || !me.bAjax3ddomain || me.mmdb_data === undefined) {
+          else if(Object.keys(me.icn3d.proteins).length > 0 && (me.bAjax3ddomain === undefined || !me.bAjax3ddomain || me.mmdb_data === undefined) ) {
               $.when(me.applyCommand3ddomain(strArray[0].trim()))
                 .then(function() {
                   me.setAnnoTabAll();
@@ -180,9 +192,23 @@ iCn3DUI.prototype.execCommandsBase = function (start, end, steps) { var me = thi
               });
           }
           else {
-                  me.setAnnoTabAll();
+              if(Object.keys(me.icn3d.proteins).length == 0) {
+                  if((me.bAjaxSnpClinvar === undefined || !me.bAjaxSnpClinvar)
+                    && (me.bAjax3ddomain === undefined || !me.bAjax3ddomain || me.mmdb_data === undefined)) {
+                      me.applyCommandSnpClinvarBase(strArray[0].trim());
+                      me.applyCommand3ddomainBase(strArray[0].trim());
+                  }
+                  else if(me.bAjaxSnpClinvar === undefined || !me.bAjaxSnpClinvar) {
+                      me.applyCommandSnpClinvarBase(strArray[0].trim());
+                  }
+                  else if(me.bAjax3ddomain === undefined || !me.bAjax3ddomain || me.mmdb_data === undefined) {
+                      me.applyCommand3ddomainBase(strArray[0].trim());
+                  }
+              }
 
-                  me.execCommandsBase(i + 1, end, steps);
+              me.setAnnoTabAll();
+
+              me.execCommandsBase(i + 1, end, steps);
           }
 
           return;
@@ -359,39 +385,26 @@ iCn3DUI.prototype.applyCommandLoad = function (commandStr) { var me = this;
   return me.deferred2.promise();
 };
 
-iCn3DUI.prototype.applyCommandAnnotationsAndCddSite = function (command) { var me = this;
+iCn3DUI.prototype.applyCommandAnnotationsAndCddSiteBase = function (command) { var me = this;
   // chain functions together
-  me.deferredAnnoCddSite = $.Deferred(function() {
       if(command == "view annotations") {
           if(me.cfg.showanno === undefined || !me.cfg.showanno) {
               me.showAnnotations();
           }
       }
-/*
-      else {
-          var pos = command.lastIndexOf(' '); // set annotation clinvar
-          var type = command.substr(pos + 1);
+};
 
-          if(type == 'cdd') {
-              me.setAnnoTabCdd();
-          }
-          else if(type == 'site') {
-              me.setAnnoTabSite();
-          }
-          else if(type == 'all') {
-              me.setAnnoTabCdd();
-              me.setAnnoTabSite();
-          }
-      }
-*/
+iCn3DUI.prototype.applyCommandAnnotationsAndCddSite = function (command) { var me = this;
+  // chain functions together
+  me.deferredAnnoCddSite = $.Deferred(function() {
+      me.applyCommandAnnotationsAndCddSiteBase(command);
   }); // end of me.deferred = $.Deferred(function() {
 
   return me.deferredAnnoCddSite.promise();
 };
 
-iCn3DUI.prototype.applyCommandSnpClinvar = function (command) { var me = this;
+iCn3DUI.prototype.applyCommandSnpClinvarBase = function (command) { var me = this;
   // chain functions together
-  me.deferredSnpClinvar = $.Deferred(function() {
       var pos = command.lastIndexOf(' '); // set annotation clinvar
       var type = command.substr(pos + 1);
 
@@ -405,32 +418,48 @@ iCn3DUI.prototype.applyCommandSnpClinvar = function (command) { var me = this;
           me.setAnnoTabClinvar();
           me.setAnnoTabSnp();
       }
+};
+
+iCn3DUI.prototype.applyCommandSnpClinvar = function (command) { var me = this;
+  // chain functions together
+  me.deferredSnpClinvar = $.Deferred(function() {
+      me.applyCommandSnpClinvarBase(command);
   }); // end of me.deferred = $.Deferred(function() {
 
   return me.deferredSnpClinvar.promise();
 };
 
-iCn3DUI.prototype.applyCommand3ddomain = function (command) { var me = this;
+iCn3DUI.prototype.applyCommand3ddomainBase = function (command) { var me = this;
   // chain functions together
-  me.deferred3ddomain = $.Deferred(function() {
       var pos = command.lastIndexOf(' ');
       var type = command.substr(pos + 1);
 
       if(type == '3ddomain' || type == 'all') {
           me.setAnnoTab3ddomain();
       }
+};
+
+iCn3DUI.prototype.applyCommand3ddomain = function (command) { var me = this;
+  // chain functions together
+  me.deferred3ddomain = $.Deferred(function() {
+      me.applyCommand3ddomainBase(command);
   }); // end of me.deferred = $.Deferred(function() {
 
   return me.deferred3ddomain.promise();
 };
 
-iCn3DUI.prototype.applyCommandViewinteraction = function (command) { var me = this;
+iCn3DUI.prototype.applyCommandViewinteractionBase = function (command) { var me = this;
   // chain functions together
-  me.deferredViewinteraction = $.Deferred(function() {
      if(me.cfg.align !== undefined) {
          var structureArray = Object.keys(me.icn3d.structures);
          me.set2DDiagramsForAlign(structureArray[0].toUpperCase(), structureArray[1].toUpperCase());
      }
+};
+
+iCn3DUI.prototype.applyCommandViewinteraction = function (command) { var me = this;
+  // chain functions together
+  me.deferredViewinteraction = $.Deferred(function() {
+     me.applyCommandViewinteractionBase(command);
   }); // end of me.deferred = $.Deferred(function() {
 
   return me.deferredViewinteraction.promise();

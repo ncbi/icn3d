@@ -248,19 +248,21 @@ iCn3D.prototype.centerSelection = function(atoms) {
    if(Object.keys(atoms).length > 1) {
            var centerAtomsResults = this.centerAtoms(atoms);
 
-           this.mdl.position.set(0,0,0);
-           this.mdlImpostor.position.set(0,0,0);
-           this.mdl_ghost.position.set(0,0,0);
-
-           this.mdl.position.sub(centerAtomsResults.center);
-           //this.mdlPicking.position.sub(centerAtomsResults.center);
-           this.mdlImpostor.position.sub(centerAtomsResults.center);
-           this.mdl_ghost.position.sub(centerAtomsResults.center);
-
            this.center = centerAtomsResults.center;
+           this.setCenter(this.center);
 
            // reset cameara
            this.setCamera();
    }
 };
 
+iCn3D.prototype.setCenter = function(center) {
+   this.mdl.position.set(0,0,0);
+   this.mdlImpostor.position.set(0,0,0);
+   this.mdl_ghost.position.set(0,0,0);
+
+   this.mdl.position.sub(center);
+   //this.mdlPicking.position.sub(center);
+   this.mdlImpostor.position.sub(center);
+   this.mdl_ghost.position.sub(center);
+};
