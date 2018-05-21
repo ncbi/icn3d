@@ -112,15 +112,22 @@ var common_js = [
     "src/shader/SphereImpostor.vert",
     "src/shader/CylinderImpostor.frag",
     "src/shader/CylinderImpostor.vert",
+    "src/shader/SphereInstancing.frag",
+    "src/shader/SphereInstancing.vert",
+    "src/shader/CylinderInstancing.frag",
+    "src/shader/CylinderInstancing.vert",
+    "src/shader/Instancing.frag",
+    "src/shader/Instancing.vert",
     "src/icn3d/icn3d.js",
     "src/icn3d/loadpdb.js",
-    "src/icn3d/drawing.js",
-    "src/icn3d/display_common.js",
+    "src/icn3d/draw/drawing.js",
+    "src/icn3d/display/display_common.js",
+    "src/icn3d/draw/impostor.js",
     "src/icn3d/other.js"
 ];
 
 var simple_js = [
-    "src/icn3d/display_simple.js"
+    "src/icn3d/display/display_simple.js"
 ];
 
 var full_js = [
@@ -130,8 +137,9 @@ var full_js = [
     "src/surface/marchingcube.js",
     "src/surface/ProteinSurface4.js",
     "src/surface/setupsurface.js",
-    "src/icn3d/drawing_full.js",
-    "src/icn3d/display_full.js",
+    "src/icn3d/draw/drawing_full.js",
+    "src/icn3d/display/display_full.js",
+    "src/icn3d/draw/instancing.js",
     "src/icn3d/other_full.js"
 ];
 

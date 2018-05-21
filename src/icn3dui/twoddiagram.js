@@ -15,6 +15,8 @@ iCn3DUI.prototype.draw2Ddgm = function(data, mmdbid, structureIndex, bUpdate) { 
     var molid2chain = {}, molid2color = {}, molid2name = {}, chainid2molid = {};
     var chainNameHash = {};
 
+    if(data === undefined) return '';
+
     for(var molid in data.moleculeInfor) {
           var color = '#' + ( '000000' + data.moleculeInfor[molid].color.toString( 16 ) ).slice( - 6 );
           var chainName = data.moleculeInfor[molid].chain.trim();

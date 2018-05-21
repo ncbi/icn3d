@@ -66,6 +66,14 @@ var iCn3D = function (id) {
         console.log('EXT_frag_depth is supported. All spheres and cylinders are drawn using shaders.');
     }
 
+    this.bInstanced = this.renderer.extensions.get( "ANGLE_instanced_arrays" );
+    if(!this.bInstanced) {
+        console.log('ANGLE_instanced_arrays is NOT supported. Assembly is drawn by making copies of the asymmetric unit.');
+    }
+    else {
+        console.log('ANGLE_instanced_arrays is supported. Assembly is drawn with one copy of the asymmetric unit using hardware instancing.');
+    }
+
         // cylinder impostor
     this.posArray = new Array();
     this.colorArray = new Array();
@@ -1110,7 +1118,7 @@ iCn3D.prototype = {
         this.inputid = {"idtype": undefined, "id":undefined}; // support pdbid, mmdbid
 
         this.biomtMatrices = [];
-        this.bAssembly = false;
+        this.bAssembly = true;
 
         this.rotateCount = 0;
         this.rotateCountMax = 20;
@@ -1129,6 +1137,6 @@ iCn3D.prototype = {
         this.lines = {};    // hash of name -> a list of solid or dashed lines. Each line contains 'position1', 'position2', 'color', and a boolean of 'dashed'
                             // line name could be custom, hbond, ssbond, distance
 
-        this.bAssembly = false;
+        this.bAssembly = true;
     }
 };

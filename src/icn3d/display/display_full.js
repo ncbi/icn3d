@@ -476,8 +476,13 @@ iCn3D.prototype.draw = function () { var me = this;
 
     //if(this.bSSOnly) this.drawHelixBrick(this.molid2ss, this.molid2color);
 
-    if(this.bAssembly) {
-        this.drawSymmetryMates2();
+    if(this.biomtMatrices !== undefined && this.biomtMatrices.length > 1) {
+        if(this.bAssembly) {
+            this.drawSymmetryMates();
+        }
+        else {
+            this.centerSelection();
+        }
     }
 
     // show the hAtoms

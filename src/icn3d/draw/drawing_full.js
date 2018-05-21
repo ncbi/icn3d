@@ -4,6 +4,8 @@
 
 // modified from iview (http://istar.cse.cuhk.edu.hk/iview/)
 iCn3D.prototype.createSurfaceRepresentation = function (atoms, type, wireframe, opacity) {
+    if(Object.keys(atoms).length == 0) return;
+
     var geo;
 
     var extent = this.getExtent(atoms);
@@ -85,72 +87,6 @@ iCn3D.prototype.createSurfaceRepresentation = function (atoms, type, wireframe, 
 
     // do not add surface to raycasting objects for pk
 };
-
-iCn3D.prototype.drawSymmetryMates2 = function() {
-   if (this.biomtMatrices === undefined) return;
-   var cnt = 1; // itself
-   var centerSum = this.center.clone();
-
-   for (var i = 0; i < this.biomtMatrices.length; i++) {  // skip itself
-      var mat = this.biomtMatrices[i];
-      if (mat === undefined) continue;
-
-      var matArray = mat.toArray();
-
-      // skip itself
-      var bItself = 1;
-      for(var j = 0, jl = matArray.length; j < jl; ++j) {
-        if(j == 0 || j == 5 || j == 10) {
-          if(parseInt(1000*matArray[j]) != 1000) bItself = 0;
-        }
-        else if(j != 0 && j != 5 && j != 10 && j != 15) {
-          if(parseInt(1000*matArray[j]) != 0) bItself = 0;
-        }
-      }
-
-      if(bItself) continue;
-
-      var symmetryMate = this.mdl.clone();
-      symmetryMate.applyMatrix(mat);
-
-      this.mdl.add(symmetryMate);
-
-      symmetryMate = this.mdlImpostor.clone();
-      symmetryMate.applyMatrix(mat);
-
-      this.mdlImpostor.add(symmetryMate);
-
-      //symmetryMate = this.mdlPicking.clone();
-      //symmetryMate.applyMatrix(mat);
-
-      //this.mdlPicking.add(symmetryMate);
-
-      symmetryMate = this.mdl_ghost.clone();
-      symmetryMate.applyMatrix(mat);
-
-      this.mdl_ghost.add(symmetryMate);
-
-      var center = this.center.clone();
-      center.applyMatrix4(mat);
-      centerSum.add(center);
-
-      ++cnt;
-   }
-
-   this.maxD *= Math.sqrt(cnt);
-   //this.center = centerSum.multiplyScalar(1.0 / cnt);
-
-   // recenter the mdl* caused the impostor shifted somehow!!! disable the centering for now
-//       this.mdl.position.add(this.center).sub(centerSum.multiplyScalar(1.0 / cnt));
-//       this.mdlImpostor.position.add(this.center).sub(centerSum.multiplyScalar(1.0 / cnt));
-   //this.mdlPicking.position.add(this.center).sub(centerSum.multiplyScalar(1.0 / cnt));
-
-//       this.mdl_ghost.position.add(this.center).sub(centerSum.multiplyScalar(1.0 / cnt));
-
-   // reset cameara
-   this.setCamera();
-};
-
 
 // http://soledadpenades.com/articles/three-js-tutorials/drawing-the-coordinate-axes/
 iCn3D.prototype.buildAxes = function (radius) {

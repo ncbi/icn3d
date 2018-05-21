@@ -112,7 +112,8 @@ iCn3DUI.prototype.showTitle = function() { var me = this;
 
             if(me.icn3d.molTitle.length > 40) title = me.icn3d.molTitle.substr(0, 40) + "...";
 
-            var asymmetricStr = (me.asuAtomCount !== undefined) ? " (Asymmetric Unit)" : "";
+            //var asymmetricStr = (me.bAssemblyUseAsu) ? " (Asymmetric Unit)" : "";
+            var asymmetricStr = "";
 
             $("#" + me.pre + "title").html("PDB ID <a href='" + url + "' target='_blank' style='color:" + me.GREYD + "'>" + me.inputid.toUpperCase() + "</a>" + asymmetricStr + ": " + title);
         }

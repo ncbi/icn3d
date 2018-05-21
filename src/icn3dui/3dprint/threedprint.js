@@ -283,11 +283,15 @@ iCn3DUI.prototype.addStabilizer = function () { var me = this;
         var residueArray = Object.keys(residueHash);
 
         if(me.icn3d.pairArray === undefined) me.icn3d.pairArray = [];
+        // displayed atoms except water
+        var dAtomsNotWater = me.icn3d.exclHash(me.icn3d.dAtoms, me.icn3d.water);
+
         for(var i = 0, il = residueArray.length; i < il; ++i) {
             var residueid = residueArray[i];
             var ss = me.icn3d.secondaries[residueid];
 
-            var sphere = me.icn3d.getNeighboringAtoms(me.icn3d.dAtoms, me.icn3d.hash2Atoms(me.icn3d.residues[residueid]), maxDistance);
+            //var sphere = me.icn3d.getNeighboringAtoms(me.icn3d.dAtoms, me.icn3d.hash2Atoms(me.icn3d.residues[residueid]), maxDistance);
+            var sphere = me.icn3d.getNeighboringAtoms(dAtomsNotWater, me.icn3d.hash2Atoms(me.icn3d.residues[residueid]), maxDistance);
 
             // original atoms
             var sphereArray = Object.keys(sphere).sort();
