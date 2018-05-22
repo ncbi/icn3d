@@ -19,7 +19,7 @@ We provided two types of iCn3D widgets: [basic interface](https://www.ncbi.nlm.n
 
 Either of these widgets could be easily added to your own web pages. Please see the [help page](https://www.ncbi.nlm.nih.gov/Structure/icn3d/docs/icn3d_help.html#HowToUse) for more details.
 
-<b>Complete package</b> of iCn3D including Three.js and jQuery can be downloaded from [https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.1.0.zip](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.1.0.zip). The "Download ZIP" link in this page does not include third-party libraries. 
+<b>Complete package</b> of iCn3D including Three.js and jQuery can be downloaded from [https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.1.1.zip](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.1.1.zip). The "Download ZIP" link in this page does not include third-party libraries. 
 
 ## Usage
 
@@ -77,6 +77,8 @@ gulp
 ```
 
 ## Change log
+The production version [icn3d-2.1.1](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.1.1.zip) was release on May 22, 2018. The option of color by "Spectrum" was added back. 
+
 The production version [icn3d-2.1.0](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.1.0.zip) was release on May 21, 2018. The instancing method is used to display a biological assembly. It significantly improved the rendering speed by sending only the geometry of its assymmetruic unit to GPU and applying transformation matrices to display the assembly. 
 
 The production version [icn3d-2.0.3](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.0.3.zip) was release on May 2, 2018. Removed the "Description" field when saving a set of atoms. This made "Share Link" URL shorter. Made the size of stabilizer thicker for 3D printing.
@@ -86,10 +88,6 @@ The production version [icn3d-2.0.2](https://www.ncbi.nlm.nih.gov/Structure/icn3
 The production version [icn3d-2.0.1](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.0.1.zip) was release on April 23, 2018. The bug about extra 3D domains in the "Sequences & Annotations" window was fixed. The stabilizers for 3D printing were improved. 
 
 The production version [icn3d-2.0.0](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.0.0.zip) was release on April 17, 2018. By clicking the menu "Windows: View Sequences & Annotations", users can view all kinds of annotations: ClinVar, SNPs, CDD domains, 3D domains, binding sites, interactions, and custom tracks. Users can click the menu "View: Chemical Binding" to show the chemical binding sites. Users can also export files for 3D printing at the menu "File: 3D Printing: VRML (Color, W/ Stabilizers)".
-
-The production version [icn3d-1.4.1](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-1.4.1.zip) was release on November 3, 2017. The version of THREE.js in the zip file was fixed.
-
-The production version [icn3d-1.4.0](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-1.4.0.zip) was release on November 2, 2017. The rendering speed has been significantly improved by using the Imposter shaders from NGL Viewer. A bug in "Share Link" was fixed.
 
 All previous releases can be found at the [API page](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d.html#log).
 
