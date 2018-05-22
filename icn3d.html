@@ -18,6 +18,11 @@
 pre { white-space: pre-wrap; }
 A { text-decoration: none;}
 
+A:link { text-decoration: none; font-family: Verdana, Arial, Sans-serif; font-size: 100%; color:#0056CC; }
+A:visited { text-decoration: none; font-family: Verdana, Arial, Sans-serif; font-size: 100%;  color:#00994E; }
+A:active { text-decoration: none; font-family: Verdana, Arial, Sans-serif; font-size: 100%;  color:#00994E; }
+A:hover { text-decoration: none; color:black;  font-family: Verdana, Arial, Sans-serif; font-size: 100%; color:#00994E;}
+
 .top {
   width: 12px;
   height: 12px;
@@ -39,6 +44,8 @@ body {font-family: Verdana, Arial, Helvetica, sans-serif;}
 <!-- ============= TABLE_OF_CONTENTS ============= -->
 
 <ul>
+
+<li><a href="https://www.ncbi.nlm.nih.gov/Structure/icn3d/docs/icn3d_help.html">Link to Help Page</a></li><br>
 
 <li><a href="#HowToUse">How to use iCn3D Structure Viewer in your html page</a></li>
     <ul>
@@ -851,6 +858,7 @@ In the dialog Select -&gt; Advanced, users can use simple specification to selec
 <a name="color"></a><b>5. Color</b> <a href="#Top"><span class="top">&nbsp;&nbsp;&nbsp;</span></a><br>
 <table width='100%'><tr><td valign='top' width='30%'><b>Menu</b></td><td valign='top' width='40%'><b>Command</b></td><td valign='top'><b>Method</b></td></tr>
 <tbody><tr><td colspan="3">a)</td> </tr>
+<tr><td width="240">Color -&gt; Spectrum:</td> <td valign='top'>color spectrum</td> <td valign='top'><a href="#setColorByOptions">setColorByOptions</a></td></tr>
 <tr><td width="240">Color -&gt; Secondary:</td> <td valign='top'>color secondary structure</td> <td valign='top'><a href="#setColorByOptions">setColorByOptions</a></td></tr>
 <tr><td valign='top'>Color -&gt; Charge:</td>  <td valign='top'>color charge</td> <td valign='top'><a href="#setColorByOptions">setColorByOptions</a></td></tr>
 <tr><td valign='top'>Color -&gt; Hydrophobic:</td>  <td valign='top'>color hydrophobic</td> <td valign='top'><a href="#setColorByOptions">setColorByOptions</a></td></tr>
@@ -971,7 +979,7 @@ In the dialog Select -&gt; Advanced, users can use simple specification to selec
       <pre>          var opts = {};
           opts['camera']             = 'perspective';        //perspective, orthographic
           opts['background']         = 'transparent';        //transparent, black, grey, white
-          opts['color']              = 'chain';              //secondary structure, charge, hydrophobic, chain, residue, atom,
+          opts['color']              = 'chain';              //spectrum, secondary structure, charge, hydrophobic, chain, residue, atom,
                                                              // red, green, blue, magenta, yellow, cyan, white, grey, custom
           opts['proteins']           = 'ribbon';             //ribbon, strand, cylinder and plate, schematic, c alpha trace,
                                                              // b factor tube, lines, stick, ball and stick, sphere, nothing

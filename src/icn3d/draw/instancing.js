@@ -312,6 +312,16 @@ iCn3D.prototype.createInstancedGeometry = function(mesh) {
        geometry.setIndex(new THREE.BufferAttribute(new Uint32Array(indexArray), 1));
    }
 
+   positionArray = [];
+   normalArray = [];
+   colorArray = [];
+   indexArray = [];
+
+   radiusArray = [];
+   mappingArray = [];
+   position2Array = [];
+   color2Array = [];
+
    var matricesAttribute1 = new THREE.InstancedBufferAttribute( new Float32Array( this.matricesElements1 ), 4 );
    var matricesAttribute2 = new THREE.InstancedBufferAttribute( new Float32Array( this.matricesElements2 ), 4 );
    var matricesAttribute3 = new THREE.InstancedBufferAttribute( new Float32Array( this.matricesElements3 ), 4 );
@@ -402,6 +412,8 @@ iCn3D.prototype.drawSymmetryMatesInstancing = function() {
        // You are moving the camera in the CPU. You are moving the vertices of the plane in the GPU
        mesh2.frustumCulled = false;
 
+       geometry = undefined;
+
        this.mdl.add(mesh2);
    }
 
@@ -415,6 +427,8 @@ iCn3D.prototype.drawSymmetryMatesInstancing = function() {
            // important: https://stackoverflow.com/questions/21184061/mesh-suddenly-disappears-in-three-js-clipping
            // You are moving the camera in the CPU. You are moving the vertices of the plane in the GPU
            mesh2.frustumCulled = false;
+
+           geometry = undefined;
 
            this.mdlImpostor.add(mesh2);
        }
