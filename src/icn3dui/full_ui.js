@@ -61,7 +61,7 @@ var iCn3DUI = function(cfg) {
     me.opts = {};
     me.opts['camera']             = 'perspective';        //perspective, orthographic
     me.opts['background']         = 'transparent';        //transparent, black, grey, white
-    me.opts['color']              = 'chain';              //secondary structure, charge, hydrophobic, conserved, chain, residue, atom, red, green, blue, magenta, yellow, cyan, white, grey, custom
+    me.opts['color']              = 'chain';              //spectrum, secondary structure, charge, hydrophobic, conserved, chain, residue, atom, red, green, blue, magenta, yellow, cyan, white, grey, custom
     me.opts['proteins']           = 'ribbon';             //ribbon, strand, cylinder and plate, schematic, c alpha trace, b factor tube, lines, stick, ball and stick, sphere, nothing
     me.opts['sidec']              = 'nothing';            //lines, stick, ball and stick, sphere, nothing
     me.opts['nucleotides']        = 'nucleotide cartoon'; //nucleotide cartoon, o3 trace, schematic, lines, stick,
@@ -205,7 +205,7 @@ iCn3DUI.prototype = {
               labels['picking'].push(label);
 
               //http://www.johannes-raida.de/tutorials/three.js/tutorial13/tutorial13.htm
-              if(this.pk === 1 || this.pk === 2) this.createLabelRepresentation(labels);
+              if(me.bMeasureDistance === undefined || !me.bMeasureDistance) this.createLabelRepresentation(labels);
           }
         };
     },
@@ -2192,14 +2192,13 @@ iCn3DUI.prototype = {
     },
 
     // mn 4
-/*
     clkMn4_clrSpectrum: function() { var me = this;
         $("#" + me.pre + "mn4_clrSpectrum").click(function (e) {
            me.setOption('color', 'spectrum');
            me.setLogCmd('color spectrum', true);
         });
     },
-*/
+
     clkMn4_clrChain: function() { var me = this;
         $("#" + me.pre + "mn4_clrChain").click(function (e) {
            me.setOption('color', 'chain');
@@ -2535,6 +2534,8 @@ iCn3DUI.prototype = {
            me.icn3d.opts['pk'] = 'atom';
            me.icn3d.pickpair = true;
            me.icn3d.pAtomNum = 0;
+
+           me.bMeasureDistance = true;
         });
     },
 
@@ -3520,6 +3521,7 @@ iCn3DUI.prototype = {
         $("#" + me.pre + "applypick_measuredistance").click(function(e) {
            e.preventDefault();
            dialog.dialog( "close" );
+           me.bMeasureDistance = false;
 
            if(me.icn3d.pAtom === undefined || me.icn3d.pAtom2 === undefined) {
              alert("Please pick another atom");
@@ -3924,7 +3926,7 @@ iCn3DUI.prototype = {
         me.clkMn3_waterSphere();
         me.clkMn3_waterDot();
         me.clkMn3_waterNo();
-//        me.clkMn4_clrSpectrum();
+        me.clkMn4_clrSpectrum();
         me.clkMn4_clrChain();
         me.clkMn4_clrSS();
         me.clkMn4_clrResidue();

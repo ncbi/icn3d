@@ -646,7 +646,7 @@ iCn3DUI.prototype.setMenu4 = function() { var me = this;
     html += "<ul class='icn3d-mn'>";
 
     if(me.cfg.cid === undefined) {
-        //html += me.getRadio('mn4_clr', 'mn4_clrSpectrum', 'Spectrum');
+        html += me.getRadio('mn4_clr', 'mn4_clrSpectrum', 'Spectrum');
         html += me.getRadio('mn4_clr', 'mn4_clrSS', 'Secondary');
 
         html += me.getRadio('mn4_clr', 'mn4_clrCharge', 'Charge');

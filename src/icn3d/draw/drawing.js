@@ -1717,11 +1717,12 @@ iCn3D.prototype.createTube = function (atoms, atomName, radius, bHighlight) {
     var currentChain, currentResi;
     var index = 0;
     var prevAtom;
+    var maxDist = 6.0;
 
     for (var i in atoms) {
         var atom = atoms[i];
         if ((atom.name === atomName) && !atom.het) {
-            if (index > 0 && (currentChain !== atom.chain || currentResi + 1 !== atom.resi || Math.abs(atom.coord.x - prevAtom.coord.x) > 6.0 || Math.abs(atom.coord.y - prevAtom.coord.y) > 6.0 || Math.abs(atom.coord.z - prevAtom.coord.z) > 6.0) ) {
+            if (index > 0 && (currentChain !== atom.chain || currentResi + 1 !== atom.resi || Math.abs(atom.coord.x - prevAtom.coord.x) > maxDist || Math.abs(atom.coord.y - prevAtom.coord.y) > maxDist || Math.abs(atom.coord.z - prevAtom.coord.z) > maxDist) ) {
 //                if (index > 0 && (currentChain !== atom.chain || Math.abs(atom.coord.x - prevAtom.coord.x) > 6.0 || Math.abs(atom.coord.y - prevAtom.coord.y) > 6.0 || Math.abs(atom.coord.z - prevAtom.coord.z) > 6.0) ) {
                 if(bHighlight !== 2) this.createTubeSub(pnts, colors, radii, bHighlight);
                 pnts = []; colors = []; radii = [];
