@@ -268,12 +268,20 @@ iCn3D.prototype.createInstancedGeometry = function(mesh) {
        colorArray = colorArray.concat(this.colorFromGeometry( mesh ));
        indexArray = indexArray.concat(this.indexFromGeometry( mesh ));
 
+       var bCylinderArray = [];
+       var bCylinder = (baseGeometry.type == 'CylinderGeometry') ? 1.0 : 0.0;
+       for(var i = 0, il = positionArray.length / 3; i < il; ++i) {
+           bCylinderArray.push(bCylinder);
+       }
+
        geometry.addAttribute('position', new THREE.BufferAttribute(new Float32Array(positionArray), 3));
        geometry.addAttribute('normal', new THREE.BufferAttribute(new Float32Array(normalArray), 3) );
        geometry.addAttribute('color', new THREE.BufferAttribute(new Float32Array(colorArray), 3) );
+
+       geometry.addAttribute('cylinder', new THREE.BufferAttribute(new Float32Array(bCylinderArray), 1) );
        geometry.setIndex(new THREE.BufferAttribute(new Uint32Array(indexArray), 1));
    }
-   else if(baseGeometry.attributes.color2 !== undefined) { // cylinder
+   else if(this.bImpo && baseGeometry.attributes.color2 !== undefined) { // cylinder
        this.instancedMaterial = this.getInstancedMaterial('CylinderInstancing');
 
        positionArray = positionArray.concat(this.hashvalue2array(baseGeometry.attributes.position1.array));
@@ -296,7 +304,7 @@ iCn3D.prototype.createInstancedGeometry = function(mesh) {
        geometry.addAttribute('mapping', new THREE.BufferAttribute(new Float32Array(mappingArray), 3) );
        geometry.setIndex(new THREE.BufferAttribute(new Uint32Array(indexArray), 1));
    }
-   else if(baseGeometry.attributes.color !== undefined) { // sphere
+   else if(this.bImpo && baseGeometry.attributes.color !== undefined) { // sphere
        this.instancedMaterial = this.getInstancedMaterial('SphereInstancing');
 
        positionArray = positionArray.concat(this.hashvalue2array(baseGeometry.attributes.position.array));
@@ -349,6 +357,8 @@ iCn3D.prototype.getInstancedMaterial = function(name) {
    });
 
    material.extensions.fragDepth = true;
+   //https://stackoverflow.com/questions/33094496/three-js-shadermaterial-flatshading
+   material.extensions.derivatives = '#extension GL_OES_standard_derivatives : enable';
 
    return material;
 }
@@ -417,40 +427,20 @@ iCn3D.prototype.drawSymmetryMatesInstancing = function() {
        this.mdl.add(mesh2);
    }
 
-//   if(this.bImpo) {
-       for(var i = 0, il = this.mdlImpostor.children.length; i < il; ++i) {
-           var mesh = this.mdlImpostor.children[i];
+   for(var i = 0, il = this.mdlImpostor.children.length; i < il; ++i) {
+       var mesh = this.mdlImpostor.children[i];
 
-           var geometry = this.createInstancedGeometry(mesh);
-           var mesh2 = new THREE.Mesh(geometry, this.instancedMaterial);
+       var geometry = this.createInstancedGeometry(mesh);
+       var mesh2 = new THREE.Mesh(geometry, this.instancedMaterial);
 
-           // important: https://stackoverflow.com/questions/21184061/mesh-suddenly-disappears-in-three-js-clipping
-           // You are moving the camera in the CPU. You are moving the vertices of the plane in the GPU
-           mesh2.frustumCulled = false;
+       // important: https://stackoverflow.com/questions/21184061/mesh-suddenly-disappears-in-three-js-clipping
+       // You are moving the camera in the CPU. You are moving the vertices of the plane in the GPU
+       mesh2.frustumCulled = false;
 
-           geometry = undefined;
+       geometry = undefined;
 
-           this.mdlImpostor.add(mesh2);
-       }
-
-/*
+       this.mdlImpostor.add(mesh2);
    }
-   else {
-       for(var i = 0, il = this.mdl_ghost.children.length; i < il; ++i) {
-           var mesh = this.mdl_ghost.children[i];
-
-           var geometry = this.createInstancedGeometry(mesh);
-
-           var mesh2 = new THREE.Mesh(geometry, this.instancedMaterial);
-
-           // important: https://stackoverflow.com/questions/21184061/mesh-suddenly-disappears-in-three-js-clipping
-           // You are moving the camera in the CPU. You are moving the vertices of the plane in the GPU
-           mesh2.frustumCulled = false;
-
-           this.mdl_ghost.add(mesh2);
-       }
-   }
-*/
 
    if(this.bSetInstancing === undefined || !this.bSetInstancing) {
        this.maxD *= Math.sqrt(cnt);

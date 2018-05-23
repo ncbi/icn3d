@@ -600,9 +600,9 @@ iCn3DUI.prototype.setMenu3 = function() { var me = this;
 
     html += "  <li><span>Surface Opacity</span>";
     html += "    <ul>";
-    html += me.getRadio('mn5_opacity', 'mn5_opacity10', '1.0');
+    html += me.getRadio('mn5_opacity', 'mn5_opacity10', '1.0', true);
     html += me.getRadio('mn5_opacity', 'mn5_opacity09', '0.9');
-    html += me.getRadio('mn5_opacity', 'mn5_opacity08', '0.8', true);
+    html += me.getRadio('mn5_opacity', 'mn5_opacity08', '0.8');
     html += me.getRadio('mn5_opacity', 'mn5_opacity07', '0.7');
     html += me.getRadio('mn5_opacity', 'mn5_opacity06', '0.6');
     html += me.getRadio('mn5_opacity', 'mn5_opacity05', '0.5');

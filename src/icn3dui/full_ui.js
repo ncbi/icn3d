@@ -67,7 +67,7 @@ var iCn3DUI = function(cfg) {
     me.opts['nucleotides']        = 'nucleotide cartoon'; //nucleotide cartoon, o3 trace, schematic, lines, stick,
                                                               // nucleotides ball and stick, sphere, nothing
     me.opts['surface']            = 'nothing';            //Van der Waals surface, molecular surface, solvent accessible surface, nothing
-    me.opts['opacity']            = '0.8';                //1.0, 0.9, 0.8, 0.7, 0.6, 0.5
+    me.opts['opacity']            = '1.0';                //1.0, 0.9, 0.8, 0.7, 0.6, 0.5
     me.opts['wireframe']          = 'no';                 //yes, no
     me.opts['chemicals']            = 'stick';              //lines, stick, ball and stick, schematic, sphere, nothing
     me.opts['water']              = 'nothing';            //sphere, dot, nothing

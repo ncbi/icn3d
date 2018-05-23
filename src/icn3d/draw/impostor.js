@@ -67,7 +67,8 @@ iCn3D.prototype.setParametersForShader = function () { var me = this;
         fogColor: { type: "v3", value: [background.r, background.g, background.b] },
         fogNear: { type: "f", value: near },
         fogFar: { type: "f", value: far },
-        fogDensity: { type: "f", value: 2.0 }
+        fogDensity: { type: "f", value: 2.0 },
+        vViewPosition: { type: "v3", value: [this.cam.position.x, this.cam.position.y, this.cam.position.z] }
       },
         THREE.UniformsLib.ambient,
         THREE.UniformsLib.lights
