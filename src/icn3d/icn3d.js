@@ -178,7 +178,7 @@ var iCn3D = function (id) {
         nucleotides: 'nucleotide cartoon',
         surface: 'nothing',
         wireframe: 'no',
-        opacity: '0.8',
+        opacity: '1.0',
         chemicals: 'stick',
         water: 'nothing',
         ions: 'sphere',

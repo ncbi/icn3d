@@ -72,12 +72,25 @@ iCn3D.prototype.createSurfaceRepresentation = function (atoms, type, wireframe, 
 
     geo.type = 'Surface'; // to be recognized in vrml.js for 3D printing
 
+/*
     var mesh = new THREE.Mesh(geo, new THREE.MeshLambertMaterial({ overdraw: me.overdraw,
         vertexColors: THREE.VertexColors,
         wireframe: wireframe,
         opacity: opacity,
         transparent: true,
     }));
+*/
+    var mesh = new THREE.Mesh(geo, new THREE.MeshPhongMaterial({ overdraw: me.overdraw,
+        specular: this.frac,
+        shininess: 10,
+        emissive: 0x000000,
+        vertexColors: THREE.VertexColors,
+        wireframe: wireframe,
+        opacity: opacity,
+        transparent: true,
+        side: THREE.DoubleSide
+    }));
+
     me.mdl.add(mesh);
 
     this.prevSurfaces.push(mesh);
