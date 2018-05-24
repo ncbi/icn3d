@@ -255,14 +255,3 @@ iCn3D.prototype.centerSelection = function(atoms) {
            this.setCamera();
    }
 };
-
-iCn3D.prototype.setCenter = function(center) {
-   this.mdl.position.set(0,0,0);
-   this.mdlImpostor.position.set(0,0,0);
-   this.mdl_ghost.position.set(0,0,0);
-
-   this.mdl.position.sub(center);
-   //this.mdlPicking.position.sub(center);
-   this.mdlImpostor.position.sub(center);
-   this.mdl_ghost.position.sub(center);
-};

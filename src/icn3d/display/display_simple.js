@@ -22,6 +22,15 @@ iCn3D.prototype.draw = function () { var me = this;
         this.drawImpostorShader();
     }
 
+    if(this.biomtMatrices !== undefined && this.biomtMatrices.length > 1) {
+        if(this.bAssembly) {
+            this.drawSymmetryMates();
+        }
+        else {
+            this.centerSelection();
+        }
+    }
+
     // show the hAtoms
     if(this.hAtoms !== undefined && Object.keys(this.hAtoms).length > 0 && Object.keys(this.hAtoms).length < Object.keys(this.atoms).length) {
         this.removeHlObjects();
