@@ -123,6 +123,7 @@ var common_js = [
     "src/icn3d/draw/drawing.js",
     "src/icn3d/display/display_common.js",
     "src/icn3d/draw/impostor.js",
+    "src/icn3d/draw/instancing.js",
     "src/icn3d/other.js"
 ];
 
@@ -139,7 +140,6 @@ var full_js = [
     "src/surface/setupsurface.js",
     "src/icn3d/draw/drawing_full.js",
     "src/icn3d/display/display_full.js",
-    "src/icn3d/draw/instancing.js",
     "src/icn3d/other_full.js"
 ];
 
