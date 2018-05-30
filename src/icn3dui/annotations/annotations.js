@@ -1920,7 +1920,9 @@ iCn3DUI.prototype.showInteraction_base = function(chnid, chnidBase) {
             resPosArray.push( parseInt(residueArray[i].substr(residueArray[i].lastIndexOf('_') + 1) ) );
         }
 
-        var htmlTmp2 = '<div class="icn3d-seqTitle icn3d-link icn3d-blue" interaction="' + (index+1).toString() + '" posarray="' + resPosArray.toString() + '" shorttitle="' + title + '" setname="' + chnid + '_' + chainname + '" anno="sequence" chain="' + chnid + '" title="' + fulltitle + '">' + title + ' </div>';
+        var chainnameNospace = chainname.replace(/\s/g, '');
+
+        var htmlTmp2 = '<div class="icn3d-seqTitle icn3d-link icn3d-blue" interaction="' + (index+1).toString() + '" posarray="' + resPosArray.toString() + '" shorttitle="' + title + '" setname="' + chnid + '_' + chainnameNospace + '" anno="sequence" chain="' + chnid + '" title="' + fulltitle + '">' + title + ' </div>';
         var htmlTmp3 = '<span class="icn3d-residueNum" title="residue count">' + resCnt.toString() + ' Res</span>';
 
         html3 += htmlTmp2 + htmlTmp3 + '<br>';
