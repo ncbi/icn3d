@@ -132,6 +132,8 @@ iCn3DUI.prototype.showAnnotations = function() { var me = this;
             ++i;
         }
 
+        me.enableHlSeq();
+
         setTimeout(function(){
           //me.setAnnoViewAndDisplay('overview');
           me.hideAllAnno();
@@ -140,6 +142,16 @@ iCn3DUI.prototype.showAnnotations = function() { var me = this;
     }
 
     me.bAnnoShown = true;
+};
+
+iCn3DUI.prototype.enableHlSeq = function() { var me = this;
+    if(! me.isMobile()) {
+        me.selectSequenceNonMobile();
+    }
+    else {
+        me.selectSequenceMobile();
+        me.selectChainMobile();
+    }
 };
 
 // by default, showSeq and showCddSite are called at showAnnotations
@@ -250,6 +262,8 @@ iCn3DUI.prototype.getAnnotationData = function(chnid, chnidBase, index) { var me
 
             me.getAnnotationDataSub(chnid, chnidBase);
         }
+
+        me.enableHlSeq();
       },
       error : function(xhr, textStatus, errorThrown ) {
         this.tryCount++;
@@ -260,6 +274,8 @@ iCn3DUI.prototype.getAnnotationData = function(chnid, chnidBase, index) { var me
         }
 
         console.log( "No data were found for the protein " + chnid + "..." );
+
+        me.enableHlSeq();
 
         me.setAlternativeSeq(chnid, chnidBase);
 
@@ -1305,13 +1321,7 @@ iCn3DUI.prototype.showSnpClinvar = function(chnid, chnidBase) {
             }
 
             // add here after the ajax call
-            if(! me.isMobile()) {
-                me.selectSequenceNonMobile();
-            }
-            else {
-                me.selectSequenceMobile();
-                me.selectChainMobile();
-            }
+            me.enableHlSeq();
 
             me.navClinVar(chnid, chnidBase);
         } //if(data != "") {
@@ -1321,6 +1331,9 @@ iCn3DUI.prototype.showSnpClinvar = function(chnid, chnidBase) {
 
             $("#" + me.pre + 'dt_snp_' + chnid).html('');
             $("#" + me.pre + 'ov_snp_' + chnid).html('');
+
+            // add here after the ajax call
+            me.enableHlSeq();
 
             console.log( "No SNP data were found for the protein " + chnid + "..." );
         }
@@ -1338,6 +1351,14 @@ iCn3DUI.prototype.showSnpClinvar = function(chnid, chnidBase) {
         }
 
         console.log( "No SNP data were found for the protein " + chnid + "..." );
+
+        $("#" + me.pre + 'dt_clinvar_' + chnid).html('');
+        $("#" + me.pre + 'ov_clinvar_' + chnid).html('');
+
+        $("#" + me.pre + 'dt_snp_' + chnid).html('');
+        $("#" + me.pre + 'ov_snp_' + chnid).html('');
+
+        me.enableHlSeq();
 
         me.bAjaxSnpClinvar = true;
 
@@ -1571,13 +1592,7 @@ iCn3DUI.prototype.showCddSite = function(chnid, chnidBase) {
         $("#" + me.pre + "tt_site_" + chnid).html(html3);
 
         // add here after the ajax call
-        if(! me.isMobile()) {
-            me.selectSequenceNonMobile();
-        }
-        else {
-            me.selectSequenceMobile();
-            me.selectChainMobile();
-        }
+        me.enableHlSeq();
 
         me.bAjaxCddSite = true;
 
@@ -1592,6 +1607,17 @@ iCn3DUI.prototype.showCddSite = function(chnid, chnidBase) {
         }
 
         console.log( "No CDD data were found for the protein " + chnid + "..." );
+
+        $("#" + me.pre + "dt_cdd_" + chnid).html('');
+        $("#" + me.pre + "ov_cdd_" + chnid).html('');
+        $("#" + me.pre + "tt_cdd_" + chnid).html('');
+
+        $("#" + me.pre + "dt_site_" + chnid).html('');
+        $("#" + me.pre + "ov_site_" + chnid).html('');
+        $("#" + me.pre + "tt_site_" + chnid).html('');
+
+        // add here after the ajax call
+        me.enableHlSeq();
 
         me.bAjaxCddSite = true;
 
@@ -1623,13 +1649,7 @@ iCn3DUI.prototype.showDomain = function(chnid, chnidBase) { var me = this;
             me.showDomainWithData(chnid, me.mmdb_data);
 
             // add here after the ajax call
-            if(! me.isMobile()) {
-                me.selectSequenceNonMobile();
-            }
-            else {
-                me.selectSequenceMobile();
-                me.selectChainMobile();
-            }
+            me.enableHlSeq();
 
             me.bAjax3ddomain = true;
 
@@ -1644,6 +1664,12 @@ iCn3DUI.prototype.showDomain = function(chnid, chnidBase) { var me = this;
             }
 
             console.log( "No 3D domain data were found for the protein " + chnid + "..." );
+
+            $("#" + me.pre + "dt_domain_" + chnid).html('');
+            $("#" + me.pre + "ov_domain_" + chnid).html('');
+            $("#" + me.pre + "tt_domain_" + chnid).html('');
+
+            me.enableHlSeq();
 
             me.bAjax3ddomain = true;
 
