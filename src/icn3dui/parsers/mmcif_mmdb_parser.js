@@ -92,7 +92,12 @@ iCn3DUI.prototype.downloadMmcifSymmetry = function (mmcifid) { var me = this;
 iCn3DUI.prototype.downloadMmcifSymmetryBase = function (mmcifid) { var me = this;
    var url, dataType;
 
-   url = "https://files.rcsb.org/header/" + mmcifid + ".cif";
+   if(me.isMac()) { // safari has a problem in getting data from https://files.rcsb.org/header/
+       url = "https://files.rcsb.org/view/" + mmcifid + ".cif";
+   }
+   else {
+       url = "https://files.rcsb.org/header/" + mmcifid + ".cif";
+   }
 
    dataType = "text";
 
@@ -193,46 +198,16 @@ iCn3DUI.prototype.loadMmcifData = function(data) { var me = this;
 };
 
 iCn3DUI.prototype.loadMmcifSymmetry = function(data) { var me = this;
-    //if(me.cfg.align === undefined && Object.keys(me.icn3d.structures).length == 1) {
-    //    $("#" + me.pre + "alternateWrapper").hide();
-    //}
-
     // load assembly info
     var assembly = data.assembly;
     var pmatrix = data.pmatrix;
 
-//    var pmatrixMat4 = new THREE.Matrix4();
-//    pmatrixMat4.fromArray(pmatrix);
-
-//console.log("pmatrix: " + JSON.stringify(pmatrix));
-
     for(var i = 0, il = assembly.length; i < il; ++i) {
-//console.log("i: " + i + " matrix1: " + JSON.stringify(assembly[i]));
-
-      //var pmatrixInverseMat4 = new THREE.Matrix4();
-      //pmatrixInverseMat4.getInverse(pmatrixMat4);
-
       var mat4 = new THREE.Matrix4();
       mat4.fromArray(assembly[i]);
 
-      //pmatrixInverseMat4.multiply(mat4).multiply(pmatrixMat4);
-//      mat4.multiplyMatrices(pmatrixMat4, mat4);
-
-//console.log("mat4.elements: " + JSON.stringify(mat4.elements));
-
-/*
-      if (me.icn3d.biomtMatrices[i] == undefined) me.icn3d.biomtMatrices[i] = new THREE.Matrix4().identity();
-
-      for(var j = 0, jl = assembly[i].length; j < jl; ++j) {
-        //me.icn3d.biomtMatrices[i].elements[j] = assembly[i][j];
-        //me.icn3d.biomtMatrices[i].elements[j] = pmatrixInverseMat4.elements[j];
-        me.icn3d.biomtMatrices[i].elements[j] = mat4.elements[j];
-      }
-*/
-
       me.icn3d.biomtMatrices[i] = mat4;
     }
-//console.log("me.icn3d.biomtMatrices: " + JSON.stringify(me.icn3d.biomtMatrices));
 
     me.icn3d.asuCnt = me.icn3d.biomtMatrices.length;
 };
@@ -435,6 +410,11 @@ iCn3DUI.prototype.getMissingResidues = function (seqArray, type, chainid) { var 
             resiPos = 1;
         }
 
+        // fixe some missing residue names such as residue 6 in 5C1M_A
+        if(seqName === '') {
+            seqName = 'x';
+        }
+
         var resObject = {};
         resObject.resi = i + 1;
         var resi = parseInt(seqArray[i][resiPos]);
@@ -596,7 +576,6 @@ iCn3DUI.prototype.loadAtomDataIn = function (data, id, type, seqalign) { var me 
             me.getMissingResidues(seqArray, type, chainid);
         }
     }
-
 
     var atomid2serial = {};
     var prevStructureNum = '', prevChainNum = '', prevResidueNum = '';
@@ -881,14 +860,13 @@ iCn3DUI.prototype.loadAtomDataIn = function (data, id, type, seqalign) { var me 
           }
 
           // me.icn3d.chainsSeq[chainid][atm.resi - 1] should have been defined for major chains
-          if( (type === 'mmdbid' || type === 'mmcifid')  && bChainSeqSet && me.icn3d.chainsSeq[chainid][atm.resi - 1] !== undefined) {
+          if( bChainSeqSet && me.icn3d.chainsSeq[chainid][atm.resi - 1] !== undefined) {
               me.icn3d.chainsSeq[chainid][atm.resi - 1].name = oneLetterRes;
           }
-          else {
+          else if(!bChainSeqSet) {
               var resObject = {};
               resObject.resi = atm.resi;
               resObject.name = oneLetterRes;
-
               var numberStr = '';
               if(atm.resi % 10 === 0) numberStr = atm.resi.toString();
 

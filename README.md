@@ -19,7 +19,7 @@ We provided two types of iCn3D widgets: [basic interface](https://www.ncbi.nlm.n
 
 Either of these widgets could be easily added to your own web pages. Please see the [help page](https://www.ncbi.nlm.nih.gov/Structure/icn3d/docs/icn3d_help.html#HowToUse) for more details.
 
-<b>Complete package</b> of iCn3D including Three.js and jQuery can be downloaded from [https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.1.3.zip](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.1.3.zip). The "Download ZIP" link in this page does not include third-party libraries. 
+<b>Complete package</b> of iCn3D including Three.js and jQuery can be downloaded from [https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.1.4.zip](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.1.4.zip). The "Download ZIP" link in this page does not include third-party libraries. 
 
 ## Usage
 
@@ -77,6 +77,8 @@ gulp
 ```
 
 ## Change log
+The production version [icn3d-2.1.4](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.1.4.zip) was release on June 7, 2018. The retrieval of transformation matrix from mmCIF was fixed for Mac.
+
 The production version [icn3d-2.1.3](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.1.3.zip) was release on May 30, 2018.  "Sequences and Annotations" is now able to be highlighted even if some annotations didn't show up.
 
 The production version [icn3d-2.1.2](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.1.2.zip) was release on May 23, 2018. The surface display was improved by adding light reflection. Light was added to the display of instanced biological assemblies.

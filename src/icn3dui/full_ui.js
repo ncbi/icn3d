@@ -614,11 +614,6 @@ iCn3DUI.prototype = {
       // display the structure right away. load the mns and sequences later
       setTimeout(function(){
           if(me.bInitial) {
-              if(me.cfg.showanno !== undefined && me.cfg.showanno) {
-                   me.showAnnotations();
-                   me.setLogCmd("view annotations", true);
-              }
-
               if(me.cfg.showsets !== undefined && me.cfg.showsets) {
                    me.showSets();
               }
@@ -632,6 +627,23 @@ iCn3DUI.prototype = {
               }
 
               //me.setProtNuclLigInMenu();
+
+              if(me.cfg.showanno !== undefined && me.cfg.showanno) {
+                   var cmd = "view annotations";
+                   me.setLogCmd(cmd, true);
+
+                   me.showAnnotations();
+/*
+                   if(Object.keys(me.icn3d.proteins).length > 0) {
+                      $.when(me.applyCommandAnnotationsAndCddSite(cmd)).then(function() {
+                          // do something afterward
+                      });
+                   }
+                   else {
+                      me.applyCommandAnnotationsAndCddSiteBase(cmd);
+                   }
+*/
+              }
           }
           else {
               me.updateHlAll();
