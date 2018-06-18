@@ -27,7 +27,8 @@ iCn3D.prototype.createSurfaceRepresentation = function (atoms, type, wireframe, 
         allatoms: this.atoms,
         atomsToShow: Object.keys(atoms),
         extendedAtoms: extendedAtoms,
-        type: type
+        type: type,
+        threshbox: this.threshbox
     });
 
     var verts = ps.vertices;
@@ -82,7 +83,7 @@ iCn3D.prototype.createSurfaceRepresentation = function (atoms, type, wireframe, 
 */
     var mesh = new THREE.Mesh(geo, new THREE.MeshPhongMaterial({ overdraw: me.overdraw,
         specular: this.frac,
-        shininess: 10,
+        shininess: 10, //30,
         emissive: 0x000000,
         vertexColors: THREE.VertexColors,
         wireframe: wireframe,

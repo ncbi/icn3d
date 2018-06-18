@@ -37,7 +37,7 @@ if (typeof console === 'undefined') {
     };
 }
 
-$3Dmol.ProteinSurface = function() {
+$3Dmol.ProteinSurface = function(threshbox) {
 
     // constants for vpbits bitmasks
     /** @const */
@@ -231,7 +231,7 @@ $3Dmol.ProteinSurface = function() {
 
         boxLength = Math.floor(boxLength * defaultScaleFactor / scaleFactor);
         scaleFactor = defaultScaleFactor;
-        var threshbox = 180; // maximum possible boxsize
+        //var threshbox = 180; // maximum possible boxsize
         if (boxLength > threshbox) {
             var sfthresh = threshbox / boxLength;
             boxLength = Math.floor(threshbox);

@@ -167,6 +167,9 @@ var iCn3D = function (id) {
     this.helixSheetWidth = 1.3; // style ribbon, nucleotide cartoon, stand thickness
     this.nucleicAcidWidth = 0.8; // nucleotide cartoon
 
+    this.threshbox = 180; // maximum possible boxsize, default 180
+    this.maxAtoms3DMultiFile = 40000; // above the threshold, multiple files wil be output for 3D printing
+
     this.LABELSIZE = 30;
 
     this.opts = {

@@ -185,10 +185,14 @@ iCn3D.prototype.drawSymmetryMatesNoInstancing = function() {
    var cnt = 1; // itself
    var centerSum = this.center.clone();
 
+   var identity = new THREE.Matrix4();
+   identity.identity();
+
    for (var i = 0; i < this.biomtMatrices.length; i++) {  // skip itself
       var mat = this.biomtMatrices[i];
       if (mat === undefined) continue;
 
+/*
       var matArray = mat.toArray();
 
       // skip itself
@@ -203,6 +207,10 @@ iCn3D.prototype.drawSymmetryMatesNoInstancing = function() {
       }
 
       if(bItself) continue;
+*/
+
+      // skip itself
+      if(mat.equals(identity)) continue;
 
       var symmetryMate = this.mdl.clone();
       symmetryMate.applyMatrix(mat);
@@ -378,6 +386,9 @@ iCn3D.prototype.drawSymmetryMatesInstancing = function() {
        this.matricesElements3 = [];
        this.matricesElements4 = [];
 
+       var identity = new THREE.Matrix4();
+       identity.identity();
+
        for (var i = 0; i < this.biomtMatrices.length; i++) {  // skip itself
           var mat = this.biomtMatrices[i];
           if (mat === undefined) continue;
@@ -385,17 +396,7 @@ iCn3D.prototype.drawSymmetryMatesInstancing = function() {
           var matArray = mat.toArray();
 
           // skip itself
-          var bItself = 1;
-          for(var j = 0, jl = matArray.length; j < jl; ++j) {
-            if(j == 0 || j == 5 || j == 10) {
-              if(parseInt(1000*matArray[j]) != 1000) bItself = 0;
-            }
-            else if(j != 0 && j != 5 && j != 10 && j != 15) {
-              if(parseInt(1000*matArray[j]) != 0) bItself = 0;
-            }
-          }
-
-          if(bItself) continue;
+          if(mat.equals(identity)) continue;
 
           this.matricesElements1.push(matArray[0], matArray[1], matArray[2], matArray[3]);
           this.matricesElements2.push(matArray[4], matArray[5], matArray[6], matArray[7]);

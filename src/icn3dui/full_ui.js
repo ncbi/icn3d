@@ -1574,15 +1574,105 @@ iCn3DUI.prototype = {
         });
     },
 
+    exportStlFile: function(postfix) { var me = this;
+       // assemblies
+       if(me.icn3d.biomtMatrices !== undefined && me.icn3d.biomtMatrices.length > 1 && me.icn3d.bAssembly) {
+            // use a smaller grid to build the surface for assembly
+            me.icn3d.threshbox = 180 / Math.pow(me.icn3d.biomtMatrices.length, 0.33);
+
+            me.icn3d.removeSurfaces();
+            me.icn3d.applySurfaceOptions();
+       }
+
+       var text = me.saveStlFile();
+       me.saveFile(me.inputid + postfix + '.stl', 'binary', text);
+
+       // assemblies
+       if(me.icn3d.biomtMatrices !== undefined && me.icn3d.biomtMatrices.length > 1 && me.icn3d.bAssembly
+         && Object.keys(me.icn3d.dAtoms).length * me.icn3d.biomtMatrices.length > me.icn3d.maxAtoms3DMultiFile ) {
+            alert(me.icn3d.biomtMatrices.length + " files will be generated for this assembly. Please merge these files using some software and 3D print the merged file.");
+
+            var identity = new THREE.Matrix4();
+            identity.identity();
+
+            var index = 1;
+            for (var i = 0; i < me.icn3d.biomtMatrices.length; i++) {  // skip itself
+              var mat = me.icn3d.biomtMatrices[i];
+              if (mat === undefined) continue;
+
+              // skip itself
+              if(mat.equals(identity)) continue;
+
+              var time = (i + 1) * 100;
+
+              //https://stackoverflow.com/questions/1190642/how-can-i-pass-a-parameter-to-a-settimeout-callback
+              setTimeout(function(mat, index){
+                  text = me.saveStlFile(mat);
+                  me.saveFile(me.inputid + postfix + index + '.stl', 'binary', text);
+                  text = '';
+              }.bind(this, mat, index), time);
+
+              ++index;
+            }
+
+            // reset grid to build the surface for assembly
+            me.icn3d.threshbox = 180;
+       }
+    },
+
+    exportVrmlFile: function(postfix) { var me = this;
+       // assemblies
+       if(me.icn3d.biomtMatrices !== undefined && me.icn3d.biomtMatrices.length > 1 && me.icn3d.bAssembly) {
+            // use a smaller grid to build the surface for assembly
+            me.icn3d.threshbox = 180 / Math.pow(me.icn3d.biomtMatrices.length, 0.33);
+
+            me.icn3d.removeSurfaces();
+            me.icn3d.applySurfaceOptions();
+       }
+
+       var text = me.saveVrmlFile();
+       me.saveFile(me.inputid + postfix + '.wrl', 'text', text);
+
+       // assemblies
+       if(me.icn3d.biomtMatrices !== undefined && me.icn3d.biomtMatrices.length > 1 && me.icn3d.bAssembly
+         && Object.keys(me.icn3d.dAtoms).length * me.icn3d.biomtMatrices.length > me.icn3d.maxAtoms3DMultiFile ) {
+            alert(me.icn3d.biomtMatrices.length + " files will be generated for this assembly. Please merge these files using some software and 3D print the merged file.");
+
+            var identity = new THREE.Matrix4();
+            identity.identity();
+
+            var index = 1;
+            for (var i = 0; i < me.icn3d.biomtMatrices.length; i++) {  // skip itself
+              var mat = me.icn3d.biomtMatrices[i];
+              if (mat === undefined) continue;
+
+              // skip itself
+              if(mat.equals(identity)) continue;
+
+              var time = (i + 1) * 100;
+
+              //https://stackoverflow.com/questions/1190642/how-can-i-pass-a-parameter-to-a-settimeout-callback
+              setTimeout(function(mat, index){
+                  text = me.saveVrmlFile(mat);
+                  me.saveFile(me.inputid + postfix + index + '.wrl', 'text', text);
+                  text = '';
+              }.bind(this, mat, index), time);
+
+              ++index;
+            }
+
+            // reset grid to build the surface for assembly
+            me.icn3d.threshbox = 180;
+       }
+    },
+
     clkMn1_exportStl: function() { var me = this;
         $("#" + me.pre + "mn1_exportStl").click(function (e) {
            me.setLogCmd("export stl file", false);
 
            //me.hideStabilizer();
 
-           var text = me.saveStlFile();
-           me.saveFile(me.inputid + '.stl', 'binary', text);
-           text = '';
+           me.exportStlFile('');
         });
     },
 
@@ -1592,9 +1682,7 @@ iCn3DUI.prototype = {
 
            //me.hideStabilizer();
 
-           var text = me.saveVrmlFile();
-           me.saveFile(me.inputid + '.wrl', 'text', text);
-           text = '';
+           me.exportVrmlFile('');
         });
     },
 
@@ -1608,14 +1696,7 @@ iCn3DUI.prototype = {
            me.resetAfter3Dprint();
            me.addStabilizer();
 
-           var text = me.saveStlFile();
-
-           //me.hideStabilizer();
-           //me.icn3d.bRender = true;
-           //me.icn3d.draw();
-
-           me.saveFile(me.inputid + '_stab.stl', 'binary', text);
-           text = '';
+           me.exportStlFile('_stab');
         });
     },
 
@@ -1629,14 +1710,7 @@ iCn3DUI.prototype = {
            me.resetAfter3Dprint();
            me.addStabilizer();
 
-           var text = me.saveVrmlFile();
-
-           //me.hideStabilizer();
-           //me.icn3d.bRender = true;
-           //me.icn3d.draw();
-
-           me.saveFile(me.inputid + '_stab.wrl', 'text', text);
-           text = '';
+           me.exportVrmlFile('_stab');
         });
     },
 

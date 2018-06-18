@@ -3,9 +3,9 @@
  */
 
 //http://gun.teipir.gr/VRML-amgem/spec/part1/examples.html
-iCn3DUI.prototype.saveVrmlFile = function(  ){ var me = this;
+iCn3DUI.prototype.saveVrmlFile = function( mat ){ var me = this;
     if(Object.keys(me.icn3d.dAtoms).length > 50000) {
-        alert('Please select a subset of the structures to display, then save the structures for 3D printing...');
+        alert('Please display a subset of the structure to export 3D files. Then merge the files for 3D printing...');
         return [''];
     }
 
@@ -19,13 +19,36 @@ iCn3DUI.prototype.saveVrmlFile = function(  ){ var me = this;
 //    vrmlStrArray += '        children [\n';
 
     var vertexCnt = 0;
-    var result = me.processVrmlMeshGroup( me.icn3d.mdl, vrmlStrArray, vertexCnt );
+    var result = me.processVrmlMeshGroup( me.icn3d.mdl, vrmlStrArray, vertexCnt, mat );
     vrmlStrArray = result.vrmlStrArray;
     vertexCnt = result.vertexCnt;
 
-    result = me.processVrmlMeshGroup( me.icn3d.mdl_ghost, vrmlStrArray, vertexCnt );
+    result = me.processVrmlMeshGroup( me.icn3d.mdl_ghost, vrmlStrArray, vertexCnt, mat );
     vrmlStrArray = result.vrmlStrArray;
     vertexCnt = result.vertexCnt;
+
+   // assemblies
+   if(me.icn3d.biomtMatrices !== undefined && me.icn3d.biomtMatrices.length > 1 && me.icn3d.bAssembly
+     && Object.keys(me.icn3d.dAtoms).length * me.icn3d.biomtMatrices.length <= me.icn3d.maxAtoms3DMultiFile ) {
+        var identity = new THREE.Matrix4();
+        identity.identity();
+
+        for (var i = 0; i < me.icn3d.biomtMatrices.length; i++) {  // skip itself
+          var mat1 = me.icn3d.biomtMatrices[i];
+          if (mat1 === undefined) continue;
+
+          // skip itself
+          if(mat1.equals(identity)) continue;
+
+            result = me.processVrmlMeshGroup( me.icn3d.mdl, vrmlStrArray, vertexCnt, mat1 );
+            vrmlStrArray = result.vrmlStrArray;
+            vertexCnt = result.vertexCnt;
+
+            result = me.processVrmlMeshGroup( me.icn3d.mdl_ghost, vrmlStrArray, vertexCnt, mat1 );
+            vrmlStrArray = result.vrmlStrArray;
+            vertexCnt = result.vertexCnt;
+        }
+    }
 
     // remove the last ',\n';
 //    var vrmlStrArray = vrmlStrArray.substr(0, vrmlStrArray.lastIndexOf(',')) + '\n';
@@ -41,7 +64,7 @@ iCn3DUI.prototype.saveVrmlFile = function(  ){ var me = this;
 
 // The file lost face color after being repaired by https://service.netfabb.com/. It only works with vertex color
 // convert face color to vertex color
-iCn3DUI.prototype.processVrmlMeshGroup = function( mdl, vrmlStrArray, vertexCnt ){ var me = this;
+iCn3DUI.prototype.processVrmlMeshGroup = function( mdl, vrmlStrArray, vertexCnt, mat ){ var me = this;
     for(var i = 0, il = mdl.children.length; i < il; ++i) {
          var mesh = mdl.children[i];
          if(mesh.type === 'Sprite') continue;
@@ -85,6 +108,8 @@ iCn3DUI.prototype.processVrmlMeshGroup = function( mdl, vrmlStrArray, vertexCnt 
              else {
                  vertex = vertices[j].clone()
              }
+
+             if(mat !== undefined) vertex.applyMatrix4(mat);
 
              vrmlStrArray.push(vertex.x.toPrecision(5) + ' ' + vertex.y.toPrecision(5) + ' ' + vertex.z.toPrecision(5));
              vertex = undefined;
