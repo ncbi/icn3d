@@ -16,9 +16,9 @@ REAL32[3] – Vertex 3
 UINT16 – Attribute byte count
 end
 */
-iCn3DUI.prototype.saveStlFile = function(  ){ var me = this;
+iCn3DUI.prototype.saveStlFile = function( mat ){ var me = this;
     if(Object.keys(me.icn3d.dAtoms).length > 70000) {
-        alert('Please select a subset of the structures to display, then save the structures for 3D printing...');
+        alert('Please display a subset of the structure to export 3D files. Then merge the files for 3D printing...');
         return [''];
     }
 
@@ -32,8 +32,10 @@ iCn3DUI.prototype.saveStlFile = function(  ){ var me = this;
          var geometry = mesh.geometry;
 
          var faces = geometry.faces;
-         for(var j = 0, jl = faces.length; j < jl; ++j) {
-             ++cntFaces;
+         if(faces !== undefined) {
+             for(var j = 0, jl = faces.length; j < jl; ++j) {
+                 ++cntFaces;
+             }
          }
     }
 
@@ -44,8 +46,10 @@ iCn3DUI.prototype.saveStlFile = function(  ){ var me = this;
          var geometry = mesh.geometry;
 
          var faces = geometry.faces;
-         for(var j = 0, jl = faces.length; j < jl; ++j) {
-             ++cntFaces;
+         if(faces !== undefined) {
+             for(var j = 0, jl = faces.length; j < jl; ++j) {
+                 ++cntFaces;
+             }
          }
     }
 
@@ -73,13 +77,38 @@ iCn3DUI.prototype.saveStlFile = function(  ){ var me = this;
     }
 
     // UINT32 – Number of triangles
-    stlArray = me.updateArray( stlArray, me.passInt32([cntFaces]), 80 );
+    if(me.icn3d.biomtMatrices !== undefined && me.icn3d.biomtMatrices.length > 1 && me.icn3d.bAssembly
+      && Object.keys(me.icn3d.dAtoms).length * me.icn3d.biomtMatrices.length <= me.icn3d.maxAtoms3DMultiFile ) {
+        stlArray = me.updateArray( stlArray, me.passInt32([cntFaces * me.icn3d.biomtMatrices.length]), 80 );
+    }
+    else {
+        stlArray = me.updateArray( stlArray, me.passInt32([cntFaces]), 80 );
+    }
 
     blobArray.push(new Blob([stlArray],{ type: "application/octet-stream"}));
 
-    blobArray = me.processStlMeshGroup( me.icn3d.mdl, blobArray );
+    blobArray = me.processStlMeshGroup( me.icn3d.mdl, blobArray, mat );
 
-    blobArray = me.processStlMeshGroup( me.icn3d.mdl_ghost, blobArray );
+    blobArray = me.processStlMeshGroup( me.icn3d.mdl_ghost, blobArray, mat );
+
+   // assemblies
+   if(me.icn3d.biomtMatrices !== undefined && me.icn3d.biomtMatrices.length > 1 && me.icn3d.bAssembly
+     && Object.keys(me.icn3d.dAtoms).length * me.icn3d.biomtMatrices.length <= me.icn3d.maxAtoms3DMultiFile ) {
+        var identity = new THREE.Matrix4();
+        identity.identity();
+
+        for (var i = 0; i < me.icn3d.biomtMatrices.length; i++) {  // skip itself
+          var mat1 = me.icn3d.biomtMatrices[i];
+          if (mat1 === undefined) continue;
+
+          // skip itself
+          if(mat1.equals(identity)) continue;
+
+          blobArray = me.processStlMeshGroup( me.icn3d.mdl, blobArray, mat1 );
+
+          blobArray = me.processStlMeshGroup( me.icn3d.mdl_ghost, blobArray, mat1 );
+        }
+    }
 
     //me.resetAfter3Dprint();
 
@@ -151,7 +180,7 @@ iCn3DUI.prototype.getView = function( ctor, typedArray, elemSize ){ var me = thi
     ) : undefined;
 };
 
-iCn3DUI.prototype.processStlMeshGroup = function( mdl, blobArray ){ var me = this;
+iCn3DUI.prototype.processStlMeshGroup = function( mdl, blobArray, mat ){ var me = this;
     for(var i = 0, il = mdl.children.length; i < il; ++i) {
          var mesh = mdl.children[i];
          if(mesh.type === 'Sprite') continue;
@@ -160,6 +189,8 @@ iCn3DUI.prototype.processStlMeshGroup = function( mdl, blobArray ){ var me = thi
 
          var vertices = geometry.vertices;
          var faces = geometry.faces;
+
+         if(faces === undefined) continue;
 
          var position = mesh.position;
          var scale = mesh.scale;
@@ -201,12 +232,20 @@ iCn3DUI.prototype.processStlMeshGroup = function( mdl, blobArray ){ var me = thi
              //UINT16 – Attribute byte count
 
              if(normal !== undefined) {
+                 if(mat !== undefined) normal.applyMatrix4(mat);
+
                  stlArray = me.updateArray( stlArray, me.passFloat32([normal.x, normal.y, normal.z]), index );
                  index += 12;
              }
              else {
                  stlArray = me.updateArray( stlArray, me.passFloat32([0.0, 0.0, 0.0]), index );
                  index += 12;
+             }
+
+             if(mat !== undefined) {
+                 v1.applyMatrix4(mat);
+                 v2.applyMatrix4(mat);
+                 v3.applyMatrix4(mat);
              }
 
              stlArray = me.updateArray( stlArray, me.passFloat32([v1.x, v1.y, v1.z]), index );
@@ -223,6 +262,7 @@ iCn3DUI.prototype.processStlMeshGroup = function( mdl, blobArray ){ var me = thi
          }
 
          blobArray.push(new Blob([stlArray],{ type: "application/octet-stream"}));
+         stlArray = null;
     }
 
     return blobArray;

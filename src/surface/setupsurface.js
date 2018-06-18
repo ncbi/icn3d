@@ -11,7 +11,9 @@ $3Dmol.SetupSurface = function (data) {
     //var vol = $3Dmol.volume(data.extent);
     var vol = undefined;
 
-    var ps = new $3Dmol.ProteinSurface();
+    var threshbox = data.threshbox; // maximum possible boxsize, default 180
+
+    var ps = new $3Dmol.ProteinSurface(threshbox);
     ps.initparm(data.extent, (data.type === 1) ? false : true, vol);
 
     ps.fillvoxels(data.allatoms, data.extendedAtoms);
