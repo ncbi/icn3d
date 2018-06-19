@@ -154,17 +154,18 @@ iCn3DUI.prototype.downloadAlignment = function (align) { var me = this;
             me.icn3d.setAtomStyleByOptions(me.opts);
             // change the default color to "Identity"
             me.icn3d.setColorByOptions(me.opts, me.icn3d.atoms);
-            me.renderStructure();
-
-            if(me.cfg.rotate !== undefined) me.rotStruc(me.cfg.rotate, true);
-
-            me.html2ddgm = '';
 
             //var mmdbidArray = me.inputid.split('_');
             me.mmdbidArray = [];
             for(var i = 0, il = data.alignedStructures[0].length; i < il; ++i) {
                 me.mmdbidArray.push(data.alignedStructures[0][i].pdbId);
             }
+
+            me.renderStructure();
+
+            if(me.cfg.rotate !== undefined) me.rotStruc(me.cfg.rotate, true);
+
+            me.html2ddgm = '';
 
             //setTimeout(function(){
             //    me.set2DDiagramsForAlign(me.mmdbidArray[0].toUpperCase(), me.mmdbidArray[1].toUpperCase());
