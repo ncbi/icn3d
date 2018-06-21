@@ -3,12 +3,12 @@
 ## iCn3D
 
 "I see in 3D" (iCn3D) Structure Viewer is a WebGL-based 3D viewer using Three.js and jQuery. iCn3D has a feature-rich user interface and allows users to: 
-* [Display and integrate annotations](https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?mmdbid=1tup&command=view annotations; set annotation cdd; set view detailed view; set annotation all">Display and integrate annotations) from NCBI resources including dbSNP, ClinVar, conserved domains, 3D domains, and binding sites
-* [Add custom tracks](https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?mmdbid=1tup&showanno=1&show2d=1&showsets=1&command=view annotations; set view detailed view; add track | chainid 1TUP_B | title Custom Key Sites | text 82 R, 152 G, 155-156 RR, 180 R, 189 R; select .B:82,152,155-156,180,189 | name mutation) in various formats (FASTA, bed file, etc) in the annotation window
+* [Display and integrate annotations](https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?mmdbid=1tup&command=view+annotations;+set+annotation+cdd;+set+view+detailed+view;+set+annotation+all) from NCBI resources including dbSNP, ClinVar, conserved domains, 3D domains, and binding sites
+* [Add custom tracks](https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?mmdbid=1tup&showanno=1&show2d=1&showsets=1&command=view+annotations;+set+view+detailed+view;+add+track+|+chainid+1TUP_B+|+title+Custom+Key+Sites+|+text+82+R,+152+G,+155-156+RR,+180+R,+189+R;+select+.B:82,152,155-156,180,189+|+name+mutation) in various formats (FASTA, bed file, etc) in the annotation window
 * Use a url or a state file to capture the custom display of 3D structures
 * Select residues by searching sequences or select on 3D structures,  2D interactions, and 1D sequences
 * Display/highlight selected residues in 3D structures,  2D interactions, and 1D sequences
-* Export STL or VRML files for [3D printing](https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?mmdbid=1tup&command=export stl stabilizer file)
+* Export STL or VRML files for [3D printing](https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?mmdbid=1tup&command=export+stl+stabilizer+file)
 * Display NCBI pre-calculated [aligned 3D structures](https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?align=1hho,4n7n&showalignseq=1) by providing two PDB IDs or MMDB IDs
 
 
