@@ -1422,7 +1422,10 @@ iCn3D.prototype.createStrand = function (atoms, num, div, fill, coilWidth, helix
                         ++drawnResidueCount;
                     }
 
-                    if ((atom.ssbegin || atom.ssend || (drawnResidueCount === totalResidueCount - 1) ) && pnts[0].length > 0 && bSameChain) {
+                    //var maxDist = 6.0;
+                    //var bBrokenSs = (prevCoorCA && Math.abs(currentCA.x - prevCoorCA.x) > maxDist) || (prevCoorCA && Math.abs(currentCA.y - prevCoorCA.y) > maxDist) || (prevCoorCA && Math.abs(currentCA.z - prevCoorCA.z) > maxDist);
+
+                    if ((atom.ssbegin || atom.ssend || (drawnResidueCount === totalResidueCount - 1)) && pnts[0].length > 0 && bSameChain) {
                         // assign the current joint residue to the previous segment
                         if(bHighlight === 1 || bHighlight === 2) {
                             colors.push(this.hColor);

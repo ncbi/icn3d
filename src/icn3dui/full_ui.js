@@ -2392,7 +2392,7 @@ iCn3DUI.prototype = {
 
     clkMn4_clrCustom: function() { var me = this;
         $("#" + me.pre + "mn4_clrCustom").click(function (e) {
-           me.openDialog(me.pre + 'dl_clr', 'Choose custom color');
+           me.openDialog(me.pre + 'dl_clr', 'Color picker');
         });
     },
 
@@ -3577,6 +3577,14 @@ iCn3DUI.prototype = {
         });
     },
 
+    pickColor: function() { var me = this;
+        var picker = new CP(document.querySelector("#" + me.pre + "colorcustom"));
+
+        picker.on("change", function(color) {
+            this.target.value = color;
+        });
+    },
+
     clickApplypick_stabilizer_rm: function() { var me = this;
         $("#" + me.pre + "applypick_stabilizer_rm").click(function(e) {
            e.preventDefault();
@@ -4125,6 +4133,7 @@ iCn3DUI.prototype = {
         me.clickApplypick_measuredistance();
         me.clickApplypick_stabilizer();
         me.clickApplypick_stabilizer_rm();
+        me.pickColor();
         me.clickApply_thickness();
         me.clickReset();
         me.clickToggleHighlight();

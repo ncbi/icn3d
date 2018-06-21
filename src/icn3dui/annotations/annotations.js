@@ -2006,6 +2006,7 @@ iCn3DUI.prototype.hideAllAnno = function() { var me = this;
 };
 
 iCn3DUI.prototype.setAnnoTabAll = function () {  var me = this;
+    if($("#" + me.pre + "anno_all").length) $("#" + me.pre + "anno_all")[0].checked = true;
 
     if($("#" + me.pre + "anno_binding").length) $("#" + me.pre + "anno_binding")[0].checked = true;
     if($("#" + me.pre + "anno_snp").length) $("#" + me.pre + "anno_snp")[0].checked = true;
@@ -2030,6 +2031,8 @@ iCn3DUI.prototype.setAnnoTabAll = function () {  var me = this;
 };
 
 iCn3DUI.prototype.hideAnnoTabAll = function () {  var me = this;
+    if($("#" + me.pre + "anno_all").length) $("#" + me.pre + "anno_all")[0].checked = false;
+
     if($("#" + me.pre + "anno_binding").length) $("#" + me.pre + "anno_binding")[0].checked = false;
     if($("#" + me.pre + "anno_snp").length) $("#" + me.pre + "anno_snp")[0].checked = false;
     if($("#" + me.pre + "anno_clinvar").length) $("#" + me.pre + "anno_clinvar")[0].checked = false;

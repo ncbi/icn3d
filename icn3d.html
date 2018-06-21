@@ -45,7 +45,28 @@ body {font-family: Verdana, Arial, Helvetica, sans-serif;}
 
 <ul>
 
-<li><a href="https://www.ncbi.nlm.nih.gov/Structure/icn3d/docs/icn3d_help.html">Link to Help Page</a></li><br>
+<li>What is iCn3D Structure Viewer?</li><br/>
+"I see in 3D" (iCn3D) Structure Viewer is a WebGL-based 3D viewer using Three.js and jQuery. iCn3D has a feature-rich user interface and allows users to:<br/><br/>
+<ul>
+<li><a href="https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?mmdbid=1tup&command=view annotations; set annotation cdd; set view detailed view; set annotation all">Display and integrate annotations</a> from NCBI resources including dbSNP, ClinVar, conserved domains, 3D domains, and binding sites</li>
+<li><a href="https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?mmdbid=1tup&showanno=1&show2d=1&showsets=1&command=view annotations; set view detailed view; add track | chainid 1TUP_B | title Custom Key Sites | text 82 R, 152 G, 155-156 RR, 180 R, 189 R; select .B:82,152,155-156,180,189 | name mutation">Add custom tracks</a> in various formats (FASTA, bed file, etc) in the annotation window</li>
+<li>Use a url or a state file to capture the custom display of 3D structures</li>
+<li>Select residues by searching sequences or select on 3D structures, 2D interactions, and 1D sequences</li>
+<li>Display/highlight selected residues in 3D structures, 2D interactions, and 1D sequences</li>
+<li>Export STL or VRML files for <a href="https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?mmdbid=1tup&command=export stl stabilizer file">3D printing</a></li>
+<li>Display NCBI pre-calculated <a href="https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?align=1hho,4n7n&showalignseq=1">aligned 3D structures</a> by providing two PDB IDs or MMDB IDs</li>
+</ul>
+<br/>
+
+We provided two types of iCn3D widgets: <a href="https://www.ncbi.nlm.nih.gov/Structure/icn3d/index.html?mmdbid=1tup">basic interface</a> and <a href="https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?mmdbid=1tup">advanced interface</a>.<br><br/>
+<ol>
+<li>The basic interface has the minimum javascript code for the interface. It has the basic features such as changing color and styles.</li>
+<li>The advanced interface has a library for the interface. It has many features.</li>
+</ol>
+<br/>
+
+This page describes Web APIs and how to embed iCn3D in your html page. Other details are described in the <a href="https://www.ncbi.nlm.nih.gov/Structure/icn3d/docs/icn3d_help.html">help</a> page.<br/>
+<br/>
 
 <li><a href="#HowToUse">How to use iCn3D Structure Viewer in your html page</a></li>
     <ul>
@@ -876,7 +897,7 @@ In the dialog Select -&gt; Advanced, users can use simple specification to selec
 <tr><td valign='top'><span class="indent">White:</span></td>              <td valign='top'>color white</td> <td valign='top'><a href="#setColorByOptions">setColorByOptions</a></td></tr>
 <tr><td valign='top'><span class="indent">Grey:</span></td>               <td valign='top'>color grey</td> <td valign='top'><a href="#setColorByOptions">setColorByOptions</a></td></tr>
 
-<tr><td colspan="3"><br>c) Color -&gt; Custom</td> </tr>
+<tr><td colspan="3"><br>c) Color -&gt; Color Picker</td> </tr>
 <tr><td valign='top'><span class="indent">Apply:</span></td>              <td valign='top'>color [e.g., FF0000]</td> <td valign='top'><a href="#setColorByOptions">setColorByOptions</a></td></tr>
 </tbody></table>
 <br>
@@ -1700,6 +1721,9 @@ Update the highlight of sequences in the annotation window according to the curr
 
 <a name="log"></a>
 <h2>Change Log:<img src="https://www.ncbi.nlm.nih.gov/Structure/IMG/spacer.gif" width="25" height="1" border="0"><a href="#Top"><img src="https://www.ncbi.nlm.nih.gov/Structure/IMG/arrowup_blue.gif" width="12" height="12" border="0" alt="back to top"></a></h2>
+The production version <a href="https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.1.6.zip">icn3d-2.1.6</a> was release on June 21, 2018. A color picker was added to the color menu.
+<br><br>
+
 The production version <a href="https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.1.5.zip">icn3d-2.1.5</a> was release on June 18, 2018. 3D printing are enabled for biological assemblies.
 <br><br>
 

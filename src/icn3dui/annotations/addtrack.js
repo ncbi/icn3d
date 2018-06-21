@@ -18,7 +18,7 @@ iCn3DUI.prototype.addTrack = function() { var me = this;
 };
 
 iCn3DUI.prototype.simplifyText = function(text) { var me = this;
-    var out = ''; // 0-based text positions
+    var out = ''; // 1-based text positions
     var bFoundText = false;
 
     var i, prevEmptyPos = -1;
@@ -26,10 +26,10 @@ iCn3DUI.prototype.simplifyText = function(text) { var me = this;
         if(text[i] == '-' || text[i] == ' ') {
             if(bFoundText && i !== prevEmptyPos) {
                 if(prevEmptyPos+1 == i-1) {
-                    out += (prevEmptyPos+1).toString() + ' ' + text.substr(prevEmptyPos+1, i - 1 - prevEmptyPos) + ', ';
+                    out += (prevEmptyPos+1 + 1).toString() + ' ' + text.substr(prevEmptyPos+1, i - 1 - prevEmptyPos) + ', ';
                }
                 else {
-                    out += (prevEmptyPos+1).toString() + '-' + (i-1).toString() + ' ' + text.substr(prevEmptyPos+1, i - 1 - prevEmptyPos) + ', ';
+                    out += (prevEmptyPos+1 + 1).toString() + '-' + (i-1 + 1).toString() + ' ' + text.substr(prevEmptyPos+1, i - 1 - prevEmptyPos) + ', ';
                 }
                 bFoundText = false;
             }
@@ -43,10 +43,10 @@ iCn3DUI.prototype.simplifyText = function(text) { var me = this;
 
     if(bFoundText && i == il) {
         if(prevEmptyPos+1 == i-1) {
-            out += (prevEmptyPos+1).toString() + ' ' + text.substr(prevEmptyPos+1, i - 1 - prevEmptyPos) + ', ';
+            out += (prevEmptyPos+1 + 1).toString() + ' ' + text.substr(prevEmptyPos+1, i - 1 - prevEmptyPos) + ', ';
         }
         else {
-            out += (prevEmptyPos+1).toString() + '-' + (i-1).toString() + ' ' + text.substr(prevEmptyPos+1, i - 1 - prevEmptyPos) + ', ';
+            out += (prevEmptyPos+1 + 1).toString() + '-' + (i-1 + 1).toString() + ' ' + text.substr(prevEmptyPos+1, i - 1 - prevEmptyPos) + ', ';
         }
     }
 
@@ -349,11 +349,13 @@ iCn3DUI.prototype.clickAddTrackButton = function() { var me = this;
 
        var chainid = $("#" + me.pre + "track_chainid").val();
        var title = $("#" + me.pre + "track_title").val();
-       var text = $("#" + me.pre + "track_text").val();
+       var text = $("#" + me.pre + "track_text").val(); // input simplifyText
 
-       me.showNewTrack(chainid, title, text);
+       //me.showNewTrack(chainid, title, text);
+       //me.setLogCmd("add track | chainid " + chainid + " | title " + title + " | text " + me.simplifyText(text), true);
 
-       me.setLogCmd("add track | chainid " + chainid + " | title " + title + " | text " + me.simplifyText(text), true);
+       me.showNewTrack(chainid, title,  me.getFullText(text));
+       me.setLogCmd("add track | chainid " + chainid + " | title " + title + " | text " + text, true);
     });
 
     // current selection
@@ -545,7 +547,7 @@ iCn3DUI.prototype.getFullText = function (text) { var me = this;
         var eachText = textArray[i].trim();
         if(eachText.length == 0) continue;
 
-        var range_text = eachText.trim().split(' ');
+        var range_text = eachText.split(' ');
         if(range_text.length !== 2) continue;
 
         var rangeText = range_text[1];
@@ -553,11 +555,11 @@ iCn3DUI.prototype.getFullText = function (text) { var me = this;
 
         var start, end;
         if(start_end.length == 2) {
-            start = start_end[0];
-            end = start_end[1];
+            start = start_end[0] - 1; // 1-based
+            end = start_end[1] - 1;
         }
         else if(start_end.length == 1) {
-            start = start_end[0];
+            start = start_end[0] - 1;
             end = start;
         }
         else {

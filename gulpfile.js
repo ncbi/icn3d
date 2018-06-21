@@ -75,8 +75,10 @@ gulp.task('copy-rename2',
   ['clean'],
   function () {
     return gulp.src([
-            "css/icn3d_full_ui.css"
+            "css/icn3d_full_ui.css",
+            "src/color-pick/color-picker.css"
         ])
+        .pipe(concat('icn3d_full_ui.css'))
         .pipe(gulp.dest(dist))
         .pipe(rename('icn3d_full_ui_' + package.version + '.css'))
         .pipe(gulp.dest(dist));
@@ -170,6 +172,7 @@ var full_uijs = [
     "src/icn3dui/html/set_html.js",
     "src/icn3dui/html/dialogs.js",
     "src/icn3dui/twoddiagram.js",
+    "src/color-pick/color-picker.js",
 ];
 
 // Create the gulp tasks for simple and full:

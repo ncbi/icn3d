@@ -230,21 +230,22 @@ iCn3DUI.prototype.execCommandsBase = function (start, end, steps) { var me = thi
       else {
           me.applyCommand(me.icn3d.commands[i]);
       }
+  }
 
-      if(i === steps - 1) {
-          // enable me.hideLoading
-          me.bCommandLoad = false;
+  //if(i === steps - 1) {
+  if(i === steps) {
+      // enable me.hideLoading
+      me.bCommandLoad = false;
 
-          // hide "loading ..."
-          me.hideLoading();
+      // hide "loading ..."
+      me.hideLoading();
 
-          me.icn3d.bRender = true;
+      me.icn3d.bRender = true;
 
-          // end of all commands
-          if(i + 1 === me.icn3d.commands.length) me.bAddCommands = true;
+      // end of all commands
+      if(i + 1 === me.icn3d.commands.length) me.bAddCommands = true;
 
-          me.renderFinalStep(steps);
-      }
+      me.renderFinalStep(steps);
   }
 };
 
