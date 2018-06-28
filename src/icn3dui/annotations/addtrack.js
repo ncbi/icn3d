@@ -454,8 +454,9 @@ iCn3DUI.prototype.showNewTrack = function(chnid, title, text, cssColorArray) {  
     var html2 = html;
     var html3 = html;
 
-    var htmlTmp2 = '<div class="icn3d-seqTitle icn3d-link icn3d-blue" gi="' + chnid + '" anno="sequence" chain="' + chnid + '"><span style="white-space:nowrap;">' + title + '</span></div>';
-    var htmlTmp3 = '<span class="icn3d-residueNum" title="residue count">' + resCnt.toString() + ' Res</span>';
+    //var htmlTmp2 = '<div class="icn3d-seqTitle icn3d-link icn3d-blue" gi="' + chnid + '" anno="sequence" chain="' + chnid + '"><span style="white-space:nowrap;">' + title + '</span></div>';
+    var htmlTmp2 = '<div class="icn3d-seqTitle" gi="' + chnid + '" anno="sequence" chain="' + chnid + '"><span style="white-space:nowrap;">' + title + '</span></div>';
+    var htmlTmp3 = '<span class="icn3d-residueNum" title="residue count">' + resCnt.toString() + ' Pos</span>';
 
     html3 += htmlTmp2 + htmlTmp3 + '<br>';
 
@@ -509,7 +510,7 @@ iCn3DUI.prototype.showNewTrack = function(chnid, title, text, cssColorArray) {  
           }
       }
     }
-    var htmlTmp = '<span class="icn3d-residueNum" title="residue count">' + resCnt.toString() + ' Res</span>';
+    var htmlTmp = '<span class="icn3d-residueNum" title="residue count">' + resCnt.toString() + ' Pos</span>';
     htmlTmp += '</span>';
     htmlTmp += '<br>';
 
@@ -571,7 +572,19 @@ iCn3DUI.prototype.getFullText = function (text) { var me = this;
             out += '-';
         }
 
-        out += rangeText;
+        var range = end - start + 1;
+
+        if(rangeText.length > range) {
+             out += rangeText.substr(0, range);
+        }
+        else {
+             out += rangeText;
+        }
+
+        // fill up rangeText
+        for(var j = 0; j < range - rangeText.length; ++j) {
+            out += '-';
+        }
 
         lastTextPos = end;
     }
