@@ -1060,7 +1060,7 @@ iCn3DUI.prototype.setDialogs = function() { var me = this;
     html += "      </div>";
     html += "      <div id='" + me.pre + "tracktab4'>";
     html += "Track Title: <input type='text' id='" + me.pre + "track_title' placeholder='track title' size=16> <br><br>";
-    html += "Track Text (e.g., \"152 G, 155-156 RR\" defines a character \"G\" at the position 152 and two continuous characters \"RR\" at positions from 155 to 156. The starting positoin is 1): <br>";
+    html += "Track Text (e.g., \"152 G, 155-156 RR\" defines a character \"G\" at the position 152 and two continuous characters \"RR\" at positions from 155 to 156. The starting position is 1): <br>";
     html += "<textarea id='" + me.pre + "track_text' rows='5' style='width: 100%; height: " + (2*me.MENU_HEIGHT) + "px; padding: 0px; border: 0px;'></textarea><br><br>";
     html += "<button id='" + me.pre + "addtrack_button4'>Add Track</button>";
     html += "      </div>";

@@ -152,6 +152,9 @@ iCn3DUI.prototype.enableHlSeq = function() { var me = this;
         me.selectSequenceMobile();
         me.selectChainMobile();
     }
+
+    // highlight seq after the ajax calls
+    me.updateHlSeq();
 };
 
 // by default, showSeq and showCddSite are called at showAnnotations
