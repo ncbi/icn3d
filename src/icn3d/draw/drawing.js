@@ -614,7 +614,7 @@ iCn3D.prototype.subdivide = function (_pnts, _clrs, DIV, bShowArray, bHighlight)
     savedColor = [];
     pnts = [];
 
-    pnts_positions = [];
+    var pnts_positions = [];
 
     pnts_positions.push(ret);
     pnts_positions.push(pos);

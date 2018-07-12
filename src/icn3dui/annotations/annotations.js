@@ -545,73 +545,12 @@ iCn3DUI.prototype.showSeq = function(chnid, chnidBase, type) {  var me = this;
     html3 += htmlTmp + '<br>';
     html += htmlTmp + '<span class="icn3d-seqLine">';
 
-/*
-var topoJson = '{secondaryArray: [';
-var currSec = '', prevSec = '';
-var startRes, endRes, rangeText='', startPos, endPos;
-*/
-
     for(var i = 0, il = giSeq.length; i < il; ++i) {
 //      var resi = (me.baseResi[chnid] + i+1).toString();
 //      var resi = me.icn3d.chainsSeq[chnid][i - me.matchedPos[chnid] ].resi;
       var resi = (i >= me.matchedPos[chnid] && i - me.matchedPos[chnid] < me.icn3d.chainsSeq[chnid].length) ? me.icn3d.chainsSeq[chnid][i - me.matchedPos[chnid]].resi : me.baseResi[chnid] + 1 + i;
 
       var residueid = chnid + '_' + resi;
-
-/*
-var c = giSeq[i].substr(0, 1);
-var atom;
-for(var serial in me.icn3d.residues[residueid]) {
-    if(me.icn3d.atoms[serial].name == 'CA' || me.icn3d.atoms[serial].name == 'O3\'' || me.icn3d.atoms[serial].name == 'O3*') {
-        atom = me.icn3d.atoms[serial];
-        break;
-    }
-}
-
-//if(atom.ssend) {
-
-if( me.icn3d.residues.hasOwnProperty(residueid) ) {
-    if(me.icn3d.secondaries[residueid] == 'H') {
-        currSec = 'H';
-    }
-    else if(me.icn3d.secondaries[residueid] == 'E') {
-        currSec = 'S';
-    }
-    else {
-        currSec = 'C'
-    }
-}
-else {
-    currSec = 'M';
-}
-
-if(currSec !== prevSec) {
-    if(i > 0) {
-        endRes = prevResi;
-        endPos = prevPos;
-        if(prevSec != 'M') {
-            topoJson += '{"type": "' + prevSec + '", "startRes": ' + startRes + ', "endRes": ' + endRes + ', "residues": "' + rangeText
-              + '", "startPos": ' + JSON.stringify(startPos) + ', "endPos": ' + JSON.stringify(endPos) + '}';
-        }
-        else {
-            topoJson += '{"type": "' + prevSec + '", "startRes": ' + startRes + ', "endRes": ' + endRes + ', "residues": "' + rangeText
-              + '"}';
-        }
-
-        topoJson += ", ";
-    }
-
-    startRes = resi;
-    startPos = (atom !== undefined) ? atom.coord : undefined;
-    rangeText = '';
-}
-
-rangeText += c;
-
-prevSec = currSec;
-prevResi = resi;
-prevPos = (atom !== undefined) ? atom.coord : undefined;
-*/
 
       if( me.icn3d.residues.hasOwnProperty(residueid) ) {
         if(me.icn3d.secondaries[residueid] == 'H') {
@@ -651,22 +590,6 @@ prevPos = (atom !== undefined) ? atom.coord : undefined;
     html += '</span>';
     html += '<br>';
     html += '</div>';
-
-/*
-endRes = prevResi;
-endPos = prevPos;
-if(prevSec != 'M') {
-    topoJson += '{"type": "' + prevSec + '", "startRes": ' + startRes + ', "endRes": ' + endRes + ', "residues": "' + rangeText
-      + '", "startPos": ' + JSON.stringify(startPos) + ', "endPos": ' + JSON.stringify(endPos) + '}';
-}
-else {
-    topoJson += '{"type": "' + prevSec + '", "startRes": ' + startRes + ', "endRes": ' + endRes + ', "residues": "' + rangeText
-      + '"}';
-}
-
-topoJson += ']}';
-console.log(chnid + ': ' + topoJson);
-*/
 
     html += '</div>'; // corresponds to above: html += '<div class="icn3d-dl_sequence">';
 
