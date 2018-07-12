@@ -3577,6 +3577,7 @@ iCn3DUI.prototype = {
         });
     },
 
+    // https://github.com/tovic/color-picker
     pickColor: function() { var me = this;
         var picker = new CP(document.querySelector("#" + me.pre + "colorcustom"));
 
