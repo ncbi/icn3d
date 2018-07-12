@@ -69,7 +69,7 @@ var saveAs = saveAs || (function(view) {
         , auto_bom = function(blob) {
             // prepend BOM for UTF-8 XML and text/* types (including HTML)
             // note: your browser will automatically convert UTF-16 U+FEFF to EF BB BF
-            if (/^\s*(?:text\/\S*|application\/xml|\S*\/\S*\+xml)\s*;.*charset\s*=\s*utf-8/i.test(blob.type)) {
+            if (blob && /^\s*(?:text\/\S*|application\/xml|\S*\/\S*\+xml)\s*;.*charset\s*=\s*utf-8/i.test(blob.type)) {
                 return new Blob([String.fromCharCode(0xFEFF), blob], {type: blob.type});
             }
             return blob;
@@ -81,7 +81,7 @@ var saveAs = saveAs || (function(view) {
             // First try a.download, then web filesystem, then object URLs
             var
                   filesaver = this
-                , type = blob.type
+                , type = (blob) ? blob.type : undefined
                 , force = type === force_saveable_type
                 , object_url
                 , dispatch_all = function() {
@@ -105,9 +105,7 @@ var saveAs = saveAs || (function(view) {
                         return;
                     }
                     // don't create more object URLs than needed
-                    if (!object_url) {
-                        object_url = get_URL().createObjectURL(blob);
-                    }
+                    if (!object_url) object_url = get_URL().createObjectURL(blob);
                     if (force) {
                         view.location.href = object_url;
                     } else {
@@ -125,7 +123,7 @@ var saveAs = saveAs || (function(view) {
             filesaver.readyState = filesaver.INIT;
 
             if (can_use_save_link) {
-                object_url = get_URL().createObjectURL(blob);
+                if (!object_url) object_url = get_URL().createObjectURL(blob);
                 setImmediate(function() {
                     save_link.href = object_url;
                     save_link.download = name;
