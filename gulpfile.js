@@ -134,7 +134,6 @@ var simple_js = [
 ];
 
 var full_js = [
-    "src/utils/dynamic_links.js",
     "src/utils/canvas-to-blob.js",
     "src/utils/FileSaver.js",
     "src/surface/marchingcube.js",

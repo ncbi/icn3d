@@ -3,8 +3,8 @@
  * Modified by Jiyao Wang / https://github.com/ncbi/icn3d
  */
 
-//$3Dmol = $3Dmol || {};
-$3Dmol = {};
+var $3Dmol = $3Dmol || {};
+
 //Encapsulate marching cube algorithm for isosurface generation
 // (currently used by protein surface rendering and generic volumetric data reading)
 $3Dmol.MarchingCubeInitializer = function() {

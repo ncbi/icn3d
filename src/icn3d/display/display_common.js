@@ -331,7 +331,7 @@ iCn3D.prototype.applyDisplayOptions = function (options, atoms, bHighlight) { va
 
     for(var style in this.style2atoms) {
       // 14 styles: ribbon, strand, cylinder and plate, nucleotide cartoon, o3 trace, schematic, c alpha trace, b factor tube, lines, stick, ball and stick, sphere, dot, nothing
-      atomHash = this.style2atoms[style];
+      var atomHash = this.style2atoms[style];
       var bPhosphorusOnly = this.isCalphaPhosOnly(this.hash2Atoms(atomHash), "O3'", "O3*");
 
       if(style === 'ribbon') {
