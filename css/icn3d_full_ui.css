@@ -11,19 +11,19 @@
 accordion {font-size: 14px!important; z-index:1999; }
 accordion h3 {width: 100px; font-size: 14px!important;}
 accordion h3 > .ui-icon { display: none !important; }
-accordion > ul {width: 60px;}
-accordion ul ul {width: 160px;}
+//accordion ul {width: 110px}
+accordion ul ul  {width: 160px}
 accordion ul li {cursor:default!important; white-space:nowrap;}
-//accordion ul .icn3d-link, div .icn3d-link, accordion li input, accordion li label, button {cursor:pointer!important; } 
+/*accordion ul .icn3d-link, div .icn3d-link, accordion li input, accordion li label, button {cursor:pointer!important; } */
 .icn3d-link, accordion li input, accordion li label, button {cursor:pointer!important; } 
 .icn3d-blue {color:blue!important;}
 
-//.icn3d-dl_sequence {background: white; padding-left:10px;}
+/*.icn3d-dl_sequence {background: white; padding-left:10px;}*/
 .icn3d-dl_sequence {background: white;}
 .icn3d-highlightSeq {background-color: #FFFF00;}
 .icn3d-highlightSeqBox {border:3px solid #FFA500;}
 
-// used to identify a residue when clicking a residue in sequence
+/* used to identify a residue when clicking a residue in sequence*/
 .icn3d-residue {font-weight:regular;} 
 .icn3d-residueNum {color: green; width:40px!important; text-align:center; white-space:nowrap;}
 
@@ -46,7 +46,7 @@ button, select, input { font-size: 10px; }
 .icn3d-dialog {font-family: Verdana, Arial, Helvetica, sans-serif; color: #666666;}
 .icn3d-commandTitle  {font-size: 12px; font-weight:bold; font-family: Verdana, Arial, Helvetica, sans-serif; color: #666666;}
 .icn3d-modeselection  {color: #f8b84e!important;}
-//.icn3d-viewselection  {color: #800000!important;}
+/*.icn3d-viewselection  {color: #800000!important;}*/
 .icn3d-viewselection  {color: #f8b84e!important;}
 
 .icn3d-middleIcon {opacity: 1.0}
@@ -54,10 +54,10 @@ button, select, input { font-size: 10px; }
 
 .icn3d-box {border: solid 1px #ccc; padding: 5px; margin: 5px;}
 
-// sequence alignent, 'cons' means aligned and conserved, 'ncons' means aligned and not conserved, 'nalign' means not aligned
+/* sequence alignent, 'cons' means aligned and conserved, 'ncons' means aligned and not conserved, 'nalign' means not aligned*/
 .icn3d-cons {}
 .icn3d-ncons {}
-.icn3d-nalign {} // {font-style: italic;}
+.icn3d-nalign {} 
 
 .icn3d-node {cursor:pointer!important; } 
 .icn3d-interaction {cursor:pointer!important; } 
@@ -74,7 +74,7 @@ button, select, input { font-size: 10px; }
     float: right;
 }
 
-// toggle button: http://www.w3schools.com/howto/howto_css_switch.asp
+/* toggle button: http://www.w3schools.com/howto/howto_css_switch.asp */
 .icn3d-switch {
   position: relative;
   display: inline-block;
@@ -130,9 +130,9 @@ input:checked + .icn3d-slider:before {
   border-radius: 50%;
 }
 
-// jquery UI 1.12.1
-// for jquery tooltip
-label {
+/* jquery UI 1.12.1
+   for jquery tooltip */
+.icn3d-tooltip {
   display: inline-block;
   width: 200px; // 5em;
 }
@@ -154,7 +154,7 @@ label {
 .icn3d-clinvar {color:green; font-size:12px; font-weight:bold;}
 .icn3d-clinvar-path {color:purple; font-size:12px; font-weight:bold;}
 
-//.icn3d-sheet {background-image: linear-gradient(transparent, transparent 25%, #FFC800 25%, #FFC800 75%, transparent 75%, transparent 100%);} 
+/*.icn3d-sheet {background-image: linear-gradient(transparent, transparent 25%, #FFC800 25%, #FFC800 75%, transparent 75%, transparent 100%);} */
 .icn3d-sheet {background-image: linear-gradient(transparent, transparent 20%, #FFC800 20%, #FFC800 70%, transparent 70%, transparent 100%);} 
 .icn3d-sheet2 {background-image: url("ssimages/tri.png"); background-size: contain; background-repeat: no-repeat;}
 
@@ -168,4 +168,35 @@ label {
 .icn3d-sheet-color {color: #FFC800;}
 
 .icn3d-fixed-pos {position:fixed;}
-//.icn3d-space-title {width:160px; display:inline-block;}
+/*.icn3d-space-title {width:160px; display:inline-block;} */
+
+.icn3d-bkgd {background-color:#eee;}
+
+/* remove the extra bar in the menu */
+    /* background: #eee url(images/ui-bg_highlight-soft_100_eeeeee_1x100.png) 50% top repeat-x; */
+.ui-widget-content {
+    border: 1px solid #ddd;
+    background: #eee;
+    color: #333;
+}
+
+.icn3d-rad > input{ /* HIDE RADIO */
+  visibility: hidden; /* Makes input not-clickable */
+  position: absolute; /* Remove input from document flow */
+}
+.icn3d-rad > input + .ui-icon{ /* IMAGE STYLES */
+  cursor:pointer;
+  //border:2px solid transparent;
+}
+.icn3d-rad > input:checked + .ui-icon{ /* (RADIO CHECKED) IMAGE STYLES */
+  //border:2px solid #f00;
+  background-position: -64px -144px; //ui-icon-check 
+}
+
+.ui-menu-icons .ui-menu-item-wrapper {
+    padding-left: 0em;
+}
+
+.icn3d-rad-text {
+    padding-left: 2em;
+}

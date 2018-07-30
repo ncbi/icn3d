@@ -160,7 +160,7 @@ iCn3D.prototype.applySsbondsOptions = function (options) {
                 }
             }
 
-            if(this.atoms[serial1].ids !== undefined) { // mmdb id asinput
+            //if(this.atoms[serial1].ids !== undefined) { // mmdb id as input
                 // remove the originaldisulfide bonds
                 var pos = this.atoms[serial1].bonds.indexOf(serial2);
                 var array1, array2;
@@ -178,7 +178,7 @@ iCn3D.prototype.applySsbondsOptions = function (options) {
 
                     this.atoms[serial2].bonds = array1.concat(array2);
                 }
-            }
+            //}
 
             //if(this.lines['ssbond'] === undefined) this.lines['ssbond'] = [];
             this.lines['ssbond'].push(line);

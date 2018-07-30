@@ -30,6 +30,8 @@ iCn3DUI.prototype.setTools_base = function() { var me = this;
 
     var buttonStyle = me.isMobile() ? 'none' : 'button';
 
+    html += "      <td valign='top'>" + me.setButton(buttonStyle, 'saveimage', 'Save Image', 'Save<br/>Image') + "</td>";
+
     if(me.cfg.cid === undefined) {
         //html += "      <td valign='top'>" + me.setButton(buttonStyle, 'definedSets', 'Select defined structure, chain, and custom sets', 'Defined <br/>Sets') + "</td>";
         html += "      <td valign='top'>" + me.setButton(buttonStyle, 'definedsets', 'Defined Sets', 'Defined<br/>Sets') + "</td>";
@@ -77,8 +79,8 @@ iCn3DUI.prototype.setTopMenusHtml = function (id) { var me = this;
     //html += "    <td valign='top'>" + me.setMenu5b() + "</td>";
     html += "    <td valign='top'>" + me.setMenu6() + "</td>";
 
-    html += "    <td valign='top'><div style='position:relative; margin-left:6px;'><label class='icn3d-switch'><input id='" + me.pre + "modeswitch' type='checkbox'><div class='icn3d-slider icn3d-round' style='width:34px; height:18px; margin: -18px 0px 0px 3px;' title='Left (\"All atoms\"): Style and color menu options will be applied to all atoms in the structure&#13;Right (\"Selection\"): Style and color menu options will be applied only to selected atoms'></div></label>";
-    html += "    <div class='icn3d-commandTitle' style='min-width:40px; margin-top: 22px; white-space: nowrap;'><span id='" + me.pre + "modeall' title='Style and color menu options will be applied to all atoms in the structure'>All atoms&nbsp;&nbsp;</span><span id='" + me.pre + "modeselection' class='icn3d-modeselection' style='display:none;' title='Style and color menu options will be applied only to selected atoms'>Selection&nbsp;&nbsp;</span></div></div></td>";
+    html += "    <td valign='top'><div style='position:relative; margin-left:6px;'><label class='icn3d-switch'><input id='" + me.pre + "modeswitch' type='checkbox'><div class='icn3d-slider icn3d-round' style='width:34px; height:18px; margin: 6px 0px 0px 3px;' title='Left (\"All atoms\"): Style and color menu options will be applied to all atoms in the structure&#13;Right (\"Selection\"): Style and color menu options will be applied only to selected atoms'></div></label>";
+    html += "    <div class='icn3d-commandTitle' style='min-width:40px; margin-top: 3px; white-space: nowrap;'><span id='" + me.pre + "modeall' title='Style and color menu options will be applied to all atoms in the structure'>All atoms&nbsp;&nbsp;</span><span id='" + me.pre + "modeselection' class='icn3d-modeselection' style='display:none;' title='Style and color menu options will be applied only to selected atoms'>Selection&nbsp;&nbsp;</span></div></div></td>";
 
     //html += '    <td valign="top"><div class="icn3d-commandTitle" style="white-space:nowrap; margin-top:10px;"><div style="width:20px; display:inline-block; margin-left:6px;"><span id="' + me.pre +  'selection_expand" class="ui-icon ui-icon-plus icn3d-link" style="width:15px;" title="Expand"></span><span id="' + me.pre +  'selection_shrink" class="ui-icon ui-icon-minus icn3d-link" style="display:none; width:15px;" title="Shrink"></span></div> Tools</div></td>';
 
@@ -159,8 +161,10 @@ iCn3DUI.prototype.getLink = function(id, text) { var me = this;
 
 iCn3DUI.prototype.getRadio = function(radioid, id, text, bChecked) { var me = this;
     var checkedStr = (bChecked !== undefined && bChecked) ? ' checked' : '';
-    return "<li><input type='radio' name='" + me.pre + radioid + "' id='" + me.pre + id + "'" + checkedStr + "><label for='" + me.pre + id + "'>" + text + "</label></li>";
-    //return "<li><span id='" + me.pre + id + "' class='icn3d-link'>" + text + "</span></li>";
+    //return "<li><input type='radio' name='" + me.pre + radioid + "' id='" + me.pre + id + "'" + checkedStr + "><label for='" + me.pre + id + "'>" + text + "</label></li>";
+
+    //https://stackoverflow.com/questions/17541614/use-images-instead-of-radio-buttons/17541916
+    return "<li><label for='" + me.pre + id + "' class='icn3d-rad'><input type='radio' name='" + me.pre + radioid + "' id='" + me.pre + id + "'" + checkedStr + "><span class='ui-icon ui-icon-blank'></span> <span class='icn3d-rad-text'>" + text + "</span></label></li>";
 };
 
 iCn3DUI.prototype.setMenu1 = function() { var me = this;
@@ -667,7 +671,7 @@ iCn3DUI.prototype.setMenu4 = function() { var me = this;
     }
 
     html += "  <li>-</li>";
-    html += "  <li><span>Unicolor</span>";
+    html += "  <li><span style='padding-left:2em;'>Unicolor</span>";
     html += "    <ul>";
     html += me.getRadio('mn4_clr', 'mn4_clrRed', 'Red');
     html += me.getRadio('mn4_clr', 'mn4_clrGreen', 'Green');
@@ -981,7 +985,7 @@ iCn3DUI.prototype.setDialogs = function() { var me = this;
     html += "  </select> &#197;</span> <span style='white-space:nowrap; margin-left:30px;'><button id='" + me.pre + "applyhbonds'>Display</button></span>";
     html += "</div>";
 
-    html += "<div id='" + me.pre + "dl_aroundsphere'";
+    html += "<div id='" + me.pre + "dl_aroundsphere'>";
     html += "  <span style='white-space:nowrap'>1. Sphere with a radius: <input type='text' id='" + me.pre + "radius_aroundsphere' value='4' size='2'> &#197;</span><br/>";
     html += "  <span style='white-space:nowrap'>2. <button id='" + me.pre + "applypick_aroundsphere'>Display</button> the sphere around currently selected atoms</span>";
     html += "</div>";
@@ -1022,11 +1026,11 @@ iCn3DUI.prototype.setDialogs = function() { var me = this;
 
     html += "<div id='" + me.pre + "dl_thickness'>";
     html += "<b>Line Radius</b>: <input type='text' id='" + me.pre + "linerad' value='1' size=4>&nbsp;&nbsp;&nbsp;(for stabilizers, hydrogen bonds, distance lines, default 0.1)<br/>";
-    html += "<b>Coil Radius</b>: <input type='text' id='" + me.pre + "coilrad' value='1.2' size=4>&nbsp;&nbsp;&nbsp;(for coils, default 0.4)<br/>";
+    html += "<b>Coil Radius</b>: <input type='text' id='" + me.pre + "coilrad' value='1.2' size=4>&nbsp;&nbsp;&nbsp;(for coils, default 0.3)<br/>";
     html += "<b>Stick Radius</b>: <input type='text' id='" + me.pre + "stickrad' value='0.8' size=4>&nbsp;&nbsp;&nbsp;(for sticks, default 0.4)<br/>";
     html += "<b>Trace Radius</b>: <input type='text' id='" + me.pre + "tracerad' value='1' size=4>&nbsp;&nbsp;&nbsp;(for C alpha trace, O3' trace, default 0.2)<br/>";
 
-    html += "<b>Ribbon Thickness</b>: <input type='text' id='" + me.pre + "ribbonthick' value='1' size=4>&nbsp;&nbsp;&nbsp;(for helix and sheet ribbons, nucleotide ribbons, default 0.4)<br/>";
+    html += "<b>Ribbon Thickness</b>: <input type='text' id='" + me.pre + "ribbonthick' value='1' size=4>&nbsp;&nbsp;&nbsp;(for helix and sheet ribbons, nucleotide ribbons, default 0.2)<br/>";
     html += "<b>Protein Ribbon Width</b>: <input type='text' id='" + me.pre + "prtribbonwidth' value='2.0' size=4>&nbsp;&nbsp;&nbsp;(for helix and sheet ribbons, default 1.3)<br/>";
     html += "<b>Nucleotide Ribbon Width</b>: <input type='text' id='" + me.pre + "nucleotideribbonwidth' value='1.4' size=4>&nbsp;&nbsp;&nbsp;(for nucleotide ribbons, default 0.8)<br/>";
 
