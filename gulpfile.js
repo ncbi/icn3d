@@ -126,7 +126,9 @@ var common_js = [
     "src/icn3d/display/display_common.js",
     "src/icn3d/draw/impostor.js",
     "src/icn3d/draw/instancing.js",
-    "src/icn3d/other.js"
+    "src/icn3d/other.js",
+    "src/utils/canvas-to-blob.js",
+    "src/utils/FileSaver.js"
 ];
 
 var simple_js = [
@@ -134,8 +136,6 @@ var simple_js = [
 ];
 
 var full_js = [
-    "src/utils/canvas-to-blob.js",
-    "src/utils/FileSaver.js",
     "src/surface/marchingcube.js",
     "src/surface/ProteinSurface4.js",
     "src/surface/setupsurface.js",

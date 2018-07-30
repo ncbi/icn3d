@@ -122,64 +122,6 @@ iCn3DUI.prototype.updateArray = function( array, inArray, indexBase ){ var me = 
     return array;
 };
 
-iCn3DUI.prototype.passFloat32 = function( array, output ){ var me = this;
-    var n = array.length;
-    if( !output ) output = new Uint8Array( 4 * n );
-    var dv = me.getDataView( output );
-    for( var i = 0; i < n; ++i ){
-        dv.setFloat32( 4 * i, array[ i ], true); // litteEndian = true
-    };
-    return me.getUint8View( output );
-};
-
-iCn3DUI.prototype.passInt8 = function( array, output ){ var me = this;
-    var n = array.length;
-    if( !output ) output = new Uint8Array( 1 * n );
-    var dv = me.getDataView( output );
-    for( var i = 0; i < n; ++i ){
-        dv.setInt8( 1 * i, array[ i ], true); // litteEndian = true
-    };
-    return me.getUint8View( output );
-};
-
-iCn3DUI.prototype.passInt16 = function( array, output ){ var me = this;
-    var n = array.length;
-    if( !output ) output = new Uint8Array( 2 * n );
-    var dv = me.getDataView( output );
-    for( var i = 0; i < n; ++i ){
-        dv.setInt16( 2 * i, array[ i ], true); // litteEndian = true
-    };
-    return me.getUint8View( output );
-};
-
-iCn3DUI.prototype.passInt32 = function( array, output ){ var me = this;
-    var n = array.length;
-    if( !output ) output = new Uint8Array( 4 * n );
-    var dv = me.getDataView( output );
-    for( var i = 0; i < n; ++i ){
-        dv.setInt32( 4 * i, array[ i ], true); // litteEndian = true
-    };
-    return me.getUint8View( output );
-};
-
-// ------------
-
-iCn3DUI.prototype.getUint8View = function( typedArray ){ var me = this;
-    return me.getView( Uint8Array, typedArray );
-};
-
-iCn3DUI.prototype.getDataView = function( typedArray ){ var me = this;
-    return me.getView( DataView, typedArray );
-};
-
-iCn3DUI.prototype.getView = function( ctor, typedArray, elemSize ){ var me = this;
-    return typedArray ? new ctor(
-        typedArray.buffer,
-        typedArray.byteOffset,
-        typedArray.byteLength / ( elemSize || 1 )
-    ) : undefined;
-};
-
 iCn3DUI.prototype.processStlMeshGroup = function( mdl, blobArray, mat ){ var me = this;
     for(var i = 0, il = mdl.children.length; i < il; ++i) {
          var mesh = mdl.children[i];

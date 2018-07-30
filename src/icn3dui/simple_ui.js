@@ -305,7 +305,7 @@ iCn3DUI.prototype = {
         }
 
         html += "<div class='icn3d-option'>";
-        html += "&nbsp;&nbsp;<button id='" + me.pre + "reset'>Reset</button> <button id='" + me.pre + "help'>Help</button>";
+        html += "&nbsp;&nbsp;<button id='" + me.pre + "saveimage'>Save Image</button> <button id='" + me.pre + "reset'>Reset</button> <button id='" + me.pre + "help'>Help</button>";
         html += "</div>";
 
         html += "</form>";
@@ -576,6 +576,14 @@ iCn3DUI.prototype = {
         });
     },
 
+    clickSaveimage: function() { var me = this;
+        $("#" + me.pre + "saveimage").click(function (e) {
+            e.preventDefault();
+
+            me.saveFile(me.inputid + '_image.png', 'png');
+        });
+    },
+
     clickHelp: function() { var me = this;
         $("#" + me.pre + "help").click(function (e) {
             e.preventDefault();
@@ -637,6 +645,7 @@ iCn3DUI.prototype = {
 //        me.clickNoPicking();
         me.changeProteinStyle();
         me.clickReset();
+        me.clickSaveimage();
         me.clickHelp();
         me.showSubsets();
         //me.clickHighlight_3d_dgm();
