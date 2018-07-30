@@ -170,6 +170,64 @@ iCn3DUI.prototype.isIE = function() { var me = this;
         return false;
 };
 
+iCn3DUI.prototype.passFloat32 = function( array, output ){ var me = this;
+    var n = array.length;
+    if( !output ) output = new Uint8Array( 4 * n );
+    var dv = me.getDataView( output );
+    for( var i = 0; i < n; ++i ){
+        dv.setFloat32( 4 * i, array[ i ], true); // litteEndian = true
+    };
+    return me.getUint8View( output );
+};
+
+iCn3DUI.prototype.passInt8 = function( array, output ){ var me = this;
+    var n = array.length;
+    if( !output ) output = new Uint8Array( 1 * n );
+    var dv = me.getDataView( output );
+    for( var i = 0; i < n; ++i ){
+        dv.setInt8( 1 * i, array[ i ], true); // litteEndian = true
+    };
+    return me.getUint8View( output );
+};
+
+iCn3DUI.prototype.passInt16 = function( array, output ){ var me = this;
+    var n = array.length;
+    if( !output ) output = new Uint8Array( 2 * n );
+    var dv = me.getDataView( output );
+    for( var i = 0; i < n; ++i ){
+        dv.setInt16( 2 * i, array[ i ], true); // litteEndian = true
+    };
+    return me.getUint8View( output );
+};
+
+iCn3DUI.prototype.passInt32 = function( array, output ){ var me = this;
+    var n = array.length;
+    if( !output ) output = new Uint8Array( 4 * n );
+    var dv = me.getDataView( output );
+    for( var i = 0; i < n; ++i ){
+        dv.setInt32( 4 * i, array[ i ], true); // litteEndian = true
+    };
+    return me.getUint8View( output );
+};
+
+// ------------
+
+iCn3DUI.prototype.getUint8View = function( typedArray ){ var me = this;
+    return me.getView( Uint8Array, typedArray );
+};
+
+iCn3DUI.prototype.getDataView = function( typedArray ){ var me = this;
+    return me.getView( DataView, typedArray );
+};
+
+iCn3DUI.prototype.getView = function( ctor, typedArray, elemSize ){ var me = this;
+    return typedArray ? new ctor(
+        typedArray.buffer,
+        typedArray.byteOffset,
+        typedArray.byteLength / ( elemSize || 1 )
+    ) : undefined;
+};
+
 iCn3DUI.prototype.getBlobFromBufferAndText = function(arrayBuffer, text) { var me = this;
     //var start = "data:image/png;base64,";
 
@@ -456,4 +514,55 @@ iCn3DUI.prototype.setViewerWidthHeight = function() { var me = this;
     if(me.cfg.height.toString().indexOf('%') === -1) {
         me.HEIGHT = parseInt(me.cfg.height) + me.EXTRAHEIGHT + me.LESSHEIGHT;
     }
+};
+
+iCn3DUI.prototype.shareLinkUrl = function() { var me = this;
+       var url = "https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?";
+
+       var pos = -1;
+       if(me.cfg.inpara !== undefined) pos = me.cfg.inpara.indexOf('&command=');
+       var inparaWithoutCommand = (pos !== -1 ) ? me.cfg.inpara.substr(0, pos) : me.cfg.inpara;
+
+       var start = 0;
+       if(inparaWithoutCommand !== undefined) {
+         url += inparaWithoutCommand.substr(1) + '&command=';
+         start = 1;
+       }
+       else {
+         url += 'command=';
+         start = 0;
+       }
+
+       var transformation = {};
+       transformation.factor = me.icn3d._zoomFactor;
+       transformation.mouseChange = me.icn3d.mouseChange;
+       transformation.quaternion = me.icn3d.quaternion;
+
+       var bCommands = false;
+       for(var i = start, il = me.icn3d.commands.length; i < il; ++i) {
+           bCommands = true;
+
+           var command_tf = me.icn3d.commands[i].split('|||');
+
+           if(i === il - 1) {
+               //var transformation = (command_tf.length > 1) ? ('|||' + command_tf[1]) : '';
+               if(i !== 1 && i !== 0) {
+                   url += '; ';
+               }
+               url += command_tf[0] + '|||' + me.getTransformationStr(transformation);
+           }
+           else if(i === 1) {
+               url += command_tf[0];
+           }
+           else if(i !== 1 && i !== il - 1) {
+               url += '; ' + command_tf[0];
+           }
+       }
+
+       // remove "&command="
+       if(!bCommands) {
+           url = url.substr(0, url.length - 9);
+       }
+
+       return url;
 };
