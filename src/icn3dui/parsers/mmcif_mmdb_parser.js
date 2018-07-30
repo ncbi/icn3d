@@ -162,7 +162,7 @@ iCn3DUI.prototype.loadMmcifData = function(data) { var me = this;
         }
 
         // load assembly info
-        var assembly = data.assembly;
+        var assembly = (data.assembly !== undefined) ? data.assembly : [];
         for(var i = 0, il = assembly.length; i < il; ++i) {
           if (me.icn3d.biomtMatrices[i] == undefined) me.icn3d.biomtMatrices[i] = new THREE.Matrix4().identity();
 

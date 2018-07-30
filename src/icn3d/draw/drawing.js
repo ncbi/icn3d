@@ -524,13 +524,21 @@ iCn3D.prototype.createLineRepresentation = function (atoms, bHighlight) {
     }
 };
 
+/*
 // modified from iview (http://istar.cse.cuhk.edu.hk/iview/)
-iCn3D.prototype.subdivide = function (_pnts, _clrs, DIV, bShowArray, bHighlight) { // Catmull-Rom subdivision
+// Catmull–Rom subdivision
+iCn3D.prototype.subdivide = function (_pnts, _clrs, DIV, bShowArray, bHighlight, prevone, nexttwo, bExtendLastRes) {
     var ret = [];
     var pos = [];
     var color = [];
 
     var pnts = new Array(); // Smoothing test
+
+    var prevoneLen = (prevone !== undefined) ? prevone.length : 0;
+    var nexttwoLenOri = (nexttwo !== undefined) ? nexttwo.length : 0;
+
+    if(prevoneLen > 0) pnts.push(prevone[0]);
+
     pnts.push(_pnts[0]);
     for (var i = 1, lim = _pnts.length - 1; i < lim; ++i) {
         var p0 = _pnts[i], p1 = _pnts[i + 1];
@@ -538,22 +546,35 @@ iCn3D.prototype.subdivide = function (_pnts, _clrs, DIV, bShowArray, bHighlight)
     }
     pnts.push(_pnts[_pnts.length - 1]);
 
+    if(nexttwoLenOri > 0) pnts.push(nexttwo[0]);
+    if(nexttwoLenOri > 1) pnts.push(nexttwo[1]);
+
     var savedPoints = [];
     var savedPos = [];
     var savedColor = [];
+
+    var nexttwoLen = nexttwoLenOri;
+    if(bExtendLastRes) {
+        nexttwoLen = (nexttwoLenOri > 0) ? nexttwoLenOri - 1 : 0;
+    }
+
     for (var i = -1, size = pnts.length, DIVINV = 1 / DIV; i <= size - 3; ++i) {
+        var newI = i - prevoneLen;
         var p0 = pnts[i === -1 ? 0 : i];
-        var p1 = pnts[i + 1], p2 = pnts[i + 2];
+        var p1 = pnts[i + 1];
+        var p2 = pnts[i + 2];
         var p3 = pnts[i === size - 3 ? size - 1 : i + 3];
         var v0 = p2.clone().sub(p0).multiplyScalar(0.5);
         var v1 = p3.clone().sub(p1).multiplyScalar(0.5);
 
         //if(i > -1 && bHighlight && bShowArray !== undefined && bShowArray[i + 1]) {
-        if(i > -1 && (bShowArray === undefined || bShowArray[i + 1]) ) {
+        if(i > -1 && (bShowArray === undefined || bShowArray[newI + 1]) ) {
             // get from previous i for the first half of residue
-            ret = ret.concat(savedPoints);
-            pos = pos.concat(savedPos);
-            color = color.concat(savedColor);
+            if(i >= -1 + prevoneLen && i <= size - 3 - nexttwoLen + 1) {
+                ret = ret.concat(savedPoints);
+                pos = pos.concat(savedPos);
+                color = color.concat(savedColor);
+            }
         }
 
         savedPoints = [];
@@ -571,42 +592,234 @@ iCn3D.prototype.subdivide = function (_pnts, _clrs, DIV, bShowArray, bHighlight)
             var z = p1.z + t * v0.z
                      + t * t * (-3 * p1.z + 3 * p2.z - 2 * v0.z - v1.z)
                      + t * t * t * (2 * p1.z - 2 * p2.z + v0.z + v1.z);
+
             if(!bShowArray) {
-                ret.push(new THREE.Vector3(x, y, z));
-                pos.push(i + 1);
-                color.push(_clrs[i+1]);
+                if(i >= -1 + prevoneLen && i <= size - 3 - nexttwoLen) {
+                    ret.push(new THREE.Vector3(x, y, z));
+                    pos.push(newI + 1);
+                    color.push(_clrs[newI+1]);
+                }
             }
             else {
-                if(bShowArray[i + 1]) {
-                    if(j <= parseInt((DIV) / 2) ) {
-                        ret.push(new THREE.Vector3(x, y, z));
-                        pos.push(bShowArray[i + 1]);
-                        color.push(_clrs[i+1]);
+                if(i >= -1 + prevoneLen && i <= size - 3 - nexttwoLen) {
+                    if(bShowArray[newI + 1]) {
+                        if(j <= parseInt((DIV) / 2) ) {
+                            ret.push(new THREE.Vector3(x, y, z));
+                            pos.push(bShowArray[newI + 1]);
+                            color.push(_clrs[newI+1]);
+                        }
                     }
                 }
 
-                if(bShowArray[i + 2]) {
-                    if(j > parseInt((DIV) / 2) ) {
-                        savedPoints.push(new THREE.Vector3(x, y, z));
-                        savedPos.push(bShowArray[i + 2]);
-                        savedColor.push(_clrs[i+2]);
+                if(i >= -1 + prevoneLen && i <= size - 3 - nexttwoLen + 1) {
+                    if(bShowArray[newI + 2]) {
+                        if(j > parseInt((DIV) / 2) ) {
+                            savedPoints.push(new THREE.Vector3(x, y, z));
+                            savedPos.push(bShowArray[newI + 2]);
+                            savedColor.push(_clrs[newI+2]);
+                        }
                     }
                 }
             } // end else
-        }
 
-    }
+        } // end for (var j = 0;
+    } // end for (var i = -1;
 
-    if(!bShowArray || bShowArray[i + 1]) {
+    if(!bShowArray || bShowArray[newI + 1]) {
         //if(bHighlight) {
-            ret = ret.concat(savedPoints);
-            pos = pos.concat(savedPos);
-            color = color.concat(savedColor);
+        ret = ret.concat(savedPoints);
+        pos = pos.concat(savedPos);
+        color = color.concat(savedColor);
         //}
 
-        ret.push(pnts[pnts.length - 1]);
-        pos.push(pnts.length - 1);
-        color.push(_clrs[pnts.length - 1]);
+        ret.push(pnts[pnts.length - 1 - nexttwoLen]);
+        pos.push(pnts.length - 1 - nexttwoLen);
+        color.push(_clrs[pnts.length - 1 - nexttwoLen]);
+    }
+
+    savedPoints = [];
+    savedPos = [];
+    savedColor = [];
+    pnts = [];
+
+    var pnts_positions = [];
+
+    pnts_positions.push(ret);
+    pnts_positions.push(pos);
+    pnts_positions.push(color);
+
+    return pnts_positions;
+};
+*/
+
+iCn3D.prototype.getKnot = function (alpha, ti, Pi, Pj) {
+    var alpha = 1;
+
+    //return Math.pow(Pi.distanceTo(Pj), alpha) + ti;
+    return Pi.distanceTo(Pj) + ti;
+}
+
+iCn3D.prototype.getValueFromKnot = function (t, t0, t1, t2, t3, y0, y1, y2, y3) {
+    var inf = 9999;
+
+    // m(i) = ( t(i+1) - t(i) == 0 ) ? 0 : ( y(i+1) - y(i) ) / ( t(i+1) - t(i) )
+    var m0 = (y1 - y0) / (t1 - t0);
+    var m1 = (y2 - y1) / (t2 - t1);
+    var m2 = (y3 - y2) / (t3 - t2);
+
+    // L(i) = m(i) * (t - t(i)) + y(i)
+    //var L0 = m0 * (t - t0) + y0;
+    var L1 = m1 * (t - t1) + y1;
+    //var L2 = m2 * (t - t2) + y2;
+
+    var denom = (t1 + t2) * (t1 + t2) - 4*(t0*t1 + t2*t3 - t0*t3);
+    var d0 = 0;
+    var d3 = 0;
+    var d1, d2;
+
+    if(denom == 0) {
+        d1 = inf;
+        d2 = inf;
+    }
+    else {
+        d1 = 6 * (3*m1*t1 + 2*m0*t3 + m2*t1 - 2*m0*t1 - 2*m1*t3 - m1*t2 - m2*t1) / denom;
+        d2 = 6 * (3*m1*t2 + 2*m2*t0 + m0*t1 - 2*m1*t0 - 2*m2*t2 - m0*t2 - m1*t1) / denom;
+    }
+
+    // a(i) = ( 2*d(i) + d(i+1) ) / 6 / (t(i) - t(i+1))
+    // b(i) = ( 2*d(i+1) + d(i) ) / 6 / (t(i+1) - t(i))
+    //var a0 = ( 2*d0 + d1 ) / 6 / (t0 - t1);
+    var a1 = ( 2*d1 + d2 ) / 6 / (t1 - t2);
+    //var a2 = ( 2*d2 + d3 ) / 6 / (t2 - t3);
+
+    //var b0 = ( 2*d1 + d0 ) / 6 / (t1 - t0);
+    var b1 = ( 2*d2 + d1 ) / 6 / (t2 - t1);
+    //var b2 = ( 2*d3 + d2 ) / 6 / (t3 - t2);
+
+    // C(i) = a(i)*(t - t(i))*(t - t(i+1))*(t - t(i+1)) + b(i)*(t - t(i))*(t - t(i))*(t - t(i+1))
+    //var C0 = a0*(t - t0)*(t - t1)*(t - t1) + b0*(t - t0)*(t - t0)*(t - t1);
+    var C1 = a1*(t - t1)*(t - t2)*(t - t2) + b1*(t - t1)*(t - t1)*(t - t2);
+    //var C2 = a2*(t - t2)*(t - t3)*(t - t3) + b2*(t - t2)*(t - t2)*(t - t3);
+
+    var F1 = L1 + C1;
+
+    return F1;
+}
+
+// cubic splines for four points: http://thalestriangles.blogspot.com/2014/02/a-bit-of-ex-spline-ation.html
+// https://math.stackexchange.com/questions/577641/how-to-calculate-interpolating-splines-in-3d-space
+iCn3D.prototype.subdivide = function (_pnts, _clrs, DIV, bShowArray, bHighlight, prevone, nexttwo, bExtendLastRes) {
+    var ret = [];
+    var pos = [];
+    var color = [];
+
+    var pnts = new Array(); // Smoothing test
+
+    var prevoneLen = (prevone !== undefined) ? prevone.length : 0;
+    var nexttwoLenOri = (nexttwo !== undefined) ? nexttwo.length : 0;
+
+    if(prevoneLen > 0) pnts.push(prevone[0]);
+
+    pnts.push(_pnts[0]);
+    for (var i = 1, lim = _pnts.length - 1; i < lim; ++i) {
+        var p0 = _pnts[i], p1 = _pnts[i + 1];
+        pnts.push(p0.smoothen ? p0.clone().add(p1).multiplyScalar(0.5) : p0);
+    }
+    pnts.push(_pnts[_pnts.length - 1]);
+
+    if(nexttwoLenOri > 0) pnts.push(nexttwo[0]);
+    if(nexttwoLenOri > 1) pnts.push(nexttwo[1]);
+
+    var savedPoints = [];
+    var savedPos = [];
+    var savedColor = [];
+
+    var nexttwoLen = nexttwoLenOri;
+    if(bExtendLastRes) {
+        nexttwoLen = (nexttwoLenOri > 0) ? nexttwoLenOri - 1 : 0;
+    }
+
+    var alpha = 1;
+
+    for (var i = -1, size = pnts.length, DIVINV = 1 / DIV; i <= size - 3; ++i) {
+        var newI = i - prevoneLen;
+        var p0 = pnts[i === -1 ? 0 : i];
+        var p1 = pnts[i + 1];
+        var p2 = pnts[i + 2];
+        var p3 = pnts[i === size - 3 ? size - 1 : i + 3];
+
+        var t0 = 0;
+        var t1 = this.getKnot(alpha, t0, p0, p1);
+        var t2 = this.getKnot(alpha, t1, p1, p2);
+        var t3 = this.getKnot(alpha, t2, p2, p3);
+
+        if(t1 - t0 < 1e-4) t1 = t0 + 1;
+        if(t2 - t1 < 1e-4) t2 = t1 + 1;
+        if(t3 - t2 < 1e-4) t3 = t2 + 1;
+
+        //if(i > -1 && bHighlight && bShowArray !== undefined && bShowArray[i + 1]) {
+        if(i > -1 && (bShowArray === undefined || bShowArray[newI + 1]) ) {
+            // get from previous i for the first half of residue
+            if(i >= -1 + prevoneLen && i <= size - 3 - nexttwoLen + 1) {
+                ret = ret.concat(savedPoints);
+                pos = pos.concat(savedPos);
+                color = color.concat(savedColor);
+            }
+        }
+
+        savedPoints = [];
+        savedPos = [];
+        savedColor = [];
+
+        var step = (t2 - t1) * DIVINV;
+        for (var j = 0; j < DIV; ++j) {
+            var t = t1 + step * j;
+            var x = this.getValueFromKnot(t, t0, t1, t2, t3, p0.x, p1.x, p2.x, p3.x);
+            var y = this.getValueFromKnot(t, t0, t1, t2, t3, p0.y, p1.y, p2.y, p3.y);
+            var z = this.getValueFromKnot(t, t0, t1, t2, t3, p0.z, p1.z, p2.z, p3.z);
+
+            if(!bShowArray) {
+                if(i >= -1 + prevoneLen && i <= size - 3 - nexttwoLen) {
+                    ret.push(new THREE.Vector3(x, y, z));
+                    pos.push(newI + 1);
+                    color.push(_clrs[newI+1]);
+                }
+            }
+            else {
+                if(i >= -1 + prevoneLen && i <= size - 3 - nexttwoLen) {
+                    if(bShowArray[newI + 1]) {
+                        if(j <= parseInt((DIV) / 2) ) {
+                            ret.push(new THREE.Vector3(x, y, z));
+                            pos.push(bShowArray[newI + 1]);
+                            color.push(_clrs[newI+1]);
+                        }
+                    }
+                }
+
+                if(i >= -1 + prevoneLen && i <= size - 3 - nexttwoLen + 1) {
+                    if(bShowArray[newI + 2]) {
+                        if(j > parseInt((DIV) / 2) ) {
+                            savedPoints.push(new THREE.Vector3(x, y, z));
+                            savedPos.push(bShowArray[newI + 2]);
+                            savedColor.push(_clrs[newI+2]);
+                        }
+                    }
+                }
+            } // end else
+
+        } // end for (var j = 0;
+    } // end for (var i = -1;
+
+    if(!bShowArray || bShowArray[newI + 1]) {
+        //if(bHighlight) {
+        ret = ret.concat(savedPoints);
+        pos = pos.concat(savedPos);
+        color = color.concat(savedColor);
+        //}
+
+        ret.push(pnts[pnts.length - 1 - nexttwoLen]);
+        pos.push(pnts.length - 1 - nexttwoLen);
+        color.push(_clrs[pnts.length - 1 - nexttwoLen]);
     }
 
     savedPoints = [];
@@ -623,13 +836,13 @@ iCn3D.prototype.subdivide = function (_pnts, _clrs, DIV, bShowArray, bHighlight)
     return pnts_positions;
 };
 
-iCn3D.prototype.createCurveSubArrow = function (p, width, colors, div, bHighlight, bRibbon, num, positionIndex, pntsCA, prevCOArray, bShowArray, calphaIdArray, bShowArrow) {
+iCn3D.prototype.createCurveSubArrow = function (p, width, colors, div, bHighlight, bRibbon, num, positionIndex, pntsCA, prevCOArray, bShowArray, calphaIdArray, bShowArrow, prevone, nexttwo) {
     var divPoints = [], positions = [];
 
     divPoints.push(p);
     positions.push(positionIndex);
 
-    this.prepareStrand(divPoints, positions, width, colors, div, undefined, bHighlight, bRibbon, num, pntsCA, prevCOArray, false, bShowArray, calphaIdArray, bShowArrow);
+    this.prepareStrand(divPoints, positions, width, colors, div, undefined, bHighlight, bRibbon, num, pntsCA, prevCOArray, false, bShowArray, calphaIdArray, bShowArrow, prevone, nexttwo);
 
     divPoints = [];
     positions = [];
@@ -653,12 +866,13 @@ iCn3D.prototype.setCalphaDrawnCoord = function (pnts, div, calphaIdArray) {
 
 
 // modified from iview (http://star.cse.cuhk.edu.hk/iview/)
-iCn3D.prototype.createCurveSub = function (_pnts, width, colors, div, bHighlight, bRibbon, bNoSmoothen, bShowArray, calphaIdArray, positions) {
+iCn3D.prototype.createCurveSub = function (_pnts, width, colors, div, bHighlight, bRibbon, bNoSmoothen, bShowArray, calphaIdArray, positions, prevone, nexttwo) {
     if (_pnts.length === 0) return;
     div = div || 5;
     var pnts;
     if(!bNoSmoothen) {
-        var pnts_clrs = this.subdivide(_pnts, colors, div, bShowArray, bHighlight);
+        var bExtendLastRes = true;
+        var pnts_clrs = this.subdivide(_pnts, colors, div, bShowArray, bHighlight, prevone, nexttwo, bExtendLastRes);
         pnts = pnts_clrs[0];
         colors = pnts_clrs[2];
     }
@@ -837,7 +1051,7 @@ iCn3D.prototype.createCylinderCurve = function (atoms, atomNameArray, radius, bL
     }
 };
 
-iCn3D.prototype.prepareStrand = function(divPoints, positions, width, colors, div, thickness, bHighlight, bRibbon, num, pntsCA, prevCOArray, bStrip, bShowArray, calphaIdArray, bShowArrow) {
+iCn3D.prototype.prepareStrand = function(divPoints, positions, width, colors, div, thickness, bHighlight, bRibbon, num, pntsCA, prevCOArray, bStrip, bShowArray, calphaIdArray, bShowArrow, prevone, nexttwo) {
     if(pntsCA.length === 1) {
         return;
     }
@@ -854,7 +1068,7 @@ iCn3D.prototype.prepareStrand = function(divPoints, positions, width, colors, di
     for(var i = 0, il = positions.length; i < il; ++i) pnts[i] = [];
 
     // smooth C-alpha
-    var pnts_clrs = this.subdivide(pntsCA, colors, div);
+    var pnts_clrs = this.subdivide(pntsCA, colors, div, undefined, undefined, prevone, nexttwo);
     var pntsCASmooth = pnts_clrs[0]; // get all smoothen pnts, do not use 'bShowArray'
     //colors = pnts_clrs[2];
 
@@ -898,12 +1112,10 @@ iCn3D.prototype.prepareStrand = function(divPoints, positions, width, colors, di
     }
 
     if(bStrip) {
-        //this.createStrip(pnts[0], pnts[1], colorsTmp, div, thickness, bHighlight, true, undefined, posIndex);
-        this.createStrip(pnts[0], pnts[1], colors, div, thickness, bHighlight, true, undefined, calphaIdArray, posIndex);
+        this.createStrip(pnts[0], pnts[1], colors, div, thickness, bHighlight, true, undefined, calphaIdArray, posIndex, prevone, nexttwo);
     }
     else {
-        //this.createCurveSub(pnts[0], width, colorsTmp, div, bHighlight, bRibbon, true, undefined, posIndex);
-        this.createCurveSub(pnts[0], width, colors, div, bHighlight, bRibbon, true, undefined, calphaIdArray, posIndex);
+        this.createCurveSub(pnts[0], width, colors, div, bHighlight, bRibbon, true, undefined, calphaIdArray, posIndex, prevone, nexttwo);
     }
 
     if(bShowArrow === undefined || bShowArrow) {
@@ -951,10 +1163,10 @@ iCn3D.prototype.prepareStrand = function(divPoints, positions, width, colors, di
         //colorsTmp.push(colors[colors.length - 1]);
 
         if(bStrip) {
-            this.createStrip(pnts[0], pnts[1], colorsTmp, div, thickness, bHighlight, true, undefined, undefined, posIndex);
+            this.createStrip(pnts[0], pnts[1], colorsTmp, div, thickness, bHighlight, true, undefined, undefined, posIndex, prevone, nexttwo);
         }
         else {
-            this.createCurveSub(pnts[0], width, colorsTmp, div, bHighlight, bRibbon, true, undefined, undefined, posIndex);
+            this.createCurveSub(pnts[0], width, colorsTmp, div, bHighlight, bRibbon, true, undefined, undefined, posIndex, prevone, nexttwo);
         }
     }
 
@@ -968,7 +1180,7 @@ iCn3D.prototype.prepareStrand = function(divPoints, positions, width, colors, di
     pnts = {};
 };
 
-iCn3D.prototype.createStripArrow = function (p0, p1, colors, div, thickness, bHighlight, num, start, end, pntsCA, prevCOArray, bShowArray, calphaIdArray, bShowArrow) {
+iCn3D.prototype.createStripArrow = function (p0, p1, colors, div, thickness, bHighlight, num, start, end, pntsCA, prevCOArray, bShowArray, calphaIdArray, bShowArrow, prevone, nexttwo) {
     var divPoints = [], positions = [];
 
     divPoints.push(p0);
@@ -976,19 +1188,20 @@ iCn3D.prototype.createStripArrow = function (p0, p1, colors, div, thickness, bHi
     positions.push(start);
     positions.push(end);
 
-    this.prepareStrand(divPoints, positions, undefined, colors, div, thickness, bHighlight, undefined, num, pntsCA, prevCOArray, true, bShowArray, calphaIdArray, bShowArrow);
+    this.prepareStrand(divPoints, positions, undefined, colors, div, thickness, bHighlight, undefined, num, pntsCA, prevCOArray, true, bShowArray, calphaIdArray, bShowArrow, prevone, nexttwo);
 
     divPoints = [];
     positions = [];
 };
 
 // modified from iview (http://istar.cse.cuhk.edu.hk/iview/)
-iCn3D.prototype.createStrip = function (p0, p1, colors, div, thickness, bHighlight, bNoSmoothen, bShowArray, calphaIdArray, positions) {
+iCn3D.prototype.createStrip = function (p0, p1, colors, div, thickness, bHighlight, bNoSmoothen, bShowArray, calphaIdArray, positions, prevone, nexttwo) {
     if (p0.length < 2) return;
     div = div || this.axisDIV;
     if(!bNoSmoothen) {
-        var pnts_clrs0 = this.subdivide(p0, colors, div, bShowArray, bHighlight);
-        var pnts_clrs1 = this.subdivide(p1, colors, div, bShowArray, bHighlight);
+        var bExtendLastRes = true;
+        var pnts_clrs0 = this.subdivide(p0, colors, div, bShowArray, bHighlight, prevone, nexttwo, bExtendLastRes);
+        var pnts_clrs1 = this.subdivide(p1, colors, div, bShowArray, bHighlight, prevone, nexttwo, bExtendLastRes);
         p0 = pnts_clrs0[0];
         p1 = pnts_clrs1[0];
         colors = pnts_clrs0[2];
@@ -1332,7 +1545,7 @@ iCn3D.prototype.createStrand = function (atoms, num, div, fill, coilWidth, helix
                 // "CA" has to appear before "O"
 
                 if (atom.name === 'CA') {
-                    if ( atoms.hasOwnProperty(i) && (atom.ss === 'coil' || atom.ssend || atom.ssbegin) ) {
+                    if ( atoms.hasOwnProperty(i) && ((atom.ss !== 'helix' && atom.ss !== 'sheet') || atom.ssend || atom.ssbegin) ) {
                         tubeAtoms[i] = atom;
                     }
 
@@ -1426,6 +1639,26 @@ iCn3D.prototype.createStrand = function (atoms, num, div, fill, coilWidth, helix
                     //var bBrokenSs = (prevCoorCA && Math.abs(currentCA.x - prevCoorCA.x) > maxDist) || (prevCoorCA && Math.abs(currentCA.y - prevCoorCA.y) > maxDist) || (prevCoorCA && Math.abs(currentCA.z - prevCoorCA.z) > maxDist);
 
                     if ((atom.ssbegin || atom.ssend || (drawnResidueCount === totalResidueCount - 1)) && pnts[0].length > 0 && bSameChain) {
+                        var atomName = 'CA';
+
+                        var prevone = [], nexttwo = [];
+
+                        var prevoneResid = this.atoms[prevAtomid].structure + '_' + this.atoms[prevAtomid].chain + '_' + (this.atoms[prevAtomid].resi - 1).toString();
+                        var prevoneCoord = this.getAtomCoordFromResi(prevoneResid, atomName);
+                        prevone = (prevoneCoord !== undefined) ? [prevoneCoord] : [];
+
+                        var nextoneResid = this.atoms[prevAtomid].structure + '_' + this.atoms[prevAtomid].chain + '_' + (this.atoms[prevAtomid].resi + 1).toString();
+                        var nextoneCoord = this.getAtomCoordFromResi(nextoneResid, atomName);
+                        if(nextoneCoord !== undefined) {
+                            nexttwo.push(nextoneCoord);
+                        }
+
+                        var nexttwoResid = this.atoms[prevAtomid].structure + '_' + this.atoms[prevAtomid].chain + '_' + (this.atoms[prevAtomid].resi + 2).toString();
+                        var nexttwoCoord = this.getAtomCoordFromResi(nexttwoResid, atomName);
+                        if(nexttwoCoord !== undefined) {
+                            nexttwo.push(nexttwoCoord);
+                        }
+
                         // assign the current joint residue to the previous segment
                         if(bHighlight === 1 || bHighlight === 2) {
                             colors.push(this.hColor);
@@ -1488,34 +1721,34 @@ iCn3D.prototype.createStrand = function (atoms, num, div, fill, coilWidth, helix
                         // draw the current segment
                         for (var j = 0; !fill && j < num; ++j) {
                             if(bSheetSegment) {
-                                this.createCurveSubArrow(pnts[j], 1, colors, div, bHighlight, bRibbon, num, j, pntsCA, prevCOArray, bShowArray, calphaIdArray);
+                                this.createCurveSubArrow(pnts[j], 1, colors, div, bHighlight, bRibbon, num, j, pntsCA, prevCOArray, bShowArray, calphaIdArray, true, prevone, nexttwo);
                             }
-                            else {
+                            else if(bHelixSegment) {
                                 if(bFullAtom) {
-                                    this.createCurveSub(pnts[j], 1, colors, div, bHighlight, bRibbon, false, bShowArray, calphaIdArray);
+                                    this.createCurveSub(pnts[j], 1, colors, div, bHighlight, bRibbon, false, bShowArray, calphaIdArray, undefined, prevone, nexttwo);
                                 }
                                 else {
-                                    this.createCurveSubArrow(pnts[j], 1, colors, div, bHighlight, bRibbon, num, j, pntsCA, prevCOArray, bShowArray, calphaIdArray, false);
+                                    this.createCurveSubArrow(pnts[j], 1, colors, div, bHighlight, bRibbon, num, j, pntsCA, prevCOArray, bShowArray, calphaIdArray, false, prevone, nexttwo);
                                 }
                             }
                         }
                         if (fill) {
                             if(bSheetSegment) {
                                 var start = 0, end = num - 1;
-                                this.createStripArrow(pnts[0], pnts[num - 1], colors, div, thickness, bHighlight, num, start, end, pntsCA, prevCOArray, bShowArray, calphaIdArray);
+                                this.createStripArrow(pnts[0], pnts[num - 1], colors, div, thickness, bHighlight, num, start, end, pntsCA, prevCOArray, bShowArray, calphaIdArray, true, prevone, nexttwo);
                             }
                             else if(bHelixSegment) {
                                 if(bFullAtom) {
-                                    this.createStrip(pnts[0], pnts[num - 1], colors, div, thickness, bHighlight, false, bShowArray, calphaIdArray);
+                                    this.createStrip(pnts[0], pnts[num - 1], colors, div, thickness, bHighlight, false, bShowArray, calphaIdArray, undefined, prevone, nexttwo);
                                 }
                                 else {
                                     var start = 0, end = num - 1;
-                                    this.createStripArrow(pnts[0], pnts[num - 1], colors, div, thickness, bHighlight, num, start, end, pntsCA, prevCOArray, bShowArray, calphaIdArray);
+                                    this.createStripArrow(pnts[0], pnts[num - 1], colors, div, thickness, bHighlight, num, start, end, pntsCA, prevCOArray, bShowArray, calphaIdArray, true, prevone, nexttwo);
                                 }
                             }
                             else {
                                 if(bHighlight === 2) { // draw coils only when highlighted. if not highlighted, coils will be drawn as tubes separately
-                                    this.createStrip(pnts[0], pnts[num - 1], colors, div, thickness, bHighlight, false, bShowArray, calphaIdArray);
+                                    this.createStrip(pnts[0], pnts[num - 1], colors, div, thickness, bHighlight, false, bShowArray, calphaIdArray, undefined, prevone, nexttwo);
                                 }
                             }
                         }
@@ -1533,31 +1766,40 @@ iCn3D.prototype.createStrand = function (atoms, num, div, fill, coilWidth, helix
                     // end of a chain
                     if ((currentChain !== atom.chain || currentResi + 1 !== atom.resi) && pnts[0].length > 0) {
 //                        if ((currentChain !== atom.chain) && pnts[0].length > 0) {
+
+                        var atomName = 'CA';
+
+                        var prevoneResid = this.atoms[prevAtomid].structure + '_' + this.atoms[prevAtomid].chain + '_' + (this.atoms[prevAtomid].resi - 1).toString();
+                        var prevoneCoord = this.getAtomCoordFromResi(prevoneResid, atomName);
+                        var prevone = (prevoneCoord !== undefined) ? [prevoneCoord] : [];
+
+                        var nexttwo = [];
+
                         for (var j = 0; !fill && j < num; ++j) {
                             if(bSheetSegment) {
-                                this.createCurveSubArrow(pnts[j], 1, colors, div, bHighlight, bRibbon, num, j, pntsCA, prevCOArray, bShowArray, calphaIdArray);
+                                this.createCurveSubArrow(pnts[j], 1, colors, div, bHighlight, bRibbon, num, j, pntsCA, prevCOArray, bShowArray, calphaIdArray, true, prevone, nexttwo);
                             }
                             else if(bHelixSegment) {
                                 if(bFullAtom) {
-                                    this.createCurveSub(pnts[j], 1, colors, div, bHighlight, bRibbon, false, bShowArray, calphaIdArray);
+                                    this.createCurveSub(pnts[j], 1, colors, div, bHighlight, bRibbon, false, bShowArray, calphaIdArray, undefined, prevone, nexttwo);
                                 }
                                 else {
-                                    this.createCurveSubArrow(pnts[j], 1, colors, div, bHighlight, bRibbon, num, j, pntsCA, prevCOArray, bShowArray, calphaIdArray, false);
+                                    this.createCurveSubArrow(pnts[j], 1, colors, div, bHighlight, bRibbon, num, j, pntsCA, prevCOArray, bShowArray, calphaIdArray, false, prevone, nexttwo);
                                 }
                             }
                         }
                         if (fill) {
                             if(bSheetSegment) {
                                 var start = 0, end = num - 1;
-                                this.createStripArrow(pnts[0], pnts[num - 1], colors, div, thickness, bHighlight, num, start, end, pntsCA, prevCOArray, bShowArray, calphaIdArray);
+                                this.createStripArrow(pnts[0], pnts[num - 1], colors, div, thickness, bHighlight, num, start, end, pntsCA, prevCOArray, bShowArray, calphaIdArray, true, prevone, nexttwo);
                             }
                             else if(bHelixSegment) {
                                 if(bFullAtom) {
-                                    this.createStrip(pnts[0], pnts[num - 1], colors, div, thickness, bHighlight, false, bShowArray, calphaIdArray);
+                                    this.createStrip(pnts[0], pnts[num - 1], colors, div, thickness, bHighlight, false, bShowArray, calphaIdArray, undefined, prevone, nexttwo);
                                 }
                                 else {
                                     var start = 0, end = num - 1;
-                                    this.createStripArrow(pnts[0], pnts[num - 1], colors, div, thickness, bHighlight, num, start, end, pntsCA, prevCOArray, bShowArray, calphaIdArray, false);
+                                    this.createStripArrow(pnts[0], pnts[num - 1], colors, div, thickness, bHighlight, num, start, end, pntsCA, prevCOArray, bShowArray, calphaIdArray, false, prevone, nexttwo);
                                 }
                             }
                         }
@@ -1633,12 +1875,13 @@ iCn3D.prototype.createStrandBrick = function (brick, color, thickness, bHighligh
 */
 
 // modified from iview (http://istar.cse.cuhk.edu.hk/iview/)
-iCn3D.prototype.createTubeSub = function (_pnts, colors, radii, bHighlight) {
+iCn3D.prototype.createTubeSub = function (_pnts, colors, radii, bHighlight, prevone, nexttwo) {
     if (_pnts.length < 2) return;
     var circleDiv = this.tubeDIV, axisDiv = this.axisDIV;
     var circleDivInv = 1 / circleDiv, axisDivInv = 1 / axisDiv;
     var geo = new THREE.Geometry();
-    var pnts_clrs = this.subdivide(_pnts, colors, axisDiv);
+    var pnts_clrs = this.subdivide(_pnts, colors, axisDiv, undefined, undefined, prevone, nexttwo);
+
     var pnts = pnts_clrs[0];
     colors = pnts_clrs[2];
 
@@ -1714,25 +1957,66 @@ iCn3D.prototype.createTubeSub = function (_pnts, colors, radii, bHighlight) {
     }
 };
 
+iCn3D.prototype.getAtomCoordFromResi = function (resid, atomName) {
+    if(this.residues.hasOwnProperty(resid)) {
+        for(var i in this.residues[resid]) {
+            if(this.atoms[i].name === atomName && !this.atoms[i].het) {
+                var coord = (this.atoms[i].coord2 !== undefined) ? this.atoms[i].coord2 : this.atoms[i].coord;
+
+                return coord;
+            }
+        }
+    }
+
+    return undefined;
+}
+
 // modified from iview (http://istar.cse.cuhk.edu.hk/iview/)
 iCn3D.prototype.createTube = function (atoms, atomName, radius, bHighlight) {
-    var pnts = [], colors = [], radii = [];
+    var pnts = [], colors = [], radii = [], prevone = [], nexttwo = [];
     var currentChain, currentResi;
     var index = 0;
     var prevAtom;
     var maxDist = 6.0;
 
+    var pnts_colors_radii_prevone_nexttwo = [];
+    var firstAtom, atom;
+
     for (var i in atoms) {
-        var atom = atoms[i];
+        atom = atoms[i];
         if ((atom.name === atomName) && !atom.het) {
+            if(index == 0) {
+                firstAtom = atom;
+            }
+
             if (index > 0 && (currentChain !== atom.chain || currentResi + 1 !== atom.resi || Math.abs(atom.coord.x - prevAtom.coord.x) > maxDist || Math.abs(atom.coord.y - prevAtom.coord.y) > maxDist || Math.abs(atom.coord.z - prevAtom.coord.z) > maxDist) ) {
 //                if (index > 0 && (currentChain !== atom.chain || Math.abs(atom.coord.x - prevAtom.coord.x) > 6.0 || Math.abs(atom.coord.y - prevAtom.coord.y) > 6.0 || Math.abs(atom.coord.z - prevAtom.coord.z) > 6.0) ) {
-                if(bHighlight !== 2) this.createTubeSub(pnts, colors, radii, bHighlight);
-                pnts = []; colors = []; radii = [];
+                if(bHighlight !== 2) {
+                    //this.createTubeSub(pnts, colors, radii, bHighlight);
+                    var prevoneResid = firstAtom.structure + '_' + firstAtom.chain + '_' + (firstAtom.resi - 1).toString();
+                    var prevoneCoord = this.getAtomCoordFromResi(prevoneResid, atomName);
+                    prevone = (prevoneCoord !== undefined) ? [prevoneCoord] : [];
+
+                    var nextoneResid = prevAtom.structure + '_' + prevAtom.chain + '_' + (prevAtom.resi + 1).toString();
+                    var nextoneCoord = this.getAtomCoordFromResi(nextoneResid, atomName);
+                    if(nextoneCoord !== undefined) {
+                        nexttwo.push(nextoneCoord);
+                    }
+
+                    var nexttwoResid = prevAtom.structure + '_' + prevAtom.chain + '_' + (prevAtom.resi + 2).toString();
+                    var nexttwoCoord = this.getAtomCoordFromResi(nexttwoResid, atomName);
+                    if(nexttwoCoord !== undefined) {
+                        nexttwo.push(nexttwoCoord);
+                    }
+
+                    pnts_colors_radii_prevone_nexttwo.push({'pnts':pnts, 'colors':colors, 'radii':radii, 'prevone':prevone, 'nexttwo':nexttwo});
+                }
+                pnts = []; colors = []; radii = []; prevone = []; nexttwo = [];
+                firstAtom = atom;
             }
             pnts.push(atom.coord);
 
-            radii.push(radius || (atom.b > 0 ? atom.b * 0.01 : 0.3));
+            radii.push(radius || (atom.b > 0 ? atom.b * 0.01 : this.coilWidth));
             colors.push(atom.color);
 
             currentChain = atom.chain;
@@ -1748,7 +2032,45 @@ iCn3D.prototype.createTube = function (atoms, atomName, radius, bHighlight) {
             prevAtom = atom;
         }
     }
-    if(bHighlight !== 2) this.createTubeSub(pnts, colors, radii, bHighlight);
+    if(bHighlight !== 2) {
+        //this.createTubeSub(pnts, colors, radii, bHighlight);
+
+        prevone = [];
+        if(firstAtom !== undefined) {
+            var prevoneResid = firstAtom.structure + '_' + firstAtom.chain + '_' + (firstAtom.resi - 1).toString();
+            var prevoneCoord = this.getAtomCoordFromResi(prevoneResid, atomName);
+            prevone = (prevoneCoord !== undefined) ? [prevoneCoord] : [];
+        }
+
+        nexttwo = [];
+        if(atom !== undefined) {
+            var nextoneResid = atom.structure + '_' + atom.chain + '_' + (atom.resi + 1).toString();
+            var nextoneCoord = this.getAtomCoordFromResi(nextoneResid, atomName);
+            if(nextoneCoord !== undefined) {
+                nexttwo.push(nextoneCoord);
+            }
+
+            var nexttwoResid = atom.structure + '_' + atom.chain + '_' + (atom.resi + 2).toString();
+            var nexttwoCoord = this.getAtomCoordFromResi(nexttwoResid, atomName);
+            if(nexttwoCoord !== undefined) {
+                nexttwo.push(nexttwoCoord);
+            }
+        }
+
+        pnts_colors_radii_prevone_nexttwo.push({'pnts':pnts, 'colors':colors, 'radii':radii, 'prevone':prevone, 'nexttwo':nexttwo});
+    }
+
+    for(var i = 0, il = pnts_colors_radii_prevone_nexttwo.length; i < il; ++i) {
+        var pnts = pnts_colors_radii_prevone_nexttwo[i].pnts;
+        var colors = pnts_colors_radii_prevone_nexttwo[i].colors;
+        var radii = pnts_colors_radii_prevone_nexttwo[i].radii;
+        var prevone = pnts_colors_radii_prevone_nexttwo[i].prevone;
+        var nexttwo = pnts_colors_radii_prevone_nexttwo[i].nexttwo;
+
+        this.createTubeSub(pnts, colors, radii, bHighlight, prevone, nexttwo);
+    }
+
+    pnts_colors_radii_prevone_nexttwo = [];
 };
 
 // modified from iview (http://istar.cse.cuhk.edu.hk/iview/)
@@ -1785,11 +2107,11 @@ iCn3D.prototype.createCylinderHelix = function (atoms, radius, bHighlight) {
     }
 
     if(bHighlight === 1 || bHighlight === 2) {
-        if(Object.keys(others).length > 0) this.createTube(others, 'CA', 0.3, bHighlight);
+        if(Object.keys(others).length > 0) this.createTube(others, 'CA', this.coilWidth, bHighlight);
         if(Object.keys(beta).length > 0) this.createStrand(beta, undefined, undefined, true, 0, this.helixSheetWidth, false, this.ribbonthickness * 2, bHighlight);
     }
     else {
-        if(Object.keys(others).length > 0) this.createTube(others, 'CA', 0.3);
+        if(Object.keys(others).length > 0) this.createTube(others, 'CA', this.coilWidth);
         if(Object.keys(beta).length > 0) this.createStrand(beta, undefined, undefined, true, 0, this.helixSheetWidth, false, this.ribbonthickness * 2);
     }
 };

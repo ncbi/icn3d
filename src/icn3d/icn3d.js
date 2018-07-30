@@ -156,14 +156,14 @@ var iCn3D = function (id) {
     //this.curveWidth = 3;
 
     this.lineRadius = 0.1; // hbonds, distance lines
-    this.coilWidth = 0.4; // style cartoon-coil
+    this.coilWidth = 0.3; //0.4; // style cartoon-coil
     this.cylinderRadius = 0.4; // style stick
     this.traceRadius = 0.4; //0.2; // c alpha trace, nucleotide stick
     this.dotSphereScale = 0.3; // style ball and stick, dot
     this.sphereRadius = 1.5; // style sphere
     this.cylinderHelixRadius = 1.6; // style sylinder and plate
 
-    this.ribbonthickness = 0.4; // style ribbon, nucleotide cartoon, stand thickness
+    this.ribbonthickness = 0.2; // 0.4; // style ribbon, nucleotide cartoon, stand thickness
     this.helixSheetWidth = 1.3; // style ribbon, nucleotide cartoon, stand thickness
     this.nucleicAcidWidth = 0.8; // nucleotide cartoon
 

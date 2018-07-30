@@ -1723,7 +1723,7 @@ iCn3DUI.prototype = {
     },
 
     clkMn1_exportCanvas: function() { var me = this;
-        $("#" + me.pre + "mn1_exportCanvas").click(function (e) {
+        $("#" + me.pre + "mn1_exportCanvas").add("#" + me.pre + "saveimage").click(function (e) {
            me.setLogCmd("export canvas", false);
 
            me.saveFile(me.inputid + '_image.png', 'png');

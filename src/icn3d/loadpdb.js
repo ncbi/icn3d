@@ -258,19 +258,8 @@ iCn3D.prototype.loadPDB = function (src) {
             this.hAtoms[serial] = 1;
 
             // Assign secondary structures from the input
-            if($.inArray(chain_resi, helixArray) !== -1) {
-              this.atoms[serial].ss = 'helix';
-
-              if($.inArray(chain_resi, helixStart) !== -1) {
-                this.atoms[serial].ssbegin = true;
-              }
-
-              // do not use else if. Some residues are both start and end of secondary structure
-              if($.inArray(chain_resi, helixEnd) !== -1) {
-                this.atoms[serial].ssend = true;
-              }
-            }
-            else if($.inArray(chain_resi, sheetArray) !== -1) {
+            // if a residue is assigned both sheet and helix, it is assigned as sheet
+            if($.inArray(chain_resi, sheetArray) !== -1) {
               this.atoms[serial].ss = 'sheet';
 
               if($.inArray(chain_resi, sheetStart) !== -1) {
@@ -279,6 +268,18 @@ iCn3D.prototype.loadPDB = function (src) {
 
               // do not use else if. Some residues are both start and end of secondary structure
               if($.inArray(chain_resi, sheetEnd) !== -1) {
+                this.atoms[serial].ssend = true;
+              }
+            }
+            else if($.inArray(chain_resi, helixArray) !== -1) {
+              this.atoms[serial].ss = 'helix';
+
+              if($.inArray(chain_resi, helixStart) !== -1) {
+                this.atoms[serial].ssbegin = true;
+              }
+
+              // do not use else if. Some residues are both start and end of secondary structure
+              if($.inArray(chain_resi, helixEnd) !== -1) {
                 this.atoms[serial].ssend = true;
               }
             }

@@ -518,7 +518,7 @@ iCn3DUI.prototype = {
         $('.icn3d-bottomTab').click(function (e) {
            var height = $(".icn3d-insideTab").height();
            if(height === 0) {
-                $(".icn3d-insideTab").height(250);
+                $(".icn3d-insideTab").height(260);
            }
            else {
              $(".icn3d-insideTab").height(0);

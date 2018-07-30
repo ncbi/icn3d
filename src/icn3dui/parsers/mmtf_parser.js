@@ -22,7 +22,7 @@ iCn3DUI.prototype.downloadMmtf = function (mmtfid) { var me = this;
             me.icn3d.molTitle = mmtfData.title;
 
             // bioAsembly
-            if(mmtfData.bioAssemblyList[0].transformList.length > 1) {
+            if(mmtfData.bioAssemblyList !== undefined && mmtfData.bioAssemblyList[0]!== undefined && mmtfData.bioAssemblyList[0].transformList.length > 1) {
                 me.icn3d.biomtMatrices = [];
                 for(var i = 0, il = mmtfData.bioAssemblyList[0].transformList.length; i < il; ++i) {
                     //var biomt = new THREE.Matrix4().identity();
