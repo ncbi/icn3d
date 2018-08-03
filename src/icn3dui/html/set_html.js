@@ -65,6 +65,8 @@ iCn3DUI.prototype.setTools_base = function() { var me = this;
 iCn3DUI.prototype.setTopMenusHtml = function (id) { var me = this;
     var html = "";
 
+    html += "<div id='" + me.pre + "popup' style='display:none; position:absolute; z-index:9999; top:-1000px; left:-1000px; background-color:#DDDDDD; text-align:center; width:80px; height:18px; padding:3px;'>test</div>";
+
     html += "<div style='position:relative;'>";
     html += "  <!--https://forum.jquery.com/topic/looking-for-a-jquery-horizontal-menu-bar-->";
     html += "  <div id='" + me.pre + "mnlist' style='position:absolute; z-index:999; float:left; display:table-row; margin-top: -2px;'>";
@@ -823,6 +825,7 @@ iCn3DUI.prototype.setDialogs = function() { var me = this;
     var html = "";
 
     html += "<!-- dialog will not be part of the form -->";
+
     html += "<div id='" + me.pre + "alldialogs' class='icn3d-hidden icn3d-dialog'>";
 
     // filter for large structure

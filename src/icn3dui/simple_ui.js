@@ -87,9 +87,23 @@ iCn3DUI.prototype = {
     },
 
     modifyIcn3dshowPicking: function() {var me = this;
-        iCn3D.prototype.showPicking = function(atom) {
-          this.showPickingBase(atom); // including render step
+        iCn3D.prototype.showPicking = function(atom, x, y) {
+          if(me.cfg.cid !== undefined) {
+              this.pk = 1; // atom
+          }
+          else {
+              this.pk = 2; // residue
+          }
 
+          this.showPickingBase(atom, x, y); // including render step
+
+          if(x !== undefined && y !== undefined) { // mouse over
+            var text = (this.pk == 1) ? atom.resn + atom.resi + '@' + atom.name : atom.resn + atom.resi;
+            $("#" + me.pre + "popup").html(text);
+            $("#" + me.pre + "popup").css("top", y).css("left", x+20).show();
+          }
+
+/*
           var residueText = atom.resn + atom.resi;
 
           var text;
@@ -121,6 +135,7 @@ iCn3DUI.prototype = {
 
           //http://www.johannes-raida.de/tutorials/three.js/tutorial13/tutorial13.htm
           this.createLabelRepresentation(labels);
+*/
         };
     },
 
@@ -172,6 +187,8 @@ iCn3DUI.prototype = {
 
     setHtml: function() { var me = this;
         var html = "";
+
+        html += "<div id='" + me.pre + "popup' style='display:none; position:absolute; z-index:9999; top:-1000px; left:-1000px; background-color:#DDDDDD; text-align:center; width:80px; height:18px; padding:3px;'></div>";
 
         html += "<div id='" + me.pre + "viewer' style='position:relative; width:100%; height:100%;'>";
 
