@@ -360,7 +360,7 @@ iCn3D.prototype.translateDown = function (percentScreenSize) { // 1
   this.render();
 };
 
-iCn3D.prototype.showPickingBase = function(atom) {
+iCn3D.prototype.showPickingHilight = function(atom) {
   if(!this.bShift && !this.bCtrl) this.removeHlObjects();
 
   this.pickedAtomList = {};
@@ -383,7 +383,7 @@ iCn3D.prototype.showPickingBase = function(atom) {
       this.bShowHighlight = false;
   }
   else {
-        this.bShowHighlight = true;
+      this.bShowHighlight = true;
   }
 
   var intersectAtoms = (Object.keys(this.hAtoms).length == Object.keys(this.atoms).length) ? {} : this.intHash(this.hAtoms, this.pickedAtomList);
@@ -441,34 +441,44 @@ iCn3D.prototype.showPickingBase = function(atom) {
   this.addHlObjects();
 };
 
-iCn3D.prototype.showPicking = function(atom) {
-  this.showPickingBase(atom); // including render step
+iCn3D.prototype.showPicking = function(atom, x, y) { var me = this;
+    this.showPickingBase(atom, x, y); // including render step
+};
 
-  //var text = '#' + atom.structure + '.' + atom.chain + ':' + atom.resi + '@' + atom.name;
-  var residueText = '.' + atom.chain + ':' + atom.resi;
-  var text = residueText + '@' + atom.name;
+iCn3D.prototype.showPickingBase = function(atom, x, y) { var me = this;
+  if(x === undefined && y === undefined) { // NOT mouse over
+      this.showPickingHilight(atom); // including render step
 
-  var labels = {};
-  labels['picking'] = [];
+/*
+      //var text = '#' + atom.structure + '.' + atom.chain + ':' + atom.resi + '@' + atom.name;
+      var residueText = '.' + atom.chain + ':' + atom.resi;
+      var text = residueText + '@' + atom.name;
 
-  var label = {};
-  label.position = new THREE.Vector3(atom.coord.x + 1, atom.coord.y + 1, atom.coord.z + 1); // shifted by 1
+      var labels = {};
+      labels['picking'] = [];
 
-  if(this.pk === 1) {
-    label.text = text;
-  }
-  else if(this.pk === 2) {
-    label.text = residueText;
-  }
-//  else if(this.pk === 3) {
-//    label.text = residueText;
-//  }
+      var label = {};
+      label.position = new THREE.Vector3(atom.coord.x + 1, atom.coord.y + 1, atom.coord.z + 1); // shifted by 1
 
-  if(this.pk === 1 || this.pk === 2) {
-      labels['picking'].push(label);
+      if(this.pk === 1) {
+        label.text = text;
+      }
+      else if(this.pk === 2) {
+        label.text = residueText;
+      }
+    //  else if(this.pk === 3) {
+    //    label.text = residueText;
+    //  }
 
-      //http://www.johannes-raida.de/tutorials/three.js/tutorial13/tutorial13.htm
-      this.createLabelRepresentation(labels);
+      if(this.pk === 1 || this.pk === 2) {
+          labels['picking'].push(label);
+
+          //http://www.johannes-raida.de/tutorials/three.js/tutorial13/tutorial13.htm
+          this.createLabelRepresentation(labels);
+      }
+*/
+
+
   }
 };
 

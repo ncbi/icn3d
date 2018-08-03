@@ -19,7 +19,7 @@ We provided two types of iCn3D widgets: [basic interface](https://www.ncbi.nlm.n
 
 Either of these widgets could be easily added to your own web pages. Please see the [help page](https://www.ncbi.nlm.nih.gov/Structure/icn3d/docs/icn3d_help.html#HowToUse) for more details.
 
-<b>Complete package</b> of iCn3D including Three.js and jQuery can be downloaded from [https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.2.0.zip](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.2.0.zip). The "Download ZIP" link in this page does not include third-party libraries. 
+<b>Complete package</b> of iCn3D including Three.js and jQuery can be downloaded from [https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.2.1.zip](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.2.1.zip). The "Download ZIP" link in this page does not include third-party libraries. 
 
 ## Usage
 
@@ -77,6 +77,8 @@ gulp
 ```
 
 ## Change log
+The production version [icn3d-2.2.1](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.2.1.zip) was release on August 3, 2018. Mouseover on the 3D structure shows the residue or atom name. Some Ajax calls are combined into one Ajax call.
+
 The production version [icn3d-2.2.0](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.2.0.zip) was release on July 30, 2018. The smoothing algorithm was switched from Catmull-Rom spline to cubic spline to make the curves more smooth. The thickness of ribbon was decreased to make the sides of the ribbons less apparent. The radio buttons in the menus was replaced by the check sign. A "Save Image" button was added in the "Toolbar".
 
 The production version [icn3d-2.1.8](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.1.8.zip) was release on July 12, 2018. Checked the code with the strict mode. 

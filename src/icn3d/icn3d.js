@@ -332,21 +332,80 @@ var iCn3D = function (id) {
     });
     this.container.bind('mousedown touchstart', function (e) {
         e.preventDefault();
+        me.isDragging = true;
 
         if (!me.scene) return;
 
         me.bStopRotate = true;
 
+        if(me.pk && (e.altKey || e.ctrlKey || e.shiftKey || e.keyCode === 18 || e.keyCode === 16 || e.keyCode === 17 || e.keyCode === 224 || e.keyCode === 91) ) {
+            me.highlightlevel = me.pk;
+
+            var bClick = true;
+            me.rayCaster(e, bClick);
+        }
+
+        me.controls.handleResize();
+        me.controls.update();
+        me.render();
+    });
+    this.container.bind('mousemove touchmove', function (e) {
+        e.preventDefault();
+        if (!me.scene) return;
+        // no action when no mouse button is clicked and no key was down
+        //if (!me.isDragging) return;
+
+        $("[id$=popup]").hide();
+
+        var bClick = false;
+        me.rayCaster(e, bClick);
+
+        if(me.isDragging) {
+            me.controls.handleResize();
+            me.controls.update();
+            me.render();
+        }
+    });
+    this.container.bind('mousewheel', function (e) {
+        e.preventDefault();
+        if (!me.scene) return;
+
+        me.bStopRotate = true;
+
+        me.controls.handleResize();
+        me.controls.update();
+
+        me.render();
+    });
+    this.container.bind('DOMMouseScroll', function (e) {
+        e.preventDefault();
+        if (!me.scene) return;
+
+        me.bStopRotate = true;
+
+        me.controls.handleResize();
+        me.controls.update();
+
+        me.render();
+    });
+};
+
+iCn3D.prototype = {
+
+    constructor: iCn3D,
+
+    rayCaster: function(e, bClick) { var me = this;
         var x = e.pageX, y = e.pageY;
         if (e.originalEvent.targetTouches && e.originalEvent.targetTouches[0]) {
             x = e.originalEvent.targetTouches[0].pageX;
             y = e.originalEvent.targetTouches[0].pageY;
         }
-        me.isDragging = true;
+
+        //me.isDragging = true;
 
         // see ref http://soledadpenades.com/articles/three-js-tutorials/object-pk/
-        if(me.pk && (e.altKey || e.ctrlKey || e.shiftKey || e.keyCode === 18 || e.keyCode === 16 || e.keyCode === 17 || e.keyCode === 224 || e.keyCode === 91) ) {
-            me.highlightlevel = me.pk;
+        //if(me.pk && (e.altKey || e.ctrlKey || e.shiftKey || e.keyCode === 18 || e.keyCode === 16 || e.keyCode === 17 || e.keyCode === 224 || e.keyCode === 91) ) {
+        //    me.highlightlevel = me.pk;
 
             me.mouse.x = ( (x - me.container.offset().left) / me.container.width() ) * 2 - 1;
             me.mouse.y = - ( (y - me.container.offset().top) / me.container.height() ) * 2 + 1;
@@ -419,7 +478,12 @@ var iCn3D = function (id) {
                       me.pAtom = atom;
                     }
 
+                    if(bClick) {
                       me.showPicking(atom);
+                    }
+                    else {
+                      me.showPicking(atom, x, y);
+                    }
                 }
                 else {
                     console.log("No atoms were found in 10 andstrom range");
@@ -457,56 +521,20 @@ var iCn3D = function (id) {
                           me.pAtom = atom;
                         }
 
+                        if(bClick) {
                           me.showPicking(atom);
+                        }
+                        else {
+                          me.showPicking(atom, x, y);
+                        }
                     }
                     else {
                         console.log("No atoms were found in 10 andstrom range");
                     }
                 } // end if
             }
-        }
-
-        me.controls.handleResize();
-        me.controls.update();
-        me.render();
-    });
-    this.container.bind('mousemove touchmove', function (e) {
-        e.preventDefault();
-        if (!me.scene) return;
-        // no action when no mouse button is clicked and no key was down
-        if (!me.isDragging) return;
-
-        me.controls.handleResize();
-        me.controls.update();
-        me.render();
-    });
-    this.container.bind('mousewheel', function (e) {
-        e.preventDefault();
-        if (!me.scene) return;
-
-        me.bStopRotate = true;
-
-        me.controls.handleResize();
-        me.controls.update();
-
-        me.render();
-    });
-    this.container.bind('DOMMouseScroll', function (e) {
-        e.preventDefault();
-        if (!me.scene) return;
-
-        me.bStopRotate = true;
-
-        me.controls.handleResize();
-        me.controls.update();
-
-        me.render();
-    });
-};
-
-iCn3D.prototype = {
-
-    constructor: iCn3D,
+        //}
+    },
 
     setRotation: function(axis, angle) { var me = this;
           axis.applyQuaternion( me.cam.quaternion ).normalize();

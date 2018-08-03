@@ -138,40 +138,54 @@ iCn3DUI.prototype = {
     },
 
     modifyIcn3dshowPicking: function() {var me = this;
-        iCn3D.prototype.showPicking = function(atom) {
-          this.showPickingBase(atom);
-
-          // highlight the sequence background
-          var idArray = this.id.split('_'); // id: div0_canvas
-          me.pre = idArray[0] + "_";
-
-          me.updateHlAll();
-
-          var transformation = {};
-          transformation.factor = this._zoomFactor;
-          transformation.mouseChange = this.mouseChange;
-          //transformation.quaternion = this.quaternion;
-          transformation.quaternion = {};
-          transformation.quaternion._x = parseFloat(this.quaternion._x).toPrecision(5);
-          transformation.quaternion._y = parseFloat(this.quaternion._y).toPrecision(5);
-          transformation.quaternion._z = parseFloat(this.quaternion._z).toPrecision(5);
-          transformation.quaternion._w = parseFloat(this.quaternion._w).toPrecision(5);
-
-          if(me.bAddCommands) {
-              this.commands.push('pickatom ' + atom.serial + '|||' + me.getTransformationStr(transformation));
-              this.optsHistory.push(this.cloneHash(this.opts));
-              this.optsHistory[this.optsHistory.length - 1].hlatomcount = Object.keys(this.hAtoms).length;
-
-              if(me.isSessionStorageSupported()) me.saveCommandsToSession();
-
-              me.STATENUMBER = this.commands.length;
+        iCn3D.prototype.showPicking = function(atom, x, y) {
+          if(me.cfg.cid !== undefined) {
+              this.pk = 1; // atom
+          }
+          else {
+              // do not change the picking option
           }
 
-          this.logs.push('pickatom ' + atom.serial + ' (chain: ' + atom.structure + '_' + atom.chain + ', residue: ' + atom.resn + ', number: ' + atom.resi + ', atom: ' + atom.name + ')');
-          if ( $( "#" + me.pre + "logtext" ).length )  {
-            $("#" + me.pre + "logtext").val("> " + this.logs.join("\n> ") + "\n> ").scrollTop($("#" + me.pre + "logtext")[0].scrollHeight);
-          }
+          this.showPickingBase(atom, x, y);
 
+          if(x !== undefined && y !== undefined) { // mouse over
+            var text = (this.pk == 1) ? atom.resn + atom.resi + '@' + atom.name : atom.resn + atom.resi;
+            $("#" + me.pre + "popup").html(text);
+            $("#" + me.pre + "popup").css("top", y).css("left", x+20).show();
+          }
+          else {
+              // highlight the sequence background
+              var idArray = this.id.split('_'); // id: div0_canvas
+              me.pre = idArray[0] + "_";
+
+              me.updateHlAll();
+
+              var transformation = {};
+              transformation.factor = this._zoomFactor;
+              transformation.mouseChange = this.mouseChange;
+              //transformation.quaternion = this.quaternion;
+              transformation.quaternion = {};
+              transformation.quaternion._x = parseFloat(this.quaternion._x).toPrecision(5);
+              transformation.quaternion._y = parseFloat(this.quaternion._y).toPrecision(5);
+              transformation.quaternion._z = parseFloat(this.quaternion._z).toPrecision(5);
+              transformation.quaternion._w = parseFloat(this.quaternion._w).toPrecision(5);
+
+              if(me.bAddCommands) {
+                  this.commands.push('pickatom ' + atom.serial + '|||' + me.getTransformationStr(transformation));
+                  this.optsHistory.push(this.cloneHash(this.opts));
+                  this.optsHistory[this.optsHistory.length - 1].hlatomcount = Object.keys(this.hAtoms).length;
+
+                  if(me.isSessionStorageSupported()) me.saveCommandsToSession();
+
+                  me.STATENUMBER = this.commands.length;
+              }
+
+              this.logs.push('pickatom ' + atom.serial + ' (chain: ' + atom.structure + '_' + atom.chain + ', residue: ' + atom.resn + ', number: ' + atom.resi + ', atom: ' + atom.name + ')');
+              if ( $( "#" + me.pre + "logtext" ).length )  {
+                $("#" + me.pre + "logtext").val("> " + this.logs.join("\n> ") + "\n> ").scrollTop($("#" + me.pre + "logtext")[0].scrollHeight);
+              }
+          }
+/*
           // add label
           var residueText = atom.resn + atom.resi;
 
@@ -182,7 +196,7 @@ iCn3DUI.prototype = {
           }
           else {
               text = residueText + '@' + atom.name;
-              // do not chnage the picking option
+              // do not change the picking option
               //this.pk = 2; // residue
           }
 
@@ -207,6 +221,7 @@ iCn3DUI.prototype = {
               //http://www.johannes-raida.de/tutorials/three.js/tutorial13/tutorial13.htm
               if(me.bMeasureDistance === undefined || !me.bMeasureDistance) this.createLabelRepresentation(labels);
           }
+*/
         };
     },
 
