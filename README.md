@@ -5,7 +5,7 @@
 "I see in 3D" (iCn3D) Structure Viewer is a WebGL-based 3D viewer using Three.js and jQuery. iCn3D has a feature-rich user interface and allows users to: 
 * [Display and integrate annotations](https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?mmdbid=1tup&command=view+annotations;+set+annotation+cdd;+set+view+detailed+view;+set+annotation+all) from NCBI resources including dbSNP, ClinVar, conserved domains, 3D domains, and binding sites
 * [Add custom tracks](https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?mmdbid=1tup&showanno=1&show2d=1&showsets=1&command=view+annotations;+set+view+detailed+view;+add+track+|+chainid+1TUP_B+|+title+Custom+Key+Sites+|+text+82+R,+152+G,+155-156+RR,+180+R,+189+R;+select+.B:82,152,155-156,180,189+|+name+mutation) in various formats (FASTA, bed file, etc) in the annotation window
-* Use a url or a state file to capture the custom display of 3D structures
+* Use a url (e.g., [https://d55qc.app.goo.gl/HDuWMFAVokxvHMKSA](https://d55qc.app.goo.gl/HDuWMFAVokxvHMKSA)) or a state file to capture the custom display of 3D structures
 * Select residues by searching sequences or select on 3D structures,  2D interactions, and 1D sequences
 * Display/highlight selected residues in 3D structures,  2D interactions, and 1D sequences
 * Export STL or VRML files for [3D printing](https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?mmdbid=1tup&command=export+stl+stabilizer+file)
@@ -19,7 +19,7 @@ We provided two types of iCn3D widgets: [basic interface](https://www.ncbi.nlm.n
 
 Either of these widgets could be easily added to your own web pages. Please see the [help page](https://www.ncbi.nlm.nih.gov/Structure/icn3d/docs/icn3d_help.html#HowToUse) for more details.
 
-<b>Complete package</b> of iCn3D including Three.js and jQuery can be downloaded from [https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.2.1.zip](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.2.1.zip). The "Download ZIP" link in this page does not include third-party libraries. 
+<b>Complete package</b> of iCn3D including Three.js and jQuery can be downloaded from [https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.2.1.zip](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.2.2.zip). The "Download ZIP" link in this page does not include third-party libraries. 
 
 ## Usage
 
@@ -77,6 +77,8 @@ gulp
 ```
 
 ## Change log
+The production version [icn3d-2.2.2](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.2.2.zip) was release on August 9, 2018. Defined sets can be combined using "or", "and", and "or".
+
 The production version [icn3d-2.2.1](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.2.1.zip) was release on August 3, 2018. Mouseover on the 3D structure shows the residue or atom name. Some Ajax calls are combined into one Ajax call.
 
 The production version [icn3d-2.2.0](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.2.0.zip) was release on July 30, 2018. The smoothing algorithm was switched from Catmull-Rom spline to cubic spline to make the curves more smooth. The thickness of ribbon was decreased to make the sides of the ribbons less apparent. The radio buttons in the menus was replaced by the check sign. A "Save Image" button was added in the "Toolbar".

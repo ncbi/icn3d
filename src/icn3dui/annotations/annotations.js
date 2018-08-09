@@ -1414,6 +1414,7 @@ iCn3DUI.prototype.showSnpClinvar = function(chnid, chnidBase) {
 
 iCn3DUI.prototype.showCddSiteAll = function() { var me = this;
     var chnidBaseArray = $.map(me.protein_chainid, function(v) { return v; });
+    var chnidArray = Object.keys(me.protein_chainid);
 
     // show conserved domains and binding sites
     var url = "https://www.ncbi.nlm.nih.gov/Structure/cdannots/cdannots.fcgi?fmt&queries=" + chnidBaseArray;
@@ -1428,7 +1429,10 @@ iCn3DUI.prototype.showCddSiteAll = function() { var me = this;
 
           for(var chainI = 0, chainLen = data.data.length; chainI < chainLen; ++chainI) {
             var cddData = data.data[chainI];
-            var chnid = cddData._id;
+            var chnidBase = cddData._id;
+            var pos = chnidBaseArray.indexOf(chnidBase);
+            var chnid = chnidArray[pos];
+
             chainWithData[chnid] = 1;
 
             var html = '<div id="' + me.pre + chnid + '_cddseq_sequence" class="icn3d-cdd icn3d-dl_sequence">';

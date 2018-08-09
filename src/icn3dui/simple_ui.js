@@ -188,9 +188,9 @@ iCn3DUI.prototype = {
     setHtml: function() { var me = this;
         var html = "";
 
-        html += "<div id='" + me.pre + "popup' style='display:none; position:absolute; z-index:9999; top:-1000px; left:-1000px; background-color:#DDDDDD; text-align:center; width:80px; height:18px; padding:3px;'></div>";
-
         html += "<div id='" + me.pre + "viewer' style='position:relative; width:100%; height:100%;'>";
+
+        html += "<div id='" + me.pre + "popup' class='icn3d-text' style='display:none; position:absolute; z-index:9999; top:-1000px; left:-1000px; background-color:#DDDDDD; text-align:center; width:80px; height:18px; padding:3px;'></div>";
 
         html += "<div id='" + me.pre + "title' style='position:absolute; top:20px; left:80px; color:" + me.GREYD + ";'></div>";
 

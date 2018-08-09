@@ -149,6 +149,10 @@ iCn3DUI.prototype = {
           this.showPickingBase(atom, x, y);
 
           if(x !== undefined && y !== undefined) { // mouse over
+            if(me.cfg.showmenu != undefined && me.cfg.showmenu == true) {
+                y += me.MENU_HEIGHT;
+            }
+
             var text = (this.pk == 1) ? atom.resn + atom.resi + '@' + atom.name : atom.resn + atom.resi;
             $("#" + me.pre + "popup").html(text);
             $("#" + me.pre + "popup").css("top", y).css("left", x+20).show();
@@ -698,14 +702,7 @@ iCn3DUI.prototype = {
 
          html += name + "\tselect ";
 
-         var residueHash = {};
-         for(var j = 0, jl = atomArray.length; j < jl; ++j) {
-             var atom = me.icn3d.atoms[atomArray[j]];
-             var residueid = atom.structure + '_' + atom.chain + '_' + atom.resi;
-             residueHash[residueid] = 1;
-         }
-
-         var residueArray = Object.keys(residueHash);
+         var residueArray = me.atoms2residues(atomArray);
 
          html += me.residueids2spec(residueArray);
 
@@ -713,6 +710,17 @@ iCn3DUI.prototype = {
        } // outer for
 
        return html;
+    },
+
+    atoms2residues: function(atomArray) { var me = this;
+         var residueHash = {};
+         for(var j = 0, jl = atomArray.length; j < jl; ++j) {
+             var atom = me.icn3d.atoms[atomArray[j]];
+             var residueid = atom.structure + '_' + atom.chain + '_' + atom.resi;
+             residueHash[residueid] = 1;
+         }
+
+         return Object.keys(residueHash);
     },
 
     residueids2spec: function(residueArray) { var me = this;

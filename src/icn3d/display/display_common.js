@@ -40,7 +40,14 @@ iCn3D.prototype.setColorByOptions = function (options, atoms, bUseInputColor) {
         case 'spectrum':
             var idx = 0;
             //var lastTerSerialInv = 1 / this.lastTerSerial;
-            var lastTerSerialInv = 1 / this.cnt;
+            //var lastTerSerialInv = 1 / this.cnt;
+            var cnt = 0;
+            for (var i in atoms) {
+                var atom = this.atoms[i];
+                if(!atom.het) ++cnt;
+            }
+
+            var lastTerSerialInv = 1 / cnt;
             for (var i in atoms) {
                 var atom = this.atoms[i];
                 atom.color = atom.het ? this.atomColors[atom.elem] || this.defaultAtomColor : new THREE.Color().setHSL(2 / 3 * (1 - idx++ * lastTerSerialInv), 1, 0.45);

@@ -25,7 +25,7 @@ iCn3DUI.prototype.clickCustomAtoms = function() { var me = this;
 
          var bUpdateHlMenus = false;
          me.changeCustomAtoms(nameArray, bUpdateHlMenus);
-         me.setLogCmd('select saved atoms ' + nameArray.toString(), true);
+         me.setLogCmd('select saved atoms ' + nameArray.join(' or '), true);
 
          me.bSelectResidue = false;
        }
@@ -39,20 +39,15 @@ iCn3DUI.prototype.clickCustomAtoms = function() { var me = this;
 iCn3DUI.prototype.changeCustomAtoms = function (nameArray, bUpdateHlMenus) { var me = this;
    me.icn3d.hAtoms = {};
 
-   //var allResidues = {};
    for(var i = 0; i < nameArray.length; ++i) {
      var selectedSet = nameArray[i];
 
      if((me.icn3d.defNames2Atoms === undefined || !me.icn3d.defNames2Atoms.hasOwnProperty(selectedSet)) && (me.icn3d.defNames2Residues === undefined || !me.icn3d.defNames2Residues.hasOwnProperty(selectedSet)) ) continue;
 
-     //var residueHash = {};
      if(me.icn3d.defNames2Atoms !== undefined && me.icn3d.defNames2Atoms.hasOwnProperty(selectedSet)) {
          var atomArray = me.icn3d.defNames2Atoms[selectedSet];
 
          for(var j = 0, jl = atomArray.length; j < jl; ++j) {
-             //var atom = me.icn3d.atoms[atomArray[j]];
-             //var residueid = atom.structure + '_' + atom.chain + '_' + atom.resi;
-             //residueHash[residueid] = 1;
              me.icn3d.hAtoms[atomArray[j]] = 1;
          }
      }
@@ -60,24 +55,15 @@ iCn3DUI.prototype.changeCustomAtoms = function (nameArray, bUpdateHlMenus) { var
      if(me.icn3d.defNames2Residues !== undefined && me.icn3d.defNames2Residues.hasOwnProperty(selectedSet)) {
          var residueArrayTmp = me.icn3d.defNames2Residues[selectedSet];
 
+         var atomHash = {};
          for(var j = 0, jl = residueArrayTmp.length; j < jl; ++j) {
-             //residueHash[residueArrayTmp[j]] = 1;
-             me.icn3d.hAtoms = me.icn3d.unionHash(me.icn3d.hAtoms, me.icn3d.residues[residueArrayTmp[j]]);
+             atomHash = me.icn3d.unionHash(atomHash, me.icn3d.residues[residueArrayTmp[j]]);
          }
+
+         me.icn3d.hAtoms = me.icn3d.unionHash(me.icn3d.hAtoms, atomHash);
      }
-
-     //var residueArray = Object.keys(residueHash);
-
-     //if(residueArray === undefined) continue;
-
-     //for(var j = 0, jl = residueArray.length; j < jl; ++j) {
-     //  allResidues[residueArray[j]] = 1;
-     //}
    } // outer for
 
-   //me.removeSeqChainBkgd();
-
-   //me.highlightResidues(Object.keys(allResidues));
    me.updateHlAll(nameArray, bUpdateHlMenus);
 
    // show selected chains in annotation window
@@ -93,41 +79,119 @@ iCn3DUI.prototype.changeCustomAtoms = function (nameArray, bUpdateHlMenus) { var
        var atomArray = me.icn3d.defNames2Atoms[nameArray[i]];
        var residueArray = me.icn3d.defNames2Residues[nameArray[i]];
        var atomTitle = me.icn3d.defNames2Descr[nameArray[i]];
-       var atomCommand = me.icn3d.defNames2Command[nameArray[i]];
-
-       if(atomCommand === undefined) continue;
-
-       if(atomCommand.indexOf('select ') !== -1) atomCommand = atomCommand.replace(/select /g, '');
 
        if(i === 0) {
-         $("#" + me.pre + "command").val(atomCommand);
+         //$("#" + me.pre + "command").val(atomCommand);
+         $("#" + me.pre + "command").val('saved atoms ' + nameArray[i]);
          $("#" + me.pre + "command_name").val(nameArray[i]);
-         //$("#" + me.pre + "command_desc").val(atomTitle);
        }
        else {
          var prevValue = $("#" + me.pre + "command").val();
-         $("#" + me.pre + "command").val(prevValue + " or " + atomCommand);
+         $("#" + me.pre + "command").val(prevValue + ' or ' + nameArray[i]);
 
          var prevValue = $("#" + me.pre + "command_name").val();
-         $("#" + me.pre + "command_name").val(prevValue + " or " + nameArray[i]);
-
-         //var prevValue = $("#" + me.pre + "command_desc").val();
-         //$("#" + me.pre + "command_desc").val(prevValue + " or " + atomTitle);
-       }
-
-       if(atomArray !== undefined) {
-           for(var j = 0, jl = atomArray.length; j < jl; ++j) {
-             me.icn3d.hAtoms[atomArray[j]] = 1;
-           }
-       }
-       else if(residueArray !== undefined) {
-           for(var j = 0, jl = residueArray.length; j < jl; ++j) {
-             me.icn3d.hAtoms = me.icn3d.unionHash(me.icn3d.hAtoms, me.icn3d.residues[residueArray[j]]);
-           }
+         $("#" + me.pre + "command_name").val(prevValue + ' or ' + nameArray[i]);
        }
    } // outer for
 };
 
+iCn3DUI.prototype.setHAtomsFromSets = function (nameArray, type) { var me = this;
+   for(var i = 0; i < nameArray.length; ++i) {
+     var selectedSet = nameArray[i];
+
+     if((me.icn3d.defNames2Atoms === undefined || !me.icn3d.defNames2Atoms.hasOwnProperty(selectedSet)) && (me.icn3d.defNames2Residues === undefined || !me.icn3d.defNames2Residues.hasOwnProperty(selectedSet)) ) continue;
+
+     if(me.icn3d.defNames2Atoms !== undefined && me.icn3d.defNames2Atoms.hasOwnProperty(selectedSet)) {
+         var atomArray = me.icn3d.defNames2Atoms[selectedSet];
+
+         if(type === 'or') {
+             for(var j = 0, jl = atomArray.length; j < jl; ++j) {
+                 me.icn3d.hAtoms[atomArray[j]] = 1;
+             }
+         }
+         else if(type === 'and') {
+             var atomHash = {};
+             for(var j = 0, jl = atomArray.length; j < jl; ++j) {
+                 atomHash[atomArray[j]] = 1;
+             }
+
+             me.icn3d.hAtoms = me.icn3d.intHash(me.icn3d.hAtoms, atomHash);
+         }
+         else if(type === 'not') {
+             for(var j = 0, jl = atomArray.length; j < jl; ++j) {
+                 me.icn3d.hAtoms[atomArray[j]] = undefined;
+             }
+         }
+     }
+
+     if(me.icn3d.defNames2Residues !== undefined && me.icn3d.defNames2Residues.hasOwnProperty(selectedSet)) {
+         var residueArrayTmp = me.icn3d.defNames2Residues[selectedSet];
+
+         var atomHash = {};
+         for(var j = 0, jl = residueArrayTmp.length; j < jl; ++j) {
+             atomHash = me.icn3d.unionHash(atomHash, me.icn3d.residues[residueArrayTmp[j]]);
+         }
+
+         if(type === 'or') {
+             me.icn3d.hAtoms = me.icn3d.unionHash(me.icn3d.hAtoms, atomHash);
+         }
+         else if(type === 'and') {
+             me.icn3d.hAtoms = me.icn3d.intHash(me.icn3d.hAtoms, atomHash);
+         }
+         else if(type === 'not') {
+             me.icn3d.hAtoms = me.icn3d.exclHash(me.icn3d.hAtoms, atomHash);
+         }
+     }
+   } // outer for
+};
+
+iCn3DUI.prototype.updateAdvancedCommands = function (nameArray, type) { var me = this;
+   // update the commands in the dialog
+   var separator = ' ' + type + ' ';
+   for(var i = 0, il = nameArray.length; i < il; ++i) {
+       if(i === 0 && type == 'or') {
+         $("#" + me.pre + "command").val('saved atoms ' + nameArray[i]);
+         $("#" + me.pre + "command_name").val(nameArray[i]);
+       }
+       else {
+         var prevValue = $("#" + me.pre + "command").val();
+         $("#" + me.pre + "command").val(prevValue + separator + nameArray[i]);
+
+         var prevValue = $("#" + me.pre + "command_name").val();
+         $("#" + me.pre + "command_name").val(prevValue + separator + nameArray[i]);
+       }
+   } // outer for
+};
+
+iCn3DUI.prototype.combineSets = function (orArray, andArray, notArray, commandname) { var me = this;
+   me.icn3d.hAtoms = {};
+   me.setHAtomsFromSets(orArray, 'or');
+
+   if(Object.keys(me.icn3d.hAtoms).length == 0) me.icn3d.hAtoms = me.icn3d.cloneHash(me.icn3d.atoms);
+   me.setHAtomsFromSets(andArray, 'and');
+
+   me.setHAtomsFromSets(notArray, 'not');
+
+   me.updateHlAll();
+
+   // show selected chains in annotation window
+   me.showAnnoSelectedChains();
+
+   // clear commmand
+   $("#" + me.pre + "command").val("");
+   $("#" + me.pre + "command_name").val("");
+
+   me.updateAdvancedCommands(orArray, 'or');
+   me.updateAdvancedCommands(andArray, 'and');
+   me.updateAdvancedCommands(notArray, 'not');
+
+   if(commandname !== undefined) {
+       var select = "select " + $("#" + me.pre + "command").val();
+
+       $("#" + me.pre + "command_name").val(commandname);
+       me.addCustomSelection(Object.keys(me.icn3d.hAtoms), commandname, commandname, select, false);
+   }
+};
 
 iCn3DUI.prototype.setProtNuclLigInMenu = function () { var me = this;
     for(var chain in me.icn3d.chains) {

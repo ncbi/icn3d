@@ -708,11 +708,12 @@ In the dialog Select -&gt; Advanced, users can use simple specification to selec
 <li>":5-10,KRDE,chemicals" uses ":" to indicate residue selection. Residue selection could be residue number (5-10), one-letter sequence (KRDE), or predefined names: "proteins", "nucleotides", "chemicals", "ions", and "water".<br/>
 <li>"@CA,C" uses "@" to indicate atom selection.<br/>
 <li>Partial definition is allowed, e.g., ":1-10" selects all residue IDs 1-10 in all chains.<br/>
+<li>Different selections can be united (with "<b>or</b>", default), intersected (with "<b>and</b>"), or negated (with "<b>not</b>"). For example, ":1-10 or :K" selects all residues 1-10 and all Lys residues. ":1-10 and :K" selects all Lys residues in the range of residue number 1-10. ":1-10 or not :K" selects all residues 1-10, which are not Lys residues.
 </ul>
 <b>Set Operation:</b>
 <ul>
 <li>Users can select multiple items in "All Selections".<br/>
-<li>Different selections can be united (with "<b>or</b>", default), intersected (with "<b>and</b>"), or negated (with "<b>not</b>"). For example, ":1-10 or :K" selects all residues 1-10 and all Lys residues. ":1-10 and :K" selects all Lys residues in the range of residue number 1-10. ":1-10 or not :K" selects all residues 1-10, which are not Lys residues.
+<li>Different sets can be unioned (with "<b>or</b>", default), intersected (with "<b>and</b>"), or negated (with "<b>not</b>"). For example, if the "Defined Sets" menu has four sets ":1-10", ":11-20", ":5-15", and ":7-8", the command "saved atoms :1-10 or :11-20 and :5-15 not :7-8" unions all residues 1-10 and 11-20 to get the residues 1-20, then intersects with the residues 5-15 to get the residues 5-15, then exclude the residues 7-8 to get the final residues 5-6 and 9-15.
 </ul>
 <b>Full commands in url or command window:</b>
 <ul>
@@ -1720,6 +1721,9 @@ Update the highlight of sequences in the annotation window according to the curr
 
 <a name="log"></a>
 <h2>Change Log:<img src="https://www.ncbi.nlm.nih.gov/Structure/IMG/spacer.gif" width="25" height="1" border="0"><a href="#Top"><img src="https://www.ncbi.nlm.nih.gov/Structure/IMG/arrowup_blue.gif" width="12" height="12" border="0" alt="back to top"></a></h2>
+The production version <a href="https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.2.2.zip">icn3d-2.2.2</a> was release on August 9, 2018. Defined sets can be combined using "or", "and", and "or".
+<br><br>
+
 The production version <a href="https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.2.1.zip">icn3d-2.2.1</a> was release on August 3, 2018. Mouseover on the 3D structure shows the residue or atom name. Some Ajax calls are combined into one Ajax call.
 <br><br>
 

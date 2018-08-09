@@ -65,9 +65,10 @@ iCn3DUI.prototype.setTools_base = function() { var me = this;
 iCn3DUI.prototype.setTopMenusHtml = function (id) { var me = this;
     var html = "";
 
-    html += "<div id='" + me.pre + "popup' style='display:none; position:absolute; z-index:9999; top:-1000px; left:-1000px; background-color:#DDDDDD; text-align:center; width:80px; height:18px; padding:3px;'>test</div>";
-
     html += "<div style='position:relative;'>";
+
+    html += "<div id='" + me.pre + "popup' class='icn3d-text' style='display:none; position:absolute; z-index:9999; top:-1000px; left:-1000px; background-color:#DDDDDD; text-align:center; width:80px; height:18px; padding:3px;'>test</div>";
+
     html += "  <!--https://forum.jquery.com/topic/looking-for-a-jquery-horizontal-menu-bar-->";
     html += "  <div id='" + me.pre + "mnlist' style='position:absolute; z-index:999; float:left; display:table-row; margin-top: -2px;'>";
     html += "    <table border='0' cellpadding='0' cellspacing='0' width='100'><tr>";
@@ -850,6 +851,7 @@ iCn3DUI.prototype.setDialogs = function() { var me = this;
     html += "    <b>Defined Sets:</b> <br/>";
     html += "    <select id='" + me.pre + "atomsCustom' multiple size='6' style='min-width:100px;'>";
     html += "    </select>";
+    html += "    Open \"Select > Advanced\" to combine sets.";
     html += "</div>";
 
     html += "<div id='" + me.pre + "dl_command'>";
@@ -873,10 +875,11 @@ iCn3DUI.prototype.setDialogs = function() { var me = this;
     html += "  <li>\".A,B,C\" uses \".\" to indicate chain selection.<br/>";
     html += "  <li>\":5-10,KRDE,chemicals\" uses \":\" to indicate residue selection. Residue selection could be residue number (5-10), one-letter sequence (KRDE), or predefined names: \"proteins\", \"nucleotides\", \"chemicals\", \"ions\", and \"water\".<br/>";
     html += "  <li>\"@CA,C\" uses \"@\" to indicate atom selection.<br/>";
-    html += "  <li>Partial definition is allowed, e.g., \":1-10\" selects all residue IDs 1-10 in all chains.<br/></ul>";
-    html += "  <b>Set Operation:</b>";
-    html += "  <ul><li>Users can select multiple items in \"All Selections\" above.<br/>";
+    html += "  <li>Partial definition is allowed, e.g., \":1-10\" selects all residue IDs 1-10 in all chains.<br/>";
     html += "  <li>Different selections can be unioned (with \"<b>or</b>\", default), intersected (with \"<b>and</b>\"), or negated (with \"<b>not</b>\"). For example, \":1-10 or :K\" selects all residues 1-10 and all Lys residues. \":1-10 and :K\" selects all Lys residues in the range of residue number 1-10. \":1-10 or not :K\" selects all residues 1-10, which are not Lys residues.</ul>";
+    html += "  <b>Set Operation:</b>";
+    html += "  <ul><li>Users can select multiple sets in the menu \"Select > Defined Sets\".<br/>";
+    html += "  <li>Different sets can be unioned (with \"<b>or</b>\", default), intersected (with \"<b>and</b>\"), or negated (with \"<b>not</b>\"). For example, if the \"Defined Sets\" menu has four sets \":1-10\", \":11-20\", \":5-15\", and \":7-8\", the command \"saved atoms :1-10 or :11-20 and :5-15 not :7-8\" unions all residues 1-10 and 11-20 to get the residues 1-20, then intersects with the residues 5-15 to get the residues 5-15, then exclude the residues 7-8 to get the final residues 5-6 and 9-15.</ul>";
     html += "  <b>Full commands in url or command window:</b>";
     html += "  <ul><li>Select without saving the set: select $1HHO,4N7N.A,B,C:5-10,KRDE,chemicals@CA,C<br/>";
     //html += "  <li>Select and save: select $1HHO,4N7N.A,B,C:5-10,KRDE,chemicals@CA,C | name my_name | description my_description</ul>";

@@ -7,6 +7,7 @@ iCn3DUI.prototype.clickCommand_apply = function() { var me = this;
        e.preventDefault();
 
        var select = $("#" + me.pre + "command").val();
+
        var commandname = $("#" + me.pre + "command_name").val().replace(/;/g, '_').replace(/\s+/g, '_');
        //var commanddesc = $("#" + me.pre + "command_desc").val().replace(/;/g, '_').replace(/\s+/g, '_');
 
@@ -16,51 +17,86 @@ iCn3DUI.prototype.clickCommand_apply = function() { var me = this;
     });
 };
 
+iCn3DUI.prototype.selectCombinedSets = function(strSets, commandname) { var me = this;
+    var idArray = strSets.split(' ');
+
+    var orArray = [], andArray = [], notArray = [];
+    var prevLabel = 'or';
+
+    for(var i = 0, il = idArray.length; i < il; ++i) {
+        if(idArray[i] === 'or' || idArray[i] === 'and' || idArray[i] === 'not') {
+            prevLabel = idArray[i];
+            continue;
+        }
+        else {
+            if(prevLabel === 'or') {
+                orArray.push(idArray[i]);
+            }
+            else if(prevLabel === 'and') {
+                andArray.push(idArray[i]);
+            }
+            else if(prevLabel === 'not') {
+                notArray.push(idArray[i]);
+            }
+        }
+    }
+
+    if(idArray !== null) me.combineSets(orArray, andArray, notArray, commandname);
+};
+
 iCn3DUI.prototype.selectByCommand = function (select, commandname, commanddesc) { var me = this;
-       var selectTmp = select.replace(/ AND /g, ' and ').replace(/ OR /g, ' or ').replace(/ or and /g, ' and ').replace(/ and /g, ' or and ').replace(/ or not /g, ' not ').replace(/ not /g, ' or not ');
+       if(select.indexOf('saved atoms') === 0) {
+            var pos = 12; // 'saved atoms '
+            var strSets = select.substr(pos);
 
-       var commandStr = (selectTmp.trim().substr(0, 6) === 'select') ? selectTmp.trim().substr(7) : selectTmp.trim();
-
-       // each select command may have several commands separated by ' or '
-       var commandArray = commandStr.split(' or ');
-       var allHighlightAtoms = {};
-
-       for(var i = 0, il = commandArray.length; i < il; ++i) {
-           var command = commandArray[i].trim().replace(/\s+/g, ' ');
-           var pos = command.indexOf(' ');
-
-           me.icn3d.hAtoms = {};
-
-           if(command.substr(0, pos).toLowerCase() === 'and') { // intersection
-                   me.applyCommand('select ' + command.substr(pos + 1));
-
-                   allHighlightAtoms = me.icn3d.intHash(allHighlightAtoms, me.icn3d.hAtoms);
-           }
-           else if(command.substr(0, pos).toLowerCase() === 'not') { // negation
-                   me.applyCommand('select ' + command.substr(pos + 1));
-
-                   allHighlightAtoms = me.icn3d.exclHash(allHighlightAtoms, me.icn3d.hAtoms);
-           }
-           else { // union
-                   me.applyCommand('select ' + command);
-
-                   allHighlightAtoms = me.icn3d.unionHash(allHighlightAtoms, me.icn3d.hAtoms);
-           }
+            me.selectCombinedSets(strSets, commandname);
        }
+       else {
+           var selectTmp = select.replace(/ AND /g, ' and ').replace(/ OR /g, ' or ').replace(/ or and /g, ' and ').replace(/ and /g, ' or and ').replace(/ or not /g, ' not ').replace(/ not /g, ' or not ');
 
-       me.icn3d.hAtoms = me.icn3d.cloneHash(allHighlightAtoms);
+           var commandStr = (selectTmp.trim().substr(0, 6) === 'select') ? selectTmp.trim().substr(7) : selectTmp.trim();
 
-       var atomArray = Object.keys(me.icn3d.hAtoms);
-       //var residueArray = Object.keys(me.icn3d.getResiduesFromAtoms(me.icn3d.hAtoms));
-       var residueArray = undefined;
+           // each select command may have several commands separated by ' or '
+           var commandArray = commandStr.split(' or ');
+           var allHighlightAtoms = {};
 
-       if(commandname !== "") {
-           me.addCustomSelection(atomArray, commandname, commanddesc, select, false);
+           for(var i = 0, il = commandArray.length; i < il; ++i) {
+               var command = commandArray[i].trim().replace(/\s+/g, ' ');
+               var pos = command.indexOf(' ');
 
-           var nameArray = [commandname];
-           //me.changeCustomResidues(nameArray);
+               me.icn3d.hAtoms = {};
 
-           me.changeCustomAtoms(nameArray);
+               if(command.substr(0, pos).toLowerCase() === 'and') { // intersection
+                       me.applyCommand('select ' + command.substr(pos + 1));
+
+                       allHighlightAtoms = me.icn3d.intHash(allHighlightAtoms, me.icn3d.hAtoms);
+               }
+               else if(command.substr(0, pos).toLowerCase() === 'not') { // negation
+                       me.applyCommand('select ' + command.substr(pos + 1));
+
+                       allHighlightAtoms = me.icn3d.exclHash(allHighlightAtoms, me.icn3d.hAtoms);
+               }
+               else { // union
+                       me.applyCommand('select ' + command);
+
+                       allHighlightAtoms = me.icn3d.unionHash(allHighlightAtoms, me.icn3d.hAtoms);
+               }
+           }
+
+           me.icn3d.hAtoms = me.icn3d.cloneHash(allHighlightAtoms);
+
+           var atomArray = Object.keys(me.icn3d.hAtoms);
+           //var residueArray = Object.keys(me.icn3d.getResiduesFromAtoms(me.icn3d.hAtoms));
+           var residueArray = undefined;
+
+           if(commandname !== "") {
+               me.addCustomSelection(atomArray, commandname, commanddesc, select, false);
+
+               var nameArray = [commandname];
+               //me.changeCustomResidues(nameArray);
+
+               me.changeCustomAtoms(nameArray);
+           }
        }
 };
 
