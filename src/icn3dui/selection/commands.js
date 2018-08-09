@@ -878,8 +878,36 @@ iCn3DUI.prototype.applyCommand = function (commandStr) { var me = this;
   }
 
   else if(commandOri.indexOf('select saved atoms') == 0) {
-    var idArray = commandOri.substr(commandOri.lastIndexOf(' ') + 1).split(',');
-    if(idArray !== null) me.changeCustomAtoms(idArray);
+    var paraArray = commandOri.split(' | '); // atom names might be case-sensitive
+
+    var select = paraArray[0].replace(/,/g, ' or ');
+
+    var commandname;
+    if(paraArray.length == 2) commandname = paraArray[1].substr(5); // 'name ...'
+
+/*
+    var pos = 19; // 'select saved atoms '
+
+    if(select.indexOf(' and ') !== -1) {
+        // all sets are intersected with the command "and"
+        var idArray = select.substr(pos).split(' and ');
+
+        var bIntersection = true;
+        if(idArray !== null) me.changeCustomAtoms(idArray, undefined, bIntersection, commandname);
+    }
+    else {
+        //var idArray = commandOri.substr(commandOri.lastIndexOf(' ') + 1).split(',');
+        var idArray = select.substr(pos).split(',');
+
+        var bIntersection = false;
+        if(idArray !== null) me.changeCustomAtoms(idArray, undefined, bIntersection, commandname);
+    }
+*/
+
+    var pos = 19; // 'select saved atoms '
+    var strSets = select.substr(pos);
+
+    me.selectCombinedSets(strSets, commandname);
   }
   else if(commandOri.indexOf('select chain') !== -1) {
     var idArray = commandOri.substr(commandOri.lastIndexOf(' ') + 1).split(',');

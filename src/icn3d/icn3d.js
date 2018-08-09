@@ -330,7 +330,8 @@ var iCn3D = function (id) {
     this.container.bind('mouseup touchend', function (e) {
         me.isDragging = false;
     });
-    this.container.bind('mousedown touchstart', function (e) {
+    //this.container.bind('mousedown touchstart', function (e) {
+    this.container.bind('mousedown', function (e) {
         e.preventDefault();
         me.isDragging = true;
 
@@ -349,6 +350,25 @@ var iCn3D = function (id) {
         me.controls.update();
         me.render();
     });
+
+    this.container.bind('touchstart', function (e) {
+        e.preventDefault();
+        me.isDragging = true;
+
+        if (!me.scene) return;
+
+        me.bStopRotate = true;
+
+        $("[id$=popup]").hide();
+
+        var bClick = false;
+        me.rayCaster(e, bClick);
+
+        me.controls.handleResize();
+        me.controls.update();
+        me.render();
+    });
+
     this.container.bind('mousemove touchmove', function (e) {
         e.preventDefault();
         if (!me.scene) return;
@@ -400,6 +420,9 @@ iCn3D.prototype = {
             x = e.originalEvent.targetTouches[0].pageX;
             y = e.originalEvent.targetTouches[0].pageY;
         }
+
+        var popupX = x - me.container.offset().left;
+        var popupY = y - me.container.offset().top;
 
         //me.isDragging = true;
 
@@ -482,7 +505,7 @@ iCn3D.prototype = {
                       me.showPicking(atom);
                     }
                     else {
-                      me.showPicking(atom, x, y);
+                      me.showPicking(atom, popupX, popupY);
                     }
                 }
                 else {
@@ -525,7 +548,7 @@ iCn3D.prototype = {
                           me.showPicking(atom);
                         }
                         else {
-                          me.showPicking(atom, x, y);
+                          me.showPicking(atom, popupX, popupY);
                         }
                     }
                     else {
