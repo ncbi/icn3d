@@ -277,6 +277,7 @@ iCn3DUI.prototype.getTransformationStr = function(transformation) { var me = thi
     return JSON.stringify(transformation2);
 };
 
+/*
 iCn3DUI.prototype.createLinkForBlob = function(blob, filename) { var me = this;
     var link = document.createElement('a');
     link.href = window.URL.createObjectURL(blob);
@@ -285,6 +286,7 @@ iCn3DUI.prototype.createLinkForBlob = function(blob, filename) { var me = this;
     link.click();
     document.body.removeChild(link);
 };
+*/
 
 iCn3DUI.prototype.saveFile = function(filename, type, text) { var me = this;
     //Save file
@@ -411,8 +413,10 @@ iCn3DUI.prototype.saveFile = function(filename, type, text) { var me = this;
     }
 */
 
-    //https://github.com/eligrey/FileSaver.js/
-    saveAs(blob, filename);
+    if(type !== 'png') {
+        //https://github.com/eligrey/FileSaver.js/
+        saveAs(blob, filename);
+    }
 };
 
 
