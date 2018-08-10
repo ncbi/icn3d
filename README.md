@@ -77,7 +77,7 @@ gulp
 ```
 
 ## Change log
-The production version [icn3d-2.2.2](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.2.2.zip) was release on August 9, 2018. Defined sets can be combined using "or", "and", and "or".
+The production version [icn3d-2.2.2](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.2.2.zip) was release on August 9, 2018. Defined sets can be combined using "or", "and", and "not".
 
 The production version [icn3d-2.2.1](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.2.1.zip) was release on August 3, 2018. Mouseover on the 3D structure shows the residue or atom name. Some Ajax calls are combined into one Ajax call.
 

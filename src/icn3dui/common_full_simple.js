@@ -543,19 +543,20 @@ iCn3DUI.prototype.shareLinkUrl = function() { var me = this;
            bCommands = true;
 
            var command_tf = me.icn3d.commands[i].split('|||');
+           var commandStr = command_tf[0].trim();
 
            if(i === il - 1) {
                //var transformation = (command_tf.length > 1) ? ('|||' + command_tf[1]) : '';
                if(i !== 1 && i !== 0) {
                    url += '; ';
                }
-               url += command_tf[0] + '|||' + me.getTransformationStr(transformation);
+               url += commandStr + '|||' + me.getTransformationStr(transformation);
            }
            else if(i === 1) {
-               url += command_tf[0];
+               url += commandStr;
            }
            else if(i !== 1 && i !== il - 1) {
-               url += '; ' + command_tf[0];
+               url += '; ' + commandStr;
            }
        }
 
