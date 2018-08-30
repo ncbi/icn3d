@@ -158,7 +158,9 @@ iCn3DUI.prototype.enableHlSeq = function() { var me = this;
     }
 
     // highlight seq after the ajax calls
-    me.updateHlSeq();
+    if(Object.keys(me.icn3d.hAtoms).length < Object.keys(me.icn3d.dAtoms).length) {
+        me.updateHlSeq();
+    }
 };
 
 // by default, showSeq and showCddSite are called at showAnnotations
@@ -1268,6 +1270,7 @@ iCn3DUI.prototype.showSnpClinvar = function(chnid, chnidBase) {
               var resiStr = snpStr.substr(0, snpStr.length - 3);
 
               var resi = parseInt(resiStr);
+
               var currRes = snpStr.substr(snpStr.length - 3, 1);
               var snpRes = snpStr.substr(snpStr.length - 1, 1);
 
@@ -1279,8 +1282,8 @@ iCn3DUI.prototype.showSnpClinvar = function(chnid, chnidBase) {
 
               // "*" means terminating codon, "-" means deleted codon
               //if(currRes !== '-' && currRes !== '*' && snpRes !== '-' && snpRes !== '*') {
-                    posHash[resi] = 1;
-                    if(disease != '') posClinHash[resi] = 1;
+                    posHash[resi + me.baseResi[chnid]] = 1;
+                    if(disease != '') posClinHash[resi + me.baseResi[chnid]] = 1;
                     resi2index[resi] = i + 1;
 
                     if(resi2snp[resi] === undefined) {
@@ -1476,8 +1479,8 @@ iCn3DUI.prototype.showCddSiteAll = function() { var me = this;
                         var domainFrom = parseInt(domainRepeatArray[r].segs[s].from);
                         var domainTo = parseInt(domainRepeatArray[r].segs[s].to);
 
-                        fromArray.push(domainFrom);
-                        toArray.push(domainTo);
+                        fromArray.push(domainFrom + me.baseResi[chnid]);
+                        toArray.push(domainTo + me.baseResi[chnid]);
 
                         for(var i = domainFrom; i <= domainTo; ++i) {
                             resiHash[i] = 1;
@@ -1812,8 +1815,8 @@ iCn3DUI.prototype.showDomainWithData = function(chnid, data) { var me = this;
                     domainHash[domainStr] = 1;
                 }
 
-                fromArray.push(domainFrom);
-                toArray.push(domainTo);
+                fromArray.push(domainFrom + me.baseResi[chnid]);
+                toArray.push(domainTo + me.baseResi[chnid]);
                 resCnt += domainTo - domainFrom + 1;
 
                 for(var j = domainFrom; j <= domainTo; ++j) {
@@ -1986,7 +1989,6 @@ iCn3DUI.prototype.showInteraction_base = function(chnid, chnidBase) {
     var index = 0;
     for(var chainname in me.chainname2residues[chnid]) {
         var residueArray = me.chainname2residues[chnid][chainname];
-        var resCnt = residueArray.length;
 
         var title = "Interact ." + chainname;
         if(title.length > 17) title = title.substr(0, 17) + '...';
@@ -1995,8 +1997,16 @@ iCn3DUI.prototype.showInteraction_base = function(chnid, chnidBase) {
 
         var resPosArray = [];
         for(var i = 0, il = residueArray.length; i < il; ++i) {
-            resPosArray.push( parseInt(residueArray[i].substr(residueArray[i].lastIndexOf('_') + 1) ) );
+            var resid = residueArray[i];
+            var resi = parseInt(resid.substr(residueArray[i].lastIndexOf('_') + 1) );
+            // exclude chemical, water and ions
+            var serial = Object.keys(me.icn3d.residues[resid])[0];
+            if(me.icn3d.proteins.hasOwnProperty(serial) || me.icn3d.nucleotides.hasOwnProperty(serial)) {
+                resPosArray.push( resi );
+            }
         }
+
+        var resCnt = resPosArray.length;
 
         var chainnameNospace = chainname.replace(/\s/g, '');
 
@@ -2017,7 +2027,7 @@ iCn3DUI.prototype.showInteraction_base = function(chnid, chnidBase) {
         var widthPerRes = 1;
 
         for(var i = 0, il = me.giSeq[chnid].length; i < il; ++i) {
-          if(resPosArray.indexOf(i+1) != -1) {
+          if(resPosArray.indexOf(i+1 + me.baseResi[chnid]) != -1) {
               var cFull = me.giSeq[chnid][i];
 
               var c = cFull;

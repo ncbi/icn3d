@@ -94,7 +94,7 @@ iCn3D.prototype.setColorByOptions = function (options, atoms, bUseInputColor) {
             for (var i in atoms) {
                 var atom = this.atoms[i];
                 // secondary color of nucleotide: blue (new THREE.Color(0x0000FF))
-                atom.color = atom.het ? this.atomColors[atom.elem] || this.defaultAtomColor : this.ssColors[atom.ss] || new THREE.Color(0x0000FF);
+                atom.color = atom.het ? this.atomColors[atom.elem] || this.defaultAtomColor : this.ssColors[atom.ss] || new THREE.Color(0xFF00FF);
 
                 this.atomPrevColors[i] = atom.color;
             }
@@ -254,6 +254,15 @@ iCn3D.prototype.applyDisplayOptions = function (options, atoms, bHighlight) { va
             // if only one residue, add the next residue in order to show highlight
             for(var residueid in singletonResidueHash) {
                 var atom = this.getFirstAtomObj(this.residues[residueid]);
+                // get calpha
+                var calpha;
+                for(var i in this.residues[residueid]) {
+                    if(this.atoms[i].name == 'CA') {
+                        calpha = this.atoms[i];
+                        break;
+                    }
+                }
+
                 var prevResidueid = atom.structure + '_' + atom.chain + '_' + parseInt(atom.resi - 1);
                 var nextResidueid = atom.structure + '_' + atom.chain + '_' + parseInt(atom.resi + 1);
 
@@ -267,6 +276,9 @@ iCn3D.prototype.applyDisplayOptions = function (options, atoms, bHighlight) { va
                     }
                 }
                 else if( (atom.style === 'ribbon' && atom.ss === 'coil') || (atom.style === 'strand' && atom.ss === 'coil') || atom.style === 'o3 trace' || atom.style === 'schematic' || atom.style === 'c alpha trace' || atom.style === 'b factor tube' || (atom.style === 'cylinder and plate' && atom.ss !== 'helix') ) {
+                    // do not add extra residue if the side chain is shown
+                    if(calpha !== undefined && calpha.style2 !== undefined && calpha.style2 !== 'nothing') continue;
+
                     var bAddResidue = false;
                     // add the next residue with same style
                     if(!bAddResidue && this.residues.hasOwnProperty(nextResidueid)) {
@@ -299,6 +311,9 @@ iCn3D.prototype.applyDisplayOptions = function (options, atoms, bHighlight) { va
                     }
                 }
                 else if( (atom.style === 'ribbon' && atom.ss !== 'coil' && atom.ssend) || (atom.style === 'strand' && atom.ss !== 'coil' && atom.ssend)) {
+                    // do not add extra residue if the side chain is shown
+                    if(calpha !== undefined && calpha.style2 !== undefined && calpha.style2 !== 'nothing') continue;
+
                     var bAddResidue = false;
                     // add the next residue with same style
                     if(!bAddResidue && this.residues.hasOwnProperty(nextResidueid)) {

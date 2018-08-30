@@ -406,6 +406,7 @@ iCn3DUI.prototype.setMenu2b = function() { var me = this;
     if(me.cfg.cid === undefined) {
         html += me.getRadio('mn6_addlabel', 'mn6_addlabelResidues', 'per Residue');
         html += me.getRadio('mn6_addlabel', 'mn6_addlabelChains', 'per Chain');
+        html += me.getRadio('mn6_addlabel', 'mn6_addlabelTermini', 'N- & C-Termini');
     }
     html += me.getRadio('mn6_addlabel', 'mn6_addlabelNo', 'Remove', true);
     html += "    </ul>";
@@ -772,6 +773,8 @@ iCn3DUI.prototype.setMenu6 = function() { var me = this;
     html += "    </ul>";
     html += "  </li>";
 
+    html += "  <li><a href='https://github.com/ncbi/icn3d' target='_blank'>Source Code</a></li>";
+
     html += "  <li>-</li>";
 
     html += "  <li><span>Transform Hints</span>";
@@ -851,7 +854,7 @@ iCn3DUI.prototype.setDialogs = function() { var me = this;
     html += "    <b>Defined Sets:</b> <br/>";
     html += "    <select id='" + me.pre + "atomsCustom' multiple size='6' style='min-width:100px;'>";
     html += "    </select>";
-    html += "    Open \"Select > Advanced\" to combine sets.";
+    html += "    Tips: Open \"Select > Advanced\" to combine sets";
     html += "</div>";
 
     html += "<div id='" + me.pre + "dl_command'>";

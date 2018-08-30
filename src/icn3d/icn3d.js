@@ -321,7 +321,9 @@ var iCn3D = function (id) {
         }
 
         else if(e.keyCode === 65 ) { // A, alternate
-           if(Object.keys(me.structures) > 1) me.alternateStructures();
+           if(Object.keys(me.structures).length > 1) {
+               me.alternateStructures();
+           }
         }
 
       }
@@ -1083,7 +1085,8 @@ iCn3D.prototype = {
     },
 
     ssColors: {
-        helix: new THREE.Color(0xFF0080),
+        //helix: new THREE.Color(0xFF0080),
+        helix: new THREE.Color(0xFF0000),
         sheet: new THREE.Color(0xFFC800),
         //sheet: new THREE.Color(0x008000),
          coil: new THREE.Color(0x6080FF)

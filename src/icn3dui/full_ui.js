@@ -415,7 +415,7 @@ iCn3DUI.prototype = {
 
             me.downloadAlignment(me.cfg.align);
         }
-        else if(me.cfg.command !== undefined) {
+        else if(me.cfg.command !== undefined && me.cfg.command !== '') {
             me.loadScript(me.cfg.command);
         }
         else {
@@ -1215,6 +1215,51 @@ iCn3DUI.prototype = {
             label.background = background;
 
             me.icn3d.labels['chain'].push(label);
+        }
+
+        me.icn3d.removeHlObjects();
+    },
+
+    addTerminiLabels: function (atoms) { var me = this;
+        var size = 18;
+        var background = "#CCCCCC";
+
+        var protNucl = me.icn3d.unionHash(me.icn3d.proteins, me.icn3d.nucleotides);
+        var hlProtNucl = me.icn3d.intHash(me.icn3d.dAtoms, protNucl);
+        var atomsHash = me.icn3d.intHash(hlProtNucl, atoms);
+
+        if(me.icn3d.labels['chain'] === undefined) me.icn3d.labels['chain'] = [];
+
+        var chainHash = me.icn3d.getChainsFromAtoms(atomsHash);
+
+        for(var chainid in chainHash) {
+            var chainAtomsHash = me.icn3d.intHash(hlProtNucl, me.icn3d.chains[chainid]);
+            var serialArray = Object.keys(chainAtomsHash);
+            var firstAtom = me.icn3d.atoms[serialArray[0]];
+            var lastAtom = me.icn3d.atoms[serialArray[serialArray.length - 1]];
+
+            var labelN = {}, labelC = {};
+
+            labelN.position = firstAtom.coord;
+            labelC.position = lastAtom.coord;
+
+            labelN.text = 'N-';
+            labelC.text = 'C-';
+
+            labelN.size = size;
+            labelC.size = size;
+
+            var atomNColorStr = firstAtom.color.getHexString().toUpperCase();
+            var atomCColorStr = lastAtom.color.getHexString().toUpperCase();
+
+            labelN.color = (atomNColorStr === "CCCCCC" || atomNColorStr === "C8C8C8") ? "#888888" : "#" + atomNColorStr;
+            labelC.color = (atomCColorStr === "CCCCCC" || atomCColorStr === "C8C8C8") ? "#888888" : "#" + atomCColorStr;
+
+            labelN.background = background;
+            labelC.background = background;
+
+            me.icn3d.labels['chain'].push(labelN);
+            me.icn3d.labels['chain'].push(labelC);
         }
 
         me.icn3d.removeHlObjects();
@@ -2539,6 +2584,16 @@ iCn3DUI.prototype = {
 
            me.saveSelectionIfSelected();
            me.setLogCmd('add chain labels', true);
+           me.icn3d.draw();
+        });
+    },
+
+    clkMn6_addlabelTermini: function() { var me = this;
+        $("#" + me.pre + "mn6_addlabelTermini").click(function (e) {
+           me.addTerminiLabels(me.icn3d.hAtoms);
+
+           me.saveSelectionIfSelected();
+           me.setLogCmd('add terminal labels', true);
            me.icn3d.draw();
         });
     },
@@ -4032,6 +4087,7 @@ iCn3DUI.prototype = {
         me.clkMn6_assemblyNo();
         me.clkMn6_addlabelResidues();
         me.clkMn6_addlabelChains();
+        me.clkMn6_addlabelTermini();
         me.clkMn6_addlabelYes();
         me.clkMn6_addlabelSelection();
         me.clkMn2_saveselection();

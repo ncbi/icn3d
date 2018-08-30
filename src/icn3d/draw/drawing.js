@@ -1432,7 +1432,7 @@ iCn3D.prototype.createStrand = function (atoms, num, div, fill, coilWidth, helix
                     var residueid = firstAtom.structure + '_' + firstAtom.chain + '_' + (firstAtom.resi - 1);
                     if(this.residues.hasOwnProperty(residueid)) {
                         atomsAdjust = this.unionHash(atomsAdjust, this.hash2Atoms(this.residues[residueid]));
-                        atoms = this.unionHash(atoms, this.hash2Atoms(this.residues[residueid]));
+//                        atoms = this.unionHash(atoms, this.hash2Atoms(this.residues[residueid]));
                     }
             }
 
@@ -1464,7 +1464,7 @@ iCn3D.prototype.createStrand = function (atoms, num, div, fill, coilWidth, helix
                     var residueid = lastAtom.structure + '_' + lastAtom.chain + '_' + (lastAtom.resi + 1);
                     if(this.residues.hasOwnProperty(residueid)) {
                         atomsAdjust = this.unionHash(atomsAdjust, this.hash2Atoms(this.residues[residueid]));
-                        atoms = this.unionHash(atoms, this.hash2Atoms(this.residues[residueid]));
+//                        atoms = this.unionHash(atoms, this.hash2Atoms(this.residues[residueid]));
                     }
             }
 
