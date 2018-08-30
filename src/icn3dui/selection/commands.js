@@ -748,6 +748,11 @@ iCn3DUI.prototype.applyCommand = function (commandStr) { var me = this;
 
     me.icn3d.draw();
   }
+  else if(command == 'add terminal labels') {
+    me.addTerminiLabels(me.icn3d.hAtoms);
+
+    me.icn3d.draw();
+  }
   else if(command == 'rotate left') {
      me.icn3d.bStopRotate = false;
      me.ROT_DIR = 'left';

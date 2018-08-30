@@ -34,6 +34,7 @@ iCn3D.prototype.applyChemicalbindingOptions = function (options) {
             }
 
             var residueArray = Object.keys(residueHash);
+
             for(var i = 0, il = residueArray.length; i < il; ++i) {
                 for(var j in this.residues[residueArray[i]]) {
                     // all atoms should be shown for hbonds
