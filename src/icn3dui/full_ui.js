@@ -1246,6 +1246,11 @@ iCn3DUI.prototype = {
             labelN.text = 'N-';
             labelC.text = 'C-';
 
+            if(me.icn3d.nucleotides.hasOwnProperty(firstAtom.serial)) {
+                labelN.text = "5'";
+                labelC.text = "3'";
+            }
+
             labelN.size = size;
             labelC.size = size;
 

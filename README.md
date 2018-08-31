@@ -53,22 +53,17 @@ See the [help page](https://www.ncbi.nlm.nih.gov/Structure/icn3d/docs/icn3d_help
 
 ## Building
 
-If you want to work with the development version, then you'll need to use the Node.js build tools. We recommend using [nvm](https://github.com/creationix/nvm) (Node version manager). First, install that per the instructions in that README file, and then install the latest LTS version of Node.js, with, for example,
-
-```
-nvm install #.#.#
-nvm alias default #.#.#   #=> Use this as default from now on
-node --version
-```
+If you want to build your code easily, you'll need to install nodejs and npm.
 
 Next, clone this repository, and then perform the following setup steps in your working copy of icn3d. 
 
 ```
 npm install -g gulp
 npm install
+npm install jquery-ui
 ```
 
-The first line installs the gulp build tool globally, making the `gulp` command available on the command line. The next line installs all of the dependences for this project.
+The first line installs the gulp build tool globally, making the `gulp` command available on the command line. The next two lines installs all of the dependences for this project. 
 
 You only have to perform the above steps once, to set up your working directory. From then on, to build, simply enter:
 
