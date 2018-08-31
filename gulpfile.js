@@ -18,22 +18,72 @@ gulp.task('clean',
     return del([dist]);
   });
 
-gulp.task('libs',
-  'Copy library files (css and js) into dist/libs',
+gulp.task('libs-three',
+  'Copy three.min.js into dist/libs',
   ['clean'],
   function() {
     return gulp.src([
-            "node_modules/jquery-ui/themes/ui-lightness/**",
-            "node_modules/jquery/dist/jquery-3.2.1.min.js",
-            "node_modules/jquery/dist/jquery.min.js",
-            "node_modules/jquery-ui/jquery-ui-1.12.1.min.js",
-            "node_modules/jquery-ui/jquery-ui.min.js",
-            "node_modules/jquery-ui/jquery-ui-1.12.1.min.css",
-            "node_modules/jquery-ui/jquery-ui.min.css",
-            "node_modules/three/three_0.80.0.min.js",
-            "node_modules/three/three.min.js"
+            "node_modules/three/build/three.min.js"
+        ])
+        .pipe(gulp.dest(dist + '/lib'))
+        .pipe(rename('three_0.80.0.min.js'))
+        .pipe(gulp.dest(dist + '/lib'));
+  });
+
+gulp.task('libs-jquery',
+  'Copy jquery.min.js into dist/libs',
+  ['clean'],
+  function() {
+    return gulp.src([
+            "node_modules/jquery/dist/jquery.min.js"
+        ])
+        .pipe(gulp.dest(dist + '/lib'))
+        .pipe(rename('jquery-3.2.1.min.js'))
+        .pipe(gulp.dest(dist + '/lib'));
+  });
+
+gulp.task('libs-jquery-ui',
+  'Copy jquery-ui.min.js into dist/libs',
+  ['clean'],
+  function() {
+    return gulp.src([
+            "node_modules/components-jqueryui/jquery-ui.min.js"
+        ])
+        .pipe(gulp.dest(dist + '/lib'))
+        .pipe(rename('jquery-ui-1.12.1.min.js'))
+        .pipe(gulp.dest(dist + '/lib'));
+  });
+
+gulp.task('libs-jquery-ui-css',
+  'Copy jquery-ui.min.css into dist/libs',
+  ['clean'],
+  function() {
+    return gulp.src([
+            "node_modules/components-jqueryui/themes/ui-lightness/jquery-ui.min.css"
+        ])
+        .pipe(gulp.dest(dist + '/lib'))
+        .pipe(rename('jquery-ui-1.12.1.min.css'))
+        .pipe(gulp.dest(dist + '/lib'));
+  });
+
+gulp.task('libs-jquery-ui-images1',
+  'Copy jquery-ui images into dist/libs',
+  ['clean'],
+  function() {
+    return gulp.src([
+            "node_modules/components-jqueryui/themes/ui-lightness/images"
         ])
         .pipe(gulp.dest(dist + '/lib'));
+  });
+
+gulp.task('libs-jquery-ui-images2',
+  'Copy jquery-ui images into dist/libs',
+  ['clean'],
+  function() {
+    return gulp.src([
+            "node_modules/components-jqueryui/themes/ui-lightness/images/**"
+        ])
+        .pipe(gulp.dest(dist + '/lib/images'));
   });
 
 gulp.task('ssimages',
@@ -214,8 +264,8 @@ gulp.task('html',
 
 gulp.task('dist',
   'Prepare all the distribution files (except the .zip).',
-  ['libs', 'ssimages', 'copy', 'copy-rename1', 'copy-rename2',
-   'src-js-simple', 'src-js-full', 'html']);
+  ['libs-three','libs-jquery','libs-jquery-ui','libs-jquery-ui-css','libs-jquery-ui-images1','libs-jquery-ui-images2',
+   'ssimages','copy','copy-rename1','copy-rename2','src-js-simple','src-js-full','html']);
 
 gulp.task('zip',
   'Zip up the dist into icn3d-<version>.zip',
