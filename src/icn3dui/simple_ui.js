@@ -317,7 +317,7 @@ iCn3DUI.prototype = {
 
             html += "&nbsp;&nbsp;<b>Select</b>: hold \"Alt\" and select<br/>";
             html += "&nbsp;&nbsp;<b>Union</b>: hold \"Ctrl\" to union<br/>";
-            html += "&nbsp;&nbsp;<b>Switch</b>: after pk, press up/down arrow";
+            html += "&nbsp;&nbsp;<b>Switch</b>: after picking, press up/down arrow";
             html += "</div>";
         }
 
