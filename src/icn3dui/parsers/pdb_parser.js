@@ -108,7 +108,7 @@ iCn3DUI.prototype.loadPdbData = function(data) {
     // calculate secondary structures if not available
     // DSSP only works for structures with all atoms. The Calpha only strucutres didn't work
     if(!me.icn3d.bSecondaryStructure && !bCalphaOnly) {
-           var url = "//test.ncbi.nlm.nih.gov/Structure/mmcifparser/mmcifparser.cgi";
+           var url = "//www.ncbi.nlm.nih.gov/Structure/mmcifparser/mmcifparser.cgi";
 
            $.ajax({
               url: url,
