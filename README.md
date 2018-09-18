@@ -19,7 +19,7 @@ We provided two types of iCn3D widgets: [basic interface](https://www.ncbi.nlm.n
 
 Either of these widgets could be easily added to your own web pages. Please see the [help page](https://www.ncbi.nlm.nih.gov/Structure/icn3d/docs/icn3d_help.html#HowToUse) for more details.
 
-<b>Complete package</b> of iCn3D including Three.js and jQuery can be downloaded from [https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.2.4.zip](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.2.4.zip). The "Download ZIP" link in this page does not include third-party libraries. 
+<b>Complete package</b> of iCn3D including Three.js and jQuery can be downloaded from [https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.2.5.zip](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.2.5.zip). The "Download ZIP" link in this page does not include third-party libraries. 
 
 ## Usage
 
@@ -72,6 +72,8 @@ gulp
 ```
 
 ## Change log
+The production version [icn3d-2.2.5](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.2.5.zip) was release on September 17, 2018. A bug in loading local PDB file was fixed.
+
 The production version [icn3d-2.2.4](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.2.4.zip) was release on September 6, 2018. The location of 2D interaction dialog was optimized.
 
 The production version [icn3d-2.2.3](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.2.3.zip) was release on August 30, 2018. Added an option to show N- and C-terminal labels.
