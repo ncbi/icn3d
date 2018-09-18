@@ -150,7 +150,7 @@ iCn3DUI.prototype.loadPdbData = function(data) {
                         }
 
                         // update ss in sequence window
-                        me.icn3d.chainsAn[chainNum][1][i] = ssOneLetter;
+                        //me.icn3d.chainsAn[chainNum][1][i] = ssOneLetter;
 
                         // assign atom ss, ssbegin, and ssend
                         var resid = chainNum + '_' + resi;
