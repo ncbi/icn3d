@@ -676,8 +676,8 @@ iCn3DUI.prototype.setMenu4 = function() { var me = this;
         html += me.getRadio('mn4_clr', 'mn4_clrAtom', 'Atom');
         html += "  <li><span style='padding-left:2em;'>B-factor</span>";
         html += "    <ul>";
-        html += me.getRadio('mn4_clr', 'mn4_clrBfactor', 'Fixed');
-        html += me.getRadio('mn4_clr', 'mn4_clrBfactorNorm', 'Relative');
+        html += me.getRadio('mn4_clr', 'mn4_clrBfactor', 'Original');
+        html += me.getRadio('mn4_clr', 'mn4_clrBfactorNorm', 'Percentile');
         html += "    </ul>";
 
         if(me.cfg.align !== undefined) {

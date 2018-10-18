@@ -2437,8 +2437,8 @@ iCn3DUI.prototype = {
 
     clkMn4_clrBfactorNorm: function() { var me = this;
         $("#" + me.pre + "mn4_clrBfactorNorm").click(function (e) {
-           me.setOption('color', 'b factor relative');
-           me.setLogCmd('color b factor relative', true);
+           me.setOption('color', 'b factor percentile');
+           me.setLogCmd('color b factor percentile', true);
         });
     },
 
