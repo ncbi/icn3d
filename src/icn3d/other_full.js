@@ -55,28 +55,6 @@ iCn3D.prototype.calculateChemicalHbonds = function (molecule, chemicals, thresho
     return hbondsAtoms;
 };
 
-iCn3D.prototype.getResiduesFromAtoms = function(atomsHash) {
-    var residuesHash = {};
-    for(var i in atomsHash) {
-        var residueid = this.atoms[i].structure + '_' + this.atoms[i].chain + '_' + this.atoms[i].resi;
-        residuesHash[residueid] = 1;
-    }
-
-    return residuesHash;
-};
-
-iCn3D.prototype.getResiduesFromCalphaAtoms = function(atomsHash) {
-    var residuesHash = {};
-    for(var i in atomsHash) {
-        if((this.atoms[i].name == 'CA' && this.proteins.hasOwnProperty(i)) || !this.proteins.hasOwnProperty(i)) {
-            var residueid = this.atoms[i].structure + '_' + this.atoms[i].chain + '_' + this.atoms[i].resi;
-            residuesHash[residueid] = 1;
-        }
-    }
-
-    return residuesHash;
-};
-
 iCn3D.prototype.getChainsFromAtoms = function(atomsHash) {
     var chainsHash = {};
     for(var i in atomsHash) {
