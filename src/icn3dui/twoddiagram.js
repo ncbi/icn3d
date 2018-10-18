@@ -95,7 +95,7 @@ iCn3DUI.prototype.draw2Ddgm = function(data, mmdbid, structureIndex, bUpdate) { 
 
                 var chainid2 = secondChainid;
 
-                var atom2 = me.icn3d.getFirstAtomObj(me.icn3d.chains[chainid2]);
+                var atom2 = me.icn3d.getFirstCalphaAtomObj(me.icn3d.chains[chainid2]);
                 //if(me.chainname2residues[chainid2] === undefined) me.chainname2residues[chainid2] = {};
 
                 var type2;
@@ -356,11 +356,15 @@ iCn3DUI.prototype.set2DdgmNote = function(bAlign) { var me = this;
     //html += "<span style='margin-right:18px;'>&#9633;</span>Nucleotide<br>";
     //html += "<span style='margin-right:18px;'>&#9671;</span>Chemical<br>";
 
-    html += "<span style='margin-right:18px;'>&#9711;</span>Protein<br>";
-    html += "<span style='margin-right:18px;'>&#9633;</span>Nucleotide<br>";
-    html += "<span style='margin-right:18px;'>&#9674;</span>Chemical<br>";
+    //html += "<span style='margin-right:18px;'>&#9711;</span>Protein<br>";
+    //html += "<span style='margin-right:18px;'>&#9633;</span>Nucleotide<br>";
+    //html += "<span style='margin-right:18px;'>&#9674;</span>Chemical<br>";
 
-    html += "<b>Lines</b>:<br> Interactions at 4 &#197;<br>"
+    html += "<span style='margin-right:18px;'>O</span>Protein<br>";
+    html += "<span style='margin-right:18px;'>&#9634;</span>Nucleotide<br>";
+    html += "<span style='margin-right:18px;'>&#9671;</span>Chemical<br>";
+
+    html += "<br><b>Lines</b>:<br> Interactions at 4 &#197;<br>"
     if(bAlign !== undefined && bAlign) html += "<b>Numbers in red</b>:<br> Aligned chains"
     html += "</div><br/>";
 

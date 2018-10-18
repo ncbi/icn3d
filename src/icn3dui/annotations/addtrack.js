@@ -2,8 +2,8 @@
  * @author Jiyao Wang <wangjiy@ncbi.nlm.nih.gov> / https://github.com/ncbi/icn3d
  */
 
-iCn3DUI.prototype.addTrack = function() { var me = this;
-    $(document).on('click', ".addtrack", function(e) {
+iCn3DUI.prototype.clickAddTrack = function() { var me = this;
+    $(document).on('click', ".icn3d-addtrack", function(e) {
       e.stopImmediatePropagation();
 
       $("#" + me.pre + "anno_custom")[0].checked = true;
@@ -15,6 +15,162 @@ iCn3DUI.prototype.addTrack = function() { var me = this;
       me.openDialog(me.pre + 'dl_addtrack', 'Add track for Chain: ' + chainid);
       $( "#" + me.pre + "track_gi" ).focus();
     });
+};
+
+iCn3DUI.prototype.clickDefineHelix = function() { var me = this;
+    $(document).on('click', ".icn3d-helixsets", function(e) {
+      e.stopImmediatePropagation();
+
+      //e.preventDefault();
+      var chainid = $(this).attr('chainid');
+
+      me.defineSecondary(chainid, 'helix');
+
+      me.setLogCmd('define helix sets | chain ' + chainid, true);
+    });
+};
+
+iCn3DUI.prototype.clickDefineSheet = function() { var me = this;
+    $(document).on('click', ".icn3d-sheetsets", function(e) {
+      e.stopImmediatePropagation();
+
+      //e.preventDefault();
+      var chainid = $(this).attr('chainid');
+
+      me.defineSecondary(chainid, 'sheet');
+
+      me.setLogCmd('define sheet sets | chain ' + chainid, true);
+    });
+};
+
+iCn3DUI.prototype.clickDefineCoil = function() { var me = this;
+    $(document).on('click', ".icn3d-coilsets", function(e) {
+      e.stopImmediatePropagation();
+
+      //e.preventDefault();
+      var chainid = $(this).attr('chainid');
+
+      me.defineSecondary(chainid, 'coil');
+
+      me.setLogCmd('define coil sets | chain ' + chainid, true);
+    });
+};
+
+iCn3DUI.prototype.clickDeleteSets = function() { var me = this;
+    $("#" + me.pre + "deletesets").click(function(e) {
+         me.deleteSelectedSets();
+         me.setLogCmd("delete selected sets", true);
+    });
+};
+
+iCn3DUI.prototype.defineSecondary = function(chainid, type) { var me = this;
+    if(!$('#' + me.pre + 'dl_definedsets').hasClass('ui-dialog-content') || !$('#' + me.pre + 'dl_definedsets').dialog( 'isOpen' )) {
+        me.openDialog(me.pre + 'dl_definedsets', 'Select');
+    }
+
+    var selectedResidues = {};
+    var bUnion = false, bUpdateHighlight = true;
+
+    // order of secondary structures
+    var index = 1;
+
+    var helixCnt = 0, sheetCnt = 0, bFirstSS = true;
+    var zero = '0';
+    //var prevName = chainid + zero + index + '_L(N', currName, setName;
+    var prevName = chainid + '_C(Nterm', currName, setName;
+
+    // clear selection
+    me.icn3d.hAtoms = {};
+
+    //for(var i = 0, il = me.giSeq[chainid].length; i < il; ++i) {
+      //var currResi = (i >= me.matchedPos[chainid] && i - me.matchedPos[chainid] < me.icn3d.chainsSeq[chainid].length) ? me.icn3d.chainsSeq[chainid][i - me.matchedPos[chainid]].resi : me.baseResi[chainid] + 1 + i;
+    for(var i = 0, il = me.icn3d.chainsSeq[chainid].length; i < il; ++i) {
+      var currResi = me.icn3d.chainsSeq[chainid][i].resi;
+
+      // name of secondary structures
+      var residueid = chainid + '_' + currResi;
+
+      if( me.icn3d.residues.hasOwnProperty(residueid) ) {
+        var atom = me.icn3d.getFirstCalphaAtomObj(me.icn3d.residues[residueid]);
+        currSS = me.icn3d.secondaries[residueid];
+
+        if(currSS == 'H') {
+            if(atom.ssbegin) {
+                ++helixCnt;
+
+                if(Object.keys(selectedResidues).length > 0) {
+                    setName = currName + 'H' + helixCnt + ')';
+                    if(type == 'coil') {
+                        me.selectResidueList(selectedResidues, setName, setName, bUnion, bUpdateHighlight);
+                        if(!bUnion) bUnion = true;
+                    }
+                    selectedResidues = {};
+                    ++index;
+                }
+            }
+
+            //zero = (index < 10) ? '0' : '';
+            //currName = chainid + zero + index + '_H' + helixCnt;
+            currName = chainid + '_H' + helixCnt;
+            selectedResidues[residueid] = 1;
+
+            if(atom.ssend) {
+                //zero = (index < 9) ? '0' : '';
+                //prevName = chainid + zero + (index+1) + '_L(H' + helixCnt;
+                prevName = chainid + '_C(H' + helixCnt;
+                if(type == 'helix') {
+                    me.selectResidueList(selectedResidues, currName, currName, bUnion, bUpdateHighlight);
+                    if(!bUnion) bUnion = true;
+                }
+                selectedResidues = {};
+                ++index;
+            }
+        }
+        else if(currSS == 'E') {
+            if(atom.ssbegin) {
+                ++sheetCnt;
+
+                if(Object.keys(selectedResidues).length > 0) {
+                    setName = currName + 'S' + sheetCnt + ')';
+                    if(type == 'coil') {
+                        me.selectResidueList(selectedResidues, setName, setName, bUnion, bUpdateHighlight);
+                        if(!bUnion) bUnion = true;
+                    }
+                    selectedResidues = {};
+                    ++index;
+                }
+            }
+
+            //zero = (index < 10) ? '0' : '';
+            //currName = chainid + zero + index + '_S' + sheetCnt;
+            currName = chainid + '_S' + sheetCnt;
+            selectedResidues[residueid] = 1;
+
+            if(atom.ssend) {
+                //zero = (index < 9) ? '0' : '';
+                //prevName = chainid + zero + (index+1) + '_L(S' + sheetCnt;
+                prevName = chainid + '_C(S' + sheetCnt;
+                if(type == 'sheet') {
+                    me.selectResidueList(selectedResidues, currName, currName, bUnion, bUpdateHighlight);
+                    if(!bUnion) bUnion = true;
+                }
+                selectedResidues = {};
+                ++index;
+            }
+        }
+        else {
+            currName = prevName + '-';
+            selectedResidues[residueid] = 1;
+        }
+      } // end if( me.icn3d.residues.hasOwnProperty(residueid) ) {
+    } // for loop
+
+    if(Object.keys(selectedResidues).length > 0) {
+        setName = currName + 'Cterm)';
+        if(type == 'coil') {
+            me.selectResidueList(selectedResidues, setName, setName, bUnion, bUpdateHighlight);
+        }
+    }
 };
 
 iCn3DUI.prototype.simplifyText = function(text) { var me = this;
@@ -370,7 +526,7 @@ iCn3DUI.prototype.clickAddTrackButton = function() { var me = this;
 
        var selectedAtoms = me.icn3d.intHash(me.icn3d.hAtoms, me.icn3d.chains[chainid]);
 
-       var residueHash = me.icn3d.getResiduesFromAtoms(selectedAtoms);
+       var residueHash = me.icn3d.getResiduesFromCalphaAtoms(selectedAtoms);
 
        var cssColorArray = [];
        for(var i = 0, il = me.giSeq[chainid].length; i < il; ++i) {
@@ -385,7 +541,7 @@ iCn3DUI.prototype.clickAddTrackButton = function() { var me = this;
           var pos = (i >= me.matchedPos[chainid] && i - me.matchedPos[chainid] < me.icn3d.chainsSeq[chainid].length) ? me.icn3d.chainsSeq[chainid][i - me.matchedPos[chainid]].resi : me.baseResi[chainid] + 1 + i;
 
           if( residueHash.hasOwnProperty(chainid + '_' + pos) ) {
-              var atom = me.icn3d.getFirstAtomObj(me.icn3d.residues[chainid + '_' + pos]);
+              var atom = me.icn3d.getFirstCalphaAtomObj(me.icn3d.residues[chainid + '_' + pos]);
               var color = atom.color.getHexString();
 
               text += c;

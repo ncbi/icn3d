@@ -146,20 +146,24 @@ iCn3DUI.prototype.setMode = function(mode) { var me = this;
 iCn3DUI.prototype.saveSelection = function(name, description) { var me = this;
     me.selectedResidues = {};
 
-    for(var i in me.icn3d.hAtoms) {
-      if(me.icn3d.hAtoms[i] !== undefined) {
-        var residueid = me.icn3d.atoms[i].structure + '_' + me.icn3d.atoms[i].chain + '_' + me.icn3d.atoms[i].resi;
-        me.selectedResidues[residueid] = 1;
-      }
+    //for(var i in me.icn3d.hAtoms) {
+    //  if(me.icn3d.hAtoms[i] !== undefined) {
+    //    var residueid = me.icn3d.atoms[i].structure + '_' + me.icn3d.atoms[i].chain + '_' + me.icn3d.atoms[i].resi;
+    //    me.selectedResidues[residueid] = 1;
+    //  }
+    //}
+
+    me.selectedResidues = me.icn3d.getResiduesFromCalphaAtoms(me.icn3d.hAtoms);
+
+    if(Object.keys(me.selectedResidues).length > 0) {
+        me.selectResidueList(me.selectedResidues, name, description);
+        //me.updateHlAll();
+
+        me.updateSelectionNameDesc();
+
+        //me.setLogCmd('select ' + me.residueids2spec(Object.keys(me.selectedResidues)) + ' | name ' + name + ' | description ' + description, true);
+        me.setLogCmd('select ' + me.residueids2spec(Object.keys(me.selectedResidues)) + ' | name ' + name, true);
     }
-
-    me.selectResidueList(me.selectedResidues, name, description);
-    me.updateHlAll();
-
-    me.updateSelectionNameDesc();
-
-    //me.setLogCmd('select ' + me.residueids2spec(Object.keys(me.selectedResidues)) + ' | name ' + name + ' | description ' + description, true);
-    me.setLogCmd('select ' + me.residueids2spec(Object.keys(me.selectedResidues)) + ' | name ' + name, true);
 };
 
 iCn3DUI.prototype.removeSelection = function() { var me = this;
@@ -180,6 +184,8 @@ iCn3DUI.prototype.removeSelection = function() { var me = this;
 //      me.removeSeqResidueBkgd();
 
       me.selectedResidues = {};
+      me.bSelectResidue = false;
+
       me.icn3d.hAtoms = {};
 
       me.icn3d.removeHlObjects();
@@ -211,12 +217,6 @@ iCn3DUI.prototype.selectAChain = function (chainid, commandname, bAlign, bUnion)
         me.menuHlHash = {};
     }
     else {
-        // update residueHash from me.icn3d.hAtoms
-        //residueHash = me.icn3d.getResiduesFromAtoms(me.icn3d.hAtoms);
-
-        // update chainHash from me.icn3d.hAtoms
-        //chainHash = me.icn3d.getChainsFromAtoms(me.icn3d.hAtoms);
-
         me.icn3d.hAtoms = me.icn3d.unionHash(me.icn3d.hAtoms, me.icn3d.chains[chainid]);
 
         if(me.menuHlHash === undefined) me.menuHlHash = {};
@@ -305,3 +305,15 @@ iCn3DUI.prototype.addCustomSelection = function (residueAtomArray, commandname, 
     me.updateHlMenus([commandname]);
 };
 
+iCn3DUI.prototype.selectSideChains = function () { var me = this;
+    var currHAtoms = me.icn3d.cloneHash(me.icn3d.hAtoms);
+
+    me.icn3d.hAtoms = {};
+    for(var i in currHAtoms) {
+        if(me.icn3d.proteins.hasOwnProperty(i) && me.icn3d.atoms[i].name !== 'CA') {
+            me.icn3d.hAtoms[i] = 1;
+        }
+    }
+
+    me.showHighlight();
+};

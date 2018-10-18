@@ -275,7 +275,7 @@ iCn3DUI.prototype.selectSequenceNonMobile = function() { var me = this;
 
 /*
           if(me.bAnnotations) {
-              me.addResiudeLabels(me.icn3d.hAtoms);
+              me.icn3d.addResiudeLabels(me.icn3d.hAtoms);
 
               me.icn3d.draw();
           }
@@ -284,7 +284,7 @@ iCn3DUI.prototype.selectSequenceNonMobile = function() { var me = this;
           }
 */
 
-          me.icn3d.addResiudeLabels(me.icn3d.hAtoms, false, 0.5);
+          //me.icn3d.addResiudeLabels(me.icn3d.hAtoms, false, 0.5);
           me.icn3d.addHlObjects();  // render() is called
 
           // get all chainid in the selected residues
@@ -371,6 +371,7 @@ iCn3DUI.prototype.selectSequenceMobile = function() { var me = this;
          }
       //});
 
+/*
       if(me.bAnnotations) {
           me.icn3d.addResiudeLabels(me.icn3d.hAtoms);
 
@@ -379,6 +380,10 @@ iCn3DUI.prototype.selectSequenceMobile = function() { var me = this;
       else {
           me.icn3d.addHlObjects();  // render() is called
       }
+*/
+
+      //me.icn3d.addResiudeLabels(me.icn3d.hAtoms, false, 0.5);
+       me.icn3d.addHlObjects();  // render() is called
 
       // get all chainid in the selected residues
       var chainHash = {};

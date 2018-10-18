@@ -714,6 +714,19 @@ iCn3D.prototype.getFirstAtomObj = function(atomsHash) {
     return this.atoms[firstIndex];
 };
 
+iCn3D.prototype.getFirstCalphaAtomObj = function(atomsHash) {
+    var firstIndex;
+
+    for(var i in atomsHash) {
+        if(this.atoms[i].name == 'CA') {
+            firstIndex = i;
+            break;
+        }
+    }
+
+    return (firstIndex !== undefined) ? this.atoms[firstIndex] : this.getFirstAtomObj(atomsHash);
+};
+
 iCn3D.prototype.getLastAtomObj = function(atomsHash) {
     var atomKeys = Object.keys(atomsHash);
     var lastIndex = atomKeys[atomKeys.length - 1];
@@ -744,7 +757,7 @@ iCn3D.prototype.selectStrandHelixFromAtom = function(atom) {
         var residueid = firstAtom.structure + '_' + firstAtom.chain + '_' + i;
         if(!this.residues.hasOwnProperty(residueid)) break;
 
-        var atom = this.getFirstAtomObj(this.residues[residueid]);
+        var atom = this.getFirstCalphaAtomObj(this.residues[residueid]);
         beginResi = atom.resi;
 
         if( (firstAtom.ss !== 'coil' && atom.ss === firstAtom.ss && atom.ssbegin) || (firstAtom.ss === 'coil' && atom.ss !== firstAtom.ss) ) {
@@ -767,7 +780,7 @@ iCn3D.prototype.selectStrandHelixFromAtom = function(atom) {
         var residueid = lastAtom.structure + '_' + lastAtom.chain + '_' + i;
         if(!this.residues.hasOwnProperty(residueid)) break;
 
-        var atom = this.getFirstAtomObj(this.residues[residueid]);
+        var atom = this.getFirstCalphaAtomObj(this.residues[residueid]);
         endResi = atom.resi;
 
         if( (lastAtom.ss !== 'coil' && atom.ss === lastAtom.ss && atom.ssend) || (lastAtom.ss === 'coil' && atom.ss !== lastAtom.ss) ) {

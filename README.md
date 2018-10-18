@@ -19,7 +19,7 @@ We provided two types of iCn3D widgets: [basic interface](https://www.ncbi.nlm.n
 
 Either of these widgets could be easily added to your own web pages. Please see the [help page](https://www.ncbi.nlm.nih.gov/Structure/icn3d/docs/icn3d_help.html#HowToUse) for more details.
 
-<b>Complete package</b> of iCn3D including Three.js and jQuery can be downloaded from [https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.2.5.zip](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.2.5.zip). The "Download ZIP" link in this page does not include third-party libraries. 
+<b>Complete package</b> of iCn3D including Three.js and jQuery can be downloaded from [https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.3.0.zip](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.3.0.zip). The "Download ZIP" link in this page does not include third-party libraries. 
 
 ## Usage
 
@@ -72,6 +72,8 @@ gulp
 ```
 
 ## Change log
+The production version [icn3d-2.3.0](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.3.0.zip) was release on October 18, 2018. Added set operations (union,intersection, exclusion) in "Defined Sets"; added buttons "Helix Sets" and "Sheet Sets" in the "Sequences and Annotations" window to define helix sets and sheet sets in the window "Defined Sets"; added "Save Color" and "Apply Saved Color" in the menu "Color"; added "Save Style" and "Apply Saved Style" in the menu "Style"; added "Side Chains" in the menu "Select" to select side chains; added two options for color by "Secondary" structures: "Sheets in Green" and "Sheets in Yellow"; added color by "B-factor" that is normalized with "Fixed" original values or "Relative" percentile values.
+
 The production version [icn3d-2.2.5](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.2.5.zip) was release on September 17, 2018. A bug in loading local PDB file was fixed.
 
 The production version [icn3d-2.2.4](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.2.4.zip) was release on September 6, 2018. The location of 2D interaction dialog was optimized.
@@ -84,29 +86,7 @@ The production version [icn3d-2.2.1](https://www.ncbi.nlm.nih.gov/Structure/icn3
 
 The production version [icn3d-2.2.0](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.2.0.zip) was release on July 30, 2018. The smoothing algorithm was switched from Catmull-Rom spline to cubic spline to make the curves more smooth. The thickness of ribbon was decreased to make the sides of the ribbons less apparent. The radio buttons in the menus was replaced by the check sign. A "Save Image" button was added in the "Toolbar".
 
-The production version [icn3d-2.1.8](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.1.8.zip) was release on July 12, 2018. Checked the code with the strict mode. 
-
-The production version [icn3d-2.1.7](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.1.7.zip) was release on June 28, 2018. Simplified the addition of custom text as a track in the Sequences and Annotations window. 
-
-The production version [icn3d-2.1.6](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.1.6.zip) was release on June 21, 2018. A color picker was added to the color menu. 
-
-The production version [icn3d-2.1.5](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.1.5.zip) was release on June 18, 2018. 3D printing are enabled for biological assemblies. 
-
-The production version [icn3d-2.1.4](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.1.4.zip) was release on June 7, 2018. The retrieval of transformation matrix from mmCIF was fixed for Mac.
-
-The production version [icn3d-2.1.3](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.1.3.zip) was release on May 30, 2018.  "Sequences and Annotations" is now able to be highlighted even if some annotations didn't show up.
-
-The production version [icn3d-2.1.2](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.1.2.zip) was release on May 23, 2018. The surface display was improved by adding light reflection. Light was added to the display of instanced biological assemblies.
-
-The production version [icn3d-2.1.1](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.1.1.zip) was release on May 22, 2018. The option of color by "Spectrum" was added back. 
-
 The production version [icn3d-2.1.0](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.1.0.zip) was release on May 21, 2018. The instancing method is used to display a biological assembly. It significantly improved the rendering speed by sending only the geometry of its assymmetruic unit to GPU and applying transformation matrices to display the assembly. 
-
-The production version [icn3d-2.0.3](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.0.3.zip) was release on May 2, 2018. Removed the "Description" field when saving a set of atoms. This made "Share Link" URL shorter. Made the size of stabilizer thicker for 3D printing.
-
-The production version [icn3d-2.0.2](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.0.2.zip) was release on April 30, 2018. Reset WebGLRenderer when WebGL context is lost in Internet Explore 11. 
-
-The production version [icn3d-2.0.1](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.0.1.zip) was release on April 23, 2018. The bug about extra 3D domains in the "Sequences & Annotations" window was fixed. The stabilizers for 3D printing were improved. 
 
 The production version [icn3d-2.0.0](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.0.0.zip) was release on April 17, 2018. By clicking the menu "Windows: View Sequences & Annotations", users can view all kinds of annotations: ClinVar, SNPs, CDD domains, 3D domains, binding sites, interactions, and custom tracks. Users can click the menu "View: Chemical Binding" to show the chemical binding sites. Users can also export files for 3D printing at the menu "File: 3D Printing: VRML (Color, W/ Stabilizers)".
 

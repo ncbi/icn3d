@@ -47,7 +47,7 @@ var iCn3DUI = function(cfg) {
     me.opts = {};
     me.opts['camera']             = 'perspective';        //perspective, orthographic
     me.opts['background']         = 'transparent';        //transparent, black, grey, white
-    me.opts['color']              = 'chain';              //spectrum, secondary structure, charge, hydrophobic, chain, residue, atom, red, green, blue, magenta, yellow, cyan, white, grey, custom
+    me.opts['color']              = 'chain';              //spectrum, secondary structure, charge, hydrophobic, chain, residue, atom, b factor, red, green, blue, magenta, yellow, cyan, white, grey, custom
     me.opts['proteins']           = 'ribbon';             //ribbon, strand, cylinder and plate, schematic, c alpha trace, b factor tube, lines, stick, ball and stick, sphere, nothing
     me.opts['sidec']              = 'nothing';            //lines, stick, ball and stick, sphere, nothing
     me.opts['nucleotides']        = 'nucleotide cartoon'; //nucleotide cartoon, o3 trace, schematic, lines, stick,
@@ -190,7 +190,7 @@ iCn3DUI.prototype = {
 
         html += "<div id='" + me.pre + "viewer' style='position:relative; width:100%; height:100%;'>";
 
-        html += "<div id='" + me.pre + "popup' class='icn3d-text' style='display:none; position:absolute; z-index:9999; top:-1000px; left:-1000px; background-color:#DDDDDD; text-align:center; width:80px; height:18px; padding:3px;'></div>";
+        html += "<div id='" + me.pre + "popup' class='icn3d-text icn3d-popup'></div>";
 
         html += "<div id='" + me.pre + "title' style='position:absolute; top:20px; left:80px; color:" + me.GREYD + ";'></div>";
 
@@ -287,6 +287,7 @@ iCn3DUI.prototype = {
 
             html += "<option value='residue'>Residue</option>";
             html += "<option value='atom'>Atom</option>";
+            html += "<option value='b factor'>B-factor</option>";
         }
         else {
             html += "<option value='atom' selected>Atom</option>";

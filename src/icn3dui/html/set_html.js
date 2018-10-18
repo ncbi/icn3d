@@ -67,7 +67,7 @@ iCn3DUI.prototype.setTopMenusHtml = function (id) { var me = this;
 
     html += "<div style='position:relative;'>";
 
-    html += "<div id='" + me.pre + "popup' class='icn3d-text' style='display:none; position:absolute; z-index:9999; top:-1000px; left:-1000px; background-color:#DDDDDD; text-align:center; width:80px; height:18px; padding:3px;'>test</div>";
+    html += "<div id='" + me.pre + "popup' class='icn3d-text icn3d-popup'></div>";
 
     html += "  <!--https://forum.jquery.com/topic/looking-for-a-jquery-horizontal-menu-bar-->";
     html += "  <div id='" + me.pre + "mnlist' style='position:absolute; z-index:999; float:left; display:table-row; margin-top: -2px;'>";
@@ -267,6 +267,7 @@ iCn3DUI.prototype.setMenu2 = function() { var me = this;
 //        }
     html += me.getLink('mn2_aroundsphere', 'by Distance');
     html += me.getLink('mn2_selectcomplement', 'Inverse');
+    html += me.getLink('mn2_selectsidechains', 'Side Chains');
     html += me.getLink('mn2_command', 'Advanced');
 
 
@@ -523,7 +524,7 @@ iCn3DUI.prototype.setMenu3 = function() { var me = this;
             html += me.getRadio('mn3_proteins', 'mn3_proteinsCalpha', 'C Alpha Trace');
         }
 
-        html += me.getRadio('mn3_proteins', 'mn3_proteinsBfactor', 'B Factor Tube');
+        html += me.getRadio('mn3_proteins', 'mn3_proteinsBfactor', 'B-factor Tube');
         html += me.getRadio('mn3_proteins', 'mn3_proteinsLines', 'Lines');
         html += me.getRadio('mn3_proteins', 'mn3_proteinsStick', 'Stick');
         html += me.getRadio('mn3_proteins', 'mn3_proteinsBallstick', 'Ball and Stick');
@@ -593,6 +594,11 @@ iCn3DUI.prototype.setMenu3 = function() { var me = this;
 
     html += "  <li>-</li>";
 
+    html += me.getLink('mn3_styleSave', 'Save Style');
+    html += me.getLink('mn3_styleApplySave', 'Apply Saved Style');
+
+    html += "  <li>-</li>";
+
     html += "  <li><span>Surface Type</span>";
     html += "    <ul>";
     html += me.getRadio('mn5_surface', 'mn5_surfaceVDW', 'Van der Waals');
@@ -655,7 +661,11 @@ iCn3DUI.prototype.setMenu4 = function() { var me = this;
 
     if(me.cfg.cid === undefined) {
         html += me.getRadio('mn4_clr', 'mn4_clrSpectrum', 'Spectrum');
-        html += me.getRadio('mn4_clr', 'mn4_clrSS', 'Secondary');
+        html += "  <li><span style='padding-left:2em;'>Secondary</span>";
+        html += "    <ul>";
+        html += me.getRadio('mn4_clr', 'mn4_clrSSGreen', 'Sheet in Green');
+        html += me.getRadio('mn4_clr', 'mn4_clrSSYellow', 'Sheet in Yellow');
+        html += "    </ul>";
 
         html += me.getRadio('mn4_clr', 'mn4_clrCharge', 'Charge');
         html += me.getRadio('mn4_clr', 'mn4_clrHydrophobic', 'Hydrophobic');
@@ -664,6 +674,11 @@ iCn3DUI.prototype.setMenu4 = function() { var me = this;
 
         html += me.getRadio('mn4_clr', 'mn4_clrResidue', 'Residue');
         html += me.getRadio('mn4_clr', 'mn4_clrAtom', 'Atom');
+        html += "  <li><span style='padding-left:2em;'>B-factor</span>";
+        html += "    <ul>";
+        html += me.getRadio('mn4_clr', 'mn4_clrBfactor', 'Fixed');
+        html += me.getRadio('mn4_clr', 'mn4_clrBfactorNorm', 'Relative');
+        html += "    </ul>";
 
         if(me.cfg.align !== undefined) {
           html += me.getRadio('mn4_clr', 'mn4_clrConserved', 'Identity');
@@ -686,8 +701,10 @@ iCn3DUI.prototype.setMenu4 = function() { var me = this;
     html += me.getRadio('mn4_clr', 'mn4_clrWhite', 'White');
     html += me.getRadio('mn4_clr', 'mn4_clrGrey', 'Grey');
     html += "    </ul>";
-    html += "  <li>-</li>";
     html += me.getRadio('mn4_clr', 'mn4_clrCustom', 'Color Picker');
+    html += "  <li>-</li>";
+    html += me.getLink('mn4_clrSave', 'Save Color');
+    html += me.getLink('mn4_clrApplySave', 'Apply Saved Color');
     html += "  <li><br/></li>";
     html += "</ul>";
     html += "</div>";
@@ -851,27 +868,35 @@ iCn3DUI.prototype.setDialogs = function() { var me = this;
     }
 
     html += "<div id='" + me.pre + "dl_definedsets'>";
-    html += "    <b>Defined Sets:</b> <br/>";
-    html += "    <select id='" + me.pre + "atomsCustom' multiple size='6' style='min-width:100px;'>";
-    html += "    </select>";
-    html += "    Tips: Open \"Select > Advanced\" to combine sets";
-    html += "</div>";
+    html += "    <div id='" + me.pre + "dl_setsmenu'>";
+    html += "        <b>Defined Sets:</b> <br/>";
+    html += "        <select id='" + me.pre + "atomsCustom' multiple size='6' style='min-width:130px;'>";
+    html += "        </select>";
+    html += "        <div style='margin: 6px 0 6px 0;'><button id='" + me.pre + "deletesets'><b>Delete Selected Sets</b></button></div>";
+    html += '        <b>Set Operations</b>: <div style="width:20px; margin-top:6px; display:inline-block;"><span id="' + me.pre + 'dl_command_expand" class="ui-icon ui-icon-plus icn3d-expand icn3d-link" style="width:15px;" title="Expand"></span><span id="' + me.pre + 'dl_command_shrink" class="ui-icon ui-icon-minus icn3d-shrink icn3d-link" style="display:none; width:15px;" title="Shrink"></span></div><br>';
+    html += "    </div>";
 
-    html += "<div id='" + me.pre + "dl_command'>";
-    html += "  <table width='500'><tr><td valign='top'><table>";
-    html += "<tr><td align='right'><b>Select:</b></td><td><input type='text' id='" + me.pre + "command' placeholder='$[structures].[chains]:[residues]@[atoms]' size='30'></td></tr>";
-    html += "<tr><td align='right'><b>Name:</b></td><td><input type='text' id='" + me.pre + "command_name' placeholder='my_selection' size='30'></td></tr>";
+    html += "    <div id='" + me.pre + "dl_command' style='display:none;'>";
+    html += "      <div id='" + me.pre + "dl_setoperations'>";
+    html += "        <label for='" + me.pre + "setOr'><input type='radio' name='" + me.pre + "setOperation' id='" + me.pre + "setOr' checked> Union (or) </label><br/>";
+    html += "        <label for='" + me.pre + "setAnd'><input type='radio' name='" + me.pre + "setOperation' id='" + me.pre + "setAnd'> Intersection (and) </label><br/>";
+    html += "        <label for='" + me.pre + "setNot'><input type='radio' name='" + me.pre + "setOperation' id='" + me.pre + "setNot'> Exclusion (not) </label>";
+    html += "      </div><br>";
+
+    html += "      <table width='500'><tr><td valign='top'><table cellspacing='0'>";
+    html += "    <tr><td><b>Select:</b></td><td><input type='text' id='" + me.pre + "command' placeholder='$[structures].[chains]:[residues]@[atoms]' size='60'></td></tr>";
+    html += "    <tr><td><b>Name:</b></td><td><input type='text' id='" + me.pre + "command_name' placeholder='my_selection' size='60'></td></tr>";
     //html += "<tr><td align='right'><b>Description:</b></td><td><input type='text' id='" + me.pre + "command_desc' placeholder='description about my selection' size='30'></td></tr>";
-    html += "<tr><td colspan='2' align='center'><button id='" + me.pre + "command_apply'><b>Save Selection</b></button></td></tr>";
-    html += "  </table></td>";
+    html += "    <tr><td colspan='2' align='left'>&nbsp;&nbsp;&nbsp;<button id='" + me.pre + "command_apply'><b>Save Selection</b></button></td></tr>";
+    html += "      </table></td>";
 
-    html += "  </tr>";
+    html += "      </tr>";
 
-    html += "  <tr><td>";
+    html += "      <tr><td>";
 
     html += 'Specification Tips: <div style="width:20px; margin-top:6px; display:inline-block;"><span id="' + me.pre + 'specguide_expand" class="ui-icon ui-icon-plus icn3d-expand icn3d-link" style="width:15px;" title="Expand"></span><span id="' + me.pre + 'specguide_shrink" class="ui-icon ui-icon-minus icn3d-shrink icn3d-link" style="display:none; width:15px;" title="Shrink"></span></div><br>';
 
-    html += "<div id='" + me.pre + "specguide' style='display:none;' class='icn3d-box'>";
+    html += "<div id='" + me.pre + "specguide' style='display:none; width:500px' class='icn3d-box'>";
 
     html += "  <b>Specification:</b> In the selection \"$1HHO,4N7N.A,B,C:5-10,KRDE,chemicals@CA,C\":";
     html += "  <ul><li>\"$1HHO,4N7N\" uses \"$\" to indicate structure selection.<br/>";
@@ -890,8 +915,9 @@ iCn3DUI.prototype.setDialogs = function() { var me = this;
 
     html += "</div>";
 
-    html += "  </td></tr></table>";
+    html += "      </td></tr></table>";
 
+    html += "    </div>";
     html += "</div>";
 
     html += "<div id='" + me.pre + "dl_mmtfid'>";
@@ -1289,7 +1315,7 @@ iCn3DUI.prototype.getAlignSequencesAnnotations = function (alignChainArray, bUpd
             colorRes = '#000000;';
         }
         else {
-            var firstAtom = me.icn3d.getFirstAtomObj(me.icn3d.residues[resIdFull]);
+            var firstAtom = me.icn3d.getFirstCalphaAtomObj(me.icn3d.residues[resIdFull]);
             colorRes = (firstAtom.color !== undefined) ? '#' + firstAtom.color.getHexString() + ';' : '#000000;';
         }
 
@@ -1342,7 +1368,7 @@ iCn3DUI.prototype.getAlignSequencesAnnotations = function (alignChainArray, bUpd
                     var resIdFull = chainid + "_" + resiId;
 
                     if(me.icn3d.residues.hasOwnProperty(resIdFull)) {
-                        var atom = me.icn3d.getFirstAtomObj(me.icn3d.residues[resIdFull]);
+                        var atom = me.icn3d.getFirstCalphaAtomObj(me.icn3d.residues[resIdFull]);
 
                         if(atom.ssend) {
                             resiHtmlArray[j] += '<span class="icn3d-sheet2">&nbsp;</span>';
