@@ -156,7 +156,7 @@ iCn3D.prototype.setColorByOptions = function (options, atoms, bUseInputColor) {
             // < 30: blue; > 60: red; use 45 as the middle value
             if (!this.middB) {
                 var minB = 1000, maxB = -1000;
-                for (var i in atoms) {
+                for (var i in this.atoms) {
                     var atom = this.atoms[i];
                     if (minB > atom.b) minB = atom.b;
                     if (maxB < atom.b) maxB = atom.b;
@@ -183,31 +183,31 @@ iCn3D.prototype.setColorByOptions = function (options, atoms, bUseInputColor) {
             }
             break;
 
-        case 'b factor relative':
+        case 'b factor percentile':
             //http://proteopedia.org/wiki/index.php/Disorder
             // percentile normalize B-factor values from 0 to 1
             var minB = 1000, maxB = -1000;
-            if (!this.middBNorm) {
-                var bfactorArray = [];
-                for (var i in atoms) {
+            if (!this.bfactorArray) {
+                this.bfactorArray = [];
+                for (var i in this.atoms) {
                     var atom = this.atoms[i];
                     if (minB > atom.b) minB = atom.b;
                     if (maxB < atom.b) maxB = atom.b;
 
-                    bfactorArray.push(atom.b);
+                    this.bfactorArray.push(atom.b);
                 }
 
-                bfactorArray.sort(function(a, b) { return a - b; });
+                this.bfactorArray.sort(function(a, b) { return a - b; });
             }
 
-            var totalCnt = bfactorArray.length;
+            var totalCnt = this.bfactorArray.length;
             for (var i in atoms) {
                 var atom = this.atoms[i];
-                if(atom.b === undefined || parseInt(atom.b * 1000) == 0 || bfactorArray.length == 0) { // invalid b-factor
+                if(atom.b === undefined || parseInt(atom.b * 1000) == 0 || this.bfactorArray.length == 0) { // invalid b-factor
                     atom.color =  new THREE.Color().setRGB(0, 1, 0);
                 }
                 else {
-                    var percentile = bfactorArray.indexOf(atom.b) / totalCnt;
+                    var percentile = this.bfactorArray.indexOf(atom.b) / totalCnt;
 
                     atom.color = percentile < 0.5 ? new THREE.Color().setRGB(percentile * 2, percentile * 2, 1) : new THREE.Color().setRGB(1, (1 - percentile) * 2, (1 - percentile) * 2);
                 }
@@ -215,7 +215,6 @@ iCn3D.prototype.setColorByOptions = function (options, atoms, bUseInputColor) {
                 this.atomPrevColors[i] = atom.color;
             }
 
-            bfactorArray = [];
             break;
 
         case 'conserved':
