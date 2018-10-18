@@ -58,8 +58,6 @@ iCn3D.prototype.setColorByOptions = function (options, atoms, bUseInputColor) {
             break;
         case 'chain':
             if(this.chainsColor !== undefined && Object.keys(this.chainsColor).length > 0) { // mmdb input
-console.log("chainsColor");
-
                 this.applyOriginalColor(this.hash2Atoms(this.hAtoms));
 
                 // atom color
@@ -73,7 +71,6 @@ console.log("chainsColor");
                 }
             }
             else {
-console.log("NOT chainsColor");
                 var index = -1, prevChain = '', colorLength = this.stdChainColors.length;
                 for (var i in atoms) {
                     var atom = this.atoms[i];
