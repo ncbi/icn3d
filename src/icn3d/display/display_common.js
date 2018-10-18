@@ -58,6 +58,8 @@ iCn3D.prototype.setColorByOptions = function (options, atoms, bUseInputColor) {
             break;
         case 'chain':
             if(this.chainsColor !== undefined && Object.keys(this.chainsColor).length > 0) { // mmdb input
+console.log("chainsColor");
+
                 this.applyOriginalColor(this.hash2Atoms(this.hAtoms));
 
                 // atom color
@@ -71,6 +73,7 @@ iCn3D.prototype.setColorByOptions = function (options, atoms, bUseInputColor) {
                 }
             }
             else {
+console.log("NOT chainsColor");
                 var index = -1, prevChain = '', colorLength = this.stdChainColors.length;
                 for (var i in atoms) {
                     var atom = this.atoms[i];
@@ -91,10 +94,23 @@ iCn3D.prototype.setColorByOptions = function (options, atoms, bUseInputColor) {
             }
             break;
         case 'secondary structure':
+            this.sheetcolor = 'green';
             for (var i in atoms) {
                 var atom = this.atoms[i];
                 // secondary color of nucleotide: blue (new THREE.Color(0x0000FF))
                 atom.color = atom.het ? this.atomColors[atom.elem] || this.defaultAtomColor : this.ssColors[atom.ss] || new THREE.Color(0xFF00FF);
+
+                this.atomPrevColors[i] = atom.color;
+            }
+
+            break;
+
+        case 'secondary structure yellow':
+            this.sheetcolor = 'yellow';
+            for (var i in atoms) {
+                var atom = this.atoms[i];
+                // secondary color of nucleotide: blue (new THREE.Color(0x0000FF))
+                atom.color = atom.het ? this.atomColors[atom.elem] || this.defaultAtomColor : this.ssColors2[atom.ss] || new THREE.Color(0xFF00FF);
 
                 this.atomPrevColors[i] = atom.color;
             }
@@ -136,6 +152,73 @@ iCn3D.prototype.setColorByOptions = function (options, atoms, bUseInputColor) {
 
                 this.atomPrevColors[i] = atom.color;
             }
+            break;
+
+        case 'b factor':
+            //http://proteopedia.org/wiki/index.php/Disorder
+            // < 30: blue; > 60: red; use 45 as the middle value
+            if (!this.middB) {
+                var minB = 1000, maxB = -1000;
+                for (var i in atoms) {
+                    var atom = this.atoms[i];
+                    if (minB > atom.b) minB = atom.b;
+                    if (maxB < atom.b) maxB = atom.b;
+                }
+
+                if(minB > 30) minB = 30;
+                if(maxB < 60) maxB = 60;
+
+                this.middB = 45; //(maxB + minB) * 0.5;
+                this.spanBinv1 = (this.middB > minB) ? 1.0 / (this.middB - minB) : 0;
+                this.spanBinv2 = (this.middB < maxB) ? 1.0 / (maxB - this.middB) : 0;
+            }
+
+            for (var i in atoms) {
+                var atom = this.atoms[i];
+                if(atom.b === undefined || parseInt(atom.b * 1000) == 0) { // invalid b-factor
+                    atom.color =  new THREE.Color().setRGB(0, 1, 0);
+                }
+                else {
+                    atom.color = atom.b < this.middB ? new THREE.Color().setRGB(1 - (s = (this.middB - atom.b) * this.spanBinv1), 1 - s, 1) : new THREE.Color().setRGB(1, 1 - (s = (atom.b - this.middB) * this.spanBinv2), 1 - s);
+                }
+
+                this.atomPrevColors[i] = atom.color;
+            }
+            break;
+
+        case 'b factor relative':
+            //http://proteopedia.org/wiki/index.php/Disorder
+            // percentile normalize B-factor values from 0 to 1
+            var minB = 1000, maxB = -1000;
+            if (!this.middBNorm) {
+                var bfactorArray = [];
+                for (var i in atoms) {
+                    var atom = this.atoms[i];
+                    if (minB > atom.b) minB = atom.b;
+                    if (maxB < atom.b) maxB = atom.b;
+
+                    bfactorArray.push(atom.b);
+                }
+
+                bfactorArray.sort(function(a, b) { return a - b; });
+            }
+
+            var totalCnt = bfactorArray.length;
+            for (var i in atoms) {
+                var atom = this.atoms[i];
+                if(atom.b === undefined || parseInt(atom.b * 1000) == 0 || bfactorArray.length == 0) { // invalid b-factor
+                    atom.color =  new THREE.Color().setRGB(0, 1, 0);
+                }
+                else {
+                    var percentile = bfactorArray.indexOf(atom.b) / totalCnt;
+
+                    atom.color = percentile < 0.5 ? new THREE.Color().setRGB(percentile * 2, percentile * 2, 1) : new THREE.Color().setRGB(1, (1 - percentile) * 2, (1 - percentile) * 2);
+                }
+
+                this.atomPrevColors[i] = atom.color;
+            }
+
+            bfactorArray = [];
             break;
 
         case 'conserved':
@@ -218,15 +301,19 @@ iCn3D.prototype.applyDisplayOptions = function (options, atoms, bHighlight) { va
     if(bHighlight === 1 && Object.keys(atoms).length < Object.keys(this.atoms).length) {
         atomsObj = this.hash2Atoms(atoms);
 
-        for(var i in atomsObj) {
-            var atom = atomsObj[i];
+        //for(var i in atomsObj) {
+        //    var atom = atomsObj[i];
 
-            residueid = atom.structure + '_' + atom.chain + '_' + atom.resi;
-            residueHash[residueid] = 1;
-        }
+        //    residueid = atom.structure + '_' + atom.chain + '_' + atom.resi;
+        //    residueHash[residueid] = 1;
+        //}
+
+        residueHash = me.getResiduesFromAtoms(atoms);
 
         // find singleton residues
         for(var i in residueHash) {
+            residueid = i;
+
             var last = i.lastIndexOf('_');
             var base = i.substr(0, last + 1);
             var lastResi = parseInt(i.substr(last + 1));
@@ -253,15 +340,10 @@ iCn3D.prototype.applyDisplayOptions = function (options, atoms, bHighlight) { va
         else {
             // if only one residue, add the next residue in order to show highlight
             for(var residueid in singletonResidueHash) {
-                var atom = this.getFirstAtomObj(this.residues[residueid]);
+                //var atom = this.getFirstAtomObj(this.residues[residueid]);
                 // get calpha
-                var calpha;
-                for(var i in this.residues[residueid]) {
-                    if(this.atoms[i].name == 'CA') {
-                        calpha = this.atoms[i];
-                        break;
-                    }
-                }
+                var calpha = this.getFirstCalphaAtomObj(this.residues[residueid]);
+                var atom = calpha;
 
                 var prevResidueid = atom.structure + '_' + atom.chain + '_' + parseInt(atom.resi - 1);
                 var nextResidueid = atom.structure + '_' + atom.chain + '_' + parseInt(atom.resi + 1);
@@ -351,18 +433,45 @@ iCn3D.prototype.applyDisplayOptions = function (options, atoms, bHighlight) { va
     //if(this.labels !== undefined) this.labels['schematic'] = undefined;
     if(this.labels !== undefined) delete this.labels['schematic'];
 
+    var bOnlySideChains = false;
+
+    if(bHighlight) {
+        var residueHashCalpha = this.getResiduesFromCalphaAtoms(this.hAtoms);
+
+        var proteinAtoms = this.intHash(this.hAtoms, this.proteins);
+        var residueHash = this.getResiduesFromAtoms(proteinAtoms);
+
+        if(Object.keys(residueHash) > Object.keys(residueHashCalpha)) { // some residues have only side chains
+            bOnlySideChains = true;
+        }
+
+/*
+        bOnlySideChains = true;
+
+        for(var i in this.hAtoms) {
+            if(this.atoms[i].name == 'CA') {
+                bOnlySideChains = false;
+                break;
+            }
+        }
+*/
+    }
+
     for(var style in this.style2atoms) {
       // 14 styles: ribbon, strand, cylinder and plate, nucleotide cartoon, o3 trace, schematic, c alpha trace, b factor tube, lines, stick, ball and stick, sphere, dot, nothing
       var atomHash = this.style2atoms[style];
       var bPhosphorusOnly = this.isCalphaPhosOnly(this.hash2Atoms(atomHash), "O3'", "O3*");
 
-      if(style === 'ribbon') {
+      //if(style === 'ribbon') {
+      if(style === 'ribbon' && (!bHighlight || (bHighlight && !bOnlySideChains))) {
           this.createStrand(this.hash2Atoms(atomHash), 2, undefined, true, undefined, undefined, false, this.ribbonthickness, bHighlight);
       }
-      else if(style === 'strand') {
+      //else if(style === 'strand') {
+      else if(style === 'strand' && (!bHighlight || (bHighlight && !bOnlySideChains))) {
           this.createStrand(this.hash2Atoms(atomHash), null, null, null, null, null, false, undefined, bHighlight);
       }
-      else if(style === 'cylinder and plate') {
+      //else if(style === 'cylinder and plate') {
+      else if(style === 'cylinder and plate' && (!bHighlight || (bHighlight && !bOnlySideChains))) {
         this.createCylinderHelix(this.hash2Atoms(atomHash), this.cylinderHelixRadius, bHighlight);
       }
       else if(style === 'nucleotide cartoon') {
@@ -767,6 +876,8 @@ iCn3D.prototype.applyOriginalColor = function (atoms) {
 
         if(this.chainsColor.hasOwnProperty(chainid)) {
             atom.color = this.chainsColor[chainid];
+
+            this.atomPrevColors[i] = atom.color;
         }
         else {
             //atom.color = this.atomColors[atom.elem];

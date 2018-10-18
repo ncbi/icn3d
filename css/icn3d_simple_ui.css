@@ -1,3 +1,5 @@
+.icn3d-text {font-family: Verdana, Arial, Helvetica, sans-serif; font-size:12px!important;}
+
 .ui-dialog { font-size: 12px;}
 .ui-dialog .ui-dialog-title { font-size: 16px; height: 18px; }
 .ui-dialog .ui-button { width: 12px; height:12px; margin: -5px 0px 0px 0px;}
@@ -17,3 +19,5 @@
 .icn3d-shown {display: block;}
 
 .icn3d-box {border-top: solid 1px #ccc; border-right: solid 1px #ccc; border-bottom: solid 1px #ccc; border-left: solid 1px #ccc; padding: 5px;}
+
+.icn3d-popup {display:none; position:absolute; z-index:9999; top:-1000px; left:-1000px; background-color:#DDDDDD; text-align:center; width:80px; height:18px; padding:3px;}

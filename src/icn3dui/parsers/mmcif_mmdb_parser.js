@@ -706,7 +706,7 @@ iCn3DUI.prototype.loadAtomDataIn = function (data, id, type, seqalign) { var me 
         //if(type === 'mmdbid' || type === 'align') {
         if(type === 'mmdbid') {
             // bfactor
-            if(type === 'mmdbid') atm.b = (atm.b !== undefined) ? atm.b : 1;
+            //if(type === 'mmdbid') atm.b = (atm.b !== undefined) ? atm.b : 1;
 
             oldResi = atm.resi;
 
@@ -753,6 +753,16 @@ iCn3DUI.prototype.loadAtomDataIn = function (data, id, type, seqalign) { var me 
         // here "ligand" is used in the cgi output
         var bChemicalIons = (me.cfg.mmcifid === undefined) ? (chainid2kind[chainNum] === 'ligand' || chainid2kind[chainNum] === undefined) : atm.mt === 'l';
 
+        // sometimes proteins or nucleotide may input as chemicals
+        // use the hash residueColors for protein residues
+        var nucleotideRes = {'G': 1, 'A': 1, 'T': 1, 'C': 1, 'U': 1, 'DG': 1, 'DA': 1, 'DT': 1, 'DC': 1, 'DU': 1};
+        if(me.icn3d.residueColors.hasOwnProperty(atm.resn)) {
+            bProtein = true;
+        }
+        else if(nucleotideRes.hasOwnProperty(atm.resn)) {
+            bNucleotide = true;
+        }
+
         if (bProtein || bNucleotide)
         {
             if (bProtein) {
@@ -790,7 +800,13 @@ iCn3DUI.prototype.loadAtomDataIn = function (data, id, type, seqalign) { var me 
         }
 
         if(type === 'mmdbid') {
-            atm.color = (!atm.het) ? new THREE.Color(chainid2color[chainNum]) : me.icn3d.atomColors[atm.elem] || me.icn3d.defaultAtomColor;
+            //atm.color = (!atm.het) ? new THREE.Color(chainid2color[chainNum]) : me.icn3d.atomColors[atm.elem] || me.icn3d.defaultAtomColor;
+            if(!atm.het) {
+                atm.color = (chainid2color[chainNum] !== undefined) ? new THREE.Color(chainid2color[chainNum]) : me.icn3d.chargeColors[atm.resn];
+            }
+            else {
+                atm.color = me.icn3d.atomColors[atm.elem] || me.icn3d.defaultAtomColor;
+            }
         }
         else {
             if(atm.color !== undefined) atm.color = new THREE.Color(atm.color);

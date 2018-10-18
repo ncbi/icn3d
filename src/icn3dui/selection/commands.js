@@ -798,6 +798,8 @@ iCn3DUI.prototype.applyCommand = function (commandStr) { var me = this;
         me.icn3d.removeHlObjects();
         me.removeHl2D();
         me.icn3d.bShowHighlight = false;
+
+        me.bSelectResidue = false;
     //}
   }
   else if(command == 'zoom selection') {
@@ -853,6 +855,9 @@ iCn3DUI.prototype.applyCommand = function (commandStr) { var me = this;
   else if(command == 'defined sets') {
      me.showSets();
   }
+  else if(command == 'delete selected sets') {
+     me.deleteSelectedSets();
+  }
   else if(command == 'view interactions') {
      if(me.cfg.mmdbid !== undefined || me.cfg.gi !== undefined) {
          me.set2DDiagrams(me.inputid);
@@ -871,7 +876,41 @@ iCn3DUI.prototype.applyCommand = function (commandStr) { var me = this;
      me.showAnnoAllChains();
   }
 
+  else if(command == 'save color') {
+     me.saveColor();
+  }
+  else if(command == 'apply saved color') {
+     me.applySavedColor();
+  }
+  else if(command == 'save style') {
+     me.saveStyle();
+  }
+  else if(command == 'apply saved style') {
+     me.applySavedStyle();
+  }
+  else if(command == 'select side chains') {
+     me.selectSideChains();
+  }
+
 // start with =================
+  else if(commandOri.indexOf('define helix sets') == 0) {
+     var chainStr = commandOri.split(' | ')[1];
+     var chainid = chainStr.split(' ')[1];
+
+     me.defineSecondary(chainid, 'helix');
+  }
+  else if(commandOri.indexOf('define sheet sets') == 0) {
+     var chainStr = commandOri.split(' | ')[1];
+     var chainid = chainStr.split(' ')[1];
+
+     me.defineSecondary(chainid, 'sheet');
+  }
+  else if(commandOri.indexOf('define coil sets') == 0) {
+     var chainStr = commandOri.split(' | ')[1];
+     var chainid = chainStr.split(' ')[1];
+
+     me.defineSecondary(chainid, 'coil');
+  }
   else if(commandOri.indexOf('select interaction') == 0) {
     var idArray = commandOri.substr(commandOri.lastIndexOf(' ') + 1).split(',');
     if(idArray !== null) {

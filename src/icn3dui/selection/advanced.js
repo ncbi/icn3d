@@ -86,7 +86,6 @@ iCn3DUI.prototype.selectByCommand = function (select, commandname, commanddesc) 
            me.icn3d.hAtoms = me.icn3d.cloneHash(allHighlightAtoms);
 
            var atomArray = Object.keys(me.icn3d.hAtoms);
-           //var residueArray = Object.keys(me.icn3d.getResiduesFromAtoms(me.icn3d.hAtoms));
            var residueArray = undefined;
 
            if(commandname !== "") {

@@ -23,6 +23,8 @@ var iCn3DUI = function(cfg) {
 
     me.inputid = '';
 
+    me.setOperation = 'or'; // by default the set operation is 'or'
+
     me.WIDTH = 400; // total width of view area
     me.HEIGHT = 400; // total height of view area
 
@@ -61,7 +63,7 @@ var iCn3DUI = function(cfg) {
     me.opts = {};
     me.opts['camera']             = 'perspective';        //perspective, orthographic
     me.opts['background']         = 'transparent';        //transparent, black, grey, white
-    me.opts['color']              = 'chain';              //spectrum, secondary structure, charge, hydrophobic, conserved, chain, residue, atom, red, green, blue, magenta, yellow, cyan, white, grey, custom
+    me.opts['color']              = 'chain';              //spectrum, secondary structure, charge, hydrophobic, conserved, chain, residue, atom, b factor, red, green, blue, magenta, yellow, cyan, white, grey, custom
     me.opts['proteins']           = 'ribbon';             //ribbon, strand, cylinder and plate, schematic, c alpha trace, b factor tube, lines, stick, ball and stick, sphere, nothing
     me.opts['sidec']              = 'nothing';            //lines, stick, ball and stick, sphere, nothing
     me.opts['nucleotides']        = 'nucleotide cartoon'; //nucleotide cartoon, o3 trace, schematic, lines, stick,
@@ -476,7 +478,7 @@ iCn3DUI.prototype = {
 
           me.icn3d.draw();
 
-          var residueHash = me.icn3d.getResiduesFromAtoms(me.icn3d.hAtoms);
+          var residueHash = me.icn3d.getResiduesFromCalphaAtoms(me.icn3d.hAtoms);
           me.changeSeqColor(Object.keys(residueHash));
       }
       else if(id === 'surface' || id === 'opacity' || id === 'wireframe') {
@@ -700,25 +702,26 @@ iCn3DUI.prototype = {
          var command = me.icn3d.defNames2Command[name];
          command = command.replace(/,/g, ', ');
 
-         html += name + "\tselect ";
-
          var residueArray = me.atoms2residues(atomArray);
 
-         html += me.residueids2spec(residueArray);
+         if(residueArray.length > 0) {
+             html += name + "\tselect ";
+             html += me.residueids2spec(residueArray);
 
-         html += "\n";
+             html += "\n";
+         }
        } // outer for
 
        return html;
     },
 
     atoms2residues: function(atomArray) { var me = this;
-         var residueHash = {};
+         var atoms = {};
          for(var j = 0, jl = atomArray.length; j < jl; ++j) {
-             var atom = me.icn3d.atoms[atomArray[j]];
-             var residueid = atom.structure + '_' + atom.chain + '_' + atom.resi;
-             residueHash[residueid] = 1;
+             atoms[atomArray[j]] = 1;
          }
+
+         var residueHash = me.icn3d.getResiduesFromCalphaAtoms(atoms);
 
          return Object.keys(residueHash);
     },
@@ -1210,7 +1213,7 @@ iCn3DUI.prototype = {
             label.text = 'Chain ' + chainName + ': ' + proteinName;
             label.size = size;
 
-            var atomColorStr = me.icn3d.getFirstAtomObj(me.icn3d.chains[chainid]).color.getHexString().toUpperCase();
+            var atomColorStr = me.icn3d.getFirstCalphaAtomObj(me.icn3d.chains[chainid]).color.getHexString().toUpperCase();
             label.color = (atomColorStr === "CCCCCC" || atomColorStr === "C8C8C8") ? "#888888" : "#" + atomColorStr;
             label.background = background;
 
@@ -1397,6 +1400,48 @@ iCn3DUI.prototype = {
        text += '</table><br/></body></html>';
 
        me.saveFile(me.inputid + '_interactions.html', 'html', text);
+    },
+
+    saveColor: function() { var me = this;
+       for(var i in me.icn3d.atoms) {
+           var atom = me.icn3d.atoms[i];
+           atom.colorSave = atom.color.clone();
+       }
+    },
+
+    applySavedColor: function() { var me = this;
+       for(var i in me.icn3d.atoms) {
+           var atom = me.icn3d.atoms[i];
+           if(atom.colorSave !== undefined) {
+               atom.color = atom.colorSave.clone();
+           }
+       }
+
+       me.icn3d.draw();
+
+       me.changeSeqColor(Object.keys(me.icn3d.residues));
+    },
+
+    saveStyle: function() { var me = this;
+       for(var i in me.icn3d.atoms) {
+           var atom = me.icn3d.atoms[i];
+           atom.styleSave = atom.style;
+           if(atom.style2 !== undefined) atom.style2Save = atom.style2;
+       }
+    },
+
+    applySavedStyle: function() { var me = this;
+       for(var i in me.icn3d.atoms) {
+           var atom = me.icn3d.atoms[i];
+           if(atom.styleSave !== undefined) {
+               atom.style = atom.styleSave;
+           }
+           if(atom.style2Save !== undefined) {
+               atom.style2 = atom.style2Save;
+           }
+       }
+
+       me.icn3d.draw();
     },
 
     // ====== functions end ===============
@@ -1908,7 +1953,7 @@ iCn3DUI.prototype = {
           var chainArray = Object.keys(me.icn3d.chains);
           var text = '';
           for(var i = 0, il = chainArray.length; i < il; ++i) {
-              var firstAtom = me.icn3d.getFirstAtomObj(me.icn3d.chains[chainArray[i]]);
+              var firstAtom = me.icn3d.getFirstCalphaAtomObj(me.icn3d.chains[chainArray[i]]);
 
               if(me.icn3d.proteins.hasOwnProperty(firstAtom.serial) && chainArray[i].length == 6) {
                   text += chainArray[i] + '[accession] OR ';
@@ -1949,6 +1994,8 @@ iCn3DUI.prototype = {
         $("#" + me.pre + "clearall").click(function (e) {
            me.setLogCmd("clear all", true);
 
+           me.bSelectResidue = false;
+
            me.selectAll();
 
            me.removeHlAll();
@@ -1969,6 +2016,14 @@ iCn3DUI.prototype = {
         });
     },
 
+    clkMn2_selectsidechains: function() { var me = this;
+        $("#" + me.pre + "mn2_selectsidechains").click(function (e) {
+           me.setLogCmd("select side chains", true);
+
+           me.selectSideChains();
+        });
+    },
+
     clkMn2_alignment: function() { var me = this;
         $("#" + me.pre + "mn2_alignment").click(function (e) {
            me.openDialog(me.pre + 'dl_alignment', 'Select residues in aligned sequences');
@@ -1977,7 +2032,10 @@ iCn3DUI.prototype = {
 
     clkMn2_command: function() { var me = this;
         $("#" + me.pre + "mn2_command").click(function (e) {
-           me.openDialog(me.pre + 'dl_command', 'Selection by specification');
+           me.openDialog(me.pre + 'dl_definedsets', 'Select by specification');
+           $("#" + me.pre + "dl_setsmenu").hide();
+           $("#" + me.pre + "dl_setoperations").hide();
+           $("#" + me.pre + "dl_command").show();
         });
     },
 
@@ -1986,6 +2044,16 @@ iCn3DUI.prototype = {
            me.showSets();
 
            me.setLogCmd('defined sets', true);
+        });
+
+        $("#" + me.pre + "setOr").click(function (e) {
+           me.setOperation = 'or';
+        });
+        $("#" + me.pre + "setAnd").click(function (e) {
+           me.setOperation = 'and';
+        });
+        $("#" + me.pre + "setNot").click(function (e) {
+           me.setOperation = 'not';
         });
     },
 
@@ -2314,10 +2382,21 @@ iCn3DUI.prototype = {
         });
     },
 
-    clkMn4_clrSS: function() { var me = this;
-        $("#" + me.pre + "mn4_clrSS").click(function (e) {
+    clkMn4_clrSSGreen: function() { var me = this;
+        $("#" + me.pre + "mn4_clrSSGreen").click(function (e) {
+           me.icn3d.sheetcolor = 'green';
+
            me.setOption('color', 'secondary structure');
            me.setLogCmd('color secondary structure', true);
+        });
+    },
+
+    clkMn4_clrSSYellow: function() { var me = this;
+        $("#" + me.pre + "mn4_clrSSYellow").click(function (e) {
+           me.icn3d.sheetcolor = 'yellow';
+
+           me.setOption('color', 'secondary structure yellow');
+           me.setLogCmd('color secondary structure yellow', true);
         });
     },
 
@@ -2346,6 +2425,20 @@ iCn3DUI.prototype = {
         $("#" + me.pre + "mn4_clrAtom").click(function (e) {
            me.setOption('color', 'atom');
            me.setLogCmd('color atom', true);
+        });
+    },
+
+    clkMn4_clrBfactor: function() { var me = this;
+        $("#" + me.pre + "mn4_clrBfactor").click(function (e) {
+           me.setOption('color', 'b factor');
+           me.setLogCmd('color b factor', true);
+        });
+    },
+
+    clkMn4_clrBfactorNorm: function() { var me = this;
+        $("#" + me.pre + "mn4_clrBfactorNorm").click(function (e) {
+           me.setOption('color', 'b factor relative');
+           me.setLogCmd('color b factor relative', true);
         });
     },
 
@@ -2415,6 +2508,36 @@ iCn3DUI.prototype = {
     clkMn4_clrCustom: function() { var me = this;
         $("#" + me.pre + "mn4_clrCustom").click(function (e) {
            me.openDialog(me.pre + 'dl_clr', 'Color picker');
+        });
+    },
+
+    clkMn4_clrSave: function() { var me = this;
+        $("#" + me.pre + "mn4_clrSave").click(function (e) {
+           me.saveColor();
+
+           me.setLogCmd('save color', true);
+        });
+    },
+
+    clkMn4_clrApplySave: function() { var me = this;
+        $("#" + me.pre + "mn4_clrApplySave").click(function (e) {
+           me.applySavedColor();
+
+           me.setLogCmd('apply saved color', true);
+        });
+    },
+
+    clkMn3_styleSave: function() { var me = this;
+        $("#" + me.pre + "mn3_styleSave").click(function (e) {
+           me.saveStyle();
+           me.setLogCmd('save style', true);
+        });
+    },
+
+    clkMn3_styleApplySave: function() { var me = this;
+        $("#" + me.pre + "mn3_styleApplySave").click(function (e) {
+           me.applySavedStyle();
+           me.setLogCmd('apply saved style', true);
         });
     },
 
@@ -3246,6 +3369,8 @@ iCn3DUI.prototype = {
         $("#" + me.pre + "reload_pdbfile").click(function(e) {
            e.preventDefault();
 
+           me.bInitial = true;
+
            dialog.dialog( "close" );
            //close all dialog
            $(".ui-dialog-content").dialog("close");
@@ -3280,6 +3405,8 @@ iCn3DUI.prototype = {
     clickReload_mol2file: function() { var me = this;
         $("#" + me.pre + "reload_mol2file").click(function(e) {
            e.preventDefault();
+
+           me.bInitial = true;
 
            dialog.dialog( "close" );
            //close all dialog
@@ -3318,6 +3445,8 @@ iCn3DUI.prototype = {
         $("#" + me.pre + "reload_sdffile").click(function(e) {
            e.preventDefault();
 
+           me.bInitial = true;
+
            dialog.dialog( "close" );
            //close all dialog
            $(".ui-dialog-content").dialog("close");
@@ -3353,6 +3482,8 @@ iCn3DUI.prototype = {
     clickReload_xyzfile: function() { var me = this;
         $("#" + me.pre + "reload_xyzfile").click(function(e) {
            e.preventDefault();
+
+           me.bInitial = true;
 
            dialog.dialog( "close" );
            //close all dialog
@@ -3390,6 +3521,8 @@ iCn3DUI.prototype = {
         $("#" + me.pre + "reload_urlfile").click(function(e) {
            e.preventDefault();
 
+           me.bInitial = true;
+
            dialog.dialog( "close" );
            //close all dialog
            $(".ui-dialog-content").dialog("close");
@@ -3404,6 +3537,8 @@ iCn3DUI.prototype = {
     clickReload_mmciffile: function() { var me = this;
         $("#" + me.pre + "reload_mmciffile").click(function(e) {
            e.preventDefault();
+
+           me.bInitial = true;
 
            dialog.dialog( "close" );
            //close all dialog
@@ -3610,11 +3745,17 @@ iCn3DUI.prototype = {
     },
 
     // https://github.com/tovic/color-picker
+    // https://tovic.github.io/color-picker/color-picker.value-update.html
     pickColor: function() { var me = this;
         var picker = new CP(document.querySelector("#" + me.pre + "colorcustom"));
 
         picker.on("change", function(color) {
             this.target.value = color;
+        });
+
+        $("#" + me.pre + "colorcustom").on("input keyup paste cut", function() {
+            var color = $("#" + me.pre + "colorcustom").val();
+            picker.set('#' + color).enter();
         });
     },
 
@@ -4006,6 +4147,7 @@ iCn3DUI.prototype = {
         me.clkMn2_selectannotations();
 //        me.clkMn2_selectresidues();
         me.clkMn2_selectcomplement();
+        me.clkMn2_selectsidechains();
         me.clkMn2_selectall();
         me.clkMn2_alignment();
         me.clkMn2_command();
@@ -4055,11 +4197,14 @@ iCn3DUI.prototype = {
         me.clkMn3_waterNo();
         me.clkMn4_clrSpectrum();
         me.clkMn4_clrChain();
-        me.clkMn4_clrSS();
+        me.clkMn4_clrSSGreen();
+        me.clkMn4_clrSSYellow();
         me.clkMn4_clrResidue();
         me.clkMn4_clrCharge();
         me.clkMn4_clrHydrophobic();
         me.clkMn4_clrAtom();
+        me.clkMn4_clrBfactor();
+        me.clkMn4_clrBfactorNorm();
         me.clkMn4_clrConserved();
         me.clkMn4_clrRed();
         me.clkMn4_clrGreen();
@@ -4070,6 +4215,10 @@ iCn3DUI.prototype = {
         me.clkMn4_clrWhite();
         me.clkMn4_clrGrey();
         me.clkMn4_clrCustom();
+        me.clkMn4_clrSave();
+        me.clkMn4_clrApplySave();
+        me.clkMn3_styleSave();
+        me.clkMn3_styleApplySave();
         me.clkMn5_neighborsYes();
         me.clkMn5_neighborsNo();
         me.clkMn5_surfaceVDW();
@@ -4183,7 +4332,11 @@ iCn3DUI.prototype = {
         me.bindMousedown();
         me.windowResize();
         me.setTabs();
-        me.addTrack();
+        me.clickAddTrack();
+        me.clickDefineHelix();
+        me.clickDefineSheet();
+        me.clickDefineCoil();
+        me.clickDeleteSets();
         me.clickAddTrackButton();
 
         me.expandShrink();

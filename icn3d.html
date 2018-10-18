@@ -288,6 +288,7 @@ This page describes Web APIs and how to embed iCn3D in your html page. Other det
 <a href="#applyCommandAnnotationsAndCddSite">applyCommandAnnotationsAndCddSite</a><br>
 <a href="#back">back</a><br>
 <a href="#changeCustomAtoms">changeCustomAtoms</a><br>
+<a href="#deleteSelectedSets">deleteSelectedSets</a><br>
 <a href="#downloadAlignment">downloadAlignment</a><br>
 <a href="#downloadCid">downloadCid</a><br>
 <a href="#downloadGi">downloadGi</a><br>
@@ -308,11 +309,12 @@ This page describes Web APIs and how to embed iCn3D in your html page. Other det
 <a href="#selectAll">selectAll</a><br>
 <a href="#selectByCommand">selectByCommand</a><br>
 <a href="#selectComplement">selectComplement</a><br>
-<a href="#set2DDiagrams">set2DDiagrams</a><br>
-<a href="#setOption">setOption</a><br>
+<a href="#selectSideChains">selectSideChains</a><br>
 </div>
 
 <div style="float:left;">
+<a href="#set2DDiagrams">set2DDiagrams</a><br>
+<a href="#setOption">setOption</a><br>
 <a href="#setStyle">setStyle</a><br>
 <a href="#shareLink">shareLink</a><br>
 <a href="#showHbonds">showHbonds</a><br>
@@ -667,7 +669,8 @@ This page describes Web APIs and how to embed iCn3D in your html page. Other det
 <a name="select"></a><b>2. Select</b> <a href="#Top"><span class="top">&nbsp;&nbsp;&nbsp;</span></a><br>
 <table width='100%'><tr><td valign='top' width='30%'><b>Menu</b></td><td valign='top' width='40%'><b>Command</b></td><td valign='top'><b>Method</b></td></tr>
 <tr><td valign='top'>a) Defined Sets:</td>     <td valign='top'>defined sets</td> <td valign='top'><a href="#showSets">showSets</a></td></tr>
-<tr><td valign='top'><span class="indent">Click a set:</span></td>    <td valign='top'>select saved atoms [name1,name2]</td> <td valign='top'><a href="#changeCustomAtoms">changeCustomAtoms</a></td></tr>
+<tr><td valign='top'><span class="indent">Select sets:</span></td>    <td valign='top'>select saved atoms [name1] or/and/not [name2]</td> <td valign='top'><a href="#changeCustomAtoms">changeCustomAtoms</a></td></tr>
+<tr><td valign='top'><span class="indent">Delete selected sets:</span></td>    <td valign='top'>delete selected sets</td> <td valign='top'><a href="#deleteSelectedSets">deleteSelectedSets</a></td></tr>
 
 <tr><td valign='top'>b) All:</td>     <td valign='top'>select all</td> <td valign='top'><a href="#selectAll">selectAll</a></td></tr>
 
@@ -675,24 +678,25 @@ This page describes Web APIs and how to embed iCn3D in your html page. Other det
 <tr><td valign='top'><span class="indent">Display:</span></td>            <td valign='top'>select zone cutoff [cutoff in angstrom]</td> <td valign='top'><a href="#pickCustomSphere">pickCustomSphere</a></td></tr>
 
 <tr><td valign='top'>d) Inverse:</td>     <td valign='top'>select complement</td> <td valign='top'><a href="#selectComplement">selectComplement</a></td></tr>
+<tr><td valign='top'>e) Side Chains:</td>     <td valign='top'>select side chains</td> <td valign='top'><a href="#selectSideChains">selectSideChains</a></td></tr>
 
-<tr><td valign='top'>e) Advanced</td><td valign='top'>select [command] | name [commandname]</td> <td valign='top'><a href="#selectByCommand">selectByCommand</a></td></tr>
+<tr><td valign='top'>f) Advanced</td><td valign='top'>select [command] | name [commandname]</td> <td valign='top'><a href="#selectByCommand">selectByCommand</a></td></tr>
 
-<tr><td colspan="3"><br>f) Select on 3D</td> </tr>
+<tr><td colspan="3"><br>g) Select on 3D</td> </tr>
 <tr><td valign='top'><span class="indent">Chain:</span></td>  <td valign='top'>set pk chain</td> <td valign='top'>me.icn3d.pk = 4; me.icn3d.opts['pk'] = 'chain';</td></tr>
 <tr><td valign='top'><span class="indent">Strand/Helix (Alt):</span></td>  <td valign='top'>set pk strand</td> <td valign='top'>me.icn3d.pk = 3; me.icn3d.opts['pk'] = 'strand';</td></tr>
 <tr><td valign='top'><span class="indent">Residue (Alt):</span></td>  <td valign='top'>set pk residue</td> <td valign='top'>me.icn3d.pk = 2; me.icn3d.opts['pk'] = 'residue';</td></tr>
 <tr><td valign='top'><span class="indent">Atom (Alt):</span></td>     <td valign='top'>set pk atom</td> <td valign='top'>me.icn3d.pk = 41; me.icn3d.opts['pk'] = 'atom';</td></tr>
 
-<tr><td valign='top'>g) Save Selection:</td>      <td valign='top'>select [command] | name [commandname]</td> <td valign='top'><a href="#selectByCommand">selectByCommand</a></td></tr>
-<tr><td valign='top'>h) Clear Selection:</td>      <td valign='top'>clear all</td> <td valign='top'><a href="#selectAll">selectAll</a></td></tr>
+<tr><td valign='top'>h) Save Selection:</td>      <td valign='top'>select [command] | name [commandname]</td> <td valign='top'><a href="#selectByCommand">selectByCommand</a></td></tr>
+<tr><td valign='top'>i) Clear Selection:</td>      <td valign='top'>clear all</td> <td valign='top'><a href="#selectAll">selectAll</a></td></tr>
 
-<tr><td colspan="3"><br>i) Highlight Color</td> </tr>
+<tr><td colspan="3"><br>j) Highlight Color</td> </tr>
 <tr><td valign='top'><span class="indent">Yellow:</span></td>   <td valign='top'>set highlight color yellow</td> <td valign='top'></td></tr>
 <tr><td valign='top'><span class="indent">Green:</span></td>    <td valign='top'>set highlight color green</td> <td valign='top'></td></tr>
 <tr><td valign='top'><span class="indent">Red:</span></td>        <td valign='top'>set highlight color red</td> <td valign='top'></td></tr>
 
-<tr><td colspan="3"><br>j) Highlight Style</td> </tr>
+<tr><td colspan="3"><br>k) Highlight Style</td> </tr>
 <tr><td valign='top'><span class="indent">Outline:</span></td>              <td valign='top'>set highlight style outline</td> <td valign='top'>me.icn3d.bHighlight = 1;</td></tr>
 <tr><td valign='top'><span class="indent">3D Objects:</span></td>         <td valign='top'>set highlight style 3d</td> <td valign='top'>me.icn3d.bHighlight = 2;</td></tr>
 
@@ -713,7 +717,7 @@ In the dialog Select -&gt; Advanced, users can use simple specification to selec
 <b>Set Operation:</b>
 <ul>
 <li>Users can select multiple sets in the menu "Select > Defined Sets".<br/>
-<li>Different sets can be unioned (with "<b>or</b>", default), intersected (with "<b>and</b>"), or negated (with "<b>not</b>"). For example, if the "Defined Sets" menu has four sets ":1-10", ":11-20", ":5-15", and ":7-8", the command "saved atoms :1-10 or :11-20 and :5-15 not :7-8" unions all residues 1-10 and 11-20 to get the residues 1-20, then intersects with the residues 5-15 to get the residues 5-15, then exclude the residues 7-8 to get the final residues 5-6 and 9-15.
+<li>Different sets can be unioned (with "<b>or</b>", default), intersected (with "<b>and</b>"), or excluded (with "<b>not</b>"). For example, if the "Defined Sets" menu has four sets ":1-10", ":11-20", ":5-15", and ":7-8", the command "saved atoms :1-10 or :11-20 and :5-15 not :7-8" unions all residues 1-10 and 11-20 to get the residues 1-20, then intersects with the residues 5-15 to get the residues 5-15, then exclude the residues 7-8 to get the final residues 5-6 and 9-15.
 </ul>
 <b>Full commands in url or command window:</b>
 <ul>
@@ -805,7 +809,7 @@ In the dialog Select -&gt; Advanced, users can use simple specification to selec
 <tr><td valign='top'><span class="indent">Cylinder and Plate:</span></td>   <td valign='top'>style proteins cylinder and plate</td> <td valign='top'><a href="#setStyle">setStyle</a></td></tr>
 <tr><td valign='top'><span class="indent">Schematic:</span></td>           <td valign='top'>style proteins schematic</td> <td valign='top'><a href="#setStyle">setStyle</a></td></tr>
 <tr><td valign='top'><span class="indent">C Alpha Trace:</span></td>      <td valign='top'>style proteins c alpha trace</td> <td valign='top'><a href="#setStyle">setStyle</a></td></tr>
-<tr><td valign='top'><span class="indent">B Factor Tube:</span></td>      <td valign='top'>style proteins b factor tube</td> <td valign='top'><a href="#setStyle">setStyle</a></td></tr>
+<tr><td valign='top'><span class="indent">B-factor Tube:</span></td>      <td valign='top'>style proteins b factor tube</td> <td valign='top'><a href="#setStyle">setStyle</a></td></tr>
 <tr><td valign='top'><span class="indent">Lines:</span></td>              <td valign='top'>style proteins lines</td> <td valign='top'><a href="#setStyle">setStyle</a></td></tr>
 <tr><td valign='top'><span class="indent">Stick:</span></td>              <td valign='top'>style proteins stick</td> <td valign='top'><a href="#setStyle">setStyle</a></td></tr>
 <tr><td valign='top'><span class="indent">Ball and Stick:</span></td>       <td valign='top'>style proteins ball and stick</td> <td valign='top'><a href="#setStyle">setStyle</a></td></tr>
@@ -847,7 +851,10 @@ In the dialog Select -&gt; Advanced, users can use simple specification to selec
 <tr><td valign='top'><span class="indent">Dot:</span></td>                <td valign='top'>style water dot</td> <td valign='top'><a href="#setStyle">setStyle</a></td></tr>
 <tr><td valign='top'><span class="indent">Hide:</span></td>            <td valign='top'>style water nothing</td> <td valign='top'><a href="#setStyle">setStyle</a></td></tr>
 
-<tr><td colspan="3"><br>g) Style -&gt; Surface Type</td> </tr>
+<tr><td valign='top'>g) Style -&gt; Save Style:</td>                    <td valign='top'>save style</td> <td valign='top'><a href="#applySurfaceOptions">saveStyle</a></td></tr>
+<tr><td valign='top'>h) Style -&gt; Apply Saved Style:</td>             <td valign='top'>apply saved style</td> <td valign='top'><a href="#applySurfaceOptions">applySavedStyle</a></td></tr>
+
+<tr><td colspan="3"><br>i) Style -&gt; Surface Type</td> </tr>
 <tr><td width="240"><span class="indent">Van der Waals:</span></td>      <td valign='top'>set surface Van der Waals surface</td> <td valign='top'><a href="#applySurfaceOptions">applySurfaceOptions</a></td></tr>
 <tr><td width="240"><span class="indent">VDW with Context:</span></td>      <td valign='top'>set surface Van der Waals surface with context</td> <td valign='top'><a href="#applySurfaceOptions">applySurfaceOptions</a></td></tr>
 <tr><td valign='top'><span class="indent">Molecular Surface:</span></td>          <td valign='top'>set surface molecular surface</td> <td valign='top'><a href="#applySurfaceOptions">applySurfaceOptions</a></td></tr>
@@ -855,9 +862,9 @@ In the dialog Select -&gt; Advanced, users can use simple specification to selec
 <tr><td valign='top'><span class="indent">Solvent Accessible:</span></td> <td valign='top'>set surface solvent accessible surface</td> <td valign='top'><a href="#applySurfaceOptions">applySurfaceOptions</a></td></tr>
 <tr><td valign='top'><span class="indent">SA with Context:</span></td> <td valign='top'>set surface solvent accessible surface with context</td> <td valign='top'><a href="#applySurfaceOptions">applySurfaceOptions</a></td></tr>
 
-<tr><td valign='top'><br>h) Style -&gt; Remove Surface:</td>                    <td valign='top'>set surface nothing</td> <td valign='top'><a href="#applySurfaceOptions">applySurfaceOptions</a></td></tr>
+<tr><td valign='top'>j) Style -&gt; Remove Surface:</td>                    <td valign='top'>set surface nothing</td> <td valign='top'><a href="#applySurfaceOptions">applySurfaceOptions</a></td></tr>
 
-<tr><td colspan="3"><br>i) Style -&gt; Surface Opacity</td> </tr>
+<tr><td colspan="3"><br>k) Style -&gt; Surface Opacity</td> </tr>
 <tr><td valign='top'><span class="indent">1.0:</span></td>                <td valign='top'>set surface opacity 1.0</td> <td valign='top'><a href="#applySurfaceOptions">applySurfaceOptions</a></td></tr>
 <tr><td valign='top'><span class="indent">0.9:</span></td>                <td valign='top'>set surface opacity 0.9</td> <td valign='top'><a href="#applySurfaceOptions">applySurfaceOptions</a></td></tr>
 <tr><td valign='top'><span class="indent">0.8:</span></td>                <td valign='top'>set surface opacity 0.8</td> <td valign='top'><a href="#applySurfaceOptions">applySurfaceOptions</a></td></tr>
@@ -865,12 +872,12 @@ In the dialog Select -&gt; Advanced, users can use simple specification to selec
 <tr><td valign='top'><span class="indent">0.6:</span></td>                <td valign='top'>set surface opacity 0.6</td> <td valign='top'><a href="#applySurfaceOptions">applySurfaceOptions</a></td></tr>
 <tr><td valign='top'><span class="indent">0.5:</span></td>                <td valign='top'>set surface opacity 0.5</td> <td valign='top'><a href="#applySurfaceOptions">applySurfaceOptions</a></td></tr>
 
-<tr><td colspan="3"><br>j) Style -&gt; Surface Wireframe</td> </tr>
+<tr><td colspan="3"><br>l) Style -&gt; Surface Wireframe</td> </tr>
 <tr><td valign='top'><span class="indent">Yes</span></td>                 <td valign='top'>set surface wireframe on</td> <td valign='top'><a href="#applySurfaceOptions">applySurfaceOptions</a></td></tr>
 <tr><td valign='top'><span class="indent">No</span></td>                  <td valign='top'>set surface wireframe off</td> <td valign='top'><a href="#applySurfaceOptions">applySurfaceOptions</a></td></tr>
 
-<tr><td colspan="3"><br>k) Style -&gt; Background</td> </tr>
-<tr><td valign='top'><span class="indent">Transparent:</span></td>              <td valign='top'>set background transparent</td> <td valign='top'>me.icn3d.opts['background'] = 'transparent'</td></tr>
+<tr><td colspan="3"><br>m) Style -&gt; Background</td> </tr>
+<tr><td valign='top'><span class="indent">Transparent:</span></td>        <td valign='top'>set background transparent</td> <td valign='top'>me.icn3d.opts['background'] = 'transparent'</td></tr>
 <tr><td valign='top'><span class="indent">Black:</span></td>              <td valign='top'>set background black</td> <td valign='top'>me.icn3d.opts['background'] = 'black'</td></tr>
 <tr><td valign='top'><span class="indent">Grey:</span></td>               <td valign='top'>set background grey</td> <td valign='top'>me.icn3d.opts['background'] = 'grey'</td></tr>
 <tr><td valign='top'><span class="indent">White:</span></td>              <td valign='top'>set background white</td> <td valign='top'>me.icn3d.opts['background'] = 'white'</td></tr>
@@ -880,13 +887,19 @@ In the dialog Select -&gt; Advanced, users can use simple specification to selec
 <a name="color"></a><b>5. Color</b> <a href="#Top"><span class="top">&nbsp;&nbsp;&nbsp;</span></a><br>
 <table width='100%'><tr><td valign='top' width='30%'><b>Menu</b></td><td valign='top' width='40%'><b>Command</b></td><td valign='top'><b>Method</b></td></tr>
 <tbody><tr><td colspan="3">a)</td> </tr>
-<tr><td width="240">Color -&gt; Spectrum:</td> <td valign='top'>color spectrum</td> <td valign='top'><a href="#setColorByOptions">setColorByOptions</a></td></tr>
-<tr><td width="240">Color -&gt; Secondary:</td> <td valign='top'>color secondary structure</td> <td valign='top'><a href="#setColorByOptions">setColorByOptions</a></td></tr>
-<tr><td valign='top'>Color -&gt; Charge:</td>  <td valign='top'>color charge</td> <td valign='top'><a href="#setColorByOptions">setColorByOptions</a></td></tr>
-<tr><td valign='top'>Color -&gt; Hydrophobic:</td>  <td valign='top'>color hydrophobic</td> <td valign='top'><a href="#setColorByOptions">setColorByOptions</a></td></tr>
-<tr><td valign='top'>Color -&gt; Chain:</td>     <td valign='top'>color chain</td> <td valign='top'><a href="#setColorByOptions">setColorByOptions</a></td></tr>
-<tr><td valign='top'>Color -&gt; Residue:</td>   <td valign='top'>color residue</td> <td valign='top'><a href="#setColorByOptions">setColorByOptions</a></td></tr>
-<tr><td valign='top'>Color -&gt; Atom:</td>  <td valign='top'>color atom</td> <td valign='top'><a href="#setColorByOptions">setColorByOptions</a></td></tr>
+<tr><td width="240">Color -&gt; Spectrum:</td>          <td valign='top'>color spectrum</td> <td valign='top'><a href="#setColorByOptions">setColorByOptions</a></td></tr>
+<tr><td width="240">Color -&gt; Secondary (Sheet in Green):</td>         <td valign='top'>color secondary structure</td> <td valign='top'><a href="#setColorByOptions">setColorByOptions</a></td></tr>
+<tr><td width="240">Color -&gt; Secondary (Sheet in Yellow):</td>        <td valign='top'>color secondary structure yellow</td> <td valign='top'><a href="#setColorByOptions">setColorByOptions</a></td></tr>
+<tr><td valign='top'>Color -&gt; Charge:</td>           <td valign='top'>color charge</td> <td valign='top'><a href="#setColorByOptions">setColorByOptions</a></td></tr>
+<tr><td valign='top'>Color -&gt; Hydrophobic:</td>      <td valign='top'>color hydrophobic</td> <td valign='top'><a href="#setColorByOptions">setColorByOptions</a></td></tr>
+<tr><td valign='top'>Color -&gt; Chain:</td>            <td valign='top'>color chain</td> <td valign='top'><a href="#setColorByOptions">setColorByOptions</a></td></tr>
+<tr><td valign='top'>Color -&gt; Residue:</td>          <td valign='top'>color residue</td> <td valign='top'><a href="#setColorByOptions">setColorByOptions</a></td></tr>
+<tr><td valign='top'>Color -&gt; Atom:</td>             <td valign='top'>color atom</td> <td valign='top'><a href="#setColorByOptions">setColorByOptions</a></td></tr>
+<tr><td valign='top'>Color -&gt; B-factor (Fixed):</td>             <td valign='top'>color b factor</td> <td valign='top'><a href="#setColorByOptions">setColorByOptions</a></td></tr>
+<tr><td valign='top'>Color -&gt; B-factor (Relative):</td>             <td valign='top'>color b factor relative</td> <td valign='top'><a href="#setColorByOptions">setColorByOptions</a></td></tr>
+
+<tr><td valign='top'>Color -&gt; Save Color:</td>       <td valign='top'>save color</td> <td valign='top'><a href="#applySurfaceOptions">saveColor</a></td></tr>
+<tr><td valign='top'>Color -&gt; Apply Saved Color:</td><td valign='top'>apply saved color</td> <td valign='top'><a href="#applySurfaceOptions">applySavedColor</a></td></tr>
 
 <tr><td colspan="3"><br>b) Color -&gt; Unicolor</td> </tr>
 <tr><td valign='top'><span class="indent">Red:</span></td>                <td valign='top'>color red</td> <td valign='top'><a href="#setColorByOptions">setColorByOptions</a></td></tr>
@@ -1001,7 +1014,7 @@ In the dialog Select -&gt; Advanced, users can use simple specification to selec
       <pre>          var opts = {};
           opts['camera']             = 'perspective';        //perspective, orthographic
           opts['background']         = 'transparent';        //transparent, black, grey, white
-          opts['color']              = 'chain';              //spectrum, secondary structure, charge, hydrophobic, chain, residue, atom,
+          opts['color']              = 'chain';              //spectrum, secondary structure, charge, hydrophobic, chain, residue, atom, b factor
                                                              // red, green, blue, magenta, yellow, cyan, white, grey, custom
           opts['proteins']           = 'ribbon';             //ribbon, strand, cylinder and plate, schematic, c alpha trace,
                                                              // b factor tube, lines, stick, ball and stick, sphere, nothing
@@ -1439,6 +1452,9 @@ Change the residue color in the annotation window for the residues in the array 
 <br><br><a name="clearSelection"></a><b>clearSelection()</b> <a href="#Top"><span class="top">&nbsp;&nbsp;&nbsp;</span></a><br>
 Clear the "Structure", "Chain", and "Custom" dropdown menu.
 
+<br><br><a name="deleteSelectedSets"></a><b>deleteSelectedSets()</b> <a href="#Top"><span class="top">&nbsp;&nbsp;&nbsp;</span></a><br>
+Delete selected sets in the menu of "Defined Sets".
+
 <br><br><a name="downloadAlignment"></a><b>downloadAlignment(align)</b> <a href="#Top"><span class="top">&nbsp;&nbsp;&nbsp;</span></a><br>
 Load the VAST+ structure alignment for the pair of structures "align", e.g., "align" could be "1HHO,4N7N".
 
@@ -1602,6 +1618,9 @@ Set a custom selection with the "command", its name "commandname" and its descri
 <br><br><a name="selectComplement"></a><b>selectComplement()</b> <a href="#Top"><span class="top">&nbsp;&nbsp;&nbsp;</span></a><br>
 Select the complement of the current selection.
 
+<br><br><a name="selectSideChains"></a><b>selectSideChains()</b> <a href="#Top"><span class="top">&nbsp;&nbsp;&nbsp;</span></a><br>
+Select only the side chain atoms of the current selection.
+
 <br><br><a name="set2DDiagrams"></a><b>set2DDiagrams(mmdbid)</b> <a href="#Top"><span class="top">&nbsp;&nbsp;&nbsp;</span></a><br>
 Generate the 2D interaction diagram for the structure "mmdbid", which could be PDB ID. The 2D interaction diagram is only available when the input is NCBI MMDB ID, i.e., the URL is something like "&mmdbid=...".
 
@@ -1725,6 +1744,9 @@ Update the highlight of sequences in the annotation window according to the curr
 
 <a name="log"></a>
 <h2>Change Log:<img src="https://www.ncbi.nlm.nih.gov/Structure/IMG/spacer.gif" width="25" height="1" border="0"><a href="#Top"><img src="https://www.ncbi.nlm.nih.gov/Structure/IMG/arrowup_blue.gif" width="12" height="12" border="0" alt="back to top"></a></h2>
+The production version <a href="https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.3.0.zip">icn3d-2.3.0</a> was release on October 18, 2018. Added set operations (union,intersection, exclusion) in "Defined Sets"; added buttons "Helix Sets" and "Sheet Sets" in the "Sequences and Annotations" window to define helix sets and sheet sets in the window "Defined Sets"; added "Save Color" and "Apply Saved Color" in the menu "Color"; added "Save Style" and "Apply Saved Style" in the menu "Style"; added "Side Chains" in the menu "Select" to select side chains; added two options for color by "Secondary" structures: "Sheets in Green" and "Sheets in Yellow"; added color by "B-factor" that is normalized with "Fixed" original values or "Relative" percentile values.
+<br><br>
+
 The production version <a href="https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.2.5.zip">icn3d-2.2.5</a> was release on September 17, 2018. A bug in loading local PDB file was fixed.
 <br><br>
 

@@ -1,4 +1,4 @@
-.icn3d-text {font-family: Verdana, Arial, Helvetica, sans-serif; font-size:12px;}
+.icn3d-text {font-family: Verdana, Arial, Helvetica, sans-serif; font-size:12px!important;}
 
 .ui-dialog { font-size: 12px;}
 .ui-dialog .ui-dialog-title { font-size: 16px; height: 18px; }
@@ -155,8 +155,11 @@ input:checked + .icn3d-slider:before {
 .icn3d-clinvar-path {color:purple; font-size:12px; font-weight:bold;}
 
 /*.icn3d-sheet {background-image: linear-gradient(transparent, transparent 25%, #FFC800 25%, #FFC800 75%, transparent 75%, transparent 100%);} */
-.icn3d-sheet {background-image: linear-gradient(transparent, transparent 20%, #FFC800 20%, #FFC800 70%, transparent 70%, transparent 100%);} 
-.icn3d-sheet2 {background-image: url("ssimages/tri.png"); background-size: contain; background-repeat: no-repeat;}
+.icn3d-sheet {background-image: linear-gradient(transparent, transparent 25%, #008000 25%, #008000 75%, transparent 75%, transparent 100%);} 
+.icn3d-sheet2 {background-image: url("ssimages/trig.png"); background-size: contain; background-repeat: no-repeat;}
+
+.icn3d-sheety {background-image: linear-gradient(transparent, transparent 25%, #FFC800 25%, #FFC800 75%, transparent 75%, transparent 100%);} 
+.icn3d-sheet2y {background-image: url("ssimages/triy.png"); background-size: contain; background-repeat: no-repeat;}
 
 .icn3d-helix {background-image: url("ssimages/helix.png"); background-size: contain; background-repeat: no-repeat;}
 .icn3d-helix2 {background-image: url("ssimages/helix2.png"); background-size: contain; background-repeat: no-repeat;}
@@ -165,7 +168,9 @@ input:checked + .icn3d-slider:before {
 .icn3d-other {background-image: linear-gradient(transparent, transparent 45%, #DDDDDD 45%, #DDDDDD 55%, transparent 55%, transparent 100%);} 
 
 .icn3d-helix-color {color: #FF0080;}
-.icn3d-sheet-color {color: #FFC800;}
+
+.icn3d-sheet-color {color: #008000;}
+.icn3d-sheet-colory {color: #FFC800;}
 
 .icn3d-fixed-pos {position:fixed;}
 /*.icn3d-space-title {width:160px; display:inline-block;} */
@@ -200,3 +205,5 @@ input:checked + .icn3d-slider:before {
 .icn3d-rad-text {
     padding-left: 2em;
 }
+
+.icn3d-popup {display:none; position:absolute; z-index:9999; top:-1000px; left:-1000px; background-color:#DDDDDD; text-align:center; width:80px; height:18px; padding:3px;}

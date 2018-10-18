@@ -1413,7 +1413,7 @@ iCn3D.prototype.createStrand = function (atoms, num, div, fill, coilWidth, helix
                     var residueid = firstAtom.structure + '_' + firstAtom.chain + '_' + i;
                     if(!this.residues.hasOwnProperty(residueid)) break;
 
-                    var atom = this.getFirstAtomObj(this.residues[residueid]);
+                    var atom = this.getFirstCalphaAtomObj(this.residues[residueid]);
 
                     if(atom.ss === firstAtom.ss && atom.ssbegin) {
                         beginResi = atom.resi;
@@ -1432,7 +1432,7 @@ iCn3D.prototype.createStrand = function (atoms, num, div, fill, coilWidth, helix
                     var residueid = firstAtom.structure + '_' + firstAtom.chain + '_' + (firstAtom.resi - 1);
                     if(this.residues.hasOwnProperty(residueid)) {
                         atomsAdjust = this.unionHash(atomsAdjust, this.hash2Atoms(this.residues[residueid]));
-//                        atoms = this.unionHash(atoms, this.hash2Atoms(this.residues[residueid]));
+                        atoms = this.unionHash(atoms, this.hash2Atoms(this.residues[residueid]));
                     }
             }
 
@@ -1445,7 +1445,7 @@ iCn3D.prototype.createStrand = function (atoms, num, div, fill, coilWidth, helix
                     var residueid = lastAtom.structure + '_' + lastAtom.chain + '_' + i;
                     if(!this.residues.hasOwnProperty(residueid)) break;
 
-                    var atom = this.getFirstAtomObj(this.residues[residueid]);
+                    var atom = this.getFirstCalphaAtomObj(this.residues[residueid]);
 
                     if(atom.ss === lastAtom.ss && atom.ssend) {
                         endResi = atom.resi;
@@ -1464,7 +1464,7 @@ iCn3D.prototype.createStrand = function (atoms, num, div, fill, coilWidth, helix
                     var residueid = lastAtom.structure + '_' + lastAtom.chain + '_' + (lastAtom.resi + 1);
                     if(this.residues.hasOwnProperty(residueid)) {
                         atomsAdjust = this.unionHash(atomsAdjust, this.hash2Atoms(this.residues[residueid]));
-//                        atoms = this.unionHash(atoms, this.hash2Atoms(this.residues[residueid]));
+                        atoms = this.unionHash(atoms, this.hash2Atoms(this.residues[residueid]));
                     }
             }
 
@@ -1538,6 +1538,8 @@ iCn3D.prototype.createStrand = function (atoms, num, div, fill, coilWidth, helix
 
     var bFullAtom = (Object.keys(this.hAtoms).length == Object.keys(this.atoms).length) ? true : false;
 
+    var caArray = []; // record all C-alpha atoms to predict the helix
+
     for (var i in atomsAdjust) {
         atom = atomsAdjust[i];
         var atomOxygen = undefined;
@@ -1552,9 +1554,17 @@ iCn3D.prototype.createStrand = function (atoms, num, div, fill, coilWidth, helix
                     currentCA = atom.coord;
                     currentColor = atom.color;
                     calphaid = atom.serial;
+
+                    caArray.push(atom.serial);
                 }
 
                 if (atom.name === 'O' || (this.bCalphaOnly && atom.name === 'CA')) {
+                    if(currentCA === null || currentCA === undefined) {
+                        currentCA = atom.coord;
+                        currentColor = atom.color;
+                        calphaid = atom.serial;
+                    }
+
                     if(atom.name === 'O') {
                         currentO = atom.coord;
                     }
@@ -1591,7 +1601,7 @@ iCn3D.prototype.createStrand = function (atoms, num, div, fill, coilWidth, helix
                             strandWidth = (ss === 'coil') ? coilWidth : helixSheetWidth;
                         }
 
-                        var O;
+                        var O, oldCA, resSpan = 4;
                         if(atom.name === 'O') {
                             O = prevCoorO.clone();
                             if(prevCoorCA !== null && prevCoorCA !== undefined) {
@@ -1599,11 +1609,25 @@ iCn3D.prototype.createStrand = function (atoms, num, div, fill, coilWidth, helix
                             }
                             else {
                                 prevCoorCA = prevCoorO.clone();
-                                O = new THREE.Vector3(Math.random(),Math.random(),Math.random());
+                                if(caArray.length > resSpan + 1) { // use the calpha and the previous 4th c-alpha to calculate the helix direction
+                                    O = prevCoorCA.clone();
+                                    oldCA = this.atoms[caArray[caArray.length - 1 - resSpan - 1]].coord.clone();
+                                    O.sub(oldCA);
+                                }
+                                else {
+                                    O = new THREE.Vector3(Math.random(),Math.random(),Math.random());
+                                }
                             }
                         }
                         else if(this.bCalphaOnly && atom.name === 'CA') {
-                            O = new THREE.Vector3(Math.random(),Math.random(),Math.random());
+                            if(caArray.length > resSpan + 1) { // use the calpha and the previous 4th c-alpha to calculate the helix direction
+                                O = prevCoorCA.clone();
+                                oldCA = this.atoms[caArray[caArray.length - 1 - resSpan - 1]].coord.clone();
+                                O.sub(oldCA);
+                            }
+                            else {
+                                O = new THREE.Vector3(Math.random(),Math.random(),Math.random());
+                            }
                         }
 
                         O.normalize(); // can be omitted for performance
@@ -1681,13 +1705,20 @@ iCn3D.prototype.createStrand = function (atoms, num, div, fill, coilWidth, helix
                             strandWidth = (atom.ss === 'coil') ? coilWidth : helixSheetWidth;
                         }
 
-                        var O;
+                        var O, oldCA, resSpan = 4;
                         if(atom.name === 'O') {
                             O = currentO.clone();
                             O.sub(currentCA);
                         }
                         else if(this.bCalphaOnly && atom.name === 'CA') {
-                            O = new THREE.Vector3(Math.random(),Math.random(),Math.random());
+                            if(caArray.length > resSpan) { // use the calpha and the previous 4th c-alpha to calculate the helix direction
+                                O = currentCA.clone();
+                                oldCA = this.atoms[caArray[caArray.length - 1 - resSpan]].coord.clone();
+                                O.sub(oldCA);
+                            }
+                            else {
+                                O = new THREE.Vector3(Math.random(),Math.random(),Math.random());
+                            }
                         }
 
                         O.normalize(); // can be omitted for performance
@@ -1830,6 +1861,8 @@ iCn3D.prototype.createStrand = function (atoms, num, div, fill, coilWidth, helix
                 } // end if (atom.name === 'O' || (this.bCalphaOnly && atom.name === 'CA') ) {
         } // end if ((atom.name === 'O' || atom.name === 'CA') && !atom.het) {
     } // end for
+
+    caArray = [];
 
     this.createTube(tubeAtoms, 'CA', coilWidth, bHighlight);
 

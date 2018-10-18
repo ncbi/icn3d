@@ -24,7 +24,7 @@ iCn3DUI.prototype.changeSeqColor = function(residueArray) { var me = this;
    for(var i = 0, il = residueArray.length; i < il; ++i) {
        var pickedResidue = residueArray[i];
        if($("[id$=" + me.pre + pickedResidue + "]").length !== 0) {
-         var atom = me.icn3d.getFirstAtomObj(me.icn3d.residues[pickedResidue]);
+         var atom = me.icn3d.getFirstCalphaAtomObj(me.icn3d.residues[pickedResidue]);
          var color = (atom.color !== undefined) ? "#" + atom.color.getHexString() : me.icn3d.defaultAtomColor;
          //$("[id$=" + me.pre + pickedResidue + "]").attr('style', 'color:' + color);
          // annotations will have their own color, only the chain will have the changed color
@@ -99,7 +99,7 @@ iCn3DUI.prototype.updateHlSeq = function(bShowHighlight, residueHash, bUnion) { 
            me.removeHlSeq();
        }
 
-       if(residueHash === undefined) residueHash = me.icn3d.getResiduesFromAtoms(me.icn3d.hAtoms);
+       if(residueHash === undefined) residueHash = me.icn3d.getResiduesFromCalphaAtoms(me.icn3d.hAtoms);
 
        me.hlSeq(Object.keys(residueHash));
        me.changeSeqColor(Object.keys(residueHash));
@@ -109,7 +109,7 @@ iCn3DUI.prototype.updateHlSeqInChain = function(commandnameArray, bUnion) { var 
        if(bUnion === undefined || !bUnion) {
            me.removeHlSeq();
        }
-       //if(residueHash === undefined) residueHash = me.icn3d.getResiduesFromAtoms(me.icn3d.hAtoms);
+       //if(residueHash === undefined) residueHash = me.icn3d.getResiduesFromCalphaAtoms(me.icn3d.hAtoms);
 
        //me.hlSeq(Object.keys(residueHash));
        // speed up with chain highlight
@@ -159,10 +159,10 @@ iCn3DUI.prototype.updateHl2D = function(chainArray2d) { var me = this;
           var hlatoms = me.icn3d.intHash(me.icn3d.chains[chainArray2d[i]], me.icn3d.hAtoms);
           var ratio = 1.0 * Object.keys(hlatoms).length / Object.keys(me.icn3d.chains[chainArray2d[i]]).length;
 
-          var firstAtom = me.icn3d.getFirstAtomObj(hlatoms);
+          var firstAtom = me.icn3d.getFirstCalphaAtomObj(hlatoms);
           if(me.icn3d.alnChains[chainArray2d[i]] !== undefined) {
                 var alignedAtoms = me.icn3d.intHash(me.icn3d.alnChains[chainArray2d[i]], hlatoms);
-                if(Object.keys(alignedAtoms).length > 0) firstAtom = me.icn3d.getFirstAtomObj(alignedAtoms);
+                if(Object.keys(alignedAtoms).length > 0) firstAtom = me.icn3d.getFirstCalphaAtomObj(alignedAtoms);
             }
           var color = (firstAtom !== undefined && firstAtom.color !== undefined) ? '#' + firstAtom.color.getHexString() : '#FFFFFF';
 
@@ -225,11 +225,25 @@ iCn3DUI.prototype.setAtomMenu = function (commandnameArray) { var me = this;
   for(var i = 0, il = nameArray.length; i < il; ++i) {
       var name = nameArray[i];
 
+      var atom, atomHash;
+      if(me.icn3d.defNames2Atoms !== undefined && me.icn3d.defNames2Atoms.hasOwnProperty(name)) {
+          var atomArray = me.icn3d.defNames2Atoms[name];
+
+          if(atomArray.length > 0) atom = me.icn3d.atoms[atomArray[0]];
+      }
+      else if(me.icn3d.defNames2Residues !== undefined && me.icn3d.defNames2Residues.hasOwnProperty(name)) {
+          var residueArray = me.icn3d.defNames2Residues[name];
+          if(residueArray.length > 0) atomHash = me.icn3d.residues[residueArray[0]]
+          atom = me.icn3d.atoms[Object.keys(atomHash)[0]];
+      }
+
+      var color = (atom !== undefined) ? atom.color.getHexString() : '000000';
+
       if(commandnameArray.indexOf(name) != -1) {
-        html += "<option value='" + name + "' selected='selected'>" + name + "</option>";
+        html += "<option value='" + name + "' style='color:#" + color + "' selected='selected'>" + name + "</option>";
       }
       else {
-        html += "<option value='" + name + "'>" + name + "</option>";
+        html += "<option value='" + name + "' style='color:#" + color + "'>" + name + "</option>";
       }
   }
 
@@ -350,7 +364,7 @@ iCn3DUI.prototype.clearHighlight = function() { var me = this;
 iCn3DUI.prototype.showHighlight = function() { var me = this;
     me.icn3d.addHlObjects();
     me.updateHlAll();
-    me.bSelectResidue = true;
+    //me.bSelectResidue = true;
 };
 
 iCn3DUI.prototype.highlightChains = function(chainArray) { var me = this;

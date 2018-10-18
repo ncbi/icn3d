@@ -3,7 +3,11 @@
  */
 
 iCn3DUI.prototype.showSets = function() { var me = this;
-    me.openDialog(me.pre + 'dl_definedsets', 'Select Sets');
+    me.openDialog(me.pre + 'dl_definedsets', 'Select sets');
+    $("#" + me.pre + "dl_setsmenu").show();
+    $("#" + me.pre + "dl_setoperations").show();
+    $("#" + me.pre + "dl_command").hide();
+
     $("#" + me.pre + "atomsCustom").resizable();
 
     if(me.bSetChainsAdvancedMenu === undefined || !me.bSetChainsAdvancedMenu) {
@@ -25,7 +29,7 @@ iCn3DUI.prototype.clickCustomAtoms = function() { var me = this;
 
          var bUpdateHlMenus = false;
          me.changeCustomAtoms(nameArray, bUpdateHlMenus);
-         me.setLogCmd('select saved atoms ' + nameArray.join(' or '), true);
+         me.setLogCmd('select saved atoms ' + nameArray.join(' ' + me.setOperation + ' '), true);
 
          me.bSelectResidue = false;
        }
@@ -34,6 +38,26 @@ iCn3DUI.prototype.clickCustomAtoms = function() { var me = this;
     $("#" + me.pre + "atomsCustom").focus(function(e) {
        if(me.isMobile()) $("#" + me.pre + "atomsCustom").val("");
     });
+};
+
+iCn3DUI.prototype.deleteSelectedSets = function() { var me = this;
+   var nameArray = $("#" + me.pre + "atomsCustom").val();
+
+   for(var i = 0; i < nameArray.length; ++i) {
+     var selectedSet = nameArray[i];
+
+     if((me.icn3d.defNames2Atoms === undefined || !me.icn3d.defNames2Atoms.hasOwnProperty(selectedSet)) && (me.icn3d.defNames2Residues === undefined || !me.icn3d.defNames2Residues.hasOwnProperty(selectedSet)) ) continue;
+
+     if(me.icn3d.defNames2Atoms !== undefined && me.icn3d.defNames2Atoms.hasOwnProperty(selectedSet)) {
+         delete me.icn3d.defNames2Atoms[selectedSet];
+     }
+
+     if(me.icn3d.defNames2Residues !== undefined && me.icn3d.defNames2Residues.hasOwnProperty(selectedSet)) {
+         delete me.icn3d.defNames2Residues[selectedSet];
+     }
+   } // outer for
+
+   me.updateHlMenus();
 };
 
 iCn3DUI.prototype.changeCustomAtoms = function (nameArray, bUpdateHlMenus) { var me = this;
@@ -87,10 +111,10 @@ iCn3DUI.prototype.changeCustomAtoms = function (nameArray, bUpdateHlMenus) { var
        }
        else {
          var prevValue = $("#" + me.pre + "command").val();
-         $("#" + me.pre + "command").val(prevValue + ' or ' + nameArray[i]);
+         $("#" + me.pre + "command").val(prevValue + ' ' + me.setOperation + ' ' + nameArray[i]);
 
          var prevValue = $("#" + me.pre + "command_name").val();
-         $("#" + me.pre + "command_name").val(prevValue + ' or ' + nameArray[i]);
+         $("#" + me.pre + "command_name").val(prevValue + ' ' + me.setOperation + ' ' + nameArray[i]);
        }
    } // outer for
 };
@@ -195,7 +219,7 @@ iCn3DUI.prototype.combineSets = function (orArray, andArray, notArray, commandna
 
 iCn3DUI.prototype.setProtNuclLigInMenu = function () { var me = this;
     for(var chain in me.icn3d.chains) {
-          // Initially, add proteins, nucleotides, chemicals, ions, water into the mn "custom selections"
+          // Initially, add proteins, nucleotides, chemicals, ions, water into the menu "custom selections"
           if(Object.keys(me.icn3d.proteins).length > 0) {
               //me.icn3d.defNames2Atoms['proteins'] = Object.keys(me.icn3d.proteins);
               me.icn3d.defNames2Residues['proteins'] = Object.keys(me.icn3d.getResiduesFromAtoms(me.icn3d.proteins));
