@@ -152,6 +152,7 @@ iCn3D.prototype.setColorByOptions = function (options, atoms, bUseInputColor) {
             break;
 
         case 'b factor':
+/*
             //http://proteopedia.org/wiki/index.php/Disorder
             // < 30: blue; > 60: red; use 45 as the middle value
             if (!this.middB) {
@@ -169,6 +170,13 @@ iCn3D.prototype.setColorByOptions = function (options, atoms, bUseInputColor) {
                 this.spanBinv1 = (this.middB > minB) ? 1.0 / (this.middB - minB) : 0;
                 this.spanBinv2 = (this.middB < maxB) ? 1.0 / (maxB - this.middB) : 0;
             }
+*/
+
+            // http://proteopedia.org/wiki/index.php/Temperature_color_schemes
+            // Fixed: Middle (white): 50, red: >= 100, blue: 0
+            this.middB = 50;
+            this.spanBinv1 = 0.02;
+            this.spanBinv2 = 0.02;
 
             for (var i in atoms) {
                 var atom = this.atoms[i];
@@ -176,6 +184,8 @@ iCn3D.prototype.setColorByOptions = function (options, atoms, bUseInputColor) {
                     atom.color =  new THREE.Color().setRGB(0, 1, 0);
                 }
                 else {
+                    if(atom.b > 100) atom.b = 100;
+
                     atom.color = atom.b < this.middB ? new THREE.Color().setRGB(1 - (s = (this.middB - atom.b) * this.spanBinv1), 1 - s, 1) : new THREE.Color().setRGB(1, 1 - (s = (atom.b - this.middB) * this.spanBinv2), 1 - s);
                 }
 
