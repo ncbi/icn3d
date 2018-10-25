@@ -2046,11 +2046,14 @@ iCn3D.prototype.createTube = function (atoms, atomName, radius, bHighlight) {
                 }
                 pnts = []; colors = []; radii = []; prevone = []; nexttwo = [];
                 firstAtom = atom;
+                index = 0;
             }
             pnts.push(atom.coord);
 
             radii.push(radius || (atom.b > 0 ? atom.b * 0.01 : this.coilWidth));
             colors.push(atom.color);
+            // the starting residue of a coil uses the color from thenext residue to avoid using the color of the last helix/sheet residue
+            if(index === 1) colors[colors.length - 2] = atom.color;
 
             currentChain = atom.chain;
             currentResi = atom.resi;

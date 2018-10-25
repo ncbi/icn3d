@@ -233,8 +233,12 @@ iCn3DUI.prototype.setAtomMenu = function (commandnameArray) { var me = this;
       }
       else if(me.icn3d.defNames2Residues !== undefined && me.icn3d.defNames2Residues.hasOwnProperty(name)) {
           var residueArray = me.icn3d.defNames2Residues[name];
-          if(residueArray.length > 0) atomHash = me.icn3d.residues[residueArray[0]]
-          atom = me.icn3d.atoms[Object.keys(atomHash)[0]];
+          if(residueArray.length > 0) {
+              atomHash = me.icn3d.residues[residueArray[0]]
+              if(atomHash) {
+                  atom = me.icn3d.atoms[Object.keys(atomHash)[0]];
+              }
+          }
       }
 
       var color = (atom !== undefined) ? atom.color.getHexString() : '000000';
