@@ -19,7 +19,7 @@ We provided two types of iCn3D widgets: [basic interface](https://www.ncbi.nlm.n
 
 Either of these widgets could be easily added to your own web pages. Please see the [help page](https://www.ncbi.nlm.nih.gov/Structure/icn3d/docs/icn3d_help.html#HowToUse) for more details.
 
-<b>Complete package</b> of iCn3D including Three.js and jQuery can be downloaded from [https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.3.1.zip](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.3.1.zip). The "Download ZIP" link in this page does not include third-party libraries. 
+<b>Complete package</b> of iCn3D including Three.js and jQuery can be downloaded from [https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.3.2.zip](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.3.2.zip). The "Download ZIP" link in this page does not include third-party libraries. 
 
 ## Usage
 
@@ -72,6 +72,8 @@ gulp
 ```
 
 ## Change log
+The production version [icn3d-2.3.2](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.3.2.zip) was release on October 30, 2018. Water molecules were enabled to be shown when the structure is not a biological assembly. Gene symbols were shown for each chain in the "Sequences and Annotations" window.
+
 The production version [icn3d-2.3.1](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.3.1.zip) was release on October 25, 2018. The color of the the first residue in a coil was fixed.
 
 The production version [icn3d-2.3.0](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.3.0.zip) was release on October 18, 2018. Added set operations (union,intersection, exclusion) in "Defined Sets"; added buttons "Helix Sets" and "Sheet Sets" in the "Sequences and Annotations" window to define helix sets and sheet sets in the window "Defined Sets"; added "Save Color" and "Apply Saved Color" in the menu "Color"; added "Save Style" and "Apply Saved Style" in the menu "Style"; added "Side Chains" in the menu "Select" to select side chains; added two options for color by "Secondary" structures: "Sheets in Green" and "Sheets in Yellow"; added color by "B-factor" that is normalized with "Original" values or "Percentile" values.

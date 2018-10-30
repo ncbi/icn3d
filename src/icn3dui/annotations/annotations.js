@@ -232,7 +232,9 @@ iCn3DUI.prototype.getAnnotationData = function() { var me = this;
 
         var categoryStr = (index == 0) ? "<span class='icn3d-annoLargeTitle'><b>Proteins</b>: </span><br><br>" : "";
 
-        var chainHtml = "<div id='" + me.pre + "anno_" + chnid + "' class='icn3d-annotation'>" + categoryStr + "<span style='font-weight:bold;'>Annotations of " + chnid + "</span>: <a class='icn3d-blue' href='https://www.ncbi.nlm.nih.gov/protein?term=" + chnid + "' target='_blank' title='" + fullProteinName + "'>" + proteinName + "</a>&nbsp;&nbsp;&nbsp;"
+        var geneLink = (me.icn3d.chainsGene[chnid].geneId) ? " (Gene: <a href='https://www.ncbi.nlm.nih.gov/gene/" + me.icn3d.chainsGene[chnid].geneId + "' target='_blank' title='" + me.icn3d.chainsGene[chnid].geneDesc + "'>" + me.icn3d.chainsGene[chnid].geneSymbol + "</a>)" : '';
+
+        var chainHtml = "<div id='" + me.pre + "anno_" + chnid + "' class='icn3d-annotation'>" + categoryStr + "<span style='font-weight:bold;'>Annotations of " + chnid + "</span>: <a class='icn3d-blue' href='https://www.ncbi.nlm.nih.gov/protein?term=" + chnid + "' target='_blank' title='" + fullProteinName + "'>" + proteinName + "</a>" + geneLink + "&nbsp;&nbsp;&nbsp;"
         + me.addButton(chnid, "icn3d-addtrack", "Add Track", "Add a custom track", 60, buttonStyle) + "&nbsp;&nbsp;&nbsp;"
         + me.addButton(chnid, "icn3d-helixsets", "Helix Sets", "Define sets for each helix in this chain and add them to the menu of \"Defined Sets\"", 60, buttonStyle) + "&nbsp;"
         + me.addButton(chnid, "icn3d-sheetsets", "Sheet Sets", "Define sets for each sheet in this chain and add them to the menu of \"Defined Sets\"", 60, buttonStyle) + "&nbsp;"
@@ -540,7 +542,7 @@ iCn3DUI.prototype.showSeq = function(chnid, chnidBase, type) {  var me = this;
         var atom = me.icn3d.getFirstCalphaAtomObj(me.icn3d.chains[chnid]);
 
         //if(me.baseResi[chnid] != 0 && (me.cfg.mmdbid !== undefined || me.cfg.gi !== undefined || me.cfg.align !== undefined)) {
-        if((me.cfg.mmdbid !== undefined || me.cfg.gi !== undefined || me.cfg.align !== undefined) && atom.resi_ori !== undefined && atom.resi_ori != atom.resi ) {
+        if((me.cfg.mmdbid !== undefined || me.cfg.gi !== undefined || me.cfg.align !== undefined) && atom.resi_ori !== undefined && atom.resi_ori != atom.resi && chnid.indexOf('Misc') == -1 ) {
             htmlTmp += '<div class="icn3d-annoTitle" anno="0" title="NCBI Residue Numbers">NCBI Residue Numbers</div>';
         }
         else {
@@ -736,7 +738,7 @@ iCn3DUI.prototype.showSeq = function(chnid, chnidBase, type) {  var me = this;
     if(me.giSeq[chnid].length > 10) {
         var atom = me.icn3d.getFirstCalphaAtomObj(me.icn3d.chains[chnid]);
         //if(me.baseResi[chnid] != 0 && (me.cfg.mmdbid !== undefined || me.cfg.gi !== undefined || me.cfg.align !== undefined)) {
-        if((me.cfg.mmdbid !== undefined || me.cfg.gi !== undefined || me.cfg.align !== undefined) && atom.resi_ori !== undefined && atom.resi_ori != atom.resi ) {
+        if((me.cfg.mmdbid !== undefined || me.cfg.gi !== undefined || me.cfg.align !== undefined) && atom.resi_ori !== undefined && atom.resi_ori != atom.resi && chnid.indexOf('Misc') == -1 ) {
             htmlTmp = '<div class="icn3d-dl_sequence">';
             htmlTmp += '<div class="icn3d-residueLine" style="white-space:nowrap;">';
             htmlTmp += '<div class="icn3d-annoTitle" anno="0" title="PDB Residue Numbers">PDB Residue Numbers</div>';
@@ -857,7 +859,7 @@ iCn3DUI.prototype.showClinVarLabelOn3D = function(chnid) { var me = this;
           me.icn3d.hAtoms[j] = 1;
       }
 
-      me.icn3d.addResiudeLabels(me.icn3d.hAtoms);
+      //me.icn3d.addResiudeLabels(me.icn3d.hAtoms);
 
       $("#clinvar_" + me.pre + residueid).addClass('icn3d-highlightSeq');
 

@@ -631,6 +631,26 @@ iCn3DUI.prototype.setMenu3 = function() { var me = this;
 
     html += "  <li>-</li>";
 
+/*
+    html += "  <li><span>Electron Density</span>";
+    html += "    <ul>";
+    html += me.getRadio('mn5_elecmap', 'mn5_elecmap2fofc', '2Fo-Fc Map');
+    html += me.getRadio('mn5_elecmap', 'mn5_elecmapfofc', 'Fo-Fc Map');
+    html += "    </ul>";
+    html += "  </li>";
+
+    html += me.getLink('mn5_elecmapNo', 'Remove Map');
+
+    html += "  <li><span>Map <br>Wireframe</span>";
+    html += "    <ul>";
+    html += me.getRadio('mn5_mapwireframe', 'mn5_mapwireframeYes', 'Yes', true);
+    html += me.getRadio('mn5_mapwireframe', 'mn5_mapwireframeNo', 'No');
+    html += "    </ul>";
+    html += "  </li>";
+
+    html += "  <li>-</li>";
+*/
+
     html += "  <li><span>Background</span>";
     html += "    <ul>";
     html += me.getRadio('mn6_bkgd', 'mn6_bkgdTransparent', 'Transparent', true);

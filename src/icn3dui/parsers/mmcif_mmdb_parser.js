@@ -226,11 +226,13 @@ iCn3DUI.prototype.downloadMmdb = function (mmdbid, bGi) { var me = this;
    }
 */
 
+   // b: b-factor, s: water, ft: pdbsite
+   //&ft=1
    if(bGi !== undefined && bGi) {
-       url = "https://www.ncbi.nlm.nih.gov/Structure/mmdb/mmdb_strview.cgi?v=2&program=icn3d&b&gi=" + mmdbid;
+       url = "https://www.ncbi.nlm.nih.gov/Structure/mmdb/mmdb_strview.cgi?v=2&program=icn3d&b=1&s=1&ft=1&gi=" + mmdbid;
    }
    else {
-       url = "https://www.ncbi.nlm.nih.gov/Structure/mmdb/mmdb_strview.cgi?v=2&program=icn3d&b&uid=" + mmdbid;
+       url = "https://www.ncbi.nlm.nih.gov/Structure/mmdb/mmdb_strview.cgi?v=2&program=icn3d&b=1&s=1&ft=1&uid=" + mmdbid;
    }
 
    me.icn3d.bCid = undefined;
@@ -276,6 +278,7 @@ iCn3DUI.prototype.downloadMmdb = function (mmdbid, bGi) { var me = this;
         var molid2rescount = data.moleculeInfor;
         var molid2color = {}, chain2molid = {}, molid2chain = {};
         me.icn3d.chainsColor = {};
+        me.icn3d.chainsGene = {};
 
         var html = "<table width='100%'><tr><td></td><th>#</th><th align='center'>Chain</th><th align='center'>Residue Count</th></tr>";
 
@@ -300,6 +303,8 @@ iCn3DUI.prototype.downloadMmdb = function (mmdbid, bGi) { var me = this;
           molid2chain[i] = chain;
 
           me.icn3d.chainsColor[chain] = new THREE.Color(color);
+
+          me.icn3d.chainsGene[chain] = {'geneId': molid2rescount[i].geneId, 'geneSymbol': molid2rescount[i].geneSymbol, 'geneDesc': molid2rescount[i].geneDesc};
           ++index;
         }
 
@@ -594,6 +599,7 @@ iCn3DUI.prototype.loadAtomDataIn = function (data, id, type, seqalign) { var me 
     me.mmdbMolidResid2mmdbChainResi = {};
 
     var bPhosphorusOnly = me.icn3d.isCalphaPhosOnly(atoms, "O3'", "O3*");
+    var miscCnt = 0;
 
     for (var i in atoms) {
         ++serial;
@@ -623,7 +629,7 @@ iCn3DUI.prototype.loadAtomDataIn = function (data, id, type, seqalign) { var me 
             atm.resi = parseInt(atm.resi);
         }
 
-        if(mmdbId !== prevmmdbId) resiArray = [];
+        //if(mmdbId !== prevmmdbId) resiArray = [];
         if(atm.chain === undefined && (type === 'mmdbid' || type === 'align')) {
             if(type === 'mmdbid') {
               molid = atm.ids.m;
@@ -633,6 +639,7 @@ iCn3DUI.prototype.loadAtomDataIn = function (data, id, type, seqalign) { var me 
                   atm.chain = me.icn3d.molid2chain[molid].substr(pos + 1);
               }
               else {
+/*
                   if(molid !== prevMolid) {
                       resiArray.push(atm.resi);
                   }
@@ -644,8 +651,13 @@ iCn3DUI.prototype.loadAtomDataIn = function (data, id, type, seqalign) { var me 
                   else {
                       miscName = 'Misc2';
                   }
+*/
+                  var miscName = 'Misc';
 
-                  //all should be defined, no "Misc" should appear
+                  ++miscCnt;
+                  atm.resi = miscCnt;
+
+                  //if all are defined in the chain section, no "Misc" should appear
                   atm.chain = miscName;
               }
             }
@@ -656,6 +668,7 @@ iCn3DUI.prototype.loadAtomDataIn = function (data, id, type, seqalign) { var me 
                   atm.chain = me.icn3d.pdbid_molid2chain[mmdbId + '_' + molid];
               }
               else {
+/*
                   if(molid !== prevMolid) {
                       resiArray.push(atm.resi);
                   }
@@ -667,6 +680,10 @@ iCn3DUI.prototype.loadAtomDataIn = function (data, id, type, seqalign) { var me 
                   else {
                       miscName = 'Misc2';
                   }
+*/
+                  var miscName = 'Misc';
+                  ++miscCnt;
+                  atm.resi = miscCnt;
 
                   // chemicals do not have assigned chains.
                   atm.chain = miscName;
