@@ -580,6 +580,14 @@ iCn3DUI.prototype.applyCommand = function (commandStr) { var me = this;
     me.icn3d.opts['wireframe'] = 'no';
     me.icn3d.applySurfaceOptions();
   }
+  else if(command == 'set map wireframe on') {
+    me.icn3d.opts['mapwireframe'] = 'yes';
+    me.icn3d.applyMapOptions();
+  }
+  else if(command == 'set map wireframe off') {
+    me.icn3d.opts['mapwireframe'] = 'no';
+    me.icn3d.applyMapOptions();
+  }
   else if(command == 'set surface neighbors on') {
     me.icn3d.bConsiderNeighbors = true;
     me.icn3d.applySurfaceOptions();
@@ -976,6 +984,12 @@ iCn3DUI.prototype.applyCommand = function (commandStr) { var me = this;
 
     me.icn3d.opts['surface'] = value;
     me.icn3d.applySurfaceOptions();
+  }
+  else if(command.indexOf('set map') == 0) {
+    var value = command.substr(8);
+
+    me.icn3d.opts['map'] = value;
+    me.icn3d.applyMapOptions();
   }
   else if(command.indexOf('set camera') == 0) {
     var value = command.substr(command.lastIndexOf(' ') + 1);

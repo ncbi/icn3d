@@ -181,6 +181,8 @@ var iCn3D = function (id) {
         nucleotides: 'nucleotide cartoon',
         surface: 'nothing',
         wireframe: 'no',
+        map: 'nothing',
+        mapwireframe: 'yes',
         opacity: '1.0',
         chemicals: 'stick',
         water: 'nothing',
@@ -1142,6 +1144,7 @@ iCn3D.prototype = {
         this.prevHighlightObjects = [];
         this.prevHighlightObjects_ghost = [];
         this.prevSurfaces = [];
+        this.prevMaps = [];
 
         this.defNames2Residues = {}; // custom defined selection name -> residue array
         this.defNames2Atoms = {}; // custom defined selection name -> atom array
@@ -1198,6 +1201,7 @@ iCn3D.prototype = {
         this.prevHighlightObjects = [];
         this.prevHighlightObjects_ghost = [];
         this.prevSurfaces = [];
+        this.prevMaps = [];
 
         this.labels = {};   // hash of name -> a list of labels. Each label contains 'position', 'text', 'size', 'color', 'background'
                             // label name could be custom, residue, schmatic, distance
