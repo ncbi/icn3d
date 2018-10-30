@@ -577,6 +577,11 @@ iCn3D.prototype.setStyle2Atoms = function (atoms) {
       this.style2atoms = {};
 
       for(var i in atoms) {
+        // do not show water in assemly
+        if(this.bAssembly && this.water.hasOwnProperty(i)) {
+            this.atoms[i].style = 'nothing';
+        }
+
         if(this.style2atoms[this.atoms[i].style] === undefined) this.style2atoms[this.atoms[i].style] = {};
 
         this.style2atoms[this.atoms[i].style][i] = 1;

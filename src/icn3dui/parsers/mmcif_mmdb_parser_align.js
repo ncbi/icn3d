@@ -23,8 +23,8 @@ iCn3DUI.prototype.downloadAlignment = function (align) { var me = this;
     //var url = 'https://www.ncbi.nlm.nih.gov/Structure/vastplus/vastplus.cgi?cmd=c&w3d&' + ids_str;
     //var url2 = 'https://www.ncbi.nlm.nih.gov/Structure/vastplus/vastplus.cgi?cmd=c1&d&' + ids_str;
 
-    var url = 'https://www.ncbi.nlm.nih.gov/Structure/vastplus/vastplus.cgi?v=2&cmd=c&w3d&' + ids_str;
-    var url2 = 'https://www.ncbi.nlm.nih.gov/Structure/vastplus/vastplus.cgi?v=2&cmd=c1&d=1&' + ids_str;
+    var url = 'https://www.ncbi.nlm.nih.gov/Structure/vastplus/vastplus.cgi?v=2&cmd=c&b=1&s=1&w3d&' + ids_str;
+    var url2 = 'https://www.ncbi.nlm.nih.gov/Structure/vastplus/vastplus.cgi?v=2&cmd=c1&b=1&s=1&d=1&' + ids_str;
 
     if(me.cfg.inpara !== undefined) {
       url += me.cfg.inpara;

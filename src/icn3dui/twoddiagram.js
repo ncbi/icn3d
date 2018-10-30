@@ -352,17 +352,21 @@ iCn3DUI.prototype.draw2Ddgm = function(data, mmdbid, structureIndex, bUpdate) { 
 
 iCn3DUI.prototype.set2DdgmNote = function(bAlign) { var me = this;
     var html = "<div style='width:150px'><b>Nodes</b>:<br>";
-    //html += "<span style='margin-right:18px;'>&#9675;</span>Protein<br>";
-    //html += "<span style='margin-right:18px;'>&#9633;</span>Nucleotide<br>";
-    //html += "<span style='margin-right:18px;'>&#9671;</span>Chemical<br>";
-
     //html += "<span style='margin-right:18px;'>&#9711;</span>Protein<br>";
     //html += "<span style='margin-right:18px;'>&#9633;</span>Nucleotide<br>";
     //html += "<span style='margin-right:18px;'>&#9674;</span>Chemical<br>";
 
-    html += "<span style='margin-right:18px;'>O</span>Protein<br>";
-    html += "<span style='margin-right:18px;'>&#9634;</span>Nucleotide<br>";
-    html += "<span style='margin-right:18px;'>&#9671;</span>Chemical<br>";
+
+    if(me.isMac()) {
+        html += "<span style='margin-right:18px;'>&#9711;</span>Protein<br>";
+        html += "<span style='margin-right:18px;'>&#9634;</span>Nucleotide<br>";
+        html += "<span style='margin-right:18px;'>&#9826;</span>Chemical<br>";
+    }
+    else {
+        html += "<span style='margin-right:18px;'>O</span>Protein<br>";
+        html += "<span style='margin-right:18px;'>&#9634;</span>Nucleotide<br>";
+        html += "<span style='margin-right:18px;'>&#9671;</span>Chemical<br>";
+    }
 
     html += "<br><b>Lines</b>:<br> Interactions at 4 &#197;<br>"
     if(bAlign !== undefined && bAlign) html += "<b>Numbers in red</b>:<br> Aligned chains"
