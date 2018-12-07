@@ -112,7 +112,7 @@ iCn3DUI.prototype.draw2Ddgm = function(data, mmdbid, structureIndex, bUpdate) { 
                     type2 = 'protein';
                 }
 
-                var name = chainid2.substr(chainid2.indexOf('_') + 1) + "(" + type2 + ")";
+                var name = chainid2.substr(chainid2.indexOf('_') + 1) + " (" + type2 + ")";
 
                 if(me.chainname2residues[fisrtChainid] === undefined) me.chainname2residues[fisrtChainid] = {};
 

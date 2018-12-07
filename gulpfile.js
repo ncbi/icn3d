@@ -189,6 +189,8 @@ var full_js = [
     "src/surface/marchingcube.js",
     "src/surface/ProteinSurface4.js",
     "src/surface/setupsurface.js",
+    "src/surface/ElectroMap.js",
+    "src/surface/setupmap.js",
     "src/icn3d/draw/drawing_full.js",
     "src/icn3d/display/display_full.js",
     "src/icn3d/other_full.js"
@@ -210,6 +212,7 @@ var full_uijs = [
     "src/icn3dui/parsers/mmcif_mmdb_parser_align.js",
     "src/icn3dui/parsers/mol2_parser.js",
     "src/icn3dui/parsers/xyz_parser.js",
+    "src/icn3dui/parsers/dsn6_parser.js",
     "src/icn3dui/annotations/annotations.js",
     "src/icn3dui/annotations/addtrack.js",
     "src/icn3dui/selection/selection.js",

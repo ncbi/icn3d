@@ -592,6 +592,8 @@ iCn3DUI.prototype.setMenu3 = function() { var me = this;
     html += "    </ul>";
     html += "  </li>";
 
+    //html += me.getLink('mn3_setthickness', 'Set Style');
+
     html += "  <li>-</li>";
 
     html += me.getLink('mn3_styleSave', 'Save Style');
@@ -629,27 +631,29 @@ iCn3DUI.prototype.setMenu3 = function() { var me = this;
     html += "    </ul>";
     html += "  </li>";
 
-    html += "  <li>-</li>";
-
 /*
-    html += "  <li><span>Electron Density</span>";
-    html += "    <ul>";
-    html += me.getRadio('mn5_elecmap', 'mn5_elecmap2fofc', '2Fo-Fc Map');
-    html += me.getRadio('mn5_elecmap', 'mn5_elecmapfofc', 'Fo-Fc Map');
-    html += "    </ul>";
-    html += "  </li>";
+    if(me.cfg.cid === undefined) {
+        html += "  <li>-</li>";
 
-    html += me.getLink('mn5_elecmapNo', 'Remove Map');
+        html += "  <li><span>Electron Density</span>";
+        html += "    <ul>";
+        html += me.getRadio('mn5_elecmap', 'mn5_elecmap2fofc', '2Fo-Fc Map');
+        html += me.getRadio('mn5_elecmap', 'mn5_elecmapfofc', 'Fo-Fc Map');
+        html += "    </ul>";
+        html += "  </li>";
 
-    html += "  <li><span>Map <br>Wireframe</span>";
-    html += "    <ul>";
-    html += me.getRadio('mn5_mapwireframe', 'mn5_mapwireframeYes', 'Yes', true);
-    html += me.getRadio('mn5_mapwireframe', 'mn5_mapwireframeNo', 'No');
-    html += "    </ul>";
-    html += "  </li>";
+        html += me.getLink('mn5_elecmapNo', 'Remove Map');
+
+        html += "  <li><span>Map <br>Wireframe</span>";
+        html += "    <ul>";
+        html += me.getRadio('mn5_mapwireframe', 'mn5_mapwireframeYes', 'Yes', true);
+        html += me.getRadio('mn5_mapwireframe', 'mn5_mapwireframeNo', 'No');
+        html += "    </ul>";
+        html += "  </li>";
+    }
+*/
 
     html += "  <li>-</li>";
-*/
 
     html += "  <li><span>Background</span>";
     html += "    <ul>";
@@ -1080,18 +1084,7 @@ iCn3DUI.prototype.setDialogs = function() { var me = this;
     html += "</div>";
 
     html += "<div id='" + me.pre + "dl_thickness'>";
-    html += "<b>Line Radius</b>: <input type='text' id='" + me.pre + "linerad' value='1' size=4>&nbsp;&nbsp;&nbsp;(for stabilizers, hydrogen bonds, distance lines, default 0.1)<br/>";
-    html += "<b>Coil Radius</b>: <input type='text' id='" + me.pre + "coilrad' value='1.2' size=4>&nbsp;&nbsp;&nbsp;(for coils, default 0.3)<br/>";
-    html += "<b>Stick Radius</b>: <input type='text' id='" + me.pre + "stickrad' value='0.8' size=4>&nbsp;&nbsp;&nbsp;(for sticks, default 0.4)<br/>";
-    html += "<b>Trace Radius</b>: <input type='text' id='" + me.pre + "tracerad' value='1' size=4>&nbsp;&nbsp;&nbsp;(for C alpha trace, O3' trace, default 0.2)<br/>";
-
-    html += "<b>Ribbon Thickness</b>: <input type='text' id='" + me.pre + "ribbonthick' value='1' size=4>&nbsp;&nbsp;&nbsp;(for helix and sheet ribbons, nucleotide ribbons, default 0.2)<br/>";
-    html += "<b>Protein Ribbon Width</b>: <input type='text' id='" + me.pre + "prtribbonwidth' value='2.0' size=4>&nbsp;&nbsp;&nbsp;(for helix and sheet ribbons, default 1.3)<br/>";
-    html += "<b>Nucleotide Ribbon Width</b>: <input type='text' id='" + me.pre + "nucleotideribbonwidth' value='1.4' size=4>&nbsp;&nbsp;&nbsp;(for nucleotide ribbons, default 0.8)<br/>";
-
-    html += "<b>Ball Scale</b>: <input type='text' id='" + me.pre + "ballscale' value='0.6' size=4>&nbsp;&nbsp;&nbsp;(for styles 'Ball and Stick' and 'Dot', default 0.3)<br/>";
-
-    html += "<span style='white-space:nowrap'><button id='" + me.pre + "apply_thickness'>Preview</button></span>";
+    html += me.setThicknessHtml('3dprint');
     html += "</div>";
 
     html += "<div id='" + me.pre + "dl_addtrack'>";
@@ -1216,6 +1209,35 @@ iCn3DUI.prototype.setDialogs = function() { var me = this;
     return html;
 };
 
+iCn3DUI.prototype.setThicknessHtml = function (type) { var me = this;
+    var html = '';
+
+    // type == '3dprint' or 'style'
+    var linerad = (type == '3dprint') ? '1' : '0.1';
+    var coilrad = (type == '3dprint') ? '1.2' : '0.3';
+    var stickrad = (type == '3dprint') ? '0.8' : '0.4';
+    var tracerad = (type == '3dprint') ? '1' : '0.2';
+    var ribbonthick = (type == '3dprint') ? '1' : '0.2';
+    var prtribbonwidth = (type == '3dprint') ? '2' : '1.3';
+    var nucleotideribbonwidth = (type == '3dprint') ? '1.4' : '0.8';
+    var ballscale = (type == '3dprint') ? '0.6' : '0.3';
+
+    html += "<b>Line Radius</b>: <input type='text' id='" + me.pre + "linerad' value='" + linerad + "' size=4>&nbsp;&nbsp;&nbsp;(for stabilizers, hydrogen bonds, distance lines, default 0.1)<br/>";
+    html += "<b>Coil Radius</b>: <input type='text' id='" + me.pre + "coilrad' value='" + coilrad + "' size=4>&nbsp;&nbsp;&nbsp;(for coils, default 0.3)<br/>";
+    html += "<b>Stick Radius</b>: <input type='text' id='" + me.pre + "stickrad' value='" + stickrad + "' size=4>&nbsp;&nbsp;&nbsp;(for sticks, default 0.4)<br/>";
+    html += "<b>Trace Radius</b>: <input type='text' id='" + me.pre + "tracerad' value='" + tracerad + "' size=4>&nbsp;&nbsp;&nbsp;(for C alpha trace, O3' trace, default 0.2)<br/>";
+
+    html += "<b>Ribbon Thickness</b>: <input type='text' id='" + me.pre + "ribbonthick' value='" + ribbonthick + "' size=4>&nbsp;&nbsp;&nbsp;(for helix and sheet ribbons, nucleotide ribbons, default 0.2)<br/>";
+    html += "<b>Protein Ribbon Width</b>: <input type='text' id='" + me.pre + "prtribbonwidth' value='" + prtribbonwidth + "' size=4>&nbsp;&nbsp;&nbsp;(for helix and sheet ribbons, default 1.3)<br/>";
+    html += "<b>Nucleotide Ribbon Width</b>: <input type='text' id='" + me.pre + "nucleotideribbonwidth' value='" + nucleotideribbonwidth + "' size=4>&nbsp;&nbsp;&nbsp;(for nucleotide ribbons, default 0.8)<br/>";
+
+    html += "<b>Ball Scale</b>: <input type='text' id='" + me.pre + "ballscale' value='" + ballscale + "' size=4>&nbsp;&nbsp;&nbsp;(for styles 'Ball and Stick' and 'Dot', default 0.3)<br/>";
+
+    html += "<span style='white-space:nowrap'><button id='" + me.pre + "apply_thickness'>Preview</button></span>";
+
+    return html;
+};
+
 iCn3DUI.prototype.setSequenceGuide = function (suffix, bShown) { var me = this;
   var sequencesHtml = '';
 
@@ -1287,10 +1309,18 @@ iCn3DUI.prototype.getAlignSequencesAnnotations = function (alignChainArray, bUpd
       }
   }
 
+  var bModifyHAtoms = Object.keys(me.icn3d.hAtoms).length == Object.keys(me.icn3d.atoms).length && bHighlightChain && (bUpdateHighlightAtoms === undefined || bUpdateHighlightAtoms);
+
+  if(bModifyHAtoms) {
+      me.icn3d.hAtoms = {};
+  }
+
   for(var i in me.icn3d.alnChains) {
       var bHighlightChain = (alignChainArray !== undefined && chainHash.hasOwnProperty(i)) ? true : false;
 
-      if( bHighlightChain && (bUpdateHighlightAtoms === undefined || bUpdateHighlightAtoms) ) {
+      //if( bHighlightChain && (bUpdateHighlightAtoms === undefined || bUpdateHighlightAtoms) ) {
+      // do not update isa subset is selected already
+      if( bModifyHAtoms ) {
           me.icn3d.hAtoms = me.icn3d.unionHash(me.icn3d.hAtoms, me.icn3d.alnChains[i]);
       }
 

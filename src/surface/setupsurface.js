@@ -14,7 +14,7 @@ $3Dmol.SetupSurface = function (data) {
     var threshbox = data.threshbox; // maximum possible boxsize, default 180
 
     var ps = new $3Dmol.ProteinSurface(threshbox);
-    ps.initparm(data.extent, (data.type === 1) ? false : true, vol);
+    ps.initparm(data.extent, (data.type === 1) ? false : true);
 
     ps.fillvoxels(data.allatoms, data.extendedAtoms);
 
@@ -27,7 +27,8 @@ $3Dmol.SetupSurface = function (data) {
         ps.fillvoxelswaals(data.allatoms, data.extendedAtoms);
     }
 
-    ps.marchingcube(data.type);
+    //ps.marchingcube(data.type);
+    ps.marchingcube();
 
     ps.vpBits = null; // uint8 array of bitmasks
     ps.vpDistance = null; // floatarray of _squared_ distances

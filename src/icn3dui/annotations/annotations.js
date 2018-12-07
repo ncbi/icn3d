@@ -232,7 +232,7 @@ iCn3DUI.prototype.getAnnotationData = function() { var me = this;
 
         var categoryStr = (index == 0) ? "<span class='icn3d-annoLargeTitle'><b>Proteins</b>: </span><br><br>" : "";
 
-        var geneLink = (me.icn3d.chainsGene[chnid].geneId) ? " (Gene: <a href='https://www.ncbi.nlm.nih.gov/gene/" + me.icn3d.chainsGene[chnid].geneId + "' target='_blank' title='" + me.icn3d.chainsGene[chnid].geneDesc + "'>" + me.icn3d.chainsGene[chnid].geneSymbol + "</a>)" : '';
+        var geneLink = (me.icn3d.chainsGene[chnid] && me.icn3d.chainsGene[chnid].geneId) ? " (Gene: <a href='https://www.ncbi.nlm.nih.gov/gene/" + me.icn3d.chainsGene[chnid].geneId + "' target='_blank' title='" + me.icn3d.chainsGene[chnid].geneDesc + "'>" + me.icn3d.chainsGene[chnid].geneSymbol + "</a>)" : '';
 
         var chainHtml = "<div id='" + me.pre + "anno_" + chnid + "' class='icn3d-annotation'>" + categoryStr + "<span style='font-weight:bold;'>Annotations of " + chnid + "</span>: <a class='icn3d-blue' href='https://www.ncbi.nlm.nih.gov/protein?term=" + chnid + "' target='_blank' title='" + fullProteinName + "'>" + proteinName + "</a>" + geneLink + "&nbsp;&nbsp;&nbsp;"
         + me.addButton(chnid, "icn3d-addtrack", "Add Track", "Add a custom track", 60, buttonStyle) + "&nbsp;&nbsp;&nbsp;"
@@ -406,7 +406,7 @@ iCn3DUI.prototype.getSequenceData = function(chnid, chnidBase, type, index) { va
             categoryStr = "<span class='icn3d-annoLargeTitle'><b>Nucleotides</b>: </span><br><br>";
         }
         else if(type == 'chemical') {
-            categoryStr = "<span class='icn3d-annoLargeTitle'><b>Chemicals/Ions</b>: </span><br><br>";
+            categoryStr = "<span class='icn3d-annoLargeTitle'><b>Chemicals/Ions/Water</b>: </span><br><br>";
         }
     }
 
@@ -438,7 +438,7 @@ iCn3DUI.prototype.getSequenceData = function(chnid, chnidBase, type, index) { va
 
 iCn3DUI.prototype.getCombinedSequenceData = function(name, residArray, index) { var me = this;
 
-    var categoryStr = (index == 0) ? "<span class='icn3d-annoLargeTitle'><b>Chemicals/Ions</b>: </span><br><br>" : "";
+    var categoryStr = (index == 0) ? "<span class='icn3d-annoLargeTitle'><b>Chemicals/Ions/Water</b>: </span><br><br>" : "";
 
     var chemName;
     var pos = residArray[0].lastIndexOf('_');
