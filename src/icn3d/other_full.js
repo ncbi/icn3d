@@ -3,31 +3,33 @@
  */
 
 // get hbonds between "molecule" and "chemical"
-iCn3D.prototype.calculateChemicalHbonds = function (molecule, chemicals, threshold) {
-    if(Object.keys(molecule).length === 0 || Object.keys(chemicals).length === 0) return;
+iCn3D.prototype.calculateChemicalHbonds = function (startAtoms, targetAtoms, threshold) {
+    if(Object.keys(startAtoms).length === 0 || Object.keys(targetAtoms).length === 0) return;
 
     var atomHbond = {};
-    var chain_resi_atom;
+    var chain_resi, chain_resi_atom;
 
     var maxlengthSq = threshold * threshold;
 
-    for (var i in molecule) {
-      var atom = molecule[i];
+    for (var i in startAtoms) {
+      var atom = startAtoms[i];
 
       if(atom.elem === "N" || atom.elem === "O" || atom.elem === "F") { // calculate hydrogen bond
         chain_resi_atom = atom.structure + "_" + atom.chain + "_" + atom.resi + "_" + atom.name;
 
         atomHbond[chain_resi_atom] = atom;
       }
-    } // end of for (var i in molecule) {
+    } // end of for (var i in startAtoms) {
 
     var hbondsAtoms = {};
+    var residueHash = {};
 
-    for (var i in chemicals) {
-      var atom = chemicals[i];
+    for (var i in targetAtoms) {
+      var atom = targetAtoms[i];
 
       if(atom.elem === "N" || atom.elem === "O" || atom.elem === "F") { // calculate hydrogen bond
-        chain_resi_atom = atom.structure + "_" + atom.chain + "_" + atom.resi + "_" + atom.name;
+        chain_resi = atom.structure + "_" + atom.chain + "_" + atom.resi;
+        chain_resi_atom = chain_resi + "_" + atom.name;
 
         for (var j in atomHbond) {
           var xdiff = Math.abs(atom.coord.x - atomHbond[j].coord.x);
@@ -48,9 +50,22 @@ iCn3D.prototype.calculateChemicalHbonds = function (molecule, chemicals, thresho
 
           hbondsAtoms = this.unionHash(hbondsAtoms, this.residues[atom.structure + "_" + atom.chain + "_" + atom.resi]);
           hbondsAtoms = this.unionHash(hbondsAtoms, this.residues[atomHbond[j].structure + "_" + atomHbond[j].chain + "_" + atomHbond[j].resi]);
+
+          residueHash[chain_resi] = 1;
         } // end of for (var j in atomHbond) {
       }
-    } // end of for (var i in chemicals) {
+    } // end of for (var i in targetAtoms) {
+
+    var residueArray = Object.keys(residueHash);
+
+    // draw sidec for these residues
+    for(var i = 0, il = residueArray.length; i < il; ++i) {
+        for(var j in this.residues[residueArray[i]]) {
+            // all atoms should be shown for hbonds
+            this.atoms[j].style2 = 'stick';
+            //this.atoms[j].style2 = 'lines';
+        }
+    }
 
     return hbondsAtoms;
 };
@@ -197,6 +212,23 @@ iCn3D.prototype.removeLastSurface = function () {
    if(this.prevSurfaces.length > 0) {
        this.mdl.remove(this.prevSurfaces[this.prevSurfaces.length - 1]);
        this.prevSurfaces.slice(this.prevSurfaces.length - 1, 1);
+   }
+};
+
+iCn3D.prototype.removeMaps = function () {
+   // remove prevous highlight
+   for(var i = 0, il = this.prevMaps.length; i < il; ++i) {
+       this.mdl.remove(this.prevMaps[i]);
+   }
+
+   this.prevMaps = [];
+};
+
+iCn3D.prototype.removeLastMap = function () {
+   // remove prevous highlight
+   if(this.prevMaps.length > 0) {
+       this.mdl.remove(this.prevMaps[this.prevMaps.length - 1]);
+       this.prevMaps.slice(this.prevMaps.length - 1, 1);
    }
 };
 

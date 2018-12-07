@@ -3,7 +3,7 @@
  */
 
 // modified from iview (http://istar.cse.cuhk.edu.hk/iview/)
-iCn3D.prototype.createSurfaceRepresentation = function (atoms, type, wireframe, opacity) {
+iCn3D.prototype.createSurfaceRepresentation = function (atoms, type, wireframe, opacity) { var me = this;
     if(Object.keys(atoms).length == 0) return;
 
     var geo;
@@ -22,19 +22,46 @@ iCn3D.prototype.createSurfaceRepresentation = function (atoms, type, wireframe, 
         extendedAtoms = Object.keys(atoms);
     }
 
-    var ps = $3Dmol.SetupSurface({
-        extent: extent,
-        allatoms: this.atoms,
-        atomsToShow: Object.keys(atoms),
-        extendedAtoms: extendedAtoms,
-        type: type,
-        threshbox: this.threshbox
-    });
+    var ps;
+    if(type == 11) { // 2fofc
+        ps = $3Dmol.SetupMap({
+            //extent: extent,
+            allatoms: this.atoms,
+            atomsToShow: Object.keys(atoms),
+            extendedAtoms: extendedAtoms,
+            //type: type,
+            //threshbox: this.threshbox,
+            header: me.icn3d.mapData.header2,
+            data: me.icn3d.mapData.data2,
+            matrix: me.icn3d.mapData.matrix2
+        });
+    }
+    else if(type == 12) { // fofc
+        ps = $3Dmol.SetupMap({
+            //extent: extent,
+            allatoms: this.atoms,
+            atomsToShow: Object.keys(atoms),
+            extendedAtoms: extendedAtoms,
+            //type: type,
+            //threshbox: this.threshbox,
+            header: me.icn3d.mapData.header,
+            data: me.icn3d.mapData.data,
+            matrix: me.icn3d.mapData.matrix
+        });
+    }
+    else {
+        ps = $3Dmol.SetupSurface({
+            extent: extent,
+            allatoms: this.atoms,
+            atomsToShow: Object.keys(atoms),
+            extendedAtoms: extendedAtoms,
+            type: type,
+            threshbox: this.threshbox
+        });
+    }
 
     var verts = ps.vertices;
     var faces = ps.faces;
-
-    var me = this;
 
     geo = new THREE.Geometry();
     geo.vertices = verts.map(function (v) {
@@ -62,25 +89,10 @@ iCn3D.prototype.createSurfaceRepresentation = function (atoms, type, wireframe, 
 
     geo.colorsNeedUpdate = true;
 
-/*
-    geo.faces.forEach(function (f) {
-        f.vertexColors = ['a', 'b', 'c' ].map(function (d) {
-            var atomid = geo.vertices[f[d]].atomid;
-            return me.atoms[atomid].color;
-        });
-    });
-*/
-
     geo.type = 'Surface'; // to be recognized in vrml.js for 3D printing
 
-/*
-    var mesh = new THREE.Mesh(geo, new THREE.MeshLambertMaterial({ overdraw: me.overdraw,
-        vertexColors: THREE.VertexColors,
-        wireframe: wireframe,
-        opacity: opacity,
-        transparent: true,
-    }));
-*/
+    if(opacity == undefined) opacity = 1.0;
+
     var mesh = new THREE.Mesh(geo, new THREE.MeshPhongMaterial({ overdraw: me.overdraw,
         specular: this.frac,
         shininess: 10, //30,

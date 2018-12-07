@@ -986,6 +986,16 @@ iCn3D.prototype = {
         VAL: new THREE.Color(0x0F820F),
         ASX: new THREE.Color(0xFF69B4),
         GLX: new THREE.Color(0xFF69B4),
+          'G': new THREE.Color(0x008000),
+          'A': new THREE.Color(0x6080FF),
+          'T': new THREE.Color(0xFF8000),
+          'C': new THREE.Color(0xFF0000),
+          'U': new THREE.Color(0xFF8000),
+         'DG': new THREE.Color(0x008000),
+         'DA': new THREE.Color(0x6080FF),
+         'DT': new THREE.Color(0xFF8000),
+         'DC': new THREE.Color(0xFF0000),
+         'DU': new THREE.Color(0xFF8000)
     },
 
     defaultResidueColor: new THREE.Color(0xBEA06E),
@@ -1114,6 +1124,8 @@ iCn3D.prototype = {
         4: undefined
     },
 
+    mapData: {},
+
     // from iview (http://istar.cse.cuhk.edu.hk/iview/)
     hasCovalentBond: function (atom0, atom1) {
         var r = this.covalentRadii[atom0.elem] + this.covalentRadii[atom1.elem];
@@ -1129,6 +1141,7 @@ iCn3D.prototype = {
 
         this.chainsSeq = {}; // structure_chain name -> array of sequence
         this.chainsColor = {}; // structure_chain name -> color, show chain color in sequence display for mmdbid and align input
+        this.chainsGene = {}; // structure_chain name -> gene, show chain gene symbol in sequence display for mmdbid and align input
         this.chainsAn = {}; // structure_chain name -> array of annotations, such as residue number
         this.chainsAnTitle = {}; // structure_chain name -> array of annotation title
 

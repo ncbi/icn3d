@@ -25,6 +25,7 @@ iCn3D.prototype.applyChemicalbindingOptions = function (options) {
         if(startAtoms !== undefined) {
             var targetAtoms = this.getAtomsWithinAtom(this.atoms, startAtoms, radius);
 
+/*
             var residueHash = {};
 
             // draw sidec for these residues
@@ -38,10 +39,11 @@ iCn3D.prototype.applyChemicalbindingOptions = function (options) {
             for(var i = 0, il = residueArray.length; i < il; ++i) {
                 for(var j in this.residues[residueArray[i]]) {
                     // all atoms should be shown for hbonds
-                    this.atoms[j].style2 = 'stick';
+                    //this.atoms[j].style2 = 'stick';
+                    this.atoms[j].style2 = 'lines';
                 }
             }
-
+*/
             // show hydrogens
             var threshold = 3.5;
             this.opts["hbonds"] = "yes";
@@ -257,6 +259,39 @@ iCn3D.prototype.applySurfaceOptions = function (options) {
     }
 };
 
+iCn3D.prototype.applyMapOptions = function (options) {
+    if(options === undefined) options = this.opts;
+
+    switch (options.mapwireframe) {
+        case 'yes':
+            options.mapwireframe = true;
+            break;
+        case 'no':
+            options.mapwireframe = false;
+            break;
+    }
+
+    var atoms, currAtoms;
+
+    // only show the surface for atoms which are displaying
+    atoms = this.intHash(this.dAtoms, this.hAtoms);
+
+    currAtoms = this.hash2Atoms(atoms);
+
+    switch (options.surface.toLowerCase()) {
+        case '2fofc':
+            this.createSurfaceRepresentation(currAtoms, 11, options.mapwireframe);
+            break;
+        case 'fofc':
+            this.createSurfaceRepresentation(currAtoms, 12, options.mapwireframe);
+            break;
+        case 'nothing':
+            // remove surfaces
+            this.removeMaps();
+            break;
+    }
+};
+
 iCn3D.prototype.setFog = function() {
     var background = this.backgroundColors[this.opts.background.toLowerCase()];
 
@@ -283,10 +318,10 @@ iCn3D.prototype.setFog = function() {
 
 // change the display atom when alternating
 iCn3D.prototype.alternateStructures = function () {
-    this.dAtoms = {};
-
     var hAtomsCount = Object.keys(this.hAtoms).length;
     var allAtomsCount = Object.keys(this.atoms).length;
+
+    this.dAtoms = {};
 
     var moleculeArray = Object.keys(this.structures);
     for(var i = 0, il = moleculeArray.length; i < il; ++i) {
@@ -312,6 +347,7 @@ iCn3D.prototype.alternateStructures = function () {
     // also alternating the surfaces
     this.removeSurfaces();
     this.applySurfaceOptions();
+    this.applyMapOptions();
 
     this.draw();
 

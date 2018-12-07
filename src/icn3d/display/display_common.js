@@ -184,9 +184,10 @@ iCn3D.prototype.setColorByOptions = function (options, atoms, bUseInputColor) {
                     atom.color =  new THREE.Color().setRGB(0, 1, 0);
                 }
                 else {
-                    if(atom.b > 100) atom.b = 100;
+                    var b = atom.b;
+                    if(b > 100) b = 100;
 
-                    atom.color = atom.b < this.middB ? new THREE.Color().setRGB(1 - (s = (this.middB - atom.b) * this.spanBinv1), 1 - s, 1) : new THREE.Color().setRGB(1, 1 - (s = (atom.b - this.middB) * this.spanBinv2), 1 - s);
+                    atom.color = b < this.middB ? new THREE.Color().setRGB(1 - (s = (this.middB - b) * this.spanBinv1), 1 - s, 1) : new THREE.Color().setRGB(1, 1 - (s = (b - this.middB) * this.spanBinv2), 1 - s);
                 }
 
                 this.atomPrevColors[i] = atom.color;

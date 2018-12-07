@@ -71,7 +71,9 @@ var iCn3DUI = function(cfg) {
     me.opts['surface']            = 'nothing';            //Van der Waals surface, molecular surface, solvent accessible surface, nothing
     me.opts['opacity']            = '1.0';                //1.0, 0.9, 0.8, 0.7, 0.6, 0.5
     me.opts['wireframe']          = 'no';                 //yes, no
-    me.opts['chemicals']            = 'stick';              //lines, stick, ball and stick, schematic, sphere, nothing
+    me.opts['map']                = 'nothing';            //2fofc, fofc
+    me.opts['mapwireframe']       = 'yes';                //yes, no
+    me.opts['chemicals']          = 'stick';              //lines, stick, ball and stick, schematic, sphere, nothing
     me.opts['water']              = 'nothing';            //sphere, dot, nothing
     me.opts['ions']               = 'sphere';             //sphere, dot, nothing
     me.opts['hbonds']             = 'no';                 //yes, no
@@ -486,6 +488,14 @@ iCn3DUI.prototype = {
               me.icn3d.removeLastSurface();
           }
           me.icn3d.applySurfaceOptions();
+          //me.icn3d.render();
+          me.icn3d.draw(); // to make surface work in assembly
+      }
+      else if(id === 'map' || id === 'mapwireframe') {
+          if(id === 'mapwireframe') {
+              me.icn3d.removeLastMap();
+          }
+          me.icn3d.applyMapOptions();
           //me.icn3d.render();
           me.icn3d.draw(); // to make surface work in assembly
       }
@@ -929,6 +939,7 @@ iCn3DUI.prototype = {
                 for(var i in me.icn3d.residues[resid]) {
                     me.icn3d.hAtoms[i] = 1;
                     me.icn3d.atoms[i].style2 = 'stick';
+                    //me.icn3d.atoms[i].style2 = 'lines';
                 }
             }
 
@@ -1389,10 +1400,21 @@ iCn3DUI.prototype = {
        var text = '<html><body><b>Interacting residues</b>:<br/><table border=1 cellpadding=0 cellspacing=0><tr><th>Base Chain: Residues</th><th>Interacting Chain</th></tr>';
 
        //me.chainids2resids[fisrtChainid][secondChainid].push(resid);
+/*
        for(var fisrtChainid in me.chainids2resids) {
            for(var secondChainid in me.chainids2resids[fisrtChainid]) {
                text += '<tr><td>' + fisrtChainid + ': ';
                text += me.residueids2spec(me.chainids2resids[fisrtChainid][secondChainid]);
+               text += '</td><td>' + secondChainid + '</td></tr>';
+           }
+       }
+*/
+
+       for(var fisrtChainid in me.chainname2residues) {
+           for(var name in me.chainname2residues[fisrtChainid]) {
+               var secondChainid = fisrtChainid.substr(0, fisrtChainid.indexOf('_')) + '_' + name.substr(0, name.indexOf(' '));
+               text += '<tr><td>' + fisrtChainid + ': ';
+               text += me.residueids2spec(me.chainname2residues[fisrtChainid][name]);
                text += '</td><td>' + secondChainid + '</td></tr>';
            }
        }
@@ -1649,6 +1671,9 @@ iCn3DUI.prototype = {
 
             me.icn3d.removeSurfaces();
             me.icn3d.applySurfaceOptions();
+
+            me.icn3d.removeMaps();
+            me.icn3d.applyMapOptions();
        }
 
        var text = me.saveStlFile();
@@ -1695,6 +1720,9 @@ iCn3DUI.prototype = {
 
             me.icn3d.removeSurfaces();
             me.icn3d.applySurfaceOptions();
+
+            me.icn3d.removeMaps();
+            me.icn3d.applyMapOptions();
        }
 
        var text = me.saveVrmlFile();
@@ -2677,6 +2705,49 @@ iCn3DUI.prototype = {
         });
     },
 
+    clkMn5_elecmap2fofc: function() { var me = this;
+        $("#" + me.pre + "mn5_elecmap2fofc").click(function (e) {
+           var type = '2fofc';
+           me.Dsn6Parser(me.inputid, type);
+
+           me.setOption('map', '2fofc');
+           me.setLogCmd('set map 2fofc', true);
+        });
+    },
+
+    clkMn5_elecmapfofc: function() { var me = this;
+        $("#" + me.pre + "mn5_elecmapfofc").click(function (e) {
+           var type = 'fofc';
+           me.Dsn6Parser(me.inputid, type);
+
+           me.setOption('map', 'fofc');
+           me.setLogCmd('set map fofc', true);
+        });
+    },
+
+    clkMn5_elecmapNo: function() { var me = this;
+        $("#" + me.pre + "mn5_elecmapNo").click(function (e) {
+           me.setOption('map', 'nothing');
+           me.setLogCmd('set map nothing', true);
+        });
+    },
+
+    clkMn5_mapwireframeYes: function() { var me = this;
+        $("#" + me.pre + "mn5_mapwireframeYes").click(function (e) {
+           me.Dsn6Parser(me.inputid);
+
+           me.setOption('mapwireframe', 'yes');
+           me.setLogCmd('set map wireframe on', true);
+        });
+    },
+
+    clkMn5_mapwireframeNo: function() { var me = this;
+        $("#" + me.pre + "mn5_mapwireframeNo").click(function (e) {
+           me.setOption('mapwireframe', 'no');
+           me.setLogCmd('set map wireframe off', true);
+        });
+    },
+
     // mn 6
     clkMn6_assemblyYes: function() { var me = this;
         $("#" + me.pre + "mn6_assemblyYes").click(function (e) {
@@ -3393,6 +3464,9 @@ iCn3DUI.prototype = {
 
                me.icn3d.molTitle = "";
 
+               me.init();
+               me.icn3d.init();
+
                me.loadPdbData(dataStr);
              };
 
@@ -3432,6 +3506,9 @@ iCn3DUI.prototype = {
 
                me.inputid = undefined;
 
+               me.init();
+               me.icn3d.init();
+
                me.loadMol2Data(dataStr);
              };
 
@@ -3469,6 +3546,9 @@ iCn3DUI.prototype = {
 
                me.icn3d.molTitle = "";
                me.inputid = undefined;
+
+               me.init();
+               me.icn3d.init();
 
                me.loadSdfData(dataStr);
              };
@@ -3508,6 +3588,9 @@ iCn3DUI.prototype = {
                me.icn3d.molTitle = "";
                me.inputid = undefined;
 
+               me.init();
+               me.icn3d.init();
+
                me.loadXyzData(dataStr);
              };
 
@@ -3529,6 +3612,9 @@ iCn3DUI.prototype = {
 
            var type = $("#" + me.pre + "filetype").val();
            var url = $("#" + me.pre + "urlfile").val();
+
+           me.init();
+           me.icn3d.init();
 
            me.downloadUrl(url, type);
         });
@@ -3585,6 +3671,9 @@ iCn3DUI.prototype = {
                       if($("#" + me.pre + "cmdlog")) $("#" + me.pre + "cmdlog").show();
                   },
                   success: function(data) {
+                      me.init();
+                      me.icn3d.init();
+
                       me.loadMmcifData(data);
                   },
                   error : function(xhr, textStatus, errorThrown ) {
@@ -4237,6 +4326,11 @@ iCn3DUI.prototype = {
         me.clkMn5_opacity05();
         me.clkMn5_wireframeYes();
         me.clkMn5_wireframeNo();
+        me.clkMn5_elecmap2fofc();
+        me.clkMn5_elecmapfofc();
+        me.clkMn5_elecmapNo();
+        me.clkMn5_mapwireframeYes();
+        me.clkMn5_mapwireframeNo();
         me.clkMn6_assemblyYes();
         me.clkMn6_assemblyNo();
         me.clkMn6_addlabelResidues();

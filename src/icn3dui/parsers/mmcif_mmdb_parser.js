@@ -655,7 +655,9 @@ iCn3DUI.prototype.loadAtomDataIn = function (data, id, type, seqalign) { var me 
                   var miscName = 'Misc';
 
                   ++miscCnt;
-                  atm.resi = miscCnt;
+                  if(chainid2kind[chainNum] === 'solvent' || atm.resn === 'HOH') {
+                      atm.resi = miscCnt;
+                  }
 
                   //if all are defined in the chain section, no "Misc" should appear
                   atm.chain = miscName;
@@ -683,7 +685,9 @@ iCn3DUI.prototype.loadAtomDataIn = function (data, id, type, seqalign) { var me 
 */
                   var miscName = 'Misc';
                   ++miscCnt;
-                  atm.resi = miscCnt;
+                  if(chainid2kind[chainNum] === 'solvent' || atm.resn === 'HOH') {
+                      atm.resi = miscCnt;
+                  }
 
                   // chemicals do not have assigned chains.
                   atm.chain = miscName;
@@ -768,7 +772,7 @@ iCn3DUI.prototype.loadAtomDataIn = function (data, id, type, seqalign) { var me 
         // in vastplus.cgi, ions arenotlisted in alignedStructures...molecules, thus chainid2kind[chainNum] === undefined is used.
         // ions will be separated from chemicals later.
         // here "ligand" is used in the cgi output
-        var bChemicalIons = (me.cfg.mmcifid === undefined) ? (chainid2kind[chainNum] === 'ligand' || chainid2kind[chainNum] === undefined) : atm.mt === 'l';
+        var bChemicalIons = (me.cfg.mmcifid === undefined) ? (chainid2kind[chainNum] === 'ligand' || chainid2kind[chainNum] === 'otherPolymer' || chainid2kind[chainNum] === undefined) : atm.mt === 'l';
 
         // sometimes proteins or nucleotide may input as chemicals
         // use the hash residueColors for protein residues
@@ -808,6 +812,9 @@ iCn3DUI.prototype.loadAtomDataIn = function (data, id, type, seqalign) { var me 
           //if (atm.bonds.length === 0) me.icn3d.ions[serial] = 1;
           if (atm.elem === atm.resn) {
               me.icn3d.ions[serial] = 1;
+          }
+          else if (atm.resn === 'HOH') {
+              me.icn3d.water[serial] = 1;
           }
           else {
               me.icn3d.chemicals[serial] = 1;

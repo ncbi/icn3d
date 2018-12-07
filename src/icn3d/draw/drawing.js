@@ -2050,7 +2050,25 @@ iCn3D.prototype.createTube = function (atoms, atomName, radius, bHighlight) {
             }
             pnts.push(atom.coord);
 
-            radii.push(radius || (atom.b > 0 ? atom.b * 0.01 : this.coilWidth));
+            var radiusFinal = radius;
+            if(radius) {
+                radiusFinal = radius;
+            }
+            else {
+                if(atom.b > 0 && atom.b <= 100) {
+                    radiusFinal = atom.b * 0.01;
+                }
+                else if(atom.b > 100) {
+                    radiusFinal = 100 * 0.01;
+                }
+                else {
+                    radiusFinal = this.coilWidth;
+                }
+            }
+
+            //radii.push(radius || (atom.b > 0 ? atom.b * 0.01 : this.coilWidth));
+            radii.push(radiusFinal);
+
             colors.push(atom.color);
             // the starting residue of a coil uses the color from thenext residue to avoid using the color of the last helix/sheet residue
             if(index === 1) colors[colors.length - 2] = atom.color;
