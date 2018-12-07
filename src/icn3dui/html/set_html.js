@@ -592,7 +592,7 @@ iCn3DUI.prototype.setMenu3 = function() { var me = this;
     html += "    </ul>";
     html += "  </li>";
 
-    html += me.getLink('mn3_setthickness', 'set Style');
+    //html += me.getLink('mn3_setthickness', 'Set Style');
 
     html += "  <li>-</li>";
 
