@@ -33,9 +33,10 @@ $3Dmol.SetupSurface = function (data) {
     ps.vpBits = null; // uint8 array of bitmasks
     ps.vpDistance = null; // floatarray of _squared_ distances
     ps.vpAtomID = null; // intarray
-    ps.faces = null;
-    ps.verts = null;
 
     return ps.getFacesAndVertices(data.atomsToShow);
+
+    ps.faces = null;
+    ps.verts = null;
 };
 

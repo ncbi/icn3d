@@ -77,14 +77,9 @@ iCn3DUI.prototype.loadDsn6Data = function(dsn6data, type) { var me = this;
        byteView[i] = dsn6data.charCodeAt(i);
     }
 
-console.log("intView: " + intView.length);
-console.log("byteView: " + byteView.length);
-
     //var brixStr = String.fromCharCode.apply(null, byteView.subarray(0, 512));
     var headerText = byteView.slice(0, 512);
     var brixStr = String.fromCharCode.apply(null, headerText);
-
-console.log("brixStr: " + brixStr);
 
     if (brixStr.indexOf(':-)') == 0) {
       header.xStart = parseInt(brixStr.substr(10, 5)); // NXSTART
@@ -112,8 +107,6 @@ console.log("brixStr: " + brixStr);
 
       header.sigma = parseFloat(brixStr.substr(170, 12)) * 100;
     } else {
-console.log("intView intView[ 18 ]: " + intView[ 18 ]);
-
       // swap byte order when big endian
       if (intView[ 18 ] !== 100) {
         for (var i = 0, n = intView.length; i < n; ++i) {
@@ -153,8 +146,6 @@ console.log("intView intView[ 18 ]: " + intView[ 18 ]);
       summand = intView[ 16 ];
       //header.gamma = intView[ 14 ] * factor;
     }
-
-console.log("header: " + JSON.stringify(header));
 
     var data = new Float32Array(
       header.xExtent * header.yExtent * header.zExtent
@@ -209,12 +200,15 @@ console.log("header: " + JSON.stringify(header));
         me.icn3d.mapData.matrix = me.getMatrix(header);
     }
 
+//console.log("header: " + JSON.stringify(header));
+//console.log("data: " + Object.keys(data).length);
+
+    me.setOption('map', type);
+
     // for 1TOP
     // header: {"xStart":765,"yStart":18,"zStart":765,"xExtent":83,"yExtent":118,"zExtent":88,"xRate":114,"yRate":114,"zRate":102,"xlen":-64.03750000000001,"ylen":-64.03750000000001,"zlen":-57.6375,"alpha":90,"beta":90,"gamma":-118.4375}
     // data: {"0":0.7797271013259888,"1":1.0396361351013184,"2":1.5594542026519775,"3":1.4944769144058228,"4":1.0396361351013184,...
 
-console.log("header: " + JSON.stringify(header));
-console.log("data: " + Object.keys(data).length);
     //if (header.sigma) {
     //  v.setStats(undefined, undefined, undefined, header.sigma);
     //}
@@ -253,6 +247,26 @@ iCn3DUI.prototype.getMatrix = function(header) { var me = this;
     var nxyz = [ 0, h.xRate, h.yRate, h.zRate ];
     var mapcrs = [ 0, 1, 2, 3 ];
 
+    //https://www.ks.uiuc.edu/Research/vmd/plugins/doxygen/dsn6plugin_8C-source.html
+    // Convert the origin from grid space to cartesian coordinates
+    // origin
+    var x0 = basisX[0] / h.xRate * h.xStart + basisY[0] / h.yRate * h.yStart + basisZ[0] / h.zRate * h.zStart;
+    var y0 = basisY[1] / h.yRate * h.yStart + basisZ[1] / h.zRate * h.zStart;
+    var z0 = basisZ[2] / h.zRate * h.zStart;
+
+    // axis
+    var xaxis = new THREE.Vector3(basisX[0] / h.xRate * (h.xExtent - 1), 0, 0);
+    var yaxis = new THREE.Vector3(basisY[0] / h.yRate * (h.yExtent - 1), basisY[1] / h.yRate * (h.yExtent - 1), 0);
+    var zaxis = new THREE.Vector3(basisZ[0] / h.zRate * (h.zExtent - 1), basisZ[1] / h.zRate * (h.zExtent - 1), basisZ[2] / h.zRate * (h.zExtent - 1));
+
+    // size
+    var xsize = h.xExtent;
+    var ysize = h.yExtent;
+    var zsize = h.zExtent;
+
+
+// console.log("x0: " + x0 + " y0: " + y0 + " z0: " + z0);
+
     var matrix = new THREE.Matrix4();
 
     matrix.set(
@@ -271,6 +285,7 @@ iCn3DUI.prototype.getMatrix = function(header) { var me = this;
       0, 0, 0, 1
     );
 
+
     matrix.multiply(
       new THREE.Matrix4().makeRotationY(Math.PI * 0.5)
     );
@@ -282,6 +297,7 @@ iCn3DUI.prototype.getMatrix = function(header) { var me = this;
     matrix.multiply(new THREE.Matrix4().makeScale(
       -1, 1, 1
     ));
+
 
     return matrix;
 };
