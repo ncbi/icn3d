@@ -1643,6 +1643,12 @@ iCn3DUI.prototype = {
         });
     },
 
+    clkMn1_pngimage: function() { var me = this;
+        $("#" + me.pre + "mn1_pngimage").click(function(e) {
+           me.openDialog(me.pre + 'dl_pngimage', 'Please input the PNG image');
+        });
+    },
+
     clkMn1_state: function() { var me = this;
         $("#" + me.pre + "mn1_state").click(function(e) {
            me.openDialog(me.pre + 'dl_state', 'Please input the state file');
@@ -2710,7 +2716,7 @@ iCn3DUI.prototype = {
            var type = '2fofc';
            me.Dsn6Parser(me.inputid, type);
 
-           me.setOption('map', '2fofc');
+           //me.setOption('map', '2fofc');
            me.setLogCmd('set map 2fofc', true);
         });
     },
@@ -2720,7 +2726,7 @@ iCn3DUI.prototype = {
            var type = 'fofc';
            me.Dsn6Parser(me.inputid, type);
 
-           me.setOption('map', 'fofc');
+           //me.setOption('map', 'fofc');
            me.setLogCmd('set map fofc', true);
         });
     },
@@ -2734,7 +2740,7 @@ iCn3DUI.prototype = {
 
     clkMn5_mapwireframeYes: function() { var me = this;
         $("#" + me.pre + "mn5_mapwireframeYes").click(function (e) {
-           me.Dsn6Parser(me.inputid);
+           //me.Dsn6Parser(me.inputid);
 
            me.setOption('mapwireframe', 'yes');
            me.setLogCmd('set map wireframe on', true);
@@ -3361,6 +3367,51 @@ iCn3DUI.prototype = {
            me.setLogCmd("load cid " + $("#" + me.pre + "cid").val(), false);
 
            window.open('https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?cid=' + $("#" + me.pre + "cid").val(), '_blank');
+        });
+    },
+
+    clickReload_pngimage: function() { var me = this;
+        $("#" + me.pre + "reload_pngimage").click(function(e) {
+           e.preventDefault();
+
+           dialog.dialog( "close" );
+           //close all dialog
+           $(".ui-dialog-content").dialog("close");
+
+           // initialize icn3dui
+           me.init();
+           me.icn3d.init();
+
+           var file = $("#" + me.pre + "pngimage")[0].files[0];
+
+           if(!file) {
+             alert("Please select a file before clicking 'Load'");
+           }
+           else {
+             if (!window.File || !window.FileReader || !window.FileList || !window.Blob) {
+                alert('The File APIs are not fully supported in this browser.');
+             }
+
+             var reader = new FileReader();
+             reader.onload = function (e) {
+               var imageStr = e.target.result; // or = reader.result;
+               var matchedStr = 'Share Link: ';
+               var pos = imageStr.indexOf(matchedStr);
+               if(pos == -1) {
+                   alert('Please load a PNG image saved by clicking "Save Files > PNG Image" in the File menu...');
+               }
+               else {
+                   var url = imageStr.substr(pos + matchedStr.length);
+
+                   me.setLogCmd('load iCn3D PNG image ' + $("#" + me.pre + "pngimage").val(), false);
+
+                   window.open(url);
+               }
+             };
+
+             reader.readAsText(file);
+           }
+
         });
     },
 
@@ -4214,6 +4265,7 @@ iCn3DUI.prototype = {
         me.clkMn1_mmdbid();
         me.clkMn1_gi();
         me.clkMn1_cid();
+        me.clkMn1_pngimage();
         me.clkMn1_state();
         me.clkMn1_selection();
         me.clkMn1_exportState();
@@ -4399,6 +4451,7 @@ iCn3DUI.prototype = {
         me.clickReload_mmdb();
         me.clickReload_gi();
         me.clickReload_cid();
+        me.clickReload_pngimage();
         me.clickReload_state();
         me.clickReload_selectionfile();
         me.clickApplycustomcolor();

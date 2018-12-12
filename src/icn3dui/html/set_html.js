@@ -197,6 +197,7 @@ iCn3DUI.prototype.setMenu1 = function() { var me = this;
     html += me.getLink('mn1_xyzfile', 'XYZ File');
     html += me.getLink('mn1_urlfile', 'Url (Same Host) ');
     html += "      <li>-</li>";
+    html += me.getLink('mn1_pngimage', 'iCn3D PNG Image');
     html += me.getLink('mn1_state', 'State/Script File');
     html += me.getLink('mn1_selection', 'Selection File');
     html += "    </ul>";
@@ -230,7 +231,7 @@ iCn3DUI.prototype.setMenu1 = function() { var me = this;
 
     html += "  <li><span>Save Files</span>";
     html += "    <ul>";
-    html += me.getLink('mn1_exportCanvas', 'PNG Image');
+    html += me.getLink('mn1_exportCanvas', 'iCn3D PNG Image');
     html += me.getLink('mn1_exportState', 'State File');
     html += me.getLink('mn1_exportSelections', 'Selection File');
     html += me.getLink('mn1_exportCounts', 'Residue Counts');
@@ -652,7 +653,6 @@ iCn3DUI.prototype.setMenu3 = function() { var me = this;
         html += "  </li>";
     }
 */
-
     html += "  <li>-</li>";
 
     html += "  <li><span>Background</span>";
@@ -1011,6 +1011,11 @@ iCn3DUI.prototype.setDialogs = function() { var me = this;
     html += "<div id='" + me.pre + "dl_cid'>";
     html += "PubChem CID: <input type='text' id='" + me.pre + "cid' value='2244' size=8> ";
     html += "<button id='" + me.pre + "reload_cid'>Load</button>";
+    html += "</div>";
+
+    html += "<div id='" + me.pre + "dl_pngimage'>";
+    html += "iCn3D PNG image: <input type='file' id='" + me.pre + "pngimage'><br/>";
+    html += "<button id='" + me.pre + "reload_pngimage' style='margin-top: 6px;'>Load</button>";
     html += "</div>";
 
     html += "<div id='" + me.pre + "dl_state'>";

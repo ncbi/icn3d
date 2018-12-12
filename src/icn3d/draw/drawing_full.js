@@ -22,6 +22,12 @@ iCn3D.prototype.createSurfaceRepresentation = function (atoms, type, wireframe, 
         extendedAtoms = Object.keys(atoms);
     }
 
+    var levelFor2fofc = 1.0; //1.5;
+    var levelForfofc = 3.0;
+    var colorFor2fofc = new THREE.Color('#00FFFF');
+    var colorForfofc = new THREE.Color('#00FF00');
+    var color;
+
     var ps;
     if(type == 11) { // 2fofc
         ps = $3Dmol.SetupMap({
@@ -31,10 +37,13 @@ iCn3D.prototype.createSurfaceRepresentation = function (atoms, type, wireframe, 
             extendedAtoms: extendedAtoms,
             //type: type,
             //threshbox: this.threshbox,
-            header: me.icn3d.mapData.header2,
-            data: me.icn3d.mapData.data2,
-            matrix: me.icn3d.mapData.matrix2
+            header: me.mapData.header2,
+            data: me.mapData.data2,
+            matrix: me.mapData.matrix2,
+            isovalue: levelFor2fofc
         });
+
+        color = colorFor2fofc;
     }
     else if(type == 12) { // fofc
         ps = $3Dmol.SetupMap({
@@ -44,10 +53,13 @@ iCn3D.prototype.createSurfaceRepresentation = function (atoms, type, wireframe, 
             extendedAtoms: extendedAtoms,
             //type: type,
             //threshbox: this.threshbox,
-            header: me.icn3d.mapData.header,
-            data: me.icn3d.mapData.data,
-            matrix: me.icn3d.mapData.matrix
+            header: me.mapData.header,
+            data: me.mapData.data,
+            matrix: me.mapData.matrix,
+            isovalue: levelForfofc
         });
+
+        color = colorForfofc;
     }
     else {
         ps = $3Dmol.SetupSurface({
@@ -66,14 +78,20 @@ iCn3D.prototype.createSurfaceRepresentation = function (atoms, type, wireframe, 
     geo = new THREE.Geometry();
     geo.vertices = verts.map(function (v) {
         var r = new THREE.Vector3(v.x, v.y, v.z);
+
         r.atomid = v.atomid;
         return r;
     });
     geo.faces = faces.map(function (f) {
         //return new THREE.Face3(f.a, f.b, f.c);
         var vertexColors = ['a', 'b', 'c' ].map(function (d) {
-            var atomid = geo.vertices[f[d]].atomid;
-            return me.atoms[atomid].color;
+            if(type == 11 || type == 12) { // 2fofc, fofc
+                return color;
+            }
+            else {
+                var atomid = geo.vertices[f[d]].atomid;
+                return me.atoms[atomid].color;
+            }
         });
 
         return new THREE.Face3(f.a, f.b, f.c, undefined, vertexColors);

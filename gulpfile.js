@@ -189,7 +189,7 @@ var full_js = [
     "src/surface/marchingcube.js",
     "src/surface/ProteinSurface4.js",
     "src/surface/setupsurface.js",
-    "src/surface/ElectroMap.js",
+    "src/surface/ElectronMap.js",
     "src/surface/setupmap.js",
     "src/icn3d/draw/drawing_full.js",
     "src/icn3d/display/display_full.js",

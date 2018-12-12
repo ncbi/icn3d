@@ -278,7 +278,7 @@ iCn3D.prototype.applyMapOptions = function (options) {
 
     currAtoms = this.hash2Atoms(atoms);
 
-    switch (options.surface.toLowerCase()) {
+    switch (options.map.toLowerCase()) {
         case '2fofc':
             this.createSurfaceRepresentation(currAtoms, 11, options.mapwireframe);
             break;

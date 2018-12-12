@@ -47,6 +47,10 @@ $3Dmol.ElectronMap = function(threshbox) {
     /** @const */
     var ISBOUND = 4;
 
+    var isovalue = 1.5;
+    var dataHash = {};
+    var matrix;
+
     var ptranx = 0, ptrany = 0, ptranz = 0;
     var probeRadius = 1.4;
     var defaultScaleFactor = 2;
@@ -88,7 +92,7 @@ $3Dmol.ElectronMap = function(threshbox) {
                new Int32Array([ -1, 1, -1 ]),
                new Int32Array([ -1, -1, -1 ]) ];
 
-    var origextent;
+    //var origextent;
 
     this.getFacesAndVertices = function(atomlist) {
         var atomsToShow = {};
@@ -97,15 +101,24 @@ $3Dmol.ElectronMap = function(threshbox) {
             atomsToShow[atomlist[i]] = true;
         var vertices = verts;
         for (i = 0, il = vertices.length; i < il; i++) {
+/*
             vertices[i].x = vertices[i].x / scaleFactor - ptranx;
             vertices[i].y = vertices[i].y / scaleFactor - ptrany;
             vertices[i].z = vertices[i].z / scaleFactor - ptranz;
+*/
+
+            var r = new THREE.Vector3(vertices[i].x, vertices[i].y, vertices[i].z).applyMatrix4(matrix);
+            vertices[i].x = r.x / scaleFactor - ptranx;
+            vertices[i].y = r.y / scaleFactor - ptrany;
+            vertices[i].z = r.z / scaleFactor - ptranz;
         }
 
         var finalfaces = [];
         for (i = 0, il = faces.length; i < il; i += 3) {
             //var f = faces[i];
             var fa = faces[i], fb = faces[i+1], fc = faces[i+2];
+
+/*
             var a = vertices[fa]['atomid'], b = vertices[fb]['atomid'], c = vertices[fc]['atomid'];
 
             // must be a unique face for each atom
@@ -117,6 +130,8 @@ $3Dmol.ElectronMap = function(threshbox) {
             if (!atomsToShow[which]) {
                 continue;
             }
+*/
+
             var av = vertices[faces[i]];
             var bv = vertices[faces[i+1]];
             var cv = vertices[faces[i+2]];
@@ -144,29 +159,31 @@ $3Dmol.ElectronMap = function(threshbox) {
     };
 
 
-    this.initparm = function(header, data, matrix) {
+    this.initparm = function(header, inData, inMatrix, inIsovalue) {
+        isovalue = inIsovalue;
+        dataHash = inData;
+        matrix = inMatrix;
+
         var margin = (1 / scaleFactor) * 5.5; // need margin to avoid
                                                 // boundary/round off effects
-        origextent = extent;
-        pminx = extent[0][0]; pmaxx = extent[1][0];
-        pminy = extent[0][1]; pmaxy = extent[1][1];
-        pminz = extent[0][2]; pmaxz = extent[1][2];
+        //origextent = extent;
 
-        if (!btype) {
-            pminx -= margin;
-            pminy -= margin;
-            pminz -= margin;
-            pmaxx += margin;
-            pmaxy += margin;
-            pmaxz += margin;
-        } else {
-            pminx -= probeRadius + margin;
-            pminy -= probeRadius + margin;
-            pminz -= probeRadius + margin;
-            pmaxx += probeRadius + margin;
-            pmaxy += probeRadius + margin;
-            pmaxz += probeRadius + margin;
-        }
+        pminx = 0; pmaxx = header.xExtent - 1;
+        pminy = 0; pmaxy = header.yExtent - 1;
+        pminz = 0; pmaxz = header.zExtent - 1;
+
+/*
+        pminx = -0.5 *(header.xExtent - 1); pmaxx = 0.5 *(header.xExtent - 1);
+        pminy = -0.5 *(header.yExtent - 1); pmaxy = 0.5 *(header.yExtent - 1);
+        pminz = -0.5 *(header.zExtent - 1); pmaxz = 0.5 *(header.zExtent - 1);
+*/
+/*
+        pminx -= margin;
+        pminy -= margin;
+        pminz -= margin;
+        pmaxx += margin;
+        pmaxy += margin;
+        pmaxz += margin;
 
         pminx = Math.floor(pminx * scaleFactor) / scaleFactor;
         pminy = Math.floor(pminy * scaleFactor) / scaleFactor;
@@ -182,10 +199,10 @@ $3Dmol.ElectronMap = function(threshbox) {
         // !!! different between 3Dmol and iCn3D
         // copied from surface.js from iview
         var boxLength = 128;
-        scaleFactor = pmaxx - pminx;
-        if ((pmaxy - pminy) > scaleFactor) scaleFactor = pmaxy - pminy;
-        if ((pmaxz - pminz) > scaleFactor) scaleFactor = pmaxz - pminz;
-        scaleFactor = (boxLength - 1.0) / scaleFactor;
+        var maxLen = pmaxx - pminx;
+        if ((pmaxy - pminy) > maxLen) maxLen = pmaxy - pminy;
+        if ((pmaxz - pminz) > maxLen) maxLen = pmaxz - pminz;
+        scaleFactor = (boxLength - 1.0) / maxLen;
 
         boxLength = Math.floor(boxLength * defaultScaleFactor / scaleFactor);
         scaleFactor = defaultScaleFactor;
@@ -196,30 +213,37 @@ $3Dmol.ElectronMap = function(threshbox) {
             scaleFactor = scaleFactor * sfthresh;
         }
         // end of surface.js part
+*/
+
+        ptranx = -pminx;
+        ptrany = -pminy;
+        ptranz = -pminz;
+
+        var maxLen = pmaxx - pminx;
+        if ((pmaxy - pminy) > maxLen) maxLen = pmaxy - pminy;
+        if ((pmaxz - pminz) > maxLen) maxLen = pmaxz - pminz;
+
+        scaleFactor = 1;
+        boxLength = maxLen;
 
         pLength = Math.ceil(scaleFactor * (pmaxx - pminx)) + 1;
         pWidth = Math.ceil(scaleFactor * (pmaxy - pminy)) + 1;
         pHeight = Math.ceil(scaleFactor * (pmaxz - pminz)) + 1;
 
-        this.boundingatom(btype);
+        //this.boundingatom();
         cutRadius = probeRadius * scaleFactor;
 
         vpBits = new Uint8Array(pLength * pWidth * pHeight);
         vpDistance = new Float64Array(pLength * pWidth * pHeight); // float 32
-        // doesn't
-        // play
-        // nicely
-        // with
-        // native
-        // floats
         vpAtomID = new Int32Array(pLength * pWidth * pHeight);
         //console.log("Box size: ", pLength, pWidth, pHeight, vpBits.length);
     };
 
+/*
     this.boundingatom = function(btype) {
         var tradius = [];
         var txz, tdept, sradius, idx;
-        flagradius = btype;
+        //flagradius = btype;
 
         for ( var i in vdwRadii) {
             if(!vdwRadii.hasOwnProperty(i))
@@ -248,24 +272,37 @@ $3Dmol.ElectronMap = function(threshbox) {
             }
         }
     };
+*/
 
     this.fillvoxels = function(atoms, atomlist) { // (int seqinit,int
         // seqterm,bool
         // atomtype,atom*
         // proseq,bool bcolor)
-        var i, il;
+        var i, j, k, il;
         for (i = 0, il = vpBits.length; i < il; i++) {
             vpBits[i] = 0;
             vpDistance[i] = -1.0;
             vpAtomID[i] = -1;
         }
 
+        var index = 0;
+        for(i = 0; i < pLength; ++i) {
+            for(j = 0; j < pWidth; ++j) {
+                for(k = 0; k < pHeight; ++k) {
+                    vpBits[index] = (dataHash[index.toString()] >= isovalue) ? 1 : 0;
+                    ++index;
+                }
+            }
+        }
+
+/*
         for (i in atomlist) {
             var atom = atoms[atomlist[i]];
             if (atom === undefined)
                 continue;
             this.fillAtom(atom, atoms);
         }
+*/
 
         for (i = 0, il = vpBits.length; i < il; i++)
             if (vpBits[i] & INOUT)
@@ -273,7 +310,7 @@ $3Dmol.ElectronMap = function(threshbox) {
 
     };
 
-
+/*
     this.fillAtom = function(atom, atoms) {
         var cx, cy, cz, ox, oy, oz, mi, mj, mk, i, j, k, si, sj, sk;
         var ii, jj, kk, n;
@@ -341,6 +378,7 @@ $3Dmol.ElectronMap = function(threshbox) {
             }// j
         }// i
     };
+*/
 
     this.buildboundary = function() {
         var pWH = pWidth*pHeight;
@@ -387,6 +425,9 @@ $3Dmol.ElectronMap = function(threshbox) {
                 else if ((vpBits[i] & ISBOUND) && !(vpBits[i] & ISDONE))
                     vpBits[i] |= ISDONE;
             } else if (stype == 3) { // sas
+                vpBits[i] &= ~ISBOUND;
+            }
+            else {
                 vpBits[i] &= ~ISBOUND;
             }
         }
@@ -459,6 +500,7 @@ $3Dmol.ElectronMap = function(threshbox) {
     this.marchingcube = function(stype) {
         this.marchingcubeinit(stype);
         verts = []; faces = [];
+
         $3Dmol.MarchingCube.march(vpBits, verts, faces, {
             smooth : 1,
             nX : pLength,
@@ -466,12 +508,13 @@ $3Dmol.ElectronMap = function(threshbox) {
             nZ : pHeight
         });
 
+/*
         var pWH = pWidth*pHeight;
         for (var i = 0, vlen = verts.length; i < vlen; i++) {
             verts[i]['atomid'] = vpAtomID[verts[i].x * pWH + pHeight *
                     verts[i].y + verts[i].z];
         }
-
+*/
         $3Dmol.MarchingCube.laplacianSmooth(1, verts, faces);
 
     };
