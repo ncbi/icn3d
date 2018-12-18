@@ -34,9 +34,11 @@ $3Dmol.SetupSurface = function (data) {
     ps.vpDistance = null; // floatarray of _squared_ distances
     ps.vpAtomID = null; // intarray
 
-    return ps.getFacesAndVertices(data.atomsToShow);
+    var result = ps.getFacesAndVertices(data.atomsToShow);
 
     ps.faces = null;
     ps.verts = null;
+
+    return result;
 };
 

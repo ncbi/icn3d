@@ -852,10 +852,12 @@ In the dialog Select -&gt; Advanced, users can use simple specification to selec
 <tr><td valign='top'><span class="indent">Dot:</span></td>                <td valign='top'>style water dot</td> <td valign='top'><a href="#setStyle">setStyle</a></td></tr>
 <tr><td valign='top'><span class="indent">Hide:</span></td>            <td valign='top'>style water nothing</td> <td valign='top'><a href="#setStyle">setStyle</a></td></tr>
 
-<tr><td valign='top'>g) Style -&gt; Save Style:</td>                    <td valign='top'>save style</td> <td valign='top'><a href="#applySurfaceOptions">saveStyle</a></td></tr>
-<tr><td valign='top'>h) Style -&gt; Apply Saved Style:</td>             <td valign='top'>apply saved style</td> <td valign='top'><a href="#applySurfaceOptions">applySavedStyle</a></td></tr>
+<tr><td valign='top'>g) Style -&gt; Set Thickness:</td>                    <td valign='top'>set thickness | linerad 0.6 | coilrad 1 | stickrad 0.8 | ribbonthick 0.8 | proteinwidth 2 | nucleotidewidth 1.2 | ballscale 0.6</td> <td valign='top'></td></tr>
 
-<tr><td colspan="3"><br>i) Style -&gt; Surface Type</td> </tr>
+<tr><td valign='top'>h) Style -&gt; Save Style:</td>                    <td valign='top'>save style</td> <td valign='top'><a href="#applySurfaceOptions">saveStyle</a></td></tr>
+<tr><td valign='top'>i) Style -&gt; Apply Saved Style:</td>             <td valign='top'>apply saved style</td> <td valign='top'><a href="#applySurfaceOptions">applySavedStyle</a></td></tr>
+
+<tr><td colspan="3"><br>j) Style -&gt; Surface Type</td> </tr>
 <tr><td width="240"><span class="indent">Van der Waals:</span></td>      <td valign='top'>set surface Van der Waals surface</td> <td valign='top'><a href="#applySurfaceOptions">applySurfaceOptions</a></td></tr>
 <tr><td width="240"><span class="indent">VDW with Context:</span></td>      <td valign='top'>set surface Van der Waals surface with context</td> <td valign='top'><a href="#applySurfaceOptions">applySurfaceOptions</a></td></tr>
 <tr><td valign='top'><span class="indent">Molecular Surface:</span></td>          <td valign='top'>set surface molecular surface</td> <td valign='top'><a href="#applySurfaceOptions">applySurfaceOptions</a></td></tr>
@@ -863,9 +865,9 @@ In the dialog Select -&gt; Advanced, users can use simple specification to selec
 <tr><td valign='top'><span class="indent">Solvent Accessible:</span></td> <td valign='top'>set surface solvent accessible surface</td> <td valign='top'><a href="#applySurfaceOptions">applySurfaceOptions</a></td></tr>
 <tr><td valign='top'><span class="indent">SA with Context:</span></td> <td valign='top'>set surface solvent accessible surface with context</td> <td valign='top'><a href="#applySurfaceOptions">applySurfaceOptions</a></td></tr>
 
-<tr><td valign='top'>j) Style -&gt; Remove Surface:</td>                    <td valign='top'>set surface nothing</td> <td valign='top'><a href="#applySurfaceOptions">applySurfaceOptions</a></td></tr>
+<tr><td valign='top'>k) Style -&gt; Remove Surface:</td>                    <td valign='top'>set surface nothing</td> <td valign='top'><a href="#applySurfaceOptions">applySurfaceOptions</a></td></tr>
 
-<tr><td colspan="3"><br>k) Style -&gt; Surface Opacity</td> </tr>
+<tr><td colspan="3"><br>l) Style -&gt; Surface Opacity</td> </tr>
 <tr><td valign='top'><span class="indent">1.0:</span></td>                <td valign='top'>set surface opacity 1.0</td> <td valign='top'><a href="#applySurfaceOptions">applySurfaceOptions</a></td></tr>
 <tr><td valign='top'><span class="indent">0.9:</span></td>                <td valign='top'>set surface opacity 0.9</td> <td valign='top'><a href="#applySurfaceOptions">applySurfaceOptions</a></td></tr>
 <tr><td valign='top'><span class="indent">0.8:</span></td>                <td valign='top'>set surface opacity 0.8</td> <td valign='top'><a href="#applySurfaceOptions">applySurfaceOptions</a></td></tr>
@@ -873,11 +875,21 @@ In the dialog Select -&gt; Advanced, users can use simple specification to selec
 <tr><td valign='top'><span class="indent">0.6:</span></td>                <td valign='top'>set surface opacity 0.6</td> <td valign='top'><a href="#applySurfaceOptions">applySurfaceOptions</a></td></tr>
 <tr><td valign='top'><span class="indent">0.5:</span></td>                <td valign='top'>set surface opacity 0.5</td> <td valign='top'><a href="#applySurfaceOptions">applySurfaceOptions</a></td></tr>
 
-<tr><td colspan="3"><br>l) Style -&gt; Surface Wireframe</td> </tr>
+<tr><td colspan="3"><br>m) Style -&gt; Surface Wireframe</td> </tr>
 <tr><td valign='top'><span class="indent">Yes</span></td>                 <td valign='top'>set surface wireframe on</td> <td valign='top'><a href="#applySurfaceOptions">applySurfaceOptions</a></td></tr>
 <tr><td valign='top'><span class="indent">No</span></td>                  <td valign='top'>set surface wireframe off</td> <td valign='top'><a href="#applySurfaceOptions">applySurfaceOptions</a></td></tr>
 
-<tr><td colspan="3"><br>m) Style -&gt; Background</td> </tr>
+<tr><td colspan="3"><br>n) Style -&gt; Electron Density</td> </tr>
+<tr><td width="240"><span class="indent">2Fo-Fc Map:</span></td>      <td valign='top'>set map 2fofc sigma 1.5</td> <td valign='top'><a href="#applySurfaceOptions">applyCommandMap</a></td></tr>
+<tr><td width="240"><span class="indent">Fo-Fc Map:</span></td>      <td valign='top'>set map 2fofc sigma 3</td> <td valign='top'><a href="#applySurfaceOptions">applyCommandMap</a></td></tr>
+
+<tr><td valign='top'>o) Style -&gt; Remove Map:</td>                    <td valign='top'>set map nothing</td> <td valign='top'><a href="#applySurfaceOptions">applyMapOptions</a></td></tr>
+
+<tr><td colspan="3"><br>p) Style -&gt; Map Wireframe</td> </tr>
+<tr><td valign='top'><span class="indent">Yes</span></td>                 <td valign='top'>set map wireframe on</td> <td valign='top'><a href="#applySurfaceOptions">applyMapOptions</a></td></tr>
+<tr><td valign='top'><span class="indent">No</span></td>                  <td valign='top'>set map wireframe off</td> <td valign='top'><a href="#applySurfaceOptions">applyMapOptions</a></td></tr>
+
+<tr><td colspan="3"><br>q) Style -&gt; Background</td> </tr>
 <tr><td valign='top'><span class="indent">Transparent:</span></td>        <td valign='top'>set background transparent</td> <td valign='top'>me.icn3d.opts['background'] = 'transparent'</td></tr>
 <tr><td valign='top'><span class="indent">Black:</span></td>              <td valign='top'>set background black</td> <td valign='top'>me.icn3d.opts['background'] = 'black'</td></tr>
 <tr><td valign='top'><span class="indent">Grey:</span></td>               <td valign='top'>set background grey</td> <td valign='top'>me.icn3d.opts['background'] = 'grey'</td></tr>
@@ -1745,6 +1757,9 @@ Update the highlight of sequences in the annotation window according to the curr
 
 <a name="log"></a>
 <h2>Change Log:<img src="https://www.ncbi.nlm.nih.gov/Structure/IMG/spacer.gif" width="25" height="1" border="0"><a href="#Top"><img src="https://www.ncbi.nlm.nih.gov/Structure/IMG/arrowup_blue.gif" width="12" height="12" border="0" alt="back to top"></a></h2>
+The production version <a href="https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.4.0.zip">icn3d-2.4.0</a> was release on December 17, 2018. Enabled users to show electron density map for any subset of a crystal structure.
+<br><br>
+
 The production version <a href="https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.3.4.zip">icn3d-2.3.4</a> was release on December 12, 2018. Enabled users to load a saved iCn3D PNG image into iCn3D to reproduce the display using the URL embedded in the image.
 <br><br>
 

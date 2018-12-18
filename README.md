@@ -8,6 +8,7 @@
 * Use a url (e.g., [https://d55qc.app.goo.gl/HDuWMFAVokxvHMKSA](https://d55qc.app.goo.gl/HDuWMFAVokxvHMKSA)) or a state file to capture the custom display of 3D structures
 * Select residues by searching sequences or select on 3D structures,  2D interactions, and 1D sequences
 * Display/highlight selected residues in 3D structures,  2D interactions, and 1D sequences
+* Show [electron density map](https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?mmdbid=3gvu&command=style+proteins+b+factor+tube;+color+b+factor;+set+map+2fofc+sigma+1.5) for an asymmetric unit
 * Export STL or VRML files for [3D printing](https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?mmdbid=1tup&command=export+stl+stabilizer+file)
 * Display NCBI pre-calculated [aligned 3D structures](https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?align=1hho,4n7n&showalignseq=1) by providing two PDB IDs or MMDB IDs
 
@@ -19,7 +20,7 @@ We provided two types of iCn3D widgets: [basic interface](https://www.ncbi.nlm.n
 
 Either of these widgets could be easily added to your own web pages. Please see the [help page](https://www.ncbi.nlm.nih.gov/Structure/icn3d/docs/icn3d_help.html#HowToUse) for more details.
 
-<b>Complete package</b> of iCn3D including Three.js and jQuery can be downloaded from [https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.3.4.zip](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.3.4.zip). The "Download ZIP" link in this page does not include third-party libraries. 
+<b>Complete package</b> of iCn3D including Three.js and jQuery can be downloaded from [https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.4.0.zip](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.4.0.zip). The "Download ZIP" link in this page does not include third-party libraries. 
 
 ## Usage
 
@@ -72,6 +73,8 @@ gulp
 ```
 
 ## Change log
+The production version [icn3d-2.4.0](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.4.0.zip) was release on December 17, 2018. Enabled users to show electron density map for any subset of a crystal structure.
+
 The production version [icn3d-2.3.4](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.3.4.zip) was release on December 12, 2018. Enabled users to load a saved iCn3D PNG image into iCn3D to reproduce the display using the URL embedded in the image.
 
 The production version [icn3d-2.3.3](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.3.3.zip) was release on December 6, 2018. Made the list of interacting residues consistent in "File -> Save Files -> Interaction List" and in the "Sequences and Annotations" window.

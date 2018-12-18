@@ -495,7 +495,9 @@ iCn3DUI.prototype = {
           if(id === 'mapwireframe') {
               me.icn3d.removeLastMap();
           }
+
           me.icn3d.applyMapOptions();
+
           //me.icn3d.render();
           me.icn3d.draw(); // to make surface work in assembly
       }
@@ -2713,21 +2715,13 @@ iCn3DUI.prototype = {
 
     clkMn5_elecmap2fofc: function() { var me = this;
         $("#" + me.pre + "mn5_elecmap2fofc").click(function (e) {
-           var type = '2fofc';
-           me.Dsn6Parser(me.inputid, type);
-
-           //me.setOption('map', '2fofc');
-           me.setLogCmd('set map 2fofc', true);
+           me.openDialog(me.pre + 'dl_elecmap2fofc', '2Fo-Fc Electron Density Map');
         });
     },
 
     clkMn5_elecmapfofc: function() { var me = this;
         $("#" + me.pre + "mn5_elecmapfofc").click(function (e) {
-           var type = 'fofc';
-           me.Dsn6Parser(me.inputid, type);
-
-           //me.setOption('map', 'fofc');
-           me.setLogCmd('set map fofc', true);
+           me.openDialog(me.pre + 'dl_elecmapfofc', 'Fo-Fc Electron Density Map');
         });
     },
 
@@ -2735,6 +2729,36 @@ iCn3DUI.prototype = {
         $("#" + me.pre + "mn5_elecmapNo").click(function (e) {
            me.setOption('map', 'nothing');
            me.setLogCmd('set map nothing', true);
+        });
+    },
+
+    clickApplymap2fofc: function() { var me = this;
+        $("#" + me.pre + "applymap2fofc").click(function(e) {
+           e.preventDefault();
+           dialog.dialog( "close" );
+
+           var sigma2fofc = parseFloat($("#" + me.pre + "sigma2fofc" ).val());
+
+           var type = '2fofc';
+           me.Dsn6Parser(me.inputid, type, sigma2fofc);
+
+           //me.setOption('map', '2fofc');
+           me.setLogCmd('set map 2fofc sigma ' + sigma2fofc, true);
+        });
+    },
+
+    clickApplymapfofc: function() { var me = this;
+        $("#" + me.pre + "applymapfofc").click(function(e) {
+           e.preventDefault();
+           dialog.dialog( "close" );
+
+           var sigmafofc = parseFloat($("#" + me.pre + "sigmafofc" ).val());
+
+           var type = 'fofc';
+           me.Dsn6Parser(me.inputid, type, sigmafofc);
+
+           //me.setOption('map', 'fofc');
+           me.setLogCmd('set map fofc sigma ' + sigmafofc, true);
         });
     },
 
@@ -3120,6 +3144,12 @@ iCn3DUI.prototype = {
     clkmn1_thicknessSet: function() { var me = this;
         $("#" + me.pre + "mn1_thicknessSet").click(function (e) {
            me.openDialog(me.pre + 'dl_thickness', 'Set Thickness for 3D Printing');
+        });
+    },
+
+    clkmn5_setThickness: function() { var me = this;
+        $("#" + me.pre + "mn3_setThickness").click(function (e) {
+           me.openDialog(me.pre + 'dl_thickness2', 'Set Thickness');
         });
     },
 
@@ -3965,21 +3995,42 @@ iCn3DUI.prototype = {
     },
 
     clickApply_thickness: function() { var me = this;
-        $("#" + me.pre + "apply_thickness").click(function(e) {
+        $("#" + me.pre + "apply_thickness_3dprint").click(function(e) {
             e.preventDefault();
             //dialog.dialog( "close" );
 
             me.bSetThickness = true;
 
-            me.icn3d.lineRadius = parseFloat($("#" + me.pre + "linerad" ).val()); //0.1; // hbonds, distance lines
-            me.icn3d.coilWidth = parseFloat($("#" + me.pre + "coilrad" ).val()); //0.4; // style cartoon-coil
-            me.icn3d.cylinderRadius = parseFloat($("#" + me.pre + "stickrad" ).val()); //0.4; // style stick
-            me.icn3d.traceRadius = parseFloat($("#" + me.pre + "stickrad" ).val()); //0.2; // style c alpha trace, nucleotide stick
-            me.icn3d.dotSphereScale = parseFloat($("#" + me.pre + "ballscale" ).val()); //0.3; // style ball and stick, dot
+            me.icn3d.lineRadius = parseFloat($("#" + me.pre + "linerad_3dprint" ).val()); //0.1; // hbonds, distance lines
+            me.icn3d.coilWidth = parseFloat($("#" + me.pre + "coilrad_3dprint" ).val()); //0.4; // style cartoon-coil
+            me.icn3d.cylinderRadius = parseFloat($("#" + me.pre + "stickrad_3dprint" ).val()); //0.4; // style stick
+            me.icn3d.traceRadius = parseFloat($("#" + me.pre + "stickrad_3dprint" ).val()); //0.2; // style c alpha trace, nucleotide stick
+            me.icn3d.dotSphereScale = parseFloat($("#" + me.pre + "ballscale_3dprint" ).val()); //0.3; // style ball and stick, dot
 
-            me.icn3d.ribbonthickness = parseFloat($("#" + me.pre + "ribbonthick" ).val()); //0.4; // style ribbon, nucleotide cartoon, stand thickness
-            me.icn3d.helixSheetWidth = parseFloat($("#" + me.pre + "prtribbonwidth" ).val()); //1.3; // style ribbon, stand thickness
-            me.icn3d.nucleicAcidWidth = parseFloat($("#" + me.pre + "nucleotideribbonwidth" ).val()); //0.8; // nucleotide cartoon
+            me.icn3d.ribbonthickness = parseFloat($("#" + me.pre + "ribbonthick_3dprint" ).val()); //0.4; // style ribbon, nucleotide cartoon, stand thickness
+            me.icn3d.helixSheetWidth = parseFloat($("#" + me.pre + "prtribbonwidth_3dprint" ).val()); //1.3; // style ribbon, stand thickness
+            me.icn3d.nucleicAcidWidth = parseFloat($("#" + me.pre + "nucleotideribbonwidth_3dprint" ).val()); //0.8; // nucleotide cartoon
+
+            me.setLogCmd('set thickness | linerad ' + me.icn3d.lineRadius + ' | coilrad ' + me.icn3d.coilWidth + ' | stickrad ' + me.icn3d.cylinderRadius + ' | tracerad ' + me.icn3d.traceRadius + ' | ribbonthick ' + me.icn3d.ribbonthickness + ' | proteinwidth ' + me.icn3d.helixSheetWidth + ' | nucleotidewidth ' + me.icn3d.nucleicAcidWidth  + ' | ballscale ' + me.icn3d.dotSphereScale, true);
+
+            me.icn3d.draw();
+        });
+
+        $("#" + me.pre + "apply_thickness_style").click(function(e) {
+            e.preventDefault();
+            //dialog.dialog( "close" );
+
+            me.bSetThickness = true;
+
+            me.icn3d.lineRadius = parseFloat($("#" + me.pre + "linerad_style" ).val()); //0.1; // hbonds, distance lines
+            me.icn3d.coilWidth = parseFloat($("#" + me.pre + "coilrad_style" ).val()); //0.4; // style cartoon-coil
+            me.icn3d.cylinderRadius = parseFloat($("#" + me.pre + "stickrad_style" ).val()); //0.4; // style stick
+            me.icn3d.traceRadius = parseFloat($("#" + me.pre + "stickrad_style" ).val()); //0.2; // style c alpha trace, nucleotide stick
+            me.icn3d.dotSphereScale = parseFloat($("#" + me.pre + "ballscale_style" ).val()); //0.3; // style ball and stick, dot
+
+            me.icn3d.ribbonthickness = parseFloat($("#" + me.pre + "ribbonthick_style" ).val()); //0.4; // style ribbon, nucleotide cartoon, stand thickness
+            me.icn3d.helixSheetWidth = parseFloat($("#" + me.pre + "prtribbonwidth_style" ).val()); //1.3; // style ribbon, stand thickness
+            me.icn3d.nucleicAcidWidth = parseFloat($("#" + me.pre + "nucleotideribbonwidth_style" ).val()); //0.8; // nucleotide cartoon
 
             me.setLogCmd('set thickness | linerad ' + me.icn3d.lineRadius + ' | coilrad ' + me.icn3d.coilWidth + ' | stickrad ' + me.icn3d.cylinderRadius + ' | tracerad ' + me.icn3d.traceRadius + ' | ribbonthick ' + me.icn3d.ribbonthickness + ' | proteinwidth ' + me.icn3d.helixSheetWidth + ' | nucleotidewidth ' + me.icn3d.nucleicAcidWidth  + ' | ballscale ' + me.icn3d.dotSphereScale, true);
 
@@ -4073,6 +4124,9 @@ iCn3DUI.prototype = {
 
                 if(lastCommand.indexOf('load') !== -1) {
                     me.applyCommandLoad(lastCommand);
+                }
+                else if(lastCommand.indexOf('set map') !== -1 && lastCommand.indexOf('set map wireframe') === -1) {
+                    me.applyCommandMap(lastCommand);
                 }
                 else if(lastCommand.indexOf('view annotations') == 0
                   //|| lastCommand.indexOf('set annotation cdd') == 0
@@ -4396,6 +4450,7 @@ iCn3DUI.prototype = {
         me.clkmn1_stabilizerOne();
         me.clkmn1_stabilizerRmOne();
         me.clkmn1_thicknessSet();
+        me.clkmn5_setThickness();
         me.clkmn1_thicknessReset();
         me.clkMn6_distanceNo();
         me.clkMn2_selectedcenter();
@@ -4457,6 +4512,8 @@ iCn3DUI.prototype = {
         me.clickApplycustomcolor();
         me.clickApplypick_aroundsphere();
         me.clickApplyhbonds();
+        me.clickApplymap2fofc();
+        me.clickApplymapfofc();
 //        me.clickApplystabilizer();
         me.clickApplypick_labels();
         me.clickApplyselection_labels();

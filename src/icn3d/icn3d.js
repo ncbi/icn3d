@@ -10,6 +10,8 @@ var iCn3D = function (id) {
 
     this.container = $('#' + id);
 
+    this.maxatomcnt = 100000; // for a biological assembly, use instancing when the total number of atomsis greater than "maxatomcnt"
+
     this.overdraw = 0;
 
     this.bDrawn = false;
