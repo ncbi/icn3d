@@ -774,6 +774,7 @@ iCn3DUI.prototype.loadAtomDataIn = function (data, id, type, seqalign) { var me 
         // here "ligand" is used in the cgi output
         var bChemicalIons = (me.cfg.mmcifid === undefined) ? (chainid2kind[chainNum] === 'ligand' || chainid2kind[chainNum] === 'otherPolymer' || chainid2kind[chainNum] === undefined) : atm.mt === 'l';
 
+/*
         // sometimes proteins or nucleotide may input as chemicals
         // use the hash residueColors for protein residues
         var nucleotideRes = {'G': 1, 'A': 1, 'T': 1, 'C': 1, 'U': 1, 'DG': 1, 'DA': 1, 'DT': 1, 'DC': 1, 'DU': 1};
@@ -783,6 +784,7 @@ iCn3DUI.prototype.loadAtomDataIn = function (data, id, type, seqalign) { var me 
         else if(nucleotideRes.hasOwnProperty(atm.resn)) {
             bNucleotide = true;
         }
+*/
 
         if (bProtein || bNucleotide)
         {
