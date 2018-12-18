@@ -5,54 +5,101 @@
  * Modified by Jiyao Wang / https://github.com/ncbi/icn3d
  */
 
-iCn3DUI.prototype.Dsn6Parser = function(pdbid, type) { var me = this;
+
+iCn3DUI.prototype.Dsn6Parser = function(pdbid, type, sigma) { var me = this;
    var url, dataType;
    // https://edmaps.rcsb.org/maps/1kq2_2fofc.dsn6
    // https://edmaps.rcsb.org/maps/1kq2_fofc.dsn6
 
    url = "https://edmaps.rcsb.org/maps/" + pdbid.toLowerCase() + "_" + type + ".dsn6";
 
-//console.log("url: " + url);
-
    dataType = "text";
 
-   me.icn3d.bCid = undefined;
+   bCid = undefined;
 
-   if( (type == '2fofc' && me.icn3d.mapData.header2 === undefined) ||
-     (type == 'fofc' && me.icn3d.mapData.header === undefined) ) {
-       $.ajax({
-          url: url,
-          dataType: dataType,
-          cache: true,
-          tryCount : 0,
-          retryLimit : 1,
-          beforeSend: function() {
-              me.showLoading();
-          },
-          complete: function() {
-              me.hideLoading();
-          },
-          success: function(dsn6data) {
-//console.log("dsn6data: " + dsn6data);
-              me.loadDsn6Data(dsn6data, type);
-          },
-          error : function(xhr, textStatus, errorThrown ) {
-            this.tryCount++;
-            if (this.tryCount <= this.retryLimit) {
-                //try again
-                $.ajax(this);
-                return;
-            }
-
-            alert("RCSB server has no corresponding eletron density map for this structure.");
-
+/*
+   $.ajax({
+      url: url,
+      dataType: dataType,
+      cache: true,
+      tryCount : 0,
+      retryLimit : 1,
+      beforeSend: function() {
+          me.showLoading();
+      },
+      complete: function() {
+          me.hideLoading();
+      },
+      success: function(dsn6data) {
+          me.loadDsn6Data(dsn6data, type);
+      },
+      error : function(xhr, textStatus, errorThrown ) {
+        this.tryCount++;
+        if (this.tryCount <= this.retryLimit) {
+            //try again
+            $.ajax(this);
             return;
-          }
-       });
+        }
+
+        alert("RCSB server has no corresponding eletron density map for this structure.");
+
+        return;
+      }
+   });
+*/
+
+    //https://stackoverflow.com/questions/33902299/using-jquery-ajax-to-download-a-binary-file
+    if(type == '2fofc' && me.bAjax2fofc) {
+        me.icn3d.mapData.sigma2 = sigma;
+        me.setOption('map', type);
+    }
+    else if(type == 'fofc' && me.bAjaxfofc) {
+        me.icn3d.mapData.sigma = sigma;
+        me.setOption('map', type);
+    }
+    else {
+        var oReq = new XMLHttpRequest();
+        oReq.open("GET", url, true);
+        oReq.responseType = "arraybuffer";
+
+        oReq.onreadystatechange = function() {
+            if (this.readyState == 4) {
+               me.hideLoading();
+
+               if(this.status == 200) {
+                   var arrayBuffer = oReq.response;
+                   var bResult = me.loadDsn6Data(arrayBuffer, type, sigma);
+
+                   if(bResult) {
+                       if(type == '2fofc') {
+                           me.bAjax2fofc = true;
+                       }
+                       else if(type == 'fofc') {
+                           me.bAjaxfofc = true;
+                       }
+
+                       me.setOption('map', type);
+                   }
+                   else {
+                       //draw();
+                   }
+                }
+                else {
+                    alert("RCSB server has no corresponding eletron density map for this structure.");
+                }
+
+                if(me.deferredMap !== undefined) me.deferredMap.resolve();
+            }
+            else {
+                me.showLoading();
+            }
+        };
+
+        oReq.send();
     }
 };
 
-iCn3DUI.prototype.loadDsn6Data = function(dsn6data, type) { var me = this;
+iCn3DUI.prototype.loadDsn6Data = function(dsn6data, type, sigma) { var me = this;
     // DSN6 http://www.uoxray.uoregon.edu/tnt/manual/node104.html
     // BRIX http://svn.cgl.ucsf.edu/svn/chimera/trunk/libs/VolumeData/dsn6/brix-1.html
 
@@ -61,25 +108,10 @@ iCn3DUI.prototype.loadDsn6Data = function(dsn6data, type) { var me = this;
     var header = {};
     var divisor, summand;
 
-    //var bin = (dsn6data.buffer && dsn6data.buffer instanceof ArrayBuffer) ? dsn6data.buffer : dsn6data;
-    //var intView = new Int16Array(bin);
-    //var byteView = new Uint8Array(bin);
-
-    var n = dsn6data.length / 2;
-    var intView = new Int16Array( n );
-    for( var i = 0, i2 = 0; i < n; ++i, i2 += 2 ){
-        intView[ i ] = dsn6data.charCodeAt(i2) << 8 ^ dsn6data.charCodeAt(i2 + 1) << 0;
-    }
-
-    var byteView = new Uint8Array(dsn6data.length);
-    for(var i = 0; i < dsn6data.length; ++i) {
-       //byteView[i] = me.passInt8([dsn6data.charCodeAt(i)])[0];
-       byteView[i] = dsn6data.charCodeAt(i);
-    }
-
-    //var brixStr = String.fromCharCode.apply(null, byteView.subarray(0, 512));
-    var headerText = byteView.slice(0, 512);
-    var brixStr = String.fromCharCode.apply(null, headerText);
+    var bin = (dsn6data.buffer && dsn6data.buffer instanceof ArrayBuffer) ? dsn6data.buffer : dsn6data;
+    var intView = new Int16Array(bin);
+    var byteView = new Uint8Array(bin);
+    var brixStr = String.fromCharCode.apply(null, byteView.subarray(0, 512));
 
     if (brixStr.indexOf(':-)') == 0) {
       header.xStart = parseInt(brixStr.substr(10, 5)); // NXSTART
@@ -108,16 +140,17 @@ iCn3DUI.prototype.loadDsn6Data = function(dsn6data, type) { var me = this;
       header.sigma = parseFloat(brixStr.substr(170, 12)) * 100;
     } else {
       // swap byte order when big endian
-      if (intView[ 18 ] !== 100) {
+      if(intView[ 18 ] !== 100) { // true
         for (var i = 0, n = intView.length; i < n; ++i) {
           var val = intView[ i ];
+
           intView[ i ] = ((val & 0xff) << 8) | ((val >> 8) & 0xff);
         }
       }
 
+      header.zStart = intView[ 2 ];
       header.xStart = intView[ 0 ]; // NXSTART
       header.yStart = intView[ 1 ];
-      header.zStart = intView[ 2 ];
 
       header.xExtent = intView[ 3 ]; // NX
       header.yExtent = intView[ 4 ];
@@ -144,7 +177,6 @@ iCn3DUI.prototype.loadDsn6Data = function(dsn6data, type) { var me = this;
 
       divisor = intView[ 15 ] / 100;
       summand = intView[ 16 ];
-      //header.gamma = intView[ 14 ] * factor;
     }
 
     var data = new Float32Array(
@@ -193,21 +225,25 @@ iCn3DUI.prototype.loadDsn6Data = function(dsn6data, type) { var me = this;
         me.icn3d.mapData.header2 = header;
         me.icn3d.mapData.data2 = data;
         me.icn3d.mapData.matrix2 = me.getMatrix(header);
+        me.icn3d.mapData.type2 = type;
+        me.icn3d.mapData.sigma2 = sigma;
     }
     else {
         me.icn3d.mapData.header = header;
         me.icn3d.mapData.data = data;
         me.icn3d.mapData.matrix = me.getMatrix(header);
+        me.icn3d.mapData.type = type;
+        me.icn3d.mapData.sigma = sigma;
     }
 
+    return true;
+
 //console.log("header: " + JSON.stringify(header));
-//console.log("data: " + Object.keys(data).length);
+//console.log("data: " + data);
 
-    me.setOption('map', type);
-
-    // for 1TOP
-    // header: {"xStart":765,"yStart":18,"zStart":765,"xExtent":83,"yExtent":118,"zExtent":88,"xRate":114,"yRate":114,"zRate":102,"xlen":-64.03750000000001,"ylen":-64.03750000000001,"zlen":-57.6375,"alpha":90,"beta":90,"gamma":-118.4375}
-    // data: {"0":0.7797271013259888,"1":1.0396361351013184,"2":1.5594542026519775,"3":1.4944769144058228,"4":1.0396361351013184,...
+    // for 1KQ2
+    // header: {"zStart":11,"xStart":0,"yStart":2,"xExtent":63,"yExtent":70,"zExtent":54,"xRate":88,"yRate":128,"zRate":112,"xlen":80.86250000000001,"ylen":115.5875,"zlen":101.8375,"alpha":90,"beta":90,"gamma":90}
+    // data: [-1.724900484085083,-1.4153029918670654,-0.5749668478965759,-0.17691287398338318,-0.6634232401847839,-1.2826182842254639,-1.1941618919372559,-0.30959752202033997,...
 
     //if (header.sigma) {
     //  v.setStats(undefined, undefined, undefined, header.sigma);
@@ -247,26 +283,6 @@ iCn3DUI.prototype.getMatrix = function(header) { var me = this;
     var nxyz = [ 0, h.xRate, h.yRate, h.zRate ];
     var mapcrs = [ 0, 1, 2, 3 ];
 
-    //https://www.ks.uiuc.edu/Research/vmd/plugins/doxygen/dsn6plugin_8C-source.html
-    // Convert the origin from grid space to cartesian coordinates
-    // origin
-    var x0 = basisX[0] / h.xRate * h.xStart + basisY[0] / h.yRate * h.yStart + basisZ[0] / h.zRate * h.zStart;
-    var y0 = basisY[1] / h.yRate * h.yStart + basisZ[1] / h.zRate * h.zStart;
-    var z0 = basisZ[2] / h.zRate * h.zStart;
-
-    // axis
-    var xaxis = new THREE.Vector3(basisX[0] / h.xRate * (h.xExtent - 1), 0, 0);
-    var yaxis = new THREE.Vector3(basisY[0] / h.yRate * (h.yExtent - 1), basisY[1] / h.yRate * (h.yExtent - 1), 0);
-    var zaxis = new THREE.Vector3(basisZ[0] / h.zRate * (h.zExtent - 1), basisZ[1] / h.zRate * (h.zExtent - 1), basisZ[2] / h.zRate * (h.zExtent - 1));
-
-    // size
-    var xsize = h.xExtent;
-    var ysize = h.yExtent;
-    var zsize = h.zExtent;
-
-
-// console.log("x0: " + x0 + " y0: " + y0 + " z0: " + z0);
-
     var matrix = new THREE.Matrix4();
 
     matrix.set(
@@ -285,7 +301,7 @@ iCn3DUI.prototype.getMatrix = function(header) { var me = this;
       0, 0, 0, 1
     );
 
-
+/*
     matrix.multiply(
       new THREE.Matrix4().makeRotationY(Math.PI * 0.5)
     );
@@ -297,7 +313,11 @@ iCn3DUI.prototype.getMatrix = function(header) { var me = this;
     matrix.multiply(new THREE.Matrix4().makeScale(
       -1, 1, 1
     ));
+*/
 
+    matrix.multiply(new THREE.Matrix4().makeTranslation(
+      h.xStart, h.yStart, h.zStart
+    ));
 
     return matrix;
 };

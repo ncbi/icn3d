@@ -48,8 +48,8 @@ $3Dmol.ElectronMap = function(threshbox) {
     var ISBOUND = 4;
 
     var isovalue = 1.5;
-    var dataHash = {};
-    var matrix;
+    var dataArray = {};
+    var matrix, center, pmin, pmax, water, header;
 
     var ptranx = 0, ptrany = 0, ptranz = 0;
     var probeRadius = 1.4;
@@ -93,58 +93,100 @@ $3Dmol.ElectronMap = function(threshbox) {
                new Int32Array([ -1, -1, -1 ]) ];
 
     //var origextent;
+/*
+    this.getShownVerticesHash = function(allatoms, atomlist, vertices) {
+        var shownVerticesHash = {};
+        var maxdistSq = maxdist * maxdist;
+        console.log("maxdist: " + maxdist + " maxdistSq: " + maxdistSq);
 
-    this.getFacesAndVertices = function(atomlist) {
+        for (var i = 0, il = vertices.length; i < il; i++) {
+            if(vertices[i].x < pmin.x || vertices[i].y < pmin.y || vertices[i].z < pmin.z
+              || vertices[i].x > pmax.x || vertices[i].y > pmax.y || vertices[i].z > pmax.z) {
+              continue;
+            }
+
+            for (var j in atomlist) {
+              if(water.hasOwnProperty(atomlist[j])) continue; // remove water
+
+              var atom = allatoms[atomlist[j]];
+
+              var xdiff = Math.abs(atom.coord.x - vertices[i].x);
+              if(xdiff > maxdist) continue;
+
+              var ydiff = Math.abs(atom.coord.y - vertices[i].y);
+              if(ydiff > maxdist) continue;
+
+              var zdiff = Math.abs(atom.coord.z - vertices[i].z);
+              if(zdiff > maxdist) continue;
+
+              var dist = xdiff * xdiff + ydiff * ydiff + zdiff * zdiff;
+              if(dist > maxdistSq) continue;
+
+              shownVerticesHash[i] = 1;
+            }
+        }
+
+        console.log("vertices: " + vertices.length + " shownVerticesHash: " + Object.keys(shownVerticesHash).length);
+
+        return shownVerticesHash;
+    };
+*/
+
+    this.getFacesAndVertices = function(allatoms, atomlist) {
         var atomsToShow = {};
         var i, il;
         for (i = 0, il = atomlist.length; i < il; i++)
-            atomsToShow[atomlist[i]] = true;
+            atomsToShow[atomlist[i]] = 1;
         var vertices = verts;
+
         for (i = 0, il = vertices.length; i < il; i++) {
 /*
             vertices[i].x = vertices[i].x / scaleFactor - ptranx;
             vertices[i].y = vertices[i].y / scaleFactor - ptrany;
             vertices[i].z = vertices[i].z / scaleFactor - ptranz;
 */
-
             var r = new THREE.Vector3(vertices[i].x, vertices[i].y, vertices[i].z).applyMatrix4(matrix);
             vertices[i].x = r.x / scaleFactor - ptranx;
             vertices[i].y = r.y / scaleFactor - ptrany;
             vertices[i].z = r.z / scaleFactor - ptranz;
         }
+/*
+        var shownVerticesHash = this.getShownVerticesHash(allatoms, atomlist, vertices);
+
+        var shownVertices = [];
+        var oldindex2newindex = {};
+        var index = 0;
+        for(i in shownVerticesHash) {
+            shownVertices.push(vertices[i]);
+            oldindex2newindex[i] = index;
+            ++index;
+        }
+*/
 
         var finalfaces = [];
+
+/*
+        var shownVerticesInFaceHash = {};
         for (i = 0, il = faces.length; i < il; i += 3) {
             //var f = faces[i];
             var fa = faces[i], fb = faces[i+1], fc = faces[i+2];
 
-/*
-            var a = vertices[fa]['atomid'], b = vertices[fb]['atomid'], c = vertices[fc]['atomid'];
-
-            // must be a unique face for each atom
-            var which = a;
-            if (b < which)
-                which = b;
-            if (c < which)
-                which = c;
-            if (!atomsToShow[which]) {
-                continue;
+            if (shownVerticesHash.hasOwnProperty(fa) && shownVerticesHash.hasOwnProperty(fb) && shownVerticesHash.hasOwnProperty(fc)
+              && fa !== fb && fb !== fc && fa !== fc){
+                // !!! different between 3Dmol and iCn3D
+                finalfaces.push({"a":oldindex2newindex[fa], "b":oldindex2newindex[fb], "c":oldindex2newindex[fc]});
             }
+        }
 */
 
-            var av = vertices[faces[i]];
-            var bv = vertices[faces[i+1]];
-            var cv = vertices[faces[i+2]];
+        for (i = 0, il = faces.length; i < il; i += 3) {
+            //var f = faces[i];
+            var fa = faces[i], fb = faces[i+1], fc = faces[i+2];
 
             if (fa !== fb && fb !== fc && fa !== fc){
-                //finalfaces.push(fa);
-                //finalfaces.push(fb);
-                //finalfaces.push(fc);
-
                 // !!! different between 3Dmol and iCn3D
                 finalfaces.push({"a":fa, "b":fb, "c":fc});
             }
-
         }
 
         //try to help the garbage collector
@@ -153,16 +195,22 @@ $3Dmol.ElectronMap = function(threshbox) {
         vpAtomID = null; // intarray
 
         return {
-            'vertices' : vertices,
+            'vertices' : vertices, //shownVertices,
             'faces' : finalfaces
         };
     };
 
 
-    this.initparm = function(header, inData, inMatrix, inIsovalue) {
+    this.initparm = function(inHeader, inData, inMatrix, inIsovalue, inCenter, inMaxdist, inPmin, inPmax, inWater) {
         isovalue = inIsovalue;
-        dataHash = inData;
+        dataArray = inData;
         matrix = inMatrix;
+        center = inCenter;
+        maxdist = inMaxdist;
+        pmin = inPmin;
+        pmax = inPmax;
+        water = inWater;
+        header = inHeader;
 
         var margin = (1 / scaleFactor) * 5.5; // need margin to avoid
                                                 // boundary/round off effects
@@ -234,8 +282,9 @@ $3Dmol.ElectronMap = function(threshbox) {
         cutRadius = probeRadius * scaleFactor;
 
         vpBits = new Uint8Array(pLength * pWidth * pHeight);
-        vpDistance = new Float64Array(pLength * pWidth * pHeight); // float 32
-        vpAtomID = new Int32Array(pLength * pWidth * pHeight);
+        //vpDistance = new Float64Array(pLength * pWidth * pHeight); // float 32
+        //vpAtomID = new Int32Array(pLength * pWidth * pHeight);
+        vpAtomID = new Uint8Array(pLength * pWidth * pHeight);
         //console.log("Box size: ", pLength, pWidth, pHeight, vpBits.length);
     };
 
@@ -281,18 +330,51 @@ $3Dmol.ElectronMap = function(threshbox) {
         var i, j, k, il;
         for (i = 0, il = vpBits.length; i < il; i++) {
             vpBits[i] = 0;
-            vpDistance[i] = -1.0;
-            vpAtomID[i] = -1;
+            //vpDistance[i] = -1.0;
+            vpAtomID[i] = 0;
         }
 
+        var inverseMatrix = new THREE.Matrix4().getInverse(matrix);
+
+        var indexArray = [];
+        maxdist = parseInt(maxdist); // has to be integer
+        var widthHeight = pWidth * pHeight;
+
+        for (var serial in atomlist) {
+            var atom = atoms[atomlist[serial]];
+            var r = new THREE.Vector3(atom.coord.x, atom.coord.y, atom.coord.z).applyMatrix4(inverseMatrix);
+
+            for(i = Math.floor(r.x) - maxdist, il = Math.ceil(r.x) + maxdist; i <= il; ++i) {
+                if(i < 0 || i > header.xExtent - 1) continue;
+                for(j = Math.floor(r.y) - maxdist, jl = Math.ceil(r.y) + maxdist; j<= jl; ++j) {
+                    if(j < 0 || j > header.yExtent - 1) continue;
+                    for(k = Math.floor(r.z) - maxdist, kl = Math.ceil(r.z) + maxdist; k<= kl; ++k) {
+                        if(k < 0 || k > header.zExtent - 1) continue;
+
+                        var index =i * widthHeight + j * pHeight + k;
+                        indexArray.push(index);
+                    }
+                }
+            }
+        }
+
+/*
         var index = 0;
         for(i = 0; i < pLength; ++i) {
             for(j = 0; j < pWidth; ++j) {
                 for(k = 0; k < pHeight; ++k) {
-                    vpBits[index] = (dataHash[index.toString()] >= isovalue) ? 1 : 0;
+                    vpBits[index] = (dataArray[index] >= isovalue || dataArray[index] <= -isovalue) ? 1 : 0;
+                    vpAtomID[index] = (dataArray[index] >= 0) ? 1 : 0;
                     ++index;
                 }
             }
+        }
+*/
+
+        for(i = 0, il = indexArray.length; i < il; ++i) {
+            var index = indexArray[i];
+            vpBits[index] = (dataArray[index] >= isovalue || dataArray[index] <= -isovalue) ? 1 : 0;
+            vpAtomID[index] = (dataArray[index] >= 0) ? 1 : 0;
         }
 
 /*
@@ -508,13 +590,13 @@ $3Dmol.ElectronMap = function(threshbox) {
             nZ : pHeight
         });
 
-/*
         var pWH = pWidth*pHeight;
         for (var i = 0, vlen = verts.length; i < vlen; i++) {
+            // positive values
             verts[i]['atomid'] = vpAtomID[verts[i].x * pWH + pHeight *
                     verts[i].y + verts[i].z];
         }
-*/
+
         $3Dmol.MarchingCube.laplacianSmooth(1, verts, faces);
 
     };

@@ -451,6 +451,13 @@ iCn3D.prototype.applyOtherOptions = function (options) {
         }
     }
 
+    // maps
+    if(this.prevSurfaces !== undefined) {
+        for(var i = 0, il = this.prevMaps.length; i < il; ++i) {
+            this.mdl.add(this.prevMaps[i]);
+        }
+    }
+
     this.applyCenterOptions(options);
 
     switch (options.axis.toLowerCase()) {

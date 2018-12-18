@@ -5,7 +5,7 @@
 
 $3Dmol.SetupMap = function (data) {
     var ps = new $3Dmol.ElectronMap();
-    ps.initparm(data.header, data.data, data.matrix, data.isovalue);
+    ps.initparm(data.header, data.data, data.matrix, data.isovalue, data.center, data.maxdist, data.pmin, data.pmax, data.water);
 
     ps.fillvoxels(data.allatoms, data.extendedAtoms);
 
@@ -17,9 +17,11 @@ $3Dmol.SetupMap = function (data) {
     //ps.vpDistance = null; // floatarray of _squared_ distances
     ps.vpAtomID = null; // intarray
 
-    return ps.getFacesAndVertices(data.atomsToShow);
+    var result = ps.getFacesAndVertices(data.allatoms, data.atomsToShow);
 
     ps.faces = null;
     ps.verts = null;
+
+    return result;
 };
 

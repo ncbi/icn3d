@@ -132,7 +132,7 @@ $3Dmol.ProteinSurface = function(threshbox) {
         var atomsToShow = {};
         var i, il;
         for (i = 0, il = atomlist.length; i < il; i++)
-            atomsToShow[atomlist[i]] = true;
+            atomsToShow[atomlist[i]] = 1;
         var vertices = verts;
         for (i = 0, il = vertices.length; i < il; i++) {
             vertices[i].x = vertices[i].x / scaleFactor - ptranx;
@@ -155,9 +155,9 @@ $3Dmol.ProteinSurface = function(threshbox) {
             if (!atomsToShow[which]) {
                 continue;
             }
-            var av = vertices[faces[i]];
-            var bv = vertices[faces[i+1]];
-            var cv = vertices[faces[i+2]];
+            //var av = vertices[faces[i]];
+            //var bv = vertices[faces[i+1]];
+            //var cv = vertices[faces[i+2]];
 
             if (fa !== fb && fb !== fc && fa !== fc){
                 //finalfaces.push(fa);

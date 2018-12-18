@@ -22,44 +22,50 @@ iCn3D.prototype.createSurfaceRepresentation = function (atoms, type, wireframe, 
         extendedAtoms = Object.keys(atoms);
     }
 
-    var levelFor2fofc = 1.0; //1.5;
-    var levelForfofc = 3.0;
-    var colorFor2fofc = new THREE.Color('#00FFFF');
-    var colorForfofc = new THREE.Color('#00FF00');
-    var color;
+    //var sigma2fofc = 1.5;
+    //var sigmafofc = 3.0;
+    var maxdist = 1; // maximum distance to show electron density map, set it between 1 AND 2
 
     var ps;
     if(type == 11) { // 2fofc
+        maxdist = (me.mapData.sigma2 < 1.5) ? 2 : 1;
         ps = $3Dmol.SetupMap({
             //extent: extent,
             allatoms: this.atoms,
             atomsToShow: Object.keys(atoms),
             extendedAtoms: extendedAtoms,
+            water: this.water,
             //type: type,
             //threshbox: this.threshbox,
             header: me.mapData.header2,
             data: me.mapData.data2,
             matrix: me.mapData.matrix2,
-            isovalue: levelFor2fofc
+            isovalue: me.mapData.sigma2,
+            center: this.center,
+            maxdist: maxdist,
+            pmin: this.pmin,
+            pmax: this.pmax
         });
-
-        color = colorFor2fofc;
     }
     else if(type == 12) { // fofc
+        maxdist = (me.mapData.sigma < 3) ? 2 : 1;
         ps = $3Dmol.SetupMap({
             //extent: extent,
             allatoms: this.atoms,
             atomsToShow: Object.keys(atoms),
             extendedAtoms: extendedAtoms,
+            water: this.water,
             //type: type,
             //threshbox: this.threshbox,
             header: me.mapData.header,
             data: me.mapData.data,
             matrix: me.mapData.matrix,
-            isovalue: levelForfofc
+            isovalue: me.mapData.sigma,
+            center: this.center,
+            maxdist: maxdist,
+            pmin: this.pmin,
+            pmax: this.pmax
         });
-
-        color = colorForfofc;
     }
     else {
         ps = $3Dmol.SetupSurface({
@@ -82,11 +88,20 @@ iCn3D.prototype.createSurfaceRepresentation = function (atoms, type, wireframe, 
         r.atomid = v.atomid;
         return r;
     });
+
+    var colorFor2fofc = new THREE.Color('#00FFFF');
+    var colorForfofcPos = new THREE.Color('#00FF00');
+    //var colorForfofcNeg = new THREE.Color('#ff3300');
+    var colorForfofcNeg = new THREE.Color('#ff0000');
+
     geo.faces = faces.map(function (f) {
         //return new THREE.Face3(f.a, f.b, f.c);
         var vertexColors = ['a', 'b', 'c' ].map(function (d) {
-            if(type == 11 || type == 12) { // 2fofc, fofc
-                return color;
+            if(type == 11) { // 2fofc
+                return colorFor2fofc;
+            }
+            else if(type == 12) { // fofc
+                return (geo.vertices[f[d]].atomid) ? colorForfofcPos : colorForfofcNeg;
             }
             else {
                 var atomid = geo.vertices[f[d]].atomid;
@@ -124,7 +139,12 @@ iCn3D.prototype.createSurfaceRepresentation = function (atoms, type, wireframe, 
 
     me.mdl.add(mesh);
 
-    this.prevSurfaces.push(mesh);
+    if(type == 11 || type == 12) {
+        this.prevMaps.push(mesh);
+    }
+    else {
+        this.prevSurfaces.push(mesh);
+    }
 
     // remove the reference
     geo = null;

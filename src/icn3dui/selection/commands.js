@@ -103,6 +103,29 @@ iCn3DUI.prototype.execCommandsBase = function (start, end, steps) { var me = thi
               return;
           }
       }
+      else if(me.icn3d.commands[i].trim().indexOf('set map') == 0 && me.icn3d.commands[i].trim().indexOf('set map wireframe') == -1) {
+          //set map 2fofc sigma 1.5
+          var str = me.icn3d.commands[i].trim().substr(8);
+          var paraArray = str.split(" ");
+
+          if(paraArray.length == 3 && paraArray[1] == 'sigma') {
+            var sigma = paraArray[2];
+            var type = paraArray[0];
+
+            if( (type == '2fofc' && (me.bAjax2fofc === undefined || !me.bAjax2fofc))
+              || (type == 'fofc' && (me.bAjaxfofc === undefined || !me.bAjaxfofc)) ) {
+                $.when(me.applyCommandMap(me.icn3d.commands[i].trim())).then(function() {
+                    me.execCommandsBase(i + 1, end, steps);
+                });
+            }
+            else {
+                me.applyCommandMap(me.icn3d.commands[i].trim());
+                me.execCommandsBase(i + 1, end, steps);
+            }
+
+            return;
+          }
+      }
       else if(me.icn3d.commands[i].trim().indexOf('view annotations') == 0
         //|| me.icn3d.commands[i].trim().indexOf('set annotation cdd') == 0
         //|| me.icn3d.commands[i].trim().indexOf('set annotation site') == 0
@@ -384,6 +407,23 @@ iCn3DUI.prototype.applyCommandLoad = function (commandStr) { var me = this;
   }); // end of me.deferred = $.Deferred(function() {
 
   return me.deferred2.promise();
+};
+
+iCn3DUI.prototype.applyCommandMap = function (command) { var me = this;
+  // chain functions together
+  me.deferredMap = $.Deferred(function() {
+      var str = command.substr(8);
+      var paraArray = str.split(" ");
+
+      if(paraArray.length == 3 && paraArray[1] == 'sigma') {
+          var sigma = paraArray[2];
+          var type = paraArray[0];
+
+          me.Dsn6Parser(me.inputid, type, sigma);
+      }
+  }); // end of me.deferred = $.Deferred(function() {
+
+  return me.deferredMap.promise();
 };
 
 iCn3DUI.prototype.applyCommandAnnotationsAndCddSiteBase = function (command) { var me = this;
@@ -985,12 +1025,12 @@ iCn3DUI.prototype.applyCommand = function (commandStr) { var me = this;
     me.icn3d.opts['surface'] = value;
     me.icn3d.applySurfaceOptions();
   }
-  else if(command.indexOf('set map') == 0) {
-    var value = command.substr(8);
+//  else if(command.indexOf('set map') == 0) {
+//    var value = command.substr(8);
 
-    me.icn3d.opts['map'] = value;
-    me.icn3d.applyMapOptions();
-  }
+//    me.icn3d.opts['map'] = value;
+//    me.icn3d.applyMapOptions();
+//  }
   else if(command.indexOf('set camera') == 0) {
     var value = command.substr(command.lastIndexOf(' ') + 1);
     me.icn3d.opts['camera'] = value;

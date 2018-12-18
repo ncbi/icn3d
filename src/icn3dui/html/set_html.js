@@ -111,10 +111,10 @@ iCn3DUI.prototype.setTopMenusHtml = function (id) { var me = this;
 
     if(me.cfg.mmtfid === undefined) {
         if(me.realHeight < 300) {
-            html += "    <div id='" + me.pre + "wait' style='position:absolute; top:100px; left:50px; font-size: 1.2em; color: #444444;'>Loading the structure...</div>";
+            html += "    <div id='" + me.pre + "wait' style='position:absolute; top:100px; left:50px; font-size: 1.2em; color: #444444;'>Loading data...</div>";
         }
         else {
-            html += "    <div id='" + me.pre + "wait' style='position:absolute; top:180px; left:50px; font-size: 1.8em; color: #444444;'>Loading the structure...</div>";
+            html += "    <div id='" + me.pre + "wait' style='position:absolute; top:180px; left:50px; font-size: 1.8em; color: #444444;'>Loading data...</div>";
         }
     }
     html += "    <canvas id='" + me.pre + "canvas' style='width:100%; height: 100%; background-color: #000;'>Your browser does not support WebGL.</canvas>";
@@ -593,7 +593,7 @@ iCn3DUI.prototype.setMenu3 = function() { var me = this;
     html += "    </ul>";
     html += "  </li>";
 
-    //html += me.getLink('mn3_setthickness', 'Set Style');
+    html += me.getLink('mn3_setThickness', 'Set Thickness');
 
     html += "  <li>-</li>";
 
@@ -632,7 +632,6 @@ iCn3DUI.prototype.setMenu3 = function() { var me = this;
     html += "    </ul>";
     html += "  </li>";
 
-/*
     if(me.cfg.cid === undefined) {
         html += "  <li>-</li>";
 
@@ -652,7 +651,7 @@ iCn3DUI.prototype.setMenu3 = function() { var me = this;
         html += "    </ul>";
         html += "  </li>";
     }
-*/
+
     html += "  <li>-</li>";
 
     html += "  <li><span>Background</span>";
@@ -1049,6 +1048,42 @@ iCn3DUI.prototype.setDialogs = function() { var me = this;
     html += "  </select> &#197;</span> <span style='white-space:nowrap; margin-left:30px;'><button id='" + me.pre + "applyhbonds'>Display</button></span>";
     html += "</div>";
 
+    html += "<div id='" + me.pre + "dl_elecmap2fofc'>";
+    html += "  <span style='white-space:nowrap;font-weight:bold;'>Contour at: <select id='" + me.pre + "sigma2fofc'>";
+    html += "  <option value='0'>0</option>";
+    html += "  <option value='0.5'>0.5</option>";
+    html += "  <option value='1'>1</option>";
+    html += "  <option value='1.5' selected>1.5</option>";
+    html += "  <option value='2'>2</option>";
+    html += "  <option value='3'>3</option>";
+    html += "  <option value='4'>4</option>";
+    html += "  <option value='5'>5</option>";
+    html += "  <option value='6'>6</option>";
+    html += "  <option value='7'>7</option>";
+    html += "  <option value='8'>8</option>";
+    html += "  <option value='9'>9</option>";
+    html += "  <option value='10'>10</option>";
+    html += "  </select> &sigma;</span> <span style='white-space:nowrap; margin-left:30px;'><button id='" + me.pre + "applymap2fofc'>Display</button></span>";
+    html += "</div>";
+
+    html += "<div id='" + me.pre + "dl_elecmapfofc'>";
+    html += "  <span style='white-space:nowrap;font-weight:bold;'>Contour at: <select id='" + me.pre + "sigmafofc'>";
+    html += "  <option value='0'>0</option>";
+    html += "  <option value='0.5'>0.5</option>";
+    html += "  <option value='1'>1</option>";
+    html += "  <option value='1.5'>1.5</option>";
+    html += "  <option value='2'>2</option>";
+    html += "  <option value='3' selected>3</option>";
+    html += "  <option value='4'>4</option>";
+    html += "  <option value='5'>5</option>";
+    html += "  <option value='6'>6</option>";
+    html += "  <option value='7'>7</option>";
+    html += "  <option value='8'>8</option>";
+    html += "  <option value='9'>9</option>";
+    html += "  <option value='10'>10</option>";
+    html += "  </select> &sigma;</span> <span style='white-space:nowrap; margin-left:30px;'><button id='" + me.pre + "applymapfofc'>Display</button></span>";
+    html += "</div>";
+
     html += "<div id='" + me.pre + "dl_aroundsphere'>";
     html += "  <span style='white-space:nowrap'>1. Sphere with a radius: <input type='text' id='" + me.pre + "radius_aroundsphere' value='4' size='2'> &#197;</span><br/>";
     html += "  <span style='white-space:nowrap'>2. <button id='" + me.pre + "applypick_aroundsphere'>Display</button> the sphere around currently selected atoms</span>";
@@ -1090,6 +1125,10 @@ iCn3DUI.prototype.setDialogs = function() { var me = this;
 
     html += "<div id='" + me.pre + "dl_thickness'>";
     html += me.setThicknessHtml('3dprint');
+    html += "</div>";
+
+    html += "<div id='" + me.pre + "dl_thickness2'>";
+    html += me.setThicknessHtml('style');
     html += "</div>";
 
     html += "<div id='" + me.pre + "dl_addtrack'>";
@@ -1227,18 +1266,18 @@ iCn3DUI.prototype.setThicknessHtml = function (type) { var me = this;
     var nucleotideribbonwidth = (type == '3dprint') ? '1.4' : '0.8';
     var ballscale = (type == '3dprint') ? '0.6' : '0.3';
 
-    html += "<b>Line Radius</b>: <input type='text' id='" + me.pre + "linerad' value='" + linerad + "' size=4>&nbsp;&nbsp;&nbsp;(for stabilizers, hydrogen bonds, distance lines, default 0.1)<br/>";
-    html += "<b>Coil Radius</b>: <input type='text' id='" + me.pre + "coilrad' value='" + coilrad + "' size=4>&nbsp;&nbsp;&nbsp;(for coils, default 0.3)<br/>";
-    html += "<b>Stick Radius</b>: <input type='text' id='" + me.pre + "stickrad' value='" + stickrad + "' size=4>&nbsp;&nbsp;&nbsp;(for sticks, default 0.4)<br/>";
-    html += "<b>Trace Radius</b>: <input type='text' id='" + me.pre + "tracerad' value='" + tracerad + "' size=4>&nbsp;&nbsp;&nbsp;(for C alpha trace, O3' trace, default 0.2)<br/>";
+    html += "<b>Line Radius</b>: <input type='text' id='" + me.pre + "linerad_" + type + "' value='" + linerad + "' size=4>&nbsp;&nbsp;&nbsp;(for stabilizers, hydrogen bonds, distance lines, default 0.1)<br/>";
+    html += "<b>Coil Radius</b>: <input type='text' id='" + me.pre + "coilrad_" + type + "' value='" + coilrad + "' size=4>&nbsp;&nbsp;&nbsp;(for coils, default 0.3)<br/>";
+    html += "<b>Stick Radius</b>: <input type='text' id='" + me.pre + "stickrad_" + type + "' value='" + stickrad + "' size=4>&nbsp;&nbsp;&nbsp;(for sticks, default 0.4)<br/>";
+    html += "<b>Trace Radius</b>: <input type='text' id='" + me.pre + "tracerad_" + type + "' value='" + tracerad + "' size=4>&nbsp;&nbsp;&nbsp;(for C alpha trace, O3' trace, default 0.2)<br/>";
 
-    html += "<b>Ribbon Thickness</b>: <input type='text' id='" + me.pre + "ribbonthick' value='" + ribbonthick + "' size=4>&nbsp;&nbsp;&nbsp;(for helix and sheet ribbons, nucleotide ribbons, default 0.2)<br/>";
-    html += "<b>Protein Ribbon Width</b>: <input type='text' id='" + me.pre + "prtribbonwidth' value='" + prtribbonwidth + "' size=4>&nbsp;&nbsp;&nbsp;(for helix and sheet ribbons, default 1.3)<br/>";
-    html += "<b>Nucleotide Ribbon Width</b>: <input type='text' id='" + me.pre + "nucleotideribbonwidth' value='" + nucleotideribbonwidth + "' size=4>&nbsp;&nbsp;&nbsp;(for nucleotide ribbons, default 0.8)<br/>";
+    html += "<b>Ribbon Thickness</b>: <input type='text' id='" + me.pre + "ribbonthick_" + type + "' value='" + ribbonthick + "' size=4>&nbsp;&nbsp;&nbsp;(for helix and sheet ribbons, nucleotide ribbons, default 0.2)<br/>";
+    html += "<b>Protein Ribbon Width</b>: <input type='text' id='" + me.pre + "prtribbonwidth_" + type + "' value='" + prtribbonwidth + "' size=4>&nbsp;&nbsp;&nbsp;(for helix and sheet ribbons, default 1.3)<br/>";
+    html += "<b>Nucleotide Ribbon Width</b>: <input type='text' id='" + me.pre + "nucleotideribbonwidth_" + type + "' value='" + nucleotideribbonwidth + "' size=4>&nbsp;&nbsp;&nbsp;(for nucleotide ribbons, default 0.8)<br/>";
 
-    html += "<b>Ball Scale</b>: <input type='text' id='" + me.pre + "ballscale' value='" + ballscale + "' size=4>&nbsp;&nbsp;&nbsp;(for styles 'Ball and Stick' and 'Dot', default 0.3)<br/>";
+    html += "<b>Ball Scale</b>: <input type='text' id='" + me.pre + "ballscale_" + type + "' value='" + ballscale + "' size=4>&nbsp;&nbsp;&nbsp;(for styles 'Ball and Stick' and 'Dot', default 0.3)<br/>";
 
-    html += "<span style='white-space:nowrap'><button id='" + me.pre + "apply_thickness'>Preview</button></span>";
+    html += "<span style='white-space:nowrap'><button id='" + me.pre + "apply_thickness_" + type + "'>Preview</button></span>";
 
     return html;
 };

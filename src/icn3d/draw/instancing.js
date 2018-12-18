@@ -172,7 +172,8 @@ iCn3D.prototype.hashvalue2array = function(hash) {
 };
 
 iCn3D.prototype.drawSymmetryMates = function() {
-    if(this.bInstanced) {
+    //if(this.bInstanced) {
+    if(this.bInstanced && Object.keys(this.atoms).length * this.biomtMatrices.length > this.maxatomcnt) {
         this.drawSymmetryMatesInstancing();
     }
     else {
@@ -238,6 +239,8 @@ iCn3D.prototype.drawSymmetryMatesNoInstancing = function() {
 
       ++cnt;
    }
+
+   this.center = centerSum.clone();
 
    this.maxD *= Math.sqrt(cnt);
    //this.center = centerSum.multiplyScalar(1.0 / cnt);
@@ -417,6 +420,7 @@ iCn3D.prototype.drawSymmetryMatesInstancing = function() {
        if(mesh.type === 'Sprite') continue;
 
        var geometry = this.createInstancedGeometry(mesh);
+
        var mesh2 = new THREE.Mesh(geometry, this.instancedMaterial);
 
        // important: https://stackoverflow.com/questions/21184061/mesh-suddenly-disappears-in-three-js-clipping
