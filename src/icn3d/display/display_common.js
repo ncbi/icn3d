@@ -674,7 +674,6 @@ iCn3D.prototype.rebuildSceneBase = function (options) { var me = this;
     this.cam_z = this.maxD * 2;
     //this.cam_z = -this.maxD * 2;
 
-
     if(this.scene !== undefined) {
         for(var i = this.scene.children.length - 1; i >= 0; i--) {
              var obj = this.scene.children[i];

@@ -170,6 +170,10 @@ iCn3D.prototype.loadPDB = function (src) {
                 }
 
              }
+             else if (type == 900 && this.emd === undefined && line.substr(34).trim() == 'RELATED DB: EMDB') {
+                 //REMARK 900 RELATED ID: EMD-3906   RELATED DB: EMDB
+                 this.emd = line.substr(23, 11).trim();
+             }
         } else if (record === 'ENDMDL') {
             ++moleculeNum;
         } else if (record === 'JRNL  ') {

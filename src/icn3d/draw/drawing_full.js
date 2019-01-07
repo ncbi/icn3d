@@ -28,7 +28,8 @@ iCn3D.prototype.createSurfaceRepresentation = function (atoms, type, wireframe, 
 
     var ps;
     if(type == 11) { // 2fofc
-        maxdist = (me.mapData.sigma2 < 1.5) ? 2 : 1;
+        //maxdist = (me.mapData.sigma2 < 1.5) ? 2 : 1;
+
         ps = $3Dmol.SetupMap({
             //extent: extent,
             allatoms: this.atoms,
@@ -44,11 +45,12 @@ iCn3D.prototype.createSurfaceRepresentation = function (atoms, type, wireframe, 
             center: this.center,
             maxdist: maxdist,
             pmin: this.pmin,
-            pmax: this.pmax
+            pmax: this.pmax,
+            type: '2fofc'
         });
     }
     else if(type == 12) { // fofc
-        maxdist = (me.mapData.sigma < 3) ? 2 : 1;
+        //maxdist = (me.mapData.sigma < 3) ? 2 : 1;
         ps = $3Dmol.SetupMap({
             //extent: extent,
             allatoms: this.atoms,
@@ -64,7 +66,30 @@ iCn3D.prototype.createSurfaceRepresentation = function (atoms, type, wireframe, 
             center: this.center,
             maxdist: maxdist,
             pmin: this.pmin,
-            pmax: this.pmax
+            pmax: this.pmax,
+            type: 'fofc'
+        });
+    }
+    else if(type == 13) { // em
+        maxdist = 3; // EM map has no unit cell. It could include more gird space.
+
+        ps = $3Dmol.SetupMap({
+            //extent: extent,
+            allatoms: this.atoms,
+            atomsToShow: Object.keys(atoms),
+            extendedAtoms: extendedAtoms,
+            water: this.water,
+            //type: type,
+            //threshbox: this.threshbox,
+            header: me.mapData.headerEm,
+            data: me.mapData.dataEm,
+            matrix: me.mapData.matrixEm,
+            isovalue: me.mapData.sigmaEm,
+            center: this.center,
+            maxdist: maxdist,
+            pmin: this.pmin,
+            pmax: this.pmax,
+            type: 'em'
         });
     }
     else {
@@ -93,6 +118,7 @@ iCn3D.prototype.createSurfaceRepresentation = function (atoms, type, wireframe, 
     var colorForfofcPos = new THREE.Color('#00FF00');
     //var colorForfofcNeg = new THREE.Color('#ff3300');
     var colorForfofcNeg = new THREE.Color('#ff0000');
+    var colorForEm = new THREE.Color('#00FFFF');
 
     geo.faces = faces.map(function (f) {
         //return new THREE.Face3(f.a, f.b, f.c);
@@ -102,6 +128,9 @@ iCn3D.prototype.createSurfaceRepresentation = function (atoms, type, wireframe, 
             }
             else if(type == 12) { // fofc
                 return (geo.vertices[f[d]].atomid) ? colorForfofcPos : colorForfofcNeg;
+            }
+            else if(type == 13) { // em
+                return colorForEm;
             }
             else {
                 var atomid = geo.vertices[f[d]].atomid;
@@ -141,6 +170,9 @@ iCn3D.prototype.createSurfaceRepresentation = function (atoms, type, wireframe, 
 
     if(type == 11 || type == 12) {
         this.prevMaps.push(mesh);
+    }
+    else if(type == 13) {
+        this.prevEmmaps.push(mesh);
     }
     else {
         this.prevSurfaces.push(mesh);

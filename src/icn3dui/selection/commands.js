@@ -62,22 +62,24 @@ iCn3DUI.prototype.execCommands = function (start, end, steps) { var me = this;
 
 iCn3DUI.prototype.execCommandsBase = function (start, end, steps) { var me = this;
   for(var i=start; i <= end; ++i) {
+      var bFinalStep = (i === steps - 1) ? true : false;
+
       if(me.icn3d.commands[i].indexOf('load') !== -1) {
           if(end === 0 && start === end) {
               if(me.bNotLoadStructure) {
                     me.icn3d.hAtoms = me.icn3d.cloneHash(me.icn3d.atoms);
-                    me.icn3d.bRender = true;
+                    //me.icn3d.bRender = true;
 
                     // end of all commands
                     if(1 === me.icn3d.commands.length) me.bAddCommands = true;
-                    me.renderFinalStep(steps);                  }
+                    if(bFinalStep) me.renderFinalStep(steps);                  }
               else {
                   $.when(me.applyCommandLoad(me.icn3d.commands[i])).then(function() {
-                    me.icn3d.bRender = true;
+                   // me.icn3d.bRender = true;
 
                     // end of all commands
                     if(1 === me.icn3d.commands.length) me.bAddCommands = true;
-                    me.renderFinalStep(steps);
+                    if(bFinalStep) me.renderFinalStep(steps);
                   });
               }
               return;
@@ -120,6 +122,27 @@ iCn3DUI.prototype.execCommandsBase = function (start, end, steps) { var me = thi
             }
             else {
                 me.applyCommandMap(me.icn3d.commands[i].trim());
+                me.execCommandsBase(i + 1, end, steps);
+            }
+
+            return;
+          }
+      }
+      else if(me.icn3d.commands[i].trim().indexOf('set emmap') == 0 && me.icn3d.commands[i].trim().indexOf('set emmap wireframe') == -1) {
+          //set emmap percentage 70
+          var str = me.icn3d.commands[i].trim().substr(10);
+          var paraArray = str.split(" ");
+
+          if(paraArray.length == 2 && paraArray[0] == 'percentage') {
+            var percentage = paraArray[1];
+
+            if(me.bAjaxEm === undefined || !me.bAjaxEm) {
+                $.when(me.applyCommandEmmap(me.icn3d.commands[i].trim())).then(function() {
+                    me.execCommandsBase(i + 1, end, steps);
+                });
+            }
+            else {
+                me.applyCommandEmmap(me.icn3d.commands[i].trim());
                 me.execCommandsBase(i + 1, end, steps);
             }
 
@@ -263,7 +286,7 @@ iCn3DUI.prototype.execCommandsBase = function (start, end, steps) { var me = thi
       // hide "loading ..."
       me.hideLoading();
 
-      me.icn3d.bRender = true;
+      //me.icn3d.bRender = true;
 
       // end of all commands
       if(i + 1 === me.icn3d.commands.length) me.bAddCommands = true;
@@ -273,6 +296,8 @@ iCn3DUI.prototype.execCommandsBase = function (start, end, steps) { var me = thi
 };
 
 iCn3DUI.prototype.renderFinalStep = function(steps) { var me = this;
+    me.icn3d.bRender = true;
+
     var commandTransformation = me.icn3d.commands[steps-1].split('|||');
 
     if(commandTransformation.length == 2) {
@@ -424,6 +449,23 @@ iCn3DUI.prototype.applyCommandMap = function (command) { var me = this;
   }); // end of me.deferred = $.Deferred(function() {
 
   return me.deferredMap.promise();
+};
+
+iCn3DUI.prototype.applyCommandEmmap = function (command) { var me = this;
+  // chain functions together
+  me.deferredEmmap = $.Deferred(function() {
+      var str = command.substr(10);
+      var paraArray = str.split(" ");
+
+      if(paraArray.length == 2 && paraArray[0] == 'percentage') {
+          var percentage = paraArray[1];
+          var type = 'em';
+
+          me.DensityCifParser(me.inputid, type, percentage, me.icn3d.emd);
+      }
+  }); // end of me.deferred = $.Deferred(function() {
+
+  return me.deferredEmmap.promise();
 };
 
 iCn3DUI.prototype.applyCommandAnnotationsAndCddSiteBase = function (command) { var me = this;
@@ -626,6 +668,14 @@ iCn3DUI.prototype.applyCommand = function (commandStr) { var me = this;
   }
   else if(command == 'set map wireframe off') {
     me.icn3d.opts['mapwireframe'] = 'no';
+    me.icn3d.applyMapOptions();
+  }
+  else if(command == 'set emmap wireframe on') {
+    me.icn3d.opts['emmapwireframe'] = 'yes';
+    me.icn3d.applyMapOptions();
+  }
+  else if(command == 'set emmap wireframe off') {
+    me.icn3d.opts['emmapwireframe'] = 'no';
     me.icn3d.applyMapOptions();
   }
   else if(command == 'set surface neighbors on') {

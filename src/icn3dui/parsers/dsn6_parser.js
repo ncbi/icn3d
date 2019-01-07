@@ -13,11 +13,11 @@ iCn3DUI.prototype.Dsn6Parser = function(pdbid, type, sigma) { var me = this;
 
    url = "https://edmaps.rcsb.org/maps/" + pdbid.toLowerCase() + "_" + type + ".dsn6";
 
-   dataType = "text";
-
    bCid = undefined;
 
 /*
+   dataType = "text";
+
    $.ajax({
       url: url,
       dataType: dataType,
@@ -68,21 +68,16 @@ iCn3DUI.prototype.Dsn6Parser = function(pdbid, type, sigma) { var me = this;
 
                if(this.status == 200) {
                    var arrayBuffer = oReq.response;
-                   var bResult = me.loadDsn6Data(arrayBuffer, type, sigma);
+                   me.loadDsn6Data(arrayBuffer, type, sigma);
 
-                   if(bResult) {
-                       if(type == '2fofc') {
-                           me.bAjax2fofc = true;
-                       }
-                       else if(type == 'fofc') {
-                           me.bAjaxfofc = true;
-                       }
+                   if(type == '2fofc') {
+                       me.bAjax2fofc = true;
+                   }
+                   else if(type == 'fofc') {
+                       me.bAjaxfofc = true;
+                   }
 
-                       me.setOption('map', type);
-                   }
-                   else {
-                       //draw();
-                   }
+                   me.setOption('map', type);
                 }
                 else {
                     alert("RCSB server has no corresponding eletron density map for this structure.");
@@ -155,10 +150,6 @@ iCn3DUI.prototype.loadDsn6Data = function(dsn6data, type, sigma) { var me = this
       header.xExtent = intView[ 3 ]; // NX
       header.yExtent = intView[ 4 ];
       header.zExtent = intView[ 5 ];
-
-      if(header.xExtent < 0 || header.yExtent < 0 || header.zExtent < 0) {
-          alert("The header of the eletron density map have some problems...");
-      }
 
       header.xRate = intView[ 6 ]; // MX
       header.yRate = intView[ 7 ];
@@ -236,8 +227,6 @@ iCn3DUI.prototype.loadDsn6Data = function(dsn6data, type, sigma) { var me = this
         me.icn3d.mapData.sigma = sigma;
     }
 
-    return true;
-
 //console.log("header: " + JSON.stringify(header));
 //console.log("data: " + data);
 
@@ -245,9 +234,15 @@ iCn3DUI.prototype.loadDsn6Data = function(dsn6data, type, sigma) { var me = this
     // header: {"zStart":11,"xStart":0,"yStart":2,"xExtent":63,"yExtent":70,"zExtent":54,"xRate":88,"yRate":128,"zRate":112,"xlen":80.86250000000001,"ylen":115.5875,"zlen":101.8375,"alpha":90,"beta":90,"gamma":90}
     // data: [-1.724900484085083,-1.4153029918670654,-0.5749668478965759,-0.17691287398338318,-0.6634232401847839,-1.2826182842254639,-1.1941618919372559,-0.30959752202033997,...
 
+    // for 1TOP
+    //header: {"zStart":-35,"xStart":-11,"yStart":18,"xExtent":83,"yExtent":118,"zExtent":88,"xRate":114,"yRate":114,"zRate":102,"xlen":66.6875,"ylen":66.6875,"zlen":60.7875,"alpha":90,"beta":90,"gamma":120}
+    //data: -0.7147111296653748,-1.0720666646957397,-0.9529482126235962,-0.05955926328897476,0.7147111296653748,0.5360333323478699,-0.1786777824163437
+
     //if (header.sigma) {
     //  v.setStats(undefined, undefined, undefined, header.sigma);
     //}
+
+    //return true;
 };
 
 iCn3DUI.prototype.getMatrix = function(header) { var me = this;

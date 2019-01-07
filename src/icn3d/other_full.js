@@ -224,11 +224,28 @@ iCn3D.prototype.removeMaps = function () {
    this.prevMaps = [];
 };
 
+iCn3D.prototype.removeEmmaps = function () {
+   // remove prevous highlight
+   for(var i = 0, il = this.prevEmmaps.length; i < il; ++i) {
+       this.mdl.remove(this.prevEmmaps[i]);
+   }
+
+   this.prevEmmaps = [];
+};
+
 iCn3D.prototype.removeLastMap = function () {
    // remove prevous highlight
    if(this.prevMaps.length > 0) {
        this.mdl.remove(this.prevMaps[this.prevMaps.length - 1]);
        this.prevMaps.slice(this.prevMaps.length - 1, 1);
+   }
+};
+
+iCn3D.prototype.removeLastEmmap = function () {
+   // remove prevous highlight
+   if(this.prevEmmaps.length > 0) {
+       this.mdl.remove(this.prevEmmaps[this.prevEmmaps.length - 1]);
+       this.prevEmmaps.slice(this.prevEmmaps.length - 1, 1);
    }
 };
 

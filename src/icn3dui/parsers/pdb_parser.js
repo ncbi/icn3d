@@ -101,6 +101,17 @@ iCn3DUI.prototype.loadPdbData = function(data) {
         $("#" + me.pre + "assemblyWrapper").hide();
       }
 
+      if(me.icn3d.emd !== undefined) {
+          $("#" + me.pre + "mapWrapper1").hide();
+          $("#" + me.pre + "mapWrapper2").hide();
+          $("#" + me.pre + "mapWrapper3").hide();
+      }
+      else {
+          $("#" + me.pre + "emmapWrapper1").hide();
+          $("#" + me.pre + "emmapWrapper2").hide();
+          $("#" + me.pre + "emmapWrapper3").hide();
+      }
+
       var bCalphaOnly = me.icn3d.isCalphaPhosOnly(me.icn3d.hash2Atoms(me.icn3d.proteins), 'CA');
 
       var calphaonly = (bCalphaOnly) ? '1' : '0';

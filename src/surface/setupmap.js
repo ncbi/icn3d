@@ -5,7 +5,7 @@
 
 $3Dmol.SetupMap = function (data) {
     var ps = new $3Dmol.ElectronMap();
-    ps.initparm(data.header, data.data, data.matrix, data.isovalue, data.center, data.maxdist, data.pmin, data.pmax, data.water);
+    ps.initparm(data.header, data.data, data.matrix, data.isovalue, data.center, data.maxdist, data.pmin, data.pmax, data.water, data.type);
 
     ps.fillvoxels(data.allatoms, data.extendedAtoms);
 
