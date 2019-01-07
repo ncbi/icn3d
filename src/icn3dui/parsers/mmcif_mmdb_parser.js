@@ -123,7 +123,7 @@ iCn3DUI.prototype.downloadMmcifSymmetryBase = function (mmcifid) { var me = this
               success: function(data) {
                   if(data.emd !== undefined) me.icn3d.emd = data.emd;
 
-                  me.loadMmcifSymmetry(data);
+                  if(me.bAssemblyUseAsu) me.loadMmcifSymmetry(data);
 
                   if(me.deferredSymmetry !== undefined) me.deferredSymmetry.resolve();
               },
