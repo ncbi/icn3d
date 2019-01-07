@@ -111,6 +111,9 @@ iCn3DUI.prototype.draw2Ddgm = function(data, mmdbid, structureIndex, bUpdate) { 
                 else if(me.icn3d.proteins.hasOwnProperty(atom2.serial)) { // 4. protein interacting with proteins
                     type2 = 'protein';
                 }
+                else if(me.icn3d.water.hasOwnProperty(atom2.serial)) { // 5. water interacting with proteins
+                    type2 = 'water';
+                }
 
                 var name = chainid2.substr(chainid2.indexOf('_') + 1) + " (" + type2 + ")";
 

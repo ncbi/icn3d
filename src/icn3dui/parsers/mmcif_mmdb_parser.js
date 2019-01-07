@@ -852,11 +852,11 @@ iCn3DUI.prototype.loadAtomDataIn = function (data, id, type, seqalign) { var me 
         }
         else if (bChemicalIons) { // chemicals and ions
           //if (atm.bonds.length === 0) me.icn3d.ions[serial] = 1;
-          if (atm.elem === atm.resn) {
-              me.icn3d.ions[serial] = 1;
-          }
-          else if (atm.resn === 'HOH') {
+          if (atm.resn === 'HOH' || atm.resn === 'O') {
               me.icn3d.water[serial] = 1;
+          }
+          else if (atm.elem === atm.resn) {
+              me.icn3d.ions[serial] = 1;
           }
           else {
               me.icn3d.chemicals[serial] = 1;
