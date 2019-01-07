@@ -71,8 +71,10 @@ var iCn3DUI = function(cfg) {
     me.opts['surface']            = 'nothing';            //Van der Waals surface, molecular surface, solvent accessible surface, nothing
     me.opts['opacity']            = '1.0';                //1.0, 0.9, 0.8, 0.7, 0.6, 0.5
     me.opts['wireframe']          = 'no';                 //yes, no
-    me.opts['map']                = 'nothing';            //2fofc, fofc
+    me.opts['map']                = 'nothing';            //2fofc, fofc, nothing
     me.opts['mapwireframe']       = 'yes';                //yes, no
+    me.opts['emmap']              = 'nothing';            //em, nothing
+    me.opts['emmapwireframe']     = 'yes';                //yes, no
     me.opts['chemicals']          = 'stick';              //lines, stick, ball and stick, schematic, sphere, nothing
     me.opts['water']              = 'nothing';            //sphere, dot, nothing
     me.opts['ions']               = 'sphere';             //sphere, dot, nothing
@@ -497,6 +499,16 @@ iCn3DUI.prototype = {
           }
 
           me.icn3d.applyMapOptions();
+
+          //me.icn3d.render();
+          me.icn3d.draw(); // to make surface work in assembly
+      }
+      else if(id === 'emmap' || id === 'emmapwireframe') {
+          if(id === 'emmapwireframe') {
+              me.icn3d.removeLastEmmap();
+          }
+
+          me.icn3d.applyEmmapOptions();
 
           //me.icn3d.render();
           me.icn3d.draw(); // to make surface work in assembly
@@ -1682,6 +1694,9 @@ iCn3DUI.prototype = {
 
             me.icn3d.removeMaps();
             me.icn3d.applyMapOptions();
+
+            me.icn3d.removeEmmaps();
+            me.icn3d.applyEmmapOptions();
        }
 
        var text = me.saveStlFile();
@@ -1731,6 +1746,9 @@ iCn3DUI.prototype = {
 
             me.icn3d.removeMaps();
             me.icn3d.applyMapOptions();
+
+            me.icn3d.removeEmmaps();
+            me.icn3d.applyEmmapOptions();
        }
 
        var text = me.saveVrmlFile();
@@ -2726,7 +2744,7 @@ iCn3DUI.prototype = {
     },
 
     clkMn5_elecmapNo: function() { var me = this;
-        $("#" + me.pre + "mn5_elecmapNo").click(function (e) {
+        $("#" + me.pre + "mn5_elecmapNo").add("#" + me.pre + "elecmapNo2").add("#" + me.pre + "elecmapNo3").click(function (e) {
            me.setOption('map', 'nothing');
            me.setLogCmd('set map nothing', true);
         });
@@ -2735,7 +2753,7 @@ iCn3DUI.prototype = {
     clickApplymap2fofc: function() { var me = this;
         $("#" + me.pre + "applymap2fofc").click(function(e) {
            e.preventDefault();
-           dialog.dialog( "close" );
+           //dialog.dialog( "close" );
 
            var sigma2fofc = parseFloat($("#" + me.pre + "sigma2fofc" ).val());
 
@@ -2743,14 +2761,14 @@ iCn3DUI.prototype = {
            me.Dsn6Parser(me.inputid, type, sigma2fofc);
 
            //me.setOption('map', '2fofc');
-           me.setLogCmd('set map 2fofc sigma ' + sigma2fofc, true);
+           me.setLogCmd('set map 2fofc sigma ' + sigma2fofc + ';', true);
         });
     },
 
     clickApplymapfofc: function() { var me = this;
         $("#" + me.pre + "applymapfofc").click(function(e) {
            e.preventDefault();
-           dialog.dialog( "close" );
+           //dialog.dialog( "close" );
 
            var sigmafofc = parseFloat($("#" + me.pre + "sigmafofc" ).val());
 
@@ -2758,7 +2776,7 @@ iCn3DUI.prototype = {
            me.Dsn6Parser(me.inputid, type, sigmafofc);
 
            //me.setOption('map', 'fofc');
-           me.setLogCmd('set map fofc sigma ' + sigmafofc, true);
+           me.setLogCmd('set map fofc sigma ' + sigmafofc + ';', true);
         });
     },
 
@@ -2775,6 +2793,50 @@ iCn3DUI.prototype = {
         $("#" + me.pre + "mn5_mapwireframeNo").click(function (e) {
            me.setOption('mapwireframe', 'no');
            me.setLogCmd('set map wireframe off', true);
+        });
+    },
+
+    clkMn5_emmap: function() { var me = this;
+        $("#" + me.pre + "mn5_emmap").click(function (e) {
+           me.openDialog(me.pre + 'dl_emmap', 'EM Density Map');
+        });
+    },
+
+    clkMn5_emmapNo: function() { var me = this;
+        $("#" + me.pre + "mn5_emmapNo").add("#" + me.pre + "emmapNo2").click(function (e) {
+           me.setOption('emmap', 'nothing');
+           me.setLogCmd('set emmap nothing', true);
+        });
+    },
+
+    clickApplyemmap: function() { var me = this;
+        $("#" + me.pre + "applyemmap").click(function(e) {
+           e.preventDefault();
+           //dialog.dialog( "close" );
+
+           var empercentage = parseFloat($("#" + me.pre + "empercentage" ).val());
+
+           var type = 'em';
+           //me.emd = 'emd-3906';
+           me.DensityCifParser(me.inputid, type, empercentage, me.icn3d.emd);
+
+           me.setLogCmd('set emmap percentage ' + empercentage + ';', true);
+        });
+    },
+
+    clkMn5_emmapwireframeYes: function() { var me = this;
+        $("#" + me.pre + "mn5_emmapwireframeYes").click(function (e) {
+           //me.Dsn6Parser(me.inputid);
+
+           me.setOption('emmapwireframe', 'yes');
+           me.setLogCmd('set emmap wireframe on', true);
+        });
+    },
+
+    clkMn5_emmapwireframeNo: function() { var me = this;
+        $("#" + me.pre + "mn5_emmapwireframeNo").click(function (e) {
+           me.setOption('emmapwireframe', 'no');
+           me.setLogCmd('set emmap wireframe off', true);
         });
     },
 
@@ -4437,6 +4499,13 @@ iCn3DUI.prototype = {
         me.clkMn5_elecmapNo();
         me.clkMn5_mapwireframeYes();
         me.clkMn5_mapwireframeNo();
+
+        me.clkMn5_emmap();
+        me.clkMn5_emmapNo();
+        me.clickApplyemmap();
+        me.clkMn5_emmapwireframeYes();
+        me.clkMn5_emmapwireframeNo();
+
         me.clkMn6_assemblyYes();
         me.clkMn6_assemblyNo();
         me.clkMn6_addlabelResidues();

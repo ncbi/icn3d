@@ -292,6 +292,36 @@ iCn3D.prototype.applyMapOptions = function (options) {
     }
 };
 
+iCn3D.prototype.applyEmmapOptions = function (options) {
+    if(options === undefined) options = this.opts;
+
+    switch (options.emmapwireframe) {
+        case 'yes':
+            options.emmapwireframe = true;
+            break;
+        case 'no':
+            options.emmapwireframe = false;
+            break;
+    }
+
+    var atoms, currAtoms;
+
+    // only show the surface for atoms which are displaying
+    atoms = this.intHash(this.dAtoms, this.hAtoms);
+
+    currAtoms = this.hash2Atoms(atoms);
+
+    switch (options.emmap.toLowerCase()) {
+        case 'em':
+            this.createSurfaceRepresentation(currAtoms, 13, options.emmapwireframe);
+            break;
+        case 'nothing':
+            // remove surfaces
+            this.removeEmmaps();
+            break;
+    }
+};
+
 iCn3D.prototype.setFog = function() {
     var background = this.backgroundColors[this.opts.background.toLowerCase()];
 
@@ -347,7 +377,12 @@ iCn3D.prototype.alternateStructures = function () {
     // also alternating the surfaces
     this.removeSurfaces();
     this.applySurfaceOptions();
+
+    this.removeMaps();
     this.applyMapOptions();
+
+    this.removeEmmaps();
+    this.applyEmmapOptions();
 
     this.draw();
 
@@ -444,17 +479,24 @@ iCn3D.prototype.applyOtherOptions = function (options) {
 
     this.createLines(this.lines);
 
+    // maps
+    if(this.prevMaps !== undefined) {
+        for(var i = 0, il = this.prevMaps.length; i < il; ++i) {
+            this.mdl.add(this.prevMaps[i]);
+        }
+    }
+
+    // EM map
+    if(this.prevEmmaps !== undefined) {
+        for(var i = 0, il = this.prevEmmaps.length; i < il; ++i) {
+            this.mdl.add(this.prevEmmaps[i]);
+        }
+    }
+
     // surfaces
     if(this.prevSurfaces !== undefined) {
         for(var i = 0, il = this.prevSurfaces.length; i < il; ++i) {
             this.mdl.add(this.prevSurfaces[i]);
-        }
-    }
-
-    // maps
-    if(this.prevSurfaces !== undefined) {
-        for(var i = 0, il = this.prevMaps.length; i < il; ++i) {
-            this.mdl.add(this.prevMaps[i]);
         }
     }
 
@@ -517,6 +559,8 @@ iCn3D.prototype.draw = function () { var me = this;
     }
 
     this.applyPrevColor();
+
+//    if(Object.keys(me.mapData).length > 0) me.applyMapOptions();
 
     //if(this.bSSOnly) this.drawHelixBrick(this.molid2ss, this.molid2color);
 

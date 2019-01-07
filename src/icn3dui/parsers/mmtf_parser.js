@@ -10,7 +10,6 @@ iCn3DUI.prototype.downloadMmtf = function (mmtfid) { var me = this;
         mmtfid,
         // onLoad callback
         function( mmtfData ){
-
             me.icn3d.init();
 
             var pmin = new THREE.Vector3( 9999, 9999, 9999);

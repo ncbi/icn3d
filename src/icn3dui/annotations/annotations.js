@@ -1969,6 +1969,8 @@ iCn3DUI.prototype.showInteraction_base = function(chnid, chnidBase) {
         for(var j = 0; j < jl; ++j) {
             var chainid2 = chainArray[j];
             if(chainid2 === chainid) continue;
+            // interactions should be on the same structure
+            if(chainid2.substr(0, chainid2.indexOf('_')) !== chainid.substr(0, chainid.indexOf('_'))) continue;
 
             pos = parseInt(chainid.indexOf('_'));
             if(pos > 4) continue; // NMR structures with structure id such as 2K042,2K043, ...

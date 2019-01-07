@@ -121,6 +121,8 @@ iCn3DUI.prototype.downloadMmcifSymmetryBase = function (mmcifid) { var me = this
               tryCount : 0,
               retryLimit : 1,
               success: function(data) {
+                  if(data.emd !== undefined) me.icn3d.emd = data.emd;
+
                   me.loadMmcifSymmetry(data);
 
                   if(me.deferredSymmetry !== undefined) me.deferredSymmetry.resolve();
@@ -154,6 +156,19 @@ iCn3DUI.prototype.downloadMmcifSymmetryBase = function (mmcifid) { var me = this
 iCn3DUI.prototype.loadMmcifData = function(data) { var me = this;
     if (data.atoms !== undefined) {
         me.icn3d.init();
+
+        if(data.emd !== undefined) me.icn3d.emd = data.emd;
+
+        if(me.icn3d.emd !== undefined) {
+          $("#" + me.pre + "mapWrapper1").hide();
+          $("#" + me.pre + "mapWrapper2").hide();
+          $("#" + me.pre + "mapWrapper3").hide();
+        }
+        else {
+          $("#" + me.pre + "emmapWrapper1").hide();
+          $("#" + me.pre + "emmapWrapper2").hide();
+          $("#" + me.pre + "emmapWrapper3").hide();
+        }
 
         me.loadAtomDataIn(data, data.mmcif, 'mmcifid');
 
@@ -328,6 +343,7 @@ iCn3DUI.prototype.downloadMmdb = function (mmdbid, bGi) { var me = this;
         // "asuAtomCount" is defined when: 1) atom count is over the threshold 2) buidx=1 3) asu atom count is smaller than biological unit atom count
         me.bAssemblyUseAsu = (data.asuAtomCount !== undefined) ? true : false;
 
+/*
         if(me.bAssemblyUseAsu) { // set up symmetric matrices
             $("#" + me.pre + "assemblyWrapper").show();
             me.icn3d.bAssembly = true;
@@ -344,6 +360,10 @@ iCn3DUI.prototype.downloadMmdb = function (mmdbid, bGi) { var me = this;
 
             me.downloadMmdbPart2();
         }
+*/
+        $.when(me.downloadMmcifSymmetry(id)).then(function() {
+            me.downloadMmdbPart2();
+        });
       },
       error : function(xhr, textStatus, errorThrown ) {
         this.tryCount++;
@@ -366,6 +386,26 @@ iCn3DUI.prototype.downloadMmdb = function (mmdbid, bGi) { var me = this;
 };
 
 iCn3DUI.prototype.downloadMmdbPart2 = function () { var me = this;
+    if(me.bAssemblyUseAsu) { // set up symmetric matrices
+        $("#" + me.pre + "assemblyWrapper").show();
+        me.icn3d.bAssembly = true;
+    }
+    else {
+        $("#" + me.pre + "assemblyWrapper").hide();
+        me.icn3d.bAssembly = false;
+    }
+
+    if(me.icn3d.emd !== undefined) {
+      $("#" + me.pre + "mapWrapper1").hide();
+      $("#" + me.pre + "mapWrapper2").hide();
+      $("#" + me.pre + "mapWrapper3").hide();
+    }
+    else {
+      $("#" + me.pre + "emmapWrapper1").hide();
+      $("#" + me.pre + "emmapWrapper2").hide();
+      $("#" + me.pre + "emmapWrapper3").hide();
+    }
+
     me.icn3d.setAtomStyleByOptions(me.opts);
     // use the original color from cgi output
     me.icn3d.setColorByOptions(me.opts, me.icn3d.atoms, true);

@@ -50,9 +50,10 @@ body {font-family: Verdana, Arial, Helvetica, sans-serif;}
 <ul>
 <li><a href="https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?mmdbid=1tup&command=view annotations; set annotation cdd; set view detailed view; set annotation all">Display and integrate annotations</a> from NCBI resources including dbSNP, ClinVar, conserved domains, 3D domains, and binding sites</li>
 <li><a href="https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?mmdbid=1tup&showanno=1&show2d=1&showsets=1&command=view annotations; set view detailed view; add track | chainid 1TUP_B | title Custom Key Sites | text 82 R, 152 G, 155-156 RR, 180 R, 189 R; select .B:82,152,155-156,180,189 | name mutation">Add custom tracks</a> in various formats (FASTA, bed file, etc) in the annotation window</li>
-<li>Use a url or a state file to capture the custom display of 3D structures</li>
+<li>Use a url (e.g., <a href="https://d55qc.app.goo.gl/HDuWMFAVokxvHMKSA">https://d55qc.app.goo.gl/HDuWMFAVokxvHMKSA</a>) or a state file to capture the custom display of 3D structures. The saved static "iCn3D PNG Image" can be loaded using "File > Open File > iCn3D PNG Image" to reproduce the interactive display.</li>
 <li>Select residues by searching sequences or select on 3D structures, 2D interactions, and 1D sequences</li>
 <li>Display/highlight selected residues in 3D structures, 2D interactions, and 1D sequences</li>
+<li>Show <a href="https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?mmdbid=3gvu&command=style+proteins+b+factor+tube;+color+b+factor;+set+map+2fofc+sigma+1.5">electron density map</a> or <a href="https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?mmdbid=6eny&command=set+emmap+percentage+20">EM density map</a></li>
 <li>Export STL or VRML files for <a href="https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?mmdbid=1tup&command=export stl stabilizer file">3D printing</a></li>
 <li>Display NCBI pre-calculated <a href="https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?align=1hho,4n7n&showalignseq=1">aligned 3D structures</a> by providing two PDB IDs or MMDB IDs</li>
 </ul>
@@ -223,6 +224,8 @@ This page describes Web APIs and how to embed iCn3D in your html page. Other det
 <div style="float:left; margin-left:10px;">
 <span style="font-weight:bold; font-size:1em;">Methods in Menus</span><br>
 <a href="#addResiudeLabels">addResiudeLabels</a><br>
+<a href="#applyEmmapOptions">applyEmmapOptions</a><br>
+<a href="#applyMapOptions">applyMapOptions</a><br>
 <a href="#applySurfaceOptions">applySurfaceOptions</a><br>
 <a href="#centerSelection">centerSelection</a><br>
 <a href="#hideHbonds">hideHbonds</a><br>
@@ -286,6 +289,10 @@ This page describes Web APIs and how to embed iCn3D in your html page. Other det
 <a href="#addLine">addLine</a><br>
 <a href="#addStabilizer">addStabilizer</a><br>
 <a href="#applyCommandAnnotationsAndCddSite">applyCommandAnnotationsAndCddSite</a><br>
+<a href="#applyCommandEmmap">applyCommandEmmap</a><br>
+<a href="#applyCommandMap">applyCommandMap</a><br>
+<a href="#applySavedColor">applySavedColor</a><br>
+<a href="#applySavedStyle">applySavedStyle</a><br>
 <a href="#back">back</a><br>
 <a href="#changeCustomAtoms">changeCustomAtoms</a><br>
 <a href="#deleteSelectedSets">deleteSelectedSets</a><br>
@@ -305,14 +312,16 @@ This page describes Web APIs and how to embed iCn3D in your html page. Other det
 <a href="#renderFinalStep">renderFinalStep</a><br>
 <a href="#resetAfter3Dprint">resetAfter3Dprint</a><br>
 <a href="#rotStruc">rotStruc</a><br>
+<a href="#saveColor">saveColor</a><br>
 <a href="#saveFile">saveFile</a><br>
+<a href="#saveStyle">saveStyle</a><br>
 <a href="#selectAll">selectAll</a><br>
-<a href="#selectByCommand">selectByCommand</a><br>
-<a href="#selectComplement">selectComplement</a><br>
-<a href="#selectSideChains">selectSideChains</a><br>
 </div>
 
 <div style="float:left;">
+<a href="#selectByCommand">selectByCommand</a><br>
+<a href="#selectComplement">selectComplement</a><br>
+<a href="#selectSideChains">selectSideChains</a><br>
 <a href="#set2DDiagrams">set2DDiagrams</a><br>
 <a href="#setOption">setOption</a><br>
 <a href="#setStyle">setStyle</a><br>
@@ -854,8 +863,8 @@ In the dialog Select -&gt; Advanced, users can use simple specification to selec
 
 <tr><td valign='top'>g) Style -&gt; Set Thickness:</td>                    <td valign='top'>set thickness | linerad 0.6 | coilrad 1 | stickrad 0.8 | ribbonthick 0.8 | proteinwidth 2 | nucleotidewidth 1.2 | ballscale 0.6</td> <td valign='top'></td></tr>
 
-<tr><td valign='top'>h) Style -&gt; Save Style:</td>                    <td valign='top'>save style</td> <td valign='top'><a href="#applySurfaceOptions">saveStyle</a></td></tr>
-<tr><td valign='top'>i) Style -&gt; Apply Saved Style:</td>             <td valign='top'>apply saved style</td> <td valign='top'><a href="#applySurfaceOptions">applySavedStyle</a></td></tr>
+<tr><td valign='top'>h) Style -&gt; Save Style:</td>                    <td valign='top'>save style</td> <td valign='top'><a href="#saveStyle">saveStyle</a></td></tr>
+<tr><td valign='top'>i) Style -&gt; Apply Saved Style:</td>             <td valign='top'>apply saved style</td> <td valign='top'><a href="#applySavedStyle">applySavedStyle</a></td></tr>
 
 <tr><td colspan="3"><br>j) Style -&gt; Surface Type</td> </tr>
 <tr><td width="240"><span class="indent">Van der Waals:</span></td>      <td valign='top'>set surface Van der Waals surface</td> <td valign='top'><a href="#applySurfaceOptions">applySurfaceOptions</a></td></tr>
@@ -880,16 +889,24 @@ In the dialog Select -&gt; Advanced, users can use simple specification to selec
 <tr><td valign='top'><span class="indent">No</span></td>                  <td valign='top'>set surface wireframe off</td> <td valign='top'><a href="#applySurfaceOptions">applySurfaceOptions</a></td></tr>
 
 <tr><td colspan="3"><br>n) Style -&gt; Electron Density</td> </tr>
-<tr><td width="240"><span class="indent">2Fo-Fc Map:</span></td>      <td valign='top'>set map 2fofc sigma 1.5</td> <td valign='top'><a href="#applySurfaceOptions">applyCommandMap</a></td></tr>
-<tr><td width="240"><span class="indent">Fo-Fc Map:</span></td>      <td valign='top'>set map 2fofc sigma 3</td> <td valign='top'><a href="#applySurfaceOptions">applyCommandMap</a></td></tr>
+<tr><td width="240"><span class="indent">2Fo-Fc Map:</span></td>      <td valign='top'>set map 2fofc sigma 1.5</td> <td valign='top'><a href="#applyCommandMap">applyCommandMap</a></td></tr>
+<tr><td width="240"><span class="indent">Fo-Fc Map:</span></td>      <td valign='top'>set map 2fofc sigma 3</td> <td valign='top'><a href="#applyCommandMap">applyCommandMap</a></td></tr>
 
-<tr><td valign='top'>o) Style -&gt; Remove Map:</td>                    <td valign='top'>set map nothing</td> <td valign='top'><a href="#applySurfaceOptions">applyMapOptions</a></td></tr>
+<tr><td valign='top'>o) Style -&gt; Remove Map:</td>                    <td valign='top'>set map nothing</td> <td valign='top'><a href="#applyMapOptions">applyMapOptions</a></td></tr>
 
 <tr><td colspan="3"><br>p) Style -&gt; Map Wireframe</td> </tr>
-<tr><td valign='top'><span class="indent">Yes</span></td>                 <td valign='top'>set map wireframe on</td> <td valign='top'><a href="#applySurfaceOptions">applyMapOptions</a></td></tr>
-<tr><td valign='top'><span class="indent">No</span></td>                  <td valign='top'>set map wireframe off</td> <td valign='top'><a href="#applySurfaceOptions">applyMapOptions</a></td></tr>
+<tr><td valign='top'><span class="indent">Yes</span></td>                 <td valign='top'>set map wireframe on</td> <td valign='top'><a href="#applyMapOptions">applyMapOptions</a></td></tr>
+<tr><td valign='top'><span class="indent">No</span></td>                  <td valign='top'>set map wireframe off</td> <td valign='top'><a href="#applyMapOptions">applyMapOptions</a></td></tr>
 
-<tr><td colspan="3"><br>q) Style -&gt; Background</td> </tr>
+<tr><td valign='top'>q) Style -&gt; EM Density Map:</td>                    <td valign='top'>set emmap em</td> <td valign='top'><a href="#applyCommandEmmap">applyCommandEmmap</a></td></tr>
+
+<tr><td valign='top'>r) Style -&gt; Remove EM Map:</td>                    <td valign='top'>set emmap nothing</td> <td valign='top'><a href="#applyEmmapOptions">applyEmmapOptions</a></td></tr>
+
+<tr><td colspan="3"><br>s) Style -&gt; EM Map Wireframe</td> </tr>
+<tr><td valign='top'><span class="indent">Yes</span></td>                 <td valign='top'>set emmap wireframe on</td> <td valign='top'><a href="#applyEmmapOptions">applyEmmapOptions</a></td></tr>
+<tr><td valign='top'><span class="indent">No</span></td>                  <td valign='top'>set emmap wireframe off</td> <td valign='top'><a href="#applyEmmapOptions">applyEmmapOptions</a></td></tr>
+
+<tr><td colspan="3"><br>t) Style -&gt; Background</td> </tr>
 <tr><td valign='top'><span class="indent">Transparent:</span></td>        <td valign='top'>set background transparent</td> <td valign='top'>me.icn3d.opts['background'] = 'transparent'</td></tr>
 <tr><td valign='top'><span class="indent">Black:</span></td>              <td valign='top'>set background black</td> <td valign='top'>me.icn3d.opts['background'] = 'black'</td></tr>
 <tr><td valign='top'><span class="indent">Grey:</span></td>               <td valign='top'>set background grey</td> <td valign='top'>me.icn3d.opts['background'] = 'grey'</td></tr>
@@ -911,8 +928,8 @@ In the dialog Select -&gt; Advanced, users can use simple specification to selec
 <tr><td valign='top'>Color -&gt; B-factor (Original):</td>             <td valign='top'>color b factor</td> <td valign='top'><a href="#setColorByOptions">setColorByOptions</a></td></tr>
 <tr><td valign='top'>Color -&gt; B-factor (Percentile):</td>             <td valign='top'>color b factor percentile</td> <td valign='top'><a href="#setColorByOptions">setColorByOptions</a></td></tr>
 
-<tr><td valign='top'>Color -&gt; Save Color:</td>       <td valign='top'>save color</td> <td valign='top'><a href="#applySurfaceOptions">saveColor</a></td></tr>
-<tr><td valign='top'>Color -&gt; Apply Saved Color:</td><td valign='top'>apply saved color</td> <td valign='top'><a href="#applySurfaceOptions">applySavedColor</a></td></tr>
+<tr><td valign='top'>Color -&gt; Save Color:</td>       <td valign='top'>save color</td> <td valign='top'><a href="#saveColor">saveColor</a></td></tr>
+<tr><td valign='top'>Color -&gt; Apply Saved Color:</td><td valign='top'>apply saved color</td> <td valign='top'><a href="#applySavedColor">applySavedColor</a></td></tr>
 
 <tr><td colspan="3"><br>b) Color -&gt; Unicolor</td> </tr>
 <tr><td valign='top'><span class="indent">Red:</span></td>                <td valign='top'>color red</td> <td valign='top'><a href="#setColorByOptions">setColorByOptions</a></td></tr>
@@ -1147,6 +1164,12 @@ Apply the rest options (e.g., hydrogen bonds, center, etc).<br>
 <br>
 <a name="applySsbondsOptions"></a><b>applySsbondsOptions(options)</b> <a href="#Top"><span class="top">&nbsp;&nbsp;&nbsp;</span></a><br>
 Apply the disulfide bond options.<br>
+<br>
+<a name="applyEmmapOptions"></a><b>applyEmmapOptions(options)</b> <a href="#Top"><span class="top">&nbsp;&nbsp;&nbsp;</span></a><br>
+Apply options for EM density map.<br>
+<br>
+<a name="applyMapOptions"></a><b>applyMapOptions(options)</b> <a href="#Top"><span class="top">&nbsp;&nbsp;&nbsp;</span></a><br>
+Apply options for electron density map.<br>
 <br>
 <a name="applySurfaceOptions"></a><b>applySurfaceOptions(options)</b> <a href="#Top"><span class="top">&nbsp;&nbsp;&nbsp;</span></a><br>
 Apply the surface options.<br>
@@ -1449,6 +1472,18 @@ Execute a command. If the command is to load a structure, use the Method "applyC
 <br><br><a name="applyCommandAnnotationsAndCddSite"></a><b>applyCommandAnnotationsAndCddSite()</b> <a href="#Top"><span class="top">&nbsp;&nbsp;&nbsp;</span></a><br>
 The annotation window calls many Ajax calls. Thus the command "view interactions" (in Share Link or loading state file) is handled specially to wait for the Ajax calls to finish before executing the next command.
 
+<br><br><a name="applyCommandMap"></a><b>applyCommandMap(command)</b> <a href="#Top"><span class="top">&nbsp;&nbsp;&nbsp;</span></a><br>
+Apply the command to show electron density map.
+
+<br><br><a name="applyCommandEmmap"></a><b>applyCommandEmmap(command)</b> <a href="#Top"><span class="top">&nbsp;&nbsp;&nbsp;</span></a><br>
+Apply the command to show EM density map.
+
+<br><br><a name="applySavedColor"></a><b>applySavedColor()</b> <a href="#Top"><span class="top">&nbsp;&nbsp;&nbsp;</span></a><br>
+Restore the previously saved color.
+
+<br><br><a name="applySavedStyle"></a><b>applySavedStyle()</b> <a href="#Top"><span class="top">&nbsp;&nbsp;&nbsp;</span></a><br>
+Restore the previously saved style.
+
 <br><br><a name="applyCommandLoad"></a><b>applyCommandLoad(command)</b> <a href="#Top"><span class="top">&nbsp;&nbsp;&nbsp;</span></a><br>
 Execute the command to load a structure. This step is different from the rest steps since it has to finish before the rest steps start.
 
@@ -1607,8 +1642,14 @@ Rotate the structure in one of the directions: "left", "right", "up", and "down"
 <br><br><a name="saveCommandsToSession"></a><b>saveCommandsToSession()</b> <a href="#Top"><span class="top">&nbsp;&nbsp;&nbsp;</span></a><br>
 Save the command history to session storage so that the viewer can show the previous state when refreshing the same page.
 
+<br><br><a name="saveColor"></a><b>saveColor()</b> <a href="#Top"><span class="top">&nbsp;&nbsp;&nbsp;</span></a><br>
+Save the current color setting so that these colors can be restored later by clicking "Apply Saved Color" in the Color menu.
+
 <br><br><a name="saveFile"></a><b>saveFile(filename, type, data)</b> <a href="#Top"><span class="top">&nbsp;&nbsp;&nbsp;</span></a><br>
 Five types are used: command, png, html, text, and binary. The type "command" is used to save the statefile. The type "png" is used to save the current canvas image. The type "html" is used to save html file with the "data". This can be used to save any text. The type "text" is used to save an array of text, where "data" is actually an array. The type "binary" is used to save an array of binary, where "data" is actually an array.
+
+<br><br><a name="saveStyle"></a><b>saveStyle()</b> <a href="#Top"><span class="top">&nbsp;&nbsp;&nbsp;</span></a><br>
+Save the current style setting so that these styles can be restored later by clicking "Apply Saved Style" in the Style menu.
 
 <br><br><a name="saveStlFile"></a><b>saveStlFile()</b> <a href="#Top"><span class="top">&nbsp;&nbsp;&nbsp;</span></a><br>
 Save the binary STL file for 3D monocolor printing.
@@ -1757,6 +1798,9 @@ Update the highlight of sequences in the annotation window according to the curr
 
 <a name="log"></a>
 <h2>Change Log:<img src="https://www.ncbi.nlm.nih.gov/Structure/IMG/spacer.gif" width="25" height="1" border="0"><a href="#Top"><img src="https://www.ncbi.nlm.nih.gov/Structure/IMG/arrowup_blue.gif" width="12" height="12" border="0" alt="back to top"></a></h2>
+The production version <a href="https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.4.1.zip">icn3d-2.4.1</a> was release on January 7, 2019. Enabled users to show EM density map for any subset of an EM structure.
+<br><br>
+
 The production version <a href="https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.4.0.zip">icn3d-2.4.0</a> was release on December 17, 2018. Enabled users to show electron density map for any subset of a crystal structure.
 <br><br>
 

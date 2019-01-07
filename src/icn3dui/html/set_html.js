@@ -30,7 +30,7 @@ iCn3DUI.prototype.setTools_base = function() { var me = this;
 
     var buttonStyle = me.isMobile() ? 'none' : 'button';
 
-    html += "      <td valign='top'>" + me.setButton(buttonStyle, 'saveimage', 'Save Image', 'Save<br/>Image') + "</td>";
+    html += "      <td valign='top'>" + me.setButton(buttonStyle, 'saveimage', 'Save iCn3D PNG Image', 'Save iCn3D<br/>PNG Image') + "</td>";
 
     if(me.cfg.cid === undefined) {
         //html += "      <td valign='top'>" + me.setButton(buttonStyle, 'definedSets', 'Select defined structure, chain, and custom sets', 'Defined <br/>Sets') + "</td>";
@@ -160,6 +160,10 @@ iCn3DUI.prototype.setTopMenusHtml = function (id) { var me = this;
 
 iCn3DUI.prototype.getLink = function(id, text) { var me = this;
     return "<li><span id='" + me.pre + id + "' class='icn3d-link'>" + text + "</span></li>";
+};
+
+iCn3DUI.prototype.getLinkWrapper = function(id, text, wrapper) { var me = this;
+    return "<li id='" + me.pre + wrapper + "'><span id='" + me.pre + id + "' class='icn3d-link'>" + text + "</span></li>";
 };
 
 iCn3DUI.prototype.getRadio = function(radioid, id, text, bChecked) { var me = this;
@@ -635,21 +639,35 @@ iCn3DUI.prototype.setMenu3 = function() { var me = this;
     if(me.cfg.cid === undefined) {
         html += "  <li>-</li>";
 
-        html += "  <li><span>Electron Density</span>";
+        html += "  <li id='" + me.pre + "mapWrapper1'><span>Electron Density</span>";
         html += "    <ul>";
         html += me.getRadio('mn5_elecmap', 'mn5_elecmap2fofc', '2Fo-Fc Map');
         html += me.getRadio('mn5_elecmap', 'mn5_elecmapfofc', 'Fo-Fc Map');
         html += "    </ul>";
         html += "  </li>";
 
-        html += me.getLink('mn5_elecmapNo', 'Remove Map');
+        html += me.getLinkWrapper('mn5_elecmapNo', 'Remove Map', 'mapWrapper2');
 
-        html += "  <li><span>Map <br>Wireframe</span>";
+        html += "  <li id='" + me.pre + "mapWrapper3'><span>Map <br>Wireframe</span>";
         html += "    <ul>";
         html += me.getRadio('mn5_mapwireframe', 'mn5_mapwireframeYes', 'Yes', true);
         html += me.getRadio('mn5_mapwireframe', 'mn5_mapwireframeNo', 'No');
         html += "    </ul>";
         html += "  </li>";
+
+        if(me.cfg.mmtfid === undefined) {
+            //html += "  <li>-</li>";
+
+            html += me.getLinkWrapper('mn5_emmap', 'EM Density Map', 'emmapWrapper1');
+            html += me.getLinkWrapper('mn5_emmapNo', 'Remove EM Map', 'emmapWrapper2');
+
+            html += "  <li id='" + me.pre + "emmapWrapper3'><span>EM Map <br>Wireframe</span>";
+            html += "    <ul>";
+            html += me.getRadio('mn5_emmapwireframe', 'mn5_emmapwireframeYes', 'Yes', true);
+            html += me.getRadio('mn5_emmapwireframe', 'mn5_emmapwireframeNo', 'No');
+            html += "    </ul>";
+            html += "  </li>";
+        }
     }
 
     html += "  <li>-</li>";
@@ -1063,7 +1081,7 @@ iCn3DUI.prototype.setDialogs = function() { var me = this;
     html += "  <option value='8'>8</option>";
     html += "  <option value='9'>9</option>";
     html += "  <option value='10'>10</option>";
-    html += "  </select> &sigma;</span> <span style='white-space:nowrap; margin-left:30px;'><button id='" + me.pre + "applymap2fofc'>Display</button></span>";
+    html += "  </select> &sigma;</span> <span style='white-space:nowrap; margin-left:30px;'><button id='" + me.pre + "applymap2fofc'>Display</button></span> <span style='white-space:nowrap; margin-left:30px;'><button id='" + me.pre + "elecmapNo2'>Remove Map</button></span>";
     html += "</div>";
 
     html += "<div id='" + me.pre + "dl_elecmapfofc'>";
@@ -1081,7 +1099,23 @@ iCn3DUI.prototype.setDialogs = function() { var me = this;
     html += "  <option value='8'>8</option>";
     html += "  <option value='9'>9</option>";
     html += "  <option value='10'>10</option>";
-    html += "  </select> &sigma;</span> <span style='white-space:nowrap; margin-left:30px;'><button id='" + me.pre + "applymapfofc'>Display</button></span>";
+    html += "  </select> &sigma;</span> <span style='white-space:nowrap; margin-left:30px;'><button id='" + me.pre + "applymapfofc'>Display</button></span> <span style='white-space:nowrap; margin-left:30px;'><button id='" + me.pre + "elecmapNo3'>Remove Map</button></span>";
+    html += "</div>";
+
+    html += "<div id='" + me.pre + "dl_emmap'>";
+    html += "  <span style='white-space:nowrap;font-weight:bold;'>Contour at: <select id='" + me.pre + "empercentage'>";
+    html += "  <option value='0'>0</option>";
+    html += "  <option value='10'>10</option>";
+    html += "  <option value='20' selected>20</option>";
+    html += "  <option value='30'>30</option>";
+    html += "  <option value='40'>40</option>";
+    html += "  <option value='50'>50</option>";
+    html += "  <option value='60'>60</option>";
+    html += "  <option value='70'>70</option>";
+    html += "  <option value='80'>80</option>";
+    html += "  <option value='90'>90</option>";
+    html += "  <option value='100'>100</option>";
+    html += "  </select> % of maximum EM values</span><br><span style='white-space:nowrap; margin-left:30px;'><button id='" + me.pre + "applyemmap'>Display</button></span> <span style='white-space:nowrap; margin-left:30px;'><button id='" + me.pre + "emmapNo2'>Remove EM Map</button></span>";
     html += "</div>";
 
     html += "<div id='" + me.pre + "dl_aroundsphere'>";
