@@ -1991,6 +1991,9 @@ iCn3DUI.prototype.showInteraction_base = function(chnid, chnidBase) {
             else if(me.icn3d.proteins.hasOwnProperty(atom2.serial)) { // 4. protein interacting with proteins
                 type2 = 'protein';
             }
+            else if(me.icn3d.water.hasOwnProperty(atom2.serial)) { // 5. water interacting with proteins
+                type2 = 'water';
+            }
 
             // find atoms in chainid1, which interact with chainid2
             var atomsChainid1 = me.icn3d.getAtomsWithinAtom(me.icn3d.hash2Atoms(me.icn3d.chains[chainid]), me.icn3d.hash2Atoms(me.icn3d.chains[chainid2]), radius);
