@@ -20,7 +20,7 @@ We provided two types of iCn3D widgets: [basic interface](https://www.ncbi.nlm.n
 
 Either of these widgets could be easily added to your own web pages. Please see the [help page](https://www.ncbi.nlm.nih.gov/Structure/icn3d/docs/icn3d_help.html#HowToUse) for more details.
 
-<b>Complete package</b> of iCn3D including Three.js and jQuery can be downloaded from [https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.4.1.zip](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.4.1.zip). The "Download ZIP" link in this page does not include third-party libraries. 
+<b>Complete package</b> of iCn3D including Three.js and jQuery can be downloaded from [https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.4.2.zip](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.4.2.zip). The "Download ZIP" link in this page does not include third-party libraries. 
 
 ## Usage
 
@@ -73,6 +73,8 @@ gulp
 ```
 
 ## Change log
+The production version [icn3d-2.4.2](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.4.2.zip) was release on January 16, 2019. Non-standard proteins or nucleotides were displayed as "Biopolymer" in 2D interactions and were displayed in the style of "Stick" in 3D. A new kind of annotation "Disulfie Bonds" was added to the "Sequences and Annotations" window.
+
 The production version [icn3d-2.4.1](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.4.1.zip) was release on January 7, 2019. Enabled users to show EM density map for any subset of an EM structure.
 
 The production version [icn3d-2.4.0](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.4.0.zip) was release on December 17, 2018. Enabled users to show electron density map for any subset of a crystal structure.

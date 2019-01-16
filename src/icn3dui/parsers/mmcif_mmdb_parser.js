@@ -812,7 +812,9 @@ iCn3DUI.prototype.loadAtomDataIn = function (data, id, type, seqalign) { var me 
         // in vastplus.cgi, ions arenotlisted in alignedStructures...molecules, thus chainid2kind[chainNum] === undefined is used.
         // ions will be separated from chemicals later.
         // here "ligand" is used in the cgi output
-        var bChemicalIons = (me.cfg.mmcifid === undefined) ? (chainid2kind[chainNum] === 'ligand' || chainid2kind[chainNum] === 'otherPolymer' || chainid2kind[chainNum] === undefined) : atm.mt === 'l';
+        //var bChemicalIons = (me.cfg.mmcifid === undefined) ? (chainid2kind[chainNum] === 'ligand' || chainid2kind[chainNum] === 'otherPolymer' || chainid2kind[chainNum] === undefined) : atm.mt === 'l';
+        // kind: other, otherPolymer, etc
+        var bChemicalIons = (me.cfg.mmcifid === undefined) ? (chainid2kind[chainNum] === 'ligand' || (chainid2kind[chainNum] !== undefined && chainid2kind[chainNum].indexOf('other') !== -1) || chainid2kind[chainNum] === undefined) : atm.mt === 'l';
 
 /*
         // sometimes proteins or nucleotide may input as chemicals
@@ -1048,6 +1050,66 @@ iCn3DUI.prototype.loadAtomDataIn = function (data, id, type, seqalign) { var me 
                     var resid = structure + ori_resid.substr(pos);
 
                     me.icn3d.ssbondpnts[structure].push(resid);
+                }
+            }
+        }
+    }
+    else if(type === 'align') { // calculate disulfide bonds
+        // get all Cys residues
+        var structure2cys_resid = {};
+        for(var chainid in chainid2seq) {
+            if(chainid2kind[chainid] == 'protein') {
+                var seq = chainid2seq[chainid];
+                var structure = chainid.substr(0, chainid.indexOf('_'));
+
+                for(var i = 0, il = seq.length; i < il; ++i) {
+                    // each seq[i] = [1,"1","V","VAL NH3+"],
+                    if(seq[i][2] == 'C') {
+                        if(structure2cys_resid[structure] == undefined) structure2cys_resid[structure] = [];
+                        structure2cys_resid[structure].push(chainid + '_' + seq[i][0]);
+                    }
+                }
+            }
+        }
+
+        // determine whether there are disulfide bonds
+        // disulfide bond is about 2.05 angstrom
+        var distSqrMax = 3 * 3;
+        for(var structure in structure2cys_resid) {
+            var cysArray = structure2cys_resid[structure];
+
+            for(var i = 0, il = cysArray.length; i < il; ++i) {
+                for(var j = i + 1, jl = cysArray.length; j < jl; ++j) {
+
+                    var resid1 = cysArray[i];
+                    var resid2 = cysArray[j];
+
+                    var coord1 = undefined, coord2 = undefined;
+                    for(var serial in me.icn3d.residues[resid1]) {
+                        if(me.icn3d.atoms[serial].elem == 'S') {
+                            coord1 = me.icn3d.atoms[serial].coord;
+                            break;
+                        }
+                    }
+                    for(var serial in me.icn3d.residues[resid2]) {
+                        if(me.icn3d.atoms[serial].elem == 'S') {
+                            coord2 = me.icn3d.atoms[serial].coord;
+                            break;
+                        }
+                    }
+
+                    if(coord1 === undefined || coord2 === undefined) break;
+
+                    if(Math.abs(coord1.x - coord2.x) > distSqrMax) break;
+                    if(Math.abs(coord1.y - coord2.y) > distSqrMax) break;
+                    if(Math.abs(coord1.y - coord2.y) > distSqrMax) break;
+                    distSqr = (coord1.x - coord2.x)*(coord1.x - coord2.x) + (coord1.y - coord2.y)*(coord1.y - coord2.y) + (coord1.z - coord2.z)*(coord1.z - coord2.z);
+
+                    if(distSqr < distSqrMax) { // disulfide bond
+                        if(me.icn3d.ssbondpnts[structure] === undefined) me.icn3d.ssbondpnts[structure] = [];
+                        me.icn3d.ssbondpnts[structure].push(resid1);
+                        me.icn3d.ssbondpnts[structure].push(resid2);
+                    }
                 }
             }
         }

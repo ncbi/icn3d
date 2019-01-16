@@ -807,6 +807,9 @@ iCn3DUI.prototype.applyCommand = function (commandStr) { var me = this;
   else if(command == 'set annotation site') {
       me.setAnnoTabSite();
   }
+  else if(command == 'set annotation ssbond') {
+      me.setAnnoTabSsbond();
+  }
   else if(command.indexOf('hide annotation') == 0) {
       var pos = command.lastIndexOf(' ');
       var type = command.substr(pos + 1);
@@ -834,6 +837,9 @@ iCn3DUI.prototype.applyCommand = function (commandStr) { var me = this;
       }
       else if(type == 'interaction') {
           me.hideAnnoTabInteraction();
+      }
+      else if(type == 'ssbond') {
+          me.hideAnnoTabSsbond();
       }
   }
   else if(command == 'add residue labels') {
