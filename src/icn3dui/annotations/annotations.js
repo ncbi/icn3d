@@ -130,6 +130,7 @@ iCn3DUI.prototype.showAnnotations = function() { var me = this;
         }
 
         me.interactChainChainbase = me.icn3d.unionHash(me.interactChainChainbase, chemical_chainid);
+        me.ssbondChainChainbase = me.icn3d.unionHash(me.protein_chainid, chemical_chainid);
 
         for(var name in chemical_set) {
             me.getCombinedSequenceData(name, chemical_set[name], i);
@@ -203,6 +204,17 @@ iCn3DUI.prototype.updateInteraction = function() { var me = this;
     me.bInteractionShown = true;
 };
 
+iCn3DUI.prototype.updateSsbond = function() { var me = this;
+    if(me.bSSbondShown === undefined || !me.bSSbondShown) {
+        for(var chainid in me.ssbondChainChainbase) {
+            var chainidBase = me.interactChainChainbase[chainid];
+            me.showSsbond(chainid, chainidBase);
+        }
+    }
+
+    me.bSSbondShown = true;
+};
+
 iCn3DUI.prototype.getAnDiv = function(chnid, anno) { var me = this;
     var message = 'Loading ' + anno + '...';
     if(anno == 'custom') {
@@ -238,7 +250,7 @@ iCn3DUI.prototype.getAnnotationData = function() { var me = this;
         + me.addButton(chnid, "icn3d-addtrack", "Add Track", "Add a custom track", 60, buttonStyle) + "&nbsp;&nbsp;&nbsp;"
         + me.addButton(chnid, "icn3d-helixsets", "Helix Sets", "Define sets for each helix in this chain and add them to the menu of \"Defined Sets\"", 60, buttonStyle) + "&nbsp;"
         + me.addButton(chnid, "icn3d-sheetsets", "Sheet Sets", "Define sets for each sheet in this chain and add them to the menu of \"Defined Sets\"", 60, buttonStyle) + "&nbsp;"
-        //+ me.addButton(chnid, "icn3d-coilsets", "Coil Sets", "Define sets for each coil in this chain and add them to the menu of \"Defined Sets\"", 60, buttonStyle);
+        + me.addButton(chnid, "icn3d-coilsets", "Coil Sets", "Define sets for each coil in this chain and add them to the menu of \"Defined Sets\"", 60, buttonStyle);
 
         $("#" + me.pre + "dl_annotations").append(chainHtml);
 
@@ -251,6 +263,7 @@ iCn3DUI.prototype.getAnnotationData = function() { var me = this;
         $("#" + me.pre + "anno_" + chnid).append(me.getAnDiv(chnid, 'site'));
         $("#" + me.pre + "anno_" + chnid).append(me.getAnDiv(chnid, 'interaction'));
         $("#" + me.pre + "anno_" + chnid).append(me.getAnDiv(chnid, 'custom'));
+        $("#" + me.pre + "anno_" + chnid).append(me.getAnDiv(chnid, 'ssbond'));
 
         $("#" + me.pre + "anno_" + chnid).append("<br><hr><br>");
 
@@ -523,6 +536,7 @@ iCn3DUI.prototype.showSeq = function(chnid, chnidBase, type) {  var me = this;
 
     $("#" + me.pre + "giseq_" + chnid).width(divLength);
     $("#" + me.pre + "interaction_" + chnid).width(divLength);
+    $("#" + me.pre + "ssbond_" + chnid).width(divLength);
     if($("#" + me.pre + "custom_" + chnid).length) $("#" + me.pre + "custom_" + chnid).width(divLength);
     if($("#" + me.pre + "clinvar_" + chnid).length) $("#" + me.pre + "clinvar_" + chnid).width(divLength);
     if($("#" + me.pre + "snp_" + chnid).length) $("#" + me.pre + "snp_" + chnid).width(divLength);
@@ -2115,6 +2129,176 @@ iCn3DUI.prototype.showInteraction_base = function(chnid, chnidBase) {
     }
 };
 
+iCn3DUI.prototype.showSsbond = function(chnid, chnidBase) {
+    var me = this;
+
+    if(me.icn3d.ssbondpnts === undefined) {
+        // didn't finish loading atom data yet
+        setTimeout(function(){
+          me.showSsbond_base(chnid, chnidBase);
+        }, 1000);
+    }
+    else {
+        me.showSsbond_base(chnid, chnidBase);
+    }
+};
+
+iCn3DUI.prototype.showSsbond_base = function(chnid, chnidBase) {
+    var me = this;
+
+    var chainArray = Object.keys(me.icn3d.chains);
+
+    //var chainid = chnid;
+    var chainid = chnidBase;
+
+    //var pos = parseInt(chainid.indexOf('_'));
+    //if(pos > 4) return; // NMR structures with structure id such as 2K042,2K043, ...
+
+    var atom = me.icn3d.getFirstCalphaAtomObj(me.icn3d.chains[chainid]);
+
+    var html = '<div id="' + me.pre + chnid + '_ssbondseq_sequence" class="icn3d-dl_sequence">';
+    var html2 = html;
+    var html3 = html;
+
+    //me.icn3d.ssbondpnts[atom1.structure].push(resid1);
+    var resid2resids = {};
+
+    var structure = chainid.substr(0, chainid.indexOf('_'));
+    var ssbondArray = me.icn3d.ssbondpnts[structure];
+    if(ssbondArray === undefined) {
+        $("#" + me.pre + "dt_ssbond_" + chnid).html('');
+        $("#" + me.pre + "ov_ssbond_" + chnid).html('');
+        $("#" + me.pre + "tt_ssbond_" + chnid).html('');
+
+        return;
+    }
+
+    for(var i = 0, il = ssbondArray.length; i < il; i = i + 2) {
+        var resid1 = ssbondArray[i];
+        var resid2 = ssbondArray[i+1];
+
+        var chainid1 = resid1.substr(0, resid1.lastIndexOf('_'));
+        var chainid2 = resid2.substr(0, resid2.lastIndexOf('_'));
+
+        if(chainid === chainid1) {
+            if(resid2resids[resid1] === undefined) resid2resids[resid1] = [];
+            resid2resids[resid1].push(resid2);
+        }
+
+        if(chainid === chainid2) {
+            if(resid2resids[resid2] === undefined) resid2resids[resid2] = [];
+            resid2resids[resid2].push(resid1);
+        }
+    }
+
+    var residueArray = Object.keys(resid2resids);
+
+    var title = "Disulfide Bond";
+    if(title.length > 17) title = title.substr(0, 17) + '...';
+
+    var fulltitle = title;
+
+    var resPosArray = [];
+    for(var i = 0, il = residueArray.length; i < il; ++i) {
+        var resid = residueArray[i];
+        var resi = parseInt(resid.substr(residueArray[i].lastIndexOf('_') + 1) );
+        // exclude chemical, water and ions
+        //var serial = Object.keys(me.icn3d.residues[resid])[0];
+        //if(me.icn3d.proteins.hasOwnProperty(serial) || me.icn3d.nucleotides.hasOwnProperty(serial)) {
+        //    resPosArray.push( resi );
+        //}
+        resPosArray.push( resi );
+    }
+
+    if(resPosArray.length === 0) {
+        $("#" + me.pre + "dt_ssbond_" + chnid).html('');
+        $("#" + me.pre + "ov_ssbond_" + chnid).html('');
+        $("#" + me.pre + "tt_ssbond_" + chnid).html('');
+
+        return;
+    }
+
+    var resCnt = resPosArray.length;
+
+    var chainnameNospace = 'ssbond'; //chainname.replace(/\s/g, '');
+
+    var htmlTmp2 = '<div class="icn3d-seqTitle icn3d-link icn3d-blue" ssbond="" posarray="' + resPosArray.toString() + '" shorttitle="' + title + '" setname="' + chnid + '_' + chainnameNospace + '" anno="sequence" chain="' + chnid + '" title="' + fulltitle + '">' + title + ' </div>';
+    var htmlTmp3 = '<span class="icn3d-residueNum" title="residue count">' + resCnt.toString() + ' Res</span>';
+
+    html3 += htmlTmp2 + htmlTmp3 + '<br>';
+
+    var htmlTmp = '<span class="icn3d-seqLine">';
+
+    html += htmlTmp2 + htmlTmp3 + htmlTmp;
+    html2 += htmlTmp2 + htmlTmp3 + htmlTmp;
+
+    var pre = 'ssbond';
+
+    var prevEmptyWidth = 0;
+    var prevLineWidth = 0;
+    var widthPerRes = 1;
+
+    for(var i = 0, il = me.giSeq[chnid].length; i < il; ++i) {
+      if(resPosArray.indexOf(i+1 + me.baseResi[chnid]) != -1) {
+          var cFull = me.giSeq[chnid][i];
+
+          var c = cFull;
+          if(cFull.length > 1) {
+              c = cFull[0] + '..';
+          }
+
+          var pos = (i >= me.matchedPos[chnid] && i - me.matchedPos[chnid] < me.icn3d.chainsSeq[chnid].length) ? me.icn3d.chainsSeq[chnid][i - me.matchedPos[chnid]].resi : me.baseResi[chnid] + 1 + i;
+
+          var resid = chnid + '_' + (i+1 + me.baseResi[chnid]).toString();
+          var title = 'Residue ' + resid + ' has disulfide bond with';
+          for(var j = 0, jl = resid2resids[resid].length; j < jl; ++j) {
+              title += ' residue ' + resid2resids[resid][j];
+          }
+
+          html += '<span id="' + pre + '_' + me.pre + chnid + '_' + pos + '" title="' + title + '" class="icn3d-residue">' + c + '</span>';
+
+            var emptyWidth = parseInt(me.seqAnnWidth * i / me.maxAnnoLength - prevEmptyWidth - prevLineWidth);
+            if(emptyWidth < 0) emptyWidth = 0;
+
+            html2 += '<div style="display:inline-block; width:' + emptyWidth + 'px;"></div>';
+            html2 += '<div style="display:inline-block; background-color:#000; width:' + widthPerRes + 'px;" title="' + title + '">&nbsp;</div>';
+
+            prevEmptyWidth += emptyWidth;
+            prevLineWidth += widthPerRes;
+      }
+      else {
+        html += '<span>-</span>'; //'<span>-</span>';
+      }
+    }
+
+    htmlTmp = '<span class="icn3d-residueNum" title="residue count">&nbsp;' + resCnt.toString() + ' Residues</span>';
+    htmlTmp += '</span>';
+    htmlTmp += '<br>';
+
+    html += htmlTmp;
+    html2 += htmlTmp;
+
+
+    html += '</div>';
+    html2 += '</div>';
+    html3 += '</div>';
+
+    $("#" + me.pre + "dt_ssbond_" + chnid).html(html);
+    $("#" + me.pre + "ov_ssbond_" + chnid).html(html2);
+    $("#" + me.pre + "tt_ssbond_" + chnid).html(html3);
+
+/*
+    // add here after the ajax call
+    if(! me.isMobile()) {
+        me.selectSequenceNonMobile();
+    }
+    else {
+        me.selectSequenceMobile();
+        me.selectChainMobile();
+    }
+*/
+};
+
 iCn3DUI.prototype.hideAllAnno = function() { var me = this;
         $("[id^=" + me.pre + "site]").hide();
         $("[id^=" + me.pre + "snp]").hide();
@@ -2123,6 +2307,7 @@ iCn3DUI.prototype.hideAllAnno = function() { var me = this;
         $("[id^=" + me.pre + "domain]").hide();
         $("[id^=" + me.pre + "interaction]").hide();
         $("[id^=" + me.pre + "custom]").hide();
+        $("[id^=" + me.pre + "ssbond]").hide();
 };
 
 iCn3DUI.prototype.setAnnoTabAll = function () {  var me = this;
@@ -2135,6 +2320,7 @@ iCn3DUI.prototype.setAnnoTabAll = function () {  var me = this;
     if($("#" + me.pre + "anno_3dd").length) $("#" + me.pre + "anno_3dd")[0].checked = true;
     if($("#" + me.pre + "anno_interact").length) $("#" + me.pre + "anno_interact")[0].checked = true;
     if($("#" + me.pre + "anno_custom").length) $("#" + me.pre + "anno_custom")[0].checked = true;
+    if($("#" + me.pre + "anno_ssbond").length) $("#" + me.pre + "anno_ssbond")[0].checked = true;
 
     //$("[id^=" + me.pre + "custom]").show();
     $("[id^=" + me.pre + "site]").show();
@@ -2144,10 +2330,12 @@ iCn3DUI.prototype.setAnnoTabAll = function () {  var me = this;
     $("[id^=" + me.pre + "domain]").show();
     $("[id^=" + me.pre + "interaction]").show();
     $("[id^=" + me.pre + "custom]").show();
+    $("[id^=" + me.pre + "ssbond]").show();
 
     me.updateSnpClinvar();
     me.updateDomain();
     me.updateInteraction();
+    me.updateSsbond();
 };
 
 iCn3DUI.prototype.hideAnnoTabAll = function () {  var me = this;
@@ -2160,6 +2348,7 @@ iCn3DUI.prototype.hideAnnoTabAll = function () {  var me = this;
     if($("#" + me.pre + "anno_3dd").length) $("#" + me.pre + "anno_3dd")[0].checked = false;
     if($("#" + me.pre + "anno_interact").length) $("#" + me.pre + "anno_interact")[0].checked = false;
     if($("#" + me.pre + "anno_custom").length) $("#" + me.pre + "anno_custom")[0].checked = false;
+    if($("#" + me.pre + "anno_ssbond").length) $("#" + me.pre + "anno_ssbond")[0].checked = false;
 
     me.hideAllAnno();
 };
@@ -2240,6 +2429,18 @@ iCn3DUI.prototype.setAnnoTabInteraction = function () {  var me = this;
 iCn3DUI.prototype.hideAnnoTabInteraction = function () {  var me = this;
     $("[id^=" + me.pre + "interaction]").hide();
     if($("#" + me.pre + "anno_interact").length) $("#" + me.pre + "anno_interact")[0].checked = false;
+};
+
+iCn3DUI.prototype.setAnnoTabSsbond = function () {  var me = this;
+    $("[id^=" + me.pre + "ssbond]").show();
+    if($("#" + me.pre + "anno_ssbond").length) $("#" + me.pre + "anno_ssbond")[0].checked = true;
+
+    me.updateSsbond();
+};
+
+iCn3DUI.prototype.hideAnnoTabSsbond = function () {  var me = this;
+    $("[id^=" + me.pre + "ssbond]").hide();
+    if($("#" + me.pre + "anno_ssbond").length) $("#" + me.pre + "anno_ssbond")[0].checked = false;
 };
 
 iCn3DUI.prototype.setTabs = function () {  var me = this;
@@ -2329,6 +2530,16 @@ iCn3DUI.prototype.setTabs = function () {  var me = this;
     }
     });
 
+    $("#" + me.pre + "anno_ssbond").click(function (e) {
+    if($("#" + me.pre + "anno_ssbond")[0].checked) {
+        me.setAnnoTabSsbond();
+        me.setLogCmd("set annotation ssbond", true);
+    }
+    else{
+        me.hideAnnoTabSsbond();
+        me.setLogCmd("hide annotation ssbond", true);
+    }
+    });
 };
 
 iCn3DUI.prototype.clickCdd = function() { var me = this;
@@ -2347,7 +2558,7 @@ iCn3DUI.prototype.clickCdd = function() { var me = this;
 // jquery tooltip
 //https://stackoverflow.com/questions/18231315/jquery-ui-tooltip-html-with-links
 iCn3DUI.prototype.setToolTip = function () {  var me = this;
-  $("[id^=" + me.pre + "snp]").add("[id^=" + me.pre + "clinvar]").tooltip({
+  $("[id^=" + me.pre + "snp]").add("[id^=" + me.pre + "clinvar]").add("[id^=" + me.pre + "ssbond]").tooltip({
     content: function () {
         return $(this).prop('title');
     },
@@ -2429,6 +2640,7 @@ iCn3DUI.prototype.showFixedTitle = function() { var me = this;
         $("[id^=" + me.pre + "tt_cdd]").attr('style', style);
         $("[id^=" + me.pre + "tt_domain]").attr('style', style);
         $("[id^=" + me.pre + "tt_interaction]").attr('style', style);
+        $("[id^=" + me.pre + "tt_ssbond]").attr('style', style);
 };
 
 iCn3DUI.prototype.hideFixedTitle = function() { var me = this;
@@ -2441,6 +2653,7 @@ iCn3DUI.prototype.hideFixedTitle = function() { var me = this;
         $("[id^=" + me.pre + "tt_cdd]").attr('style', style);
         $("[id^=" + me.pre + "tt_domain]").attr('style', style);
         $("[id^=" + me.pre + "tt_interaction]").attr('style', style);
+        $("[id^=" + me.pre + "tt_ssbond]").attr('style', style);
 };
 
 iCn3DUI.prototype.setAnnoViewAndDisplay = function(view) { var me = this;
@@ -2456,6 +2669,7 @@ iCn3DUI.prototype.setAnnoViewAndDisplay = function(view) { var me = this;
         $("[id^=" + me.pre + "dt_cdd]").attr('style', style);
         $("[id^=" + me.pre + "dt_domain]").attr('style', style);
         $("[id^=" + me.pre + "dt_interaction]").attr('style', style);
+        $("[id^=" + me.pre + "dt_ssbond]").attr('style', style);
 
         $("#" + me.pre + "seqguide_wrapper").attr('style', style);
 
@@ -2468,6 +2682,7 @@ iCn3DUI.prototype.setAnnoViewAndDisplay = function(view) { var me = this;
         $("[id^=" + me.pre + "ov_cdd]").attr('style', style);
         $("[id^=" + me.pre + "ov_domain]").attr('style', style);
         $("[id^=" + me.pre + "ov_interaction]").attr('style', style);
+        $("[id^=" + me.pre + "ov_ssbond]").attr('style', style);
     }
     else { // overview
         me.setAnnoView('overview');
@@ -2483,6 +2698,7 @@ iCn3DUI.prototype.setAnnoViewAndDisplay = function(view) { var me = this;
         $("[id^=" + me.pre + "dt_cdd]").attr('style', style);
         $("[id^=" + me.pre + "dt_domain]").attr('style', style);
         $("[id^=" + me.pre + "dt_interaction]").attr('style', style);
+        $("[id^=" + me.pre + "dt_ssbond]").attr('style', style);
 
         $("#" + me.pre + "seqguide_wrapper").attr('style', style);
 
@@ -2495,6 +2711,7 @@ iCn3DUI.prototype.setAnnoViewAndDisplay = function(view) { var me = this;
         $("[id^=" + me.pre + "ov_cdd]").attr('style', style);
         $("[id^=" + me.pre + "ov_domain]").attr('style', style);
         $("[id^=" + me.pre + "ov_interaction]").attr('style', style);
+        $("[id^=" + me.pre + "ov_ssbond]").attr('style', style);
     }
 };
 

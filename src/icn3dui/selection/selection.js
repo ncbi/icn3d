@@ -22,6 +22,8 @@ iCn3DUI.prototype.showSelection = function (id) { var me = this;
 
     //show selected rotationcenter
     me.icn3d.opts['rotationcenter'] = 'display center';
+
+    // clear hbonds and ssbonds?
     me.icn3d.opts['hbonds'] = 'no';
     me.icn3d.opts['ssbonds'] = 'no';
 
