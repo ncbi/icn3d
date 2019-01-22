@@ -2193,7 +2193,7 @@ iCn3DUI.prototype.showSsbond_base = function(chnid, chnidBase) {
 
     var residueArray = Object.keys(resid2resids);
 
-    var title = "Disulfide Bond";
+    var title = "Disulfide Bonds";
     if(title.length > 17) title = title.substr(0, 17) + '...';
 
     var fulltitle = title;
