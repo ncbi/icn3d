@@ -641,6 +641,8 @@ iCn3DUI.prototype.loadAtomDataIn = function (data, id, type, seqalign) { var me 
     var bPhosphorusOnly = me.icn3d.isCalphaPhosOnly(atoms, "O3'", "O3*");
     var miscCnt = 0;
 
+    biopolymerChainsHash = {};
+
     for (var i in atoms) {
         ++serial;
 
@@ -815,6 +817,17 @@ iCn3DUI.prototype.loadAtomDataIn = function (data, id, type, seqalign) { var me 
         //var bChemicalIons = (me.cfg.mmcifid === undefined) ? (chainid2kind[chainNum] === 'ligand' || chainid2kind[chainNum] === 'otherPolymer' || chainid2kind[chainNum] === undefined) : atm.mt === 'l';
         // kind: other, otherPolymer, etc
         var bChemicalIons = (me.cfg.mmcifid === undefined) ? (chainid2kind[chainNum] === 'ligand' || (chainid2kind[chainNum] !== undefined && chainid2kind[chainNum].indexOf('other') !== -1) || chainid2kind[chainNum] === undefined) : atm.mt === 'l';
+        if((atm.chain === 'Misc' || chainid2kind[chainNum] === 'other') && biopolymerChainsHash[chainNum] !== 'protein' && biopolymerChainsHash[chainNum] !== 'nucleotide') { // biopolymer, could be protein or nucleotide
+            if(atm.name === 'CA') {
+                biopolymerChainsHash[chainNum] = 'protein';
+            }
+            else if(atm.name === 'P') {
+                biopolymerChainsHash[chainNum] = 'nucleotide';
+            }
+            else {
+                biopolymerChainsHash[chainNum] = 'chemical';
+            }
+        }
 
 /*
         // sometimes proteins or nucleotide may input as chemicals
@@ -966,6 +979,36 @@ iCn3DUI.prototype.loadAtomDataIn = function (data, id, type, seqalign) { var me 
 
         prevMolid = molid;
         prevmmdbId = mmdbId;
+    }
+
+    // adjust biopolymer type
+    for(var chainid in biopolymerChainsHash) {
+        if(Object.keys(me.icn3d.chains[chainid]).length < 10) continue;
+
+        if(biopolymerChainsHash[chainid] === 'chemical') continue;
+
+        for(var serial in me.icn3d.chains[chainid]) {
+            var atm = me.icn3d.atoms[serial];
+
+            delete me.icn3d.chemicals[serial];
+            atm.het = false;
+
+            if(biopolymerChainsHash[chainid] === 'protein') {
+              me.icn3d.proteins[serial] = 1;
+              //atm.style = (me.cfg.align !== undefined) ? 'c alpha trace' : 'ribbon';
+
+              if (atm.name === 'CA') me.icn3d.calphas[serial] = 1;
+              if (atm.name !== 'N' && atm.name !== 'CA' && atm.name !== 'C' && atm.name !== 'O') me.icn3d.sidec[serial] = 1;
+            }
+            else if(biopolymerChainsHash[chainid] === 'nucleotide') {
+              me.icn3d.nucleotides[serial] = 1;
+              //atm.style = 'nucleotide cartoon';
+
+              if (atm.name == "O3'" || atm.name == "O3*" || (bPhosphorusOnly && atm.name == 'P') ) {
+                  me.icn3d.nucleotidesO3[serial] = 1;
+              }
+            }
+        }
     }
 
 //        me.icn3d.adjustSeq(me.chainMissingResidueArray);
