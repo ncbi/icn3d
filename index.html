@@ -15,7 +15,7 @@
   <link rel="stylesheet" href="icn3d_simple_ui.css">
   <script src="lib/jquery-3.2.1.min.js"></script>
   <script src="lib/jquery-ui-1.12.1.min.js"></script>
-  <script src="lib/three_0.80.0.min.js"></script>
+  <script src="lib/three_0.99.0.min.js"></script>
   <script src="simple_ui_all.min.js"></script>
 
   <script type="text/javascript">
@@ -71,6 +71,22 @@
       resize = false;
     }
 
+    var showmenu = params.showmenu;
+    if(showmenu === undefined || showmenu == 'true' || showmenu == '1') {
+      showmenu = true;
+    }
+    else if(showmenu == 'false' || showmenu == '0') {
+      showmenu = false;
+    }
+
+    var showtitle = params.showtitle;
+    if(showtitle === undefined || showtitle == 'true' || showtitle == '1') {
+      showtitle = true;
+    }
+    else if(showtitle == 'false' || showtitle == '0') {
+      showtitle = false;
+    }
+
     var rotate = params.rotate;
     if(rotate === undefined) {
       rotate = 'right';
@@ -103,7 +119,9 @@
               width: width,
               height: height,
               resize: resize,
-              rotate: rotate
+              rotate: rotate,
+              showmenu: showmenu,
+              showtitle: showtitle
           };
           cfg[idName] = idArray[i];
 
@@ -136,7 +154,9 @@
               height: height,
               resize: resize,
               rotate: rotate,
-              align: align
+              align: align,
+              showmenu: showmenu,
+              showtitle: showtitle
           };
 
           var icn3dui = new iCn3DUI(cfg);

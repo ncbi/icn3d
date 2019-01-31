@@ -24,7 +24,7 @@ iCn3D.prototype.createSphere = function (atom, defaultRadius, forceDefault, scal
 
       var color = this.hColor;
 
-      mesh = new THREE.Mesh(this.sphereGeometry, new THREE.MeshPhongMaterial({ transparent: true, opacity: 0.5, overdraw: this.overdraw, specular: this.frac, shininess: 30, emissive: 0x000000, color: color }));
+      mesh = new THREE.Mesh(this.sphereGeometry, new THREE.MeshPhongMaterial({ transparent: true, opacity: 0.5, specular: this.frac, shininess: 30, emissive: 0x000000, color: color }));
 
       mesh.scale.x = mesh.scale.y = mesh.scale.z = forceDefault ? defaultRadius :  radius * (scale ? scale : 1);
       mesh.position.copy(atom.coord);
@@ -46,7 +46,7 @@ iCn3D.prototype.createSphere = function (atom, defaultRadius, forceDefault, scal
 
       var color = atom.color;
 
-      mesh = new THREE.Mesh(this.sphereGeometry, new THREE.MeshPhongMaterial({ overdraw: this.overdraw, specular: this.frac, shininess: 30, emissive: 0x000000, color: color }));
+      mesh = new THREE.Mesh(this.sphereGeometry, new THREE.MeshPhongMaterial({ specular: this.frac, shininess: 30, emissive: 0x000000, color: color }));
       mesh.scale.x = mesh.scale.y = mesh.scale.z = forceDefault ? defaultRadius :  radius * (scale ? scale : 1);
       mesh.position.copy(atom.coord);
 
@@ -97,7 +97,7 @@ iCn3D.prototype.createCylinder = function (p0, p1, radius, color, bHighlight, co
 
         mesh.position.copy(p0).add(p1).multiplyScalar(0.5);
         mesh.matrixAutoUpdate = false;
-        mesh.lookAt(p0);
+        mesh.lookAt(p1.clone().sub(p0));
         mesh.updateMatrix();
 
         mesh.matrix.multiply(new THREE.Matrix4().makeScale(radius, radius, p0.distanceTo(p1))).multiply(new THREE.Matrix4().makeRotationX(Math.PI * 0.5));
@@ -110,17 +110,18 @@ iCn3D.prototype.createCylinder = function (p0, p1, radius, color, bHighlight, co
     }
     else {
         if(bHighlight === 2) {
-          mesh = new THREE.Mesh(this.cylinderGeometry, new THREE.MeshPhongMaterial({ transparent: true, opacity: 0.5, overdraw: this.overdraw, specular: this.frac, shininess: 30, emissive: 0x000000, color: color }));
+          mesh = new THREE.Mesh(this.cylinderGeometry, new THREE.MeshPhongMaterial({ transparent: true, opacity: 0.5, specular: this.frac, shininess: 30, emissive: 0x000000, color: color }));
 
           radius *= 1.5;
         }
         else {
-          mesh = new THREE.Mesh(this.cylinderGeometry, new THREE.MeshPhongMaterial({ overdraw: this.overdraw, specular: this.frac, shininess: 30, emissive: 0x000000, color: color }));
+          mesh = new THREE.Mesh(this.cylinderGeometry, new THREE.MeshPhongMaterial({ specular: this.frac, shininess: 30, emissive: 0x000000, color: color }));
         }
 
         mesh.position.copy(p0).add(p1).multiplyScalar(0.5);
         mesh.matrixAutoUpdate = false;
-        mesh.lookAt(p0);
+        //mesh.lookAt(p0);
+        mesh.lookAt(p1.clone().sub(p0));
         mesh.updateMatrix();
 
         mesh.matrix.multiply(new THREE.Matrix4().makeScale(radius, radius, p0.distanceTo(p1))).multiply(new THREE.Matrix4().makeRotationX(Math.PI * 0.5));
@@ -200,7 +201,7 @@ iCn3D.prototype.createRepresentationSub = function (atoms, f0, f01) {
     //if (ged.vertices.length && this.bShowCrossResidueBond) {
     if (clbondArray.length > 0 && this.bShowCrossResidueBond) {
         //ged.computeLineDistances();
-        //this.mdl.add(new THREE.Line(ged, new THREE.LineDashedMaterial({ linewidth: this.linewidth, color: this.defaultBondColor, dashSize: 0.3, gapSize: 0.15 }), THREE.LinePieces));
+        //this.mdl.add(new THREE.Line(ged, new THREE.LineDashedMaterial({ linewidth: this.linewidth, color: this.defaultBondColor, dashSize: 0.3, gapSize: 0.15 }), THREE.LineSegments));
         var color = new THREE.Color(0x00FF00);
 
         for(var i = 0, il = clbondArray.length; i < il; ++i) {
@@ -508,7 +509,7 @@ iCn3D.prototype.createLineRepresentation = function (atoms, bHighlight) {
             //line = new THREE.Mesh(geo, this.matShader);
         }
         else {
-            line = new THREE.Line(geo, new THREE.LineBasicMaterial({ linewidth: this.linewidth, vertexColors: true }), THREE.LinePieces);
+            line = new THREE.Line(geo, new THREE.LineBasicMaterial({ linewidth: this.linewidth, vertexColors: true }), THREE.LineSegments);
             this.mdl.add(line);
         }
 
@@ -1357,13 +1358,13 @@ iCn3D.prototype.createStrip = function (p0, p1, colors, div, thickness, bHighlig
         var mesh;
 
         if(bHighlight === 2) {
-          mesh = new THREE.Mesh(geo, new THREE.MeshPhongMaterial({ transparent: true, opacity: 0.5, overdraw: this.overdraw, specular: this.frac, shininess: 30, emissive: 0x000000, vertexColors: THREE.FaceColors, side: THREE.DoubleSide }));
+          mesh = new THREE.Mesh(geo, new THREE.MeshPhongMaterial({ transparent: true, opacity: 0.5, specular: this.frac, shininess: 30, emissive: 0x000000, vertexColors: THREE.FaceColors, side: THREE.DoubleSide }));
 
           this.mdl.add(mesh);
           this.prevHighlightObjects.push(mesh);
         }
         else {
-          mesh = new THREE.Mesh(geo, new THREE.MeshPhongMaterial({ overdraw: this.overdraw, specular: this.frac, shininess: 30, emissive: 0x000000, vertexColors: THREE.FaceColors, side: THREE.DoubleSide }));
+          mesh = new THREE.Mesh(geo, new THREE.MeshPhongMaterial({ specular: this.frac, shininess: 30, emissive: 0x000000, vertexColors: THREE.FaceColors, side: THREE.DoubleSide }));
 
           this.mdl.add(mesh);
           this.objects.push(mesh);
@@ -1968,7 +1969,7 @@ iCn3D.prototype.createTubeSub = function (_pnts, colors, radii, bHighlight, prev
 
     var mesh;
     if(bHighlight === 2) {
-      mesh = new THREE.Mesh(geo, new THREE.MeshPhongMaterial({ transparent: true, opacity: 0.5, overdraw: this.overdraw, specular: this.frac, shininess: 30, emissive: 0x000000, vertexColors: THREE.FaceColors, side: THREE.DoubleSide }));
+      mesh = new THREE.Mesh(geo, new THREE.MeshPhongMaterial({ transparent: true, opacity: 0.5, specular: this.frac, shininess: 30, emissive: 0x000000, vertexColors: THREE.FaceColors, side: THREE.DoubleSide }));
       this.mdl.add(mesh);
     }
     else if(bHighlight === 1) {
@@ -1978,7 +1979,7 @@ iCn3D.prototype.createTubeSub = function (_pnts, colors, radii, bHighlight, prev
       this.mdl.add(mesh);
     }
     else {
-      mesh = new THREE.Mesh(geo, new THREE.MeshPhongMaterial({ overdraw: this.overdraw, specular: this.frac, shininess: 30, emissive: 0x000000, vertexColors: THREE.FaceColors, side: THREE.DoubleSide }));
+      mesh = new THREE.Mesh(geo, new THREE.MeshPhongMaterial({ specular: this.frac, shininess: 30, emissive: 0x000000, vertexColors: THREE.FaceColors, side: THREE.DoubleSide }));
       this.mdl.add(mesh);
     }
 
@@ -2327,7 +2328,7 @@ iCn3D.prototype.createSingleLine = function ( src, dst, colorHex, dashed, dashSi
     geom.vertices.push( dst );
     if(dashed) geom.computeLineDistances(); // This one is SUPER important, otherwise dashed lines will appear as simple plain lines
 
-    var axis = new THREE.Line( geom, mat, THREE.LinePieces );
+    var axis = new THREE.Line( geom, mat, THREE.LineSegments );
 
     return axis;
 };
@@ -2343,12 +2344,12 @@ iCn3D.prototype.createBox = function (atom, defaultRadius, forceDefault, scale, 
     if(bHighlight) {
         if(color === undefined) color = this.hColor;
 
-          mesh = new THREE.Mesh(this.boxGeometry, new THREE.MeshPhongMaterial({ transparent: true, opacity: 0.5, overdraw: this.overdraw, specular: this.frac, shininess: 30, emissive: 0x000000, color: color }));
+          mesh = new THREE.Mesh(this.boxGeometry, new THREE.MeshPhongMaterial({ transparent: true, opacity: 0.5, specular: this.frac, shininess: 30, emissive: 0x000000, color: color }));
     }
     else {
         if(color === undefined) color = atom.color;
 
-          mesh = new THREE.Mesh(this.boxGeometry, new THREE.MeshPhongMaterial({ overdraw: this.overdraw, specular: this.frac, shininess: 30, emissive: 0x000000, color: color }));
+          mesh = new THREE.Mesh(this.boxGeometry, new THREE.MeshPhongMaterial({ specular: this.frac, shininess: 30, emissive: 0x000000, color: color }));
     }
 
     mesh.scale.x = mesh.scale.y = mesh.scale.z = forceDefault ? defaultRadius : (this.vdwRadii[atom.elem] || defaultRadius) * (scale ? scale : 1);
@@ -2617,4 +2618,3 @@ iCn3D.prototype.createLabelRepresentation = function (labels) {
 //    this.maxD = tmpMaxD;
 //    this.setCamera();
 };
-

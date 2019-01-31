@@ -146,25 +146,38 @@ iCn3D.prototype.createSurfaceRepresentation = function (atoms, type, wireframe, 
     verts = null;
     faces = null;
 
+    //http://analyticphysics.com/Coding%20Methods/Special%20Topics%20in%20Three.js.htm
+    //var c = geo.center();
+
     geo.computeFaceNormals();
-    geo.computeVertexNormals(false);
+    //geo.computeVertexNormals(false);
+    geo.computeVertexNormals(true);
 
     geo.colorsNeedUpdate = true;
+    geo.normalsNeedUpdate = true;
 
     geo.type = 'Surface'; // to be recognized in vrml.js for 3D printing
 
     if(opacity == undefined) opacity = 1.0;
 
-    var mesh = new THREE.Mesh(geo, new THREE.MeshPhongMaterial({ overdraw: me.overdraw,
+    var mesh = new THREE.Mesh(geo, new THREE.MeshPhongMaterial({
         specular: this.frac,
         shininess: 10, //30,
         emissive: 0x000000,
         vertexColors: THREE.VertexColors,
         wireframe: wireframe,
         opacity: opacity,
+        //wireframe: false,
+        //opacity: 0.5,
         transparent: true,
+        //depthWrite: false,
         side: THREE.DoubleSide
     }));
+
+    //mesh.position.set( -c.x, -c.y, -c.z );
+
+    //http://www.html5gamedevs.com/topic/7288-threejs-transparency-bug-or-limitation-or-what/
+    mesh.renderOrder = 1; // default 0
 
     me.mdl.add(mesh);
 
@@ -261,11 +274,11 @@ iCn3D.prototype.createLines = function(lines) { // show extra lines, not used fo
 iCn3D.prototype.createBrick = function (p0, p1, radius, color) {
     var cylinderGeometry = new THREE.CylinderGeometry(1, 1, 1, 4, 1);
 
-    var mesh = new THREE.Mesh(cylinderGeometry, new THREE.MeshPhongMaterial({ overdraw: this.overdraw, specular: this.frac, shininess: 30, emissive: 0x000000, color: color }));
+    var mesh = new THREE.Mesh(cylinderGeometry, new THREE.MeshPhongMaterial({ specular: this.frac, shininess: 30, emissive: 0x000000, color: color }));
 
     mesh.position.copy(p0).add(p1).multiplyScalar(0.5);
     mesh.matrixAutoUpdate = false;
-    mesh.lookAt(p0);
+    mesh.lookAt(p1.clone().sub(p0));
     mesh.updateMatrix();
 
     mesh.matrix.multiply(new THREE.Matrix4().makeScale(radius, radius, p0.distanceTo(p1))).multiply(new THREE.Matrix4().makeRotationX(Math.PI * 0.5));

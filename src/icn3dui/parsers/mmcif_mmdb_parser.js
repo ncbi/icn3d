@@ -361,6 +361,7 @@ iCn3DUI.prototype.downloadMmdb = function (mmdbid, bGi) { var me = this;
             me.downloadMmdbPart2();
         }
 */
+
         $.when(me.downloadMmcifSymmetry(id)).then(function() {
             me.downloadMmdbPart2();
         });

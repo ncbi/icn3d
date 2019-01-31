@@ -26,7 +26,7 @@ gulp.task('libs-three',
             "node_modules/three/build/three.min.js"
         ])
         .pipe(gulp.dest(dist + '/lib'))
-        .pipe(rename('three_0.80.0.min.js'))
+        .pipe(rename('three_0.99.0.min.js'))
         .pipe(gulp.dest(dist + '/lib'));
   });
 
@@ -204,7 +204,6 @@ var common_uijs = [
     "src/icn3dui/parsers/sdf_parser.js"
 ];
 
-
 var full_uijs = [
     "src/icn3dui/3dprint/stl.js",
     "src/icn3dui/3dprint/vrml.js",
@@ -229,7 +228,7 @@ var full_uijs = [
 ];
 
 // Create the gulp tasks for simple and full:
-make_js_task("simple", common_js.concat(simple_js).concat("src/icn3dui/simple_ui.js").concat(common_uijs));
+make_js_task("simple", common_js.concat(simple_js).concat("src/icn3dui/simple_ui.js").concat(common_uijs).concat("src/icn3dui/highlight/hl_update_simple.js"));
 make_js_task("full", common_js.concat(full_js).concat("src/icn3dui/full_ui.js").concat(common_uijs).concat(full_uijs));
 
 gulp.task('html',

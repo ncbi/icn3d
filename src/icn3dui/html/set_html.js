@@ -300,7 +300,12 @@ iCn3DUI.prototype.setMenu2 = function() { var me = this;
         html += "  </li>";
     }
     else {
-        html += "  <li><span>Picking with<br>\"Alt\" + Click</span>";
+        if(me.isMobile()) {
+            html += "  <li><span>Touch to pick</span>";
+        }
+        else {
+            html += "  <li><span>Picking with<br>\"Alt\" + Click</span>";
+        }
     }
 
     html += "  <li>-</li>";
@@ -455,10 +460,10 @@ iCn3DUI.prototype.setMenu2b = function() { var me = this;
 
     html += "  <li><span>Auto Rotation</span>";
     html += "    <ul>";
-    html += me.getLink('mn6_rotateleft', 'Rotate Left');
-    html += me.getLink('mn6_rotateright', 'Rotate Right');
-    html += me.getLink('mn6_rotateup', 'Rotate Up');
-    html += me.getLink('mn6_rotatedown', 'Rotate Down');
+    html += me.getRadio('mn6_rotate', 'mn6_rotateleft', 'Rotate Left');
+    html += me.getRadio('mn6_rotate', 'mn6_rotateright', 'Rotate Right');
+    html += me.getRadio('mn6_rotate', 'mn6_rotateup', 'Rotate Up');
+    html += me.getRadio('mn6_rotate', 'mn6_rotatedown', 'Rotate Down');
     html += "    </ul>";
     html += "  </li>";
     html += "  <li><span>Camera</span>";
@@ -883,6 +888,49 @@ iCn3DUI.prototype.setLogWindow = function() { var me = this;
     return html;
 };
 
+iCn3DUI.prototype.setAdvanced = function(index) { var me = this;
+    var indexStr = (index === undefined) ? '' : index;
+
+    var html = "<div id='" + me.pre + "dl_advanced" + indexStr + "'>";
+
+    html += "      <table width='500'><tr><td valign='top'><table cellspacing='0'>";
+    html += "    <tr><td><b>Select:</b></td><td><input type='text' id='" + me.pre + "command" + indexStr + "' placeholder='$[structures].[chains]:[residues]@[atoms]' size='60'></td></tr>";
+    html += "    <tr><td><b>Name:</b></td><td><input type='text' id='" + me.pre + "command_name" + indexStr + "' placeholder='my_selection' size='60'></td></tr>";
+    //html += "<tr><td align='right'><b>Description:</b></td><td><input type='text' id='" + me.pre + "command_desc' placeholder='description about my selection' size='30'></td></tr>";
+    html += "    <tr><td colspan='2' align='left'>&nbsp;&nbsp;&nbsp;<button id='" + me.pre + "command_apply" + indexStr + "'><b>Save Selection</b></button></td></tr>";
+    html += "      </table></td>";
+
+    html += "      </tr>";
+
+    html += "      <tr><td>";
+
+    html += 'Specification Tips: <div style="width:20px; margin-top:6px; display:inline-block;"><span id="' + me.pre + 'specguide' + indexStr + '_expand" class="ui-icon ui-icon-plus icn3d-expand icn3d-link" style="width:15px;" title="Expand"></span><span id="' + me.pre + 'specguide' + indexStr + '_shrink" class="ui-icon ui-icon-minus icn3d-shrink icn3d-link" style="display:none; width:15px;" title="Shrink"></span></div><br>';
+
+    html += "<div id='" + me.pre + "specguide" + indexStr + "' style='display:none; width:500px' class='icn3d-box'>";
+
+    html += "  <b>Specification:</b> In the selection \"$1HHO,4N7N.A,B,C:5-10,KRDE,chemicals@CA,C\":";
+    html += "  <ul><li>\"$1HHO,4N7N\" uses \"$\" to indicate structure selection.<br/>";
+    html += "  <li>\".A,B,C\" uses \".\" to indicate chain selection.<br/>";
+    html += "  <li>\":5-10,KRDE,chemicals\" uses \":\" to indicate residue selection. Residue selection could be residue number (5-10), one-letter sequence (KRDE), or predefined names: \"proteins\", \"nucleotides\", \"chemicals\", \"ions\", and \"water\".<br/>";
+    html += "  <li>\"@CA,C\" uses \"@\" to indicate atom selection.<br/>";
+    html += "  <li>Partial definition is allowed, e.g., \":1-10\" selects all residue IDs 1-10 in all chains.<br/>";
+    html += "  <li>Different selections can be unioned (with \"<b>or</b>\", default), intersected (with \"<b>and</b>\"), or negated (with \"<b>not</b>\"). For example, \":1-10 or :K\" selects all residues 1-10 and all Lys residues. \":1-10 and :K\" selects all Lys residues in the range of residue number 1-10. \":1-10 or not :K\" selects all residues 1-10, which are not Lys residues.</ul>";
+    html += "  <b>Set Operation:</b>";
+    html += "  <ul><li>Users can select multiple sets in the menu \"Select > Defined Sets\".<br/>";
+    html += "  <li>Different sets can be unioned (with \"<b>or</b>\", default), intersected (with \"<b>and</b>\"), or negated (with \"<b>not</b>\"). For example, if the \"Defined Sets\" menu has four sets \":1-10\", \":11-20\", \":5-15\", and \":7-8\", the command \"saved atoms :1-10 or :11-20 and :5-15 not :7-8\" unions all residues 1-10 and 11-20 to get the residues 1-20, then intersects with the residues 5-15 to get the residues 5-15, then exclude the residues 7-8 to get the final residues 5-6 and 9-15.</ul>";
+    html += "  <b>Full commands in url or command window:</b>";
+    html += "  <ul><li>Select without saving the set: select $1HHO,4N7N.A,B,C:5-10,KRDE,chemicals@CA,C<br/>";
+    //html += "  <li>Select and save: select $1HHO,4N7N.A,B,C:5-10,KRDE,chemicals@CA,C | name my_name | description my_description</ul>";
+    html += "  <li>Select and save: select $1HHO,4N7N.A,B,C:5-10,KRDE,chemicals@CA,C | name my_name</ul>";
+
+    html += "</div>";
+
+    html += "      </td></tr></table>";
+    html += "</div>";
+
+    return html;
+};
+
 iCn3DUI.prototype.setDialogs = function() { var me = this;
     var html = "";
 
@@ -924,42 +972,12 @@ iCn3DUI.prototype.setDialogs = function() { var me = this;
     html += "        <label for='" + me.pre + "setNot'><input type='radio' name='" + me.pre + "setOperation' id='" + me.pre + "setNot'> Exclusion (not) </label>";
     html += "      </div><br>";
 
-    html += "      <table width='500'><tr><td valign='top'><table cellspacing='0'>";
-    html += "    <tr><td><b>Select:</b></td><td><input type='text' id='" + me.pre + "command' placeholder='$[structures].[chains]:[residues]@[atoms]' size='60'></td></tr>";
-    html += "    <tr><td><b>Name:</b></td><td><input type='text' id='" + me.pre + "command_name' placeholder='my_selection' size='60'></td></tr>";
-    //html += "<tr><td align='right'><b>Description:</b></td><td><input type='text' id='" + me.pre + "command_desc' placeholder='description about my selection' size='30'></td></tr>";
-    html += "    <tr><td colspan='2' align='left'>&nbsp;&nbsp;&nbsp;<button id='" + me.pre + "command_apply'><b>Save Selection</b></button></td></tr>";
-    html += "      </table></td>";
-
-    html += "      </tr>";
-
-    html += "      <tr><td>";
-
-    html += 'Specification Tips: <div style="width:20px; margin-top:6px; display:inline-block;"><span id="' + me.pre + 'specguide_expand" class="ui-icon ui-icon-plus icn3d-expand icn3d-link" style="width:15px;" title="Expand"></span><span id="' + me.pre + 'specguide_shrink" class="ui-icon ui-icon-minus icn3d-shrink icn3d-link" style="display:none; width:15px;" title="Shrink"></span></div><br>';
-
-    html += "<div id='" + me.pre + "specguide' style='display:none; width:500px' class='icn3d-box'>";
-
-    html += "  <b>Specification:</b> In the selection \"$1HHO,4N7N.A,B,C:5-10,KRDE,chemicals@CA,C\":";
-    html += "  <ul><li>\"$1HHO,4N7N\" uses \"$\" to indicate structure selection.<br/>";
-    html += "  <li>\".A,B,C\" uses \".\" to indicate chain selection.<br/>";
-    html += "  <li>\":5-10,KRDE,chemicals\" uses \":\" to indicate residue selection. Residue selection could be residue number (5-10), one-letter sequence (KRDE), or predefined names: \"proteins\", \"nucleotides\", \"chemicals\", \"ions\", and \"water\".<br/>";
-    html += "  <li>\"@CA,C\" uses \"@\" to indicate atom selection.<br/>";
-    html += "  <li>Partial definition is allowed, e.g., \":1-10\" selects all residue IDs 1-10 in all chains.<br/>";
-    html += "  <li>Different selections can be unioned (with \"<b>or</b>\", default), intersected (with \"<b>and</b>\"), or negated (with \"<b>not</b>\"). For example, \":1-10 or :K\" selects all residues 1-10 and all Lys residues. \":1-10 and :K\" selects all Lys residues in the range of residue number 1-10. \":1-10 or not :K\" selects all residues 1-10, which are not Lys residues.</ul>";
-    html += "  <b>Set Operation:</b>";
-    html += "  <ul><li>Users can select multiple sets in the menu \"Select > Defined Sets\".<br/>";
-    html += "  <li>Different sets can be unioned (with \"<b>or</b>\", default), intersected (with \"<b>and</b>\"), or negated (with \"<b>not</b>\"). For example, if the \"Defined Sets\" menu has four sets \":1-10\", \":11-20\", \":5-15\", and \":7-8\", the command \"saved atoms :1-10 or :11-20 and :5-15 not :7-8\" unions all residues 1-10 and 11-20 to get the residues 1-20, then intersects with the residues 5-15 to get the residues 5-15, then exclude the residues 7-8 to get the final residues 5-6 and 9-15.</ul>";
-    html += "  <b>Full commands in url or command window:</b>";
-    html += "  <ul><li>Select without saving the set: select $1HHO,4N7N.A,B,C:5-10,KRDE,chemicals@CA,C<br/>";
-    //html += "  <li>Select and save: select $1HHO,4N7N.A,B,C:5-10,KRDE,chemicals@CA,C | name my_name | description my_description</ul>";
-    html += "  <li>Select and save: select $1HHO,4N7N.A,B,C:5-10,KRDE,chemicals@CA,C | name my_name</ul>";
-
-    html += "</div>";
-
-    html += "      </td></tr></table>";
+    html += me.setAdvanced();
 
     html += "    </div>";
     html += "</div>";
+
+    html += me.setAdvanced(2);
 
     html += "<div id='" + me.pre + "dl_mmtfid'>";
     html += "MMTF ID: <input type='text' id='" + me.pre + "mmtfid' value='1TUP' size=8> ";
@@ -1128,7 +1146,12 @@ iCn3DUI.prototype.setDialogs = function() { var me = this;
     html += "2. Size: <input type='text' id='" + me.pre + "labelsize' value='18' size=4 maxlength=2><br/>";
     html += "3. Color: <input type='text' id='" + me.pre + "labelcolor' value='ffff00' size=4><br/>";
     html += "4. Background: <input type='text' id='" + me.pre + "labelbkgd' value='cccccc' size=4><br/>";
-    html += "<span style='white-space:nowrap'>5. Pick TWO atoms while holding \"Alt\" key</span><br/>";
+    if(me.isMobile()) {
+        html += "  <span style='white-space:nowrap'>5. Touch TWO atoms</span><br/>";
+    }
+    else {
+        html += "  <span style='white-space:nowrap'>5. Pick TWO atoms while holding \"Alt\" key</span><br/>";
+    }
     html += "<span style='white-space:nowrap'>6. <button id='" + me.pre + "applypick_labels'>Display</button></span>";
     html += "</div>";
 
@@ -1141,19 +1164,34 @@ iCn3DUI.prototype.setDialogs = function() { var me = this;
     html += "</div>";
 
     html += "<div id='" + me.pre + "dl_distance'>";
-    html += "  <span style='white-space:nowrap'>1. Pick TWO atoms while holding \"Alt\" key</span><br/>";
+    if(me.isMobile()) {
+        html += "  <span style='white-space:nowrap'>1. Touch TWO atoms</span><br/>";
+    }
+    else {
+        html += "  <span style='white-space:nowrap'>1. Pick TWO atoms while holding \"Alt\" key</span><br/>";
+    }
     html += "  <span style='white-space:nowrap'>2. Color: <input type='text' id='" + me.pre + "distancecolor' value='ffff00' size=4><br/>";
     html += "  <span style='white-space:nowrap'>3. <button id='" + me.pre + "applypick_measuredistance'>Display</button></span>";
     html += "</div>";
 
     html += "<div id='" + me.pre + "dl_stabilizer'>";
-    html += "  <span style='white-space:nowrap'>1. Pick TWO atoms while holding \"Alt\" key</span><br/>";
+    if(me.isMobile()) {
+        html += "  <span style='white-space:nowrap'>1. Touch TWO atoms</span><br/>";
+    }
+    else {
+        html += "  <span style='white-space:nowrap'>1. Pick TWO atoms while holding \"Alt\" key</span><br/>";
+    }
     html += "  <span style='white-space:nowrap'>2. Color: <input type='text' id='" + me.pre + "stabilizercolor' value='ffffff' size=4><br/>";
     html += "  <span style='white-space:nowrap'>3. <button id='" + me.pre + "applypick_stabilizer'>Add</button></span>";
     html += "</div>";
 
     html += "<div id='" + me.pre + "dl_stabilizer_rm'>";
-    html += "  <span style='white-space:nowrap'>1. Pick TWO atoms while holding \"Alt\" key</span><br/>";
+    if(me.isMobile()) {
+        html += "  <span style='white-space:nowrap'>1. Touch TWO atoms</span><br/>";
+    }
+    else {
+        html += "  <span style='white-space:nowrap'>1. Pick TWO atoms while holding \"Alt\" key</span><br/>";
+    }
     html += "  <span style='white-space:nowrap'>2. <button id='" + me.pre + "applypick_stabilizer_rm'>Remove</button></span>";
     html += "</div>";
 
@@ -1339,7 +1377,8 @@ iCn3DUI.prototype.setSequenceGuide = function (suffix, bShown) { var me = this;
 
       sequencesHtml += "<b>Select on 2D interaction diagram:</b> click on the nodes or lines. The nodes are chains and can be united with the Ctrl key. The lines are interactions and can NOT be united. Each click on the lines selects half of the lines, i.e., select the interacting residues in one of the two chains. The selected residues are saved in the \"Select -> Advanced\" menu.<br/><br/>";
 
-      sequencesHtml += "<b>Select on 3D structures:</b> hold \"Alt\" and use mouse to pick, click the second time to deselect, hold \"Ctrl\" to union selection, hold \"Shift\" to select a range, press the up/down arrow to switch among atom/residue/strand/chain/structure, click \"Save Selection\" to save the current selection.<br/><br/>";
+      var tmpStr = me.isMobile() ? 'use finger to pick' : 'hold "Alt" and use mouse to pick';
+      sequencesHtml += "<b>Select on 3D structures:</b> " + tmpStr + ", click the second time to deselect, hold \"Ctrl\" to union selection, hold \"Shift\" to select a range, press the up/down arrow to switch among atom/residue/strand/chain/structure, click \"Save Selection\" to save the current selection.<br/><br/>";
 
       sequencesHtml += "<b>Save the current selection</b> (either on 3D structure, 2D interactions, or 1D sequence): open the menu \"Select -> Save Selection\", specify the name and description for the selection, and click \"Save\".<br/><br/>";
   }
@@ -1366,7 +1405,8 @@ iCn3DUI.prototype.getAlignSequencesAnnotations = function (alignChainArray, bUpd
 
       sequencesHtml += "<b>Select on 2D interaction diagram:</b> click on the nodes or lines. The nodes are chains and can be united with the Ctrl key. The lines are interactions and can NOT be united. Each click on the lines selects half of the lines, i.e., select the interacting residues in one of the two chains. The selected residues are saved in the \"Select -> Advanced\" menu.<br/><br/>";
 
-      sequencesHtml += "<b>Select on 3D structures:</b> hold \"Alt\" and use mouse to pick, click the second time to deselect, hold \"Ctrl\" to union selection, hold \"Shift\" to select a range, press the up/down arrow to switch among atom/residue/strand/chain/structure, click \"Save Selection\" to save the current selection.<br/>";
+      var tmpStr = me.isMobile() ? 'use finger to pick' : 'hold "Alt" and use mouse to pick';
+      sequencesHtml += "<b>Select on 3D structures:</b> " + tmpStr + ", click the second time to deselect, hold \"Ctrl\" to union selection, hold \"Shift\" to select a range, press the up/down arrow to switch among atom/residue/strand/chain/structure, click \"Save Selection\" to save the current selection.<br/>";
 
       sequencesHtml += "<b>Save the current selection</b> (either on 3D structure, 2D interactions, or 1D sequence): open the menu \"Select -> Save Selection\", specify the name and description for the selection, and click \"Save\".<br/><br/>";
   }

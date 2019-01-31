@@ -128,6 +128,7 @@ iCn3D.prototype.applySsbondsOptions = function (options) {
                 if(this.atoms[j].name === 'SG') {
                     serial1 = this.atoms[j].serial;
                     line.position1 = this.atoms[j].coord;
+                    line.serial1 = this.atoms[j].serial;
                     bFound = true;
                     break;
                 }
@@ -137,6 +138,7 @@ iCn3D.prototype.applySsbondsOptions = function (options) {
                 for(var j in this.residues[res1]) {
                     if(this.atoms[j].name === 'CA') {
                         line.position1 = this.atoms[j].coord;
+                        line.serial1 = this.atoms[j].serial;
                         bFound = true;
                         break;
                     }
@@ -148,6 +150,7 @@ iCn3D.prototype.applySsbondsOptions = function (options) {
                 if(this.atoms[j].name === 'SG') {
                     serial2 = this.atoms[j].serial;
                     line.position2 = this.atoms[j].coord;
+                    line.serial2 = this.atoms[j].serial;
                     bFound = true;
                     break;
                 }
@@ -157,11 +160,15 @@ iCn3D.prototype.applySsbondsOptions = function (options) {
                 for(var j in this.residues[res2]) {
                     if(this.atoms[j].name === 'CA') {
                         line.position2 = this.atoms[j].coord;
+                        line.serial2 = this.atoms[j].serial;
                         bFound = true;
                         break;
                     }
                 }
             }
+
+            // only draw bonds connected with currently displayed atoms
+            if(line.serial1 !== undefined && line.serial2 !== undefined && !this.dAtoms.hasOwnProperty(line.serial1) && !this.dAtoms.hasOwnProperty(line.serial2)) continue;
 
             //if(this.atoms[serial1].ids !== undefined) { // mmdb id as input
                 // remove the originaldisulfide bonds
@@ -206,57 +213,6 @@ iCn3D.prototype.applySsbondsOptions = function (options) {
           } // for(var i = 0,
       } // for(var s = 0,
     } // if (options.ssbonds.toLowerCase() === 'yes'
-};
-
-iCn3D.prototype.applySurfaceOptions = function (options) {
-    if(options === undefined) options = this.opts;
-
-    //switch (options.wireframe.toLowerCase()) {
-    switch (options.wireframe) {
-        case 'yes':
-            options.wireframe = true;
-            break;
-        case 'no':
-            options.wireframe = false;
-            break;
-    }
-
-    options.opacity = parseFloat(options.opacity);
-
-    var atoms, currAtoms;
-
-    // only show the surface for atoms which are displaying
-    atoms = this.intHash(this.dAtoms, this.hAtoms);
-
-    currAtoms = this.hash2Atoms(atoms);
-
-    switch (options.surface.toLowerCase()) {
-        case 'van der waals surface':
-            this.createSurfaceRepresentation(currAtoms, 1, options.wireframe, options.opacity);
-            break;
-//            case 'solvent excluded surface':
-//                this.createSurfaceRepresentation(currAtoms, 2, options.wireframe, options.opacity);
-//                break;
-        case 'solvent accessible surface':
-            this.createSurfaceRepresentation(currAtoms, 3, options.wireframe, options.opacity);
-            break;
-        case 'molecular surface':
-            this.createSurfaceRepresentation(currAtoms, 2, options.wireframe, options.opacity);
-            break;
-        case 'van der waals surface with context':
-            this.createSurfaceRepresentation(currAtoms, 1, options.wireframe, options.opacity);
-            break;
-        case 'solvent accessible surface with context':
-            this.createSurfaceRepresentation(currAtoms, 3, options.wireframe, options.opacity);
-            break;
-        case 'molecular surface with context':
-            this.createSurfaceRepresentation(currAtoms, 2, options.wireframe, options.opacity);
-            break;
-        case 'nothing':
-            // remove surfaces
-            this.removeSurfaces();
-            break;
-    }
 };
 
 iCn3D.prototype.applyMapOptions = function (options) {
@@ -330,13 +286,13 @@ iCn3D.prototype.setFog = function() {
         if(this.opts['camera'] === 'perspective') {        //perspective, orthographic
             //this.scene.fog = new THREE.Fog(background, this.cam_z, this.cam_z + 0.5 * this.maxD);
             //this.scene.fog = new THREE.Fog(background, 2 * this.maxD, 2.5 * this.maxD);
-            this.scene.fog = new THREE.Fog(background, 2 * this.maxD, 3 * this.maxD);
+            this.scene.fog = new THREE.Fog(background, 1.5 * this.maxD, 3 * this.maxD);
         }
         else if(this.opts['camera'] === 'orthographic') {
             this.scene.fog = new THREE.FogExp2(background, 2);
             //this.scene.fog.near = this.cam_z;
             //this.scene.fog.far = this.cam_z + 0.5 * this.maxD;
-            this.scene.fog.near = 2 * this.maxD;
+            this.scene.fog.near = 1.5 * this.maxD;
             //this.scene.fog.far = 2.5 * this.maxD;
             this.scene.fog.far = 3 * this.maxD;
         }
@@ -435,8 +391,61 @@ iCn3D.prototype.getResidueRepPos = function (serial) { var me = this;
     return pos;
 };
 
+iCn3D.prototype.applySurfaceOptions = function (options) {
+    if(options === undefined) options = this.opts;
+
+    //switch (options.wireframe.toLowerCase()) {
+    switch (options.wireframe) {
+        case 'yes':
+            options.wireframe = true;
+            break;
+        case 'no':
+            options.wireframe = false;
+            break;
+    }
+
+    options.opacity = parseFloat(options.opacity);
+
+    var atoms, currAtoms;
+
+    // only show the surface for atoms which are displaying
+    atoms = this.intHash(this.dAtoms, this.hAtoms);
+
+    currAtoms = this.hash2Atoms(atoms);
+
+    switch (options.surface.toLowerCase()) {
+        case 'van der waals surface':
+            this.createSurfaceRepresentation(currAtoms, 1, options.wireframe, options.opacity);
+            break;
+//            case 'solvent excluded surface':
+//                this.createSurfaceRepresentation(currAtoms, 2, options.wireframe, options.opacity);
+//                break;
+        case 'solvent accessible surface':
+            this.createSurfaceRepresentation(currAtoms, 3, options.wireframe, options.opacity);
+            break;
+        case 'molecular surface':
+            this.createSurfaceRepresentation(currAtoms, 2, options.wireframe, options.opacity);
+            break;
+        case 'van der waals surface with context':
+            this.createSurfaceRepresentation(currAtoms, 1, options.wireframe, options.opacity);
+            break;
+        case 'solvent accessible surface with context':
+            this.createSurfaceRepresentation(currAtoms, 3, options.wireframe, options.opacity);
+            break;
+        case 'molecular surface with context':
+            this.createSurfaceRepresentation(currAtoms, 2, options.wireframe, options.opacity);
+            break;
+        case 'nothing':
+            // remove surfaces
+            this.removeSurfaces();
+            break;
+    }
+};
+
 iCn3D.prototype.applyOtherOptions = function (options) {
     if(options === undefined) options = this.opts;
+
+    this.lines['hbond'] = [];
 
     //common part options
 
@@ -448,10 +457,15 @@ iCn3D.prototype.applyOtherOptions = function (options) {
 
          for (var i = 0, lim = Math.floor(pnts.length / 2); i < lim; i++) {
             var line = {};
-            line.position1 = pnts[2 * i];
-            line.position2 = pnts[2 * i + 1];
+            line.position1 = pnts[2 * i].coord;
+            line.serial1 = pnts[2 * i].serial;
+            line.position2 = pnts[2 * i + 1].coord;
+            line.serial2 = pnts[2 * i + 1].serial;
             line.color = color;
             line.dashed = true;
+
+            // only draw bonds connected with currently displayed atoms
+            if(line.serial1 !== undefined && line.serial2 !== undefined && !this.dAtoms.hasOwnProperty(line.serial1) && !this.dAtoms.hasOwnProperty(line.serial2)) continue;
 
             if(this.lines['hbond'] === undefined) this.lines['hbond'] = [];
             this.lines['hbond'].push(line);

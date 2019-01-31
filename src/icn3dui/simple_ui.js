@@ -177,6 +177,20 @@ iCn3DUI.prototype = {
 
         me.allCustomEvents();
 
+        if(me.cfg.showmenu != undefined && me.cfg.showmenu == false) {
+          $("#" + me.pre + "toolbox").hide();
+        }
+        else {
+          $("#" + me.pre + "toolbox").show();
+        }
+
+        if(me.cfg.showtitle != undefined && me.cfg.showtitle == false) {
+          $("#" + me.pre + "title").hide();
+        }
+        else {
+          $("#" + me.pre + "title").show();
+        }
+
         me.icn3d = new iCn3D(me.pre + 'canvas');
         if(!me.isMobile()) me.icn3d.scaleFactor = 2.0;
 

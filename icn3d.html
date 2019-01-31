@@ -617,7 +617,8 @@ This page describes Web APIs and how to embed iCn3D in your html page. Other det
 <tr valign='top'><td>showalignseq</td><td>No</td><td>Yes</td><td>Set "true" or "1" to show the aligned sequence window. The default is "false".</td></tr>
 <tr valign='top'><td>showsets</td><td>No</td><td>Yes</td><td>Set "true" or "1" to show the defined sets. The default is "false".</td></tr>
 <tr valign='top'><td>show2d</td><td>No</td><td>Yes</td><td>Set "true" or "1" to show the 2D interaction. The default is "false".</td></tr>
-<tr valign='top'><td>showmenu</td><td>No</td><td>Yes</td><td>Set "false" or "0" to hide the menus and buttons at the top of the structure canvas. The default is "true".</td></tr>
+<tr valign='top'><td>showmenu</td><td>Yes</td><td>Yes</td><td>Set "false" or "0" to hide the menus and buttons at the top of the structure canvas. The default is "true".</td></tr>
+<tr valign='top'><td>showtitle</td><td>Yes</td><td>Yes</td><td>Set "false" or "0" to hide the title at the top of the structure canvas. The default is "true".</td></tr>
 <tr valign='top'><td>showcommand</td><td>No</td><td>Yes</td><td>Set "false" or "0" to hide the command window. The default is "true".</td></tr>
 <tr valign='top'><td><a name="commandsUrl"></a>command</td><td>No</td><td>Yes</td><td>Besides the "Script/Log" section at the bottom of the canvas, commands can also be attached to the url parameter "command". Several commands can be concatenated with the separator ";", e.g., <a href="full.html?mmdbid=3gvu&command=select .A:38-40 or .A:42 or .A:45 or .A:61 or .A:63 or .A:77-78 or .A:82 or .A:91 or .A:107-108 or .A:110 or .A:114 or .A:162 or .A:172-173; style proteins stick; color atom; set surface Van der Waals surface; add label ATP-binding Site | size 18 | color 0000ff | background cccccc | type custom; select .STI; color green; toggle highlight">full.html?mmdbid=3gvu&amp;command=select .A:38-40 or .A:42 or .A:45 or .A:61 or .A:63 or .A:77-78 or .A:82 or .A:91 or .A:107-108 or .A:110 or .A:114 or .A:162 or .A:172-173; style proteins stick; color atom; set surface Van der Waals surface; add label ATP-binding Site | size 18 | color 0000ff | background cccccc | type custom; select .STI; color green; toggle highlight</a>.</td></tr>
 </table>
@@ -1798,6 +1799,9 @@ Update the highlight of sequences in the annotation window according to the curr
 
 <a name="log"></a>
 <h2>Change Log:<img src="https://www.ncbi.nlm.nih.gov/Structure/IMG/spacer.gif" width="25" height="1" border="0"><a href="#Top"><img src="https://www.ncbi.nlm.nih.gov/Structure/IMG/arrowup_blue.gif" width="12" height="12" border="0" alt="back to top"></a></h2>
+The production version <a href="https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.5.0.zip">icn3d-2.5.0</a> was release on January 31, 2019. Updated Three.js from version 80 to version 99. Enabled the basic version (simple_ui_all.min.js) to hide the Tools menu and title. Fixed a bug in picking an atom for distance or labeling.
+<br><br>
+
 The production version <a href="https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.4.3.zip">icn3d-2.4.3</a> was release on January 22, 2019. Non-standard proteins or nucleotides were still displayed as "Biopolymer" in 2D interactions and were displayed in the style of protein or nucleotide in 3D. The usage tracking was implemented in iCn3D.
 <br><br>
 

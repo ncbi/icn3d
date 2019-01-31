@@ -45,8 +45,8 @@ iCn3D.prototype.calculateChemicalHbonds = function (startAtoms, targetAtoms, thr
           if(dist > maxlengthSq) continue;
 
           // output hydrogen bonds
-          this.hbondpnts.push(atom.coord);
-          this.hbondpnts.push(atomHbond[j].coord);
+          this.hbondpnts.push({'serial': atom.serial, 'coord': atom.coord});
+          this.hbondpnts.push({'serial': atomHbond[j].serial, 'coord': atomHbond[j].coord});
 
           hbondsAtoms = this.unionHash(hbondsAtoms, this.residues[atom.structure + "_" + atom.chain + "_" + atom.resi]);
           hbondsAtoms = this.unionHash(hbondsAtoms, this.residues[atomHbond[j].structure + "_" + atomHbond[j].chain + "_" + atomHbond[j].resi]);

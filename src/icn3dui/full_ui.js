@@ -123,6 +123,8 @@ iCn3DUI.prototype = {
 
         me.bInitial = true;
 
+        //me.bInputfile = false;
+
         $("#" + me.pre + "dl_annotations").html('');
         $("#" + me.pre + "dl_2ddgm").html('');
     },
@@ -296,6 +298,13 @@ iCn3DUI.prototype = {
           me.showMenu();
         }
 
+        if(me.cfg.showtitle != undefined && me.cfg.showtitle == false) {
+          $("#" + me.pre + "title").hide();
+        }
+        else {
+          $("#" + me.pre + "title").show();
+        }
+
         $("#" + me.pre + "viewer").width(width).height(parseInt(height) + extraHeight);
         $("#" + me.pre + "canvas").width(width).height(parseInt(height));
         //$("#" + me.pre + "canvas").resizable(); // resizing behavor not good for canvas.
@@ -436,9 +445,7 @@ iCn3DUI.prototype = {
       if($("#" + me.pre + "mnlist")[0] !== undefined) $("#" + me.pre + "mnlist")[0].style.display = "none";
       if($("#" + me.pre + "mnLogSection")[0] !== undefined) $("#" + me.pre + "mnLogSection")[0].style.display = "none";
       if($("#" + me.pre + "cmdlog")[0] !== undefined) $("#" + me.pre + "cmdlog")[0].style.display = "none";
-//      if($("#" + me.pre + "selection")[0] !== undefined) $("#" + me.pre + "selection")[0].style.display = "none";
 
-      //if($("#" + me.pre + "title")[0] !== undefined) $("#" + me.pre + "title")[0].style.display = "none";
       $("#" + me.pre + "title")[0].style.margin = "10px 0 0 10px";
     },
 
@@ -446,9 +453,8 @@ iCn3DUI.prototype = {
       if($("#" + me.pre + "mnlist")[0] !== undefined) $("#" + me.pre + "mnlist")[0].style.display = "block";
       if($("#" + me.pre + "mnLogSection")[0] !== undefined) $("#" + me.pre + "mnLogSection")[0].style.display = "block";
       if($("#" + me.pre + "cmdlog")[0] !== undefined) $("#" + me.pre + "cmdlog")[0].style.display = "block";
-//      if($("#" + me.pre + "selection")[0] !== undefined) $("#" + me.pre + "selection")[0].style.display = "block";
 
-      if($("#" + me.pre + "title")[0] !== undefined) $("#" + me.pre + "title")[0].style.display = "block";
+      //if($("#" + me.pre + "title")[0] !== undefined) $("#" + me.pre + "title")[0].style.display = "block";
     },
 
     saveSelectionIfSelected: function (id, value) { var me = this;
@@ -1018,39 +1024,6 @@ iCn3DUI.prototype = {
 
             me.icn3d.draw();
         }
-    },
-
-    addLabel: function (text, x, y, z, size, color, background, type) { var me = this;
-        var label = {}; // Each label contains 'position', 'text', 'color', 'background'
-
-        if(size === '0' || size === '' || size === 'undefined') size = undefined;
-        if(color === '0' || color === '' || color === 'undefined') color = undefined;
-        if(background === '0' || background === '' || background === 'undefined') background = undefined;
-
-        var position = new THREE.Vector3();
-        position.x = x;
-        position.y = y;
-        position.z = z;
-
-        label.position = position;
-
-        label.text = text;
-        label.size = size;
-        label.color = color;
-        label.background = background;
-
-        if(me.icn3d.labels[type] === undefined) me.icn3d.labels[type] = [];
-
-        if(type !== undefined) {
-            me.icn3d.labels[type].push(label);
-        }
-        else {
-            me.icn3d.labels['custom'].push(label);
-        }
-
-        me.icn3d.removeHlObjects();
-
-        //me.icn3d.draw();
     },
 
     addLine: function (x1, y1, z1, x2, y2, z2, color, dashed, type) { var me = this;
@@ -1752,7 +1725,8 @@ iCn3DUI.prototype = {
        }
 
        var text = me.saveVrmlFile();
-       me.saveFile(me.inputid + postfix + '.wrl', 'text', text);
+       //me.saveFile(me.inputid + postfix + '.wrl', 'text', text);
+       me.saveFile(me.inputid + postfix + '.vrml', 'text', text);
 
        // assemblies
        if(me.icn3d.biomtMatrices !== undefined && me.icn3d.biomtMatrices.length > 1 && me.icn3d.bAssembly
@@ -1775,7 +1749,8 @@ iCn3DUI.prototype = {
               //https://stackoverflow.com/questions/1190642/how-can-i-pass-a-parameter-to-a-settimeout-callback
               setTimeout(function(mat, index){
                   text = me.saveVrmlFile(mat);
-                  me.saveFile(me.inputid + postfix + index + '.wrl', 'text', text);
+                  //me.saveFile(me.inputid + postfix + index + '.wrl', 'text', text);
+                  me.saveFile(me.inputid + postfix + index + '.vrml', 'text', text);
                   text = '';
               }.bind(this, mat, index), time);
 
@@ -2036,11 +2011,8 @@ iCn3DUI.prototype = {
 
            me.selectAll();
 
-           // do not highlight
-           //me.removeHlAll();
-           me.removeSelection();
+           me.removeHlAll();
 
-           //me.icn3d.addHlObjects();
            me.icn3d.draw();
 
         });
@@ -2086,10 +2058,10 @@ iCn3DUI.prototype = {
 
     clkMn2_command: function() { var me = this;
         $("#" + me.pre + "mn2_command").click(function (e) {
-           me.openDialog(me.pre + 'dl_definedsets', 'Select by specification');
-           $("#" + me.pre + "dl_setsmenu").hide();
-           $("#" + me.pre + "dl_setoperations").hide();
-           $("#" + me.pre + "dl_command").show();
+           me.openDialog(me.pre + 'dl_advanced2', 'Select by specification');
+           //$("#" + me.pre + "dl_setsmenu").hide();
+           //$("#" + me.pre + "dl_setoperations").hide();
+           //$("#" + me.pre + "dl_command").show();
         });
     },
 
@@ -3610,6 +3582,8 @@ iCn3DUI.prototype = {
                me.init();
                me.icn3d.init();
 
+               me.bInputfile = true;
+
                me.loadPdbData(dataStr);
              };
 
@@ -3652,6 +3626,8 @@ iCn3DUI.prototype = {
                me.init();
                me.icn3d.init();
 
+               me.bInputfile = true;
+
                me.loadMol2Data(dataStr);
              };
 
@@ -3692,6 +3668,8 @@ iCn3DUI.prototype = {
 
                me.init();
                me.icn3d.init();
+
+               me.bInputfile = true;
 
                me.loadSdfData(dataStr);
              };
@@ -3734,6 +3712,8 @@ iCn3DUI.prototype = {
                me.init();
                me.icn3d.init();
 
+               me.bInputfile = true;
+
                me.loadXyzData(dataStr);
              };
 
@@ -3758,6 +3738,8 @@ iCn3DUI.prototype = {
 
            me.init();
            me.icn3d.init();
+
+           me.bInputfile = true;
 
            me.downloadUrl(url, type);
         });
@@ -3816,6 +3798,8 @@ iCn3DUI.prototype = {
                   success: function(data) {
                       me.init();
                       me.icn3d.init();
+
+                      me.bInputfile = true;
 
                       me.loadMmcifData(data);
                   },
@@ -4229,6 +4213,10 @@ iCn3DUI.prototype = {
            e.stopImmediatePropagation();
            dialog.dialog( "close" );
 
+           if(!$('#' + me.pre + 'dl_definedsets').hasClass('ui-dialog-content') || !$('#' + me.pre + 'dl_definedsets').dialog( 'isOpen' )) {
+             me.openDialog(me.pre + 'dl_definedsets', 'Select');
+           }
+
            me.bSelectResidue = false;
 
            var name = $("#" + me.pre + "seq_command_name").val().replace(/\s+/g, '_');
@@ -4239,6 +4227,10 @@ iCn3DUI.prototype = {
 
         $(document).on("click", "#" + me.pre + "seq_saveselection2", function(e) {
            e.stopImmediatePropagation();
+
+           if(!$('#' + me.pre + 'dl_definedsets').hasClass('ui-dialog-content') || !$('#' + me.pre + 'dl_definedsets').dialog( 'isOpen' )) {
+             me.openDialog(me.pre + 'dl_definedsets', 'Select');
+           }
 
            me.bSelectResidue = false;
 
@@ -4251,7 +4243,12 @@ iCn3DUI.prototype = {
 
     clickAlignSeqSaveSelection: function() { var me = this;
         $(document).on("click", "#" + me.pre + "alignseq_saveselection", function(e) {
-              e.stopImmediatePropagation();
+            e.stopImmediatePropagation();
+
+           if(!$('#' + me.pre + 'dl_definedsets').hasClass('ui-dialog-content') || !$('#' + me.pre + 'dl_definedsets').dialog( 'isOpen' )) {
+             me.openDialog(me.pre + 'dl_definedsets', 'Select');
+           }
+
             me.bSelectAlignResidue = false;
 
             var name = $("#" + me.pre + "alignseq_command_name").val().replace(/\s+/g, '_');
