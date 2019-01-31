@@ -59,7 +59,7 @@ var iCn3D = function (id) {
     this.scaleFactor = 1.5;
 
     // Impostor shaders
-    this.bImpo = false; //true;
+    this.bImpo = true;
     this.bExtFragDepth = this.renderer.extensions.get( "EXT_frag_depth" );
     if(!this.bExtFragDepth) {
         this.bImpo = false;
@@ -170,7 +170,7 @@ var iCn3D = function (id) {
     this.helixSheetWidth = 1.3; // style ribbon, nucleotide cartoon, stand thickness
     this.nucleicAcidWidth = 0.8; // nucleotide cartoon
 
-    this.threshbox = 360; //180; // maximum possible boxsize, default 180
+    this.threshbox = 180; // maximum possible boxsize, default 180
     this.maxAtoms3DMultiFile = 40000; // above the threshold, multiple files wil be output for 3D printing
 
     this.LABELSIZE = 30;
