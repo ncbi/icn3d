@@ -569,5 +569,40 @@ iCn3DUI.prototype.shareLinkUrl = function() { var me = this;
            url = url.substr(0, url.length - 9);
        }
 
+       if(me.bInputfile) url = "https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html";
+
        return url;
+};
+
+iCn3DUI.prototype.addLabel = function (text, x, y, z, size, color, background, type) { var me = this;
+    var label = {}; // Each label contains 'position', 'text', 'color', 'background'
+
+    if(size === '0' || size === '' || size === 'undefined') size = undefined;
+    if(color === '0' || color === '' || color === 'undefined') color = undefined;
+    if(background === '0' || background === '' || background === 'undefined') background = undefined;
+
+    var position = new THREE.Vector3();
+    position.x = x;
+    position.y = y;
+    position.z = z;
+
+    label.position = position;
+
+    label.text = text;
+    label.size = size;
+    label.color = color;
+    label.background = background;
+
+    if(me.icn3d.labels[type] === undefined) me.icn3d.labels[type] = [];
+
+    if(type !== undefined) {
+        me.icn3d.labels[type].push(label);
+    }
+    else {
+        me.icn3d.labels['custom'].push(label);
+    }
+
+    me.icn3d.removeHlObjects();
+
+    //me.icn3d.draw();
 };

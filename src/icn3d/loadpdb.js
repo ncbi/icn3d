@@ -92,6 +92,7 @@ iCn3D.prototype.loadPDB = function (src) {
             });
 
         } else if (record === 'HBOND ') {
+/*
             //HBOND A 1536   N2 A   59  ND2  -19.130  83.151  52.266 -18.079  81.613  49.427    3.40
             bCalculateHbond = false;
 
@@ -113,6 +114,7 @@ iCn3D.prototype.loadPDB = function (src) {
 
             this.hbondpnts.push(new THREE.Vector3(chemical_x, chemical_y, chemical_z));
             this.hbondpnts.push(new THREE.Vector3(protein_x, protein_y, protein_z));
+*/
         } else if (record === 'SSBOND') {
             //SSBOND   1 CYS E   48    CYS E   51                          2555
             var chain1 = line.substr(15, 1);

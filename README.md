@@ -73,6 +73,8 @@ gulp
 ```
 
 ## Change log
+The production version [icn3d-2.5.0](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.5.0.zip) was release on January 31, 2019. Updated Three.js from version 80 to version 99. Enabled the basic version (simple_ui_all.min.js) to hide the Tools menu and title. Fixed a bug in picking an atom for distance or labeling. 
+
 The production version [icn3d-2.4.3](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.4.3.zip) was release on January 22, 2019. Non-standard proteins or nucleotides were still displayed as "Biopolymer" in 2D interactions and were displayed in the style of protein or nucleotide in 3D. The usage tracking was implemented in iCn3D.
 
 The production version [icn3d-2.4.2](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.4.2.zip) was release on January 16, 2019. Non-standard proteins or nucleotides were displayed as "Biopolymer" in 2D interactions and were displayed in the style of "Stick" in 3D. A new kind of annotation "Disulfie Bonds" was added to the "Sequences and Annotations" window.
@@ -101,7 +103,7 @@ The production version [icn3d-1.0.0](https://www.ncbi.nlm.nih.gov/Structure/icn3
 
 The beta version [icn3d-0.9.0-dev](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-0.9.0-dev.zip) was release on Jan 17, 2016.
 
-All previous releases can be found at the [API page](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d.html#log).
+All previous releases can be found in the [API page](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d.html#log).
 
 ## Contact
 

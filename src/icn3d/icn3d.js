@@ -19,7 +19,7 @@ var iCn3D = function (id) {
     this.bSecondaryStructure = false;
 
     this.bHighlight = 1; // undefined: no highlight, 1: highlight by outline, 2: highlight by 3D object
-    this.renderOrderPicking = -1; // less than 0, the default order
+    this.renderOrderPicking = -1; // less than 0, the default order is 0
 
     this.ALTERNATE_STRUCTURE = -1;
 
@@ -28,6 +28,7 @@ var iCn3D = function (id) {
             canvas: this.container.get(0),
             antialias: true,
             preserveDrawingBuffer: true,
+            //sortObjects: false,
             alpha: true
         });
 
@@ -369,7 +370,8 @@ var iCn3D = function (id) {
 
         $("[id$=popup]").hide();
 
-        var bClick = false;
+        //var bClick = false;
+        var bClick = true;
         me.rayCaster(e, bClick);
 
         me.controls.handleResize();
@@ -496,14 +498,16 @@ iCn3D.prototype = {
                 if(atom) {
                     bFound = true;
                     if(me.pickpair) {
-                      if(me.pAtomNum % 2 === 0) {
-                        me.pAtom = atom;
-                      }
-                      else {
-                        me.pAtom2 = atom;
-                      }
+                        if(bClick) {
+                          if(me.pAtomNum % 2 === 0) {
+                            me.pAtom = atom;
+                          }
+                          else {
+                            me.pAtom2 = atom;
+                          }
 
-                      ++me.pAtomNum;
+                          ++me.pAtomNum;
+                        }
                     }
                     else {
                       me.pAtom = atom;
@@ -539,14 +543,16 @@ iCn3D.prototype = {
 
                     if(atom) {
                         if(me.pickpair) {
-                          if(me.pAtomNum % 2 === 0) {
-                            me.pAtom = atom;
-                          }
-                          else {
-                            me.pAtom2 = atom;
-                          }
+                            if(bClick) {
+                              if(me.pAtomNum % 2 === 0) {
+                                me.pAtom = atom;
+                              }
+                              else {
+                                me.pAtom2 = atom;
+                              }
 
-                          ++me.pAtomNum;
+                              ++me.pAtomNum;
+                            }
                         }
                         else {
                           me.pAtom = atom;

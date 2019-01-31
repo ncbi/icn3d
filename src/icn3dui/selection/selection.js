@@ -24,11 +24,11 @@ iCn3DUI.prototype.showSelection = function (id) { var me = this;
     me.icn3d.opts['rotationcenter'] = 'display center';
 
     // clear hbonds and ssbonds?
-    me.icn3d.opts['hbonds'] = 'no';
-    me.icn3d.opts['ssbonds'] = 'no';
+    //me.icn3d.opts['hbonds'] = 'no';
+    //me.icn3d.opts['ssbonds'] = 'no';
 
-    me.icn3d.lines['hbond'] = [];
-    me.icn3d.lines['ssbond'] = [];
+    //me.icn3d.lines['hbond'] = [];
+    //me.icn3d.lines['ssbond'] = [];
 
     me.saveSelectionIfSelected();
 

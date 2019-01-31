@@ -193,23 +193,6 @@ iCn3D.prototype.drawSymmetryMatesNoInstancing = function() {
       var mat = this.biomtMatrices[i];
       if (mat === undefined) continue;
 
-/*
-      var matArray = mat.toArray();
-
-      // skip itself
-      var bItself = 1;
-      for(var j = 0, jl = matArray.length; j < jl; ++j) {
-        if(j == 0 || j == 5 || j == 10) {
-          if(parseInt(1000*matArray[j]) != 1000) bItself = 0;
-        }
-        else if(j != 0 && j != 5 && j != 10 && j != 15) {
-          if(parseInt(1000*matArray[j]) != 0) bItself = 0;
-        }
-      }
-
-      if(bItself) continue;
-*/
-
       // skip itself
       if(mat.equals(identity)) continue;
 
@@ -220,6 +203,12 @@ iCn3D.prototype.drawSymmetryMatesNoInstancing = function() {
 
       symmetryMate = this.mdlImpostor.clone();
       symmetryMate.applyMatrix(mat);
+
+      //symmetryMate.onBeforeRender = this.onBeforeRender;
+      for(var j = symmetryMate.children.length - 1; j >= 0; j--) {
+           var mesh = symmetryMate.children[j];
+           mesh.onBeforeRender = this.onBeforeRender;
+      }
 
       this.mdlImpostor.add(symmetryMate);
 
@@ -240,20 +229,32 @@ iCn3D.prototype.drawSymmetryMatesNoInstancing = function() {
       ++cnt;
    }
 
-   this.center = centerSum.clone();
+   if(this.bSetInstancing === undefined || !this.bSetInstancing) {
+       this.maxD *= Math.sqrt(cnt);
 
-   this.maxD *= Math.sqrt(cnt);
-   //this.center = centerSum.multiplyScalar(1.0 / cnt);
+       this.center = centerSum.multiplyScalar(1.0 / cnt);
 
-   // recenter the mdl* caused the impostor shifted somehow!!! disable the centering for now
-//       this.mdl.position.add(this.center).sub(centerSum.multiplyScalar(1.0 / cnt));
-//       this.mdlImpostor.position.add(this.center).sub(centerSum.multiplyScalar(1.0 / cnt));
-   //this.mdlPicking.position.add(this.center).sub(centerSum.multiplyScalar(1.0 / cnt));
+       this.maxDAssembly = this.maxD;
 
-//       this.mdl_ghost.position.add(this.center).sub(centerSum.multiplyScalar(1.0 / cnt));
+       this.centerAssembly = this.center.clone();
 
-   // reset cameara
-   this.setCamera();
+       this.setCenter(this.center);
+
+       // reset cameara
+       this.setCamera();
+   }
+   else {
+       this.maxD = this.maxDAssembly;
+
+       this.center = this.centerAssembly.clone();
+
+       this.setCenter(this.center);
+
+       // reset cameara
+       this.setCamera();
+   }
+
+   this.bSetInstancing = true;
 };
 
 iCn3D.prototype.createInstancedGeometry = function(mesh) {
@@ -423,6 +424,8 @@ iCn3D.prototype.drawSymmetryMatesInstancing = function() {
 
        var mesh2 = new THREE.Mesh(geometry, this.instancedMaterial);
 
+       mesh2.onBeforeRender = this.onBeforeRender;
+
        // important: https://stackoverflow.com/questions/21184061/mesh-suddenly-disappears-in-three-js-clipping
        // You are moving the camera in the CPU. You are moving the vertices of the plane in the GPU
        mesh2.frustumCulled = false;
@@ -436,7 +439,20 @@ iCn3D.prototype.drawSymmetryMatesInstancing = function() {
        var mesh = this.mdlImpostor.children[i];
 
        var geometry = this.createInstancedGeometry(mesh);
+
+/*
+       var material;
+       if(mesh.type == 'Sphere') {
+         material = this.SphereImpostorMaterial;
+       }
+       else { //if(mesh.type == 'Cylinder') {
+         material = this.CylinderImpostorMaterial;
+       }
+*/
        var mesh2 = new THREE.Mesh(geometry, this.instancedMaterial);
+       //var mesh2 = new THREE.Mesh(geometry, material);
+
+       mesh2.onBeforeRender = this.onBeforeRender;
 
        // important: https://stackoverflow.com/questions/21184061/mesh-suddenly-disappears-in-three-js-clipping
        // You are moving the camera in the CPU. You are moving the vertices of the plane in the GPU

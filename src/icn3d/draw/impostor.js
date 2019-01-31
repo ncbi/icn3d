@@ -2,7 +2,98 @@
  * @author Jiyao Wang <wangjiy@ncbi.nlm.nih.gov> / https://github.com/ncbi/icn3d
  */
 
+iCn3D.prototype.onBeforeRender = function(renderer, scene, camera, geometry, material) {
+  var u = material.uniforms;
+  var updateList = [];
+
+  if (u.objectId) {
+    u.objectId.value = SupportsReadPixelsFloat ? this.id : this.id / 255
+    updateList.push('objectId')
+  }
+
+  if (u.modelViewMatrixInverse || u.modelViewMatrixInverseTranspose ||
+      u.modelViewProjectionMatrix || u.modelViewProjectionMatrixInverse
+  ) {
+    this.modelViewMatrix.multiplyMatrices(camera.matrixWorldInverse, this.matrixWorld);
+  }
+
+  if (u.modelViewMatrixInverse) {
+    u.modelViewMatrixInverse.value.getInverse(this.modelViewMatrix);
+    updateList.push('modelViewMatrixInverse');
+  }
+
+  if (u.modelViewMatrixInverseTranspose) {
+    if (u.modelViewMatrixInverse) {
+      u.modelViewMatrixInverseTranspose.value.copy(
+        u.modelViewMatrixInverse.value
+      ).transpose();
+    } else {
+      u.modelViewMatrixInverseTranspose.value
+        .getInverse(this.modelViewMatrix)
+        .transpose();
+    }
+    updateList.push('modelViewMatrixInverseTranspose');
+  }
+
+  if (u.modelViewProjectionMatrix) {
+    camera.updateProjectionMatrix();
+    u.modelViewProjectionMatrix.value.multiplyMatrices(
+      camera.projectionMatrix, this.modelViewMatrix
+    );
+    updateList.push('modelViewProjectionMatrix');
+  }
+
+  if (u.modelViewProjectionMatrixInverse) {
+    var tmpMatrix = new THREE.Matrix4();
+    if (u.modelViewProjectionMatrix) {
+      tmpMatrix.copy(
+        u.modelViewProjectionMatrix.value
+      );
+      u.modelViewProjectionMatrixInverse.value.getInverse(
+        tmpMatrix
+      );
+    } else {
+      camera.updateProjectionMatrix();
+      tmpMatrix.multiplyMatrices(
+        camera.projectionMatrix, this.modelViewMatrix
+      );
+      u.modelViewProjectionMatrixInverse.value.getInverse(
+        tmpMatrix
+      );
+    }
+    updateList.push('modelViewProjectionMatrixInverse');
+  }
+
+  if (u.projectionMatrix) {
+    camera.updateProjectionMatrix();
+    u.projectionMatrix.value.copy( camera.projectionMatrix );
+    updateList.push('projectionMatrix');
+  }
+
+  if (u.projectionMatrixInverse) {
+    camera.updateProjectionMatrix();
+    u.projectionMatrixInverse.value.getInverse(camera.projectionMatrix);
+    updateList.push('projectionMatrixInverse');
+  }
+
+  if (updateList.length) {
+    var materialProperties = renderer.properties.get(material);
+
+    if (materialProperties.program) {
+      var gl = renderer.getContext();
+      var p = materialProperties.program;
+      gl.useProgram(p.program);
+      var pu = p.getUniforms();
+
+      updateList.forEach(function (name) {
+        pu.setValue(gl, name, u[ name ].value)
+      });
+    }
+  }
+};
+
 iCn3D.prototype.setParametersForShader = function () { var me = this;
+/*
     var modelViewMatrix = new THREE.Uniform( new THREE.Matrix4() )
             .onUpdate( function( object ){
                 this.value.copy( object.modelViewMatrix );
@@ -39,6 +130,7 @@ iCn3D.prototype.setParametersForShader = function () { var me = this;
             .onUpdate( function(  ){
                 this.value.getInverse( me.cam.projectionMatrix );
     } );
+*/
 
     var background = this.backgroundColors[this.opts.background.toLowerCase()];
     var near = 2 * this.maxD;
@@ -48,6 +140,7 @@ iCn3D.prototype.setParametersForShader = function () { var me = this;
     this.uniforms = THREE.UniformsUtils.merge([
       THREE.UniformsLib.common,
       {
+/*
         modelViewMatrix: modelViewMatrix,
         modelViewMatrixInverse: modelViewMatrixInverse,
         modelViewMatrixInverseTranspose: modelViewMatrixInverseTranspose,
@@ -55,6 +148,16 @@ iCn3D.prototype.setParametersForShader = function () { var me = this;
         modelViewProjectionMatrixInverse: modelViewProjectionMatrixInverse,
         projectionMatrix: projectionMatrix,
         projectionMatrixInverse: projectionMatrixInverse,
+*/
+
+        modelViewMatrix: { value: new THREE.Matrix4() },
+        modelViewMatrixInverse: { value: new THREE.Matrix4() },
+        modelViewMatrixInverseTranspose: { value: new THREE.Matrix4() },
+        modelViewProjectionMatrix: { value: new THREE.Matrix4() },
+        modelViewProjectionMatrixInverse: { value: new THREE.Matrix4() },
+        projectionMatrix: { value: new THREE.Matrix4() },
+        projectionMatrixInverse: { value: new THREE.Matrix4() },
+
         //ambientLightColor: { type: "v3", value: [0.25, 0.25, 0.25] },
         diffuse: { type: "v3", value: [1.0, 1.0, 1.0] },
         emissive: { type: "v3", value: [0.0,0.0,0.0] },
@@ -145,6 +248,13 @@ iCn3D.prototype.createImpostorShaderBase = function (shaderName, mapping, mappin
   });
 
   shaderMaterial.extensions.fragDepth = true;
+
+  if(shaderName == 'CylinderImpostor') {
+      this.CylinderImpostorMaterial = shaderMaterial;
+  }
+  else if(shaderName == 'SphereImpostor') {
+      this.SphereImpostorMaterial = shaderMaterial;
+  }
 
     //MappedBuffer
     var attributeSize = count * mappingSize;
@@ -251,6 +361,16 @@ iCn3D.prototype.createImpostorShaderBase = function (shaderName, mapping, mappin
     mesh.frustumCulled = false;
 
     mesh.scale.x = mesh.scale.y = mesh.scale.z = 1.0;
+
+    if(shaderName == 'CylinderImpostor') {
+      mesh.type = 'Cylinder';
+    }
+    else if(shaderName == 'SphereImpostor') {
+      mesh.type = 'Sphere';
+    }
+
+    //mesh.onBeforeRender = this.onBeforeRender(this.renderer, this.scene, this.cam, geometry, shaderMaterial);
+    mesh.onBeforeRender = this.onBeforeRender;
 
     this.mdlImpostor.add(mesh);
 

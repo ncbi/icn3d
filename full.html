@@ -15,7 +15,7 @@
   <link rel="stylesheet" href="icn3d_full_ui.css">
   <script src="lib/jquery-3.2.1.min.js"></script>
   <script src="lib/jquery-ui-1.12.1.min.js"></script>
-  <script src="lib/three_0.80.0.min.js"></script>
+  <script src="lib/three_0.99.0.min.js"></script>
   <script src="full_ui_all.min.js"></script>
 
   <script type="text/javascript">
@@ -88,6 +88,14 @@
     }
     else if(showmenu == 'false' || showmenu == '0') {
       showmenu = false;
+    }
+
+    var showtitle = params.showtitle;
+    if(showtitle === undefined || showtitle == 'true' || showtitle == '1') {
+      showtitle = true;
+    }
+    else if(showtitle == 'false' || showtitle == '0') {
+      showtitle = false;
     }
 
     var showcommand = params.showcommand;
@@ -176,6 +184,7 @@
               resize: resize,
               rotate: rotate,
               showmenu: showmenu,
+              showtitle: showtitle,
               showcommand: showcommand,
               showanno: showanno,
               show2d: show2d,
@@ -226,6 +235,7 @@
               resize: resize,
               rotate: rotate,
               showmenu: showmenu,
+              showtitle: showtitle,
               showcommand: showcommand,
               showanno: showanno,
               showalignseq: showalignseq,
