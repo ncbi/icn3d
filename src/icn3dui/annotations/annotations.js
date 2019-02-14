@@ -227,8 +227,8 @@ iCn3DUI.prototype.getAnDiv = function(chnid, anno) { var me = this;
     return "<div id='" + me.pre + anno + "_" + chnid + "'><div id='" + me.pre + "tt_" + anno + "_" + chnid + "' class='icn3d-fixed-pos' style='display:none!important'></div><div id='" + me.pre + "dt_" + anno + "_" + chnid + "' style='display:none'>" + message + "</div><div id='" + me.pre + "ov_" + anno + "_" + chnid + "'>" + message + "</div></div>";
 };
 
-iCn3DUI.prototype.addButton = function(chnid, class, name, desc, width, buttonStyle) { var me = this;
-    return "<div class='" + class + "' chainid='" + chnid + "' style='display:inline-block; font-size:11px; font-weight:bold; width:" + width + "px!important;'><button style='-webkit-appearance:" + buttonStyle + "; height:18px; width:" + width + "px;'><span style='white-space:nowrap; margin-left:-3px;' title='" + desc + "'>" + name + "</span></button></div>";
+iCn3DUI.prototype.addButton = function(chnid, classvalue, name, desc, width, buttonStyle) { var me = this;
+    return "<div class='" + classvalue + "' chainid='" + chnid + "' style='display:inline-block; font-size:11px; font-weight:bold; width:" + width + "px!important;'><button style='-webkit-appearance:" + buttonStyle + "; height:18px; width:" + width + "px;'><span style='white-space:nowrap; margin-left:-3px;' title='" + desc + "'>" + name + "</span></button></div>";
 }
 
 iCn3DUI.prototype.getAnnotationData = function() { var me = this;
@@ -1300,6 +1300,8 @@ iCn3DUI.prototype.showSnpClinvar = function(chnid, chnidBase) {
             var prevSnpStr = '';
             for(var i = 0, il = lineArray.length; i < il; ++i) {
              //1310770    13    14    14Y>H    368771578    150500    Hereditary cancer-predisposing syndrome; Li-Fraumeni syndrome; not specified; Li-Fraumeni syndrome 1    Likely benign; Uncertain significance; Uncertain significance; Uncertain significance    1TSR_A    120407068    NP_000537.3
+             //Pdb_gi, Pos from, Pos to, Pos & Amino acid change, rs#, ClinVar Allele ID, Disease name, Clinical significance, master_gi, master_accession.version
+
              if(lineArray[i] != '') {
               var fieldArray = lineArray[i].split('\t');
 
@@ -2252,8 +2254,10 @@ iCn3DUI.prototype.showSsbond_base = function(chnid, chnidBase) {
 
           var resid = chnid + '_' + (i+1 + me.baseResi[chnid]).toString();
           var title = 'Residue ' + resid + ' has disulfide bond with';
-          for(var j = 0, jl = resid2resids[resid].length; j < jl; ++j) {
-              title += ' residue ' + resid2resids[resid][j];
+          if(resid2resids[resid] !== undefined) {
+              for(var j = 0, jl = resid2resids[resid].length; j < jl; ++j) {
+                  title += ' residue ' + resid2resids[resid][j];
+              }
           }
 
           html += '<span id="' + pre + '_' + me.pre + chnid + '_' + pos + '" title="' + title + '" class="icn3d-residue">' + c + '</span>';

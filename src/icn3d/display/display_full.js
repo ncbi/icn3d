@@ -115,7 +115,8 @@ iCn3D.prototype.applySsbondsOptions = function (options) {
 
           if(this.ssbondpnts[structure] === undefined) continue;
 
-          for(var i = 0, lim = Math.floor(this.ssbondpnts[structure].length / 2); i < lim; i++) {
+          //for(var i = 0, lim = Math.floor(this.ssbondpnts[structure].length / 2); i < lim; i++) {
+          for(var i = Math.floor(this.ssbondpnts[structure].length / 2) - 1; i >= 0; i--) {
             var res1 = this.ssbondpnts[structure][2 * i], res2 = this.ssbondpnts[structure][2 * i + 1];
             var serial1, serial2;
 
@@ -170,8 +171,16 @@ iCn3D.prototype.applySsbondsOptions = function (options) {
             // only draw bonds connected with currently displayed atoms
             if(line.serial1 !== undefined && line.serial2 !== undefined && !this.dAtoms.hasOwnProperty(line.serial1) && !this.dAtoms.hasOwnProperty(line.serial2)) continue;
 
+            // determine whether it's true disulfide bonds
+            // disulfide bond is about 2.05 angstrom
+            var distMax = 3;
+            if(line.position1.distanceTo(line.position2) > distMax) {
+                this.ssbondpnts[structure].splice(2 * i, 2);
+                continue;
+            }
+
             //if(this.atoms[serial1].ids !== undefined) { // mmdb id as input
-                // remove the originaldisulfide bonds
+                // remove the original disulfide bonds
                 var pos = this.atoms[serial1].bonds.indexOf(serial2);
                 var array1, array2;
                 if(pos != -1) {

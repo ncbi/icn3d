@@ -142,12 +142,14 @@ function make_js_task(name, src) {
       ['clean'],
       function() {
         return gulp.src(src)
-            .pipe(concat(name + '_ui_all.js'))
+            .pipe(concat('icn3d_' + name + '_ui.js'))
             .pipe(gulp.dest(dist))
             .pipe(uglify())
             .pipe(rename({ extname: '.min.js' }))
             .pipe(gulp.dest(dist))
-            .pipe(rename(name + '_ui_all_' + package.version + '.min.js'))
+            .pipe(rename('icn3d_' + name + '_ui_' + package.version + '.min.js'))
+            .pipe(gulp.dest(dist))
+            .pipe(rename(name + '_ui_all.min.js'))
             .pipe(gulp.dest(dist));
       });
 }

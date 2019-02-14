@@ -90,7 +90,9 @@ iCn3DUI.prototype.updateHlAll = function(commandnameArray, bSetMenu, bUnion) { v
 
 iCn3DUI.prototype.updateHlObjects = function() { var me = this;
        me.icn3d.removeHlObjects();
-       me.icn3d.addHlObjects();
+       if(Object.keys(me.icn3d.hAtoms).length < Object.keys(me.icn3d.atoms).length) {
+           me.icn3d.addHlObjects();
+       }
 };
 
 // update highlight in sequence, slow if sequence is long
@@ -101,7 +103,7 @@ iCn3DUI.prototype.updateHlSeq = function(bShowHighlight, residueHash, bUnion) { 
 
        if(residueHash === undefined) residueHash = me.icn3d.getResiduesFromCalphaAtoms(me.icn3d.hAtoms);
 
-       me.hlSeq(Object.keys(residueHash));
+       if(Object.keys(me.icn3d.hAtoms).length < Object.keys(me.icn3d.atoms).length) me.hlSeq(Object.keys(residueHash));
        me.changeSeqColor(Object.keys(residueHash));
 };
 
@@ -110,6 +112,8 @@ iCn3DUI.prototype.updateHlSeqInChain = function(commandnameArray, bUnion) { var 
            me.removeHlSeq();
        }
        //if(residueHash === undefined) residueHash = me.icn3d.getResiduesFromCalphaAtoms(me.icn3d.hAtoms);
+
+       if(Object.keys(me.icn3d.hAtoms).length == Object.keys(me.icn3d.atoms).length) return;
 
        //me.hlSeq(Object.keys(residueHash));
        // speed up with chain highlight
@@ -148,6 +152,8 @@ iCn3DUI.prototype.updateHlSeqInChain = function(commandnameArray, bUnion) { var 
 // update highlight in 2D window
 iCn3DUI.prototype.updateHl2D = function(chainArray2d) { var me = this;
   me.removeHl2D();
+
+  if(Object.keys(me.icn3d.hAtoms).length == Object.keys(me.icn3d.atoms).length) return;
 
   if(chainArray2d === undefined) {
       var chainHash = me.icn3d.getChainsFromAtoms(me.icn3d.hAtoms);
@@ -199,7 +205,7 @@ iCn3DUI.prototype.updateHl2D = function(chainArray2d) { var me = this;
   // update the previously highlisghted atoms for switching between all and selection
   me.icn3d.prevHighlightAtoms = me.icn3d.cloneHash(me.icn3d.hAtoms);
 
-  if(Object.keys(me.icn3d.hAtoms).length < Object.keys(me.icn3d.atoms).length) me.setMode('selection');
+  me.setMode('selection');
 };
 
 // update highlight in the menu of defined sets

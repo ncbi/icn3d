@@ -15,6 +15,8 @@ if (!$.ui.dialog.prototype._makeDraggableBase) {
 var iCn3DUI = function(cfg) {
     var me = this;
 
+    this.REVISION = '2.5.1';
+
     me.bFullUi = true;
 
     me.cfg = cfg;
@@ -1359,7 +1361,8 @@ iCn3DUI.prototype = {
               url: fdlUrl,
               type: 'POST',
               //data : {'longDynamicLink': 'https://d55qc.app.goo.gl/?link=' + url, "suffix": {"option": "SHORT"}},
-              data : {'longDynamicLink': 'https://d55qc.app.goo.gl/?link=' + encodeURIComponent(url)},
+              //data : {'longDynamicLink': 'https://d55qc.app.goo.gl/?link=' + encodeURIComponent(url)},
+              data : {'longDynamicLink': 'https://icn3d.page.link/?link=' + encodeURIComponent(url)},
               dataType: 'json',
               success: function(data) {
                 var shorturl = 'Problem in getting shortened URL';
@@ -4214,7 +4217,7 @@ iCn3DUI.prototype = {
            dialog.dialog( "close" );
 
            if(!$('#' + me.pre + 'dl_definedsets').hasClass('ui-dialog-content') || !$('#' + me.pre + 'dl_definedsets').dialog( 'isOpen' )) {
-             me.openDialog(me.pre + 'dl_definedsets', 'Select');
+             me.openDialog(me.pre + 'dl_definedsets', 'Select sets');
            }
 
            me.bSelectResidue = false;
@@ -4229,7 +4232,7 @@ iCn3DUI.prototype = {
            e.stopImmediatePropagation();
 
            if(!$('#' + me.pre + 'dl_definedsets').hasClass('ui-dialog-content') || !$('#' + me.pre + 'dl_definedsets').dialog( 'isOpen' )) {
-             me.openDialog(me.pre + 'dl_definedsets', 'Select');
+             me.openDialog(me.pre + 'dl_definedsets', 'Select sets');
            }
 
            me.bSelectResidue = false;
@@ -4246,7 +4249,7 @@ iCn3DUI.prototype = {
             e.stopImmediatePropagation();
 
            if(!$('#' + me.pre + 'dl_definedsets').hasClass('ui-dialog-content') || !$('#' + me.pre + 'dl_definedsets').dialog( 'isOpen' )) {
-             me.openDialog(me.pre + 'dl_definedsets', 'Select');
+             me.openDialog(me.pre + 'dl_definedsets', 'Select sets');
            }
 
             me.bSelectAlignResidue = false;

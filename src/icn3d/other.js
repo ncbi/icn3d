@@ -708,6 +708,8 @@ iCn3D.prototype.resetOrientation = function() {
  };
 
 iCn3D.prototype.getFirstAtomObj = function(atomsHash) {
+    if(atomsHash == undefined) return this.atoms[0];
+
     var atomKeys = Object.keys(atomsHash);
     var firstIndex = atomKeys[0];
 
@@ -715,6 +717,8 @@ iCn3D.prototype.getFirstAtomObj = function(atomsHash) {
 };
 
 iCn3D.prototype.getFirstCalphaAtomObj = function(atomsHash) {
+    if(atomsHash == undefined) return this.atoms[0];
+
     var firstIndex;
 
     for(var i in atomsHash) {

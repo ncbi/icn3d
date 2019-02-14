@@ -20,7 +20,7 @@ We provided two types of iCn3D widgets: [basic interface](https://www.ncbi.nlm.n
 
 Either of these widgets could be easily added to your own web pages. Please see the [help page](https://www.ncbi.nlm.nih.gov/Structure/icn3d/docs/icn3d_help.html#HowToUse) for more details.
 
-<b>Complete package</b> of iCn3D including Three.js and jQuery can be downloaded from [https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.5.0.zip](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.5.0.zip). The "Download ZIP" link in this page does not include third-party libraries. 
+<b>Complete package</b> of iCn3D including Three.js and jQuery can be downloaded from [https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.5.1.zip](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.5.1.zip). The "Download ZIP" link in this page does not include third-party libraries. 
 
 ## Usage
 
@@ -71,39 +71,6 @@ You only have to perform the above steps once, to set up your working directory.
 ```
 gulp
 ```
-
-## Change log
-The production version [icn3d-2.5.0](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.5.0.zip) was release on January 31, 2019. Updated Three.js from version 80 to version 99. Enabled the basic version (simple_ui_all.min.js) to hide the Tools menu and title. Fixed a bug in picking an atom for distance or labeling. 
-
-The production version [icn3d-2.4.3](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.4.3.zip) was release on January 22, 2019. Non-standard proteins or nucleotides were still displayed as "Biopolymer" in 2D interactions and were displayed in the style of protein or nucleotide in 3D. The usage tracking was implemented in iCn3D.
-
-The production version [icn3d-2.4.2](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.4.2.zip) was release on January 16, 2019. Non-standard proteins or nucleotides were displayed as "Biopolymer" in 2D interactions and were displayed in the style of "Stick" in 3D. A new kind of annotation "Disulfie Bonds" was added to the "Sequences and Annotations" window.
-
-The production version [icn3d-2.4.1](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.4.1.zip) was release on January 7, 2019. Enabled users to show EM density map for any subset of an EM structure.
-
-The production version [icn3d-2.4.0](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.4.0.zip) was release on December 17, 2018. Enabled users to show electron density map for any subset of a crystal structure.
-
-The production version [icn3d-2.3.0](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.3.0.zip) was release on October 18, 2018. Added set operations (union,intersection, exclusion) in "Defined Sets"; added buttons "Helix Sets" and "Sheet Sets" in the "Sequences and Annotations" window to define helix sets and sheet sets in the window "Defined Sets"; added "Save Color" and "Apply Saved Color" in the menu "Color"; added "Save Style" and "Apply Saved Style" in the menu "Style"; added "Side Chains" in the menu "Select" to select side chains; added two options for color by "Secondary" structures: "Sheets in Green" and "Sheets in Yellow"; added color by "B-factor" that is normalized with "Original" values or "Percentile" values.
-
-The production version [icn3d-2.2.0](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.2.0.zip) was release on July 30, 2018. The smoothing algorithm was switched from Catmull-Rom spline to cubic spline to make the curves more smooth. The thickness of ribbon was decreased to make the sides of the ribbons less apparent. The radio buttons in the menus was replaced by the check sign. A "Save Image" button was added in the "Toolbar".
-
-The production version [icn3d-2.1.0](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.1.0.zip) was release on May 21, 2018. The instancing method is used to display a biological assembly. It significantly improved the rendering speed by sending only the geometry of its assymmetruic unit to GPU and applying transformation matrices to display the assembly. 
-
-The production version [icn3d-2.0.0](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.0.0.zip) was release on April 17, 2018. By clicking the menu "Windows: View Sequences & Annotations", users can view all kinds of annotations: ClinVar, SNPs, CDD domains, 3D domains, binding sites, interactions, and custom tracks. Users can click the menu "View: Chemical Binding" to show the chemical binding sites. Users can also export files for 3D printing at the menu "File: 3D Printing: VRML (Color, W/ Stabilizers)".
-
-The production version [icn3d-1.4.0](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-1.4.0.zip) was release on November 2, 2017. The rendering speed has been significantly improved by using the Imposter shaders from NGL Viewer. A bug in "Share Link" was fixed.
-
-The production version [icn3d-1.3.1](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-1.3.1.zip) was release on October 4, 2016. Partial diplay of helices or beta-sheets are enabled. The side chains, if displayed, are connected to C-alphas.
-
-The production version [icn3d-1.2.0](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-1.2.0.zip) was release on August 17, 2016. The dialog of 2D interactions was added to show the interactions among different chains. Both the nodes (chains) and lines (interactions) can be selected. Secondary structures will be calculated if the input PDB file has no defined secondary structure information. The previous files src/icn3d.js, src/full_ui.js, and src/simple_ui.js were separated into small files.
-
-The production version [icn3d-1.1.1](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-1.1.1.zip) was release on July 25, 2016. Some bugs were fixed.
-
-The production version [icn3d-1.0.0](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-1.0.0.zip) was release on April 28, 2016.
-
-The beta version [icn3d-0.9.0-dev](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-0.9.0-dev.zip) was release on Jan 17, 2016.
-
-All previous releases can be found in the [API page](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d.html#log).
 
 ## Contact
 
