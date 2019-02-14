@@ -61,6 +61,8 @@ iCn3DUI.prototype.draw2Ddgm = function(data, mmdbid, structureIndex, bUpdate) { 
                 ++index;
             }
 
+            if(chainid1 === undefined || chainid2 === undefined) continue;
+
             index = 0;
             for(var molid in pair) {
                 var resArray = pair[molid];
@@ -298,85 +300,57 @@ iCn3DUI.prototype.draw2Ddgm = function(data, mmdbid, structureIndex, bUpdate) { 
                 var width = dgm.coords[2] * factor - x;
                 var height = dgm.coords[3] * factor - y;
 
-                nodeHtml += "<g class='icn3d-node' chainid='" + chainid + "' >";
-                nodeHtml += "<title>Chain " + oriChain + ": " + chainname + "</title>";
-                // place holder
-                nodeHtml += "<rect class='icn3d-basenode' x='" + x + "' y='" + y + "' width='" + width + "' height='" + height + "' fill='" + color + "' stroke-width='" + strokewidth + "' stroke='" + strokecolor + "' />";
-                // highlight
-                nodeHtml += "<rect class='icn3d-hlnode' x='" + (x + width / 2.0 * (1 - ratio)).toString() + "' y='" + (y + height / 2.0 * (1 - ratio)).toString() + "' width='" + (width * ratio).toString() + "' height='" + (height * ratio).toString() + "' fill='" + oricolor + "' stroke-width='" + strokewidth + "' stroke='" + strokecolor + "' />";
-
-                nodeHtml += "<text x='" + (x + width / 2 - adjustx).toString() + "' y='" + (y + height / 2 + adjusty).toString() + "' style='fill:" + textcolor + "; font-size:" + fontsize + "; text-anchor:middle' >" + chain + "</text>";
-
-                if(alignNum !== "") nodeHtml += "<text x='" + (x + width / 2 - adjustx).toString() + "' y='" + (y + height + adjusty + halfLetHigh).toString() + "' style='fill:" + oricolor + "; font-size:" + smallfontsize + "; font-weight:bold; text-anchor:middle' >" + alignNum + "</text>";
-
-                nodeHtml += "</g>";
+                nodeHtml += me.draw2DNucleotide(x + 0.5 * width, y + 0.5 * height, chainid, oriChain, chain, chainname, alignNum, color, oricolor, factor, ratio);
 
                 posHash[molid] = [x + width/2, y + height/2];
             }
             else if(dgm.shape === 'circle') {
                 var x = dgm.coords[0] * factor;
                 var y = dgm.coords[1] * factor;
-                var r = dgm.coords[2] * factor;
 
-                nodeHtml += "<g class='icn3d-node' chainid='" + chainid + "' >";
-                nodeHtml += "<title>Chain " + oriChain + ": " + chainname + "</title>";
-                nodeHtml += "<circle class='icn3d-basenode' cx='" + x + "' cy='" + y + "' r='" + r + "' fill='" + color + "' stroke-width='" + strokewidth + "' stroke='" + strokecolor + "' class='icn3d-node' chainid='" + chainid + "' />";
-
-                nodeHtml += "<circle class='icn3d-hlnode' cx='" + x + "' cy='" + y + "' r='" + (r * ratio).toString() + "' fill='" + oricolor + "' stroke-width='" + strokewidth + "' stroke='" + strokecolor + "' />";
-
-                nodeHtml += "<text x='" + (x - adjustx).toString() + "' y='" + (y + adjusty).toString() + "' style='fill:" + textcolor + "; font-size:" + fontsize + "; text-anchor:middle' >" + chain + "</text>";
-
-                if(alignNum !== "") nodeHtml += "<text x='" + (x - adjustx).toString() + "' y='" + (y + r + adjusty + halfLetHigh).toString() + "' style='fill:" + oricolor + "; font-size:" + smallfontsize + "; font-weight:bold; text-anchor:middle' >" + alignNum + "</text>";
-
-                nodeHtml += "</g>";
+                nodeHtml += me.draw2DProtein(x, y, chainid, oriChain, chain, chainname, alignNum, color, oricolor, factor, ratio);
 
                 posHash[molid] = [x, y];
             }
             else if(dgm.shape === 'poly') {
-                var x0 = dgm.coords[0] * factor;
-                var y0 = dgm.coords[1] * factor;
-                var x1 = dgm.coords[2] * factor;
-                var y1 = dgm.coords[3] * factor;
-                var x2 = dgm.coords[4] * factor;
-                var y2 = dgm.coords[5] * factor;
-                var x3 = dgm.coords[6] * factor;
-                var y3 = dgm.coords[7] * factor;
+              var x0 = dgm.coords[0] * factor;
+              var y0 = dgm.coords[1] * factor;
+              var x1 = dgm.coords[2] * factor;
+              var y1 = dgm.coords[3] * factor;
+              var x2 = dgm.coords[4] * factor;
+              var y2 = dgm.coords[5] * factor;
+              var x3 = dgm.coords[6] * factor;
+              var y3 = dgm.coords[7] * factor;
 
-                var x = x0, y = y1;
+              var x = x0, y = y1;
 
-                var x0diff = x0 - x;
-                var y0diff = y0 - y;
-                var x1diff = x1 - x;
-                var y1diff = y1 - y;
-                var x2diff = x2 - x;
-                var y2diff = y2 - y;
-                var x3diff = x3 - x;
-                var y3diff = y3 - y;
+              var atom = me.icn3d.getFirstAtomObj(me.icn3d.chains[chainid]);
 
-                chemNodeHtml += "<g class='icn3d-node' chainid='" + chainid + "' >";
-                chemNodeHtml += "<title>Chain " + oriChain + ": " + chainname + "</title>";
-                chemNodeHtml += "<polygon class='icn3d-basenode' points='" + x0 + ", " + y0 + "," + x1 + ", " + y1 + "," + x2 + ", " + y2 + "," + x3 + ", " + y3 + "' x='" + x + "' y='" + y + "' x0d='" + x0diff + "' y0d='" + y0diff + "' x1d='" + x1diff + "' y1d='" + y1diff + "' x2d='" + x2diff + "' y2d='" + y2diff + "' x3d='" + x3diff + "' y3d='" + y3diff + "' fill='" + color + "' stroke-width='" + strokewidth + "' stroke='" + strokecolor + "' />";
+              //if(me.icn3d.proteins.hasOwnProperty(atom.serial)) {
+              //    chemNodeHtml += me.draw2DProtein(x, y, chainid, oriChain, chain, chainname, alignNum, color, oricolor, factor, ratio);
+              //}
+              //else if(me.icn3d.nucleotides.hasOwnProperty(atom.serial)) {
+              //    chemNodeHtml += me.draw2DNucleotide(x, y, chainid, oriChain, chain, chainname, alignNum, color, oricolor, factor, ratio);
+              //}
+              //else {
+              //    chemNodeHtml += me.draw2DChemical(x, y, chainid, oriChain, chain, chainname, alignNum, color, oricolor, factor, ratio);
+              //}
 
-                chemNodeHtml += "<polygon class='icn3d-hlnode' points='" + (x+x0diff*ratio).toString() + ", " + (y+y0diff*ratio).toString() + "," + (x+x1diff*ratio).toString() + ", " + (y+y1diff*ratio).toString() + "," + (x+x2diff*ratio).toString() + ", " + (y+y2diff*ratio).toString() + "," + (x+x3diff*ratio).toString() + ", " + (y+y3diff*ratio).toString() + "' fill='" + oricolor + "' stroke-width='" + strokewidth + "' stroke='" + strokecolor + "' />";
+              chemNodeHtml += me.draw2DChemical(x, y, chainid, oriChain, chain, chainname, alignNum, color, oricolor, factor, ratio);
 
-                chemNodeHtml += "<text x='" + (x + smalladjustx).toString() + "' y='" + (y + smalladjusty).toString() + "' style='fill:" + textcolor + "; font-size:" + smallfontsize + "; text-anchor:middle' >" + chain + "</text>";
-
-                if(alignNum !== "") chemNodeHtml += "<text x='" + (x + smalladjustx).toString() + "' y='" + (y + smalladjusty + halfLetHigh).toString() + "' style='fill:" + oricolor + "; font-size:" + smallfontsize + "; font-weight:bold; text-anchor:middle' >" + alignNum + "</text>";
-
-                chemNodeHtml += "</g>";
-
-                posHash[molid] = [x0, y1];
+              posHash[molid] = [x0, y1];
             }
         }
         else { // missing biopolymer
             // max x and y value: 300
             var maxSize = 300;
-            var step = 20;
+            var step = 50;
 
             var xCenter, yCenter;
-            if(missingMolid2intrac[molid] !== undefined && missingMolid2intrac[molid].length > 0) { // has interactions
+            if(missingMolid2intrac[molid] !== undefined && missingMolid2intrac[molid].length > 1) { // has interactions
                 // find its position
                 var xSum = 0, ySum = 0;
+
                 for(var j = 0, jl = missingMolid2intrac[molid].length; j < jl; ++j) {
                     var intracMolid = missingMolid2intrac[molid][j];
                     if(posHash.hasOwnProperty(intracMolid)) {
@@ -389,64 +363,42 @@ iCn3DUI.prototype.draw2Ddgm = function(data, mmdbid, structureIndex, bUpdate) { 
                 xCenter = xSum / missingMolid2intrac[molid].length;
                 yCenter = ySum / missingMolid2intrac[molid].length;
             }
-            else { // has NO interactions
-                // do nothing
-                continue;
-/*
+            else { // has NO interactions or just one interaction
                 var nSteps = maxSize / step;
 
-                if(cntNointeraction < 0.5 * nSteps) {
-                    xCenter = (0.5 * maxSize + cntNointeraction * step) * factor;
+                if(cntNointeraction < nSteps - 1) {
+                    xCenter = (cntNointeraction + 1) * step * factor;
                     yCenter = 0.1 * maxSize * factor;
                 }
-                else {
+                else if(cntNointeraction - (nSteps - 1) < nSteps - 1) {
                     xCenter = 0.1 * maxSize * factor;
+                    yCenter = (cntNointeraction - (nSteps - 1) + 1) * step * factor;
+                }
+                else {
+                    xCenter = 0.25 * maxSize * factor;
                     yCenter = xCenter;
                 }
 
                 ++cntNointeraction;
-*/
+
             }
-
-            var xOffset = 0.5 * step / Math.sqrt(3) * factor;
-            var yOffset = 0.5 * step * factor;
-
-            var xOffset2 = 0.5 * step / Math.sqrt(3) * factor * ratio;
-            var yOffset2 = 0.5 * step * factor * ratio;
 
             var x = xCenter, y = yCenter;
 
-            var x0 = x - xOffset;
-            var y0 = y - yOffset;
-            var x1 = x + 3 * xOffset;
-            var y1 = y - yOffset;
-            var x2 = x + xOffset;
-            var y2 = y + yOffset;
-            var x3 = x - 3 * xOffset;
-            var y3 = y + yOffset;
+            var atom = me.icn3d.getFirstAtomObj(me.icn3d.chains[chainid]);
 
-            var x0diff = x0 - x;
-            var y0diff = y0 - y;
-            var x1diff = x1 - x;
-            var y1diff = y1 - y;
-            var x2diff = x2 - x;
-            var y2diff = y2 - y;
-            var x3diff = x3 - x;
-            var y3diff = y3 - y;
+            //if(me.icn3d.proteins.hasOwnProperty(atom.serial)) {
+            //  chemNodeHtml += me.draw2DProtein(x, y, chainid, oriChain, chain, chainname, alignNum, color, oricolor, factor, ratio);
+            //}
+            //else if(me.icn3d.nucleotides.hasOwnProperty(atom.serial)) {
+            //  chemNodeHtml += me.draw2DNucleotide(x, y, chainid, oriChain, chain, chainname, alignNum, color, oricolor, factor, ratio);
+            //}
+            //else {
+            //  chemNodeHtml += me.draw2DChemical(x, y, chainid, oriChain, chain, chainname, alignNum, color, oricolor, factor, ratio);
+            //}
 
-            nodeHtml += "<g class='icn3d-node' chainid='" + chainid + "' >";
-            nodeHtml += "<title>Chain " + oriChain + ": " + chainname + "</title>";
-            nodeHtml += "<polygon class='icn3d-basenode' points='" + x0 + ", " + y0 + "," + x1 + ", " + y1 + "," + x2 + ", " + y2 + "," + x3 + ", " + y3 + "' x='" + x + "' y='" + y + "' x0d='" + x0diff + "' y0d='" + y0diff + "' x1d='" + x1diff + "' y1d='" + y1diff + "' x2d='" + x2diff + "' y2d='" + y2diff + "' x3d='" + x3diff + "' y3d='" + y3diff + "' fill='" + color + "' stroke-width='" + strokewidth + "' stroke='" + strokecolor + "' />";
-
-            oricolor = '#FFFFFF';
-
-            nodeHtml += "<polygon class='icn3d-hlnode' points='" + (x+x0diff*ratio).toString() + ", " + (y+y0diff*ratio).toString() + "," + (x+x1diff*ratio).toString() + ", " + (y+y1diff*ratio).toString() + "," + (x+x2diff*ratio).toString() + ", " + (y+y2diff*ratio).toString() + "," + (x+x3diff*ratio).toString() + ", " + (y+y3diff*ratio).toString() + "' fill='" + oricolor + "' stroke-width='" + strokewidth + "' stroke='" + strokecolor + "' />";
-
-            nodeHtml += "<text x='" + (x + smalladjustx).toString() + "' y='" + (y + smalladjusty).toString() + "' style='fill:" + textcolor + "; font-size:" + smallfontsize + "; text-anchor:middle' >" + chain + "</text>";
-
-            if(alignNum !== "") nodeHtml += "<text x='" + (x + smalladjustx).toString() + "' y='" + (y + smalladjusty + halfLetHigh).toString() + "' style='fill:" + oricolor + "; font-size:" + smallfontsize + "; font-weight:bold; text-anchor:middle' >" + alignNum + "</text>";
-
-            nodeHtml += "</g>";
+            var bBiopolymer = true;
+            chemNodeHtml += me.draw2DChemical(x, y, chainid, oriChain, chain, chainname, alignNum, color, oricolor, factor, ratio, bBiopolymer);
 
             posHash[molid] = [x, y];
         }
@@ -746,5 +698,124 @@ iCn3DUI.prototype.selectInteractionAtoms = function (chainid1, chainid2) {   var
     var nameArray = [commandname];
 };
 
+iCn3DUI.prototype.draw2DProtein = function(x, y, chainid, oriChain, chain, chainname, alignNum, color, oricolor, factor, ratio) { var me = this;
+    var strokecolor = '#000000';
+    var strokewidth = '1';
+    var linestrokewidth = '2';
+    var textcolor = '#000000';
+    var fontsize = '10';
+    var smallfontsize = '8';
+    var adjustx = 0, adjusty = 4, smalladjustx = 1, smalladjusty = 2, halfLetHigh = 6;
 
+    var r = 20 * factor;
+
+    html = "<g class='icn3d-node' chainid='" + chainid + "' >";
+    html += "<title>Chain " + oriChain + ": " + chainname + "</title>";
+    html += "<circle class='icn3d-basenode' cx='" + x + "' cy='" + y + "' r='" + r + "' fill='" + color + "' stroke-width='" + strokewidth + "' stroke='" + strokecolor + "' class='icn3d-node' chainid='" + chainid + "' />";
+
+    html += "<circle class='icn3d-hlnode' cx='" + x + "' cy='" + y + "' r='" + (r * ratio).toString() + "' fill='" + oricolor + "' stroke-width='" + strokewidth + "' stroke='" + strokecolor + "' />";
+
+    html += "<text x='" + (x - adjustx).toString() + "' y='" + (y + adjusty).toString() + "' style='fill:" + textcolor + "; font-size:" + fontsize + "; text-anchor:middle' >" + chain + "</text>";
+
+    if(alignNum !== "") html += "<text x='" + (x - adjustx).toString() + "' y='" + (y + r + adjusty + halfLetHigh).toString() + "' style='fill:" + oricolor + "; font-size:" + smallfontsize + "; font-weight:bold; text-anchor:middle' >" + alignNum + "</text>";
+
+    html += "</g>";
+
+    return html;
+};
+
+iCn3DUI.prototype.draw2DNucleotide = function(x, y, chainid, oriChain, chain, chainname, alignNum, color, oricolor, factor, ratio) { var me = this;
+    var strokecolor = '#000000';
+    var strokewidth = '1';
+    var linestrokewidth = '2';
+    var textcolor = '#000000';
+    var fontsize = '10';
+    var smallfontsize = '8';
+    var adjustx = 0, adjusty = 4, smalladjustx = 1, smalladjusty = 2, halfLetHigh = 6;
+
+    var width = 30 * factor;
+    var height = 30 * factor;
+
+    x -= 0.5 * width;
+    y -= 0.5 * height;
+
+    html = "<g class='icn3d-node' chainid='" + chainid + "' >";
+    html += "<title>Chain " + oriChain + ": " + chainname + "</title>";
+    // place holder
+    html += "<rect class='icn3d-basenode' x='" + x + "' y='" + y + "' width='" + width + "' height='" + height + "' fill='" + color + "' stroke-width='" + strokewidth + "' stroke='" + strokecolor + "' />";
+    // highlight
+    html += "<rect class='icn3d-hlnode' x='" + (x + width / 2.0 * (1 - ratio)).toString() + "' y='" + (y + height / 2.0 * (1 - ratio)).toString() + "' width='" + (width * ratio).toString() + "' height='" + (height * ratio).toString() + "' fill='" + oricolor + "' stroke-width='" + strokewidth + "' stroke='" + strokecolor + "' />";
+
+    html += "<text x='" + (x + width / 2 - adjustx).toString() + "' y='" + (y + height / 2 + adjusty).toString() + "' style='fill:" + textcolor + "; font-size:" + fontsize + "; text-anchor:middle' >" + chain + "</text>";
+
+    if(alignNum !== "") html += "<text x='" + (x + width / 2 - adjustx).toString() + "' y='" + (y + height + adjusty + halfLetHigh).toString() + "' style='fill:" + oricolor + "; font-size:" + smallfontsize + "; font-weight:bold; text-anchor:middle' >" + alignNum + "</text>";
+
+    html += "</g>";
+
+    return html;
+};
+
+iCn3DUI.prototype.draw2DChemical = function(x, y, chainid, oriChain, chain, chainname, alignNum, color, oricolor, factor, ratio, bBiopolymer) { var me = this;
+    var strokecolor = '#000000';
+    var strokewidth = '1';
+    var linestrokewidth = '2';
+    var textcolor = '#000000';
+    var fontsize = '10';
+    var smallfontsize = '8';
+    var adjustx = 0, adjusty = 4, smalladjustx = 1, smalladjusty = 2, halfLetHigh = 6;
+
+    var bpsize = 30 * factor;
+
+    if(bBiopolymer !== undefined && bBiopolymer) {
+        // biopolymer
+        var xOffset = 0.5 * bpsize / Math.sqrt(3);
+        var yOffset = 0.5 * bpsize;
+
+        var x0 = x - xOffset;
+        var y0 = y - yOffset;
+        var x1 = x + 3 * xOffset;
+        var y1 = y - yOffset;
+        var x2 = x + xOffset;
+        var y2 = y + yOffset;
+        var x3 = x - 3 * xOffset;
+        var y3 = y + yOffset;
+    }
+    else {
+        // diamond
+        var xOffset = 0.5 * bpsize;
+        var yOffset = 0.5 * bpsize;
+
+        var x0 = x - xOffset;
+        var y0 = y;
+        var x1 = x;
+        var y1 = y + yOffset;
+        var x2 = x + xOffset;
+        var y2 = y;
+        var x3 = x;
+        var y3 = y - yOffset;
+    }
+
+    var x0diff = x0 - x;
+    var y0diff = y0 - y;
+    var x1diff = x1 - x;
+    var y1diff = y1 - y;
+    var x2diff = x2 - x;
+    var y2diff = y2 - y;
+    var x3diff = x3 - x;
+    var y3diff = y3 - y;
+
+    var html = "<g class='icn3d-node' chainid='" + chainid + "' >";
+    html += "<title>Chain " + oriChain + ": " + chainname + "</title>";
+    html += "<polygon class='icn3d-basenode' points='" + x0 + ", " + y0 + "," + x1 + ", " + y1 + "," + x2 + ", " + y2 + "," + x3 + ", " + y3 + "' x='" + x + "' y='" + y + "' x0d='" + x0diff + "' y0d='" + y0diff + "' x1d='" + x1diff + "' y1d='" + y1diff + "' x2d='" + x2diff + "' y2d='" + y2diff + "' x3d='" + x3diff + "' y3d='" + y3diff + "' fill='" + color + "' stroke-width='" + strokewidth + "' stroke='" + strokecolor + "' />";
+
+    html += "<polygon class='icn3d-hlnode' points='" + (x+x0diff*ratio).toString() + ", " + (y+y0diff*ratio).toString() + "," + (x+x1diff*ratio).toString() + ", " + (y+y1diff*ratio).toString() + "," + (x+x2diff*ratio).toString() + ", " + (y+y2diff*ratio).toString() + "," + (x+x3diff*ratio).toString() + ", " + (y+y3diff*ratio).toString() + "' fill='" + oricolor + "' stroke-width='" + strokewidth + "' stroke='" + strokecolor + "' />";
+
+    html += "<text x='" + (x + smalladjustx).toString() + "' y='" + (y + smalladjusty).toString() + "' style='fill:" + textcolor + "; font-size:" + smallfontsize + "; text-anchor:middle' >" + chain + "</text>";
+
+    if(alignNum !== "") html += "<text x='" + (x + smalladjustx).toString() + "' y='" + (y + smalladjusty + halfLetHigh).toString() + "' style='fill:" + oricolor + "; font-size:" + smallfontsize + "; font-weight:bold; text-anchor:middle' >" + alignNum + "</text>";
+
+    html += "</g>";
+
+    return html;
+};
 

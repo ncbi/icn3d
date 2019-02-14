@@ -823,7 +823,7 @@ iCn3DUI.prototype.setMenu6 = function() { var me = this;
     html += "<div>";
     html += "<ul class='icn3d-mn'>";
 
-    html += "  <li><a href='https://www.ncbi.nlm.nih.gov/Structure/icn3d/docs/icn3d_about.html' target='_blank'>About iCn3D</a></li>";
+    html += "  <li><a href='https://www.ncbi.nlm.nih.gov/Structure/icn3d/docs/icn3d_about.html' target='_blank'>About iCn3D<span style='font-size:0.9em'> " + me.REVISION + "</span></a></li>";
 
     html += "  <li><a href='https://www.ncbi.nlm.nih.gov/Structure/icn3d/docs/icn3d_help.html' target='_blank'>Help Doc</a></li>";
 

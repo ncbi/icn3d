@@ -65,7 +65,7 @@ iCn3DUI.prototype.clickDeleteSets = function() { var me = this;
 
 iCn3DUI.prototype.defineSecondary = function(chainid, type) { var me = this;
     if(!$('#' + me.pre + 'dl_definedsets').hasClass('ui-dialog-content') || !$('#' + me.pre + 'dl_definedsets').dialog( 'isOpen' )) {
-        me.openDialog(me.pre + 'dl_definedsets', 'Select');
+        me.openDialog(me.pre + 'dl_definedsets', 'Select sets');
     }
 
     var selectedResidues = {};

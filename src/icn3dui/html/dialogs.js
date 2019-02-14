@@ -69,7 +69,7 @@ iCn3DUI.prototype.openDialog2Ddgm = function (id, inHeight, bDefinedSets) {  var
     var at, title;
     if(id === me.pre + 'dl_definedsets') {
         at = "right top";
-        //title = 'Select';
+        title = 'Select sets';
     }
     else if(id === me.pre + 'dl_2ddgm') {
         if(bDefinedSets !== undefined && bDefinedSets) {
