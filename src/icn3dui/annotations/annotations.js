@@ -1746,11 +1746,15 @@ iCn3DUI.prototype.showCddSiteAll = function() { var me = this;
 };
 
 iCn3DUI.prototype.showDomainAll = function() { var me = this;
-    var chnid = Object.keys(me.protein_chainid)[0];
-    var pdbid = chnid.substr(0, chnid.indexOf('_'));
+    //var chnid = Object.keys(me.protein_chainid)[0];
+    //var pdbid = chnid.substr(0, chnid.indexOf('_'));
+    var pdbArray = Object.keys(me.icn3d.structures);
 
     // show 3D domains
-    var url = "https://www.ncbi.nlm.nih.gov/Structure/mmdb/mmdb_strview.cgi?v=2&program=icn3d&domain&molinfor&uid=" + pdbid;
+    var pdbid1 = pdbArray[0];
+    var url = "https://www.ncbi.nlm.nih.gov/Structure/mmdb/mmdb_strview.cgi?v=2&program=icn3d&domain&molinfor&uid=" + pdbid1;
+
+    var bAjaxDone1 = false, bAjaxDone2 = false;
 
     if(me.mmdb_data !== undefined) {
         for(var chnid in me.protein_chainid) {
@@ -1768,15 +1772,25 @@ iCn3DUI.prototype.showDomainAll = function() { var me = this;
             me.mmdb_data = data;
 
             for(var chnid in me.protein_chainid) {
-                me.showDomainWithData(chnid, me.mmdb_data);
+                if(chnid.indexOf(pdbid1) !== -1) {
+                    me.showDomainWithData(chnid, me.mmdb_data);
+                }
             }
 
             // add here after the ajax call
             me.enableHlSeq();
 
             me.bAjax3ddomain = true;
+            bAjaxDone1 = true;
 
-            if(me.deferred3ddomain !== undefined) me.deferred3ddomain.resolve();
+            if(me.deferred3ddomain !== undefined) {
+                if(me.cfg.align === undefined) {
+                    me.deferred3ddomain.resolve();
+                }
+                else if(bAjaxDone1 && bAjaxDone2) {
+                    me.deferred3ddomain.resolve();
+                }
+            }
           },
           error : function(xhr, textStatus, errorThrown ) {
             this.tryCount++;
@@ -1786,19 +1800,100 @@ iCn3DUI.prototype.showDomainAll = function() { var me = this;
                 return;
             }
 
-            console.log( "No 3D domain data were found for the protein " + chnid + "..." );
+            console.log( "No 3D domain data were found for the protein " + pdbid + "..." );
 
             for(var chnid in me.protein_chainid) {
-                $("#" + me.pre + "dt_domain_" + chnid).html('');
-                $("#" + me.pre + "ov_domain_" + chnid).html('');
-                $("#" + me.pre + "tt_domain_" + chnid).html('');
+                if(chnid.indexOf(pdbid1) !== -1) {
+                    $("#" + me.pre + "dt_domain_" + chnid).html('');
+                    $("#" + me.pre + "ov_domain_" + chnid).html('');
+                    $("#" + me.pre + "tt_domain_" + chnid).html('');
+                }
             }
 
             me.enableHlSeq();
 
             me.bAjax3ddomain = true;
+            bAjaxDone1 = true;
 
-            if(me.deferred3ddomain !== undefined) me.deferred3ddomain.resolve();
+            if(me.deferred3ddomain !== undefined) {
+                if(me.cfg.align === undefined) {
+                    me.deferred3ddomain.resolve();
+                }
+                else if(bAjaxDone1 && bAjaxDone2) {
+                    me.deferred3ddomain.resolve();
+                }
+            }
+            return;
+          }
+        });
+    }
+
+    // alignment
+    if(me.cfg.align !== undefined && pdbArray.length > 1) {
+        var pdbid2 = pdbArray[1];
+        url = "https://www.ncbi.nlm.nih.gov/Structure/mmdb/mmdb_strview.cgi?v=2&program=icn3d&domain&molinfor&uid=" + pdbid2;
+
+        $.ajax({
+          url: url,
+          dataType: 'json',
+          cache: true,
+          tryCount : 0,
+          retryLimit : 1,
+          success: function(data) {
+            me.mmdb_data2 = data;
+
+            for(var chnid in me.protein_chainid) {
+                if(chnid.indexOf(pdbid2) !== -1) {
+                    me.showDomainWithData(chnid, me.mmdb_data2);
+                }
+            }
+
+            // add here after the ajax call
+            me.enableHlSeq();
+
+            me.bAjax3ddomain = true;
+            bAjaxDone2 = true;
+
+            if(me.deferred3ddomain !== undefined) {
+                if(me.cfg.align === undefined) {
+                    me.deferred3ddomain.resolve();
+                }
+                else if(bAjaxDone1 && bAjaxDone2) {
+                    me.deferred3ddomain.resolve();
+                }
+            }
+          },
+          error : function(xhr, textStatus, errorThrown ) {
+            this.tryCount++;
+            if (this.tryCount <= this.retryLimit) {
+                //try again
+                $.ajax(this);
+                return;
+            }
+
+            console.log( "No 3D domain data were found for the protein " + pdbid + "..." );
+
+            for(var chnid in me.protein_chainid) {
+                if(chnid.indexOf(pdbid2) !== -1) {
+                    $("#" + me.pre + "dt_domain_" + chnid).html('');
+                    $("#" + me.pre + "ov_domain_" + chnid).html('');
+                    $("#" + me.pre + "tt_domain_" + chnid).html('');
+                }
+            }
+
+            me.enableHlSeq();
+
+            me.bAjax3ddomain = true;
+            bAjaxDone2 = true;
+
+            if(me.deferred3ddomain !== undefined) {
+                if(me.cfg.align === undefined) {
+                    me.deferred3ddomain.resolve();
+                }
+                else if(bAjaxDone1 && bAjaxDone2) {
+                    me.deferred3ddomain.resolve();
+                }
+            }
             return;
           }
         });
