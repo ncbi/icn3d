@@ -777,7 +777,7 @@ iCn3DUI.prototype.setMenu5 = function() { var me = this;
         }
 
         //html += me.getLink('mn2_selectresidues', 'View Sequences');
-        if(me.cfg.mmdbid !== undefined || me.cfg.align !== undefined) {
+        if(me.cfg.mmdbid !== undefined || me.cfg.gi !== undefined || me.cfg.align !== undefined) {
           html += me.getLink('mn2_2ddgm', 'View Interactions');
         }
     }

@@ -186,6 +186,7 @@ iCn3D.prototype.createRepresentationSub = function (atoms, f0, f01) {
     for (var i in atoms) {
         var atom0 = atoms[i];
         f0 && f0(atom0);
+
         for (var j in atom0.bonds) {
             var atom1 = this.atoms[atom0.bonds[j]];
             if (atom1 === undefined || atom1.serial < atom0.serial) continue;
@@ -509,7 +510,8 @@ iCn3D.prototype.createLineRepresentation = function (atoms, bHighlight) {
             //line = new THREE.Mesh(geo, this.matShader);
         }
         else {
-            line = new THREE.Line(geo, new THREE.LineBasicMaterial({ linewidth: this.linewidth, vertexColors: true }), THREE.LineSegments);
+            //line = new THREE.Line(geo, new THREE.LineBasicMaterial({ linewidth: this.linewidth, vertexColors: true }), THREE.LineSegments);
+            line = new THREE.LineSegments(geo, new THREE.LineBasicMaterial({ linewidth: this.linewidth, vertexColors: true }));
             this.mdl.add(line);
         }
 
@@ -966,7 +968,8 @@ iCn3D.prototype.createCurveSub = function (_pnts, width, colors, div, bHighlight
             }
         }
 
-        var line = new THREE.Line(geo, new THREE.LineBasicMaterial({ linewidth: width, vertexColors: true }), THREE.LineStrip);
+        //var line = new THREE.Line(geo, new THREE.LineBasicMaterial({ linewidth: width, vertexColors: true }), THREE.LineStrip);
+        var line = new THREE.LineSegments(geo, new THREE.LineBasicMaterial({ linewidth: width, vertexColors: true }));
         this.mdl.add(line);
         if(bHighlight === 2) {
             this.prevHighlightObjects.push(line);
@@ -2328,7 +2331,8 @@ iCn3D.prototype.createSingleLine = function ( src, dst, colorHex, dashed, dashSi
     geom.vertices.push( dst );
     if(dashed) geom.computeLineDistances(); // This one is SUPER important, otherwise dashed lines will appear as simple plain lines
 
-    var axis = new THREE.Line( geom, mat, THREE.LineSegments );
+    //var axis = new THREE.Line( geom, mat, THREE.LineSegments );
+    var axis = new THREE.LineSegments( geom, mat );
 
     return axis;
 };

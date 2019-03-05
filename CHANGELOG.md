@@ -1,4 +1,6 @@
 ## Change Log
+The production version [icn3d-2.5.2](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.5.2.zip) was release on March 5, 2019. The style Lines was fixed by replacing THREE.Line with THREE.LineSegments. 
+
 The production version [icn3d-2.5.1](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.5.1.zip) was release on February 14, 2019. Change log was moved to the file CHANGELOG.md. Share Link was changed from https://d55qc.app.goo.gl/### to https://icn3d.page.link/###. All previous share links still work. iCn3D library file was renamed from full_ui_all_#.#.#.min.js to icn3d_full_ui_#.#.#.min.js. Both files are available to make it backward compatible. 
 
 The production version [icn3d-2.5.0](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.5.0.zip) was release on January 31, 2019. Updated Three.js from version 80 to version 99. Enabled the basic version (simple_ui_all.min.js) to hide the Tools menu and title. Fixed a bug in picking an atom for distance or labeling.
