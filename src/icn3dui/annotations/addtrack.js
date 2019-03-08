@@ -223,12 +223,14 @@ iCn3DUI.prototype.clickAddTrackButton = function() { var me = this;
        var title = (isNaN(gi)) ? 'Acc ' + gi : 'gi ' + gi;
 
        //var text = $("#" + me.pre + "track_text").val();
-       var url = 'https://www.ncbi.nlm.nih.gov/Structure/pwaln/pwaln.fcgi?fmt';
+       var url = 'https://www.ncbi.nlm.nih.gov/Structure/pwaln/pwaln.fcgi?';
+
        $.ajax({
           url: url,
           type: 'POST',
           data : {'targets': chainid, 'queries': gi},
-          dataType: 'jsonp',
+          //dataType: 'jsonp',
+          dataType: 'json',
           tryCount : 0,
           retryLimit : 1,
           success: function(data) {
@@ -237,6 +239,7 @@ iCn3DUI.prototype.clickAddTrackButton = function() { var me = this;
               if(data.data !== undefined) {
                   query = data.data[0].query;
                   target = data.data[0].targets[chainid];
+                  if(target === undefined) target = data.data[0].targets[chainid.replace(/_/g, '')];
               }
 
               var text = '';
@@ -309,12 +312,13 @@ iCn3DUI.prototype.clickAddTrackButton = function() { var me = this;
        var title = 'fasta ' + fasta.substr(0, 5);
 
        //var text = $("#" + me.pre + "track_text").val();
-       var url = 'https://www.ncbi.nlm.nih.gov/Structure/pwaln/pwaln.fcgi?fmt';
+       var url = 'https://www.ncbi.nlm.nih.gov/Structure/pwaln/pwaln.fcgi?';
        $.ajax({
           url: url,
           type: 'POST',
           data : {'targets': chainid, 'queries': fasta},
-          dataType: 'jsonp',
+          //dataType: 'jsonp',
+          dataType: 'json',
           tryCount : 0,
           retryLimit : 1,
           success: function(data) {
@@ -323,6 +327,7 @@ iCn3DUI.prototype.clickAddTrackButton = function() { var me = this;
               if(data.data !== undefined) {
                   query = data.data[0].query;
                   target = data.data[0].targets[chainid];
+                  if(target === undefined) target = data.data[0].targets[chainid.replace(/_/g, '')];
               }
 
               var text = '';
