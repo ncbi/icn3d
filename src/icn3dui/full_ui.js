@@ -134,7 +134,147 @@ iCn3DUI.prototype = {
     // modify iCn3D function
     modifyIcn3d: function() {var me = this;
         me.modifyIcn3dshowPicking();
-        me.modifySwitchHighlightLevel();
+    },
+
+    switchHighlightLevelUp: function() { var me = this;
+          if(!me.icn3d.bShift && !me.icn3d.bCtrl) me.icn3d.removeHlObjects();
+
+          if(me.icn3d.highlightlevel === 1) { // atom -> residue
+              me.icn3d.highlightlevel = 2;
+
+              var firstAtom = me.icn3d.getFirstAtomObj(me.icn3d.pickedAtomList);
+
+              if(!me.icn3d.bShift && !me.icn3d.bCtrl) {
+                  me.icn3d.hAtoms = me.icn3d.cloneHash(me.icn3d.residues[firstAtom.structure + '_' + firstAtom.chain + '_' + firstAtom.resi]);
+            }
+            else {
+                me.icn3d.hAtoms = me.icn3d.unionHash(me.icn3d.hAtoms, me.icn3d.residues[firstAtom.structure + '_' + firstAtom.chain + '_' + firstAtom.resi]);
+            }
+          }
+          else if(me.icn3d.highlightlevel === 2) { // residue -> strand
+              me.icn3d.highlightlevel = 3;
+
+              var firstAtom = me.icn3d.getFirstAtomObj(me.icn3d.pickedAtomList);
+              if(!me.icn3d.bShift && !me.icn3d.bCtrl) {
+                  me.icn3d.hAtoms = me.icn3d.cloneHash(me.icn3d.selectStrandHelixFromAtom(firstAtom));
+            }
+            else {
+                me.icn3d.hAtoms = me.icn3d.unionHash(me.icn3d.hAtoms, me.icn3d.selectStrandHelixFromAtom(firstAtom));
+            }
+          }
+          else if(me.icn3d.highlightlevel === 3) { // strand -> chain
+              me.icn3d.highlightlevel = 4;
+
+              var firstAtom = me.icn3d.getFirstAtomObj(me.icn3d.pickedAtomList);
+              if(!me.icn3d.bShift && !me.icn3d.bCtrl) {
+                  me.icn3d.hAtoms = me.icn3d.cloneHash(me.icn3d.chains[firstAtom.structure + '_' + firstAtom.chain]);
+            }
+            else {
+                me.icn3d.hAtoms = me.icn3d.unionHash(me.icn3d.hAtoms, me.icn3d.chains[firstAtom.structure + '_' + firstAtom.chain]);
+            }
+          }
+          else if(me.icn3d.highlightlevel === 4 || me.icn3d.highlightlevel === 5) { // chain -> structure
+              me.icn3d.highlightlevel = 5;
+
+              var firstAtom = me.icn3d.getFirstAtomObj(me.icn3d.pickedAtomList);
+
+              if(!me.icn3d.bShift && !me.icn3d.bCtrl) me.icn3d.hAtoms = {};
+              var chainArray = me.icn3d.structures[firstAtom.structure];
+              for(var i = 0, il = chainArray.length; i < il; ++i) {
+                  me.icn3d.hAtoms = me.icn3d.unionHash(me.icn3d.hAtoms, me.icn3d.chains[chainArray[i]]);
+            }
+          }
+
+          me.icn3d.addHlObjects();
+          me.updateHlAll();
+    },
+
+    switchHighlightLevelDown: function() { var me = this;
+          me.icn3d.removeHlObjects();
+
+          if( (me.icn3d.highlightlevel === 2 || me.icn3d.highlightlevel === 1) && Object.keys(me.icn3d.pickedAtomList).length === 1) { // residue -> atom
+              me.icn3d.highlightlevel = 1;
+
+              me.icn3d.hAtoms = me.icn3d.cloneHash(me.icn3d.pickedAtomList);
+              if(!me.icn3d.bShift && !me.icn3d.bCtrl) {
+                  me.icn3d.hAtoms = me.icn3d.cloneHash(me.icn3d.pickedAtomList);
+            }
+            else {
+                me.icn3d.hAtoms = me.icn3d.unionHash(me.icn3d.hAtoms, me.icn3d.pickedAtomList);
+            }
+          }
+          else if(me.icn3d.highlightlevel === 3) { // strand -> residue
+            var residueHash = {};
+
+            for(var i in me.icn3d.pickedAtomList) {
+                residueid = me.icn3d.atoms[i].structure + '_' + me.icn3d.atoms[i].chain + '_' + me.icn3d.atoms[i].resi;
+                residueHash[residueid] = 1;
+            }
+
+            if(Object.keys(residueHash).length === 1) {
+                me.icn3d.highlightlevel = 2;
+
+                var firstAtom = me.icn3d.getFirstAtomObj(me.icn3d.pickedAtomList);
+                if(!me.icn3d.bShift && !me.icn3d.bCtrl) {
+                    me.icn3d.hAtoms = me.icn3d.cloneHash(me.icn3d.residues[firstAtom.structure + '_' + firstAtom.chain + '_' + firstAtom.resi]);
+                }
+                else {
+                    me.icn3d.hAtoms = me.icn3d.unionHash(me.icn3d.hAtoms, me.icn3d.residues[firstAtom.structure + '_' + firstAtom.chain + '_' + firstAtom.resi]);
+                }
+            }
+          }
+          else if(me.icn3d.highlightlevel === 4) { // chain -> strand
+              me.icn3d.highlightlevel = 3;
+
+              var firstAtom = me.icn3d.getFirstAtomObj(me.icn3d.pickedAtomList);
+              if(!me.icn3d.bShift && !me.icn3d.bCtrl) {
+                  me.icn3d.hAtoms = me.icn3d.cloneHash(me.icn3d.selectStrandHelixFromAtom(firstAtom));
+              }
+              else {
+                  me.icn3d.hAtoms = me.icn3d.unionHash(me.icn3d.hAtoms, me.icn3d.selectStrandHelixFromAtom(firstAtom));
+              }
+          }
+          else if(me.icn3d.highlightlevel === 5) { // structure -> chain
+              me.icn3d.highlightlevel = 4;
+
+              var firstAtom = me.icn3d.getFirstAtomObj(me.icn3d.pickedAtomList);
+              if(!me.icn3d.bShift && !me.icn3d.bCtrl) {
+                  me.icn3d.hAtoms = me.icn3d.cloneHash(me.icn3d.chains[firstAtom.structure + '_' + firstAtom.chain]);
+            }
+            else {
+                me.icn3d.hAtoms = me.icn3d.unionHash(me.icn3d.hAtoms, me.icn3d.chains[firstAtom.structure + '_' + firstAtom.chain]);
+            }
+          }
+
+          me.icn3d.addHlObjects();
+          me.updateHlAll();
+    },
+
+    switchHighlightLevel: function() { var me = this;
+      $(document).bind('keydown', function (e) {
+        if(e.keyCode === 38) { // arrow up, select upper level of atoms
+          e.preventDefault();
+
+          if(Object.keys(me.icn3d.pickedAtomList).length == 0 || !me.icn3d.hAtoms.hasOwnProperty(me.icn3d.getFirstAtomObj(me.icn3d.pickedAtomList).serial)) {
+              me.icn3d.pickedAtomList = me.icn3d.cloneHash(me.icn3d.hAtoms);
+              //me.icn3d.pk = 2;
+          }
+
+          me.switchHighlightLevelUp();
+          me.setLogCmd("highlight level up", true);
+        }
+        else if(e.keyCode === 40) { // arrow down, select down level of atoms
+          e.preventDefault();
+
+          if(Object.keys(me.icn3d.pickedAtomList).length == 0 || !me.icn3d.hAtoms.hasOwnProperty(me.icn3d.getFirstAtomObj(me.icn3d.pickedAtomList).serial)) {
+              me.icn3d.pickedAtomList = me.icn3d.cloneHash(me.icn3d.hAtoms);
+              //me.icn3d.pk = 2;
+          }
+
+          me.switchHighlightLevelDown();
+          me.setLogCmd("highlight level down", true);
+        }
+      });
     },
 
     allCustomEvents: function() { var me = this;
@@ -155,6 +295,8 @@ iCn3DUI.prototype = {
           else {
               // do not change the picking option
           }
+
+          me.icn3d.highlightlevel = me.icn3d.pk;
 
           this.showPickingBase(atom, x, y);
 
@@ -236,18 +378,6 @@ iCn3DUI.prototype = {
               if(me.bMeasureDistance === undefined || !me.bMeasureDistance) this.createLabelRepresentation(labels);
           }
 */
-        };
-    },
-
-    modifySwitchHighlightLevel: function() {var me = this;
-        iCn3D.prototype.switchHighlightLevel = function() {
-          this.switchHighlightLevelBase();
-
-          $(document).bind('keydown', function (e) {
-            if(e.keyCode === 38 || e.keyCode === 40) { // arrow up/down, select upper/down level of atoms
-                me.updateHlAll();
-            }
-          });
         };
     },
 
@@ -4614,5 +4744,6 @@ iCn3DUI.prototype = {
 
         me.expandShrink();
         me.scrollAnno();
+        me.switchHighlightLevel();
     }
 };
