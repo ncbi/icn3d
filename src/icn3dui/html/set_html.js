@@ -1210,7 +1210,7 @@ iCn3DUI.prototype.setDialogs = function() { var me = this;
     html += "      <ul>";
     html += "        <li><a href='#" + me.pre + "tracktab5'>Current Selection</a></li>";
     html += "        <li><a href='#" + me.pre + "tracktab2'>FASTA</a></li>";
-    html += "        <li><a href='#" + me.pre + "tracktab3'>BED file</a></li>";
+    html += "        <li><a href='#" + me.pre + "tracktab3'>BED File</a></li>";
     html += "        <li><a href='#" + me.pre + "tracktab4'>Custom</a></li>";
     html += "        <li><a href='#" + me.pre + "tracktab1'>NCBI gi/Accession</a></li>";
     html += "      </ul>";

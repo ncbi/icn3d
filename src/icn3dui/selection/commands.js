@@ -810,6 +810,12 @@ iCn3DUI.prototype.applyCommand = function (commandStr) { var me = this;
   else if(command == 'set annotation ssbond') {
       me.setAnnoTabSsbond();
   }
+  else if(command == 'highlight level up') {
+      me.switchHighlightLevelUp();
+  }
+  else if(command == 'highlight level down') {
+      me.switchHighlightLevelDown();
+  }
   else if(command.indexOf('hide annotation') == 0) {
       var pos = command.lastIndexOf(' ');
       var type = command.substr(pos + 1);

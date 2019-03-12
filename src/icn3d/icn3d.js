@@ -217,7 +217,7 @@ var iCn3D = function (id) {
         e.preventDefault();
     });
 
-    me.switchHighlightLevel();
+    //me.switchHighlightLevel();
 
     // key event has to use the document because it requires the focus
     me.typetext = false;

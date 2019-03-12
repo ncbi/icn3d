@@ -510,129 +510,6 @@ iCn3D.prototype.addHlObjects = function (color, bRender, atomsHash) {
    if(bRender === undefined || bRender) this.render();
 };
 
-iCn3D.prototype.switchHighlightLevelBase = function() { var me = this;
-  $(document).bind('keydown', function (e) {
-    if(e.keyCode === 38) { // arrow up, select upper level of atoms
-      e.preventDefault();
-
-      if(!me.bShift && !me.bCtrl) me.removeHlObjects();
-
-      if(me.highlightlevel === 1) { // atom -> residue
-          me.highlightlevel = 2;
-
-          var firstAtom = me.getFirstAtomObj(me.pickedAtomList);
-
-          if(!me.bShift && !me.bCtrl) {
-              me.hAtoms = me.cloneHash(me.residues[firstAtom.structure + '_' + firstAtom.chain + '_' + firstAtom.resi]);
-        }
-        else {
-            me.hAtoms = me.unionHash(me.hAtoms, me.residues[firstAtom.structure + '_' + firstAtom.chain + '_' + firstAtom.resi]);
-        }
-      }
-      else if(me.highlightlevel === 2) { // residue -> strand
-          me.highlightlevel = 3;
-
-          var firstAtom = me.getFirstAtomObj(me.pickedAtomList);
-          if(!me.bShift && !me.bCtrl) {
-              me.hAtoms = me.cloneHash(me.selectStrandHelixFromAtom(firstAtom));
-        }
-        else {
-            me.hAtoms = me.unionHash(me.hAtoms, me.selectStrandHelixFromAtom(firstAtom));
-        }
-      }
-      else if(me.highlightlevel === 3) { // strand -> chain
-          me.highlightlevel = 4;
-
-          var firstAtom = me.getFirstAtomObj(me.pickedAtomList);
-          if(!me.bShift && !me.bCtrl) {
-              me.hAtoms = me.cloneHash(me.chains[firstAtom.structure + '_' + firstAtom.chain]);
-        }
-        else {
-            me.hAtoms = me.unionHash(me.hAtoms, me.chains[firstAtom.structure + '_' + firstAtom.chain]);
-        }
-      }
-      else if(me.highlightlevel === 4 || me.highlightlevel === 5) { // chain -> structure
-          me.highlightlevel = 5;
-
-          var firstAtom = me.getFirstAtomObj(me.pickedAtomList);
-
-          if(!me.bShift && !me.bCtrl) me.hAtoms = {};
-          var chainArray = me.structures[firstAtom.structure];
-          for(var i = 0, il = chainArray.length; i < il; ++i) {
-              me.hAtoms = me.unionHash(me.hAtoms, me.chains[chainArray[i]]);
-        }
-      }
-
-      me.addHlObjects();
-    }
-    else if(e.keyCode === 40) { // arrow down, select down level of atoms
-      e.preventDefault();
-
-      me.removeHlObjects();
-
-      if( (me.highlightlevel === 2 || me.highlightlevel === 1) && Object.keys(me.pickedAtomList).length === 1) { // residue -> atom
-          me.highlightlevel = 1;
-
-          me.hAtoms = me.cloneHash(me.pickedAtomList);
-          if(!me.bShift && !me.bCtrl) {
-              me.hAtoms = me.cloneHash(me.pickedAtomList);
-        }
-        else {
-            me.hAtoms = me.unionHash(me.hAtoms, me.pickedAtomList);
-        }
-      }
-      else if(me.highlightlevel === 3) { // strand -> residue
-        var residueHash = {};
-
-        for(var i in me.pickedAtomList) {
-            residueid = me.atoms[i].structure + '_' + me.atoms[i].chain + '_' + me.atoms[i].resi;
-            residueHash[residueid] = 1;
-        }
-
-        if(Object.keys(residueHash).length === 1) {
-            me.highlightlevel = 2;
-
-            var firstAtom = me.getFirstAtomObj(me.pickedAtomList);
-            if(!me.bShift && !me.bCtrl) {
-                me.hAtoms = me.cloneHash(me.residues[firstAtom.structure + '_' + firstAtom.chain + '_' + firstAtom.resi]);
-            }
-            else {
-                me.hAtoms = me.unionHash(me.hAtoms, me.residues[firstAtom.structure + '_' + firstAtom.chain + '_' + firstAtom.resi]);
-            }
-        }
-      }
-      else if(me.highlightlevel === 4) { // chain -> strand
-          me.highlightlevel = 3;
-
-          var firstAtom = me.getFirstAtomObj(me.pickedAtomList);
-          if(!me.bShift && !me.bCtrl) {
-              me.hAtoms = me.cloneHash(me.selectStrandHelixFromAtom(firstAtom));
-        }
-        else {
-            me.hAtoms = me.unionHash(me.hAtoms, me.selectStrandHelixFromAtom(firstAtom));
-        }
-      }
-      else if(me.highlightlevel === 5) { // structure -> chain
-          me.highlightlevel = 4;
-
-          var firstAtom = me.getFirstAtomObj(me.pickedAtomList);
-          if(!me.bShift && !me.bCtrl) {
-              me.hAtoms = me.cloneHash(me.chains[firstAtom.structure + '_' + firstAtom.chain]);
-        }
-        else {
-            me.hAtoms = me.unionHash(me.hAtoms, me.chains[firstAtom.structure + '_' + firstAtom.chain]);
-        }
-      }
-
-      me.addHlObjects();
-    }
-  });
-};
-
-iCn3D.prototype.switchHighlightLevel = function() { var me = this;
-    this.switchHighlightLevelBase();
-};
-
 iCn3D.prototype.resetOrientation = function() {
     var bSet = false;
     if(this.commands.length > 0) {
@@ -757,24 +634,27 @@ iCn3D.prototype.selectStrandHelixFromAtom = function(atom) {
 
     // fill the beginning
     var beginResi = firstAtom.resi;
-    for(var i = firstAtom.resi - 1; i > 0; --i) {
-        var residueid = firstAtom.structure + '_' + firstAtom.chain + '_' + i;
-        if(!this.residues.hasOwnProperty(residueid)) break;
+    if(!firstAtom.ssbegin) {
+        for(var i = firstAtom.resi - 1; i > 0; --i) {
+            var residueid = firstAtom.structure + '_' + firstAtom.chain + '_' + i;
+            if(!this.residues.hasOwnProperty(residueid)) break;
 
-        var atom = this.getFirstCalphaAtomObj(this.residues[residueid]);
-        beginResi = atom.resi;
+            var atom = this.getFirstCalphaAtomObj(this.residues[residueid]);
+            beginResi = atom.resi;
 
-        if( (firstAtom.ss !== 'coil' && atom.ss === firstAtom.ss && atom.ssbegin) || (firstAtom.ss === 'coil' && atom.ss !== firstAtom.ss) ) {
-            if(firstAtom.ss === 'coil' && atom.ss !== firstAtom.ss) {
-                beginResi = atom.resi + 1;
+            if( (firstAtom.ss !== 'coil' && atom.ss === firstAtom.ss && atom.ssbegin)
+              || (firstAtom.ss === 'coil' && atom.ss !== firstAtom.ss) ) {
+                if(firstAtom.ss === 'coil' && atom.ss !== firstAtom.ss) {
+                    beginResi = atom.resi + 1;
+                }
+                break;
             }
-            break;
         }
-    }
 
-    for(var i = beginResi; i <= firstAtom.resi; ++i) {
-        var residueid = firstAtom.structure + '_' + firstAtom.chain + '_' + i;
-        atomsHash = this.unionHash(atomsHash, this.hash2Atoms(this.residues[residueid]));
+        for(var i = beginResi; i <= firstAtom.resi; ++i) {
+            var residueid = firstAtom.structure + '_' + firstAtom.chain + '_' + i;
+            atomsHash = this.unionHash(atomsHash, this.hash2Atoms(this.residues[residueid]));
+        }
     }
 
     // fill the end
