@@ -523,7 +523,8 @@ iCn3DUI.prototype.getAnnotationData = function() { var me = this;
                               me.fullpos2ConsTargetpos[i + nGap] = {'same': 0, 'pos': i+1, 'res': targetSeq[i], 'color': colorHexStr};
                               me.consrvResPosArray.push(i+1);
 
-                              me.icn3d.alnChainsSeq[chnid].push({'resi': i, 'color': '#0000FF', 'color2': '#' + colorHexStr});
+                              //me.icn3d.alnChainsSeq[chnid].push({'resi': i, 'color': '#0000FF', 'color2': '#' + colorHexStr});
+                              me.icn3d.alnChainsSeq[chnid].push({'resi': i, 'color': '#00FF00', 'color2': '#' + colorHexStr});
                           }
                           else {
                               compText += ' ';
@@ -1109,8 +1110,8 @@ iCn3DUI.prototype.showSeq = function(chnid, chnidBase, type, queryTitle, compTit
 
                   var color = me.fullpos2ConsTargetpos[i].color;
 
-                  //html += '<span id="giseq_' + me.pre + chnid + '_' + pos + '" title="' + c + pos + '" class="icn3d-residue" style="color:#' + color + '">' + c + '</span>';
-                  html += '<span id="blast_' + me.pre + chnid + '_' + pos + '" title="' + me.fullpos2ConsTargetpos[i].res + pos + '" class="icn3d-residue" style="color:#' + color + '">' + c + '</span>';
+                  //html += '<span id="blast_' + me.pre + chnid + '_' + pos + '" title="' + me.fullpos2ConsTargetpos[i].res + pos + '" class="icn3d-residue" style="color:#' + color + '">' + c + '</span>';
+                  html += '<span id="giseq_' + me.pre + chnid + '_' + pos + '" title="' + me.fullpos2ConsTargetpos[i].res + pos + '" class="icn3d-residue" style="color:#' + color + '">' + c + '</span>';
               }
 
               html2 += me.insertGapOverview(chnid, i);
