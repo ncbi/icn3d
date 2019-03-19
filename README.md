@@ -20,13 +20,14 @@ We provided two types of iCn3D widgets: [basic interface](https://www.ncbi.nlm.n
 
 Either of these widgets could be easily added to your own web pages. Please see the [help page](https://www.ncbi.nlm.nih.gov/Structure/icn3d/docs/icn3d_help.html#HowToUse) for more details.
 
-<b>Complete package</b> of iCn3D including Three.js and jQuery can be downloaded from [https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.5.3.zip](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.5.3.zip). The "Download ZIP" link in this page does not include third-party libraries. 
+<b>Complete package</b> of iCn3D including Three.js and jQuery can be downloaded from [https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.6.0.zip](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.6.0.zip). The "Download ZIP" link in this page does not include third-party libraries. 
 
 ## Usage
 
 iCn3D accepts the following IDs:
 
 * <b>mmdbid</b>: NCBI MMDB ID, e.g., [https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?mmdbid=1tup&showanno=1&show2d=1&showsets=1](https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?mmdbid=1tup&showanno=1&show2d=1&showsets=1)
+* <b>query_id and blast_rep_id</b>: NCBI protein accessions of a protein sequence and a chain of a 3D structure for sequence-structure alignment, e.g., [https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?command=view+annotations;+set+annotation+cdd;+set+view+detailed+view;+select+chain+1TUP_A;+show+selection&query_id=23491729&blast_rep_id=1TUP_A](https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?command=view+annotations;+set+annotation+cdd;+set+view+detailed+view;+select+chain+1TUP_A;+show+selection&query_id=23491729&blast_rep_id=1TUP_A)
 * <b>mmtfid</b>: MMTF ID, e.g., [https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?mmtfid=1tup&show2d=1&showsets=1](https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?mmtfid=1tup&showanno=1&showsets=1)
 * <b>pdbid</b>: PDB ID, e.g., [https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?pdbid=1tup&show2d=1&showsets=1](https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?pdbid=1tup&showanno=1&showsets=1)
 * <b>mmcifid</b>: mmCIF ID, e.g., [https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?mmcifid=1tup&show2d=1&showsets=1](https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?mmcifid=1tup&showanno=1&showsets=1)

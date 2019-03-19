@@ -44,7 +44,7 @@ iCn3DUI.prototype.showAnnotations = function() { var me = this;
         me.protein_chainid = {};
 
         for(var i = 0, il = chainArray.length; i < il; ++i) {
-            var pos = parseInt(chainArray[i].indexOf('_'));
+            var pos = Math.round(chainArray[i].indexOf('_'));
             if(pos > 4) continue; // NMR structures with structure id such as 2K042,2K043, ...
 
             var atom = me.icn3d.getFirstCalphaAtomObj(me.icn3d.chains[chainArray[i]]);
@@ -113,40 +113,73 @@ iCn3DUI.prototype.showAnnotations = function() { var me = this;
         }
 */
 
-        me.getAnnotationData();
-
-        var i = 0;
-        for(var chain in nucleotide_chainid) {
-            me.getSequenceData(chain, nucleotide_chainid[chain], 'nucleotide', i);
-            ++i;
+        if(me.cfg.blast_rep_id === undefined) {
+           me.showAnnoSeqData(nucleotide_chainid, chemical_chainid, chemical_set);
         }
+        else if(me.cfg.blast_rep_id !== undefined) { // align sequence to structure
+           var url = 'https://www.ncbi.nlm.nih.gov/Structure/pwaln/pwaln.fcgi?from=querytarget';
 
-        me.interactChainChainbase = me.icn3d.unionHash(me.protein_chainid, nucleotide_chainid);
+           $.ajax({
+              url: url,
+              type: 'POST',
+              data : {'targets': me.cfg.blast_rep_id, 'queries': me.cfg.query_id},
+              dataType: 'jsonp',
+              //dataType: 'json',
+              tryCount : 0,
+              retryLimit : 1,
+              success: function(data) {
+                me.seqStructAlignData = data;
 
-        i = 0;
-        for(var chain in chemical_chainid) {
-            me.getSequenceData(chain, chemical_chainid[chain], 'chemical', i);
-            ++i;
-        }
-
-        me.interactChainChainbase = me.icn3d.unionHash(me.interactChainChainbase, chemical_chainid);
-        me.ssbondChainChainbase = me.icn3d.unionHash(me.protein_chainid, chemical_chainid);
-
-        for(var name in chemical_set) {
-            me.getCombinedSequenceData(name, chemical_set[name], i);
-            ++i;
-        }
-
-        me.enableHlSeq();
-
-        setTimeout(function(){
-          //me.setAnnoViewAndDisplay('overview');
-          me.hideAllAnno();
-          me.clickCdd();
-        }, 0);
+                me.showAnnoSeqData(nucleotide_chainid, chemical_chainid, chemical_set);
+              },
+              error : function(xhr, textStatus, errorThrown ) {
+                this.tryCount++;
+                if (this.tryCount <= this.retryLimit) {
+                    //try again
+                    $.ajax(this);
+                    return;
+                }
+                return;
+              }
+            });
+        } // align seq to structure
     }
 
     me.bAnnoShown = true;
+};
+
+iCn3DUI.prototype.showAnnoSeqData = function(nucleotide_chainid, chemical_chainid, chemical_set) { var me = this;
+    me.getAnnotationData();
+
+    var i = 0;
+    for(var chain in nucleotide_chainid) {
+        me.getSequenceData(chain, nucleotide_chainid[chain], 'nucleotide', i);
+        ++i;
+    }
+
+    me.interactChainChainbase = me.icn3d.unionHash(me.protein_chainid, nucleotide_chainid);
+
+    i = 0;
+    for(var chain in chemical_chainid) {
+        me.getSequenceData(chain, chemical_chainid[chain], 'chemical', i);
+        ++i;
+    }
+
+    me.interactChainChainbase = me.icn3d.unionHash(me.interactChainChainbase, chemical_chainid);
+    me.ssbondChainChainbase = me.icn3d.unionHash(me.protein_chainid, chemical_chainid);
+
+    for(var name in chemical_set) {
+        me.getCombinedSequenceData(name, chemical_set[name], i);
+        ++i;
+    }
+
+    me.enableHlSeq();
+
+    setTimeout(function(){
+      //me.setAnnoViewAndDisplay('overview');
+      me.hideAllAnno();
+      me.clickCdd();
+    }, 0);
 };
 
 iCn3DUI.prototype.enableHlSeq = function() { var me = this;
@@ -229,7 +262,46 @@ iCn3DUI.prototype.getAnDiv = function(chnid, anno) { var me = this;
 
 iCn3DUI.prototype.addButton = function(chnid, classvalue, name, desc, width, buttonStyle) { var me = this;
     return "<div class='" + classvalue + "' chainid='" + chnid + "' style='display:inline-block; font-size:11px; font-weight:bold; width:" + width + "px!important;'><button style='-webkit-appearance:" + buttonStyle + "; height:18px; width:" + width + "px;'><span style='white-space:nowrap; margin-left:-3px;' title='" + desc + "'>" + name + "</span></button></div>";
-}
+};
+
+iCn3DUI.prototype.conservativeReplacement = function(resA, resB) { var me = this;
+    var iA = (me.b62ResArray.indexOf(resA) !== -1) ? me.b62ResArray.indexOf(resA) : me.b62ResArray.length - 1; // or the last one "*"
+    var iB = (me.b62ResArray.indexOf(resB) !== -1) ? me.b62ResArray.indexOf(resB) : me.b62ResArray.length - 1; // or the last one "*"
+
+    var matrixValue = me.b62Matrix[iA][iB];
+
+    if(matrixValue > 0) {
+        return true;
+    }
+    else {
+        return false;
+    }
+};
+
+iCn3DUI.prototype.getColorhexFromBlosum62 = function(resA, resB) { var me = this;
+    var iA = (me.b62ResArray.indexOf(resA) !== -1) ? me.b62ResArray.indexOf(resA) : me.b62ResArray.length - 1; // or the last one "*"
+    var iB = (me.b62ResArray.indexOf(resB) !== -1) ? me.b62ResArray.indexOf(resB) : me.b62ResArray.length - 1; // or the last one "*"
+
+    var matrixValue = me.b62Matrix[iA][iB];
+
+    if(matrixValue === undefined) return '333333';
+
+    // range and color: blue for -4 ~ 0, red for 0 ~ 11
+    // max value 221 to avoid white
+    var color = '333333';
+    if(matrixValue > 0) {
+        var c = 221 - parseInt(matrixValue / 11.0 * 221);
+        var cStr = (c < 10) ? '0' + c.toString(16) : c.toString(16);
+        color = 'DD' + cStr + cStr;
+    }
+    else {
+        var c = 221 - parseInt(-1.0 * matrixValue / 4.0 * 221);
+        var cStr = (c < 10) ? '0' + c.toString(16) : c.toString(16);
+        color = cStr + cStr + 'DD';
+    }
+
+    return color;
+};
 
 iCn3DUI.prototype.getAnnotationData = function() { var me = this;
     var chnidBaseArray = $.map(me.protein_chainid, function(v) { return v; });
@@ -317,23 +389,181 @@ iCn3DUI.prototype.getAnnotationData = function() { var me = this;
                     console.log("The gi sequence didn't match the protein sequence. The start of 3D protein sequence: " + startResStr + ". The gi sequence: " + allSeq.substr(0, 10) + ".");
 
                     me.setAlternativeSeq(chnid, chnidBase);
-                    me.showSeq(chnid, chnidBase);
-                    //return false;
                 }
                 else {
                     me.matchedPos[chnid] = pos;
                     me.baseResi[chnid] = me.icn3d.chainsSeq[chnid][0].resi - me.matchedPos[chnid] - 1;
-
-                    me.showSeq(chnid, chnidBase);
                 }
             }
             else {
                 console.log( "No data were found for the protein " + chnid + "..." );
 
                 me.setAlternativeSeq(chnid, chnidBase);
+            }
+
+            if(me.cfg.blast_rep_id != chnid) {
                 me.showSeq(chnid, chnidBase);
             }
-        }
+            else if(me.cfg.blast_rep_id == chnid && me.seqStructAlignData.data === undefined) {
+              var title;
+              if(me.cfg.query_id.length > 14) {
+                  title = 'Query: ' + me.cfg.query_id.substr(0, 6);
+              }
+              else {
+                  title = (isNaN(me.cfg.query_id)) ? 'Query: ' + me.cfg.query_id : 'Query: gi ' + me.cfg.query_id;
+              }
+
+              compTitle = undefined;
+              compText = undefined;
+
+              var text = "cannot be aligned";
+
+              me.queryStart = '';
+              me.queryEnd = '';
+
+              alert('The sequence can NOT be aligned to the structure');
+
+              me.showSeq(chnid, chnidBase, undefined, title, compTitle, text, compText);
+            }
+            else if(me.cfg.blast_rep_id == chnid && me.seqStructAlignData.data !== undefined) { // align sequence to structure
+              //var title = 'Query: ' + me.cfg.query_id.substr(0, 6);
+              var title;
+              if(me.cfg.query_id.length > 14) {
+                  title = 'Query: ' + me.cfg.query_id.substr(0, 6);
+              }
+              else {
+                  title = (isNaN(me.cfg.query_id)) ? 'Query: ' + me.cfg.query_id : 'Query: gi ' + me.cfg.query_id;
+              }
+
+              var data = me.seqStructAlignData;
+
+              var query, target;
+
+              if(data.data !== undefined) {
+                  query = data.data[0].query;
+                  target = data.data[0].targets[chnid.replace(/_/g, '')];
+
+                  target = (target.hsps.length > 0) ? target.hsps[0] : undefined;
+              }
+
+              var text = '', compText = '';
+
+              me.queryStart = '';
+              me.queryEnd = '';
+
+              if(query !== undefined && target !== undefined) {
+                  var evalue = target.scores.e_value.toPrecision(2);
+                  if(evalue > 1e-200) evalue = parseFloat(evalue).toExponential();
+
+                  var bitscore = target.scores.bit_score;
+
+                  var targetSeq = data.targets[chnid.replace(/_/g, '')].seqdata;
+                  var querySeq = query.seqdata;
+
+                  var segArray = target.segs;
+                  var target2queryHash = {};
+                  me.targetGapHash = {};
+                  me.fullpos2ConsTargetpos = {};
+                  me.consrvResPosArray = [];
+
+                  var prevTargetTo = 0, prevQueryTo = 0;
+                  me.nTotalGap = 0;
+                  me.queryStart = segArray[0].from + 1;
+                  me.queryEnd = segArray[segArray.length - 1].to + 1;
+
+                  for(var i = 0, il = segArray.length; i < il; ++i) {
+                      var seg = segArray[i];
+                      if(i > 0) { // determine gap
+                        if(seg.orifrom - prevTargetTo < seg.from - prevQueryTo) { // gap in target
+                            me.targetGapHash[seg.orifrom] = {'from': prevQueryTo + 1, 'to': seg.from - 1};
+                            me.nTotalGap += me.targetGapHash[seg.orifrom].to - me.targetGapHash[seg.orifrom].from + 1;
+                        }
+                        else if(seg.orifrom - prevTargetTo > seg.from - prevQueryTo) { // gap in query
+                            for(var j = prevTargetTo + 1; j < seg.orifrom; ++j) {
+                              target2queryHash[j] = -1; // means gap in query
+                            }
+                        }
+                      }
+
+                      for(var j = 0; j <= seg.orito - seg.orifrom; ++j) {
+                          target2queryHash[j + seg.orifrom] = j + seg.from;
+                      }
+                      prevTargetTo = seg.orito;
+                      prevQueryTo = seg.to;
+                  }
+
+                  // the missing residuesatthe end ofthe seq will be filled up in the API showNewTrack()
+                  var nGap = 0;
+                  me.icn3d.alnChainsSeq[chnid] = [];
+
+                  for(var i = 0, il = targetSeq.length; i < il; ++i) {
+                      //text += me.insertGap(chnid, i, '-', true);
+                      if(me.targetGapHash.hasOwnProperty(i)) {
+                          for(var j = me.targetGapHash[i].from; j <= me.targetGapHash[i].to; ++j) {
+                              text += querySeq[j];
+                          }
+                      }
+
+                      compText += me.insertGap(chnid, i, '-', true);
+                      if(me.targetGapHash.hasOwnProperty(i)) nGap += me.targetGapHash[i].to - me.targetGapHash[i].from + 1;
+
+                      if(target2queryHash.hasOwnProperty(i) && target2queryHash[i] !== -1) {
+                          text += querySeq[target2queryHash[i]];
+                          var colorHexStr = me.getColorhexFromBlosum62(targetSeq[i], querySeq[target2queryHash[i]]);
+
+                          if(targetSeq[i] == querySeq[target2queryHash[i]]) {
+                              compText += targetSeq[i];
+                              me.fullpos2ConsTargetpos[i + nGap] = {'same': 1, 'pos': i+1, 'res': targetSeq[i], 'color': colorHexStr};
+                              me.consrvResPosArray.push(i+1);
+
+                              me.icn3d.alnChainsSeq[chnid].push({'resi': i, 'color': '#FF0000', 'color2': '#' + colorHexStr});
+                          }
+                          else if(me.conservativeReplacement(targetSeq[i], querySeq[target2queryHash[i]])) {
+                              compText += '+';
+                              me.fullpos2ConsTargetpos[i + nGap] = {'same': 0, 'pos': i+1, 'res': targetSeq[i], 'color': colorHexStr};
+                              me.consrvResPosArray.push(i+1);
+
+                              me.icn3d.alnChainsSeq[chnid].push({'resi': i, 'color': '#0000FF', 'color2': '#' + colorHexStr});
+                          }
+                          else {
+                              compText += ' ';
+                              me.fullpos2ConsTargetpos[i + nGap] = {'same': -1, 'pos': i+1, 'res': targetSeq[i], 'color': colorHexStr};
+
+                              me.icn3d.alnChainsSeq[chnid].push({'resi': i, 'color': me.GREYC, 'color2': '#' + colorHexStr});
+                          }
+                      }
+                      else {
+                          text += '-';
+                          compText += ' ';
+                      }
+                  }
+
+                  //title += ', E: ' + evalue;
+              }
+              else {
+                  text += "cannot be aligned";
+
+                  alert('The sequence can NOT be aligned to the structure');
+              }
+
+              var compTitle = 'BLAST, E: ' + evalue;
+              me.showSeq(chnid, chnidBase, undefined, title, compTitle, text, compText);
+
+              var residueidHash = {};
+              var residueid;
+              if(me.consrvResPosArray !== undefined) {
+                for(var i = 0, il = me.consrvResPosArray.length; i < il; ++i) {
+                    residueid = chnidBase + '_' + me.consrvResPosArray[i];
+
+                    residueidHash[residueid] = 1;
+                    //atomHash = me.icn3d.unionHash(atomHash, me.icn3d.residues[residueid]);
+                }
+              }
+
+              //me.selectResidueList(residueidHash, chnidBase + '_blast', compTitle, false);
+              me.selectResidueList(residueidHash, 'aligned_protein', compTitle, false);
+            } // align seq to structure
+        } // for loop
 
         me.enableHlSeq();
 
@@ -383,7 +613,7 @@ iCn3DUI.prototype.setAlternativeSeq = function(chnid, chnidBase) { var me = this
 
 iCn3DUI.prototype.getProteinName= function(chnid) { var me = this;
     var fullProteinName = '';
-    if(me.cfg.mmdbid !== undefined && me.mmdb_data !== undefined) {
+    if( (me.cfg.mmdbid !== undefined || me.cfg.gi !== undefined || me.cfg.blast_rep_id !== undefined) && me.mmdb_data !== undefined) {
         var moleculeInfor = me.mmdb_data.moleculeInfor;
         var chain = chnid.substr(chnid.indexOf('_') + 1);
         for(var i in moleculeInfor) {
@@ -505,8 +735,8 @@ iCn3DUI.prototype.getCombinedSequenceData = function(name, residArray, index) { 
 
     var color = me.GREY8;
 
-    //html2 += '<div class="icn3d-seqTitle" style="display:inline-block; color:white; font-weight:bold; background-color:' + color + '; width:' + parseInt(me.seqAnnWidth * residArray.length / me.maxAnnoLength) + 'px;">' + name + '</div>';
-    var width = parseInt(me.seqAnnWidth * residArray.length / me.maxAnnoLength);
+    //html2 += '<div class="icn3d-seqTitle" style="display:inline-block; color:white; font-weight:bold; background-color:' + color + '; width:' + Math.round(me.seqAnnWidth * residArray.length / me.maxAnnoLength) + 'px;">' + name + '</div>';
+    var width = Math.round(me.seqAnnWidth * residArray.length / me.maxAnnoLength);
     if(width < 1) width = 1;
     html2 += '<div class="icn3d-seqTitle" style="display:inline-block; color:white; font-weight:bold; background-color:' + color + '; width:' + width + 'px;">&nbsp;</div>';
 
@@ -524,7 +754,36 @@ iCn3DUI.prototype.getCombinedSequenceData = function(name, residArray, index) { 
     $("#" + me.pre + 'ov_giseq_' + name).html(html2);
 };
 
-iCn3DUI.prototype.showSeq = function(chnid, chnidBase, type) {  var me = this;
+iCn3DUI.prototype.insertGap = function(chnid, seqIndex, text, bNohtml) {  var me = this;
+  var html = '';
+
+  if(me.cfg.blast_rep_id == chnid && me.targetGapHash!== undefined && me.targetGapHash.hasOwnProperty(seqIndex)) {
+      for(var j = 0; j < (me.targetGapHash[seqIndex].to - me.targetGapHash[seqIndex].from + 1); ++j) {
+          if(bNohtml !== undefined && bNohtml) {
+             html += text;
+          }
+          else {
+             html += '<span>' + text + '</span>';
+          }
+      }
+  }
+
+  return html;
+};
+
+iCn3DUI.prototype.insertGapOverview = function(chnid, seqIndex) {  var me = this;
+  var html2 = '';
+
+  if(me.cfg.blast_rep_id == chnid && me.targetGapHash!== undefined && me.targetGapHash.hasOwnProperty(seqIndex)) {
+      var width = me.seqAnnWidth * (me.targetGapHash[seqIndex].to - me.targetGapHash[seqIndex].from + 1) / (me.maxAnnoLength + me.nTotalGap);
+
+      html2 += '<div style="display:inline-block; background-color:#333; width:' + width + 'px; height:3px;">&nbsp;</div>';
+  }
+
+  return html2;
+};
+
+iCn3DUI.prototype.showSeq = function(chnid, chnidBase, type, queryTitle, compTitle, queryText, compText) {  var me = this;
     var giSeq = me.giSeq[chnid];
 
     var divLength = me.RESIDUE_WIDTH * me.giSeq[chnid].length + 200;
@@ -556,7 +815,7 @@ iCn3DUI.prototype.showSeq = function(chnid, chnidBase, type) {  var me = this;
         var atom = me.icn3d.getFirstCalphaAtomObj(me.icn3d.chains[chnid]);
 
         //if(me.baseResi[chnid] != 0 && (me.cfg.mmdbid !== undefined || me.cfg.gi !== undefined || me.cfg.align !== undefined)) {
-        if((me.cfg.mmdbid !== undefined || me.cfg.gi !== undefined || me.cfg.align !== undefined) && atom.resi_ori !== undefined && atom.resi_ori != atom.resi && chnid.indexOf('Misc') == -1 ) {
+        if((me.cfg.mmdbid !== undefined || me.cfg.gi !== undefined || me.cfg.blast_rep_id !== undefined || me.cfg.align !== undefined) && atom.resi_ori !== undefined && atom.resi_ori != atom.resi && chnid.indexOf('Misc') == -1 ) {
             htmlTmp += '<div class="icn3d-annoTitle" anno="0" title="NCBI Residue Numbers">NCBI Residue Numbers</div>';
         }
         else {
@@ -572,6 +831,8 @@ iCn3DUI.prototype.showSeq = function(chnid, chnidBase, type) {  var me = this;
         var helixCnt = 0, sheetCnt = 0;
 
         for(var i = 0, il = giSeq.length; i < il; ++i) {
+          html += me.insertGap(chnid, i, '-');
+
           var currResi = (i >= me.matchedPos[chnid] && i - me.matchedPos[chnid] < me.icn3d.chainsSeq[chnid].length) ? me.icn3d.chainsSeq[chnid][i - me.matchedPos[chnid]].resi : me.baseResi[chnid] + 1 + i;
 
           html += '<span>'
@@ -620,6 +881,7 @@ iCn3DUI.prototype.showSeq = function(chnid, chnidBase, type) {  var me = this;
     html += htmlTmp + '<span class="icn3d-seqLine">';
 
     for(var i = 0, il = giSeq.length; i < il; ++i) {
+      html += me.insertGap(chnid, i, '-');
 //      var resi = (me.baseResi[chnid] + i+1).toString();
 //      var resi = me.icn3d.chainsSeq[chnid][i - me.matchedPos[chnid] ].resi;
       var resi = (i >= me.matchedPos[chnid] && i - me.matchedPos[chnid] < me.icn3d.chainsSeq[chnid].length) ? me.icn3d.chainsSeq[chnid][i - me.matchedPos[chnid]].resi : me.baseResi[chnid] + 1 + i;
@@ -679,8 +941,12 @@ iCn3DUI.prototype.showSeq = function(chnid, chnidBase, type) {  var me = this;
 
     html3 += '</div></div>';
 
-    // sequence, detailed view
-    htmlTmp = '<div id="' + me.pre + 'giseq_sequence" class="icn3d-dl_sequence">';
+    if(me.cfg.blast_rep_id === chnid) {
+        htmlTmp = '<div id="' + me.pre + 'giseq_sequence" class="icn3d-dl_sequence" style="border: solid 1px #000;">';
+    }
+    else {
+        htmlTmp = '<div id="' + me.pre + 'giseq_sequence" class="icn3d-dl_sequence">';
+    }
 
     var chainType = 'Protein', chainTypeFull = 'Protein';
     if(type !== undefined) {
@@ -694,6 +960,7 @@ iCn3DUI.prototype.showSeq = function(chnid, chnidBase, type) {  var me = this;
         }
     }
 
+    // sequence, detailed view
     htmlTmp += '<div class="icn3d-seqTitle icn3d-link icn3d-blue" gi="' + chnid + '" anno="sequence" chain="' + chnid + '"><span style="white-space:nowrap;" title="' + chainTypeFull + ' ' + chnid + '">' + chainType + ' ' + chnid + '</span></div>';
 
     htmlTmp += '<span class="icn3d-residueNum" title="starting protein sequence number">' + (me.baseResi[chnid]+1).toString() + '</span>';
@@ -702,11 +969,15 @@ iCn3DUI.prototype.showSeq = function(chnid, chnidBase, type) {  var me = this;
 
     var htmlTmp2 = '<span class="icn3d-seqLine">';
 
-    // sequence, overview
     html += htmlTmp + htmlTmp2;
     html2 += htmlTmp + htmlTmp2;
 
+    var nGap = 0;
     for(var i = 0, il = giSeq.length; i < il; ++i) {
+      html += me.insertGap(chnid, i, '-');
+
+      if(me.targetGapHash !== undefined && me.targetGapHash.hasOwnProperty(i)) nGap += me.targetGapHash[i].to - me.targetGapHash[i].from + 1;
+
       var cFull = giSeq[i];
 
       var c = cFull;
@@ -723,36 +994,236 @@ iCn3DUI.prototype.showSeq = function(chnid, chnidBase, type) {  var me = this;
           html += '<span title="' + cFull + pos + '" class="icn3d-residue">' + c + '</span>';
       }
       else {
-          var atom = me.icn3d.getFirstCalphaAtomObj(me.icn3d.residues[chnid + '_' + pos]);
-          var color = (atom.color) ? atom.color.getHexString() : me.icn3d.defaultAtomColor;
+          //var atom = me.icn3d.getFirstCalphaAtomObj(me.icn3d.residues[chnid + '_' + pos]);
+          //var color = (atom.color) ? atom.color.getHexString() : me.icn3d.defaultAtomColor;
+
+          var color = '333333';
+          if(me.cfg.blast_rep_id == chnid) {
+              if(me.fullpos2ConsTargetpos !== undefined && me.fullpos2ConsTargetpos[i + nGap] !== undefined) color = me.fullpos2ConsTargetpos[i + nGap].color;
+          }
+          else {
+              var atom = me.icn3d.getFirstCalphaAtomObj(me.icn3d.residues[chnid + '_' + pos]);
+              color = (atom.color) ? atom.color.getHexString() : me.icn3d.defaultAtomColor;
+          }
 
           html += '<span id="giseq_' + me.pre + chnid + '_' + pos + '" title="' + cFull + pos + '" class="icn3d-residue" style="color:#' + color + '">' + c + '</span>';
       }
     }
 
+    if(me.cfg.blast_rep_id == chnid) {
+      // change color in 3D
+      me.opts['color'] = 'conservation';
+      me.icn3d.setColorByOptions(me.opts, me.icn3d.atoms);
+
+      // remove highlight
+      //me.removeHlSeq();
+    }
+
+    // sequence, overview
     var atom = me.icn3d.getFirstCalphaAtomObj(me.icn3d.chains[chnid]);
     var color = (atom.color) ? atom.color.getHexString() : me.icn3d.defaultAtomColor;
 
-    var width = parseInt(me.seqAnnWidth * giSeq.length / me.maxAnnoLength);
+    var width = Math.round(me.seqAnnWidth * giSeq.length / me.maxAnnoLength);
     if(width < 1) width = 1;
 
-    html2 += '<div id="giseq_summary_' + me.pre + chnid + '" class="icn3d-seqTitle icn3d-link" gi chain="' + chnid + '" style="display:inline-block; color:white; font-weight:bold; background-color:#' + color + '; width:' + width + 'px;">' + chnid + '</div>';
+    if(me.cfg.blast_rep_id != chnid) { // regular
+        html2 += '<div id="giseq_summary_' + me.pre + chnid + '" class="icn3d-seqTitle icn3d-link" gi chain="' + chnid + '" style="display:inline-block; color:white; font-weight:bold; background-color:#' + color + '; width:' + width + 'px;">' + chnid + '</div>';
+    }
+    else { // with potential gaps
+        var fromArray2 = [], toArray2 = [];
+        fromArray2.push(0);
+
+        for(var i = 0, il = giSeq.length; i < il; ++i) {
+            if(me.targetGapHash !== undefined && me.targetGapHash.hasOwnProperty(i)) {
+                toArray2.push(i - 1);
+                fromArray2.push(i);
+            }
+        }
+
+        toArray2.push(giSeq.length - 1);
+
+        html2 += '<div id="giseq_summary_' + me.pre + chnid + '" class="icn3d-seqTitle icn3d-link" gi chain="' + chnid + '" style="width:' + width + 'px;">';
+        for(var i = 0, il = fromArray2.length; i < il; ++i) {
+            html2 += me.insertGapOverview(chnid, fromArray2[i]);
+
+            //var emptyWidth = (i == 0) ? Math.round(me.seqAnnWidth * fromArray2[i] / (me.maxAnnoLength + me.nTotalGap)) : Math.round(me.seqAnnWidth * (fromArray2[i] - toArray2[i-1] - 1) / (me.maxAnnoLength + me.nTotalGap));
+            //html2 += '<div style="display:inline-block; width:' + emptyWidth + 'px;">&nbsp;</div>';
+
+            html2 += '<div style="display:inline-block; color:white!important; font-weight:bold; background-color:#' + color + '; width:' + Math.round(me.seqAnnWidth * (toArray2[i] - fromArray2[i] + 1) / (me.maxAnnoLength + me.nTotalGap)) + 'px;" class="icn3d-seqTitle icn3d-link icn3d-blue" anno="sequence" gi chain="' + chnid + '" title="' + chnid + '">' + chnid + '</div>';
+        }
+        html2 += '</div>';
+    }
 
     htmlTmp = '<span class="icn3d-residueNum" title="ending protein sequence number">' + pos + '</span>';
     htmlTmp += '</span>';
     htmlTmp += '<br>';
 
-    htmlTmp += '</div>';
-
     html += htmlTmp;
     html2 += htmlTmp;
+
+    if(me.cfg.blast_rep_id == chnid) {
+        // 1. residue conservation
+        if(compText !== undefined && compText !== '') {
+        // conservation, detailed view
+        htmlTmp = '<div class="icn3d-seqTitle icn3d-link icn3d-blue" blast="" posarray="' + me.consrvResPosArray.toString() + '" title="' + compTitle + '" setname="' + chnid + '_blast" anno="sequence" chain="' + chnid + '"><span style="white-space:nowrap;" title="' + compTitle + '">' + compTitle + '</span></div>';
+
+        htmlTmp += '<span class="icn3d-residueNum"></span>';
+
+        html3 += htmlTmp + '<br>';
+
+        var htmlTmp2 = '<span class="icn3d-seqLine">';
+
+        html += htmlTmp + htmlTmp2;
+        html2 += htmlTmp + htmlTmp2;
+
+        var prevEmptyWidth = 0;
+        var prevLineWidth = 0;
+        var widthPerRes = 1;
+
+        var queryPos = me.queryStart;
+        for(var i = 0, il = compText.length; i < il; ++i) {
+          var c = compText[i];
+
+          if(c == '-') {
+              html += '<span>-</span>';
+          }
+          else if(c == ' ') {
+              html += '<span> </span>';
+          }
+          else {
+              var pos = me.fullpos2ConsTargetpos[i].pos;
+              if( !me.icn3d.residues.hasOwnProperty(chnid + '_' + pos) ) {
+                  c = c.toLowerCase();
+                  html += '<span class="icn3d-residue">' + c + '</span>';
+              }
+              else {
+                  /*
+                  var color = "333";
+                  if(me.fullpos2ConsTargetpos[i].same == 1) {
+                      color = "F00";
+                  }
+                  else if(me.fullpos2ConsTargetpos[i].same == 0) {
+                      color = "00F";
+                  }
+                  */
+
+                  var color = me.fullpos2ConsTargetpos[i].color;
+
+                  //html += '<span id="giseq_' + me.pre + chnid + '_' + pos + '" title="' + c + pos + '" class="icn3d-residue" style="color:#' + color + '">' + c + '</span>';
+                  html += '<span id="blast_' + me.pre + chnid + '_' + pos + '" title="' + me.fullpos2ConsTargetpos[i].res + pos + '" class="icn3d-residue" style="color:#' + color + '">' + c + '</span>';
+              }
+
+              html2 += me.insertGapOverview(chnid, i);
+
+              var emptyWidth = Math.round(me.seqAnnWidth * i / (me.maxAnnoLength + me.nTotalGap) - prevEmptyWidth - prevLineWidth);
+
+              if(emptyWidth < 0) emptyWidth = 0;
+
+              html2 += '<div style="display:inline-block; width:' + emptyWidth + 'px;">&nbsp;</div>';
+              html2 += '<div style="display:inline-block; background-color:#F00; width:' + widthPerRes + 'px;" title="' + c + pos + '">&nbsp;</div>';
+
+              prevEmptyWidth += emptyWidth;
+              prevLineWidth += widthPerRes;
+
+              ++queryPos;
+          }
+        }
+
+        htmlTmp = '<span class="icn3d-residueNum"></span>';
+        htmlTmp += '</span>';
+        htmlTmp += '<br>';
+
+        html += htmlTmp;
+        html2 += htmlTmp;
+        }
+
+
+        // 2. Query text
+        // query protein, detailed view
+        htmlTmp = '<div class="icn3d-annoTitle" anno="sequence" chain="' + chnid + '"><span style="white-space:nowrap;" title="' + queryTitle + '">' + queryTitle + '</span></div>';
+
+        htmlTmp += '<span class="icn3d-residueNum" title="starting protein sequence number">' + me.queryStart + '</span>';
+
+        html3 += htmlTmp + '<br>';
+
+        //var htmlTmp2 = '<span class="icn3d-seqLine">';
+        var htmlTmp2 = '<span class="icn3d-seqLine" style="font-weight: bold;">';
+
+        html += htmlTmp + htmlTmp2;
+        html2 += htmlTmp + htmlTmp2;
+
+        var queryPos = me.queryStart;
+        for(var i = 0, il = queryText.length; i < il; ++i) {
+          var c = queryText[i];
+
+          if(c == ' ' || c == '-') {
+              html += '<span>-</span>';
+          }
+          else {
+              //var pos = (i >= me.matchedPos[chnid] && i - me.matchedPos[chnid] < me.icn3d.chainsSeq[chnid].length) ? me.icn3d.chainsSeq[chnid][i - me.matchedPos[chnid]].resi : me.baseResi[chnid] + 1 + i;
+              if( me.fullpos2ConsTargetpos !== undefined && me.fullpos2ConsTargetpos[i] !== undefined && !me.icn3d.residues.hasOwnProperty(chnid + '_' + me.fullpos2ConsTargetpos[i].pos) ) {
+                  c = c.toLowerCase();
+                  html += '<span title="' + c + queryPos + '" class="icn3d-residue">' + c + '</span>';
+              }
+              else {
+                  //var color = (me.fullpos2ConsTargetpos !== undefined && me.fullpos2ConsTargetpos[i] !== undefined) ? me.fullpos2ConsTargetpos[i].color : '333333';
+                  //html += '<span title="' + c + queryPos + '" class="icn3d-residue" style="color:#' + color + '">' + c + '</span>';
+
+                  html += '<span title="' + c + queryPos + '" class="icn3d-residue">' + c + '</span>';
+              }
+
+              ++queryPos;
+          }
+        }
+
+        // query protein, overview
+        var atom = me.icn3d.getFirstCalphaAtomObj(me.icn3d.chains[chnid]);
+        var color = (atom.color) ? atom.color.getHexString() : me.icn3d.defaultAtomColor;
+
+        var fromArray2 = [], toArray2 = [];
+
+        var prevChar = '-';
+        for(var i = 0, il = queryText.length; i < il; ++i) {
+            var c = queryText[i];
+
+            if(c != '-' && prevChar == '-') {
+                fromArray2.push(i);
+            }
+            else if(c == '-' && prevChar != '-' ) {
+                toArray2.push(i-1);
+            }
+
+            prevChar = c;
+        }
+
+        if(prevChar != '-') {
+            toArray2.push(queryText.length - 1);
+        }
+
+        for(var i = 0, il = fromArray2.length; i < il; ++i) {
+            var emptyWidth = (i == 0) ? Math.round(me.seqAnnWidth * fromArray2[i] / (me.maxAnnoLength + me.nTotalGap)) : Math.round(me.seqAnnWidth * (fromArray2[i] - toArray2[i-1] - 1) / (me.maxAnnoLength + me.nTotalGap));
+            html2 += '<div style="display:inline-block; width:' + emptyWidth + 'px;">&nbsp;</div>';
+
+            html2 += '<div style="display:inline-block; color:white!important; font-weight:bold; background-color:#' + color + '; width:' + Math.round(me.seqAnnWidth * (toArray2[i] - fromArray2[i] + 1) / (me.maxAnnoLength + me.nTotalGap)) + 'px;" anno="sequence" chain="' + chnid + '" title="' + queryTitle + '">' + queryTitle + '</div>';
+        }
+
+        htmlTmp = '<span class="icn3d-residueNum" title="ending protein sequence number">' + me.queryEnd + '</span>';
+        htmlTmp += '</span>';
+        htmlTmp += '<br>';
+
+        html += htmlTmp;
+        html2 += htmlTmp;
+    }
+
+    html += '</div>';
+    html2 += '</div>';
     html3 += '</div>';
 
     //if(Object.keys(me.icn3d.chains[chnid]).length > 10) {
     if(me.giSeq[chnid].length > 10) {
         var atom = me.icn3d.getFirstCalphaAtomObj(me.icn3d.chains[chnid]);
         //if(me.baseResi[chnid] != 0 && (me.cfg.mmdbid !== undefined || me.cfg.gi !== undefined || me.cfg.align !== undefined)) {
-        if((me.cfg.mmdbid !== undefined || me.cfg.gi !== undefined || me.cfg.align !== undefined) && atom.resi_ori !== undefined && atom.resi_ori != atom.resi && chnid.indexOf('Misc') == -1 ) {
+        if((me.cfg.mmdbid !== undefined || me.cfg.gi !== undefined || me.cfg.blast_rep_id !== undefined || me.cfg.align !== undefined) && atom.resi_ori !== undefined && atom.resi_ori != atom.resi && chnid.indexOf('Misc') == -1 ) {
             htmlTmp = '<div class="icn3d-dl_sequence">';
             htmlTmp += '<div class="icn3d-residueLine" style="white-space:nowrap;">';
             htmlTmp += '<div class="icn3d-annoTitle" anno="0" title="PDB Residue Numbers">PDB Residue Numbers</div>';
@@ -763,6 +1234,8 @@ iCn3DUI.prototype.showSeq = function(chnid, chnidBase, type) {  var me = this;
             html += htmlTmp + '<span class="icn3d-seqLine">';
 
             for(var i = 0, il = giSeq.length; i < il; ++i) {
+                html += me.insertGap(chnid, i, '-');
+
                 if(i >= me.matchedPos[chnid] && i - me.matchedPos[chnid] < me.icn3d.chainsSeq[chnid].length) {
                   var currResi = me.icn3d.chainsSeq[chnid][i - me.matchedPos[chnid]].resi;
 
@@ -802,7 +1275,7 @@ iCn3DUI.prototype.showSeq = function(chnid, chnidBase, type) {  var me = this;
 
     $("#" + me.pre + 'dt_giseq_' + chnid).html(html);
     $("#" + me.pre + 'ov_giseq_' + chnid).html(html2);
-    $("#" + me.pre + 'tt_giseq_' + chnid).html(html3);
+    $("#" + me.pre + 'tt_giseq_' + chnid).html(html3); // fixed title for scrolling
 };
 
 iCn3DUI.prototype.navClinVar = function(chnid) { var me = this;
@@ -862,7 +1335,7 @@ iCn3DUI.prototype.showClinVarLabelOn3D = function(chnid) { var me = this;
       if(me.icn3d.labels == undefined) me.icn3d.labels = {};
       me.icn3d.labels['clinvar'] = [];
 
-      //var size = parseInt(me.icn3d.LABELSIZE * 10 / label.length);
+      //var size = Math.round(me.icn3d.LABELSIZE * 10 / label.length);
       var size = me.icn3d.LABELSIZE;
       var color = "#FFFF00";
       me.addLabel(label, position.center.x + 1, position.center.y + 1, position.center.z + 1, size, color, undefined, 'clinvar');
@@ -1056,14 +1529,15 @@ iCn3DUI.prototype.getSnpLine = function(line, totalLineNum, resi2snp, resi2rsnum
                 //    snpType = 'icn3d-clinvar-path';
                 //}
 
-                var emptyWidth = parseInt(me.seqAnnWidth * (i-1) / me.maxAnnoLength - prevEmptyWidth - prevLineWidth);
+                html += me.insertGapOverview(chnid, i-1);
+
+                var emptyWidth = (me.cfg.blast_rep_id == chnid) ? Math.round(me.seqAnnWidth * (i-1) / (me.maxAnnoLength + me.nTotalGap) - prevEmptyWidth - prevLineWidth) : Math.round(me.seqAnnWidth * (i-1) / me.maxAnnoLength - prevEmptyWidth - prevLineWidth);
+
                 if(emptyWidth < 0) emptyWidth = 0;
-
-
 
                 if(bClinvar) {
                     if(snpTypeHash[i] == 'icn3d-clinvar' || snpTypeHash[i] == 'icn3d-clinvar-path') {
-                        if(emptyWidth > 0) html += '<div style="display:inline-block; width:' + emptyWidth + 'px;"></div>';
+                        if(emptyWidth > 0) html += '<div style="display:inline-block; width:' + emptyWidth + 'px;">&nbsp;</div>';
 
                         html += '<div style="display:inline-block; background-color:#000; width:' + widthPerRes + 'px;" title="' + snpTitle + '">&nbsp;</div>';
 
@@ -1072,7 +1546,7 @@ iCn3DUI.prototype.getSnpLine = function(line, totalLineNum, resi2snp, resi2rsnum
                     }
                 }
                 else {
-                    if(emptyWidth > 0) html += '<div style="display:inline-block; width:' + emptyWidth + 'px;"></div>';
+                    if(emptyWidth > 0) html += '<div style="display:inline-block; width:' + emptyWidth + 'px;">&nbsp;</div>';
 
                     html += '<div style="display:inline-block; background-color:#000; width:' + widthPerRes + 'px;" title="' + snpTitle + '">&nbsp;</div>';
 
@@ -1082,6 +1556,8 @@ iCn3DUI.prototype.getSnpLine = function(line, totalLineNum, resi2snp, resi2rsnum
             }
         }
         else { // detailed view
+          html += me.insertGap(chnid, i-1, '-');
+
           if(resi2index[i] !== undefined) {
               if(!bClinvar && line == 1) {
                   html += '<span>&dArr;</span>'; // or down triangle &#9660;
@@ -1312,7 +1788,7 @@ iCn3DUI.prototype.showSnpClinvar = function(chnid, chnidBase) {
 
               var resiStr = snpStr.substr(0, snpStr.length - 3);
 
-              var resi = parseInt(resiStr);
+              var resi = Math.round(resiStr);
 
               var currRes = snpStr.substr(snpStr.length - 3, 1);
               var snpRes = snpStr.substr(snpStr.length - 1, 1);
@@ -1466,7 +1942,7 @@ iCn3DUI.prototype.showCddSiteAll = function() { var me = this;
     var url = "https://www.ncbi.nlm.nih.gov/Structure/cdannots/cdannots.fcgi?fmt&queries=" + chnidBaseArray;
     $.ajax({
       url: url,
-      dataType: 'json',
+      dataType: 'jsonp',
       cache: true,
       tryCount : 0,
       retryLimit : 1,
@@ -1512,16 +1988,16 @@ iCn3DUI.prototype.showCddSiteAll = function() { var me = this;
                     // each domain repeat or domain may have several segments, i.e., a domain may not be continous
                     var fromArray = [], toArray = [];
 
-                    //var domainFrom = parseInt(domainArray[index].locs[r].segs[0].from);
-                    //var domainTo = parseInt(domainArray[index].locs[r].segs[0].to);
+                    //var domainFrom = Math.round(domainArray[index].locs[r].segs[0].from);
+                    //var domainTo = Math.round(domainArray[index].locs[r].segs[0].to);
                     //var range = domainTo - domainFrom + 1;
 
                     var resiHash = {};
                     var resCnt = 0;
 
                     for(var s = 0, sl = domainRepeatArray[r].segs.length; s < sl; ++s) {
-                        var domainFrom = parseInt(domainRepeatArray[r].segs[s].from);
-                        var domainTo = parseInt(domainRepeatArray[r].segs[s].to);
+                        var domainFrom = Math.round(domainRepeatArray[r].segs[s].from);
+                        var domainTo = Math.round(domainRepeatArray[r].segs[s].to);
 
                         fromArray.push(domainFrom + me.baseResi[chnid]);
                         toArray.push(domainTo + me.baseResi[chnid]);
@@ -1556,6 +2032,8 @@ iCn3DUI.prototype.showCddSiteAll = function() { var me = this;
 
                     var pre = type + index.toString();
                     for(var i = 0, il = me.giSeq[chnid].length; i < il; ++i) {
+                      html += me.insertGap(chnid, i, '-');
+
                       if(resiHash.hasOwnProperty(i)) {
                         var cFull = me.giSeq[chnid][i];
 
@@ -1579,14 +2057,40 @@ iCn3DUI.prototype.showCddSiteAll = function() { var me = this;
                     var atom = me.icn3d.getFirstCalphaAtomObj(me.icn3d.chains[chnid]);
                     var color = (atom.color) ? atom.color.getHexString() : me.icn3d.defaultAtomColor;
 
-                    //html2 += '<div style="display:inline-block; width:' + parseInt(me.seqAnnWidth * domainFrom / me.maxAnnoLength) + 'px;"></div>';
-                    //html2 += '<div style="display:inline-block; color:white!important; font-weight:bold; background-color:#' + color + '; width:' + parseInt(me.seqAnnWidth * (domainTo - domainFrom + 1) / me.maxAnnoLength) + 'px;" class="icn3d-seqTitle icn3d-link icn3d-blue" domain="' + acc + '" from="' + domainFrom.toString() + '" to="' + domainTo.toString() + '" shorttitle="' + title + '" setname="' + chnid + '_' + type + '_' + index + '" anno="sequence" chain="' + chnid + '" title="' + fulltitle + '">' + domain + ' </div>';
+                    //html2 += '<div style="display:inline-block; width:' + Math.round(me.seqAnnWidth * domainFrom / me.maxAnnoLength) + 'px;"></div>';
+                    //html2 += '<div style="display:inline-block; color:white!important; font-weight:bold; background-color:#' + color + '; width:' + Math.round(me.seqAnnWidth * (domainTo - domainFrom + 1) / me.maxAnnoLength) + 'px;" class="icn3d-seqTitle icn3d-link icn3d-blue" domain="' + acc + '" from="' + domainFrom.toString() + '" to="' + domainTo.toString() + '" shorttitle="' + title + '" setname="' + chnid + '_' + type + '_' + index + '" anno="sequence" chain="' + chnid + '" title="' + fulltitle + '">' + domain + ' </div>';
 
-                    for(var i = 0, il = fromArray.length; i < il; ++i) {
-                        var emptyWidth = (i == 0) ? parseInt(me.seqAnnWidth * fromArray[i] / me.maxAnnoLength) : parseInt(me.seqAnnWidth * (fromArray[i] - toArray[i-1] + 1) / me.maxAnnoLength);
-                        html2 += '<div style="display:inline-block; width:' + emptyWidth + 'px;"></div>';
+                    if(me.cfg.blast_rep_id != chnid) { // regular
+                        for(var i = 0, il = fromArray.length; i < il; ++i) {
+                            var emptyWidth = (i == 0) ? Math.round(me.seqAnnWidth * fromArray[i] / me.maxAnnoLength) : Math.round(me.seqAnnWidth * (fromArray[i] - toArray[i-1] - 1) / me.maxAnnoLength);
+                            html2 += '<div style="display:inline-block; width:' + emptyWidth + 'px;">&nbsp;</div>';
 
-                        html2 += '<div style="display:inline-block; color:white!important; font-weight:bold; background-color:#' + color + '; width:' + parseInt(me.seqAnnWidth * (toArray[i] - fromArray[i] + 1) / me.maxAnnoLength) + 'px;" class="icn3d-seqTitle icn3d-link icn3d-blue" domain="' + (index+1).toString() + '" from="' + fromArray + '" to="' + toArray + '" shorttitle="' + title + '" index="' + index + '" setname="' + chnid + '_domain_' + index + '_' + r + '" id="' + chnid + '_domain_' + index + '_' + r + '" anno="sequence" chain="' + chnid + '" title="' + fulltitle + '">' + domain + ' </div>';
+                            html2 += '<div style="display:inline-block; color:white!important; font-weight:bold; background-color:#' + color + '; width:' + Math.round(me.seqAnnWidth * (toArray[i] - fromArray[i] + 1) / me.maxAnnoLength) + 'px;" class="icn3d-seqTitle icn3d-link icn3d-blue" domain="' + (index+1).toString() + '" from="' + fromArray + '" to="' + toArray + '" shorttitle="' + title + '" index="' + index + '" setname="' + chnid + '_domain_' + index + '_' + r + '" id="' + chnid + '_domain_' + index + '_' + r + '" anno="sequence" chain="' + chnid + '" title="' + fulltitle + '">' + domain + ' </div>';
+                        }
+                    }
+                    else { // with potential gaps
+                        var fromArray2 = [], toArray2 = [];
+                        for(var i = 0, il = fromArray.length; i < il; ++i) {
+                            fromArray2.push(fromArray[i]);
+
+                            for(var j = fromArray[i]; j <= toArray[i]; ++j) {
+                                if(me.targetGapHash !== undefined && me.targetGapHash.hasOwnProperty(j)) {
+                                    toArray2.push(j - 1);
+                                    fromArray2.push(j);
+                                }
+                            }
+
+                            toArray2.push(toArray[i]);
+                        }
+
+                        for(var i = 0, il = fromArray2.length; i < il; ++i) {
+                            html2 += me.insertGapOverview(chnid, fromArray2[i]);
+
+                            var emptyWidth = (i == 0) ? Math.round(me.seqAnnWidth * fromArray2[i] / (me.maxAnnoLength + me.nTotalGap)) : Math.round(me.seqAnnWidth * (fromArray2[i] - toArray2[i-1] - 1) / (me.maxAnnoLength + me.nTotalGap));
+                            html2 += '<div style="display:inline-block; width:' + emptyWidth + 'px;">&nbsp;</div>';
+
+                            html2 += '<div style="display:inline-block; color:white!important; font-weight:bold; background-color:#' + color + '; width:' + Math.round(me.seqAnnWidth * (toArray2[i] - fromArray2[i] + 1) / (me.maxAnnoLength + me.nTotalGap)) + 'px;" class="icn3d-seqTitle icn3d-link icn3d-blue" domain="' + (index+1).toString() + '" from="' + fromArray2 + '" to="' + toArray2 + '" shorttitle="' + title + '" index="' + index + '" setname="' + chnid + '_domain_' + index + '_' + r + '" id="' + chnid + '_domain_' + index + '_' + r + '" anno="sequence" chain="' + chnid + '" title="' + fulltitle + '">' + domain + ' </div>';
+                        }
                     }
 
                     htmlTmp = '<span class="icn3d-residueNum" title="residue count">&nbsp;' + resCnt.toString() + ' Residues</span>';
@@ -1630,7 +2134,7 @@ iCn3DUI.prototype.showCddSiteAll = function() { var me = this;
                 var resPosArray = siteArray[index].locs[0].coords;
                 var adjustedResPosArray = [];
                 for(var i = 0, il = resPosArray.length; i < il; ++i) {
-                    adjustedResPosArray.push(parseInt(resPosArray[i]) + me.baseResi[chnid]);
+                    adjustedResPosArray.push(Math.round(resPosArray[i]) + me.baseResi[chnid]);
                 }
 
                 var htmlTmp2 = '<div class="icn3d-seqTitle icn3d-link icn3d-blue" site="site" posarray="' + adjustedResPosArray.toString() + '" shorttitle="' + title + '" setname="' + chnid + '_site_' + index + '" anno="sequence" chain="' + chnid + '" title="' + fulltitle + '">' + title + ' </div>';
@@ -1649,6 +2153,8 @@ iCn3DUI.prototype.showCddSiteAll = function() { var me = this;
                 var prevLineWidth = 0;
                 var widthPerRes = 1;
                 for(var i = 0, il = me.giSeq[chnid].length; i < il; ++i) {
+                  html += me.insertGap(chnid, i, '-');
+
                   if(resPosArray.indexOf(i) != -1) {
                     var cFull = me.giSeq[chnid][i];
 
@@ -1663,10 +2169,13 @@ iCn3DUI.prototype.showCddSiteAll = function() { var me = this;
 
                     html += '<span id="' + pre + '_' + me.pre + chnid + '_' + pos + '" title="' + c + pos + '" class="icn3d-residue">' + cFull + '</span>';
 
-                    var emptyWidth = parseInt(me.seqAnnWidth * i / me.maxAnnoLength - prevEmptyWidth - prevLineWidth);
+                    html2 += me.insertGapOverview(chnid, i);
+
+                    var emptyWidth = (me.cfg.blast_rep_id == chnid) ? Math.round(me.seqAnnWidth * i / (me.maxAnnoLength + me.nTotalGap) - prevEmptyWidth - prevLineWidth) : Math.round(me.seqAnnWidth * i / me.maxAnnoLength - prevEmptyWidth - prevLineWidth);
+
                     if(emptyWidth < 0) emptyWidth = 0;
 
-                    html2 += '<div style="display:inline-block; width:' + emptyWidth + 'px;"></div>';
+                    html2 += '<div style="display:inline-block; width:' + emptyWidth + 'px;">&nbsp;</div>';
                     html2 += '<div style="display:inline-block; background-color:#000; width:' + widthPerRes + 'px;" title="' + c + pos + '">&nbsp;</div>';
 
                     prevEmptyWidth += emptyWidth;
@@ -1906,8 +2415,8 @@ iCn3DUI.prototype.showDomainWithData = function(chnid, data) { var me = this;
             var resiHash = {};
             var resCnt = 0
             for(var i = 0, il = subdomainArray.length; i < il; ++i) {
-                var domainFrom = parseInt(subdomainArray[i][0]) - 1; // 1-based
-                var domainTo = parseInt(subdomainArray[i][1]) - 1;
+                var domainFrom = Math.round(subdomainArray[i][0]) - 1; // 1-based
+                var domainTo = Math.round(subdomainArray[i][1]) - 1;
 
                 domainStr = domainFrom + "," + domainTo;
 
@@ -1927,15 +2436,8 @@ iCn3DUI.prototype.showDomainWithData = function(chnid, data) { var me = this;
                 }
             }
 
-            //var domainFrom = parseInt(domainArray[index].intervals.) - 1; // 1-based
-            //var domainTo = parseInt(domainArray[index][0][1]) - 1;
-            //var range = domainTo - domainFrom + 1;
-
-            //var htmlTmp = '<div class="icn3d-seqTitle icn3d-link icn3d-blue" domain="' + (index+1).toString() + '" from="' + domainFrom.toString() + '" to="' + domainTo.toString() + '" shorttitle="' + title + '" setname="' + chnid + '_3d_domain_' + index + '" anno="sequence" chain="' + chnid + '" title="' + fulltitle + '">' + title + ' </div>';
-            //var htmlTmp = '<div class="icn3d-seqTitle icn3d-link icn3d-blue" domain="' + (index+1).toString() + '" posarray="' + Object.keys(resiHash).toString() + '" shorttitle="' + title + '" setname="' + chnid + '_3d_domain_' + index + '" anno="sequence" chain="' + chnid + '" title="' + fulltitle + '">' + title + ' </div>';
             var htmlTmp2 = '<div class="icn3d-seqTitle icn3d-link icn3d-blue" 3ddomain="' + (index+1).toString() + '" from="' + fromArray + '" to="' + toArray + '" shorttitle="' + title + '" index="' + index + '" setname="' + chnid + '_3d_domain_' + index + '" anno="sequence" chain="' + chnid + '" title="' + fulltitle + '">' + title + ' </div>';
 
-            //htmlTmp += '<span class="icn3d-residueNum" title="starting protein sequence number">' + (me.baseResi[chnid] + fromArray[0]+1).toString() + '</span>';
             var htmlTmp3 = '<span class="icn3d-residueNum" title="residue count">' + resCnt.toString() + ' Res</span>';
 
             html3 += htmlTmp2 + htmlTmp3 + '<br>';
@@ -1947,6 +2449,8 @@ iCn3DUI.prototype.showDomainWithData = function(chnid, data) { var me = this;
 
             var pre = 'domain3d' + index.toString();
             for(var i = 0, il = me.giSeq[chnid].length; i < il; ++i) {
+              html += me.insertGap(chnid, i, '-');
+
               //if(i >= domainFrom && i <= domainTo) {
               if(resiHash.hasOwnProperty(i+1)) {
                 var cFull = me.giSeq[chnid][i];
@@ -1970,11 +2474,37 @@ iCn3DUI.prototype.showDomainWithData = function(chnid, data) { var me = this;
             var atom = me.icn3d.getFirstCalphaAtomObj(me.icn3d.chains[chnid]);
             var color = (atom.color) ? atom.color.getHexString() : me.icn3d.defaultAtomColor;
 
-            for(var i = 0, il = fromArray.length; i < il; ++i) {
-                var emptyWidth = (i == 0) ? parseInt(me.seqAnnWidth * fromArray[i] / me.maxAnnoLength) : parseInt(me.seqAnnWidth * (fromArray[i] - toArray[i-1] + 1) / me.maxAnnoLength);
-                html2 += '<div style="display:inline-block; width:' + emptyWidth + 'px;"></div>';
+            if(me.cfg.blast_rep_id != chnid) { // regular
+                for(var i = 0, il = fromArray.length; i < il; ++i) {
+                    var emptyWidth = (i == 0) ? Math.round(me.seqAnnWidth * fromArray[i] / me.maxAnnoLength) : Math.round(me.seqAnnWidth * (fromArray[i] - toArray[i-1] - 1) / me.maxAnnoLength);
+                    html2 += '<div style="display:inline-block; width:' + emptyWidth + 'px;">&nbsp;</div>';
 
-                html2 += '<div style="display:inline-block; color:white!important; font-weight:bold; background-color:#' + color + '; width:' + parseInt(me.seqAnnWidth * (toArray[i] - fromArray[i] + 1) / me.maxAnnoLength) + 'px;" class="icn3d-seqTitle icn3d-link icn3d-blue" 3ddomain="' + (index+1).toString() + '" from="' + fromArray + '" to="' + toArray + '" shorttitle="' + title + '" index="' + index + '" setname="' + chnid + '_3d_domain_' + index + '" id="' + chnid + '_3d_domain_' + index + '" anno="sequence" chain="' + chnid + '" title="' + fulltitle + '">3D domain ' + (index+1).toString() + '</div>';
+                    html2 += '<div style="display:inline-block; color:white!important; font-weight:bold; background-color:#' + color + '; width:' + Math.round(me.seqAnnWidth * (toArray[i] - fromArray[i] + 1) / me.maxAnnoLength) + 'px;" class="icn3d-seqTitle icn3d-link icn3d-blue" 3ddomain="' + (index+1).toString() + '" from="' + fromArray + '" to="' + toArray + '" shorttitle="' + title + '" index="' + index + '" setname="' + chnid + '_3d_domain_' + index + '" id="' + chnid + '_3d_domain_' + index + '" anno="sequence" chain="' + chnid + '" title="' + fulltitle + '">3D domain ' + (index+1).toString() + '</div>';
+                }
+            }
+            else { // with potential gaps
+                var fromArray2 = [], toArray2 = [];
+                for(var i = 0, il = fromArray.length; i < il; ++i) {
+                    fromArray2.push(fromArray[i]);
+
+                    for(var j = fromArray[i]; j <= toArray[i]; ++j) {
+                        if(me.targetGapHash !== undefined && me.targetGapHash.hasOwnProperty(j)) {
+                            toArray2.push(j - 1);
+                            fromArray2.push(j);
+                        }
+                    }
+
+                    toArray2.push(toArray[i]);
+                }
+
+                for(var i = 0, il = fromArray2.length; i < il; ++i) {
+                    html2 += me.insertGapOverview(chnid, fromArray2[i]);
+
+                    var emptyWidth = (i == 0) ? Math.round(me.seqAnnWidth * fromArray2[i] / (me.maxAnnoLength + me.nTotalGap)) : Math.round(me.seqAnnWidth * (fromArray2[i] - toArray2[i-1] - 1) / (me.maxAnnoLength + me.nTotalGap));
+                    html2 += '<div style="display:inline-block; width:' + emptyWidth + 'px;">&nbsp;</div>';
+
+                    html2 += '<div style="display:inline-block; color:white!important; font-weight:bold; background-color:#' + color + '; width:' + Math.round(me.seqAnnWidth * (toArray2[i] - fromArray2[i] + 1) / (me.maxAnnoLength + me.nTotalGap)) + 'px;" class="icn3d-seqTitle icn3d-link icn3d-blue" 3ddomain="' + (index+1).toString() + '" from="' + fromArray2 + '" to="' + toArray2 + '" shorttitle="' + title + '" index="' + index + '" setname="' + chnid + '_3d_domain_' + index + '" id="' + chnid + '_3d_domain_' + index + '" anno="sequence" chain="' + chnid + '" title="' + fulltitle + '">3D domain ' + (index+1).toString() + '</div>';
+                }
             }
 
             //var lastToArray = toArray[toArray.length - 1];
@@ -2002,7 +2532,7 @@ iCn3DUI.prototype.showDomainWithData = function(chnid, data) { var me = this;
 iCn3DUI.prototype.showInteraction = function(chnid, chnidBase) {
     var me = this;
 
-    if(me.chainname2residues === undefined && (me.cfg.mmdbid !== undefined || me.cfg.gi !== undefined || me.cfg.align !== undefined) ) {
+    if(me.chainname2residues === undefined && (me.cfg.mmdbid !== undefined || me.cfg.gi !== undefined || me.cfg.blast_rep_id !== undefined || me.cfg.align !== undefined) ) {
         // 2d interaction didn't finish loading data yet
         setTimeout(function(){
           me.showInteraction_base(chnid, chnidBase);
@@ -2024,7 +2554,7 @@ iCn3DUI.prototype.showInteraction_base = function(chnid, chnidBase) {
 
     var chainid = chnid;
 
-    var pos = parseInt(chainid.indexOf('_'));
+    var pos = Math.round(chainid.indexOf('_'));
     if(pos > 4) return; // NMR structures with structure id such as 2K042,2K043, ...
 
     var atom = me.icn3d.getFirstCalphaAtomObj(me.icn3d.chains[chainid]);
@@ -2033,7 +2563,7 @@ iCn3DUI.prototype.showInteraction_base = function(chnid, chnidBase) {
         me.chainname2residues[chainid] = {};
 
         var jl = chainArray.length;
-        if(jl > 100 && me.cfg.mmdbid === undefined && me.cfg.gi === undefined && me.cfg.align === undefined) {
+        if(jl > 100 && me.cfg.mmdbid === undefined && me.cfg.gi === undefined && me.cfg.blast_rep_id === undefined && me.cfg.align === undefined) {
         //if(jl > 100) {
             //console.log("Do not show interactions if there are more than 100 chains");
             $("#" + me.pre + "dt_interaction_" + chnid).html("");
@@ -2048,7 +2578,7 @@ iCn3DUI.prototype.showInteraction_base = function(chnid, chnidBase) {
             // interactions should be on the same structure
             if(chainid2.substr(0, chainid2.indexOf('_')) !== chainid.substr(0, chainid.indexOf('_'))) continue;
 
-            pos = parseInt(chainid.indexOf('_'));
+            pos = Math.round(chainid.indexOf('_'));
             if(pos > 4) continue; // NMR structures with structure id such as 2K042,2K043, ...
 
             var atom2 = me.icn3d.getFirstCalphaAtomObj(me.icn3d.chains[chainid2]);
@@ -2106,7 +2636,7 @@ iCn3DUI.prototype.showInteraction_base = function(chnid, chnidBase) {
         var resPosArray = [];
         for(var i = 0, il = residueArray.length; i < il; ++i) {
             var resid = residueArray[i];
-            var resi = parseInt(resid.substr(residueArray[i].lastIndexOf('_') + 1) );
+            var resi = Math.round(resid.substr(residueArray[i].lastIndexOf('_') + 1) );
             // exclude chemical, water and ions
             var serial = Object.keys(me.icn3d.residues[resid])[0];
             if(me.icn3d.proteins.hasOwnProperty(serial) || me.icn3d.nucleotides.hasOwnProperty(serial)) {
@@ -2115,6 +2645,8 @@ iCn3DUI.prototype.showInteraction_base = function(chnid, chnidBase) {
         }
 
         var resCnt = resPosArray.length;
+
+        if(resCnt == 0) continue;
 
         var chainnameNospace = chainname.replace(/\s/g, '');
 
@@ -2135,6 +2667,8 @@ iCn3DUI.prototype.showInteraction_base = function(chnid, chnidBase) {
         var widthPerRes = 1;
 
         for(var i = 0, il = me.giSeq[chnid].length; i < il; ++i) {
+          html += me.insertGap(chnid, i, '-');
+
           if(resPosArray.indexOf(i+1 + me.baseResi[chnid]) != -1) {
               var cFull = me.giSeq[chnid][i];
 
@@ -2149,10 +2683,13 @@ iCn3DUI.prototype.showInteraction_base = function(chnid, chnidBase) {
 
               html += '<span id="' + pre + '_' + me.pre + chnid + '_' + pos + '" title="' + cFull + pos + '" class="icn3d-residue">' + c + '</span>';
 
-                var emptyWidth = parseInt(me.seqAnnWidth * i / me.maxAnnoLength - prevEmptyWidth - prevLineWidth);
+              html2 += me.insertGapOverview(chnid, i);
+
+              var emptyWidth = (me.cfg.blast_rep_id == chnid) ? Math.round(me.seqAnnWidth * i / (me.maxAnnoLength + me.nTotalGap) - prevEmptyWidth - prevLineWidth) : Math.round(me.seqAnnWidth * i / me.maxAnnoLength - prevEmptyWidth - prevLineWidth);
+
                 if(emptyWidth < 0) emptyWidth = 0;
 
-                html2 += '<div style="display:inline-block; width:' + emptyWidth + 'px;"></div>';
+                html2 += '<div style="display:inline-block; width:' + emptyWidth + 'px;">&nbsp;</div>';
                 html2 += '<div style="display:inline-block; background-color:#000; width:' + widthPerRes + 'px;" title="' + c + pos + '">&nbsp;</div>';
 
                 prevEmptyWidth += emptyWidth;
@@ -2213,7 +2750,7 @@ iCn3DUI.prototype.showSsbond_base = function(chnid, chnidBase) {
     //var chainid = chnid;
     var chainid = chnidBase;
 
-    //var pos = parseInt(chainid.indexOf('_'));
+    //var pos = Math.round(chainid.indexOf('_'));
     //if(pos > 4) return; // NMR structures with structure id such as 2K042,2K043, ...
 
     var atom = me.icn3d.getFirstCalphaAtomObj(me.icn3d.chains[chainid]);
@@ -2263,7 +2800,7 @@ iCn3DUI.prototype.showSsbond_base = function(chnid, chnidBase) {
     var resPosArray = [];
     for(var i = 0, il = residueArray.length; i < il; ++i) {
         var resid = residueArray[i];
-        var resi = parseInt(resid.substr(residueArray[i].lastIndexOf('_') + 1) );
+        var resi = Math.round(resid.substr(residueArray[i].lastIndexOf('_') + 1) );
         // exclude chemical, water and ions
         //var serial = Object.keys(me.icn3d.residues[resid])[0];
         //if(me.icn3d.proteins.hasOwnProperty(serial) || me.icn3d.nucleotides.hasOwnProperty(serial)) {
@@ -2301,6 +2838,8 @@ iCn3DUI.prototype.showSsbond_base = function(chnid, chnidBase) {
     var widthPerRes = 1;
 
     for(var i = 0, il = me.giSeq[chnid].length; i < il; ++i) {
+      html += me.insertGap(chnid, i, '-');
+
       if(resPosArray.indexOf(i+1 + me.baseResi[chnid]) != -1) {
           var cFull = me.giSeq[chnid][i];
 
@@ -2321,10 +2860,13 @@ iCn3DUI.prototype.showSsbond_base = function(chnid, chnidBase) {
 
           html += '<span id="' + pre + '_' + me.pre + chnid + '_' + pos + '" title="' + title + '" class="icn3d-residue">' + c + '</span>';
 
-            var emptyWidth = parseInt(me.seqAnnWidth * i / me.maxAnnoLength - prevEmptyWidth - prevLineWidth);
+          html2 += me.insertGapOverview(chnid, i);
+
+          var emptyWidth = (me.cfg.blast_rep_id == chnid) ? Math.round(me.seqAnnWidth * i / (me.maxAnnoLength + me.nTotalGap) - prevEmptyWidth - prevLineWidth) : Math.round(me.seqAnnWidth * i / me.maxAnnoLength - prevEmptyWidth - prevLineWidth);
+
             if(emptyWidth < 0) emptyWidth = 0;
 
-            html2 += '<div style="display:inline-block; width:' + emptyWidth + 'px;"></div>';
+            html2 += '<div style="display:inline-block; width:' + emptyWidth + 'px;">&nbsp;</div>';
             html2 += '<div style="display:inline-block; background-color:#000; width:' + widthPerRes + 'px;" title="' + title + '">&nbsp;</div>';
 
             prevEmptyWidth += emptyWidth;
@@ -2475,12 +3017,12 @@ iCn3DUI.prototype.hideAnnoTab3ddomain = function () {  var me = this;
 
 iCn3DUI.prototype.setAnnoTabSite = function () {  var me = this;
     $("[id^=" + me.pre + "site]").show();
-    if($("#" + me.pre + "anno_site").length) $("#" + me.pre + "anno_site")[0].checked = true;
+    if($("#" + me.pre + "anno_binding").length) $("#" + me.pre + "anno_binding")[0].checked = true;
 };
 
 iCn3DUI.prototype.hideAnnoTabSite = function () {  var me = this;
     $("[id^=" + me.pre + "site]").hide();
-    if($("#" + me.pre + "anno_site").length) $("#" + me.pre + "anno_site")[0].checked = false;
+    if($("#" + me.pre + "anno_binding").length) $("#" + me.pre + "anno_binding")[0].checked = false;
 };
 
 iCn3DUI.prototype.setAnnoTabInteraction = function () {  var me = this;

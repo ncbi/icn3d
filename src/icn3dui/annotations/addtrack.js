@@ -207,10 +207,61 @@ iCn3DUI.prototype.simplifyText = function(text) { var me = this;
     }
 
     return out;
-}
+};
+
+iCn3DUI.prototype.alignSequenceToStructure = function(chainid, data, title) { var me = this;
+  var query, target;
+
+  if(data.data !== undefined) {
+      query = data.data[0].query;
+      target = data.data[0].targets[chainid.replace(/_/g, '')];
+
+      target = target.hsps[0];
+  }
+
+  var text = '';
+
+  if(query !== undefined && target !== undefined) {
+      var evalue = target.scores.e_value.toPrecision(2);
+      if(evalue > 1e-200) evalue = parseFloat(evalue).toExponential();
+
+      var bitscore = target.scores.bit_score;
+
+      var targetSeq = data.targets[chainid.replace(/_/g, '')].seqdata;
+      var querySeq = query.seqdata;
+
+      var segArray = target.segs;
+      var target2queryHash = {};
+      for(var i = 0, il = segArray.length; i < il; ++i) {
+          var seg = segArray[i];
+          for(var j = 0; j <= seg.orito - seg.orifrom; ++j) {
+              target2queryHash[j + seg.orifrom] = j + seg.from;
+          }
+      }
+
+      // the missing residuesatthe end ofthe seq will be filled up in the API showNewTrack()
+      for(var i = 0, il = targetSeq.length; i < il; ++i) {
+          if(target2queryHash.hasOwnProperty(i)) {
+              text += querySeq[target2queryHash[i]];
+          }
+          else {
+              text += '-';
+          }
+      }
+
+      title += ', E: ' + evalue;
+  }
+  else {
+      text += "cannot be aligned";
+  }
+
+  me.showNewTrack(chainid, title, text, undefined, target2queryHash);
+
+  me.setLogCmd("add track | chainid " + chainid + " | title " + title + " | text " + me.simplifyText(text), true);
+};
 
 iCn3DUI.prototype.clickAddTrackButton = function() { var me = this;
-    // ncbi gi
+    // ncbi gi/accession
     $(document).on('click', "#" + me.pre + "addtrack_button1", function(e) {
        e.stopImmediatePropagation();
 
@@ -223,70 +274,18 @@ iCn3DUI.prototype.clickAddTrackButton = function() { var me = this;
        var title = (isNaN(gi)) ? 'Acc ' + gi : 'gi ' + gi;
 
        //var text = $("#" + me.pre + "track_text").val();
-       var url = 'https://www.ncbi.nlm.nih.gov/Structure/pwaln/pwaln.fcgi?';
+       var url = 'https://www.ncbi.nlm.nih.gov/Structure/pwaln/pwaln.fcgi?from=track';
 
        $.ajax({
           url: url,
           type: 'POST',
           data : {'targets': chainid, 'queries': gi},
-          //dataType: 'jsonp',
-          dataType: 'json',
+          dataType: 'jsonp',
+          //dataType: 'json',
           tryCount : 0,
           retryLimit : 1,
           success: function(data) {
-              var query, target;
-
-              if(data.data !== undefined) {
-                  query = data.data[0].query;
-                  target = data.data[0].targets[chainid];
-                  if(target === undefined) target = data.data[0].targets[chainid.replace(/_/g, '')];
-              }
-
-              var text = '';
-
-              if(query !== undefined && query.to > 0 && target !== undefined) {
-                  var queryStart = query.start;
-                  var queryEnd = query.end;
-
-                  var targetStart = target.start;
-                  var targetEnd = target.end;
-
-                  // two sequences are combined to determine the start and end
-                  var offset = targetStart - queryStart;
-
-                  var from = (targetStart < queryStart) ? query.from : query.from - offset;
-                  var to = (targetStart < queryStart) ? query.to : query.to - offset;
-
-                  var evalue = target.scores.e_value.toPrecision(2);
-                  if(evalue > 1e-200) evalue = parseFloat(evalue).toExponential();
-                  //if(evalue.length > 10) evalue = evalue.substr(0, 10);
-
-                  var bitscore = target.scores.bit_score;
-
-                  var seq = target.seqdata;
-                  var querySeq = query.seqdata;
-
-                  // the missing residuesatthe end ofthe seq will be filled up in the API showNewTrack()
-                  for(var i = 0, il = seq.length; i < il && i <= to; ++i) {
-                      if(i < from) {
-                          text += '-';
-                      }
-                      else {
-                          //text += seq[i];
-                          text += querySeq[i + offset];
-                      }
-                  }
-
-                  //title += ' (eval: ' + evalue + ')';
-                  title += ', E: ' + evalue;
-              }
-              else {
-                  text += "cannot be aligned";
-              }
-
-              me.showNewTrack(chainid, title, text);
-
-              me.setLogCmd("add track | chainid " + chainid + " | title " + title + " | text " + me.simplifyText(text), true);
+              me.alignSequenceToStructure(chainid, data, title);
           },
           error : function(xhr, textStatus, errorThrown ) {
             this.tryCount++;
@@ -312,69 +311,17 @@ iCn3DUI.prototype.clickAddTrackButton = function() { var me = this;
        var title = 'fasta ' + fasta.substr(0, 5);
 
        //var text = $("#" + me.pre + "track_text").val();
-       var url = 'https://www.ncbi.nlm.nih.gov/Structure/pwaln/pwaln.fcgi?';
+       var url = 'https://www.ncbi.nlm.nih.gov/Structure/pwaln/pwaln.fcgi?from=track';
        $.ajax({
           url: url,
           type: 'POST',
           data : {'targets': chainid, 'queries': fasta},
-          //dataType: 'jsonp',
-          dataType: 'json',
+          dataType: 'jsonp',
+          //dataType: 'json',
           tryCount : 0,
           retryLimit : 1,
           success: function(data) {
-              var query, target;
-
-              if(data.data !== undefined) {
-                  query = data.data[0].query;
-                  target = data.data[0].targets[chainid];
-                  if(target === undefined) target = data.data[0].targets[chainid.replace(/_/g, '')];
-              }
-
-              var text = '';
-
-              if(query !== undefined && query.to > 0 && target !== undefined) {
-                  var queryStart = query.start;
-                  var queryEnd = query.end;
-
-                  var targetStart = target.start;
-                  var targetEnd = target.end;
-
-                  // two sequences are combined to determine the start and end
-                  var offset = targetStart - queryStart;
-
-                  var from = (targetStart < queryStart) ? query.from : query.from - offset;
-                  var to = (targetStart < queryStart) ? query.to : query.to - offset;
-
-                  var evalue = target.scores.e_value.toPrecision(2);
-                  if(evalue > 1e-200) evalue = parseFloat(evalue).toExponential();
-//                  if(evalue.length > 10) evalue = evalue.substr(0, 10);
-
-                  var bitscore = target.scores.bit_score;
-
-                  var seq = target.seqdata;
-                  var querySeq = query.seqdata;
-
-                  // the missing residuesatthe end ofthe seq will be filled up in the API showNewTrack()
-                  for(var i = 0, il = seq.length; i < il && i <= to; ++i) {
-                      if(i < from) {
-                          text += '-';
-                      }
-                      else {
-                          //text += seq[i];
-                          text += querySeq[i + offset];
-                      }
-                  }
-
-                  //title += ' (eval: ' + evalue + ')';
-                  title += ', E: ' + evalue;
-              }
-              else {
-                  text += "cannot be aligned";
-              }
-
-              me.showNewTrack(chainid, title, text);
-
-              me.setLogCmd("add track | chainid " + chainid + " | title " + title + " | text " + me.simplifyText(text), true);
+              me.alignSequenceToStructure(chainid, data, title);
           },
           error : function(xhr, textStatus, errorThrown ) {
             this.tryCount++;
@@ -565,7 +512,7 @@ iCn3DUI.prototype.clickAddTrackButton = function() { var me = this;
 
 };
 
-iCn3DUI.prototype.showNewTrack = function(chnid, title, text, cssColorArray) {  var me = this;
+iCn3DUI.prototype.showNewTrack = function(chnid, title, text, cssColorArray, target2queryHash) {  var me = this;
     //if(me.customTracks[chnid] === undefined) {
     //    me.customTracks[chnid] = {};
     //}
@@ -635,11 +582,15 @@ iCn3DUI.prototype.showNewTrack = function(chnid, title, text, cssColorArray) {  
     var widthPerRes = 1;
 
     for(var i = 0, il = text.length; i < il; ++i) {
+      html += me.insertGap(chnid, i, '-');
+
       var c = text.charAt(i);
 
       if(c != ' ' && c != '-') {
           //var pos = me.icn3d.chainsSeq[chnid][i - me.matchedPos[chnid] ].resi;
           var pos = me.icn3d.chainsSeq[chnid][i].resi - me.matchedPos[chnid];
+
+          if(target2queryHash !== undefined) pos = target2queryHash[i] + 1; // 0-based
 
           if(cssColorArray !== undefined && cssColorArray[i] != '') {
               html += '<span id="' + pre + '_' + me.pre + chnid + '_' + pos + '" title="' + c + pos + '" class="icn3d-residue" style="color:' + cssColorArray[i] + '">' + c + '</span>';
@@ -648,10 +599,12 @@ iCn3DUI.prototype.showNewTrack = function(chnid, title, text, cssColorArray) {  
               html += '<span id="' + pre + '_' + me.pre + chnid + '_' + pos + '" title="' + c + pos + '" class="icn3d-residue">' + c + '</span>';
           }
 
-          var emptyWidth = parseInt(me.seqAnnWidth * i / me.maxAnnoLength - prevEmptyWidth - prevLineWidth);
+          html2 += me.insertGapOverview(chnid, i);
+
+          var emptyWidth = (me.cfg.blast_rep_id == chnid) ? Math.round(me.seqAnnWidth * i / (me.maxAnnoLength + me.nTotalGap) - prevEmptyWidth - prevLineWidth) : Math.round(me.seqAnnWidth * i / me.maxAnnoLength - prevEmptyWidth - prevLineWidth);
           if(emptyWidth < 0) emptyWidth = 0;
 
-          html2 += '<div style="display:inline-block; width:' + emptyWidth + 'px;"></div>';
+          html2 += '<div style="display:inline-block; width:' + emptyWidth + 'px;">&nbsp;</div>';
           if(cssColorArray !== undefined && cssColorArray[i] != '') {
               html2 += '<div style="display:inline-block; background-color:' + cssColorArray[i] + '; width:' + widthPerRes + 'px;" title="' + c + (i+1).toString() + '">&nbsp;</div>';
           }

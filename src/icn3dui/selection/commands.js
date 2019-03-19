@@ -406,6 +406,9 @@ iCn3DUI.prototype.applyCommandLoad = function (commandStr) { var me = this;
       me.cfg.gi = id;
       me.downloadGi(id);
     }
+    else if(command.indexOf('load seq_struc_ids') !== -1) {
+      me.downloadBlast_rep_id(id);
+    }
     else if(command.indexOf('load cid') !== -1) {
       me.cfg.cid = id;
       me.downloadCid(id);

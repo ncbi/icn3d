@@ -62,6 +62,36 @@ var iCn3DUI = function(cfg) {
     me.GREYD = "#DDDDDD";
     me.ORANGE = "#FFA500";
 
+    // https://www.ncbi.nlm.nih.gov/Class/FieldGuide/BLOSUM62.txt, range from -4 to 11
+    me.b62ResArray = ['A', 'R', 'N', 'D', 'C', 'Q', 'E', 'G', 'H', 'I', 'L', 'K', 'M', 'F', 'P', 'S', 'T', 'W', 'Y', 'V', 'B', 'Z', 'X', '*']; // length: 24
+
+    me.b62Matrix = [
+            [4, -1, -2, -2, 0, -1, -1, 0, -2, -1, -1, -1, -1, -2, -1, 1, 0, -3, -2, 0, -2, -1, 0, -4],
+            [-1, 5, 0, -2, -3, 1, 0, -2, 0, -3, -2, 2, -1, -3, -2, -1, -1, -3, -2, -3, -1, 0, -1, -4],
+            [-2, 0, 6, 1, -3, 0, 0, 0, 1, -3, -3, 0, -2, -3, -2, 1, 0, -4, -2, -3, 3, 0, -1, -4],
+            [-2, -2, 1, 6, -3, 0, 2, -1, -1, -3, -4, -1, -3, -3, -1, 0, -1, -4, -3, -3, 4, 1, -1, -4],
+            [0, -3, -3, -3, 9, -3, -4, -3, -3, -1, -1, -3, -1, -2, -3, -1, -1, -2, -2, -1, -3, -3, -2, -4],
+            [-1, 1, 0, 0, -3, 5, 2, -2, 0, -3, -2, 1, 0, -3, -1, 0, -1, -2, -1, -2, 0, 3, -1, -4],
+            [-1, 0, 0, 2, -4, 2, 5, -2, 0, -3, -3, 1, -2, -3, -1, 0, -1, -3, -2, -2, 1, 4, -1, -4],
+            [0, -2, 0, -1, -3, -2, -2, 6, -2, -4, -4, -2, -3, -3, -2, 0, -2, -2, -3, -3, -1, -2, -1, -4],
+            [-2, 0, 1, -1, -3, 0, 0, -2, 8, -3, -3, -1, -2, -1, -2, -1, -2, -2, 2, -3, 0, 0, -1, -4],
+            [-1, -3, -3, -3, -1, -3, -3, -4, -3, 4, 2, -3, 1, 0, -3, -2, -1, -3, -1, 3, -3, -3, -1, -4],
+            [-1, -2, -3, -4, -1, -2, -3, -4, -3, 2, 4, -2, 2, 0, -3, -2, -1, -2, -1, 1, -4, -3, -1, -4],
+            [-1, 2, 0, -1, -3, 1, 1, -2, -1, -3, -2, 5, -1, -3, -1, 0, -1, -3, -2, -2, 0, 1, -1, -4],
+            [-1, -1, -2, -3, -1, 0, -2, -3, -2, 1, 2, -1, 5, 0, -2, -1, -1, -1, -1, 1, -3, -1, -1, -4],
+            [-2, -3, -3, -3, -2, -3, -3, -3, -1, 0, 0, -3, 0, 6, -4, -2, -2, 1, 3, -1, -3, -3, -1, -4],
+            [-1, -2, -2, -1, -3, -1, -1, -2, -2, -3, -3, -1, -2, -4, 7, -1, -1, -4, -3, -2, -2, -1, -2, -4],
+            [1, -1, 1, 0, -1, 0, 0, 0, -1, -2, -2, 0, -1, -2, -1, 4, 1, -3, -2, -2, 0, 0, 0, -4],
+            [0, -1, 0, -1, -1, -1, -1, -2, -2, -1, -1, -1, -1, -2, -1, 1, 5, -2, -2, 0, -1, -1, 0, -4],
+            [-3, -3, -4, -4, -2, -2, -3, -2, -2, -3, -2, -3, -1, 1, -4, -3, -2, 11, 2, -3, -4, -3, -2, -4],
+            [-2, -2, -2, -3, -2, -1, -2, -3, 2, -1, -1, -2, -1, 3, -3, -2, -2, 2, 7, -1, -3, -2, -1, -4],
+            [0, -3, -3, -3, -1, -2, -2, -3, -3, 3, 1, -2, 1, -1, -2, -2, 0, -3, -1, 4, -3, -2, -1, -4],
+            [-2, -1, 3, 4, -3, 0, 1, -1, 0, -3, -4, 0, -3, -3, -2, 0, -1, -4, -3, -3, 4, 1, -1, -4],
+            [-1, 0, 0, 1, -3, 3, 4, -2, 0, -3, -3, 1, -1, -3, -1, 0, -1, -3, -2, -2, 1, 4, -1, -4],
+            [0, -1, -1, -1, -2, -1, -1, -1, -1, -1, -1, -1, -1, -1, -2, 0, 0, -2, -1, -1, -1, -1, -1, -4],
+            [-4, -4, -4, -4, -4, -4, -4, -4, -4, -4, -4, -4, -4, -4, -4, -4, -4, -4, -4, -4, -4, -4, -4, 1],
+        ];
+
     me.opts = {};
     me.opts['camera']             = 'perspective';        //perspective, orthographic
     me.opts['background']         = 'transparent';        //transparent, black, grey, white
@@ -90,7 +120,8 @@ var iCn3DUI = function(cfg) {
     me.opts['pk']                 = 'residue';            //no, atom, residue, strand, chain
     me.opts['chemicalbinding']      = 'hide';               //show, hide
 
-    if(me.cfg.align !== undefined) me.opts['color'] = 'conserved';
+    if(me.cfg.align !== undefined) me.opts['color'] = 'conservation';
+    if(me.cfg.blast_rep_id !== undefined) me.opts['color'] = 'conservation';
     if(me.cfg.cid !== undefined) me.opts['color'] = 'atom';
 
     if(me.cfg.options !== undefined) jQuery.extend(me.opts, me.cfg.options);
@@ -467,7 +498,7 @@ iCn3DUI.prototype = {
             var id = loadCommand.substr(loadCommand.lastIndexOf(' ') + 1);
 
             // reload only if viewing the same structure
-            if(id === me.cfg.mmtfid || id === me.cfg.pdbid || id === me.cfg.mmdbid || id === me.cfg.gi || id === me.cfg.cid || id === me.cfg.mmcifid || id === me.cfg.align) {
+            if(id === me.cfg.mmtfid || id === me.cfg.pdbid || id === me.cfg.mmdbid || id === me.cfg.gi  || id === me.cfg.blast_rep_id || id === me.cfg.cid || id === me.cfg.mmcifid || id === me.cfg.align) {
                 me.loadScript(me.commandsBeforeCrash, true);
 
                 return;
@@ -514,6 +545,11 @@ iCn3DUI.prototype = {
 
            me.downloadGi(me.cfg.gi);
         }
+        else if(me.cfg.blast_rep_id !== undefined) {
+           me.setLogCmd('load seq_struct_ids ' + me.cfg.query_id + ',' + me.cfg.blast_rep_id, true);
+
+           me.downloadBlast_rep_id(me.cfg.query_id + ',' + me.cfg.blast_rep_id);
+        }
         else if(me.cfg.cid !== undefined) {
            me.inputid = me.cfg.cid;
 
@@ -542,7 +578,7 @@ iCn3DUI.prototype = {
             me.downloadCid(me.cfg.cid);
         }
         else if(me.cfg.mmcifid !== undefined) {
-           me.inputid = me.cfg.mmcifid;
+            me.inputid = me.cfg.mmcifid;
 
             me.setLogCmd('load mmcif ' + me.cfg.mmcifid, true);
 
@@ -1702,7 +1738,7 @@ iCn3DUI.prototype = {
 
     clkMn1_align: function() { var me = this;
         $("#" + me.pre + "mn1_align").click(function(e) {
-           me.openDialog(me.pre + 'dl_align', 'Please input two PDB IDs or MMDB IDs');
+           me.openDialog(me.pre + 'dl_align', 'Align two 3D structures');
         });
     },
 
@@ -1748,6 +1784,12 @@ iCn3DUI.prototype = {
     clkMn1_mmdbid: function() { var me = this;
         $("#" + me.pre + "mn1_mmdbid").click(function(e) {
            me.openDialog(me.pre + 'dl_mmdbid', 'Please input MMDB ID');
+        });
+    },
+
+    clkMn1_blast_rep_id: function() { var me = this;
+        $("#" + me.pre + "mn1_blast_rep_id").click(function(e) {
+           me.openDialog(me.pre + 'dl_blast_rep_id', 'Align sequence to structure');
         });
     },
 
@@ -2601,10 +2643,17 @@ iCn3DUI.prototype = {
         });
     },
 
+    clkMn4_clrIdentity: function() { var me = this;
+        $("#" + me.pre + "mn4_clrIdentity").click(function (e) {
+           me.setOption('color', 'identity');
+           me.setLogCmd('color identity', true);
+        });
+    },
+
     clkMn4_clrConserved: function() { var me = this;
         $("#" + me.pre + "mn4_clrConserved").click(function (e) {
-           me.setOption('color', 'conserved');
-           me.setLogCmd('color conserved', true);
+           me.setOption('color', 'conservation');
+           me.setLogCmd('color conservation', true);
         });
     },
 
@@ -3540,6 +3589,50 @@ iCn3DUI.prototype = {
 
            //me.downloadMmdb($("#" + me.pre + "mmdbid").val());
            window.open('https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?mmdbid=' + $("#" + me.pre + "mmdbid").val(), '_blank');
+        });
+    },
+
+    clickReload_blast_rep_id: function() { var me = this;
+        $("#" + me.pre + "reload_blast_rep_id").click(function(e) {
+           e.preventDefault();
+
+           dialog.dialog( "close" );
+
+           var query_id = $("#" + me.pre + "query_id").val().toUpperCase();
+           var query_fasta = encodeURIComponent($("#" + me.pre + "query_fasta").val());
+           var blast_rep_id = $("#" + me.pre + "blast_rep_id").val().toUpperCase();
+
+           me.setLogCmd("load seq_struc_ids " + query_id + "," + blast_rep_id, false);
+
+           query_id = (query_id !== '' && query_id !== undefined) ? query_id : query_fasta;
+
+//           if(query_id !== '' && query_id !== undefined) {
+               window.open('https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?from=icn3d&blast_rep_id=' + blast_rep_id + '&query_id=' + query_id, '_blank');
+/*
+           }
+           else if(query_fasta !== '' && query_fasta !== undefined) {
+               var form = document.createElement("form");
+               form.setAttribute("method", "post");
+               form.setAttribute("action", "https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html");
+
+               form.setAttribute("target", "_blank");
+
+               var hiddenField = document.createElement("input");
+               hiddenField.setAttribute('command', 'view+annotations;+set+annotation+cdd;+set+view+detailed+view;+select+chain+' + blast_rep_id + ';+show+selection');
+               hiddenField.setAttribute('query_id', query_fasta);
+               hiddenField.setAttribute('blast_rep_id', blast_rep_id);
+               form.appendChild(hiddenField);
+               document.body.appendChild(form);
+
+               var newWin = window.open('', '_blank');
+
+               if (newWin) {
+                   form.submit();
+               } else {
+                   alert('You must allow popups for this to work.');
+               }
+           }
+*/
         });
     },
 
@@ -4509,6 +4602,7 @@ iCn3DUI.prototype = {
         me.clkMn1_mmciffile();
         me.clkMn1_mmcifid();
         me.clkMn1_mmdbid();
+        me.clkMn1_blast_rep_id();
         me.clkMn1_gi();
         me.clkMn1_cid();
         me.clkMn1_pngimage();
@@ -4593,6 +4687,7 @@ iCn3DUI.prototype = {
         me.clkMn4_clrBfactor();
         me.clkMn4_clrBfactorNorm();
         me.clkMn4_clrConserved();
+        me.clkMn4_clrIdentity();
         me.clkMn4_clrRed();
         me.clkMn4_clrGreen();
         me.clkMn4_clrBlue();
@@ -4703,6 +4798,7 @@ iCn3DUI.prototype = {
         me.clickReload_mmciffile();
         me.clickReload_mmcif();
         me.clickReload_mmdb();
+        me.clickReload_blast_rep_id();
         me.clickReload_gi();
         me.clickReload_cid();
         me.clickReload_pngimage();

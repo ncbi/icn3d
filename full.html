@@ -52,6 +52,8 @@
     }
 
     var gi = params.gi;
+    var blast_rep_id = params.blast_rep_id;
+    var query_id = params.query_id;
     var mmdbid = params.mmdbid;
     var mmtfid = params.mmtfid;
     var pdbid = params.pdbid;
@@ -66,6 +68,8 @@
     var height = params.height;
 
     var command = params.command; // ";" separated commands
+
+    var from = params.from;
 
     if(command === undefined) {
       command = '';
@@ -189,6 +193,7 @@
               showanno: showanno,
               show2d: show2d,
               showsets: showsets,
+              query_id: query_id,
               command: command
           };
           if(idName !== '') cfg[idName] = idArray[i];
@@ -220,6 +225,14 @@
       }
       else if(gi !== undefined) {
           setupViewer('gi', gi);
+      }
+      else if(blast_rep_id !== undefined) {
+          if( (from === 'blast' || from === 'icn3d') && command == '') {
+            command = 'view+annotations;+set+annotation+cdd;+set+annotation+site;+set+view+detailed+view;+select+chain+'
+              + blast_rep_id + ';+show+selection';
+          }
+
+          setupViewer('blast_rep_id', blast_rep_id);
       }
       else if(urlname !== undefined) {
         urlname = decodeURIComponent(urlname);

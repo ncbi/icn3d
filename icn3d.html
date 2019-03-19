@@ -297,6 +297,7 @@ This page describes Web APIs and how to embed iCn3D in your html page. Other det
 <a href="#changeCustomAtoms">changeCustomAtoms</a><br>
 <a href="#deleteSelectedSets">deleteSelectedSets</a><br>
 <a href="#downloadAlignment">downloadAlignment</a><br>
+<a href="#downloadBlast_rep_id">downloadBlast_rep_id</a><br>
 <a href="#downloadCid">downloadCid</a><br>
 <a href="#downloadGi">downloadGi</a><br>
 <a href="#downloadMmcif">downloadMmcif</a><br>
@@ -607,6 +608,7 @@ This page describes Web APIs and how to embed iCn3D in your html page. Other det
 <tr valign='top'><td>mmcifid</td><td>Yes</td><td>Yes</td><td>mmCIF ID, e.g., <a href="full.html?mmcifid=1tup">?mmcifid=1tup</a></td></tr>
 <tr valign='top'><td>gi</td><td>Yes</td><td>Yes</td><td>NCBI protein gi number, e.g., <a href="full.html?gi=827343227">?gi=827343227</a></td></tr>
 <tr valign='top'><td>cid</td><td>Yes</td><td>Yes</td><td>PubChem Compound ID, e.g., <a href="full.html?cid=2244">?cid=2244</a></td></tr>
+<tr valign='top'><td>blast_rep_id</td><td>No</td><td>Yes</td><td>NCBI protein accession of a chain of a 3D structure. "blast_rep_id" combines with the parameter "query_id" of a protein sequence to show the sequence-structure alignment, e.g., <a href="full.html?command=view+annotations;+set+annotation+cdd;+set+view+detailed+view;+select+chain+1TUP_A;+show+selection&blast_rep_id=1TUP_A&query_id=23491729">?command=view+annotations;+set+annotation+cdd;+set+view+detailed+view;+select+chain+1TUP_A;+show+selection&blast_rep_id=1TUP_A&query_id=23491729</a></td></tr>
 <tr valign='top'><td>align</td><td>No</td><td>Yes</td><td>Two PDB IDs or MMDB IDs for structure alignment, e.g., <a href="full.html?align=1hho,4n7n">?align=1hho,4n7n</a></td></tr>
 <tr valign='top'><td>url</td><td>Yes</td><td>Yes</td><td>Use the url (encoded) to retrieve the 3D structure. The url requires another parameter "type", e.g., <a href="full.html?type=pdb&url=https%3A%2F%2Ffiles.rcsb.org%2Fview%2F1gpk.pdb">?type=pdb&url=https%3A%2F%2Ffiles.rcsb.org%2Fview%2F1gpk.pdb</a></td></tr>
 
@@ -651,9 +653,10 @@ This page describes Web APIs and how to embed iCn3D in your html page. Other det
 <tr><td valign='top'><span class="indent">State/Script File:</span></td>   <td valign='top'>[no command available]</td> <td valign='top'><a href="#loadScript">loadScript</a></td></tr>
 <tr><td valign='top'><span class="indent">Selection File:</span></td>   <td valign='top'>[no command available]</td> <td valign='top'></td></tr>
 
-<tr><td colspan="3">c) Open VAST Alignment</td> </tr>
-<tr><td valign='top'><span class="indent">Invariant Substructure Superposed:</span></td>           <td valign='top'>load alignment [1HHO,4N7N] | parameters &atype=1</td> <td valign='top'><a href="#downloadAlignment">downloadAlignment</a></td></tr>
-<tr><td valign='top'><span class="indent">All Matching Molecules Superposed:</span></td>           <td valign='top'>load alignment [1HHO,4N7N] | parameters &atype=0</td> <td valign='top'><a href="#downloadAlignment">downloadAlignment</a></td></tr>
+<tr><td colspan="3">c) Align</td> </tr>
+<tr><td valign='top'><span class="indent">Sequence to Structure:</span></td>            <td valign='top'>load seq_struc_ids [23491729,1TUP_A]</td> <td valign='top'><a href="#downloadBlast_rep_id">downloadBlast_rep_id</a></td></tr>
+<tr><td valign='top'><span class="indent">Structure to Structure - Invariant Substructure Superposed:</span></td>          <td valign='top'>load alignment [1HHO,4N7N] | parameters atype=1</td> <td valign='top'><a href="#downloadAlignment">downloadAlignment</a></td></tr>
+<tr><td valign='top'><span class="indent">Structure to Structure - All Matching Molecules Superposed:</span></td>          <td valign='top'>load alignment [1HHO,4N7N] | parameters atype=0</td> <td valign='top'><a href="#downloadAlignment">downloadAlignment</a></td></tr>
 
 <tr><td colspan="3">d) 3D Printing</td> </tr>
 <tr><td valign='top'><span class="indent">VRML (Color, W/ Stabilizers):</span></td>          <td valign='top'>export vrml stabilizer file</td> <td valign='top'><a href="#saveVrmlFile">saveVrmlFile</a></td></tr>
@@ -668,14 +671,14 @@ This page describes Web APIs and how to embed iCn3D in your html page. Other det
 <tr><td valign='top'><span class="indent">Set Thickness:</span></td>          <td valign='top'>set thickness | linerad 0.6 | coilrad 1 | stickrad 0.8 | ribbonthick 0.8 | proteinwidth 2 | nucleotidewidth 1.2 | ballscale 0.6</td> <td valign='top'></td></tr>
 <tr><td valign='top'><span class="indent">Reset Thickness:</span></td>          <td valign='top'>reset thickness</td> <td valign='top'><a href="#resetAfter3Dprint">resetAfter3Dprint</a></td></tr>
 
-<tr><td colspan="3">f) Save Files</td> </tr>
+<tr><td colspan="3">e) Save Files</td> </tr>
 <tr><td valign='top'><span class="indent">iCn3D PNG Image:</span></td>          <td valign='top'>export canvas (URL example: <a href="https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?mmdbid=1top&command=export%20canvas" target="_blank">https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?mmdbid=1top&command=export%20canvas</a>)</td> <td valign='top'><a href="#saveFile">saveFile([filename], 'png')</a></td></tr>
 <tr><td valign='top'><span class="indent">State File:</span></td>            <td valign='top'>[no command available]</td> <td valign='top'><a href="#saveFile">saveFile</a></td></tr>
 <tr><td valign='top'><span class="indent">All Selections:</span></td>   <td valign='top'>[no command available]</td> <td valign='top'><a href="#saveFile">saveFile</a></td></tr>
 <tr><td valign='top'><span class="indent">Residue Counts:</span></td>   <td valign='top'>[no command available]</td> <td valign='top'><a href="#saveFile">saveFile</a></td></tr>
 <tr><td valign='top'><span class="indent">Interaction List:</span></td>                <td valign='top'>export interactions</td> <td valign='top'><a href="#exportInteractions">exportInteractions</a></td></tr>
 
-<tr><td valign='top'>g) Share Link:</td>         <td valign='top'>[no command available]</td> <td valign='top'><a href="#shareLink">shareLink</a></td></tr>
+<tr><td valign='top'>f) Share Link:</td>         <td valign='top'>[no command available]</td> <td valign='top'><a href="#shareLink">shareLink</a></td></tr>
 
 </tbody></table>
 <br>
@@ -1513,6 +1516,9 @@ Delete selected sets in the menu of "Defined Sets".
 <br><br><a name="downloadAlignment"></a><b>downloadAlignment(align)</b> <a href="#Top"><span class="top">&nbsp;&nbsp;&nbsp;</span></a><br>
 Load the VAST+ structure alignment for the pair of structures "align", e.g., "align" could be "1HHO,4N7N".
 
+<br><br><a name="downloadBlast_rep_id"></a><b>downloadBlast_rep_id(sequence_id_comma_structure_id)</b> <a href="#Top"><span class="top">&nbsp;&nbsp;&nbsp;</span></a><br>
+Ajax call was used to get the atom data from "sequence_id_comma_structure_id", comma-separated NCBI protein accessions of a protein sequence and a chain of a 3D structure (e.g., 23491729,1TUP_A). This function was deferred so that it can be chained together with other deferred functions for sequential execution. Note that only one structure corresponding to the blast_rep_id will be shown. If there is no structures available for the blast_rep_id, a warning message will be shown.
+
 <br><br><a name="downloadCid"></a><b>downloadCid(cid)</b> <a href="#Top"><span class="top">&nbsp;&nbsp;&nbsp;</span></a><br>
 Ajax call was used to get the atom data from the PubChem "cid". This function was deferred so that it can be chained together with other deferred functions for sequential execution.
 
@@ -1810,6 +1816,9 @@ Update the highlight of sequences in the annotation window according to the curr
 
 <a name="log"></a>
 <h2>Change Log:<img src="https://www.ncbi.nlm.nih.gov/Structure/IMG/spacer.gif" width="25" height="1" border="0"><a href="#Top"><img src="https://www.ncbi.nlm.nih.gov/Structure/IMG/arrowup_blue.gif" width="12" height="12" border="0" alt="back to top"></a></h2>
+The production version <a href="https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.6.0.zip">icn3d-2.6.0</a> was release on March 19, 2019. Users can now align any sequence to a hit structure by clicking "Align > Sequence to Structure" in the File menu. The default color scheme is color by sequence "Conservation" for sequence-structure or structure-structure alignments.
+<br><br>
+
 The production version <a href="https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.5.3.zip">icn3d-2.5.3</a> was release on March 12, 2019. Added commands for up arraow and down arrow after picking a residue.
 <br><br>
 
