@@ -1215,6 +1215,8 @@ iCn3D.prototype = {
 
         this.rotateCount = 0;
         this.rotateCountMax = 20;
+
+        this.targetChainsSeq = {}; // hold the resi and color information of the target chain when comparing a sequence to a structure
     },
 
     reinitAfterLoad: function () {

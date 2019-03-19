@@ -409,7 +409,12 @@ iCn3DUI.prototype.downloadMmdbPart2 = function () { var me = this;
 
     me.icn3d.setAtomStyleByOptions(me.opts);
     // use the original color from cgi output
-    me.icn3d.setColorByOptions(me.opts, me.icn3d.atoms, true);
+    if(me.cfg.blast_rep_id !== undefined) {
+      me.icn3d.setColorByOptions(me.opts, me.icn3d.atoms);
+    }
+    else {
+      me.icn3d.setColorByOptions(me.opts, me.icn3d.atoms, true);
+    }
 
     me.renderStructure();
     if(me.cfg.rotate !== undefined) me.rotStruc(me.cfg.rotate, true);
@@ -432,7 +437,18 @@ iCn3DUI.prototype.downloadGi = function (gi) { var me = this;
     me.icn3d.bCid = undefined;
     var bGi = true;
     me.downloadMmdb(gi, bGi);
+};
 
+iCn3DUI.prototype.downloadBlast_rep_id = function (sequence_structure_ids) { var me = this;
+    me.icn3d.bCid = undefined;
+
+    var idArray = sequence_structure_ids.split(',');
+    me.cfg.query_id = idArray[0];
+    me.cfg.blast_rep_id = idArray[1];
+
+    var mmdbid = me.cfg.blast_rep_id.split('_')[0];
+
+    me.downloadMmdb(mmdbid);
 };
 
 iCn3DUI.prototype.getMissingResidues = function (seqArray, type, chainid) { var me = this;
@@ -818,6 +834,7 @@ iCn3DUI.prototype.loadAtomDataIn = function (data, id, type, seqalign) { var me 
         //var bChemicalIons = (me.cfg.mmcifid === undefined) ? (chainid2kind[chainNum] === 'ligand' || chainid2kind[chainNum] === 'otherPolymer' || chainid2kind[chainNum] === undefined) : atm.mt === 'l';
         // kind: other, otherPolymer, etc
         var bChemicalIons = (me.cfg.mmcifid === undefined) ? (chainid2kind[chainNum] === 'ligand' || (chainid2kind[chainNum] !== undefined && chainid2kind[chainNum].indexOf('other') !== -1) || chainid2kind[chainNum] === undefined) : atm.mt === 'l';
+
         if((atm.chain === 'Misc' || chainid2kind[chainNum] === 'other') && biopolymerChainsHash[chainNum] !== 'protein' && biopolymerChainsHash[chainNum] !== 'nucleotide') { // biopolymer, could be protein or nucleotide
             if(atm.name === 'CA') {
                 biopolymerChainsHash[chainNum] = 'protein';

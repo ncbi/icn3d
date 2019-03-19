@@ -388,7 +388,7 @@ iCn3DUI.prototype.setSeqAlign = function (seqalign, alignedStructures) { var me 
 
               var aligned = id2aligninfo[j].aligned + alignedTmp; // 0 or 2
 
-              var color, classname;
+              var color, color2, classname;
               if(aligned === 2) { // aligned
                   if(id2aligninfo[j].resn === resn) {
                       color = '#FF0000';
@@ -404,6 +404,8 @@ iCn3DUI.prototype.setSeqAlign = function (seqalign, alignedStructures) { var me 
                       me.nconsHash1[chainid1 + '_' + id2aligninfo[j].resi] = 1;
                       me.nconsHash2[chainid2 + '_' + resi] = 1;
                   }
+
+                  color2 = '#' + me.getColorhexFromBlosum62(id2aligninfo[j].resn, resn);
 
                   // expensive and thus remove
                   //alignedAtoms = me.icn3d.unionHash(alignedAtoms, me.icn3d.residues[chainid1 + '_' + id2aligninfo[j].resi]);
@@ -428,7 +430,8 @@ iCn3DUI.prototype.setSeqAlign = function (seqalign, alignedStructures) { var me 
               resObject.resn = (resObject.resi === '' || classname === 'icn3d-nalign') ? id2aligninfo[j].resn.toLowerCase() : id2aligninfo[j].resn;
               resObject.aligned = aligned;
               // resi will be empty if there is no coordinates
-              resObject.color = (resObject.resi === '') ? me.GREYC : color;
+              resObject.color = (resObject.resi === '') ? me.GREYC : color; // color by identity
+              resObject.color2 = (resObject.resi === '') ? me.GREYC : color2; // color by conservation
               resObject.class = classname;
 
               me.icn3d.alnChainsSeq[chainid1].push(resObject);
@@ -449,7 +452,8 @@ iCn3DUI.prototype.setSeqAlign = function (seqalign, alignedStructures) { var me 
               resObject.resn = (resObject.resi === '' || classname === 'icn3d-nalign') ? resn.toLowerCase() : resn;
               resObject.aligned = aligned;
               // resi will be empty if there is no coordinates
-              resObject.color = (resObject.resi === '') ? me.GREYC : color;
+              resObject.color = (resObject.resi === '') ? me.GREYC : color; // color by identity
+              resObject.color2 = (resObject.resi === '') ? me.GREYC : color2; // color by conservation
               resObject.class = classname;
 
               me.icn3d.alnChainsSeq[chainid2].push(resObject);

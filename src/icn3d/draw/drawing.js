@@ -969,7 +969,7 @@ iCn3D.prototype.createCurveSub = function (_pnts, width, colors, div, bHighlight
         }
 
         //var line = new THREE.Line(geo, new THREE.LineBasicMaterial({ linewidth: width, vertexColors: true }), THREE.LineStrip);
-        var line = new THREE.LineSegments(geo, new THREE.LineBasicMaterial({ linewidth: width, vertexColors: true }));
+        var line = new THREE.Line(geo, new THREE.LineBasicMaterial({ linewidth: width, vertexColors: true }));
         this.mdl.add(line);
         if(bHighlight === 2) {
             this.prevHighlightObjects.push(line);

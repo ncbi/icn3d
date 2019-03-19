@@ -42,7 +42,7 @@ iCn3DUI.prototype.setTools_base = function() { var me = this;
             html += "      <td valign='top'>" + me.setButton(buttonStyle, 'show_alignsequences', 'View the sequences of the aligned structures', 'Aligned<br/>Sequences') + "</td>";
         }
 
-        if(me.cfg.mmdbid !== undefined || me.cfg.gi !== undefined || me.cfg.align !== undefined) {
+        if(me.cfg.mmdbid !== undefined || me.cfg.gi !== undefined || me.cfg.blast_rep_id !== undefined || me.cfg.align !== undefined) {
             html += "      <td valign='top'>" + me.setButton(buttonStyle, 'show_2ddgm', 'View the interactions of the structure', 'View<br/>Interactions') + "</td>";
         }
 
@@ -206,7 +206,12 @@ iCn3DUI.prototype.setMenu1 = function() { var me = this;
     html += me.getLink('mn1_selection', 'Selection File');
     html += "    </ul>";
     html += "  </li>";
-    html += "  <li><span id='" + me.pre + "mn1_align' class='icn3d-link'>Open VAST<br>Alignment</span></li>";
+    html += "  <li><span>Align</span>";
+    html += "    <ul>";
+    html += me.getLink('mn1_blast_rep_id', 'Sequence to Structure');
+    html += me.getLink('mn1_align', 'Structure to Structure');
+    html += "    </ul>";
+    html += "  </li>";
     html += "  <li><span>3D Printing</span>";
     html += "    <ul>";
     if(me.cfg.cid === undefined) {
@@ -391,7 +396,7 @@ iCn3DUI.prototype.setMenu2b = function() { var me = this;
         html += "    </ul>";
         html += "  </li>";
 
-        if(me.cfg.mmtfid !== undefined || me.cfg.pdbid !== undefined || me.cfg.mmcifid !== undefined || me.cfg.mmdbid !== undefined) {
+        if(me.cfg.mmtfid !== undefined || me.cfg.pdbid !== undefined || me.cfg.mmcifid !== undefined || me.cfg.mmdbid !== undefined || me.cfg.gi !== undefined || me.cfg.blast_rep_id !== undefined) {
           html += "  <li id='" + me.pre + "assemblyWrapper'><span>Assembly</span>";
           html += "    <ul>";
 
@@ -716,7 +721,12 @@ iCn3DUI.prototype.setMenu4 = function() { var me = this;
         html += me.getRadio('mn4_clr', 'mn4_clrCharge', 'Charge');
         html += me.getRadio('mn4_clr', 'mn4_clrHydrophobic', 'Hydrophobic');
 
-        html += me.getRadio('mn4_clr', 'mn4_clrChain', 'Chain', true);
+        if(me.cfg.align !== undefined || me.cfg.blast_rep_id !== undefined) {
+          html += me.getRadio('mn4_clr', 'mn4_clrChain', 'Chain');
+        }
+        else {
+          html += me.getRadio('mn4_clr', 'mn4_clrChain', 'Chain', true);
+        }
 
         html += me.getRadio('mn4_clr', 'mn4_clrResidue', 'Residue');
         html += me.getRadio('mn4_clr', 'mn4_clrAtom', 'Atom');
@@ -726,10 +736,10 @@ iCn3DUI.prototype.setMenu4 = function() { var me = this;
         html += me.getRadio('mn4_clr', 'mn4_clrBfactorNorm', 'Percentile');
         html += "    </ul>";
 
-        if(me.cfg.align !== undefined) {
-          html += me.getRadio('mn4_clr', 'mn4_clrConserved', 'Identity');
+        if(me.cfg.align !== undefined || me.cfg.blast_rep_id !== undefined) {
+          html += me.getRadio('mn4_clr', 'mn4_clrIdentity', 'Identity');
+          html += me.getRadio('mn4_clr', 'mn4_clrConserved', 'Conservation', true);
         }
-
     }
     else {
         html += me.getRadio('mn4_clr', 'mn4_clrAtom', 'Atom', true);
@@ -777,7 +787,7 @@ iCn3DUI.prototype.setMenu5 = function() { var me = this;
         }
 
         //html += me.getLink('mn2_selectresidues', 'View Sequences');
-        if(me.cfg.mmdbid !== undefined || me.cfg.gi !== undefined || me.cfg.align !== undefined) {
+        if(me.cfg.mmdbid !== undefined || me.cfg.gi !== undefined || me.cfg.blast_rep_id !== undefined || me.cfg.align !== undefined) {
           html += me.getLink('mn2_2ddgm', 'View Interactions');
         }
     }
@@ -995,8 +1005,8 @@ iCn3DUI.prototype.setDialogs = function() { var me = this;
     html += "</div>";
 
     html += "<div id='" + me.pre + "dl_align'>";
-    html += "Enter the PDB IDs or MMDB IDs of two structures that have been found to be similar by <A HREF=' https://www.ncbi.nlm.nih.gov/Structure/VAST/vast.shtml'>VAST</A> or <A HREF=' https://www.ncbi.nlm.nih.gov/Structure/vastplus/vastplus.cgi'>VAST+</A> : <br/><br/>ID1: <input type='text' id='" + me.pre + "alignid1' value='1HHO' size=8>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ID2: <input type='text' id='" + me.pre + "alignid2' value='4N7N' size=8><br/><br/>";
-    html += "<button id='" + me.pre + "reload_align_refined'>Invariant Substructure Superposed</button>&nbsp;&nbsp;&nbsp;<button id='" + me.pre + "reload_align_ori'>All Matching Molecules Superposed</button>";
+    html += "Enter the PDB IDs or MMDB IDs of two structures that have been found to be similar by <A HREF=' https://www.ncbi.nlm.nih.gov/Structure/vastplus/vastplus.cgi'>VAST+</A> : <br/><br/>ID1: <input type='text' id='" + me.pre + "alignid1' value='1HHO' size=8>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ID2: <input type='text' id='" + me.pre + "alignid2' value='4N7N' size=8><br/><br/>";
+    html += "<button id='" + me.pre + "reload_align_ori'>All Matching Molecules Superposed</button>&nbsp;&nbsp;&nbsp;<button id='" + me.pre + "reload_align_refined'>Invariant Substructure Superposed</button>";
     html += "</div>";
 
     html += "<div id='" + me.pre + "dl_mol2file'>";
@@ -1036,6 +1046,14 @@ iCn3DUI.prototype.setDialogs = function() { var me = this;
     html += "<div id='" + me.pre + "dl_mmdbid'>";
     html += "MMDB ID: <input type='text' id='" + me.pre + "mmdbid' value='1TUP' size=8> ";
     html += "<button id='" + me.pre + "reload_mmdb'>Load</button>";
+    html += "</div>";
+
+    html += "<div id='" + me.pre + "dl_blast_rep_id' style='max-width:500px;'>";
+    html += "Enter a Sequence ID (or FASTA sequence) and the aligned Structure ID, which can be found using the <a href='https://blast.ncbi.nlm.nih.gov/Blast.cgi?PROGRAM=blastp&PAGE_TYPE=BlastSearch&DATABASE=pdb' target='_blank'>BLAST</a> search against the pdb database with the Sequence ID or FASTA sequence as input.<br><br> ";
+    html += "<b>Sequence ID</b> (NCBI protein accession of a sequence): <input type='text' id='" + me.pre + "query_id' value='NP_001108451.1' size=8><br> ";
+    html += "or FASTA sequence: <br><textarea id='" + me.pre + "query_fasta' rows='5' style='width: 100%; height: " + (me.MENU_HEIGHT) + "px; padding: 0px; border: 0px;'></textarea><br><br>";
+    html += "<b>Structure ID</b> (NCBI protein accession of a chain of a 3D structure): <input type='text' id='" + me.pre + "blast_rep_id' value='1TSR_A' size=8><br> ";
+    html += "<button id='" + me.pre + "reload_blast_rep_id'>Load</button>";
     html += "</div>";
 
     html += "<div id='" + me.pre + "dl_gi'>";
@@ -1208,11 +1226,11 @@ iCn3DUI.prototype.setDialogs = function() { var me = this;
 
     html += "    <div id='" + me.pre + "dl_addtrack_tabs' style='border:0px;'>";
     html += "      <ul>";
-    html += "        <li><a href='#" + me.pre + "tracktab5'>Current Selection</a></li>";
+    html += "        <li><a href='#" + me.pre + "tracktab1'>NCBI gi/Accession</a></li>";
     html += "        <li><a href='#" + me.pre + "tracktab2'>FASTA</a></li>";
     html += "        <li><a href='#" + me.pre + "tracktab3'>BED File</a></li>";
     html += "        <li><a href='#" + me.pre + "tracktab4'>Custom</a></li>";
-    html += "        <li><a href='#" + me.pre + "tracktab1'>NCBI gi/Accession</a></li>";
+    html += "        <li><a href='#" + me.pre + "tracktab5'>Current Selection</a></li>";
     html += "      </ul>";
     html += "      <div id='" + me.pre + "tracktab1'>";
     html += "NCBI gi/Accession: <input type='text' id='" + me.pre + "track_gi' placeholder='gi' size=16> <br><br>";
@@ -1291,7 +1309,7 @@ iCn3DUI.prototype.setDialogs = function() { var me = this;
     html += "      </div>";
     html += "</div>";
 
-    html += "      <div class='icn3d-box'><b>Annotations:&nbsp;</b><br><table border=0><tr>";
+    html += "      <div class='icn3d-box' style='width:520px;'><b>Annotations:&nbsp;</b><br><table border=0><tr>";
     html += "        <td style='min-width:60px;'><input type='checkbox' id='" + me.pre + "anno_all'>All&nbsp;&nbsp;</td>";
     html += "        <td style='min-width:130px;'><input type='checkbox' id='" + me.pre + "anno_cdd' checked>Conserved Domains&nbsp;&nbsp;</td>";
     html += "        <td style='min-width:60px;'><input type='checkbox' id='" + me.pre + "anno_clinvar'>ClinVar&nbsp;&nbsp;</td>";

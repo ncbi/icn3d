@@ -18,6 +18,45 @@ iCn3D.prototype.updateChainsColor = function (atom) {
     }
 };
 
+iCn3D.prototype.setMmdbChainColor = function () {
+    this.applyOriginalColor(this.hash2Atoms(this.hAtoms));
+
+    // atom color
+    var atomHash = this.unionHash(this.chemicals, this.ions);
+
+    for (var i in atomHash) {
+        var atom = this.atoms[i];
+        atom.color = this.atomColors[atom.elem] || this.defaultAtomColor;
+
+        this.atomPrevColors[i] = atom.color;
+    }
+};
+
+iCn3D.prototype.setConservationColor = function (atoms, bIdentity) {
+    for (var i in atoms) {
+        var atom = this.atoms[i];
+        atom.color = this.defaultAtomColor;
+
+        this.atomPrevColors[i] = atom.color;
+    }
+
+    for(var chainid in this.alnChainsSeq) {
+        var resObjectArray = this.alnChainsSeq[chainid];
+
+        for(var i = 0, il = resObjectArray.length; i < il; ++i) {
+            var residueid = chainid + '_' + resObjectArray[i].resi;
+
+            for(var j in this.residues[residueid]) {
+                if(atoms.hasOwnProperty(j)) {
+                    var color = (bIdentity) ? new THREE.Color(resObjectArray[i].color) : new THREE.Color(resObjectArray[i].color2);
+                    this.atoms[j].color = color;
+                    this.atomPrevColors[j] = color;
+                }
+            }
+        }
+    }
+};
+
 iCn3D.prototype.setColorByOptions = function (options, atoms, bUseInputColor) {
  if(options !== undefined) {
   if(bUseInputColor !== undefined && bUseInputColor) {
@@ -58,17 +97,7 @@ iCn3D.prototype.setColorByOptions = function (options, atoms, bUseInputColor) {
             break;
         case 'chain':
             if(this.chainsColor !== undefined && Object.keys(this.chainsColor).length > 0) { // mmdb input
-                this.applyOriginalColor(this.hash2Atoms(this.hAtoms));
-
-                // atom color
-                var atomHash = this.unionHash(this.chemicals, this.ions);
-
-                for (var i in atomHash) {
-                    var atom = this.atoms[i];
-                    atom.color = this.atomColors[atom.elem] || this.defaultAtomColor;
-
-                    this.atomPrevColors[i] = atom.color;
-                }
+                this.setMmdbChainColor();
             }
             else {
                 var index = -1, prevChain = '', colorLength = this.stdChainColors.length;
@@ -228,29 +257,12 @@ iCn3D.prototype.setColorByOptions = function (options, atoms, bUseInputColor) {
 
             break;
 
-        case 'conserved':
-            for (var i in atoms) {
-                var atom = this.atoms[i];
-                atom.color = this.defaultAtomColor;
+        case 'identity':
+            this.setConservationColor(atoms, true);
+            break;
 
-                this.atomPrevColors[i] = atom.color;
-            }
-
-            for(var chainid in this.alnChainsSeq) {
-                var resObjectArray = this.alnChainsSeq[chainid];
-
-                for(var i = 0, il = resObjectArray.length; i < il; ++i) {
-                    var residueid = chainid + '_' + resObjectArray[i].resi;
-
-                    for(var j in this.residues[residueid]) {
-                        if(atoms.hasOwnProperty(j)) {
-                            var color = new THREE.Color(resObjectArray[i].color);
-                            this.atoms[j].color = color;
-                            this.atomPrevColors[j] = color;
-                        }
-                    }
-                }
-            }
+        case 'conservation':
+            this.setConservationColor(atoms, false);
             break;
 
         case 'white':
