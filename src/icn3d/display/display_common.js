@@ -18,8 +18,9 @@ iCn3D.prototype.updateChainsColor = function (atom) {
     }
 };
 
-iCn3D.prototype.setMmdbChainColor = function () {
-    this.applyOriginalColor(this.hash2Atoms(this.hAtoms));
+iCn3D.prototype.setMmdbChainColor = function (inAtoms) {
+    var atoms = (inAtoms === undefined) ? this.hAtoms : inAtoms;
+    this.applyOriginalColor(this.hash2Atoms(atoms));
 
     // atom color
     var atomHash = this.unionHash(this.chemicals, this.ions);
@@ -33,12 +34,15 @@ iCn3D.prototype.setMmdbChainColor = function () {
 };
 
 iCn3D.prototype.setConservationColor = function (atoms, bIdentity) {
+/*
     for (var i in atoms) {
         var atom = this.atoms[i];
         atom.color = this.defaultAtomColor;
 
         this.atomPrevColors[i] = atom.color;
     }
+*/
+    this.setMmdbChainColor(atoms);
 
     for(var chainid in this.alnChainsSeq) {
         var resObjectArray = this.alnChainsSeq[chainid];
@@ -258,6 +262,10 @@ iCn3D.prototype.setColorByOptions = function (options, atoms, bUseInputColor) {
             break;
 
         case 'identity':
+            this.setConservationColor(atoms, true);
+            break;
+
+        case 'conserved': // backward-compatible, "conserved" was changed to "identity"
             this.setConservationColor(atoms, true);
             break;
 
@@ -899,12 +907,12 @@ iCn3D.prototype.applyOriginalColor = function (atoms) {
 
         if(this.chainsColor.hasOwnProperty(chainid)) {
             atom.color = this.chainsColor[chainid];
-
-            this.atomPrevColors[i] = atom.color;
         }
         else {
-            //atom.color = this.atomColors[atom.elem];
-            break;
+            atom.color = this.atomColors[atom.elem];
+            //break;
         }
+
+        this.atomPrevColors[i] = atom.color;
     }
 };
