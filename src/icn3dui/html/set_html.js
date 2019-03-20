@@ -736,7 +736,11 @@ iCn3DUI.prototype.setMenu4 = function() { var me = this;
         html += me.getRadio('mn4_clr', 'mn4_clrBfactorNorm', 'Percentile');
         html += "    </ul>";
 
-        if(me.cfg.align !== undefined || me.cfg.blast_rep_id !== undefined) {
+        if(me.cfg.align !== undefined) {
+          html += me.getRadio('mn4_clr', 'mn4_clrIdentity', 'Identity', true);
+          html += me.getRadio('mn4_clr', 'mn4_clrConserved', 'Conservation');
+        }
+        else if(me.cfg.blast_rep_id !== undefined) {
           html += me.getRadio('mn4_clr', 'mn4_clrIdentity', 'Identity');
           html += me.getRadio('mn4_clr', 'mn4_clrConserved', 'Conservation', true);
         }

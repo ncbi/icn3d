@@ -398,8 +398,7 @@ iCn3DUI.prototype.setSeqAlign = function (seqalign, alignedStructures) { var me 
                       me.consHash2[chainid2 + '_' + resi] = 1;
                   }
                   else {
-                      //color = '#0000FF';
-                      color = '#00FF00';
+                      color = '#0000FF';
                       classname = 'icn3d-ncons';
 
                       me.nconsHash1[chainid1 + '_' + id2aligninfo[j].resi] = 1;

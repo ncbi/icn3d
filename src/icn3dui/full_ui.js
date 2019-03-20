@@ -120,7 +120,7 @@ var iCn3DUI = function(cfg) {
     me.opts['pk']                 = 'residue';            //no, atom, residue, strand, chain
     me.opts['chemicalbinding']      = 'hide';               //show, hide
 
-    if(me.cfg.align !== undefined) me.opts['color'] = 'conservation';
+    if(me.cfg.align !== undefined) me.opts['color'] = 'identity';
     if(me.cfg.blast_rep_id !== undefined) me.opts['color'] = 'conservation';
     if(me.cfg.cid !== undefined) me.opts['color'] = 'atom';
 

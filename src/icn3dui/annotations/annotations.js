@@ -516,21 +516,20 @@ iCn3DUI.prototype.getAnnotationData = function() { var me = this;
                               me.fullpos2ConsTargetpos[i + nGap] = {'same': 1, 'pos': i+1, 'res': targetSeq[i], 'color': colorHexStr};
                               me.consrvResPosArray.push(i+1);
 
-                              me.icn3d.alnChainsSeq[chnid].push({'resi': i, 'color': '#FF0000', 'color2': '#' + colorHexStr});
+                              me.icn3d.alnChainsSeq[chnid].push({'resi': i+1, 'color': '#FF0000', 'color2': '#' + colorHexStr});
                           }
                           else if(me.conservativeReplacement(targetSeq[i], querySeq[target2queryHash[i]])) {
                               compText += '+';
                               me.fullpos2ConsTargetpos[i + nGap] = {'same': 0, 'pos': i+1, 'res': targetSeq[i], 'color': colorHexStr};
                               me.consrvResPosArray.push(i+1);
 
-                              //me.icn3d.alnChainsSeq[chnid].push({'resi': i, 'color': '#0000FF', 'color2': '#' + colorHexStr});
-                              me.icn3d.alnChainsSeq[chnid].push({'resi': i, 'color': '#00FF00', 'color2': '#' + colorHexStr});
+                              me.icn3d.alnChainsSeq[chnid].push({'resi': i+1, 'color': '#0000FF', 'color2': '#' + colorHexStr});
                           }
                           else {
                               compText += ' ';
                               me.fullpos2ConsTargetpos[i + nGap] = {'same': -1, 'pos': i+1, 'res': targetSeq[i], 'color': colorHexStr};
 
-                              me.icn3d.alnChainsSeq[chnid].push({'resi': i, 'color': me.GREYC, 'color2': '#' + colorHexStr});
+                              me.icn3d.alnChainsSeq[chnid].push({'resi': i+1, 'color': me.GREYC, 'color2': '#' + colorHexStr});
                           }
                       }
                       else {
@@ -999,8 +998,8 @@ iCn3DUI.prototype.showSeq = function(chnid, chnidBase, type, queryTitle, compTit
           //var color = (atom.color) ? atom.color.getHexString() : me.icn3d.defaultAtomColor;
 
           var color = '333333';
-          if(me.cfg.blast_rep_id == chnid) {
-              if(me.fullpos2ConsTargetpos !== undefined && me.fullpos2ConsTargetpos[i + nGap] !== undefined) color = me.fullpos2ConsTargetpos[i + nGap].color;
+          if(me.cfg.blast_rep_id == chnid && me.fullpos2ConsTargetpos !== undefined && me.fullpos2ConsTargetpos[i + nGap] !== undefined) {
+              color = me.fullpos2ConsTargetpos[i + nGap].color;
           }
           else {
               var atom = me.icn3d.getFirstCalphaAtomObj(me.icn3d.residues[chnid + '_' + pos]);
