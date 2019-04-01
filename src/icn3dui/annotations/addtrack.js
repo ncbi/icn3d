@@ -270,7 +270,8 @@ iCn3DUI.prototype.clickAddTrackButton = function() { var me = this;
 
        var chainid = $("#" + me.pre + "track_chainid").val();
 
-       var gi = $("#" + me.pre + "track_gi").val().toUpperCase();
+       //var gi = $("#" + me.pre + "track_gi").val().toUpperCase();
+       var gi = $("#" + me.pre + "track_gi").val();
        var title = (isNaN(gi)) ? 'Acc ' + gi : 'gi ' + gi;
 
        //var text = $("#" + me.pre + "track_text").val();

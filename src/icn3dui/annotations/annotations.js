@@ -118,11 +118,32 @@ iCn3DUI.prototype.showAnnotations = function() { var me = this;
         }
         else if(me.cfg.blast_rep_id !== undefined) { // align sequence to structure
            var url = 'https://www.ncbi.nlm.nih.gov/Structure/pwaln/pwaln.fcgi?from=querytarget';
+           var dataObj = {'targets': me.cfg.blast_rep_id, 'queries': me.cfg.query_id};
+
+           if(me.cfg.query_from_to !== undefined ) {
+               // convert from 1-based to 0-based
+               var query_from_to_array = me.cfg.query_from_to.split(':');
+               for(var i = 0, il = query_from_to_array.length; i < il; ++i) {
+                   query_from_to_array[i] = parseInt(query_from_to_array[i]) - 1;
+               }
+
+               dataObj['queries'] = me.cfg.query_id + ':' + query_from_to_array.join(':');
+           }
+
+           if(me.cfg.target_from_to !== undefined) {
+               // convert from 1-based to 0-based
+               var target_from_to_array = me.cfg.target_from_to.split(':');
+               for(var i = 0, il = target_from_to_array.length; i < il; ++i) {
+                   target_from_to_array[i] = parseInt(target_from_to_array[i]) - 1;
+               }
+
+               dataObj['targets'] = me.cfg.blast_rep_id + ':' + target_from_to_array.join(':');
+           }
 
            $.ajax({
               url: url,
               type: 'POST',
-              data : {'targets': me.cfg.blast_rep_id, 'queries': me.cfg.query_id},
+              data : dataObj,
               dataType: 'jsonp',
               //dataType: 'json',
               tryCount : 0,
@@ -345,7 +366,7 @@ iCn3DUI.prototype.getAnnotationData = function() { var me = this;
     me.setToolTip();
 
     // show the sequence and 3D structure
-    var url = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=protein&retmode=json&rettype=fasta&id=" + chnidBaseArray;
+    var url = "https://eutils-internal.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=protein&retmode=json&rettype=fasta&id=" + chnidBaseArray;
     $.ajax({
       url: url,
       dataType: 'text',

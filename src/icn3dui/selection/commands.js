@@ -1211,7 +1211,8 @@ iCn3DUI.prototype.applyCommand = function (commandStr) { var me = this;
       //"add track | chainid " + chainid + " | title " + title + " | text " + text
       var paraArray = commandOri.split(' | ');
 
-      var chainid = paraArray[1].substr(8).toUpperCase();
+      //var chainid = paraArray[1].substr(8).toUpperCase();
+      var chainid = paraArray[1].substr(8);
       var title = paraArray[2].substr(6);
       var text = paraArray[3].substr(5);
 
