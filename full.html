@@ -54,6 +54,21 @@
     var gi = params.gi;
     var blast_rep_id = params.blast_rep_id;
     var query_id = params.query_id;
+    var query_from_to, target_from_to;
+    if(blast_rep_id !== undefined) {
+      var pos1 = blast_rep_id.indexOf(':');
+      var pos2 = query_id.indexOf(':');
+      if(pos1 !== -1) {
+        target_from_to = blast_rep_id.substr(pos1 + 1);
+        blast_rep_id = blast_rep_id.substr(0, pos1);
+      }
+
+      if(pos2 !== -1) {
+        query_from_to = query_id.substr(pos2 + 1);
+        query_id = query_id.substr(0, pos2);
+      }
+    }
+
     var mmdbid = params.mmdbid;
     var mmtfid = params.mmtfid;
     var pdbid = params.pdbid;
@@ -193,10 +208,15 @@
               showanno: showanno,
               show2d: show2d,
               showsets: showsets,
-              query_id: query_id,
               command: command
           };
           if(idName !== '') cfg[idName] = idArray[i];
+
+          if(idName === 'blast_rep_id') {
+            cfg['query_id'] = query_id;
+            if(query_from_to !== undefined) cfg['query_from_to'] = query_from_to;
+            if(target_from_to !== undefined) cfg['target_from_to'] = target_from_to;
+          }
 
           if(Object.keys(options).length > 0) cfg['options'] = options;
 

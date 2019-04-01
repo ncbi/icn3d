@@ -1,4 +1,6 @@
 ## Change Log
+The production version [icn3d-2.6.1](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.6.1.zip) was release on April 1, 2019. Enabled to link from BLAST result page to iCn3D.
+
 The production version [icn3d-2.6.0](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.6.0.zip) was release on March 19, 2019. Users can now align any sequence to a hit structure by clicking "Align > Sequence to Structure" in the File menu. The default color scheme is color by sequence "Conservation" for sequence-structure or structure-structure alignments.
 
 The production version [icn3d-2.5.3](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.5.3.zip) was release on March 12, 2019. Added commands for up arraow and down arrow after picking a residue. 

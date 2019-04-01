@@ -3598,9 +3598,11 @@ iCn3DUI.prototype = {
 
            dialog.dialog( "close" );
 
-           var query_id = $("#" + me.pre + "query_id").val().toUpperCase();
+           //var query_id = $("#" + me.pre + "query_id").val().toUpperCase();
+           var query_id = $("#" + me.pre + "query_id").val();
            var query_fasta = encodeURIComponent($("#" + me.pre + "query_fasta").val());
-           var blast_rep_id = $("#" + me.pre + "blast_rep_id").val().toUpperCase();
+           //var blast_rep_id = $("#" + me.pre + "blast_rep_id").val().toUpperCase();
+           var blast_rep_id = $("#" + me.pre + "blast_rep_id").val();
 
            me.setLogCmd("load seq_struc_ids " + query_id + "," + blast_rep_id, false);
 

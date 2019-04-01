@@ -384,42 +384,7 @@ iCn3DUI.prototype = {
             me.downloadMmdb(me.cfg.mmdbid);
         }
         else if(me.cfg.gi !== undefined) {
-            var mmdbid;
-
-            // get mmdbid from gi
-            var uri = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/elink.fcgi?dbfrom=protein&db=structure&linkname=protein_structure_direct&id=" + me.cfg.gi;
-
-           $.ajax({
-              url: uri,
-              dataType: 'text',
-              cache: true,
-              tryCount : 0,
-              retryLimit : 1,
-              success: function(data) {
-                if(data.indexOf('<Link>') === -1) {
-                  alert("There are no MMDB IDs available for the gi " + me.cfg.gi);
-                }
-                else {
-                  var linkStr = data.substr(data.indexOf('<Link>'));
-                  var start = linkStr.indexOf('<Id>');
-                  var end = linkStr.indexOf('</Id>');
-                  var mmdbid = linkStr.substr(start + 4, end - start - 4);
-
-                  me.inputid = mmdbid;
-
-                  me.downloadMmdb(mmdbid);
-                }
-              },
-              error : function(xhr, textStatus, errorThrown ) {
-                this.tryCount++;
-                if (this.tryCount <= this.retryLimit) {
-                    //try again
-                    $.ajax(this);
-                    return;
-                }
-                return;
-              }
-           });
+            me.downloadGi(me.cfg.gi);
         }
         else if(me.cfg.cid !== undefined) {
            me.inputid = me.cfg.cid;
