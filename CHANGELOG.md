@@ -1,4 +1,6 @@
 ## Change Log
+The production version [icn3d-2.6.2](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.6.2.zip) was release on April 15, 2019. Enabled to show large structure such as HIV-1 capsid (3J3Q) in the basic version of iCn3D (https://www.ncbi.nlm.nih.gov/Structure/icn3d/?mmtfid=3j3q).
+
 The production version [icn3d-2.6.1](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.6.1.zip) was release on April 1, 2019. Enabled to link from BLAST result page to iCn3D.
 
 The production version [icn3d-2.6.0](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.6.0.zip) was release on March 19, 2019. Users can now align any sequence to a hit structure by clicking "Align > Sequence to Structure" in the File menu. The default color scheme is color by sequence "Conservation" for sequence-structure or structure-structure alignments.

@@ -292,7 +292,7 @@ iCn3DUI.prototype = {
         html += "<b>&nbsp;&nbsp;Color&nbsp;</b>";
         html += "<select id='" + me.pre + "color'>";
         if(me.cfg.cid === undefined) {
-            //html += "<option value='spectrum'>Spectrum</option>";
+            html += "<option value='spectrum'>Spectrum</option>";
 
             html += "<option value='secondary structure'>Secondary Structure</option>";
 

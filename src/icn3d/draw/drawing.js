@@ -62,7 +62,7 @@ iCn3D.prototype.createSphere = function (atom, defaultRadius, forceDefault, scal
           var realRadius = forceDefault ? defaultRadius :  radius * (scale ? scale : 1);
           this.radiusArraySphere.push(realRadius);
 
-          this.mdl_ghost.add(mesh);
+          if(this.cnt <= this.maxatomcnt) this.mdl_ghost.add(mesh);
       }
       else {
           this.mdl.add(mesh);
@@ -73,7 +73,7 @@ iCn3D.prototype.createSphere = function (atom, defaultRadius, forceDefault, scal
 
     if(bHighlight === 1 || bHighlight === 2) {
         if(this.bImpo) {
-            this.prevHighlightObjects_ghost.push(mesh);
+            if(this.cnt <= this.maxatomcnt) this.prevHighlightObjects_ghost.push(mesh);
         }
         else {
             this.prevHighlightObjects.push(mesh);
@@ -81,7 +81,7 @@ iCn3D.prototype.createSphere = function (atom, defaultRadius, forceDefault, scal
     }
     else {
         if(this.bImpo) {
-            this.objects_ghost.push(mesh);
+            if(this.cnt <= this.maxatomcnt) this.objects_ghost.push(mesh);
         }
         else {
             this.objects.push(mesh);
@@ -152,7 +152,7 @@ iCn3D.prototype.createCylinder = function (p0, p1, radius, color, bHighlight, co
 
           this.radiusArray.push(radius);
 
-          this.mdl_ghost.add(mesh);
+          if(this.cnt <= this.maxatomcnt) this.mdl_ghost.add(mesh);
         }
         else {
             this.mdl.add(mesh);
@@ -160,7 +160,7 @@ iCn3D.prototype.createCylinder = function (p0, p1, radius, color, bHighlight, co
 
         if(bHighlight === 2) {
             if(this.bImpo) {
-                this.prevHighlightObjects_ghost.push(mesh);
+                if(this.cnt <= this.maxatomcnt) this.prevHighlightObjects_ghost.push(mesh);
             }
             else {
                 this.prevHighlightObjects.push(mesh);
@@ -168,7 +168,7 @@ iCn3D.prototype.createCylinder = function (p0, p1, radius, color, bHighlight, co
         }
         else {
             if(this.bImpo) {
-                this.objects_ghost.push(mesh);
+                if(this.cnt <= this.maxatomcnt) this.objects_ghost.push(mesh);
             }
             else {
                 if(bPicking === undefined || bPicking) this.objects.push(mesh);
@@ -1525,7 +1525,7 @@ iCn3D.prototype.createStrand = function (atoms, num, div, fill, coilWidth, helix
     var atom, tubeAtoms = {};
 
     // test the first 30 atoms to see whether only C-alpha is available
-    this.bCalphaOnly = this.isCalphaPhosOnly(atomsAdjust, 'CA');
+    this.bCalphaOnly = this.isCalphaPhosOnly(atomsAdjust); //, 'CA');
 
     // when highlight, draw whole beta sheet and use bShowArray to show the highlight part
     var residueHash = {};
@@ -2203,18 +2203,19 @@ iCn3D.prototype.drawNucleicAcidStick = function(atomlist, bHighlight) {
                         new THREE.Vector3(end.coord.x, end.coord.y, end.coord.z), this.cylinderRadius, start.color, bHighlight);
 };
 
-iCn3D.prototype.isCalphaPhosOnly = function(atomlist, atomname1, atomname2) {
+//iCn3D.prototype.isCalphaPhosOnly = function(atomlist, atomname1, atomname2) {
+iCn3D.prototype.isCalphaPhosOnly = function(atomlist) {
       var bCalphaPhosOnly = false;
 
-      var index = 0, testLength = 30;
-      var bOtherAtoms = false;
+      var index = 0, testLength = 50; //30
+      //var bOtherAtoms = false;
+      var nOtherAtoms = 0;
       for(var i in atomlist) {
         if(index < testLength) {
-          if(atomlist[i].name !== atomname1 &&
-            (atomname2 == undefined || (atomname2 != undefined && atomlist.name !== atomname2) )
-            ) {
-            bOtherAtoms = true;
-            break;
+          if(atomlist[i].name !== "CA" && atomlist[i].name !== "P" && atomlist[i].name !== "O3'" && atomlist[i].name !== "O3*") {
+            //bOtherAtoms = true;
+            //break;
+            ++nOtherAtoms;
           }
         }
         else {
@@ -2224,7 +2225,8 @@ iCn3D.prototype.isCalphaPhosOnly = function(atomlist, atomname1, atomname2) {
         ++index;
       }
 
-      if(!bOtherAtoms) {
+      //if(!bOtherAtoms) {
+      if(nOtherAtoms < 0.5 * index) {
         bCalphaPhosOnly = true;
       }
 

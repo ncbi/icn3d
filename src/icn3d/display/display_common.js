@@ -487,7 +487,8 @@ iCn3D.prototype.applyDisplayOptions = function (options, atoms, bHighlight) { va
     for(var style in this.style2atoms) {
       // 14 styles: ribbon, strand, cylinder and plate, nucleotide cartoon, o3 trace, schematic, c alpha trace, b factor tube, lines, stick, ball and stick, sphere, dot, nothing
       var atomHash = this.style2atoms[style];
-      var bPhosphorusOnly = this.isCalphaPhosOnly(this.hash2Atoms(atomHash), "O3'", "O3*");
+      //var bPhosphorusOnly = this.isCalphaPhosOnly(this.hash2Atoms(atomHash), "O3'", "O3*") || this.isCalphaPhosOnly(this.hash2Atoms(atomHash), "P");
+      var bPhosphorusOnly = this.isCalphaPhosOnly(this.hash2Atoms(atomHash));
 
       //if(style === 'ribbon') {
       if(style === 'ribbon' && (!bHighlight || (bHighlight && !bOnlySideChains))) {
@@ -572,6 +573,10 @@ iCn3D.prototype.applyDisplayOptions = function (options, atoms, bHighlight) { va
         this.createSphereRepresentation(this.hash2Atoms(atomHash), this.sphereRadius, false, this.dotSphereScale, bHighlight);
       }
     } // end for loop
+
+    if(this.cnt > this.maxmaxatomcnt) { // release memory
+        this.init_base();
+    }
 
     // hide the previous labels
     if(this.labels !== undefined && Object.keys(this.labels).length > 0) {

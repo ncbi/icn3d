@@ -1173,10 +1173,10 @@ iCn3DUI.prototype.applyCommand = function (commandStr) { var me = this;
 
     // add label Text | x 40.45 y 24.465000000000003 z 53.48 | size 40 | color #ffff00 | background #cccccc | type custom
     var x,y,z, size, color, background, type;
+    var bPosition = false;
     for(var i = 1, il = paraArray.length; i < il; ++i) {
         var wordArray = paraArray[i].split(' ');
 
-        var bPosition = false;
         if(wordArray[0] == 'x') {
             bPosition = true;
             x = wordArray[1];
@@ -1195,13 +1195,13 @@ iCn3DUI.prototype.applyCommand = function (commandStr) { var me = this;
         else if(wordArray[0] == 'type') {
             type = paraArray[i].substr(paraArray[i].lastIndexOf(' ') + 1);
         }
+    }
 
-        if(!bPosition) {
-          var position = me.icn3d.centerAtoms(me.icn3d.hash2Atoms(me.icn3d.hAtoms));
-          x = position.center.x;
-          y = position.center.y;
-          z = position.center.z;
-        }
+    if(!bPosition) {
+      var position = me.icn3d.centerAtoms(me.icn3d.hash2Atoms(me.icn3d.hAtoms));
+      x = position.center.x;
+      y = position.center.y;
+      z = position.center.z;
     }
 
     me.addLabel(text, x,y,z, size, color, background, type);

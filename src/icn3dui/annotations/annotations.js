@@ -2138,7 +2138,7 @@ iCn3DUI.prototype.showCddSiteAll = function() { var me = this;
             html2 = html;
             html3 = html;
 
-            var siteArray = data.data[0].sites;
+            var siteArray = data.data[chainI].sites;
             var indexl = (siteArray !== undefined) ? siteArray.length : 0;
 
             for(var index = 0; index < indexl; ++index) {

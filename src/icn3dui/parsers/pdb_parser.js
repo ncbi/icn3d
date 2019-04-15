@@ -112,7 +112,7 @@ iCn3DUI.prototype.loadPdbData = function(data) {
           $("#" + me.pre + "emmapWrapper3").hide();
       }
 
-      var bCalphaOnly = me.icn3d.isCalphaPhosOnly(me.icn3d.hash2Atoms(me.icn3d.proteins), 'CA');
+      var bCalphaOnly = me.icn3d.isCalphaPhosOnly(me.icn3d.hash2Atoms(me.icn3d.proteins));//, 'CA');
 
       var calphaonly = (bCalphaOnly) ? '1' : '0';
 
