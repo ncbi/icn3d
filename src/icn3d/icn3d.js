@@ -1141,7 +1141,7 @@ iCn3D.prototype = {
         return atom0.coord.distanceToSquared(atom1.coord) < 1.3 * r * r;
     },
 
-    init: function () {
+    init_base: function () {
         this.structures = {}; // structure name -> array of chains
         this.chains = {}; // structure_chain name -> atom hash
         this.residues = {}; // structure_chain_resi name -> atom hash
@@ -1176,8 +1176,6 @@ iCn3D.prototype = {
 
         this.residueId2Name = {}; // structure_chain_resi -> one letter abbreviation
 
-        this.molTitle = "";
-
         this.atoms = {};
         this.dAtoms = {};
         this.hAtoms = {};
@@ -1193,7 +1191,6 @@ iCn3D.prototype = {
 
         this.hbondpnts = [];
         this.stabilizerpnts = [];
-        this.ssbondpnts = {}; // disulfide bonds for each structure
         //this.ncbondpnts = []; // non-covalent bonds
 
         this.doublebonds = {};
@@ -1208,15 +1205,21 @@ iCn3D.prototype = {
         this.lines = {};     // hash of name -> a list of solid or dashed lines. Each line contains 'position1', 'position2', 'color', and a boolean of 'dashed'
                             // line name could be custom, hbond, ssbond, distance
 
+        this.rotateCount = 0;
+        this.rotateCountMax = 20;
+    },
+
+    init: function () {
+        this.init_base();
+
+        this.molTitle = "";
+
+        this.ssbondpnts = {}; // disulfide bonds for each structure
+
         this.inputid = {"idtype": undefined, "id":undefined}; // support pdbid, mmdbid
 
         this.biomtMatrices = [];
         this.bAssembly = true;
-
-        this.rotateCount = 0;
-        this.rotateCountMax = 20;
-
-        this.targetChainsSeq = {}; // hold the resi and color information of the target chain when comparing a sequence to a structure
     },
 
     reinitAfterLoad: function () {

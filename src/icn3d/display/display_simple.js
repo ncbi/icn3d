@@ -32,7 +32,7 @@ iCn3D.prototype.draw = function () { var me = this;
     }
 
     // show the hAtoms
-    if(this.hAtoms !== undefined && Object.keys(this.hAtoms).length > 0 && Object.keys(this.hAtoms).length < Object.keys(this.atoms).length) {
+    if(this.cnt <= this.maxmaxatomcnt && this.hAtoms !== undefined && Object.keys(this.hAtoms).length > 0 && Object.keys(this.hAtoms).length < Object.keys(this.atoms).length) {
         this.removeHlObjects();
         if(this.bShowHighlight === undefined || this.bShowHighlight) this.addHlObjects();
     }

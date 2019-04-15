@@ -177,7 +177,7 @@ iCn3DUI.prototype.downloadAlignment = function (align) { var me = this;
                 me.openDialog(me.pre + 'dl_alignment', 'Select residues in aligned sequences');
             }
 
-            if(me.cfg.show2d !== undefined && me.cfg.show2d) {
+            if(me.cfg.show2d !== undefined && me.cfg.show2d && me.bFullUi) {
                 me.set2DDiagramsForAlign(me.mmdbidArray[0].toUpperCase(), me.mmdbidArray[1].toUpperCase());
             }
 
