@@ -1100,7 +1100,7 @@ iCn3DUI.prototype.loadAtomDataIn = function (data, id, type, seqalign) { var me 
 
     me.icn3d.cnt = serial;
 
-    if(me.icn3d.cnt > me.icn3d.maxatomcnt) {
+    if(me.icn3d.cnt > me.icn3d.maxatomcnt || (me.icn3d.biomtMatrices !== undefined && me.icn3d.biomtMatrices.length * me.icn3d.cnt > 10 * me.icn3d.maxatomcnt) ) {
         me.opts['proteins'] = 'c alpha trace'; //ribbon, strand, cylinder and plate, schematic, c alpha trace, b factor tube, lines, stick, ball and stick, sphere, nothing
         me.opts['nucleotides'] = 'o3 trace'; //nucleotide cartoon, o3 trace, schematic, lines, stick,
     }

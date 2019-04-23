@@ -787,11 +787,12 @@ iCn3D.prototype.setCamera = function() {
     this.cam = this.cams[this.opts.camera.toLowerCase()];
 
     if(this.cam === this.perspectiveCamera) {
+        var factor = (this.biomtMatrices !== undefined && this.biomtMatrices.length * this.cnt > 10 * this.maxatomcnt) ? 1 : 2;
         if(this.cam_z > 0) {
-          this.cam.position.z = this.maxD * 2; // forperspective, the z positionshould be large enough to see the whole molecule
+          this.cam.position.z = this.maxD * factor; // forperspective, the z positionshould be large enough to see the whole molecule
         }
         else {
-          this.cam.position.z = -this.maxD * 2; // forperspective, the z positionshould be large enough to see the whole molecule
+          this.cam.position.z = -this.maxD * factor; // forperspective, the z positionshould be large enough to see the whole molecule
         }
 
         if(this.opts['slab'] === 'yes') {
@@ -805,7 +806,13 @@ iCn3D.prototype.setCamera = function() {
         this.controls = new THREE.TrackballControls( this.cam, document.getElementById(this.id), this );
     }
     else if (this.cam === this.orthographicCamera){
-        this.cam.right = this.maxD/2 * 2.5;
+        if(this.biomtMatrices !== undefined && this.biomtMatrices.length * this.cnt > 10 * this.maxatomcnt) {
+            this.cam.right = this.maxD/2 * 1.5;
+        }
+        else {
+            this.cam.right = this.maxD/2 * 2.5;
+        }
+
         this.cam.left = -this.cam.right;
         this.cam.top = this.cam.right /this.container.whratio;
         this.cam.bottom = -this.cam.right /this.container.whratio;
