@@ -365,8 +365,39 @@ iCn3DUI.prototype.getAnnotationData = function() { var me = this;
 
     me.setToolTip();
 
+    // set me.chain2gi
+    me.chain2gi = {};
+
+    // get gi from acc
+    var url2 = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi?db=protein&retmode=json&id=" + chnidBaseArray;
+
+    $.ajax({
+      url: url2,
+      dataType: 'json',
+      cache: true,
+      tryCount : 0,
+      retryLimit : 1,
+      success: function(data2) {
+        for(var id in data2.result) {
+          if(id !== 'uids') {
+            me.chain2gi[data2.result[id].caption] = id;
+          }
+        }
+      },
+      error : function(xhr, textStatus, errorThrown ) {
+        this.tryCount++;
+        if (this.tryCount <= this.retryLimit) {
+            //try again
+            $.ajax(this);
+            //return;
+        }
+
+        //return;
+      }
+    });
+
     // show the sequence and 3D structure
-    var url = "https://eutils-internal.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=protein&retmode=json&rettype=fasta&id=" + chnidBaseArray;
+    var url = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=protein&retmode=json&rettype=fasta&id=" + chnidBaseArray;
     $.ajax({
       url: url,
       dataType: 'text',
@@ -1378,7 +1409,7 @@ iCn3DUI.prototype.showClinVarLabelOn3D = function(chnid) { var me = this;
       me.icn3d.draw();
 };
 
-iCn3DUI.prototype.getSnpLine = function(line, totalLineNum, resi2snp, resi2rsnum, resi2clinAllele, resi2disease, resi2index, resi2sig, posarray, posClinArray, bStartEndRes, chnid, bOverview, bClinvar, bTitleOnly) {
+iCn3DUI.prototype.getSnpLine = function(line, totalLineNum, resi2snp, resi2rsnum, resi2clinAllele, resi2disease, resi2index, resi2sig, posarray, posClinArray, bStartEndRes, chnid, bOverview, bClinvar, bTitleOnly, bSnpOnly) {
     var me = this;
 
     var html = '';
@@ -1415,7 +1446,7 @@ iCn3DUI.prototype.getSnpLine = function(line, totalLineNum, resi2snp, resi2rsnum
             ++snpCnt;
 
             var snpType = '', allDiseaseTitle = '';
-            for(var j = 0, jl = resi2snp[i].length; j < jl; ++j) {
+            for(var j = 0, jl = resi2snp[i].length; j < jl && !bSnpOnly; ++j) {
                 var diseaseArray = resi2disease[i][j].split('; ');
                 var sigArray = resi2sig[i][j].split('; ');
 
@@ -1425,12 +1456,6 @@ iCn3DUI.prototype.getSnpLine = function(line, totalLineNum, resi2snp, resi2rsnum
                         diseaseTitle += diseaseArray[k] + ' (' + sigArray[k] + '); ';
                     }
                 }
-
-/*
-                if(diseaseTitle != '') {
-                    snpTypeHash[i] = 'icn3d-clinvar';
-                }
-*/
 
                 if(diseaseTitle != '') {
                     snpTypeHash[i] = 'icn3d-clinvar';
@@ -1454,12 +1479,6 @@ iCn3DUI.prototype.getSnpLine = function(line, totalLineNum, resi2snp, resi2rsnum
             if(snpTypeHash[i] == 'icn3d-clinvar' || snpTypeHash[i] == 'icn3d-clinvar-path') {
                 ++clinvarCnt;
             }
-
-/*
-            if(allDiseaseTitle != '') {
-                ++clinvarCnt;
-            }
-*/
         }
     }
 
@@ -1475,7 +1494,7 @@ iCn3DUI.prototype.getSnpLine = function(line, totalLineNum, resi2snp, resi2rsnum
         return '';
     }
 
-    if(clinvarCnt == 0) {
+    if(clinvarCnt == 0 && bClinvar) {
         $("#" + me.pre + 'dt_clinvar_' + chnid).html('');
         $("#" + me.pre + 'ov_clinvar_' + chnid).html('');
         $("#" + me.pre + 'tt_clinvar_' + chnid).html('');
@@ -1486,10 +1505,10 @@ iCn3DUI.prototype.getSnpLine = function(line, totalLineNum, resi2snp, resi2rsnum
     var cnt = bClinvar ? clinvarCnt : snpCnt;
 
     if(clinvarCnt == 0) {
-        me.bShowClinvar = false;
+        me.bClinvarCnt = false;
     }
     else {
-        me.bShowClinvar = true;
+        me.bClinvarCnt = true;
     }
 
     //var start = bStartEndRes ? me.baseResi[chnid] + 1 : '';
@@ -1511,6 +1530,7 @@ iCn3DUI.prototype.getSnpLine = function(line, totalLineNum, resi2snp, resi2rsnum
     var prevLineWidth = 0;
     var widthPerRes = 1;
 
+
     for(var i = 1, il = me.giSeq[chnid].length; i <= il; ++i) {
         if(bOverview) {
             if(resi2index[i] !== undefined) {
@@ -1529,26 +1549,20 @@ iCn3DUI.prototype.getSnpLine = function(line, totalLineNum, resi2snp, resi2rsnum
                 for(var j = 0, jl = resi2snp[i].length; j < jl; ++j) {
                     snpTitle += resi2snp[i][j];
 
-                    var diseaseArray = resi2disease[i][j].split('; ');
-                    var sigArray = resi2sig[i][j].split('; ');
+                    if(!bSnpOnly) {
+                        var diseaseArray = resi2disease[i][j].split('; ');
+                        var sigArray = resi2sig[i][j].split('; ');
 
-                    var diseaseTitle = '';
-                    for(var k = 0, kl = diseaseArray.length; k < kl; ++k) {
-                        if(diseaseArray[k] != '' && diseaseArray[k] != 'not specified' && diseaseArray[k] != 'not provided') {
-                            diseaseTitle += diseaseArray[k] + ' (' + sigArray[k] + '); ';
+                        var diseaseTitle = '';
+                        for(var k = 0, kl = diseaseArray.length; k < kl; ++k) {
+                            if(diseaseArray[k] != '' && diseaseArray[k] != 'not specified' && diseaseArray[k] != 'not provided') {
+                                diseaseTitle += diseaseArray[k] + ' (' + sigArray[k] + '); ';
+                            }
                         }
+
+                        allDiseaseTitle += diseaseTitle + ' | ';
                     }
-
-                    //if(diseaseTitle != '') {
-                    //    snpType = 'icn3d-clinvar';
-                    //}
-
-                    allDiseaseTitle += diseaseTitle + ' | ';
                 }
-
-                //if(allDiseaseTitle.indexOf('Pathogenic') != -1) {
-                //    snpType = 'icn3d-clinvar-path';
-                //}
 
                 html += me.insertGapOverview(chnid, i-1);
 
@@ -1620,41 +1634,48 @@ iCn3DUI.prototype.getSnpLine = function(line, totalLineNum, resi2snp, resi2rsnum
 
                         snpTitle += pos + c + '>' + resi2snp[i][j];
 
-                        // disease and significace
-                        var diseaseArray = resi2disease[i][j].split('; ');
-                        var sigArray = resi2sig[i][j].split('; ');
+                        if(!bSnpOnly) {
+                            // disease and significace
+                            var diseaseArray = resi2disease[i][j].split('; ');
+                            var sigArray = resi2sig[i][j].split('; ');
 
-                        var diseaseTitle = '';
-                        var index = 0;
-                        for(var k = 0, kl = diseaseArray.length; k < kl; ++k) {
-                            if(diseaseArray[k] != '' && diseaseArray[k] != 'not specified' && diseaseArray[k] != 'not provided') {
-                                if(index > 0) {
-                                    diseaseTitle += '; ';
-                                }
-                                else {
-                                    if( j === 0 || j === 1) diseaseStr = 'disease="' + diseaseArray[k] + '"';
-                                }
+                            var diseaseTitle = '';
+                            var index = 0;
+                            for(var k = 0, kl = diseaseArray.length; k < kl; ++k) {
+                                if(diseaseArray[k] != '' && diseaseArray[k] != 'not specified' && diseaseArray[k] != 'not provided') {
+                                    if(index > 0) {
+                                        diseaseTitle += '; ';
+                                    }
+                                    else {
+                                        if( j === 0 || j === 1) diseaseStr = 'disease="' + diseaseArray[k] + '"';
+                                    }
 
-                                diseaseTitle += diseaseArray[k] + ' (' + sigArray[k] + ')';
-                                ++index;
+                                    diseaseTitle += diseaseArray[k] + ' (' + sigArray[k] + ')';
+                                    ++index;
+                                }
+                            }
+
+                            //resi2rsnum, resi2clinAllele,
+
+                            if(diseaseTitle != '') {
+                                //snpType = 'icn3d-clinvar';
+
+                                snpTitle += ': ' + diseaseTitle;
+                                snpTitle += "<br>Links: <a href='https://www.ncbi.nlm.nih.gov/clinvar/?term=" + resi2clinAllele[i][j] + "[AlleleID]' target='_blank'>ClinVar</a>, <a href='https://www.ncbi.nlm.nih.gov/snp/?term=" + resi2rsnum[i][j] + "' target='_blank'>dbSNP (rs" + resi2rsnum[i][j] + ")</a>";
+                            }
+                            else {
+                                snpTitle += "<br>Link: <a href='https://www.ncbi.nlm.nih.gov/snp/?term=" + resi2rsnum[i][j] + "' target='_blank'>dbSNP (rs" + resi2rsnum[i][j] + ")</a>"
+                            }
+
+                            if(j < jl - 1) {
+                                //if(j < 1) snpStr += ';';
+                                snpTitle += '<br><br>';
                             }
                         }
-
-                        //resi2rsnum, resi2clinAllele,
-
-                        if(diseaseTitle != '') {
-                            //snpType = 'icn3d-clinvar';
-
-                            snpTitle += ': ' + diseaseTitle;
-                            snpTitle += "<br>Links: <a href='https://www.ncbi.nlm.nih.gov/clinvar/?term=" + resi2clinAllele[i][j] + "[AlleleID]' target='_blank'>ClinVar</a>, <a href='https://www.ncbi.nlm.nih.gov/snp/?term=" + resi2rsnum[i][j] + "' target='_blank'>dbSNP (rs" + resi2rsnum[i][j] + ")</a>";
-                        }
-                        else {
-                            snpTitle += "<br>Link: <a href='https://www.ncbi.nlm.nih.gov/snp/?term=" + resi2rsnum[i][j] + "' target='_blank'>dbSNP (rs" + resi2rsnum[i][j] + ")</a>"
-                        }
-
-                        if(j < jl - 1) {
-                            //if(j < 1) snpStr += ';';
-                            snpTitle += '<br><br>';
+                        else { //if(bSnpOnly) {
+                            if(j < jl - 1) {
+                                snpTitle += '<br>';
+                            }
                         }
                     }
 
@@ -1706,10 +1727,6 @@ iCn3DUI.prototype.getSnpLine = function(line, totalLineNum, resi2snp, resi2rsnum
                     if(diseaseCnt > shownResCnt && line == 3) snpStr += '..';
                 } // else { // if(bClinvar)
 
-                //if(snpTitle.indexOf('Pathogenic') != -1) {
-                //    snpType = 'icn3d-clinvar-path';
-                //}
-
                 snpTitle += '</div>';
 
                 if(bClinvar) {
@@ -1735,7 +1752,12 @@ iCn3DUI.prototype.getSnpLine = function(line, totalLineNum, resi2snp, resi2rsnum
                         html += '<span>-</span>';
                     }
                     else {
-                        html += '<span id="' + pre + '_' + me.pre + chnid + '_' + pos + '" label title="' + snpTitle + '" ' + diseaseStr + ' class="icn3d-tooltip icn3d-residue ' + currSnpTypeHash[i] + '">' + snpStr + '</span>';
+                        if(!bSnpOnly) {
+                            html += '<span id="' + pre + '_' + me.pre + chnid + '_' + pos + '" label title="' + snpTitle + '" ' + diseaseStr + ' class="icn3d-tooltip icn3d-residue ' + currSnpTypeHash[i] + '">' + snpStr + '</span>';
+                        }
+                        else {
+                            html += '<span id="' + pre + '_' + me.pre + chnid + '_' + pos + '" label title="' + snpTitle + '" class="icn3d-residue ' + currSnpTypeHash[i] + '">' + snpStr + '</span>';
+                        }
                     }
                 }
               } // if(!bClinvar && line == 1) {
@@ -1760,6 +1782,161 @@ iCn3DUI.prototype.getSnpLine = function(line, totalLineNum, resi2snp, resi2rsnum
     return html;
 };
 
+iCn3DUI.prototype.processSnpClinvar = function(data, chnid, chnidBase, bSnpOnly) {
+    var me = this;
+
+    var html = '<div id="' + me.pre + chnid + '_snpseq_sequence" class="icn3d-dl_sequence">';
+    var html2 = html;
+    var html3 = html;
+
+    var htmlClinvar = '<div id="' + me.pre + chnid + '_clinvarseq_sequence" class="icn3d-dl_sequence">';
+    var htmlClinvar2 = htmlClinvar;
+    var htmlClinvar3 = htmlClinvar;
+
+    var lineArray = data.split('\n');
+
+    var resi2snp = {};
+    var resi2index = {};
+    var resi2disease = {};
+    me.resi2disease_nonempty[chnid] = {};
+    var resi2sig = {};
+
+    var resi2rsnum = {};
+    var resi2clinAllele = {};
+
+    var posHash = {}, posClinHash = {};
+
+    var prevSnpStr = '';
+    for(var i = 0, il = lineArray.length; i < il; ++i) {
+     //bSnpOnly: false
+     //1310770    13    14    14Y>H    368771578    150500    Hereditary cancer-predisposing syndrome; Li-Fraumeni syndrome; not specified; Li-Fraumeni syndrome 1    Likely benign; Uncertain significance; Uncertain significance; Uncertain significance    1TSR_A    120407068    NP_000537.3
+     //Pdb_gi, Pos from, Pos to, Pos & Amino acid change, rs#, ClinVar Allele ID, Disease name, Clinical significance, master_gi, master_accession.version
+
+     //bSnpOnly: true
+     //1310770    13    14    14Y>H
+
+     if(lineArray[i] != '') {
+      var fieldArray = lineArray[i].split('\t');
+
+      var snpStr = fieldArray[3];
+
+      if(snpStr == prevSnpStr) continue;
+      prevSnpStr = snpStr;
+
+      var resiStr = snpStr.substr(0, snpStr.length - 3);
+
+      var resi = Math.round(resiStr);
+
+      var currRes = snpStr.substr(snpStr.length - 3, 1);
+      var snpRes = snpStr.substr(snpStr.length - 1, 1);
+
+      var rsnum = bSnpOnly ? '' : fieldArray[4];
+      var clinAllele = bSnpOnly ? '' : fieldArray[5];
+      var disease = bSnpOnly ? '' : fieldArray[6];  // When more than 2+ diseases, they are separated by "; "
+                                    // Some are "not specified", "not provided"
+      var clinSig = bSnpOnly ? '' : fieldArray[7];     // Clinical significance, When more than 2+ diseases, they are separated by "; "
+
+      // "*" means terminating codon, "-" means deleted codon
+      //if(currRes !== '-' && currRes !== '*' && snpRes !== '-' && snpRes !== '*') {
+            posHash[resi + me.baseResi[chnid]] = 1;
+            if(disease != '') posClinHash[resi + me.baseResi[chnid]] = 1;
+            resi2index[resi] = i + 1;
+
+            if(resi2snp[resi] === undefined) {
+                resi2snp[resi] = [];
+            }
+            resi2snp[resi].push(snpRes);
+
+            if(resi2rsnum[resi] === undefined) {
+                resi2rsnum[resi] = [];
+            }
+            resi2rsnum[resi].push(rsnum);
+
+            if(resi2clinAllele[resi] === undefined) {
+                resi2clinAllele[resi] = [];
+            }
+            resi2clinAllele[resi].push(clinAllele);
+
+            if(resi2disease[resi] === undefined) {
+                resi2disease[resi] = [];
+            }
+            resi2disease[resi].push(disease);
+
+            if(disease != '') {
+                if(me.resi2disease_nonempty[chnid][resi] === undefined) {
+                    me.resi2disease_nonempty[chnid][resi] = [];
+                }
+                me.resi2disease_nonempty[chnid][resi].push(disease);
+            }
+
+            if(resi2sig[resi] === undefined) {
+                resi2sig[resi] = [];
+            }
+            resi2sig[resi].push(clinSig);
+
+      //}
+     }
+    }
+
+    var posarray = Object.keys(posHash);
+    var posClinArray = Object.keys(posClinHash);
+
+    var bClinvar = false;
+
+    html += me.getSnpLine(1, 3, resi2snp, resi2rsnum, resi2clinAllele, resi2disease, resi2index, resi2sig, posarray, posClinArray, 1, chnid, false, bClinvar, undefined, bSnpOnly);
+    html += me.getSnpLine(2, 3, resi2snp, resi2rsnum, resi2clinAllele, resi2disease, resi2index, resi2sig, posarray, posClinArray, 0, chnid, false, bClinvar, undefined, bSnpOnly);
+    html += me.getSnpLine(3, 3, resi2snp, resi2rsnum, resi2clinAllele, resi2disease, resi2index, resi2sig, posarray, posClinArray, 0, chnid, false, bClinvar, undefined, bSnpOnly);
+
+    html3 += me.getSnpLine(1, 3, resi2snp, resi2rsnum, resi2clinAllele, resi2disease, resi2index, resi2sig, posarray, posClinArray, 1, chnid, false, bClinvar, true, bSnpOnly);
+    html3 += me.getSnpLine(2, 3, resi2snp, resi2rsnum, resi2clinAllele, resi2disease, resi2index, resi2sig, posarray, posClinArray, 0, chnid, false, bClinvar, true, bSnpOnly);
+    html3 += me.getSnpLine(3, 3, resi2snp, resi2rsnum, resi2clinAllele, resi2disease, resi2index, resi2sig, posarray, posClinArray, 0, chnid, false, bClinvar, true, bSnpOnly);
+
+    html2 += me.getSnpLine(1, 3, resi2snp, resi2rsnum, resi2clinAllele, resi2disease, resi2index, resi2sig, posarray, posClinArray, 1, chnid, true, bClinvar, undefined, bSnpOnly);
+
+    html += '</div>';
+    html2 += '</div>';
+    html3 += '</div>';
+
+    $("#" + me.pre + 'dt_snp_' + chnid).html(html);
+    $("#" + me.pre + 'ov_snp_' + chnid).html(html2);
+    $("#" + me.pre + 'tt_snp_' + chnid).html(html3);
+
+    if(!bSnpOnly && me.bClinvarCnt) {
+        bClinvar = true;
+
+        htmlClinvar += me.getSnpLine(1, 3, resi2snp, resi2rsnum, resi2clinAllele, resi2disease, resi2index, resi2sig, posarray, posClinArray, 1, chnid, false, bClinvar, undefined, bSnpOnly);
+        htmlClinvar += me.getSnpLine(2, 3, resi2snp, resi2rsnum, resi2clinAllele, resi2disease, resi2index, resi2sig, posarray, posClinArray, 0, chnid, false, bClinvar, undefined, bSnpOnly);
+        htmlClinvar += me.getSnpLine(3, 3, resi2snp, resi2rsnum, resi2clinAllele, resi2disease, resi2index, resi2sig, posarray, posClinArray, 0, chnid, false, bClinvar, undefined, bSnpOnly);
+
+        htmlClinvar3 += me.getSnpLine(1, 3, resi2snp, resi2rsnum, resi2clinAllele, resi2disease, resi2index, resi2sig, posarray, posClinArray, 1, chnid, false, bClinvar, true, bSnpOnly);
+        htmlClinvar3 += me.getSnpLine(2, 3, resi2snp, resi2rsnum, resi2clinAllele, resi2disease, resi2index, resi2sig, posarray, posClinArray, 0, chnid, false, bClinvar, true, bSnpOnly);
+        htmlClinvar3 += me.getSnpLine(3, 3, resi2snp, resi2rsnum, resi2clinAllele, resi2disease, resi2index, resi2sig, posarray, posClinArray, 0, chnid, false, bClinvar, true, bSnpOnly);
+
+        htmlClinvar2 += me.getSnpLine(1, 3, resi2snp, resi2rsnum, resi2clinAllele, resi2disease, resi2index, resi2sig, posarray, posClinArray, 1, chnid, true, bClinvar, undefined, bSnpOnly);
+
+        htmlClinvar += '</div>';
+        htmlClinvar2 += '</div>';
+        htmlClinvar3 += '</div>';
+
+        $("#" + me.pre + 'dt_clinvar_' + chnid).html(htmlClinvar);
+        $("#" + me.pre + 'ov_clinvar_' + chnid).html(htmlClinvar2);
+        $("#" + me.pre + 'tt_clinvar_' + chnid).html(htmlClinvar3);
+
+        me.navClinVar(chnid, chnidBase);
+    }
+    else {
+        $("#" + me.pre + 'dt_clinvar_' + chnid).html('');
+        $("#" + me.pre + 'ov_clinvar_' + chnid).html('');
+        $("#" + me.pre + 'tt_clinvar_' + chnid).html('');
+    }
+
+    // add here after the ajax call
+    me.enableHlSeq();
+
+    me.bAjaxSnpClinvar = true;
+    if(me.deferredSnpClinvar !== undefined) me.deferredSnpClinvar.resolve();
+};
+
 iCn3DUI.prototype.showSnpClinvar = function(chnid, chnidBase) {
     var me = this;
 
@@ -1772,162 +1949,51 @@ iCn3DUI.prototype.showSnpClinvar = function(chnid, chnidBase) {
       tryCount : 0,
       retryLimit : 1,
       success: function(data) {
-          if(data != "") {
-            var html = '<div id="' + me.pre + chnid + '_snpseq_sequence" class="icn3d-dl_sequence">';
-            var html2 = html;
-            var html3 = html;
-
-            var htmlClinvar = '<div id="' + me.pre + chnid + '_clinvarseq_sequence" class="icn3d-dl_sequence">';
-            var htmlClinvar2 = htmlClinvar;
-            var htmlClinvar3 = htmlClinvar;
-
-            var lineArray = data.split('\n');
-
-            var resi2snp = {};
-            var resi2index = {};
-            var resi2disease = {};
-            me.resi2disease_nonempty[chnid] = {};
-            var resi2sig = {};
-
-            var resi2rsnum = {};
-            var resi2clinAllele = {};
-
-            var posHash = {}, posClinHash = {};
-
-            var prevSnpStr = '';
-            for(var i = 0, il = lineArray.length; i < il; ++i) {
-             //1310770    13    14    14Y>H    368771578    150500    Hereditary cancer-predisposing syndrome; Li-Fraumeni syndrome; not specified; Li-Fraumeni syndrome 1    Likely benign; Uncertain significance; Uncertain significance; Uncertain significance    1TSR_A    120407068    NP_000537.3
-             //Pdb_gi, Pos from, Pos to, Pos & Amino acid change, rs#, ClinVar Allele ID, Disease name, Clinical significance, master_gi, master_accession.version
-
-             if(lineArray[i] != '') {
-              var fieldArray = lineArray[i].split('\t');
-
-              var snpStr = fieldArray[3];
-
-              if(snpStr == prevSnpStr) continue;
-              prevSnpStr = snpStr;
-
-              var resiStr = snpStr.substr(0, snpStr.length - 3);
-
-              var resi = Math.round(resiStr);
-
-              var currRes = snpStr.substr(snpStr.length - 3, 1);
-              var snpRes = snpStr.substr(snpStr.length - 1, 1);
-
-              var rsnum = fieldArray[4];
-              var clinAllele = fieldArray[5];
-              var disease = fieldArray[6];  // When more than 2+ diseases, they are separated by "; "
-                                            // Some are "not specified", "not provided"
-              var clinSig = fieldArray[7];     // Clinical significance, When more than 2+ diseases, they are separated by "; "
-
-              // "*" means terminating codon, "-" means deleted codon
-              //if(currRes !== '-' && currRes !== '*' && snpRes !== '-' && snpRes !== '*') {
-                    posHash[resi + me.baseResi[chnid]] = 1;
-                    if(disease != '') posClinHash[resi + me.baseResi[chnid]] = 1;
-                    resi2index[resi] = i + 1;
-
-                    if(resi2snp[resi] === undefined) {
-                        resi2snp[resi] = [];
-                    }
-                    resi2snp[resi].push(snpRes);
-
-                    if(resi2rsnum[resi] === undefined) {
-                        resi2rsnum[resi] = [];
-                    }
-                    resi2rsnum[resi].push(rsnum);
-
-                    if(resi2clinAllele[resi] === undefined) {
-                        resi2clinAllele[resi] = [];
-                    }
-                    resi2clinAllele[resi].push(clinAllele);
-
-                    if(resi2disease[resi] === undefined) {
-                        resi2disease[resi] = [];
-                    }
-                    resi2disease[resi].push(disease);
-
-                    if(disease != '') {
-                        if(me.resi2disease_nonempty[chnid][resi] === undefined) {
-                            me.resi2disease_nonempty[chnid][resi] = [];
-                        }
-                        me.resi2disease_nonempty[chnid][resi].push(disease);
-                    }
-
-                    if(resi2sig[resi] === undefined) {
-                        resi2sig[resi] = [];
-                    }
-                    resi2sig[resi].push(clinSig);
-
-              //}
-             }
-            }
-
-            var posarray = Object.keys(posHash);
-            var posClinArray = Object.keys(posClinHash);
-
-            var bClinvar = false;
-
-            html += me.getSnpLine(1, 3, resi2snp, resi2rsnum, resi2clinAllele, resi2disease, resi2index, resi2sig, posarray, posClinArray, 1, chnid, false, bClinvar);
-            html += me.getSnpLine(2, 3, resi2snp, resi2rsnum, resi2clinAllele, resi2disease, resi2index, resi2sig, posarray, posClinArray, 0, chnid, false, bClinvar);
-            html += me.getSnpLine(3, 3, resi2snp, resi2rsnum, resi2clinAllele, resi2disease, resi2index, resi2sig, posarray, posClinArray, 0, chnid, false, bClinvar);
-
-            html3 += me.getSnpLine(1, 3, resi2snp, resi2rsnum, resi2clinAllele, resi2disease, resi2index, resi2sig, posarray, posClinArray, 1, chnid, false, bClinvar, true);
-            html3 += me.getSnpLine(2, 3, resi2snp, resi2rsnum, resi2clinAllele, resi2disease, resi2index, resi2sig, posarray, posClinArray, 0, chnid, false, bClinvar, true);
-            html3 += me.getSnpLine(3, 3, resi2snp, resi2rsnum, resi2clinAllele, resi2disease, resi2index, resi2sig, posarray, posClinArray, 0, chnid, false, bClinvar, true);
-
-            html2 += me.getSnpLine(1, 3, resi2snp, resi2rsnum, resi2clinAllele, resi2disease, resi2index, resi2sig, posarray, posClinArray, 1, chnid, true, bClinvar);
-
-            html += '</div>';
-            html2 += '</div>';
-            html3 += '</div>';
-
-            $("#" + me.pre + 'dt_snp_' + chnid).html(html);
-            $("#" + me.pre + 'ov_snp_' + chnid).html(html2);
-            $("#" + me.pre + 'tt_snp_' + chnid).html(html3);
-
-            bClinvar = true;
-
-            htmlClinvar += me.getSnpLine(1, 3, resi2snp, resi2rsnum, resi2clinAllele, resi2disease, resi2index, resi2sig, posarray, posClinArray, 1, chnid, false, bClinvar);
-            htmlClinvar += me.getSnpLine(2, 3, resi2snp, resi2rsnum, resi2clinAllele, resi2disease, resi2index, resi2sig, posarray, posClinArray, 0, chnid, false, bClinvar);
-            htmlClinvar += me.getSnpLine(3, 3, resi2snp, resi2rsnum, resi2clinAllele, resi2disease, resi2index, resi2sig, posarray, posClinArray, 0, chnid, false, bClinvar);
-
-            htmlClinvar3 += me.getSnpLine(1, 3, resi2snp, resi2rsnum, resi2clinAllele, resi2disease, resi2index, resi2sig, posarray, posClinArray, 1, chnid, false, bClinvar, true);
-            htmlClinvar3 += me.getSnpLine(2, 3, resi2snp, resi2rsnum, resi2clinAllele, resi2disease, resi2index, resi2sig, posarray, posClinArray, 0, chnid, false, bClinvar, true);
-            htmlClinvar3 += me.getSnpLine(3, 3, resi2snp, resi2rsnum, resi2clinAllele, resi2disease, resi2index, resi2sig, posarray, posClinArray, 0, chnid, false, bClinvar, true);
-
-            htmlClinvar2 += me.getSnpLine(1, 3, resi2snp, resi2rsnum, resi2clinAllele, resi2disease, resi2index, resi2sig, posarray, posClinArray, 1, chnid, true, bClinvar);
-
-            htmlClinvar += '</div>';
-            htmlClinvar2 += '</div>';
-            htmlClinvar3 += '</div>';
-
-            if(me.bShowClinvar) {
-                $("#" + me.pre + 'dt_clinvar_' + chnid).html(htmlClinvar);
-                $("#" + me.pre + 'ov_clinvar_' + chnid).html(htmlClinvar2);
-                $("#" + me.pre + 'tt_clinvar_' + chnid).html(htmlClinvar3);
-            }
-
-            // add here after the ajax call
-            me.enableHlSeq();
-
-            me.navClinVar(chnid, chnidBase);
+        if(data != "") {
+            var bSnpOnly = false;
+            me.processSnpClinvar(data, chnid, chnidBase, bSnpOnly);
         } //if(data != "") {
         else {
-            $("#" + me.pre + 'dt_clinvar_' + chnid).html('');
-            $("#" + me.pre + 'ov_clinvar_' + chnid).html('');
+            if(me.chain2gi !== undefined && Object.keys(me.chain2gi).length > 0) {
+               var gi = me.chain2gi[chnidBase];
 
-            $("#" + me.pre + 'dt_snp_' + chnid).html('');
-            $("#" + me.pre + 'ov_snp_' + chnid).html('');
+               me.showSnpClinvarAlt(chnid, chnidBase, gi);
+            }
+            else {
+               // get gi from acc
+               var url2 = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi?db=protein&retmode=json&id=" + chnidBase;
 
-            // add here after the ajax call
-            me.enableHlSeq();
+               $.ajax({
+                  url: url2,
+                  dataType: 'json',
+                  cache: true,
+                  tryCount : 0,
+                  retryLimit : 1,
+                  success: function(data2) {
+                    var gi;
+                    for(var id in data2.result) {
+                      if(id !== 'uids') {
+                        gi = id;
+                      }
+                    }
 
-            console.log( "No SNP data were found for the protein " + chnid + "..." );
+                    me.showSnpClinvarAlt(chnid, chnidBase, gi);
+
+                  },
+                  error : function(xhr, textStatus, errorThrown ) {
+                    this.tryCount++;
+                    if (this.tryCount <= this.retryLimit) {
+                        //try again
+                        $.ajax(this);
+                        return;
+                    }
+
+                    me.processNoSnpClinvar(chnid);
+                    return;
+                  }
+               });
+           }
         }
-
-        me.bAjaxSnpClinvar = true;
-
-        if(me.deferredSnpClinvar !== undefined) me.deferredSnpClinvar.resolve();
       },
       error : function(xhr, textStatus, errorThrown ) {
         this.tryCount++;
@@ -1937,6 +2003,51 @@ iCn3DUI.prototype.showSnpClinvar = function(chnid, chnidBase) {
             return;
         }
 
+        me.processNoSnpClinvar(chnid);
+
+        return;
+      }
+    });
+};
+
+iCn3DUI.prototype.showSnpClinvarAlt = function(chnid, chnidBase, gi) { var me = this;
+    if(gi !== undefined) {
+        var url3 = "https://www.ncbi.nlm.nih.gov/projects/SNP/beVarSearch.cgi?appname=iCn3D&format=bed&report=pdb2bed&gi=" + gi;
+
+        $.ajax({
+          url: url3,
+          dataType: 'text',
+          cache: true,
+          tryCount : 0,
+          retryLimit : 1,
+          success: function(data3) {
+            if(data3 != "") {
+                var bSnpOnly = true;
+                me.processSnpClinvar(data3, chnid, chnidBase, bSnpOnly);
+            } //if(data3 != "") {
+            else {
+                me.processNoSnpClinvar(chnid);
+            }
+          },
+          error : function(xhr, textStatus, errorThrown ) {
+            this.tryCount++;
+            if (this.tryCount <= this.retryLimit) {
+                //try again
+                $.ajax(this);
+                return;
+            }
+
+            me.processNoSnpClinvar(chnid);
+            return;
+          }
+        });
+    }
+    else {
+        console.log( "No gi was found for the chain " + chnidBase + "..." );
+    }
+};
+
+iCn3DUI.prototype.processNoSnpClinvar = function(chnid) { var me = this;
         console.log( "No SNP data were found for the protein " + chnid + "..." );
 
         $("#" + me.pre + 'dt_clinvar_' + chnid).html('');
@@ -1950,9 +2061,6 @@ iCn3DUI.prototype.showSnpClinvar = function(chnid, chnidBase) {
         me.bAjaxSnpClinvar = true;
 
         if(me.deferredSnpClinvar !== undefined) me.deferredSnpClinvar.resolve();
-        return;
-      }
-    });
 };
 
 iCn3DUI.prototype.showCddSiteAll = function() { var me = this;

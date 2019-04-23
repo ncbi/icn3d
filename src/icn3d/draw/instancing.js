@@ -168,7 +168,14 @@ iCn3D.prototype.normalFromGeometry = function( mesh ){
 };
 
 iCn3D.prototype.hashvalue2array = function(hash) {
-    return $.map(hash, function(v) { return v; });
+    //return $.map(hash, function(v) { return v; });
+
+    var array = [];
+    for(var i in hash) {
+        array.push(hash[i]);
+    }
+
+    return array;
 };
 
 iCn3D.prototype.drawSymmetryMates = function() {
@@ -275,10 +282,15 @@ iCn3D.prototype.createInstancedGeometry = function(mesh) {
    if( baseGeometry.vertices && baseGeometry.faces ){
        this.instancedMaterial = this.getInstancedMaterial('Instancing');
 
-       positionArray = positionArray.concat(this.positionFromGeometry( mesh ));
-       normalArray = normalArray.concat(this.normalFromGeometry( mesh ));
-       colorArray = colorArray.concat(this.colorFromGeometry( mesh ));
-       indexArray = indexArray.concat(this.indexFromGeometry( mesh ));
+       var positionArray2 = this.positionFromGeometry( mesh );
+       var normalArray2 = this.normalFromGeometry( mesh );
+       var colorArray2 = this.colorFromGeometry( mesh );
+       var indexArray2 = this.indexFromGeometry( mesh );
+
+       positionArray = positionArray.concat(positionArray2);
+       normalArray = normalArray.concat(normalArray2);
+       colorArray = colorArray.concat(colorArray2);
+       indexArray = indexArray.concat(indexArray2);
 
        var bCylinderArray = [];
        var bCylinder = (baseGeometry.type == 'CylinderGeometry') ? 1.0 : 0.0;
@@ -292,19 +304,35 @@ iCn3D.prototype.createInstancedGeometry = function(mesh) {
 
        geometry.addAttribute('cylinder', new THREE.BufferAttribute(new Float32Array(bCylinderArray), 1) );
        geometry.setIndex(new THREE.BufferAttribute(new Uint32Array(indexArray), 1));
+
+       positionArray2 = null;
+       normalArray2 = null;
+       colorArray2 = null;
+       indexArray2 = null;
+
    }
    else if(this.bImpo && baseGeometry.attributes.color2 !== undefined) { // cylinder
        this.instancedMaterial = this.getInstancedMaterial('CylinderInstancing');
 
-       positionArray = positionArray.concat(this.hashvalue2array(baseGeometry.attributes.position1.array));
-       colorArray = colorArray.concat(this.hashvalue2array(baseGeometry.attributes.color.array));
+       var positionArray2 = this.hashvalue2array(baseGeometry.attributes.position1.array);
+       var colorArray2 = this.hashvalue2array(baseGeometry.attributes.color.array);
 
-       position2Array = position2Array.concat(this.hashvalue2array(baseGeometry.attributes.position2.array));
-       color2Array = color2Array.concat(this.hashvalue2array(baseGeometry.attributes.color2.array));
+       var positionArray2b = this.hashvalue2array(baseGeometry.attributes.position2.array);
+       var colorArray2b = this.hashvalue2array(baseGeometry.attributes.color2.array);
 
-       indexArray = indexArray.concat(this.hashvalue2array(baseGeometry.index.array));
-       radiusArray = radiusArray.concat(this.hashvalue2array(baseGeometry.attributes.radius.array));
-       mappingArray = mappingArray.concat(this.hashvalue2array(baseGeometry.attributes.mapping.array));
+       var indexArray2 = this.hashvalue2array(baseGeometry.index.array);
+       var radiusArray2 = this.hashvalue2array(baseGeometry.attributes.radius.array);
+       var mappingArray2 = this.hashvalue2array(baseGeometry.attributes.mapping.array);
+
+       positionArray = positionArray.concat(positionArray2);
+       colorArray = colorArray.concat(colorArray2);
+
+       position2Array = position2Array.concat(positionArray2b);
+       color2Array = color2Array.concat(colorArray2b);
+
+       indexArray = indexArray.concat(indexArray2);
+       radiusArray = radiusArray.concat(radiusArray2);
+       mappingArray = mappingArray.concat(mappingArray2);
 
        geometry.addAttribute('position1', new THREE.BufferAttribute(new Float32Array(positionArray), 3));
        geometry.addAttribute('color', new THREE.BufferAttribute(new Float32Array(colorArray), 3) );
@@ -315,32 +343,52 @@ iCn3D.prototype.createInstancedGeometry = function(mesh) {
        geometry.addAttribute('radius', new THREE.BufferAttribute(new Float32Array(radiusArray), 1) );
        geometry.addAttribute('mapping', new THREE.BufferAttribute(new Float32Array(mappingArray), 3) );
        geometry.setIndex(new THREE.BufferAttribute(new Uint32Array(indexArray), 1));
+
+       positionArray2 = null;
+       colorArray2 = null;
+       positionArray2b = null;
+       colorArray2b = null;
+       indexArray2 = null;
+       radiusArray2 = null;
+       mappingArray2 = null;
    }
    else if(this.bImpo && baseGeometry.attributes.color !== undefined) { // sphere
        this.instancedMaterial = this.getInstancedMaterial('SphereInstancing');
 
-       positionArray = positionArray.concat(this.hashvalue2array(baseGeometry.attributes.position.array));
-       colorArray = colorArray.concat(this.hashvalue2array(baseGeometry.attributes.color.array));
-       indexArray = indexArray.concat(this.hashvalue2array(baseGeometry.index.array));
-       radiusArray = radiusArray.concat(this.hashvalue2array(baseGeometry.attributes.radius.array));
-       mappingArray = mappingArray.concat(this.hashvalue2array(baseGeometry.attributes.mapping.array));
+       var positionArray2 = this.hashvalue2array(baseGeometry.attributes.position.array);
+       var colorArray2 = this.hashvalue2array(baseGeometry.attributes.color.array);
+       var indexArray2 = this.hashvalue2array(baseGeometry.index.array);
+       var radiusArray2 = this.hashvalue2array(baseGeometry.attributes.radius.array);
+       var mappingArray2 = this.hashvalue2array(baseGeometry.attributes.mapping.array);
+
+       positionArray = positionArray.concat(positionArray2);
+       colorArray = colorArray.concat(colorArray2);
+       indexArray = indexArray.concat(indexArray2);
+       radiusArray = radiusArray.concat(radiusArray2);
+       mappingArray = mappingArray.concat(mappingArray2);
 
        geometry.addAttribute('position', new THREE.BufferAttribute(new Float32Array(positionArray), 3));
        geometry.addAttribute('color', new THREE.BufferAttribute(new Float32Array(colorArray), 3) );
        geometry.addAttribute('radius', new THREE.BufferAttribute(new Float32Array(radiusArray), 1) );
        geometry.addAttribute('mapping', new THREE.BufferAttribute(new Float32Array(mappingArray), 2) );
        geometry.setIndex(new THREE.BufferAttribute(new Uint32Array(indexArray), 1));
+
+       positionArray2 = null;
+       colorArray2 = null;
+       indexArray2 = null;
+       radiusArray2 = null;
+       mappingArray2 = null;
    }
 
-   positionArray = [];
-   normalArray = [];
-   colorArray = [];
-   indexArray = [];
+   positionArray = null;
+   normalArray = null;
+   colorArray = null;
+   indexArray = null;
 
-   radiusArray = [];
-   mappingArray = [];
-   position2Array = [];
-   color2Array = [];
+   radiusArray = null;
+   mappingArray = null;
+   position2Array = null;
+   color2Array = null;
 
    var matricesAttribute1 = new THREE.InstancedBufferAttribute( new Float32Array( this.matricesElements1 ), 4 );
    var matricesAttribute2 = new THREE.InstancedBufferAttribute( new Float32Array( this.matricesElements2 ), 4 );
@@ -458,7 +506,7 @@ iCn3D.prototype.drawSymmetryMatesInstancing = function() {
        // You are moving the camera in the CPU. You are moving the vertices of the plane in the GPU
        mesh2.frustumCulled = false;
 
-       geometry = undefined;
+       geometry = null;
 
        this.mdlImpostor.add(mesh2);
    }

@@ -54,6 +54,7 @@ iCn3DUI.prototype.parseMmtfData = function (mmtfData, bFull) { var me = this;
     // bioAsembly
     if(mmtfData.bioAssemblyList !== undefined && mmtfData.bioAssemblyList[0]!== undefined && mmtfData.bioAssemblyList[0].transformList.length > 1) {
         me.icn3d.biomtMatrices = [];
+
         for(var i = 0, il = mmtfData.bioAssemblyList[0].transformList.length; i < il; ++i) {
             //var biomt = new THREE.Matrix4().identity();
 
@@ -383,7 +384,7 @@ iCn3DUI.prototype.parseMmtfData = function (mmtfData, bFull) { var me = this;
 
     me.icn3d.cnt = serial;
 
-    if(me.icn3d.cnt > me.icn3d.maxatomcnt) {
+    if(me.icn3d.cnt > me.icn3d.maxatomcnt || (me.icn3d.biomtMatrices !== undefined && me.icn3d.biomtMatrices.length * me.icn3d.cnt > 10 * me.icn3d.maxatomcnt) ) {
         me.opts['proteins'] = 'c alpha trace'; //ribbon, strand, cylinder and plate, schematic, c alpha trace, b factor tube, lines, stick, ball and stick, sphere, nothing
         me.opts['nucleotides'] = 'o3 trace'; //nucleotide cartoon, o3 trace, schematic, lines, stick,
     }
