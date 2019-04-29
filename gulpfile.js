@@ -38,7 +38,7 @@ gulp.task('libs-jquery',
             "node_modules/jquery/dist/jquery.min.js"
         ])
         .pipe(gulp.dest(dist + '/lib'))
-        .pipe(rename('jquery-3.2.1.min.js'))
+        .pipe(rename('jquery-3.4.0.min.js'))
         .pipe(gulp.dest(dist + '/lib'));
   });
 
