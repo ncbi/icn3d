@@ -1,4 +1,6 @@
 ## Change Log
+[icn3d-2.6.4](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.6.4.zip) was release on April 29, 2019. jQuery was upgraded to version 3.4.0.
+
 [icn3d-2.6.3](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.6.3.zip) was release on April 23, 2019. Showed SNP annotations for more 3D structures.
 
 [icn3d-2.6.2](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.6.2.zip) was release on April 15, 2019. Enabled to show large structure such as HIV-1 capsid (3J3Q): (https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?mmtfid=3j3q).
