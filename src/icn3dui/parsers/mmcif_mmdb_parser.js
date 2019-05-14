@@ -502,6 +502,7 @@ iCn3DUI.prototype.getMissingResidues = function (seqArray, type, chainid) { var 
     var prevResi = -9999;
     var missingResBegin = 0;
     var bCount = true;
+
     for(var i = 0, il = seqArray.length; i < il; ++i) {
         var seqName, resiPos;
         // mmdbid: ["0","R","ARG"],["502","V","VAL"]; mmcifid: [1, "ARG"]; align: [1, "0","R","ARG"]
