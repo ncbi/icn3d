@@ -114,7 +114,18 @@ iCn3DUI.prototype.showAnnotations = function() { var me = this;
 */
 
         if(me.cfg.blast_rep_id === undefined) {
-           me.showAnnoSeqData(nucleotide_chainid, chemical_chainid, chemical_set);
+           if(me.bFullUi) {
+               if(me.cfg.mmtfid !== undefined) { // mmtf data do NOT have the missing residues
+                   var id = chainArray[0].substr(0, chainArray[0].indexOf('_'));
+
+                   $.when(me.downloadMmcifSymmetry(id, 'mmtfid')).then(function() {
+                       me.showAnnoSeqData(nucleotide_chainid, chemical_chainid, chemical_set);
+                   });
+               }
+               else {
+                   me.showAnnoSeqData(nucleotide_chainid, chemical_chainid, chemical_set);
+               }
+           }
         }
         else if(me.cfg.blast_rep_id !== undefined) { // align sequence to structure
            var url = 'https://www.ncbi.nlm.nih.gov/Structure/pwaln/pwaln.fcgi?from=querytarget';

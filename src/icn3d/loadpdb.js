@@ -391,7 +391,7 @@ iCn3D.prototype.loadPDB = function (src) {
 
                 if(this.atoms[oriSerial2NewSerial[from]] !== undefined) this.atoms[oriSerial2NewSerial[from]].bonds.push(oriSerial2NewSerial[to]);
             }
-        } else if (record === 'TER   ') {
+        } else if (record.substr(0,3) === 'TER') {
             // Concatenation of two pdbs will have several atoms for the same serial
             ++serial;
         }
