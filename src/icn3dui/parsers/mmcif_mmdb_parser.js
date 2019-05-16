@@ -80,16 +80,16 @@ iCn3DUI.prototype.downloadMmcif = function (mmcifid) { var me = this;
     });
 };
 
-iCn3DUI.prototype.downloadMmcifSymmetry = function (mmcifid) { var me = this;
+iCn3DUI.prototype.downloadMmcifSymmetry = function (mmcifid, type) { var me = this;
   // chain functions together
   me.deferredSymmetry = $.Deferred(function() {
-      me.downloadMmcifSymmetryBase(mmcifid);
+      me.downloadMmcifSymmetryBase(mmcifid, type);
   }); // end of me.deferred = $.Deferred(function() {
 
   return me.deferredSymmetry.promise();
 };
 
-iCn3DUI.prototype.downloadMmcifSymmetryBase = function (mmcifid) { var me = this;
+iCn3DUI.prototype.downloadMmcifSymmetryBase = function (mmcifid, type) { var me = this;
    var url, dataType;
 
    if(me.isMac()) { // safari has a problem in getting data from https://files.rcsb.org/header/
@@ -124,6 +124,39 @@ iCn3DUI.prototype.downloadMmcifSymmetryBase = function (mmcifid) { var me = this
                   if(data.emd !== undefined) me.icn3d.emd = data.emd;
 
                   if(me.bAssemblyUseAsu) me.loadMmcifSymmetry(data);
+
+                  if(type === 'mmtfid' && data.missingseq !== undefined) {
+                        // adjust missing residues
+                        var maxMissingResi = 0, prevMissingChain = '';
+                        var chainMissingResidueArray = {};
+                        for(var i = 0, il = data.missingseq.length; i < il; ++i) {
+
+                            var resn = data.missingseq[i].resn;
+                            var chain = data.missingseq[i].chain;
+                            var resi = data.missingseq[i].resi;
+
+                            var chainNum = mmcifid + '_' + chain;
+
+                            if(chainMissingResidueArray[chainNum] === undefined) chainMissingResidueArray[chainNum] = [];
+                            var resObject = {};
+                            resObject.resi = resi;
+                            resObject.name = me.icn3d.residueName2Abbr(resn).toLowerCase();
+
+                            if(chain != prevMissingChain) {
+                                maxMissingResi = 0;
+                            }
+
+                            // not all listed residues are considered missing, e.g., PDB ID 4OR2, only the firts four residues are considered missing
+                            if(!isNaN(resi) && (prevMissingChain == '' || (chain != prevMissingChain) || (chain == prevMissingChain && resi > maxMissingResi)) ) {
+                                chainMissingResidueArray[chainNum].push(resObject);
+
+                                maxMissingResi = resi;
+                                prevMissingChain = chain;
+                            }
+                        }
+
+                        me.icn3d.adjustSeq(chainMissingResidueArray);
+                  }
 
                   if(me.deferredSymmetry !== undefined) me.deferredSymmetry.resolve();
               },
@@ -675,9 +708,9 @@ iCn3DUI.prototype.loadAtomDataIn = function (data, id, type, seqalign) { var me 
             for(var chain in data.sequences) {
                 var seqArray = data.sequences[chain];
                 var chainid = id + '_' + chain;
-                if(type === 'mmcifid') chainid = '1_' + chain;
+                //if(type === 'mmcifid') chainid = '1_' + chain;
 
-                me.getMissingResidues(seqArray, type, chainid);
+                me.getMissingResidues(seqArray, type, chainid); // assign me.icn3d.chainsSeq
             }
         }
         else if(type === 'align') {
@@ -697,6 +730,7 @@ iCn3DUI.prototype.loadAtomDataIn = function (data, id, type, seqalign) { var me 
     var prevResi = 0; // continuous from 1 for each chain
     var missingResIndex = 0;
     var bChainSeqSet = true;
+    var bAddedNewSeq = false;
 
     // In align, chemicals do not have assigned chains. Assembly will have the same residue id so that two different residues will be combined in one residue. To avoid this, build an array to check for molid
     var resiArray = [];
@@ -1025,10 +1059,10 @@ iCn3DUI.prototype.loadAtomDataIn = function (data, id, type, seqalign) { var me 
           }
 
           // me.icn3d.chainsSeq[chainid][atm.resi - 1] should have been defined for major chains
-          if( bChainSeqSet && me.icn3d.chainsSeq[chainid][atm.resi - 1] !== undefined) {
+          if( bChainSeqSet && !bAddedNewSeq && me.icn3d.chainsSeq[chainid][atm.resi - 1] !== undefined) {
               me.icn3d.chainsSeq[chainid][atm.resi - 1].name = oneLetterRes;
           }
-          else if(!bChainSeqSet) {
+          else if(!bChainSeqSet || !me.icn3d.chainsSeq[chainid].hasOwnProperty(atm.resi - 1)) {
               var resObject = {};
               resObject.resi = atm.resi;
               resObject.name = oneLetterRes;
@@ -1036,6 +1070,8 @@ iCn3DUI.prototype.loadAtomDataIn = function (data, id, type, seqalign) { var me 
               if(atm.resi % 10 === 0) numberStr = atm.resi.toString();
 
               me.icn3d.chainsSeq[chainid].push(resObject);
+
+              bAddedNewSeq = true;
           }
         }
 
@@ -1079,7 +1115,7 @@ iCn3DUI.prototype.loadAtomDataIn = function (data, id, type, seqalign) { var me 
         }
     }
 
-//        me.icn3d.adjustSeq(me.chainMissingResidueArray);
+    // me.icn3d.adjustSeq(me.chainMissingResidueArray);
 
     // remove the reference
     data.atoms = {};

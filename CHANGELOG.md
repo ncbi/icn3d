@@ -1,4 +1,6 @@
 ## Change Log
+[icn3d-2.6.6](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.6.6.zip) was release on May 16, 2019. The sequence display was fixed when the input is a MMTF ID or a mmCIF ID.
+
 [icn3d-2.6.5](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.6.5.zip) was release on May 14, 2019. The sequence display was fixed when the input is a pdb file.
 
 [icn3d-2.6.4](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.6.4.zip) was release on April 29, 2019. jQuery was upgraded to version 3.4.0.

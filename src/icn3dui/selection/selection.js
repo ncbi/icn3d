@@ -249,11 +249,13 @@ iCn3DUI.prototype.selectAChain = function (chainid, commandname, bAlign, bUnion)
         me.addCustomSelection(Object.keys(oriResidueHash), commandname, commandname, command, true);
     }
 
+    var bForceHighlight = true;
+
     if(bAlign) {
-        me.updateHlAll(undefined, undefined, bUnion);
+        me.updateHlAll(undefined, undefined, bUnion, bForceHighlight);
     }
     else {
-        me.updateHlAll(Object.keys(me.menuHlHash), undefined, bUnion);
+        me.updateHlAll(Object.keys(me.menuHlHash), undefined, bUnion, bForceHighlight);
     }
 
 //        me.icn3d.addHlObjects();

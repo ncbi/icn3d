@@ -72,8 +72,8 @@ iCn3DUI.prototype.removeHlMenus = function() { var me = this;
     $("#" + me.pre + "atomsCustom").val("");
 };
 
-iCn3DUI.prototype.updateHlAll = function(commandnameArray, bSetMenu, bUnion) { var me = this;
-       me.updateHlObjects();
+iCn3DUI.prototype.updateHlAll = function(commandnameArray, bSetMenu, bUnion, bForceHighlight) { var me = this;
+       me.updateHlObjects(bForceHighlight);
 
        if(commandnameArray !== undefined) {
            me.updateHlSeqInChain(commandnameArray, bUnion);
@@ -88,9 +88,10 @@ iCn3DUI.prototype.updateHlAll = function(commandnameArray, bSetMenu, bUnion) { v
        //me.showAnnoSelectedChains();
 };
 
-iCn3DUI.prototype.updateHlObjects = function() { var me = this;
+iCn3DUI.prototype.updateHlObjects = function(bForceHighlight) { var me = this;
        me.icn3d.removeHlObjects();
-       if(Object.keys(me.icn3d.hAtoms).length < Object.keys(me.icn3d.atoms).length) {
+
+       if(Object.keys(me.icn3d.hAtoms).length < Object.keys(me.icn3d.atoms).length || bForceHighlight) {
            me.icn3d.addHlObjects();
        }
 };
@@ -222,8 +223,8 @@ iCn3DUI.prototype.updateHlMenus = function(commandnameArray) { var me = this;
 iCn3DUI.prototype.setAtomMenu = function (commandnameArray) { var me = this;
   var html = "";
 
-  var nameArray1 = Object.keys(me.icn3d.defNames2Residues);
-  var nameArray2 = Object.keys(me.icn3d.defNames2Atoms);
+  var nameArray1 = (me.icn3d.defNames2Residues !== undefined) ? Object.keys(me.icn3d.defNames2Residues) : [];
+  var nameArray2 = (me.icn3d.defNames2Atoms !== undefined) ? Object.keys(me.icn3d.defNames2Atoms) : [];
 
   var nameArray = nameArray1.concat(nameArray2).sort();
 
