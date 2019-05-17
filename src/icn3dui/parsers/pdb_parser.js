@@ -144,7 +144,7 @@ iCn3DUI.prototype.loadPdbData = function(data) {
                         var resi = residueObjectArray[i].resi;
                         var chain_resi = chain + '_' + resi;
 
-                        var ssOneLetter = '-';
+                        var ssOneLetter = 'c';
                         if(ssHash.hasOwnProperty(chain_resi)) {
                             ssOneLetter = ssHash[chain_resi];
                         }
@@ -165,6 +165,8 @@ iCn3DUI.prototype.loadPdbData = function(data) {
 
                         // assign atom ss, ssbegin, and ssend
                         var resid = chainNum + '_' + resi;
+
+                        me.icn3d.secondaries[resid] = ssOneLetter;
 
                         // no residue can be both ssbegin and ssend in DSSP calculated secondary structures
                         var bSetPrevResidue = 0; // 0: no need to reset, 1: reset previous residue to "ssbegin = true", 2: reset previous residue to "ssend = true"
