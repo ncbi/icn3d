@@ -331,7 +331,24 @@ iCn3DUI.prototype.saveFile = function(filename, type, text) { var me = this;
 
                     var url = me.shareLinkUrl();
 
-                    var text = "\nShare Link: " + url;
+                    var text = "";
+                    if(me.bInputfile) {
+                        text += "\nStart of type file======\n";
+                        text += me.InputfileType + "\n";
+                        text += "End of type file======\n";
+
+                        text += "Start of data file======\n";
+                        text += me.InputfileData;
+                        text += "End of data file======\n";
+
+                        text += "Start of state file======\n";
+                        text += url;
+                        text += "End of state file======\n";
+                    }
+                    else {
+                        text += "\nShare Link: " + url;
+                    }
+
                     blob = me.getBlobFromBufferAndText(arrayBuffer, text);
 
                     //if(window.navigator.msSaveBlob) navigator.msSaveBlob(blob, filename);
@@ -352,7 +369,23 @@ iCn3DUI.prototype.saveFile = function(filename, type, text) { var me = this;
 
                         var url = me.shareLinkUrl();
 
-                        var text = "\nShare Link: " + url;
+                        var text = "";
+                        if(me.bInputfile) {
+                            text += "\nStart of type file======\n";
+                            text += me.InputfileType + "\n";
+                            text += "End of type file======\n";
+
+                            text += "Start of data file======\n";
+                            text += me.InputfileData;
+                            text += "End of data file======\n";
+
+                            text += "Start of state file======\n";
+                            text += url;
+                            text += "End of state file======\n";
+                        }
+                        else {
+                            text += "\nShare Link: " + url;
+                        }
                         blob = me.getBlobFromBufferAndText(arrayBuffer, text);
 
                         //me.createLinkForBlob(blob, filename);
@@ -537,12 +570,15 @@ iCn3DUI.prototype.shareLinkUrl = function() { var me = this;
          start = 0;
        }
 
+       if(me.bInputfile) start = 0;
+
        var transformation = {};
        transformation.factor = me.icn3d._zoomFactor;
        transformation.mouseChange = me.icn3d.mouseChange;
        transformation.quaternion = me.icn3d.quaternion;
 
        var bCommands = false;
+       var statefile = "";
        for(var i = start, il = me.icn3d.commands.length; i < il; ++i) {
            bCommands = true;
 
@@ -562,6 +598,8 @@ iCn3DUI.prototype.shareLinkUrl = function() { var me = this;
            else if(i !== 1 && i !== il - 1) {
                url += '; ' + commandStr;
            }
+
+           statefile += me.icn3d.commands[i] + "\n";
        }
 
        // remove "&command="
@@ -569,7 +607,7 @@ iCn3DUI.prototype.shareLinkUrl = function() { var me = this;
            url = url.substr(0, url.length - 9);
        }
 
-       if(me.bInputfile) url = "https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html";
+       if(me.bInputfile) url = statefile;
 
        return url;
 };

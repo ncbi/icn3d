@@ -1,4 +1,6 @@
 ## Change Log
+[icn3d-2.7.0](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.7.0.zip) was release on May 20, 2019. "Share Link" can be used to reproduce a custom display when the input is a known ID. "iCn3D PNG Image" can be saved and opened in the File menu to reproduce a custom display for all cases, even when the input is a PDB file or other files.
+
 [icn3d-2.6.6](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.6.6.zip) was release on May 16, 2019. The sequence display was fixed when the input is a MMTF ID or a mmCIF ID.
 
 [icn3d-2.6.5](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.6.5.zip) was release on May 14, 2019. The sequence display was fixed when the input is a pdb file.
