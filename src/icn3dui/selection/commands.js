@@ -15,7 +15,7 @@ iCn3DUI.prototype.loadScript = function (dataStr, bStatefile) { var me = this;
   var preCommands = [];
   if(me.icn3d.commands.length > 0) preCommands[0] = me.icn3d.commands[0];
 
-  me.icn3d.commands = dataStr.split('\n');
+  me.icn3d.commands = dataStr.trim().split('\n');
   me.STATENUMBER = me.icn3d.commands.length;
 
   me.icn3d.commands = preCommands.concat(me.icn3d.commands);

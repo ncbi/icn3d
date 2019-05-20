@@ -15,7 +15,7 @@ if (!$.ui.dialog.prototype._makeDraggableBase) {
 var iCn3DUI = function(cfg) {
     var me = this;
 
-    this.REVISION = '2.5.1';
+    this.REVISION = '2.7.0';
 
     me.bFullUi = true;
 
@@ -1452,6 +1452,7 @@ iCn3DUI.prototype = {
        if(sessionStorage.getItem('good_exit') && sessionStorage.getItem('good_exit') === 'pending') {
           if(!me.isMac()) me.bCrashed = true;  // this doesn't work in mac
           me.commandsBeforeCrash = sessionStorage.getItem('commands');
+          if(!me.commandsBeforeCrash) me.commandsBeforeCrash = '';
        }
     },
 
@@ -1494,9 +1495,18 @@ iCn3DUI.prototype = {
     shareLink: function() { var me = this;
            var url = me.shareLinkUrl();
 
-           me.setLogCmd("share link: " + url, false);
+           if(me.bInputfile) {
+               alert("Share Link does NOT work when the data is from custom files. Please save 'iCn3D PNG Image' in the File menu and open it in iCn3D.");
+               return;
+           }
 
-           if(url.length > 4000) alert("The url is more than 4000 characters and may not work. Please export the 'State File' and open it in the viewer.");
+            if(url.length > 4000) {
+               alert("The url is more than 4000 characters and may not work. Please save 'iCn3D PNG Image' or 'State File' and open them in iCn3D.");
+               return;
+           }
+
+
+           me.setLogCmd("share link: " + url, false);
 
            //window.open(url, '_blank');
 
@@ -3687,17 +3697,71 @@ iCn3DUI.prototype = {
              var reader = new FileReader();
              reader.onload = function (e) {
                var imageStr = e.target.result; // or = reader.result;
+
                var matchedStr = 'Share Link: ';
                var pos = imageStr.indexOf(matchedStr);
-               if(pos == -1) {
-                   alert('Please load a PNG image saved by clicking "Save Files > PNG Image" in the File menu...');
+
+               var matchedStrData = "Start of data file======\n";
+               var posData = imageStr.indexOf(matchedStrData);
+
+               if(pos == -1 && posData == -1) {
+                   alert('Please load a PNG image saved by clicking "Save Datas > PNG Image" in the Data menu...');
                }
-               else {
+               else if(pos != -1) {
                    var url = imageStr.substr(pos + matchedStr.length);
 
                    me.setLogCmd('load iCn3D PNG image ' + $("#" + me.pre + "pngimage").val(), false);
 
                    window.open(url);
+               }
+               else if(posData != -1) {
+                   me.bInputfile = true;
+
+                   var posDataEnd = imageStr.indexOf("End of data file======\n");
+                   var data = imageStr.substr(posData + matchedStrData.length, posDataEnd - posData - matchedStrData.length);
+
+                   var matchedStrState = "Start of state file======\n";
+                   var posState = imageStr.indexOf(matchedStrState);
+
+                   var posStateEnd = imageStr.indexOf("End of state file======\n");
+                   var statefile = imageStr.substr(posState + matchedStrState.length, posStateEnd - posState- matchedStrState.length);
+
+                   var matchedStrType = "Start of type file======\n";
+                   var posType = imageStr.indexOf(matchedStrType);
+
+                   var posTypeEnd = imageStr.indexOf("End of type file======\n");
+                   var type = imageStr.substr(posType + matchedStrType.length, posTypeEnd - posType - matchedStrType.length - 1); // remove the new line char
+
+                    if(type === 'pdb') {
+                        $.when( me.loadPdbData(data))
+                         .then(function() {
+                             me.icn3d.commands = [];
+                             me.icn3d.optsHistory = [];
+
+                             me.loadScript(statefile, true);
+                         });
+                    }
+                    else {
+                        if(type === 'mol2') {
+                            me.loadMol2Data(data);
+                        }
+                        else if(type === 'sdf') {
+                            me.loadSdfData(data);
+                        }
+                        else if(type === 'xyz') {
+                            me.loadXyzData(data);
+                        }
+                        else if(type === 'mmcif') {
+                            me.loadMmcifData(data);
+                        }
+
+                       me.icn3d.commands = [];
+                       me.icn3d.optsHistory = [];
+
+                       me.loadScript(statefile, true);
+                   }
+
+                   me.setLogCmd('load iCn3D PNG image ' + $("#" + me.pre + "pngimage").val(), false);
                }
              };
 
@@ -3716,8 +3780,11 @@ iCn3DUI.prototype = {
            $(".ui-dialog-content").dialog("close");
 
            // initialize icn3dui
-           me.init();
-           me.icn3d.init();
+           //Do NOT clear data if iCn3D loads a pdb or other data file and then load a state file
+           if(!me.bInputfile) {
+               me.init();
+               me.icn3d.init();
+           }
 
            var file = $("#" + me.pre + "state")[0].files[0];
 
@@ -3811,6 +3878,8 @@ iCn3DUI.prototype = {
                me.icn3d.init();
 
                me.bInputfile = true;
+               me.InputfileData = dataStr;
+               me.InputfileType = 'pdb';
 
                me.loadPdbData(dataStr);
              };
@@ -3855,6 +3924,8 @@ iCn3DUI.prototype = {
                me.icn3d.init();
 
                me.bInputfile = true;
+               me.InputfileData = dataStr;
+               me.InputfileType = 'mol2';
 
                me.loadMol2Data(dataStr);
              };
@@ -3898,6 +3969,8 @@ iCn3DUI.prototype = {
                me.icn3d.init();
 
                me.bInputfile = true;
+               me.InputfileData = dataStr;
+               me.InputfileType = 'sdf';
 
                me.loadSdfData(dataStr);
              };
@@ -3941,6 +4014,8 @@ iCn3DUI.prototype = {
                me.icn3d.init();
 
                me.bInputfile = true;
+               me.InputfileData = dataStr;
+               me.InputfileType = 'xyz';
 
                me.loadXyzData(dataStr);
              };
@@ -4028,6 +4103,8 @@ iCn3DUI.prototype = {
                       me.icn3d.init();
 
                       me.bInputfile = true;
+                      me.InputfileData = data;
+                      me.InputfileType = 'mmcif';
 
                       me.loadMmcifData(data);
                   },
