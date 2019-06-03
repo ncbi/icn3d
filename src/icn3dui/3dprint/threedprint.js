@@ -159,7 +159,8 @@ iCn3DUI.prototype.outputSelection = function() { var me = this;
         output += "<tr><td>" + structure + "</td><td>" + chain + "</td><td>" + resi + "</td></tr>";
     }
 
-    me.saveFile(me.inputid + '_residues.txt', 'html', output);
+    var file_pref = (me.inputid) ? me.inputid : "custom";
+    me.saveFile(file_pref + '_residues.txt', 'html', output);
 
 };
 

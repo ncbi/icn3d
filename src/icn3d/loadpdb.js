@@ -28,7 +28,7 @@ iCn3D.prototype.loadPDB = function (src) {
 
     var chainMissingResidueArray = {};
 
-    var id = 'structure';
+    var id = 'stru';
 
     var maxMissingResi = 0, prevMissingChain = '';
 
@@ -186,8 +186,7 @@ iCn3D.prototype.loadPDB = function (src) {
             var structure = (moleculeNum === 1) ? id : id + moleculeNum.toString();
 
             var alt = line.substr(16, 1);
-            //if (alt === "B") continue;
-            if (alt !== " " && alt !== "A") continue;
+            //if (alt !== " " && alt !== "A") continue;
 
             // "CA" has to appear before "O". Otherwise the cartoon of secondary structure will have breaks
             // Concatenation of two pdbs will have several atoms for the same serial
@@ -213,19 +212,19 @@ iCn3D.prototype.loadPDB = function (src) {
             //var oriResi = line.substr(22, 4).trim();
             var oriResi = line.substr(22, 5).trim();
             oriResidueNum = chainNum + "_" + oriResi;
-            if(oriResidueNum !== prevOriResidueNum) {
-                if(bModifyResi) {
-                  ++prevResi;
-                }
-                else {
-                  prevResi = (chainNum !== prevChainNum) ? 0 : parseInt(prevResidueNum.substr(prevResidueNum.lastIndexOf("_") + 1));
-                }
-            }
+            //if(oriResidueNum !== prevOriResidueNum) {
+            //    if(bModifyResi) {
+            //      ++prevResi;
+            //    }
+            //    else {
+            //      prevResi = (chainNum !== prevChainNum) ? 0 : parseInt(prevResidueNum.substr(prevResidueNum.lastIndexOf("_") + 1));
+            //    }
+            //}
 
             var resi = parseInt(oriResi);
             if(oriResi != resi || bModifyResi) { // e.g., 99A and 99
               bModifyResi = true;
-              resi = (prevResi == 0) ? resi : prevResi + 1;
+              //resi = (prevResi == 0) ? resi : prevResi + 1;
             }
 
             residueNum = chainNum + "_" + resi;
@@ -310,14 +309,17 @@ iCn3D.prototype.loadPDB = function (src) {
             this.secondaries[residueNum] = secondaries;
 
             // different residue
-            if(residueNum !== prevResidueNum) {
+            //if(residueNum !== prevResidueNum) {
+            if(oriResidueNum !== prevOriResidueNum) {
                 var residue = this.residueName2Abbr(resn);
 
                 this.residueId2Name[residueNum] = residue;
 
                 if(serial !== 1) this.residues[prevResidueNum] = residuesTmp;
 
-                residuesTmp = {};
+                if(residueNum !== prevResidueNum) {
+                    residuesTmp = {};
+                }
 
                 // different chain
                 if(chainNum !== prevChainNum) {
@@ -418,6 +420,14 @@ iCn3D.prototype.loadPDB = function (src) {
     }
 
     this.adjustSeq(chainMissingResidueArray);
+
+//    this.missingResidues = [];
+//    for(var chainid in chainMissingResidueArray) {
+//        var resArray = chainMissingResidueArray[chainid];
+//        for(var i = 0; i < resArray.length; ++i) {
+//            this.missingResidues.push(chainid + '_' + resArray[i].resi);
+//        }
+//    }
 
     // remove the reference
     lines = null;

@@ -579,7 +579,9 @@ iCn3DUI.prototype = {
         $("#" + me.pre + "saveimage").click(function (e) {
             e.preventDefault();
 
-            me.saveFile(me.inputid + '_image.png', 'png');
+            var file_pref = (me.inputid) ? me.inputid : "custom";
+
+            me.saveFile(file_pref + '_image.png', 'png');
         });
     },
 

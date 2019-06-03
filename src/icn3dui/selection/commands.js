@@ -563,12 +563,14 @@ iCn3DUI.prototype.applyCommand = function (commandStr) { var me = this;
 
 // exact match =============
 
+  var file_pref = (me.inputid) ? me.inputid : "custom";
+
   if(command == 'export state file') { // last step to update transformation
     // the last transformation will be applied
   }
   else if(command == 'export canvas') {
     setTimeout(function(){
-           me.saveFile(me.inputid + '.png', 'png');
+           me.saveFile(file_pref + '_icn3d_loadable.png', 'png');
         }, 500);
   }
   else if(command == 'export interactions') {
@@ -579,7 +581,7 @@ iCn3DUI.prototype.applyCommand = function (commandStr) { var me = this;
            //me.hideStabilizer();
 
            var text = me.saveStlFile();
-           me.saveFile(me.inputid + '.stl', 'binary', text);
+           me.saveFile(file_pref + '.stl', 'binary', text);
            text = '';
         }, 500);
   }
@@ -588,7 +590,7 @@ iCn3DUI.prototype.applyCommand = function (commandStr) { var me = this;
            //me.hideStabilizer();
 
            var text = me.saveVrmlFile();
-           me.saveFile(me.inputid + '.wrl', 'text', text);
+           me.saveFile(file_pref + '.wrl', 'text', text);
            text = '';
         }, 500);
   }
@@ -606,7 +608,7 @@ iCn3DUI.prototype.applyCommand = function (commandStr) { var me = this;
            //me.icn3d.bRender = true;
            //me.icn3d.draw();
 
-           me.saveFile(me.inputid + '_stab.stl', 'binary', text);
+           me.saveFile(file_pref + '_stab.stl', 'binary', text);
            text = '';
         }, 500);
   }
@@ -624,7 +626,7 @@ iCn3DUI.prototype.applyCommand = function (commandStr) { var me = this;
            //me.icn3d.bRender = true;
            //me.icn3d.draw();
 
-           me.saveFile(me.inputid + '_stab.wrl', 'text', text);
+           me.saveFile(file_pref + '_stab.wrl', 'text', text);
            text = '';
         }, 500);
   }

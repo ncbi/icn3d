@@ -847,7 +847,20 @@ iCn3DUI.prototype.insertGapOverview = function(chnid, seqIndex) {  var me = this
 };
 
 iCn3DUI.prototype.showSeq = function(chnid, chnidBase, type, queryTitle, compTitle, queryText, compText) {  var me = this;
-    var giSeq = me.giSeq[chnid];
+    var bNonMmdb = false;
+
+    var giSeq;
+    if(me.cfg.mmdbid === undefined && me.cfg.gi === undefined && me.cfg.blast_rep_id === undefined && me.cfg.align === undefined) {
+        bNonMmdb = true;
+
+        giSeq = [];
+        for(var i = 0; i < me.giSeq[chnid].length; ++i) {
+            giSeq.push(me.icn3d.chainsSeq[chnid][i]);
+        }
+    }
+    else {
+        giSeq = me.giSeq[chnid];
+    }
 
     var divLength = me.RESIDUE_WIDTH * me.giSeq[chnid].length + 200;
     var seqLength = me.giSeq[chnid].length
@@ -896,7 +909,13 @@ iCn3DUI.prototype.showSeq = function(chnid, chnidBase, type, queryTitle, compTit
         for(var i = 0, il = giSeq.length; i < il; ++i) {
           html += me.insertGap(chnid, i, '-');
 
-          var currResi = (i >= me.matchedPos[chnid] && i - me.matchedPos[chnid] < me.icn3d.chainsSeq[chnid].length) ? me.icn3d.chainsSeq[chnid][i - me.matchedPos[chnid]].resi : me.baseResi[chnid] + 1 + i;
+          var currResi;
+          if(bNonMmdb) {
+            currResi = giSeq[i].resi;
+          }
+          else {
+            currResi = (i >= me.matchedPos[chnid] && i - me.matchedPos[chnid] < me.icn3d.chainsSeq[chnid].length) ? me.icn3d.chainsSeq[chnid][i - me.matchedPos[chnid]].resi : me.baseResi[chnid] + 1 + i;
+          }
 
           html += '<span>'
 
@@ -1041,7 +1060,7 @@ iCn3DUI.prototype.showSeq = function(chnid, chnidBase, type, queryTitle, compTit
 
       if(me.targetGapHash !== undefined && me.targetGapHash.hasOwnProperty(i)) nGap += me.targetGapHash[i].to - me.targetGapHash[i].from + 1;
 
-      var cFull = giSeq[i];
+      var cFull = (bNonMmdb) ? giSeq[i].name : giSeq[i];
 
       var c = cFull;
       if(cFull.length > 1) {
