@@ -1574,8 +1574,8 @@ iCn3D.prototype.createStrand = function (atoms, num, div, fill, coilWidth, helix
                     }
                     // smoothen each coil, helix and sheet separately. The joint residue has to be included both in the previous and next segment
                     var bSameChain = true;
-                    if (currentChain !== atom.chain || currentResi + 1 !== atom.resi) {
-//                        if (currentChain !== atom.chain) {
+//                    if (currentChain !== atom.chain || currentResi + 1 !== atom.resi) {
+                    if (currentChain !== atom.chain) {
                         bSameChain = false;
                     }
 
@@ -1799,8 +1799,8 @@ iCn3D.prototype.createStrand = function (atoms, num, div, fill, coilWidth, helix
                     } // end if (atom.ssbegin || atom.ssend)
 
                     // end of a chain
-                    if ((currentChain !== atom.chain || currentResi + 1 !== atom.resi) && pnts[0].length > 0) {
-//                        if ((currentChain !== atom.chain) && pnts[0].length > 0) {
+//                    if ((currentChain !== atom.chain || currentResi + 1 !== atom.resi) && pnts[0].length > 0) {
+                    if ((currentChain !== atom.chain) && pnts[0].length > 0) {
 
                         var atomName = 'CA';
 
@@ -2026,8 +2026,8 @@ iCn3D.prototype.createTube = function (atoms, atomName, radius, bHighlight) {
                 firstAtom = atom;
             }
 
-            if (index > 0 && (currentChain !== atom.chain || currentResi + 1 !== atom.resi || Math.abs(atom.coord.x - prevAtom.coord.x) > maxDist || Math.abs(atom.coord.y - prevAtom.coord.y) > maxDist || Math.abs(atom.coord.z - prevAtom.coord.z) > maxDist) ) {
-//                if (index > 0 && (currentChain !== atom.chain || Math.abs(atom.coord.x - prevAtom.coord.x) > 6.0 || Math.abs(atom.coord.y - prevAtom.coord.y) > 6.0 || Math.abs(atom.coord.z - prevAtom.coord.z) > 6.0) ) {
+            //if (index > 0 && (currentChain !== atom.chain || currentResi + 1 !== atom.resi || Math.abs(atom.coord.x - prevAtom.coord.x) > maxDist || Math.abs(atom.coord.y - prevAtom.coord.y) > maxDist || Math.abs(atom.coord.z - prevAtom.coord.z) > maxDist) ) {
+            if (index > 0 && (currentChain !== atom.chain || Math.abs(atom.coord.x - prevAtom.coord.x) > maxDist || Math.abs(atom.coord.y - prevAtom.coord.y) > maxDist || Math.abs(atom.coord.z - prevAtom.coord.z) > maxDist) ) {
                 if(bHighlight !== 2) {
                     //this.createTubeSub(pnts, colors, radii, bHighlight);
                     var prevoneResid = firstAtom.structure + '_' + firstAtom.chain + '_' + (firstAtom.resi - 1).toString();
@@ -2260,8 +2260,8 @@ iCn3D.prototype.drawStrandNucleicAcid = function(atomlist, num, div, fill, nucle
 
       if ((atom.name === 'O3\'' || atom.name === 'OP2' || atom.name === 'O3*' || atom.name === 'O2P') && !atom.het) {
          if (atom.name === 'O3\'' || atom.name === 'O3*') { // to connect 3' end. FIXME: better way to do?
-            if (currentChain !== atom.chain || currentResi + 1 !== atom.resi) {
-//                if (currentChain !== atom.chain) {
+//            if (currentChain !== atom.chain || currentResi + 1 !== atom.resi) {
+            if (currentChain !== atom.chain) {
                if (currentO3 && prevOO) {
                   for (j = 0; j < num; j++) {
                      var delta = -1 + 2 / (num - 1) * j;

@@ -15,7 +15,7 @@ if (!$.ui.dialog.prototype._makeDraggableBase) {
 var iCn3DUI = function(cfg) {
     var me = this;
 
-    this.REVISION = '2.7.0';
+    this.REVISION = '2.7.1';
 
     me.bFullUi = true;
 
@@ -1587,7 +1587,8 @@ iCn3DUI.prototype = {
 
        text += '</table><br/></body></html>';
 
-       me.saveFile(me.inputid + '_interactions.html', 'html', text);
+       var file_pref = (me.inputid) ? me.inputid : "custom";
+       me.saveFile(file_pref + '_interactions.html', 'html', text);
     },
 
     saveColor: function() { var me = this;
@@ -1837,7 +1838,8 @@ iCn3DUI.prototype = {
         $("#" + me.pre + "mn1_exportState").click(function (e) {
            me.setLogCmd("export state file", false);
 
-           me.saveFile(me.inputid + '_statefile.txt', 'command');
+           var file_pref = (me.inputid) ? me.inputid : "custom";
+           me.saveFile(file_pref + '_statefile.txt', 'command');
         });
     },
 
@@ -1858,7 +1860,8 @@ iCn3DUI.prototype = {
        }
 
        var text = me.saveStlFile();
-       me.saveFile(me.inputid + postfix + '.stl', 'binary', text);
+       var file_pref = (me.inputid) ? me.inputid : "custom";
+       me.saveFile(file_pref + postfix + '.stl', 'binary', text);
 
        // assemblies
        if(me.icn3d.biomtMatrices !== undefined && me.icn3d.biomtMatrices.length > 1 && me.icn3d.bAssembly
@@ -1881,7 +1884,7 @@ iCn3DUI.prototype = {
               //https://stackoverflow.com/questions/1190642/how-can-i-pass-a-parameter-to-a-settimeout-callback
               setTimeout(function(mat, index){
                   text = me.saveStlFile(mat);
-                  me.saveFile(me.inputid + postfix + index + '.stl', 'binary', text);
+                  me.saveFile(file_pref + postfix + index + '.stl', 'binary', text);
                   text = '';
               }.bind(this, mat, index), time);
 
@@ -1910,8 +1913,9 @@ iCn3DUI.prototype = {
        }
 
        var text = me.saveVrmlFile();
-       //me.saveFile(me.inputid + postfix + '.wrl', 'text', text);
-       me.saveFile(me.inputid + postfix + '.vrml', 'text', text);
+       var file_pref = (me.inputid) ? me.inputid : "custom";
+       //me.saveFile(file_pref + postfix + '.wrl', 'text', text);
+       me.saveFile(file_pref + postfix + '.vrml', 'text', text);
 
        // assemblies
        if(me.icn3d.biomtMatrices !== undefined && me.icn3d.biomtMatrices.length > 1 && me.icn3d.bAssembly
@@ -1935,7 +1939,7 @@ iCn3DUI.prototype = {
               setTimeout(function(mat, index){
                   text = me.saveVrmlFile(mat);
                   //me.saveFile(me.inputid + postfix + index + '.wrl', 'text', text);
-                  me.saveFile(me.inputid + postfix + index + '.vrml', 'text', text);
+                  me.saveFile(file_pref + postfix + index + '.vrml', 'text', text);
                   text = '';
               }.bind(this, mat, index), time);
 
@@ -2007,7 +2011,8 @@ iCn3DUI.prototype = {
         $("#" + me.pre + "mn1_exportCanvas").add("#" + me.pre + "saveimage").click(function (e) {
            me.setLogCmd("export canvas", false);
 
-           me.saveFile(me.inputid + '_image.png', 'png');
+           var file_pref = (me.inputid) ? me.inputid : "custom";
+           me.saveFile(file_pref + '_image_icn3d_loadable.png', 'png');
         });
     },
 
@@ -2041,7 +2046,8 @@ iCn3DUI.prototype = {
 
            text += '</table><br/></body></html>';
 
-           me.saveFile(me.inputid + '_counts.html', 'html', text);
+           var file_pref = (me.inputid) ? me.inputid : "custom";
+           me.saveFile(file_pref + '_counts.html', 'html', text);
         });
     },
 
@@ -2051,7 +2057,8 @@ iCn3DUI.prototype = {
 
            var text = me.exportCustomAtoms();
 
-           me.saveFile(me.inputid + '_selections.txt', 'text', [text]);
+           var file_pref = (me.inputid) ? me.inputid : "custom";
+           me.saveFile(file_pref + '_selections.txt', 'text', [text]);
         });
     },
 

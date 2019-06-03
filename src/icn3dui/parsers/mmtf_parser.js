@@ -119,10 +119,10 @@ iCn3DUI.prototype.parseMmtfData = function (mmtfData, bFull) { var me = this;
             resn = groupData.groupName;
             resi = groupData.groupId;
 
-            if(resi == prevResi || bModifyResi) {
-                bModifyResi = true;
-                resi = prevResi + 1; // for residue insertion code
-            }
+            //if(resi == prevResi || bModifyResi) {
+            //    bModifyResi = true;
+            //    resi = prevResi + 1; // for residue insertion code
+            //}
 
             var resid = structure + '_' + chain + '_' + resi;
 

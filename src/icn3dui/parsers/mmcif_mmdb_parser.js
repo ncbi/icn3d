@@ -39,7 +39,6 @@ iCn3DUI.prototype.downloadMmcif = function (mmcifid) { var me = this;
       },
       success: function(data) {
            url = "https://www.ncbi.nlm.nih.gov/Structure/mmcifparser/mmcifparser.cgi";
-
            $.ajax({
               url: url,
               type: 'POST',
@@ -323,7 +322,7 @@ iCn3DUI.prototype.parseMmdbData = function (data) { var me = this;
         me.icn3d.chain2molid = chain2molid;
         me.icn3d.molid2chain = molid2chain;
 
-        //if ((me.cfg.inpara !== undefined && me.cfg.inpara.indexOf('mols=') != -1) || (data.atomcount <= maxatomcnt && data.atoms !== undefined) ) {
+        //if ((me.cfg.inpara !== undefined && me.cfg.inpara.indexOf('mols=') != -1) || (data.atomCount <= maxatomcnt && data.atoms !== undefined) ) {
         // small structure with all atoms
         // show surface options
         $("#" + me.pre + "accordion5").show();
@@ -403,7 +402,7 @@ iCn3DUI.prototype.downloadMmdb = function (mmdbid, bGi) { var me = this;
       success: function(data) {
         var bCalphaOnly = me.icn3d.isCalphaPhosOnly(data.atoms); //, 'CA');
 
-        if(bCalphaOnly || data.atomcount <= me.icn3d.maxatomcnt) {
+        if(bCalphaOnly || data.atomCount <= me.icn3d.maxatomcnt) {
             me.parseMmdbData(data);
         }
         else {
@@ -865,6 +864,7 @@ iCn3DUI.prototype.loadAtomDataIn = function (data, id, type, seqalign) { var me 
 
         var oneLetterRes = me.icn3d.residueName2Abbr(atm.resn.substr(0, 3));
 
+/*
         // modify resi since MMDB used the same resi as in PDB where resi is not continuous
         // No need to modify mmcif resi
         //if(type === 'mmdbid' || type === 'align') {
@@ -899,6 +899,7 @@ iCn3DUI.prototype.loadAtomDataIn = function (data, id, type, seqalign) { var me 
 
             prevOldResi = oldResi;
         }
+*/
 
         if( (type === 'mmdbid' || type === 'align') && me.bFullUi ) {
             // set me.mmdbMolidResid2mmdbChainResi
@@ -1226,13 +1227,13 @@ iCn3DUI.prototype.loadAtomDataIn = function (data, id, type, seqalign) { var me 
 
         // determine whether there are disulfide bonds
         // disulfide bond is about 2.05 angstrom
-        var distSqrMax = 3 * 3;
+        var distMax = 4; //3; // https://icn3d.page.link/5KRXx6XYfig1fkye7
+        var distSqrMax = distMax * distMax;
         for(var structure in structure2cys_resid) {
             var cysArray = structure2cys_resid[structure];
 
             for(var i = 0, il = cysArray.length; i < il; ++i) {
                 for(var j = i + 1, jl = cysArray.length; j < jl; ++j) {
-
                     var resid1 = cysArray[i];
                     var resid2 = cysArray[j];
 
@@ -1250,11 +1251,11 @@ iCn3DUI.prototype.loadAtomDataIn = function (data, id, type, seqalign) { var me 
                         }
                     }
 
-                    if(coord1 === undefined || coord2 === undefined) break;
+                    if(coord1 === undefined || coord2 === undefined) continue;
 
-                    if(Math.abs(coord1.x - coord2.x) > distSqrMax) break;
-                    if(Math.abs(coord1.y - coord2.y) > distSqrMax) break;
-                    if(Math.abs(coord1.y - coord2.y) > distSqrMax) break;
+                    if(Math.abs(coord1.x - coord2.x) > distMax) continue;
+                    if(Math.abs(coord1.y - coord2.y) > distMax) continue;
+                    if(Math.abs(coord1.z - coord2.z) > distMax) continue;
                     distSqr = (coord1.x - coord2.x)*(coord1.x - coord2.x) + (coord1.y - coord2.y)*(coord1.y - coord2.y) + (coord1.z - coord2.z)*(coord1.z - coord2.z);
 
                     if(distSqr < distSqrMax) { // disulfide bond
