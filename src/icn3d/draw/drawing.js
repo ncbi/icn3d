@@ -2027,7 +2027,7 @@ iCn3D.prototype.createTube = function (atoms, atomName, radius, bHighlight) {
             }
 
             //if (index > 0 && (currentChain !== atom.chain || currentResi + 1 !== atom.resi || Math.abs(atom.coord.x - prevAtom.coord.x) > maxDist || Math.abs(atom.coord.y - prevAtom.coord.y) > maxDist || Math.abs(atom.coord.z - prevAtom.coord.z) > maxDist) ) {
-            if (index > 0 && (currentChain !== atom.chain || (this.missingResidues !== undefined && this.missingResidues.indexOf(atom.structure + '_' + atom.chain + '_' + atom.resi) !== -1) || Math.abs(atom.coord.x - prevAtom.coord.x) > maxDist || Math.abs(atom.coord.y - prevAtom.coord.y) > maxDist || Math.abs(atom.coord.z - prevAtom.coord.z) > maxDist) ) {
+            if (index > 0 && (currentChain !== atom.chain || Math.abs(atom.coord.x - prevAtom.coord.x) > maxDist || Math.abs(atom.coord.y - prevAtom.coord.y) > maxDist || Math.abs(atom.coord.z - prevAtom.coord.z) > maxDist) ) {
                 if(bHighlight !== 2) {
                     //this.createTubeSub(pnts, colors, radii, bHighlight);
                     var prevoneResid = firstAtom.structure + '_' + firstAtom.chain + '_' + (firstAtom.resi - 1).toString();
