@@ -15,7 +15,7 @@ if (!$.ui.dialog.prototype._makeDraggableBase) {
 var iCn3DUI = function(cfg) {
     var me = this;
 
-    this.REVISION = '2.7.1';
+    this.REVISION = '2.7.2';
 
     me.bFullUi = true;
 
@@ -2888,6 +2888,34 @@ iCn3DUI.prototype = {
         });
     },
 
+    clkMn5_opacity04: function() { var me = this;
+        $("#" + me.pre + "mn5_opacity04").click(function (e) {
+           me.setOption('opacity', '0.4');
+           me.setLogCmd('set surface opacity 0.4', true);
+        });
+    },
+
+    clkMn5_opacity03: function() { var me = this;
+        $("#" + me.pre + "mn5_opacity03").click(function (e) {
+           me.setOption('opacity', '0.3');
+           me.setLogCmd('set surface opacity 0.3', true);
+        });
+    },
+
+    clkMn5_opacity02: function() { var me = this;
+        $("#" + me.pre + "mn5_opacity02").click(function (e) {
+           me.setOption('opacity', '0.2');
+           me.setLogCmd('set surface opacity 0.2', true);
+        });
+    },
+
+    clkMn5_opacity01: function() { var me = this;
+        $("#" + me.pre + "mn5_opacity01").click(function (e) {
+           me.setOption('opacity', '0.1');
+           me.setLogCmd('set surface opacity 0.1', true);
+        });
+    },
+
     clkMn5_wireframeYes: function() { var me = this;
         $("#" + me.pre + "mn5_wireframeYes").click(function (e) {
            me.setOption('wireframe', 'yes');
@@ -4803,6 +4831,10 @@ iCn3DUI.prototype = {
         me.clkMn5_opacity07();
         me.clkMn5_opacity06();
         me.clkMn5_opacity05();
+        me.clkMn5_opacity04();
+        me.clkMn5_opacity03();
+        me.clkMn5_opacity02();
+        me.clkMn5_opacity01();
         me.clkMn5_wireframeYes();
         me.clkMn5_wireframeNo();
         me.clkMn5_elecmap2fofc();
