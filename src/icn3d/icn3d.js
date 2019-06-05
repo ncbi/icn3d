@@ -27,7 +27,7 @@ var iCn3D = function (id) {
             canvas: this.container.get(0),
             antialias: true,
             preserveDrawingBuffer: true,
-            //sortObjects: false,
+            sortObjects: false,
             alpha: true
         });
 
@@ -1220,6 +1220,10 @@ iCn3D.prototype = {
 
         this.biomtMatrices = [];
         this.bAssembly = true;
+
+        this.bDrawn = false;
+        this.bSecondaryStructure = false;
+        this.bHighlight = 1; // undefined: no highlight, 1: highlight by outline, 2: highlight by 3D object
     },
 
     reinitAfterLoad: function () {

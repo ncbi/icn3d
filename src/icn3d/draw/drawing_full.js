@@ -6,6 +6,10 @@
 iCn3D.prototype.createSurfaceRepresentation = function (atoms, type, wireframe, opacity) { var me = this;
     if(Object.keys(atoms).length == 0) return;
 
+    if(opacity == undefined) opacity = 1.0;
+
+    this.opacity = opacity;
+
     var geo;
 
     var extent = this.getExtent(atoms);
@@ -25,6 +29,8 @@ iCn3D.prototype.createSurfaceRepresentation = function (atoms, type, wireframe, 
     //var sigma2fofc = 1.5;
     //var sigmafofc = 3.0;
     var maxdist = 1; // maximum distance to show electron density map, set it between 1 AND 2
+
+    var bTransparent = (parseInt(10*opacity) != 10 && !wireframe && !(this.bInstanced && Object.keys(this.atoms).length * this.biomtMatrices.length > this.maxatomcnt) ) ? true : false;
 
     var ps;
     if(type == 11) { // 2fofc
@@ -99,20 +105,12 @@ iCn3D.prototype.createSurfaceRepresentation = function (atoms, type, wireframe, 
             atomsToShow: Object.keys(atoms),
             extendedAtoms: extendedAtoms,
             type: type,
-            threshbox: this.threshbox
+            threshbox: (bTransparent) ? 60 : this.threshbox
         });
     }
 
     var verts = ps.vertices;
     var faces = ps.faces;
-
-    geo = new THREE.Geometry();
-    geo.vertices = verts.map(function (v) {
-        var r = new THREE.Vector3(v.x, v.y, v.z);
-
-        r.atomid = v.atomid;
-        return r;
-    });
 
     var colorFor2fofc = new THREE.Color('#00FFFF');
     var colorForfofcPos = new THREE.Color('#00FF00');
@@ -120,76 +118,158 @@ iCn3D.prototype.createSurfaceRepresentation = function (atoms, type, wireframe, 
     var colorForfofcNeg = new THREE.Color('#ff0000');
     var colorForEm = new THREE.Color('#00FFFF');
 
-    geo.faces = faces.map(function (f) {
-        //return new THREE.Face3(f.a, f.b, f.c);
-        var vertexColors = ['a', 'b', 'c' ].map(function (d) {
-            if(type == 11) { // 2fofc
-                return colorFor2fofc;
-            }
-            else if(type == 12) { // fofc
-                return (geo.vertices[f[d]].atomid) ? colorForfofcPos : colorForfofcNeg;
-            }
-            else if(type == 13) { // em
-                return colorForEm;
+    if(bTransparent) { // WebGL has someordering problem when dealing with transparency
+      for(var i = 0, il = faces.length; i < il; ++i) {
+        var va = faces[i].a;
+        var vb = faces[i].b;
+        var vc = faces[i].c;
+
+        geo = new THREE.Geometry();
+
+        geo.vertices = [];
+
+        geo.vertices.push(new THREE.Vector3(verts[va].x, verts[va].y, verts[va].z));
+        geo.vertices.push(new THREE.Vector3(verts[vb].x, verts[vb].y, verts[vb].z));
+        geo.vertices.push(new THREE.Vector3(verts[vc].x, verts[vc].y, verts[vc].z));
+
+        var vertexColors = [];
+        vertexColors.push(me.atoms[verts[va].atomid].color);
+        vertexColors.push(me.atoms[verts[vb].atomid].color);
+        vertexColors.push(me.atoms[verts[vc].atomid].color);
+
+        geo.faces = [new THREE.Face3(0, 1, 2, undefined, vertexColors)];
+
+        geo.computeVertexNormals(true);
+
+        geo.colorsNeedUpdate = true;
+        geo.normalsNeedUpdate = true;
+
+        geo.type = 'Surface'; // to be recognized in vrml.js for 3D printing
+
+        var mesh = new THREE.Mesh(geo, new THREE.MeshPhongMaterial({
+            specular: this.frac,
+            shininess: 10, //30,
+            emissive: 0x000000,
+            vertexColors: THREE.VertexColors,
+            wireframe: wireframe,
+            opacity: opacity,
+            transparent: true,
+            side: THREE.DoubleSide
+        }));
+
+        //http://www.html5gamedevs.com/topic/7288-threejs-transparency-bug-or-limitation-or-what/
+        //mesh.renderOrder = 2; //1; // default 0
+
+        var avePos = mesh.geometry.vertices[0].clone().add(mesh.geometry.vertices[1]).add(mesh.geometry.vertices[2]).multiplyScalar(0.333);
+        var realPos = avePos.sub(me.oriCenter).applyMatrix4(me.cam.matrixWorldInverse);
+        if(me.cam_z > 0) {
+            mesh.renderOrder = -parseInt(realPos.z); // + me.oriMaxD);
+        }
+        else {
+            mesh.renderOrder = parseInt(realPos.z); // + me.oriMaxD);
+        }
+
+        mesh.onBeforeRender = function(renderer, scene, camera, geometry, material, group) {
+            //https://juejin.im/post/5a0872d4f265da43062a4156
+            //var realPos = this.geometry.vertices[0].project(me.cam);
+            var avePos = this.geometry.vertices[0].clone().add(this.geometry.vertices[1]).add(this.geometry.vertices[2]).multiplyScalar(0.333);
+            var realPos = avePos.sub(me.oriCenter).applyMatrix4(me.cam.matrixWorldInverse);
+
+            if(me.cam_z > 0) {
+                this.renderOrder = -parseInt(realPos.z); // + me.oriMaxD);
             }
             else {
-                var atomid = geo.vertices[f[d]].atomid;
-                return me.atoms[atomid].color;
+                this.renderOrder = parseInt(realPos.z); // + me.oriMaxD);
             }
+        };
+
+        me.mdl.add(mesh);
+
+        if(type == 11 || type == 12) {
+            this.prevMaps.push(mesh);
+        }
+        else if(type == 13) {
+            this.prevEmmaps.push(mesh);
+        }
+        else {
+            this.prevSurfaces.push(mesh);
+        }
+      }
+    }
+    else {
+        geo = new THREE.Geometry();
+        geo.vertices = verts.map(function (v) {
+            var r = new THREE.Vector3(v.x, v.y, v.z);
+
+            r.atomid = v.atomid;
+            return r;
         });
 
-        return new THREE.Face3(f.a, f.b, f.c, undefined, vertexColors);
-    });
+        geo.faces = faces.map(function (f) {
+            //return new THREE.Face3(f.a, f.b, f.c);
+            var vertexColors = ['a', 'b', 'c' ].map(function (d) {
+                if(type == 11) { // 2fofc
+                    return colorFor2fofc;
+                }
+                else if(type == 12) { // fofc
+                    return (geo.vertices[f[d]].atomid) ? colorForfofcPos : colorForfofcNeg;
+                }
+                else if(type == 13) { // em
+                    return colorForEm;
+                }
+                else {
+                    var atomid = geo.vertices[f[d]].atomid;
+                    return me.atoms[atomid].color;
+                }
+            });
+
+            return new THREE.Face3(f.a, f.b, f.c, undefined, vertexColors);
+        });
+
+
+        //http://analyticphysics.com/Coding%20Methods/Special%20Topics%20in%20Three.js.htm
+        //var c = geo.center();
+
+        //geo.computeFaceNormals();
+        //geo.computeVertexNormals(false);
+        geo.computeVertexNormals(true);
+
+        geo.colorsNeedUpdate = true;
+        geo.normalsNeedUpdate = true;
+
+        geo.type = 'Surface'; // to be recognized in vrml.js for 3D printing
+
+        var mesh = new THREE.Mesh(geo, new THREE.MeshPhongMaterial({
+            specular: this.frac,
+            shininess: 10, //30,
+            emissive: 0x000000,
+            vertexColors: THREE.VertexColors,
+            wireframe: wireframe,
+            opacity: opacity,
+            transparent: true,
+            side: THREE.DoubleSide
+        }));
+
+        //http://www.html5gamedevs.com/topic/7288-threejs-transparency-bug-or-limitation-or-what/
+        mesh.renderOrder = 2; //1; // default 0
+
+        me.mdl.add(mesh);
+
+        if(type == 11 || type == 12) {
+            this.prevMaps.push(mesh);
+        }
+        else if(type == 13) {
+            this.prevEmmaps.push(mesh);
+        }
+        else {
+            this.prevSurfaces.push(mesh);
+        }
+    }
 
     // remove the reference
     ps = null;
     verts = null;
     faces = null;
-
-    //http://analyticphysics.com/Coding%20Methods/Special%20Topics%20in%20Three.js.htm
-    //var c = geo.center();
-
-    geo.computeFaceNormals();
-    //geo.computeVertexNormals(false);
-    geo.computeVertexNormals(true);
-
-    geo.colorsNeedUpdate = true;
-    geo.normalsNeedUpdate = true;
-
-    geo.type = 'Surface'; // to be recognized in vrml.js for 3D printing
-
-    if(opacity == undefined) opacity = 1.0;
-
-    var mesh = new THREE.Mesh(geo, new THREE.MeshPhongMaterial({
-        specular: this.frac,
-        shininess: 10, //30,
-        emissive: 0x000000,
-        vertexColors: THREE.VertexColors,
-        wireframe: wireframe,
-        opacity: opacity,
-        //wireframe: false,
-        //opacity: 0.5,
-        transparent: true,
-        //depthWrite: false,
-        side: THREE.DoubleSide
-    }));
-
-    //mesh.position.set( -c.x, -c.y, -c.z );
-
-    //http://www.html5gamedevs.com/topic/7288-threejs-transparency-bug-or-limitation-or-what/
-    mesh.renderOrder = 1; // default 0
-
-    me.mdl.add(mesh);
-
-    if(type == 11 || type == 12) {
-        this.prevMaps.push(mesh);
-    }
-    else if(type == 13) {
-        this.prevEmmaps.push(mesh);
-    }
-    else {
-        this.prevSurfaces.push(mesh);
-    }
 
     // remove the reference
     geo = null;

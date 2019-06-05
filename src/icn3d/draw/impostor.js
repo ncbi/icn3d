@@ -92,7 +92,7 @@ iCn3D.prototype.onBeforeRender = function(renderer, scene, camera, geometry, mat
   }
 };
 
-iCn3D.prototype.setParametersForShader = function () { var me = this;
+iCn3D.prototype.setParametersForShader = function (opacity) { var me = this;
 /*
     var modelViewMatrix = new THREE.Uniform( new THREE.Matrix4() )
             .onUpdate( function( object ){
@@ -137,6 +137,8 @@ iCn3D.prototype.setParametersForShader = function () { var me = this;
     //var far = 2.5 * this.maxD;
     var far = 3 * this.maxD;
 
+    var opacityValue = (opacity !== undefined) ? opacity : 1.0;
+
     this.uniforms = THREE.UniformsUtils.merge([
       THREE.UniformsLib.common,
       {
@@ -163,7 +165,7 @@ iCn3D.prototype.setParametersForShader = function () { var me = this;
         emissive: { type: "v3", value: [0.0,0.0,0.0] },
         roughness: { type: "f", value: 0.5 }, // 0.4
         metalness: { type: "f", value: 0.3 }, // 0.5
-        opacity: { type: "f", value: 1.0 },
+        opacity: { type: "f", value: opacityValue },
         nearClip: { type: "f", value: 0.1 },
         ortho: { type: "f", value: 0.0 },
         shrink: { type: "f", value: 0.13 },

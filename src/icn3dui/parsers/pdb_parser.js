@@ -135,7 +135,7 @@ iCn3DUI.prototype.loadPdbData = function(data) { var me = this;
 };
 
 iCn3DUI.prototype.loadPdbDataBase = function(data, calphaonly) { var me = this;
-   var url = "//www.ncbi.nlm.nih.gov/Structure/mmcifparser/mmcifparser.cgi";
+   var url = "https://www.ncbi.nlm.nih.gov/Structure/mmcifparser/mmcifparser.cgi";
 
    $.ajax({
       url: url,
