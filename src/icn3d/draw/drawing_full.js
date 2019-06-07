@@ -118,6 +118,51 @@ iCn3D.prototype.createSurfaceRepresentation = function (atoms, type, wireframe, 
     var colorForfofcNeg = new THREE.Color('#ff0000');
     var colorForEm = new THREE.Color('#00FFFF');
 
+    geo = new THREE.Geometry();
+    geo.vertices = verts.map(function (v) {
+        var r = new THREE.Vector3(v.x, v.y, v.z);
+
+        r.atomid = v.atomid;
+        return r;
+    });
+
+    geo.faces = faces.map(function (f) {
+        //return new THREE.Face3(f.a, f.b, f.c);
+        var vertexColors = ['a', 'b', 'c' ].map(function (d) {
+            if(type == 11) { // 2fofc
+                return colorFor2fofc;
+            }
+            else if(type == 12) { // fofc
+                return (geo.vertices[f[d]].atomid) ? colorForfofcPos : colorForfofcNeg;
+            }
+            else if(type == 13) { // em
+                return colorForEm;
+            }
+            else {
+                var atomid = geo.vertices[f[d]].atomid;
+                return me.atoms[atomid].color;
+            }
+        });
+
+        return new THREE.Face3(f.a, f.b, f.c, undefined, vertexColors);
+    });
+
+
+    //http://analyticphysics.com/Coding%20Methods/Special%20Topics%20in%20Three.js.htm
+    //var c = geo.center();
+
+    //geo.computeFaceNormals();
+    //geo.computeVertexNormals(false);
+    geo.computeVertexNormals(true);
+
+    geo.colorsNeedUpdate = true;
+    geo.normalsNeedUpdate = true;
+
+    geo.type = 'Surface'; // to be recognized in vrml.js for 3D printing
+
+    //var normalArray = geo.data.normals;
+    var normalArray = JSON.parse(JSON.stringify(geo)).data.normals;
+
     if(bTransparent) { // WebGL has someordering problem when dealing with transparency
       // the following method minimize the number of objects by a factor of 3
       var va2faces = {};
@@ -135,36 +180,41 @@ iCn3D.prototype.createSurfaceRepresentation = function (atoms, type, wireframe, 
       }
 
       for(var va in va2faces) {
-        geo = new THREE.Geometry();
-        geo.vertices = [];
-        geo.faces = [];
+        var geometry = new THREE.Geometry();
+        geometry.vertices = [];
+        geometry.faces = [];
 
         var faceVertices = va2faces[va];
         for(var i = 0, il = faceVertices.length; i < il; i += 2) {
             var vb = faceVertices[i];
             var vc = faceVertices[i + 1];
 
-            geo.vertices.push(new THREE.Vector3(verts[va].x, verts[va].y, verts[va].z));
-            geo.vertices.push(new THREE.Vector3(verts[vb].x, verts[vb].y, verts[vb].z));
-            geo.vertices.push(new THREE.Vector3(verts[vc].x, verts[vc].y, verts[vc].z));
+            geometry.vertices.push(new THREE.Vector3(verts[va].x, verts[va].y, verts[va].z));
+            geometry.vertices.push(new THREE.Vector3(verts[vb].x, verts[vb].y, verts[vb].z));
+            geometry.vertices.push(new THREE.Vector3(verts[vc].x, verts[vc].y, verts[vc].z));
 
             var vertexColors = [];
             vertexColors.push(me.atoms[verts[va].atomid].color);
             vertexColors.push(me.atoms[verts[vb].atomid].color);
             vertexColors.push(me.atoms[verts[vc].atomid].color);
 
+            var normals = [];
+            normals.push(normalArray[va]);
+            normals.push(normalArray[vb]);
+            normals.push(normalArray[vc]);
+
             var initPos = i / 2 * 3;
-            geo.faces.push(new THREE.Face3(initPos, initPos + 1, initPos + 2, undefined, vertexColors));
+            geometry.faces.push(new THREE.Face3(initPos, initPos + 1, initPos + 2, normals, vertexColors));
         }
 
-        geo.computeVertexNormals(false);
+        //geometry.computeVertexNormals(false);
 
-        geo.colorsNeedUpdate = true;
-        geo.normalsNeedUpdate = true;
+        geometry.colorsNeedUpdate = true;
+        //geometry.normalsNeedUpdate = true;
 
-        geo.type = 'Surface'; // to be recognized in vrml.js for 3D printing
+        geometry.type = 'Surface'; // to be recognized in vrml.js for 3D printing
 
-        var mesh = new THREE.Mesh(geo, new THREE.MeshPhongMaterial({
+        var mesh = new THREE.Mesh(geometry, new THREE.MeshPhongMaterial({
             specular: this.frac,
             shininess: 10, //30,
             emissive: 0x000000,
@@ -177,12 +227,6 @@ iCn3D.prototype.createSurfaceRepresentation = function (atoms, type, wireframe, 
 
         //http://www.html5gamedevs.com/topic/7288-threejs-transparency-bug-or-limitation-or-what/
         //mesh.renderOrder = 2; //1; // default 0
-/*
-        var avePos = mesh.geometry.vertices[0].clone().add(mesh.geometry.vertices[1]).add(mesh.geometry.vertices[2]).multiplyScalar(0.333);
-        var realPos = avePos.sub(me.oriCenter).applyMatrix4(me.cam.matrixWorldInverse);
-        mesh.renderOrder = (me.cam_z > 0) ? -parseInt(realPos.z) : parseInt(realPos.z);
-*/
-
         var sum = new THREE.Vector3(0,0,0);
         for(var i = 0, il = mesh.geometry.vertices.length; i < il; ++i) {
             sum = sum.add(mesh.geometry.vertices[i]);
@@ -193,13 +237,6 @@ iCn3D.prototype.createSurfaceRepresentation = function (atoms, type, wireframe, 
 
         mesh.onBeforeRender = function(renderer, scene, camera, geometry, material, group) {
             //https://juejin.im/post/5a0872d4f265da43062a4156
-/*
-            var avePos = this.geometry.vertices[0].clone().add(this.geometry.vertices[1]).add(this.geometry.vertices[2]).multiplyScalar(0.333);
-            var realPos = avePos.sub(me.oriCenter).applyMatrix4(me.cam.matrixWorldInverse);
-
-            this.renderOrder = (me.cam_z > 0) ? -parseInt(realPos.z) : parseInt(realPos.z);
-*/
-
             var sum = new THREE.Vector3(0,0,0);
             for(var i = 0, il = this.geometry.vertices.length; i < il; ++i) {
                 sum = sum.add(this.geometry.vertices[i]);
@@ -223,48 +260,6 @@ iCn3D.prototype.createSurfaceRepresentation = function (atoms, type, wireframe, 
       } // for(var va
     }
     else {
-        geo = new THREE.Geometry();
-        geo.vertices = verts.map(function (v) {
-            var r = new THREE.Vector3(v.x, v.y, v.z);
-
-            r.atomid = v.atomid;
-            return r;
-        });
-
-        geo.faces = faces.map(function (f) {
-            //return new THREE.Face3(f.a, f.b, f.c);
-            var vertexColors = ['a', 'b', 'c' ].map(function (d) {
-                if(type == 11) { // 2fofc
-                    return colorFor2fofc;
-                }
-                else if(type == 12) { // fofc
-                    return (geo.vertices[f[d]].atomid) ? colorForfofcPos : colorForfofcNeg;
-                }
-                else if(type == 13) { // em
-                    return colorForEm;
-                }
-                else {
-                    var atomid = geo.vertices[f[d]].atomid;
-                    return me.atoms[atomid].color;
-                }
-            });
-
-            return new THREE.Face3(f.a, f.b, f.c, undefined, vertexColors);
-        });
-
-
-        //http://analyticphysics.com/Coding%20Methods/Special%20Topics%20in%20Three.js.htm
-        //var c = geo.center();
-
-        //geo.computeFaceNormals();
-        //geo.computeVertexNormals(false);
-        geo.computeVertexNormals(true);
-
-        geo.colorsNeedUpdate = true;
-        geo.normalsNeedUpdate = true;
-
-        geo.type = 'Surface'; // to be recognized in vrml.js for 3D printing
-
         var mesh = new THREE.Mesh(geo, new THREE.MeshPhongMaterial({
             specular: this.frac,
             shininess: 10, //30,
