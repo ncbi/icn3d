@@ -1,4 +1,6 @@
 ## Change Log
+[icn3d-2.7.3](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.7.3.zip) was release on June 6, 2019. Improved the display of transparent surfaces.
+
 [icn3d-2.7.2](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.7.2.zip) was release on June 5, 2019. Fixed the display of transparent surfaces.
 
 [icn3d-2.7.1](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.7.1.zip) was release on June 3, 2019. Fixed the sequence display when there are insertion codes or missing coordinates.
