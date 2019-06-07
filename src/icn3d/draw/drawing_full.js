@@ -119,27 +119,45 @@ iCn3D.prototype.createSurfaceRepresentation = function (atoms, type, wireframe, 
     var colorForEm = new THREE.Color('#00FFFF');
 
     if(bTransparent) { // WebGL has someordering problem when dealing with transparency
+      // the following method minimize the number of objects by a factor of 3
+      var va2faces = {};
+
       for(var i = 0, il = faces.length; i < il; ++i) {
         var va = faces[i].a;
         var vb = faces[i].b;
         var vc = faces[i].c;
 
+        // It produces less objects using va as the key
+        if(va2faces[va] === undefined) va2faces[va] = [];
+        //va2faces[va].push(va);
+        va2faces[va].push(vb);
+        va2faces[va].push(vc);
+      }
+
+      for(var va in va2faces) {
         geo = new THREE.Geometry();
-
         geo.vertices = [];
+        geo.faces = [];
 
-        geo.vertices.push(new THREE.Vector3(verts[va].x, verts[va].y, verts[va].z));
-        geo.vertices.push(new THREE.Vector3(verts[vb].x, verts[vb].y, verts[vb].z));
-        geo.vertices.push(new THREE.Vector3(verts[vc].x, verts[vc].y, verts[vc].z));
+        var faceVertices = va2faces[va];
+        for(var i = 0, il = faceVertices.length; i < il; i += 2) {
+            var vb = faceVertices[i];
+            var vc = faceVertices[i + 1];
 
-        var vertexColors = [];
-        vertexColors.push(me.atoms[verts[va].atomid].color);
-        vertexColors.push(me.atoms[verts[vb].atomid].color);
-        vertexColors.push(me.atoms[verts[vc].atomid].color);
+            geo.vertices.push(new THREE.Vector3(verts[va].x, verts[va].y, verts[va].z));
+            geo.vertices.push(new THREE.Vector3(verts[vb].x, verts[vb].y, verts[vb].z));
+            geo.vertices.push(new THREE.Vector3(verts[vc].x, verts[vc].y, verts[vc].z));
 
-        geo.faces = [new THREE.Face3(0, 1, 2, undefined, vertexColors)];
+            var vertexColors = [];
+            vertexColors.push(me.atoms[verts[va].atomid].color);
+            vertexColors.push(me.atoms[verts[vb].atomid].color);
+            vertexColors.push(me.atoms[verts[vc].atomid].color);
 
-        geo.computeVertexNormals(true);
+            var initPos = i / 2 * 3;
+            geo.faces.push(new THREE.Face3(initPos, initPos + 1, initPos + 2, undefined, vertexColors));
+        }
+
+        geo.computeVertexNormals(false);
 
         geo.colorsNeedUpdate = true;
         geo.normalsNeedUpdate = true;
@@ -159,28 +177,36 @@ iCn3D.prototype.createSurfaceRepresentation = function (atoms, type, wireframe, 
 
         //http://www.html5gamedevs.com/topic/7288-threejs-transparency-bug-or-limitation-or-what/
         //mesh.renderOrder = 2; //1; // default 0
-
+/*
         var avePos = mesh.geometry.vertices[0].clone().add(mesh.geometry.vertices[1]).add(mesh.geometry.vertices[2]).multiplyScalar(0.333);
         var realPos = avePos.sub(me.oriCenter).applyMatrix4(me.cam.matrixWorldInverse);
-        if(me.cam_z > 0) {
-            mesh.renderOrder = -parseInt(realPos.z); // + me.oriMaxD);
+        mesh.renderOrder = (me.cam_z > 0) ? -parseInt(realPos.z) : parseInt(realPos.z);
+*/
+
+        var sum = new THREE.Vector3(0,0,0);
+        for(var i = 0, il = mesh.geometry.vertices.length; i < il; ++i) {
+            sum = sum.add(mesh.geometry.vertices[i]);
         }
-        else {
-            mesh.renderOrder = parseInt(realPos.z); // + me.oriMaxD);
-        }
+
+        var realPos = sum.multiplyScalar(1.0 / mesh.geometry.vertices.length).sub(me.oriCenter).applyMatrix4(me.cam.matrixWorldInverse);
+        mesh.renderOrder = (me.cam_z > 0) ? -parseInt(realPos.z) : parseInt(realPos.z);
 
         mesh.onBeforeRender = function(renderer, scene, camera, geometry, material, group) {
             //https://juejin.im/post/5a0872d4f265da43062a4156
-            //var realPos = this.geometry.vertices[0].project(me.cam);
+/*
             var avePos = this.geometry.vertices[0].clone().add(this.geometry.vertices[1]).add(this.geometry.vertices[2]).multiplyScalar(0.333);
             var realPos = avePos.sub(me.oriCenter).applyMatrix4(me.cam.matrixWorldInverse);
 
-            if(me.cam_z > 0) {
-                this.renderOrder = -parseInt(realPos.z); // + me.oriMaxD);
+            this.renderOrder = (me.cam_z > 0) ? -parseInt(realPos.z) : parseInt(realPos.z);
+*/
+
+            var sum = new THREE.Vector3(0,0,0);
+            for(var i = 0, il = this.geometry.vertices.length; i < il; ++i) {
+                sum = sum.add(this.geometry.vertices[i]);
             }
-            else {
-                this.renderOrder = parseInt(realPos.z); // + me.oriMaxD);
-            }
+
+            var realPos = sum.multiplyScalar(1.0 / this.geometry.vertices.length).sub(me.oriCenter).applyMatrix4(me.cam.matrixWorldInverse);
+            this.renderOrder = (me.cam_z > 0) ? -parseInt(realPos.z) : parseInt(realPos.z);
         };
 
         me.mdl.add(mesh);
@@ -194,7 +220,7 @@ iCn3D.prototype.createSurfaceRepresentation = function (atoms, type, wireframe, 
         else {
             this.prevSurfaces.push(mesh);
         }
-      }
+      } // for(var va
     }
     else {
         geo = new THREE.Geometry();
