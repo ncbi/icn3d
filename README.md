@@ -89,4 +89,4 @@ Please send all comments to wangjiy@ncbi.nlm.nih.gov.
 
 To cite iCn3D, please reference:
 
-Wang J, Youkharibache P, Zhang D, Lanczycki CJ, Geer RC, Madej T, Phan L, Ward M, Lu S, Marchler GH, Wang Y, Bryant SH, Geer LY, Marchler-Bauer A. iCn3D, a Web-based 3D Viewer for Sharing 1D/2D/3D Representations of Biomolecular Structures. Bioinformatics. 2019 June 20; pii: btz502. doi: 10.1093/bioinformatics/btz502. [PubMed PMID: 31218344](https://www.ncbi.nlm.nih.gov/pubmed/31218344) [Full Text at Oxford Academic](https://academic.oup.com/bioinformatics/advance-article/doi/10.1093/bioinformatics/btz502/5520951)
+Wang J, Youkharibache P, Zhang D, Lanczycki CJ, Geer RC, Madej T, Phan L, Ward M, Lu S, Marchler GH, Wang Y, Bryant SH, Geer LY, Marchler-Bauer A. *iCn3D, a Web-based 3D Viewer for Sharing 1D/2D/3D Representations of Biomolecular Structures.* **_Bioinformatics_. 2019** June 20; pii: btz502. doi: 10.1093/bioinformatics/btz502. [PubMed PMID: 31218344](https://www.ncbi.nlm.nih.gov/pubmed/31218344), [Full Text at Oxford Academic](https://academic.oup.com/bioinformatics/advance-article/doi/10.1093/bioinformatics/btz502/5520951)
