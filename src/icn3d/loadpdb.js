@@ -457,6 +457,10 @@ iCn3D.prototype.loadPDB = function (src) {
     var pmax = new THREE.Vector3(-9999,-9999,-9999);
     var psum = new THREE.Vector3();
     var cnt = 0;
+
+    // lipids may be considered as protein if "ATOM" instead of "HETATM" was used
+    var lipidResidHash = {};
+
     // assign atoms
     for (var i in this.atoms) {
         var atom = this.atoms[i];
@@ -477,13 +481,17 @@ iCn3D.prototype.loadPDB = function (src) {
             }
           }
           else {
+            if (atom.elem === 'P') {
+                lipidResidHash[atom.structure + '_' + atom.chain + '_' + atom.resi] = 1;
+            }
+
             this.proteins[atom.serial] = 1;
             if (atom.name === 'CA') this.calphas[atom.serial] = 1;
             if (atom.name !== 'N' && atom.name !== 'CA' && atom.name !== 'C' && atom.name !== 'O') this.sidec[atom.serial] = 1;
           }
         }
         else if(atom.het) {
-          if(atom.resn === 'HOH' || atom.resn === 'WAT') {
+          if(atom.resn === 'HOH' || atom.resn === 'WAT' || atom.resn === 'SOL') {
             this.water[atom.serial] = 1;
           }
           else if($.inArray(atom.resn, this.ionsArray) !== -1 || atom.elem.trim() === atom.resn.trim()) {
@@ -509,6 +517,22 @@ iCn3D.prototype.loadPDB = function (src) {
         }
         curResAtoms.push(atom);
     } // end of for
+
+    // reset lipid
+    for(resid in lipidResidHash) {
+        var atomHash = this.residues[resid];
+        for(serial in atomHash) {
+            var atom = this.atoms[serial];
+
+            atom.het = true;
+            this.chemicals[atom.serial] = 1;
+            this.secondaries[resid] = 'o'; // nucleotide
+
+            delete this.proteins[atom.serial];
+            if (atom.name === 'CA') delete this.calphas[atom.serial];
+            if (atom.name !== 'N' && atom.name !== 'CA' && atom.name !== 'C' && atom.name !== 'O') delete this.sidec[atom.serial];
+        }
+    }
 
     // last residue
     refreshBonds();

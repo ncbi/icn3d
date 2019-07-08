@@ -210,7 +210,7 @@ iCn3DUI.prototype.updateSelectionNameDesc = function() { var me = this;
 
 iCn3DUI.prototype.selectAChain = function (chainid, commandname, bAlign, bUnion) { var me = this;
     var commandname = commandname.replace(/\s/g, '');
-    var command = 'select chain ' + chainid;
+    var command = (bAlign !== undefined || bAlign) ? 'select alignChain ' + chainid : 'select chain ' + chainid;
 
     //var residueHash = {}, chainHash = {};
 

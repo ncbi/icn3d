@@ -5,6 +5,7 @@ $NGL_shaderTextHash['SphereInstancing.vert'] = ["uniform mat4 projectionMatrixIn
 "varying float vRadiusSq;",
 "varying vec3 vPoint;",
 "varying vec3 vPointViewPosition;",
+"varying float fogDepth;",
 "",
 "attribute vec2 mapping;",
 "//attribute vec3 position;",

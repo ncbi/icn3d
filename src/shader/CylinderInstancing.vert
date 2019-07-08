@@ -40,6 +40,7 @@ $NGL_shaderTextHash['CylinderInstancing.vert'] = ["// Open-Source PyMOL is Copyr
 "varying vec3 U;",
 "varying vec3 V;",
 "varying vec4 w;",
+"varying float fogDepth;",
 "",
 "#ifdef PICKING",
 "    #include unpack_clr",
