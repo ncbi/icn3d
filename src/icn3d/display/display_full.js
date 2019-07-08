@@ -174,7 +174,7 @@ iCn3D.prototype.applySsbondsOptions = function (options) {
             // determine whether it's true disulfide bonds
             // disulfide bond is about 2.05 angstrom
             var distMax = 3;
-            if(line.position1.distanceTo(line.position2) > distMax) {
+            if(line.position1 === undefined || line.position2 === undefined || line.position1.distanceTo(line.position2) > distMax) {
                 this.ssbondpnts[structure].splice(2 * i, 2);
                 continue;
             }
@@ -298,12 +298,11 @@ iCn3D.prototype.setFog = function() {
             this.scene.fog = new THREE.Fog(background, 1.5 * this.maxD, 3 * this.maxD);
         }
         else if(this.opts['camera'] === 'orthographic') {
-            this.scene.fog = new THREE.FogExp2(background, 2);
-            //this.scene.fog.near = this.cam_z;
-            //this.scene.fog.far = this.cam_z + 0.5 * this.maxD;
-            this.scene.fog.near = 1.5 * this.maxD;
-            //this.scene.fog.far = 2.5 * this.maxD;
-            this.scene.fog.far = 3 * this.maxD;
+            //this.scene.fog = new THREE.FogExp2(background, 2);
+            //this.scene.fog.near = 1.5 * this.maxD;
+            //this.scene.fog.far = 3 * this.maxD;
+
+            this.scene.fog = undefined;
         }
     }
     else {

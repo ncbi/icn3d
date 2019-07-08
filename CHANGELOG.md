@@ -1,4 +1,6 @@
 ## Change Log
+[icn3d-2.7.4](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.7.4.zip) was release on July 8, 2019. Included Miniland1333's fix on clickTab for the basic display; auto-detected lipids and treated them as chemicals; improved the display of modified PDB files; mouseover showed the structure names when there are more than one structures.
+
 [icn3d-2.7.3](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.7.3.zip) was release on June 6, 2019. Improved the display of transparent surfaces.
 
 [icn3d-2.7.2](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.7.2.zip) was release on June 5, 2019. Fixed the display of transparent surfaces.

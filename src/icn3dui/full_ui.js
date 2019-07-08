@@ -15,7 +15,7 @@ if (!$.ui.dialog.prototype._makeDraggableBase) {
 var iCn3DUI = function(cfg) {
     var me = this;
 
-    this.REVISION = '2.7.3';
+    this.REVISION = '2.7.4';
 
     me.bFullUi = true;
 
@@ -337,6 +337,15 @@ iCn3DUI.prototype = {
             }
 
             var text = (this.pk == 1) ? atom.resn + atom.resi + '@' + atom.name : atom.resn + atom.resi;
+            //if(me.cfg.align !== undefined) {
+            if(Object.keys(me.icn3d.structures).length > 0) {
+                text = atom.structure + ' ' + text;
+                $("#" + me.pre + "popup").css("width", "100px");
+            }
+            else {
+                $("#" + me.pre + "popup").css("width", "80px");
+            }
+
             $("#" + me.pre + "popup").html(text);
             $("#" + me.pre + "popup").css("top", y).css("left", x+20).show();
           }

@@ -1041,30 +1041,13 @@ iCn3DUI.prototype.applyCommand = function (commandStr) { var me = this;
 
     var select = paraArray[0].replace(/,/g, ' or ');
 
-    var commandname;
-    if(paraArray.length == 2) commandname = paraArray[1].substr(5); // 'name ...'
-
-/*
-    var pos = 19; // 'select saved atoms '
-
-    if(select.indexOf(' and ') !== -1) {
-        // all sets are intersected with the command "and"
-        var idArray = select.substr(pos).split(' and ');
-
-        var bIntersection = true;
-        if(idArray !== null) me.changeCustomAtoms(idArray, undefined, bIntersection, commandname);
-    }
-    else {
-        //var idArray = commandOri.substr(commandOri.lastIndexOf(' ') + 1).split(',');
-        var idArray = select.substr(pos).split(',');
-
-        var bIntersection = false;
-        if(idArray !== null) me.changeCustomAtoms(idArray, undefined, bIntersection, commandname);
-    }
-*/
+//    var commandname;
+//    if(paraArray.length == 2) commandname = paraArray[1].substr(5); // 'name ...'
 
     var pos = 19; // 'select saved atoms '
     var strSets = select.substr(pos);
+
+    var commandname = strSets;
 
     me.selectCombinedSets(strSets, commandname);
   }
@@ -1073,7 +1056,15 @@ iCn3DUI.prototype.applyCommand = function (commandStr) { var me = this;
 
     //if(idArray !== null) me.changeChainid(idArray);
     for(var i = 0, il = idArray.length; i < il; ++i) {
-        me.selectAChain(idArray[i], idArray[i]);
+        me.selectAChain(idArray[i], idArray[i], false);
+    }
+  }
+  else if(commandOri.indexOf('select alignChain') !== -1) {
+    var idArray = commandOri.substr(commandOri.lastIndexOf(' ') + 1).split(',');
+
+    //if(idArray !== null) me.changeChainid(idArray);
+    for(var i = 0, il = idArray.length; i < il; ++i) {
+        me.selectAChain(idArray[i], 'align_' + idArray[i], true);
     }
   }
   else if(command.indexOf('select zone cutoff') == 0) {
