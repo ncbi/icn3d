@@ -416,9 +416,10 @@ iCn3D.prototype.applySurfaceOptions = function (options) {
 
     var atoms, currAtoms;
 
-    // only show the surface for atoms which are displaying and exclude water molecules
+    // only show the surface for atoms which are displaying
     atoms = this.intHash(this.dAtoms, this.hAtoms);
-    atoms = this.exclHash(atoms, this.water);
+    // exclude water molecules
+    if(options['water'] === 'nothing') atoms = this.exclHash(atoms, this.water);
 
     currAtoms = this.hash2Atoms(atoms);
 
