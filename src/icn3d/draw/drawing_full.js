@@ -226,7 +226,7 @@ iCn3D.prototype.createSurfaceRepresentation = function (atoms, type, wireframe, 
         }));
 
         //http://www.html5gamedevs.com/topic/7288-threejs-transparency-bug-or-limitation-or-what/
-        //mesh.renderOrder = 2; //1; // default 0
+        //mesh.renderOrder = 0; // default 0
         var sum = new THREE.Vector3(0,0,0);
         for(var i = 0, il = mesh.geometry.vertices.length; i < il; ++i) {
             sum = sum.add(mesh.geometry.vertices[i]);
@@ -272,7 +272,7 @@ iCn3D.prototype.createSurfaceRepresentation = function (atoms, type, wireframe, 
         }));
 
         //http://www.html5gamedevs.com/topic/7288-threejs-transparency-bug-or-limitation-or-what/
-        mesh.renderOrder = 2; //1; // default 0
+        mesh.renderOrder = 0; // default 0
 
         me.mdl.add(mesh);
 

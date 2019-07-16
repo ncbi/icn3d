@@ -150,6 +150,7 @@ iCn3DUI.prototype = {
 
         me.setViewerWidthHeight();
 
+/*
         var width, height;
 
         if(me.cfg.width.toString().indexOf('%') !== -1) {
@@ -165,6 +166,13 @@ iCn3DUI.prototype = {
         else {
           height = me.cfg.height;
         }
+*/
+
+        var width = me.WIDTH; // - me.LESSWIDTH_RESIZE;
+        var height = me.HEIGHT; // - me.LESSHEIGHT - me.EXTRAHEIGHT;
+
+        me.oriWidth = width;
+        me.oriHeight = height;
 
         $("#" + me.pre + "viewer").width(width).height(height);
         $("#" + me.pre + "canvas").width(width).height(height);

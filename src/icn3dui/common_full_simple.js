@@ -314,6 +314,10 @@ iCn3DUI.prototype.saveFile = function(filename, type, text) { var me = this;
         blob = new Blob([data],{ type: "text;charset=utf-8;"});
     }
     else if(type === 'png') {
+        // render to larger size
+        me.icn3d.scaleFactor = 3.0;
+        me.icn3d.setWidthHeight(me.WIDTH, me.HEIGHT);
+
         me.icn3d.render();
 
         var bAddURL = true;
@@ -353,6 +357,12 @@ iCn3DUI.prototype.saveFile = function(filename, type, text) { var me = this;
 
                     //if(window.navigator.msSaveBlob) navigator.msSaveBlob(blob, filename);
                     saveAs(blob, filename);
+
+                    // render to original size
+                    me.icn3d.scaleFactor = 1.0;
+                    me.icn3d.setWidthHeight(me.WIDTH, me.HEIGHT);
+
+                    me.icn3d.render();
 
                     return;
                 };
@@ -517,11 +527,12 @@ iCn3DUI.prototype.handleContextLost = function() { var me = this;
 iCn3DUI.prototype.windowResize = function() { var me = this;
     if(me.cfg.resize !== undefined && me.cfg.resize && !me.isMobile() ) {
         $(window).resize(function() {
-            me.WIDTH = $( window ).width();
-            me.HEIGHT = $( window ).height();
+            //me.WIDTH = $( window ).width();
+            //me.HEIGHT = $( window ).height();
+            me.setViewerWidthHeight();
 
-            var width = me.WIDTH - me.LESSWIDTH_RESIZE;
-            var height = me.HEIGHT - me.LESSHEIGHT - me.EXTRAHEIGHT;
+            var width = me.WIDTH; // - me.LESSWIDTH_RESIZE;
+            var height = me.HEIGHT; // - me.LESSHEIGHT - me.EXTRAHEIGHT;
 
             if(me.icn3d !== undefined) me.resizeCanvas(width, height);
         });
@@ -529,11 +540,33 @@ iCn3DUI.prototype.windowResize = function() { var me = this;
 };
 
 iCn3DUI.prototype.setViewerWidthHeight = function() { var me = this;
-    me.WIDTH = $( window ).width();
-    me.HEIGHT = $( window ).height();
+    me.WIDTH = $( window ).width() - me.LESSWIDTH;
+    me.HEIGHT = $( window ).height() - me.EXTRAHEIGHT - me.LESSHEIGHT;
 
-    var viewer_width = $( "#" + me.pre + "viewer" ).width();
-    var viewer_height = $( "#" + me.pre + "viewer" ).height();
+    // width from css
+    var viewer_width, viewer_height;
+
+    if(me.oriWidth !== undefined) {
+        viewer_width = me.oriWidth;
+        viewer_height = me.oriHeight;
+    }
+    else {
+        // css width and height
+        viewer_width = $( "#" + me.pre + "viewer" ).css('width');
+        viewer_height = $( "#" + me.pre + "viewer" ).css('height'); // + me.MENU_HEIGHT;
+
+        if(viewer_width === undefined) viewer_width = me.WIDTH;
+        if(viewer_height === undefined) viewer_height = me.HEIGHT;
+
+        // width and height from input parameter
+        if(me.cfg.width.toString().indexOf('%') === -1) {
+            viewer_width = parseInt(me.cfg.width);
+        }
+
+        if(me.cfg.height.toString().indexOf('%') === -1) {
+            viewer_height = parseInt(me.cfg.height);
+        }
+    }
 
     if(viewer_width && me.WIDTH > viewer_width) me.WIDTH = viewer_width;
     if(viewer_height && me.HEIGHT > viewer_height) me.HEIGHT = viewer_height;
@@ -544,13 +577,13 @@ iCn3DUI.prototype.setViewerWidthHeight = function() { var me = this;
       me.HEIGHT = $( window ).height() / $( window ).width() * me.MENU_WIDTH;
     }
 
-    if(me.cfg.width.toString().indexOf('%') === -1) {
-        me.WIDTH = parseInt(me.cfg.width) + me.LESSWIDTH;
-    }
+    //if(me.cfg.width.toString().indexOf('%') === -1) {
+    //    me.WIDTH = parseInt(me.cfg.width) + me.LESSWIDTH;
+    //}
 
-    if(me.cfg.height.toString().indexOf('%') === -1) {
-        me.HEIGHT = parseInt(me.cfg.height) + me.EXTRAHEIGHT + me.LESSHEIGHT;
-    }
+    //if(me.cfg.height.toString().indexOf('%') === -1) {
+    //    me.HEIGHT = parseInt(me.cfg.height) + me.EXTRAHEIGHT + me.LESSHEIGHT;
+    //}
 };
 
 iCn3DUI.prototype.shareLinkUrl = function() { var me = this;

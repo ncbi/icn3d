@@ -54,8 +54,9 @@ var iCn3D = function (id) {
     this.frac = new THREE.Color(0.1, 0.1, 0.1);
 
     // mobile has a problem when the scaleFactor is 2.0
-    // the scaleFactor improve the image quality
-    this.scaleFactor = 1.5;
+    // the scaleFactor improve the image quality, but it has some centering and picking problems in some Mac when it is not 1
+    //this.scaleFactor = 1.5;
+    this.scaleFactor = 1.0;
 
     // Impostor shaders
     this.bImpo = true;

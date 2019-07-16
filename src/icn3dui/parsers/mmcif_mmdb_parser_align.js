@@ -11,8 +11,8 @@ iCn3DUI.prototype.downloadAlignment = function (align) { var me = this;
 
         me.setViewerWidthHeight();
 
-        var width = me.WIDTH - me.LESSWIDTH;
-        var height = me.HEIGHT - me.LESSHEIGHT;
+        var width = me.WIDTH; // - me.LESSWIDTH;
+        var height = me.HEIGHT; // - me.LESSHEIGHT;
 
         me.resizeCanvas(width, height, true, false);
     }
