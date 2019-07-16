@@ -15,7 +15,7 @@ if (!$.ui.dialog.prototype._makeDraggableBase) {
 var iCn3DUI = function(cfg) {
     var me = this;
 
-    this.REVISION = '2.7.4';
+    this.REVISION = '2.7.5';
 
     me.bFullUi = true;
 
@@ -338,7 +338,7 @@ iCn3DUI.prototype = {
 
             var text = (this.pk == 1) ? atom.resn + atom.resi + '@' + atom.name : atom.resn + atom.resi;
             //if(me.cfg.align !== undefined) {
-            if(Object.keys(me.icn3d.structures).length > 0) {
+            if(Object.keys(me.icn3d.structures).length > 1) {
                 text = atom.structure + ' ' + text;
                 $("#" + me.pre + "popup").css("width", "100px");
             }
@@ -425,10 +425,13 @@ iCn3DUI.prototype = {
     // show3DStructure is the main function to show 3D structure
     show3DStructure: function() { var me = this;
       me.deferred = $.Deferred(function() {
+        me.setTopMenusHtml(me.divid);
+
         if(me.isSessionStorageSupported()) me.getCommandsBeforeCrash();
 
         me.setViewerWidthHeight();
 
+/*
         var width, height;
 
         if(me.cfg.width.toString().indexOf('%') !== -1) {
@@ -444,11 +447,13 @@ iCn3DUI.prototype = {
         else {
           height = me.cfg.height;
         }
+*/
 
-        me.realWidth = width;
-        me.realHeight = height;
+        var width = me.WIDTH; // - me.LESSWIDTH_RESIZE;
+        var height = me.HEIGHT; // - me.LESSHEIGHT - me.EXTRAHEIGHT;
 
-        me.setTopMenusHtml(me.divid);
+        me.oriWidth = width;
+        me.oriHeight = height;
 
         me.allEventFunctions();
 

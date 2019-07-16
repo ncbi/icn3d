@@ -5,9 +5,11 @@
 iCn3DUI.prototype.openDialogHalfWindow = function (id, title, dialogWidth, bForceResize) {  var me = this;
     var twoddgmWidth = 170;
 
-    me.resizeCanvas(me.WIDTH - dialogWidth - me.LESSWIDTH, me.HEIGHT - me.LESSHEIGHT - me.EXTRAHEIGHT, bForceResize);
+    //me.resizeCanvas(me.WIDTH - dialogWidth - me.LESSWIDTH, me.HEIGHT - me.LESSHEIGHT - me.EXTRAHEIGHT, bForceResize);
+    me.resizeCanvas(me.WIDTH - dialogWidth, me.HEIGHT, bForceResize);
 
-    height = me.HEIGHT - me.LESSHEIGHT - me.EXTRAHEIGHT;
+    //height = me.HEIGHT - me.LESSHEIGHT - me.EXTRAHEIGHT;
+    height = me.HEIGHT;
     width = dialogWidth;
 
     var position;
@@ -46,13 +48,15 @@ iCn3DUI.prototype.openDialogHalfWindow = function (id, title, dialogWidth, bForc
             || (id === me.pre + 'dl_alignment' && (!bSelectannotationsInit2) )
             ) {
               if(bTwoddgmInit2 || bSetsInit2) {
-                  me.resizeCanvas(me.WIDTH - me.LESSWIDTH - twoddgmWidth, me.HEIGHT - me.LESSHEIGHT - me.EXTRAHEIGHT, true);
+                  //me.resizeCanvas(me.WIDTH - me.LESSWIDTH - twoddgmWidth, me.HEIGHT - me.LESSHEIGHT - me.EXTRAHEIGHT, true);
+                  me.resizeCanvas(me.WIDTH - twoddgmWidth, me.HEIGHT, true);
 
                   if(bTwoddgmInit2) me.openDialog2Ddgm(me.pre + 'dl_2ddgm', undefined, bSetsInit2);
                   if(bSetsInit2) me.openDialog2Ddgm(me.pre + 'dl_definedsets');
               }
               else {
-                  me.resizeCanvas(me.WIDTH - me.LESSWIDTH, me.HEIGHT - me.LESSHEIGHT - me.EXTRAHEIGHT, true);
+                  //me.resizeCanvas(me.WIDTH - me.LESSWIDTH, me.HEIGHT - me.LESSHEIGHT - me.EXTRAHEIGHT, true);
+                  me.resizeCanvas(me.WIDTH, me.HEIGHT, true);
               }
           }
       },
@@ -108,7 +112,8 @@ iCn3DUI.prototype.openDialog2Ddgm = function (id, inHeight, bDefinedSets) {  var
             if(bSetsInit) bSetsInit2 = $('#' + me.pre + 'dl_definedsets').dialog( 'isOpen' );
 
           if( (!bSelectannotationsInit2) && (!bAlignmentInit2) ) {
-                me.resizeCanvas(me.WIDTH - me.LESSWIDTH, me.HEIGHT - me.LESSHEIGHT - me.EXTRAHEIGHT, true);
+                //me.resizeCanvas(me.WIDTH - me.LESSWIDTH, me.HEIGHT - me.LESSHEIGHT - me.EXTRAHEIGHT, true);
+                me.resizeCanvas(me.WIDTH, me.HEIGHT, true);
           }
       }
     });
@@ -130,24 +135,30 @@ iCn3DUI.prototype.openDialog = function (id, title) {  var me = this;
     if(bSetsInit) bSetsInit2 = $('#' + me.pre + 'dl_definedsets').dialog( 'isOpen' );
 
     if(id === me.pre + 'dl_selectannotations' || id === me.pre + 'dl_alignment') {
-        var dialogWidth = 0.5 * (me.WIDTH - me.LESSWIDTH) - twoddgmWidth * 0.5;
+        //var dialogWidth = 0.5 * (me.WIDTH - me.LESSWIDTH) - twoddgmWidth * 0.5;
+        var dialogWidth = 0.5 * (me.WIDTH) - twoddgmWidth * 0.5;
 
-        if(me.WIDTH - me.LESSWIDTH >= me.HEIGHT - me.LESSHEIGHT - me.EXTRAHEIGHT) {
+        //if(me.WIDTH - me.LESSWIDTH >= me.HEIGHT - me.LESSHEIGHT - me.EXTRAHEIGHT) {
+        if(me.WIDTH >= me.HEIGHT) {
             me.openDialogHalfWindow(id, title, dialogWidth, true);
 
             if(bTwoddgmInit2 || bSetsInit2) {
-                me.resizeCanvas(me.WIDTH - me.LESSWIDTH - dialogWidth - twoddgmWidth, me.HEIGHT - me.LESSHEIGHT - me.EXTRAHEIGHT, true);
+                //me.resizeCanvas(me.WIDTH - me.LESSWIDTH - dialogWidth - twoddgmWidth, me.HEIGHT - me.LESSHEIGHT - me.EXTRAHEIGHT, true);
+                me.resizeCanvas(me.WIDTH - dialogWidth - twoddgmWidth, me.HEIGHT, true);
 
                 if(bTwoddgmInit2) me.openDialog2Ddgm(me.pre + 'dl_2ddgm', undefined, bSetsInit2);
                 if(bSetsInit2) me.openDialog2Ddgm(me.pre + 'dl_definedsets');
             }
         }
         else {
-            me.resizeCanvas(me.WIDTH - me.LESSWIDTH, (me.HEIGHT - me.LESSHEIGHT - me.EXTRAHEIGHT) * 0.5, true);
+            //me.resizeCanvas(me.WIDTH - me.LESSWIDTH, (me.HEIGHT - me.LESSHEIGHT - me.EXTRAHEIGHT) * 0.5, true);
+            me.resizeCanvas(me.WIDTH, (me.HEIGHT) * 0.5, true);
 
-            height = (me.HEIGHT - me.LESSHEIGHT - me.EXTRAHEIGHT) * 0.5;
+            //height = (me.HEIGHT - me.LESSHEIGHT - me.EXTRAHEIGHT) * 0.5;
+            height = (me.HEIGHT) * 0.5;
 
-            width = me.WIDTH - me.LESSWIDTH;
+            //width = me.WIDTH - me.LESSWIDTH;
+            width = me.WIDTH;
 
             var position ={ my: "left top", at: "left bottom+32", of: "#" + me.pre + "canvas", collision: "none" };
 
@@ -177,13 +188,15 @@ iCn3DUI.prototype.openDialog = function (id, title) {  var me = this;
                     || (id === me.pre + 'dl_alignment' &&(!bSelectannotationsInit2) )
                     ) {
                       if(bTwoddgmInit2 || bSetsInit2) {
-                          me.resizeCanvas(me.WIDTH - me.LESSWIDTH - twoddgmWidth, me.HEIGHT - me.LESSHEIGHT - me.EXTRAHEIGHT, true);
+                          //me.resizeCanvas(me.WIDTH - me.LESSWIDTH - twoddgmWidth, me.HEIGHT - me.LESSHEIGHT - me.EXTRAHEIGHT, true);
+                          me.resizeCanvas(me.WIDTH - twoddgmWidth, me.HEIGHT, true);
 
                           if(bTwoddgmInit2) me.openDialog2Ddgm(me.pre + 'dl_2ddgm', undefined, bSetsInit2);
                           if(bSetsInit2) me.openDialog2Ddgm(me.pre + 'dl_definedsets');
                       }
                       else {
-                          me.resizeCanvas(me.WIDTH - me.LESSWIDTH, me.HEIGHT - me.LESSHEIGHT - me.EXTRAHEIGHT, true);
+                          //me.resizeCanvas(me.WIDTH - me.LESSWIDTH, me.HEIGHT - me.LESSHEIGHT - me.EXTRAHEIGHT, true);
+                          me.resizeCanvas(me.WIDTH, me.HEIGHT, true);
                       }
                   }
               },
@@ -198,19 +211,25 @@ iCn3DUI.prototype.openDialog = function (id, title) {  var me = this;
     else if(id === me.pre + 'dl_2ddgm') {
         var tmpWidth = 0;
 
-        if(me.WIDTH - me.LESSWIDTH >= me.HEIGHT - me.LESSHEIGHT - me.EXTRAHEIGHT) {
+        //if(me.WIDTH - me.LESSWIDTH >= me.HEIGHT - me.LESSHEIGHT - me.EXTRAHEIGHT) {
+        if(me.WIDTH >= me.HEIGHT) {
             if(bSelectannotationsInit2 || bAlignmentInit2) {
-                tmpWidth = 0.5 * (me.WIDTH - me.LESSWIDTH) - twoddgmWidth * 0.5;
+                //tmpWidth = 0.5 * (me.WIDTH - me.LESSWIDTH) - twoddgmWidth * 0.5;
+                tmpWidth = 0.5 * (me.WIDTH) - twoddgmWidth * 0.5;
             }
-            me.resizeCanvas(me.WIDTH - me.LESSWIDTH - tmpWidth - twoddgmWidth, me.HEIGHT - me.LESSHEIGHT - me.EXTRAHEIGHT, true);
+            //me.resizeCanvas(me.WIDTH - me.LESSWIDTH - tmpWidth - twoddgmWidth, me.HEIGHT - me.LESSHEIGHT - me.EXTRAHEIGHT, true);
+            me.resizeCanvas(me.WIDTH - tmpWidth - twoddgmWidth, me.HEIGHT, true);
 
             me.openDialog2Ddgm(id, undefined, bSetsInit2);
         }
         else {
-            me.resizeCanvas(me.WIDTH - me.LESSWIDTH - tmpWidth - twoddgmWidth, (me.HEIGHT - me.LESSHEIGHT - me.EXTRAHEIGHT)*0.5, true);
-            me.openDialog2Ddgm(id, (me.HEIGHT - me.LESSHEIGHT - me.EXTRAHEIGHT)*0.5);
+            //me.resizeCanvas(me.WIDTH - me.LESSWIDTH - tmpWidth - twoddgmWidth, (me.HEIGHT - me.LESSHEIGHT - me.EXTRAHEIGHT)*0.5, true);
+            me.resizeCanvas(me.WIDTH - tmpWidth - twoddgmWidth, (me.HEIGHT)*0.5, true);
+            //me.openDialog2Ddgm(id, (me.HEIGHT - me.LESSHEIGHT - me.EXTRAHEIGHT)*0.5);
+            me.openDialog2Ddgm(id, (me.HEIGHT)*0.5);
 
-            me.openDialog2Ddgm(id, (me.HEIGHT - me.LESSHEIGHT - me.EXTRAHEIGHT)*0.5, bSetsInit2);
+            //me.openDialog2Ddgm(id, (me.HEIGHT - me.LESSHEIGHT - me.EXTRAHEIGHT)*0.5, bSetsInit2);
+            me.openDialog2Ddgm(id, (me.HEIGHT)*0.5, bSetsInit2);
         }
     }
     else {
@@ -226,20 +245,26 @@ iCn3DUI.prototype.openDialog = function (id, title) {  var me = this;
         if(id === me.pre + 'dl_definedsets') {
             var tmpWidth = 0;
 
-            if(me.WIDTH - me.LESSWIDTH >= me.HEIGHT - me.LESSHEIGHT - me.EXTRAHEIGHT) {
+            //if(me.WIDTH - me.LESSWIDTH >= me.HEIGHT - me.LESSHEIGHT - me.EXTRAHEIGHT) {
+            if(me.WIDTH >= me.HEIGHT) {
                 if(bSelectannotationsInit2 || bAlignmentInit2) {
-                    tmpWidth = 0.5 * (me.WIDTH - me.LESSWIDTH) - twoddgmWidth * 0.5;
+                    //tmpWidth = 0.5 * (me.WIDTH - me.LESSWIDTH) - twoddgmWidth * 0.5;
+                    tmpWidth = 0.5 * (me.WIDTH) - twoddgmWidth * 0.5;
                 }
-                me.resizeCanvas(me.WIDTH - me.LESSWIDTH - tmpWidth - twoddgmWidth, me.HEIGHT - me.LESSHEIGHT - me.EXTRAHEIGHT, true);
+                //me.resizeCanvas(me.WIDTH - me.LESSWIDTH - tmpWidth - twoddgmWidth, me.HEIGHT - me.LESSHEIGHT - me.EXTRAHEIGHT, true);
+                me.resizeCanvas(me.WIDTH - tmpWidth - twoddgmWidth, me.HEIGHT, true);
                 me.openDialog2Ddgm(id);
 
                 if(bTwoddgmInit2) me.openDialog2Ddgm(me.pre + 'dl_2ddgm', undefined, true);
             }
             else {
-                me.resizeCanvas(me.WIDTH - me.LESSWIDTH - tmpWidth - twoddgmWidth, (me.HEIGHT - me.LESSHEIGHT - me.EXTRAHEIGHT)*0.5, true);
-                me.openDialog2Ddgm(id, (me.HEIGHT - me.LESSHEIGHT - me.EXTRAHEIGHT)*0.5);
+                //me.resizeCanvas(me.WIDTH - me.LESSWIDTH - tmpWidth - twoddgmWidth, (me.HEIGHT - me.LESSHEIGHT - me.EXTRAHEIGHT)*0.5, true);
+                me.resizeCanvas(me.WIDTH - tmpWidth - twoddgmWidth, (me.HEIGHT)*0.5, true);
+                //me.openDialog2Ddgm(id, (me.HEIGHT - me.LESSHEIGHT - me.EXTRAHEIGHT)*0.5);
+                me.openDialog2Ddgm(id, (me.HEIGHT)*0.5);
 
-                if(bTwoddgmInit2) me.openDialog2Ddgm(me.pre + 'dl_2ddgm', (me.HEIGHT - me.LESSHEIGHT - me.EXTRAHEIGHT)*0.5, true);
+                //if(bTwoddgmInit2) me.openDialog2Ddgm(me.pre + 'dl_2ddgm', (me.HEIGHT - me.LESSHEIGHT - me.EXTRAHEIGHT)*0.5, true);
+                if(bTwoddgmInit2) me.openDialog2Ddgm(me.pre + 'dl_2ddgm', (me.HEIGHT)*0.5, true);
             }
         }
         else {
