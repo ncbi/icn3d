@@ -848,6 +848,7 @@ iCn3DUI.prototype.setMenu6 = function() { var me = this;
     html += "  <li><span>Web APIs</span>";
     html += "    <ul>";
 
+    html += "<li><a href='https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d.html#gallery' target='_blank'>Gallery</a></li>";
     html += "<li><a href='https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d.html#HowToUse' target='_blank'>How to Use</a></li>";
     html += "<li><a href='https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d.html#parameters' target='_blank'>URL Parameters</a></li>";
     html += "<li><a href='https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d.html#commands' target='_blank'>Commands</a></li>";
