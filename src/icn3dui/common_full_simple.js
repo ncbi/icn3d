@@ -314,12 +314,6 @@ iCn3DUI.prototype.saveFile = function(filename, type, text) { var me = this;
         blob = new Blob([data],{ type: "text;charset=utf-8;"});
     }
     else if(type === 'png') {
-        // render to larger size
-        if(!me.isMobile() && !me.isMac()) {
-            me.icn3d.scaleFactor = 2.0;
-            me.icn3d.setWidthHeight(me.WIDTH, me.HEIGHT);
-        }
-
         me.icn3d.render();
 
         var bAddURL = true;
@@ -359,14 +353,6 @@ iCn3DUI.prototype.saveFile = function(filename, type, text) { var me = this;
 
                     //if(window.navigator.msSaveBlob) navigator.msSaveBlob(blob, filename);
                     saveAs(blob, filename);
-
-                    // render to original size
-                    if(!me.isMobile() && !me.isMac()) {
-                        me.icn3d.scaleFactor = 1.0;
-                        me.icn3d.setWidthHeight(me.WIDTH, me.HEIGHT);
-
-                        me.icn3d.render();
-                    }
 
                     return;
                 };
