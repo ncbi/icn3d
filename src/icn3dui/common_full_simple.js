@@ -315,8 +315,10 @@ iCn3DUI.prototype.saveFile = function(filename, type, text) { var me = this;
     }
     else if(type === 'png') {
         // render to larger size
-        me.icn3d.scaleFactor = 3.0;
-        me.icn3d.setWidthHeight(me.WIDTH, me.HEIGHT);
+        if(!me.isMobile() && !me.isMac()) {
+            me.icn3d.scaleFactor = 2.0;
+            me.icn3d.setWidthHeight(me.WIDTH, me.HEIGHT);
+        }
 
         me.icn3d.render();
 
@@ -359,10 +361,12 @@ iCn3DUI.prototype.saveFile = function(filename, type, text) { var me = this;
                     saveAs(blob, filename);
 
                     // render to original size
-                    me.icn3d.scaleFactor = 1.0;
-                    me.icn3d.setWidthHeight(me.WIDTH, me.HEIGHT);
+                    if(!me.isMobile() && !me.isMac()) {
+                        me.icn3d.scaleFactor = 1.0;
+                        me.icn3d.setWidthHeight(me.WIDTH, me.HEIGHT);
 
-                    me.icn3d.render();
+                        me.icn3d.render();
+                    }
 
                     return;
                 };

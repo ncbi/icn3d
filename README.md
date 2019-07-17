@@ -8,7 +8,7 @@
 * Use a url (e.g., [https://icn3d.page.link/uRL4mitQdG6J3gGg8](https://icn3d.page.link/uRL4mitQdG6J3gGg8)) or a state file to capture the custom display of 3D structures. The saved static "iCn3D PNG Image" can be loaded using "File > Open File > iCn3D PNG Image" to reproduce the interactive display.
 * Select residues by searching sequences or select on 3D structures,  2D interactions, and 1D sequences
 * Display/highlight selected residues in 3D structures,  2D interactions, and 1D sequences
-* Show [electron density map](https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?mmdbid=3gvu&command=style+proteins+b+factor+tube;+color+b+factor;+set+map+2fofc+sigma+1.5) or [EM density map](https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?mmdbid=6eny&command=set+emmap+percentage+20)
+* Show [electron density map](https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?mmdbid=3gvu&command=style+proteins+b+factor+tube;+color+b+factor;+set+map+2fofc+sigma+1.5;) or [EM density map](https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?mmdbid=6eny&command=set+emmap+percentage+20;)
 * Export STL or VRML files for [3D printing](https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?mmdbid=1tup&command=export+stl+stabilizer+file)
 * Display NCBI pre-calculated [aligned 3D structures](https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?align=1hho,4n7n&showalignseq=1) by providing two PDB IDs or MMDB IDs
 * [Align a sequence to a structure](https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?from=icn3d&blast_rep_id=1TSR_A&query_id=NP_001108451.1)
