@@ -200,7 +200,6 @@ iCn3DUI.prototype = {
         }
 
         me.icn3d = new iCn3D(me.pre + 'canvas');
-        if(!me.isMobile()) me.icn3d.scaleFactor = 2.0;
 
         me.handleContextLost();
 

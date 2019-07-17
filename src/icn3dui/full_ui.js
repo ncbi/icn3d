@@ -487,7 +487,6 @@ iCn3DUI.prototype = {
         //$("#" + me.pre + "canvas").resizable(); // resizing behavor not good for canvas.
 
         me.icn3d = new iCn3D(me.pre + 'canvas');
-        if(!me.isMobile()) me.icn3d.scaleFactor = 2.0;
 
         me.handleContextLost();
 

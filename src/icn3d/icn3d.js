@@ -55,7 +55,6 @@ var iCn3D = function (id) {
 
     // mobile has a problem when the scaleFactor is 2.0
     // the scaleFactor improve the image quality, but it has some centering and picking problems in some Mac when it is not 1
-    //this.scaleFactor = 1.5;
     this.scaleFactor = 1.0;
 
     // Impostor shaders
@@ -654,6 +653,7 @@ iCn3D.prototype = {
     // modified from iview (http://istar.cse.cuhk.edu.hk/iview/)
     setWidthHeight: function(width, height) {
         //this.renderer.setSize(width, height);
+        if(this.scaleFactor === undefined) this.scaleFactor = 1.0;
 
         //antialiasing by render twice large:
         //https://stackoverflow.com/questions/17224795/antialiasing-not-working-in-three-js

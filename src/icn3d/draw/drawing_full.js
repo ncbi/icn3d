@@ -272,7 +272,7 @@ iCn3D.prototype.createSurfaceRepresentation = function (atoms, type, wireframe, 
         }));
 
         //http://www.html5gamedevs.com/topic/7288-threejs-transparency-bug-or-limitation-or-what/
-        mesh.renderOrder = 0; // default 0
+        mesh.renderOrder = -1; // default 0
 
         me.mdl.add(mesh);
 
