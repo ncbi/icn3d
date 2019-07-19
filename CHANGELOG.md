@@ -1,4 +1,6 @@
 ## Change Log
+[icn3d-2.7.6](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.7.6.zip) was release on July 18, 2019. Enabled to show disulfide bonds when a custom pdb file is input; added the option to output pairs for disulfide bonds, hydrogen bonds, and interacting/contacting residues by distance.
+
 [icn3d-2.7.5](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.7.5.zip) was release on July 16, 2019. Added a Gallery section. Fixed the picking and centering issues in some Mac computers. Optimized the width and height of embedded iCn3D viewer.
 
 [icn3d-2.7.4](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.7.4.zip) was release on July 8, 2019. Included Miniland1333's fix on clickTab for the basic display; auto-detected lipids and treated them as chemicals; improved the display of modified PDB files; mouseover showed the structure names when there are more than one structures.

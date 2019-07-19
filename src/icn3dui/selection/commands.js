@@ -107,7 +107,9 @@ iCn3DUI.prototype.execCommandsBase = function (start, end, steps) { var me = thi
       }
       else if(me.icn3d.commands[i].trim().indexOf('set map') == 0 && me.icn3d.commands[i].trim().indexOf('set map wireframe') == -1) {
           //set map 2fofc sigma 1.5
-          var str = me.icn3d.commands[i].trim().substr(8);
+          var strArray = me.icn3d.commands[i].split("|||");
+
+          var str = strArray[0].trim().substr(8);
           var paraArray = str.split(" ");
 
           if(paraArray.length == 3 && paraArray[1] == 'sigma') {
@@ -116,12 +118,12 @@ iCn3DUI.prototype.execCommandsBase = function (start, end, steps) { var me = thi
 
             if( (type == '2fofc' && (me.bAjax2fofc === undefined || !me.bAjax2fofc))
               || (type == 'fofc' && (me.bAjaxfofc === undefined || !me.bAjaxfofc)) ) {
-                $.when(me.applyCommandMap(me.icn3d.commands[i].trim())).then(function() {
+                $.when(me.applyCommandMap(strArray[0].trim())).then(function() {
                     me.execCommandsBase(i + 1, end, steps);
                 });
             }
             else {
-                me.applyCommandMap(me.icn3d.commands[i].trim());
+                me.applyCommandMap(strArray[0].trim());
                 me.execCommandsBase(i + 1, end, steps);
             }
 
@@ -130,19 +132,21 @@ iCn3DUI.prototype.execCommandsBase = function (start, end, steps) { var me = thi
       }
       else if(me.icn3d.commands[i].trim().indexOf('set emmap') == 0 && me.icn3d.commands[i].trim().indexOf('set emmap wireframe') == -1) {
           //set emmap percentage 70
-          var str = me.icn3d.commands[i].trim().substr(10);
+          var strArray = me.icn3d.commands[i].split("|||");
+
+          var str = strArray[0].trim().substr(10);
           var paraArray = str.split(" ");
 
           if(paraArray.length == 2 && paraArray[0] == 'percentage') {
             var percentage = paraArray[1];
 
             if(me.bAjaxEm === undefined || !me.bAjaxEm) {
-                $.when(me.applyCommandEmmap(me.icn3d.commands[i].trim())).then(function() {
+                $.when(me.applyCommandEmmap(strArray[0].trim())).then(function() {
                     me.execCommandsBase(i + 1, end, steps);
                 });
             }
             else {
-                me.applyCommandEmmap(me.icn3d.commands[i].trim());
+                me.applyCommandEmmap(strArray[0].trim());
                 me.execCommandsBase(i + 1, end, steps);
             }
 
@@ -358,6 +362,9 @@ iCn3DUI.prototype.renderFinalStep = function(steps) { var me = this;
     else { // more complicated if partial atoms are modified
         me.icn3d.draw();
     }
+
+    // an extra render to remove artifacts in transparent surface
+    if(me.bTransparentSurface) me.icn3d.render();
 };
 
 iCn3DUI.prototype.applyCommandLoad = function (commandStr) { var me = this;
@@ -1068,14 +1075,29 @@ iCn3DUI.prototype.applyCommand = function (commandStr) { var me = this;
     }
   }
   else if(command.indexOf('select zone cutoff') == 0) {
-    var radius = parseFloat(command.substr(command.lastIndexOf(' ') + 1));
+    if(me.bSetChainsAdvancedMenu === undefined || !me.bSetChainsAdvancedMenu) {
+       me.setPredefinedInMenu();
 
-    me.pickCustomSphere(radius);
+       me.bSetChainsAdvancedMenu = true;
+    }
+
+    var paraArray = command.split(' | '); // | sets a,b,c
+    var radius = parseFloat(paraArray[0].substr(paraArray[0].lastIndexOf(' ') + 1));
+
+    var nameArray = [];
+    if(paraArray.length == 2) {
+        var nameStr = paraArray[1].substr(paraArray[1].indexOf(' ') + 1);
+        nameArray = nameStr.split(",");
+    }
+
+    me.pickCustomSphere(radius, nameArray);
   }
   else if(command.indexOf('set surface opacity') == 0) {
     var value = command.substr(command.lastIndexOf(' ') + 1);
     me.icn3d.opts['opacity'] = value;
     me.icn3d.applySurfaceOptions();
+
+    if(parseInt(100*value) < 100) me.bTransparentSurface = true;
   }
   else if(command.indexOf('set surface') == 0) {
     var value = command.substr(12);
@@ -1250,9 +1272,22 @@ iCn3DUI.prototype.applyCommand = function (commandStr) { var me = this;
     me.icn3d.showPicking(me.icn3d.pAtom);
   }
   else if(command.indexOf('hbonds') == 0) {
-    var threshold = parseFloat(command.substr(command.indexOf(' ') + 1));
+    if(me.bSetChainsAdvancedMenu === undefined || !me.bSetChainsAdvancedMenu) {
+       me.setPredefinedInMenu();
 
-    if(!isNaN(threshold)) me.showHbonds(threshold);
+       me.bSetChainsAdvancedMenu = true;
+    }
+
+    var paraArray = command.split(' | ');
+
+    var threshold = parseFloat(paraArray[0].substr(paraArray[0].indexOf(' ') + 1));
+    var nameArray = [];
+    if(paraArray.length == 2) {
+        var nameStr = paraArray[1].substr(paraArray[1].indexOf(' ') + 1);
+        nameArray = nameStr.split(",");
+    }
+
+    if(!isNaN(threshold)) me.showHbonds(threshold, nameArray);
   }
   else if(command.indexOf('color') == 0) {
     var color = command.substr(command.indexOf(' ') + 1);

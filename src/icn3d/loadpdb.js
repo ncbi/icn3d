@@ -116,6 +116,7 @@ iCn3D.prototype.loadPDB = function (src) {
             this.hbondpnts.push(new THREE.Vector3(protein_x, protein_y, protein_z));
 */
         } else if (record === 'SSBOND') {
+            this.bSsbondProvided = true;
             //SSBOND   1 CYS E   48    CYS E   51                          2555
             var chain1 = line.substr(15, 1);
             var resi1 = line.substr(17, 4).replace(/ /g, "");
@@ -399,6 +400,16 @@ iCn3D.prototype.loadPDB = function (src) {
         }
     }
 
+    this.adjustSeq(chainMissingResidueArray);
+
+//    this.missingResidues = [];
+//    for(var chainid in chainMissingResidueArray) {
+//        var resArray = chainMissingResidueArray[chainid];
+//        for(var i = 0; i < resArray.length; ++i) {
+//            this.missingResidues.push(chainid + '_' + resArray[i].resi);
+//        }
+//    }
+
     // copy disulfide bonds
     var structureArray = Object.keys(this.structures);
     for(var s = 0, sl = structureArray.length; s < sl; ++s) {
@@ -419,15 +430,25 @@ iCn3D.prototype.loadPDB = function (src) {
         }
     }
 
-    this.adjustSeq(chainMissingResidueArray);
+    // calculate disulfide bonds for PDB files
+    if(!this.bSsbondProvided) {
+        // get all Cys residues
+        var structure2cys_resid = {};
+        for(var chainid in this.chainsSeq) {
+            var seq = this.chainsSeq[chainid];
+            var structure = chainid.substr(0, chainid.indexOf('_'));
 
-//    this.missingResidues = [];
-//    for(var chainid in chainMissingResidueArray) {
-//        var resArray = chainMissingResidueArray[chainid];
-//        for(var i = 0; i < resArray.length; ++i) {
-//            this.missingResidues.push(chainid + '_' + resArray[i].resi);
-//        }
-//    }
+            for(var i = 0, il = seq.length; i < il; ++i) {
+                // each seq[i] = {"resi": 1, "name":"C"}
+                if(seq[i].name == 'C') {
+                    if(structure2cys_resid[structure] == undefined) structure2cys_resid[structure] = [];
+                    structure2cys_resid[structure].push(chainid + '_' + seq[i].resi);
+                }
+            }
+        }
+
+        this.setSsbond(structure2cys_resid);
+    }
 
     // remove the reference
     lines = null;
@@ -619,5 +640,49 @@ iCn3D.prototype.adjustSeq = function (chainMissingResidueArray) {
         this.chainsSeq[chainNum] = C;
         //this.chainsAn[chainNum][0] = C2;
         //this.chainsAn[chainNum][1] = C3;
+    }
+};
+
+iCn3D.prototype.setSsbond = function (structure2cys_resid) { var me = this;
+    // determine whether there are disulfide bonds
+    // disulfide bond is about 2.05 angstrom
+    var distMax = 4; //3; // https://icn3d.page.link/5KRXx6XYfig1fkye7
+    var distSqrMax = distMax * distMax;
+    for(var structure in structure2cys_resid) {
+        var cysArray = structure2cys_resid[structure];
+
+        for(var i = 0, il = cysArray.length; i < il; ++i) {
+            for(var j = i + 1, jl = cysArray.length; j < jl; ++j) {
+                var resid1 = cysArray[i];
+                var resid2 = cysArray[j];
+
+                var coord1 = undefined, coord2 = undefined;
+                for(var serial in me.residues[resid1]) {
+                    if(me.atoms[serial].elem == 'S') {
+                        coord1 = me.atoms[serial].coord;
+                        break;
+                    }
+                }
+                for(var serial in me.residues[resid2]) {
+                    if(me.atoms[serial].elem == 'S') {
+                        coord2 = me.atoms[serial].coord;
+                        break;
+                    }
+                }
+
+                if(coord1 === undefined || coord2 === undefined) continue;
+
+                if(Math.abs(coord1.x - coord2.x) > distMax) continue;
+                if(Math.abs(coord1.y - coord2.y) > distMax) continue;
+                if(Math.abs(coord1.z - coord2.z) > distMax) continue;
+                distSqr = (coord1.x - coord2.x)*(coord1.x - coord2.x) + (coord1.y - coord2.y)*(coord1.y - coord2.y) + (coord1.z - coord2.z)*(coord1.z - coord2.z);
+
+                if(distSqr < distSqrMax) { // disulfide bond
+                    if(me.ssbondpnts[structure] === undefined) me.ssbondpnts[structure] = [];
+                    me.ssbondpnts[structure].push(resid1);
+                    me.ssbondpnts[structure].push(resid2);
+                }
+            }
+        }
     }
 };

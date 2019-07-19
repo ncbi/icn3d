@@ -244,9 +244,9 @@ iCn3DUI.prototype.setMenu1 = function() { var me = this;
     html += me.getLink('mn1_exportState', 'State File');
     html += me.getLink('mn1_exportSelections', 'Selection File');
     html += me.getLink('mn1_exportCounts', 'Residue Counts');
-    if(me.cfg.mmdbid !== undefined) {
+    //if(me.cfg.mmdbid !== undefined) {
      html += me.getLink('mn6_exportInteraction', 'Interaction List');
-    }
+    //}
 
     html += "    </ul>";
     html += "  </li>";
@@ -385,6 +385,7 @@ iCn3DUI.prototype.setMenu2b = function() { var me = this;
         html += "  <li><span>Disulfide Bonds</span>";
         html += "    <ul>";
         html += me.getRadio('mn6_ssbonds', 'mn6_ssbondsYes', 'Show', true);
+        html += me.getRadio('mn6_ssbonds', 'mn6_ssbondsExport', 'Export Pairs');
         html += me.getRadio('mn6_ssbonds', 'mn6_ssbondsNo', 'Hide');
         html += "    </ul>";
         html += "  </li>";
@@ -1097,8 +1098,7 @@ iCn3DUI.prototype.setDialogs = function() { var me = this;
     html += "</div>";
 
     html += "<div id='" + me.pre + "dl_hbonds'>";
-    html += "<div style='width:400px;'>To show hydrogen bonds between other residues and the current selection, please select the threshold of H-bonds.</div><br/>";
-    html += "  <span style='white-space:nowrap;font-weight:bold;'>Threshold: <select id='" + me.pre + "hbondthreshold'>";
+    html += "  <div style='white-space:nowrap;font-weight:bold;'>1. Threshold of H-bonds: <select id='" + me.pre + "hbondthreshold'>";
     html += "  <option value='3.2'>3.2</option>";
     html += "  <option value='3.3'>3.3</option>";
     html += "  <option value='3.4'>3.4</option>";
@@ -1108,7 +1108,14 @@ iCn3DUI.prototype.setDialogs = function() { var me = this;
     html += "  <option value='3.8'>3.8</option>";
     html += "  <option value='3.9'>3.9</option>";
     html += "  <option value='4.0'>4.0</option>";
-    html += "  </select> &#197;</span> <span style='white-space:nowrap; margin-left:30px;'><button id='" + me.pre + "applyhbonds'>Display</button></span>";
+    html += "  </select> &#197;</div><br>";
+
+    html += "  <div style='white-space:nowrap'>2. Select sets to apply the H-bonds:</div>";
+    html += "  <div style='text-indent:1.1em'><select id='" + me.pre + "atomsCustomHbond' multiple size='2' style='min-width:130px;'>";
+    html += "  </select></div><br>";
+
+    html += "  <div>3. <button id='" + me.pre + "applyhbonds'>Display</button> H-bonds between current selection and the selected set</div><br>";
+    html += "  <div style='text-indent:1.1em'><button id='" + me.pre + "hbondExport'>Export</button> H-bond pairs</div>";
     html += "</div>";
 
     html += "<div id='" + me.pre + "dl_elecmap2fofc'>";
@@ -1164,8 +1171,14 @@ iCn3DUI.prototype.setDialogs = function() { var me = this;
     html += "</div>";
 
     html += "<div id='" + me.pre + "dl_aroundsphere'>";
-    html += "  <span style='white-space:nowrap'>1. Sphere with a radius: <input type='text' id='" + me.pre + "radius_aroundsphere' value='4' size='2'> &#197;</span><br/>";
-    html += "  <span style='white-space:nowrap'>2. <button id='" + me.pre + "applypick_aroundsphere'>Display</button> the sphere around currently selected atoms</span>";
+    html += "  <div style='white-space:nowrap'>1. Sphere with a radius: <input type='text' id='" + me.pre + "radius_aroundsphere' value='4' size='2'> &#197;</div><br/>";
+
+    html += "  <div style='white-space:nowrap'>2. Select sets to apply the sphere:</div>";
+    html += "  <div style='text-indent:1.1em'><select id='" + me.pre + "atomsCustomSphere' multiple size='2' style='min-width:130px;'>";
+    html += "  </select></div><br>";
+
+    html += "  <div style='white-space:nowrap'>3. <button id='" + me.pre + "applypick_aroundsphere'>Display</button> the sphere around currently selected atoms</div><br>";
+    html += "  <div style='text-indent:1.1em'><button id='" + me.pre + "sphereExport'>Export</button> residue pairs within the sphere</div>";
     html += "</div>";
 
     html += "<div id='" + me.pre + "dl_addlabel'>";

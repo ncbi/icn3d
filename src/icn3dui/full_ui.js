@@ -15,7 +15,7 @@ if (!$.ui.dialog.prototype._makeDraggableBase) {
 var iCn3DUI = function(cfg) {
     var me = this;
 
-    this.REVISION = '2.7.5';
+    this.REVISION = '2.7.6';
 
     me.bFullUi = true;
 
@@ -1047,19 +1047,61 @@ iCn3DUI.prototype = {
          return spec;
     },
 
-    pickCustomSphere: function (radius) {   var me = this; // me.icn3d.pAtom is set already
+    getAtomsFromSets: function (nameArray) {   var me = this; // me.icn3d.pAtom is set already
+       var residuesHash = {};
+
+       for(var i = 0, il = nameArray.length; i < il; ++i) {
+           var commandname = nameArray[i];
+           if(Object.keys(me.icn3d.chains).indexOf(commandname) !== -1) {
+               residuesHash = me.icn3d.unionHash(residuesHash, me.icn3d.chains[commandname]);
+           }
+           else {
+               if(me.icn3d.defNames2Residues[commandname] !== undefined && me.icn3d.defNames2Residues[commandname].length > 0) {
+                   for(var j = 0, jl = me.icn3d.defNames2Residues[commandname].length; j < jl; ++j) {
+                       var serial = me.icn3d.defNames2Residues[commandname][j];
+                       var atom = me.icn3d.atoms[serial];
+                       var resid = atom.structure + '_' + atom.chain + '_' + atom.resi;
+
+                       residuesHash = me.icn3d.unionHash(residuesHash, me.icn3d.residues[resid]);
+                   }
+               }
+
+               if(me.icn3d.defNames2Atoms[commandname] !== undefined && me.icn3d.defNames2Atoms[commandname].length > 0) {
+                   for(var j = 0, jl = me.icn3d.defNames2Atoms[commandname].length; j < jl; ++j) {
+                       var serial = me.icn3d.defNames2Atoms[commandname][j];
+                       var atom = me.icn3d.atoms[serial];
+                       var resid = atom.structure + '_' + atom.chain + '_' + atom.resi;
+
+                       residuesHash = me.icn3d.unionHash(residuesHash, me.icn3d.residues[resid]);
+                   }
+               }
+           }
+       }
+
+       return residuesHash;
+    },
+
+    pickCustomSphere: function (radius, nameArray) {   var me = this; // me.icn3d.pAtom is set already
 //        me.removeHlMenus();
 
-        var select = "select zone cutoff " + radius;
+        var select = "select zone cutoff " + radius + " | sets " + nameArray;
 
-        var atomlistTarget = {};
-
+        var atomlistTarget = {}, otherAtoms = {};
         for(var i in me.icn3d.hAtoms) {
           atomlistTarget[i] = me.icn3d.atoms[i];
         }
 
+        if(nameArray.length == 0) { // select all hAtoms
+            otherAtoms = me.icn3d.atoms;
+        }
+        else {
+            otherAtoms = me.icn3d.hash2Atoms(me.getAtomsFromSets(nameArray));
+        }
+
         // select all atom, not just displayed atoms
-        var atoms = me.icn3d.getAtomsWithinAtom(me.icn3d.atoms, atomlistTarget, parseFloat(radius));
+        var bGetPairs = true;
+        var atoms = me.icn3d.getAtomsWithinAtom(otherAtoms, atomlistTarget, parseFloat(radius), bGetPairs);
+        me.resid2ResidhashSphere = me.icn3d.cloneHash(me.icn3d.resid2Residhash);
 
         var residues = {}, atomArray = undefined;
 
@@ -1104,35 +1146,37 @@ iCn3DUI.prototype = {
         me.icn3d.draw(); // show all neighbors, even not displayed before
     },
 
-    // between the highlighted and the rest atoms
-    showHbonds: function (threshold) { var me = this;
+    // between the highlighted and atoms in nameArray
+    showHbonds: function (threshold, nameArray) { var me = this;
         me.icn3d.opts["hbonds"] = "yes";
         me.icn3d.opts["water"] = "dot";
 
-        var select = 'hbonds ' + threshold;
+        var select = 'hbonds ' + threshold + ' | sets ' + nameArray;
 
-       var complement = {};
+        var complement = {};
 
-       for(var i in me.icn3d.atoms) {
-           if(!me.icn3d.hAtoms.hasOwnProperty(i) && me.icn3d.dAtoms.hasOwnProperty(i)) {
-               complement[i] = me.icn3d.atoms[i];
+        if(nameArray.length == 0) {
+           for(var i in me.icn3d.atoms) {
+               if(!me.icn3d.hAtoms.hasOwnProperty(i) && me.icn3d.dAtoms.hasOwnProperty(i)) {
+                   complement[i] = me.icn3d.atoms[i];
+               }
            }
-       }
+        }
+        else {
+            complement = me.icn3d.hash2Atoms(me.getAtomsFromSets(nameArray));
+        }
 
         var firstAtom = me.icn3d.getFirstAtomObj(me.icn3d.hAtoms);
 
         if(Object.keys(complement).length > 0 && Object.keys(me.icn3d.hAtoms).length > 0) {
             var selectedAtoms = me.icn3d.calculateChemicalHbonds(complement, me.icn3d.intHash2Atoms(me.icn3d.dAtoms, me.icn3d.hAtoms), parseFloat(threshold) );
+            me.resid2ResidhashHbond = me.icn3d.cloneHash(me.icn3d.resid2Residhash);
 
             var residues = {}, atomArray = undefined;
 
             for (var i in selectedAtoms) {
                 var residueid = me.icn3d.atoms[i].structure + '_' + me.icn3d.atoms[i].chain + '_' + me.icn3d.atoms[i].resi;
                 residues[residueid] = 1;
-
-                //atomArray.push(i);
-
-                //me.icn3d.atoms[i].style2 = 'stick';
             }
 
             me.icn3d.hAtoms = {};
@@ -1576,18 +1620,7 @@ iCn3DUI.prototype = {
     },
 
     exportInteractions: function() { var me = this;
-       var text = '<html><body><b>Interacting residues</b>:<br/><table border=1 cellpadding=0 cellspacing=0><tr><th>Base Chain: Residues</th><th>Interacting Chain</th></tr>';
-
-       //me.chainids2resids[fisrtChainid][secondChainid].push(resid);
-/*
-       for(var fisrtChainid in me.chainids2resids) {
-           for(var secondChainid in me.chainids2resids[fisrtChainid]) {
-               text += '<tr><td>' + fisrtChainid + ': ';
-               text += me.residueids2spec(me.chainids2resids[fisrtChainid][secondChainid]);
-               text += '</td><td>' + secondChainid + '</td></tr>';
-           }
-       }
-*/
+       var text = '<html><body><div style="text-align:center"><br><b>Interacting residues</b>:<br/><table align=center border=1 cellpadding=10 cellspacing=0><tr><th>Base Chain: Residues</th><th>Interacting Chain</th></tr>';
 
        for(var fisrtChainid in me.chainname2residues) {
            for(var name in me.chainname2residues[fisrtChainid]) {
@@ -1598,10 +1631,78 @@ iCn3DUI.prototype = {
            }
        }
 
-       text += '</table><br/></body></html>';
+       text += '</table><br/></div></body></html>';
 
        var file_pref = (me.inputid) ? me.inputid : "custom";
        me.saveFile(file_pref + '_interactions.html', 'html', text);
+    },
+
+    exportSsbondPairs: function() { var me = this;
+        var tmpText = '';
+        var cnt = 0;
+        for(var structure in me.icn3d.structures) {
+            var ssbondArray = me.icn3d.ssbondpnts[structure];
+            if(ssbondArray === undefined) {
+                break;
+            }
+
+            for(var i = 0, il = ssbondArray.length; i < il; i = i + 2) {
+                var resid1 = ssbondArray[i];
+                var resid2 = ssbondArray[i+1];
+
+                tmpText += '<tr><td>' + resid1 + ' Cys</td><td>' + resid2 + ' Cys</td></tr>';
+                ++cnt;
+            }
+        }
+
+        var text = '<html><body><div style="text-align:center"><br><b>' + cnt + ' disulfide pairs</b>:<br><br><table align=center border=1 cellpadding=10 cellspacing=0><tr><th>Residue ID 1</th><th>Residue ID 2</th></tr>';
+
+        text += tmpText;
+
+        text += '</table><br/></div></body></html>';
+
+        var file_pref = (me.inputid) ? me.inputid : "custom";
+        me.saveFile(file_pref + '_disulfide_pairs.html', 'html', text);
+    },
+
+    exportHbondPairs: function() { var me = this;
+        var tmpText = '';
+        var cnt = 0;
+        for(var resid1 in me.resid2ResidhashHbond) {
+            for(var resid2 in me.resid2ResidhashHbond[resid1]) {
+                tmpText += '<tr><td>' + resid1 + '</td><td>' + resid2 + '</td></tr>';
+                ++cnt;
+            }
+        }
+
+        var text = '<html><body><div style="text-align:center"><br><b>' + cnt + ' hydrogen bond pairs</b>:<br><br><table align=center border=1 cellpadding=10 cellspacing=0><tr><th>Residue ID 1</th><th>Residue ID 2</th></tr>';
+
+        text += tmpText;
+
+        text += '</table><br/></div></body></html>';
+
+        var file_pref = (me.inputid) ? me.inputid : "custom";
+        me.saveFile(file_pref + '_hbond_pairs.html', 'html', text);
+    },
+
+    exportSpherePairs: function() { var me = this;
+        var tmpText = '';
+        var cnt = 0;
+        for(var resid1 in me.resid2ResidhashSphere) {
+            for(var resid2 in me.resid2ResidhashSphere[resid1]) {
+                tmpText += '<tr><td>' + resid1 + '</td><td>' + resid2 + '</td></tr>';
+                ++cnt;
+            }
+        }
+
+        var text = '<html><body><div style="text-align:center"><br><b>' + cnt + ' residue pairs in sphere</b>:<br><br><table align=center border=1 cellpadding=10 cellspacing=0><tr><th>Residue ID 1</th><th>Residue ID 2</th></tr>';
+
+        text += tmpText;
+
+        text += '</table><br/></div></body></html>';
+
+        var file_pref = (me.inputid) ? me.inputid : "custom";
+        me.saveFile(file_pref + '_sphere_pairs.html', 'html', text);
     },
 
     saveColor: function() { var me = this;
@@ -2016,6 +2117,8 @@ iCn3DUI.prototype = {
         $("#" + me.pre + "mn6_exportInteraction").click(function (e) {
            me.setLogCmd("export interactions", false);
 
+           me.retrieveInteractionData();
+
            me.exportInteractions();
         });
     },
@@ -2033,7 +2136,7 @@ iCn3DUI.prototype = {
         $("#" + me.pre + "mn1_exportCounts").click(function (e) {
            me.setLogCmd("export counts", false);
 
-           var text = '<html><body><b>Total Count for atoms with coordinates</b>:<br/><table border=1><tr><th>Structure Count</th><th>Chain Count</th><th>Residue Count</th><th>Atom Count</th></tr>';
+           var text = '<html><body><div style="text-align:center"><br><b>Total Count for atoms with coordinates</b>:<br/><table align=center border=1 cellpadding=10 cellspacing=0><tr><th>Structure Count</th><th>Chain Count</th><th>Residue Count</th><th>Atom Count</th></tr>';
 
            text += '<tr><td>' + Object.keys(me.icn3d.structures).length + '</td><td>' + Object.keys(me.icn3d.chains).length + '</td><td>' + Object.keys(me.icn3d.residues).length + '</td><td>' + Object.keys(me.icn3d.atoms).length + '</td></tr>';
 
@@ -2057,7 +2160,7 @@ iCn3DUI.prototype = {
                text += '<tr><td>' + structure + '</td><td>' + chain + '</td><td>' + Object.keys(residueHash).length + '</td><td>' + Object.keys(me.icn3d.chains[chainid]).length + '</td></tr>';
            }
 
-           text += '</table><br/></body></html>';
+           text += '</table><br/></div></body></html>';
 
            var file_pref = (me.inputid) ? me.inputid : "custom";
            me.saveFile(file_pref + '_counts.html', 'html', text);
@@ -2067,6 +2170,12 @@ iCn3DUI.prototype = {
     clkMn1_exportSelections: function() { var me = this;
         $("#" + me.pre + "mn1_exportSelections").click(function (e) {
            me.setLogCmd("export all selections", false);
+
+          if(me.bSetChainsAdvancedMenu === undefined || !me.bSetChainsAdvancedMenu) {
+               me.setPredefinedInMenu();
+
+               me.bSetChainsAdvancedMenu = true;
+          }
 
            var text = me.exportCustomAtoms();
 
@@ -2333,7 +2442,20 @@ iCn3DUI.prototype = {
 
     clkMn2_aroundsphere: function() { var me = this;
         $("#" + me.pre + "mn2_aroundsphere").click(function (e) {
-           me.openDialog(me.pre + 'dl_aroundsphere', 'Select a sphere around current selection');
+            if(me.bSetChainsAdvancedMenu === undefined || !me.bSetChainsAdvancedMenu) {
+               me.setPredefinedInMenu();
+
+               me.bSetChainsAdvancedMenu = true;
+            }
+
+            var definedAtomsHtml = me.setAtomMenu(['protein']);
+
+            if($("#" + me.pre + "atomsCustomSphere").length) {
+                $("#" + me.pre + "atomsCustomSphere").html(definedAtomsHtml);
+            }
+
+            me.openDialog(me.pre + 'dl_aroundsphere', 'Select a sphere around current selection');
+            me.bSphereCalc = false;
         });
     },
 
@@ -2973,7 +3095,7 @@ iCn3DUI.prototype = {
            me.Dsn6Parser(me.inputid, type, sigma2fofc);
 
            //me.setOption('map', '2fofc');
-           me.setLogCmd('set map 2fofc sigma ' + sigma2fofc + ';', true);
+           me.setLogCmd('set map 2fofc sigma ' + sigma2fofc, true);
         });
     },
 
@@ -2988,7 +3110,7 @@ iCn3DUI.prototype = {
            me.Dsn6Parser(me.inputid, type, sigmafofc);
 
            //me.setOption('map', 'fofc');
-           me.setLogCmd('set map fofc sigma ' + sigmafofc + ';', true);
+           me.setLogCmd('set map fofc sigma ' + sigmafofc, true);
         });
     },
 
@@ -3032,7 +3154,7 @@ iCn3DUI.prototype = {
            //me.emd = 'emd-3906';
            me.DensityCifParser(me.inputid, type, empercentage, me.icn3d.emd);
 
-           me.setLogCmd('set emmap percentage ' + empercentage + ';', true);
+           me.setLogCmd('set emmap percentage ' + empercentage, true);
         });
     },
 
@@ -3356,7 +3478,20 @@ iCn3DUI.prototype = {
 
     clkMn6_hbondsYes: function() { var me = this;
         $("#" + me.pre + "mn6_hbondsYes").click(function (e) {
+            if(me.bSetChainsAdvancedMenu === undefined || !me.bSetChainsAdvancedMenu) {
+               me.setPredefinedInMenu();
+
+               me.bSetChainsAdvancedMenu = true;
+            }
+
+            var definedAtomsHtml = me.setAtomMenu(['protein']);
+
+            if($("#" + me.pre + "atomsCustomHbond").length) {
+                $("#" + me.pre + "atomsCustomHbond").html(definedAtomsHtml);
+            }
+
            me.openDialog(me.pre + 'dl_hbonds', 'Hydrogen bonds to selection');
+           me.bHbondCalc = false;
         });
     },
 
@@ -3445,6 +3580,14 @@ iCn3DUI.prototype = {
            me.setLogCmd(select, true);
 
            me.showSsbonds();
+        });
+    },
+
+    clkMn6_ssbondsExport: function() { var me = this;
+        $("#" + me.pre + "mn6_ssbondsExport").click(function (e) {
+           me.exportSsbondPairs();
+
+           me.setLogCmd("export disulfide bond pairs", true);
         });
     },
 
@@ -3540,18 +3683,22 @@ iCn3DUI.prototype = {
     clickShow_2ddgm: function() { var me = this;
         $("#" + me.pre + "show_2ddgm").add("#" + me.pre + "mn2_2ddgm").click(function(e) {
              me.openDialog(me.pre + 'dl_2ddgm', 'Interactions');
-             if(!me.b2DShown) {
-                 if(me.cfg.align !== undefined) {
-                     var structureArray = Object.keys(me.icn3d.structures);
-                     me.set2DDiagramsForAlign(structureArray[0].toUpperCase(), structureArray[1].toUpperCase());
-                 }
-                 else {
-                     me.download2Ddgm(me.inputid.toUpperCase());
-                 }
-             }
+             me.retrieveInteractionData();
 
              me.setLogCmd("view interactions", true);
         });
+    },
+
+    retrieveInteractionData: function() { var me = this;
+         if(!me.b2DShown) {
+             if(me.cfg.align !== undefined) {
+                 var structureArray = Object.keys(me.icn3d.structures);
+                 me.set2DDiagramsForAlign(structureArray[0].toUpperCase(), structureArray[1].toUpperCase());
+             }
+             else {
+                 me.download2Ddgm(me.inputid.toUpperCase());
+             }
+         }
     },
 
     clickSearchSeq: function() { var me = this;
@@ -4186,34 +4333,69 @@ iCn3DUI.prototype = {
 
     clickApplypick_aroundsphere: function() { var me = this;
         $("#" + me.pre + "applypick_aroundsphere").click(function(e) {
-            e.preventDefault();
+            //e.preventDefault();
+            //dialog.dialog( "close" );
 
-            dialog.dialog( "close" );
             var radius = parseFloat($("#" + me.pre + "radius_aroundsphere").val());
+            var nameArray = $("#" + me.pre + "atomsCustomSphere").val();
 
-               var select = "select zone cutoff " + radius;
-               //me.setLogCmd(select, true);
+            var select = "select zone cutoff " + radius + " | sets " + nameArray;
+            //me.setLogCmd(select, true);
 
-               me.pickCustomSphere(radius);
+            if(!me.bSphereCalc) me.pickCustomSphere(radius, nameArray);
+            me.bSphereCalc = true;
 
-               me.updateHlAll();
+            me.updateHlAll();
 
-               me.setLogCmd(select, true);
+            me.setLogCmd(select, true);
+        });
+
+        $("#" + me.pre + "sphereExport").click(function(e) {
+            e.preventDefault();
+            dialog.dialog( "close" );
+
+            var radius = parseFloat($("#" + me.pre + "radius_aroundsphere").val());
+            var nameArray = $("#" + me.pre + "atomsCustomSphere").val();
+
+            if(!me.bSphereCalc) me.pickCustomSphere(radius, nameArray);
+            me.bSphereCalc = true;
+
+            me.exportSpherePairs();
+
+            me.setLogCmd("export pairs in the sphere", false);
         });
     },
 
     clickApplyhbonds: function() { var me = this;
         $("#" + me.pre + "applyhbonds").click(function(e) {
+           //e.preventDefault();
+           //dialog.dialog( "close" );
+
+           var threshold = parseFloat($("#" + me.pre + "hbondthreshold" ).val());
+           var nameArray = $("#" + me.pre + "atomsCustomHbond").val();
+
+           var select = "hbonds " + threshold + " | sets " + nameArray;
+           //me.setLogCmd(select, true);
+
+           if(!me.bHbondCalc) me.showHbonds(threshold, nameArray);
+           me.bHbondCalc = true;
+
+           me.setLogCmd(select, true);
+        });
+
+        $("#" + me.pre + "hbondExport").click(function(e) {
            e.preventDefault();
            dialog.dialog( "close" );
 
            var threshold = parseFloat($("#" + me.pre + "hbondthreshold" ).val());
+           var nameArray = $("#" + me.pre + "atomsCustomHbond").val();
 
-           var select = "hbonds " + threshold;
-           //me.setLogCmd(select, true);
+           if(!me.bHbondCalc) me.showHbonds(threshold, nameArray);
+           me.bHbondCalc = true;
 
-           me.showHbonds(threshold);
-           me.setLogCmd(select, true);
+           me.exportHbondPairs();
+
+           me.setLogCmd("export hbond pairs", false);
         });
     },
 
@@ -4904,6 +5086,7 @@ iCn3DUI.prototype = {
         me.clkmn1_stabilizerYes();
         me.clkmn1_stabilizerNo();
         me.clkMn6_ssbondsYes();
+        me.clkMn6_ssbondsExport();
         me.clkMn6_ssbondsNo();
         me.clkMn6_clbondsYes();
         me.clkMn6_clbondsNo();
