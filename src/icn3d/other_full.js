@@ -3,8 +3,10 @@
  */
 
 // get hbonds between "molecule" and "chemical"
-iCn3D.prototype.calculateChemicalHbonds = function (startAtoms, targetAtoms, threshold) {
+iCn3D.prototype.calculateChemicalHbonds = function (startAtoms, targetAtoms, threshold) { var me = this;
     if(Object.keys(startAtoms).length === 0 || Object.keys(targetAtoms).length === 0) return;
+
+    me.resid2Residhash = {};
 
     var atomHbond = {};
     var chain_resi, chain_resi_atom;
@@ -27,9 +29,13 @@ iCn3D.prototype.calculateChemicalHbonds = function (startAtoms, targetAtoms, thr
     for (var i in targetAtoms) {
       var atom = targetAtoms[i];
 
+      var currResiHash = {};
       if(atom.elem === "N" || atom.elem === "O" || atom.elem === "F") { // calculate hydrogen bond
         chain_resi = atom.structure + "_" + atom.chain + "_" + atom.resi;
         chain_resi_atom = chain_resi + "_" + atom.name;
+
+        var oriResidName = chain_resi + ' ' + atom.resn;
+        if(me.resid2Residhash[oriResidName] === undefined) me.resid2Residhash[oriResidName] = {};
 
         for (var j in atomHbond) {
           var xdiff = Math.abs(atom.coord.x - atomHbond[j].coord.x);
@@ -52,6 +58,9 @@ iCn3D.prototype.calculateChemicalHbonds = function (startAtoms, targetAtoms, thr
           hbondsAtoms = this.unionHash(hbondsAtoms, this.residues[atomHbond[j].structure + "_" + atomHbond[j].chain + "_" + atomHbond[j].resi]);
 
           residueHash[chain_resi] = 1;
+
+          var residName = atomHbond[j].structure + "_" + atomHbond[j].chain + "_" + atomHbond[j].resi + " " + atomHbond[j].resn;
+          me.resid2Residhash[oriResidName][residName] = 1;
         } // end of for (var j in atomHbond) {
       }
     } // end of for (var i in targetAtoms) {
@@ -121,16 +130,22 @@ iCn3D.prototype.getChainsFromAtoms = function(atomsHash) {
  };
 
  // modified from iview (http://istar.cse.cuhk.edu.hk/iview/)
- iCn3D.prototype.getAtomsWithinAtom = function(atomlist, atomlistTarget, distance) {
-    var me = this;
-
+ iCn3D.prototype.getAtomsWithinAtom = function(atomlist, atomlistTarget, distance, bGetPairs) { var me = this;
     var neighbors = this.getNeighboringAtoms(atomlist, atomlistTarget, distance);
+
+    if(bGetPairs) me.resid2Residhash = {};
 
     var ret = {};
     for(var i in atomlistTarget) {
         //var oriAtom = atomlistTarget[i];
         var oriAtom = me.atoms[i];
         var radius = this.vdwRadii[oriAtom.elem] || this.defaultRadius;
+
+        var oriResidName;
+        if(bGetPairs) {
+            oriResidName = oriAtom.structure + '_' + oriAtom.chain + '_' + oriAtom.resi + ' ' + oriAtom.resn;
+            if(me.resid2Residhash[oriResidName] === undefined) me.resid2Residhash[oriResidName] = {};
+        }
 
         for (var j in neighbors) {
            var atom = neighbors[j];
@@ -143,9 +158,15 @@ iCn3D.prototype.getChainsFromAtoms = function(atomsHash) {
            var maxDistSq = (radius + distance) * (radius + distance);
 
            if(atomDistSq < maxDistSq) {
-               ret[atom.serial] = atom;
+                ret[atom.serial] = atom;
+
+                var residName;
+                if(bGetPairs) {
+                    residName = atom.structure + '_' + atom.chain + '_' + atom.resi + ' ' + atom.resn;
+                    me.resid2Residhash[oriResidName][residName] = 1
+                }
            }
-       }
+        }
     }
 
     return ret;

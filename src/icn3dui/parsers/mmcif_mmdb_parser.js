@@ -1225,47 +1225,7 @@ iCn3DUI.prototype.loadAtomDataIn = function (data, id, type, seqalign) { var me 
             }
         }
 
-        // determine whether there are disulfide bonds
-        // disulfide bond is about 2.05 angstrom
-        var distMax = 4; //3; // https://icn3d.page.link/5KRXx6XYfig1fkye7
-        var distSqrMax = distMax * distMax;
-        for(var structure in structure2cys_resid) {
-            var cysArray = structure2cys_resid[structure];
-
-            for(var i = 0, il = cysArray.length; i < il; ++i) {
-                for(var j = i + 1, jl = cysArray.length; j < jl; ++j) {
-                    var resid1 = cysArray[i];
-                    var resid2 = cysArray[j];
-
-                    var coord1 = undefined, coord2 = undefined;
-                    for(var serial in me.icn3d.residues[resid1]) {
-                        if(me.icn3d.atoms[serial].elem == 'S') {
-                            coord1 = me.icn3d.atoms[serial].coord;
-                            break;
-                        }
-                    }
-                    for(var serial in me.icn3d.residues[resid2]) {
-                        if(me.icn3d.atoms[serial].elem == 'S') {
-                            coord2 = me.icn3d.atoms[serial].coord;
-                            break;
-                        }
-                    }
-
-                    if(coord1 === undefined || coord2 === undefined) continue;
-
-                    if(Math.abs(coord1.x - coord2.x) > distMax) continue;
-                    if(Math.abs(coord1.y - coord2.y) > distMax) continue;
-                    if(Math.abs(coord1.z - coord2.z) > distMax) continue;
-                    distSqr = (coord1.x - coord2.x)*(coord1.x - coord2.x) + (coord1.y - coord2.y)*(coord1.y - coord2.y) + (coord1.z - coord2.z)*(coord1.z - coord2.z);
-
-                    if(distSqr < distSqrMax) { // disulfide bond
-                        if(me.icn3d.ssbondpnts[structure] === undefined) me.icn3d.ssbondpnts[structure] = [];
-                        me.icn3d.ssbondpnts[structure].push(resid1);
-                        me.icn3d.ssbondpnts[structure].push(resid2);
-                    }
-                }
-            }
-        }
+        me.icn3d.setSsbond(structure2cys_resid);
     }
 
     // set up sequence alignment

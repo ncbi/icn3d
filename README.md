@@ -8,7 +8,7 @@
 * Use a url (e.g., [https://icn3d.page.link/uRL4mitQdG6J3gGg8](https://icn3d.page.link/uRL4mitQdG6J3gGg8)) or a state file to capture the custom display of 3D structures. The saved static "iCn3D PNG Image" can be loaded using "File > Open File > iCn3D PNG Image" to reproduce the interactive display.
 * Select residues by searching sequences or select on 3D structures,  2D interactions, and 1D sequences
 * Display/highlight selected residues in 3D structures,  2D interactions, and 1D sequences
-* Show [electron density map](https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?mmdbid=3gvu&command=style+proteins+b+factor+tube;+color+b+factor;+set+map+2fofc+sigma+1.5;) or [EM density map](https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?mmdbid=6eny&command=set+emmap+percentage+20;)
+* Show [electron density map](https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?mmdbid=3gvu&command=style+proteins+b+factor+tube;+color+b+factor;+set+map+2fofc+sigma+1.5) or [EM density map](https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?mmdbid=6eny&command=set+emmap+percentage+20)
 * Export STL or VRML files for [3D printing](https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?mmdbid=1tup&command=export+stl+stabilizer+file)
 * Display NCBI pre-calculated [aligned 3D structures](https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?align=1hho,4n7n&showalignseq=1) by providing two PDB IDs or MMDB IDs
 * [Align a sequence to a structure](https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?from=icn3d&blast_rep_id=1TSR_A&query_id=NP_001108451.1)
@@ -19,9 +19,9 @@ We provided two types of iCn3D widgets: [basic interface](https://www.ncbi.nlm.n
 1. The basic interface has the minimum javascript code for the interface. It has the basic features such as changing color and styles.
 2. The advanced interface has a library for the interface. It has many features.
 
-Either of these widgets could be easily added to your own web pages. Please see the [help page](https://www.ncbi.nlm.nih.gov/Structure/icn3d/docs/icn3d_help.html#HowToUse) for more details.
+Either of these widgets could be easily added to your own web pages as shown in the section of "Embed iCn3D with iframe or JavaScript libraries" below. 
 
-<b>Complete package</b> of iCn3D including Three.js and jQuery can be downloaded from [https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.7.5.zip](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.7.5.zip). The "Download ZIP" link in this page does not include third-party libraries. 
+<b>Complete package</b> of iCn3D including Three.js and jQuery can be downloaded from [https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.7.6.zip](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.7.6.zip). The "Download ZIP" link in this page does not include third-party libraries. 
 
 ## [Gallery](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d.html#gallery)
 

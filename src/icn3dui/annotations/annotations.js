@@ -1982,7 +1982,7 @@ iCn3DUI.prototype.showSnpClinvar = function(chnid, chnidBase) {
         if(data != "") {
             var bSnpOnly = false;
             me.processSnpClinvar(data, chnid, chnidBase, bSnpOnly);
-        } //if(data != "") {
+        }
         else {
             if(me.chain2gi !== undefined && Object.keys(me.chain2gi).length > 0) {
                var gi = me.chain2gi[chnidBase];
@@ -2073,6 +2073,8 @@ iCn3DUI.prototype.showSnpClinvarAlt = function(chnid, chnidBase, gi) { var me = 
         });
     }
     else {
+        me.processNoSnpClinvar(chnid);
+
         console.log( "No gi was found for the chain " + chnidBase + "..." );
     }
 };
