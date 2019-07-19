@@ -1104,8 +1104,6 @@ iCn3DUI.prototype.applyCommand = function (commandStr) { var me = this;
 
     me.icn3d.opts['surface'] = value;
     me.icn3d.applySurfaceOptions();
-
-    me.icn3d.render();
   }
 //  else if(command.indexOf('set map') == 0) {
 //    var value = command.substr(8);
