@@ -113,7 +113,7 @@ iCn3DUI.prototype.loadSdfAtomData = function (data, cid) { var me = this;
     var i, line;
 
     var atomid2serial = {};
-    var skipAtomids = {}; // skip hydrgen atom
+    var HAtomids = {};
 
     var AtomHash = {};
     var serial = 1;
@@ -123,7 +123,7 @@ iCn3DUI.prototype.loadSdfAtomData = function (data, cid) { var me = this;
 
         var name = line.substr(31, 3).replace(/ /g, "");
 
-        if(name !== 'H') {
+        //if(name !== 'H') {
             var x = parseFloat(line.substr(0, 10));
             var y = parseFloat(line.substr(10, 10));
             var z = parseFloat(line.substr(20, 10));
@@ -154,10 +154,10 @@ iCn3DUI.prototype.loadSdfAtomData = function (data, cid) { var me = this;
             atomid2serial[i] = serial;
 
             ++serial;
-        }
-        else {
-            skipAtomids[i] = 1;
-        }
+        //}
+        //else {
+            if(name == 'H') HAtomids[i] = 1;
+        //}
     }
 
     me.icn3d.dAtoms = AtomHash;
@@ -191,7 +191,7 @@ iCn3DUI.prototype.loadSdfAtomData = function (data, cid) { var me = this;
         //var order = parseInt(line.substr(6, 3));
         var order = line.substr(6, 3).trim();
 
-        if(!skipAtomids.hasOwnProperty(fromAtomid) && !skipAtomids.hasOwnProperty(toAtomid)) {
+        //if(!HAtomids.hasOwnProperty(fromAtomid) && !HAtomids.hasOwnProperty(toAtomid)) {
             var from = atomid2serial[fromAtomid];
             var to = atomid2serial[toAtomid];
 
@@ -199,15 +199,22 @@ iCn3DUI.prototype.loadSdfAtomData = function (data, cid) { var me = this;
             me.icn3d.atoms[from].bondOrder.push(order);
             me.icn3d.atoms[to].bonds.push(from);
             me.icn3d.atoms[to].bondOrder.push(order);
-            if(order == '2') {
-                me.icn3d.doublebonds[from + '_' + to] = 1;
-                me.icn3d.doublebonds[to + '_' + from] = 1;
+
+            if(!HAtomids.hasOwnProperty(fromAtomid) && !HAtomids.hasOwnProperty(toAtomid)) {
+                if(order == '2') {
+                    me.icn3d.doublebonds[from + '_' + to] = 1;
+                    me.icn3d.doublebonds[to + '_' + from] = 1;
+                }
+                else if(order == '3') {
+                    me.icn3d.triplebonds[from + '_' + to] = 1;
+                    me.icn3d.triplebonds[to + '_' + from] = 1;
+                }
             }
-            else if(order == '3') {
-                me.icn3d.triplebonds[from + '_' + to] = 1;
-                me.icn3d.triplebonds[to + '_' + from] = 1;
-            }
-        }
+    }
+
+    // backup bonds
+    for(i in me.icn3d.atoms) {
+        me.icn3d.atoms[i].bonds2 = me.icn3d.atoms[i].bonds.concat();
     }
 
     me.setMaxD();

@@ -732,6 +732,16 @@ iCn3DUI.prototype.applyCommand = function (commandStr) { var me = this;
     me.icn3d.hideHbonds();
     me.icn3d.draw();
   }
+
+  else if(command == 'hydrogens') {
+    me.showHydrogens();
+    me.icn3d.draw();
+  }
+  else if(command == 'set hydrogens off') {
+    me.hideHydrogens();
+    me.icn3d.draw();
+  }
+
   else if(command == 'set stabilizer off') {
     me.hideStabilizer();
     me.icn3d.draw();

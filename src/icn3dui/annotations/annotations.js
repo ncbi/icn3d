@@ -391,7 +391,14 @@ iCn3DUI.prototype.getAnnotationData = function() { var me = this;
       success: function(data2) {
         for(var id in data2.result) {
           if(id !== 'uids') {
-            me.chain2gi[data2.result[id].caption] = id;
+            var chainid = data2.result[id].caption;
+
+            // temp fix: use the representative gi of 1TSR_A for 1TUP_A, 1TUP_B, 1TUP_C
+            if(id == '1310960' || id == '1310961' || id == '1310962') {
+                id = '1310770';
+            }
+
+            me.chain2gi[chainid] = id;
           }
         }
       },
@@ -1840,7 +1847,7 @@ iCn3DUI.prototype.processSnpClinvar = function(data, chnid, chnidBase, bSnpOnly)
     for(var i = 0, il = lineArray.length; i < il; ++i) {
      //bSnpOnly: false
      //1310770    13    14    14Y>H    368771578    150500    Hereditary cancer-predisposing syndrome; Li-Fraumeni syndrome; not specified; Li-Fraumeni syndrome 1    Likely benign; Uncertain significance; Uncertain significance; Uncertain significance    1TSR_A    120407068    NP_000537.3
-     //Pdb_gi, Pos from, Pos to, Pos & Amino acid change, rs#, ClinVar Allele ID, Disease name, Clinical significance, master_gi, master_accession.version
+     //Pdb_gi, Pos from, Pos to, Pos & Amino acid change, rs#, ClinVar Allele ID, Disease name, Clinical significance, master accession, master_gi, master_accession.version
 
      //bSnpOnly: true
      //1310770    13    14    14Y>H

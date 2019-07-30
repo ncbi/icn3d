@@ -19,6 +19,14 @@
   <script src="icn3d_full_ui.min.js"></script>
 
   <script type="text/javascript">
+    // add your custom iCn3D code here. Start ======
+    iCn3DUI.prototype.modifyIcn3d = function() {var me = this;
+        //me.opts['chemicalbinding'] = 'show';
+
+        me.modifyIcn3dshowPicking();
+    };
+    // End ======
+
     // separating the GET parameters from the current URL
     // repalce "color #" with "color " in the url
     var url = document.URL.replace(/\#/g, '');
@@ -192,7 +200,7 @@
         var options = {};
 
         //Options are available at: https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d.html#DisplayOptions
-        //options['proteins'] = 'sphere';
+        //options['chemicalbinding'] = 'show';
 
         for(var i = 0, il = idArray.length; i < il && i < maxStructure; ++i) {
           var cfg = {

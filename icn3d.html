@@ -444,7 +444,7 @@ This page describes Web APIs and how to embed iCn3D in your html page. Other det
 <br>
 
 <a name="gallery"></a>
-<h2>iCn3D gallery<img src="https://www.ncbi.nlm.nih.gov/Structure/IMG/spacer.gif" width="25" height="1" border="0"><a href="#Top"><img src="https://www.ncbi.nlm.nih.gov/Structure/IMG/arrowup_blue.gif" width="12" height="12" border="0" alt="back to top"></a></h2>
+<h2>iCn3D gallery <span style="font-size:0.7em">(These images can be loaded into iCn3D by clicking "Open File > iCn3D PNG Image" in iCn3D File menu)</span> <img src="https://www.ncbi.nlm.nih.gov/Structure/IMG/spacer.gif" width="25" height="1" border="0"><a href="#Top"><img src="https://www.ncbi.nlm.nih.gov/Structure/IMG/arrowup_blue.gif" width="12" height="12" border="0" alt="back to top"></a></h2>
 
 <div class="gallery">
 <a href="https://icn3d.page.link/2rZWsy1LZmtTS3kBA" target="_blank">
@@ -461,6 +461,12 @@ This page describes Web APIs and how to embed iCn3D in your html page. Other det
 <div class="gallery">
 <a href="https://icn3d.page.link/Mmm82craCwGMAxru9" target="_blank">
 <img style="height:300px" src ="https://www.ncbi.nlm.nih.gov/Structure/icn3d/gallery/1TSR-align-Mmm82craCwGMAxru9.png"><br>Align Protein NP_001108451.1 to Structure 1TSR (PDB 1TSR)
+</a>
+</div>
+
+<div class="gallery">
+<a href="https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html" target="_blank">
+<img style="height:300px" src ="https://www.ncbi.nlm.nih.gov/Structure/icn3d/gallery/custom_image_icn3d_loadable.png"><br>Custom PDB (load the image in iCn3D)
 </a>
 </div>
 
@@ -502,8 +508,8 @@ This page describes Web APIs and how to embed iCn3D in your html page. Other det
 </div>
 
 <div class="gallery">
-<a href="https://icn3d.page.link/1aGgc8GzV6cmrK1R9" target="_blank">
-<img style="height:300px" src ="https://www.ncbi.nlm.nih.gov/Structure/icn3d/gallery/3GVU-1aGgc8GzV6cmrK1R9.png"><br>Ligand Binding (PDB 3GVU)
+<a href="https://icn3d.page.link/aRyqxdcTWuUfJcYE6" target="_blank">
+<img style="height:300px" src ="https://www.ncbi.nlm.nih.gov/Structure/icn3d/gallery/3GVU-aRyqxdcTWuUfJcYE6.png"><br>Ligand Binding (PDB 3GVU)
 </a>
 </div>
 
@@ -532,8 +538,14 @@ This page describes Web APIs and how to embed iCn3D in your html page. Other det
 </div>
 
 <div class="gallery">
-<a href="https://icn3d.page.link/Fw5aWKJuMrpeTsif9" target="_blank">
-<img style="height:300px" src ="https://www.ncbi.nlm.nih.gov/Structure/icn3d/gallery/cid2244-Fw5aWKJuMrpeTsif9.png"><br>PubChem Compound (CID 2244)
+<a href="https://icn3d.page.link/e9tDyp13ePPjnvdH6" target="_blank">
+<img style="height:300px" src ="https://www.ncbi.nlm.nih.gov/Structure/icn3d/gallery/cid2244-all-e9tDyp13ePPjnvdH6.png"><br>Compound with Hydrogens (CID 2244)
+</a>
+</div>
+
+<div class="gallery">
+<a href="https://icn3d.page.link/y4t5iA1YvEoib2517" target="_blank">
+<img style="height:300px" src ="https://www.ncbi.nlm.nih.gov/Structure/icn3d/gallery/cid2244-y4t5iA1YvEoib2517.png"><br>Compound without Hydrogens (CID 2244)
 </a>
 </div>
 
@@ -727,7 +739,7 @@ This page describes Web APIs and how to embed iCn3D in your html page. Other det
 <tr valign='top'><td>showmenu</td><td>Yes</td><td>Yes</td><td>Set "false" or "0" to hide the menus and buttons at the top of the structure canvas. The default is "true".</td></tr>
 <tr valign='top'><td>showtitle</td><td>Yes</td><td>Yes</td><td>Set "false" or "0" to hide the title at the top of the structure canvas. The default is "true".</td></tr>
 <tr valign='top'><td>showcommand</td><td>No</td><td>Yes</td><td>Set "false" or "0" to hide the command window. The default is "true".</td></tr>
-<tr valign='top'><td><a name="commandsUrl"></a>command</td><td>No</td><td>Yes</td><td>Besides the "Script/Log" section at the bottom of the canvas, commands can also be attached to the url parameter "command". Several commands can be concatenated with the separator ";", e.g., <a href="full.html?mmdbid=3gvu&command=select .A:38-40 or .A:42 or .A:45 or .A:61 or .A:63 or .A:77-78 or .A:82 or .A:91 or .A:107-108 or .A:110 or .A:114 or .A:162 or .A:172-173; style proteins stick; color atom; set surface Van der Waals surface; add label ATP-binding Site | size 18 | color 0000ff | background cccccc | type custom; select .STI; color green; toggle highlight">full.html?mmdbid=3gvu&amp;command=select .A:38-40 or .A:42 or .A:45 or .A:61 or .A:63 or .A:77-78 or .A:82 or .A:91 or .A:107-108 or .A:110 or .A:114 or .A:162 or .A:172-173; style proteins stick; color atom; set surface Van der Waals surface; add label ATP-binding Site | size 18 | color 0000ff | background cccccc | type custom; select .STI; color green; toggle highlight</a>.</td></tr>
+<tr valign='top'><td><a name="commandsUrl"></a>command</td><td>No</td><td>Yes</td><td>Besides the "Script/Log" section at the bottom of the canvas, commands can also be attached to the url parameter "command". The easy way to generate the commands is to operate manually to get your custom display and then click "File > Share Link" to find the URL with full commands or just the short URL.</td></tr>
 </table>
 
 <hr>
@@ -965,6 +977,10 @@ In the dialog Select -&gt; Advanced, users can use simple specification to selec
 <tr><td valign='top'><span class="indent">Sphere:</span></td>             <td valign='top'>style chemicals sphere</td> <td valign='top'><a href="#setStyle">setStyle</a></td></tr>
 <tr><td valign='top'><span class="indent">Hide:</span></td>            <td valign='top'>style chemicals nothing</td> <td valign='top'><a href="#setStyle">setStyle</a></td></tr>
 
+<tr><td colspan="3"><br>d2) Style -&gt; Hydrogens</td> </tr>
+<tr><td valign='top'><span class="indent">Show:</span></td>              <td valign='top'>hydrogens</td> <td valign='top'><a href="#setStyle">showHydrogens</a></td></tr>
+<tr><td valign='top'><span class="indent">Hide:</span></td>            <td valign='top'>set hydrogens off</td> <td valign='top'><a href="#setStyle">hideHydrogens</a></td></tr>
+
 <tr><td colspan="3"><br>e) Style -&gt; Ions</td> </tr>
 <tr><td valign='top'><span class="indent">Sphere:</span></td>             <td valign='top'>style ions sphere</td> <td valign='top'><a href="#setStyle">setStyle</a></td></tr>
 <tr><td valign='top'><span class="indent">Dot:</span></td>                <td valign='top'>style ions dot</td> <td valign='top'><a href="#setStyle">setStyle</a></td></tr>
@@ -1158,7 +1174,7 @@ In the dialog Select -&gt; Advanced, users can use simple specification to selec
     <a name="DisplayOptions"></a>
     <h2>Display Options<img src="https://www.ncbi.nlm.nih.gov/Structure/IMG/spacer.gif" width="25" height="1" border="0"><a href="#Top"><img src="https://www.ncbi.nlm.nih.gov/Structure/IMG/arrowup_blue.gif" width="12" height="12" border="0" alt="back to top"></a></h2>
     <ul>
-    <li><b>Default values and possible choices of display options</b>
+    <li><b>Default values and possible choices of display options</b>. (There are two ways to modify the default display. First, you can manually operate in iCn3D viewer to get your custom display. Then click "File > Share Link" to get your desired full URL or short URL. Second, you can update the source code of the file full.html in the lines of "iCn3DUI.prototype.modifyIcn3d".)
       <pre>          var opts = {};
           opts['camera']             = 'perspective';        //perspective, orthographic
           opts['background']         = 'transparent';        //transparent, black, grey, white
@@ -1924,6 +1940,9 @@ Update the highlight of sequences in the annotation window according to the curr
 
 <a name="log"></a>
 <h2>Change Log:<img src="https://www.ncbi.nlm.nih.gov/Structure/IMG/spacer.gif" width="25" height="1" border="0"><a href="#Top"><img src="https://www.ncbi.nlm.nih.gov/Structure/IMG/arrowup_blue.gif" width="12" height="12" border="0" alt="back to top"></a></h2>
+<a href="https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.7.7.zip">icn3d-2.7.7</a> was release on July 30, 2019. Added the option to show or hide hydrogens when displaying PubChem compounds.
+<br><br>
+
 <a href="https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.7.6.zip">icn3d-2.7.6</a> was release on July 18, 2019. Enabled to show disulfide bonds when a custom pdb file is input; added the option to output pairs for disulfide bonds, hydrogen bonds, and interacting/contacting residues by distance.
 <br><br>
 
