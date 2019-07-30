@@ -566,7 +566,7 @@ iCn3D.prototype.resetOrientation = function() {
        //if(atom.coord.z < point.z - threshold || atom.coord.z > point.z + threshold) continue;
 
        if(this.ions.hasOwnProperty(i) && this.opts['ions'] === 'sphere') {
-           var adjust = this.vdwRadii[atom.elem];
+           var adjust = this.vdwRadii[atom.elem.toUpperCase()];
 
            if(Math.abs(atom.coord.x - point.x) - adjust > threshold) continue;
            if(Math.abs(atom.coord.y - point.y) - adjust > threshold) continue;

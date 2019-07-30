@@ -63,7 +63,7 @@ $3Dmol.ProteinSurface = function(threshbox) {
 
     var vdwRadii = {
             "H" : 1.2,
-            "Li" : 1.82,
+            "LI" : 1.82,
             "Na" : 2.27,
             "K" : 2.75,
             "C" : 1.7,
@@ -83,7 +83,7 @@ $3Dmol.ProteinSurface = function(threshbox) {
 
     /** @param {AtomSpec} atom */
     var getVDWIndex = function(atom) {
-        if(!atom.elem || typeof(vdwRadii[atom.elem]) == "undefined") {
+        if(!atom.elem || typeof(vdwRadii[atom.elem.toUpperCase()]) == "undefined") {
             return "X";
         }
         return atom.elem;

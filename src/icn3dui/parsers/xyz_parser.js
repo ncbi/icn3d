@@ -58,7 +58,7 @@ iCn3DUI.prototype.setXyzAtomSeq = function (AtomHash, moleculeNum, chainNum, res
 
         for(var k = j + 1, kl = serialArray.length; k < kl; ++k) {
             var atom1 = me.icn3d.atoms[serialArray[k]];
-            var maxR = 1.2 * (me.icn3d.covalentRadii[atom0.elem] + me.icn3d.covalentRadii[atom1.elem]);
+            var maxR = 1.2 * (me.icn3d.covalentRadii[atom0.elem.toUpperCase()] + me.icn3d.covalentRadii[atom1.elem.toUpperCase()]);
             if(Math.abs(atom0.coord.x - atom1.coord.x) > maxR) continue;
             if(Math.abs(atom0.coord.y - atom1.coord.y) > maxR) continue;
             if(Math.abs(atom0.coord.z - atom1.coord.z) > maxR) continue;

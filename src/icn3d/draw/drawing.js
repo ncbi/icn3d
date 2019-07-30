@@ -10,7 +10,7 @@ iCn3D.prototype.createSphere = function (atom, defaultRadius, forceDefault, scal
     if(forceDefault === undefined) forceDefault = false;
     if(scale === undefined) scale = 1.0;
 
-    var radius = (this.vdwRadii[atom.elem] || defaultRadius);
+    var radius = (this.vdwRadii[atom.elem.toUpperCase()] || defaultRadius);
 
     if(bHighlight === 2) {
       //if(scale > 0.9) { // sphere
@@ -2361,7 +2361,7 @@ iCn3D.prototype.createBox = function (atom, defaultRadius, forceDefault, scale, 
           mesh = new THREE.Mesh(this.boxGeometry, new THREE.MeshPhongMaterial({ specular: this.frac, shininess: 30, emissive: 0x000000, color: color }));
     }
 
-    mesh.scale.x = mesh.scale.y = mesh.scale.z = forceDefault ? defaultRadius : (this.vdwRadii[atom.elem] || defaultRadius) * (scale ? scale : 1);
+    mesh.scale.x = mesh.scale.y = mesh.scale.z = forceDefault ? defaultRadius : (this.vdwRadii[atom.elem.toUpperCase()] || defaultRadius) * (scale ? scale : 1);
     mesh.position.copy(atom.coord);
     this.mdl.add(mesh);
 

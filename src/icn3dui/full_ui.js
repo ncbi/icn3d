@@ -15,7 +15,7 @@ if (!$.ui.dialog.prototype._makeDraggableBase) {
 var iCn3DUI = function(cfg) {
     var me = this;
 
-    this.REVISION = '2.7.6';
+    this.REVISION = '2.7.7';
 
     me.bFullUi = true;
 
@@ -1747,6 +1747,40 @@ iCn3DUI.prototype = {
        me.icn3d.draw();
     },
 
+    showHydrogens: function() { var me = this;
+       for(var i in me.icn3d.atoms) {
+           var atom = me.icn3d.atoms[i];
+           if(atom.name === 'H') {
+               me.icn3d.atoms[atom.serial].bonds = me.icn3d.atoms[atom.serial].bonds2.concat();
+
+               var otherSerial = me.icn3d.atoms[atom.serial].bonds[0];
+               me.icn3d.atoms[otherSerial].bonds = me.icn3d.atoms[otherSerial].bonds2.concat();
+
+               me.icn3d.dAtoms[atom.serial] = 1;
+               me.icn3d.hAtoms[atom.serial] = 1;
+           }
+       }
+    },
+
+    hideHydrogens: function() { var me = this;
+       for(var i in me.icn3d.dAtoms) {
+           var atom = me.icn3d.atoms[i];
+           if(atom.name === 'H') {
+               if(me.icn3d.atoms[atom.serial].bonds.length > 0) {
+                   var otherSerial = me.icn3d.atoms[atom.serial].bonds[0];
+
+                   me.icn3d.atoms[atom.serial].bonds = [];
+
+                   var pos = me.icn3d.atoms[otherSerial].bonds.indexOf(atom.serial);
+                   if(pos !== -1) me.icn3d.atoms[otherSerial].bonds.splice(pos, 1);
+               }
+
+               delete me.icn3d.dAtoms[atom.serial];
+               delete me.icn3d.hAtoms[atom.serial];
+           }
+       }
+    },
+
     // ====== functions end ===============
 
     // ====== events start ===============
@@ -2117,7 +2151,7 @@ iCn3DUI.prototype = {
         $("#" + me.pre + "mn6_exportInteraction").click(function (e) {
            me.setLogCmd("export interactions", false);
 
-           me.retrieveInteractionData();
+           if(me.cfg.mmdbid !== undefined) me.retrieveInteractionData();
 
            me.exportInteractions();
         });
@@ -2675,6 +2709,22 @@ iCn3DUI.prototype = {
         $("#" + me.pre + "mn3_ligNo").click(function (e) {
            me.setStyle('chemicals', 'nothing');
            me.setLogCmd('style chemicals nothing', true);
+        });
+    },
+
+    clkMn3_hydrogensYes: function() { var me = this;
+        $("#" + me.pre + "mn3_hydrogensYes").click(function (e) {
+           me.showHydrogens();
+           me.icn3d.draw();
+           me.setLogCmd('hydrogens', true);
+        });
+    },
+
+    clkMn3_hydrogensNo: function() { var me = this;
+        $("#" + me.pre + "mn3_hydrogensNo").click(function (e) {
+           me.hideHydrogens();
+           me.icn3d.draw();
+           me.setLogCmd('set hydrogens off', true);
         });
     },
 
@@ -4979,6 +5029,8 @@ iCn3DUI.prototype = {
         me.clkMn3_ligSchematic();
         me.clkMn3_ligSphere();
         me.clkMn3_ligNo();
+        me.clkMn3_hydrogensYes();
+        me.clkMn3_hydrogensNo();
         me.clkMn3_ionsSphere();
         me.clkMn3_ionsDot();
         me.clkMn3_ionsNo();

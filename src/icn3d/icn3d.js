@@ -1138,7 +1138,7 @@ iCn3D.prototype = {
 
     // from iview (http://istar.cse.cuhk.edu.hk/iview/)
     hasCovalentBond: function (atom0, atom1) {
-        var r = this.covalentRadii[atom0.elem] + this.covalentRadii[atom1.elem];
+        var r = this.covalentRadii[atom0.elem.toUpperCase()] + this.covalentRadii[atom1.elem.toUpperCase()];
         return atom0.coord.distanceToSquared(atom1.coord) < 1.3 * r * r;
     },
 
