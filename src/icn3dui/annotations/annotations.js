@@ -376,43 +376,47 @@ iCn3DUI.prototype.getAnnotationData = function() { var me = this;
 
     me.setToolTip();
 
-    // set me.chain2gi
-    me.chain2gi = {};
+    // set me.chainid2repgi
+    if(me.chainid2repgi === undefined) {
+        // get gi from acc
+        //var url2 = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi?db=protein&retmode=json&id=" + chnidBaseArray;
+        var url2 = "https://www.ncbi.nlm.nih.gov/Structure/icn3d/chainid2repgi.txt";
 
-    // get gi from acc
-    var url2 = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi?db=protein&retmode=json&id=" + chnidBaseArray;
+        $.ajax({
+          url: url2,
+          dataType: 'text',
+          cache: true,
+          tryCount : 0,
+          retryLimit : 1,
+          success: function(data2) {
+    /*
+            for(var id in data2.result) {
+              if(id !== 'uids') {
+                var chainid = data2.result[id].caption;
 
-    $.ajax({
-      url: url2,
-      dataType: 'json',
-      cache: true,
-      tryCount : 0,
-      retryLimit : 1,
-      success: function(data2) {
-        for(var id in data2.result) {
-          if(id !== 'uids') {
-            var chainid = data2.result[id].caption;
+                // temp fix: use the representative gi of 1TSR_A for 1TUP_A, 1TUP_B, 1TUP_C
+                if(id == '1310960' || id == '1310961' || id == '1310962') {
+                    id = '1310770';
+                }
 
-            // temp fix: use the representative gi of 1TSR_A for 1TUP_A, 1TUP_B, 1TUP_C
-            if(id == '1310960' || id == '1310961' || id == '1310962') {
-                id = '1310770';
+                me.chain2gi[chainid] = id;
+              }
+            }
+    */
+            me.chainid2repgi = JSON.parse(data2);
+          },
+          error : function(xhr, textStatus, errorThrown ) {
+            this.tryCount++;
+            if (this.tryCount <= this.retryLimit) {
+                //try again
+                $.ajax(this);
+                //return;
             }
 
-            me.chain2gi[chainid] = id;
-          }
-        }
-      },
-      error : function(xhr, textStatus, errorThrown ) {
-        this.tryCount++;
-        if (this.tryCount <= this.retryLimit) {
-            //try again
-            $.ajax(this);
             //return;
-        }
-
-        //return;
-      }
-    });
+          }
+        });
+    }
 
     // show the sequence and 3D structure
     var url = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=protein&retmode=json&rettype=fasta&id=" + chnidBaseArray;
@@ -1991,28 +1995,35 @@ iCn3DUI.prototype.showSnpClinvar = function(chnid, chnidBase) {
             me.processSnpClinvar(data, chnid, chnidBase, bSnpOnly);
         }
         else {
-            if(me.chain2gi !== undefined && Object.keys(me.chain2gi).length > 0) {
-               var gi = me.chain2gi[chnidBase];
+            //if(me.chain2gi !== undefined && Object.keys(me.chain2gi).length > 0) {
+            if(me.chainid2repgi !== undefined) {
+               var gi = me.chainid2repgi[chnidBase];
 
                me.showSnpClinvarAlt(chnid, chnidBase, gi);
             }
             else {
                // get gi from acc
-               var url2 = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi?db=protein&retmode=json&id=" + chnidBase;
+               //var url2 = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi?db=protein&retmode=json&id=" + chnidBase;
+               var url2 = "https://www.ncbi.nlm.nih.gov/Structure/icn3d/chainid2repgi.txt";
 
                $.ajax({
                   url: url2,
-                  dataType: 'json',
+                  dataType: 'text',
                   cache: true,
                   tryCount : 0,
                   retryLimit : 1,
                   success: function(data2) {
                     var gi;
+/*
                     for(var id in data2.result) {
                       if(id !== 'uids') {
                         gi = id;
                       }
                     }
+*/
+                    me.chainid2repgi = JSON.parse(data2);
+
+                    gi = me.chainid2repgi[chnidBase];
 
                     me.showSnpClinvarAlt(chnid, chnidBase, gi);
 

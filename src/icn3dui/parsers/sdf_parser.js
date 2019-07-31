@@ -214,7 +214,10 @@ iCn3DUI.prototype.loadSdfAtomData = function (data, cid) { var me = this;
 
     // backup bonds
     for(i in me.icn3d.atoms) {
-        me.icn3d.atoms[i].bonds2 = me.icn3d.atoms[i].bonds.concat();
+        if(me.icn3d.atoms[i].name !== 'H') { // only need to deal with non-hydrogen atoms
+            me.icn3d.atoms[i].bonds2 = me.icn3d.atoms[i].bonds.concat();
+            me.icn3d.atoms[i].bondOrder2 = me.icn3d.atoms[i].bondOrder.concat();
+        }
     }
 
     me.setMaxD();

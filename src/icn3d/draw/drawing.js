@@ -2362,6 +2362,7 @@ iCn3D.prototype.createBox = function (atom, defaultRadius, forceDefault, scale, 
     }
 
     mesh.scale.x = mesh.scale.y = mesh.scale.z = forceDefault ? defaultRadius : (this.vdwRadii[atom.elem.toUpperCase()] || defaultRadius) * (scale ? scale : 1);
+
     mesh.position.copy(atom.coord);
     this.mdl.add(mesh);
 
