@@ -15,7 +15,7 @@ if (!$.ui.dialog.prototype._makeDraggableBase) {
 var iCn3DUI = function(cfg) {
     var me = this;
 
-    this.REVISION = '2.7.7';
+    this.REVISION = '2.7.8';
 
     me.bFullUi = true;
 
@@ -1748,31 +1748,59 @@ iCn3DUI.prototype = {
     },
 
     showHydrogens: function() { var me = this;
+/*
+       // get all hydrogen atoms
        for(var i in me.icn3d.atoms) {
            var atom = me.icn3d.atoms[i];
            if(atom.name === 'H') {
-               me.icn3d.atoms[atom.serial].bonds = me.icn3d.atoms[atom.serial].bonds2.concat();
+               //me.icn3d.atoms[atom.serial].bonds = me.icn3d.atoms[atom.serial].bonds2.concat();
 
                var otherSerial = me.icn3d.atoms[atom.serial].bonds[0];
-               me.icn3d.atoms[otherSerial].bonds = me.icn3d.atoms[otherSerial].bonds2.concat();
+               if(me.icn3d.atoms[otherSerial].bonds2 !== undefined) {
+                   me.icn3d.atoms[otherSerial].bonds = me.icn3d.atoms[otherSerial].bonds2.concat();
+                   me.icn3d.atoms[otherSerial].bondOrder = me.icn3d.atoms[otherSerial].bondOrder2.concat();
+               }
 
                me.icn3d.dAtoms[atom.serial] = 1;
                me.icn3d.hAtoms[atom.serial] = 1;
            }
        }
+*/
+       // get hydrogen atoms for currently selected atoms
+       for(var i in me.icn3d.hAtoms) {
+           var atom = me.icn3d.atoms[i];
+
+           if(atom.name !== 'H') {
+               me.icn3d.atoms[atom.serial].bonds = me.icn3d.atoms[atom.serial].bonds2.concat();
+               me.icn3d.atoms[atom.serial].bondOrder = me.icn3d.atoms[atom.serial].bondOrder2.concat();
+
+               for(var j = 0, jl = me.icn3d.atoms[atom.serial].bonds.length; j < jl; ++j) {
+                   var serial = me.icn3d.atoms[atom.serial].bonds[j];
+
+                   if(me.icn3d.atoms[serial].name === 'H') {
+                       me.icn3d.dAtoms[serial] = 1;
+                       me.icn3d.hAtoms[serial] = 1;
+                   }
+               }
+           }
+       }
     },
 
     hideHydrogens: function() { var me = this;
-       for(var i in me.icn3d.dAtoms) {
+       // remove hydrogen atoms for currently selected atoms
+       for(var i in me.icn3d.hAtoms) {
            var atom = me.icn3d.atoms[i];
            if(atom.name === 'H') {
                if(me.icn3d.atoms[atom.serial].bonds.length > 0) {
                    var otherSerial = me.icn3d.atoms[atom.serial].bonds[0];
 
-                   me.icn3d.atoms[atom.serial].bonds = [];
+                   //me.icn3d.atoms[atom.serial].bonds = [];
 
                    var pos = me.icn3d.atoms[otherSerial].bonds.indexOf(atom.serial);
-                   if(pos !== -1) me.icn3d.atoms[otherSerial].bonds.splice(pos, 1);
+                   if(pos !== -1) {
+                       me.icn3d.atoms[otherSerial].bonds.splice(pos, 1);
+                       me.icn3d.atoms[otherSerial].bondOrder.splice(pos, 1);
+                   }
                }
 
                delete me.icn3d.dAtoms[atom.serial];

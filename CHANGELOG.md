@@ -1,4 +1,6 @@
 ## Change Log
+[icn3d-2.7.8](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.7.8.zip) was release on July 31, 2019. Fixed SNP annotation in the sequences and annotations window.
+
 [icn3d-2.7.7](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.7.7.zip) was release on July 30, 2019. Added the option to show or hide hydrogens when displaying PubChem compounds.
 
 [icn3d-2.7.6](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.7.6.zip) was release on July 18, 2019. Enabled to show disulfide bonds when a custom pdb file is input; added the option to output pairs for disulfide bonds, hydrogen bonds, and interacting/contacting residues by distance.
