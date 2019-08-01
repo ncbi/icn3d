@@ -201,6 +201,7 @@ iCn3D.prototype.setParametersForShader = function (opacity) { var me = this;
 
     if(this.opts['fog'] === 'yes') {
         this.defines['USE_FOG'] = 1;
+
         if(this.opts['camera'] === 'orthographic') {
             this.defines['FOG_EXP2'] = 1;
         }
