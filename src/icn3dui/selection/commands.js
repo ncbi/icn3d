@@ -1095,7 +1095,7 @@ iCn3DUI.prototype.applyCommand = function (commandStr) { var me = this;
     var radius = parseFloat(paraArray[0].substr(paraArray[0].lastIndexOf(' ') + 1));
 
     var nameArray = [];
-    if(paraArray.length == 2) {
+    if(paraArray.length == 2 && paraArray[1].length > 4) { //sets a,b,c
         var nameStr = paraArray[1].substr(paraArray[1].indexOf(' ') + 1);
         nameArray = nameStr.split(",");
     }
@@ -1292,7 +1292,7 @@ iCn3DUI.prototype.applyCommand = function (commandStr) { var me = this;
 
     var threshold = parseFloat(paraArray[0].substr(paraArray[0].indexOf(' ') + 1));
     var nameArray = [];
-    if(paraArray.length == 2) {
+    if(paraArray.length == 2 && paraArray[1].length > 4) { //sets a,b,c
         var nameStr = paraArray[1].substr(paraArray[1].indexOf(' ') + 1);
         nameArray = nameStr.split(",");
     }

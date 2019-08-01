@@ -6,6 +6,8 @@ $NGL_shaderTextHash['SphereImpostor.vert'] = ["uniform mat4 projectionMatrixInve
 "varying vec3 vPoint;",
 "varying vec3 vPointViewPosition;",
 "varying float fogDepth;",
+"varying float fogNear;",
+"varying float fogFar;",
 "",
 "attribute vec2 mapping;",
 "//attribute vec3 position;",
