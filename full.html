@@ -141,6 +141,14 @@
       simplemenu = false;
     }
 
+    var closepopup = params.closepopup;
+    if(closepopup == 'true' || closepopup == '1') {
+      closepopup = true;
+    }
+    else if(closepopup === undefined || closepopup == 'false' || closepopup == '0') {
+      closepopup = false;
+    }
+
     var showanno = params.showanno;
     if(showanno == 'true' || showanno == '1') {
       showanno = true;
@@ -225,6 +233,7 @@
               show2d: show2d,
               showsets: showsets,
               simplemenu: simplemenu,
+              closepopup: closepopup,
               command: command
           };
           if(idName !== '') cfg[idName] = idArray[i];
@@ -292,6 +301,7 @@
               show2d: show2d,
               showsets: showsets,
               simplemenu: simplemenu,
+              closepopup: closepopup,
               align: align,
               command: command
           };

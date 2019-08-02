@@ -363,6 +363,15 @@ iCn3DUI.prototype.renderFinalStep = function(steps) { var me = this;
         me.icn3d.draw();
     }
 
+    if(me.cfg.closepopup) {
+        if($('#' + me.pre + 'dl_selectannotations').dialog( 'isOpen' )) $('#' + me.pre + 'dl_selectannotations').dialog( 'close' );
+        if($('#' + me.pre + 'dl_alignment').dialog( 'isOpen' )) $('#' + me.pre + 'dl_alignment').dialog( 'close' );
+        if($('#' + me.pre + 'dl_2ddgm').dialog( 'isOpen' )) $('#' + me.pre + 'dl_2ddgm').dialog( 'close' );
+        if($('#' + me.pre + 'dl_definedsets').dialog( 'isOpen' )) $('#' + me.pre + 'dl_definedsets').dialog( 'close' );
+
+        me.resizeCanvas(me.WIDTH, me.HEIGHT, true);
+    }
+
     // an extra render to remove artifacts in transparent surface
     if(me.bTransparentSurface) me.icn3d.render();
 };
