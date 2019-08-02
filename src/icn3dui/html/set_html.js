@@ -74,23 +74,27 @@ iCn3DUI.prototype.setTopMenusHtml = function (id) { var me = this;
     html += "    <table border='0' cellpadding='0' cellspacing='0' width='100'><tr>";
 
     html += "    <td valign='top'>" + me.setMenu1() + "</td>";
-    html += "    <td valign='top'>" + me.setMenu2() + "</td>";
+
+    if(!me.cfg.simplemenu) {
+        html += "    <td valign='top'>" + me.setMenu2() + "</td>";
+    }
+
     html += "    <td valign='top'>" + me.setMenu2b() + "</td>";
     html += "    <td valign='top'>" + me.setMenu3() + "</td>";
     html += "    <td valign='top'>" + me.setMenu4() + "</td>";
-    html += "    <td valign='top'>" + me.setMenu5() + "</td>";
-    //html += "    <td valign='top'>" + me.setMenu5b() + "</td>";
-    html += "    <td valign='top'>" + me.setMenu6() + "</td>";
 
-    html += "    <td valign='top'><div style='position:relative; margin-left:6px;'><label class='icn3d-switch'><input id='" + me.pre + "modeswitch' type='checkbox'><div class='icn3d-slider icn3d-round' style='width:34px; height:18px; margin: 6px 0px 0px 3px;' title='Left (\"All atoms\"): Style and color menu options will be applied to all atoms in the structure&#13;Right (\"Selection\"): Style and color menu options will be applied only to selected atoms'></div></label>";
-    html += "    <div class='icn3d-commandTitle' style='min-width:40px; margin-top: 3px; white-space: nowrap;'><span id='" + me.pre + "modeall' title='Style and color menu options will be applied to all atoms in the structure'>All atoms&nbsp;&nbsp;</span><span id='" + me.pre + "modeselection' class='icn3d-modeselection' style='display:none;' title='Style and color menu options will be applied only to selected atoms'>Selection&nbsp;&nbsp;</span></div></div></td>";
+    if(!me.cfg.simplemenu) {
+        html += "    <td valign='top'>" + me.setMenu5() + "</td>";
+        //html += "    <td valign='top'>" + me.setMenu5b() + "</td>";
+        html += "    <td valign='top'>" + me.setMenu6() + "</td>";
 
-    //html += '    <td valign="top"><div class="icn3d-commandTitle" style="white-space:nowrap; margin-top:10px;"><div style="width:20px; display:inline-block; margin-left:6px;"><span id="' + me.pre +  'selection_expand" class="ui-icon ui-icon-plus icn3d-link" style="width:15px;" title="Expand"></span><span id="' + me.pre +  'selection_shrink" class="ui-icon ui-icon-minus icn3d-link" style="display:none; width:15px;" title="Shrink"></span></div> Tools</div></td>';
+        html += "    <td valign='top'><div style='position:relative; margin-left:6px;'><label class='icn3d-switch'><input id='" + me.pre + "modeswitch' type='checkbox'><div class='icn3d-slider icn3d-round' style='width:34px; height:18px; margin: 6px 0px 0px 3px;' title='Left (\"All atoms\"): Style and color menu options will be applied to all atoms in the structure&#13;Right (\"Selection\"): Style and color menu options will be applied only to selected atoms'></div></label>";
+        html += "    <div class='icn3d-commandTitle' style='min-width:40px; margin-top: 3px; white-space: nowrap;'><span id='" + me.pre + "modeall' title='Style and color menu options will be applied to all atoms in the structure'>All atoms&nbsp;&nbsp;</span><span id='" + me.pre + "modeselection' class='icn3d-modeselection' style='display:none;' title='Style and color menu options will be applied only to selected atoms'>Selection&nbsp;&nbsp;</span></div></div></td>";
 
-    //html += '    <td valign="top"><div class="icn3d-commandTitle" style="white-space:nowrap; margin-top:10px;"><span id="' + me.pre +  'selection_expand" class="icn3d-expand icn3d-link" title="Expand"><span class="ui-icon ui-icon-plus"></span> Show Tools</span><span id="' + me.pre +  'selection_shrink" class="icn3d-shrink icn3d-link" style="display:none;" title="Shrink"><span class="ui-icon ui-icon-minus"></span> Hide Tools</span></div></td>';
-    html += '    <td valign="top"><div class="icn3d-commandTitle" style="white-space:nowrap; margin-top:10px; border-left:solid 1px #888888"><span id="' + me.pre +  'selection_expand" class="icn3d-expand icn3d-link" title="Expand">&nbsp;&nbsp;Show Toolbar&nbsp;&nbsp;</span><span id="' + me.pre +  'selection_shrink" class="icn3d-shrink icn3d-link" style="display:none;" title="Shrink">&nbsp;&nbsp;Hide Toolbar&nbsp;&nbsp;</span></div></td>';
+        html += '    <td valign="top"><div class="icn3d-commandTitle" style="white-space:nowrap; margin-top:10px; border-left:solid 1px #888888"><span id="' + me.pre +  'selection_expand" class="icn3d-expand icn3d-link" title="Expand">&nbsp;&nbsp;Show Toolbar&nbsp;&nbsp;</span><span id="' + me.pre +  'selection_shrink" class="icn3d-shrink icn3d-link" style="display:none;" title="Shrink">&nbsp;&nbsp;Hide Toolbar&nbsp;&nbsp;</span></div></td>';
 
-    html += '    <td valign="top"><div class="icn3d-commandTitle" style="white-space:nowrap; margin-top:8px; border-left:solid 1px #888888">&nbsp;&nbsp;<input type="text" id="' + me.pre + 'search_seq" size="10" placeholder="one-letter seq."> <button style="white-space:nowrap;" id="' + me.pre + 'search_seq_button">Search Seq.</button> <a href="https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d.html#selectb" target="_blank" title="Specification tips">?</a></div></td>';
+        html += '    <td valign="top"><div class="icn3d-commandTitle" style="white-space:nowrap; margin-top:8px; border-left:solid 1px #888888">&nbsp;&nbsp;<input type="text" id="' + me.pre + 'search_seq" size="10" placeholder="one-letter seq."> <button style="white-space:nowrap;" id="' + me.pre + 'search_seq_button">Search Seq.</button> <a href="https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d.html#selectb" target="_blank" title="Specification tips">?</a></div></td>';
+    }
 
     html += "  </tr>";
     html += "  </table>";
