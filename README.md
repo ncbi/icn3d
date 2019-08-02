@@ -17,7 +17,7 @@
 We provided two types of iCn3D widgets: [basic interface](https://www.ncbi.nlm.nih.gov/Structure/icn3d/index.html?mmdbid=1tup) and [advanced interface](https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?mmdbid=1tup). 
 
 1. The basic interface has the minimum javascript code for the interface. It has the basic features such as changing color and styles.
-2. The advanced interface has a library for the interface. It has many features.
+2. The advanced interface has a library for the interface. It is recommended since it has many features and can have simple UI using [URL parameters](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d.html#parameters) such as [https://icn3d.page.link/2J9Zv4i74yxyagtFA](https://icn3d.page.link/2J9Zv4i74yxyagtFA).
 
 Either of these widgets could be easily added to your own web pages as shown in the section of "Embed iCn3D with iframe or JavaScript libraries" below. 
 
