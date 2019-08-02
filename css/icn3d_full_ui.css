@@ -198,7 +198,7 @@ input:checked + .icn3d-slider:before {
   background-position: -64px -144px; //ui-icon-check 
 }
 
-.ui-menu-icons .ui-menu-item-wrapper {
+.ui-menu-icons .ui-menu-item-wrapper, .ui-menu-icons .ui-menu-item {
     padding-left: 0em;
 }
 
