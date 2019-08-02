@@ -199,7 +199,7 @@ input:checked + .icn3d-slider:before {
 }
 
 .ui-menu-icons .ui-menu-item-wrapper, .ui-menu-icons .ui-menu-item {
-    padding-left: 0em;
+    padding-left: 0.4em;
 }
 
 .icn3d-rad-text {
