@@ -1443,7 +1443,7 @@ iCn3DUI.prototype.showClinVarLabelOn3D = function(chnid) { var me = this;
 
       $("#clinvar_" + me.pre + residueid).addClass('icn3d-highlightSeq');
 
-      if(!$("#" + me.pre + "modeswitch")[0].checked) {
+      if($("#" + me.pre + "modeswitch")[0] !== undefined && !$("#" + me.pre + "modeswitch")[0].checked) {
           me.setMode('selection');
       }
 

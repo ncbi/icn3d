@@ -43,7 +43,7 @@ iCn3DUI.prototype.showSelection = function (id) { var me = this;
 
 iCn3DUI.prototype.clickModeswitch = function() { var me = this;
     $("#" + me.pre + "modeswitch").click(function (e) {
-        if($("#" + me.pre + "modeswitch")[0].checked) { // mode: selection
+        if($("#" + me.pre + "modeswitch")[0] !== undefined && $("#" + me.pre + "modeswitch")[0].checked) { // mode: selection
             me.setModeAndDisplay('selection');
         }
         else { // mode: all
@@ -121,7 +121,7 @@ iCn3DUI.prototype.setMode = function(mode) { var me = this;
         $("#" + me.pre + "modeall").show();
         $("#" + me.pre + "modeselection").hide();
 
-        $("#" + me.pre + "modeswitch")[0].checked = false;
+        if($("#" + me.pre + "modeswitch")[0] !== undefined) $("#" + me.pre + "modeswitch")[0].checked = false;
 
         if($("#" + me.pre + "style").hasClass('icn3d-modeselection')) $("#" + me.pre + "style").removeClass('icn3d-modeselection');
         if($("#" + me.pre + "color").hasClass('icn3d-modeselection')) $("#" + me.pre + "color").removeClass('icn3d-modeselection');
@@ -133,7 +133,7 @@ iCn3DUI.prototype.setMode = function(mode) { var me = this;
             $("#" + me.pre + "modeall").hide();
             $("#" + me.pre + "modeselection").show();
 
-            $("#" + me.pre + "modeswitch")[0].checked = true;
+            if($("#" + me.pre + "modeswitch")[0] !== undefined) $("#" + me.pre + "modeswitch")[0].checked = true;
 
             if(!$("#" + me.pre + "style").hasClass('icn3d-modeselection')) $("#" + me.pre + "style").addClass('icn3d-modeselection');
             if(!$("#" + me.pre + "color").hasClass('icn3d-modeselection')) $("#" + me.pre + "color").addClass('icn3d-modeselection');
