@@ -133,6 +133,14 @@
       showcommand = false;
     }
 
+    var simplemenu = params.simplemenu;
+    if(simplemenu === undefined || simplemenu == 'true' || simplemenu == '1') {
+      simplemenu = true;
+    }
+    else if(simplemenu == 'false' || simplemenu == '0') {
+      simplemenu = false;
+    }
+
     var showanno = params.showanno;
     if(showanno == 'true' || showanno == '1') {
       showanno = true;
@@ -216,6 +224,7 @@
               showanno: showanno,
               show2d: show2d,
               showsets: showsets,
+              simplemenu: simplemenu,
               command: command
           };
           if(idName !== '') cfg[idName] = idArray[i];
@@ -282,6 +291,7 @@
               showalignseq: showalignseq,
               show2d: show2d,
               showsets: showsets,
+              simplemenu: simplemenu,
               align: align,
               command: command
           };

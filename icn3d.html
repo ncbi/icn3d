@@ -509,7 +509,7 @@ This page describes Web APIs and how to embed iCn3D in your html page. Other det
 
 <div class="gallery">
 <a href="https://icn3d.page.link/WTtKKEaYkeMRE5nP7" target="_blank">
-<img style="height:300px" src ="https://www.ncbi.nlm.nih.gov/Structure/icn3d/gallery/3GVU-b1-WTtKKEaYkeMRE5nP7"><br>Ligand Binding with Fog (PDB 3GVU)
+<img style="height:300px" src ="https://www.ncbi.nlm.nih.gov/Structure/icn3d/gallery/3GVU-b1-WTtKKEaYkeMRE5nP7.png"><br>Ligand Binding with Fog (PDB 3GVU)
 </a>
 </div>
 
@@ -745,6 +745,7 @@ This page describes Web APIs and how to embed iCn3D in your html page. Other det
 <tr valign='top'><td>showmenu</td><td>Yes</td><td>Yes</td><td>Set "false" or "0" to hide the menus and buttons at the top of the structure canvas. The default is "true".</td></tr>
 <tr valign='top'><td>showtitle</td><td>Yes</td><td>Yes</td><td>Set "false" or "0" to hide the title at the top of the structure canvas. The default is "true".</td></tr>
 <tr valign='top'><td>showcommand</td><td>No</td><td>Yes</td><td>Set "false" or "0" to hide the command window. The default is "true".</td></tr>
+<tr valign='top'><td>simplemenu</td><td>No</td><td>Yes</td><td>Set "true" or "1" to show only the menus "File", "View", "Style", and "Color" to simplify the UI. The default is "false".</td></tr>
 <tr valign='top'><td><a name="commandsUrl"></a>command</td><td>No</td><td>Yes</td><td>Besides the "Script/Log" section at the bottom of the canvas, commands can also be attached to the url parameter "command". The easy way to generate the commands is to operate manually to get your custom display and then click "File > Share Link" to find the URL with full commands or just the short URL.</td></tr>
 </table>
 
@@ -823,7 +824,7 @@ This page describes Web APIs and how to embed iCn3D in your html page. Other det
 <tr><td valign='top'><span class="indent">Chain:</span></td>  <td valign='top'>set pk chain</td> <td valign='top'>me.icn3d.pk = 4; me.icn3d.opts['pk'] = 'chain';</td></tr>
 <tr><td valign='top'><span class="indent">Strand/Helix (Alt):</span></td>  <td valign='top'>set pk strand</td> <td valign='top'>me.icn3d.pk = 3; me.icn3d.opts['pk'] = 'strand';</td></tr>
 <tr><td valign='top'><span class="indent">Residue (Alt):</span></td>  <td valign='top'>set pk residue</td> <td valign='top'>me.icn3d.pk = 2; me.icn3d.opts['pk'] = 'residue';</td></tr>
-<tr><td valign='top'><span class="indent">Atom (Alt):</span></td>     <td valign='top'>set pk atom</td> <td valign='top'>me.icn3d.pk = 41; me.icn3d.opts['pk'] = 'atom';</td></tr>
+<tr><td valign='top'><span class="indent">Atom (Alt):</span></td>     <td valign='top'>set pk atom</td> <td valign='top'>me.icn3d.pk = 1; me.icn3d.opts['pk'] = 'atom';</td></tr>
 
 <tr><td valign='top'>h) Save Selection:</td>      <td valign='top'>select [command] | name [commandname]</td> <td valign='top'><a href="#selectByCommand">selectByCommand</a></td></tr>
 <tr><td valign='top'>i) Clear Selection:</td>      <td valign='top'>clear all</td> <td valign='top'><a href="#selectAll">selectAll</a></td></tr>
