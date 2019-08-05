@@ -298,13 +298,21 @@ iCn3D.prototype.setFog = function(bZoomin) { var me = this;
     this.maxD = centerAtomsResults.maxD;
     if (this.maxD < 5) this.maxD = 5;
 
+    var bInstance = (this.biomtMatrices !== undefined && this.biomtMatrices.length * this.cnt > this.maxatomcnt) ? true : false;
+
     // apply fog
     if(this.opts['fog'] === 'yes') {
         if(this.opts['camera'] === 'perspective') {        //perspective, orthographic
             //this.scene.fog = new THREE.Fog(background, this.cam_z, this.cam_z + 0.5 * this.maxD);
             //this.scene.fog = new THREE.Fog(background, 2 * this.maxD, 2.5 * this.maxD);
             //this.scene.fog = new THREE.Fog(background, 1.5 * this.maxD, 3 * this.maxD);
-            this.scene.fog = new THREE.Fog(background, 2.5*this.maxD, 4*this.maxD);
+
+            if(bInstance) {
+                this.scene.fog = undefined;
+            }
+            else {
+                this.scene.fog = new THREE.Fog(background, 2.5*this.maxD, 4*this.maxD);
+            }
         }
         else if(this.opts['camera'] === 'orthographic') {
             //this.scene.fog = new THREE.FogExp2(background, 2);
@@ -318,7 +326,7 @@ iCn3D.prototype.setFog = function(bZoomin) { var me = this;
         this.scene.fog = undefined;
     }
 
-    if(bZoomin) {
+    if(bZoomin && !bInstance) {
         var para = {};
 
         para._zoomFactor = 1.0 / me._zoomFactor;

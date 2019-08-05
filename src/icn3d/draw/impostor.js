@@ -146,9 +146,11 @@ iCn3D.prototype.setParametersForShader = function (opacity) { var me = this;
     var near = 2.5*this.maxD;
     var far = 4*this.maxD;
 
+    var bInstance = (this.biomtMatrices !== undefined && this.biomtMatrices.length * this.cnt > this.maxatomcnt) ? true : false;
+
     var nearClip;
     if(this.opts['slab'] === 'yes') {
-        nearClip = this.maxD * (3-0.3);
+        nearClip = (bInstance) ? 0.1 : this.maxD * (3-0.3);
     }
     else {
         nearClip = 0.1;
@@ -215,7 +217,7 @@ iCn3D.prototype.setParametersForShader = function (opacity) { var me = this;
         CAP: 1
     };
 
-    if(this.opts['fog'] === 'yes') {
+    if(this.opts['fog'] === 'yes' && !bInstance) {
         this.defines['USE_FOG'] = 1;
 
         if(this.opts['camera'] === 'orthographic') {
