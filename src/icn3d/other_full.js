@@ -278,19 +278,12 @@ iCn3D.prototype.zoominSelection = function(atoms) {
    // center on the hAtoms if more than one residue is selected
    if(Object.keys(atoms).length > 1) {
            var centerAtomsResults = this.centerAtoms(atoms);
+
            this.maxD = centerAtomsResults.maxD;
            if (this.maxD < 5) this.maxD = 5;
 
-           this.mdl.position.set(0,0,0);
-           this.mdlImpostor.position.set(0,0,0);
-           this.mdl_ghost.position.set(0,0,0);
-
-           this.mdl.position.sub(centerAtomsResults.center);
-           //this.mdlPicking.position.sub(centerAtomsResults.center);
-           this.mdlImpostor.position.sub(centerAtomsResults.center);
-           this.mdl_ghost.position.sub(centerAtomsResults.center);
-
            this.center = centerAtomsResults.center;
+           this.setCenter(this.center);
 
            // reset cameara
            this.setCamera();
@@ -298,7 +291,7 @@ iCn3D.prototype.zoominSelection = function(atoms) {
 };
 
 iCn3D.prototype.centerSelection = function(atoms) {
-   this.resetOrientation();
+   //this.resetOrientation();
 
    if(atoms === undefined) {
        atoms = this.hash2Atoms(this.hAtoms);

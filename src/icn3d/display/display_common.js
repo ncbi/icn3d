@@ -786,17 +786,20 @@ iCn3D.prototype.rebuildSceneBase = function (options) { var me = this;
 iCn3D.prototype.setCamera = function() {
     this.cam = this.cams[this.opts.camera.toLowerCase()];
 
+    var maxD = this.maxD;
+
     if(this.cam === this.perspectiveCamera) {
-        var factor = (this.biomtMatrices !== undefined && this.biomtMatrices.length * this.cnt > 10 * this.maxatomcnt) ? 1 : 2;
+        //var factor = (this.biomtMatrices !== undefined && this.biomtMatrices.length * this.cnt > 10 * this.maxatomcnt) ? 1 : 2;
+        var factor = (this.biomtMatrices !== undefined && this.biomtMatrices.length * this.cnt > 10 * this.maxatomcnt) ? 1 : 3;
         if(this.cam_z > 0) {
-          this.cam.position.z = this.maxD * factor; // forperspective, the z positionshould be large enough to see the whole molecule
+          this.cam.position.z = maxD * factor; // forperspective, the z positionshould be large enough to see the whole molecule
         }
         else {
-          this.cam.position.z = -this.maxD * factor; // forperspective, the z positionshould be large enough to see the whole molecule
+          this.cam.position.z = -maxD * factor; // forperspective, the z positionshould be large enough to see the whole molecule
         }
 
         if(this.opts['slab'] === 'yes') {
-            this.cam.near = this.maxD * 2;
+            this.cam.near = maxD * (3-0.3);
         }
         else {
             this.cam.near = 0.1;

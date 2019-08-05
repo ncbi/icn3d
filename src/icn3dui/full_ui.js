@@ -15,7 +15,7 @@ if (!$.ui.dialog.prototype._makeDraggableBase) {
 var iCn3DUI = function(cfg) {
     var me = this;
 
-    this.REVISION = '2.7.9';
+    this.REVISION = '2.7.10';
 
     me.bFullUi = true;
 
@@ -875,6 +875,15 @@ iCn3DUI.prototype = {
                       me.applyCommandAnnotationsAndCddSiteBase(cmd);
                    }
 */
+              }
+
+              if(me.cfg.closepopup) {
+                if($('#' + me.pre + 'dl_selectannotations').dialog( 'isOpen' )) $('#' + me.pre + 'dl_selectannotations').dialog( 'close' );
+                if($('#' + me.pre + 'dl_alignment').dialog( 'isOpen' )) $('#' + me.pre + 'dl_alignment').dialog( 'close' );
+                if($('#' + me.pre + 'dl_2ddgm').dialog( 'isOpen' )) $('#' + me.pre + 'dl_2ddgm').dialog( 'close' );
+                if($('#' + me.pre + 'dl_definedsets').dialog( 'isOpen' )) $('#' + me.pre + 'dl_definedsets').dialog( 'close' );
+
+                me.resizeCanvas(me.WIDTH, me.HEIGHT, true);
               }
           }
           else {
@@ -3514,14 +3523,20 @@ iCn3DUI.prototype = {
 
     clkMn6_showfogYes: function() { var me = this;
         $("#" + me.pre + "mn6_showfogYes").click(function (e) {
-           me.setOption('fog', 'yes');
+           //me.setOption('fog', 'yes');
+           me.icn3d.opts['fog'] = 'yes';
+           me.icn3d.setFog(true);
+           me.icn3d.draw();
            me.setLogCmd('set fog on', true);
         });
     },
 
     clkMn6_showfogNo: function() { var me = this;
         $("#" + me.pre + "mn6_showfogNo").click(function (e) {
-           me.setOption('fog', 'no');
+           //me.setOption('fog', 'no');
+           me.icn3d.opts['fog'] = 'no';
+           me.icn3d.setFog(true);
+           me.icn3d.draw();
            me.setLogCmd('set fog off', true);
         });
     },
