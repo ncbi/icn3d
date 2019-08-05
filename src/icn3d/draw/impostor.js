@@ -146,6 +146,16 @@ iCn3D.prototype.setParametersForShader = function (opacity) { var me = this;
     var near = 2.5*this.maxD;
     var far = 4*this.maxD;
 
+    var bInstance = (this.biomtMatrices !== undefined && this.biomtMatrices.length * this.cnt > this.maxatomcnt) ? true : false;
+
+    var nearClip;
+    if(this.opts['slab'] === 'yes') {
+        nearClip = (bInstance) ? 0.1 : this.maxD * (3-0.3);
+    }
+    else {
+        nearClip = 0.1;
+    }
+
     var opacityValue = (opacity !== undefined) ? opacity : 1.0;
 
     this.uniforms = THREE.UniformsUtils.merge([
@@ -175,7 +185,7 @@ iCn3D.prototype.setParametersForShader = function (opacity) { var me = this;
         roughness: { type: "f", value: 0.5 }, // 0.4
         metalness: { type: "f", value: 0.3 }, // 0.5
         opacity: { type: "f", value: opacityValue },
-        nearClip: { type: "f", value: 0.1 },
+        nearClip: { type: "f", value: nearClip },
         ortho: { type: "f", value: 0.0 },
         shrink: { type: "f", value: 0.13 },
         fogColor: { type: "v3", value: [background.r, background.g, background.b] },
@@ -207,7 +217,7 @@ iCn3D.prototype.setParametersForShader = function (opacity) { var me = this;
         CAP: 1
     };
 
-    if(this.opts['fog'] === 'yes') {
+    if(this.opts['fog'] === 'yes' && !bInstance) {
         this.defines['USE_FOG'] = 1;
 
         if(this.opts['camera'] === 'orthographic') {

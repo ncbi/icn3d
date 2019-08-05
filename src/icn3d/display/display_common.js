@@ -789,8 +789,10 @@ iCn3D.prototype.setCamera = function() {
     var maxD = this.maxD;
 
     if(this.cam === this.perspectiveCamera) {
+        var bInstance = (this.biomtMatrices !== undefined && this.biomtMatrices.length * this.cnt > this.maxatomcnt) ? true : false;
         //var factor = (this.biomtMatrices !== undefined && this.biomtMatrices.length * this.cnt > 10 * this.maxatomcnt) ? 1 : 2;
-        var factor = (this.biomtMatrices !== undefined && this.biomtMatrices.length * this.cnt > 10 * this.maxatomcnt) ? 1 : 3;
+        //var factor = (this.biomtMatrices !== undefined && this.biomtMatrices.length * this.cnt > 10 * this.maxatomcnt) ? 1 : 3;
+        var factor =  (bInstance) ? 1 : 3;
         if(this.cam_z > 0) {
           this.cam.position.z = maxD * factor; // forperspective, the z positionshould be large enough to see the whole molecule
         }
@@ -799,7 +801,7 @@ iCn3D.prototype.setCamera = function() {
         }
 
         if(this.opts['slab'] === 'yes') {
-            this.cam.near = maxD * (3-0.3);
+            this.cam.near = (bInstance) ? 0.1 : maxD * (3-0.3);
         }
         else {
             this.cam.near = 0.1;
