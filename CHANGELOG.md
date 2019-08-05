@@ -1,6 +1,8 @@
 ## Change Log
+[icn3d-2.7.10](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.7.10.zip) was release on August 5, 2019. Improved the display of binding sites with fog and slab.
+
 [icn3d-2.7.9](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.7.9.zip) was release on August 1, 2019. Fixed the effect of Fog on sticks and spheres.
- 
+
 [icn3d-2.7.8](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.7.8.zip) was release on July 31, 2019. Fixed SNP annotation in the sequences and annotations window.
 
 [icn3d-2.7.7](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.7.7.zip) was release on July 30, 2019. Added the option to show or hide hydrogens when displaying PubChem compounds.

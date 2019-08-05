@@ -715,9 +715,11 @@ iCn3DUI.prototype.applyCommand = function (commandStr) { var me = this;
   }
   else if(command == 'set fog on') {
     me.icn3d.opts['fog'] = 'yes';
+    me.icn3d.setFog(true);
   }
   else if(command == 'set fog off') {
     me.icn3d.opts['fog'] = 'no';
+    me.icn3d.setFog(true);
   }
   else if(command == 'set slab on') {
     me.icn3d.opts['slab'] = 'yes';

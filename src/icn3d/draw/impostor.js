@@ -133,10 +133,18 @@ iCn3D.prototype.setParametersForShader = function (opacity) { var me = this;
 */
 
     var background = this.backgroundColors[this.opts.background.toLowerCase()];
+
+    var centerAtomsResults = this.centerAtoms(this.hAtoms);
+    this.maxD = centerAtomsResults.maxD;
+    if (this.maxD < 5) this.maxD = 5;
+
     //var near = 2 * this.maxD;
-    var near = 1.5 * this.maxD;
     //var far = 2.5 * this.maxD;
-    var far = 3 * this.maxD;
+    //var near = 1.5 * this.maxD;
+    //var far = 3 * this.maxD;
+
+    var near = 2.5*this.maxD;
+    var far = 4*this.maxD;
 
     var opacityValue = (opacity !== undefined) ? opacity : 1.0;
 

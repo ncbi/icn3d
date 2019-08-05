@@ -561,11 +561,12 @@ iCn3DUI.prototype.setViewerWidthHeight = function() { var me = this;
     if(viewer_width && me.WIDTH > viewer_width) me.WIDTH = viewer_width;
     if(viewer_height && me.HEIGHT > viewer_height) me.HEIGHT = viewer_height;
 
-    if(me.isMac() && me.isMobile()) {
-      if(me.WIDTH < me.MENU_WIDTH) me.WIDTH = me.MENU_WIDTH;
+    // show the full size of the menus and partialcanvas
+//    if(me.isMac() && me.isMobile()) {
+//      if(me.WIDTH < me.MENU_WIDTH) me.WIDTH = me.MENU_WIDTH;
 
-      me.HEIGHT = $( window ).height() / $( window ).width() * me.MENU_WIDTH;
-    }
+//      me.HEIGHT = $( window ).height() / $( window ).width() * me.MENU_WIDTH;
+//    }
 
     //if(me.cfg.width.toString().indexOf('%') === -1) {
     //    me.WIDTH = parseInt(me.cfg.width) + me.LESSWIDTH;
