@@ -2432,8 +2432,8 @@ iCn3D.prototype.makeTextSprite = function ( message, parameters ) {
         }
     }
 
-    //var factor = (bSchematic) ? 3 * this.oriMaxD / 100 : 3 * this.oriMaxD / 100;
-    //var factor = (bSchematic) ? 3 * this.maxD / 100 : 3 * this.maxD / 100;
+    // var factor = (bSchematic) ? 3 * this.oriMaxD / 100 : 3 * this.oriMaxD / 100;
+    // var factor = (bSchematic) ? 3 * this.maxD / 100 : 3 * this.maxD / 100;
     var factor = 3 * this.oriMaxD / 100 * this.labelScale;
 
     var expandWidthFactor = 0.8 * textWidth / height;
