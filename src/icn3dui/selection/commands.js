@@ -1115,10 +1115,14 @@ iCn3DUI.prototype.applyCommand = function (commandStr) { var me = this;
   }
   else if(command.indexOf('set surface opacity') == 0) {
     var value = command.substr(command.lastIndexOf(' ') + 1);
-    me.icn3d.opts['opacity'] = value;
+    me.icn3d.opts['opacity'] = parseFloat(value);
     me.icn3d.applySurfaceOptions();
 
     if(parseInt(100*value) < 100) me.bTransparentSurface = true;
+  }
+  else if(command.indexOf('set labelscale') == 0) {
+    var value = command.substr(command.lastIndexOf(' ') + 1);
+    me.icn3d.labelScale = parseFloat(value);
   }
   else if(command.indexOf('set surface') == 0) {
     var value = command.substr(12);

@@ -1,4 +1,6 @@
 ## Change Log
+[icn3d-2.7.11](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.7.11.zip) was release on August 6, 2019. Added "Label Scale" in the View menu to scale all labels.
+
 [icn3d-2.7.10](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.7.10.zip) was release on August 5, 2019. Improved the display of binding sites with fog and slab.
 
 [icn3d-2.7.9](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.7.9.zip) was release on August 1, 2019. Fixed the effect of Fog on sticks and spheres.

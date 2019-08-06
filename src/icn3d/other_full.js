@@ -270,7 +270,14 @@ iCn3D.prototype.removeLastEmmap = function () {
    }
 };
 
-iCn3D.prototype.zoominSelection = function(atoms) {
+iCn3D.prototype.zoominSelection = function(atoms) { var me = this;
+   var para = {};
+
+   para._zoomFactor = 1.0 / me._zoomFactor;
+   para.update = true;
+
+   me.controls.update(para);
+
    if(atoms === undefined) {
        atoms = this.hash2Atoms(this.hAtoms);
    }
