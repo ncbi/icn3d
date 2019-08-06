@@ -3356,7 +3356,7 @@ iCn3DUI.prototype = {
         $("#" + me.pre + "mn6_labelscale01").click(function (e) {
            me.icn3d.labelScale = 0.1;
            me.icn3d.draw();
-           me.setLogCmd('set labelscale 0.1', true);
+           me.setLogCmd('set label scale 0.1', true);
         });
     },
 
@@ -3364,7 +3364,7 @@ iCn3DUI.prototype = {
         $("#" + me.pre + "mn6_labelscale02").click(function (e) {
            me.icn3d.labelScale = 0.2;
            me.icn3d.draw();
-           me.setLogCmd('set labelscale 0.2', true);
+           me.setLogCmd('set label scale 0.2', true);
         });
     },
 
@@ -3372,7 +3372,7 @@ iCn3DUI.prototype = {
         $("#" + me.pre + "mn6_labelscale04").click(function (e) {
            me.icn3d.labelScale = 0.4;
            me.icn3d.draw();
-           me.setLogCmd('set labelscale 0.4', true);
+           me.setLogCmd('set label scale 0.4', true);
         });
     },
 
@@ -3380,7 +3380,7 @@ iCn3DUI.prototype = {
         $("#" + me.pre + "mn6_labelscale06").click(function (e) {
            me.icn3d.labelScale = 0.6;
            me.icn3d.draw();
-           me.setLogCmd('set labelscale 0.6', true);
+           me.setLogCmd('set label scale 0.6', true);
         });
     },
 
@@ -3388,7 +3388,7 @@ iCn3DUI.prototype = {
         $("#" + me.pre + "mn6_labelscale08").click(function (e) {
            me.icn3d.labelScale = 0.8;
            me.icn3d.draw();
-           me.setLogCmd('set labelscale 0.8', true);
+           me.setLogCmd('set label scale 0.8', true);
         });
     },
 
@@ -3396,7 +3396,7 @@ iCn3DUI.prototype = {
         $("#" + me.pre + "mn6_labelscale10").click(function (e) {
            me.icn3d.labelScale = 1.0;
            me.icn3d.draw();
-           me.setLogCmd('set labelscale 1.0', true);
+           me.setLogCmd('set label scale 1.0', true);
         });
     },
 
@@ -3404,7 +3404,7 @@ iCn3DUI.prototype = {
         $("#" + me.pre + "mn6_labelscale20").click(function (e) {
            me.icn3d.labelScale = 2.0;
            me.icn3d.draw();
-           me.setLogCmd('set labelscale 2.0', true);
+           me.setLogCmd('set label scale 2.0', true);
         });
     },
 
@@ -3412,7 +3412,7 @@ iCn3DUI.prototype = {
         $("#" + me.pre + "mn6_labelscale40").click(function (e) {
            me.icn3d.labelScale = 4.0;
            me.icn3d.draw();
-           me.setLogCmd('set labelscale 4.0', true);
+           me.setLogCmd('set label scale 4.0', true);
         });
     },
 
@@ -3420,7 +3420,7 @@ iCn3DUI.prototype = {
         $("#" + me.pre + "mn6_labelscale60").click(function (e) {
            me.icn3d.labelScale = 6.0;
            me.icn3d.draw();
-           me.setLogCmd('set labelscale 6.0', true);
+           me.setLogCmd('set label scale 6.0', true);
         });
     },
 
@@ -3428,7 +3428,7 @@ iCn3DUI.prototype = {
         $("#" + me.pre + "mn6_labelscale80").click(function (e) {
            me.icn3d.labelScale = 8.0;
            me.icn3d.draw();
-           me.setLogCmd('set labelscale 8.0', true);
+           me.setLogCmd('set label scale 8.0', true);
         });
     },
 
@@ -3436,7 +3436,7 @@ iCn3DUI.prototype = {
         $("#" + me.pre + "mn6_labelscale100").click(function (e) {
            me.icn3d.labelScale = 10.0;
            me.icn3d.draw();
-           me.setLogCmd('set labelscale 10.0', true);
+           me.setLogCmd('set label scale 10.0', true);
         });
     },
 

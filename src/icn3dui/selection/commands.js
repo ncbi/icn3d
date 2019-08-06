@@ -1120,7 +1120,7 @@ iCn3DUI.prototype.applyCommand = function (commandStr) { var me = this;
 
     if(parseInt(100*value) < 100) me.bTransparentSurface = true;
   }
-  else if(command.indexOf('set labelscale') == 0) {
+  else if(command.indexOf('set label scale') == 0) {
     var value = command.substr(command.lastIndexOf(' ') + 1);
     me.icn3d.labelScale = parseFloat(value);
   }

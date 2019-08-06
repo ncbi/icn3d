@@ -543,7 +543,7 @@ This page describes Web APIs and how to embed iCn3D in your html page. Other det
 </div>
 
 <div class="gallery">
-<a href="https://icn3d.page.link/F6T2n9wr6RWtHFMj8" target="_blank">
+<a href="https://icn3d.page.link/CQpW8dCjt4WYtjGt7" target="_blank">
 <img style="height:300px" src ="https://www.ncbi.nlm.nih.gov/Structure/icn3d/gallery/3GVU-b2-F6T2n9wr6RWtHFMj8.png"><br>Ligand Binding with Surfaces and Labels (PDB 3GVU)
 </a>
 </div>
@@ -940,35 +940,48 @@ In the dialog Select -&gt; Advanced, users can use simple specification to selec
 <tr><td valign='top'><span class="indent">N- & C- Termini:</span></td>            <td valign='top'>add terminal labels</td> <td valign='top'><a href="#addTerminiLabels">addTerminiLabels</a></td></tr>
 <tr><td valign='top'><span class="indent">Remove:</span></td>            <td valign='top'>set labels off</td> <td valign='top'><a href="#addChainLabels">addChainLabels</a></td></tr>
 
-<tr><td colspan="3"><br>k) View -&gt; Reset:</td> </tr>
+<tr><td colspan="3"><br>k) View -&gt; Label Scale</td> </tr>
+<tr><td valign='top'><span class="indent">0.1:</span></td>                <td valign='top'>set label scale 0.1</td> <td valign='top'>me.icn3d.labelScale=0.1</td></tr>
+<tr><td valign='top'><span class="indent">0.2:</span></td>                <td valign='top'>set label scale 0.2</td> <td valign='top'>me.icn3d.labelScale=0.2</td></tr>
+<tr><td valign='top'><span class="indent">0.4:</span></td>                <td valign='top'>set label scale 0.4</td> <td valign='top'>me.icn3d.labelScale=0.4</td></tr>
+<tr><td valign='top'><span class="indent">0.6:</span></td>                <td valign='top'>set label scale 0.6</td> <td valign='top'>me.icn3d.labelScale=0.6</td></tr>
+<tr><td valign='top'><span class="indent">0.8:</span></td>                <td valign='top'>set label scale 0.8</td> <td valign='top'>me.icn3d.labelScale=0.8</td></tr>
+<tr><td valign='top'><span class="indent">1.0:</span></td>                <td valign='top'>set label scale 1.0</td> <td valign='top'>me.icn3d.labelScale=1.0</td></tr>
+<tr><td valign='top'><span class="indent">2.0:</span></td>                <td valign='top'>set label scale 2.0</td> <td valign='top'>me.icn3d.labelScale=2.0</td></tr>
+<tr><td valign='top'><span class="indent">4.0:</span></td>                <td valign='top'>set label scale 4.0</td> <td valign='top'>me.icn3d.labelScale=4.0</td></tr>
+<tr><td valign='top'><span class="indent">6.0:</span></td>                <td valign='top'>set label scale 6.0</td> <td valign='top'>me.icn3d.labelScale=6.0</td></tr>
+<tr><td valign='top'><span class="indent">8.0:</span></td>                <td valign='top'>set label scale 8.0</td> <td valign='top'>me.icn3d.labelScale=8.0</td></tr>
+<tr><td valign='top'><span class="indent">10.0:</span></td>                <td valign='top'>set label scale 10.0</td> <td valign='top'>me.icn3d.labelScale=10.0</td></tr>
+
+<tr><td colspan="3"><br>l) View -&gt; Reset:</td> </tr>
 <tr><td valign='top'><span class="indent">All:</span></td>                <td valign='top'>reset</td> <td valign='top'><a href="#renderFinalStep">renderFinalStep</a></td></tr>
 <tr><td valign='top'><span class="indent">Orientation:</span></td>                 <td valign='top'>reset orientation</td> <td valign='top'><a href="#resetOrientation">resetOrientation</a></td></tr>
 
-<tr><td colspan="3"><br>l) View -&gt; Auto Rotation</td> </tr>
+<tr><td colspan="3"><br>m) View -&gt; Auto Rotation</td> </tr>
 <tr><td valign='top'><span class="indent">Rotate Left:</span></td>              <td valign='top'>rotate left</td> <td valign='top'><a href="#rotStruc">rotStruc</a></td></tr>
 <tr><td valign='top'><span class="indent">Rotate Right:</span></td>              <td valign='top'>rotate right</td> <td valign='top'><a href="#rotStruc">rotStruc</a></td></tr>
 <tr><td valign='top'><span class="indent">Rotate Up:</span></td>              <td valign='top'>rotate up</td> <td valign='top'><a href="#rotStruc">rotStruc</a></td></tr>
 <tr><td valign='top'><span class="indent">Rotate Down:</span></td>              <td valign='top'>rotate down</td> <td valign='top'><a href="#rotStruc">rotStruc</a></td></tr>
 
-<tr><td colspan="3"><br>m) View -&gt; Camera</td> </tr>
+<tr><td colspan="3"><br>n) View -&gt; Camera</td> </tr>
 <tr><td valign='top'><span class="indent">Perspective:</span></td>        <td valign='top'>set camera perspective</td> <td valign='top'>me.icn3d.opts['camera'] = 'perspective';</td></tr>
 <tr><td valign='top'><span class="indent">Orthographic:</span></td>       <td valign='top'>set camera orthographic</td> <td valign='top'>me.icn3d.opts['camera'] = 'orthographic';</td></tr>
 
-<tr><td colspan="3"><br>n) View -&gt; Fog</td> </tr>
+<tr><td colspan="3"><br>o) View -&gt; Fog</td> </tr>
 <tr><td valign='top'><span class="indent">On:</span></td>                <td valign='top'>set fog on</td> <td valign='top'>me.icn3d.opts['fog'] = 'yes';</td></tr>
 <tr><td valign='top'><span class="indent">Off:</span></td>                 <td valign='top'>set fog off</td> <td valign='top'>me.icn3d.opts['fog'] = 'no';</td></tr>
 
-<tr><td colspan="3"><br>o) View -&gt; Slab</td> </tr>
+<tr><td colspan="3"><br>p) View -&gt; Slab</td> </tr>
 <tr><td valign='top'><span class="indent">On:</span></td>                <td valign='top'>set slab on</td> <td valign='top'>me.icn3d.opts['slab'] = 'yes';</td></tr>
 <tr><td valign='top'><span class="indent">Off:</span></td>                 <td valign='top'>set slab off</td> <td valign='top'>me.icn3d.opts['slab'] = 'no';</td></tr>
 
-<tr><td colspan="3"><br>p) View -&gt; XYZ-axes</td> </tr>
+<tr><td colspan="3"><br>q) View -&gt; XYZ-axes</td> </tr>
 <tr><td valign='top'><span class="indent">Show:</span></td>                <td valign='top'>set axis on</td> <td valign='top'>me.icn3d.opts['axis'] = 'yes';</td></tr>
 <tr><td valign='top'><span class="indent">Hide:</span></td>                 <td valign='top'>set axis off</td> <td valign='top'>me.icn3d.opts['axis'] = 'no';</td></tr>
 
-<tr><td valign='top'>q) View -&gt; Undo:</td>     <td valign='top'>back</td> <td valign='top'><a href="#back">back</a></td></tr>
+<tr><td valign='top'>r) View -&gt; Undo:</td>     <td valign='top'>back</td> <td valign='top'><a href="#back">back</a></td></tr>
 
-<tr><td valign='top'>r) View -&gt; Redo:</td>     <td valign='top'>forward</td> <td valign='top'><a href="#forward">forward</a></td></tr>
+<tr><td valign='top'>s) View -&gt; Redo:</td>     <td valign='top'>forward</td> <td valign='top'><a href="#forward">forward</a></td></tr>
 
 </tbody></table>
 

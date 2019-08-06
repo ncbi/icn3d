@@ -444,7 +444,7 @@ iCn3DUI.prototype.setMenu2b = function() { var me = this;
     html += me.getRadio('mn6_labelscale', 'mn6_labelscale20', '2.0');
     html += me.getRadio('mn6_labelscale', 'mn6_labelscale40', '4.0');
     html += me.getRadio('mn6_labelscale', 'mn6_labelscale60', '6.0');
-    html += me.getRadio('mn6_labelscale', 'mn6_labelscale80', '7.0');
+    html += me.getRadio('mn6_labelscale', 'mn6_labelscale80', '8.0');
     html += me.getRadio('mn6_labelscale', 'mn6_labelscale100', '10.0');
     html += "    </ul>";
     html += "  </li>";
