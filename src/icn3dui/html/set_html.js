@@ -433,6 +433,22 @@ iCn3DUI.prototype.setMenu2b = function() { var me = this;
     html += "    </ul>";
     html += "  </li>";
 
+    html += "  <li><span>Label Scale</span>";
+    html += "    <ul>";
+    html += me.getRadio('mn6_labelscale', 'mn6_labelscale01', '0.1');
+    html += me.getRadio('mn6_labelscale', 'mn6_labelscale02', '0.2');
+    html += me.getRadio('mn6_labelscale', 'mn6_labelscale04', '0.4');
+    html += me.getRadio('mn6_labelscale', 'mn6_labelscale06', '0.6');
+    html += me.getRadio('mn6_labelscale', 'mn6_labelscale08', '0.8');
+    html += me.getRadio('mn6_labelscale', 'mn6_labelscale10', '1.0', true);
+    html += me.getRadio('mn6_labelscale', 'mn6_labelscale20', '2.0');
+    html += me.getRadio('mn6_labelscale', 'mn6_labelscale40', '4.0');
+    html += me.getRadio('mn6_labelscale', 'mn6_labelscale60', '6.0');
+    html += me.getRadio('mn6_labelscale', 'mn6_labelscale80', '7.0');
+    html += me.getRadio('mn6_labelscale', 'mn6_labelscale100', '10.0');
+    html += "    </ul>";
+    html += "  </li>";
+
     html += "  <li>-</li>";
 
     html += "  <li><span>Reset</span>";

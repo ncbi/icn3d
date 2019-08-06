@@ -57,6 +57,9 @@ var iCn3D = function (id) {
     // the scaleFactor improve the image quality, but it has some centering and picking problems in some Mac when it is not 1
     this.scaleFactor = 1.0;
 
+    // scale all labels
+    this.labelScale = 1.0;
+
     // Impostor shaders
     this.bImpo = true;
     this.bExtFragDepth = this.renderer.extensions.get( "EXT_frag_depth" );

@@ -15,7 +15,7 @@ if (!$.ui.dialog.prototype._makeDraggableBase) {
 var iCn3DUI = function(cfg) {
     var me = this;
 
-    this.REVISION = '2.7.10';
+    this.REVISION = '2.7.11';
 
     me.bFullUi = true;
 
@@ -3352,6 +3352,94 @@ iCn3DUI.prototype = {
         });
     },
 
+    clkMn6_labelscale01: function() { var me = this;
+        $("#" + me.pre + "mn6_labelscale01").click(function (e) {
+           me.icn3d.labelScale = 0.1;
+           me.icn3d.draw();
+           me.setLogCmd('set labelscale 0.1', true);
+        });
+    },
+
+    clkMn6_labelscale02: function() { var me = this;
+        $("#" + me.pre + "mn6_labelscale02").click(function (e) {
+           me.icn3d.labelScale = 0.2;
+           me.icn3d.draw();
+           me.setLogCmd('set labelscale 0.2', true);
+        });
+    },
+
+    clkMn6_labelscale04: function() { var me = this;
+        $("#" + me.pre + "mn6_labelscale04").click(function (e) {
+           me.icn3d.labelScale = 0.4;
+           me.icn3d.draw();
+           me.setLogCmd('set labelscale 0.4', true);
+        });
+    },
+
+    clkMn6_labelscale06: function() { var me = this;
+        $("#" + me.pre + "mn6_labelscale06").click(function (e) {
+           me.icn3d.labelScale = 0.6;
+           me.icn3d.draw();
+           me.setLogCmd('set labelscale 0.6', true);
+        });
+    },
+
+    clkMn6_labelscale08: function() { var me = this;
+        $("#" + me.pre + "mn6_labelscale08").click(function (e) {
+           me.icn3d.labelScale = 0.8;
+           me.icn3d.draw();
+           me.setLogCmd('set labelscale 0.8', true);
+        });
+    },
+
+    clkMn6_labelscale10: function() { var me = this;
+        $("#" + me.pre + "mn6_labelscale10").click(function (e) {
+           me.icn3d.labelScale = 1.0;
+           me.icn3d.draw();
+           me.setLogCmd('set labelscale 1.0', true);
+        });
+    },
+
+    clkMn6_labelscale20: function() { var me = this;
+        $("#" + me.pre + "mn6_labelscale20").click(function (e) {
+           me.icn3d.labelScale = 2.0;
+           me.icn3d.draw();
+           me.setLogCmd('set labelscale 2.0', true);
+        });
+    },
+
+    clkMn6_labelscale40: function() { var me = this;
+        $("#" + me.pre + "mn6_labelscale40").click(function (e) {
+           me.icn3d.labelScale = 4.0;
+           me.icn3d.draw();
+           me.setLogCmd('set labelscale 4.0', true);
+        });
+    },
+
+    clkMn6_labelscale60: function() { var me = this;
+        $("#" + me.pre + "mn6_labelscale60").click(function (e) {
+           me.icn3d.labelScale = 6.0;
+           me.icn3d.draw();
+           me.setLogCmd('set labelscale 6.0', true);
+        });
+    },
+
+    clkMn6_labelscale80: function() { var me = this;
+        $("#" + me.pre + "mn6_labelscale80").click(function (e) {
+           me.icn3d.labelScale = 8.0;
+           me.icn3d.draw();
+           me.setLogCmd('set labelscale 8.0', true);
+        });
+    },
+
+    clkMn6_labelscale100: function() { var me = this;
+        $("#" + me.pre + "mn6_labelscale100").click(function (e) {
+           me.icn3d.labelScale = 10.0;
+           me.icn3d.draw();
+           me.setLogCmd('set labelscale 10.0', true);
+        });
+    },
+
     clkMn6_distanceYes: function() { var me = this;
         $("#" + me.pre + "mn6_distanceYes").click(function (e) {
            me.openDialog(me.pre + 'dl_distance', 'Measure the distance of atoms');
@@ -5146,6 +5234,18 @@ iCn3DUI.prototype = {
         me.clkMn6_addlabelTermini();
         me.clkMn6_addlabelYes();
         me.clkMn6_addlabelSelection();
+        me.clkMn6_labelscale01();
+        me.clkMn6_labelscale02();
+        me.clkMn6_labelscale04();
+        me.clkMn6_labelscale06();
+        me.clkMn6_labelscale08();
+        me.clkMn6_labelscale10();
+        me.clkMn6_labelscale20();
+        me.clkMn6_labelscale40();
+        me.clkMn6_labelscale60();
+        me.clkMn6_labelscale80();
+        me.clkMn6_labelscale100();
+
         me.clkMn2_saveselection();
         me.clkMn6_addlabelNo();
         me.clkMn6_distanceYes();
