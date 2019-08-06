@@ -793,6 +793,16 @@ iCn3D.prototype.setCamera = function() {
         //var factor = (this.biomtMatrices !== undefined && this.biomtMatrices.length * this.cnt > 10 * this.maxatomcnt) ? 1 : 2;
         //var factor = (this.biomtMatrices !== undefined && this.biomtMatrices.length * this.cnt > 10 * this.maxatomcnt) ? 1 : 3;
         var factor =  (bInstance) ? 1 : 3;
+        if(bInstance) {
+            factor = 1;
+        }
+        else if(this.bSetFog) {
+            factor = 3;
+        }
+        else {
+            factor = 2;
+        }
+
         if(this.cam_z > 0) {
           this.cam.position.z = maxD * factor; // forperspective, the z positionshould be large enough to see the whole molecule
         }

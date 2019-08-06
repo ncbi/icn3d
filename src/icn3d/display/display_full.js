@@ -294,9 +294,11 @@ iCn3D.prototype.applyEmmapOptions = function (options) {
 iCn3D.prototype.setFog = function(bZoomin) { var me = this;
     var background = this.backgroundColors[this.opts.background.toLowerCase()];
 
-    var centerAtomsResults = this.centerAtoms(this.hAtoms);
-    this.maxD = centerAtomsResults.maxD;
-    if (this.maxD < 5) this.maxD = 5;
+    if(bZoomin) {
+        var centerAtomsResults = this.centerAtoms(this.hAtoms);
+        this.maxD = centerAtomsResults.maxD;
+        if (this.maxD < 5) this.maxD = 5;
+    }
 
     var bInstance = (this.biomtMatrices !== undefined && this.biomtMatrices.length * this.cnt > this.maxatomcnt) ? true : false;
 
@@ -309,9 +311,11 @@ iCn3D.prototype.setFog = function(bZoomin) { var me = this;
 
             if(bInstance) {
                 this.scene.fog = undefined;
+                this.bSetFog = false;
             }
             else {
                 this.scene.fog = new THREE.Fog(background, 2.5*this.maxD, 4*this.maxD);
+                this.bSetFog = true;
             }
         }
         else if(this.opts['camera'] === 'orthographic') {
@@ -320,10 +324,12 @@ iCn3D.prototype.setFog = function(bZoomin) { var me = this;
             //this.scene.fog.far = 3 * this.maxD;
 
             this.scene.fog = undefined;
+            this.bSetFog = false;
         }
     }
     else {
         this.scene.fog = undefined;
+        this.bSetFog = false;
     }
 
     if(bZoomin && !bInstance) {
