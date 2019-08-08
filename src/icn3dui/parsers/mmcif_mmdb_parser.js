@@ -121,6 +121,7 @@ iCn3DUI.prototype.downloadMmcifSymmetryBase = function (mmcifid, type) { var me 
               retryLimit : 1,
               success: function(data) {
                   if(data.emd !== undefined) me.icn3d.emd = data.emd;
+                  if(data.organism !== undefined) me.icn3d.organism = data.organism;
 
                   if(me.bAssemblyUseAsu) me.loadMmcifSymmetry(data);
 
@@ -190,6 +191,7 @@ iCn3DUI.prototype.loadMmcifData = function(data) { var me = this;
         me.icn3d.init();
 
         if(data.emd !== undefined) me.icn3d.emd = data.emd;
+        if(data.organism !== undefined) me.icn3d.organism = data.organism;
 
         if(me.icn3d.emd !== undefined) {
           $("#" + me.pre + "mapWrapper1").hide();
@@ -694,6 +696,8 @@ iCn3DUI.prototype.loadAtomDataIn = function (data, id, type, seqalign) { var me 
 
               chainid2kind[chainid] = kind;
               chainid2color[chainid] = color;
+
+              if(kind == 'protein') me.icn3d.organism = data.moleculeInfor[molid].taxonomyName.toLowerCase();
 
               if(sid !== undefined) me.chainid2sid[chainid] = sid;
           }
