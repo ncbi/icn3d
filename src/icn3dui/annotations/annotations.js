@@ -1210,13 +1210,15 @@ iCn3DUI.prototype.showSeq = function(chnid, chnidBase, type, queryTitle, compTit
 
               var emptyWidth = Math.round(me.seqAnnWidth * i / (me.maxAnnoLength + me.nTotalGap) - prevEmptyWidth - prevLineWidth);
 
-              if(emptyWidth < 0) emptyWidth = 0;
+              //if(emptyWidth < 0) emptyWidth = 0;
 
+              if(emptyWidth >= 0) {
               html2 += '<div style="display:inline-block; width:' + emptyWidth + 'px;">&nbsp;</div>';
               html2 += '<div style="display:inline-block; background-color:#F00; width:' + widthPerRes + 'px;" title="' + c + pos + '">&nbsp;</div>';
 
               prevEmptyWidth += emptyWidth;
               prevLineWidth += widthPerRes;
+              }
 
               ++queryPos;
           }
@@ -1294,7 +1296,7 @@ iCn3DUI.prototype.showSeq = function(chnid, chnidBase, type, queryTitle, compTit
         }
 
         for(var i = 0, il = fromArray2.length; i < il; ++i) {
-            var emptyWidth = (i == 0) ? Math.round(me.seqAnnWidth * fromArray2[i] / (me.maxAnnoLength + me.nTotalGap)) : Math.round(me.seqAnnWidth * (fromArray2[i] - toArray2[i-1] - 1) / (me.maxAnnoLength + me.nTotalGap));
+            var emptyWidth = (i == 0) ? Math.round(me.seqAnnWidth * (fromArray2[i] - me.baseResi[chnid] - 1) / (me.maxAnnoLength + me.nTotalGap)) : Math.round(me.seqAnnWidth * (fromArray2[i] - toArray2[i-1] - 1) / (me.maxAnnoLength + me.nTotalGap));
             html2 += '<div style="display:inline-block; width:' + emptyWidth + 'px;">&nbsp;</div>';
 
             html2 += '<div style="display:inline-block; color:white!important; font-weight:bold; background-color:#' + color + '; width:' + Math.round(me.seqAnnWidth * (toArray2[i] - fromArray2[i] + 1) / (me.maxAnnoLength + me.nTotalGap)) + 'px;" anno="sequence" chain="' + chnid + '" title="' + queryTitle + '">' + queryTitle + '</div>';
@@ -1458,13 +1460,17 @@ iCn3DUI.prototype.getSnpLine = function(line, totalLineNum, resi2snp, resi2rsnum
     var altName = bClinvar ? 'clinvar' : 'snp';
 
     if(bStartEndRes) {
-        var title1 = 'ClinVar', title2 = 'SNP';
+        var title1 = 'ClinVar', title2 = 'SNP', title2b = 'SNP', warning = "", warning2 = "";
+        if(me.icn3d.organism !== undefined && me.icn3d.organism !== 'human' && me.icn3d.organism !== 'homo sapiens') {
+            warning = " <span style='color:#FFA500'>(from human)</span>";
+            warning2 = " <span style='color:#FFA500'>(based on human sequences and mapped to this structure by sequence similarity)</span>";
+        }
 
         if(bClinvar) {
-            html += '<div class="icn3d-seqTitle icn3d-link icn3d-blue icn3d-clinvar-path" clinvar="clinvar" posarray="' + posClinArray + '" shorttitle="' + title1 + '" setname="' + chnid + '_' + title1 + '" anno="sequence" chain="' + chnid + '" title="' + title1 + '">' + title1 + '</div>';
+            html += '<div class="icn3d-seqTitle icn3d-link icn3d-blue icn3d-clinvar-path" clinvar="clinvar" posarray="' + posClinArray + '" shorttitle="' + title1 + '" setname="' + chnid + '_' + title1 + '" anno="sequence" chain="' + chnid + '" title="' + title1 + warning2 + '">' + title1 + warning + '</div>';
         }
         else {
-            html += '<div class="icn3d-seqTitle icn3d-link icn3d-blue" clinvar="clinvar" posarray="' + posarray + '" shorttitle="' + title2 + '" setname="' + chnid + '_' + title2 + '" anno="sequence" chain="' + chnid + '" title="' + title2 + '">' + title2 + '</div>';
+            html += '<div class="icn3d-seqTitle icn3d-link icn3d-blue" clinvar="clinvar" posarray="' + posarray + '" shorttitle="' + title2 + '" setname="' + chnid + '_' + title2 + '" anno="sequence" chain="' + chnid + '" title="' + title2 + warning2 + '">' + title2 + warning + '</div>';
         }
     }
     else if(line == 2 && bClinvar) {
@@ -1609,25 +1615,29 @@ iCn3DUI.prototype.getSnpLine = function(line, totalLineNum, resi2snp, resi2rsnum
 
                 var emptyWidth = (me.cfg.blast_rep_id == chnid) ? Math.round(me.seqAnnWidth * (i-1) / (me.maxAnnoLength + me.nTotalGap) - prevEmptyWidth - prevLineWidth) : Math.round(me.seqAnnWidth * (i-1) / me.maxAnnoLength - prevEmptyWidth - prevLineWidth);
 
-                if(emptyWidth < 0) emptyWidth = 0;
+                //if(emptyWidth < 0) emptyWidth = 0;
 
                 if(bClinvar) {
                     if(snpTypeHash[i] == 'icn3d-clinvar' || snpTypeHash[i] == 'icn3d-clinvar-path') {
-                        if(emptyWidth > 0) html += '<div style="display:inline-block; width:' + emptyWidth + 'px;">&nbsp;</div>';
+                        if(emptyWidth >= 0) {
+                            html += '<div style="display:inline-block; width:' + emptyWidth + 'px;">&nbsp;</div>';
+
+                            html += '<div style="display:inline-block; background-color:#000; width:' + widthPerRes + 'px;" title="' + snpTitle + '">&nbsp;</div>';
+
+                            prevEmptyWidth += emptyWidth;
+                            prevLineWidth += widthPerRes;
+                        }
+                    }
+                }
+                else {
+                    if(emptyWidth > 0) {
+                        html += '<div style="display:inline-block; width:' + emptyWidth + 'px;">&nbsp;</div>';
 
                         html += '<div style="display:inline-block; background-color:#000; width:' + widthPerRes + 'px;" title="' + snpTitle + '">&nbsp;</div>';
 
                         prevEmptyWidth += emptyWidth;
                         prevLineWidth += widthPerRes;
                     }
-                }
-                else {
-                    if(emptyWidth > 0) html += '<div style="display:inline-block; width:' + emptyWidth + 'px;">&nbsp;</div>';
-
-                    html += '<div style="display:inline-block; background-color:#000; width:' + widthPerRes + 'px;" title="' + snpTitle + '">&nbsp;</div>';
-
-                    prevEmptyWidth += emptyWidth;
-                    prevLineWidth += widthPerRes;
                 }
             }
         }
@@ -2241,7 +2251,7 @@ iCn3DUI.prototype.showCddSiteAll = function() { var me = this;
 
                     if(me.cfg.blast_rep_id != chnid) { // regular
                         for(var i = 0, il = fromArray.length; i < il; ++i) {
-                            var emptyWidth = (i == 0) ? Math.round(me.seqAnnWidth * fromArray[i] / me.maxAnnoLength) : Math.round(me.seqAnnWidth * (fromArray[i] - toArray[i-1] - 1) / me.maxAnnoLength);
+                            var emptyWidth = (i == 0) ? Math.round(me.seqAnnWidth * (fromArray[i] - me.baseResi[chnid] - 1) / me.maxAnnoLength) : Math.round(me.seqAnnWidth * (fromArray[i] - toArray[i-1] - 1) / me.maxAnnoLength);
                             html2 += '<div style="display:inline-block; width:' + emptyWidth + 'px;">&nbsp;</div>';
 
                             html2 += '<div style="display:inline-block; color:white!important; font-weight:bold; background-color:#' + color + '; width:' + Math.round(me.seqAnnWidth * (toArray[i] - fromArray[i] + 1) / me.maxAnnoLength) + 'px;" class="icn3d-seqTitle icn3d-link icn3d-blue" domain="' + (index+1).toString() + '" from="' + fromArray + '" to="' + toArray + '" shorttitle="' + title + '" index="' + index + '" setname="' + chnid + '_domain_' + index + '_' + r + '" id="' + chnid + '_domain_' + index + '_' + r + '" anno="sequence" chain="' + chnid + '" title="' + fulltitle + '">' + domain + ' </div>';
@@ -2265,7 +2275,7 @@ iCn3DUI.prototype.showCddSiteAll = function() { var me = this;
                         for(var i = 0, il = fromArray2.length; i < il; ++i) {
                             html2 += me.insertGapOverview(chnid, fromArray2[i]);
 
-                            var emptyWidth = (i == 0) ? Math.round(me.seqAnnWidth * fromArray2[i] / (me.maxAnnoLength + me.nTotalGap)) : Math.round(me.seqAnnWidth * (fromArray2[i] - toArray2[i-1] - 1) / (me.maxAnnoLength + me.nTotalGap));
+                            var emptyWidth = (i == 0) ? Math.round(me.seqAnnWidth * (fromArray2[i] - me.baseResi[chnid] - 1) / (me.maxAnnoLength + me.nTotalGap)) : Math.round(me.seqAnnWidth * (fromArray2[i] - toArray2[i-1] - 1) / (me.maxAnnoLength + me.nTotalGap));
                             html2 += '<div style="display:inline-block; width:' + emptyWidth + 'px;">&nbsp;</div>';
 
                             html2 += '<div style="display:inline-block; color:white!important; font-weight:bold; background-color:#' + color + '; width:' + Math.round(me.seqAnnWidth * (toArray2[i] - fromArray2[i] + 1) / (me.maxAnnoLength + me.nTotalGap)) + 'px;" class="icn3d-seqTitle icn3d-link icn3d-blue" domain="' + (index+1).toString() + '" from="' + fromArray2 + '" to="' + toArray2 + '" shorttitle="' + title + '" index="' + index + '" setname="' + chnid + '_domain_' + index + '_' + r + '" id="' + chnid + '_domain_' + index + '_' + r + '" anno="sequence" chain="' + chnid + '" title="' + fulltitle + '">' + domain + ' </div>';
@@ -2352,13 +2362,15 @@ iCn3DUI.prototype.showCddSiteAll = function() { var me = this;
 
                     var emptyWidth = (me.cfg.blast_rep_id == chnid) ? Math.round(me.seqAnnWidth * i / (me.maxAnnoLength + me.nTotalGap) - prevEmptyWidth - prevLineWidth) : Math.round(me.seqAnnWidth * i / me.maxAnnoLength - prevEmptyWidth - prevLineWidth);
 
-                    if(emptyWidth < 0) emptyWidth = 0;
+                    //if(emptyWidth < 0) emptyWidth = 0;
 
+                    if(emptyWidth >= 0) {
                     html2 += '<div style="display:inline-block; width:' + emptyWidth + 'px;">&nbsp;</div>';
                     html2 += '<div style="display:inline-block; background-color:#000; width:' + widthPerRes + 'px;" title="' + c + pos + '">&nbsp;</div>';
 
                     prevEmptyWidth += emptyWidth;
                     prevLineWidth += widthPerRes;
+                    }
                   }
                   else {
                     html += '<span>-</span>'; //'<span>-</span>';
@@ -2655,7 +2667,7 @@ iCn3DUI.prototype.showDomainWithData = function(chnid, data) { var me = this;
 
             if(me.cfg.blast_rep_id != chnid) { // regular
                 for(var i = 0, il = fromArray.length; i < il; ++i) {
-                    var emptyWidth = (i == 0) ? Math.round(me.seqAnnWidth * fromArray[i] / me.maxAnnoLength) : Math.round(me.seqAnnWidth * (fromArray[i] - toArray[i-1] - 1) / me.maxAnnoLength);
+                    var emptyWidth = (i == 0) ? Math.round(me.seqAnnWidth * (fromArray[i] - me.baseResi[chnid] - 1) / me.maxAnnoLength) : Math.round(me.seqAnnWidth * (fromArray[i] - toArray[i-1] - 1) / me.maxAnnoLength);
                     html2 += '<div style="display:inline-block; width:' + emptyWidth + 'px;">&nbsp;</div>';
 
                     html2 += '<div style="display:inline-block; color:white!important; font-weight:bold; background-color:#' + color + '; width:' + Math.round(me.seqAnnWidth * (toArray[i] - fromArray[i] + 1) / me.maxAnnoLength) + 'px;" class="icn3d-seqTitle icn3d-link icn3d-blue" 3ddomain="' + (index+1).toString() + '" from="' + fromArray + '" to="' + toArray + '" shorttitle="' + title + '" index="' + index + '" setname="' + chnid + '_3d_domain_' + index + '" id="' + chnid + '_3d_domain_' + index + '" anno="sequence" chain="' + chnid + '" title="' + fulltitle + '">3D domain ' + (index+1).toString() + '</div>';
@@ -2679,7 +2691,7 @@ iCn3DUI.prototype.showDomainWithData = function(chnid, data) { var me = this;
                 for(var i = 0, il = fromArray2.length; i < il; ++i) {
                     html2 += me.insertGapOverview(chnid, fromArray2[i]);
 
-                    var emptyWidth = (i == 0) ? Math.round(me.seqAnnWidth * fromArray2[i] / (me.maxAnnoLength + me.nTotalGap)) : Math.round(me.seqAnnWidth * (fromArray2[i] - toArray2[i-1] - 1) / (me.maxAnnoLength + me.nTotalGap));
+                    var emptyWidth = (i == 0) ? Math.round(me.seqAnnWidth * (fromArray2[i] - me.baseResi[chnid] - 1) / (me.maxAnnoLength + me.nTotalGap)) : Math.round(me.seqAnnWidth * (fromArray2[i] - toArray2[i-1] - 1) / (me.maxAnnoLength + me.nTotalGap));
                     html2 += '<div style="display:inline-block; width:' + emptyWidth + 'px;">&nbsp;</div>';
 
                     html2 += '<div style="display:inline-block; color:white!important; font-weight:bold; background-color:#' + color + '; width:' + Math.round(me.seqAnnWidth * (toArray2[i] - fromArray2[i] + 1) / (me.maxAnnoLength + me.nTotalGap)) + 'px;" class="icn3d-seqTitle icn3d-link icn3d-blue" 3ddomain="' + (index+1).toString() + '" from="' + fromArray2 + '" to="' + toArray2 + '" shorttitle="' + title + '" index="' + index + '" setname="' + chnid + '_3d_domain_' + index + '" id="' + chnid + '_3d_domain_' + index + '" anno="sequence" chain="' + chnid + '" title="' + fulltitle + '">3D domain ' + (index+1).toString() + '</div>';
@@ -2866,13 +2878,15 @@ iCn3DUI.prototype.showInteraction_base = function(chnid, chnidBase) {
 
               var emptyWidth = (me.cfg.blast_rep_id == chnid) ? Math.round(me.seqAnnWidth * i / (me.maxAnnoLength + me.nTotalGap) - prevEmptyWidth - prevLineWidth) : Math.round(me.seqAnnWidth * i / me.maxAnnoLength - prevEmptyWidth - prevLineWidth);
 
-                if(emptyWidth < 0) emptyWidth = 0;
+                //if(emptyWidth < 0) emptyWidth = 0;
 
+                if(emptyWidth >= 0) {
                 html2 += '<div style="display:inline-block; width:' + emptyWidth + 'px;">&nbsp;</div>';
                 html2 += '<div style="display:inline-block; background-color:#000; width:' + widthPerRes + 'px;" title="' + c + pos + '">&nbsp;</div>';
 
                 prevEmptyWidth += emptyWidth;
                 prevLineWidth += widthPerRes;
+                }
           }
           else {
             html += '<span>-</span>'; //'<span>-</span>';
@@ -3043,13 +3057,15 @@ iCn3DUI.prototype.showSsbond_base = function(chnid, chnidBase) {
 
           var emptyWidth = (me.cfg.blast_rep_id == chnid) ? Math.round(me.seqAnnWidth * i / (me.maxAnnoLength + me.nTotalGap) - prevEmptyWidth - prevLineWidth) : Math.round(me.seqAnnWidth * i / me.maxAnnoLength - prevEmptyWidth - prevLineWidth);
 
-            if(emptyWidth < 0) emptyWidth = 0;
+            //if(emptyWidth < 0) emptyWidth = 0;
 
+            if(emptyWidth >= 0) {
             html2 += '<div style="display:inline-block; width:' + emptyWidth + 'px;">&nbsp;</div>';
             html2 += '<div style="display:inline-block; background-color:#000; width:' + widthPerRes + 'px;" title="' + title + '">&nbsp;</div>';
 
             prevEmptyWidth += emptyWidth;
             prevLineWidth += widthPerRes;
+            }
       }
       else {
         html += '<span>-</span>'; //'<span>-</span>';
