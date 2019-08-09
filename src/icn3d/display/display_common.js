@@ -792,7 +792,6 @@ iCn3D.prototype.setCamera = function() {
         var bInstance = (this.biomtMatrices !== undefined && this.biomtMatrices.length * this.cnt > this.maxatomcnt) ? true : false;
         //var factor = (this.biomtMatrices !== undefined && this.biomtMatrices.length * this.cnt > 10 * this.maxatomcnt) ? 1 : 2;
         //var factor = (this.biomtMatrices !== undefined && this.biomtMatrices.length * this.cnt > 10 * this.maxatomcnt) ? 1 : 3;
-        this.camMaxDFactor =  (bInstance) ? 1 : 3;
         if(bInstance) {
             this.camMaxDFactor = 1;
         }
