@@ -316,6 +316,7 @@ iCn3D.prototype.setFog = function(bZoomin) { var me = this;
             else {
                 this.scene.fog = new THREE.Fog(background, 2.5*this.maxD, 4*this.maxD);
                 this.bSetFog = true;
+                this.camMaxDFactorFog = 3;
             }
         }
         else if(this.opts['camera'] === 'orthographic') {
