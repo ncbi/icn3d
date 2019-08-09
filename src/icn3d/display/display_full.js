@@ -584,8 +584,12 @@ iCn3D.prototype.applyOtherOptions = function (options) {
 iCn3D.prototype.rebuildScene = function (options) { var me = this;
     this.rebuildSceneBase(options);
 
-    //if(this.bSkipChemicalbinding === undefined || !this.bSkipChemicalbinding) this.applyChemicalbindingOptions();
-    //this.bSkipChemicalbinding = true;
+    this.setFog();
+
+    this.setCamera();
+
+    if(this.bSkipChemicalbinding === undefined || !this.bSkipChemicalbinding) this.applyChemicalbindingOptions();
+    this.bSkipChemicalbinding = true;
 
     // show disulfide bonds, set side chains
     this.applySsbondsOptions();
@@ -594,12 +598,9 @@ iCn3D.prototype.rebuildScene = function (options) { var me = this;
 
     this.applyOtherOptions();
 
-    this.setFog();
+    //this.setFog();
 
-    this.setCamera();
-
-    if(this.bSkipChemicalbinding === undefined || !this.bSkipChemicalbinding) this.applyChemicalbindingOptions();
-    this.bSkipChemicalbinding = true;
+    //this.setCamera();
 
     //https://stackoverflow.com/questions/15726560/three-js-raycaster-intersection-empty-when-objects-not-part-of-scene
     me.scene_ghost.updateMatrixWorld(true);
