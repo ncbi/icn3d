@@ -815,7 +815,7 @@ iCn3D.prototype.setCamera = function() {
                 this.cam.near = 0.1;
             }
             else if(this.camMaxDFactorFog !== undefined) {
-                this.cam.near = maxD * (this.camMaxDFactorFog - 0.3);
+                this.cam.near = maxD * this.camMaxDFactorFog - 10; // keep some surrounding residues
             }
             else {
                 this.cam.near = maxD * this.camMaxDFactor;

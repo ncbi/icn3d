@@ -156,7 +156,7 @@ iCn3D.prototype.setParametersForShader = function (opacity) { var me = this;
             nearClip = 0.1;
         }
         else if(this.camMaxDFactorFog !== undefined) {
-            nearClip = this.maxD * (this.camMaxDFactorFog - 0.3);
+            nearClip = this.maxD * this.camMaxDFactorFog - 10; // keep some surrounding residues
         }
         else {
             nearClip = this.maxD * this.camMaxDFactor;
