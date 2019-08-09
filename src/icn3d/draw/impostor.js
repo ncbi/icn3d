@@ -134,11 +134,11 @@ iCn3D.prototype.setParametersForShader = function (opacity) { var me = this;
 
     var background = this.backgroundColors[this.opts.background.toLowerCase()];
 
-//    if(this.bSetFog) {
-//        var centerAtomsResults = this.centerAtoms(this.hAtoms);
-//        this.maxD = centerAtomsResults.maxD;
-//        if (this.maxD < 5) this.maxD = 5;
-//    }
+    if(this.camMaxDFactorFog !== undefined) {
+        var centerAtomsResults = this.centerAtoms(this.hAtoms);
+        this.maxD = centerAtomsResults.maxD;
+        if (this.maxD < 5) this.maxD = 5;
+    }
 
     //var near = 2 * this.maxD;
     //var far = 2.5 * this.maxD;
@@ -157,6 +157,8 @@ iCn3D.prototype.setParametersForShader = function (opacity) { var me = this;
         }
         else if(this.camMaxDFactorFog !== undefined) {
             nearClip = this.maxD * this.camMaxDFactorFog - 10; // keep some surrounding residues
+            near = (2.5*this.maxD - nearClip < 0) ? 0 : 2.5*this.maxD - nearClip;
+            far = 4*this.maxD - nearClip;
         }
         else {
             nearClip = this.maxD * this.camMaxDFactor;
