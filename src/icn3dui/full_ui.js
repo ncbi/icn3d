@@ -15,7 +15,7 @@ if (!$.ui.dialog.prototype._makeDraggableBase) {
 var iCn3DUI = function(cfg) {
     var me = this;
 
-    this.REVISION = '2.7.12';
+    this.REVISION = '2.7.13';
 
     me.bFullUi = true;
 
@@ -425,11 +425,13 @@ iCn3DUI.prototype = {
     // show3DStructure is the main function to show 3D structure
     show3DStructure: function() { var me = this;
       me.deferred = $.Deferred(function() {
+        me.setViewerWidthHeight();
+
         me.setTopMenusHtml(me.divid);
 
         if(me.isSessionStorageSupported()) me.getCommandsBeforeCrash();
 
-        me.setViewerWidthHeight();
+        //me.setViewerWidthHeight();
 
 /*
         var width, height;
@@ -3239,9 +3241,36 @@ iCn3DUI.prototype = {
 
            var type = 'em';
            //me.emd = 'emd-3906';
-           me.DensityCifParser(me.inputid, type, empercentage, me.icn3d.emd);
 
-           me.setLogCmd('set emmap percentage ' + empercentage, true);
+           if(iCn3DUI.prototype.DensityCifParser === undefined) {
+               var url = "https://www.ncbi.nlm.nih.gov/Structure/icn3d/density_cif_parser.min.js";
+               $.ajax({
+                  url: url,
+                  dataType: "script",
+                  cache: true,
+                  tryCount : 0,
+                  retryLimit : 1,
+                  success: function(data) {
+                       me.DensityCifParser(me.inputid, type, empercentage, me.icn3d.emd);
+
+                       me.setLogCmd('set emmap percentage ' + empercentage, true);
+                  },
+                  error : function(xhr, textStatus, errorThrown ) {
+                    this.tryCount++;
+                    if (this.tryCount <= this.retryLimit) {
+                        //try again
+                        $.ajax(this);
+                        return;
+                    }
+                    return;
+                  }
+               });
+           }
+           else {
+               me.DensityCifParser(me.inputid, type, empercentage, me.icn3d.emd);
+
+               me.setLogCmd('set emmap percentage ' + empercentage, true);
+           }
         });
     },
 

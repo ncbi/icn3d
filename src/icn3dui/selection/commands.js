@@ -477,10 +477,37 @@ iCn3DUI.prototype.applyCommandEmmap = function (command) { var me = this;
       var paraArray = str.split(" ");
 
       if(paraArray.length == 2 && paraArray[0] == 'percentage') {
-          var percentage = paraArray[1];
-          var type = 'em';
+           if(iCn3DUI.prototype.DensityCifParser === undefined) {
+               var url = "https://www.ncbi.nlm.nih.gov/Structure/icn3d/density_cif_parser.min.js";
+               $.ajax({
+                  url: url,
+                  dataType: "script",
+                  cache: true,
+                  tryCount : 0,
+                  retryLimit : 1,
+                  success: function(data) {
+                      var percentage = paraArray[1];
+                      var type = 'em';
 
-          me.DensityCifParser(me.inputid, type, percentage, me.icn3d.emd);
+                      me.DensityCifParser(me.inputid, type, percentage, me.icn3d.emd);
+                  },
+                  error : function(xhr, textStatus, errorThrown ) {
+                    this.tryCount++;
+                    if (this.tryCount <= this.retryLimit) {
+                        //try again
+                        $.ajax(this);
+                        return;
+                    }
+                    return;
+                  }
+               });
+           }
+           else {
+              var percentage = paraArray[1];
+              var type = 'em';
+
+              me.DensityCifParser(me.inputid, type, percentage, me.icn3d.emd);
+           }
       }
   }); // end of me.deferred = $.Deferred(function() {
 

@@ -1,4 +1,6 @@
 ## Change Log
+[icn3d-2.7.13](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.7.13.zip) was release on August 14, 2019. Fixed the calculations on contacting atoms by considering the centers of atoms and not radii of atoms. Minimized the code size by retrieving some rarely used code on the fly. 
+
 [icn3d-2.7.12](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.7.12.zip) was release on August 8, 2019. The backend to retrieve ClinVar annotation was fixed.
 
 [icn3d-2.7.11](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.7.11.zip) was release on August 6, 2019. Added "Label Scale" in the View menu to scale all labels.

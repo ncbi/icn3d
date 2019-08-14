@@ -101,7 +101,7 @@
     if(width === undefined) width = '100%';
     if(height === undefined) height = '100%';
 
-    var resize = params.resize;
+    var resize = (params.resize === undefined) ? true : params.resize;
     if(resize === undefined || resize == 'true' || resize == '1') {
       resize = true;
     }

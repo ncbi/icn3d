@@ -103,7 +103,7 @@ iCn3DUI.prototype.setTopMenusHtml = function (id) { var me = this;
     html += me.setTools();
 
     // show title at the top left corner
-    html += "  <div id='" + me.pre + "title' class='icn3d-commandTitle' style='font-size:1.2em; font-weight:normal; position:absolute; z-index:1; float:left; display:table-row; margin: 85px 0px 0px 5px; color: " + me.GREYD + "'></div>";
+    html += "  <div id='" + me.pre + "title' class='icn3d-commandTitle' style='font-size:1.2em; font-weight:normal; position:absolute; z-index:1; float:left; display:table-row; margin: 85px 0px 0px 5px; color:" + me.GREYD + "; width:" + me.WIDTH + "px'></div>";
     html += "  <div id='" + me.pre + "viewer' style='position:relative; width:100%; height:100%; background-color: " + me.GREYD + ";'>";
     html += "   <div id='" + me.pre + "mnLogSection'>";
     html += "    <div style='height: " + me.MENU_HEIGHT + "px;'></div>";
