@@ -1,5 +1,7 @@
 # iCn3D Structure Viewer
 
+## [Gallery with live examples](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d.html#gallery)
+
 ## iCn3D
 
 "I see in 3D" (iCn3D) Structure Viewer is a WebGL-based 3D viewer using Three.js and jQuery. iCn3D has a feature-rich user interface and allows users to: 
@@ -22,8 +24,6 @@ We provided two types of iCn3D widgets: [basic interface](https://www.ncbi.nlm.n
 Either of these widgets could be easily added to your own web pages as shown in the section of "Embed iCn3D with iframe or JavaScript libraries" below. 
 
 <b>Complete package</b> of iCn3D including Three.js and jQuery can be downloaded from [https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.7.13.zip](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.7.13.zip). The "Download ZIP" link in this page does not include third-party libraries. 
-
-## [Gallery with live examples](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d.html#gallery)
 
 ## Usage
 
