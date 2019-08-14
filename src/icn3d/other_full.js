@@ -139,7 +139,9 @@ iCn3D.prototype.getChainsFromAtoms = function(atomsHash) {
     for(var i in atomlistTarget) {
         //var oriAtom = atomlistTarget[i];
         var oriAtom = me.atoms[i];
-        var radius = this.vdwRadii[oriAtom.elem.toUpperCase()] || this.defaultRadius;
+        //var radius = this.vdwRadii[oriAtom.elem.toUpperCase()] || this.defaultRadius;
+        // The distance between atoms does not include the radius
+        var radius = 0;
 
         var oriResidName;
         if(bGetPairs) {

@@ -49,7 +49,8 @@ iCn3DUI.prototype.openDialogHalfWindow = function (id, title, dialogWidth, bForc
             ) {
               if(bTwoddgmInit2 || bSetsInit2) {
                   //me.resizeCanvas(me.WIDTH - me.LESSWIDTH - twoddgmWidth, me.HEIGHT - me.LESSHEIGHT - me.EXTRAHEIGHT, true);
-                  me.resizeCanvas(me.WIDTH - twoddgmWidth, me.HEIGHT, true);
+                  var canvasWidth = me.isMobile() ? me.WIDTH : me.WIDTH - twoddgmWidth;
+                  me.resizeCanvas(canvasWidth, me.HEIGHT, true);
 
                   if(bTwoddgmInit2) me.openDialog2Ddgm(me.pre + 'dl_2ddgm', undefined, bSetsInit2);
                   if(bSetsInit2) me.openDialog2Ddgm(me.pre + 'dl_definedsets');
@@ -189,7 +190,8 @@ iCn3DUI.prototype.openDialog = function (id, title) {  var me = this;
                     ) {
                       if(bTwoddgmInit2 || bSetsInit2) {
                           //me.resizeCanvas(me.WIDTH - me.LESSWIDTH - twoddgmWidth, me.HEIGHT - me.LESSHEIGHT - me.EXTRAHEIGHT, true);
-                          me.resizeCanvas(me.WIDTH - twoddgmWidth, me.HEIGHT, true);
+                          var canvasWidth = me.isMobile() ? me.WIDTH : me.WIDTH - twoddgmWidth;
+                          me.resizeCanvas(canvasWidth, me.HEIGHT, true);
 
                           if(bTwoddgmInit2) me.openDialog2Ddgm(me.pre + 'dl_2ddgm', undefined, bSetsInit2);
                           if(bSetsInit2) me.openDialog2Ddgm(me.pre + 'dl_definedsets');
@@ -224,7 +226,8 @@ iCn3DUI.prototype.openDialog = function (id, title) {  var me = this;
         }
         else {
             //me.resizeCanvas(me.WIDTH - me.LESSWIDTH - tmpWidth - twoddgmWidth, (me.HEIGHT - me.LESSHEIGHT - me.EXTRAHEIGHT)*0.5, true);
-            me.resizeCanvas(me.WIDTH - tmpWidth - twoddgmWidth, (me.HEIGHT)*0.5, true);
+            var canvasWidth = me.isMobile() ? me.WIDTH : me.WIDTH - twoddgmWidth;
+            me.resizeCanvas(canvasWidth, (me.HEIGHT)*0.5, true);
             //me.openDialog2Ddgm(id, (me.HEIGHT - me.LESSHEIGHT - me.EXTRAHEIGHT)*0.5);
             me.openDialog2Ddgm(id, (me.HEIGHT)*0.5);
 
@@ -259,7 +262,8 @@ iCn3DUI.prototype.openDialog = function (id, title) {  var me = this;
             }
             else {
                 //me.resizeCanvas(me.WIDTH - me.LESSWIDTH - tmpWidth - twoddgmWidth, (me.HEIGHT - me.LESSHEIGHT - me.EXTRAHEIGHT)*0.5, true);
-                me.resizeCanvas(me.WIDTH - tmpWidth - twoddgmWidth, (me.HEIGHT)*0.5, true);
+                var canvasWidth = me.isMobile() ? me.WIDTH : me.WIDTH - twoddgmWidth;
+                me.resizeCanvas(canvasWidth, (me.HEIGHT)*0.5, true);
                 //me.openDialog2Ddgm(id, (me.HEIGHT - me.LESSHEIGHT - me.EXTRAHEIGHT)*0.5);
                 me.openDialog2Ddgm(id, (me.HEIGHT)*0.5);
 

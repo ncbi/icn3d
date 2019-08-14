@@ -6,6 +6,7 @@ iCn3DUI.prototype.downloadAlignment = function (align) { var me = this;
     me.opts['proteins'] = 'c alpha trace';
     me.icn3d.opts['proteins'] = 'c alpha trace';
 
+/*
     if(me.bFullUi && me.isMac() && me.isMobile) {
         me.MENU_WIDTH = 950; // have enough space to show image in iphone
 
@@ -16,6 +17,7 @@ iCn3DUI.prototype.downloadAlignment = function (align) { var me = this;
 
         me.resizeCanvas(width, height, true, false);
     }
+*/
 
     var alignArray = align.split(',');
     //var ids_str = (alignArray.length === 2? 'uids=' : 'ids=') + align;
