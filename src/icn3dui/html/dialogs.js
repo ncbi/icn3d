@@ -13,8 +13,7 @@ iCn3DUI.prototype.openDialogHalfWindow = function (id, title, dialogWidth, bForc
     width = dialogWidth;
 
     var position;
-    if(me.cfg.showmenu) {
-        //position ={ my: "left top", at: "right top+80", of: "#" + me.pre + "viewer", collision: "none" };
+    if(me.cfg.showmenu && !me.isMobile() && !me.cfg.mobilemenu) {
         position ={ my: "left top", at: "right top+40", of: "#" + me.pre + "viewer", collision: "none" };
     }
     else {
