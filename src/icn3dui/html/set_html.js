@@ -62,6 +62,98 @@ iCn3DUI.prototype.setTools_base = function() { var me = this;
     return html;
 };
 
+iCn3DUI.prototype.setTopMenusHtmlMobile = function (id) { var me = this;
+    var html = "";
+
+    html += "<div style='position:relative;'>";
+
+    html += "<div id='" + me.pre + "popup' class='icn3d-text icn3d-popup'></div>";
+
+    html += "  <!--https://forum.jquery.com/topic/looking-for-a-jquery-horizontal-menu-bar-->";
+    html += "  <div id='" + me.pre + "mnlist' style='position:absolute; z-index:999; float:left; display:block; margin: 5px 0px 0px 5px;'>";
+
+    //html += "    <div class='icn3d-menu'>";
+    html += "    <div>";
+    html += "          <accordion id='" + me.pre + "accordion0' class='icn3d-accordion'>";
+    html += "<h3 style='width:20px!important'>&nbsp;&nbsp;&#9776;</h3>";
+    html += "<div>";
+
+    html += "<ul class='icn3d-mn'>";
+    html += "  <li><span class='icn3d-menu-color'>File</span>";
+    html += me.setMenu1_base();
+    html += "  <li><span class='icn3d-menu-color'>Select</span>";
+    html += me.setMenu2_base();
+    html += "  <li><span class='icn3d-menu-color'>View</span>";
+    html += me.setMenu2b_base();
+    html += "  <li><span class='icn3d-menu-color'>Style</span>";
+    html += me.setMenu3_base();
+    html += "  <li><span class='icn3d-menu-color'>Color</span>";
+    html += me.setMenu4_base();
+    html += "  <li><span class='icn3d-menu-color'>Windows</span>";
+    html += me.setMenu5_base();
+    html += "  <li><span class='icn3d-menu-color'>Help</span>";
+    html += me.setMenu6_base();
+
+    html += "    <li><div style='position:relative; margin-top:-6px;'><label class='icn3d-switch'><input id='" + me.pre + "modeswitch' type='checkbox'><div class='icn3d-slider icn3d-round' style='width:34px; height:18px; margin: 6px 0px 0px 3px;' title='Left (\"All atoms\"): Style and color menu options will be applied to all atoms in the structure&#13;Right (\"Selection\"): Style and color menu options will be applied only to selected atoms'></div></label>";
+    html += "    <div class='icn3d-commandTitle' style='margin-top: 3px; white-space: nowrap;'><span id='" + me.pre + "modeall' title='Style and color menu options will be applied to all atoms in the structure'>All atoms&nbsp;&nbsp;</span><span id='" + me.pre + "modeselection' class='icn3d-modeselection' style='display:none;' title='Style and color menu options will be applied only to selected atoms'>Selection&nbsp;&nbsp;</span></div></div>";
+
+    //html += '    <li><div class="icn3d-commandTitle" style="white-space:nowrap;"><span id="' + me.pre +  'selection_expand" class="icn3d-expand icn3d-link" title="Expand">Show Toolbar</span><span id="' + me.pre +  'selection_shrink" class="icn3d-shrink icn3d-link" style="display:none;" title="Shrink">Hide Toolbar</span></div>';
+
+    //html += '    <li><div class="icn3d-commandTitle" style="white-space:nowrap;"><input type="text" id="' + me.pre + 'search_seq" size="10" placeholder="one-letter seq."><br><button style="white-space:nowrap;" id="' + me.pre + 'search_seq_button">Search Seq.</button> <a style="text-decoration: none;" href="https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d.html#selectb" target="_blank" title="Specification tips">?</a></div>';
+
+
+    html += "</ul>";
+
+    html += "</div>";
+    html += "          </accordion>";
+    html += "    </div>";
+
+    html += "  </div>";
+
+    //html += me.setTools();
+
+    // show title at the top left corner
+    html += "  <div id='" + me.pre + "title' class='icn3d-commandTitle' style='font-size:1.2em; font-weight:normal; position:absolute; z-index:1; float:left; display:block; margin: 45px 0px 0px 5px; color:" + me.GREYD + "; width:" + me.WIDTH + "px'></div>";
+    html += "  <div id='" + me.pre + "viewer' style='position:relative; width:100%; height:100%; background-color: " + me.GREYD + ";'>";
+    html += "   <div id='" + me.pre + "mnLogSection'>";
+    html += "    <div style='height: " + me.MENU_HEIGHT + "px;'></div>";
+    html += "   </div>";
+
+    if(me.cfg.mmtfid === undefined) {
+        if(me.realHeight < 300) {
+            html += "    <div id='" + me.pre + "wait' style='position:absolute; top:100px; left:50px; font-size: 1.2em; color: #444444;'>Loading data...</div>";
+        }
+        else {
+            html += "    <div id='" + me.pre + "wait' style='position:absolute; top:180px; left:50px; font-size: 1.8em; color: #444444;'>Loading data...</div>";
+        }
+    }
+    html += "    <canvas id='" + me.pre + "canvas' style='width:100%; height: 100%; background-color: #000;'>Your browser does not support WebGL.</canvas>";
+
+    // separate for the log box
+    if(me.cfg.showcommand === undefined || me.cfg.showcommand) {
+        html += me.setLogWindow();
+    }
+
+    html += "  </div>";
+
+    html += "</div>";
+
+    html += me.setDialogs();
+
+    html += me.setCustomDialogs();
+
+    $( "#" + id).html(html);
+
+    // mn display
+    $("accordion").accordion({ collapsible: true, active: false, heightStyle: "content"});
+    $("accordion div").removeClass("ui-accordion-content ui-corner-all ui-corner-bottom ui-widget-content");
+
+    $(".icn3d-mn").menu({position: { my: "left top", at: "right top" }});
+    $(".icn3d-mn").hover(function(){},function(){$("accordion").accordion( "option", "active", "none");});
+
+    $("#" + me.pre + "accordion0").hover( function(){ $("#" + me.pre + "accordion0 div").css("display", "block"); }, function(){ $("#" + me.pre + "accordion0 div").css("display", "none"); } );
+};
+
 iCn3DUI.prototype.setTopMenusHtml = function (id) { var me = this;
     var html = "";
 
@@ -93,7 +185,7 @@ iCn3DUI.prototype.setTopMenusHtml = function (id) { var me = this;
 
         html += '    <td valign="top"><div class="icn3d-commandTitle" style="white-space:nowrap; margin-top:10px; border-left:solid 1px #888888"><span id="' + me.pre +  'selection_expand" class="icn3d-expand icn3d-link" title="Expand">&nbsp;&nbsp;Show Toolbar&nbsp;&nbsp;</span><span id="' + me.pre +  'selection_shrink" class="icn3d-shrink icn3d-link" style="display:none;" title="Shrink">&nbsp;&nbsp;Hide Toolbar&nbsp;&nbsp;</span></div></td>';
 
-        html += '    <td valign="top"><div class="icn3d-commandTitle" style="white-space:nowrap; margin-top:8px; border-left:solid 1px #888888">&nbsp;&nbsp;<input type="text" id="' + me.pre + 'search_seq" size="10" placeholder="one-letter seq."> <button style="white-space:nowrap;" id="' + me.pre + 'search_seq_button">Search Seq.</button> <a href="https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d.html#selectb" target="_blank" title="Specification tips">?</a></div></td>';
+        html += '    <td valign="top"><div class="icn3d-commandTitle" style="white-space:nowrap; margin-top:8px; border-left:solid 1px #888888">&nbsp;&nbsp;<input type="text" id="' + me.pre + 'search_seq" size="10" placeholder="one-letter seq."> <button style="white-space:nowrap;" id="' + me.pre + 'search_seq_button">Search Seq.</button> <a style="text-decoration: none;" href="https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d.html#selectb" target="_blank" title="Specification tips">?</a></div></td>';
     }
 
     html += "  </tr>";
@@ -182,9 +274,22 @@ iCn3DUI.prototype.setMenu1 = function() { var me = this;
     var html = "";
 
     html += "    <div class='icn3d-menu'>";
-    html += "          <accordion id='" + me.pre + "accordion1'>";
+    html += "          <accordion id='" + me.pre + "accordion1' class='icn3d-accordion'>";
     html += "<h3>File</h3>";
     html += "<div>";
+
+    html += me.setMenu1_base();
+
+    html += "</div>";
+    html += "          </accordion>";
+    html += "    </div>";
+
+    return html;
+};
+
+iCn3DUI.prototype.setMenu1_base = function() { var me = this;
+    var html = "";
+
     html += "<ul class='icn3d-mn'>";
     html += "  <li><span>Retrieve by ID</span>";
     html += "    <ul>";
@@ -258,6 +363,20 @@ iCn3DUI.prototype.setMenu1 = function() { var me = this;
     html += me.getLink('mn1_sharelink', 'Share Link');
 
     html += "</ul>";
+
+    return html;
+}
+
+iCn3DUI.prototype.setMenu2 = function() { var me = this;
+    var html = "";
+
+    html += "    <div class='icn3d-menu'>";
+    html += "          <accordion id='" + me.pre + "accordion2' class='icn3d-accordion'>";
+    html += "<h3>Select</h3>";
+    html += "<div>";
+
+    html += me.setMenu2_base();
+
     html += "</div>";
     html += "          </accordion>";
     html += "    </div>";
@@ -265,13 +384,9 @@ iCn3DUI.prototype.setMenu1 = function() { var me = this;
     return html;
 };
 
-iCn3DUI.prototype.setMenu2 = function() { var me = this;
+iCn3DUI.prototype.setMenu2_base = function() { var me = this;
     var html = "";
 
-    html += "    <div class='icn3d-menu'>";
-    html += "          <accordion id='" + me.pre + "accordion2'>";
-    html += "<h3>Select</h3>";
-    html += "<div>";
     html += "<ul class='icn3d-mn'>";
 
     html += me.getLink('mn2_definedsets', 'Defined Sets');
@@ -346,9 +461,6 @@ iCn3DUI.prototype.setMenu2 = function() { var me = this;
     html += "  <li><br/></li>";
 
     html += "</ul>";
-    html += "</div>";
-    html += "          </accordion>";
-    html += "    </div>";
 
     return html;
 };
@@ -357,9 +469,21 @@ iCn3DUI.prototype.setMenu2b = function() { var me = this;
     var html = "";
 
     html += "    <div class='icn3d-menu'>";
-    html += "          <accordion id='" + me.pre + "accordion2b'>";
+    html += "          <accordion id='" + me.pre + "accordion2b' class='icn3d-accordion'>";
     html += "<h3>View</h3>";
     html += "<div>";
+
+    html += me.setMenu2b_base();
+
+    html += "</div>";
+    html += "          </accordion>";
+    html += "    </div>";
+
+    return html;
+};
+
+iCn3DUI.prototype.setMenu2b_base = function() { var me = this;
+    var html = "";
     html += "<ul class='icn3d-mn'>";
 
     html += me.getLink('mn2_show_selected', 'View Only <br>Selection');
@@ -523,9 +647,6 @@ iCn3DUI.prototype.setMenu2b = function() { var me = this;
     html += "  <li><br/></li>";
 
     html += "</ul>";
-    html += "</div>";
-    html += "          </accordion>";
-    html += "    </div>";
 
     return html;
 };
@@ -534,9 +655,22 @@ iCn3DUI.prototype.setMenu3 = function() { var me = this;
     var html = "";
 
     html += "    <div class='icn3d-menu'>";
-    html += "          <accordion id='" + me.pre + "accordion3'>";
+    html += "          <accordion id='" + me.pre + "accordion3' class='icn3d-accordion'>";
     html += "<h3 id='" + me.pre + "style'>Style</h3>";
     html += "<div>";
+
+    html += me.setMenu3_base();
+
+    html += "</div>";
+    html += "          </accordion>";
+    html += "    </div>";
+
+    return html;
+};
+
+iCn3DUI.prototype.setMenu3_base = function() { var me = this;
+    var html = "";
+
     html += "<ul class='icn3d-mn'>";
 
     if(me.cfg.cid === undefined) {
@@ -727,9 +861,6 @@ iCn3DUI.prototype.setMenu3 = function() { var me = this;
     html += "  <li><br/></li>";
 
     html += "</ul>";
-    html += "</div>";
-    html += "          </accordion>";
-    html += "    </div>";
 
     return html;
 };
@@ -738,9 +869,22 @@ iCn3DUI.prototype.setMenu4 = function() { var me = this;
     var html = "";
 
     html += "    <div class='icn3d-menu'>";
-    html += "          <accordion id='" + me.pre + "accordion4'>";
+    html += "          <accordion id='" + me.pre + "accordion4' class='icn3d-accordion'>";
     html += "<h3 id='" + me.pre + "color'>Color</h3>";
     html += "<div>";
+
+    html += me.setMenu4_base();
+
+    html += "</div>";
+    html += "          </accordion>";
+    html += "    </div>";
+
+    return html;
+};
+
+iCn3DUI.prototype.setMenu4_base = function() { var me = this;
+    var html = "";
+
     html += "<ul class='icn3d-mn'>";
 
     if(me.cfg.cid === undefined) {
@@ -800,9 +944,6 @@ iCn3DUI.prototype.setMenu4 = function() { var me = this;
     html += me.getLink('mn4_clrApplySave', 'Apply Saved Color');
     html += "  <li><br/></li>";
     html += "</ul>";
-    html += "</div>";
-    html += "          </accordion>";
-    html += "    </div>";
 
     return html;
 };
@@ -811,9 +952,22 @@ iCn3DUI.prototype.setMenu5 = function() { var me = this;
     var html = "";
 
     html += "    <div class='icn3d-menu'>";
-    html += "          <accordion id='" + me.pre + "accordion5'>";
+    html += "          <accordion id='" + me.pre + "accordion5' class='icn3d-accordion'>";
     html += "<h3 id='" + me.pre + "windows' style='font-size:1.2em'>&nbsp;Windows</h3>";
     html += "<div>";
+
+    html += me.setMenu5_base();
+
+    html += "</div>";
+    html += "          </accordion>";
+    html += "    </div>";
+
+    return html;
+};
+
+iCn3DUI.prototype.setMenu5_base = function() { var me = this;
+    var html = "";
+
     html += "<ul class='icn3d-mn'>";
 
     if(me.cfg.cid === undefined) {
@@ -854,9 +1008,6 @@ iCn3DUI.prototype.setMenu5 = function() { var me = this;
     html += "  <li><br/></li>";
 
     html += "</ul>";
-    html += "</div>";
-    html += "          </accordion>";
-    html += "    </div>";
 
     return html;
 };
@@ -865,9 +1016,22 @@ iCn3DUI.prototype.setMenu6 = function() { var me = this;
     var html = "";
 
     html += "    <div class='icn3d-menu'>";
-    html += "          <accordion id='" + me.pre + "accordion6'>";
+    html += "          <accordion id='" + me.pre + "accordion6' class='icn3d-accordion'>";
     html += "<h3>Help</h3>";
     html += "<div>";
+
+    html += me.setMenu6_base();
+
+    html += "</div>";
+    html += "          </accordion>";
+    html += "    </div>";
+
+    return html;
+};
+
+iCn3DUI.prototype.setMenu6_base = function() { var me = this;
+    var html = "";
+
     html += "<ul class='icn3d-mn'>";
 
     html += "  <li><a href='https://www.ncbi.nlm.nih.gov/Structure/icn3d/docs/icn3d_about.html' target='_blank'>About iCn3D<span style='font-size:0.9em'> " + me.REVISION + "</span></a></li>";
@@ -918,9 +1082,6 @@ iCn3DUI.prototype.setMenu6 = function() { var me = this;
 
     html += "  <li><br/></li>";
     html += "</ul>";
-    html += "</div>";
-    html += "          </accordion>";
-    html += "    </div>";
 
     return html;
 };

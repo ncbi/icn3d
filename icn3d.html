@@ -445,7 +445,7 @@ This page describes Web APIs and how to embed iCn3D in your html page. Other det
 <br>
 
 <a name="gallery"></a>
-<h2>iCn3D gallery with live examples<span style="font-size:0.7em"> ("iCn3D PNG Images", all images below except the first four snapshots, can be loaded into iCn3D by clicking "Open File > iCn3D PNG Image" in <a href="https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html" target="_blank">iCn3D File menu</a>)</span> <img src="https://www.ncbi.nlm.nih.gov/Structure/IMG/spacer.gif" width="25" height="1" border="0"><a href="#Top"><img src="https://www.ncbi.nlm.nih.gov/Structure/IMG/arrowup_blue.gif" width="12" height="12" border="0" alt="back to top"></a></h2>
+<h2>iCn3D gallery with live examples<span style="font-size:0.7em"> ("iCn3D PNG Images", all images below except the first five snapshots, can be loaded into iCn3D by clicking "Open File > iCn3D PNG Image" in <a href="https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html" target="_blank">iCn3D File menu</a>)</span> <img src="https://www.ncbi.nlm.nih.gov/Structure/IMG/spacer.gif" width="25" height="1" border="0"><a href="#Top"><img src="https://www.ncbi.nlm.nih.gov/Structure/IMG/arrowup_blue.gif" width="12" height="12" border="0" alt="back to top"></a></h2>
 
 <div class="gallery">
 <a href="https://icn3d.page.link/wUuKpZDbK3Xr79EQ7" target="_blank">
@@ -456,6 +456,12 @@ This page describes Web APIs and how to embed iCn3D in your html page. Other det
 <div class="gallery">
 <a href="https://icn3d.page.link/xNw6uf2wySbhEaUT7" target="_blank">
 <img style="height:300px" src ="https://www.ncbi.nlm.nih.gov/Structure/icn3d/gallery/1TUP-simplemenu-xNw6uf2wySbhEaUT7.png"><br>Simplified Menus (PDB 1TUP)
+</a>
+</div>
+
+<div class="gallery">
+<a href="https://icn3d.page.link/gVnT" target="_blank">
+<img style="height:300px" src ="https://www.ncbi.nlm.nih.gov/Structure/icn3d/gallery/1TUP-mobilemenu-gVnT.png"><br>Mobile-style Menus (PDB 1TUP)
 </a>
 </div>
 
@@ -776,6 +782,7 @@ This page describes Web APIs and how to embed iCn3D in your html page. Other det
 <tr valign='top'><td>showtitle</td><td>Yes</td><td>Yes</td><td>Set "false" or "0" to hide the title at the top of the structure canvas. The default is "true".</td></tr>
 <tr valign='top'><td>showcommand</td><td>No</td><td>Yes</td><td>Set "false" or "0" to hide the command window. The default is "true".</td></tr>
 <tr valign='top'><td>simplemenu</td><td>No</td><td>Yes</td><td>Set "true" or "1" to show only the menus "File", "View", "Style", and "Color" to simplify the UI. The default is "false".</td></tr>
+<tr valign='top'><td>mobilemenu</td><td>No</td><td>Yes</td><td>Set "true" or "1" to show the mobile-style menu. Users can click to see all menus. The default is "false".</td></tr>
 <tr valign='top'><td>closepopup</td><td>No</td><td>Yes</td><td>Set "true" or "1" to close the dialogs of "Defined Sets", "Interactions", and "Sequences and Annotations". The default is "false".</td></tr>
 <tr valign='top'><td><a name="commandsUrl"></a>command</td><td>No</td><td>Yes</td><td>Besides the "Script/Log" section at the bottom of the canvas, commands can also be attached to the url parameter "command". The easy way to generate the commands is to operate manually to get your custom display and then click "File > Share Link" to find the URL with full commands or just the short URL.</td></tr>
 </table>
@@ -1991,6 +1998,9 @@ Update the highlight of sequences in the annotation window according to the curr
 
 <a name="log"></a>
 <h2>Change Log:<img src="https://www.ncbi.nlm.nih.gov/Structure/IMG/spacer.gif" width="25" height="1" border="0"><a href="#Top"><img src="https://www.ncbi.nlm.nih.gov/Structure/IMG/arrowup_blue.gif" width="12" height="12" border="0" alt="back to top"></a></h2>
+<a href="https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.7.14.zip">icn3d-2.7.14</a> was release on August 21, 2019. Enabled the mobile style menu with the URL parameter "mobilemenu=1".
+<br><br>
+
 <a href="https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.7.13.zip">icn3d-2.7.13</a> was release on August 14, 2019. Fixed the calculations on contacting atoms by considering the centers of atoms and not radii of atoms. Minimized the code size by retrieving some rarely used code on the fly.
 <br><br>
 

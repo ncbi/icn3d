@@ -15,7 +15,7 @@ if (!$.ui.dialog.prototype._makeDraggableBase) {
 var iCn3DUI = function(cfg) {
     var me = this;
 
-    this.REVISION = '2.7.13';
+    this.REVISION = '2.7.14';
 
     me.bFullUi = true;
 
@@ -31,7 +31,13 @@ var iCn3DUI = function(cfg) {
     me.HEIGHT = 400; // total height of view area
 
     me.RESIDUE_WIDTH = 10;  // sequences
-    me.MENU_HEIGHT = 40;
+
+    if(me.isMobile() || me.cfg.mobilemenu) {
+        me.MENU_HEIGHT = 0;
+    }
+    else {
+        me.MENU_HEIGHT = 40;
+    }
 
     // used to set the position for the log/command textarea
     //me.MENU_WIDTH = 690;
@@ -61,6 +67,8 @@ var iCn3DUI = function(cfg) {
     me.GREYC = "#CCCCCC"; // grey background
     me.GREYD = "#DDDDDD";
     me.ORANGE = "#FFA500";
+
+    me.closeAc = {collapsible: true, active: false}; // close accordion
 
     // https://www.ncbi.nlm.nih.gov/Class/FieldGuide/BLOSUM62.txt, range from -4 to 11
     me.b62ResArray = ['A', 'R', 'N', 'D', 'C', 'Q', 'E', 'G', 'H', 'I', 'L', 'K', 'M', 'F', 'P', 'S', 'T', 'W', 'Y', 'V', 'B', 'Z', 'X', '*']; // length: 24
@@ -427,7 +435,12 @@ iCn3DUI.prototype = {
       me.deferred = $.Deferred(function() {
         me.setViewerWidthHeight();
 
-        me.setTopMenusHtml(me.divid);
+        if(me.isMobile() || me.cfg.mobilemenu) {
+            me.setTopMenusHtmlMobile(me.divid);
+        }
+        else {
+            me.setTopMenusHtml(me.divid);
+        }
 
         if(me.isSessionStorageSupported()) me.getCommandsBeforeCrash();
 
@@ -1830,6 +1843,8 @@ iCn3DUI.prototype = {
 
            me.setLogCmd("back", false);
            me.back();
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -1839,6 +1854,8 @@ iCn3DUI.prototype = {
 
            me.setLogCmd("forward", false);
            me.forward();
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -1847,6 +1864,8 @@ iCn3DUI.prototype = {
            //me.setLogCmd("toggle selection", true);
            me.toggleSelection();
            me.setLogCmd("toggle selection", true);
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -1856,6 +1875,8 @@ iCn3DUI.prototype = {
            me.icn3d.hColor = new THREE.Color(0xFFFF00);
            me.icn3d.matShader = me.icn3d.setOutlineColor('yellow');
            me.icn3d.draw(); // required to make it work properly
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -1865,6 +1886,8 @@ iCn3DUI.prototype = {
            me.icn3d.hColor = new THREE.Color(0x00FF00);
            me.icn3d.matShader = me.icn3d.setOutlineColor('green');
            me.icn3d.draw(); // required to make it work properly
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -1874,6 +1897,8 @@ iCn3DUI.prototype = {
            me.icn3d.hColor = new THREE.Color(0xFF0000);
            me.icn3d.matShader = me.icn3d.setOutlineColor('red');
            me.icn3d.draw(); // required to make it work properly
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -1884,7 +1909,7 @@ iCn3DUI.prototype = {
 
            me.showHighlight();
 
-           //me.icn3d.draw();
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -1895,7 +1920,7 @@ iCn3DUI.prototype = {
 
            me.showHighlight();
 
-           //me.icn3d.draw();
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -1906,6 +1931,8 @@ iCn3DUI.prototype = {
             me.clearHighlight();
 
             me.setLogCmd("clear selection", true);
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -1918,6 +1945,8 @@ iCn3DUI.prototype = {
 
            me.icn3d.bAlternate = false;
            me.setLogCmd("alternate structures", false);
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -1925,99 +1954,133 @@ iCn3DUI.prototype = {
     clkMn1_mmtfid: function() { var me = this;
         $("#" + me.pre + "mn1_mmtfid").click(function(e) {
            me.openDialog(me.pre + 'dl_mmtfid', 'Please input MMTF ID');
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
     clkMn1_pdbid: function() { var me = this;
         $("#" + me.pre + "mn1_pdbid").click(function(e) {
            me.openDialog(me.pre + 'dl_pdbid', 'Please input PDB ID');
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
     clkMn1_align: function() { var me = this;
         $("#" + me.pre + "mn1_align").click(function(e) {
            me.openDialog(me.pre + 'dl_align', 'Align two 3D structures');
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
     clkMn1_pdbfile: function() { var me = this;
         $("#" + me.pre + "mn1_pdbfile").click(function(e) {
            me.openDialog(me.pre + 'dl_pdbfile', 'Please input PDB File');
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
     clkMn1_mol2file: function() { var me = this;
         $("#" + me.pre + "mn1_mol2file").click(function(e) {
            me.openDialog(me.pre + 'dl_mol2file', 'Please input Mol2 File');
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
     clkMn1_sdffile: function() { var me = this;
         $("#" + me.pre + "mn1_sdffile").click(function(e) {
            me.openDialog(me.pre + 'dl_sdffile', 'Please input SDF File');
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
     clkMn1_xyzfile: function() { var me = this;
         $("#" + me.pre + "mn1_xyzfile").click(function(e) {
            me.openDialog(me.pre + 'dl_xyzfile', 'Please input XYZ File');
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
     clkMn1_urlfile: function() { var me = this;
         $("#" + me.pre + "mn1_urlfile").click(function(e) {
            me.openDialog(me.pre + 'dl_urlfile', 'Load data by URL');
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
     clkMn1_mmciffile: function() { var me = this;
         $("#" + me.pre + "mn1_mmciffile").click(function(e) {
            me.openDialog(me.pre + 'dl_mmciffile', 'Please input mmCIF File');
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
     clkMn1_mmcifid: function() { var me = this;
         $("#" + me.pre + "mn1_mmcifid").click(function(e) {
            me.openDialog(me.pre + 'dl_mmcifid', 'Please input mmCIF ID');
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
     clkMn1_mmdbid: function() { var me = this;
         $("#" + me.pre + "mn1_mmdbid").click(function(e) {
            me.openDialog(me.pre + 'dl_mmdbid', 'Please input MMDB ID');
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
     clkMn1_blast_rep_id: function() { var me = this;
         $("#" + me.pre + "mn1_blast_rep_id").click(function(e) {
            me.openDialog(me.pre + 'dl_blast_rep_id', 'Align sequence to structure');
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
     clkMn1_gi: function() { var me = this;
         $("#" + me.pre + "mn1_gi").click(function(e) {
            me.openDialog(me.pre + 'dl_gi', 'Please input protein gi');
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
     clkMn1_cid: function() { var me = this;
         $("#" + me.pre + "mn1_cid").click(function(e) {
            me.openDialog(me.pre + 'dl_cid', 'Please input PubChem CID');
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
     clkMn1_pngimage: function() { var me = this;
         $("#" + me.pre + "mn1_pngimage").click(function(e) {
            me.openDialog(me.pre + 'dl_pngimage', 'Please input the PNG image');
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
     clkMn1_state: function() { var me = this;
         $("#" + me.pre + "mn1_state").click(function(e) {
            me.openDialog(me.pre + 'dl_state', 'Please input the state file');
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
     clkMn1_selection: function() { var me = this;
         $("#" + me.pre + "mn1_selection").click(function(e) {
            me.openDialog(me.pre + 'dl_selection', 'Please input the selection file');
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -2027,6 +2090,8 @@ iCn3DUI.prototype = {
 
            var file_pref = (me.inputid) ? me.inputid : "custom";
            me.saveFile(file_pref + '_statefile.txt', 'command');
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -2155,6 +2220,8 @@ iCn3DUI.prototype = {
            //me.hideStabilizer();
 
            me.exportVrmlFile('');
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -2169,6 +2236,8 @@ iCn3DUI.prototype = {
            me.addStabilizer();
 
            me.exportStlFile('_stab');
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -2183,6 +2252,8 @@ iCn3DUI.prototype = {
            me.addStabilizer();
 
            me.exportVrmlFile('_stab');
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -2193,6 +2264,8 @@ iCn3DUI.prototype = {
            if(me.cfg.mmdbid !== undefined) me.retrieveInteractionData();
 
            me.exportInteractions();
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -2202,6 +2275,8 @@ iCn3DUI.prototype = {
 
            var file_pref = (me.inputid) ? me.inputid : "custom";
            me.saveFile(file_pref + '_image_icn3d_loadable.png', 'png');
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -2237,6 +2312,8 @@ iCn3DUI.prototype = {
 
            var file_pref = (me.inputid) ? me.inputid : "custom";
            me.saveFile(file_pref + '_counts.html', 'html', text);
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -2254,12 +2331,16 @@ iCn3DUI.prototype = {
 
            var file_pref = (me.inputid) ? me.inputid : "custom";
            me.saveFile(file_pref + '_selections.txt', 'text', [text]);
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
     clkMn1_sharelink: function() { var me = this;
         $("#" + me.pre + "mn1_sharelink").click(function (e) {
             me.shareLink();
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -2268,6 +2349,8 @@ iCn3DUI.prototype = {
            var url = me.getLinkToStructureSummary(true);
 
            window.open(url, '_blank');
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -2277,6 +2360,8 @@ iCn3DUI.prototype = {
            me.setLogCmd("link to 3D protein structures bound to CID " + me.inputid + ": " + url, false);
 
            window.open(url, '_blank');
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -2307,6 +2392,8 @@ iCn3DUI.prototype = {
 
                window.open(url, '_blank');
            }
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -2358,6 +2445,8 @@ iCn3DUI.prototype = {
                    alert("No literature information is available for this structure.");
                }
            }
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -2381,6 +2470,8 @@ iCn3DUI.prototype = {
           me.setLogCmd("link to Entrez protein about PDB " + structArray + ": " + url, false);
 
           window.open(url, '_blank');
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -2389,6 +2480,8 @@ iCn3DUI.prototype = {
         $("#" + me.pre + "mn6_selectannotations").click(function (e) {
            me.showAnnotations();
            me.setLogCmd("view annotations", true);
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -2402,6 +2495,7 @@ iCn3DUI.prototype = {
 
            me.icn3d.draw();
 
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
 
         $("#" + me.pre + "clearall").click(function (e) {
@@ -2415,6 +2509,7 @@ iCn3DUI.prototype = {
 
            me.icn3d.draw();
 
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
 
     },
@@ -2426,6 +2521,8 @@ iCn3DUI.prototype = {
 
                me.selectComplement();
            }
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -2434,12 +2531,16 @@ iCn3DUI.prototype = {
            me.setLogCmd("select side chains", true);
 
            me.selectSideChains();
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
     clkMn2_alignment: function() { var me = this;
         $("#" + me.pre + "mn2_alignment").click(function (e) {
            me.openDialog(me.pre + 'dl_alignment', 'Select residues in aligned sequences');
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -2449,6 +2550,8 @@ iCn3DUI.prototype = {
            //$("#" + me.pre + "dl_setsmenu").hide();
            //$("#" + me.pre + "dl_setoperations").hide();
            //$("#" + me.pre + "dl_command").show();
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -2457,6 +2560,8 @@ iCn3DUI.prototype = {
            me.showSets();
 
            me.setLogCmd('defined sets', true);
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
 
         $("#" + me.pre + "setOr").click(function (e) {
@@ -2478,6 +2583,8 @@ iCn3DUI.prototype = {
 
            me.icn3d.draw();
            me.icn3d.removeHlObjects();
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -2486,6 +2593,8 @@ iCn3DUI.prototype = {
            me.icn3d.pk = 1;
            me.icn3d.opts['pk'] = 'atom';
            me.setLogCmd('set pk atom', true);
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -2494,6 +2603,8 @@ iCn3DUI.prototype = {
            me.icn3d.pk = 2;
            me.icn3d.opts['pk'] = 'residue';
            me.setLogCmd('set pk residue', true);
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -2502,6 +2613,8 @@ iCn3DUI.prototype = {
            me.icn3d.pk = 3;
            me.icn3d.opts['pk'] = 'strand';
            me.setLogCmd('set pk strand', true);
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -2510,6 +2623,8 @@ iCn3DUI.prototype = {
            me.icn3d.pk = 4;
            me.icn3d.opts['pk'] = 'chain';
            me.setLogCmd('set pk chain', true);
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -2529,12 +2644,16 @@ iCn3DUI.prototype = {
 
             me.openDialog(me.pre + 'dl_aroundsphere', 'Select a sphere around current selection');
             me.bSphereCalc = false;
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
     clkMn2_select_chain: function() { var me = this;
         $("#" + me.pre + "mn2_select_chain").add("#" + me.pre + "definedSets").click(function (e) {
            me.openDialog(me.pre + 'dl_select_chain', 'Select Structure/Chain/Custom Selection');
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -2543,6 +2662,8 @@ iCn3DUI.prototype = {
         $("#" + me.pre + "mn3_proteinsRibbon").click(function (e) {
            me.setStyle('proteins', 'ribbon');
            me.setLogCmd('style proteins ribbon', true);
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -2551,6 +2672,8 @@ iCn3DUI.prototype = {
            me.setStyle('proteins', 'strand');
 
            me.setLogCmd('style proteins strand', true);
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -2558,6 +2681,8 @@ iCn3DUI.prototype = {
         $("#" + me.pre + "mn3_proteinsCylinder").click(function (e) {
            me.setStyle('proteins', 'cylinder and plate');
            me.setLogCmd('style proteins cylinder and plate', true);
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -2565,6 +2690,8 @@ iCn3DUI.prototype = {
         $("#" + me.pre + "mn3_proteinsSchematic").click(function (e) {
            me.setStyle('proteins', 'schematic');
            me.setLogCmd('style proteins schematic', true);
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -2572,6 +2699,8 @@ iCn3DUI.prototype = {
         $("#" + me.pre + "mn3_proteinsCalpha").click(function (e) {
            me.setStyle('proteins', 'c alpha trace');
            me.setLogCmd('style proteins c alpha trace', true);
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -2579,6 +2708,8 @@ iCn3DUI.prototype = {
         $("#" + me.pre + "mn3_proteinsBfactor").click(function (e) {
            me.setStyle('proteins', 'b factor tube');
            me.setLogCmd('style proteins b factor tube', true);
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -2586,6 +2717,8 @@ iCn3DUI.prototype = {
         $("#" + me.pre + "mn3_proteinsLines").click(function (e) {
            me.setStyle('proteins', 'lines');
            me.setLogCmd('style proteins lines', true);
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -2593,6 +2726,8 @@ iCn3DUI.prototype = {
         $("#" + me.pre + "mn3_proteinsStick").click(function (e) {
            me.setStyle('proteins', 'stick');
            me.setLogCmd('style proteins stick', true);
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -2600,6 +2735,8 @@ iCn3DUI.prototype = {
         $("#" + me.pre + "mn3_proteinsBallstick").click(function (e) {
            me.setStyle('proteins', 'ball and stick');
            me.setLogCmd('style proteins ball and stick', true);
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -2607,6 +2744,8 @@ iCn3DUI.prototype = {
         $("#" + me.pre + "mn3_proteinsSphere").click(function (e) {
            me.setStyle('proteins', 'sphere');
            me.setLogCmd('style proteins sphere', true);
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -2614,6 +2753,8 @@ iCn3DUI.prototype = {
         $("#" + me.pre + "mn3_proteinsNo").click(function (e) {
            me.setStyle('proteins', 'nothing');
            me.setLogCmd('style proteins nothing', true);
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -2621,6 +2762,8 @@ iCn3DUI.prototype = {
         $("#" + me.pre + "mn3_sidecLines").click(function (e) {
            me.setStyle('sidec', 'lines');
            me.setLogCmd('style sidec lines', true);
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -2628,6 +2771,8 @@ iCn3DUI.prototype = {
         $("#" + me.pre + "mn3_sidecStick").click(function (e) {
            me.setStyle('sidec', 'stick');
            me.setLogCmd('style sidec stick', true);
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -2635,6 +2780,8 @@ iCn3DUI.prototype = {
         $("#" + me.pre + "mn3_sidecBallstick").click(function (e) {
            me.setStyle('sidec', 'ball and stick');
            me.setLogCmd('style sidec ball and stick', true);
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -2642,6 +2789,8 @@ iCn3DUI.prototype = {
         $("#" + me.pre + "mn3_sidecSphere").click(function (e) {
            me.setStyle('sidec', 'sphere');
            me.setLogCmd('style sidec sphere', true);
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -2649,6 +2798,8 @@ iCn3DUI.prototype = {
         $("#" + me.pre + "mn3_sidecNo").click(function (e) {
            me.setStyle('sidec', 'nothing');
            me.setLogCmd('style sidec nothing', true);
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -2657,13 +2808,17 @@ iCn3DUI.prototype = {
         $("#" + me.pre + "mn3_nuclCartoon").click(function (e) {
            me.setStyle('nucleotides', 'nucleotide cartoon');
            me.setLogCmd('style nucleotides nucleotide cartoon', true);
-        });
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
+       });
     },
 
     clkMn3_nuclSchematic: function() { var me = this;
         $("#" + me.pre + "mn3_nuclSchematic").click(function (e) {
            me.setStyle('nucleotides', 'schematic');
            me.setLogCmd('style nucleotides schematic', true);
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -2671,6 +2826,8 @@ iCn3DUI.prototype = {
         $("#" + me.pre + "mn3_nuclPhos").click(function (e) {
            me.setStyle('nucleotides', 'o3 trace');
            me.setLogCmd('style nucleotides o3 trace', true);
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -2678,6 +2835,8 @@ iCn3DUI.prototype = {
         $("#" + me.pre + "mn3_nuclLines").click(function (e) {
            me.setStyle('nucleotides', 'lines');
            me.setLogCmd('style nucleotides lines', true);
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -2685,6 +2844,8 @@ iCn3DUI.prototype = {
         $("#" + me.pre + "mn3_nuclStick").click(function (e) {
            me.setStyle('nucleotides', 'stick');
            me.setLogCmd('style nucleotides stick', true);
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -2692,6 +2853,8 @@ iCn3DUI.prototype = {
         $("#" + me.pre + "mn3_nuclBallstick").click(function (e) {
            me.setStyle('nucleotides', 'ball and stick');
            me.setLogCmd('style nucleotides ball and stick', true);
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -2699,6 +2862,8 @@ iCn3DUI.prototype = {
         $("#" + me.pre + "mn3_nuclSphere").click(function (e) {
            me.setStyle('nucleotides', 'sphere');
            me.setLogCmd('style nucleotides sphere', true);
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -2706,6 +2871,8 @@ iCn3DUI.prototype = {
         $("#" + me.pre + "mn3_nuclNo").click(function (e) {
            me.setStyle('nucleotides', 'nothing');
            me.setLogCmd('style nucleotides nothing', true);
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -2713,6 +2880,8 @@ iCn3DUI.prototype = {
         $("#" + me.pre + "mn3_ligLines").click(function (e) {
            me.setStyle('chemicals', 'lines');
            me.setLogCmd('style chemicals lines', true);
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -2720,6 +2889,8 @@ iCn3DUI.prototype = {
         $("#" + me.pre + "mn3_ligStick").click(function (e) {
            me.setStyle('chemicals', 'stick');
            me.setLogCmd('style chemicals stick', true);
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -2727,6 +2898,8 @@ iCn3DUI.prototype = {
         $("#" + me.pre + "mn3_ligBallstick").click(function (e) {
            me.setStyle('chemicals', 'ball and stick');
            me.setLogCmd('style chemicals ball and stick', true);
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -2734,6 +2907,8 @@ iCn3DUI.prototype = {
         $("#" + me.pre + "mn3_ligSchematic").click(function (e) {
            me.setStyle('chemicals', 'schematic');
            me.setLogCmd('style chemicals schematic', true);
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -2741,6 +2916,8 @@ iCn3DUI.prototype = {
         $("#" + me.pre + "mn3_ligSphere").click(function (e) {
            me.setStyle('chemicals', 'sphere');
            me.setLogCmd('style chemicals sphere', true);
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -2748,6 +2925,8 @@ iCn3DUI.prototype = {
         $("#" + me.pre + "mn3_ligNo").click(function (e) {
            me.setStyle('chemicals', 'nothing');
            me.setLogCmd('style chemicals nothing', true);
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -2756,6 +2935,8 @@ iCn3DUI.prototype = {
            me.showHydrogens();
            me.icn3d.draw();
            me.setLogCmd('hydrogens', true);
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -2764,6 +2945,8 @@ iCn3DUI.prototype = {
            me.hideHydrogens();
            me.icn3d.draw();
            me.setLogCmd('set hydrogens off', true);
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -2771,6 +2954,8 @@ iCn3DUI.prototype = {
         $("#" + me.pre + "mn3_ionsSphere").click(function (e) {
            me.setStyle('ions', 'sphere');
            me.setLogCmd('style ions sphere', true);
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -2778,6 +2963,8 @@ iCn3DUI.prototype = {
         $("#" + me.pre + "mn3_ionsDot").click(function (e) {
            me.setStyle('ions', 'dot');
            me.setLogCmd('style ions dot', true);
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -2785,6 +2972,8 @@ iCn3DUI.prototype = {
         $("#" + me.pre + "mn3_ionsNo").click(function (e) {
            me.setStyle('ions', 'nothing');
            me.setLogCmd('style ions nothing', true);
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -2792,6 +2981,8 @@ iCn3DUI.prototype = {
         $("#" + me.pre + "mn3_waterSphere").click(function (e) {
            me.setStyle('water', 'sphere');
            me.setLogCmd('style water sphere', true);
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -2799,6 +2990,8 @@ iCn3DUI.prototype = {
         $("#" + me.pre + "mn3_waterDot").click(function (e) {
            me.setStyle('water', 'dot');
            me.setLogCmd('style water dot', true);
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -2806,6 +2999,8 @@ iCn3DUI.prototype = {
         $("#" + me.pre + "mn3_waterNo").click(function (e) {
            me.setStyle('water', 'nothing');
            me.setLogCmd('style water nothing', true);
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -2814,6 +3009,8 @@ iCn3DUI.prototype = {
         $("#" + me.pre + "mn4_clrSpectrum").click(function (e) {
            me.setOption('color', 'spectrum');
            me.setLogCmd('color spectrum', true);
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -2821,6 +3018,8 @@ iCn3DUI.prototype = {
         $("#" + me.pre + "mn4_clrChain").click(function (e) {
            me.setOption('color', 'chain');
            me.setLogCmd('color chain', true);
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -2830,6 +3029,8 @@ iCn3DUI.prototype = {
 
            me.setOption('color', 'secondary structure');
            me.setLogCmd('color secondary structure', true);
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -2839,6 +3040,8 @@ iCn3DUI.prototype = {
 
            me.setOption('color', 'secondary structure yellow');
            me.setLogCmd('color secondary structure yellow', true);
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -2846,6 +3049,8 @@ iCn3DUI.prototype = {
         $("#" + me.pre + "mn4_clrResidue").click(function (e) {
            me.setOption('color', 'residue');
            me.setLogCmd('color residue', true);
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -2853,6 +3058,8 @@ iCn3DUI.prototype = {
         $("#" + me.pre + "mn4_clrCharge").click(function (e) {
            me.setOption('color', 'charge');
            me.setLogCmd('color charge', true);
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -2860,6 +3067,8 @@ iCn3DUI.prototype = {
         $("#" + me.pre + "mn4_clrHydrophobic").click(function (e) {
            me.setOption('color', 'hydrophobic');
            me.setLogCmd('color hydrophobic', true);
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -2867,6 +3076,8 @@ iCn3DUI.prototype = {
         $("#" + me.pre + "mn4_clrAtom").click(function (e) {
            me.setOption('color', 'atom');
            me.setLogCmd('color atom', true);
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -2874,6 +3085,8 @@ iCn3DUI.prototype = {
         $("#" + me.pre + "mn4_clrBfactor").click(function (e) {
            me.setOption('color', 'b factor');
            me.setLogCmd('color b factor', true);
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -2881,6 +3094,8 @@ iCn3DUI.prototype = {
         $("#" + me.pre + "mn4_clrBfactorNorm").click(function (e) {
            me.setOption('color', 'b factor percentile');
            me.setLogCmd('color b factor percentile', true);
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -2888,6 +3103,8 @@ iCn3DUI.prototype = {
         $("#" + me.pre + "mn4_clrIdentity").click(function (e) {
            me.setOption('color', 'identity');
            me.setLogCmd('color identity', true);
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -2895,6 +3112,8 @@ iCn3DUI.prototype = {
         $("#" + me.pre + "mn4_clrConserved").click(function (e) {
            me.setOption('color', 'conservation');
            me.setLogCmd('color conservation', true);
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -2902,6 +3121,8 @@ iCn3DUI.prototype = {
         $("#" + me.pre + "mn4_clrRed").click(function (e) {
            me.setOption('color', 'red');
            me.setLogCmd('color red', true);
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -2909,6 +3130,8 @@ iCn3DUI.prototype = {
         $("#" + me.pre + "mn4_clrGreen").click(function (e) {
            me.setOption('color', 'green');
            me.setLogCmd('color green', true);
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -2916,6 +3139,8 @@ iCn3DUI.prototype = {
         $("#" + me.pre + "mn4_clrBlue").click(function (e) {
            me.setOption('color', 'blue');
            me.setLogCmd('color blue', true);
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -2923,6 +3148,8 @@ iCn3DUI.prototype = {
         $("#" + me.pre + "mn4_clrMagenta").click(function (e) {
            me.setOption('color', 'magenta');
            me.setLogCmd('color magenta', true);
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -2930,6 +3157,8 @@ iCn3DUI.prototype = {
         $("#" + me.pre + "mn4_clrYellow").click(function (e) {
            me.setOption('color', 'yellow');
            me.setLogCmd('color yellow', true);
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -2937,6 +3166,8 @@ iCn3DUI.prototype = {
         $("#" + me.pre + "mn4_clrCyan").click(function (e) {
            me.setOption('color', 'cyan');
            me.setLogCmd('color cyan', true);
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -2944,6 +3175,8 @@ iCn3DUI.prototype = {
         $("#" + me.pre + "mn4_clrWhite").click(function (e) {
            me.setOption('color', 'white');
            me.setLogCmd('color white', true);
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -2951,12 +3184,16 @@ iCn3DUI.prototype = {
         $("#" + me.pre + "mn4_clrGrey").click(function (e) {
            me.setOption('color', 'grey');
            me.setLogCmd('color grey', true);
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
     clkMn4_clrCustom: function() { var me = this;
         $("#" + me.pre + "mn4_clrCustom").click(function (e) {
            me.openDialog(me.pre + 'dl_clr', 'Color picker');
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -2965,6 +3202,8 @@ iCn3DUI.prototype = {
            me.saveColor();
 
            me.setLogCmd('save color', true);
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -2973,6 +3212,8 @@ iCn3DUI.prototype = {
            me.applySavedColor();
 
            me.setLogCmd('apply saved color', true);
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -2980,6 +3221,8 @@ iCn3DUI.prototype = {
         $("#" + me.pre + "mn3_styleSave").click(function (e) {
            me.saveStyle();
            me.setLogCmd('save style', true);
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -2987,6 +3230,8 @@ iCn3DUI.prototype = {
         $("#" + me.pre + "mn3_styleApplySave").click(function (e) {
            me.applySavedStyle();
            me.setLogCmd('apply saved style', true);
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -3000,6 +3245,8 @@ iCn3DUI.prototype = {
            me.icn3d.render();
 
            me.setLogCmd('set surface neighbors on', true);
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -3012,6 +3259,8 @@ iCn3DUI.prototype = {
            me.icn3d.render();
 
            me.setLogCmd('set surface neighbors off', true);
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -3020,6 +3269,8 @@ iCn3DUI.prototype = {
            me.icn3d.bConsiderNeighbors = false;
            me.setOption('surface', 'Van der Waals surface');
            me.setLogCmd('set surface Van der Waals surface', true);
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -3028,6 +3279,8 @@ iCn3DUI.prototype = {
            me.icn3d.bConsiderNeighbors = false;
            me.setOption('surface', 'solvent accessible surface');
            me.setLogCmd('set surface solvent accessible surface', true);
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -3036,6 +3289,8 @@ iCn3DUI.prototype = {
            me.icn3d.bConsiderNeighbors = false;
            me.setOption('surface', 'molecular surface');
            me.setLogCmd('set surface molecular surface', true);
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -3044,6 +3299,8 @@ iCn3DUI.prototype = {
            me.icn3d.bConsiderNeighbors = true;
            me.setOption('surface', 'Van der Waals surface with context');
            me.setLogCmd('set surface Van der Waals surface with context', true);
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -3052,6 +3309,8 @@ iCn3DUI.prototype = {
            me.icn3d.bConsiderNeighbors = true;
            me.setOption('surface', 'solvent accessible surface with context');
            me.setLogCmd('set surface solvent accessible surface with context', true);
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -3060,6 +3319,8 @@ iCn3DUI.prototype = {
            me.icn3d.bConsiderNeighbors = true;
            me.setOption('surface', 'molecular surface with context');
            me.setLogCmd('set surface molecular surface with context', true);
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -3067,6 +3328,8 @@ iCn3DUI.prototype = {
         $("#" + me.pre + "mn5_surfaceNo").click(function (e) {
            me.setOption('surface', 'nothing');
            me.setLogCmd('set surface nothing', true);
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -3074,6 +3337,8 @@ iCn3DUI.prototype = {
         $("#" + me.pre + "mn5_opacity10").click(function (e) {
            me.setOption('opacity', '1.0');
            me.setLogCmd('set surface opacity 1.0', true);
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -3081,6 +3346,8 @@ iCn3DUI.prototype = {
         $("#" + me.pre + "mn5_opacity09").click(function (e) {
            me.setOption('opacity', '0.9');
            me.setLogCmd('set surface opacity 0.9', true);
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -3088,6 +3355,8 @@ iCn3DUI.prototype = {
         $("#" + me.pre + "mn5_opacity08").click(function (e) {
            me.setOption('opacity', '0.8');
            me.setLogCmd('set surface opacity 0.8', true);
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -3095,6 +3364,8 @@ iCn3DUI.prototype = {
         $("#" + me.pre + "mn5_opacity07").click(function (e) {
            me.setOption('opacity', '0.7');
            me.setLogCmd('set surface opacity 0.7', true);
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -3102,6 +3373,8 @@ iCn3DUI.prototype = {
         $("#" + me.pre + "mn5_opacity06").click(function (e) {
            me.setOption('opacity', '0.6');
            me.setLogCmd('set surface opacity 0.6', true);
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -3109,6 +3382,8 @@ iCn3DUI.prototype = {
         $("#" + me.pre + "mn5_opacity05").click(function (e) {
            me.setOption('opacity', '0.5');
            me.setLogCmd('set surface opacity 0.5', true);
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -3116,6 +3391,8 @@ iCn3DUI.prototype = {
         $("#" + me.pre + "mn5_opacity04").click(function (e) {
            me.setOption('opacity', '0.4');
            me.setLogCmd('set surface opacity 0.4', true);
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -3123,6 +3400,8 @@ iCn3DUI.prototype = {
         $("#" + me.pre + "mn5_opacity03").click(function (e) {
            me.setOption('opacity', '0.3');
            me.setLogCmd('set surface opacity 0.3', true);
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -3130,6 +3409,8 @@ iCn3DUI.prototype = {
         $("#" + me.pre + "mn5_opacity02").click(function (e) {
            me.setOption('opacity', '0.2');
            me.setLogCmd('set surface opacity 0.2', true);
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -3137,6 +3418,8 @@ iCn3DUI.prototype = {
         $("#" + me.pre + "mn5_opacity01").click(function (e) {
            me.setOption('opacity', '0.1');
            me.setLogCmd('set surface opacity 0.1', true);
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -3144,6 +3427,8 @@ iCn3DUI.prototype = {
         $("#" + me.pre + "mn5_wireframeYes").click(function (e) {
            me.setOption('wireframe', 'yes');
            me.setLogCmd('set surface wireframe on', true);
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -3151,18 +3436,24 @@ iCn3DUI.prototype = {
         $("#" + me.pre + "mn5_wireframeNo").click(function (e) {
            me.setOption('wireframe', 'no');
            me.setLogCmd('set surface wireframe off', true);
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
     clkMn5_elecmap2fofc: function() { var me = this;
         $("#" + me.pre + "mn5_elecmap2fofc").click(function (e) {
            me.openDialog(me.pre + 'dl_elecmap2fofc', '2Fo-Fc Electron Density Map');
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
     clkMn5_elecmapfofc: function() { var me = this;
         $("#" + me.pre + "mn5_elecmapfofc").click(function (e) {
            me.openDialog(me.pre + 'dl_elecmapfofc', 'Fo-Fc Electron Density Map');
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -3170,6 +3461,8 @@ iCn3DUI.prototype = {
         $("#" + me.pre + "mn5_elecmapNo").add("#" + me.pre + "elecmapNo2").add("#" + me.pre + "elecmapNo3").click(function (e) {
            me.setOption('map', 'nothing');
            me.setLogCmd('set map nothing', true);
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -3185,6 +3478,8 @@ iCn3DUI.prototype = {
 
            //me.setOption('map', '2fofc');
            me.setLogCmd('set map 2fofc sigma ' + sigma2fofc, true);
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -3200,6 +3495,8 @@ iCn3DUI.prototype = {
 
            //me.setOption('map', 'fofc');
            me.setLogCmd('set map fofc sigma ' + sigmafofc, true);
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -3209,6 +3506,8 @@ iCn3DUI.prototype = {
 
            me.setOption('mapwireframe', 'yes');
            me.setLogCmd('set map wireframe on', true);
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -3216,12 +3515,16 @@ iCn3DUI.prototype = {
         $("#" + me.pre + "mn5_mapwireframeNo").click(function (e) {
            me.setOption('mapwireframe', 'no');
            me.setLogCmd('set map wireframe off', true);
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
     clkMn5_emmap: function() { var me = this;
         $("#" + me.pre + "mn5_emmap").click(function (e) {
            me.openDialog(me.pre + 'dl_emmap', 'EM Density Map');
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -3229,6 +3532,8 @@ iCn3DUI.prototype = {
         $("#" + me.pre + "mn5_emmapNo").add("#" + me.pre + "emmapNo2").click(function (e) {
            me.setOption('emmap', 'nothing');
            me.setLogCmd('set emmap nothing', true);
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -3271,6 +3576,8 @@ iCn3DUI.prototype = {
 
                me.setLogCmd('set emmap percentage ' + empercentage, true);
            }
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -3280,6 +3587,8 @@ iCn3DUI.prototype = {
 
            me.setOption('emmapwireframe', 'yes');
            me.setLogCmd('set emmap wireframe on', true);
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -3287,6 +3596,8 @@ iCn3DUI.prototype = {
         $("#" + me.pre + "mn5_emmapwireframeNo").click(function (e) {
            me.setOption('emmapwireframe', 'no');
            me.setLogCmd('set emmap wireframe off', true);
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -3296,6 +3607,8 @@ iCn3DUI.prototype = {
            me.icn3d.bAssembly = true;
            me.setLogCmd('set assembly on', true);
            me.icn3d.draw();
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -3304,6 +3617,8 @@ iCn3DUI.prototype = {
            me.icn3d.bAssembly = false;
            me.setLogCmd('set assembly off', true);
            me.icn3d.draw();
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -3316,6 +3631,8 @@ iCn3DUI.prototype = {
            me.saveSelectionIfSelected();
            me.setLogCmd('add residue labels', true);
            me.icn3d.draw();
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -3326,6 +3643,8 @@ iCn3DUI.prototype = {
            me.saveSelectionIfSelected();
            me.setLogCmd('add chain labels', true);
            me.icn3d.draw();
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -3336,6 +3655,8 @@ iCn3DUI.prototype = {
            me.saveSelectionIfSelected();
            me.setLogCmd('add terminal labels', true);
            me.icn3d.draw();
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -3346,18 +3667,24 @@ iCn3DUI.prototype = {
            me.icn3d.opts['pk'] = 'atom';
            me.icn3d.pickpair = true;
            me.icn3d.pAtomNum = 0;
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
     clkMn6_addlabelSelection: function() { var me = this;
         $("#" + me.pre + "mn6_addlabelSelection").click(function (e) {
            me.openDialog(me.pre + 'dl_addlabelselection', 'Add custom labels by the current selection');
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
     clkMn2_saveselection: function() { var me = this;
         $("#" + me.pre + "mn2_saveselection").click(function (e) {
            me.openDialog(me.pre + 'dl_saveselection', 'Save the current selection');
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -3378,6 +3705,8 @@ iCn3DUI.prototype = {
            }
 
            me.icn3d.draw();
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -3386,6 +3715,8 @@ iCn3DUI.prototype = {
            me.icn3d.labelScale = 0.1;
            me.icn3d.draw();
            me.setLogCmd('set label scale 0.1', true);
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -3394,6 +3725,8 @@ iCn3DUI.prototype = {
            me.icn3d.labelScale = 0.2;
            me.icn3d.draw();
            me.setLogCmd('set label scale 0.2', true);
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -3402,6 +3735,8 @@ iCn3DUI.prototype = {
            me.icn3d.labelScale = 0.4;
            me.icn3d.draw();
            me.setLogCmd('set label scale 0.4', true);
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -3410,6 +3745,8 @@ iCn3DUI.prototype = {
            me.icn3d.labelScale = 0.6;
            me.icn3d.draw();
            me.setLogCmd('set label scale 0.6', true);
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -3418,6 +3755,8 @@ iCn3DUI.prototype = {
            me.icn3d.labelScale = 0.8;
            me.icn3d.draw();
            me.setLogCmd('set label scale 0.8', true);
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -3426,6 +3765,8 @@ iCn3DUI.prototype = {
            me.icn3d.labelScale = 1.0;
            me.icn3d.draw();
            me.setLogCmd('set label scale 1.0', true);
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -3434,6 +3775,8 @@ iCn3DUI.prototype = {
            me.icn3d.labelScale = 2.0;
            me.icn3d.draw();
            me.setLogCmd('set label scale 2.0', true);
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -3442,6 +3785,8 @@ iCn3DUI.prototype = {
            me.icn3d.labelScale = 4.0;
            me.icn3d.draw();
            me.setLogCmd('set label scale 4.0', true);
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -3450,6 +3795,8 @@ iCn3DUI.prototype = {
            me.icn3d.labelScale = 6.0;
            me.icn3d.draw();
            me.setLogCmd('set label scale 6.0', true);
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -3458,6 +3805,8 @@ iCn3DUI.prototype = {
            me.icn3d.labelScale = 8.0;
            me.icn3d.draw();
            me.setLogCmd('set label scale 8.0', true);
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -3466,6 +3815,8 @@ iCn3DUI.prototype = {
            me.icn3d.labelScale = 10.0;
            me.icn3d.draw();
            me.setLogCmd('set label scale 10.0', true);
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -3478,6 +3829,8 @@ iCn3DUI.prototype = {
            me.icn3d.pAtomNum = 0;
 
            me.bMeasureDistance = true;
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -3494,6 +3847,8 @@ iCn3DUI.prototype = {
            me.icn3d.pk = 2;
 
            me.icn3d.draw();
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -3504,6 +3859,8 @@ iCn3DUI.prototype = {
            me.icn3d.zoominSelection();
            me.icn3d.draw();
            me.setLogCmd('zoom selection', true);
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -3514,6 +3871,8 @@ iCn3DUI.prototype = {
            me.icn3d.centerSelection();
            me.icn3d.draw();
            me.setLogCmd('center selection', true);
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -3527,6 +3886,8 @@ iCn3DUI.prototype = {
 
            me.icn3d.draw();
            me.setLogCmd('reset orientation', true);
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -3534,6 +3895,8 @@ iCn3DUI.prototype = {
         $("#" + me.pre + "mn6_chemicalbindingshow").add("#" + me.pre + "chemicalbindingshow").click(function (e) {
            me.setOption('chemicalbinding', 'show');
            me.setLogCmd('set chemicalbinding show', true);
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -3541,6 +3904,8 @@ iCn3DUI.prototype = {
         $("#" + me.pre + "mn6_chemicalbindinghide").add("#" + me.pre + "chemicalbindinghide").click(function (e) {
            me.setOption('chemicalbinding', 'hide');
            me.setLogCmd('set chemicalbinding hide', true);
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -3554,6 +3919,8 @@ iCn3DUI.prototype = {
            me.ROT_DIR = 'left';
 
            me.rotStruc('left');
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -3567,6 +3934,8 @@ iCn3DUI.prototype = {
            me.ROT_DIR = 'right';
 
            me.rotStruc('right');
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -3580,6 +3949,8 @@ iCn3DUI.prototype = {
            me.ROT_DIR = 'up';
 
            me.rotStruc('up');
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -3593,6 +3964,8 @@ iCn3DUI.prototype = {
            me.ROT_DIR = 'down';
 
            me.rotStruc('down');
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -3600,6 +3973,8 @@ iCn3DUI.prototype = {
         $("#" + me.pre + "mn6_cameraPers").click(function (e) {
            me.setOption('camera', 'perspective');
            me.setLogCmd('set camera perspective', true);
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -3607,6 +3982,8 @@ iCn3DUI.prototype = {
         $("#" + me.pre + "mn6_cameraOrth").click(function (e) {
            me.setOption('camera', 'orthographic');
            me.setLogCmd('set camera orthographic', true);
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -3614,6 +3991,8 @@ iCn3DUI.prototype = {
         $("#" + me.pre + "mn6_bkgdBlack").click(function (e) {
            me.setOption('background', 'black');
            me.setLogCmd('set background black', true);
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -3621,6 +4000,8 @@ iCn3DUI.prototype = {
         $("#" + me.pre + "mn6_bkgdGrey").click(function (e) {
            me.setOption('background', 'grey');
            me.setLogCmd('set background grey', true);
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -3628,6 +4009,8 @@ iCn3DUI.prototype = {
         $("#" + me.pre + "mn6_bkgdWhite").click(function (e) {
            me.setOption('background', 'white');
            me.setLogCmd('set background white', true);
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -3635,6 +4018,8 @@ iCn3DUI.prototype = {
         $("#" + me.pre + "mn6_bkgdTransparent").click(function (e) {
            me.setOption('background', 'transparent');
            me.setLogCmd('set background transparent', true);
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -3645,6 +4030,8 @@ iCn3DUI.prototype = {
            me.icn3d.setFog(true);
            me.icn3d.draw();
            me.setLogCmd('set fog on', true);
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -3655,6 +4042,8 @@ iCn3DUI.prototype = {
            me.icn3d.setFog(true);
            me.icn3d.draw();
            me.setLogCmd('set fog off', true);
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -3662,6 +4051,8 @@ iCn3DUI.prototype = {
         $("#" + me.pre + "mn6_showslabYes").click(function (e) {
            me.setOption('slab', 'yes');
            me.setLogCmd('set slab on', true);
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -3669,6 +4060,8 @@ iCn3DUI.prototype = {
         $("#" + me.pre + "mn6_showslabNo").click(function (e) {
            me.setOption('slab', 'no');
            me.setLogCmd('set slab off', true);
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -3676,6 +4069,8 @@ iCn3DUI.prototype = {
         $("#" + me.pre + "mn6_showaxisYes").click(function (e) {
            me.setOption('axis', 'yes');
            me.setLogCmd('set axis on', true);
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -3683,6 +4078,8 @@ iCn3DUI.prototype = {
         $("#" + me.pre + "mn6_showaxisNo").click(function (e) {
            me.setOption('axis', 'no');
            me.setLogCmd('set axis off', true);
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -3702,6 +4099,8 @@ iCn3DUI.prototype = {
 
            me.openDialog(me.pre + 'dl_hbonds', 'Hydrogen bonds to selection');
            me.bHbondCalc = false;
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -3712,6 +4111,8 @@ iCn3DUI.prototype = {
 
            me.icn3d.hideHbonds();
            me.icn3d.draw();
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -3726,6 +4127,8 @@ iCn3DUI.prototype = {
            //me.icn3d.draw();
 
            me.setLogCmd(select, true);
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -3737,6 +4140,8 @@ iCn3DUI.prototype = {
            me.hideStabilizer();
 
            me.icn3d.draw();
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -3747,6 +4152,8 @@ iCn3DUI.prototype = {
            me.icn3d.opts['pk'] = 'atom';
            me.icn3d.pickpair = true;
            me.icn3d.pAtomNum = 0;
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -3757,18 +4164,24 @@ iCn3DUI.prototype = {
            me.icn3d.opts['pk'] = 'atom';
            me.icn3d.pickpair = true;
            me.icn3d.pAtomNum = 0;
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
     clkmn1_thicknessSet: function() { var me = this;
         $("#" + me.pre + "mn1_thicknessSet").click(function (e) {
            me.openDialog(me.pre + 'dl_thickness', 'Set Thickness for 3D Printing');
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
     clkmn5_setThickness: function() { var me = this;
         $("#" + me.pre + "mn3_setThickness").click(function (e) {
            me.openDialog(me.pre + 'dl_thickness2', 'Set Thickness');
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -3781,6 +4194,8 @@ iCn3DUI.prototype = {
 
            me.resetAfter3Dprint();
            me.icn3d.draw();
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -3790,6 +4205,8 @@ iCn3DUI.prototype = {
            me.setLogCmd(select, true);
 
            me.showSsbonds();
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -3798,6 +4215,8 @@ iCn3DUI.prototype = {
            me.exportSsbondPairs();
 
            me.setLogCmd("export disulfide bond pairs", true);
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -3811,6 +4230,8 @@ iCn3DUI.prototype = {
            me.icn3d.lines['ssbond'] = [];
 
            me.setStyle('sidec', 'nothing');
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -3823,6 +4244,8 @@ iCn3DUI.prototype = {
 
            me.setStyle('proteins', 'lines')
            //me.icn3d.draw();
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -3838,6 +4261,8 @@ iCn3DUI.prototype = {
 
            //me.icn3d.draw();
            me.setStyle('proteins', 'ribbon')
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -3874,19 +4299,25 @@ iCn3DUI.prototype = {
         $("#" + me.pre + "show_annotations").click(function(e) {
              me.showAnnotations();
              me.setLogCmd("view annotations", true);
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
     clickShowallchains: function() { var me = this;
         $("#" + me.pre + "showallchains").click(function(e) {
-             me.showAnnoAllChains();
-             me.setLogCmd("show annotations all chains", true);
+           me.showAnnoAllChains();
+           me.setLogCmd("show annotations all chains", true);
+
+           ////$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
     clickShow_alignsequences: function() { var me = this;
         $("#" + me.pre + "show_alignsequences").click(function(e) {
              me.openDialog(me.pre + 'dl_alignment', 'Select residues in aligned sequences');
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -3896,6 +4327,8 @@ iCn3DUI.prototype = {
              me.retrieveInteractionData();
 
              me.setLogCmd("view interactions", true);
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -3927,6 +4360,8 @@ iCn3DUI.prototype = {
            me.selectByCommand(select, commandname, commanddesc);
            //me.setLogCmd('select ' + select + ' | name ' + commandname + ' | description ' + commanddesc, true);
            me.setLogCmd('select ' + select + ' | name ' + commandname, true);
+
+           ////$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -3939,6 +4374,8 @@ iCn3DUI.prototype = {
            me.setLogCmd("load mmtf " + $("#" + me.pre + "mmtfid").val(), false);
 
            window.open('https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?mmtfid=' + $("#" + me.pre + "mmtfid").val(), '_blank');
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -3951,6 +4388,8 @@ iCn3DUI.prototype = {
            me.setLogCmd("load pdb " + $("#" + me.pre + "pdbid").val(), false);
 
            window.open('https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?pdbid=' + $("#" + me.pre + "pdbid").val(), '_blank');
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -3965,6 +4404,8 @@ iCn3DUI.prototype = {
            me.setLogCmd("load alignment " + alignment + ' | parameters &atype=1', false);
 
            window.open('https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?align=' + alignment + '&showalignseq=1&atype=1', '_blank');
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -3979,6 +4420,8 @@ iCn3DUI.prototype = {
            me.setLogCmd("load alignment " + alignment + ' | parameters &atype=0', false);
 
            window.open('https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?align=' + alignment + '&showalignseq=1&atype=0', '_blank');
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -3991,6 +4434,8 @@ iCn3DUI.prototype = {
            me.setLogCmd("load mmcif " + $("#" + me.pre + "mmcifid").val(), false);
 
            window.open('https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?mmcifid=' + $("#" + me.pre + "mmcifid").val(), '_blank');
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -4004,6 +4449,8 @@ iCn3DUI.prototype = {
 
            //me.downloadMmdb($("#" + me.pre + "mmdbid").val());
            window.open('https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?mmdbid=' + $("#" + me.pre + "mmdbid").val(), '_blank');
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -4050,6 +4497,8 @@ iCn3DUI.prototype = {
                }
            }
 */
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -4062,6 +4511,8 @@ iCn3DUI.prototype = {
            me.setLogCmd("load gi " + $("#" + me.pre + "gi").val(), false);
 
            window.open('https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?gi=' + $("#" + me.pre + "gi").val(), '_blank');
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -4074,6 +4525,8 @@ iCn3DUI.prototype = {
            me.setLogCmd("load cid " + $("#" + me.pre + "cid").val(), false);
 
            window.open('https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?cid=' + $("#" + me.pre + "cid").val(), '_blank');
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -4173,6 +4626,8 @@ iCn3DUI.prototype = {
              reader.readAsText(file);
            }
 
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -4216,6 +4671,8 @@ iCn3DUI.prototype = {
              reader.readAsText(file);
            }
 
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -4248,6 +4705,8 @@ iCn3DUI.prototype = {
              reader.readAsText(file);
            }
 
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -4292,6 +4751,7 @@ iCn3DUI.prototype = {
              reader.readAsText(file);
            }
 
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -4338,6 +4798,7 @@ iCn3DUI.prototype = {
              reader.readAsText(file);
            }
 
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -4383,6 +4844,7 @@ iCn3DUI.prototype = {
              reader.readAsText(file);
            }
 
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -4428,6 +4890,7 @@ iCn3DUI.prototype = {
              reader.readAsText(file);
            }
 
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -4450,6 +4913,8 @@ iCn3DUI.prototype = {
            me.bInputfile = true;
 
            me.downloadUrl(url, type);
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -4528,6 +4993,7 @@ iCn3DUI.prototype = {
              reader.readAsText(file);
            }
 
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -4538,6 +5004,8 @@ iCn3DUI.prototype = {
 
            me.setOption("color", $("#" + me.pre + "colorcustom").val());
            me.setLogCmd("color " + $("#" + me.pre + "colorcustom").val(), true);
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -4558,6 +5026,8 @@ iCn3DUI.prototype = {
             me.updateHlAll();
 
             me.setLogCmd(select, true);
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
 
         $("#" + me.pre + "sphereExport").click(function(e) {
@@ -4573,6 +5043,8 @@ iCn3DUI.prototype = {
             me.exportSpherePairs();
 
             me.setLogCmd("export pairs in the sphere", false);
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -4591,6 +5063,8 @@ iCn3DUI.prototype = {
            me.bHbondCalc = true;
 
            me.setLogCmd(select, true);
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
 
         $("#" + me.pre + "hbondExport").click(function(e) {
@@ -4606,6 +5080,8 @@ iCn3DUI.prototype = {
            me.exportHbondPairs();
 
            me.setLogCmd("export hbond pairs", false);
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -4644,6 +5120,8 @@ iCn3DUI.prototype = {
              me.setLogCmd('add label ' + text + ' | x ' + x.toPrecision(4)  + ' y ' + y.toPrecision(4) + ' z ' + z.toPrecision(4) + sizeStr + colorStr + backgroundStr + ' | type custom', true);
              me.icn3d.draw();
            }
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -4677,6 +5155,8 @@ iCn3DUI.prototype = {
              me.setLogCmd('add label ' + text + ' | x ' + x.toPrecision(4)  + ' y ' + y.toPrecision(4) + ' z ' + z.toPrecision(4) + sizeStr + colorStr + backgroundStr + ' | type custom', true);
 
              me.icn3d.draw();
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -4702,6 +5182,8 @@ iCn3DUI.prototype = {
 
              me.icn3d.draw();
            }
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -4743,6 +5225,8 @@ iCn3DUI.prototype = {
 
              me.icn3d.draw();
            }
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -4782,6 +5266,8 @@ iCn3DUI.prototype = {
 
              me.icn3d.pk = 2;
            }
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -4805,6 +5291,8 @@ iCn3DUI.prototype = {
             me.setLogCmd('set thickness | linerad ' + me.icn3d.lineRadius + ' | coilrad ' + me.icn3d.coilWidth + ' | stickrad ' + me.icn3d.cylinderRadius + ' | tracerad ' + me.icn3d.traceRadius + ' | ribbonthick ' + me.icn3d.ribbonthickness + ' | proteinwidth ' + me.icn3d.helixSheetWidth + ' | nucleotidewidth ' + me.icn3d.nucleicAcidWidth  + ' | ballscale ' + me.icn3d.dotSphereScale, true);
 
             me.icn3d.draw();
+
+           ////$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
 
         $("#" + me.pre + "apply_thickness_style").click(function(e) {
@@ -4826,6 +5314,8 @@ iCn3DUI.prototype = {
             me.setLogCmd('set thickness | linerad ' + me.icn3d.lineRadius + ' | coilrad ' + me.icn3d.coilWidth + ' | stickrad ' + me.icn3d.cylinderRadius + ' | tracerad ' + me.icn3d.traceRadius + ' | ribbonthick ' + me.icn3d.ribbonthickness + ' | proteinwidth ' + me.icn3d.helixSheetWidth + ' | nucleotidewidth ' + me.icn3d.nucleicAcidWidth  + ' | ballscale ' + me.icn3d.dotSphereScale, true);
 
             me.icn3d.draw();
+
+           ////$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -4849,6 +5339,8 @@ iCn3DUI.prototype = {
 
             me.removeHl2D();
             me.removeHlMenus();
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -4968,6 +5460,8 @@ iCn3DUI.prototype = {
            //var description = $("#" + me.pre + "seq_command_desc").val();
 
            me.saveSelection(name, name);
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
 
         $(document).on("click", "#" + me.pre + "seq_saveselection2", function(e) {
@@ -4983,6 +5477,8 @@ iCn3DUI.prototype = {
            //var description = $("#" + me.pre + "seq_command_desc2").val();
 
            me.saveSelection(name, name);
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -5000,6 +5496,8 @@ iCn3DUI.prototype = {
             //var description = $("#" + me.pre + "alignseq_command_desc").val();
 
             me.saveSelection(name, name);
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -5010,6 +5508,8 @@ iCn3DUI.prototype = {
             me.bSelectAlignResidue = false;
             me.setLogCmd('output selection', true);
             me.outputSelection();
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 

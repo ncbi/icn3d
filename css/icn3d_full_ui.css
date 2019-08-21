@@ -8,11 +8,16 @@
 .ui-accordion .ui-accordion-icons { padding-left: 0; text-align: center; }
 
 .icn3d-menu {float:left; width:110px;}
+.icn3d-menu-color {color:#1c94c4; font-weight:bold; font-size: 14px!important;}
+
 accordion {font-size: 14px!important; z-index:1999; }
 accordion h3 {width: 100px; font-size: 14px!important;}
 accordion h3 > .ui-icon { display: none !important; }
-//accordion ul {width: 110px}
 accordion ul ul  {width: 160px}
+@media screen and (max-device-width: 480px) { 
+	accordion ul ul  {width: 110px} 
+}
+accordion ul ul ul {width: 160px}
 accordion ul li {cursor:default!important; white-space:nowrap;}
 /*accordion ul .icn3d-link, div .icn3d-link, accordion li input, accordion li label, button {cursor:pointer!important; } */
 .icn3d-link, accordion li input, accordion li label, button {cursor:pointer!important; } 

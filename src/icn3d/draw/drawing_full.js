@@ -269,6 +269,7 @@ iCn3D.prototype.createSurfaceRepresentation = function (atoms, type, wireframe, 
             opacity: opacity,
             transparent: true,
             side: THREE.DoubleSide
+            //depthTest: (this.bTransparent) ? false : true
         }));
 
         //http://www.html5gamedevs.com/topic/7288-threejs-transparency-bug-or-limitation-or-what/
