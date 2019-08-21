@@ -1844,7 +1844,7 @@ iCn3DUI.prototype = {
            me.setLogCmd("back", false);
            me.back();
 
-           $( ".icn3d-accordion" ).accordion(me.closeAc);
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -1855,7 +1855,7 @@ iCn3DUI.prototype = {
            me.setLogCmd("forward", false);
            me.forward();
 
-           $( ".icn3d-accordion" ).accordion(me.closeAc);
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -1865,7 +1865,7 @@ iCn3DUI.prototype = {
            me.toggleSelection();
            me.setLogCmd("toggle selection", true);
 
-           $( ".icn3d-accordion" ).accordion(me.closeAc);
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -1876,7 +1876,7 @@ iCn3DUI.prototype = {
            me.icn3d.matShader = me.icn3d.setOutlineColor('yellow');
            me.icn3d.draw(); // required to make it work properly
 
-           $( ".icn3d-accordion" ).accordion(me.closeAc);
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -1887,7 +1887,7 @@ iCn3DUI.prototype = {
            me.icn3d.matShader = me.icn3d.setOutlineColor('green');
            me.icn3d.draw(); // required to make it work properly
 
-           $( ".icn3d-accordion" ).accordion(me.closeAc);
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -1898,7 +1898,7 @@ iCn3DUI.prototype = {
            me.icn3d.matShader = me.icn3d.setOutlineColor('red');
            me.icn3d.draw(); // required to make it work properly
 
-           $( ".icn3d-accordion" ).accordion(me.closeAc);
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -1909,7 +1909,7 @@ iCn3DUI.prototype = {
 
            me.showHighlight();
 
-           $( ".icn3d-accordion" ).accordion(me.closeAc);
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -1920,7 +1920,7 @@ iCn3DUI.prototype = {
 
            me.showHighlight();
 
-           $( ".icn3d-accordion" ).accordion(me.closeAc);
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -1932,7 +1932,7 @@ iCn3DUI.prototype = {
 
             me.setLogCmd("clear selection", true);
 
-           $( ".icn3d-accordion" ).accordion(me.closeAc);
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -1946,7 +1946,7 @@ iCn3DUI.prototype = {
            me.icn3d.bAlternate = false;
            me.setLogCmd("alternate structures", false);
 
-           $( ".icn3d-accordion" ).accordion(me.closeAc);
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -1955,7 +1955,7 @@ iCn3DUI.prototype = {
         $("#" + me.pre + "mn1_mmtfid").click(function(e) {
            me.openDialog(me.pre + 'dl_mmtfid', 'Please input MMTF ID');
 
-           $( ".icn3d-accordion" ).accordion(me.closeAc);
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -1963,7 +1963,7 @@ iCn3DUI.prototype = {
         $("#" + me.pre + "mn1_pdbid").click(function(e) {
            me.openDialog(me.pre + 'dl_pdbid', 'Please input PDB ID');
 
-           $( ".icn3d-accordion" ).accordion(me.closeAc);
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -1971,7 +1971,7 @@ iCn3DUI.prototype = {
         $("#" + me.pre + "mn1_align").click(function(e) {
            me.openDialog(me.pre + 'dl_align', 'Align two 3D structures');
 
-           $( ".icn3d-accordion" ).accordion(me.closeAc);
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -1979,7 +1979,7 @@ iCn3DUI.prototype = {
         $("#" + me.pre + "mn1_pdbfile").click(function(e) {
            me.openDialog(me.pre + 'dl_pdbfile', 'Please input PDB File');
 
-           $( ".icn3d-accordion" ).accordion(me.closeAc);
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -1987,28 +1987,28 @@ iCn3DUI.prototype = {
         $("#" + me.pre + "mn1_mol2file").click(function(e) {
            me.openDialog(me.pre + 'dl_mol2file', 'Please input Mol2 File');
 
-           $( ".icn3d-accordion" ).accordion(me.closeAc);
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
     clkMn1_sdffile: function() { var me = this;
         $("#" + me.pre + "mn1_sdffile").click(function(e) {
            me.openDialog(me.pre + 'dl_sdffile', 'Please input SDF File');
 
-           $( ".icn3d-accordion" ).accordion(me.closeAc);
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
     clkMn1_xyzfile: function() { var me = this;
         $("#" + me.pre + "mn1_xyzfile").click(function(e) {
            me.openDialog(me.pre + 'dl_xyzfile', 'Please input XYZ File');
 
-           $( ".icn3d-accordion" ).accordion(me.closeAc);
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
     clkMn1_urlfile: function() { var me = this;
         $("#" + me.pre + "mn1_urlfile").click(function(e) {
            me.openDialog(me.pre + 'dl_urlfile', 'Load data by URL');
 
-           $( ".icn3d-accordion" ).accordion(me.closeAc);
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -2016,7 +2016,7 @@ iCn3DUI.prototype = {
         $("#" + me.pre + "mn1_mmciffile").click(function(e) {
            me.openDialog(me.pre + 'dl_mmciffile', 'Please input mmCIF File');
 
-           $( ".icn3d-accordion" ).accordion(me.closeAc);
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -2024,7 +2024,7 @@ iCn3DUI.prototype = {
         $("#" + me.pre + "mn1_mmcifid").click(function(e) {
            me.openDialog(me.pre + 'dl_mmcifid', 'Please input mmCIF ID');
 
-           $( ".icn3d-accordion" ).accordion(me.closeAc);
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -2032,7 +2032,7 @@ iCn3DUI.prototype = {
         $("#" + me.pre + "mn1_mmdbid").click(function(e) {
            me.openDialog(me.pre + 'dl_mmdbid', 'Please input MMDB ID');
 
-           $( ".icn3d-accordion" ).accordion(me.closeAc);
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -2040,7 +2040,7 @@ iCn3DUI.prototype = {
         $("#" + me.pre + "mn1_blast_rep_id").click(function(e) {
            me.openDialog(me.pre + 'dl_blast_rep_id', 'Align sequence to structure');
 
-           $( ".icn3d-accordion" ).accordion(me.closeAc);
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -2048,7 +2048,7 @@ iCn3DUI.prototype = {
         $("#" + me.pre + "mn1_gi").click(function(e) {
            me.openDialog(me.pre + 'dl_gi', 'Please input protein gi');
 
-           $( ".icn3d-accordion" ).accordion(me.closeAc);
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -2056,7 +2056,7 @@ iCn3DUI.prototype = {
         $("#" + me.pre + "mn1_cid").click(function(e) {
            me.openDialog(me.pre + 'dl_cid', 'Please input PubChem CID');
 
-           $( ".icn3d-accordion" ).accordion(me.closeAc);
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -2064,7 +2064,7 @@ iCn3DUI.prototype = {
         $("#" + me.pre + "mn1_pngimage").click(function(e) {
            me.openDialog(me.pre + 'dl_pngimage', 'Please input the PNG image');
 
-           $( ".icn3d-accordion" ).accordion(me.closeAc);
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -2072,7 +2072,7 @@ iCn3DUI.prototype = {
         $("#" + me.pre + "mn1_state").click(function(e) {
            me.openDialog(me.pre + 'dl_state', 'Please input the state file');
 
-           $( ".icn3d-accordion" ).accordion(me.closeAc);
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -2080,7 +2080,7 @@ iCn3DUI.prototype = {
         $("#" + me.pre + "mn1_selection").click(function(e) {
            me.openDialog(me.pre + 'dl_selection', 'Please input the selection file');
 
-           $( ".icn3d-accordion" ).accordion(me.closeAc);
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -2091,7 +2091,7 @@ iCn3DUI.prototype = {
            var file_pref = (me.inputid) ? me.inputid : "custom";
            me.saveFile(file_pref + '_statefile.txt', 'command');
 
-           $( ".icn3d-accordion" ).accordion(me.closeAc);
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -2221,7 +2221,7 @@ iCn3DUI.prototype = {
 
            me.exportVrmlFile('');
 
-           $( ".icn3d-accordion" ).accordion(me.closeAc);
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -2237,7 +2237,7 @@ iCn3DUI.prototype = {
 
            me.exportStlFile('_stab');
 
-           $( ".icn3d-accordion" ).accordion(me.closeAc);
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -2253,7 +2253,7 @@ iCn3DUI.prototype = {
 
            me.exportVrmlFile('_stab');
 
-           $( ".icn3d-accordion" ).accordion(me.closeAc);
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -2265,7 +2265,7 @@ iCn3DUI.prototype = {
 
            me.exportInteractions();
 
-           $( ".icn3d-accordion" ).accordion(me.closeAc);
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -2276,7 +2276,7 @@ iCn3DUI.prototype = {
            var file_pref = (me.inputid) ? me.inputid : "custom";
            me.saveFile(file_pref + '_image_icn3d_loadable.png', 'png');
 
-           $( ".icn3d-accordion" ).accordion(me.closeAc);
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -2313,7 +2313,7 @@ iCn3DUI.prototype = {
            var file_pref = (me.inputid) ? me.inputid : "custom";
            me.saveFile(file_pref + '_counts.html', 'html', text);
 
-           $( ".icn3d-accordion" ).accordion(me.closeAc);
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -2332,7 +2332,7 @@ iCn3DUI.prototype = {
            var file_pref = (me.inputid) ? me.inputid : "custom";
            me.saveFile(file_pref + '_selections.txt', 'text', [text]);
 
-           $( ".icn3d-accordion" ).accordion(me.closeAc);
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -2340,7 +2340,7 @@ iCn3DUI.prototype = {
         $("#" + me.pre + "mn1_sharelink").click(function (e) {
             me.shareLink();
 
-           $( ".icn3d-accordion" ).accordion(me.closeAc);
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -2350,7 +2350,7 @@ iCn3DUI.prototype = {
 
            window.open(url, '_blank');
 
-           $( ".icn3d-accordion" ).accordion(me.closeAc);
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -2361,7 +2361,7 @@ iCn3DUI.prototype = {
 
            window.open(url, '_blank');
 
-           $( ".icn3d-accordion" ).accordion(me.closeAc);
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -2393,7 +2393,7 @@ iCn3DUI.prototype = {
                window.open(url, '_blank');
            }
 
-           $( ".icn3d-accordion" ).accordion(me.closeAc);
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -2446,7 +2446,7 @@ iCn3DUI.prototype = {
                }
            }
 
-           $( ".icn3d-accordion" ).accordion(me.closeAc);
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -2471,7 +2471,7 @@ iCn3DUI.prototype = {
 
           window.open(url, '_blank');
 
-           $( ".icn3d-accordion" ).accordion(me.closeAc);
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -2481,7 +2481,7 @@ iCn3DUI.prototype = {
            me.showAnnotations();
            me.setLogCmd("view annotations", true);
 
-           $( ".icn3d-accordion" ).accordion(me.closeAc);
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -2495,7 +2495,7 @@ iCn3DUI.prototype = {
 
            me.icn3d.draw();
 
-           $( ".icn3d-accordion" ).accordion(me.closeAc);
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
 
         $("#" + me.pre + "clearall").click(function (e) {
@@ -2509,7 +2509,7 @@ iCn3DUI.prototype = {
 
            me.icn3d.draw();
 
-           $( ".icn3d-accordion" ).accordion(me.closeAc);
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
 
     },
@@ -2522,7 +2522,7 @@ iCn3DUI.prototype = {
                me.selectComplement();
            }
 
-           $( ".icn3d-accordion" ).accordion(me.closeAc);
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -2532,7 +2532,7 @@ iCn3DUI.prototype = {
 
            me.selectSideChains();
 
-           $( ".icn3d-accordion" ).accordion(me.closeAc);
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -2540,7 +2540,7 @@ iCn3DUI.prototype = {
         $("#" + me.pre + "mn2_alignment").click(function (e) {
            me.openDialog(me.pre + 'dl_alignment', 'Select residues in aligned sequences');
 
-           $( ".icn3d-accordion" ).accordion(me.closeAc);
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -2551,7 +2551,7 @@ iCn3DUI.prototype = {
            //$("#" + me.pre + "dl_setoperations").hide();
            //$("#" + me.pre + "dl_command").show();
 
-           $( ".icn3d-accordion" ).accordion(me.closeAc);
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -2561,7 +2561,7 @@ iCn3DUI.prototype = {
 
            me.setLogCmd('defined sets', true);
 
-           $( ".icn3d-accordion" ).accordion(me.closeAc);
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
 
         $("#" + me.pre + "setOr").click(function (e) {
@@ -2584,7 +2584,7 @@ iCn3DUI.prototype = {
            me.icn3d.draw();
            me.icn3d.removeHlObjects();
 
-           $( ".icn3d-accordion" ).accordion(me.closeAc);
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -2594,7 +2594,7 @@ iCn3DUI.prototype = {
            me.icn3d.opts['pk'] = 'atom';
            me.setLogCmd('set pk atom', true);
 
-           $( ".icn3d-accordion" ).accordion(me.closeAc);
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -2604,7 +2604,7 @@ iCn3DUI.prototype = {
            me.icn3d.opts['pk'] = 'residue';
            me.setLogCmd('set pk residue', true);
 
-           $( ".icn3d-accordion" ).accordion(me.closeAc);
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -2614,7 +2614,7 @@ iCn3DUI.prototype = {
            me.icn3d.opts['pk'] = 'strand';
            me.setLogCmd('set pk strand', true);
 
-           $( ".icn3d-accordion" ).accordion(me.closeAc);
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -2624,7 +2624,7 @@ iCn3DUI.prototype = {
            me.icn3d.opts['pk'] = 'chain';
            me.setLogCmd('set pk chain', true);
 
-           $( ".icn3d-accordion" ).accordion(me.closeAc);
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -2645,7 +2645,7 @@ iCn3DUI.prototype = {
             me.openDialog(me.pre + 'dl_aroundsphere', 'Select a sphere around current selection');
             me.bSphereCalc = false;
 
-           $( ".icn3d-accordion" ).accordion(me.closeAc);
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -2653,7 +2653,7 @@ iCn3DUI.prototype = {
         $("#" + me.pre + "mn2_select_chain").add("#" + me.pre + "definedSets").click(function (e) {
            me.openDialog(me.pre + 'dl_select_chain', 'Select Structure/Chain/Custom Selection');
 
-           $( ".icn3d-accordion" ).accordion(me.closeAc);
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -2663,7 +2663,7 @@ iCn3DUI.prototype = {
            me.setStyle('proteins', 'ribbon');
            me.setLogCmd('style proteins ribbon', true);
 
-           $( ".icn3d-accordion" ).accordion(me.closeAc);
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -2673,7 +2673,7 @@ iCn3DUI.prototype = {
 
            me.setLogCmd('style proteins strand', true);
 
-           $( ".icn3d-accordion" ).accordion(me.closeAc);
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -2682,7 +2682,7 @@ iCn3DUI.prototype = {
            me.setStyle('proteins', 'cylinder and plate');
            me.setLogCmd('style proteins cylinder and plate', true);
 
-           $( ".icn3d-accordion" ).accordion(me.closeAc);
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -2691,7 +2691,7 @@ iCn3DUI.prototype = {
            me.setStyle('proteins', 'schematic');
            me.setLogCmd('style proteins schematic', true);
 
-           $( ".icn3d-accordion" ).accordion(me.closeAc);
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -2700,7 +2700,7 @@ iCn3DUI.prototype = {
            me.setStyle('proteins', 'c alpha trace');
            me.setLogCmd('style proteins c alpha trace', true);
 
-           $( ".icn3d-accordion" ).accordion(me.closeAc);
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -2709,7 +2709,7 @@ iCn3DUI.prototype = {
            me.setStyle('proteins', 'b factor tube');
            me.setLogCmd('style proteins b factor tube', true);
 
-           $( ".icn3d-accordion" ).accordion(me.closeAc);
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -2718,7 +2718,7 @@ iCn3DUI.prototype = {
            me.setStyle('proteins', 'lines');
            me.setLogCmd('style proteins lines', true);
 
-           $( ".icn3d-accordion" ).accordion(me.closeAc);
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -2727,7 +2727,7 @@ iCn3DUI.prototype = {
            me.setStyle('proteins', 'stick');
            me.setLogCmd('style proteins stick', true);
 
-           $( ".icn3d-accordion" ).accordion(me.closeAc);
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -2736,7 +2736,7 @@ iCn3DUI.prototype = {
            me.setStyle('proteins', 'ball and stick');
            me.setLogCmd('style proteins ball and stick', true);
 
-           $( ".icn3d-accordion" ).accordion(me.closeAc);
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -2745,7 +2745,7 @@ iCn3DUI.prototype = {
            me.setStyle('proteins', 'sphere');
            me.setLogCmd('style proteins sphere', true);
 
-           $( ".icn3d-accordion" ).accordion(me.closeAc);
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -2754,7 +2754,7 @@ iCn3DUI.prototype = {
            me.setStyle('proteins', 'nothing');
            me.setLogCmd('style proteins nothing', true);
 
-           $( ".icn3d-accordion" ).accordion(me.closeAc);
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -2763,7 +2763,7 @@ iCn3DUI.prototype = {
            me.setStyle('sidec', 'lines');
            me.setLogCmd('style sidec lines', true);
 
-           $( ".icn3d-accordion" ).accordion(me.closeAc);
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -2772,7 +2772,7 @@ iCn3DUI.prototype = {
            me.setStyle('sidec', 'stick');
            me.setLogCmd('style sidec stick', true);
 
-           $( ".icn3d-accordion" ).accordion(me.closeAc);
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -2781,7 +2781,7 @@ iCn3DUI.prototype = {
            me.setStyle('sidec', 'ball and stick');
            me.setLogCmd('style sidec ball and stick', true);
 
-           $( ".icn3d-accordion" ).accordion(me.closeAc);
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -2790,7 +2790,7 @@ iCn3DUI.prototype = {
            me.setStyle('sidec', 'sphere');
            me.setLogCmd('style sidec sphere', true);
 
-           $( ".icn3d-accordion" ).accordion(me.closeAc);
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -2799,7 +2799,7 @@ iCn3DUI.prototype = {
            me.setStyle('sidec', 'nothing');
            me.setLogCmd('style sidec nothing', true);
 
-           $( ".icn3d-accordion" ).accordion(me.closeAc);
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -2809,7 +2809,7 @@ iCn3DUI.prototype = {
            me.setStyle('nucleotides', 'nucleotide cartoon');
            me.setLogCmd('style nucleotides nucleotide cartoon', true);
 
-           $( ".icn3d-accordion" ).accordion(me.closeAc);
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
        });
     },
 
@@ -2818,7 +2818,7 @@ iCn3DUI.prototype = {
            me.setStyle('nucleotides', 'schematic');
            me.setLogCmd('style nucleotides schematic', true);
 
-           $( ".icn3d-accordion" ).accordion(me.closeAc);
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -2827,7 +2827,7 @@ iCn3DUI.prototype = {
            me.setStyle('nucleotides', 'o3 trace');
            me.setLogCmd('style nucleotides o3 trace', true);
 
-           $( ".icn3d-accordion" ).accordion(me.closeAc);
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -2836,7 +2836,7 @@ iCn3DUI.prototype = {
            me.setStyle('nucleotides', 'lines');
            me.setLogCmd('style nucleotides lines', true);
 
-           $( ".icn3d-accordion" ).accordion(me.closeAc);
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -2845,7 +2845,7 @@ iCn3DUI.prototype = {
            me.setStyle('nucleotides', 'stick');
            me.setLogCmd('style nucleotides stick', true);
 
-           $( ".icn3d-accordion" ).accordion(me.closeAc);
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -2854,7 +2854,7 @@ iCn3DUI.prototype = {
            me.setStyle('nucleotides', 'ball and stick');
            me.setLogCmd('style nucleotides ball and stick', true);
 
-           $( ".icn3d-accordion" ).accordion(me.closeAc);
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -2863,7 +2863,7 @@ iCn3DUI.prototype = {
            me.setStyle('nucleotides', 'sphere');
            me.setLogCmd('style nucleotides sphere', true);
 
-           $( ".icn3d-accordion" ).accordion(me.closeAc);
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -2872,7 +2872,7 @@ iCn3DUI.prototype = {
            me.setStyle('nucleotides', 'nothing');
            me.setLogCmd('style nucleotides nothing', true);
 
-           $( ".icn3d-accordion" ).accordion(me.closeAc);
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -2881,7 +2881,7 @@ iCn3DUI.prototype = {
            me.setStyle('chemicals', 'lines');
            me.setLogCmd('style chemicals lines', true);
 
-           $( ".icn3d-accordion" ).accordion(me.closeAc);
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -2890,7 +2890,7 @@ iCn3DUI.prototype = {
            me.setStyle('chemicals', 'stick');
            me.setLogCmd('style chemicals stick', true);
 
-           $( ".icn3d-accordion" ).accordion(me.closeAc);
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -2899,7 +2899,7 @@ iCn3DUI.prototype = {
            me.setStyle('chemicals', 'ball and stick');
            me.setLogCmd('style chemicals ball and stick', true);
 
-           $( ".icn3d-accordion" ).accordion(me.closeAc);
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -2908,7 +2908,7 @@ iCn3DUI.prototype = {
            me.setStyle('chemicals', 'schematic');
            me.setLogCmd('style chemicals schematic', true);
 
-           $( ".icn3d-accordion" ).accordion(me.closeAc);
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -2917,7 +2917,7 @@ iCn3DUI.prototype = {
            me.setStyle('chemicals', 'sphere');
            me.setLogCmd('style chemicals sphere', true);
 
-           $( ".icn3d-accordion" ).accordion(me.closeAc);
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -2926,7 +2926,7 @@ iCn3DUI.prototype = {
            me.setStyle('chemicals', 'nothing');
            me.setLogCmd('style chemicals nothing', true);
 
-           $( ".icn3d-accordion" ).accordion(me.closeAc);
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -2936,7 +2936,7 @@ iCn3DUI.prototype = {
            me.icn3d.draw();
            me.setLogCmd('hydrogens', true);
 
-           $( ".icn3d-accordion" ).accordion(me.closeAc);
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -2946,7 +2946,7 @@ iCn3DUI.prototype = {
            me.icn3d.draw();
            me.setLogCmd('set hydrogens off', true);
 
-           $( ".icn3d-accordion" ).accordion(me.closeAc);
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -2955,7 +2955,7 @@ iCn3DUI.prototype = {
            me.setStyle('ions', 'sphere');
            me.setLogCmd('style ions sphere', true);
 
-           $( ".icn3d-accordion" ).accordion(me.closeAc);
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -2964,7 +2964,7 @@ iCn3DUI.prototype = {
            me.setStyle('ions', 'dot');
            me.setLogCmd('style ions dot', true);
 
-           $( ".icn3d-accordion" ).accordion(me.closeAc);
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -2973,7 +2973,7 @@ iCn3DUI.prototype = {
            me.setStyle('ions', 'nothing');
            me.setLogCmd('style ions nothing', true);
 
-           $( ".icn3d-accordion" ).accordion(me.closeAc);
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -2982,7 +2982,7 @@ iCn3DUI.prototype = {
            me.setStyle('water', 'sphere');
            me.setLogCmd('style water sphere', true);
 
-           $( ".icn3d-accordion" ).accordion(me.closeAc);
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -2991,7 +2991,7 @@ iCn3DUI.prototype = {
            me.setStyle('water', 'dot');
            me.setLogCmd('style water dot', true);
 
-           $( ".icn3d-accordion" ).accordion(me.closeAc);
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -3000,7 +3000,7 @@ iCn3DUI.prototype = {
            me.setStyle('water', 'nothing');
            me.setLogCmd('style water nothing', true);
 
-           $( ".icn3d-accordion" ).accordion(me.closeAc);
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -3010,7 +3010,7 @@ iCn3DUI.prototype = {
            me.setOption('color', 'spectrum');
            me.setLogCmd('color spectrum', true);
 
-           $( ".icn3d-accordion" ).accordion(me.closeAc);
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -3019,7 +3019,7 @@ iCn3DUI.prototype = {
            me.setOption('color', 'chain');
            me.setLogCmd('color chain', true);
 
-           $( ".icn3d-accordion" ).accordion(me.closeAc);
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -3030,7 +3030,7 @@ iCn3DUI.prototype = {
            me.setOption('color', 'secondary structure');
            me.setLogCmd('color secondary structure', true);
 
-           $( ".icn3d-accordion" ).accordion(me.closeAc);
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -3041,7 +3041,7 @@ iCn3DUI.prototype = {
            me.setOption('color', 'secondary structure yellow');
            me.setLogCmd('color secondary structure yellow', true);
 
-           $( ".icn3d-accordion" ).accordion(me.closeAc);
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -3050,7 +3050,7 @@ iCn3DUI.prototype = {
            me.setOption('color', 'residue');
            me.setLogCmd('color residue', true);
 
-           $( ".icn3d-accordion" ).accordion(me.closeAc);
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -3059,7 +3059,7 @@ iCn3DUI.prototype = {
            me.setOption('color', 'charge');
            me.setLogCmd('color charge', true);
 
-           $( ".icn3d-accordion" ).accordion(me.closeAc);
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -3068,7 +3068,7 @@ iCn3DUI.prototype = {
            me.setOption('color', 'hydrophobic');
            me.setLogCmd('color hydrophobic', true);
 
-           $( ".icn3d-accordion" ).accordion(me.closeAc);
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -3077,7 +3077,7 @@ iCn3DUI.prototype = {
            me.setOption('color', 'atom');
            me.setLogCmd('color atom', true);
 
-           $( ".icn3d-accordion" ).accordion(me.closeAc);
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -3086,7 +3086,7 @@ iCn3DUI.prototype = {
            me.setOption('color', 'b factor');
            me.setLogCmd('color b factor', true);
 
-           $( ".icn3d-accordion" ).accordion(me.closeAc);
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -3095,7 +3095,7 @@ iCn3DUI.prototype = {
            me.setOption('color', 'b factor percentile');
            me.setLogCmd('color b factor percentile', true);
 
-           $( ".icn3d-accordion" ).accordion(me.closeAc);
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -3104,7 +3104,7 @@ iCn3DUI.prototype = {
            me.setOption('color', 'identity');
            me.setLogCmd('color identity', true);
 
-           $( ".icn3d-accordion" ).accordion(me.closeAc);
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -3113,7 +3113,7 @@ iCn3DUI.prototype = {
            me.setOption('color', 'conservation');
            me.setLogCmd('color conservation', true);
 
-           $( ".icn3d-accordion" ).accordion(me.closeAc);
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -3122,7 +3122,7 @@ iCn3DUI.prototype = {
            me.setOption('color', 'red');
            me.setLogCmd('color red', true);
 
-           $( ".icn3d-accordion" ).accordion(me.closeAc);
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -3131,7 +3131,7 @@ iCn3DUI.prototype = {
            me.setOption('color', 'green');
            me.setLogCmd('color green', true);
 
-           $( ".icn3d-accordion" ).accordion(me.closeAc);
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -3140,7 +3140,7 @@ iCn3DUI.prototype = {
            me.setOption('color', 'blue');
            me.setLogCmd('color blue', true);
 
-           $( ".icn3d-accordion" ).accordion(me.closeAc);
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -3149,7 +3149,7 @@ iCn3DUI.prototype = {
            me.setOption('color', 'magenta');
            me.setLogCmd('color magenta', true);
 
-           $( ".icn3d-accordion" ).accordion(me.closeAc);
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -3158,7 +3158,7 @@ iCn3DUI.prototype = {
            me.setOption('color', 'yellow');
            me.setLogCmd('color yellow', true);
 
-           $( ".icn3d-accordion" ).accordion(me.closeAc);
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -3167,7 +3167,7 @@ iCn3DUI.prototype = {
            me.setOption('color', 'cyan');
            me.setLogCmd('color cyan', true);
 
-           $( ".icn3d-accordion" ).accordion(me.closeAc);
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -3176,7 +3176,7 @@ iCn3DUI.prototype = {
            me.setOption('color', 'white');
            me.setLogCmd('color white', true);
 
-           $( ".icn3d-accordion" ).accordion(me.closeAc);
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -3185,7 +3185,7 @@ iCn3DUI.prototype = {
            me.setOption('color', 'grey');
            me.setLogCmd('color grey', true);
 
-           $( ".icn3d-accordion" ).accordion(me.closeAc);
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -3193,7 +3193,7 @@ iCn3DUI.prototype = {
         $("#" + me.pre + "mn4_clrCustom").click(function (e) {
            me.openDialog(me.pre + 'dl_clr', 'Color picker');
 
-           $( ".icn3d-accordion" ).accordion(me.closeAc);
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -3203,7 +3203,7 @@ iCn3DUI.prototype = {
 
            me.setLogCmd('save color', true);
 
-           $( ".icn3d-accordion" ).accordion(me.closeAc);
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -3213,7 +3213,7 @@ iCn3DUI.prototype = {
 
            me.setLogCmd('apply saved color', true);
 
-           $( ".icn3d-accordion" ).accordion(me.closeAc);
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -3222,7 +3222,7 @@ iCn3DUI.prototype = {
            me.saveStyle();
            me.setLogCmd('save style', true);
 
-           $( ".icn3d-accordion" ).accordion(me.closeAc);
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -3231,7 +3231,7 @@ iCn3DUI.prototype = {
            me.applySavedStyle();
            me.setLogCmd('apply saved style', true);
 
-           $( ".icn3d-accordion" ).accordion(me.closeAc);
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -3246,7 +3246,7 @@ iCn3DUI.prototype = {
 
            me.setLogCmd('set surface neighbors on', true);
 
-           $( ".icn3d-accordion" ).accordion(me.closeAc);
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -3260,7 +3260,7 @@ iCn3DUI.prototype = {
 
            me.setLogCmd('set surface neighbors off', true);
 
-           $( ".icn3d-accordion" ).accordion(me.closeAc);
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -3270,7 +3270,7 @@ iCn3DUI.prototype = {
            me.setOption('surface', 'Van der Waals surface');
            me.setLogCmd('set surface Van der Waals surface', true);
 
-           $( ".icn3d-accordion" ).accordion(me.closeAc);
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -3280,7 +3280,7 @@ iCn3DUI.prototype = {
            me.setOption('surface', 'solvent accessible surface');
            me.setLogCmd('set surface solvent accessible surface', true);
 
-           $( ".icn3d-accordion" ).accordion(me.closeAc);
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -3290,7 +3290,7 @@ iCn3DUI.prototype = {
            me.setOption('surface', 'molecular surface');
            me.setLogCmd('set surface molecular surface', true);
 
-           $( ".icn3d-accordion" ).accordion(me.closeAc);
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -3300,7 +3300,7 @@ iCn3DUI.prototype = {
            me.setOption('surface', 'Van der Waals surface with context');
            me.setLogCmd('set surface Van der Waals surface with context', true);
 
-           $( ".icn3d-accordion" ).accordion(me.closeAc);
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -3310,7 +3310,7 @@ iCn3DUI.prototype = {
            me.setOption('surface', 'solvent accessible surface with context');
            me.setLogCmd('set surface solvent accessible surface with context', true);
 
-           $( ".icn3d-accordion" ).accordion(me.closeAc);
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -3320,7 +3320,7 @@ iCn3DUI.prototype = {
            me.setOption('surface', 'molecular surface with context');
            me.setLogCmd('set surface molecular surface with context', true);
 
-           $( ".icn3d-accordion" ).accordion(me.closeAc);
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -3329,7 +3329,7 @@ iCn3DUI.prototype = {
            me.setOption('surface', 'nothing');
            me.setLogCmd('set surface nothing', true);
 
-           $( ".icn3d-accordion" ).accordion(me.closeAc);
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -3338,7 +3338,7 @@ iCn3DUI.prototype = {
            me.setOption('opacity', '1.0');
            me.setLogCmd('set surface opacity 1.0', true);
 
-           $( ".icn3d-accordion" ).accordion(me.closeAc);
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -3347,7 +3347,7 @@ iCn3DUI.prototype = {
            me.setOption('opacity', '0.9');
            me.setLogCmd('set surface opacity 0.9', true);
 
-           $( ".icn3d-accordion" ).accordion(me.closeAc);
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -3356,7 +3356,7 @@ iCn3DUI.prototype = {
            me.setOption('opacity', '0.8');
            me.setLogCmd('set surface opacity 0.8', true);
 
-           $( ".icn3d-accordion" ).accordion(me.closeAc);
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -3365,7 +3365,7 @@ iCn3DUI.prototype = {
            me.setOption('opacity', '0.7');
            me.setLogCmd('set surface opacity 0.7', true);
 
-           $( ".icn3d-accordion" ).accordion(me.closeAc);
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -3374,7 +3374,7 @@ iCn3DUI.prototype = {
            me.setOption('opacity', '0.6');
            me.setLogCmd('set surface opacity 0.6', true);
 
-           $( ".icn3d-accordion" ).accordion(me.closeAc);
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -3383,7 +3383,7 @@ iCn3DUI.prototype = {
            me.setOption('opacity', '0.5');
            me.setLogCmd('set surface opacity 0.5', true);
 
-           $( ".icn3d-accordion" ).accordion(me.closeAc);
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -3392,7 +3392,7 @@ iCn3DUI.prototype = {
            me.setOption('opacity', '0.4');
            me.setLogCmd('set surface opacity 0.4', true);
 
-           $( ".icn3d-accordion" ).accordion(me.closeAc);
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -3401,7 +3401,7 @@ iCn3DUI.prototype = {
            me.setOption('opacity', '0.3');
            me.setLogCmd('set surface opacity 0.3', true);
 
-           $( ".icn3d-accordion" ).accordion(me.closeAc);
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -3410,7 +3410,7 @@ iCn3DUI.prototype = {
            me.setOption('opacity', '0.2');
            me.setLogCmd('set surface opacity 0.2', true);
 
-           $( ".icn3d-accordion" ).accordion(me.closeAc);
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -3419,7 +3419,7 @@ iCn3DUI.prototype = {
            me.setOption('opacity', '0.1');
            me.setLogCmd('set surface opacity 0.1', true);
 
-           $( ".icn3d-accordion" ).accordion(me.closeAc);
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -3428,7 +3428,7 @@ iCn3DUI.prototype = {
            me.setOption('wireframe', 'yes');
            me.setLogCmd('set surface wireframe on', true);
 
-           $( ".icn3d-accordion" ).accordion(me.closeAc);
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -3437,7 +3437,7 @@ iCn3DUI.prototype = {
            me.setOption('wireframe', 'no');
            me.setLogCmd('set surface wireframe off', true);
 
-           $( ".icn3d-accordion" ).accordion(me.closeAc);
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -3445,7 +3445,7 @@ iCn3DUI.prototype = {
         $("#" + me.pre + "mn5_elecmap2fofc").click(function (e) {
            me.openDialog(me.pre + 'dl_elecmap2fofc', '2Fo-Fc Electron Density Map');
 
-           $( ".icn3d-accordion" ).accordion(me.closeAc);
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -3453,7 +3453,7 @@ iCn3DUI.prototype = {
         $("#" + me.pre + "mn5_elecmapfofc").click(function (e) {
            me.openDialog(me.pre + 'dl_elecmapfofc', 'Fo-Fc Electron Density Map');
 
-           $( ".icn3d-accordion" ).accordion(me.closeAc);
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -3462,7 +3462,7 @@ iCn3DUI.prototype = {
            me.setOption('map', 'nothing');
            me.setLogCmd('set map nothing', true);
 
-           $( ".icn3d-accordion" ).accordion(me.closeAc);
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -3479,7 +3479,7 @@ iCn3DUI.prototype = {
            //me.setOption('map', '2fofc');
            me.setLogCmd('set map 2fofc sigma ' + sigma2fofc, true);
 
-           $( ".icn3d-accordion" ).accordion(me.closeAc);
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -3496,7 +3496,7 @@ iCn3DUI.prototype = {
            //me.setOption('map', 'fofc');
            me.setLogCmd('set map fofc sigma ' + sigmafofc, true);
 
-           $( ".icn3d-accordion" ).accordion(me.closeAc);
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -3507,7 +3507,7 @@ iCn3DUI.prototype = {
            me.setOption('mapwireframe', 'yes');
            me.setLogCmd('set map wireframe on', true);
 
-           $( ".icn3d-accordion" ).accordion(me.closeAc);
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -3516,7 +3516,7 @@ iCn3DUI.prototype = {
            me.setOption('mapwireframe', 'no');
            me.setLogCmd('set map wireframe off', true);
 
-           $( ".icn3d-accordion" ).accordion(me.closeAc);
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -3524,7 +3524,7 @@ iCn3DUI.prototype = {
         $("#" + me.pre + "mn5_emmap").click(function (e) {
            me.openDialog(me.pre + 'dl_emmap', 'EM Density Map');
 
-           $( ".icn3d-accordion" ).accordion(me.closeAc);
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -3533,7 +3533,7 @@ iCn3DUI.prototype = {
            me.setOption('emmap', 'nothing');
            me.setLogCmd('set emmap nothing', true);
 
-           $( ".icn3d-accordion" ).accordion(me.closeAc);
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -3577,7 +3577,7 @@ iCn3DUI.prototype = {
                me.setLogCmd('set emmap percentage ' + empercentage, true);
            }
 
-           $( ".icn3d-accordion" ).accordion(me.closeAc);
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -3588,7 +3588,7 @@ iCn3DUI.prototype = {
            me.setOption('emmapwireframe', 'yes');
            me.setLogCmd('set emmap wireframe on', true);
 
-           $( ".icn3d-accordion" ).accordion(me.closeAc);
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -3597,7 +3597,7 @@ iCn3DUI.prototype = {
            me.setOption('emmapwireframe', 'no');
            me.setLogCmd('set emmap wireframe off', true);
 
-           $( ".icn3d-accordion" ).accordion(me.closeAc);
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -3608,7 +3608,7 @@ iCn3DUI.prototype = {
            me.setLogCmd('set assembly on', true);
            me.icn3d.draw();
 
-           $( ".icn3d-accordion" ).accordion(me.closeAc);
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -3618,7 +3618,7 @@ iCn3DUI.prototype = {
            me.setLogCmd('set assembly off', true);
            me.icn3d.draw();
 
-           $( ".icn3d-accordion" ).accordion(me.closeAc);
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -3632,7 +3632,7 @@ iCn3DUI.prototype = {
            me.setLogCmd('add residue labels', true);
            me.icn3d.draw();
 
-           $( ".icn3d-accordion" ).accordion(me.closeAc);
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -3644,7 +3644,7 @@ iCn3DUI.prototype = {
            me.setLogCmd('add chain labels', true);
            me.icn3d.draw();
 
-           $( ".icn3d-accordion" ).accordion(me.closeAc);
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -3656,7 +3656,7 @@ iCn3DUI.prototype = {
            me.setLogCmd('add terminal labels', true);
            me.icn3d.draw();
 
-           $( ".icn3d-accordion" ).accordion(me.closeAc);
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -3668,7 +3668,7 @@ iCn3DUI.prototype = {
            me.icn3d.pickpair = true;
            me.icn3d.pAtomNum = 0;
 
-           $( ".icn3d-accordion" ).accordion(me.closeAc);
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -3676,7 +3676,7 @@ iCn3DUI.prototype = {
         $("#" + me.pre + "mn6_addlabelSelection").click(function (e) {
            me.openDialog(me.pre + 'dl_addlabelselection', 'Add custom labels by the current selection');
 
-           $( ".icn3d-accordion" ).accordion(me.closeAc);
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -3684,7 +3684,7 @@ iCn3DUI.prototype = {
         $("#" + me.pre + "mn2_saveselection").click(function (e) {
            me.openDialog(me.pre + 'dl_saveselection', 'Save the current selection');
 
-           $( ".icn3d-accordion" ).accordion(me.closeAc);
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -3706,7 +3706,7 @@ iCn3DUI.prototype = {
 
            me.icn3d.draw();
 
-           $( ".icn3d-accordion" ).accordion(me.closeAc);
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -3716,7 +3716,7 @@ iCn3DUI.prototype = {
            me.icn3d.draw();
            me.setLogCmd('set label scale 0.1', true);
 
-           $( ".icn3d-accordion" ).accordion(me.closeAc);
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -3726,7 +3726,7 @@ iCn3DUI.prototype = {
            me.icn3d.draw();
            me.setLogCmd('set label scale 0.2', true);
 
-           $( ".icn3d-accordion" ).accordion(me.closeAc);
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -3736,7 +3736,7 @@ iCn3DUI.prototype = {
            me.icn3d.draw();
            me.setLogCmd('set label scale 0.4', true);
 
-           $( ".icn3d-accordion" ).accordion(me.closeAc);
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -3746,7 +3746,7 @@ iCn3DUI.prototype = {
            me.icn3d.draw();
            me.setLogCmd('set label scale 0.6', true);
 
-           $( ".icn3d-accordion" ).accordion(me.closeAc);
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -3756,7 +3756,7 @@ iCn3DUI.prototype = {
            me.icn3d.draw();
            me.setLogCmd('set label scale 0.8', true);
 
-           $( ".icn3d-accordion" ).accordion(me.closeAc);
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -3766,7 +3766,7 @@ iCn3DUI.prototype = {
            me.icn3d.draw();
            me.setLogCmd('set label scale 1.0', true);
 
-           $( ".icn3d-accordion" ).accordion(me.closeAc);
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -3776,7 +3776,7 @@ iCn3DUI.prototype = {
            me.icn3d.draw();
            me.setLogCmd('set label scale 2.0', true);
 
-           $( ".icn3d-accordion" ).accordion(me.closeAc);
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -3786,7 +3786,7 @@ iCn3DUI.prototype = {
            me.icn3d.draw();
            me.setLogCmd('set label scale 4.0', true);
 
-           $( ".icn3d-accordion" ).accordion(me.closeAc);
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -3796,7 +3796,7 @@ iCn3DUI.prototype = {
            me.icn3d.draw();
            me.setLogCmd('set label scale 6.0', true);
 
-           $( ".icn3d-accordion" ).accordion(me.closeAc);
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -3806,7 +3806,7 @@ iCn3DUI.prototype = {
            me.icn3d.draw();
            me.setLogCmd('set label scale 8.0', true);
 
-           $( ".icn3d-accordion" ).accordion(me.closeAc);
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -3816,7 +3816,7 @@ iCn3DUI.prototype = {
            me.icn3d.draw();
            me.setLogCmd('set label scale 10.0', true);
 
-           $( ".icn3d-accordion" ).accordion(me.closeAc);
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -3830,7 +3830,7 @@ iCn3DUI.prototype = {
 
            me.bMeasureDistance = true;
 
-           $( ".icn3d-accordion" ).accordion(me.closeAc);
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -3848,7 +3848,7 @@ iCn3DUI.prototype = {
 
            me.icn3d.draw();
 
-           $( ".icn3d-accordion" ).accordion(me.closeAc);
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -3860,7 +3860,7 @@ iCn3DUI.prototype = {
            me.icn3d.draw();
            me.setLogCmd('zoom selection', true);
 
-           $( ".icn3d-accordion" ).accordion(me.closeAc);
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -3872,7 +3872,7 @@ iCn3DUI.prototype = {
            me.icn3d.draw();
            me.setLogCmd('center selection', true);
 
-           $( ".icn3d-accordion" ).accordion(me.closeAc);
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -3887,7 +3887,7 @@ iCn3DUI.prototype = {
            me.icn3d.draw();
            me.setLogCmd('reset orientation', true);
 
-           $( ".icn3d-accordion" ).accordion(me.closeAc);
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -3896,7 +3896,7 @@ iCn3DUI.prototype = {
            me.setOption('chemicalbinding', 'show');
            me.setLogCmd('set chemicalbinding show', true);
 
-           $( ".icn3d-accordion" ).accordion(me.closeAc);
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -3905,7 +3905,7 @@ iCn3DUI.prototype = {
            me.setOption('chemicalbinding', 'hide');
            me.setLogCmd('set chemicalbinding hide', true);
 
-           $( ".icn3d-accordion" ).accordion(me.closeAc);
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -3920,7 +3920,7 @@ iCn3DUI.prototype = {
 
            me.rotStruc('left');
 
-           $( ".icn3d-accordion" ).accordion(me.closeAc);
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -3935,7 +3935,7 @@ iCn3DUI.prototype = {
 
            me.rotStruc('right');
 
-           $( ".icn3d-accordion" ).accordion(me.closeAc);
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -3950,7 +3950,7 @@ iCn3DUI.prototype = {
 
            me.rotStruc('up');
 
-           $( ".icn3d-accordion" ).accordion(me.closeAc);
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -3965,7 +3965,7 @@ iCn3DUI.prototype = {
 
            me.rotStruc('down');
 
-           $( ".icn3d-accordion" ).accordion(me.closeAc);
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -3974,7 +3974,7 @@ iCn3DUI.prototype = {
            me.setOption('camera', 'perspective');
            me.setLogCmd('set camera perspective', true);
 
-           $( ".icn3d-accordion" ).accordion(me.closeAc);
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -3983,7 +3983,7 @@ iCn3DUI.prototype = {
            me.setOption('camera', 'orthographic');
            me.setLogCmd('set camera orthographic', true);
 
-           $( ".icn3d-accordion" ).accordion(me.closeAc);
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -3992,7 +3992,7 @@ iCn3DUI.prototype = {
            me.setOption('background', 'black');
            me.setLogCmd('set background black', true);
 
-           $( ".icn3d-accordion" ).accordion(me.closeAc);
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -4001,7 +4001,7 @@ iCn3DUI.prototype = {
            me.setOption('background', 'grey');
            me.setLogCmd('set background grey', true);
 
-           $( ".icn3d-accordion" ).accordion(me.closeAc);
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -4010,7 +4010,7 @@ iCn3DUI.prototype = {
            me.setOption('background', 'white');
            me.setLogCmd('set background white', true);
 
-           $( ".icn3d-accordion" ).accordion(me.closeAc);
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -4019,7 +4019,7 @@ iCn3DUI.prototype = {
            me.setOption('background', 'transparent');
            me.setLogCmd('set background transparent', true);
 
-           $( ".icn3d-accordion" ).accordion(me.closeAc);
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -4031,7 +4031,7 @@ iCn3DUI.prototype = {
            me.icn3d.draw();
            me.setLogCmd('set fog on', true);
 
-           $( ".icn3d-accordion" ).accordion(me.closeAc);
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -4043,7 +4043,7 @@ iCn3DUI.prototype = {
            me.icn3d.draw();
            me.setLogCmd('set fog off', true);
 
-           $( ".icn3d-accordion" ).accordion(me.closeAc);
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -4052,7 +4052,7 @@ iCn3DUI.prototype = {
            me.setOption('slab', 'yes');
            me.setLogCmd('set slab on', true);
 
-           $( ".icn3d-accordion" ).accordion(me.closeAc);
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -4061,7 +4061,7 @@ iCn3DUI.prototype = {
            me.setOption('slab', 'no');
            me.setLogCmd('set slab off', true);
 
-           $( ".icn3d-accordion" ).accordion(me.closeAc);
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -4070,7 +4070,7 @@ iCn3DUI.prototype = {
            me.setOption('axis', 'yes');
            me.setLogCmd('set axis on', true);
 
-           $( ".icn3d-accordion" ).accordion(me.closeAc);
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -4079,7 +4079,7 @@ iCn3DUI.prototype = {
            me.setOption('axis', 'no');
            me.setLogCmd('set axis off', true);
 
-           $( ".icn3d-accordion" ).accordion(me.closeAc);
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -4100,7 +4100,7 @@ iCn3DUI.prototype = {
            me.openDialog(me.pre + 'dl_hbonds', 'Hydrogen bonds to selection');
            me.bHbondCalc = false;
 
-           $( ".icn3d-accordion" ).accordion(me.closeAc);
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -4112,7 +4112,7 @@ iCn3DUI.prototype = {
            me.icn3d.hideHbonds();
            me.icn3d.draw();
 
-           $( ".icn3d-accordion" ).accordion(me.closeAc);
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -4128,7 +4128,7 @@ iCn3DUI.prototype = {
 
            me.setLogCmd(select, true);
 
-           $( ".icn3d-accordion" ).accordion(me.closeAc);
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -4141,7 +4141,7 @@ iCn3DUI.prototype = {
 
            me.icn3d.draw();
 
-           $( ".icn3d-accordion" ).accordion(me.closeAc);
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -4153,7 +4153,7 @@ iCn3DUI.prototype = {
            me.icn3d.pickpair = true;
            me.icn3d.pAtomNum = 0;
 
-           $( ".icn3d-accordion" ).accordion(me.closeAc);
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -4165,7 +4165,7 @@ iCn3DUI.prototype = {
            me.icn3d.pickpair = true;
            me.icn3d.pAtomNum = 0;
 
-           $( ".icn3d-accordion" ).accordion(me.closeAc);
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -4173,7 +4173,7 @@ iCn3DUI.prototype = {
         $("#" + me.pre + "mn1_thicknessSet").click(function (e) {
            me.openDialog(me.pre + 'dl_thickness', 'Set Thickness for 3D Printing');
 
-           $( ".icn3d-accordion" ).accordion(me.closeAc);
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -4181,7 +4181,7 @@ iCn3DUI.prototype = {
         $("#" + me.pre + "mn3_setThickness").click(function (e) {
            me.openDialog(me.pre + 'dl_thickness2', 'Set Thickness');
 
-           $( ".icn3d-accordion" ).accordion(me.closeAc);
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -4195,7 +4195,7 @@ iCn3DUI.prototype = {
            me.resetAfter3Dprint();
            me.icn3d.draw();
 
-           $( ".icn3d-accordion" ).accordion(me.closeAc);
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -4206,7 +4206,7 @@ iCn3DUI.prototype = {
 
            me.showSsbonds();
 
-           $( ".icn3d-accordion" ).accordion(me.closeAc);
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -4216,7 +4216,7 @@ iCn3DUI.prototype = {
 
            me.setLogCmd("export disulfide bond pairs", true);
 
-           $( ".icn3d-accordion" ).accordion(me.closeAc);
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -4231,7 +4231,7 @@ iCn3DUI.prototype = {
 
            me.setStyle('sidec', 'nothing');
 
-           $( ".icn3d-accordion" ).accordion(me.closeAc);
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -4245,7 +4245,7 @@ iCn3DUI.prototype = {
            me.setStyle('proteins', 'lines')
            //me.icn3d.draw();
 
-           $( ".icn3d-accordion" ).accordion(me.closeAc);
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -4262,7 +4262,7 @@ iCn3DUI.prototype = {
            //me.icn3d.draw();
            me.setStyle('proteins', 'ribbon')
 
-           $( ".icn3d-accordion" ).accordion(me.closeAc);
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -4300,7 +4300,7 @@ iCn3DUI.prototype = {
              me.showAnnotations();
              me.setLogCmd("view annotations", true);
 
-           $( ".icn3d-accordion" ).accordion(me.closeAc);
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -4309,7 +4309,7 @@ iCn3DUI.prototype = {
            me.showAnnoAllChains();
            me.setLogCmd("show annotations all chains", true);
 
-           //$( ".icn3d-accordion" ).accordion(me.closeAc);
+           ////$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -4317,7 +4317,7 @@ iCn3DUI.prototype = {
         $("#" + me.pre + "show_alignsequences").click(function(e) {
              me.openDialog(me.pre + 'dl_alignment', 'Select residues in aligned sequences');
 
-           $( ".icn3d-accordion" ).accordion(me.closeAc);
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -4328,7 +4328,7 @@ iCn3DUI.prototype = {
 
              me.setLogCmd("view interactions", true);
 
-           $( ".icn3d-accordion" ).accordion(me.closeAc);
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -4361,7 +4361,7 @@ iCn3DUI.prototype = {
            //me.setLogCmd('select ' + select + ' | name ' + commandname + ' | description ' + commanddesc, true);
            me.setLogCmd('select ' + select + ' | name ' + commandname, true);
 
-           //$( ".icn3d-accordion" ).accordion(me.closeAc);
+           ////$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -4375,7 +4375,7 @@ iCn3DUI.prototype = {
 
            window.open('https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?mmtfid=' + $("#" + me.pre + "mmtfid").val(), '_blank');
 
-           $( ".icn3d-accordion" ).accordion(me.closeAc);
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -4389,7 +4389,7 @@ iCn3DUI.prototype = {
 
            window.open('https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?pdbid=' + $("#" + me.pre + "pdbid").val(), '_blank');
 
-           $( ".icn3d-accordion" ).accordion(me.closeAc);
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -4405,7 +4405,7 @@ iCn3DUI.prototype = {
 
            window.open('https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?align=' + alignment + '&showalignseq=1&atype=1', '_blank');
 
-           $( ".icn3d-accordion" ).accordion(me.closeAc);
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -4421,7 +4421,7 @@ iCn3DUI.prototype = {
 
            window.open('https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?align=' + alignment + '&showalignseq=1&atype=0', '_blank');
 
-           $( ".icn3d-accordion" ).accordion(me.closeAc);
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -4435,7 +4435,7 @@ iCn3DUI.prototype = {
 
            window.open('https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?mmcifid=' + $("#" + me.pre + "mmcifid").val(), '_blank');
 
-           $( ".icn3d-accordion" ).accordion(me.closeAc);
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -4450,7 +4450,7 @@ iCn3DUI.prototype = {
            //me.downloadMmdb($("#" + me.pre + "mmdbid").val());
            window.open('https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?mmdbid=' + $("#" + me.pre + "mmdbid").val(), '_blank');
 
-           $( ".icn3d-accordion" ).accordion(me.closeAc);
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -4498,7 +4498,7 @@ iCn3DUI.prototype = {
            }
 */
 
-           $( ".icn3d-accordion" ).accordion(me.closeAc);
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -4512,7 +4512,7 @@ iCn3DUI.prototype = {
 
            window.open('https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?gi=' + $("#" + me.pre + "gi").val(), '_blank');
 
-           $( ".icn3d-accordion" ).accordion(me.closeAc);
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -4526,7 +4526,7 @@ iCn3DUI.prototype = {
 
            window.open('https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?cid=' + $("#" + me.pre + "cid").val(), '_blank');
 
-           $( ".icn3d-accordion" ).accordion(me.closeAc);
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -4627,7 +4627,7 @@ iCn3DUI.prototype = {
            }
 
 
-           $( ".icn3d-accordion" ).accordion(me.closeAc);
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -4672,7 +4672,7 @@ iCn3DUI.prototype = {
            }
 
 
-           $( ".icn3d-accordion" ).accordion(me.closeAc);
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -4706,7 +4706,7 @@ iCn3DUI.prototype = {
            }
 
 
-           $( ".icn3d-accordion" ).accordion(me.closeAc);
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -4751,7 +4751,7 @@ iCn3DUI.prototype = {
              reader.readAsText(file);
            }
 
-           $( ".icn3d-accordion" ).accordion(me.closeAc);
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -4798,7 +4798,7 @@ iCn3DUI.prototype = {
              reader.readAsText(file);
            }
 
-           $( ".icn3d-accordion" ).accordion(me.closeAc);
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -4844,7 +4844,7 @@ iCn3DUI.prototype = {
              reader.readAsText(file);
            }
 
-           $( ".icn3d-accordion" ).accordion(me.closeAc);
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -4890,7 +4890,7 @@ iCn3DUI.prototype = {
              reader.readAsText(file);
            }
 
-           $( ".icn3d-accordion" ).accordion(me.closeAc);
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -4914,7 +4914,7 @@ iCn3DUI.prototype = {
 
            me.downloadUrl(url, type);
 
-           $( ".icn3d-accordion" ).accordion(me.closeAc);
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -4993,7 +4993,7 @@ iCn3DUI.prototype = {
              reader.readAsText(file);
            }
 
-           $( ".icn3d-accordion" ).accordion(me.closeAc);
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -5005,7 +5005,7 @@ iCn3DUI.prototype = {
            me.setOption("color", $("#" + me.pre + "colorcustom").val());
            me.setLogCmd("color " + $("#" + me.pre + "colorcustom").val(), true);
 
-           $( ".icn3d-accordion" ).accordion(me.closeAc);
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -5027,7 +5027,7 @@ iCn3DUI.prototype = {
 
             me.setLogCmd(select, true);
 
-           $( ".icn3d-accordion" ).accordion(me.closeAc);
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
 
         $("#" + me.pre + "sphereExport").click(function(e) {
@@ -5044,7 +5044,7 @@ iCn3DUI.prototype = {
 
             me.setLogCmd("export pairs in the sphere", false);
 
-           $( ".icn3d-accordion" ).accordion(me.closeAc);
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -5064,7 +5064,7 @@ iCn3DUI.prototype = {
 
            me.setLogCmd(select, true);
 
-           $( ".icn3d-accordion" ).accordion(me.closeAc);
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
 
         $("#" + me.pre + "hbondExport").click(function(e) {
@@ -5081,7 +5081,7 @@ iCn3DUI.prototype = {
 
            me.setLogCmd("export hbond pairs", false);
 
-           $( ".icn3d-accordion" ).accordion(me.closeAc);
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -5121,7 +5121,7 @@ iCn3DUI.prototype = {
              me.icn3d.draw();
            }
 
-           $( ".icn3d-accordion" ).accordion(me.closeAc);
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -5156,7 +5156,7 @@ iCn3DUI.prototype = {
 
              me.icn3d.draw();
 
-           $( ".icn3d-accordion" ).accordion(me.closeAc);
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -5183,7 +5183,7 @@ iCn3DUI.prototype = {
              me.icn3d.draw();
            }
 
-           $( ".icn3d-accordion" ).accordion(me.closeAc);
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -5226,7 +5226,7 @@ iCn3DUI.prototype = {
              me.icn3d.draw();
            }
 
-           $( ".icn3d-accordion" ).accordion(me.closeAc);
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -5267,7 +5267,7 @@ iCn3DUI.prototype = {
              me.icn3d.pk = 2;
            }
 
-           $( ".icn3d-accordion" ).accordion(me.closeAc);
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -5292,7 +5292,7 @@ iCn3DUI.prototype = {
 
             me.icn3d.draw();
 
-           //$( ".icn3d-accordion" ).accordion(me.closeAc);
+           ////$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
 
         $("#" + me.pre + "apply_thickness_style").click(function(e) {
@@ -5315,7 +5315,7 @@ iCn3DUI.prototype = {
 
             me.icn3d.draw();
 
-           //$( ".icn3d-accordion" ).accordion(me.closeAc);
+           ////$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -5340,7 +5340,7 @@ iCn3DUI.prototype = {
             me.removeHl2D();
             me.removeHlMenus();
 
-           $( ".icn3d-accordion" ).accordion(me.closeAc);
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -5461,7 +5461,7 @@ iCn3DUI.prototype = {
 
            me.saveSelection(name, name);
 
-           $( ".icn3d-accordion" ).accordion(me.closeAc);
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
 
         $(document).on("click", "#" + me.pre + "seq_saveselection2", function(e) {
@@ -5478,7 +5478,7 @@ iCn3DUI.prototype = {
 
            me.saveSelection(name, name);
 
-           $( ".icn3d-accordion" ).accordion(me.closeAc);
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -5497,7 +5497,7 @@ iCn3DUI.prototype = {
 
             me.saveSelection(name, name);
 
-           $( ".icn3d-accordion" ).accordion(me.closeAc);
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
@@ -5509,7 +5509,7 @@ iCn3DUI.prototype = {
             me.setLogCmd('output selection', true);
             me.outputSelection();
 
-           $( ".icn3d-accordion" ).accordion(me.closeAc);
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
 
