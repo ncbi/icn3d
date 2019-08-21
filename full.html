@@ -141,6 +141,14 @@
       simplemenu = false;
     }
 
+    var mobilemenu = params.mobilemenu;
+    if(mobilemenu == 'true' || mobilemenu == '1') {
+      mobilemenu = true;
+    }
+    else if(mobilemenu === undefined || mobilemenu == 'false' || mobilemenu == '0') {
+      mobilemenu = false;
+    }
+
     var closepopup = params.closepopup;
     if(closepopup == 'true' || closepopup == '1') {
       closepopup = true;
@@ -233,6 +241,7 @@
               show2d: show2d,
               showsets: showsets,
               simplemenu: simplemenu,
+              mobilemenu: mobilemenu,
               closepopup: closepopup,
               command: command
           };
@@ -301,6 +310,7 @@
               show2d: show2d,
               showsets: showsets,
               simplemenu: simplemenu,
+              mobilemenu: mobilemenu,
               closepopup: closepopup,
               align: align,
               command: command

@@ -1,6 +1,6 @@
 {
   "name": "icn3d",
-  "version": "2.7.13",
+  "version": "2.7.14",
   "description": "iCn3D Structure Viewer",
   "main": "index.html",
   "scripts": {
@@ -22,7 +22,7 @@
   "dependencies": {
     "jquery": "~3.4.0",
     "jquery-ui": "components/jqueryui.git#1.12.1",
-    "three": "~0.99.0"
+    "three": "~0.107.0"
   },
   "devDependencies": {
     "del": "^2.2.0",

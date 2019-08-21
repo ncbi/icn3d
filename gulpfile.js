@@ -26,7 +26,7 @@ gulp.task('libs-three',
             "node_modules/three/build/three.min.js"
         ])
         .pipe(gulp.dest(dist + '/lib'))
-        .pipe(rename('three_0.99.0.min.js'))
+        .pipe(rename('three_0.107.0.min.js'))
         .pipe(gulp.dest(dist + '/lib'));
   });
 
