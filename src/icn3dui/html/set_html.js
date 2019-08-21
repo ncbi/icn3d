@@ -116,7 +116,7 @@ iCn3DUI.prototype.setTopMenusHtmlMobile = function (id) { var me = this;
     html += "  <div id='" + me.pre + "title' class='icn3d-commandTitle' style='font-size:1.2em; font-weight:normal; position:absolute; z-index:1; float:left; display:block; margin: 12px 0px 0px 40px; color:" + me.GREYD + "; width:" + (me.WIDTH - 40).toString() + "px'></div>";
     html += "  <div id='" + me.pre + "viewer' style='position:relative; width:100%; height:100%; background-color: " + me.GREYD + ";'>";
     html += "   <div id='" + me.pre + "mnLogSection'>";
-    html += "    <div style='height: " + me.MENU_HEIGHT + "px;'></div>";
+    html += "    <div style='height: " + me.LOG_HEIGHT + "px;'></div>";
     html += "   </div>";
 
     if(me.cfg.mmtfid === undefined) {
@@ -198,7 +198,7 @@ iCn3DUI.prototype.setTopMenusHtml = function (id) { var me = this;
     html += "  <div id='" + me.pre + "title' class='icn3d-commandTitle' style='font-size:1.2em; font-weight:normal; position:absolute; z-index:1; float:left; display:table-row; margin: 85px 0px 0px 5px; color:" + me.GREYD + "; width:" + me.WIDTH + "px'></div>";
     html += "  <div id='" + me.pre + "viewer' style='position:relative; width:100%; height:100%; background-color: " + me.GREYD + ";'>";
     html += "   <div id='" + me.pre + "mnLogSection'>";
-    html += "    <div style='height: " + me.MENU_HEIGHT + "px;'></div>";
+    html += "    <div style='height: " + me.LOG_HEIGHT + "px;'></div>";
 //        html += "    <div style='height: " + me.MENU_HEIGHT + "px;'></div>";
 
     html += "   </div>";
@@ -1250,7 +1250,7 @@ iCn3DUI.prototype.setDialogs = function() { var me = this;
     html += "<div id='" + me.pre + "dl_blast_rep_id' style='max-width:500px;'>";
     html += "Enter a Sequence ID (or FASTA sequence) and the aligned Structure ID, which can be found using the <a href='https://blast.ncbi.nlm.nih.gov/Blast.cgi?PROGRAM=blastp&PAGE_TYPE=BlastSearch&DATABASE=pdb' target='_blank'>BLAST</a> search against the pdb database with the Sequence ID or FASTA sequence as input.<br><br> ";
     html += "<b>Sequence ID</b> (NCBI protein accession of a sequence): <input type='text' id='" + me.pre + "query_id' value='NP_001108451.1' size=8><br> ";
-    html += "or FASTA sequence: <br><textarea id='" + me.pre + "query_fasta' rows='5' style='width: 100%; height: " + (me.MENU_HEIGHT) + "px; padding: 0px; border: 0px;'></textarea><br><br>";
+    html += "or FASTA sequence: <br><textarea id='" + me.pre + "query_fasta' rows='5' style='width: 100%; height: " + (me.LOG_HEIGHT) + "px; padding: 0px; border: 0px;'></textarea><br><br>";
     html += "<b>Structure ID</b> (NCBI protein accession of a chain of a 3D structure): <input type='text' id='" + me.pre + "blast_rep_id' value='1TSR_A' size=8><br> ";
     html += "<button id='" + me.pre + "reload_blast_rep_id'>Load</button>";
     html += "</div>";
@@ -1450,7 +1450,7 @@ iCn3DUI.prototype.setDialogs = function() { var me = this;
     html += "<button id='" + me.pre + "addtrack_button1'>Add Track</button>";
     html += "      </div>";
     html += "      <div id='" + me.pre + "tracktab2'>";
-    html += "FASTA sequence: <br><textarea id='" + me.pre + "track_fasta' rows='5' style='width: 100%; height: " + (2*me.MENU_HEIGHT) + "px; padding: 0px; border: 0px;'></textarea><br><br>";
+    html += "FASTA sequence: <br><textarea id='" + me.pre + "track_fasta' rows='5' style='width: 100%; height: " + (2*me.LOG_HEIGHT) + "px; padding: 0px; border: 0px;'></textarea><br><br>";
     html += "<button id='" + me.pre + "addtrack_button2'>Add Track</button>";
     html += "      </div>";
     html += "      <div id='" + me.pre + "tracktab3'>";

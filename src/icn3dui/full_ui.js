@@ -39,8 +39,9 @@ var iCn3DUI = function(cfg) {
         me.MENU_HEIGHT = 40;
     }
 
+    me.LOG_HEIGHT = 40;
+
     // used to set the position for the log/command textarea
-    //me.MENU_WIDTH = 690;
     me.MENU_WIDTH = 750;
 
     me.LESSWIDTH = 20;
@@ -50,7 +51,7 @@ var iCn3DUI = function(cfg) {
     me.ROT_DIR = 'right';
     me.bHideSelection = true;
 
-    me.CMD_HEIGHT = 0.8*me.MENU_HEIGHT;
+    me.CMD_HEIGHT = 0.8*me.LOG_HEIGHT;
 
     //me.EXTRAHEIGHT = 2*me.MENU_HEIGHT + me.CMD_HEIGHT;
     me.EXTRAHEIGHT = me.MENU_HEIGHT + me.CMD_HEIGHT;
