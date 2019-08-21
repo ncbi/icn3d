@@ -123,7 +123,8 @@ iCn3D.prototype.setColorByOptions = function (options, atoms, bUseInputColor) {
                 }
             }
             break;
-        case 'secondary structure':
+
+        case 'secondary structure green':
             this.sheetcolor = 'green';
             for (var i in atoms) {
                 var atom = this.atoms[i];
@@ -136,6 +137,7 @@ iCn3D.prototype.setColorByOptions = function (options, atoms, bUseInputColor) {
             break;
 
         case 'secondary structure yellow':
+        case 'secondary structure':
             this.sheetcolor = 'yellow';
             for (var i in atoms) {
                 var atom = this.atoms[i];

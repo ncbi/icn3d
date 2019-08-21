@@ -3027,8 +3027,8 @@ iCn3DUI.prototype = {
         $("#" + me.pre + "mn4_clrSSGreen").click(function (e) {
            me.icn3d.sheetcolor = 'green';
 
-           me.setOption('color', 'secondary structure');
-           me.setLogCmd('color secondary structure', true);
+           me.setOption('color', 'secondary structure green');
+           me.setLogCmd('color secondary structure green', true);
 
            //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
