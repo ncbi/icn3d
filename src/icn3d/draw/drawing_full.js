@@ -225,17 +225,6 @@ iCn3D.prototype.createSurfaceRepresentation = function (atoms, type, wireframe, 
             side: THREE.DoubleSide
         }));
 
-        var mesh = new THREE.Mesh(geometry, new THREE.MeshPhongMaterial({
-            specular: this.frac,
-            shininess: 10, //30,
-            emissive: 0x000000,
-            vertexColors: THREE.VertexColors,
-            wireframe: wireframe,
-            opacity: opacity,
-            transparent: true,
-            side: THREE.DoubleSide
-        }));
-
         //http://www.html5gamedevs.com/topic/7288-threejs-transparency-bug-or-limitation-or-what/
         //mesh.renderOrder = 0; // default 0
         var sum = new THREE.Vector3(0,0,0);
