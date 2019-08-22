@@ -234,6 +234,9 @@ iCn3DUI.prototype.loadPdbDataBase = function(data, calphaonly) { var me = this;
               } // for each residue
           } // for each chain
         } // if no error
+        else {
+            console.log("DSSP calculation had a problem with this structure...");
+        }
 
         me.loadPdbDataRender();
 

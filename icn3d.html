@@ -653,7 +653,7 @@ This page describes Web APIs and how to embed iCn3D in your html page. Other det
     });&lt;/script&gt;
     </pre>
     </li>
-    <li>Advanced UI:<br>
+    <li>Advanced UI: (To embed multiple iCn3D viewers, see the <a href="view-source:https://www.ncbi.nlm.nih.gov/Structure/icn3d/example.html">source code</a> of the <a href="https://www.ncbi.nlm.nih.gov/Structure/icn3d/example.html">example page</a> for reference)<br>
     <pre>  &lt;script type="text/javascript"&gt;
     $( document ).ready(function() {
           var options = {};
@@ -667,7 +667,9 @@ This page describes Web APIs and how to embed iCn3D in your html page. Other det
               height: '100%',
               resize: true,
               rotate: 'right',
-              showmenu: true
+              mobilemenu: true,
+              showcommand: false,
+              showtitle: false
           };
           cfg['pdbid'] = '1tup';
           if(Object.keys(options).length > 0) cfg['options'] = options;
@@ -1998,6 +2000,9 @@ Update the highlight of sequences in the annotation window according to the curr
 
 <a name="log"></a>
 <h2>Change Log:<img src="https://www.ncbi.nlm.nih.gov/Structure/IMG/spacer.gif" width="25" height="1" border="0"><a href="#Top"><img src="https://www.ncbi.nlm.nih.gov/Structure/IMG/arrowup_blue.gif" width="12" height="12" border="0" alt="back to top"></a></h2>
+<a href="https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.7.15.zip">icn3d-2.7.15</a> was release on August 21, 2019. Added an example page to embed multiple iCn3D viewers in one page.
+<br><br>
+
 <a href="https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.7.14.zip">icn3d-2.7.14</a> was release on August 21, 2019. Enabled the mobile style menu with the URL parameter "mobilemenu=1".
 <br><br>
 

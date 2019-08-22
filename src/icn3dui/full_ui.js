@@ -15,7 +15,7 @@ if (!$.ui.dialog.prototype._makeDraggableBase) {
 var iCn3DUI = function(cfg) {
     var me = this;
 
-    this.REVISION = '2.7.14';
+    this.REVISION = '2.7.15';
 
     me.bFullUi = true;
 
@@ -138,7 +138,6 @@ var iCn3DUI = function(cfg) {
     me.init();
 
     me.modifyIcn3d();
-
 
 };
 
@@ -329,6 +328,13 @@ iCn3DUI.prototype = {
 
     modifyIcn3dshowPicking: function() {var me = this;
         iCn3D.prototype.showPicking = function(atom, x, y) {
+          var idArray = this.id.split('_'); // id: div0_canvas
+          me.pre = idArray[0] + "_";
+
+          if(window.icn3duiHash !== undefined && window.icn3duiHash.hasOwnProperty(idArray[0])) { // for multiple 3D display
+              me = window.icn3duiHash[idArray[0]];
+          }
+
           if(me.cfg.cid !== undefined) {
               this.pk = 1; // atom
           }
@@ -347,7 +353,7 @@ iCn3DUI.prototype = {
 
             var text = (this.pk == 1) ? atom.resn + atom.resi + '@' + atom.name : atom.resn + atom.resi;
             //if(me.cfg.align !== undefined) {
-            if(Object.keys(me.icn3d.structures).length > 1) {
+            if(me.icn3d.structures !== undefined && Object.keys(me.icn3d.structures).length > 1) {
                 text = atom.structure + ' ' + text;
                 $("#" + me.pre + "popup").css("width", "100px");
             }
@@ -360,8 +366,10 @@ iCn3DUI.prototype = {
           }
           else {
               // highlight the sequence background
-              var idArray = this.id.split('_'); // id: div0_canvas
-              me.pre = idArray[0] + "_";
+              //var idArray = this.id.split('_'); // id: div0_canvas
+              //me.pre = idArray[0] + "_";
+
+              //me = icn3duiHash[idArray[0]];
 
               me.updateHlAll();
 
@@ -446,24 +454,6 @@ iCn3DUI.prototype = {
         if(me.isSessionStorageSupported()) me.getCommandsBeforeCrash();
 
         //me.setViewerWidthHeight();
-
-/*
-        var width, height;
-
-        if(me.cfg.width.toString().indexOf('%') !== -1) {
-          width = me.WIDTH * me.cfg.width.substr(0, me.cfg.width.toString().indexOf('%')) / 100.0 - me.LESSWIDTH;
-        }
-        else {
-          width = me.cfg.width;
-        }
-
-        if(me.cfg.height.toString().indexOf('%') !== -1) {
-          height = me.HEIGHT * me.cfg.height.substr(0, me.cfg.height.toString().indexOf('%')) / 100.0 - me.EXTRAHEIGHT - me.LESSHEIGHT;
-        }
-        else {
-          height = me.cfg.height;
-        }
-*/
 
         var width = me.WIDTH; // - me.LESSWIDTH_RESIZE;
         var height = me.HEIGHT; // - me.LESSHEIGHT - me.EXTRAHEIGHT;
