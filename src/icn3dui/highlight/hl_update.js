@@ -73,6 +73,9 @@ iCn3DUI.prototype.removeHlMenus = function() { var me = this;
 };
 
 iCn3DUI.prototype.updateHlAll = function(commandnameArray, bSetMenu, bUnion, bForceHighlight) { var me = this;
+       // update the previously highlisghted atoms for switching between all and selection
+       me.icn3d.prevHighlightAtoms = me.icn3d.cloneHash(me.icn3d.hAtoms);
+
        me.updateHlObjects(bForceHighlight);
 
        if(commandnameArray !== undefined) {
@@ -92,7 +95,8 @@ iCn3DUI.prototype.updateHlObjects = function(bForceHighlight) { var me = this;
        me.icn3d.removeHlObjects();
 
        if(Object.keys(me.icn3d.hAtoms).length < Object.keys(me.icn3d.atoms).length || bForceHighlight) {
-           me.icn3d.addHlObjects();
+          me.icn3d.addHlObjects();
+          me.setMode('selection');
        }
 };
 

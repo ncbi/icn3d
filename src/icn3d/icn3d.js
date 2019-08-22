@@ -216,11 +216,9 @@ var iCn3D = function (id) {
     this.quaternion = new THREE.Quaternion(0,0,0,1);
 
     var me = this;
-    this.container.bind('contextmn', function (e) {
+    this.container.bind('contextmenu', function (e) {
         e.preventDefault();
     });
-
-    //me.switchHighlightLevel();
 
     // key event has to use the document because it requires the focus
     me.typetext = false;
@@ -392,11 +390,11 @@ var iCn3D = function (id) {
         var bClick = false;
         me.rayCaster(e, bClick);
 
-        if(me.isDragging) {
+        //if(me.isDragging) {
             me.controls.handleResize();
             me.controls.update();
             me.render();
-        }
+        //}
     });
     this.container.bind('mousewheel', function (e) {
         e.preventDefault();
@@ -420,6 +418,7 @@ var iCn3D = function (id) {
 
         me.render();
     });
+
 };
 
 iCn3D.prototype = {
@@ -520,6 +519,7 @@ iCn3D.prototype = {
                     }
                     else {
                       me.showPicking(atom, popupX, popupY);
+                      //me.showPicking(atom, x, y);
                     }
                 }
                 else {

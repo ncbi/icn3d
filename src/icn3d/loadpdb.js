@@ -37,6 +37,8 @@ iCn3D.prototype.loadPDB = function (src) {
         var record = line.substr(0, 6);
 
         if (record === 'HEADER') {
+            this.bSecondaryStructure = true;
+
             id = line.substr(62, 4);
 
             this.molTitle = '';
