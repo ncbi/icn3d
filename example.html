@@ -1,0 +1,72 @@
+<!DOCTYPE html><html lang="en"><head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+<meta name="description" content="iCn3D Structure Viewer">
+<meta name="ncbi_db" content="structure"><meta name="ncbi_app" content="iCn3D"><meta name="ncbi_pdid" content="advanced">
+<meta name="keywords" content="NCBI, Structure, JavaScript, iCn3D, 3D, Viewer, WebGL, three.js, sequence, chemical">
+<meta name="robots" content="index,follow,noarchive">
+<title>iCn3D: Web-based 3D Structure Viewer</title>
+</head>
+<body>
+<h3 style="font-family: Verdana, Arial, Helvetica, sans-serif;">Embed Multiple iCn3D Viewers in One Page</h3>
+  <div id="div0"></div><br>
+  <div id="div1"></div><br>
+  <div id="div2"></div><br>
+  <div id="div3"></div><br>
+  <div id="div4"></div><br>
+
+<link rel="stylesheet" href="https://www.ncbi.nlm.nih.gov/Structure/icn3d/lib/jquery-ui.min.css">
+<link rel="stylesheet" href="https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d_full_ui.css">
+<script src="https://www.ncbi.nlm.nih.gov/Structure/icn3d/lib/jquery.min.js"></script>
+<script src="https://www.ncbi.nlm.nih.gov/Structure/icn3d/lib/jquery-ui.min.js"></script>
+<script src="https://www.ncbi.nlm.nih.gov/Structure/icn3d/lib/three.min.js"></script>
+<script src="https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d_full_ui.min.js"></script>
+
+  <script type="text/javascript">
+    $( document ).ready(function() {
+      // use the FIXED name "icn3duiHash", which is used in iCn3DUI
+      window.icn3duiHash = {};
+
+      function setupViewer(idName, idValue, divid) {
+        var options = {};
+
+        //Options are available at: https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d.html#DisplayOptions
+        options['chemicalbinding'] = 'show';
+
+        var cfg = {
+          divid: divid,
+          width: 200,
+          height: 200,
+          mobilemenu: true,
+          showcommand: false,
+          showtitle: false
+        };
+        if(idName !== '') cfg[idName] = idValue;
+
+        if(Object.keys(options).length > 0) cfg['options'] = options;
+
+        var icn3dui = new iCn3DUI(cfg);
+        icn3dui.show3DStructure();
+        icn3duiHash[divid] = icn3dui;
+      }
+
+      setupViewer('pdbid', '1tup', 'div0');
+
+      setupViewer('pdbid', '3gvu', 'div1');
+
+      setupViewer('pdbid', '1gpk', 'div2');
+
+      setupViewer('pdbid', '1top', 'div3');
+
+      // load pdb from URL
+      var urlname = 'https://www.ncbi.nlm.nih.gov/Structure/icn3d/1GPK_sim.pdb';
+      var urltype = 'pdb';
+      urlname = decodeURIComponent(urlname);
+      setupViewer('url', urltype + '|' + urlname, 'div4');
+    }); // document ready
+
+  </script>
+
+</body></html>
+

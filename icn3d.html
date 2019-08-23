@@ -653,7 +653,7 @@ This page describes Web APIs and how to embed iCn3D in your html page. Other det
     });&lt;/script&gt;
     </pre>
     </li>
-    <li>Advanced UI: (To embed multiple iCn3D viewers, see the <a href="view-source:https://www.ncbi.nlm.nih.gov/Structure/icn3d/example.html">source code</a> of the <a href="https://www.ncbi.nlm.nih.gov/Structure/icn3d/example.html">example page</a> for reference)<br>
+    <li>Advanced UI: (To embed multiple iCn3D viewers, see the source code of the <a href="https://www.ncbi.nlm.nih.gov/Structure/icn3d/example.html">example page</a> for reference)<br>
     <pre>  &lt;script type="text/javascript"&gt;
     $( document ).ready(function() {
           var options = {};
@@ -878,7 +878,9 @@ This page describes Web APIs and how to embed iCn3D in your html page. Other det
 <tr><td valign='top'><span class="indent">Outline:</span></td>              <td valign='top'>set highlight style outline</td> <td valign='top'>me.icn3d.bHighlight = 1;</td></tr>
 <tr><td valign='top'><span class="indent">3D Objects:</span></td>         <td valign='top'>set highlight style 3d</td> <td valign='top'>me.icn3d.bHighlight = 2;</td></tr>
 
-<tr><td colspan="3"><br>l) Switch Highlight Level</td> </tr>
+<tr><td valign='top'>l) Clear Highlight</td><td valign='top'>clear selection</td> <td valign='top'><a href="#selectByCommand">me.icn3d.removeHlObjects(); me.icn3d.bShowHighlight = false;</a></td></tr>
+
+<tr><td colspan="3"><br>m) Switch Highlight Level</td> </tr>
 <tr><td valign='top'><span class="indent">&uarr;:</span></td>              <td valign='top'>highlight level up</td> <td valign='top'><a href="#switchHighlightLevelUp">switchHighlightLevelUp<a></td></tr>
 <tr><td valign='top'><span class="indent">&darr;:</span></td>         <td valign='top'>highlight level down</td> <td valign='top'><a href="#switchHighlightLevelDown">switchHighlightLevelDown</a></td></tr>
 
