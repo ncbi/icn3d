@@ -451,10 +451,12 @@ iCn3DUI.prototype.setMenu2_base = function() { var me = this;
 
     html += me.getRadio('mn2_hl_style', 'mn2_hl_styleOutline', 'Outline', true);
     html += me.getRadio('mn2_hl_style', 'mn2_hl_styleObject', '3D Objects');
-    html += me.getRadio('mn2_hl_style', 'mn2_hl_styleNone', 'No Highlight');
+    //html += me.getRadio('mn2_hl_style', 'mn2_hl_styleNone', 'No Highlight');
 
     html += "        </ul>";
     html += "      </li>";
+
+    html += me.getLink('mn2_hl_styleNone', 'Clear Highlight');
 
     //html += me.getLink('toggleHighlight2', 'Toggle Highlight');
 
