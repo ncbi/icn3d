@@ -203,31 +203,34 @@ iCn3D.prototype.drawSymmetryMatesNoInstancing = function() {
       // skip itself
       if(mat.equals(identity)) continue;
 
-      var symmetryMate = this.mdl.clone();
-      symmetryMate.applyMatrix(mat);
+      var symmetryMate;
 
-      this.mdl.add(symmetryMate);
+      if(this.mdl !== undefined) {
+          symmetryMate = this.mdl.clone();
+          symmetryMate.applyMatrix(mat);
 
-      symmetryMate = this.mdlImpostor.clone();
-      symmetryMate.applyMatrix(mat);
-
-      //symmetryMate.onBeforeRender = this.onBeforeRender;
-      for(var j = symmetryMate.children.length - 1; j >= 0; j--) {
-           var mesh = symmetryMate.children[j];
-           mesh.onBeforeRender = this.onBeforeRender;
+          this.mdl.add(symmetryMate);
       }
 
-      this.mdlImpostor.add(symmetryMate);
+      if(this.mdlImpostor !== undefined) {
+          symmetryMate = this.mdlImpostor.clone();
+          symmetryMate.applyMatrix(mat);
 
-      //symmetryMate = this.mdlPicking.clone();
-      //symmetryMate.applyMatrix(mat);
+          //symmetryMate.onBeforeRender = this.onBeforeRender;
+          for(var j = symmetryMate.children.length - 1; j >= 0; j--) {
+               var mesh = symmetryMate.children[j];
+               mesh.onBeforeRender = this.onBeforeRender;
+          }
 
-      //this.mdlPicking.add(symmetryMate);
+          this.mdlImpostor.add(symmetryMate);
+      }
 
-      symmetryMate = this.mdl_ghost.clone();
-      symmetryMate.applyMatrix(mat);
+      if(this.mdl_ghost !== undefined) {
+          symmetryMate = this.mdl_ghost.clone();
+          symmetryMate.applyMatrix(mat);
 
-      this.mdl_ghost.add(symmetryMate);
+          this.mdl_ghost.add(symmetryMate);
+      }
 
       var center = this.center.clone();
       center.applyMatrix4(mat);
