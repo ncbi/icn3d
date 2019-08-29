@@ -1,4 +1,6 @@
 ## Change Log
+[icn3d-2.7.16](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.7.16.zip) was release on August 29, 2019. Fixed the transparent display by switching three.js from version 107 to 103. 
+
 [icn3d-2.7.15](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.7.15.zip) was release on August 21, 2019. Added an example page to embed multiple iCn3D viewers in one page. 
 
 [icn3d-2.7.14](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.7.14.zip) was release on August 21, 2019. Enabled the mobile style menu with the URL parameter "mobilemenu=1". 

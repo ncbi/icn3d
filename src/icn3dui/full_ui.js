@@ -15,7 +15,7 @@ if (!$.ui.dialog.prototype._makeDraggableBase) {
 var iCn3DUI = function(cfg) {
     var me = this;
 
-    this.REVISION = '2.7.15';
+    this.REVISION = '2.7.16';
 
     me.bFullUi = true;
 

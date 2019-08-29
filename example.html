@@ -7,14 +7,21 @@
 <meta name="keywords" content="NCBI, Structure, JavaScript, iCn3D, 3D, Viewer, WebGL, three.js, sequence, chemical">
 <meta name="robots" content="index,follow,noarchive">
 <title>iCn3D: Web-based 3D Structure Viewer</title>
+
+<style type="text/css">
+.gallery {float:left; padding: 5px; margin: 10px;}
+
+body {font-family: Verdana, Arial, Helvetica, sans-serif;}
+</style>
+
 </head>
 <body>
-<h3 style="font-family: Verdana, Arial, Helvetica, sans-serif;">Embed Multiple iCn3D Viewers in One Page</h3>
-  <div id="div0"></div><br>
-  <div id="div1"></div><br>
-  <div id="div2"></div><br>
-  <div id="div3"></div><br>
-  <div id="div4"></div><br>
+<h3 style="text-align:center">Embed Multiple iCn3D Viewers in One Page</h3>
+  <div id="div0" class="gallery"></div>
+  <div id="div1" class="gallery"></div>
+  <div id="div2" class="gallery"></div>
+  <div id="div3" class="gallery"></div>
+  <div id="div4" class="gallery"></div>
 
 <link rel="stylesheet" href="https://www.ncbi.nlm.nih.gov/Structure/icn3d/lib/jquery-ui.min.css">
 <link rel="stylesheet" href="https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d_full_ui.css">
@@ -36,8 +43,8 @@
 
         var cfg = {
           divid: divid,
-          width: 200,
-          height: 200,
+          width: 300,
+          height: 300,
           mobilemenu: true,
           showcommand: false,
           showtitle: false
@@ -53,7 +60,7 @@
 
       setupViewer('pdbid', '1tup', 'div0');
 
-      setupViewer('pdbid', '3gvu', 'div1');
+      setupViewer('pdbid', '1kq2', 'div1');
 
       setupViewer('pdbid', '1gpk', 'div2');
 

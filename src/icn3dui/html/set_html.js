@@ -1250,7 +1250,7 @@ iCn3DUI.prototype.setDialogs = function() { var me = this;
     html += "</div>";
 
     html += "<div id='" + me.pre + "dl_blast_rep_id' style='max-width:500px;'>";
-    html += "Enter a Sequence ID (or FASTA sequence) and the aligned Structure ID, which can be found using the <a href='https://blast.ncbi.nlm.nih.gov/Blast.cgi?PROGRAM=blastp&PAGE_TYPE=BlastSearch&DATABASE=pdb' target='_blank'>BLAST</a> search against the pdb database with the Sequence ID or FASTA sequence as input.<br><br> ";
+    html += "Enter a Sequence ID (or FASTA sequence) and the aligned Structure ID, which can be found using the <a href='https://blast.ncbi.nlm.nih.gov/Blast.cgi?PROGRAM=blastp&PAGE_TYPE=BlastSearch&DATABASE=pdb_v5' target='_blank'>BLAST</a> search against the pdb database with the Sequence ID or FASTA sequence as input.<br><br> ";
     html += "<b>Sequence ID</b> (NCBI protein accession of a sequence): <input type='text' id='" + me.pre + "query_id' value='NP_001108451.1' size=8><br> ";
     html += "or FASTA sequence: <br><textarea id='" + me.pre + "query_fasta' rows='5' style='width: 100%; height: " + (me.LOG_HEIGHT) + "px; padding: 0px; border: 0px;'></textarea><br><br>";
     html += "<b>Structure ID</b> (NCBI protein accession of a chain of a 3D structure): <input type='text' id='" + me.pre + "blast_rep_id' value='1TSR_A' size=8><br> ";
