@@ -1564,43 +1564,33 @@ iCn3DUI.prototype = {
       }
     },
 
-    shareLink: function() { var me = this;
+    shareLink: function(bPngHtml) { var me = this;
            var url = me.shareLinkUrl();
 
-           if(me.bInputfile) {
-               alert("Share Link does NOT work when the data is from custom files. Please save 'iCn3D PNG Image' in the File menu and open it in iCn3D.");
-               return;
+           if(bPngHtml) url += "&random=" + parseInt(Math.random() * 1000); // generate a new shorten URL and thus image name everytime
+
+           var inputid = (me.inputid) ? me.inputid : "custom";
+
+           if(!bPngHtml) {
+               if(me.bInputfile) {
+                   alert("Share Link does NOT work when the data is from custom files. Please save 'iCn3D PNG Image' in the File menu and open it in iCn3D.");
+                   return;
+               }
+
+               if(url.length > 4000) {
+                   alert("The url is more than 4000 characters and may not work. Please save 'iCn3D PNG Image' or 'State File' and open them in iCn3D.");
+                   return;
+               }
+
+
+               me.setLogCmd("share link: " + url, false);
            }
-
-            if(url.length > 4000) {
-               alert("The url is more than 4000 characters and may not work. Please save 'iCn3D PNG Image' or 'State File' and open them in iCn3D.");
-               return;
+           else {
+               if(me.bInputfile || url.length > 4000) {
+                   me.saveFile(inputid + '_image_icn3d_loadable.png', 'png');
+                   return;
+               }
            }
-
-
-           me.setLogCmd("share link: " + url, false);
-
-           //window.open(url, '_blank');
-
-/*
-           //https://gist.github.com/hayageek/4584508
-           var request = gapi.client.urlshortener.url.insert({
-                'resource': {
-                  'longUrl': url
-                }
-           });
-           request.execute(function(response) {
-                var shorturl = 'Problem in getting shortened URL';
-                if(response.id !== undefined) {
-                    shorturl = response.id;
-                }
-
-                $("#" + me.pre + "ori_url").val(url);
-                $("#" + me.pre + "short_url").val(shorturl);
-
-                me.openDialog(me.pre + 'dl_copyurl', 'Copy a Share Link URL');
-           });
-*/
 
            //https://firebase.google.com/docs/dynamic-links/rest
            //Web API Key: AIzaSyBxl9CgM0dY5lagHL4UOhEpLWE1fuwdnvc
@@ -1616,12 +1606,30 @@ iCn3DUI.prototype = {
                 var shorturl = 'Problem in getting shortened URL';
                 if(data.shortLink !== undefined) {
                     shorturl = data.shortLink;
+
+                    if(bPngHtml) { // save png and corresponding html
+                        var strArray = shorturl.split("/");
+                        var shortName = strArray[strArray.length - 1];
+                        me.saveFile(inputid + '-' + shortName + '.png', 'png');
+
+                        var text = '<div style="float:left; border: solid 1px #0000ff; padding: 5px; margin: 10px; text-align:center;">';
+                        text += '<a href="https://icn3d.page.link/' + shortName + '" target="_blank">';
+                        text += '<img style="height:300px" src ="' + inputid + '-' + shortName + '.png"><br>PDB ' + inputid;
+                        text += '</a>';
+                        text += '</div>';
+
+                        me.saveFile(inputid + '-' + shortName + '.html', 'html', text);
+                    }
+                }
+
+                if(bPngHtml && data.shortLink === undefined) {
+                    me.saveFile(inputid + '_image_icn3d_loadable.png', 'png');
                 }
 
                 $("#" + me.pre + "ori_url").val(url);
                 $("#" + me.pre + "short_url").val(shorturl);
 
-                me.openDialog(me.pre + 'dl_copyurl', 'Copy a Share Link URL');
+                if(!bPngHtml) me.openDialog(me.pre + 'dl_copyurl', 'Copy a Share Link URL');
               },
               error : function(xhr, textStatus, errorThrown ) {
                 var shorturl = 'Problem in getting shortened URL';
@@ -1629,7 +1637,7 @@ iCn3DUI.prototype = {
                 $("#" + me.pre + "ori_url").val(url);
                 $("#" + me.pre + "short_url").val(shorturl);
 
-                me.openDialog(me.pre + 'dl_copyurl', 'Copy a Share Link URL');
+                if(!bPngHtml) me.openDialog(me.pre + 'dl_copyurl', 'Copy a Share Link URL');
               }
            });
     },
@@ -2264,8 +2272,10 @@ iCn3DUI.prototype = {
         $("#" + me.pre + "mn1_exportCanvas").add("#" + me.pre + "saveimage").click(function (e) {
            me.setLogCmd("export canvas", false);
 
-           var file_pref = (me.inputid) ? me.inputid : "custom";
-           me.saveFile(file_pref + '_image_icn3d_loadable.png', 'png');
+           //var file_pref = (me.inputid) ? me.inputid : "custom";
+           //me.saveFile(file_pref + '_image_icn3d_loadable.png', 'png');
+           var bPngHtml = true;
+           me.shareLink(bPngHtml);
 
            //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
