@@ -1858,8 +1858,20 @@ iCn3DUI.prototype = {
         });
     },
 
+    openFullscreen: function(elem) { var me = this;
+      if (elem.requestFullscreen) {
+        elem.requestFullscreen();
+      } else if (elem.mozRequestFullScreen) { /* Firefox */
+        elem.mozRequestFullScreen();
+      } else if (elem.webkitRequestFullscreen) { /* Chrome, Safari and Opera */
+        elem.webkitRequestFullscreen();
+      } else if (elem.msRequestFullscreen) { /* IE/Edge */
+        elem.msRequestFullscreen();
+      }
+    },
+
     clickFullscreen: function() { var me = this;
-        $("#" + me.pre + "fullscreen").add("#" + me.pre + "mn6_fullscreen").click(function(e) {
+        $("#" + me.pre + "mn6_fullscreen").click(function(e) {
            e.preventDefault();
 
            me.setLogCmd("full screen", false);
@@ -1870,6 +1882,14 @@ iCn3DUI.prototype = {
            me.resizeCanvas(me.WIDTH, me.HEIGHT, true);
 
            $("#" + me.pre + "fullscreen").hide();
+        });
+
+        $("#" + me.pre + "fullscreen").click(function(e) {
+           e.preventDefault();
+
+           me.setLogCmd("full screen", false);
+
+           me.openFullscreen($("#" + me.pre + "canvas")[0]);
         });
     },
 
