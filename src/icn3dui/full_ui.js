@@ -1868,6 +1868,8 @@ iCn3DUI.prototype = {
            me.HEIGHT = $( window ).height() - me.EXTRAHEIGHT - me.LESSHEIGHT;
 
            me.resizeCanvas(me.WIDTH, me.HEIGHT, true);
+
+           $("#" + me.pre + "fullscreen").hide();
         });
     },
 
