@@ -1858,6 +1858,19 @@ iCn3DUI.prototype = {
         });
     },
 
+    clickFullscreen: function() { var me = this;
+        $("#" + me.pre + "fullscreen").add("#" + me.pre + "mn6_fullscreen").click(function(e) {
+           e.preventDefault();
+
+           me.setLogCmd("full screen", false);
+
+           me.WIDTH = $( window ).width() - me.LESSWIDTH;
+           me.HEIGHT = $( window ).height() - me.EXTRAHEIGHT - me.LESSHEIGHT;
+
+           me.resizeCanvas(me.WIDTH, me.HEIGHT, true);
+        });
+    },
+
     clickToggle: function() { var me = this;
         $("#" + me.pre + "toggle").add("#" + me.pre + "mn2_toggle").click(function(e) {
            //me.setLogCmd("toggle selection", true);
@@ -5601,6 +5614,7 @@ iCn3DUI.prototype = {
 
         me.clickBack();
         me.clickForward();
+        me.clickFullscreen();
         me.clickToggle();
 
         me.clickHlColorYellow();
