@@ -658,6 +658,7 @@ iCn3DUI.prototype.setMenu2b_base = function() { var me = this;
     html += me.getLink('mn6_forward', 'Redo');
 
     html += me.getLink('mn6_fullscreen', 'Full Screen');
+    html += me.getLink('mn6_exitfullscreen', 'Exit Full Screen');
 
     html += "  <li><br/></li>";
 
