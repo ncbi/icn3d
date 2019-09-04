@@ -661,8 +661,8 @@ iCn3D.prototype = {
         //antialiasing by render twice large:
         //https://stackoverflow.com/questions/17224795/antialiasing-not-working-in-three-js
         this.renderer.setSize(width*this.scaleFactor, height*this.scaleFactor);
-        this.renderer.domElement.style.width = width + "px";
-        this.renderer.domElement.style.height = height + "px";
+        this.renderer.domElement.style.width = width*this.scaleFactor + "px";
+        this.renderer.domElement.style.height = height*this.scaleFactor + "px";
         this.renderer.domElement.width = width*this.scaleFactor;
         this.renderer.domElement.height = height*this.scaleFactor;
 
