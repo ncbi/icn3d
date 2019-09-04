@@ -1891,31 +1891,26 @@ iCn3DUI.prototype = {
            e.preventDefault();
 
            me.setLogCmd("enter full screen", false);
+           me.icn3d.bFullscreen = true;
 
-           me.icn3d.scaleFactor = ($( window ).width() - me.LESSWIDTH) / me.WIDTH;
+           me.WIDTH = $( window ).width();
+           me.HEIGHT = $( window ).height();
 
            me.icn3d.setWidthHeight(me.WIDTH, me.HEIGHT);
 
            me.icn3d.draw();
 
-           //me.WIDTH = $( window ).width() - me.LESSWIDTH;
-           //me.HEIGHT = $( window ).height() - me.EXTRAHEIGHT - me.LESSHEIGHT;
-
            me.openFullscreen($("#" + me.pre + "canvas")[0]);
         });
-
-        //document.addEventListener('fullscreenchange', me.exitHandler);
-        //document.addEventListener('webkitfullscreenchange', me.exitHandler);
-        //document.addEventListener('mozfullscreenchange', me.exitHandler);
-        //document.addEventListener('MSFullscreenChange', me.exitHandler);
 
         $(document).bind('fullscreenchange webkitfullscreenchange mozfullscreenchange msfullscreenchange', function (e) {
             var fullscreenElement = document.fullscreenElement || document.webkitFullscreenElement || document.mozFullscreenElement || document.msFullscreenElement;
 
             if (!fullscreenElement) {
                 me.setLogCmd("exit full screen", false);
+                me.icn3d.bFullscreen = false;
 
-                me.icn3d.scaleFactor = 1.0;
+                me.setViewerWidthHeight();
 
                 me.icn3d.setWidthHeight(me.WIDTH, me.HEIGHT);
 

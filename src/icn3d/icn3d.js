@@ -432,8 +432,14 @@ iCn3D.prototype = {
             y = e.originalEvent.targetTouches[0].pageY;
         }
 
-        var popupX = x - me.container.offset().left;
-        var popupY = y - me.container.offset().top;
+        var left = me.container.offset().left;
+        var top = me.container.offset().top;
+
+        var containerWidth = me.container.width();
+        var containerHeight = me.container.height();
+
+        var popupX = x - left;
+        var popupY = y - top;
 
         //me.isDragging = true;
 
@@ -441,8 +447,8 @@ iCn3D.prototype = {
         //if(me.pk && (e.altKey || e.ctrlKey || e.shiftKey || e.keyCode === 18 || e.keyCode === 16 || e.keyCode === 17 || e.keyCode === 224 || e.keyCode === 91) ) {
         //    me.highlightlevel = me.pk;
 
-            me.mouse.x = ( (x - me.container.offset().left) / me.container.width() ) * 2 - 1;
-            me.mouse.y = - ( (y - me.container.offset().top) / me.container.height() ) * 2 + 1;
+            me.mouse.x = ( popupX / containerWidth ) * 2 - 1;
+            me.mouse.y = - ( popupY / containerHeight ) * 2 + 1;
 
             var mouse3 = new THREE.Vector3();
             mouse3.x = me.mouse.x;
@@ -666,8 +672,9 @@ iCn3D.prototype = {
         this.renderer.domElement.width = width*this.scaleFactor;
         this.renderer.domElement.height = height*this.scaleFactor;
 
-        this.container.widthInv  = 1 / (this.scaleFactor*width);
-        this.container.heightInv = 1 / (this.scaleFactor*height);
+        //this.container.widthInv  = 1 / (this.scaleFactor*width);
+        //this.container.heightInv = 1 / (this.scaleFactor*height);
+
         this.container.whratio = width / height;
     },
 
