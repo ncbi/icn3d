@@ -589,7 +589,7 @@ iCn3D.prototype.rebuildScene = function (options) { var me = this;
     this.setCamera();
 
     if(this.bSkipChemicalbinding === undefined || !this.bSkipChemicalbinding) this.applyChemicalbindingOptions();
-    this.bSkipChemicalbinding = true;
+    //this.bSkipChemicalbinding = true;
 
     // show disulfide bonds, set side chains
     this.applySsbondsOptions();

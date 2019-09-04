@@ -1,4 +1,6 @@
 ## Change Log
+[icn3d-2.7.18](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.7.18.zip) was release on September 4, 2019. Added the option to view in Full Screen mode by clicking the expansion icon in the top-right corner when "mobilemenu" is turned on, or by clicking "Full Screen" in the View menu. 
+
 [icn3d-2.7.17](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.7.17.zip) was release on September 3, 2019. Made it easy to save interactive work by clicking "File > Save Files > iCn3D PNG Images". This saves both "iCn3D PNG Image" and an HTML file with a clickable PNG image, which is link to the custom display via a sharable link. 
 
 [icn3d-2.7.16](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.7.16.zip) was release on August 29, 2019. Fixed the transparent display by switching three.js from version 107 to 103. 

@@ -47,11 +47,10 @@ body {font-family: Verdana, Arial, Helvetica, sans-serif;}
           height: 300,
           mobilemenu: true,
           showcommand: false,
-          showtitle: false
+          showtitle: false,
+          options: options
         };
         if(idName !== '') cfg[idName] = idValue;
-
-        if(Object.keys(options).length > 0) cfg['options'] = options;
 
         var icn3dui = new iCn3DUI(cfg);
         icn3dui.show3DStructure();
