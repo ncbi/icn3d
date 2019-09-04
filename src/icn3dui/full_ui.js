@@ -1889,6 +1889,15 @@ iCn3DUI.prototype = {
 
            me.setLogCmd("full screen", false);
 
+           me.icn3d.scaleFactor = ($( window ).width() - me.LESSWIDTH) / me.WIDTH;
+
+           me.WIDTH = $( window ).width() - me.LESSWIDTH;
+           me.HEIGHT = $( window ).height() - me.EXTRAHEIGHT - me.LESSHEIGHT;
+
+           me.icn3d.setWidthHeight(me.WIDTH, me.HEIGHT);
+
+           me.icn3d.draw();
+
            me.openFullscreen($("#" + me.pre + "canvas")[0]);
         });
     },
