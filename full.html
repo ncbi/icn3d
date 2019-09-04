@@ -19,14 +19,6 @@
   <script src="icn3d_full_ui.min.js"></script>
 
   <script type="text/javascript">
-    // add your custom iCn3D code here. Start ======
-    iCn3DUI.prototype.modifyIcn3d = function() {var me = this;
-        //me.opts['chemicalbinding'] = 'show';
-
-        me.modifyIcn3dshowPicking();
-    };
-    // End ======
-
     // separating the GET parameters from the current URL
     // repalce "color #" with "color " in the url
     var url = document.URL.replace(/\#/g, '');
@@ -62,20 +54,6 @@
     var gi = params.gi;
     var blast_rep_id = params.blast_rep_id;
     var query_id = params.query_id;
-    var query_from_to, target_from_to;
-    if(blast_rep_id !== undefined) {
-      var pos1 = blast_rep_id.indexOf(':');
-      var pos2 = query_id.indexOf(':');
-      if(pos1 !== -1) {
-        target_from_to = blast_rep_id.substr(pos1 + 1);
-        blast_rep_id = blast_rep_id.substr(0, pos1);
-      }
-
-      if(pos2 !== -1) {
-        query_from_to = query_id.substr(pos2 + 1);
-        query_id = query_id.substr(0, pos2);
-      }
-    }
 
     var mmdbid = params.mmdbid;
     var mmtfid = params.mmtfid;
@@ -206,6 +184,8 @@
       rotate = 'right';
     }
 
+    var options = (params.options !== undefined) ? JSON.parse(params.options) : undefined;
+
     $( document ).ready(function() {
       function setupViewer(idName, idValue) {
         var maxStructure = 5; // show max 5 structures
@@ -221,7 +201,7 @@
           }
         }
 
-        var options = {};
+        if(options === undefined) options = {};
 
         //Options are available at: https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d.html#DisplayOptions
         //options['chemicalbinding'] = 'show';
@@ -243,17 +223,12 @@
               simplemenu: simplemenu,
               mobilemenu: mobilemenu,
               closepopup: closepopup,
+              blast_rep_id: blast_rep_id,
+              query_id: query_id,
+              options: options,
               command: command
           };
           if(idName !== '') cfg[idName] = idArray[i];
-
-          if(idName === 'blast_rep_id') {
-            cfg['query_id'] = query_id;
-            if(query_from_to !== undefined) cfg['query_from_to'] = query_from_to;
-            if(target_from_to !== undefined) cfg['target_from_to'] = target_from_to;
-          }
-
-          if(Object.keys(options).length > 0) cfg['options'] = options;
 
           var icn3dui = new iCn3DUI(cfg);
 

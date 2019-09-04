@@ -580,6 +580,17 @@ iCn3DUI.prototype.setViewerWidthHeight = function() { var me = this;
 iCn3DUI.prototype.shareLinkUrl = function() { var me = this;
        var url = "https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?";
 
+       for(var key in me.cfg) {
+           if(key == 'inpara' || me.key == 'command') continue;
+
+           if(key == 'options') {
+               url += key + '=' + JSON.stringify(me.cfg[key]) + '&';
+           }
+           else {
+               url += key + '=' + me.cfg[key] + '&';
+           }
+       }
+
        var pos = -1;
        if(me.cfg.inpara !== undefined) pos = me.cfg.inpara.indexOf('&command=');
        var inparaWithoutCommand = (pos !== -1 ) ? me.cfg.inpara.substr(0, pos) : me.cfg.inpara;

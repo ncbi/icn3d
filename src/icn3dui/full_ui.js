@@ -15,13 +15,27 @@ if (!$.ui.dialog.prototype._makeDraggableBase) {
 var iCn3DUI = function(cfg) {
     var me = this;
 
-    this.REVISION = '2.7.17';
+    this.REVISION = '2.7.18';
 
     me.bFullUi = true;
 
     me.cfg = cfg;
     me.divid = me.cfg.divid;
     me.pre = me.divid + "_";
+
+    if(me.cfg.blast_rep_id !== undefined) {
+      var pos1 = me.cfg.blast_rep_id.indexOf(':');
+      var pos2 = me.cfg.query_id.indexOf(':');
+      if(pos1 !== -1) {
+        me.cfg.target_from_to = me.cfg.blast_rep_id.substr(pos1 + 1);
+        me.cfg.blast_rep_id = me.cfg.blast_rep_id.substr(0, pos1);
+      }
+
+      if(pos2 !== -1) {
+        me.cfg.query_from_to = me.cfg.query_id.substr(pos2 + 1);
+        me.cfg.query_id = me.cfg.query_id.substr(0, pos2);
+      }
+    }
 
     me.inputid = '';
 
@@ -1074,20 +1088,26 @@ iCn3DUI.prototype = {
                if(me.icn3d.defNames2Residues[commandname] !== undefined && me.icn3d.defNames2Residues[commandname].length > 0) {
                    for(var j = 0, jl = me.icn3d.defNames2Residues[commandname].length; j < jl; ++j) {
                        var serial = me.icn3d.defNames2Residues[commandname][j];
-                       var atom = me.icn3d.atoms[serial];
-                       var resid = atom.structure + '_' + atom.chain + '_' + atom.resi;
 
-                       residuesHash = me.icn3d.unionHash(residuesHash, me.icn3d.residues[resid]);
+                       if(serial !== undefined) {
+                           var atom = me.icn3d.atoms[serial];
+                           var resid = atom.structure + '_' + atom.chain + '_' + atom.resi;
+
+                           residuesHash = me.icn3d.unionHash(residuesHash, me.icn3d.residues[resid]);
+                       }
                    }
                }
 
                if(me.icn3d.defNames2Atoms[commandname] !== undefined && me.icn3d.defNames2Atoms[commandname].length > 0) {
                    for(var j = 0, jl = me.icn3d.defNames2Atoms[commandname].length; j < jl; ++j) {
                        var serial = me.icn3d.defNames2Atoms[commandname][j];
-                       var atom = me.icn3d.atoms[serial];
-                       var resid = atom.structure + '_' + atom.chain + '_' + atom.resi;
 
-                       residuesHash = me.icn3d.unionHash(residuesHash, me.icn3d.residues[resid]);
+                       if(serial !== undefined) {
+                           var atom = me.icn3d.atoms[serial];
+                           var resid = atom.structure + '_' + atom.chain + '_' + atom.resi;
+
+                           residuesHash = me.icn3d.unionHash(residuesHash, me.icn3d.residues[resid]);
+                       }
                    }
                }
            }
