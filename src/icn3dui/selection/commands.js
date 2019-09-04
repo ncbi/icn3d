@@ -68,14 +68,12 @@ iCn3DUI.prototype.execCommandsBase = function (start, end, steps) { var me = thi
           if(end === 0 && start === end) {
               if(me.bNotLoadStructure) {
                     me.icn3d.hAtoms = me.icn3d.cloneHash(me.icn3d.atoms);
-                    //me.icn3d.bRender = true;
 
                     // end of all commands
                     if(1 === me.icn3d.commands.length) me.bAddCommands = true;
                     if(bFinalStep) me.renderFinalStep(steps);                  }
               else {
                   $.when(me.applyCommandLoad(me.icn3d.commands[i])).then(function() {
-                   // me.icn3d.bRender = true;
 
                     // end of all commands
                     if(1 === me.icn3d.commands.length) me.bAddCommands = true;

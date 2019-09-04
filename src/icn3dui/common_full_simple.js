@@ -581,7 +581,7 @@ iCn3DUI.prototype.shareLinkUrl = function() { var me = this;
        var url = "https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?";
 
        for(var key in me.cfg) {
-           if(key == 'inpara' || me.key == 'command') continue;
+           if(key == 'inpara' || me.key == 'command' || me.cfg[key] == undefined) continue;
 
            if(key == 'options') {
                url += key + '=' + JSON.stringify(me.cfg[key]) + '&';
