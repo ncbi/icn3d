@@ -524,7 +524,7 @@ iCn3DUI.prototype.windowResize = function() { var me = this;
             var width = me.WIDTH; // - me.LESSWIDTH_RESIZE;
             var height = me.HEIGHT; // - me.LESSHEIGHT - me.EXTRAHEIGHT;
 
-            if(me.icn3d !== undefined) me.resizeCanvas(width, height);
+            if(me.icn3d !== undefined && !me.icn3d.bFullscreen) me.resizeCanvas(width, height);
         });
     }
 };
