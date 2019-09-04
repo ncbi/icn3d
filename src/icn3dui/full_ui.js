@@ -1893,14 +1893,14 @@ iCn3DUI.prototype = {
            me.setLogCmd("enter full screen", false);
            me.icn3d.bFullscreen = true;
 
-           //me.WIDTH = $( window ).width();
-           //me.HEIGHT = $( window ).height();
+           me.WIDTH = $( window ).width();
+           me.HEIGHT = $( window ).height();
 
-           me.icn3d.setWidthHeight($( window ).width(), $( window ).height());
+           me.icn3d.setWidthHeight(me.WIDTH, me.HEIGHT);
 
            me.icn3d.draw();
 
-//           me.openFullscreen($("#" + me.pre + "canvas")[0]);
+           me.openFullscreen($("#" + me.pre + "canvas")[0]);
         });
 
         $(document).bind('fullscreenchange webkitfullscreenchange mozfullscreenchange msfullscreenchange', function (e) {
