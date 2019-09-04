@@ -1859,14 +1859,17 @@ iCn3DUI.prototype = {
     },
 
     openFullscreen: function(elem) { var me = this;
-      if (elem.requestFullscreen) {
-        elem.requestFullscreen();
-      } else if (elem.mozRequestFullScreen) { /* Firefox */
-        elem.mozRequestFullScreen();
-      } else if (elem.webkitRequestFullscreen) { /* Chrome, Safari and Opera */
-        elem.webkitRequestFullscreen();
-      } else if (elem.msRequestFullscreen) { /* IE/Edge */
-        elem.msRequestFullscreen();
+      if (!document.fullscreenElement && !document.mozFullScreenElement &&
+        !document.webkitFullscreenElement && !document.msFullscreenElement) {
+          if (elem.requestFullscreen) {
+            elem.requestFullscreen();
+          } else if (elem.mozRequestFullScreen) { /* Firefox */
+            elem.mozRequestFullScreen();
+          } else if (elem.webkitRequestFullscreen) { /* Chrome, Safari and Opera */
+            elem.webkitRequestFullscreen();
+          } else if (elem.msRequestFullscreen) { /* IE/Edge */
+            elem.msRequestFullscreen();
+          }
       }
     },
 
@@ -1887,7 +1890,7 @@ iCn3DUI.prototype = {
         $("#" + me.pre + "fullscreen").click(function(e) {
            e.preventDefault();
 
-           me.setLogCmd("full screen", false);
+           me.setLogCmd("enter full screen", false);
 
            me.icn3d.scaleFactor = ($( window ).width() - me.LESSWIDTH) / me.WIDTH;
 
@@ -1895,12 +1898,29 @@ iCn3DUI.prototype = {
 
            me.icn3d.draw();
 
-           me.WIDTH = $( window ).width() - me.LESSWIDTH;
-           me.HEIGHT = $( window ).height() - me.EXTRAHEIGHT - me.LESSHEIGHT;
-
-           me.icn3d.scaleFactor = 1.0;
+           //me.WIDTH = $( window ).width() - me.LESSWIDTH;
+           //me.HEIGHT = $( window ).height() - me.EXTRAHEIGHT - me.LESSHEIGHT;
 
            me.openFullscreen($("#" + me.pre + "canvas")[0]);
+        });
+
+        //document.addEventListener('fullscreenchange', me.exitHandler);
+        //document.addEventListener('webkitfullscreenchange', me.exitHandler);
+        //document.addEventListener('mozfullscreenchange', me.exitHandler);
+        //document.addEventListener('MSFullscreenChange', me.exitHandler);
+
+        $(document).bind('fullscreenchange webkitfullscreenchange mozfullscreenchange msfullscreenchange', function (e) {
+            var fullscreenElement = document.fullscreenElement || document.webkitFullscreenElement || document.mozFullscreenElement || document.msFullscreenElement;
+
+            if (!fullscreenElement) {
+                me.setLogCmd("exit full screen", false);
+
+                me.icn3d.scaleFactor = 1.0;
+
+                me.icn3d.setWidthHeight(me.WIDTH, me.HEIGHT);
+
+                me.icn3d.draw();
+            }
         });
     },
 
