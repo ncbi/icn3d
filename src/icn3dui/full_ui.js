@@ -1877,15 +1877,28 @@ iCn3DUI.prototype = {
         $("#" + me.pre + "mn6_fullscreen").click(function(e) {
            e.preventDefault();
 
-           me.setLogCmd("full screen", false);
+           me.setLogCmd("enter full screen", false);
 
            me.WIDTH = $( window ).width() - me.LESSWIDTH;
            me.HEIGHT = $( window ).height() - me.EXTRAHEIGHT - me.LESSHEIGHT;
 
            me.resizeCanvas(me.WIDTH, me.HEIGHT, true);
 
-           $("#" + me.pre + "fullscreen").hide();
+           if($("#" + me.pre + "fullscreen")[0] !== undefined) $("#" + me.pre + "fullscreen").hide();
         });
+
+        $("#" + me.pre + "mn6_exitfullscreen").click(function(e) {
+           e.preventDefault();
+
+           me.setLogCmd("exit full screen", false);
+
+           me.setViewerWidthHeight();
+
+           me.resizeCanvas(me.WIDTH, me.HEIGHT, true);
+
+           if($("#" + me.pre + "fullscreen")[0] !== undefined) $("#" + me.pre + "fullscreen").show();
+        });
+
 
         $("#" + me.pre + "fullscreen").click(function(e) {
            e.preventDefault();
