@@ -25,25 +25,6 @@ iCn3D.prototype.applyChemicalbindingOptions = function (options) {
         if(startAtoms !== undefined) {
             var targetAtoms = this.getAtomsWithinAtom(this.atoms, startAtoms, radius);
 
-/*
-            var residueHash = {};
-
-            // draw sidec for these residues
-            for(var i in targetAtoms) {
-              if(startAtoms.hasOwnProperty(i)) continue;
-              residueHash[this.atoms[i].structure + '_' + this.atoms[i].chain + '_' + this.atoms[i].resi] = 1;
-            }
-
-            var residueArray = Object.keys(residueHash);
-
-            for(var i = 0, il = residueArray.length; i < il; ++i) {
-                for(var j in this.residues[residueArray[i]]) {
-                    // all atoms should be shown for hbonds
-                    //this.atoms[j].style2 = 'stick';
-                    this.atoms[j].style2 = 'lines';
-                }
-            }
-*/
             // show hydrogens
             var threshold = 3.5;
             this.opts["hbonds"] = "yes";
@@ -54,7 +35,7 @@ iCn3D.prototype.applyChemicalbindingOptions = function (options) {
             }
 
             // zoom in on the atoms
-            this.zoominSelection( this.unionHash(startAtoms, targetAtoms) );
+            if(!this.bSetFog) this.zoominSelection( this.unionHash(startAtoms, targetAtoms) );
 
             //this.opts['slab'] = 'yes';
             //this.opts['fog'] = 'yes';
@@ -66,7 +47,7 @@ iCn3D.prototype.applyChemicalbindingOptions = function (options) {
         this.hideHbonds();
 
         // center on the atoms
-        this.zoominSelection(this.atoms);
+        if(!this.bSetFog) this.zoominSelection(this.atoms);
 
         //this.opts['slab'] = 'no';
         //this.opts['fog'] = 'no';
