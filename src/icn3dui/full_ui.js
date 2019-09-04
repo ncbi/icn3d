@@ -1898,6 +1898,8 @@ iCn3DUI.prototype = {
 
            me.icn3d.draw();
 
+           me.icn3d.scaleFactor = 1.0;
+
            me.openFullscreen($("#" + me.pre + "canvas")[0]);
         });
     },
