@@ -172,8 +172,7 @@ iCn3DUI.prototype.addStabilizer = function () { var me = this;
 
     var minHbondLen = 3.2;
 
-    //me.icn3d.opts["stabilizer"] = "yes";
-    me.icn3d.opts["water"] = "dot";
+    //me.icn3d.opts["water"] = "dot";
 
     if(Object.keys(me.icn3d.dAtoms).length > 0) {
 

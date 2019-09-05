@@ -28,7 +28,6 @@ iCn3D.prototype.applyChemicalbindingOptions = function (options) {
             // show hydrogens
             var threshold = 3.5;
             this.opts["hbonds"] = "yes";
-            //this.opts["water"] = "dot";
 
             if(Object.keys(targetAtoms).length > 0) {
                 this.calculateChemicalHbonds(startAtoms, targetAtoms, parseFloat(threshold) );
@@ -36,10 +35,6 @@ iCn3D.prototype.applyChemicalbindingOptions = function (options) {
 
             // zoom in on the atoms
             if(!this.bSetFog) this.zoominSelection( this.unionHash(startAtoms, targetAtoms) );
-
-            //this.opts['slab'] = 'yes';
-            //this.opts['fog'] = 'yes';
-            //this.setFog();
         }
     }
     else if (options.chemicalbinding === 'hide') {
@@ -48,10 +43,6 @@ iCn3D.prototype.applyChemicalbindingOptions = function (options) {
 
         // center on the atoms
         if(!this.bSetFog) this.zoominSelection(this.atoms);
-
-        //this.opts['slab'] = 'no';
-        //this.opts['fog'] = 'no';
-        //this.setFog();
     }
 };
 
@@ -66,11 +57,15 @@ iCn3D.prototype.hideHbonds = function () {
         }
 
         for(var i in this.sidec) {
-            this.atoms[i].style2 = this.opts["sidec"];
+            if(this.hAtoms.hasOwnProperty(i)) {
+                this.atoms[i].style2 = this.opts["sidec"];
+            }
         }
 
         for(var i in this.water) {
-            this.atoms[i].style = this.opts["water"];
+            if(this.hAtoms.hasOwnProperty(i)) {
+                this.atoms[i].style = this.opts["water"];
+            }
         }
 };
 
@@ -563,6 +558,8 @@ iCn3D.prototype.applyOtherOptions = function (options) {
 };
 
 iCn3D.prototype.rebuildScene = function (options) { var me = this;
+    if(options === undefined) options = this.opts;
+
     this.rebuildSceneBase(options);
 
     this.setFog();
@@ -570,7 +567,11 @@ iCn3D.prototype.rebuildScene = function (options) { var me = this;
     this.setCamera();
 
     if(this.bSkipChemicalbinding === undefined || !this.bSkipChemicalbinding) this.applyChemicalbindingOptions();
-    //this.bSkipChemicalbinding = true;
+    this.bSkipChemicalbinding = true;
+
+    if (options.chemicalbinding === 'show') {
+        this.opts["hbonds"] = "yes";
+    }
 
     // show disulfide bonds, set side chains
     this.applySsbondsOptions();
