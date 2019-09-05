@@ -377,6 +377,8 @@ iCn3DUI.prototype.renderFinalStep = function(steps) { var me = this;
 iCn3DUI.prototype.applyCommandLoad = function (commandStr) { var me = this;
   //me.bCommandLoad = true;
 
+  if(me.icn3d.atoms !== undefined && Object.keys(me.icn3d.atoms).length > 0) return;
+
   // chain functions together
   me.deferred2 = $.Deferred(function() {
   me.bAddCommands = false;
@@ -619,20 +621,20 @@ iCn3DUI.prototype.applyCommand = function (commandStr) { var me = this;
   }
   else if(command == 'export stl file') {
     setTimeout(function(){
-           //me.hideStabilizer();
+           //var text = me.saveStlFile();
+           //me.saveFile(file_pref + '.stl', 'binary', text);
+           //text = '';
 
-           var text = me.saveStlFile();
-           me.saveFile(file_pref + '.stl', 'binary', text);
-           text = '';
+           me.exportStlFile('');
         }, 500);
   }
   else if(command == 'export vrml file') {
     setTimeout(function(){
-           //me.hideStabilizer();
+           //var text = me.saveVrmlFile();
+           //me.saveFile(file_pref + '.wrl', 'text', text);
+           //text = '';
 
-           var text = me.saveVrmlFile();
-           me.saveFile(file_pref + '.wrl', 'text', text);
-           text = '';
+           me.exportVrmlFile('');
         }, 500);
   }
   else if(command == 'export stl stabilizer file') {
@@ -643,14 +645,12 @@ iCn3DUI.prototype.applyCommand = function (commandStr) { var me = this;
            me.resetAfter3Dprint();
            me.addStabilizer();
 
-           var text = me.saveStlFile();
+           //var text = me.saveStlFile();
 
-           //me.hideStabilizer();
-           //me.icn3d.bRender = true;
-           //me.icn3d.draw();
+           //me.saveFile(file_pref + '_stab.stl', 'binary', text);
+           //text = '';
 
-           me.saveFile(file_pref + '_stab.stl', 'binary', text);
-           text = '';
+           me.exportStlFile('_stab');
         }, 500);
   }
   else if(command == 'export vrml stabilizer file') {
@@ -661,14 +661,12 @@ iCn3DUI.prototype.applyCommand = function (commandStr) { var me = this;
            me.resetAfter3Dprint();
            me.addStabilizer();
 
-           var text = me.saveVrmlFile();
+           //var text = me.saveVrmlFile();
 
-           //me.hideStabilizer();
-           //me.icn3d.bRender = true;
-           //me.icn3d.draw();
+           //me.saveFile(file_pref + '_stab.wrl', 'text', text);
+           //text = '';
 
-           me.saveFile(file_pref + '_stab.wrl', 'text', text);
-           text = '';
+           me.exportVrmlFile('_stab');
         }, 500);
   }
   else if(command == 'select all') {
