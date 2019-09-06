@@ -459,53 +459,55 @@ iCn3D.prototype.applySurfaceOptions = function (options) {
 iCn3D.prototype.applyOtherOptions = function (options) {
     if(options === undefined) options = this.opts;
 
-    this.lines['hbond'] = [];
+    if(this.lines !== undefined) {
+        this.lines['hbond'] = [];
 
-    //common part options
+        //common part options
 
-    // lines
-    //if (options.hbonds.toLowerCase() === 'yes' || options.ncbonds.toLowerCase() === 'yes') {
-    if (options.hbonds.toLowerCase() === 'yes') {
-        var color = '#00FF00';
-        var pnts = this.hbondpnts;
+        // lines
+        //if (options.hbonds.toLowerCase() === 'yes' || options.ncbonds.toLowerCase() === 'yes') {
+        if (options.hbonds.toLowerCase() === 'yes') {
+            var color = '#00FF00';
+            var pnts = this.hbondpnts;
 
-         for (var i = 0, lim = Math.floor(pnts.length / 2); i < lim; i++) {
-            var line = {};
-            line.position1 = pnts[2 * i].coord;
-            line.serial1 = pnts[2 * i].serial;
-            line.position2 = pnts[2 * i + 1].coord;
-            line.serial2 = pnts[2 * i + 1].serial;
-            line.color = color;
-            line.dashed = true;
+             for (var i = 0, lim = Math.floor(pnts.length / 2); i < lim; i++) {
+                var line = {};
+                line.position1 = pnts[2 * i].coord;
+                line.serial1 = pnts[2 * i].serial;
+                line.position2 = pnts[2 * i + 1].coord;
+                line.serial2 = pnts[2 * i + 1].serial;
+                line.color = color;
+                line.dashed = true;
 
-            // only draw bonds connected with currently displayed atoms
-            if(line.serial1 !== undefined && line.serial2 !== undefined && !this.dAtoms.hasOwnProperty(line.serial1) && !this.dAtoms.hasOwnProperty(line.serial2)) continue;
+                // only draw bonds connected with currently displayed atoms
+                if(line.serial1 !== undefined && line.serial2 !== undefined && !this.dAtoms.hasOwnProperty(line.serial1) && !this.dAtoms.hasOwnProperty(line.serial2)) continue;
 
-            if(this.lines['hbond'] === undefined) this.lines['hbond'] = [];
-            this.lines['hbond'].push(line);
-         }
+                if(this.lines['hbond'] === undefined) this.lines['hbond'] = [];
+                this.lines['hbond'].push(line);
+             }
 
-        //this.createLines(this.lines);
-    }
-
-    if (this.pairArray !== undefined && this.pairArray.length > 0) {
-        this.updateStabilizer(); // to update this.stabilizerpnts
-
-        var color = '#FFFFFF';
-        var pnts = this.stabilizerpnts;
-        this.lines['stabilizer'] = []; // reset
-        for (var i = 0, lim = Math.floor(pnts.length / 2); i < lim; i++) {
-            var line = {};
-            line.position1 = pnts[2 * i];
-            line.position2 = pnts[2 * i + 1];
-            line.color = color;
-            line.dashed = false; // if true, there will be too many cylinders in the dashed lines
-
-            this.lines['stabilizer'].push(line);
+            //this.createLines(this.lines);
         }
-    }
 
-    this.createLines(this.lines);
+        if (this.pairArray !== undefined && this.pairArray.length > 0) {
+            this.updateStabilizer(); // to update this.stabilizerpnts
+
+            var color = '#FFFFFF';
+            var pnts = this.stabilizerpnts;
+            this.lines['stabilizer'] = []; // reset
+            for (var i = 0, lim = Math.floor(pnts.length / 2); i < lim; i++) {
+                var line = {};
+                line.position1 = pnts[2 * i];
+                line.position2 = pnts[2 * i + 1];
+                line.color = color;
+                line.dashed = false; // if true, there will be too many cylinders in the dashed lines
+
+                this.lines['stabilizer'].push(line);
+            }
+        }
+
+        this.createLines(this.lines);
+    }
 
     // maps
     if(this.prevMaps !== undefined) {

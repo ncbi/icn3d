@@ -2600,7 +2600,7 @@ iCn3DUI.prototype.showDomainWithData = function(chnid, data) { var me = this;
             var subdomainArray = domainArray[index].intervals;
 
             // remove duplicate, e.g., at https://www.ncbi.nlm.nih.gov/Structure/mmdb/mmdb_strview.cgi?v=2&program=icn3d&domain&molinfor&uid=1itw
-            var domainHash = {};
+            var domainFromHash = {}, domainToHash = {};
 
             var fromArray = [], toArray = [];
             var resiHash = {};
@@ -2609,13 +2609,12 @@ iCn3DUI.prototype.showDomainWithData = function(chnid, data) { var me = this;
                 var domainFrom = Math.round(subdomainArray[i][0]) - 1; // 1-based
                 var domainTo = Math.round(subdomainArray[i][1]) - 1;
 
-                domainStr = domainFrom + "," + domainTo;
-
-                if(domainHash.hasOwnProperty(domainStr)) {
-                    continue; // do nothing for duplicates, e.g, PDBID 1ITW
+                if(domainFromHash.hasOwnProperty(domainFrom) || domainToHash.hasOwnProperty(domainTo)) {
+                    continue; // do nothing for duplicated "from" or "to", e.g, PDBID 1ITW, 5FWI
                 }
                 else {
-                    domainHash[domainStr] = 1;
+                    domainFromHash[domainFrom] = 1;
+                    domainToHash[domainTo] = 1;
                 }
 
                 fromArray.push(domainFrom + me.baseResi[chnid]);
