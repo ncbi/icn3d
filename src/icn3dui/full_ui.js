@@ -1894,7 +1894,7 @@ iCn3DUI.prototype = {
     },
 
     clickFullscreen: function() { var me = this;
-        $("#" + me.pre + "mn6_fullscreen").click(function(e) {
+        $("#" + me.pre + "mn6_fullscreen").click(function(e) { // from menu "View > Full Screen"
            e.preventDefault();
 
            me.setLogCmd("enter full screen", false);
@@ -1907,7 +1907,7 @@ iCn3DUI.prototype = {
            if($("#" + me.pre + "fullscreen")[0] !== undefined) $("#" + me.pre + "fullscreen").hide();
         });
 
-        $("#" + me.pre + "mn6_exitfullscreen").click(function(e) {
+        $("#" + me.pre + "mn6_exitfullscreen").click(function(e) { // from menu "View > Exit Full Screen"
            e.preventDefault();
 
            me.setLogCmd("exit full screen", false);
@@ -1920,8 +1920,15 @@ iCn3DUI.prototype = {
         });
 
 
-        $("#" + me.pre + "fullscreen").click(function(e) {
+        $("#" + me.pre + "fullscreen").click(function(e) { // from expand icon for mobilemenu
            e.preventDefault();
+
+           var idArray = $(this).attr('id').split('_'); // id: div0_fullscreen
+           me.pre = idArray[0] + "_";
+
+           if(window.icn3duiHash !== undefined && window.icn3duiHash.hasOwnProperty(idArray[0])) { // for multiple 3D display
+              me = window.icn3duiHash[idArray[0]];
+           }
 
            me.setLogCmd("enter full screen", false);
            me.icn3d.bFullscreen = true;
