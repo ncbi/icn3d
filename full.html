@@ -72,117 +72,46 @@
 
     var from = params.from;
 
-    if(command === undefined) {
-      command = '';
+    function getValue(input) {
+        if(input == 'true' || input == '1') {
+          input = true;
+        }
+        else if(input == 'false' || input == '0') {
+          input = false;
+        }
+
+        return input;
     }
 
-    if(width === undefined) width = '100%';
-    if(height === undefined) height = '100%';
+    var resize = getValue(params.resize);
 
-    var resize = params.resize;
-    if(resize === undefined || resize == 'true' || resize == '1') {
-      resize = true;
-    }
-    else if(resize == 'false' || resize == '0') {
-      resize = false;
-    }
+    var showmenu = getValue(params.showmenu);
 
-    var showmenu = params.showmenu;
-    if(showmenu === undefined || showmenu == 'true' || showmenu == '1') {
-      showmenu = true;
-    }
-    else if(showmenu == 'false' || showmenu == '0') {
-      showmenu = false;
-    }
+    var showtitle = getValue(params.showtitle);
 
-    var showtitle = params.showtitle;
-    if(showtitle === undefined || showtitle == 'true' || showtitle == '1') {
-      showtitle = true;
-    }
-    else if(showtitle == 'false' || showtitle == '0') {
-      showtitle = false;
-    }
+    var showcommand = getValue(params.showcommand);
 
-    var showcommand = params.showcommand;
-    if(showcommand === undefined || showcommand == 'true' || showcommand == '1') {
-      showcommand = true;
-    }
-    else if(showcommand == 'false' || showcommand == '0') {
-      showcommand = false;
-    }
+    var simplemenu = getValue(params.simplemenu);
 
-    var simplemenu = params.simplemenu;
-    if(simplemenu == 'true' || simplemenu == '1') {
-      simplemenu = true;
-    }
-    else if(simplemenu === undefined || simplemenu == 'false' || simplemenu == '0') {
-      simplemenu = false;
-    }
+    var mobilemenu = getValue(params.mobilemenu);
 
-    var mobilemenu = params.mobilemenu;
-    if(mobilemenu == 'true' || mobilemenu == '1') {
-      mobilemenu = true;
-    }
-    else if(mobilemenu === undefined || mobilemenu == 'false' || mobilemenu == '0') {
-      mobilemenu = false;
-    }
+    var closepopup = getValue(params.closepopup);
 
-    var closepopup = params.closepopup;
-    if(closepopup == 'true' || closepopup == '1') {
-      closepopup = true;
-    }
-    else if(closepopup === undefined || closepopup == 'false' || closepopup == '0') {
-      closepopup = false;
-    }
+    var showanno = getValue(params.showanno);
 
-    var showanno = params.showanno;
-    if(showanno == 'true' || showanno == '1') {
-      showanno = true;
-    }
-    else if(showanno === undefined || showanno == 'false' || showanno == '0') {
-      showanno = false;
-    }
-
-    var showseq = params.showseq;
-    if(showseq == 'true' || showseq == '1') {
-      showseq = true;
-    }
-    else if(showseq === undefined || showseq == 'false' || showseq == '0') {
-      showseq = false;
-    }
+    var showseq = getValue(params.showseq);
 
     // backward compatible with showseq
     showanno = showanno || showseq;
 
     // for alignment
-    var showalignseq = params.showalignseq;
-    if(showalignseq == 'true' || showalignseq == '1') {
-      showalignseq = true;
-    }
-    else if(showalignseq === undefined || showalignseq == 'false' || showalignseq == '0') {
-      showalignseq = false;
-    }
+    var showalignseq = getValue(params.showalignseq);
 
-    var show2d = params.show2d;
-    if(show2d == 'true' || show2d == '1') {
-      show2d = true;
-    }
-    else if(show2d === undefined || show2d == 'false' || show2d == '0') {
-      show2d = false;
-    }
+    var show2d = getValue(params.show2d);
 
-    var showsets = params.showsets;
-    if(showsets == 'true' || showsets == '1') {
-      showsets = true;
-    }
-    else if(showsets === undefined || showsets == 'false' || showsets == '0') {
-      showsets = false;
-    }
+    var showsets = getValue(params.showsets);
 
     var rotate = params.rotate;
-    if(rotate === undefined) {
-      rotate = 'right';
-    }
 
     var options = (params.options !== undefined) ? JSON.parse(params.options) : undefined;
 

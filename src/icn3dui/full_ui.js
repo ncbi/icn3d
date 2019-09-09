@@ -15,13 +15,34 @@ if (!$.ui.dialog.prototype._makeDraggableBase) {
 var iCn3DUI = function(cfg) {
     var me = this;
 
-    this.REVISION = '2.7.18';
+    this.REVISION = '2.7.19';
 
     me.bFullUi = true;
 
     me.cfg = cfg;
     me.divid = me.cfg.divid;
     me.pre = me.divid + "_";
+
+    if(me.cfg.command === undefined) me.cfg.command = '';
+
+    if(me.cfg.width === undefined) me.cfg.width = '100%';
+    if(me.cfg.height === undefined) me.cfg.height = '100%';
+
+    if(me.cfg.resize === undefined) me.cfg.resize = true;
+    if(me.cfg.showmenu === undefined) me.cfg.showmenu = true;
+    if(me.cfg.showtitle === undefined) me.cfg.showtitle = true;
+    if(me.cfg.showcommand === undefined) me.cfg.showcommand = true;
+
+    if(me.cfg.simplemenu === undefined) me.cfg.simplemenu = false;
+    if(me.cfg.mobilemenu === undefined) me.cfg.mobilemenu = false;
+    if(me.cfg.closepopup === undefined) me.cfg.closepopup = false;
+    if(me.cfg.showanno === undefined) me.cfg.showanno = false;
+    if(me.cfg.showseq === undefined) me.cfg.showseq = false;
+    if(me.cfg.showalignseq === undefined) me.cfg.showalignseq = false;
+    if(me.cfg.show2d === undefined) me.cfg.show2d = false;
+    if(me.cfg.showsets === undefined) me.cfg.showsets = false;
+
+    if(me.cfg.rotate === undefined) me.cfg.rotate = 'right';
 
     if(me.cfg.blast_rep_id !== undefined) {
       var pos1 = me.cfg.blast_rep_id.indexOf(':');
@@ -456,6 +477,20 @@ iCn3DUI.prototype = {
     // show3DStructure is the main function to show 3D structure
     show3DStructure: function() { var me = this;
       me.deferred = $.Deferred(function() {
+        if(me.cfg.width.toString().indexOf('%') !== -1) {
+          me.oriWidth = $( window ).width() * me.cfg.width.substr(0, me.cfg.width.toString().indexOf('%')) / 100.0 - me.LESSWIDTH;
+        }
+        else {
+          me.oriWidth = me.cfg.width;
+        }
+
+        if(me.cfg.height.toString().indexOf('%') !== -1) {
+          me.oriHeight = $( window ).height() * me.cfg.height.substr(0, me.cfg.height.toString().indexOf('%')) / 100.0 - me.EXTRAHEIGHT - me.LESSHEIGHT;
+        }
+        else {
+          me.oriHeight = me.cfg.height;
+        }
+
         me.setViewerWidthHeight();
 
         if(me.isMobile() || me.cfg.mobilemenu) {
@@ -2070,6 +2105,14 @@ iCn3DUI.prototype = {
     clkMn1_align: function() { var me = this;
         $("#" + me.pre + "mn1_align").click(function(e) {
            me.openDialog(me.pre + 'dl_align', 'Align two 3D structures');
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
+        });
+    },
+
+    clkMn1_chainalign: function() { var me = this;
+        $("#" + me.pre + "mn1_chainalign").click(function(e) {
+           me.openDialog(me.pre + 'dl_chainalign', 'Align two chains of 3D structures');
 
            //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
@@ -4527,6 +4570,22 @@ iCn3DUI.prototype = {
         });
     },
 
+    clickReload_chainalign: function() { var me = this;
+        $("#" + me.pre + "reload_chainalign").click(function(e) {
+           e.preventDefault();
+
+           dialog.dialog( "close" );
+
+           var alignment = $("#" + me.pre + "chainalignid1").val() + "|" + $("#" + me.pre + "chainalignid2").val();
+
+           me.setLogCmd("load chain alignment " + alignment, false);
+
+           window.open('https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?chainalign=' + alignment + '&showanno=1', '_blank');
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
+        });
+    },
+
     clickReload_mmcif: function() { var me = this;
         $("#" + me.pre + "reload_mmcif").click(function(e) {
            e.preventDefault();
@@ -5716,6 +5775,7 @@ iCn3DUI.prototype = {
         me.clkMn1_mmtfid();
         me.clkMn1_pdbid();
         me.clkMn1_align();
+        me.clkMn1_chainalign();
         me.clkMn1_pdbfile();
         me.clkMn1_mol2file();
         me.clkMn1_sdffile();
@@ -5930,6 +5990,7 @@ iCn3DUI.prototype = {
         me.clickReload_pdb();
         me.clickReload_align_refined();
         me.clickReload_align_ori();
+        me.clickReload_chainalign();
         me.clickReload_mmtf();
         me.clickReload_pdbfile();
         me.clickReload_mol2file();

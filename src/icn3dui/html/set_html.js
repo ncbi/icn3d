@@ -330,6 +330,7 @@ iCn3DUI.prototype.setMenu1_base = function() { var me = this;
     html += "    <ul>";
     html += me.getLink('mn1_blast_rep_id', 'Sequence to Structure');
     html += me.getLink('mn1_align', 'Structure to Structure');
+//    html += me.getLink('mn1_chainalign', 'Chain to Chain');
     html += "    </ul>";
     html += "  </li>";
     html += "  <li><span>3D Printing</span>";
@@ -1222,6 +1223,11 @@ iCn3DUI.prototype.setDialogs = function() { var me = this;
     html += "<div id='" + me.pre + "dl_align'>";
     html += "Enter the PDB IDs or MMDB IDs of two structures that have been found to be similar by <A HREF=' https://www.ncbi.nlm.nih.gov/Structure/vastplus/vastplus.cgi'>VAST+</A> : <br/><br/>ID1: <input type='text' id='" + me.pre + "alignid1' value='1HHO' size=8>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ID2: <input type='text' id='" + me.pre + "alignid2' value='4N7N' size=8><br/><br/>";
     html += "<button id='" + me.pre + "reload_align_ori'>All Matching Molecules Superposed</button>&nbsp;&nbsp;&nbsp;<button id='" + me.pre + "reload_align_refined'>Invariant Substructure Superposed</button>";
+    html += "</div>";
+
+    html += "<div id='" + me.pre + "dl_chainalign'>";
+    html += "Enter the PDB chain IDs in the form of pdbid_chain (e.g., 1HHO_A): <br/><br/>ID1: <input type='text' id='" + me.pre + "chainalignid1' value='1HHO_A' size=8>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ID2: <input type='text' id='" + me.pre + "chainalignid2' value='4N7N_A' size=8><br/><br/>";
+    html += "<button id='" + me.pre + "reload_chainalign'>Align</button>";
     html += "</div>";
 
     html += "<div id='" + me.pre + "dl_mol2file'>";
