@@ -581,13 +581,42 @@ iCn3DUI.prototype.shareLinkUrl = function() { var me = this;
        var url = "https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?";
 
        for(var key in me.cfg) {
-           if(key === 'inpara' || me.key === 'command' || me.cfg[key] === undefined) continue;
+           var value = me.cfg[key];
+           if(key === 'inpara' || me.key === 'command' || value === undefined) continue;
+
+            // check the default values as defined at the beginning of full_ui.js
+            //if(key === 'command' && value === '') continue;
+
+            if(key === 'width' && value === '100%') continue;
+            if(key === 'height' && value === '100%') continue;
+
+            if(key === 'resize' && value === true) continue;
+            if(key === 'showmenu' && value === true) continue;
+            if(key === 'showtitle' && value === true) continue;
+            if(key === 'showcommand' && value === true) continue;
+
+            if(key === 'simplemenu' && value === false) continue;
+            if(key === 'mobilemenu' && value === false) continue;
+            if(key === 'closepopup' && value === false) continue;
+            if(key === 'showanno' && value === false) continue;
+            if(key === 'showseq' && value === false) continue;
+            if(key === 'showalignseq' && value === false) continue;
+            if(key === 'show2d' && value === false) continue;
+            if(key === 'showsets' && value === false) continue;
+
+            if(key === 'rotate' && value === 'right') continue;
 
            if(key === 'options') {
-               url += key + '=' + JSON.stringify(me.cfg[key]) + '&';
+               url += key + '=' + JSON.stringify(value) + '&';
+           }
+           else if(value === true) {
+               url += key + '=1&';
+           }
+           else if(value === false) {
+               url += key + '=0&';
            }
            else {
-               url += key + '=' + me.cfg[key] + '&';
+               url += key + '=' + value + '&';
            }
        }
 
