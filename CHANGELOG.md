@@ -1,4 +1,6 @@
 ## Change Log
+[icn3d-2.8.0](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.8.0.zip) was release on October 10, 2019. Allowed to align any chain to another chain in the menu "File > Align > Chain to Chain".  
+
 [icn3d-2.7.19](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.7.19.zip) was release on September 9, 2019. Fixed the input width and height with "%". 
 
 [icn3d-2.7.18](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.7.18.zip) was release on September 4, 2019. Added the option to view in Full Screen mode by clicking the expansion icon in the top-right corner when "mobilemenu" is turned on, or by clicking "Full Screen" in the View menu. 

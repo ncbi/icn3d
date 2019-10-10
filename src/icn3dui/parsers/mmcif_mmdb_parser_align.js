@@ -6,19 +6,6 @@ iCn3DUI.prototype.downloadAlignment = function (align) { var me = this;
     me.opts['proteins'] = 'c alpha trace';
     me.icn3d.opts['proteins'] = 'c alpha trace';
 
-/*
-    if(me.bFullUi && me.isMac() && me.isMobile) {
-        me.MENU_WIDTH = 950; // have enough space to show image in iphone
-
-        me.setViewerWidthHeight();
-
-        var width = me.WIDTH; // - me.LESSWIDTH;
-        var height = me.HEIGHT; // - me.LESSHEIGHT;
-
-        me.resizeCanvas(width, height, true, false);
-    }
-*/
-
     var alignArray = align.split(',');
     //var ids_str = (alignArray.length === 2? 'uids=' : 'ids=') + align;
     var ids_str = 'ids=' + align;
@@ -192,6 +179,152 @@ iCn3DUI.prototype.downloadAlignment = function (align) { var me = this;
             return false;
         }
     });
+};
+
+iCn3DUI.prototype.downloadChainAlignment = function (chainalign) { var me = this;
+    me.opts['proteins'] = 'c alpha trace';
+    me.icn3d.opts['proteins'] = 'c alpha trace';
+
+    var alignArray = chainalign.split(',');
+    var pos1 = alignArray[0].indexOf('_');
+    var pos2 = alignArray[1].indexOf('_');
+    var mmdbid_q = alignArray[0].substr(0, pos1).toUpperCase();
+    var mmdbid_t = alignArray[1].substr(0, pos2).toUpperCase();
+    me.chain_q = alignArray[0].substr(pos1+1);
+    me.chain_t = alignArray[1].substr(pos2+1);
+
+    var chainalignFinal = mmdbid_q + "_" + me.chain_q + "," + mmdbid_t + "_" + me.chain_t;
+
+    var urlalign = "https://www.ncbi.nlm.nih.gov/Structure/vastdyn/vastdyn.cgi?chainpairs=" + chainalignFinal;
+    var url_t = "https://www.ncbi.nlm.nih.gov/Structure/mmdb/mmdb_strview.cgi?v=2&program=icn3d&b=1&s=1&ft=1&uid=" + mmdbid_t;
+    var url_q = "https://www.ncbi.nlm.nih.gov/Structure/mmdb/mmdb_strview.cgi?v=2&program=icn3d&b=1&s=1&ft=1&uid=" + mmdbid_q;
+
+    if(me.cfg.inpara !== undefined) {
+      url_t += me.cfg.inpara;
+      url_q += me.cfg.inpara;
+    }
+
+    me.icn3d.bCid = undefined;
+
+    // define for 'align' only
+    me.icn3d.pdbid_chain2title = {};
+
+    if(me.chainids2resids === undefined) me.chainids2resids = {}; // me.chainids2resids[chainid1][chainid2] = [resid, resid]
+
+    $.ajax({
+      url: urlalign,
+      dataType: 'jsonp',
+      cache: true,
+      beforeSend: function() {
+          me.showLoading();
+      },
+      complete: function() {
+          me.hideLoading();
+      },
+      success: function(align) {
+        if(align === undefined || align.length == 0) {
+            alert("These two chains " + chainalign + " can not align to each other.");
+            return false;
+        }
+
+        me.t_trans_add = align[0].t_trans_add;
+        me.q_trans_sub = align[0].q_trans_sub;
+        me.q_rotation = align[0].q_rotation;
+        me.qt_start_end = align[0].segs;
+
+/*
+        me.icn3d.t_trans_add = new THREE.Vector3(align[0].t_trans_add.x, align[0].t_trans_add.y, align[0].t_trans_add.z);
+
+        var qtrans = align[0].q_trans_sub;
+        var qrot = align[0].q_rotation;
+
+        var x = qtrans.x * qrot.x1 + qtrans.y * qrot.y1 + qtrans.z * qrot.z1;
+        var y = qtrans.x * qrot.x2 + qtrans.y * qrot.y2 + qtrans.z * qrot.z2;
+        var z = qtrans.x * qrot.x3 + qtrans.y * qrot.y3 + qtrans.z * qrot.z3;
+
+        me.icn3d.q_trans_sub = new THREE.Vector3(x, y, z);
+
+        me.icn3d.chainMat = new THREE.Matrix4();
+
+        me.icn3d.chainMat.set ( qrot.x1, qrot.y1, qrot.z1, 0, qrot.x2, qrot.y2, qrot.z2, 0, qrot.x3, qrot.y3, qrot.z3, 0, 0, 0, 0, 1);
+*/
+        $.ajax({
+          url: url_t,
+          dataType: 'jsonp',
+          cache: true,
+          beforeSend: function() {
+              me.showLoading();
+          },
+          complete: function() {
+              me.hideLoading();
+          },
+          success: function(data1) {
+            me.parseMmdbData(data1, 'target');
+
+            $.ajax({
+              url: url_q,
+              dataType: 'jsonp',
+              cache: true,
+              beforeSend: function() {
+                  me.showLoading();
+              },
+              complete: function() {
+                  me.hideLoading();
+              },
+              success: function(data2) {
+                me.parseMmdbData(data2, 'query');
+
+
+                //if(me.cfg.chainalign === undefined && Object.keys(me.icn3d.structures).length == 1) {
+                //    $("#" + me.pre + "alternateWrapper").hide();
+                //}
+
+                // show all
+                var allAtoms = {};
+                for(var i in me.icn3d.atoms) {
+                    allAtoms[i] = 1;
+                }
+                me.icn3d.dAtoms = allAtoms;
+                me.icn3d.hAtoms = allAtoms;
+
+                me.icn3d.setAtomStyleByOptions(me.opts);
+                // change the default color to "Identity"
+                me.icn3d.setColorByOptions(me.opts, me.icn3d.atoms);
+
+                //var mmdbidArray = me.inputid.split('_');
+                me.mmdbidArray = Object.keys(me.icn3d.structures);
+
+                me.renderStructure();
+
+                if(me.cfg.rotate !== undefined) me.rotStruc(me.cfg.rotate, true);
+
+                me.html2ddgm = '';
+
+                // by default, open the seq alignment window
+                //if(me.cfg.show2d !== undefined && me.cfg.show2d) me.openDialog(me.pre + 'dl_2ddgm', 'Interactions');
+                if(me.cfg.showalignseq !== undefined && me.cfg.showalignseq) {
+                    me.openDialog(me.pre + 'dl_alignment', 'Select residues in aligned sequences');
+                }
+
+                if(me.cfg.show2d !== undefined && me.cfg.show2d && me.bFullUi) {
+                    me.openDialog(me.pre + 'dl_2ddgm', 'Interactions');
+                    if(me.bFullUi) {
+                        if(!me.icn3d.bChainAlign) {
+                            me.download2Ddgm(me.inputid.toUpperCase());
+                        }
+                        else {
+                            me.set2DDiagramsForAlign(me.inputid2.toUpperCase(), me.inputid.toUpperCase());
+                        }
+                    }
+                }
+
+                //if(me.deferred !== undefined) me.deferred.resolve(); if(me.deferred2 !== undefined) me.deferred2.resolve();
+              } // success
+            }); // ajax
+          } // success
+        }); // ajax
+      } // success
+    }); // ajax
 };
 
 iCn3DUI.prototype.set2DDiagramsForAlign = function (mmdbid1, mmdbid2) { var me = this;
@@ -517,4 +650,231 @@ iCn3DUI.prototype.setSeqAlign = function (seqalign, alignedStructures) { var me 
       } // end for(var i
 
       seqalign = {};
+};
+
+iCn3DUI.prototype.setSeqPerResi = function (chainid, chainid1, chainid2, resi, resn, bAligned, color, color2, classname, bFirstChain, bFirstResi, alignIndex) { var me = this;
+      if(me.icn3d.alnChainsSeq[chainid] === undefined) me.icn3d.alnChainsSeq[chainid] = [];
+
+      resObject = {};
+      var pos = chainid.indexOf('_');
+      resObject.mmdbid = chainid.substr(0, pos);
+      resObject.chain = chainid.substr(pos+1);
+      resObject.resi = resi;
+      // resi will be empty if there is no coordinates
+      resObject.resn = (resObject.resi === '' || classname === 'icn3d-nalign') ? resn.toLowerCase() : resn;
+      resObject.aligned = bAligned;
+      // resi will be empty if there is no coordinates
+      resObject.color = (resObject.resi === '') ? me.GREYC : color; // color by identity
+      resObject.color2 = (resObject.resi === '') ? me.GREYC : color2; // color by conservation
+      resObject.class = classname;
+
+      me.icn3d.alnChainsSeq[chainid].push(resObject);
+
+      if(resObject.resi !== '') {
+      if(me.icn3d.alnChains[chainid] === undefined) me.icn3d.alnChains[chainid] = {};
+      $.extend(me.icn3d.alnChains[chainid], me.icn3d.residues[chainid + '_' + resObject.resi] );
+      }
+
+      if(bFirstChain) {
+          // annotation is for the master seq only
+          if(me.icn3d.alnChainsAnno[chainid] === undefined ) me.icn3d.alnChainsAnno[chainid] = [];
+          if(me.icn3d.alnChainsAnno[chainid][0] === undefined ) me.icn3d.alnChainsAnno[chainid][0] = [];
+          if(me.icn3d.alnChainsAnno[chainid][1] === undefined ) me.icn3d.alnChainsAnno[chainid][1] = [];
+          if(me.icn3d.alnChainsAnno[chainid][2] === undefined ) me.icn3d.alnChainsAnno[chainid][2] = [];
+          if(me.icn3d.alnChainsAnno[chainid][3] === undefined ) me.icn3d.alnChainsAnno[chainid][3] = [];
+          if(bFirstResi) {
+              // empty line
+              // 2nd chain title
+              if(me.icn3d.alnChainsAnno[chainid][4] === undefined ) me.icn3d.alnChainsAnno[chainid][4] = [];
+              // master chain title
+              if(me.icn3d.alnChainsAnno[chainid][5] === undefined ) me.icn3d.alnChainsAnno[chainid][5] = [];
+              // empty line
+              if(me.icn3d.alnChainsAnno[chainid][6] === undefined ) me.icn3d.alnChainsAnno[chainid][6] = [];
+
+              me.icn3d.alnChainsAnno[chainid][4].push(me.icn3d.pdbid_chain2title[chainid2]);
+              me.icn3d.alnChainsAnno[chainid][5].push(me.icn3d.pdbid_chain2title[chainid]);
+              me.icn3d.alnChainsAnno[chainid][6].push('');
+          }
+
+          var symbol = '.';
+          if(alignIndex % 5 === 0) symbol = '*';
+          if(alignIndex % 10 === 0) symbol = '|';
+          me.icn3d.alnChainsAnno[chainid][2].push(symbol); // symbol: | for 10th, * for 5th, . for rest
+
+          var numberStr = '';
+          if(alignIndex % 10 === 0) numberStr = alignIndex.toString();
+          me.icn3d.alnChainsAnno[chainid][3].push(numberStr); // symbol: 10, 20, etc, empty for rest
+
+          var residueid = chainid + '_' + resi;
+          var ss = me.icn3d.secondaries[residueid];
+
+          if(ss !== undefined) {
+              me.icn3d.alnChainsAnno[chainid][1].push(ss);
+          }
+          else {
+              me.icn3d.alnChainsAnno[chainid][1].push('-');
+          }
+      }
+      else {
+          var residueid = chainid + '_' + resi;
+          var ss = me.icn3d.secondaries[residueid];
+          if(ss !== undefined) {
+              me.icn3d.alnChainsAnno[chainid1][0].push(ss);
+          }
+          else {
+              me.icn3d.alnChainsAnno[chainid1][0].push('-');
+          }
+      }
+};
+
+iCn3DUI.prototype.setSeqAlignChain = function () { var me = this;
+      //loadSeqAlignment
+      var alignedAtoms = {};
+      var mmdbid1 = me.inputid2;
+      var mmdbid2 = me.inputid;
+
+      me.conservedName1 = mmdbid1 + '_cons';
+      me.nonConservedName1 = mmdbid1 + '_ncons';
+      me.notAlignedName1 = mmdbid1 + '_nalign';
+
+      me.conservedName2 = mmdbid2 + '_cons';
+      me.nonConservedName2 = mmdbid2 + '_ncons';
+      me.notAlignedName2 = mmdbid2 + '_nalign';
+
+      me.consHash1 = {};
+      me.nconsHash1 = {};
+      me.nalignHash1 = {};
+
+      me.consHash2 = {};
+      me.nconsHash2 = {};
+      me.nalignHash2 = {};
+
+      var chainidArray = me.cfg.chainalign.split(',');
+      var chainid1 = chainidArray[0];
+      var chainid2 = chainidArray[1];
+
+      var chain1 = chainid1.split('_')[1];
+      var chain2 = chainid2.split('_')[1];
+
+      // annoation title for the master seq only
+      if(me.icn3d.alnChainsAnTtl[chainid1] === undefined ) me.icn3d.alnChainsAnTtl[chainid1] = [];
+      if(me.icn3d.alnChainsAnTtl[chainid1][0] === undefined ) me.icn3d.alnChainsAnTtl[chainid1][0] = [];
+      if(me.icn3d.alnChainsAnTtl[chainid1][1] === undefined ) me.icn3d.alnChainsAnTtl[chainid1][1] = [];
+      if(me.icn3d.alnChainsAnTtl[chainid1][2] === undefined ) me.icn3d.alnChainsAnTtl[chainid1][2] = [];
+      if(me.icn3d.alnChainsAnTtl[chainid1][3] === undefined ) me.icn3d.alnChainsAnTtl[chainid1][3] = [];
+      if(me.icn3d.alnChainsAnTtl[chainid1][4] === undefined ) me.icn3d.alnChainsAnTtl[chainid1][4] = [];
+      if(me.icn3d.alnChainsAnTtl[chainid1][5] === undefined ) me.icn3d.alnChainsAnTtl[chainid1][5] = [];
+      if(me.icn3d.alnChainsAnTtl[chainid1][6] === undefined ) me.icn3d.alnChainsAnTtl[chainid1][6] = [];
+
+      // two annotations without titles
+      me.icn3d.alnChainsAnTtl[chainid1][0].push(chainid2);
+      me.icn3d.alnChainsAnTtl[chainid1][1].push(chainid1);
+      me.icn3d.alnChainsAnTtl[chainid1][2].push("");
+      me.icn3d.alnChainsAnTtl[chainid1][3].push("");
+
+      // 2nd chain title
+      me.icn3d.alnChainsAnTtl[chainid1][4].push(chainid2);
+      // master chain title
+      me.icn3d.alnChainsAnTtl[chainid1][5].push(chainid1);
+      // empty line
+      me.icn3d.alnChainsAnTtl[chainid1][6].push("");
+
+      var color, color2, classname;
+      var firstIndex1 = 0;
+      var firstIndex2 = 0;
+      var prevIndex1, prevIndex2;
+
+      var alignIndex = 1;
+      for (var i = 0, il = me.qt_start_end.length; i < il; ++i) {
+          var start1 = me.qt_start_end[i].q_start - 1;
+          var start2 = me.qt_start_end[i].t_start - 1;
+          var end1 = me.qt_start_end[i].q_end - 1;
+          var end2 = me.qt_start_end[i].t_end - 1;
+
+          var index1 = alignIndex;
+          for(var j = prevIndex1 + 1, jl = start1; prevIndex1 !== undefined && j < jl; ++j) {
+              var resi = me.icn3d.chainsSeq[chainid1][j].resi;
+              var resn = me.icn3d.chainsSeq[chainid1][j].name.toLowerCase();
+
+              color = me.GREY8;
+              classname = 'icn3d-nalign';
+
+              me.nalignHash1[chainid1 + '_' + resi] = 1;
+              me.setSeqPerResi(chainid1, chainid1, chainid2, resi, resn, false, color, undefined, classname, true, false, index1);
+              ++index1;
+          }
+
+          var index2 = alignIndex;
+          for(var j = prevIndex2 + 1, jl = start2; prevIndex2 !== undefined && j < jl; ++j) {
+              var resi = me.icn3d.chainsSeq[chainid2][j].resi;
+              var resn = me.icn3d.chainsSeq[chainid2][j].name.toLowerCase();
+
+              color = me.GREY8;
+              classname = 'icn3d-nalign';
+
+              me.nalignHash2[chainid2 + '_' + resi] = 1;
+              me.setSeqPerResi(chainid2, chainid1, chainid2, resi, resn, false, color, undefined, classname, false, false, index2);
+              ++index2; // count just once
+          }
+
+          if(index1 < index2) {
+              alignIndex = index2;
+
+              for(var j = 0; j < index2 - index1; ++j) {
+                  var resi = '';
+                  var resn = '-';
+
+                  color = me.GREY8;
+                  classname = 'icn3d-nalign';
+
+                  me.setSeqPerResi(chainid1, chainid1, chainid2, resi, resn, false, color, undefined, classname, true, false, index1 + j);
+              }
+          }
+          else {
+              alignIndex = index1;
+
+              for(var j = 0; j < index1 - index2; ++j) {
+                  var resi = '';
+                  var resn = '-';
+
+                  color = me.GREY8;
+                  classname = 'icn3d-nalign';
+
+                  me.setSeqPerResi(chainid2, chainid1, chainid2, resi, resn, false, color, undefined, classname, false, false, index2 + j);
+              }
+          }
+
+          for(var j = 0; j <= end1 - start1; ++j) {
+              var resi1 = me.icn3d.chainsSeq[chainid1][j + start1].resi;
+              var resi2 = me.icn3d.chainsSeq[chainid2][j + start2].resi;
+              var resn1 = me.icn3d.chainsSeq[chainid1][j + start1].name.toUpperCase();
+              var resn2 = me.icn3d.chainsSeq[chainid2][j + start2].name.toUpperCase();
+
+              if(resn1 === resn2) {
+                  color = '#FF0000';
+                  classname = 'icn3d-cons';
+
+                  me.consHash1[chainid1 + '_' + resi1] = 1;
+                  me.consHash2[chainid2 + '_' + resi2] = 1;
+              }
+              else {
+                  color = '#0000FF';
+                  classname = 'icn3d-ncons';
+
+                  me.nconsHash1[chainid1 + '_' + resi1] = 1;
+                  me.nconsHash2[chainid2 + '_' + resi2] = 1;
+              }
+
+              color2 = '#' + me.getColorhexFromBlosum62(resn1, resn2);
+
+              var bFirstResi = (i === 0 && j === 0) ? true : false;
+              me.setSeqPerResi(chainid1, chainid1, chainid2, resi1, resn1, true, color, color2, classname, true, bFirstResi, alignIndex);
+              me.setSeqPerResi(chainid2, chainid1, chainid2, resi2, resn2, true, color, color2, classname, false, bFirstResi, alignIndex);
+
+              ++alignIndex;
+          } // end for(var j
+
+          prevIndex1 = end1;
+          prevIndex2 = end2;
+      } // end for(var i
 };

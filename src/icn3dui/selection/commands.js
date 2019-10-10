@@ -429,9 +429,13 @@ iCn3DUI.prototype.applyCommandLoad = function (commandStr) { var me = this;
       me.cfg.cid = id;
       me.downloadCid(id);
     }
-    else if(command.indexOf('load align') !== -1) {
+    else if(command.indexOf('load alignment') !== -1) {
       me.cfg.align = id;
       me.downloadAlignment(id);
+    }
+    else if(command.indexOf('load chainalignment') !== -1) {
+      me.cfg.chainalign = id;
+      me.downloadChainAlignment(id);
     }
     else if(command.indexOf('load url') !== -1) {
         var typeStr = load_parameters[1]; // type pdb
@@ -579,7 +583,7 @@ iCn3DUI.prototype.applyCommand3ddomain = function (command) { var me = this;
 
 iCn3DUI.prototype.applyCommandViewinteractionBase = function (command) { var me = this;
   // chain functions together
-     if(me.cfg.align !== undefined) {
+     if(me.cfg.align !== undefined || me.cfg.chainalign !== undefined) {
          var structureArray = Object.keys(me.icn3d.structures);
          me.set2DDiagramsForAlign(structureArray[0].toUpperCase(), structureArray[1].toUpperCase());
      }
@@ -960,13 +964,11 @@ iCn3DUI.prototype.applyCommand = function (commandStr) { var me = this;
     me.icn3d.draw();
   }
   else if(command == 'clear selection') {
-    //if(me.icn3d.prevHighlightObjects.length > 0) { // remove
-        me.icn3d.removeHlObjects();
-        me.removeHl2D();
-        me.icn3d.bShowHighlight = false;
+    me.icn3d.removeHlObjects();
+    me.removeHl2D();
+    me.icn3d.bShowHighlight = false;
 
-        me.bSelectResidue = false;
-    //}
+    me.bSelectResidue = false;
   }
   else if(command == 'zoom selection') {
     me.icn3d.zoominSelection();
@@ -986,7 +988,7 @@ iCn3DUI.prototype.applyCommand = function (commandStr) { var me = this;
      me.toggleSelection();
   }
   else if(command == 'toggle highlight') {
-    if(me.icn3d.prevHighlightObjects.length > 0) { // remove
+    if(me.icn3d.prevHighlightObjects.length > 0 || me.icn3d.prevHighlightObjects_ghost.length > 0) { // remove
         me.icn3d.removeHlObjects();
         me.icn3d.bShowHighlight = false;
     }
@@ -1274,7 +1276,6 @@ iCn3DUI.prototype.applyCommand = function (commandStr) { var me = this;
       //"add track | chainid " + chainid + " | title " + title + " | text " + text
       var paraArray = commandOri.split(' | ');
 
-      //var chainid = paraArray[1].substr(8).toUpperCase();
       var chainid = paraArray[1].substr(8);
       var title = paraArray[2].substr(6);
       var text = paraArray[3].substr(5);

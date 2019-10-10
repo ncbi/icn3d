@@ -107,6 +107,12 @@ iCn3DUI.prototype.showTitle = function() { var me = this;
         else if(me.cfg.align !== undefined) {
             $("#" + me.pre + "title").html(title);
         }
+        else if(me.cfg.chainalign !== undefined) {
+            var chainidArray = me.cfg.chainalign.split(',');
+            title = 'Dynamic Structure Alignment of Chain ' + chainidArray[0] + ' to Chain ' + chainidArray[1];
+
+            $("#" + me.pre + "title").html(title);
+        }
         else {
             var url = me.getLinkToStructureSummary();
 
@@ -288,6 +294,44 @@ iCn3DUI.prototype.createLinkForBlob = function(blob, filename) { var me = this;
 };
 */
 
+iCn3DUI.prototype.getPngText = function() { var me = this;
+    var url; // output state file if me.bInputfile is true or the URL is mor than 4000 chars
+    var bAllCommands = true;
+
+    var text = "";
+    if(me.bInputfile) {
+        url = me.shareLinkUrl(bAllCommands); // output state file if me.bInputfile is true or the URL is mor than 4000 chars
+
+        text += "\nStart of type file======\n";
+        text += me.InputfileType + "\n";
+        text += "End of type file======\n";
+
+        text += "Start of data file======\n";
+        text += me.InputfileData;
+        text += "End of data file======\n";
+
+        text += "Start of state file======\n";
+        text += url;
+        text += "End of state file======\n";
+    }
+    else {
+        url = me.shareLinkUrl();
+        if(url.length > 4000) {
+            url = me.shareLinkUrl(bAllCommands); // output state file if me.bInputfile is true or the URL is mor than 4000 chars
+
+            text += "\nStart of state file======\n";
+
+            text += url;
+            text += "End of state file======\n";
+        }
+        else {
+            text += "\nShare Link: " + url;
+        }
+    }
+
+    return text;
+};
+
 iCn3DUI.prototype.saveFile = function(filename, type, text) { var me = this;
     //Save file
     var blob;
@@ -329,25 +373,7 @@ iCn3DUI.prototype.saveFile = function(filename, type, text) { var me = this;
                 reader.onload = function (e) {
                     var arrayBuffer = e.target.result; // or = reader.result;
 
-                    var url = me.shareLinkUrl();
-
-                    var text = "";
-                    if(me.bInputfile) {
-                        text += "\nStart of type file======\n";
-                        text += me.InputfileType + "\n";
-                        text += "End of type file======\n";
-
-                        text += "Start of data file======\n";
-                        text += me.InputfileData;
-                        text += "End of data file======\n";
-
-                        text += "Start of state file======\n";
-                        text += url;
-                        text += "End of state file======\n";
-                    }
-                    else {
-                        text += "\nShare Link: " + url;
-                    }
+                    var text = me.getPngText();
 
                     blob = me.getBlobFromBufferAndText(arrayBuffer, text);
 
@@ -367,25 +393,8 @@ iCn3DUI.prototype.saveFile = function(filename, type, text) { var me = this;
                     reader.onload = function (e) {
                         var arrayBuffer = e.target.result; // or = reader.result;
 
-                        var url = me.shareLinkUrl();
+                        var text = me.getPngText();
 
-                        var text = "";
-                        if(me.bInputfile) {
-                            text += "\nStart of type file======\n";
-                            text += me.InputfileType + "\n";
-                            text += "End of type file======\n";
-
-                            text += "Start of data file======\n";
-                            text += me.InputfileData;
-                            text += "End of data file======\n";
-
-                            text += "Start of state file======\n";
-                            text += url;
-                            text += "End of state file======\n";
-                        }
-                        else {
-                            text += "\nShare Link: " + url;
-                        }
                         blob = me.getBlobFromBufferAndText(arrayBuffer, text);
 
                         //me.createLinkForBlob(blob, filename);
@@ -536,7 +545,7 @@ iCn3DUI.prototype.setViewerWidthHeight = function() { var me = this;
     // width from css
     var viewer_width, viewer_height;
 
-    if(me.oriWidth !== undefined) {
+    if(me.oriWidth !== undefined && me.cfg.width.toString().indexOf('%') === -1) {
         viewer_width = me.oriWidth;
         viewer_height = me.oriHeight;
     }
@@ -549,35 +558,26 @@ iCn3DUI.prototype.setViewerWidthHeight = function() { var me = this;
         if(viewer_height === undefined) viewer_height = me.HEIGHT;
 
         // width and height from input parameter
-        if(me.cfg.width.toString().indexOf('%') === -1) {
-            viewer_width = parseInt(me.cfg.width);
+        if(me.cfg.width.toString().indexOf('%') !== -1) {
+          viewer_width = $( window ).width() * me.cfg.width.substr(0, me.cfg.width.toString().indexOf('%')) / 100.0 - me.LESSWIDTH;
+        }
+        else {
+          viewer_width = parseInt(me.cfg.width);
         }
 
-        if(me.cfg.height.toString().indexOf('%') === -1) {
-            viewer_height = parseInt(me.cfg.height);
+        if(me.cfg.height.toString().indexOf('%') !== -1) {
+          viewer_height = $( window ).height() * me.cfg.height.substr(0, me.cfg.height.toString().indexOf('%')) / 100.0 - me.EXTRAHEIGHT - me.LESSHEIGHT;
+        }
+        else {
+          viewer_height = parseInt(me.cfg.height);
         }
     }
 
     if(viewer_width && me.WIDTH > viewer_width) me.WIDTH = viewer_width;
     if(viewer_height && me.HEIGHT > viewer_height) me.HEIGHT = viewer_height;
-
-    // show the full size of the menus and partialcanvas
-//    if(me.isMac() && me.isMobile()) {
-//      if(me.WIDTH < me.MENU_WIDTH) me.WIDTH = me.MENU_WIDTH;
-
-//      me.HEIGHT = $( window ).height() / $( window ).width() * me.MENU_WIDTH;
-//    }
-
-    //if(me.cfg.width.toString().indexOf('%') === -1) {
-    //    me.WIDTH = parseInt(me.cfg.width) + me.LESSWIDTH;
-    //}
-
-    //if(me.cfg.height.toString().indexOf('%') === -1) {
-    //    me.HEIGHT = parseInt(me.cfg.height) + me.EXTRAHEIGHT + me.LESSHEIGHT;
-    //}
 };
 
-iCn3DUI.prototype.shareLinkUrl = function() { var me = this;
+iCn3DUI.prototype.shareLinkUrl = function(bAllCommands) { var me = this;
        var url = "https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?";
 
        for(var key in me.cfg) {
@@ -607,7 +607,7 @@ iCn3DUI.prototype.shareLinkUrl = function() { var me = this;
             if(key === 'rotate' && value === 'right') continue;
 
            if(key === 'options') {
-               url += key + '=' + JSON.stringify(value) + '&';
+               if(Object.keys(value).length > 0) url += key + '=' + JSON.stringify(value) + '&';
            }
            else if(value === true) {
                url += key + '=1&';
@@ -615,7 +615,7 @@ iCn3DUI.prototype.shareLinkUrl = function() { var me = this;
            else if(value === false) {
                url += key + '=0&';
            }
-           else {
+           else if(value !== '') {
                url += key + '=' + value + '&';
            }
        }
@@ -634,7 +634,7 @@ iCn3DUI.prototype.shareLinkUrl = function() { var me = this;
          start = 0;
        }
 
-       if(me.bInputfile) start = 0;
+       if(bAllCommands !== undefined && bAllCommands) start = 0;
 
        var transformation = {};
        transformation.factor = me.icn3d._zoomFactor;
@@ -643,35 +643,66 @@ iCn3DUI.prototype.shareLinkUrl = function() { var me = this;
 
        var bCommands = false;
        var statefile = "";
-       for(var i = start, il = me.icn3d.commands.length; i < il; ++i) {
+       var prevCommandStr = undefined;
+
+       var toggleStr = 'toggle highlight';
+       var cntToggle = 0;
+
+       if(me.icn3d.commands.length > start) {
+           var command_tf = me.icn3d.commands[start].split('|||');
+           prevCommandStr = command_tf[0].trim();
+
+           //statefile += me.icn3d.commands[start] + "\n";
+
+           if(prevCommandStr.indexOf(toggleStr) !== -1) ++cntToggle;
+       }
+
+       var i = start + 1;
+       for(var il = me.icn3d.commands.length; i < il; ++i) {
            bCommands = true;
 
            var command_tf = me.icn3d.commands[i].split('|||');
            var commandStr = command_tf[0].trim();
 
-           if(i === il - 1) {
-               //var transformation = (command_tf.length > 1) ? ('|||' + command_tf[1]) : '';
-               if(i !== 1 && i !== 0) {
-                   url += '; ';
-               }
-               url += commandStr + '|||' + me.getTransformationStr(transformation);
+           //statefile += me.icn3d.commands[i] + "\n";
+
+           // only output the most recent 'select saved atoms...'
+           if( (prevCommandStr.indexOf('select saved atoms') !== -1 && commandStr.indexOf('select saved atoms') !== -1)
+             || (prevCommandStr.indexOf('select chain') !== -1 && commandStr.indexOf('select chain') !== -1)
+             || (prevCommandStr.indexOf('pickatom') !== -1 && commandStr.indexOf('pickatom') !== -1)
+             ) {
+               // do nothing
            }
-           else if(i === 1) {
-               url += commandStr;
+           else if(prevCommandStr.indexOf(toggleStr) !== -1) {
+               ++cntToggle;
            }
-           else if(i !== 1 && i !== il - 1) {
-               url += '; ' + commandStr;
+           else if(i === start + 1) {
+               url += prevCommandStr;
+               statefile += prevCommandStr + "\n";
+           }
+           else {
+               url += '; ' + prevCommandStr;
+               statefile += prevCommandStr + "\n";
            }
 
-           statefile += me.icn3d.commands[i] + "\n";
+           prevCommandStr = commandStr;
+       }
+
+       // last command
+       if(prevCommandStr !== undefined) {
+           if(bCommands) url += '; ';
+           if(cntToggle > 0 && cntToggle %2 == 0 && prevCommandStr !== toggleStr) url += toggleStr + '; ';
+
+           url += prevCommandStr + '|||' + me.getTransformationStr(transformation);
+           statefile += prevCommandStr + '|||' + me.getTransformationStr(transformation) + '\n';
        }
 
        // remove "&command="
-       if(!bCommands) {
-           url = url.substr(0, url.length - 9);
-       }
+//       if(!bCommands) {
+//           url = url.substr(0, url.length - 9);
+//       }
 
-       if(me.bInputfile) url = statefile;
+       if(me.bInputfile || url.length > 4000) url = statefile;
 
        return url;
 };

@@ -454,7 +454,6 @@ iCn3D.prototype.showPickingBase = function(atom, x, y) { var me = this;
 iCn3D.prototype.removeHlObjects = function () {
    // remove prevous highlight
    for(var i in this.prevHighlightObjects) {
-       //this.mdlPicking.remove(this.prevHighlightObjects[i]);
        this.mdl.remove(this.prevHighlightObjects[i]);
    }
 
@@ -462,12 +461,10 @@ iCn3D.prototype.removeHlObjects = function () {
 
    // remove prevous highlight
    for(var i in this.prevHighlightObjects_ghost) {
-       //this.mdlPicking.remove(this.prevHighlightObjects_ghost[i]);
        this.mdl.remove(this.prevHighlightObjects_ghost[i]);
    }
 
    this.prevHighlightObjects_ghost = [];
-
 };
 
 iCn3D.prototype.addHlObjects = function (color, bRender, atomsHash) {
@@ -742,14 +739,16 @@ iCn3D.prototype.addResiudeLabels = function (atoms, bSchematic, alpha) {
 };
 
 iCn3D.prototype.setCenter = function(center) {
-   this.mdl.position.set(0,0,0);
-   this.mdlImpostor.position.set(0,0,0);
-   this.mdl_ghost.position.set(0,0,0);
+   if(!this.bChainAlign) {
+       this.mdl.position.set(0,0,0);
+       this.mdlImpostor.position.set(0,0,0);
+       this.mdl_ghost.position.set(0,0,0);
 
-   this.mdl.position.sub(center);
-   //this.mdlPicking.position.sub(center);
-   this.mdlImpostor.position.sub(center);
-   this.mdl_ghost.position.sub(center);
+       this.mdl.position.sub(center);
+       //this.mdlPicking.position.sub(center);
+       this.mdlImpostor.position.sub(center);
+       this.mdl_ghost.position.sub(center);
+   }
 };
 
 iCn3D.prototype.getResiduesFromAtoms = function(atomsHash) {

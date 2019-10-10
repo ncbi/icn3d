@@ -16,6 +16,26 @@ REAL32[3] – Vertex 3
 UINT16 – Attribute byte count
 end
 */
+
+iCn3DUI.prototype.getFaceCnt = function( mdl ){ var me = this;
+    var cntFaces = 0;
+    for(var i = 0, il = mdl.children.length; i < il; ++i) {
+         var mesh = mdl.children[i];
+         if(mesh.type === 'Sprite') continue;
+
+         var geometry = mesh.geometry;
+
+         var faces = geometry.faces;
+         if(faces !== undefined) {
+             for(var j = 0, jl = faces.length; j < jl; ++j) {
+                 ++cntFaces;
+             }
+         }
+    }
+
+    return cntFaces;
+};
+
 iCn3DUI.prototype.saveStlFile = function( mat ){ var me = this;
     if(Object.keys(me.icn3d.dAtoms).length > 70000) {
         alert('Please display a subset of the structure to export 3D files. Then merge the files for 3D printing...');
@@ -25,33 +45,9 @@ iCn3DUI.prototype.saveStlFile = function( mat ){ var me = this;
     me.prepareFor3Dprint();
 
     var cntFaces = 0;
-    for(var i = 0, il = me.icn3d.mdl.children.length; i < il; ++i) {
-         var mesh = me.icn3d.mdl.children[i];
-         if(mesh.type === 'Sprite') continue;
 
-         var geometry = mesh.geometry;
-
-         var faces = geometry.faces;
-         if(faces !== undefined) {
-             for(var j = 0, jl = faces.length; j < jl; ++j) {
-                 ++cntFaces;
-             }
-         }
-    }
-
-    for(var i = 0, il = me.icn3d.mdl_ghost.children.length; i < il; ++i) {
-         var mesh = me.icn3d.mdl_ghost.children[i];
-         if(mesh.type === 'Sprite') continue;
-
-         var geometry = mesh.geometry;
-
-         var faces = geometry.faces;
-         if(faces !== undefined) {
-             for(var j = 0, jl = faces.length; j < jl; ++j) {
-                 ++cntFaces;
-             }
-         }
-    }
+    cntFaces += me.getFaceCnt(me.icn3d.mdl);
+    cntFaces += me.getFaceCnt(me.icn3d.mdl_ghost);
 
     var blobArray = []; // hold blobs
 

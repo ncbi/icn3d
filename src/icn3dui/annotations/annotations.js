@@ -699,7 +699,7 @@ iCn3DUI.prototype.getProteinName= function(chnid) { var me = this;
             }
         }
     }
-    else if(me.cfg.align !== undefined && me.chainid2title !== undefined) {
+    else if((me.cfg.align !== undefined || me.cfg.chainalign !== undefined) && me.chainid2title !== undefined) {
         if(me.chainid2title[chnid] !== undefined) {
             fullProteinName = me.chainid2title[chnid];
         }
@@ -861,7 +861,7 @@ iCn3DUI.prototype.showSeq = function(chnid, chnidBase, type, queryTitle, compTit
     var bNonMmdb = false;
 
     var giSeq;
-    if(me.cfg.mmdbid === undefined && me.cfg.gi === undefined && me.cfg.blast_rep_id === undefined && me.cfg.align === undefined) {
+    if(me.cfg.mmdbid === undefined && me.cfg.gi === undefined && me.cfg.blast_rep_id === undefined && me.cfg.align === undefined && me.cfg.chainalign === undefined) {
         bNonMmdb = true;
 
         giSeq = [];
@@ -902,7 +902,7 @@ iCn3DUI.prototype.showSeq = function(chnid, chnidBase, type, queryTitle, compTit
         var atom = me.icn3d.getFirstCalphaAtomObj(me.icn3d.chains[chnid]);
 
         //if(me.baseResi[chnid] != 0 && (me.cfg.mmdbid !== undefined || me.cfg.gi !== undefined || me.cfg.align !== undefined)) {
-        if((me.cfg.mmdbid !== undefined || me.cfg.gi !== undefined || me.cfg.blast_rep_id !== undefined || me.cfg.align !== undefined) && atom.resi_ori !== undefined && atom.resi_ori != atom.resi && chnid.indexOf('Misc') == -1 ) {
+        if((me.cfg.mmdbid !== undefined || me.cfg.gi !== undefined || me.cfg.blast_rep_id !== undefined || me.cfg.align !== undefined || me.cfg.chainalign !== undefined) && atom.resi_ori !== undefined && atom.resi_ori != atom.resi && chnid.indexOf('Misc') == -1 ) {
             htmlTmp += '<div class="icn3d-annoTitle" anno="0" title="NCBI Residue Numbers">NCBI Residue Numbers</div>';
         }
         else {
@@ -1318,7 +1318,7 @@ iCn3DUI.prototype.showSeq = function(chnid, chnidBase, type, queryTitle, compTit
     if(me.giSeq[chnid].length > 10) {
         var atom = me.icn3d.getFirstCalphaAtomObj(me.icn3d.chains[chnid]);
         //if(me.baseResi[chnid] != 0 && (me.cfg.mmdbid !== undefined || me.cfg.gi !== undefined || me.cfg.align !== undefined)) {
-        if((me.cfg.mmdbid !== undefined || me.cfg.gi !== undefined || me.cfg.blast_rep_id !== undefined || me.cfg.align !== undefined) && atom.resi_ori !== undefined && atom.resi_ori != atom.resi && chnid.indexOf('Misc') == -1 ) {
+        if((me.cfg.mmdbid !== undefined || me.cfg.gi !== undefined || me.cfg.blast_rep_id !== undefined || me.cfg.align !== undefined || me.cfg.chainalign !== undefined) && atom.resi_ori !== undefined && atom.resi_ori != atom.resi && chnid.indexOf('Misc') == -1 ) {
             htmlTmp = '<div class="icn3d-dl_sequence">';
             htmlTmp += '<div class="icn3d-residueLine" style="white-space:nowrap;">';
             htmlTmp += '<div class="icn3d-annoTitle" anno="0" title="PDB Residue Numbers">PDB Residue Numbers</div>';
@@ -2491,7 +2491,7 @@ iCn3DUI.prototype.showDomainPerStructure = function(index) { var me = this;
             me.bAjaxDoneArray[index] = true;
 
             if(me.deferred3ddomain !== undefined) {
-                if(me.cfg.align === undefined) {
+                if(me.cfg.align === undefined || me.cfg.chainalign === undefined ) {
                     me.deferred3ddomain.resolve();
                 }
                 else {
@@ -2528,7 +2528,7 @@ iCn3DUI.prototype.showDomainPerStructure = function(index) { var me = this;
             bAjaxDone1 = true;
 
             if(me.deferred3ddomain !== undefined) {
-                if(me.cfg.align === undefined) {
+                if(me.cfg.align === undefined || me.cfg.chainalign === undefined) {
                     me.deferred3ddomain.resolve();
                 }
                 else {
@@ -2722,7 +2722,7 @@ iCn3DUI.prototype.showDomainWithData = function(chnid, data) { var me = this;
 iCn3DUI.prototype.showInteraction = function(chnid, chnidBase) {
     var me = this;
 
-    if(me.chainname2residues === undefined && (me.cfg.mmdbid !== undefined || me.cfg.gi !== undefined || me.cfg.blast_rep_id !== undefined || me.cfg.align !== undefined) ) {
+    if(me.chainname2residues === undefined && (me.cfg.mmdbid !== undefined || me.cfg.gi !== undefined || me.cfg.blast_rep_id !== undefined || me.cfg.align !== undefined || me.cfg.chainalign !== undefined) ) {
         // 2d interaction didn't finish loading data yet
         setTimeout(function(){
           me.showInteraction_base(chnid, chnidBase);
@@ -2753,7 +2753,7 @@ iCn3DUI.prototype.showInteraction_base = function(chnid, chnidBase) {
         me.chainname2residues[chainid] = {};
 
         var jl = chainArray.length;
-        if(jl > 100 && me.cfg.mmdbid === undefined && me.cfg.gi === undefined && me.cfg.blast_rep_id === undefined && me.cfg.align === undefined) {
+        if(jl > 100 && me.cfg.mmdbid === undefined && me.cfg.gi === undefined && me.cfg.blast_rep_id === undefined && me.cfg.align === undefined && me.cfg.chainalign === undefined) {
         //if(jl > 100) {
             //console.log("Do not show interactions if there are more than 100 chains");
             $("#" + me.pre + "dt_interaction_" + chnid).html("");
