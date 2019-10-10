@@ -988,8 +988,7 @@ iCn3DUI.prototype.applyCommand = function (commandStr) { var me = this;
      me.toggleSelection();
   }
   else if(command == 'toggle highlight') {
-    if(me.icn3d.prevHighlightObjects.length > 0 || me.icn3d.prevHighlightObjects_ghost.length > 0
-      || me.icn3d.prevHighlightObjects2.length > 0 || me.icn3d.prevHighlightObjects_ghost2.length > 0) { // remove
+    if(me.icn3d.prevHighlightObjects.length > 0 || me.icn3d.prevHighlightObjects_ghost.length > 0) { // remove
         me.icn3d.removeHlObjects();
         me.icn3d.bShowHighlight = false;
     }

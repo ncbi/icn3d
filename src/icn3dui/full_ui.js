@@ -39,7 +39,6 @@ var iCn3DUI = function(cfg) {
     if(me.cfg.showanno === undefined) me.cfg.showanno = false;
     if(me.cfg.showseq === undefined) me.cfg.showseq = false;
     if(me.cfg.showalignseq === undefined) me.cfg.showalignseq = false;
-    if(me.cfg.showchainalignseq === undefined) me.cfg.showchainalignseq = false;
     if(me.cfg.show2d === undefined) me.cfg.show2d = false;
     if(me.cfg.showsets === undefined) me.cfg.showsets = false;
 

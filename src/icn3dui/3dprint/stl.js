@@ -46,8 +46,8 @@ iCn3DUI.prototype.saveStlFile = function( mat ){ var me = this;
 
     var cntFaces = 0;
 
-    cntFaces += getFaceCnt(me.icn3d.mdl);
-    cntFaces += getFaceCnt(me.icn3d.mdl_ghost);
+    cntFaces += me.getFaceCnt(me.icn3d.mdl);
+    cntFaces += me.getFaceCnt(me.icn3d.mdl_ghost);
 
     var blobArray = []; // hold blobs
 

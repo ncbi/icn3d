@@ -465,22 +465,6 @@ iCn3D.prototype.removeHlObjects = function () {
    }
 
    this.prevHighlightObjects_ghost = [];
-
-   if(this.bChainAlign) {
-       // remove prevous highlight
-       for(var i in this.prevHighlightObjects2) {
-           this.mdl.remove(this.prevHighlightObjects2[i]);
-       }
-
-       this.prevHighlightObjects2 = [];
-
-       // remove prevous highlight
-       for(var i in this.prevHighlightObjects_ghost2) {
-           this.mdl.remove(this.prevHighlightObjects_ghost2[i]);
-       }
-
-       this.prevHighlightObjects_ghost2 = [];
-   }
 };
 
 iCn3D.prototype.addHlObjects = function (color, bRender, atomsHash) {

@@ -352,8 +352,7 @@ iCn3DUI.prototype.hlSeqInChain = function(chainid) { var me = this;
 iCn3DUI.prototype.toggleHighlight = function() { var me = this;
     //me.setLogCmd("toggle highlight", true);
 
-    if(me.icn3d.prevHighlightObjects.length > 0 || me.icn3d.prevHighlightObjects_ghost.length > 0
-      || me.icn3d.prevHighlightObjects2.length > 0 || me.icn3d.prevHighlightObjects_ghost2.length > 0) { // remove
+    if(me.icn3d.prevHighlightObjects.length > 0 || me.icn3d.prevHighlightObjects_ghost.length > 0) { // remove
         me.clearHighlight();
     }
     else { // add

@@ -601,7 +601,6 @@ iCn3DUI.prototype.shareLinkUrl = function(bAllCommands) { var me = this;
             if(key === 'showanno' && value === false) continue;
             if(key === 'showseq' && value === false) continue;
             if(key === 'showalignseq' && value === false) continue;
-            if(key === 'showchainalignseq' && value === false) continue;
             if(key === 'show2d' && value === false) continue;
             if(key === 'showsets' && value === false) continue;
 

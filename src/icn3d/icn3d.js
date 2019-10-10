@@ -1172,10 +1172,6 @@ iCn3D.prototype = {
         this.stabilizerpnts = [];
         //this.ncbondpnts = []; // non-covalent bonds
 
-        // for chain alignment
-        this.targetAtoms = {};
-        this.queryAtoms = {};
-
         this.doublebonds = {};
         this.triplebonds = {};
         this.aromaticbonds = {};
