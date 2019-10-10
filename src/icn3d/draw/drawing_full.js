@@ -373,7 +373,7 @@ iCn3D.prototype.createLines = function(lines) { // show extra lines, not used fo
    // do not add the artificial lines to raycasting objects
 };
 
-iCn3D.prototype.createBrick = function (p0, p1, radius, color) {
+iCn3D.prototype.createBrick = function (p0, p1, radius, color) { var me = this;
     var cylinderGeometry = new THREE.CylinderGeometry(1, 1, 1, 4, 1);
 
     var mesh = new THREE.Mesh(cylinderGeometry, new THREE.MeshPhongMaterial({ specular: this.frac, shininess: 30, emissive: 0x000000, color: color }));
@@ -385,6 +385,6 @@ iCn3D.prototype.createBrick = function (p0, p1, radius, color) {
 
     mesh.matrix.multiply(new THREE.Matrix4().makeScale(radius, radius, p0.distanceTo(p1))).multiply(new THREE.Matrix4().makeRotationX(Math.PI * 0.5));
 
-    this.mdl.add(mesh);
+    me.mdl.add(mesh);
 };
 

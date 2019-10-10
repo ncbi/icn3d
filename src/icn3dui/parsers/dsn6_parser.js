@@ -166,7 +166,8 @@ iCn3DUI.prototype.loadDsn6Data = function(dsn6data, type, sigma) { var me = this
       header.beta = intView[ 13 ] * factor;
       header.gamma = intView[ 14 ] * factor;
 
-      divisor = intView[ 15 ] / 100;
+      //divisor = intView[ 15 ] / 100;
+      divisor = intView[ 15 ] / intView[ 18 ];
       summand = intView[ 16 ];
     }
 
@@ -228,6 +229,8 @@ iCn3DUI.prototype.loadDsn6Data = function(dsn6data, type, sigma) { var me = this
     }
 
 //console.log("header: " + JSON.stringify(header));
+//console.log("data.length: " + data.length);
+//console.log("sigma: " + sigma);
 //console.log("data: " + data);
 
     // for 1KQ2

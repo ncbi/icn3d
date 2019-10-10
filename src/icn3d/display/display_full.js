@@ -595,7 +595,7 @@ iCn3D.prototype.draw = function () { var me = this;
 
     // Impostor display using the saved arrays
     if(this.bImpo) {
-        this.drawImpostorShader();
+        this.drawImpostorShader(); // target
     }
 
     this.applyPrevColor();

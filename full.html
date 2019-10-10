@@ -64,6 +64,7 @@
     var urltype = (params.type === undefined) ? 'pdb' : params.type;
 
     var align = params.align;
+    var chainalign = params.chainalign;
 
     var width = params.width;
     var height = params.height;
@@ -106,6 +107,7 @@
 
     // for alignment
     var showalignseq = getValue(params.showalignseq);
+    var showchainalignseq = getValue(params.showchainalignseq);
 
     var show2d = getValue(params.show2d);
 
@@ -217,6 +219,32 @@
               mobilemenu: mobilemenu,
               closepopup: closepopup,
               align: align,
+              command: command
+          };
+
+          var icn3dui = new iCn3DUI(cfg);
+
+          icn3dui.show3DStructure();
+      }
+      else if(chainalign !== undefined) {
+          var cfg = {
+              divid: 'div0',
+              inpara: inpara,
+              width: width,
+              height: height,
+              resize: resize,
+              rotate: rotate,
+              showmenu: showmenu,
+              showtitle: showtitle,
+              showcommand: showcommand,
+              showanno: showanno,
+              showalignseq: showalignseq,
+              show2d: show2d,
+              showsets: showsets,
+              simplemenu: simplemenu,
+              mobilemenu: mobilemenu,
+              closepopup: closepopup,
+              chainalign: chainalign,
               command: command
           };
 

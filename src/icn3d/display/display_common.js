@@ -563,10 +563,10 @@ iCn3D.prototype.applyDisplayOptions = function (options, atoms, bHighlight) { va
         }
       }
       else if(style === 'stick') {
-        this.createStickRepresentation(this.hash2Atoms(atomHash), this.cylinderRadius, this.cylinderRadius, undefined, bHighlight);
+        this.createStickRepresentation(this.hash2Atoms(atomHash), this.cylinderRadius, this.cylinderRadius, undefined, bHighlight, undefined);
       }
       else if(style === 'ball and stick') {
-        this.createStickRepresentation(this.hash2Atoms(atomHash), this.cylinderRadius, this.cylinderRadius * 0.5, this.dotSphereScale, bHighlight);
+        this.createStickRepresentation(this.hash2Atoms(atomHash), this.cylinderRadius, this.cylinderRadius * 0.5, this.dotSphereScale, bHighlight, undefined);
       }
       else if(style === 'sphere') {
         this.createSphereRepresentation(this.hash2Atoms(atomHash), this.sphereRadius, undefined, undefined, bHighlight);
@@ -738,13 +738,9 @@ iCn3D.prototype.rebuildSceneBase = function (options) { var me = this;
     this.scene.add(this.directionalLight);
     this.scene.add(ambientLight);
 
-    //this.group = new THREE.Object3D();  // regular display
-
     this.mdl = new THREE.Object3D();  // regular display
-    //this.mdlPicking = new THREE.Object3D();  // pk display
     this.mdlImpostor = new THREE.Object3D();  // Impostor display
 
-    //this.scene.add(this.mdlPicking);
     this.scene.add(this.mdl);
     this.scene.add(this.mdlImpostor);
 
@@ -752,12 +748,10 @@ iCn3D.prototype.rebuildSceneBase = function (options) { var me = this;
     this.mdl_ghost = new THREE.Object3D();  // Impostor display
     this.scene_ghost.add(this.mdl_ghost);
 
-    //this.scene_ghost.add(this.directionalLight);
-    //this.scene_ghost.add(ambientLight);
-
     // related to pk
     this.objects = []; // define objects for pk, not all elements are used for pk
     this.objects_ghost = []; // define objects for pk, not all elements are used for pk
+
     this.raycaster = new THREE.Raycaster();
     this.projector = new THREE.Projector();
     this.mouse = new THREE.Vector2();
@@ -924,14 +918,7 @@ iCn3D.prototype.applyCenterOptions = function (options) {
 };
 
 iCn3D.prototype.setRotationCenter = function (coord) {
-   this.mdl.position.set(0,0,0);
-   this.mdlImpostor.position.set(0,0,0);
-   this.mdl_ghost.position.set(0,0,0);
-
-    //this.mdlPicking.position.sub(coord);
-    this.mdl.position.sub(coord);
-    this.mdlImpostor.position.sub(coord);
-    this.mdl_ghost.position.sub(coord);
+   this.setCenter(coord);
 };
 
 iCn3D.prototype.applyOriginalColor = function (atoms) {

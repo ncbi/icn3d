@@ -79,7 +79,7 @@ var iCn3D = function (id) {
         console.log('ANGLE_instanced_arrays is supported. Assembly is drawn with one copy of the asymmetric unit using hardware instancing.');
     }
 
-        // cylinder impostor
+    // cylinder impostor
     this.posArray = new Array();
     this.colorArray = new Array();
 
@@ -88,7 +88,7 @@ var iCn3D = function (id) {
 
     this.radiusArray = new Array();
 
-        // sphere impostor
+    // sphere impostor
     this.posArraySphere = new Array();
     this.colorArraySphere = new Array();
     this.radiusArraySphere = new Array();
@@ -425,7 +425,61 @@ iCn3D.prototype = {
 
     constructor: iCn3D,
 
+    isIntersect: function(objects, mdl, bClick, popupX, popupY) { var me = this;
+        var intersects = me.raycaster.intersectObjects( objects ); // not all "mdl" group will be used for pk
+
+        var bFound = false;
+
+        var position = mdl.position;
+        if ( intersects.length > 0 ) {
+            // the intersections are sorted so that the closest point is the first one.
+            intersects[ 0 ].point.sub(position); // mdl.position was moved to the original (0,0,0) after reading the molecule coordinates. The raycasting was done based on the original. The position of the original should be substracted.
+
+            var threshold = 0.5;
+            var atom = me.getAtomsFromPosition(intersects[ 0 ].point, threshold); // the second parameter is the distance threshold. The first matched atom will be returned. Use 1 angstrom, not 2 angstrom. If it's 2 angstrom, other atom will be returned.
+
+            while(!atom && threshold < 10) {
+                threshold = threshold + 0.5;
+                atom = me.getAtomsFromPosition(intersects[ 0 ].point, threshold);
+            }
+
+            if(atom) {
+                bFound = true;
+                if(me.pickpair) {
+                    if(bClick) {
+                      if(me.pAtomNum % 2 === 0) {
+                        me.pAtom = atom;
+                      }
+                      else {
+                        me.pAtom2 = atom;
+                      }
+
+                      ++me.pAtomNum;
+                    }
+                }
+                else {
+                  me.pAtom = atom;
+                }
+
+                if(bClick) {
+                  me.showPicking(atom);
+                }
+                else {
+                  me.showPicking(atom, popupX, popupY);
+                  //me.showPicking(atom, x, y);
+                }
+            }
+            else {
+                console.log("No atoms were found in 10 andstrom range");
+            }
+        } // end if
+
+        return bFound;
+    },
+
     rayCaster: function(e, bClick) { var me = this;
+//        if(this.bChainAlign) return; // no picking for chain alignment
+
         var x = e.pageX, y = e.pageY;
         if (e.originalEvent.targetTouches && e.originalEvent.targetTouches[0]) {
             x = e.originalEvent.targetTouches[0].pageX;
@@ -485,98 +539,10 @@ iCn3D.prototype = {
                 me.raycaster.set(mouse3, new THREE.Vector3(0,0,-1).transformDirection( me.cam.matrixWorld )); // works for all versions
             }
 
-            var intersects = me.raycaster.intersectObjects( me.objects ); // not all "mdl" group will be used for pk
-
-            var bFound = false;
-
-            var position = me.mdl.position;
-            if ( intersects.length > 0 ) {
-                // the intersections are sorted so that the closest point is the first one.
-                intersects[ 0 ].point.sub(position); // mdl.position was moved to the original (0,0,0) after reading the molecule coordinates. The raycasting was done based on the original. The positio of the ooriginal should be substracted.
-
-                var threshold = 0.5;
-                var atom = me.getAtomsFromPosition(intersects[ 0 ].point, threshold); // the second parameter is the distance threshold. The first matched atom will be returned. Use 1 angstrom, not 2 angstrom. If it's 2 angstrom, other atom will be returned.
-
-                while(!atom && threshold < 10) {
-                    threshold = threshold + 0.5;
-                    atom = me.getAtomsFromPosition(intersects[ 0 ].point, threshold);
-                }
-
-                if(atom) {
-                    bFound = true;
-                    if(me.pickpair) {
-                        if(bClick) {
-                          if(me.pAtomNum % 2 === 0) {
-                            me.pAtom = atom;
-                          }
-                          else {
-                            me.pAtom2 = atom;
-                          }
-
-                          ++me.pAtomNum;
-                        }
-                    }
-                    else {
-                      me.pAtom = atom;
-                    }
-
-                    if(bClick) {
-                      me.showPicking(atom);
-                    }
-                    else {
-                      me.showPicking(atom, popupX, popupY);
-                      //me.showPicking(atom, x, y);
-                    }
-                }
-                else {
-                    console.log("No atoms were found in 10 andstrom range");
-                }
-            } // end if
+            var bFound = this.isIntersect(me.objects, me.mdl, bClick, popupX, popupY);
 
             if(!bFound) {
-                intersects = me.raycaster.intersectObjects( me.objects_ghost ); // not all "mdl" group will be used for pk
-
-                position = me.mdl_ghost.position;
-                if ( intersects.length > 0 ) {
-                    // the intersections are sorted so that the closest point is the first one.
-                    intersects[ 0 ].point.sub(position); // mdl.position was moved to the original (0,0,0) after reading the molecule coordinates. The raycasting was done based on the original. The positio of the ooriginal should be substracted.
-
-                    var threshold = 0.5;
-                    var atom = me.getAtomsFromPosition(intersects[ 0 ].point, threshold); // the second parameter is the distance threshold. The first matched atom will be returned. Use 1 angstrom, not 2 angstrom. If it's 2 angstrom, other atom will be returned.
-
-                    while(!atom && threshold < 10) {
-                        threshold = threshold + 0.5;
-                        atom = me.getAtomsFromPosition(intersects[ 0 ].point, threshold);
-                    }
-
-                    if(atom) {
-                        if(me.pickpair) {
-                            if(bClick) {
-                              if(me.pAtomNum % 2 === 0) {
-                                me.pAtom = atom;
-                              }
-                              else {
-                                me.pAtom2 = atom;
-                              }
-
-                              ++me.pAtomNum;
-                            }
-                        }
-                        else {
-                          me.pAtom = atom;
-                        }
-
-                        if(bClick) {
-                          me.showPicking(atom);
-                        }
-                        else {
-                          me.showPicking(atom, popupX, popupY);
-                        }
-                    }
-                    else {
-                        console.log("No atoms were found in 10 andstrom range");
-                    }
-                } // end if
+                bFound = this.isIntersect(me.objects_ghost, me.mdl_ghost, bClick, popupX, popupY);
             }
         //}
     },
@@ -894,7 +860,8 @@ iCn3D.prototype = {
         'LI': new THREE.Color(0xB22222),
         'B': new THREE.Color(0x00FF00),
         'C': new THREE.Color(0xC8C8C8),
-        'N': new THREE.Color(0x8F8FFF),
+        //'N': new THREE.Color(0x8F8FFF),
+        'N': new THREE.Color(0x0000FF),
         'O': new THREE.Color(0xF00000),
         'F': new THREE.Color(0xDAA520),
         'Na': new THREE.Color(0x0000FF),
@@ -1169,13 +1136,14 @@ iCn3D.prototype = {
         this.alnChainsAnno = {}; // structure_chain name -> array of annotations, such as residue number
         this.alnChainsAnTtl = {}; // structure_chain name -> array of annotation title
 
-        this.dAtoms = {}; // show selected atoms
-        this.hAtoms = {}; // used to change color or dislay type for certain atoms
+        //this.dAtoms = {}; // show selected atoms
+        //this.hAtoms = {}; // used to change color or dislay type for certain atoms
 
         this.pickedAtomList = {}; // used to switch among different highlight levels
 
         this.prevHighlightObjects = [];
         this.prevHighlightObjects_ghost = [];
+
         this.prevSurfaces = [];
         this.prevMaps = [];
         this.prevEmmaps = [];
@@ -1203,6 +1171,10 @@ iCn3D.prototype = {
         this.hbondpnts = [];
         this.stabilizerpnts = [];
         //this.ncbondpnts = []; // non-covalent bonds
+
+        // for chain alignment
+        this.targetAtoms = {};
+        this.queryAtoms = {};
 
         this.doublebonds = {};
         this.triplebonds = {};
@@ -1243,6 +1215,7 @@ iCn3D.prototype = {
 
         this.prevHighlightObjects = [];
         this.prevHighlightObjects_ghost = [];
+
         this.prevSurfaces = [];
         this.prevMaps = [];
         this.prevEmmaps = [];

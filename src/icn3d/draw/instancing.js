@@ -179,7 +179,6 @@ iCn3D.prototype.hashvalue2array = function(hash) {
 };
 
 iCn3D.prototype.drawSymmetryMates = function() {
-    //if(this.bInstanced) {
     if(this.bInstanced && Object.keys(this.atoms).length * this.biomtMatrices.length > this.maxatomcnt) {
         this.drawSymmetryMatesInstancing();
     }
@@ -196,6 +195,14 @@ iCn3D.prototype.drawSymmetryMatesNoInstancing = function() {
    var identity = new THREE.Matrix4();
    identity.identity();
 
+   var mdlTmp = new THREE.Object3D();
+   var mdlImpostorTmp = new THREE.Object3D();
+   var mdl_ghostTmp = new THREE.Object3D();
+
+   var mdlTmp2 = new THREE.Object3D();
+   var mdlImpostorTmp2 = new THREE.Object3D();
+   var mdl_ghostTmp2 = new THREE.Object3D();
+
    for (var i = 0; i < this.biomtMatrices.length; i++) {  // skip itself
       var mat = this.biomtMatrices[i];
       if (mat === undefined) continue;
@@ -209,7 +216,7 @@ iCn3D.prototype.drawSymmetryMatesNoInstancing = function() {
           symmetryMate = this.mdl.clone();
           symmetryMate.applyMatrix(mat);
 
-          this.mdl.add(symmetryMate);
+          mdlTmp.add(symmetryMate);
       }
 
       if(this.mdlImpostor !== undefined) {
@@ -222,14 +229,14 @@ iCn3D.prototype.drawSymmetryMatesNoInstancing = function() {
                mesh.onBeforeRender = this.onBeforeRender;
           }
 
-          this.mdlImpostor.add(symmetryMate);
+          mdlImpostorTmp.add(symmetryMate);
       }
 
       if(this.mdl_ghost !== undefined) {
           symmetryMate = this.mdl_ghost.clone();
           symmetryMate.applyMatrix(mat);
 
-          this.mdl_ghost.add(symmetryMate);
+          mdl_ghostTmp.add(symmetryMate);
       }
 
       var center = this.center.clone();
@@ -238,6 +245,10 @@ iCn3D.prototype.drawSymmetryMatesNoInstancing = function() {
 
       ++cnt;
    }
+
+   this.mdl.add(mdlTmp);
+   this.mdlImpostor.add(mdlImpostorTmp);
+   this.mdl_ghost.add(mdl_ghostTmp);
 
    if(this.bSetInstancing === undefined || !this.bSetInstancing) {
        this.maxD *= Math.sqrt(cnt);
@@ -424,7 +435,29 @@ iCn3D.prototype.getInstancedMaterial = function(name) {
    material.extensions.derivatives = '#extension GL_OES_standard_derivatives : enable';
 
    return material;
-}
+};
+
+iCn3D.prototype.createInstancedMesh = function(mdl) {
+   for(var i = 0, il = mdl.children.length; i < il; ++i) {
+       var mesh = mdl.children[i];
+
+       if(mesh.type === 'Sprite') continue;
+
+       var geometry = this.createInstancedGeometry(mesh);
+
+       var mesh2 = new THREE.Mesh(geometry, this.instancedMaterial);
+
+       mesh2.onBeforeRender = this.onBeforeRender;
+
+       // important: https://stackoverflow.com/questions/21184061/mesh-suddenly-disappears-in-three-js-clipping
+       // You are moving the camera in the CPU. You are moving the vertices of the plane in the GPU
+       mesh2.frustumCulled = false;
+
+       geometry = null;
+
+       mdl.add(mesh2);
+   }
+};
 
 iCn3D.prototype.drawSymmetryMatesInstancing = function() {
    if (this.biomtMatrices === undefined || this.biomtMatrices.length == 0) return;
@@ -466,6 +499,10 @@ iCn3D.prototype.drawSymmetryMatesInstancing = function() {
        }
    }
 
+   this.createInstancedMesh(this.mdl);
+   this.createInstancedMesh(this.mdlImpostor);
+
+/*
    for(var i = 0, il = this.mdl.children.length; i < il; ++i) {
        var mesh = this.mdl.children[i];
 
@@ -491,15 +528,6 @@ iCn3D.prototype.drawSymmetryMatesInstancing = function() {
 
        var geometry = this.createInstancedGeometry(mesh);
 
-/*
-       var material;
-       if(mesh.type == 'Sphere') {
-         material = this.SphereImpostorMaterial;
-       }
-       else { //if(mesh.type == 'Cylinder') {
-         material = this.CylinderImpostorMaterial;
-       }
-*/
        var mesh2 = new THREE.Mesh(geometry, this.instancedMaterial);
        //var mesh2 = new THREE.Mesh(geometry, material);
 
@@ -513,6 +541,7 @@ iCn3D.prototype.drawSymmetryMatesInstancing = function() {
 
        this.mdlImpostor.add(mesh2);
    }
+*/
 
    if(this.bSetInstancing === undefined || !this.bSetInstancing) {
        this.maxD *= Math.sqrt(cnt);
