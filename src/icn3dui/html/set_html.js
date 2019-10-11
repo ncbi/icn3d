@@ -526,6 +526,8 @@ iCn3DUI.prototype.setMenu2b_base = function() { var me = this;
         html += "    </ul>";
         html += "  </li>";
 
+        html += me.getLink('mn2_aroundsphere2', 'Interactions');
+
         html += "  <li><span>Disulfide Bonds</span>";
         html += "    <ul>";
         html += me.getRadio('mn6_ssbonds', 'mn6_ssbondsYes', 'Show', true);

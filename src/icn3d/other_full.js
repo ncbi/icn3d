@@ -38,6 +38,9 @@ iCn3D.prototype.calculateChemicalHbonds = function (startAtoms, targetAtoms, thr
         if(me.resid2Residhash[oriResidName] === undefined) me.resid2Residhash[oriResidName] = {};
 
         for (var j in atomHbond) {
+          // skip same protein residue
+          if(chain_resi == j.substr(0, j.lastIndexOf('_')) && this.proteins.hasOwnProperty(atomHbond[j].serial)) continue;
+
           var xdiff = Math.abs(atom.coord.x - atomHbond[j].coord.x);
           if(xdiff > threshold) continue;
 
