@@ -713,7 +713,7 @@ iCn3DUI.prototype.loadAtomDataIn = function (data, id, type, seqalign, alignType
                   chainHash[chain] = 1;
               }
 
-              if(me.mmdbid_q == me.mmdbid_t && alignType === 'query') chainid += "_1";
+              if(me.mmdbid_q == me.mmdbid_t && alignType === 'query') chainid += me.postfix;
 
               var kind = data.moleculeInfor[molid].kind;
               var color = data.moleculeInfor[molid].color;
@@ -749,7 +749,7 @@ iCn3DUI.prototype.loadAtomDataIn = function (data, id, type, seqalign, alignType
                 var seqArray = data.sequences[chain];
                 var chainid = id + '_' + chain;
 
-                if(me.mmdbid_q == me.mmdbid_t && alignType === 'query') chainid += "_1";
+                if(me.mmdbid_q == me.mmdbid_t && alignType === 'query') chainid += me.postfix;
 
                 me.getMissingResidues(seqArray, type, chainid); // assign me.icn3d.chainsSeq
             }
@@ -843,6 +843,8 @@ iCn3DUI.prototype.loadAtomDataIn = function (data, id, type, seqalign, alignType
                   //if all are defined in the chain section, no "Misc" should appear
                   atm.chain = miscName;
               }
+
+              if(me.mmdbid_q == me.mmdbid_t && alignType === 'query') atm.chain += me.postfix;
             }
             else if(type === 'align') {
               molid = atm.ids.m;
@@ -889,7 +891,7 @@ iCn3DUI.prototype.loadAtomDataIn = function (data, id, type, seqalign, alignType
         structureNum = atm.structure;
 
         chainNum = structureNum + '_' + atm.chain;
-        if(me.mmdbid_q == me.mmdbid_t && alignType === 'query') chainNum += "_1";
+        //if(me.mmdbid_q == me.mmdbid_t && alignType === 'query') chainNum += me.postfix;
 
         if(chainNum !== prevChainNum) {
             missingResIndex = 0;
@@ -1069,7 +1071,7 @@ iCn3DUI.prototype.loadAtomDataIn = function (data, id, type, seqalign, alignType
 
         // chain level
         var chainid = atm.structure + '_' + atm.chain;
-        if(me.mmdbid_q == me.mmdbid_t && alignType === 'query') chainid += "_1";
+        //if(me.mmdbid_q == me.mmdbid_t && alignType === 'query') chainid += me.postfix;
 
         if (me.icn3d.chains[chainid] === undefined) me.icn3d.chains[chainid] = {};
         me.icn3d.chains[chainid][serial] = 1;

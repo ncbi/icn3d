@@ -747,7 +747,7 @@ iCn3DUI.prototype.setSeqAlignChain = function () { var me = this;
       var chainid1 = chainidArray[0].substr(0, pos1).toUpperCase() + "_" + chain1;
       var chainid2 = chainidArray[1].substr(0, pos2).toUpperCase() + "_" + chain2;
 
-      if(me.mmdbid_q == me.mmdbid_t) chainid1 += "_1";
+      if(me.mmdbid_q == me.mmdbid_t) chainid1 += me.postfix;
 
       me.conservedName1 = chainid1 + '_cons';
       me.nonConservedName1 = chainid1 + '_ncons';
@@ -802,6 +802,7 @@ iCn3DUI.prototype.setSeqAlignChain = function () { var me = this;
 
           var index1 = alignIndex;
           for(var j = prevIndex1 + 1, jl = start1; prevIndex1 !== undefined && j < jl; ++j) {
+              if(me.icn3d.chainsSeq[chainid1] === undefined) break;
               var resi = me.icn3d.chainsSeq[chainid1][j].resi;
               var resn = me.icn3d.chainsSeq[chainid1][j].name.toLowerCase();
 
@@ -815,6 +816,7 @@ iCn3DUI.prototype.setSeqAlignChain = function () { var me = this;
 
           var index2 = alignIndex;
           for(var j = prevIndex2 + 1, jl = start2; prevIndex2 !== undefined && j < jl; ++j) {
+              if(me.icn3d.chainsSeq[chainid2] === undefined) break;
               var resi = me.icn3d.chainsSeq[chainid2][j].resi;
               var resn = me.icn3d.chainsSeq[chainid2][j].name.toLowerCase();
 
@@ -854,6 +856,8 @@ iCn3DUI.prototype.setSeqAlignChain = function () { var me = this;
           }
 
           for(var j = 0; j <= end1 - start1; ++j) {
+              if(me.icn3d.chainsSeq[chainid1] === undefined || me.icn3d.chainsSeq[chainid2] === undefined) break;
+
               var resi1 = me.icn3d.chainsSeq[chainid1][j + start1].resi;
               var resi2 = me.icn3d.chainsSeq[chainid2][j + start2].resi;
               var resn1 = me.icn3d.chainsSeq[chainid1][j + start1].name.toUpperCase();
