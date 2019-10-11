@@ -4508,7 +4508,12 @@ iCn3DUI.prototype = {
              }
              else if(me.cfg.chainalign !== undefined) {
                  var structureArray = Object.keys(me.icn3d.structures);
-                 me.set2DDiagramsForAlign(structureArray[1].toUpperCase(), structureArray[0].toUpperCase());
+                 if(structureArray.length == 2) {
+                    me.set2DDiagramsForAlign(structureArray[1].toUpperCase(), structureArray[0].toUpperCase());
+                 }
+                 else if(structureArray.length == 1) {
+                    me.set2DDiagramsForAlign(structureArray[0].toUpperCase(), structureArray[0].toUpperCase());
+                 }
              }
              else {
                  me.download2Ddgm(me.inputid.toUpperCase());

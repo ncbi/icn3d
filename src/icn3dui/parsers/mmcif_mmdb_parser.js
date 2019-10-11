@@ -704,6 +704,7 @@ iCn3DUI.prototype.loadAtomDataIn = function (data, id, type, seqalign, alignType
           for(var molid in data.moleculeInfor) {
               var chain = data.moleculeInfor[molid].chain.trim();
               var chainid = pdbidTmp + '_' + chain;
+
               if(chainHash.hasOwnProperty(chain)) {
                   ++chainHash[chain];
                   chainid += chainHash[chain];
@@ -711,6 +712,8 @@ iCn3DUI.prototype.loadAtomDataIn = function (data, id, type, seqalign, alignType
               else {
                   chainHash[chain] = 1;
               }
+
+              if(me.mmdbid_q == me.mmdbid_t && alignType === 'query') chainid += "_1";
 
               var kind = data.moleculeInfor[molid].kind;
               var color = data.moleculeInfor[molid].color;
@@ -745,7 +748,8 @@ iCn3DUI.prototype.loadAtomDataIn = function (data, id, type, seqalign, alignType
             for(var chain in data.sequences) {
                 var seqArray = data.sequences[chain];
                 var chainid = id + '_' + chain;
-                //if(type === 'mmcifid') chainid = '1_' + chain;
+
+                if(me.mmdbid_q == me.mmdbid_t && alignType === 'query') chainid += "_1";
 
                 me.getMissingResidues(seqArray, type, chainid); // assign me.icn3d.chainsSeq
             }
@@ -883,7 +887,9 @@ iCn3DUI.prototype.loadAtomDataIn = function (data, id, type, seqalign, alignType
         }
 
         structureNum = atm.structure;
+
         chainNum = structureNum + '_' + atm.chain;
+        if(me.mmdbid_q == me.mmdbid_t && alignType === 'query') chainNum += "_1";
 
         if(chainNum !== prevChainNum) {
             missingResIndex = 0;
@@ -1063,11 +1069,13 @@ iCn3DUI.prototype.loadAtomDataIn = function (data, id, type, seqalign, alignType
 
         // chain level
         var chainid = atm.structure + '_' + atm.chain;
+        if(me.mmdbid_q == me.mmdbid_t && alignType === 'query') chainid += "_1";
+
         if (me.icn3d.chains[chainid] === undefined) me.icn3d.chains[chainid] = {};
         me.icn3d.chains[chainid][serial] = 1;
 
         // residue level
-        var residueid = atm.structure + '_' + atm.chain + '_' + atm.resi;
+        var residueid = chainid + '_' + atm.resi;
         if (me.icn3d.residues[residueid] === undefined) me.icn3d.residues[residueid] = {};
         me.icn3d.residues[residueid][serial] = 1;
 
@@ -1221,8 +1229,11 @@ iCn3DUI.prototype.loadAtomDataIn = function (data, id, type, seqalign, alignType
                 var atom1 = me.icn3d.atoms[serial1];
                 var atom2 = me.icn3d.atoms[serial2];
 
-                var resid1 = atom1.structure + '_' + atom1.chain + '_' + atom1.resi;
-                var resid2 = atom2.structure + '_' + atom2.chain + '_' + atom2.resi;
+                var chain1 = atom1.chain;
+                var chain2 = atom2.chain;
+
+                var resid1 = atom1.structure + '_' + chain1 + '_' + atom1.resi;
+                var resid2 = atom2.structure + '_' + chain2 + '_' + atom2.resi;
 
                 if(me.icn3d.ssbondpnts[atom1.structure] === undefined) me.icn3d.ssbondpnts[atom1.structure] = [];
 
