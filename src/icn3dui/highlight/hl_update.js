@@ -13,7 +13,12 @@ iCn3DUI.prototype.update2DdgmContent = function () { var me = this;
    }
    else if(me.cfg.align !== undefined || me.cfg.chainalign !== undefined ) {
       html2ddgm += me.draw2Ddgm(me.interactionData1, me.mmdbidArray[0].toUpperCase(), 0, true);
-      html2ddgm += me.draw2Ddgm(me.interactionData2, me.mmdbidArray[1].toUpperCase(), 1, true);
+      if(me.mmdbid_q == me.mmdbid_t) {
+          html2ddgm += me.draw2Ddgm(me.interactionData2, me.mmdbidArray[0].toUpperCase(), 1, true);
+      }
+      else {
+          html2ddgm += me.draw2Ddgm(me.interactionData2, me.mmdbidArray[1].toUpperCase(), 1, true);
+      }
       html2ddgm += me.set2DdgmNote(true);
 
       $("#" + me.pre + "dl_2ddgm").html(html2ddgm);

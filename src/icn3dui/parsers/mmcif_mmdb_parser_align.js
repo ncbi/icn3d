@@ -188,16 +188,16 @@ iCn3DUI.prototype.downloadChainAlignment = function (chainalign) { var me = this
     var alignArray = chainalign.split(',');
     var pos1 = alignArray[0].indexOf('_');
     var pos2 = alignArray[1].indexOf('_');
-    var mmdbid_q = alignArray[0].substr(0, pos1).toUpperCase();
-    var mmdbid_t = alignArray[1].substr(0, pos2).toUpperCase();
+    me.mmdbid_q = alignArray[0].substr(0, pos1).toUpperCase();
+    me.mmdbid_t = alignArray[1].substr(0, pos2).toUpperCase();
     me.chain_q = alignArray[0].substr(pos1+1);
     me.chain_t = alignArray[1].substr(pos2+1);
 
-    var chainalignFinal = mmdbid_q + "_" + me.chain_q + "," + mmdbid_t + "_" + me.chain_t;
+    var chainalignFinal = me.mmdbid_q + "_" + me.chain_q + "," + me.mmdbid_t + "_" + me.chain_t;
 
     var urlalign = "https://www.ncbi.nlm.nih.gov/Structure/vastdyn/vastdyn.cgi?chainpairs=" + chainalignFinal;
-    var url_t = "https://www.ncbi.nlm.nih.gov/Structure/mmdb/mmdb_strview.cgi?v=2&program=icn3d&b=1&s=1&ft=1&uid=" + mmdbid_t;
-    var url_q = "https://www.ncbi.nlm.nih.gov/Structure/mmdb/mmdb_strview.cgi?v=2&program=icn3d&b=1&s=1&ft=1&uid=" + mmdbid_q;
+    var url_t = "https://www.ncbi.nlm.nih.gov/Structure/mmdb/mmdb_strview.cgi?v=2&program=icn3d&b=1&s=1&ft=1&uid=" + me.mmdbid_t;
+    var url_q = "https://www.ncbi.nlm.nih.gov/Structure/mmdb/mmdb_strview.cgi?v=2&program=icn3d&b=1&s=1&ft=1&uid=" + me.mmdbid_q;
 
     if(me.cfg.inpara !== undefined) {
       url_t += me.cfg.inpara;
@@ -323,7 +323,11 @@ iCn3DUI.prototype.downloadChainAlignment = function (chainalign) { var me = this
             }); // ajax
           } // success
         }); // ajax
-      } // success
+      }, // success
+      error : function(xhr, textStatus, errorThrown ) {
+        alert("One of the chains is unavailable in the NCBI MMDB database.");
+        return;
+      }
     }); // ajax
 };
 
@@ -671,8 +675,8 @@ iCn3DUI.prototype.setSeqPerResi = function (chainid, chainid1, chainid2, resi, r
       me.icn3d.alnChainsSeq[chainid].push(resObject);
 
       if(resObject.resi !== '') {
-      if(me.icn3d.alnChains[chainid] === undefined) me.icn3d.alnChains[chainid] = {};
-      $.extend(me.icn3d.alnChains[chainid], me.icn3d.residues[chainid + '_' + resObject.resi] );
+          if(me.icn3d.alnChains[chainid] === undefined) me.icn3d.alnChains[chainid] = {};
+          $.extend(me.icn3d.alnChains[chainid], me.icn3d.residues[chainid + '_' + resObject.resi] );
       }
 
       if(bFirstChain) {
@@ -733,13 +737,25 @@ iCn3DUI.prototype.setSeqAlignChain = function () { var me = this;
       var mmdbid1 = me.inputid2;
       var mmdbid2 = me.inputid;
 
-      me.conservedName1 = mmdbid1 + '_cons';
-      me.nonConservedName1 = mmdbid1 + '_ncons';
-      me.notAlignedName1 = mmdbid1 + '_nalign';
+      var chainidArray = me.cfg.chainalign.split(',');
+      var pos1 = chainidArray[0].indexOf('_');
+      var pos2 = chainidArray[1].indexOf('_');
 
-      me.conservedName2 = mmdbid2 + '_cons';
-      me.nonConservedName2 = mmdbid2 + '_ncons';
-      me.notAlignedName2 = mmdbid2 + '_nalign';
+      var chain1 = chainidArray[0].substr(pos1 + 1);
+      var chain2 = chainidArray[1].substr(pos2 + 1);
+
+      var chainid1 = chainidArray[0].substr(0, pos1).toUpperCase() + "_" + chain1;
+      var chainid2 = chainidArray[1].substr(0, pos2).toUpperCase() + "_" + chain2;
+
+      if(me.mmdbid_q == me.mmdbid_t) chainid1 += "_1";
+
+      me.conservedName1 = chainid1 + '_cons';
+      me.nonConservedName1 = chainid1 + '_ncons';
+      me.notAlignedName1 = chainid1 + '_nalign';
+
+      me.conservedName2 = chainid2 + '_cons';
+      me.nonConservedName2 = chainid2 + '_ncons';
+      me.notAlignedName2 = chainid2 + '_nalign';
 
       me.consHash1 = {};
       me.nconsHash1 = {};
@@ -748,13 +764,6 @@ iCn3DUI.prototype.setSeqAlignChain = function () { var me = this;
       me.consHash2 = {};
       me.nconsHash2 = {};
       me.nalignHash2 = {};
-
-      var chainidArray = me.cfg.chainalign.split(',');
-      var chainid1 = chainidArray[0];
-      var chainid2 = chainidArray[1];
-
-      var chain1 = chainid1.split('_')[1];
-      var chain2 = chainid2.split('_')[1];
 
       // annoation title for the master seq only
       if(me.icn3d.alnChainsAnTtl[chainid1] === undefined ) me.icn3d.alnChainsAnTtl[chainid1] = [];
