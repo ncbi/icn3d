@@ -104,6 +104,8 @@ var iCn3DUI = function(cfg) {
     me.GREYD = "#DDDDDD";
     me.ORANGE = "#FFA500";
 
+    me.postfix = "_q"; // add postfix for the chains of the query protein whne align two chians in one protein
+
     me.closeAc = {collapsible: true, active: false}; // close accordion
 
     // https://www.ncbi.nlm.nih.gov/Class/FieldGuide/BLOSUM62.txt, range from -4 to 11
