@@ -104,23 +104,26 @@ iCn3D.prototype.applySsbondsOptions = function (options) {
             line.color = color;
             line.dashed = true;
 
-            var bFound = false;
+            // each Cys has two S atoms
+            var serial1Array = [], serial2Array = [];
+            var position1Array = [], position2Array = [];
+
+            var bFound = false, bCalpha = false;
             for(var j in this.residues[res1]) {
                 if(this.atoms[j].name === 'SG') {
-                    serial1 = this.atoms[j].serial;
-                    line.position1 = this.atoms[j].coord;
-                    line.serial1 = this.atoms[j].serial;
+                    position1Array.push(this.atoms[j].coord);
+                    serial1Array.push(this.atoms[j].serial);
                     bFound = true;
-                    break;
                 }
             }
 
             if(!bFound) {
                 for(var j in this.residues[res1]) {
                     if(this.atoms[j].name === 'CA') {
-                        line.position1 = this.atoms[j].coord;
-                        line.serial1 = this.atoms[j].serial;
+                        position1Array.push(this.atoms[j].coord);
+                        serial1Array.push(this.atoms[j].serial);
                         bFound = true;
+                        bCalpha = true;
                         break;
                     }
                 }
@@ -129,20 +132,40 @@ iCn3D.prototype.applySsbondsOptions = function (options) {
             bFound = false;
             for(var j in this.residues[res2]) {
                 if(this.atoms[j].name === 'SG') {
-                    serial2 = this.atoms[j].serial;
-                    line.position2 = this.atoms[j].coord;
-                    line.serial2 = this.atoms[j].serial;
+                    position2Array.push(this.atoms[j].coord);
+                    serial2Array.push(this.atoms[j].serial);
                     bFound = true;
-                    break;
                 }
             }
 
             if(!bFound) {
                 for(var j in this.residues[res2]) {
                     if(this.atoms[j].name === 'CA') {
-                        line.position2 = this.atoms[j].coord;
-                        line.serial2 = this.atoms[j].serial;
+                        position2Array.push(this.atoms[j].coord);
+                        serial2Array.push(this.atoms[j].serial);
                         bFound = true;
+                        bCalpha = true;
+                        break;
+                    }
+                }
+            }
+
+            // determine whether it's true disulfide bonds
+            // disulfide bond is about 2.05 angstrom
+            var distMax = (bCalpha) ? 7.0 : 3.0;
+
+            var bSsbond = false;
+            for(var m = 0, ml = position1Array.length; m < ml; ++m) {
+                for(var n = 0, nl = position2Array.length; n < nl; ++n) {
+                    if(position1Array[m].distanceTo(position2Array[n]) < distMax) {
+                        bSsbond = true;
+
+                        line.serial1 = serial1Array[m];
+                        line.position1 = position1Array[m];
+
+                        line.serial2 = serial2Array[n];
+                        line.position2 = position2Array[n];
+
                         break;
                     }
                 }
@@ -151,31 +174,29 @@ iCn3D.prototype.applySsbondsOptions = function (options) {
             // only draw bonds connected with currently displayed atoms
             if(line.serial1 !== undefined && line.serial2 !== undefined && !this.dAtoms.hasOwnProperty(line.serial1) && !this.dAtoms.hasOwnProperty(line.serial2)) continue;
 
-            // determine whether it's true disulfide bonds
-            // disulfide bond is about 2.05 angstrom
-            var distMax = 3;
-            if(line.position1 === undefined || line.position2 === undefined || line.position1.distanceTo(line.position2) > distMax) {
+            //if(line.position1 === undefined || line.position2 === undefined || line.position1.distanceTo(line.position2) > distMax) {
+            if(!bSsbond) {
                 this.ssbondpnts[structure].splice(2 * i, 2);
                 continue;
             }
 
             //if(this.atoms[serial1].ids !== undefined) { // mmdb id as input
                 // remove the original disulfide bonds
-                var pos = this.atoms[serial1].bonds.indexOf(serial2);
+                var pos = this.atoms[line.serial1].bonds.indexOf(line.serial2);
                 var array1, array2;
                 if(pos != -1) {
-                    array1 = this.atoms[serial1].bonds.slice(0, pos);
-                    array2 = this.atoms[serial1].bonds.slice(pos + 1);
+                    array1 = this.atoms[line.serial1].bonds.slice(0, pos);
+                    array2 = this.atoms[line.serial1].bonds.slice(pos + 1);
 
-                    this.atoms[serial1].bonds = array1.concat(array2);
+                    this.atoms[line.serial1].bonds = array1.concat(array2);
                 }
 
-                pos = this.atoms[serial2].bonds.indexOf(serial1);
+                pos = this.atoms[line.serial2].bonds.indexOf(line.serial1);
                 if(pos != -1) {
-                    array1 = this.atoms[serial2].bonds.slice(0, pos);
-                    array2 = this.atoms[serial2].bonds.slice(pos + 1);
+                    array1 = this.atoms[line.serial2].bonds.slice(0, pos);
+                    array2 = this.atoms[line.serial2].bonds.slice(pos + 1);
 
-                    this.atoms[serial2].bonds = array1.concat(array2);
+                    this.atoms[line.serial2].bonds = array1.concat(array2);
                 }
             //}
 

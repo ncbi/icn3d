@@ -723,6 +723,7 @@ iCn3DUI.prototype.loadAtomDataIn = function (data, id, type, seqalign, alignType
 
               if(sid !== undefined) me.chainid2sid[chainid] = sid;
 
+              if(me.icn3d.pdbid_chain2title === undefined) me.icn3d.pdbid_chain2title = {};
               me.icn3d.pdbid_chain2title[chainid] = data.moleculeInfor[molid].name;
 
               if(alignType == 'query' && chain == me.chain_q) {
@@ -771,9 +772,6 @@ iCn3DUI.prototype.loadAtomDataIn = function (data, id, type, seqalign, alignType
     // In align, chemicals do not have assigned chains. Assembly will have the same residue id so that two different residues will be combined in one residue. To avoid this, build an array to check for molid
     var resiArray = [];
     var molid, prevMolid = '', prevmmdbId = '';
-
-    // set mmdbMolidResid2mmdbChainResi
-    if(alignType === 'target') me.mmdbMolidResid2mmdbChainResi = {};
 
     var bPhosphorusOnly = me.icn3d.isCalphaPhosOnly(atoms); //, "O3'", "O3*") || me.icn3d.isCalphaPhosOnly(atoms, "P");
     var miscCnt = 0;
@@ -959,6 +957,7 @@ iCn3DUI.prototype.loadAtomDataIn = function (data, id, type, seqalign, alignType
 
         if( (type === 'mmdbid' || type === 'align') && me.bFullUi ) {
             // set me.mmdbMolidResid2mmdbChainResi
+            if(me.mmdbMolidResid2mmdbChainResi === undefined) me.mmdbMolidResid2mmdbChainResi = {};
             me.mmdbMolidResid2mmdbChainResi[mmdbId + '_' + atm.ids.m + '_' + atm.ids.r] = mmdbId + '_' + atm.chain + '_' + atm.resi;
         }
 

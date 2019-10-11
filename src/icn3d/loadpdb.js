@@ -132,6 +132,8 @@ iCn3D.prototype.loadPDB = function (src) {
 
             this.ssbondpnts[id].push(resid1);
             this.ssbondpnts[id].push(resid2);
+
+console.log("this.ssbondpnts: " + JSON.stringify(this.ssbondpnts));
         } else if (record === 'REMARK') {
              var type = parseInt(line.substr(7, 3));
              // from GLMol

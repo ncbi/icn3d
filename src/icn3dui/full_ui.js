@@ -2793,7 +2793,7 @@ iCn3DUI.prototype = {
     },
 
     clkMn2_aroundsphere: function() { var me = this;
-        $("#" + me.pre + "mn2_aroundsphere").click(function(e) { me = me.getiCn3DUI(me);
+        $("#" + me.pre + "mn2_aroundsphere").add("#" + me.pre + "mn2_aroundsphere2").click(function(e) { me = me.getiCn3DUI(me);
             if(me.bSetChainsAdvancedMenu === undefined || !me.bSetChainsAdvancedMenu) {
                me.setPredefinedInMenu();
 
@@ -5709,6 +5709,7 @@ iCn3DUI.prototype = {
 
            if(!$('#' + me.pre + 'dl_definedsets').hasClass('ui-dialog-content') || !$('#' + me.pre + 'dl_definedsets').dialog( 'isOpen' )) {
              me.openDialog(me.pre + 'dl_definedsets', 'Select sets');
+             $("#" + me.pre + "atomsCustom").resizable();
            }
 
            me.bSelectResidue = false;
@@ -5726,6 +5727,7 @@ iCn3DUI.prototype = {
 
            if(!$('#' + me.pre + 'dl_definedsets').hasClass('ui-dialog-content') || !$('#' + me.pre + 'dl_definedsets').dialog( 'isOpen' )) {
              me.openDialog(me.pre + 'dl_definedsets', 'Select sets');
+             $("#" + me.pre + "atomsCustom").resizable();
            }
 
            me.bSelectResidue = false;
@@ -5745,6 +5747,7 @@ iCn3DUI.prototype = {
 
            if(!$('#' + me.pre + 'dl_definedsets').hasClass('ui-dialog-content') || !$('#' + me.pre + 'dl_definedsets').dialog( 'isOpen' )) {
              me.openDialog(me.pre + 'dl_definedsets', 'Select sets');
+             $("#" + me.pre + "atomsCustom").resizable();
            }
 
             me.bSelectAlignResidue = false;
