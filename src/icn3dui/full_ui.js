@@ -15,7 +15,7 @@ if (!$.ui.dialog.prototype._makeDraggableBase) {
 var iCn3DUI = function(cfg) {
     var me = this;
 
-    this.REVISION = '2.8.0';
+    this.REVISION = '2.8.1';
 
     me.bFullUi = true;
 
@@ -1942,6 +1942,7 @@ iCn3DUI.prototype = {
     },
 
     clickFullscreen: function() { var me = this;
+/*
         $("#" + me.pre + "mn6_fullscreen").click(function(e) { me = me.getiCn3DUI(me); // from menu "View > Full Screen"
            e.preventDefault();
 
@@ -1966,9 +1967,9 @@ iCn3DUI.prototype = {
 
            if($("#" + me.pre + "fullscreen")[0] !== undefined) $("#" + me.pre + "fullscreen").show();
         });
+*/
 
-
-        $("#" + me.pre + "fullscreen").click(function(e) { me = me.getiCn3DUI(me); // from expand icon for mobilemenu
+        $("#" + me.pre + "fullscreen").add("#" + me.pre + "mn6_fullscreen").click(function(e) { me = me.getiCn3DUI(me); // from expand icon for mobilemenu
            e.preventDefault();
 
            var idArray = $(this).attr('id').split('_'); // id: div0_fullscreen
@@ -2652,7 +2653,7 @@ iCn3DUI.prototype = {
     },
 
     clkMn2_selectall: function() { var me = this;
-        $("#" + me.pre + "mn2_selectall").click(function(e) { me = me.getiCn3DUI(me);
+        $("#" + me.pre + "mn2_selectall").add("#" + me.pre + "mn2_fullstru").click(function(e) { me = me.getiCn3DUI(me);
            me.setLogCmd("select all", true);
 
            me.selectAll();

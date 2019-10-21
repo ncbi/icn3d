@@ -695,7 +695,8 @@ iCn3DUI.prototype.setSeqPerResi = function (chainid, chainid1, chainid2, resi, r
               // empty line
               if(me.icn3d.alnChainsAnno[chainid][6] === undefined ) me.icn3d.alnChainsAnno[chainid][6] = [];
 
-              me.icn3d.alnChainsAnno[chainid][4].push(me.icn3d.pdbid_chain2title[chainid2]);
+              var title = me.icn3d.pdbid_chain2title.hasOwnProperty(chainid2) ? me.icn3d.pdbid_chain2title[chainid2] : "??"
+              me.icn3d.alnChainsAnno[chainid][4].push(title);
               me.icn3d.alnChainsAnno[chainid][5].push(me.icn3d.pdbid_chain2title[chainid]);
               me.icn3d.alnChainsAnno[chainid][6].push('');
           }
@@ -722,11 +723,17 @@ iCn3DUI.prototype.setSeqPerResi = function (chainid, chainid1, chainid2, resi, r
       else {
           var residueid = chainid + '_' + resi;
           var ss = me.icn3d.secondaries[residueid];
-          if(ss !== undefined) {
-              me.icn3d.alnChainsAnno[chainid1][0].push(ss);
+
+          if(me.icn3d.alnChainsAnno.hasOwnProperty(chainid1) && me.icn3d.alnChainsAnno[chainid1].length > 0) {
+              if(ss !== undefined) {
+                  me.icn3d.alnChainsAnno[chainid1][0].push(ss);
+              }
+              else {
+                  me.icn3d.alnChainsAnno[chainid1][0].push('-');
+              }
           }
           else {
-              me.icn3d.alnChainsAnno[chainid1][0].push('-');
+              console.log("Error: me.icn3d.alnChainsAnno[chainid1] is undefined");
           }
       }
 };
@@ -747,7 +754,7 @@ iCn3DUI.prototype.setSeqAlignChain = function () { var me = this;
       var chainid1 = chainidArray[0].substr(0, pos1).toUpperCase() + "_" + chain1;
       var chainid2 = chainidArray[1].substr(0, pos2).toUpperCase() + "_" + chain2;
 
-      if(me.mmdbid_q == me.mmdbid_t) chainid1 += me.postfix;
+      if(me.mmdbid_q !== undefined && me.mmdbid_q === me.mmdbid_t) chainid1 += me.postfix;
 
       me.conservedName1 = chainid1 + '_cons';
       me.nonConservedName1 = chainid1 + '_ncons';

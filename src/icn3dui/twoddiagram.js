@@ -29,7 +29,7 @@ iCn3DUI.prototype.draw2Ddgm = function(data, mmdbid, structureIndex, bUpdate) { 
 
           var chainNameFinal = (chainNameHash[chainName] === 1) ? chainName : chainName + chainNameHash[chainName].toString();
           var chainid = mmdbid + '_' + chainNameFinal;
-          if(me.mmdbid_q == me.mmdbid_t && structureIndex === 0) chainid += me.postfix;
+          if(me.mmdbid_q !== undefined && me.mmdbid_q === me.mmdbid_t && structureIndex === 0) chainid += me.postfix;
 
           molid2chain[molid] = chainid;
           molid2color[molid] = color;
