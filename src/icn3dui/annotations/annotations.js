@@ -2264,10 +2264,12 @@ iCn3DUI.prototype.showCddSiteAll = function() { var me = this;
                 //var fulltitle = "site: " + siteArray[index].title + " (domain: " + domain + ")";
                 var fulltitle = siteArray[index].title;
 
-                var resPosArray = siteArray[index].locs[0].coords;
                 var adjustedResPosArray = [];
-                for(var i = 0, il = resPosArray.length; i < il; ++i) {
-                    adjustedResPosArray.push(Math.round(resPosArray[i]) + me.baseResi[chnid]);
+                for(var i = 0, il = siteArray[index].locs.length; i < il; ++i) {
+                    var resPosArray = siteArray[index].locs[i].coords;
+                    for(var j = 0, jl = resPosArray.length; j < jl; ++j) {
+                        adjustedResPosArray.push(Math.round(resPosArray[j]) + me.baseResi[chnid]);
+                    }
                 }
 
                 var htmlTmp2 = '<div class="icn3d-seqTitle icn3d-link icn3d-blue" site="site" posarray="' + adjustedResPosArray.toString() + '" shorttitle="' + title + '" setname="' + chnid + '_site_' + index + '" anno="sequence" chain="' + chnid + '" title="' + fulltitle + '">' + title + ' </div>';

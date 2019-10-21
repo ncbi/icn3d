@@ -505,6 +505,7 @@ iCn3DUI.prototype.setMenu2b_base = function() { var me = this;
     html += me.getLink('mn2_show_selected', 'View Only <br>Selection');
     html += me.getLink('mn2_selectedcenter', 'Zoom in <br>Selection');
     html += me.getLink('mn6_center', 'Center on <br>Selection');
+    html += me.getLink('mn2_fullstru', 'View Full <br>Structure');
     if(me.cfg.align !== undefined || me.cfg.chainalign !== undefined) {
         html += me.getLink('mn2_alternate', 'Alternate (Key \"a\")');
     }
@@ -593,13 +594,6 @@ iCn3DUI.prototype.setMenu2b_base = function() { var me = this;
 
     html += "  <li>-</li>";
 
-    html += "  <li><span>Reset</span>";
-    html += "    <ul>";
-    html += me.getRadio('mn6_reset', 'reset', 'All');
-    html += me.getRadio('mn6_reset', 'mn6_resetOrientation', 'Orientation');
-    html += "    </ul>";
-    html += "  </li>";
-
     html += "  <li><span>Transform Hints</span>";
     html += "    <ul>";
     html += "      <li><span>Rotate</span>";
@@ -659,11 +653,20 @@ iCn3DUI.prototype.setMenu2b_base = function() { var me = this;
     html += "    </ul>";
     html += "  </li>";
 
+    html += "  <li>-</li>";
+
+    html += "  <li><span>Reset</span>";
+    html += "    <ul>";
+    html += me.getRadio('mn6_reset', 'reset', 'All');
+    html += me.getRadio('mn6_reset', 'mn6_resetOrientation', 'Orientation');
+    html += "    </ul>";
+    html += "  </li>";
+
     html += me.getLink('mn6_back', 'Undo');
     html += me.getLink('mn6_forward', 'Redo');
 
     html += me.getLink('mn6_fullscreen', 'Full Screen');
-    html += me.getLink('mn6_exitfullscreen', 'Exit Full Screen');
+//    html += me.getLink('mn6_exitfullscreen', 'Exit Full Screen');
 
     html += "  <li><br/></li>";
 

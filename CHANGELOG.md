@@ -1,4 +1,6 @@
 ## Change Log
+[icn3d-2.8.1](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.8.1.zip) was release on October 21, 2019. Fixed the 2D interaction display in structure alignment. The bug was introduced in the last release.  
+
 [icn3d-2.8.0](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.8.0.zip) was release on October 10, 2019. Allowed to align any chain to another chain in the menu "File > Align > Chain to Chain".  
 
 [icn3d-2.7.19](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.7.19.zip) was release on September 9, 2019. Fixed the input width and height with "%". 

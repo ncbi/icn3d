@@ -919,37 +919,38 @@ In the dialog Select -&gt; Advanced, users can use simple specification to selec
 <tr><td valign='top'>a) View -&gt; View Only Selection:</td>  <td valign='top'>show selection</td> <td valign='top'><a href="#showSelection">showSelection</a></td></tr>
 <tr><td valign='top'>b) View -&gt; Zoom in Selection:</td>  <td valign='top'>zoom selection</td> <td valign='top'><a href="#zoominSelection">zoominSelection</a></td></tr>
 <tr><td valign='top'>c) View -&gt; Center on Selection:</td>  <td valign='top'>center selection</td> <td valign='top'><a href="#centerSelection">centerSelection</a></td></tr>
+<tr><td valign='top'>d) View -&gt; View Full Structure:</td>  <td valign='top'>select all</td> <td valign='top'><a href="#selectAll">selectAll</a></td></tr>
 
-<tr><td colspan="3"><br>d) View -&gt; Chemical Binding</td> </tr>
+<tr><td colspan="3"><br>e) View -&gt; Chemical Binding</td> </tr>
 <tr><td valign='top'><span class="indent">Show:</span></td>            <td valign='top'>set chemicalbinding show</td> <td valign='top'>me.setOption('chemicalbinding', 'show');</td></tr>
 <tr><td valign='top'><span class="indent">Hide:</span></td>            <td valign='top'>set chemicalbinding hide</td> <td valign='top'>me.setOption('chemicalbinding', 'hide');</td></tr>
 
-<tr><td colspan="3"><br>e) View -&gt; H-Bonds to Selection</td> </tr>
+<tr><td colspan="3"><br>f) View -&gt; H-Bonds to Selection</td> </tr>
 <tr><td valign='top'><span class="indent">Show:</span></td>            <td valign='top'>hbonds [hbond threshold in angstrom]</td> <td valign='top'><a href="#showHbonds">showHbonds</a></td></tr>
 <tr><td valign='top'><span class="indent">Hide:</span></td>            <td valign='top'>set hbonds off</td> <td valign='top'><a href="#hideHbonds">hideHbonds</a></td></tr>
 
-<tr><td colspan="3">f) Interactions</td> </tr>
+<tr><td colspan="3">g) View -&gt; Interactions</td> </tr>
 <tr><td valign='top'><span class="indent">Display:</span></td>            <td valign='top'>select zone cutoff [cutoff in angstrom]</td> <td valign='top'><a href="#pickCustomSphere">pickCustomSphere</a></td></tr>
 
-<tr><td colspan="3"><br>g) View -&gt; Disulfide Bonds</td> </tr>
+<tr><td colspan="3"><br>h) View -&gt; Disulfide Bonds</td> </tr>
 <tr><td valign='top'><span class="indent">Show:</span></td>            <td valign='top'>disulfide bonds</td> <td valign='top'><a href="#showSsbonds">showSsbonds</a></td></tr>
 <tr><td valign='top'><span class="indent">Export Pairs:</span></td>            <td valign='top'>[no command available]</td> <td valign='top'></td></tr>
 <tr><td valign='top'><span class="indent">Hide:</span></td>            <td valign='top'>set disulfide bonds off</td> <td valign='top'>me.icn3d.opts["ssbonds"] = "no";</td></tr>
 
-<tr><td colspan="3"><br>h) View -&gt; Cross-Linkages</td> </tr>
+<tr><td colspan="3"><br>i) View -&gt; Cross-Linkages</td> </tr>
 <tr><td valign='top'><span class="indent">Show:</span></td>            <td valign='top'>cross linkage</td> <td valign='top'>me.icn3d.bShowCrossResidueBond = true;</td></tr>
 <tr><td valign='top'><span class="indent">Hide:</span></td>            <td valign='top'>set cross linkage off</td> <td valign='top'>me.icn3d.bShowCrossResidueBond = false;</td></tr>
 
-<tr><td colspan="3"><br>i) View -&gt; Assembly (PDB, mmCIF, or MMTF files only)</td> </tr>
+<tr><td colspan="3"><br>j) View -&gt; Assembly (PDB, mmCIF, or MMTF files only)</td> </tr>
 <tr><td valign='top'><span class="indent">yes:</span></td>                <td valign='top'>set assembly on</td> <td valign='top'>me.icn3d.bAssembly = true;</td></tr>
 <tr><td valign='top'><span class="indent">no:</span></td>                 <td valign='top'>set assembly off</td> <td valign='top'>me.icn3d.bAssembly = false;</td></tr>
 
-<tr><td colspan="3"><br>j) View -&gt; Distance</td> </tr>
+<tr><td colspan="3"><br>k) View -&gt; Distance</td> </tr>
 <tr><td valign='top' rowspan="2"><span class="indent">Measure:</span></td>            <td valign='top'>add label [label text] | x [x] y [y] z [z] | size [label size] | color [FF0000] | background [FFFFFF]</td> <td valign='top'><a href="#addLabel">addLabel</a></td></tr>
 <tr>                                                               <td valign='top'>add line | x1 [x1] y1 [y1] z1 [z1] | x2 [x2] y2 [y2] z2 [z2] | color [FFFF00] | dashed [true]</td> <td valign='top'><a href="#addLine">addLine</a></td></tr>
 <tr><td valign='top'><span class="indent">Hide:</span></td>            <td valign='top'>set lines off</td> <td valign='top'>me.icn3d.labels['distance'] = []; me.icn3d.lines['distance'] = [];</td></tr>
 
-<tr><td colspan="3"><br>k) View -&gt; Label</td> </tr>
+<tr><td colspan="3"><br>l) View -&gt; Label</td> </tr>
 <tr><td valign='top'><span class="indent">by Picking Atoms:</span></td>            <td valign='top'>add label [label text] | x [x] y [y] z [z] | size [label size] | color [FF0000] | background [FFFFFF]</td> <td valign='top'><a href="#addLabel">addLabel</a></td></tr>
 <tr><td valign='top'><span class="indent">per Selection:</span></td>            <td valign='top'>add label [label text] | size [label size] | color [FF0000] | background [FFFFFF]</td> <td valign='top'><a href="#addLabel">addLabel</a></td></tr>
 <tr><td valign='top'><span class="indent">per Residue:</span></td>            <td valign='top'>add residue labels</td> <td valign='top'><a href="#addResiudeLabels">addResiudeLabels</a></td></tr>
@@ -957,7 +958,7 @@ In the dialog Select -&gt; Advanced, users can use simple specification to selec
 <tr><td valign='top'><span class="indent">N- & C- Termini:</span></td>            <td valign='top'>add terminal labels</td> <td valign='top'><a href="#addTerminiLabels">addTerminiLabels</a></td></tr>
 <tr><td valign='top'><span class="indent">Remove:</span></td>            <td valign='top'>set labels off</td> <td valign='top'><a href="#addChainLabels">addChainLabels</a></td></tr>
 
-<tr><td colspan="3"><br>l) View -&gt; Label Scale</td> </tr>
+<tr><td colspan="3"><br>m) View -&gt; Label Scale</td> </tr>
 <tr><td valign='top'><span class="indent">0.1:</span></td>                <td valign='top'>set label scale 0.1</td> <td valign='top'>me.icn3d.labelScale=0.1</td></tr>
 <tr><td valign='top'><span class="indent">0.2:</span></td>                <td valign='top'>set label scale 0.2</td> <td valign='top'>me.icn3d.labelScale=0.2</td></tr>
 <tr><td valign='top'><span class="indent">0.4:</span></td>                <td valign='top'>set label scale 0.4</td> <td valign='top'>me.icn3d.labelScale=0.4</td></tr>
@@ -969,10 +970,6 @@ In the dialog Select -&gt; Advanced, users can use simple specification to selec
 <tr><td valign='top'><span class="indent">6.0:</span></td>                <td valign='top'>set label scale 6.0</td> <td valign='top'>me.icn3d.labelScale=6.0</td></tr>
 <tr><td valign='top'><span class="indent">8.0:</span></td>                <td valign='top'>set label scale 8.0</td> <td valign='top'>me.icn3d.labelScale=8.0</td></tr>
 <tr><td valign='top'><span class="indent">10.0:</span></td>                <td valign='top'>set label scale 10.0</td> <td valign='top'>me.icn3d.labelScale=10.0</td></tr>
-
-<tr><td colspan="3"><br>m) View -&gt; Reset:</td> </tr>
-<tr><td valign='top'><span class="indent">All:</span></td>                <td valign='top'>reset</td> <td valign='top'><a href="#renderFinalStep">renderFinalStep</a></td></tr>
-<tr><td valign='top'><span class="indent">Orientation:</span></td>                 <td valign='top'>reset orientation</td> <td valign='top'><a href="#resetOrientation">resetOrientation</a></td></tr>
 
 <tr><td colspan="3"><br>n) View -&gt; Auto Rotation</td> </tr>
 <tr><td valign='top'><span class="indent">Rotate Left:</span></td>              <td valign='top'>rotate left</td> <td valign='top'><a href="#rotStruc">rotStruc</a></td></tr>
@@ -996,13 +993,17 @@ In the dialog Select -&gt; Advanced, users can use simple specification to selec
 <tr><td valign='top'><span class="indent">Show:</span></td>                <td valign='top'>set axis on</td> <td valign='top'>me.icn3d.opts['axis'] = 'yes';</td></tr>
 <tr><td valign='top'><span class="indent">Hide:</span></td>                 <td valign='top'>set axis off</td> <td valign='top'>me.icn3d.opts['axis'] = 'no';</td></tr>
 
-<tr><td valign='top'>s) View -&gt; Undo:</td>     <td valign='top'>back</td> <td valign='top'><a href="#back">back</a></td></tr>
+<tr><td colspan="3"><br>s) View -&gt; Reset:</td> </tr>
+<tr><td valign='top'><span class="indent">All:</span></td>                <td valign='top'>reset</td> <td valign='top'><a href="#renderFinalStep">renderFinalStep</a></td></tr>
+<tr><td valign='top'><span class="indent">Orientation:</span></td>                 <td valign='top'>reset orientation</td> <td valign='top'><a href="#resetOrientation">resetOrientation</a></td></tr>
 
-<tr><td valign='top'>t) View -&gt; Redo:</td>     <td valign='top'>forward</td> <td valign='top'><a href="#forward">forward</a></td></tr>
+<tr><td valign='top'>t) View -&gt; Undo:</td>     <td valign='top'>back</td> <td valign='top'><a href="#back">back</a></td></tr>
 
-<tr><td valign='top'>u) View -&gt; Full Screen:</td>     <td valign='top'>[no command available]</td> <td valign='top'></td></tr>
+<tr><td valign='top'>u) View -&gt; Redo:</td>     <td valign='top'>forward</td> <td valign='top'><a href="#forward">forward</a></td></tr>
 
-<tr><td valign='top'>v) View -&gt; Exit Full Screen:</td>     <td valign='top'>[no command available]</td> <td valign='top'></td></tr>
+<tr><td valign='top'>v) View -&gt; Full Screen:</td>     <td valign='top'>[no command available]</td> <td valign='top'></td></tr>
+
+<!--tr><td valign='top'>w) View -&gt; Exit Full Screen:</td>     <td valign='top'>[no command available]</td> <td valign='top'></td></tr-->
 
 </tbody></table>
 
@@ -2011,6 +2012,9 @@ Update the highlight of sequences in the annotation window according to the curr
 
 <a name="log"></a>
 <h2>Change Log:<img src="https://www.ncbi.nlm.nih.gov/Structure/IMG/spacer.gif" width="25" height="1" border="0"><a href="#Top"><img src="https://www.ncbi.nlm.nih.gov/Structure/IMG/arrowup_blue.gif" width="12" height="12" border="0" alt="back to top"></a></h2>
+<a href="https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.8.1.zip">icn3d-2.8.1</a> was release on October 21, 2019. Fixed the 2D interaction display in structure alignment. The bug was introduced in the last release.
+<br><br>
+
 <a href="https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.8.0.zip">icn3d-2.8.0</a> was release on October 10, 2019. Allowed to align any chain to another chain in the menu "File > Align > Chain to Chain".
 <br><br>
 
