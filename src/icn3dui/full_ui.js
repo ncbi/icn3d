@@ -391,8 +391,8 @@ iCn3DUI.prototype = {
 
             var text = (this.pk == 1) ? atom.resn + atom.resi + '@' + atom.name : atom.resn + atom.resi;
             if(me.icn3d.structures !== undefined && Object.keys(me.icn3d.structures).length > 1) {
-                text = atom.structure + ' ' + text;
-                $("#" + me.pre + "popup").css("width", "100px");
+                text = atom.structure + '_' + atom.chain + ' ' + text;
+                $("#" + me.pre + "popup").css("width", "120px");
             }
             else {
                 $("#" + me.pre + "popup").css("width", "80px");
