@@ -2739,7 +2739,7 @@ iCn3DUI.prototype = {
     },
 
     clkMn2_definedsets: function() { var me = this;
-        $("#" + me.pre + "mn2_definedsets").add("#" + me.pre + "definedsets").click(function(e) {
+        $("#" + me.pre + "mn2_definedsets").add("#" + me.pre + "definedsets").add("#" + me.pre + "definedsets2").click(function(e) {
            me.showSets();
 
            me.setLogCmd('defined sets', true);

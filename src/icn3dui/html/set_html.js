@@ -1008,6 +1008,8 @@ iCn3DUI.prototype.setMenu5_base = function() { var me = this;
         if(me.cfg.mmdbid !== undefined || me.cfg.gi !== undefined || me.cfg.blast_rep_id !== undefined || me.cfg.align !== undefined || me.cfg.chainalign !== undefined) {
           html += me.getLink('mn2_2ddgm', 'View Interactions');
         }
+
+        html += me.getLink('definedsets2', 'Defined Sets');
     }
 
     if(me.cfg.cid !== undefined) {
