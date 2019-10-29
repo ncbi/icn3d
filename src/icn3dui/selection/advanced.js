@@ -9,11 +9,11 @@ iCn3DUI.prototype.clickCommand_apply = function() { var me = this;
        var select = $("#" + me.pre + "command").val();
 
        var commandname = $("#" + me.pre + "command_name").val().replace(/;/g, '_').replace(/\s+/g, '_');
-       //var commanddesc = $("#" + me.pre + "command_desc").val().replace(/;/g, '_').replace(/\s+/g, '_');
 
-       me.selectByCommand(select, commandname, commandname);
-       //me.setLogCmd('select ' + select + ' | name ' + commandname + ' | description ' + commanddesc, true);
-       me.setLogCmd('select ' + select + ' | name ' + commandname, true);
+       if(select) {
+           me.selectByCommand(select, commandname, commandname);
+           me.setLogCmd('select ' + select + ' | name ' + commandname, true);
+       }
     });
 
     $("#" + me.pre + "command_apply2").click(function(e) {
@@ -22,11 +22,11 @@ iCn3DUI.prototype.clickCommand_apply = function() { var me = this;
        var select = $("#" + me.pre + "command2").val();
 
        var commandname = $("#" + me.pre + "command_name2").val().replace(/;/g, '_').replace(/\s+/g, '_');
-       //var commanddesc = $("#" + me.pre + "command_desc").val().replace(/;/g, '_').replace(/\s+/g, '_');
 
-       me.selectByCommand(select, commandname, commandname);
-       //me.setLogCmd('select ' + select + ' | name ' + commandname + ' | description ' + commanddesc, true);
-       me.setLogCmd('select ' + select + ' | name ' + commandname, true);
+       if(select) {
+           me.selectByCommand(select, commandname, commandname);
+           me.setLogCmd('select ' + select + ' | name ' + commandname, true);
+       }
     });
 
 };

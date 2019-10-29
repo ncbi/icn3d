@@ -102,7 +102,7 @@ iCn3DUI.prototype.showTitle = function() { var me = this;
         else if(me.cfg.cid !== undefined) {
             var url = me.getLinkToStructureSummary();
 
-            $("#" + me.pre + "title").html("PubChem CID <a href='" + url + "' target='_blank' style='color:" + me.GREYD + "'>" + me.inputid.toUpperCase() + "</a>: " + title);
+            $("#" + me.pre + "title").html("PubChem CID <a href='" + url + "' target='_blank'>" + me.inputid.toUpperCase() + "</a>: " + title);
         }
         else if(me.cfg.align !== undefined) {
             $("#" + me.pre + "title").html(title);
@@ -121,7 +121,7 @@ iCn3DUI.prototype.showTitle = function() { var me = this;
             //var asymmetricStr = (me.bAssemblyUseAsu) ? " (Asymmetric Unit)" : "";
             var asymmetricStr = "";
 
-            $("#" + me.pre + "title").html("PDB ID <a href='" + url + "' target='_blank' style='color:" + me.GREYD + "'>" + me.inputid.toUpperCase() + "</a>" + asymmetricStr + ": " + title);
+            $("#" + me.pre + "title").html("PDB ID <a href='" + url + "' target='_blank'>" + me.inputid.toUpperCase() + "</a>" + asymmetricStr + ": " + title);
         }
     }
     else {

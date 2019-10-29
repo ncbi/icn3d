@@ -364,7 +364,7 @@ iCn3DUI.prototype.toggleHighlight = function() { var me = this;
         me.showHighlight();
     }
 
-    me.setLogCmd("toggle highlight", true);
+    //me.setLogCmd("toggle highlight", true);
 };
 
 iCn3DUI.prototype.clearHighlight = function() { var me = this;
