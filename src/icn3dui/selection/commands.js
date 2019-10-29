@@ -60,7 +60,7 @@ iCn3DUI.prototype.execCommands = function (start, end, steps) { var me = this;
     me.execCommandsBase(start, end, steps);
 };
 
-iCn3DUI.prototype.execCommandsBase = function (start, end, steps) { var me = this;
+iCn3DUI.prototype.execCommandsBase = function (start, end, steps, bFinalStep) { var me = this;
   for(var i=start; i <= end; ++i) {
       var bFinalStep = (i === steps - 1) ? true : false;
 
@@ -281,7 +281,7 @@ iCn3DUI.prototype.execCommandsBase = function (start, end, steps) { var me = thi
   }
 
   //if(i === steps - 1) {
-  if(i === steps) {
+  if(i === steps || bFinalStep) {
       // enable me.hideLoading
       me.bCommandLoad = false;
 
@@ -293,7 +293,7 @@ iCn3DUI.prototype.execCommandsBase = function (start, end, steps) { var me = thi
       // end of all commands
       if(i + 1 === me.icn3d.commands.length) me.bAddCommands = true;
 
-      me.renderFinalStep(steps);
+      me.renderFinalStep(i);
   }
 };
 
@@ -362,10 +362,10 @@ iCn3DUI.prototype.renderFinalStep = function(steps) { var me = this;
     }
 
     if(me.cfg.closepopup) {
-        if($('#' + me.pre + 'dl_selectannotations').dialog( 'isOpen' )) $('#' + me.pre + 'dl_selectannotations').dialog( 'close' );
-        if($('#' + me.pre + 'dl_alignment').dialog( 'isOpen' )) $('#' + me.pre + 'dl_alignment').dialog( 'close' );
-        if($('#' + me.pre + 'dl_2ddgm').dialog( 'isOpen' )) $('#' + me.pre + 'dl_2ddgm').dialog( 'close' );
-        if($('#' + me.pre + 'dl_definedsets').dialog( 'isOpen' )) $('#' + me.pre + 'dl_definedsets').dialog( 'close' );
+        if($('#' + me.pre + 'dl_selectannotations').hasClass('ui-dialog-content') && $('#' + me.pre + 'dl_selectannotations').dialog( 'isOpen' )) $('#' + me.pre + 'dl_selectannotations').dialog( 'close' );
+        if($('#' + me.pre + 'dl_alignment').hasClass('ui-dialog-content') && $('#' + me.pre + 'dl_alignment').dialog( 'isOpen' )) $('#' + me.pre + 'dl_alignment').dialog( 'close' );
+        if($('#' + me.pre + 'dl_2ddgm').hasClass('ui-dialog-content') && $('#' + me.pre + 'dl_2ddgm').dialog( 'isOpen' )) $('#' + me.pre + 'dl_2ddgm').dialog( 'close' );
+        if($('#' + me.pre + 'dl_definedsets').hasClass('ui-dialog-content') && $('#' + me.pre + 'dl_definedsets').dialog( 'isOpen' )) $('#' + me.pre + 'dl_definedsets').dialog( 'close' );
 
         me.resizeCanvas(me.WIDTH, me.HEIGHT, true);
     }
@@ -676,6 +676,9 @@ iCn3DUI.prototype.applyCommand = function (commandStr) { var me = this;
   else if(command == 'select all') {
      me.selectAll();
      //me.icn3d.addHlObjects();
+  }
+  else if(command == 'show all') {
+     me.showAll();
   }
   else if(command == 'select complement') {
      me.selectComplement();
@@ -988,6 +991,8 @@ iCn3DUI.prototype.applyCommand = function (commandStr) { var me = this;
      me.toggleSelection();
   }
   else if(command == 'toggle highlight') {
+    me.toggleHighlight();
+/*
     if(me.icn3d.prevHighlightObjects.length > 0 || me.icn3d.prevHighlightObjects_ghost.length > 0) { // remove
         me.icn3d.removeHlObjects();
         me.icn3d.bShowHighlight = false;
@@ -996,6 +1001,7 @@ iCn3DUI.prototype.applyCommand = function (commandStr) { var me = this;
         me.icn3d.addHlObjects();
         me.icn3d.bShowHighlight = true;
     }
+*/
   }
   else if(command == 'stabilizer') {
     me.addStabilizer();
@@ -1168,6 +1174,13 @@ iCn3DUI.prototype.applyCommand = function (commandStr) { var me = this;
   else if(command.indexOf('set background') == 0) {
     var value = command.substr(command.lastIndexOf(' ') + 1);
     me.icn3d.opts['background'] = value;
+
+    if(value == 'white' || value == 'grey') {
+        $("#" + me.pre + "title").css("color", "black");
+    }
+    else {
+        $("#" + me.pre + "title").css("color", me.GREYD);
+    }
   }
   else if(commandOri.indexOf('set thickness') == 0) {
     var paraArray = command.split(' | ');

@@ -1682,6 +1682,8 @@ iCn3DUI.prototype.getSnpLine = function(line, totalLineNum, resi2snp, resi2rsnum
                             }
                         }
                         else { //if(bSnpOnly) {
+                            snpTitle += "<br>Link: <a href='https://www.ncbi.nlm.nih.gov/snp/?term=" + resi2rsnum[i][j] + "' target='_blank'>dbSNP (rs" + resi2rsnum[i][j] + ")</a>"
+
                             if(j < jl - 1) {
                                 snpTitle += '<br>';
                             }

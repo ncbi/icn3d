@@ -469,11 +469,11 @@ iCn3D.prototype.createImpostorShaderCylinder = function (shaderName) { var me = 
     colors2 = null;
     radii = null;
 
-  me.posArray = null;
-  me.colorArray = null;
-  me.pos2Array = null;
-  me.color2Array = null;
-  me.radiusArray = null;
+  me.posArray = [];
+  me.colorArray = [];
+  me.pos2Array = [];
+  me.color2Array = [];
+  me.radiusArray = [];
 };
 
 iCn3D.prototype.createImpostorShaderSphere = function (shaderName) { var me = this;
@@ -521,7 +521,7 @@ iCn3D.prototype.createImpostorShaderSphere = function (shaderName) { var me = th
     colors = null;
     radii = null;
 
-  me.posArraySphere = null;
-  me.colorArraySphere = null;
-  me.radiusArraySphere = null;
+  me.posArraySphere = [];
+  me.colorArraySphere = [];
+  me.radiusArraySphere = [];
 };

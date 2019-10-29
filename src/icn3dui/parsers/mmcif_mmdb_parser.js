@@ -675,7 +675,7 @@ iCn3DUI.prototype.loadAtomDataIn = function (data, id, type, seqalign, alignType
               if(sid !== undefined) me.chainid2sid[chainid] = sid;
           }
 
-          me.icn3d.molTitle +=  "<a href=\"https://www.ncbi.nlm.nih.gov/Structure/mmdb/mmdbsrv.cgi?uid=" + structure.pdbId.toUpperCase() + "\" target=\"_blank\" style=\"color: " + me.GREYD + ";\">" + structure.pdbId.toUpperCase() + "</a>";
+          me.icn3d.molTitle +=  "<a href=\"https://www.ncbi.nlm.nih.gov/Structure/mmdb/mmdbsrv.cgi?uid=" + structure.pdbId.toUpperCase() + "\" target=\"_blank\">" + structure.pdbId.toUpperCase() + "</a>";
 
           if(structure.descr !== undefined) me.pmid += structure.descr.pubmedid;
           if(i === 0) {

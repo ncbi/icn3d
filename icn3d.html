@@ -880,7 +880,7 @@ This page describes Web APIs and how to embed iCn3D in your html page. Other det
 <tr><td valign='top'><span class="indent">Outline:</span></td>              <td valign='top'>set highlight style outline</td> <td valign='top'>me.icn3d.bHighlight = 1;</td></tr>
 <tr><td valign='top'><span class="indent">3D Objects:</span></td>         <td valign='top'>set highlight style 3d</td> <td valign='top'>me.icn3d.bHighlight = 2;</td></tr>
 
-<tr><td valign='top'>l) Clear Highlight</td><td valign='top'>clear selection</td> <td valign='top'><a href="#selectByCommand">me.icn3d.removeHlObjects(); me.icn3d.bShowHighlight = false;</a></td></tr>
+<tr><td valign='top'>l) Toggle Highlight</td><td valign='top'>toggle highlight</td> <td valign='top'><a href="#toggleHighlight">toggleHighlight</a></td></tr>
 
 <tr><td colspan="3"><br>m) Switch Highlight Level</td> </tr>
 <tr><td valign='top'><span class="indent">&uarr;:</span></td>              <td valign='top'>highlight level up</td> <td valign='top'><a href="#switchHighlightLevelUp">switchHighlightLevelUp<a></td></tr>
@@ -898,7 +898,8 @@ In the dialog Select -&gt; Advanced, users can use simple specification to selec
 <li>":5-10,KRDE,chemicals" uses ":" to indicate residue selection. Residue selection could be residue number (5-10), one-letter sequence (KRDE), or predefined names: "proteins", "nucleotides", "chemicals", "ions", and "water".<br/>
 <li>"@CA,C" uses "@" to indicate atom selection.<br/>
 <li>Partial definition is allowed, e.g., ":1-10" selects all residue IDs 1-10 in all chains.<br/>
-<li>Different selections can be united (with "<b>or</b>", default), intersected (with "<b>and</b>"), or negated (with "<b>not</b>"). For example, ":1-10 or :K" selects all residues 1-10 and all Lys residues. ":1-10 and :K" selects all Lys residues in the range of residue number 1-10. ":1-10 or not :K" selects all residues 1-10, which are not Lys residues.
+<li>Different selections can be united (with "<b>or</b>", default), intersected (with "<b>and</b>"), or negated (with "<b>not</b>"). For example, ":1-10 or :K" selects all residues 1-10 and all Lys residues. ":1-10 and :K" selects all Lys residues in the range of residue number 1-10. ":1-10 or not :K" selects all residues 1-10, which are not Lys residues.<br/>
+<li>The wild card character \"X\" or \"x\" can be used to represent any character.
 </ul>
 <b>Set Operation:</b>
 <ul>
@@ -919,7 +920,7 @@ In the dialog Select -&gt; Advanced, users can use simple specification to selec
 <tr><td valign='top'>a) View -&gt; View Only Selection:</td>  <td valign='top'>show selection</td> <td valign='top'><a href="#showSelection">showSelection</a></td></tr>
 <tr><td valign='top'>b) View -&gt; Zoom in Selection:</td>  <td valign='top'>zoom selection</td> <td valign='top'><a href="#zoominSelection">zoominSelection</a></td></tr>
 <tr><td valign='top'>c) View -&gt; Center on Selection:</td>  <td valign='top'>center selection</td> <td valign='top'><a href="#centerSelection">centerSelection</a></td></tr>
-<tr><td valign='top'>d) View -&gt; View Full Structure:</td>  <td valign='top'>select all</td> <td valign='top'><a href="#selectAll">selectAll</a></td></tr>
+<tr><td valign='top'>d) View -&gt; View Full Structure:</td>  <td valign='top'>show all</td> <td valign='top'><a href="#selectAll">showAll</a></td></tr>
 
 <tr><td colspan="3"><br>e) View -&gt; Chemical Binding</td> </tr>
 <tr><td valign='top'><span class="indent">Show:</span></td>            <td valign='top'>set chemicalbinding show</td> <td valign='top'>me.setOption('chemicalbinding', 'show');</td></tr>
@@ -2012,6 +2013,9 @@ Update the highlight of sequences in the annotation window according to the curr
 
 <a name="log"></a>
 <h2>Change Log:<img src="https://www.ncbi.nlm.nih.gov/Structure/IMG/spacer.gif" width="25" height="1" border="0"><a href="#Top"><img src="https://www.ncbi.nlm.nih.gov/Structure/IMG/arrowup_blue.gif" width="12" height="12" border="0" alt="back to top"></a></h2>
+<a href="https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.8.2.zip">icn3d-2.8.2</a> was release on October 29, 2019. Reduced the size of three.js (version 103) library. Added links to dbSNP in the mouseover texts of SNP annotations.
+<br><br>
+
 <a href="https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.8.1.zip">icn3d-2.8.1</a> was release on October 21, 2019. Fixed the 2D interaction display in structure alignment. The bug was introduced in the last release.
 <br><br>
 

@@ -124,7 +124,9 @@ iCn3DUI.prototype.setTopMenusHtmlMobile = function (id) { var me = this;
     //html += me.setTools();
 
     // show title at the top left corner
-    html += "  <div id='" + me.pre + "title' class='icn3d-commandTitle' style='font-size:1.2em; font-weight:normal; position:absolute; z-index:1; float:left; display:block; margin: 12px 0px 0px 40px; color:" + me.GREYD + "; width:" + (me.WIDTH - 40).toString() + "px'></div>";
+    var titleColor = (me.opts['background'] == 'white' || me.opts['background'] == 'grey') ? 'black' : me.GREYD;
+
+    html += "  <div id='" + me.pre + "title' class='icn3d-commandTitle' style='font-size:1.2em; font-weight:normal; position:absolute; z-index:1; float:left; display:block; margin: 12px 0px 0px 40px; color:" + titleColor + "; width:" + (me.WIDTH - 40).toString() + "px'></div>";
     html += "  <div id='" + me.pre + "viewer' style='position:relative; width:100%; height:100%; background-color: " + me.GREYD + ";'>";
     html += "   <div id='" + me.pre + "mnLogSection'>";
     html += "    <div style='height: " + me.MENU_HEIGHT + "px;'></div>";
@@ -470,9 +472,9 @@ iCn3DUI.prototype.setMenu2_base = function() { var me = this;
     html += "        </ul>";
     html += "      </li>";
 
-    html += me.getLink('mn2_hl_styleNone', 'Clear Highlight');
+    //html += me.getLink('mn2_hl_styleNone', 'Clear Highlight');
 
-    //html += me.getLink('toggleHighlight2', 'Toggle Highlight');
+    html += me.getLink('toggleHighlight2', 'Toggle Highlight');
 
     html += "  <li><br/></li>";
 
@@ -580,15 +582,16 @@ iCn3DUI.prototype.setMenu2b_base = function() { var me = this;
     html += "    <ul>";
     html += me.getRadio('mn6_labelscale', 'mn6_labelscale01', '0.1');
     html += me.getRadio('mn6_labelscale', 'mn6_labelscale02', '0.2');
+    html += me.getRadio('mn6_labelscale', 'mn6_labelscale03', '0.3', true);
     html += me.getRadio('mn6_labelscale', 'mn6_labelscale04', '0.4');
+    html += me.getRadio('mn6_labelscale', 'mn6_labelscale05', '0.5');
     html += me.getRadio('mn6_labelscale', 'mn6_labelscale06', '0.6');
+    html += me.getRadio('mn6_labelscale', 'mn6_labelscale07', '0.7');
     html += me.getRadio('mn6_labelscale', 'mn6_labelscale08', '0.8');
-    html += me.getRadio('mn6_labelscale', 'mn6_labelscale10', '1.0', true);
+    html += me.getRadio('mn6_labelscale', 'mn6_labelscale09', '0.9');
+    html += me.getRadio('mn6_labelscale', 'mn6_labelscale10', '1.0');
     html += me.getRadio('mn6_labelscale', 'mn6_labelscale20', '2.0');
     html += me.getRadio('mn6_labelscale', 'mn6_labelscale40', '4.0');
-    html += me.getRadio('mn6_labelscale', 'mn6_labelscale60', '6.0');
-    html += me.getRadio('mn6_labelscale', 'mn6_labelscale80', '8.0');
-    html += me.getRadio('mn6_labelscale', 'mn6_labelscale100', '10.0');
     html += "    </ul>";
     html += "  </li>";
 
@@ -1130,7 +1133,7 @@ iCn3DUI.prototype.setAdvanced = function(index) { var me = this;
     html += "    <tr><td><b>Select:</b></td><td><input type='text' id='" + me.pre + "command" + indexStr + "' placeholder='$[structures].[chains]:[residues]@[atoms]' size='60'></td></tr>";
     html += "    <tr><td><b>Name:</b></td><td><input type='text' id='" + me.pre + "command_name" + indexStr + "' placeholder='my_selection' size='60'></td></tr>";
     //html += "<tr><td align='right'><b>Description:</b></td><td><input type='text' id='" + me.pre + "command_desc' placeholder='description about my selection' size='30'></td></tr>";
-    html += "    <tr><td colspan='2' align='left'>&nbsp;&nbsp;&nbsp;<button id='" + me.pre + "command_apply" + indexStr + "'><b>Save Selection</b></button></td></tr>";
+    html += "    <tr><td colspan='2' align='left'>&nbsp;&nbsp;&nbsp;<button id='" + me.pre + "command_apply" + indexStr + "'><b>Save Selection to Defined Sets</b></button></td></tr>";
     html += "      </table></td>";
 
     html += "      </tr>";
@@ -1144,10 +1147,12 @@ iCn3DUI.prototype.setAdvanced = function(index) { var me = this;
     html += "  <b>Specification:</b> In the selection \"$1HHO,4N7N.A,B,C:5-10,KRDE,chemicals@CA,C\":";
     html += "  <ul><li>\"$1HHO,4N7N\" uses \"$\" to indicate structure selection.<br/>";
     html += "  <li>\".A,B,C\" uses \".\" to indicate chain selection.<br/>";
-    html += "  <li>\":5-10,KRDE,chemicals\" uses \":\" to indicate residue selection. Residue selection could be residue number (5-10), one-letter sequence (KRDE), or predefined names: \"proteins\", \"nucleotides\", \"chemicals\", \"ions\", and \"water\".<br/>";
+    html += "  <li>\":5-10,KRDE,chemicals\" uses the colon \":\" to indicate residue selection. Residue selection could be residue number (5-10), one-letter IUPAC abbreviations (KRDE), or predefined names: \"proteins\", \"nucleotides\", \"chemicals\", \"ions\", and \"water\".<br/>";
     html += "  <li>\"@CA,C\" uses \"@\" to indicate atom selection.<br/>";
     html += "  <li>Partial definition is allowed, e.g., \":1-10\" selects all residue IDs 1-10 in all chains.<br/>";
-    html += "  <li>Different selections can be unioned (with \"<b>or</b>\", default), intersected (with \"<b>and</b>\"), or negated (with \"<b>not</b>\"). For example, \":1-10 or :K\" selects all residues 1-10 and all Lys residues. \":1-10 and :K\" selects all Lys residues in the range of residue number 1-10. \":1-10 or not :K\" selects all residues 1-10, which are not Lys residues.</ul>";
+    html += "  <li>Different selections can be unioned (with \"<b>or</b>\", default), intersected (with \"<b>and</b>\"), or negated (with \"<b>not</b>\"). For example, \":1-10 or :K\" selects all residues 1-10 and all Lys residues. \":1-10 and :K\" selects all Lys residues in the range of residue number 1-10. \":1-10 or not :K\" selects all residues 1-10, which are not Lys residues.<br/>";
+    html += "  <li>The wild card character \"X\" or \"x\" can be used to represent any character.";
+    html += "  </ul>";
     html += "  <b>Set Operation:</b>";
     html += "  <ul><li>Users can select multiple sets in the menu \"Select > Defined Sets\".<br/>";
     html += "  <li>Different sets can be unioned (with \"<b>or</b>\", default), intersected (with \"<b>and</b>\"), or negated (with \"<b>not</b>\"). For example, if the \"Defined Sets\" menu has four sets \":1-10\", \":11-20\", \":5-15\", and \":7-8\", the command \"saved atoms :1-10 or :11-20 and :5-15 not :7-8\" unions all residues 1-10 and 11-20 to get the residues 1-20, then intersects with the residues 5-15 to get the residues 5-15, then exclude the residues 7-8 to get the final residues 5-6 and 9-15.</ul>";
@@ -1357,7 +1362,7 @@ iCn3DUI.prototype.setDialogs = function() { var me = this;
     html += "</div>";
 
     html += "<div id='" + me.pre + "dl_hbonds'>";
-    html += "  <div style='white-space:nowrap'>1. Make a selection whenever this window is open</div><br>";
+    html += "  <div style='white-space:nowrap'>1. Make a selection in 3D, 2D or 1D whenever this window is open</div><br>";
     html += "  <div style='white-space:nowrap'>2. Threshold of H-bonds: <select id='" + me.pre + "hbondthreshold'>";
     html += "  <option value='3.2'>3.2</option>";
     html += "  <option value='3.3'>3.3</option>";
@@ -1431,7 +1436,7 @@ iCn3DUI.prototype.setDialogs = function() { var me = this;
     html += "</div>";
 
     html += "<div id='" + me.pre + "dl_aroundsphere'>";
-    html += "  <div style='white-space:nowrap'>1. Make a selection whenever this window is open</div><br>";
+    html += "  <div style='white-space:nowrap'>1. Make a selection in 3D, 2D or 1D whenever this window is open</div><br>";
     html += "  <div style='white-space:nowrap'>2. Sphere with a radius: <input type='text' id='" + me.pre + "radius_aroundsphere' value='4' size='2'> &#197;</div><br/>";
 
     html += "  <div style='white-space:nowrap'>3. Select sets to apply the sphere:</div>";
