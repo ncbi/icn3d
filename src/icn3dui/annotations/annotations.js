@@ -377,14 +377,17 @@ iCn3DUI.prototype.getAnnotationData = function() { var me = this;
     me.setToolTip();
 
     // show the sequence and 3D structure
-    var url = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=protein&retmode=json&rettype=fasta&id=" + chnidBaseArray;
+    //var url = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=protein&retmode=json&rettype=fasta&id=" + chnidBaseArray;
+    var url = "https://www.ncbi.nlm.nih.gov/Structure/vastdyn/vastdyn.cgi?chainlist=" + chnidBaseArray;
+
     $.ajax({
       url: url,
-      dataType: 'text',
+      dataType: 'jsonp', //'text',
       cache: true,
       tryCount : 0,
       retryLimit : 1,
       success: function(data) {
+/*
         var chainArray = data.split('\n\n');
 
         var chainid_seq = {};
@@ -402,6 +405,8 @@ iCn3DUI.prototype.getAnnotationData = function() { var me = this;
                 chainid_seq[chainid] = allSeq;
             }
         }
+*/
+        var chainid_seq = data;
 
         for(var chnid in me.protein_chainid) {
             var chnidBase = me.protein_chainid[chnid];
@@ -1824,7 +1829,7 @@ iCn3DUI.prototype.processSnpClinvar = function(data, chnid, chnidBase, bSnpOnly)
      //Pdb_gi, Pos from, Pos to, Pos & Amino acid change, rs#, ClinVar Allele ID, Disease name, Clinical significance, master accession, master_gi, master_accession.version
 
      //bSnpOnly: true
-     //1310770    13    14    14Y>H
+     //1310770    13    14    14Y>H    1111111
 
      if(lineArray[i] != '') {
       var fieldArray = lineArray[i].split('\t');
