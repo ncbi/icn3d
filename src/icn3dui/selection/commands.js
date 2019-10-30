@@ -1126,14 +1126,14 @@ iCn3DUI.prototype.applyCommand = function (commandStr) { var me = this;
         me.selectAChain(idArray[i], 'align_' + idArray[i], true);
     }
   }
-  else if(command.indexOf('select zone cutoff') == 0) {
+  else if(commandOri.indexOf('select zone cutoff') == 0) {
     if(me.bSetChainsAdvancedMenu === undefined || !me.bSetChainsAdvancedMenu) {
        me.setPredefinedInMenu();
 
        me.bSetChainsAdvancedMenu = true;
     }
 
-    var paraArray = command.split(' | '); // | sets a,b,c
+    var paraArray = commandOri.split(' | '); // | sets a,b,c
     var radius = parseFloat(paraArray[0].substr(paraArray[0].lastIndexOf(' ') + 1));
 
     var nameArray = [];
@@ -1142,7 +1142,10 @@ iCn3DUI.prototype.applyCommand = function (commandStr) { var me = this;
         nameArray = nameStr.split(",");
     }
 
-    me.pickCustomSphere(radius, nameArray);
+    if(!me.bSphereCalc) me.pickCustomSphere(radius, nameArray);
+    me.bSphereCalc = true;
+
+    me.updateHlAll();
   }
   else if(command.indexOf('set surface opacity') == 0) {
     var value = command.substr(command.lastIndexOf(' ') + 1);

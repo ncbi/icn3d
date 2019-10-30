@@ -606,6 +606,9 @@ iCn3DUI.prototype.shareLinkUrl = function(bAllCommands) { var me = this;
 
             if(key === 'rotate' && value === 'right') continue;
 
+            // commands will be added in the for loop below: for(var il = me.icn3d.commands...
+            if(key === 'command') continue;
+
            if(key === 'options') {
                if(Object.keys(value).length > 0) url += key + '=' + JSON.stringify(value) + '&';
            }
@@ -626,7 +629,8 @@ iCn3DUI.prototype.shareLinkUrl = function(bAllCommands) { var me = this;
 
        var start = 0;
        if(inparaWithoutCommand !== undefined) {
-         url += inparaWithoutCommand.substr(1) + '&command=';
+         //url += inparaWithoutCommand.substr(1) + '&command=';
+         url += 'command=';
          start = 1;
        }
        else {
@@ -671,6 +675,10 @@ iCn3DUI.prototype.shareLinkUrl = function(bAllCommands) { var me = this;
              || (prevCommandStr.indexOf('select chain') !== -1 && commandStr.indexOf('select chain') !== -1)
              || (prevCommandStr.indexOf('pickatom') !== -1 && commandStr.indexOf('pickatom') !== -1)
              ) {
+               // do nothing
+           }
+           // remove all "show selection" except the last one
+           else if(prevCommandStr == 'show selection' && me.icn3d.commands.slice(i).toString().indexOf('show selection') != -1) {
                // do nothing
            }
            else if(prevCommandStr.indexOf(toggleStr) !== -1) {

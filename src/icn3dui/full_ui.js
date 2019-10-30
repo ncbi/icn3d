@@ -1764,14 +1764,45 @@ iCn3DUI.prototype = {
     exportSpherePairs: function() { var me = this;
         var tmpText = '';
         var cnt = 0;
-        for(var resid1 in me.resid2ResidhashSphere) {
+        for(var resid1 in me.resid2ResidhashSphere) { // e.g., resid1: 1KQ2_A_6 ASN
+            var resid1Final = resid1.substr(0, resid1.indexOf(' '));
+
+            var caSerial1, caSerial2, tmpSerial;
+            for(var serial in me.icn3d.residues[resid1Final]) {
+                if(me.icn3d.calphas.hasOwnProperty(serial)) {
+                    caSerial1 = serial;
+                    break;
+                }
+                tmpSerial = serial;
+            }
+            if(caSerial1 === undefined) caSerial1 = tmpSerial;
+
+            var ca1 = me.icn3d.atoms[caSerial1];
+            var caVec1 = new THREE.Vector3(ca1.coord.x, ca1.coord.y, ca1.coord.z);
+
             for(var resid2 in me.resid2ResidhashSphere[resid1]) {
-                tmpText += '<tr><td>' + resid1 + '</td><td>' + resid2 + '</td></tr>';
+                var resid2Final = resid2.substr(0, resid2.indexOf(' '));
+
+                for(var serial in me.icn3d.residues[resid2Final]) {
+                    if(me.icn3d.calphas.hasOwnProperty(serial)) {
+                        caSerial2 = serial;
+                        break;
+                    }
+                    tmpSerial = serial;
+                }
+                if(caSerial2 === undefined) caSerial2 = tmpSerial;
+
+                var ca2 = me.icn3d.atoms[caSerial2];
+                var caVec2 = new THREE.Vector3(ca2.coord.x, ca2.coord.y, ca2.coord.z);
+
+                var dist = caVec1.distanceTo(caVec2).toFixed(1);
+
+                tmpText += '<tr><td>' + resid1 + '</td><td>' + resid2 + '</td><td align="center">' + dist + '</td></tr>';
                 ++cnt;
             }
         }
 
-        var text = '<html><body><div style="text-align:center"><br><b>' + cnt + ' residue pairs in sphere</b>:<br><br><table align=center border=1 cellpadding=10 cellspacing=0><tr><th>Residue ID 1</th><th>Residue ID 2</th></tr>';
+        var text = '<html><body><div style="text-align:center"><br><b>' + cnt + ' residue pairs in sphere</b>:<br><br><table align=center border=1 cellpadding=10 cellspacing=0><tr><th>Residue ID 1</th><th>Residue ID 2</th><th align="center">C&alpha;-C&alpha; Dist (&#8491;)</th></tr>';
 
         text += tmpText;
 
