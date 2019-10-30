@@ -383,6 +383,10 @@ iCn3DUI.prototype.selectBySpec = function (select, commandname, commanddesc, bDi
 
    me.icn3d.hAtoms = me.icn3d.cloneHash(atomHash);
 
+   if(Object.keys(me.icn3d.hAtoms).length == 0) {
+       alert("No residues were selected. Please try another search.");
+   }
+
    if(bDisplay === undefined || bDisplay) me.updateHlAll();
 
    var residueAtomArray;

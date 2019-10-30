@@ -895,7 +895,7 @@ In the dialog Select -&gt; Advanced, users can use simple specification to selec
 <ul>
 <li>"$1HHO,4N7N" uses "$" to indicate structure selection.<br/>
 <li>".A,B,C" uses "." to indicate chain selection.<br/>
-<li>":5-10,KRDE,chemicals" uses ":" to indicate residue selection. Residue selection could be residue number (5-10), one-letter sequence (KRDE), or predefined names: "proteins", "nucleotides", "chemicals", "ions", and "water".<br/>
+<li>":5-10,KRDE,chemicals" uses the colon ":" to indicate residue selection. Residue selection could be residue number (5-10), one-letter  IUPAC abbreviations (KRDE), or predefined names: "proteins", "nucleotides", "chemicals", "ions", and "water". IUPAC abbreviations can be written either as a contiguous string (e.g., ":KRDE"), in order to find all instances of that sequence in the structure, or they can be separated by commas (e.g., ":K,R,D,E") to select all residues of a given type in the structure (in the latter case, select all Lysine, Arginine, Aspartic Acid, and Glutamic Acid in the structure). <br/>
 <li>"@CA,C" uses "@" to indicate atom selection.<br/>
 <li>Partial definition is allowed, e.g., ":1-10" selects all residue IDs 1-10 in all chains.<br/>
 <li>Different selections can be united (with "<b>or</b>", default), intersected (with "<b>and</b>"), or negated (with "<b>not</b>"). For example, ":1-10 or :K" selects all residues 1-10 and all Lys residues. ":1-10 and :K" selects all Lys residues in the range of residue number 1-10. ":1-10 or not :K" selects all residues 1-10, which are not Lys residues.<br/>
