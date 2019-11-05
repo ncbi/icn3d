@@ -94,6 +94,8 @@ iCn3DUI.prototype.showTitle = function() { var me = this;
     if(me.icn3d.molTitle !== undefined && me.icn3d.molTitle !== '') {
         var title = me.icn3d.molTitle;
 
+        var titlelinkColor = (me.opts['background'] == 'white' || me.opts['background'] == 'grey') ? 'black' : me.GREYD;
+
         if(me.inputid === undefined) {
             if(me.icn3d.molTitle.length > 40) title = me.icn3d.molTitle.substr(0, 40) + "...";
 
@@ -102,7 +104,7 @@ iCn3DUI.prototype.showTitle = function() { var me = this;
         else if(me.cfg.cid !== undefined) {
             var url = me.getLinkToStructureSummary();
 
-            $("#" + me.pre + "title").html("PubChem CID <a href='" + url + "' target='_blank'>" + me.inputid.toUpperCase() + "</a>: " + title);
+            $("#" + me.pre + "title").html("PubChem CID <a id='" + me.pre + "titlelink' href='" + url + "' style='color:" + titlelinkColor + "' target='_blank'>" + me.inputid.toUpperCase() + "</a>: " + title);
         }
         else if(me.cfg.align !== undefined) {
             $("#" + me.pre + "title").html(title);
@@ -121,7 +123,7 @@ iCn3DUI.prototype.showTitle = function() { var me = this;
             //var asymmetricStr = (me.bAssemblyUseAsu) ? " (Asymmetric Unit)" : "";
             var asymmetricStr = "";
 
-            $("#" + me.pre + "title").html("PDB ID <a href='" + url + "' target='_blank'>" + me.inputid.toUpperCase() + "</a>" + asymmetricStr + ": " + title);
+            $("#" + me.pre + "title").html("PDB ID <a id='" + me.pre + "titlelink' href='" + url + "' style='color:" + titlelinkColor + "' target='_blank'>" + me.inputid.toUpperCase() + "</a>" + asymmetricStr + ": " + title);
         }
     }
     else {

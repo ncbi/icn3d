@@ -773,6 +773,10 @@ iCn3DUI.prototype.applyCommand = function (commandStr) { var me = this;
     me.icn3d.hideHbonds();
     me.icn3d.draw();
   }
+  else if(command == 'set salt bridge off') {
+    me.icn3d.hideSaltbridge();
+    me.icn3d.draw();
+  }
 
   else if(command == 'hydrogens') {
     me.showHydrogens();
@@ -913,6 +917,11 @@ iCn3DUI.prototype.applyCommand = function (commandStr) { var me = this;
   }
   else if(command == 'add residue labels') {
     me.icn3d.addResiudeLabels(me.icn3d.hAtoms);
+
+    me.icn3d.draw();
+  }
+  else if(command == 'add atom labels') {
+    me.icn3d.addAtomLabels(me.icn3d.hAtoms);
 
     me.icn3d.draw();
   }
@@ -1136,16 +1145,19 @@ iCn3DUI.prototype.applyCommand = function (commandStr) { var me = this;
     var paraArray = commandOri.split(' | '); // | sets a,b,c
     var radius = parseFloat(paraArray[0].substr(paraArray[0].lastIndexOf(' ') + 1));
 
-    var nameArray = [];
-    if(paraArray.length == 2 && paraArray[1].length > 4) { //sets a,b,c
-        var nameStr = paraArray[1].substr(paraArray[1].indexOf(' ') + 1);
-        nameArray = nameStr.split(",");
+    var nameArray = [], nameArray2 = [];
+    if(paraArray.length == 2 && paraArray[1].length > 4) { //sets a,b,c e,f,g
+        //var nameStr = paraArray[1].substr(paraArray[1].indexOf(' ') + 1);
+        //nameArray = nameStr.split(",");
+        var setsArray = paraArray[1].split(" ");
+        if(setsArray.length > 1) nameArray = setsArray[1].split(",");
+        if(setsArray.length > 2) nameArray2 = setsArray[2].split(",");
     }
 
-    if(!me.bSphereCalc) me.pickCustomSphere(radius, nameArray);
+    if(!me.bSphereCalc) me.pickCustomSphere(radius, nameArray, nameArray2);
     me.bSphereCalc = true;
 
-    me.updateHlAll();
+    //me.updateHlAll();
   }
   else if(command.indexOf('set surface opacity') == 0) {
     var value = command.substr(command.lastIndexOf(' ') + 1);
@@ -1180,9 +1192,11 @@ iCn3DUI.prototype.applyCommand = function (commandStr) { var me = this;
 
     if(value == 'white' || value == 'grey') {
         $("#" + me.pre + "title").css("color", "black");
+        $("#" + me.pre + "titlelink").css("color", "black");
     }
     else {
         $("#" + me.pre + "title").css("color", me.GREYD);
+        $("#" + me.pre + "titlelink").css("color", me.GREYD);
     }
   }
   else if(commandOri.indexOf('set thickness') == 0) {
@@ -1336,23 +1350,47 @@ iCn3DUI.prototype.applyCommand = function (commandStr) { var me = this;
 
     me.icn3d.showPicking(me.icn3d.pAtom);
   }
-  else if(command.indexOf('hbonds') == 0) {
+  else if(commandOri.indexOf('hbonds') == 0) {
     if(me.bSetChainsAdvancedMenu === undefined || !me.bSetChainsAdvancedMenu) {
        me.setPredefinedInMenu();
 
        me.bSetChainsAdvancedMenu = true;
     }
 
-    var paraArray = command.split(' | ');
+    var paraArray = commandOri.split(' | ');
 
     var threshold = parseFloat(paraArray[0].substr(paraArray[0].indexOf(' ') + 1));
-    var nameArray = [];
-    if(paraArray.length == 2 && paraArray[1].length > 4) { //sets a,b,c
-        var nameStr = paraArray[1].substr(paraArray[1].indexOf(' ') + 1);
-        nameArray = nameStr.split(",");
+    var nameArray = [], nameArray2 = [];
+    if(paraArray.length == 2 && paraArray[1].length > 4) { //sets a,b,c e,f,g
+        //var nameStr = paraArray[1].substr(paraArray[1].indexOf(' ') + 1);
+        //nameArray = nameStr.split(",");
+        var setsArray = paraArray[1].split(" ");
+        if(setsArray.length > 1) nameArray = setsArray[1].split(",");
+        if(setsArray.length > 2) nameArray2 = setsArray[2].split(",");
     }
 
-    if(!isNaN(threshold)) me.showHbonds(threshold, nameArray);
+    if(!isNaN(threshold)) me.showHbonds(threshold, nameArray, nameArray2);
+  }
+  else if(commandOri.indexOf('salt bridge') == 0) {
+    if(me.bSetChainsAdvancedMenu === undefined || !me.bSetChainsAdvancedMenu) {
+       me.setPredefinedInMenu();
+
+       me.bSetChainsAdvancedMenu = true;
+    }
+
+    var paraArray = commandOri.split(' | ');
+
+    var threshold = parseFloat(paraArray[0].substr(paraArray[0].indexOf(' ') + 1));
+    var nameArray = [], nameArray2 = [];
+    if(paraArray.length == 2 && paraArray[1].length > 4) { //sets a,b,c e,f,g
+        //var nameStr = paraArray[1].substr(paraArray[1].indexOf(' ') + 1);
+        //nameArray = nameStr.split(",");
+        var setsArray = paraArray[1].split(" ");
+        if(setsArray.length > 1) nameArray = setsArray[1].split(",");
+        if(setsArray.length > 2) nameArray2 = setsArray[2].split(",");
+    }
+
+    if(!isNaN(threshold)) me.showHbonds(threshold, nameArray, nameArray2, true);
   }
   else if(command.indexOf('color') == 0) {
     var color = command.substr(command.indexOf(' ') + 1);

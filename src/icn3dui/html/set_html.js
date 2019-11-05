@@ -522,10 +522,17 @@ iCn3DUI.prototype.setMenu2b_base = function() { var me = this;
         html += "    </ul>";
         html += "  </li>";
 
-        html += "  <li><span>H-Bonds to</span><br/><span>Selection</span>";
+        html += "  <li><span>H-Bonds</span>";
         html += "    <ul>";
         html += me.getRadio('mn6_hbonds', 'mn6_hbondsYes', 'Show');
         html += me.getRadio('mn6_hbonds', 'mn6_hbondsNo', 'Hide', true);
+        html += "    </ul>";
+        html += "  </li>";
+
+        html += "  <li><span>Salt Bridge</span>";
+        html += "    <ul>";
+        html += me.getRadio('mn6_saltbridge', 'mn6_saltbridgeYes', 'Show');
+        html += me.getRadio('mn6_saltbridge', 'mn6_saltbridgeNo', 'Hide', true);
         html += "    </ul>";
         html += "  </li>";
 
@@ -569,6 +576,7 @@ iCn3DUI.prototype.setMenu2b_base = function() { var me = this;
     html += "    <ul>";
     html += me.getRadio('mn6_addlabel', 'mn6_addlabelYes', 'by Picking Atoms');
     html += me.getRadio('mn6_addlabel', 'mn6_addlabelSelection', 'per Selection');
+    html += me.getRadio('mn6_addlabel', 'mn6_addlabelAtoms', 'per Atom');
     if(me.cfg.cid === undefined) {
         html += me.getRadio('mn6_addlabel', 'mn6_addlabelResidues', 'per Residue');
         html += me.getRadio('mn6_addlabel', 'mn6_addlabelChains', 'per Chain');
@@ -920,6 +928,7 @@ iCn3DUI.prototype.setMenu4_base = function() { var me = this;
         html += "    <ul>";
         html += me.getRadio('mn4_clr', 'mn4_clrSSGreen', 'Sheet in Green');
         html += me.getRadio('mn4_clr', 'mn4_clrSSYellow', 'Sheet in Yellow');
+        html += me.getRadio('mn4_clr', 'mn4_clrSSSpectrum', 'Spectrum');
         html += "    </ul>";
 
         html += me.getRadio('mn4_clr', 'mn4_clrCharge', 'Charge');
@@ -1279,7 +1288,7 @@ iCn3DUI.prototype.setDialogs = function() { var me = this;
     html += "</div>";
 
     html += "<div id='" + me.pre + "dl_mmdbid'>";
-    html += "MMDB ID: <input type='text' id='" + me.pre + "mmdbid' value='1TUP' size=8> ";
+    html += "MMDB or PDB ID: <input type='text' id='" + me.pre + "mmdbid' value='1TUP' size=8> ";
     html += "<button id='" + me.pre + "reload_mmdb'>Load</button>";
     html += "</div>";
 
@@ -1364,7 +1373,9 @@ iCn3DUI.prototype.setDialogs = function() { var me = this;
     html += "</div>";
 
     html += "<div id='" + me.pre + "dl_hbonds'>";
-    html += "  <div style='white-space:nowrap'>1. Make a selection in 3D, 2D or 1D whenever this window is open</div><br>";
+    html += "  <div style='white-space:nowrap'>1. Select the first set:</div>";
+    html += "  <div style='text-indent:1.1em'><select id='" + me.pre + "atomsCustomHbond2' multiple size='3' style='min-width:130px;'>";
+    html += "  </select></div><br>";
     html += "  <div style='white-space:nowrap'>2. Threshold of H-bonds: <select id='" + me.pre + "hbondthreshold'>";
     html += "  <option value='3.2'>3.2</option>";
     html += "  <option value='3.3'>3.3</option>";
@@ -1377,12 +1388,36 @@ iCn3DUI.prototype.setDialogs = function() { var me = this;
     html += "  <option value='4.0'>4.0</option>";
     html += "  </select> &#197;</div><br>";
 
-    html += "  <div style='white-space:nowrap'>3. Select sets to apply the H-bonds:</div>";
+    html += "  <div style='white-space:nowrap'>3. Select the second set to apply the H-bonds:</div>";
     html += "  <div style='text-indent:1.1em'><select id='" + me.pre + "atomsCustomHbond' multiple size='3' style='min-width:130px;'>";
     html += "  </select></div><br>";
 
     html += "  <div>4. <button id='" + me.pre + "applyhbonds'>Display</button> H-bonds between current selection and the selected set</div><br>";
     html += "  <div style='text-indent:1.1em'><button id='" + me.pre + "hbondExport'>Save</button> H-bond pairs in a file</div>";
+    html += "</div>";
+
+    html += "<div id='" + me.pre + "dl_saltbridge'>";
+    html += "  <div style='white-space:nowrap'>1. Select the first set:</div>";
+    html += "  <div style='text-indent:1.1em'><select id='" + me.pre + "atomsCustomSaltbridge2' multiple size='3' style='min-width:130px;'>";
+    html += "  </select></div><br>";
+    html += "  <div style='white-space:nowrap'>2. Threshold of salt bridge: <select id='" + me.pre + "saltbridgethreshold'>";
+    html += "  <option value='3.2'>3.2</option>";
+    html += "  <option value='3.3'>3.3</option>";
+    html += "  <option value='3.4'>3.4</option>";
+    html += "  <option value='3.5'>3.5</option>";
+    html += "  <option value='3.6'>3.6</option>";
+    html += "  <option value='3.7'>3.7</option>";
+    html += "  <option value='3.8'>3.8</option>";
+    html += "  <option value='3.9'>3.9</option>";
+    html += "  <option value='4.0' selected>4.0</option>";
+    html += "  </select> &#197;</div><br>";
+
+    html += "  <div style='white-space:nowrap'>3. Select the second set to apply the salt bridges:</div>";
+    html += "  <div style='text-indent:1.1em'><select id='" + me.pre + "atomsCustomSaltbridge' multiple size='3' style='min-width:130px;'>";
+    html += "  </select></div><br>";
+
+    html += "  <div>4. <button id='" + me.pre + "applysaltbridge'>Display</button> salt bridges between current selection and the selected set</div><br>";
+    html += "  <div style='text-indent:1.1em'><button id='" + me.pre + "saltbridgeExport'>Save</button> salt bridge pairs in a file</div>";
     html += "</div>";
 
     html += "<div id='" + me.pre + "dl_elecmap2fofc'>";
@@ -1438,10 +1473,12 @@ iCn3DUI.prototype.setDialogs = function() { var me = this;
     html += "</div>";
 
     html += "<div id='" + me.pre + "dl_aroundsphere'>";
-    html += "  <div style='white-space:nowrap'>1. Make a selection in 3D, 2D or 1D whenever this window is open</div><br>";
+    html += "  <div style='white-space:nowrap'>1. Select the first set:</div>";
+    html += "  <div style='text-indent:1.1em'><select id='" + me.pre + "atomsCustomSphere2' multiple size='3' style='min-width:130px;'>";
+    html += "  </select></div><br>";
     html += "  <div style='white-space:nowrap'>2. Sphere with a radius: <input type='text' id='" + me.pre + "radius_aroundsphere' value='4' size='2'> &#197;</div><br/>";
 
-    html += "  <div style='white-space:nowrap'>3. Select sets to apply the sphere:</div>";
+    html += "  <div style='white-space:nowrap'>3. Select the second set to apply the sphere:</div>";
     html += "  <div style='text-indent:1.1em'><select id='" + me.pre + "atomsCustomSphere' multiple size='3' style='min-width:130px;'>";
     html += "  </select></div><br>";
 

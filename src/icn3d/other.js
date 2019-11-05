@@ -738,6 +738,36 @@ iCn3D.prototype.addResiudeLabels = function (atoms, bSchematic, alpha) {
     this.removeHlObjects();
 };
 
+iCn3D.prototype.addAtomLabels = function (atoms) {
+    var size = 18;
+    var background = "#CCCCCC";
+
+    var atomsHash = this.intHash(this.hAtoms, atoms);
+
+    if(this.labels['residue'] === undefined) this.labels['residue'] = [];
+
+    for(var i in atomsHash) {
+        var atom = this.atoms[i];
+
+        var label = {}; // Each label contains 'position', 'text', 'color', 'background'
+
+        label.position = atom.coord;
+
+        label.bSchematic = 0;
+
+        label.text = atom.name;
+        label.size = size;
+
+        var atomColorStr = atom.color.getHexString().toUpperCase();
+        label.color = (atomColorStr === "CCCCCC" || atomColorStr === "C8C8C8") ? "#888888" : "#" + atomColorStr;
+        label.background = background;
+
+        this.labels['residue'].push(label);
+    }
+
+    this.removeHlObjects();
+};
+
 iCn3D.prototype.setCenter = function(center) {
    if(!this.bChainAlign) {
        this.mdl.position.set(0,0,0);

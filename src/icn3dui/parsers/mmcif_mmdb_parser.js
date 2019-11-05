@@ -309,8 +309,10 @@ iCn3DUI.prototype.parseMmdbData = function (data, type) { var me = this;
         var index = 1;
         var chainNameHash = {};
         for(var i in molid2rescount) {
-          var color = '#' + ( '000000' + molid2rescount[i].color.toString( 16 ) ).slice( - 6 );
-          var chainName = molid2rescount[i].chain.trim();
+          if(Object.keys(molid2rescount[i]).length === 0) continue;
+
+          var color = (molid2rescount[i].color === undefined) ? '#CCCCCC' : '#' + ( '000000' + molid2rescount[i].color.toString( 16 ) ).slice( - 6 );
+          var chainName = (molid2rescount[i].chain === undefined) ? '' : molid2rescount[i].chain.trim();
           if(chainNameHash[chainName] === undefined) {
               chainNameHash[chainName] = 1;
           }
@@ -320,7 +322,6 @@ iCn3DUI.prototype.parseMmdbData = function (data, type) { var me = this;
 
           var chainNameFinal = (chainNameHash[chainName] === 1) ? chainName : chainName + chainNameHash[chainName].toString();
           var chain = id + '_' + chainNameFinal;
-          //html += "<tr style='color:" + color + "'><td><input type='checkbox' name='" + me.pre + "filter_ckbx' value='" + i + "' chain='" + chain + "'/></td><td align='center'>" + index + "</td><td align='center'>" + chainNameFinal + "</td><td align='center'>" + molid2rescount[i].resCount + "</td></tr>";
 
           molid2color[i] = color;
           chain2molid[chain] = i;
@@ -328,7 +329,10 @@ iCn3DUI.prototype.parseMmdbData = function (data, type) { var me = this;
 
           me.icn3d.chainsColor[chain] = (type !== undefined) ? new THREE.Color(me.GREY8) : new THREE.Color(color);
 
-          me.icn3d.chainsGene[chain] = {'geneId': molid2rescount[i].geneId, 'geneSymbol': molid2rescount[i].geneSymbol, 'geneDesc': molid2rescount[i].geneDesc};
+          var geneId = (molid2rescount[i].geneId === undefined) ? '' : molid2rescount[i].geneId;
+          var geneSymbol = (molid2rescount[i].geneSymbol === undefined) ? '' : molid2rescount[i].geneSymbol;
+          var geneDesc = (molid2rescount[i].geneDesc === undefined) ? '' : molid2rescount[i].geneDesc;
+          me.icn3d.chainsGene[chain] = {'geneId': geneId, 'geneSymbol': geneSymbol, 'geneDesc': geneDesc};
           ++index;
         }
 
@@ -702,6 +706,8 @@ iCn3DUI.prototype.loadAtomDataIn = function (data, id, type, seqalign, alignType
 
           var molidCnt = 1;
           for(var molid in data.moleculeInfor) {
+              if(Object.keys(data.moleculeInfor[molid]).length === 0) continue;
+
               var chain = data.moleculeInfor[molid].chain.trim();
               var chainid = pdbidTmp + '_' + chain;
 
