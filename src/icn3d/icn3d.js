@@ -197,6 +197,7 @@ var iCn3D = function (id) {
         //labels: 'no',
         //effect: 'none',
         hbonds: 'no',
+        saltbridge: 'no',
         //stabilizer: 'no',
         ssbonds: 'no',
         //ncbonds: 'no',
@@ -1169,6 +1170,7 @@ iCn3D.prototype = {
         this.calphas = {};
 
         this.hbondpnts = [];
+        this.saltbridgepnts = [];
         this.stabilizerpnts = [];
         //this.ncbondpnts = []; // non-covalent bonds
 

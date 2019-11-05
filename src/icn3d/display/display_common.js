@@ -90,11 +90,11 @@ iCn3D.prototype.setColorByOptions = function (options, atoms, bUseInputColor) {
                 if(!atom.het) ++cnt;
             }
 
-            var lastTerSerialInv = 1 / cnt;
+            var lastTerSerialInv = (cnt > 1) ? 1 / (cnt - 1) : 1;
             for (var i in atoms) {
                 var atom = this.atoms[i];
-                atom.color = atom.het ? this.atomColors[atom.elem] || this.defaultAtomColor : new THREE.Color().setHSL(2 / 3 * (1 - idx++ * lastTerSerialInv), 1, 0.45);
-                //atom.color = this.atomColors[atom.elem] || this.defaultAtomColor;
+                //atom.color = atom.het ? this.atomColors[atom.elem] || this.defaultAtomColor : new THREE.Color().setHSL(2 / 3 * (1 - idx++ * lastTerSerialInv), 1, 0.45);
+                atom.color = atom.het ? this.atomColors[atom.elem] || this.defaultAtomColor : new THREE.Color().setHSL(3 / 4 * (1 - idx++ * lastTerSerialInv), 1, 0.45);
 
                 this.atomPrevColors[i] = atom.color;
             }
@@ -147,6 +147,68 @@ iCn3D.prototype.setColorByOptions = function (options, atoms, bUseInputColor) {
                 this.atomPrevColors[i] = atom.color;
             }
 
+            break;
+
+        case 'secondary structure spectrum':
+            var idx = 0, cnt = 0;
+
+            var ssArray = [], coilArray = [];
+            var prevI = -9999, start;
+            var currSS, prevSS, currResi, prevResi;
+            for (var i in atoms) {
+                // only for proteins
+                if(!this.proteins.hasOwnProperty(i)) continue;
+
+                var atom = this.atoms[i];
+
+                currSS = atom.ss;
+                currResi = atom.resi;
+
+                if(prevI == -9999) start = parseInt(i);
+
+                if(prevI != -9999 && (currSS != prevSS || Math.abs(currResi - prevResi) > 1) ) {
+                    if(prevSS == 'coil') {
+                        coilArray.push([start, prevI]);
+                    }
+                    else {
+                        ssArray.push([start, prevI]);
+                    }
+                    start = i;
+                }
+
+                prevI = parseInt(i);
+                prevSS = currSS;
+                prevResi = currResi;
+            }
+
+            if(prevSS == 'coil') {
+                coilArray.push([start, prevI]);
+            }
+            else {
+                ssArray.push([start, prevI]);
+            }
+
+            cnt = ssArray.length;
+            var lastTerSerialInv = (cnt > 1) ? 1 / (cnt - 1) : 1;
+            for (var i = 0, il = ssArray.length; i < il; ++i) {
+                //var color = new THREE.Color().setHSL(2 / 3 * (1 - idx++ * lastTerSerialInv), 1, 0.45);
+                var color = new THREE.Color().setHSL(3 / 4 * (1 - idx++ * lastTerSerialInv), 1, 0.45);
+
+                for(var serial = ssArray[i][0]; serial <= ssArray[i][1]; ++serial) {
+                    var atom = this.atoms[serial];
+                    atom.color = color;
+                    this.atomPrevColors[serial] = atom.color;
+                }
+            }
+
+            var color = this.ssColors2['coil']
+            for (var i = 0, il = coilArray.length; i < il; ++i) {
+                for(var serial = coilArray[i][0]; serial <= coilArray[i][1]; ++serial) {
+                    var atom = this.atoms[serial];
+                    atom.color = color;
+                    this.atomPrevColors[serial] = atom.color;
+                }
+            }
             break;
 
         case 'residue':

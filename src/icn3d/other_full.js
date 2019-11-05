@@ -3,7 +3,7 @@
  */
 
 // get hbonds between "molecule" and "chemical"
-iCn3D.prototype.calculateChemicalHbonds = function (startAtoms, targetAtoms, threshold) { var me = this;
+iCn3D.prototype.calculateChemicalHbonds = function (startAtoms, targetAtoms, threshold, bSaltbridge) { var me = this;
     if(Object.keys(startAtoms).length === 0 || Object.keys(targetAtoms).length === 0) return;
 
     me.resid2Residhash = {};
@@ -16,8 +16,14 @@ iCn3D.prototype.calculateChemicalHbonds = function (startAtoms, targetAtoms, thr
     for (var i in startAtoms) {
       var atom = startAtoms[i];
 
-      if(atom.elem === "N" || atom.elem === "O" || atom.elem === "F") { // calculate hydrogen bond
-        chain_resi_atom = atom.structure + "_" + atom.chain + "_" + atom.resi + "_" + atom.name;
+      // salt bridge: calculate hydrogen bond between Lys/Arg and Glu/Asp
+      // hbonds: calculate hydrogen bond
+      var bAtomCond = (bSaltbridge !== undefined && bSaltbridge) ? ( (atom.resn === 'ARG' || atom.resn === 'LYS') && atom.elem === "N" && atom.name !== "N")
+        || ( (atom.resn === 'GLU' || atom.resn === 'ASP') && atom.elem === "O" && atom.name !== "O") : atom.elem === "N" || atom.elem === "O" || atom.elem === "F";
+
+      if(bAtomCond) {
+        chain_resi = atom.structure + "_" + atom.chain + "_" + atom.resi;
+        chain_resi_atom = chain_resi + "_" + atom.name;
 
         atomHbond[chain_resi_atom] = atom;
       }
@@ -29,17 +35,31 @@ iCn3D.prototype.calculateChemicalHbonds = function (startAtoms, targetAtoms, thr
     for (var i in targetAtoms) {
       var atom = targetAtoms[i];
 
+      // salt bridge: calculate hydrogen bond between Lys/Arg and Glu/Asp
+      // hbonds: calculate hydrogen bond
+      var bAtomCond = (bSaltbridge !== undefined && bSaltbridge) ? ( (atom.resn === 'ARG' || atom.resn === 'LYS') && atom.elem === "N" && atom.name !== "N")
+        || ( (atom.resn === 'GLU' || atom.resn === 'ASP') && atom.elem === "O" && atom.name !== "O") : atom.elem === "N" || atom.elem === "O" || atom.elem === "F";
+
       var currResiHash = {};
-      if(atom.elem === "N" || atom.elem === "O" || atom.elem === "F") { // calculate hydrogen bond
+      if(bAtomCond) {
         chain_resi = atom.structure + "_" + atom.chain + "_" + atom.resi;
         chain_resi_atom = chain_resi + "_" + atom.name;
 
-        var oriResidName = chain_resi + ' ' + atom.resn;
+        //var oriResidName = atom.resn + ' ' + chain_resi_atom;
+        var oriResidName = atom.resn + ' $' + atom.structure + '.' + atom.chain + ':' + atom.resi + '@' + atom.name;
         if(me.resid2Residhash[oriResidName] === undefined) me.resid2Residhash[oriResidName] = {};
 
         for (var j in atomHbond) {
+          if(bSaltbridge !== undefined && bSaltbridge) {
+              // skip both positive orboth negative cases
+              if( ( (atom.resn === 'LYS' || atom.resn === 'ARG') && (atomHbond[j].resn === 'LYS' || atomHbond[j].resn === 'ARG') ) ||
+                ( (atom.resn === 'GLU' || atom.resn === 'ASP') && (atomHbond[j].resn === 'GLU' || atomHbond[j].resn === 'ASP') ) ) {
+                    continue;
+                }
+          }
+
           // skip same protein residue
-          if(chain_resi == j.substr(0, j.lastIndexOf('_')) && this.proteins.hasOwnProperty(atomHbond[j].serial)) continue;
+          if(chain_resi == j.substr(0, j.lastIndexOf('_') ) && this.proteins.hasOwnProperty(atomHbond[j].serial)) continue;
 
           var xdiff = Math.abs(atom.coord.x - atomHbond[j].coord.x);
           if(xdiff > threshold) continue;
@@ -54,16 +74,26 @@ iCn3D.prototype.calculateChemicalHbonds = function (startAtoms, targetAtoms, thr
           if(dist > maxlengthSq) continue;
 
           // output hydrogen bonds
-          this.hbondpnts.push({'serial': atom.serial, 'coord': atom.coord});
-          this.hbondpnts.push({'serial': atomHbond[j].serial, 'coord': atomHbond[j].coord});
+          if(bSaltbridge !== undefined && bSaltbridge) {
+              this.saltbridgepnts.push({'serial': atom.serial, 'coord': atom.coord});
+              this.saltbridgepnts.push({'serial': atomHbond[j].serial, 'coord': atomHbond[j].coord});
+          }
+          else {
+              this.hbondpnts.push({'serial': atom.serial, 'coord': atom.coord});
+              this.hbondpnts.push({'serial': atomHbond[j].serial, 'coord': atomHbond[j].coord});
+          }
 
           hbondsAtoms = this.unionHash(hbondsAtoms, this.residues[atom.structure + "_" + atom.chain + "_" + atom.resi]);
           hbondsAtoms = this.unionHash(hbondsAtoms, this.residues[atomHbond[j].structure + "_" + atomHbond[j].chain + "_" + atomHbond[j].resi]);
 
           residueHash[chain_resi] = 1;
 
-          var residName = atomHbond[j].structure + "_" + atomHbond[j].chain + "_" + atomHbond[j].resi + " " + atomHbond[j].resn;
-          me.resid2Residhash[oriResidName][residName] = 1;
+          //var residName = atomHbond[j].resn + " " + atomHbond[j].structure + "_" + atomHbond[j].chain + "_" + atomHbond[j].resi + '_' + atomHbond[j].name;
+          var residName = atomHbond[j].resn + ' $' + atomHbond[j].structure + '.' + atomHbond[j].chain + ':' + atomHbond[j].resi + '@' + atomHbond[j].name;
+
+          if(me.resid2Residhash[oriResidName][residName] === undefined || me.resid2Residhash[oriResidName][residName] > dist) {
+              me.resid2Residhash[oriResidName][residName] = dist.toFixed(1);
+          }
         } // end of for (var j in atomHbond) {
       }
     } // end of for (var i in targetAtoms) {
@@ -75,7 +105,6 @@ iCn3D.prototype.calculateChemicalHbonds = function (startAtoms, targetAtoms, thr
         for(var j in this.residues[residueArray[i]]) {
             // all atoms should be shown for hbonds
             this.atoms[j].style2 = 'stick';
-            //this.atoms[j].style2 = 'lines';
         }
     }
 
@@ -148,7 +177,9 @@ iCn3D.prototype.getChainsFromAtoms = function(atomsHash) {
 
         var oriResidName;
         if(bGetPairs) {
-            oriResidName = oriAtom.structure + '_' + oriAtom.chain + '_' + oriAtom.resi + ' ' + oriAtom.resn;
+            //oriResidName = oriAtom.structure + '_' + oriAtom.chain + '_' + oriAtom.resi + '_' + oriAtom.name + ' ' + oriAtom.resn;
+            //oriResidName = oriAtom.structure + '_' + oriAtom.chain + '_' + oriAtom.resi + ' ' + oriAtom.resn;
+            oriResidName = '$' + oriAtom.structure + '.' + oriAtom.chain + ':' + oriAtom.resi + ' ' + oriAtom.resn;
             if(me.resid2Residhash[oriResidName] === undefined) me.resid2Residhash[oriResidName] = {};
         }
 
@@ -167,8 +198,13 @@ iCn3D.prototype.getChainsFromAtoms = function(atomsHash) {
 
                 var residName;
                 if(bGetPairs) {
-                    residName = atom.structure + '_' + atom.chain + '_' + atom.resi + ' ' + atom.resn;
-                    me.resid2Residhash[oriResidName][residName] = 1
+                    //residName = atom.structure + '_' + atom.chain + '_' + atom.resi + '_' + atom.name + ' ' + atom.resn;
+                    //residName = atom.structure + '_' + atom.chain + '_' + atom.resi + ' ' + atom.resn;
+                    residName = '$' + atom.structure + '.' + atom.chain + ':' + atom.resi + ' ' + atom.resn;
+                    var dist = Math.sqrt(atomDistSq).toFixed(1);
+                    if(me.resid2Residhash[oriResidName][residName] === undefined || me.resid2Residhash[oriResidName][residName] > dist) {
+                        me.resid2Residhash[oriResidName][residName] = dist;
+                    }
                 }
            }
         }

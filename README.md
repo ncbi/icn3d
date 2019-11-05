@@ -24,7 +24,7 @@ We provided two types of iCn3D widgets: [basic interface](https://www.ncbi.nlm.n
 
 Either of these widgets could be easily added to your own web pages as shown in the section of "Embed iCn3D with iframe or JavaScript libraries" below. 
 
-<b>Complete package</b> of iCn3D including Three.js and jQuery can be downloaded from [https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.8.2.zip](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.8.2.zip). The "Download ZIP" link in this page does not include third-party libraries. 
+<b>Complete package</b> of iCn3D including Three.js and jQuery can be downloaded from [https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.8.3.zip](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.8.3.zip). The "Download ZIP" link in this page does not include third-party libraries. 
 
 ## Usage
 
