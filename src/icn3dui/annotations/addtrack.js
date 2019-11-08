@@ -496,7 +496,8 @@ iCn3DUI.prototype.clickAddTrackButton = function() { var me = this;
 
           if( residueHash.hasOwnProperty(chainid + '_' + pos) ) {
               var atom = me.icn3d.getFirstCalphaAtomObj(me.icn3d.residues[chainid + '_' + pos]);
-              var color = atom.color.getHexString();
+              var colorStr = (atom.color === undefined || atom.color.getHexString().toUpperCase() === 'FFFFFF') ? 'DDDDDD' : atom.color.getHexString();
+              var color = (atom.color !== undefined) ? "#" + colorStr : me.icn3d.defaultAtomColor;
 
               text += c;
               cssColorArray.push('#' + color);

@@ -218,42 +218,103 @@ iCn3DUI.prototype.combineSets = function (orArray, andArray, notArray, commandna
 };
 
 iCn3DUI.prototype.setProtNuclLigInMenu = function () { var me = this;
-    for(var chain in me.icn3d.chains) {
-          // Initially, add proteins, nucleotides, chemicals, ions, water into the menu "custom selections"
-          if(Object.keys(me.icn3d.proteins).length > 0) {
-              //me.icn3d.defNames2Atoms['proteins'] = Object.keys(me.icn3d.proteins);
-              me.icn3d.defNames2Residues['proteins'] = Object.keys(me.icn3d.getResiduesFromAtoms(me.icn3d.proteins));
-              me.icn3d.defNames2Descr['proteins'] = 'proteins';
-              me.icn3d.defNames2Command['proteins'] = 'select :proteins';
+    // Initially, add proteins, nucleotides, chemicals, ions, water into the menu "custom selections"
+    if(Object.keys(me.icn3d.proteins).length > 0) {
+      //me.icn3d.defNames2Atoms['proteins'] = Object.keys(me.icn3d.proteins);
+      me.icn3d.defNames2Residues['proteins'] = Object.keys(me.icn3d.getResiduesFromAtoms(me.icn3d.proteins));
+      me.icn3d.defNames2Descr['proteins'] = 'proteins';
+      me.icn3d.defNames2Command['proteins'] = 'select :proteins';
+    }
+
+    if(Object.keys(me.icn3d.nucleotides).length > 0) {
+      //me.icn3d.defNames2Atoms['nucleotides'] = Object.keys(me.icn3d.nucleotides);
+      me.icn3d.defNames2Residues['nucleotides'] = Object.keys(me.icn3d.getResiduesFromAtoms(me.icn3d.nucleotides));
+      me.icn3d.defNames2Descr['nucleotides'] = 'nucleotides';
+      me.icn3d.defNames2Command['nucleotides'] = 'select :nucleotides';
+    }
+
+    if(Object.keys(me.icn3d.chemicals).length > 0) {
+      //me.icn3d.defNames2Atoms['chemicals'] = Object.keys(me.icn3d.chemicals);
+      if(me.icn3d.bOpm) {
+          var chemicalResHash = {}, memResHash = {};
+          for(var serial in me.icn3d.chemicals) {
+              var atom = me.icn3d.atoms[serial];
+              var residueid = atom.structure + '_' + atom.chain + '_' + atom.resi;
+              if(atom.resn === 'DUM') {
+                  memResHash[residueid] = 1;
+              }
+              else {
+                  chemicalResHash[residueid] = 1;
+              }
           }
 
-          if(Object.keys(me.icn3d.nucleotides).length > 0) {
-              //me.icn3d.defNames2Atoms['nucleotides'] = Object.keys(me.icn3d.nucleotides);
-              me.icn3d.defNames2Residues['nucleotides'] = Object.keys(me.icn3d.getResiduesFromAtoms(me.icn3d.nucleotides));
-              me.icn3d.defNames2Descr['nucleotides'] = 'nucleotides';
-              me.icn3d.defNames2Command['nucleotides'] = 'select :nucleotides';
-          }
-
-          if(Object.keys(me.icn3d.chemicals).length > 0) {
-              //me.icn3d.defNames2Atoms['chemicals'] = Object.keys(me.icn3d.chemicals);
-              me.icn3d.defNames2Residues['chemicals'] = Object.keys(me.icn3d.getResiduesFromAtoms(me.icn3d.chemicals));
+          if(Object.keys(chemicalResHash).length > 0) {
+              me.icn3d.defNames2Residues['chemicals'] = Object.keys(chemicalResHash);
               me.icn3d.defNames2Descr['chemicals'] = 'chemicals';
               me.icn3d.defNames2Command['chemicals'] = 'select :chemicals';
           }
 
-          if(Object.keys(me.icn3d.ions).length > 0) {
-              //me.icn3d.defNames2Atoms['ions'] = Object.keys(me.icn3d.ions);
-              me.icn3d.defNames2Residues['ions'] = Object.keys(me.icn3d.getResiduesFromAtoms(me.icn3d.ions));
-              me.icn3d.defNames2Descr['ions'] = 'ions';
-              me.icn3d.defNames2Command['ions'] = 'select :ions';
+          if(Object.keys(memResHash).length > 0) {
+              me.icn3d.defNames2Residues['membrane'] = Object.keys(memResHash);
+              me.icn3d.defNames2Descr['membrane'] = 'membrane';
+              me.icn3d.defNames2Command['membrane'] = 'select :membrane';
           }
+      }
+      else {
+          me.icn3d.defNames2Residues['chemicals'] = Object.keys(me.icn3d.getResiduesFromAtoms(me.icn3d.chemicals));
+          me.icn3d.defNames2Descr['chemicals'] = 'chemicals';
+          me.icn3d.defNames2Command['chemicals'] = 'select :chemicals';
+      }
+    }
 
-          if(Object.keys(me.icn3d.water).length > 0) {
-              //me.icn3d.defNames2Atoms['water'] = Object.keys(me.icn3d.water);
-              me.icn3d.defNames2Residues['water'] = Object.keys(me.icn3d.getResiduesFromAtoms(me.icn3d.water));
-              me.icn3d.defNames2Descr['water'] = 'water';
-              me.icn3d.defNames2Command['water'] = 'select :water';
+    if(Object.keys(me.icn3d.ions).length > 0) {
+      //me.icn3d.defNames2Atoms['ions'] = Object.keys(me.icn3d.ions);
+      me.icn3d.defNames2Residues['ions'] = Object.keys(me.icn3d.getResiduesFromAtoms(me.icn3d.ions));
+      me.icn3d.defNames2Descr['ions'] = 'ions';
+      me.icn3d.defNames2Command['ions'] = 'select :ions';
+    }
+
+    if(Object.keys(me.icn3d.water).length > 0) {
+      //me.icn3d.defNames2Atoms['water'] = Object.keys(me.icn3d.water);
+      me.icn3d.defNames2Residues['water'] = Object.keys(me.icn3d.getResiduesFromAtoms(me.icn3d.water));
+      me.icn3d.defNames2Descr['water'] = 'water';
+      me.icn3d.defNames2Command['water'] = 'select :water';
+    }
+
+    // set transmembrane, extracellular, intracellular
+    if(me.icn3d.bOpm) {
+      var transmembraneHash = {}, extracellularHash = {}, intracellularHash = {};
+      for(var serial in me.icn3d.atoms) {
+          var atom = me.icn3d.atoms[serial];
+          var residueid = atom.structure + '_' + atom.chain + '_' + atom.resi;
+          if(atom.coord.z > me.icn3d.halfBilayerSize) {
+              extracellularHash[residueid] = 1;
           }
+          else if(atom.coord.z < -me.icn3d.halfBilayerSize) {
+              intracellularHash[residueid] = 1;
+          }
+          else if(atom.resn !== 'DUM') {
+              transmembraneHash[residueid] = 1;
+          }
+      }
+
+      if(Object.keys(transmembraneHash).length > 0) {
+          me.icn3d.defNames2Residues['transmembrane'] = Object.keys(transmembraneHash);
+          me.icn3d.defNames2Descr['transmembrane'] = 'transmembrane';
+          me.icn3d.defNames2Command['transmembrane'] = 'select :transmembrane';
+      }
+
+      if(Object.keys(extracellularHash).length > 0) {
+          me.icn3d.defNames2Residues['extracellular'] = Object.keys(extracellularHash);
+          me.icn3d.defNames2Descr['extracellular'] = 'extracellular';
+          me.icn3d.defNames2Command['extracellular'] = 'select :extracellular';
+      }
+
+      if(Object.keys(intracellularHash).length > 0) {
+          me.icn3d.defNames2Residues['intracellular'] = Object.keys(intracellularHash);
+          me.icn3d.defNames2Descr['intracellular'] = 'intracellular';
+          me.icn3d.defNames2Command['intracellular'] = 'select :intracellular';
+      }
     }
 };
 

@@ -114,7 +114,7 @@ iCn3D.prototype.setColorByOptions = function (options, atoms, bUseInputColor) {
                         index = index % colorLength;
                     }
 
-                    atom.color = this.stdChainColors[index];
+                    if(atom.color === undefined) atom.color = this.stdChainColors[index];
 
                     if(Object.keys(this.chainsColor).length > 0) this.updateChainsColor(atom);
                     this.atomPrevColors[i] = atom.color;

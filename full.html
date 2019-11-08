@@ -58,6 +58,7 @@
     var mmdbid = params.mmdbid;
     var mmtfid = params.mmtfid;
     var pdbid = params.pdbid;
+    var opmid = params.opmid;
     var cid = params.cid;
     var mmcifid = params.mmcifid;
     var urlname = params.url;
@@ -173,6 +174,9 @@
       }
       else if(pdbid !== undefined) {
           setupViewer('pdbid', pdbid);
+      }
+      else if(opmid !== undefined) {
+          setupViewer('opmid', opmid);
       }
       else if(cid !== undefined) {
           setupViewer('cid', cid);

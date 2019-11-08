@@ -170,7 +170,7 @@ iCn3DUI.prototype.selectTitle = function(that) { var me = this;
                         position = me.icn3d.centerAtoms(me.icn3d.hash2Atoms(me.icn3d.residues[residueid]));
                     }
                     //else if($(that).attr('site') !== undefined || $(that).attr('clinvar') !== undefined) {
-                    else {
+                    else if($(that).attr('posarray') !== undefined) {
                         var posArray = $(that).attr('posarray').split(',');
 
                         //me.icn3d.hAtoms = {};

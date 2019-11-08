@@ -15,7 +15,7 @@ if (!$.ui.dialog.prototype._makeDraggableBase) {
 var iCn3DUI = function(cfg) {
     var me = this;
 
-    this.REVISION = '2.8.3';
+    this.REVISION = '2.9.0';
 
     me.bFullUi = true;
 
@@ -555,7 +555,7 @@ iCn3DUI.prototype = {
             var id = loadCommand.substr(loadCommand.lastIndexOf(' ') + 1);
 
             // reload only if viewing the same structure
-            if(id === me.cfg.mmtfid || id === me.cfg.pdbid || id === me.cfg.mmdbid || id === me.cfg.gi  || id === me.cfg.blast_rep_id
+            if(id === me.cfg.mmtfid || id === me.cfg.pdbid || id === me.cfg.opmid || id === me.cfg.mmdbid || id === me.cfg.gi  || id === me.cfg.blast_rep_id
               || id === me.cfg.cid || id === me.cfg.mmcifid || id === me.cfg.align || id === me.cfg.chainalign) {
                 me.loadScript(me.commandsBeforeCrash, true);
 
@@ -590,6 +590,13 @@ iCn3DUI.prototype = {
            me.setLogCmd('load pdb ' + me.cfg.pdbid, true);
 
            me.downloadPdb(me.cfg.pdbid);
+        }
+        else if(me.cfg.opmid !== undefined) {
+           me.inputid = me.cfg.opmid;
+
+           me.setLogCmd('load opm ' + me.cfg.opmid, true);
+
+           me.downloadOpm(me.cfg.opmid);
         }
         else if(me.cfg.mmdbid !== undefined) {
            me.inputid = me.cfg.mmdbid;
@@ -2157,6 +2164,14 @@ iCn3DUI.prototype = {
     clkMn1_pdbid: function() { var me = this;
         $("#" + me.pre + "mn1_pdbid").click(function(e) {
            me.openDialog(me.pre + 'dl_pdbid', 'Please input PDB ID');
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
+        });
+    },
+
+    clkMn1_opmid: function() { var me = this;
+        $("#" + me.pre + "mn1_opmid").click(function(e) {
+           me.openDialog(me.pre + 'dl_opmid', 'Please input OPM PDB ID');
 
            //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
@@ -4193,6 +4208,39 @@ iCn3DUI.prototype = {
         });
     },
 
+    clkMn6_rotatex: function() { var me = this;
+        $("#" + me.pre + "mn6_rotatex").click(function(e) {
+          me.setLogCmd('rotate x', true);
+
+          var axis = new THREE.Vector3(1,0,0);
+          var angle = 0.5 * Math.PI;
+
+          me.icn3d.setRotation(axis, angle);
+        });
+    },
+
+    clkMn6_rotatey: function() { var me = this;
+        $("#" + me.pre + "mn6_rotatey").click(function(e) {
+          me.setLogCmd('rotate y', true);
+
+          var axis = new THREE.Vector3(0,1,0);
+          var angle = 0.5 * Math.PI;
+
+          me.icn3d.setRotation(axis, angle);
+        });
+    },
+
+    clkMn6_rotatez: function() { var me = this;
+        $("#" + me.pre + "mn6_rotatez").click(function(e) {
+          me.setLogCmd('rotate z', true);
+
+          var axis = new THREE.Vector3(0,0,1);
+          var angle = 0.5 * Math.PI;
+
+          me.icn3d.setRotation(axis, angle);
+        });
+    },
+
     clkMn6_cameraPers: function() { var me = this;
         $("#" + me.pre + "mn6_cameraPers").click(function(e) {
            me.setOption('camera', 'perspective');
@@ -4674,6 +4722,20 @@ iCn3DUI.prototype = {
            me.setLogCmd("load pdb " + $("#" + me.pre + "pdbid").val(), false);
 
            window.open('https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?pdbid=' + $("#" + me.pre + "pdbid").val(), '_blank');
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
+        });
+    },
+
+    clickReload_opm: function() { var me = this;
+        $("#" + me.pre + "reload_opm").click(function(e) {
+           e.preventDefault();
+
+           dialog.dialog( "close" );
+
+           me.setLogCmd("load opm " + $("#" + me.pre + "opmid").val(), false);
+
+           window.open('https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?opmid=' + $("#" + me.pre + "opmid").val(), '_blank');
 
            //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
@@ -6056,6 +6118,7 @@ iCn3DUI.prototype = {
         me.clickAlternate();
         me.clkMn1_mmtfid();
         me.clkMn1_pdbid();
+        me.clkMn1_opmid();
         me.clkMn1_align();
         me.clkMn1_chainalign();
         me.clkMn1_pdbfile();
@@ -6243,6 +6306,9 @@ iCn3DUI.prototype = {
         me.clkMn6_rotateright();
         me.clkMn6_rotateup();
         me.clkMn6_rotatedown();
+        me.clkMn6_rotatex();
+        me.clkMn6_rotatey();
+        me.clkMn6_rotatez();
         me.clkMn6_cameraPers();
         me.clkMn6_cameraOrth();
         me.clkMn6_bkgdBlack();
@@ -6277,6 +6343,7 @@ iCn3DUI.prototype = {
         me.clickCommand_apply();
         me.clickSearchSeq();
         me.clickReload_pdb();
+        me.clickReload_opm();
         me.clickReload_align_refined();
         me.clickReload_align_ori();
         me.clickReload_chainalign();

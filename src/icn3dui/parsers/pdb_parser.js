@@ -38,6 +38,47 @@ iCn3DUI.prototype.downloadPdb = function (pdbid) { var me = this;
    });
 };
 
+iCn3DUI.prototype.downloadOpm = function (opmid) { var me = this;
+   var url, dataType;
+
+   url = "https://opm-assets.storage.googleapis.com/pdb/" + opmid.toLowerCase()+ ".pdb";
+
+   dataType = "text";
+
+   me.icn3d.bCid = undefined;
+
+   // no rotation
+   me.icn3d.bStopRotate = true;
+
+   $.ajax({
+      url: url,
+      dataType: dataType,
+      cache: true,
+      tryCount : 0,
+      retryLimit : 1,
+      beforeSend: function() {
+          me.showLoading();
+      },
+      complete: function() {
+          me.hideLoading();
+      },
+      success: function(data) {
+          me.icn3d.bOpm = true;
+          me.loadPdbData(data, me.icn3d.bOpm);
+      },
+      error : function(xhr, textStatus, errorThrown ) {
+        this.tryCount++;
+        if (this.tryCount <= this.retryLimit) {
+            //try again
+            $.ajax(this);
+            return;
+        }
+        alert("This is probably not a transmembrane protein. It has no data in Orientations of Proteins in Membranes (OPM) database.");
+        return;
+      }
+   });
+};
+
 iCn3DUI.prototype.downloadUrl = function (url, type) { var me = this;
    var dataType = "text";
 
@@ -93,8 +134,8 @@ iCn3DUI.prototype.downloadUrl = function (url, type) { var me = this;
    });
 };
 
-iCn3DUI.prototype.loadPdbData = function(data) { var me = this;
-      me.icn3d.loadPDB(data); // defined in the core library
+iCn3DUI.prototype.loadPdbData = function(data, bOpm) { var me = this;
+      me.icn3d.loadPDB(data, bOpm); // defined in the core library
 
       if(me.icn3d.biomtMatrices !== undefined && me.icn3d.biomtMatrices.length > 1) {
         $("#" + me.pre + "assemblyWrapper").show();
