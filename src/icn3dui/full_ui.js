@@ -887,6 +887,14 @@ iCn3DUI.prototype = {
               me.icn3d.draw();
           }
 
+          if(me.icn3d.bOpm) {
+              var axis = new THREE.Vector3(1,0,0);
+              var angle = -0.5 * Math.PI;
+
+              var bNorender = true;
+              me.icn3d.setRotation(axis, angle);
+          }
+
           if(Object.keys(me.icn3d.structures).length > 1) {
               $("#" + me.pre + "alternate").show();
           }
