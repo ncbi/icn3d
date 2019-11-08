@@ -83,7 +83,7 @@ iCn3DUI.prototype.showAnnotations = function() { var me = this;
             //}
 
             // protein and nucleotide chain may have chemicals/ions attached at the end
-            if( (me.cfg.pdbid !== undefined || me.cfg.mmcifid !== undefined || me.cfg.mmtfid !== undefined)
+            if( (me.cfg.pdbid !== undefined || me.cfg.opmid !== undefined || me.cfg.mmcifid !== undefined || me.cfg.mmtfid !== undefined)
               && (me.icn3d.proteins.hasOwnProperty(atom.serial) || me.icn3d.nucleotides.hasOwnProperty(atom.serial)) ) {
                 for(var r = 0, rl = me.icn3d.chainsSeq[chainArray[i]].length; r < rl; ++r) {
                     var resObj = me.icn3d.chainsSeq[chainArray[i]][r];
@@ -745,7 +745,7 @@ iCn3DUI.prototype.getCombinedSequenceData = function(name, residArray, index) { 
 
     var chainType = 'Chem.', chainTypeFull = 'Chemical';
 
-    htmlTmp += '<div class="icn3d-seqTitle" anno="sequence"><span style="white-space:nowrap;" title="' + chainTypeFull + ' ' + name + '">' + chainType + ' ' + name + '</span></div>';
+    htmlTmp += '<div class="icn3d-seqTitle2" anno="sequence"><span style="white-space:nowrap;" title="' + chainTypeFull + ' ' + name + '">' + chainType + ' ' + name + '</span></div>';
 
     htmlTmp += '<span class="icn3d-residueNum" style="width:60px!important;" title="starting protein sequence number">Count: ' + residArray.length + '</span>';
     htmlTmp += '<span class="icn3d-seqLine">';
@@ -1050,16 +1050,14 @@ iCn3DUI.prototype.showSeq = function(chnid, chnidBase, type, queryTitle, compTit
           html += '<span title="' + cFull + pos + '" class="icn3d-residue">' + c + '</span>';
       }
       else {
-          //var atom = me.icn3d.getFirstCalphaAtomObj(me.icn3d.residues[chnid + '_' + pos]);
-          //var color = (atom.color) ? atom.color.getHexString() : me.icn3d.defaultAtomColor;
-
           var color = '333333';
           if(me.cfg.blast_rep_id == chnid && me.fullpos2ConsTargetpos !== undefined && me.fullpos2ConsTargetpos[i + nGap] !== undefined) {
               color = me.fullpos2ConsTargetpos[i + nGap].color;
           }
           else {
               var atom = me.icn3d.getFirstCalphaAtomObj(me.icn3d.residues[chnid + '_' + pos]);
-              color = (atom.color) ? atom.color.getHexString() : me.icn3d.defaultAtomColor;
+              var colorStr = (atom.color === undefined || atom.color.getHexString() === 'FFFFFF') ? 'DDDDDD' : atom.color.getHexString();
+              color = (atom.color !== undefined) ? "#" + colorStr : me.icn3d.defaultAtomColor;
           }
 
           html += '<span id="giseq_' + me.pre + chnid + '_' + pos + '" title="' + cFull + pos + '" class="icn3d-residue" style="color:#' + color + '">' + c + '</span>';
@@ -1077,6 +1075,8 @@ iCn3DUI.prototype.showSeq = function(chnid, chnidBase, type, queryTitle, compTit
 
     // sequence, overview
     var atom = me.icn3d.getFirstCalphaAtomObj(me.icn3d.chains[chnid]);
+    //var colorStr = (atom.color === undefined || atom.color.getHexString() === 'FFFFFF') ? 'DDDDDD' : atom.color.getHexString();
+    //var color = (atom.color !== undefined) ? "#" + colorStr : me.icn3d.defaultAtomColor;
     var color = (atom.color) ? atom.color.getHexString() : me.icn3d.defaultAtomColor;
 
     var width = Math.round(me.seqAnnWidth * giSeq.length / me.maxAnnoLength);
@@ -1236,7 +1236,8 @@ iCn3DUI.prototype.showSeq = function(chnid, chnidBase, type, queryTitle, compTit
 
         // query protein, overview
         var atom = me.icn3d.getFirstCalphaAtomObj(me.icn3d.chains[chnid]);
-        var color = (atom.color) ? atom.color.getHexString() : me.icn3d.defaultAtomColor;
+        var colorStr = (atom.color === undefined || atom.color.getHexString() === 'FFFFFF') ? 'DDDDDD' : atom.color.getHexString();
+        var color = (atom.color !== undefined) ? "#" + colorStr : me.icn3d.defaultAtomColor;
 
         var fromArray2 = [], toArray2 = [];
 
@@ -2195,7 +2196,8 @@ iCn3DUI.prototype.showCddSiteAll = function() { var me = this;
 
 
                     var atom = me.icn3d.getFirstCalphaAtomObj(me.icn3d.chains[chnid]);
-                    var color = (atom.color) ? atom.color.getHexString() : me.icn3d.defaultAtomColor;
+                    var colorStr = (atom.color === undefined || atom.color.getHexString() === 'FFFFFF') ? 'DDDDDD' : atom.color.getHexString();
+                    var color = (atom.color !== undefined) ? "#" + colorStr : me.icn3d.defaultAtomColor;
 
                     //html2 += '<div style="display:inline-block; width:' + Math.round(me.seqAnnWidth * domainFrom / me.maxAnnoLength) + 'px;"></div>';
                     //html2 += '<div style="display:inline-block; color:white!important; font-weight:bold; background-color:#' + color + '; width:' + Math.round(me.seqAnnWidth * (domainTo - domainFrom + 1) / me.maxAnnoLength) + 'px;" class="icn3d-seqTitle icn3d-link icn3d-blue" domain="' + acc + '" from="' + domainFrom.toString() + '" to="' + domainTo.toString() + '" shorttitle="' + title + '" setname="' + chnid + '_' + type + '_' + index + '" anno="sequence" chain="' + chnid + '" title="' + fulltitle + '">' + domain + ' </div>';
@@ -2615,7 +2617,8 @@ iCn3DUI.prototype.showDomainWithData = function(chnid, data) { var me = this;
             }
 
             var atom = me.icn3d.getFirstCalphaAtomObj(me.icn3d.chains[chnid]);
-            var color = (atom.color) ? atom.color.getHexString() : me.icn3d.defaultAtomColor;
+            var colorStr = (atom.color === undefined || atom.color.getHexString() === 'FFFFFF') ? 'DDDDDD' : atom.color.getHexString();
+            var color = (atom.color !== undefined) ? "#" + colorStr : me.icn3d.defaultAtomColor;
 
             if(me.cfg.blast_rep_id != chnid) { // regular
                 for(var i = 0, il = fromArray.length; i < il; ++i) {

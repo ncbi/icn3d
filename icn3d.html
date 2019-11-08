@@ -709,6 +709,10 @@ This page describes Web APIs and how to embed iCn3D in your html page. Other det
               <li>Key J: right</li>
               <li>Key I: up</li>
               <li>Key M: down</li>
+              <li>Shift + Key L: left 90&deg;</li>
+              <li>Shift + Key J: right 90&deg;</li>
+              <li>Shift + Key I: up 90&deg;</li>
+              <li>Shift + Key M: down 90&deg;</li>
           </ul>
       </li>
       <li>Zoom
@@ -801,6 +805,7 @@ This page describes Web APIs and how to embed iCn3D in your html page. Other det
 <tr><td valign='top'><span class="indent">MMDB ID:</span></td>          <td valign='top'>load mmdb [1GPK]</td> <td valign='top'><a href="#downloadMmdb">downloadMmdb</a></td></tr>
 <tr><td width="240"><span class="indent">MMTF ID:</span></td>           <td valign='top'>load mmtf [1GPK]</td> <td valign='top'><a href="#downloadMmtf">downloadMmtf</a></td></tr>
 <tr><td valign='top'><span class="indent">PDB ID:</span></td>           <td valign='top'>load pdb [1GPK]</td> <td valign='top'><a href="#downloadPdb">downloadPdb</a></td></tr>
+<tr><td valign='top'><span class="indent">OPM PDB ID:</span></td>           <td valign='top'>load opm [6JXR]</td> <td valign='top'><a href="#downloadPdb">downloadOpm</a></td></tr>
 <tr><td valign='top'><span class="indent">mmCIF ID:</span></td>          <td valign='top'>load mmcif [1GPK]</td> <td valign='top'><a href="#downloadMmcif">downloadMmcif</a></td></tr>
 <tr><td valign='top'><span class="indent">NCBI gi:</span></td>               <td valign='top'>load gi [827343227]</td> <td valign='top'><a href="#downloadGi">downloadGi</a></td></tr>
 <tr><td valign='top'><span class="indent">PubChem CID:</span></td>              <td valign='top'>load cid [2244]</td> <td valign='top'><a href="#downloadCid">downloadCid</a></td></tr>
@@ -977,37 +982,42 @@ In the dialog Select -&gt; Advanced, users can use simple specification to selec
 <tr><td valign='top'><span class="indent">8.0:</span></td>                <td valign='top'>set label scale 8.0</td> <td valign='top'>me.icn3d.labelScale=8.0</td></tr>
 <tr><td valign='top'><span class="indent">10.0:</span></td>                <td valign='top'>set label scale 10.0</td> <td valign='top'>me.icn3d.labelScale=10.0</td></tr>
 
-<tr><td colspan="3"><br>n) View -&gt; Auto Rotation</td> </tr>
+<tr><td colspan="3"><br>n) View -&gt; Rotate 90&deg;</td> </tr>
+<tr><td valign='top'><span class="indent">X-axis:</span></td>              <td valign='top'>rotate x</td> <td valign='top'><a href="#rotStruc">rotStruc</a></td></tr>
+<tr><td valign='top'><span class="indent">Y-axis:</span></td>              <td valign='top'>rotate y</td> <td valign='top'><a href="#rotStruc">rotStruc</a></td></tr>
+<tr><td valign='top'><span class="indent">Z-axis:</span></td>              <td valign='top'>rotate z</td> <td valign='top'><a href="#rotStruc">rotStruc</a></td></tr>
+
+<tr><td colspan="3"><br>o) View -&gt; Auto Rotation</td> </tr>
 <tr><td valign='top'><span class="indent">Rotate Left:</span></td>              <td valign='top'>rotate left</td> <td valign='top'><a href="#rotStruc">rotStruc</a></td></tr>
 <tr><td valign='top'><span class="indent">Rotate Right:</span></td>              <td valign='top'>rotate right</td> <td valign='top'><a href="#rotStruc">rotStruc</a></td></tr>
 <tr><td valign='top'><span class="indent">Rotate Up:</span></td>              <td valign='top'>rotate up</td> <td valign='top'><a href="#rotStruc">rotStruc</a></td></tr>
 <tr><td valign='top'><span class="indent">Rotate Down:</span></td>              <td valign='top'>rotate down</td> <td valign='top'><a href="#rotStruc">rotStruc</a></td></tr>
 
-<tr><td colspan="3"><br>o) View -&gt; Camera</td> </tr>
+<tr><td colspan="3"><br>p) View -&gt; Camera</td> </tr>
 <tr><td valign='top'><span class="indent">Perspective:</span></td>        <td valign='top'>set camera perspective</td> <td valign='top'>me.icn3d.opts['camera'] = 'perspective';</td></tr>
 <tr><td valign='top'><span class="indent">Orthographic:</span></td>       <td valign='top'>set camera orthographic</td> <td valign='top'>me.icn3d.opts['camera'] = 'orthographic';</td></tr>
 
-<tr><td colspan="3"><br>p) View -&gt; Fog for Selection</td> </tr>
+<tr><td colspan="3"><br>q) View -&gt; Fog for Selection</td> </tr>
 <tr><td valign='top'><span class="indent">On:</span></td>                <td valign='top'>set fog on</td> <td valign='top'>me.icn3d.opts['fog'] = 'yes';</td></tr>
 <tr><td valign='top'><span class="indent">Off:</span></td>                 <td valign='top'>set fog off</td> <td valign='top'>me.icn3d.opts['fog'] = 'no';</td></tr>
 
-<tr><td colspan="3"><br>q) View -&gt; Slab for Selection</td> </tr>
+<tr><td colspan="3"><br>r) View -&gt; Slab for Selection</td> </tr>
 <tr><td valign='top'><span class="indent">On:</span></td>                <td valign='top'>set slab on</td> <td valign='top'>me.icn3d.opts['slab'] = 'yes';</td></tr>
 <tr><td valign='top'><span class="indent">Off:</span></td>                 <td valign='top'>set slab off</td> <td valign='top'>me.icn3d.opts['slab'] = 'no';</td></tr>
 
-<tr><td colspan="3"><br>r) View -&gt; XYZ-axes</td> </tr>
+<tr><td colspan="3"><br>s) View -&gt; XYZ-axes</td> </tr>
 <tr><td valign='top'><span class="indent">Show:</span></td>                <td valign='top'>set axis on</td> <td valign='top'>me.icn3d.opts['axis'] = 'yes';</td></tr>
 <tr><td valign='top'><span class="indent">Hide:</span></td>                 <td valign='top'>set axis off</td> <td valign='top'>me.icn3d.opts['axis'] = 'no';</td></tr>
 
-<tr><td colspan="3"><br>s) View -&gt; Reset:</td> </tr>
+<tr><td colspan="3"><br>t) View -&gt; Reset:</td> </tr>
 <tr><td valign='top'><span class="indent">All:</span></td>                <td valign='top'>reset</td> <td valign='top'><a href="#renderFinalStep">renderFinalStep</a></td></tr>
 <tr><td valign='top'><span class="indent">Orientation:</span></td>                 <td valign='top'>reset orientation</td> <td valign='top'><a href="#resetOrientation">resetOrientation</a></td></tr>
 
-<tr><td valign='top'>t) View -&gt; Undo:</td>     <td valign='top'>back</td> <td valign='top'><a href="#back">back</a></td></tr>
+<tr><td valign='top'>u) View -&gt; Undo:</td>     <td valign='top'>back</td> <td valign='top'><a href="#back">back</a></td></tr>
 
-<tr><td valign='top'>u) View -&gt; Redo:</td>     <td valign='top'>forward</td> <td valign='top'><a href="#forward">forward</a></td></tr>
+<tr><td valign='top'>v) View -&gt; Redo:</td>     <td valign='top'>forward</td> <td valign='top'><a href="#forward">forward</a></td></tr>
 
-<tr><td valign='top'>v) View -&gt; Full Screen:</td>     <td valign='top'>[no command available]</td> <td valign='top'></td></tr>
+<tr><td valign='top'>w) View -&gt; Full Screen:</td>     <td valign='top'>[no command available]</td> <td valign='top'></td></tr>
 
 <!--tr><td valign='top'>w) View -&gt; Exit Full Screen:</td>     <td valign='top'>[no command available]</td> <td valign='top'></td></tr-->
 
@@ -2021,7 +2031,11 @@ Update the highlight of sequences in the annotation window according to the curr
 
 <a name="log"></a>
 <h2>Change Log:<img src="https://www.ncbi.nlm.nih.gov/Structure/IMG/spacer.gif" width="25" height="1" border="0"><a href="#Top"><img src="https://www.ncbi.nlm.nih.gov/Structure/IMG/arrowup_blue.gif" width="12" height="12" border="0" alt="back to top"></a></h2>
+<a href="https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.9.0.zip">icn3d-2.9.0</a> was release on November 8, 2019. Display membranes for transmembrane proteins using data from Orientations of Proteins in Membranes (OPM). The feature is at "File > Retrieve by ID > OPM PDB ID".
+<br><br>
+
 <a href="https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.8.3.zip">icn3d-2.8.3</a> was release on November 5, 2019. Display/output salt bridges; color helices and sheets with spectrum in the menu "Color > Secondary > Spectrum".
+<br><br>
 
 <a href="https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.8.2.zip">icn3d-2.8.2</a> was release on October 29, 2019. Reduced the size of three.js (version 103) library. Added links to dbSNP in the mouseover texts of SNP annotations.
 <br><br>

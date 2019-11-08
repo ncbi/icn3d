@@ -254,6 +254,8 @@ var iCn3D = function (id) {
 
       me.bStopRotate = true;
 
+      var rotAngle = (me.bShift) ? 90 : 5;
+
       if(!me.typetext) {
         // zoom
         if(e.keyCode === 90 ) { // Z
@@ -305,25 +307,25 @@ var iCn3D = function (id) {
         // rotate
         else if(e.keyCode === 76 ) { // L, rotate left
           var axis = new THREE.Vector3(0,1,0);
-          var angle = -5.0 / 180.0 * Math.PI;
+          var angle = -rotAngle / 180.0 * Math.PI;
 
           me.setRotation(axis, angle);
         }
         else if(e.keyCode === 74 ) { // J, rotate right
           var axis = new THREE.Vector3(0,1,0);
-          var angle = 5.0 / 180.0 * Math.PI;
+          var angle = rotAngle / 180.0 * Math.PI;
 
           me.setRotation(axis, angle);
         }
         else if(e.keyCode === 73 ) { // I, rotate up
           var axis = new THREE.Vector3(1,0,0);
-          var angle = -5.0 / 180.0 * Math.PI;
+          var angle = -rotAngle / 180.0 * Math.PI;
 
           me.setRotation(axis, angle);
         }
         else if(e.keyCode === 77 ) { // M, rotate down
           var axis = new THREE.Vector3(1,0,0);
-          var angle = 5.0 / 180.0 * Math.PI;
+          var angle = rotAngle / 180.0 * Math.PI;
 
           me.setRotation(axis, angle);
         }
@@ -1168,6 +1170,7 @@ iCn3D.prototype = {
         this.ions = {};
         this.water = {};
         this.calphas = {};
+        //this.mem = {}; // membrane for OPM pdb
 
         this.hbondpnts = [];
         this.saltbridgepnts = [];

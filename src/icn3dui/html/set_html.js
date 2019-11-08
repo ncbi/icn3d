@@ -86,7 +86,7 @@ iCn3DUI.prototype.setTopMenusHtmlMobile = function (id) { var me = this;
     //html += "    <div class='icn3d-menu'>";
     html += "    <div>";
     html += "          <accordion id='" + me.pre + "accordion0' class='icn3d-accordion'>";
-    html += "<h3 style='width:20px!important'>&nbsp;&nbsp;&#9776;</h3>";
+    html += "<h3 style='width:20px'>&nbsp;&nbsp;&#9776;</h3>";
     html += "<div>";
 
     html += "<ul class='icn3d-mn'>";
@@ -309,6 +309,7 @@ iCn3DUI.prototype.setMenu1_base = function() { var me = this;
     html += me.getLink('mn1_mmdbid', 'MMDB ID');
     html += me.getLink('mn1_mmtfid', 'MMTF ID');
     html += me.getLink('mn1_pdbid', 'PDB ID');
+    html += me.getLink('mn1_opmid', 'OPM PDB ID');
     html += me.getLink('mn1_mmcifid', 'mmCIF ID');
     html += me.getLink('mn1_gi', 'NCBI gi');
     html += me.getLink('mn1_cid', 'PubChem CID');
@@ -553,7 +554,7 @@ iCn3DUI.prototype.setMenu2b_base = function() { var me = this;
         html += "    </ul>";
         html += "  </li>";
 
-        if(me.cfg.mmtfid !== undefined || me.cfg.pdbid !== undefined || me.cfg.mmcifid !== undefined || me.cfg.mmdbid !== undefined || me.cfg.gi !== undefined || me.cfg.blast_rep_id !== undefined) {
+        if(me.cfg.mmtfid !== undefined || me.cfg.pdbid !== undefined || me.cfg.opmid !== undefined || me.cfg.mmcifid !== undefined || me.cfg.mmdbid !== undefined || me.cfg.gi !== undefined || me.cfg.blast_rep_id !== undefined) {
           html += "  <li id='" + me.pre + "assemblyWrapper'><span>Assembly</span>";
           html += "    <ul>";
 
@@ -614,6 +615,10 @@ iCn3DUI.prototype.setMenu2b_base = function() { var me = this;
     html += "<li>Key J: Right</li>";
     html += "<li>Key I: Up</li>";
     html += "<li>Key M: Down</li>";
+    html += "<li>Shift + Key L: Left 90&deg;</li>";
+    html += "<li>Shift + Key J: Right 90&deg;</li>";
+    html += "<li>Shift + Key I: Up 90&deg;</li>";
+    html += "<li>Shift + Key M: Down 90&deg;</li>";
     html += "          </ul>";
     html += "      </li>";
     html += "      <li><span>Zoom</span>";
@@ -631,6 +636,13 @@ iCn3DUI.prototype.setMenu2b_base = function() { var me = this;
     html += "    </ul>";
     html += "  </li>";
 
+    html += "  <li><span>Rotate 90&deg;</span>";
+    html += "    <ul>";
+    html += me.getRadio('mn6_rotate90', 'mn6_rotatex', 'X-axis (Shift + Key M)');
+    html += me.getRadio('mn6_rotate90', 'mn6_rotatey', 'Y-axis (Shift + Key J)');
+    html += me.getRadio('mn6_rotate90', 'mn6_rotatez', 'Z-axis');
+    html += "    </ul>";
+    html += "  </li>";
     html += "  <li><span>Auto Rotation</span>";
     html += "    <ul>";
     html += me.getRadio('mn6_rotate', 'mn6_rotateleft', 'Rotate Left');
@@ -1236,6 +1248,11 @@ iCn3DUI.prototype.setDialogs = function() { var me = this;
     html += "<div id='" + me.pre + "dl_pdbid'>";
     html += "PDB ID: <input type='text' id='" + me.pre + "pdbid' value='1TUP' size=8> ";
     html += "<button id='" + me.pre + "reload_pdb'>Load</button>";
+    html += "</div>";
+
+    html += "<div id='" + me.pre + "dl_opmid'>";
+    html += "<a href='https://opm.phar.umich.edu' target='_blank'>Orientations of Proteins in Membranes(OPM)</a> PDB ID: <input type='text' id='" + me.pre + "opmid' value='6JXR' size=8> ";
+    html += "<button id='" + me.pre + "reload_opm'>Load</button>";
     html += "</div>";
 
     html += "<div id='" + me.pre + "dl_pdbfile'>";

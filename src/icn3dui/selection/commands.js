@@ -410,6 +410,10 @@ iCn3DUI.prototype.applyCommandLoad = function (commandStr) { var me = this;
       me.cfg.pdbid = id;
       me.downloadPdb(id);
     }
+    else if(command.indexOf('load opm') !== -1) {
+      me.cfg.opmid = id;
+      me.downloadOpm(id);
+    }
     else if(command.indexOf('load mmcif') !== -1) {
       me.cfg.mmcifid = id;
       me.downloadMmcif(id);
@@ -958,6 +962,24 @@ iCn3DUI.prototype.applyCommand = function (commandStr) { var me = this;
      me.ROT_DIR = 'down';
 
      me.rotStruc('down');
+  }
+  else if(command == 'rotate x') {
+      var axis = new THREE.Vector3(1,0,0);
+      var angle = 0.5 * Math.PI;
+
+      me.icn3d.setRotation(axis, angle);
+  }
+  else if(command == 'rotate y') {
+      var axis = new THREE.Vector3(0,1,0);
+      var angle = 0.5 * Math.PI;
+
+      me.icn3d.setRotation(axis, angle);
+  }
+  else if(command == 'rotate z') {
+      var axis = new THREE.Vector3(0,0,1);
+      var angle = 0.5 * Math.PI;
+
+      me.icn3d.setRotation(axis, angle);
   }
   else if(command === 'reset') {
     //location.reload();

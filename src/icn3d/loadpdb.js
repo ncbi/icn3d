@@ -3,7 +3,7 @@
  */
 
 // modified from iview (http://istar.cse.cuhk.edu.hk/iview/)
-iCn3D.prototype.loadPDB = function (src) {
+iCn3D.prototype.loadPDB = function (src, bOpm) {
     var helices = [], sheets = [];
     //this.atoms = {};
     var lines = src.split('\n');
@@ -134,8 +134,11 @@ iCn3D.prototype.loadPDB = function (src) {
             this.ssbondpnts[id].push(resid2);
         } else if (record === 'REMARK') {
              var type = parseInt(line.substr(7, 3));
-             // from GLMol
-             if (type == 350 && line.substr(13, 5) == 'BIOMT') {
+
+             if(line.indexOf('1/2 of bilayer thickness:') !== -1) { // OPM transmembrane protein
+                this.halfBilayerSize = parseFloat(line.substr(line.indexOf(':') + 1).trim());
+             }
+             else if (type == 350 && line.substr(13, 5) == 'BIOMT') {
                 var n = parseInt(line[18]) - 1;
                 //var m = parseInt(line.substr(21, 2));
                 var m = parseInt(line.substr(21, 2)) - 1; // start from 1
@@ -204,29 +207,16 @@ iCn3D.prototype.loadPDB = function (src) {
 
             var elem = line.substr(76, 2).replace(/ /g, "");
             if (elem === '') { // for some incorrect PDB files
-               elem = line.substr(12, 2).replace(/ /g,"");
+               elem = line.substr(12, 4).replace(/ /g,"");
             }
+            var atom = line.substr(12, 4).replace(/ /g, '');
+            var resn = line.substr(17, 3);
 
             var chain = line.substr(21, 1);
-            if(chain === '') chain = 1;
-
-            chainNum = structure + "_" + chain;
-            if(chainNum !== prevChainNum) {
-                prevResi = 0;
-                bModifyResi = false;
-            }
+            if(chain === ' ') chain = 1;
 
             //var oriResi = line.substr(22, 4).trim();
             var oriResi = line.substr(22, 5).trim();
-            oriResidueNum = chainNum + "_" + oriResi;
-            //if(oriResidueNum !== prevOriResidueNum) {
-            //    if(bModifyResi) {
-            //      ++prevResi;
-            //    }
-            //    else {
-            //      prevResi = (chainNum !== prevChainNum) ? 0 : parseInt(prevResidueNum.substr(prevResidueNum.lastIndexOf("_") + 1));
-            //    }
-            //}
 
             var resi = parseInt(oriResi);
             if(oriResi != resi || bModifyResi) { // e.g., 99A and 99
@@ -234,15 +224,27 @@ iCn3D.prototype.loadPDB = function (src) {
               //resi = (prevResi == 0) ? resi : prevResi + 1;
             }
 
+            if(bOpm && resn === 'DUM') {
+                elem = atom;
+                chain = 'MEM';
+                resi = 1;
+                oriResi = 1;
+            }
+
+            chainNum = structure + "_" + chain;
+            oriResidueNum = chainNum + "_" + oriResi;
+            if(chainNum !== prevChainNum) {
+                prevResi = 0;
+                bModifyResi = false;
+            }
+
             residueNum = chainNum + "_" + resi;
 
-            var atom = line.substr(12, 4).replace(/ /g, '');
             var chain_resi = chain + "_" + resi;
 
             var x = parseFloat(line.substr(30, 8));
             var y = parseFloat(line.substr(38, 8));
             var z = parseFloat(line.substr(46, 8));
-            var resn = line.substr(17, 3);
             var coord = new THREE.Vector3(x, y, z);
 
             var atomDetails = {
@@ -521,12 +523,17 @@ iCn3D.prototype.loadPDB = function (src) {
           if(atom.resn === 'HOH' || atom.resn === 'WAT' || atom.resn === 'SOL') {
             this.water[atom.serial] = 1;
           }
+          //else if(bOpm && atom.resn === 'DUM') {
+          //  this.mem[atom.serial] = 1;
+          //}
           else if($.inArray(atom.resn, this.ionsArray) !== -1 || atom.elem.trim() === atom.resn.trim()) {
             this.ions[atom.serial] = 1;
           }
           else {
             this.chemicals[atom.serial] = 1;
           }
+
+          atom.color = this.atomColors[atom.elem];
         }
 
         if (!(curChain === atom.chain && curResi === atom.resi)) {
