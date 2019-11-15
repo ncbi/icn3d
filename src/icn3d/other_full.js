@@ -21,6 +21,8 @@ iCn3D.prototype.calculateChemicalHbonds = function (startAtoms, targetAtoms, thr
       var bAtomCond = (bSaltbridge !== undefined && bSaltbridge) ? ( (atom.resn === 'ARG' || atom.resn === 'LYS') && atom.elem === "N" && atom.name !== "N")
         || ( (atom.resn === 'GLU' || atom.resn === 'ASP') && atom.elem === "O" && atom.name !== "O") : atom.elem === "N" || atom.elem === "O" || atom.elem === "F";
 
+      bAtomCond = (this.bOpm) ? bAtomCond && atom.resn !== 'DUM' : bAtomCond;
+
       if(bAtomCond) {
         chain_resi = atom.structure + "_" + atom.chain + "_" + atom.resi;
         chain_resi_atom = chain_resi + "_" + atom.name;
@@ -39,6 +41,8 @@ iCn3D.prototype.calculateChemicalHbonds = function (startAtoms, targetAtoms, thr
       // hbonds: calculate hydrogen bond
       var bAtomCond = (bSaltbridge !== undefined && bSaltbridge) ? ( (atom.resn === 'ARG' || atom.resn === 'LYS') && atom.elem === "N" && atom.name !== "N")
         || ( (atom.resn === 'GLU' || atom.resn === 'ASP') && atom.elem === "O" && atom.name !== "O") : atom.elem === "N" || atom.elem === "O" || atom.elem === "F";
+
+      bAtomCond = (this.bOpm) ? bAtomCond && atom.resn !== 'DUM' : bAtomCond;
 
       var currResiHash = {};
       if(bAtomCond) {
@@ -144,6 +148,8 @@ iCn3D.prototype.getChainsFromAtoms = function(atomsHash) {
        // exclude the target atoms
        if(atom.serial in atomlistTarget) continue;
 
+       if(this.bOpm && atom.resn === 'DUM') continue;
+
        if (atom.coord.x < extent[0][0] - distance || atom.coord.x > extent[1][0] + distance) continue;
        if (atom.coord.y < extent[0][1] - distance || atom.coord.y > extent[1][1] + distance) continue;
        if (atom.coord.z < extent[0][2] - distance || atom.coord.z > extent[1][2] + distance) continue;
@@ -188,6 +194,7 @@ iCn3D.prototype.getChainsFromAtoms = function(atomsHash) {
 
            // exclude the target atoms
            if(atom.serial in atomlistTarget) continue;
+           if(this.bOpm && atom.resn === 'DUM') continue;
 
            var atomDistSq = (atom.coord.x - oriAtom.coord.x) * (atom.coord.x - oriAtom.coord.x) + (atom.coord.y - oriAtom.coord.y) * (atom.coord.y - oriAtom.coord.y) + (atom.coord.z - oriAtom.coord.z) * (atom.coord.z - oriAtom.coord.z);
 

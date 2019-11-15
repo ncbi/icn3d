@@ -10,11 +10,17 @@ iCn3DUI.prototype.showSets = function() { var me = this;
 
     $("#" + me.pre + "atomsCustom").resizable();
 
+    var prevHAtoms = me.icn3d.cloneHash(me.icn3d.hAtoms);
+    var prevDAtoms = me.icn3d.cloneHash(me.icn3d.dAtoms);
+
     if(me.bSetChainsAdvancedMenu === undefined || !me.bSetChainsAdvancedMenu) {
        me.setPredefinedInMenu();
 
        me.bSetChainsAdvancedMenu = true;
     }
+
+    me.icn3d.hAtoms = me.icn3d.cloneHash(prevHAtoms);
+    me.icn3d.dAtoms = me.icn3d.cloneHash(prevDAtoms);
 
     me.updateHlMenus();
 };

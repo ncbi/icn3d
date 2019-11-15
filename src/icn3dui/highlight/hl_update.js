@@ -31,11 +31,10 @@ iCn3DUI.prototype.changeSeqColor = function(residueArray) { var me = this;
        if($("[id$=" + me.pre + pickedResidue + "]").length !== 0) {
          var atom = me.icn3d.getFirstCalphaAtomObj(me.icn3d.residues[pickedResidue]);
          var colorStr = (atom.color === undefined || atom.color.getHexString().toUpperCase() === 'FFFFFF') ? 'DDDDDD' : atom.color.getHexString();
-         var color = (atom.color !== undefined) ? "#" + colorStr : me.icn3d.defaultAtomColor;
-         //$("[id$=" + me.pre + pickedResidue + "]").attr('style', 'color:' + color);
+         var color = (atom.color !== undefined) ? colorStr : "CCCCCC";
          // annotations will have their own color, only the chain will have the changed color
-         $("[id=giseq_" + me.pre + pickedResidue + "]").attr('style', 'color:' + color);
-         if(me.cfg.align !== undefined || me.cfg.chainalign !== undefined ) $("[id=align_" + me.pre + pickedResidue + "]").attr('style', 'color:' + color);
+         $("[id=giseq_" + me.pre + pickedResidue + "]").attr('style', 'color:#' + color);
+         if(me.cfg.align !== undefined || me.cfg.chainalign !== undefined ) $("[id=align_" + me.pre + pickedResidue + "]").attr('style', 'color:#' + color);
        }
    }
 };
@@ -259,7 +258,7 @@ iCn3DUI.prototype.setAtomMenu = function (commandnameArray) { var me = this;
       }
 
       var colorStr = (atom === undefined || atom.color === undefined || atom.color.getHexString().toUpperCase() === 'FFFFFF') ? 'DDDDDD' : atom.color.getHexString();
-      var color = (atom !== undefined && atom.color !== undefined) ? "#" + colorStr : '000000';
+      var color = (atom !== undefined && atom.color !== undefined) ? colorStr : '000000';
 
       if(commandnameArray.indexOf(name) != -1) {
         html += "<option value='" + name + "' style='color:#" + color + "' selected='selected'>" + name + "</option>";

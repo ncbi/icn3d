@@ -206,8 +206,8 @@ iCn3D.prototype.loadPDB = function (src, bOpm) {
             oriSerial2NewSerial[serial2] = serial;
 
             var elem = line.substr(76, 2).replace(/ /g, "");
-            if (elem === '') { // for some incorrect PDB files
-               elem = line.substr(12, 4).replace(/ /g,"");
+            if (elem === '') { // for some incorrect PDB files, important to use substr(12,2), not (12,4)
+               elem = line.substr(12, 2).replace(/ /g,"");
             }
             var atom = line.substr(12, 4).replace(/ /g, '');
             var resn = line.substr(17, 3);

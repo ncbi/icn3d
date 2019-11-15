@@ -309,12 +309,31 @@ iCn3DUI.prototype.addCustomSelection = function (residueAtomArray, commandname, 
     me.updateHlMenus([commandname]);
 };
 
-iCn3DUI.prototype.selectSideChains = function () { var me = this;
+iCn3DUI.prototype.selectMainChains = function () { var me = this;
     var currHAtoms = me.icn3d.cloneHash(me.icn3d.hAtoms);
+
+    var nuclMainArray = ["C1'", "C1*", "C2'", "C2*", "C3'", "C3*", "C4'", "C4*", "C5'", "C5*", "O3'", "O3*", "O4'", "O4*", "O5'", "O5*", "P", "OP1", "O1P", "OP2", "O2P"];
 
     me.icn3d.hAtoms = {};
     for(var i in currHAtoms) {
-        if(me.icn3d.proteins.hasOwnProperty(i) && me.icn3d.atoms[i].name !== 'CA') {
+        if( (me.icn3d.proteins.hasOwnProperty(i) && me.icn3d.atoms[i].name === "CA")
+          || (me.icn3d.nucleotides.hasOwnProperty(i) && nuclMainArray.indexOf(me.icn3d.atoms[i].name) !== -1) ) {
+            me.icn3d.hAtoms[i] = 1;
+        }
+    }
+
+    me.showHighlight();
+};
+
+iCn3DUI.prototype.selectSideChains = function () { var me = this;
+    var currHAtoms = me.icn3d.cloneHash(me.icn3d.hAtoms);
+
+    var nuclMainArray = ["C1'", "C1*", "C2'", "C2*", "C3'", "C3*", "C4'", "C4*", "C5'", "C5*", "O3'", "O3*", "O4'", "O4*", "O5'", "O5*", "P", "OP1", "O1P", "OP2", "O2P"];
+
+    me.icn3d.hAtoms = {};
+    for(var i in currHAtoms) {
+        if( (me.icn3d.proteins.hasOwnProperty(i) && me.icn3d.atoms[i].name !== "CA")
+          || (me.icn3d.nucleotides.hasOwnProperty(i) && nuclMainArray.indexOf(me.icn3d.atoms[i].name) === -1) ) {
             me.icn3d.hAtoms[i] = 1;
         }
     }

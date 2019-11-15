@@ -154,20 +154,17 @@ iCn3D.prototype.setColorByOptions = function (options, atoms, bUseInputColor) {
 
             var ssArray = [], coilArray = [];
             var prevI = -9999, start;
-            var currSS, prevSS, currResi, prevResi;
+            var prevAtom;
             for (var i in atoms) {
                 // only for proteins
                 if(!this.proteins.hasOwnProperty(i)) continue;
 
                 var atom = this.atoms[i];
 
-                currSS = atom.ss;
-                currResi = atom.resi;
-
                 if(prevI == -9999) start = parseInt(i);
 
-                if(prevI != -9999 && (currSS != prevSS || Math.abs(currResi - prevResi) > 1) ) {
-                    if(prevSS == 'coil') {
+                if(prevI != -9999 && (atom.ss != prevAtom.ss || Math.abs(atom.resi - prevAtom.resi) > 1 || (atom.ssbegin && prevAtom.ssend) ) ) {
+                    if(prevAtom.ss == 'coil') {
                         coilArray.push([start, prevI]);
                     }
                     else {
@@ -177,11 +174,10 @@ iCn3D.prototype.setColorByOptions = function (options, atoms, bUseInputColor) {
                 }
 
                 prevI = parseInt(i);
-                prevSS = currSS;
-                prevResi = currResi;
+                prevAtom = atom;
             }
 
-            if(prevSS == 'coil') {
+            if(prevAtom.ss == 'coil') {
                 coilArray.push([start, prevI]);
             }
             else {

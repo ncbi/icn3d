@@ -14,6 +14,7 @@ var iCn3D = function (id) {
     this.overdraw = 0;
 
     this.bDrawn = false;
+    this.bOpm = false; // true if the PDB data is from OPM for transmembrane proteins
 
     this.bSecondaryStructure = false;
 

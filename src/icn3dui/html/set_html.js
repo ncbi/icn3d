@@ -413,6 +413,7 @@ iCn3DUI.prototype.setMenu2_base = function() { var me = this;
 //        }
     html += me.getLink('mn2_aroundsphere', 'by Distance');
     html += me.getLink('mn2_selectcomplement', 'Inverse');
+    html += me.getLink('mn2_selectmainchains', 'Main Chains');
     html += me.getLink('mn2_selectsidechains', 'Side Chains');
     html += me.getLink('mn2_command', 'Advanced');
 
@@ -506,9 +507,9 @@ iCn3DUI.prototype.setMenu2b_base = function() { var me = this;
     html += "<ul class='icn3d-mn'>";
 
     html += me.getLink('mn2_show_selected', 'View Only <br>Selection');
-    html += me.getLink('mn2_selectedcenter', 'Zoom in <br>Selection');
-    html += me.getLink('mn6_center', 'Center on <br>Selection');
-    html += me.getLink('mn2_fullstru', 'View Full <br>Structure');
+    html += me.getLink('mn2_selectedcenter', 'Zoom in Selection');
+    html += me.getLink('mn6_center', 'Center Selection');
+    html += me.getLink('mn2_fullstru', 'View Full Structure');
     if(me.cfg.align !== undefined || me.cfg.chainalign !== undefined) {
         html += me.getLink('mn2_alternate', 'Alternate (Key \"a\")');
     }
@@ -604,8 +605,15 @@ iCn3DUI.prototype.setMenu2b_base = function() { var me = this;
     html += "    </ul>";
     html += "  </li>";
 
+    if(me.cfg.opmid !== undefined) {
+        //html += me.getLink('adjustmem', 'Adjust Membrane');
+        //html += me.getLink('addplane', 'Add a Plane');
+        html += me.getLink('selectplane', 'Select between<br>Two X-Y Planes');
+    }
+
     html += "  <li>-</li>";
 
+/*
     html += "  <li><span>Transform Hints</span>";
     html += "    <ul>";
     html += "      <li><span>Rotate</span>";
@@ -635,6 +643,10 @@ iCn3DUI.prototype.setMenu2b_base = function() { var me = this;
     html += "      </li>";
     html += "    </ul>";
     html += "  </li>";
+*/
+
+    html += "  <li><span>Rotate</span>";
+    html += "  <ul>";
 
     html += "  <li><span>Rotate 90&deg;</span>";
     html += "    <ul>";
@@ -651,6 +663,10 @@ iCn3DUI.prototype.setMenu2b_base = function() { var me = this;
     html += me.getRadio('mn6_rotate', 'mn6_rotatedown', 'Rotate Down');
     html += "    </ul>";
     html += "  </li>";
+
+    html += "  </ul>";
+    html += "  </li>";
+
     html += "  <li><span>Camera</span>";
     html += "    <ul>";
     html += me.getRadio('mn6_camera', 'mn6_cameraPers', 'Perspective', true);
@@ -1499,8 +1515,31 @@ iCn3DUI.prototype.setDialogs = function() { var me = this;
     html += "  <div style='text-indent:1.1em'><select id='" + me.pre + "atomsCustomSphere' multiple size='3' style='min-width:130px;'>";
     html += "  </select></div><br>";
 
-    html += "  <div style='white-space:nowrap'>4. <button id='" + me.pre + "applypick_aroundsphere'>Display</button> the sphere around currently selected atoms</div><br>";
+    html += "  <div style='white-space:nowrap'>4. <button id='" + me.pre + "applypick_aroundsphere'>Display</button> the sphere around the first set of atoms</div><br>";
     html += "  <div style='text-indent:1.1em'><button id='" + me.pre + "sphereExport'>Save</button> interacting/contacting residue pairs in a file</div>";
+    html += "</div>";
+
+/*
+    html += "<div id='" + me.pre + "dl_adjustmem'>";
+    html += "<b>Note</b>: The membranes are parallel to the X-Y plane. The center of the membranes is at Z = 0. <br/><br/>";
+    html += "  <div style='white-space:nowrap'>1. Extracellular membrane Z-axis position: <input type='text' id='" + me.pre + "extra_mem_z' value='' size='3'> &#197;</div><br/>";
+    html += "  <div style='white-space:nowrap'>2. intracellular membrane Z-axis position: <input type='text' id='" + me.pre + "intra_mem_z' value='' size='3'> &#197;</div><br/>";
+    html += "  <div style='white-space:nowrap'>3. <button id='" + me.pre + "apply_adjustmem'>Display</button> the adjusted membranes</div><br>";
+    html += "</div>";
+
+    html += "<div id='" + me.pre + "dl_addplane'>";
+    html += "<b>Note</b>: The membranes are parallel to the X-Y plane. The center of the membranes is at Z = 0. <br/><br/>";
+    html += "  <div style='white-space:nowrap'>1. Z-axis position of the added plane: <input type='text' id='" + me.pre + "addplane_z' value='0' size='3'> &#197;</div><br/>";
+    html += "  <div style='white-space:nowrap'>2. <button id='" + me.pre + "apply_addplane'>Display</button> the added plane</div><br>";
+    html += "  <div style='white-space:nowrap; text-indent:1.1em'><button id='" + me.pre + "apply_removeplane'>Remove</button> the added plane</div><br>";
+    html += "</div>";
+*/
+
+    html += "<div id='" + me.pre + "dl_selectplane'>";
+    html += "<b>Note</b>: The membranes are parallel to the X-Y plane. The center of the membranes is at Z = 0. <br/><br/>";
+    html += "  <div style='white-space:nowrap'>1. Z-axis position of the first X-Y plane: <input type='text' id='" + me.pre + "selectplane_z1' value='15' size='3'> &#197;</div><br/>";
+    html += "  <div style='white-space:nowrap'>2. Z-axis position of the second X-Y plane: <input type='text' id='" + me.pre + "selectplane_z2' value='-15' size='3'> &#197;</div><br/>";
+    html += "  <div style='white-space:nowrap'>3. <button id='" + me.pre + "apply_selectplane'>Save</button> the region between the planes to Defined Sets</div><br>";
     html += "</div>";
 
     html += "<div id='" + me.pre + "dl_addlabel'>";

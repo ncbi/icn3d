@@ -1057,7 +1057,7 @@ iCn3DUI.prototype.showSeq = function(chnid, chnidBase, type, queryTitle, compTit
           else {
               var atom = me.icn3d.getFirstCalphaAtomObj(me.icn3d.residues[chnid + '_' + pos]);
               var colorStr = (atom.color === undefined || atom.color.getHexString() === 'FFFFFF') ? 'DDDDDD' : atom.color.getHexString();
-              color = (atom.color !== undefined) ? "#" + colorStr : me.icn3d.defaultAtomColor;
+              color = (atom.color !== undefined) ? colorStr : "CCCCCC";
           }
 
           html += '<span id="giseq_' + me.pre + chnid + '_' + pos + '" title="' + cFull + pos + '" class="icn3d-residue" style="color:#' + color + '">' + c + '</span>';
@@ -1075,9 +1075,7 @@ iCn3DUI.prototype.showSeq = function(chnid, chnidBase, type, queryTitle, compTit
 
     // sequence, overview
     var atom = me.icn3d.getFirstCalphaAtomObj(me.icn3d.chains[chnid]);
-    //var colorStr = (atom.color === undefined || atom.color.getHexString() === 'FFFFFF') ? 'DDDDDD' : atom.color.getHexString();
-    //var color = (atom.color !== undefined) ? "#" + colorStr : me.icn3d.defaultAtomColor;
-    var color = (atom.color) ? atom.color.getHexString() : me.icn3d.defaultAtomColor;
+    var color = (atom.color) ? atom.color.getHexString() : "CCCCCC";
 
     var width = Math.round(me.seqAnnWidth * giSeq.length / me.maxAnnoLength);
     if(width < 1) width = 1;
@@ -1237,7 +1235,7 @@ iCn3DUI.prototype.showSeq = function(chnid, chnidBase, type, queryTitle, compTit
         // query protein, overview
         var atom = me.icn3d.getFirstCalphaAtomObj(me.icn3d.chains[chnid]);
         var colorStr = (atom.color === undefined || atom.color.getHexString() === 'FFFFFF') ? 'DDDDDD' : atom.color.getHexString();
-        var color = (atom.color !== undefined) ? "#" + colorStr : me.icn3d.defaultAtomColor;
+        var color = (atom.color !== undefined) ? colorStr : "CCCCCC";
 
         var fromArray2 = [], toArray2 = [];
 
@@ -2197,7 +2195,7 @@ iCn3DUI.prototype.showCddSiteAll = function() { var me = this;
 
                     var atom = me.icn3d.getFirstCalphaAtomObj(me.icn3d.chains[chnid]);
                     var colorStr = (atom.color === undefined || atom.color.getHexString() === 'FFFFFF') ? 'DDDDDD' : atom.color.getHexString();
-                    var color = (atom.color !== undefined) ? "#" + colorStr : me.icn3d.defaultAtomColor;
+                    var color = (atom.color !== undefined) ? colorStr : "CCCCCC";
 
                     //html2 += '<div style="display:inline-block; width:' + Math.round(me.seqAnnWidth * domainFrom / me.maxAnnoLength) + 'px;"></div>';
                     //html2 += '<div style="display:inline-block; color:white!important; font-weight:bold; background-color:#' + color + '; width:' + Math.round(me.seqAnnWidth * (domainTo - domainFrom + 1) / me.maxAnnoLength) + 'px;" class="icn3d-seqTitle icn3d-link icn3d-blue" domain="' + acc + '" from="' + domainFrom.toString() + '" to="' + domainTo.toString() + '" shorttitle="' + title + '" setname="' + chnid + '_' + type + '_' + index + '" anno="sequence" chain="' + chnid + '" title="' + fulltitle + '">' + domain + ' </div>';
@@ -2618,7 +2616,7 @@ iCn3DUI.prototype.showDomainWithData = function(chnid, data) { var me = this;
 
             var atom = me.icn3d.getFirstCalphaAtomObj(me.icn3d.chains[chnid]);
             var colorStr = (atom.color === undefined || atom.color.getHexString() === 'FFFFFF') ? 'DDDDDD' : atom.color.getHexString();
-            var color = (atom.color !== undefined) ? "#" + colorStr : me.icn3d.defaultAtomColor;
+            var color = (atom.color !== undefined) ? colorStr : "CCCCCC";
 
             if(me.cfg.blast_rep_id != chnid) { // regular
                 for(var i = 0, il = fromArray.length; i < il; ++i) {
