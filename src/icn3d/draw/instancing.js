@@ -199,10 +199,6 @@ iCn3D.prototype.drawSymmetryMatesNoInstancing = function() {
    var mdlImpostorTmp = new THREE.Object3D();
    var mdl_ghostTmp = new THREE.Object3D();
 
-   var mdlTmp2 = new THREE.Object3D();
-   var mdlImpostorTmp2 = new THREE.Object3D();
-   var mdl_ghostTmp2 = new THREE.Object3D();
-
    for (var i = 0; i < this.biomtMatrices.length; i++) {  // skip itself
       var mat = this.biomtMatrices[i];
       if (mat === undefined) continue;

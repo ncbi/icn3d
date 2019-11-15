@@ -863,29 +863,30 @@ This page describes Web APIs and how to embed iCn3D in your html page. Other det
 <tr><td valign='top'><span class="indent">Display:</span></td>            <td valign='top'>select zone cutoff [cutoff in angstrom]</td> <td valign='top'><a href="#pickCustomSphere">pickCustomSphere</a></td></tr>
 
 <tr><td valign='top'>d) Inverse:</td>     <td valign='top'>select complement</td> <td valign='top'><a href="#selectComplement">selectComplement</a></td></tr>
-<tr><td valign='top'>e) Side Chains:</td>     <td valign='top'>select side chains</td> <td valign='top'><a href="#selectSideChains">selectSideChains</a></td></tr>
+<tr><td valign='top'>e) Main Chains:</td>     <td valign='top'>select main chains</td> <td valign='top'><a href="#selectMainChains">selectMainChains</a></td></tr>
+<tr><td valign='top'>f) Side Chains:</td>     <td valign='top'>select side chains</td> <td valign='top'><a href="#selectSideChains">selectSideChains</a></td></tr>
 
-<tr><td valign='top'>f) Advanced</td><td valign='top'>select [command] | name [commandname]</td> <td valign='top'><a href="#selectByCommand">selectByCommand</a></td></tr>
+<tr><td valign='top'>g) Advanced</td><td valign='top'>select [command] | name [commandname]</td> <td valign='top'><a href="#selectByCommand">selectByCommand</a></td></tr>
 
-<tr><td colspan="3"><br>g) Select on 3D</td> </tr>
+<tr><td colspan="3"><br>h) Select on 3D</td> </tr>
 <tr><td valign='top'><span class="indent">Chain:</span></td>  <td valign='top'>set pk chain</td> <td valign='top'>me.icn3d.pk = 4; me.icn3d.opts['pk'] = 'chain';</td></tr>
 <tr><td valign='top'><span class="indent">Strand/Helix (Alt):</span></td>  <td valign='top'>set pk strand</td> <td valign='top'>me.icn3d.pk = 3; me.icn3d.opts['pk'] = 'strand';</td></tr>
 <tr><td valign='top'><span class="indent">Residue (Alt):</span></td>  <td valign='top'>set pk residue</td> <td valign='top'>me.icn3d.pk = 2; me.icn3d.opts['pk'] = 'residue';</td></tr>
 <tr><td valign='top'><span class="indent">Atom (Alt):</span></td>     <td valign='top'>set pk atom</td> <td valign='top'>me.icn3d.pk = 1; me.icn3d.opts['pk'] = 'atom';</td></tr>
 
-<tr><td valign='top'>h) Save Selection:</td>      <td valign='top'>select [command] | name [commandname]</td> <td valign='top'><a href="#selectByCommand">selectByCommand</a></td></tr>
-<tr><td valign='top'>i) Clear Selection:</td>      <td valign='top'>clear all</td> <td valign='top'><a href="#selectAll">selectAll</a></td></tr>
+<tr><td valign='top'>i) Save Selection:</td>      <td valign='top'>select [command] | name [commandname]</td> <td valign='top'><a href="#selectByCommand">selectByCommand</a></td></tr>
+<tr><td valign='top'>j) Clear Selection:</td>      <td valign='top'>clear all</td> <td valign='top'><a href="#selectAll">selectAll</a></td></tr>
 
-<tr><td colspan="3"><br>j) Highlight Color</td> </tr>
+<tr><td colspan="3"><br>k) Highlight Color</td> </tr>
 <tr><td valign='top'><span class="indent">Yellow:</span></td>   <td valign='top'>set highlight color yellow</td> <td valign='top'></td></tr>
 <tr><td valign='top'><span class="indent">Green:</span></td>    <td valign='top'>set highlight color green</td> <td valign='top'></td></tr>
 <tr><td valign='top'><span class="indent">Red:</span></td>        <td valign='top'>set highlight color red</td> <td valign='top'></td></tr>
 
-<tr><td colspan="3"><br>k) Highlight Style</td> </tr>
+<tr><td colspan="3"><br>l) Highlight Style</td> </tr>
 <tr><td valign='top'><span class="indent">Outline:</span></td>              <td valign='top'>set highlight style outline</td> <td valign='top'>me.icn3d.bHighlight = 1;</td></tr>
 <tr><td valign='top'><span class="indent">3D Objects:</span></td>         <td valign='top'>set highlight style 3d</td> <td valign='top'>me.icn3d.bHighlight = 2;</td></tr>
 
-<tr><td valign='top'>l) Toggle Highlight</td><td valign='top'>toggle highlight</td> <td valign='top'><a href="#toggleHighlight">toggleHighlight</a></td></tr>
+<tr><td valign='top'>m) Toggle Highlight</td><td valign='top'>toggle highlight</td> <td valign='top'><a href="#toggleHighlight">toggleHighlight</a></td></tr>
 
 <tr><td colspan="3"><br>m) Switch Highlight Level</td> </tr>
 <tr><td valign='top'><span class="indent">&uarr;:</span></td>              <td valign='top'>highlight level up</td> <td valign='top'><a href="#switchHighlightLevelUp">switchHighlightLevelUp<a></td></tr>
@@ -924,7 +925,7 @@ In the dialog Select -&gt; Advanced, users can use simple specification to selec
 
 <tr><td valign='top'>a) View -&gt; View Only Selection:</td>  <td valign='top'>show selection</td> <td valign='top'><a href="#showSelection">showSelection</a></td></tr>
 <tr><td valign='top'>b) View -&gt; Zoom in Selection:</td>  <td valign='top'>zoom selection</td> <td valign='top'><a href="#zoominSelection">zoominSelection</a></td></tr>
-<tr><td valign='top'>c) View -&gt; Center on Selection:</td>  <td valign='top'>center selection</td> <td valign='top'><a href="#centerSelection">centerSelection</a></td></tr>
+<tr><td valign='top'>c) View -&gt; Center Selection:</td>  <td valign='top'>center selection</td> <td valign='top'><a href="#centerSelection">centerSelection</a></td></tr>
 <tr><td valign='top'>d) View -&gt; View Full Structure:</td>  <td valign='top'>show all</td> <td valign='top'><a href="#selectAll">showAll</a></td></tr>
 
 <tr><td colspan="3"><br>e) View -&gt; Chemical Binding</td> </tr>
@@ -982,42 +983,44 @@ In the dialog Select -&gt; Advanced, users can use simple specification to selec
 <tr><td valign='top'><span class="indent">8.0:</span></td>                <td valign='top'>set label scale 8.0</td> <td valign='top'>me.icn3d.labelScale=8.0</td></tr>
 <tr><td valign='top'><span class="indent">10.0:</span></td>                <td valign='top'>set label scale 10.0</td> <td valign='top'>me.icn3d.labelScale=10.0</td></tr>
 
-<tr><td colspan="3"><br>n) View -&gt; Rotate 90&deg;</td> </tr>
+<tr><td colspan="3"><br>n) View -&gt; Rotate</td> </tr>
+
+<tr><td colspan="3"><br><span class="indent">n1) Rotate 90&deg;</span></td> </tr>
 <tr><td valign='top'><span class="indent">X-axis:</span></td>              <td valign='top'>rotate x</td> <td valign='top'><a href="#rotStruc">setRotation</a></td></tr>
 <tr><td valign='top'><span class="indent">Y-axis:</span></td>              <td valign='top'>rotate y</td> <td valign='top'><a href="#rotStruc">setRotation</a></td></tr>
 <tr><td valign='top'><span class="indent">Z-axis:</span></td>              <td valign='top'>rotate z</td> <td valign='top'><a href="#rotStruc">setRotation</a></td></tr>
 
-<tr><td colspan="3"><br>o) View -&gt; Auto Rotation</td> </tr>
+<tr><td colspan="3"><br><span class="indent">n2) Auto Rotation</span></td> </tr>
 <tr><td valign='top'><span class="indent">Rotate Left:</span></td>              <td valign='top'>rotate left</td> <td valign='top'><a href="#rotStruc">rotStruc</a></td></tr>
 <tr><td valign='top'><span class="indent">Rotate Right:</span></td>              <td valign='top'>rotate right</td> <td valign='top'><a href="#rotStruc">rotStruc</a></td></tr>
 <tr><td valign='top'><span class="indent">Rotate Up:</span></td>              <td valign='top'>rotate up</td> <td valign='top'><a href="#rotStruc">rotStruc</a></td></tr>
 <tr><td valign='top'><span class="indent">Rotate Down:</span></td>              <td valign='top'>rotate down</td> <td valign='top'><a href="#rotStruc">rotStruc</a></td></tr>
 
-<tr><td colspan="3"><br>p) View -&gt; Camera</td> </tr>
+<tr><td colspan="3"><br>o) View -&gt; Camera</td> </tr>
 <tr><td valign='top'><span class="indent">Perspective:</span></td>        <td valign='top'>set camera perspective</td> <td valign='top'>me.icn3d.opts['camera'] = 'perspective';</td></tr>
 <tr><td valign='top'><span class="indent">Orthographic:</span></td>       <td valign='top'>set camera orthographic</td> <td valign='top'>me.icn3d.opts['camera'] = 'orthographic';</td></tr>
 
-<tr><td colspan="3"><br>q) View -&gt; Fog for Selection</td> </tr>
+<tr><td colspan="3"><br>p) View -&gt; Fog for Selection</td> </tr>
 <tr><td valign='top'><span class="indent">On:</span></td>                <td valign='top'>set fog on</td> <td valign='top'>me.icn3d.opts['fog'] = 'yes';</td></tr>
 <tr><td valign='top'><span class="indent">Off:</span></td>                 <td valign='top'>set fog off</td> <td valign='top'>me.icn3d.opts['fog'] = 'no';</td></tr>
 
-<tr><td colspan="3"><br>r) View -&gt; Slab for Selection</td> </tr>
+<tr><td colspan="3"><br>q) View -&gt; Slab for Selection</td> </tr>
 <tr><td valign='top'><span class="indent">On:</span></td>                <td valign='top'>set slab on</td> <td valign='top'>me.icn3d.opts['slab'] = 'yes';</td></tr>
 <tr><td valign='top'><span class="indent">Off:</span></td>                 <td valign='top'>set slab off</td> <td valign='top'>me.icn3d.opts['slab'] = 'no';</td></tr>
 
-<tr><td colspan="3"><br>s) View -&gt; XYZ-axes</td> </tr>
+<tr><td colspan="3"><br>r) View -&gt; XYZ-axes</td> </tr>
 <tr><td valign='top'><span class="indent">Show:</span></td>                <td valign='top'>set axis on</td> <td valign='top'>me.icn3d.opts['axis'] = 'yes';</td></tr>
 <tr><td valign='top'><span class="indent">Hide:</span></td>                 <td valign='top'>set axis off</td> <td valign='top'>me.icn3d.opts['axis'] = 'no';</td></tr>
 
-<tr><td colspan="3"><br>t) View -&gt; Reset:</td> </tr>
+<tr><td colspan="3"><br>s) View -&gt; Reset:</td> </tr>
 <tr><td valign='top'><span class="indent">All:</span></td>                <td valign='top'>reset</td> <td valign='top'><a href="#renderFinalStep">renderFinalStep</a></td></tr>
 <tr><td valign='top'><span class="indent">Orientation:</span></td>                 <td valign='top'>reset orientation</td> <td valign='top'><a href="#resetOrientation">resetOrientation</a></td></tr>
 
-<tr><td valign='top'>u) View -&gt; Undo:</td>     <td valign='top'>back</td> <td valign='top'><a href="#back">back</a></td></tr>
+<tr><td valign='top'>t) View -&gt; Undo:</td>     <td valign='top'>back</td> <td valign='top'><a href="#back">back</a></td></tr>
 
-<tr><td valign='top'>v) View -&gt; Redo:</td>     <td valign='top'>forward</td> <td valign='top'><a href="#forward">forward</a></td></tr>
+<tr><td valign='top'>u) View -&gt; Redo:</td>     <td valign='top'>forward</td> <td valign='top'><a href="#forward">forward</a></td></tr>
 
-<tr><td valign='top'>w) View -&gt; Full Screen:</td>     <td valign='top'>[no command available]</td> <td valign='top'></td></tr>
+<tr><td valign='top'>v) View -&gt; Full Screen:</td>     <td valign='top'>[no command available]</td> <td valign='top'></td></tr>
 
 <!--tr><td valign='top'>w) View -&gt; Exit Full Screen:</td>     <td valign='top'>[no command available]</td> <td valign='top'></td></tr-->
 
@@ -2031,6 +2034,9 @@ Update the highlight of sequences in the annotation window according to the curr
 
 <a name="log"></a>
 <h2>Change Log:<img src="https://www.ncbi.nlm.nih.gov/Structure/IMG/spacer.gif" width="25" height="1" border="0"><a href="#Top"><img src="https://www.ncbi.nlm.nih.gov/Structure/IMG/arrowup_blue.gif" width="12" height="12" border="0" alt="back to top"></a></h2>
+<a href="https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.9.1.zip">icn3d-2.9.1</a> was release on November 14, 2019. Enable to select regions between two X-Y membranes for transmembrane proteins.
+<br><br>
+
 <a href="https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.9.0.zip">icn3d-2.9.0</a> was release on November 8, 2019. Display membranes for transmembrane proteins using data from Orientations of Proteins in Membranes (OPM). The feature is at "File > Retrieve by ID > OPM PDB ID".
 <br><br>
 

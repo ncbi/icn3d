@@ -727,11 +727,11 @@ iCn3DUI.prototype.applyCommand = function (commandStr) { var me = this;
   }
   else if(command == 'set emmap wireframe on') {
     me.icn3d.opts['emmapwireframe'] = 'yes';
-    me.icn3d.applyMapOptions();
+    me.icn3d.applyEmmapOptions();
   }
   else if(command == 'set emmap wireframe off') {
     me.icn3d.opts['emmapwireframe'] = 'no';
-    me.icn3d.applyMapOptions();
+    me.icn3d.applyEmmapOptions();
   }
   else if(command == 'set surface neighbors on') {
     me.icn3d.bConsiderNeighbors = true;
@@ -1093,6 +1093,9 @@ iCn3DUI.prototype.applyCommand = function (commandStr) { var me = this;
   else if(command == 'apply saved style') {
      me.applySavedStyle();
   }
+  else if(command == 'select main chains') {
+     me.selectMainChains();
+  }
   else if(command == 'select side chains') {
      me.selectSideChains();
   }
@@ -1363,6 +1366,15 @@ iCn3DUI.prototype.applyCommand = function (commandStr) { var me = this;
 
      me.icn3d.draw();
   }
+  else if(command.indexOf('select planes z-axis') == 0) {
+    var paraArray = command.split(' ');
+    if(paraArray.length == 5) {
+        var large = parseFloat(paraArray[3]);
+        var small = parseFloat(paraArray[4]);
+
+        me.selectBtwPlanes(large, small);
+    }
+  }
 
 // start with, single word =============
   else if(command.indexOf('pickatom') == 0) {
@@ -1381,7 +1393,7 @@ iCn3DUI.prototype.applyCommand = function (commandStr) { var me = this;
 
     var paraArray = commandOri.split(' | ');
 
-    var threshold = parseFloat(paraArray[0].substr(paraArray[0].indexOf(' ') + 1));
+    var threshold = parseFloat(paraArray[0].substr(paraArray[0].lastIndexOf(' ') + 1));
     var nameArray = [], nameArray2 = [];
     if(paraArray.length == 2 && paraArray[1].length > 4) { //sets a,b,c e,f,g
         //var nameStr = paraArray[1].substr(paraArray[1].indexOf(' ') + 1);
@@ -1402,7 +1414,7 @@ iCn3DUI.prototype.applyCommand = function (commandStr) { var me = this;
 
     var paraArray = commandOri.split(' | ');
 
-    var threshold = parseFloat(paraArray[0].substr(paraArray[0].indexOf(' ') + 1));
+    var threshold = parseFloat(paraArray[0].substr(paraArray[0].lastIndexOf(' ') + 1));
     var nameArray = [], nameArray2 = [];
     if(paraArray.length == 2 && paraArray[1].length > 4) { //sets a,b,c e,f,g
         //var nameStr = paraArray[1].substr(paraArray[1].indexOf(' ') + 1);

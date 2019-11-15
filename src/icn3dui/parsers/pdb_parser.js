@@ -65,6 +65,9 @@ iCn3DUI.prototype.downloadOpm = function (opmid) { var me = this;
       success: function(data) {
           me.icn3d.bOpm = true;
           me.loadPdbData(data, me.icn3d.bOpm);
+
+          $("#" + me.pre + "selectplane_z1").val(me.icn3d.halfBilayerSize);
+          $("#" + me.pre + "selectplane_z2").val(-me.icn3d.halfBilayerSize);
       },
       error : function(xhr, textStatus, errorThrown ) {
         this.tryCount++;

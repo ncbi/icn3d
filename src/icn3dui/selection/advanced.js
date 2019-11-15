@@ -141,14 +141,14 @@ iCn3DUI.prototype.selectBySpec = function (select, commandname, commanddesc, bDi
        var colonPos = commandArray[i].indexOf(':');
        var atPos = commandArray[i].indexOf('@');
 
-       var moleculeStr, chainStr, residueStr, atomStr;
+       var moleculeStr, chainStr, residueStr, atomStrArray;
        var testStr = commandArray[i];
 
        if(atPos === -1) {
-         atomStr = "*";
+         atomStrArray = ["*"];
        }
        else {
-         atomStr = testStr.substr(atPos + 1);
+         atomStrArray = testStr.substr(atPos + 1).split(',');
          testStr = testStr.substr(0, atPos);
        }
 
@@ -172,11 +172,11 @@ iCn3DUI.prototype.selectBySpec = function (select, commandname, commanddesc, bDi
          moleculeStr = "*";
        }
        else {
-         moleculeStr = testStr.substr(dollarPos + 1);
+         moleculeStr = testStr.substr(dollarPos + 1).toUpperCase();
          testStr = testStr.substr(0, dollarPos);
        }
 
-       if(atomStr !== '*') {
+       if(atomStrArray.length == 1 && atomStrArray[0] !== '*') {
          bSelectResidues = false; // selected atoms
        }
 
@@ -260,16 +260,19 @@ iCn3DUI.prototype.selectBySpec = function (select, commandname, commanddesc, bDi
                  }
 
                  for(var m in me.icn3d.residues[residueId]) {
-                   if(atomStr === '*' || atomStr === me.icn3d.atoms[m].name) {
-                     if(i === 0) {
-                         //currHighlightAtoms[m] = 1;
-                         atomHash[m] = 1;
-                     }
-                     else {
-                         //if(!currHighlightAtoms.hasOwnProperty(m)) currHighlightAtoms[m] = undefined;
-                         //if(!atomHash.hasOwnProperty(m)) atomHash[m] = undefined;
-                         if(!atomHash.hasOwnProperty(m)) delete atomHash[m];
-                     }
+                   for(var n = 0, nl = atomStrArray.length; n < nl; ++n) {
+                       var atomStr = atomStrArray[n];
+                       if(atomStr === '*' || atomStr === me.icn3d.atoms[m].name) {
+                         if(i === 0) {
+                             //currHighlightAtoms[m] = 1;
+                             atomHash[m] = 1;
+                         }
+                         else {
+                             //if(!currHighlightAtoms.hasOwnProperty(m)) currHighlightAtoms[m] = undefined;
+                             //if(!atomHash.hasOwnProperty(m)) atomHash[m] = undefined;
+                             if(!atomHash.hasOwnProperty(m)) delete atomHash[m];
+                         }
+                       }
                    }
                  }
                }
@@ -298,15 +301,19 @@ iCn3DUI.prototype.selectBySpec = function (select, commandname, commanddesc, bDi
                          if(!residueHash.hasOwnProperty(residTmp)) delete residueHash[residTmp];
                      }
 
-                     if(atomStr === '*' || atomStr === me.icn3d.atoms[m].name) {
-                         if(i === 0) {
-                             //currHighlightAtoms[m] = 1;
-                             atomHash[m] = 1;
-                         }
-                         else {
-                             //if(!currHighlightAtoms.hasOwnProperty(m)) currHighlightAtoms[m] = undefined;
-                             //if(!atomHash.hasOwnProperty(m)) atomHash[m] = undefined;
-                             if(!atomHash.hasOwnProperty(m)) delete atomHash[m];
+                     for(var n = 0, nl = atomStrArray.length; n < nl; ++n) {
+                         var atomStr = atomStrArray[n];
+
+                         if(atomStr === '*' || atomStr === me.icn3d.atoms[m].name) {
+                             if(i === 0) {
+                                 //currHighlightAtoms[m] = 1;
+                                 atomHash[m] = 1;
+                             }
+                             else {
+                                 //if(!currHighlightAtoms.hasOwnProperty(m)) currHighlightAtoms[m] = undefined;
+                                 //if(!atomHash.hasOwnProperty(m)) atomHash[m] = undefined;
+                                 if(!atomHash.hasOwnProperty(m)) delete atomHash[m];
+                             }
                          }
                      }
 
@@ -352,16 +359,19 @@ iCn3DUI.prototype.selectBySpec = function (select, commandname, commanddesc, bDi
                          }
 
                          for(var m in me.icn3d.residues[residueId]) {
-                           if(atomStr === '*' || atomStr === me.icn3d.atoms[m].name) {
-                             if(i === 0) {
-                                 //currHighlightAtoms[m] = 1;
-                                 atomHash[m] = 1;
-                             }
-                             else {
-                                 //if(!currHighlightAtoms.hasOwnProperty(m)) currHighlightAtoms[m] = undefined;
-                                 //if(!atomHash.hasOwnProperty(m)) atomHash[m] = undefined;
-                                 if(!atomHash.hasOwnProperty(m)) delete atomHash[m];
-                             }
+                           for(var n = 0, nl = atomStrArray.length; n < nl; ++n) {
+                               var atomStr = atomStrArray[n];
+                               if(atomStr === '*' || atomStr === me.icn3d.atoms[m].name) {
+                                 if(i === 0) {
+                                     //currHighlightAtoms[m] = 1;
+                                     atomHash[m] = 1;
+                                 }
+                                 else {
+                                     //if(!currHighlightAtoms.hasOwnProperty(m)) currHighlightAtoms[m] = undefined;
+                                     //if(!atomHash.hasOwnProperty(m)) atomHash[m] = undefined;
+                                     if(!atomHash.hasOwnProperty(m)) delete atomHash[m];
+                                 }
+                               }
                            }
                          }
                        } // for

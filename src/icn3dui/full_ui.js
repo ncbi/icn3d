@@ -15,7 +15,7 @@ if (!$.ui.dialog.prototype._makeDraggableBase) {
 var iCn3DUI = function(cfg) {
     var me = this;
 
-    this.REVISION = '2.9.0';
+    this.REVISION = '2.9.1';
 
     me.bFullUi = true;
 
@@ -1137,7 +1137,7 @@ iCn3DUI.prototype = {
            else {
                if(me.icn3d.defNames2Residues[commandname] !== undefined && me.icn3d.defNames2Residues[commandname].length > 0) {
                    for(var j = 0, jl = me.icn3d.defNames2Residues[commandname].length; j < jl; ++j) {
-                       var resid = me.icn3d.defNames2Residues[commandname][j];
+                       var resid = me.icn3d.defNames2Residues[commandname][j]; // return an array of resid
 
                        residuesHash = me.icn3d.unionHash(residuesHash, me.icn3d.residues[resid]);
                    }
@@ -1145,9 +1145,11 @@ iCn3DUI.prototype = {
 
                if(me.icn3d.defNames2Atoms[commandname] !== undefined && me.icn3d.defNames2Atoms[commandname].length > 0) {
                    for(var j = 0, jl = me.icn3d.defNames2Atoms[commandname].length; j < jl; ++j) {
-                       var resid = me.icn3d.defNames2Atoms[commandname][j];
+                       //var resid = me.icn3d.defNames2Atoms[commandname][j]; // return an array of serial
+                       //residuesHash = me.icn3d.unionHash(residuesHash, me.icn3d.residues[resid]);
 
-                       residuesHash = me.icn3d.unionHash(residuesHash, me.icn3d.residues[resid]);
+                       var serial = me.icn3d.defNames2Atoms[commandname][j]; // return an array of serial
+                       residuesHash[serial] = 1;
                    }
                }
            }
@@ -1169,7 +1171,6 @@ iCn3DUI.prototype = {
             atomlistTarget = me.icn3d.hash2Atoms(me.getAtomsFromSets(nameArray2));
         }
 
-
         if(nameArray.length == 0 || nameArray[0] === 'all') { // select all hAtoms
             otherAtoms = me.icn3d.atoms;
         }
@@ -1186,6 +1187,9 @@ iCn3DUI.prototype = {
 
         for (var i in atoms) {
             var atom = atoms[i];
+
+            if(me.icn3d.bOpm && atom.resn === 'DUM') continue;
+
             var residueid = atom.structure + '_' + atom.chain + '_' + atom.resi;
             residues[residueid] = 1;
 
@@ -1207,7 +1211,8 @@ iCn3DUI.prototype = {
           }
         }
 
-        me.icn3d.dAtoms = me.icn3d.cloneHash(me.icn3d.atoms);
+        // do not change the set of displaying atoms
+        //me.icn3d.dAtoms = me.icn3d.cloneHash(me.icn3d.atoms);
 
         var commandname, commanddesc;
           var firstAtom = me.icn3d.getFirstAtomObj(atomlistTarget);
@@ -1222,7 +1227,7 @@ iCn3DUI.prototype = {
 
         me.saveSelectionIfSelected();
 
-        me.icn3d.draw(); // show all neighbors, even not displayed before
+        me.icn3d.draw();
     },
 
     // between the highlighted and atoms in nameArray
@@ -2770,6 +2775,16 @@ iCn3DUI.prototype = {
         });
     },
 
+    clkMn2_selectmainchains: function() { var me = this;
+        $("#" + me.pre + "mn2_selectmainchains").click(function(e) {
+           me.setLogCmd("select main chains", true);
+
+           me.selectMainChains();
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
+        });
+    },
+
     clkMn2_selectsidechains: function() { var me = this;
         $("#" + me.pre + "mn2_selectsidechains").click(function(e) {
            me.setLogCmd("select side chains", true);
@@ -2867,6 +2882,26 @@ iCn3DUI.prototype = {
            me.setLogCmd('set pk chain', true);
 
            //$( ".icn3d-accordion" ).accordion(me.closeAc);
+        });
+    },
+
+/*
+    clk_adjustmem: function() { var me = this;
+        $("#" + me.pre + "adjustmem").click(function(e) {
+            me.openDialog(me.pre + 'dl_adjustmem', 'Adjust the positions of the membranes');
+        });
+    },
+
+    clk_addplane: function() { var me = this;
+        $("#" + me.pre + "addplane").click(function(e) {
+            me.openDialog(me.pre + 'dl_addplane', 'Add a plane parallel to the membranes');
+        });
+    },
+*/
+
+    clk_selectplane: function() { var me = this;
+        $("#" + me.pre + "selectplane").click(function(e) {
+            me.openDialog(me.pre + 'dl_selectplane', 'Select a region between two planes');
         });
     },
 
@@ -5500,6 +5535,147 @@ iCn3DUI.prototype = {
         });
     },
 
+/*
+    clickApply_adjustmem: function() { var me = this;
+        $("#" + me.pre + "apply_adjustmem").click(function(e) {
+            //e.preventDefault();
+            dialog.dialog( "close" );
+
+            var extra_mem_z = parseFloat($("#" + me.pre + "extra_mem_z").val());
+            var intra_mem_z = parseFloat($("#" + me.pre + "intra_mem_z").val());
+
+            var select = "adjust membrane " + extra_mem_z + " " + intra_mem_z;
+
+            for(var i in me.icn3d.chains['MEM']) {
+                var atom = me.icn3d.atoms[i];
+
+                if(atom.name == 'O') {
+                    atom.coord.z = extra_mem_z;
+                }
+                else if(atom.name == 'N') {
+                    atom.coord.z = intra_mem_z;
+                }
+            }
+
+            me.icn3d.draw();
+
+            me.setLogCmd(select, true);
+        });
+    },
+
+    clickApply_addplane: function() { var me = this;
+        $("#" + me.pre + "apply_addplane").click(function(e) {
+            //e.preventDefault();
+            dialog.dialog( "close" );
+
+            var addplane_z = parseFloat($("#" + me.pre + "addplane_z").val());
+
+            var select = "add plane " + addplane_z;
+
+            var bPlaneExist = false;
+            var i;
+            for(i in me.icn3d.chains['MEM']) {
+                var atom = me.icn3d.atoms[i];
+
+                if(atom.name == 'C') {
+                    atom.coord.z = addplane_z;
+                    bPlaneExist = true;
+                }
+            }
+
+            var serial = i;
+
+            if(!bPlaneExist) {
+                // add C atoms
+                for(var i in me.icn3d.chains['MEM']) {
+                    var atom = me.icn3d.atoms[i];
+
+                    if(atom.name == 'O') {
+                        ++serial;
+                        var planeAtom = me.icn3d.cloneHash(atom);
+                        planeAtom.name = 'C';
+                        planeAtom.elem = 'C';
+                        planeAtom.coord.z = addplane_z;
+                        planeAtom.serial = serial;
+                        planeAtom.resi = 2;
+                        planeAtom.color = me.icn3d.atomColors[planeAtom.elem];
+
+                        me.icn3d.atoms[serial] = planeAtom;
+                        me.icn3d.dAtoms[serial] = 1;
+                        me.icn3d.hAtoms[serial] = 1;
+                        me.icn3d.chemicals[serial] = 1;
+                        me.icn3d.residues[atom.structure + '_MEM_2'][serial] = 1;
+                        me.icn3d.chains['MEM'][serial] = 1;
+                    }
+                }
+            }
+
+            me.icn3d.draw();
+
+            me.setLogCmd(select, true);
+        });
+
+        $("#" + me.pre + "apply_removeplane").click(function(e) {
+            //e.preventDefault();
+            dialog.dialog( "close" );
+
+            var select = "remove plane";
+
+            for(var i in me.icn3d.chains['MEM']) {
+                var atom = me.icn3d.atoms[i];
+
+                if(atom.name == 'C') {
+                    delete me.icn3d.dAtoms[i];
+                    delete me.icn3d.hAtoms[i];
+                }
+            }
+
+            me.icn3d.draw();
+
+            me.setLogCmd(select, true);
+        });
+    },
+*/
+
+    clickApply_selectplane: function() { var me = this;
+        $("#" + me.pre + "apply_selectplane").click(function(e) {
+            //e.preventDefault();
+            dialog.dialog( "close" );
+
+            var large = parseFloat($("#" + me.pre + "selectplane_z1").val());
+            var small = parseFloat($("#" + me.pre + "selectplane_z2").val());
+
+            me.selectBtwPlanes(large, small);
+
+            var select = "select planes z-axis " + large + " " + small;
+
+            me.setLogCmd(select, true);
+        });
+    },
+
+    selectBtwPlanes: function(large, small) { var me = this;
+        if(large < small) {
+            var tmp = small;
+            small = large;
+            large = tmp;
+        }
+
+        var residueHash = {};
+        for(var i in me.icn3d.atoms) {
+            var atom = me.icn3d.atoms[i];
+            if(atom.resn == 'DUM') continue;
+
+            if(atom.coord.z >= small && atom.coord.z <= large) {
+                var resid = atom.structure + '_' + atom.chain + '_' + atom.resi;
+                residueHash[resid] = 1;
+            }
+        }
+
+        var commandname = "z_planes_" + large + "_" + small;
+        var commanddescr = commandname;
+        me.selectResidueList(residueHash, commandname, commanddescr, false);
+    },
+
     clickApplyhbonds: function() { var me = this;
         $("#" + me.pre + "atomsCustomHbond2").add("#" + me.pre + "atomsCustomHbond").change(function(e) {
             me.bHbondCalc = false;
@@ -6164,6 +6340,7 @@ iCn3DUI.prototype = {
         me.clkMn2_selectannotations();
 //        me.clkMn2_selectresidues();
         me.clkMn2_selectcomplement();
+        me.clkMn2_selectmainchains();
         me.clkMn2_selectsidechains();
         me.clkMn2_selectall();
         me.clkMn2_fullstru();
@@ -6176,6 +6353,9 @@ iCn3DUI.prototype = {
         me.clkMn2_pkStrand();
         me.clkMn2_pkChain();
         me.clkMn2_aroundsphere();
+        //me.clk_adjustmem();
+        //me.clk_addplane();
+        me.clk_selectplane();
         me.clkMn2_select_chain();
         me.clkMn3_proteinsRibbon();
         me.clkMn3_proteinsStrand();
@@ -6373,6 +6553,11 @@ iCn3DUI.prototype = {
         me.clickReload_dsn6file();
         me.clickApplycustomcolor();
         me.clickApplypick_aroundsphere();
+
+        //me.clickApply_adjustmem();
+        //me.clickApply_addplane();
+        me.clickApply_selectplane();
+
         me.clickApplyhbonds();
         me.clickApplysaltbridge();
         me.clickApplymap2fofc();

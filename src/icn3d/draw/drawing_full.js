@@ -303,14 +303,22 @@ iCn3D.prototype.createSurfaceRepresentation = function (atoms, type, wireframe, 
 iCn3D.prototype.buildAxes = function (radius) {
     var axes = new THREE.Object3D();
 
-    axes.add( this.createSingleLine( new THREE.Vector3( 0, 0, 0 ), new THREE.Vector3( 0 + radius, 0, 0 ), 0xFF0000, false, 0.5 ) ); // +X
-    axes.add( this.createSingleLine( new THREE.Vector3( 0, 0, 0 ), new THREE.Vector3( 0 - radius, 0, 0 ), 0x800000, true, 0.5) ); // -X
+    var x = 0, y = 0, z = 0;
 
-    axes.add( this.createSingleLine( new THREE.Vector3( 0, 0, 0 ), new THREE.Vector3( 0, 0 + radius, 0 ), 0x00FF00, false, 0.5 ) ); // +Y
-    axes.add( this.createSingleLine( new THREE.Vector3( 0, 0, 0 ), new THREE.Vector3( 0, 0 - radius, 0 ), 0x008000, true, 0.5 ) ); // -Y
+    if(this.bOpm) {
+        x = -this.oriCenter.x;
+        y = -this.oriCenter.y;
+        z = -this.oriCenter.z;
+    }
 
-    axes.add( this.createSingleLine( new THREE.Vector3( 0, 0, 0 ), new THREE.Vector3( 0, 0, 0 + radius ), 0x0000FF, false, 0.5 ) ); // +Z
-    axes.add( this.createSingleLine( new THREE.Vector3( 0, 0, 0 ), new THREE.Vector3( 0, 0, 0 - radius ), 0x000080, true, 0.5 ) ); // -Z
+    axes.add( this.createSingleLine( new THREE.Vector3( x, y, z ), new THREE.Vector3( x + radius, y, z ), 0xFF0000, false, 0.5 ) ); // +X
+    //axes.add( this.createSingleLine( new THREE.Vector3( x, y, z ), new THREE.Vector3( x - radius, y, z ), 0x800000, true, 0.5) ); // -X
+
+    axes.add( this.createSingleLine( new THREE.Vector3( x, y, z ), new THREE.Vector3( x, y + radius, z ), 0x00FF00, false, 0.5 ) ); // +Y
+    //axes.add( this.createSingleLine( new THREE.Vector3( x, y, z ), new THREE.Vector3( x, y - radius, z ), 0x008000, true, 0.5 ) ); // -Y
+
+    axes.add( this.createSingleLine( new THREE.Vector3( x, y, z ), new THREE.Vector3( x, y, z + radius ), 0x0000FF, false, 0.5 ) ); // +Z
+    //axes.add( this.createSingleLine( new THREE.Vector3( x, y, z ), new THREE.Vector3( x, y, z - radius ), 0x000080, true, 0.5 ) ); // -Z
 
     this.scene.add( axes );
 };
