@@ -278,6 +278,13 @@ iCn3DUI.prototype.setPredefinedInMenu = function() { var me = this;
       // predefined sets: proteins,nucleotides, chemicals
       me.setProtNuclLigInMenu();
 
+      // show 3d domains for mmdbid
+      if(me.cfg.mmdbid !== undefined || me.cfg.gi !== undefined || me.cfg.chainalign !== undefined) {
+          for(var tddomainName in me.icn3d.tddomains) {
+              me.selectResidueList(me.icn3d.tddomains[tddomainName], tddomainName, tddomainName, false, false);
+          }
+      }
+
       if((me.cfg.align !== undefined || me.cfg.chainalign !== undefined) && me.bFullUi) {
         me.selectResidueList(me.consHash1, me.conservedName1, me.conservedName1, false, false);
         me.selectResidueList(me.consHash2, me.conservedName2, me.conservedName2, false, false);

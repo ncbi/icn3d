@@ -280,6 +280,17 @@ iCn3DUI.prototype.updateSsbond = function() { var me = this;
     me.bSSbondShown = true;
 };
 
+iCn3DUI.prototype.updateTransmem = function() { var me = this;
+    if(me.bTranememShown === undefined || !me.bTranememShown) {
+        for(var chainid in me.protein_chainid) {
+            var chainidBase = me.protein_chainid[chainid];
+            me.showTransmem(chainid, chainidBase);
+        }
+    }
+
+    me.bTranememShown = true;
+};
+
 iCn3DUI.prototype.getAnDiv = function(chnid, anno) { var me = this;
     var message = 'Loading ' + anno + '...';
     if(anno == 'custom') {
@@ -368,6 +379,7 @@ iCn3DUI.prototype.getAnnotationData = function() { var me = this;
         $("#" + me.pre + "anno_" + chnid).append(me.getAnDiv(chnid, 'interaction'));
         $("#" + me.pre + "anno_" + chnid).append(me.getAnDiv(chnid, 'custom'));
         $("#" + me.pre + "anno_" + chnid).append(me.getAnDiv(chnid, 'ssbond'));
+        $("#" + me.pre + "anno_" + chnid).append(me.getAnDiv(chnid, 'transmem'));
 
         $("#" + me.pre + "anno_" + chnid).append("<br><hr><br>");
 
@@ -846,6 +858,7 @@ iCn3DUI.prototype.showSeq = function(chnid, chnidBase, type, queryTitle, compTit
     $("#" + me.pre + "giseq_" + chnid).width(divLength);
     $("#" + me.pre + "interaction_" + chnid).width(divLength);
     $("#" + me.pre + "ssbond_" + chnid).width(divLength);
+    if($("#" + me.pre + "transmem_" + chnid).length) $("#" + me.pre + "transmem_" + chnid).width(divLength);
     if($("#" + me.pre + "custom_" + chnid).length) $("#" + me.pre + "custom_" + chnid).width(divLength);
     if($("#" + me.pre + "clinvar_" + chnid).length) $("#" + me.pre + "clinvar_" + chnid).width(divLength);
     if($("#" + me.pre + "snp_" + chnid).length) $("#" + me.pre + "snp_" + chnid).width(divLength);
@@ -2579,7 +2592,7 @@ iCn3DUI.prototype.showDomainWithData = function(chnid, data) { var me = this;
                 }
             }
 
-            var htmlTmp2 = '<div class="icn3d-seqTitle icn3d-link icn3d-blue" 3ddomain="' + (index+1).toString() + '" from="' + fromArray + '" to="' + toArray + '" shorttitle="' + title + '" index="' + index + '" setname="' + chnid + '_3d_domain_' + index + '" anno="sequence" chain="' + chnid + '" title="' + fulltitle + '">' + title + ' </div>';
+            var htmlTmp2 = '<div class="icn3d-seqTitle icn3d-link icn3d-blue" 3ddomain="' + (index+1).toString() + '" from="' + fromArray + '" to="' + toArray + '" shorttitle="' + title + '" index="' + index + '" setname="' + chnid + '_3d_domain_' + (index+1).toString() + '" anno="sequence" chain="' + chnid + '" title="' + fulltitle + '">' + title + ' </div>';
 
             var htmlTmp3 = '<span class="icn3d-residueNum" title="residue count">' + resCnt.toString() + ' Res</span>';
 
@@ -2623,7 +2636,7 @@ iCn3DUI.prototype.showDomainWithData = function(chnid, data) { var me = this;
                     var emptyWidth = (i == 0) ? Math.round(me.seqAnnWidth * (fromArray[i] - me.baseResi[chnid] - 1) / me.maxAnnoLength) : Math.round(me.seqAnnWidth * (fromArray[i] - toArray[i-1] - 1) / me.maxAnnoLength);
                     html2 += '<div style="display:inline-block; width:' + emptyWidth + 'px;">&nbsp;</div>';
 
-                    html2 += '<div style="display:inline-block; color:white!important; font-weight:bold; background-color:#' + color + '; width:' + Math.round(me.seqAnnWidth * (toArray[i] - fromArray[i] + 1) / me.maxAnnoLength) + 'px;" class="icn3d-seqTitle icn3d-link icn3d-blue" 3ddomain="' + (index+1).toString() + '" from="' + fromArray + '" to="' + toArray + '" shorttitle="' + title + '" index="' + index + '" setname="' + chnid + '_3d_domain_' + index + '" id="' + chnid + '_3d_domain_' + index + '" anno="sequence" chain="' + chnid + '" title="' + fulltitle + '">3D domain ' + (index+1).toString() + '</div>';
+                    html2 += '<div style="display:inline-block; color:white!important; font-weight:bold; background-color:#' + color + '; width:' + Math.round(me.seqAnnWidth * (toArray[i] - fromArray[i] + 1) / me.maxAnnoLength) + 'px;" class="icn3d-seqTitle icn3d-link icn3d-blue" 3ddomain="' + (index+1).toString() + '" from="' + fromArray + '" to="' + toArray + '" shorttitle="' + title + '" index="' + index + '" setname="' + chnid + '_3d_domain_' + (index+1).toString() + '" id="' + chnid + '_3d_domain_' + index + '" anno="sequence" chain="' + chnid + '" title="' + fulltitle + '">3D domain ' + (index+1).toString() + '</div>';
                 }
             }
             else { // with potential gaps
@@ -2647,7 +2660,7 @@ iCn3DUI.prototype.showDomainWithData = function(chnid, data) { var me = this;
                     var emptyWidth = (i == 0) ? Math.round(me.seqAnnWidth * (fromArray2[i] - me.baseResi[chnid] - 1) / (me.maxAnnoLength + me.nTotalGap)) : Math.round(me.seqAnnWidth * (fromArray2[i] - toArray2[i-1] - 1) / (me.maxAnnoLength + me.nTotalGap));
                     html2 += '<div style="display:inline-block; width:' + emptyWidth + 'px;">&nbsp;</div>';
 
-                    html2 += '<div style="display:inline-block; color:white!important; font-weight:bold; background-color:#' + color + '; width:' + Math.round(me.seqAnnWidth * (toArray2[i] - fromArray2[i] + 1) / (me.maxAnnoLength + me.nTotalGap)) + 'px;" class="icn3d-seqTitle icn3d-link icn3d-blue" 3ddomain="' + (index+1).toString() + '" from="' + fromArray2 + '" to="' + toArray2 + '" shorttitle="' + title + '" index="' + index + '" setname="' + chnid + '_3d_domain_' + index + '" id="' + chnid + '_3d_domain_' + index + '" anno="sequence" chain="' + chnid + '" title="' + fulltitle + '">3D domain ' + (index+1).toString() + '</div>';
+                    html2 += '<div style="display:inline-block; color:white!important; font-weight:bold; background-color:#' + color + '; width:' + Math.round(me.seqAnnWidth * (toArray2[i] - fromArray2[i] + 1) / (me.maxAnnoLength + me.nTotalGap)) + 'px;" class="icn3d-seqTitle icn3d-link icn3d-blue" 3ddomain="' + (index+1).toString() + '" from="' + fromArray2 + '" to="' + toArray2 + '" shorttitle="' + title + '" index="' + index + '" setname="' + chnid + '_3d_domain_' + (index+1).toString() + '" id="' + chnid + '_3d_domain_' + index + '" anno="sequence" chain="' + chnid + '" title="' + fulltitle + '">3D domain ' + (index+1).toString() + '</div>';
                 }
             }
 
@@ -2874,9 +2887,7 @@ iCn3DUI.prototype.showInteraction_base = function(chnid, chnidBase) {
     }
 };
 
-iCn3DUI.prototype.showSsbond = function(chnid, chnidBase) {
-    var me = this;
-
+iCn3DUI.prototype.showSsbond = function(chnid, chnidBase) { var me = this;
     if(me.icn3d.ssbondpnts === undefined) {
         // didn't finish loading atom data yet
         setTimeout(function(){
@@ -2888,9 +2899,48 @@ iCn3DUI.prototype.showSsbond = function(chnid, chnidBase) {
     }
 };
 
-iCn3DUI.prototype.showSsbond_base = function(chnid, chnidBase) {
-    var me = this;
+iCn3DUI.prototype.showSsbond_base = function(chnid, chnidBase) { var me = this;
 
+    var chainid = chnidBase;
+
+    var resid2resids = {};
+
+    var structure = chainid.substr(0, chainid.indexOf('_'));
+    var ssbondArray = me.icn3d.ssbondpnts[structure];
+    if(ssbondArray === undefined) {
+        $("#" + me.pre + "dt_ssbond_" + chnid).html('');
+        $("#" + me.pre + "ov_ssbond_" + chnid).html('');
+        $("#" + me.pre + "tt_ssbond_" + chnid).html('');
+
+        return;
+    }
+
+    for(var i = 0, il = ssbondArray.length; i < il; i = i + 2) {
+        var resid1 = ssbondArray[i];
+        var resid2 = ssbondArray[i+1];
+
+        var chainid1 = resid1.substr(0, resid1.lastIndexOf('_'));
+        var chainid2 = resid2.substr(0, resid2.lastIndexOf('_'));
+
+        if(chainid === chainid1) {
+            if(resid2resids[resid1] === undefined) resid2resids[resid1] = [];
+            resid2resids[resid1].push(resid2);
+        }
+
+        if(chainid === chainid2) {
+            if(resid2resids[resid2] === undefined) resid2resids[resid2] = [];
+            resid2resids[resid2].push(resid1);
+        }
+    }
+
+    var residueArray = Object.keys(resid2resids);
+
+    var title = "Disulfide Bonds";
+
+    me.showAnnoType(chnid, chnidBase, 'ssbond', title, residueArray, resid2resids);
+
+
+/*
     var chainArray = Object.keys(me.icn3d.chains);
 
     //var chainid = chnid;
@@ -3040,17 +3090,151 @@ iCn3DUI.prototype.showSsbond_base = function(chnid, chnidBase) {
     $("#" + me.pre + "dt_ssbond_" + chnid).html(html);
     $("#" + me.pre + "ov_ssbond_" + chnid).html(html2);
     $("#" + me.pre + "tt_ssbond_" + chnid).html(html3);
+*/
+};
 
-/*
-    // add here after the ajax call
-    if(! me.isMobile()) {
-        me.selectSequenceNonMobile();
+iCn3DUI.prototype.showTransmem = function(chnid, chnidBase) { var me = this;
+    if(me.icn3d.ssbondpnts === undefined) {
+        // didn't finish loading atom data yet
+        setTimeout(function(){
+          me.showTransmem_base(chnid, chnidBase);
+        }, 1000);
     }
     else {
-        me.selectSequenceMobile();
-        me.selectChainMobile();
+        me.showTransmem_base(chnid, chnidBase);
     }
-*/
+};
+
+iCn3DUI.prototype.showTransmem_base = function(chnid, chnidBase) { var me = this;
+    var residHash = {};
+    for(var serial in me.icn3d.chains[chnidBase]) {
+        var atom = me.icn3d.atoms[serial];
+        if(atom.coord.z < me.icn3d.halfBilayerSize && atom.coord.z > -me.icn3d.halfBilayerSize) {
+            var resid = atom.structure + '_' + atom.chain + '_' + atom.resi;
+            residHash[resid] = 1;
+        }
+    }
+
+    var residueArray = Object.keys(residHash);
+    var title = "Transmembrane domain";
+
+    me.showAnnoType(chnid, chnidBase, 'transmem', title, residueArray);
+};
+
+iCn3DUI.prototype.showAnnoType = function(chnid, chnidBase, type, title, residueArray, resid2resids) { var me = this;
+//    var chainArray = Object.keys(me.icn3d.chains);
+
+    //var chainid = chnid;
+//    var chainid = chnidBase;
+
+//    var atom = me.icn3d.getFirstCalphaAtomObj(me.icn3d.chains[chainid]);
+
+    var html = '<div id="' + me.pre + chnid + '_' + type + 'seq_sequence" class="icn3d-dl_sequence">';
+    var html2 = html;
+    var html3 = html;
+
+//    var structure = chainid.substr(0, chainid.indexOf('_'));
+
+    if(residueArray.length == 0) {
+        $("#" + me.pre + "dt_" + type + "_" + chnid).html('');
+        $("#" + me.pre + "ov_" + type + "_" + chnid).html('');
+        $("#" + me.pre + "tt_" + type + "_" + chnid).html('');
+
+        return;
+    }
+
+    var fulltitle = title;
+
+    if(title.length > 17) title = title.substr(0, 17) + '...';
+
+    var resPosArray = [];
+    for(var i = 0, il = residueArray.length; i < il; ++i) {
+        var resid = residueArray[i];
+        var resi = Math.round(resid.substr(residueArray[i].lastIndexOf('_') + 1) );
+        resPosArray.push( resi );
+    }
+
+    var resCnt = resPosArray.length;
+
+    var chainnameNospace = type;
+
+    var htmlTmp2 = '<div class="icn3d-seqTitle icn3d-link icn3d-blue" ' + type + '="" posarray="' + resPosArray.toString() + '" shorttitle="' + title + '" setname="' + chnid + '_' + chainnameNospace + '" anno="sequence" chain="' + chnid + '" title="' + fulltitle + '">' + title + ' </div>';
+    var htmlTmp3 = '<span class="icn3d-residueNum" title="residue count">' + resCnt.toString() + ' Res</span>';
+
+    html3 += htmlTmp2 + htmlTmp3 + '<br>';
+
+    var htmlTmp = '<span class="icn3d-seqLine">';
+
+    html += htmlTmp2 + htmlTmp3 + htmlTmp;
+    html2 += htmlTmp2 + htmlTmp3 + htmlTmp;
+
+    var pre = type;
+
+    var prevEmptyWidth = 0;
+    var prevLineWidth = 0;
+    var widthPerRes = 1;
+
+    for(var i = 0, il = me.giSeq[chnid].length; i < il; ++i) {
+      html += me.insertGap(chnid, i, '-');
+
+      if(resPosArray.indexOf(i+1 + me.baseResi[chnid]) != -1) {
+          var cFull = me.giSeq[chnid][i];
+
+          var c = cFull;
+          if(cFull.length > 1) {
+              c = cFull[0] + '..';
+          }
+
+          var pos = (i >= me.matchedPos[chnid] && i - me.matchedPos[chnid] < me.icn3d.chainsSeq[chnid].length) ? me.icn3d.chainsSeq[chnid][i - me.matchedPos[chnid]].resi : me.baseResi[chnid] + 1 + i;
+
+          var resid = chnid + '_' + (i+1 + me.baseResi[chnid]).toString();
+          var title = cFull + (i+1 + me.baseResi[chnid]).toString();
+          if(type == 'ssbond') {
+              title = 'Residue ' + resid + ' has disulfide bond with';
+              if(resid2resids[resid] !== undefined) {
+                  for(var j = 0, jl = resid2resids[resid].length; j < jl; ++j) {
+                      title += ' residue ' + resid2resids[resid][j];
+                  }
+              }
+          }
+
+          html += '<span id="' + pre + '_' + me.pre + chnid + '_' + pos + '" title="' + title + '" class="icn3d-residue">' + c + '</span>';
+
+          html2 += me.insertGapOverview(chnid, i);
+
+          var emptyWidth = (me.cfg.blast_rep_id == chnid) ? Math.round(me.seqAnnWidth * i / (me.maxAnnoLength + me.nTotalGap) - prevEmptyWidth - prevLineWidth) : Math.round(me.seqAnnWidth * i / me.maxAnnoLength - prevEmptyWidth - prevLineWidth);
+
+            //if(emptyWidth < 0) emptyWidth = 0;
+
+            if(emptyWidth >= 0) {
+            html2 += '<div style="display:inline-block; width:' + emptyWidth + 'px;">&nbsp;</div>';
+            html2 += '<div style="display:inline-block; background-color:#000; width:' + widthPerRes + 'px;" title="' + title + '">&nbsp;</div>';
+
+            prevEmptyWidth += emptyWidth;
+            prevLineWidth += widthPerRes;
+            }
+      }
+      else {
+        html += '<span>-</span>'; //'<span>-</span>';
+      }
+    }
+
+    htmlTmp = '<span class="icn3d-residueNum" title="residue count">&nbsp;' + resCnt.toString() + ' Residues</span>';
+    htmlTmp += '</span>';
+    htmlTmp += '<br>';
+
+    html += htmlTmp;
+    html2 += htmlTmp;
+
+
+    html += '</div>';
+    html2 += '</div>';
+    html3 += '</div>';
+
+    $("#" + me.pre + "dt_" + type + "_" + chnid).html(html);
+    $("#" + me.pre + "ov_" + type + "_" + chnid).html(html2);
+    $("#" + me.pre + "tt_" + type + "_" + chnid).html(html3);
+
 };
 
 iCn3DUI.prototype.hideAllAnno = function() { var me = this;
@@ -3062,6 +3246,7 @@ iCn3DUI.prototype.hideAllAnno = function() { var me = this;
         $("[id^=" + me.pre + "interaction]").hide();
         $("[id^=" + me.pre + "custom]").hide();
         $("[id^=" + me.pre + "ssbond]").hide();
+        $("[id^=" + me.pre + "transmem]").hide();
 };
 
 iCn3DUI.prototype.setAnnoTabAll = function () {  var me = this;
@@ -3075,6 +3260,7 @@ iCn3DUI.prototype.setAnnoTabAll = function () {  var me = this;
     if($("#" + me.pre + "anno_interact").length) $("#" + me.pre + "anno_interact")[0].checked = true;
     if($("#" + me.pre + "anno_custom").length) $("#" + me.pre + "anno_custom")[0].checked = true;
     if($("#" + me.pre + "anno_ssbond").length) $("#" + me.pre + "anno_ssbond")[0].checked = true;
+    if($("#" + me.pre + "anno_transmem").length) $("#" + me.pre + "anno_transmem")[0].checked = true;
 
     //$("[id^=" + me.pre + "custom]").show();
     $("[id^=" + me.pre + "site]").show();
@@ -3085,11 +3271,13 @@ iCn3DUI.prototype.setAnnoTabAll = function () {  var me = this;
     $("[id^=" + me.pre + "interaction]").show();
     $("[id^=" + me.pre + "custom]").show();
     $("[id^=" + me.pre + "ssbond]").show();
+    $("[id^=" + me.pre + "transmem]").show();
 
     me.updateSnpClinvar();
     me.updateDomain();
     me.updateInteraction();
     me.updateSsbond();
+    me.updateTransmem();
 };
 
 iCn3DUI.prototype.hideAnnoTabAll = function () {  var me = this;
@@ -3103,6 +3291,7 @@ iCn3DUI.prototype.hideAnnoTabAll = function () {  var me = this;
     if($("#" + me.pre + "anno_interact").length) $("#" + me.pre + "anno_interact")[0].checked = false;
     if($("#" + me.pre + "anno_custom").length) $("#" + me.pre + "anno_custom")[0].checked = false;
     if($("#" + me.pre + "anno_ssbond").length) $("#" + me.pre + "anno_ssbond")[0].checked = false;
+    if($("#" + me.pre + "anno_transmem").length) $("#" + me.pre + "anno_transmem")[0].checked = false;
 
     me.hideAllAnno();
 };
@@ -3195,6 +3384,18 @@ iCn3DUI.prototype.setAnnoTabSsbond = function () {  var me = this;
 iCn3DUI.prototype.hideAnnoTabSsbond = function () {  var me = this;
     $("[id^=" + me.pre + "ssbond]").hide();
     if($("#" + me.pre + "anno_ssbond").length) $("#" + me.pre + "anno_ssbond")[0].checked = false;
+};
+
+iCn3DUI.prototype.setAnnoTabTransmem = function () {  var me = this;
+    $("[id^=" + me.pre + "transmem]").show();
+    if($("#" + me.pre + "anno_transmem").length) $("#" + me.pre + "anno_transmem")[0].checked = true;
+
+    me.updateTransmem();
+};
+
+iCn3DUI.prototype.hideAnnoTabTransmem = function () {  var me = this;
+    $("[id^=" + me.pre + "transmem]").hide();
+    if($("#" + me.pre + "anno_transmem").length) $("#" + me.pre + "anno_transmem")[0].checked = false;
 };
 
 iCn3DUI.prototype.setTabs = function () {  var me = this;
@@ -3292,6 +3493,17 @@ iCn3DUI.prototype.setTabs = function () {  var me = this;
     else{
         me.hideAnnoTabSsbond();
         me.setLogCmd("hide annotation ssbond", true);
+    }
+    });
+
+    $("#" + me.pre + "anno_transmem").click(function (e) {
+    if($("#" + me.pre + "anno_transmem").length && $("#" + me.pre + "anno_transmem")[0].checked) {
+        me.setAnnoTabTransmem();
+        me.setLogCmd("set annotation transmembrane", true);
+    }
+    else{
+        me.hideAnnoTabTransmem();
+        me.setLogCmd("hide annotation transmembrane", true);
     }
     });
 };
@@ -3395,6 +3607,7 @@ iCn3DUI.prototype.showFixedTitle = function() { var me = this;
         $("[id^=" + me.pre + "tt_domain]").attr('style', style);
         $("[id^=" + me.pre + "tt_interaction]").attr('style', style);
         $("[id^=" + me.pre + "tt_ssbond]").attr('style', style);
+        $("[id^=" + me.pre + "tt_transmem]").attr('style', style);
 };
 
 iCn3DUI.prototype.hideFixedTitle = function() { var me = this;
@@ -3408,6 +3621,7 @@ iCn3DUI.prototype.hideFixedTitle = function() { var me = this;
         $("[id^=" + me.pre + "tt_domain]").attr('style', style);
         $("[id^=" + me.pre + "tt_interaction]").attr('style', style);
         $("[id^=" + me.pre + "tt_ssbond]").attr('style', style);
+        $("[id^=" + me.pre + "tt_transmem]").attr('style', style);
 };
 
 iCn3DUI.prototype.setAnnoViewAndDisplay = function(view) { var me = this;
@@ -3424,6 +3638,7 @@ iCn3DUI.prototype.setAnnoViewAndDisplay = function(view) { var me = this;
         $("[id^=" + me.pre + "dt_domain]").attr('style', style);
         $("[id^=" + me.pre + "dt_interaction]").attr('style', style);
         $("[id^=" + me.pre + "dt_ssbond]").attr('style', style);
+        $("[id^=" + me.pre + "dt_transmem]").attr('style', style);
 
         $("#" + me.pre + "seqguide_wrapper").attr('style', style);
 
@@ -3437,6 +3652,7 @@ iCn3DUI.prototype.setAnnoViewAndDisplay = function(view) { var me = this;
         $("[id^=" + me.pre + "ov_domain]").attr('style', style);
         $("[id^=" + me.pre + "ov_interaction]").attr('style', style);
         $("[id^=" + me.pre + "ov_ssbond]").attr('style', style);
+        $("[id^=" + me.pre + "ov_transmem]").attr('style', style);
     }
     else { // overview
         me.setAnnoView('overview');
@@ -3453,6 +3669,7 @@ iCn3DUI.prototype.setAnnoViewAndDisplay = function(view) { var me = this;
         $("[id^=" + me.pre + "dt_domain]").attr('style', style);
         $("[id^=" + me.pre + "dt_interaction]").attr('style', style);
         $("[id^=" + me.pre + "dt_ssbond]").attr('style', style);
+        $("[id^=" + me.pre + "dt_transmem]").attr('style', style);
 
         $("#" + me.pre + "seqguide_wrapper").attr('style', style);
 
@@ -3466,6 +3683,7 @@ iCn3DUI.prototype.setAnnoViewAndDisplay = function(view) { var me = this;
         $("[id^=" + me.pre + "ov_domain]").attr('style', style);
         $("[id^=" + me.pre + "ov_interaction]").attr('style', style);
         $("[id^=" + me.pre + "ov_ssbond]").attr('style', style);
+        $("[id^=" + me.pre + "ov_transmem]").attr('style', style);
     }
 };
 

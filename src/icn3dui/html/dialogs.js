@@ -274,6 +274,11 @@ iCn3DUI.prototype.openDialog = function (id, title) {  var me = this;
             if(me.isMobile()) {
                 position ={ my: "left top", at: "left bottom-50", of: "#" + me.pre + "canvas", collision: "none" };
             }
+            else if(id === me.pre + 'dl_allinteraction') {
+                position ={ my: "right top", at: "right top+50", of: "#" + me.pre + "canvas", collision: "none" };
+
+                height = 300;
+            }
             else {
                 position ={ my: "left top", at: "left top+50", of: "#" + me.pre + "canvas", collision: "none" };
             }

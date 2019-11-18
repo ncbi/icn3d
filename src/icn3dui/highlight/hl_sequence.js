@@ -245,8 +245,8 @@ iCn3DUI.prototype.selectTitle = function(that) { var me = this;
 
 iCn3DUI.prototype.selectSequenceNonMobile = function() { var me = this;
   //$("#" + me.pre + "dl_sequence").add("#" + me.pre + "dl_sequence2").add("#" + me.pre + "dl_annotations").selectable({
-  $("#" + me.pre + "dl_sequence2").add("[id^=" + me.pre + "dt_giseq]").add("[id^=" + me.pre + "dt_site]").add("[id^=" + me.pre + "dt_snp]").add("[id^=" + me.pre + "dt_clinvar]").add("[id^=" + me.pre + "dt_cdd]").add("[id^=" + me.pre + "dt_domain]").add("[id^=" + me.pre + "dt_interaction]").add("[id^=" + me.pre + "dt_ssbond]")
-  .add("[id^=" + me.pre + "tt_giseq]").add("[id^=" + me.pre + "tt_site]").add("[id^=" + me.pre + "tt_snp]").add("[id^=" + me.pre + "tt_clinvar]").add("[id^=" + me.pre + "tt_cdd]").add("[id^=" + me.pre + "tt_domain]").add("[id^=" + me.pre + "tt_interaction]").add("[id^=" + me.pre + "tt_ssbond]")
+  $("#" + me.pre + "dl_sequence2").add("[id^=" + me.pre + "dt_giseq]").add("[id^=" + me.pre + "dt_site]").add("[id^=" + me.pre + "dt_snp]").add("[id^=" + me.pre + "dt_clinvar]").add("[id^=" + me.pre + "dt_cdd]").add("[id^=" + me.pre + "dt_domain]").add("[id^=" + me.pre + "dt_interaction]").add("[id^=" + me.pre + "dt_ssbond]").add("[id^=" + me.pre + "dt_transmem]")
+  .add("[id^=" + me.pre + "tt_giseq]").add("[id^=" + me.pre + "tt_site]").add("[id^=" + me.pre + "tt_snp]").add("[id^=" + me.pre + "tt_clinvar]").add("[id^=" + me.pre + "tt_cdd]").add("[id^=" + me.pre + "tt_domain]").add("[id^=" + me.pre + "tt_interaction]").add("[id^=" + me.pre + "tt_ssbond]").add("[id^=" + me.pre + "tt_transmem]")
   .selectable({
   //$(".icn3d-dl_sequence").selectable({
       stop: function() {
@@ -310,8 +310,8 @@ iCn3DUI.prototype.selectSequenceNonMobile = function() { var me = this;
       }
   });
 
-  $("[id^=" + me.pre + "ov_giseq]").add("[id^=" + me.pre + "ov_site]").add("[id^=" + me.pre + "ov_snp]").add("[id^=" + me.pre + "ov_clinvar]").add("[id^=" + me.pre + "ov_cdd]").add("[id^=" + me.pre + "ov_domain]").add("[id^=" + me.pre + "ov_interaction]").add("[id^=" + me.pre + "ov_ssbond]")
-  .add("[id^=" + me.pre + "tt_giseq]").add("[id^=" + me.pre + "tt_site]").add("[id^=" + me.pre + "tt_snp]").add("[id^=" + me.pre + "tt_clinvar]").add("[id^=" + me.pre + "tt_cdd]").add("[id^=" + me.pre + "tt_domain]").add("[id^=" + me.pre + "tt_interaction]").add("[id^=" + me.pre + "tt_ssbond]")
+  $("[id^=" + me.pre + "ov_giseq]").add("[id^=" + me.pre + "ov_site]").add("[id^=" + me.pre + "ov_snp]").add("[id^=" + me.pre + "ov_clinvar]").add("[id^=" + me.pre + "ov_cdd]").add("[id^=" + me.pre + "ov_domain]").add("[id^=" + me.pre + "ov_interaction]").add("[id^=" + me.pre + "ov_ssbond]").add("[id^=" + me.pre + "ov_transmem]")
+  .add("[id^=" + me.pre + "tt_giseq]").add("[id^=" + me.pre + "tt_site]").add("[id^=" + me.pre + "tt_snp]").add("[id^=" + me.pre + "tt_clinvar]").add("[id^=" + me.pre + "tt_cdd]").add("[id^=" + me.pre + "tt_domain]").add("[id^=" + me.pre + "tt_interaction]").add("[id^=" + me.pre + "tt_ssbond]").add("[id^=" + me.pre + "tt_transmem]")
   .on('click', '.icn3d-seqTitle', function(e) {
       e.stopImmediatePropagation();
 
@@ -324,6 +324,17 @@ iCn3DUI.prototype.selectSequenceNonMobile = function() { var me = this;
 
           me.hlSummaryDomain3ddomain(this);
        //});
+
+        // remove possible text selection
+        if (window.getSelection) {
+          if (window.getSelection().empty) {  // Chrome
+            window.getSelection().empty();
+          } else if (window.getSelection().removeAllRanges) {  // Firefox
+            window.getSelection().removeAllRanges();
+          }
+        } else if (document.selection) {  // IE?
+          document.selection.empty();
+        }
   });
 };
 
@@ -348,7 +359,7 @@ iCn3DUI.prototype.hlSummaryDomain3ddomain = function(that) { var me = this;
 };
 
 iCn3DUI.prototype.selectSequenceMobile = function() { var me = this;
-  $("#" + me.pre + "dl_sequence2").add("[id^=" + me.pre + "giseq]").add("[id^=" + me.pre + "site]").add("[id^=" + me.pre + "clinvar]").add("[id^=" + me.pre + "snp]").add("[id^=" + me.pre + "cdd]").add("[id^=" + me.pre + "domain]").add("[id^=" + me.pre + "interaction]").add("[id^=" + me.pre + "ssbond]").on('click', '.icn3d-residue', function(e) {
+  $("#" + me.pre + "dl_sequence2").add("[id^=" + me.pre + "giseq]").add("[id^=" + me.pre + "site]").add("[id^=" + me.pre + "clinvar]").add("[id^=" + me.pre + "snp]").add("[id^=" + me.pre + "cdd]").add("[id^=" + me.pre + "domain]").add("[id^=" + me.pre + "interaction]").add("[id^=" + me.pre + "ssbond]").add("[id^=" + me.pre + "transmem]").on('click', '.icn3d-residue', function(e) {
   //$(".icn3d-dl_sequence").on('click', '.icn3d-residue', function(e) {
       e.stopImmediatePropagation();
 
@@ -404,7 +415,7 @@ iCn3DUI.prototype.selectSequenceMobile = function() { var me = this;
 };
 
 iCn3DUI.prototype.selectChainMobile = function() { var me = this;
-  $("#" + me.pre + "dl_sequence2").add("[id^=" + me.pre + "giseq]").add("[id^=" + me.pre + "site]").add("[id^=" + me.pre + "clinvar]").add("[id^=" + me.pre + "snp]").add("[id^=" + me.pre + "cdd]").add("[id^=" + me.pre + "domain]").add("[id^=" + me.pre + "interaction]").add("[id^=" + me.pre + "ssbond]").on('click', '.icn3d-seqTitle', function(e) {
+  $("#" + me.pre + "dl_sequence2").add("[id^=" + me.pre + "giseq]").add("[id^=" + me.pre + "site]").add("[id^=" + me.pre + "clinvar]").add("[id^=" + me.pre + "snp]").add("[id^=" + me.pre + "cdd]").add("[id^=" + me.pre + "domain]").add("[id^=" + me.pre + "interaction]").add("[id^=" + me.pre + "ssbond]").add("[id^=" + me.pre + "transmem]").on('click', '.icn3d-seqTitle', function(e) {
   //$(".icn3d-dl_sequence").on('click', '.icn3d-seqTitle', function(e) {
       e.stopImmediatePropagation();
 

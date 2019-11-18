@@ -881,6 +881,9 @@ iCn3DUI.prototype.applyCommand = function (commandStr) { var me = this;
   else if(command == 'set annotation ssbond') {
       me.setAnnoTabSsbond();
   }
+  else if(command == 'set annotation transmembrane') {
+      me.setAnnoTabTransmem();
+  }
   else if(command == 'highlight level up') {
       me.switchHighlightLevelUp();
   }
@@ -917,6 +920,9 @@ iCn3DUI.prototype.applyCommand = function (commandStr) { var me = this;
       }
       else if(type == 'ssbond') {
           me.hideAnnoTabSsbond();
+      }
+      else if(type == 'transmembrane') {
+          me.hideAnnoTabTransmem();
       }
   }
   else if(command == 'add residue labels') {
@@ -1375,6 +1381,15 @@ iCn3DUI.prototype.applyCommand = function (commandStr) { var me = this;
         me.selectBtwPlanes(large, small);
     }
   }
+  else if(command.indexOf('adjust membrane z-axis') == 0) {
+    var paraArray = command.split(' ');
+    if(paraArray.length == 5) {
+        var large = parseFloat(paraArray[3]);
+        var small = parseFloat(paraArray[4]);
+
+        me.adjustMembrane(large, small);
+    }
+  }
 
 // start with, single word =============
   else if(command.indexOf('pickatom') == 0) {
@@ -1405,7 +1420,7 @@ iCn3DUI.prototype.applyCommand = function (commandStr) { var me = this;
 
     if(!isNaN(threshold)) me.showHbonds(threshold, nameArray, nameArray2);
   }
-  else if(commandOri.indexOf('salt bridge') == 0) {
+  else if(commandOri.indexOf('salt bridges') == 0) {
     if(me.bSetChainsAdvancedMenu === undefined || !me.bSetChainsAdvancedMenu) {
        me.setPredefinedInMenu();
 

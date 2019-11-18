@@ -2,7 +2,7 @@
  * @author Jiyao Wang <wangjiy@ncbi.nlm.nih.gov> / https://github.com/ncbi/icn3d
  */
 
-// get hbonds between "molecule" and "chemical"
+// get hbonds
 iCn3D.prototype.calculateChemicalHbonds = function (startAtoms, targetAtoms, threshold, bSaltbridge) { var me = this;
     if(Object.keys(startAtoms).length === 0 || Object.keys(targetAtoms).length === 0) return;
 
@@ -19,7 +19,8 @@ iCn3D.prototype.calculateChemicalHbonds = function (startAtoms, targetAtoms, thr
       // salt bridge: calculate hydrogen bond between Lys/Arg and Glu/Asp
       // hbonds: calculate hydrogen bond
       var bAtomCond = (bSaltbridge !== undefined && bSaltbridge) ? ( (atom.resn === 'ARG' || atom.resn === 'LYS') && atom.elem === "N" && atom.name !== "N")
-        || ( (atom.resn === 'GLU' || atom.resn === 'ASP') && atom.elem === "O" && atom.name !== "O") : atom.elem === "N" || atom.elem === "O" || atom.elem === "F";
+        || ( (atom.resn === 'GLU' || atom.resn === 'ASP') && atom.elem === "O" && atom.name !== "O")
+        || (atom.het && (atom.elem === "N" || atom.elem === "O" || atom.elem === "F") ): atom.elem === "N" || atom.elem === "O" || atom.elem === "F";
 
       bAtomCond = (this.bOpm) ? bAtomCond && atom.resn !== 'DUM' : bAtomCond;
 
@@ -40,9 +41,15 @@ iCn3D.prototype.calculateChemicalHbonds = function (startAtoms, targetAtoms, thr
       // salt bridge: calculate hydrogen bond between Lys/Arg and Glu/Asp
       // hbonds: calculate hydrogen bond
       var bAtomCond = (bSaltbridge !== undefined && bSaltbridge) ? ( (atom.resn === 'ARG' || atom.resn === 'LYS') && atom.elem === "N" && atom.name !== "N")
-        || ( (atom.resn === 'GLU' || atom.resn === 'ASP') && atom.elem === "O" && atom.name !== "O") : atom.elem === "N" || atom.elem === "O" || atom.elem === "F";
+        || ( (atom.resn === 'GLU' || atom.resn === 'ASP') && atom.elem === "O" && atom.name !== "O")
+        || (atom.het && (atom.elem === "N" || atom.elem === "O" || atom.elem === "F") ): atom.elem === "N" || atom.elem === "O" || atom.elem === "F";
 
       bAtomCond = (this.bOpm) ? bAtomCond && atom.resn !== 'DUM' : bAtomCond;
+
+      var bondAtoms = [];
+      for(var k = 0, kl = atom.bonds.length; k < kl; ++k) {
+          bondAtoms.push(this.atoms[atom.bonds[k]]);
+      }
 
       var currResiHash = {};
       if(bAtomCond) {
@@ -76,6 +83,98 @@ iCn3D.prototype.calculateChemicalHbonds = function (startAtoms, targetAtoms, thr
 
           var dist = xdiff * xdiff + ydiff * ydiff + zdiff * zdiff;
           if(dist > maxlengthSq) continue;
+
+          // https://www.rcsb.org/pages/help/3dview#ligand-view
+          // exclude pairs accordingto angles
+          var bondAtoms2 = [];
+          for(var k = 0, kl = atomHbond[j].bonds.length; k < kl; ++k) {
+              bondAtoms2.push(this.atoms[atomHbond[j].bonds[k]]);
+          }
+
+          // The angles DA-D-A and D-A-AA should be between 45 and 135 degree, or between Math.PI * 0.25 and Math.PI * 0.75
+          var angleMin = Math.PI * 0.25, angleMax = Math.PI * 0.75;
+          var v1 = new THREE.Vector3(atom.coord.x, atom.coord.y, atom.coord.z);
+          var v2 = new THREE.Vector3(atomHbond[j].coord.x, atomHbond[j].coord.y, atomHbond[j].coord.z);
+          var v12 = v2.clone().sub(v1);
+          var v21 = v1.clone().sub(v2);
+          var v0 = new THREE.Vector3(0,0,0);
+
+          var bValid = true;
+
+          for(var k = 0, kl = bondAtoms.length; k < kl && !v12.equals(v0); ++k) {
+              var va = new THREE.Vector3(bondAtoms[k].coord.x, bondAtoms[k].coord.y, bondAtoms[k].coord.z);
+              var v1a = va.clone().sub(v1);
+              if( v1a.equals(v0) ) {
+                  continue;
+              }
+
+              var rad = v1a.clone().angleTo(v12);
+              if(rad < angleMin || rad > angleMax) {
+                  bValid = false;
+                  break;
+              }
+          }
+          if(!bValid) continue;
+
+          for(var k = 0, kl = bondAtoms2.length; k < kl && !v21.equals(v0); ++k) {
+              var vb = new THREE.Vector3(bondAtoms2[k].coord.x, bondAtoms2[k].coord.y, bondAtoms2[k].coord.z);
+              var v2b = vb.clone().sub(v2);
+              if( v2b.equals(v0) ) {
+                  continue;
+              }
+
+              var rad = v2b.clone().angleTo(v21);
+              if(rad < angleMin || rad > angleMax) {
+                  bValid = false;
+                  break;
+              }
+          }
+          if(!bValid) continue;
+
+          // The angle between DA and AA-A-AA' (or DA-D-DA') should be < 90 degree, or < Math.PI * 0.5
+          angleMax = Math.PI * 0.5;
+
+          if(bondAtoms.length > 1) {
+              var v1a = new THREE.Vector3(bondAtoms[0].coord.x, bondAtoms[0].coord.y, bondAtoms[0].coord.z);
+              var v1b = new THREE.Vector3(bondAtoms[1].coord.x, bondAtoms[1].coord.y, bondAtoms[1].coord.z);
+              var plane1 = new THREE.Plane().setFromCoplanarPoints ( v1, v1a, v1b);
+
+              var normal = plane1.normal;
+
+              var vOnPlane = v12.clone().projectOnPlane(normal);
+
+              if( v12.equals(v0) || vOnPlane.equals(v0)) {
+                  continue;
+              }
+
+              var rad = v12.clone().angleTo(vOnPlane);
+              if(rad > angleMax) {
+                  bValid = false;
+                  break;
+              }
+          }
+          if(!bValid) continue;
+
+          if(bondAtoms2.length > 1) {
+              var v2a = new THREE.Vector3(bondAtoms2[0].coord.x, bondAtoms2[0].coord.y, bondAtoms2[0].coord.z);
+              var v2b = new THREE.Vector3(bondAtoms2[1].coord.x, bondAtoms2[1].coord.y, bondAtoms2[1].coord.z);
+              var plane2 = new THREE.Plane().setFromCoplanarPoints ( v2, v2a, v2b);
+
+              var normal = plane2.normal;
+
+              var vOnPlane = v21.clone().projectOnPlane(normal);
+
+              if( v21.equals(v0) || vOnPlane.equals(v0)) {
+                  continue;
+              }
+
+              var rad = v21.clone().angleTo(vOnPlane);
+              if(rad > angleMax) {
+                  bValid = false;
+                  break;
+              }
+          }
+          if(!bValid) continue;
 
           // output hydrogen bonds
           if(bSaltbridge !== undefined && bSaltbridge) {
@@ -168,7 +267,7 @@ iCn3D.prototype.getChainsFromAtoms = function(atomsHash) {
  };
 
  // modified from iview (http://istar.cse.cuhk.edu.hk/iview/)
- iCn3D.prototype.getAtomsWithinAtom = function(atomlist, atomlistTarget, distance, bGetPairs) { var me = this;
+ iCn3D.prototype.getAtomsWithinAtom = function(atomlist, atomlistTarget, distance, bGetPairs, bInteraction) { var me = this;
     var neighbors = this.getNeighboringAtoms(atomlist, atomlistTarget, distance);
 
     if(bGetPairs) me.resid2Residhash = {};
@@ -202,6 +301,7 @@ iCn3D.prototype.getChainsFromAtoms = function(atomsHash) {
 
            if(atomDistSq < maxDistSq) {
                 ret[atom.serial] = atom;
+                if(bInteraction) ret[oriAtom.serial] = oriAtom;
 
                 var residName;
                 if(bGetPairs) {
