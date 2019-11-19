@@ -5827,19 +5827,6 @@ iCn3DUI.prototype = {
         });
     },
 
-    getCommandPerNameArray: function(nameArray) { var me = this;
-            if(nameArray[i] === 'non-selected') { // select all hAtoms
-               var currAtoms = {};
-               for(var i in me.icn3d.atoms) {
-                   if(!me.icn3d.hAtoms.hasOwnProperty(i) && me.icn3d.dAtoms.hasOwnProperty(i)) {
-                       currAtoms[i] = me.icn3d.atoms[i];
-                   }
-               }
-               otherAtoms = me.icn3d.unionHash(otherAtoms, currAtoms);
-            }
-
-    },
-
     viewInteractionPairs: function(nameArray2, nameArray, bHbond, bSaltbridge, bInteraction) { var me = this;
        me.icn3d.bRender = false;
        var hAtoms = {};
