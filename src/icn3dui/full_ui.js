@@ -1162,29 +1162,39 @@ iCn3DUI.prototype = {
        return residuesHash;
     },
 
+    getAtomsFromNameArray: function (nameArray) {   var me = this;
+        var selAtoms = {};
+
+        for(var i = 0, il = nameArray.length; i < il; ++i) {
+            if(nameArray[i] === 'non-selected') { // select all hAtoms
+               var currAtoms = {};
+               for(var i in me.icn3d.atoms) {
+                   if(!me.icn3d.hAtoms.hasOwnProperty(i) && me.icn3d.dAtoms.hasOwnProperty(i)) {
+                       currAtoms[i] = me.icn3d.atoms[i];
+                   }
+               }
+               selAtoms = me.icn3d.unionHash(selAtoms, currAtoms);
+            }
+            else if(nameArray[i] === 'selected') {
+                selAtoms = me.icn3d.unionHash(selAtoms, me.icn3d.hash2Atoms(me.icn3d.hAtoms) );
+            }
+            else {
+                selAtoms = me.icn3d.unionHash(selAtoms, me.icn3d.hash2Atoms(me.getAtomsFromSets(nameArray[i])) );
+            }
+        }
+        if(nameArray.length == 0) selAtoms = me.icn3d.atoms;
+
+        return selAtoms;
+    },
+
     pickCustomSphere: function (radius, nameArray2, nameArray, bInteraction) {   var me = this; // me.icn3d.pAtom is set already
 //        me.removeHlMenus();
 
         var select = "select zone cutoff " + radius + " | sets " + nameArray2 + " " + nameArray;
         if(bInteraction) select = "interactions " + radius + " | sets " + nameArray2 + " " + nameArray;
 
-        var atomlistTarget = {}, otherAtoms = {};
-        if(nameArray2[0] === 'selected') {
-            atomlistTarget = me.icn3d.hash2Atoms(me.icn3d.hAtoms);
-        }
-        else {
-            atomlistTarget = me.icn3d.hash2Atoms(me.getAtomsFromSets(nameArray2));
-        }
-
-        if(nameArray.length == 0 || nameArray[0] === 'non-selected' || nameArray[0] === 'all') { // select all hAtoms
-            otherAtoms = me.icn3d.atoms;
-        }
-        else if(nameArray[0] === 'selected') {
-            otherAtoms = me.icn3d.hash2Atoms(me.icn3d.hAtoms);
-        }
-        else {
-            otherAtoms = me.icn3d.hash2Atoms(me.getAtomsFromSets(nameArray));
-        }
+        var atomlistTarget = me.getAtomsFromNameArray(nameArray2);
+        var otherAtoms = me.getAtomsFromNameArray(nameArray);
 
         // select all atom, not just displayed atoms
         var bGetPairs = true;
@@ -1254,27 +1264,8 @@ iCn3DUI.prototype = {
         me.icn3d.opts[hbonds_saltbridge] = "yes";
         me.icn3d.opts["water"] = "dot";
 
-        var firstSetAtoms = {}, complement = {};
-        if(nameArray2[0] === 'selected') {
-            firstSetAtoms = me.icn3d.hash2Atoms(me.icn3d.hAtoms);
-        }
-        else {
-            firstSetAtoms = me.icn3d.hash2Atoms(me.getAtomsFromSets(nameArray2));
-        }
-
-        if(nameArray.length == 0 || nameArray[0] === 'non-selected' || nameArray[0] === 'all') {
-           for(var i in me.icn3d.atoms) {
-               if(!firstSetAtoms.hasOwnProperty(i) && me.icn3d.dAtoms.hasOwnProperty(i)) {
-                   complement[i] = me.icn3d.atoms[i];
-               }
-           }
-        }
-        else if(nameArray[0] === 'selected') {
-            complement = me.icn3d.hash2Atoms(me.icn3d.hAtoms);
-        }
-        else {
-            complement = me.icn3d.hash2Atoms(me.getAtomsFromSets(nameArray));
-        }
+        var firstSetAtoms = me.getAtomsFromNameArray(nameArray2);
+        var complement = me.getAtomsFromNameArray(nameArray);
 
         var firstAtom = me.icn3d.getFirstAtomObj(firstSetAtoms);
 
@@ -5840,7 +5831,19 @@ iCn3DUI.prototype = {
        me.icn3d.bRender = false;
        var hAtoms = {};
        var prevHatoms = me.icn3d.cloneHash(me.icn3d.hAtoms);
-       var html = '';
+       var html = '<b>Hydrogen Bonds, Salt Bridges, or Interactions between Two Sets:</b><br>';
+
+       var atomSet1 = me.getAtomsFromNameArray(nameArray2);
+       var atomSet2 = me.getAtomsFromNameArray(nameArray);
+
+       var residueArray1 = me.atoms2residues(Object.keys(atomSet1));
+       var residueArray2 = me.atoms2residues(Object.keys(atomSet2));
+
+       var cmd1 = 'select ' + me.residueids2spec(residueArray1);
+       var cmd2 = 'select ' + me.residueids2spec(residueArray2);
+
+       html += 'Set 1: ' + nameArray2 + ' <button class="' + me.pre + 'selset" cmd="' + cmd1 + '">Highlight in 3D</button><br>';
+       html += 'Set 2: ' + nameArray + ' <button class="' + me.pre + 'selset" cmd="' + cmd2 + '">Highlight in 3D</button><br><br>';
 
        var interactionTypes = '';
 
@@ -6348,6 +6351,7 @@ iCn3DUI.prototype = {
     },
 
     clickResidueOnInteraction: function() { var me = this;
+        // highlight a pair residues
         $(document).on("click", "." + me.pre + "selres", function(e) {
               e.stopImmediatePropagation();
 
@@ -6377,6 +6381,20 @@ iCn3DUI.prototype = {
                   }
                   me.selectedResidues[resid] = 1;
               }
+
+              me.icn3d.removeHlObjects();  // render() is called
+              me.icn3d.addHlObjects();  // render() is called
+
+              me.setLogCmd(cmd, true);
+        });
+
+        // highlight a set of residues
+        $(document).on("click", "." + me.pre + "selset", function(e) {
+              e.stopImmediatePropagation();
+
+              var cmd = $(this).attr('cmd');
+
+              me.selectByCommand(cmd, '', '');
 
               me.icn3d.removeHlObjects();  // render() is called
               me.icn3d.addHlObjects();  // render() is called
