@@ -1162,11 +1162,11 @@ iCn3DUI.prototype = {
        return residuesHash;
     },
 
-    pickCustomSphere: function (radius, nameArray, nameArray2, bInteraction) {   var me = this; // me.icn3d.pAtom is set already
+    pickCustomSphere: function (radius, nameArray2, nameArray, bInteraction) {   var me = this; // me.icn3d.pAtom is set already
 //        me.removeHlMenus();
 
-        var select = "select zone cutoff " + radius + " | sets " + nameArray + " " + nameArray2;
-        if(bInteraction) select = "interactions " + radius + " | sets " + nameArray + " " + nameArray2;
+        var select = "select zone cutoff " + radius + " | sets " + nameArray2 + " " + nameArray;
+        if(bInteraction) select = "interactions " + radius + " | sets " + nameArray2 + " " + nameArray;
 
         var atomlistTarget = {}, otherAtoms = {};
         if(nameArray2[0] === 'selected') {
@@ -1240,15 +1240,15 @@ iCn3DUI.prototype = {
     },
 
     // between the highlighted and atoms in nameArray
-    showHbonds: function (threshold, nameArray, nameArray2, bSaltbridge) { var me = this;
+    showHbonds: function (threshold, nameArray2, nameArray, bSaltbridge) { var me = this;
         var hbonds_saltbridge, select;
         if(bSaltbridge !== undefined && bSaltbridge) {
             hbonds_saltbridge = 'saltbridge';
-            select = 'salt bridge ' + threshold + ' | sets ' + nameArray + " " + nameArray2;
+            select = 'salt bridge ' + threshold + ' | sets ' + nameArray2 + " " + nameArray;
         }
         else {
             hbonds_saltbridge = 'hbonds';
-            select = 'hbonds ' + threshold + ' | sets ' + nameArray + " " + nameArray2;
+            select = 'hbonds ' + threshold + ' | sets ' + nameArray2 + " " + nameArray;
         }
 
         me.icn3d.opts[hbonds_saltbridge] = "yes";
@@ -5558,9 +5558,9 @@ iCn3DUI.prototype = {
                 alert("Please select the first set at step #1");
             }
             else {
-                var select = "select zone cutoff " + radius + " | sets " + nameArray + " " + nameArray2;
+                var select = "select zone cutoff " + radius + " | sets " + nameArray2 + " " + nameArray;
 
-                if(!me.bSphereCalc) me.pickCustomSphere(radius, nameArray, nameArray2);
+                if(!me.bSphereCalc) me.pickCustomSphere(radius, nameArray2, nameArray);
                 me.bSphereCalc = true;
 
                 me.updateHlAll();
@@ -5581,7 +5581,7 @@ iCn3DUI.prototype = {
                 alert("Please select the first set at step #1");
             }
             else {
-                if(!me.bSphereCalc) me.pickCustomSphere(radius, nameArray, nameArray2);
+                if(!me.bSphereCalc) me.pickCustomSphere(radius, nameArray2, nameArray);
                 me.bSphereCalc = true;
 
                 me.setLogCmd("export pairs in the sphere", false);
@@ -5762,11 +5762,11 @@ iCn3DUI.prototype = {
                if($("#" + me.pre + "analysis_hbond")[0].checked) {
                    var threshold = parseFloat($("#" + me.pre + "hbondthreshold" ).val());
 
-                   var select = "hbonds " + threshold + " | sets " + nameArray + " " + nameArray2;
+                   var select = "hbonds " + threshold + " | sets " + nameArray2 + " " + nameArray;
 
                    if(!me.bHbondCalc) {
                        me.icn3d.hAtoms = me.icn3d.cloneHash(prevHatoms);
-                       me.showHbonds(threshold, nameArray, nameArray2);
+                       me.showHbonds(threshold, nameArray2, nameArray);
                    }
 
                    hAtoms = me.icn3d.unionHash(hAtoms, me.icn3d.hAtoms);
@@ -5777,11 +5777,11 @@ iCn3DUI.prototype = {
                if($("#" + me.pre + "analysis_saltbridge")[0].checked) {
                    var threshold = parseFloat($("#" + me.pre + "saltbridgethreshold" ).val());
 
-                   var select = "salt bridges " + threshold + " | sets " + nameArray + " " + nameArray2;
+                   var select = "salt bridges " + threshold + " | sets " + nameArray2 + " " + nameArray;
 
                    if(!me.bHbondCalc) {
                        me.icn3d.hAtoms = me.icn3d.cloneHash(prevHatoms);
-                       me.showHbonds(threshold, nameArray, nameArray2, true);
+                       me.showHbonds(threshold, nameArray2, nameArray, true);
                    }
 
                    hAtoms = me.icn3d.unionHash(hAtoms, me.icn3d.hAtoms);
@@ -5792,11 +5792,11 @@ iCn3DUI.prototype = {
                if($("#" + me.pre + "analysis_contact")[0].checked) {
                    var threshold = parseFloat($("#" + me.pre + "contactthreshold" ).val());
 
-                   var select = "interactions " + threshold + " | sets " + nameArray + " " + nameArray2;
+                   var select = "interactions " + threshold + " | sets " + nameArray2 + " " + nameArray;
 
                    if(!me.bHbondCalc) {
                        me.icn3d.hAtoms = me.icn3d.cloneHash(prevHatoms);
-                       me.pickCustomSphere(threshold, nameArray, nameArray2, true);
+                       me.pickCustomSphere(threshold, nameArray2, nameArray, true);
                    }
 
                    hAtoms = me.icn3d.unionHash(hAtoms, me.icn3d.hAtoms);
@@ -5825,73 +5825,93 @@ iCn3DUI.prototype = {
                alert("Please select the first set");
            }
            else {
-               me.icn3d.bRender = false;
-               var hAtoms = {};
-               var prevHatoms = me.icn3d.cloneHash(me.icn3d.hAtoms);
-               var html = '';
+               var bHbond = $("#" + me.pre + "analysis_hbond")[0].checked;
+               var bSaltbridge = $("#" + me.pre + "analysis_saltbridge")[0].checked;
+               var bInteraction = $("#" + me.pre + "analysis_contact")[0].checked;
 
-               if($("#" + me.pre + "analysis_hbond")[0].checked) {
-                   var threshold = parseFloat($("#" + me.pre + "hbondthreshold" ).val());
+               var interactionTypes = me.viewInteractionPairs(nameArray2, nameArray, bHbond, bSaltbridge, bInteraction);
 
-                   if(!me.bHbondCalc) {
-                       me.icn3d.hAtoms = me.icn3d.cloneHash(prevHatoms);
-                       me.showHbonds(threshold, nameArray, nameArray2);
-                   }
-
-                   hAtoms = me.icn3d.unionHash(hAtoms, me.icn3d.hAtoms);
-
-                   html += me.exportHbondPairs();
-
-                   me.setLogCmd("export hbond pairs", false);
-               }
-
-               if($("#" + me.pre + "analysis_saltbridge")[0].checked) {
-                   var threshold = parseFloat($("#" + me.pre + "saltbridgethreshold" ).val());
-
-                   if(!me.bHbondCalc) {
-                       me.icn3d.hAtoms = me.icn3d.cloneHash(prevHatoms);
-                       me.showHbonds(threshold, nameArray, nameArray2, true);
-                   }
-
-                   hAtoms = me.icn3d.unionHash(hAtoms, me.icn3d.hAtoms);
-
-                   html += me.exportSaltbridgePairs();
-
-                   me.setLogCmd("export salt bridge pairs", false);
-               }
-
-               if($("#" + me.pre + "analysis_contact")[0].checked) {
-                   var threshold = parseFloat($("#" + me.pre + "contactthreshold" ).val());
-
-                   if(!me.bHbondCalc) {
-                       me.icn3d.hAtoms = me.icn3d.cloneHash(prevHatoms);
-                       me.pickCustomSphere(threshold, nameArray, nameArray2, true);
-                   }
-
-                   hAtoms = me.icn3d.unionHash(hAtoms, me.icn3d.hAtoms);
-
-                   html += me.exportSpherePairs(true);
-
-                   me.setLogCmd("export interaction pairs", false);
-               }
-
-               me.icn3d.hAtoms = me.icn3d.cloneHash(hAtoms);
-
-               me.icn3d.bRender = true;
-               //me.updateHlAll();
-               me.icn3d.draw();
-
-
-               //var file_pref = (me.inputid) ? me.inputid : "custom";
-               //me.saveFile(file_pref + '_interaction_pairs.html', 'html', html);
-
-               $("#" + me.pre + "dl_allinteraction").html(html);
-
-               me.openDialog(me.pre + 'dl_allinteraction', 'Show hydrogen bonds, salt bridges, and interactions');
-
-               me.bHbondCalc = true;
+               me.setLogCmd("view interaction pairs | " + nameArray2 + " " + nameArray + " | " + interactionTypes, true);
            }
         });
+    },
+
+    viewInteractionPairs: function(nameArray2, nameArray, bHbond, bSaltbridge, bInteraction) { var me = this;
+       me.icn3d.bRender = false;
+       var hAtoms = {};
+       var prevHatoms = me.icn3d.cloneHash(me.icn3d.hAtoms);
+       var html = '';
+
+       var interactionTypes = '';
+
+       if(bHbond) {
+           var threshold = parseFloat($("#" + me.pre + "hbondthreshold" ).val());
+
+           if(!me.bHbondCalc) {
+               me.icn3d.hAtoms = me.icn3d.cloneHash(prevHatoms);
+               me.showHbonds(threshold, nameArray2, nameArray);
+           }
+
+           hAtoms = me.icn3d.unionHash(hAtoms, me.icn3d.hAtoms);
+
+           html += me.exportHbondPairs();
+
+           //me.setLogCmd("export hbond pairs", false);
+
+           interactionTypes += 'hbonds';
+           if(bSaltbridge || bInteraction) interactionTypes += ',';
+       }
+
+       if(bSaltbridge) {
+           var threshold = parseFloat($("#" + me.pre + "saltbridgethreshold" ).val());
+
+           if(!me.bHbondCalc) {
+               me.icn3d.hAtoms = me.icn3d.cloneHash(prevHatoms);
+               me.showHbonds(threshold, nameArray2, nameArray, true);
+           }
+
+           hAtoms = me.icn3d.unionHash(hAtoms, me.icn3d.hAtoms);
+
+           html += me.exportSaltbridgePairs();
+
+           //me.setLogCmd("export salt bridge pairs", false);
+           interactionTypes += 'salt bridge';
+           if(bInteraction) interactionTypes += ',';
+       }
+
+       if(bInteraction) {
+           var threshold = parseFloat($("#" + me.pre + "contactthreshold" ).val());
+
+           if(!me.bHbondCalc) {
+               me.icn3d.hAtoms = me.icn3d.cloneHash(prevHatoms);
+               me.pickCustomSphere(threshold, nameArray2, nameArray, true);
+           }
+
+           hAtoms = me.icn3d.unionHash(hAtoms, me.icn3d.hAtoms);
+
+           html += me.exportSpherePairs(true);
+
+           //me.setLogCmd("export interaction pairs", false);
+           interactionTypes += 'interaction';
+       }
+
+       me.icn3d.hAtoms = me.icn3d.cloneHash(hAtoms);
+
+       me.icn3d.bRender = true;
+       //me.updateHlAll();
+       me.icn3d.draw();
+
+
+       //var file_pref = (me.inputid) ? me.inputid : "custom";
+       //me.saveFile(file_pref + '_interaction_pairs.html', 'html', html);
+
+       $("#" + me.pre + "dl_allinteraction").html(html);
+
+       me.openDialog(me.pre + 'dl_allinteraction', 'Show hydrogen bonds, salt bridges, and interactions');
+
+       me.bHbondCalc = true;
+
+       return interactionTypes;
     },
 
     clickApplypick_labels: function() { var me = this;
@@ -6335,6 +6355,7 @@ iCn3DUI.prototype = {
 
               me.icn3d.hAtoms = {};
               me.selectedResidues = {};
+              var cmd = 'select ';
               for(var i = 0, il = idArray.length; i < il; ++i) {
                   var idStr = idArray[i]; // TYR $1KQ2.B:56@OH, or $1KQ2.B:40 ASP
                   var posStructure = idStr.indexOf('$');
@@ -6348,6 +6369,8 @@ iCn3DUI.prototype = {
                   var resi = idStr.substr(posRes + 1, posAtom - posRes - 1);
 
                   var resid = structure + '_' + chain + '_' + resi;
+                  if(i > 0) cmd += ' or ';
+                  cmd += '$' + structure + '.' + chain + ':' + resi;
 
                   for(var j in me.icn3d.residues[resid]) {
                     me.icn3d.hAtoms[j] = 1;
@@ -6357,6 +6380,8 @@ iCn3DUI.prototype = {
 
               me.icn3d.removeHlObjects();  // render() is called
               me.icn3d.addHlObjects();  // render() is called
+
+              me.setLogCmd(cmd, true);
         });
     },
 
