@@ -1126,6 +1126,7 @@ iCn3D.prototype = {
     init_base: function () {
         this.structures = {}; // structure name -> array of chains
         this.chains = {}; // structure_chain name -> atom hash
+        this.tddomains = {}; // structure_chain_3d_domain_# name -> residue id hash such as {'structure_chain_1': 1, ...}
         this.residues = {}; // structure_chain_resi name -> atom hash
         this.secondaries = {}; // structure_chain_resi name -> secondary structure: 'c', 'H', or 'E'
         this.alnChains = {}; // structure_chain name -> atom hash

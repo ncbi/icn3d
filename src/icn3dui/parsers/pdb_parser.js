@@ -68,6 +68,9 @@ iCn3DUI.prototype.downloadOpm = function (opmid) { var me = this;
 
           $("#" + me.pre + "selectplane_z1").val(me.icn3d.halfBilayerSize);
           $("#" + me.pre + "selectplane_z2").val(-me.icn3d.halfBilayerSize);
+
+          $("#" + me.pre + "extra_mem_z").val(me.icn3d.halfBilayerSize);
+          $("#" + me.pre + "intra_mem_z").val(-me.icn3d.halfBilayerSize);
       },
       error : function(xhr, textStatus, errorThrown ) {
         this.tryCount++;

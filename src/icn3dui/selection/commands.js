@@ -881,6 +881,9 @@ iCn3DUI.prototype.applyCommand = function (commandStr) { var me = this;
   else if(command == 'set annotation ssbond') {
       me.setAnnoTabSsbond();
   }
+  else if(command == 'set annotation transmembrane') {
+      me.setAnnoTabTransmem();
+  }
   else if(command == 'highlight level up') {
       me.switchHighlightLevelUp();
   }
@@ -917,6 +920,9 @@ iCn3DUI.prototype.applyCommand = function (commandStr) { var me = this;
       }
       else if(type == 'ssbond') {
           me.hideAnnoTabSsbond();
+      }
+      else if(type == 'transmembrane') {
+          me.hideAnnoTabTransmem();
       }
   }
   else if(command == 'add residue labels') {
@@ -1375,6 +1381,29 @@ iCn3DUI.prototype.applyCommand = function (commandStr) { var me = this;
         me.selectBtwPlanes(large, small);
     }
   }
+  else if(command.indexOf('adjust membrane z-axis') == 0) {
+    var paraArray = command.split(' ');
+    if(paraArray.length == 5) {
+        var large = parseFloat(paraArray[3]);
+        var small = parseFloat(paraArray[4]);
+
+        me.adjustMembrane(large, small);
+    }
+  }
+  else if(command.indexOf('view interaction pairs') == 0) {
+    var paraArray = command.split(' | ');
+    if(paraArray.length == 3) {
+        var setNameArray = paraArray[1].split(' ');
+        var nameArray2 = setNameArray[0].split(',');
+        var nameArray = setNameArray[1].split(',');
+
+        var bHbond = paraArray[2].indexOf('hbonds') !== -1;
+        var bSaltbridge = paraArray[2].indexOf('salt bridge') !== -1;
+        var bInteraction = paraArray[2].indexOf('interaction') !== -1;
+
+        me.viewInteractionPairs(nameArray2, nameArray, bHbond, bSaltbridge, bInteraction);
+    }
+  }
 
 // start with, single word =============
   else if(command.indexOf('pickatom') == 0) {
@@ -1399,13 +1428,13 @@ iCn3DUI.prototype.applyCommand = function (commandStr) { var me = this;
         //var nameStr = paraArray[1].substr(paraArray[1].indexOf(' ') + 1);
         //nameArray = nameStr.split(",");
         var setsArray = paraArray[1].split(" ");
-        if(setsArray.length > 1) nameArray = setsArray[1].split(",");
-        if(setsArray.length > 2) nameArray2 = setsArray[2].split(",");
+        if(setsArray.length > 1) nameArray2 = setsArray[1].split(",");
+        if(setsArray.length > 2) nameArray = setsArray[2].split(",");
     }
 
-    if(!isNaN(threshold)) me.showHbonds(threshold, nameArray, nameArray2);
+    if(!isNaN(threshold)) me.showHbonds(threshold, nameArray2, nameArray);
   }
-  else if(commandOri.indexOf('salt bridge') == 0) {
+  else if(commandOri.indexOf('salt bridges') == 0) {
     if(me.bSetChainsAdvancedMenu === undefined || !me.bSetChainsAdvancedMenu) {
        me.setPredefinedInMenu();
 

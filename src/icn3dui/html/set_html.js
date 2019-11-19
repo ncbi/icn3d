@@ -524,7 +524,11 @@ iCn3DUI.prototype.setMenu2b_base = function() { var me = this;
         html += "    </ul>";
         html += "  </li>";
 
-        html += "  <li><span>H-Bonds</span>";
+        html += me.getLink('mn6_hbondsYes', 'H-Bonds &<br>Interactions');
+        html += me.getLink('mn6_hbondsNo', 'Hide H-Bonds');
+
+/*
+        html += "  <li><span>H-Bonds &<br>Interactions</span>";
         html += "    <ul>";
         html += me.getRadio('mn6_hbonds', 'mn6_hbondsYes', 'Show');
         html += me.getRadio('mn6_hbonds', 'mn6_hbondsNo', 'Hide', true);
@@ -539,6 +543,7 @@ iCn3DUI.prototype.setMenu2b_base = function() { var me = this;
         html += "  </li>";
 
         html += me.getLink('mn2_aroundsphere2', 'Interactions');
+*/
 
         html += "  <li><span>Disulfide Bonds</span>";
         html += "    <ul>";
@@ -606,7 +611,7 @@ iCn3DUI.prototype.setMenu2b_base = function() { var me = this;
     html += "  </li>";
 
     if(me.cfg.opmid !== undefined) {
-        //html += me.getLink('adjustmem', 'Adjust Membrane');
+        html += me.getLink('adjustmem', 'Adjust Membrane');
         //html += me.getLink('addplane', 'Add a Plane');
         html += me.getLink('selectplane', 'Select between<br>Two X-Y Planes');
     }
@@ -1406,10 +1411,14 @@ iCn3DUI.prototype.setDialogs = function() { var me = this;
     html += "</div>";
 
     html += "<div id='" + me.pre + "dl_hbonds'>";
-    html += "  <div style='white-space:nowrap'>1. Select the first set:</div>";
-    html += "  <div style='text-indent:1.1em'><select id='" + me.pre + "atomsCustomHbond2' multiple size='3' style='min-width:130px;'>";
-    html += "  </select></div><br>";
-    html += "  <div style='white-space:nowrap'>2. Threshold of H-bonds: <select id='" + me.pre + "hbondthreshold'>";
+    html += "      1. Choose interaction types and their thresholds:<br>";
+    html += "      <div class='icn3d-box'><table border=0 width=400><tr>";
+    html += "        <td style='min-width:130px;'><input type='checkbox' id='" + me.pre + "analysis_hbond' checked>Hydrogen Bonds&nbsp;&nbsp;</td>";
+    html += "        <td style='min-width:130px;'><input type='checkbox' id='" + me.pre + "analysis_saltbridge' checked>Salt Bridges&nbsp;&nbsp;</td>";
+    html += "        <td style='min-width:130px;'><input type='checkbox' id='" + me.pre + "analysis_contact' checked>Interactions&nbsp;&nbsp;</td>";
+    html += "        </tr><tr>";
+    html += "        <td>";
+    html += "  <div style='white-space:nowrap'>Threshold: <select id='" + me.pre + "hbondthreshold'>";
     html += "  <option value='3.2'>3.2</option>";
     html += "  <option value='3.3'>3.3</option>";
     html += "  <option value='3.4'>3.4</option>";
@@ -1419,21 +1428,9 @@ iCn3DUI.prototype.setDialogs = function() { var me = this;
     html += "  <option value='3.8'>3.8</option>";
     html += "  <option value='3.9'>3.9</option>";
     html += "  <option value='4.0'>4.0</option>";
-    html += "  </select> &#197;</div><br>";
-
-    html += "  <div style='white-space:nowrap'>3. Select the second set to apply the H-bonds:</div>";
-    html += "  <div style='text-indent:1.1em'><select id='" + me.pre + "atomsCustomHbond' multiple size='3' style='min-width:130px;'>";
-    html += "  </select></div><br>";
-
-    html += "  <div>4. <button id='" + me.pre + "applyhbonds'>Display</button> H-bonds between current selection and the selected set</div><br>";
-    html += "  <div style='text-indent:1.1em'><button id='" + me.pre + "hbondExport'>Save</button> H-bond pairs in a file</div>";
-    html += "</div>";
-
-    html += "<div id='" + me.pre + "dl_saltbridge'>";
-    html += "  <div style='white-space:nowrap'>1. Select the first set:</div>";
-    html += "  <div style='text-indent:1.1em'><select id='" + me.pre + "atomsCustomSaltbridge2' multiple size='3' style='min-width:130px;'>";
-    html += "  </select></div><br>";
-    html += "  <div style='white-space:nowrap'>2. Threshold of salt bridge: <select id='" + me.pre + "saltbridgethreshold'>";
+    html += "  </select> &#197;</div></td>";
+    html += "        <td>";
+    html += "  <div style='white-space:nowrap'>Threshold: <select id='" + me.pre + "saltbridgethreshold'>";
     html += "  <option value='3.2'>3.2</option>";
     html += "  <option value='3.3'>3.3</option>";
     html += "  <option value='3.4'>3.4</option>";
@@ -1443,14 +1440,34 @@ iCn3DUI.prototype.setDialogs = function() { var me = this;
     html += "  <option value='3.8'>3.8</option>";
     html += "  <option value='3.9'>3.9</option>";
     html += "  <option value='4.0' selected>4.0</option>";
-    html += "  </select> &#197;</div><br>";
+    html += "  </select> &#197;</div></td>";
+    html += "        <td>";
+    html += "  <div style='white-space:nowrap'>Threshold: <select id='" + me.pre + "contactthreshold'>";
+    html += "  <option value='3'>3</option>";
+    html += "  <option value='4' selected>4</option>";
+    html += "  <option value='5'>5</option>";
+    html += "  </select> &#197;</div></td>";
+    html += "      </tr></table></div>";
 
-    html += "  <div style='white-space:nowrap'>3. Select the second set to apply the salt bridges:</div>";
-    html += "  <div style='text-indent:1.1em'><select id='" + me.pre + "atomsCustomSaltbridge' multiple size='3' style='min-width:130px;'>";
+    html += "      <table border=0 width=400 cellspacing=10><tr><td>";
+
+    html += "  <div style='white-space:nowrap'>2. Select the first set:</div>";
+    html += "  <div style='text-indent:1.1em'><select id='" + me.pre + "atomsCustomHbond2' multiple size='5' style='min-width:130px;'>";
     html += "  </select></div><br>";
 
-    html += "  <div>4. <button id='" + me.pre + "applysaltbridge'>Display</button> salt bridges between current selection and the selected set</div><br>";
-    html += "  <div style='text-indent:1.1em'><button id='" + me.pre + "saltbridgeExport'>Save</button> salt bridge pairs in a file</div>";
+    html += "      </td><td>";
+
+    html += "  <div style='white-space:nowrap'>3. Select the second set:</div>";
+    html += "  <div style='text-indent:1.1em'><select id='" + me.pre + "atomsCustomHbond' multiple size='5' style='min-width:130px;'>";
+    html += "  </select></div><br>";
+
+    html += "      </td></tr></table>";
+
+    html += "  <div>4. <button id='" + me.pre + "applyhbonds'>Display</button> H-bonds/Interactions between these two sets</div><br>";
+    html += "  <div style='text-indent:1.1em'><button id='" + me.pre + "hbondExport'>Show</button> H-bond/Interaction pairs in a window</div>";
+    html += "</div>";
+
+    html += "<div id='" + me.pre + "dl_allinteraction'>";
     html += "</div>";
 
     html += "<div id='" + me.pre + "dl_elecmap2fofc'>";
@@ -1519,7 +1536,6 @@ iCn3DUI.prototype.setDialogs = function() { var me = this;
     html += "  <div style='text-indent:1.1em'><button id='" + me.pre + "sphereExport'>Save</button> interacting/contacting residue pairs in a file</div>";
     html += "</div>";
 
-/*
     html += "<div id='" + me.pre + "dl_adjustmem'>";
     html += "<b>Note</b>: The membranes are parallel to the X-Y plane. The center of the membranes is at Z = 0. <br/><br/>";
     html += "  <div style='white-space:nowrap'>1. Extracellular membrane Z-axis position: <input type='text' id='" + me.pre + "extra_mem_z' value='' size='3'> &#197;</div><br/>";
@@ -1527,6 +1543,7 @@ iCn3DUI.prototype.setDialogs = function() { var me = this;
     html += "  <div style='white-space:nowrap'>3. <button id='" + me.pre + "apply_adjustmem'>Display</button> the adjusted membranes</div><br>";
     html += "</div>";
 
+/*
     html += "<div id='" + me.pre + "dl_addplane'>";
     html += "<b>Note</b>: The membranes are parallel to the X-Y plane. The center of the membranes is at Z = 0. <br/><br/>";
     html += "  <div style='white-space:nowrap'>1. Z-axis position of the added plane: <input type='text' id='" + me.pre + "addplane_z' value='0' size='3'> &#197;</div><br/>";
@@ -1703,6 +1720,9 @@ iCn3DUI.prototype.setDialogs = function() { var me = this;
     html += "        <td style='min-width:130px;'><input type='checkbox' id='" + me.pre + "anno_3dd'>3D Domains&nbsp;&nbsp;</td>";
     html += "        <td style='min-width:60px;'><input type='checkbox' id='" + me.pre + "anno_snp'>SNPs&nbsp;&nbsp;</td>";
     html += "        <td style='min-width:110px;'><input type='checkbox' id='" + me.pre + "anno_interact'>Interactions&nbsp;&nbsp;</td>";
+    if(me.cfg.opmid !== undefined) {
+        html += "        <td style='min-width:110px;'><input type='checkbox' id='" + me.pre + "anno_transmem'>Transmembrane&nbsp;&nbsp;</td>";
+    }
     html += "        <td></td>";
     html += "      </tr></table></div>";
 
