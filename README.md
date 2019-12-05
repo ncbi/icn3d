@@ -2,9 +2,9 @@
 
 ## [Gallery with live examples](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d.html#gallery)
 
-## iCn3D
+## About iCn3D
 
-"I see in 3D" (iCn3D) Structure Viewer is a WebGL-based 3D viewer using Three.js and jQuery. iCn3D synchronized the display of 3D structure, 2D interaction, and 1D sequences and annotatins. Users' custom display can be saved in a short URL or a PNG image.
+"I see in 3D" (iCn3D) Structure Viewer is a WebGL-based 3D viewer using Three.js and jQuery. iCn3D synchronized the display of 3D structure, 2D interaction, and 1D sequences and annotations. Users' custom display can be saved in a short URL or a PNG image. <b>Complete package</b> of iCn3D including Three.js and jQuery can be downloaded from [https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.10.0.zip](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.10.0.zip). The "Download ZIP" link in this page does not include third-party libraries. 
 * <b>view a 3D structure in iCn3D</b>
     Open the link https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html, input a PDB ID, and click "Load". You can also click "File" menu to "Open File" or input other IDs.
 
@@ -51,11 +51,15 @@
 * <b>[align a protein sequence to a structure](https://icn3d.page.link/Mmm82craCwGMAxru9)</b>
     You can click "File > Align > Sequence to Structure".
 
-Either of these widgets could be easily added to your own web pages as shown in the section of "Embed iCn3D with iframe or JavaScript libraries" below. 
+## Embed iCn3D with iframe or JavaScript libraries
 
-<b>Complete package</b> of iCn3D including Three.js and jQuery can be downloaded from [https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.10.0.zip](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.10.0.zip). The "Download ZIP" link in this page does not include third-party libraries. 
+iCn3D can be embedded in a web page by including the URL in HTML iframe, e.g. <iframe src="https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?mmdbid=1tup&width=300&height=300&showmenu=0&showtitle=0&showcommand=0&rotate=right" width="400" height="400" style="border:none</iframe>. This method always shows the most recent version of iCn3D.
 
-## Usage
+To embed iCn3D with JavaScript libraries, the following libraries need to be included: jQuery, jQuery UI, Three.js, and iCn3D library. An html div tag to hold the 3D viewer is added. The iCn3D widget is initialized with the custom defined parameter "cfg": "var icn3dui = new iCn3DUI(cfg); icn3dui.show3DStructure();". Multiple iCn3D widgets can be embedded in a single page. Please see the source code of the [example page](https://www.ncbi.nlm.nih.gov/Structure/icn3d/example.html) for reference.
+
+Users can choose to show the most recent version of iCn3D, or a locked version of iCn3D. To show the most recent version, use the library files without the version postfix as shown in the [iCn3D Web API page](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d.html#HowToUse). To show a locked version, use the library files with the version postfix as shown in the source code of [iCn3D page](https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?mmdbid=1tup). If the input is provided as an MMDB ID, both library files and backend cgis are versioned so that the 3D display will be stable. 
+
+## Data Sources
 
 iCn3D accepts the following IDs:
 
@@ -74,19 +78,10 @@ iCn3D also accepts the following file types: PDB, mmCIF, Mol2, SDF, and XYZ. The
 
 See the [help page](https://www.ncbi.nlm.nih.gov/Structure/icn3d/docs/icn3d_help.html) or the [API page](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d.html) for more details.
 
-## Embed iCn3D with iframe or JavaScript libraries
-
-iCn3D can be embedded in a web page by including the URL in HTML iframe, e.g. <iframe src="https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?mmdbid=1tup&width=300&height=300&showmenu=0&showtitle=0&showcommand=0&rotate=right" width="400" height="400" style="border:none</iframe>. This method always shows the most recent version of iCn3D.
-
-To embed iCn3D with JavaScript libraries, the following libraries need to be included: jQuery, jQuery UI, Three.js, and iCn3D library. An html div tag to hold the 3D viewer is added. The iCn3D widget is initialized with the custom defined parameter "cfg": "var icn3dui = new iCn3DUI(cfg); icn3dui.show3DStructure();". Multiple iCn3D widgets can be embedded in a single page. Please see the source code of the [example page](https://www.ncbi.nlm.nih.gov/Structure/icn3d/example.html) for reference.
-
-Users can choose to show the most recent version of iCn3D, or a locked version of iCn3D. To show the most recent version, use the library files without the version postfix as shown in the [iCn3D Web API page](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d.html#HowToUse). To show a locked version, use the library files with the version postfix as shown in the source code of [iCn3D page](https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?mmdbid=1tup). If the input is provided as an MMDB ID, both library files and backend cgis are versioned so that the 3D display will be stable. 
-
 ## Third-party libraries used
 
 * **[jQuery and jQuery UI](https://jquery.com/)**: used as a general tool to write Javascript code. Some jQuery UI features are used.
 * **[Three.js](http://threejs.org/)**: used to set up the 3D view.
-
 
 ## Tools based on
 
