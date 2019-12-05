@@ -367,9 +367,11 @@ iCn3DUI.prototype.toggleHighlight = function() { var me = this;
 
     if(me.icn3d.prevHighlightObjects.length > 0 || me.icn3d.prevHighlightObjects_ghost.length > 0) { // remove
         me.clearHighlight();
+        me.icn3d.bShowHighlight = false;
     }
     else { // add
         me.showHighlight();
+        me.icn3d.bShowHighlight = true;
     }
 
     //me.setLogCmd("toggle highlight", true);

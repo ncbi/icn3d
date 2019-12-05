@@ -92,6 +92,29 @@ iCn3D.prototype.hideSaltbridge = function () {
         }
 };
 
+iCn3D.prototype.hideContact = function () {
+        this.opts["contact"] = "no";
+        if(this.lines === undefined) this.lines = {};
+        this.lines['contact'] = [];
+        this.contactpnts = [];
+
+        for(var i in this.atoms) {
+            this.atoms[i].style2 = 'nothing';
+        }
+
+        for(var i in this.sidec) {
+            if(this.hAtoms.hasOwnProperty(i)) {
+                this.atoms[i].style2 = this.opts["sidec"];
+            }
+        }
+
+        for(var i in this.water) {
+            if(this.hAtoms.hasOwnProperty(i)) {
+                this.atoms[i].style = this.opts["water"];
+            }
+        }
+};
+
 iCn3D.prototype.applySsbondsOptions = function (options) {
     if(options === undefined) options = this.opts;
 
@@ -500,15 +523,24 @@ iCn3D.prototype.applySurfaceOptions = function (options) {
     }
 };
 
-iCn3D.prototype.setHbondsSaltbridge = function (options, bSaltbridge) {
-    var hbond_saltbridge = (bSaltbridge !== undefined && bSaltbridge) ? 'saltbridge' : 'hbond';
-    var hbonds_saltbridge = (bSaltbridge !== undefined && bSaltbridge) ? 'saltbridge' : 'hbonds';
+iCn3D.prototype.setHbondsContacts = function (options, type) {
+    var hbond_contact = type;
+    var hbonds_contact = (type == 'hbond') ? 'hbonds' : type;
 
-    this.lines[hbond_saltbridge] = [];
+    this.lines[hbond_contact] = [];
 
-    if (options[hbonds_saltbridge].toLowerCase() === 'yes') {
-        var color = '#00FF00';
-        var pnts = (bSaltbridge !== undefined && bSaltbridge) ? this.saltbridgepnts : this.hbondpnts;
+    if (options[hbonds_contact].toLowerCase() === 'yes') {
+        var color = (type == 'contact') ? "#888888" : '#00FF00';
+        var pnts;
+        if(type == 'hbond') {
+            pnts = this.hbondpnts;
+        }
+        else if(type == 'saltbridge') {
+            pnts = this.saltbridgepnts;
+        }
+        else if(type == 'contact') {
+            pnts = this.contactpnts;
+        }
 
          for (var i = 0, lim = Math.floor(pnts.length / 2); i < lim; i++) {
             var line = {};
@@ -522,8 +554,8 @@ iCn3D.prototype.setHbondsSaltbridge = function (options, bSaltbridge) {
             // only draw bonds connected with currently displayed atoms
             if(line.serial1 !== undefined && line.serial2 !== undefined && !this.dAtoms.hasOwnProperty(line.serial1) && !this.dAtoms.hasOwnProperty(line.serial2)) continue;
 
-            //if(this.lines[hbond_saltbridge] === undefined) this.lines[hbond_saltbridge] = [];
-            this.lines[hbond_saltbridge].push(line);
+            //if(this.lines[hbond_contact] === undefined) this.lines[hbond_contact] = [];
+            this.lines[hbond_contact].push(line);
          }
     }
 };
@@ -538,33 +570,11 @@ iCn3D.prototype.applyOtherOptions = function (options) {
         //common part options
 
         // hbond lines
-        this.setHbondsSaltbridge(options);
-/*
-        if (options.hbonds.toLowerCase() === 'yes') {
-            var color = '#00FF00';
-            var pnts = this.hbondpnts;
-
-             for (var i = 0, lim = Math.floor(pnts.length / 2); i < lim; i++) {
-                var line = {};
-                line.position1 = pnts[2 * i].coord;
-                line.serial1 = pnts[2 * i].serial;
-                line.position2 = pnts[2 * i + 1].coord;
-                line.serial2 = pnts[2 * i + 1].serial;
-                line.color = color;
-                line.dashed = true;
-
-                // only draw bonds connected with currently displayed atoms
-                if(line.serial1 !== undefined && line.serial2 !== undefined && !this.dAtoms.hasOwnProperty(line.serial1) && !this.dAtoms.hasOwnProperty(line.serial2)) continue;
-
-                if(this.lines['hbond'] === undefined) this.lines['hbond'] = [];
-                this.lines['hbond'].push(line);
-             }
-
-            //this.createLines(this.lines);
-        }
-*/
+        this.setHbondsContacts(options, 'hbond');
         // salt bridge lines
-        this.setHbondsSaltbridge(options, true);
+        this.setHbondsContacts(options, 'saltbridge');
+        // contact lines
+        this.setHbondsContacts(options, 'contact');
 
         if (this.pairArray !== undefined && this.pairArray.length > 0) {
             this.updateStabilizer(); // to update this.stabilizerpnts

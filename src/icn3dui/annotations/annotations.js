@@ -609,8 +609,10 @@ iCn3DUI.prototype.getAnnotationData = function() { var me = this;
                 }
               }
 
+              var prevHAtoms = me.icn3d.cloneHash(me.icn3d.hAtoms);
               //me.selectResidueList(residueidHash, chnidBase + '_blast', compTitle, false);
               me.selectResidueList(residueidHash, 'aligned_protein', compTitle, false);
+              me.icn3d.hAtoms = me.icn3d.cloneHash(prevHAtoms);
             } // align seq to structure
         } // for loop
 

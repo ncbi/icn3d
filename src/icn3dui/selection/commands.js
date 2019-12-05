@@ -602,6 +602,33 @@ iCn3DUI.prototype.applyCommandViewinteraction = function (command) { var me = th
   return me.deferredViewinteraction.promise();
 };
 
+iCn3DUI.prototype.getThresholdNameArrays = function (commandOri) { var me = this;
+    if(me.bSetChainsAdvancedMenu === undefined || !me.bSetChainsAdvancedMenu) {
+       var prevHAtoms = me.icn3d.cloneHash(me.icn3d.hAtoms);
+
+       me.setPredefinedInMenu();
+       me.bSetChainsAdvancedMenu = true;
+
+       me.icn3d.hAtoms = me.icn3d.cloneHash(prevHAtoms);
+    }
+
+    var paraArray = commandOri.split(' | ');
+
+    var threshold = parseFloat(paraArray[0].substr(paraArray[0].lastIndexOf(' ') + 1));
+    var nameArray = [], nameArray2 = [];
+    if(paraArray.length == 2 && paraArray[1].length > 4) { //sets a,b,c e,f,g
+        var setsArray = paraArray[1].split(" ");
+        if(setsArray.length > 1) nameArray2 = setsArray[1].split(",");
+        if(setsArray.length > 2) nameArray = setsArray[2].split(",");
+    }
+    else {
+        nameArray2 = ['selected'];
+        nameArray = ['non-selected'];
+    }
+
+    return {'threshold': threshold, 'nameArray2': nameArray2, 'nameArray': nameArray};
+};
+
 iCn3DUI.prototype.applyCommand = function (commandStr) { var me = this;
   me.bAddCommands = false;
 
@@ -705,8 +732,12 @@ iCn3DUI.prototype.applyCommand = function (commandStr) { var me = this;
     me.icn3d.pk = 3;
     me.icn3d.opts['pk'] = 'strand';
   }
-  else if(command == 'set pk chain') {
+  else if(command == 'set pk domain') {
     me.icn3d.pk = 4;
+    me.icn3d.opts['pk'] = 'domain';
+  }
+  else if(command == 'set pk chain') {
+    me.icn3d.pk = 5;
     me.icn3d.opts['pk'] = 'chain';
   }
   else if(command == 'set surface wireframe on') {
@@ -779,6 +810,10 @@ iCn3DUI.prototype.applyCommand = function (commandStr) { var me = this;
   }
   else if(command == 'set salt bridge off') {
     me.icn3d.hideSaltbridge();
+    me.icn3d.draw();
+  }
+  else if(command == 'set contact off') {
+    me.icn3d.hideContact();
     me.icn3d.draw();
   }
 
@@ -1167,28 +1202,17 @@ iCn3DUI.prototype.applyCommand = function (commandStr) { var me = this;
     }
   }
   else if(commandOri.indexOf('select zone cutoff') == 0) {
-    if(me.bSetChainsAdvancedMenu === undefined || !me.bSetChainsAdvancedMenu) {
-       me.setPredefinedInMenu();
+    var ret = me.getThresholdNameArrays(commandOri);
 
-       me.bSetChainsAdvancedMenu = true;
-    }
-
-    var paraArray = commandOri.split(' | '); // | sets a,b,c
-    var radius = parseFloat(paraArray[0].substr(paraArray[0].lastIndexOf(' ') + 1));
-
-    var nameArray = [], nameArray2 = [];
-    if(paraArray.length == 2 && paraArray[1].length > 4) { //sets a,b,c e,f,g
-        //var nameStr = paraArray[1].substr(paraArray[1].indexOf(' ') + 1);
-        //nameArray = nameStr.split(",");
-        var setsArray = paraArray[1].split(" ");
-        if(setsArray.length > 1) nameArray = setsArray[1].split(",");
-        if(setsArray.length > 2) nameArray2 = setsArray[2].split(",");
-    }
-
-    if(!me.bSphereCalc) me.pickCustomSphere(radius, nameArray, nameArray2);
+    if(!me.bSphereCalc) me.pickCustomSphere(ret.threshold, ret.nameArray2, ret.nameArray);
     me.bSphereCalc = true;
 
     //me.updateHlAll();
+  }
+  else if(commandOri.indexOf('interactions') == 0) {
+    var ret = me.getThresholdNameArrays(commandOri);
+
+    if(!isNaN(ret.threshold)) me.showHbonds(ret.threshold, ret.nameArray2, ret.nameArray);
   }
   else if(command.indexOf('set surface opacity') == 0) {
     var value = command.substr(command.lastIndexOf(' ') + 1);
@@ -1404,6 +1428,9 @@ iCn3DUI.prototype.applyCommand = function (commandStr) { var me = this;
         me.viewInteractionPairs(nameArray2, nameArray, bHbond, bSaltbridge, bInteraction);
     }
   }
+  else if(command.indexOf('reset interaction pairs') == 0) {
+    me.resetInteractionPairs();
+  }
 
 // start with, single word =============
   else if(command.indexOf('pickatom') == 0) {
@@ -1414,46 +1441,14 @@ iCn3DUI.prototype.applyCommand = function (commandStr) { var me = this;
     me.icn3d.showPicking(me.icn3d.pAtom);
   }
   else if(commandOri.indexOf('hbonds') == 0) {
-    if(me.bSetChainsAdvancedMenu === undefined || !me.bSetChainsAdvancedMenu) {
-       me.setPredefinedInMenu();
+    var ret = me.getThresholdNameArrays(commandOri);
 
-       me.bSetChainsAdvancedMenu = true;
-    }
-
-    var paraArray = commandOri.split(' | ');
-
-    var threshold = parseFloat(paraArray[0].substr(paraArray[0].lastIndexOf(' ') + 1));
-    var nameArray = [], nameArray2 = [];
-    if(paraArray.length == 2 && paraArray[1].length > 4) { //sets a,b,c e,f,g
-        //var nameStr = paraArray[1].substr(paraArray[1].indexOf(' ') + 1);
-        //nameArray = nameStr.split(",");
-        var setsArray = paraArray[1].split(" ");
-        if(setsArray.length > 1) nameArray2 = setsArray[1].split(",");
-        if(setsArray.length > 2) nameArray = setsArray[2].split(",");
-    }
-
-    if(!isNaN(threshold)) me.showHbonds(threshold, nameArray2, nameArray);
+    if(!isNaN(ret.threshold)) me.showHbonds(ret.threshold, ret.nameArray2, ret.nameArray);
   }
   else if(commandOri.indexOf('salt bridges') == 0) {
-    if(me.bSetChainsAdvancedMenu === undefined || !me.bSetChainsAdvancedMenu) {
-       me.setPredefinedInMenu();
+    var ret = me.getThresholdNameArrays(commandOri);
 
-       me.bSetChainsAdvancedMenu = true;
-    }
-
-    var paraArray = commandOri.split(' | ');
-
-    var threshold = parseFloat(paraArray[0].substr(paraArray[0].lastIndexOf(' ') + 1));
-    var nameArray = [], nameArray2 = [];
-    if(paraArray.length == 2 && paraArray[1].length > 4) { //sets a,b,c e,f,g
-        //var nameStr = paraArray[1].substr(paraArray[1].indexOf(' ') + 1);
-        //nameArray = nameStr.split(",");
-        var setsArray = paraArray[1].split(" ");
-        if(setsArray.length > 1) nameArray = setsArray[1].split(",");
-        if(setsArray.length > 2) nameArray2 = setsArray[2].split(",");
-    }
-
-    if(!isNaN(threshold)) me.showHbonds(threshold, nameArray, nameArray2, true);
+    if(!isNaN(ret.threshold)) me.showHbonds(ret.threshold, ret.nameArray2, ret.nameArray, true);
   }
   else if(command.indexOf('color') == 0) {
     var color = command.substr(command.indexOf(' ') + 1);
@@ -1474,6 +1469,10 @@ iCn3DUI.prototype.applyCommand = function (commandStr) { var me = this;
 
 // special, select ==========
 
+  else if(command.indexOf('select displayed set') !== -1) {
+    me.icn3d.hAtoms = me.icn3d.cloneHash(me.icn3d.dAtoms);
+    me.updateHlAll();
+  }
   else if(command.indexOf('select') == 0 && command.indexOf('name') !== -1) {
     var paraArray = commandOri.split(' | '); // atom names might be case-sensitive
 

@@ -4,28 +4,57 @@
 
 ## iCn3D
 
-"I see in 3D" (iCn3D) Structure Viewer is a WebGL-based 3D viewer using Three.js and jQuery. iCn3D has a feature-rich user interface and allows users to: 
-* [Display and integrate annotations](https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?mmdbid=1tup&command=view+annotations;+set+annotation+cdd;+set+view+detailed+view;+set+annotation+all) from NCBI resources including dbSNP, ClinVar, conserved domains, 3D domains, and binding sites
-* [Add custom tracks](https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?mmdbid=1tup&showanno=1&show2d=1&showsets=1&command=view+annotations;+set+view+detailed+view;+add+track+|+chainid+1TUP_B+|+title+Custom+Key+Sites+|+text+82+R,+152+G,+155-156+RR,+180+R,+189+R;+select+.B:82,152,155-156,180,189+|+name+mutation) in various formats (FASTA, bed file, etc) in the annotation window
-* Several ways to save users' custom display. First, save "iCn3D PNG Image" in the menu "File > Save Files". Both the PNG file and an HTML file are saved. Click the HTML file to see the PNG image, which is linked to the custom display via a shorten URL. The downloaded "iCn3D PNG Image" itself can also be used as an input in the menu "File > Open File" to reproduce the custom display. Second, a shareable link can be generated in the menu "File > Share Link". Third, a "State File" can be generated in the menu "File > Save Files" and be used to reproduce the custom display in the menu "File > Open File".  
-* Select residues by searching sequences or select on 3D structures,  2D interactions, and 1D sequences
-* Display/highlight selected residues in 3D structures,  2D interactions, and 1D sequences
-* Show [electron density map](https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?mmdbid=3gvu&command=style+proteins+b+factor+tube;+color+b+factor;+set+map+2fofc+sigma+1.5) or [EM density map](https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?mmdbid=6eny&command=set+emmap+percentage+20)
-* Export STL or VRML files for [3D printing](https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?mmdbid=1tup&command=export+stl+stabilizer+file)
-* Display NCBI pre-calculated [aligned 3D structures](https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?align=1hho,4n7n&showalignseq=1) by providing two PDB IDs or MMDB IDs
-* [Align a sequence to a structure](https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?from=icn3d&blast_rep_id=1TSR_A&query_id=NP_001108451.1)
-* [Align any two chains](https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?chainalign=1HHO_A,4N7N_A&showalignseq=1&show2d=1)
-* Display membranes for transmembrane proteins using data from [Orientations of Proteins in Membranes (OPM)](https://opm.phar.umich.edu/)
+"I see in 3D" (iCn3D) Structure Viewer is a WebGL-based 3D viewer using Three.js and jQuery. iCn3D synchronized the display of 3D structure, 2D interaction, and 1D sequences and annotatins. Users' custom display can be saved in a short URL or a PNG image.
+* <b>view a 3D structure in iCn3D</b>
+Open the link https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html, input a PDB ID, and click "Load". You can also click "File" menu to "Open File" or input other IDs.
 
+As mentioned in the menu "Help > Transformation Hints", you can use Left mouse button for rotation, Middle mouse wheel for zooming, and Right mouse button for translation. 
 
-We provided two types of iCn3D widgets: [basic interface](https://www.ncbi.nlm.nih.gov/Structure/icn3d/index.html?mmdbid=1tup) and [advanced interface](https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?mmdbid=1tup). 
+The most important point about using iCn3D is the current selection. Any operations on color, style, etc. are working on the current selection. By default, all atoms are selected. Once you select any subset, your operation will work ONLY on the subset. You can switch the selection using the toggle next to the Help menu.
 
-1. The basic interface has the minimum javascript code for the interface. It has the basic features such as changing color and styles.
-2. The advanced interface has a library for the interface. It is recommended since it has many features and can have simple UI using [URL parameters](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d.html#parameters) such as [https://icn3d.page.link/rDxQ](https://icn3d.page.link/rDxQ).
+* <b>create custom 3D view</b>
+You first open a structure in "File" menu, then select a subset in "Select" menu, view only the selected subset by clicking "View Only Selection" in View menu, finally change styles or colors in "Style" and "Color" menus. 
+
+Each operation has a corresponding command as listed at https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d.html#commands. These commands will show up in the command/log window right beneath the 3D display. To view all previous commands, you can click "Share Link" in "File" menu. Both the original URL and the short URL can be used to display your custom view.
+
+* <b>save your work</b>
+You can save "iCn3D PNG Image" in the menu "File > Save Files". Both the PNG file and an HTML file are saved. Click the HTML file to see the PNG image, which is linked to the custom display via a shorten URL. The downloaded "iCn3D PNG Image" itself can also be used as an input in the menu "File > Open File" to reproduce the custom display. You can combine these HTML files to generate your own galleries.
+
+* <b>[show binding site](https://icn3d.page.link/JR5B)</b>
+You can click "Chem. Binding" in "View" menu to show all hydrogen bonds around chemicals.
+
+* <b>[export models for 3D printing](https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?mmdbid=1tup&command=export+stl+stabilizer+file)</b>
+You can click "3D Printing" in "File" menu to export models for 3D printing. Both STL and VRML files are supported.
+
+* <b>[show transmembrane proteins](https://icn3d.page.link/TuSd)</b>
+If the protein is a transmembrane protein, you can click "File > Retrieve by ID > OPM PDB ID" to input a PDB ID to view the membranes.
+
+* <b>show [surface](https://icn3d.page.link/aYAjP4S3NbrBJX3x6), [EM map](https://icn3d.page.link/L4C4WYE85tYRiFeK7), or [electron density map](https://icn3d.page.link/QpqNZ3k65ToYFvUB6)</b>
+You can click "Style > Surface Type", "Style > EM Density Map", or "Style > Electron Density".
+
+* <b>view 1D sequences and 2D interactions</b>
+In the page https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?mmdbid=1TUP, you can click in "Windows" menu to "View Sequences & Annotations",
+"View Interactions", and see all "Defined Sets", which can be clicked to see any of your selections.
+
+* <b>select on 3D, 1D and 2D</b>
+To select on 3D structures: hold "Alt" and use mouse to pick, hold "Ctrl" to union selection, hold "Shift" to select a range, press the up/down arrow to switch among atom/residue/strand/chain/structure. Click "Save Selection" in "Select" menu to save the current selection.
+
+To select on 1D sequences: drag on the sequences or the blue track title to select.
+
+To select on 2D interaction diagram: click on the nodes or lines. The nodes are chains and can be united with the Ctrl key. The lines are interactions and can NOT be united. Each click on the lines selects half of the lines, i.e., select the interacting residues in one of the two chains.
+
+* <b>[align two structures](https://icn3d.page.link/wPoW56e8QnzVfuZw6)</b>
+You can click "File > Align > Structure to Structure".
+
+* <b>[align two chains]9https://icn3d.page.link/ijnf)</b>
+You can click "File > Align > Chain to Chain".
+
+* <b>[align a protein sequence to a structure](https://icn3d.page.link/Mmm82craCwGMAxru9)</b>
+You can click "File > Align > Sequence to Structure".
 
 Either of these widgets could be easily added to your own web pages as shown in the section of "Embed iCn3D with iframe or JavaScript libraries" below. 
 
-<b>Complete package</b> of iCn3D including Three.js and jQuery can be downloaded from [https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.9.2.zip](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.9.2.zip). The "Download ZIP" link in this page does not include third-party libraries. 
+<b>Complete package</b> of iCn3D including Three.js and jQuery can be downloaded from [https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.10.0.zip](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.10.0.zip). The "Download ZIP" link in this page does not include third-party libraries. 
 
 ## Usage
 
@@ -42,13 +71,13 @@ iCn3D accepts the following IDs:
 * <b>align two chains</b>: any two chains for structure alignment, e.g., [https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?chainalign=1HHO_A,4N7N_A&showalignseq=1&show2d=1&showsets=1](https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?chainalign=1HHO_A,4N7N_A&showalignseq=1&show2d=1&showsets=1)
 * <b>blast_rep_id and query_id</b>: NCBI protein accessions of a protein sequence and a chain of a 3D structure for sequence-structure alignment, e.g., [https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?from=icn3d&blast_rep_id=1TSR_A&query_id=NP_001108451.1](https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?from=icn3d&blast_rep_id=1TSR_A&query_id=NP_001108451.1)
 
-iCn3D also accepts the following file types: PDB, mmCIF, Mol2, SDF, and XYZ. The files can be passed through a url, e.g., <a href="https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?type=pdb&url=https%3A%2F%2Ffiles.rcsb.org%2Fview%2F1gpk.pdb">https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?type=pdb&url=https%3A%2F%2Ffiles.rcsb.org%2Fview%2F1gpk.pdb</a>:
+iCn3D also accepts the following file types: PDB, mmCIF, Mol2, SDF, and XYZ. The files can be passed through a url, e.g., https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?type=pdb&url=https%3A%2F%2Ffiles.rcsb.org%2Fview%2F1gpk.pdbhttps://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?type=pdb&url=https%3A%2F%2Ffiles.rcsb.org%2Fview%2F1gpk.pdb</a>:
 
 See the [help page](https://www.ncbi.nlm.nih.gov/Structure/icn3d/docs/icn3d_help.html) or the [API page](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d.html) for more details.
 
 ## Embed iCn3D with iframe or JavaScript libraries
 
-iCn3D can be embedded in a web page by including the URL in HTML iframe, e.g. <iframe src="https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?mmdbid=1tup&width=300&height=300&showmenu=0&showtitle=0&showcommand=0&rotate=right" width="400" height="400" style="border:none"></iframe>. This method always shows the most recent version of iCn3D.
+iCn3D can be embedded in a web page by including the URL in HTML iframe, e.g. <iframe src="https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?mmdbid=1tup&width=300&height=300&showmenu=0&showtitle=0&showcommand=0&rotate=right" width="400" height="400" style="border:none</iframe>. This method always shows the most recent version of iCn3D.
 
 To embed iCn3D with JavaScript libraries, the following libraries need to be included: jQuery, jQuery UI, Three.js, and iCn3D library. An html div tag to hold the 3D viewer is added. The iCn3D widget is initialized with the custom defined parameter "cfg": "var icn3dui = new iCn3DUI(cfg); icn3dui.show3DStructure();". Multiple iCn3D widgets can be embedded in a single page. Please see the source code of the [example page](https://www.ncbi.nlm.nih.gov/Structure/icn3d/example.html) for reference.
 

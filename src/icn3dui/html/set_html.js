@@ -108,6 +108,11 @@ iCn3DUI.prototype.setTopMenusHtmlMobile = function (id) { var me = this;
     html += "    <li><div style='position:relative; margin-top:-6px;'><label class='icn3d-switch'><input id='" + me.pre + "modeswitch' type='checkbox'><div class='icn3d-slider icn3d-round' style='width:34px; height:18px; margin: 6px 0px 0px 3px;' title='Left (\"All atoms\"): Style and color menu options will be applied to all atoms in the structure&#13;Right (\"Selection\"): Style and color menu options will be applied only to selected atoms'></div></label>";
     html += "    <div class='icn3d-commandTitle' style='margin-top: 3px; white-space: nowrap;'><span id='" + me.pre + "modeall' title='Style and color menu options will be applied to all atoms in the structure'>All atoms&nbsp;&nbsp;</span><span id='" + me.pre + "modeselection' class='icn3d-modeselection' style='display:none;' title='Style and color menu options will be applied only to selected atoms'>Selection&nbsp;&nbsp;</span></div></div>";
 
+    if(me.cfg.align !== undefined) {
+        html += "    <li><span id='" + me.pre + "alternate2' class='icn3d-menu-color' title='Alternate the structures'>Alternate</span>";
+
+    }
+
     //html += '    <li><div class="icn3d-commandTitle" style="white-space:nowrap;"><span id="' + me.pre +  'selection_expand" class="icn3d-expand icn3d-link" title="Expand">Show Toolbar</span><span id="' + me.pre +  'selection_shrink" class="icn3d-shrink icn3d-link" style="display:none;" title="Shrink">Hide Toolbar</span></div>';
 
     //html += '    <li><div class="icn3d-commandTitle" style="white-space:nowrap;"><input type="text" id="' + me.pre + 'search_seq" size="10" placeholder="one-letter seq."><br><button style="white-space:nowrap;" id="' + me.pre + 'search_seq_button">Search Seq.</button> <a style="text-decoration: none;" href="https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d.html#selectb" target="_blank" title="Specification tips">?</a></div>';
@@ -371,7 +376,7 @@ iCn3DUI.prototype.setMenu1_base = function() { var me = this;
     html += me.getLink('mn1_exportSelections', 'Selection File');
     html += me.getLink('mn1_exportCounts', 'Residue Counts');
     //if(me.cfg.mmdbid !== undefined) {
-     html += me.getLink('mn6_exportInteraction', 'Interaction List');
+//     html += me.getLink('mn6_exportInteraction', 'Interaction List');
     //}
 
     html += "    </ul>";
@@ -408,6 +413,7 @@ iCn3DUI.prototype.setMenu2_base = function() { var me = this;
 
     html += me.getLink('mn2_definedsets', 'Defined Sets');
     html += me.getLink('mn2_selectall', 'All');
+    html += me.getLink('mn2_selectdisplayed', 'Displayed Set');
 //        if(me.cfg.cid === undefined) {
 //            html += me.getRadio('mn2_select', 'mn2_select_chain', 'Defined Sets');
 //        }
@@ -435,6 +441,9 @@ iCn3DUI.prototype.setMenu2_base = function() { var me = this;
         html += "  <li>\"Shift\"+Click: range Selection</li>";
         html += "  <li>-</li>";
         html += me.getRadio('mn2_pk', 'mn2_pkChain', 'Chain');
+        if(me.cfg.mmdbid !== undefined || me.cfg.gi !== undefined) {
+            html += me.getRadio('mn2_pk', 'mn2_pkDomain', '3D Domain');
+        }
         html += me.getRadio('mn2_pk', 'mn2_pkStrand', 'Strand/Helix');
         html += me.getRadio('mn2_pk', 'mn2_pkResidue', 'Residue', true);
         html += me.getRadio('mn2_pk', 'mn2_pkYes', 'Atom');
@@ -524,26 +533,8 @@ iCn3DUI.prototype.setMenu2b_base = function() { var me = this;
         html += "    </ul>";
         html += "  </li>";
 
-        html += me.getLink('mn6_hbondsYes', 'H-Bonds &<br>Interactions');
-        html += me.getLink('mn6_hbondsNo', 'Hide H-Bonds');
-
-/*
-        html += "  <li><span>H-Bonds &<br>Interactions</span>";
-        html += "    <ul>";
-        html += me.getRadio('mn6_hbonds', 'mn6_hbondsYes', 'Show');
-        html += me.getRadio('mn6_hbonds', 'mn6_hbondsNo', 'Hide', true);
-        html += "    </ul>";
-        html += "  </li>";
-
-        html += "  <li><span>Salt Bridge</span>";
-        html += "    <ul>";
-        html += me.getRadio('mn6_saltbridge', 'mn6_saltbridgeYes', 'Show');
-        html += me.getRadio('mn6_saltbridge', 'mn6_saltbridgeNo', 'Hide', true);
-        html += "    </ul>";
-        html += "  </li>";
-
-        html += me.getLink('mn2_aroundsphere2', 'Interactions');
-*/
+        html += me.getLink('mn6_hbondsYes', 'H-Bonds <br>& Interactions');
+        //html += me.getLink('mn6_hbondsNo', 'Remove H-Bonds <br>& Interactions');
 
         html += "  <li><span>Disulfide Bonds</span>";
         html += "    <ul>";
@@ -972,6 +963,10 @@ iCn3DUI.prototype.setMenu4_base = function() { var me = this;
         }
         else {
           html += me.getRadio('mn4_clr', 'mn4_clrChain', 'Chain', true);
+        }
+
+        if(me.cfg.mmdbid !== undefined || me.cfg.gi !== undefined) {
+          html += me.getRadio('mn4_clr', 'mn4_clrdomain', '3D Domain');
         }
 
         html += me.getRadio('mn4_clr', 'mn4_clrResidue', 'Residue');
@@ -1412,10 +1407,10 @@ iCn3DUI.prototype.setDialogs = function() { var me = this;
 
     html += "<div id='" + me.pre + "dl_hbonds'>";
     html += "      1. Choose interaction types and their thresholds:<br>";
-    html += "      <div class='icn3d-box'><table border=0 width=400><tr>";
+    html += "      <div class='icn3d-box'><table border=0 width=450><tr>";
     html += "        <td style='min-width:130px;'><input type='checkbox' id='" + me.pre + "analysis_hbond' checked>Hydrogen Bonds&nbsp;&nbsp;</td>";
-    html += "        <td style='min-width:130px;'><input type='checkbox' id='" + me.pre + "analysis_saltbridge' checked>Salt Bridges&nbsp;&nbsp;</td>";
-    html += "        <td style='min-width:130px;'><input type='checkbox' id='" + me.pre + "analysis_contact' checked>Interactions&nbsp;&nbsp;</td>";
+    html += "        <td style='min-width:130px;'><input type='checkbox' id='" + me.pre + "analysis_saltbridge'>Salt Bridges&nbsp;&nbsp;</td>";
+    html += "        <td style='min-width:130px;'><input type='checkbox' id='" + me.pre + "analysis_contact'>Contacts/Interactions&nbsp;&nbsp;</td>";
     html += "        </tr><tr>";
     html += "        <td>";
     html += "  <div style='white-space:nowrap'>Threshold: <select id='" + me.pre + "hbondthreshold'>";
@@ -1463,8 +1458,10 @@ iCn3DUI.prototype.setDialogs = function() { var me = this;
 
     html += "      </td></tr></table>";
 
-    html += "  <div>4. <button id='" + me.pre + "applyhbonds'>Display</button> H-bonds/Interactions between these two sets</div><br>";
-    html += "  <div style='text-indent:1.1em'><button id='" + me.pre + "hbondExport'>Show</button> H-bond/Interaction pairs in a window</div>";
+    html += "  <div>4. <button id='" + me.pre + "applyhbonds'>Display</button> H-bonds/Contacts in 3D</div><br>";
+    html += "  <div style='text-indent:1.1em'><button id='" + me.pre + "hbondWindow'>Highlight</button> H-bond/Contact pairs in a window</div><br>";
+    html += "  <div style='text-indent:1.1em'><button id='" + me.pre + "hbondExport'>Save</button> H-bond/Contact pairs in a file</div><br>";
+    html += "  <div style='text-indent:1.1em'><button id='" + me.pre + "hbondReset'>Reset</button> and select new sets</div>";
     html += "</div>";
 
     html += "<div id='" + me.pre + "dl_allinteraction'>";
@@ -1796,7 +1793,7 @@ iCn3DUI.prototype.setSequenceGuide = function (suffix, bShown) { var me = this;
   if(!me.isMobile()) {
       sequencesHtml += "<b>Select on 1D sequences:</b> drag to select, drag again to deselect, multiple selection is allowed without Ctrl key, click \"Save Selection\" to save the current selection.<br/><br/>";
 
-      sequencesHtml += "<b>Select on 2D interaction diagram:</b> click on the nodes or lines. The nodes are chains and can be united with the Ctrl key. The lines are interactions and can NOT be united. Each click on the lines selects half of the lines, i.e., select the interacting residues in one of the two chains. The selected residues are saved in the \"Select -> Advanced\" menu.<br/><br/>";
+      sequencesHtml += "<b>Select on 2D interaction diagram:</b> click on the nodes or lines. The nodes are chains and can be united with the Ctrl key. The lines are interactions and can NOT be united. Each click on the lines selects half of the lines, i.e., select the interacting residues in one of the two chains.<br/><br/>";
 
       var tmpStr = me.isMobile() ? 'use finger to pick' : 'hold "Alt" and use mouse to pick';
       sequencesHtml += "<b>Select on 3D structures:</b> " + tmpStr + ", click the second time to deselect, hold \"Ctrl\" to union selection, hold \"Shift\" to select a range, press the up/down arrow to switch among atom/residue/strand/chain/structure, click \"Save Selection\" to save the current selection.<br/><br/>";
@@ -1824,7 +1821,7 @@ iCn3DUI.prototype.getAlignSequencesAnnotations = function (alignChainArray, bUpd
   if(!me.isMobile()) {
       sequencesHtml = "<b>Select on 1D sequences:</b> drag to select, drag again to deselect, multiple selection is allowed without Ctrl key, click \"Save Selection\" to save the current selection.<br/>";
 
-      sequencesHtml += "<b>Select on 2D interaction diagram:</b> click on the nodes or lines. The nodes are chains and can be united with the Ctrl key. The lines are interactions and can NOT be united. Each click on the lines selects half of the lines, i.e., select the interacting residues in one of the two chains. The selected residues are saved in the \"Select -> Advanced\" menu.<br/><br/>";
+      sequencesHtml += "<b>Select on 2D interaction diagram:</b> click on the nodes or lines. The nodes are chains and can be united with the Ctrl key. The lines are interactions and can NOT be united. Each click on the lines selects half of the lines, i.e., select the interacting residues in one of the two chains.<br/><br/>";
 
       var tmpStr = me.isMobile() ? 'use finger to pick' : 'hold "Alt" and use mouse to pick';
       sequencesHtml += "<b>Select on 3D structures:</b> " + tmpStr + ", click the second time to deselect, hold \"Ctrl\" to union selection, hold \"Shift\" to select a range, press the up/down arrow to switch among atom/residue/strand/chain/structure, click \"Save Selection\" to save the current selection.<br/>";

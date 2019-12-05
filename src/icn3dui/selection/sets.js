@@ -339,4 +339,34 @@ iCn3DUI.prototype.setChainsInMenu = function () { var me = this;
           me.icn3d.defNames2Command[chainid] = 'select $' + structure + '.' + chain;
         }
     }
+
+    // select whole structure
+    if(Object.keys(me.icn3d.structures) == 1) {
+      var structure = Object.keys(me.icn3d.structures)[0];
+
+      me.icn3d.defNames2Residues[structure] = Object.keys(me.icn3d.residues);
+      me.icn3d.defNames2Descr[structure] = structure;
+
+      me.icn3d.defNames2Command[structure] = 'select $' + structure;
+    }
+    else {
+        var resArray = Object.keys(me.icn3d.residues);
+        var structResHash = {};
+        for(var i = 0, il = resArray.length; i < il; ++i) {
+            var resid = resArray[i];
+            var pos = resid.indexOf('_');
+            var structure = resid.substr(0, pos);
+            if(structResHash[structure] === undefined) {
+                structResHash[structure] = [];
+            }
+            structResHash[structure].push(resid);
+        }
+
+        for(var structure in structResHash) {
+          me.icn3d.defNames2Residues[structure] = structResHash[structure];
+          me.icn3d.defNames2Descr[structure] = structure;
+
+          me.icn3d.defNames2Command[structure] = 'select $' + structure;
+        }
+    }
 };
