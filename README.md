@@ -45,7 +45,7 @@
 * <b>[align two structures](https://icn3d.page.link/wPoW56e8QnzVfuZw6)</b>: 
     You can click "File > Align > Structure to Structure".
 
-* <b>[align two chains]9https://icn3d.page.link/ijnf)</b>: 
+* <b>[align two chains](https://icn3d.page.link/ijnf)</b>: 
     You can click "File > Align > Chain to Chain".
 
 * <b>[align a protein sequence to a structure](https://icn3d.page.link/Mmm82craCwGMAxru9)</b>: 
