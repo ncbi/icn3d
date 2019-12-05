@@ -360,6 +360,29 @@ iCn3D.prototype.translateDown = function (percentScreenSize) { // 1
   this.render();
 };
 
+iCn3D.prototype.select3ddomainFromAtom = function (atom) {
+    var chainid = atom.structure + '_' + atom.chain;
+    var resid = chainid + '_' + atom.resi;
+
+    var domainid;
+    for(var id in this.tddomains) { // 3GVU_A_3d_domain_1
+        var pos = id.indexOf('_3d_domain');
+        if(id.substr(0, pos) == chainid) {
+            if(Object.keys(this.tddomains[id]).indexOf(resid) !== -1) {
+                domainid = id;
+                break;
+            }
+        }
+    }
+
+    var atomList = {};
+    for(var resid in this.tddomains[domainid]) {
+        atomList = this.unionHash(atomList, this.residues[resid]);
+    }
+
+    return atomList;
+};
+
 iCn3D.prototype.showPickingHilight = function(atom) {
   if(!this.bShift && !this.bCtrl) this.removeHlObjects();
 
@@ -375,6 +398,9 @@ iCn3D.prototype.showPickingHilight = function(atom) {
     this.pickedAtomList = this.selectStrandHelixFromAtom(atom);
   }
   else if(this.pk === 4) {
+    this.pickedAtomList = this.select3ddomainFromAtom(atom);
+  }
+  else if(this.pk === 5) {
     var chainid = atom.structure + '_' + atom.chain;
     this.pickedAtomList = this.chains[chainid];
   }

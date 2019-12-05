@@ -91,6 +91,7 @@ iCn3DUI.prototype.parseMmtfData = function (mmtfData, bFull) { var me = this;
     var structure, chain, resn, resi, ss, ssbegin, ssend;
     var het, bProtein, bNucleotide;
     var elem, atomName, coord, b, alt;
+    var CSerial, prevCSerial, OSerial, prevOSerial;
 
     var bModifyResi = false;
 
@@ -143,6 +144,9 @@ iCn3DUI.prototype.parseMmtfData = function (mmtfData, bFull) { var me = this;
             var bSetPrevSsend = false;
 
             if(chain !== prevChain) {
+                prevCSerial = undefined;
+                prevOSerial = undefined;
+
                 // new chain
                 if(ss !== 'coil' && ss !== 'other') {
                     ssbegin = true;
@@ -163,25 +167,30 @@ iCn3DUI.prototype.parseMmtfData = function (mmtfData, bFull) { var me = this;
                     }
                 }
             }
-            else if(ss !== prevSS) {
-                if(prevSS === 'coil' || prevSS === 'other') {
-                    ssbegin = true;
-                    ssend = false;
-                }
-                else if(ss === 'coil' || ss === 'other') {
-                    bSetPrevSsend = true;
-                    ssbegin = false;
-                    ssend = false;
-                }
-                else if( (prevSS === 'sheet' && ss === 'helix') || (prevSS === 'helix' && ss === 'sheet')) {
-                    bSetPrevSsend = true;
-                    ssbegin = true;
-                    ssend = false;
-                }
-            }
             else {
-                    ssbegin = false;
-                    ssend = false;
+                prevCSerial = CSerial;
+                prevOSerial = OSerial;
+
+                if(ss !== prevSS) {
+                    if(prevSS === 'coil' || prevSS === 'other') {
+                        ssbegin = true;
+                        ssend = false;
+                    }
+                    else if(ss === 'coil' || ss === 'other') {
+                        bSetPrevSsend = true;
+                        ssbegin = false;
+                        ssend = false;
+                    }
+                    else if( (prevSS === 'sheet' && ss === 'helix') || (prevSS === 'helix' && ss === 'sheet')) {
+                        bSetPrevSsend = true;
+                        ssbegin = true;
+                        ssend = false;
+                    }
+                }
+                else {
+                        ssbegin = false;
+                        ssend = false;
+                }
             }
 
             if(bSetPrevSsend) {
@@ -281,6 +290,24 @@ iCn3DUI.prototype.parseMmtfData = function (mmtfData, bFull) { var me = this;
                     ssbegin: ssbegin,         // optional, used to show the beginning of secondary structures
                     ssend: ssend            // optional, used to show the end of secondary structures
                 };
+
+                if(!atomDetails.het && atomDetails.name === 'C') {
+                    CSerial = serial;
+                }
+                if(!atomDetails.het && atomDetails.name === 'O') {
+                    OSerial = serial;
+                }
+
+                // from DSSP C++ code
+                if(!atomDetails.het && atomDetails.name === 'N' && prevCSerial !== undefined && prevOSerial !== undefined) {
+                    var dist = me.icn3d.atoms[prevCSerial].coord.distanceTo(me.icn3d.atoms[prevOSerial].coord);
+
+                    var x2 = atomDetails.coord.x + (me.icn3d.atoms[prevCSerial].coord.x - me.icn3d.atoms[prevOSerial].coord.x) / dist;
+                    var y2 = atomDetails.coord.y + (me.icn3d.atoms[prevCSerial].coord.y - me.icn3d.atoms[prevOSerial].coord.y) / dist;
+                    var z2 = atomDetails.coord.z + (me.icn3d.atoms[prevCSerial].coord.z - me.icn3d.atoms[prevOSerial].coord.z) / dist;
+
+                    atomDetails.hcoord = new THREE.Vector3(x2, y2, z2);
+                }
 
                 me.icn3d.atoms[serial] = atomDetails;
 

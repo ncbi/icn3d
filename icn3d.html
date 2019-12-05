@@ -47,10 +47,10 @@ body {font-family: Verdana, Arial, Helvetica, sans-serif;}
 
 <ul>
 
-<li><a href="#gallery">iCn3D gallery with live examples</a></li>
+<li><b><a href="#gallery">iCn3D gallery with live examples</a></b></li>
 <br>
 
-<li>What is iCn3D Structure Viewer?</li><br/>
+<!--li>What is iCn3D Structure Viewer?</li><br/>
 "I see in 3D" (iCn3D) Structure Viewer is a WebGL-based 3D viewer using Three.js and jQuery. iCn3D has a feature-rich user interface and allows users to:<br/><br/>
 <ul>
 <li><a href="https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?mmdbid=1tup&command=view annotations; set annotation cdd; set view detailed view; set annotation all">Display and integrate annotations</a> from NCBI resources including dbSNP, ClinVar, conserved domains, 3D domains, and binding sites</li>
@@ -72,9 +72,61 @@ We provided two types of iCn3D widgets: <a href="https://www.ncbi.nlm.nih.gov/St
 <br/>
 
 This page describes Web APIs and how to embed iCn3D in your html page. Other details are described in the <a href="https://www.ncbi.nlm.nih.gov/Structure/icn3d/docs/icn3d_help.html">help</a> page. The source code of iCn3D is available at <a href="https://github.com/ncbi/icn3d">github.com/ncbi/icn3d</a>.<br/>
-<br/>
+<br/-->
 
-<li><a href="#HowToUse">How to embed iCn3D Structure Viewer in your html page</a></li>
+<li><b>What is iCn3D Structure Viewer?</b></li><br/>
+"I see in 3D" (iCn3D) Structure Viewer is a WebGL-based 3D viewer using Three.js and jQuery. iCn3D synchronized the display of 3D structure, 2D interaction, and 1D sequences and annotations. Users' custom display can be saved in a short URL or a PNG image.<br/><br/>
+<ol>
+<li><b>view a 3D structure in iCn3D</b><br/>
+Open the link https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html, input a PDB ID, and click "Load". You can also click "File" menu to "Open File" or input other IDs.<br/>
+<br/>
+As mentioned in the menu "Help > Transformation Hints", you can use Left mouse button for rotation, Middle mouse wheel for zooming, and Right mouse button for translation. <br>
+<br>
+The most important point about using iCn3D is the current selection. Any operations on color, style, etc. are working on the current selection. By default, all atoms are selected. Once you select any subset, your operation will work ONLY on the subset. You can switch the selection using the toggle next to the Help menu.<br/>
+<br/>
+<li><b>create custom 3D view</b><br/>
+You first open a structure in "File" menu, then select a subset in "Select" menu, view only the selected subset by clicking "View Only Selection" in View menu, finally change styles or colors in "Style" and "Color" menus. <br/>
+<br/>
+Each operation has a corresponding command as listed at https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d.html#commands. These commands will show up in the command/log window right beneath the 3D display. To view all previous commands, you can click "Share Link" in "File" menu. Both the original URL and the short URL can be used to display your custom view.<br/>
+<br/>
+<li><b>save your work</b><br/>
+You can save "iCn3D PNG Image" in the menu "File > Save Files". Both the PNG file and an HTML file are saved. Click the HTML file to see the PNG image, which is linked to the custom display via a shorten URL. The downloaded "iCn3D PNG Image" itself can also be used as an input in the menu "File > Open File" to reproduce the custom display. You can combine these HTML files to generate your own galleries.<br/>
+<br/>
+<li><b><a href="https://icn3d.page.link/JR5B">show binding site</a></b><br/>
+You can click "Chem. Binding" in "View" menu to show all hydrogen bonds around chemicals.<br/>
+<br/>
+<li><b><a href="https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?mmdbid=1tup&command=export+stl+stabilizer+file">export models for 3D printing</a></b><br/>
+You can click "3D Printing" in "File" menu to export models for 3D printing. Both STL and VRML files are supported.<br/>
+<br/>
+<li><b><a href="https://icn3d.page.link/TuSd">show transmembrane proteins</a></b><br/>
+If the protein is a transmembrane protein, you can click "File > Retrieve by ID > OPM PDB ID" to input a PDB ID to view the membranes.<br/>
+<br/>
+<li><b>show <a href="https://icn3d.page.link/aYAjP4S3NbrBJX3x6">surface</a>, <a href="https://icn3d.page.link/L4C4WYE85tYRiFeK7">EM map</a>, or <a href="https://icn3d.page.link/QpqNZ3k65ToYFvUB6">electron density map</a></b><br/>
+You can click "Style > Surface Type", "Style > EM Density Map", or "Style > Electron Density".<br/>
+<br/>
+<li><b>view 1D sequences and 2D interactions</b><br/>
+In the page https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?mmdbid=1TUP, you can click in "Windows" menu to "View Sequences & Annotations",
+"View Interactions", and see all "Defined Sets", which can be clicked to see any of your selections.<br/>
+<br/>
+<li><b>select on 3D, 1D and 2D</b><br/>
+To select on 3D structures: hold "Alt" and use mouse to pick, hold "Ctrl" to union selection, hold "Shift" to select a range, press the up/down arrow to switch among atom/residue/strand/chain/structure. Click "Save Selection" in "Select" menu to save the current selection.<br/>
+<br/>
+To select on 1D sequences: drag on the sequences or the blue track title to select.<br/>
+<br/>
+To select on 2D interaction diagram: click on the nodes or lines. The nodes are chains and can be united with the Ctrl key. The lines are interactions and can NOT be united. Each click on the lines selects half of the lines, i.e., select the interacting residues in one of the two chains.<br/>
+<br/>
+<li><b><a href="https://icn3d.page.link/wPoW56e8QnzVfuZw6">align two structures</a></b><br/>
+You can click "File > Align > Structure to Structure".<br/>
+<br/>
+<li><b><a href="https://icn3d.page.link/ijnf">align two chains</a></b><br/>
+You can click "File > Align > Chain to Chain".<br/>
+<br/>
+<li><b><a href="https://icn3d.page.link/Mmm82craCwGMAxru9">align a protein sequence to a structure</a></b><br/>
+You can click "File > Align > Sequence to Structure".<br/>
+<br/>
+</ol>
+
+<li><b><a href="#HowToUse">How to embed iCn3D Structure Viewer in your html page?</a></b></li>
     <ul>
     <li><a href="#embedIframe">Embed using iframe</a></li>
     <li><a href="#embedJS">Embed using Javascript</a><br>
@@ -100,9 +152,8 @@ This page describes Web APIs and how to embed iCn3D in your html page. Other det
     </li>
     </ul>
 <br>
-<li><a href="#parameters">URL parameters for the advanced interface</a>
-</li><br>
-<li><a href="#commands">Menus, Commands, and Methods of the advanced interface</a>
+<li><b><a href="#parameters">URL parameters for the advanced interface</a></b></li><br>
+<li><b><a href="#commands">Menus, Commands, and Methods of the advanced interface</a></b>
     <table>
         <tbody><tr>
         <td>1. <a href="#file">File</a>&nbsp;&nbsp;</td>
@@ -117,9 +168,9 @@ This page describes Web APIs and how to embed iCn3D in your html page. Other det
         </tbody>
     </table>
 </li><br>
-<li><a href="#DataStructure">Data Structure</a></li><br>
-<li><a href="#DisplayOptions">Display Options</a></li><br>
-<li><a href="#Methods">Method Documents of the core library iCn3D</a></li>
+<li><b><a href="#DataStructure">Data Structure</a></b></li><br>
+<li><b><a href="#DisplayOptions">Display Options</a></b></li><br>
+<li><b><a href="#Methods">Method Documents of the core library iCn3D</a></b></li>
 <table>
 <tbody><tr>
 <td valign="top">
@@ -253,7 +304,7 @@ This page describes Web APIs and how to embed iCn3D in your html page. Other det
 </tbody></table>
 <br>
 
-<li><a href="#UIMethods">Method Documents of the advanced UI library iCn3DUI</a></li>
+<li><b><a href="#UIMethods">Method Documents of the advanced UI library iCn3DUI</a></b></li>
 <table>
 <tbody><tr>
 <td valign="top">
@@ -431,7 +482,7 @@ This page describes Web APIs and how to embed iCn3D in your html page. Other det
 </tr>
 </tbody></table>
 <br>
-<li><a href="#log">Change Log</a></li>
+<li><b><a href="#log">Change Log</a></b></li>
 
 </ul>
 
@@ -472,20 +523,26 @@ This page describes Web APIs and how to embed iCn3D in your html page. Other det
 </div>
 
 <div class="gallery">
-<a href="https://icn3d.page.link/5G331gjp5Rb665uY6" target="_blank">
-<img style="height:300px" src ="https://www.ncbi.nlm.nih.gov/Structure/icn3d/gallery/3GVU-b0-KMLt1dbwKWadqwzV8.png"><br>Ligand Binding with Fog and Slab (PDB 3GVU)
+<a href="https://icn3d.page.link/ijnf" target="_blank">
+<img style="height:300px" src ="https://www.ncbi.nlm.nih.gov/Structure/icn3d/gallery/1HHO-4N7N-ijnf.png"><br>Align chain A of PDB 1HHO with chain A of PDB 4N7N
 </a>
 </div>
 
 <div class="gallery">
-<a href="https://icn3d.page.link/9QckpJJnwQdCuddSA" target="_blank">
-<img style="height:300px" src ="https://www.ncbi.nlm.nih.gov/Structure/icn3d/gallery/3GVU-b1-ggCX1Va9q1ukRxDh9.png"><br>Ligand Binding with Thinner Coils (PDB 3GVU)
+<a href="https://icn3d.page.link/JR5B" target="_blank">
+<img style="height:300px" src ="https://www.ncbi.nlm.nih.gov/Structure/icn3d/gallery/3GVU-JR5B.png"><br>Ligand Binding with Fog and Slab (PDB 3GVU)
 </a>
 </div>
 
 <div class="gallery">
-<a href="https://icn3d.page.link/FL4pnLZRWhziLXY99" target="_blank">
-<img style="height:300px" src ="https://www.ncbi.nlm.nih.gov/Structure/icn3d/gallery/3GVU-b2-FL4pnLZRWhziLXY99.png"><br>Ligand Binding with Surfaces and Labels (PDB 3GVU)
+<a href="https://icn3d.page.link/D6LC" target="_blank">
+<img style="height:300px" src ="https://www.ncbi.nlm.nih.gov/Structure/icn3d/gallery/3GVU-D6LC.png"><br>Ligand Binding with Thinner Coils (PDB 3GVU)
+</a>
+</div>
+
+<div class="gallery">
+<a href="https://icn3d.page.link/vzTs" target="_blank">
+<img style="height:300px" src ="https://www.ncbi.nlm.nih.gov/Structure/icn3d/gallery/3GVU-vzTs.png"><br>Ligand Binding with Surfaces and Labels (PDB 3GVU)
 </a>
 </div>
 
@@ -845,7 +902,7 @@ This page describes Web APIs and how to embed iCn3D in your html page. Other det
 <tr><td valign='top'><span class="indent">State File:</span></td>            <td valign='top'>[no command available]</td> <td valign='top'><a href="#saveFile">saveFile</a></td></tr>
 <tr><td valign='top'><span class="indent">All Selections:</span></td>   <td valign='top'>[no command available]</td> <td valign='top'><a href="#saveFile">saveFile</a></td></tr>
 <tr><td valign='top'><span class="indent">Residue Counts:</span></td>   <td valign='top'>[no command available]</td> <td valign='top'><a href="#saveFile">saveFile</a></td></tr>
-<tr><td valign='top'><span class="indent">Interaction List:</span></td>                <td valign='top'>export interactions</td> <td valign='top'><a href="#exportInteractions">exportInteractions</a></td></tr>
+</tr>
 
 <tr><td valign='top'>f) Share Link:</td>         <td valign='top'>[no command available]</td> <td valign='top'><a href="#shareLink">shareLink</a></td></tr>
 
@@ -858,37 +915,39 @@ This page describes Web APIs and how to embed iCn3D in your html page. Other det
 <tr><td valign='top'><span class="indent">Delete selected sets:</span></td>    <td valign='top'>delete selected sets</td> <td valign='top'><a href="#deleteSelectedSets">deleteSelectedSets</a></td></tr>
 
 <tr><td valign='top'>b) All:</td>     <td valign='top'>select all</td> <td valign='top'><a href="#selectAll">selectAll</a></td></tr>
+<tr><td valign='top'>c) Displayed Set:</td>     <td valign='top'>select displayed set</td> <td valign='top'>me.icn3d.hAtoms = me.icn3d.cloneHash(me.icn3d.dAtoms)</td></tr>
 
-<tr><td colspan="3">c) by Distance</td> </tr>
+<tr><td colspan="3">d) by Distance</td> </tr>
 <tr><td valign='top'><span class="indent">Display:</span></td>            <td valign='top'>select zone cutoff [cutoff in angstrom]</td> <td valign='top'><a href="#pickCustomSphere">pickCustomSphere</a></td></tr>
 
-<tr><td valign='top'>d) Inverse:</td>     <td valign='top'>select complement</td> <td valign='top'><a href="#selectComplement">selectComplement</a></td></tr>
-<tr><td valign='top'>e) Main Chains:</td>     <td valign='top'>select main chains</td> <td valign='top'><a href="#selectMainChains">selectMainChains</a></td></tr>
-<tr><td valign='top'>f) Side Chains:</td>     <td valign='top'>select side chains</td> <td valign='top'><a href="#selectSideChains">selectSideChains</a></td></tr>
+<tr><td valign='top'>e) Inverse:</td>     <td valign='top'>select complement</td> <td valign='top'><a href="#selectComplement">selectComplement</a></td></tr>
+<tr><td valign='top'>f) Main Chains:</td>     <td valign='top'>select main chains</td> <td valign='top'><a href="#selectMainChains">selectMainChains</a></td></tr>
+<tr><td valign='top'>g) Side Chains:</td>     <td valign='top'>select side chains</td> <td valign='top'><a href="#selectSideChains">selectSideChains</a></td></tr>
 
-<tr><td valign='top'>g) Advanced</td><td valign='top'>select [command] | name [commandname]</td> <td valign='top'><a href="#selectByCommand">selectByCommand</a></td></tr>
+<tr><td valign='top'>h) Advanced</td><td valign='top'>select [command] | name [commandname]</td> <td valign='top'><a href="#selectByCommand">selectByCommand</a></td></tr>
 
-<tr><td colspan="3"><br>h) Select on 3D</td> </tr>
-<tr><td valign='top'><span class="indent">Chain:</span></td>  <td valign='top'>set pk chain</td> <td valign='top'>me.icn3d.pk = 4; me.icn3d.opts['pk'] = 'chain';</td></tr>
+<tr><td colspan="3"><br>i) Select on 3D</td> </tr>
+<tr><td valign='top'><span class="indent">Chain (Alt):</span></td>  <td valign='top'>set pk chain</td> <td valign='top'>me.icn3d.pk = 5; me.icn3d.opts['pk'] = 'chain';</td></tr>
+<tr><td valign='top'><span class="indent">3D Domain (Alt):</span></td>  <td valign='top'>set pk domain</td> <td valign='top'>me.icn3d.pk = 4; me.icn3d.opts['pk'] = 'domain';</td></tr>
 <tr><td valign='top'><span class="indent">Strand/Helix (Alt):</span></td>  <td valign='top'>set pk strand</td> <td valign='top'>me.icn3d.pk = 3; me.icn3d.opts['pk'] = 'strand';</td></tr>
 <tr><td valign='top'><span class="indent">Residue (Alt):</span></td>  <td valign='top'>set pk residue</td> <td valign='top'>me.icn3d.pk = 2; me.icn3d.opts['pk'] = 'residue';</td></tr>
 <tr><td valign='top'><span class="indent">Atom (Alt):</span></td>     <td valign='top'>set pk atom</td> <td valign='top'>me.icn3d.pk = 1; me.icn3d.opts['pk'] = 'atom';</td></tr>
 
-<tr><td valign='top'>i) Save Selection:</td>      <td valign='top'>select [command] | name [commandname]</td> <td valign='top'><a href="#selectByCommand">selectByCommand</a></td></tr>
-<tr><td valign='top'>j) Clear Selection:</td>      <td valign='top'>clear all</td> <td valign='top'><a href="#selectAll">selectAll</a></td></tr>
+<tr><td valign='top'>j) Save Selection:</td>      <td valign='top'>select [command] | name [commandname]</td> <td valign='top'><a href="#selectByCommand">selectByCommand</a></td></tr>
+<tr><td valign='top'>k) Clear Selection:</td>      <td valign='top'>clear all</td> <td valign='top'><a href="#selectAll">selectAll</a></td></tr>
 
-<tr><td colspan="3"><br>k) Highlight Color</td> </tr>
+<tr><td colspan="3"><br>l) Highlight Color</td> </tr>
 <tr><td valign='top'><span class="indent">Yellow:</span></td>   <td valign='top'>set highlight color yellow</td> <td valign='top'></td></tr>
 <tr><td valign='top'><span class="indent">Green:</span></td>    <td valign='top'>set highlight color green</td> <td valign='top'></td></tr>
 <tr><td valign='top'><span class="indent">Red:</span></td>        <td valign='top'>set highlight color red</td> <td valign='top'></td></tr>
 
-<tr><td colspan="3"><br>l) Highlight Style</td> </tr>
+<tr><td colspan="3"><br>m) Highlight Style</td> </tr>
 <tr><td valign='top'><span class="indent">Outline:</span></td>              <td valign='top'>set highlight style outline</td> <td valign='top'>me.icn3d.bHighlight = 1;</td></tr>
 <tr><td valign='top'><span class="indent">3D Objects:</span></td>         <td valign='top'>set highlight style 3d</td> <td valign='top'>me.icn3d.bHighlight = 2;</td></tr>
 
-<tr><td valign='top'>m) Toggle Highlight</td><td valign='top'>toggle highlight</td> <td valign='top'><a href="#toggleHighlight">toggleHighlight</a></td></tr>
+<tr><td valign='top'>n) Toggle Highlight</td><td valign='top'>toggle highlight</td> <td valign='top'><a href="#toggleHighlight">toggleHighlight</a></td></tr>
 
-<tr><td colspan="3"><br>m) Switch Highlight Level</td> </tr>
+<tr><td colspan="3"><br>o) Switch Highlight Level</td> </tr>
 <tr><td valign='top'><span class="indent">&uarr;:</span></td>              <td valign='top'>highlight level up</td> <td valign='top'><a href="#switchHighlightLevelUp">switchHighlightLevelUp<a></td></tr>
 <tr><td valign='top'><span class="indent">&darr;:</span></td>         <td valign='top'>highlight level down</td> <td valign='top'><a href="#switchHighlightLevelDown">switchHighlightLevelDown</a></td></tr>
 
@@ -934,27 +993,25 @@ In the dialog Select -&gt; Advanced, users can use simple specification to selec
 
 <tr><td valign='top'>f) View -&gt; H-Bonds & Interactions:</td>  <td valign='top'>hbonds 3.5 | sets non-selected selected;<br>salt bridges 4 | sets non-selected selected;<br>interactions 4 | sets non-selected selected</td> <td valign='top'><a href="#showHbonds">showHbonds;showSaltbridge;pickCustomSphere</a></td></tr>
 
-<tr><td valign='top'>g) View -&gt; Hide H-Bonds:</td>  <td valign='top'>set hbonds off; set salt bridge off</td> <td valign='top'><a href="#selectAll">hideHbonds; hideSaltbridge</a></td></tr>
-
-<tr><td colspan="3"><br>h) View -&gt; Disulfide Bonds</td> </tr>
+<tr><td colspan="3"><br>g) View -&gt; Disulfide Bonds</td> </tr>
 <tr><td valign='top'><span class="indent">Show:</span></td>            <td valign='top'>disulfide bonds</td> <td valign='top'><a href="#showSsbonds">showSsbonds</a></td></tr>
 <tr><td valign='top'><span class="indent">Export Pairs:</span></td>            <td valign='top'>[no command available]</td> <td valign='top'></td></tr>
 <tr><td valign='top'><span class="indent">Hide:</span></td>            <td valign='top'>set disulfide bonds off</td> <td valign='top'>me.icn3d.opts["ssbonds"] = "no";</td></tr>
 
-<tr><td colspan="3"><br>i) View -&gt; Cross-Linkages</td> </tr>
+<tr><td colspan="3"><br>h) View -&gt; Cross-Linkages</td> </tr>
 <tr><td valign='top'><span class="indent">Show:</span></td>            <td valign='top'>cross linkage</td> <td valign='top'>me.icn3d.bShowCrossResidueBond = true;</td></tr>
 <tr><td valign='top'><span class="indent">Hide:</span></td>            <td valign='top'>set cross linkage off</td> <td valign='top'>me.icn3d.bShowCrossResidueBond = false;</td></tr>
 
-<tr><td colspan="3"><br>j) View -&gt; Assembly (PDB, mmCIF, or MMTF files only)</td> </tr>
+<tr><td colspan="3"><br>i) View -&gt; Assembly (PDB, mmCIF, or MMTF files only)</td> </tr>
 <tr><td valign='top'><span class="indent">yes:</span></td>                <td valign='top'>set assembly on</td> <td valign='top'>me.icn3d.bAssembly = true;</td></tr>
 <tr><td valign='top'><span class="indent">no:</span></td>                 <td valign='top'>set assembly off</td> <td valign='top'>me.icn3d.bAssembly = false;</td></tr>
 
-<tr><td colspan="3"><br>k) View -&gt; Distance</td> </tr>
+<tr><td colspan="3"><br>j) View -&gt; Distance</td> </tr>
 <tr><td valign='top' rowspan="2"><span class="indent">Measure:</span></td>            <td valign='top'>add label [label text] | x [x] y [y] z [z] | size [label size] | color [FF0000] | background [FFFFFF]</td> <td valign='top'><a href="#addLabel">addLabel</a></td></tr>
 <tr>                                                               <td valign='top'>add line | x1 [x1] y1 [y1] z1 [z1] | x2 [x2] y2 [y2] z2 [z2] | color [FFFF00] | dashed [true]</td> <td valign='top'><a href="#addLine">addLine</a></td></tr>
 <tr><td valign='top'><span class="indent">Hide:</span></td>            <td valign='top'>set lines off</td> <td valign='top'>me.icn3d.labels['distance'] = []; me.icn3d.lines['distance'] = [];</td></tr>
 
-<tr><td colspan="3"><br>l) View -&gt; Label</td> </tr>
+<tr><td colspan="3"><br>k) View -&gt; Label</td> </tr>
 <tr><td valign='top'><span class="indent">by Picking Atoms:</span></td>            <td valign='top'>add label [label text] | x [x] y [y] z [z] | size [label size] | color [FF0000] | background [FFFFFF]</td> <td valign='top'><a href="#addLabel">addLabel</a></td></tr>
 <tr><td valign='top'><span class="indent">per Selection:</span></td>            <td valign='top'>add label [label text] | size [label size] | color [FF0000] | background [FFFFFF]</td> <td valign='top'><a href="#addLabel">addLabel</a></td></tr>
 <tr><td valign='top'><span class="indent">per Atom:</span></td>            <td valign='top'>add atom labels</td> <td valign='top'><a href="#addAtomLabels">addAtomLabels</a></td></tr>
@@ -963,7 +1020,7 @@ In the dialog Select -&gt; Advanced, users can use simple specification to selec
 <tr><td valign='top'><span class="indent">N- & C- Termini:</span></td>            <td valign='top'>add terminal labels</td> <td valign='top'><a href="#addTerminiLabels">addTerminiLabels</a></td></tr>
 <tr><td valign='top'><span class="indent">Remove:</span></td>            <td valign='top'>set labels off</td> <td valign='top'><a href="#addChainLabels">addChainLabels</a></td></tr>
 
-<tr><td colspan="3"><br>m) View -&gt; Label Scale</td> </tr>
+<tr><td colspan="3"><br>l) View -&gt; Label Scale</td> </tr>
 <tr><td valign='top'><span class="indent">0.1:</span></td>                <td valign='top'>set label scale 0.1</td> <td valign='top'>me.icn3d.labelScale=0.1</td></tr>
 <tr><td valign='top'><span class="indent">0.2:</span></td>                <td valign='top'>set label scale 0.2</td> <td valign='top'>me.icn3d.labelScale=0.2</td></tr>
 <tr><td valign='top'><span class="indent">0.4:</span></td>                <td valign='top'>set label scale 0.4</td> <td valign='top'>me.icn3d.labelScale=0.4</td></tr>
@@ -976,46 +1033,44 @@ In the dialog Select -&gt; Advanced, users can use simple specification to selec
 <tr><td valign='top'><span class="indent">8.0:</span></td>                <td valign='top'>set label scale 8.0</td> <td valign='top'>me.icn3d.labelScale=8.0</td></tr>
 <tr><td valign='top'><span class="indent">10.0:</span></td>                <td valign='top'>set label scale 10.0</td> <td valign='top'>me.icn3d.labelScale=10.0</td></tr>
 
-<tr><td colspan="3"><br>n) View -&gt; Rotate</td> </tr>
+<tr><td colspan="3"><br>m) View -&gt; Rotate</td> </tr>
 
-<tr><td colspan="3"><br><span class="indent">n1) Rotate 90&deg;</span></td> </tr>
+<tr><td colspan="3"><br><span class="indent">m1) Rotate 90&deg;</span></td> </tr>
 <tr><td valign='top'><span class="indent">X-axis:</span></td>              <td valign='top'>rotate x</td> <td valign='top'><a href="#rotStruc">setRotation</a></td></tr>
 <tr><td valign='top'><span class="indent">Y-axis:</span></td>              <td valign='top'>rotate y</td> <td valign='top'><a href="#rotStruc">setRotation</a></td></tr>
 <tr><td valign='top'><span class="indent">Z-axis:</span></td>              <td valign='top'>rotate z</td> <td valign='top'><a href="#rotStruc">setRotation</a></td></tr>
 
-<tr><td colspan="3"><br><span class="indent">n2) Auto Rotation</span></td> </tr>
+<tr><td colspan="3"><br><span class="indent">m2) Auto Rotation</span></td> </tr>
 <tr><td valign='top'><span class="indent">Rotate Left:</span></td>              <td valign='top'>rotate left</td> <td valign='top'><a href="#rotStruc">rotStruc</a></td></tr>
 <tr><td valign='top'><span class="indent">Rotate Right:</span></td>              <td valign='top'>rotate right</td> <td valign='top'><a href="#rotStruc">rotStruc</a></td></tr>
 <tr><td valign='top'><span class="indent">Rotate Up:</span></td>              <td valign='top'>rotate up</td> <td valign='top'><a href="#rotStruc">rotStruc</a></td></tr>
 <tr><td valign='top'><span class="indent">Rotate Down:</span></td>              <td valign='top'>rotate down</td> <td valign='top'><a href="#rotStruc">rotStruc</a></td></tr>
 
-<tr><td colspan="3"><br>o) View -&gt; Camera</td> </tr>
+<tr><td colspan="3"><br>n) View -&gt; Camera</td> </tr>
 <tr><td valign='top'><span class="indent">Perspective:</span></td>        <td valign='top'>set camera perspective</td> <td valign='top'>me.icn3d.opts['camera'] = 'perspective';</td></tr>
 <tr><td valign='top'><span class="indent">Orthographic:</span></td>       <td valign='top'>set camera orthographic</td> <td valign='top'>me.icn3d.opts['camera'] = 'orthographic';</td></tr>
 
-<tr><td colspan="3"><br>p) View -&gt; Fog for Selection</td> </tr>
+<tr><td colspan="3"><br>o) View -&gt; Fog for Selection</td> </tr>
 <tr><td valign='top'><span class="indent">On:</span></td>                <td valign='top'>set fog on</td> <td valign='top'>me.icn3d.opts['fog'] = 'yes';</td></tr>
 <tr><td valign='top'><span class="indent">Off:</span></td>                 <td valign='top'>set fog off</td> <td valign='top'>me.icn3d.opts['fog'] = 'no';</td></tr>
 
-<tr><td colspan="3"><br>q) View -&gt; Slab for Selection</td> </tr>
+<tr><td colspan="3"><br>p) View -&gt; Slab for Selection</td> </tr>
 <tr><td valign='top'><span class="indent">On:</span></td>                <td valign='top'>set slab on</td> <td valign='top'>me.icn3d.opts['slab'] = 'yes';</td></tr>
 <tr><td valign='top'><span class="indent">Off:</span></td>                 <td valign='top'>set slab off</td> <td valign='top'>me.icn3d.opts['slab'] = 'no';</td></tr>
 
-<tr><td colspan="3"><br>r) View -&gt; XYZ-axes</td> </tr>
+<tr><td colspan="3"><br>q) View -&gt; XYZ-axes</td> </tr>
 <tr><td valign='top'><span class="indent">Show:</span></td>                <td valign='top'>set axis on</td> <td valign='top'>me.icn3d.opts['axis'] = 'yes';</td></tr>
 <tr><td valign='top'><span class="indent">Hide:</span></td>                 <td valign='top'>set axis off</td> <td valign='top'>me.icn3d.opts['axis'] = 'no';</td></tr>
 
-<tr><td colspan="3"><br>s) View -&gt; Reset:</td> </tr>
+<tr><td colspan="3"><br>r) View -&gt; Reset:</td> </tr>
 <tr><td valign='top'><span class="indent">All:</span></td>                <td valign='top'>reset</td> <td valign='top'><a href="#renderFinalStep">renderFinalStep</a></td></tr>
 <tr><td valign='top'><span class="indent">Orientation:</span></td>                 <td valign='top'>reset orientation</td> <td valign='top'><a href="#resetOrientation">resetOrientation</a></td></tr>
 
-<tr><td valign='top'>t) View -&gt; Undo:</td>     <td valign='top'>back</td> <td valign='top'><a href="#back">back</a></td></tr>
+<tr><td valign='top'>s) View -&gt; Undo:</td>     <td valign='top'>back</td> <td valign='top'><a href="#back">back</a></td></tr>
 
-<tr><td valign='top'>u) View -&gt; Redo:</td>     <td valign='top'>forward</td> <td valign='top'><a href="#forward">forward</a></td></tr>
+<tr><td valign='top'>t) View -&gt; Redo:</td>     <td valign='top'>forward</td> <td valign='top'><a href="#forward">forward</a></td></tr>
 
-<tr><td valign='top'>v) View -&gt; Full Screen:</td>     <td valign='top'>[no command available]</td> <td valign='top'></td></tr>
-
-<!--tr><td valign='top'>w) View -&gt; Exit Full Screen:</td>     <td valign='top'>[no command available]</td> <td valign='top'></td></tr-->
+<tr><td valign='top'>u) View -&gt; Full Screen:</td>     <td valign='top'>[no command available]</td> <td valign='top'></td></tr>
 
 </tbody></table>
 
@@ -1142,6 +1197,7 @@ In the dialog Select -&gt; Advanced, users can use simple specification to selec
 <tr><td valign='top'>Color -&gt; Charge:</td>           <td valign='top'>color charge</td> <td valign='top'><a href="#setColorByOptions">setColorByOptions</a></td></tr>
 <tr><td valign='top'>Color -&gt; Hydrophobic:</td>      <td valign='top'>color hydrophobic</td> <td valign='top'><a href="#setColorByOptions">setColorByOptions</a></td></tr>
 <tr><td valign='top'>Color -&gt; Chain:</td>            <td valign='top'>color chain</td> <td valign='top'><a href="#setColorByOptions">setColorByOptions</a></td></tr>
+<tr><td valign='top'>Color -&gt; 3D Domain:</td>          <td valign='top'>color 3ddomain</td> <td valign='top'><a href="#setColorByOptions">setColorByOptions</a></td></tr>
 <tr><td valign='top'>Color -&gt; Residue:</td>          <td valign='top'>color residue</td> <td valign='top'><a href="#setColorByOptions">setColorByOptions</a></td></tr>
 <tr><td valign='top'>Color -&gt; Atom:</td>             <td valign='top'>color atom</td> <td valign='top'><a href="#setColorByOptions">setColorByOptions</a></td></tr>
 <tr><td valign='top'>Color -&gt; B-factor (Original):</td>             <td valign='top'>color b factor</td> <td valign='top'><a href="#setColorByOptions">setColorByOptions</a></td></tr>
@@ -2027,6 +2083,9 @@ Update the highlight of sequences in the annotation window according to the curr
 
 <a name="log"></a>
 <h2>Change Log:<img src="https://www.ncbi.nlm.nih.gov/Structure/IMG/spacer.gif" width="25" height="1" border="0"><a href="#Top"><img src="https://www.ncbi.nlm.nih.gov/Structure/IMG/arrowup_blue.gif" width="12" height="12" border="0" alt="back to top"></a></h2>
+<a href="https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.10.0.zip">icn3d-2.10.0</a> was release on December 5, 2019. Enabled to show each hydrogen bond and contact in 3D using the menu "View > H-Bonds & Interactions".
+<br><br>
+
 <a href="https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.9.2.zip">icn3d-2.9.2</a> was release on November 18, 2019. Added Transmembrane track if the input is opmid. Added angle constraint for hydrogen bonds.
 <br><br>
 

@@ -3,7 +3,7 @@
  */
 
 // modified from iview (http://istar.cse.cuhk.edu.hk/iview/)
-iCn3D.prototype.loadPDB = function (src, bOpm) {
+iCn3D.prototype.loadPDB = function (src, pdbid, bOpm, bVector) {
     var helices = [], sheets = [];
     //this.atoms = {};
     var lines = src.split('\n');
@@ -31,6 +31,7 @@ iCn3D.prototype.loadPDB = function (src, bOpm) {
     var id = 'stru';
 
     var maxMissingResi = 0, prevMissingChain = '';
+    var CSerial, prevCSerial, OSerial, prevOSerial;
 
     for (var i in lines) {
         var line = lines[i];
@@ -193,6 +194,10 @@ iCn3D.prototype.loadPDB = function (src, bOpm) {
                 this.pmid = line.substr(19).trim();
             }
         } else if (record === 'ATOM  ' || record === 'HETATM') {
+            //if(id == 'stru' && bOpm) {
+            //    id = pdbid;
+            //}
+
             var structure = (moleculeNum === 1) ? id : id + moleculeNum.toString();
 
             var alt = line.substr(16, 1);
@@ -231,6 +236,8 @@ iCn3D.prototype.loadPDB = function (src, bOpm) {
                 oriResi = 1;
             }
 
+            if(bVector !== undefined && bVector && resn === 'DUM') break; // just need to get the vector of the largest chain
+
             chainNum = structure + "_" + chain;
             oriResidueNum = chainNum + "_" + oriResi;
             if(chainNum !== prevChainNum) {
@@ -265,6 +272,24 @@ iCn3D.prototype.loadPDB = function (src, bOpm) {
                 ssbegin: false,         // optional, used to show the beginning of secondary structures
                 ssend: false            // optional, used to show the end of secondary structures
             };
+
+            if(!atomDetails.het && atomDetails.name === 'C') {
+                CSerial = serial;
+            }
+            if(!atomDetails.het && atomDetails.name === 'O') {
+                OSerial = serial;
+            }
+
+            // from DSSP C++ code
+            if(!atomDetails.het && atomDetails.name === 'N' && prevCSerial !== undefined && prevOSerial !== undefined) {
+                var dist = this.atoms[prevCSerial].coord.distanceTo(this.atoms[prevOSerial].coord);
+
+                var x2 = atomDetails.coord.x + (this.atoms[prevCSerial].coord.x - this.atoms[prevOSerial].coord.x) / dist;
+                var y2 = atomDetails.coord.y + (this.atoms[prevCSerial].coord.y - this.atoms[prevOSerial].coord.y) / dist;
+                var z2 = atomDetails.coord.z + (this.atoms[prevCSerial].coord.z - this.atoms[prevOSerial].coord.z) / dist;
+
+                atomDetails.hcoord = new THREE.Vector3(x2, y2, z2);
+            }
 
             this.atoms[serial] = atomDetails;
 
@@ -332,6 +357,9 @@ iCn3D.prototype.loadPDB = function (src, bOpm) {
 
                 // different chain
                 if(chainNum !== prevChainNum) {
+                    prevCSerial = undefined;
+                    prevOSerial = undefined;
+
                     // a chain could be separated in two sections
                     if(serial !== 1) {
                         //this.chains[prevChainNum] = this.unionHash2Atoms(this.chains[prevChainNum], chainsTmp);
@@ -344,44 +372,22 @@ iCn3D.prototype.loadPDB = function (src, bOpm) {
                     this.structures[structure.toString()].push(chainNum);
 
                     if(this.chainsSeq[chainNum] === undefined) this.chainsSeq[chainNum] = [];
-/*
-                    if(this.chainsAn[chainNum] === undefined ) this.chainsAn[chainNum] = [];
-                    if(this.chainsAn[chainNum][0] === undefined ) this.chainsAn[chainNum][0] = [];
-                    if(this.chainsAn[chainNum][1] === undefined ) this.chainsAn[chainNum][1] = [];
-                    if(this.chainsAnTitle[chainNum] === undefined ) this.chainsAnTitle[chainNum] = [];
-                    if(this.chainsAnTitle[chainNum][0] === undefined ) this.chainsAnTitle[chainNum][0] = [];
-                    if(this.chainsAnTitle[chainNum][1] === undefined ) this.chainsAnTitle[chainNum][1] = [];
-*/
-                      var resObject = {};
-                      resObject.resi = resi;
-                      resObject.name = residue;
+
+                    var resObject = {};
+                    resObject.resi = resi;
+                    resObject.name = residue;
 
                     this.chainsSeq[chainNum].push(resObject);
-
-/*
-                      var numberStr = '';
-                      if(resi % 10 === 0) numberStr = resi.toString();
-
-                    this.chainsAn[chainNum][0].push(numberStr);
-                    this.chainsAn[chainNum][1].push(secondaries);
-                    this.chainsAnTitle[chainNum][0].push("");
-                    this.chainsAnTitle[chainNum][1].push("SS");
-*/
                 }
                 else {
-                      var resObject = {};
-                      resObject.resi = resi;
-                      resObject.name = residue;
+                    prevCSerial = CSerial;
+                    prevOSerial = OSerial;
+
+                    var resObject = {};
+                    resObject.resi = resi;
+                    resObject.name = residue;
 
                     this.chainsSeq[chainNum].push(resObject);
-
-/*
-                      var numberStr = '';
-                      if(resi % 10 === 0) numberStr = resi.toString();
-
-                    this.chainsAn[chainNum][0].push(numberStr);
-                    this.chainsAn[chainNum][1].push(secondaries);
-*/
                 }
             }
 
@@ -406,6 +412,10 @@ iCn3D.prototype.loadPDB = function (src, bOpm) {
             // Concatenation of two pdbs will have several atoms for the same serial
             ++serial;
         }
+    }
+
+    if(bVector !== undefined && bVector) { // just need to get the vector of the largest chain
+        return this.getChainCalpha(this.chains, this.atoms);
     }
 
     this.adjustSeq(chainMissingResidueArray);
@@ -698,4 +708,29 @@ iCn3D.prototype.setSsbond = function (structure2cys_resid) { var me = this;
             }
         }
     }
+};
+
+iCn3D.prototype.getChainCalpha = function (chains, atoms) {
+    var chainCalphaHash = {};
+
+    for(var chainid in chains) {
+        var serialArray = Object.keys(chains[chainid]);
+
+        var calphaArray = [];
+        var cnt = 0;
+        for(var i = 0, il = serialArray.length; i < il; ++i) {
+            if(atoms[serialArray[i]].name == "CA" || atoms[serialArray[i]].name == "O3'" || atoms[serialArray[i]].name == "O3*") {
+                calphaArray.push(atoms[serialArray[i]].coord);
+                ++cnt;
+            }
+        }
+
+        if(cnt > 0) {
+            //var chainid = atoms[serialArray[0]].structure + '_' + atoms[serialArray[0]].chain;
+            var chainid = atoms[serialArray[0]].chain;
+            chainCalphaHash[chainid] = calphaArray;
+        }
+    }
+
+    return chainCalphaHash;
 };

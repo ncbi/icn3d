@@ -101,7 +101,7 @@ var iCn3D = function (id) {
     this.axis = false;  // used to turn on and off xyz axes
 
     // pk
-    this.pk = 1; // 0: no pk, 1: pk on atoms, 2: pk on residues, 3: pk on strand/helix/coil, 4: pk on chain
+    this.pk = 1; // 0: no pk, 1: pk on atoms, 2: pk on residues, 3: pk on strand/helix/coil, 4: pk on domain, 5: pk on chain, 6: structure
     this.highlightlevel = 1; // 1: highlight on atoms, 2: highlight on residues, 3: highlight on strand/helix/coil 4: highlight on chain 5: highlight on structure
 
     this.pickpair = false; // used for pk pair of atoms for label and distance
@@ -199,6 +199,7 @@ var iCn3D = function (id) {
         //effect: 'none',
         hbonds: 'no',
         saltbridge: 'no',
+        contact: 'no',
         //stabilizer: 'no',
         ssbonds: 'no',
         //ncbonds: 'no',
@@ -1017,6 +1018,7 @@ iCn3D.prototype = {
         'LYS': new THREE.Color(0x0000FF),
         'ASP': new THREE.Color(0xFF0000),
         'GLU': new THREE.Color(0xFF0000),
+        'HIS': new THREE.Color(0xFF8080),
 
 // hydrophobic
         'GLY': new THREE.Color(0x888888),
@@ -1028,7 +1030,7 @@ iCn3D.prototype = {
         'PHE': new THREE.Color(0x888888),
 
 // polar
-        'HIS': new THREE.Color(0x888888),
+//        'HIS': new THREE.Color(0x888888),
         'SER': new THREE.Color(0x888888),
         'THR': new THREE.Color(0x888888),
         'ASN': new THREE.Color(0x888888),
@@ -1061,30 +1063,33 @@ iCn3D.prototype = {
          'DT': new THREE.Color(0x888888),
          'DC': new THREE.Color(0x888888),
          'DU': new THREE.Color(0x888888),
-        'ARG': new THREE.Color(0x888888),
-        'LYS': new THREE.Color(0x888888),
-        'ASP': new THREE.Color(0x888888),
-        'GLU': new THREE.Color(0x888888),
+        'ARG': new THREE.Color(0x0000FF),
+        'LYS': new THREE.Color(0x0000FF),
+        'ASP': new THREE.Color(0xFF0000),
+        'GLU': new THREE.Color(0xFF0000),
+        'HIS': new THREE.Color(0x8080FF),
 
+//new THREE.Color().setHSL(1/3.0, 1, 0.5 + 0.5 * ( + 0.81)/(1.14 + 0.81)),
 // hydrophobic
-        'GLY': new THREE.Color(0x00FF00),
-        'PRO': new THREE.Color(0x00FF00),
-        'ALA': new THREE.Color(0x00FF00),
-        'VAL': new THREE.Color(0x00FF00),
-        'LEU': new THREE.Color(0x00FF00),
-        'ILE': new THREE.Color(0x00FF00),
-        'PHE': new THREE.Color(0x00FF00),
+// https://en.m.wikipedia.org/wiki/Hydrophobicity_scales#Wimley%E2%80%93White_whole_residue_hydrophobicity_scales
+        'GLY': new THREE.Color().setHSL(1/3.0, 1, 0.5 + 0.5 * (1.14 + 0.81)/(1.14 + 0.81)),
+        'PRO': new THREE.Color().setHSL(1/3.0, 1, 0.5 + 0.5 * (-0.31 + 0.81)/(1.14 + 0.81)),
+        'ALA': new THREE.Color().setHSL(1/3.0, 1, 0.5 + 0.5 * (0.33 + 0.81)/(1.14 + 0.81)),
+        'VAL': new THREE.Color().setHSL(1/3.0, 1, 0.5 + 0.5 * (-0.53 + 0.81)/(1.14 + 0.81)),
+        'LEU': new THREE.Color().setHSL(1/3.0, 1, 0.5 + 0.5 * (-0.69 + 0.81)/(1.14 + 0.81)),
+        'ILE': new THREE.Color().setHSL(1/3.0, 1, 0.5 + 0.5 * (-0.81 + 0.81)/(1.14 + 0.81)),
+        'PHE': new THREE.Color().setHSL(1/3.0, 1, 0.5 + 0.5 * (-0.58 + 0.81)/(1.14 + 0.81)),
 
 // polar
-        'HIS': new THREE.Color(0x888888),
-        'SER': new THREE.Color(0x888888),
-        'THR': new THREE.Color(0x888888),
-        'ASN': new THREE.Color(0x888888),
-        'GLN': new THREE.Color(0x888888),
-        'TYR': new THREE.Color(0x888888),
-        'MET': new THREE.Color(0x888888),
-        'CYS': new THREE.Color(0x888888),
-        'TRP': new THREE.Color(0x888888)
+//        'HIS': new THREE.Color(0x888888),
+        'SER': new THREE.Color().setHSL(1/3.0, 1, 0.5 + 0.5 * (0.33 + 0.81)/(1.14 + 0.81)),
+        'THR': new THREE.Color().setHSL(1/3.0, 1, 0.5 + 0.5 * (0.11 + 0.81)/(1.14 + 0.81)),
+        'ASN': new THREE.Color().setHSL(1/3.0, 1, 0.5 + 0.5 * (0.43 + 0.81)/(1.14 + 0.81)),
+        'GLN': new THREE.Color().setHSL(1/3.0, 1, 0.5 + 0.5 * (0.19 + 0.81)/(1.14 + 0.81)),
+        'TYR': new THREE.Color().setHSL(1/3.0, 1, 0.5 + 0.5 * (0.23 + 0.81)/(1.14 + 0.81)),
+        'MET': new THREE.Color().setHSL(1/3.0, 1, 0.5 + 0.5 * (-0.44 + 0.81)/(1.14 + 0.81)),
+        'CYS': new THREE.Color().setHSL(1/3.0, 1, 0.5 + 0.5 * (0.22 + 0.81)/(1.14 + 0.81)),
+        'TRP': new THREE.Color().setHSL(1/3.0, 1, 0.5 + 0.5 * (-0.24 + 0.81)/(1.14 + 0.81))
     },
 
     sheetcolor: 'green',
@@ -1126,7 +1131,7 @@ iCn3D.prototype = {
     init_base: function () {
         this.structures = {}; // structure name -> array of chains
         this.chains = {}; // structure_chain name -> atom hash
-        this.tddomains = {}; // structure_chain_3d_domain_# name -> residue id hash such as {'structure_chain_1': 1, ...}
+        this.tddomains = {}; // structure_chain_3d_domain_# name -> residue id hash such as {'structure_chain_3d_domain_1': 1, ...}
         this.residues = {}; // structure_chain_resi name -> atom hash
         this.secondaries = {}; // structure_chain_resi name -> secondary structure: 'c', 'H', or 'E'
         this.alnChains = {}; // structure_chain name -> atom hash
@@ -1176,6 +1181,7 @@ iCn3D.prototype = {
 
         this.hbondpnts = [];
         this.saltbridgepnts = [];
+        this.contactpnts = [];
         this.stabilizerpnts = [];
         //this.ncbondpnts = []; // non-covalent bonds
 

@@ -217,7 +217,7 @@ iCn3DUI.prototype.selectTitle = function(that) { var me = this;
                     //var size = parseInt(me.icn3d.LABELSIZE * 10 / commandname.length);
                     var size = me.icn3d.LABELSIZE;
                     var color = "FFFF00";
-                    me.addLabel(commanddescr, position.center.x, position.center.y, position.center.z, size, color, undefined, 'custom');
+                    if(position !== undefined) me.addLabel(commanddescr, position.center.x, position.center.y, position.center.z, size, color, undefined, 'custom');
 
 //                        me.icn3d.addHlObjects();
 //                        me.updateHl2D([chainid]);

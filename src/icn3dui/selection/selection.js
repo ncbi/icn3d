@@ -316,7 +316,8 @@ iCn3DUI.prototype.selectMainChains = function () { var me = this;
 
     me.icn3d.hAtoms = {};
     for(var i in currHAtoms) {
-        if( (me.icn3d.proteins.hasOwnProperty(i) && me.icn3d.atoms[i].name === "CA")
+        if( (me.icn3d.proteins.hasOwnProperty(i) && (me.icn3d.atoms[i].name === "N" || me.icn3d.atoms[i].name === "C" || me.icn3d.atoms[i].name === "O"
+          || (me.icn3d.atoms[i].name === "CA" && me.icn3d.atoms[i].elem === "C") ) )
           || (me.icn3d.nucleotides.hasOwnProperty(i) && nuclMainArray.indexOf(me.icn3d.atoms[i].name) !== -1) ) {
             me.icn3d.hAtoms[i] = 1;
         }
@@ -332,7 +333,8 @@ iCn3DUI.prototype.selectSideChains = function () { var me = this;
 
     me.icn3d.hAtoms = {};
     for(var i in currHAtoms) {
-        if( (me.icn3d.proteins.hasOwnProperty(i) && me.icn3d.atoms[i].name !== "CA")
+        if( (me.icn3d.proteins.hasOwnProperty(i) && me.icn3d.atoms[i].name !== "N" && me.icn3d.atoms[i].name !== "C" && me.icn3d.atoms[i].name !== "O"
+          && !(me.icn3d.atoms[i].name === "CA" && me.icn3d.atoms[i].elem === "C") )
           || (me.icn3d.nucleotides.hasOwnProperty(i) && nuclMainArray.indexOf(me.icn3d.atoms[i].name) === -1) ) {
             me.icn3d.hAtoms[i] = 1;
         }

@@ -114,12 +114,31 @@ iCn3D.prototype.setColorByOptions = function (options, atoms, bUseInputColor) {
                         index = index % colorLength;
                     }
 
-                    if(atom.color === undefined) atom.color = this.stdChainColors[index];
+                    //if(atom.color === undefined) atom.color = this.stdChainColors[index];
+                    atom.color = this.stdChainColors[index];
 
                     if(Object.keys(this.chainsColor).length > 0) this.updateChainsColor(atom);
                     this.atomPrevColors[i] = atom.color;
 
                     prevChain = atom.chain;
+                }
+            }
+            break;
+
+        case 'domain':
+            var idx = 0, cnt = 0;
+            var domainArray = Object.keys(this.tddomains);
+            cnt = domainArray.length;
+            var lastTerSerialInv = (cnt > 1) ? 1 / (cnt - 1) : 1;
+            for (var i = 0, il = domainArray.length; i < il; ++i) {
+                var color = new THREE.Color().setHSL(3 / 4 * (1 - idx++ * lastTerSerialInv), 1, 0.45);
+
+                for(var resid in this.tddomains[domainArray[i]]) {
+                    for(var serial in this.residues[resid]) {
+                        var atom = this.atoms[serial];
+                        atom.color = color;
+                        this.atomPrevColors[serial] = atom.color;
+                    }
                 }
             }
             break;

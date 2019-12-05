@@ -827,6 +827,7 @@ iCn3DUI.prototype.loadAtomDataIn = function (data, id, type, seqalign, alignType
 
     var bPhosphorusOnly = me.icn3d.isCalphaPhosOnly(atoms); //, "O3'", "O3*") || me.icn3d.isCalphaPhosOnly(atoms, "P");
     var miscCnt = 0;
+    var CSerial, prevCSerial, OSerial, prevOSerial;
 
     biopolymerChainsHash = {};
 
@@ -868,19 +869,6 @@ iCn3DUI.prototype.loadAtomDataIn = function (data, id, type, seqalign, alignType
                   atm.chain = me.icn3d.molid2chain[molid].substr(pos + 1);
               }
               else {
-/*
-                  if(molid !== prevMolid) {
-                      resiArray.push(atm.resi);
-                  }
-
-                  var miscName;
-                  if($.inArray(atm.resi, resiArray) === resiArray.length - 1) {
-                      miscName = 'Misc';
-                  }
-                  else {
-                      miscName = 'Misc2';
-                  }
-*/
                   var miscName = 'Misc';
 
                   ++miscCnt;
@@ -901,19 +889,6 @@ iCn3DUI.prototype.loadAtomDataIn = function (data, id, type, seqalign, alignType
                   atm.chain = me.icn3d.pdbid_molid2chain[mmdbId + '_' + molid];
               }
               else {
-/*
-                  if(molid !== prevMolid) {
-                      resiArray.push(atm.resi);
-                  }
-
-                  var miscName;
-                  if($.inArray(atm.resi, resiArray) === resiArray.length - 1) {
-                      miscName = 'Misc';
-                  }
-                  else {
-                      miscName = 'Misc2';
-                  }
-*/
                   var miscName = 'Misc';
                   ++miscCnt;
                   if(chainid2kind[chainNum] === 'solvent' || atm.resn === 'HOH') {
@@ -946,6 +921,17 @@ iCn3DUI.prototype.loadAtomDataIn = function (data, id, type, seqalign, alignType
             prevResi = 0;
         }
 
+        if(atm.resi !== prevResi) {
+            if(chainNum !== prevChainNum) {
+                prevCSerial = undefined;
+                prevOSerial = undefined;
+            }
+            else {
+                prevCSerial = CSerial;
+                prevOSerial = OSerial;
+            }
+        }
+
         if(type === 'mmdbid') {
             atm.coord = new THREE.Vector3(atm.coord[0], atm.coord[1], atm.coord[2]);
 
@@ -973,43 +959,6 @@ iCn3DUI.prototype.loadAtomDataIn = function (data, id, type, seqalign, alignType
         }
 
         var oneLetterRes = me.icn3d.residueName2Abbr(atm.resn.substr(0, 3));
-
-/*
-        // modify resi since MMDB used the same resi as in PDB where resi is not continuous
-        // No need to modify mmcif resi
-        //if(type === 'mmdbid' || type === 'align') {
-        if(type === 'mmdbid') {
-            // bfactor
-            //if(type === 'mmdbid') atm.b = (atm.b !== undefined) ? atm.b : 1;
-
-            oldResi = atm.resi;
-
-//          if(atm.resi !== prevOldResi && atm.resi !== prevOldResi + 1) {
-            if(me.countNextresiArray[chainNum] !== undefined
-              && me.countNextresiArray[chainNum][missingResIndex] !== undefined
-              && atm.resi === me.countNextresiArray[chainNum][missingResIndex][1] + resiCorrection) {
-                // add missed residues
-                var count = me.countNextresiArray[chainNum][missingResIndex][0];
-                prevResi += count;
-
-                ++missingResIndex;
-            }
-//          }
-
-            if(molid !== prevMolid) {
-                atm.resi = atm.resi; // don't change the assigned resi
-            }
-            else if(atm.resi !== prevOldResi) {
-                atm.resi = prevResi + 1;
-            }
-
-            else {
-                atm.resi = prevResi;
-            }
-
-            prevOldResi = oldResi;
-        }
-*/
 
         if( (type === 'mmdbid' || type === 'align') && me.bFullUi ) {
             // set me.mmdbMolidResid2mmdbChainResi
@@ -1108,6 +1057,24 @@ iCn3DUI.prototype.loadAtomDataIn = function (data, id, type, seqalign, alignType
 
         if(atm.resn.charAt(0) !== ' ' && atm.resn.charAt(1) === ' ') {
           atm.resn = atm.resn.charAt(0);
+        }
+
+        if(!atm.het && atm.name === 'C') {
+            CSerial = serial;
+        }
+        if(!atm.het && atm.name === 'O') {
+            OSerial = serial;
+        }
+
+        // from DSSP C++ code
+        if(!atm.het && atm.name === 'N' && prevCSerial !== undefined && prevOSerial !== undefined) {
+            var dist = me.icn3d.atoms[prevCSerial].coord.distanceTo(me.icn3d.atoms[prevOSerial].coord);
+
+            var x2 = atm.coord.x + (me.icn3d.atoms[prevCSerial].coord.x - me.icn3d.atoms[prevOSerial].coord.x) / dist;
+            var y2 = atm.coord.y + (me.icn3d.atoms[prevCSerial].coord.y - me.icn3d.atoms[prevOSerial].coord.y) / dist;
+            var z2 = atm.coord.z + (me.icn3d.atoms[prevCSerial].coord.z - me.icn3d.atoms[prevOSerial].coord.z) / dist;
+
+            atm.hcoord = new THREE.Vector3(x2, y2, z2);
         }
 
         // double check
