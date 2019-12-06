@@ -1398,6 +1398,107 @@ iCn3D.prototype.createStrip = function (p0, p1, colors, div, thickness, bHighlig
     p1 = null;
 };
 
+iCn3D.prototype.getSSExpandedAtoms = function (atoms) {
+    var currChain, currResi, currAtom, prevChain, prevResi, prevAtom;
+    var firstAtom, lastAtom;
+    var index = 0, length = Object.keys(atoms).length;
+
+    var atomsAdjust = this.cloneHash(atoms);
+    for(var serial in atoms) {
+      currChain = atoms[serial].structure + '_' + atoms[serial].chain;
+      currResi = parseInt(atoms[serial].resi);
+      currAtom = atoms[serial];
+
+      if(prevChain === undefined) firstAtom = atoms[serial];
+
+      if( (currChain !== prevChain && prevChain !== undefined) || (currResi !== prevResi && currResi !== prevResi + 1 && prevResi !== undefined) || index === length - 1) {
+        if( (currChain !== prevChain && prevChain !== undefined) || (currResi !== prevResi && currResi !== prevResi + 1 && prevResi !== undefined) ) {
+            lastAtom = prevAtom;
+        }
+        else if(index === length - 1) {
+            lastAtom = currAtom;
+        }
+
+        // fill the beginning
+        var beginResi = firstAtom.resi;
+        if(firstAtom.ss !== 'coil' && !(firstAtom.ssbegin) ) {
+            for(var i = firstAtom.resi - 1; i > 0; --i) {
+                var residueid = firstAtom.structure + '_' + firstAtom.chain + '_' + i;
+                if(!this.residues.hasOwnProperty(residueid)) break;
+
+                var atom = this.getFirstCalphaAtomObj(this.residues[residueid]);
+
+                if(atom.ss === firstAtom.ss && atom.ssbegin) {
+                    beginResi = atom.resi;
+                    break;
+                }
+            }
+
+            for(var i = beginResi; i < firstAtom.resi; ++i) {
+                var residueid = firstAtom.structure + '_' + firstAtom.chain + '_' + i;
+                atomsAdjust = this.unionHash(atomsAdjust, this.hash2Atoms(this.residues[residueid]));
+            }
+        }
+
+        // add one extra residue for coils between strands/helix
+        if(this.pk === 3 && bHighlight === 1 && firstAtom.ss === 'coil') {
+                var residueid = firstAtom.structure + '_' + firstAtom.chain + '_' + (firstAtom.resi - 1);
+                if(this.residues.hasOwnProperty(residueid)) {
+                    atomsAdjust = this.unionHash(atomsAdjust, this.hash2Atoms(this.residues[residueid]));
+                    atoms = this.unionHash(atoms, this.hash2Atoms(this.residues[residueid]));
+                }
+        }
+
+        // fill the end
+        var endResi = lastAtom.resi;
+        // when a coil connects to a sheet and the last residue of coil is highlighted, the first sheet residue is set as atom.notshow. This residue should not be shown.
+
+        if(lastAtom.ss !== undefined && lastAtom.ss !== 'coil' && !(lastAtom.ssend) && !(lastAtom.notshow)) {
+
+            var endChainResi = this.getLastAtomObj(this.chains[lastAtom.structure + '_' + lastAtom.chain]).resi;
+            for(var i = lastAtom.resi + 1; i <= endChainResi; ++i) {
+                var residueid = lastAtom.structure + '_' + lastAtom.chain + '_' + i;
+                if(!this.residues.hasOwnProperty(residueid)) break;
+
+                var atom = this.getFirstCalphaAtomObj(this.residues[residueid]);
+
+                if(atom.ss === lastAtom.ss && atom.ssend) {
+                    endResi = atom.resi;
+                    break;
+                }
+            }
+
+            for(var i = lastAtom.resi + 1; i <= endResi; ++i) {
+                var residueid = lastAtom.structure + '_' + lastAtom.chain + '_' + i;
+                atomsAdjust = this.unionHash(atomsAdjust, this.hash2Atoms(this.residues[residueid]));
+            }
+        }
+
+        // add one extra residue for coils between strands/helix
+        if(this.pk === 3 && bHighlight === 1 && lastAtom.ss === 'coil') {
+                var residueid = lastAtom.structure + '_' + lastAtom.chain + '_' + (lastAtom.resi + 1);
+                if(this.residues.hasOwnProperty(residueid)) {
+                    atomsAdjust = this.unionHash(atomsAdjust, this.hash2Atoms(this.residues[residueid]));
+                    atoms = this.unionHash(atoms, this.hash2Atoms(this.residues[residueid]));
+                }
+        }
+
+        // reset notshow
+        if(lastAtom.notshow) lastAtom.notshow = undefined;
+
+        firstAtom = currAtom;
+      }
+
+      prevChain = currChain;
+      prevResi = currResi;
+      prevAtom = currAtom;
+
+      ++index;
+    }
+
+    return atomsAdjust;
+};
+
 // significantly modified from iview (http://istar.cse.cuhk.edu.hk/iview/)
 iCn3D.prototype.createStrand = function (atoms, num, div, fill, coilWidth, helixSheetWidth, doNotSmoothen, thickness, bHighlight) {
     var bRibbon = fill ? true: false;
@@ -1408,102 +1509,7 @@ iCn3D.prototype.createStrand = function (atoms, num, div, fill, coilWidth, helix
 
     //if( (bHighlight === 1 || bHighlight === 2) && !this.bAllAtoms) {
     if( !this.bAllAtoms) {
-        var currChain, currResi, currAtom, prevChain, prevResi, prevAtom;
-        var firstAtom, lastAtom;
-        var index = 0, length = Object.keys(atoms).length;
-
-        atomsAdjust = this.cloneHash(atoms);
-        for(var serial in atoms) {
-          currChain = atoms[serial].structure + '_' + atoms[serial].chain;
-          currResi = parseInt(atoms[serial].resi);
-          currAtom = atoms[serial];
-
-          if(prevChain === undefined) firstAtom = atoms[serial];
-
-          if( (currChain !== prevChain && prevChain !== undefined) || (currResi !== prevResi && currResi !== prevResi + 1 && prevResi !== undefined) || index === length - 1) {
-            if( (currChain !== prevChain && prevChain !== undefined) || (currResi !== prevResi && currResi !== prevResi + 1 && prevResi !== undefined) ) {
-//              if( (currChain !== prevChain && prevChain !== undefined) || index === length - 1) {
-//                if( (currChain !== prevChain && prevChain !== undefined) ) {
-                lastAtom = prevAtom;
-            }
-            else if(index === length - 1) {
-                lastAtom = currAtom;
-            }
-
-            // fill the beginning
-            var beginResi = firstAtom.resi;
-            if(firstAtom.ss !== 'coil' && !(firstAtom.ssbegin) ) {
-                for(var i = firstAtom.resi - 1; i > 0; --i) {
-                    var residueid = firstAtom.structure + '_' + firstAtom.chain + '_' + i;
-                    if(!this.residues.hasOwnProperty(residueid)) break;
-
-                    var atom = this.getFirstCalphaAtomObj(this.residues[residueid]);
-
-                    if(atom.ss === firstAtom.ss && atom.ssbegin) {
-                        beginResi = atom.resi;
-                        break;
-                    }
-                }
-
-                for(var i = beginResi; i < firstAtom.resi; ++i) {
-                    var residueid = firstAtom.structure + '_' + firstAtom.chain + '_' + i;
-                    atomsAdjust = this.unionHash(atomsAdjust, this.hash2Atoms(this.residues[residueid]));
-                }
-            }
-
-            // add one extra residue for coils between strands/helix
-            if(this.pk === 3 && bHighlight === 1 && firstAtom.ss === 'coil') {
-                    var residueid = firstAtom.structure + '_' + firstAtom.chain + '_' + (firstAtom.resi - 1);
-                    if(this.residues.hasOwnProperty(residueid)) {
-                        atomsAdjust = this.unionHash(atomsAdjust, this.hash2Atoms(this.residues[residueid]));
-                        atoms = this.unionHash(atoms, this.hash2Atoms(this.residues[residueid]));
-                    }
-            }
-
-            // fill the end
-            var endResi = lastAtom.resi;
-            // when a coil connects to a sheet and the last residue of coil is highlighted, the first sheet residue is set as atom.notshow. This residue should not be shown.
-            if(lastAtom.ss !== 'coil' && !(lastAtom.ssend) && !(lastAtom.notshow)) {
-                var endChainResi = this.getLastAtomObj(this.chains[lastAtom.structure + '_' + lastAtom.chain]).resi;
-                for(var i = lastAtom.resi + 1; i <= endChainResi; ++i) {
-                    var residueid = lastAtom.structure + '_' + lastAtom.chain + '_' + i;
-                    if(!this.residues.hasOwnProperty(residueid)) break;
-
-                    var atom = this.getFirstCalphaAtomObj(this.residues[residueid]);
-
-                    if(atom.ss === lastAtom.ss && atom.ssend) {
-                        endResi = atom.resi;
-                        break;
-                    }
-                }
-
-                for(var i = lastAtom.resi + 1; i <= endResi; ++i) {
-                    var residueid = lastAtom.structure + '_' + lastAtom.chain + '_' + i;
-                    atomsAdjust = this.unionHash(atomsAdjust, this.hash2Atoms(this.residues[residueid]));
-                }
-            }
-
-            // add one extra residue for coils between strands/helix
-            if(this.pk === 3 && bHighlight === 1 && lastAtom.ss === 'coil') {
-                    var residueid = lastAtom.structure + '_' + lastAtom.chain + '_' + (lastAtom.resi + 1);
-                    if(this.residues.hasOwnProperty(residueid)) {
-                        atomsAdjust = this.unionHash(atomsAdjust, this.hash2Atoms(this.residues[residueid]));
-                        atoms = this.unionHash(atoms, this.hash2Atoms(this.residues[residueid]));
-                    }
-            }
-
-            // reset notshow
-            if(lastAtom.notshow) lastAtom.notshow = undefined;
-
-            firstAtom = currAtom;
-          }
-
-          prevChain = currChain;
-          prevResi = currResi;
-          prevAtom = currAtom;
-
-          ++index;
-        }
+        atomsAdjust = this.getSSExpandedAtoms(atoms);
     }
     else {
         atomsAdjust = atoms;
@@ -1686,7 +1692,9 @@ iCn3D.prototype.createStrand = function (atoms, num, div, fill, coilWidth, helix
                     //var maxDist = 6.0;
                     //var bBrokenSs = (prevCoorCA && Math.abs(currentCA.x - prevCoorCA.x) > maxDist) || (prevCoorCA && Math.abs(currentCA.y - prevCoorCA.y) > maxDist) || (prevCoorCA && Math.abs(currentCA.z - prevCoorCA.z) > maxDist);
 
-                    if ((atom.ssbegin || atom.ssend || (drawnResidueCount === totalResidueCount - 1)) && pnts[0].length > 0 && bSameChain) {
+                    //if ((atom.ssbegin || atom.ssend || (drawnResidueCount === totalResidueCount - 1)) && pnts[0].length > 0 && bSameChain) {
+
+                    if ((atom.ssbegin || atom.ssend || (drawnResidueCount === totalResidueCount - 1) ) && pnts[0].length > 0 && bSameChain) {
                         var atomName = 'CA';
 
                         var prevone = [], nexttwo = [];

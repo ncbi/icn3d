@@ -324,7 +324,8 @@ iCn3DUI.prototype.selectBySpec = function (select, commandname, commanddesc, bDi
                    //oneLetterResidueStr.length;
                    var chainSeq = '', resiArray = [];
                    for(var s = 0, sl = me.icn3d.chainsSeq[molecule_chain].length; s < sl;  ++s) {
-                       chainSeq += (me.icn3d.chainsSeq[molecule_chain][s].name.length == 1) ? me.icn3d.chainsSeq[molecule_chain][s].name : me.icn3d.chainsSeq[molecule_chain][s].name.substr(0, 1);
+                       //chainSeq += (me.icn3d.chainsSeq[molecule_chain][s].name.length == 1) ? me.icn3d.chainsSeq[molecule_chain][s].name : me.icn3d.chainsSeq[molecule_chain][s].name.substr(0, 1);
+                       chainSeq += (me.icn3d.chainsSeq[molecule_chain][s].name.length == 1) ? me.icn3d.chainsSeq[molecule_chain][s].name : ' ';
                        resiArray.push(me.icn3d.chainsSeq[molecule_chain][s].resi);
                    }
 
