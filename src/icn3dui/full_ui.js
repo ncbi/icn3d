@@ -834,9 +834,11 @@ iCn3DUI.prototype = {
 
     setStyle: function (selectionType, style) { var me = this;
       var atoms = {};
+      var bAll = true;
       switch (selectionType) {
           case 'proteins':
               atoms = me.icn3d.intHash(me.icn3d.hAtoms, me.icn3d.proteins);
+              if(Object.keys(me.icn3d.hAtoms).length < Object.keys(me.icn3d.proteins).length) bAll = false;
               break;
           case 'sidec':
               atoms = me.icn3d.intHash(me.icn3d.hAtoms, me.icn3d.sidec);
@@ -846,6 +848,7 @@ iCn3DUI.prototype = {
               break;
           case 'nucleotides':
               atoms = me.icn3d.intHash(me.icn3d.hAtoms, me.icn3d.nucleotides);
+              if(Object.keys(me.icn3d.hAtoms).length < Object.keys(me.icn3d.nucleotides).length) bAll = false;
               break;
           case 'chemicals':
               atoms = me.icn3d.intHash(me.icn3d.hAtoms, me.icn3d.chemicals);
@@ -865,6 +868,10 @@ iCn3DUI.prototype = {
           }
       }
       else {
+          if(!bAll) {
+              atoms = me.icn3d.getSSExpandedAtoms(me.icn3d.hash2Atoms(atoms));
+          }
+
           for(var i in atoms) {
             me.icn3d.atoms[i].style = style;
           }
@@ -1306,14 +1313,16 @@ iCn3DUI.prototype = {
         var commandname, commanddesc;
         var firstAtom = me.icn3d.getFirstAtomObj(atomlistTarget);
 
-        commandname = "sphere." + firstAtom.chain + ":" + me.icn3d.residueName2Abbr(firstAtom.resn.substr(0, 3)) + firstAtom.resi + "-" + $("#" + me.pre + "radius_aroundsphere").val() + "A";
-        if(bInteraction) commandname = "interactions." + firstAtom.chain + ":" + me.icn3d.residueName2Abbr(firstAtom.resn.substr(0, 3)) + firstAtom.resi + "-" + $("#" + me.pre + "contactthreshold").val() + "A";
-        //commanddesc = "select a sphere around currently selected " + Object.keys(me.icn3d.hAtoms).length + " atoms with a radius of " + radius + " angstrom";
-        commanddesc = commandname;
+        if(firstAtom !== undefined) {
+            commandname = "sphere." + firstAtom.chain + ":" + me.icn3d.residueName2Abbr(firstAtom.resn.substr(0, 3)) + firstAtom.resi + "-" + $("#" + me.pre + "radius_aroundsphere").val() + "A";
+            if(bInteraction) commandname = "interactions." + firstAtom.chain + ":" + me.icn3d.residueName2Abbr(firstAtom.resn.substr(0, 3)) + firstAtom.resi + "-" + $("#" + me.pre + "contactthreshold").val() + "A";
+            //commanddesc = "select a sphere around currently selected " + Object.keys(me.icn3d.hAtoms).length + " atoms with a radius of " + radius + " angstrom";
+            commanddesc = commandname;
 
-        me.addCustomSelection(residueArray, commandname, commanddesc, select, true);
+            me.addCustomSelection(residueArray, commandname, commanddesc, select, true);
+        }
 
-        var nameArray = [commandname];
+        //var nameArray = [commandname];
 
         //me.changeCustomResidues(nameArray);
 
@@ -4869,9 +4878,9 @@ iCn3DUI.prototype = {
                select = ':' + select;
            }
 
-           var commandname = select;
+           var commandname = select.replace(/\s+/g, '_');
            //var commanddesc = "search with the one-letter sequence " + select;
-           var commanddesc = select;
+           var commanddesc = commandname;
 
            me.selectByCommand(select, commandname, commanddesc);
            //me.setLogCmd('select ' + select + ' | name ' + commandname + ' | description ' + commanddesc, true);

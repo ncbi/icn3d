@@ -115,10 +115,16 @@ iCn3D.prototype.setColorByOptions = function (options, atoms, bUseInputColor) {
                     }
 
                     //if(atom.color === undefined) atom.color = this.stdChainColors[index];
-                    atom.color = this.stdChainColors[index];
+                    if(!atom.het) {
+                        atom.color = this.stdChainColors[index];
 
-                    if(Object.keys(this.chainsColor).length > 0) this.updateChainsColor(atom);
-                    this.atomPrevColors[i] = atom.color;
+                        if(Object.keys(this.chainsColor).length > 0) this.updateChainsColor(atom);
+                        this.atomPrevColors[i] = atom.color;
+                    }
+                    else{
+                        atom.color = this.atomColors[atom.elem];
+                        this.atomPrevColors[i] = atom.color;
+                    }
 
                     prevChain = atom.chain;
                 }
@@ -301,6 +307,8 @@ iCn3D.prototype.setColorByOptions = function (options, atoms, bUseInputColor) {
 
                     atom.color = b < this.middB ? new THREE.Color().setRGB(1 - (s = (this.middB - b) * this.spanBinv1), 1 - s, 1) : new THREE.Color().setRGB(1, 1 - (s = (b - this.middB) * this.spanBinv2), 1 - s);
                 }
+
+                if(this.bOpm && atom.resn == 'DUM') atom.color = this.atomColors[atom.elem];
 
                 this.atomPrevColors[i] = atom.color;
             }
