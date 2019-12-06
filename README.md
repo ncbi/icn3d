@@ -45,7 +45,7 @@
 * <b>[Align two structures](https://icn3d.page.link/wPoW56e8QnzVfuZw6), [align two chains](https://icn3d.page.link/ijnf), or [align a protein sequence to a structure](https://icn3d.page.link/Mmm82craCwGMAxru9)</b>: 
     You can click "File > Align" to see all three alignment options.
 
-* <b>[Add custom tracks](https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?mmdbid=1tup&showanno=1&show2d=1&showsets=1&command=view+annotations;+set+view+detailed+view;+add+track+|+chainid+1TUP_B+|+title+Custom+Key+Sites+|+text+82+R,+152+G,+155-156+RR,+180+R,+189+R;+select+.B:82,152,155-156,180,189+|+name+mutation)</b>:
+* <b>[Add custom tracks](https://icn3d.page.link/pUzP)</b>:
     You can add custom tracks in various formats (FASTA, bed file, etc.) in the annotation window by clicking the menu "Windows > View Sequences & Annotations".
 
 ## Embed iCn3D with iframe or JavaScript libraries
