@@ -672,8 +672,9 @@ iCn3DUI.prototype.shareLinkUrl = function(bAllCommands) { var me = this;
 
            //statefile += me.icn3d.commands[i] + "\n";
 
-           // only output the most recent 'select saved atoms...'
-           if( (prevCommandStr.indexOf('select saved atoms') !== -1 && commandStr.indexOf('select saved atoms') !== -1)
+           // only output the most recent 'select saved atoms...' without " | name ..."
+           if( (prevCommandStr.indexOf('select saved atoms') !== -1 && commandStr.indexOf('select saved atoms') !== -1
+             && prevCommandStr.indexOf(' name ') === -1 && commandStr.indexOf(' name ') === -1)
              || (prevCommandStr.indexOf('select chain') !== -1 && commandStr.indexOf('select chain') !== -1)
              || (prevCommandStr.indexOf('pickatom') !== -1 && commandStr.indexOf('pickatom') !== -1)
              ) {

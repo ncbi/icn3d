@@ -842,9 +842,9 @@ iCn3DUI.prototype = {
               break;
           case 'sidec':
               atoms = me.icn3d.intHash(me.icn3d.hAtoms, me.icn3d.sidec);
-              calpha_atoms = me.icn3d.intHash(me.icn3d.hAtoms, me.icn3d.calphas);
+              //calpha_atoms = me.icn3d.intHash(me.icn3d.hAtoms, me.icn3d.calphas);
               // include calphas
-              atoms = me.icn3d.unionHash(atoms, calpha_atoms);
+              //atoms = me.icn3d.unionHash(atoms, calpha_atoms);
               break;
           case 'nucleotides':
               atoms = me.icn3d.intHash(me.icn3d.hAtoms, me.icn3d.nucleotides);

@@ -415,13 +415,6 @@ iCn3D.prototype.applyDisplayOptions = function (options, atoms, bHighlight) { va
     if(bHighlight === 1 && Object.keys(atoms).length < Object.keys(this.atoms).length) {
         atomsObj = this.hash2Atoms(atoms);
 
-        //for(var i in atomsObj) {
-        //    var atom = atomsObj[i];
-
-        //    residueid = atom.structure + '_' + atom.chain + '_' + atom.resi;
-        //    residueHash[residueid] = 1;
-        //}
-
         residueHash = me.getResiduesFromAtoms(atoms);
 
         // find singleton residues
@@ -454,7 +447,6 @@ iCn3D.prototype.applyDisplayOptions = function (options, atoms, bHighlight) { va
         else {
             // if only one residue, add the next residue in order to show highlight
             for(var residueid in singletonResidueHash) {
-                //var atom = this.getFirstAtomObj(this.residues[residueid]);
                 // get calpha
                 var calpha = this.getFirstCalphaAtomObj(this.residues[residueid]);
                 var atom = calpha;
@@ -536,11 +528,6 @@ iCn3D.prototype.applyDisplayOptions = function (options, atoms, bHighlight) { va
         this.bAllAtoms = (Object.keys(atoms).length === Object.keys(this.atoms).length);
     }
 
-//        var currentCalphas = {};
-//        if(this.opts['sidec'] !== 'nothing') {
-//            currentCalphas = this.intHash(this.hAtoms, this.calphas);
-//        }
-
     var chemicalSchematicRadius = this.cylinderRadius * 0.5;
 
     // remove schematic labels
@@ -558,17 +545,6 @@ iCn3D.prototype.applyDisplayOptions = function (options, atoms, bHighlight) { va
         if(Object.keys(residueHash) > Object.keys(residueHashCalpha)) { // some residues have only side chains
             bOnlySideChains = true;
         }
-
-/*
-        bOnlySideChains = true;
-
-        for(var i in this.hAtoms) {
-            if(this.atoms[i].name == 'CA') {
-                bOnlySideChains = false;
-                break;
-            }
-        }
-*/
     }
 
     for(var style in this.style2atoms) {
@@ -646,12 +622,16 @@ iCn3D.prototype.applyDisplayOptions = function (options, atoms, bHighlight) { va
         else {
             this.createLineRepresentation(this.hash2Atoms(atomHash), bHighlight);
         }
+
+        this.createConnCalphSidechain(this.hash2Atoms(atomHash), style);
       }
       else if(style === 'stick') {
         this.createStickRepresentation(this.hash2Atoms(atomHash), this.cylinderRadius, this.cylinderRadius, undefined, bHighlight, undefined);
+        this.createConnCalphSidechain(this.hash2Atoms(atomHash), style);
       }
       else if(style === 'ball and stick') {
         this.createStickRepresentation(this.hash2Atoms(atomHash), this.cylinderRadius, this.cylinderRadius * 0.5, this.dotSphereScale, bHighlight, undefined);
+        this.createConnCalphSidechain(this.hash2Atoms(atomHash), style);
       }
       else if(style === 'sphere') {
         this.createSphereRepresentation(this.hash2Atoms(atomHash), this.sphereRadius, undefined, undefined, bHighlight);
@@ -706,25 +686,6 @@ iCn3D.prototype.setStyle2Atoms = function (atoms) {
             this.style2atoms[this.atoms[i].style2][i] = 1;
         }
       }
-
-/*
-      for(var i in this.atoms) {
-          if(atoms.hasOwnProperty(i)) {
-            if(this.style2atoms[this.atoms[i].style] === undefined) this.style2atoms[this.atoms[i].style] = {};
-
-            this.style2atoms[this.atoms[i].style][i] = 1;
-
-            // side chains
-            if(this.style2atoms[this.atoms[i].style2] === undefined) this.style2atoms[this.atoms[i].style2] = {};
-
-            this.style2atoms[this.atoms[i].style2][i] = 1;
-          }
-          else if(this.atoms[i].style == 'schematic') { // always display schematic
-            if(this.style2atoms[this.atoms[i].style] === undefined) this.style2atoms[this.atoms[i].style] = {};
-            this.style2atoms[this.atoms[i].style][i] = 1;
-          }
-      }
-*/
 };
 
 // set atom style when loading a structure

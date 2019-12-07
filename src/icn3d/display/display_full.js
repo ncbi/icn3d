@@ -258,9 +258,9 @@ iCn3D.prototype.applySsbondsOptions = function (options) {
 
             // show side chains for the selected atoms
             var atoms = this.intHash(residueAtoms, this.sidec);
-            var calpha_atoms = this.intHash(residueAtoms, this.calphas);
+//            var calpha_atoms = this.intHash(residueAtoms, this.calphas);
             // include calphas
-            atoms = this.unionHash(atoms, calpha_atoms);
+//            atoms = this.unionHash(atoms, calpha_atoms);
 
             // draw sidec separatedly
             for(var j in atoms) {
