@@ -229,6 +229,52 @@ iCn3D.prototype.createBoxRepresentation_P_CA = function (atoms, scale, bHighligh
     });
 };
 
+iCn3D.prototype.createConnCalphSidechain = function (atoms, style) {
+    // find all residues with style2 as 'nothing' or undefined
+    var residueHash = {};
+    for(var i in atoms) {
+        var atom = atoms[i];
+        if(!atom.het && atom.style2 === style) {
+            var resid = atom.structure + '_' + atom.chain + '_' + atom.resi;
+            residueHash[resid] = 1;
+        }
+    }
+
+    var coordArray = [];
+    var colorArray = [];
+    for(var resid in residueHash) {
+        var atom = this.getFirstCalphaAtomObj(this.residues[resid]);
+
+        var sideAtom;
+        for(var i = 0, il = atom.bonds.length; i < il; ++i) {
+            var bondAtom = this.atoms[atom.bonds[i]];
+            if(bondAtom.name !== 'C' && bondAtom.name !== 'N') {
+                sideAtom = bondAtom;
+                break;
+            }
+        }
+
+        if(sideAtom !== undefined) {
+            coordArray.push(atom.coord);
+            coordArray.push(sideAtom.coord);
+
+            colorArray.push(atom.color);
+            colorArray.push(sideAtom.color);
+        }
+    }
+
+    for(var i = 0, il = coordArray.length; i < il; i += 2) {
+        if(style === 'ball and stick' || style === 'stick') {
+            var radius = (style === 'stick') ? this.cylinderRadius : this.cylinderRadius * 0.5;
+            this.createCylinder(coordArray[i], coordArray[i+1], radius, colorArray[i]);
+        }
+        else if(style === 'lines') {
+            var line = this.createSingleLine(coordArray[i], coordArray[i+1], colorArray[i], false, 0.5);
+            this.mdl.add(line);
+        }
+    }
+};
+
 // modified from iview (http://istar.cse.cuhk.edu.hk/iview/)
 iCn3D.prototype.createStickRepresentation = function (atoms, atomR, bondR, scale, bHighlight, bSchematic) {
     var me = this;
@@ -2022,19 +2068,48 @@ iCn3D.prototype.createTubeSub = function (_pnts, colors, radii, bHighlight, prev
     }
 };
 
-iCn3D.prototype.getAtomCoordFromResi = function (resid, atomName) {
+iCn3D.prototype.getAtomFromResi = function (resid, atomName) {
     if(this.residues.hasOwnProperty(resid)) {
         for(var i in this.residues[resid]) {
             if(this.atoms[i].name === atomName && !this.atoms[i].het) {
-                var coord = (this.atoms[i].coord2 !== undefined) ? this.atoms[i].coord2 : this.atoms[i].coord;
-
-                return coord;
+                return this.atoms[i];
             }
         }
     }
 
     return undefined;
-}
+};
+
+iCn3D.prototype.getAtomCoordFromResi = function (resid, atomName) {
+    var atom = this.getAtomFromResi(resid, atomName);
+    if(atom !== undefined) {
+        var coord = (atom.coord2 !== undefined) ? atom.coord2 : atom.coord;
+
+        return coord;
+    }
+
+    return undefined;
+};
+
+iCn3D.prototype.getRadius = function (radius, atom) {
+    var radiusFinal = radius;
+    if(radius) {
+        radiusFinal = radius;
+    }
+    else {
+        if(atom.b > 0 && atom.b <= 100) {
+            radiusFinal = atom.b * 0.01;
+        }
+        else if(atom.b > 100) {
+            radiusFinal = 100 * 0.01;
+        }
+        else {
+            radiusFinal = this.coilWidth;
+        }
+    }
+
+    return radiusFinal;
+};
 
 // modified from iview (http://istar.cse.cuhk.edu.hk/iview/)
 iCn3D.prototype.createTube = function (atoms, atomName, radius, bHighlight) {
@@ -2060,18 +2135,30 @@ iCn3D.prototype.createTube = function (atoms, atomName, radius, bHighlight) {
               || (currentResi + 1 !== atom.resi && (Math.abs(atom.coord.x - prevAtom.coord.x) > maxDist2 || Math.abs(atom.coord.y - prevAtom.coord.y) > maxDist2 || Math.abs(atom.coord.z - prevAtom.coord.z) > maxDist2) )
               ) ) {
                 if(bHighlight !== 2) {
-                    //this.createTubeSub(pnts, colors, radii, bHighlight);
                     var prevoneResid = firstAtom.structure + '_' + firstAtom.chain + '_' + (firstAtom.resi - 1).toString();
                     var prevoneCoord = this.getAtomCoordFromResi(prevoneResid, atomName);
                     prevone = (prevoneCoord !== undefined) ? [prevoneCoord] : [];
 
                     var nextoneResid = prevAtom.structure + '_' + prevAtom.chain + '_' + (prevAtom.resi + 1).toString();
+                    var nexttwoResid = prevAtom.structure + '_' + prevAtom.chain + '_' + (prevAtom.resi + 2).toString();
+
+                    if(this.residues.hasOwnProperty(nextoneResid)) {
+                        var nextAtom = this.getAtomFromResi(nextoneResid, atomName);
+                        if(nextAtom !== undefined && nextAtom.ssbegin) { // include the residue
+                            nextoneResid = prevAtom.structure + '_' + prevAtom.chain + '_' + (prevAtom.resi + 2).toString();
+                            nexttwoResid = prevAtom.structure + '_' + prevAtom.chain + '_' + (prevAtom.resi + 3).toString();
+
+                            pnts.push(nextAtom.coord);
+                            radii.push(this.getRadius(radius, nextAtom));
+                            colors.push(nextAtom.color);
+                        }
+                    }
+
                     var nextoneCoord = this.getAtomCoordFromResi(nextoneResid, atomName);
                     if(nextoneCoord !== undefined) {
                         nexttwo.push(nextoneCoord);
                     }
 
-                    var nexttwoResid = prevAtom.structure + '_' + prevAtom.chain + '_' + (prevAtom.resi + 2).toString();
                     var nexttwoCoord = this.getAtomCoordFromResi(nexttwoResid, atomName);
                     if(nexttwoCoord !== undefined) {
                         nexttwo.push(nexttwoCoord);
@@ -2083,29 +2170,26 @@ iCn3D.prototype.createTube = function (atoms, atomName, radius, bHighlight) {
                 firstAtom = atom;
                 index = 0;
             }
+            if(pnts.length == 0) {
+                var prevoneResid = atom.structure + '_' + atom.chain + '_' + (atom.resi - 1).toString();
+                if(this.residues.hasOwnProperty(prevoneResid)) {
+                    var prevAtom = this.getAtomFromResi(prevoneResid, atomName);
+                    if(prevAtom !== undefined && prevAtom.ssend) { // include the residue
+                        pnts.push(prevAtom.coord);
+                        radii.push(this.getRadius(radius, prevAtom));
+                        colors.push(prevAtom.color);
+                    }
+                }
+            }
             pnts.push(atom.coord);
 
-            var radiusFinal = radius;
-            if(radius) {
-                radiusFinal = radius;
-            }
-            else {
-                if(atom.b > 0 && atom.b <= 100) {
-                    radiusFinal = atom.b * 0.01;
-                }
-                else if(atom.b > 100) {
-                    radiusFinal = 100 * 0.01;
-                }
-                else {
-                    radiusFinal = this.coilWidth;
-                }
-            }
+            var radiusFinal = this.getRadius(radius, atom);
 
             //radii.push(radius || (atom.b > 0 ? atom.b * 0.01 : this.coilWidth));
             radii.push(radiusFinal);
 
             colors.push(atom.color);
-            // the starting residue of a coil uses the color from thenext residue to avoid using the color of the last helix/sheet residue
+            // the starting residue of a coil uses the color from the next residue to avoid using the color of the last helix/sheet residue
             if(index === 1) colors[colors.length - 2] = atom.color;
 
             currentChain = atom.chain;
