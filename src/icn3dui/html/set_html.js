@@ -72,7 +72,7 @@ iCn3DUI.prototype.setTopMenusHtmlMobile = function (id) { var me = this;
     if(!me.isMobile()) {
         var marginLeft = me.WIDTH - 40 + 5;
 
-        html += "  <button id='" + me.pre + "fullscreen' style='position:absolute; z-index:1999; display:block; padding:0px; margin: 7px 0px 0px " + marginLeft + "px; width:30px; height:34px; border-radius:4px; border:none;' title='Full scrren'>";
+        html += "  <button id='" + me.pre + "fullscreen' style='position:absolute; z-index:1999; display:block; padding:0px; margin: 7px 0px 0px " + marginLeft + "px; width:30px; height:34px; border-radius:4px; border:none;' title='Full screen'>";
         html += "    <svg fill='#1c94c4' viewBox='0 0 24 24' width='24' height='24'>";
         html += "    <path d='M0 0h24v24H0z' fill='none'></path>";
         html += "    <path d='M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z'></path>";

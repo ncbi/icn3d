@@ -74,6 +74,8 @@ iCn3DUI.prototype.selectTitle = function(that) { var me = this;
         me.removeSeqResidueBkgd();
 
         me.removeSeqChainBkgd();
+
+        me.currSelectedSets = [];
     }
 
     $(that).toggleClass('icn3d-highlightSeq');
@@ -94,26 +96,24 @@ iCn3DUI.prototype.selectTitle = function(that) { var me = this;
 
     if($(that).hasClass('icn3d-highlightSeq')) {
         if(!me.bAnnotations) {
-            if(me.bAlignSeq) {
-                if(me.icn3d.bCtrl || me.icn3d.bShift) {
-                    me.selectAChain(chainid, commandname, true, true);
-                }
-                else {
-                    me.selectAChain(chainid, commandname, true);
-                }
+            if(me.icn3d.bCtrl || me.icn3d.bShift) {
+                me.currSelectedSets.push(commandname);
+                me.selectAChain(chainid, commandname, true, true);
+            }
+            else {
+                me.currSelectedSets = [commandname];
+                me.selectAChain(chainid, commandname, true);
+            }
 
+            if(me.bAlignSeq) {
                 me.setLogCmd('select alignChain ' + chainid, true);
             }
             else {
-                if(me.icn3d.bCtrl || me.icn3d.bShift) {
-                    me.selectAChain(chainid, commandname, false, true);
-                }
-                else {
-                    me.selectAChain(chainid, commandname, false);
-                }
-
                 me.setLogCmd('select chain ' + chainid, true);
             }
+
+            var setNames = me.currSelectedSets.join(' or ');
+            me.setLogCmd('select saved atoms ' + setNames, true);
         }
         else {
             if($(that).hasClass('icn3d-highlightSeq')) {
@@ -121,13 +121,18 @@ iCn3DUI.prototype.selectTitle = function(that) { var me = this;
 
                 if($(that).attr('gi') !== undefined) {
                     if(me.icn3d.bCtrl || me.icn3d.bShift) {
+                        me.currSelectedSets.push(chainid);
                         me.selectAChain(chainid, chainid, false, true);
                     }
                     else {
+                        me.currSelectedSets = [chainid];
                         me.selectAChain(chainid, chainid, false);
                     }
 
                     me.setLogCmd('select chain ' + chainid, true);
+
+                    var setNames = me.currSelectedSets.join(' or ');
+                    me.setLogCmd('select saved atoms ' + setNames, true);
                 }
                 else {
                     var residueidHash = {};
@@ -137,12 +142,7 @@ iCn3DUI.prototype.selectTitle = function(that) { var me = this;
                         var fromArray = $(that).attr('from').split(',');
                         var toArray = $(that).attr('to').split(',');
 
-                        //me.icn3d.hAtoms = {};
-
-                        //removeAllLabels();
-
                         // protein chains
-                        //var atomHash = {}, residueidHash = {};
                         var residueid;
                         for(var i = 0, il = fromArray.length; i < il; ++i) {
                             var from = parseInt(fromArray[i]);
@@ -199,8 +199,6 @@ iCn3DUI.prototype.selectTitle = function(that) { var me = this;
                             me.selectResidueList(residueidHash, commandname, commanddescr, false);
                         }
 
-                        //me.updateHlAll();
-
                         residueid = chainid + '_' + posArray[parseInt((0 + posArray.length)/2)].toString();
                         //residueid = chainid + '_' + posArray[0].toString();
                         position = me.icn3d.centerAtoms(me.icn3d.hash2Atoms(me.icn3d.residues[residueid]));
@@ -208,7 +206,6 @@ iCn3DUI.prototype.selectTitle = function(that) { var me = this;
 
                     //removeAllLabels
                     for(var name in me.icn3d.labels) {
-                        //if(name === 'residue' || name === 'custom' || name === 'clinvar') {
                         if(name !== 'schematic' && name !== 'distance') {
                            me.icn3d.labels[name] = [];
                         }
@@ -219,14 +216,19 @@ iCn3DUI.prototype.selectTitle = function(that) { var me = this;
                     var color = "FFFF00";
                     if(position !== undefined) me.addLabel(commanddescr, position.center.x, position.center.y, position.center.z, size, color, undefined, 'custom');
 
-//                        me.icn3d.addHlObjects();
-//                        me.updateHl2D([chainid]);
-
                     me.icn3d.draw();
 
-                    //me.setLogCmd('select ' + commandname, true);
-                    //me.setLogCmd('select ' + me.residueids2spec(Object.keys(residueidHash)) + ' | name ' + commandname + ' | description ' + commanddescr, true);
                     me.setLogCmd('select ' + me.residueids2spec(Object.keys(residueidHash)) + ' | name ' + commandname, true);
+
+                    if(me.icn3d.bCtrl || me.icn3d.bShift) {
+                        me.currSelectedSets.push(commandname);
+                    }
+                    else {
+                        me.currSelectedSets = [commandname];
+                    }
+
+                    var setNames = me.currSelectedSets.join(' or ');
+                    me.setLogCmd('select saved atoms ' + setNames, true);
                 } // if($(that).attr('gi') !== undefined) {
             } // if($(that).hasClass('icn3d-highlightSeq')) {
         } // if(!me.bAnnotations) {
@@ -234,8 +236,6 @@ iCn3DUI.prototype.selectTitle = function(that) { var me = this;
     else {
         me.icn3d.removeHlObjects();
         me.removeHl2D();
-
-        //me.icn3d.hAtoms = {};
 
        $("#" + me.pre + "atomsCustom").val("");
     }
