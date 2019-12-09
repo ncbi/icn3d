@@ -266,10 +266,10 @@ iCn3D.prototype.createConnCalphSidechain = function (atoms, style) {
     for(var i = 0, il = coordArray.length; i < il; i += 2) {
         if(style === 'ball and stick' || style === 'stick') {
             var radius = (style === 'stick') ? this.cylinderRadius : this.cylinderRadius * 0.5;
-            this.createCylinder(coordArray[i], coordArray[i+1], radius, colorArray[i]);
+            this.createCylinder(coordArray[i], coordArray[i+1], radius, colorArray[i+1]);
         }
         else if(style === 'lines') {
-            var line = this.createSingleLine(coordArray[i], coordArray[i+1], colorArray[i], false, 0.5);
+            var line = this.createSingleLine(coordArray[i], coordArray[i+1], colorArray[i+1], false, 0.5);
             this.mdl.add(line);
         }
     }

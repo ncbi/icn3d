@@ -1,4 +1,6 @@
 ## Change Log
+[icn3d-2.10.1](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.10.1.zip) was release on December 9, 2019. Enabled to select the currently displayed set in the Select menu and fixed some bugs on H-Bonds & Interactions.
+
 [icn3d-2.10.0](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.10.0.zip) was release on December 5, 2019. Enabled to show each hydrogen bond and contact in 3D using the menu "View > H-Bonds & Interactions".
 
 [icn3d-2.9.2](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.9.2.zip) was release on November 18, 2019. Added Transmembrane track if the input is opmid. Added angle constraint for hydrogen bonds.

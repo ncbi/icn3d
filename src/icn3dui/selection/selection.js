@@ -245,7 +245,7 @@ iCn3DUI.prototype.selectAChain = function (chainid, commandname, bAlign, bUnion)
         }
     }
 
-    if((me.icn3d.defNames2Atoms === undefined || !me.icn3d.defNames2Atoms.hasOwnProperty(chainid)) && (me.icn3d.defNames2Residues === undefined || !me.icn3d.defNames2Residues.hasOwnProperty(chainid)) ) {
+    if((me.icn3d.defNames2Atoms === undefined || !me.icn3d.defNames2Atoms.hasOwnProperty(commandname)) && (me.icn3d.defNames2Residues === undefined || !me.icn3d.defNames2Residues.hasOwnProperty(commandname)) ) {
         me.addCustomSelection(Object.keys(oriResidueHash), commandname, commandname, command, true);
     }
 
@@ -257,9 +257,6 @@ iCn3DUI.prototype.selectAChain = function (chainid, commandname, bAlign, bUnion)
     else {
         me.updateHlAll(Object.keys(me.menuHlHash), undefined, bUnion, bForceHighlight);
     }
-
-//        me.icn3d.addHlObjects();
-//        me.updateHl2D(Object.keys(chainHash));
 };
 
 iCn3DUI.prototype.selectResidueList = function (residueHash, commandname, commanddescr, bUnion, bUpdateHighlight) { var me = this;

@@ -640,9 +640,11 @@ iCn3D.prototype.getChainsFromAtoms = function(atomsHash) {
            //if(atomDistSq < maxDistSq) {
            if(atomDist < distance) {
                 ret[atom.serial] = atom;
-                if(bInteraction !== undefined && bInteraction) ret[oriAtom.serial] = oriAtom;
-
                 var calpha, residName;
+                if(bInteraction !== undefined && bInteraction) {
+                    ret[oriAtom.serial] = oriAtom;
+                }
+
                 var resid = atom.structure + '_' + atom.chain + '_' + atom.resi;
                 for(var serial in me.residues[resid]) {
                     if(me.atoms[serial].name === 'CA' || me.atoms[serial].name === "O3'" || me.atoms[serial].name === "O3*") {
@@ -653,9 +655,11 @@ iCn3D.prototype.getChainsFromAtoms = function(atomsHash) {
 
                 if(calpha === undefined) calpha = atom;
 
-                // output contact lines
-                this.contactpnts.push({'serial': calpha.serial, 'coord': calpha.coord});
-                this.contactpnts.push({'serial': oriCalpha.serial, 'coord': oriCalpha.coord});
+                    // output contact lines
+                if(bInteraction !== undefined && bInteraction) {
+                    this.contactpnts.push({'serial': calpha.serial, 'coord': calpha.coord});
+                    this.contactpnts.push({'serial': oriCalpha.serial, 'coord': oriCalpha.coord});
+                }
 
                 if(bGetPairs) {
                     residName = '$' + atom.structure + '.' + atom.chain + ':' + atom.resi + ' ' + atom.resn;
