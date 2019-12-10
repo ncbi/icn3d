@@ -4587,7 +4587,7 @@ iCn3DUI.prototype = {
     },
 
     clkMn6_hbondsYes: function() { var me = this;
-        $("#" + me.pre + "mn6_hbondsYes").click(function(e) {
+        $("#" + me.pre + "mn6_hbondsYes").add("#" + me.pre + "hbondsYes").click(function(e) {
             if(me.bSetChainsAdvancedMenu === undefined || !me.bSetChainsAdvancedMenu) {
                var prevHAtoms = me.icn3d.cloneHash(me.icn3d.hAtoms);
 

@@ -46,7 +46,9 @@ iCn3DUI.prototype.setTools_base = function() { var me = this;
             html += "      <td valign='top'>" + me.setButton(buttonStyle, 'show_2ddgm', 'View the interactions of the structure', 'View<br/>Interactions') + "</td>";
         }
 
-        html += "      <td valign='top'>" + me.setButton(buttonStyle, 'chemicalbindingshow', 'View Chemical Binding', 'View Chemical<br/>Binding') + "</td>";
+        //html += "      <td valign='top'>" + me.setButton(buttonStyle, 'chemicalbindingshow', 'View Chemical Binding', 'Chemical<br/>Binding') + "</td>";
+
+        html += "      <td valign='top'>" + me.setButton(buttonStyle, 'hbondsYes', 'View H-Bonds & Interactions', 'H-Bonds &<br/> Interactions') + "</td>";
 
         html += "      <td valign='top'>" + me.setButton(buttonStyle, 'alternate', 'Alternate the structures', 'Alternate<br/>(Key \"a\")') + "</td>";
     }
