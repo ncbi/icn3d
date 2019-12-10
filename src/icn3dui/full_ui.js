@@ -1321,7 +1321,7 @@ iCn3DUI.prototype = {
         var firstAtom = me.icn3d.getFirstAtomObj(atomlistTarget);
 
         if(firstAtom !== undefined) {
-            commandname = "sphere." + firstAtom.chain + ":" + me.icn3d.residueName2Abbr(firstAtom.resn.substr(0, 3)) + firstAtom.resi + "-" + $("#" + me.pre + "radius_aroundsphere").val() + "A";
+            commandname = "sphere." + firstAtom.chain + ":" + me.icn3d.residueName2Abbr(firstAtom.resn.substr(0, 3)) + firstAtom.resi + "-" + radius + "A";
             if(bInteraction) commandname = "interactions." + firstAtom.chain + ":" + me.icn3d.residueName2Abbr(firstAtom.resn.substr(0, 3)) + firstAtom.resi + "-" + $("#" + me.pre + "contactthreshold").val() + "A";
             //commanddesc = "select a sphere around currently selected " + Object.keys(me.icn3d.hAtoms).length + " atoms with a radius of " + radius + " angstrom";
             commanddesc = commandname;
