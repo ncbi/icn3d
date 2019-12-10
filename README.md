@@ -50,7 +50,7 @@
 
 ## Embed iCn3D with iframe or JavaScript libraries
 
-iCn3D can be embedded in a web page by including the URL in HTML iframe, e.g. <iframe src="https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?mmdbid=1tup&width=300&height=300&showcommand=0&mobilemenu=1&showtitle=0" width="320" height="320" style="border:none</iframe>. This method always shows the most recent version of iCn3D.
+iCn3D can be embedded in a web page by including the URL in HTML iframe, e.g. <iframe src="https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?mmdbid=1tup&width=300&height=300&showcommand=0&mobilemenu=1&showtitle=0" width="320" height="320" style="border:none"></iframe>. This method always shows the most recent version of iCn3D.
 
 To embed iCn3D with JavaScript libraries, the following libraries need to be included: jQuery, jQuery UI, Three.js, and iCn3D library. An html div tag to hold the 3D viewer is added. The iCn3D widget is initialized with the custom defined parameter "cfg": "var icn3dui = new iCn3DUI(cfg); icn3dui.show3DStructure();". Multiple iCn3D widgets can be embedded in a single page. Please see the source code of the [example page](https://www.ncbi.nlm.nih.gov/Structure/icn3d/example.html) for reference.
 
