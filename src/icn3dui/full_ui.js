@@ -872,9 +872,9 @@ iCn3DUI.prototype = {
           }
       }
       else {
-          if(!bAll) {
-              atoms = me.icn3d.getSSExpandedAtoms(me.icn3d.hash2Atoms(atoms));
-          }
+          //if(!bAll) {
+          //    atoms = me.icn3d.getSSExpandedAtoms(me.icn3d.hash2Atoms(atoms));
+          //}
 
           for(var i in atoms) {
             me.icn3d.atoms[i].style = style;
