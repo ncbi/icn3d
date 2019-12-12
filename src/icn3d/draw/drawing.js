@@ -1593,7 +1593,7 @@ iCn3D.prototype.createStrand = function (atoms, num, div, fill, coilWidth, helix
     var colors = [];
     var currentChain, currentResi, currentCA = null, currentO = null, currentColor = null, prevCoorCA = null, prevCoorO = null, prevColor = null;
     var prevCO = null, ss = null, ssend = false, atomid = null, prevAtomid = null, prevResi = null, calphaid = null, prevCalphaid = null;
-    var strandWidth, bSheetSegment = false, bHelixSegment = false;
+    var strandWidth, bSheetSegment = false, bHelixSegment = false, bSheetEnd = false;
     var atom, tubeAtoms = {};
 
     // test the first 30 atoms to see whether only C-alpha is available
@@ -1649,13 +1649,6 @@ iCn3D.prototype.createStrand = function (atoms, num, div, fill, coilWidth, helix
 //                    if (currentChain !== atom.chain || currentResi + 1 !== atom.resi) {
                     if (currentChain !== atom.chain) {
                         bSameChain = false;
-                    }
-
-                    if(atom.ssend && atom.ss === 'sheet') {
-                        bSheetSegment = true;
-                    }
-                    else if(atom.ssend && atom.ss === 'helix') {
-                        bHelixSegment = true;
                     }
 
                     // assign the previous residue
@@ -1735,125 +1728,152 @@ iCn3D.prototype.createStrand = function (atoms, num, div, fill, coilWidth, helix
                         ++drawnResidueCount;
                     }
 
-                    //var maxDist = 6.0;
-                    //var bBrokenSs = (prevCoorCA && Math.abs(currentCA.x - prevCoorCA.x) > maxDist) || (prevCoorCA && Math.abs(currentCA.y - prevCoorCA.y) > maxDist) || (prevCoorCA && Math.abs(currentCA.z - prevCoorCA.z) > maxDist);
+                    //if(atom.ssend && atom.ss === 'sheet') {
+                    if(atom.ss === 'sheet') {
+                        bSheetSegment = true;
+                    }
+                    //else if(atom.ssend && atom.ss === 'helix') {
+                    else if(atom.ss === 'helix') {
+                        bHelixSegment = true;
+                    }
 
-                    //if ((atom.ssbegin || atom.ssend || (drawnResidueCount === totalResidueCount - 1)) && pnts[0].length > 0 && bSameChain) {
+                    if(atom.ssend) {
+                        bSheetEnd = true;
+                    }
 
-                    if ((atom.ssbegin || atom.ssend || (drawnResidueCount === totalResidueCount - 1) ) && pnts[0].length > 0 && bSameChain) {
+                    var maxDist = 6.0;
+                    var bBrokenSs = (prevCoorCA && Math.abs(currentCA.x - prevCoorCA.x) > maxDist) || (prevCoorCA && Math.abs(currentCA.y - prevCoorCA.y) > maxDist) || (prevCoorCA && Math.abs(currentCA.z - prevCoorCA.z) > maxDist);
+
+                    if ((atom.ssbegin || atom.ssend || (drawnResidueCount === totalResidueCount - 1) || bBrokenSs) && pnts[0].length > 0 && bSameChain) {
                         var atomName = 'CA';
 
                         var prevone = [], nexttwo = [];
 
-                        var prevoneResid = this.atoms[prevAtomid].structure + '_' + this.atoms[prevAtomid].chain + '_' + (this.atoms[prevAtomid].resi - 1).toString();
+                        var lastAtom = (bBrokenSs) ? this.atoms[prevAtomid] : atom; // bBrokenSs: skip the current residue
+
+                        var prevoneResid = lastAtom.structure + '_' + lastAtom.chain + '_' + (lastAtom.resi - 1).toString();
                         var prevoneCoord = this.getAtomCoordFromResi(prevoneResid, atomName);
                         prevone = (prevoneCoord !== undefined) ? [prevoneCoord] : [];
 
-                        var nextoneResid = this.atoms[prevAtomid].structure + '_' + this.atoms[prevAtomid].chain + '_' + (this.atoms[prevAtomid].resi + 1).toString();
+                        var nextoneResid = lastAtom.structure + '_' + lastAtom.chain + '_' + (lastAtom.resi + 1).toString();
                         var nextoneCoord = this.getAtomCoordFromResi(nextoneResid, atomName);
                         if(nextoneCoord !== undefined) {
                             nexttwo.push(nextoneCoord);
                         }
 
-                        var nexttwoResid = this.atoms[prevAtomid].structure + '_' + this.atoms[prevAtomid].chain + '_' + (this.atoms[prevAtomid].resi + 2).toString();
+                        var nexttwoResid = lastAtom.structure + '_' + lastAtom.chain + '_' + (lastAtom.resi + 2).toString();
                         var nexttwoCoord = this.getAtomCoordFromResi(nexttwoResid, atomName);
                         if(nexttwoCoord !== undefined) {
                             nexttwo.push(nexttwoCoord);
                         }
 
-                        // assign the current joint residue to the previous segment
-                        if(bHighlight === 1 || bHighlight === 2) {
-                            colors.push(this.hColor);
+                        //if(atom.ssend && atom.ss === 'sheet') {
+                        if(lastAtom.ss === 'sheet') {
+                            bSheetSegment = true;
                         }
-                        else {
-                            //colors.push(atom.color);
-                            colors.push(prevColor);
-                        }
-
-                        if(atom.ssend && atom.ss === 'sheet') { // current residue is the end of ss and is the end of arrow
-                            strandWidth = 0; // make the arrow end sharp
-                        }
-                        else if(ss === 'coil' && atom.ssbegin) {
-                            strandWidth = coilWidth;
-                        }
-                        else if(ssend && atom.ssbegin) { // current residue is the start of ss and  the previous residue is the end of ss, then use coil
-                            strandWidth = coilWidth;
-                        }
-                        else { // use the ss from the previous residue
-                            strandWidth = (atom.ss === 'coil') ? coilWidth : helixSheetWidth;
+                        //else if(atom.ssend && atom.ss === 'helix') {
+                        else if(lastAtom.ss === 'helix') {
+                            bHelixSegment = true;
                         }
 
-                        var O, oldCA, resSpan = 4;
-                        if(atom.name === 'O') {
-                            O = currentO.clone();
-                            O.sub(currentCA);
+                        if(lastAtom.ssend) {
+                            bSheetEnd = true;
                         }
-                        else if(this.bCalphaOnly && atom.name === 'CA') {
-                            if(caArray.length > resSpan) { // use the calpha and the previous 4th c-alpha to calculate the helix direction
-                                O = currentCA.clone();
-                                oldCA = this.atoms[caArray[caArray.length - 1 - resSpan]].coord.clone();
-                                O.sub(oldCA);
+
+                        if(!bBrokenSs) { // include the current residue
+                            // assign the current joint residue to the previous segment
+                            if(bHighlight === 1 || bHighlight === 2) {
+                                colors.push(this.hColor);
                             }
                             else {
-                                O = new THREE.Vector3(Math.random(),Math.random(),Math.random());
+                                //colors.push(atom.color);
+                                colors.push(prevColor);
                             }
-                        }
 
-                        O.normalize(); // can be omitted for performance
-                        O.multiplyScalar(strandWidth);
-                        if (prevCO !== null && O.dot(prevCO) < 0) O.negate();
-                        prevCO = O;
+                            if(atom.ssend && atom.ss === 'sheet') { // current residue is the end of ss and is the end of arrow
+                                strandWidth = 0; // make the arrow end sharp
+                            }
+                            else if(ss === 'coil' && atom.ssbegin) {
+                                strandWidth = coilWidth;
+                            }
+                            else if(ssend && atom.ssbegin) { // current residue is the start of ss and  the previous residue is the end of ss, then use coil
+                                strandWidth = coilWidth;
+                            }
+                            else { // use the ss from the previous residue
+                                strandWidth = (atom.ss === 'coil') ? coilWidth : helixSheetWidth;
+                            }
 
-                        for (var j = 0, numM1Inv2 = 2 / (num - 1); j < num; ++j) {
-                            var delta = -1 + numM1Inv2 * j;
-                            var v = new THREE.Vector3(currentCA.x + prevCO.x * delta, currentCA.y + prevCO.y * delta, currentCA.z + prevCO.z * delta);
-                            if (!doNotSmoothen && ss === 'sheet') v.smoothen = true;
-                            pnts[j].push(v);
-                        }
+                            var O, oldCA, resSpan = 4;
+                            if(atom.name === 'O') {
+                                O = currentO.clone();
+                                O.sub(currentCA);
+                            }
+                            else if(this.bCalphaOnly && atom.name === 'CA') {
+                                if(caArray.length > resSpan) { // use the calpha and the previous 4th c-alpha to calculate the helix direction
+                                    O = currentCA.clone();
+                                    oldCA = this.atoms[caArray[caArray.length - 1 - resSpan]].coord.clone();
+                                    O.sub(oldCA);
+                                }
+                                else {
+                                    O = new THREE.Vector3(Math.random(),Math.random(),Math.random());
+                                }
+                            }
 
-                        atomid = atom.serial;
+                            O.normalize(); // can be omitted for performance
+                            O.multiplyScalar(strandWidth);
+                            if (prevCO !== null && O.dot(prevCO) < 0) O.negate();
+                            prevCO = O;
 
-                        pntsCA.push(currentCA);
-                        prevCOArray.push(prevCO);
+                            for (var j = 0, numM1Inv2 = 2 / (num - 1); j < num; ++j) {
+                                var delta = -1 + numM1Inv2 * j;
+                                var v = new THREE.Vector3(currentCA.x + prevCO.x * delta, currentCA.y + prevCO.y * delta, currentCA.z + prevCO.z * delta);
+                                if (!doNotSmoothen && ss === 'sheet') v.smoothen = true;
+                                pnts[j].push(v);
+                            }
 
-                        // when a coil connects to a sheet and the last residue of coild is highlighted, the first sheet residue is set as atom.highlightStyle. This residue should not be shown.
-                        //if(atoms.hasOwnProperty(atomid) && (bHighlight === 1 && !atom.notshow) ) {
-                        if(atoms.hasOwnProperty(atomid)) {
-                            bShowArray.push(atom.resi);
-                            calphaIdArray.push(calphaid);
-                        }
-                        else {
-                            bShowArray.push(0);
-                            calphaIdArray.push(0);
+                            atomid = atom.serial;
+
+                            pntsCA.push(currentCA);
+                            prevCOArray.push(prevCO);
+
+                            // when a coil connects to a sheet and the last residue of coild is highlighted, the first sheet residue is set as atom.highlightStyle. This residue should not be shown.
+                            //if(atoms.hasOwnProperty(atomid) && (bHighlight === 1 && !atom.notshow) ) {
+                            if(atoms.hasOwnProperty(atomid)) {
+                                bShowArray.push(atom.resi);
+                                calphaIdArray.push(calphaid);
+                            }
+                            else {
+                                bShowArray.push(0);
+                                calphaIdArray.push(0);
+                            }
                         }
 
                         // draw the current segment
                         for (var j = 0; !fill && j < num; ++j) {
                             if(bSheetSegment) {
-                                this.createCurveSubArrow(pnts[j], 1, colors, div, bHighlight, bRibbon, num, j, pntsCA, prevCOArray, bShowArray, calphaIdArray, true, prevone, nexttwo);
-                            }
-                            else if(bHelixSegment) {
-                                if(bFullAtom) {
-                                    this.createCurveSub(pnts[j], 1, colors, div, bHighlight, bRibbon, false, bShowArray, calphaIdArray, undefined, prevone, nexttwo);
+                                if(bSheetEnd) {
+                                    this.createCurveSubArrow(pnts[j], 1, colors, div, bHighlight, bRibbon, num, j, pntsCA, prevCOArray, bShowArray, calphaIdArray, true, prevone, nexttwo);
                                 }
                                 else {
-                                    this.createCurveSubArrow(pnts[j], 1, colors, div, bHighlight, bRibbon, num, j, pntsCA, prevCOArray, bShowArray, calphaIdArray, false, prevone, nexttwo);
+                                    this.createCurveSub(pnts[j], 1, colors, div, bHighlight, bRibbon, false, bShowArray, calphaIdArray, undefined, prevone, nexttwo);
                                 }
+                            }
+                            else if(bHelixSegment) {
+                                this.createCurveSub(pnts[j], 1, colors, div, bHighlight, bRibbon, false, bShowArray, calphaIdArray, undefined, prevone, nexttwo);
                             }
                         }
                         if (fill) {
                             if(bSheetSegment) {
                                 var start = 0, end = num - 1;
-                                this.createStripArrow(pnts[0], pnts[num - 1], colors, div, thickness, bHighlight, num, start, end, pntsCA, prevCOArray, bShowArray, calphaIdArray, true, prevone, nexttwo);
-                            }
-                            else if(bHelixSegment) {
-                                if(bFullAtom) {
-                                    this.createStrip(pnts[0], pnts[num - 1], colors, div, thickness, bHighlight, false, bShowArray, calphaIdArray, undefined, prevone, nexttwo);
-                                }
-                                else {
-                                    var start = 0, end = num - 1;
+                                if(bSheetEnd) {
                                     this.createStripArrow(pnts[0], pnts[num - 1], colors, div, thickness, bHighlight, num, start, end, pntsCA, prevCOArray, bShowArray, calphaIdArray, true, prevone, nexttwo);
                                 }
+                                else {
+                                    this.createStrip(pnts[0], pnts[num - 1], colors, div, thickness, bHighlight, false, bShowArray, calphaIdArray, undefined, prevone, nexttwo);
+                                }
+                            }
+                            else if(bHelixSegment) {
+                                this.createStrip(pnts[0], pnts[num - 1], colors, div, thickness, bHighlight, false, bShowArray, calphaIdArray, undefined, prevone, nexttwo);
                             }
                             else {
                                 if(bHighlight === 2) { // draw coils only when highlighted. if not highlighted, coils will be drawn as tubes separately
@@ -1861,6 +1881,7 @@ iCn3D.prototype.createStrand = function (atoms, num, div, fill, coilWidth, helix
                                 }
                             }
                         }
+
                         for (var k = 0; k < num; ++k) pnts[k] = [];
 
                         colors = [];
@@ -1870,6 +1891,7 @@ iCn3D.prototype.createStrand = function (atoms, num, div, fill, coilWidth, helix
                         calphaIdArray = [];
                         bSheetSegment = false;
                         bHelixSegment = false;
+                        bSheetEnd = false;
                     } // end if (atom.ssbegin || atom.ssend)
 
                     // end of a chain
@@ -1886,30 +1908,29 @@ iCn3D.prototype.createStrand = function (atoms, num, div, fill, coilWidth, helix
 
                         for (var j = 0; !fill && j < num; ++j) {
                             if(bSheetSegment) {
-                                this.createCurveSubArrow(pnts[j], 1, colors, div, bHighlight, bRibbon, num, j, pntsCA, prevCOArray, bShowArray, calphaIdArray, true, prevone, nexttwo);
-                            }
-                            else if(bHelixSegment) {
-                                if(bFullAtom) {
-                                    this.createCurveSub(pnts[j], 1, colors, div, bHighlight, bRibbon, false, bShowArray, calphaIdArray, undefined, prevone, nexttwo);
+                                if(bSheetEnd) {
+                                    this.createCurveSubArrow(pnts[j], 1, colors, div, bHighlight, bRibbon, num, j, pntsCA, prevCOArray, bShowArray, calphaIdArray, true, prevone, nexttwo);
                                 }
                                 else {
-                                    this.createCurveSubArrow(pnts[j], 1, colors, div, bHighlight, bRibbon, num, j, pntsCA, prevCOArray, bShowArray, calphaIdArray, false, prevone, nexttwo);
+                                    this.createCurveSub(pnts[j], 1, colors, div, bHighlight, bRibbon, false, bShowArray, calphaIdArray, undefined, prevone, nexttwo);
                                 }
+                            }
+                            else if(bHelixSegment) {
+                                this.createCurveSub(pnts[j], 1, colors, div, bHighlight, bRibbon, false, bShowArray, calphaIdArray, undefined, prevone, nexttwo);
                             }
                         }
                         if (fill) {
                             if(bSheetSegment) {
                                 var start = 0, end = num - 1;
-                                this.createStripArrow(pnts[0], pnts[num - 1], colors, div, thickness, bHighlight, num, start, end, pntsCA, prevCOArray, bShowArray, calphaIdArray, true, prevone, nexttwo);
-                            }
-                            else if(bHelixSegment) {
-                                if(bFullAtom) {
-                                    this.createStrip(pnts[0], pnts[num - 1], colors, div, thickness, bHighlight, false, bShowArray, calphaIdArray, undefined, prevone, nexttwo);
+                                if(bSheetEnd) {
+                                    this.createStripArrow(pnts[0], pnts[num - 1], colors, div, thickness, bHighlight, num, start, end, pntsCA, prevCOArray, bShowArray, calphaIdArray, true, prevone, nexttwo);
                                 }
                                 else {
-                                    var start = 0, end = num - 1;
-                                    this.createStripArrow(pnts[0], pnts[num - 1], colors, div, thickness, bHighlight, num, start, end, pntsCA, prevCOArray, bShowArray, calphaIdArray, false, prevone, nexttwo);
+                                    this.createStrip(pnts[0], pnts[num - 1], colors, div, thickness, bHighlight, false, bShowArray, calphaIdArray, undefined, prevone, nexttwo);
                                 }
+                            }
+                            else if(bHelixSegment) {
+                                this.createStrip(pnts[0], pnts[num - 1], colors, div, thickness, bHighlight, false, bShowArray, calphaIdArray, undefined, prevone, nexttwo);
                             }
                         }
 
@@ -1921,6 +1942,7 @@ iCn3D.prototype.createStrand = function (atoms, num, div, fill, coilWidth, helix
                         calphaIdArray = [];
                         bSheetSegment = false;
                         bHelixSegment = false;
+                        bSheetEnd = false;
                     }
 
                     currentChain = atom.chain;
