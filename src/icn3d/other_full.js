@@ -820,3 +820,18 @@ iCn3D.prototype.centerSelection = function(atoms) {
            this.setCamera();
    }
 };
+
+iCn3D.prototype.transformMemPro = function(inCoord, rot, centerFrom, centerTo) {
+    var coord = inCoord.clone();
+    coord.sub(centerFrom);
+
+    var x = coord.x*rot[0] + coord.y*rot[1] + coord.z*rot[2] + centerTo.x;
+    var y = coord.x*rot[3] + coord.y*rot[4] + coord.z*rot[5] + centerTo.y;
+    var z = coord.x*rot[6] + coord.y*rot[7] + coord.z*rot[8] + centerTo.z;
+
+    coord.x = x;
+    coord.y = y;
+    coord.z = z;
+
+    return coord;
+};

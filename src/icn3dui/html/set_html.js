@@ -604,9 +604,14 @@ iCn3DUI.prototype.setMenu2b_base = function() { var me = this;
     html += "  </li>";
 
     if(me.cfg.opmid !== undefined) {
-        html += me.getLink('adjustmem', 'Adjust Membrane');
-        //html += me.getLink('addplane', 'Add a Plane');
-        html += me.getLink('selectplane', 'Select between<br>Two X-Y Planes');
+        //html += me.getLink('adjustmem', 'Adjust Membrane');
+        //html += me.getLink('selectplane', 'Select between<br>Two X-Y Planes');
+        html += "<li id='" + me.pre + "adjustmemli'><span id='" + me.pre + "adjustmem' class='icn3d-link'>Adjust Membrane</span></li>";
+        html += "<li id='" + me.pre + "selectplaneli'><span id='" + me.pre + "selectplane' class='icn3d-link'>Select between<br>Two X-Y Planes</span></li>";
+    }
+    else {
+        html += "<li id='" + me.pre + "adjustmemli' style='display:none'><span id='" + me.pre + "adjustmem' class='icn3d-link'>Adjust Membrane</span></li>";
+        html += "<li id='" + me.pre + "selectplaneli' style='display:none'><span id='" + me.pre + "selectplane' class='icn3d-link'>Select between<br>Two X-Y Planes</span></li>";
     }
 
     html += "  <li>-</li>";
@@ -1724,8 +1729,12 @@ iCn3DUI.prototype.setDialogs = function() { var me = this;
     html += "        <td style='min-width:60px;'><input type='checkbox' id='" + me.pre + "anno_snp'>SNPs&nbsp;&nbsp;</td>";
     html += "        <td style='min-width:110px;'><input type='checkbox' id='" + me.pre + "anno_interact'>Interactions&nbsp;&nbsp;</td>";
     if(me.cfg.opmid !== undefined) {
-        html += "        <td style='min-width:110px;'><input type='checkbox' id='" + me.pre + "anno_transmem'>Transmembrane&nbsp;&nbsp;</td>";
+        html += "        <td style='min-width:110px;'><span id='" + me.pre + "anno_transmemli'><input type='checkbox' id='" + me.pre + "anno_transmem'>Transmembrane&nbsp;&nbsp;</span></td>";
     }
+    else {
+        html += "        <td style='min-width:110px;'><span id='" + me.pre + "anno_transmemli' style='display:none'><input type='checkbox' id='" + me.pre + "anno_transmem'>Transmembrane&nbsp;&nbsp;</span></td>";
+    }
+
     html += "        <td></td>";
     html += "      </tr></table></div>";
 

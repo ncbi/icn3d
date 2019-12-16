@@ -15,7 +15,7 @@ if (!$.ui.dialog.prototype._makeDraggableBase) {
 var iCn3DUI = function(cfg) {
     var me = this;
 
-    this.REVISION = '2.10.1';
+    this.REVISION = '2.11.0';
 
     me.bFullUi = true;
 
@@ -5727,6 +5727,12 @@ iCn3DUI.prototype = {
                 atom.coord.z = intra_mem_z;
             }
         }
+
+        // reset transmembrane set
+        var bReset = true;
+        me.setTransmemInMenu(extra_mem_z, intra_mem_z, bReset);
+
+        me.updateHlMenus();
 
         me.icn3d.draw();
     },

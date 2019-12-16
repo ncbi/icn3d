@@ -6,6 +6,7 @@ iCn3DUI.prototype.showSets = function() { var me = this;
     me.openDialog(me.pre + 'dl_definedsets', 'Select sets');
     $("#" + me.pre + "dl_setsmenu").show();
     $("#" + me.pre + "dl_setoperations").show();
+
     $("#" + me.pre + "dl_command").hide();
 
     $("#" + me.pre + "atomsCustom").resizable();
@@ -287,16 +288,20 @@ iCn3DUI.prototype.setProtNuclLigInMenu = function () { var me = this;
       me.icn3d.defNames2Command['water'] = 'select :water';
     }
 
+    me.setTransmemInMenu(me.icn3d.halfBilayerSize, -me.icn3d.halfBilayerSize);
+};
+
+iCn3DUI.prototype.setTransmemInMenu = function (posZ, negZ, bReset) { var me = this;
     // set transmembrane, extracellular, intracellular
     if(me.icn3d.bOpm) {
       var transmembraneHash = {}, extracellularHash = {}, intracellularHash = {};
       for(var serial in me.icn3d.atoms) {
           var atom = me.icn3d.atoms[serial];
           var residueid = atom.structure + '_' + atom.chain + '_' + atom.resi;
-          if(atom.coord.z > me.icn3d.halfBilayerSize) {
+          if(atom.coord.z > posZ) {
               extracellularHash[residueid] = 1;
           }
-          else if(atom.coord.z < -me.icn3d.halfBilayerSize) {
+          else if(atom.coord.z < negZ) {
               intracellularHash[residueid] = 1;
           }
           else if(atom.resn !== 'DUM') {
@@ -304,22 +309,24 @@ iCn3DUI.prototype.setProtNuclLigInMenu = function () { var me = this;
           }
       }
 
+      var extraStr = (bReset !== undefined && bReset) ? '2' : '';
+
       if(Object.keys(transmembraneHash).length > 0) {
-          me.icn3d.defNames2Residues['transmembrane'] = Object.keys(transmembraneHash);
-          me.icn3d.defNames2Descr['transmembrane'] = 'transmembrane';
-          me.icn3d.defNames2Command['transmembrane'] = 'select :transmembrane';
+          me.icn3d.defNames2Residues['transmembrane' + extraStr] = Object.keys(transmembraneHash);
+          me.icn3d.defNames2Descr['transmembrane' + extraStr] = 'transmembrane' + extraStr;
+          me.icn3d.defNames2Command['transmembrane' + extraStr] = 'select :transmembrane' + extraStr;
       }
 
       if(Object.keys(extracellularHash).length > 0) {
-          me.icn3d.defNames2Residues['extracellular'] = Object.keys(extracellularHash);
-          me.icn3d.defNames2Descr['extracellular'] = 'extracellular';
-          me.icn3d.defNames2Command['extracellular'] = 'select :extracellular';
+          me.icn3d.defNames2Residues['extracellular' + extraStr] = Object.keys(extracellularHash);
+          me.icn3d.defNames2Descr['extracellular' + extraStr] = 'extracellular' + extraStr;
+          me.icn3d.defNames2Command['extracellular' + extraStr] = 'select :extracellular' + extraStr;
       }
 
       if(Object.keys(intracellularHash).length > 0) {
-          me.icn3d.defNames2Residues['intracellular'] = Object.keys(intracellularHash);
-          me.icn3d.defNames2Descr['intracellular'] = 'intracellular';
-          me.icn3d.defNames2Command['intracellular'] = 'select :intracellular';
+          me.icn3d.defNames2Residues['intracellular' + extraStr] = Object.keys(intracellularHash);
+          me.icn3d.defNames2Descr['intracellular' + extraStr] = 'intracellular' + extraStr;
+          me.icn3d.defNames2Command['intracellular' + extraStr] = 'select :intracellular' + extraStr;
       }
     }
 };

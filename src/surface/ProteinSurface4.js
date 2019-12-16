@@ -304,7 +304,7 @@ $3Dmol.ProteinSurface = function(threshbox) {
 
         for (i in atomlist) {
             var atom = atoms[atomlist[i]];
-            if (atom === undefined)
+            if (atom === undefined || atom.resn === 'DUM')
                 continue;
             this.fillAtom(atom, atoms);
         }

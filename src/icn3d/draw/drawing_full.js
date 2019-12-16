@@ -52,7 +52,8 @@ iCn3D.prototype.createSurfaceRepresentation = function (atoms, type, wireframe, 
             maxdist: maxdist,
             pmin: this.pmin,
             pmax: this.pmax,
-            type: '2fofc'
+            type: '2fofc',
+            rmsd_supr: this.rmsd_supr
         });
     }
     else if(type == 12) { // fofc
@@ -73,7 +74,8 @@ iCn3D.prototype.createSurfaceRepresentation = function (atoms, type, wireframe, 
             maxdist: maxdist,
             pmin: this.pmin,
             pmax: this.pmax,
-            type: 'fofc'
+            type: 'fofc',
+            rmsd_supr: this.rmsd_supr
         });
     }
     else if(type == 13) { // em
@@ -95,7 +97,8 @@ iCn3D.prototype.createSurfaceRepresentation = function (atoms, type, wireframe, 
             maxdist: maxdist,
             pmin: this.pmin,
             pmax: this.pmax,
-            type: 'em'
+            type: 'em',
+            rmsd_supr: this.rmsd_supr
         });
     }
     else {
@@ -118,9 +121,19 @@ iCn3D.prototype.createSurfaceRepresentation = function (atoms, type, wireframe, 
     var colorForfofcNeg = new THREE.Color('#ff0000');
     var colorForEm = new THREE.Color('#00FFFF');
 
+    var rot, centerFrom, centerTo;
+    if((type == 11 || type == 12 || type == 13) && this.rmsd_supr.rot !== undefined) {
+      rot = me.rmsd_supr.rot;
+      centerFrom = me.rmsd_supr.trans1;
+      centerTo = me.rmsd_supr.trans2;
+    }
+
     geo = new THREE.Geometry();
     geo.vertices = verts.map(function (v) {
         var r = new THREE.Vector3(v.x, v.y, v.z);
+        if((type == 11 || type == 12 || type == 13) && me.rmsd_supr.rot !== undefined) {
+            r = me.transformMemPro(r, rot, centerFrom, centerTo);
+        }
 
         r.atomid = v.atomid;
         return r;
