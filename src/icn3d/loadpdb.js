@@ -414,9 +414,9 @@ iCn3D.prototype.loadPDB = function (src, pdbid, bOpm, bVector) {
         }
     }
 
-    if(bVector !== undefined && bVector) { // just need to get the vector of the largest chain
-        return this.getChainCalpha(this.chains, this.atoms);
-    }
+    // add the last residue set
+    this.residues[residueNum] = residuesTmp;
+    this.chains[chainNum] = this.unionHash2Atoms(this.chains[chainNum], chainsTmp);
 
     this.adjustSeq(chainMissingResidueArray);
 
@@ -470,10 +470,6 @@ iCn3D.prototype.loadPDB = function (src, pdbid, bOpm, bVector) {
 
     // remove the reference
     lines = null;
-
-    // add the last residue set
-    this.residues[residueNum] = residuesTmp;
-    this.chains[chainNum] = this.unionHash2Atoms(this.chains[chainNum], chainsTmp);
 
     var curChain, curResi, curInsc, curResAtoms = [], me = this;
     // refresh for atoms in each residue
@@ -593,6 +589,10 @@ iCn3D.prototype.loadPDB = function (src, pdbid, bOpm, bVector) {
 
     this.oriMaxD = this.maxD;
     this.oriCenter = this.center.clone();
+
+    if(bVector !== undefined && bVector) { // just need to get the vector of the largest chain
+        return this.getChainCalpha(this.chains, this.atoms);
+    }
 };
 
 iCn3D.prototype.adjustSeq = function (chainMissingResidueArray) {
@@ -718,19 +718,25 @@ iCn3D.prototype.getChainCalpha = function (chains, atoms) {
 
         var calphaArray = [];
         var cnt = 0;
+        var lastResi = 0;
         for(var i = 0, il = serialArray.length; i < il; ++i) {
-            if(atoms[serialArray[i]].name == "CA" || atoms[serialArray[i]].name == "O3'" || atoms[serialArray[i]].name == "O3*") {
-                calphaArray.push(atoms[serialArray[i]].coord);
+            if( (this.proteins.hasOwnProperty(serialArray[i]) && atoms[serialArray[i]].name == "CA")
+              || (this.nucleotides.hasOwnProperty(serialArray[i]) && (atoms[serialArray[i]].name == "O3'" || atoms[serialArray[i]].name == "O3*")) ) {
+                if(atoms[serialArray[i]].resi == lastResi) continue; // e.g., Alt A and B
+
+                calphaArray.push(atoms[serialArray[i]].coord.clone());
                 ++cnt;
+
+                lastResi = atoms[serialArray[i]].resi;
             }
         }
 
         if(cnt > 0) {
             //var chainid = atoms[serialArray[0]].structure + '_' + atoms[serialArray[0]].chain;
-            var chainid = atoms[serialArray[0]].chain;
-            chainCalphaHash[chainid] = calphaArray;
+            var chain = atoms[serialArray[0]].chain;
+            chainCalphaHash[chain] = calphaArray;
         }
     }
 
-    return chainCalphaHash;
+    return {'chainCalphaHash': chainCalphaHash, 'center': this.center.clone()};
 };

@@ -24,12 +24,12 @@ iCn3DUI.prototype.downloadPdb = function (pdbid) { var me = this;
           me.hideLoading();
       },
       success: function(data) {
-          me.loadPdbData(data, pdbid);
-          //me.deferredOpm = $.Deferred(function() {
-          //    me.loadOpmPdbData(data, pdbid);
-          //});
+          //me.loadPdbData(data, pdbid);
+          me.deferredOpm = $.Deferred(function() {
+              me.loadPdbOpmData(data, pdbid);
+          });
 
-          //return me.deferredOpm.promise();
+          return me.deferredOpm.promise();
       },
       error : function(xhr, textStatus, errorThrown ) {
         this.tryCount++;
@@ -145,84 +145,157 @@ iCn3DUI.prototype.downloadUrl = function (url, type) { var me = this;
    });
 };
 
+iCn3DUI.prototype.addOneDumAtom = function(pdbid, atomName, x, y, z, lastSerial) { var me = this;
+      var resn = 'DUM';
+      var chain = 'MEM';
+      var resi = 1;
+      var coord = new THREE.Vector3(x, y, z);
+
+      var atomDetails = {
+          het: true, // optional, used to determine chemicals, water, ions, etc
+          serial: ++lastSerial,         // required, unique atom id
+          name: atomName,             // required, atom name
+          alt: undefined,               // optional, some alternative coordinates
+          resn: resn,             // optional, used to determine protein or nucleotide
+          structure: pdbid,   // optional, used to identify structure
+          chain: chain,           // optional, used to identify chain
+          resi: resi,             // optional, used to identify residue ID
+          coord: coord,           // required, used to draw 3D shape
+          b: undefined, // optional, used to draw B-factor tube
+          elem: atomName,             // optional, used to determine hydrogen bond
+          bonds: [],              // required, used to connect atoms
+          ss: '',             // optional, used to show secondary structures
+          ssbegin: false,         // optional, used to show the beginning of secondary structures
+          ssend: false,            // optional, used to show the end of secondary structures
+          color: me.icn3d.atomColors[atomName]
+      };
+      me.icn3d.atoms[lastSerial] = atomDetails;
+
+      me.icn3d.chains[pdbid + '_MEM'][lastSerial] = 1;
+      me.icn3d.residues[pdbid + '_MEM_1'][lastSerial] = 1;
+
+      me.icn3d.chemicals[lastSerial] = 1;
+
+      me.icn3d.dAtoms[lastSerial] = 1;
+      me.icn3d.hAtoms[lastSerial] = 1;
+
+      return lastSerial;
+};
+
+iCn3DUI.prototype.addMemAtoms = function(dmem, pdbid, dxymax) { var me = this;
+      var npoint=40; // points in radius
+      var step = 2;
+      var maxpnt=2*npoint+1; // points in diameter
+      var fn=step*npoint; // center point
+
+      //var dxymax = npoint / 2.0 * step;
+
+      pdbid = pdbid.toUpperCase();
+
+      me.icn3d.structures[pdbid].push(pdbid + '_MEM');
+      me.icn3d.chains[pdbid + '_MEM'] = {};
+      me.icn3d.residues[pdbid + '_MEM_1'] = {};
+
+      me.icn3d.chainsSeq[pdbid + '_MEM'] = [{'name':'DUM', 'resi': 1}];
+
+      var m=0;
+      var lastSerial = Object.keys(me.icn3d.atoms).length;
+      for(var i = 0; i < 1000; ++i) {
+          if(!me.icn3d.atoms.hasOwnProperty(lastSerial + i)) {
+              lastSerial = lastSerial + i - 1;
+              break;
+          }
+      }
+
+      for(var i=0; i < maxpnt; ++i) {
+         for(var j=0; j < maxpnt; ++j) {
+            ++m;
+            var a=step*i-fn;
+            var b=step*j-fn;
+            var dxy=Math.sqrt(a*a+b*b);
+            if(dxy < dxymax) {
+                  var c=-dmem-0.4;
+                  // Resn: DUM, name: N, a,b,c
+                  lastSerial = me.addOneDumAtom(pdbid, 'N', a, b, c, lastSerial);
+
+                  c=dmem+0.4;
+                  // Resn: DUM, name: O, a,b,c
+                  atomName = 'O';
+                  coord = new THREE.Vector3(a, b, c);
+                  lastSerial = me.addOneDumAtom(pdbid, 'O', a, b, c, lastSerial);
+            }
+         }
+      }
+};
+
+iCn3DUI.prototype.transformToOpmOri = function(pdbid, chainCalphaHash2) { var me = this;
+  if(chainCalphaHash2 !== undefined) {
+      var chainCalphaHash1 = me.icn3d.getChainCalpha(me.icn3d.chains, me.icn3d.atoms);
+
+      var coordsFrom = [], coordsTo = [];
+      for(var chainid in chainCalphaHash1.chainCalphaHash) {
+          if(chainCalphaHash2.chainCalphaHash.hasOwnProperty(chainid)) {
+              var coordArray1 = chainCalphaHash1.chainCalphaHash[chainid];
+              var coordArray2 = chainCalphaHash2.chainCalphaHash[chainid];
+
+              if(coordArray1.length != coordArray2.length) continue;
+
+              coordsFrom = coordsFrom.concat(coordArray1);
+              coordsTo = coordsTo.concat(coordArray2);
+
+              if(coordsFrom.length > 500) break; // no need to use all c-alpha
+          }
+      }
+
+      var n = coordsFrom.length;
+
+      me.icn3d.rmsd_supr = me.rmsd_supr(coordsFrom, coordsTo, n);
+
+      // apply matrix for each atom
+      if(me.icn3d.rmsd_supr.rot !== undefined) {
+          var rot = me.icn3d.rmsd_supr.rot;
+          var centerFrom = me.icn3d.rmsd_supr.trans1;
+          var centerTo = me.icn3d.rmsd_supr.trans2;
+          //var rsmd = me.icn3d.rmsd_supr.rsmd;
+
+          var dxymaxsq = 0;
+          for(var i in me.icn3d.atoms) {
+            var atom = me.icn3d.atoms[i];
+
+            atom.coord = me.icn3d.transformMemPro(atom.coord, rot, centerFrom, centerTo);
+
+            var xysq = atom.coord.x * atom.coord.x + atom.coord.y * atom.coord.y;
+            if(Math.abs(atom.coord.z) <= 25 && xysq > dxymaxsq) {
+                dxymaxsq = xysq;
+            }
+          }
+
+          me.icn3d.center = chainCalphaHash2.center;
+          me.icn3d.oriCenter = me.icn3d.center.clone();
+
+          // add membranes
+          me.addMemAtoms(me.icn3d.halfBilayerSize, pdbid, Math.sqrt(dxymaxsq));
+
+          // no rotation
+          me.icn3d.bStopRotate = true;
+
+          me.icn3d.bOpm = true;
+
+          // show transmembrane features
+          $("#" + me.pre + "adjustmemli").show();
+          $("#" + me.pre + "selectplaneli").show();
+          $("#" + me.pre + "anno_transmemli").show();
+      }
+      else {
+          me.icn3d.bOpm = false;
+      }
+  }
+};
+
 iCn3DUI.prototype.loadPdbData = function(data, pdbid, bOpm, chainCalphaHash2) { var me = this;
       me.icn3d.loadPDB(data, pdbid, bOpm); // defined in the core library
 
-      if(chainCalphaHash2 !== undefined) {
-          var  chainCalphaHash1 = me.icn3d.getChainCalpha(me.icn3d.chains, me.icn3d.atoms);
-
-          var coordsFrom = [], coordsTo = [];
-          var psumFrom = new THREE.Vector3(), psumTo = new THREE.Vector3();
-          var centerFrom, centerTo;
-          for(var chainid in chainCalphaHash1) {
-              if(chainCalphaHash2.hasOwnProperty(chainid)) {
-                  var coordArray1 = chainCalphaHash1[chainid];
-                  var coordArray2 = chainCalphaHash2[chainid];
-
-                  if(coordArray1.length != coordArray2.length) continue;
-
-                  for(var i = 0, il = coordArray1.length; i < il; ++i) {
-                      psumFrom.add(coordArray1[i]);
-                      psumTo.add(coordArray2[i]);
-                  }
-
-                  coordsFrom = coordsFrom.concat(coordArray1);
-                  coordsTo = coordsTo.concat(coordArray2);
-
-                  //if(coordsFrom.length > 1000) break; // no need to use all c-alpha
-              }
-          }
-
-          // add an extra coord as the first coord
-          coordsFrom.unshift(new THREE.Vector3());
-          coordsTo.unshift(new THREE.Vector3());
-
-          // cmpcor is 1-based, the first coord will be skipped
-          var n = coordsFrom.length - 1;
-
-          var centerFrom = psumFrom.multiplyScalar(1.0 / n);
-          var centerTo = psumTo.multiplyScalar(1.0 / n);
-          var bFindRot = false;
-          if(coordsFrom.length > 1) {
-              var rmsd_rot_ier = me.cmpcor(n, coordsFrom, coordsTo, centerFrom, centerTo);
-              var rot = rmsd_rot_ier.rot;
-
-              // apply matrix for each atom
-              if(rot !== undefined) {
-                  bFindRot = true;
-                  for(var i in me.icn3d.atoms) {
-                    var atom = me.icn3d.atoms[i];
-
-                    var x = (atom.coord.x - centerFrom.x)*rot[1][1]
-                      + (atom.coord.y - centerFrom.y)*rot[1][2]
-                      + (atom.coord.z - centerFrom.z)*rot[1][3]
-                      + centerTo.x;
-                    var y = (atom.coord.x - centerFrom.x)*rot[2][1]
-                      + (atom.coord.y - centerFrom.y)*rot[2][2]
-                      + (atom.coord.z - centerFrom.z)*rot[2][3]
-                      + centerTo.y;
-                    var z = (atom.coord.x - centerFrom.x)*rot[3][1]
-                      + (atom.coord.y - centerFrom.y)*rot[3][2]
-                      + (atom.coord.z - centerFrom.z)*rot[3][3]
-                      + centerTo.z;
-
-                    atom.coord.x = x;
-                    atom.coord.y = y;
-                    atom.coord.z = z;
-                  }
-
-                  me.icn3d.center = centerTo;
-                  me.icn3d.oriCenter = centerTo;
-
-                  // no rotation
-                  me.icn3d.bStopRotate = true;
-              }
-          }
-
-          if(!bFindRot) {
-              me.icn3d.bOpm = false;
-          }
-      }
+      me.transformToOpmOri(pdbid, chainCalphaHash2);
 
       if(me.icn3d.biomtMatrices !== undefined && me.icn3d.biomtMatrices.length > 1) {
         $("#" + me.pre + "assemblyWrapper").show();
@@ -385,7 +458,7 @@ iCn3DUI.prototype.loadPdbDataBase = function(data, calphaonly) { var me = this;
     });
 };
 
-iCn3DUI.prototype.loadOpmPdbData = function(data, pdbid) { var me = this;
+iCn3DUI.prototype.loadPdbOpmData = function(data, pdbid) { var me = this;
     var url, dataType;
 
     url = "https://opm-assets.storage.googleapis.com/pdb/" + pdbid.toLowerCase()+ ".pdb";
@@ -429,6 +502,237 @@ iCn3DUI.prototype.loadOpmPdbData = function(data, pdbid) { var me = this;
     });
 };
 
+iCn3DUI.prototype.loadMmtfOpmData = function(data, pdbid, bFull) { var me = this;
+    var url, dataType;
+
+    url = "https://opm-assets.storage.googleapis.com/pdb/" + pdbid.toLowerCase()+ ".pdb";
+
+    dataType = "text";
+
+    $.ajax({
+      url: url,
+      dataType: dataType,
+      cache: true,
+      tryCount : 0,
+      retryLimit : 1,
+      success: function(opmdata) {
+          me.icn3d.bOpm = true;
+          var bVector = true;
+          var chainCalphaHash = me.icn3d.loadPDB(opmdata, pdbid, me.icn3d.bOpm, bVector); // defined in the core library
+
+          $("#" + me.pre + "selectplane_z1").val(me.icn3d.halfBilayerSize);
+          $("#" + me.pre + "selectplane_z2").val(-me.icn3d.halfBilayerSize);
+
+          $("#" + me.pre + "extra_mem_z").val(me.icn3d.halfBilayerSize);
+          $("#" + me.pre + "intra_mem_z").val(-me.icn3d.halfBilayerSize);
+
+          me.icn3d.init(); // remove all previously loaded data
+          me.parseMmtfData(data, mmtfid, bFull, chainCalphaHash);
+
+          if(me.deferredOpm !== undefined) me.deferredOpm.resolve();
+      },
+      error : function(xhr, textStatus, errorThrown ) {
+        this.tryCount++;
+        if (this.tryCount <= this.retryLimit) {
+            //try again
+            $.ajax(this);
+            return;
+        }
+
+        me.loadPdbData(data, pdbid);
+        if(me.deferredOpm !== undefined) me.deferredOpm.resolve();
+        return;
+      }
+    });
+};
+
+iCn3DUI.prototype.loadMmcifOpmDataPart2 = function(data, pdbid) { var me = this;
+    if(Object.keys(me.icn3d.structures).length == 1) {
+        $("#" + me.pre + "alternateWrapper").hide();
+    }
+
+    // load assembly info
+    var assembly = (data.assembly !== undefined) ? data.assembly : [];
+    for(var i = 0, il = assembly.length; i < il; ++i) {
+      if (me.icn3d.biomtMatrices[i] == undefined) me.icn3d.biomtMatrices[i] = new THREE.Matrix4().identity();
+
+      for(var j = 0, jl = assembly[i].length; j < jl; ++j) {
+        me.icn3d.biomtMatrices[i].elements[j] = assembly[i][j];
+      }
+    }
+
+    if(me.icn3d.biomtMatrices !== undefined && me.icn3d.biomtMatrices.length > 1) {
+        $("#" + me.pre + "assemblyWrapper").show();
+
+        me.icn3d.asuCnt = me.icn3d.biomtMatrices.length;
+    }
+    else {
+        $("#" + me.pre + "assemblyWrapper").hide();
+    }
+
+    me.icn3d.setAtomStyleByOptions(me.opts);
+    me.icn3d.setColorByOptions(me.opts, me.icn3d.atoms);
+
+    me.renderStructure();
+
+    if(me.cfg.rotate !== undefined) me.rotStruc(me.cfg.rotate, true);
+
+    //if(me.cfg.showseq !== undefined && me.cfg.showseq) me.openDialog(me.pre + 'dl_selectresidues', 'Select residues in sequences');
+
+    if(me.deferred !== undefined) me.deferred.resolve(); if(me.deferred2 !== undefined) me.deferred2.resolve();
+};
+
+iCn3DUI.prototype.loadMmcifOpmData = function(data, pdbid) { var me = this;
+    var url, dataType;
+
+    url = "https://opm-assets.storage.googleapis.com/pdb/" + pdbid.toLowerCase()+ ".pdb";
+
+    dataType = "text";
+
+    $.ajax({
+      url: url,
+      dataType: dataType,
+      cache: true,
+      tryCount : 0,
+      retryLimit : 1,
+      success: function(opmdata) {
+          me.icn3d.bOpm = true;
+          var bVector = true;
+          var chainCalphaHash = me.icn3d.loadPDB(opmdata, pdbid, me.icn3d.bOpm, bVector); // defined in the core library
+
+          $("#" + me.pre + "selectplane_z1").val(me.icn3d.halfBilayerSize);
+          $("#" + me.pre + "selectplane_z2").val(-me.icn3d.halfBilayerSize);
+
+          $("#" + me.pre + "extra_mem_z").val(me.icn3d.halfBilayerSize);
+          $("#" + me.pre + "intra_mem_z").val(-me.icn3d.halfBilayerSize);
+
+          me.icn3d.init(); // remove all previously loaded data
+          //me.loadPdbData(data, pdbid, undefined, chainCalphaHash);
+
+          me.loadAtomDataIn(data, data.mmcif, 'mmcifid', undefined, undefined, chainCalphaHash);
+          me.loadMmcifOpmDataPart2(data, pdbid);
+
+          if(me.deferredOpm !== undefined) me.deferredOpm.resolve();
+      },
+      error : function(xhr, textStatus, errorThrown ) {
+        this.tryCount++;
+        if (this.tryCount <= this.retryLimit) {
+            //try again
+            $.ajax(this);
+            return;
+        }
+
+        me.loadAtomDataIn(data, data.mmcif, 'mmcifid', undefined, undefined);
+        me.loadMmcifOpmDataPart2(data, pdbid);
+
+        if(me.deferredOpm !== undefined) me.deferredOpm.resolve();
+        return;
+      }
+    });
+};
+
+iCn3DUI.prototype.loadMmdbOpmDataPart2 = function(data, pdbid, type) { var me = this;
+    // set 3d domains
+    var structure = data.pdbId;
+
+    for(var molid in data.domains) {
+        var chain = data.domains[molid].chain;
+        var domainArray = data.domains[molid].domains;
+
+        for(var index = 0, indexl = domainArray.length; index < indexl; ++index) {
+            var domainName = structure + '_' + chain + '_3d_domain_' + (index+1).toString();
+            me.icn3d.tddomains[domainName] = {};
+
+            var subdomainArray = domainArray[index].intervals;
+
+            // remove duplicate, e.g., at https://www.ncbi.nlm.nih.gov/Structure/mmdb/mmdb_strview.cgi?v=2&program=icn3d&domain&molinfor&uid=1itw
+            var domainFromHash = {}, domainToHash = {};
+
+            //var fromArray = [], toArray = [];
+            //var resCnt = 0
+            for(var i = 0, il = subdomainArray.length; i < il; ++i) {
+                var domainFrom = Math.round(subdomainArray[i][0]) - 1; // 1-based
+                var domainTo = Math.round(subdomainArray[i][1]) - 1;
+
+                if(domainFromHash.hasOwnProperty(domainFrom) || domainToHash.hasOwnProperty(domainTo)) {
+                    continue; // do nothing for duplicated "from" or "to", e.g, PDBID 1ITW, 5FWI
+                }
+                else {
+                    domainFromHash[domainFrom] = 1;
+                    domainToHash[domainTo] = 1;
+                }
+
+                //fromArray.push(domainFrom + me.baseResi[chnid]);
+                //toArray.push(domainTo + me.baseResi[chnid]);
+                //resCnt += domainTo - domainFrom + 1;
+
+                for(var j = domainFrom; j <= domainTo; ++j) {
+                    var resid = structure + '_' + chain + '_' + (j+1).toString();
+                    me.icn3d.tddomains[domainName][resid] = 1;
+                }
+            }
+        } // for each domainArray
+    } // for each molid
+
+    // "asuAtomCount" is defined when: 1) atom count is over the threshold 2) buidx=1 3) asu atom count is smaller than biological unit atom count
+    me.bAssemblyUseAsu = (data.asuAtomCount !== undefined) ? true : false;
+    if(type !== undefined) {
+        me.bAssemblyUseAsu = false;
+    }
+
+    $.when(me.downloadMmcifSymmetry(pdbid)).then(function() {
+        me.downloadMmdbPart2(type);
+    });
+};
+
+iCn3DUI.prototype.loadMmdbOpmData = function(data, pdbid, type) { var me = this;
+    var url, dataType;
+
+    url = "https://opm-assets.storage.googleapis.com/pdb/" + pdbid.toLowerCase()+ ".pdb";
+
+    dataType = "text";
+
+    $.ajax({
+      url: url,
+      dataType: dataType,
+      cache: true,
+      tryCount : 0,
+      retryLimit : 1,
+      success: function(opmdata) {
+          me.icn3d.bOpm = true;
+          var bVector = true;
+          var chainCalphaHash = me.icn3d.loadPDB(opmdata, pdbid, me.icn3d.bOpm, bVector); // defined in the core library
+
+          $("#" + me.pre + "selectplane_z1").val(me.icn3d.halfBilayerSize);
+          $("#" + me.pre + "selectplane_z2").val(-me.icn3d.halfBilayerSize);
+
+          $("#" + me.pre + "extra_mem_z").val(me.icn3d.halfBilayerSize);
+          $("#" + me.pre + "intra_mem_z").val(-me.icn3d.halfBilayerSize);
+
+          me.icn3d.init(); // remove all previously loaded data
+          me.loadAtomDataIn(data, pdbid, 'mmdbid', undefined, type, chainCalphaHash);
+
+          me.loadMmdbOpmDataPart2(data, pdbid, type);
+
+          if(me.deferredOpm !== undefined) me.deferredOpm.resolve();
+      },
+      error : function(xhr, textStatus, errorThrown ) {
+        this.tryCount++;
+        if (this.tryCount <= this.retryLimit) {
+            //try again
+            $.ajax(this);
+            return;
+        }
+
+        me.loadAtomDataIn(data, pdbid, 'mmdbid', undefined, type);
+        me.loadMmdbOpmDataPart2(data, pdbid, type);
+
+        if(me.deferredOpm !== undefined) me.deferredOpm.resolve();
+        return;
+      }
+    });
+};
+
 iCn3DUI.prototype.loadPdbDataRender = function() {
     var me = this;
 
@@ -448,361 +752,4 @@ iCn3DUI.prototype.loadPdbDataRender = function() {
     if(me.cfg.rotate !== undefined) me.rotStruc(me.cfg.rotate, true);
 
     if(me.deferred !== undefined) me.deferred.resolve(); if(me.deferred2 !== undefined) me.deferred2.resolve();
-};
-
-/*
-     cmp system***15.12.86***
-     subroutine cmpcor to clc rmsd between structures
-     xyz and abc (mclachlan a.d., jmb, 1979, v.128, p.49-79)
-
-     n - no.of points
-     mv=1 - without rot matrix clc, =0 with one
-     xc,yc,zc and ac,bc,cc  - comparing coordinate' sets
-     rmsd - value of difference between the sets
-     rot  - rotation matrix for best coincidence a and b
-            to rotate xyz set to abc set :
-
-            ac'(i)=xc(i)*rot(1,1)+yc(i)*rot(1,2)+zc(i)*rot(1,3)
-            bc'(i)=xc(i)*rot(2,1)+yc(i)*rot(2,2)+zc(i)*rot(2,3)
-            cc'(i)=xc(i)*rot(3,1)+yc(i)*rot(3,2)+zc(i)*rot(3,3)
-
-     ier = 0 - unique rot matrix
-         = 1 - rot matrix has one degree  of freedom
-         = 2 - rot matrix has two degrees of freedom
-         =-1 - best fit is undefined
-         =-2 - sqrt from negative rmsd squared
-
-     subunits: eigen
-     files: none
-     funct.lib.: sqrt(real), abs(real)
-*/
-
-// Converted from Fortran code by Andrei Lomize, OPM at University of Michigan
-iCn3DUI.prototype.cmpcor = function(n, coordsFrom, coordsTo, centerFrom, centerTo) { var me = this;
-      var mv = 0;
-      var rmsd,rot,ier;
-
-      //dimension xc(300),yc(300),zc(300),ac(300),bc(300),cc(300)
-      //var xc = [], yc = [], zc = [], ac = [], bc = [], cc = [];
-      //dimension rot(3,3),u(3,3),omega(6,6),omgl(21),eigom(36),evecth(3,3),evectk(3,3),r1(3),r2(3),sgn(3)
-      var dim = 3, dim2 = 6, dimx = 3 + 1, dim2x = 6 + 1;
-      var rot = new Array(dimx), u = new Array(dimx), omega = new Array(dim2x);
-      var omgl = new Array(21+1), eigom= new Array(36+1);
-      var evecth = new Array(dimx), evectk = new Array(dimx);
-      var r1 = new Array(dimx), r2 = new Array(dimx), sgn = new Array(dimx);
-      for(var i = 0; i <= dim; ++i) {
-          rot[i] = new Array(dimx);
-          u[i] = new Array(dimx);
-          evecth[i] = new Array(dimx);
-          evectk[i] = new Array(dimx);
-      }
-      for(var i = 0; i <= dim2; ++i) {
-          omega[i] = new Array(dim2x);
-      }
-
-      var epsi = 1.0e-04, twsqrt = 1.41421356;
-
-      ier=0;
-      rmsd=0.0;
-
-      var fdiff=0.0;
-      for(var i = 1; i <= n; ++i) {
-        fdiff = fdiff
-          + (coordsFrom[i].x - centerFrom.x)*(coordsFrom[i].x - centerFrom.x)
-          + (coordsTo[i].x - centerTo.x)*(coordsTo[i].x - centerTo.x)
-          + (coordsFrom[i].y - centerFrom.y)*(coordsFrom[i].y - centerFrom.y)
-          + (coordsTo[i].y - centerTo.y)*(coordsTo[i].y - centerTo.y)
-          + (coordsFrom[i].z - centerFrom.z)*(coordsFrom[i].z - centerFrom.z)
-          + (coordsTo[i].z - centerTo.z)*(coordsTo[i].z - centerTo.z);
-      }
-      fdiff = fdiff /(2*n);
-
-      for( var k=1; k <= dim; ++k) {
-        for( var l=1; l <= dim; ++l) {
-          u[k][l]=0.0;
-        }
-      }
-
-      var dn=1.0/n;
-      for(var i=1; i <= n; ++i) {
-        r1[1]=coordsFrom[i].x - centerFrom.x;
-        r1[2]=coordsFrom[i].y - centerFrom.y;
-        r1[3]=coordsFrom[i].z - centerFrom.z;
-        r2[1]=coordsTo[i].x - centerTo.x;
-        r2[2]=coordsTo[i].y - centerTo.y;
-        r2[3]=coordsTo[i].z - centerTo.z;
-
-        for( var k=1; k <= dim; ++k) {
-          for( var l=1; l <= dim; ++l) {
-            u[k][l] = u[k][l] + r1[k]*r2[l]*dn;
-          }
-        }
-      }
-
-      var detu = u[1][1]*(u[2][2]*u[3][3] - u[2][3]*u[3][2]) + u[1][2]*(u[2][3]*u[3][1]-u[2][1]*u[3][3])
-        + u[1][3]*(u[2][1]*u[3][2]-u[2][2]*u[3][1]);
-
-      //if(detu == 0.0) {
-      if(parseInt(1000000*detu) == 0) {
-         ier=-1;
-         return ier;
-      }
-
-      var sgndu = detu / Math.abs(detu);
-
-      for( var i=1; i <= dim2; ++i) {
-        for( var j=1; j <= dim2; ++j) {
-          omega[i][j]=0.0;
-        }
-      }
-
-      for( var k=1; k <= dim; ++k) {
-        for( var l=1; l <= dim; ++l) {
-          omega[k][l+3]=u[k][l];
-        }
-      }
-
-      for( var j=1; j <= dim2; ++j) {
-        for( var i=1; i <= j; ++i) {
-          var ij=i+j*(j-1)/2;
-          omgl[ij]=omega[i][j];
-        }
-      }
-
-      me.eigen(omgl,eigom,6,mv);
-
-      var rlamb1=omgl[1];
-      var rlamb2=omgl[3];
-      var rlamb3=omgl[6];
-
-      var slamb;
-      if(detu >= 0.0 || rlamb2 != rlamb3) {
-          slamb=rlamb1+rlamb2+sgndu*rlamb3;
-      }
-      else if(rlamb1 != rlamb2) {
-          ier=1;
-          slamb=rlamb1;
-      }
-      else {
-          ier=2;
-          slamb=rlamb1;
-      }
-
-      rmsd=fdiff-slamb;
-      if(rmsd >= 0.0) {
-          rmsd=Math.sqrt(2.0*rmsd);
-      }
-      else if(rmsd+epsi < 0.0) {
-          ier=-2;
-          return ier;
-      }
-      else {
-          rmsd=0.0;
-          rmsd=Math.sqrt(2.0*rmsd);
-      }
-
-      //if(mv == 1) return false;
-
-      for( var k=1; k <= dim; ++k) {
-        for( var l=1; l <= dim; ++l) {
-          var klh=6*(k-1)+l;
-          var klk=klh+3;
-          evecth[k][l]=twsqrt*eigom[klh];
-          evectk[k][l]=twsqrt*eigom[klk];
-        }
-      }
-
-      evecth[3][1]=evecth[1][2]*evecth[2][3]-evecth[1][3]*evecth[2][2];
-      evecth[3][2]=evecth[1][3]*evecth[2][1]-evecth[1][1]*evecth[2][3];
-      evecth[3][3]=evecth[1][1]*evecth[2][2]-evecth[1][2]*evecth[2][1];
-
-      // change sign in k-vector if det u-matrix< 0
-
-      var qf=1.0;
-      if(sgndu < 0) qf=-1.0;
-
-      evectk[3][1]=qf*(evectk[1][2]*evectk[2][3]-evectk[1][3]*evectk[2][2]);
-      evectk[3][2]=qf*(evectk[1][3]*evectk[2][1]-evectk[1][1]*evectk[2][3]);
-      evectk[3][3]=qf*(evectk[1][1]*evectk[2][2]-evectk[1][2]*evectk[2][1]);
-
-      sgn[1]=1.0;
-      sgn[2]=1.0;
-      sgn[3]=sgndu;
-
-      for( var k=1; k <= dim; ++k) {
-        for( var l=1; l <= dim; ++l) {
-          rot[k][l]=0;
-        }
-      }
-
-      for( var k=1; k <= dim; ++k) {
-        for( var l=1; l <= dim; ++l) {
-          rot[k][l]=0.0;
-          for( var m=1; m <= dim; ++m) {
-            rot[k][l]=rot[k][l]+evectk[m][k]*evecth[m][l]*sgn[m];
-          }
-        }
-      }
-
-      return {'rmsd': rmsd, 'rot': rot, 'ier': ier};
-};
-
-iCn3DUI.prototype.eigen = function(a,r,n,mv) { var me = this;
-//     --------------------------
-//     general***15.12.86***  from ssp-1966
-// !!! here a and r dimensioned as 21 and 36, respectively, n = 6, mv = 0
-
-      //dimension a(21),r(36)
-
-      if(mv-1 != 0) {
-          var iq=-n;
-          for(var j=1; j <= n; ++j) {
-              iq=iq+n;
-              for(var i=1; i <= n; ++i) {
-                  var ij=iq+i;
-                  r[ij]=0.0;
-
-                  if(i-j == 0) {
-                    r[ij]=1.0;
-                  }
-              }
-          }
-      }
-
-      var anorm=0.0;
-
-      for(var i=1; i <= n; ++i) {
-          for(var j=1; j <= n; ++j) {
-              if(i-j != 0) {
-                  var ia=i+(j*j-j)/2;
-                  anorm=anorm+a[ia]*a[ia];
-              }
-          }
-      }
-
-      if(anorm > 0) {
-          anorm=1.414*Math.sqrt(anorm);
-          var anrmx=anorm*1.0e-10/n;
-
-          var ind=0;
-          var thr=anorm;
-
-          while(true) {
-           thr=thr/n;
-           while(true) {
-              var l=1;
-            while(true) {
-              var m=l+1;
-             while(true) {
-              var mq=(m*m-m)/2;
-              var lq=(l*l-l)/2;
-              var lm=l+mq;
-              if(Math.abs(a[lm])-thr >= 0) {
-                  ind=1;
-                  var ll=l+lq;
-                  var mm=m+mq;
-                  var x=0.5*(a[ll]-a[mm]);
-                  var y=-a[lm]/Math.sqrt(a[lm]*a[lm]+x*x);
-                  if(x < 0) {
-                      y=-y;
-                  }
-                  var sinx=y/Math.sqrt(2.0*(1.0+(Math.sqrt(1.0-y*y))));
-                  var sinx2=sinx*sinx;
-                  var cosx=Math.sqrt(1.0-sinx2);
-                  var cosx2=cosx*cosx;
-                  var sincs=sinx*cosx;
-
-                  var ilq=n*(l-1);
-                  var imq=n*(m-1);
-                  for(var i=1; i <= n; ++i) {
-                      var iq=(i*i-i)/2;
-                      if(i-l != 0) {
-                          if(i-m != 0) {
-                              var im;
-                              if(i-m < 0) {
-                                  im=i+mq;
-                              }
-                              else if(i-m > 0) {
-                                  im=m+iq;
-                              }
-
-                              if(i-l < 0) {
-                                  var il=i+lq;
-                              }
-                              else {
-                                  var il=l+iq;
-                              }
-
-                              x=a[il]*cosx-a[im]*sinx;
-                              a[im]=a[il]*sinx+a[im]*cosx;
-                              a[il]=x;
-                          }
-                      }
-                      if(mv-1 != 0) {
-                          var ilr=ilq+i;
-                          var imr=imq+i;
-                          x=r[ilr]*cosx-r[imr]*sinx;
-                          r[imr]=r[ilr]*sinx+r[imr]*cosx;
-                          r[ilr]=x;
-                      }
-                  }
-                  x=2.0*a[lm]*sincs;
-                  y=a[ll]*cosx2+a[mm]*sinx2-x;
-                  x=a[ll]*sinx2+a[mm]*cosx2+x;
-                  a[lm]=(a[ll]-a[mm])*sincs+a[lm]*(cosx2-sinx2);
-                  a[ll]=y;
-                  a[mm]=x;
-              }
-
-              if(m-n != 0) {
-                  m=m+1;
-              }
-              else {
-                  break;
-              }
-             }
-
-             if(l-(n-1) != 0) {
-                  l=l+1;
-             }
-             else {
-                  break;
-             }
-            }
-            if(ind-1 == 0) {
-                  ind=0;
-            }
-            else {
-                  break;
-            }
-           }
-
-           if(thr-anrmx <= 0) break;
-          }
-      }
-
-      iq=-n;
-      for(var i = 1; i <= n; ++i) {
-          var iq=iq+n;
-          var ll=i+(i*i-i)/2;
-          var jq=n*(i-2);
-          for(var j = 1; j <= n; ++j) {
-              jq=jq+n;
-              var mm=j+(j*j-j)/2;
-              if(a[ll]-a[mm] < 0) {
-                  var x=a[ll];
-                  a[ll]=a[mm];
-                  a[mm]=x;
-                  if(mv-1 != 0) {
-                      for(var k = 1; k <= n; ++k) {
-                          var ilr=iq+k;
-                          var imr=jq+k;
-                          x=r[ilr];
-                          r[ilr]=r[imr];
-                          r[imr]=x;
-                      }
-                  }
-              }
-          }
-      }
 };

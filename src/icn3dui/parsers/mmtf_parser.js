@@ -12,7 +12,12 @@ iCn3DUI.prototype.downloadMmtf = function (mmtfid) { var me = this;
         function( mmtfData ){
             if(mmtfData.numAtoms * 10 > me.icn3d.maxatomcnt) {
                 var bFull = false;
-                me.parseMmtfData(mmtfData, bFull);
+                //me.parseMmtfData(mmtfData, bFull);
+                me.deferredOpm = $.Deferred(function() {
+                    me.loadMmtfOpmData(mmtfData, mmtfid, bFull);
+                });
+
+                return me.deferredOpm.promise();
             }
             else {
                 mmtfData = null;
@@ -22,7 +27,12 @@ iCn3DUI.prototype.downloadMmtf = function (mmtfid) { var me = this;
                     // onLoad callback
                     function( mmtfData2 ){
                         var bFull = true;
-                        me.parseMmtfData(mmtfData2, bFull);
+                        //me.parseMmtfData(mmtfData2, bFull);
+                        me.deferredOpm = $.Deferred(function() {
+                            me.loadMmtfOpmData(mmtfData2, mmtfid, bFull);
+                        });
+
+                        return me.deferredOpm.promise();
                     },
                     // onError callback
                     function( error ){
@@ -38,7 +48,7 @@ iCn3DUI.prototype.downloadMmtf = function (mmtfid) { var me = this;
     );
 };
 
-iCn3DUI.prototype.parseMmtfData = function (mmtfData, bFull) { var me = this;
+iCn3DUI.prototype.parseMmtfData = function (mmtfData, mmtfid, bFull, chainCalphaHash2) { var me = this;
     var cnt = mmtfData.numAtoms;
 
     me.icn3d.init();
@@ -424,6 +434,8 @@ iCn3DUI.prototype.parseMmtfData = function (mmtfData, bFull) { var me = this;
     if (me.icn3d.maxD < 5) me.icn3d.maxD = 5;
     me.icn3d.oriMaxD = me.icn3d.maxD;
     me.icn3d.oriCenter = me.icn3d.center.clone();
+
+    me.transformToOpmOri(mmtfid, chainCalphaHash2);
 
     if(me.cfg.align === undefined && Object.keys(me.icn3d.structures).length == 1) {
         $("#" + me.pre + "alternateWrapper").hide();

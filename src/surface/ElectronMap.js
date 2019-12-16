@@ -134,7 +134,7 @@ $3Dmol.ElectronMap = function(threshbox) {
     };
 
 
-    this.initparm = function(inHeader, inData, inMatrix, inIsovalue, inCenter, inMaxdist, inPmin, inPmax, inWater, inType) {
+    this.initparm = function(inHeader, inData, inMatrix, inIsovalue, inCenter, inMaxdist, inPmin, inPmax, inWater, inType, inRmsd_supr) {
         header = inHeader;
 
         if(header.max !== undefined) { // EM density map from EBI
@@ -155,6 +155,7 @@ $3Dmol.ElectronMap = function(threshbox) {
         pmax = inPmax;
         water = inWater;
         type = inType;
+        rmsd_supr = inRmsd_supr;
 
         var margin = (1 / scaleFactor) * 5.5; // need margin to avoid
                                                 // boundary/round off effects
@@ -189,6 +190,21 @@ $3Dmol.ElectronMap = function(threshbox) {
         //console.log("Box size: ", pLength, pWidth, pHeight, vpBits.length);
     };
 
+    this.transformMemPro = function(inCoord, rot, centerFrom, centerTo) {
+        var coord = inCoord.clone();
+        coord.sub(centerFrom);
+
+        var x = coord.x*rot[0] + coord.y*rot[1] + coord.z*rot[2] + centerTo.x;
+        var y = coord.x*rot[3] + coord.y*rot[4] + coord.z*rot[5] + centerTo.y;
+        var z = coord.x*rot[6] + coord.y*rot[7] + coord.z*rot[8] + centerTo.z;
+
+        coord.x = x;
+        coord.y = y;
+        coord.z = z;
+
+        return coord;
+    };
+
     this.fillvoxels = function(atoms, atomlist) { // (int seqinit,int
         // seqterm,bool
         // atomtype,atom*
@@ -207,9 +223,41 @@ $3Dmol.ElectronMap = function(threshbox) {
         var widthHeight = pWidth * pHeight;
         var lengthWidth = pLength * pWidth;
 
+        var rot, inverseRot = new Array(9), centerFrom, centerTo;
+        if(rmsd_supr.rot !== undefined) {
+          rot = rmsd_supr.rot;
+          centerFrom = rmsd_supr.trans1;
+          centerTo = rmsd_supr.trans2;
+
+          var m = new THREE.Matrix3(), inverseM = new THREE.Matrix3();
+          m.set(rot[0], rot[1], rot[2], rot[3], rot[4], rot[5], rot[6], rot[7], rot[8]);
+          inverseM.getInverse(m);
+
+          inverseRot[0] = inverseM.elements[0];
+          inverseRot[1] = inverseM.elements[3];
+          inverseRot[2] = inverseM.elements[6];
+          inverseRot[3] = inverseM.elements[1];
+          inverseRot[4] = inverseM.elements[4];
+          inverseRot[5] = inverseM.elements[7];
+          inverseRot[6] = inverseM.elements[2];
+          inverseRot[7] = inverseM.elements[5];
+          inverseRot[8] = inverseM.elements[8];
+        }
+
         for (var serial in atomlist) {
             var atom = atoms[atomlist[serial]];
-            var r = new THREE.Vector3(atom.coord.x, atom.coord.y, atom.coord.z).applyMatrix4(inverseMatrix);
+
+            if(atom.resn === 'DUM') continue;
+
+            var r;
+            if(rmsd_supr.rot !== undefined) {
+                // revert to the orginal coord
+                var coord = this.transformMemPro(atom.coord, inverseRot, centerTo, centerFrom);
+                r = coord.applyMatrix4(inverseMatrix);
+            }
+            else {
+                r = atom.coord.clone().applyMatrix4(inverseMatrix);
+            }
 
             for(i = Math.floor(r.x) - maxdist, il = Math.ceil(r.x) + maxdist; i <= il; ++i) {
                 if(i < 0 || i > header.xExtent - 1) continue;

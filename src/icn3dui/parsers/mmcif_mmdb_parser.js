@@ -54,7 +54,7 @@ iCn3DUI.prototype.downloadMmcif = function (mmcifid) { var me = this;
                   me.hideLoading();
               },
               success: function(data) {
-                  me.loadMmcifData(data);
+                  me.loadMmcifData(data, mmcifid);
               },
               error : function(xhr, textStatus, errorThrown ) {
                 this.tryCount++;
@@ -186,7 +186,7 @@ iCn3DUI.prototype.downloadMmcifSymmetryBase = function (mmcifid, type) { var me 
     });
 };
 
-iCn3DUI.prototype.loadMmcifData = function(data) { var me = this;
+iCn3DUI.prototype.loadMmcifData = function(data, mmcifid) { var me = this;
     if (data.atoms !== undefined) {
         me.icn3d.init();
 
@@ -204,41 +204,12 @@ iCn3DUI.prototype.loadMmcifData = function(data) { var me = this;
           $("#" + me.pre + "emmapWrapper3").hide();
         }
 
-        me.loadAtomDataIn(data, data.mmcif, 'mmcifid');
+        //me.loadAtomDataIn(data, data.mmcif, 'mmcifid');
+        me.deferredOpm = $.Deferred(function() {
+              me.loadMmcifOpmData(data, mmcifid);
+        });
 
-        if(Object.keys(me.icn3d.structures).length == 1) {
-            $("#" + me.pre + "alternateWrapper").hide();
-        }
-
-        // load assembly info
-        var assembly = (data.assembly !== undefined) ? data.assembly : [];
-        for(var i = 0, il = assembly.length; i < il; ++i) {
-          if (me.icn3d.biomtMatrices[i] == undefined) me.icn3d.biomtMatrices[i] = new THREE.Matrix4().identity();
-
-          for(var j = 0, jl = assembly[i].length; j < jl; ++j) {
-            me.icn3d.biomtMatrices[i].elements[j] = assembly[i][j];
-          }
-        }
-
-        if(me.icn3d.biomtMatrices !== undefined && me.icn3d.biomtMatrices.length > 1) {
-            $("#" + me.pre + "assemblyWrapper").show();
-
-            me.icn3d.asuCnt = me.icn3d.biomtMatrices.length;
-        }
-        else {
-            $("#" + me.pre + "assemblyWrapper").hide();
-        }
-
-        me.icn3d.setAtomStyleByOptions(me.opts);
-        me.icn3d.setColorByOptions(me.opts, me.icn3d.atoms);
-
-        me.renderStructure();
-
-        if(me.cfg.rotate !== undefined) me.rotStruc(me.cfg.rotate, true);
-
-        //if(me.cfg.showseq !== undefined && me.cfg.showseq) me.openDialog(me.pre + 'dl_selectresidues', 'Select residues in sequences');
-
-        if(me.deferred !== undefined) me.deferred.resolve(); if(me.deferred2 !== undefined) me.deferred2.resolve();
+        return me.deferredOpm.promise();
     }
     else {
         alert('invalid atoms data.');
@@ -355,59 +326,12 @@ iCn3DUI.prototype.parseMmdbData = function (data, type) { var me = this;
         // show surface options
         $("#" + me.pre + "accordion5").show();
 
-        me.loadAtomDataIn(data, id, 'mmdbid', undefined, type);
-
-        // set 3d domains
-        var structure = data.pdbId;
-
-        for(var molid in data.domains) {
-            var chain = data.domains[molid].chain;
-            var domainArray = data.domains[molid].domains;
-
-            for(var index = 0, indexl = domainArray.length; index < indexl; ++index) {
-                var domainName = structure + '_' + chain + '_3d_domain_' + (index+1).toString();
-                me.icn3d.tddomains[domainName] = {};
-
-                var subdomainArray = domainArray[index].intervals;
-
-                // remove duplicate, e.g., at https://www.ncbi.nlm.nih.gov/Structure/mmdb/mmdb_strview.cgi?v=2&program=icn3d&domain&molinfor&uid=1itw
-                var domainFromHash = {}, domainToHash = {};
-
-                //var fromArray = [], toArray = [];
-                //var resCnt = 0
-                for(var i = 0, il = subdomainArray.length; i < il; ++i) {
-                    var domainFrom = Math.round(subdomainArray[i][0]) - 1; // 1-based
-                    var domainTo = Math.round(subdomainArray[i][1]) - 1;
-
-                    if(domainFromHash.hasOwnProperty(domainFrom) || domainToHash.hasOwnProperty(domainTo)) {
-                        continue; // do nothing for duplicated "from" or "to", e.g, PDBID 1ITW, 5FWI
-                    }
-                    else {
-                        domainFromHash[domainFrom] = 1;
-                        domainToHash[domainTo] = 1;
-                    }
-
-                    //fromArray.push(domainFrom + me.baseResi[chnid]);
-                    //toArray.push(domainTo + me.baseResi[chnid]);
-                    //resCnt += domainTo - domainFrom + 1;
-
-                    for(var j = domainFrom; j <= domainTo; ++j) {
-                        var resid = structure + '_' + chain + '_' + (j+1).toString();
-                        me.icn3d.tddomains[domainName][resid] = 1;
-                    }
-                }
-            } // for each domainArray
-        } // for each molid
-
-        // "asuAtomCount" is defined when: 1) atom count is over the threshold 2) buidx=1 3) asu atom count is smaller than biological unit atom count
-        me.bAssemblyUseAsu = (data.asuAtomCount !== undefined) ? true : false;
-        if(type !== undefined) {
-            me.bAssemblyUseAsu = false;
-        }
-
-        $.when(me.downloadMmcifSymmetry(id)).then(function() {
-            me.downloadMmdbPart2(type);
+        //me.loadAtomDataIn(data, id, 'mmdbid', undefined, type);
+        me.deferredOpm = $.Deferred(function() {
+              me.loadMmdbOpmData(data, id, type);
         });
+
+        return me.deferredOpm.promise();
 };
 
 iCn3DUI.prototype.downloadMmdb = function (mmdbid, bGi) { var me = this;
@@ -657,7 +581,7 @@ iCn3DUI.prototype.getMissingResidues = function (seqArray, type, chainid) { var 
 
 //type: "mmdbid", "mmcifid", "align"
 //alignType: "query", "target" for chain to chain 3D alignment
-iCn3DUI.prototype.loadAtomDataIn = function (data, id, type, seqalign, alignType) { var me = this;
+iCn3DUI.prototype.loadAtomDataIn = function (data, id, type, seqalign, alignType, chainCalphaHash2) { var me = this;
     //me.icn3d.init();
     me.icn3d.pmin = new THREE.Vector3( 9999, 9999, 9999);
     me.icn3d.pmax = new THREE.Vector3(-9999,-9999,-9999);
@@ -1311,6 +1235,10 @@ iCn3DUI.prototype.loadAtomDataIn = function (data, id, type, seqalign, alignType
         }
 
         me.icn3d.setSsbond(structure2cys_resid);
+    }
+
+    if(type === 'mmdbid' || type === 'mmcifid') {
+        me.transformToOpmOri(id, chainCalphaHash2);
     }
 
     // set up sequence alignment
