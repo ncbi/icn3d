@@ -2,7 +2,7 @@
  * @author Jiyao Wang <wangjiy@ncbi.nlm.nih.gov> / https://github.com/ncbi/icn3d
  */
 
-iCn3D.prototype.positionFromGeometry = function( mesh ){
+iCn3D.prototype.positionFromGeometry = function( mesh ){ "use strict"; var me = this;
     var geometry = mesh.geometry;
 
     var vertices = geometry.vertices;
@@ -40,7 +40,7 @@ iCn3D.prototype.positionFromGeometry = function( mesh ){
 };
 
 
-iCn3D.prototype.colorFromGeometry = function( mesh ){
+iCn3D.prototype.colorFromGeometry = function( mesh ){ "use strict"; var me = this;
     var geometry = mesh.geometry;
 
     var meshColor = new THREE.Color(1, 1, 1);
@@ -100,7 +100,7 @@ iCn3D.prototype.colorFromGeometry = function( mesh ){
 };
 
 
-iCn3D.prototype.indexFromGeometry = function( mesh ){
+iCn3D.prototype.indexFromGeometry = function( mesh ){  "use strict"; var me = this;
     var geometry = mesh.geometry;
 
     var faces = geometry.faces;
@@ -127,7 +127,7 @@ iCn3D.prototype.indexFromGeometry = function( mesh ){
 };
 
 
-iCn3D.prototype.normalFromGeometry = function( mesh ){
+iCn3D.prototype.normalFromGeometry = function( mesh ){  "use strict"; var me = this;
     var geometry = mesh.geometry;
 
     var faces = geometry.faces;
@@ -167,7 +167,7 @@ iCn3D.prototype.normalFromGeometry = function( mesh ){
 
 };
 
-iCn3D.prototype.hashvalue2array = function(hash) {
+iCn3D.prototype.hashvalue2array = function(hash) {  "use strict"; var me = this;
     //return $.map(hash, function(v) { return v; });
 
     var array = [];
@@ -178,7 +178,7 @@ iCn3D.prototype.hashvalue2array = function(hash) {
     return array;
 };
 
-iCn3D.prototype.drawSymmetryMates = function() {
+iCn3D.prototype.drawSymmetryMates = function() {  "use strict"; var me = this;
     if(this.bInstanced && Object.keys(this.atoms).length * this.biomtMatrices.length > this.maxatomcnt) {
         this.drawSymmetryMatesInstancing();
     }
@@ -187,7 +187,7 @@ iCn3D.prototype.drawSymmetryMates = function() {
     }
 };
 
-iCn3D.prototype.applyMat = function(obj, mat, bVector3) {
+iCn3D.prototype.applyMat = function(obj, mat, bVector3) {  "use strict"; var me = this;
       var rot = this.rmsd_supr.rot;
       var centerFrom = this.rmsd_supr.trans1;
       var centerTo = this.rmsd_supr.trans2;
@@ -242,7 +242,7 @@ iCn3D.prototype.applyMat = function(obj, mat, bVector3) {
       }
 };
 
-iCn3D.prototype.drawSymmetryMatesNoInstancing = function() {
+iCn3D.prototype.drawSymmetryMatesNoInstancing = function() {  "use strict"; var me = this;
    if (this.biomtMatrices === undefined || this.biomtMatrices.length == 0) return;
    var cnt = 1; // itself
    var centerSum = this.center.clone();
@@ -334,7 +334,7 @@ iCn3D.prototype.drawSymmetryMatesNoInstancing = function() {
    this.bSetInstancing = true;
 };
 
-iCn3D.prototype.createInstancedGeometry = function(mesh) {
+iCn3D.prototype.createInstancedGeometry = function(mesh) {  "use strict"; var me = this;
    var baseGeometry = mesh.geometry;
 
    var geometry = new THREE.InstancedBufferGeometry();
@@ -473,7 +473,7 @@ iCn3D.prototype.createInstancedGeometry = function(mesh) {
    return geometry;
 };
 
-iCn3D.prototype.getInstancedMaterial = function(name) {
+iCn3D.prototype.getInstancedMaterial = function(name) {  "use strict"; var me = this;
    //var material = new THREE.RawShaderMaterial({
    var material = new THREE.ShaderMaterial({
       defines: this.defines,
@@ -493,7 +493,7 @@ iCn3D.prototype.getInstancedMaterial = function(name) {
    return material;
 };
 
-iCn3D.prototype.createInstancedMesh = function(mdl) {
+iCn3D.prototype.createInstancedMesh = function(mdl) { "use strict"; var me = this;
    for(var i = 0, il = mdl.children.length; i < il; ++i) {
        var mesh = mdl.children[i];
 
@@ -515,7 +515,7 @@ iCn3D.prototype.createInstancedMesh = function(mdl) {
    }
 };
 
-iCn3D.prototype.drawSymmetryMatesInstancing = function() {
+iCn3D.prototype.drawSymmetryMatesInstancing = function() { "use strict"; var me = this;
    if (this.biomtMatrices === undefined || this.biomtMatrices.length == 0) return;
    var cnt = 1; // itself
    var centerSum = this.center.clone();

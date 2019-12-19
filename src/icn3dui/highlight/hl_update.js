@@ -2,7 +2,7 @@
  * @author Jiyao Wang <wangjiy@ncbi.nlm.nih.gov> / https://github.com/ncbi/icn3d
  */
 
-iCn3DUI.prototype.update2DdgmContent = function () { var me = this;
+iCn3DUI.prototype.update2DdgmContent = function () { "use strict"; var me = this;
    // update 2D diagram to show just the displayed parts
    var html2ddgm = '';
    if(me.cfg.mmdbid !== undefined || me.cfg.gi !== undefined) {
@@ -25,7 +25,7 @@ iCn3DUI.prototype.update2DdgmContent = function () { var me = this;
    }
 };
 
-iCn3DUI.prototype.changeSeqColor = function(residueArray) { var me = this;
+iCn3DUI.prototype.changeSeqColor = function(residueArray) { "use strict"; var me = this;
    for(var i = 0, il = residueArray.length; i < il; ++i) {
        var pickedResidue = residueArray[i];
        if($("[id$=" + me.pre + pickedResidue + "]").length !== 0) {
@@ -39,25 +39,25 @@ iCn3DUI.prototype.changeSeqColor = function(residueArray) { var me = this;
    }
 };
 
-iCn3DUI.prototype.removeHlAll = function() { var me = this;
+iCn3DUI.prototype.removeHlAll = function() { "use strict"; var me = this;
        me.removeHlObjects();
        me.removeHlSeq();
        me.removeHl2D();
        me.removeHlMenus();
 };
 
-iCn3DUI.prototype.removeHlObjects = function() { var me = this;
+iCn3DUI.prototype.removeHlObjects = function() { "use strict"; var me = this;
        me.icn3d.removeHlObjects();
 };
 
 // remove highlight in sequence
-iCn3DUI.prototype.removeHlSeq = function() { var me = this;
+iCn3DUI.prototype.removeHlSeq = function() { "use strict"; var me = this;
 //       me.removeSeqChainBkgd();
        me.removeSeqResidueBkgd();
 };
 
 // remove highlight in 2D window
-iCn3DUI.prototype.removeHl2D = function() { var me = this;
+iCn3DUI.prototype.removeHl2D = function() { "use strict"; var me = this;
       // clear nodes in 2d dgm
       $("#" + me.pre + "dl_2ddgm rect").attr('stroke', '#000000');
       $("#" + me.pre + "dl_2ddgm circle").attr('stroke', '#000000');
@@ -73,11 +73,11 @@ iCn3DUI.prototype.removeHl2D = function() { var me = this;
 };
 
 // remove highlight in the menu of defined sets
-iCn3DUI.prototype.removeHlMenus = function() { var me = this;
+iCn3DUI.prototype.removeHlMenus = function() { "use strict"; var me = this;
     $("#" + me.pre + "atomsCustom").val("");
 };
 
-iCn3DUI.prototype.updateHlAll = function(commandnameArray, bSetMenu, bUnion, bForceHighlight) { var me = this;
+iCn3DUI.prototype.updateHlAll = function(commandnameArray, bSetMenu, bUnion, bForceHighlight) { "use strict"; var me = this;
        // update the previously highlisghted atoms for switching between all and selection
        me.icn3d.prevHighlightAtoms = me.icn3d.cloneHash(me.icn3d.hAtoms);
 
@@ -96,7 +96,7 @@ iCn3DUI.prototype.updateHlAll = function(commandnameArray, bSetMenu, bUnion, bFo
        //me.showAnnoSelectedChains();
 };
 
-iCn3DUI.prototype.updateHlObjects = function(bForceHighlight) { var me = this;
+iCn3DUI.prototype.updateHlObjects = function(bForceHighlight) { "use strict"; var me = this;
        me.icn3d.removeHlObjects();
 
        if(Object.keys(me.icn3d.hAtoms).length < Object.keys(me.icn3d.atoms).length || bForceHighlight) {
@@ -106,7 +106,7 @@ iCn3DUI.prototype.updateHlObjects = function(bForceHighlight) { var me = this;
 };
 
 // update highlight in sequence, slow if sequence is long
-iCn3DUI.prototype.updateHlSeq = function(bShowHighlight, residueHash, bUnion) { var me = this;
+iCn3DUI.prototype.updateHlSeq = function(bShowHighlight, residueHash, bUnion) { "use strict"; var me = this;
        if(bUnion === undefined || !bUnion) {
            me.removeHlSeq();
        }
@@ -117,7 +117,7 @@ iCn3DUI.prototype.updateHlSeq = function(bShowHighlight, residueHash, bUnion) { 
        me.changeSeqColor(Object.keys(residueHash));
 };
 
-iCn3DUI.prototype.updateHlSeqInChain = function(commandnameArray, bUnion) { var me = this;
+iCn3DUI.prototype.updateHlSeqInChain = function(commandnameArray, bUnion) { "use strict"; var me = this;
        if(bUnion === undefined || !bUnion) {
            me.removeHlSeq();
        }
@@ -160,7 +160,7 @@ iCn3DUI.prototype.updateHlSeqInChain = function(commandnameArray, bUnion) { var 
 };
 
 // update highlight in 2D window
-iCn3DUI.prototype.updateHl2D = function(chainArray2d) { var me = this;
+iCn3DUI.prototype.updateHl2D = function(chainArray2d) { "use strict"; var me = this;
   me.removeHl2D();
 
   if(Object.keys(me.icn3d.hAtoms).length == Object.keys(me.icn3d.atoms).length) return;
@@ -219,7 +219,7 @@ iCn3DUI.prototype.updateHl2D = function(chainArray2d) { var me = this;
 };
 
 // update highlight in the menu of defined sets
-iCn3DUI.prototype.updateHlMenus = function(commandnameArray) { var me = this;
+iCn3DUI.prototype.updateHlMenus = function(commandnameArray) { "use strict"; var me = this;
     if(commandnameArray === undefined) commandnameArray = [];
 
     var definedAtomsHtml = me.setAtomMenu(commandnameArray);
@@ -229,7 +229,7 @@ iCn3DUI.prototype.updateHlMenus = function(commandnameArray) { var me = this;
     }
 };
 
-iCn3DUI.prototype.setAtomMenu = function (commandnameArray) { var me = this;
+iCn3DUI.prototype.setAtomMenu = function (commandnameArray) { "use strict"; var me = this;
   var html = "";
 
   var nameArray1 = (me.icn3d.defNames2Residues !== undefined) ? Object.keys(me.icn3d.defNames2Residues) : [];
@@ -271,7 +271,7 @@ iCn3DUI.prototype.setAtomMenu = function (commandnameArray) { var me = this;
   return html;
 };
 
-iCn3DUI.prototype.setPredefinedInMenu = function() { var me = this;
+iCn3DUI.prototype.setPredefinedInMenu = function() { "use strict"; var me = this;
       // predefined sets: all chains
       me.setChainsInMenu();
 
@@ -320,7 +320,7 @@ iCn3DUI.prototype.setPredefinedInMenu = function() { var me = this;
       }
 };
 
-iCn3DUI.prototype.hlSeq = function(residueArray) { var me = this;
+iCn3DUI.prototype.hlSeq = function(residueArray) { "use strict"; var me = this;
    // update annotation windows and alignment sequences
    var chainHash = {};
    for(var i = 0, il = residueArray.length; i < il; ++i) {
@@ -342,7 +342,7 @@ iCn3DUI.prototype.hlSeq = function(residueArray) { var me = this;
    }
 };
 
-iCn3DUI.prototype.hlSeqInChain = function(chainid) { var me = this;
+iCn3DUI.prototype.hlSeqInChain = function(chainid) { "use strict"; var me = this;
    // update annotation windows and alignment sequences
    for(var i = 0, il = me.icn3d.chainsSeq[chainid].length; i < il; ++i) {
        var resi = me.icn3d.chainsSeq[chainid][i].resi;
@@ -362,7 +362,7 @@ iCn3DUI.prototype.hlSeqInChain = function(chainid) { var me = this;
    }
 };
 
-iCn3DUI.prototype.toggleHighlight = function() { var me = this;
+iCn3DUI.prototype.toggleHighlight = function() { "use strict"; var me = this;
     //me.setLogCmd("toggle highlight", true);
 
     if(me.icn3d.prevHighlightObjects.length > 0 || me.icn3d.prevHighlightObjects_ghost.length > 0) { // remove
@@ -377,7 +377,7 @@ iCn3DUI.prototype.toggleHighlight = function() { var me = this;
     //me.setLogCmd("toggle highlight", true);
 };
 
-iCn3DUI.prototype.clearHighlight = function() { var me = this;
+iCn3DUI.prototype.clearHighlight = function() { "use strict"; var me = this;
     me.icn3d.labels['picking']=[];
     me.icn3d.draw();
 
@@ -391,13 +391,13 @@ iCn3DUI.prototype.clearHighlight = function() { var me = this;
     me.bSelectResidue = false;
 };
 
-iCn3DUI.prototype.showHighlight = function() { var me = this;
+iCn3DUI.prototype.showHighlight = function() { "use strict"; var me = this;
     me.icn3d.addHlObjects();
     me.updateHlAll();
     //me.bSelectResidue = true;
 };
 
-iCn3DUI.prototype.highlightChains = function(chainArray) { var me = this;
+iCn3DUI.prototype.highlightChains = function(chainArray) { "use strict"; var me = this;
     me.icn3d.removeHlObjects();
     me.removeHl2D();
 

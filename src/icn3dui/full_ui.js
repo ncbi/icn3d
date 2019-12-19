@@ -15,7 +15,7 @@ if (!$.ui.dialog.prototype._makeDraggableBase) {
 var iCn3DUI = function(cfg) {
     "use strict";
 
-    var me = this;
+    "use strict"; var me = this;
 
     this.REVISION = '2.11.1';
 
@@ -189,7 +189,7 @@ iCn3DUI.prototype = {
 
     constructor: iCn3DUI,
 
-    init: function () { var me = this;
+    init: function () { "use strict"; var me = this;
         me.bSelectResidue = false;
         me.bSelectAlignResidue = false;
         me.selectedResidues = {};
@@ -215,11 +215,11 @@ iCn3DUI.prototype = {
     },
 
     // modify iCn3D function
-    modifyIcn3d: function() {var me = this;
+    modifyIcn3d: function() {"use strict"; var me = this;
         me.modifyIcn3dshowPicking();
     },
 
-    switchHighlightLevelUp: function() { var me = this;
+    switchHighlightLevelUp: function() { "use strict"; var me = this;
           if(!me.icn3d.bShift && !me.icn3d.bCtrl) me.icn3d.removeHlObjects();
 
           if(me.icn3d.highlightlevel === 1) { // atom -> residue
@@ -300,7 +300,7 @@ iCn3DUI.prototype = {
           me.updateHlAll();
     },
 
-    switchHighlightLevelDown: function() { var me = this;
+    switchHighlightLevelDown: function() { "use strict"; var me = this;
           me.icn3d.removeHlObjects();
 
           if( (me.icn3d.highlightlevel === 2 || me.icn3d.highlightlevel === 1) && Object.keys(me.icn3d.pickedAtomList).length === 1) { // residue -> atom
@@ -389,7 +389,7 @@ iCn3DUI.prototype = {
           me.updateHlAll();
     },
 
-    switchHighlightLevel: function() { var me = this;
+    switchHighlightLevel: function() { "use strict"; var me = this;
       $(document).bind('keydown', function (e) {
         if(e.keyCode === 38) { // arrow up, select upper level of atoms
           e.preventDefault();
@@ -416,17 +416,17 @@ iCn3DUI.prototype = {
       });
     },
 
-    allCustomEvents: function() { var me = this;
+    allCustomEvents: function() { "use strict"; var me = this;
       // add custom events here
     },
 
-    setCustomDialogs: function() { var me = this;
+    setCustomDialogs: function() { "use strict"; var me = this;
         var html = "";
 
         return html;
     },
 
-    modifyIcn3dshowPicking: function() {var me = this;
+    modifyIcn3dshowPicking: function() {"use strict"; var me = this;
         iCn3D.prototype.showPicking = function(atom, x, y) {
           var idArray = this.id.split('_'); // id: div0_canvas
           me.pre = idArray[0] + "_";
@@ -545,7 +545,7 @@ iCn3DUI.prototype = {
 
     // ======= functions start==============
     // show3DStructure is the main function to show 3D structure
-    show3DStructure: function() { var me = this;
+    show3DStructure: function() { "use strict"; var me = this;
       me.deferred = $.Deferred(function() {
         me.setViewerWidthHeight();
 
@@ -751,7 +751,7 @@ iCn3DUI.prototype = {
       return me.deferred.promise();
     },
 
-    hideMenu: function() { var me = this;
+    hideMenu: function() { "use strict"; var me = this;
       if($("#" + me.pre + "mnlist")[0] !== undefined) $("#" + me.pre + "mnlist")[0].style.display = "none";
       if($("#" + me.pre + "mnLogSection")[0] !== undefined) $("#" + me.pre + "mnLogSection")[0].style.display = "none";
       if($("#" + me.pre + "cmdlog")[0] !== undefined) $("#" + me.pre + "cmdlog")[0].style.display = "none";
@@ -759,7 +759,7 @@ iCn3DUI.prototype = {
       $("#" + me.pre + "title")[0].style.margin = "10px 0 0 10px";
     },
 
-    showMenu: function() { var me = this;
+    showMenu: function() { "use strict"; var me = this;
       if($("#" + me.pre + "mnlist")[0] !== undefined) $("#" + me.pre + "mnlist")[0].style.display = "block";
       if($("#" + me.pre + "mnLogSection")[0] !== undefined) $("#" + me.pre + "mnLogSection")[0].style.display = "block";
       if($("#" + me.pre + "cmdlog")[0] !== undefined) $("#" + me.pre + "cmdlog")[0].style.display = "block";
@@ -767,7 +767,7 @@ iCn3DUI.prototype = {
       //if($("#" + me.pre + "title")[0] !== undefined) $("#" + me.pre + "title")[0].style.display = "block";
     },
 
-    saveSelectionIfSelected: function (id, value) { var me = this;
+    saveSelectionIfSelected: function (id, value) { "use strict"; var me = this;
       if(me.bSelectResidue || me.bSelectAlignResidue) {
           var name = $("#" + me.pre + "seq_command_name2").val().replace(/\s+/g, '_');
           //var description = $("#" + me.pre + "seq_command_desc2").val();
@@ -784,7 +784,7 @@ iCn3DUI.prototype = {
       }
     },
 
-    setOption: function (id, value) { var me = this;
+    setOption: function (id, value) { "use strict"; var me = this;
       //var options2 = {};
       //options2[id] = value;
 
@@ -838,7 +838,7 @@ iCn3DUI.prototype = {
       }
     },
 
-    setStyle: function (selectionType, style) { var me = this;
+    setStyle: function (selectionType, style) { "use strict"; var me = this;
       var atoms = {};
       var bAll = true;
       switch (selectionType) {
@@ -890,7 +890,7 @@ iCn3DUI.prototype = {
       me.icn3d.draw();
     },
 
-    setLogCmd: function (str, bSetCommand, bAddLogs) { var me = this;
+    setLogCmd: function (str, bSetCommand, bAddLogs) { "use strict"; var me = this;
       if(str.trim() === '') return false;
 
       var pos = str.indexOf('|||');
@@ -948,7 +948,7 @@ iCn3DUI.prototype = {
       me.adjustIcon();
     },
 
-    renderStructure: function () {  var me = this;
+    renderStructure: function () {  "use strict"; var me = this;
       if(me.bInitial) {
           if(me.cfg.command !== undefined && me.cfg.command !== '') {
               me.icn3d.bRender = false;
@@ -1038,7 +1038,7 @@ iCn3DUI.prototype = {
       }, 0);
     },
 
-    exportCustomAtoms: function () { var me = this;
+    exportCustomAtoms: function () { "use strict"; var me = this;
        var html = "";
 
        var nameArray = (me.icn3d.defNames2Residues !== undefined) ? Object.keys(me.icn3d.defNames2Residues).sort() : [];
@@ -1079,7 +1079,7 @@ iCn3DUI.prototype = {
        return html;
     },
 
-    atoms2residues: function(atomArray) { var me = this;
+    atoms2residues: function(atomArray) { "use strict"; var me = this;
          var atoms = {};
          for(var j = 0, jl = atomArray.length; j < jl; ++j) {
              atoms[atomArray[j]] = 1;
@@ -1090,7 +1090,7 @@ iCn3DUI.prototype = {
          return Object.keys(residueHash);
     },
 
-    residueids2spec: function(residueArray) { var me = this;
+    residueids2spec: function(residueArray) { "use strict"; var me = this;
          var spec = "";
 
          if(residueArray !== undefined){
@@ -1200,7 +1200,7 @@ iCn3DUI.prototype = {
          return spec;
     },
 
-    getAtomsFromSets: function (nameArray) {   var me = this; // me.icn3d.pAtom is set already
+    getAtomsFromSets: function (nameArray) {   "use strict"; var me = this; // me.icn3d.pAtom is set already
        var residuesHash = {};
 
        for(var i = 0, il = nameArray.length; i < il; ++i) {
@@ -1213,7 +1213,7 @@ iCn3DUI.prototype = {
        return residuesHash;
     },
 
-    getAtomsFromSet: function (commandname) {   var me = this; // me.icn3d.pAtom is set already
+    getAtomsFromSet: function (commandname) {   "use strict"; var me = this; // me.icn3d.pAtom is set already
        var residuesHash = {};
 
        //for(var i = 0, il = nameArray.length; i < il; ++i) {
@@ -1245,7 +1245,7 @@ iCn3DUI.prototype = {
        return residuesHash;
     },
 
-    getAtomsFromNameArray: function (nameArray) {   var me = this;
+    getAtomsFromNameArray: function (nameArray) {   "use strict"; var me = this;
         var selAtoms = {};
 
         for(var i = 0, il = nameArray.length; i < il; ++i) {
@@ -1270,7 +1270,7 @@ iCn3DUI.prototype = {
         return selAtoms;
     },
 
-    pickCustomSphere: function (radius, nameArray2, nameArray, bSphereCalc, bInteraction) {   var me = this; // me.icn3d.pAtom is set already
+    pickCustomSphere: function (radius, nameArray2, nameArray, bSphereCalc, bInteraction) {   "use strict"; var me = this; // me.icn3d.pAtom is set already
 //        me.removeHlMenus();
 
         if(bSphereCalc !== undefined && bSphereCalc) return;
@@ -1341,7 +1341,7 @@ iCn3DUI.prototype = {
     },
 
     // between the highlighted and atoms in nameArray
-    showHbonds: function (threshold, nameArray2, nameArray, bHbondCalc, bSaltbridge) { var me = this;
+    showHbonds: function (threshold, nameArray2, nameArray, bHbondCalc, bSaltbridge) { "use strict"; var me = this;
         if(bHbondCalc !== undefined && bHbondCalc) return;
 
         var hbonds_saltbridge, select;
@@ -1403,7 +1403,7 @@ iCn3DUI.prototype = {
     },
 
     // show all disulfide bonds
-    showSsbonds: function () { var me = this;
+    showSsbonds: function () { "use strict"; var me = this;
          me.icn3d.opts["ssbonds"] = "yes";
 
          var select = 'disulfide bonds';
@@ -1449,7 +1449,7 @@ iCn3DUI.prototype = {
         }
     },
 
-    addLine: function (x1, y1, z1, x2, y2, z2, color, dashed, type) { var me = this;
+    addLine: function (x1, y1, z1, x2, y2, z2, color, dashed, type) { "use strict"; var me = this;
         var line = {}; // Each line contains 'position1', 'position2', 'color', and a boolean of 'dashed'
         line.position1 = new THREE.Vector3(x1, y1, z1);
         line.position2 = new THREE.Vector3(x2, y2, z2);
@@ -1470,7 +1470,7 @@ iCn3DUI.prototype = {
         //me.icn3d.draw();
     },
 
-    back: function () { var me = this;
+    back: function () { "use strict"; var me = this;
       me.backForward = true;
 
       me.STATENUMBER--;
@@ -1494,7 +1494,7 @@ iCn3DUI.prototype = {
       me.bAddLogs = true;
     },
 
-    forward: function () { var me = this;
+    forward: function () { "use strict"; var me = this;
       me.backForward = true;
 
       me.STATENUMBER++;
@@ -1518,7 +1518,7 @@ iCn3DUI.prototype = {
       me.bAddLogs = true;
     },
 
-    toggleSelection: function () { var me = this;
+    toggleSelection: function () { "use strict"; var me = this;
         if(me.bHideSelection) {
             for(var i in me.icn3d.dAtoms) {
                 if(me.icn3d.hAtoms.hasOwnProperty(i)) delete me.icn3d.dAtoms[i];
@@ -1535,7 +1535,7 @@ iCn3DUI.prototype = {
         me.icn3d.draw();
     },
 
-    adjustIcon: function () { var me = this;
+    adjustIcon: function () { "use strict"; var me = this;
       if(me.STATENUMBER === 1) {
         if($("#" + me.pre + "back").hasClass('icn3d-middleIcon')) {
           $("#" + me.pre + "back").toggleClass('icn3d-middleIcon');
@@ -1563,7 +1563,7 @@ iCn3DUI.prototype = {
       }
     },
 
-    toggle: function (id1, id2, id3, id4) { var me = this;
+    toggle: function (id1, id2, id3, id4) { "use strict"; var me = this;
       $("#" + id1).toggleClass('ui-icon-plus');
       $("#" + id1).toggleClass('ui-icon-minus');
 
@@ -1583,7 +1583,7 @@ iCn3DUI.prototype = {
       $("#" + id4).toggleClass('icn3d-hidden');
     },
 
-    selectComplement: function() { var me = this;
+    selectComplement: function() { "use strict"; var me = this;
            var complement = {};
            //var residueHash = {}, chainHash = {};
            //var residueid, chainid;
@@ -1604,14 +1604,14 @@ iCn3DUI.prototype = {
            me.updateHlAll();
     },
 
-    saveCommandsToSession: function() { var me = this;
+    saveCommandsToSession: function() { "use strict"; var me = this;
         var dataStr = me.icn3d.commands.join('\n');
         var data = decodeURIComponent(dataStr);
 
         sessionStorage.setItem('commands', data);
     },
 
-    addChainLabels: function (atoms) { var me = this;
+    addChainLabels: function (atoms) { "use strict"; var me = this;
         var size = 18;
         var background = "#CCCCCC";
 
@@ -1644,7 +1644,7 @@ iCn3DUI.prototype = {
         me.icn3d.removeHlObjects();
     },
 
-    addTerminiLabels: function (atoms) { var me = this;
+    addTerminiLabels: function (atoms) { "use strict"; var me = this;
         var size = 18;
         var background = "#CCCCCC";
 
@@ -1695,7 +1695,7 @@ iCn3DUI.prototype = {
     },
 
     //http://jasonjl.me/blog/2015/06/21/taking-action-on-browser-crashes/
-    getCommandsBeforeCrash: function() { var me = this;
+    getCommandsBeforeCrash: function() { "use strict"; var me = this;
        window.addEventListener('load', function () {
           sessionStorage.setItem('good_exit', 'pending');
        });
@@ -1711,7 +1711,7 @@ iCn3DUI.prototype = {
        }
     },
 
-    addLineFromPicking: function(type) { var me = this;
+    addLineFromPicking: function(type) { "use strict"; var me = this;
              var size = 0, color, background = 0;
              var color = $("#" + me.pre + type + "color" ).val();
 
@@ -1728,7 +1728,7 @@ iCn3DUI.prototype = {
              me.icn3d.pickpair = false;
     },
 
-    setEntrezLinks: function(db) { var me = this;
+    setEntrezLinks: function(db) { "use strict"; var me = this;
       var structArray = Object.keys(me.icn3d.structures);
 
       var url;
@@ -1747,7 +1747,7 @@ iCn3DUI.prototype = {
       }
     },
 
-    shareLink: function(bPngHtml) { var me = this;
+    shareLink: function(bPngHtml) { "use strict"; var me = this;
            var url = me.shareLinkUrl();
 
            if(bPngHtml) url += "&random=" + parseInt(Math.random() * 1000); // generate a new shorten URL and thus image name everytime
@@ -1825,7 +1825,7 @@ iCn3DUI.prototype = {
            });
     },
 
-    exportInteractions: function() { var me = this;
+    exportInteractions: function() { "use strict"; var me = this;
        var text = '<html><body><div style="text-align:center"><br><b>Interacting residues</b>:<br/><table align=center border=1 cellpadding=10 cellspacing=0><tr><th>Base Chain: Residues</th><th>Interacting Chain</th></tr>';
 
        for(var fisrtChainid in me.chainname2residues) {
@@ -1843,7 +1843,7 @@ iCn3DUI.prototype = {
        me.saveFile(file_pref + '_interactions.html', 'html', text);
     },
 
-    exportSsbondPairs: function() { var me = this;
+    exportSsbondPairs: function() { "use strict"; var me = this;
         var tmpText = '';
         var cnt = 0;
         for(var structure in me.icn3d.structures) {
@@ -1871,7 +1871,7 @@ iCn3DUI.prototype = {
         me.saveFile(file_pref + '_disulfide_pairs.html', 'html', text);
     },
 
-    exportHbondPairs: function(bSave) { var me = this;
+    exportHbondPairs: function(bSave) { "use strict"; var me = this;
         var tmpText = '';
         var cnt = 0;
         for(var resid1 in me.resid2ResidhashHbond) {
@@ -1898,7 +1898,7 @@ iCn3DUI.prototype = {
         return text;
     },
 
-    exportSaltbridgePairs: function(bSave) { var me = this;
+    exportSaltbridgePairs: function(bSave) { "use strict"; var me = this;
         var tmpText = '';
         var cnt = 0;
         for(var resid1 in me.resid2ResidhashSaltbridge) {
@@ -1926,7 +1926,7 @@ iCn3DUI.prototype = {
         return text;
     },
 
-    exportSpherePairs: function(bInteraction, bSave) { var me = this;
+    exportSpherePairs: function(bInteraction, bSave) { "use strict"; var me = this;
         var tmpText = '';
         var cnt = 0;
         var residHash = (bInteraction) ? me.resid2ResidhashInteractions : me.resid2ResidhashSphere;
@@ -1979,14 +1979,14 @@ iCn3DUI.prototype = {
         return text;
     },
 
-    saveColor: function() { var me = this;
+    saveColor: function() { "use strict"; var me = this;
        for(var i in me.icn3d.atoms) {
            var atom = me.icn3d.atoms[i];
            atom.colorSave = atom.color.clone();
        }
     },
 
-    applySavedColor: function() { var me = this;
+    applySavedColor: function() { "use strict"; var me = this;
        for(var i in me.icn3d.atoms) {
            var atom = me.icn3d.atoms[i];
            if(atom.colorSave !== undefined) {
@@ -1999,7 +1999,7 @@ iCn3DUI.prototype = {
        me.changeSeqColor(Object.keys(me.icn3d.residues));
     },
 
-    saveStyle: function() { var me = this;
+    saveStyle: function() { "use strict"; var me = this;
        for(var i in me.icn3d.atoms) {
            var atom = me.icn3d.atoms[i];
            atom.styleSave = atom.style;
@@ -2007,7 +2007,7 @@ iCn3DUI.prototype = {
        }
     },
 
-    applySavedStyle: function() { var me = this;
+    applySavedStyle: function() { "use strict"; var me = this;
        for(var i in me.icn3d.atoms) {
            var atom = me.icn3d.atoms[i];
            if(atom.styleSave !== undefined) {
@@ -2021,7 +2021,7 @@ iCn3DUI.prototype = {
        me.icn3d.draw();
     },
 
-    showHydrogens: function() { var me = this;
+    showHydrogens: function() { "use strict"; var me = this;
 /*
        // get all hydrogen atoms
        for(var i in me.icn3d.atoms) {
@@ -2060,7 +2060,7 @@ iCn3DUI.prototype = {
        }
     },
 
-    hideHydrogens: function() { var me = this;
+    hideHydrogens: function() { "use strict"; var me = this;
        // remove hydrogen atoms for currently selected atoms
        for(var i in me.icn3d.hAtoms) {
            var atom = me.icn3d.atoms[i];
@@ -2083,7 +2083,7 @@ iCn3DUI.prototype = {
        }
     },
 
-    showAll: function() { var me = this;
+    showAll: function() { "use strict"; var me = this;
            me.icn3d.dAtoms = me.icn3d.cloneHash(me.icn3d.atoms);
 
            me.icn3d.maxD = me.icn3d.oriMaxD;
@@ -2110,7 +2110,7 @@ iCn3DUI.prototype = {
     },
 
     // back and forward arrows
-    clickBack: function() { var me = this;
+    clickBack: function() { "use strict"; var me = this;
         $("#" + me.pre + "back").add("#" + me.pre + "mn6_back").click(function(e) {
            e.preventDefault();
 
@@ -2121,7 +2121,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    clickForward: function() { var me = this;
+    clickForward: function() { "use strict"; var me = this;
         $("#" + me.pre + "forward").add("#" + me.pre + "mn6_forward").click(function(e) {
            e.preventDefault();
 
@@ -2132,7 +2132,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    openFullscreen: function(elem) { var me = this;
+    openFullscreen: function(elem) { "use strict"; var me = this;
       if (!document.fullscreenElement && !document.mozFullScreenElement &&
         !document.webkitFullscreenElement && !document.msFullscreenElement) {
           if (elem.requestFullscreen) {
@@ -2147,7 +2147,7 @@ iCn3DUI.prototype = {
       }
     },
 
-    clickFullscreen: function() { var me = this;
+    clickFullscreen: function() { "use strict"; var me = this;
 /*
         $("#" + me.pre + "mn6_fullscreen").click(function(e) { // from menu "View > Full Screen"
            e.preventDefault();
@@ -2214,7 +2214,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    clickToggle: function() { var me = this;
+    clickToggle: function() { "use strict"; var me = this;
         $("#" + me.pre + "toggle").add("#" + me.pre + "mn2_toggle").click(function(e) {
            //me.setLogCmd("toggle selection", true);
            me.toggleSelection();
@@ -2224,7 +2224,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    clickHlColorYellow: function() { var me = this;
+    clickHlColorYellow: function() { "use strict"; var me = this;
         $("#" + me.pre + "mn2_hl_clrYellow").click(function(e) {
            me.setLogCmd("set highlight color yellow", true);
            me.icn3d.hColor = new THREE.Color(0xFFFF00);
@@ -2235,7 +2235,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    clickHlColorGreen: function() { var me = this;
+    clickHlColorGreen: function() { "use strict"; var me = this;
         $("#" + me.pre + "mn2_hl_clrGreen").click(function(e) {
            me.setLogCmd("set highlight color green", true);
            me.icn3d.hColor = new THREE.Color(0x00FF00);
@@ -2246,7 +2246,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    clickHlColorRed: function() { var me = this;
+    clickHlColorRed: function() { "use strict"; var me = this;
         $("#" + me.pre + "mn2_hl_clrRed").click(function(e) {
            me.setLogCmd("set highlight color red", true);
            me.icn3d.hColor = new THREE.Color(0xFF0000);
@@ -2257,7 +2257,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    clickHlStyleOutline: function() { var me = this;
+    clickHlStyleOutline: function() { "use strict"; var me = this;
         $("#" + me.pre + "mn2_hl_styleOutline").click(function(e) {
            me.setLogCmd("set highlight style outline", true);
            me.icn3d.bHighlight = 1;
@@ -2268,7 +2268,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    clickHlStyleObject: function() { var me = this;
+    clickHlStyleObject: function() { "use strict"; var me = this;
         $("#" + me.pre + "mn2_hl_styleObject").click(function(e) {
            me.setLogCmd("set highlight style 3d", true);
            me.icn3d.bHighlight = 2;
@@ -2279,7 +2279,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    clickHlStyleNone: function() { var me = this;
+    clickHlStyleNone: function() { "use strict"; var me = this;
         $("#" + me.pre + "mn2_hl_styleNone").click(function(e) {
             e.stopImmediatePropagation();
 
@@ -2291,7 +2291,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    clickAlternate: function() { var me = this;
+    clickAlternate: function() { "use strict"; var me = this;
         $("#" + me.pre + "alternate").add("#" + me.pre + "mn2_alternate").add("#" + me.pre + "alternate2").click(function(e) {
            //me.setLogCmd("alternate structures", false);
            me.icn3d.bAlternate = true;
@@ -2306,7 +2306,7 @@ iCn3DUI.prototype = {
     },
 
     //mn 1
-    clkMn1_mmtfid: function() { var me = this;
+    clkMn1_mmtfid: function() { "use strict"; var me = this;
         $("#" + me.pre + "mn1_mmtfid").click(function(e) {
            me.openDialog(me.pre + 'dl_mmtfid', 'Please input MMTF ID');
 
@@ -2314,7 +2314,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    clkMn1_pdbid: function() { var me = this;
+    clkMn1_pdbid: function() { "use strict"; var me = this;
         $("#" + me.pre + "mn1_pdbid").click(function(e) {
            me.openDialog(me.pre + 'dl_pdbid', 'Please input PDB ID');
 
@@ -2322,7 +2322,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    clkMn1_opmid: function() { var me = this;
+    clkMn1_opmid: function() { "use strict"; var me = this;
         $("#" + me.pre + "mn1_opmid").click(function(e) {
            me.openDialog(me.pre + 'dl_opmid', 'Please input OPM PDB ID');
 
@@ -2330,7 +2330,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    clkMn1_align: function() { var me = this;
+    clkMn1_align: function() { "use strict"; var me = this;
         $("#" + me.pre + "mn1_align").click(function(e) {
            me.openDialog(me.pre + 'dl_align', 'Align two 3D structures');
 
@@ -2338,7 +2338,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    clkMn1_chainalign: function() { var me = this;
+    clkMn1_chainalign: function() { "use strict"; var me = this;
         $("#" + me.pre + "mn1_chainalign").click(function(e) {
            me.openDialog(me.pre + 'dl_chainalign', 'Align two chains of 3D structures');
 
@@ -2346,7 +2346,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    clkMn1_pdbfile: function() { var me = this;
+    clkMn1_pdbfile: function() { "use strict"; var me = this;
         $("#" + me.pre + "mn1_pdbfile").click(function(e) {
            me.openDialog(me.pre + 'dl_pdbfile', 'Please input PDB File');
 
@@ -2354,28 +2354,28 @@ iCn3DUI.prototype = {
         });
     },
 
-    clkMn1_mol2file: function() { var me = this;
+    clkMn1_mol2file: function() { "use strict"; var me = this;
         $("#" + me.pre + "mn1_mol2file").click(function(e) {
            me.openDialog(me.pre + 'dl_mol2file', 'Please input Mol2 File');
 
            //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
-    clkMn1_sdffile: function() { var me = this;
+    clkMn1_sdffile: function() { "use strict"; var me = this;
         $("#" + me.pre + "mn1_sdffile").click(function(e) {
            me.openDialog(me.pre + 'dl_sdffile', 'Please input SDF File');
 
            //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
-    clkMn1_xyzfile: function() { var me = this;
+    clkMn1_xyzfile: function() { "use strict"; var me = this;
         $("#" + me.pre + "mn1_xyzfile").click(function(e) {
            me.openDialog(me.pre + 'dl_xyzfile', 'Please input XYZ File');
 
            //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
-    clkMn1_urlfile: function() { var me = this;
+    clkMn1_urlfile: function() { "use strict"; var me = this;
         $("#" + me.pre + "mn1_urlfile").click(function(e) {
            me.openDialog(me.pre + 'dl_urlfile', 'Load data by URL');
 
@@ -2383,7 +2383,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    clkMn1_mmciffile: function() { var me = this;
+    clkMn1_mmciffile: function() { "use strict"; var me = this;
         $("#" + me.pre + "mn1_mmciffile").click(function(e) {
            me.openDialog(me.pre + 'dl_mmciffile', 'Please input mmCIF File');
 
@@ -2391,7 +2391,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    clkMn1_mmcifid: function() { var me = this;
+    clkMn1_mmcifid: function() { "use strict"; var me = this;
         $("#" + me.pre + "mn1_mmcifid").click(function(e) {
            me.openDialog(me.pre + 'dl_mmcifid', 'Please input mmCIF ID');
 
@@ -2399,7 +2399,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    clkMn1_mmdbid: function() { var me = this;
+    clkMn1_mmdbid: function() { "use strict"; var me = this;
         $("#" + me.pre + "mn1_mmdbid").click(function(e) {
            me.openDialog(me.pre + 'dl_mmdbid', 'Please input MMDB or PDB ID');
 
@@ -2407,7 +2407,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    clkMn1_blast_rep_id: function() { var me = this;
+    clkMn1_blast_rep_id: function() { "use strict"; var me = this;
         $("#" + me.pre + "mn1_blast_rep_id").click(function(e) {
            me.openDialog(me.pre + 'dl_blast_rep_id', 'Align sequence to structure');
 
@@ -2415,7 +2415,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    clkMn1_gi: function() { var me = this;
+    clkMn1_gi: function() { "use strict"; var me = this;
         $("#" + me.pre + "mn1_gi").click(function(e) {
            me.openDialog(me.pre + 'dl_gi', 'Please input protein gi');
 
@@ -2423,7 +2423,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    clkMn1_cid: function() { var me = this;
+    clkMn1_cid: function() { "use strict"; var me = this;
         $("#" + me.pre + "mn1_cid").click(function(e) {
            me.openDialog(me.pre + 'dl_cid', 'Please input PubChem CID');
 
@@ -2431,7 +2431,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    clkMn1_pngimage: function() { var me = this;
+    clkMn1_pngimage: function() { "use strict"; var me = this;
         $("#" + me.pre + "mn1_pngimage").click(function(e) {
            me.openDialog(me.pre + 'dl_pngimage', 'Please input the PNG image');
 
@@ -2439,7 +2439,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    clkMn1_state: function() { var me = this;
+    clkMn1_state: function() { "use strict"; var me = this;
         $("#" + me.pre + "mn1_state").click(function(e) {
            me.openDialog(me.pre + 'dl_state', 'Please input the state file');
 
@@ -2447,7 +2447,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    clkMn1_selection: function() { var me = this;
+    clkMn1_selection: function() { "use strict"; var me = this;
         $("#" + me.pre + "mn1_selection").click(function(e) {
            me.openDialog(me.pre + 'dl_selection', 'Please input the selection file');
 
@@ -2455,7 +2455,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    clkMn1_dsn6: function() { var me = this;
+    clkMn1_dsn6: function() { "use strict"; var me = this;
         $("#" + me.pre + "mn1_dsn6").click(function(e) {
            me.openDialog(me.pre + 'dl_dsn6', 'Please input the DSN6 file to display electron density map');
 
@@ -2463,7 +2463,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    clkMn1_exportState: function() { var me = this;
+    clkMn1_exportState: function() { "use strict"; var me = this;
         $("#" + me.pre + "mn1_exportState").click(function(e) {
            me.setLogCmd("export state file", false);
 
@@ -2474,7 +2474,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    exportStlFile: function(postfix) { var me = this;
+    exportStlFile: function(postfix) { "use strict"; var me = this;
        // assemblies
        if(me.icn3d.biomtMatrices !== undefined && me.icn3d.biomtMatrices.length > 1 && me.icn3d.bAssembly) {
             // use a smaller grid to build the surface for assembly
@@ -2527,7 +2527,7 @@ iCn3DUI.prototype = {
        }
     },
 
-    exportVrmlFile: function(postfix) { var me = this;
+    exportVrmlFile: function(postfix) { "use strict"; var me = this;
        // assemblies
        if(me.icn3d.biomtMatrices !== undefined && me.icn3d.biomtMatrices.length > 1 && me.icn3d.bAssembly) {
             // use a smaller grid to build the surface for assembly
@@ -2582,7 +2582,7 @@ iCn3DUI.prototype = {
        }
     },
 
-    clkMn1_exportStl: function() { var me = this;
+    clkMn1_exportStl: function() { "use strict"; var me = this;
         $("#" + me.pre + "mn1_exportStl").click(function(e) {
            me.setLogCmd("export stl file", false);
 
@@ -2592,7 +2592,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    clkMn1_exportVrml: function() { var me = this;
+    clkMn1_exportVrml: function() { "use strict"; var me = this;
         $("#" + me.pre + "mn1_exportVrml").click(function(e) {
            me.setLogCmd("export vrml file", false);
 
@@ -2604,7 +2604,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    clkMn1_exportStlStab: function() { var me = this;
+    clkMn1_exportStlStab: function() { "use strict"; var me = this;
         $("#" + me.pre + "mn1_exportStlStab").click(function(e) {
            me.setLogCmd("export stl stabilizer file", false);
 
@@ -2620,7 +2620,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    clkMn1_exportVrmlStab: function() { var me = this;
+    clkMn1_exportVrmlStab: function() { "use strict"; var me = this;
         $("#" + me.pre + "mn1_exportVrmlStab").click(function(e) {
            me.setLogCmd("export vrml stabilizer file", false);
 
@@ -2636,7 +2636,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    clkMn6_exportInteraction: function() { var me = this;
+    clkMn6_exportInteraction: function() { "use strict"; var me = this;
         $("#" + me.pre + "mn6_exportInteraction").click(function(e) {
            me.setLogCmd("export interactions", false);
 
@@ -2648,7 +2648,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    clkMn1_exportCanvas: function() { var me = this;
+    clkMn1_exportCanvas: function() { "use strict"; var me = this;
         $("#" + me.pre + "mn1_exportCanvas").add("#" + me.pre + "saveimage").click(function(e) {
            me.setLogCmd("export canvas", false);
 
@@ -2661,7 +2661,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    clkMn1_exportCounts: function() { var me = this;
+    clkMn1_exportCounts: function() { "use strict"; var me = this;
         $("#" + me.pre + "mn1_exportCounts").click(function(e) {
            me.setLogCmd("export counts", false);
 
@@ -2698,7 +2698,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    clkMn1_exportSelections: function() { var me = this;
+    clkMn1_exportSelections: function() { "use strict"; var me = this;
         $("#" + me.pre + "mn1_exportSelections").click(function(e) {
            me.setLogCmd("export all selections", false);
 
@@ -2720,7 +2720,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    clkMn1_sharelink: function() { var me = this;
+    clkMn1_sharelink: function() { "use strict"; var me = this;
         $("#" + me.pre + "mn1_sharelink").click(function(e) {
             me.shareLink();
 
@@ -2728,7 +2728,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    clkMn1_link_structure: function() { var me = this;
+    clkMn1_link_structure: function() { "use strict"; var me = this;
         $("#" + me.pre + "mn1_link_structure").click(function(e) {
            var url = me.getLinkToStructureSummary(true);
 
@@ -2738,7 +2738,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    clkMn1_link_bind: function() { var me = this;
+    clkMn1_link_bind: function() { "use strict"; var me = this;
         $("#" + me.pre + "mn1_link_bind").click(function(e) {
            url = "https://www.ncbi.nlm.nih.gov/pccompound?LinkName=pccompound_structure&from_uid=" + me.inputid;
            me.setLogCmd("link to 3D protein structures bound to CID " + me.inputid + ": " + url, false);
@@ -2749,7 +2749,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    clkMn1_link_vast: function() { var me = this;
+    clkMn1_link_vast: function() { "use strict"; var me = this;
         $("#" + me.pre + "mn1_link_vast").click(function(e) {
            if(me.inputid === undefined) {
                    url = "https://www.ncbi.nlm.nih.gov/pccompound?term=" + me.icn3d.molTitle;
@@ -2781,7 +2781,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    clkMn1_link_pubmed: function() { var me = this;
+    clkMn1_link_pubmed: function() { "use strict"; var me = this;
         $("#" + me.pre + "mn1_link_pubmed").click(function(e) {
            var url;
            if(me.inputid === undefined) {
@@ -2834,7 +2834,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    clkMn1_link_protein: function() { var me = this;
+    clkMn1_link_protein: function() { "use strict"; var me = this;
         $("#" + me.pre + "mn1_link_protein").click(function(e) {
           //me.setEntrezLinks('protein');
           var structArray = Object.keys(me.icn3d.structures);
@@ -2860,7 +2860,7 @@ iCn3DUI.prototype = {
     },
 
     // mn 2
-    clkMn2_selectannotations: function() { var me = this;
+    clkMn2_selectannotations: function() { "use strict"; var me = this;
         $("#" + me.pre + "mn6_selectannotations").click(function(e) {
            me.showAnnotations();
            me.setLogCmd("view annotations", true);
@@ -2869,7 +2869,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    clkMn2_selectall: function() { var me = this;
+    clkMn2_selectall: function() { "use strict"; var me = this;
         $("#" + me.pre + "mn2_selectall").click(function(e) {
            me.setLogCmd("select all", true);
 
@@ -2898,7 +2898,7 @@ iCn3DUI.prototype = {
 
     },
 
-    clkMn2_selectdisplayed: function() { var me = this;
+    clkMn2_selectdisplayed: function() { "use strict"; var me = this;
         $("#" + me.pre + "mn2_selectdisplayed").click(function(e) {
            me.setLogCmd("select displayed set", true);
 
@@ -2909,7 +2909,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    clkMn2_fullstru: function() { var me = this;
+    clkMn2_fullstru: function() { "use strict"; var me = this;
         $("#" + me.pre + "mn2_fullstru").click(function(e) {
            me.setLogCmd("show all", true);
 
@@ -2917,7 +2917,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    clkMn2_selectcomplement: function() { var me = this;
+    clkMn2_selectcomplement: function() { "use strict"; var me = this;
         $("#" + me.pre + "mn2_selectcomplement").click(function(e) {
            if(Object.keys(me.icn3d.hAtoms).length < Object.keys(me.icn3d.atoms).length) {
                me.setLogCmd("select complement", true);
@@ -2929,7 +2929,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    clkMn2_selectmainchains: function() { var me = this;
+    clkMn2_selectmainchains: function() { "use strict"; var me = this;
         $("#" + me.pre + "mn2_selectmainchains").click(function(e) {
            me.setLogCmd("select main chains", true);
 
@@ -2939,7 +2939,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    clkMn2_selectsidechains: function() { var me = this;
+    clkMn2_selectsidechains: function() { "use strict"; var me = this;
         $("#" + me.pre + "mn2_selectsidechains").click(function(e) {
            me.setLogCmd("select side chains", true);
 
@@ -2949,7 +2949,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    clkMn2_alignment: function() { var me = this;
+    clkMn2_alignment: function() { "use strict"; var me = this;
         $("#" + me.pre + "mn2_alignment").click(function(e) {
            me.openDialog(me.pre + 'dl_alignment', 'Select residues in aligned sequences');
 
@@ -2957,7 +2957,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    clkMn2_command: function() { var me = this;
+    clkMn2_command: function() { "use strict"; var me = this;
         $("#" + me.pre + "mn2_command").click(function(e) {
            me.openDialog(me.pre + 'dl_advanced2', 'Select by specification');
            //$("#" + me.pre + "dl_setsmenu").hide();
@@ -2968,7 +2968,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    clkMn2_definedsets: function() { var me = this;
+    clkMn2_definedsets: function() { "use strict"; var me = this;
         $("#" + me.pre + "mn2_definedsets").add("#" + me.pre + "definedsets").add("#" + me.pre + "definedsets2").click(function(e) {
            me.showSets();
 
@@ -2986,7 +2986,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    clkMn2_pkNo: function() { var me = this;
+    clkMn2_pkNo: function() { "use strict"; var me = this;
         $("#" + me.pre + "mn2_pkNo").click(function(e) {
            me.icn3d.pk = 0;
            me.icn3d.opts['pk'] = 'no';
@@ -2999,7 +2999,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    clkMn2_pkYes: function() { var me = this;
+    clkMn2_pkYes: function() { "use strict"; var me = this;
         $("#" + me.pre + "mn2_pkYes").click(function(e) {
            me.icn3d.pk = 1;
            me.icn3d.opts['pk'] = 'atom';
@@ -3009,7 +3009,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    clkMn2_pkResidue: function() { var me = this;
+    clkMn2_pkResidue: function() { "use strict"; var me = this;
         $("#" + me.pre + "mn2_pkResidue").click(function(e) {
            me.icn3d.pk = 2;
            me.icn3d.opts['pk'] = 'residue';
@@ -3019,7 +3019,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    clkMn2_pkStrand: function() { var me = this;
+    clkMn2_pkStrand: function() { "use strict"; var me = this;
         $("#" + me.pre + "mn2_pkStrand").click(function(e) {
            me.icn3d.pk = 3;
            me.icn3d.opts['pk'] = 'strand';
@@ -3029,7 +3029,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    clkMn2_pkDomain: function() { var me = this;
+    clkMn2_pkDomain: function() { "use strict"; var me = this;
         $("#" + me.pre + "mn2_pkDomain").click(function(e) {
            me.icn3d.pk = 4;
            me.icn3d.opts['pk'] = 'domain';
@@ -3039,7 +3039,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    clkMn2_pkChain: function() { var me = this;
+    clkMn2_pkChain: function() { "use strict"; var me = this;
         $("#" + me.pre + "mn2_pkChain").click(function(e) {
            me.icn3d.pk = 5;
            me.icn3d.opts['pk'] = 'chain';
@@ -3049,13 +3049,13 @@ iCn3DUI.prototype = {
         });
     },
 
-    clk_adjustmem: function() { var me = this;
+    clk_adjustmem: function() { "use strict"; var me = this;
         $("#" + me.pre + "adjustmem").click(function(e) {
             me.openDialog(me.pre + 'dl_adjustmem', 'Adjust the Z-axis positions of the membrane');
         });
     },
 
-    toggleMembrane: function() { var me = this;
+    toggleMembrane: function() { "use strict"; var me = this;
         var structure = Object.keys(me.icn3d.structures)[0];
         var atomsHash = me.icn3d.residues[structure + '_MEM_1'];
         var firstAtom = me.icn3d.getFirstAtomObj(atomsHash);
@@ -3075,7 +3075,7 @@ iCn3DUI.prototype = {
         me.icn3d.draw();
     },
 
-    clk_togglemem: function() { var me = this;
+    clk_togglemem: function() { "use strict"; var me = this;
         $("#" + me.pre + "togglemem").click(function(e) {
            me.toggleMembrane();
            me.setLogCmd('toggle membrane', true);
@@ -3083,20 +3083,20 @@ iCn3DUI.prototype = {
     },
 
 /*
-    clk_addplane: function() { var me = this;
+    clk_addplane: function() { "use strict"; var me = this;
         $("#" + me.pre + "addplane").click(function(e) {
             me.openDialog(me.pre + 'dl_addplane', 'Add a plane parallel to the membranes');
         });
     },
 */
 
-    clk_selectplane: function() { var me = this;
+    clk_selectplane: function() { "use strict"; var me = this;
         $("#" + me.pre + "selectplane").click(function(e) {
             me.openDialog(me.pre + 'dl_selectplane', 'Select a region between two planes');
         });
     },
 
-    clkMn2_aroundsphere: function() { var me = this;
+    clkMn2_aroundsphere: function() { "use strict"; var me = this;
         //$("#" + me.pre + "mn2_aroundsphere").add("#" + me.pre + "mn2_aroundsphere2").click(function(e) {
         $("#" + me.pre + "mn2_aroundsphere").click(function(e) {
             if(me.bSetChainsAdvancedMenu === undefined || !me.bSetChainsAdvancedMenu) {
@@ -3128,7 +3128,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    clkMn2_select_chain: function() { var me = this;
+    clkMn2_select_chain: function() { "use strict"; var me = this;
         $("#" + me.pre + "mn2_select_chain").add("#" + me.pre + "definedSets").click(function(e) {
            me.openDialog(me.pre + 'dl_select_chain', 'Select Structure/Chain/Custom Selection');
 
@@ -3137,7 +3137,7 @@ iCn3DUI.prototype = {
     },
 
     // mn 3
-    clkMn3_proteinsRibbon: function() { var me = this;
+    clkMn3_proteinsRibbon: function() { "use strict"; var me = this;
         $("#" + me.pre + "mn3_proteinsRibbon").click(function(e) {
            me.setStyle('proteins', 'ribbon');
            me.setLogCmd('style proteins ribbon', true);
@@ -3146,7 +3146,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    clkMn3_proteinsStrand: function() { var me = this;
+    clkMn3_proteinsStrand: function() { "use strict"; var me = this;
         $("#" + me.pre + "mn3_proteinsStrand").click(function(e) {
            me.setStyle('proteins', 'strand');
 
@@ -3156,7 +3156,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    clkMn3_proteinsCylinder: function() { var me = this;
+    clkMn3_proteinsCylinder: function() { "use strict"; var me = this;
         $("#" + me.pre + "mn3_proteinsCylinder").click(function(e) {
            me.setStyle('proteins', 'cylinder and plate');
            me.setLogCmd('style proteins cylinder and plate', true);
@@ -3165,7 +3165,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    clkMn3_proteinsSchematic: function() { var me = this;
+    clkMn3_proteinsSchematic: function() { "use strict"; var me = this;
         $("#" + me.pre + "mn3_proteinsSchematic").click(function(e) {
            me.setStyle('proteins', 'schematic');
            me.setLogCmd('style proteins schematic', true);
@@ -3174,7 +3174,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    clkMn3_proteinsCalpha: function() { var me = this;
+    clkMn3_proteinsCalpha: function() { "use strict"; var me = this;
         $("#" + me.pre + "mn3_proteinsCalpha").click(function(e) {
            me.setStyle('proteins', 'c alpha trace');
            me.setLogCmd('style proteins c alpha trace', true);
@@ -3183,7 +3183,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    clkMn3_proteinsBfactor: function() { var me = this;
+    clkMn3_proteinsBfactor: function() { "use strict"; var me = this;
         $("#" + me.pre + "mn3_proteinsBfactor").click(function(e) {
            me.setStyle('proteins', 'b factor tube');
            me.setLogCmd('style proteins b factor tube', true);
@@ -3192,7 +3192,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    clkMn3_proteinsLines: function() { var me = this;
+    clkMn3_proteinsLines: function() { "use strict"; var me = this;
         $("#" + me.pre + "mn3_proteinsLines").click(function(e) {
            me.setStyle('proteins', 'lines');
            me.setLogCmd('style proteins lines', true);
@@ -3201,7 +3201,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    clkMn3_proteinsStick: function() { var me = this;
+    clkMn3_proteinsStick: function() { "use strict"; var me = this;
         $("#" + me.pre + "mn3_proteinsStick").click(function(e) {
            me.setStyle('proteins', 'stick');
            me.setLogCmd('style proteins stick', true);
@@ -3210,7 +3210,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    clkMn3_proteinsBallstick: function() { var me = this;
+    clkMn3_proteinsBallstick: function() { "use strict"; var me = this;
         $("#" + me.pre + "mn3_proteinsBallstick").click(function(e) {
            me.setStyle('proteins', 'ball and stick');
            me.setLogCmd('style proteins ball and stick', true);
@@ -3219,7 +3219,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    clkMn3_proteinsSphere: function() { var me = this;
+    clkMn3_proteinsSphere: function() { "use strict"; var me = this;
         $("#" + me.pre + "mn3_proteinsSphere").click(function(e) {
            me.setStyle('proteins', 'sphere');
            me.setLogCmd('style proteins sphere', true);
@@ -3228,7 +3228,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    clkMn3_proteinsNo: function() { var me = this;
+    clkMn3_proteinsNo: function() { "use strict"; var me = this;
         $("#" + me.pre + "mn3_proteinsNo").click(function(e) {
            me.setStyle('proteins', 'nothing');
            me.setLogCmd('style proteins nothing', true);
@@ -3237,7 +3237,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    clkMn3_sidecLines: function() { var me = this;
+    clkMn3_sidecLines: function() { "use strict"; var me = this;
         $("#" + me.pre + "mn3_sidecLines").click(function(e) {
            me.setStyle('sidec', 'lines');
            me.setLogCmd('style sidec lines', true);
@@ -3246,7 +3246,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    clkMn3_sidecStick: function() { var me = this;
+    clkMn3_sidecStick: function() { "use strict"; var me = this;
         $("#" + me.pre + "mn3_sidecStick").click(function(e) {
            me.setStyle('sidec', 'stick');
            me.setLogCmd('style sidec stick', true);
@@ -3255,7 +3255,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    clkMn3_sidecBallstick: function() { var me = this;
+    clkMn3_sidecBallstick: function() { "use strict"; var me = this;
         $("#" + me.pre + "mn3_sidecBallstick").click(function(e) {
            me.setStyle('sidec', 'ball and stick');
            me.setLogCmd('style sidec ball and stick', true);
@@ -3264,7 +3264,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    clkMn3_sidecSphere: function() { var me = this;
+    clkMn3_sidecSphere: function() { "use strict"; var me = this;
         $("#" + me.pre + "mn3_sidecSphere").click(function(e) {
            me.setStyle('sidec', 'sphere');
            me.setLogCmd('style sidec sphere', true);
@@ -3273,7 +3273,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    clkMn3_sidecNo: function() { var me = this;
+    clkMn3_sidecNo: function() { "use strict"; var me = this;
         $("#" + me.pre + "mn3_sidecNo").click(function(e) {
            me.setStyle('sidec', 'nothing');
            me.setLogCmd('style sidec nothing', true);
@@ -3283,7 +3283,7 @@ iCn3DUI.prototype = {
     },
 
 
-    clkMn3_nuclCartoon: function() { var me = this;
+    clkMn3_nuclCartoon: function() { "use strict"; var me = this;
         $("#" + me.pre + "mn3_nuclCartoon").click(function(e) {
            me.setStyle('nucleotides', 'nucleotide cartoon');
            me.setLogCmd('style nucleotides nucleotide cartoon', true);
@@ -3292,7 +3292,7 @@ iCn3DUI.prototype = {
        });
     },
 
-    clkMn3_nuclSchematic: function() { var me = this;
+    clkMn3_nuclSchematic: function() { "use strict"; var me = this;
         $("#" + me.pre + "mn3_nuclSchematic").click(function(e) {
            me.setStyle('nucleotides', 'schematic');
            me.setLogCmd('style nucleotides schematic', true);
@@ -3301,7 +3301,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    clkMn3_nuclPhos: function() { var me = this;
+    clkMn3_nuclPhos: function() { "use strict"; var me = this;
         $("#" + me.pre + "mn3_nuclPhos").click(function(e) {
            me.setStyle('nucleotides', 'o3 trace');
            me.setLogCmd('style nucleotides o3 trace', true);
@@ -3310,7 +3310,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    clkMn3_nuclLines: function() { var me = this;
+    clkMn3_nuclLines: function() { "use strict"; var me = this;
         $("#" + me.pre + "mn3_nuclLines").click(function(e) {
            me.setStyle('nucleotides', 'lines');
            me.setLogCmd('style nucleotides lines', true);
@@ -3319,7 +3319,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    clkMn3_nuclStick: function() { var me = this;
+    clkMn3_nuclStick: function() { "use strict"; var me = this;
         $("#" + me.pre + "mn3_nuclStick").click(function(e) {
            me.setStyle('nucleotides', 'stick');
            me.setLogCmd('style nucleotides stick', true);
@@ -3328,7 +3328,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    clkMn3_nuclBallstick: function() { var me = this;
+    clkMn3_nuclBallstick: function() { "use strict"; var me = this;
         $("#" + me.pre + "mn3_nuclBallstick").click(function(e) {
            me.setStyle('nucleotides', 'ball and stick');
            me.setLogCmd('style nucleotides ball and stick', true);
@@ -3337,7 +3337,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    clkMn3_nuclSphere: function() { var me = this;
+    clkMn3_nuclSphere: function() { "use strict"; var me = this;
         $("#" + me.pre + "mn3_nuclSphere").click(function(e) {
            me.setStyle('nucleotides', 'sphere');
            me.setLogCmd('style nucleotides sphere', true);
@@ -3346,7 +3346,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    clkMn3_nuclNo: function() { var me = this;
+    clkMn3_nuclNo: function() { "use strict"; var me = this;
         $("#" + me.pre + "mn3_nuclNo").click(function(e) {
            me.setStyle('nucleotides', 'nothing');
            me.setLogCmd('style nucleotides nothing', true);
@@ -3355,7 +3355,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    clkMn3_ligLines: function() { var me = this;
+    clkMn3_ligLines: function() { "use strict"; var me = this;
         $("#" + me.pre + "mn3_ligLines").click(function(e) {
            me.setStyle('chemicals', 'lines');
            me.setLogCmd('style chemicals lines', true);
@@ -3364,7 +3364,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    clkMn3_ligStick: function() { var me = this;
+    clkMn3_ligStick: function() { "use strict"; var me = this;
         $("#" + me.pre + "mn3_ligStick").click(function(e) {
            me.setStyle('chemicals', 'stick');
            me.setLogCmd('style chemicals stick', true);
@@ -3373,7 +3373,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    clkMn3_ligBallstick: function() { var me = this;
+    clkMn3_ligBallstick: function() { "use strict"; var me = this;
         $("#" + me.pre + "mn3_ligBallstick").click(function(e) {
            me.setStyle('chemicals', 'ball and stick');
            me.setLogCmd('style chemicals ball and stick', true);
@@ -3382,7 +3382,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    clkMn3_ligSchematic: function() { var me = this;
+    clkMn3_ligSchematic: function() { "use strict"; var me = this;
         $("#" + me.pre + "mn3_ligSchematic").click(function(e) {
            me.setStyle('chemicals', 'schematic');
            me.setLogCmd('style chemicals schematic', true);
@@ -3391,7 +3391,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    clkMn3_ligSphere: function() { var me = this;
+    clkMn3_ligSphere: function() { "use strict"; var me = this;
         $("#" + me.pre + "mn3_ligSphere").click(function(e) {
            me.setStyle('chemicals', 'sphere');
            me.setLogCmd('style chemicals sphere', true);
@@ -3400,7 +3400,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    clkMn3_ligNo: function() { var me = this;
+    clkMn3_ligNo: function() { "use strict"; var me = this;
         $("#" + me.pre + "mn3_ligNo").click(function(e) {
            me.setStyle('chemicals', 'nothing');
            me.setLogCmd('style chemicals nothing', true);
@@ -3409,7 +3409,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    clkMn3_hydrogensYes: function() { var me = this;
+    clkMn3_hydrogensYes: function() { "use strict"; var me = this;
         $("#" + me.pre + "mn3_hydrogensYes").click(function(e) {
            me.showHydrogens();
            me.icn3d.draw();
@@ -3419,7 +3419,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    clkMn3_hydrogensNo: function() { var me = this;
+    clkMn3_hydrogensNo: function() { "use strict"; var me = this;
         $("#" + me.pre + "mn3_hydrogensNo").click(function(e) {
            me.hideHydrogens();
            me.icn3d.draw();
@@ -3429,7 +3429,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    clkMn3_ionsSphere: function() { var me = this;
+    clkMn3_ionsSphere: function() { "use strict"; var me = this;
         $("#" + me.pre + "mn3_ionsSphere").click(function(e) {
            me.setStyle('ions', 'sphere');
            me.setLogCmd('style ions sphere', true);
@@ -3438,7 +3438,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    clkMn3_ionsDot: function() { var me = this;
+    clkMn3_ionsDot: function() { "use strict"; var me = this;
         $("#" + me.pre + "mn3_ionsDot").click(function(e) {
            me.setStyle('ions', 'dot');
            me.setLogCmd('style ions dot', true);
@@ -3447,7 +3447,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    clkMn3_ionsNo: function() { var me = this;
+    clkMn3_ionsNo: function() { "use strict"; var me = this;
         $("#" + me.pre + "mn3_ionsNo").click(function(e) {
            me.setStyle('ions', 'nothing');
            me.setLogCmd('style ions nothing', true);
@@ -3456,7 +3456,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    clkMn3_waterSphere: function() { var me = this;
+    clkMn3_waterSphere: function() { "use strict"; var me = this;
         $("#" + me.pre + "mn3_waterSphere").click(function(e) {
            me.setStyle('water', 'sphere');
            me.setLogCmd('style water sphere', true);
@@ -3465,7 +3465,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    clkMn3_waterDot: function() { var me = this;
+    clkMn3_waterDot: function() { "use strict"; var me = this;
         $("#" + me.pre + "mn3_waterDot").click(function(e) {
            me.setStyle('water', 'dot');
            me.setLogCmd('style water dot', true);
@@ -3474,7 +3474,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    clkMn3_waterNo: function() { var me = this;
+    clkMn3_waterNo: function() { "use strict"; var me = this;
         $("#" + me.pre + "mn3_waterNo").click(function(e) {
            me.setStyle('water', 'nothing');
            me.setLogCmd('style water nothing', true);
@@ -3484,7 +3484,7 @@ iCn3DUI.prototype = {
     },
 
     // mn 4
-    clkMn4_clrSpectrum: function() { var me = this;
+    clkMn4_clrSpectrum: function() { "use strict"; var me = this;
         $("#" + me.pre + "mn4_clrSpectrum").click(function(e) {
            me.setOption('color', 'spectrum');
            me.setLogCmd('color spectrum', true);
@@ -3493,7 +3493,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    clkMn4_clrChain: function() { var me = this;
+    clkMn4_clrChain: function() { "use strict"; var me = this;
         $("#" + me.pre + "mn4_clrChain").click(function(e) {
            me.setOption('color', 'chain');
            me.setLogCmd('color chain', true);
@@ -3502,7 +3502,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    clkMn4_clrDomain: function() { var me = this;
+    clkMn4_clrDomain: function() { "use strict"; var me = this;
         $("#" + me.pre + "mn4_clrdomain").click(function(e) {
            me.setOption('color', 'domain');
            me.setLogCmd('color domain', true);
@@ -3511,7 +3511,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    clkMn4_clrSSGreen: function() { var me = this;
+    clkMn4_clrSSGreen: function() { "use strict"; var me = this;
         $("#" + me.pre + "mn4_clrSSGreen").click(function(e) {
            me.icn3d.sheetcolor = 'green';
 
@@ -3522,7 +3522,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    clkMn4_clrSSYellow: function() { var me = this;
+    clkMn4_clrSSYellow: function() { "use strict"; var me = this;
         $("#" + me.pre + "mn4_clrSSYellow").click(function(e) {
            me.icn3d.sheetcolor = 'yellow';
 
@@ -3533,14 +3533,14 @@ iCn3DUI.prototype = {
         });
     },
 
-    clkMn4_clrSSSpectrum: function() { var me = this;
+    clkMn4_clrSSSpectrum: function() { "use strict"; var me = this;
         $("#" + me.pre + "mn4_clrSSSpectrum").click(function(e) {
            me.setOption('color', 'secondary structure spectrum');
            me.setLogCmd('color secondary structure spectrum', true);
         });
     },
 
-    clkMn4_clrResidue: function() { var me = this;
+    clkMn4_clrResidue: function() { "use strict"; var me = this;
         $("#" + me.pre + "mn4_clrResidue").click(function(e) {
            me.setOption('color', 'residue');
            me.setLogCmd('color residue', true);
@@ -3549,7 +3549,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    clkMn4_clrCharge: function() { var me = this;
+    clkMn4_clrCharge: function() { "use strict"; var me = this;
         $("#" + me.pre + "mn4_clrCharge").click(function(e) {
            me.setOption('color', 'charge');
            me.setLogCmd('color charge', true);
@@ -3558,7 +3558,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    clkMn4_clrHydrophobic: function() { var me = this;
+    clkMn4_clrHydrophobic: function() { "use strict"; var me = this;
         $("#" + me.pre + "mn4_clrHydrophobic").click(function(e) {
            me.setOption('color', 'hydrophobic');
            me.setLogCmd('color hydrophobic', true);
@@ -3567,7 +3567,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    clkMn4_clrAtom: function() { var me = this;
+    clkMn4_clrAtom: function() { "use strict"; var me = this;
         $("#" + me.pre + "mn4_clrAtom").click(function(e) {
            me.setOption('color', 'atom');
            me.setLogCmd('color atom', true);
@@ -3576,7 +3576,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    clkMn4_clrBfactor: function() { var me = this;
+    clkMn4_clrBfactor: function() { "use strict"; var me = this;
         $("#" + me.pre + "mn4_clrBfactor").click(function(e) {
            me.setOption('color', 'b factor');
            me.setLogCmd('color b factor', true);
@@ -3585,7 +3585,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    clkMn4_clrBfactorNorm: function() { var me = this;
+    clkMn4_clrBfactorNorm: function() { "use strict"; var me = this;
         $("#" + me.pre + "mn4_clrBfactorNorm").click(function(e) {
            me.setOption('color', 'b factor percentile');
            me.setLogCmd('color b factor percentile', true);
@@ -3594,7 +3594,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    clkMn4_clrIdentity: function() { var me = this;
+    clkMn4_clrIdentity: function() { "use strict"; var me = this;
         $("#" + me.pre + "mn4_clrIdentity").click(function(e) {
            me.setOption('color', 'identity');
            me.setLogCmd('color identity', true);
@@ -3603,7 +3603,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    clkMn4_clrConserved: function() { var me = this;
+    clkMn4_clrConserved: function() { "use strict"; var me = this;
         $("#" + me.pre + "mn4_clrConserved").click(function(e) {
            me.setOption('color', 'conservation');
            me.setLogCmd('color conservation', true);
@@ -3612,7 +3612,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    clkMn4_clrRed: function() { var me = this;
+    clkMn4_clrRed: function() { "use strict"; var me = this;
         $("#" + me.pre + "mn4_clrRed").click(function(e) {
            me.setOption('color', 'red');
            me.setLogCmd('color red', true);
@@ -3621,7 +3621,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    clkMn4_clrGreen: function() { var me = this;
+    clkMn4_clrGreen: function() { "use strict"; var me = this;
         $("#" + me.pre + "mn4_clrGreen").click(function(e) {
            me.setOption('color', 'green');
            me.setLogCmd('color green', true);
@@ -3630,7 +3630,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    clkMn4_clrBlue: function() { var me = this;
+    clkMn4_clrBlue: function() { "use strict"; var me = this;
         $("#" + me.pre + "mn4_clrBlue").click(function(e) {
            me.setOption('color', 'blue');
            me.setLogCmd('color blue', true);
@@ -3639,7 +3639,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    clkMn4_clrMagenta: function() { var me = this;
+    clkMn4_clrMagenta: function() { "use strict"; var me = this;
         $("#" + me.pre + "mn4_clrMagenta").click(function(e) {
            me.setOption('color', 'magenta');
            me.setLogCmd('color magenta', true);
@@ -3648,7 +3648,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    clkMn4_clrYellow: function() { var me = this;
+    clkMn4_clrYellow: function() { "use strict"; var me = this;
         $("#" + me.pre + "mn4_clrYellow").click(function(e) {
            me.setOption('color', 'yellow');
            me.setLogCmd('color yellow', true);
@@ -3657,7 +3657,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    clkMn4_clrCyan: function() { var me = this;
+    clkMn4_clrCyan: function() { "use strict"; var me = this;
         $("#" + me.pre + "mn4_clrCyan").click(function(e) {
            me.setOption('color', 'cyan');
            me.setLogCmd('color cyan', true);
@@ -3666,7 +3666,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    clkMn4_clrWhite: function() { var me = this;
+    clkMn4_clrWhite: function() { "use strict"; var me = this;
         $("#" + me.pre + "mn4_clrWhite").click(function(e) {
            me.setOption('color', 'white');
            me.setLogCmd('color white', true);
@@ -3675,7 +3675,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    clkMn4_clrGrey: function() { var me = this;
+    clkMn4_clrGrey: function() { "use strict"; var me = this;
         $("#" + me.pre + "mn4_clrGrey").click(function(e) {
            me.setOption('color', 'grey');
            me.setLogCmd('color grey', true);
@@ -3684,7 +3684,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    clkMn4_clrCustom: function() { var me = this;
+    clkMn4_clrCustom: function() { "use strict"; var me = this;
         $("#" + me.pre + "mn4_clrCustom").click(function(e) {
            me.openDialog(me.pre + 'dl_clr', 'Color picker');
 
@@ -3692,7 +3692,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    clkMn4_clrSave: function() { var me = this;
+    clkMn4_clrSave: function() { "use strict"; var me = this;
         $("#" + me.pre + "mn4_clrSave").click(function(e) {
            me.saveColor();
 
@@ -3702,7 +3702,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    clkMn4_clrApplySave: function() { var me = this;
+    clkMn4_clrApplySave: function() { "use strict"; var me = this;
         $("#" + me.pre + "mn4_clrApplySave").click(function(e) {
            me.applySavedColor();
 
@@ -3712,7 +3712,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    clkMn3_styleSave: function() { var me = this;
+    clkMn3_styleSave: function() { "use strict"; var me = this;
         $("#" + me.pre + "mn3_styleSave").click(function(e) {
            me.saveStyle();
            me.setLogCmd('save style', true);
@@ -3721,7 +3721,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    clkMn3_styleApplySave: function() { var me = this;
+    clkMn3_styleApplySave: function() { "use strict"; var me = this;
         $("#" + me.pre + "mn3_styleApplySave").click(function(e) {
            me.applySavedStyle();
            me.setLogCmd('apply saved style', true);
@@ -3731,7 +3731,7 @@ iCn3DUI.prototype = {
     },
 
     // mn 5
-    clkMn5_neighborsYes: function() { var me = this;
+    clkMn5_neighborsYes: function() { "use strict"; var me = this;
         $("#" + me.pre + "mn5_neighborsYes").click(function(e) {
            me.icn3d.bConsiderNeighbors = true;
 
@@ -3745,7 +3745,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    clkMn5_neighborsNo: function() { var me = this;
+    clkMn5_neighborsNo: function() { "use strict"; var me = this;
         $("#" + me.pre + "mn5_neighborsNo").click(function(e) {
            me.icn3d.bConsiderNeighbors = false;
 
@@ -3759,7 +3759,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    clkMn5_surfaceVDW: function() { var me = this;
+    clkMn5_surfaceVDW: function() { "use strict"; var me = this;
         $("#" + me.pre + "mn5_surfaceVDW").click(function(e) {
            me.icn3d.bConsiderNeighbors = false;
            me.setOption('surface', 'Van der Waals surface');
@@ -3769,7 +3769,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    clkMn5_surfaceSAS: function() { var me = this;
+    clkMn5_surfaceSAS: function() { "use strict"; var me = this;
         $("#" + me.pre + "mn5_surfaceSAS").click(function(e) {
            me.icn3d.bConsiderNeighbors = false;
            me.setOption('surface', 'solvent accessible surface');
@@ -3779,7 +3779,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    clkMn5_surfaceMolecular: function() { var me = this;
+    clkMn5_surfaceMolecular: function() { "use strict"; var me = this;
         $("#" + me.pre + "mn5_surfaceMolecular").click(function(e) {
            me.icn3d.bConsiderNeighbors = false;
            me.setOption('surface', 'molecular surface');
@@ -3789,7 +3789,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    clkMn5_surfaceVDWContext: function() { var me = this;
+    clkMn5_surfaceVDWContext: function() { "use strict"; var me = this;
         $("#" + me.pre + "mn5_surfaceVDWContext").click(function(e) {
            me.icn3d.bConsiderNeighbors = true;
            me.setOption('surface', 'Van der Waals surface with context');
@@ -3799,7 +3799,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    clkMn5_surfaceSASContext: function() { var me = this;
+    clkMn5_surfaceSASContext: function() { "use strict"; var me = this;
         $("#" + me.pre + "mn5_surfaceSASContext").click(function(e) {
            me.icn3d.bConsiderNeighbors = true;
            me.setOption('surface', 'solvent accessible surface with context');
@@ -3809,7 +3809,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    clkMn5_surfaceMolecularContext: function() { var me = this;
+    clkMn5_surfaceMolecularContext: function() { "use strict"; var me = this;
         $("#" + me.pre + "mn5_surfaceMolecularContext").click(function(e) {
            me.icn3d.bConsiderNeighbors = true;
            me.setOption('surface', 'molecular surface with context');
@@ -3819,7 +3819,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    clkMn5_surfaceNo: function() { var me = this;
+    clkMn5_surfaceNo: function() { "use strict"; var me = this;
         $("#" + me.pre + "mn5_surfaceNo").click(function(e) {
            me.setOption('surface', 'nothing');
            me.setLogCmd('set surface nothing', true);
@@ -3828,7 +3828,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    clkMn5_opacity10: function() { var me = this;
+    clkMn5_opacity10: function() { "use strict"; var me = this;
         $("#" + me.pre + "mn5_opacity10").click(function(e) {
            me.setOption('opacity', '1.0');
            me.setLogCmd('set surface opacity 1.0', true);
@@ -3837,7 +3837,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    clkMn5_opacity09: function() { var me = this;
+    clkMn5_opacity09: function() { "use strict"; var me = this;
         $("#" + me.pre + "mn5_opacity09").click(function(e) {
            me.setOption('opacity', '0.9');
            me.setLogCmd('set surface opacity 0.9', true);
@@ -3846,7 +3846,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    clkMn5_opacity08: function() { var me = this;
+    clkMn5_opacity08: function() { "use strict"; var me = this;
         $("#" + me.pre + "mn5_opacity08").click(function(e) {
            me.setOption('opacity', '0.8');
            me.setLogCmd('set surface opacity 0.8', true);
@@ -3855,7 +3855,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    clkMn5_opacity07: function() { var me = this;
+    clkMn5_opacity07: function() { "use strict"; var me = this;
         $("#" + me.pre + "mn5_opacity07").click(function(e) {
            me.setOption('opacity', '0.7');
            me.setLogCmd('set surface opacity 0.7', true);
@@ -3864,7 +3864,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    clkMn5_opacity06: function() { var me = this;
+    clkMn5_opacity06: function() { "use strict"; var me = this;
         $("#" + me.pre + "mn5_opacity06").click(function(e) {
            me.setOption('opacity', '0.6');
            me.setLogCmd('set surface opacity 0.6', true);
@@ -3873,7 +3873,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    clkMn5_opacity05: function() { var me = this;
+    clkMn5_opacity05: function() { "use strict"; var me = this;
         $("#" + me.pre + "mn5_opacity05").click(function(e) {
            me.setOption('opacity', '0.5');
            me.setLogCmd('set surface opacity 0.5', true);
@@ -3882,7 +3882,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    clkMn5_opacity04: function() { var me = this;
+    clkMn5_opacity04: function() { "use strict"; var me = this;
         $("#" + me.pre + "mn5_opacity04").click(function(e) {
            me.setOption('opacity', '0.4');
            me.setLogCmd('set surface opacity 0.4', true);
@@ -3891,7 +3891,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    clkMn5_opacity03: function() { var me = this;
+    clkMn5_opacity03: function() { "use strict"; var me = this;
         $("#" + me.pre + "mn5_opacity03").click(function(e) {
            me.setOption('opacity', '0.3');
            me.setLogCmd('set surface opacity 0.3', true);
@@ -3900,7 +3900,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    clkMn5_opacity02: function() { var me = this;
+    clkMn5_opacity02: function() { "use strict"; var me = this;
         $("#" + me.pre + "mn5_opacity02").click(function(e) {
            me.setOption('opacity', '0.2');
            me.setLogCmd('set surface opacity 0.2', true);
@@ -3909,7 +3909,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    clkMn5_opacity01: function() { var me = this;
+    clkMn5_opacity01: function() { "use strict"; var me = this;
         $("#" + me.pre + "mn5_opacity01").click(function(e) {
            me.setOption('opacity', '0.1');
            me.setLogCmd('set surface opacity 0.1', true);
@@ -3918,7 +3918,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    clkMn5_wireframeYes: function() { var me = this;
+    clkMn5_wireframeYes: function() { "use strict"; var me = this;
         $("#" + me.pre + "mn5_wireframeYes").click(function(e) {
            me.setOption('wireframe', 'yes');
            me.setLogCmd('set surface wireframe on', true);
@@ -3927,7 +3927,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    clkMn5_wireframeNo: function() { var me = this;
+    clkMn5_wireframeNo: function() { "use strict"; var me = this;
         $("#" + me.pre + "mn5_wireframeNo").click(function(e) {
            me.setOption('wireframe', 'no');
            me.setLogCmd('set surface wireframe off', true);
@@ -3936,7 +3936,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    clkMn5_elecmap2fofc: function() { var me = this;
+    clkMn5_elecmap2fofc: function() { "use strict"; var me = this;
         $("#" + me.pre + "mn5_elecmap2fofc").click(function(e) {
            me.openDialog(me.pre + 'dl_elecmap2fofc', '2Fo-Fc Electron Density Map');
 
@@ -3944,7 +3944,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    clkMn5_elecmapfofc: function() { var me = this;
+    clkMn5_elecmapfofc: function() { "use strict"; var me = this;
         $("#" + me.pre + "mn5_elecmapfofc").click(function(e) {
            me.openDialog(me.pre + 'dl_elecmapfofc', 'Fo-Fc Electron Density Map');
 
@@ -3952,7 +3952,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    clkMn5_elecmapNo: function() { var me = this;
+    clkMn5_elecmapNo: function() { "use strict"; var me = this;
         $("#" + me.pre + "mn5_elecmapNo").add("#" + me.pre + "elecmapNo2").add("#" + me.pre + "elecmapNo3").add("#" + me.pre + "elecmapNo4").click(function(e) {
            me.setOption('map', 'nothing');
            me.setLogCmd('set map nothing', true);
@@ -3961,7 +3961,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    clickApplymap2fofc: function() { var me = this;
+    clickApplymap2fofc: function() { "use strict"; var me = this;
         $("#" + me.pre + "applymap2fofc").click(function(e) {
            e.preventDefault();
            //dialog.dialog( "close" );
@@ -3978,7 +3978,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    clickApplymapfofc: function() { var me = this;
+    clickApplymapfofc: function() { "use strict"; var me = this;
         $("#" + me.pre + "applymapfofc").click(function(e) {
            e.preventDefault();
            //dialog.dialog( "close" );
@@ -3995,7 +3995,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    clkMn5_mapwireframeYes: function() { var me = this;
+    clkMn5_mapwireframeYes: function() { "use strict"; var me = this;
         $("#" + me.pre + "mn5_mapwireframeYes").click(function(e) {
            //me.Dsn6Parser(me.inputid);
 
@@ -4006,7 +4006,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    clkMn5_mapwireframeNo: function() { var me = this;
+    clkMn5_mapwireframeNo: function() { "use strict"; var me = this;
         $("#" + me.pre + "mn5_mapwireframeNo").click(function(e) {
            me.setOption('mapwireframe', 'no');
            me.setLogCmd('set map wireframe off', true);
@@ -4015,7 +4015,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    clkMn5_emmap: function() { var me = this;
+    clkMn5_emmap: function() { "use strict"; var me = this;
         $("#" + me.pre + "mn5_emmap").click(function(e) {
            me.openDialog(me.pre + 'dl_emmap', 'EM Density Map');
 
@@ -4023,7 +4023,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    clkMn5_emmapNo: function() { var me = this;
+    clkMn5_emmapNo: function() { "use strict"; var me = this;
         $("#" + me.pre + "mn5_emmapNo").add("#" + me.pre + "emmapNo2").click(function(e) {
            me.setOption('emmap', 'nothing');
            me.setLogCmd('set emmap nothing', true);
@@ -4032,7 +4032,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    clickApplyemmap: function() { var me = this;
+    clickApplyemmap: function() { "use strict"; var me = this;
         $("#" + me.pre + "applyemmap").click(function(e) {
            e.preventDefault();
            //dialog.dialog( "close" );
@@ -4076,7 +4076,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    clkMn5_emmapwireframeYes: function() { var me = this;
+    clkMn5_emmapwireframeYes: function() { "use strict"; var me = this;
         $("#" + me.pre + "mn5_emmapwireframeYes").click(function(e) {
            //me.Dsn6Parser(me.inputid);
 
@@ -4087,7 +4087,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    clkMn5_emmapwireframeNo: function() { var me = this;
+    clkMn5_emmapwireframeNo: function() { "use strict"; var me = this;
         $("#" + me.pre + "mn5_emmapwireframeNo").click(function(e) {
            me.setOption('emmapwireframe', 'no');
            me.setLogCmd('set emmap wireframe off', true);
@@ -4097,7 +4097,7 @@ iCn3DUI.prototype = {
     },
 
     // mn 6
-    clkMn6_assemblyYes: function() { var me = this;
+    clkMn6_assemblyYes: function() { "use strict"; var me = this;
         $("#" + me.pre + "mn6_assemblyYes").click(function(e) {
            me.icn3d.bAssembly = true;
            me.setLogCmd('set assembly on', true);
@@ -4107,7 +4107,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    clkMn6_assemblyNo: function() { var me = this;
+    clkMn6_assemblyNo: function() { "use strict"; var me = this;
         $("#" + me.pre + "mn6_assemblyNo").click(function(e) {
            me.icn3d.bAssembly = false;
            me.setLogCmd('set assembly off', true);
@@ -4117,7 +4117,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    clkMn6_addlabelAtoms: function() { var me = this;
+    clkMn6_addlabelAtoms: function() { "use strict"; var me = this;
         $("#" + me.pre + "mn6_addlabelAtoms").click(function(e) {
            me.icn3d.addAtomLabels(me.icn3d.hAtoms);
 
@@ -4127,7 +4127,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    clkMn6_addlabelResidues: function() { var me = this;
+    clkMn6_addlabelResidues: function() { "use strict"; var me = this;
         $("#" + me.pre + "mn6_addlabelResidues").click(function(e) {
            me.icn3d.addResiudeLabels(me.icn3d.hAtoms);
 
@@ -4137,7 +4137,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    clkMn6_addlabelChains: function() { var me = this;
+    clkMn6_addlabelChains: function() { "use strict"; var me = this;
         $("#" + me.pre + "mn6_addlabelChains").click(function(e) {
            me.addChainLabels(me.icn3d.hAtoms);
 
@@ -4149,7 +4149,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    clkMn6_addlabelTermini: function() { var me = this;
+    clkMn6_addlabelTermini: function() { "use strict"; var me = this;
         $("#" + me.pre + "mn6_addlabelTermini").click(function(e) {
            me.addTerminiLabels(me.icn3d.hAtoms);
 
@@ -4161,7 +4161,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    clkMn6_addlabelYes: function() { var me = this;
+    clkMn6_addlabelYes: function() { "use strict"; var me = this;
         $("#" + me.pre + "mn6_addlabelYes").click(function(e) {
            me.openDialog(me.pre + 'dl_addlabel', 'Add custom labels by selection');
            me.icn3d.pk = 1;
@@ -4173,7 +4173,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    clkMn6_addlabelSelection: function() { var me = this;
+    clkMn6_addlabelSelection: function() { "use strict"; var me = this;
         $("#" + me.pre + "mn6_addlabelSelection").click(function(e) {
            me.openDialog(me.pre + 'dl_addlabelselection', 'Add custom labels by the selected');
 
@@ -4181,7 +4181,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    clkMn2_saveselection: function() { var me = this;
+    clkMn2_saveselection: function() { "use strict"; var me = this;
         $("#" + me.pre + "mn2_saveselection").click(function(e) {
            me.openDialog(me.pre + 'dl_saveselection', 'Save the selected');
 
@@ -4189,7 +4189,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    clkMn6_addlabelNo: function() { var me = this;
+    clkMn6_addlabelNo: function() { "use strict"; var me = this;
         $("#" + me.pre + "mn6_addlabelNo").add("#" + me.pre + "removeLabels").click(function(e) {
            me.icn3d.pickpair = false;
 
@@ -4211,7 +4211,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    clkMn6_labelscale01: function() { var me = this;
+    clkMn6_labelscale01: function() { "use strict"; var me = this;
         $("#" + me.pre + "mn6_labelscale01").click(function(e) {
            me.icn3d.labelScale = 0.1;
            me.icn3d.draw();
@@ -4219,7 +4219,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    clkMn6_labelscale02: function() { var me = this;
+    clkMn6_labelscale02: function() { "use strict"; var me = this;
         $("#" + me.pre + "mn6_labelscale02").click(function(e) {
            me.icn3d.labelScale = 0.2;
            me.icn3d.draw();
@@ -4227,7 +4227,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    clkMn6_labelscale03: function() { var me = this;
+    clkMn6_labelscale03: function() { "use strict"; var me = this;
         $("#" + me.pre + "mn6_labelscale03").click(function(e) {
            me.icn3d.labelScale = 0.3;
            me.icn3d.draw();
@@ -4235,7 +4235,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    clkMn6_labelscale04: function() { var me = this;
+    clkMn6_labelscale04: function() { "use strict"; var me = this;
         $("#" + me.pre + "mn6_labelscale04").click(function(e) {
            me.icn3d.labelScale = 0.4;
            me.icn3d.draw();
@@ -4243,7 +4243,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    clkMn6_labelscale05: function() { var me = this;
+    clkMn6_labelscale05: function() { "use strict"; var me = this;
         $("#" + me.pre + "mn6_labelscale05").click(function(e) {
            me.icn3d.labelScale = 0.5;
            me.icn3d.draw();
@@ -4251,7 +4251,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    clkMn6_labelscale06: function() { var me = this;
+    clkMn6_labelscale06: function() { "use strict"; var me = this;
         $("#" + me.pre + "mn6_labelscale06").click(function(e) {
            me.icn3d.labelScale = 0.6;
            me.icn3d.draw();
@@ -4259,7 +4259,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    clkMn6_labelscale07: function() { var me = this;
+    clkMn6_labelscale07: function() { "use strict"; var me = this;
         $("#" + me.pre + "mn6_labelscale07").click(function(e) {
            me.icn3d.labelScale = 0.7;
            me.icn3d.draw();
@@ -4267,7 +4267,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    clkMn6_labelscale08: function() { var me = this;
+    clkMn6_labelscale08: function() { "use strict"; var me = this;
         $("#" + me.pre + "mn6_labelscale08").click(function(e) {
            me.icn3d.labelScale = 0.8;
            me.icn3d.draw();
@@ -4275,7 +4275,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    clkMn6_labelscale09: function() { var me = this;
+    clkMn6_labelscale09: function() { "use strict"; var me = this;
         $("#" + me.pre + "mn6_labelscale09").click(function(e) {
            me.icn3d.labelScale = 0.9;
            me.icn3d.draw();
@@ -4283,7 +4283,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    clkMn6_labelscale10: function() { var me = this;
+    clkMn6_labelscale10: function() { "use strict"; var me = this;
         $("#" + me.pre + "mn6_labelscale10").click(function(e) {
            me.icn3d.labelScale = 1.0;
            me.icn3d.draw();
@@ -4291,7 +4291,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    clkMn6_labelscale20: function() { var me = this;
+    clkMn6_labelscale20: function() { "use strict"; var me = this;
         $("#" + me.pre + "mn6_labelscale20").click(function(e) {
            me.icn3d.labelScale = 2.0;
            me.icn3d.draw();
@@ -4299,7 +4299,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    clkMn6_labelscale40: function() { var me = this;
+    clkMn6_labelscale40: function() { "use strict"; var me = this;
         $("#" + me.pre + "mn6_labelscale40").click(function(e) {
            me.icn3d.labelScale = 4.0;
            me.icn3d.draw();
@@ -4307,7 +4307,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    clkMn6_distanceYes: function() { var me = this;
+    clkMn6_distanceYes: function() { "use strict"; var me = this;
         $("#" + me.pre + "mn6_distanceYes").click(function(e) {
            me.openDialog(me.pre + 'dl_distance', 'Measure the distance of atoms');
            me.icn3d.pk = 1;
@@ -4321,7 +4321,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    clkMn6_distanceNo: function() { var me = this;
+    clkMn6_distanceNo: function() { "use strict"; var me = this;
         $("#" + me.pre + "mn6_distanceNo").click(function(e) {
            me.icn3d.pickpair = false;
 
@@ -4339,7 +4339,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    clkMn2_selectedcenter: function() { var me = this;
+    clkMn2_selectedcenter: function() { "use strict"; var me = this;
         $("#" + me.pre + "mn2_selectedcenter").add("#" + me.pre + "zoomin_selection").click(function(e) {
            //me.setLogCmd('zoom selection', true);
 
@@ -4351,7 +4351,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    clkMn6_center: function() { var me = this;
+    clkMn6_center: function() { "use strict"; var me = this;
         $("#" + me.pre + "mn6_center").click(function(e) {
            //me.setLogCmd('center selection', true);
 
@@ -4363,7 +4363,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    clkMn6_resetOrientation: function() { var me = this;
+    clkMn6_resetOrientation: function() { "use strict"; var me = this;
         $("#" + me.pre + "mn6_resetOrientation").add("#" + me.pre + "resetOrientation").click(function(e) {
            //me.setLogCmd('reset orientation', true);
 
@@ -4378,7 +4378,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    clkMn6_chemicalbindingshow: function() { var me = this;
+    clkMn6_chemicalbindingshow: function() { "use strict"; var me = this;
         $("#" + me.pre + "mn6_chemicalbindingshow").add("#" + me.pre + "chemicalbindingshow").click(function(e) {
            me.setOption('chemicalbinding', 'show');
            me.setLogCmd('set chemicalbinding show', true);
@@ -4387,7 +4387,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    clkMn6_chemicalbindinghide: function() { var me = this;
+    clkMn6_chemicalbindinghide: function() { "use strict"; var me = this;
         $("#" + me.pre + "mn6_chemicalbindinghide").add("#" + me.pre + "chemicalbindinghide").click(function(e) {
            me.setOption('chemicalbinding', 'hide');
            me.setLogCmd('set chemicalbinding hide', true);
@@ -4396,7 +4396,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    clkMn6_rotateleft: function() { var me = this;
+    clkMn6_rotateleft: function() { "use strict"; var me = this;
         $("#" + me.pre + "mn6_rotateleft").click(function(e) {
            me.setLogCmd('rotate left', true);
 
@@ -4411,7 +4411,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    clkMn6_rotateright: function() { var me = this;
+    clkMn6_rotateright: function() { "use strict"; var me = this;
         $("#" + me.pre + "mn6_rotateright").click(function(e) {
            me.setLogCmd('rotate right', true);
 
@@ -4426,7 +4426,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    clkMn6_rotateup: function() { var me = this;
+    clkMn6_rotateup: function() { "use strict"; var me = this;
         $("#" + me.pre + "mn6_rotateup").click(function(e) {
            me.setLogCmd('rotate up', true);
 
@@ -4441,7 +4441,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    clkMn6_rotatedown: function() { var me = this;
+    clkMn6_rotatedown: function() { "use strict"; var me = this;
         $("#" + me.pre + "mn6_rotatedown").click(function(e) {
            me.setLogCmd('rotate down', true);
 
@@ -4456,7 +4456,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    clkMn6_rotatex: function() { var me = this;
+    clkMn6_rotatex: function() { "use strict"; var me = this;
         $("#" + me.pre + "mn6_rotatex").click(function(e) {
           me.setLogCmd('rotate x', true);
 
@@ -4467,7 +4467,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    clkMn6_rotatey: function() { var me = this;
+    clkMn6_rotatey: function() { "use strict"; var me = this;
         $("#" + me.pre + "mn6_rotatey").click(function(e) {
           me.setLogCmd('rotate y', true);
 
@@ -4478,7 +4478,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    clkMn6_rotatez: function() { var me = this;
+    clkMn6_rotatez: function() { "use strict"; var me = this;
         $("#" + me.pre + "mn6_rotatez").click(function(e) {
           me.setLogCmd('rotate z', true);
 
@@ -4489,7 +4489,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    clkMn6_cameraPers: function() { var me = this;
+    clkMn6_cameraPers: function() { "use strict"; var me = this;
         $("#" + me.pre + "mn6_cameraPers").click(function(e) {
            me.setOption('camera', 'perspective');
            me.setLogCmd('set camera perspective', true);
@@ -4498,7 +4498,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    clkMn6_cameraOrth: function() { var me = this;
+    clkMn6_cameraOrth: function() { "use strict"; var me = this;
         $("#" + me.pre + "mn6_cameraOrth").click(function(e) {
            me.setOption('camera', 'orthographic');
            me.setLogCmd('set camera orthographic', true);
@@ -4507,7 +4507,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    clkMn6_bkgdBlack: function() { var me = this;
+    clkMn6_bkgdBlack: function() { "use strict"; var me = this;
         $("#" + me.pre + "mn6_bkgdBlack").click(function(e) {
            me.setOption('background', 'black');
            me.setLogCmd('set background black', true);
@@ -4519,7 +4519,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    clkMn6_bkgdGrey: function() { var me = this;
+    clkMn6_bkgdGrey: function() { "use strict"; var me = this;
         $("#" + me.pre + "mn6_bkgdGrey").click(function(e) {
            me.setOption('background', 'grey');
            me.setLogCmd('set background grey', true);
@@ -4531,7 +4531,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    clkMn6_bkgdWhite: function() { var me = this;
+    clkMn6_bkgdWhite: function() { "use strict"; var me = this;
         $("#" + me.pre + "mn6_bkgdWhite").click(function(e) {
            me.setOption('background', 'white');
            me.setLogCmd('set background white', true);
@@ -4543,7 +4543,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    clkMn6_bkgdTransparent: function() { var me = this;
+    clkMn6_bkgdTransparent: function() { "use strict"; var me = this;
         $("#" + me.pre + "mn6_bkgdTransparent").click(function(e) {
            me.setOption('background', 'transparent');
            me.setLogCmd('set background transparent', true);
@@ -4555,7 +4555,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    clkMn6_showfogYes: function() { var me = this;
+    clkMn6_showfogYes: function() { "use strict"; var me = this;
         $("#" + me.pre + "mn6_showfogYes").click(function(e) {
            //me.setOption('fog', 'yes');
            me.icn3d.opts['fog'] = 'yes';
@@ -4567,7 +4567,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    clkMn6_showfogNo: function() { var me = this;
+    clkMn6_showfogNo: function() { "use strict"; var me = this;
         $("#" + me.pre + "mn6_showfogNo").click(function(e) {
            //me.setOption('fog', 'no');
            me.icn3d.opts['fog'] = 'no';
@@ -4579,7 +4579,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    clkMn6_showslabYes: function() { var me = this;
+    clkMn6_showslabYes: function() { "use strict"; var me = this;
         $("#" + me.pre + "mn6_showslabYes").click(function(e) {
            me.setOption('slab', 'yes');
            me.setLogCmd('set slab on', true);
@@ -4588,7 +4588,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    clkMn6_showslabNo: function() { var me = this;
+    clkMn6_showslabNo: function() { "use strict"; var me = this;
         $("#" + me.pre + "mn6_showslabNo").click(function(e) {
            me.setOption('slab', 'no');
            me.setLogCmd('set slab off', true);
@@ -4597,7 +4597,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    clkMn6_showaxisYes: function() { var me = this;
+    clkMn6_showaxisYes: function() { "use strict"; var me = this;
         $("#" + me.pre + "mn6_showaxisYes").click(function(e) {
            me.setOption('axis', 'yes');
            me.setLogCmd('set axis on', true);
@@ -4606,7 +4606,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    clkMn6_showaxisNo: function() { var me = this;
+    clkMn6_showaxisNo: function() { "use strict"; var me = this;
         $("#" + me.pre + "mn6_showaxisNo").click(function(e) {
            me.setOption('axis', 'no');
            me.setLogCmd('set axis off', true);
@@ -4615,7 +4615,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    clkMn6_hbondsYes: function() { var me = this;
+    clkMn6_hbondsYes: function() { "use strict"; var me = this;
         $("#" + me.pre + "mn6_hbondsYes").add("#" + me.pre + "hbondsYes").click(function(e) {
             if(me.bSetChainsAdvancedMenu === undefined || !me.bSetChainsAdvancedMenu) {
                var prevHAtoms = me.icn3d.cloneHash(me.icn3d.hAtoms);
@@ -4646,7 +4646,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    clkMn6_hbondsNo: function() { var me = this;
+    clkMn6_hbondsNo: function() { "use strict"; var me = this;
         $("#" + me.pre + "mn6_hbondsNo").click(function(e) {
            me.hideHbondsContacts();
 
@@ -4654,7 +4654,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    hideHbondsContacts: function() { var me = this;
+    hideHbondsContacts: function() { "use strict"; var me = this;
            var select = "set hbonds off";
            me.setLogCmd(select, true);
 
@@ -4672,7 +4672,7 @@ iCn3DUI.prototype = {
            me.icn3d.hideContact();
     },
 
-    clkmn1_stabilizerYes: function() { var me = this;
+    clkmn1_stabilizerYes: function() { "use strict"; var me = this;
         $("#" + me.pre + "mn1_stabilizerYes").click(function(e) {
            //me.openDialog(me.pre + 'dl_stabilizer', 'Hydrogen bonds inside selection');
 
@@ -4688,7 +4688,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    clkmn1_stabilizerNo: function() { var me = this;
+    clkmn1_stabilizerNo: function() { "use strict"; var me = this;
         $("#" + me.pre + "mn1_stabilizerNo").click(function(e) {
            var select = "set stabilizer off";
            me.setLogCmd(select, true);
@@ -4701,7 +4701,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    clkmn1_stabilizerOne: function() { var me = this;
+    clkmn1_stabilizerOne: function() { "use strict"; var me = this;
         $("#" + me.pre + "mn1_stabilizerOne").click(function(e) {
            me.openDialog(me.pre + 'dl_stabilizer', 'Add One Stabilizer');
            me.icn3d.pk = 1;
@@ -4713,7 +4713,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    clkmn1_stabilizerRmOne: function() { var me = this;
+    clkmn1_stabilizerRmOne: function() { "use strict"; var me = this;
         $("#" + me.pre + "mn1_stabilizerRmOne").click(function(e) {
            me.openDialog(me.pre + 'dl_stabilizer_rm', 'Remove One Stabilizer');
            me.icn3d.pk = 1;
@@ -4725,7 +4725,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    clkmn1_thicknessSet: function() { var me = this;
+    clkmn1_thicknessSet: function() { "use strict"; var me = this;
         $("#" + me.pre + "mn1_thicknessSet").click(function(e) {
            me.openDialog(me.pre + 'dl_thickness', 'Set Thickness for 3D Printing');
 
@@ -4733,7 +4733,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    clkmn5_setThickness: function() { var me = this;
+    clkmn5_setThickness: function() { "use strict"; var me = this;
         $("#" + me.pre + "mn3_setThickness").click(function(e) {
            me.openDialog(me.pre + 'dl_thickness2', 'Set Thickness');
 
@@ -4741,7 +4741,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    clkmn1_thicknessReset: function() { var me = this;
+    clkmn1_thicknessReset: function() { "use strict"; var me = this;
         $("#" + me.pre + "mn1_thicknessReset").click(function(e) {
            var select = "reset thickness";
            me.setLogCmd(select, true);
@@ -4755,7 +4755,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    clkMn6_ssbondsYes: function() { var me = this;
+    clkMn6_ssbondsYes: function() { "use strict"; var me = this;
         $("#" + me.pre + "mn6_ssbondsYes").click(function(e) {
            var select = "disulfide bonds";
            me.setLogCmd(select, true);
@@ -4766,7 +4766,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    clkMn6_ssbondsExport: function() { var me = this;
+    clkMn6_ssbondsExport: function() { "use strict"; var me = this;
         $("#" + me.pre + "mn6_ssbondsExport").click(function(e) {
            me.exportSsbondPairs();
 
@@ -4776,7 +4776,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    clkMn6_ssbondsNo: function() { var me = this;
+    clkMn6_ssbondsNo: function() { "use strict"; var me = this;
         $("#" + me.pre + "mn6_ssbondsNo").click(function(e) {
            me.icn3d.opts["ssbonds"] = "no";
 
@@ -4791,7 +4791,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    clkMn6_clbondsYes: function() { var me = this;
+    clkMn6_clbondsYes: function() { "use strict"; var me = this;
         $("#" + me.pre + "mn6_clbondsYes").click(function(e) {
            var select = "cross linkage";
            me.setLogCmd(select, true);
@@ -4805,7 +4805,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    clkMn6_clbondsNo: function() { var me = this;
+    clkMn6_clbondsNo: function() { "use strict"; var me = this;
         $("#" + me.pre + "mn6_clbondsNo").click(function(e) {
            me.icn3d.opts["clbonds"] = "no";
 
@@ -4823,7 +4823,7 @@ iCn3DUI.prototype = {
     },
 
     // other
-    clickViewswitch: function() { var me = this;
+    clickViewswitch: function() { "use strict"; var me = this;
 /*
         $("#" + me.pre + "viewswitch").click(function(e) {
             if($("#" + me.pre + "viewswitch")[0].checked) { // mode: Detailed View
@@ -4851,7 +4851,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    clickShow_annotations: function() { var me = this;
+    clickShow_annotations: function() { "use strict"; var me = this;
         $("#" + me.pre + "show_annotations").click(function(e) {
              me.showAnnotations();
              me.setLogCmd("view annotations", true);
@@ -4860,7 +4860,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    clickShowallchains: function() { var me = this;
+    clickShowallchains: function() { "use strict"; var me = this;
         $("#" + me.pre + "showallchains").click(function(e) {
            me.showAnnoAllChains();
            me.setLogCmd("show annotations all chains", true);
@@ -4869,7 +4869,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    clickShow_alignsequences: function() { var me = this;
+    clickShow_alignsequences: function() { "use strict"; var me = this;
         $("#" + me.pre + "show_alignsequences").click(function(e) {
              me.openDialog(me.pre + 'dl_alignment', 'Select residues in aligned sequences');
 
@@ -4877,7 +4877,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    clickShow_2ddgm: function() { var me = this;
+    clickShow_2ddgm: function() { "use strict"; var me = this;
         $("#" + me.pre + "show_2ddgm").add("#" + me.pre + "mn2_2ddgm").click(function(e) {
              me.openDialog(me.pre + 'dl_2ddgm', 'Interactions');
              me.retrieveInteractionData();
@@ -4888,7 +4888,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    retrieveInteractionData: function() { var me = this;
+    retrieveInteractionData: function() { "use strict"; var me = this;
          if(!me.b2DShown) {
              if(me.cfg.align !== undefined) {
                  var structureArray = Object.keys(me.icn3d.structures);
@@ -4909,7 +4909,7 @@ iCn3DUI.prototype = {
          }
     },
 
-    clickSearchSeq: function() { var me = this;
+    clickSearchSeq: function() { "use strict"; var me = this;
         $(document).on("click", "#" + me.pre + "search_seq_button", function(e) {
            e.stopImmediatePropagation();
 
@@ -4930,7 +4930,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    clickReload_mmtf: function() { var me = this;
+    clickReload_mmtf: function() { "use strict"; var me = this;
         $("#" + me.pre + "reload_mmtf").click(function(e) {
            e.preventDefault();
 
@@ -4944,7 +4944,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    clickReload_pdb: function() { var me = this;
+    clickReload_pdb: function() { "use strict"; var me = this;
         $("#" + me.pre + "reload_pdb").click(function(e) {
            e.preventDefault();
 
@@ -4958,7 +4958,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    clickReload_opm: function() { var me = this;
+    clickReload_opm: function() { "use strict"; var me = this;
         $("#" + me.pre + "reload_opm").click(function(e) {
            e.preventDefault();
 
@@ -4972,7 +4972,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    clickReload_align_refined: function() { var me = this;
+    clickReload_align_refined: function() { "use strict"; var me = this;
         $("#" + me.pre + "reload_align_refined").click(function(e) {
            e.preventDefault();
 
@@ -4988,7 +4988,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    clickReload_align_ori: function() { var me = this;
+    clickReload_align_ori: function() { "use strict"; var me = this;
         $("#" + me.pre + "reload_align_ori").click(function(e) {
            e.preventDefault();
 
@@ -5004,7 +5004,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    clickReload_chainalign: function() { var me = this;
+    clickReload_chainalign: function() { "use strict"; var me = this;
         $("#" + me.pre + "reload_chainalign").click(function(e) {
            e.preventDefault();
 
@@ -5020,7 +5020,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    clickReload_mmcif: function() { var me = this;
+    clickReload_mmcif: function() { "use strict"; var me = this;
         $("#" + me.pre + "reload_mmcif").click(function(e) {
            e.preventDefault();
 
@@ -5034,7 +5034,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    clickReload_mmdb: function() { var me = this;
+    clickReload_mmdb: function() { "use strict"; var me = this;
         $("#" + me.pre + "reload_mmdb").click(function(e) {
            e.preventDefault();
 
@@ -5049,7 +5049,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    clickReload_blast_rep_id: function() { var me = this;
+    clickReload_blast_rep_id: function() { "use strict"; var me = this;
         $("#" + me.pre + "reload_blast_rep_id").click(function(e) {
            e.preventDefault();
 
@@ -5097,7 +5097,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    clickReload_gi: function() { var me = this;
+    clickReload_gi: function() { "use strict"; var me = this;
         $("#" + me.pre + "reload_gi").click(function(e) {
            e.preventDefault();
 
@@ -5111,7 +5111,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    clickReload_cid: function() { var me = this;
+    clickReload_cid: function() { "use strict"; var me = this;
         $("#" + me.pre + "reload_cid").click(function(e) {
            e.preventDefault();
 
@@ -5125,7 +5125,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    clickReload_pngimage: function() { var me = this;
+    clickReload_pngimage: function() { "use strict"; var me = this;
         $("#" + me.pre + "reload_pngimage").click(function(e) {
            e.preventDefault();
 
@@ -5243,7 +5243,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    clickReload_state: function() { var me = this;
+    clickReload_state: function() { "use strict"; var me = this;
         $("#" + me.pre + "reload_state").click(function(e) {
            e.preventDefault();
 
@@ -5288,7 +5288,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    clickReload_selectionfile: function() { var me = this;
+    clickReload_selectionfile: function() { "use strict"; var me = this;
         $("#" + me.pre + "reload_selectionfile").click(function(e) {
            e.preventDefault();
 
@@ -5322,7 +5322,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    loadDsn6File: function(type) { var me = this;
+    loadDsn6File: function(type) { "use strict"; var me = this;
        var file = $("#" + me.pre + "dsn6file" + type)[0].files[0];
        var sigma = $("#" + me.pre + "dsn6sigma" + type).val();
 
@@ -5356,7 +5356,7 @@ iCn3DUI.prototype = {
        }
     },
 
-    clickReload_dsn6file: function() { var me = this;
+    clickReload_dsn6file: function() { "use strict"; var me = this;
         $("#" + me.pre + "reload_dsn6file2fofc").click(function(e) {
            e.preventDefault();
 
@@ -5374,7 +5374,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    clickReload_pdbfile: function() { var me = this;
+    clickReload_pdbfile: function() { "use strict"; var me = this;
         $("#" + me.pre + "reload_pdbfile").click(function(e) {
            e.preventDefault();
 
@@ -5419,7 +5419,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    clickReload_mol2file: function() { var me = this;
+    clickReload_mol2file: function() { "use strict"; var me = this;
         $("#" + me.pre + "reload_mol2file").click(function(e) {
            e.preventDefault();
 
@@ -5466,7 +5466,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    clickReload_sdffile: function() { var me = this;
+    clickReload_sdffile: function() { "use strict"; var me = this;
         $("#" + me.pre + "reload_sdffile").click(function(e) {
            e.preventDefault();
 
@@ -5512,7 +5512,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    clickReload_xyzfile: function() { var me = this;
+    clickReload_xyzfile: function() { "use strict"; var me = this;
         $("#" + me.pre + "reload_xyzfile").click(function(e) {
            e.preventDefault();
 
@@ -5558,7 +5558,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    clickReload_urlfile: function() { var me = this;
+    clickReload_urlfile: function() { "use strict"; var me = this;
         $("#" + me.pre + "reload_urlfile").click(function(e) {
            e.preventDefault();
 
@@ -5582,7 +5582,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    clickReload_mmciffile: function() { var me = this;
+    clickReload_mmciffile: function() { "use strict"; var me = this;
         $("#" + me.pre + "reload_mmciffile").click(function(e) {
            e.preventDefault();
 
@@ -5661,7 +5661,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    clickApplycustomcolor: function() { var me = this;
+    clickApplycustomcolor: function() { "use strict"; var me = this;
         $("#" + me.pre + "applycustomcolor").click(function(e) {
            e.preventDefault();
            dialog.dialog( "close" );
@@ -5673,7 +5673,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    clickApplypick_aroundsphere: function() { var me = this;
+    clickApplypick_aroundsphere: function() { "use strict"; var me = this;
         $("#" + me.pre + "atomsCustomSphere2").add("#" + me.pre + "atomsCustomSphere").add("#" + me.pre + "radius_aroundsphere").change(function(e) {
             me.bSphereCalc = false;
             //me.setLogCmd('set calculate sphere false', true);
@@ -5729,7 +5729,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    clickApply_adjustmem: function() { var me = this;
+    clickApply_adjustmem: function() { "use strict"; var me = this;
         $("#" + me.pre + "apply_adjustmem").click(function(e) {
             //e.preventDefault();
             dialog.dialog( "close" );
@@ -5745,7 +5745,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    adjustMembrane: function(extra_mem_z, intra_mem_z) { var me = this;
+    adjustMembrane: function(extra_mem_z, intra_mem_z) { "use strict"; var me = this;
         for(var i in me.icn3d.chains[me.inputid.toUpperCase() + '_MEM']) {
             var atom = me.icn3d.atoms[i];
 
@@ -5766,7 +5766,7 @@ iCn3DUI.prototype = {
         me.icn3d.draw();
     },
 
-    clickApply_selectplane: function() { var me = this;
+    clickApply_selectplane: function() { "use strict"; var me = this;
         $("#" + me.pre + "apply_selectplane").click(function(e) {
             //e.preventDefault();
             dialog.dialog( "close" );
@@ -5782,7 +5782,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    selectBtwPlanes: function(large, small) { var me = this;
+    selectBtwPlanes: function(large, small) { "use strict"; var me = this;
         if(large < small) {
             var tmp = small;
             small = large;
@@ -5805,7 +5805,7 @@ iCn3DUI.prototype = {
         me.selectResidueList(residueHash, commandname, commanddescr, false);
     },
 
-    displayInteraction3d: function(nameArray2, nameArray, bHbondCalc, interactionTypes) { var me = this;
+    displayInteraction3d: function(nameArray2, nameArray, bHbondCalc, interactionTypes) { "use strict"; var me = this;
        me.icn3d.bRender = false;
        var hAtoms = {};
        var prevHatoms = me.icn3d.cloneHash(me.icn3d.hAtoms);
@@ -5851,7 +5851,7 @@ iCn3DUI.prototype = {
        me.bHbondCalc = true;
     },
 
-    clickApplyhbonds: function() { var me = this;
+    clickApplyhbonds: function() { "use strict"; var me = this;
         $("#" + me.pre + "atomsCustomHbond2").add("#" + me.pre + "atomsCustomHbond").add("#" + me.pre + "analysis_hbond").add("#" + me.pre + "analysis_saltbridge").add("#" + me.pre + "analysis_contact").add("#" + me.pre + "hbondthreshold").add("#" + me.pre + "saltbridgethreshold").add("#" + me.pre + "contactthreshold").change(function(e) {
             me.bHbondCalc = false;
             //me.setLogCmd('set calculate hbond false', true);
@@ -5988,7 +5988,7 @@ iCn3DUI.prototype = {
 
     },
 
-    resetInteractionPairs: function() { var me = this;
+    resetInteractionPairs: function() { "use strict"; var me = this;
        $("#" + me.pre + "analysis_hbond")[0].checked = true;
        $("#" + me.pre + "analysis_saltbridge")[0].checked = false;
        $("#" + me.pre + "analysis_contact")[0].checked = false;
@@ -6008,7 +6008,7 @@ iCn3DUI.prototype = {
        me.clearHighlight();
     },
 
-    viewInteractionPairs: function(nameArray2, nameArray, bHbondCalc, bHbond, bSaltbridge, bInteraction, bSave) { var me = this;
+    viewInteractionPairs: function(nameArray2, nameArray, bHbondCalc, bHbond, bSaltbridge, bInteraction, bSave) { "use strict"; var me = this;
        me.icn3d.bRender = false;
        var hAtoms = {};
        var prevHatoms = me.icn3d.cloneHash(me.icn3d.hAtoms);
@@ -6108,7 +6108,7 @@ iCn3DUI.prototype = {
        return interactionTypes;
     },
 
-    clickApplypick_labels: function() { var me = this;
+    clickApplypick_labels: function() { "use strict"; var me = this;
         $("#" + me.pre + "applypick_labels").click(function(e) {
            e.preventDefault();
            dialog.dialog( "close" );
@@ -6148,7 +6148,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    clickApplyselection_labels: function() { var me = this;
+    clickApplyselection_labels: function() { "use strict"; var me = this;
         $("#" + me.pre + "applyselection_labels").click(function(e) {
            e.preventDefault();
            dialog.dialog( "close" );
@@ -6183,7 +6183,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    clickApplypick_stabilizer: function() { var me = this;
+    clickApplypick_stabilizer: function() { "use strict"; var me = this;
         $("#" + me.pre + "applypick_stabilizer").click(function(e) {
            e.preventDefault();
            dialog.dialog( "close" );
@@ -6212,7 +6212,7 @@ iCn3DUI.prototype = {
 
     // https://github.com/tovic/color-picker
     // https://tovic.github.io/color-picker/color-picker.value-update.html
-    pickColor: function() { var me = this;
+    pickColor: function() { "use strict"; var me = this;
         var picker = new CP(document.querySelector("#" + me.pre + "colorcustom"));
 
         picker.on("change", function(color) {
@@ -6225,7 +6225,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    clickApplypick_stabilizer_rm: function() { var me = this;
+    clickApplypick_stabilizer_rm: function() { "use strict"; var me = this;
         $("#" + me.pre + "applypick_stabilizer_rm").click(function(e) {
            e.preventDefault();
            dialog.dialog( "close" );
@@ -6253,7 +6253,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    clickApplypick_measuredistance: function() { var me = this;
+    clickApplypick_measuredistance: function() { "use strict"; var me = this;
         $("#" + me.pre + "applypick_measuredistance").click(function(e) {
            e.preventDefault();
            dialog.dialog( "close" );
@@ -6294,7 +6294,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    clickApply_thickness: function() { var me = this;
+    clickApply_thickness: function() { "use strict"; var me = this;
         $("#" + me.pre + "apply_thickness_3dprint").click(function(e) {
             e.preventDefault();
             //dialog.dialog( "close" );
@@ -6342,7 +6342,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    clickReset: function() { var me = this;
+    clickReset: function() { "use strict"; var me = this;
         $("#" + me.pre + "reset").click(function(e) {
             //me.setLogCmd("reset", true);
 
@@ -6367,7 +6367,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    clickToggleHighlight: function() { var me = this;
+    clickToggleHighlight: function() { "use strict"; var me = this;
         $("#" + me.pre + "toggleHighlight").add("#" + me.pre + "toggleHighlight2").click(function(e) {
             e.stopImmediatePropagation();
             me.toggleHighlight();
@@ -6398,7 +6398,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    pressCommandtext: function() { var me = this;
+    pressCommandtext: function() { "use strict"; var me = this;
         $("#" + me.pre + "logtext").keypress(function(e){
            me.bAddLogs = false; // turn off log
 
@@ -6470,7 +6470,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    clickSeqSaveSelection: function() { var me = this;
+    clickSeqSaveSelection: function() { "use strict"; var me = this;
         $(document).on("click", "#" + me.pre + "seq_saveselection", function(e) {
            e.stopImmediatePropagation();
            dialog.dialog( "close" );
@@ -6509,7 +6509,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    clickAlignSeqSaveSelection: function() { var me = this;
+    clickAlignSeqSaveSelection: function() { "use strict"; var me = this;
         $(document).on("click", "#" + me.pre + "alignseq_saveselection", function(e) {
             e.stopImmediatePropagation();
 
@@ -6529,7 +6529,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    clickOutputSelection: function() { var me = this;
+    clickOutputSelection: function() { "use strict"; var me = this;
         $(document).on("click", "." + me.pre + "outputselection", function(e) {
               e.stopImmediatePropagation();
             me.bSelectResidue = false;
@@ -6541,7 +6541,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    clickResidueOnInteraction: function() { var me = this;
+    clickResidueOnInteraction: function() { "use strict"; var me = this;
         // highlight a pair residues
         $(document).on("click", "." + me.pre + "selres", function(e) {
               e.stopImmediatePropagation();
@@ -6594,7 +6594,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    bindMouseup: function() { var me = this;
+    bindMouseup: function() { "use strict"; var me = this;
         $("accordion").bind('mouseup touchend', function (e) {
           if(me.icn3d.controls) {
             me.icn3d.controls.noRotate = false;
@@ -6604,7 +6604,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    bindMousedown: function() { var me = this;
+    bindMousedown: function() { "use strict"; var me = this;
         $("accordion").bind('mousedown touchstart', function (e) {
           if(me.icn3d.controls) {
             me.icn3d.controls.noRotate = true;
@@ -6614,7 +6614,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    expandShrink: function() { var me = this;
+    expandShrink: function() { "use strict"; var me = this;
         //$("[id$=_cddseq_expand]").on('click', '.ui-icon-plus', function(e) {
         $(document).on("click", ".icn3d-expand", function(e) {
             e.stopImmediatePropagation();
@@ -6642,7 +6642,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    scrollAnno: function() { var me = this;
+    scrollAnno: function() { "use strict"; var me = this;
         window.onscroll = function (e) {
             if(me.view == 'detailed view' && $(window).scrollTop() == 0 && $(window).scrollTop() == 0 && $("#" + me.pre + "dl_selectannotations").scrollTop() == 0) {
                 // show fixed titles
@@ -6667,7 +6667,7 @@ iCn3DUI.prototype = {
     },
 
     // ===== events end
-    allEventFunctions: function() { var me = this;
+    allEventFunctions: function() { "use strict"; var me = this;
         me.clickModeswitch();
         me.clickViewswitch();
 

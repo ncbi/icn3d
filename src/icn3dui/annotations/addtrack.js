@@ -2,7 +2,7 @@
  * @author Jiyao Wang <wangjiy@ncbi.nlm.nih.gov> / https://github.com/ncbi/icn3d
  */
 
-iCn3DUI.prototype.clickAddTrack = function() { var me = this;
+iCn3DUI.prototype.clickAddTrack = function() { "use strict"; var me = this;
     $(document).on('click', ".icn3d-addtrack", function(e) {
       e.stopImmediatePropagation();
 
@@ -17,7 +17,7 @@ iCn3DUI.prototype.clickAddTrack = function() { var me = this;
     });
 };
 
-iCn3DUI.prototype.clickDefineHelix = function() { var me = this;
+iCn3DUI.prototype.clickDefineHelix = function() { "use strict"; var me = this;
     $(document).on('click', ".icn3d-helixsets", function(e) {
       e.stopImmediatePropagation();
 
@@ -30,7 +30,7 @@ iCn3DUI.prototype.clickDefineHelix = function() { var me = this;
     });
 };
 
-iCn3DUI.prototype.clickDefineSheet = function() { var me = this;
+iCn3DUI.prototype.clickDefineSheet = function() { "use strict"; var me = this;
     $(document).on('click', ".icn3d-sheetsets", function(e) {
       e.stopImmediatePropagation();
 
@@ -43,7 +43,7 @@ iCn3DUI.prototype.clickDefineSheet = function() { var me = this;
     });
 };
 
-iCn3DUI.prototype.clickDefineCoil = function() { var me = this;
+iCn3DUI.prototype.clickDefineCoil = function() { "use strict"; var me = this;
     $(document).on('click', ".icn3d-coilsets", function(e) {
       e.stopImmediatePropagation();
 
@@ -56,14 +56,14 @@ iCn3DUI.prototype.clickDefineCoil = function() { var me = this;
     });
 };
 
-iCn3DUI.prototype.clickDeleteSets = function() { var me = this;
+iCn3DUI.prototype.clickDeleteSets = function() { "use strict"; var me = this;
     $("#" + me.pre + "deletesets").click(function(e) {
          me.deleteSelectedSets();
          me.setLogCmd("delete selected sets", true);
     });
 };
 
-iCn3DUI.prototype.defineSecondary = function(chainid, type) { var me = this;
+iCn3DUI.prototype.defineSecondary = function(chainid, type) { "use strict"; var me = this;
     if(!$('#' + me.pre + 'dl_definedsets').hasClass('ui-dialog-content') || !$('#' + me.pre + 'dl_definedsets').dialog( 'isOpen' )) {
         me.openDialog(me.pre + 'dl_definedsets', 'Select sets');
         $("#" + me.pre + "atomsCustom").resizable();
@@ -174,7 +174,7 @@ iCn3DUI.prototype.defineSecondary = function(chainid, type) { var me = this;
     }
 };
 
-iCn3DUI.prototype.simplifyText = function(text) { var me = this;
+iCn3DUI.prototype.simplifyText = function(text) { "use strict"; var me = this;
     var out = ''; // 1-based text positions
     var bFoundText = false;
 
@@ -210,7 +210,7 @@ iCn3DUI.prototype.simplifyText = function(text) { var me = this;
     return out;
 };
 
-iCn3DUI.prototype.alignSequenceToStructure = function(chainid, data, title) { var me = this;
+iCn3DUI.prototype.alignSequenceToStructure = function(chainid, data, title) { "use strict"; var me = this;
   var query, target;
 
   if(data.data !== undefined) {
@@ -261,7 +261,7 @@ iCn3DUI.prototype.alignSequenceToStructure = function(chainid, data, title) { va
   me.setLogCmd("add track | chainid " + chainid + " | title " + title + " | text " + me.simplifyText(text), true);
 };
 
-iCn3DUI.prototype.clickAddTrackButton = function() { var me = this;
+iCn3DUI.prototype.clickAddTrackButton = function() { "use strict"; var me = this;
     // ncbi gi/accession
     $(document).on('click', "#" + me.pre + "addtrack_button1", function(e) {
        e.stopImmediatePropagation();
@@ -515,7 +515,7 @@ iCn3DUI.prototype.clickAddTrackButton = function() { var me = this;
 
 };
 
-iCn3DUI.prototype.showNewTrack = function(chnid, title, text, cssColorArray, target2queryHash) {  var me = this;
+iCn3DUI.prototype.showNewTrack = function(chnid, title, text, cssColorArray, target2queryHash) {  "use strict"; var me = this;
     //if(me.customTracks[chnid] === undefined) {
     //    me.customTracks[chnid] = {};
     //}
@@ -643,7 +643,7 @@ iCn3DUI.prototype.showNewTrack = function(chnid, title, text, cssColorArray, tar
     $("#" + me.pre + "tt_custom_" + chnid + "_" + simpTitle).html(html3);
 };
 
-iCn3DUI.prototype.checkGiSeq = function (chainid, title, text, index) { var me = this;
+iCn3DUI.prototype.checkGiSeq = function (chainid, title, text, index) { "use strict"; var me = this;
     if(index > 20) return false;
 
     if(me.giSeq !== undefined && me.giSeq[chainid] !== undefined) {
@@ -656,7 +656,7 @@ iCn3DUI.prototype.checkGiSeq = function (chainid, title, text, index) { var me =
     setTimeout(function(){ me.checkGiSeq(chainid, title, text, index + 1); }, 100);
 };
 
-iCn3DUI.prototype.getFullText = function (text) { var me = this;
+iCn3DUI.prototype.getFullText = function (text) { "use strict"; var me = this;
     var out = '';
 
     var textArray = text.split(',');

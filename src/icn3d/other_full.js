@@ -4,7 +4,7 @@
 
 //http://www.imgt.org/IMGTeducation/Aide-memoire/_UK/aminoacids/charge/#hydrogen
 // return: 'donor', 'acceptor', 'both', 'ring', 'none'
-iCn3D.prototype.isHbondDonorAcceptor = function (atom) { var me = this;
+iCn3D.prototype.isHbondDonorAcceptor = function (atom) { "use strict"; var me = this;
   if( (atom.name == 'N' && !atom.het ) // backbone
     || (atom.elem == 'N' && atom.resn == 'Arg')
     || (atom.elem == 'N' && atom.resn == 'Asn')
@@ -118,7 +118,7 @@ iCn3D.prototype.isHbondDonorAcceptor = function (atom) { var me = this;
  * @param  {AtomProxy} ap2 Second atom
  * @return {number[]}        Angles in radians
  */
-iCn3D.prototype.calcAngles = function (ap1, ap2) {
+iCn3D.prototype.calcAngles = function (ap1, ap2) { "use strict"; var me = this;
   var angles = [];
   var d1 = new THREE.Vector3();
   var d2 = new THREE.Vector3();
@@ -142,7 +142,7 @@ iCn3D.prototype.calcAngles = function (ap1, ap2) {
  * @param  {AtomProxy} ap2 Second atom (out-of-plane)
  * @return {number}        Angle from plane to second atom
  */
-iCn3D.prototype.calcPlaneAngle = function (ap1, ap2) {
+iCn3D.prototype.calcPlaneAngle = function (ap1, ap2) { "use strict"; var me = this;
   var x1 = ap1;
 
   var v12 = new THREE.Vector3();
@@ -178,7 +178,7 @@ iCn3D.prototype.calcPlaneAngle = function (ap1, ap2) {
 
 // https://www.rcsb.org/pages/help/3dview#ligand-view
 // exclude pairs accordingto angles
-iCn3D.prototype.isValidHbond = function (atom, atomHbond, threshold) { var me = this;
+iCn3D.prototype.isValidHbond = function (atom, atomHbond, threshold) { "use strict"; var me = this;
       // return: 'donor', 'acceptor', 'both', 'ring', 'none'
       var atomType = this.isHbondDonorAcceptor(atom);
       var atomHbondType = this.isHbondDonorAcceptor(atomHbond);
@@ -257,108 +257,10 @@ iCn3D.prototype.isValidHbond = function (atom, atomHbond, threshold) { var me = 
       //}
 
       return true;
-
-/*
-      var bondAtoms2 = [];
-      for(var k = 0, kl = atomHbond.bonds.length; k < kl; ++k) {
-          bondAtoms2.push(this.atoms[atomHbond.bonds[k]]);
-      }
-
-      // The angles DA-D-A and D-A-AA should be between 45 and 135 degree, or between Math.PI * 0.25 and Math.PI * 0.75
-      var angleMin = Math.PI * 0.25, angleMax = Math.PI * 0.75;
-      var v1 = atom.coord; // new THREE.Vector3(atom.coord.x, atom.coord.y, atom.coord.z);
-      var v2 = atomHbond.coord; // new THREE.Vector3(atomHbond.coord.x, atomHbond.coord.y, atomHbond.coord.z);
-      var v12 = v2.clone().sub(v1);
-      var v21 = v1.clone().sub(v2);
-      var v0 = new THREE.Vector3(0,0,0);
-
-      var bValid = true;
-
-      for(var k = 0, kl = bondAtoms.length; k < kl && !v12.equals(v0); ++k) {
-          var va = new THREE.Vector3(bondAtoms[k].coord.x, bondAtoms[k].coord.y, bondAtoms[k].coord.z);
-          var v1a = va.clone().sub(v1);
-          if( v1a.equals(v0) ) {
-              continue;
-          }
-
-          var rad = v1a.clone().angleTo(v12);
-          if(rad < angleMin || rad > angleMax) {
-              bValid = false;
-              break;
-          }
-      }
-      if(!bValid) return bValid;
-
-      for(var k = 0, kl = bondAtoms2.length; k < kl && !v21.equals(v0); ++k) {
-          var vb = new THREE.Vector3(bondAtoms2[k].coord.x, bondAtoms2[k].coord.y, bondAtoms2[k].coord.z);
-          var v2b = vb.clone().sub(v2);
-          if( v2b.equals(v0) ) {
-              continue;
-          }
-
-          var rad = v2b.clone().angleTo(v21);
-          if(rad < angleMin || rad > angleMax) {
-              bValid = false;
-              break;
-          }
-      }
-      if(!bValid) return bValid;
-
-      // The angle between DA and AA-A-AA' (or DA-D-DA') should be < 90 degree, or < Math.PI * 0.5
-      angleMax = Math.PI * 0.5;
-
-      if(bondAtoms.length > 1) {
-          var v1a = new THREE.Vector3(bondAtoms[0].coord.x, bondAtoms[0].coord.y, bondAtoms[0].coord.z);
-          var v1b = new THREE.Vector3(bondAtoms[1].coord.x, bondAtoms[1].coord.y, bondAtoms[1].coord.z);
-          var plane1 = new THREE.Plane().setFromCoplanarPoints ( v1, v1a, v1b);
-
-          var normal = plane1.normal;
-
-          var vOnPlane = v12.clone().projectOnPlane(normal);
-
-          if( v12.equals(v0) || vOnPlane.equals(v0)) {
-              bValid = false;
-              //continue;
-          }
-          else {
-              var rad = v12.clone().angleTo(vOnPlane);
-              if(rad > angleMax) {
-                  bValid = false;
-                  //break;
-              }
-          }
-      }
-      if(!bValid) return bValid;
-
-      if(bondAtoms2.length > 1) {
-          var v2a = new THREE.Vector3(bondAtoms2[0].coord.x, bondAtoms2[0].coord.y, bondAtoms2[0].coord.z);
-          var v2b = new THREE.Vector3(bondAtoms2[1].coord.x, bondAtoms2[1].coord.y, bondAtoms2[1].coord.z);
-          var plane2 = new THREE.Plane().setFromCoplanarPoints ( v2, v2a, v2b);
-
-          var normal = plane2.normal;
-
-          var vOnPlane = v21.clone().projectOnPlane(normal);
-
-          if( v21.equals(v0) || vOnPlane.equals(v0)) {
-              bValid = false;
-              //continue;
-          }
-          else {
-              var rad = v21.clone().angleTo(vOnPlane);
-              if(rad > angleMax) {
-                  bValid = false;
-                  //break;
-              }
-          }
-      }
-      if(!bValid) return bValid;
-
-      return bValid;
-*/
 };
 
 // get hbonds
-iCn3D.prototype.calculateChemicalHbonds = function (startAtoms, targetAtoms, threshold, bSaltbridge) { var me = this;
+iCn3D.prototype.calculateChemicalHbonds = function (startAtoms, targetAtoms, threshold, bSaltbridge) { "use strict"; var me = this;
     if(Object.keys(startAtoms).length === 0 || Object.keys(targetAtoms).length === 0) return;
 
     me.resid2Residhash = {};
@@ -542,7 +444,7 @@ iCn3D.prototype.calculateChemicalHbonds = function (startAtoms, targetAtoms, thr
     return hbondsAtoms;
 };
 
-iCn3D.prototype.getChainsFromAtoms = function(atomsHash) {
+iCn3D.prototype.getChainsFromAtoms = function(atomsHash) { "use strict"; var me = this;
     var chainsHash = {};
     for(var i in atomsHash) {
        var atom = this.atoms[i];
@@ -555,8 +457,8 @@ iCn3D.prototype.getChainsFromAtoms = function(atomsHash) {
 };
 
 
- iCn3D.prototype.getNeighboringAtoms = function(atomlist, atomlistTarget, distance) {
-    var me = this;
+ iCn3D.prototype.getNeighboringAtoms = function(atomlist, atomlistTarget, distance) { "use strict"; var me = this;
+    "use strict"; var me = this;
 
     var extent = this.getExtent(atomlistTarget);
 
@@ -595,7 +497,7 @@ iCn3D.prototype.getChainsFromAtoms = function(atomsHash) {
  };
 
  // modified from iview (http://istar.cse.cuhk.edu.hk/iview/)
- iCn3D.prototype.getAtomsWithinAtom = function(atomlist, atomlistTarget, distance, bGetPairs, bInteraction) { var me = this;
+ iCn3D.prototype.getAtomsWithinAtom = function(atomlist, atomlistTarget, distance, bGetPairs, bInteraction) { "use strict"; var me = this;
     var neighbors = this.getNeighboringAtoms(atomlist, atomlistTarget, distance);
 
     if(bGetPairs) me.resid2Residhash = {};
@@ -678,9 +580,7 @@ iCn3D.prototype.getChainsFromAtoms = function(atomsHash) {
  };
 
  // from iview (http://istar.cse.cuhk.edu.hk/iview/)
- iCn3D.prototype.getExtent = function(atomlist) {
-    var me = this;
-
+ iCn3D.prototype.getExtent = function(atomlist) { "use strict"; var me = this;
     var xmin = ymin = zmin = 9999;
     var xmax = ymax = zmax = -9999;
     var xsum = ysum = zsum = cnt = 0;
@@ -704,7 +604,7 @@ iCn3D.prototype.getChainsFromAtoms = function(atomsHash) {
     return [[xmin, ymin, zmin], [xmax, ymax, zmax], [xsum / cnt, ysum / cnt, zsum / cnt]];
  };
 
-iCn3D.prototype.centerAtoms = function(atoms) {
+iCn3D.prototype.centerAtoms = function(atoms) { "use strict"; var me = this;
     var pmin = new THREE.Vector3( 9999, 9999, 9999);
     var pmax = new THREE.Vector3(-9999,-9999,-9999);
     var psum = new THREE.Vector3();
@@ -724,7 +624,7 @@ iCn3D.prototype.centerAtoms = function(atoms) {
     return {"center": psum.multiplyScalar(1.0 / cnt), "maxD": maxD};
 };
 
-iCn3D.prototype.removeSurfaces = function () {
+iCn3D.prototype.removeSurfaces = function () { "use strict"; var me = this;
    // remove prevous highlight
    for(var i = 0, il = this.prevSurfaces.length; i < il; ++i) {
        this.mdl.remove(this.prevSurfaces[i]);
@@ -733,7 +633,7 @@ iCn3D.prototype.removeSurfaces = function () {
    this.prevSurfaces = [];
 };
 
-iCn3D.prototype.removeLastSurface = function () {
+iCn3D.prototype.removeLastSurface = function () { "use strict"; var me = this;
    // remove prevous highlight
    if(this.prevSurfaces.length > 0) {
        this.mdl.remove(this.prevSurfaces[this.prevSurfaces.length - 1]);
@@ -741,7 +641,7 @@ iCn3D.prototype.removeLastSurface = function () {
    }
 };
 
-iCn3D.prototype.removeMaps = function () {
+iCn3D.prototype.removeMaps = function () { "use strict"; var me = this;
    // remove prevous highlight
    for(var i = 0, il = this.prevMaps.length; i < il; ++i) {
        this.mdl.remove(this.prevMaps[i]);
@@ -750,7 +650,7 @@ iCn3D.prototype.removeMaps = function () {
    this.prevMaps = [];
 };
 
-iCn3D.prototype.removeEmmaps = function () {
+iCn3D.prototype.removeEmmaps = function () { "use strict"; var me = this;
    // remove prevous highlight
    for(var i = 0, il = this.prevEmmaps.length; i < il; ++i) {
        this.mdl.remove(this.prevEmmaps[i]);
@@ -759,7 +659,7 @@ iCn3D.prototype.removeEmmaps = function () {
    this.prevEmmaps = [];
 };
 
-iCn3D.prototype.removeLastMap = function () {
+iCn3D.prototype.removeLastMap = function () { "use strict"; var me = this;
    // remove prevous highlight
    if(this.prevMaps.length > 0) {
        this.mdl.remove(this.prevMaps[this.prevMaps.length - 1]);
@@ -767,7 +667,7 @@ iCn3D.prototype.removeLastMap = function () {
    }
 };
 
-iCn3D.prototype.removeLastEmmap = function () {
+iCn3D.prototype.removeLastEmmap = function () { "use strict"; var me = this;
    // remove prevous highlight
    if(this.prevEmmaps.length > 0) {
        this.mdl.remove(this.prevEmmaps[this.prevEmmaps.length - 1]);
@@ -775,7 +675,7 @@ iCn3D.prototype.removeLastEmmap = function () {
    }
 };
 
-iCn3D.prototype.zoominSelection = function(atoms) { var me = this;
+iCn3D.prototype.zoominSelection = function(atoms) { "use strict"; var me = this;
    var para = {};
 
    para._zoomFactor = 1.0 / me._zoomFactor;
@@ -802,7 +702,7 @@ iCn3D.prototype.zoominSelection = function(atoms) { var me = this;
    }
 };
 
-iCn3D.prototype.centerSelection = function(atoms) {
+iCn3D.prototype.centerSelection = function(atoms) { "use strict"; var me = this;
    //this.resetOrientation();
 
    if(atoms === undefined) {
@@ -821,7 +721,7 @@ iCn3D.prototype.centerSelection = function(atoms) {
    }
 };
 
-iCn3D.prototype.transformMemPro = function(inCoord, rot, centerFrom, centerTo) {
+iCn3D.prototype.transformMemPro = function(inCoord, rot, centerFrom, centerTo) { "use strict"; var me = this;
     var coord = inCoord.clone();
 
     coord.sub(centerFrom);

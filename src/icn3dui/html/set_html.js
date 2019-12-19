@@ -2,7 +2,7 @@
  * @author Jiyao Wang <wangjiy@ncbi.nlm.nih.gov> / https://github.com/ncbi/icn3d
  */
 
-iCn3DUI.prototype.setTools = function() { var me = this;
+iCn3DUI.prototype.setTools = function() { "use strict"; var me = this;
     var html = "";
 
     html += "  <div id='" + me.pre + "selection' style='display:none;'><div style='position:absolute; z-index:555; float:left; display:table-row; margin: 32px 0px 0px 3px;'>";
@@ -19,12 +19,12 @@ iCn3DUI.prototype.setTools = function() { var me = this;
     return html;
 };
 
-iCn3DUI.prototype.setButton = function(buttonStyle, id, title, text) { var me = this;
+iCn3DUI.prototype.setButton = function(buttonStyle, id, title, text) { "use strict"; var me = this;
     var bkgdColor = me.isMobile() ? ' background-color:#DDDDDD;' : '';
     return "<div style='margin:3px 0px 0px 10px;'><button style='-webkit-appearance:" + buttonStyle + "; height:36px;" + bkgdColor + "' id='" + me.pre + id + "'><span style='white-space:nowrap' class='icn3d-commandTitle' title='" + title + "'>" + text + "</span></button></div>";
 };
 
-iCn3DUI.prototype.setTools_base = function() { var me = this;
+iCn3DUI.prototype.setTools_base = function() { "use strict"; var me = this;
     // second row
     var html = "";
 
@@ -64,7 +64,7 @@ iCn3DUI.prototype.setTools_base = function() { var me = this;
     return html;
 };
 
-iCn3DUI.prototype.setTopMenusHtmlMobile = function (id) { var me = this;
+iCn3DUI.prototype.setTopMenusHtmlMobile = function (id) { "use strict"; var me = this;
     var html = "";
 
     html += "<div style='position:relative;'>";
@@ -174,7 +174,7 @@ iCn3DUI.prototype.setTopMenusHtmlMobile = function (id) { var me = this;
     $("#" + me.pre + "accordion0").hover( function(){ $("#" + me.pre + "accordion0 div").css("display", "block"); }, function(){ $("#" + me.pre + "accordion0 div").css("display", "none"); } );
 };
 
-iCn3DUI.prototype.setTopMenusHtml = function (id) { var me = this;
+iCn3DUI.prototype.setTopMenusHtml = function (id) { "use strict"; var me = this;
     var html = "";
 
     html += "<div style='position:relative;'>";
@@ -274,15 +274,15 @@ iCn3DUI.prototype.setTopMenusHtml = function (id) { var me = this;
     $("#" + me.pre + "accordion6").hover( function(){ $("#" + me.pre + "accordion6 div").css("display", "block"); }, function(){ $("#" + me.pre + "accordion6 div").css("display", "none"); } );
 };
 
-iCn3DUI.prototype.getLink = function(id, text) { var me = this;
+iCn3DUI.prototype.getLink = function(id, text) { "use strict"; var me = this;
     return "<li><span id='" + me.pre + id + "' class='icn3d-link'>" + text + "</span></li>";
 };
 
-iCn3DUI.prototype.getLinkWrapper = function(id, text, wrapper) { var me = this;
+iCn3DUI.prototype.getLinkWrapper = function(id, text, wrapper) { "use strict"; var me = this;
     return "<li id='" + me.pre + wrapper + "'><span id='" + me.pre + id + "' class='icn3d-link'>" + text + "</span></li>";
 };
 
-iCn3DUI.prototype.getRadio = function(radioid, id, text, bChecked) { var me = this;
+iCn3DUI.prototype.getRadio = function(radioid, id, text, bChecked) { "use strict"; var me = this;
     var checkedStr = (bChecked !== undefined && bChecked) ? ' checked' : '';
     //return "<li><input type='radio' name='" + me.pre + radioid + "' id='" + me.pre + id + "'" + checkedStr + "><label for='" + me.pre + id + "'>" + text + "</label></li>";
 
@@ -290,7 +290,7 @@ iCn3DUI.prototype.getRadio = function(radioid, id, text, bChecked) { var me = th
     return "<li><label for='" + me.pre + id + "' class='icn3d-rad'><input type='radio' name='" + me.pre + radioid + "' id='" + me.pre + id + "'" + checkedStr + "><span class='ui-icon ui-icon-blank'></span> <span class='icn3d-rad-text'>" + text + "</span></label></li>";
 };
 
-iCn3DUI.prototype.setMenu1 = function() { var me = this;
+iCn3DUI.prototype.setMenu1 = function() { "use strict"; var me = this;
     var html = "";
 
     html += "    <div class='icn3d-menu'>";
@@ -307,7 +307,7 @@ iCn3DUI.prototype.setMenu1 = function() { var me = this;
     return html;
 };
 
-iCn3DUI.prototype.setMenu1_base = function() { var me = this;
+iCn3DUI.prototype.setMenu1_base = function() { "use strict"; var me = this;
     var html = "";
 
     html += "<ul class='icn3d-mn'>";
@@ -391,7 +391,7 @@ iCn3DUI.prototype.setMenu1_base = function() { var me = this;
     return html;
 }
 
-iCn3DUI.prototype.setMenu2 = function() { var me = this;
+iCn3DUI.prototype.setMenu2 = function() { "use strict"; var me = this;
     var html = "";
 
     html += "    <div class='icn3d-menu'>";
@@ -408,7 +408,7 @@ iCn3DUI.prototype.setMenu2 = function() { var me = this;
     return html;
 };
 
-iCn3DUI.prototype.setMenu2_base = function() { var me = this;
+iCn3DUI.prototype.setMenu2_base = function() { "use strict"; var me = this;
     var html = "";
 
     html += "<ul class='icn3d-mn'>";
@@ -496,7 +496,7 @@ iCn3DUI.prototype.setMenu2_base = function() { var me = this;
     return html;
 };
 
-iCn3DUI.prototype.setMenu2b = function() { var me = this;
+iCn3DUI.prototype.setMenu2b = function() { "use strict"; var me = this;
     var html = "";
 
     html += "    <div class='icn3d-menu'>";
@@ -513,7 +513,7 @@ iCn3DUI.prototype.setMenu2b = function() { var me = this;
     return html;
 };
 
-iCn3DUI.prototype.setMenu2b_base = function() { var me = this;
+iCn3DUI.prototype.setMenu2b_base = function() { "use strict"; var me = this;
     var html = "";
     html += "<ul class='icn3d-mn'>";
 
@@ -721,7 +721,7 @@ iCn3DUI.prototype.setMenu2b_base = function() { var me = this;
     return html;
 };
 
-iCn3DUI.prototype.setMenu3 = function() { var me = this;
+iCn3DUI.prototype.setMenu3 = function() { "use strict"; var me = this;
     var html = "";
 
     html += "    <div class='icn3d-menu'>";
@@ -738,7 +738,7 @@ iCn3DUI.prototype.setMenu3 = function() { var me = this;
     return html;
 };
 
-iCn3DUI.prototype.setMenu3_base = function() { var me = this;
+iCn3DUI.prototype.setMenu3_base = function() { "use strict"; var me = this;
     var html = "";
 
     html += "<ul class='icn3d-mn'>";
@@ -935,7 +935,7 @@ iCn3DUI.prototype.setMenu3_base = function() { var me = this;
     return html;
 };
 
-iCn3DUI.prototype.setMenu4 = function() { var me = this;
+iCn3DUI.prototype.setMenu4 = function() { "use strict"; var me = this;
     var html = "";
 
     html += "    <div class='icn3d-menu'>";
@@ -952,7 +952,7 @@ iCn3DUI.prototype.setMenu4 = function() { var me = this;
     return html;
 };
 
-iCn3DUI.prototype.setMenu4_base = function() { var me = this;
+iCn3DUI.prototype.setMenu4_base = function() { "use strict"; var me = this;
     var html = "";
 
     html += "<ul class='icn3d-mn'>";
@@ -1023,7 +1023,7 @@ iCn3DUI.prototype.setMenu4_base = function() { var me = this;
     return html;
 };
 
-iCn3DUI.prototype.setMenu5 = function() { var me = this;
+iCn3DUI.prototype.setMenu5 = function() { "use strict"; var me = this;
     var html = "";
 
     html += "    <div class='icn3d-menu'>";
@@ -1040,7 +1040,7 @@ iCn3DUI.prototype.setMenu5 = function() { var me = this;
     return html;
 };
 
-iCn3DUI.prototype.setMenu5_base = function() { var me = this;
+iCn3DUI.prototype.setMenu5_base = function() { "use strict"; var me = this;
     var html = "";
 
     html += "<ul class='icn3d-mn'>";
@@ -1089,7 +1089,7 @@ iCn3DUI.prototype.setMenu5_base = function() { var me = this;
     return html;
 };
 
-iCn3DUI.prototype.setMenu6 = function() { var me = this;
+iCn3DUI.prototype.setMenu6 = function() { "use strict"; var me = this;
     var html = "";
 
     html += "    <div class='icn3d-menu'>";
@@ -1106,7 +1106,7 @@ iCn3DUI.prototype.setMenu6 = function() { var me = this;
     return html;
 };
 
-iCn3DUI.prototype.setMenu6_base = function() { var me = this;
+iCn3DUI.prototype.setMenu6_base = function() { "use strict"; var me = this;
     var html = "";
 
     html += "<ul class='icn3d-mn'>";
@@ -1167,7 +1167,7 @@ iCn3DUI.prototype.setMenu6_base = function() { var me = this;
     return html;
 };
 
-iCn3DUI.prototype.setLogWindow = function() { var me = this;
+iCn3DUI.prototype.setLogWindow = function() { "use strict"; var me = this;
     var html = "";
 
     html += "  <div id='" + me.pre + "cmdlog' style='float:left; margin-top: -5px; width: 100%;'>";
@@ -1178,7 +1178,7 @@ iCn3DUI.prototype.setLogWindow = function() { var me = this;
     return html;
 };
 
-iCn3DUI.prototype.setAdvanced = function(index) { var me = this;
+iCn3DUI.prototype.setAdvanced = function(index) { "use strict"; var me = this;
     var indexStr = (index === undefined) ? '' : index;
 
     var html = "<div id='" + me.pre + "dl_advanced" + indexStr + "'>";
@@ -1223,7 +1223,7 @@ iCn3DUI.prototype.setAdvanced = function(index) { var me = this;
     return html;
 };
 
-iCn3DUI.prototype.setDialogs = function() { var me = this;
+iCn3DUI.prototype.setDialogs = function() { "use strict"; var me = this;
     var html = "";
 
     html += "<!-- dialog will not be part of the form -->";
@@ -1763,7 +1763,7 @@ iCn3DUI.prototype.setDialogs = function() { var me = this;
     return html;
 };
 
-iCn3DUI.prototype.setThicknessHtml = function (type) { var me = this;
+iCn3DUI.prototype.setThicknessHtml = function (type) { "use strict"; var me = this;
     var html = '';
 
     // type == '3dprint' or 'style'
@@ -1792,7 +1792,7 @@ iCn3DUI.prototype.setThicknessHtml = function (type) { var me = this;
     return html;
 };
 
-iCn3DUI.prototype.setSequenceGuide = function (suffix, bShown) { var me = this;
+iCn3DUI.prototype.setSequenceGuide = function (suffix, bShown) { "use strict"; var me = this;
   var sequencesHtml = '';
 
   var index = (me.icn3d) ? Object.keys(me.icn3d.defNames2Atoms).length : 1;
@@ -1831,7 +1831,7 @@ iCn3DUI.prototype.setSequenceGuide = function (suffix, bShown) { var me = this;
   return sequencesHtml;
 };
 
-iCn3DUI.prototype.getAlignSequencesAnnotations = function (alignChainArray, bUpdateHighlightAtoms, residueArray, bShowHighlight) { var me = this;
+iCn3DUI.prototype.getAlignSequencesAnnotations = function (alignChainArray, bUpdateHighlightAtoms, residueArray, bShowHighlight) { "use strict"; var me = this;
   var resCategories = "<b>Residue labeling:</b> aligned residue with coordinates: UPPER case letter; non-aligned residue with coordinates: lower case letter which can be highlighted; residue missing coordinates: lower case letter which can NOT be highlighted.";
   var scroll = (me.isMac() && !me.isMobile()) ? "<br/><b>Turn on scroll bar:</b> System preferences -> General -> show scroll bars -> check Always" : "";
 

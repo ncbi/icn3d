@@ -2,7 +2,7 @@
  * @author Jiyao Wang <wangjiy@ncbi.nlm.nih.gov> / https://github.com/ncbi/icn3d
  */
 
-iCn3DUI.prototype.downloadAlignment = function (align) { var me = this;
+iCn3DUI.prototype.downloadAlignment = function (align) { "use strict"; var me = this;
     me.opts['proteins'] = 'c alpha trace';
     me.icn3d.opts['proteins'] = 'c alpha trace';
 
@@ -181,7 +181,7 @@ iCn3DUI.prototype.downloadAlignment = function (align) { var me = this;
     });
 };
 
-iCn3DUI.prototype.downloadChainAlignment = function (chainalign) { var me = this;
+iCn3DUI.prototype.downloadChainAlignment = function (chainalign) { "use strict"; var me = this;
     me.opts['proteins'] = 'c alpha trace';
     me.icn3d.opts['proteins'] = 'c alpha trace';
 
@@ -331,7 +331,7 @@ iCn3DUI.prototype.downloadChainAlignment = function (chainalign) { var me = this
     }); // ajax
 };
 
-iCn3DUI.prototype.set2DDiagramsForAlign = function (mmdbid1, mmdbid2) { var me = this;
+iCn3DUI.prototype.set2DDiagramsForAlign = function (mmdbid1, mmdbid2) { "use strict"; var me = this;
    me.openDialog(me.pre + 'dl_2ddgm', 'Interactions');
 
    var url1="https://www.ncbi.nlm.nih.gov/Structure/mmdb/mmdb_strview.cgi?v=2&program=icn3d&uid="+mmdbid1+"&intrac=1";
@@ -378,7 +378,7 @@ iCn3DUI.prototype.set2DDiagramsForAlign = function (mmdbid1, mmdbid2) { var me =
    });
 };
 
-iCn3DUI.prototype.download2Ddgm = function(mmdbid, structureIndex) {var me = this;
+iCn3DUI.prototype.download2Ddgm = function(mmdbid, structureIndex) {"use strict"; var me = this;
 /*
   me.deferred3 = $.Deferred(function() {
     var url="https://www.ncbi.nlm.nih.gov/Structure/mmdb/mmdb_strview.cgi?uid="+mmdbid+"&format=json&intrac=3";
@@ -416,7 +416,7 @@ iCn3DUI.prototype.download2Ddgm = function(mmdbid, structureIndex) {var me = thi
     me.set2DDiagrams(mmdbid);
 };
 
-iCn3DUI.prototype.set2DDiagrams = function (mmdbid) { var me = this;
+iCn3DUI.prototype.set2DDiagrams = function (mmdbid) { "use strict"; var me = this;
     me.openDialog(me.pre + 'dl_2ddgm', 'Interactions');
 
     if(me.b2DShown === undefined || !me.b2DShown) {
@@ -431,7 +431,7 @@ iCn3DUI.prototype.set2DDiagrams = function (mmdbid) { var me = this;
     me.b2DShown = true;
 };
 
-iCn3DUI.prototype.setSeqAlign = function (seqalign, alignedStructures) { var me = this;
+iCn3DUI.prototype.setSeqAlign = function (seqalign, alignedStructures) { "use strict"; var me = this;
       //loadSeqAlignment
       var alignedAtoms = {};
       var mmdbid1 = alignedStructures[0][0].pdbId;
@@ -656,7 +656,7 @@ iCn3DUI.prototype.setSeqAlign = function (seqalign, alignedStructures) { var me 
       seqalign = {};
 };
 
-iCn3DUI.prototype.setSeqPerResi = function (chainid, chainid1, chainid2, resi, resn, bAligned, color, color2, classname, bFirstChain, bFirstResi, alignIndex) { var me = this;
+iCn3DUI.prototype.setSeqPerResi = function (chainid, chainid1, chainid2, resi, resn, bAligned, color, color2, classname, bFirstChain, bFirstResi, alignIndex) { "use strict"; var me = this;
       if(me.icn3d.alnChainsSeq[chainid] === undefined) me.icn3d.alnChainsSeq[chainid] = [];
 
       resObject = {};
@@ -738,7 +738,7 @@ iCn3DUI.prototype.setSeqPerResi = function (chainid, chainid1, chainid2, resi, r
       }
 };
 
-iCn3DUI.prototype.setSeqAlignChain = function () { var me = this;
+iCn3DUI.prototype.setSeqAlignChain = function () { "use strict"; var me = this;
       //loadSeqAlignment
       var alignedAtoms = {};
       var mmdbid1 = me.inputid2;

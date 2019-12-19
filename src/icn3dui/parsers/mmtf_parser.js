@@ -5,7 +5,7 @@
 // from the 2016 NCBI hackathon in Orlando: https://github.com/NCBI-Hackathons/iCN3D-MMTF
 // Contributors: Jiyao Wang, Alexander Rose, Peter Rose
 // requires the library mmtf.js
-iCn3DUI.prototype.downloadMmtf = function (mmtfid) { var me = this;
+iCn3DUI.prototype.downloadMmtf = function (mmtfid) { "use strict"; var me = this;
     MMTF.fetchReduced(
         mmtfid,
         // onLoad callback
@@ -48,7 +48,7 @@ iCn3DUI.prototype.downloadMmtf = function (mmtfid) { var me = this;
     );
 };
 
-iCn3DUI.prototype.parseMmtfData = function (mmtfData, mmtfid, bFull, chainCalphaHash2) { var me = this;
+iCn3DUI.prototype.parseMmtfData = function (mmtfData, mmtfid, bFull, chainCalphaHash2) { "use strict"; var me = this;
     var cnt = mmtfData.numAtoms;
 
     me.icn3d.init();

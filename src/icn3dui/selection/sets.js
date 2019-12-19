@@ -2,7 +2,7 @@
  * @author Jiyao Wang <wangjiy@ncbi.nlm.nih.gov> / https://github.com/ncbi/icn3d
  */
 
-iCn3DUI.prototype.showSets = function() { var me = this;
+iCn3DUI.prototype.showSets = function() { "use strict"; var me = this;
     me.openDialog(me.pre + 'dl_definedsets', 'Select sets');
     $("#" + me.pre + "dl_setsmenu").show();
     $("#" + me.pre + "dl_setoperations").show();
@@ -26,7 +26,7 @@ iCn3DUI.prototype.showSets = function() { var me = this;
     me.updateHlMenus();
 };
 
-iCn3DUI.prototype.clickCustomAtoms = function() { var me = this;
+iCn3DUI.prototype.clickCustomAtoms = function() { "use strict"; var me = this;
     $("#" + me.pre + "atomsCustom").change(function(e) {
        var nameArray = $(this).val();
 
@@ -47,7 +47,7 @@ iCn3DUI.prototype.clickCustomAtoms = function() { var me = this;
     });
 };
 
-iCn3DUI.prototype.deleteSelectedSets = function() { var me = this;
+iCn3DUI.prototype.deleteSelectedSets = function() { "use strict"; var me = this;
    var nameArray = $("#" + me.pre + "atomsCustom").val();
 
    for(var i = 0; i < nameArray.length; ++i) {
@@ -67,7 +67,7 @@ iCn3DUI.prototype.deleteSelectedSets = function() { var me = this;
    me.updateHlMenus();
 };
 
-iCn3DUI.prototype.changeCustomAtoms = function (nameArray, bUpdateHlMenus) { var me = this;
+iCn3DUI.prototype.changeCustomAtoms = function (nameArray, bUpdateHlMenus) { "use strict"; var me = this;
    me.icn3d.hAtoms = {};
 
    for(var i = 0; i < nameArray.length; ++i) {
@@ -126,7 +126,7 @@ iCn3DUI.prototype.changeCustomAtoms = function (nameArray, bUpdateHlMenus) { var
    } // outer for
 };
 
-iCn3DUI.prototype.setHAtomsFromSets = function (nameArray, type) { var me = this;
+iCn3DUI.prototype.setHAtomsFromSets = function (nameArray, type) { "use strict"; var me = this;
    for(var i = 0; i < nameArray.length; ++i) {
      var selectedSet = nameArray[i];
 
@@ -176,7 +176,7 @@ iCn3DUI.prototype.setHAtomsFromSets = function (nameArray, type) { var me = this
    } // outer for
 };
 
-iCn3DUI.prototype.updateAdvancedCommands = function (nameArray, type) { var me = this;
+iCn3DUI.prototype.updateAdvancedCommands = function (nameArray, type) { "use strict"; var me = this;
    // update the commands in the dialog
    var separator = ' ' + type + ' ';
    for(var i = 0, il = nameArray.length; i < il; ++i) {
@@ -194,7 +194,7 @@ iCn3DUI.prototype.updateAdvancedCommands = function (nameArray, type) { var me =
    } // outer for
 };
 
-iCn3DUI.prototype.combineSets = function (orArray, andArray, notArray, commandname) { var me = this;
+iCn3DUI.prototype.combineSets = function (orArray, andArray, notArray, commandname) { "use strict"; var me = this;
    me.icn3d.hAtoms = {};
    me.setHAtomsFromSets(orArray, 'or');
 
@@ -224,7 +224,7 @@ iCn3DUI.prototype.combineSets = function (orArray, andArray, notArray, commandna
    }
 };
 
-iCn3DUI.prototype.setProtNuclLigInMenu = function () { var me = this;
+iCn3DUI.prototype.setProtNuclLigInMenu = function () { "use strict"; var me = this;
     // Initially, add proteins, nucleotides, chemicals, ions, water into the menu "custom selections"
     if(Object.keys(me.icn3d.proteins).length > 0) {
       //me.icn3d.defNames2Atoms['proteins'] = Object.keys(me.icn3d.proteins);
@@ -291,7 +291,7 @@ iCn3DUI.prototype.setProtNuclLigInMenu = function () { var me = this;
     me.setTransmemInMenu(me.icn3d.halfBilayerSize, -me.icn3d.halfBilayerSize);
 };
 
-iCn3DUI.prototype.setTransmemInMenu = function (posZ, negZ, bReset) { var me = this;
+iCn3DUI.prototype.setTransmemInMenu = function (posZ, negZ, bReset) { "use strict"; var me = this;
     // set transmembrane, extracellular, intracellular
     if(me.icn3d.bOpm) {
       var transmembraneHash = {}, extracellularHash = {}, intracellularHash = {};
@@ -331,7 +331,7 @@ iCn3DUI.prototype.setTransmemInMenu = function (posZ, negZ, bReset) { var me = t
     }
 };
 
-iCn3DUI.prototype.setChainsInMenu = function () { var me = this;
+iCn3DUI.prototype.setChainsInMenu = function () { "use strict"; var me = this;
     for(var chainid in me.icn3d.chains) {
         // skip chains with one residue/chemical
         if(me.icn3d.chainsSeq[chainid].length > 1) {

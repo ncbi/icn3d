@@ -3,7 +3,7 @@
  */
 
 // modified from iview (http://istar.cse.cuhk.edu.hk/iview/)
-iCn3D.prototype.createSurfaceRepresentation = function (atoms, type, wireframe, opacity) { var me = this;
+iCn3D.prototype.createSurfaceRepresentation = function (atoms, type, wireframe, opacity) { "use strict"; var me = this;
     if(Object.keys(atoms).length == 0) return;
 
     if(opacity == undefined) opacity = 1.0;
@@ -313,7 +313,7 @@ iCn3D.prototype.createSurfaceRepresentation = function (atoms, type, wireframe, 
 };
 
 // http://soledadpenades.com/articles/three-js-tutorials/drawing-the-coordinate-axes/
-iCn3D.prototype.buildAxes = function (radius) {
+iCn3D.prototype.buildAxes = function (radius) { "use strict"; var me = this;
     var axes = new THREE.Object3D();
 
     var x = 0, y = 0, z = 0;
@@ -336,7 +336,8 @@ iCn3D.prototype.buildAxes = function (radius) {
     this.scene.add( axes );
 };
 
-iCn3D.prototype.createLines = function(lines) { // show extra lines, not used for pk, so no this.objects
+// show extra lines, not used for pk, so no this.objects
+iCn3D.prototype.createLines = function(lines) {  "use strict"; var me = this;
    if(lines !== undefined) {
      for(var name in lines) {
          var lineArray = lines[name];
@@ -394,7 +395,7 @@ iCn3D.prototype.createLines = function(lines) { // show extra lines, not used fo
    // do not add the artificial lines to raycasting objects
 };
 
-iCn3D.prototype.createBrick = function (p0, p1, radius, color) { var me = this;
+iCn3D.prototype.createBrick = function (p0, p1, radius, color) { "use strict"; var me = this;
     var cylinderGeometry = new THREE.CylinderGeometry(1, 1, 1, 4, 1);
 
     var mesh = new THREE.Mesh(cylinderGeometry, new THREE.MeshPhongMaterial({ specular: this.frac, shininess: 30, emissive: 0x000000, color: color }));

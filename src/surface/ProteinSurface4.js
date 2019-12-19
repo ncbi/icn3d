@@ -38,6 +38,7 @@ if (typeof console === 'undefined') {
 }
 
 $3Dmol.ProteinSurface = function(threshbox) {
+    "use strict";
 
     // constants for vpbits bitmasks
     /** @const */

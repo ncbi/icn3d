@@ -7,7 +7,7 @@ var $3Dmol = $3Dmol || {};
 
 //Encapsulate marching cube algorithm for isosurface generation
 // (currently used by protein surface rendering and generic volumetric data reading)
-$3Dmol.MarchingCubeInitializer = function() {
+$3Dmol.MarchingCubeInitializer = function() { "use strict"; var me = this;
 
     //Marching cube algorithm - assume data has been pre-treated so isovalue is 0
     // (i.e. select points greater than 0)
