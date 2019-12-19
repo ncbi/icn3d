@@ -5,7 +5,7 @@
  */
 
 
-iCn3DUI.prototype.DensityCifParser = function(pdbid, type, sigma, emd) { var me = this;
+iCn3DUI.prototype.DensityCifParser = function(pdbid, type, sigma, emd) { "use strict"; var me = this;
    var url;
    var detail = (me.isMobile()) ? 0 : 4; //4;
 
@@ -78,7 +78,7 @@ iCn3DUI.prototype.DensityCifParser = function(pdbid, type, sigma, emd) { var me 
     }
 };
 
-iCn3DUI.prototype.parseChannels = function(densitydata, type, sigma) { var me = this;
+iCn3DUI.prototype.parseChannels = function(densitydata, type, sigma) { "use strict"; var me = this;
     var cif = me.BinaryParse(densitydata);
 
     if(type == '2fofc' || type == 'fofc') {
@@ -175,7 +175,7 @@ iCn3DUI.prototype.parseChannels = function(densitydata, type, sigma) { var me = 
     }
 };
 
-iCn3DUI.prototype.getChannel = function(data, name) { var me = this;
+iCn3DUI.prototype.getChannel = function(data, name) { "use strict"; var me = this;
     //var block = data.dataBlocks.filter(b => b.header === name)[0];
     //var block = data.dataBlocks.filter(b => b.id === name)[0];
 
@@ -191,7 +191,7 @@ iCn3DUI.prototype.getChannel = function(data, name) { var me = this;
     return density;
 };
 
-iCn3DUI.prototype.CIFParse = function(block) { var me = this;
+iCn3DUI.prototype.CIFParse = function(block) { "use strict"; var me = this;
     var info = block.getCategory('_volume_data_3d_info');
 
     if (!info) {
@@ -315,7 +315,7 @@ iCn3DUI.prototype.CIFParse = function(block) { var me = this;
     return data;
 };
 
-iCn3DUI.prototype.BinaryParse = function(data) { var me = this;
+iCn3DUI.prototype.BinaryParse = function(data) { "use strict"; var me = this;
 //    var minVersion = [0, 3];
 //    try {
         var array = new Uint8Array(data);
@@ -751,7 +751,7 @@ iCn3DUI.prototype.BinaryParse = function(data) { var me = this;
 //    }
 };
 
-iCn3DUI.prototype.MessagePackParse = function(state) { var me = this;
+iCn3DUI.prototype.MessagePackParse = function(state) { "use strict"; var me = this;
     /*
      * Adapted from https://github.com/rcsb/mmtf-javascript
      * by Alexander Rose <alexander.rose@weirdbyte.de>, MIT License, Copyright (c) 2016

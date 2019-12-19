@@ -5,6 +5,7 @@
  */
 
 THREE.TrackballControls = function ( object, domElement, icn3d ) {
+    "use strict";
 
     var _this = this;
 

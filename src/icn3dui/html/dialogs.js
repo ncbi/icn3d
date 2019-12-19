@@ -2,7 +2,7 @@
  * @author Jiyao Wang <wangjiy@ncbi.nlm.nih.gov> / https://github.com/ncbi/icn3d
  */
 
-iCn3DUI.prototype.openDialogHalfWindow = function (id, title, dialogWidth, bForceResize) {  var me = this;
+iCn3DUI.prototype.openDialogHalfWindow = function (id, title, dialogWidth, bForceResize) {  "use strict"; var me = this;
     var twoddgmWidth = 170;
 
     //me.resizeCanvas(me.WIDTH - dialogWidth - me.LESSWIDTH, me.HEIGHT - me.LESSHEIGHT - me.EXTRAHEIGHT, bForceResize);
@@ -68,7 +68,7 @@ iCn3DUI.prototype.openDialogHalfWindow = function (id, title, dialogWidth, bForc
     });
 };
 
-iCn3DUI.prototype.openDialog2Ddgm = function (id, inHeight, bDefinedSets) {  var me = this;
+iCn3DUI.prototype.openDialog2Ddgm = function (id, inHeight, bDefinedSets) {  "use strict"; var me = this;
     var twoddgmWidth = 170;
     var at, title;
     if(id === me.pre + 'dl_definedsets') {
@@ -119,7 +119,7 @@ iCn3DUI.prototype.openDialog2Ddgm = function (id, inHeight, bDefinedSets) {  var
     });
 };
 
-iCn3DUI.prototype.openDialog = function (id, title) {  var me = this;
+iCn3DUI.prototype.openDialog = function (id, title) {  "use strict"; var me = this;
     var width = 400, height = 150;
     var twoddgmWidth = 170;
 

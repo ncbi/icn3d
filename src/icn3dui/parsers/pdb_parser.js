@@ -2,7 +2,7 @@
  * @author Jiyao Wang <wangjiy@ncbi.nlm.nih.gov> / https://github.com/ncbi/icn3d
  */
 
-iCn3DUI.prototype.downloadPdb = function (pdbid) { var me = this;
+iCn3DUI.prototype.downloadPdb = function (pdbid) { "use strict"; var me = this;
    var url, dataType;
 
    url = "https://files.rcsb.org/view/" + pdbid + ".pdb";
@@ -43,7 +43,7 @@ iCn3DUI.prototype.downloadPdb = function (pdbid) { var me = this;
    });
 };
 
-iCn3DUI.prototype.downloadOpm = function (opmid) { var me = this;
+iCn3DUI.prototype.downloadOpm = function (opmid) { "use strict"; var me = this;
    var url, dataType;
 
    url = "https://opm-assets.storage.googleapis.com/pdb/" + opmid.toLowerCase()+ ".pdb";
@@ -90,7 +90,7 @@ iCn3DUI.prototype.downloadOpm = function (opmid) { var me = this;
    });
 };
 
-iCn3DUI.prototype.downloadUrl = function (url, type) { var me = this;
+iCn3DUI.prototype.downloadUrl = function (url, type) { "use strict"; var me = this;
    var dataType = "text";
 
    me.icn3d.bCid = undefined;
@@ -145,7 +145,7 @@ iCn3DUI.prototype.downloadUrl = function (url, type) { var me = this;
    });
 };
 
-iCn3DUI.prototype.addOneDumAtom = function(pdbid, atomName, x, y, z, lastSerial) { var me = this;
+iCn3DUI.prototype.addOneDumAtom = function(pdbid, atomName, x, y, z, lastSerial) { "use strict"; var me = this;
       var resn = 'DUM';
       var chain = 'MEM';
       var resi = 1;
@@ -182,7 +182,7 @@ iCn3DUI.prototype.addOneDumAtom = function(pdbid, atomName, x, y, z, lastSerial)
       return lastSerial;
 };
 
-iCn3DUI.prototype.addMemAtoms = function(dmem, pdbid, dxymax) { var me = this;
+iCn3DUI.prototype.addMemAtoms = function(dmem, pdbid, dxymax) { "use strict"; var me = this;
       var npoint=40; // points in radius
       var step = 2;
       var maxpnt=2*npoint+1; // points in diameter
@@ -227,7 +227,7 @@ iCn3DUI.prototype.addMemAtoms = function(dmem, pdbid, dxymax) { var me = this;
       }
 };
 
-iCn3DUI.prototype.transformToOpmOri = function(pdbid, chainCalphaHash2) { var me = this;
+iCn3DUI.prototype.transformToOpmOri = function(pdbid, chainCalphaHash2) { "use strict"; var me = this;
   if(chainCalphaHash2 !== undefined) {
       var chainCalphaHash1 = me.icn3d.getChainCalpha(me.icn3d.chains, me.icn3d.atoms);
 
@@ -291,7 +291,7 @@ iCn3DUI.prototype.transformToOpmOri = function(pdbid, chainCalphaHash2) { var me
   }
 };
 
-iCn3DUI.prototype.loadPdbData = function(data, pdbid, bOpm, chainCalphaHash2) { var me = this;
+iCn3DUI.prototype.loadPdbData = function(data, pdbid, bOpm, chainCalphaHash2) { "use strict"; var me = this;
       me.icn3d.loadPDB(data, pdbid, bOpm); // defined in the core library
 
       me.transformToOpmOri(pdbid, chainCalphaHash2);
@@ -334,7 +334,7 @@ iCn3DUI.prototype.loadPdbData = function(data, pdbid, bOpm, chainCalphaHash2) { 
     }
 };
 
-iCn3DUI.prototype.loadPdbDataBase = function(data, calphaonly) { var me = this;
+iCn3DUI.prototype.loadPdbDataBase = function(data, calphaonly) { "use strict"; var me = this;
    var url = "https://www.ncbi.nlm.nih.gov/Structure/mmcifparser/mmcifparser.cgi";
 
    $.ajax({
@@ -457,7 +457,7 @@ iCn3DUI.prototype.loadPdbDataBase = function(data, calphaonly) { var me = this;
     });
 };
 
-iCn3DUI.prototype.loadPdbOpmData = function(data, pdbid) { var me = this;
+iCn3DUI.prototype.loadPdbOpmData = function(data, pdbid) { "use strict"; var me = this;
     var url, dataType;
 
     url = "https://opm-assets.storage.googleapis.com/pdb/" + pdbid.toLowerCase()+ ".pdb";
@@ -501,7 +501,7 @@ iCn3DUI.prototype.loadPdbOpmData = function(data, pdbid) { var me = this;
     });
 };
 
-iCn3DUI.prototype.loadMmtfOpmData = function(data, pdbid, bFull) { var me = this;
+iCn3DUI.prototype.loadMmtfOpmData = function(data, pdbid, bFull) { "use strict"; var me = this;
     var url, dataType;
 
     url = "https://opm-assets.storage.googleapis.com/pdb/" + pdbid.toLowerCase()+ ".pdb";
@@ -545,7 +545,7 @@ iCn3DUI.prototype.loadMmtfOpmData = function(data, pdbid, bFull) { var me = this
     });
 };
 
-iCn3DUI.prototype.loadMmcifOpmDataPart2 = function(data, pdbid) { var me = this;
+iCn3DUI.prototype.loadMmcifOpmDataPart2 = function(data, pdbid) { "use strict"; var me = this;
     if(Object.keys(me.icn3d.structures).length == 1) {
         $("#" + me.pre + "alternateWrapper").hide();
     }
@@ -581,7 +581,7 @@ iCn3DUI.prototype.loadMmcifOpmDataPart2 = function(data, pdbid) { var me = this;
     if(me.deferred !== undefined) me.deferred.resolve(); if(me.deferred2 !== undefined) me.deferred2.resolve();
 };
 
-iCn3DUI.prototype.loadMmcifOpmData = function(data, pdbid) { var me = this;
+iCn3DUI.prototype.loadMmcifOpmData = function(data, pdbid) { "use strict"; var me = this;
     var url, dataType;
 
     url = "https://opm-assets.storage.googleapis.com/pdb/" + pdbid.toLowerCase()+ ".pdb";
@@ -630,7 +630,7 @@ iCn3DUI.prototype.loadMmcifOpmData = function(data, pdbid) { var me = this;
     });
 };
 
-iCn3DUI.prototype.loadMmdbOpmDataPart2 = function(data, pdbid, type) { var me = this;
+iCn3DUI.prototype.loadMmdbOpmDataPart2 = function(data, pdbid, type) { "use strict"; var me = this;
     // set 3d domains
     var structure = data.pdbId;
 
@@ -684,7 +684,7 @@ iCn3DUI.prototype.loadMmdbOpmDataPart2 = function(data, pdbid, type) { var me = 
     });
 };
 
-iCn3DUI.prototype.loadMmdbOpmData = function(data, pdbid, type) { var me = this;
+iCn3DUI.prototype.loadMmdbOpmData = function(data, pdbid, type) { "use strict"; var me = this;
     var url, dataType;
 
     url = "https://opm-assets.storage.googleapis.com/pdb/" + pdbid.toLowerCase()+ ".pdb";
@@ -733,7 +733,7 @@ iCn3DUI.prototype.loadMmdbOpmData = function(data, pdbid, type) { var me = this;
 };
 
 iCn3DUI.prototype.loadPdbDataRender = function() {
-    var me = this;
+    "use strict"; var me = this;
 
     me.pmid = me.icn3d.pmid;
 

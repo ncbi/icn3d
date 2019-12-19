@@ -2,7 +2,7 @@
  * @author Jiyao Wang <wangjiy@ncbi.nlm.nih.gov> / https://github.com/ncbi/icn3d
  */
 
-iCn3D.prototype.cloneHash = function(from) {
+iCn3D.prototype.cloneHash = function(from) { "use strict"; var me = this;
   var to = {};
   for(var i in from) {
     to[i] = from[i];
@@ -11,7 +11,7 @@ iCn3D.prototype.cloneHash = function(from) {
   return to;
 };
 
-iCn3D.prototype.residueName2Abbr = function(residueName) {
+iCn3D.prototype.residueName2Abbr = function(residueName) { "use strict"; var me = this;
   if(residueName !== undefined && residueName.charAt(0) !== ' ' && residueName.charAt(1) === ' ') {
     //residueName = 'n' + residueName.charAt(0);
     residueName = residueName.charAt(0);
@@ -133,7 +133,7 @@ iCn3D.prototype.residueName2Abbr = function(residueName) {
   }
 };
 
-iCn3D.prototype.intHash = function(atoms1, atoms2) {
+iCn3D.prototype.intHash = function(atoms1, atoms2) { "use strict"; var me = this;
     var results = {};
 
     if(Object.keys(atoms1).length < Object.keys(atoms2).length) {
@@ -158,7 +158,7 @@ iCn3D.prototype.intHash = function(atoms1, atoms2) {
 };
 
 // get atoms in allAtoms, but not in "atoms"
-iCn3D.prototype.exclHash = function(includeAtoms, excludeAtoms) {
+iCn3D.prototype.exclHash = function(includeAtoms, excludeAtoms) { "use strict"; var me = this;
     var results = {};
 
     for (var i in includeAtoms) {
@@ -173,7 +173,7 @@ iCn3D.prototype.exclHash = function(includeAtoms, excludeAtoms) {
     return results;
 };
 
-iCn3D.prototype.unionHash = function(atoms1, atoms2) {
+iCn3D.prototype.unionHash = function(atoms1, atoms2) { "use strict"; var me = this;
     // The commented-out version has a problem: atom1 became undefined.
     //jQuery.extend(atoms1, atoms2);
 
@@ -182,7 +182,7 @@ iCn3D.prototype.unionHash = function(atoms1, atoms2) {
     return this.unionHashNotInPlace(atoms1, atoms2);
 };
 
-iCn3D.prototype.unionHashNotInPlace = function(atoms1, atoms2) {
+iCn3D.prototype.unionHashNotInPlace = function(atoms1, atoms2) { "use strict"; var me = this;
     var results = jQuery.extend({}, atoms1, atoms2);
     atoms1 = {};
     atoms2 = {};
@@ -190,20 +190,20 @@ iCn3D.prototype.unionHashNotInPlace = function(atoms1, atoms2) {
     return results;
 };
 
-iCn3D.prototype.intHash2Atoms = function(atoms1, atoms2) {
+iCn3D.prototype.intHash2Atoms = function(atoms1, atoms2) { "use strict"; var me = this;
     return this.hash2Atoms(this.intHash(atoms1, atoms2));
 };
 
 // get atoms in allAtoms, but not in "atoms"
-iCn3D.prototype.exclHash2Atoms = function(includeAtoms, excludeAtoms) {
+iCn3D.prototype.exclHash2Atoms = function(includeAtoms, excludeAtoms) { "use strict"; var me = this;
     return this.hash2Atoms(this.exclHash(includeAtoms, excludeAtoms));
 };
 
-iCn3D.prototype.unionHash2Atoms = function(atoms1, atoms2) {
+iCn3D.prototype.unionHash2Atoms = function(atoms1, atoms2) { "use strict"; var me = this;
     return this.hash2Atoms(this.unionHash(atoms1, atoms2));
 };
 
-iCn3D.prototype.hash2Atoms = function(hash) {
+iCn3D.prototype.hash2Atoms = function(hash) { "use strict"; var me = this;
     var atoms = {};
     for(var i in hash) {
       atoms[i] = this.atoms[i];
@@ -215,13 +215,13 @@ iCn3D.prototype.hash2Atoms = function(hash) {
 };
 
 // from iview (http://istar.cse.cuhk.edu.hk/iview/)
-iCn3D.prototype.exportCanvas = function () {
+iCn3D.prototype.exportCanvas = function () { "use strict"; var me = this;
     this.render();
     window.open(this.renderer.domElement.toDataURL('image/png'));
 };
 
 // zoom
-iCn3D.prototype.zoomIn = function (normalizedFactor) { // 0.1
+iCn3D.prototype.zoomIn = function (normalizedFactor) {  "use strict"; var me = this;
   var para = {};
   para._zoomFactor = 1 - normalizedFactor;
   para.update = true;
@@ -229,7 +229,7 @@ iCn3D.prototype.zoomIn = function (normalizedFactor) { // 0.1
   this.render();
 };
 
-iCn3D.prototype.zoomOut = function (normalizedFactor) { // 0.1
+iCn3D.prototype.zoomOut = function (normalizedFactor) {  "use strict"; var me = this;
   var para = {};
   para._zoomFactor = 1 + normalizedFactor;
   para.update = true;
@@ -238,7 +238,7 @@ iCn3D.prototype.zoomOut = function (normalizedFactor) { // 0.1
 };
 
 // rotate
-iCn3D.prototype.rotateLeft = function (degree) { // 5
+iCn3D.prototype.rotateLeft = function (degree) {  "use strict"; var me = this;
   var axis = new THREE.Vector3(0,1,0);
   var angle = -degree / 180.0 * Math.PI;
 
@@ -255,7 +255,7 @@ iCn3D.prototype.rotateLeft = function (degree) { // 5
   this.render();
 };
 
-iCn3D.prototype.rotateRight = function (degree) { // 5
+iCn3D.prototype.rotateRight = function (degree) {  "use strict"; var me = this;
   var axis = new THREE.Vector3(0,1,0);
   var angle = degree / 180.0 * Math.PI;
 
@@ -272,7 +272,7 @@ iCn3D.prototype.rotateRight = function (degree) { // 5
   this.render();
 };
 
-iCn3D.prototype.rotateUp = function (degree) { // 5
+iCn3D.prototype.rotateUp = function (degree) {  "use strict"; var me = this;
   var axis = new THREE.Vector3(1,0,0);
   var angle = -degree / 180.0 * Math.PI;
 
@@ -289,7 +289,7 @@ iCn3D.prototype.rotateUp = function (degree) { // 5
   this.render();
 };
 
-iCn3D.prototype.rotateDown = function (degree) { // 5
+iCn3D.prototype.rotateDown = function (degree) {  "use strict"; var me = this;
   var axis = new THREE.Vector3(1,0,0);
   var angle = degree / 180.0 * Math.PI;
 
@@ -307,7 +307,7 @@ iCn3D.prototype.rotateDown = function (degree) { // 5
 };
 
 // translate
-iCn3D.prototype.translateLeft = function (percentScreenSize) { // 1
+iCn3D.prototype.translateLeft = function (percentScreenSize) {  "use strict"; var me = this;
   var mouseChange = new THREE.Vector2(0,0);
 
   // 1 means the full screen size
@@ -321,7 +321,7 @@ iCn3D.prototype.translateLeft = function (percentScreenSize) { // 1
   this.render();
 };
 
-iCn3D.prototype.translateRight = function (percentScreenSize) { // 1
+iCn3D.prototype.translateRight = function (percentScreenSize) {  "use strict"; var me = this;
   var mouseChange = new THREE.Vector2(0,0);
 
   mouseChange.x += percentScreenSize / 100.0;
@@ -334,7 +334,7 @@ iCn3D.prototype.translateRight = function (percentScreenSize) { // 1
   this.render();
 };
 
-iCn3D.prototype.translateUp = function (percentScreenSize) { // 1
+iCn3D.prototype.translateUp = function (percentScreenSize) {  "use strict"; var me = this;
   var mouseChange = new THREE.Vector2(0,0);
 
   mouseChange.y -= percentScreenSize / 100.0;
@@ -347,7 +347,7 @@ iCn3D.prototype.translateUp = function (percentScreenSize) { // 1
   this.render();
 };
 
-iCn3D.prototype.translateDown = function (percentScreenSize) { // 1
+iCn3D.prototype.translateDown = function (percentScreenSize) {  "use strict"; var me = this;
   var mouseChange = new THREE.Vector2(0,0);
 
   mouseChange.y += percentScreenSize / 100.0;
@@ -360,7 +360,7 @@ iCn3D.prototype.translateDown = function (percentScreenSize) { // 1
   this.render();
 };
 
-iCn3D.prototype.select3ddomainFromAtom = function (atom) {
+iCn3D.prototype.select3ddomainFromAtom = function (atom) { "use strict"; var me = this;
     var chainid = atom.structure + '_' + atom.chain;
     var resid = chainid + '_' + atom.resi;
 
@@ -383,7 +383,7 @@ iCn3D.prototype.select3ddomainFromAtom = function (atom) {
     return atomList;
 };
 
-iCn3D.prototype.showPickingHilight = function(atom) {
+iCn3D.prototype.showPickingHilight = function(atom) { "use strict"; var me = this;
   if(!this.bShift && !this.bCtrl) this.removeHlObjects();
 
   this.pickedAtomList = {};
@@ -467,17 +467,17 @@ iCn3D.prototype.showPickingHilight = function(atom) {
   this.addHlObjects();
 };
 
-iCn3D.prototype.showPicking = function(atom, x, y) { var me = this;
+iCn3D.prototype.showPicking = function(atom, x, y) { "use strict"; var me = this;
     this.showPickingBase(atom, x, y); // including render step
 };
 
-iCn3D.prototype.showPickingBase = function(atom, x, y) { var me = this;
+iCn3D.prototype.showPickingBase = function(atom, x, y) { "use strict"; var me = this;
   if(x === undefined && y === undefined) { // NOT mouse over
       this.showPickingHilight(atom); // including render step
   }
 };
 
-iCn3D.prototype.removeHlObjects = function () {
+iCn3D.prototype.removeHlObjects = function () { "use strict"; var me = this;
    // remove prevous highlight
    for(var i in this.prevHighlightObjects) {
        this.mdl.remove(this.prevHighlightObjects[i]);
@@ -493,7 +493,7 @@ iCn3D.prototype.removeHlObjects = function () {
    this.prevHighlightObjects_ghost = [];
 };
 
-iCn3D.prototype.addHlObjects = function (color, bRender, atomsHash) {
+iCn3D.prototype.addHlObjects = function (color, bRender, atomsHash) { "use strict"; var me = this;
    if(color === undefined) color = this.hColor;
    if(atomsHash === undefined) atomsHash = this.hAtoms;
 
@@ -502,7 +502,7 @@ iCn3D.prototype.addHlObjects = function (color, bRender, atomsHash) {
    if(bRender === undefined || bRender) this.render();
 };
 
-iCn3D.prototype.resetOrientation = function() {
+iCn3D.prototype.resetOrientation = function() { "use strict"; var me = this;
     var bSet = false;
     if(this.commands.length > 0) {
         var commandTransformation = this.commands[0].split('|||');
@@ -543,7 +543,7 @@ iCn3D.prototype.resetOrientation = function() {
 };
 
  // from iview (http://istar.cse.cuhk.edu.hk/iview/)
- iCn3D.prototype.getAtomsFromPosition = function(point, threshold) {
+ iCn3D.prototype.getAtomsFromPosition = function(point, threshold) { "use strict"; var me = this;
     var i, atom;
 
     if(threshold === undefined || threshold === null) {
@@ -576,7 +576,7 @@ iCn3D.prototype.resetOrientation = function() {
     return null;
  };
 
-iCn3D.prototype.getFirstAtomObj = function(atomsHash) {
+iCn3D.prototype.getFirstAtomObj = function(atomsHash) { "use strict"; var me = this;
     if(atomsHash == undefined) return this.atoms[0];
 
     var atomKeys = Object.keys(atomsHash);
@@ -585,7 +585,7 @@ iCn3D.prototype.getFirstAtomObj = function(atomsHash) {
     return this.atoms[firstIndex];
 };
 
-iCn3D.prototype.getFirstCalphaAtomObj = function(atomsHash) {
+iCn3D.prototype.getFirstCalphaAtomObj = function(atomsHash) { "use strict"; var me = this;
     if(atomsHash == undefined) return this.atoms[0];
 
     var firstIndex;
@@ -600,7 +600,7 @@ iCn3D.prototype.getFirstCalphaAtomObj = function(atomsHash) {
     return (firstIndex !== undefined) ? this.atoms[firstIndex] : this.getFirstAtomObj(atomsHash);
 };
 
-iCn3D.prototype.getLastAtomObj = function(atomsHash) {
+iCn3D.prototype.getLastAtomObj = function(atomsHash) { "use strict"; var me = this;
     var atomKeys = Object.keys(atomsHash);
     var lastIndex = atomKeys[atomKeys.length - 1];
 
@@ -608,7 +608,7 @@ iCn3D.prototype.getLastAtomObj = function(atomsHash) {
 };
 
  // http://stackoverflow.com/questions/5623838/rgb-to-hex-and-hex-to-rgb
- iCn3D.prototype.hexToRgb = function (hex, a) {
+ iCn3D.prototype.hexToRgb = function (hex, a) { "use strict"; var me = this;
      var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
      return result ? {
          r: parseInt(result[1], 16),
@@ -618,7 +618,7 @@ iCn3D.prototype.getLastAtomObj = function(atomsHash) {
      } : null;
  };
 
-iCn3D.prototype.selectStrandHelixFromAtom = function(atom) {
+iCn3D.prototype.selectStrandHelixFromAtom = function(atom) { "use strict"; var me = this;
     var firstAtom = atom;
     var lastAtom = atom;
 
@@ -675,7 +675,7 @@ iCn3D.prototype.selectStrandHelixFromAtom = function(atom) {
     return atomsHash;
 };
 
-iCn3D.prototype.addNonCarbonAtomLabels = function (atoms) {
+iCn3D.prototype.addNonCarbonAtomLabels = function (atoms) { "use strict"; var me = this;
     var size = 18;
     var background = "#FFFFFF";
 
@@ -708,7 +708,7 @@ iCn3D.prototype.addNonCarbonAtomLabels = function (atoms) {
     this.removeHlObjects();
 };
 
-iCn3D.prototype.addResiudeLabels = function (atoms, bSchematic, alpha) {
+iCn3D.prototype.addResiudeLabels = function (atoms, bSchematic, alpha) { "use strict"; var me = this;
     var size = 18;
     var background = "#CCCCCC";
     if(alpha === undefined) alpha = 1.0;
@@ -764,7 +764,7 @@ iCn3D.prototype.addResiudeLabels = function (atoms, bSchematic, alpha) {
     this.removeHlObjects();
 };
 
-iCn3D.prototype.addAtomLabels = function (atoms) {
+iCn3D.prototype.addAtomLabels = function (atoms) { "use strict"; var me = this;
     var size = 18;
     var background = "#CCCCCC";
 
@@ -794,7 +794,7 @@ iCn3D.prototype.addAtomLabels = function (atoms) {
     this.removeHlObjects();
 };
 
-iCn3D.prototype.setCenter = function(center) {
+iCn3D.prototype.setCenter = function(center) { "use strict"; var me = this;
    if(!this.bChainAlign) {
        this.mdl.position.set(0,0,0);
        this.mdlImpostor.position.set(0,0,0);
@@ -807,7 +807,7 @@ iCn3D.prototype.setCenter = function(center) {
    }
 };
 
-iCn3D.prototype.getResiduesFromAtoms = function(atomsHash) {
+iCn3D.prototype.getResiduesFromAtoms = function(atomsHash) { "use strict"; var me = this;
     var residuesHash = {};
     for(var i in atomsHash) {
         var residueid = this.atoms[i].structure + '_' + this.atoms[i].chain + '_' + this.atoms[i].resi;
@@ -817,7 +817,7 @@ iCn3D.prototype.getResiduesFromAtoms = function(atomsHash) {
     return residuesHash;
 };
 
-iCn3D.prototype.getResiduesFromCalphaAtoms = function(atomsHash) {
+iCn3D.prototype.getResiduesFromCalphaAtoms = function(atomsHash) { "use strict"; var me = this;
     var residuesHash = {};
     for(var i in atomsHash) {
         if((this.atoms[i].name == 'CA' && this.proteins.hasOwnProperty(i)) || !this.proteins.hasOwnProperty(i)) {

@@ -2,7 +2,7 @@
  * @author Jiyao Wang <wangjiy@ncbi.nlm.nih.gov> / https://github.com/ncbi/icn3d
  */
 
-iCn3DUI.prototype.selectResidues = function(id, that) { var me = this;
+iCn3DUI.prototype.selectResidues = function(id, that) { "use strict"; var me = this;
   if(id !== undefined && id !== '') {
     // add "align_" in front of id so that full sequence and aligned sequence will not conflict
     //if(id.substr(0, 5) === 'align') id = id.substr(5);
@@ -52,7 +52,7 @@ iCn3DUI.prototype.selectResidues = function(id, that) { var me = this;
   }
 };
 
-iCn3DUI.prototype.selectTitle = function(that) { var me = this;
+iCn3DUI.prototype.selectTitle = function(that) { "use strict"; var me = this;
   if($(that).hasClass('icn3d-seqTitle')) {
     var chainid = $(that).attr('chain');
 
@@ -243,7 +243,7 @@ iCn3DUI.prototype.selectTitle = function(that) { var me = this;
   }
 };
 
-iCn3DUI.prototype.selectSequenceNonMobile = function() { var me = this;
+iCn3DUI.prototype.selectSequenceNonMobile = function() { "use strict"; var me = this;
   //$("#" + me.pre + "dl_sequence").add("#" + me.pre + "dl_sequence2").add("#" + me.pre + "dl_annotations").selectable({
   $("#" + me.pre + "dl_sequence2").add("[id^=" + me.pre + "dt_giseq]").add("[id^=" + me.pre + "dt_site]").add("[id^=" + me.pre + "dt_snp]").add("[id^=" + me.pre + "dt_clinvar]").add("[id^=" + me.pre + "dt_cdd]").add("[id^=" + me.pre + "dt_domain]").add("[id^=" + me.pre + "dt_interaction]").add("[id^=" + me.pre + "dt_ssbond]").add("[id^=" + me.pre + "dt_transmem]")
   .add("[id^=" + me.pre + "tt_giseq]").add("[id^=" + me.pre + "tt_site]").add("[id^=" + me.pre + "tt_snp]").add("[id^=" + me.pre + "tt_clinvar]").add("[id^=" + me.pre + "tt_cdd]").add("[id^=" + me.pre + "tt_domain]").add("[id^=" + me.pre + "tt_interaction]").add("[id^=" + me.pre + "tt_ssbond]").add("[id^=" + me.pre + "tt_transmem]")
@@ -338,7 +338,7 @@ iCn3DUI.prototype.selectSequenceNonMobile = function() { var me = this;
   });
 };
 
-iCn3DUI.prototype.hlSummaryDomain3ddomain = function(that) { var me = this;
+iCn3DUI.prototype.hlSummaryDomain3ddomain = function(that) { "use strict"; var me = this;
   if($(that).attr('domain') !== undefined) { // domain
     var index = $(that).attr('index');
     var chainid = $(that).attr('chain');
@@ -358,7 +358,7 @@ iCn3DUI.prototype.hlSummaryDomain3ddomain = function(that) { var me = this;
   }
 };
 
-iCn3DUI.prototype.selectSequenceMobile = function() { var me = this;
+iCn3DUI.prototype.selectSequenceMobile = function() { "use strict"; var me = this;
   $("#" + me.pre + "dl_sequence2").add("[id^=" + me.pre + "giseq]").add("[id^=" + me.pre + "site]").add("[id^=" + me.pre + "clinvar]").add("[id^=" + me.pre + "snp]").add("[id^=" + me.pre + "cdd]").add("[id^=" + me.pre + "domain]").add("[id^=" + me.pre + "interaction]").add("[id^=" + me.pre + "ssbond]").add("[id^=" + me.pre + "transmem]").on('click', '.icn3d-residue', function(e) {
   //$(".icn3d-dl_sequence").on('click', '.icn3d-residue', function(e) {
       e.stopImmediatePropagation();
@@ -414,7 +414,7 @@ iCn3DUI.prototype.selectSequenceMobile = function() { var me = this;
   });
 };
 
-iCn3DUI.prototype.selectChainMobile = function() { var me = this;
+iCn3DUI.prototype.selectChainMobile = function() { "use strict"; var me = this;
   $("#" + me.pre + "dl_sequence2").add("[id^=" + me.pre + "giseq]").add("[id^=" + me.pre + "site]").add("[id^=" + me.pre + "clinvar]").add("[id^=" + me.pre + "snp]").add("[id^=" + me.pre + "cdd]").add("[id^=" + me.pre + "domain]").add("[id^=" + me.pre + "interaction]").add("[id^=" + me.pre + "ssbond]").add("[id^=" + me.pre + "transmem]").on('click', '.icn3d-seqTitle', function(e) {
   //$(".icn3d-dl_sequence").on('click', '.icn3d-seqTitle', function(e) {
       e.stopImmediatePropagation();

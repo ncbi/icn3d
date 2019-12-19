@@ -2,7 +2,7 @@
  * @author Jiyao Wang <wangjiy@ncbi.nlm.nih.gov> / https://github.com/ncbi/icn3d
  */
 
-iCn3DUI.prototype.showAnnotations = function() { var me = this;
+iCn3DUI.prototype.showAnnotations = function() { "use strict"; var me = this;
     me.openDialog(me.pre + 'dl_selectannotations', 'Sequences and Annotations');
 
     // add note about assembly
@@ -180,7 +180,7 @@ iCn3DUI.prototype.showAnnotations = function() { var me = this;
     me.bAnnoShown = true;
 };
 
-iCn3DUI.prototype.showAnnoSeqData = function(nucleotide_chainid, chemical_chainid, chemical_set) { var me = this;
+iCn3DUI.prototype.showAnnoSeqData = function(nucleotide_chainid, chemical_chainid, chemical_set) { "use strict"; var me = this;
     me.getAnnotationData();
 
     var i = 0;
@@ -214,7 +214,7 @@ iCn3DUI.prototype.showAnnoSeqData = function(nucleotide_chainid, chemical_chaini
     }, 0);
 };
 
-iCn3DUI.prototype.enableHlSeq = function() { var me = this;
+iCn3DUI.prototype.enableHlSeq = function() { "use strict"; var me = this;
     if(! me.isMobile()) {
         me.selectSequenceNonMobile();
     }
@@ -233,7 +233,7 @@ iCn3DUI.prototype.enableHlSeq = function() { var me = this;
 // the following will be called only when the annotation is selected: showSnpClinvar, showDomain, showInteraction
 // showSnpClinvar and showDomain will loop through me.protein_chainid
 // showInteraction will loop through me.interactChainChainbase
-iCn3DUI.prototype.updateSnpClinvar = function() { var me = this;
+iCn3DUI.prototype.updateSnpClinvar = function() { "use strict"; var me = this;
     if(me.bSnpClinvarShown === undefined || !me.bSnpClinvarShown) {
         for(var chainid in me.protein_chainid) {
             var chainidBase = me.protein_chainid[chainid];
@@ -244,7 +244,7 @@ iCn3DUI.prototype.updateSnpClinvar = function() { var me = this;
     me.bSnpClinvarShown = true;
 };
 
-iCn3DUI.prototype.updateDomain = function() { var me = this;
+iCn3DUI.prototype.updateDomain = function() { "use strict"; var me = this;
     if(me.bDomainShown === undefined || !me.bDomainShown) {
 /*
         for(var chainid in me.protein_chainid) {
@@ -258,7 +258,7 @@ iCn3DUI.prototype.updateDomain = function() { var me = this;
     me.bDomainShown = true;
 };
 
-iCn3DUI.prototype.updateInteraction = function() { var me = this;
+iCn3DUI.prototype.updateInteraction = function() { "use strict"; var me = this;
     if(me.bInteractionShown === undefined || !me.bInteractionShown) {
         for(var chainid in me.interactChainChainbase) {
             var chainidBase = me.interactChainChainbase[chainid];
@@ -269,7 +269,7 @@ iCn3DUI.prototype.updateInteraction = function() { var me = this;
     me.bInteractionShown = true;
 };
 
-iCn3DUI.prototype.updateSsbond = function() { var me = this;
+iCn3DUI.prototype.updateSsbond = function() { "use strict"; var me = this;
     if(me.bSSbondShown === undefined || !me.bSSbondShown) {
         for(var chainid in me.ssbondChainChainbase) {
             var chainidBase = me.interactChainChainbase[chainid];
@@ -280,7 +280,7 @@ iCn3DUI.prototype.updateSsbond = function() { var me = this;
     me.bSSbondShown = true;
 };
 
-iCn3DUI.prototype.updateTransmem = function() { var me = this;
+iCn3DUI.prototype.updateTransmem = function() { "use strict"; var me = this;
     if(me.bTranememShown === undefined || !me.bTranememShown) {
         for(var chainid in me.protein_chainid) {
             var chainidBase = me.protein_chainid[chainid];
@@ -291,7 +291,7 @@ iCn3DUI.prototype.updateTransmem = function() { var me = this;
     me.bTranememShown = true;
 };
 
-iCn3DUI.prototype.getAnDiv = function(chnid, anno) { var me = this;
+iCn3DUI.prototype.getAnDiv = function(chnid, anno) { "use strict"; var me = this;
     var message = 'Loading ' + anno + '...';
     if(anno == 'custom') {
         message = ''
@@ -303,11 +303,11 @@ iCn3DUI.prototype.getAnDiv = function(chnid, anno) { var me = this;
     return "<div id='" + me.pre + anno + "_" + chnid + "'><div id='" + me.pre + "tt_" + anno + "_" + chnid + "' class='icn3d-fixed-pos' style='display:none!important'></div><div id='" + me.pre + "dt_" + anno + "_" + chnid + "' style='display:none'>" + message + "</div><div id='" + me.pre + "ov_" + anno + "_" + chnid + "'>" + message + "</div></div>";
 };
 
-iCn3DUI.prototype.addButton = function(chnid, classvalue, name, desc, width, buttonStyle) { var me = this;
+iCn3DUI.prototype.addButton = function(chnid, classvalue, name, desc, width, buttonStyle) { "use strict"; var me = this;
     return "<div class='" + classvalue + "' chainid='" + chnid + "' style='display:inline-block; font-size:11px; font-weight:bold; width:" + width + "px!important;'><button style='-webkit-appearance:" + buttonStyle + "; height:18px; width:" + width + "px;'><span style='white-space:nowrap; margin-left:-3px;' title='" + desc + "'>" + name + "</span></button></div>";
 };
 
-iCn3DUI.prototype.conservativeReplacement = function(resA, resB) { var me = this;
+iCn3DUI.prototype.conservativeReplacement = function(resA, resB) { "use strict"; var me = this;
     var iA = (me.b62ResArray.indexOf(resA) !== -1) ? me.b62ResArray.indexOf(resA) : me.b62ResArray.length - 1; // or the last one "*"
     var iB = (me.b62ResArray.indexOf(resB) !== -1) ? me.b62ResArray.indexOf(resB) : me.b62ResArray.length - 1; // or the last one "*"
 
@@ -321,7 +321,7 @@ iCn3DUI.prototype.conservativeReplacement = function(resA, resB) { var me = this
     }
 };
 
-iCn3DUI.prototype.getColorhexFromBlosum62 = function(resA, resB) { var me = this;
+iCn3DUI.prototype.getColorhexFromBlosum62 = function(resA, resB) { "use strict"; var me = this;
     var iA = (me.b62ResArray.indexOf(resA) !== -1) ? me.b62ResArray.indexOf(resA) : me.b62ResArray.length - 1; // or the last one "*"
     var iB = (me.b62ResArray.indexOf(resB) !== -1) ? me.b62ResArray.indexOf(resB) : me.b62ResArray.length - 1; // or the last one "*"
 
@@ -346,7 +346,7 @@ iCn3DUI.prototype.getColorhexFromBlosum62 = function(resA, resB) { var me = this
     return color;
 };
 
-iCn3DUI.prototype.getAnnotationData = function() { var me = this;
+iCn3DUI.prototype.getAnnotationData = function() { "use strict"; var me = this;
     var chnidBaseArray = $.map(me.protein_chainid, function(v) { return v; });
 
     var index = 0;
@@ -647,7 +647,7 @@ iCn3DUI.prototype.getAnnotationData = function() { var me = this;
     });
 };
 
-iCn3DUI.prototype.setAlternativeSeq = function(chnid, chnidBase) { var me = this;
+iCn3DUI.prototype.setAlternativeSeq = function(chnid, chnidBase) { "use strict"; var me = this;
     //if(me.icn3d.chainsSeq[chnid] !== undefined) {
     var resArray = me.icn3d.chainsSeq[chnid];
 
@@ -662,7 +662,7 @@ iCn3DUI.prototype.setAlternativeSeq = function(chnid, chnidBase) { var me = this
     me.baseResi[chnid] = me.icn3d.chainsSeq[chnid][0].resi - me.matchedPos[chnid] - 1;
 };
 
-iCn3DUI.prototype.getProteinName= function(chnid) { var me = this;
+iCn3DUI.prototype.getProteinName= function(chnid) { "use strict"; var me = this;
     var fullProteinName = '';
     if( (me.cfg.mmdbid !== undefined || me.cfg.gi !== undefined || me.cfg.blast_rep_id !== undefined) && me.mmdb_data !== undefined) {
         var moleculeInfor = me.mmdb_data.moleculeInfor;
@@ -670,7 +670,7 @@ iCn3DUI.prototype.getProteinName= function(chnid) { var me = this;
         for(var i in moleculeInfor) {
             if(moleculeInfor[i].chain == chain) {
                 fullProteinName = moleculeInfor[i].name.replace(/\'/g, '&prime;');
-                proteinName = fullProteinName;
+                var proteinName = fullProteinName;
                 //if(proteinName.length > 40) proteinName = proteinName.substr(0, 40) + "...";
                 break;
             }
@@ -685,7 +685,7 @@ iCn3DUI.prototype.getProteinName= function(chnid) { var me = this;
     return fullProteinName;
 };
 
-iCn3DUI.prototype.getSequenceData = function(chnid, chnidBase, type, index) { var me = this;
+iCn3DUI.prototype.getSequenceData = function(chnid, chnidBase, type, index) { "use strict"; var me = this;
     var fullProteinName = me.getProteinName(chnid);
     var proteinName = fullProteinName;
     if(proteinName.length > 40) proteinName = proteinName.substr(0, 40) + "...";
@@ -730,7 +730,7 @@ iCn3DUI.prototype.getSequenceData = function(chnid, chnidBase, type, index) { va
     //me.showInteraction(chnid, chnidBase);
 };
 
-iCn3DUI.prototype.getCombinedSequenceData = function(name, residArray, index) { var me = this;
+iCn3DUI.prototype.getCombinedSequenceData = function(name, residArray, index) { "use strict"; var me = this;
 
     var categoryStr = (index == 0) ? "<span class='icn3d-annoLargeTitle'><b>Chemicals/Ions/Water</b>: </span><br><br>" : "";
 
@@ -805,7 +805,7 @@ iCn3DUI.prototype.getCombinedSequenceData = function(name, residArray, index) { 
     $("#" + me.pre + 'ov_giseq_' + name).html(html2);
 };
 
-iCn3DUI.prototype.insertGap = function(chnid, seqIndex, text, bNohtml) {  var me = this;
+iCn3DUI.prototype.insertGap = function(chnid, seqIndex, text, bNohtml) {  "use strict"; var me = this;
   var html = '';
 
   if(me.cfg.blast_rep_id == chnid && me.targetGapHash!== undefined && me.targetGapHash.hasOwnProperty(seqIndex)) {
@@ -822,7 +822,7 @@ iCn3DUI.prototype.insertGap = function(chnid, seqIndex, text, bNohtml) {  var me
   return html;
 };
 
-iCn3DUI.prototype.insertGapOverview = function(chnid, seqIndex) {  var me = this;
+iCn3DUI.prototype.insertGapOverview = function(chnid, seqIndex) {  "use strict"; var me = this;
   var html2 = '';
 
   if(me.cfg.blast_rep_id == chnid && me.targetGapHash!== undefined && me.targetGapHash.hasOwnProperty(seqIndex)) {
@@ -834,7 +834,7 @@ iCn3DUI.prototype.insertGapOverview = function(chnid, seqIndex) {  var me = this
   return html2;
 };
 
-iCn3DUI.prototype.showSeq = function(chnid, chnidBase, type, queryTitle, compTitle, queryText, compText) {  var me = this;
+iCn3DUI.prototype.showSeq = function(chnid, chnidBase, type, queryTitle, compTitle, queryText, compText) {  "use strict"; var me = this;
     var bNonMmdb = false;
 
     var giSeq;
@@ -1350,7 +1350,7 @@ iCn3DUI.prototype.showSeq = function(chnid, chnidBase, type, queryTitle, compTit
     $("#" + me.pre + 'tt_giseq_' + chnid).html(html3); // fixed title for scrolling
 };
 
-iCn3DUI.prototype.navClinVar = function(chnid) { var me = this;
+iCn3DUI.prototype.navClinVar = function(chnid) { "use strict"; var me = this;
     me.currClin[chnid] = - 1;
 
     $(document).on('click', "#" + me.pre + chnid + "_prevclin", function(e) {
@@ -1376,7 +1376,7 @@ iCn3DUI.prototype.navClinVar = function(chnid) { var me = this;
     });
 };
 
-iCn3DUI.prototype.showClinVarLabelOn3D = function(chnid) { var me = this;
+iCn3DUI.prototype.showClinVarLabelOn3D = function(chnid) { "use strict"; var me = this;
       var resiArray = Object.keys(me.resi2disease_nonempty[chnid]);
 
       var chainid, residueid;
@@ -1430,7 +1430,7 @@ iCn3DUI.prototype.showClinVarLabelOn3D = function(chnid) { var me = this;
 };
 
 iCn3DUI.prototype.getSnpLine = function(line, totalLineNum, resi2snp, resi2rsnum, resi2clinAllele, resi2disease, resi2index, resi2sig, posarray, posClinArray, bStartEndRes, chnid, bOverview, bClinvar, bTitleOnly, bSnpOnly) {
-    var me = this;
+    "use strict"; var me = this;
 
     var html = '';
 
@@ -1813,7 +1813,7 @@ iCn3DUI.prototype.getSnpLine = function(line, totalLineNum, resi2snp, resi2rsnum
 };
 
 iCn3DUI.prototype.processSnpClinvar = function(data, chnid, chnidBase, bSnpOnly) {
-    var me = this;
+    "use strict"; var me = this;
 
     var html = '<div id="' + me.pre + chnid + '_snpseq_sequence" class="icn3d-dl_sequence">';
     var html2 = html;
@@ -1968,7 +1968,7 @@ iCn3DUI.prototype.processSnpClinvar = function(data, chnid, chnidBase, bSnpOnly)
 };
 
 iCn3DUI.prototype.showSnpClinvar = function(chnid, chnidBase) {
-    var me = this;
+    "use strict"; var me = this;
 
     var url = "https://www.ncbi.nlm.nih.gov/projects/SNP/beVarSearch_mt.cgi?appname=iCn3D&format=bed&report=pdb2bed&acc=" + chnidBase;
 
@@ -2033,7 +2033,7 @@ iCn3DUI.prototype.showSnpClinvar = function(chnid, chnidBase) {
     });
 };
 
-iCn3DUI.prototype.showSnpClinvarAlt = function(chnid, chnidBase, gi) { var me = this;
+iCn3DUI.prototype.showSnpClinvarAlt = function(chnid, chnidBase, gi) { "use strict"; var me = this;
     if(gi !== undefined) {
         var url3 = "https://www.ncbi.nlm.nih.gov/projects/SNP/beVarSearch.cgi?appname=iCn3D&format=bed&report=pdb2bed&gi=" + gi;
 
@@ -2072,7 +2072,7 @@ iCn3DUI.prototype.showSnpClinvarAlt = function(chnid, chnidBase, gi) { var me = 
     }
 };
 
-iCn3DUI.prototype.processNoSnpClinvar = function(chnid) { var me = this;
+iCn3DUI.prototype.processNoSnpClinvar = function(chnid) { "use strict"; var me = this;
         console.log( "No SNP data were found for the protein " + chnid + "..." );
 
         $("#" + me.pre + 'dt_clinvar_' + chnid).html('');
@@ -2088,7 +2088,7 @@ iCn3DUI.prototype.processNoSnpClinvar = function(chnid) { var me = this;
         if(me.deferredSnpClinvar !== undefined) me.deferredSnpClinvar.resolve();
 };
 
-iCn3DUI.prototype.showCddSiteAll = function() { var me = this;
+iCn3DUI.prototype.showCddSiteAll = function() { "use strict"; var me = this;
     var chnidBaseArray = $.map(me.protein_chainid, function(v) { return v; });
     var chnidArray = Object.keys(me.protein_chainid);
 
@@ -2413,7 +2413,7 @@ iCn3DUI.prototype.showCddSiteAll = function() { var me = this;
     });
 };
 
-iCn3DUI.prototype.showDomainPerStructure = function(index) { var me = this;
+iCn3DUI.prototype.showDomainPerStructure = function(index) { "use strict"; var me = this;
     //var chnid = Object.keys(me.protein_chainid)[0];
     //var pdbid = chnid.substr(0, chnid.indexOf('_'));
     var pdbArray = Object.keys(me.icn3d.structures);
@@ -2514,7 +2514,7 @@ iCn3DUI.prototype.showDomainPerStructure = function(index) { var me = this;
     }
 };
 
-iCn3DUI.prototype.showDomainAll = function() { var me = this;
+iCn3DUI.prototype.showDomainAll = function() { "use strict"; var me = this;
     //var chnid = Object.keys(me.protein_chainid)[0];
     //var pdbid = chnid.substr(0, chnid.indexOf('_'));
     var pdbArray = Object.keys(me.icn3d.structures);
@@ -2532,7 +2532,7 @@ iCn3DUI.prototype.showDomainAll = function() { var me = this;
     }
 };
 
-iCn3DUI.prototype.showDomainWithData = function(chnid, data) { var me = this;
+iCn3DUI.prototype.showDomainWithData = function(chnid, data) { "use strict"; var me = this;
         var html = '<div id="' + me.pre + chnid + '_domainseq_sequence" class="icn3d-dl_sequence">';
         var html2 = html;
         var html3 = html;
@@ -2689,7 +2689,7 @@ iCn3DUI.prototype.showDomainWithData = function(chnid, data) { var me = this;
 };
 
 iCn3DUI.prototype.showInteraction = function(chnid, chnidBase) {
-    var me = this;
+    "use strict"; var me = this;
 
     if(me.chainname2residues === undefined && (me.cfg.mmdbid !== undefined || me.cfg.gi !== undefined || me.cfg.blast_rep_id !== undefined || me.cfg.align !== undefined || me.cfg.chainalign !== undefined) ) {
         // 2d interaction didn't finish loading data yet
@@ -2703,7 +2703,7 @@ iCn3DUI.prototype.showInteraction = function(chnid, chnidBase) {
 };
 
 iCn3DUI.prototype.showInteraction_base = function(chnid, chnidBase) {
-    var me = this;
+    "use strict"; var me = this;
 
     // set interaction
     if(me.chainname2residues === undefined) me.chainname2residues = {};
@@ -2889,7 +2889,7 @@ iCn3DUI.prototype.showInteraction_base = function(chnid, chnidBase) {
     }
 };
 
-iCn3DUI.prototype.showSsbond = function(chnid, chnidBase) { var me = this;
+iCn3DUI.prototype.showSsbond = function(chnid, chnidBase) { "use strict"; var me = this;
     if(me.icn3d.ssbondpnts === undefined) {
         // didn't finish loading atom data yet
         setTimeout(function(){
@@ -2901,7 +2901,7 @@ iCn3DUI.prototype.showSsbond = function(chnid, chnidBase) { var me = this;
     }
 };
 
-iCn3DUI.prototype.showSsbond_base = function(chnid, chnidBase) { var me = this;
+iCn3DUI.prototype.showSsbond_base = function(chnid, chnidBase) { "use strict"; var me = this;
 
     var chainid = chnidBase;
 
@@ -3095,7 +3095,7 @@ iCn3DUI.prototype.showSsbond_base = function(chnid, chnidBase) { var me = this;
 */
 };
 
-iCn3DUI.prototype.showTransmem = function(chnid, chnidBase) { var me = this;
+iCn3DUI.prototype.showTransmem = function(chnid, chnidBase) { "use strict"; var me = this;
     if(me.icn3d.ssbondpnts === undefined) {
         // didn't finish loading atom data yet
         setTimeout(function(){
@@ -3107,7 +3107,7 @@ iCn3DUI.prototype.showTransmem = function(chnid, chnidBase) { var me = this;
     }
 };
 
-iCn3DUI.prototype.showTransmem_base = function(chnid, chnidBase) { var me = this;
+iCn3DUI.prototype.showTransmem_base = function(chnid, chnidBase) { "use strict"; var me = this;
     var residHash = {};
     for(var serial in me.icn3d.chains[chnidBase]) {
         var atom = me.icn3d.atoms[serial];
@@ -3123,7 +3123,7 @@ iCn3DUI.prototype.showTransmem_base = function(chnid, chnidBase) { var me = this
     me.showAnnoType(chnid, chnidBase, 'transmem', title, residueArray);
 };
 
-iCn3DUI.prototype.showAnnoType = function(chnid, chnidBase, type, title, residueArray, resid2resids) { var me = this;
+iCn3DUI.prototype.showAnnoType = function(chnid, chnidBase, type, title, residueArray, resid2resids) { "use strict"; var me = this;
 //    var chainArray = Object.keys(me.icn3d.chains);
 
     //var chainid = chnid;
@@ -3239,7 +3239,7 @@ iCn3DUI.prototype.showAnnoType = function(chnid, chnidBase, type, title, residue
 
 };
 
-iCn3DUI.prototype.hideAllAnno = function() { var me = this;
+iCn3DUI.prototype.hideAllAnno = function() { "use strict"; var me = this;
         $("[id^=" + me.pre + "site]").hide();
         $("[id^=" + me.pre + "snp]").hide();
         $("[id^=" + me.pre + "clinvar]").hide();
@@ -3251,7 +3251,7 @@ iCn3DUI.prototype.hideAllAnno = function() { var me = this;
         $("[id^=" + me.pre + "transmem]").hide();
 };
 
-iCn3DUI.prototype.setAnnoTabAll = function () {  var me = this;
+iCn3DUI.prototype.setAnnoTabAll = function () {  "use strict"; var me = this;
     if($("#" + me.pre + "anno_all").length) $("#" + me.pre + "anno_all")[0].checked = true;
 
     if($("#" + me.pre + "anno_binding").length) $("#" + me.pre + "anno_binding")[0].checked = true;
@@ -3282,7 +3282,7 @@ iCn3DUI.prototype.setAnnoTabAll = function () {  var me = this;
     me.updateTransmem();
 };
 
-iCn3DUI.prototype.hideAnnoTabAll = function () {  var me = this;
+iCn3DUI.prototype.hideAnnoTabAll = function () {  "use strict"; var me = this;
     if($("#" + me.pre + "anno_all").length) $("#" + me.pre + "anno_all")[0].checked = false;
 
     if($("#" + me.pre + "anno_binding").length) $("#" + me.pre + "anno_binding")[0].checked = false;
@@ -3298,109 +3298,109 @@ iCn3DUI.prototype.hideAnnoTabAll = function () {  var me = this;
     me.hideAllAnno();
 };
 
-iCn3DUI.prototype.setAnnoTabCustom = function () {  var me = this;
+iCn3DUI.prototype.setAnnoTabCustom = function () {  "use strict"; var me = this;
     $("[id^=" + me.pre + "custom]").show();
     if($("#" + me.pre + "anno_custom").length) $("#" + me.pre + "anno_custom")[0].checked = true;
 };
 
-iCn3DUI.prototype.hideAnnoTabCustom = function () {  var me = this;
+iCn3DUI.prototype.hideAnnoTabCustom = function () {  "use strict"; var me = this;
     $("[id^=" + me.pre + "custom]").hide();
     if($("#" + me.pre + "anno_custom").length) $("#" + me.pre + "anno_custom")[0].checked = false;
 };
 
-iCn3DUI.prototype.setAnnoTabClinvar = function () {  var me = this;
+iCn3DUI.prototype.setAnnoTabClinvar = function () {  "use strict"; var me = this;
     $("[id^=" + me.pre + "clinvar]").show();
     if($("#" + me.pre + "anno_clinvar").length) $("#" + me.pre + "anno_clinvar")[0].checked = true;
 
     me.updateSnpClinvar();
 };
 
-iCn3DUI.prototype.hideAnnoTabClinvar = function () {  var me = this;
+iCn3DUI.prototype.hideAnnoTabClinvar = function () {  "use strict"; var me = this;
     $("[id^=" + me.pre + "clinvar]").hide();
     if($("#" + me.pre + "anno_clinvar").length) $("#" + me.pre + "anno_clinvar")[0].checked = false;
 };
 
-iCn3DUI.prototype.setAnnoTabSnp = function () {  var me = this;
+iCn3DUI.prototype.setAnnoTabSnp = function () {  "use strict"; var me = this;
     $("[id^=" + me.pre + "snp]").show();
     if($("#" + me.pre + "anno_snp").length) $("#" + me.pre + "anno_snp")[0].checked = true;
 
     me.updateSnpClinvar();
 };
 
-iCn3DUI.prototype.hideAnnoTabSnp = function () {  var me = this;
+iCn3DUI.prototype.hideAnnoTabSnp = function () {  "use strict"; var me = this;
     $("[id^=" + me.pre + "snp]").hide();
     if($("#" + me.pre + "anno_snp").length) $("#" + me.pre + "anno_snp")[0].checked = false;
 };
 
-iCn3DUI.prototype.setAnnoTabCdd = function () {  var me = this;
+iCn3DUI.prototype.setAnnoTabCdd = function () {  "use strict"; var me = this;
     $("[id^=" + me.pre + "cdd]").show();
     if($("#" + me.pre + "anno_cdd").length) $("#" + me.pre + "anno_cdd")[0].checked = true;
 };
 
-iCn3DUI.prototype.hideAnnoTabCdd = function () {  var me = this;
+iCn3DUI.prototype.hideAnnoTabCdd = function () {  "use strict"; var me = this;
     $("[id^=" + me.pre + "cdd]").hide();
     if($("#" + me.pre + "anno_cdd").length) $("#" + me.pre + "anno_cdd")[0].checked = false;
 };
 
-iCn3DUI.prototype.setAnnoTab3ddomain = function () {  var me = this;
+iCn3DUI.prototype.setAnnoTab3ddomain = function () {  "use strict"; var me = this;
     $("[id^=" + me.pre + "domain]").show();
     if($("#" + me.pre + "anno_3dd").length) $("#" + me.pre + "anno_3dd")[0].checked = true;
 
     me.updateDomain();
 };
 
-iCn3DUI.prototype.hideAnnoTab3ddomain = function () {  var me = this;
+iCn3DUI.prototype.hideAnnoTab3ddomain = function () {  "use strict"; var me = this;
     $("[id^=" + me.pre + "domain]").hide();
     if($("#" + me.pre + "anno_3dd").length) $("#" + me.pre + "anno_3dd")[0].checked = false;
 };
 
-iCn3DUI.prototype.setAnnoTabSite = function () {  var me = this;
+iCn3DUI.prototype.setAnnoTabSite = function () {  "use strict"; var me = this;
     $("[id^=" + me.pre + "site]").show();
     if($("#" + me.pre + "anno_binding").length) $("#" + me.pre + "anno_binding")[0].checked = true;
 };
 
-iCn3DUI.prototype.hideAnnoTabSite = function () {  var me = this;
+iCn3DUI.prototype.hideAnnoTabSite = function () {  "use strict"; var me = this;
     $("[id^=" + me.pre + "site]").hide();
     if($("#" + me.pre + "anno_binding").length) $("#" + me.pre + "anno_binding")[0].checked = false;
 };
 
-iCn3DUI.prototype.setAnnoTabInteraction = function () {  var me = this;
+iCn3DUI.prototype.setAnnoTabInteraction = function () {  "use strict"; var me = this;
     $("[id^=" + me.pre + "interaction]").show();
     if($("#" + me.pre + "anno_interact").length) $("#" + me.pre + "anno_interact")[0].checked = true;
 
     me.updateInteraction();
 };
 
-iCn3DUI.prototype.hideAnnoTabInteraction = function () {  var me = this;
+iCn3DUI.prototype.hideAnnoTabInteraction = function () {  "use strict"; var me = this;
     $("[id^=" + me.pre + "interaction]").hide();
     if($("#" + me.pre + "anno_interact").length) $("#" + me.pre + "anno_interact")[0].checked = false;
 };
 
-iCn3DUI.prototype.setAnnoTabSsbond = function () {  var me = this;
+iCn3DUI.prototype.setAnnoTabSsbond = function () {  "use strict"; var me = this;
     $("[id^=" + me.pre + "ssbond]").show();
     if($("#" + me.pre + "anno_ssbond").length) $("#" + me.pre + "anno_ssbond")[0].checked = true;
 
     me.updateSsbond();
 };
 
-iCn3DUI.prototype.hideAnnoTabSsbond = function () {  var me = this;
+iCn3DUI.prototype.hideAnnoTabSsbond = function () {  "use strict"; var me = this;
     $("[id^=" + me.pre + "ssbond]").hide();
     if($("#" + me.pre + "anno_ssbond").length) $("#" + me.pre + "anno_ssbond")[0].checked = false;
 };
 
-iCn3DUI.prototype.setAnnoTabTransmem = function () {  var me = this;
+iCn3DUI.prototype.setAnnoTabTransmem = function () {  "use strict"; var me = this;
     $("[id^=" + me.pre + "transmem]").show();
     if($("#" + me.pre + "anno_transmem").length) $("#" + me.pre + "anno_transmem")[0].checked = true;
 
     me.updateTransmem();
 };
 
-iCn3DUI.prototype.hideAnnoTabTransmem = function () {  var me = this;
+iCn3DUI.prototype.hideAnnoTabTransmem = function () {  "use strict"; var me = this;
     $("[id^=" + me.pre + "transmem]").hide();
     if($("#" + me.pre + "anno_transmem").length) $("#" + me.pre + "anno_transmem")[0].checked = false;
 };
 
-iCn3DUI.prototype.setTabs = function () {  var me = this;
+iCn3DUI.prototype.setTabs = function () {  "use strict"; var me = this;
 //        $("#" + me.pre + "dl_annotations_tabs").tabs();
     $("#" + me.pre + "dl_addtrack_tabs").tabs();
     $("#" + me.pre + "dl_anno_view_tabs").tabs();
@@ -3510,7 +3510,7 @@ iCn3DUI.prototype.setTabs = function () {  var me = this;
     });
 };
 
-iCn3DUI.prototype.clickCdd = function() { var me = this;
+iCn3DUI.prototype.clickCdd = function() { "use strict"; var me = this;
   if($("[id^=" + me.pre + "cdd]").length > 0) {
     if($("#" + me.pre + "anno_cdd")[0].checked) {
         me.setAnnoTabCdd();
@@ -3525,7 +3525,7 @@ iCn3DUI.prototype.clickCdd = function() { var me = this;
 
 // jquery tooltip
 //https://stackoverflow.com/questions/18231315/jquery-ui-tooltip-html-with-links
-iCn3DUI.prototype.setToolTip = function () {  var me = this;
+iCn3DUI.prototype.setToolTip = function () {  "use strict"; var me = this;
   $("[id^=" + me.pre + "snp]").add("[id^=" + me.pre + "clinvar]").add("[id^=" + me.pre + "ssbond]").tooltip({
     content: function () {
         return $(this).prop('title');
@@ -3547,7 +3547,7 @@ iCn3DUI.prototype.setToolTip = function () {  var me = this;
   });
 };
 
-iCn3DUI.prototype.showAnnoSelectedChains = function () {   var me = this;
+iCn3DUI.prototype.showAnnoSelectedChains = function () {   "use strict"; var me = this;
     // show selected chains in annotation window
     var chainHash = {};
     for(var i in me.icn3d.hAtoms) {
@@ -3569,11 +3569,11 @@ iCn3DUI.prototype.showAnnoSelectedChains = function () {   var me = this;
     }
 };
 
-iCn3DUI.prototype.showAnnoAllChains = function () {   var me = this;
+iCn3DUI.prototype.showAnnoAllChains = function () {   "use strict"; var me = this;
     $("#" + me.pre + "dl_annotations > .icn3d-annotation").show();
 };
 
-iCn3DUI.prototype.setAnnoView = function(view) { var me = this;
+iCn3DUI.prototype.setAnnoView = function(view) { "use strict"; var me = this;
     if(view === 'detailed view') {
         me.view = 'detailed view';
 
@@ -3598,7 +3598,7 @@ iCn3DUI.prototype.setAnnoView = function(view) { var me = this;
     }
 };
 
-iCn3DUI.prototype.showFixedTitle = function() { var me = this;
+iCn3DUI.prototype.showFixedTitle = function() { "use strict"; var me = this;
         var style = 'display:block;'
         $("[id^=" + me.pre + "tt_giseq]").attr('style', style);
         $("[id^=" + me.pre + "tt_custom]").attr('style', style);
@@ -3612,7 +3612,7 @@ iCn3DUI.prototype.showFixedTitle = function() { var me = this;
         $("[id^=" + me.pre + "tt_transmem]").attr('style', style);
 };
 
-iCn3DUI.prototype.hideFixedTitle = function() { var me = this;
+iCn3DUI.prototype.hideFixedTitle = function() { "use strict"; var me = this;
         var style = 'display:none!important;'
         $("[id^=" + me.pre + "tt_giseq]").attr('style', style);
         $("[id^=" + me.pre + "tt_custom]").attr('style', style);
@@ -3626,7 +3626,7 @@ iCn3DUI.prototype.hideFixedTitle = function() { var me = this;
         $("[id^=" + me.pre + "tt_transmem]").attr('style', style);
 };
 
-iCn3DUI.prototype.setAnnoViewAndDisplay = function(view) { var me = this;
+iCn3DUI.prototype.setAnnoViewAndDisplay = function(view) { "use strict"; var me = this;
     if(view === 'detailed view') {
         me.setAnnoView('detailed view');
 

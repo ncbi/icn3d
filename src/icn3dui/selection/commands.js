@@ -2,7 +2,7 @@
  * @author Jiyao Wang <wangjiy@ncbi.nlm.nih.gov> / https://github.com/ncbi/icn3d
  */
 
-iCn3DUI.prototype.loadScript = function (dataStr, bStatefile) { var me = this;
+iCn3DUI.prototype.loadScript = function (dataStr, bStatefile) { "use strict"; var me = this;
   // allow the "loading structure..." message to be shown while loading script
   me.bCommandLoad = true;
 
@@ -30,7 +30,7 @@ iCn3DUI.prototype.loadScript = function (dataStr, bStatefile) { var me = this;
   }
 };
 
-iCn3DUI.prototype.loadSelection = function (dataStr) { var me = this;
+iCn3DUI.prototype.loadSelection = function (dataStr) { "use strict"; var me = this;
   var nameCommandArray = dataStr.trim().split('\n');
 
   for(var i = 0, il = nameCommandArray.length; i < il; ++i) {
@@ -44,7 +44,7 @@ iCn3DUI.prototype.loadSelection = function (dataStr) { var me = this;
   }
 };
 
-iCn3DUI.prototype.execCommands = function (start, end, steps) { var me = this;
+iCn3DUI.prototype.execCommands = function (start, end, steps) { "use strict"; var me = this;
     me.icn3d.bRender = false;
 
     // initialize icn3dui
@@ -60,7 +60,7 @@ iCn3DUI.prototype.execCommands = function (start, end, steps) { var me = this;
     me.execCommandsBase(start, end, steps);
 };
 
-iCn3DUI.prototype.execCommandsBase = function (start, end, steps, bFinalStep) { var me = this;
+iCn3DUI.prototype.execCommandsBase = function (start, end, steps, bFinalStep) { "use strict"; var me = this;
   for(var i=start; i <= end; ++i) {
       var bFinalStep = (i === steps - 1) ? true : false;
 
@@ -297,7 +297,7 @@ iCn3DUI.prototype.execCommandsBase = function (start, end, steps, bFinalStep) { 
   }
 };
 
-iCn3DUI.prototype.renderFinalStep = function(steps) { var me = this;
+iCn3DUI.prototype.renderFinalStep = function(steps) { "use strict"; var me = this;
     me.icn3d.bRender = true;
 
     var commandTransformation = me.icn3d.commands[steps-1].split('|||');
@@ -374,7 +374,7 @@ iCn3DUI.prototype.renderFinalStep = function(steps) { var me = this;
     if(me.bTransparentSurface) me.icn3d.render();
 };
 
-iCn3DUI.prototype.applyCommandLoad = function (commandStr) { var me = this;
+iCn3DUI.prototype.applyCommandLoad = function (commandStr) { "use strict"; var me = this;
   //me.bCommandLoad = true;
 
   if(me.icn3d.atoms !== undefined && Object.keys(me.icn3d.atoms).length > 0) return;
@@ -461,7 +461,7 @@ iCn3DUI.prototype.applyCommandLoad = function (commandStr) { var me = this;
   return me.deferred2.promise();
 };
 
-iCn3DUI.prototype.applyCommandMap = function (command) { var me = this;
+iCn3DUI.prototype.applyCommandMap = function (command) { "use strict"; var me = this;
   // chain functions together
   me.deferredMap = $.Deferred(function() {
       var str = command.substr(8);
@@ -478,7 +478,7 @@ iCn3DUI.prototype.applyCommandMap = function (command) { var me = this;
   return me.deferredMap.promise();
 };
 
-iCn3DUI.prototype.applyCommandEmmap = function (command) { var me = this;
+iCn3DUI.prototype.applyCommandEmmap = function (command) { "use strict"; var me = this;
   // chain functions together
   me.deferredEmmap = $.Deferred(function() {
       var str = command.substr(10);
@@ -522,7 +522,7 @@ iCn3DUI.prototype.applyCommandEmmap = function (command) { var me = this;
   return me.deferredEmmap.promise();
 };
 
-iCn3DUI.prototype.applyCommandAnnotationsAndCddSiteBase = function (command) { var me = this;
+iCn3DUI.prototype.applyCommandAnnotationsAndCddSiteBase = function (command) { "use strict"; var me = this;
   // chain functions together
       if(command == "view annotations") {
           if(me.cfg.showanno === undefined || !me.cfg.showanno) {
@@ -531,7 +531,7 @@ iCn3DUI.prototype.applyCommandAnnotationsAndCddSiteBase = function (command) { v
       }
 };
 
-iCn3DUI.prototype.applyCommandAnnotationsAndCddSite = function (command) { var me = this;
+iCn3DUI.prototype.applyCommandAnnotationsAndCddSite = function (command) { "use strict"; var me = this;
   // chain functions together
   me.deferredAnnoCddSite = $.Deferred(function() {
       me.applyCommandAnnotationsAndCddSiteBase(command);
@@ -540,7 +540,7 @@ iCn3DUI.prototype.applyCommandAnnotationsAndCddSite = function (command) { var m
   return me.deferredAnnoCddSite.promise();
 };
 
-iCn3DUI.prototype.applyCommandSnpClinvarBase = function (command) { var me = this;
+iCn3DUI.prototype.applyCommandSnpClinvarBase = function (command) { "use strict"; var me = this;
   // chain functions together
       var pos = command.lastIndexOf(' '); // set annotation clinvar
       var type = command.substr(pos + 1);
@@ -557,7 +557,7 @@ iCn3DUI.prototype.applyCommandSnpClinvarBase = function (command) { var me = thi
       }
 };
 
-iCn3DUI.prototype.applyCommandSnpClinvar = function (command) { var me = this;
+iCn3DUI.prototype.applyCommandSnpClinvar = function (command) { "use strict"; var me = this;
   // chain functions together
   me.deferredSnpClinvar = $.Deferred(function() {
       me.applyCommandSnpClinvarBase(command);
@@ -566,7 +566,7 @@ iCn3DUI.prototype.applyCommandSnpClinvar = function (command) { var me = this;
   return me.deferredSnpClinvar.promise();
 };
 
-iCn3DUI.prototype.applyCommand3ddomainBase = function (command) { var me = this;
+iCn3DUI.prototype.applyCommand3ddomainBase = function (command) { "use strict"; var me = this;
   // chain functions together
       var pos = command.lastIndexOf(' ');
       var type = command.substr(pos + 1);
@@ -576,7 +576,7 @@ iCn3DUI.prototype.applyCommand3ddomainBase = function (command) { var me = this;
       }
 };
 
-iCn3DUI.prototype.applyCommand3ddomain = function (command) { var me = this;
+iCn3DUI.prototype.applyCommand3ddomain = function (command) { "use strict"; var me = this;
   // chain functions together
   me.deferred3ddomain = $.Deferred(function() {
       me.applyCommand3ddomainBase(command);
@@ -585,7 +585,7 @@ iCn3DUI.prototype.applyCommand3ddomain = function (command) { var me = this;
   return me.deferred3ddomain.promise();
 };
 
-iCn3DUI.prototype.applyCommandViewinteractionBase = function (command) { var me = this;
+iCn3DUI.prototype.applyCommandViewinteractionBase = function (command) { "use strict"; var me = this;
   // chain functions together
      if(me.cfg.align !== undefined || me.cfg.chainalign !== undefined) {
          var structureArray = Object.keys(me.icn3d.structures);
@@ -593,7 +593,7 @@ iCn3DUI.prototype.applyCommandViewinteractionBase = function (command) { var me 
      }
 };
 
-iCn3DUI.prototype.applyCommandViewinteraction = function (command) { var me = this;
+iCn3DUI.prototype.applyCommandViewinteraction = function (command) { "use strict"; var me = this;
   // chain functions together
   me.deferredViewinteraction = $.Deferred(function() {
      me.applyCommandViewinteractionBase(command);
@@ -602,7 +602,7 @@ iCn3DUI.prototype.applyCommandViewinteraction = function (command) { var me = th
   return me.deferredViewinteraction.promise();
 };
 
-iCn3DUI.prototype.getThresholdNameArrays = function (commandOri) { var me = this;
+iCn3DUI.prototype.getThresholdNameArrays = function (commandOri) { "use strict"; var me = this;
     if(me.bSetChainsAdvancedMenu === undefined || !me.bSetChainsAdvancedMenu) {
        var prevHAtoms = me.icn3d.cloneHash(me.icn3d.hAtoms);
 
@@ -634,7 +634,7 @@ iCn3DUI.prototype.getThresholdNameArrays = function (commandOri) { var me = this
     return {'threshold': threshold, 'nameArray2': nameArray2, 'nameArray': nameArray, 'bHbondCalc': bHbondCalc};
 };
 
-iCn3DUI.prototype.applyCommand = function (commandStr) { var me = this;
+iCn3DUI.prototype.applyCommand = function (commandStr) { "use strict"; var me = this;
   me.bAddCommands = false;
 
   var commandTransformation = commandStr.split('|||');
