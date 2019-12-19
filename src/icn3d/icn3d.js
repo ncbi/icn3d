@@ -5,6 +5,8 @@
 if (typeof jQuery === 'undefined') { throw new Error('iCn3D requires jQuery') }
 
 var iCn3D = function (id) {
+    "use strict";
+
     this.id = id;
 
     this.container = $('#' + id);

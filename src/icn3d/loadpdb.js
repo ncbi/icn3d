@@ -724,6 +724,11 @@ iCn3D.prototype.getChainCalpha = function (chains, atoms) {
               || (this.nucleotides.hasOwnProperty(serialArray[i]) && (atoms[serialArray[i]].name == "O3'" || atoms[serialArray[i]].name == "O3*")) ) {
                 if(atoms[serialArray[i]].resi == lastResi) continue; // e.g., Alt A and B
 
+                var resn = (atoms[serialArray[i]].resn.trim().length > 3) ? atoms[serialArray[i]].resn.trim().substr(0, 3) : atoms[serialArray[i]].resn.trim();
+                if(!this.chargeColors.hasOwnProperty(resn)) {
+                    continue; // regular residues
+                }
+
                 calphaArray.push(atoms[serialArray[i]].coord.clone());
                 ++cnt;
 

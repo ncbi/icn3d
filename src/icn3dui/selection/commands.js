@@ -1413,6 +1413,9 @@ iCn3DUI.prototype.applyCommand = function (commandStr) { var me = this;
         me.adjustMembrane(large, small);
     }
   }
+  else if(command.indexOf('toggle membrane') == 0) {
+    me.toggleMembrane();
+  }
   else if(commandOri.indexOf('view interaction pairs') == 0) {
     var paraArray = commandOri.split(' | ');
     if(paraArray.length >= 3) {

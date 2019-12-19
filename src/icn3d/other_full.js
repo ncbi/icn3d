@@ -823,6 +823,7 @@ iCn3D.prototype.centerSelection = function(atoms) {
 
 iCn3D.prototype.transformMemPro = function(inCoord, rot, centerFrom, centerTo) {
     var coord = inCoord.clone();
+
     coord.sub(centerFrom);
 
     var x = coord.x*rot[0] + coord.y*rot[1] + coord.z*rot[2] + centerTo.x;
@@ -833,5 +834,15 @@ iCn3D.prototype.transformMemPro = function(inCoord, rot, centerFrom, centerTo) {
     coord.y = y;
     coord.z = z;
 
+/*
+      var rotationM4 = new THREE.Matrix4();
+      rotationM4.set(rot[0], rot[1], rot[2], centerTo.x, rot[3], rot[4], rot[5], centerTo.y, rot[6], rot[7], rot[8], centerTo.z, 0, 0, 0, 1);
+
+      var modifiedMat = new THREE.Matrix4();
+      modifiedMat.makeTranslation(-centerFrom.x, -centerFrom.y, -centerFrom.z);
+      coord.applyMatrix4(modifiedMat);
+
+      coord.applyMatrix4(rotationM4);
+*/
     return coord;
 };

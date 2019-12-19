@@ -199,6 +199,7 @@ iCn3D.prototype.createRepresentationSub = function (atoms, f0, f01) {
             }
         }
     }
+
     //if (ged.vertices.length && this.bShowCrossResidueBond) {
     if (clbondArray.length > 0 && this.bShowCrossResidueBond) {
         //ged.computeLineDistances();
@@ -245,10 +246,10 @@ iCn3D.prototype.createConnCalphSidechain = function (atoms, style) {
     for(var resid in residueHash) {
         var atom = this.getFirstCalphaAtomObj(this.residues[resid]);
 
-        var sideAtom;
+        var sideAtom = undefined;
         for(var i = 0, il = atom.bonds.length; i < il; ++i) {
             var bondAtom = this.atoms[atom.bonds[i]];
-            if(bondAtom.name !== 'C' && bondAtom.name !== 'N') {
+            if(bondAtom.name !== 'C' && bondAtom.name !== 'N' && bondAtom.resi == atom.resi) {
                 sideAtom = bondAtom;
                 break;
             }
@@ -280,7 +281,6 @@ iCn3D.prototype.createStickRepresentation = function (atoms, atomR, bondR, scale
     var me = this;
     var factor = (bSchematic !== undefined && bSchematic) ? atomR / me.cylinderRadius : 1;
 
-//        if(bHighlight !== 2) {
         this.createRepresentationSub(atoms, function (atom0) {
                 me.createSphere(atom0, atomR, !scale, scale, bHighlight);
         }, function (atom0, atom1) {
@@ -540,10 +540,6 @@ iCn3D.prototype.createStickRepresentation = function (atoms, atomR, bondR, scale
                 }
             }
         });
-//        }
-//        else if(bHighlight === 2) {
-//            this.createBoxRepresentation_P_CA(atoms, 1.2, bHighlight);
-//        }
 };
 
 // modified from iview (http://istar.cse.cuhk.edu.hk/iview/)
