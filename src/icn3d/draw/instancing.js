@@ -185,7 +185,62 @@ iCn3D.prototype.drawSymmetryMates = function() {
     else {
         this.drawSymmetryMatesNoInstancing();
     }
-}
+};
+
+iCn3D.prototype.applyMat = function(obj, mat, bVector3) {
+      var rot = this.rmsd_supr.rot;
+      var centerFrom = this.rmsd_supr.trans1;
+      var centerTo = this.rmsd_supr.trans2;
+
+      var rotationM4 = new THREE.Matrix4();
+      rotationM4.set(rot[0], rot[1], rot[2], 0, rot[3], rot[4], rot[5], 0, rot[6], rot[7], rot[8], 0, 0, 0, 0, 1);
+
+      var rotationM4Inv = new THREE.Matrix4();
+      rotationM4Inv.getInverse(rotationM4);
+
+      //modifiedMat.makeTranslation(-centerTo.x, -centerTo.y, -centerTo.z).multiply(rotationM4Inv).makeTranslation(centerFrom.x, centerFrom.y, centerFrom.z).multiply(mat).makeTranslation(-centerFrom.x, -centerFrom.y, -centerFrom.z).multiply(rotationM4).makeTranslation(centerTo.x, centerTo.y, centerTo.z);
+
+      var tmpMat = new THREE.Matrix4();
+
+      if(bVector3 === undefined) {
+          tmpMat.makeTranslation(-centerTo.x, -centerTo.y, -centerTo.z);
+          obj.applyMatrix(tmpMat);
+
+          obj.applyMatrix(rotationM4Inv);
+
+          tmpMat.makeTranslation(centerFrom.x, centerFrom.y, centerFrom.z);
+          obj.applyMatrix(tmpMat);
+
+          obj.applyMatrix(mat);
+
+          tmpMat.makeTranslation(-centerFrom.x, -centerFrom.y, -centerFrom.z);
+          obj.applyMatrix(tmpMat);
+
+          obj.applyMatrix(rotationM4);
+
+          tmpMat.makeTranslation(centerTo.x, centerTo.y, centerTo.z);
+          obj.applyMatrix(tmpMat);
+      }
+      else if(bVector3) {
+          tmpMat.makeTranslation(-centerTo.x, -centerTo.y, -centerTo.z);
+          obj.applyMatrix4(tmpMat);
+
+          obj.applyMatrix4(rotationM4Inv);
+
+          tmpMat.makeTranslation(centerFrom.x, centerFrom.y, centerFrom.z);
+          obj.applyMatrix4(tmpMat);
+
+          obj.applyMatrix4(mat);
+
+          tmpMat.makeTranslation(-centerFrom.x, -centerFrom.y, -centerFrom.z);
+          obj.applyMatrix4(tmpMat);
+
+          obj.applyMatrix4(rotationM4);
+
+          tmpMat.makeTranslation(centerTo.x, centerTo.y, centerTo.z);
+          obj.applyMatrix4(tmpMat);
+      }
+};
 
 iCn3D.prototype.drawSymmetryMatesNoInstancing = function() {
    if (this.biomtMatrices === undefined || this.biomtMatrices.length == 0) return;
@@ -210,14 +265,16 @@ iCn3D.prototype.drawSymmetryMatesNoInstancing = function() {
 
       if(this.mdl !== undefined) {
           symmetryMate = this.mdl.clone();
-          symmetryMate.applyMatrix(mat);
+          //symmetryMate.applyMatrix(mat);
+          this.applyMat(symmetryMate, mat);
 
           mdlTmp.add(symmetryMate);
       }
 
       if(this.mdlImpostor !== undefined) {
           symmetryMate = this.mdlImpostor.clone();
-          symmetryMate.applyMatrix(mat);
+          //symmetryMate.applyMatrix(mat);
+          this.applyMat(symmetryMate, mat);
 
           //symmetryMate.onBeforeRender = this.onBeforeRender;
           for(var j = symmetryMate.children.length - 1; j >= 0; j--) {
@@ -230,13 +287,16 @@ iCn3D.prototype.drawSymmetryMatesNoInstancing = function() {
 
       if(this.mdl_ghost !== undefined) {
           symmetryMate = this.mdl_ghost.clone();
-          symmetryMate.applyMatrix(mat);
+          //symmetryMate.applyMatrix(mat);
+          this.applyMat(symmetryMate, mat);
 
           mdl_ghostTmp.add(symmetryMate);
       }
 
       var center = this.center.clone();
-      center.applyMatrix4(mat);
+      //center.applyMatrix4(mat);
+      this.applyMat(center, mat, true);
+
       centerSum.add(center);
 
       ++cnt;

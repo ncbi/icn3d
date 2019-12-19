@@ -13,9 +13,11 @@ if (!$.ui.dialog.prototype._makeDraggableBase) {
 }
 
 var iCn3DUI = function(cfg) {
+    "use strict";
+
     var me = this;
 
-    this.REVISION = '2.11.0';
+    this.REVISION = '2.11.1';
 
     me.bFullUi = true;
 
@@ -3050,6 +3052,33 @@ iCn3DUI.prototype = {
     clk_adjustmem: function() { var me = this;
         $("#" + me.pre + "adjustmem").click(function(e) {
             me.openDialog(me.pre + 'dl_adjustmem', 'Adjust the Z-axis positions of the membrane');
+        });
+    },
+
+    toggleMembrane: function() { var me = this;
+        var structure = Object.keys(me.icn3d.structures)[0];
+        var atomsHash = me.icn3d.residues[structure + '_MEM_1'];
+        var firstAtom = me.icn3d.getFirstAtomObj(atomsHash);
+        var oriStyle = firstAtom.style;
+
+        for(var i in atomsHash) {
+            var atom = me.icn3d.atoms[i];
+
+            if(oriStyle !== 'nothing') {
+                atom.style = 'nothing';
+            }
+            else {
+                atom.style = 'stick';
+            }
+        }
+
+        me.icn3d.draw();
+    },
+
+    clk_togglemem: function() { var me = this;
+        $("#" + me.pre + "togglemem").click(function(e) {
+           me.toggleMembrane();
+           me.setLogCmd('toggle membrane', true);
         });
     },
 
@@ -6719,7 +6748,7 @@ iCn3DUI.prototype = {
         me.clkMn2_pkChain();
         me.clkMn2_aroundsphere();
         me.clk_adjustmem();
-        //me.clk_addplane();
+        me.clk_togglemem();
         me.clk_selectplane();
         me.clkMn2_select_chain();
         me.clkMn3_proteinsRibbon();

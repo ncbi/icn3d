@@ -224,7 +224,7 @@ $3Dmol.ElectronMap = function(threshbox) {
         var lengthWidth = pLength * pWidth;
 
         var rot, inverseRot = new Array(9), centerFrom, centerTo;
-        if(rmsd_supr.rot !== undefined) {
+        if(rmsd_supr !== undefined && rmsd_supr.rot !== undefined) {
           rot = rmsd_supr.rot;
           centerFrom = rmsd_supr.trans1;
           centerTo = rmsd_supr.trans2;
@@ -250,7 +250,7 @@ $3Dmol.ElectronMap = function(threshbox) {
             if(atom.resn === 'DUM') continue;
 
             var r;
-            if(rmsd_supr.rot !== undefined) {
+            if(rmsd_supr !== undefined && rmsd_supr.rot !== undefined) {
                 // revert to the orginal coord
                 var coord = this.transformMemPro(atom.coord, inverseRot, centerTo, centerFrom);
                 r = coord.applyMatrix4(inverseMatrix);

@@ -327,11 +327,19 @@ iCn3DUI.prototype.parseMmdbData = function (data, type) { var me = this;
         $("#" + me.pre + "accordion5").show();
 
         //me.loadAtomDataIn(data, id, 'mmdbid', undefined, type);
-        me.deferredOpm = $.Deferred(function() {
-              me.loadMmdbOpmData(data, id, type);
-        });
 
-        return me.deferredOpm.promise();
+        if(type === undefined) {
+            me.deferredOpm = $.Deferred(function() {
+                  me.loadMmdbOpmData(data, id, type);
+            });
+
+            return me.deferredOpm.promise();
+        }
+        else {
+            me.loadAtomDataIn(data, id, 'mmdbid', undefined, type);
+
+            me.loadMmdbOpmDataPart2(data, id, type);
+        }
 };
 
 iCn3DUI.prototype.downloadMmdb = function (mmdbid, bGi) { var me = this;

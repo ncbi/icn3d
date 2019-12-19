@@ -122,7 +122,7 @@ iCn3D.prototype.createSurfaceRepresentation = function (atoms, type, wireframe, 
     var colorForEm = new THREE.Color('#00FFFF');
 
     var rot, centerFrom, centerTo;
-    if((type == 11 || type == 12 || type == 13) && this.rmsd_supr.rot !== undefined) {
+    if((type == 11 || type == 12 || type == 13) && this.rmsd_supr !== undefined && this.rmsd_supr.rot !== undefined) {
       rot = me.rmsd_supr.rot;
       centerFrom = me.rmsd_supr.trans1;
       centerTo = me.rmsd_supr.trans2;
@@ -131,7 +131,7 @@ iCn3D.prototype.createSurfaceRepresentation = function (atoms, type, wireframe, 
     geo = new THREE.Geometry();
     geo.vertices = verts.map(function (v) {
         var r = new THREE.Vector3(v.x, v.y, v.z);
-        if((type == 11 || type == 12 || type == 13) && me.rmsd_supr.rot !== undefined) {
+        if((type == 11 || type == 12 || type == 13) && this.rmsd_supr !== undefined && this.rmsd_supr.rot !== undefined) {
             r = me.transformMemPro(r, rot, centerFrom, centerTo);
         }
 

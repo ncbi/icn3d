@@ -1,4 +1,6 @@
 ## Change Log
+[icn3d-2.11.1](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.11.1.zip) was release on December 19, 2019. Fixed a bug in chain alignment due to the introduction of membranes.
+
 [icn3d-2.11.0](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.11.0.zip) was release on December 16, 2019. Enabled to show membranes for transmembrane proteins for data from PDB or MMDB by aligning the coordinates to the data from Orientations of Proteins in Membranes (OPM) database. Users could adjust the location of the membrane as well.
 
 [icn3d-2.10.1](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.10.1.zip) was release on December 9, 2019. Enabled to select the currently displayed set in the Select menu and fixed some bugs on H-Bonds & Interactions.

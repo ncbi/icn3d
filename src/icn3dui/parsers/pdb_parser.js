@@ -221,7 +221,6 @@ iCn3DUI.prototype.addMemAtoms = function(dmem, pdbid, dxymax) { var me = this;
                   c=dmem+0.4;
                   // Resn: DUM, name: O, a,b,c
                   atomName = 'O';
-                  coord = new THREE.Vector3(a, b, c);
                   lastSerial = me.addOneDumAtom(pdbid, 'O', a, b, c, lastSerial);
             }
          }
@@ -263,7 +262,6 @@ iCn3DUI.prototype.transformToOpmOri = function(pdbid, chainCalphaHash2) { var me
             var atom = me.icn3d.atoms[i];
 
             atom.coord = me.icn3d.transformMemPro(atom.coord, rot, centerFrom, centerTo);
-
             var xysq = atom.coord.x * atom.coord.x + atom.coord.y * atom.coord.y;
             if(Math.abs(atom.coord.z) <= 25 && xysq > dxymaxsq) {
                 dxymaxsq = xysq;
@@ -282,6 +280,7 @@ iCn3DUI.prototype.transformToOpmOri = function(pdbid, chainCalphaHash2) { var me
           me.icn3d.bOpm = true;
 
           // show transmembrane features
+          $("#" + me.pre + "togglememli").show();
           $("#" + me.pre + "adjustmemli").show();
           $("#" + me.pre + "selectplaneli").show();
           $("#" + me.pre + "anno_transmemli").show();
@@ -527,7 +526,7 @@ iCn3DUI.prototype.loadMmtfOpmData = function(data, pdbid, bFull) { var me = this
           $("#" + me.pre + "intra_mem_z").val(-me.icn3d.halfBilayerSize);
 
           me.icn3d.init(); // remove all previously loaded data
-          me.parseMmtfData(data, mmtfid, bFull, chainCalphaHash);
+          me.parseMmtfData(data, pdbid, bFull, chainCalphaHash);
 
           if(me.deferredOpm !== undefined) me.deferredOpm.resolve();
       },
@@ -539,7 +538,7 @@ iCn3DUI.prototype.loadMmtfOpmData = function(data, pdbid, bFull) { var me = this
             return;
         }
 
-        me.loadPdbData(data, pdbid);
+        me.parseMmtfData(data, pdbid, bFull);
         if(me.deferredOpm !== undefined) me.deferredOpm.resolve();
         return;
       }
