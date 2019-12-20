@@ -764,6 +764,7 @@ iCn3DUI.prototype.setMenu3_base = function() { "use strict"; var me = this;
             html += me.getRadio('mn3_proteins', 'mn3_proteinsCalpha', 'C Alpha Trace');
         }
 
+        html += me.getRadio('mn3_proteins', 'mn3_proteinsBackbone', 'Backbone');
         html += me.getRadio('mn3_proteins', 'mn3_proteinsBfactor', 'B-factor Tube');
         html += me.getRadio('mn3_proteins', 'mn3_proteinsLines', 'Lines');
         html += me.getRadio('mn3_proteins', 'mn3_proteinsStick', 'Stick');
@@ -788,6 +789,7 @@ iCn3DUI.prototype.setMenu3_base = function() { "use strict"; var me = this;
         html += "    <ul>";
         html += me.getRadio('mn3_nucl', 'mn3_nuclCartoon', 'Cartoon', true);
         html += me.getRadio('mn3_nucl', 'mn3_nuclPhos', "O3' Trace");
+        html += me.getRadio('mn3_nucl', 'mn3_nuclBackbone', 'Backbone');
         html += me.getRadio('mn3_nucl', 'mn3_nuclSchematic', 'Schematic')
         html += me.getRadio('mn3_nucl', 'mn3_nuclLines', 'Lines');
         html += me.getRadio('mn3_nucl', 'mn3_nuclStick', 'Stick');

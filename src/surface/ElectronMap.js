@@ -38,7 +38,7 @@ if (typeof console === 'undefined') {
 }
 
 $3Dmol.ElectronMap = function(threshbox) {
-    //"use strict";
+    "use strict";
 
     // constants for vpbits bitmasks
     /** @const */
@@ -210,7 +210,7 @@ $3Dmol.ElectronMap = function(threshbox) {
         // seqterm,bool
         // atomtype,atom*
         // proseq,bool bcolor)
-        var i, j, k, il;
+        var i, j, k, il, jl, kl;
         for (i = 0, il = vpBits.length; i < il; i++) {
             vpBits[i] = 0;
             //vpDistance[i] = -1.0;
@@ -311,6 +311,8 @@ $3Dmol.ElectronMap = function(threshbox) {
 
     this.buildboundary = function() {
         var pWH = pWidth*pHeight;
+        var i, j, k;
+
         for (i = 0; i < pLength; i++) {
             for (j = 0; j < pHeight; j++) {
                 for (k = 0; k < pWidth; k++) {

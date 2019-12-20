@@ -93,7 +93,7 @@ iCn3DUI.prototype.defineSecondary = function(chainid, type) { "use strict"; var 
 
       if( me.icn3d.residues.hasOwnProperty(residueid) ) {
         var atom = me.icn3d.getFirstCalphaAtomObj(me.icn3d.residues[residueid]);
-        currSS = me.icn3d.secondaries[residueid];
+        var currSS = me.icn3d.secondaries[residueid];
 
         if(currSS == 'H') {
             if(atom.ssbegin) {

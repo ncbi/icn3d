@@ -220,7 +220,6 @@ iCn3DUI.prototype.addMemAtoms = function(dmem, pdbid, dxymax) { "use strict"; va
 
                   c=dmem+0.4;
                   // Resn: DUM, name: O, a,b,c
-                  atomName = 'O';
                   lastSerial = me.addOneDumAtom(pdbid, 'O', a, b, c, lastSerial);
             }
          }
@@ -387,6 +386,7 @@ iCn3DUI.prototype.loadPdbDataBase = function(data, calphaonly) { "use strict"; v
                 // no residue can be both ssbegin and ssend in DSSP calculated secondary structures
                 var bSetPrevResidue = 0; // 0: no need to reset, 1: reset previous residue to "ssbegin = true", 2: reset previous residue to "ssend = true"
 
+                var ssbegin, ssend;
                 if(ss !== prevSS) {
                     if(prevSS === 'coil') {
                         ssbegin = true;

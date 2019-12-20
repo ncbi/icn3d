@@ -629,6 +629,10 @@ iCn3D.prototype.applyDisplayOptions = function (options, atoms, bHighlight) { "u
         this.createStickRepresentation(this.hash2Atoms(atomHash), this.cylinderRadius, this.cylinderRadius, undefined, bHighlight, undefined);
         this.createConnCalphSidechain(this.hash2Atoms(atomHash), style);
       }
+      else if(style === 'backbone') {
+        var atomHash = this.selectMainChainSubset(atomHash);
+        this.createStickRepresentation(this.hash2Atoms(atomHash), this.cylinderRadius, this.cylinderRadius, undefined, bHighlight, undefined);
+      }
       else if(style === 'ball and stick') {
         this.createStickRepresentation(this.hash2Atoms(atomHash), this.cylinderRadius, this.cylinderRadius * 0.5, this.dotSphereScale, bHighlight, undefined);
         this.createConnCalphSidechain(this.hash2Atoms(atomHash), style);

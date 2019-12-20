@@ -829,3 +829,17 @@ iCn3D.prototype.getResiduesFromCalphaAtoms = function(atomsHash) { "use strict";
     return residuesHash;
 };
 
+iCn3D.prototype.selectMainChainSubset = function (atoms) { "use strict"; var me = this;
+    var nuclMainArray = ["C1'", "C1*", "C2'", "C2*", "C3'", "C3*", "C4'", "C4*", "C5'", "C5*", "O3'", "O3*", "O4'", "O4*", "O5'", "O5*", "P", "OP1", "O1P", "OP2", "O2P"];
+
+    var atomHash = {};
+    for(var i in atoms) {
+        if( (this.proteins.hasOwnProperty(i) && (this.atoms[i].name === "N" || this.atoms[i].name === "C" || this.atoms[i].name === "O"
+          || (this.atoms[i].name === "CA" && this.atoms[i].elem === "C") ) )
+          || (this.nucleotides.hasOwnProperty(i) && nuclMainArray.indexOf(this.atoms[i].name) !== -1) ) {
+            atomHash[i] = 1;
+        }
+    }
+
+    return atomHash;
+};
