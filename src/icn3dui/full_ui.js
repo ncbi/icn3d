@@ -17,7 +17,7 @@ var iCn3DUI = function(cfg) {
 
     "use strict"; var me = this;
 
-    this.REVISION = '2.11.1';
+    this.REVISION = '2.11.2';
 
     me.bFullUi = true;
 
@@ -146,9 +146,9 @@ var iCn3DUI = function(cfg) {
     me.opts['camera']             = 'perspective';        //perspective, orthographic
     me.opts['background']         = 'transparent';        //transparent, black, grey, white
     me.opts['color']              = 'chain';              //spectrum, secondary structure, charge, hydrophobic, conserved, chain, residue, atom, b factor, red, green, blue, magenta, yellow, cyan, white, grey, custom
-    me.opts['proteins']           = 'ribbon';             //ribbon, strand, cylinder and plate, schematic, c alpha trace, b factor tube, lines, stick, ball and stick, sphere, nothing
+    me.opts['proteins']           = 'ribbon';             //ribbon, strand, cylinder and plate, schematic, c alpha trace, backbone, b factor tube, lines, stick, ball and stick, sphere, nothing
     me.opts['sidec']              = 'nothing';            //lines, stick, ball and stick, sphere, nothing
-    me.opts['nucleotides']        = 'nucleotide cartoon'; //nucleotide cartoon, o3 trace, schematic, lines, stick,
+    me.opts['nucleotides']        = 'nucleotide cartoon'; //nucleotide cartoon, o3 trace, backbone, schematic, lines, stick,
                                                               // nucleotides ball and stick, sphere, nothing
     me.opts['surface']            = 'nothing';            //Van der Waals surface, molecular surface, solvent accessible surface, nothing
     me.opts['opacity']            = '1.0';                //1.0, 0.9, 0.8, 0.7, 0.6, 0.5
@@ -3183,6 +3183,15 @@ iCn3DUI.prototype = {
         });
     },
 
+    clkMn3_proteinsBackbone: function() { "use strict"; var me = this;
+        $("#" + me.pre + "mn3_proteinsBackbone").click(function(e) {
+           me.setStyle('proteins', 'backbone');
+           me.setLogCmd('style proteins backbone', true);
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
+        });
+    },
+
     clkMn3_proteinsBfactor: function() { "use strict"; var me = this;
         $("#" + me.pre + "mn3_proteinsBfactor").click(function(e) {
            me.setStyle('proteins', 'b factor tube');
@@ -3290,6 +3299,15 @@ iCn3DUI.prototype = {
 
            //$( ".icn3d-accordion" ).accordion(me.closeAc);
        });
+    },
+
+    clkMn3_nuclBackbone: function() { "use strict"; var me = this;
+        $("#" + me.pre + "mn3_nuclBackbone").click(function(e) {
+           me.setStyle('nucleotides', 'backbone');
+           me.setLogCmd('style nucleotides backbone', true);
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
+        });
     },
 
     clkMn3_nuclSchematic: function() { "use strict"; var me = this;
@@ -6756,6 +6774,7 @@ iCn3DUI.prototype = {
         me.clkMn3_proteinsCylinder();
         me.clkMn3_proteinsSchematic();
         me.clkMn3_proteinsCalpha();
+        me.clkMn3_proteinsBackbone();
         me.clkMn3_proteinsBfactor();
         me.clkMn3_proteinsLines();
         me.clkMn3_proteinsStick();
@@ -6768,6 +6787,7 @@ iCn3DUI.prototype = {
         me.clkMn3_sidecSphere();
         me.clkMn3_sidecNo();
         me.clkMn3_nuclCartoon();
+        me.clkMn3_nuclBackbone();
         me.clkMn3_nuclSchematic();
         me.clkMn3_nuclPhos();
         me.clkMn3_nuclLines();

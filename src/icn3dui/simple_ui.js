@@ -48,9 +48,9 @@ var iCn3DUI = function(cfg) {
     me.opts['camera']             = 'perspective';        //perspective, orthographic
     me.opts['background']         = 'transparent';        //transparent, black, grey, white
     me.opts['color']              = 'chain';              //spectrum, secondary structure, charge, hydrophobic, chain, residue, atom, b factor, red, green, blue, magenta, yellow, cyan, white, grey, custom
-    me.opts['proteins']           = 'ribbon';             //ribbon, strand, cylinder and plate, schematic, c alpha trace, b factor tube, lines, stick, ball and stick, sphere, nothing
+    me.opts['proteins']           = 'ribbon';             //ribbon, strand, cylinder and plate, schematic, c alpha trace, backbone, b factor tube, lines, stick, ball and stick, sphere, nothing
     me.opts['sidec']              = 'nothing';            //lines, stick, ball and stick, sphere, nothing
-    me.opts['nucleotides']        = 'nucleotide cartoon'; //nucleotide cartoon, o3 trace, schematic, lines, stick,
+    me.opts['nucleotides']        = 'nucleotide cartoon'; //nucleotide cartoon, o3 trace, backbone, schematic, lines, stick,
                                                               // nucleotides ball and stick, sphere, nothing
     me.opts['surface']            = 'nothing';            //Van der Waals surface, molecular surface, solvent accessible surface, nothing
     me.opts['opacity']            = '1.0';                //1.0, 0.9, 0.8, 0.7, 0.6, 0.5
@@ -235,6 +235,7 @@ iCn3DUI.prototype = {
         html += "<option value='cylinder and plate'>Cylinder and Plate</option>";
         html += "<option value='schematic'>Schematic</option>";
         html += "<option value='c alpha trace'>C Alpha Trace</option>";
+        html += "<option value='backbone'>Backbone</option>";
         html += "<option value='b factor tube'>B Factor Tube</option>";
         html += "<option value='lines'>Lines</option>";
         html += "<option value='stick'>Stick</option>";
@@ -260,6 +261,7 @@ iCn3DUI.prototype = {
         html += "<select id='" + me.pre + "nucleotides'>";
         html += "<option value='nucleotide cartoon' selected>Cartoon</option>";
         html += "<option value='o3 trace'>O3' Trace</option>";
+        html += "<option value='backbone'>Backbone</option>";
         html += "<option value='schematic'>Schematic</option>";
         html += "<option value='lines'>Lines</option>";
         html += "<option value='stick'>Stick</option>";
