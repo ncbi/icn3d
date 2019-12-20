@@ -659,7 +659,7 @@ iCn3DUI.prototype.setSeqAlign = function (seqalign, alignedStructures) { "use st
 iCn3DUI.prototype.setSeqPerResi = function (chainid, chainid1, chainid2, resi, resn, bAligned, color, color2, classname, bFirstChain, bFirstResi, alignIndex) { "use strict"; var me = this;
       if(me.icn3d.alnChainsSeq[chainid] === undefined) me.icn3d.alnChainsSeq[chainid] = [];
 
-      resObject = {};
+      var resObject = {};
       var pos = chainid.indexOf('_');
       resObject.mmdbid = chainid.substr(0, pos);
       resObject.chain = chainid.substr(pos+1);

@@ -38,7 +38,7 @@ if (typeof console === 'undefined') {
 }
 
 $3Dmol.ProteinSurface = function(threshbox) {
-    "use strict";
+    //"use strict";
 
     // constants for vpbits bitmasks
     /** @const */
@@ -261,8 +261,8 @@ $3Dmol.ProteinSurface = function(threshbox) {
 
     this.boundingatom = function(btype) {
         var tradius = [];
-        var txz, tdept, sradius, idx;
-        flagradius = btype;
+        var txz, tdept, sradius, indx;
+        //flagradius = btype;
 
         for ( var i in vdwRadii) {
             if(!vdwRadii.hasOwnProperty(i))
@@ -277,8 +277,8 @@ $3Dmol.ProteinSurface = function(threshbox) {
             widxz[i] = Math.floor(tradius[i]) + 1;
             depty[i] = new Int32Array(widxz[i] * widxz[i]);
             indx = 0;
-            for (j = 0; j < widxz[i]; j++) {
-                for (k = 0; k < widxz[i]; k++) {
+            for (var j = 0; j < widxz[i]; j++) {
+                for (var k = 0; k < widxz[i]; k++) {
                     txz = j * j + k * k;
                     if (txz > sradius)
                         depty[i][indx] = -1; // outside
@@ -464,9 +464,9 @@ $3Dmol.ProteinSurface = function(threshbox) {
 
     this.buildboundary = function() {
         var pWH = pWidth*pHeight;
-        for (i = 0; i < pLength; i++) {
-            for (j = 0; j < pHeight; j++) {
-                for (k = 0; k < pWidth; k++) {
+        for (var i = 0; i < pLength; i++) {
+            for (var j = 0; j < pHeight; j++) {
+                for (var k = 0; k < pWidth; k++) {
                     var index = i * pWH + k * pHeight + j;
                     if (vpBits[index] & INOUT) {
                         var flagbound = false;

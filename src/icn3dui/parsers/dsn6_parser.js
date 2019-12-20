@@ -13,7 +13,7 @@ iCn3DUI.prototype.Dsn6Parser = function(pdbid, type, sigma) { "use strict"; var 
 
    url = "https://edmaps.rcsb.org/maps/" + pdbid.toLowerCase() + "_" + type + ".dsn6";
 
-   bCid = undefined;
+   var bCid = undefined;
 
 /*
    dataType = "text";

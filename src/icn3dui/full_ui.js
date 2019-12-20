@@ -996,7 +996,7 @@ iCn3DUI.prototype = {
 
               if(me.cfg.align !== undefined || me.cfg.chainalign !== undefined) {
                   var bShowHighlight = false;
-                  seqObj = me.getAlignSequencesAnnotations(Object.keys(me.icn3d.alnChains), undefined, undefined, bShowHighlight);
+                  var seqObj = me.getAlignSequencesAnnotations(Object.keys(me.icn3d.alnChains), undefined, undefined, bShowHighlight);
 
                   $("#" + me.pre + "dl_sequence2").html(seqObj.sequencesHtml);
                   $("#" + me.pre + "dl_sequence2").width(me.RESIDUE_WIDTH * seqObj.maxSeqCnt + 200);

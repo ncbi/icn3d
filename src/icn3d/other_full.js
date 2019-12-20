@@ -581,9 +581,13 @@ iCn3D.prototype.getChainsFromAtoms = function(atomsHash) { "use strict"; var me 
 
  // from iview (http://istar.cse.cuhk.edu.hk/iview/)
  iCn3D.prototype.getExtent = function(atomlist) { "use strict"; var me = this;
-    var xmin = ymin = zmin = 9999;
-    var xmax = ymax = zmax = -9999;
-    var xsum = ysum = zsum = cnt = 0;
+    var xmin, ymin, zmin;
+    var xmax, ymax, zmax;
+    var xsum, ysum, zsum, cnt;
+
+    xmin = ymin = zmin = 9999;
+    xmax = ymax = zmax = -9999;
+    xsum = ysum = zsum = cnt = 0;
     var i;
     for (i in atomlist) {
        //var atom = atomlist[i];
