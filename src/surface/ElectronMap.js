@@ -38,7 +38,7 @@ if (typeof console === 'undefined') {
 }
 
 $3Dmol.ElectronMap = function(threshbox) {
-    "use strict";
+    //"use strict";
 
     // constants for vpbits bitmasks
     /** @const */
@@ -50,7 +50,7 @@ $3Dmol.ElectronMap = function(threshbox) {
 
     var isovalue = 1.5;
     var dataArray = {};
-    var matrix, center, pmin, pmax, water, header, type;
+    var matrix, center, maxdist, pmin, pmax, water, header, type, rmsd_supr;
 
     var ptranx = 0, ptrany = 0, ptranz = 0;
     var probeRadius = 1.4;
@@ -175,7 +175,7 @@ $3Dmol.ElectronMap = function(threshbox) {
         if ((pmaxz - pminz) > maxLen) maxLen = pmaxz - pminz;
 
         scaleFactor = 1;
-        boxLength = maxLen;
+        var boxLength = maxLen;
 
         pLength = Math.ceil(scaleFactor * (pmaxx - pminx)) + 1;
         pWidth = Math.ceil(scaleFactor * (pmaxy - pminy)) + 1;

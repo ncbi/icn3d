@@ -964,7 +964,7 @@ iCn3D.prototype.createCurveSub = function (_pnts, width, colors, div, bHighlight
                             closed
                         );
 
-                        mesh = new THREE.Mesh(geometry0, this.matShader);
+                        var mesh = new THREE.Mesh(geometry0, this.matShader);
                         mesh.renderOrder = this.renderOrderPicking;
                         //this.mdlPicking.add(mesh);
                         this.mdl.add(mesh);
@@ -992,7 +992,7 @@ iCn3D.prototype.createCurveSub = function (_pnts, width, colors, div, bHighlight
                     closed
                 );
 
-                mesh = new THREE.Mesh(geometry0, this.matShader);
+                var mesh = new THREE.Mesh(geometry0, this.matShader);
                 mesh.renderOrder = this.renderOrderPicking;
                 //this.mdlPicking.add(mesh);
                 this.mdl.add(mesh);

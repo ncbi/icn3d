@@ -698,7 +698,7 @@ iCn3D.prototype.setSsbond = function (structure2cys_resid) { "use strict"; var m
                 if(Math.abs(coord1.x - coord2.x) > distMax) continue;
                 if(Math.abs(coord1.y - coord2.y) > distMax) continue;
                 if(Math.abs(coord1.z - coord2.z) > distMax) continue;
-                distSqr = (coord1.x - coord2.x)*(coord1.x - coord2.x) + (coord1.y - coord2.y)*(coord1.y - coord2.y) + (coord1.z - coord2.z)*(coord1.z - coord2.z);
+                var distSqr = (coord1.x - coord2.x)*(coord1.x - coord2.x) + (coord1.y - coord2.y)*(coord1.y - coord2.y) + (coord1.z - coord2.z)*(coord1.z - coord2.z);
 
                 if(distSqr < distSqrMax) { // disulfide bond
                     if(me.ssbondpnts[structure] === undefined) me.ssbondpnts[structure] = [];

@@ -740,7 +740,7 @@ iCn3DUI.prototype.draw2DNucleotide = function(x, y, chainid, oriChain, chain, ch
     x -= 0.5 * width;
     y -= 0.5 * height;
 
-    html = "<g class='icn3d-node' chainid='" + chainid + "' >";
+    var html = "<g class='icn3d-node' chainid='" + chainid + "' >";
     html += "<title>Chain " + oriChain + ": " + chainname + "</title>";
     // place holder
     html += "<rect class='icn3d-basenode' x='" + x + "' y='" + y + "' width='" + width + "' height='" + height + "' fill='" + color + "' stroke-width='" + strokewidth + "' stroke='" + strokecolor + "' />";
