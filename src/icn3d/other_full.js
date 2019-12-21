@@ -4,7 +4,7 @@
 
 //http://www.imgt.org/IMGTeducation/Aide-memoire/_UK/aminoacids/charge/#hydrogen
 // return: 'donor', 'acceptor', 'both', 'ring', 'none'
-iCn3D.prototype.isHbondDonorAcceptor = function (atom) { "use strict"; var me = this;
+iCn3D.prototype.isHbondDonorAcceptor = function (atom) { var me = this; //"use strict";
   if( (atom.name == 'N' && !atom.het ) // backbone
     || (atom.elem == 'N' && atom.resn == 'Arg')
     || (atom.elem == 'N' && atom.resn == 'Asn')
@@ -118,7 +118,7 @@ iCn3D.prototype.isHbondDonorAcceptor = function (atom) { "use strict"; var me = 
  * @param  {AtomProxy} ap2 Second atom
  * @return {number[]}        Angles in radians
  */
-iCn3D.prototype.calcAngles = function (ap1, ap2) { "use strict"; var me = this;
+iCn3D.prototype.calcAngles = function (ap1, ap2) { var me = this; //"use strict";
   var angles = [];
   var d1 = new THREE.Vector3();
   var d2 = new THREE.Vector3();
@@ -142,7 +142,7 @@ iCn3D.prototype.calcAngles = function (ap1, ap2) { "use strict"; var me = this;
  * @param  {AtomProxy} ap2 Second atom (out-of-plane)
  * @return {number}        Angle from plane to second atom
  */
-iCn3D.prototype.calcPlaneAngle = function (ap1, ap2) { "use strict"; var me = this;
+iCn3D.prototype.calcPlaneAngle = function (ap1, ap2) { var me = this; //"use strict";
   var x1 = ap1;
 
   var v12 = new THREE.Vector3();
@@ -178,7 +178,7 @@ iCn3D.prototype.calcPlaneAngle = function (ap1, ap2) { "use strict"; var me = th
 
 // https://www.rcsb.org/pages/help/3dview#ligand-view
 // exclude pairs accordingto angles
-iCn3D.prototype.isValidHbond = function (atom, atomHbond, threshold) { "use strict"; var me = this;
+iCn3D.prototype.isValidHbond = function (atom, atomHbond, threshold) { var me = this; //"use strict";
       // return: 'donor', 'acceptor', 'both', 'ring', 'none'
       var atomType = this.isHbondDonorAcceptor(atom);
       var atomHbondType = this.isHbondDonorAcceptor(atomHbond);
@@ -260,7 +260,7 @@ iCn3D.prototype.isValidHbond = function (atom, atomHbond, threshold) { "use stri
 };
 
 // get hbonds
-iCn3D.prototype.calculateChemicalHbonds = function (startAtoms, targetAtoms, threshold, bSaltbridge) { "use strict"; var me = this;
+iCn3D.prototype.calculateChemicalHbonds = function (startAtoms, targetAtoms, threshold, bSaltbridge) { var me = this; //"use strict";
     if(Object.keys(startAtoms).length === 0 || Object.keys(targetAtoms).length === 0) return;
 
     me.resid2Residhash = {};
@@ -444,7 +444,7 @@ iCn3D.prototype.calculateChemicalHbonds = function (startAtoms, targetAtoms, thr
     return hbondsAtoms;
 };
 
-iCn3D.prototype.getChainsFromAtoms = function(atomsHash) { "use strict"; var me = this;
+iCn3D.prototype.getChainsFromAtoms = function(atomsHash) { var me = this; //"use strict";
     var chainsHash = {};
     for(var i in atomsHash) {
        var atom = this.atoms[i];
@@ -457,8 +457,8 @@ iCn3D.prototype.getChainsFromAtoms = function(atomsHash) { "use strict"; var me 
 };
 
 
- iCn3D.prototype.getNeighboringAtoms = function(atomlist, atomlistTarget, distance) { "use strict"; var me = this;
-    "use strict"; var me = this;
+ iCn3D.prototype.getNeighboringAtoms = function(atomlist, atomlistTarget, distance) { var me = this; //"use strict";
+    var me = this; //"use strict";
 
     var extent = this.getExtent(atomlistTarget);
 
@@ -497,7 +497,7 @@ iCn3D.prototype.getChainsFromAtoms = function(atomsHash) { "use strict"; var me 
  };
 
  // modified from iview (http://istar.cse.cuhk.edu.hk/iview/)
- iCn3D.prototype.getAtomsWithinAtom = function(atomlist, atomlistTarget, distance, bGetPairs, bInteraction) { "use strict"; var me = this;
+ iCn3D.prototype.getAtomsWithinAtom = function(atomlist, atomlistTarget, distance, bGetPairs, bInteraction) { var me = this; //"use strict";
     var neighbors = this.getNeighboringAtoms(atomlist, atomlistTarget, distance);
 
     if(bGetPairs) me.resid2Residhash = {};
@@ -580,7 +580,7 @@ iCn3D.prototype.getChainsFromAtoms = function(atomsHash) { "use strict"; var me 
  };
 
  // from iview (http://istar.cse.cuhk.edu.hk/iview/)
- iCn3D.prototype.getExtent = function(atomlist) { "use strict"; var me = this;
+ iCn3D.prototype.getExtent = function(atomlist) { var me = this; //"use strict";
     var xmin, ymin, zmin;
     var xmax, ymax, zmax;
     var xsum, ysum, zsum, cnt;
@@ -608,7 +608,7 @@ iCn3D.prototype.getChainsFromAtoms = function(atomsHash) { "use strict"; var me 
     return [[xmin, ymin, zmin], [xmax, ymax, zmax], [xsum / cnt, ysum / cnt, zsum / cnt]];
  };
 
-iCn3D.prototype.centerAtoms = function(atoms) { "use strict"; var me = this;
+iCn3D.prototype.centerAtoms = function(atoms) { var me = this; //"use strict";
     var pmin = new THREE.Vector3( 9999, 9999, 9999);
     var pmax = new THREE.Vector3(-9999,-9999,-9999);
     var psum = new THREE.Vector3();
@@ -628,7 +628,7 @@ iCn3D.prototype.centerAtoms = function(atoms) { "use strict"; var me = this;
     return {"center": psum.multiplyScalar(1.0 / cnt), "maxD": maxD};
 };
 
-iCn3D.prototype.removeSurfaces = function () { "use strict"; var me = this;
+iCn3D.prototype.removeSurfaces = function () { var me = this; //"use strict";
    // remove prevous highlight
    for(var i = 0, il = this.prevSurfaces.length; i < il; ++i) {
        this.mdl.remove(this.prevSurfaces[i]);
@@ -637,7 +637,7 @@ iCn3D.prototype.removeSurfaces = function () { "use strict"; var me = this;
    this.prevSurfaces = [];
 };
 
-iCn3D.prototype.removeLastSurface = function () { "use strict"; var me = this;
+iCn3D.prototype.removeLastSurface = function () { var me = this; //"use strict";
    // remove prevous highlight
    if(this.prevSurfaces.length > 0) {
        this.mdl.remove(this.prevSurfaces[this.prevSurfaces.length - 1]);
@@ -645,7 +645,7 @@ iCn3D.prototype.removeLastSurface = function () { "use strict"; var me = this;
    }
 };
 
-iCn3D.prototype.removeMaps = function () { "use strict"; var me = this;
+iCn3D.prototype.removeMaps = function () { var me = this; //"use strict";
    // remove prevous highlight
    for(var i = 0, il = this.prevMaps.length; i < il; ++i) {
        this.mdl.remove(this.prevMaps[i]);
@@ -654,7 +654,7 @@ iCn3D.prototype.removeMaps = function () { "use strict"; var me = this;
    this.prevMaps = [];
 };
 
-iCn3D.prototype.removeEmmaps = function () { "use strict"; var me = this;
+iCn3D.prototype.removeEmmaps = function () { var me = this; //"use strict";
    // remove prevous highlight
    for(var i = 0, il = this.prevEmmaps.length; i < il; ++i) {
        this.mdl.remove(this.prevEmmaps[i]);
@@ -663,7 +663,7 @@ iCn3D.prototype.removeEmmaps = function () { "use strict"; var me = this;
    this.prevEmmaps = [];
 };
 
-iCn3D.prototype.removeLastMap = function () { "use strict"; var me = this;
+iCn3D.prototype.removeLastMap = function () { var me = this; //"use strict";
    // remove prevous highlight
    if(this.prevMaps.length > 0) {
        this.mdl.remove(this.prevMaps[this.prevMaps.length - 1]);
@@ -671,7 +671,7 @@ iCn3D.prototype.removeLastMap = function () { "use strict"; var me = this;
    }
 };
 
-iCn3D.prototype.removeLastEmmap = function () { "use strict"; var me = this;
+iCn3D.prototype.removeLastEmmap = function () { var me = this; //"use strict";
    // remove prevous highlight
    if(this.prevEmmaps.length > 0) {
        this.mdl.remove(this.prevEmmaps[this.prevEmmaps.length - 1]);
@@ -679,7 +679,7 @@ iCn3D.prototype.removeLastEmmap = function () { "use strict"; var me = this;
    }
 };
 
-iCn3D.prototype.zoominSelection = function(atoms) { "use strict"; var me = this;
+iCn3D.prototype.zoominSelection = function(atoms) { var me = this; //"use strict";
    var para = {};
 
    para._zoomFactor = 1.0 / me._zoomFactor;
@@ -706,7 +706,7 @@ iCn3D.prototype.zoominSelection = function(atoms) { "use strict"; var me = this;
    }
 };
 
-iCn3D.prototype.centerSelection = function(atoms) { "use strict"; var me = this;
+iCn3D.prototype.centerSelection = function(atoms) { var me = this; //"use strict";
    //this.resetOrientation();
 
    if(atoms === undefined) {
@@ -725,7 +725,7 @@ iCn3D.prototype.centerSelection = function(atoms) { "use strict"; var me = this;
    }
 };
 
-iCn3D.prototype.transformMemPro = function(inCoord, rot, centerFrom, centerTo) { "use strict"; var me = this;
+iCn3D.prototype.transformMemPro = function(inCoord, rot, centerFrom, centerTo) { var me = this; //"use strict";
     var coord = inCoord.clone();
 
     coord.sub(centerFrom);

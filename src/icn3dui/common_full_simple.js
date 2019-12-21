@@ -8,7 +8,7 @@ if (typeof jQuery === 'undefined') { throw new Error('iCn3DUI requires jQuery') 
 if (typeof iCn3D === 'undefined') { throw new Error('iCn3DUI requires iCn3D') }
 
 /*
-iCn3DUI.prototype.clickHighlight_3d_dgm = function() { "use strict"; var me = this;
+iCn3DUI.prototype.clickHighlight_3d_dgm = function() { var me = this; //"use strict";
     $("#" + me.pre + "highlight_3d_dgm").click(function (e) {
        //e.preventDefault();
        me.icn3d.removeHlObjects();
@@ -43,7 +43,7 @@ iCn3DUI.prototype.clickHighlight_3d_dgm = function() { "use strict"; var me = th
 };
 */
 
-iCn3DUI.prototype.rotStruc = function (direction, bInitial) { "use strict"; var me = this;
+iCn3DUI.prototype.rotStruc = function (direction, bInitial) { var me = this; //"use strict";
     if(me.icn3d.bStopRotate) return false;
     if(me.icn3d.rotateCount > me.icn3d.rotateCountMax) {
         // back to the original orientation
@@ -90,7 +90,7 @@ iCn3DUI.prototype.rotStruc = function (direction, bInitial) { "use strict"; var 
     setTimeout(function(){ me.rotStruc(direction); }, 100);
 };
 
-iCn3DUI.prototype.showTitle = function() { "use strict"; var me = this;
+iCn3DUI.prototype.showTitle = function() { var me = this; //"use strict";
     if(me.icn3d.molTitle !== undefined && me.icn3d.molTitle !== '') {
         var title = me.icn3d.molTitle;
 
@@ -131,7 +131,7 @@ iCn3DUI.prototype.showTitle = function() { "use strict"; var me = this;
     }
 };
 
-iCn3DUI.prototype.getLinkToStructureSummary = function(bLog) { "use strict"; var me = this;
+iCn3DUI.prototype.getLinkToStructureSummary = function(bLog) { var me = this; //"use strict";
 
        var url = "https://www.ncbi.nlm.nih.gov/structure/?term=";
 
@@ -167,7 +167,7 @@ iCn3DUI.prototype.getLinkToStructureSummary = function(bLog) { "use strict"; var
        return url;
 },
 
-iCn3DUI.prototype.isIE = function() { "use strict"; var me = this;
+iCn3DUI.prototype.isIE = function() { var me = this; //"use strict";
     //http://stackoverflow.com/questions/19999388/check-if-user-is-using-ie-with-jquery
     var ua = window.navigator.userAgent;
     var msie = ua.indexOf("MSIE ");
@@ -178,7 +178,7 @@ iCn3DUI.prototype.isIE = function() { "use strict"; var me = this;
         return false;
 };
 
-iCn3DUI.prototype.passFloat32 = function( array, output ){ "use strict"; var me = this;
+iCn3DUI.prototype.passFloat32 = function( array, output ){ var me = this; //"use strict";
     var n = array.length;
     if( !output ) output = new Uint8Array( 4 * n );
     var dv = me.getDataView( output );
@@ -188,7 +188,7 @@ iCn3DUI.prototype.passFloat32 = function( array, output ){ "use strict"; var me 
     return me.getUint8View( output );
 };
 
-iCn3DUI.prototype.passInt8 = function( array, output ){ "use strict"; var me = this;
+iCn3DUI.prototype.passInt8 = function( array, output ){ var me = this; //"use strict";
     var n = array.length;
     if( !output ) output = new Uint8Array( 1 * n );
     var dv = me.getDataView( output );
@@ -198,7 +198,7 @@ iCn3DUI.prototype.passInt8 = function( array, output ){ "use strict"; var me = t
     return me.getUint8View( output );
 };
 
-iCn3DUI.prototype.passInt16 = function( array, output ){ "use strict"; var me = this;
+iCn3DUI.prototype.passInt16 = function( array, output ){ var me = this; //"use strict";
     var n = array.length;
     if( !output ) output = new Uint8Array( 2 * n );
     var dv = me.getDataView( output );
@@ -208,7 +208,7 @@ iCn3DUI.prototype.passInt16 = function( array, output ){ "use strict"; var me = 
     return me.getUint8View( output );
 };
 
-iCn3DUI.prototype.passInt32 = function( array, output ){ "use strict"; var me = this;
+iCn3DUI.prototype.passInt32 = function( array, output ){ var me = this; //"use strict";
     var n = array.length;
     if( !output ) output = new Uint8Array( 4 * n );
     var dv = me.getDataView( output );
@@ -220,15 +220,15 @@ iCn3DUI.prototype.passInt32 = function( array, output ){ "use strict"; var me = 
 
 // ------------
 
-iCn3DUI.prototype.getUint8View = function( typedArray ){ "use strict"; var me = this;
+iCn3DUI.prototype.getUint8View = function( typedArray ){ var me = this; //"use strict";
     return me.getView( Uint8Array, typedArray );
 };
 
-iCn3DUI.prototype.getDataView = function( typedArray ){ "use strict"; var me = this;
+iCn3DUI.prototype.getDataView = function( typedArray ){ var me = this; //"use strict";
     return me.getView( DataView, typedArray );
 };
 
-iCn3DUI.prototype.getView = function( ctor, typedArray, elemSize ){ "use strict"; var me = this;
+iCn3DUI.prototype.getView = function( ctor, typedArray, elemSize ){ var me = this; //"use strict";
     return typedArray ? new ctor(
         typedArray.buffer,
         typedArray.byteOffset,
@@ -236,7 +236,7 @@ iCn3DUI.prototype.getView = function( ctor, typedArray, elemSize ){ "use strict"
     ) : undefined;
 };
 
-iCn3DUI.prototype.getBlobFromBufferAndText = function(arrayBuffer, text) { "use strict"; var me = this;
+iCn3DUI.prototype.getBlobFromBufferAndText = function(arrayBuffer, text) { var me = this; //"use strict";
     //var start = "data:image/png;base64,";
 
     //var strArray0 = new Uint8Array(start.length);
@@ -263,7 +263,7 @@ iCn3DUI.prototype.getBlobFromBufferAndText = function(arrayBuffer, text) { "use 
     return blob;
 };
 
-iCn3DUI.prototype.getTransformationStr = function(transformation) { "use strict"; var me = this;
+iCn3DUI.prototype.getTransformationStr = function(transformation) { var me = this; //"use strict";
     var transformation2 = {"factor": 1.0, "mouseChange": {"x": 0, "y": 0}, "quaternion": {"_x": 0, "_y": 0, "_z": 0, "_w": 1} };
     transformation2.factor = parseFloat(transformation.factor).toPrecision(5);
     transformation2.mouseChange.x = parseFloat(transformation.mouseChange.x).toPrecision(5);
@@ -286,7 +286,7 @@ iCn3DUI.prototype.getTransformationStr = function(transformation) { "use strict"
 };
 
 /*
-iCn3DUI.prototype.createLinkForBlob = function(blob, filename) { "use strict"; var me = this;
+iCn3DUI.prototype.createLinkForBlob = function(blob, filename) { var me = this; //"use strict";
     var link = document.createElement('a');
     link.href = window.URL.createObjectURL(blob);
     link.setAttribute('download', filename);
@@ -296,7 +296,7 @@ iCn3DUI.prototype.createLinkForBlob = function(blob, filename) { "use strict"; v
 };
 */
 
-iCn3DUI.prototype.getPngText = function() { "use strict"; var me = this;
+iCn3DUI.prototype.getPngText = function() { var me = this; //"use strict";
     var url; // output state file if me.bInputfile is true or the URL is mor than 4000 chars
     var bAllCommands = true;
 
@@ -334,7 +334,7 @@ iCn3DUI.prototype.getPngText = function() { "use strict"; var me = this;
     return text;
 };
 
-iCn3DUI.prototype.saveFile = function(filename, type, text) { "use strict"; var me = this;
+iCn3DUI.prototype.saveFile = function(filename, type, text) { var me = this; //"use strict";
     //Save file
     var blob;
 
@@ -483,7 +483,7 @@ iCn3DUI.prototype.isSessionStorageSupported = function() {
   }
 };
 
-iCn3DUI.prototype.resizeCanvas = function (width, height, bForceResize, bDraw) { "use strict"; var me = this;
+iCn3DUI.prototype.resizeCanvas = function (width, height, bForceResize, bDraw) { var me = this; //"use strict";
   if( (bForceResize !== undefined && bForceResize) || (me.cfg.resize !== undefined && me.cfg.resize) ) {
     //var heightTmp = parseInt(height) - me.EXTRAHEIGHT;
     var heightTmp = height;
@@ -499,7 +499,7 @@ iCn3DUI.prototype.resizeCanvas = function (width, height, bForceResize, bDraw) {
   }
 };
 
-iCn3DUI.prototype.handleContextLost = function() { "use strict"; var me = this;
+iCn3DUI.prototype.handleContextLost = function() { var me = this; //"use strict";
     //https://www.khronos.org/webgl/wiki/HandlingContextLost
     // 1 add a lost context handler and tell it to prevent the default behavior
 
@@ -525,7 +525,7 @@ iCn3DUI.prototype.handleContextLost = function() { "use strict"; var me = this;
     }, false);
 };
 
-iCn3DUI.prototype.windowResize = function() { "use strict"; var me = this;
+iCn3DUI.prototype.windowResize = function() { var me = this; //"use strict";
     if(me.cfg.resize !== undefined && me.cfg.resize && !me.isMobile() ) {
         $(window).resize(function() {
             //me.WIDTH = $( window ).width();
@@ -540,7 +540,7 @@ iCn3DUI.prototype.windowResize = function() { "use strict"; var me = this;
     }
 };
 
-iCn3DUI.prototype.setViewerWidthHeight = function() { "use strict"; var me = this;
+iCn3DUI.prototype.setViewerWidthHeight = function() { var me = this; //"use strict";
     me.WIDTH = $( window ).width() - me.LESSWIDTH;
     me.HEIGHT = $( window ).height() - me.EXTRAHEIGHT - me.LESSHEIGHT;
 
@@ -579,7 +579,7 @@ iCn3DUI.prototype.setViewerWidthHeight = function() { "use strict"; var me = thi
     if(viewer_height && me.HEIGHT > viewer_height) me.HEIGHT = viewer_height;
 };
 
-iCn3DUI.prototype.shareLinkUrl = function(bAllCommands) { "use strict"; var me = this;
+iCn3DUI.prototype.shareLinkUrl = function(bAllCommands) { var me = this; //"use strict";
        var url = "https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?";
 
        for(var key in me.cfg) {
@@ -718,7 +718,7 @@ iCn3DUI.prototype.shareLinkUrl = function(bAllCommands) { "use strict"; var me =
        return url;
 };
 
-iCn3DUI.prototype.addLabel = function (text, x, y, z, size, color, background, type) { "use strict"; var me = this;
+iCn3DUI.prototype.addLabel = function (text, x, y, z, size, color, background, type) { var me = this; //"use strict";
     var label = {}; // Each label contains 'position', 'text', 'color', 'background'
 
     if(size === '0' || size === '' || size === 'undefined') size = undefined;

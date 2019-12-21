@@ -14,7 +14,6 @@
  */
 
 var Detector = {
-
     canvas: !! window.CanvasRenderingContext2D,
     webgl: ( function () {
 

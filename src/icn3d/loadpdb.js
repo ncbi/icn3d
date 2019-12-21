@@ -3,7 +3,7 @@
  */
 
 // modified from iview (http://istar.cse.cuhk.edu.hk/iview/)
-iCn3D.prototype.loadPDB = function (src, pdbid, bOpm, bVector) { "use strict"; var me = this;
+iCn3D.prototype.loadPDB = function (src, pdbid, bOpm, bVector) { var me = this; //"use strict";
     var helices = [], sheets = [];
     //this.atoms = {};
     var lines = src.split('\n');
@@ -595,7 +595,7 @@ iCn3D.prototype.loadPDB = function (src, pdbid, bOpm, bVector) { "use strict"; v
     }
 };
 
-iCn3D.prototype.adjustSeq = function (chainMissingResidueArray) { "use strict"; var me = this;
+iCn3D.prototype.adjustSeq = function (chainMissingResidueArray) { var me = this; //"use strict";
     // adjust sequences
     for(var chainNum in this.chainsSeq) {
         if(chainMissingResidueArray[chainNum] === undefined) continue;
@@ -666,7 +666,7 @@ iCn3D.prototype.adjustSeq = function (chainMissingResidueArray) { "use strict"; 
     }
 };
 
-iCn3D.prototype.setSsbond = function (structure2cys_resid) { "use strict"; var me = this;
+iCn3D.prototype.setSsbond = function (structure2cys_resid) { var me = this; //"use strict";
     // determine whether there are disulfide bonds
     // disulfide bond is about 2.05 angstrom
     var distMax = 4; //3; // https://icn3d.page.link/5KRXx6XYfig1fkye7
@@ -710,7 +710,7 @@ iCn3D.prototype.setSsbond = function (structure2cys_resid) { "use strict"; var m
     }
 };
 
-iCn3D.prototype.getChainCalpha = function (chains, atoms) { "use strict"; var me = this;
+iCn3D.prototype.getChainCalpha = function (chains, atoms) { var me = this; //"use strict";
     var chainCalphaHash = {};
 
     for(var chainid in chains) {

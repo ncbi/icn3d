@@ -404,7 +404,7 @@ iCn3D.prototype.setColorByOptions = function (options, atoms, bUseInputColor) {
  }
 };
 
-iCn3D.prototype.applyDisplayOptions = function (options, atoms, bHighlight) { "use strict"; var me = this; // atoms: hash of key -> 1
+iCn3D.prototype.applyDisplayOptions = function (options, atoms, bHighlight) { var me = this; //"use strict";  // atoms: hash of key -> 1
     if(options === undefined) options = this.opts;
 
     var residueHash = {};
@@ -658,7 +658,7 @@ iCn3D.prototype.applyDisplayOptions = function (options, atoms, bHighlight) { "u
     }
 };
 
-iCn3D.prototype.hideLabels = function () { "use strict"; var me = this;
+iCn3D.prototype.hideLabels = function () { var me = this; //"use strict";
     // remove previous labels
     if(this.mdl !== undefined) {
         for(var i = 0, il = this.mdl.children.length; i < il; ++i) {
@@ -745,7 +745,7 @@ iCn3D.prototype.setAtomStyleByOptions = function (options) {
     }
 };
 
-iCn3D.prototype.rebuildSceneBase = function (options) { "use strict"; var me = this;
+iCn3D.prototype.rebuildSceneBase = function (options) { var me = this; //"use strict";
     jQuery.extend(me.opts, options);
 
     this.cam_z = this.maxD * 2;

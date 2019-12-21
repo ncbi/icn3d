@@ -3,7 +3,7 @@
  */
 
 //http://gun.teipir.gr/VRML-amgem/spec/part1/examples.html
-iCn3DUI.prototype.saveVrmlFile = function( mat ){ "use strict"; var me = this;
+iCn3DUI.prototype.saveVrmlFile = function( mat ){ var me = this; //"use strict";
     if(Object.keys(me.icn3d.dAtoms).length > 50000) {
         alert('Please display a subset of the structure to export 3D files. Then merge the files for 3D printing...');
         return [''];
@@ -64,7 +64,7 @@ iCn3DUI.prototype.saveVrmlFile = function( mat ){ "use strict"; var me = this;
 
 // The file lost face color after being repaired by https://service.netfabb.com/. It only works with vertex color
 // convert face color to vertex color
-iCn3DUI.prototype.processVrmlMeshGroup = function( mdl, vrmlStrArray, vertexCnt, mat ){ "use strict"; var me = this;
+iCn3DUI.prototype.processVrmlMeshGroup = function( mdl, vrmlStrArray, vertexCnt, mat ){ var me = this; //"use strict";
     for(var i = 0, il = mdl.children.length; i < il; ++i) {
          var mesh = mdl.children[i];
          if(mesh.type === 'Sprite') continue;

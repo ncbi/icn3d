@@ -92,7 +92,7 @@ iCn3D.prototype.onBeforeRender = function(renderer, scene, camera, geometry, mat
   }
 };
 
-iCn3D.prototype.setParametersForShader = function (opacity) { "use strict"; var me = this;
+iCn3D.prototype.setParametersForShader = function (opacity) { var me = this; //"use strict";
 /*
     var modelViewMatrix = new THREE.Uniform( new THREE.Matrix4() )
             .onUpdate( function( object ){
@@ -242,7 +242,7 @@ iCn3D.prototype.setParametersForShader = function (opacity) { "use strict"; var 
     }
 };
 
-iCn3D.prototype.drawImpostorShader = function () { "use strict"; var me = this;
+iCn3D.prototype.drawImpostorShader = function () { var me = this; //"use strict";
     this.setParametersForShader();
 
     this.createImpostorShaderSphere("SphereImpostor");
@@ -250,7 +250,7 @@ iCn3D.prototype.drawImpostorShader = function () { "use strict"; var me = this;
     //this.createImpostorShaderCylinder("HyperballStickImpostor");
 };
 
-iCn3D.prototype.getShader = function (name) { "use strict"; var me = this;
+iCn3D.prototype.getShader = function (name) { var me = this; //"use strict";
   var shaderText = $NGL_shaderTextHash[name];
   var reInclude = /#include\s+(\S+)/gmi;
 
@@ -268,7 +268,7 @@ iCn3D.prototype.getShader = function (name) { "use strict"; var me = this;
   return shaderText;
 };
 
-iCn3D.prototype.createImpostorShaderBase = function (shaderName, mapping, mappingIndices, data, attributeData, count, mappingSize, mappingIndicesSize, mappingItemSize) { "use strict"; var me = this;
+iCn3D.prototype.createImpostorShaderBase = function (shaderName, mapping, mappingIndices, data, attributeData, count, mappingSize, mappingIndicesSize, mappingItemSize) { var me = this; //"use strict";
   var shaderMaterial =
     new THREE.ShaderMaterial({
       defines: me.defines,
@@ -411,7 +411,7 @@ iCn3D.prototype.createImpostorShaderBase = function (shaderName, mapping, mappin
     //this.objects.push(mesh);
 };
 
-iCn3D.prototype.createImpostorShaderCylinder = function (shaderName) { "use strict"; var me = this;
+iCn3D.prototype.createImpostorShaderCylinder = function (shaderName) { var me = this; //"use strict";
     var positions = new Float32Array( me.posArray );
     var colors = new Float32Array( me.colorArray );
     var positions2 = new Float32Array( me.pos2Array );
@@ -476,7 +476,7 @@ iCn3D.prototype.createImpostorShaderCylinder = function (shaderName) { "use stri
   me.radiusArray = [];
 };
 
-iCn3D.prototype.createImpostorShaderSphere = function (shaderName) { "use strict"; var me = this;
+iCn3D.prototype.createImpostorShaderSphere = function (shaderName) { var me = this; //"use strict";
     var positions = new Float32Array( me.posArraySphere );
     var colors = new Float32Array( me.colorArraySphere );
     var radii = new Float32Array( me.radiusArraySphere );

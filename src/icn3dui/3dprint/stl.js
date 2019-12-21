@@ -17,7 +17,7 @@ UINT16 – Attribute byte count
 end
 */
 
-iCn3DUI.prototype.getFaceCnt = function( mdl ){ "use strict"; var me = this;
+iCn3DUI.prototype.getFaceCnt = function( mdl ){ var me = this; //"use strict";
     var cntFaces = 0;
     for(var i = 0, il = mdl.children.length; i < il; ++i) {
          var mesh = mdl.children[i];
@@ -36,7 +36,7 @@ iCn3DUI.prototype.getFaceCnt = function( mdl ){ "use strict"; var me = this;
     return cntFaces;
 };
 
-iCn3DUI.prototype.saveStlFile = function( mat ){ "use strict"; var me = this;
+iCn3DUI.prototype.saveStlFile = function( mat ){ var me = this; //"use strict";
     if(Object.keys(me.icn3d.dAtoms).length > 70000) {
         alert('Please display a subset of the structure to export 3D files. Then merge the files for 3D printing...');
         return [''];
@@ -111,14 +111,14 @@ iCn3DUI.prototype.saveStlFile = function( mat ){ "use strict"; var me = this;
     return blobArray;
 };
 
-iCn3DUI.prototype.updateArray = function( array, inArray, indexBase ){ "use strict"; var me = this;
+iCn3DUI.prototype.updateArray = function( array, inArray, indexBase ){ var me = this; //"use strict";
     for( var i = 0, il = inArray.length; i < il; ++i ){
         array[indexBase + i] = inArray[i];
     };
     return array;
 };
 
-iCn3DUI.prototype.processStlMeshGroup = function( mdl, blobArray, mat ){ "use strict"; var me = this;
+iCn3DUI.prototype.processStlMeshGroup = function( mdl, blobArray, mat ){ var me = this; //"use strict";
     for(var i = 0, il = mdl.children.length; i < il; ++i) {
          var mesh = mdl.children[i];
          if(mesh.type === 'Sprite') continue;

@@ -1,11 +1,11 @@
-/**
+644444444444444444/**
  * @file Density Cif Parser
  * @author David Sehnal dsehnal <alexander.rose@weirdbyte.de>
  * Modified by Jiyao Wang / https://github.com/ncbi/icn3d
  */
 
 
-iCn3DUI.prototype.DensityCifParser = function(pdbid, type, sigma, emd) { "use strict"; var me = this;
+iCn3DUI.prototype.DensityCifParser = function(pdbid, type, sigma, emd) { var me = this; //"use strict";
    var url;
    var detail = (me.isMobile()) ? 0 : 4; //4;
 
@@ -78,7 +78,7 @@ iCn3DUI.prototype.DensityCifParser = function(pdbid, type, sigma, emd) { "use st
     }
 };
 
-iCn3DUI.prototype.parseChannels = function(densitydata, type, sigma) { "use strict"; var me = this;
+iCn3DUI.prototype.parseChannels = function(densitydata, type, sigma) { var me = this; //"use strict";
     var cif = me.BinaryParse(densitydata);
 
     if(type == '2fofc' || type == 'fofc') {
@@ -175,7 +175,7 @@ iCn3DUI.prototype.parseChannels = function(densitydata, type, sigma) { "use stri
     }
 };
 
-iCn3DUI.prototype.getChannel = function(data, name) { "use strict"; var me = this;
+iCn3DUI.prototype.getChannel = function(data, name) { var me = this; //"use strict";
     //var block = data.dataBlocks.filter(b => b.header === name)[0];
     //var block = data.dataBlocks.filter(b => b.id === name)[0];
 
@@ -191,7 +191,7 @@ iCn3DUI.prototype.getChannel = function(data, name) { "use strict"; var me = thi
     return density;
 };
 
-iCn3DUI.prototype.CIFParse = function(block) { "use strict"; var me = this;
+iCn3DUI.prototype.CIFParse = function(block) { var me = this; //"use strict";
     var info = block.getCategory('_volume_data_3d_info');
 
     if (!info) {
@@ -315,7 +315,7 @@ iCn3DUI.prototype.CIFParse = function(block) { "use strict"; var me = this;
     return data;
 };
 
-iCn3DUI.prototype.BinaryParse = function(data) { "use strict"; var me = this;
+iCn3DUI.prototype.BinaryParse = function(data) { var me = this; //"use strict";
 //    var minVersion = [0, 3];
 //    try {
         var array = new Uint8Array(data);
@@ -751,7 +751,7 @@ iCn3DUI.prototype.BinaryParse = function(data) { "use strict"; var me = this;
 //    }
 };
 
-iCn3DUI.prototype.MessagePackParse = function(state) { "use strict"; var me = this;
+iCn3DUI.prototype.MessagePackParse = function(state) { var me = this; //"use strict";
     /*
      * Adapted from https://github.com/rcsb/mmtf-javascript
      * by Alexander Rose <alexander.rose@weirdbyte.de>, MIT License, Copyright (c) 2016
