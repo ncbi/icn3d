@@ -6,7 +6,7 @@
  */
 
 
-iCn3DUI.prototype.Dsn6Parser = function(pdbid, type, sigma) { "use strict"; var me = this;
+iCn3DUI.prototype.Dsn6Parser = function(pdbid, type, sigma) { var me = this; //"use strict";
    var url, dataType;
    // https://edmaps.rcsb.org/maps/1kq2_2fofc.dsn6
    // https://edmaps.rcsb.org/maps/1kq2_fofc.dsn6
@@ -94,7 +94,7 @@ iCn3DUI.prototype.Dsn6Parser = function(pdbid, type, sigma) { "use strict"; var 
     }
 };
 
-iCn3DUI.prototype.loadDsn6Data = function(dsn6data, type, sigma) { "use strict"; var me = this;
+iCn3DUI.prototype.loadDsn6Data = function(dsn6data, type, sigma) { var me = this; //"use strict";
     // DSN6 http://www.uoxray.uoregon.edu/tnt/manual/node104.html
     // BRIX http://svn.cgl.ucsf.edu/svn/chimera/trunk/libs/VolumeData/dsn6/brix-1.html
 
@@ -248,7 +248,7 @@ iCn3DUI.prototype.loadDsn6Data = function(dsn6data, type, sigma) { "use strict";
     //return true;
 };
 
-iCn3DUI.prototype.getMatrix = function(header) { "use strict"; var me = this;
+iCn3DUI.prototype.getMatrix = function(header) { var me = this; //"use strict";
     var h = header;
 
     var basisX = [

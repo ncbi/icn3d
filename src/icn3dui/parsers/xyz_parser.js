@@ -2,7 +2,7 @@
  * @author Jiyao Wang <wangjiy@ncbi.nlm.nih.gov> / https://github.com/ncbi/icn3d
  */
 
-iCn3DUI.prototype.loadXyzData = function(data) { "use strict"; var me = this;
+iCn3DUI.prototype.loadXyzData = function(data) { var me = this; //"use strict";
     var bResult = me.loadXyzAtomData(data);
 
     if(me.cfg.align === undefined && Object.keys(me.icn3d.structures).length == 1) {
@@ -24,7 +24,7 @@ iCn3DUI.prototype.loadXyzData = function(data) { "use strict"; var me = this;
     }
 };
 
-iCn3DUI.prototype.setXyzAtomSeq = function (AtomHash, moleculeNum, chainNum, residueNum) { "use strict"; var me = this;
+iCn3DUI.prototype.setXyzAtomSeq = function (AtomHash, moleculeNum, chainNum, residueNum) { var me = this; //"use strict";
     me.icn3d.dAtoms = me.icn3d.unionHash(me.icn3d.dAtoms, AtomHash);
     me.icn3d.hAtoms= me.icn3d.unionHash(me.icn3d.hAtoms, AtomHash);
 
@@ -69,7 +69,7 @@ iCn3DUI.prototype.setXyzAtomSeq = function (AtomHash, moleculeNum, chainNum, res
     }
 },
 
-iCn3DUI.prototype.loadXyzAtomData = function (data) { "use strict"; var me = this;
+iCn3DUI.prototype.loadXyzAtomData = function (data) { var me = this; //"use strict";
     var lines = data.split(/\r?\n|\r/);
     if (lines.length < 3) return false;
 

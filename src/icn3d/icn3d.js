@@ -4,8 +4,7 @@
 
 if (typeof jQuery === 'undefined') { throw new Error('iCn3D requires jQuery') }
 
-var iCn3D = function (id) {
-    "use strict";
+var iCn3D = function (id) { var me = this; //"use strict";
 
     this.id = id;
 
@@ -220,7 +219,7 @@ var iCn3D = function (id) {
     this.mouseChange = new THREE.Vector2(0,0);
     this.quaternion = new THREE.Quaternion(0,0,0,1);
 
-    "use strict"; var me = this;
+    var me = this; //"use strict";
     this.container.bind('contextmenu', function (e) {
         e.preventDefault();
     });
@@ -432,7 +431,7 @@ iCn3D.prototype = {
 
     constructor: iCn3D,
 
-    isIntersect: function(objects, mdl, bClick, popupX, popupY) { "use strict"; var me = this;
+    isIntersect: function(objects, mdl, bClick, popupX, popupY) { var me = this; //"use strict";
         var intersects = me.raycaster.intersectObjects( objects ); // not all "mdl" group will be used for pk
 
         var bFound = false;
@@ -484,7 +483,7 @@ iCn3D.prototype = {
         return bFound;
     },
 
-    rayCaster: function(e, bClick) { "use strict"; var me = this;
+    rayCaster: function(e, bClick) { var me = this; //"use strict";
 //        if(this.bChainAlign) return; // no picking for chain alignment
 
         var x = e.pageX, y = e.pageY;
@@ -554,7 +553,7 @@ iCn3D.prototype = {
         //}
     },
 
-    setRotation: function(axis, angle) { "use strict"; var me = this;
+    setRotation: function(axis, angle) { var me = this; //"use strict";
           axis.applyQuaternion( me.cam.quaternion ).normalize();
 
           var quaternion = new THREE.Quaternion();
@@ -568,7 +567,7 @@ iCn3D.prototype = {
           me.render();
     },
 
-    setOutlineColor: function(colorStr) { "use strict"; var me = this;
+    setOutlineColor: function(colorStr) { var me = this; //"use strict";
         // outline using ShaderMaterial: http://jsfiddle.net/Eskel/g593q/9/
         var shader = {
             'outline' : {

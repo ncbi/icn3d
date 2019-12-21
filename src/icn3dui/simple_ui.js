@@ -3,7 +3,7 @@
  */
 
 var iCn3DUI = function(cfg) {
-    "use strict"; var me = this;
+    var me = this; //"use strict";
 
     me.bFullUi = false;
 
@@ -84,11 +84,11 @@ iCn3DUI.prototype = {
     constructor: iCn3DUI,
 
     // modify me.icn3d function
-    modifyIcn3d: function() {"use strict"; var me = this;
+    modifyIcn3d: function() {var me = this; //"use strict";
         me.modifyIcn3dshowPicking();
     },
 
-    modifyIcn3dshowPicking: function() {"use strict"; var me = this;
+    modifyIcn3dshowPicking: function() {var me = this; //"use strict";
         iCn3D.prototype.showPicking = function(atom, x, y) {
           if(me.cfg.cid !== undefined) {
               this.pk = 1; // atom
@@ -143,7 +143,7 @@ iCn3DUI.prototype = {
 
     // ======= functions start==============
     // show3DStructure is the main function to show 3D structure
-    show3DStructure: function() { "use strict"; var me = this;
+    show3DStructure: function() { var me = this; //"use strict";
         var html = me.setHtml();
 
         $( "#" + me.divid).html(html);
@@ -208,7 +208,7 @@ iCn3DUI.prototype = {
         me.loadStructure();
     },
 
-    setHtml: function() { "use strict"; var me = this;
+    setHtml: function() { var me = this; //"use strict";
         var html = "";
 
         html += "<div id='" + me.pre + "viewer' style='position:relative; width:100%; height:100%;'>";
@@ -374,7 +374,7 @@ iCn3DUI.prototype = {
         return html;
     },
 
-    loadStructure: function() { "use strict"; var me = this;
+    loadStructure: function() { var me = this; //"use strict";
         me.icn3d.molTitle = '';
 
         if(me.cfg.mmtfid !== undefined) {
@@ -441,7 +441,7 @@ iCn3DUI.prototype = {
         }
     },
 
-    renderStructure: function(bInitial) { "use strict"; var me = this;
+    renderStructure: function(bInitial) { var me = this; //"use strict";
         if(bInitial) {
             //me.icn3d.draw(me.opts);
 
@@ -453,20 +453,20 @@ iCn3DUI.prototype = {
         }
     },
 
-    selectAll: function() { "use strict"; var me = this;
+    selectAll: function() { var me = this; //"use strict";
           // select all atoms again
           for(var i in me.icn3d.atoms) {
               me.icn3d.hAtoms[i] = 1;
           }
     },
 
-    setCamera: function(id, value) { "use strict"; var me = this;
+    setCamera: function(id, value) { var me = this; //"use strict";
       me.icn3d.opts[id] = value;
 
       me.icn3d.draw();
     },
 
-    setColor: function(id, value) { "use strict"; var me = this;
+    setColor: function(id, value) { var me = this; //"use strict";
       me.icn3d.opts[id] = value;
 
       me.selectAll();
@@ -476,7 +476,7 @@ iCn3DUI.prototype = {
       me.icn3d.draw();
     },
 
-    setStyle: function(selectionType, style) { "use strict"; var me = this;
+    setStyle: function(selectionType, style) { var me = this; //"use strict";
       var atoms = {};
 
       me.selectAll();
@@ -522,7 +522,7 @@ iCn3DUI.prototype = {
       me.icn3d.draw();
     },
 
-    clickTab: function() { "use strict"; var me = this;
+    clickTab: function() { var me = this; //"use strict";
         $("#" + me.pre + "toolbox > .icn3d-bottomTab").click(function (e) {
            var height = $("#" + me.pre + "toolbox > .icn3d-insideTab").height();
            if(height === 0) {
@@ -535,7 +535,7 @@ iCn3DUI.prototype = {
     },
 
 /*
-    clickPicking: function() { "use strict"; var me = this;
+    clickPicking: function() { var me = this; //"use strict";
         $("#" + me.pre + "enablepick").click(function(e) {
            e.preventDefault();
 
@@ -551,7 +551,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    clickNoPicking: function() { "use strict"; var me = this;
+    clickNoPicking: function() { var me = this; //"use strict";
         $("#" + me.pre + "disablepick").click(function(e) {
            e.preventDefault();
 
@@ -565,7 +565,7 @@ iCn3DUI.prototype = {
     },
 */
 
-    changeProteinStyle: function() { "use strict"; var me = this;
+    changeProteinStyle: function() { var me = this; //"use strict";
         $("#" + me.pre + "proteins").change(function(e) {
            e.preventDefault();
 
@@ -573,7 +573,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    clickReset: function() { "use strict"; var me = this;
+    clickReset: function() { var me = this; //"use strict";
         $("#" + me.pre + "reset").click(function (e) {
             e.preventDefault();
 
@@ -584,7 +584,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    clickSaveimage: function() { "use strict"; var me = this;
+    clickSaveimage: function() { var me = this; //"use strict";
         $("#" + me.pre + "saveimage").click(function (e) {
             e.preventDefault();
 
@@ -594,7 +594,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    clickHelp: function() { "use strict"; var me = this;
+    clickHelp: function() { var me = this; //"use strict";
         $("#" + me.pre + "help").click(function (e) {
             e.preventDefault();
 
@@ -602,7 +602,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    showSubsets: function() { "use strict"; var me = this;
+    showSubsets: function() { var me = this; //"use strict";
         $("#" + me.pre + "filter").click(function (e) {
             e.preventDefault();
 
@@ -633,7 +633,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    changeSelection: function() { "use strict"; var me = this;
+    changeSelection: function() { var me = this; //"use strict";
         ['camera', 'color', 'sidec', 'proteins', 'chemicals', 'water', 'ions', 'nucleotides'].forEach(function (opt) {
             $('#' + me.pre + opt).change(function (e) {
                 if(opt === 'camera') {
@@ -649,7 +649,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    allEventFunctions: function() { "use strict"; var me = this;
+    allEventFunctions: function() { var me = this; //"use strict";
         me.clickTab();
 //        me.clickPicking();
 //        me.clickNoPicking();
@@ -663,11 +663,11 @@ iCn3DUI.prototype = {
         me.changeSelection();
     },
 
-    allCustomEvents: function() { "use strict"; var me = this;
+    allCustomEvents: function() { var me = this; //"use strict";
       // add custom events here
     },
 
-    download2Ddgm: function(mmdbid, structureIndex) {"use strict"; var me = this;
+    download2Ddgm: function(mmdbid, structureIndex) {var me = this; //"use strict";
       // not used in simple version, but called in common API downloadMmdb()
     }
 };

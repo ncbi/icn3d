@@ -38,7 +38,7 @@ if (typeof console === 'undefined') {
 }
 
 $3Dmol.ElectronMap = function(threshbox) {
-    "use strict";
+    //"use strict";
 
     // constants for vpbits bitmasks
     /** @const */

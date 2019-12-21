@@ -2,7 +2,7 @@
  * @author Jiyao Wang <wangjiy@ncbi.nlm.nih.gov> / https://github.com/ncbi/icn3d
  */
 
-iCn3DUI.prototype.clickCommand_apply = function() { "use strict"; var me = this;
+iCn3DUI.prototype.clickCommand_apply = function() { var me = this; //"use strict";
     $("#" + me.pre + "command_apply").click(function(e) {
        e.preventDefault();
 
@@ -31,7 +31,7 @@ iCn3DUI.prototype.clickCommand_apply = function() { "use strict"; var me = this;
 
 };
 
-iCn3DUI.prototype.selectCombinedSets = function(strSets, commandname) { "use strict"; var me = this;
+iCn3DUI.prototype.selectCombinedSets = function(strSets, commandname) { var me = this; //"use strict";
     var idArray = strSets.split(' ');
 
     var orArray = [], andArray = [], notArray = [];
@@ -58,7 +58,7 @@ iCn3DUI.prototype.selectCombinedSets = function(strSets, commandname) { "use str
     if(idArray !== null) me.combineSets(orArray, andArray, notArray, commandname);
 };
 
-iCn3DUI.prototype.selectByCommand = function (select, commandname, commanddesc) { "use strict"; var me = this;
+iCn3DUI.prototype.selectByCommand = function (select, commandname, commanddesc) { var me = this; //"use strict";
        if(select.indexOf('saved atoms') === 0) {
             var pos = 12; // 'saved atoms '
             var strSets = select.substr(pos);
@@ -113,7 +113,7 @@ iCn3DUI.prototype.selectByCommand = function (select, commandname, commanddesc) 
        }
 };
 
-iCn3DUI.prototype.selectBySpec = function (select, commandname, commanddesc, bDisplay) { "use strict"; var me = this;
+iCn3DUI.prototype.selectBySpec = function (select, commandname, commanddesc, bDisplay) { var me = this; //"use strict";
    select = (select.trim().substr(0, 6) === 'select') ? select.trim().substr(7) : select.trim();
 
    me.icn3d.hAtoms = {};

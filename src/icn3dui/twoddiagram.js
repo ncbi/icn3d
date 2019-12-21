@@ -5,7 +5,7 @@
 // draw 2D dgm for MMDB ID
 // Used as a reference the work at 2016 ISMB hackathon: https://github.com/NCBI-Hackathons/3D_2D_Rep_Structure
 // bUpdate: redraw 2Ddiagramfor the displayed structure
-iCn3DUI.prototype.draw2Ddgm = function(data, mmdbid, structureIndex, bUpdate) { "use strict"; var me = this;
+iCn3DUI.prototype.draw2Ddgm = function(data, mmdbid, structureIndex, bUpdate) { var me = this; //"use strict";
     // only show the 2D diagrams for displayed structures
 
     // reduce the size from 300 to 150
@@ -457,7 +457,7 @@ iCn3DUI.prototype.draw2Ddgm = function(data, mmdbid, structureIndex, bUpdate) { 
     return html;
 };
 
-iCn3DUI.prototype.set2DdgmNote = function(bAlign) { "use strict"; var me = this;
+iCn3DUI.prototype.set2DdgmNote = function(bAlign) { var me = this; //"use strict";
     var html = "<div style='width:150px'><b>Nodes</b>:<br>";
     //html += "<span style='margin-right:18px;'>&#9711;</span>Protein<br>";
     //html += "<span style='margin-right:18px;'>&#9633;</span>Nucleotide<br>";
@@ -484,7 +484,7 @@ iCn3DUI.prototype.set2DdgmNote = function(bAlign) { "use strict"; var me = this;
     return html;
 };
 
-iCn3DUI.prototype.highlightNode = function(type, highlight, base, ratio) { "use strict"; var me = this;
+iCn3DUI.prototype.highlightNode = function(type, highlight, base, ratio) { var me = this; //"use strict";
     if(ratio < 0.2) ratio = 0.2;
     var strokeWidth = 3; // default 1
 
@@ -527,7 +527,7 @@ iCn3DUI.prototype.highlightNode = function(type, highlight, base, ratio) { "use 
     }
 };
 
-iCn3DUI.prototype.click2Ddgm = function() { "use strict"; var me = this;
+iCn3DUI.prototype.click2Ddgm = function() { var me = this; //"use strict";
     $("#" + me.pre + "dl_2ddgm").on("click", ".icn3d-node", function(e) {
           e.stopImmediatePropagation();
         if(Object.keys(me.icn3d.hAtoms).length < Object.keys(me.icn3d.atoms).length) me.setMode('selection');
@@ -646,7 +646,7 @@ iCn3DUI.prototype.click2Ddgm = function() { "use strict"; var me = this;
     });
 };
 
-iCn3DUI.prototype.selectInteraction = function (chainid1, chainid2) {   "use strict"; var me = this;
+iCn3DUI.prototype.selectInteraction = function (chainid1, chainid2) {   var me = this; //"use strict";
         me.removeHl2D();
         me.icn3d.removeHlObjects();
 
@@ -667,7 +667,7 @@ iCn3DUI.prototype.selectInteraction = function (chainid1, chainid2) {   "use str
         me.updateHlAll();
 };
 
-iCn3DUI.prototype.selectInteractionAtoms = function (chainid1, chainid2) {   "use strict"; var me = this; // me.icn3d.pAtom is set already
+iCn3DUI.prototype.selectInteractionAtoms = function (chainid1, chainid2) {   var me = this; //"use strict";  // me.icn3d.pAtom is set already
     var radius = 4;
 
     // method 2. Retrieved from the cgi (This previously had problems in sharelink where the data from ajax is async. Now the data is from the same cgi as the atom data and there is no problem.)
@@ -699,7 +699,7 @@ iCn3DUI.prototype.selectInteractionAtoms = function (chainid1, chainid2) {   "us
     var nameArray = [commandname];
 };
 
-iCn3DUI.prototype.draw2DProtein = function(x, y, chainid, oriChain, chain, chainname, alignNum, color, oricolor, factor, ratio) { "use strict"; var me = this;
+iCn3DUI.prototype.draw2DProtein = function(x, y, chainid, oriChain, chain, chainname, alignNum, color, oricolor, factor, ratio) { var me = this; //"use strict";
     var strokecolor = '#000000';
     var strokewidth = '1';
     var linestrokewidth = '2';
@@ -725,7 +725,7 @@ iCn3DUI.prototype.draw2DProtein = function(x, y, chainid, oriChain, chain, chain
     return html;
 };
 
-iCn3DUI.prototype.draw2DNucleotide = function(x, y, chainid, oriChain, chain, chainname, alignNum, color, oricolor, factor, ratio) { "use strict"; var me = this;
+iCn3DUI.prototype.draw2DNucleotide = function(x, y, chainid, oriChain, chain, chainname, alignNum, color, oricolor, factor, ratio) { var me = this; //"use strict";
     var strokecolor = '#000000';
     var strokewidth = '1';
     var linestrokewidth = '2';
@@ -756,7 +756,7 @@ iCn3DUI.prototype.draw2DNucleotide = function(x, y, chainid, oriChain, chain, ch
     return html;
 };
 
-iCn3DUI.prototype.draw2DChemical = function(x, y, chainid, oriChain, chain, chainname, alignNum, color, oricolor, factor, ratio, bBiopolymer) { "use strict"; var me = this;
+iCn3DUI.prototype.draw2DChemical = function(x, y, chainid, oriChain, chain, chainname, alignNum, color, oricolor, factor, ratio, bBiopolymer) { var me = this; //"use strict";
     var strokecolor = '#000000';
     var strokewidth = '1';
     var linestrokewidth = '2';

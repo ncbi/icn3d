@@ -2,13 +2,13 @@
  * @author Jiyao Wang <wangjiy@ncbi.nlm.nih.gov> / https://github.com/ncbi/icn3d
  */
 
-iCn3DUI.prototype.showLoading = function () { "use strict"; var me = this;
+iCn3DUI.prototype.showLoading = function () { var me = this; //"use strict";
       if($("#" + me.pre + "wait")) $("#" + me.pre + "wait").show();
       if($("#" + me.pre + "canvas")) $("#" + me.pre + "canvas").hide();
       if($("#" + me.pre + "cmdlog")) $("#" + me.pre + "cmdlog").hide();
 };
 
-iCn3DUI.prototype.hideLoading = function () { "use strict"; var me = this;
+iCn3DUI.prototype.hideLoading = function () { var me = this; //"use strict";
     if(me.bCommandLoad === undefined || !me.bCommandLoad) {
       if($("#" + me.pre + "wait")) $("#" + me.pre + "wait").hide();
       if($("#" + me.pre + "canvas")) $("#" + me.pre + "canvas").show();
@@ -16,7 +16,7 @@ iCn3DUI.prototype.hideLoading = function () { "use strict"; var me = this;
     }
 };
 
-iCn3DUI.prototype.downloadMmcif = function (mmcifid) { "use strict"; var me = this;
+iCn3DUI.prototype.downloadMmcif = function (mmcifid) { var me = this; //"use strict";
    var url, dataType;
 
    url = "https://files.rcsb.org/view/" + mmcifid + ".cif";
@@ -79,7 +79,7 @@ iCn3DUI.prototype.downloadMmcif = function (mmcifid) { "use strict"; var me = th
     });
 };
 
-iCn3DUI.prototype.downloadMmcifSymmetry = function (mmcifid, type) { "use strict"; var me = this;
+iCn3DUI.prototype.downloadMmcifSymmetry = function (mmcifid, type) { var me = this; //"use strict";
   // chain functions together
   me.deferredSymmetry = $.Deferred(function() {
       me.downloadMmcifSymmetryBase(mmcifid, type);
@@ -88,7 +88,7 @@ iCn3DUI.prototype.downloadMmcifSymmetry = function (mmcifid, type) { "use strict
   return me.deferredSymmetry.promise();
 };
 
-iCn3DUI.prototype.downloadMmcifSymmetryBase = function (mmcifid, type) { "use strict"; var me = this;
+iCn3DUI.prototype.downloadMmcifSymmetryBase = function (mmcifid, type) { var me = this; //"use strict";
    var url, dataType;
 
    if(me.isMac()) { // safari has a problem in getting data from https://files.rcsb.org/header/
@@ -186,7 +186,7 @@ iCn3DUI.prototype.downloadMmcifSymmetryBase = function (mmcifid, type) { "use st
     });
 };
 
-iCn3DUI.prototype.loadMmcifData = function(data, mmcifid) { "use strict"; var me = this;
+iCn3DUI.prototype.loadMmcifData = function(data, mmcifid) { var me = this; //"use strict";
     if (data.atoms !== undefined) {
         me.icn3d.init();
 
@@ -217,7 +217,7 @@ iCn3DUI.prototype.loadMmcifData = function(data, mmcifid) { "use strict"; var me
     }
 };
 
-iCn3DUI.prototype.loadMmcifSymmetry = function(data) { "use strict"; var me = this;
+iCn3DUI.prototype.loadMmcifSymmetry = function(data) { var me = this; //"use strict";
     // load assembly info
     var assembly = data.assembly;
     var pmatrix = data.pmatrix;
@@ -232,7 +232,7 @@ iCn3DUI.prototype.loadMmcifSymmetry = function(data) { "use strict"; var me = th
     me.icn3d.asuCnt = me.icn3d.biomtMatrices.length;
 };
 
-iCn3DUI.prototype.parseMmdbData = function (data, type) { "use strict"; var me = this;
+iCn3DUI.prototype.parseMmdbData = function (data, type) { var me = this; //"use strict";
         // if type is defined, always process target before query
         if(data.atoms === undefined && data.molid2rescount === undefined) {
             alert('invalid MMDB data.');
@@ -342,7 +342,7 @@ iCn3DUI.prototype.parseMmdbData = function (data, type) { "use strict"; var me =
         }
 };
 
-iCn3DUI.prototype.downloadMmdb = function (mmdbid, bGi) { "use strict"; var me = this;
+iCn3DUI.prototype.downloadMmdb = function (mmdbid, bGi) { var me = this; //"use strict";
    //var maxatomcnt = (me.cfg.maxatomcnt === undefined) ? 50000 : me.cfg.maxatomcnt;
    //var maxatomcnt = 100000; // asymmetric unit (buidx=0) will be returned if above this threshold
 
@@ -443,7 +443,7 @@ iCn3DUI.prototype.downloadMmdb = function (mmdbid, bGi) { "use strict"; var me =
     }); // ajax
 };
 
-iCn3DUI.prototype.downloadMmdbPart2 = function (type) { "use strict"; var me = this;
+iCn3DUI.prototype.downloadMmdbPart2 = function (type) { var me = this; //"use strict";
     if(me.bAssemblyUseAsu) { // set up symmetric matrices
         $("#" + me.pre + "assemblyWrapper").show();
         me.icn3d.bAssembly = true;
@@ -498,13 +498,13 @@ iCn3DUI.prototype.downloadMmdbPart2 = function (type) { "use strict"; var me = t
     if(me.deferred !== undefined) me.deferred.resolve(); if(me.deferred2 !== undefined) me.deferred2.resolve();
 };
 
-iCn3DUI.prototype.downloadGi = function (gi) { "use strict"; var me = this;
+iCn3DUI.prototype.downloadGi = function (gi) { var me = this; //"use strict";
     me.icn3d.bCid = undefined;
     var bGi = true;
     me.downloadMmdb(gi, bGi);
 };
 
-iCn3DUI.prototype.downloadBlast_rep_id = function (sequence_structure_ids) { "use strict"; var me = this;
+iCn3DUI.prototype.downloadBlast_rep_id = function (sequence_structure_ids) { var me = this; //"use strict";
     me.icn3d.bCid = undefined;
 
     var idArray = sequence_structure_ids.split(',');
@@ -516,7 +516,7 @@ iCn3DUI.prototype.downloadBlast_rep_id = function (sequence_structure_ids) { "us
     me.downloadMmdb(mmdbid);
 };
 
-iCn3DUI.prototype.getMissingResidues = function (seqArray, type, chainid) { "use strict"; var me = this;
+iCn3DUI.prototype.getMissingResidues = function (seqArray, type, chainid) { var me = this; //"use strict";
     var prevResi = -9999;
     var missingResBegin = 0;
     var bCount = true;
@@ -589,7 +589,7 @@ iCn3DUI.prototype.getMissingResidues = function (seqArray, type, chainid) { "use
 
 //type: "mmdbid", "mmcifid", "align"
 //alignType: "query", "target" for chain to chain 3D alignment
-iCn3DUI.prototype.loadAtomDataIn = function (data, id, type, seqalign, alignType, chainCalphaHash2) { "use strict"; var me = this;
+iCn3DUI.prototype.loadAtomDataIn = function (data, id, type, seqalign, alignType, chainCalphaHash2) { var me = this; //"use strict";
     //me.icn3d.init();
     me.icn3d.pmin = new THREE.Vector3( 9999, 9999, 9999);
     me.icn3d.pmax = new THREE.Vector3(-9999,-9999,-9999);

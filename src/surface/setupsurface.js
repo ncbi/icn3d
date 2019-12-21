@@ -4,7 +4,7 @@
  */
 
 $3Dmol.SetupSurface = function (data) {
-    "use strict"; var me = this;
+    var me = this; //"use strict";
 
     //var $3Dmol = $3Dmol || {};
 

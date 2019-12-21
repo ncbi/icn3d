@@ -2,14 +2,14 @@
  * @author Jiyao Wang <wangjiy@ncbi.nlm.nih.gov> / https://github.com/ncbi/icn3d
  */
 
-iCn3D.prototype.applyPrevColor = function () { "use strict"; var me = this;
+iCn3D.prototype.applyPrevColor = function () { var me = this; //"use strict";
     for (var i in this.atoms) {
         var atom = this.atoms[i];
         atom.color = this.atomPrevColors[i];
     }
 };
 
-iCn3D.prototype.applyChemicalbindingOptions = function (options) { "use strict"; var me = this;
+iCn3D.prototype.applyChemicalbindingOptions = function (options) { var me = this; //"use strict";
     if(options === undefined) options = this.opts;
 
     // display mode
@@ -46,7 +46,7 @@ iCn3D.prototype.applyChemicalbindingOptions = function (options) { "use strict";
     }
 };
 
-iCn3D.prototype.hideHbonds = function () { "use strict"; var me = this;
+iCn3D.prototype.hideHbonds = function () { var me = this; //"use strict";
         this.opts["hbonds"] = "no";
         if(this.lines === undefined) this.lines = {};
         this.lines['hbond'] = [];
@@ -69,7 +69,7 @@ iCn3D.prototype.hideHbonds = function () { "use strict"; var me = this;
         }
 };
 
-iCn3D.prototype.hideSaltbridge = function () { "use strict"; var me = this;
+iCn3D.prototype.hideSaltbridge = function () { var me = this; //"use strict";
         this.opts["saltbridge"] = "no";
         if(this.lines === undefined) this.lines = {};
         this.lines['saltbridge'] = [];
@@ -92,7 +92,7 @@ iCn3D.prototype.hideSaltbridge = function () { "use strict"; var me = this;
         }
 };
 
-iCn3D.prototype.hideContact = function () { "use strict"; var me = this;
+iCn3D.prototype.hideContact = function () { var me = this; //"use strict";
         this.opts["contact"] = "no";
         if(this.lines === undefined) this.lines = {};
         this.lines['contact'] = [];
@@ -115,7 +115,7 @@ iCn3D.prototype.hideContact = function () { "use strict"; var me = this;
         }
 };
 
-iCn3D.prototype.applySsbondsOptions = function (options) { "use strict"; var me = this;
+iCn3D.prototype.applySsbondsOptions = function (options) { var me = this; //"use strict";
     if(options === undefined) options = this.opts;
 
     if (options.ssbonds.toLowerCase() === 'yes' && this.ssbondpnts !== undefined) {
@@ -271,7 +271,7 @@ iCn3D.prototype.applySsbondsOptions = function (options) { "use strict"; var me 
     } // if (options.ssbonds.toLowerCase() === 'yes'
 };
 
-iCn3D.prototype.applyMapOptions = function (options) { "use strict"; var me = this;
+iCn3D.prototype.applyMapOptions = function (options) { var me = this; //"use strict";
     if(options === undefined) options = this.opts;
 
     switch (options.mapwireframe) {
@@ -304,7 +304,7 @@ iCn3D.prototype.applyMapOptions = function (options) { "use strict"; var me = th
     }
 };
 
-iCn3D.prototype.applyEmmapOptions = function (options) { "use strict"; var me = this;
+iCn3D.prototype.applyEmmapOptions = function (options) { var me = this; //"use strict";
     if(options === undefined) options = this.opts;
 
     switch (options.emmapwireframe) {
@@ -334,7 +334,7 @@ iCn3D.prototype.applyEmmapOptions = function (options) { "use strict"; var me = 
     }
 };
 
-iCn3D.prototype.setFog = function(bZoomin) { "use strict"; var me = this;
+iCn3D.prototype.setFog = function(bZoomin) { var me = this; //"use strict";
     var background = this.backgroundColors[this.opts.background.toLowerCase()];
 
     if(bZoomin) {
@@ -382,7 +382,7 @@ iCn3D.prototype.setFog = function(bZoomin) { "use strict"; var me = this;
 };
 
 // change the display atom when alternating
-iCn3D.prototype.alternateStructures = function () { "use strict"; var me = this;
+iCn3D.prototype.alternateStructures = function () { var me = this; //"use strict";
     var hAtomsCount = Object.keys(this.hAtoms).length;
     var allAtomsCount = Object.keys(this.atoms).length;
 
@@ -425,7 +425,7 @@ iCn3D.prototype.alternateStructures = function () { "use strict"; var me = this;
     this.opts['rotationcenter'] = 'molecule center';
 };
 
-iCn3D.prototype.updateStabilizer = function () { "use strict"; var me = this;
+iCn3D.prototype.updateStabilizer = function () { var me = this; //"use strict";
     this.stabilizerpnts = [];
 
     if(this.pairArray !== undefined) {
@@ -439,7 +439,7 @@ iCn3D.prototype.updateStabilizer = function () { "use strict"; var me = this;
     }
 };
 
-iCn3D.prototype.getResidueRepPos = function (serial) { "use strict"; var me = this;
+iCn3D.prototype.getResidueRepPos = function (serial) { var me = this; //"use strict";
     var atomIn = this.atoms[serial];
     var residueid = atomIn.structure + "_" + atomIn.chain + "_" + atomIn.resi;
 
@@ -470,7 +470,7 @@ iCn3D.prototype.getResidueRepPos = function (serial) { "use strict"; var me = th
     return pos;
 };
 
-iCn3D.prototype.applySurfaceOptions = function (options) { "use strict"; var me = this;
+iCn3D.prototype.applySurfaceOptions = function (options) { var me = this; //"use strict";
     if(options === undefined) options = this.opts;
 
     //switch (options.wireframe.toLowerCase()) {
@@ -523,7 +523,7 @@ iCn3D.prototype.applySurfaceOptions = function (options) { "use strict"; var me 
     }
 };
 
-iCn3D.prototype.setHbondsContacts = function (options, type) { "use strict"; var me = this;
+iCn3D.prototype.setHbondsContacts = function (options, type) { var me = this; //"use strict";
     var hbond_contact = type;
     var hbonds_contact = (type == 'hbond') ? 'hbonds' : type;
 
@@ -560,7 +560,7 @@ iCn3D.prototype.setHbondsContacts = function (options, type) { "use strict"; var
     }
 };
 
-iCn3D.prototype.applyOtherOptions = function (options) { "use strict"; var me = this;
+iCn3D.prototype.applyOtherOptions = function (options) { var me = this; //"use strict";
     if(options === undefined) options = this.opts;
 
     if(this.lines !== undefined) {
@@ -646,7 +646,7 @@ iCn3D.prototype.applyOtherOptions = function (options) { "use strict"; var me = 
     }
 };
 
-iCn3D.prototype.rebuildScene = function (options) { "use strict"; var me = this;
+iCn3D.prototype.rebuildScene = function (options) { var me = this; //"use strict";
     if(options === undefined) options = this.opts;
 
     this.rebuildSceneBase(options);
@@ -677,7 +677,7 @@ iCn3D.prototype.rebuildScene = function (options) { "use strict"; var me = this;
     me.scene_ghost.updateMatrixWorld(true);
 };
 
-iCn3D.prototype.draw = function () { "use strict"; var me = this;
+iCn3D.prototype.draw = function () { var me = this; //"use strict";
     this.rebuildScene();
 
     // Impostor display using the saved arrays

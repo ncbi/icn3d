@@ -3,7 +3,7 @@
  */
 
 iCn3DUI.prototype.loadMol2Data = function(data) {
-    "use strict"; var me = this;
+    var me = this; //"use strict";
 
     var bResult = me.loadMol2AtomData(data);
 
@@ -26,7 +26,7 @@ iCn3DUI.prototype.loadMol2Data = function(data) {
     }
 };
 
-iCn3DUI.prototype.loadMol2AtomData = function (data) { "use strict"; var me = this;
+iCn3DUI.prototype.loadMol2AtomData = function (data) { var me = this; //"use strict";
     var lines = data.split(/\r?\n|\r/);
     if (lines.length < 4) return false;
 

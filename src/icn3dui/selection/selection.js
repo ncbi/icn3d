@@ -2,7 +2,7 @@
  * @author Jiyao Wang <wangjiy@ncbi.nlm.nih.gov> / https://github.com/ncbi/icn3d
  */
 
-iCn3DUI.prototype.clickShow_selected = function() { "use strict"; var me = this;
+iCn3DUI.prototype.clickShow_selected = function() { var me = this; //"use strict";
     $("#" + me.pre + "show_selected").add("#" + me.pre + "mn2_show_selected").click(function(e) {
        //me.setLogCmd("show selection", true);
 
@@ -11,7 +11,7 @@ iCn3DUI.prototype.clickShow_selected = function() { "use strict"; var me = this;
     });
 };
 
-iCn3DUI.prototype.showSelection = function (id) { "use strict"; var me = this;
+iCn3DUI.prototype.showSelection = function (id) { var me = this; //"use strict";
     me.icn3d.dAtoms = {};
 
     me.icn3d.dAtoms = me.icn3d.cloneHash(me.icn3d.hAtoms);
@@ -41,7 +41,7 @@ iCn3DUI.prototype.showSelection = function (id) { "use strict"; var me = this;
     me.showAnnoSelectedChains();
 };
 
-iCn3DUI.prototype.clickModeswitch = function() { "use strict"; var me = this;
+iCn3DUI.prototype.clickModeswitch = function() { var me = this; //"use strict";
     $("#" + me.pre + "modeswitch").click(function (e) {
         if($("#" + me.pre + "modeswitch")[0] !== undefined && $("#" + me.pre + "modeswitch")[0].checked) { // mode: selection
             me.setModeAndDisplay('selection');
@@ -60,7 +60,7 @@ iCn3DUI.prototype.clickModeswitch = function() { "use strict"; var me = this;
     });
 };
 
-iCn3DUI.prototype.selectAll = function() { "use strict"; var me = this;
+iCn3DUI.prototype.selectAll = function() { var me = this; //"use strict";
     me.icn3d.hAtoms = {};
 
     for(var i in me.icn3d.chains) {
@@ -84,7 +84,7 @@ iCn3DUI.prototype.selectAll = function() { "use strict"; var me = this;
     me.setMode('all');
 };
 
-iCn3DUI.prototype.setModeAndDisplay = function(mode) { "use strict"; var me = this;
+iCn3DUI.prototype.setModeAndDisplay = function(mode) { var me = this; //"use strict";
     if(mode === 'all') { // mode all
         me.setMode('all');
 
@@ -115,7 +115,7 @@ iCn3DUI.prototype.setModeAndDisplay = function(mode) { "use strict"; var me = th
     }
 };
 
-iCn3DUI.prototype.setMode = function(mode) { "use strict"; var me = this;
+iCn3DUI.prototype.setMode = function(mode) { var me = this; //"use strict";
     if(mode === 'all') { // mode all
         // set text
         $("#" + me.pre + "modeall").show();
@@ -145,7 +145,7 @@ iCn3DUI.prototype.setMode = function(mode) { "use strict"; var me = this;
     }
 };
 
-iCn3DUI.prototype.saveSelection = function(name, description) { "use strict"; var me = this;
+iCn3DUI.prototype.saveSelection = function(name, description) { var me = this; //"use strict";
     me.selectedResidues = {};
 
     //for(var i in me.icn3d.hAtoms) {
@@ -168,7 +168,7 @@ iCn3DUI.prototype.saveSelection = function(name, description) { "use strict"; va
     }
 };
 
-iCn3DUI.prototype.removeSelection = function() { "use strict"; var me = this;
+iCn3DUI.prototype.removeSelection = function() { var me = this; //"use strict";
     if(!me.bAnnotations) {
         me.removeSeqChainBkgd();
     }
@@ -195,7 +195,7 @@ iCn3DUI.prototype.removeSelection = function() { "use strict"; var me = this;
       me.removeHl2D();
 };
 
-iCn3DUI.prototype.updateSelectionNameDesc = function() { "use strict"; var me = this;
+iCn3DUI.prototype.updateSelectionNameDesc = function() { var me = this; //"use strict";
     var numDef = Object.keys(me.icn3d.defNames2Residues).length + Object.keys(me.icn3d.defNames2Atoms).length;
 
     $("#" + me.pre + "seq_command_name").val("seq_" + numDef);
@@ -208,7 +208,7 @@ iCn3DUI.prototype.updateSelectionNameDesc = function() { "use strict"; var me = 
     //$("#" + me.pre + "alignseq_command_desc").val("alseq_desc_" + numDef);
 };
 
-iCn3DUI.prototype.selectAChain = function (chainid, commandname, bAlign, bUnion) { "use strict"; var me = this;
+iCn3DUI.prototype.selectAChain = function (chainid, commandname, bAlign, bUnion) { var me = this; //"use strict";
     var commandname = commandname.replace(/\s/g, '');
     var command = (bAlign !== undefined || bAlign) ? 'select alignChain ' + chainid : 'select chain ' + chainid;
 
@@ -259,7 +259,7 @@ iCn3DUI.prototype.selectAChain = function (chainid, commandname, bAlign, bUnion)
     }
 };
 
-iCn3DUI.prototype.selectResidueList = function (residueHash, commandname, commanddescr, bUnion, bUpdateHighlight) { "use strict"; var me = this;
+iCn3DUI.prototype.selectResidueList = function (residueHash, commandname, commanddescr, bUnion, bUpdateHighlight) { var me = this; //"use strict";
   if(Object.keys(residueHash).length > 0) {
     var chainHash = {};
     if(bUnion === undefined || !bUnion) {
@@ -292,7 +292,7 @@ iCn3DUI.prototype.selectResidueList = function (residueHash, commandname, comman
   }
 };
 
-iCn3DUI.prototype.addCustomSelection = function (residueAtomArray, commandname, commanddesc, select, bSelectResidues) { "use strict"; var me = this;
+iCn3DUI.prototype.addCustomSelection = function (residueAtomArray, commandname, commanddesc, select, bSelectResidues) { var me = this; //"use strict";
     if(bSelectResidues) {
         me.icn3d.defNames2Residues[commandname] = residueAtomArray;
     }
@@ -306,7 +306,7 @@ iCn3DUI.prototype.addCustomSelection = function (residueAtomArray, commandname, 
     me.updateHlMenus([commandname]);
 };
 
-iCn3DUI.prototype.selectMainChains = function () { "use strict"; var me = this;
+iCn3DUI.prototype.selectMainChains = function () { var me = this; //"use strict";
     var currHAtoms = me.icn3d.cloneHash(me.icn3d.hAtoms);
 
     me.icn3d.hAtoms = me.icn3d.selectMainChainSubset(currHAtoms);
@@ -314,7 +314,7 @@ iCn3DUI.prototype.selectMainChains = function () { "use strict"; var me = this;
     me.showHighlight();
 };
 
-iCn3DUI.prototype.selectSideChains = function () { "use strict"; var me = this;
+iCn3DUI.prototype.selectSideChains = function () { var me = this; //"use strict";
     var currHAtoms = me.icn3d.cloneHash(me.icn3d.hAtoms);
 
     var nuclMainArray = ["C1'", "C1*", "C2'", "C2*", "C3'", "C3*", "C4'", "C4*", "C5'", "C5*", "O3'", "O3*", "O4'", "O4*", "O5'", "O5*", "P", "OP1", "O1P", "OP2", "O2P"];

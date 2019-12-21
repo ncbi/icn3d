@@ -2,7 +2,7 @@
  * @author Jiyao Wang <wangjiy@ncbi.nlm.nih.gov> / https://github.com/ncbi/icn3d
  */
 
-iCn3DUI.prototype.downloadCid = function (cid) { "use strict"; var me = this;
+iCn3DUI.prototype.downloadCid = function (cid) { var me = this; //"use strict";
     var uri = "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/cid/" + cid + "/record/SDF/?record_type=3d&response_type=display";
 
     me.opts['pk'] = 'atom';
@@ -63,7 +63,7 @@ iCn3DUI.prototype.downloadCid = function (cid) { "use strict"; var me = this;
 };
 
 iCn3DUI.prototype.loadSdfData = function(data) {
-    "use strict"; var me = this;
+    var me = this; //"use strict";
 
     var bResult = me.loadSdfAtomData(data);
 
@@ -86,7 +86,7 @@ iCn3DUI.prototype.loadSdfData = function(data) {
     }
 };
 
-iCn3DUI.prototype.loadSdfAtomData = function (data, cid) { "use strict"; var me = this;
+iCn3DUI.prototype.loadSdfAtomData = function (data, cid) { var me = this; //"use strict";
     var lines = data.split(/\r?\n|\r/);
     if (lines.length < 4) return false;
 
@@ -227,7 +227,7 @@ iCn3DUI.prototype.loadSdfAtomData = function (data, cid) { "use strict"; var me 
     return true;
 };
 
-iCn3DUI.prototype.setMaxD = function () { "use strict"; var me = this;
+iCn3DUI.prototype.setMaxD = function () { var me = this; //"use strict";
     var pmin = new THREE.Vector3( 9999, 9999, 9999);
     var pmax = new THREE.Vector3(-9999,-9999,-9999);
     var psum = new THREE.Vector3();
