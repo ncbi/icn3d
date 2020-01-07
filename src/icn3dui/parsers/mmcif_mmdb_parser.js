@@ -1245,8 +1245,12 @@ iCn3DUI.prototype.loadAtomDataIn = function (data, id, type, seqalign, alignType
         me.icn3d.setSsbond(structure2cys_resid);
     }
 
-    if(type === 'mmdbid' || type === 'mmcifid') {
+    if(type === 'mmcifid') {
         me.transformToOpmOri(id, chainCalphaHash2);
+    }
+    else if(type === 'mmdbid') {
+        var bResi_ori = true;
+        me.transformToOpmOri(id, chainCalphaHash2, bResi_ori);
     }
 
     // set up sequence alignment

@@ -1,4 +1,6 @@
 ## Change Log
+[icn3d-2.11.3](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.11.3.zip) was release on January 7, 2020. A bug was fixed to have predefined sets available for hydrogen bonds/interations.
+
 [icn3d-2.11.2](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.11.2.zip) was release on December 20, 2019. Added the style Backbone and added 'use strict' to each function.
 
 [icn3d-2.11.1](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.11.1.zip) was release on December 19, 2019. Fixed a bug in chain alignment due to the introduction of membranes.

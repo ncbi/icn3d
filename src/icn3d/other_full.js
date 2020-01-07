@@ -301,6 +301,8 @@ iCn3D.prototype.calculateChemicalHbonds = function (startAtoms, targetAtoms, thr
     var kCouplingConstant = -27.888;    //  = -332 * 0.42 * 0.2
     //var kMaxPeptideBondLength = 2.5;
 
+    var hbondCnt = {};
+
     for (var i in targetAtoms) {
       var atom = targetAtoms[i];
 
@@ -404,6 +406,25 @@ iCn3D.prototype.calculateChemicalHbonds = function (startAtoms, targetAtoms, thr
           }
           else {
               if(!this.isValidHbond(atom, atomHbond[j], threshold)) continue;
+          }
+
+          if(hbondCnt[atom.serial] === undefined) {
+              hbondCnt[atom.serial] = 1;
+          }
+          else {
+              ++hbondCnt[atom.serial];
+          }
+
+          if(hbondCnt[atomHbond[j].serial] === undefined) {
+              hbondCnt[atomHbond[j].serial] = 1;
+          }
+          else {
+              ++hbondCnt[atomHbond[j].serial];
+          }
+
+          // too many hydrogen bonds for one atom
+          if(hbondCnt[atom.serial] > 2 || hbondCnt[atomHbond[j].serial] > 2) {
+              continue;
           }
 
           // output hydrogen bonds

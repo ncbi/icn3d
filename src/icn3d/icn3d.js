@@ -1041,7 +1041,7 @@ iCn3D.prototype = {
         'CYS': new THREE.Color(0x888888),
         'TRP': new THREE.Color(0x888888)
     },
-
+/*
     hydrophobicColors: {
 // charged residues
         '  G': new THREE.Color(0x888888),
@@ -1064,6 +1064,54 @@ iCn3D.prototype = {
          'DT': new THREE.Color(0x888888),
          'DC': new THREE.Color(0x888888),
          'DU': new THREE.Color(0x888888),
+        'ARG': new THREE.Color(0x888888),
+        'LYS': new THREE.Color(0x888888),
+        'ASP': new THREE.Color(0x888888),
+        'GLU': new THREE.Color(0x888888),
+
+// hydrophobic
+        'GLY': new THREE.Color(0x00FF00),
+        'PRO': new THREE.Color(0x00FF00),
+        'ALA': new THREE.Color(0x00FF00),
+        'VAL': new THREE.Color(0x00FF00),
+        'LEU': new THREE.Color(0x00FF00),
+        'ILE': new THREE.Color(0x00FF00),
+        'PHE': new THREE.Color(0x00FF00),
+
+// polar
+        'HIS': new THREE.Color(0x888888),
+        'SER': new THREE.Color(0x888888),
+        'THR': new THREE.Color(0x888888),
+        'ASN': new THREE.Color(0x888888),
+        'GLN': new THREE.Color(0x888888),
+        'TYR': new THREE.Color(0x888888),
+        'MET': new THREE.Color(0x888888),
+        'CYS': new THREE.Color(0x888888),
+        'TRP': new THREE.Color(0x888888)
+    },
+*/
+    hydrophobicColors: {
+// charged residues
+        '  G': new THREE.Color(0xFF0000),
+        '  A': new THREE.Color(0xFF0000),
+        '  T': new THREE.Color(0xFF0000),
+        '  C': new THREE.Color(0xFF0000),
+        '  U': new THREE.Color(0xFF0000),
+        ' DG': new THREE.Color(0xFF0000),
+        ' DA': new THREE.Color(0xFF0000),
+        ' DT': new THREE.Color(0xFF0000),
+        ' DC': new THREE.Color(0xFF0000),
+        ' DU': new THREE.Color(0xFF0000),
+          'G': new THREE.Color(0xFF0000),
+          'A': new THREE.Color(0xFF0000),
+          'T': new THREE.Color(0xFF0000),
+          'C': new THREE.Color(0xFF0000),
+          'U': new THREE.Color(0xFF0000),
+         'DG': new THREE.Color(0xFF0000),
+         'DA': new THREE.Color(0xFF0000),
+         'DT': new THREE.Color(0xFF0000),
+         'DC': new THREE.Color(0xFF0000),
+         'DU': new THREE.Color(0xFF0000),
         'ARG': new THREE.Color(0x0000FF),
         'LYS': new THREE.Color(0x0000FF),
         'ASP': new THREE.Color(0xFF0000),
@@ -1073,24 +1121,23 @@ iCn3D.prototype = {
 //new THREE.Color().setHSL(1/3.0, 1, 0.5 + 0.5 * ( + 0.81)/(1.14 + 0.81)),
 // hydrophobic
 // https://en.m.wikipedia.org/wiki/Hydrophobicity_scales#Wimley%E2%80%93White_whole_residue_hydrophobicity_scales
-        'GLY': new THREE.Color().setHSL(1/3.0, 1, 0.5 + 0.5 * (1.14 + 0.81)/(1.14 + 0.81)),
-        'PRO': new THREE.Color().setHSL(1/3.0, 1, 0.5 + 0.5 * (-0.31 + 0.81)/(1.14 + 0.81)),
-        'ALA': new THREE.Color().setHSL(1/3.0, 1, 0.5 + 0.5 * (0.33 + 0.81)/(1.14 + 0.81)),
-        'VAL': new THREE.Color().setHSL(1/3.0, 1, 0.5 + 0.5 * (-0.53 + 0.81)/(1.14 + 0.81)),
-        'LEU': new THREE.Color().setHSL(1/3.0, 1, 0.5 + 0.5 * (-0.69 + 0.81)/(1.14 + 0.81)),
-        'ILE': new THREE.Color().setHSL(1/3.0, 1, 0.5 + 0.5 * (-0.81 + 0.81)/(1.14 + 0.81)),
-        'PHE': new THREE.Color().setHSL(1/3.0, 1, 0.5 + 0.5 * (-0.58 + 0.81)/(1.14 + 0.81)),
+        'TRP': new THREE.Color().setHSL(1/3.0, 1, 0.5 + 0.5 * (-1.85 + 1.85)/(0 + 1.85)),
+        'PHE': new THREE.Color().setHSL(1/3.0, 1, 0.5 + 0.5 * (-1.13 + 1.85)/(0 + 1.85)),
+        'TYR': new THREE.Color().setHSL(1/3.0, 1, 0.5 + 0.5 * (-0.94 + 1.85)/(0 + 1.85)),
+        'LEU': new THREE.Color().setHSL(1/3.0, 1, 0.5 + 0.5 * (-0.56 + 1.85)/(0 + 1.85)),
+        'ILE': new THREE.Color().setHSL(1/3.0, 1, 0.5 + 0.5 * (-0.31 + 1.85)/(0 + 1.85)),
+        'CYS': new THREE.Color().setHSL(1/3.0, 1, 0.5 + 0.5 * (-0.24 + 1.85)/(0 + 1.85)),
+        'MET': new THREE.Color().setHSL(1/3.0, 1, 0.5 + 0.5 * (-0.23 + 1.85)/(0 + 1.85)),
 
 // polar
-//        'HIS': new THREE.Color(0x888888),
-        'SER': new THREE.Color().setHSL(1/3.0, 1, 0.5 + 0.5 * (0.33 + 0.81)/(1.14 + 0.81)),
-        'THR': new THREE.Color().setHSL(1/3.0, 1, 0.5 + 0.5 * (0.11 + 0.81)/(1.14 + 0.81)),
-        'ASN': new THREE.Color().setHSL(1/3.0, 1, 0.5 + 0.5 * (0.43 + 0.81)/(1.14 + 0.81)),
-        'GLN': new THREE.Color().setHSL(1/3.0, 1, 0.5 + 0.5 * (0.19 + 0.81)/(1.14 + 0.81)),
-        'TYR': new THREE.Color().setHSL(1/3.0, 1, 0.5 + 0.5 * (0.23 + 0.81)/(1.14 + 0.81)),
-        'MET': new THREE.Color().setHSL(1/3.0, 1, 0.5 + 0.5 * (-0.44 + 0.81)/(1.14 + 0.81)),
-        'CYS': new THREE.Color().setHSL(1/3.0, 1, 0.5 + 0.5 * (0.22 + 0.81)/(1.14 + 0.81)),
-        'TRP': new THREE.Color().setHSL(1/3.0, 1, 0.5 + 0.5 * (-0.24 + 0.81)/(1.14 + 0.81))
+        'GLY': new THREE.Color().setHSL(1/6.0, 1, 0.5 + 0.5 * (-0.01 + 0.58)/(0 + 0.58)),
+        'VAL': new THREE.Color().setHSL(1/6.0, 1, 0.5 + 0.5 * (-0.07 + 0.58)/(0 + 0.58)),
+        'SER': new THREE.Color().setHSL(1/6.0, 1, 0.5 + 0.5 * (-0.13 + 0.58)/(0 + 0.58)),
+        'THR': new THREE.Color().setHSL(1/6.0, 1, 0.5 + 0.5 * (-0.14 + 0.58)/(0 + 0.58)),
+        'ALA': new THREE.Color().setHSL(1/6.0, 1, 0.5 + 0.5 * (-0.17 + 0.58)/(0 + 0.58)),
+        'ASN': new THREE.Color().setHSL(1/6.0, 1, 0.5 + 0.5 * (-0.42 + 0.58)/(0 + 0.58)),
+        'PRO': new THREE.Color().setHSL(1/6.0, 1, 0.5 + 0.5 * (-0.45 + 0.58)/(0 + 0.58)),
+        'GLN': new THREE.Color().setHSL(1/6.0, 1, 0.5 + 0.5 * (-0.58 + 0.58)/(0 + 0.58))
     },
 
     sheetcolor: 'green',

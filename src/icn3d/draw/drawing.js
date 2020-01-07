@@ -1433,7 +1433,7 @@ iCn3D.prototype.createStrip = function (p0, p1, colors, div, thickness, bHighlig
     p1 = null;
 };
 
-iCn3D.prototype.getSSExpandedAtoms = function (atoms) { var me = this; //"use strict";
+iCn3D.prototype.getSSExpandedAtoms = function (atoms, bHighlight) { var me = this; //"use strict";
     var currChain, currResi, currAtom, prevChain, prevResi, prevAtom;
     var firstAtom, lastAtom;
     var index = 0, length = Object.keys(atoms).length;
@@ -1544,7 +1544,7 @@ iCn3D.prototype.createStrand = function (atoms, num, div, fill, coilWidth, helix
 
     //if( (bHighlight === 1 || bHighlight === 2) && !this.bAllAtoms) {
     if( !this.bAllAtoms) {
-        atomsAdjust = this.getSSExpandedAtoms(atoms);
+        atomsAdjust = this.getSSExpandedAtoms(atoms, bHighlight);
     }
     else {
         atomsAdjust = atoms;

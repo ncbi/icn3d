@@ -188,6 +188,15 @@ iCn3D.prototype.drawSymmetryMates = function() {  var me = this; //"use strict";
 };
 
 iCn3D.prototype.applyMat = function(obj, mat, bVector3) {  var me = this; //"use strict";
+    if(this.rmsd_supr === undefined) {
+      if(bVector3 === undefined) {
+          obj.applyMatrix(mat);
+      }
+      else if(bVector3) {
+          obj.applyMatrix4(mat);
+      }
+    }
+    else {
       var rot = this.rmsd_supr.rot;
       var centerFrom = this.rmsd_supr.trans1;
       var centerTo = this.rmsd_supr.trans2;
@@ -240,6 +249,7 @@ iCn3D.prototype.applyMat = function(obj, mat, bVector3) {  var me = this; //"use
           tmpMat.makeTranslation(centerTo.x, centerTo.y, centerTo.z);
           obj.applyMatrix4(tmpMat);
       }
+    }
 };
 
 iCn3D.prototype.drawSymmetryMatesNoInstancing = function() {  var me = this; //"use strict";

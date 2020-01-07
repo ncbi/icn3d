@@ -38,7 +38,7 @@ iCn3D.prototype.loadPDB = function (src, pdbid, bOpm, bVector) { var me = this; 
         var record = line.substr(0, 6);
 
         if (record === 'HEADER') {
-            this.bSecondaryStructure = true;
+            if(bOpm === undefined || !bOpm) this.bSecondaryStructure = true;
 
             id = line.substr(62, 4);
 
@@ -710,38 +710,42 @@ iCn3D.prototype.setSsbond = function (structure2cys_resid) { var me = this; //"u
     }
 };
 
-iCn3D.prototype.getChainCalpha = function (chains, atoms) { var me = this; //"use strict";
-    var chainCalphaHash = {};
+iCn3D.prototype.getChainCalpha = function (chains, atoms, bResi_ori) { var me = this; //"use strict";
+    var chainresiCalphaHash = {};
 
     for(var chainid in chains) {
         var serialArray = Object.keys(chains[chainid]);
 
         var calphaArray = [];
-        var cnt = 0;
+        //var cnt = 0;
         var lastResi = 0;
         for(var i = 0, il = serialArray.length; i < il; ++i) {
-            if( (this.proteins.hasOwnProperty(serialArray[i]) && atoms[serialArray[i]].name == "CA")
-              || (this.nucleotides.hasOwnProperty(serialArray[i]) && (atoms[serialArray[i]].name == "O3'" || atoms[serialArray[i]].name == "O3*")) ) {
-                if(atoms[serialArray[i]].resi == lastResi) continue; // e.g., Alt A and B
+            var atom = atoms[serialArray[i]];
+            if( (this.proteins.hasOwnProperty(serialArray[i]) && atom.name == "CA")
+              || (this.nucleotides.hasOwnProperty(serialArray[i]) && (atom.name == "O3'" || atom.name == "O3*")) ) {
+                if(atom.resi == lastResi) continue; // e.g., Alt A and B
 
-                var resn = (atoms[serialArray[i]].resn.trim().length > 3) ? atoms[serialArray[i]].resn.trim().substr(0, 3) : atoms[serialArray[i]].resn.trim();
+                var resn = (atom.resn.trim().length > 3) ? atom.resn.trim().substr(0, 3) : atom.resn.trim();
                 if(!this.chargeColors.hasOwnProperty(resn)) {
                     continue; // regular residues
                 }
 
-                calphaArray.push(atoms[serialArray[i]].coord.clone());
-                ++cnt;
+                var resi = (bResi_ori !== undefined && bResi_ori) ? atom.resi_ori : atom.resi; // MMDB uses resi_ori for PDB residue number
+                chainresiCalphaHash[atom.chain + '_' + resi] = atom.coord.clone();
 
-                lastResi = atoms[serialArray[i]].resi;
+                //calphaArray.push(atom.coord.clone());
+                //++cnt;
+
+                lastResi = atom.resi;
             }
         }
 
-        if(cnt > 0) {
+        //if(cnt > 0) {
             //var chainid = atoms[serialArray[0]].structure + '_' + atoms[serialArray[0]].chain;
-            var chain = atoms[serialArray[0]].chain;
-            chainCalphaHash[chain] = calphaArray;
-        }
+        //    var chain = atoms[serialArray[0]].chain;
+        //    chainCalphaHash[chain] = calphaArray;
+        //}
     }
 
-    return {'chainCalphaHash': chainCalphaHash, 'center': this.center.clone()};
+    return {'chainresiCalphaHash': chainresiCalphaHash, 'center': this.center.clone()};
 };

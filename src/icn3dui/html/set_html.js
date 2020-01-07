@@ -969,7 +969,7 @@ iCn3DUI.prototype.setMenu4_base = function() { var me = this; //"use strict";
         html += "    </ul>";
 
         html += me.getRadio('mn4_clr', 'mn4_clrCharge', 'Charge');
-        html += me.getRadio('mn4_clr', 'mn4_clrHydrophobic', 'Hydrophobic');
+        html += me.getRadio('mn4_clr', 'mn4_clrHydrophobic', 'Wimley-White<br><span style="padding-left:1.5em;">Hydrophobicity</span>');
 
         if(me.cfg.align !== undefined || me.cfg.chainalign !== undefined || me.cfg.blast_rep_id !== undefined) {
           html += me.getRadio('mn4_clr', 'mn4_clrChain', 'Chain');

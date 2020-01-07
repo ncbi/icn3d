@@ -631,8 +631,8 @@ iCn3DUI.prototype.shareLinkUrl = function(bAllCommands) { var me = this; //"use 
 
        var start = 0;
        if(inparaWithoutCommand !== undefined) {
-         //url += inparaWithoutCommand.substr(1) + '&command=';
-         url += 'command=';
+         url += inparaWithoutCommand.substr(1) + '&command=';
+         //url += 'command=';
          start = 1;
        }
        else {
