@@ -13,7 +13,7 @@ if (!$.ui.dialog.prototype._makeDraggableBase) {
 }
 
 var iCn3DUI = function(cfg) { var me = this; //"use strict";
-    this.REVISION = '2.11.2';
+    this.REVISION = '2.11.3';
 
     me.bFullUi = true;
 
@@ -1211,6 +1211,11 @@ iCn3DUI.prototype = {
 
     getAtomsFromSet: function (commandname) {   var me = this; //"use strict";  // me.icn3d.pAtom is set already
        var residuesHash = {};
+
+       // defined sets is not set up
+       if(me.icn3d.defNames2Residues['proteins'] === undefined) {
+           me.showSets();
+       }
 
        //for(var i = 0, il = nameArray.length; i < il; ++i) {
            //var commandname = nameArray[i];

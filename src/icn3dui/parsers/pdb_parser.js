@@ -226,20 +226,18 @@ iCn3DUI.prototype.addMemAtoms = function(dmem, pdbid, dxymax) { var me = this; /
       }
 };
 
-iCn3DUI.prototype.transformToOpmOri = function(pdbid, chainCalphaHash2) { var me = this; //"use strict";
-  if(chainCalphaHash2 !== undefined) {
-      var chainCalphaHash1 = me.icn3d.getChainCalpha(me.icn3d.chains, me.icn3d.atoms);
+iCn3DUI.prototype.transformToOpmOri = function(pdbid, chainresiCalphaHash2, bResi_ori) { var me = this; //"use strict";
+  if(chainresiCalphaHash2 !== undefined) {
+      var chainresiCalphaHash1 = me.icn3d.getChainCalpha(me.icn3d.chains, me.icn3d.atoms, bResi_ori);
 
       var coordsFrom = [], coordsTo = [];
-      for(var chainid in chainCalphaHash1.chainCalphaHash) {
-          if(chainCalphaHash2.chainCalphaHash.hasOwnProperty(chainid)) {
-              var coordArray1 = chainCalphaHash1.chainCalphaHash[chainid];
-              var coordArray2 = chainCalphaHash2.chainCalphaHash[chainid];
+      for(var chainresi in chainresiCalphaHash1.chainresiCalphaHash) {
+          if(chainresiCalphaHash2.chainresiCalphaHash.hasOwnProperty(chainresi)) {
+              var coord1 = chainresiCalphaHash1.chainresiCalphaHash[chainresi];
+              var coord2 = chainresiCalphaHash2.chainresiCalphaHash[chainresi];
 
-              if(coordArray1.length != coordArray2.length) continue;
-
-              coordsFrom = coordsFrom.concat(coordArray1);
-              coordsTo = coordsTo.concat(coordArray2);
+              coordsFrom.push(coord1);
+              coordsTo.push(coord2);
 
               if(coordsFrom.length > 500) break; // no need to use all c-alpha
           }
@@ -247,42 +245,47 @@ iCn3DUI.prototype.transformToOpmOri = function(pdbid, chainCalphaHash2) { var me
 
       var n = coordsFrom.length;
 
-      me.icn3d.rmsd_supr = me.rmsd_supr(coordsFrom, coordsTo, n);
+      if(n > 2) {
+          me.icn3d.rmsd_supr = me.rmsd_supr(coordsFrom, coordsTo, n);
 
-      // apply matrix for each atom
-      if(me.icn3d.rmsd_supr.rot !== undefined) {
-          var rot = me.icn3d.rmsd_supr.rot;
-          var centerFrom = me.icn3d.rmsd_supr.trans1;
-          var centerTo = me.icn3d.rmsd_supr.trans2;
-          //var rsmd = me.icn3d.rmsd_supr.rsmd;
+          // apply matrix for each atom
+          if(me.icn3d.rmsd_supr.rot !== undefined) {
+              var rot = me.icn3d.rmsd_supr.rot;
+              var centerFrom = me.icn3d.rmsd_supr.trans1;
+              var centerTo = me.icn3d.rmsd_supr.trans2;
+              //var rsmd = me.icn3d.rmsd_supr.rsmd;
 
-          var dxymaxsq = 0;
-          for(var i in me.icn3d.atoms) {
-            var atom = me.icn3d.atoms[i];
+              var dxymaxsq = 0;
+              for(var i in me.icn3d.atoms) {
+                var atom = me.icn3d.atoms[i];
 
-            atom.coord = me.icn3d.transformMemPro(atom.coord, rot, centerFrom, centerTo);
-            var xysq = atom.coord.x * atom.coord.x + atom.coord.y * atom.coord.y;
-            if(Math.abs(atom.coord.z) <= 25 && xysq > dxymaxsq) {
-                dxymaxsq = xysq;
-            }
+                atom.coord = me.icn3d.transformMemPro(atom.coord, rot, centerFrom, centerTo);
+                var xysq = atom.coord.x * atom.coord.x + atom.coord.y * atom.coord.y;
+                if(Math.abs(atom.coord.z) <= 25 && xysq > dxymaxsq) {
+                    dxymaxsq = xysq;
+                }
+              }
+
+              me.icn3d.center = chainresiCalphaHash2.center;
+              me.icn3d.oriCenter = me.icn3d.center.clone();
+
+              // add membranes
+              me.addMemAtoms(me.icn3d.halfBilayerSize, pdbid, Math.sqrt(dxymaxsq));
+
+              // no rotation
+              me.icn3d.bStopRotate = true;
+
+              me.icn3d.bOpm = true;
+
+              // show transmembrane features
+              $("#" + me.pre + "togglememli").show();
+              $("#" + me.pre + "adjustmemli").show();
+              $("#" + me.pre + "selectplaneli").show();
+              $("#" + me.pre + "anno_transmemli").show();
           }
-
-          me.icn3d.center = chainCalphaHash2.center;
-          me.icn3d.oriCenter = me.icn3d.center.clone();
-
-          // add membranes
-          me.addMemAtoms(me.icn3d.halfBilayerSize, pdbid, Math.sqrt(dxymaxsq));
-
-          // no rotation
-          me.icn3d.bStopRotate = true;
-
-          me.icn3d.bOpm = true;
-
-          // show transmembrane features
-          $("#" + me.pre + "togglememli").show();
-          $("#" + me.pre + "adjustmemli").show();
-          $("#" + me.pre + "selectplaneli").show();
-          $("#" + me.pre + "anno_transmemli").show();
+          else {
+              me.icn3d.bOpm = false;
+          }
       }
       else {
           me.icn3d.bOpm = false;
@@ -290,10 +293,10 @@ iCn3DUI.prototype.transformToOpmOri = function(pdbid, chainCalphaHash2) { var me
   }
 };
 
-iCn3DUI.prototype.loadPdbData = function(data, pdbid, bOpm, chainCalphaHash2) { var me = this; //"use strict";
+iCn3DUI.prototype.loadPdbData = function(data, pdbid, bOpm, chainresiCalphaHash2) { var me = this; //"use strict";
       me.icn3d.loadPDB(data, pdbid, bOpm); // defined in the core library
 
-      me.transformToOpmOri(pdbid, chainCalphaHash2);
+      me.transformToOpmOri(pdbid, chainresiCalphaHash2);
 
       if(me.icn3d.biomtMatrices !== undefined && me.icn3d.biomtMatrices.length > 1) {
         $("#" + me.pre + "assemblyWrapper").show();
@@ -323,7 +326,7 @@ iCn3DUI.prototype.loadPdbData = function(data, pdbid, bOpm, chainCalphaHash2) { 
           var bCalphaOnly = me.icn3d.isCalphaPhosOnly(me.icn3d.hash2Atoms(me.icn3d.proteins));//, 'CA');
           var calphaonly = (bCalphaOnly) ? '1' : '0';
 
-          me.loadPdbDataBase(data, calphaonly);
+          me.loadPdbDataBase(data, calphaonly, bOpm);
       }); // end of me.deferred = $.Deferred(function() {
 
       return me.deferredSecondary.promise();
@@ -333,13 +336,31 @@ iCn3DUI.prototype.loadPdbData = function(data, pdbid, bOpm, chainCalphaHash2) { 
     }
 };
 
-iCn3DUI.prototype.loadPdbDataBase = function(data, calphaonly) { var me = this; //"use strict";
+iCn3DUI.prototype.loadPdbDataBase = function(data, calphaonly, bOpm) { var me = this; //"use strict";
    var url = "https://www.ncbi.nlm.nih.gov/Structure/mmcifparser/mmcifparser.cgi";
+
+   var dataModified = '';
+   if(bOpm !== undefined && bOpm) {
+        var lines = data.split('\n');
+        for (var i in lines) {
+            var line = lines[i];
+            var resn = line.substr(17, 3);
+
+            if (resn === 'DUM') {
+                break;
+            }
+
+            dataModified += line + '\n';
+       }
+   }
+   else {
+       dataModified = data;
+   }
 
    $.ajax({
       url: url,
       type: 'POST',
-      data: {'dssp':'t', 'calphaonly': calphaonly, 'pdbfile': data},
+      data: {'dssp':'t', 'calphaonly': calphaonly, 'pdbfile': dataModified},
       dataType: 'jsonp',
       cache: true,
       tryCount : 0,
@@ -473,7 +494,7 @@ iCn3DUI.prototype.loadPdbOpmData = function(data, pdbid) { var me = this; //"use
       success: function(opmdata) {
           me.icn3d.bOpm = true;
           var bVector = true;
-          var chainCalphaHash = me.icn3d.loadPDB(opmdata, pdbid, me.icn3d.bOpm, bVector); // defined in the core library
+          var chainresiCalphaHash = me.icn3d.loadPDB(opmdata, pdbid, me.icn3d.bOpm, bVector); // defined in the core library
 
           $("#" + me.pre + "selectplane_z1").val(me.icn3d.halfBilayerSize);
           $("#" + me.pre + "selectplane_z2").val(-me.icn3d.halfBilayerSize);
@@ -482,7 +503,7 @@ iCn3DUI.prototype.loadPdbOpmData = function(data, pdbid) { var me = this; //"use
           $("#" + me.pre + "intra_mem_z").val(-me.icn3d.halfBilayerSize);
 
           me.icn3d.init(); // remove all previously loaded data
-          me.loadPdbData(data, pdbid, undefined, chainCalphaHash);
+          me.loadPdbData(data, pdbid, undefined, chainresiCalphaHash);
 
           if(me.deferredOpm !== undefined) me.deferredOpm.resolve();
       },
@@ -517,7 +538,7 @@ iCn3DUI.prototype.loadMmtfOpmData = function(data, pdbid, bFull) { var me = this
       success: function(opmdata) {
           me.icn3d.bOpm = true;
           var bVector = true;
-          var chainCalphaHash = me.icn3d.loadPDB(opmdata, pdbid, me.icn3d.bOpm, bVector); // defined in the core library
+          var chainresiCalphaHash = me.icn3d.loadPDB(opmdata, pdbid, me.icn3d.bOpm, bVector); // defined in the core library
 
           $("#" + me.pre + "selectplane_z1").val(me.icn3d.halfBilayerSize);
           $("#" + me.pre + "selectplane_z2").val(-me.icn3d.halfBilayerSize);
@@ -526,7 +547,7 @@ iCn3DUI.prototype.loadMmtfOpmData = function(data, pdbid, bFull) { var me = this
           $("#" + me.pre + "intra_mem_z").val(-me.icn3d.halfBilayerSize);
 
           me.icn3d.init(); // remove all previously loaded data
-          me.parseMmtfData(data, pdbid, bFull, chainCalphaHash);
+          me.parseMmtfData(data, pdbid, bFull, chainresiCalphaHash);
 
           if(me.deferredOpm !== undefined) me.deferredOpm.resolve();
       },
@@ -597,7 +618,7 @@ iCn3DUI.prototype.loadMmcifOpmData = function(data, pdbid) { var me = this; //"u
       success: function(opmdata) {
           me.icn3d.bOpm = true;
           var bVector = true;
-          var chainCalphaHash = me.icn3d.loadPDB(opmdata, pdbid, me.icn3d.bOpm, bVector); // defined in the core library
+          var chainresiCalphaHash = me.icn3d.loadPDB(opmdata, pdbid, me.icn3d.bOpm, bVector); // defined in the core library
 
           $("#" + me.pre + "selectplane_z1").val(me.icn3d.halfBilayerSize);
           $("#" + me.pre + "selectplane_z2").val(-me.icn3d.halfBilayerSize);
@@ -606,9 +627,9 @@ iCn3DUI.prototype.loadMmcifOpmData = function(data, pdbid) { var me = this; //"u
           $("#" + me.pre + "intra_mem_z").val(-me.icn3d.halfBilayerSize);
 
           me.icn3d.init(); // remove all previously loaded data
-          //me.loadPdbData(data, pdbid, undefined, chainCalphaHash);
+          //me.loadPdbData(data, pdbid, undefined, chainresiCalphaHash);
 
-          me.loadAtomDataIn(data, data.mmcif, 'mmcifid', undefined, undefined, chainCalphaHash);
+          me.loadAtomDataIn(data, data.mmcif, 'mmcifid', undefined, undefined, chainresiCalphaHash);
           me.loadMmcifOpmDataPart2(data, pdbid);
 
           if(me.deferredOpm !== undefined) me.deferredOpm.resolve();
@@ -700,7 +721,7 @@ iCn3DUI.prototype.loadMmdbOpmData = function(data, pdbid, type) { var me = this;
       success: function(opmdata) {
           me.icn3d.bOpm = true;
           var bVector = true;
-          var chainCalphaHash = me.icn3d.loadPDB(opmdata, pdbid, me.icn3d.bOpm, bVector); // defined in the core library
+          var chainresiCalphaHash = me.icn3d.loadPDB(opmdata, pdbid, me.icn3d.bOpm, bVector); // defined in the core library
 
           $("#" + me.pre + "selectplane_z1").val(me.icn3d.halfBilayerSize);
           $("#" + me.pre + "selectplane_z2").val(-me.icn3d.halfBilayerSize);
@@ -709,7 +730,7 @@ iCn3DUI.prototype.loadMmdbOpmData = function(data, pdbid, type) { var me = this;
           $("#" + me.pre + "intra_mem_z").val(-me.icn3d.halfBilayerSize);
 
           me.icn3d.init(); // remove all previously loaded data
-          me.loadAtomDataIn(data, pdbid, 'mmdbid', undefined, type, chainCalphaHash);
+          me.loadAtomDataIn(data, pdbid, 'mmdbid', undefined, type, chainresiCalphaHash);
 
           me.loadMmdbOpmDataPart2(data, pdbid, type);
 

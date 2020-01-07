@@ -850,6 +850,15 @@ iCn3DUI.prototype.showSeq = function(chnid, chnidBase, type, queryTitle, compTit
         giSeq = me.giSeq[chnid];
     }
 
+    // remove null giSeq[i]
+    var giSeqTmp = [];
+    for(var i = 0, il = giSeq.length; i < il; ++i) {
+        if(giSeq[i]) {
+            giSeqTmp.push(giSeq[i]);
+        }
+    }
+    giSeq = giSeqTmp;
+
     var divLength = me.RESIDUE_WIDTH * me.giSeq[chnid].length + 200;
     var seqLength = me.giSeq[chnid].length
 
