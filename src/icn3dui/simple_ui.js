@@ -6,6 +6,7 @@ var iCn3DUI = function(cfg) {
     var me = this; //"use strict";
 
     me.bFullUi = false;
+    me.bInitial = true;
 
     me.cfg = cfg;
     me.divid = me.cfg.divid;
@@ -441,16 +442,25 @@ iCn3DUI.prototype = {
         }
     },
 
-    renderStructure: function(bInitial) { var me = this; //"use strict";
-        if(bInitial) {
-            //me.icn3d.draw(me.opts);
+    renderStructure: function() { var me = this; //"use strict";
+        if(me.bInitial) {
+          //me.icn3d.draw(me.opts);
 
-            jQuery.extend(me.icn3d.opts, me.opts);
-            me.icn3d.draw();
+          jQuery.extend(me.icn3d.opts, me.opts);
+          me.icn3d.draw();
+
+          if(me.icn3d.bOpm) {
+              var axis = new THREE.Vector3(1,0,0);
+              var angle = -0.5 * Math.PI;
+
+              me.icn3d.setRotation(axis, angle);
+          }
         }
         else {
-            me.icn3d.draw();
+          me.icn3d.draw();
         }
+
+        me.bInitial = false;
     },
 
     selectAll: function() { var me = this; //"use strict";

@@ -961,7 +961,6 @@ iCn3DUI.prototype = {
               var axis = new THREE.Vector3(1,0,0);
               var angle = -0.5 * Math.PI;
 
-              var bNorender = true;
               me.icn3d.setRotation(axis, angle);
           }
 
@@ -6592,8 +6591,10 @@ iCn3DUI.prototype = {
                   me.selectedResidues[resid] = 1;
               }
 
-              me.icn3d.removeHlObjects();  // render() is called
-              me.icn3d.addHlObjects();  // render() is called
+              //me.icn3d.removeHlObjects();  // render() is called
+              //me.icn3d.addHlObjects();  // render() is called
+
+              me.updateHlAll();
 
               me.setLogCmd(cmd, true);
         });
