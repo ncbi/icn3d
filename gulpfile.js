@@ -262,7 +262,7 @@ gulp.task('html',
                 }
                 if (set_attr) e.setAttribute(src_attr, new_src);
             }
-            this;
+            return this;
         }))
         .pipe(gulp.dest(dist));
   });
