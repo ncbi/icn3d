@@ -1,9 +1,9 @@
 var package = require('./package.json');
-var gulp = require('gulp-help')(require('gulp'));
+var gulp = require('gulp'); //require('gulp-help')(require('gulp'));
 var concat = require('gulp-concat');
 var del = require('del');
 var dom  = require('gulp-dom');
-var gh_pages = require('gulp-gh-pages');
+//var gh_pages = require('gulp-gh-pages');
 var rename = require('gulp-rename');
 var uglify = require('gulp-uglify');
 var zip = require('gulp-zip');
@@ -12,15 +12,15 @@ var dist = 'dist';
 var base_name = 'icn3d-' + package.version;
 
 
+//  'Removes the dist directory, for a clean build',
 gulp.task('clean',
-  'Removes the dist directory, for a clean build',
-  function () {
+  function() {
     return del([dist]);
   });
 
+//  'Copy three.min.js into dist/libs',
 gulp.task('libs-three',
-  'Copy three.min.js into dist/libs',
-  ['clean'],
+  //gulp.series('clean'),
   function() {
     return gulp.src([
             "node_modules/three/build/three.min.js"
@@ -30,9 +30,9 @@ gulp.task('libs-three',
         .pipe(gulp.dest(dist + '/lib'));
   });
 
+//  'Copy jquery.min.js into dist/libs',
 gulp.task('libs-jquery',
-  'Copy jquery.min.js into dist/libs',
-  ['clean'],
+  //gulp.series('clean'),
   function() {
     return gulp.src([
             "node_modules/jquery/dist/jquery.min.js"
@@ -42,53 +42,53 @@ gulp.task('libs-jquery',
         .pipe(gulp.dest(dist + '/lib'));
   });
 
+//  'Copy jquery-ui.min.js into dist/libs',
 gulp.task('libs-jquery-ui',
-  'Copy jquery-ui.min.js into dist/libs',
-  ['clean'],
+  //gulp.series('clean'),
   function() {
     return gulp.src([
-            "node_modules/components-jqueryui/jquery-ui.min.js"
+            "node_modules/jquery-ui/jquery-ui.min.js"
         ])
         .pipe(gulp.dest(dist + '/lib'))
         .pipe(rename('jquery-ui-1.12.1.min.js'))
         .pipe(gulp.dest(dist + '/lib'));
   });
 
+//  'Copy jquery-ui.min.css into dist/libs',
 gulp.task('libs-jquery-ui-css',
-  'Copy jquery-ui.min.css into dist/libs',
-  ['clean'],
+  //gulp.series('clean'),
   function() {
     return gulp.src([
-            "node_modules/components-jqueryui/themes/ui-lightness/jquery-ui.min.css"
+            "node_modules/jquery-ui/themes/ui-lightness/jquery-ui.min.css"
         ])
         .pipe(gulp.dest(dist + '/lib'))
         .pipe(rename('jquery-ui-1.12.1.min.css'))
         .pipe(gulp.dest(dist + '/lib'));
   });
 
+//  'Copy jquery-ui images into dist/libs',
 gulp.task('libs-jquery-ui-images1',
-  'Copy jquery-ui images into dist/libs',
-  ['clean'],
+  //gulp.series('clean'),
   function() {
     return gulp.src([
-            "node_modules/components-jqueryui/themes/ui-lightness/images"
+            "node_modules/jquery-ui/themes/ui-lightness/images"
         ])
         .pipe(gulp.dest(dist + '/lib'));
   });
 
+//  'Copy jquery-ui images into dist/libs',
 gulp.task('libs-jquery-ui-images2',
-  'Copy jquery-ui images into dist/libs',
-  ['clean'],
+  //gulp.series('clean'),
   function() {
     return gulp.src([
-            "node_modules/components-jqueryui/themes/ui-lightness/images/**"
+            "node_modules/jquery-ui/themes/ui-lightness/images/**"
         ])
         .pipe(gulp.dest(dist + '/lib/images'));
   });
 
+//  'Copy images to show secondary structures into dist/ssimages',
 gulp.task('ssimages',
-  'Copy images to show secondary structures into dist/ssimages',
-  ['clean'],
+  //gulp.series('clean'),
   function() {
     return gulp.src([
             "ssimages/**"
@@ -96,11 +96,10 @@ gulp.task('ssimages',
         .pipe(gulp.dest(dist + '/ssimages'));
   });
 
+//  'Copies several files as-is into dist, including source css and various metadata files.',
 gulp.task('copy',
-  'Copies several files as-is into dist, including source css and ' +
-  'various metadata files.',
-  ['clean'],
-  function () {
+  //gulp.series('clean'),
+  function() {
     return gulp.src([
             'LICENSE',
             'README.md'
@@ -108,10 +107,10 @@ gulp.task('copy',
         .pipe(gulp.dest(dist));
   });
 
+//  'Copy and rename css files',
 gulp.task('copy-rename1',
-  'Copy and rename css files',
-  ['clean'],
-  function () {
+  //gulp.series('clean'),
+  function() {
     return gulp.src([
             "css/icn3d_simple_ui.css"
         ])
@@ -120,10 +119,10 @@ gulp.task('copy-rename1',
         .pipe(gulp.dest(dist));
   });
 
+//  'Copy and rename css files',
 gulp.task('copy-rename2',
-  'Copy and rename css files',
-  ['clean'],
-  function () {
+  //gulp.series('clean'),
+  function() {
     return gulp.src([
             "css/icn3d_full_ui.css",
             "src/color-pick/color-picker.css"
@@ -136,10 +135,10 @@ gulp.task('copy-rename2',
 
 // Helper function to create a gulp task to concatenate and minify
 // simple and full
+//      'Concat and minify the ' + name + ' javascript',
 function make_js_task(name, src) {
     gulp.task("src-js-" + name,
-      'Concat and minify the ' + name + ' javascript',
-      ['clean'],
+      //gulp.series('clean'),
       function() {
         return gulp.src(src)
             .pipe(concat('icn3d_' + name + '_ui.js'))
@@ -234,9 +233,9 @@ var full_uijs = [
 make_js_task("simple", common_js.concat(simple_js).concat("src/icn3dui/simple_ui.js").concat(common_uijs).concat("src/icn3dui/highlight/hl_update_simple.js"));
 make_js_task("full", common_js.concat(full_js).concat("src/icn3dui/full_ui.js").concat(common_uijs).concat(full_uijs));
 
+//  'Rewrite the link and script tags in the html',
 gulp.task('html',
-  'Rewrite the link and script tags in the html',
-  ['clean'],
+  //gulp.series('clean'),
   function() {
     return gulp.src(['index.html', 'full.html', 'icn3d.html'])
         .pipe(dom(function() {
@@ -263,19 +262,19 @@ gulp.task('html',
                 }
                 if (set_attr) e.setAttribute(src_attr, new_src);
             }
-            return this;
+            this;
         }))
         .pipe(gulp.dest(dist));
   });
 
+//  'Prepare all the distribution files (except the .zip).',
 gulp.task('dist',
-  'Prepare all the distribution files (except the .zip).',
-  ['libs-three','libs-jquery','libs-jquery-ui','libs-jquery-ui-css','libs-jquery-ui-images1','libs-jquery-ui-images2',
-   'ssimages','copy','copy-rename1','copy-rename2','src-js-simple','src-js-full','html']);
+  gulp.series('clean', 'libs-three','libs-jquery','libs-jquery-ui','libs-jquery-ui-css','libs-jquery-ui-images1','libs-jquery-ui-images2',
+   'ssimages','copy','copy-rename1','copy-rename2','src-js-simple','src-js-full','html')
+);
 
+//  'Zip up the dist into icn3d-<version>.zip',
 gulp.task('zip',
-  'Zip up the dist into icn3d-<version>.zip',
-  ['dist'],
   function() {
     return gulp.src('./dist/**')
       .pipe(rename(function(path) {
@@ -285,32 +284,7 @@ gulp.task('zip',
       .pipe(gulp.dest('dist'));
   });
 
-
+//  'The default task creates the distribution files and the .zip from scratch',
 gulp.task('default',
-  'The default task creates the distribution files and the .zip ' +
-  'from scratch',
-  ['zip']
+  gulp.series('dist','zip')
 );
-
-var gh_pages_files = [
-  'LICENSE',
-  'README.md',
-  'index.html',
-  'icn3d.html',
-  'full.html',
-  '*.min.js',
-  '*.css',
-  'lib/**',
-].map(function(f) { return 'dist/' + f; });
-
-gulp.task('gh-pages',
-  'Deploy project to GitHub pages',
-  ['dist'],
-  function () {
-    return gulp.src(gh_pages_files, { base: 'dist' })
-      .pipe(gh_pages({
-        origin: "github",
-        cacheDir: ".gh-pages",
-      }))
-  });
-
