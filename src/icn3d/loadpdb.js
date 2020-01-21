@@ -51,7 +51,7 @@ iCn3D.prototype.loadPDB = function (src, pdbid, bOpm, bVector) { var me = this; 
         } else if (record === 'HELIX ') {
             this.bSecondaryStructure = true;
 
-            var startChain = line.substr(19, 1);
+            var startChain = (line.substr(19, 1) == ' ') ? 'A' : line.substr(19, 1);
             var startResi = parseInt(line.substr(21, 4));
             var endResi = parseInt(line.substr(33, 4));
 
@@ -74,7 +74,7 @@ iCn3D.prototype.loadPDB = function (src, pdbid, bOpm, bVector) { var me = this; 
         } else if (record === 'SHEET ') {
             this.bSecondaryStructure = true;
 
-            var startChain = line.substr(21, 1);
+            var startChain = (line.substr(21, 1) == ' ') ? 'A' : line.substr(21, 1);
             var startResi = parseInt(line.substr(22, 4));
             var endResi = parseInt(line.substr(33, 4));
 
@@ -121,11 +121,11 @@ iCn3D.prototype.loadPDB = function (src, pdbid, bOpm, bVector) { var me = this; 
         } else if (record === 'SSBOND') {
             this.bSsbondProvided = true;
             //SSBOND   1 CYS E   48    CYS E   51                          2555
-            var chain1 = line.substr(15, 1);
+            var chain1 = (line.substr(15, 1) == ' ') ? 'A' : line.substr(15, 1);
             var resi1 = line.substr(17, 4).replace(/ /g, "");
             var resid1 = id + '_' + chain1 + '_' + resi1;
 
-            var chain2 = line.substr(29, 1);
+            var chain2 = (line.substr(29, 1) == ' ') ? 'A' : line.substr(29, 1);
             var resi2 = line.substr(31, 4).replace(/ /g, "");
             var resid2 = id + '_' + chain2 + '_' + resi2;
 
@@ -218,7 +218,7 @@ iCn3D.prototype.loadPDB = function (src, pdbid, bOpm, bVector) { var me = this; 
             var resn = line.substr(17, 3);
 
             var chain = line.substr(21, 1);
-            if(chain === ' ') chain = 1;
+            if(chain === ' ') chain = 'A';
 
             //var oriResi = line.substr(22, 4).trim();
             var oriResi = line.substr(22, 5).trim();

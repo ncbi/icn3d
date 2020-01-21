@@ -1,4 +1,4 @@
-644444444444444444/**
+/**
  * @file Density Cif Parser
  * @author David Sehnal dsehnal <alexander.rose@weirdbyte.de>
  * Modified by Jiyao Wang / https://github.com/ncbi/icn3d
