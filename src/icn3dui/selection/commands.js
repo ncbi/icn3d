@@ -1357,17 +1357,21 @@ iCn3DUI.prototype.applyCommand = function (commandStr) { var me = this; //"use s
     me.icn3d.draw();
   }
   else if(commandOri.indexOf('add track') == 0) {
-      //"add track | chainid " + chainid + " | title " + title + " | text " + text
+      //"add track | chainid " + chainid + " | title " + title + " | text " + text + " | type " + type + " | color " + color
       var paraArray = commandOri.split(' | ');
 
       var chainid = paraArray[1].substr(8);
       var title = paraArray[2].substr(6);
       var text = paraArray[3].substr(5);
+      var type;
+      if(paraArray.length >= 5) type = paraArray[4].substr(5);
+      var color;
+      if(paraArray.length >= 6) color = paraArray[5].substr(6);
 
       $("#" + me.pre + "anno_custom")[0].checked = true;
       $("[id^=" + me.pre + "custom]").show();
 
-      me.checkGiSeq(chainid, title, text, 0);
+      me.checkGiSeq(chainid, title, text, type, color, 0);
   }
   else if(command.indexOf('remove one stabilizer') == 0) {
     var paraArray = command.split(' | ');

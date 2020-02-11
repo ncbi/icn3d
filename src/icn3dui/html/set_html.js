@@ -1651,6 +1651,7 @@ iCn3DUI.prototype.setDialogs = function() { var me = this; //"use strict";
     html += "<button id='" + me.pre + "addtrack_button1'>Add Track</button>";
     html += "      </div>";
     html += "      <div id='" + me.pre + "tracktab2'>";
+    html += "FASTA Title: <input type='text' id='" + me.pre + "fasta_title' placeholder='track title' size=16> <br><br>";
     html += "FASTA sequence: <br><textarea id='" + me.pre + "track_fasta' rows='5' style='width: 100%; height: " + (2*me.LOG_HEIGHT) + "px; padding: 0px; border: 0px;'></textarea><br><br>";
     html += "<button id='" + me.pre + "addtrack_button2'>Add Track</button>";
     html += "      </div>";

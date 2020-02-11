@@ -232,7 +232,7 @@ iCn3DUI.prototype.loadMmcifSymmetry = function(data) { var me = this; //"use str
     me.icn3d.asuCnt = me.icn3d.biomtMatrices.length;
 };
 
-iCn3DUI.prototype.parseMmdbData = function (data, type) { var me = this; //"use strict";
+iCn3DUI.prototype.parseMmdbDataPart1 = function (data, type) { var me = this; //"use strict";
         // if type is defined, always process target before query
         if(data.atoms === undefined && data.molid2rescount === undefined) {
             alert('invalid MMDB data.');
@@ -327,15 +327,23 @@ iCn3DUI.prototype.parseMmdbData = function (data, type) { var me = this; //"use 
         $("#" + me.pre + "accordion5").show();
 
         //me.loadAtomDataIn(data, id, 'mmdbid', undefined, type);
+};
 
+iCn3DUI.prototype.parseMmdbData = function (data, type) { var me = this; //"use strict";
         if(type === undefined) {
             me.deferredOpm = $.Deferred(function() {
+                  var id = (data.pdbId !== undefined) ? data.pdbId : data.mmdbId;
+
                   me.loadMmdbOpmData(data, id, type);
             });
 
             return me.deferredOpm.promise();
         }
         else {
+            me.parseMmdbDataPart1(data, type);
+
+            var id = (data.pdbId !== undefined) ? data.pdbId : data.mmdbId;
+
             me.loadAtomDataIn(data, id, 'mmdbid', undefined, type);
 
             me.loadMmdbOpmDataPart2(data, id, type);
