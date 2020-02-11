@@ -240,13 +240,18 @@ iCn3DUI.prototype.alignSequenceToStructure = function(chainid, data, title) { va
           }
       }
 
+      var cssColorArray = [];
       // the missing residuesatthe end ofthe seq will be filled up in the API showNewTrack()
       for(var i = 0, il = targetSeq.length; i < il; ++i) {
           if(target2queryHash.hasOwnProperty(i)) {
               text += querySeq[target2queryHash[i]];
+
+              var colorHexStr = me.getColorhexFromBlosum62(targetSeq[i], querySeq[target2queryHash[i]]);
+              cssColorArray.push("#" + colorHexStr);
           }
           else {
               text += '-';
+              cssColorArray.push("");
           }
       }
 
@@ -256,9 +261,9 @@ iCn3DUI.prototype.alignSequenceToStructure = function(chainid, data, title) { va
       text += "cannot be aligned";
   }
 
-  me.showNewTrack(chainid, title, text, undefined, target2queryHash);
+  me.showNewTrack(chainid, title, text, cssColorArray, target2queryHash, 'seq');
 
-  me.setLogCmd("add track | chainid " + chainid + " | title " + title + " | text " + me.simplifyText(text), true);
+  me.setLogCmd("add track | chainid " + chainid + " | title " + title + " | text " + me.simplifyText(text) + " | type seq", true);
 };
 
 iCn3DUI.prototype.clickAddTrackButton = function() { var me = this; //"use strict";
@@ -310,7 +315,8 @@ iCn3DUI.prototype.clickAddTrackButton = function() { var me = this; //"use stric
        var chainid = $("#" + me.pre + "track_chainid").val();
 
        var fasta = $("#" + me.pre + "track_fasta").val();
-       var title = 'fasta ' + fasta.substr(0, 5);
+       //var title = 'fasta ' + fasta.substr(0, 5);
+       var title = $("#" + me.pre + "fasta_title").val();
 
        //var text = $("#" + me.pre + "track_text").val();
        var url = 'https://www.ncbi.nlm.nih.gov/Structure/pwaln/pwaln.fcgi?from=track';
@@ -440,9 +446,9 @@ iCn3DUI.prototype.clickAddTrackButton = function() { var me = this; //"use stric
                        }
                    }
 
-                   me.showNewTrack(chainid, title, text, cssColorArray);
+                   me.showNewTrack(chainid, title, text, cssColorArray, undefined, undefined, rgbColor);
 
-                   me.setLogCmd("add track | chainid " + chainid + " | title " + title + " | text " + me.simplifyText(text), true);
+                   me.setLogCmd("add track | chainid " + chainid + " | title " + title + " | text " + me.simplifyText(text) + " | type bed | color " + rgbColor, true);
                }
            }
          };
@@ -464,8 +470,8 @@ iCn3DUI.prototype.clickAddTrackButton = function() { var me = this; //"use stric
        //me.showNewTrack(chainid, title, text);
        //me.setLogCmd("add track | chainid " + chainid + " | title " + title + " | text " + me.simplifyText(text), true);
 
-       me.showNewTrack(chainid, title,  me.getFullText(text));
-       me.setLogCmd("add track | chainid " + chainid + " | title " + title + " | text " + text, true);
+       me.showNewTrack(chainid, title,  me.getFullText(text), undefined, undefined, 'custom');
+       me.setLogCmd("add track | chainid " + chainid + " | title " + title + " | text " + text + " | type custom", true);
     });
 
     // current selection
@@ -508,14 +514,14 @@ iCn3DUI.prototype.clickAddTrackButton = function() { var me = this; //"use stric
           }
        }
 
-       me.showNewTrack(chainid, title, text, cssColorArray);
+       me.showNewTrack(chainid, title, text, cssColorArray, undefined, undefined, 'selection');
 
-       me.setLogCmd("add track | chainid " + chainid + " | title " + title + " | text " + me.simplifyText(text), true);
+       me.setLogCmd("add track | chainid " + chainid + " | title " + title + " | text " + me.simplifyText(text) + " | type selection", true);
     });
 
 };
 
-iCn3DUI.prototype.showNewTrack = function(chnid, title, text, cssColorArray, target2queryHash) {  var me = this; //"use strict";
+iCn3DUI.prototype.showNewTrack = function(chnid, title, text, cssColorArray, target2queryHash, type, color) {  var me = this; //"use strict";
     //if(me.customTracks[chnid] === undefined) {
     //    me.customTracks[chnid] = {};
     //}
@@ -584,10 +590,14 @@ iCn3DUI.prototype.showNewTrack = function(chnid, title, text, cssColorArray, tar
     var prevLineWidth = 0;
     var widthPerRes = 1;
 
+    var bAlignColor = (type === undefined || type === 'seq' || type === 'custom') && text.indexOf('cannot-be-aligned') == -1 && text.indexOf('cannot be aligned') == -1 ? true : false;
+
     for(var i = 0, il = text.length; i < il; ++i) {
       html += me.insertGap(chnid, i, '-');
 
       var c = text.charAt(i);
+
+      var colorHexStr = me.getColorhexFromBlosum62(c, me.icn3d.chainsSeq[chnid][i].name);
 
       if(c != ' ' && c != '-') {
           //var pos = me.icn3d.chainsSeq[chnid][i - me.matchedPos[chnid] ].resi;
@@ -597,6 +607,12 @@ iCn3DUI.prototype.showNewTrack = function(chnid, title, text, cssColorArray, tar
 
           if(cssColorArray !== undefined && cssColorArray[i] != '') {
               html += '<span id="' + pre + '_' + me.pre + chnid + '_' + pos + '" title="' + c + pos + '" class="icn3d-residue" style="color:' + cssColorArray[i] + '">' + c + '</span>';
+          }
+          else if(color !== undefined) {
+              html += '<span id="' + pre + '_' + me.pre + chnid + '_' + pos + '" title="' + c + pos + '" class="icn3d-residue" style="color:rgb(' + rgbColor + ')">' + c + '</span>';
+          }
+          else if(bAlignColor) {
+              html += '<span id="' + pre + '_' + me.pre + chnid + '_' + pos + '" title="' + c + pos + '" class="icn3d-residue" style="color:#' + colorHexStr + '">' + c + '</span>';
           }
           else {
               html += '<span id="' + pre + '_' + me.pre + chnid + '_' + pos + '" title="' + c + pos + '" class="icn3d-residue">' + c + '</span>';
@@ -610,6 +626,12 @@ iCn3DUI.prototype.showNewTrack = function(chnid, title, text, cssColorArray, tar
           html2 += '<div style="display:inline-block; width:' + emptyWidth + 'px;">&nbsp;</div>';
           if(cssColorArray !== undefined && cssColorArray[i] != '') {
               html2 += '<div style="display:inline-block; background-color:' + cssColorArray[i] + '; width:' + widthPerRes + 'px;" title="' + c + (i+1).toString() + '">&nbsp;</div>';
+          }
+          else if(color !== undefined) {
+              html2 += '<div style="display:inline-block; background-color:rgb(' + rgbColor + '); width:' + widthPerRes + 'px;" title="' + c + (i+1).toString() + '">&nbsp;</div>';
+          }
+          else if(bAlignColor) {
+              html2 += '<div style="display:inline-block; background-color:#' + colorHexStr + '; width:' + widthPerRes + 'px;" title="' + c + (i+1).toString() + '">&nbsp;</div>';
           }
           else {
               html2 += '<div style="display:inline-block; background-color:#333; width:' + widthPerRes + 'px;" title="' + c + (i+1).toString() + '">&nbsp;</div>';
@@ -643,17 +665,17 @@ iCn3DUI.prototype.showNewTrack = function(chnid, title, text, cssColorArray, tar
     $("#" + me.pre + "tt_custom_" + chnid + "_" + simpTitle).html(html3);
 };
 
-iCn3DUI.prototype.checkGiSeq = function (chainid, title, text, index) { var me = this; //"use strict";
+iCn3DUI.prototype.checkGiSeq = function (chainid, title, text, type, color, index) { var me = this; //"use strict";
     if(index > 20) return false;
 
     if(me.giSeq !== undefined && me.giSeq[chainid] !== undefined) {
         text = me.getFullText(text);
-        me.showNewTrack(chainid, title, text);
+        me.showNewTrack(chainid, title, text, undefined, undefined, type, color);
         return false;
     }
 
     // wait for me.giSeq to be available
-    setTimeout(function(){ me.checkGiSeq(chainid, title, text, index + 1); }, 100);
+    setTimeout(function(){ me.checkGiSeq(chainid, title, text, type, color, index + 1); }, 100);
 };
 
 iCn3DUI.prototype.getFullText = function (text) { var me = this; //"use strict";

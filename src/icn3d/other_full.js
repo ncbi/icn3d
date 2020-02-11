@@ -730,6 +730,8 @@ iCn3D.prototype.zoominSelection = function(atoms) { var me = this; //"use strict
 iCn3D.prototype.centerSelection = function(atoms) { var me = this; //"use strict";
    //this.resetOrientation();
 
+   this.opts['rotationcenter'] = 'highlight center';
+
    if(atoms === undefined) {
        atoms = this.hash2Atoms(this.hAtoms);
    }

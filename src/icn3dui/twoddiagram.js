@@ -221,37 +221,44 @@ iCn3DUI.prototype.draw2Ddgm = function(data, mmdbid, structureIndex, bUpdate) { 
     for(var index = 0, indexl = allMolidArray.length; index < indexl; ++index) {
         var molid = allMolidArray[index];
 
+        var chainid = molid2chain[molid];
+
         // if redraw2d diagram and the molid is not displayed, skip
         if(bUpdate !== undefined && bUpdate && !displayedMolids.hasOwnProperty(molid)) continue;
 
         var dgm = data.intrac[molid];
         var color = "#FFFFFF";
         var oricolor = molid2color[molid];
+        if(chainid !== undefined) {
+            var atomArray = Object.keys(me.icn3d.chains[chainid]);
+            if(atomArray.length > 0) {
+                oricolor = "#" + me.icn3d.atoms[atomArray[0]].color.getHexString().toUpperCase();
+            }
+        }
+
         var alignNum = "";
-        if(structureIndex !== undefined && structureIndex === 0) {
-            if(me.alignmolid2color !== undefined && me.alignmolid2color[0].hasOwnProperty(molid)) {
-                //color = me.alignmolid2color[0][molid];
-                alignNum = me.alignmolid2color[0][molid];
-                oricolor = "#FF0000";
+        if(me.bInitial) {
+            if(structureIndex !== undefined && structureIndex === 0) {
+                if(me.alignmolid2color !== undefined && me.alignmolid2color[0].hasOwnProperty(molid)) {
+                    //color = me.alignmolid2color[0][molid];
+                    alignNum = me.alignmolid2color[0][molid];
+                    oricolor = "#FF0000";
+                }
+                else {
+                    oricolor = "#FFFFFF";
+                }
             }
-            else {
-                oricolor = "#FFFFFF";
+            else if(structureIndex !== undefined && structureIndex === 1) {
+                if(me.alignmolid2color !== undefined && me.alignmolid2color[1].hasOwnProperty(molid)) {
+                    //color = me.alignmolid2color[1][molid];
+                    alignNum = me.alignmolid2color[1][molid];
+                    oricolor = "#FF0000";
+                }
+                else {
+                    oricolor = "#FFFFFF";
+                }
             }
         }
-        else if(structureIndex !== undefined && structureIndex === 1) {
-            if(me.alignmolid2color !== undefined && me.alignmolid2color[1].hasOwnProperty(molid)) {
-                //color = me.alignmolid2color[1][molid];
-                alignNum = me.alignmolid2color[1][molid];
-                oricolor = "#FF0000";
-            }
-            else {
-                oricolor = "#FFFFFF";
-            }
-        }
-
-        var chainid;
-
-        chainid = molid2chain[molid];
 
         var chainname = molid2name[molid];
 
@@ -276,7 +283,7 @@ iCn3DUI.prototype.draw2Ddgm = function(data, mmdbid, structureIndex, bUpdate) { 
         }
 
         var ratio = 1.0;
-        if(me.icn3d.alnChains[chainid] !== undefined) {
+        if(me.bInitial && me.icn3d.alnChains[chainid] !== undefined) {
             //ratio = 1.0 * Object.keys(me.icn3d.alnChains[chainid]).length / Object.keys(me.icn3d.chains[chainid]).length;
             var alignedAtomCnt = 0;
             for(var i in me.icn3d.alnChains[chainid]) {

@@ -384,6 +384,12 @@ iCn3DUI.prototype.loadPdbDataBase = function(data, calphaonly, bOpm) { var me = 
                 if(ssHash.hasOwnProperty(chain_resi)) {
                     ssOneLetter = ssHash[chain_resi];
                 }
+                else if(ssHash.hasOwnProperty(' _' + resi)) {
+                    ssOneLetter = ssHash[' _' + resi];
+                }
+                else if(ssHash.hasOwnProperty('_' + resi)) {
+                    ssOneLetter = ssHash['_' + resi];
+                }
 
                 var ss;
                 if(ssOneLetter === 'H') {
@@ -730,6 +736,7 @@ iCn3DUI.prototype.loadMmdbOpmData = function(data, pdbid, type) { var me = this;
           $("#" + me.pre + "intra_mem_z").val(-me.icn3d.halfBilayerSize);
 
           me.icn3d.init(); // remove all previously loaded data
+          me.parseMmdbDataPart1(data, type);
           me.loadAtomDataIn(data, pdbid, 'mmdbid', undefined, type, chainresiCalphaHash);
 
           me.loadMmdbOpmDataPart2(data, pdbid, type);
@@ -744,6 +751,7 @@ iCn3DUI.prototype.loadMmdbOpmData = function(data, pdbid, type) { var me = this;
             return;
         }
 
+        me.parseMmdbDataPart1(data, type);
         me.loadAtomDataIn(data, pdbid, 'mmdbid', undefined, type);
         me.loadMmdbOpmDataPart2(data, pdbid, type);
 
