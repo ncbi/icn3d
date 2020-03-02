@@ -38,7 +38,7 @@ iCn3DUI.prototype.downloadMmcif = function (mmcifid) { var me = this; //"use str
           me.hideLoading();
       },
       success: function(data) {
-           url = "https://www.ncbi.nlm.nih.gov/Structure/mmcifparser/mmcifparser.cgi";
+           url = me.baseUrl + "mmcifparser/mmcifparser.cgi";
            $.ajax({
               url: url,
               type: 'POST',
@@ -109,7 +109,7 @@ iCn3DUI.prototype.downloadMmcifSymmetryBase = function (mmcifid, type) { var me 
       tryCount : 0,
       retryLimit : 1,
       success: function(data) {
-           url = "https://www.ncbi.nlm.nih.gov/Structure/mmcifparser/mmcifparser.cgi";
+           url = me.baseUrl + "mmcifparser/mmcifparser.cgi";
 
            $.ajax({
               url: url,
@@ -359,10 +359,10 @@ iCn3DUI.prototype.downloadMmdb = function (mmdbid, bGi) { var me = this; //"use 
    // b: b-factor, s: water, ft: pdbsite
    //&ft=1
    if(bGi !== undefined && bGi) {
-       url = "https://www.ncbi.nlm.nih.gov/Structure/mmdb/mmdb_strview.cgi?v=2&program=icn3d&b=1&s=1&ft=1&gi=" + mmdbid;
+       url = me.baseUrl + "mmdb/mmdb_strview.cgi?v=2&program=icn3d&b=1&s=1&ft=1&gi=" + mmdbid;
    }
    else {
-       url = "https://www.ncbi.nlm.nih.gov/Structure/mmdb/mmdb_strview.cgi?v=2&program=icn3d&b=1&s=1&ft=1&uid=" + mmdbid;
+       url = me.baseUrl + "mmdb/mmdb_strview.cgi?v=2&program=icn3d&b=1&s=1&ft=1&uid=" + mmdbid;
    }
 
    me.icn3d.bCid = undefined;
@@ -422,7 +422,7 @@ iCn3DUI.prototype.downloadMmdb = function (mmdbid, bGi) { var me = this; //"use 
                 }
                 else {
                   alert("This mmdbid " + mmdbid + " with the parameters " + me.cfg.inpara
-                    + " may not have 3D structure data. Please visit the summary page for details: https://www.ncbi.nlm.nih.gov/Structure/pdb/" + mmdbid);
+                    + " may not have 3D structure data. Please visit the summary page for details: " + me.baseUrl + "pdb/" + mmdbid);
                 }
 
                 return;
@@ -443,7 +443,7 @@ iCn3DUI.prototype.downloadMmdb = function (mmdbid, bGi) { var me = this; //"use 
         }
         else {
           alert("This mmdbid " + mmdbid + " with the parameters " + me.cfg.inpara
-            + " may not have 3D structure data. Please visit the summary page for details: https://www.ncbi.nlm.nih.gov/Structure/pdb/" + mmdbid);
+            + " may not have 3D structure data. Please visit the summary page for details: " + me.baseUrl + "pdb/" + mmdbid);
         }
 
         return;
@@ -661,7 +661,7 @@ iCn3DUI.prototype.loadAtomDataIn = function (data, id, type, seqalign, alignType
               if(sid !== undefined) me.chainid2sid[chainid] = sid;
           }
 
-          me.icn3d.molTitle +=  "<a href=\"https://www.ncbi.nlm.nih.gov/Structure/mmdb/mmdbsrv.cgi?uid=" + structure.pdbId.toUpperCase() + "\" target=\"_blank\">" + structure.pdbId.toUpperCase() + "</a>";
+          me.icn3d.molTitle +=  "<a href=\"" + me.baseUrl + "mmdb/mmdbsrv.cgi?uid=" + structure.pdbId.toUpperCase() + "\" target=\"_blank\">" + structure.pdbId.toUpperCase() + "</a>";
 
           if(structure.descr !== undefined) me.pmid += structure.descr.pubmedid;
           if(i === 0) {

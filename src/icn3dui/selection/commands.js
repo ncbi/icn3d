@@ -1145,6 +1145,9 @@ iCn3DUI.prototype.applyCommand = function (commandStr) { var me = this; //"use s
   else if(command == 'select side chains') {
      me.selectSideChains();
   }
+  else if(command == 'realign') {
+     me.realign();
+  }
 
 // start with =================
   else if(commandOri.indexOf('define helix sets') == 0) {

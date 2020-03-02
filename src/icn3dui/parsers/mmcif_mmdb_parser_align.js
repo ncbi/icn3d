@@ -12,8 +12,8 @@ iCn3DUI.prototype.downloadAlignment = function (align) { var me = this; //"use s
     //var url = 'https://www.ncbi.nlm.nih.gov/Structure/vastplus/vastplus.cgi?cmd=c&w3d&' + ids_str;
     //var url2 = 'https://www.ncbi.nlm.nih.gov/Structure/vastplus/vastplus.cgi?cmd=c1&d&' + ids_str;
 
-    var url = 'https://www.ncbi.nlm.nih.gov/Structure/vastplus/vastplus.cgi?v=2&cmd=c&b=1&s=1&w3d&' + ids_str;
-    var url2 = 'https://www.ncbi.nlm.nih.gov/Structure/vastplus/vastplus.cgi?v=2&cmd=c1&b=1&s=1&d=1&' + ids_str;
+    var url = me.baseUrl + 'vastplus/vastplus.cgi?v=2&cmd=c&b=1&s=1&w3d&' + ids_str;
+    var url2 = me.baseUrl + 'vastplus/vastplus.cgi?v=2&cmd=c1&b=1&s=1&d=1&' + ids_str;
 
     if(me.cfg.inpara !== undefined) {
       url += me.cfg.inpara;
@@ -195,9 +195,9 @@ iCn3DUI.prototype.downloadChainAlignment = function (chainalign) { var me = this
 
     var chainalignFinal = me.mmdbid_q + "_" + me.chain_q + "," + me.mmdbid_t + "_" + me.chain_t;
 
-    var urlalign = "https://www.ncbi.nlm.nih.gov/Structure/vastdyn/vastdyn.cgi?chainpairs=" + chainalignFinal;
-    var url_t = "https://www.ncbi.nlm.nih.gov/Structure/mmdb/mmdb_strview.cgi?v=2&program=icn3d&b=1&s=1&ft=1&uid=" + me.mmdbid_t;
-    var url_q = "https://www.ncbi.nlm.nih.gov/Structure/mmdb/mmdb_strview.cgi?v=2&program=icn3d&b=1&s=1&ft=1&uid=" + me.mmdbid_q;
+    var urlalign = me.baseUrl + "vastdyn/vastdyn.cgi?chainpairs=" + chainalignFinal;
+    var url_t = me.baseUrl + "mmdb/mmdb_strview.cgi?v=2&program=icn3d&b=1&s=1&ft=1&uid=" + me.mmdbid_t;
+    var url_q = me.baseUrl + "mmdb/mmdb_strview.cgi?v=2&program=icn3d&b=1&s=1&ft=1&uid=" + me.mmdbid_q;
 
     if(me.cfg.inpara !== undefined) {
       url_t += me.cfg.inpara;
@@ -334,8 +334,8 @@ iCn3DUI.prototype.downloadChainAlignment = function (chainalign) { var me = this
 iCn3DUI.prototype.set2DDiagramsForAlign = function (mmdbid1, mmdbid2) { var me = this; //"use strict";
    me.openDialog(me.pre + 'dl_2ddgm', 'Interactions');
 
-   var url1="https://www.ncbi.nlm.nih.gov/Structure/mmdb/mmdb_strview.cgi?v=2&program=icn3d&uid="+mmdbid1+"&intrac=1";
-   var url2="https://www.ncbi.nlm.nih.gov/Structure/mmdb/mmdb_strview.cgi?v=2&program=icn3d&uid="+mmdbid2+"&intrac=1";
+   var url1 = me.baseUrl + "mmdb_strview.cgi?v=2&program=icn3d&uid="+mmdbid1+"&intrac=1";
+   var url2 = me.baseUrl + "mmdb/mmdb_strview.cgi?v=2&program=icn3d&uid="+mmdbid2+"&intrac=1";
 
    if(me.cfg.inpara !== undefined) {
       url1 += me.cfg.inpara;

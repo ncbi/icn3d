@@ -1019,7 +1019,7 @@ iCn3D.prototype = {
         'LYS': new THREE.Color(0x0000FF),
         'ASP': new THREE.Color(0xFF0000),
         'GLU': new THREE.Color(0xFF0000),
-        'HIS': new THREE.Color(0xFF8080),
+        'HIS': new THREE.Color(0x8080FF),
 
 // hydrophobic
         'GLY': new THREE.Color(0x888888),

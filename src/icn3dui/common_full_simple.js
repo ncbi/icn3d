@@ -144,7 +144,7 @@ iCn3DUI.prototype.getLinkToStructureSummary = function(bLog) { var me = this; //
            }
            else {
                //url = "https://www.ncbi.nlm.nih.gov/Structure/mmdb/mmdbsrv.cgi?uid=";
-               url = "https://www.ncbi.nlm.nih.gov/Structure/pdb/";
+               url = me.baseUrl + "pdb/";
            }
        }
 
@@ -580,7 +580,7 @@ iCn3DUI.prototype.setViewerWidthHeight = function() { var me = this; //"use stri
 };
 
 iCn3DUI.prototype.shareLinkUrl = function(bAllCommands) { var me = this; //"use strict";
-       var url = "https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?";
+       var url = me.baseUrl + "icn3d/full.html?";
 
        for(var key in me.cfg) {
            var value = me.cfg[key];

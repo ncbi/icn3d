@@ -38,6 +38,8 @@ var iCn3DUI = function(cfg) {
     me.GREYC = "#CCCCCC"; // grey background
     me.GREYD = "#DDDDDD";
 
+    me.baseUrl = "https://www.ncbi.nlm.nih.gov/Structure/";
+
     me.bSelectResidue = false;
     me.bSelectAlignResidue = false;
     me.selectedResidues = {};
