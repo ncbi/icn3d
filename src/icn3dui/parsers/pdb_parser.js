@@ -293,6 +293,61 @@ iCn3DUI.prototype.transformToOpmOri = function(pdbid, chainresiCalphaHash2, bRes
   }
 };
 
+iCn3DUI.prototype.realign = function() { var me = this; //"use strict";
+    var structHash = {};
+    var lastResi = 0;
+    for(var serial in me.icn3d.hAtoms) {
+        var atom = me.icn3d.atoms[serial];
+        if( (me.icn3d.proteins.hasOwnProperty(serial) && atom.name == "CA")
+          || (me.icn3d.nucleotides.hasOwnProperty(serial) && (atom.name == "O3'" || atom.name == "O3*")) ) {
+            if(atom.resi == lastResi) continue; // e.g., Alt A and B
+
+            if(!structHash.hasOwnProperty(atom.structure)) {
+                structHash[atom.structure] = [];
+            }
+
+            structHash[atom.structure].push(atom.coord.clone());
+
+            lastResi = atom.resi;
+        }
+    }
+
+    var structArray = Object.keys(structHash);
+
+    if(structArray.length >= 2 && structHash[structArray[0]].length == structHash[structArray[1]].length) {
+      var firstStruct = structArray[0];
+      var secondStruct = structArray[1];
+
+      // transform from the second structure to the first structure
+      var coordsFrom = structHash[secondStruct];
+      var coordsTo = structHash[firstStruct];
+
+      var n = coordsFrom.length;
+
+      if(n > 2) {
+          me.icn3d.rmsd_supr = me.rmsd_supr(coordsFrom, coordsTo, n);
+
+          // apply matrix for each atom
+          if(me.icn3d.rmsd_supr.rot !== undefined) {
+              var rot = me.icn3d.rmsd_supr.rot;
+              var centerFrom = me.icn3d.rmsd_supr.trans1;
+              var centerTo = me.icn3d.rmsd_supr.trans2;
+              //var rsmd = me.icn3d.rmsd_supr.rsmd;
+
+              for(var i = 0, il = me.icn3d.structures[secondStruct].length; i < il; ++i) {
+                  var chainid = me.icn3d.structures[secondStruct][i];
+                  for(var j in me.icn3d.chains[chainid]) {
+                    var atom = me.icn3d.atoms[j];
+                    atom.coord = me.icn3d.transformMemPro(atom.coord, rot, centerFrom, centerTo);
+                  }
+              }
+
+              me.icn3d.draw();
+          }
+      }
+    }
+};
+
 iCn3DUI.prototype.loadPdbData = function(data, pdbid, bOpm, chainresiCalphaHash2) { var me = this; //"use strict";
       me.icn3d.loadPDB(data, pdbid, bOpm); // defined in the core library
 
@@ -337,7 +392,7 @@ iCn3DUI.prototype.loadPdbData = function(data, pdbid, bOpm, chainresiCalphaHash2
 };
 
 iCn3DUI.prototype.loadPdbDataBase = function(data, calphaonly, bOpm) { var me = this; //"use strict";
-   var url = "https://www.ncbi.nlm.nih.gov/Structure/mmcifparser/mmcifparser.cgi";
+   var url = me.baseUrl + "mmcifparser/mmcifparser.cgi";
 
    var dataModified = '';
    if(bOpm !== undefined && bOpm) {

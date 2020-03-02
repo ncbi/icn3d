@@ -1,4 +1,6 @@
 ## Change Log
+[icn3d-2.12.0](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.12.0.zip) was release on March 2, 2020. Enabled to realign selected residues in VAST+ structure alignment. The option "Realign Selection" is in the View menu.
+
 [icn3d-2.11.5](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.11.5.zip) was release on February 11, 2020. Add colors to aligned sequence track based on Blosum62.
 
 [icn3d-2.11.4](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.11.4.zip) was release on January 14, 2020. The compiling tool gulp was upgraded to version 4.

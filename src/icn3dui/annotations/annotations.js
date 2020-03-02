@@ -128,7 +128,7 @@ iCn3DUI.prototype.showAnnotations = function() { var me = this; //"use strict";
            }
         }
         else if(me.cfg.blast_rep_id !== undefined) { // align sequence to structure
-           var url = 'https://www.ncbi.nlm.nih.gov/Structure/pwaln/pwaln.fcgi?from=querytarget';
+           var url = me.baseUrl + 'pwaln/pwaln.fcgi?from=querytarget';
            var dataObj = {'targets': me.cfg.blast_rep_id, 'queries': me.cfg.query_id};
 
            if(me.cfg.query_from_to !== undefined ) {
@@ -390,7 +390,7 @@ iCn3DUI.prototype.getAnnotationData = function() { var me = this; //"use strict"
 
     // show the sequence and 3D structure
     //var url = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=protein&retmode=json&rettype=fasta&id=" + chnidBaseArray;
-    var url = "https://www.ncbi.nlm.nih.gov/Structure/vastdyn/vastdyn.cgi?chainlist=" + chnidBaseArray;
+    var url = me.baseUrl + "/vastdyn/vastdyn.cgi?chainlist=" + chnidBaseArray;
 
     $.ajax({
       url: url,
@@ -1995,7 +1995,7 @@ iCn3DUI.prototype.showSnpClinvar = function(chnid, chnidBase) {
         else {
            // get gi from acc
            //var url2 = "https://www.ncbi.nlm.nih.gov/Structure/icn3d/chainid2repgi.txt";
-           var url2 = "https://www.ncbi.nlm.nih.gov/Structure/vastdyn/vastdyn.cgi?chainid=" + chnidBase;
+           var url2 = me.baseUrl + "vastdyn/vastdyn.cgi?chainid=" + chnidBase;
 
 
            $.ajax({
@@ -2102,7 +2102,7 @@ iCn3DUI.prototype.showCddSiteAll = function() { var me = this; //"use strict";
     var chnidArray = Object.keys(me.protein_chainid);
 
     // show conserved domains and binding sites
-    var url = "https://www.ncbi.nlm.nih.gov/Structure/cdannots/cdannots.fcgi?fmt&queries=" + chnidBaseArray;
+    var url = me.baseUrl + "cdannots/cdannots.fcgi?fmt&queries=" + chnidBaseArray;
     $.ajax({
       url: url,
       dataType: 'jsonp',
@@ -2265,7 +2265,7 @@ iCn3DUI.prototype.showCddSiteAll = function() { var me = this; //"use strict";
                     html += htmlTmp;
                     html2 += htmlTmp;
 
-                    html2 += '<div id="' + me.pre + chnid + '_' + acc + '_' + r + '_cddseq" style="display:none; white-space:normal;" class="icn3d-box">' + defline + ' (<a href="https://www.ncbi.nlm.nih.gov/Structure/cdd/cddsrv.cgi?uid=' + acc + '" target="_blank" class="icn3d-blue">open details view...</a>)</div>';
+                    html2 += '<div id="' + me.pre + chnid + '_' + acc + '_' + r + '_cddseq" style="display:none; white-space:normal;" class="icn3d-box">' + defline + ' (<a href="' + me.baseUrl + 'cdd/cddsrv.cgi?uid=' + acc + '" target="_blank" class="icn3d-blue">open details view...</a>)</div>';
                 } // for(var r = 0,
             }
 
@@ -2429,7 +2429,7 @@ iCn3DUI.prototype.showDomainPerStructure = function(index) { var me = this; //"u
 
     // show 3D domains
     var pdbid = pdbArray[index];
-    var url = "https://www.ncbi.nlm.nih.gov/Structure/mmdb/mmdb_strview.cgi?v=2&program=icn3d&domain&molinfor&uid=" + pdbid;
+    var url = me.baseUrl + "mmdb/mmdb_strview.cgi?v=2&program=icn3d&domain&molinfor&uid=" + pdbid;
 
     if(index == 0 && me.mmdb_data !== undefined) {
         for(var chnid in me.protein_chainid) {

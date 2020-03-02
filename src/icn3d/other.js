@@ -600,6 +600,21 @@ iCn3D.prototype.getFirstCalphaAtomObj = function(atomsHash) { var me = this; //"
     return (firstIndex !== undefined) ? this.atoms[firstIndex] : this.getFirstAtomObj(atomsHash);
 };
 
+iCn3D.prototype.getFirstAtomObjByName = function(atomsHash, atomName) { var me = this; //"use strict";
+    if(atomsHash == undefined) return this.atoms[0];
+
+    var firstIndex;
+
+    for(var i in atomsHash) {
+        if(this.atoms[i].name == atomName) {
+            firstIndex = i;
+            break;
+        }
+    }
+
+    return (firstIndex !== undefined) ? this.atoms[firstIndex] : undefined;
+};
+
 iCn3D.prototype.getLastAtomObj = function(atomsHash) { var me = this; //"use strict";
     var atomKeys = Object.keys(atomsHash);
     var lastIndex = atomKeys[atomKeys.length - 1];

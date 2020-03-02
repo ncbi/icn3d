@@ -13,7 +13,7 @@ if (!$.ui.dialog.prototype._makeDraggableBase) {
 }
 
 var iCn3DUI = function(cfg) { var me = this; //"use strict";
-    this.REVISION = '2.11.4';
+    this.REVISION = '2.12.0';
 
     me.bFullUi = true;
 
@@ -103,6 +103,16 @@ var iCn3DUI = function(cfg) { var me = this; //"use strict";
     me.GREYC = "#CCCCCC"; // grey background
     me.GREYD = "#DDDDDD";
     me.ORANGE = "#FFA500";
+
+    me.baseUrl = "https://www.ncbi.nlm.nih.gov/Structure/";
+    me.divStr = "<div id='" + me.pre;
+    me.divNowrapStr = "<div style='white-space:nowrap'>";
+    me.spanNowrapStr = "<span style='white-space:nowrap'>";
+    me.inputTextStr = "<input type='text' ";
+    me.inputFileStr = "<input type='file' ";
+    me.inputRadioStr = "<input type='radio' ";
+    me.inputCheckStr = "<input type='checkbox' ";
+    me.buttonStr = "<button id='" + me.pre;
 
     me.postfix = "_q"; // add postfix for the chains of the query protein whne align two chians in one protein
 
@@ -2305,6 +2315,13 @@ iCn3DUI.prototype = {
         });
     },
 
+    clickRealign: function() { var me = this; //"use strict";
+        $("#" + me.pre + "mn2_realign").click(function(e) {
+           me.realign();
+           me.setLogCmd("realign", true);
+        });
+    },
+
     //mn 1
     clkMn1_mmtfid: function() { var me = this; //"use strict";
         $("#" + me.pre + "mn1_mmtfid").click(function(e) {
@@ -2765,11 +2782,11 @@ iCn3DUI.prototype = {
 
                    var url;
                    if(idArray.length === 1) {
-                       url = "https://www.ncbi.nlm.nih.gov/Structure/vastplus/vastplus.cgi?uid=" + me.inputid;
+                       url = me.baseUrl + "vastplus/vastplus.cgi?uid=" + me.inputid;
                        me.setLogCmd("link to structures similar to " + me.inputid + ": " + url, false);
                    }
                    else if(idArray.length === 2) {
-                       url = "https://www.ncbi.nlm.nih.gov/Structure/vastplus/vastplus.cgi?uid=" + idArray[0];
+                       url = me.baseUrl + "vastplus/vastplus.cgi?uid=" + idArray[0];
                        me.setLogCmd("link to structures similar to " + idArray[0] + ": " + url, false);
                    }
                }
@@ -4061,7 +4078,7 @@ iCn3DUI.prototype = {
            //me.emd = 'emd-3906';
 
            if(iCn3DUI.prototype.DensityCifParser === undefined) {
-               var url = "https://www.ncbi.nlm.nih.gov/Structure/icn3d/density_cif_parser.min.js";
+               var url = me.baseUrl + "icn3d/density_cif_parser.min.js";
                $.ajax({
                   url: url,
                   dataType: "script",
@@ -4956,7 +4973,7 @@ iCn3DUI.prototype = {
 
            me.setLogCmd("load mmtf " + $("#" + me.pre + "mmtfid").val(), false);
 
-           window.open('https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?mmtfid=' + $("#" + me.pre + "mmtfid").val(), '_blank');
+           window.open(me.baseUrl + 'icn3d/full.html?mmtfid=' + $("#" + me.pre + "mmtfid").val(), '_blank');
 
            //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
@@ -4970,7 +4987,7 @@ iCn3DUI.prototype = {
 
            me.setLogCmd("load pdb " + $("#" + me.pre + "pdbid").val(), false);
 
-           window.open('https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?pdbid=' + $("#" + me.pre + "pdbid").val(), '_blank');
+           window.open(me.baseUrl + 'icn3d/full.html?pdbid=' + $("#" + me.pre + "pdbid").val(), '_blank');
 
            //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
@@ -4984,7 +5001,7 @@ iCn3DUI.prototype = {
 
            me.setLogCmd("load opm " + $("#" + me.pre + "opmid").val(), false);
 
-           window.open('https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?opmid=' + $("#" + me.pre + "opmid").val(), '_blank');
+           window.open(me.baseUrl + 'icn3d/full.html?opmid=' + $("#" + me.pre + "opmid").val(), '_blank');
 
            //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
@@ -5000,7 +5017,7 @@ iCn3DUI.prototype = {
 
            me.setLogCmd("load alignment " + alignment + ' | parameters &atype=1', false);
 
-           window.open('https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?align=' + alignment + '&showalignseq=1&atype=1', '_blank');
+           window.open(me.baseUrl + 'icn3d/full.html?align=' + alignment + '&showalignseq=1&atype=1', '_blank');
 
            //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
@@ -5016,7 +5033,7 @@ iCn3DUI.prototype = {
 
            me.setLogCmd("load alignment " + alignment + ' | parameters &atype=0', false);
 
-           window.open('https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?align=' + alignment + '&showalignseq=1&atype=0', '_blank');
+           window.open( me.baseUrl + 'icn3d/full.html?align=' + alignment + '&showalignseq=1&atype=0', '_blank');
 
            //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
@@ -5032,7 +5049,7 @@ iCn3DUI.prototype = {
 
            me.setLogCmd("load chain alignment " + alignment, false);
 
-           window.open('https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?chainalign=' + alignment + '&showalignseq=1', '_blank');
+           window.open(me.baseUrl + 'icn3d/full.html?chainalign=' + alignment + '&showalignseq=1', '_blank');
 
            //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
@@ -5046,7 +5063,7 @@ iCn3DUI.prototype = {
 
            me.setLogCmd("load mmcif " + $("#" + me.pre + "mmcifid").val(), false);
 
-           window.open('https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?mmcifid=' + $("#" + me.pre + "mmcifid").val(), '_blank');
+           window.open(me.baseUrl + 'icn3d/full.html?mmcifid=' + $("#" + me.pre + "mmcifid").val(), '_blank');
 
            //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
@@ -5061,7 +5078,7 @@ iCn3DUI.prototype = {
            me.setLogCmd("load mmdb " + $("#" + me.pre + "mmdbid").val(), false);
 
            //me.downloadMmdb($("#" + me.pre + "mmdbid").val());
-           window.open('https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?mmdbid=' + $("#" + me.pre + "mmdbid").val(), '_blank');
+           window.open(me.baseUrl + 'icn3d/full.html?mmdbid=' + $("#" + me.pre + "mmdbid").val(), '_blank');
 
            //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
@@ -5084,7 +5101,7 @@ iCn3DUI.prototype = {
            query_id = (query_id !== '' && query_id !== undefined) ? query_id : query_fasta;
 
 //           if(query_id !== '' && query_id !== undefined) {
-               window.open('https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?from=icn3d&blast_rep_id=' + blast_rep_id + '&query_id=' + query_id, '_blank');
+               window.open(me.baseUrl + 'icn3d/full.html?from=icn3d&blast_rep_id=' + blast_rep_id + '&query_id=' + query_id, '_blank');
 /*
            }
            else if(query_fasta !== '' && query_fasta !== undefined) {
@@ -5123,7 +5140,7 @@ iCn3DUI.prototype = {
 
            me.setLogCmd("load gi " + $("#" + me.pre + "gi").val(), false);
 
-           window.open('https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?gi=' + $("#" + me.pre + "gi").val(), '_blank');
+           window.open(me.baseUrl + 'icn3d/full.html?gi=' + $("#" + me.pre + "gi").val(), '_blank');
 
            //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
@@ -5137,7 +5154,7 @@ iCn3DUI.prototype = {
 
            me.setLogCmd("load cid " + $("#" + me.pre + "cid").val(), false);
 
-           window.open('https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?cid=' + $("#" + me.pre + "cid").val(), '_blank');
+           window.open(me.baseUrl + 'icn3d/full.html?cid=' + $("#" + me.pre + "cid").val(), '_blank');
 
            //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
@@ -5628,7 +5645,7 @@ iCn3DUI.prototype = {
 
                me.icn3d.molTitle = "";
 
-                var url = "//www.ncbi.nlm.nih.gov/Structure/mmcifparser/mmcifparser.cgi";
+                var url = me.baseUrl + "mmcifparser/mmcifparser.cgi";
 
                 me.icn3d.bCid = undefined;
 
@@ -6713,6 +6730,7 @@ iCn3DUI.prototype = {
         me.clickHlStyleNone();
 
         me.clickAlternate();
+        me.clickRealign();
         me.clkMn1_mmtfid();
         me.clkMn1_pdbid();
         me.clkMn1_opmid();
