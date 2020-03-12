@@ -13,7 +13,7 @@ if (!$.ui.dialog.prototype._makeDraggableBase) {
 }
 
 var iCn3DUI = function(cfg) { var me = this; //"use strict";
-    this.REVISION = '2.12.0';
+    this.REVISION = '2.12.1';
 
     me.bFullUi = true;
 
@@ -1014,16 +1014,6 @@ iCn3DUI.prototype = {
                    me.setLogCmd(cmd, true);
 
                    me.showAnnotations();
-/*
-                   if(Object.keys(me.icn3d.proteins).length > 0) {
-                      $.when(me.applyCommandAnnotationsAndCddSite(cmd)).then(function() {
-                          // do something afterward
-                      });
-                   }
-                   else {
-                      me.applyCommandAnnotationsAndCddSiteBase(cmd);
-                   }
-*/
               }
 
               if(me.cfg.closepopup) {
@@ -6506,17 +6496,22 @@ iCn3DUI.prototype = {
         });
     },
 
-    clickSeqSaveSelection: function() { var me = this; //"use strict";
-        $(document).on("click", "#" + me.pre + "seq_saveselection", function(e) {
-           e.stopImmediatePropagation();
-           dialog.dialog( "close" );
-
+    saveSelectionPrep: function() { var me = this; //"use strict";
            if(!$('#' + me.pre + 'dl_definedsets').hasClass('ui-dialog-content') || !$('#' + me.pre + 'dl_definedsets').dialog( 'isOpen' )) {
              me.openDialog(me.pre + 'dl_definedsets', 'Select sets');
              $("#" + me.pre + "atomsCustom").resizable();
            }
 
            me.bSelectResidue = false;
+           me.bSelectAlignResidue = false;
+    },
+
+    clickSeqSaveSelection: function() { var me = this; //"use strict";
+        $(document).on("click", "#" + me.pre + "seq_saveselection", function(e) {
+           e.stopImmediatePropagation();
+           dialog.dialog( "close" );
+
+           me.saveSelectionPrep();
 
            var name = $("#" + me.pre + "seq_command_name").val().replace(/\s+/g, '_');
            //var description = $("#" + me.pre + "seq_command_desc").val();
@@ -6529,12 +6524,7 @@ iCn3DUI.prototype = {
         $(document).on("click", "#" + me.pre + "seq_saveselection2", function(e) {
            e.stopImmediatePropagation();
 
-           if(!$('#' + me.pre + 'dl_definedsets').hasClass('ui-dialog-content') || !$('#' + me.pre + 'dl_definedsets').dialog( 'isOpen' )) {
-             me.openDialog(me.pre + 'dl_definedsets', 'Select sets');
-             $("#" + me.pre + "atomsCustom").resizable();
-           }
-
-           me.bSelectResidue = false;
+           me.saveSelectionPrep();
 
            var name = $("#" + me.pre + "seq_command_name2").val().replace(/\s+/g, '_');
            //var description = $("#" + me.pre + "seq_command_desc2").val();
@@ -6547,19 +6537,14 @@ iCn3DUI.prototype = {
 
     clickAlignSeqSaveSelection: function() { var me = this; //"use strict";
         $(document).on("click", "#" + me.pre + "alignseq_saveselection", function(e) {
-            e.stopImmediatePropagation();
+           e.stopImmediatePropagation();
 
-           if(!$('#' + me.pre + 'dl_definedsets').hasClass('ui-dialog-content') || !$('#' + me.pre + 'dl_definedsets').dialog( 'isOpen' )) {
-             me.openDialog(me.pre + 'dl_definedsets', 'Select sets');
-             $("#" + me.pre + "atomsCustom").resizable();
-           }
+           me.saveSelectionPrep();
 
-            me.bSelectAlignResidue = false;
+           var name = $("#" + me.pre + "alignseq_command_name").val().replace(/\s+/g, '_');
+           //var description = $("#" + me.pre + "alignseq_command_desc").val();
 
-            var name = $("#" + me.pre + "alignseq_command_name").val().replace(/\s+/g, '_');
-            //var description = $("#" + me.pre + "alignseq_command_desc").val();
-
-            me.saveSelection(name, name);
+           me.saveSelection(name, name);
 
            //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });

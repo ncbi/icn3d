@@ -240,7 +240,9 @@ iCn3D.prototype.isValidHbond = function (atom, atomHbond, threshold) { var me = 
 
       //if (idealGeometry[donor.index] === AtomGeometry.Trigonal){ // 120
         var outOfPlane1 = this.calcPlaneAngle(donorAtom, acceptorAtom);
-        if (outOfPlane1 !== undefined && outOfPlane1 > maxHbondDonPlaneAngle) return false;
+        if (outOfPlane1 !== undefined && outOfPlane1 > maxHbondDonPlaneAngle) {
+            return false;
+        }
       //}
 
       var acceptorAngles = this.calcAngles(acceptorAtom, donorAtom);
@@ -356,7 +358,7 @@ iCn3D.prototype.calculateChemicalHbonds = function (startAtoms, targetAtoms, thr
             && (atom.name === 'N' || atom.name === 'O') && (atomHbond[j].name === 'O' || atomHbond[j].name === 'N') ) {
 
             if(atom.name === atomHbond[j].name) continue;
-            if(Math.abs(atom.resi - atomHbond[j].resi) <= 1) continue; // peptide bond
+            if(atom.structure == atomHbond[j].structure && atom.chain == atomHbond[j].chain && Math.abs(atom.resi - atomHbond[j].resi) <= 1) continue; // peptide bond
 
             // protein backbone hydrogen
             // https://en.wikipedia.org/wiki/DSSP_(hydrogen_bond_estimation_algorithm)

@@ -75,6 +75,7 @@ iCn3DUI.prototype.removeHl2D = function() { var me = this; //"use strict";
 // remove highlight in the menu of defined sets
 iCn3DUI.prototype.removeHlMenus = function() { var me = this; //"use strict";
     $("#" + me.pre + "atomsCustom").val("");
+    $("#" + me.pre + "atomsCustom")[0].blur();
 };
 
 iCn3DUI.prototype.updateHlAll = function(commandnameArray, bSetMenu, bUnion, bForceHighlight) { var me = this; //"use strict";
@@ -226,6 +227,7 @@ iCn3DUI.prototype.updateHlMenus = function(commandnameArray) { var me = this; //
 
     if($("#" + me.pre + "atomsCustom").length) {
         $("#" + me.pre + "atomsCustom").html(definedAtomsHtml);
+        $("#" + me.pre + "atomsCustom")[0].blur();
     }
 };
 
@@ -235,7 +237,26 @@ iCn3DUI.prototype.setAtomMenu = function (commandnameArray) { var me = this; //"
   var nameArray1 = (me.icn3d.defNames2Residues !== undefined) ? Object.keys(me.icn3d.defNames2Residues) : [];
   var nameArray2 = (me.icn3d.defNames2Atoms !== undefined) ? Object.keys(me.icn3d.defNames2Atoms) : [];
 
-  var nameArray = nameArray1.concat(nameArray2).sort();
+/*
+  var nameHash = {};
+
+  for(var i = 0, il = nameArray1.length; i < il; ++i) {
+      nameHash[nameArray1[i]] = 1;
+  }
+
+  for(var i = 0, il = nameArray2.length; i < il; ++i) {
+      nameHash[nameArray2[i]] = 1;
+  }
+
+  var nameArray = Object.keys(nameHash);
+*/
+
+  var nameArrayTmp = nameArray1.concat(nameArray2).sort();
+
+  var nameArray = [];
+  $.each(nameArrayTmp, function(i, el){
+       if($.inArray(el, nameArray) === -1) nameArray.push(el);
+  });
 
   //for(var i in me.icn3d.defNames2Atoms) {
   for(var i = 0, il = nameArray.length; i < il; ++i) {
