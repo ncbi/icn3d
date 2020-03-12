@@ -511,7 +511,8 @@ iCn3DUI.prototype.null_basis = function(a0, v1, v2, v3, epsi) { var me = this; /
                 // the null space contains only the zero vector
                 k0 = 0;
                 v1[0] = 0.0; v1[1] = 0.0; v1[2] = 0.0;
-                return;
+                //return;
+                return {'k': k0, 'v1': v1, 'v2': v2, 'v3': v3};
             }
         }
     }

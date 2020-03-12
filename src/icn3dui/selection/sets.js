@@ -70,6 +70,13 @@ iCn3DUI.prototype.deleteSelectedSets = function() { var me = this; //"use strict
 iCn3DUI.prototype.changeCustomAtoms = function (nameArray, bUpdateHlMenus) { var me = this; //"use strict";
    me.icn3d.hAtoms = {};
 
+/*
+   var nameArray = [];
+   $.each(inNameArray, function(i, el){
+       if($.inArray(el, nameArray) === -1) nameArray.push(el);
+   });
+*/
+
    for(var i = 0; i < nameArray.length; ++i) {
      var selectedSet = nameArray[i];
 

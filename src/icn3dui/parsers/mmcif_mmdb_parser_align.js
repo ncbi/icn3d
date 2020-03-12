@@ -334,7 +334,7 @@ iCn3DUI.prototype.downloadChainAlignment = function (chainalign) { var me = this
 iCn3DUI.prototype.set2DDiagramsForAlign = function (mmdbid1, mmdbid2) { var me = this; //"use strict";
    me.openDialog(me.pre + 'dl_2ddgm', 'Interactions');
 
-   var url1 = me.baseUrl + "mmdb_strview.cgi?v=2&program=icn3d&uid="+mmdbid1+"&intrac=1";
+   var url1 = me.baseUrl + "mmdb/mmdb_strview.cgi?v=2&program=icn3d&uid="+mmdbid1+"&intrac=1";
    var url2 = me.baseUrl + "mmdb/mmdb_strview.cgi?v=2&program=icn3d&uid="+mmdbid2+"&intrac=1";
 
    if(me.cfg.inpara !== undefined) {

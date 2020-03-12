@@ -231,25 +231,29 @@ iCn3DUI.prototype.transformToOpmOri = function(pdbid, chainresiCalphaHash2, bRes
       var chainresiCalphaHash1 = me.icn3d.getChainCalpha(me.icn3d.chains, me.icn3d.atoms, bResi_ori);
 
       var coordsFrom = [], coordsTo = [];
+      var bOneChain = (Object.keys(chainresiCalphaHash1.chainresiCalphaHash).length == 1 || Object.keys(chainresiCalphaHash2.chainresiCalphaHash).length == 1) ? true : false;
       for(var chainresi in chainresiCalphaHash1.chainresiCalphaHash) {
           if(chainresiCalphaHash2.chainresiCalphaHash.hasOwnProperty(chainresi)) {
               var coord1 = chainresiCalphaHash1.chainresiCalphaHash[chainresi];
               var coord2 = chainresiCalphaHash2.chainresiCalphaHash[chainresi];
 
-              coordsFrom.push(coord1);
-              coordsTo.push(coord2);
+              if(coord1.length == coord2.length || bOneChain) {
+                  coordsFrom = coordsFrom.concat(coord1);
+                  coordsTo = coordsTo.concat(coord2);
+              }
 
               if(coordsFrom.length > 500) break; // no need to use all c-alpha
           }
       }
 
-      var n = coordsFrom.length;
+      //var n = coordsFrom.length;
+      var n = (coordsFrom.length < coordsTo.length) ? coordsFrom.length : coordsTo.length;
 
-      if(n > 2) {
+      if(n >= 4) {
           me.icn3d.rmsd_supr = me.rmsd_supr(coordsFrom, coordsTo, n);
 
           // apply matrix for each atom
-          if(me.icn3d.rmsd_supr.rot !== undefined) {
+          if(me.icn3d.rmsd_supr.rot !== undefined && me.icn3d.rmsd_supr.rsmd < 0.1) {
               var rot = me.icn3d.rmsd_supr.rot;
               var centerFrom = me.icn3d.rmsd_supr.trans1;
               var centerTo = me.icn3d.rmsd_supr.trans2;
@@ -294,13 +298,20 @@ iCn3DUI.prototype.transformToOpmOri = function(pdbid, chainresiCalphaHash2, bRes
 };
 
 iCn3DUI.prototype.realign = function() { var me = this; //"use strict";
+    me.saveSelectionPrep();
+
+    var index = Object.keys(me.icn3d.defNames2Atoms).length;
+    var name = 'alseq_' + index;
+
+    me.saveSelection(name, name);
+
     var structHash = {};
-    var lastResi = 0;
+    var lastStruResi = '';
     for(var serial in me.icn3d.hAtoms) {
         var atom = me.icn3d.atoms[serial];
         if( (me.icn3d.proteins.hasOwnProperty(serial) && atom.name == "CA")
           || (me.icn3d.nucleotides.hasOwnProperty(serial) && (atom.name == "O3'" || atom.name == "O3*")) ) {
-            if(atom.resi == lastResi) continue; // e.g., Alt A and B
+            if(atom.structure + '_' + atom.resi == lastStruResi) continue; // e.g., Alt A and B
 
             if(!structHash.hasOwnProperty(atom.structure)) {
                 structHash[atom.structure] = [];
@@ -308,13 +319,16 @@ iCn3DUI.prototype.realign = function() { var me = this; //"use strict";
 
             structHash[atom.structure].push(atom.coord.clone());
 
-            lastResi = atom.resi;
+            lastStruResi = atom.structure + '_' + atom.resi;
         }
     }
 
     var structArray = Object.keys(structHash);
 
-    if(structArray.length >= 2 && structHash[structArray[0]].length == structHash[structArray[1]].length) {
+//    if(structHash[structArray[0]].length != structHash[structArray[1]].length) alert("The number of selected residues in each structure should be the same...");
+
+//    if(structArray.length >= 2 && structHash[structArray[0]].length == structHash[structArray[1]].length) {
+    if(structArray.length >= 2) {
       var firstStruct = structArray[0];
       var secondStruct = structArray[1];
 
@@ -322,14 +336,18 @@ iCn3DUI.prototype.realign = function() { var me = this; //"use strict";
       var coordsFrom = structHash[secondStruct];
       var coordsTo = structHash[firstStruct];
 
-      var n = coordsFrom.length;
+      //var n = coordsFrom.length;
+      var n = (coordsFrom.length < coordsTo.length) ? coordsFrom.length : coordsTo.length;
 
-      if(n > 2) {
+      if(n < 4) alert("Please select at least four residues in each structure...");
+      if(n >= 4) {
           me.icn3d.rmsd_supr = me.rmsd_supr(coordsFrom, coordsTo, n);
 
           // apply matrix for each atom
           if(me.icn3d.rmsd_supr.rot !== undefined) {
               var rot = me.icn3d.rmsd_supr.rot;
+              if(rot[0] === null) alert("Please select more residues in each structure...");
+
               var centerFrom = me.icn3d.rmsd_supr.trans1;
               var centerTo = me.icn3d.rmsd_supr.trans2;
               //var rsmd = me.icn3d.rmsd_supr.rsmd;
