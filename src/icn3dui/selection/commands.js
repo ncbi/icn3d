@@ -275,6 +275,32 @@ iCn3DUI.prototype.execCommandsBase = function (start, end, steps, bFinalStep) { 
 
           return;
       }
+      else if(me.icn3d.commands[i].trim().indexOf('symmetry') == 0) {
+        var strArray = me.icn3d.commands[i].split("|||");
+        var command = strArray[0].trim();
+
+        var title = command.substr(command.indexOf(' ') + 1);
+        me.icn3d.symmetrytitle = (title === 'none') ? undefined : title;
+
+        if(title !== 'none') {
+            if(me.icn3d.symmetryHash === undefined) {
+                $.when(me.retrieveSymmetry(Object.keys(me.icn3d.structures)[0])).then(function() {
+                   //me.icn3d.applySymmetry(title);
+                   me.icn3d.draw();
+                   me.execCommandsBase(i + 1, end, steps);
+                });
+            }
+            else {
+                //me.icn3d.applySymmetry(title);
+                me.icn3d.draw();
+                me.execCommandsBase(i + 1, end, steps);
+            }
+        }
+        else {
+            me.icn3d.draw();
+            me.execCommandsBase(i + 1, end, steps);
+        }
+      }
       else {
           me.applyCommand(me.icn3d.commands[i]);
       }
@@ -520,6 +546,160 @@ iCn3DUI.prototype.applyCommandEmmap = function (command) { var me = this; //"use
   }); // end of me.deferred = $.Deferred(function() {
 
   return me.deferredEmmap.promise();
+};
+
+iCn3DUI.prototype.getAxisColor = function (symbol, order) { var me = this; //"use strict";
+    var type = symbol.substr(0, 1);
+
+    //https://www.rcsb.org/pages/help/viewers/jmol_symmetry_view
+    if(type == 'C') { // Cyclic Cn
+        return new THREE.Color(0xFF0000); // red
+    }
+    else if(type == 'D') { // Dihedral Dn
+        if(order == 2) {
+            return new THREE.Color(0x00FFFF); // cyan
+        }
+        else {
+            return new THREE.Color(0xFF0000); // red
+        }
+    }
+    else if(type == 'T') { // Tetrahedral T
+        if(order == 2) {
+            return new THREE.Color(0x00FFFF); // cyan
+        }
+        else {
+            return new THREE.Color(0x00FF00); // green
+        }
+    }
+    else if(type == 'O') { // Octahedral O
+        if(order == 2) {
+            return new THREE.Color(0x00FFFF); // cyan
+        }
+        else if(order == 3) {
+            return new THREE.Color(0x00FF00); // green
+        }
+        else {
+            return new THREE.Color(0xFF0000); // red
+        }
+    }
+    else if(type == 'I') { // Icosahedral I
+        if(order == 2) {
+            return new THREE.Color(0x00FFFF); // cyan
+        }
+        else if(order == 3) {
+            return new THREE.Color(0x00FF00); // green
+        }
+        else {
+            return new THREE.Color(0xFF0000); // red
+        }
+    }
+    else { // Helical H, etc
+        return new THREE.Color(0xFF0000); // red
+    }
+};
+
+iCn3DUI.prototype.getPolygonColor = function (symbol) { var me = this; //"use strict";
+    var type = symbol.substr(0, 1);
+
+    //https://www.rcsb.org/pages/help/viewers/jmol_symmetry_view
+    if(type == 'C') { // Cyclic Cn
+        return new THREE.Color(0xFF8C00); // dark orange
+    }
+    else if(type == 'D') { // Dihedral Dn
+        return new THREE.Color(0x00FFFF); // cyan
+    }
+    else if(type == 'T') { // Tetrahedral T
+        return new THREE.Color(0xEE82EE); //0x800080); // purple
+    }
+    else if(type == 'O') { // Octahedral O
+        return new THREE.Color(0xFFA500); // orange
+    }
+    else if(type == 'I') { // Icosahedral I
+        return new THREE.Color(0x00FF00); // green
+    }
+    else { // Helical H, etc
+        return new THREE.Color(0xA9A9A9); // dark grey
+    }
+};
+
+iCn3DUI.prototype.retrieveSymmetry = function (pdbid) { var me = this; //"use strict";
+  // chain functions together
+  me.deferredSymmetry = $.Deferred(function() {
+       var url = "https://data-beta.rcsb.org/rest/v3/core/assembly/" + pdbid + "/1";
+       //var url = "https://rest.rcsb.org/rest/structures/3dview/" + pdbid;
+
+       $.ajax({
+          url: url,
+          dataType: "json",
+          cache: true,
+          tryCount : 0,
+          retryLimit : 1,
+          success: function(data) {
+              var symmetryArray = data.rcsb_struct_symmetry;
+
+              me.icn3d.symmetryHash = {};
+              for(var i = 0, il = symmetryArray.length; i < il; ++i) {
+                  if(symmetryArray[i].symbol == 'C1') continue;
+                  var title = 'no title';
+                  if(symmetryArray[i].kind == "Pseudo Symmetry") {
+                      title = symmetryArray[i].symbol + ' (pseudo)';
+                  }
+                  else if(symmetryArray[i].kind == "Global Symmetry") {
+                      title = symmetryArray[i].symbol + ' (global)';
+                  }
+
+                  var rotation_axes = symmetryArray[i].rotation_axes;
+                  var axesArray = [];
+                  for(var j = 0, jl = rotation_axes.length; j < jl; ++j) {
+                      var tmpArray = [];
+                      var start = new THREE.Vector3(rotation_axes[j].start[0], rotation_axes[j].start[1], rotation_axes[j].start[2]);
+                      var end = new THREE.Vector3(rotation_axes[j].end[0], rotation_axes[j].end[1], rotation_axes[j].end[2]);
+                      tmpArray.push(start);
+                      tmpArray.push(end);
+
+                      // https://www.rcsb.org/pages/help/viewers/jmol_symmetry_view
+                      var colorAxis = me.getAxisColor(symmetryArray[i].symbol, rotation_axes[j].order);
+                      var colorPolygon = me.getPolygonColor(symmetryArray[i].symbol);
+                      tmpArray.push(colorAxis);
+                      tmpArray.push(colorPolygon);
+
+                      tmpArray.push(rotation_axes[j].order);
+
+                      axesArray.push(tmpArray);
+                  }
+
+                  me.icn3d.symmetryHash[title] = axesArray;
+              }
+
+              if(Object.keys(me.icn3d.symmetryHash).length == 0) {
+                  $("#" + me.pre + "dl_symmetry").html("<br>This structure has no symmetry.");
+              }
+              else {
+                  var html = "<option value='none'>None</option>", index = 0;
+                  for(var title in me.icn3d.symmetryHash) {
+                      var selected = (index == 0) ? 'selected' : '';
+                      html += "<option value=" + "'" + title + "' " + selected + ">" + title + "</option>";
+                      ++index;
+                  }
+
+                  $("#" + me.pre + "selectSymmetry").html(html);
+              }
+
+              if(me.deferredSymmetry !== undefined) me.deferredSymmetry.resolve();
+          },
+          error : function(xhr, textStatus, errorThrown ) {
+            this.tryCount++;
+            if (this.tryCount <= this.retryLimit) {
+                //try again
+                $.ajax(this);
+                return;
+            }
+            return;
+          }
+       });
+  }); // end of me.deferred = $.Deferred(function() {
+
+  return me.deferredSymmetry.promise();
 };
 
 iCn3DUI.prototype.applyCommandAnnotationsAndCddSiteBase = function (command) { var me = this; //"use strict";

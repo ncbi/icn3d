@@ -230,12 +230,13 @@ iCn3DUI.prototype.transformToOpmOri = function(pdbid, chainresiCalphaHash2, bRes
   if(chainresiCalphaHash2 !== undefined) {
       var chainresiCalphaHash1 = me.icn3d.getChainCalpha(me.icn3d.chains, me.icn3d.atoms, bResi_ori);
 
-      var coordsFrom = [], coordsTo = [];
       var bOneChain = (Object.keys(chainresiCalphaHash1.chainresiCalphaHash).length == 1 || Object.keys(chainresiCalphaHash2.chainresiCalphaHash).length == 1) ? true : false;
-      for(var chainresi in chainresiCalphaHash1.chainresiCalphaHash) {
-          if(chainresiCalphaHash2.chainresiCalphaHash.hasOwnProperty(chainresi)) {
-              var coord1 = chainresiCalphaHash1.chainresiCalphaHash[chainresi];
-              var coord2 = chainresiCalphaHash2.chainresiCalphaHash[chainresi];
+
+      var coordsFrom = [], coordsTo = [];
+      for(var chain in chainresiCalphaHash1.chainresiCalphaHash) {
+          if(chainresiCalphaHash2.chainresiCalphaHash.hasOwnProperty(chain)) {
+              var coord1 = chainresiCalphaHash1.chainresiCalphaHash[chain];
+              var coord2 = chainresiCalphaHash2.chainresiCalphaHash[chain];
 
               if(coord1.length == coord2.length || bOneChain) {
                   coordsFrom = coordsFrom.concat(coord1);
@@ -253,7 +254,7 @@ iCn3DUI.prototype.transformToOpmOri = function(pdbid, chainresiCalphaHash2, bRes
           me.icn3d.rmsd_supr = me.rmsd_supr(coordsFrom, coordsTo, n);
 
           // apply matrix for each atom
-          if(me.icn3d.rmsd_supr.rot !== undefined && me.icn3d.rmsd_supr.rsmd < 0.1) {
+          if(me.icn3d.rmsd_supr.rot !== undefined && me.icn3d.rmsd_supr.rmsd < 0.1) {
               var rot = me.icn3d.rmsd_supr.rot;
               var centerFrom = me.icn3d.rmsd_supr.trans1;
               var centerTo = me.icn3d.rmsd_supr.trans2;

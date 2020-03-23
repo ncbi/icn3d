@@ -1257,7 +1257,7 @@ iCn3DUI.prototype.loadAtomDataIn = function (data, id, type, seqalign, alignType
         me.transformToOpmOri(id, chainCalphaHash2);
     }
     else if(type === 'mmdbid') {
-        var bResi_ori = true;
+        var bResi_ori = false; // true
         me.transformToOpmOri(id, chainCalphaHash2, bResi_ori);
     }
 

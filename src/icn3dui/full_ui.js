@@ -13,7 +13,7 @@ if (!$.ui.dialog.prototype._makeDraggableBase) {
 }
 
 var iCn3DUI = function(cfg) { var me = this; //"use strict";
-    this.REVISION = '2.12.1';
+    this.REVISION = '2.13.0';
 
     me.bFullUi = true;
 
@@ -3068,6 +3068,12 @@ iCn3DUI.prototype = {
         var firstAtom = me.icn3d.getFirstAtomObj(atomsHash);
         var oriStyle = firstAtom.style;
 
+        if(!me.icn3d.dAtoms.hasOwnProperty(firstAtom.serial)) {
+            // add membrane to displayed atoms if the membrane is not part of the display
+            me.icn3d.dAtoms = me.icn3d.unionHash(me.icn3d.dAtoms, atomsHash);
+            oriStyle = 'nothing';
+        }
+
         for(var i in atomsHash) {
             var atom = me.icn3d.atoms[i];
 
@@ -4637,6 +4643,27 @@ iCn3DUI.prototype = {
            me.setLogCmd('set axis off', true);
 
            //$( ".icn3d-accordion" ).accordion(me.closeAc);
+        });
+    },
+
+    clkMn6_symmetry: function() { var me = this; //"use strict";
+        $("#" + me.pre + "mn6_symmetry").click(function(e) {
+           me.retrieveSymmetry(Object.keys(me.icn3d.structures)[0]);
+
+           me.openDialog(me.pre + 'dl_symmetry', 'Symmetry');
+        });
+    },
+
+    clkMn6_applysymmetry: function() { var me = this; //"use strict";
+        $("#" + me.pre + "applysymmetry").click(function(e) {
+           var title = $("#" + me.pre + "selectSymmetry" ).val();
+           me.icn3d.symmetrytitle = (title === 'none') ? undefined : title;
+
+           //if(title !== 'none') me.icn3d.applySymmetry(title);
+
+           me.icn3d.draw();
+
+           me.setLogCmd('symmetry ' + title, true);
         });
     },
 
@@ -6930,6 +6957,8 @@ iCn3DUI.prototype = {
         me.clkMn6_showslabNo();
         me.clkMn6_showaxisYes();
         me.clkMn6_showaxisNo();
+        me.clkMn6_symmetry();
+        me.clkMn6_applysymmetry();
         me.clkMn6_hbondsYes();
         me.clkMn6_hbondsNo();
         //me.clkMn6_saltbridgeYes();
