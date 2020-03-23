@@ -711,14 +711,15 @@ iCn3D.prototype.setSsbond = function (structure2cys_resid) { var me = this; //"u
 };
 
 iCn3D.prototype.getChainCalpha = function (chains, atoms, bResi_ori) { var me = this; //"use strict";
-    var chainresiCalphaHash = {};
+    var chainCalphaHash = {};
 
     for(var chainid in chains) {
         var serialArray = Object.keys(chains[chainid]);
 
         var calphaArray = [];
-        //var cnt = 0;
+        var cnt = 0;
         var lastResi = 0;
+        var bBaseResi = true, baseResi = 1;
         for(var i = 0, il = serialArray.length; i < il; ++i) {
             var atom = atoms[serialArray[i]];
             if( (this.proteins.hasOwnProperty(serialArray[i]) && atom.name == "CA")
@@ -731,21 +732,28 @@ iCn3D.prototype.getChainCalpha = function (chains, atoms, bResi_ori) { var me = 
                 }
 
                 var resi = (bResi_ori !== undefined && bResi_ori) ? atom.resi_ori : atom.resi; // MMDB uses resi_ori for PDB residue number
-                chainresiCalphaHash[atom.chain + '_' + resi] = atom.coord.clone();
 
-                //calphaArray.push(atom.coord.clone());
-                //++cnt;
+                if(bBaseResi) {
+                    baseResi = resi;
+                    bBaseResi = false;
+                }
+                resi = resi - baseResi + 1;
+
+                //chainresiCalphaHash[atom.chain + '_' + resi] = atom.coord.clone();
+
+                calphaArray.push(atom.coord.clone());
+                ++cnt;
 
                 lastResi = atom.resi;
             }
         }
 
-        //if(cnt > 0) {
+        if(cnt > 0) {
             //var chainid = atoms[serialArray[0]].structure + '_' + atoms[serialArray[0]].chain;
-        //    var chain = atoms[serialArray[0]].chain;
-        //    chainCalphaHash[chain] = calphaArray;
-        //}
+            var chain = atoms[serialArray[0]].chain;
+            chainCalphaHash[chain] = calphaArray;
+        }
     }
 
-    return {'chainresiCalphaHash': chainresiCalphaHash, 'center': this.center.clone()};
+    return {'chainresiCalphaHash': chainCalphaHash, 'center': this.center.clone()};
 };

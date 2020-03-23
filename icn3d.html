@@ -1015,12 +1015,14 @@ In the dialog Select -&gt; Advanced, users can use simple specification to selec
 <tr><td valign='top'><span class="indent">yes:</span></td>                <td valign='top'>set assembly on</td> <td valign='top'>me.icn3d.bAssembly = true;</td></tr>
 <tr><td valign='top'><span class="indent">no:</span></td>                 <td valign='top'>set assembly off</td> <td valign='top'>me.icn3d.bAssembly = false;</td></tr>
 
-<tr><td colspan="3"><br>j) View -&gt; Distance</td> </tr>
+<tr><td valign='top'>j) View -&gt; Symmetry:</td>  <td valign='top'>symmetry C6 (global)</td> <td valign='top'>retrieveSymmetry; applySymmetry</td></tr>
+
+<tr><td colspan="3"><br>k) View -&gt; Distance</td> </tr>
 <tr><td valign='top' rowspan="2"><span class="indent">Measure:</span></td>            <td valign='top'>add label [label text] | x [x] y [y] z [z] | size [label size] | color [FF0000] | background [FFFFFF]</td> <td valign='top'><a href="#addLabel">addLabel</a></td></tr>
 <tr>                                                               <td valign='top'>add line | x1 [x1] y1 [y1] z1 [z1] | x2 [x2] y2 [y2] z2 [z2] | color [FFFF00] | dashed [true]</td> <td valign='top'><a href="#addLine">addLine</a></td></tr>
 <tr><td valign='top'><span class="indent">Hide:</span></td>            <td valign='top'>set lines off</td> <td valign='top'>me.icn3d.labels['distance'] = []; me.icn3d.lines['distance'] = [];</td></tr>
 
-<tr><td colspan="3"><br>k) View -&gt; Label</td> </tr>
+<tr><td colspan="3"><br>l) View -&gt; Label</td> </tr>
 <tr><td valign='top'><span class="indent">by Picking Atoms:</span></td>            <td valign='top'>add label [label text] | x [x] y [y] z [z] | size [label size] | color [FF0000] | background [FFFFFF]</td> <td valign='top'><a href="#addLabel">addLabel</a></td></tr>
 <tr><td valign='top'><span class="indent">per Selection:</span></td>            <td valign='top'>add label [label text] | size [label size] | color [FF0000] | background [FFFFFF]</td> <td valign='top'><a href="#addLabel">addLabel</a></td></tr>
 <tr><td valign='top'><span class="indent">per Atom:</span></td>            <td valign='top'>add atom labels</td> <td valign='top'><a href="#addAtomLabels">addAtomLabels</a></td></tr>
@@ -1029,7 +1031,7 @@ In the dialog Select -&gt; Advanced, users can use simple specification to selec
 <tr><td valign='top'><span class="indent">N- & C- Termini:</span></td>            <td valign='top'>add terminal labels</td> <td valign='top'><a href="#addTerminiLabels">addTerminiLabels</a></td></tr>
 <tr><td valign='top'><span class="indent">Remove:</span></td>            <td valign='top'>set labels off</td> <td valign='top'><a href="#addChainLabels">addChainLabels</a></td></tr>
 
-<tr><td colspan="3"><br>l) View -&gt; Label Scale</td> </tr>
+<tr><td colspan="3"><br>m) View -&gt; Label Scale</td> </tr>
 <tr><td valign='top'><span class="indent">0.1:</span></td>                <td valign='top'>set label scale 0.1</td> <td valign='top'>me.icn3d.labelScale=0.1</td></tr>
 <tr><td valign='top'><span class="indent">0.2:</span></td>                <td valign='top'>set label scale 0.2</td> <td valign='top'>me.icn3d.labelScale=0.2</td></tr>
 <tr><td valign='top'><span class="indent">0.4:</span></td>                <td valign='top'>set label scale 0.4</td> <td valign='top'>me.icn3d.labelScale=0.4</td></tr>
@@ -1042,7 +1044,7 @@ In the dialog Select -&gt; Advanced, users can use simple specification to selec
 <tr><td valign='top'><span class="indent">8.0:</span></td>                <td valign='top'>set label scale 8.0</td> <td valign='top'>me.icn3d.labelScale=8.0</td></tr>
 <tr><td valign='top'><span class="indent">10.0:</span></td>                <td valign='top'>set label scale 10.0</td> <td valign='top'>me.icn3d.labelScale=10.0</td></tr>
 
-<tr><td colspan="3"><br>m) View -&gt; Rotate</td> </tr>
+<tr><td colspan="3"><br>n) View -&gt; Rotate</td> </tr>
 
 <tr><td colspan="3"><br><span class="indent">m1) Rotate 90&deg;</span></td> </tr>
 <tr><td valign='top'><span class="indent">X-axis:</span></td>              <td valign='top'>rotate x</td> <td valign='top'><a href="#rotStruc">setRotation</a></td></tr>
@@ -1055,31 +1057,31 @@ In the dialog Select -&gt; Advanced, users can use simple specification to selec
 <tr><td valign='top'><span class="indent">Rotate Up:</span></td>              <td valign='top'>rotate up</td> <td valign='top'><a href="#rotStruc">rotStruc</a></td></tr>
 <tr><td valign='top'><span class="indent">Rotate Down:</span></td>              <td valign='top'>rotate down</td> <td valign='top'><a href="#rotStruc">rotStruc</a></td></tr>
 
-<tr><td colspan="3"><br>n) View -&gt; Camera</td> </tr>
+<tr><td colspan="3"><br>o) View -&gt; Camera</td> </tr>
 <tr><td valign='top'><span class="indent">Perspective:</span></td>        <td valign='top'>set camera perspective</td> <td valign='top'>me.icn3d.opts['camera'] = 'perspective';</td></tr>
 <tr><td valign='top'><span class="indent">Orthographic:</span></td>       <td valign='top'>set camera orthographic</td> <td valign='top'>me.icn3d.opts['camera'] = 'orthographic';</td></tr>
 
-<tr><td colspan="3"><br>o) View -&gt; Fog for Selection</td> </tr>
+<tr><td colspan="3"><br>p) View -&gt; Fog for Selection</td> </tr>
 <tr><td valign='top'><span class="indent">On:</span></td>                <td valign='top'>set fog on</td> <td valign='top'>me.icn3d.opts['fog'] = 'yes';</td></tr>
 <tr><td valign='top'><span class="indent">Off:</span></td>                 <td valign='top'>set fog off</td> <td valign='top'>me.icn3d.opts['fog'] = 'no';</td></tr>
 
-<tr><td colspan="3"><br>p) View -&gt; Slab for Selection</td> </tr>
+<tr><td colspan="3"><br>q) View -&gt; Slab for Selection</td> </tr>
 <tr><td valign='top'><span class="indent">On:</span></td>                <td valign='top'>set slab on</td> <td valign='top'>me.icn3d.opts['slab'] = 'yes';</td></tr>
 <tr><td valign='top'><span class="indent">Off:</span></td>                 <td valign='top'>set slab off</td> <td valign='top'>me.icn3d.opts['slab'] = 'no';</td></tr>
 
-<tr><td colspan="3"><br>q) View -&gt; XYZ-axes</td> </tr>
+<tr><td colspan="3"><br>r) View -&gt; XYZ-axes</td> </tr>
 <tr><td valign='top'><span class="indent">Show:</span></td>                <td valign='top'>set axis on</td> <td valign='top'>me.icn3d.opts['axis'] = 'yes';</td></tr>
 <tr><td valign='top'><span class="indent">Hide:</span></td>                 <td valign='top'>set axis off</td> <td valign='top'>me.icn3d.opts['axis'] = 'no';</td></tr>
 
-<tr><td colspan="3"><br>r) View -&gt; Reset:</td> </tr>
+<tr><td colspan="3"><br>s) View -&gt; Reset:</td> </tr>
 <tr><td valign='top'><span class="indent">All:</span></td>                <td valign='top'>reset</td> <td valign='top'><a href="#renderFinalStep">renderFinalStep</a></td></tr>
 <tr><td valign='top'><span class="indent">Orientation:</span></td>                 <td valign='top'>reset orientation</td> <td valign='top'><a href="#resetOrientation">resetOrientation</a></td></tr>
 
-<tr><td valign='top'>s) View -&gt; Undo:</td>     <td valign='top'>back</td> <td valign='top'><a href="#back">back</a></td></tr>
+<tr><td valign='top'>t) View -&gt; Undo:</td>     <td valign='top'>back</td> <td valign='top'><a href="#back">back</a></td></tr>
 
-<tr><td valign='top'>t) View -&gt; Redo:</td>     <td valign='top'>forward</td> <td valign='top'><a href="#forward">forward</a></td></tr>
+<tr><td valign='top'>u) View -&gt; Redo:</td>     <td valign='top'>forward</td> <td valign='top'><a href="#forward">forward</a></td></tr>
 
-<tr><td valign='top'>u) View -&gt; Full Screen:</td>     <td valign='top'>[no command available]</td> <td valign='top'></td></tr>
+<tr><td valign='top'>v) View -&gt; Full Screen:</td>     <td valign='top'>[no command available]</td> <td valign='top'></td></tr>
 
 </tbody></table>
 
@@ -2094,6 +2096,9 @@ Update the highlight of sequences in the annotation window according to the curr
 
 <a name="log"></a>
 <h2>Change Log:<img src="https://www.ncbi.nlm.nih.gov/Structure/IMG/spacer.gif" width="25" height="1" border="0"><a href="#Top"><img src="https://www.ncbi.nlm.nih.gov/Structure/IMG/arrowup_blue.gif" width="12" height="12" border="0" alt="back to top"></a></h2>
+<a href="https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.13.0.zip">icn3d-2.13.0</a> was release on March 23, 2020. Added protein symmetry view.
+<br><br>
+
 <a href="https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.12.1.zip">icn3d-2.12.1</a> was release on March 12, 2020. Fixed a bug on hydrogen bonds between residues with the same residue number but different chain names. Removed duplicated names in the menu of "Defined Sets".
 <br><br>
 

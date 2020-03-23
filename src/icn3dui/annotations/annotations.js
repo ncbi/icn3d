@@ -738,7 +738,7 @@ iCn3DUI.prototype.getCombinedSequenceData = function(name, residArray, index) { 
     var pos = residArray[0].lastIndexOf('_');
     var firstChainid = residArray[0].substr(0, pos);
 
-    var sid = (me.cfg.mmdbid !== undefined) ? me.chainid2sid[firstChainid] : undefined;
+    var sid = (me.cfg.mmdbid !== undefined && me.chainid2sid !== undefined) ? me.chainid2sid[firstChainid] : undefined;
     if(sid !== undefined) {
         chemName = "<b><a class='icn3d-blue' href='https://pubchem.ncbi.nlm.nih.gov/substance/" + sid + "#section=2D-Structure' target='_blank'>" + name + " <img src='https://pubchem.ncbi.nlm.nih.gov/image/imgsrv.fcgi?sid=" + sid + "'></a></b>";
     }

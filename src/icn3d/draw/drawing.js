@@ -4,25 +4,31 @@
 
 // modified from iview (http://istar.cse.cuhk.edu.hk/iview/)
 iCn3D.prototype.createSphere = function (atom, defaultRadius, forceDefault, scale, bHighlight) { var me = this; //"use strict";
-    var mesh;
-
     if(defaultRadius === undefined) defaultRadius = 0.8;
     if(forceDefault === undefined) forceDefault = false;
-    if(scale === undefined) scale = 1.0;
 
     var radius = (this.vdwRadii[atom.elem.toUpperCase()] || defaultRadius);
+    if(forceDefault) {
+        radius = defaultRadius;
+        scale = 1;
+    }
+
+    this.createSphereBase(atom.coord, atom.color, radius, scale, bHighlight);
+};
+
+iCn3D.prototype.createSphereBase = function (pos, color, radius, scale, bHighlight) { var me = this; //"use strict";
+    var mesh;
+
+    //if(defaultRadius === undefined) defaultRadius = 0.8;
+    //if(forceDefault === undefined) forceDefault = false;
+    if(scale === undefined) scale = 1.0;
+
+    //var radius = (this.vdwRadii[atom.elem.toUpperCase()] || defaultRadius);
 
     if(bHighlight === 2) {
-      //if(scale > 0.9) { // sphere
-      //  scale = 1.5;
-      //}
-      //else if(scale < 0.5) { // dot
-      //  scale = 1.0;
-      //}
-
       scale *= 1.5;
 
-      var color = this.hColor;
+      color = this.hColor;
 
       mesh = new THREE.Mesh(this.sphereGeometry, new THREE.MeshPhongMaterial({ transparent: true, opacity: 0.5, specular: this.frac, shininess: 30, emissive: 0x000000, color: color }));
 
@@ -33,33 +39,32 @@ iCn3D.prototype.createSphere = function (atom, defaultRadius, forceDefault, scal
     else if(bHighlight === 1) {
       mesh = new THREE.Mesh(this.sphereGeometry, this.matShader);
 
-      mesh.scale.x = mesh.scale.y = mesh.scale.z = forceDefault ? defaultRadius :  radius * (scale ? scale : 1);
-      mesh.position.copy(atom.coord);
+      mesh.scale.x = mesh.scale.y = mesh.scale.z = radius * (scale ? scale : 1);
+      mesh.position.copy(pos);
       mesh.renderOrder = this.renderOrderPicking;
-      //this.mdlPicking.add(mesh);
       this.mdl.add(mesh);
     }
     else {
-      if(atom.color === undefined) {
-          atom.color = this.defaultAtomColor;
+      if(color === undefined) {
+          color = this.defaultAtomColor;
       }
 
-      var color = atom.color;
+      //var color = atom.color;
 
       mesh = new THREE.Mesh(this.sphereGeometry, new THREE.MeshPhongMaterial({ specular: this.frac, shininess: 30, emissive: 0x000000, color: color }));
-      mesh.scale.x = mesh.scale.y = mesh.scale.z = forceDefault ? defaultRadius :  radius * (scale ? scale : 1);
-      mesh.position.copy(atom.coord);
+      mesh.scale.x = mesh.scale.y = mesh.scale.z = radius * (scale ? scale : 1);
+      mesh.position.copy(pos);
 
       if(this.bImpo) {
-          this.posArraySphere.push(atom.coord.x);
-          this.posArraySphere.push(atom.coord.y);
-          this.posArraySphere.push(atom.coord.z);
+          this.posArraySphere.push(pos.x);
+          this.posArraySphere.push(pos.y);
+          this.posArraySphere.push(pos.z);
 
-          this.colorArraySphere.push(atom.color.r);
-          this.colorArraySphere.push(atom.color.g);
-          this.colorArraySphere.push(atom.color.b);
+          this.colorArraySphere.push(color.r);
+          this.colorArraySphere.push(color.g);
+          this.colorArraySphere.push(color.b);
 
-          var realRadius = forceDefault ? defaultRadius :  radius * (scale ? scale : 1);
+          var realRadius = radius * (scale ? scale : 1);
           this.radiusArraySphere.push(realRadius);
 
           if(this.cnt <= this.maxatomcnt) this.mdl_ghost.add(mesh);
@@ -68,8 +73,6 @@ iCn3D.prototype.createSphere = function (atom, defaultRadius, forceDefault, scal
           this.mdl.add(mesh);
       }
     }
-
-    //this.mdl.add(mesh);
 
     if(bHighlight === 1 || bHighlight === 2) {
         if(this.bImpo) {

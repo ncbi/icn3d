@@ -617,6 +617,11 @@ iCn3D.prototype.applyOtherOptions = function (options) { var me = this; //"use s
         }
     }
 
+    // symmetry axes and polygon
+    if(this.symmetryHash !== undefined && this.symmetrytitle !== undefined) {
+        this.applySymmetry(this.symmetrytitle);
+    }
+
     this.applyCenterOptions(options);
 
     switch (options.axis.toLowerCase()) {

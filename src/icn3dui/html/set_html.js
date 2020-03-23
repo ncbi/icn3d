@@ -389,6 +389,8 @@ iCn3DUI.prototype.setMenu1_base = function() { var me = this; //"use strict";
 
     html += me.getLink('mn1_sharelink', 'Share Link');
 
+    html += "<li><br/></li>";
+
     html += "</ul>";
 
     return html;
@@ -566,6 +568,8 @@ iCn3DUI.prototype.setMenu2b_base = function() { var me = this; //"use strict";
 
           html += "</ul>";
           html += "</li>";
+
+          html += me.getLink('mn6_symmetry', 'Symmetry');
         }
     }
 
@@ -1427,6 +1431,12 @@ iCn3DUI.prototype.setDialogs = function() { var me = this; //"use strict";
     html += "Click in the input box to use the color picker:<br><br> ";
     html += "Custom Color: " + me.inputTextStr + "id='" + me.pre + "colorcustom' value='FF0000' size=8> ";
     html += me.buttonStr + "applycustomcolor'>Apply</button>";
+    html += "</div>";
+
+    html += me.divStr + "dl_symmetry'><br>";
+    html += me.divNowrapStr + "Symmetry: <select id='" + me.pre + "selectSymmetry'>";
+    html += "</select>&nbsp;&nbsp;&nbsp;";
+    html += me.buttonStr + "applysymmetry'>Apply</button></div>";
     html += "</div>";
 
     html += me.divStr + "dl_hbonds'>";
