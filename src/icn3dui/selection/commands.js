@@ -637,6 +637,12 @@ iCn3DUI.prototype.retrieveSymmetry = function (pdbid) { var me = this; //"use st
           success: function(data) {
               var symmetryArray = data.rcsb_struct_symmetry;
 
+              if(me.icn3d.rmsd_supr !== undefined && me.icn3d.rmsd_supr.rot !== undefined) {
+                  var rot = me.icn3d.rmsd_supr.rot;
+                  var centerFrom = me.icn3d.rmsd_supr.trans1;
+                  var centerTo = me.icn3d.rmsd_supr.trans2;
+              }
+
               me.icn3d.symmetryHash = {};
               for(var i = 0, il = symmetryArray.length; i < il; ++i) {
                   if(symmetryArray[i].symbol == 'C1') continue;
@@ -654,6 +660,13 @@ iCn3DUI.prototype.retrieveSymmetry = function (pdbid) { var me = this; //"use st
                       var tmpArray = [];
                       var start = new THREE.Vector3(rotation_axes[j].start[0], rotation_axes[j].start[1], rotation_axes[j].start[2]);
                       var end = new THREE.Vector3(rotation_axes[j].end[0], rotation_axes[j].end[1], rotation_axes[j].end[2]);
+
+                      // apply matrix for each atom
+                      if(me.icn3d.rmsd_supr !== undefined && me.icn3d.rmsd_supr.rot !== undefined) {
+                          start = me.icn3d.transformMemPro(start, rot, centerFrom, centerTo);
+                          end = me.icn3d.transformMemPro(end, rot, centerFrom, centerTo);
+                      }
+
                       tmpArray.push(start);
                       tmpArray.push(end);
 
