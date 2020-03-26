@@ -13,7 +13,7 @@ if (!$.ui.dialog.prototype._makeDraggableBase) {
 }
 
 var iCn3DUI = function(cfg) { var me = this; //"use strict";
-    this.REVISION = '2.13.0';
+    this.REVISION = '2.13.1';
 
     me.bFullUi = true;
 
@@ -956,14 +956,27 @@ iCn3DUI.prototype = {
 
     renderStructure: function () {  var me = this; //"use strict";
       if(me.bInitial) {
+          jQuery.extend(me.icn3d.opts, me.opts);
+
+          if(me.icn3d.bOpm && me.cfg.align !== undefined) { // show membrane
+              var resid = me.selectedPdbid + '_MEM_1';
+              for(var i in me.icn3d.residues[resid]) {
+                  var atom = me.icn3d.atoms[i];
+                  atom.style = 'stick';
+                  atom.color = me.icn3d.atomColors[atom.name];
+                  me.icn3d.atomPrevColors[i] = atom.color;
+
+                  me.icn3d.dAtoms[i] = 1;
+              }
+          }
+
           if(me.cfg.command !== undefined && me.cfg.command !== '') {
               me.icn3d.bRender = false;
 
-              jQuery.extend(me.icn3d.opts, me.opts);
               me.icn3d.draw();
           }
           else {
-              jQuery.extend(me.icn3d.opts, me.opts);
+
               me.icn3d.draw();
           }
 

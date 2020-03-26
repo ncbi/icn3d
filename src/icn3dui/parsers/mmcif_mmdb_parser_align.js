@@ -124,61 +124,71 @@ iCn3DUI.prototype.downloadAlignment = function (align) { var me = this; //"use s
 
     chained.done(function( data ) { // url
         if (data.atoms !== undefined) {
-            me.icn3d.init();
+            me.deferredOpm = $.Deferred(function() {
+                //var mmdbidArray = me.inputid.split('_');
+                me.mmdbidArray = [];
+                for(var i = 0, il = data.alignedStructures[0].length; i < il; ++i) {
+                    me.mmdbidArray.push(data.alignedStructures[0][i].pdbId);
+                }
 
-            me.loadAtomDataIn(data, undefined, 'align', seqalign);
+                me.loadOpmDataForAlign(data, seqalign, me.mmdbidArray);
+            });
 
-            if(me.cfg.align === undefined && Object.keys(me.icn3d.structures).length == 1) {
-                $("#" + me.pre + "alternateWrapper").hide();
-            }
-
-            // show all
-            var allAtoms = {};
-            for(var i in me.icn3d.atoms) {
-                allAtoms[i] = 1;
-            }
-            me.icn3d.dAtoms = allAtoms;
-            me.icn3d.hAtoms = allAtoms;
-
-            me.icn3d.setAtomStyleByOptions(me.opts);
-            // change the default color to "Identity"
-            me.icn3d.setColorByOptions(me.opts, me.icn3d.atoms);
-
-            //var mmdbidArray = me.inputid.split('_');
-            me.mmdbidArray = [];
-            for(var i = 0, il = data.alignedStructures[0].length; i < il; ++i) {
-                me.mmdbidArray.push(data.alignedStructures[0][i].pdbId);
-            }
-
-            me.renderStructure();
-
-            if(me.cfg.rotate !== undefined) me.rotStruc(me.cfg.rotate, true);
-
-            me.html2ddgm = '';
-
-            //setTimeout(function(){
-            //    me.set2DDiagramsForAlign(me.mmdbidArray[0].toUpperCase(), me.mmdbidArray[1].toUpperCase());
-            //}, 0);
-
-            // by default, open the seq alignment window
-            //if(me.cfg.show2d !== undefined && me.cfg.show2d) me.openDialog(me.pre + 'dl_2ddgm', 'Interactions');
-            if(me.cfg.showalignseq !== undefined && me.cfg.showalignseq) {
-                me.openDialog(me.pre + 'dl_alignment', 'Select residues in aligned sequences');
-            }
-
-            if(me.cfg.show2d !== undefined && me.cfg.show2d && me.bFullUi) {
-                me.set2DDiagramsForAlign(me.mmdbidArray[0].toUpperCase(), me.mmdbidArray[1].toUpperCase());
-            }
-
-            //if(me.cfg.showseq !== undefined && me.cfg.showseq) me.openDialog(me.pre + 'dl_selectresidues', 'Select residues in sequences');
-
-            if(me.deferred !== undefined) me.deferred.resolve(); if(me.deferred2 !== undefined) me.deferred2.resolve();
+            return me.deferredOpm.promise();
         }
         else {
             alert('invalid atoms data.');
             return false;
         }
     });
+};
+
+iCn3DUI.prototype.downloadAlignmentPart2 = function (data, seqalign, chainresiCalphaHash2) { var me = this; //"use strict";
+    //me.icn3d.init();
+    me.loadAtomDataIn(data, undefined, 'align', seqalign);
+
+    if(me.cfg.align === undefined && Object.keys(me.icn3d.structures).length == 1) {
+        $("#" + me.pre + "alternateWrapper").hide();
+    }
+
+    // show all
+    var allAtoms = {};
+    for(var i in me.icn3d.atoms) {
+        allAtoms[i] = 1;
+    }
+    me.icn3d.dAtoms = allAtoms;
+    me.icn3d.hAtoms = allAtoms;
+
+    me.icn3d.setAtomStyleByOptions(me.opts);
+    // change the default color to "Identity"
+    me.icn3d.setColorByOptions(me.opts, me.icn3d.atoms);
+
+    // memebrane is determined by one structure. But transform both structures
+    if(chainresiCalphaHash2 !== undefined) me.transformToOpmOriForAlign(me.selectedPdbid, chainresiCalphaHash2, true);
+
+    me.renderStructure();
+
+    if(me.cfg.rotate !== undefined) me.rotStruc(me.cfg.rotate, true);
+
+    me.html2ddgm = '';
+
+    //setTimeout(function(){
+    //    me.set2DDiagramsForAlign(me.mmdbidArray[0].toUpperCase(), me.mmdbidArray[1].toUpperCase());
+    //}, 0);
+
+    // by default, open the seq alignment window
+    //if(me.cfg.show2d !== undefined && me.cfg.show2d) me.openDialog(me.pre + 'dl_2ddgm', 'Interactions');
+    if(me.cfg.showalignseq !== undefined && me.cfg.showalignseq) {
+        me.openDialog(me.pre + 'dl_alignment', 'Select residues in aligned sequences');
+    }
+
+    if(me.cfg.show2d !== undefined && me.cfg.show2d && me.bFullUi) {
+        me.set2DDiagramsForAlign(me.mmdbidArray[0].toUpperCase(), me.mmdbidArray[1].toUpperCase());
+    }
+
+    //if(me.cfg.showseq !== undefined && me.cfg.showseq) me.openDialog(me.pre + 'dl_selectresidues', 'Select residues in sequences');
+
+    if(me.deferred !== undefined) me.deferred.resolve(); if(me.deferred2 !== undefined) me.deferred2.resolve();
 };
 
 iCn3DUI.prototype.downloadChainAlignment = function (chainalign) { var me = this; //"use strict";
