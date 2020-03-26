@@ -26,7 +26,8 @@ iCn3DUI.prototype.downloadPdb = function (pdbid) { var me = this; //"use strict"
       success: function(data) {
           //me.loadPdbData(data, pdbid);
           me.deferredOpm = $.Deferred(function() {
-              me.loadPdbOpmData(data, pdbid);
+              //me.loadPdbOpmData(data, pdbid);
+              me.loadOpmData(data, pdbid, undefined, 'pdb');
           });
 
           return me.deferredOpm.promise();
@@ -226,7 +227,48 @@ iCn3DUI.prototype.addMemAtoms = function(dmem, pdbid, dxymax) { var me = this; /
       }
 };
 
-iCn3DUI.prototype.transformToOpmOri = function(pdbid, chainresiCalphaHash2, bResi_ori) { var me = this; //"use strict";
+iCn3DUI.prototype.transformToOpmOri = function(pdbid) { var me = this; //"use strict";
+  // apply matrix for each atom
+  if(me.icn3d.rmsd_supr !== undefined && me.icn3d.rmsd_supr.rot !== undefined) {
+      var rot = me.icn3d.rmsd_supr.rot;
+      var centerFrom = me.icn3d.rmsd_supr.trans1;
+      var centerTo = me.icn3d.rmsd_supr.trans2;
+      //var rsmd = me.icn3d.rmsd_supr.rsmd;
+
+      var dxymaxsq = 0;
+      for(var i in me.icn3d.atoms) {
+        var atom = me.icn3d.atoms[i];
+
+        atom.coord = me.icn3d.transformMemPro(atom.coord, rot, centerFrom, centerTo);
+        var xysq = atom.coord.x * atom.coord.x + atom.coord.y * atom.coord.y;
+        if(Math.abs(atom.coord.z) <= 25 && xysq > dxymaxsq) {
+            dxymaxsq = xysq;
+        }
+      }
+
+      //me.icn3d.center = chainresiCalphaHash2.center;
+      //me.icn3d.oriCenter = me.icn3d.center.clone();
+
+      // add membranes
+      me.addMemAtoms(me.icn3d.halfBilayerSize, pdbid, Math.sqrt(dxymaxsq));
+
+      // no rotation
+      me.icn3d.bStopRotate = true;
+
+      me.icn3d.bOpm = true;
+
+      // show transmembrane features
+      $("#" + me.pre + "togglememli").show();
+      $("#" + me.pre + "adjustmemli").show();
+      $("#" + me.pre + "selectplaneli").show();
+      $("#" + me.pre + "anno_transmemli").show();
+  }
+  else {
+      me.icn3d.bOpm = false;
+  }
+};
+
+iCn3DUI.prototype.transformToOpmOriForAlign = function(pdbid, chainresiCalphaHash2, bResi_ori) { var me = this; //"use strict";
   if(chainresiCalphaHash2 !== undefined) {
       var chainresiCalphaHash1 = me.icn3d.getChainCalpha(me.icn3d.chains, me.icn3d.atoms, bResi_ori);
 
@@ -367,10 +409,10 @@ iCn3DUI.prototype.realign = function() { var me = this; //"use strict";
     }
 };
 
-iCn3DUI.prototype.loadPdbData = function(data, pdbid, bOpm, chainresiCalphaHash2) { var me = this; //"use strict";
+iCn3DUI.prototype.loadPdbData = function(data, pdbid, bOpm) { var me = this; //"use strict";
       me.icn3d.loadPDB(data, pdbid, bOpm); // defined in the core library
 
-      me.transformToOpmOri(pdbid, chainresiCalphaHash2);
+      me.transformToOpmOri(pdbid);
 
       if(me.icn3d.biomtMatrices !== undefined && me.icn3d.biomtMatrices.length > 1) {
         $("#" + me.pre + "assemblyWrapper").show();
@@ -558,12 +600,12 @@ iCn3DUI.prototype.loadPdbDataBase = function(data, calphaonly, bOpm) { var me = 
     });
 };
 
+/*
 iCn3DUI.prototype.loadPdbOpmData = function(data, pdbid) { var me = this; //"use strict";
     var url, dataType;
 
-    url = "https://opm-assets.storage.googleapis.com/pdb/" + pdbid.toLowerCase()+ ".pdb";
-
-    dataType = "text";
+    url = "https://www.ncbi.nlm.nih.gov/Structure/mmdb/mmdb_strview.cgi?v=2&program=icn3d&opm&uid=" + pdbid.toLowerCase();
+    dataType = "jsonp";
 
     $.ajax({
       url: url,
@@ -573,8 +615,11 @@ iCn3DUI.prototype.loadPdbOpmData = function(data, pdbid) { var me = this; //"use
       retryLimit : 1,
       success: function(opmdata) {
           me.icn3d.bOpm = true;
-          var bVector = true;
-          var chainresiCalphaHash = me.icn3d.loadPDB(opmdata, pdbid, me.icn3d.bOpm, bVector); // defined in the core library
+
+          //var bVector = true;
+          //var chainresiCalphaHash = me.icn3d.loadPDB(opmdata, pdbid, me.icn3d.bOpm, bVector); // defined in the core library
+
+          me.setOpmData(opmdata);
 
           $("#" + me.pre + "selectplane_z1").val(me.icn3d.halfBilayerSize);
           $("#" + me.pre + "selectplane_z2").val(-me.icn3d.halfBilayerSize);
@@ -582,8 +627,8 @@ iCn3DUI.prototype.loadPdbOpmData = function(data, pdbid) { var me = this; //"use
           $("#" + me.pre + "extra_mem_z").val(me.icn3d.halfBilayerSize);
           $("#" + me.pre + "intra_mem_z").val(-me.icn3d.halfBilayerSize);
 
-          me.icn3d.init(); // remove all previously loaded data
-          me.loadPdbData(data, pdbid, undefined, chainresiCalphaHash);
+          //me.icn3d.init(); // remove all previously loaded data
+          me.loadPdbData(data, pdbid, undefined);
 
           if(me.deferredOpm !== undefined) me.deferredOpm.resolve();
       },
@@ -601,13 +646,14 @@ iCn3DUI.prototype.loadPdbOpmData = function(data, pdbid) { var me = this; //"use
       }
     });
 };
+*/
 
+/*
 iCn3DUI.prototype.loadMmtfOpmData = function(data, pdbid, bFull) { var me = this; //"use strict";
     var url, dataType;
 
-    url = "https://opm-assets.storage.googleapis.com/pdb/" + pdbid.toLowerCase()+ ".pdb";
-
-    dataType = "text";
+    url = "https://www.ncbi.nlm.nih.gov/Structure/mmdb/mmdb_strview.cgi?v=2&program=icn3d&opm&uid=" + pdbid.toLowerCase();
+    dataType = "jsonp";
 
     $.ajax({
       url: url,
@@ -617,8 +663,11 @@ iCn3DUI.prototype.loadMmtfOpmData = function(data, pdbid, bFull) { var me = this
       retryLimit : 1,
       success: function(opmdata) {
           me.icn3d.bOpm = true;
-          var bVector = true;
-          var chainresiCalphaHash = me.icn3d.loadPDB(opmdata, pdbid, me.icn3d.bOpm, bVector); // defined in the core library
+
+          //var bVector = true;
+          //var chainresiCalphaHash = me.icn3d.loadPDB(opmdata, pdbid, me.icn3d.bOpm, bVector); // defined in the core library
+
+          me.setOpmData(opmdata);
 
           $("#" + me.pre + "selectplane_z1").val(me.icn3d.halfBilayerSize);
           $("#" + me.pre + "selectplane_z2").val(-me.icn3d.halfBilayerSize);
@@ -626,8 +675,8 @@ iCn3DUI.prototype.loadMmtfOpmData = function(data, pdbid, bFull) { var me = this
           $("#" + me.pre + "extra_mem_z").val(me.icn3d.halfBilayerSize);
           $("#" + me.pre + "intra_mem_z").val(-me.icn3d.halfBilayerSize);
 
-          me.icn3d.init(); // remove all previously loaded data
-          me.parseMmtfData(data, pdbid, bFull, chainresiCalphaHash);
+          //me.icn3d.init(); // remove all previously loaded data
+          me.parseMmtfData(data, pdbid, bFull);
 
           if(me.deferredOpm !== undefined) me.deferredOpm.resolve();
       },
@@ -641,6 +690,177 @@ iCn3DUI.prototype.loadMmtfOpmData = function(data, pdbid, bFull) { var me = this
 
         me.parseMmtfData(data, pdbid, bFull);
         if(me.deferredOpm !== undefined) me.deferredOpm.resolve();
+        return;
+      }
+    });
+};
+*/
+
+iCn3DUI.prototype.loadOpmData = function(data, pdbid, bFull, type, pdbid2) { var me = this; //"use strict";
+    var url, dataType;
+
+    url = "https://www.ncbi.nlm.nih.gov/Structure/mmdb/mmdb_strview.cgi?v=2&program=icn3d&opm&uid=" + pdbid.toLowerCase();
+    dataType = "jsonp";
+
+    $.ajax({
+      url: url,
+      dataType: dataType,
+      cache: true,
+      tryCount : 0,
+      retryLimit : 1,
+      success: function(opmdata) {
+          me.setOpmData(opmdata); // set me.icn3d.bOpm
+
+          $("#" + me.pre + "selectplane_z1").val(me.icn3d.halfBilayerSize);
+          $("#" + me.pre + "selectplane_z2").val(-me.icn3d.halfBilayerSize);
+
+          $("#" + me.pre + "extra_mem_z").val(me.icn3d.halfBilayerSize);
+          $("#" + me.pre + "intra_mem_z").val(-me.icn3d.halfBilayerSize);
+
+          if(type === 'mmtf') {
+              me.parseMmtfData(data, pdbid, bFull);
+              if(me.deferredOpm !== undefined) me.deferredOpm.resolve();
+          }
+          else if(type === 'mmcif') {
+              me.loadAtomDataIn(data, data.mmcif, 'mmcifid', undefined, undefined);
+              me.loadMmcifOpmDataPart2(data, pdbid);
+              if(me.deferredOpm !== undefined) me.deferredOpm.resolve();
+          }
+          else if(type === 'pdb') {
+              me.loadPdbData(data, pdbid);
+              if(me.deferredOpm !== undefined) me.deferredOpm.resolve();
+          }
+          else if(type === 'align') {
+              if(me.icn3d.bOpm) {
+                  me.downloadAlignmentPart2(pdbid);
+                  if(me.deferredOpm !== undefined) me.deferredOpm.resolve();
+              }
+              else {
+                  if(pdbid2 !== undefined) {
+                      me.loadOpmData(data, pdbid2, bFull, type);
+                  }
+                  else {
+                      me.downloadAlignmentPart2(pdbid);
+                      if(me.deferredOpm !== undefined) me.deferredOpm.resolve();
+                  }
+              }
+          }
+
+          //if(me.deferredOpm !== undefined) me.deferredOpm.resolve();
+      },
+      error : function(xhr, textStatus, errorThrown ) {
+        this.tryCount++;
+        if (this.tryCount <= this.retryLimit) {
+            //try again
+            $.ajax(this);
+            return;
+        }
+
+          if(type === 'mmtf') {
+              me.parseMmtfData(data, pdbid, bFull);
+              if(me.deferredOpm !== undefined) me.deferredOpm.resolve();
+          }
+          else if(type === 'mmcif') {
+              me.loadAtomDataIn(data, data.mmcif, 'mmcifid', undefined, undefined);
+              me.loadMmcifOpmDataPart2(data, pdbid);
+              if(me.deferredOpm !== undefined) me.deferredOpm.resolve();
+          }
+          else if(type === 'pdb') {
+              me.loadPdbData(data, pdbid);
+              if(me.deferredOpm !== undefined) me.deferredOpm.resolve();
+          }
+          else if(type === 'align') {
+              if(pdbid2 !== undefined) {
+                  me.loadOpmData(data, pdbid2, bFull, type);
+              }
+              else {
+                  me.downloadAlignmentPart2(pdbid);
+                  if(me.deferredOpm !== undefined) me.deferredOpm.resolve();
+              }
+          }
+
+        //if(me.deferredOpm !== undefined) me.deferredOpm.resolve();
+        return;
+      }
+    });
+};
+
+iCn3DUI.prototype.loadOpmDataForAlign = function(data, seqalign, mmdbidArray) { var me = this; //"use strict";
+    var url, dataType;
+
+    url = "https://opm-assets.storage.googleapis.com/pdb/" + mmdbidArray[0].toLowerCase()+ ".pdb";
+
+    dataType = "text";
+
+    $.ajax({
+      url: url,
+      dataType: dataType,
+      cache: true,
+      //tryCount : 0,
+      //retryLimit : 1,
+      success: function(opmdata) {
+          me.selectedPdbid = mmdbidArray[0];
+
+          me.icn3d.bOpm = true;
+          var bVector = true;
+          var chainresiCalphaHash = me.icn3d.loadPDB(opmdata, mmdbidArray[0], me.icn3d.bOpm, bVector); // defined in the core library
+
+          $("#" + me.pre + "selectplane_z1").val(me.icn3d.halfBilayerSize);
+          $("#" + me.pre + "selectplane_z2").val(-me.icn3d.halfBilayerSize);
+
+          $("#" + me.pre + "extra_mem_z").val(me.icn3d.halfBilayerSize);
+          $("#" + me.pre + "intra_mem_z").val(-me.icn3d.halfBilayerSize);
+
+          me.icn3d.init(); // remove all previously loaded data
+          me.downloadAlignmentPart2(data, seqalign, chainresiCalphaHash);
+
+          if(me.deferredOpm !== undefined) me.deferredOpm.resolve();
+      },
+      error : function(xhr, textStatus, errorThrown ) {
+/*
+        this.tryCount++;
+        if (this.tryCount <= this.retryLimit) {
+            //try again
+            $.ajax(this);
+            return;
+        }
+*/
+
+        var url2 = "https://opm-assets.storage.googleapis.com/pdb/" + mmdbidArray[1].toLowerCase()+ ".pdb";
+
+        $.ajax({
+          url: url2,
+          dataType: dataType,
+          cache: true,
+          //tryCount : 0,
+          //retryLimit : 1,
+          success: function(opmdata) {
+              me.selectedPdbid = mmdbidArray[1];
+
+              me.icn3d.bOpm = true;
+              var bVector = true;
+              var chainresiCalphaHash = me.icn3d.loadPDB(opmdata, mmdbidArray[1], me.icn3d.bOpm, bVector); // defined in the core library
+
+              $("#" + me.pre + "selectplane_z1").val(me.icn3d.halfBilayerSize);
+              $("#" + me.pre + "selectplane_z2").val(-me.icn3d.halfBilayerSize);
+
+              $("#" + me.pre + "extra_mem_z").val(me.icn3d.halfBilayerSize);
+              $("#" + me.pre + "intra_mem_z").val(-me.icn3d.halfBilayerSize);
+
+              me.icn3d.init(); // remove all previously loaded data
+              me.downloadAlignmentPart2(data, seqalign, chainresiCalphaHash);
+
+              if(me.deferredOpm !== undefined) me.deferredOpm.resolve();
+          },
+          error : function(xhr, textStatus, errorThrown ) {
+              me.icn3d.init(); // remove all previously loaded data
+              me.downloadAlignmentPart2(data, seqalign);
+
+              if(me.deferredOpm !== undefined) me.deferredOpm.resolve();
+              return;
+          }
+        });
+
         return;
       }
     });
@@ -682,12 +902,12 @@ iCn3DUI.prototype.loadMmcifOpmDataPart2 = function(data, pdbid) { var me = this;
     if(me.deferred !== undefined) me.deferred.resolve(); if(me.deferred2 !== undefined) me.deferred2.resolve();
 };
 
+/*
 iCn3DUI.prototype.loadMmcifOpmData = function(data, pdbid) { var me = this; //"use strict";
     var url, dataType;
 
-    url = "https://opm-assets.storage.googleapis.com/pdb/" + pdbid.toLowerCase()+ ".pdb";
-
-    dataType = "text";
+    url = "https://www.ncbi.nlm.nih.gov/Structure/mmdb/mmdb_strview.cgi?v=2&program=icn3d&opm&uid=" + pdbid.toLowerCase();
+    dataType = "jsonp";
 
     $.ajax({
       url: url,
@@ -697,8 +917,11 @@ iCn3DUI.prototype.loadMmcifOpmData = function(data, pdbid) { var me = this; //"u
       retryLimit : 1,
       success: function(opmdata) {
           me.icn3d.bOpm = true;
-          var bVector = true;
-          var chainresiCalphaHash = me.icn3d.loadPDB(opmdata, pdbid, me.icn3d.bOpm, bVector); // defined in the core library
+
+          //var bVector = true;
+          //var chainresiCalphaHash = me.icn3d.loadPDB(opmdata, pdbid, me.icn3d.bOpm, bVector); // defined in the core library
+
+          me.setOpmData(opmdata);
 
           $("#" + me.pre + "selectplane_z1").val(me.icn3d.halfBilayerSize);
           $("#" + me.pre + "selectplane_z2").val(-me.icn3d.halfBilayerSize);
@@ -706,10 +929,9 @@ iCn3DUI.prototype.loadMmcifOpmData = function(data, pdbid) { var me = this; //"u
           $("#" + me.pre + "extra_mem_z").val(me.icn3d.halfBilayerSize);
           $("#" + me.pre + "intra_mem_z").val(-me.icn3d.halfBilayerSize);
 
-          me.icn3d.init(); // remove all previously loaded data
-          //me.loadPdbData(data, pdbid, undefined, chainresiCalphaHash);
+          //me.icn3d.init(); // remove all previously loaded data
 
-          me.loadAtomDataIn(data, data.mmcif, 'mmcifid', undefined, undefined, chainresiCalphaHash);
+          me.loadAtomDataIn(data, data.mmcif, 'mmcifid', undefined, undefined);
           me.loadMmcifOpmDataPart2(data, pdbid);
 
           if(me.deferredOpm !== undefined) me.deferredOpm.resolve();
@@ -730,6 +952,7 @@ iCn3DUI.prototype.loadMmcifOpmData = function(data, pdbid) { var me = this; //"u
       }
     });
 };
+*/
 
 iCn3DUI.prototype.loadMmdbOpmDataPart2 = function(data, pdbid, type) { var me = this; //"use strict";
     // set 3d domains
@@ -786,53 +1009,37 @@ iCn3DUI.prototype.loadMmdbOpmDataPart2 = function(data, pdbid, type) { var me = 
 };
 
 iCn3DUI.prototype.loadMmdbOpmData = function(data, pdbid, type) { var me = this; //"use strict";
-    var url, dataType;
+  if(data.opm !== undefined && data.opm.rot !== undefined) {
+      me.icn3d.bOpm = true;
 
-    url = "https://opm-assets.storage.googleapis.com/pdb/" + pdbid.toLowerCase()+ ".pdb";
+      me.setOpmData(data);
 
-    dataType = "text";
+      me.parseMmdbDataPart1(data, type);
+      me.loadAtomDataIn(data, pdbid, 'mmdbid', undefined, type);
 
-    $.ajax({
-      url: url,
-      dataType: dataType,
-      cache: true,
-      tryCount : 0,
-      retryLimit : 1,
-      success: function(opmdata) {
-          me.icn3d.bOpm = true;
-          var bVector = true;
-          var chainresiCalphaHash = me.icn3d.loadPDB(opmdata, pdbid, me.icn3d.bOpm, bVector); // defined in the core library
+      me.loadMmdbOpmDataPart2(data, pdbid, type);
+  }
+  else {
+      me.parseMmdbDataPart1(data, type);
+      me.loadAtomDataIn(data, pdbid, 'mmdbid', undefined, type);
+      me.loadMmdbOpmDataPart2(data, pdbid, type);
+  }
+};
 
-          $("#" + me.pre + "selectplane_z1").val(me.icn3d.halfBilayerSize);
-          $("#" + me.pre + "selectplane_z2").val(-me.icn3d.halfBilayerSize);
+iCn3DUI.prototype.setOpmData = function(data) { var me = this;
+    if(data.opm.rot !== undefined) {
+        me.icn3d.bOpm = true;
 
-          $("#" + me.pre + "extra_mem_z").val(me.icn3d.halfBilayerSize);
-          $("#" + me.pre + "intra_mem_z").val(-me.icn3d.halfBilayerSize);
-
-          me.icn3d.init(); // remove all previously loaded data
-          me.parseMmdbDataPart1(data, type);
-          me.loadAtomDataIn(data, pdbid, 'mmdbid', undefined, type, chainresiCalphaHash);
-
-          me.loadMmdbOpmDataPart2(data, pdbid, type);
-
-          if(me.deferredOpm !== undefined) me.deferredOpm.resolve();
-      },
-      error : function(xhr, textStatus, errorThrown ) {
-        this.tryCount++;
-        if (this.tryCount <= this.retryLimit) {
-            //try again
-            $.ajax(this);
-            return;
-        }
-
-        me.parseMmdbDataPart1(data, type);
-        me.loadAtomDataIn(data, pdbid, 'mmdbid', undefined, type);
-        me.loadMmdbOpmDataPart2(data, pdbid, type);
-
-        if(me.deferredOpm !== undefined) me.deferredOpm.resolve();
-        return;
-      }
-    });
+        me.icn3d.halfBilayerSize = data.opm.thickness;
+        me.icn3d.rmsd_supr = {};
+        me.icn3d.rmsd_supr.rot = data.opm.rot;
+        me.icn3d.rmsd_supr.trans1 = new THREE.Vector3(data.opm.trans1[0], data.opm.trans1[1], data.opm.trans1[2]);
+        me.icn3d.rmsd_supr.trans2 = new THREE.Vector3(data.opm.trans2[0], data.opm.trans2[1], data.opm.trans2[2]);
+        me.icn3d.rmsd_supr.rsmd = data.opm.rmsd;
+    }
+    else {
+        me.icn3d.bOpm = false;
+    }
 };
 
 iCn3DUI.prototype.loadPdbDataRender = function() {

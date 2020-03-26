@@ -206,7 +206,8 @@ iCn3DUI.prototype.loadMmcifData = function(data, mmcifid) { var me = this; //"us
 
         //me.loadAtomDataIn(data, data.mmcif, 'mmcifid');
         me.deferredOpm = $.Deferred(function() {
-              me.loadMmcifOpmData(data, mmcifid);
+              //me.loadMmcifOpmData(data, mmcifid);
+              me.loadOpmData(data, mmcifid, undefined, 'mmcif');
         });
 
         return me.deferredOpm.promise();
@@ -331,13 +332,13 @@ iCn3DUI.prototype.parseMmdbDataPart1 = function (data, type) { var me = this; //
 
 iCn3DUI.prototype.parseMmdbData = function (data, type) { var me = this; //"use strict";
         if(type === undefined) {
-            me.deferredOpm = $.Deferred(function() {
+            //me.deferredOpm = $.Deferred(function() {
                   var id = (data.pdbId !== undefined) ? data.pdbId : data.mmdbId;
 
                   me.loadMmdbOpmData(data, id, type);
-            });
+            //});
 
-            return me.deferredOpm.promise();
+            //return me.deferredOpm.promise();
         }
         else {
             me.parseMmdbDataPart1(data, type);
@@ -597,7 +598,7 @@ iCn3DUI.prototype.getMissingResidues = function (seqArray, type, chainid) { var 
 
 //type: "mmdbid", "mmcifid", "align"
 //alignType: "query", "target" for chain to chain 3D alignment
-iCn3DUI.prototype.loadAtomDataIn = function (data, id, type, seqalign, alignType, chainCalphaHash2) { var me = this; //"use strict";
+iCn3DUI.prototype.loadAtomDataIn = function (data, id, type, seqalign, alignType) { var me = this; //"use strict";
     //me.icn3d.init();
     me.icn3d.pmin = new THREE.Vector3( 9999, 9999, 9999);
     me.icn3d.pmax = new THREE.Vector3(-9999,-9999,-9999);
@@ -1254,11 +1255,10 @@ iCn3DUI.prototype.loadAtomDataIn = function (data, id, type, seqalign, alignType
     }
 
     if(type === 'mmcifid') {
-        me.transformToOpmOri(id, chainCalphaHash2);
+        me.transformToOpmOri(id);
     }
     else if(type === 'mmdbid') {
-        var bResi_ori = false; // true
-        me.transformToOpmOri(id, chainCalphaHash2, bResi_ori);
+        me.transformToOpmOri(id);
     }
 
     // set up sequence alignment

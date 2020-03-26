@@ -432,17 +432,26 @@ iCn3D.prototype.applySymmetry = function (title) { var me = this; //"use strict"
         var colorAxis = dataArray[i][2];
         var colorPolygon = dataArray[i][3];
         var order = dataArray[i][4];
+        var chain = dataArray[i][5];
 
         me.createCylinder(start, end, axisRadius, colorAxis, 0);
 
         if(symmetryType == 'C' || (symmetryType == 'D' && order == nSide) ) {
-            // find the center and size of the first protein chain
-            var selectedChain = Object.keys(this.chains)[0];
-            for(var chainid in this.chains) {
-                var firstSerial = Object.keys(this.chains[chainid])[0];
-                if(this.proteins.hasOwnProperty(firstSerial)) {
-                    selectedChain = chainid;
-                    break;
+            // find the center and size of the selected protein chain
+            var selectedChain = Object.keys(this.structures)[0] + '_' + chain;
+
+            if(!this.chains.hasOwnProperty(selectedChain)) {
+                selectedChain = Object.keys(this.structures)[0] + '_' + chain.toLowerCase();
+            }
+
+            if(!this.chains.hasOwnProperty(selectedChain)) {
+                selectedChain = Object.keys(this.chains)[0];
+                for(var chainid in this.chains) {
+                    var firstSerial = Object.keys(this.chains[chainid])[0];
+                    if(this.proteins.hasOwnProperty(firstSerial)) {
+                        selectedChain = chainid;
+                        break;
+                    }
                 }
             }
 
