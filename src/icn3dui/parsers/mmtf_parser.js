@@ -14,6 +14,10 @@ iCn3DUI.prototype.downloadMmtf = function (mmtfid) { var me = this; //"use stric
                 var bFull = false;
                 //me.parseMmtfData(mmtfData, bFull);
                 me.deferredOpm = $.Deferred(function() {
+                    if(Object.keys(mmtfData).length == 0) {
+                        alert('This PDB structure is not found at RCSB...');
+                        return me.deferredOpm.promise();
+                    }
                     //me.loadMmtfOpmData(mmtfData, mmtfid, bFull);
                     me.loadOpmData(mmtfData, mmtfid, bFull, 'mmtf');
                 });
@@ -30,6 +34,11 @@ iCn3DUI.prototype.downloadMmtf = function (mmtfid) { var me = this; //"use stric
                         var bFull = true;
                         //me.parseMmtfData(mmtfData2, bFull);
                         me.deferredOpm = $.Deferred(function() {
+                            if(Object.keys(mmtfData2).length == 0) {
+                                alert('This PDB structure is not found at RCSB...');
+                                return me.deferredOpm.promise();
+                            }
+
                             //me.loadMmtfOpmData(mmtfData2, mmtfid, bFull);
                             me.loadOpmData(mmtfData2, mmtfid, bFull, 'mmtf');
                         });
@@ -38,14 +47,16 @@ iCn3DUI.prototype.downloadMmtf = function (mmtfid) { var me = this; //"use stric
                     },
                     // onError callback
                     function( error ){
-                        console.error( error )
+                        //alert('This PDB structure is not found at RCSB...');
+                        //console.error( error )
                     }
                 );
             }
         },
         // onError callback
         function( error ){
-            console.error( error )
+            //alert('This PDB structure is not found at RCSB...');
+            //console.error( error )
         }
     );
 };

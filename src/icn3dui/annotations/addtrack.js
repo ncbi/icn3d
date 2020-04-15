@@ -17,6 +17,17 @@ iCn3DUI.prototype.clickAddTrack = function() { var me = this; //"use strict";
     });
 };
 
+iCn3DUI.prototype.clickCustomColor = function() { var me = this; //"use strict";
+    $(document).on('click', ".icn3d-customcolor", function(e) {
+      e.stopImmediatePropagation();
+
+      //e.preventDefault();
+      var chainid = $(this).attr('chainid');
+      $("#" + me.pre + "customcolor_chainid").val(chainid);
+      me.openDialog(me.pre + 'dl_customcolor', 'Use custom color for Chain: ' + chainid);
+    });
+};
+
 iCn3DUI.prototype.clickDefineHelix = function() { var me = this; //"use strict";
     $(document).on('click', ".icn3d-helixsets", function(e) {
       e.stopImmediatePropagation();
@@ -232,22 +243,29 @@ iCn3DUI.prototype.alignSequenceToStructure = function(chainid, data, title) { va
       var querySeq = query.seqdata;
 
       var segArray = target.segs;
-      var target2queryHash = {};
+      me.icn3d.target2queryHash = {};
       for(var i = 0, il = segArray.length; i < il; ++i) {
           var seg = segArray[i];
           for(var j = 0; j <= seg.orito - seg.orifrom; ++j) {
-              target2queryHash[j + seg.orifrom] = j + seg.from;
+              me.icn3d.target2queryHash[j + seg.orifrom] = j + seg.from;
           }
       }
 
       var cssColorArray = [];
       // the missing residuesatthe end ofthe seq will be filled up in the API showNewTrack()
       for(var i = 0, il = targetSeq.length; i < il; ++i) {
-          if(target2queryHash.hasOwnProperty(i)) {
-              text += querySeq[target2queryHash[i]];
+          if(me.icn3d.target2queryHash.hasOwnProperty(i)) {
+              text += querySeq[me.icn3d.target2queryHash[i]];
 
-              var colorHexStr = me.getColorhexFromBlosum62(targetSeq[i], querySeq[target2queryHash[i]]);
+              var colorHexStr = me.getColorhexFromBlosum62(targetSeq[i], querySeq[me.icn3d.target2queryHash[i]]);
               cssColorArray.push("#" + colorHexStr);
+
+              var resi = i + 1;
+              for(var serial in me.icn3d.residues[chainid + '_' + resi]) {
+                  var color = new THREE.Color("#" + colorHexStr);
+                  me.icn3d.atoms[serial].color = color;
+                  me.icn3d.atomPrevColors[serial] = color;
+              }
           }
           else {
               text += '-';
@@ -261,7 +279,10 @@ iCn3DUI.prototype.alignSequenceToStructure = function(chainid, data, title) { va
       text += "cannot be aligned";
   }
 
-  me.showNewTrack(chainid, title, text, cssColorArray, target2queryHash, 'seq');
+  me.showNewTrack(chainid, title, text, cssColorArray, me.icn3d.target2queryHash, 'seq');
+
+  me.updateHlAll();
+  me.icn3d.draw();
 
   me.setLogCmd("add track | chainid " + chainid + " | title " + title + " | text " + me.simplifyText(text) + " | type seq", true);
 };
@@ -521,7 +542,7 @@ iCn3DUI.prototype.clickAddTrackButton = function() { var me = this; //"use stric
 
 };
 
-iCn3DUI.prototype.showNewTrack = function(chnid, title, text, cssColorArray, target2queryHash, type, color) {  var me = this; //"use strict";
+iCn3DUI.prototype.showNewTrack = function(chnid, title, text, cssColorArray, inTarget2queryHash, type, color) {  var me = this; //"use strict";
     //if(me.customTracks[chnid] === undefined) {
     //    me.customTracks[chnid] = {};
     //}
@@ -603,7 +624,7 @@ iCn3DUI.prototype.showNewTrack = function(chnid, title, text, cssColorArray, tar
           //var pos = me.icn3d.chainsSeq[chnid][i - me.matchedPos[chnid] ].resi;
           var pos = me.icn3d.chainsSeq[chnid][i].resi - me.matchedPos[chnid];
 
-          if(target2queryHash !== undefined) pos = target2queryHash[i] + 1; // 0-based
+          if(inTarget2queryHash !== undefined) pos = inTarget2queryHash[i] + 1; // 0-based
 
           if(cssColorArray !== undefined && cssColorArray[i] != '') {
               html += '<span id="' + pre + '_' + me.pre + chnid + '_' + pos + '" title="' + c + pos + '" class="icn3d-residue" style="color:' + cssColorArray[i] + '">' + c + '</span>';

@@ -233,31 +233,19 @@ iCn3DUI.prototype.downloadChainAlignment = function (chainalign) { var me = this
       },
       success: function(align) {
         if(align === undefined || align.length == 0) {
-            alert("These two chains " + chainalign + " can not align to each other.");
-            return false;
+            if(!me.cfg.command) alert('These two chains ' + chainalign + ' can not align to each other. ' + 'Please select sequences from two chains in the "Sequences & Annotations" window, ' + 'and click "Realign Selection" in the "File" menu to align your selection.');
+
+            me.cfg.showanno = 1;
+            me.cfg.showalignseq = 0;
+            //return false;
+        }
+        else {
+            me.t_trans_add = align[0].t_trans_add;
+            me.q_trans_sub = align[0].q_trans_sub;
+            me.q_rotation = align[0].q_rotation;
+            me.qt_start_end = align[0].segs;
         }
 
-        me.t_trans_add = align[0].t_trans_add;
-        me.q_trans_sub = align[0].q_trans_sub;
-        me.q_rotation = align[0].q_rotation;
-        me.qt_start_end = align[0].segs;
-
-/*
-        me.icn3d.t_trans_add = new THREE.Vector3(align[0].t_trans_add.x, align[0].t_trans_add.y, align[0].t_trans_add.z);
-
-        var qtrans = align[0].q_trans_sub;
-        var qrot = align[0].q_rotation;
-
-        var x = qtrans.x * qrot.x1 + qtrans.y * qrot.y1 + qtrans.z * qrot.z1;
-        var y = qtrans.x * qrot.x2 + qtrans.y * qrot.y2 + qtrans.z * qrot.z2;
-        var z = qtrans.x * qrot.x3 + qtrans.y * qrot.y3 + qtrans.z * qrot.z3;
-
-        me.icn3d.q_trans_sub = new THREE.Vector3(x, y, z);
-
-        me.icn3d.chainMat = new THREE.Matrix4();
-
-        me.icn3d.chainMat.set ( qrot.x1, qrot.y1, qrot.z1, 0, qrot.x2, qrot.y2, qrot.z2, 0, qrot.x3, qrot.y3, qrot.z3, 0, 0, 0, 0, 1);
-*/
         $.ajax({
           url: url_t,
           dataType: 'jsonp',
@@ -269,8 +257,6 @@ iCn3DUI.prototype.downloadChainAlignment = function (chainalign) { var me = this
               me.hideLoading();
           },
           success: function(data1) {
-            me.parseMmdbData(data1, 'target');
-
             $.ajax({
               url: url_q,
               dataType: 'jsonp',
@@ -282,8 +268,8 @@ iCn3DUI.prototype.downloadChainAlignment = function (chainalign) { var me = this
                   me.hideLoading();
               },
               success: function(data2) {
+                me.parseMmdbData(data1, 'target');
                 me.parseMmdbData(data2, 'query');
-
 
                 //if(me.cfg.chainalign === undefined && Object.keys(me.icn3d.structures).length == 1) {
                 //    $("#" + me.pre + "alternateWrapper").hide();
@@ -343,6 +329,9 @@ iCn3DUI.prototype.downloadChainAlignment = function (chainalign) { var me = this
 
 iCn3DUI.prototype.set2DDiagramsForAlign = function (mmdbid1, mmdbid2) { var me = this; //"use strict";
    me.openDialog(me.pre + 'dl_2ddgm', 'Interactions');
+
+   mmdbid1 = mmdbid1.substr(0, 4);
+   mmdbid2 = mmdbid2.substr(0, 4);
 
    var url1 = me.baseUrl + "mmdb/mmdb_strview.cgi?v=2&program=icn3d&uid="+mmdbid1+"&intrac=1";
    var url2 = me.baseUrl + "mmdb/mmdb_strview.cgi?v=2&program=icn3d&uid="+mmdbid2+"&intrac=1";
@@ -705,9 +694,10 @@ iCn3DUI.prototype.setSeqPerResi = function (chainid, chainid1, chainid2, resi, r
               // empty line
               if(me.icn3d.alnChainsAnno[chainid][6] === undefined ) me.icn3d.alnChainsAnno[chainid][6] = [];
 
-              var title = me.icn3d.pdbid_chain2title.hasOwnProperty(chainid2) ? me.icn3d.pdbid_chain2title[chainid2] : "??"
-              me.icn3d.alnChainsAnno[chainid][4].push(title);
-              me.icn3d.alnChainsAnno[chainid][5].push(me.icn3d.pdbid_chain2title[chainid]);
+              var title1 = me.icn3d.pdbid_chain2title && me.icn3d.pdbid_chain2title.hasOwnProperty(chainid2) ? me.icn3d.pdbid_chain2title[chainid2] : ""
+              var title2 = me.icn3d.pdbid_chain2title && me.icn3d.pdbid_chain2title.hasOwnProperty(chainid) ? me.icn3d.pdbid_chain2title[chainid] : ""
+              me.icn3d.alnChainsAnno[chainid][4].push(title1);
+              me.icn3d.alnChainsAnno[chainid][5].push(title2);
               me.icn3d.alnChainsAnno[chainid][6].push('');
           }
 
@@ -764,7 +754,10 @@ iCn3DUI.prototype.setSeqAlignChain = function () { var me = this; //"use strict"
       var chainid1 = chainidArray[0].substr(0, pos1).toUpperCase() + "_" + chain1;
       var chainid2 = chainidArray[1].substr(0, pos2).toUpperCase() + "_" + chain2;
 
-      if(me.mmdbid_q !== undefined && me.mmdbid_q === me.mmdbid_t) chainid1 += me.postfix;
+      if(me.mmdbid_q !== undefined && me.mmdbid_q === me.mmdbid_t) {
+          //chainid1 += me.postfix;
+          chainid1 = chainidArray[0].substr(0, pos1).toUpperCase() + me.postfix + "_" + chain1;
+      }
 
       me.conservedName1 = chainid1 + '_cons';
       me.nonConservedName1 = chainid1 + '_ncons';
@@ -907,4 +900,304 @@ iCn3DUI.prototype.setSeqAlignChain = function () { var me = this; //"use strict"
           prevIndex1 = end1;
           prevIndex2 = end2;
       } // end for(var i
+};
+
+iCn3DUI.prototype.setSeqAlignForRealign = function () { var me = this; //"use strict";
+      //loadSeqAlignment
+      var alignedAtoms = {};
+      var structureArray = Object.keys(me.icn3d.structures);
+      var structure1 = structureArray[0];
+      var structure2 = structureArray[1];
+
+      me.conservedName1 = structure1 + '_cons';
+      me.conservedName2 = structure2 + '_cons';
+
+      me.consHash1 = {};
+      me.consHash2 = {};
+
+      for(var i = 0, il = me.realignResid[structure1].length; i < il; ++i) {
+          var resObject1 = me.realignResid[structure1][i];
+          var pos1 = resObject1.resid.lastIndexOf('_');
+          var chainid1 = resObject1.resid.substr(0, pos1);
+          var resi1 = resObject1.resid.substr(pos1 + 1);
+          resObject1.resi = resi1;
+          resObject1.aligned = true;
+
+          var resObject2 = me.realignResid[structure2][i];
+          var pos2 = resObject2.resid.lastIndexOf('_');
+          var chainid2 = resObject2.resid.substr(0, pos2);
+          var resi2 = resObject2.resid.substr(pos2 + 1);
+          resObject2.resi = resi2;
+          resObject2.aligned = true;
+
+          var color;
+          if(resObject1.resn == resObject2.resn) {
+              color = "#FF0000";
+          }
+          else {
+              color = "#0000FF";
+          }
+          var color2 = '#' + me.getColorhexFromBlosum62(resObject1.resn, resObject2.resn);
+
+          resObject1.color = color;
+          resObject2.color = color;
+
+          resObject1.color2 = color2;
+          resObject2.color2 = color2;
+
+          for(var j in me.icn3d.residues[resObject1.resid]) {
+              me.icn3d.atoms[j].color = new THREE.Color(color);
+          }
+          for(var j in me.icn3d.residues[resObject2.resid]) {
+              me.icn3d.atoms[j].color = new THREE.Color(color);
+          }
+
+          // annoation title for the master seq only
+          if(me.icn3d.alnChainsAnTtl[chainid1] === undefined ) me.icn3d.alnChainsAnTtl[chainid1] = [];
+          //if(me.icn3d.alnChainsAnTtl[chainid2] === undefined ) me.icn3d.alnChainsAnTtl[chainid2] = [];
+
+          if(me.icn3d.alnChainsAnTtl[chainid1][0] === undefined ) me.icn3d.alnChainsAnTtl[chainid1][0] = [];
+          if(me.icn3d.alnChainsAnTtl[chainid1][1] === undefined ) me.icn3d.alnChainsAnTtl[chainid1][1] = [];
+          if(me.icn3d.alnChainsAnTtl[chainid1][2] === undefined ) me.icn3d.alnChainsAnTtl[chainid1][2] = [];
+          //if(me.icn3d.alnChainsAnTtl[chainid1][3] === undefined ) me.icn3d.alnChainsAnTtl[chainid1][3] = [];
+          //if(me.icn3d.alnChainsAnTtl[chainid1][4] === undefined ) me.icn3d.alnChainsAnTtl[chainid1][4] = [];
+          //if(me.icn3d.alnChainsAnTtl[chainid1][5] === undefined ) me.icn3d.alnChainsAnTtl[chainid1][5] = [];
+          //if(me.icn3d.alnChainsAnTtl[chainid1][6] === undefined ) me.icn3d.alnChainsAnTtl[chainid1][6] = [];
+
+          // two annotations without titles
+          me.icn3d.alnChainsAnTtl[chainid1][0].push("");
+          me.icn3d.alnChainsAnTtl[chainid1][1].push("");
+          me.icn3d.alnChainsAnTtl[chainid1][2].push("");
+          //me.icn3d.alnChainsAnTtl[chainid1][3].push("");
+
+          // 2nd chain title
+          //me.icn3d.alnChainsAnTtl[chainid1][4].push("");
+          // master chain title
+          //me.icn3d.alnChainsAnTtl[chainid1][5].push("");
+          // empty line
+          //me.icn3d.alnChainsAnTtl[chainid1][6].push("");
+
+          if(me.icn3d.alnChainsSeq[chainid1] === undefined) me.icn3d.alnChainsSeq[chainid1] = [];
+          if(me.icn3d.alnChainsSeq[chainid2] === undefined) me.icn3d.alnChainsSeq[chainid2] = [];
+
+          me.icn3d.alnChainsSeq[chainid1].push(resObject1);
+          me.icn3d.alnChainsSeq[chainid2].push(resObject2);
+
+          if(me.icn3d.alnChains[chainid1] === undefined) me.icn3d.alnChains[chainid1] = {};
+          if(me.icn3d.alnChains[chainid2] === undefined) me.icn3d.alnChains[chainid2] = {};
+          $.extend(me.icn3d.alnChains[chainid1], me.icn3d.residues[chainid1 + '_' + resObject1.resi] );
+          $.extend(me.icn3d.alnChains[chainid2], me.icn3d.residues[chainid2 + '_' + resObject2.resi] );
+
+          me.consHash1[chainid1 + '_' + resObject1.resi] = 1;
+          me.consHash2[chainid2 + '_' + resObject2.resi] = 1;
+
+          // annotation is for the master seq only
+          if(me.icn3d.alnChainsAnno[chainid1] === undefined ) me.icn3d.alnChainsAnno[chainid1] = [];
+          //if(me.icn3d.alnChainsAnno[chainid2] === undefined ) me.icn3d.alnChainsAnno[chainid2] = [];
+
+          if(me.icn3d.alnChainsAnno[chainid1][0] === undefined ) me.icn3d.alnChainsAnno[chainid1][0] = [];
+          if(me.icn3d.alnChainsAnno[chainid1][1] === undefined ) me.icn3d.alnChainsAnno[chainid1][1] = [];
+          if(me.icn3d.alnChainsAnno[chainid1][2] === undefined ) me.icn3d.alnChainsAnno[chainid1][2] = [];
+          //if(me.icn3d.alnChainsAnno[chainid1][3] === undefined ) me.icn3d.alnChainsAnno[chainid1][3] = [];
+          //if(i == 0) {
+              // empty line
+              // 2nd chain title
+              //if(me.icn3d.alnChainsAnno[chainid1][4] === undefined ) me.icn3d.alnChainsAnno[chainid1][4] = [];
+              // master chain title
+              //if(me.icn3d.alnChainsAnno[chainid1][5] === undefined ) me.icn3d.alnChainsAnno[chainid1][5] = [];
+              // empty line
+              //if(me.icn3d.alnChainsAnno[chainid1][6] === undefined ) me.icn3d.alnChainsAnno[chainid1][6] = [];
+
+              //me.icn3d.alnChainsAnno[chainid1][4].push(structure2);
+              //me.icn3d.alnChainsAnno[chainid1][5].push(structure1);
+              //me.icn3d.alnChainsAnno[chainid1][6].push('');
+          //}
+
+          var symbol = '.';
+          if(i % 5 === 0) symbol = '*';
+          if(i % 10 === 0) symbol = '|';
+          me.icn3d.alnChainsAnno[chainid1][0].push(symbol); // symbol: | for 10th, * for 5th, . for rest
+
+          var numberStr = '';
+          if(i % 10 === 0) numberStr = i.toString();
+          me.icn3d.alnChainsAnno[chainid1][1].push(numberStr); // symbol: 10, 20, etc, empty for rest
+      }
+};
+
+/*
+iCn3DUI.prototype.realign = function() { var me = this; //"use strict";
+    me.saveSelectionPrep();
+
+    var index = Object.keys(me.icn3d.defNames2Atoms).length;
+    var name = 'alseq_' + index;
+
+    me.saveSelection(name, name);
+
+    var structArray = Object.keys(structHash);
+
+    if(structArray.length >= 2) {
+        var toStruct = structArray[0];
+        var fromStruct = structArray[1];
+
+        me.realignResid = {};
+
+        var structHash = {};
+        var lastStruResi = '';
+        for(var serial in me.icn3d.hAtoms) {
+            var atom = me.icn3d.atoms[serial];
+            if( (me.icn3d.proteins.hasOwnProperty(serial) && atom.name == "CA")
+              || (me.icn3d.nucleotides.hasOwnProperty(serial) && (atom.name == "O3'" || atom.name == "O3*")) ) {
+                var resid = atom.structure + '_' + atom.chain + '_' + atom.resi;
+
+                if(resid == lastStruResi) continue; // e.g., Alt A and B
+
+                if(!structHash.hasOwnProperty(atom.structure)) {
+                    structHash[atom.structure] = [];
+                }
+
+                structHash[atom.structure].push(atom.coord.clone());
+
+                if(me.realignResid[atom.structure] === undefined) me.realignResid[atom.structure] = [];
+                me.realignResid[atom.structure].push(resid);
+
+                lastStruResi = resid;
+            }
+        }
+
+
+        // transform from the second structure to the first structure
+        var coordsFrom = structHash[fromStruct];
+        var coordsTo = structHash[toStruct];
+
+        me.alignCoords(coordsFrom, coordsTo, fromStruct);
+    }
+};
+*/
+
+iCn3DUI.prototype.realignOnSeqAlign = function () { var me = this; //"use strict";
+    me.saveSelectionPrep();
+
+    var index = Object.keys(me.icn3d.defNames2Atoms).length;
+    var name = 'alseq_' + index;
+
+    me.saveSelection(name, name);
+
+    var struct2SeqHash = {};
+    var struct2CoorHash = {};
+    var struct2resid = {};
+    var lastStruResi = '';
+    for(var serial in me.icn3d.hAtoms) {
+        var atom = me.icn3d.atoms[serial];
+        if( (me.icn3d.proteins.hasOwnProperty(serial) && atom.name == "CA")
+          || (me.icn3d.nucleotides.hasOwnProperty(serial) && (atom.name == "O3'" || atom.name == "O3*")) ) {
+            var resid = atom.structure + '_' + atom.chain + '_' + atom.resi;
+
+            if(resid == lastStruResi) continue; // e.g., Alt A and B
+
+            if(!struct2SeqHash.hasOwnProperty(atom.structure)) {
+                struct2SeqHash[atom.structure] = '';
+                struct2CoorHash[atom.structure] = [];
+                struct2resid[atom.structure] = [];
+            }
+
+            var oneLetterRes = me.icn3d.residueName2Abbr(atom.resn.substr(0, 3));
+
+            struct2SeqHash[atom.structure] += oneLetterRes;
+            struct2CoorHash[atom.structure].push(atom.coord.clone());
+            struct2resid[atom.structure].push(resid);
+
+            //if(me.realignResid[atom.structure] === undefined) me.realignResid[atom.structure] = [];
+            //me.realignResid[atom.structure].push(resid);
+
+            lastStruResi = resid;
+        }
+    }
+
+    var structArray = Object.keys(struct2SeqHash);
+
+    var toStruct = structArray[0];
+    var fromStruct = structArray[1];
+
+    var seq1 = struct2SeqHash[toStruct];
+    var seq2 = struct2SeqHash[fromStruct];
+
+    var coord1 = struct2CoorHash[toStruct];
+    var coord2 = struct2CoorHash[fromStruct];
+
+    var residArray1 = struct2resid[toStruct];
+    var residArray2 = struct2resid[fromStruct];
+
+    // chain functions together
+    me.deferredRealign = $.Deferred(function() {
+       var url = 'https://www.ncbi.nlm.nih.gov/Structure/pwaln/pwaln.fcgi?from=track';
+       $.ajax({
+          url: url,
+          type: 'POST',
+          data : {'targets': seq1, 'queries': seq2},
+          dataType: 'jsonp',
+          //dataType: 'json',
+          tryCount : 0,
+          retryLimit : 1,
+          success: function(data) {
+              var query, target;
+
+              if(data.data !== undefined) {
+                  query = data.data[0].query;
+                  var targetName = Object.keys(data.data[0].targets)[0];
+                  target = data.data[0].targets[targetName];
+
+                  target = target.hsps[0];
+              }
+
+              if(query !== undefined && target !== undefined) {
+                  // transform from the second structure to the first structure
+                  var coordsTo = [];
+                  var coordsFrom = [];
+
+                  var seqto = '', seqfrom = ''
+
+                  me.realignResid = {};
+                  me.realignResid[toStruct] = [];
+                  me.realignResid[fromStruct] = [];
+
+                  var segArray = target.segs;
+                  for(var i = 0, il = segArray.length; i < il; ++i) {
+                      var seg = segArray[i];
+                      for(var j = 0; j <= seg.orito - seg.orifrom; ++j) {
+                          coordsTo.push(coord1[j + seg.orifrom]);
+                          coordsFrom.push(coord2[j + seg.from]);
+
+                          seqto += seq1[j + seg.orifrom];
+                          seqfrom += seq2[j + seg.from];
+
+                          me.realignResid[toStruct].push({'resid':residArray1[j + seg.orifrom], 'resn':seq1[j + seg.orifrom]});
+                          me.realignResid[fromStruct].push({'resid':residArray2[j + seg.from], 'resn':seq2[j + seg.from]});
+                      }
+                  }
+
+                  me.alignCoords(coordsFrom, coordsTo, fromStruct);
+              }
+              else {
+                  alert('These two sequences can not be aligned...');
+              }
+
+              if(me.deferredRealign !== undefined) me.deferredRealign.resolve();
+          },
+          error : function(xhr, textStatus, errorThrown ) {
+            this.tryCount++;
+            if (this.tryCount <= this.retryLimit) {
+                //try again
+                $.ajax(this);
+                return;
+            }
+
+            alert('These two sequences can not be aligned...');
+
+            if(me.deferredRealign !== undefined) me.deferredRealign.resolve();
+            return;
+          }
+        });
+    }); // end of me.deferred = $.Deferred(function() {
+
+    return me.deferredRealign.promise();
 };

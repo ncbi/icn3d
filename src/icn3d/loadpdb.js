@@ -710,10 +710,15 @@ iCn3D.prototype.setSsbond = function (structure2cys_resid) { var me = this; //"u
     }
 };
 
-iCn3D.prototype.getChainCalpha = function (chains, atoms, bResi_ori) { var me = this; //"use strict";
+iCn3D.prototype.getChainCalpha = function (chains, atoms, bResi_ori, pdbid) { var me = this; //"use strict";
     var chainCalphaHash = {};
 
     for(var chainid in chains) {
+        if(pdbid !== undefined) {
+            textArray =  chainid.split('_');
+            if(textArray[0] !== pdbid) continue; // skip different chain
+        }
+
         var serialArray = Object.keys(chains[chainid]);
 
         var calphaArray = [];

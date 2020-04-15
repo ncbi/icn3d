@@ -39,7 +39,7 @@ iCn3DUI.prototype.setTools_base = function() { var me = this; //"use strict";
 
         html += tdStr + me.setButton(buttonStyle, 'show_annotations', 'View sequences and annotations for each chain', 'View Sequences<br/>& Annotations') + "</td>";
 
-        if(me.cfg.align !== undefined || me.cfg.chainalign !== undefined ) {
+        if(me.cfg.align !== undefined || me.cfg.chainalign !== undefined || me.bRealign) {
             html += tdStr + me.setButton(buttonStyle, 'show_alignsequences', 'View the sequences of the aligned structures', 'Aligned<br/>Sequences') + "</td>";
         }
 
@@ -219,6 +219,7 @@ iCn3DUI.prototype.setTopMenusHtml = function (id) { var me = this; //"use strict
 
     // show title at the top left corner
     html += me.divStr + "title' class='icn3d-commandTitle' style='font-size:1.2em; font-weight:normal; position:absolute; z-index:1; float:left; display:table-row; margin: 85px 0px 0px 5px; color:" + me.GREYD + "; width:" + me.WIDTH + "px'></div>";
+
     html += me.divStr + "viewer' style='position:relative; width:100%; height:100%; background-color: " + me.GREYD + ";'>";
     html += me.divStr + "mnLogSection'>";
     html += "<div style='height: " + me.MENU_HEIGHT + "px;'></div>";
@@ -338,7 +339,14 @@ iCn3DUI.prototype.setMenu1_base = function() { var me = this; //"use strict";
     html += me.getLink('mn1_state', 'State/Script File');
     html += me.getLink('mn1_selection', 'Selection File');
     html += "<li>-</li>";
-    html += me.getLink('mn1_dsn6', 'Electron Density (DSN6)');
+
+    //html += me.getLink('mn1_dsn6', 'Electron Density (DSN6)');
+    html += "<li><span>Electron Density (DSN6)</span>";
+    html += "<ul>";
+    html += me.getLink('mn1_dsn6', 'Local File');
+    html += me.getLink('mn1_dsn6url', 'URL (Same Host)');
+    html += "</ul>";
+
     html += "</ul>";
     html += "</li>";
     html += "<li><span>Align</span>";
@@ -346,8 +354,19 @@ iCn3DUI.prototype.setMenu1_base = function() { var me = this; //"use strict";
     html += me.getLink('mn1_blast_rep_id', 'Sequence to Structure');
     html += me.getLink('mn1_align', 'Structure to Structure');
     html += me.getLink('mn1_chainalign', 'Chain to Chain');
+
     html += "</ul>";
     html += "</li>";
+
+    html += me.getLink('mn2_realignonseqalign', 'Realign Selection');
+/*
+    html += "<li id='" + me.pre + "mn2_realignWrap'><span>Realign Selection</span>";
+    html += "<ul>";
+    html += me.getRadio('mn2_realign', 'mn2_realignonseqalign', 'on Sequence Alignment', true);
+    html += me.getRadio('mn2_realign', 'mn2_realignresbyres', 'Residue by Residue');
+    html += "</ul>";
+    html += "</li>";
+*/
     html += "<li><span>3D Printing</span>";
     html += "<ul>";
     if(me.cfg.cid === undefined) {
@@ -526,10 +545,10 @@ iCn3DUI.prototype.setMenu2b_base = function() { var me = this; //"use strict";
     html += me.getLink('mn2_selectedcenter', 'Zoom in Selection');
     html += me.getLink('mn6_center', 'Center Selection');
     html += me.getLink('mn2_fullstru', 'View Full Structure');
-    if(me.cfg.align !== undefined || me.cfg.chainalign !== undefined) {
-        html += me.getLink('mn2_alternate', 'Alternate (Key \"a\")');
-        html += me.getLink('mn2_realign', 'Realign Selection');
-    }
+    //if(me.cfg.align !== undefined || me.cfg.chainalign !== undefined || ( me.bInputfile && me.InputfileType == 'pdb' && Object.keys(me.icn3d.structures).length >= 2) ) {
+        //html += me.getLink('mn2_alternate', 'Alternate (Key \"a\")');
+        html += "<li id='" + me.pre + "mn2_alternateWrap'><span id='" + me.pre + "mn2_alternate' class='icn3d-link'>Alternate (Key \"a\")</span></li>";
+    //}
 
     html += "<li>-</li>";
 
@@ -990,7 +1009,14 @@ iCn3DUI.prototype.setMenu4_base = function() { var me = this; //"use strict";
           html += me.getRadio('mn4_clr', 'mn4_clrdomain', '3D Domain');
         }
 
-        html += me.getRadio('mn4_clr', 'mn4_clrResidue', 'Residue');
+        //html += me.getRadio('mn4_clr', 'mn4_clrResidue', 'Residue');
+
+        html += "<li><span style='padding-left:2.3em;'>Residue</span>";
+        html += "<ul>";
+        html += me.getRadio('mn4_clr', 'mn4_clrResidue', 'Default');
+        html += me.getRadio('mn4_clr', 'mn4_clrResidueCustom', 'Custom');
+        html += "</ul>";
+
         html += me.getRadio('mn4_clr', 'mn4_clrAtom', 'Atom');
         html += "<li><span style='padding-left:2.3em;'>B-factor</span>";
         html += "<ul>";
@@ -1058,7 +1084,7 @@ iCn3DUI.prototype.setMenu5_base = function() { var me = this; //"use strict";
     if(me.cfg.cid === undefined) {
         html += me.getLink('mn6_selectannotations', 'View Sequences<br>& Annotations');
 
-        if(me.cfg.align !== undefined || me.cfg.chainalign !== undefined) {
+        if(me.cfg.align !== undefined || me.cfg.chainalign !== undefined || me.bRealign) {
             html += me.getLink('mn2_alignment', 'View Aligned<br>Sequences');
         }
 
@@ -1254,7 +1280,7 @@ iCn3DUI.prototype.setDialogs = function() { var me = this; //"use strict";
     html += me.divStr + "dl_2ddgm' class='icn3d-dl_2ddgm'>";
     html += "</div>";
 
-    if(me.cfg.align !== undefined || me.cfg.chainalign !== undefined) {
+    if(me.cfg.align !== undefined || me.cfg.chainalign !== undefined || me.bRealign) {
       html += me.divStr + "dl_alignment' style='background-color:white;'>";
       html += me.divStr + "dl_sequence2' class='icn3d-dl_sequence'>";
       html += "</div>";
@@ -1300,8 +1326,24 @@ iCn3DUI.prototype.setDialogs = function() { var me = this; //"use strict";
     html += "</div>";
 
     html += me.divStr + "dl_pdbfile'>";
-    html += "PDB File: " + me.inputFileStr + "id='" + me.pre + "pdbfile' size=8> ";
+    html += "Note: Several PDB files could be concatenated into a single PDB file. Use the line \"ENDMDL\" to separate PDB files.<br><br>";
+    html += "PDB File: " + me.inputFileStr + " id='" + me.pre + "pdbfile' size=8> ";
     html += me.buttonStr + "reload_pdbfile'>Load</button>";
+    html += "</div>";
+
+    html += me.divStr + "dl_rescolorfile'>";
+    html += '<div style="width:450px;">The custom JSON file on residue colors has the following format for proteins ("ALA" and "ARG") and nucleotides ("G" and "A"):<br>';
+    html += '{"ALA":"#C8C8C8", "ARG":"#145AFF", ..., "G":"#008000", "A":"#6080FF", ...}</div><br>';
+    html += "Residue Color File: " + me.inputFileStr + "id='" + me.pre + "rescolorfile' size=8> ";
+    html += me.buttonStr + "reload_rescolorfile'>Load</button>";
+    html += "</div>";
+
+    html += me.divStr + "dl_customcolor'>";
+    html += " <input type='hidden' id='" + me.pre + "customcolor_chainid' value=''>";
+    html += '<div style="width:450px;">The custom color file for the query sequence has three columns separated by space or tab: residue name, residue number, and color score.</div><br>';
+    html += "Color File: " + me.inputFileStr + "id='" + me.pre + "cstcolorfile' size=8> ";
+    html += me.buttonStr + "reload_customcolorfile'>Load</button>";
+
     html += "</div>";
 
     html += me.divStr + "dl_align'>";
@@ -1311,7 +1353,8 @@ iCn3DUI.prototype.setDialogs = function() { var me = this; //"use strict";
 
     html += me.divStr + "dl_chainalign'>";
     html += "Enter the PDB chain IDs in the form of pdbid_chain (e.g., 1HHO_A, case sensitive): <br/><br/>ID1: " + me.inputTextStr + "id='" + me.pre + "chainalignid1' value='1HHO_A' size=8>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ID2: " + me.inputTextStr + "id='" + me.pre + "chainalignid2' value='4N7N_A' size=8><br/><br/>";
-    html += me.buttonStr + "reload_chainalign'>Align</button>";
+    html += me.buttonStr + "reload_chainalign'>Align</button><br/><br/>";
+    html += "<div style='width:450px'>(Note: To align chains in custom PDB files, you could concatenate PDB files in a single PDB file with the separation line \"ENDMDL\". Then load it in \"Open File > PDB File\" in the \"File\" menu and click \"View Sequences & Annotations\" in the \"Window\" menu. Finally select two chains in the sequence window and click \"Realign Selection\" in the \"File\" menu.)</div>";
     html += "</div>";
 
     html += me.divStr + "dl_mol2file'>";
@@ -1427,6 +1470,47 @@ iCn3DUI.prototype.setDialogs = function() { var me = this; //"use strict";
 
     html += "</div>";
 
+    html += me.divStr + "dl_dsn6url'>";
+    html += "<b>Note</b>: Always load a PDB file before loading DSN6 files. <br/><br/><br/>";
+
+    html += "<span style='white-space:nowrap;font-weight:bold;'>2fofc contour at: <select id='" + me.pre + "dsn6sigmaurl2fofc'>";
+    html += optionStr + "'0'>0</option>";
+    html += optionStr + "'0.5'>0.5</option>";
+    html += optionStr + "'1'>1</option>";
+    html += optionStr + "'1.5' selected>1.5</option>";
+    html += optionStr + "'2'>2</option>";
+    html += optionStr + "'3'>3</option>";
+    html += optionStr + "'4'>4</option>";
+    html += optionStr + "'5'>5</option>";
+    html += optionStr + "'6'>6</option>";
+    html += optionStr + "'7'>7</option>";
+    html += optionStr + "'8'>8</option>";
+    html += optionStr + "'9'>9</option>";
+    html += optionStr + "'10'>10</option>";
+    html += "</select> &sigma;</span><br/>";
+    html += "URL in the same host: " + me.inputTextStr + "id='" + me.pre + "dsn6fileurl2fofc' size=20>&nbsp;&nbsp;&nbsp;" + me.buttonStr + "reload_dsn6fileurl2fofc' style='margin-top: 6px;'>Load</button><br><br><br/>";
+
+    html += "<span style='white-space:nowrap;font-weight:bold;'>fofc contour at: <select id='" + me.pre + "dsn6sigmaurlfofc'>";
+    html += optionStr + "'0'>0</option>";
+    html += optionStr + "'0.5'>0.5</option>";
+    html += optionStr + "'1'>1</option>";
+    html += optionStr + "'1.5'>1.5</option>";
+    html += optionStr + "'2'>2</option>";
+    html += optionStr + "'3' selected>3</option>";
+    html += optionStr + "'4'>4</option>";
+    html += optionStr + "'5'>5</option>";
+    html += optionStr + "'6'>6</option>";
+    html += optionStr + "'7'>7</option>";
+    html += optionStr + "'8'>8</option>";
+    html += optionStr + "'9'>9</option>";
+    html += optionStr + "'10'>10</option>";
+    html += "</select> &sigma;</span><br/>";
+    html += "URL in the same host: " + me.inputTextStr + "id='" + me.pre + "dsn6fileurlfofc' size=20>&nbsp;&nbsp;&nbsp;" + me.buttonStr + "reload_dsn6fileurlfofc' style='margin-top: 6px;'>Load</button><br><br><br/>";
+
+    html += me.buttonStr + "elecmapNo5'>Remove Map</button><br>";
+
+    html += "</div>";
+
     html += me.divStr + "dl_clr'>";
     html += "Click in the input box to use the color picker:<br><br> ";
     html += "Custom Color: " + me.inputTextStr + "id='" + me.pre + "colorcustom' value='FF0000' size=8> ";
@@ -1436,7 +1520,8 @@ iCn3DUI.prototype.setDialogs = function() { var me = this; //"use strict";
     html += me.divStr + "dl_symmetry'><br>";
     html += me.divNowrapStr + "Symmetry: <select id='" + me.pre + "selectSymmetry'>";
     html += "</select>&nbsp;&nbsp;&nbsp;";
-    html += me.buttonStr + "applysymmetry'>Apply</button></div>";
+    html += me.buttonStr + "applysymmetry'>Apply</button>&nbsp;&nbsp;&nbsp;";
+    html += me.buttonStr + "clearsymmetry'>Clear</button></div>";
     html += "</div>";
 
     html += me.divStr + "dl_hbonds'>";
@@ -1971,7 +2056,7 @@ iCn3DUI.prototype.getAlignSequencesAnnotations = function (alignChainArray, bUpd
       for(var j=0, jl=annoLength; j < jl; ++j) {
         resiHtmlArray[j] = "";
 
-        var chainid = (j == 0) ? me.icn3d.alnChainsAnTtl[i][4][0] : i; // bottom secondary, j == 0: chain2,  next secondary, j == 1: chain1,
+        var chainid = (j == 0 && annoLength >= 7) ? me.icn3d.alnChainsAnTtl[i][4][0] : i; // bottom secondary, j == 0: chain2,  next secondary, j == 1: chain1,
 
         resiHtmlArray[j] += "<span class='icn3d-residueNum'></span>"; // a spot corresponding to the starting and ending residue number
         for(var k=0, kl=me.icn3d.alnChainsAnno[i][j].length; k < kl; ++k) {

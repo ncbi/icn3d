@@ -5,48 +5,18 @@
  * Modified by Jiyao Wang / https://github.com/ncbi/icn3d
  */
 
-
 iCn3DUI.prototype.Dsn6Parser = function(pdbid, type, sigma) { var me = this; //"use strict";
-   var url, dataType;
-   // https://edmaps.rcsb.org/maps/1kq2_2fofc.dsn6
-   // https://edmaps.rcsb.org/maps/1kq2_fofc.dsn6
+    // https://edmaps.rcsb.org/maps/1kq2_2fofc.dsn6
+    // https://edmaps.rcsb.org/maps/1kq2_fofc.dsn6
 
-   url = "https://edmaps.rcsb.org/maps/" + pdbid.toLowerCase() + "_" + type + ".dsn6";
+    var url = "https://edmaps.rcsb.org/maps/" + pdbid.toLowerCase() + "_" + type + ".dsn6";
+    me.Dsn6ParserBase(url, type, sigma);
+};
 
-   var bCid = undefined;
+iCn3DUI.prototype.Dsn6ParserBase = function(url, type, sigma) { var me = this; //"use strict";
+    var dataType;
 
-/*
-   dataType = "text";
-
-   $.ajax({
-      url: url,
-      dataType: dataType,
-      cache: true,
-      tryCount : 0,
-      retryLimit : 1,
-      beforeSend: function() {
-          me.showLoading();
-      },
-      complete: function() {
-          me.hideLoading();
-      },
-      success: function(dsn6data) {
-          me.loadDsn6Data(dsn6data, type);
-      },
-      error : function(xhr, textStatus, errorThrown ) {
-        this.tryCount++;
-        if (this.tryCount <= this.retryLimit) {
-            //try again
-            $.ajax(this);
-            return;
-        }
-
-        alert("RCSB server has no corresponding eletron density map for this structure.");
-
-        return;
-      }
-   });
-*/
+    var bCid = undefined;
 
     //https://stackoverflow.com/questions/33902299/using-jquery-ajax-to-download-a-binary-file
     if(type == '2fofc' && me.bAjax2fofc) {

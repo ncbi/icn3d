@@ -1,4 +1,6 @@
 ## Change Log
+[icn3d-2.14.0](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.14.0.zip) was release on April 15, 2020. Added the features to load Electron Density data in the menu "File > Open File > Electron Density (DSN6)", resize the 3D window, realign two structures in the menu "File > Realign", color residues with custom colors in the menu "Color > Residue > Custom", and add custom colors when aligning a sequence to a structure.
+
 [icn3d-2.13.1](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.13.1.zip) was release on March 26, 2020. Showed membranes for transmembrane proteins in VAST+ alignment.
 
 [icn3d-2.13.0](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.13.0.zip) was release on March 23, 2020. Added the "Symmetry" feature in the View menu.
@@ -7,7 +9,7 @@
 
 [icn3d-2.12.0](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.12.0.zip) was release on March 2, 2020. Enabled to realign selected residues in VAST+ structure alignment. The option "Realign Selection" is in the View menu.
 
-[icn3d-2.11.5](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.11.5.zip) was release on February 11, 2020. Add colors to aligned sequence track based on Blosum62.
+[icn3d-2.11.5](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.11.5.zip) was release on Fearuary 11, 2020. Add colors to aligned sequence track based on Blosum62.
 
 [icn3d-2.11.4](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.11.4.zip) was release on January 14, 2020. The compiling tool gulp was upgraded to version 4.
 
