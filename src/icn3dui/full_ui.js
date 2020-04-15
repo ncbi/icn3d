@@ -13,7 +13,7 @@ if (!$.ui.dialog.prototype._makeDraggableBase) {
 }
 
 var iCn3DUI = function(cfg) { var me = this; //"use strict";
-    this.REVISION = '2.13.1';
+    this.REVISION = '2.14.0';
 
     me.bFullUi = true;
 
@@ -114,7 +114,7 @@ var iCn3DUI = function(cfg) { var me = this; //"use strict";
     me.inputCheckStr = "<input type='checkbox' ";
     me.buttonStr = "<button id='" + me.pre;
 
-    me.postfix = "_q"; // add postfix for the chains of the query protein whne align two chians in one protein
+    me.postfix = "2"; // add postfix for the structure of the query protein when align two chains in one protein
 
     me.closeAc = {collapsible: true, active: false}; // close accordion
 
@@ -601,7 +601,15 @@ iCn3DUI.prototype = {
 
         $("#" + me.pre + "viewer").width(width).height(parseInt(height) + extraHeight);
         $("#" + me.pre + "canvas").width(width).height(parseInt(height));
-        //$("#" + me.pre + "canvas").resizable(); // resizing behavor not good for canvas.
+        $("#" + me.pre + "canvas").resizable({
+          resize: function( event, ui ) {
+            me.WIDTH = $("#" + me.pre + "canvas").width();
+            me.HEIGHT = $("#" + me.pre + "canvas").height();
+            if(me.icn3d !== undefined && !me.icn3d.bFullscreen) {
+                me.resizeCanvas(me.WIDTH, me.HEIGHT, true);
+            }
+          }
+        });
 
         me.icn3d = new iCn3D(me.pre + 'canvas');
 
@@ -1005,6 +1013,15 @@ iCn3DUI.prototype = {
               me.loadScript(me.cfg.command);
       }
 
+      if(me.cfg.align !== undefined || me.cfg.chainalign !== undefined || me.bRealign || ( me.bInputfile && me.InputfileType == 'pdb' && Object.keys(me.icn3d.structures).length >= 2) ) {
+          $("#" + me.pre + "mn2_alternateWrap").show();
+          $("#" + me.pre + "mn2_realignWrap").show();
+      }
+      else {
+          $("#" + me.pre + "mn2_alternateWrap").hide();
+          $("#" + me.pre + "mn2_realignWrap").hide();
+      }
+
       // display the structure right away. load the mns and sequences later
       setTimeout(function(){
           if(me.bInitial) {
@@ -1041,6 +1058,8 @@ iCn3DUI.prototype = {
           else {
               me.updateHlAll();
           }
+
+          if($("#" + me.pre + "atomsCustom").length > 0) $("#" + me.pre + "atomsCustom")[0].blur();
 
           me.bInitial = false;
       }, 0);
@@ -2317,11 +2336,18 @@ iCn3DUI.prototype = {
            //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
     },
-
+/*
     clickRealign: function() { var me = this; //"use strict";
-        $("#" + me.pre + "mn2_realign").click(function(e) {
+        $("#" + me.pre + "mn2_realignresbyres").click(function(e) {
            me.realign();
            me.setLogCmd("realign", true);
+        });
+    },
+*/
+    clickRealignonseqalign: function() { var me = this; //"use strict";
+        $("#" + me.pre + "mn2_realignonseqalign").click(function(e) {
+           me.realignOnSeqAlign();
+           me.setLogCmd("realign on seq align", true);
         });
     },
 
@@ -2478,6 +2504,14 @@ iCn3DUI.prototype = {
     clkMn1_dsn6: function() { var me = this; //"use strict";
         $("#" + me.pre + "mn1_dsn6").click(function(e) {
            me.openDialog(me.pre + 'dl_dsn6', 'Please input the DSN6 file to display electron density map');
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
+        });
+    },
+
+    clkMn1_dsn6url: function() { var me = this; //"use strict";
+        $("#" + me.pre + "mn1_dsn6url").click(function(e) {
+           me.openDialog(me.pre + 'dl_dsn6url', 'Please input the DSN6 file to display electron density map');
 
            //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
@@ -3593,6 +3627,139 @@ iCn3DUI.prototype = {
         });
     },
 
+    clkMn4_clrResidueCustom: function() { var me = this; //"use strict";
+        $("#" + me.pre + "mn4_clrResidueCustom").click(function(e) {
+           me.openDialog(me.pre + 'dl_rescolorfile', 'Please input the file on residue colors');
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
+        });
+    },
+
+    clkMn4_reloadRescolorfile: function() { var me = this; //"use strict";
+        $("#" + me.pre + "reload_rescolorfile").click(function(e) {
+           e.preventDefault();
+
+           dialog.dialog( "close" );
+
+           var file = $("#" + me.pre + "rescolorfile")[0].files[0];
+
+           if(!file) {
+             alert("Please select a file before clicking 'Load'");
+           }
+           else {
+             if (!window.File || !window.FileReader || !window.FileList || !window.Blob) {
+                alert('The File APIs are not fully supported in this browser.');
+             }
+
+             var reader = new FileReader();
+             reader.onload = function (e) {
+               var dataStrTmp = e.target.result; // or = reader.result;
+               var dataStr = dataStrTmp.replace(/#/g, "");
+
+               me.icn3d.customResidueColors = JSON.parse(dataStr);
+               for(var res in me.icn3d.customResidueColors) {
+                   me.icn3d.customResidueColors[res.toUpperCase()] = new THREE.Color("#" + me.icn3d.customResidueColors[res]);
+               }
+
+               me.setOption('color', 'residue custom');
+               me.setLogCmd('color residue custom | ' + dataStr, true);
+             };
+
+             reader.readAsText(file);
+           }
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
+        });
+    },
+
+    clkMn4_reloadCustomcolorfile: function() { var me = this; //"use strict";
+        $("#" + me.pre + "reload_customcolorfile").click(function(e) {
+           e.preventDefault();
+
+           dialog.dialog( "close" );
+
+           var chainid = $("#" + me.pre + "customcolor_chainid").val();
+           var file = $("#" + me.pre + "cstcolorfile")[0].files[0];
+
+           if(!file) {
+             alert("Please select a file before clicking 'Load'");
+           }
+           else {
+             if (!window.File || !window.FileReader || !window.FileList || !window.Blob) {
+                alert('The File APIs are not fully supported in this browser.');
+             }
+
+             var reader = new FileReader();
+             reader.onload = function (e) {
+                var dataStr = e.target.result; // or = reader.result;
+                var lineArray = dataStr.split('\n');
+
+                // http://proteopedia.org/wiki/index.php/Temperature_color_schemes
+                // Fixed: Middle (white): 50, red: >= 100, blue: 0
+                var middB = 50;
+                var spanBinv1 = 0.02;
+                var spanBinv2 = 0.02;
+
+                var queryresi2color = {}, queryresi2score = {};
+                for(var i = 0, il = lineArray.length; i < il; ++i) {
+                    var columnArray = lineArray[i].split(/\s+/);
+
+                    var b = columnArray[2]; // score
+                    if(b > 100) b = 100;
+
+                    var color = b < middB ? new THREE.Color().setRGB(1 - (s = (middB - b) * spanBinv1), 1 - s, 1) : new THREE.Color().setRGB(1, 1 - (s = (b - middB) * spanBinv2), 1 - s);
+
+                    queryresi2color[columnArray[1]] = color;
+                    queryresi2score[columnArray[1]] = b;
+                }
+
+                var resi2score = {};
+                for(var serail in me.icn3d.chains[chainid]) {
+                    var resi = me.icn3d.atoms[serail].resi - 1;
+                    var color;
+                    if(me.icn3d.target2queryHash.hasOwnProperty(resi) && me.icn3d.target2queryHash[resi] !== -1) { // -1 means gap
+                        var queryresi = me.icn3d.target2queryHash[resi] + 1;
+
+                        if(queryresi2color.hasOwnProperty(queryresi)) {
+                            color = queryresi2color[queryresi];
+
+                            resi2score[queryresi] = parseInt(100*queryresi2score[queryresi])/100.0;
+                        }
+                        else {
+                            color = me.icn3d.defaultAtomColor;
+                        }
+                    }
+                    else {
+                        color = me.icn3d.defaultAtomColor;
+                    }
+
+                    me.icn3d.atoms[serail].color = color;
+                    me.icn3d.atomPrevColors[serail] = color;
+
+                    me.icn3d.hAtoms[serail] = 1;
+                }
+
+                var resiScoreStr = '', bFound = false;
+                for(var resi in resi2score) {
+                    if(bFound) resiScoreStr += ', ';
+                    resiScoreStr += resi + ' ' + resi2score[resi];
+                    bFound = true;
+                }
+
+                me.updateHlAll();
+
+                me.icn3d.draw();
+
+                me.setLogCmd('color align custom | ' + resiScoreStr, true);
+             };
+
+             reader.readAsText(file);
+           }
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
+        });
+    },
+
     clkMn4_clrCharge: function() { var me = this; //"use strict";
         $("#" + me.pre + "mn4_clrCharge").click(function(e) {
            me.setOption('color', 'charge');
@@ -3997,7 +4164,7 @@ iCn3DUI.prototype = {
     },
 
     clkMn5_elecmapNo: function() { var me = this; //"use strict";
-        $("#" + me.pre + "mn5_elecmapNo").add("#" + me.pre + "elecmapNo2").add("#" + me.pre + "elecmapNo3").add("#" + me.pre + "elecmapNo4").click(function(e) {
+        $("#" + me.pre + "mn5_elecmapNo").add("#" + me.pre + "elecmapNo2").add("#" + me.pre + "elecmapNo3").add("#" + me.pre + "elecmapNo4").add("#" + me.pre + "elecmapNo5").click(function(e) {
            me.setOption('map', 'nothing');
            me.setLogCmd('set map nothing', true);
 
@@ -4678,6 +4845,15 @@ iCn3DUI.prototype = {
 
            me.setLogCmd('symmetry ' + title, true);
         });
+
+        $("#" + me.pre + "clearsymmetry").click(function(e) {
+           var title = 'none';
+           me.icn3d.symmetrytitle = undefined;
+
+           me.icn3d.draw();
+
+           me.setLogCmd('symmetry ' + title, true);
+        });
     },
 
     clkMn6_hbondsYes: function() { var me = this; //"use strict";
@@ -5131,7 +5307,10 @@ iCn3DUI.prototype = {
            query_id = (query_id !== '' && query_id !== undefined) ? query_id : query_fasta;
 
 //           if(query_id !== '' && query_id !== undefined) {
-               window.open(me.baseUrl + 'icn3d/full.html?from=icn3d&blast_rep_id=' + blast_rep_id + '&query_id=' + query_id, '_blank');
+               window.open(me.baseUrl + 'icn3d/full.html?from=icn3d&blast_rep_id=' + blast_rep_id
+                 + '&command=view annotations; set annotation cdd; set annotation site; set view detailed view; select chain '
+                 + blast_rep_id + '; show selection'
+                 + '&query_id=' + query_id, '_blank');
 /*
            }
            else if(query_fasta !== '' && query_fasta !== undefined) {
@@ -5421,6 +5600,47 @@ iCn3DUI.prototype = {
        }
     },
 
+    loadDsn6FileUrl: function(type) { var me = this; //"use strict";
+       var url = $("#" + me.pre + "dsn6fileurl" + type).val();
+       var sigma = $("#" + me.pre + "dsn6sigmaurl" + type).val();
+
+       me.Dsn6ParserBase(url, type, sigma);
+
+       me.setLogCmd('set map ' + type + ' sigma ' + sigma + ' | ' + encodeURIComponent(url), true);
+
+/*
+       if(!file) {
+         alert("Please select a file before clicking 'Load'");
+       }
+       else {
+         if (!window.File || !window.FileReader || !window.FileList || !window.Blob) {
+            alert('The File APIs are not fully supported in this browser.');
+         }
+
+         var reader = new FileReader();
+         reader.onload = function (e) {
+           var arrayBuffer = e.target.result; // or = reader.result;
+
+           me.loadDsn6Data(arrayBuffer, type, sigma);
+
+           if(type == '2fofc') {
+               me.bAjax2fofc = true;
+           }
+           else if(type == 'fofc') {
+               me.bAjaxfofc = true;
+           }
+
+           me.setOption('map', type);
+
+           me.setLogCmd('load dsn6 file ' + $("#" + me.pre + "dsn6file" + type).val(), false);
+         };
+
+         reader.readAsArrayBuffer(file);
+       }
+*/
+
+    },
+
     clickReload_dsn6file: function() { var me = this; //"use strict";
         $("#" + me.pre + "reload_dsn6file2fofc").click(function(e) {
            e.preventDefault();
@@ -5436,6 +5656,22 @@ iCn3DUI.prototype = {
            dialog.dialog( "close" );
 
            me.loadDsn6File('fofc');
+        });
+
+        $("#" + me.pre + "reload_dsn6fileurl2fofc").click(function(e) {
+           e.preventDefault();
+
+           dialog.dialog( "close" );
+
+           me.loadDsn6FileUrl('2fofc');
+        });
+
+        $("#" + me.pre + "reload_dsn6fileurlfofc").click(function(e) {
+           e.preventDefault();
+
+           dialog.dialog( "close" );
+
+           me.loadDsn6FileUrl('fofc');
         });
     },
 
@@ -6016,7 +6252,8 @@ iCn3DUI.prototype = {
 
                var interactionTypes = me.viewInteractionPairs(nameArray2, nameArray, me.bHbondCalc, bHbond, bSaltbridge, bInteraction);
 
-               me.setLogCmd("view interaction pairs | " + nameArray2 + " " + nameArray + " | " + interactionTypes + " | " + me.bHbondCalc, true);
+               //me.setLogCmd("view interaction pairs | " + nameArray2 + " " + nameArray + " | " + interactionTypes + " | " + me.bHbondCalc, true);
+               me.setLogCmd("view interaction pairs | " + nameArray2 + " " + nameArray + " | " + interactionTypes + " | false", true);
            }
         });
 
@@ -6038,7 +6275,8 @@ iCn3DUI.prototype = {
                var bSave = true;
                var interactionTypes = me.viewInteractionPairs(nameArray2, nameArray, me.bHbondCalc, bHbond, bSaltbridge, bInteraction, bSave);
 
-               me.setLogCmd("save interaction pairs | " + nameArray2 + " " + nameArray + " | " + interactionTypes + " | " + me.bHbondCalc, false);
+               //me.setLogCmd("save interaction pairs | " + nameArray2 + " " + nameArray + " | " + interactionTypes + " | " + me.bHbondCalc, true);
+               me.setLogCmd("save interaction pairs | " + nameArray2 + " " + nameArray + " | " + interactionTypes + " | false", true);
            }
         });
 
@@ -6755,7 +6993,8 @@ iCn3DUI.prototype = {
         me.clickHlStyleNone();
 
         me.clickAlternate();
-        me.clickRealign();
+        //me.clickRealign();
+        me.clickRealignonseqalign();
         me.clkMn1_mmtfid();
         me.clkMn1_pdbid();
         me.clkMn1_opmid();
@@ -6776,6 +7015,7 @@ iCn3DUI.prototype = {
         me.clkMn1_state();
         me.clkMn1_selection();
         me.clkMn1_dsn6();
+        me.clkMn1_dsn6url();
         me.clkMn1_exportState();
         me.clkMn1_exportStl();
         me.clkMn1_exportVrml();
@@ -6862,6 +7102,9 @@ iCn3DUI.prototype = {
         me.clkMn4_clrSSYellow();
         me.clkMn4_clrSSSpectrum();
         me.clkMn4_clrResidue();
+        me.clkMn4_clrResidueCustom();
+        me.clkMn4_reloadRescolorfile();
+        me.clkMn4_reloadCustomcolorfile();
         me.clkMn4_clrCharge();
         me.clkMn4_clrHydrophobic();
         me.clkMn4_clrAtom();
@@ -7049,6 +7292,7 @@ iCn3DUI.prototype = {
         me.windowResize();
         me.setTabs();
         me.clickAddTrack();
+        me.clickCustomColor();
         me.clickDefineHelix();
         me.clickDefineSheet();
         me.clickDefineCoil();

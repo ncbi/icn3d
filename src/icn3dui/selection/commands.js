@@ -107,7 +107,9 @@ iCn3DUI.prototype.execCommandsBase = function (start, end, steps, bFinalStep) { 
           //set map 2fofc sigma 1.5
           var strArray = me.icn3d.commands[i].split("|||");
 
-          var str = strArray[0].trim().substr(8);
+          var urlArray = strArray[0].trim().split(' | ');
+
+          var str = urlArray[0].substr(8);
           var paraArray = str.split(" ");
 
           if(paraArray.length == 3 && paraArray[1] == 'sigma') {
@@ -301,6 +303,14 @@ iCn3DUI.prototype.execCommandsBase = function (start, end, steps, bFinalStep) { 
             me.execCommandsBase(i + 1, end, steps);
         }
       }
+      else if(me.icn3d.commands[i].trim().indexOf('realign on seq align') == 0) {
+        var strArray = me.icn3d.commands[i].split("|||");
+        var command = strArray[0].trim();
+
+        $.when(me.realignOnSeqAlign()).then(function() {
+           me.execCommandsBase(i + 1, end, steps);
+        });
+      }
       else {
           me.applyCommand(me.icn3d.commands[i]);
       }
@@ -490,14 +500,26 @@ iCn3DUI.prototype.applyCommandLoad = function (commandStr) { var me = this; //"u
 iCn3DUI.prototype.applyCommandMap = function (command) { var me = this; //"use strict";
   // chain functions together
   me.deferredMap = $.Deferred(function() {
-      var str = command.substr(8);
+      //"set map 2fofc sigma 1.5"
+      // or "set map 2fofc sigma 1.5 | [url]"
+      var urlArray = command.split(" | ");
+console.log("command: " + command);
+
+      var str = urlArray[0].substr(8);
       var paraArray = str.split(" ");
+console.log("paraArray: " + paraArray);
 
       if(paraArray.length == 3 && paraArray[1] == 'sigma') {
           var sigma = paraArray[2];
           var type = paraArray[0];
 
-          me.Dsn6Parser(me.inputid, type, sigma);
+          if(urlArray.length == 2) {
+console.log("url: " + urlArray[1]);
+              me.Dsn6ParserBase(urlArray[1], type, sigma);
+          }
+          else {
+              me.Dsn6Parser(me.inputid, type, sigma);
+          }
       }
   }); // end of me.deferred = $.Deferred(function() {
 
@@ -625,8 +647,9 @@ iCn3DUI.prototype.getPolygonColor = function (symbol) { var me = this; //"use st
 iCn3DUI.prototype.retrieveSymmetry = function (pdbid) { var me = this; //"use strict";
   // chain functions together
   me.deferredSymmetry = $.Deferred(function() {
-       var url = "https://data-beta.rcsb.org/rest/v3/core/assembly/" + pdbid + "/1";
        //var url = "https://rest.rcsb.org/rest/structures/3dview/" + pdbid;
+       //var url = "https://data-beta.rcsb.org/rest/v3/core/assembly/" + pdbid + "/1";
+       var url = "https://data-beta.rcsb.org/rest/v1/core/assembly/" + pdbid + "/1";
 
        $.ajax({
           url: url,
@@ -1351,9 +1374,9 @@ iCn3DUI.prototype.applyCommand = function (commandStr) { var me = this; //"use s
   else if(command == 'select side chains') {
      me.selectSideChains();
   }
-  else if(command == 'realign') {
-     me.realign();
-  }
+//  else if(command == 'realign') {
+//     me.realign();
+//  }
 
 // start with =================
   else if(commandOri.indexOf('define helix sets') == 0) {
@@ -1629,7 +1652,7 @@ iCn3DUI.prototype.applyCommand = function (commandStr) { var me = this; //"use s
   else if(command.indexOf('toggle membrane') == 0) {
     me.toggleMembrane();
   }
-  else if(commandOri.indexOf('view interaction pairs') == 0) {
+  else if(commandOri.indexOf('view interaction pairs') == 0 || commandOri.indexOf('save interaction pairs') == 0) {
     var paraArray = commandOri.split(' | ');
     if(paraArray.length >= 3) {
         var setNameArray = paraArray[1].split(' ');
@@ -1645,7 +1668,12 @@ iCn3DUI.prototype.applyCommand = function (commandStr) { var me = this; //"use s
             bHbondCalc = (paraArray[3] == 'true') ? true : false;
         }
 
-        me.viewInteractionPairs(nameArray2, nameArray, bHbondCalc, bHbond, bSaltbridge, bInteraction);
+        if(commandOri.indexOf('view interaction pairs') == 0) {
+            me.viewInteractionPairs(nameArray2, nameArray, bHbondCalc, bHbond, bSaltbridge, bInteraction);
+        }
+        else if(commandOri.indexOf('save interaction pairs') == 0) {
+            me.viewInteractionPairs(nameArray2, nameArray, bHbondCalc, bHbond, bSaltbridge, bInteraction, true);
+        }
     }
   }
   else if(command.indexOf('reset interaction pairs') == 0) {
@@ -1694,9 +1722,26 @@ iCn3DUI.prototype.applyCommand = function (commandStr) { var me = this; //"use s
         me.displayInteraction3d(nameArray2, nameArray, bHbondCalc, interactionTypes);
     }
   }
-  else if(command.indexOf('color') == 0) {
-    var color = command.substr(command.indexOf(' ') + 1);
+  else if(commandOri.indexOf('color') == 0) {
+    var strArray = commandOri.split(" | ");
+    var color = strArray[0].substr(strArray[0].indexOf(' ') + 1);
     me.icn3d.opts['color'] = color;
+
+    if(color == "residue custom" && strArray.length == 2) {
+        me.icn3d.customResidueColors = JSON.parse(strArray[1]);
+        for(var res in me.icn3d.customResidueColors) {
+            me.icn3d.customResidueColors[res.toUpperCase()] = new THREE.Color("#" + me.icn3d.customResidueColors[res]);
+        }
+    }
+    else if(color == "align custom" && strArray.length == 2) {
+        var resiScoreArray = strArray[1].split(', ');
+        me.icn3d.queryresi2score = {};
+        for(var i = 0, il = resiScoreArray.length; i < il; ++i) {
+            var resi_score = resiScoreArray[i].split(' ');
+
+            me.icn3d.queryresi2score[resi_score[0]] = resi_score[1];
+        }
+    }
 
     me.icn3d.setColorByOptions(me.icn3d.opts, me.icn3d.hAtoms);
 

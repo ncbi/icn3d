@@ -139,7 +139,8 @@ iCn3DUI.prototype.getLinkToStructureSummary = function(bLog) { var me = this; //
            url = "https://www.ncbi.nlm.nih.gov/pccompound/?term=";
        }
        else {
-           if(me.inputid.indexOf(",") !== -1) {
+           //if(me.inputid.indexOf(",") !== -1) {
+           if(Object.keys(me.icn3d.structures).length > 1) {
                url = "https://www.ncbi.nlm.nih.gov/structure/?term=";
            }
            else {
@@ -488,8 +489,9 @@ iCn3DUI.prototype.resizeCanvas = function (width, height, bForceResize, bDraw) {
     //var heightTmp = parseInt(height) - me.EXTRAHEIGHT;
     var heightTmp = height;
     $("#" + me.pre + "canvas").width(width).height(heightTmp);
-
     $("#" + me.pre + "viewer").width(width).height(height);
+
+    $("div:has(#" + me.pre + "canvas)").width(width).height(heightTmp);
 
     me.icn3d.setWidthHeight(width, heightTmp);
 

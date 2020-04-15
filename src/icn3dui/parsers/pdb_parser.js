@@ -233,7 +233,7 @@ iCn3DUI.prototype.transformToOpmOri = function(pdbid) { var me = this; //"use st
       var rot = me.icn3d.rmsd_supr.rot;
       var centerFrom = me.icn3d.rmsd_supr.trans1;
       var centerTo = me.icn3d.rmsd_supr.trans2;
-      //var rsmd = me.icn3d.rmsd_supr.rsmd;
+      var rmsd = me.icn3d.rmsd_supr.rmsd;
 
       var dxymaxsq = 0;
       for(var i in me.icn3d.atoms) {
@@ -270,7 +270,7 @@ iCn3DUI.prototype.transformToOpmOri = function(pdbid) { var me = this; //"use st
 
 iCn3DUI.prototype.transformToOpmOriForAlign = function(pdbid, chainresiCalphaHash2, bResi_ori) { var me = this; //"use strict";
   if(chainresiCalphaHash2 !== undefined) {
-      var chainresiCalphaHash1 = me.icn3d.getChainCalpha(me.icn3d.chains, me.icn3d.atoms, bResi_ori);
+      var chainresiCalphaHash1 = me.icn3d.getChainCalpha(me.icn3d.chains, me.icn3d.atoms, bResi_ori, pdbid);
 
       var bOneChain = (Object.keys(chainresiCalphaHash1.chainresiCalphaHash).length == 1 || Object.keys(chainresiCalphaHash2.chainresiCalphaHash).length == 1) ? true : false;
 
@@ -300,7 +300,9 @@ iCn3DUI.prototype.transformToOpmOriForAlign = function(pdbid, chainresiCalphaHas
               var rot = me.icn3d.rmsd_supr.rot;
               var centerFrom = me.icn3d.rmsd_supr.trans1;
               var centerTo = me.icn3d.rmsd_supr.trans2;
-              //var rsmd = me.icn3d.rmsd_supr.rsmd;
+              var rmsd = me.icn3d.rmsd_supr.rmsd;
+
+              me.setLogCmd("alignment RMSD: " + rmsd.toPrecision(4), false);
 
               var dxymaxsq = 0;
               for(var i in me.icn3d.atoms) {
@@ -340,79 +342,54 @@ iCn3DUI.prototype.transformToOpmOriForAlign = function(pdbid, chainresiCalphaHas
   }
 };
 
-iCn3DUI.prototype.realign = function() { var me = this; //"use strict";
-    me.saveSelectionPrep();
+iCn3DUI.prototype.alignCoords = function(coordsFrom, coordsTo, secondStruct) { var me = this; //"use strict";
+  //var n = coordsFrom.length;
+  var n = (coordsFrom.length < coordsTo.length) ? coordsFrom.length : coordsTo.length;
 
-    var index = Object.keys(me.icn3d.defNames2Atoms).length;
-    var name = 'alseq_' + index;
+  if(n < 4) alert("Please select at least four residues in each structure...");
+  if(n >= 4) {
+      me.icn3d.rmsd_supr = me.rmsd_supr(coordsFrom, coordsTo, n);
 
-    me.saveSelection(name, name);
+      // apply matrix for each atom
+      if(me.icn3d.rmsd_supr.rot !== undefined) {
+          var rot = me.icn3d.rmsd_supr.rot;
+          if(rot[0] === null) alert("Please select more residues in each structure...");
 
-    var structHash = {};
-    var lastStruResi = '';
-    for(var serial in me.icn3d.hAtoms) {
-        var atom = me.icn3d.atoms[serial];
-        if( (me.icn3d.proteins.hasOwnProperty(serial) && atom.name == "CA")
-          || (me.icn3d.nucleotides.hasOwnProperty(serial) && (atom.name == "O3'" || atom.name == "O3*")) ) {
-            if(atom.structure + '_' + atom.resi == lastStruResi) continue; // e.g., Alt A and B
+          var centerFrom = me.icn3d.rmsd_supr.trans1;
+          var centerTo = me.icn3d.rmsd_supr.trans2;
+          var rmsd = me.icn3d.rmsd_supr.rmsd;
+          me.setLogCmd("alignment RMSD: " + rmsd.toPrecision(4), false);
 
-            if(!structHash.hasOwnProperty(atom.structure)) {
-                structHash[atom.structure] = [];
-            }
-
-            structHash[atom.structure].push(atom.coord.clone());
-
-            lastStruResi = atom.structure + '_' + atom.resi;
-        }
-    }
-
-    var structArray = Object.keys(structHash);
-
-//    if(structHash[structArray[0]].length != structHash[structArray[1]].length) alert("The number of selected residues in each structure should be the same...");
-
-//    if(structArray.length >= 2 && structHash[structArray[0]].length == structHash[structArray[1]].length) {
-    if(structArray.length >= 2) {
-      var firstStruct = structArray[0];
-      var secondStruct = structArray[1];
-
-      // transform from the second structure to the first structure
-      var coordsFrom = structHash[secondStruct];
-      var coordsTo = structHash[firstStruct];
-
-      //var n = coordsFrom.length;
-      var n = (coordsFrom.length < coordsTo.length) ? coordsFrom.length : coordsTo.length;
-
-      if(n < 4) alert("Please select at least four residues in each structure...");
-      if(n >= 4) {
-          me.icn3d.rmsd_supr = me.rmsd_supr(coordsFrom, coordsTo, n);
-
-          // apply matrix for each atom
-          if(me.icn3d.rmsd_supr.rot !== undefined) {
-              var rot = me.icn3d.rmsd_supr.rot;
-              if(rot[0] === null) alert("Please select more residues in each structure...");
-
-              var centerFrom = me.icn3d.rmsd_supr.trans1;
-              var centerTo = me.icn3d.rmsd_supr.trans2;
-              //var rsmd = me.icn3d.rmsd_supr.rsmd;
-
-              for(var i = 0, il = me.icn3d.structures[secondStruct].length; i < il; ++i) {
-                  var chainid = me.icn3d.structures[secondStruct][i];
-                  for(var j in me.icn3d.chains[chainid]) {
-                    var atom = me.icn3d.atoms[j];
-                    atom.coord = me.icn3d.transformMemPro(atom.coord, rot, centerFrom, centerTo);
-                  }
+          for(var i = 0, il = me.icn3d.structures[secondStruct].length; i < il; ++i) {
+              var chainid = me.icn3d.structures[secondStruct][i];
+              for(var j in me.icn3d.chains[chainid]) {
+                var atom = me.icn3d.atoms[j];
+                atom.coord = me.icn3d.transformMemPro(atom.coord, rot, centerFrom, centerTo);
               }
-
-              me.icn3d.draw();
           }
+
+          me.bRealign = true;
+          me.opts['color'] = 'identity';
+
+          me.setSeqAlignForRealign();
+
+          var bShowHighlight = false;
+          var seqObj = me.getAlignSequencesAnnotations(Object.keys(me.icn3d.alnChains), undefined, undefined, bShowHighlight);
+
+          $("#" + me.pre + "dl_sequence2").html(seqObj.sequencesHtml);
+          $("#" + me.pre + "dl_sequence2").width(me.RESIDUE_WIDTH * seqObj.maxSeqCnt + 200);
+
+          me.openDialog(me.pre + 'dl_alignment', 'Select residues in aligned sequences');
+
+          me.icn3d.draw();
       }
-    }
+  }
 };
 
 iCn3DUI.prototype.loadPdbData = function(data, pdbid, bOpm) { var me = this; //"use strict";
       me.icn3d.loadPDB(data, pdbid, bOpm); // defined in the core library
 
-      me.transformToOpmOri(pdbid);
+      if(me.cfg.opmid === undefined) me.transformToOpmOri(pdbid);
 
       if(me.icn3d.biomtMatrices !== undefined && me.icn3d.biomtMatrices.length > 1) {
         $("#" + me.pre + "assemblyWrapper").show();
@@ -1027,7 +1004,7 @@ iCn3DUI.prototype.loadMmdbOpmData = function(data, pdbid, type) { var me = this;
 };
 
 iCn3DUI.prototype.setOpmData = function(data) { var me = this;
-    if(data.opm.rot !== undefined) {
+    if(data.opm !== undefined && data.opm.rot !== undefined) {
         me.icn3d.bOpm = true;
 
         me.icn3d.halfBilayerSize = data.opm.thickness;
@@ -1035,7 +1012,7 @@ iCn3DUI.prototype.setOpmData = function(data) { var me = this;
         me.icn3d.rmsd_supr.rot = data.opm.rot;
         me.icn3d.rmsd_supr.trans1 = new THREE.Vector3(data.opm.trans1[0], data.opm.trans1[1], data.opm.trans1[2]);
         me.icn3d.rmsd_supr.trans2 = new THREE.Vector3(data.opm.trans2[0], data.opm.trans2[1], data.opm.trans2[2]);
-        me.icn3d.rmsd_supr.rsmd = data.opm.rmsd;
+        me.icn3d.rmsd_supr.rmsd = data.opm.rmsd;
     }
     else {
         me.icn3d.bOpm = false;

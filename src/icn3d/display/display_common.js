@@ -240,6 +240,50 @@ iCn3D.prototype.setColorByOptions = function (options, atoms, bUseInputColor) {
                 this.atomPrevColors[i] = atom.color;
             }
             break;
+
+        case 'residue custom':
+            for (var i in atoms) {
+                var atom = this.atoms[i];
+                atom.color = atom.het ? this.atomColors[atom.elem] || this.defaultAtomColor : this.customResidueColors[atom.resn] || this.defaultResidueColor;
+
+                this.atomPrevColors[i] = atom.color;
+            }
+            break;
+
+        case 'align custom':
+            // http://proteopedia.org/wiki/index.php/Temperature_color_schemes
+            // Fixed: Middle (white): 50, red: >= 100, blue: 0
+            var middB = 50;
+            var spanBinv1 = 0.02;
+            var spanBinv2 = 0.02;
+
+            for(var serial in atoms) {
+                var resi = this.atoms[serial].resi - 1;
+                var color;
+                if(this.target2queryHash.hasOwnProperty(resi) && this.target2queryHash[resi] !== -1) { // -1 means gap
+                    var queryresi = this.target2queryHash[resi] + 1;
+
+                    if(this.queryresi2score.hasOwnProperty(queryresi)) {
+                        var b = this.queryresi2score[queryresi];
+
+                        if(b > 100) b = 100;
+                        color = b < middB ? new THREE.Color().setRGB(1 - (s = (middB - b) * spanBinv1), 1 - s, 1) : new THREE.Color().setRGB(1, 1 - (s = (b - middB) * spanBinv2), 1 - s);
+                    }
+                    else {
+                        color = this.defaultAtomColor;
+                    }
+                }
+                else {
+                    color = this.defaultAtomColor;
+                }
+
+                this.atoms[serial].color = color;
+                this.atomPrevColors[serial] = color;
+            }
+
+            //me.updateHlAll();
+            break;
+
         case 'charge':
             for (var i in atoms) {
                 var atom = this.atoms[i];

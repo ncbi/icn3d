@@ -48,6 +48,8 @@ iCn3DUI.prototype.showAnnotations = function() { var me = this; //"use strict";
             //if(pos > 4) continue; // NMR structures with structure id such as 2K042,2K043, ...
 
             var atom = me.icn3d.getFirstCalphaAtomObj(me.icn3d.chains[chainArray[i]]);
+            if(atom === undefined) atom = me.icn3d.getFirstAtomObj(me.icn3d.chains[chainArray[i]]);
+
             // only single letter chain has accession such as 1P9M_A
             var chainLetter = chainArray[i].substr(chainArray[i].indexOf('_') + 1);
 
@@ -90,6 +92,7 @@ iCn3DUI.prototype.showAnnotations = function() { var me = this; //"use strict";
                     if(resObj.name !== '' && resObj.name !== '-' && resObj.name == resObj.name.toUpperCase()) {
                         var resid = chainArray[i] + '_' + resObj.resi;
                         var atom = me.icn3d.getFirstCalphaAtomObj(me.icn3d.residues[resid]);
+                        if(atom === undefined) atom = me.icn3d.getFirstAtomObj(me.icn3d.chains[chainArray[i]]);
 
                         if(me.icn3d.proteins.hasOwnProperty(atom.serial) || me.icn3d.nucleotides.hasOwnProperty(atom.serial)) {
                             continue;
@@ -361,11 +364,20 @@ iCn3DUI.prototype.getAnnotationData = function() { var me = this; //"use strict"
 
         var geneLink = (me.icn3d.chainsGene[chnid] && me.icn3d.chainsGene[chnid].geneId) ? " (Gene: <a href='https://www.ncbi.nlm.nih.gov/gene/" + me.icn3d.chainsGene[chnid].geneId + "' target='_blank' title='" + me.icn3d.chainsGene[chnid].geneDesc + "'>" + me.icn3d.chainsGene[chnid].geneSymbol + "</a>)" : '';
 
-        var chainHtml = "<div id='" + me.pre + "anno_" + chnid + "' class='icn3d-annotation'>" + categoryStr + "<span style='font-weight:bold;'>Annotations of " + chnid + "</span>: <a class='icn3d-blue' href='https://www.ncbi.nlm.nih.gov/protein?term=" + chnid + "' target='_blank' title='" + fullProteinName + "'>" + proteinName + "</a>" + geneLink + "&nbsp;&nbsp;&nbsp;"
-        + me.addButton(chnid, "icn3d-addtrack", "Add Track", "Add a custom track", 60, buttonStyle) + "&nbsp;&nbsp;&nbsp;"
-        + me.addButton(chnid, "icn3d-helixsets", "Helix Sets", "Define sets for each helix in this chain and add them to the menu of \"Defined Sets\"", 60, buttonStyle) + "&nbsp;"
-        + me.addButton(chnid, "icn3d-sheetsets", "Sheet Sets", "Define sets for each sheet in this chain and add them to the menu of \"Defined Sets\"", 60, buttonStyle) + "&nbsp;"
-        + me.addButton(chnid, "icn3d-coilsets", "Coil Sets", "Define sets for each coil in this chain and add them to the menu of \"Defined Sets\"", 60, buttonStyle);
+        var chainHtml = "<div id='" + me.pre + "anno_" + chnid + "' class='icn3d-annotation'>" + categoryStr
+            + "<span style='font-weight:bold;'>Annotations of " + chnid
+            + "</span>: <a class='icn3d-blue' href='https://www.ncbi.nlm.nih.gov/protein?term="
+            + chnid + "' target='_blank' title='" + fullProteinName + "'>" + proteinName + "</a>"
+            + geneLink + "&nbsp;&nbsp;&nbsp;"
+            + me.addButton(chnid, "icn3d-addtrack", "Add Track", "Add a custom track", 60, buttonStyle)
+            + "&nbsp;&nbsp;&nbsp;"
+            + me.addButton(chnid, "icn3d-helixsets", "Helix Sets", "Define sets for each helix in this chain and add them to the menu of \"Defined Sets\"", 60, buttonStyle) + "&nbsp;"
+            + me.addButton(chnid, "icn3d-sheetsets", "Sheet Sets", "Define sets for each sheet in this chain and add them to the menu of \"Defined Sets\"", 60, buttonStyle) + "&nbsp;"
+            + me.addButton(chnid, "icn3d-coilsets", "Coil Sets", "Define sets for each coil in this chain and add them to the menu of \"Defined Sets\"", 60, buttonStyle) + "&nbsp;&nbsp;&nbsp;";
+
+        if(me.cfg.blast_rep_id !== undefined && me.cfg.blast_rep_id == chnid) {
+            chainHtml += me.addButton(chnid, "icn3d-customcolor", "Custom Color", "Use a custom file to define the colors in 3D structure", 80, buttonStyle);
+        }
 
         $("#" + me.pre + "dl_annotations").append(chainHtml);
 
@@ -510,7 +522,7 @@ iCn3DUI.prototype.getAnnotationData = function() { var me = this; //"use strict"
                   var querySeq = query.seqdata;
 
                   var segArray = target.segs;
-                  var target2queryHash = {};
+                  me.icn3d.target2queryHash = {};
                   me.targetGapHash = {};
                   me.fullpos2ConsTargetpos = {};
                   me.consrvResPosArray = [];
@@ -529,13 +541,13 @@ iCn3DUI.prototype.getAnnotationData = function() { var me = this; //"use strict"
                         }
                         else if(seg.orifrom - prevTargetTo > seg.from - prevQueryTo) { // gap in query
                             for(var j = prevTargetTo + 1; j < seg.orifrom; ++j) {
-                              target2queryHash[j] = -1; // means gap in query
+                              me.icn3d.target2queryHash[j] = -1; // means gap in query
                             }
                         }
                       }
 
                       for(var j = 0; j <= seg.orito - seg.orifrom; ++j) {
-                          target2queryHash[j + seg.orifrom] = j + seg.from;
+                          me.icn3d.target2queryHash[j + seg.orifrom] = j + seg.from;
                       }
                       prevTargetTo = seg.orito;
                       prevQueryTo = seg.to;
@@ -556,18 +568,18 @@ iCn3DUI.prototype.getAnnotationData = function() { var me = this; //"use strict"
                       compText += me.insertGap(chnid, i, '-', true);
                       if(me.targetGapHash.hasOwnProperty(i)) nGap += me.targetGapHash[i].to - me.targetGapHash[i].from + 1;
 
-                      if(target2queryHash.hasOwnProperty(i) && target2queryHash[i] !== -1) {
-                          text += querySeq[target2queryHash[i]];
-                          var colorHexStr = me.getColorhexFromBlosum62(targetSeq[i], querySeq[target2queryHash[i]]);
+                      if(me.icn3d.target2queryHash.hasOwnProperty(i) && me.icn3d.target2queryHash[i] !== -1) {
+                          text += querySeq[me.icn3d.target2queryHash[i]];
+                          var colorHexStr = me.getColorhexFromBlosum62(targetSeq[i], querySeq[me.icn3d.target2queryHash[i]]);
 
-                          if(targetSeq[i] == querySeq[target2queryHash[i]]) {
+                          if(targetSeq[i] == querySeq[me.icn3d.target2queryHash[i]]) {
                               compText += targetSeq[i];
                               me.fullpos2ConsTargetpos[i + nGap] = {'same': 1, 'pos': i+1, 'res': targetSeq[i], 'color': colorHexStr};
                               me.consrvResPosArray.push(i+1);
 
                               me.icn3d.alnChainsSeq[chnid].push({'resi': i+1, 'color': '#FF0000', 'color2': '#' + colorHexStr});
                           }
-                          else if(me.conservativeReplacement(targetSeq[i], querySeq[target2queryHash[i]])) {
+                          else if(me.conservativeReplacement(targetSeq[i], querySeq[me.icn3d.target2queryHash[i]])) {
                               compText += '+';
                               me.fullpos2ConsTargetpos[i + nGap] = {'same': 0, 'pos': i+1, 'res': targetSeq[i], 'color': colorHexStr};
                               me.consrvResPosArray.push(i+1);
@@ -676,7 +688,7 @@ iCn3DUI.prototype.getProteinName= function(chnid) { var me = this; //"use strict
             }
         }
     }
-    else if((me.cfg.align !== undefined || me.cfg.chainalign !== undefined) && me.chainid2title !== undefined) {
+    else if((me.cfg.align !== undefined || me.cfg.chainalign !== undefined || me.bRealign) && me.chainid2title !== undefined) {
         if(me.chainid2title[chnid] !== undefined) {
             fullProteinName = me.chainid2title[chnid];
         }
@@ -2468,7 +2480,7 @@ iCn3DUI.prototype.showDomainPerStructure = function(index) { var me = this; //"u
             me.bAjaxDoneArray[index] = true;
 
             if(me.deferred3ddomain !== undefined) {
-                if(me.cfg.align === undefined || me.cfg.chainalign === undefined ) {
+                if(me.cfg.align === undefined || me.cfg.chainalign === undefined || me.bRealign) {
                     me.deferred3ddomain.resolve();
                 }
                 else {

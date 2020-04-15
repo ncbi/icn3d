@@ -11,7 +11,7 @@ iCn3DUI.prototype.update2DdgmContent = function () { var me = this; //"use stric
 
       $("#" + me.pre + "dl_2ddgm").html(html2ddgm);
    }
-   else if(me.cfg.align !== undefined || me.cfg.chainalign !== undefined ) {
+   else if(me.cfg.align !== undefined || me.cfg.chainalign !== undefined || me.bRealign) {
       html2ddgm += me.draw2Ddgm(me.interactionData1, me.mmdbidArray[0].toUpperCase(), 0, true);
       if(me.mmdbid_q !== undefined && me.mmdbid_q === me.mmdbid_t) {
           html2ddgm += me.draw2Ddgm(me.interactionData2, me.mmdbidArray[0].toUpperCase(), 1, true);
@@ -34,7 +34,7 @@ iCn3DUI.prototype.changeSeqColor = function(residueArray) { var me = this; //"us
          var color = (atom.color !== undefined) ? colorStr : "CCCCCC";
          // annotations will have their own color, only the chain will have the changed color
          $("[id=giseq_" + me.pre + pickedResidue + "]").attr('style', 'color:#' + color);
-         if(me.cfg.align !== undefined || me.cfg.chainalign !== undefined ) $("[id=align_" + me.pre + pickedResidue + "]").attr('style', 'color:#' + color);
+         if(me.cfg.align !== undefined || me.cfg.chainalign !== undefined || me.bRealign) $("[id=align_" + me.pre + pickedResidue + "]").attr('style', 'color:#' + color);
        }
    }
 };

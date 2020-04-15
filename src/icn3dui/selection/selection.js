@@ -260,7 +260,7 @@ iCn3DUI.prototype.selectAChain = function (chainid, commandname, bAlign, bUnion)
 };
 
 iCn3DUI.prototype.selectResidueList = function (residueHash, commandname, commanddescr, bUnion, bUpdateHighlight) { var me = this; //"use strict";
-  if(Object.keys(residueHash).length > 0) {
+  if(residueHash !== undefined && Object.keys(residueHash).length > 0) {
     var chainHash = {};
     if(bUnion === undefined || !bUnion) {
         me.icn3d.hAtoms = {};

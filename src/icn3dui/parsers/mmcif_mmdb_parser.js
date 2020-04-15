@@ -702,7 +702,10 @@ iCn3DUI.prototype.loadAtomDataIn = function (data, id, type, seqalign, alignType
                   chainHash[chain] = 1;
               }
 
-              if(me.mmdbid_q !== undefined && me.mmdbid_q === me.mmdbid_t && alignType === 'query') chainid += me.postfix;
+              if(me.mmdbid_q !== undefined && me.mmdbid_q === me.mmdbid_t && alignType === 'query') {
+                  //chainid += me.postfix;
+                  chainid = pdbidTmp + me.postfix + '_' + chain;
+              }
 
               var kind = data.moleculeInfor[molid].kind;
               var color = data.moleculeInfor[molid].color;
@@ -738,7 +741,10 @@ iCn3DUI.prototype.loadAtomDataIn = function (data, id, type, seqalign, alignType
                 var seqArray = data.sequences[chain];
                 var chainid = id + '_' + chain;
 
-                if(me.mmdbid_q !== undefined && me.mmdbid_q === me.mmdbid_t && alignType === 'query') chainid += me.postfix;
+                if(me.mmdbid_q !== undefined && me.mmdbid_q === me.mmdbid_t && alignType === 'query') {
+                    //chainid += me.postfix;
+                    chainid = id + me.postfix + '_' + chain;
+                }
 
                 me.getMissingResidues(seqArray, type, chainid); // assign me.icn3d.chainsSeq
             }
@@ -821,7 +827,9 @@ iCn3DUI.prototype.loadAtomDataIn = function (data, id, type, seqalign, alignType
                   atm.chain = miscName;
               }
 
-              if(me.mmdbid_q !== undefined && me.mmdbid_q === me.mmdbid_t && alignType === 'query') atm.chain += me.postfix;
+              //if(me.mmdbid_q !== undefined && me.mmdbid_q === me.mmdbid_t && alignType === 'query') {
+                  //atm.chain += me.postfix;
+              //}
             }
             else if(type === 'align') {
               molid = atm.ids.m;
@@ -850,6 +858,10 @@ iCn3DUI.prototype.loadAtomDataIn = function (data, id, type, seqalign, alignType
         // mmcif has pre-assigned structure in mmcifparser.cgi output
         if(type === 'mmdbid' || type === 'align') {
             atm.structure = mmdbId;
+
+            if(type === 'mmdbid' && me.mmdbid_q !== undefined && me.mmdbid_q === me.mmdbid_t && alignType === 'query') {
+                atm.structure += me.postfix;
+            }
         }
 
         structureNum = atm.structure;
@@ -876,23 +888,25 @@ iCn3DUI.prototype.loadAtomDataIn = function (data, id, type, seqalign, alignType
         if(type === 'mmdbid') {
             atm.coord = new THREE.Vector3(atm.coord[0], atm.coord[1], atm.coord[2]);
 
-            if(alignType === 'target') {
-                atm.coord.x += me.t_trans_add.x;
-                atm.coord.y += me.t_trans_add.y;
-                atm.coord.z += me.t_trans_add.z;
-            }
-            else if(alignType === 'query') {
-                atm.coord.x -= me.q_trans_sub.x;
-                atm.coord.y -= me.q_trans_sub.y;
-                atm.coord.z -= me.q_trans_sub.z;
+            if(me.q_rotation !== undefined) {
+                if(alignType === 'target') {
+                    atm.coord.x += me.t_trans_add.x;
+                    atm.coord.y += me.t_trans_add.y;
+                    atm.coord.z += me.t_trans_add.z;
+                }
+                else if(alignType === 'query') {
+                    atm.coord.x -= me.q_trans_sub.x;
+                    atm.coord.y -= me.q_trans_sub.y;
+                    atm.coord.z -= me.q_trans_sub.z;
 
-                var x = atm.coord.x * me.q_rotation.x1 + atm.coord.y * me.q_rotation.y1 + atm.coord.z * me.q_rotation.z1;
-                var y = atm.coord.x * me.q_rotation.x2 + atm.coord.y * me.q_rotation.y2 + atm.coord.z * me.q_rotation.z2;
-                var z = atm.coord.x * me.q_rotation.x3 + atm.coord.y * me.q_rotation.y3 + atm.coord.z * me.q_rotation.z3;
+                    var x = atm.coord.x * me.q_rotation.x1 + atm.coord.y * me.q_rotation.y1 + atm.coord.z * me.q_rotation.z1;
+                    var y = atm.coord.x * me.q_rotation.x2 + atm.coord.y * me.q_rotation.y2 + atm.coord.z * me.q_rotation.z2;
+                    var z = atm.coord.x * me.q_rotation.x3 + atm.coord.y * me.q_rotation.y3 + atm.coord.z * me.q_rotation.z3;
 
-                atm.coord.x = x;
-                atm.coord.y = y;
-                atm.coord.z = z;
+                    atm.coord.x = x;
+                    atm.coord.y = y;
+                    atm.coord.z = z;
+                }
             }
         }
         else {
@@ -1267,8 +1281,31 @@ iCn3DUI.prototype.loadAtomDataIn = function (data, id, type, seqalign, alignType
     if(type === 'align' && seqalign !== undefined && me.bFullUi) {
         me.setSeqAlign(seqalign, data.alignedStructures);
     } // if(align
-    else if(type === 'mmdbid' && alignType === 'query' && me.bFullUi) {
+    else if(type === 'mmdbid' && alignType === 'query' && me.bFullUi && me.q_rotation !== undefined) {
         me.setSeqAlignChain();
+    }
+
+    if(type === 'mmdbid' && (alignType === 'target' || alignType === 'query') && me.q_rotation === undefined) {
+        if(alignType === 'target' || alignType === 'query') {
+            for(var i in atoms) {
+                var atom = atoms[i];
+                atom.coord.x -= me.icn3d.center.x;
+                atom.coord.y -= me.icn3d.center.y;
+                atom.coord.z -= me.icn3d.center.z;
+            }
+        }
+
+        if(alignType === 'target') {
+            me.icn3d.maxD1 = me.icn3d.maxD;
+            me.icn3d.center1 = me.icn3d.center;
+        }
+        else if(alignType === 'query') {
+            me.icn3d.maxD2 = me.icn3d.maxD;
+            me.icn3d.center2 = me.icn3d.center;
+
+            if(me.icn3d.maxD2 < me.icn3d.maxD1) me.icn3d.maxD = me.icn3d.maxD1;
+            me.icn3d.center = new THREE.Vector3(0,0,0);
+        }
     }
 
     me.showTitle();

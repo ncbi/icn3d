@@ -892,6 +892,8 @@ You can add custom tracks in various formats (FASTA, bed file, etc.) in the anno
 <tr><td valign='top'><span class="indent">iCn3D PNG Image:</span></td>   <td valign='top'>[no command available]</td> <td valign='top'></td></tr>
 <tr><td valign='top'><span class="indent">State/Script File:</span></td>   <td valign='top'>[no command available]</td> <td valign='top'><a href="#loadScript">loadScript</a></td></tr>
 <tr><td valign='top'><span class="indent">Selection File:</span></td>   <td valign='top'>[no command available]</td> <td valign='top'></td></tr>
+<tr><td valign='top'><span class="indent">Electron Density (DSN6) - Local File:</span></td>   <td valign='top'>set map 2fofc sigma 1.5</td> <td valign='top'>loadDsn6Data()</td></tr>
+<tr><td valign='top'><span class="indent">Electron Density (DSN6) - URL (Same Host):</span></td>   <td valign='top'>set map 2fofc sigma 1.5 | [URL]</td> <td valign='top'>Dsn6ParserBase()</td></tr>
 
 <tr><td colspan="3">c) Align</td> </tr>
 <tr><td valign='top'><span class="indent">Sequence to Structure:</span></td>            <td valign='top'>load seq_struc_ids [23491729,1TUP_A]</td> <td valign='top'><a href="#downloadBlast_rep_id">downloadBlast_rep_id</a></td></tr>
@@ -899,7 +901,9 @@ You can add custom tracks in various formats (FASTA, bed file, etc.) in the anno
 <tr><td valign='top'><span class="indent">Structure to Structure - All Matching Molecules Superposed:</span></td>          <td valign='top'>load alignment [1HHO,4N7N] | parameters atype=0</td> <td valign='top'><a href="#downloadAlignment">downloadAlignment</a></td></tr>
 <tr><td valign='top'><span class="indent">Chain to Chain:</span></td>          <td valign='top'>load chainalignment [1HHO_A,4N7N_A]</td> <td valign='top'><a href="#downloadChainAlignment">downloadChainAlignment</a></td></tr>
 
-<tr><td colspan="3">d) 3D Printing</td> </tr>
+<tr><td valign='top'>d) Realign Selection</td>         <td valign='top'>realign on seq align</td> <td valign='top'><a href="#shareLink">realignOnSeqAlign</a></td></tr>
+
+<tr><td colspan="3">e) 3D Printing</td> </tr>
 <tr><td valign='top'><span class="indent">VRML (Color, W/ Stabilizers):</span></td>          <td valign='top'>export vrml stabilizer file</td> <td valign='top'><a href="#saveVrmlFile">saveVrmlFile</a></td></tr>
 <tr><td valign='top'><span class="indent">STL (W/ Stabilizers):</span></td>          <td valign='top'>export stl stabilizer file</td> <td valign='top'><a href="#saveStlFile">saveStlFile</a></td></tr>
 
@@ -912,14 +916,14 @@ You can add custom tracks in various formats (FASTA, bed file, etc.) in the anno
 <tr><td valign='top'><span class="indent">Set Thickness:</span></td>          <td valign='top'>set thickness | linerad 0.6 | coilrad 1 | stickrad 0.8 | ribbonthick 0.8 | proteinwidth 2 | nucleotidewidth 1.2 | ballscale 0.6</td> <td valign='top'></td></tr>
 <tr><td valign='top'><span class="indent">Reset Thickness:</span></td>          <td valign='top'>reset thickness</td> <td valign='top'><a href="#resetAfter3Dprint">resetAfter3Dprint</a></td></tr>
 
-<tr><td colspan="3">e) Save Files</td> </tr>
+<tr><td colspan="3">f) Save Files</td> </tr>
 <tr><td valign='top'><span class="indent">iCn3D PNG Image:</span></td>          <td valign='top'>export canvas (URL example: <a href="https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?mmdbid=1top&command=export%20canvas" target="_blank">https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?mmdbid=1top&command=export%20canvas</a>)</td> <td valign='top'><a href="#saveFile">saveFile([filename], 'png')</a></td></tr>
 <tr><td valign='top'><span class="indent">State File:</span></td>            <td valign='top'>[no command available]</td> <td valign='top'><a href="#saveFile">saveFile</a></td></tr>
 <tr><td valign='top'><span class="indent">All Selections:</span></td>   <td valign='top'>[no command available]</td> <td valign='top'><a href="#saveFile">saveFile</a></td></tr>
 <tr><td valign='top'><span class="indent">Residue Counts:</span></td>   <td valign='top'>[no command available]</td> <td valign='top'><a href="#saveFile">saveFile</a></td></tr>
 </tr>
 
-<tr><td valign='top'>f) Share Link:</td>         <td valign='top'>[no command available]</td> <td valign='top'><a href="#shareLink">shareLink</a></td></tr>
+<tr><td valign='top'>g) Share Link:</td>         <td valign='top'>[no command available]</td> <td valign='top'><a href="#shareLink">shareLink</a></td></tr>
 
 </tbody></table>
 <br>
@@ -2102,6 +2106,9 @@ Update the highlight of sequences in the annotation window according to the curr
 
 <a name="log"></a>
 <h2>Change Log:<img src="https://www.ncbi.nlm.nih.gov/Structure/IMG/spacer.gif" width="25" height="1" border="0"><a href="#Top"><img src="https://www.ncbi.nlm.nih.gov/Structure/IMG/arrowup_blue.gif" width="12" height="12" border="0" alt="back to top"></a></h2>
+<a href="https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.14.0.zip">icn3d-2.14.0</a> was release on April 15, 2020. Added the features to load Electron Density data in the menu "File > Open File > Electron Density (DSN6)", resize the 3D window, and realign two structures in the menu "File > Realign".
+<br><br>
+
 <a href="https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.13.1.zip">icn3d-2.13.1</a> was release on March 26, 2020. Showed membranes for transmembrane proteins in VAST+ alignment.
 <br><br>
 
