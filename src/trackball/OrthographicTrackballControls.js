@@ -217,7 +217,7 @@ THREE.OrthographicTrackballControls = function ( object, domElement, icn3d ) { v
                 }
 
                 // order matters in quaernion multiplication: http://www.cprogramming.com/tutorial/3d/quaternions.html
-                if(bUpdate === undefined || bUpdate === true) icn3d.quaternion.multiplyQuaternions(quaternion, icn3d.quaternion);
+                if(icn3d !== undefined && (bUpdate === undefined || bUpdate === true)) icn3d.quaternion.multiplyQuaternions(quaternion, icn3d.quaternion);
 
                 _eye.applyQuaternion( quaternion );
                 _this.object.up.applyQuaternion( quaternion );
@@ -265,7 +265,7 @@ THREE.OrthographicTrackballControls = function ( object, domElement, icn3d ) { v
             }
         }
 
-        if(bUpdate === undefined || bUpdate === true) icn3d._zoomFactor *= factor;
+        if(icn3d !== undefined && (bUpdate === undefined || bUpdate === true)) icn3d._zoomFactor *= factor;
 
         //if ( factor !== 1.0 && factor > 0.0 ) {
         if ( factor !== 1.0 ) {
@@ -303,12 +303,12 @@ THREE.OrthographicTrackballControls = function ( object, domElement, icn3d ) { v
             if(mouseChangeIn !== undefined) {
               mouseChange = mouseChangeIn;
 
-              if(bUpdate === undefined || bUpdate === true) icn3d.mouseChange.add(mouseChangeIn);
+              if(icn3d !== undefined && (bUpdate === undefined || bUpdate === true)) icn3d.mouseChange.add(mouseChangeIn);
             }
             else {
               mouseChange.copy( _this._panEnd ).sub( _this._panStart );
 
-              if(bUpdate === undefined || bUpdate === true) icn3d.mouseChange.add( _this._panEnd ).sub( _this._panStart );
+              if(icn3d !== undefined && (bUpdate === undefined || bUpdate === true)) icn3d.mouseChange.add( _this._panEnd ).sub( _this._panStart );
             }
 
             if ( mouseChange.lengthSq() ) {
@@ -457,7 +457,7 @@ THREE.OrthographicTrackballControls = function ( object, domElement, icn3d ) { v
 
         if ( _this.enabled === false ) return;
 
-        event.preventDefault();
+        //event.preventDefault();
         event.stopPropagation();
 
         if ( _this._state === STATE.NONE ) {
@@ -494,7 +494,7 @@ THREE.OrthographicTrackballControls = function ( object, domElement, icn3d ) { v
 
         if ( _this.enabled === false ) return;
 
-        event.preventDefault();
+        //event.preventDefault();
         event.stopPropagation();
 
         if ( _this._state === STATE.ROTATE && !_this.noRotate ) {
@@ -517,7 +517,7 @@ THREE.OrthographicTrackballControls = function ( object, domElement, icn3d ) { v
 
         if ( _this.enabled === false ) return;
 
-        event.preventDefault();
+        //event.preventDefault();
         event.stopPropagation();
 
         _this._state = STATE.NONE;
@@ -532,7 +532,7 @@ THREE.OrthographicTrackballControls = function ( object, domElement, icn3d ) { v
 
         if ( _this.enabled === false ) return;
 
-        event.preventDefault();
+        //event.preventDefault();
         event.stopPropagation();
 
         var delta = 0;
@@ -591,7 +591,7 @@ THREE.OrthographicTrackballControls = function ( object, domElement, icn3d ) { v
 
         if ( _this.enabled === false ) return;
 
-        event.preventDefault();
+        //event.preventDefault();
         event.stopPropagation();
 
         switch ( event.touches.length ) {
@@ -644,7 +644,9 @@ THREE.OrthographicTrackballControls = function ( object, domElement, icn3d ) { v
 
     }
 
-    this.domElement.addEventListener( 'contextmn', function ( event ) { event.preventDefault(); }, false );
+    this.domElement.addEventListener( 'contextmn', function ( event ) {
+        //event.preventDefault();
+    }, false );
 
     this.domElement.addEventListener( 'mousedown', mousedown, false );
 

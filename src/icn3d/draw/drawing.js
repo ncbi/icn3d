@@ -32,8 +32,8 @@ iCn3D.prototype.createSphereBase = function (pos, color, radius, scale, bHighlig
 
       mesh = new THREE.Mesh(this.sphereGeometry, new THREE.MeshPhongMaterial({ transparent: true, opacity: 0.5, specular: this.frac, shininess: 30, emissive: 0x000000, color: color }));
 
-      mesh.scale.x = mesh.scale.y = mesh.scale.z = forceDefault ? defaultRadius :  radius * (scale ? scale : 1);
-      mesh.position.copy(atom.coord);
+      mesh.scale.x = mesh.scale.y = mesh.scale.z = radius * (scale ? scale : 1);
+      mesh.position.copy(pos);
       this.mdl.add(mesh);
     }
     else if(bHighlight === 1) {

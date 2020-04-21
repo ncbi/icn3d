@@ -542,6 +542,7 @@ iCn3DUI.prototype.setMenu2b_base = function() { var me = this; //"use strict";
     html += "<ul class='icn3d-mn'>";
 
     html += me.getLink('mn2_show_selected', 'View Only <br>Selection');
+    html += me.getLink('mn2_hide_selected', 'Hide Selection');
     html += me.getLink('mn2_selectedcenter', 'Zoom in Selection');
     html += me.getLink('mn6_center', 'Center Selection');
     html += me.getLink('mn2_fullstru', 'View Full Structure');
@@ -678,6 +679,8 @@ iCn3DUI.prototype.setMenu2b_base = function() { var me = this; //"use strict";
     html += "</ul>";
     html += "</li>";
 */
+
+    html += me.getLink('mn6_sidebyside', 'Show Side by Side');
 
     html += "<li><span>Rotate</span>";
     html += "<ul>";
@@ -1153,10 +1156,10 @@ iCn3DUI.prototype.setMenu6_base = function() { var me = this; //"use strict";
 
     html += liStr + me.baseUrl + "icn3d/docs/icn3d_help.html' target='_blank'>Help Doc</a></li>";
 
+    html += liStr + me.baseUrl + "icn3d/icn3d.html#gallery' target='_blank'>Gallery</a></li>";
+
     html += "<li><span>Web APIs</span>";
     html += "<ul>";
-
-    html += liStr + me.baseUrl + "icn3d/icn3d.html#gallery' target='_blank'>Gallery</a></li>";
     html += liStr + me.baseUrl + "icn3d/icn3d.html#HowToUse' target='_blank'>How to Embed</a></li>";
     html += liStr + me.baseUrl + "icn3d/icn3d.html#parameters' target='_blank'>URL Parameters</a></li>";
     html += liStr + me.baseUrl + "icn3d/icn3d.html#commands' target='_blank'>Commands</a></li>";
@@ -1583,6 +1586,15 @@ iCn3DUI.prototype.setDialogs = function() { var me = this; //"use strict";
     html += "<div style='text-indent:1.1em'>" + me.buttonStr + "hbondReset'>Reset</button> and select new sets</div>";
     html += "</div>";
 
+    html += me.divStr + "dl_realign'>";
+
+    html += me.divNowrapStr + "1. Select sets from two structures below <br>or use your current selection:</div><br>";
+    html += "<div style='text-indent:1.1em'><select id='" + me.pre + "atomsCustomRealign' multiple size='5' style='min-width:130px;'>";
+    html += "</select></div>";
+
+    html += "<div>2. " + me.buttonStr + "applyRealign'>Realign</button></div><br>";
+    html += "</div>";
+
     html += me.divStr + "dl_allinteraction'>";
     html += "</div>";
 
@@ -1744,6 +1756,7 @@ iCn3DUI.prototype.setDialogs = function() { var me = this; //"use strict";
     html += "<ul>";
     html += "<li><a href='#" + me.pre + "tracktab1'>NCBI gi/Accession</a></li>";
     html += "<li><a href='#" + me.pre + "tracktab2'>FASTA</a></li>";
+    html += "<li><a href='#" + me.pre + "tracktab2b'>FASTA Alignment</a></li>";
     html += "<li><a href='#" + me.pre + "tracktab3'>BED File</a></li>";
     html += "<li><a href='#" + me.pre + "tracktab4'>Custom</a></li>";
     html += "<li><a href='#" + me.pre + "tracktab5'>Current Selection</a></li>";
@@ -1757,6 +1770,15 @@ iCn3DUI.prototype.setDialogs = function() { var me = this; //"use strict";
     html += "FASTA sequence: <br><textarea id='" + me.pre + "track_fasta' rows='5' style='width: 100%; height: " + (2*me.LOG_HEIGHT) + "px; padding: 0px; border: 0px;'></textarea><br><br>";
     html += me.buttonStr + "addtrack_button2'>Add Track</button>";
     html += "</div>";
+
+    html += me.divStr + "tracktab2b'>";
+    html += "<div style='width:600px'>The full protein sequences with gaps are listed one by one. The sequence of the structure is listed at the top. Each sequence has a title line starting with \">\".</div><br>";
+    html += "<b>FASTA alignment sequences</b>:<br>";
+    html += "<textarea id='" + me.pre + "track_fastaalign' rows='5' style='width: 100%; height: " + (2*me.LOG_HEIGHT) + "px; padding: 0px; border: 0px;'></textarea><br><br>";
+    html += "Position of the first residue in Sequences & Annotations window: " + me.inputTextStr + "id='" + me.pre + "fasta_startpos' value='1' size=2> <br><br>";
+    html += me.buttonStr + "addtrack_button2b'>Add Track(s)</button>";
+    html += "</div>";
+
     html += me.divStr + "tracktab3'>";
     html += "BED file: " + me.inputFileStr + "id='" + me.pre + "track_bed' size=16> <br><br>";
     html += me.buttonStr + "addtrack_button3'>Add Track</button>";
@@ -1994,7 +2016,8 @@ iCn3DUI.prototype.getAlignSequencesAnnotations = function (alignChainArray, bUpd
       var structure = i.substr(0, dashPos);
       var chain = i.substr(dashPos + 1);
 
-      seqHtml += "<span class='icn3d-residueNum' title='starting residue number'>" + me.icn3d.alnChainsSeq[i][0].resi + "</span>";
+      var startResi = (me.icn3d.alnChainsSeq[i][0] !== undefined) ? me.icn3d.alnChainsSeq[i][0].resi : '';
+      seqHtml += "<span class='icn3d-residueNum' title='starting residue number'>" + startResi + "</span>";
       var bHighlightChain = (alignChainArray !== undefined && chainHash.hasOwnProperty(i)) ? true : false;
 
       for(var k=0, kl=seqLength; k < kl; ++k) {
@@ -2048,7 +2071,8 @@ iCn3DUI.prototype.getAlignSequencesAnnotations = function (alignChainArray, bUpd
         }
 
       }
-      seqHtml += "<span class='icn3d-residueNum' title='ending residue number'>" + me.icn3d.alnChainsSeq[i][seqLength-1].resi + "</span>";
+      var endResi = (me.icn3d.alnChainsSeq[i][seqLength-1] !== undefined) ? me.icn3d.alnChainsSeq[i][seqLength-1].resi : '';
+      seqHtml += "<span class='icn3d-residueNum' title='ending residue number'>" + endResi + "</span>";
 
       // the first chain stores all annotations
       var annoLength = (me.icn3d.alnChainsAnno[i] !== undefined) ? me.icn3d.alnChainsAnno[i].length : 0;

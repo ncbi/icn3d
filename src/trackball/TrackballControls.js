@@ -204,7 +204,7 @@ THREE.TrackballControls = function ( object, domElement, icn3d ) {
                 }
 
                 // order matters in quaernion multiplication: http://www.cprogramming.com/tutorial/3d/quaternions.html
-                if(bUpdate === undefined || bUpdate === true) icn3d.quaternion.multiplyQuaternions(quaternion, icn3d.quaternion);
+                if(icn3d !== undefined && (bUpdate === undefined || bUpdate === true)) icn3d.quaternion.multiplyQuaternions(quaternion, icn3d.quaternion);
 
                 _eye.applyQuaternion( quaternion );
                 _this.object.up.applyQuaternion( quaternion );
@@ -243,7 +243,7 @@ THREE.TrackballControls = function ( object, domElement, icn3d ) {
 
             _eye.multiplyScalar( factor );
 
-            if(bUpdate === undefined || bUpdate === true) icn3d._zoomFactor *= factor;
+            if(icn3d !== undefined && (bUpdate === undefined || bUpdate === true)) icn3d._zoomFactor *= factor;
 
         } else {
 
@@ -256,7 +256,7 @@ THREE.TrackballControls = function ( object, domElement, icn3d ) {
               factor = 1.0 + ( _this._zoomEnd.y - _this._zoomStart.y ) * _this.zoomSpeed;
             }
 
-            if(bUpdate === undefined || bUpdate === true) icn3d._zoomFactor *= factor;
+            if(icn3d !== undefined && (bUpdate === undefined || bUpdate === true)) icn3d._zoomFactor *= factor;
 
             //if ( factor !== 1.0 && factor > 0.0 ) {
             if ( factor !== 1.0 ) {
@@ -288,12 +288,12 @@ THREE.TrackballControls = function ( object, domElement, icn3d ) {
             if(mouseChangeIn !== undefined) {
               mouseChange = mouseChangeIn;
 
-              if(bUpdate === undefined || bUpdate === true) icn3d.mouseChange.add(mouseChangeIn);
+              if(icn3d !== undefined && (bUpdate === undefined || bUpdate === true)) icn3d.mouseChange.add(mouseChangeIn);
             }
             else {
               mouseChange.copy( _this._panEnd ).sub( _this._panStart );
 
-              if(bUpdate === undefined || bUpdate === true) icn3d.mouseChange.add( _this._panEnd ).sub( _this._panStart );
+              if(icn3d !== undefined && (bUpdate === undefined || bUpdate === true)) icn3d.mouseChange.add( _this._panEnd ).sub( _this._panStart );
             }
 
             if ( mouseChange.lengthSq() ) {
@@ -460,7 +460,7 @@ THREE.TrackballControls = function ( object, domElement, icn3d ) {
 
         if ( _this.enabled === false ) return;
 
-        event.preventDefault();
+        //event.preventDefault();
         event.stopPropagation();
 
         if ( _this._state === _this.STATE.NONE ) {
@@ -497,7 +497,7 @@ THREE.TrackballControls = function ( object, domElement, icn3d ) {
 
         if ( _this.enabled === false ) return;
 
-        event.preventDefault();
+        //event.preventDefault();
         event.stopPropagation();
 
         if ( _this._state === _this.STATE.ROTATE && !_this.noRotate ) {
@@ -520,7 +520,7 @@ THREE.TrackballControls = function ( object, domElement, icn3d ) {
     function mouseup( event ) {
         if ( _this.enabled === false ) return;
 
-        event.preventDefault();
+        //event.preventDefault();
         event.stopPropagation();
 
         _this._state = _this.STATE.NONE;
@@ -535,7 +535,7 @@ THREE.TrackballControls = function ( object, domElement, icn3d ) {
 
         if ( _this.enabled === false ) return;
 
-        event.preventDefault();
+        //event.preventDefault();
         event.stopPropagation();
 
         var delta = 0;
@@ -594,7 +594,7 @@ THREE.TrackballControls = function ( object, domElement, icn3d ) {
 
         if ( _this.enabled === false ) return;
 
-        event.preventDefault();
+        //event.preventDefault();
         event.stopPropagation();
 
         switch ( event.touches.length ) {
@@ -647,7 +647,9 @@ THREE.TrackballControls = function ( object, domElement, icn3d ) {
 
     }
 
-    this.domElement.addEventListener( 'contextmn', function ( event ) { event.preventDefault(); }, false );
+    this.domElement.addEventListener( 'contextmn', function ( event ) {
+        //event.preventDefault();
+    }, false );
 
     this.domElement.addEventListener( 'mousedown', mousedown, false );
 
