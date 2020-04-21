@@ -11,10 +11,47 @@ iCn3DUI.prototype.clickShow_selected = function() { var me = this; //"use strict
     });
 };
 
-iCn3DUI.prototype.showSelection = function (id) { var me = this; //"use strict";
+iCn3DUI.prototype.clickHide_selected = function() { var me = this; //"use strict";
+    $("#" + me.pre + "mn2_hide_selected").click(function(e) {
+       me.hideSelection();
+       me.setLogCmd("hide selection", true);
+    });
+};
+
+iCn3DUI.prototype.showSelection = function () { var me = this; //"use strict";
     me.icn3d.dAtoms = {};
 
     me.icn3d.dAtoms = me.icn3d.cloneHash(me.icn3d.hAtoms);
+
+    var centerAtomsResults = me.icn3d.centerAtoms(me.icn3d.hash2Atoms(me.icn3d.dAtoms));
+    me.icn3d.maxD = centerAtomsResults.maxD;
+    if (me.icn3d.maxD < 5) me.icn3d.maxD = 5;
+
+    //show selected rotationcenter
+    me.icn3d.opts['rotationcenter'] = 'display center';
+
+    // clear hbonds and ssbonds?
+    //me.icn3d.opts['hbonds'] = 'no';
+    //me.icn3d.opts['ssbonds'] = 'no';
+
+    //me.icn3d.lines['hbond'] = [];
+    //me.icn3d.lines['ssbond'] = [];
+
+    me.saveSelectionIfSelected();
+
+    me.icn3d.draw();
+
+    me.update2DdgmContent();
+    me.updateHl2D();
+
+    // show selected chains in annotation window
+    me.showAnnoSelectedChains();
+};
+
+iCn3DUI.prototype.hideSelection = function () { var me = this; //"use strict";
+    me.icn3d.dAtoms = me.icn3d.exclHash(me.icn3d.dAtoms, me.icn3d.hAtoms);
+
+    me.icn3d.hAtoms = me.icn3d.cloneHash(me.icn3d.dAtoms);
 
     var centerAtomsResults = me.icn3d.centerAtoms(me.icn3d.hash2Atoms(me.icn3d.dAtoms));
     me.icn3d.maxD = centerAtomsResults.maxD;

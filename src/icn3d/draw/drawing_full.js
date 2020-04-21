@@ -176,7 +176,7 @@ iCn3D.prototype.createSurfaceRepresentation = function (atoms, type, wireframe, 
     //var normalArray = geo.data.normals;
     var normalArray = JSON.parse(JSON.stringify(geo)).data.normals;
 
-    if(bTransparent) { // WebGL has someordering problem when dealing with transparency
+    if(bTransparent) { // WebGL has some ordering problem when dealing with transparency
       // the following method minimize the number of objects by a factor of 3
       var va2faces = {};
 
@@ -245,7 +245,13 @@ iCn3D.prototype.createSurfaceRepresentation = function (atoms, type, wireframe, 
             sum = sum.add(mesh.geometry.vertices[i]);
         }
 
-        var realPos = sum.multiplyScalar(1.0 / mesh.geometry.vertices.length).sub(me.oriCenter).applyMatrix4(me.cam.matrixWorldInverse);
+        var realPos;
+        if(me.bControlGl) {
+            realPos = sum.multiplyScalar(1.0 / mesh.geometry.vertices.length).sub(me.oriCenter).applyMatrix4(window.cam.matrixWorldInverse);
+        }
+        else {
+            realPos = sum.multiplyScalar(1.0 / mesh.geometry.vertices.length).sub(me.oriCenter).applyMatrix4(me.cam.matrixWorldInverse);
+        }
         mesh.renderOrder = (me.cam_z > 0) ? -parseInt(realPos.z) : parseInt(realPos.z);
 
         mesh.onBeforeRender = function(renderer, scene, camera, geometry, material, group) {
@@ -255,7 +261,13 @@ iCn3D.prototype.createSurfaceRepresentation = function (atoms, type, wireframe, 
                 sum = sum.add(this.geometry.vertices[i]);
             }
 
-            var realPos = sum.multiplyScalar(1.0 / this.geometry.vertices.length).sub(me.oriCenter).applyMatrix4(me.cam.matrixWorldInverse);
+            var realPos;
+            if(me.bControlGl) {
+                realPos = sum.multiplyScalar(1.0 / this.geometry.vertices.length).sub(me.oriCenter).applyMatrix4(window.cam.matrixWorldInverse);
+            }
+            else {
+                realPos = sum.multiplyScalar(1.0 / this.geometry.vertices.length).sub(me.oriCenter).applyMatrix4(me.cam.matrixWorldInverse);
+            }
             this.renderOrder = (me.cam_z > 0) ? -parseInt(realPos.z) : parseInt(realPos.z);
         };
 

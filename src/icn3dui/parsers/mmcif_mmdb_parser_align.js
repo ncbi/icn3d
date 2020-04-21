@@ -191,6 +191,58 @@ iCn3DUI.prototype.downloadAlignmentPart2 = function (data, seqalign, chainresiCa
     if(me.deferred !== undefined) me.deferred.resolve(); if(me.deferred2 !== undefined) me.deferred2.resolve();
 };
 
+iCn3DUI.prototype.downloadChainalignmentPart2 = function (data1, data2, chainresiCalphaHash2) { var me = this; //"use strict";
+    me.parseMmdbData(data1, 'target');
+    me.parseMmdbData(data2, 'query');
+
+    //if(me.cfg.chainalign === undefined && Object.keys(me.icn3d.structures).length == 1) {
+    //    $("#" + me.pre + "alternateWrapper").hide();
+    //}
+
+    // show all
+    var allAtoms = {};
+    for(var i in me.icn3d.atoms) {
+        allAtoms[i] = 1;
+    }
+    me.icn3d.dAtoms = allAtoms;
+    me.icn3d.hAtoms = allAtoms;
+
+    me.icn3d.setAtomStyleByOptions(me.opts);
+    // change the default color to "Identity"
+    me.icn3d.setColorByOptions(me.opts, me.icn3d.atoms);
+
+    //me.mmdbidArray = Object.keys(me.icn3d.structures);
+
+    // memebrane is determined by one structure. But transform both structures
+    if(chainresiCalphaHash2 !== undefined) me.transformToOpmOriForAlign(me.selectedPdbid, chainresiCalphaHash2, true);
+
+    me.renderStructure();
+
+    if(me.cfg.rotate !== undefined) me.rotStruc(me.cfg.rotate, true);
+
+    me.html2ddgm = '';
+
+    // by default, open the seq alignment window
+    //if(me.cfg.show2d !== undefined && me.cfg.show2d) me.openDialog(me.pre + 'dl_2ddgm', 'Interactions');
+    if(me.cfg.showalignseq !== undefined && me.cfg.showalignseq) {
+        me.openDialog(me.pre + 'dl_alignment', 'Select residues in aligned sequences');
+    }
+
+    if(me.cfg.show2d !== undefined && me.cfg.show2d && me.bFullUi) {
+        me.openDialog(me.pre + 'dl_2ddgm', 'Interactions');
+        if(me.bFullUi) {
+            if(!me.icn3d.bChainAlign) {
+                me.download2Ddgm(me.inputid.toUpperCase());
+            }
+            else {
+                me.set2DDiagramsForAlign(me.inputid2.toUpperCase(), me.inputid.toUpperCase());
+            }
+        }
+    }
+
+    if(me.deferred !== undefined) me.deferred.resolve(); if(me.deferred2 !== undefined) me.deferred2.resolve();
+};
+
 iCn3DUI.prototype.downloadChainAlignment = function (chainalign) { var me = this; //"use strict";
     me.opts['proteins'] = 'c alpha trace';
     me.icn3d.opts['proteins'] = 'c alpha trace';
@@ -232,7 +284,15 @@ iCn3DUI.prototype.downloadChainAlignment = function (chainalign) { var me = this
           me.hideLoading();
       },
       success: function(align) {
-        if(align === undefined || align.length == 0) {
+        if(align.length == 0 && me.mmdbid_q == me.mmdbid_t && me.chain_q == me.chain_t) {
+            me.t_trans_add = {"x":0, "y":0, "z":0};
+            me.q_trans_sub = {"x":0, "y":0, "z":0};
+            me.q_rotation = {"x1":1, "y1":0, "z1":0, "x2":0, "y2":1, "z2":0, "x3":0, "y3":0, "z3":1};
+
+            //var chainLen = me.icn3d.chainsSeq[me.mmdbid_q + '_' + me.chain_q].length;
+            //me.qt_start_end =  [{"q_start":1, "q_end": chainLen, "t_start":1, "t_end": chainLen}];
+        }
+        else if(align === undefined || align.length == 0) {
             if(!me.cfg.command) alert('These two chains ' + chainalign + ' can not align to each other. ' + 'Please select sequences from two chains in the "Sequences & Annotations" window, ' + 'and click "Realign Selection" in the "File" menu to align your selection.');
 
             me.cfg.showanno = 1;
@@ -268,51 +328,11 @@ iCn3DUI.prototype.downloadChainAlignment = function (chainalign) { var me = this
                   me.hideLoading();
               },
               success: function(data2) {
-                me.parseMmdbData(data1, 'target');
-                me.parseMmdbData(data2, 'query');
+                me.mmdbidArray = [];
+                me.mmdbidArray.push(me.mmdbid_q);
+                me.mmdbidArray.push(me.mmdbid_t);
 
-                //if(me.cfg.chainalign === undefined && Object.keys(me.icn3d.structures).length == 1) {
-                //    $("#" + me.pre + "alternateWrapper").hide();
-                //}
-
-                // show all
-                var allAtoms = {};
-                for(var i in me.icn3d.atoms) {
-                    allAtoms[i] = 1;
-                }
-                me.icn3d.dAtoms = allAtoms;
-                me.icn3d.hAtoms = allAtoms;
-
-                me.icn3d.setAtomStyleByOptions(me.opts);
-                // change the default color to "Identity"
-                me.icn3d.setColorByOptions(me.opts, me.icn3d.atoms);
-
-                //var mmdbidArray = me.inputid.split('_');
-                me.mmdbidArray = Object.keys(me.icn3d.structures);
-
-                me.renderStructure();
-
-                if(me.cfg.rotate !== undefined) me.rotStruc(me.cfg.rotate, true);
-
-                me.html2ddgm = '';
-
-                // by default, open the seq alignment window
-                //if(me.cfg.show2d !== undefined && me.cfg.show2d) me.openDialog(me.pre + 'dl_2ddgm', 'Interactions');
-                if(me.cfg.showalignseq !== undefined && me.cfg.showalignseq) {
-                    me.openDialog(me.pre + 'dl_alignment', 'Select residues in aligned sequences');
-                }
-
-                if(me.cfg.show2d !== undefined && me.cfg.show2d && me.bFullUi) {
-                    me.openDialog(me.pre + 'dl_2ddgm', 'Interactions');
-                    if(me.bFullUi) {
-                        if(!me.icn3d.bChainAlign) {
-                            me.download2Ddgm(me.inputid.toUpperCase());
-                        }
-                        else {
-                            me.set2DDiagramsForAlign(me.inputid2.toUpperCase(), me.inputid.toUpperCase());
-                        }
-                    }
-                }
+                me.loadOpmDataForChainalign(data1, data2, me.mmdbidArray);
 
                 //if(me.deferred !== undefined) me.deferred.resolve(); if(me.deferred2 !== undefined) me.deferred2.resolve();
               } // success
@@ -751,6 +771,11 @@ iCn3DUI.prototype.setSeqAlignChain = function () { var me = this; //"use strict"
       var chain1 = chainidArray[0].substr(pos1 + 1);
       var chain2 = chainidArray[1].substr(pos2 + 1);
 
+      if(mmdbid1 == mmdbid2 && chain1 == chain2) {
+        var chainLen = me.icn3d.chainsSeq[me.mmdbid_q + '_' + me.chain_q].length;
+        me.qt_start_end =  [{"q_start":1, "q_end": chainLen, "t_start":1, "t_end": chainLen}];
+      }
+
       var chainid1 = chainidArray[0].substr(0, pos1).toUpperCase() + "_" + chain1;
       var chainid2 = chainidArray[1].substr(0, pos2).toUpperCase() + "_" + chain2;
 
@@ -914,6 +939,12 @@ iCn3DUI.prototype.setSeqAlignForRealign = function () { var me = this; //"use st
 
       me.consHash1 = {};
       me.consHash2 = {};
+
+      me.icn3d.alnChainsAnTtl = {};
+      me.icn3d.alnChainsAnno = {};
+
+      me.icn3d.alnChainsSeq = {};
+      me.icn3d.alnChains = {};
 
       for(var i = 0, il = me.realignResid[structure1].length; i < il; ++i) {
           var resObject1 = me.realignResid[structure1][i];
@@ -1178,7 +1209,15 @@ iCn3DUI.prototype.realignOnSeqAlign = function () { var me = this; //"use strict
                   me.alignCoords(coordsFrom, coordsTo, fromStruct);
               }
               else {
-                  alert('These two sequences can not be aligned...');
+                  if(fromStruct === undefined && !me.cfg.command) {
+                     alert('Please do not align residues in the same structure');
+                  }
+                  else if((seq1.length < 6 || seq2.length < 6) && !me.cfg.command) {
+                     alert('These sequences are too short for alignment');
+                  }
+                  else if(seq1.length >= 6 && seq2.length >= 6 && !me.cfg.command) {
+                     alert('These sequences can not be aligned to each other');
+                  }
               }
 
               if(me.deferredRealign !== undefined) me.deferredRealign.resolve();
@@ -1191,7 +1230,15 @@ iCn3DUI.prototype.realignOnSeqAlign = function () { var me = this; //"use strict
                 return;
             }
 
-            alert('These two sequences can not be aligned...');
+               if(fromStruct === undefined && !me.cfg.command) {
+                  alert('Please do not align residues in the same structure');
+               }
+               else if((seq1.length < 6 || seq2.length < 6) && !me.cfg.command) {
+                  alert('These sequences are too short for alignment');
+               }
+               else if(seq1.length >= 6 && seq2.length >= 6 && !me.cfg.command) {
+                  alert('These sequences can not be aligned to each other');
+               }
 
             if(me.deferredRealign !== undefined) me.deferredRealign.resolve();
             return;

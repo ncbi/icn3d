@@ -151,26 +151,21 @@ iCn3D.prototype.intHash = function(atoms1, atoms2) { var me = this; //"use stric
         }
     }
 
-    atoms1 = {};
-    atoms2 = {};
+//    atoms1 = {};
+//    atoms2 = {};
 
     return results;
 };
 
 // get atoms in allAtoms, but not in "atoms"
 iCn3D.prototype.exclHash = function(includeAtoms, excludeAtoms) { var me = this; //"use strict";
-    var results = {};
-
     for (var i in includeAtoms) {
-        if (!(i in excludeAtoms)) {
-            results[i] = includeAtoms[i];
+        if (excludeAtoms.hasOwnProperty(i)) {
+            delete includeAtoms[i];
         }
     }
 
-    includeAtoms = {};
-    excludeAtoms = {};
-
-    return results;
+    return includeAtoms;
 };
 
 iCn3D.prototype.unionHash = function(atoms1, atoms2) { var me = this; //"use strict";
@@ -225,7 +220,13 @@ iCn3D.prototype.zoomIn = function (normalizedFactor) {  var me = this; //"use st
   var para = {};
   para._zoomFactor = 1 - normalizedFactor;
   para.update = true;
-  this.controls.update(para);
+  if(this.bControlGl) {
+      window.controls.update(para);
+  }
+  else {
+      this.controls.update(para);
+  }
+
   this.render();
 };
 
@@ -233,7 +234,13 @@ iCn3D.prototype.zoomOut = function (normalizedFactor) {  var me = this; //"use s
   var para = {};
   para._zoomFactor = 1 + normalizedFactor;
   para.update = true;
-  this.controls.update(para);
+
+  if(this.bControlGl) {
+      window.controls.update(para);
+  }
+  else {
+      this.controls.update(para);
+  }
   this.render();
 };
 
@@ -242,7 +249,12 @@ iCn3D.prototype.rotateLeft = function (degree) {  var me = this; //"use strict";
   var axis = new THREE.Vector3(0,1,0);
   var angle = -degree / 180.0 * Math.PI;
 
-  axis.applyQuaternion( this.cam.quaternion ).normalize();
+  if(me.bControlGl) {
+      axis.applyQuaternion( window.cam.quaternion ).normalize();
+  }
+  else {
+      axis.applyQuaternion( this.cam.quaternion ).normalize();
+  }
 
   var quaternion = new THREE.Quaternion();
   quaternion.setFromAxisAngle( axis, -angle );
@@ -251,7 +263,13 @@ iCn3D.prototype.rotateLeft = function (degree) {  var me = this; //"use strict";
   para.quaternion = quaternion;
   para.update = true;
 
-  this.controls.update(para);
+  if(this.bControlGl) {
+      window.controls.update(para);
+  }
+  else {
+      this.controls.update(para);
+  }
+
   this.render();
 };
 
@@ -259,7 +277,12 @@ iCn3D.prototype.rotateRight = function (degree) {  var me = this; //"use strict"
   var axis = new THREE.Vector3(0,1,0);
   var angle = degree / 180.0 * Math.PI;
 
-  axis.applyQuaternion( this.cam.quaternion ).normalize();
+  if(me.bControlGl) {
+      axis.applyQuaternion( window.cam.quaternion ).normalize();
+  }
+  else {
+      axis.applyQuaternion( this.cam.quaternion ).normalize();
+  }
 
   var quaternion = new THREE.Quaternion();
   quaternion.setFromAxisAngle( axis, -angle );
@@ -268,7 +291,13 @@ iCn3D.prototype.rotateRight = function (degree) {  var me = this; //"use strict"
   para.quaternion = quaternion;
   para.update = true;
 
-  this.controls.update(para);
+  if(this.bControlGl) {
+      window.controls.update(para);
+  }
+  else {
+      this.controls.update(para);
+  }
+
   this.render();
 };
 
@@ -276,7 +305,12 @@ iCn3D.prototype.rotateUp = function (degree) {  var me = this; //"use strict";
   var axis = new THREE.Vector3(1,0,0);
   var angle = -degree / 180.0 * Math.PI;
 
-  axis.applyQuaternion( this.cam.quaternion ).normalize();
+  if(me.bControlGl) {
+      axis.applyQuaternion( window.cam.quaternion ).normalize();
+  }
+  else {
+      axis.applyQuaternion( this.cam.quaternion ).normalize();
+  }
 
   var quaternion = new THREE.Quaternion();
   quaternion.setFromAxisAngle( axis, -angle );
@@ -285,7 +319,13 @@ iCn3D.prototype.rotateUp = function (degree) {  var me = this; //"use strict";
   para.quaternion = quaternion;
   para.update = true;
 
-  this.controls.update(para);
+  if(this.bControlGl) {
+      window.controls.update(para);
+  }
+  else {
+      this.controls.update(para);
+  }
+
   this.render();
 };
 
@@ -293,7 +333,12 @@ iCn3D.prototype.rotateDown = function (degree) {  var me = this; //"use strict";
   var axis = new THREE.Vector3(1,0,0);
   var angle = degree / 180.0 * Math.PI;
 
-  axis.applyQuaternion( this.cam.quaternion ).normalize();
+  if(me.bControlGl) {
+      axis.applyQuaternion( window.cam.quaternion ).normalize();
+  }
+  else {
+      axis.applyQuaternion( this.cam.quaternion ).normalize();
+  }
 
   var quaternion = new THREE.Quaternion();
   quaternion.setFromAxisAngle( axis, -angle );
@@ -302,7 +347,13 @@ iCn3D.prototype.rotateDown = function (degree) {  var me = this; //"use strict";
   para.quaternion = quaternion;
   para.update = true;
 
-  this.controls.update(para);
+  if(this.bControlGl) {
+      window.controls.update(para);
+  }
+  else {
+      this.controls.update(para);
+  }
+
   this.render();
 };
 
@@ -317,7 +368,13 @@ iCn3D.prototype.translateLeft = function (percentScreenSize) {  var me = this; /
   para.mouseChange = mouseChange;
   para.update = true;
 
-  this.controls.update(para);
+  if(this.bControlGl) {
+      window.controls.update(para);
+  }
+  else {
+      this.controls.update(para);
+  }
+
   this.render();
 };
 
@@ -330,7 +387,13 @@ iCn3D.prototype.translateRight = function (percentScreenSize) {  var me = this; 
   para.mouseChange = mouseChange;
   para.update = true;
 
-  this.controls.update(para);
+  if(this.bControlGl) {
+      window.controls.update(para);
+  }
+  else {
+      this.controls.update(para);
+  }
+
   this.render();
 };
 
@@ -343,7 +406,13 @@ iCn3D.prototype.translateUp = function (percentScreenSize) {  var me = this; //"
   para.mouseChange = mouseChange;
   para.update = true;
 
-  this.controls.update(para);
+  if(this.bControlGl) {
+      window.controls.update(para);
+  }
+  else {
+      this.controls.update(para);
+  }
+
   this.render();
 };
 
@@ -356,7 +425,13 @@ iCn3D.prototype.translateDown = function (percentScreenSize) {  var me = this; /
   para.mouseChange = mouseChange;
   para.update = true;
 
-  this.controls.update(para);
+  if(this.bControlGl) {
+      window.controls.update(para);
+  }
+  else {
+      this.controls.update(para);
+  }
+
   this.render();
 };
 

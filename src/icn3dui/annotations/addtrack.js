@@ -364,6 +364,67 @@ iCn3DUI.prototype.clickAddTrackButton = function() { var me = this; //"use stric
         });
     });
 
+    // FASTA Alignment
+    $(document).on('click', "#" + me.pre + "addtrack_button2b", function(e) {
+       e.stopImmediatePropagation();
+       //e.preventDefault();
+       dialog.dialog( "close" );
+
+       var chainid = $("#" + me.pre + "track_chainid").val();
+       var startpos = $("#" + me.pre + "fasta_startpos").val();
+
+       var fastaList = $("#" + me.pre + "track_fastaalign").val();
+       var fastaArray = fastaList.split('>');
+
+       // the first array item is empty
+       // the second array item is the sequence of the structure, start with i = 2
+       var posFirst = fastaArray[1].indexOf('\n');
+       var titleFirst = fastaArray[1].substr(0, posFirst);
+       var seqFirst = fastaArray[1].substr(posFirst + 1).replace(/\n/g, '');
+
+       var trackTitleArray = [];
+       var trackSeqArray = [];
+       for(var i = 2, il = fastaArray.length; i < il; ++i) {
+           var pos = fastaArray[i].indexOf('\n');
+           var title = fastaArray[i].substr(0, pos);
+           trackTitleArray.push(title);
+           var seq = fastaArray[i].substr(pos + 1).replace(/\n/g, '');
+           trackSeqArray.push(seq);
+       }
+
+       var startposGiSeq;
+       for(var i = 0, il = me.giSeq[chainid].length; i < il; ++i) {
+           var pos = (i >= me.matchedPos[chainid] && i - me.matchedPos[chainid] < me.icn3d.chainsSeq[chainid].length) ? me.icn3d.chainsSeq[chainid][i - me.matchedPos[chainid]].resi : me.baseResi[chainid] + 1 + i;
+
+           if(pos != startpos) {
+               continue;
+           }
+           else {
+               startposGiSeq = i;
+           }
+       }
+
+       if(startposGiSeq === undefined) alert("Please double check the start position before clicking \"Add Track\"");
+
+       for(var j = 0, jl = trackSeqArray.length; j < jl; ++j) {
+           var i = startposGiSeq;
+           var text = '';
+           for(var k = 0, kl = seqFirst.length; k < kl; ++k) {
+              if(seqFirst[k] == '-') continue;
+
+              text += trackSeqArray[j][k]; //me.giSeq[chainid][i];
+
+              ++i;
+           }
+
+           var title = (trackTitleArray[j].length < 20) ? trackTitleArray[j] : trackTitleArray[j].substr(0, 20) + '...';
+
+           me.showNewTrack(chainid, title, text, undefined, undefined, 'custom', undefined);
+
+           me.setLogCmd("add track | chainid " + chainid + " | title " + title + " | text " + me.simplifyText(text) + " | type custom", true);
+        }
+    });
+
     // BED file
     $(document).on('click', "#" + me.pre + "addtrack_button3", function(e) {
        e.stopImmediatePropagation();
@@ -491,7 +552,7 @@ iCn3DUI.prototype.clickAddTrackButton = function() { var me = this; //"use stric
        //me.showNewTrack(chainid, title, text);
        //me.setLogCmd("add track | chainid " + chainid + " | title " + title + " | text " + me.simplifyText(text), true);
 
-       me.showNewTrack(chainid, title,  me.getFullText(text), undefined, undefined, 'custom');
+       me.showNewTrack(chainid, title,  me.getFullText(text), undefined, 'custom', undefined);
        me.setLogCmd("add track | chainid " + chainid + " | title " + title + " | text " + text + " | type custom", true);
     });
 
@@ -535,7 +596,7 @@ iCn3DUI.prototype.clickAddTrackButton = function() { var me = this; //"use stric
           }
        }
 
-       me.showNewTrack(chainid, title, text, cssColorArray, undefined, undefined, 'selection');
+       me.showNewTrack(chainid, title, text, cssColorArray, undefined, 'selection', undefined);
 
        me.setLogCmd("add track | chainid " + chainid + " | title " + title + " | text " + me.simplifyText(text) + " | type selection", true);
     });

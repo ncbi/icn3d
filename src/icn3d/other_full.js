@@ -708,7 +708,12 @@ iCn3D.prototype.zoominSelection = function(atoms) { var me = this; //"use strict
    para._zoomFactor = 1.0 / me._zoomFactor;
    para.update = true;
 
-   me.controls.update(para);
+   if(this.bControlGl) {
+      window.controls.update(para);
+   }
+   else {
+      this.controls.update(para);
+   }
 
    if(atoms === undefined) {
        atoms = this.hash2Atoms(this.hAtoms);

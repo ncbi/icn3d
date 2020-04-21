@@ -288,6 +288,8 @@ iCn3DUI.prototype.execCommandsBase = function (start, end, steps, bFinalStep) { 
             if(me.icn3d.symmetryHash === undefined) {
                 $.when(me.retrieveSymmetry(Object.keys(me.icn3d.structures)[0])).then(function() {
                    //me.icn3d.applySymmetry(title);
+                   dialog.dialog( "close" );
+
                    me.icn3d.draw();
                    me.execCommandsBase(i + 1, end, steps);
                 });
@@ -306,6 +308,12 @@ iCn3DUI.prototype.execCommandsBase = function (start, end, steps, bFinalStep) { 
       else if(me.icn3d.commands[i].trim().indexOf('realign on seq align') == 0) {
         var strArray = me.icn3d.commands[i].split("|||");
         var command = strArray[0].trim();
+
+        var paraArray = command.split(' | ');
+        if(paraArray.length == 2) {
+            var nameArray = paraArray[1].split(',');
+            me.icn3d.hAtom = me.getAtomsFromNameArray(nameArray);
+        }
 
         $.when(me.realignOnSeqAlign()).then(function() {
            me.execCommandsBase(i + 1, end, steps);
@@ -649,7 +657,8 @@ iCn3DUI.prototype.retrieveSymmetry = function (pdbid) { var me = this; //"use st
   me.deferredSymmetry = $.Deferred(function() {
        //var url = "https://rest.rcsb.org/rest/structures/3dview/" + pdbid;
        //var url = "https://data-beta.rcsb.org/rest/v3/core/assembly/" + pdbid + "/1";
-       var url = "https://data-beta.rcsb.org/rest/v1/core/assembly/" + pdbid + "/1";
+       //var url = "https://data-beta.rcsb.org/rest/v1/core/assembly/" + pdbid + "/1";
+       var url = "https://data.rcsb.org/rest/v1/core/assembly/" + pdbid + "/1";
 
        $.ajax({
           url: url,
@@ -732,6 +741,8 @@ iCn3DUI.prototype.retrieveSymmetry = function (pdbid) { var me = this; //"use st
                   $("#" + me.pre + "dl_symmetry").html("<br>This structure has no symmetry.");
               }
 
+              me.openDialog(me.pre + 'dl_symmetry', 'Symmetry');
+
               if(me.deferredSymmetry !== undefined) me.deferredSymmetry.resolve();
           },
           error : function(xhr, textStatus, errorThrown ) {
@@ -742,6 +753,9 @@ iCn3DUI.prototype.retrieveSymmetry = function (pdbid) { var me = this; //"use st
                 return;
             }
             $("#" + me.pre + "dl_symmetry").html("<br>This structure has no symmetry.");
+
+            me.openDialog(me.pre + 'dl_symmetry', 'Symmetry');
+
             if(me.deferredSymmetry !== undefined) me.deferredSymmetry.resolve();
             return;
           }
@@ -1290,6 +1304,9 @@ iCn3DUI.prototype.applyCommand = function (commandStr) { var me = this; //"use s
   else if(command == 'show selection') {
     me.showSelection();
   }
+  else if(command == 'hide selection') {
+    me.hideSelection();
+  }
   else if(command == 'output selection') {
       me.outputSelection();
   }
@@ -1679,6 +1696,14 @@ iCn3DUI.prototype.applyCommand = function (commandStr) { var me = this; //"use s
   else if(command.indexOf('reset interaction pairs') == 0) {
     me.resetInteractionPairs();
   }
+  else if(command.indexOf('side by side') == 0) {
+    var paraArray = command.split(' | ');
+    var url = paraArray[1];
+
+    window.open(url, '_blank');
+  }
+
+
 
 // start with, single word =============
   else if(command.indexOf('pickatom') == 0) {

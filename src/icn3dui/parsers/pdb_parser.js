@@ -843,6 +843,78 @@ iCn3DUI.prototype.loadOpmDataForAlign = function(data, seqalign, mmdbidArray) { 
     });
 };
 
+iCn3DUI.prototype.loadOpmDataForChainalign = function(data1, data2, mmdbidArray) { var me = this; //"use strict";
+    var url, dataType;
+
+    url = "https://opm-assets.storage.googleapis.com/pdb/" + mmdbidArray[0].toLowerCase()+ ".pdb";
+
+    dataType = "text";
+
+    $.ajax({
+      url: url,
+      dataType: dataType,
+      cache: true,
+      //tryCount : 0,
+      //retryLimit : 1,
+      success: function(opmdata) {
+          me.selectedPdbid = mmdbidArray[0];
+
+          me.icn3d.bOpm = true;
+          var bVector = true;
+          var chainresiCalphaHash = me.icn3d.loadPDB(opmdata, mmdbidArray[0], me.icn3d.bOpm, bVector); // defined in the core library
+
+          $("#" + me.pre + "selectplane_z1").val(me.icn3d.halfBilayerSize);
+          $("#" + me.pre + "selectplane_z2").val(-me.icn3d.halfBilayerSize);
+
+          $("#" + me.pre + "extra_mem_z").val(me.icn3d.halfBilayerSize);
+          $("#" + me.pre + "intra_mem_z").val(-me.icn3d.halfBilayerSize);
+
+          me.icn3d.init(); // remove all previously loaded data
+          me.downloadChainalignmentPart2(data1, data2, chainresiCalphaHash);
+
+          if(me.deferredOpm !== undefined) me.deferredOpm.resolve();
+      },
+      error : function(xhr, textStatus, errorThrown ) {
+        var url2 = "https://opm-assets.storage.googleapis.com/pdb/" + mmdbidArray[1].toLowerCase()+ ".pdb";
+
+        $.ajax({
+          url: url2,
+          dataType: dataType,
+          cache: true,
+          //tryCount : 0,
+          //retryLimit : 1,
+          success: function(opmdata) {
+              me.selectedPdbid = mmdbidArray[1];
+
+              me.icn3d.bOpm = true;
+              var bVector = true;
+              var chainresiCalphaHash = me.icn3d.loadPDB(opmdata, mmdbidArray[1], me.icn3d.bOpm, bVector); // defined in the core library
+
+              $("#" + me.pre + "selectplane_z1").val(me.icn3d.halfBilayerSize);
+              $("#" + me.pre + "selectplane_z2").val(-me.icn3d.halfBilayerSize);
+
+              $("#" + me.pre + "extra_mem_z").val(me.icn3d.halfBilayerSize);
+              $("#" + me.pre + "intra_mem_z").val(-me.icn3d.halfBilayerSize);
+
+              me.icn3d.init(); // remove all previously loaded data
+              me.downloadChainalignmentPart2(data1, data2, chainresiCalphaHash);
+
+              if(me.deferredOpm !== undefined) me.deferredOpm.resolve();
+          },
+          error : function(xhr, textStatus, errorThrown ) {
+              me.icn3d.init(); // remove all previously loaded data
+              me.downloadChainalignmentPart2(data1, data2);
+
+              if(me.deferredOpm !== undefined) me.deferredOpm.resolve();
+              return;
+          }
+        });
+
+        return;
+      }
+    });
+};
+
 iCn3DUI.prototype.loadMmcifOpmDataPart2 = function(data, pdbid) { var me = this; //"use strict";
     if(Object.keys(me.icn3d.structures).length == 1) {
         $("#" + me.pre + "alternateWrapper").hide();

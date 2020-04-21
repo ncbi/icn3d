@@ -13,7 +13,7 @@ if (!$.ui.dialog.prototype._makeDraggableBase) {
 }
 
 var iCn3DUI = function(cfg) { var me = this; //"use strict";
-    this.REVISION = '2.14.0';
+    this.REVISION = '2.15.0';
 
     me.bFullUi = true;
 
@@ -613,6 +613,12 @@ iCn3DUI.prototype = {
 
         me.icn3d = new iCn3D(me.pre + 'canvas');
 
+        if(me.cfg.controlGl) {
+            me.icn3d.bControlGl = true;
+            me.icn3d.container = (me.icn3d.bControlGl) ? $(document) : $('#' + me.icn3d.id);
+        }
+        me.icn3d.setControl(); // rotation, translation, zoom, etc
+
         me.handleContextLost();
 
         me.icn3d.setWidthHeight(width, height);
@@ -966,7 +972,7 @@ iCn3DUI.prototype = {
       if(me.bInitial) {
           jQuery.extend(me.icn3d.opts, me.opts);
 
-          if(me.icn3d.bOpm && me.cfg.align !== undefined) { // show membrane
+          if(me.icn3d.bOpm && (me.cfg.align !== undefined || me.cfg.chainalign !== undefined)) { // show membrane
               var resid = me.selectedPdbid + '_MEM_1';
               for(var i in me.icn3d.residues[resid]) {
                   var atom = me.icn3d.atoms[i];
@@ -1908,7 +1914,7 @@ iCn3DUI.prototype = {
         var cnt = 0;
         for(var resid1 in me.resid2ResidhashHbond) {
             for(var resid2 in me.resid2ResidhashHbond[resid1]) {
-                tmpText += '<tr><td>' + resid1 + '</td><td>' + resid2 + '</td>';
+                tmpText += '<tr><td><input type="checkbox" class="' + me.pre + 'seloneres" id="' + me.pre + 'hbond_' +  cnt + 'a" resid="' + resid1 + '"/> ' + resid1 + '</td><td><input type="checkbox" class="' + me.pre + 'seloneres" id="' + me.pre + 'hbond_' +  cnt + 'b" resid="' + resid2 + '"/> ' + resid2 + '</td>';
                 if(bSave === undefined) tmpText += '<td align="center"><button class="' + me.pre + 'selres" resid="' + resid1 + '|' + resid2 + '">Highlight</button></td>';
                 tmpText += '</tr>';
                 ++cnt;
@@ -1916,7 +1922,7 @@ iCn3DUI.prototype = {
         }
 
         var text = '<div style="text-align:center"><br><b>' + cnt
-        + ' hydrogen bond pairs</b>:<br><br><table align=center border=1 cellpadding=10 cellspacing=0>'
+        + ' hydrogen bond pairs</b>:</div><br><br><table align=center border=1 cellpadding=10 cellspacing=0>'
         + '<tr><th>Atom 1</th><th>Atom 2</th>';
         if(bSave === undefined) text += '<th align="center">Highlight in 3D</th>';
         text += '</tr>';
@@ -1935,7 +1941,7 @@ iCn3DUI.prototype = {
         var cnt = 0;
         for(var resid1 in me.resid2ResidhashSaltbridge) {
             for(var resid2 in me.resid2ResidhashSaltbridge[resid1]) {
-                tmpText += '<tr><td>' + resid1 + '</td><td>' + resid2 + '</td>';
+                tmpText += '<tr><td><input type="checkbox" class="' + me.pre + 'seloneres" id="' + me.pre + 'saltb_' +  cnt + 'a" resid="' + resid1 + '"/> ' + resid1 + '</td><td><input type="checkbox" class="' + me.pre + 'seloneres" id="' + me.pre + 'saltb_' +  cnt + 'b" resid="' + resid2 + '"/> ' + resid2 + '</td>';
                 if(bSave === undefined) tmpText += '<td align="center"><button class="' + me.pre + 'selres" resid="' + resid1 + '|' + resid2 + '">Highlight</button></td>';
                 tmpText += '</tr>';
                 ++cnt;
@@ -1943,7 +1949,7 @@ iCn3DUI.prototype = {
         }
 
         var text = '<div style="text-align:center"><br><b>' + cnt
-          + ' Salt bridge pairs</b>:<br><br><table align=center border=1 cellpadding=10 cellspacing=0>'
+          + ' Salt bridge pairs</b>:</div><br><br><table align=center border=1 cellpadding=10 cellspacing=0>'
           + '<tr><th>Atom 1</th><th>Atom 2</th>';
         if(bSave === undefined) text += '<th align="center">Highlight in 3D</th>';
         text += '</tr>';
@@ -1968,7 +1974,7 @@ iCn3DUI.prototype = {
                 var dist1_dist2 = residHash[resid1][resid2].split('_');
 
                 if(bInteraction) {
-                    tmpText += '<tr><td>' + resid1 + '</td><td>' + resid2 + '</td><td align="center">' + dist1_dist2[0] + '</td><td align="center">' + dist1_dist2[1] + '</td>';
+                    tmpText += '<tr><td><input type="checkbox" class="' + me.pre + 'seloneres" id="' + me.pre + 'inter_' +  cnt + 'a" resid="' + resid1 + '"/> ' + resid1 + '</td><td><input type="checkbox" class="' + me.pre + 'seloneres" id="' + me.pre + 'inter_' +  cnt + 'b" resid="' + resid2 + '"/> ' + resid2 + '</td><td align="center">' + dist1_dist2[0] + '</td><td align="center">' + dist1_dist2[1] + '</td>';
                     if(bSave === undefined) tmpText += '<td align="center"><button class="' + me.pre + 'selres" resid="' + resid1 + '|' + resid2 + '">Highlight</button></td>';
                     tmpText += '</tr>';
                 }
@@ -1982,7 +1988,7 @@ iCn3DUI.prototype = {
 
         var nameStr = (bInteraction) ? "the interations" : "sphere";
         var text = '<div style="text-align:center"><br><b>' + cnt
-          + ' residue pairs in ' + nameStr + '</b>:<br><br>';
+          + ' residue pairs in ' + nameStr + '</b>:</div><br><br>';
 
         if(bInteraction) {
             text += '<table align=center border=1 cellpadding=10 cellspacing=0>'
@@ -2346,8 +2352,44 @@ iCn3DUI.prototype = {
 */
     clickRealignonseqalign: function() { var me = this; //"use strict";
         $("#" + me.pre + "mn2_realignonseqalign").click(function(e) {
+            if(me.bSetChainsAdvancedMenu === undefined || !me.bSetChainsAdvancedMenu) {
+               var prevHAtoms = me.icn3d.cloneHash(me.icn3d.hAtoms);
+
+               me.setPredefinedInMenu();
+               me.bSetChainsAdvancedMenu = true;
+
+               me.icn3d.hAtoms = me.icn3d.cloneHash(prevHAtoms);
+            }
+
+            var definedAtomsHtml = me.setAtomMenu(['protein']);
+
+            if($("#" + me.pre + "atomsCustomRealign").length) {
+                $("#" + me.pre + "atomsCustomRealign").html(definedAtomsHtml);
+            }
+            if($("#" + me.pre + "atomsCustomRealign2").length) {
+                $("#" + me.pre + "atomsCustomRealign2").html(definedAtomsHtml);
+            }
+
+            me.openDialog(me.pre + 'dl_realign', 'Please select two sets to realign');
+
+            $("#" + me.pre + "atomsCustomRealign").resizable();
+            $("#" + me.pre + "atomsCustomRealign2").resizable();
+        });
+    },
+
+    clickApplyRealign: function() { var me = this; //"use strict";
+        $("#" + me.pre + "applyRealign").click(function(e) {
+           e.preventDefault();
+           dialog.dialog( "close" );
+
+           var nameArray = $("#" + me.pre + "atomsCustomRealign").val();
+
+           if(nameArray.length > 0) {
+               me.icn3d.hAtoms = me.getAtomsFromNameArray(nameArray);
+           }
+
            me.realignOnSeqAlign();
-           me.setLogCmd("realign on seq align", true);
+           me.setLogCmd("realign on seq align | " + nameArray, true);
         });
     },
 
@@ -4622,6 +4664,18 @@ iCn3DUI.prototype = {
         });
     },
 
+    clkMn6_sidebyside: function() { var me = this; //"use strict";
+        $("#" + me.pre + "mn6_sidebyside").click(function(e) {
+           var url = me.shareLinkUrl();
+           url = url.replace("full.html", "full2.html");
+           window.open(url, '_blank');
+
+           me.setLogCmd('side by side | ' + url, true);
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
+        });
+    },
+
     clkMn6_rotateright: function() { var me = this; //"use strict";
         $("#" + me.pre + "mn6_rotateright").click(function(e) {
            me.setLogCmd('rotate right', true);
@@ -4830,7 +4884,7 @@ iCn3DUI.prototype = {
         $("#" + me.pre + "mn6_symmetry").click(function(e) {
            me.retrieveSymmetry(Object.keys(me.icn3d.structures)[0]);
 
-           me.openDialog(me.pre + 'dl_symmetry', 'Symmetry');
+           //me.openDialog(me.pre + 'dl_symmetry', 'Symmetry');
         });
     },
 
@@ -6335,6 +6389,10 @@ iCn3DUI.prototype = {
            html += 'Set 2: ' + nameArray + ' <button class="' + me.pre + 'selset" cmd="' + cmd2 + '">Highlight in 3D</button><br><br></div>';
        }
 
+       html += '<div style="width:450px; text-align:center"><b>Note</b>: Each checkbox below selects the corresponding residue. '
+         + 'You can click "Save Selection" in the "Select" menu to save the selection '
+         + 'and click on "Highlight" button to clear the checkboxes.</div><br>'
+
        var interactionTypes = '';
 
        if(bHbond) {
@@ -6840,10 +6898,52 @@ iCn3DUI.prototype = {
         });
     },
 
+
+    selectOneResid: function(idStr, bUnchecked) { var me = this; //"use strict";
+      //var idStr = idArray[i]; // TYR $1KQ2.B:56@OH, or $1KQ2.B:40 ASP
+      var posStructure = idStr.indexOf('$');
+      var posChain = idStr.indexOf('.');
+      var posRes = idStr.indexOf(':');
+      var posAtom = idStr.indexOf('@');
+      if(posAtom == -1) posAtom = idStr.indexOf(' ');
+
+      var structure = idStr.substr(posStructure + 1, posChain - posStructure - 1);
+      var chain = idStr.substr(posChain + 1, posRes - posChain - 1);
+      var resi = idStr.substr(posRes + 1, posAtom - posRes - 1);
+
+      var resid = structure + '_' + chain + '_' + resi;
+
+      for(var j in me.icn3d.residues[resid]) {
+          if(bUnchecked) {
+              delete me.icn3d.hAtoms[j];
+          }
+          else {
+              me.icn3d.hAtoms[j] = 1;
+          }
+      }
+
+      if(bUnchecked) {
+          delete me.selectedResidues[resid];
+      }
+      else {
+          me.selectedResidues[resid] = 1;
+      }
+
+      var cmd = '$' + structure + '.' + chain + ':' + resi;
+
+      return cmd;
+    },
+
     clickResidueOnInteraction: function() { var me = this; //"use strict";
         // highlight a pair residues
         $(document).on("click", "." + me.pre + "selres", function(e) {
               e.stopImmediatePropagation();
+
+              me.bSelOneRes = false;
+              var elems = $( "." + me.pre + "seloneres" );
+              for(var i = 0, il = elems.length; i < il;  ++i) {
+                  elems[i].checked = false;
+              }
 
               var idArray = $(this).attr('resid').split('|');
 
@@ -6852,37 +6952,62 @@ iCn3DUI.prototype = {
               var cmd = 'select ';
               for(var i = 0, il = idArray.length; i < il; ++i) {
                   var idStr = idArray[i]; // TYR $1KQ2.B:56@OH, or $1KQ2.B:40 ASP
-                  var posStructure = idStr.indexOf('$');
-                  var posChain = idStr.indexOf('.');
-                  var posRes = idStr.indexOf(':');
-                  var posAtom = idStr.indexOf('@');
-                  if(posAtom == -1) posAtom = idStr.indexOf(' ');
 
-                  var structure = idStr.substr(posStructure + 1, posChain - posStructure - 1);
-                  var chain = idStr.substr(posChain + 1, posRes - posChain - 1);
-                  var resi = idStr.substr(posRes + 1, posAtom - posRes - 1);
-
-                  var resid = structure + '_' + chain + '_' + resi;
                   if(i > 0) cmd += ' or ';
-                  cmd += '$' + structure + '.' + chain + ':' + resi;
-
-                  for(var j in me.icn3d.residues[resid]) {
-                    me.icn3d.hAtoms[j] = 1;
-                  }
-                  me.selectedResidues[resid] = 1;
+                  cmd += me.selectOneResid(idStr);
               }
-
-              //me.icn3d.removeHlObjects();  // render() is called
-              //me.icn3d.addHlObjects();  // render() is called
 
               me.updateHlAll();
 
               me.setLogCmd(cmd, true);
         });
 
+        // highlight a residue
+        $(document).on("click", "." + me.pre + "seloneres", function(e) {
+              e.stopImmediatePropagation();
+
+              if(!me.bSelOneRes) {
+                  me.icn3d.hAtoms = {};
+                  me.selectedResidues = {};
+
+                  me.bSelOneRes = true;
+              }
+
+              var resid = $(this).attr('resid');
+              var id = $(this).attr('id');
+
+              if($("#" + id).length && $("#" + id)[0].checked) { // checked
+                  me.selectOneResid(resid);
+              }
+              else if($("#" + id).length && !$("#" + id)[0].checked) { // unchecked
+                  me.selectOneResid(resid, true);
+              }
+
+              me.updateHlAll();
+
+/*
+              var cmd = 'select ';
+              var cnt = 0;
+              for(var resid in me.selectedResidues) {
+                  if(cnt > 0) cmd += ' or ';
+                  cmd += resid;
+
+                  ++cnt;
+              }
+
+              me.setLogCmd(cmd, true);
+*/
+        });
+
         // highlight a set of residues
         $(document).on("click", "." + me.pre + "selset", function(e) {
               e.stopImmediatePropagation();
+
+              me.bSelOneRes = false;
+              var elems = $( "." + me.pre + "seloneres" );
+              for(var i = 0, il = elems.length; i < il;  ++i) {
+                  elems[i].checked = false;
+              }
 
               var cmd = $(this).attr('cmd');
 
@@ -6897,20 +7022,38 @@ iCn3DUI.prototype = {
 
     bindMouseup: function() { var me = this; //"use strict";
         $("accordion").bind('mouseup touchend', function (e) {
-          if(me.icn3d.controls) {
-            me.icn3d.controls.noRotate = false;
-            me.icn3d.controls.noZoom = false;
-            me.icn3d.controls.noPan = false;
+          if(me.icn3d.bControlGl) {
+              if(window.controls) {
+                window.controls.noRotate = false;
+                window.controls.noZoom = false;
+                window.controls.noPan = false;
+              }
+          }
+          else {
+              if(me.icn3d.controls) {
+                me.icn3d.controls.noRotate = false;
+                me.icn3d.controls.noZoom = false;
+                me.icn3d.controls.noPan = false;
+              }
           }
         });
     },
 
     bindMousedown: function() { var me = this; //"use strict";
         $("accordion").bind('mousedown touchstart', function (e) {
-          if(me.icn3d.controls) {
-            me.icn3d.controls.noRotate = true;
-            me.icn3d.controls.noZoom = true;
-            me.icn3d.controls.noPan = true;
+          if(me.icn3d.bControlGl) {
+              if(window.controls) {
+                window.controls.noRotate = true;
+                window.controls.noZoom = true;
+                window.controls.noPan = true;
+              }
+          }
+          else {
+              if(me.icn3d.controls) {
+                me.icn3d.controls.noRotate = true;
+                me.icn3d.controls.noZoom = true;
+                me.icn3d.controls.noPan = true;
+              }
           }
         });
     },
@@ -6995,6 +7138,7 @@ iCn3DUI.prototype = {
         me.clickAlternate();
         //me.clickRealign();
         me.clickRealignonseqalign();
+        me.clickApplyRealign();
         me.clkMn1_mmtfid();
         me.clkMn1_pdbid();
         me.clkMn1_opmid();
@@ -7195,6 +7339,7 @@ iCn3DUI.prototype = {
         me.clkMn6_chemicalbindingshow();
         me.clkMn6_chemicalbindinghide();
         me.clkMn6_rotateleft();
+        me.clkMn6_sidebyside();
         me.clkMn6_rotateright();
         me.clkMn6_rotateup();
         me.clkMn6_rotatedown();
@@ -7228,6 +7373,7 @@ iCn3DUI.prototype = {
         me.clkMn6_clbondsNo();
         me.clickCustomAtoms();
         me.clickShow_selected();
+        me.clickHide_selected();
         me.clickShow_annotations();
         me.clickShowallchains();
 //        me.clickShow_sequences();

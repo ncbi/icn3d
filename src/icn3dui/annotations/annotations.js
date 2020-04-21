@@ -468,7 +468,7 @@ iCn3DUI.prototype.getAnnotationData = function() { var me = this; //"use strict"
             else if(me.cfg.blast_rep_id == chnid && me.seqStructAlignData.data === undefined) {
               var title;
               if(me.cfg.query_id.length > 14) {
-                  title = 'Query: ' + me.cfg.query_id.substr(0, 6);
+                  title = 'Query: ' + me.cfg.query_id.substr(0, 6) + '...';
               }
               else {
                   title = (isNaN(me.cfg.query_id)) ? 'Query: ' + me.cfg.query_id : 'Query: gi ' + me.cfg.query_id;
@@ -490,7 +490,7 @@ iCn3DUI.prototype.getAnnotationData = function() { var me = this; //"use strict"
               //var title = 'Query: ' + me.cfg.query_id.substr(0, 6);
               var title;
               if(me.cfg.query_id.length > 14) {
-                  title = 'Query: ' + me.cfg.query_id.substr(0, 6);
+                  title = 'Query: ' + me.cfg.query_id.substr(0, 6) + '...';
               }
               else {
                   title = (isNaN(me.cfg.query_id)) ? 'Query: ' + me.cfg.query_id : 'Query: gi ' + me.cfg.query_id;
