@@ -66,7 +66,7 @@ iCn3DUI.prototype.downloadOpm = function (opmid) { var me = this; //"use strict"
           me.showLoading();
       },
       complete: function() {
-          me.hideLoading();
+          //me.hideLoading();
       },
       success: function(data) {
           me.icn3d.bOpm = true;
