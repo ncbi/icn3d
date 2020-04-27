@@ -38,6 +38,10 @@ iCn3D.prototype.draw = function () { var me = this; //"use strict";
     }
 
     if(this.bRender === true) {
+      if($("#" + this.pre + "wait")) $("#" + this.pre + "wait").hide();
+      if($("#" + this.pre + "canvas")) $("#" + this.pre + "canvas").show();
+      if($("#" + this.pre + "cmdlog")) $("#" + this.pre + "cmdlog").show();
+
       this.applyTransformation(this._zoomFactor, this.mouseChange, this.quaternion);
       this.render();
     }
