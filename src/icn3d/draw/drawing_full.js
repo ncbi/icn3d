@@ -20,7 +20,11 @@ iCn3D.prototype.createSurfaceRepresentation = function (atoms, type, wireframe, 
     var extendedAtoms = [];
 
     if(this.bConsiderNeighbors) {
-        extendedAtoms = Object.keys(this.unionHash(atoms, this.getAtomsWithinAtom(this.atoms, atoms, distance)));
+        var unionAtoms;
+        unionAtoms = this.unionHash(unionAtoms, atoms)
+        unionAtoms = this.unionHash(unionAtoms, this.getAtomsWithinAtom(this.atoms, atoms, distance))
+
+        extendedAtoms = Object.keys(unionAtoms);
     }
     else {
         extendedAtoms = Object.keys(atoms);

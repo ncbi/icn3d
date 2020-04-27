@@ -160,7 +160,7 @@ iCn3D.prototype.intHash = function(atoms1, atoms2) { var me = this; //"use stric
 // get atoms in allAtoms, but not in "atoms"
 iCn3D.prototype.exclHash = function(includeAtoms, excludeAtoms) { var me = this; //"use strict";
     for (var i in includeAtoms) {
-        if (excludeAtoms.hasOwnProperty(i)) {
+        if (excludeAtoms !== undefined && excludeAtoms[i]) {
             delete includeAtoms[i];
         }
     }
@@ -169,18 +169,24 @@ iCn3D.prototype.exclHash = function(includeAtoms, excludeAtoms) { var me = this;
 };
 
 iCn3D.prototype.unionHash = function(atoms1, atoms2) { var me = this; //"use strict";
-    // The commented-out version has a problem: atom1 became undefined.
-    //jQuery.extend(atoms1, atoms2);
+    // much slower
+    //return this.unionHashNotInPlace(atoms1, atoms2);
 
-    //return atoms1;
+    // much faster
+    return this.unionHashInPlace(atoms1, atoms2);
+};
 
-    return this.unionHashNotInPlace(atoms1, atoms2);
+iCn3D.prototype.unionHashInPlace = function(atoms1, atoms2) { var me = this; //"use strict";
+    if(atoms1 === undefined) atoms1 = {};
+    if(atoms2 === undefined) atoms2 = {};
+
+    jQuery.extend(atoms1, atoms2);
+
+    return atoms1;
 };
 
 iCn3D.prototype.unionHashNotInPlace = function(atoms1, atoms2) { var me = this; //"use strict";
     var results = jQuery.extend({}, atoms1, atoms2);
-    atoms1 = {};
-    atoms2 = {};
 
     return results;
 };
@@ -204,14 +210,14 @@ iCn3D.prototype.hash2Atoms = function(hash) { var me = this; //"use strict";
       atoms[i] = this.atoms[i];
     }
 
-    hash = {};
+    //hash = {};
 
     return atoms;
 };
 
 // from iview (http://istar.cse.cuhk.edu.hk/iview/)
 iCn3D.prototype.exportCanvas = function () { var me = this; //"use strict";
-    this.render();
+    if(this.bRender) this.render();
     window.open(this.renderer.domElement.toDataURL('image/png'));
 };
 
@@ -227,7 +233,7 @@ iCn3D.prototype.zoomIn = function (normalizedFactor) {  var me = this; //"use st
       this.controls.update(para);
   }
 
-  this.render();
+  if(this.bRender) this.render();
 };
 
 iCn3D.prototype.zoomOut = function (normalizedFactor) {  var me = this; //"use strict";
@@ -241,7 +247,7 @@ iCn3D.prototype.zoomOut = function (normalizedFactor) {  var me = this; //"use s
   else {
       this.controls.update(para);
   }
-  this.render();
+  if(this.bRender) this.render();
 };
 
 // rotate
@@ -270,7 +276,7 @@ iCn3D.prototype.rotateLeft = function (degree) {  var me = this; //"use strict";
       this.controls.update(para);
   }
 
-  this.render();
+  if(this.bRender) this.render();
 };
 
 iCn3D.prototype.rotateRight = function (degree) {  var me = this; //"use strict";
@@ -298,7 +304,7 @@ iCn3D.prototype.rotateRight = function (degree) {  var me = this; //"use strict"
       this.controls.update(para);
   }
 
-  this.render();
+  if(this.bRender) this.render();
 };
 
 iCn3D.prototype.rotateUp = function (degree) {  var me = this; //"use strict";
@@ -326,7 +332,7 @@ iCn3D.prototype.rotateUp = function (degree) {  var me = this; //"use strict";
       this.controls.update(para);
   }
 
-  this.render();
+  if(this.bRender) this.render();
 };
 
 iCn3D.prototype.rotateDown = function (degree) {  var me = this; //"use strict";
@@ -354,7 +360,7 @@ iCn3D.prototype.rotateDown = function (degree) {  var me = this; //"use strict";
       this.controls.update(para);
   }
 
-  this.render();
+  if(this.bRender) this.render();
 };
 
 // translate
@@ -375,7 +381,7 @@ iCn3D.prototype.translateLeft = function (percentScreenSize) {  var me = this; /
       this.controls.update(para);
   }
 
-  this.render();
+  if(this.bRender) this.render();
 };
 
 iCn3D.prototype.translateRight = function (percentScreenSize) {  var me = this; //"use strict";
@@ -394,7 +400,7 @@ iCn3D.prototype.translateRight = function (percentScreenSize) {  var me = this; 
       this.controls.update(para);
   }
 
-  this.render();
+  if(this.bRender) this.render();
 };
 
 iCn3D.prototype.translateUp = function (percentScreenSize) {  var me = this; //"use strict";
@@ -413,7 +419,7 @@ iCn3D.prototype.translateUp = function (percentScreenSize) {  var me = this; //"
       this.controls.update(para);
   }
 
-  this.render();
+  if(this.bRender) this.render();
 };
 
 iCn3D.prototype.translateDown = function (percentScreenSize) {  var me = this; //"use strict";
@@ -432,7 +438,7 @@ iCn3D.prototype.translateDown = function (percentScreenSize) {  var me = this; /
       this.controls.update(para);
   }
 
-  this.render();
+  if(this.bRender) this.render();
 };
 
 iCn3D.prototype.select3ddomainFromAtom = function (atom) { var me = this; //"use strict";
@@ -515,7 +521,9 @@ iCn3D.prototype.showPickingHilight = function(atom) { var me = this; //"use stri
             this.hAtoms = this.unionHash(this.hAtoms, this.pickedAtomList);
         }
         else { // range in the same chain only
-            var combinedAtomList = this.unionHash(this.prevPickedAtomList, this.pickedAtomList);
+            var combinedAtomList;
+            combinedAtomList = this.unionHash(combinedAtomList, this.prevPickedAtomList);
+            combinedAtomList = this.unionHash(combinedAtomList, this.pickedAtomList);
 
             var firstAtom = this.getFirstAtomObj(combinedAtomList);
             var lastAtom = this.getLastAtomObj(combinedAtomList);
@@ -574,7 +582,7 @@ iCn3D.prototype.addHlObjects = function (color, bRender, atomsHash) { var me = t
 
    this.applyDisplayOptions(this.opts, this.intHash(atomsHash, this.dAtoms), this.bHighlight);
 
-   if(bRender === undefined || bRender) this.render();
+   if(bRender) this.render();
 };
 
 iCn3D.prototype.resetOrientation = function() { var me = this; //"use strict";
@@ -652,7 +660,9 @@ iCn3D.prototype.resetOrientation = function() { var me = this; //"use strict";
  };
 
 iCn3D.prototype.getFirstAtomObj = function(atomsHash) { var me = this; //"use strict";
-    if(atomsHash == undefined) return this.atoms[0];
+    if(atomsHash === undefined || Object.keys(atomsHash).length === 0) {
+        return this.atoms[0];
+    }
 
     var atomKeys = Object.keys(atomsHash);
     var firstIndex = atomKeys[0];
@@ -661,7 +671,9 @@ iCn3D.prototype.getFirstAtomObj = function(atomsHash) { var me = this; //"use st
 };
 
 iCn3D.prototype.getFirstCalphaAtomObj = function(atomsHash) { var me = this; //"use strict";
-    if(atomsHash == undefined) return this.atoms[0];
+    if(atomsHash === undefined || Object.keys(atomsHash).length === 0) {
+        return this.atoms[0];
+    }
 
     var firstIndex;
 
@@ -676,7 +688,9 @@ iCn3D.prototype.getFirstCalphaAtomObj = function(atomsHash) { var me = this; //"
 };
 
 iCn3D.prototype.getFirstAtomObjByName = function(atomsHash, atomName) { var me = this; //"use strict";
-    if(atomsHash == undefined) return this.atoms[0];
+    if(atomsHash === undefined || Object.keys(atomsHash).length === 0) {
+        return this.atoms[0];
+    }
 
     var firstIndex;
 
@@ -691,6 +705,10 @@ iCn3D.prototype.getFirstAtomObjByName = function(atomsHash, atomName) { var me =
 };
 
 iCn3D.prototype.getLastAtomObj = function(atomsHash) { var me = this; //"use strict";
+    if(atomsHash === undefined || Object.keys(atomsHash).length === 0) {
+        return this.atoms[0];
+    }
+
     var atomKeys = Object.keys(atomsHash);
     var lastIndex = atomKeys[atomKeys.length - 1];
 
@@ -885,7 +903,7 @@ iCn3D.prototype.addAtomLabels = function (atoms) { var me = this; //"use strict"
 };
 
 iCn3D.prototype.setCenter = function(center) { var me = this; //"use strict";
-   if(!this.bChainAlign) {
+   //if(!this.bChainAlign) {
        this.mdl.position.set(0,0,0);
        this.mdlImpostor.position.set(0,0,0);
        this.mdl_ghost.position.set(0,0,0);
@@ -894,7 +912,7 @@ iCn3D.prototype.setCenter = function(center) { var me = this; //"use strict";
        //this.mdlPicking.position.sub(center);
        this.mdlImpostor.position.sub(center);
        this.mdl_ghost.position.sub(center);
-   }
+   //}
 };
 
 iCn3D.prototype.getResiduesFromAtoms = function(atomsHash) { var me = this; //"use strict";

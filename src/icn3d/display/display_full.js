@@ -254,7 +254,9 @@ iCn3D.prototype.applySsbondsOptions = function (options) { var me = this; //"use
             this.createCylinder(line.position1, line.position2, this.cylinderRadius, colorObj);
 
             // show ball and stick for these two residues
-            var residueAtoms = this.unionHash(this.residues[res1], this.residues[res2]);
+            var residueAtoms;
+            residueAtoms = this.unionHash(residueAtoms, this.residues[res1]);
+            residueAtoms = this.unionHash(residueAtoms, this.residues[res2]);
 
             // show side chains for the selected atoms
             var atoms = this.intHash(residueAtoms, this.sidec);
@@ -715,6 +717,10 @@ iCn3D.prototype.draw = function () { var me = this; //"use strict";
     }
 
     if(this.bRender === true) {
+      if($("#" + this.pre + "wait")) $("#" + this.pre + "wait").hide();
+      if($("#" + this.pre + "canvas")) $("#" + this.pre + "canvas").show();
+      if($("#" + this.pre + "cmdlog")) $("#" + this.pre + "cmdlog").show();
+
       this.applyTransformation(this._zoomFactor, this.mouseChange, this.quaternion);
       this.render();
 

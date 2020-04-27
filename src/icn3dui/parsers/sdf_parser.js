@@ -23,7 +23,7 @@ iCn3DUI.prototype.downloadCid = function (cid) { var me = this; //"use strict";
           me.showLoading();
       },
       complete: function() {
-          me.hideLoading();
+          //me.hideLoading();
       },
       success: function(data) {
         var bResult = me.loadSdfAtomData(data, cid);

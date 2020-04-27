@@ -192,7 +192,8 @@ iCn3DUI.prototype.showAnnoSeqData = function(nucleotide_chainid, chemical_chaini
         ++i;
     }
 
-    me.interactChainChainbase = me.icn3d.unionHash(me.protein_chainid, nucleotide_chainid);
+    me.interactChainChainbase = me.icn3d.unionHash(me.interactChainChainbase, me.protein_chainid);
+    me.interactChainChainbase = me.icn3d.unionHash(me.interactChainChainbase, nucleotide_chainid);
 
     i = 0;
     for(var chain in chemical_chainid) {
@@ -201,7 +202,8 @@ iCn3DUI.prototype.showAnnoSeqData = function(nucleotide_chainid, chemical_chaini
     }
 
     me.interactChainChainbase = me.icn3d.unionHash(me.interactChainChainbase, chemical_chainid);
-    me.ssbondChainChainbase = me.icn3d.unionHash(me.protein_chainid, chemical_chainid);
+    me.ssbondChainChainbase = me.icn3d.unionHash(me.ssbondChainChainbase, me.protein_chainid);
+    me.ssbondChainChainbase = me.icn3d.unionHash(me.ssbondChainChainbase, chemical_chainid);
 
     for(var name in chemical_set) {
         me.getCombinedSequenceData(name, chemical_set[name], i);
@@ -370,14 +372,14 @@ iCn3DUI.prototype.getAnnotationData = function() { var me = this; //"use strict"
             + chnid + "' target='_blank' title='" + fullProteinName + "'>" + proteinName + "</a>"
             + geneLink + "&nbsp;&nbsp;&nbsp;"
             + me.addButton(chnid, "icn3d-addtrack", "Add Track", "Add a custom track", 60, buttonStyle)
-            + "&nbsp;&nbsp;&nbsp;"
-            + me.addButton(chnid, "icn3d-helixsets", "Helix Sets", "Define sets for each helix in this chain and add them to the menu of \"Defined Sets\"", 60, buttonStyle) + "&nbsp;"
-            + me.addButton(chnid, "icn3d-sheetsets", "Sheet Sets", "Define sets for each sheet in this chain and add them to the menu of \"Defined Sets\"", 60, buttonStyle) + "&nbsp;"
-            + me.addButton(chnid, "icn3d-coilsets", "Coil Sets", "Define sets for each coil in this chain and add them to the menu of \"Defined Sets\"", 60, buttonStyle) + "&nbsp;&nbsp;&nbsp;";
+            + "&nbsp;&nbsp;&nbsp;";
 
-        if(me.cfg.blast_rep_id !== undefined && me.cfg.blast_rep_id == chnid) {
-            chainHtml += me.addButton(chnid, "icn3d-customcolor", "Custom Color", "Use a custom file to define the colors in 3D structure", 80, buttonStyle);
-        }
+        //if(me.cfg.blast_rep_id !== undefined && me.cfg.blast_rep_id == chnid) {
+            chainHtml += me.addButton(chnid, "icn3d-customcolor", "Custom Color", "Use a custom file to define the colors in 3D structure", 80, buttonStyle) + "&nbsp;&nbsp;&nbsp;";
+        //}
+            chainHtml += me.addButton(chnid, "icn3d-helixsets", "Helix Sets", "Define sets for each helix in this chain and add them to the menu of \"Defined Sets\"", 60, buttonStyle) + "&nbsp;"
+            + me.addButton(chnid, "icn3d-sheetsets", "Sheet Sets", "Define sets for each sheet in this chain and add them to the menu of \"Defined Sets\"", 60, buttonStyle) + "&nbsp;"
+            + me.addButton(chnid, "icn3d-coilsets", "Coil Sets", "Define sets for each coil in this chain and add them to the menu of \"Defined Sets\"", 60, buttonStyle);
 
         $("#" + me.pre + "dl_annotations").append(chainHtml);
 
@@ -3584,9 +3586,12 @@ iCn3DUI.prototype.showAnnoSelectedChains = function () {   var me = this; //"use
         }
 
         var atom = me.icn3d.getFirstCalphaAtomObj(me.icn3d.chains[chainid]);
-        var oneLetterRes = me.icn3d.residueName2Abbr(atom.resn.substr(0, 3));
 
-        $("#" + me.pre + "anno_" + oneLetterRes).show();
+        if(atom.resn !== undefined) {
+            var oneLetterRes = me.icn3d.residueName2Abbr(atom.resn.substr(0, 3));
+
+            $("#" + me.pre + "anno_" + oneLetterRes).show();
+        }
     }
 };
 

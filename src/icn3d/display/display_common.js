@@ -23,7 +23,9 @@ iCn3D.prototype.setMmdbChainColor = function (inAtoms) {
     this.applyOriginalColor(this.hash2Atoms(atoms));
 
     // atom color
-    var atomHash = this.unionHash(this.chemicals, this.ions);
+    var atomHash;
+    atomHash = this.unionHash(atomHash, this.chemicals);
+    atomHash = this.unionHash(atomHash, this.ions);
 
     for (var i in atomHash) {
         var atom = this.atoms[i];
@@ -258,13 +260,17 @@ iCn3D.prototype.setColorByOptions = function (options, atoms, bUseInputColor) {
             var spanBinv2 = 0.02;
 
             for(var serial in atoms) {
-                var resi = this.atoms[serial].resi - 1;
-                var color;
-                if(this.target2queryHash.hasOwnProperty(resi) && this.target2queryHash[resi] !== -1) { // -1 means gap
-                    var queryresi = this.target2queryHash[resi] + 1;
+                var chainid = this.atoms[serial].structure + '_' + this.atoms[serial].chain;
+                if(this.queryresi2score === undefined || !this.queryresi2score.hasOwnProperty(chainid)) continue;
 
-                    if(this.queryresi2score.hasOwnProperty(queryresi)) {
-                        var b = this.queryresi2score[queryresi];
+                //var resi = this.atoms[serial].resi - 1;
+                var color;
+                //if(this.target2queryHash.hasOwnProperty(resi) && this.target2queryHash[resi] !== -1) { // -1 means gap
+                    //var queryresi = this.target2queryHash[resi] + 1;
+                    var queryresi = this.atoms[serial].resi;
+
+                    if(this.queryresi2score[chainid].hasOwnProperty(queryresi)) {
+                        var b = this.queryresi2score[chainid][queryresi];
 
                         if(b > 100) b = 100;
                         color = b < middB ? new THREE.Color().setRGB(1 - (s = (middB - b) * spanBinv1), 1 - s, 1) : new THREE.Color().setRGB(1, 1 - (s = (b - middB) * spanBinv2), 1 - s);
@@ -272,10 +278,10 @@ iCn3D.prototype.setColorByOptions = function (options, atoms, bUseInputColor) {
                     else {
                         color = this.defaultAtomColor;
                     }
-                }
-                else {
-                    color = this.defaultAtomColor;
-                }
+                //}
+                //else {
+                //    color = this.defaultAtomColor;
+                //}
 
                 this.atoms[serial].color = color;
                 this.atomPrevColors[serial] = color;

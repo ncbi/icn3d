@@ -38,7 +38,7 @@ iCn3DUI.prototype.clickHighlight_3d_dgm = function() { var me = this; //"use str
        me.icn3d.drawHelixBrick(molid2ssTmp, molid2colorTmp, me.icn3d.bHighlight); // condensed view
        me.icn3d.addHlObjects(undefined, false); // all atom view
 
-       me.icn3d.render();
+       if(me.icn3d.bRender) me.icn3d.render();
     });
 };
 */
@@ -319,7 +319,8 @@ iCn3DUI.prototype.getPngText = function() { var me = this; //"use strict";
     }
     else {
         url = me.shareLinkUrl();
-        if(url.length > 4000) {
+        var bTooLong = (url.length > 4000 || url.indexOf('http') !== 0) ? true : false;
+        if(bTooLong) {
             url = me.shareLinkUrl(bAllCommands); // output state file if me.bInputfile is true or the URL is mor than 4000 chars
 
             text += "\nStart of state file======\n";
@@ -361,7 +362,7 @@ iCn3DUI.prototype.saveFile = function(filename, type, text) { var me = this; //"
         blob = new Blob([data],{ type: "text;charset=utf-8;"});
     }
     else if(type === 'png') {
-        me.icn3d.render();
+        if(me.icn3d.bRender) me.icn3d.render();
 
         var bAddURL = true;
         if (!window.File || !window.FileReader || !window.FileList || !window.Blob) {

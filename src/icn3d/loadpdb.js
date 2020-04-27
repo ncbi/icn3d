@@ -362,7 +362,7 @@ iCn3D.prototype.loadPDB = function (src, pdbid, bOpm, bVector) { var me = this; 
 
                     // a chain could be separated in two sections
                     if(serial !== 1) {
-                        //this.chains[prevChainNum] = this.unionHash2Atoms(this.chains[prevChainNum], chainsTmp);
+                        if(this.chains[prevChainNum] === undefined) this.chains[prevChainNum] = {};
                         this.chains[prevChainNum] = this.unionHash(this.chains[prevChainNum], chainsTmp);
                     }
 
@@ -416,6 +416,7 @@ iCn3D.prototype.loadPDB = function (src, pdbid, bOpm, bVector) { var me = this; 
 
     // add the last residue set
     this.residues[residueNum] = residuesTmp;
+    if(this.chains[chainNum] === undefined) this.chains[chainNum] = {};
     this.chains[chainNum] = this.unionHash2Atoms(this.chains[chainNum], chainsTmp);
 
     this.adjustSeq(chainMissingResidueArray);

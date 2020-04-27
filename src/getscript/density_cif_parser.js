@@ -39,7 +39,7 @@ iCn3DUI.prototype.DensityCifParser = function(pdbid, type, sigma, emd) { var me 
 
         oReq.onreadystatechange = function() {
             if (this.readyState == 4) {
-               me.hideLoading();
+               //me.hideLoading();
 
                if(this.status == 200) {
                    var arrayBuffer = oReq.response;

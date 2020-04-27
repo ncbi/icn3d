@@ -203,6 +203,7 @@ iCn3DUI.prototype = {
         }
 
         me.icn3d = new iCn3D(me.pre + 'canvas');
+        me.icn3d.setControl(); // rotation, translation, zoom, etc
 
         me.handleContextLost();
 

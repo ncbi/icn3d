@@ -9,11 +9,11 @@ iCn3DUI.prototype.showLoading = function () { var me = this; //"use strict";
 };
 
 iCn3DUI.prototype.hideLoading = function () { var me = this; //"use strict";
-    if(me.bCommandLoad === undefined || !me.bCommandLoad) {
+    //if(me.bCommandLoad === undefined || !me.bCommandLoad) {
       if($("#" + me.pre + "wait")) $("#" + me.pre + "wait").hide();
       if($("#" + me.pre + "canvas")) $("#" + me.pre + "canvas").show();
       if($("#" + me.pre + "cmdlog")) $("#" + me.pre + "cmdlog").show();
-    }
+    //}
 };
 
 iCn3DUI.prototype.downloadMmcif = function (mmcifid) { var me = this; //"use strict";
@@ -35,7 +35,7 @@ iCn3DUI.prototype.downloadMmcif = function (mmcifid) { var me = this; //"use str
           me.showLoading();
       },
       complete: function() {
-          me.hideLoading();
+          //me.hideLoading();
       },
       success: function(data) {
            url = me.baseUrl + "mmcifparser/mmcifparser.cgi";
@@ -51,7 +51,7 @@ iCn3DUI.prototype.downloadMmcif = function (mmcifid) { var me = this; //"use str
                   me.showLoading();
               },
               complete: function() {
-                  me.hideLoading();
+                  //me.hideLoading();
               },
               success: function(data) {
                   me.loadMmcifData(data, mmcifid);
@@ -384,7 +384,7 @@ iCn3DUI.prototype.downloadMmdb = function (mmdbid, bGi) { var me = this; //"use 
           me.showLoading();
       },
       complete: function() {
-          me.hideLoading();
+          //me.hideLoading();
       },
       success: function(data) {
         var bCalphaOnly = me.icn3d.isCalphaPhosOnly(data.atoms); //, 'CA');
@@ -405,7 +405,7 @@ iCn3DUI.prototype.downloadMmdb = function (mmdbid, bGi) { var me = this; //"use 
                   me.showLoading();
               },
               complete: function() {
-                  me.hideLoading();
+                  //me.hideLoading();
               },
               success: function(data2) {
                   me.parseMmdbData(data2);
