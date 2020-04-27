@@ -680,7 +680,7 @@ iCn3DUI.prototype.setMenu2b_base = function() { var me = this; //"use strict";
     html += "</li>";
 */
 
-    html += me.getLink('mn6_sidebyside', 'Show Side by Side');
+    html += me.getLink('mn6_sidebyside', 'Side by Side');
 
     html += "<li><span>Rotate</span>";
     html += "<ul>";
@@ -1343,7 +1343,7 @@ iCn3DUI.prototype.setDialogs = function() { var me = this; //"use strict";
 
     html += me.divStr + "dl_customcolor'>";
     html += " <input type='hidden' id='" + me.pre + "customcolor_chainid' value=''>";
-    html += '<div style="width:450px;">The custom color file for the query sequence has three columns separated by space or tab: residue name, residue number, and color score.</div><br>';
+    html += '<div style="width:450px;">The custom color file for the structure has two columns separated by space or tab: residue number, and color score in the range of 0-100, where scores 0 and 100 mean blue and red, respectively.</div><br>';
     html += "Color File: " + me.inputFileStr + "id='" + me.pre + "cstcolorfile' size=8> ";
     html += me.buttonStr + "reload_customcolorfile'>Load</button>";
 
@@ -1776,6 +1776,12 @@ iCn3DUI.prototype.setDialogs = function() { var me = this; //"use strict";
     html += "<b>FASTA alignment sequences</b>:<br>";
     html += "<textarea id='" + me.pre + "track_fastaalign' rows='5' style='width: 100%; height: " + (2*me.LOG_HEIGHT) + "px; padding: 0px; border: 0px;'></textarea><br><br>";
     html += "Position of the first residue in Sequences & Annotations window: " + me.inputTextStr + "id='" + me.pre + "fasta_startpos' value='1' size=2> <br><br>";
+
+    html += "Color Sequence by: <select id='" + me.pre + "colorseqby'>";
+    html += optionStr + "'identity' selected>Identity</option>";
+    html += optionStr + "'conservation'>Conservation</option>";
+    html += "</select> <br><br>";
+
     html += me.buttonStr + "addtrack_button2b'>Add Track(s)</button>";
     html += "</div>";
 
@@ -1820,7 +1826,7 @@ iCn3DUI.prototype.setDialogs = function() { var me = this; //"use strict";
 /*
     html += "<table border=0><tr>";
     html += "<td valign='top' width='100'>";
-    html += "<div style='margin-top:28px; white-space: nowrap;'><span id='" + me.pre + "viewdetail' style='display:none;' title='Expand the width of the annotation window to view the residue details'><b>Detailed View</b></span><span id='" + me.pre + "overview' class='icn3d-viewselection' title='Shrink the width of the annotaion window to overview'><b>Overview</b></span></div>";
+    html += "<div style='margin-top:28px; white-space: nowrap;'><span id='" + me.pre + "viewdetail' style='display:none;' title='Expand the width of the annotation window to view the residue details'><b>Detailed View</b></span><span id='" + me.pre + "overview' class='icn3d-viewselection' title='Shrink the width of the annotation window to overview'><b>Overview</b></span></div>";
     html += "<label class='icn3d-switch'><input id='" + me.pre + "viewswitch' type='checkbox'><div class='icn3d-slider icn3d-round' style='width:34px; height:18px; margin: 16px 0px 0px 30px;' title='Left (\"Detailed View\")&#13;Right (\"Overview\")'></div></label>";
     html += "</td>";
     html += "<td>";

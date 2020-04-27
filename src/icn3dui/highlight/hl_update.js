@@ -404,7 +404,7 @@ iCn3DUI.prototype.clearHighlight = function() { var me = this; //"use strict";
 
     me.icn3d.removeHlObjects();
     me.removeHl2D();
-    me.icn3d.render();
+    if(me.icn3d.bRender) me.icn3d.render();
 
     me.removeSeqChainBkgd();
     me.removeSeqResidueBkgd();

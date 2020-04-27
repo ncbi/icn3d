@@ -21,7 +21,7 @@ iCn3DUI.prototype.downloadPdb = function (pdbid) { var me = this; //"use strict"
           me.showLoading();
       },
       complete: function() {
-          me.hideLoading();
+          //me.hideLoading();
       },
       success: function(data) {
           //me.loadPdbData(data, pdbid);

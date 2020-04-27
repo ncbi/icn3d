@@ -7,6 +7,7 @@ if (typeof jQuery === 'undefined') { throw new Error('iCn3D requires jQuery') }
 var iCn3D = function (id) { var me = this; //"use strict";
 
     this.id = id;
+    this.pre = id.substr(0, id.indexOf('_') + 1);
 
     this.bControlGl = false;
     this.container = (this.bControlGl) ? $(document) : $('#' + id);
@@ -313,7 +314,7 @@ iCn3D.prototype = {
               else {
                   me.controls.update(para);
               }
-              me.render();
+              if(me.bRender) me.render();
             }
             else if(e.keyCode === 88 ) { // X
               var para = {};
@@ -360,7 +361,7 @@ iCn3D.prototype = {
               else {
                   me.controls.update(para);
               }
-              me.render();
+              if(me.bRender) me.render();
             }
 
             // rotate
@@ -426,7 +427,7 @@ iCn3D.prototype = {
               me.controls.update();
             }
 
-            me.render();
+            if(me.bRender) me.render();
         });
 
         this.container.bind('touchstart', function (e) {
@@ -452,7 +453,7 @@ iCn3D.prototype = {
               me.controls.update();
             }
 
-            me.render();
+            if(me.bRender) me.render();
         });
 
         this.container.bind('mousemove touchmove', function (e) {
@@ -475,7 +476,7 @@ iCn3D.prototype = {
               me.controls.update();
             }
 
-            me.render();
+            if(me.bRender) me.render();
         });
         this.container.bind('mousewheel', function (e) {
             //e.preventDefault();
@@ -492,7 +493,7 @@ iCn3D.prototype = {
               me.controls.update();
             }
 
-            me.render();
+            if(me.bRender) me.render();
         });
         this.container.bind('DOMMouseScroll', function (e) {
             //e.preventDefault();
@@ -509,7 +510,7 @@ iCn3D.prototype = {
               me.controls.update();
             }
 
-            me.render();
+            if(me.bRender) me.render();
         });
     },
 
@@ -683,7 +684,7 @@ iCn3D.prototype = {
               me.controls.update(para);
           }
 
-          me.render();
+          if(me.bRender) me.render();
     },
 
     setOutlineColor: function(colorStr) { var me = this; //"use strict";

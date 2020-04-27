@@ -37,7 +37,7 @@ iCn3DUI.prototype.clearHighlight = function() { var me = this; //"use strict";
     me.icn3d.draw();
 
     me.icn3d.removeHlObjects();
-    me.icn3d.render();
+    if(me.icn3d.bRender) me.icn3d.render();
 };
 
 iCn3DUI.prototype.showHighlight = function() { var me = this; //"use strict";

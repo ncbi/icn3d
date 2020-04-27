@@ -415,7 +415,7 @@ iCn3DUI.prototype.renderFinalStep = function(steps) { var me = this; //"use stri
     }
 
     // an extra render to remove artifacts in transparent surface
-    if(me.bTransparentSurface) me.icn3d.render();
+    if(me.bTransparentSurface && me.icn3d.bRender) me.icn3d.render();
 };
 
 iCn3DUI.prototype.applyCommandLoad = function (commandStr) { var me = this; //"use strict";
@@ -1276,7 +1276,7 @@ iCn3DUI.prototype.applyCommand = function (commandStr) { var me = this; //"use s
     me.renderFinalStep(1);
 
     // need to render
-    me.icn3d.render();
+    if(me.icn3d.bRender) me.icn3d.render();
   }
   else if(command === 'reset orientation') {
     me.icn3d.resetOrientation();
@@ -1758,13 +1758,15 @@ iCn3DUI.prototype.applyCommand = function (commandStr) { var me = this; //"use s
             me.icn3d.customResidueColors[res.toUpperCase()] = new THREE.Color("#" + me.icn3d.customResidueColors[res]);
         }
     }
-    else if(color == "align custom" && strArray.length == 2) {
-        var resiScoreArray = strArray[1].split(', ');
+    else if(color == "align custom" && strArray.length == 3) {
+        var chainid = strArray[1];
+        var resiScoreArray = strArray[2].split(', ');
         me.icn3d.queryresi2score = {};
+        me.icn3d.queryresi2score[chainid] = {};
         for(var i = 0, il = resiScoreArray.length; i < il; ++i) {
             var resi_score = resiScoreArray[i].split(' ');
 
-            me.icn3d.queryresi2score[resi_score[0]] = resi_score[1];
+            me.icn3d.queryresi2score[chainid][resi_score[0]] = resi_score[1];
         }
     }
 

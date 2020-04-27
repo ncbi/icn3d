@@ -217,7 +217,7 @@ THREE.OrthographicTrackballControls = function ( object, domElement, icn3d ) { v
                 }
 
                 // order matters in quaernion multiplication: http://www.cprogramming.com/tutorial/3d/quaternions.html
-                if(icn3d !== undefined && (bUpdate === undefined || bUpdate === true)) icn3d.quaternion.multiplyQuaternions(quaternion, icn3d.quaternion);
+                if(icn3d !== undefined && icn3d.quaternion !== undefined && (bUpdate === undefined || bUpdate === true)) icn3d.quaternion.multiplyQuaternions(quaternion, icn3d.quaternion);
 
                 _eye.applyQuaternion( quaternion );
                 _this.object.up.applyQuaternion( quaternion );
@@ -265,7 +265,7 @@ THREE.OrthographicTrackballControls = function ( object, domElement, icn3d ) { v
             }
         }
 
-        if(icn3d !== undefined && (bUpdate === undefined || bUpdate === true)) icn3d._zoomFactor *= factor;
+        if(icn3d !== undefined && icn3d._zoomFactor !== undefined && (bUpdate === undefined || bUpdate === true)) icn3d._zoomFactor *= factor;
 
         //if ( factor !== 1.0 && factor > 0.0 ) {
         if ( factor !== 1.0 ) {
@@ -303,12 +303,12 @@ THREE.OrthographicTrackballControls = function ( object, domElement, icn3d ) { v
             if(mouseChangeIn !== undefined) {
               mouseChange = mouseChangeIn;
 
-              if(icn3d !== undefined && (bUpdate === undefined || bUpdate === true)) icn3d.mouseChange.add(mouseChangeIn);
+              if(icn3d !== undefined && icn3d.mouseChange !== undefined && (bUpdate === undefined || bUpdate === true)) icn3d.mouseChange.add(mouseChangeIn);
             }
             else {
               mouseChange.copy( _this._panEnd ).sub( _this._panStart );
 
-              if(icn3d !== undefined && (bUpdate === undefined || bUpdate === true)) icn3d.mouseChange.add( _this._panEnd ).sub( _this._panStart );
+              if(icn3d !== undefined && icn3d.mouseChange !== undefined && (bUpdate === undefined || bUpdate === true)) icn3d.mouseChange.add( _this._panEnd ).sub( _this._panStart );
             }
 
             if ( mouseChange.lengthSq() ) {

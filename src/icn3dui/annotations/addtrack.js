@@ -372,6 +372,8 @@ iCn3DUI.prototype.clickAddTrackButton = function() { var me = this; //"use stric
 
        var chainid = $("#" + me.pre + "track_chainid").val();
        var startpos = $("#" + me.pre + "fasta_startpos").val();
+       var colorseqby = $("#" + me.pre + "colorseqby").val();
+       var type = (colorseqby == 'identity') ? 'identity' : 'custom';
 
        var fastaList = $("#" + me.pre + "track_fastaalign").val();
        var fastaArray = fastaList.split('>');
@@ -419,9 +421,9 @@ iCn3DUI.prototype.clickAddTrackButton = function() { var me = this; //"use stric
 
            var title = (trackTitleArray[j].length < 20) ? trackTitleArray[j] : trackTitleArray[j].substr(0, 20) + '...';
 
-           me.showNewTrack(chainid, title, text, undefined, undefined, 'custom', undefined);
+           me.showNewTrack(chainid, title, text, undefined, undefined, type, undefined);
 
-           me.setLogCmd("add track | chainid " + chainid + " | title " + title + " | text " + me.simplifyText(text) + " | type custom", true);
+           me.setLogCmd("add track | chainid " + chainid + " | title " + title + " | text " + me.simplifyText(text) + " | type " + type, true);
         }
     });
 
@@ -674,12 +676,15 @@ iCn3DUI.prototype.showNewTrack = function(chnid, title, text, cssColorArray, inT
 
     var bAlignColor = (type === undefined || type === 'seq' || type === 'custom') && text.indexOf('cannot-be-aligned') == -1 && text.indexOf('cannot be aligned') == -1 ? true : false;
 
+    var bIdentityColor = (type === 'identity') && text.indexOf('cannot-be-aligned') == -1 && text.indexOf('cannot be aligned') == -1 ? true : false;
+
     for(var i = 0, il = text.length; i < il; ++i) {
       html += me.insertGap(chnid, i, '-');
 
       var c = text.charAt(i);
 
       var colorHexStr = me.getColorhexFromBlosum62(c, me.icn3d.chainsSeq[chnid][i].name);
+      var identityColorStr = (c == me.icn3d.chainsSeq[chnid][i].name) ? 'FF0000' : '0000FF';
 
       if(c != ' ' && c != '-') {
           //var pos = me.icn3d.chainsSeq[chnid][i - me.matchedPos[chnid] ].resi;
@@ -695,6 +700,9 @@ iCn3DUI.prototype.showNewTrack = function(chnid, title, text, cssColorArray, inT
           }
           else if(bAlignColor) {
               html += '<span id="' + pre + '_' + me.pre + chnid + '_' + pos + '" title="' + c + pos + '" class="icn3d-residue" style="color:#' + colorHexStr + '">' + c + '</span>';
+          }
+          else if(bIdentityColor) {
+              html += '<span id="' + pre + '_' + me.pre + chnid + '_' + pos + '" title="' + c + pos + '" class="icn3d-residue" style="color:#' + identityColorStr + '">' + c + '</span>';
           }
           else {
               html += '<span id="' + pre + '_' + me.pre + chnid + '_' + pos + '" title="' + c + pos + '" class="icn3d-residue">' + c + '</span>';

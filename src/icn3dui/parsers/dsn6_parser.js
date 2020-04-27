@@ -34,7 +34,7 @@ iCn3DUI.prototype.Dsn6ParserBase = function(url, type, sigma) { var me = this; /
 
         oReq.onreadystatechange = function() {
             if (this.readyState == 4) {
-               me.hideLoading();
+               //me.hideLoading();
 
                if(this.status == 200) {
                    var arrayBuffer = oReq.response;

@@ -117,7 +117,7 @@ iCn3DUI.prototype.downloadAlignment = function (align) { var me = this; //"use s
               me.showLoading();
           },
           complete: function() {
-              me.hideLoading();
+              //me.hideLoading();
           }
         });
     });
@@ -281,10 +281,10 @@ iCn3DUI.prototype.downloadChainAlignment = function (chainalign) { var me = this
           me.showLoading();
       },
       complete: function() {
-          me.hideLoading();
+          //me.hideLoading();
       },
       success: function(align) {
-        if(align.length == 0 && me.mmdbid_q == me.mmdbid_t && me.chain_q == me.chain_t) {
+        if((align === undefined || align.length == 0) && me.mmdbid_q == me.mmdbid_t && me.chain_q == me.chain_t) {
             me.t_trans_add = {"x":0, "y":0, "z":0};
             me.q_trans_sub = {"x":0, "y":0, "z":0};
             me.q_rotation = {"x1":1, "y1":0, "z1":0, "x2":0, "y2":1, "z2":0, "x3":0, "y3":0, "z3":1};
@@ -314,7 +314,7 @@ iCn3DUI.prototype.downloadChainAlignment = function (chainalign) { var me = this
               me.showLoading();
           },
           complete: function() {
-              me.hideLoading();
+              //me.hideLoading();
           },
           success: function(data1) {
             $.ajax({
@@ -325,7 +325,7 @@ iCn3DUI.prototype.downloadChainAlignment = function (chainalign) { var me = this
                   me.showLoading();
               },
               complete: function() {
-                  me.hideLoading();
+                  //me.hideLoading();
               },
               success: function(data2) {
                 me.mmdbidArray = [];
