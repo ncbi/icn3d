@@ -6,7 +6,6 @@ var iCn3DUI = function(cfg) {
     var me = this; //"use strict";
 
     me.bFullUi = false;
-    me.bInitial = true;
 
     me.cfg = cfg;
     me.divid = me.cfg.divid;
@@ -446,7 +445,7 @@ iCn3DUI.prototype = {
     },
 
     renderStructure: function() { var me = this; //"use strict";
-        if(me.bInitial) {
+        if(me.icn3d.bInitial) {
           //me.icn3d.draw(me.opts);
 
           jQuery.extend(me.icn3d.opts, me.opts);
@@ -463,7 +462,7 @@ iCn3DUI.prototype = {
           me.icn3d.draw();
         }
 
-        me.bInitial = false;
+        me.icn3d.bInitial = false;
     },
 
     selectAll: function() { var me = this; //"use strict";

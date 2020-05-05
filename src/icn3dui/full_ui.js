@@ -13,7 +13,7 @@ if (!$.ui.dialog.prototype._makeDraggableBase) {
 }
 
 var iCn3DUI = function(cfg) { var me = this; //"use strict";
-    this.REVISION = '2.15.1';
+    this.REVISION = '2.15.2';
 
     me.bFullUi = true;
 
@@ -211,8 +211,6 @@ iCn3DUI.prototype = {
         me.bAddLogs = true;
 
         me.bNotLoadStructure = false;
-
-        me.bInitial = true;
 
         //me.bInputfile = false;
 
@@ -434,12 +432,7 @@ iCn3DUI.prototype = {
 
     modifyIcn3dshowPicking: function() {var me = this; //"use strict";
         iCn3D.prototype.showPicking = function(atom, x, y) {
-          var idArray = this.id.split('_'); // id: div0_canvas
-          me.pre = idArray[0] + "_";
-
-          if(window.icn3duiHash !== undefined && window.icn3duiHash.hasOwnProperty(idArray[0])) { // for multiple 3D display
-              me = window.icn3duiHash[idArray[0]];
-          }
+          me.setIcn3dui(this.id);
 
           if(me.cfg.cid !== undefined) {
               this.pk = 1; // atom
@@ -471,11 +464,6 @@ iCn3DUI.prototype = {
           }
           else {
               // highlight the sequence background
-              //var idArray = this.id.split('_'); // id: div0_canvas
-              //me.pre = idArray[0] + "_";
-
-              //me = icn3duiHash[idArray[0]];
-
               me.updateHlAll();
 
               var transformation = {};
@@ -660,7 +648,7 @@ iCn3DUI.prototype = {
             var url = type_url[1];
 
             me.icn3d.molTitle = "";
-            me.inputid = undefined;
+            me.inputid = url;
 
             me.setLogCmd('load url ' + url + ' | type ' + type, true);
 
@@ -700,6 +688,8 @@ iCn3DUI.prototype = {
            me.downloadGi(me.cfg.gi);
         }
         else if(me.cfg.blast_rep_id !== undefined) {
+           me.inputid = me.cfg.query_id + '_' + me.cfg.blast_rep_id;
+
            me.setLogCmd('load seq_struct_ids ' + me.cfg.query_id + ',' + me.cfg.blast_rep_id, true);
 
            me.downloadBlast_rep_id(me.cfg.query_id + ',' + me.cfg.blast_rep_id);
@@ -829,6 +819,7 @@ iCn3DUI.prototype = {
           }
           me.icn3d.applySurfaceOptions();
           //if(me.icn3d.bRender) me.icn3d.render();
+
           me.icn3d.draw(); // to make surface work in assembly
       }
       else if(id === 'map' || id === 'mapwireframe') {
@@ -971,7 +962,7 @@ iCn3DUI.prototype = {
     },
 
     renderStructure: function () {  var me = this; //"use strict";
-      if(me.bInitial) {
+      if(me.icn3d.bInitial) {
           jQuery.extend(me.icn3d.opts, me.opts);
 
           if(me.icn3d.bOpm && (me.cfg.align !== undefined || me.cfg.chainalign !== undefined)) { // show membrane
@@ -1016,14 +1007,12 @@ iCn3DUI.prototype = {
           me.icn3d.draw();
       }
 
-      if(me.bInitial && me.cfg.command !== undefined && me.cfg.command !== '') {
-          me.icn3d.bRender = false;
-
+      if(me.icn3d.bInitial && me.cfg.command !== undefined && me.cfg.command !== '') {
+          if(Object.keys(me.icn3d.structures).length == 1) {
+              var id = Object.keys(me.icn3d.structures)[0];
+              me.cfg.command = me.cfg.command.replace(new RegExp('!','g'), id + '_');
+          }
           me.loadScript(me.cfg.command);
-
-          //me.icn3d.bRender = true;
-          //me.icn3d.applyTransformation(this._zoomFactor, this.mouseChange, this.quaternion);
-          //if(me.icn3d.bRender) me.icn3d.render();
       }
 
       if(me.cfg.align !== undefined || me.cfg.chainalign !== undefined || me.bRealign || ( me.bInputfile && me.InputfileType == 'pdb' && Object.keys(me.icn3d.structures).length >= 2) ) {
@@ -1037,12 +1026,18 @@ iCn3DUI.prototype = {
 
       // display the structure right away. load the mns and sequences later
       setTimeout(function(){
-          if(me.bInitial) {
+          if(me.icn3d.bInitial) {
               if(me.cfg.showsets !== undefined && me.cfg.showsets) {
                    me.showSets();
               }
 
               if(me.cfg.align !== undefined || me.cfg.chainalign !== undefined) {
+                  // expand the toolbar
+                  var id = me.pre + 'selection';
+                  $("#" + id).show();
+                  $("#" + id + "_expand").hide();
+                  $("#" + id + "_shrink").show();
+
                   var bShowHighlight = false;
                   var seqObj = me.getAlignSequencesAnnotations(Object.keys(me.icn3d.alnChains), undefined, undefined, bShowHighlight);
 
@@ -1074,7 +1069,7 @@ iCn3DUI.prototype = {
 
           if($("#" + me.pre + "atomsCustom").length > 0) $("#" + me.pre + "atomsCustom")[0].blur();
 
-          me.bInitial = false;
+          me.icn3d.bInitial = false;
       }, 0);
     },
 
@@ -1845,7 +1840,11 @@ iCn3DUI.prototype = {
 
                         var text = '<div style="float:left; border: solid 1px #0000ff; padding: 5px; margin: 10px; text-align:center;">';
                         text += '<a href="https://icn3d.page.link/' + shortName + '" target="_blank">';
-                        text += '<img style="height:300px" src ="' + inputid + '-' + shortName + '.png"><br>\nPDB ' + inputid + '\n';
+                        text += '<img style="height:300px" src ="' + inputid + '-' + shortName + '.png"><br>\n';
+                        text += '<!--Start of your comments==================-->\n';
+                        var yournote = (me.yournote) ? ': ' + me.yournote.replace(/\n/g, "<br>") : '';
+                        text += 'PDB ' + inputid + yournote + '\n';
+                        text += '<!--End of your comments====================-->\n';
                         text += '</a>';
                         text += '</div>\n\n';
 
@@ -2142,21 +2141,6 @@ iCn3DUI.prototype = {
     // ====== functions end ===============
 
     // ====== events start ===============
-    getiCn3DUI: function(me) {
-/*
-       var id = me.pre.substr(0, me.pre.length - 1);
-
-       if(window.icn3duiHash !== undefined && window.icn3duiHash.hasOwnProperty(id)) { // for multiple 3D display
-          return window.icn3duiHash[id];
-       }
-       else {
-          return me;
-       }
-*/
-       return me;
-
-    },
-
     // back and forward arrows
     clickBack: function() { var me = this; //"use strict";
         $("#" + me.pre + "back").add("#" + me.pre + "mn6_back").click(function(e) {
@@ -2226,12 +2210,7 @@ iCn3DUI.prototype = {
         $("#" + me.pre + "fullscreen").add("#" + me.pre + "mn6_fullscreen").click(function(e) { // from expand icon for mobilemenu
            e.preventDefault();
 
-           var idArray = $(this).attr('id').split('_'); // id: div0_fullscreen
-           me.pre = idArray[0] + "_";
-
-           if(window.icn3duiHash !== undefined && window.icn3duiHash.hasOwnProperty(idArray[0])) { // for multiple 3D display
-              me = window.icn3duiHash[idArray[0]];
-           }
+           me.setIcn3dui($(this).attr('id'));
 
            me.setLogCmd("enter full screen", false);
            me.icn3d.bFullscreen = true;
@@ -2449,8 +2428,19 @@ iCn3DUI.prototype = {
         });
     },
 
+    setIcn3dui: function(id) { var me = this; //"use strict";
+           var idArray = id.split('_'); // id: div0_reload_pdbfile
+           me.pre = idArray[0] + "_";
+
+           if(window.icn3duiHash !== undefined && window.icn3duiHash.hasOwnProperty(idArray[0])) { // for multiple 3D display
+              me = window.icn3duiHash[idArray[0]];
+           }
+    },
+
     clkMn1_pdbfile: function() { var me = this; //"use strict";
         $("#" + me.pre + "mn1_pdbfile").click(function(e) {
+           me.setIcn3dui($(this).attr('id'));
+
            me.openDialog(me.pre + 'dl_pdbfile', 'Please input PDB File');
 
            //$( ".icn3d-accordion" ).accordion(me.closeAc);
@@ -2770,6 +2760,24 @@ iCn3DUI.prototype = {
 
            //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
+        $("#" + me.pre + "mn1_exportCanvas2").click(function(e) {
+           me.setLogCmd("export canvas 2", false);
+
+           me.icn3d.scaleFactor = 2;
+           me.shareLink(true);
+        });
+        $("#" + me.pre + "mn1_exportCanvas4").click(function(e) {
+           me.setLogCmd("export canvas 4", false);
+
+           me.icn3d.scaleFactor = 4;
+           me.shareLink(true);
+        });
+        $("#" + me.pre + "mn1_exportCanvas8").click(function(e) {
+           me.setLogCmd("export canvas 8", false);
+
+           me.icn3d.scaleFactor = 8;
+           me.shareLink(true);
+        });
     },
 
     clkMn1_exportCounts: function() { var me = this; //"use strict";
@@ -3063,6 +3071,24 @@ iCn3DUI.prototype = {
     clkMn2_alignment: function() { var me = this; //"use strict";
         $("#" + me.pre + "mn2_alignment").click(function(e) {
            me.openDialog(me.pre + 'dl_alignment', 'Select residues in aligned sequences');
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
+        });
+    },
+
+    clkMn6_yournote: function() { var me = this; //"use strict";
+        $("#" + me.pre + "mn6_yournote").click(function(e) {
+           me.openDialog(me.pre + 'dl_yournote', 'Your note about the current display');
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
+        });
+    },
+
+    clkApplyYournote: function() { var me = this; //"use strict";
+        $("#" + me.pre + "applyyournote").click(function(e) {
+           me.yournote = $("#" + me.pre + "yournote").val();
+
+           me.setLogCmd('saved your note: ' + me.yournote, false);
 
            //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
@@ -5759,7 +5785,9 @@ iCn3DUI.prototype = {
         $("#" + me.pre + "reload_pdbfile").click(function(e) {
            e.preventDefault();
 
-           me.bInitial = true;
+           me.setIcn3dui(this.id);
+
+           me.icn3d.bInitial = true;
 
            dialog.dialog( "close" );
            //close all dialog
@@ -5804,7 +5832,7 @@ iCn3DUI.prototype = {
         $("#" + me.pre + "reload_mol2file").click(function(e) {
            e.preventDefault();
 
-           me.bInitial = true;
+           me.icn3d.bInitial = true;
 
            dialog.dialog( "close" );
            //close all dialog
@@ -5851,7 +5879,7 @@ iCn3DUI.prototype = {
         $("#" + me.pre + "reload_sdffile").click(function(e) {
            e.preventDefault();
 
-           me.bInitial = true;
+           me.icn3d.bInitial = true;
 
            dialog.dialog( "close" );
            //close all dialog
@@ -5897,7 +5925,7 @@ iCn3DUI.prototype = {
         $("#" + me.pre + "reload_xyzfile").click(function(e) {
            e.preventDefault();
 
-           me.bInitial = true;
+           me.icn3d.bInitial = true;
 
            dialog.dialog( "close" );
            //close all dialog
@@ -5943,7 +5971,7 @@ iCn3DUI.prototype = {
         $("#" + me.pre + "reload_urlfile").click(function(e) {
            e.preventDefault();
 
-           me.bInitial = true;
+           me.icn3d.bInitial = true;
 
            dialog.dialog( "close" );
            //close all dialog
@@ -5967,7 +5995,7 @@ iCn3DUI.prototype = {
         $("#" + me.pre + "reload_mmciffile").click(function(e) {
            e.preventDefault();
 
-           me.bInitial = true;
+           me.icn3d.bInitial = true;
 
            dialog.dialog( "close" );
            //close all dialog
@@ -7208,6 +7236,8 @@ iCn3DUI.prototype = {
         me.clkMn2_selectdisplayed();
         me.clkMn2_fullstru();
         me.clkMn2_alignment();
+        me.clkMn6_yournote();
+        me.clkApplyYournote();
         me.clkMn2_command();
         me.clkMn2_definedsets();
         me.clkMn2_pkYes();

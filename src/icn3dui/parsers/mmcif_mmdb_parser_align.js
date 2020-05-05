@@ -208,7 +208,7 @@ iCn3DUI.prototype.downloadChainalignmentPart2 = function (data1, data2, chainres
     me.icn3d.hAtoms = allAtoms;
 
     me.icn3d.setAtomStyleByOptions(me.opts);
-    // change the default color to "Identity"
+    // change the6 default color to "Identity"
     me.icn3d.setColorByOptions(me.opts, me.icn3d.atoms);
 
     //me.mmdbidArray = Object.keys(me.icn3d.structures);
@@ -293,7 +293,7 @@ iCn3DUI.prototype.downloadChainAlignment = function (chainalign) { var me = this
             //me.qt_start_end =  [{"q_start":1, "q_end": chainLen, "t_start":1, "t_end": chainLen}];
         }
         else if(align === undefined || align.length == 0) {
-            if(!me.cfg.command) alert('These two chains ' + chainalign + ' can not align to each other. ' + 'Please select sequences from two chains in the "Sequences & Annotations" window, ' + 'and click "Realign Selection" in the "File" menu to align your selection.');
+            if(!me.cfg.command) alert('These two chains ' + chainalign + ' can not align to each other. ' + 'Please select sequences from these two chains in the "Sequences & Annotations" window, ' + 'and click "Realign Selection" in the "File" menu to align your selection.');
 
             me.cfg.showanno = 1;
             me.cfg.showalignseq = 0;

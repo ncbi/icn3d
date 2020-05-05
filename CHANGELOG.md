@@ -1,4 +1,6 @@
 ## Change Log
+[icn3d-2.15.2](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.15.2.zip) was release on May 5, 2020. Fixed the display of electron density map and EM map.
+
 [icn3d-2.15.1](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.15.1.zip) was release on April 27, 2020. Improved the unionHash function to speed up selection. Improved the message when loading a list of commands.
 
 [icn3d-2.15.0](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.15.0.zip) was release on April 21, 2020. Enabled to show the same structure "Side by Side" in two views in the "View" menu. Each view has the same orientation, but can have independent 3D display. Enabled to add multiple sequence alignments as tracks when clicking "Add Track" in the "Sequences & Annotations" window. Added "Hide Selection" in the "View" menu. Improved selection on "H-Bonds & Interactions". Improved the UI for "Realign Selection" in the "File" menu. The gallery shows COVID-19-related structures at the top. 

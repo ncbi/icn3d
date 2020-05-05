@@ -402,6 +402,8 @@ iCn3DUI.prototype.renderFinalStep = function(steps) { var me = this; //"use stri
         }
     }
     else { // more complicated if partial atoms are modified
+        me.updateHlAll();
+
         me.icn3d.draw();
     }
 
@@ -889,14 +891,17 @@ iCn3DUI.prototype.applyCommand = function (commandStr) { var me = this; //"use s
 
 // exact match =============
 
-  var file_pref = (me.inputid) ? me.inputid : "custom";
+  //var file_pref = (me.inputid) ? me.inputid : "custom";
 
   if(command == 'export state file') { // last step to update transformation
     // the last transformation will be applied
   }
-  else if(command == 'export canvas') {
+  else if(command.indexOf('export canvas') == 0) {
     setTimeout(function(){
-           me.saveFile(file_pref + '_icn3d_loadable.png', 'png');
+           //me.saveFile(file_pref + '_icn3d_loadable.png', 'png');
+           var scaleStr = command.substr(13).trim();
+           me.icn3d.scaleFactor = (scaleStr === '') ? 1: parseInt(scaleStr);
+           me.shareLink(true);
         }, 500);
   }
   else if(command == 'export interactions') {
@@ -1424,18 +1429,19 @@ iCn3DUI.prototype.applyCommand = function (commandStr) { var me = this; //"use s
     }
   }
 
-  else if(commandOri.indexOf('select saved atoms') == 0) {
+  else if(commandOri.indexOf('select saved atoms') == 0 || commandOri.indexOf('select sets') == 0) {
     var paraArray = commandOri.split(' | '); // atom names might be case-sensitive
 
     var select = paraArray[0].replace(/,/g, ' or ');
 
     var pos = 19; // 'select saved atoms '
+    if(commandOri.indexOf('select sets') == 0) pos = 12; // 'select sets '
+
     var strSets = select.substr(pos);
 
     var commandname = strSets;
 
     if(paraArray.length == 2) commandname = paraArray[1].substr(5); // 'name ...'
-
     me.selectCombinedSets(strSets, commandname);
   }
   else if(commandOri.indexOf('select chain') !== -1) {
