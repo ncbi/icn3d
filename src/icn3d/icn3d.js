@@ -26,6 +26,8 @@ var iCn3D = function (id) { var me = this; //"use strict";
     this.bHighlight = 1; // undefined: no highlight, 1: highlight by outline, 2: highlight by 3D object
     this.renderOrderPicking = -1; // less than 0, the default order is 0
 
+    this.bInitial = true; // first 3d display
+
     this.ALTERNATE_STRUCTURE = -1;
 
     if(Detector.webgl){

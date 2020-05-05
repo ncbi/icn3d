@@ -242,7 +242,7 @@ iCn3DUI.prototype.draw2Ddgm = function(data, mmdbid, structureIndex, bUpdate) { 
         }
 
         var alignNum = "";
-        if(me.bInitial) {
+        if(me.icn3d.bInitial) {
             if(structureIndex !== undefined && structureIndex === 0) {
                 if(me.alignmolid2color !== undefined && me.alignmolid2color[0].hasOwnProperty(molid)) {
                     //color = me.alignmolid2color[0][molid];
@@ -288,7 +288,7 @@ iCn3DUI.prototype.draw2Ddgm = function(data, mmdbid, structureIndex, bUpdate) { 
         }
 
         var ratio = 1.0;
-        if(me.bInitial && me.icn3d.alnChains[chainid] !== undefined) {
+        if(me.icn3d.bInitial && me.icn3d.alnChains[chainid] !== undefined) {
             //ratio = 1.0 * Object.keys(me.icn3d.alnChains[chainid]).length / Object.keys(me.icn3d.chains[chainid]).length;
             var alignedAtomCnt = 0;
             for(var i in me.icn3d.alnChains[chainid]) {

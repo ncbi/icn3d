@@ -694,10 +694,6 @@ iCn3D.prototype.draw = function () { var me = this; //"use strict";
 
     this.applyPrevColor();
 
-//    if(Object.keys(me.mapData).length > 0) me.applyMapOptions();
-
-    //if(this.bSSOnly) this.drawHelixBrick(this.molid2ss, this.molid2color);
-
     if(this.biomtMatrices !== undefined && this.biomtMatrices.length > 1) {
         if(this.bAssembly) {
             this.drawSymmetryMates();
@@ -710,22 +706,20 @@ iCn3D.prototype.draw = function () { var me = this; //"use strict";
     // show the hAtoms
     var hAtomsLen = (this.hAtoms !== undefined) ? Object.keys(this.hAtoms).length : 0;
 
-    //if(hAtomsLen > 0 && hAtomsLen < Object.keys(this.atoms).length) {
     if(hAtomsLen > 0 && hAtomsLen < Object.keys(this.dAtoms).length) {
         this.removeHlObjects();
         if(this.bShowHighlight === undefined || this.bShowHighlight) this.addHlObjects();
     }
 
     if(this.bRender === true) {
-      if($("#" + this.pre + "wait")) $("#" + this.pre + "wait").hide();
-      if($("#" + this.pre + "canvas")) $("#" + this.pre + "canvas").show();
-      if($("#" + this.pre + "cmdlog")) $("#" + this.pre + "cmdlog").show();
+      if(this.bInitial || $("#" + this.pre + "wait").is(":visible")) {
+          if($("#" + this.pre + "wait")) $("#" + this.pre + "wait").hide();
+          if($("#" + this.pre + "canvas")) $("#" + this.pre + "canvas").show();
+          if($("#" + this.pre + "cmdlog")) $("#" + this.pre + "cmdlog").show();
+      }
 
       this.applyTransformation(this._zoomFactor, this.mouseChange, this.quaternion);
       this.render();
-
-      // reset to hide the side chain
-      //this.opts['sidec'] = 'nothing';
     }
 
     this.clearImpostors();

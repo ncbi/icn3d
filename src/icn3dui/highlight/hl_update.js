@@ -28,14 +28,15 @@ iCn3DUI.prototype.update2DdgmContent = function () { var me = this; //"use stric
 iCn3DUI.prototype.changeSeqColor = function(residueArray) { var me = this; //"use strict";
    for(var i = 0, il = residueArray.length; i < il; ++i) {
        var pickedResidue = residueArray[i];
-       if($("[id$=" + me.pre + pickedResidue + "]").length !== 0) {
+       //[id$= is expensive
+       //if($("[id$=" + me.pre + pickedResidue + "]").length !== 0) {
          var atom = me.icn3d.getFirstCalphaAtomObj(me.icn3d.residues[pickedResidue]);
          var colorStr = (atom.color === undefined || atom.color.getHexString().toUpperCase() === 'FFFFFF') ? 'DDDDDD' : atom.color.getHexString();
          var color = (atom.color !== undefined) ? colorStr : "CCCCCC";
          // annotations will have their own color, only the chain will have the changed color
          $("[id=giseq_" + me.pre + pickedResidue + "]").attr('style', 'color:#' + color);
          if(me.cfg.align !== undefined || me.cfg.chainalign !== undefined || me.bRealign) $("[id=align_" + me.pre + pickedResidue + "]").attr('style', 'color:#' + color);
-       }
+       //}
    }
 };
 
@@ -346,8 +347,11 @@ iCn3DUI.prototype.hlSeq = function(residueArray) { var me = this; //"use strict"
    var chainHash = {};
    for(var i = 0, il = residueArray.length; i < il; ++i) {
        var pickedResidue = residueArray[i];
-       if($("[id$=" + me.pre + pickedResidue + "]").length !== 0) {
-         $("[id$=" + me.pre + pickedResidue + "]").addClass('icn3d-highlightSeq');
+       //[id$= is expensive to search id ending with
+       //var resElem = $("[id$=" + me.pre + pickedResidue + "]");
+       var resElem = $("[id=giseq_" + me.pre + pickedResidue + "]");
+       if(resElem.length !== 0) {
+         resElem.addClass('icn3d-highlightSeq');
        }
 
        var pos = pickedResidue.lastIndexOf('_');

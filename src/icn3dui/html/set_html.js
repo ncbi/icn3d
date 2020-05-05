@@ -19,9 +19,10 @@ iCn3DUI.prototype.setTools = function() { var me = this; //"use strict";
     return html;
 };
 
-iCn3DUI.prototype.setButton = function(buttonStyle, id, title, text) { var me = this; //"use strict";
+iCn3DUI.prototype.setButton = function(buttonStyle, id, title, text, color) { var me = this; //"use strict";
+    color = (color !== undefined) ? 'color:' + color : '';
     var bkgdColor = me.isMobile() ? ' background-color:#DDDDDD;' : '';
-    return "<div style='margin:3px 0px 0px 10px;'><button style='-webkit-appearance:" + buttonStyle + "; height:36px;" + bkgdColor + "' id='" + me.pre + id + "'><span style='white-space:nowrap' class='icn3d-commandTitle' title='" + title + "'>" + text + "</span></button></div>";
+    return "<div style='margin:3px 0px 0px 10px;'><button style='-webkit-appearance:" + buttonStyle + "; height:36px;" + bkgdColor + "' id='" + me.pre + id + "'><span style='white-space:nowrap;" + color + "' class='icn3d-commandTitle' title='" + title + "'>" + text + "</span></button></div>";
 };
 
 iCn3DUI.prototype.setTools_base = function() { var me = this; //"use strict";
@@ -31,10 +32,14 @@ iCn3DUI.prototype.setTools_base = function() { var me = this; //"use strict";
     var buttonStyle = me.isMobile() ? 'none' : 'button';
     var tdStr = "<td valign='top'>";
 
+    if(me.cfg.align !== undefined || me.cfg.chainalign !== undefined) {
+        html += tdStr + me.setButton(buttonStyle, 'alternate', 'Alternate the structures', 'Alternate<br/>(Key \"a\")', me.ORANGE) + "</td>";
+    }
+
     html += tdStr + me.setButton(buttonStyle, 'saveimage', 'Save iCn3D PNG Image', 'Save iCn3D<br/>PNG Image') + "</td>";
 
     if(me.cfg.cid === undefined) {
-        //html += tdStr + me.setButton(buttonStyle, 'definedSets', 'Select defined structure, chain, and custom sets', 'Defined <br/>Sets') + "</td>";
+/*
         html += tdStr + me.setButton(buttonStyle, 'definedsets', 'Defined Sets', 'Defined<br/>Sets') + "</td>";
 
         html += tdStr + me.setButton(buttonStyle, 'show_annotations', 'View sequences and annotations for each chain', 'View Sequences<br/>& Annotations') + "</td>";
@@ -46,12 +51,8 @@ iCn3DUI.prototype.setTools_base = function() { var me = this; //"use strict";
         if(me.cfg.mmdbid !== undefined || me.cfg.gi !== undefined || me.cfg.blast_rep_id !== undefined || me.cfg.align !== undefined || me.cfg.chainalign !== undefined) {
             html += tdStr + me.setButton(buttonStyle, 'show_2ddgm', 'View the interactions of the structure', 'View<br/>Interactions') + "</td>";
         }
-
-        //html += tdStr + me.setButton(buttonStyle, 'chemicalbindingshow', 'View Chemical Binding', 'Chemical<br/>Binding') + "</td>";
-
+*/
         html += tdStr + me.setButton(buttonStyle, 'hbondsYes', 'View H-Bonds & Interactions', 'H-Bonds &<br/> Interactions') + "</td>";
-
-        html += tdStr + me.setButton(buttonStyle, 'alternate', 'Alternate the structures', 'Alternate<br/>(Key \"a\")') + "</td>";
     }
 
     html += tdStr + me.setButton(buttonStyle, 'show_selected', 'View ONLY the selected atoms', 'View Only<br/>Selection') + "</td>";
@@ -395,7 +396,17 @@ iCn3DUI.prototype.setMenu1_base = function() { var me = this; //"use strict";
 
     html += "<li><span>Save Files</span>";
     html += "<ul>";
-    html += me.getLink('mn1_exportCanvas', 'iCn3D PNG Image');
+    //html += me.getLink('mn1_exportCanvas', 'iCn3D PNG Image');
+
+    html += "<li><span>iCn3D PNG Image</span>";
+    html += "<ul>";
+    html += me.getLink('mn1_exportCanvas', 'Original Size');
+    html += me.getLink('mn1_exportCanvas2', '2X Large');
+    html += me.getLink('mn1_exportCanvas4', '4X Large');
+    html += me.getLink('mn1_exportCanvas8', '8X Large');
+    html += "</ul>";
+    html += "</li>";
+
     html += me.getLink('mn1_exportState', 'State File');
     html += me.getLink('mn1_exportSelections', 'Selection File');
     html += me.getLink('mn1_exportCounts', 'Residue Counts');
@@ -1099,6 +1110,8 @@ iCn3DUI.prototype.setMenu5_base = function() { var me = this; //"use strict";
         html += me.getLink('definedsets2', 'Defined Sets');
     }
 
+    html += me.getLink('mn6_yournote', 'Your Note');
+
     if(me.cfg.cid !== undefined) {
         html += "<li><span>Links</span>";
         html += "<ul>";
@@ -1405,6 +1418,12 @@ iCn3DUI.prototype.setDialogs = function() { var me = this; //"use strict";
     html += "or FASTA sequence: <br><textarea id='" + me.pre + "query_fasta' rows='5' style='width: 100%; height: " + (me.LOG_HEIGHT) + "px; padding: 0px; border: 0px;'></textarea><br><br>";
     html += "<b>Structure ID</b> (NCBI protein accession of a chain of a 3D structure): " + me.inputTextStr + "id='" + me.pre + "blast_rep_id' value='1TSR_A' size=8><br> ";
     html += me.buttonStr + "reload_blast_rep_id'>Load</button>";
+    html += "</div>";
+
+    html += me.divStr + "dl_yournote'>";
+    html += "Your note will be saved in the HTML file when you click \"File > Save Files > iCn3D PNG Image\".<br><br>";
+    html += "<textarea id='" + me.pre + "yournote' rows='5' style='width: 100%; height: " + (me.LOG_HEIGHT) + "px; padding: 0px; border: 0px;' placeholder='Enter your note here'></textarea><br>";
+    html += me.buttonStr + "applyyournote'>Save</button>";
     html += "</div>";
 
     html += me.divStr + "dl_gi'>";

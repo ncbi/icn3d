@@ -113,7 +113,8 @@ iCn3DUI.prototype.selectTitle = function(that) { var me = this; //"use strict";
             }
 
             var setNames = me.currSelectedSets.join(' or ');
-            me.setLogCmd('select saved atoms ' + setNames, true);
+            //if(me.currSelectedSets.length > 1) me.setLogCmd('select saved atoms ' + setNames, true);
+            if(me.currSelectedSets.length > 1) me.setLogCmd('select sets ' + setNames, true);
         }
         else {
             if($(that).hasClass('icn3d-highlightSeq')) {
@@ -132,7 +133,8 @@ iCn3DUI.prototype.selectTitle = function(that) { var me = this; //"use strict";
                     me.setLogCmd('select chain ' + chainid, true);
 
                     var setNames = me.currSelectedSets.join(' or ');
-                    me.setLogCmd('select saved atoms ' + setNames, true);
+                    //if(me.currSelectedSets.length > 1) me.setLogCmd('select saved atoms ' + setNames, true);
+                    if(me.currSelectedSets.length > 1) me.setLogCmd('select sets ' + setNames, true);
                 }
                 else {
                     var residueidHash = {};
@@ -228,7 +230,8 @@ iCn3DUI.prototype.selectTitle = function(that) { var me = this; //"use strict";
                     }
 
                     var setNames = me.currSelectedSets.join(' or ');
-                    me.setLogCmd('select saved atoms ' + setNames, true);
+                    //if(me.currSelectedSets.length > 1) me.setLogCmd('select saved atoms ' + setNames, true);
+                    if(me.currSelectedSets.length > 1) me.setLogCmd('select sets ' + setNames, true);
                 } // if($(that).attr('gi') !== undefined) {
             } // if($(that).hasClass('icn3d-highlightSeq')) {
         } // if(!me.bAnnotations) {

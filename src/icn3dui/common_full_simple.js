@@ -362,6 +362,11 @@ iCn3DUI.prototype.saveFile = function(filename, type, text) { var me = this; //"
         blob = new Blob([data],{ type: "text;charset=utf-8;"});
     }
     else if(type === 'png') {
+        //me.icn3d.scaleFactor = 1.0;
+        var width = $("#" + me.pre + "canvas").width();
+        var height = $("#" + me.pre + "canvas").height();
+        me.icn3d.setWidthHeight(width, height);
+
         if(me.icn3d.bRender) me.icn3d.render();
 
         var bAddURL = true;
@@ -419,6 +424,12 @@ iCn3DUI.prototype.saveFile = function(filename, type, text) { var me = this; //"
                 }
             });
         }
+
+        // reset the image size
+        me.icn3d.scaleFactor = 1.0;
+        me.icn3d.setWidthHeight(width, height);
+
+        if(me.icn3d.bRender) me.icn3d.render();
     }
     else if(type === 'html') {
         var dataStr = text;
@@ -585,6 +596,7 @@ iCn3DUI.prototype.setViewerWidthHeight = function() { var me = this; //"use stri
 iCn3DUI.prototype.shareLinkUrl = function(bAllCommands) { var me = this; //"use strict";
        var url = me.baseUrl + "icn3d/full.html?";
 
+       var paraHash = {};
        for(var key in me.cfg) {
            var value = me.cfg[key];
            if(key === 'inpara' || me.key === 'command' || value === undefined) continue;
@@ -615,16 +627,22 @@ iCn3DUI.prototype.shareLinkUrl = function(bAllCommands) { var me = this; //"use 
             if(key === 'command') continue;
 
            if(key === 'options') {
-               if(Object.keys(value).length > 0) url += key + '=' + JSON.stringify(value) + '&';
+               if(Object.keys(value).length > 0) {
+                   //url += key + '=' + JSON.stringify(value) + '&';
+                   paraHash[key] = JSON.stringify(value);
+               }
            }
            else if(value === true) {
-               url += key + '=1&';
+               //url += key + '=1&';
+               paraHash[key] = 1;
            }
            else if(value === false) {
-               url += key + '=0&';
+               //url += key + '=0&';
+               paraHash[key] = 0;
            }
            else if(value !== '') {
-               url += key + '=' + value + '&';
+               //url += key + '=' + value + '&';
+               paraHash[key] = value;
            }
        }
 
@@ -632,16 +650,18 @@ iCn3DUI.prototype.shareLinkUrl = function(bAllCommands) { var me = this; //"use 
        if(me.cfg.inpara !== undefined) pos = me.cfg.inpara.indexOf('&command=');
        var inparaWithoutCommand = (pos !== -1 ) ? me.cfg.inpara.substr(0, pos) : me.cfg.inpara;
 
-       var start = 0;
-       if(inparaWithoutCommand !== undefined) {
-         url += inparaWithoutCommand.substr(1) + '&command=';
-         //url += 'command=';
-         start = 1;
+       inparaArray = inparaWithoutCommand.substr(1).split('&');
+       for(var i = 0, il = inparaArray.length; i < il; ++i) {
+           var key_value = inparaArray[i].split('=');
+           if(key_value.length == 2) paraHash[key_value[0]] = key_value[1];
        }
-       else {
-         url += 'command=';
-         start = 0;
+
+       for(var key in paraHash) {
+           url += key + '=' + paraHash[key] + '&';
        }
+       url += 'command=';
+
+       var start = (inparaWithoutCommand !== undefined) ? 1 : 0;
 
        if(bAllCommands !== undefined && bAllCommands) start = 0;
 
@@ -667,6 +687,7 @@ iCn3DUI.prototype.shareLinkUrl = function(bAllCommands) { var me = this; //"use 
        }
 
        var i = start + 1;
+       var selectChainHash = {};
        for(var il = me.icn3d.commands.length; i < il; ++i) {
            bCommands = true;
 
@@ -676,9 +697,9 @@ iCn3DUI.prototype.shareLinkUrl = function(bAllCommands) { var me = this; //"use 
            //statefile += me.icn3d.commands[i] + "\n";
 
            // only output the most recent 'select saved atoms...' without " | name ..."
-           if( (prevCommandStr.indexOf('select saved atoms') !== -1 && commandStr.indexOf('select saved atoms') !== -1
-             && prevCommandStr.indexOf(' name ') === -1 && commandStr.indexOf(' name ') === -1)
-             || (prevCommandStr.indexOf('select chain') !== -1 && commandStr.indexOf('select chain') !== -1)
+           if( ( (prevCommandStr.indexOf('select saved atoms') !== -1 || prevCommandStr.indexOf('select sets') !== -1)
+             && (commandStr.indexOf('select') === 0 || commandStr.indexOf('select') === 0)
+             && prevCommandStr.indexOf(' name ') === -1)
              || (prevCommandStr.indexOf('pickatom') !== -1 && commandStr.indexOf('pickatom') !== -1)
              ) {
                // do nothing
@@ -692,12 +713,15 @@ iCn3DUI.prototype.shareLinkUrl = function(bAllCommands) { var me = this; //"use 
            }
            else if(i === start + 1) {
                url += prevCommandStr;
-               statefile += prevCommandStr + "\n";
+               //statefile += prevCommandStr + "\n";
            }
            else {
                url += '; ' + prevCommandStr;
-               statefile += prevCommandStr + "\n";
+               //statefile += prevCommandStr + "\n";
            }
+
+           // keep all commands in statefile
+           statefile += prevCommandStr + "\n";
 
            prevCommandStr = commandStr;
        }
@@ -717,6 +741,11 @@ iCn3DUI.prototype.shareLinkUrl = function(bAllCommands) { var me = this; //"use 
 //       }
 
        if(me.bInputfile || url.length > 4000) url = statefile;
+
+       if(Object.keys(me.icn3d.structures).length == 1 && me.inputid !== undefined) {
+           var id = Object.keys(me.icn3d.structures)[0];
+           url = url.replace(new RegExp(id + '_','g'), '!');
+       }
 
        return url;
 };

@@ -17,7 +17,7 @@ iCn3DUI.prototype.DensityCifParser = function(pdbid, type, sigma, emd) { var me 
        url = "https://www.ebi.ac.uk/pdbe/densities/emd/" + emd.toLowerCase() + "/cell?detail=" + detail;
    }
 
-   bCid = undefined;
+   //var bCid = undefined;
 
     //https://stackoverflow.com/questions/33902299/using-jquery-ajax-to-download-a-binary-file
     if(type == '2fofc' && me.bAjax2fofc) {

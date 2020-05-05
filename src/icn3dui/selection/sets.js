@@ -36,7 +36,8 @@ iCn3DUI.prototype.clickCustomAtoms = function() { var me = this; //"use strict";
 
          var bUpdateHlMenus = false;
          me.changeCustomAtoms(nameArray, bUpdateHlMenus);
-         me.setLogCmd('select saved atoms ' + nameArray.join(' ' + me.setOperation + ' '), true);
+         //me.setLogCmd('select saved atoms ' + nameArray.join(' ' + me.setOperation + ' '), true);
+         me.setLogCmd('select sets ' + nameArray.join(' ' + me.setOperation + ' '), true);
 
          me.bSelectResidue = false;
        }
@@ -210,7 +211,9 @@ iCn3DUI.prototype.combineSets = function (orArray, andArray, notArray, commandna
 
    me.setHAtomsFromSets(notArray, 'not');
 
-   me.updateHlAll();
+   // expensive to update, avoid it when loading script
+   //me.updateHlAll();
+   if(!me.icn3d.bInitial) me.updateHlAll();
 
    // show selected chains in annotation window
    me.showAnnoSelectedChains();

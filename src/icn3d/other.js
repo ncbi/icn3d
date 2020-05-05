@@ -582,7 +582,7 @@ iCn3D.prototype.addHlObjects = function (color, bRender, atomsHash) { var me = t
 
    this.applyDisplayOptions(this.opts, this.intHash(atomsHash, this.dAtoms), this.bHighlight);
 
-   if(bRender) this.render();
+   if( (bRender !== undefined && bRender) || (this.bRender) ) this.render();
 };
 
 iCn3D.prototype.resetOrientation = function() { var me = this; //"use strict";
@@ -661,7 +661,7 @@ iCn3D.prototype.resetOrientation = function() { var me = this; //"use strict";
 
 iCn3D.prototype.getFirstAtomObj = function(atomsHash) { var me = this; //"use strict";
     if(atomsHash === undefined || Object.keys(atomsHash).length === 0) {
-        return this.atoms[0];
+        return undefined;
     }
 
     var atomKeys = Object.keys(atomsHash);
@@ -672,7 +672,7 @@ iCn3D.prototype.getFirstAtomObj = function(atomsHash) { var me = this; //"use st
 
 iCn3D.prototype.getFirstCalphaAtomObj = function(atomsHash) { var me = this; //"use strict";
     if(atomsHash === undefined || Object.keys(atomsHash).length === 0) {
-        return this.atoms[0];
+        return undefined;
     }
 
     var firstIndex;

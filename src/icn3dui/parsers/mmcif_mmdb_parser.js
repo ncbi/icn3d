@@ -1186,8 +1186,6 @@ iCn3DUI.prototype.loadAtomDataIn = function (data, id, type, seqalign, alignType
     me.icn3d.maxD = me.icn3d.pmax.distanceTo(me.icn3d.pmin);
     me.icn3d.center = me.icn3d.psum.multiplyScalar(1.0 / me.icn3d.cnt);
     if (me.icn3d.maxD < 5) me.icn3d.maxD = 5;
-    me.icn3d.oriMaxD = me.icn3d.maxD;
-    me.icn3d.oriCenter = me.icn3d.center.clone();
 
     // set up disulfide bonds
     if(type === 'mmdbid') {
@@ -1307,6 +1305,9 @@ iCn3DUI.prototype.loadAtomDataIn = function (data, id, type, seqalign, alignType
             me.icn3d.center = new THREE.Vector3(0,0,0);
         }
     }
+
+    me.icn3d.oriMaxD = me.icn3d.maxD;
+    me.icn3d.oriCenter = me.icn3d.center.clone();
 
     me.showTitle();
 
