@@ -20,7 +20,7 @@
   },
   "homepage": "https://github.com/ncbi/icn3d#readme",
   "dependencies": {
-    "jquery": "^3.5.1",
+    "jquery": "~3.5.0",
     "jquery-ui": "components/jqueryui.git#1.12.1",
     "three": "~0.103.0"
   },
@@ -35,3 +35,4 @@
     "gulp-zip": "^5.0.1"
   }
 }
+ 
