@@ -76,7 +76,7 @@ iCn3DUI.prototype.openDialog2Ddgm = function (id, inHeight, bDefinedSets) {  var
         title = 'Select sets';
     }
     else if(id === me.pre + 'dl_2ddgm') {
-        if(bDefinedSets !== undefined && bDefinedSets) {
+        if(bDefinedSets) {
             at = "right top+240";
         }
         else {

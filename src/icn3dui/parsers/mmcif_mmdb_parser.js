@@ -359,7 +359,7 @@ iCn3DUI.prototype.downloadMmdb = function (mmdbid, bGi) { var me = this; //"use 
 
    // b: b-factor, s: water, ft: pdbsite
    //&ft=1
-   if(bGi !== undefined && bGi) {
+   if(bGi) {
        url = me.baseUrl + "mmdb/mmdb_strview.cgi?v=2&program=icn3d&b=1&s=1&ft=1&gi=" + mmdbid;
    }
    else {
@@ -487,7 +487,7 @@ iCn3DUI.prototype.downloadMmdbPart2 = function (type) { var me = this; //"use st
         if(me.cfg.rotate !== undefined) me.rotStruc(me.cfg.rotate, true);
 
         me.html2ddgm = '';
-        if(me.cfg.show2d !== undefined && me.cfg.show2d) {
+        if(me.cfg.show2d) {
             me.openDialog(me.pre + 'dl_2ddgm', 'Interactions');
             if(me.bFullUi) {
                 if(type === undefined) {

@@ -824,7 +824,7 @@ iCn3DUI.prototype.insertGap = function(chnid, seqIndex, text, bNohtml) {  var me
 
   if(me.cfg.blast_rep_id == chnid && me.targetGapHash!== undefined && me.targetGapHash.hasOwnProperty(seqIndex)) {
       for(var j = 0; j < (me.targetGapHash[seqIndex].to - me.targetGapHash[seqIndex].from + 1); ++j) {
-          if(bNohtml !== undefined && bNohtml) {
+          if(bNohtml) {
              html += text;
           }
           else {
@@ -1566,7 +1566,7 @@ iCn3DUI.prototype.getSnpLine = function(line, totalLineNum, resi2snp, resi2rsnum
         html += '<span class="icn3d-residueNum"></span>';
     }
 
-    if(bTitleOnly !== undefined && bTitleOnly) {
+    if(bTitleOnly) {
         return html + '<br>';
     }
 

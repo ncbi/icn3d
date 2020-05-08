@@ -65,7 +65,7 @@ iCn3D.prototype.setConservationColor = function (atoms, bIdentity) {
 
 iCn3D.prototype.setColorByOptions = function (options, atoms, bUseInputColor) {
  if(options !== undefined) {
-  if(bUseInputColor !== undefined && bUseInputColor) {
+  if(bUseInputColor) {
     for (var i in atoms) {
         var atom = this.atoms[i];
 
@@ -960,7 +960,9 @@ iCn3D.prototype.setCamera = function() {
 
         window.cam.updateProjectionMatrix();
     }
-    else {
+//    else {
+        // also set its own camera for picking purpose
+
         this.cam = this.cams[this.opts.camera.toLowerCase()];
 
         var maxD = this.maxD;
@@ -1039,7 +1041,7 @@ iCn3D.prototype.setCamera = function() {
         }
 
         this.cam.updateProjectionMatrix();
-    }
+//    }
 };
 
 iCn3D.prototype.render = function () {

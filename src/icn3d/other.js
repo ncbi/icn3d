@@ -582,7 +582,7 @@ iCn3D.prototype.addHlObjects = function (color, bRender, atomsHash) { var me = t
 
    this.applyDisplayOptions(this.opts, this.intHash(atomsHash, this.dAtoms), this.bHighlight);
 
-   if( (bRender !== undefined && bRender) || (this.bRender) ) this.render();
+   if( (bRender) || (this.bRender) ) this.render();
 };
 
 iCn3D.prototype.resetOrientation = function() { var me = this; //"use strict";
@@ -633,7 +633,8 @@ iCn3D.prototype.resetOrientation = function() { var me = this; //"use strict";
       threshold = 1;
     }
 
-    for (i in this.atoms) {
+    //for (i in this.atoms) {
+    for (i in this.dAtoms) {
        var atom = this.atoms[i];
 
        //if(atom.coord.x < point.x - threshold || atom.coord.x > point.x + threshold) continue;

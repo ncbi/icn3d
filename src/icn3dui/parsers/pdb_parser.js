@@ -435,7 +435,7 @@ iCn3DUI.prototype.loadPdbDataBase = function(data, calphaonly, bOpm) { var me = 
    var url = me.baseUrl + "mmcifparser/mmcifparser.cgi";
 
    var dataModified = '';
-   if(bOpm !== undefined && bOpm) {
+   if(bOpm) {
         var lines = data.split('\n');
         for (var i in lines) {
             var line = lines[i];

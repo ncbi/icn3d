@@ -237,7 +237,7 @@ make_js_task("full", common_js.concat(full_js).concat("src/icn3dui/full_ui.js").
 gulp.task('html',
   //gulp.series('clean'),
   function() {
-    return gulp.src(['index.html', 'full.html', 'full2.html', 'icn3d.html'])
+    return gulp.src(['index.html', 'full.html', 'full2.html', 'icn3d.html', 'share.html'])
         .pipe(dom(function() {
             var elems = this.querySelectorAll(
                 "script[src],link[rel='stylesheet']");

@@ -53,7 +53,7 @@ iCn3DUI.prototype.rotStruc = function (direction, bInitial) { var me = this; //"
     }
     ++me.icn3d.rotateCount;
 
-    if(bInitial !== undefined && bInitial) {
+    if(bInitial) {
         if(direction === 'left') {
           me.ROT_DIR = 'left';
         }
@@ -157,11 +157,11 @@ iCn3DUI.prototype.getLinkToStructureSummary = function(bLog) { var me = this; //
 
            if(idArray.length === 1) {
                url += me.inputid;
-               if(bLog !== undefined && bLog) me.setLogCmd("link to Structure Summary " + me.inputid + ": " + url, false);
+               if(bLog) me.setLogCmd("link to Structure Summary " + me.inputid + ": " + url, false);
            }
            else if(idArray.length === 2) {
                url += idArray[0] + " OR " + idArray[1];
-               if(bLog !== undefined && bLog) me.setLogCmd("link to structures " + idArray[0] + " and " + idArray[1] + ": " + url, false);
+               if(bLog) me.setLogCmd("link to structures " + idArray[0] + " and " + idArray[1] + ": " + url, false);
            }
        }
 
@@ -497,7 +497,7 @@ iCn3DUI.prototype.isSessionStorageSupported = function() {
 };
 
 iCn3DUI.prototype.resizeCanvas = function (width, height, bForceResize, bDraw) { var me = this; //"use strict";
-  if( (bForceResize !== undefined && bForceResize) || (me.cfg.resize !== undefined && me.cfg.resize) ) {
+  if( bForceResize || me.cfg.resize ) {
     //var heightTmp = parseInt(height) - me.EXTRAHEIGHT;
     var heightTmp = height;
     $("#" + me.pre + "canvas").width(width).height(heightTmp);
@@ -540,7 +540,7 @@ iCn3DUI.prototype.handleContextLost = function() { var me = this; //"use strict"
 };
 
 iCn3DUI.prototype.windowResize = function() { var me = this; //"use strict";
-    if(me.cfg.resize !== undefined && me.cfg.resize && !me.isMobile() ) {
+    if(me.cfg.resize && !me.isMobile() ) {
         $(window).resize(function() {
             //me.WIDTH = $( window ).width();
             //me.HEIGHT = $( window ).height();
@@ -595,6 +595,7 @@ iCn3DUI.prototype.setViewerWidthHeight = function() { var me = this; //"use stri
 
 iCn3DUI.prototype.shareLinkUrl = function(bAllCommands) { var me = this; //"use strict";
        var url = me.baseUrl + "icn3d/full.html?";
+       if(me.cfg.bSidebyside) url = me.baseUrl + "icn3d/full2.html?";
 
        var paraHash = {};
        for(var key in me.cfg) {
@@ -663,7 +664,7 @@ iCn3DUI.prototype.shareLinkUrl = function(bAllCommands) { var me = this; //"use 
 
        var start = (inparaWithoutCommand !== undefined) ? 1 : 0;
 
-       if(bAllCommands !== undefined && bAllCommands) start = 0;
+       if(bAllCommands) start = 0;
 
        var transformation = {};
        transformation.factor = me.icn3d._zoomFactor;
@@ -742,7 +743,7 @@ iCn3DUI.prototype.shareLinkUrl = function(bAllCommands) { var me = this; //"use 
 
        if(me.bInputfile || url.length > 4000) url = statefile;
 
-       if(Object.keys(me.icn3d.structures).length == 1 && me.inputid !== undefined) {
+       if(me.icn3d.structures !== undefined && Object.keys(me.icn3d.structures).length == 1 && me.inputid !== undefined) {
            var id = Object.keys(me.icn3d.structures)[0];
            url = url.replace(new RegExp(id + '_','g'), '!');
        }

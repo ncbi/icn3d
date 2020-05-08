@@ -156,7 +156,7 @@ iCn3DUI.prototype.draw2Ddgm = function(data, mmdbid, structureIndex, bUpdate) { 
     var alignedAtomArray = [];
 
     var displayedMolids = {};
-    if(bUpdate !== undefined && bUpdate) {
+    if(bUpdate) {
         // get all displayed chains
         for(var i in me.icn3d.dAtoms) {
             var atom = me.icn3d.atoms[i];
@@ -229,7 +229,7 @@ iCn3DUI.prototype.draw2Ddgm = function(data, mmdbid, structureIndex, bUpdate) { 
         var chainid = molid2chain[molid];
 
         // if redraw2d diagram and the molid is not displayed, skip
-        if(bUpdate !== undefined && bUpdate && !displayedMolids.hasOwnProperty(molid)) continue;
+        if(bUpdate && !displayedMolids.hasOwnProperty(molid)) continue;
 
         var dgm = data.intrac[molid];
         var color = "#FFFFFF";
@@ -421,7 +421,7 @@ iCn3DUI.prototype.draw2Ddgm = function(data, mmdbid, structureIndex, bUpdate) { 
         var pair = lines[i];
 
         // if redraw2d diagram and the molid is not displayed, skip
-        if(bUpdate !== undefined && bUpdate && (!displayedMolids.hasOwnProperty(pair[0]) || !displayedMolids.hasOwnProperty(pair[1])) ) continue;
+        if(bUpdate && (!displayedMolids.hasOwnProperty(pair[0]) || !displayedMolids.hasOwnProperty(pair[1])) ) continue;
 
         var node1 = posHash[parseInt(pair[0])];
         var node2 = posHash[parseInt(pair[1])];
@@ -490,7 +490,7 @@ iCn3DUI.prototype.set2DdgmNote = function(bAlign) { var me = this; //"use strict
     }
 
     html += "<br><b>Lines</b>:<br> Interactions at 4 &#197;<br>"
-    if(bAlign !== undefined && bAlign) html += "<b>Numbers in red</b>:<br> Aligned chains"
+    if(bAlign) html += "<b>Numbers in red</b>:<br> Aligned chains"
     html += "</div><br/>";
 
     return html;
@@ -779,7 +779,7 @@ iCn3DUI.prototype.draw2DChemical = function(x, y, chainid, oriChain, chain, chai
 
     var bpsize = 30 * factor;
 
-    if(bBiopolymer !== undefined && bBiopolymer) {
+    if(bBiopolymer) {
         // biopolymer
         var xOffset = 0.5 * bpsize / Math.sqrt(3);
         var yOffset = 0.5 * bpsize;
