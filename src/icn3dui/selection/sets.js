@@ -319,7 +319,7 @@ iCn3DUI.prototype.setTransmemInMenu = function (posZ, negZ, bReset) { var me = t
           }
       }
 
-      var extraStr = (bReset !== undefined && bReset) ? '2' : '';
+      var extraStr = (bReset) ? '2' : '';
 
       if(Object.keys(transmembraneHash).length > 0) {
           me.icn3d.defNames2Residues['transmembrane' + extraStr] = Object.keys(transmembraneHash);

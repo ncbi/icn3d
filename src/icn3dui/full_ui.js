@@ -13,7 +13,7 @@ if (!$.ui.dialog.prototype._makeDraggableBase) {
 }
 
 var iCn3DUI = function(cfg) { var me = this; //"use strict";
-    this.REVISION = '2.15.2';
+    this.REVISION = '2.15.3';
 
     me.bFullUi = true;
 
@@ -431,8 +431,14 @@ iCn3DUI.prototype = {
     },
 
     modifyIcn3dshowPicking: function() {var me = this; //"use strict";
+        iCn3D.prototype.rayCaster = function(e, bClick) {
+            me = me.setIcn3dui(this.id);
+
+            me.icn3d.rayCasterBase(e, bClick);
+        };
+
         iCn3D.prototype.showPicking = function(atom, x, y) {
-          me.setIcn3dui(this.id);
+          me = me.setIcn3dui(this.id);
 
           if(me.cfg.cid !== undefined) {
               this.pk = 1; // atom
@@ -983,6 +989,7 @@ iCn3DUI.prototype = {
               me.icn3d.draw();
           }
           else {
+              me.oneStructurePerWindow(); // for alignment
 
               me.icn3d.draw();
           }
@@ -1027,7 +1034,7 @@ iCn3DUI.prototype = {
       // display the structure right away. load the mns and sequences later
       setTimeout(function(){
           if(me.icn3d.bInitial) {
-              if(me.cfg.showsets !== undefined && me.cfg.showsets) {
+              if(me.cfg.showsets) {
                    me.showSets();
               }
 
@@ -1047,7 +1054,7 @@ iCn3DUI.prototype = {
 
               //me.setProtNuclLigInMenu();
 
-              if(me.cfg.showanno !== undefined && me.cfg.showanno) {
+              if(me.cfg.showanno) {
                    var cmd = "view annotations";
                    me.setLogCmd(cmd, true);
 
@@ -1313,7 +1320,7 @@ iCn3DUI.prototype = {
     pickCustomSphere: function (radius, nameArray2, nameArray, bSphereCalc, bInteraction) {   var me = this; //"use strict";  // me.icn3d.pAtom is set already
 //        me.removeHlMenus();
 
-        if(bSphereCalc !== undefined && bSphereCalc) return;
+        if(bSphereCalc) return;
 
         var select = "select zone cutoff " + radius + " | sets " + nameArray2 + " " + nameArray + " | " + bSphereCalc;
         if(bInteraction) {
@@ -1382,10 +1389,10 @@ iCn3DUI.prototype = {
 
     // between the highlighted and atoms in nameArray
     showHbonds: function (threshold, nameArray2, nameArray, bHbondCalc, bSaltbridge) { var me = this; //"use strict";
-        if(bHbondCalc !== undefined && bHbondCalc) return;
+        if(bHbondCalc) return;
 
         var hbonds_saltbridge, select;
-        if(bSaltbridge !== undefined && bSaltbridge) {
+        if(bSaltbridge) {
             hbonds_saltbridge = 'saltbridge';
             select = 'salt bridge ' + threshold + ' | sets ' + nameArray2 + " " + nameArray + " | " + bHbondCalc;
         }
@@ -1406,7 +1413,7 @@ iCn3DUI.prototype = {
             var selectedAtoms = me.icn3d.calculateChemicalHbonds(complement, me.icn3d.intHash2Atoms(me.icn3d.dAtoms, firstSetAtoms), parseFloat(threshold), bSaltbridge );
 
             var commanddesc;
-            if(bSaltbridge !== undefined && bSaltbridge) {
+            if(bSaltbridge) {
                 me.resid2ResidhashSaltbridge = me.icn3d.cloneHash(me.icn3d.resid2Residhash);
                 commanddesc = 'all atoms that have salt bridges with the selected atoms';
             }
@@ -1856,6 +1863,10 @@ iCn3DUI.prototype = {
                     me.saveFile(inputid + '_image_icn3d_loadable.png', 'png');
                 }
 
+                //shorturl: https://icn3d.page.link/NvbAh1Vmiwc4bgX87
+                var urlArray = shorturl.split('page.link/');
+                if(urlArray.length == 2) shorturl = me.baseUrl + 'icn3d/share.html?' + urlArray[1];
+
                 $("#" + me.pre + "ori_url").val(url);
                 $("#" + me.pre + "short_url").val(shorturl);
 
@@ -2210,7 +2221,7 @@ iCn3DUI.prototype = {
         $("#" + me.pre + "fullscreen").add("#" + me.pre + "mn6_fullscreen").click(function(e) { // from expand icon for mobilemenu
            e.preventDefault();
 
-           me.setIcn3dui($(this).attr('id'));
+           me = me.setIcn3dui($(this).attr('id'));
 
            me.setLogCmd("enter full screen", false);
            me.icn3d.bFullscreen = true;
@@ -2435,11 +2446,13 @@ iCn3DUI.prototype = {
            if(window.icn3duiHash !== undefined && window.icn3duiHash.hasOwnProperty(idArray[0])) { // for multiple 3D display
               me = window.icn3duiHash[idArray[0]];
            }
+
+           return me;
     },
 
     clkMn1_pdbfile: function() { var me = this; //"use strict";
         $("#" + me.pre + "mn1_pdbfile").click(function(e) {
-           me.setIcn3dui($(this).attr('id'));
+           me = me.setIcn3dui($(this).attr('id'));
 
            me.openDialog(me.pre + 'dl_pdbfile', 'Please input PDB File');
 
@@ -4708,7 +4721,8 @@ iCn3DUI.prototype = {
 
     clkMn6_sidebyside: function() { var me = this; //"use strict";
         $("#" + me.pre + "mn6_sidebyside").click(function(e) {
-           var url = me.shareLinkUrl();
+           var bSidebyside = true;
+           var url = me.shareLinkUrl(undefined);
 
            if(url.indexOf('http') !== 0) {
                alert("The url is more than 4000 characters and may not work.");
@@ -5785,7 +5799,7 @@ iCn3DUI.prototype = {
         $("#" + me.pre + "reload_pdbfile").click(function(e) {
            e.preventDefault();
 
-           me.setIcn3dui(this.id);
+           me = me.setIcn3dui(this.id);
 
            me.icn3d.bInitial = true;
 
@@ -6430,7 +6444,7 @@ iCn3DUI.prototype = {
        var cmd1 = 'select ' + me.residueids2spec(residueArray1);
        var cmd2 = 'select ' + me.residueids2spec(residueArray2);
 
-       if(bSave !== undefined && bSave) {
+       if(bSave) {
            html += 'Set 1: ' + nameArray2 + '<br>';
            html += 'Set 2: ' + nameArray + '<br><br></div>';
        }
@@ -6503,7 +6517,7 @@ iCn3DUI.prototype = {
        me.icn3d.draw();
 
 
-       if(bSave !== undefined && bSave) {
+       if(bSave) {
            var file_pref = (me.inputid) ? me.inputid : "custom";
            me.saveFile(file_pref + '_hbond_interaction_pairs.html', 'html', html);
        }

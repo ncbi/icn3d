@@ -101,7 +101,7 @@ iCn3DUI.prototype.updateHlAll = function(commandnameArray, bSetMenu, bUnion, bFo
 iCn3DUI.prototype.updateHlObjects = function(bForceHighlight) { var me = this; //"use strict";
        me.icn3d.removeHlObjects();
 
-       if(Object.keys(me.icn3d.hAtoms).length < Object.keys(me.icn3d.atoms).length || bForceHighlight) {
+       if((me.icn3d.hAtoms !== undefined && Object.keys(me.icn3d.hAtoms).length < Object.keys(me.icn3d.atoms).length) || bForceHighlight) {
           me.icn3d.addHlObjects();
           me.setMode('selection');
        }

@@ -10,7 +10,8 @@ var iCn3D = function (id) { var me = this; //"use strict";
     this.pre = id.substr(0, id.indexOf('_') + 1);
 
     this.bControlGl = false;
-    this.container = (this.bControlGl) ? $(document) : $('#' + id);
+    //this.container = (this.bControlGl) ? $(document) : $('#' + id);
+    this.container = $('#' + id);
 
     this.oriContainer = $('#' + id);
 
@@ -222,7 +223,7 @@ iCn3D.prototype = {
 
     constructor: iCn3D,
 
-    setControl: function() {
+    setControl: function() { var me = this;
         // adjust the size
         this.WIDTH = this.container.width(), this.HEIGHT = this.container.height();
         this.setWidthHeight(this.WIDTH, this.HEIGHT);
@@ -231,7 +232,6 @@ iCn3D.prototype = {
         this.mouseChange = new THREE.Vector2(0,0);
         this.quaternion = new THREE.Quaternion(0,0,0,1);
 
-        var me = this; //"use strict";
         this.container.bind('contextmenu', function (e) {
             //e.preventDefault();
         });
@@ -440,7 +440,8 @@ iCn3D.prototype = {
 
             me.bStopRotate = true;
 
-            $("[id$=popup]").hide();
+            //$("[id$=popup]").hide();
+            $("#" + me.pre + "popup").hide();
 
             //var bClick = false;
             var bClick = true;
@@ -464,7 +465,8 @@ iCn3D.prototype = {
             // no action when no mouse button is clicked and no key was down
             //if (!me.isDragging) return;
 
-            $("[id$=popup]").hide();
+            //$("[id$=popup]").hide();
+            $("#" + me.pre + "popup").hide();
 
             var bClick = false;
             me.rayCaster(e, bClick);
@@ -569,6 +571,10 @@ iCn3D.prototype = {
     },
 
     rayCaster: function(e, bClick) { var me = this; //"use strict";
+        me.rayCasterBase(e, bClick);
+    },
+
+    rayCasterBase: function(e, bClick) { var me = this; //"use strict";
 //        if(this.bChainAlign) return; // no picking for chain alignment
 
         var x = e.pageX, y = e.pageY;
@@ -607,6 +613,7 @@ iCn3D.prototype = {
             }
 
             // similar to setFromCamera() except mouse3.z is the opposite sign from the value in setFromCamera()
+/*
             if(me.bControlGl) {
                 if(window.cam === me.perspectiveCamera) { // perspective
                     if(this.cam_z > 0) {
@@ -632,6 +639,9 @@ iCn3D.prototype = {
                 }
             }
             else {
+*/
+                // use itsown camera for picking
+
                 if(me.cam === me.perspectiveCamera) { // perspective
                     if(this.cam_z > 0) {
                       mouse3.z = -1.0;
@@ -654,7 +664,7 @@ iCn3D.prototype = {
                     mouse3.unproject(me.cam );  // works for all versions
                     me.raycaster.set(mouse3, new THREE.Vector3(0,0,-1).transformDirection( me.cam.matrixWorld )); // works for all versions
                 }
-            }
+//            }
 
             var bFound = this.isIntersect(me.objects, me.mdl, bClick, popupX, popupY);
 

@@ -236,7 +236,7 @@ iCn3D.prototype.loadPDB = function (src, pdbid, bOpm, bVector) { var me = this; 
                 oriResi = 1;
             }
 
-            if(bVector !== undefined && bVector && resn === 'DUM') break; // just need to get the vector of the largest chain
+            if(bVector && resn === 'DUM') break; // just need to get the vector of the largest chain
 
             chainNum = structure + "_" + chain;
             oriResidueNum = chainNum + "_" + oriResi;
@@ -591,7 +591,7 @@ iCn3D.prototype.loadPDB = function (src, pdbid, bOpm, bVector) { var me = this; 
     this.oriMaxD = this.maxD;
     this.oriCenter = this.center.clone();
 
-    if(bVector !== undefined && bVector) { // just need to get the vector of the largest chain
+    if(bVector) { // just need to get the vector of the largest chain
         return this.getChainCalpha(this.chains, this.atoms);
     }
 };
@@ -737,7 +737,7 @@ iCn3D.prototype.getChainCalpha = function (chains, atoms, bResi_ori, pdbid) { va
                     continue; // regular residues
                 }
 
-                var resi = (bResi_ori !== undefined && bResi_ori) ? atom.resi_ori : atom.resi; // MMDB uses resi_ori for PDB residue number
+                var resi = (bResi_ori) ? atom.resi_ori : atom.resi; // MMDB uses resi_ori for PDB residue number
 
                 if(bBaseResi) {
                     baseResi = resi;

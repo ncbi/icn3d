@@ -178,11 +178,11 @@ iCn3DUI.prototype.downloadAlignmentPart2 = function (data, seqalign, chainresiCa
 
     // by default, open the seq alignment window
     //if(me.cfg.show2d !== undefined && me.cfg.show2d) me.openDialog(me.pre + 'dl_2ddgm', 'Interactions');
-    if(me.cfg.showalignseq !== undefined && me.cfg.showalignseq) {
+    if(me.cfg.showalignseq) {
         me.openDialog(me.pre + 'dl_alignment', 'Select residues in aligned sequences');
     }
 
-    if(me.cfg.show2d !== undefined && me.cfg.show2d && me.bFullUi) {
+    if(me.cfg.show2d && me.bFullUi) {
         me.set2DDiagramsForAlign(me.mmdbidArray[0].toUpperCase(), me.mmdbidArray[1].toUpperCase());
     }
 
@@ -224,11 +224,11 @@ iCn3DUI.prototype.downloadChainalignmentPart2 = function (data1, data2, chainres
 
     // by default, open the seq alignment window
     //if(me.cfg.show2d !== undefined && me.cfg.show2d) me.openDialog(me.pre + 'dl_2ddgm', 'Interactions');
-    if(me.cfg.showalignseq !== undefined && me.cfg.showalignseq) {
+    if(me.cfg.showalignseq) {
         me.openDialog(me.pre + 'dl_alignment', 'Select residues in aligned sequences');
     }
 
-    if(me.cfg.show2d !== undefined && me.cfg.show2d && me.bFullUi) {
+    if(me.cfg.show2d && me.bFullUi) {
         me.openDialog(me.pre + 'dl_2ddgm', 'Interactions');
         if(me.bFullUi) {
             if(!me.icn3d.bChainAlign) {
@@ -373,7 +373,7 @@ iCn3DUI.prototype.set2DDiagramsForAlign = function (mmdbid1, mmdbid2) { var me =
         me.html2ddgm = '';
 
         me.draw2Ddgm(data, mmdbid1, 0);
-        if(me.cfg.show2d !== undefined && me.cfg.show2d) me.openDialog(me.pre + 'dl_2ddgm', 'Interactions');
+        if(me.cfg.show2d) me.openDialog(me.pre + 'dl_2ddgm', 'Interactions');
 
         return $.ajax({
           url: url2,

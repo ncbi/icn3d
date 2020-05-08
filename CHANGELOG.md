@@ -1,4 +1,6 @@
 ## Change Log
+[icn3d-2.15.3](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.15.3.zip) was release on May 8, 2020. Enabled to update the short "Share Link" URL; enabled to save in a sharable URL the "Side by Side" view, which is useful to view two aligned structures.
+
 [icn3d-2.15.2](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.15.2.zip) was release on May 5, 2020. Fixed the display of electron density map and EM map.
 
 [icn3d-2.15.1](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.15.1.zip) was release on April 27, 2020. Improved the unionHash function to speed up selection. Improved the message when loading a list of commands.

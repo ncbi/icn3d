@@ -277,7 +277,7 @@ iCn3D.prototype.calculateChemicalHbonds = function (startAtoms, targetAtoms, thr
 
       // salt bridge: calculate hydrogen bond between Lys/Arg and Glu/Asp
       // hbonds: calculate hydrogen bond
-      var bAtomCond = (bSaltbridge !== undefined && bSaltbridge) ? ( (atom.resn === 'ARG' || atom.resn === 'LYS') && atom.elem === "N" && atom.name !== "N")
+      var bAtomCond = (bSaltbridge) ? ( (atom.resn === 'ARG' || atom.resn === 'LYS') && atom.elem === "N" && atom.name !== "N")
         || ( (atom.resn === 'GLU' || atom.resn === 'ASP') && atom.elem === "O" && atom.name !== "O")
         || (atom.het && (atom.elem === "N" || atom.elem === "O" || (atom.elem === "S" && (atom.resn === "Cys" || atom.resn === "Met")) ) ): atom.elem === "N" || atom.elem === "O" || (atom.elem === "S" && (atom.resn === "Cys" || atom.resn === "Met"));
 
@@ -310,7 +310,7 @@ iCn3D.prototype.calculateChemicalHbonds = function (startAtoms, targetAtoms, thr
 
       // salt bridge: calculate hydrogen bond between Lys/Arg and Glu/Asp
       // hbonds: calculate hydrogen bond
-      var bAtomCond = (bSaltbridge !== undefined && bSaltbridge) ? ( (atom.resn === 'ARG' || atom.resn === 'LYS') && atom.elem === "N" && atom.name !== "N")
+      var bAtomCond = (bSaltbridge) ? ( (atom.resn === 'ARG' || atom.resn === 'LYS') && atom.elem === "N" && atom.name !== "N")
         || ( (atom.resn === 'GLU' || atom.resn === 'ASP') && atom.elem === "O" && atom.name !== "O")
         || (atom.het && (atom.elem === "N" || atom.elem === "O" || (atom.elem === "S" && (atom.resn === "Cys" || atom.resn === "Met")) ) ): atom.elem === "N" || atom.elem === "O" || (atom.elem === "S" && (atom.resn === "Cys" || atom.resn === "Met"));
 
@@ -331,7 +331,7 @@ iCn3D.prototype.calculateChemicalHbonds = function (startAtoms, targetAtoms, thr
         if(me.resid2Residhash[oriResidName] === undefined) me.resid2Residhash[oriResidName] = {};
 
         for (var j in atomHbond) {
-          if(bSaltbridge !== undefined && bSaltbridge) {
+          if(bSaltbridge) {
               // skip both positive orboth negative cases
               if( ( (atom.resn === 'LYS' || atom.resn === 'ARG') && (atomHbond[j].resn === 'LYS' || atomHbond[j].resn === 'ARG') ) ||
                 ( (atom.resn === 'GLU' || atom.resn === 'ASP') && (atomHbond[j].resn === 'GLU' || atomHbond[j].resn === 'ASP') ) ) {
@@ -430,7 +430,7 @@ iCn3D.prototype.calculateChemicalHbonds = function (startAtoms, targetAtoms, thr
           }
 
           // output hydrogen bonds
-          if(bSaltbridge !== undefined && bSaltbridge) {
+          if(bSaltbridge) {
               this.saltbridgepnts.push({'serial': atom.serial, 'coord': atom.coord});
               this.saltbridgepnts.push({'serial': atomHbond[j].serial, 'coord': atomHbond[j].coord});
           }
@@ -566,7 +566,7 @@ iCn3D.prototype.getChainsFromAtoms = function(atomsHash) { var me = this; //"use
            if(atomDist < distance) {
                 ret[atom.serial] = atom;
                 var calpha, residName;
-                if(bInteraction !== undefined && bInteraction) {
+                if(bInteraction) {
                     ret[oriAtom.serial] = oriAtom;
                 }
 
@@ -581,7 +581,7 @@ iCn3D.prototype.getChainsFromAtoms = function(atomsHash) { var me = this; //"use
                 if(calpha === undefined) calpha = atom;
 
                     // output contact lines
-                if(bInteraction !== undefined && bInteraction) {
+                if(bInteraction) {
                     this.contactpnts.push({'serial': calpha.serial, 'coord': calpha.coord});
                     this.contactpnts.push({'serial': oriCalpha.serial, 'coord': oriCalpha.coord});
                 }

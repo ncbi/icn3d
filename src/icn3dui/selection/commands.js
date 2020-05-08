@@ -21,7 +21,7 @@ iCn3DUI.prototype.loadScript = function (dataStr, bStatefile) { var me = this; /
   me.icn3d.commands = preCommands.concat(me.icn3d.commands);
   me.STATENUMBER = me.icn3d.commands.length;
 
-  if(bStatefile !== undefined && bStatefile) {
+  if(bStatefile) {
       me.execCommands(0, me.STATENUMBER-1, me.STATENUMBER);
   }
   else {
@@ -87,14 +87,14 @@ iCn3DUI.prototype.execCommandsBase = function (start, end, steps, bFinalStep) { 
                   me.icn3d.hAtoms = me.icn3d.cloneHash(me.icn3d.atoms);
 
                   // undo/redo requires render the first step
-                  if(me.backForward !== undefined && me.backForward) me.renderFinalStep(1);
+                  if(me.backForward) me.renderFinalStep(1);
 
                   me.execCommandsBase(i + 1, end, steps);
               }
               else {
                   $.when(me.applyCommandLoad(me.icn3d.commands[i])).then(function() {
                       // undo/redo requires render the first step
-                      if(me.backForward !== undefined && me.backForward) me.renderFinalStep(1);
+                      if(me.backForward) me.renderFinalStep(1);
 
                       me.execCommandsBase(i + 1, end, steps);
                   });
@@ -341,6 +341,25 @@ iCn3DUI.prototype.execCommandsBase = function (start, end, steps, bFinalStep) { 
   }
 };
 
+iCn3DUI.prototype.oneStructurePerWindow = function() { var me = this; //"use strict";
+    // only display one of the two aligned structures
+    var structureArray = Object.keys(me.icn3d.structures);
+    if(me.cfg.bSidebyside && structureArray.length == 2) {
+        var dividArray = Object.keys(window.icn3duiHash);
+        var pos = dividArray.indexOf(me.divid);
+
+        var structure = structureArray[pos];
+        var chainArray = me.icn3d.structures[structure];
+        var structAtoms = {};
+        for(var i = 0, il = chainArray.length; i < il; ++i) {
+            structAtoms = me.icn3d.unionHash(structAtoms, me.icn3d.chains[chainArray[i]]);
+        }
+
+        me.icn3d.dAtoms = me.icn3d.intHash(structAtoms, me.icn3d.dAtoms);
+        me.icn3d.hAtoms = me.icn3d.cloneHash(me.icn3d.dAtoms);
+    }
+};
+
 iCn3DUI.prototype.renderFinalStep = function(steps) { var me = this; //"use strict";
     me.icn3d.bRender = true;
 
@@ -359,6 +378,8 @@ iCn3DUI.prototype.renderFinalStep = function(steps) { var me = this; //"use stri
         me.icn3d.quaternion._z = transformation.quaternion._z;
         me.icn3d.quaternion._w = transformation.quaternion._w;
     }
+
+    me.oneStructurePerWindow();
 
     // simple if all atoms are modified
     //if( me.cfg.command === undefined && (steps === 1 || (Object.keys(me.icn3d.hAtoms).length === Object.keys(me.icn3d.atoms).length) || (me.icn3d.optsHistory[steps - 1] !== undefined && me.icn3d.optsHistory[steps - 1].hasOwnProperty('hlatomcount') && me.icn3d.optsHistory[steps - 1].hlatomcount === Object.keys(me.icn3d.atoms).length) ) ) {

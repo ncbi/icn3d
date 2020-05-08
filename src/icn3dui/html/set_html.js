@@ -288,7 +288,7 @@ iCn3DUI.prototype.getLinkWrapper = function(id, text, wrapper) { var me = this; 
 };
 
 iCn3DUI.prototype.getRadio = function(radioid, id, text, bChecked) { var me = this; //"use strict";
-    var checkedStr = (bChecked !== undefined && bChecked) ? ' checked' : '';
+    var checkedStr = (bChecked) ? ' checked' : '';
     //return "<li>" + me.inputRadioStr + "name='" + me.pre + radioid + "' id='" + me.pre + id + "'" + checkedStr + "><label for='" + me.pre + id + "'>" + text + "</label></li>";
 
     //https://stackoverflow.com/questions/17541614/use-images-instead-of-radio-buttons/17541916
@@ -1832,10 +1832,10 @@ iCn3DUI.prototype.setDialogs = function() { var me = this; //"use strict";
     html += "</div>";
 
 
-    html += me.divStr + "dl_copyurl'>";
-    html += "Please copy one of the URLs below. They work the same way.<br><br>";
+    html += me.divStr + "dl_copyurl' style='width:500px;'>";
+    html += "Please copy one of the URLs below. They show the same result.<br><br>";
     html += "Original URL with commands: <br><textarea id='" + me.pre + "ori_url' rows='4' style='width:100%'></textarea><br><br>";
-    html += "Short URL: <br>" + me.inputTextStr + "id='" + me.pre + "short_url' value='' style='width:100%'><br><br>";
+    html += "Short URL: (To replace this URL, send a pull request to update share.html at <a href='https://github.com/ncbi/icn3d' target='_blank'>iCn3D GitHub</a>)<br>" + me.inputTextStr + "id='" + me.pre + "short_url' value='' style='width:100%'><br><br>";
     html += "</div>";
 
     html += me.divStr + "dl_selectannotations' class='icn3d-annotation' style='background-color:white;'>";
