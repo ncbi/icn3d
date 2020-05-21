@@ -585,8 +585,9 @@ iCn3DUI.prototype.setMenu2b_base = function() { var me = this; //"use strict";
 
         html += "<li><span>Cross-Linkages</span>";
         html += "<ul>";
-        html += me.getRadio('mn6_clbonds', 'mn6_clbondsYes', 'Show');
-        html += me.getRadio('mn6_clbonds', 'mn6_clbondsNo', 'Hide', true);
+        html += me.getRadio('mn6_clbonds', 'mn6_clbondsYes', 'Show', true);
+        html += me.getRadio('mn6_ssbonds', 'mn6_clbondsExport', 'Export Pairs');
+        html += me.getRadio('mn6_clbonds', 'mn6_clbondsNo', 'Hide');
         html += "</ul>";
         html += "</li>";
 
@@ -610,6 +611,8 @@ iCn3DUI.prototype.setMenu2b_base = function() { var me = this; //"use strict";
     html += me.getRadio('mn6_distance', 'mn6_distanceNo', 'Hide', true);
     html += "</ul>";
     html += "</li>";
+
+    html += me.getLink('mn6_area', 'Surface Area');
 
     html += "<li><span>Label</span>";
     html += "<ul>";
@@ -1012,6 +1015,14 @@ iCn3DUI.prototype.setMenu4_base = function() { var me = this; //"use strict";
         html += me.getRadio('mn4_clr', 'mn4_clrCharge', 'Charge');
         html += me.getRadio('mn4_clr', 'mn4_clrHydrophobic', 'Wimley-White<br><span style="padding-left:1.5em;">Hydrophobicity</span>');
 
+        html += "<li><span style='padding-left:2.3em;'>B-factor</span>";
+        html += "<ul>";
+        html += me.getRadio('mn4_clr', 'mn4_clrBfactor', 'Original');
+        html += me.getRadio('mn4_clr', 'mn4_clrBfactorNorm', 'Percentile');
+        html += "</ul>";
+
+        html += me.getRadio('mn4_clr', 'mn4_clrArea', 'Solvent<br><span style="padding-left:1.5em;">Accessibility</span>');
+
         if(me.cfg.align !== undefined || me.cfg.chainalign !== undefined || me.cfg.blast_rep_id !== undefined) {
           html += me.getRadio('mn4_clr', 'mn4_clrChain', 'Chain');
         }
@@ -1032,11 +1043,6 @@ iCn3DUI.prototype.setMenu4_base = function() { var me = this; //"use strict";
         html += "</ul>";
 
         html += me.getRadio('mn4_clr', 'mn4_clrAtom', 'Atom');
-        html += "<li><span style='padding-left:2.3em;'>B-factor</span>";
-        html += "<ul>";
-        html += me.getRadio('mn4_clr', 'mn4_clrBfactor', 'Original');
-        html += me.getRadio('mn4_clr', 'mn4_clrBfactorNorm', 'Percentile');
-        html += "</ul>";
 
         if(me.cfg.align !== undefined || me.cfg.chainalign !== undefined) {
           html += me.getRadio('mn4_clr', 'mn4_clrIdentity', 'Identity', true);
@@ -1550,8 +1556,8 @@ iCn3DUI.prototype.setDialogs = function() { var me = this; //"use strict";
     html += "1. Choose interaction types and their thresholds:<br>";
     html += "<div class='icn3d-box'><table border=0 width=450><tr>";
     html += "<td style='min-width:130px;'>" + me.inputCheckStr + "id='" + me.pre + "analysis_hbond' checked>Hydrogen Bonds&nbsp;&nbsp;</td>";
-    html += "<td style='min-width:130px;'>" + me.inputCheckStr + "id='" + me.pre + "analysis_saltbridge'>Salt Bridges&nbsp;&nbsp;</td>";
-    html += "<td style='min-width:130px;'>" + me.inputCheckStr + "id='" + me.pre + "analysis_contact'>Contacts/Interactions&nbsp;&nbsp;</td>";
+    html += "<td style='min-width:130px;'>" + me.inputCheckStr + "id='" + me.pre + "analysis_saltbridge' checked>Ionic Interaction&nbsp;&nbsp;</td>";
+    html += "<td style='min-width:130px;'>" + me.inputCheckStr + "id='" + me.pre + "analysis_contact' checked>Contacts/Interactions&nbsp;&nbsp;</td>";
     html += "</tr><tr>";
     html += "<td>";
     html += me.divNowrapStr + "Threshold: <select id='" + me.pre + "hbondthreshold'>";
@@ -1567,42 +1573,50 @@ iCn3DUI.prototype.setDialogs = function() { var me = this; //"use strict";
     html += "</select> &#197;</div></td>";
     html += "<td>";
     html += me.divNowrapStr + "Threshold: <select id='" + me.pre + "saltbridgethreshold'>";
-    html += optionStr + "'3.2'>3.2</option>";
-    html += optionStr + "'3.3'>3.3</option>";
-    html += optionStr + "'3.4'>3.4</option>";
-    html += optionStr + "'3.5'>3.5</option>";
-    html += optionStr + "'3.6'>3.6</option>";
-    html += optionStr + "'3.7'>3.7</option>";
-    html += optionStr + "'3.8'>3.8</option>";
-    html += optionStr + "'3.9'>3.9</option>";
-    html += optionStr + "'4.0' selected>4.0</option>";
+    html += optionStr + "'3'>3</option>";
+    html += optionStr + "'4'>4</option>";
+    html += optionStr + "'5'>5</option>";
+    html += optionStr + "'6' selected>6</option>";
+    html += optionStr + "'8'>8</option>";
     html += "</select> &#197;</div></td>";
     html += "<td>";
     html += me.divNowrapStr + "Threshold: <select id='" + me.pre + "contactthreshold'>";
     html += optionStr + "'3'>3</option>";
     html += optionStr + "'4' selected>4</option>";
     html += optionStr + "'5'>5</option>";
+    html += optionStr + "'6'>6</option>";
+    html += optionStr + "'8'>8</option>";
     html += "</select> &#197;</div></td>";
     html += "</tr></table></div>";
 
     html += "<table border=0 width=400 cellspacing=10><tr><td>";
 
     html += me.divNowrapStr + "2. Select the first set:</div>";
-    html += "<div style='text-indent:1.1em'><select id='" + me.pre + "atomsCustomHbond2' multiple size='5' style='min-width:130px;'>";
-    html += "</select></div><br>";
+    html += "<div style='text-indent:1.1em'><select style='max-width:200px' id='" + me.pre + "atomsCustomHbond2' multiple size='5' style='min-width:130px;'>";
+    html += "</select></div>";
 
     html += "</td><td>";
 
     html += me.divNowrapStr + "3. Select the second set:</div>";
-    html += "<div style='text-indent:1.1em'><select id='" + me.pre + "atomsCustomHbond' multiple size='5' style='min-width:130px;'>";
-    html += "</select></div><br>";
+    html += "<div style='text-indent:1.1em'><select style='max-width:200px' id='" + me.pre + "atomsCustomHbond' multiple size='5' style='min-width:130px;'>";
+    html += "</select></div>";
 
     html += "</td></tr></table>";
 
     html += "<div>4. " + me.buttonStr + "applyhbonds'>Display</button> H-bonds/Contacts in 3D</div><br>";
     html += "<div style='text-indent:1.1em'>" + me.buttonStr + "hbondWindow'>Highlight</button> H-bond/Contact pairs in a window</div><br>";
+
+    html += "<div style='text-indent:1.1em'>" + me.buttonStr + "hbondGraph'>Force-Directed Graph</button> to show interactions with strength parameters in 0-200:</div>";
+    html += '<div style="text-indent:1.1em">Helix or Sheet: <input type="text" id="' + me.pre + 'dist_ss" size="4" value="100"> &nbsp;&nbsp;&nbsp;';
+    html += 'Coil or Nucleotide: <input type="text" id="' + me.pre + 'dist_coil" size="4" value="50">&nbsp;&nbsp;&nbsp;';
+    html += 'Disulfide Bonds: <input type="text" id="' + me.pre + 'dist_ssbond" size="4" value="50"></div>';
+    html += '<div style="text-indent:1.1em">Hydrogen Bonds: <input type="text" id="' + me.pre + 'dist_hbond" size="4" value="50"> &nbsp;&nbsp;&nbsp;';
+    html += 'Ionic Interactions: <input type="text" id="' + me.pre + 'dist_ionic" size="4" value="50"> &nbsp;&nbsp;&nbsp;';
+    html += 'Contacts: <input type="text" id="' + me.pre + 'dist_inter" size="4" value="25"></div>';
+    html += '<div style="text-indent:1.1em">(Note: you can also adjust thresholds at #1 to add/remove interactions.)</div><br>';
+
     html += "<div style='text-indent:1.1em'>" + me.buttonStr + "hbondExport'>Save</button> H-bond/Contact pairs in a file</div><br>";
-    html += "<div style='text-indent:1.1em'>" + me.buttonStr + "hbondReset'>Reset</button> and select new sets</div>";
+    html += "<div>5. " + me.buttonStr + "hbondReset'>Reset</button> and select new sets</div>";
     html += "</div>";
 
     html += me.divStr + "dl_realign'>";
@@ -1842,26 +1856,6 @@ iCn3DUI.prototype.setDialogs = function() { var me = this; //"use strict";
 
     html += me.divStr + "dl_annotations_tabs'>";
 
-/*
-    html += "<table border=0><tr>";
-    html += "<td valign='top' width='100'>";
-    html += "<div style='margin-top:28px; white-space: nowrap;'><span id='" + me.pre + "viewdetail' style='display:none;' title='Expand the width of the annotation window to view the residue details'><b>Detailed View</b></span><span id='" + me.pre + "overview' class='icn3d-viewselection' title='Shrink the width of the annotation window to overview'><b>Overview</b></span></div>";
-    html += "<label class='icn3d-switch'><input id='" + me.pre + "viewswitch' type='checkbox'><div class='icn3d-slider icn3d-round' style='width:34px; height:18px; margin: 16px 0px 0px 30px;' title='Left (\"Detailed View\")&#13;Right (\"Overview\")'></div></label>";
-    html += "</td>";
-    html += "<td>";
-    html += "<div style='border-left:1px solid #ccc; width:1px; height:40px;'></div>";
-    html += "</td>";
-    html += "<td>";
-*/
-
-/*
-    html += "<div style='white-space: nowrap;'><span id='" + me.pre + "viewdetail' class='icn3d-large'><b>Sequence Details</b></span>";
-    html += "<label class='icn3d-switch'><input id='" + me.pre + "viewswitch' type='checkbox'><div class='icn3d-slider icn3d-round' style='width:34px; height:18px; display:inline-block; margin: 6px 0px 0px 145px;' title='Left (\"Detailed View\")&#13;Right (\"Overview\")'></div></label>";
-    html += "<span id='" + me.pre + "overview' style='margin-left:50px;' class='icn3d-viewselection icn3d-large'><b>Graphic Summary</b></span>";
-
-    html += "<button style='white-space:nowrap; margin-left:50px' id='" + me.pre + "showallchains'>Show All Chains</button></div>";
-*/
-
     html += me.divStr + "dl_anno_view_tabs' style='border:0px; height:33px;'>";
     html += "<ul>";
     html += "<li><a href='#" + me.pre + "anno_tmp1' id='" + me.pre + "anno_summary'>Summary</a></li>";
@@ -1895,18 +1889,74 @@ iCn3DUI.prototype.setDialogs = function() { var me = this; //"use strict";
     html += "</tr></table></div>";
 
     html += "<button style='white-space:nowrap; margin-left:5px;' id='" + me.pre + "showallchains'>Show All Chains</button><br>";
-//    html += "</td>";
-//    html += "</tr></table>";
 
     html += me.divStr + "seqguide_wrapper' style='display:none'><br>" + me.setSequenceGuide("2") + "</div>";
-
-    // add note about assembly
-    //html = "<div id='" + me.pre + "assembly_note' class='icn3d-annoLargeTitle'><br>Only the asymmetric unit is shown in the sequence window.</div>";
 
     html += "</div><br/><hr><br>";
 
     html += me.divStr + "dl_annotations'>";
     html += "</div>";
+
+    html += "</div>";
+
+    html += me.divStr + "dl_graph' style='background-color:white;'>";
+    me.svgid = me.pre + 'icn3d_viz';
+    html += '<style>';
+    html += '#' + me.svgid + ' svg { border: 1px solid; font: 13px sans-serif; text-anchor: end; }';
+    html += '#' + me.svgid + ' .node { stroke: #eee; stroke-width: 1.5px; }';
+    html += '.node .selected { stroke: ' + me.ORANGE + '; }';
+    html += '.link { stroke: #999; stroke-opacity: 0.6; }';
+
+//    html += '.links line { stroke-opacity: 0.6; }';
+//    html += '.nodes circle { stroke: #fff; stroke-width: 1.5px; }';
+//    html += 'text { font-family: sans-serif; font-weight: bold; font-size: 18px;}';
+    html += '</style>';
+
+    html += me.divNowrapStr + '<b>Zoom</b>: mouse wheel; &nbsp;&nbsp;&nbsp; <b>Move</b>: left button; &nbsp;&nbsp;&nbsp; <b>Select Multiple Nodes</b>: Ctrl Key and drag an Area&nbsp;&nbsp;&nbsp;';
+    html += '<div style="width:20px; margin-top:6px; display:inline-block;"><span id="'
+      + me.pre + 'dl_svgcolor_expand" class="ui-icon ui-icon-plus icn3d-expand icn3d-link" style="width:15px;" title="Expand"></span><span id="'
+      + me.pre + 'dl_svgcolor_shrink" class="ui-icon ui-icon-minus icn3d-shrink icn3d-link" style="display:none; width:15px;" title="Shrink"></span></div></div>';
+    html += me.divStr + "dl_svgcolor' style='display:none;'>";
+    html += me.divNowrapStr + '<span style="margin-left:33px">Click "View > H-Bonds & Interactions" to relaunch the graph</span></div>';
+    html += me.divNowrapStr + '<span style="margin-left:33px; color:#00FF00; font-weight:bold">Green</span>: H-bonds in interface; ';
+    html += '<span style="color:#98FB98; font-weight:bold">Light Green</span>: H-bonds in each set; ';
+    html += '<span style="color:#00FFFF; font-weight:bold">Cyan</span>: Ionic Interactions</div>';
+    html += me.divNowrapStr + '<span style="margin-left:33px; font-weight:bold">Dark Grey</span>: contacts in interface; ';
+    html += '<span style="color:#888888; font-weight:bold">Light Grey</span>: contacts in each set; ';
+    html += '<span style="color:' + me.ORANGE + '; font-weight:bold">Orange</span>: disulfide bonds</div>';
+    html += "</div>";
+
+    html += me.divNowrapStr + '<button class="icn3d-commandTitle" style="-webkit-appearance:button; height:24px;background-color:#DDDDDD;" id="' + me.svgid + '_svg">SVG</button>&nbsp;&nbsp;';
+    html += '<button class="icn3d-commandTitle" style="-webkit-appearance:button; height:24px;background-color:#DDDDDD;" id="' + me.svgid + '_png">PNG</button>&nbsp;&nbsp;&nbsp;';
+    html += "<b>Label Size</b>: <select id='" + me.svgid + "_label'>";
+    html += optionStr + "'icn3d-node-text0'>No Label</option>";
+    html += optionStr + "'icn3d-node-text4'>4px</option>";
+    html += optionStr + "'icn3d-node-text8' selected>8px</option>";
+    html += optionStr + "'icn3d-node-text12'>12px</option>";
+    html += optionStr + "'icn3d-node-text16'>16px</option>";
+    html += optionStr + "'icn3d-node-text24'>24px</option>";
+    html += optionStr + "'icn3d-node-text32'>32px</option>";
+    html += "</select>&nbsp;&nbsp;&nbsp;";
+    html += "<b>Push to Center</b>: <select id='" + me.svgid + "_pushcenter'>";
+    html += optionStr + "'0' selected>No</option>";
+    html += optionStr + "'1'>Yes</option>";
+    html += "</select>&nbsp;&nbsp;&nbsp;";
+    html += "</div>";
+
+    html += '<svg id="' + me.svgid + '" style="margin-top:6px;"></svg>';
+    html += "</div>";
+
+    html += me.divStr + "dl_area'>";
+    html += "Solvent Accessible Surface Area (SASA) calculated using the <a href='https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0008140' target='_blank'>EDTSurf algorithm</a>: <br>";
+    html += '(0-20% out is considered "in". 50-100% out is considered "out".)<br><br>';
+    html += "<b>Toal</b>: " + me.inputTextStr + "id='" + me.pre + "areavalue' value='' size='10'> &#8491;<sup>2</sup><br><br>";
+    html += "<div id='" + me.pre + "areatable' style='max-height:400px; overflow:auto'></div>";
+    html += "</div>";
+
+    html += me.divStr + "dl_colorbyarea'>";
+    html += "<div style='width:500px'>Color each residue based on the percentage of solvent accessilbe surface area. The color ranges from blue, to white, to red for a percentage of 0, 35 (variable), and 100, respectively.</div><br>";
+    html += "<b>Middle Percentage (White)</b>: " + me.inputTextStr + "id='" + me.pre + "midpercent' value='35' size='10'>% <br><br>";
+    html += "<button style='white-space:nowrap;' id='" + me.pre + "applycolorbyarea'>Color</button><br/><br/>";
     html += "</div>";
 
     html += "</div>";

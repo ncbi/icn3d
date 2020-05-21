@@ -801,6 +801,9 @@ iCn3DUI.prototype.loadAtomDataIn = function (data, id, type, seqalign, alignType
             atm.resi = atm.ids.r; // corrected for residue insertion code
 
             resiCorrection = atm.resi - atm.resi_ori;
+
+            var pos = atm.resn.indexOf(' ');
+            if(pos !== -1 && pos != 0) atm.resn = atm.resn.substr(0, pos);
         }
         else {
             atm.resi = parseInt(atm.resi);

@@ -182,8 +182,8 @@ iCn3D.prototype.createCylinder = function (p0, p1, radius, color, bHighlight, co
 
 // from iview (http://istar.cse.cuhk.edu.hk/iview/)
 iCn3D.prototype.createRepresentationSub = function (atoms, f0, f01) { var me = this; //"use strict";
-    //var ged = new THREE.Geometry();
     var clbondArray = [];
+    var resiAtoms = {};
     for (var i in atoms) {
         var atom0 = atoms[i];
         f0 && f0(atom0);
@@ -194,23 +194,19 @@ iCn3D.prototype.createRepresentationSub = function (atoms, f0, f01) { var me = t
             if (atom1.chain === atom0.chain && ((atom1.resi === atom0.resi) || (atom0.name === 'C' && atom1.name === 'N') || (atom0.name === 'O3\'' && atom1.name === 'P') || (atom0.name === 'O3*' && atom1.name === 'P') || (atom0.name === 'SG' && atom1.name === 'SG'))) {
                 f01 && f01(atom0, atom1);
             } else {
-                //ged.vertices.push(atom0.coord);
-                //ged.vertices.push(atom1.coord);
-                clbondArray.push([atom0.coord, atom1.coord]);
+                //clbondArray.push([atom0.coord, atom1.coord]);
             }
         }
     }
-
-    //if (ged.vertices.length && this.bShowCrossResidueBond) {
+/*
     if (clbondArray.length > 0 && this.bShowCrossResidueBond) {
-        //ged.computeLineDistances();
-        //this.mdl.add(new THREE.Line(ged, new THREE.LineDashedMaterial({ linewidth: this.linewidth, color: this.defaultBondColor, dashSize: 0.3, gapSize: 0.15 }), THREE.LineSegments));
         var color = new THREE.Color(0x00FF00);
 
         for(var i = 0, il = clbondArray.length; i < il; ++i) {
             me.createCylinder(clbondArray[i][0], clbondArray[i][1], this.cylinderRadius, color, 0);
         }
     }
+*/
 };
 
 // modified from iview (http://istar.cse.cuhk.edu.hk/iview/)
@@ -242,27 +238,6 @@ iCn3D.prototype.createConnCalphSidechain = function (atoms, style) { var me = th
     var coordArray = [];
     var colorArray = [];
     for(var resid in residueHash) {
-/*
-        var atom = this.getFirstCalphaAtomObj(this.residues[resid]);
-
-        var sideAtom = undefined;
-        for(var i = 0, il = atom.bonds.length; i < il; ++i) {
-            var bondAtom = this.atoms[atom.bonds[i]];
-            if(bondAtom.name !== 'C' && bondAtom.name !== 'N' && bondAtom.elem !== 'H' && bondAtom.resi == atom.resi) {
-                sideAtom = bondAtom;
-                break;
-            }
-        }
-
-        if(sideAtom !== undefined) {
-            coordArray.push(atom.coord);
-            coordArray.push(sideAtom.coord);
-
-            colorArray.push(atom.color);
-            colorArray.push(sideAtom.color);
-        }
-*/
-
         var atom = this.getFirstAtomObjByName(this.residues[resid], 'CA');
 
         if(atom !== undefined) {

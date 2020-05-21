@@ -125,7 +125,7 @@ var iCn3D = function (id) { var me = this; //"use strict";
 
     this.bConsiderNeighbors = false; // a flag to show surface considering the neighboring atoms or not
 
-    this.bShowCrossResidueBond = false;
+    this.bShowCrossResidueBond = true;
 
     this.effects = {
         //'anaglyph': new THREE.AnaglyphEffect(this.renderer),
@@ -205,7 +205,8 @@ var iCn3D = function (id) { var me = this; //"use strict";
         saltbridge: 'no',
         contact: 'no',
         //stabilizer: 'no',
-        ssbonds: 'no',
+        ssbonds: 'yes',
+        clbonds: 'yes',
         //ncbonds: 'no',
         labels: 'no',
         lines: 'no',
@@ -784,8 +785,11 @@ iCn3D.prototype = {
 
     // added nucleotides and ions
     nucleotidesArray: ['  G', '  A', '  T', '  C', '  U', ' DG', ' DA', ' DT', ' DC', ' DU'],
+    nucleotidesTrimArray: ['G', 'A', 'T', 'C', 'U', 'DG', 'DA', 'DT', 'DC', 'DU'],
 
     ionsArray: ['  K', ' NA', ' MG', ' AL', ' CA', ' TI', ' MN', ' FE', ' NI', ' CU', ' ZN', ' AG', ' BA', '  F', ' CL', ' BR', '  I'],
+    cationsTrimArray: ['K', 'NA', 'MG', 'AL', 'CA', 'TI', 'MN', 'FE', 'NI', 'CU', 'ZN', 'AG', 'BA'],
+    anionsTrimArray: ['F', 'CL', 'BR', 'I'],
 
     vdwRadii: { // Hu, S.Z.; Zhou, Z.H.; Tsai, K.R. Acta Phys.-Chim. Sin., 2003, 19:1073.
          H: 1.08,
@@ -1123,6 +1127,42 @@ iCn3D.prototype = {
          'DU': new THREE.Color(0xFF8000)
     },
 
+    // calculated in iCn3D, the value could fluctuate 10-20 in different proteins
+    residueArea: {
+        ALA: 247,
+        ARG: 366,
+        ASN: 290,
+        ASP: 285,
+        CYS: 271,
+        GLN: 336,
+        GLU: 325,
+        GLY: 217,
+        HIS: 340,
+        ILE: 324,
+        LEU: 328,
+        LYS: 373,
+        MET: 346,
+        PHE: 366,
+        PRO: 285,
+        SER: 265,
+        THR: 288,
+        TRP: 414,
+        TYR: 387,
+        VAL: 293,
+        ASX: 290,
+        GLX: 336,
+          'G': 520,
+          'A': 507,
+          'T': 515,
+          'C': 467,
+          'U': 482,
+         'DG': 520,
+         'DA': 507,
+         'DT': 515,
+         'DC': 467,
+         'DU': 482
+    },
+
     defaultResidueColor: new THREE.Color(0xBEA06E),
 
     chargeColors: {
@@ -1387,6 +1427,7 @@ iCn3D.prototype = {
         this.molTitle = "";
 
         this.ssbondpnts = {}; // disulfide bonds for each structure
+        this.clbondpnts = {}; // cross-linkages for each structure
 
         this.inputid = {"idtype": undefined, "id":undefined}; // support pdbid, mmdbid
 

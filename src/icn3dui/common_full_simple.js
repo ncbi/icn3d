@@ -394,6 +394,12 @@ iCn3DUI.prototype.saveFile = function(filename, type, text) { var me = this; //"
 
                 reader.readAsArrayBuffer(blob);
             }
+            else {
+                //me.createLinkForBlob(blob, filename);
+                saveAs(blob, filename);
+
+                return;
+            }
         }
         else {
             me.icn3d.renderer.domElement.toBlob(function(data) {
@@ -486,6 +492,7 @@ iCn3DUI.prototype.isMac = function() {
 };
 
 iCn3DUI.prototype.isSessionStorageSupported = function() {
+/*
   var testKey = 'test';
   try {
     sessionStorage.setItem(testKey, '1');
@@ -494,6 +501,8 @@ iCn3DUI.prototype.isSessionStorageSupported = function() {
   } catch (error) {
     return false;
   }
+*/
+    return window.sessionStorage;
 };
 
 iCn3DUI.prototype.resizeCanvas = function (width, height, bForceResize, bDraw) { var me = this; //"use strict";

@@ -398,6 +398,44 @@ iCn3D.prototype.setColorByOptions = function (options, atoms, bUseInputColor) {
 
             break;
 
+        case 'area':
+            if(this.resid2area === undefined) {
+                // calculate area to set up this.resid2area
+                var currHAtoms = this.cloneHash(this.hAtoms);
+
+                // calculate area for all
+                this.hAtoms = this.cloneHash(this.atoms);
+
+                this.bCalcArea = true;
+                this.opts.surface = 'solvent accessible surface';
+                this.applySurfaceOptions();
+                this.bCalcArea = false;
+
+                this.hAtoms = this.cloneHash(currHAtoms);
+            }
+
+            // http://proteopedia.org/wiki/index.php/Temperature_color_schemes
+            // Fixed: Middle (white): 50, red: >= 100, blue: 0
+            var middB = (this.midpercent !== undefined) ? this.midpercent : 35;
+            this.spanBinv1 = 0.02;
+            this.spanBinv2 = 0.02;
+
+            for (var i in atoms) {
+                var atom = this.atoms[i];
+                var resid = atom.structure + '_' + atom.chain + '_' + atom.resi + '_' + atom.resn;
+
+                var b = (this.residueArea.hasOwnProperty(atom.resn)) ? this.resid2area[resid] / this.residueArea[atom.resn] * 100 : middB;
+
+                if(b > 100) b = 100;
+
+                atom.color = b < middB ? new THREE.Color().setRGB(1 - (s = (middB - b) * this.spanBinv1), 1 - s, 1) : new THREE.Color().setRGB(1, 1 - (s = (b - middB) * this.spanBinv2), 1 - s);
+
+                if(this.bOpm && atom.resn == 'DUM') atom.color = this.atomColors[atom.elem];
+
+                this.atomPrevColors[i] = atom.color;
+            }
+            break;
+
         case 'identity':
             this.setConservationColor(atoms, true);
             break;

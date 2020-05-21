@@ -112,8 +112,58 @@ iCn3D.prototype.createSurfaceRepresentation = function (atoms, type, wireframe, 
             atomsToShow: Object.keys(atoms),
             extendedAtoms: extendedAtoms,
             type: type,
-            threshbox: (bTransparent) ? 60 : this.threshbox
+            threshbox: (bTransparent) ? 60 : this.threshbox,
+            bCalcArea: this.bCalcArea
         });
+    }
+
+    if(this.bCalcArea) {
+        this.areavalue = ps.area.toFixed(2);
+        var serial2area = ps.serial2area;
+        var scaleFactorSq = ps.scaleFactor * ps.scaleFactor;
+
+        this.resid2area = {};
+        var structureHash = {}, chainHash = {};
+        for(var i in serial2area) {
+            var atom = this.atoms[i];
+            var resid = atom.structure + '_' + atom.chain + '_' + atom.resi + '_' + atom.resn;
+            structureHash[atom.structure] = 1;
+            chainHash[atom.structure + '_' + atom.chain] = 1;
+
+            if(this.resid2area[resid] === undefined) this.resid2area[resid] = serial2area[i];
+            else this.resid2area[resid] += serial2area[i];
+        }
+
+        var html = '<table border="1" cellpadding="10" cellspacing="0">';
+        var structureStr = (Object.keys(structureHash).length > 1) ? '<th>Structure</th>' : '';
+        var chainStr = (Object.keys(chainHash).length > 1) ? '<th>Chain</th>' : '';
+        html += '<tr>' + structureStr + chainStr + '<th>Residue</th><th>Number</th><th>SASA (&#8491;<sup>2</sup>)</th><th>Percent Out</th><th>In/Out</th></tr>';
+        for(var resid in this.resid2area) {
+            var idArray = resid.split('_');
+
+            structureStr = (Object.keys(structureHash).length > 1) ? '<td>' + idArray[0] + '</td>' : '';
+            chainStr = (Object.keys(chainHash).length > 1) ? '<td>' + idArray[1] + '</td>' : '';
+            // outside: >= 50%; Inside: < 20%; middle: 35
+            var inoutStr = '', percent = '';
+            var  area = (this.resid2area[resid] / scaleFactorSq).toFixed(2);
+            if(this.residueArea.hasOwnProperty(idArray[3])) {
+                var middle = 35;
+                percent = parseInt(area / this.residueArea[idArray[3]] * 100);
+                if(percent > 100) percent = 100;
+
+                if(percent >= 50) inoutStr = 'out';
+                if(percent < 20) inoutStr = 'in';
+            }
+
+            html += '<tr align="center">' + structureStr + chainStr + '<td>' + idArray[3] + '</td><td align="right">' + idArray[2] + '</td><td align="right">'
+                + area + '</td><td align="right">' + percent + '%</td><td>' + inoutStr + '</td></tr>';
+        }
+
+        html += '</table>';
+
+        this.areahtml = html;
+
+        return;
     }
 
     var verts = ps.vertices;
@@ -163,7 +213,6 @@ iCn3D.prototype.createSurfaceRepresentation = function (atoms, type, wireframe, 
 
         return new THREE.Face3(f.a, f.b, f.c, undefined, vertexColors);
     });
-
 
     //http://analyticphysics.com/Coding%20Methods/Special%20Topics%20in%20Three.js.htm
     //var c = geo.center();

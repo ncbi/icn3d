@@ -13,7 +13,7 @@ if (!$.ui.dialog.prototype._makeDraggableBase) {
 }
 
 var iCn3DUI = function(cfg) { var me = this; //"use strict";
-    this.REVISION = '2.15.3';
+    this.REVISION = '2.16.0';
 
     me.bFullUi = true;
 
@@ -104,7 +104,22 @@ var iCn3DUI = function(cfg) { var me = this; //"use strict";
     me.GREYD = "#DDDDDD";
     me.ORANGE = "#FFA500";
 
-    me.baseUrl = "https://www.ncbi.nlm.nih.gov/Structure/";
+    // used in graph
+    me.ssValue = 3;
+    me.coilValue = 2;
+
+    me.contactValue = 11;
+    me.contactInsideValue = 11;
+    me.hbondValue = 12;
+    me.hbondInsideValue = 13;
+
+    me.ssbondValue = 4;
+    me.ionicValue = 5;
+    me.ionicInsideValue = 6;
+
+    me.clbondValue = 14;
+
+    me.baseUrl = "https://structure.ncbi.nlm.nih.gov/";
     me.divStr = "<div id='" + me.pre;
     me.divNowrapStr = "<div style='white-space:nowrap'>";
     me.spanNowrapStr = "<span style='white-space:nowrap'>";
@@ -171,6 +186,7 @@ var iCn3DUI = function(cfg) { var me = this; //"use strict";
     me.opts['contact']            = 'no';                 //yes, no
     //me.opts['stabilizer']           = 'no';                 //yes, no
     me.opts['ssbonds']            = 'yes';                 //yes, no
+    me.opts['clbonds']            = 'yes';                 //yes, no
     me.opts['rotationcenter']     = 'molecule center';    //molecule center, pick center, display center
     me.opts['axis']               = 'no';                 //yes, no
     me.opts['fog']                = 'no';                 //yes, no
@@ -459,7 +475,7 @@ iCn3DUI.prototype = {
             var text = (this.pk == 1) ? atom.resn + atom.resi + '@' + atom.name : atom.resn + atom.resi;
             if(me.icn3d.structures !== undefined && Object.keys(me.icn3d.structures).length > 1) {
                 text = atom.structure + '_' + atom.chain + ' ' + text;
-                $("#" + me.pre + "popup").css("width", "120px");
+                $("#" + me.pre + "popup").css("width", "140px");
             }
             else {
                 $("#" + me.pre + "popup").css("width", "80px");
@@ -818,6 +834,43 @@ iCn3DUI.prototype = {
 
           var residueHash = me.icn3d.getResiduesFromCalphaAtoms(me.icn3d.hAtoms);
           me.changeSeqColor(Object.keys(residueHash));
+
+          // change graphcolor
+          if(me.graphStr !== undefined) {
+              var graphJson = JSON.parse(me.graphStr);
+
+              var resid2color = {};
+              for(var resid in me.icn3d.residues) {
+                  var atom = me.icn3d.getFirstAtomObj(me.icn3d.residues[resid]);
+                  resid2color[resid] = atom.color.getHexString().toUpperCase();
+              }
+
+              var target2resid = {};
+              for(var i = 0, il = graphJson.nodes.length; i < il; ++i) {
+                  var node = graphJson.nodes[i];
+
+                  //node.r: 1_1_1KQ2_A_1
+                  var idArray = node.r.split('_');
+                  var resid = idArray[2] + '_' + idArray[3] + '_' + idArray[4];
+
+                  node.c = resid2color[resid];
+
+                  target2resid[node.id] = resid;
+              }
+
+              for(var i = 0, il = graphJson.links.length; i < il; ++i) {
+                  var link = graphJson.links[i];
+
+                  if(link.v == me.ssValue || link.v == me.coilValue) {
+                      var resid = target2resid[link.target];
+                      link.c = resid2color[resid];
+                  }
+              }
+
+              me.graphStr = JSON.stringify(graphJson);
+
+              me.drawGraph(me.graphStr);
+          }
       }
       else if(id === 'surface' || id === 'opacity' || id === 'wireframe') {
           if(id === 'opacity' || id === 'wireframe') {
@@ -1317,7 +1370,7 @@ iCn3DUI.prototype = {
         return selAtoms;
     },
 
-    pickCustomSphere: function (radius, nameArray2, nameArray, bSphereCalc, bInteraction) {   var me = this; //"use strict";  // me.icn3d.pAtom is set already
+    pickCustomSphere: function (radius, nameArray2, nameArray, bSphereCalc, bInteraction, type) {   var me = this; //"use strict";  // me.icn3d.pAtom is set already
 //        me.removeHlMenus();
 
         if(bSphereCalc) return;
@@ -1328,8 +1381,24 @@ iCn3DUI.prototype = {
             me.icn3d.opts['contact'] = "yes";
         }
 
-        var atomlistTarget = me.getAtomsFromNameArray(nameArray2);
-        var otherAtoms = me.getAtomsFromNameArray(nameArray);
+        var atomlistTarget, otherAtoms;
+
+        // could be ligands
+/*
+        if(type == 'graph') { // only consider protein or nucleotide
+            var atoms = me.getAtomsFromNameArray(nameArray2);
+            atomlistTarget = me.icn3d.intHash(atoms, me.icn3d.proteins);
+            atomlistTarget = me.icn3d.unionHash2Atoms(atomlistTarget, me.icn3d.intHash(atoms, me.icn3d.nucleotides));
+
+            atoms = me.getAtomsFromNameArray(nameArray);
+            otherAtoms = me.icn3d.intHash(atoms, me.icn3d.proteins);
+            otherAtoms = me.icn3d.unionHash2Atoms(otherAtoms, me.icn3d.intHash(atoms, me.icn3d.nucleotides));
+        }
+        else {
+*/
+            atomlistTarget = me.getAtomsFromNameArray(nameArray2);
+            otherAtoms = me.getAtomsFromNameArray(nameArray);
+//        }
 
         // select all atom, not just displayed atoms
         var bGetPairs = true;
@@ -1388,7 +1457,7 @@ iCn3DUI.prototype = {
     },
 
     // between the highlighted and atoms in nameArray
-    showHbonds: function (threshold, nameArray2, nameArray, bHbondCalc, bSaltbridge) { var me = this; //"use strict";
+    showHbonds: function (threshold, nameArray2, nameArray, bHbondCalc, bSaltbridge, type) { var me = this; //"use strict";
         if(bHbondCalc) return;
 
         var hbonds_saltbridge, select;
@@ -1404,13 +1473,27 @@ iCn3DUI.prototype = {
         me.icn3d.opts[hbonds_saltbridge] = "yes";
         me.icn3d.opts["water"] = "dot";
 
-        var firstSetAtoms = me.getAtomsFromNameArray(nameArray2);
-        var complement = me.getAtomsFromNameArray(nameArray);
+        var firstSetAtoms, complement;
+/*
+        if(type == 'graph') { // only consider protein or nucleotide
+            var atoms = me.getAtomsFromNameArray(nameArray2);
+            firstSetAtoms = me.icn3d.intHash(atoms, me.icn3d.proteins);
+            firstSetAtoms = me.icn3d.unionHash2Atoms(firstSetAtoms, me.icn3d.intHash(atoms, me.icn3d.nucleotides));
+
+            atoms = me.getAtomsFromNameArray(nameArray);
+            complement = me.icn3d.intHash(atoms, me.icn3d.proteins);
+            complement = me.icn3d.unionHash2Atoms(complement, me.icn3d.intHash(atoms, me.icn3d.nucleotides));
+        }
+*/
+        //else {
+            firstSetAtoms = me.getAtomsFromNameArray(nameArray2);
+            complement = me.getAtomsFromNameArray(nameArray);
+        //}
 
         var firstAtom = me.icn3d.getFirstAtomObj(firstSetAtoms);
 
         if(Object.keys(complement).length > 0 && Object.keys(firstSetAtoms).length > 0) {
-            var selectedAtoms = me.icn3d.calculateChemicalHbonds(complement, me.icn3d.intHash2Atoms(me.icn3d.dAtoms, firstSetAtoms), parseFloat(threshold), bSaltbridge );
+            var selectedAtoms = me.icn3d.calculateChemicalHbonds(me.icn3d.intHash2Atoms(me.icn3d.dAtoms, complement), me.icn3d.intHash2Atoms(me.icn3d.dAtoms, firstSetAtoms), parseFloat(threshold), bSaltbridge );
 
             var commanddesc;
             if(bSaltbridge) {
@@ -1434,6 +1517,58 @@ iCn3DUI.prototype = {
                 for(var i in me.icn3d.residues[resid]) {
                     me.icn3d.hAtoms[i] = 1;
                     me.icn3d.atoms[i].style2 = 'stick';
+                    //me.icn3d.atoms[i].style2 = 'lines';
+                }
+            }
+
+            var commandname = hbonds_saltbridge + '_' + firstAtom.serial;
+            me.addCustomSelection(Object.keys(residues), commandname, commanddesc, select, true);
+
+            var nameArray = [commandname];
+
+            me.saveSelectionIfSelected();
+
+            me.icn3d.draw();
+        }
+    },
+
+    showIonicInteractions: function (threshold, nameArray2, nameArray, bHbondCalc, bSaltbridge, type) { var me = this; //"use strict";
+        if(bHbondCalc) return;
+
+        var hbonds_saltbridge, select;
+        hbonds_saltbridge = 'saltbridge';
+        select = 'salt bridge ' + threshold + ' | sets ' + nameArray2 + " " + nameArray + " | " + bHbondCalc;
+
+        me.icn3d.opts[hbonds_saltbridge] = "yes";
+        //me.icn3d.opts["water"] = "dot";
+
+        var firstSetAtoms, complement;
+        firstSetAtoms = me.getAtomsFromNameArray(nameArray2);
+        complement = me.getAtomsFromNameArray(nameArray);
+
+        var firstAtom = me.icn3d.getFirstAtomObj(firstSetAtoms);
+
+        if(Object.keys(complement).length > 0 && Object.keys(firstSetAtoms).length > 0) {
+            var selectedAtoms = me.icn3d.calculateIonicInteractions(me.icn3d.intHash2Atoms(me.icn3d.dAtoms, complement), me.icn3d.intHash2Atoms(me.icn3d.dAtoms, firstSetAtoms), parseFloat(threshold), bSaltbridge );
+
+            var commanddesc;
+            me.resid2ResidhashSaltbridge = me.icn3d.cloneHash(me.icn3d.resid2Residhash);
+            commanddesc = 'all atoms that have ionic interactions with the selected atoms';
+
+            var residues = {}, atomArray = undefined;
+
+            for (var i in selectedAtoms) {
+                var residueid = me.icn3d.atoms[i].structure + '_' + me.icn3d.atoms[i].chain + '_' + me.icn3d.atoms[i].resi;
+                residues[residueid] = 1;
+            }
+
+            me.icn3d.hAtoms = {};
+            for(var resid in residues) {
+                for(var i in me.icn3d.residues[resid]) {
+                    me.icn3d.hAtoms[i] = 1;
+                    me.icn3d.atoms[i].style2 = 'stick';
+
+                    if(me.icn3d.ions.hasOwnProperty(i)) me.icn3d.atoms[i].style2 = 'sphere';
                     //me.icn3d.atoms[i].style2 = 'lines';
                 }
             }
@@ -1494,6 +1629,37 @@ iCn3DUI.prototype = {
 
             me.icn3d.draw();
         }
+    },
+
+    // show all cross-linkages bonds
+    showClbonds: function () { var me = this; //"use strict";
+         me.icn3d.opts["clbonds"] = "yes";
+
+         var select = 'cross linkage';
+
+         // find all bonds to chemicals
+         var residues = me.icn3d.applyClbondsOptions();
+
+         for(var resid in residues) {
+             me.icn3d.hAtoms = me.icn3d.unionHash(me.icn3d.hAtoms, me.icn3d.residues[resid]);
+         }
+
+         if(Object.keys(residues).length > 0) {
+            var commandname = 'clbonds';
+            var commanddesc = 'all atoms that have cross-linkages';
+            me.addCustomSelection(Object.keys(residues), commandname, commanddesc, select, true);
+
+            var nameArray = [commandname];
+
+            //me.changeCustomResidues(nameArray);
+
+            me.saveSelectionIfSelected();
+
+            // show side chains for the selected atoms
+            //me.setStyle('sidec', 'stick');
+
+            me.icn3d.draw();
+         }
     },
 
     addLine: function (x1, y1, z1, x2, y2, z2, color, dashed, type) { var me = this; //"use strict";
@@ -1929,13 +2095,94 @@ iCn3DUI.prototype = {
         me.saveFile(file_pref + '_disulfide_pairs.html', 'html', text);
     },
 
-    exportHbondPairs: function(bSave) { var me = this; //"use strict";
+    exportClbondPairs: function() { var me = this; //"use strict";
         var tmpText = '';
         var cnt = 0;
+
+        var residHash = {};
+        for(var structure in me.icn3d.structures) {
+            var clbondArray = me.icn3d.clbondpnts[structure];
+            if(clbondArray === undefined) {
+                break;
+            }
+
+            for(var i = 0, il = clbondArray.length; i < il; i = i + 2) {
+                var resid1 = clbondArray[i];
+                var resid2 = clbondArray[i+1];
+
+                if(!residHash.hasOwnProperty(resid1 + '_' + resid2)) {
+                    var atom1 = me.icn3d.getFirstAtomObj(me.icn3d.residues[resid1]);
+                    var atom2 = me.icn3d.getFirstAtomObj(me.icn3d.residues[resid2]);
+
+                    tmpText += '<tr><td>' + resid1 + ' ' + atom1.resn + '</td><td>' + resid2 + ' ' + atom2.resn + '</td></tr>';
+                    ++cnt;
+                }
+
+                residHash[resid1 + '_' + resid2] = 1;
+                residHash[resid2 + '_' + resid1] = 1;
+            }
+        }
+
+        var text = '<html><body><div style="text-align:center"><br><b>' + cnt + ' cross-linkage pairs</b>:<br><br><table align=center border=1 cellpadding=10 cellspacing=0><tr><th>Residue ID 1</th><th>Residue ID 2</th></tr>';
+
+        text += tmpText;
+
+        text += '</table><br/></div></body></html>';
+
+        var file_pref = (me.inputid) ? me.inputid : "custom";
+        me.saveFile(file_pref + '_crosslinkage_pairs.html', 'html', text);
+    },
+
+    getGraphLinks: function(hash1, hash2, color, labelType, value) { var me = this; //"use strict";
+        var hbondStr = '';
+
+        value = (value === undefined) ? 1 : value;
+
+        var prevLinkStr = '';
+        for(var resid1 in hash1) {
+            //ASN $1KQ2.A:6@ND2
+            //or ASN $1KQ2.A:6
+            var pos1a = resid1.indexOf(' ');
+            var pos1b = resid1.indexOf(':');
+            var posTmp1 = resid1.indexOf('@');
+            var pos1c = (posTmp1 !== -1) ? posTmp1 : resid1.length;
+            var pos1d = resid1.indexOf('.');
+            var pos1e = resid1.indexOf('$');
+            var resName1 = me.icn3d.residueName2Abbr(resid1.substr(0, pos1a)) + resid1.substr(pos1b + 1, pos1c - pos1b - 1);
+            if(labelType == 'chain' || labelType == 'structure') resName1 += '.' + resid1.substr(pos1d + 1, pos1b - pos1d - 1);
+            if(labelType == 'structure') resName1 += '.' + resid1.substr(pos1e + 1, pos1d - pos1e - 1);
+
+            for(var resid2 in hash2[resid1]) {
+                var pos2a = resid2.indexOf(' ');
+                var pos2b = resid2.indexOf(':');
+                var posTmp2 = resid2.indexOf('@');
+                var pos2c = (posTmp2 !== -1) ? posTmp2 : resid2.length;
+                var pos2d = resid2.indexOf('.');
+                var pos2e = resid2.indexOf('$');
+                var resName2 = me.icn3d.residueName2Abbr(resid2.substr(0, pos2a)) + resid2.substr(pos2b + 1, pos2c - pos2b - 1); //
+                    + '_' + resid2.substr(pos2d + 1, pos2b - pos2d - 1);
+                if(labelType == 'chain' || labelType == 'structure') resName2 += '.' + resid2.substr(pos2d + 1, pos2b - pos2d - 1);
+                if(labelType == 'structure') resName2 += '.' + resid2.substr(pos2e + 1, pos2d - pos2e - 1);
+
+                var linkStr = ', {"source": "' + resName1 + '", "target": "' + resName2 + '", "v": ' + value + ', "c": "' + color + '"}';
+
+                if(linkStr != prevLinkStr) hbondStr += linkStr;
+
+                prevLinkStr = linkStr;
+            }
+        }
+
+        return hbondStr;
+    },
+
+    exportHbondPairs: function(type, labelType) { var me = this; //"use strict";
+        var tmpText = '';
+        var cnt = 0;
+
         for(var resid1 in me.resid2ResidhashHbond) {
             for(var resid2 in me.resid2ResidhashHbond[resid1]) {
                 tmpText += '<tr><td><input type="checkbox" class="' + me.pre + 'seloneres" id="' + me.pre + 'hbond_' +  cnt + 'a" resid="' + resid1 + '"/> ' + resid1 + '</td><td><input type="checkbox" class="' + me.pre + 'seloneres" id="' + me.pre + 'hbond_' +  cnt + 'b" resid="' + resid2 + '"/> ' + resid2 + '</td>';
-                if(bSave === undefined) tmpText += '<td align="center"><button class="' + me.pre + 'selres" resid="' + resid1 + '|' + resid2 + '">Highlight</button></td>';
+                if(type == 'view') tmpText += '<td align="center"><button class="' + me.pre + 'selres" resid="' + resid1 + '|' + resid2 + '">Highlight</button></td>';
                 tmpText += '</tr>';
                 ++cnt;
             }
@@ -1944,58 +2191,65 @@ iCn3DUI.prototype = {
         var text = '<div style="text-align:center"><br><b>' + cnt
         + ' hydrogen bond pairs</b>:</div><br><br><table align=center border=1 cellpadding=10 cellspacing=0>'
         + '<tr><th>Atom 1</th><th>Atom 2</th>';
-        if(bSave === undefined) text += '<th align="center">Highlight in 3D</th>';
+        if(type == 'view') text += '<th align="center">Highlight in 3D</th>';
         text += '</tr>';
 
         text += tmpText;
 
         text += '</table><br/></div>';
 
-        //var file_pref = (me.inputid) ? me.inputid : "custom";
-        //me.saveFile(file_pref + '_hbond_pairs.html', 'html', text);
-        return text;
+        if(type == 'graph') {
+            var hbondStr = me.getGraphLinks(me.resid2ResidhashHbond, me.resid2ResidhashHbond, '0F0', labelType, me.hbondValue);
+            return hbondStr;
+        }
+        else {
+            return text;
+        }
     },
 
-    exportSaltbridgePairs: function(bSave) { var me = this; //"use strict";
+    exportSaltbridgePairs: function(type, labelType) { var me = this; //"use strict";
         var tmpText = '';
         var cnt = 0;
         for(var resid1 in me.resid2ResidhashSaltbridge) {
             for(var resid2 in me.resid2ResidhashSaltbridge[resid1]) {
                 tmpText += '<tr><td><input type="checkbox" class="' + me.pre + 'seloneres" id="' + me.pre + 'saltb_' +  cnt + 'a" resid="' + resid1 + '"/> ' + resid1 + '</td><td><input type="checkbox" class="' + me.pre + 'seloneres" id="' + me.pre + 'saltb_' +  cnt + 'b" resid="' + resid2 + '"/> ' + resid2 + '</td>';
-                if(bSave === undefined) tmpText += '<td align="center"><button class="' + me.pre + 'selres" resid="' + resid1 + '|' + resid2 + '">Highlight</button></td>';
+                if(type == 'view') tmpText += '<td align="center"><button class="' + me.pre + 'selres" resid="' + resid1 + '|' + resid2 + '">Highlight</button></td>';
                 tmpText += '</tr>';
                 ++cnt;
             }
         }
 
         var text = '<div style="text-align:center"><br><b>' + cnt
-          + ' Salt bridge pairs</b>:</div><br><br><table align=center border=1 cellpadding=10 cellspacing=0>'
+          + ' ionic interaction pairs</b>:</div><br><br><table align=center border=1 cellpadding=10 cellspacing=0>'
           + '<tr><th>Atom 1</th><th>Atom 2</th>';
-        if(bSave === undefined) text += '<th align="center">Highlight in 3D</th>';
+        if(type == 'view') text += '<th align="center">Highlight in 3D</th>';
         text += '</tr>';
 
         text += tmpText;
 
         text += '</table><br/></div>';
 
-        //var file_pref = (me.inputid) ? me.inputid : "custom";
-        //me.saveFile(file_pref + '_saltbridge_pairs.html', 'html', text);
-
-        return text;
+        if(type == 'graph') {
+            var hbondStr = me.getGraphLinks(me.resid2ResidhashSaltbridge, me.resid2ResidhashSaltbridge, '0FF', labelType, me.ionicValue);
+            return hbondStr;
+        }
+        else {
+            return text;
+        }
     },
 
-    exportSpherePairs: function(bInteraction, bSave) { var me = this; //"use strict";
+    exportSpherePairs: function(bInteraction, type, labelType) { var me = this; //"use strict";
         var tmpText = '';
         var cnt = 0;
         var residHash = (bInteraction) ? me.resid2ResidhashInteractions : me.resid2ResidhashSphere;
 
-        for(var resid1 in residHash) { // e.g., resid1: 1KQ2_A_6_C ASN
+        for(var resid1 in residHash) { // e.g., resid1: TYR $1KQ2.A:42
             for(var resid2 in residHash[resid1]) {
                 var dist1_dist2 = residHash[resid1][resid2].split('_');
 
                 if(bInteraction) {
                     tmpText += '<tr><td><input type="checkbox" class="' + me.pre + 'seloneres" id="' + me.pre + 'inter_' +  cnt + 'a" resid="' + resid1 + '"/> ' + resid1 + '</td><td><input type="checkbox" class="' + me.pre + 'seloneres" id="' + me.pre + 'inter_' +  cnt + 'b" resid="' + resid2 + '"/> ' + resid2 + '</td><td align="center">' + dist1_dist2[0] + '</td><td align="center">' + dist1_dist2[1] + '</td>';
-                    if(bSave === undefined) tmpText += '<td align="center"><button class="' + me.pre + 'selres" resid="' + resid1 + '|' + resid2 + '">Highlight</button></td>';
+                    if(type == 'view') tmpText += '<td align="center"><button class="' + me.pre + 'selres" resid="' + resid1 + '|' + resid2 + '">Highlight</button></td>';
                     tmpText += '</tr>';
                 }
                 else {
@@ -2006,14 +2260,14 @@ iCn3DUI.prototype = {
             }
         }
 
-        var nameStr = (bInteraction) ? "the interations" : "sphere";
+        var nameStr = (bInteraction) ? "the contacts" : "sphere";
         var text = '<div style="text-align:center"><br><b>' + cnt
           + ' residue pairs in ' + nameStr + '</b>:</div><br><br>';
 
         if(bInteraction) {
             text += '<table align=center border=1 cellpadding=10 cellspacing=0>'
               + '<tr><th>Residue 1</th><th>Residue 2</th><th align="center">Min Distance (&#8491;)</th><th align="center">C-alpha Distance (&#8491;)</th>';
-            if(bSave === undefined) text += '<th align="center">Highlight in 3D</th>';
+            if(type == 'view') text += '<th align="center">Highlight in 3D</th>';
             text += '</tr>';
         }
         else {
@@ -2025,16 +2279,48 @@ iCn3DUI.prototype = {
 
         text += '</table><br/></div>';
 
-/*
-        var file_pref = (me.inputid) ? me.inputid : "custom";
-        if(bInteraction) {
-            me.saveFile(file_pref + '_interaction_pairs.html', 'html', text);
+        if(type == 'graph') {
+            var interStr = me.getGraphLinks(residHash, residHash, '222', labelType, me.contactValue);
+
+            return interStr;
         }
         else {
-            me.saveFile(file_pref + '_sphere_pairs.html', 'html', text);
+            return text;
+        }
+/*
+        if(type == 'graph') {
+            var interStr = '';
+            for(var resid1 in residHash) {
+                //$1KQ2.A:42 TYR
+                var pos1a = resid1.indexOf(' ');
+                var pos1b = resid1.indexOf(':');
+                var pos1c = resid1.indexOf('.');
+                var pos1d = resid1.indexOf('$');
+                var resn1 = me.icn3d.residueName2Abbr(resid1.substr(pos1a + 1));
+                var resName1 = resn1 + resid1.substr(pos1b + 1, pos1a - pos1b - 1);
+                if(labelType == 'chain' || labelType == 'structure') resName1 += '.' + resid1.substr(pos1c + 1, pos1b - pos1c - 1);
+                if(labelType == 'structure') resName1 += '.' + resid1.substr(pos1d + 1, pos1c - pos1d - 1);
+
+                for(var resid2 in residHash[resid1]) {
+                    var pos2a = resid2.indexOf(' ');
+                    var pos2b = resid2.indexOf(':');
+                    var pos2c = resid2.indexOf('.');
+                    var pos2d = resid2.indexOf('$');
+                    var resn2 = me.icn3d.residueName2Abbr(resid2.substr(pos2a + 1));
+                    var resName2 = resn2 + resid2.substr(pos2b + 1, pos2a - pos2b - 1);
+                    if(labelType == 'chain' || labelType == 'structure') resName2 += '.' + resid2.substr(pos2c + 1, pos2b - pos2c - 1);
+                    if(labelType == 'structure') resName2 += '.' + resid2.substr(pos2d + 1, pos2c - pos2d - 1);
+
+                    interStr += ', {"source": "' + resName1 + '", "target": "' + resName2 + '", "v": 0.5, "c": "222"}';
+                }
+            }
+
+            return interStr;
+        }
+        else {
+            return text;
         }
 */
-        return text;
     },
 
     saveColor: function() { var me = this; //"use strict";
@@ -3893,6 +4179,21 @@ iCn3DUI.prototype = {
         });
     },
 
+    clkMn4_clrArea: function() { var me = this; //"use strict";
+        $("#" + me.pre + "mn4_clrArea").click(function(e) {
+            me.openDialog(me.pre + 'dl_colorbyarea', "Color based on residue's solvent accessibility");
+        });
+
+        $("#" + me.pre + "applycolorbyarea").click(function(e) {
+            me.icn3d.midpercent = $("#" + me.pre + 'midpercent').val();
+
+            me.setOption('color', 'area');
+            me.setLogCmd('color area | ' + me.icn3d.midpercent, true);
+
+            //$( ".icn3d-accordion" ).accordion(me.closeAc);
+        });
+    },
+
     clkMn4_clrBfactorNorm: function() { var me = this; //"use strict";
         $("#" + me.pre + "mn4_clrBfactorNorm").click(function(e) {
            me.setOption('color', 'b factor percentile');
@@ -4950,6 +5251,28 @@ iCn3DUI.prototype = {
         });
     },
 
+    clkMn6_area: function() { var me = this; //"use strict";
+        $("#" + me.pre + "mn6_area").click(function(e) {
+            me.calculateArea();
+            me.setLogCmd('area', true);
+        });
+    },
+
+    calculateArea: function() { var me = this; //"use strict";
+       me.icn3d.bCalcArea = true;
+
+       me.icn3d.opts.surface = 'solvent accessible surface';
+
+       me.icn3d.applySurfaceOptions();
+
+       $("#" + me.pre + "areavalue").val(me.icn3d.areavalue);
+       $("#" + me.pre + "areatable").html(me.icn3d.areahtml);
+
+       me.openDialog(me.pre + 'dl_area', 'Surface area calculation');
+
+       me.icn3d.bCalcArea = false;
+    },
+
     clkMn6_applysymmetry: function() { var me = this; //"use strict";
         $("#" + me.pre + "applysymmetry").click(function(e) {
            var title = $("#" + me.pre + "selectSymmetry" ).val();
@@ -5127,7 +5450,7 @@ iCn3DUI.prototype = {
         $("#" + me.pre + "mn6_ssbondsExport").click(function(e) {
            me.exportSsbondPairs();
 
-           me.setLogCmd("export disulfide bond pairs", true);
+           me.setLogCmd("export disulfide bond pairs", false);
 
            //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
@@ -5153,10 +5476,20 @@ iCn3DUI.prototype = {
            var select = "cross linkage";
            me.setLogCmd(select, true);
 
-           me.icn3d.bShowCrossResidueBond = true;
+           //me.icn3d.bShowCrossResidueBond = true;
+           //me.setStyle('proteins', 'lines')
 
-           me.setStyle('proteins', 'lines')
-           //me.icn3d.draw();
+           me.showClbonds(true);
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
+        });
+    },
+
+    clkMn6_clbondsExport: function() { var me = this; //"use strict";
+        $("#" + me.pre + "mn6_clbondsExport").click(function(e) {
+           me.exportClbondPairs();
+
+           me.setLogCmd("export cross linkage pairs", false);
 
            //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
@@ -5169,11 +5502,12 @@ iCn3DUI.prototype = {
            var select = "set cross linkage off";
            me.setLogCmd(select, true);
 
-           me.icn3d.bShowCrossResidueBond = false;
-           //me.opts['proteins'] = 'ribbon';
+           //me.icn3d.bShowCrossResidueBond = false;
+           //me.setStyle('proteins', 'ribbon')
 
-           //me.icn3d.draw();
-           me.setStyle('proteins', 'ribbon')
+           me.icn3d.lines['clbond'] = [];
+
+           me.setStyle('sidec', 'nothing');
 
            //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
@@ -6270,6 +6604,47 @@ iCn3DUI.prototype = {
        me.bHbondCalc = true;
     },
 
+    showInteractions: function(type) { var me = this; //"use strict";
+       var nameArray = $("#" + me.pre + "atomsCustomHbond").val();
+       var nameArray2 = $("#" + me.pre + "atomsCustomHbond2").val();
+
+       if(nameArray2.length == 0) {
+           alert("Please select the first set");
+       }
+       else {
+           var bHbond = $("#" + me.pre + "analysis_hbond")[0].checked;
+           var bSaltbridge = $("#" + me.pre + "analysis_saltbridge")[0].checked;
+           var bInteraction = $("#" + me.pre + "analysis_contact")[0].checked;
+
+           var thresholdHbond = $("#" + me.pre + "hbondthreshold").val();
+           var thresholdSaltbridge = $("#" + me.pre + "saltbridgethreshold").val();
+           var thresholdContact = $("#" + me.pre + "contactthreshold").val();
+           var thresholdStr = 'threshold ' + thresholdHbond + ' ' + thresholdSaltbridge + ' ' + thresholdContact;
+
+           var interactionTypes = me.viewInteractionPairs(nameArray2, nameArray, me.bHbondCalc, bHbond, bSaltbridge, bInteraction, type);
+
+           if(type == 'view') {
+               me.setLogCmd("view interaction pairs | " + nameArray2 + " " + nameArray + " | " + interactionTypes + " | false | " + thresholdStr, true);
+           }
+           else if(type == 'save') {
+               me.setLogCmd("save interaction pairs | " + nameArray2 + " " + nameArray + " | " + interactionTypes + " | false | " + thresholdStr, true);
+           }
+           else if(type == 'graph') { // force-directed graph
+                var dist_ss = parseInt($("#" + me.pre + "dist_ss").val());
+                var dist_coil = parseInt($("#" + me.pre + "dist_coil").val());
+                var dist_hbond = parseInt($("#" + me.pre + "dist_hbond").val());
+                var dist_inter = parseInt($("#" + me.pre + "dist_inter").val());
+                var dist_ssbond = parseInt($("#" + me.pre + "dist_ssbond").val());
+                var dist_ionic = parseInt($("#" + me.pre + "dist_ionic").val());
+
+                me.setLogCmd("graph interaction pairs | " + nameArray2 + " " + nameArray + " | " + interactionTypes
+                    + " | false | " + thresholdStr + " | " + dist_ss + " " + dist_coil
+                    + " " + dist_hbond + " " + dist_inter
+                    + " " + dist_ssbond + " " + dist_ionic, true);
+           }
+       }
+    },
+
     clickApplyhbonds: function() { var me = this; //"use strict";
         $("#" + me.pre + "atomsCustomHbond2").add("#" + me.pre + "atomsCustomHbond").add("#" + me.pre + "analysis_hbond").add("#" + me.pre + "analysis_saltbridge").add("#" + me.pre + "analysis_contact").add("#" + me.pre + "hbondthreshold").add("#" + me.pre + "saltbridgethreshold").add("#" + me.pre + "contactthreshold").change(function(e) {
             me.bHbondCalc = false;
@@ -6357,44 +6732,74 @@ iCn3DUI.prototype = {
            e.preventDefault();
            //dialog.dialog( "close" );
 
-           var nameArray = $("#" + me.pre + "atomsCustomHbond").val();
-           var nameArray2 = $("#" + me.pre + "atomsCustomHbond2").val();
-
-           if(nameArray2.length == 0) {
-               alert("Please select the first set");
-           }
-           else {
-               var bHbond = $("#" + me.pre + "analysis_hbond")[0].checked;
-               var bSaltbridge = $("#" + me.pre + "analysis_saltbridge")[0].checked;
-               var bInteraction = $("#" + me.pre + "analysis_contact")[0].checked;
-
-               var interactionTypes = me.viewInteractionPairs(nameArray2, nameArray, me.bHbondCalc, bHbond, bSaltbridge, bInteraction);
-
-               //me.setLogCmd("view interaction pairs | " + nameArray2 + " " + nameArray + " | " + interactionTypes + " | " + me.bHbondCalc, true);
-               me.setLogCmd("view interaction pairs | " + nameArray2 + " " + nameArray + " | " + interactionTypes + " | false", true);
-           }
+           me.showInteractions('view');
         });
 
         $("#" + me.pre + "hbondExport").click(function(e) {
            e.preventDefault();
            //dialog.dialog( "close" );
 
-           var nameArray = $("#" + me.pre + "atomsCustomHbond").val();
-           var nameArray2 = $("#" + me.pre + "atomsCustomHbond2").val();
+           me.showInteractions('save');
+        });
 
-           if(nameArray2.length == 0) {
-               alert("Please select the first set");
-           }
-           else {
-               var bHbond = $("#" + me.pre + "analysis_hbond")[0].checked;
-               var bSaltbridge = $("#" + me.pre + "analysis_saltbridge")[0].checked;
-               var bInteraction = $("#" + me.pre + "analysis_contact")[0].checked;
+        $("#" + me.pre + "hbondGraph").click(function(e) {
+           e.preventDefault();
+           //dialog.dialog( "close" );
 
-               var bSave = true;
-               var interactionTypes = me.viewInteractionPairs(nameArray2, nameArray, me.bHbondCalc, bHbond, bSaltbridge, bInteraction, bSave);
+           me.showInteractions('graph');
+        });
 
-               //me.setLogCmd("save interaction pairs | " + nameArray2 + " " + nameArray + " | " + interactionTypes + " | " + me.bHbondCalc, true);
-               me.setLogCmd("save interaction pairs | " + nameArray2 + " " + nameArray + " | " + interactionTypes + " | false", true);
+        // select residues
+        $(document).on("click", "#" + me.svgid + " circle.selected", function(e) {
+            e.stopImmediatePropagation();
+            var id = $(this).attr('res');
+
+            if(me.bSelectResidue === false && !me.icn3d.bShift && !me.icn3d.bCtrl) {
+              me.removeSelection();
+            }
+
+            if(id !== undefined) {
+               me.selectResidues(id, this);
+               me.icn3d.addHlObjects();  // render() is called
+            }
+        });
+
+        $("#" + me.svgid + "_svg").click(function(e) {
+           e.preventDefault();
+           //dialog.dialog( "close" );
+
+           me.saveSvg(me.inputid + "_force_directed_graph.svg");
+        });
+
+        $("#" + me.svgid + "_png").click(function(e) {
+           e.preventDefault();
+           //dialog.dialog( "close" );
+
+           me.savePng(me.inputid + "_force_directed_graph.png");
+        });
+
+        $("#" + me.svgid + "_label").change(function(e) {
+           e.preventDefault();
+           //dialog.dialog( "close" );
+
+           var className = $("#" + me.svgid + "_label").val();
+
+           $("#" + me.svgid + " text").removeClass();
+           $("#" + me.svgid + " text").addClass(className);
+
+           me.setLogCmd("graph label " + className, true);
+        });
+
+        $("#" + me.svgid + "_pushcenter").change(function(e) {
+           e.preventDefault();
+           //dialog.dialog( "close" );
+
+           me.pushcenter = parseInt($("#" + me.svgid + "_pushcenter").val());
+
+           if(me.graphStr !== undefined) {
+               me.drawGraph(me.graphStr);
+
+               me.setLogCmd("graph center " + me.pushcenter, true);
            }
         });
 
@@ -6410,16 +6815,16 @@ iCn3DUI.prototype = {
     },
 
     resetInteractionPairs: function() { var me = this; //"use strict";
-       $("#" + me.pre + "analysis_hbond")[0].checked = true;
-       $("#" + me.pre + "analysis_saltbridge")[0].checked = false;
-       $("#" + me.pre + "analysis_contact")[0].checked = false;
+       //$("#" + me.pre + "analysis_hbond")[0].checked = true;
+       //$("#" + me.pre + "analysis_saltbridge")[0].checked = true;
+       //$("#" + me.pre + "analysis_contact")[0].checked = true;
 
-       $("#" + me.pre + "atomsCustomHbond2").val(['selected']);
-       $("#" + me.pre + "atomsCustomHbond").val(['non-selected']);
+       //$("#" + me.pre + "atomsCustomHbond2").val(['selected']);
+       //$("#" + me.pre + "atomsCustomHbond").val(['non-selected']);
 
-       $("#" + me.pre + "hbondthreshold" ).val(3.5);
+       //$("#" + me.pre + "hbondthreshold" ).val(3.5);
        //$("#" + me.pre + "saltbridgethreshold" ).val(4.0); // this one somehow not working
-       $("#" + me.pre + "contactthreshold" ).val(4);
+       //$("#" + me.pre + "contactthreshold" ).val(4);
 
        me.bHbondCalc = false;
        //me.setLogCmd('set calculate hbond false', true);
@@ -6429,7 +6834,8 @@ iCn3DUI.prototype = {
        me.clearHighlight();
     },
 
-    viewInteractionPairs: function(nameArray2, nameArray, bHbondCalc, bHbond, bSaltbridge, bInteraction, bSave) { var me = this; //"use strict";
+    viewInteractionPairs: function(nameArray2, nameArray, bHbondCalc, bHbond, bSaltbridge, bInteraction, type) { var me = this; //"use strict";
+       // type: view, save, forcegraph
        me.icn3d.bRender = false;
        var hAtoms = {};
        var prevHatoms = me.icn3d.cloneHash(me.icn3d.hAtoms);
@@ -6438,38 +6844,64 @@ iCn3DUI.prototype = {
        var atomSet1 = me.getAtomsFromNameArray(nameArray2);
        var atomSet2 = me.getAtomsFromNameArray(nameArray);
 
+       var labelType; // residue, chain, structure
+       var cntChain = 0, cntStructure = 0;
+       for(var structure in me.icn3d.structures) {
+           var bStructure = false;
+           for(var i = 0, il = me.icn3d.structures[structure].length; i < il; ++i) {
+               var chainid = me.icn3d.structures[structure][i];
+               for(var serial in me.icn3d.chains[chainid]) {
+                   if(atomSet1.hasOwnProperty(serial) || atomSet2.hasOwnProperty(serial)) {
+                       ++cntChain;
+                       bStructure = true;
+                       break;
+                   }
+               }
+           }
+           ++cntStructure;
+       }
+
+       if(cntStructure > 1) labelType = 'structure';
+       else if(cntChain > 1) labelType = 'chain';
+       else labelType = 'residue';
+
        var residueArray1 = me.atoms2residues(Object.keys(atomSet1));
        var residueArray2 = me.atoms2residues(Object.keys(atomSet2));
 
        var cmd1 = 'select ' + me.residueids2spec(residueArray1);
        var cmd2 = 'select ' + me.residueids2spec(residueArray2);
 
-       if(bSave) {
+       if(type == 'save') {
            html += 'Set 1: ' + nameArray2 + '<br>';
            html += 'Set 2: ' + nameArray + '<br><br></div>';
        }
-       else {
+       else if(type == 'view') {
            html += 'Set 1: ' + nameArray2 + ' <button class="' + me.pre + 'selset" cmd="' + cmd1 + '">Highlight in 3D</button><br>';
            html += 'Set 2: ' + nameArray + ' <button class="' + me.pre + 'selset" cmd="' + cmd2 + '">Highlight in 3D</button><br><br></div>';
        }
 
-       html += '<div style="width:450px; text-align:center"><b>Note</b>: Each checkbox below selects the corresponding residue. '
-         + 'You can click "Save Selection" in the "Select" menu to save the selection '
+       html += '<div style="text-align:center"><b>Note</b>: Each checkbox below selects the corresponding residue. '
+         + 'You<br> can click "Save Selection" in the "Select" menu to save the selection<br> '
          + 'and click on "Highlight" button to clear the checkboxes.</div><br>'
 
+       if(type == 'graph') html = '';
+
        var interactionTypes = '';
+
+       var atomSet2 = me.getAtomsFromNameArray(nameArray2);
+       var atomSet1 = me.getAtomsFromNameArray(nameArray);
 
        if(bHbond) {
            var threshold = parseFloat($("#" + me.pre + "hbondthreshold" ).val());
 
            if(!bHbondCalc) {
                me.icn3d.hAtoms = me.icn3d.cloneHash(prevHatoms);
-               me.showHbonds(threshold, nameArray2, nameArray, bHbondCalc);
+               me.showHbonds(threshold, nameArray2, nameArray, bHbondCalc, undefined, type);
            }
 
            hAtoms = me.icn3d.unionHash(hAtoms, me.icn3d.hAtoms);
 
-           html += me.exportHbondPairs(bSave);
+           html += me.exportHbondPairs(type, labelType);
 
            //me.setLogCmd("export hbond pairs", false);
 
@@ -6482,12 +6914,13 @@ iCn3DUI.prototype = {
 
            if(!bHbondCalc) {
                me.icn3d.hAtoms = me.icn3d.cloneHash(prevHatoms);
-               me.showHbonds(threshold, nameArray2, nameArray, bHbondCalc, true);
+               //me.showHbonds(threshold, nameArray2, nameArray, bHbondCalc, true, type);
+               me.showIonicInteractions(threshold, nameArray2, nameArray, bHbondCalc, true, type);
            }
 
            hAtoms = me.icn3d.unionHash(hAtoms, me.icn3d.hAtoms);
 
-           html += me.exportSaltbridgePairs(bSave);
+           html += me.exportSaltbridgePairs(type, labelType);
 
            //me.setLogCmd("export salt bridge pairs", false);
            interactionTypes += 'salt bridge';
@@ -6499,12 +6932,12 @@ iCn3DUI.prototype = {
 
            if(!bHbondCalc) {
                me.icn3d.hAtoms = me.icn3d.cloneHash(prevHatoms);
-               me.pickCustomSphere(threshold, nameArray2, nameArray, bHbondCalc, true);
+               me.pickCustomSphere(threshold, nameArray2, nameArray, bHbondCalc, true, type);
            }
 
            hAtoms = me.icn3d.unionHash(hAtoms, me.icn3d.hAtoms);
 
-           html += me.exportSpherePairs(true, bSave);
+           html += me.exportSpherePairs(true, type, labelType);
 
            //me.setLogCmd("export interaction pairs", false);
            interactionTypes += 'interactions';
@@ -6516,21 +6949,329 @@ iCn3DUI.prototype = {
        //me.updateHlAll();
        me.icn3d.draw();
 
-
-       if(bSave) {
+       if(type == 'save') {
            var file_pref = (me.inputid) ? me.inputid : "custom";
            me.saveFile(file_pref + '_hbond_interaction_pairs.html', 'html', html);
        }
-       else {
+       else if(type == 'view') {
            $("#" + me.pre + "dl_allinteraction").html(html);
 
-           me.openDialog(me.pre + 'dl_allinteraction', 'Show hydrogen bonds, salt bridges, and interactions');
+           me.openDialog(me.pre + 'dl_allinteraction', 'Show hydrogen bonds, ionic interactions, and contacts');
+       }
+       else if(type == 'graph') {
+           me.graphStr = me.getGraphData(atomSet2, atomSet1, nameArray2, nameArray, html, labelType);
+
+           if(me.bD3 === undefined) {
+               var url = "https://d3js.org/d3.v4.min.js";
+               $.ajax({
+                  url: url,
+                  dataType: "script",
+                  cache: true,
+                  tryCount : 0,
+                  retryLimit : 1,
+                  success: function(data) {
+                       me.bD3 = true;
+
+                       $("#" + me.svgid).empty();
+                       me.openDialog(me.pre + 'dl_graph', 'Force-directed graph');
+                       if(me.icn3d.bRender) me.drawGraph(me.graphStr);
+                  },
+                  error : function(xhr, textStatus, errorThrown ) {
+                    this.tryCount++;
+                    if (this.tryCount <= this.retryLimit) {
+                        //try again
+                        $.ajax(this);
+                        return;
+                    }
+                    return;
+                  }
+               });
+           }
+           else {
+               $("#" + me.svgid).empty();
+               me.openDialog(me.pre + 'dl_graph', 'Force-directed graph');
+               if(me.icn3d.bRender) me.drawGraph(me.graphStr);
+           }
        }
 
        me.bHbondCalc = true;
        //me.setLogCmd('set calculate hbond true', true);
 
        return interactionTypes;
+    },
+
+    getGraphData: function(atomSet2, atomSet1, nameArray2, nameArray, html, labelType) { var me = this; //"use strict";
+       // get the nodes and links data
+       var nodeStr = '', linkStr = '';
+
+       var nodeArray = [], linkArray = [];
+
+       var node_link1 = me.getNodesLinksForSet(atomSet2, labelType);
+       var node_link2 = me.getNodesLinksForSet(atomSet1, labelType);
+
+       nodeArray = node_link1.node.concat(node_link2.node);
+
+       // removed uplicated nodes
+       var nodeStrArray = [];
+       for(var i = 0, il = nodeArray.length; i < il; ++i) {
+           var node = nodeArray[i];
+           if(nodeStrArray.indexOf(node) == -1) nodeStrArray.push(node);
+       }
+       nodeStr = nodeStrArray.join(', ');
+
+       // linkStr
+       linkArray = node_link1.link.concat(node_link2.link);
+       linkStr = linkArray.join(', ');
+
+       // add chemicals, no links for chemicals
+       var selectedAtoms = me.icn3d.unionHash(me.icn3d.cloneHash(atomSet1), atomSet2);
+       var chemcicalAtoms = me.icn3d.exclHash(me.icn3d.cloneHash(selectedAtoms), me.icn3d.proteins);
+       chemcicalAtoms = me.icn3d.exclHash(chemcicalAtoms, me.icn3d.nucleotides);
+
+       var chemicalNodeStr = '', prevResi = '', prevChain = '';
+       for(var i in chemcicalAtoms) {
+           var atom = me.icn3d.atoms[i];
+           if(atom.resi != prevResi || atom.chain != prevChain) {
+               var resName = me.icn3d.residueName2Abbr(atom.resn) + atom.resi;
+               if(labelType == 'chain' || labelType == 'structure') resName += '.' + atom.chain;
+               if(labelType == 'structure') resName += '.' + atom.structure;
+               // add 1_1_ to match other conventionssuch as seq_div0_1KQ2_A_50
+               var resid = '1_1_' + atom.structure + '_' + atom.chain + '_' + atom.resi;
+
+               chemicalNodeStr += ', {"id": "' + resName + '", "r": "' + resid + '", "x": ' + atom.coord.x.toFixed(0)
+                   + ', "y": ' + atom.coord.y.toFixed(0) + ', "c": "' + atom.color.getHexString().toUpperCase() + '"}';
+           }
+
+           prevResi = atom.resi;
+           prevChain = atom.chain;
+       }
+
+       // add hydrogen bonds for each set, color in light green
+       var hBondLinkStr = '';
+       if(!(nameArray2.length == 1 && nameArray.length == 1 && nameArray2[0] == nameArray[0])) {
+           hBondLinkStr += me.getHbondLinksForSet(atomSet2, labelType);
+           hBondLinkStr += me.getHbondLinksForSet(atomSet1, labelType);
+       }
+
+       // add ionic interaction for each set, color in cyan
+       var ionicLinkStr = '';
+       if(!(nameArray2.length == 1 && nameArray.length == 1 && nameArray2[0] == nameArray[0])) {
+           ionicLinkStr += me.getIonicLinksForSet(atomSet2, labelType);
+           ionicLinkStr += me.getIonicLinksForSet(atomSet1, labelType);
+       }
+
+       // add contacts for each set, color in light grey
+       var contactLinkStr = '';
+       if(!(nameArray2.length == 1 && nameArray.length == 1 && nameArray2[0] == nameArray[0])) {
+           contactLinkStr += me.getContactLinksForSet(atomSet2, labelType);
+           contactLinkStr += me.getContactLinksForSet(atomSet1, labelType);
+       }
+       else {
+           contactLinkStr += me.getContactLinksForSet(atomSet1, labelType);
+       }
+
+       // add disulfide bonds in orange
+       var disulfideLinkStr = ''
+       for(var structure in me.icn3d.ssbondpnts) {
+           for(var i = 0, il = me.icn3d.ssbondpnts[structure].length; i < il; i += 2) {
+               var resid1 = me.icn3d.ssbondpnts[structure][i]; //1GPK_A_402
+               var resid2 = me.icn3d.ssbondpnts[structure][i+1];
+               var atom1 = me.icn3d.getFirstAtomObj(me.icn3d.residues[resid1]);
+               var atom2 = me.icn3d.getFirstAtomObj(me.icn3d.residues[resid2]);
+
+               if(selectedAtoms.hasOwnProperty(atom1.serial) && selectedAtoms.hasOwnProperty(atom2.serial)) {
+                   var resName1 = me.icn3d.residueName2Abbr(atom1.resn) + atom1.resi;
+                   if(labelType == 'chain' || labelType == 'structure') resName1 += '.' + atom1.chain;
+                   if(labelType == 'structure') resName1 += '.' + atom1.structure;
+
+                   var resName2 = me.icn3d.residueName2Abbr(atom2.resn) + atom2.resi; // + '_' + atom.chain;
+                   if(labelType == 'chain' || labelType == 'structure') resName2 += '.' + atom2.chain;
+                   if(labelType == 'structure') resName2 += '.' + atom2.structure;
+
+                   disulfideLinkStr += ', {"source": "' + resName1 + '", "target": "' + resName2
+                       + '", "v": ' + me.ssbondValue + ', "c": "FFA500"}';
+               }
+           }
+       }
+
+       // add cross linkage in blue
+       var crossLinkStr = ''
+       for(var structure in me.icn3d.clbondpnts) {
+           for(var i = 0, il = me.icn3d.clbondpnts[structure].length; i < il; i += 2) {
+               var resid1 = me.icn3d.clbondpnts[structure][i]; //1GPK_A_402
+               var resid2 = me.icn3d.clbondpnts[structure][i+1];
+               var atom1 = me.icn3d.getFirstAtomObj(me.icn3d.residues[resid1]);
+               var atom2 = me.icn3d.getFirstAtomObj(me.icn3d.residues[resid2]);
+
+               if(selectedAtoms.hasOwnProperty(atom1.serial) && selectedAtoms.hasOwnProperty(atom2.serial)) {
+                   var resName1 = me.icn3d.residueName2Abbr(atom1.resn) + atom1.resi;
+                   if(labelType == 'chain' || labelType == 'structure') resName1 += '.' + atom1.chain;
+                   if(labelType == 'structure') resName1 += '.' + atom1.structure;
+
+                   var resName2 = me.icn3d.residueName2Abbr(atom2.resn) + atom2.resi; // + '_' + atom.chain;
+                   if(labelType == 'chain' || labelType == 'structure') resName2 += '.' + atom2.chain;
+                   if(labelType == 'structure') resName2 += '.' + atom2.structure;
+
+                   crossLinkStr += ', {"source": "' + resName1 + '", "target": "' + resName2
+                       + '", "v": ' + me.clbondValue + ', "c": "006400"}';
+               }
+           }
+       }
+
+       var resStr = '{"nodes": [' + nodeStr + chemicalNodeStr + '], "links": [';
+
+       resStr += linkStr + html + hBondLinkStr + ionicLinkStr + disulfideLinkStr + crossLinkStr + contactLinkStr;
+
+       resStr += ']}';
+
+       return resStr;
+    },
+
+    getNodesLinksForSet: function(atomSet, labelType) { var me = this; //"use strict";
+       //var nodeStr = '', linkStr = '';
+       var nodeArray = [], linkArray = [];
+       var cnt = 0, linkCnt = 0;
+       var thickness = me.coilValue;
+       var prevChain = '', prevResName = '', preResi = '', prevAtom;
+       // proteins and nucleotides
+       for(var i in atomSet) {
+           var atom = me.icn3d.atoms[i];
+           if(atom.chain != 'DUM' && ((atom.name == "CA" && atom.elem == "C") || atom.name == "O3'" || atom.name == "O3*")) {
+           // starting nucleotide have "P"
+           //if(atom.chain != 'DUM' && (atom.name == "CA" || atom.name == "P")) {
+               var resName = me.icn3d.residueName2Abbr(atom.resn) + atom.resi;
+               if(labelType == 'chain' || labelType == 'structure') resName += '.' + atom.chain;
+               if(labelType == 'structure') resName += '.' + atom.structure;
+               // add 1_1_ to match other conventionssuch as seq_div0_1KQ2_A_50
+               var resid = '1_1_' + atom.structure + '_' + atom.chain + '_' + atom.resi;
+
+
+               //if(cnt > 0) nodeStr += ', ';
+               nodeArray.push('{"id": "' + resName + '", "r": "' + resid + '", "x": ' + atom.coord.x.toFixed(0)
+                   + ', "y": ' + atom.coord.y.toFixed(0) + ', "c": "' + atom.color.getHexString().toUpperCase() + '"}');
+
+               if(cnt > 0 && prevChain == atom.chain) {
+                   //if(linkCnt > 0) linkStr += ', ';
+                   linkArray.push('{"source": "' + prevResName + '", "target": "' + resName
+                       + '", "v": ' + thickness + ', "c": "' + atom.color.getHexString().toUpperCase() + '"}');
+
+                   if(atom.ssbegin) thickness = me.ssValue;
+                   if(atom.ssend) thickness = me.coilValue;
+                   ++linkCnt;
+               }
+
+               prevChain = atom.chain;
+               prevResName = resName;
+               ++cnt;
+           }
+
+           preResi = atom.resi;
+           prevChain = atom.chain;
+       }
+
+       return {"node": nodeArray, "link":linkArray};
+    },
+
+    getHbondLinksForSet: function(atoms, labelType) { var me = this; //"use strict";
+        var resid2ResidhashHbond = {};
+
+        var threshold = parseFloat($("#" + me.pre + "hbondthreshold" ).val());
+
+        //var atoms = me.getAtomsFromNameArray(nameArray);
+
+        //var firstSetAtoms = me.icn3d.intHash(atoms, me.icn3d.proteins);
+        //firstSetAtoms = me.icn3d.unionHash2Atoms(firstSetAtoms, me.icn3d.intHash(atoms, me.icn3d.nucleotides));
+        // not only protein or nucleotides, could be ligands
+        var firstSetAtoms = atoms;
+
+        var complement = firstSetAtoms;
+
+        if(Object.keys(complement).length > 0 && Object.keys(firstSetAtoms).length > 0) {
+            var bSaltbridge = false;
+            var selectedAtoms = me.icn3d.calculateChemicalHbonds(me.icn3d.intHash2Atoms(me.icn3d.dAtoms, complement), me.icn3d.intHash2Atoms(me.icn3d.dAtoms, firstSetAtoms), parseFloat(threshold), bSaltbridge, 'graph' );
+
+            resid2ResidhashHbond = me.icn3d.cloneHash(me.icn3d.resid2Residhash);
+        }
+
+        var hbondStr = me.getGraphLinks(resid2ResidhashHbond, resid2ResidhashHbond, 'AFA', labelType, me.hbondInsideValue);
+
+        return hbondStr;
+    },
+
+    getIonicLinksForSet: function(atoms, labelType) { var me = this; //"use strict";
+        var resid2Residhash = {};
+
+        var threshold = parseFloat($("#" + me.pre + "saltbridgethreshold" ).val());
+
+        //var atoms = me.getAtomsFromNameArray(nameArray);
+
+        //var firstSetAtoms = me.icn3d.intHash(atoms, me.icn3d.proteins);
+        //firstSetAtoms = me.icn3d.unionHash2Atoms(firstSetAtoms, me.icn3d.intHash(atoms, me.icn3d.nucleotides));
+        // not only protein or nucleotides, could be ligands
+        var firstSetAtoms = atoms;
+
+        var complement = firstSetAtoms;
+
+        if(Object.keys(complement).length > 0 && Object.keys(firstSetAtoms).length > 0) {
+            var bSaltbridge = false;
+            var selectedAtoms = me.icn3d.calculateIonicInteractions(me.icn3d.intHash2Atoms(me.icn3d.dAtoms, complement), me.icn3d.intHash2Atoms(me.icn3d.dAtoms, firstSetAtoms), parseFloat(threshold), bSaltbridge, 'graph' );
+
+            resid2Residhash = me.icn3d.cloneHash(me.icn3d.resid2Residhash);
+        }
+
+        var ionicStr = me.getGraphLinks(resid2Residhash, resid2Residhash, '8FF', labelType, me.ionicInsideValue);
+
+        return ionicStr;
+    },
+
+    getContactLinksForSet: function(atoms, labelType) { var me = this; //"use strict";
+        // get secondary structure elements and coil elements
+        //var atoms = me.getAtomsFromNameArray(nameArray);
+
+        // include all atoms
+        //var atoms = me.icn3d.intHash(atoms, me.icn3d.proteins);
+        //atoms = me.icn3d.unionHash2Atoms(firstSetAtoms, me.icn3d.intHash(atoms, me.icn3d.nucleotides));
+
+        var ssAtomsArray = [];
+        var prevSS = '', prevChain = '';
+        var ssAtoms = {};
+
+        for(var i in atoms) {
+            var atom = me.icn3d.atoms[i];
+            if(atom.ss != prevSS || atom.chain != prevChain) {
+                if(Object.keys(ssAtoms).length > 0) ssAtomsArray.push(ssAtoms);
+                ssAtoms = {};
+            }
+
+            ssAtoms[atom.serial] = 1;
+
+            prevSS = atom.ss;
+            prevChain = atom.chain;
+        }
+
+        // last ss
+        if(Object.keys(ssAtoms).length > 0) ssAtomsArray.push(ssAtoms);
+
+        var len = ssAtomsArray.length;
+        var interStr = '';
+        for(var i = 0; i < len; ++i) {
+            for(var j = i + 1; j < len; ++j) {
+                interStr += me.getContactLinks(ssAtomsArray[i], ssAtomsArray[j], labelType);
+            }
+        }
+
+        return interStr;
+    },
+
+    getContactLinks: function(atomlistTarget, otherAtoms, labelType) { var me = this; //"use strict";
+        var radius = parseFloat($("#" + me.pre + "contactthreshold" ).val());
+
+        var bGetPairs = true, bInteraction = false;
+        var atoms = me.icn3d.getAtomsWithinAtom(otherAtoms, atomlistTarget, parseFloat(radius), bGetPairs, bInteraction);
+
+        var residHash = me.icn3d.cloneHash(me.icn3d.resid2Residhash);
+        var interStr = me.getGraphLinks(residHash, residHash, 'DDD', labelType, me.contactInsideValue);
+        return interStr;
     },
 
     clickApplypick_labels: function() { var me = this; //"use strict";
@@ -6868,9 +7609,11 @@ iCn3DUI.prototype = {
                   ) {
                     me.applyCommandAnnotationsAndCddSite(lastCommand);
                 }
-                else if(lastCommand.indexOf('set annotation clinvar') == 0
-                  || lastCommand.indexOf('set annotation snp') == 0) {
-                    me.applyCommandSnpClinvar(lastCommand);
+                else if(lastCommand.indexOf('set annotation clinvar') == 0 ) {
+                    me.applyCommandClinvar(lastCommand);
+                }
+                else if(lastCommand.indexOf('set annotation snp') == 0) {
+                    me.applyCommandSnp(lastCommand);
                 }
                 else if(lastCommand.indexOf('set annotation 3ddomain') == 0) {
                     me.applyCommand3ddomain(lastCommand);
@@ -6878,8 +7621,9 @@ iCn3DUI.prototype = {
                 else if(lastCommand.indexOf('set annotation all') == 0) {
                     //$.when(me.applyCommandAnnotationsAndCddSite(lastCommand))
                     //    .then(me.applyCommandSnpClinvar(lastCommand))
-                    $.when(me.applyCommandSnpClinvar(lastCommand))
-                        .then(me.applyCommandSnpClinvar(lastCommand));
+                    $.when(me.applyCommandClinvar(lastCommand))
+                        .then(me.applyCommandSnp(lastCommand))
+                        .then(me.applyCommand3ddomain(lastCommand));
 
                     me.setAnnoTabAll();
                 }
@@ -6964,12 +7708,13 @@ iCn3DUI.prototype = {
 
 
     selectOneResid: function(idStr, bUnchecked) { var me = this; //"use strict";
-      //var idStr = idArray[i]; // TYR $1KQ2.B:56@OH, or $1KQ2.B:40 ASP
+      //var idStr = idArray[i]; // TYR $1KQ2.B:56@OH, $1KQ2.B:40 ASP
+      //change to: var idStr = idArray[i]; // TYR $1KQ2.B:56@OH, or ASP $1KQ2.B:40
       var posStructure = idStr.indexOf('$');
       var posChain = idStr.indexOf('.');
       var posRes = idStr.indexOf(':');
       var posAtom = idStr.indexOf('@');
-      if(posAtom == -1) posAtom = idStr.indexOf(' ');
+      if(posAtom == -1) posAtom = idStr.length; //idStr.indexOf(' ');
 
       var structure = idStr.substr(posStructure + 1, posChain - posStructure - 1);
       var chain = idStr.substr(posChain + 1, posRes - posChain - 1);
@@ -7320,6 +8065,7 @@ iCn3DUI.prototype = {
         me.clkMn4_clrAtom();
         me.clkMn4_clrBfactor();
         me.clkMn4_clrBfactorNorm();
+        me.clkMn4_clrArea();
         me.clkMn4_clrConserved();
         me.clkMn4_clrIdentity();
         me.clkMn4_clrRed();
@@ -7425,6 +8171,7 @@ iCn3DUI.prototype = {
         me.clkMn6_showaxisYes();
         me.clkMn6_showaxisNo();
         me.clkMn6_symmetry();
+        me.clkMn6_area();
         me.clkMn6_applysymmetry();
         me.clkMn6_hbondsYes();
         me.clkMn6_hbondsNo();
@@ -7436,6 +8183,7 @@ iCn3DUI.prototype = {
         me.clkMn6_ssbondsExport();
         me.clkMn6_ssbondsNo();
         me.clkMn6_clbondsYes();
+        me.clkMn6_clbondsExport();
         me.clkMn6_clbondsNo();
         me.clickCustomAtoms();
         me.clickShow_selected();

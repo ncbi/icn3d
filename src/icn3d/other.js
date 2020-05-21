@@ -17,6 +17,11 @@ iCn3D.prototype.residueName2Abbr = function(residueName) { var me = this; //"use
     residueName = residueName.charAt(0);
   }
 
+  var pos = residueName.indexOf(' ');
+  if(pos !== -1) {
+      residueName = residueName.substr(0, pos);
+  }
+
   switch(residueName) {
     case '  A':
       return 'A';

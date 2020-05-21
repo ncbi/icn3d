@@ -217,6 +217,8 @@ var full_uijs = [
     //"src/icn3dui/parsers/density_cif_parser.js",
     "src/icn3dui/annotations/annotations.js",
     "src/icn3dui/annotations/addtrack.js",
+    "src/icn3dui/d3/d3v4-brush-lite.js",
+    "src/icn3dui/d3/graph.js",
     "src/icn3dui/selection/selection.js",
     "src/icn3dui/selection/advanced.js",
     "src/icn3dui/selection/sets.js",

@@ -37,7 +37,7 @@ var iCn3DUI = function(cfg) {
     me.GREYC = "#CCCCCC"; // grey background
     me.GREYD = "#DDDDDD";
 
-    me.baseUrl = "https://www.ncbi.nlm.nih.gov/Structure/";
+    me.baseUrl = "https://structure.ncbi.nlm.nih.gov/";
 
     me.bSelectResidue = false;
     me.bSelectAlignResidue = false;
@@ -610,7 +610,7 @@ iCn3DUI.prototype = {
         $("#" + me.pre + "help").click(function (e) {
             e.preventDefault();
 
-            window.open('https://www.ncbi.nlm.nih.gov/Structure/icn3d/docs/icn3d_help.html', '_blank');
+            window.open('https://structure.ncbi.nlm.nih.gov/icn3d/docs/icn3d_help.html', '_blank');
         });
     },
 
