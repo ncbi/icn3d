@@ -173,18 +173,35 @@ iCn3DUI.prototype.execCommandsBase = function (start, end, steps, bFinalStep) { 
 
           return;
       }
-      else if(me.icn3d.commands[i].trim().indexOf('set annotation clinvar') == 0
-        || me.icn3d.commands[i].trim().indexOf('set annotation snp') == 0) { // the command may have "|||{"factor"...
+      else if(me.icn3d.commands[i].trim().indexOf('set annotation clinvar') == 0 ) { // the command may have "|||{"factor"...
           var strArray = me.icn3d.commands[i].split("|||");
 
-          if(Object.keys(me.icn3d.proteins).length > 0 && (me.bAjaxSnpClinvar === undefined || !me.bAjaxSnpClinvar) ) {
-              $.when(me.applyCommandSnpClinvar(strArray[0].trim())).then(function() {
+          if(Object.keys(me.icn3d.proteins).length > 0 && (me.bAjaxClinvar === undefined || !me.bAjaxClinvar) ) {
+              $.when(me.applyCommandClinvar(strArray[0].trim())).then(function() {
                   me.execCommandsBase(i + 1, end, steps);
               });
           }
           else {
               if(Object.keys(me.icn3d.proteins).length > 0) {
-                  me.applyCommandSnpClinvar(strArray[0].trim());
+                  me.applyCommandClinvar(strArray[0].trim());
+              }
+
+              me.execCommandsBase(i + 1, end, steps);
+          }
+
+          return;
+      }
+      else if(me.icn3d.commands[i].trim().indexOf('set annotation snp') == 0) { // the command may have "|||{"factor"...
+          var strArray = me.icn3d.commands[i].split("|||");
+
+          if(Object.keys(me.icn3d.proteins).length > 0 && (me.bAjaxSnp === undefined || !me.bAjaxSnp) ) {
+              $.when(me.applyCommandSnp(strArray[0].trim())).then(function() {
+                  me.execCommandsBase(i + 1, end, steps);
+              });
+          }
+          else {
+              if(Object.keys(me.icn3d.proteins).length > 0) {
+                  me.applyCommandSnp(strArray[0].trim());
               }
 
               me.execCommandsBase(i + 1, end, steps);
@@ -215,9 +232,11 @@ iCn3DUI.prototype.execCommandsBase = function (start, end, steps, bFinalStep) { 
           //$.when(me.applyCommandAnnotationsAndCddSite(strArray[0].trim()))
           //  .then(me.applyCommandSnpClinvar(strArray[0].trim()))
 
-          if( Object.keys(me.icn3d.proteins).length > 0 && (me.bAjaxSnpClinvar === undefined || !me.bAjaxSnpClinvar)
+          if( Object.keys(me.icn3d.proteins).length > 0 && (me.bAjaxClinvar === undefined || !me.bAjaxClinvar)
+            && (me.bAjaxSnp === undefined || !me.bAjaxSnp)
             && (me.bAjax3ddomain === undefined || !me.bAjax3ddomain || me.mmdb_data === undefined) ) {
-              $.when(me.applyCommandSnpClinvar(strArray[0].trim()))
+              $.when(me.applyCommandClinvar(strArray[0].trim()))
+                .then(me.applyCommandSnp(strArray[0].trim()))
                 .then(me.applyCommand3ddomain(strArray[0].trim()))
                 .then(function() {
                   me.setAnnoTabAll();
@@ -225,8 +244,46 @@ iCn3DUI.prototype.execCommandsBase = function (start, end, steps, bFinalStep) { 
                   me.execCommandsBase(i + 1, end, steps);
               });
           }
-          else if(Object.keys(me.icn3d.proteins).length > 0 && (me.bAjaxSnpClinvar === undefined || !me.bAjaxSnpClinvar) ) {
-              $.when(me.applyCommandSnpClinvar(strArray[0].trim()))
+          else if(Object.keys(me.icn3d.proteins).length > 0 && (me.bAjaxClinvar === undefined || !me.bAjaxClinvar)
+            && (me.bAjaxSnp === undefined || !me.bAjaxSnp)) {
+              $.when(me.applyCommandClinvar(strArray[0].trim()))
+                .then(me.applyCommandSnp(strArray[0].trim()))
+                .then(function() {
+                  me.setAnnoTabAll();
+
+                  me.execCommandsBase(i + 1, end, steps);
+              });
+          }
+          else if(Object.keys(me.icn3d.proteins).length > 0 && (me.bAjaxClinvar === undefined || !me.bAjaxClinvar)
+            && (me.bAjax3ddomain === undefined || !me.bAjax3ddomain || me.mmdb_data === undefined)) {
+              $.when(me.applyCommandClinvar(strArray[0].trim()))
+                .then(me.applyCommand3ddomain(strArray[0].trim()))
+                .then(function() {
+                  me.setAnnoTabAll();
+
+                  me.execCommandsBase(i + 1, end, steps);
+              });
+          }
+          else if(Object.keys(me.icn3d.proteins).length > 0 && (me.bAjax3ddomain === undefined || !me.bAjax3ddomain || me.mmdb_data === undefined)
+            && (me.bAjaxSnp === undefined || !me.bAjaxSnp)) {
+              $.when(me.applyCommand3ddomain(strArray[0].trim()))
+                .then(me.applyCommandSnp(strArray[0].trim()))
+                .then(function() {
+                  me.setAnnoTabAll();
+
+                  me.execCommandsBase(i + 1, end, steps);
+              });
+          }
+          else if(Object.keys(me.icn3d.proteins).length > 0 && (me.bAjaxClinvar === undefined || !me.bAjaxClinvar) ) {
+              $.when(me.applyCommandClinvar(strArray[0].trim()))
+                .then(function() {
+                  me.setAnnoTabAll();
+
+                  me.execCommandsBase(i + 1, end, steps);
+              });
+          }
+          else if(Object.keys(me.icn3d.proteins).length > 0 && (me.bAjaxSnp === undefined || !me.bAjaxSnp) ) {
+              $.when(me.applyCommandSnp(strArray[0].trim()))
                 .then(function() {
                   me.setAnnoTabAll();
 
@@ -242,16 +299,34 @@ iCn3DUI.prototype.execCommandsBase = function (start, end, steps, bFinalStep) { 
               });
           }
           else {
+/*
               if(Object.keys(me.icn3d.proteins).length > 0) {
-                  if((me.bAjaxSnpClinvar === undefined || !me.bAjaxSnpClinvar)
+                  if((me.bAjaxClinvar === undefined || !me.bAjaxClinvar)
+                    && (me.bAjaxSnp === undefined || !me.bAjaxSnp)
                     && (me.bAjax3ddomain === undefined || !me.bAjax3ddomain || me.mmdb_data === undefined)) {
-                      me.applyCommandSnpClinvarBase(strArray[0].trim());
+                      me.applyCommandClinvarBase(strArray[0].trim());
+                      me.applyCommandSnpBase(strArray[0].trim());
                       me.applyCommand3ddomainBase(strArray[0].trim());
                   }
                   else if(me.bAjaxSnpClinvar === undefined || !me.bAjaxSnpClinvar) {
                       me.applyCommandSnpClinvarBase(strArray[0].trim());
                   }
                   else if(me.bAjax3ddomain === undefined || !me.bAjax3ddomain || me.mmdb_data === undefined) {
+                      me.applyCommand3ddomainBase(strArray[0].trim());
+                  }
+              }
+*/
+
+              if(Object.keys(me.icn3d.proteins).length > 0) {
+                  if(me.bAjaxClinvar) {
+                      me.applyCommandClinvarBase(strArray[0].trim());
+                  }
+
+                  if(me.bAjaxSnp) {
+                      me.applyCommandSnpBase(strArray[0].trim());
+                  }
+
+                  if(me.bAjax3ddomain || me.mmdb_data !== undefined) {
                       me.applyCommand3ddomainBase(strArray[0].trim());
                   }
               }
@@ -318,6 +393,59 @@ iCn3DUI.prototype.execCommandsBase = function (start, end, steps, bFinalStep) { 
         $.when(me.realignOnSeqAlign()).then(function() {
            me.execCommandsBase(i + 1, end, steps);
         });
+      }
+      else if(me.icn3d.commands[i].trim().indexOf('graph interaction pairs') == 0) {
+        var strArray = me.icn3d.commands[i].split("|||");
+        var command = strArray[0].trim();
+
+        var paraArray = command.split(' | ');
+        if(paraArray.length >= 3) {
+            var setNameArray = paraArray[1].split(' ');
+            var nameArray2 = setNameArray[0].split(',');
+            var nameArray = setNameArray[1].split(',');
+
+            var bHbond = paraArray[2].indexOf('hbonds') !== -1;
+            var bSaltbridge = paraArray[2].indexOf('salt bridge') !== -1;
+            var bInteraction = paraArray[2].indexOf('interactions') !== -1;
+
+            var bHbondCalc;
+            if(paraArray.length >= 4) {
+                bHbondCalc = (paraArray[3] == 'true') ? true : false;
+            }
+
+            if(paraArray.length >= 5) {
+               thresholdArray = paraArray[4].split(' ');
+
+               if(thresholdArray.length == 4) {
+                   $("#" + me.pre + "hbondthreshold").val(thresholdArray[1]);
+                   $("#" + me.pre + "saltbridgethreshold").val(thresholdArray[2]);
+                   $("#" + me.pre + "contactthreshold").val(thresholdArray[3]);
+               }
+            }
+
+            if(paraArray.length == 6) {
+                var thicknessArray = paraArray[5].split(' ');
+
+                if(thicknessArray.length == 6) {
+                    $("#" + me.pre + "dist_ss").val(thicknessArray[0]);
+                    $("#" + me.pre + "dist_coil").val(thicknessArray[1]);
+                    $("#" + me.pre + "dist_hbond").val(thicknessArray[2]);
+                    $("#" + me.pre + "dist_inter").val(thicknessArray[3]);
+                    $("#" + me.pre + "dist_ssbond").val(thicknessArray[4]);
+                    $("#" + me.pre + "dist_ionic").val(thicknessArray[5]);
+                }
+            }
+
+            if(me.bD3) {
+                me.viewInteractionPairs(nameArray2, nameArray, bHbondCalc, bHbond, bSaltbridge, bInteraction, 'graph');
+                me.execCommandsBase(i + 1, end, steps);
+            }
+            else {
+                $.when(me.viewInteractionPairs(nameArray2, nameArray, bHbondCalc, bHbond, bSaltbridge, bInteraction, 'graph')).then(function() {
+                   me.execCommandsBase(i + 1, end, steps);
+                });
+            }
+        }
       }
       else {
           me.applyCommand(me.icn3d.commands[i]);
@@ -806,30 +934,38 @@ iCn3DUI.prototype.applyCommandAnnotationsAndCddSite = function (command) { var m
   return me.deferredAnnoCddSite.promise();
 };
 
-iCn3DUI.prototype.applyCommandSnpClinvarBase = function (command) { var me = this; //"use strict";
+iCn3DUI.prototype.applyCommandClinvarBase = function (command) { var me = this; //"use strict";
   // chain functions together
       var pos = command.lastIndexOf(' '); // set annotation clinvar
       var type = command.substr(pos + 1);
 
-      if(type == 'clinvar') {
-          me.setAnnoTabClinvar();
-      }
-      else if(type == 'snp') {
-          me.setAnnoTabSnp();
-      }
-      else if(type == 'all') {
-          me.setAnnoTabClinvar();
-          me.setAnnoTabSnp();
-      }
+      me.setAnnoTabClinvar();
 };
 
-iCn3DUI.prototype.applyCommandSnpClinvar = function (command) { var me = this; //"use strict";
+iCn3DUI.prototype.applyCommandSnpBase = function (command) { var me = this; //"use strict";
   // chain functions together
-  me.deferredSnpClinvar = $.Deferred(function() {
-      me.applyCommandSnpClinvarBase(command);
+      var pos = command.lastIndexOf(' '); // set annotation clinvar
+      var type = command.substr(pos + 1);
+
+      me.setAnnoTabSnp();
+};
+
+iCn3DUI.prototype.applyCommandClinvar = function (command) { var me = this; //"use strict";
+  // chain functions together
+  me.deferredClinvar = $.Deferred(function() {
+      me.applyCommandClinvarBase(command);
   }); // end of me.deferred = $.Deferred(function() {
 
-  return me.deferredSnpClinvar.promise();
+  return me.deferredClinvar.promise();
+};
+
+iCn3DUI.prototype.applyCommandSnp = function (command) { var me = this; //"use strict";
+  // chain functions together
+  me.deferredSnp = $.Deferred(function() {
+      me.applyCommandSnpBase(command);
+  }); // end of me.deferred = $.Deferred(function() {
+
+  return me.deferredSnp.promise();
 };
 
 iCn3DUI.prototype.applyCommand3ddomainBase = function (command) { var me = this; //"use strict";
@@ -1109,10 +1245,11 @@ iCn3DUI.prototype.applyCommand = function (commandStr) { var me = this; //"use s
     me.icn3d.draw();
   }
   else if(command == 'set cross linkage off') {
-    me.icn3d.bShowCrossResidueBond = false;
-    //me.opts['proteins'] = 'ribbon';
-    //me.icn3d.draw();
-    me.setStyle('proteins', 'ribbon')
+    //me.icn3d.bShowCrossResidueBond = false;
+    //me.setStyle('proteins', 'ribbon');
+
+    me.icn3d.opts["clbonds"] = "no";
+    me.icn3d.draw();
   }
   else if(command == 'set lines off') {
     me.icn3d.labels['distance'] = [];
@@ -1362,9 +1499,10 @@ iCn3DUI.prototype.applyCommand = function (commandStr) { var me = this; //"use s
     me.showSsbonds();
   }
   else if(command == 'cross linkage') {
-    me.icn3d.bShowCrossResidueBond = true;
+    //me.icn3d.bShowCrossResidueBond = true;
+    //me.setStyle('proteins', 'lines');
 
-    me.setStyle('proteins', 'lines')
+    me.showClbonds();
   }
   else if(command == 'back') {
      me.back();
@@ -1420,6 +1558,9 @@ iCn3DUI.prototype.applyCommand = function (commandStr) { var me = this; //"use s
 //  else if(command == 'realign') {
 //     me.realign();
 //  }
+  else if(command == 'area') {
+     me.calculateArea();
+  }
 
 // start with =================
   else if(commandOri.indexOf('define helix sets') == 0) {
@@ -1696,7 +1837,8 @@ iCn3DUI.prototype.applyCommand = function (commandStr) { var me = this; //"use s
   else if(command.indexOf('toggle membrane') == 0) {
     me.toggleMembrane();
   }
-  else if(commandOri.indexOf('view interaction pairs') == 0 || commandOri.indexOf('save interaction pairs') == 0) {
+  else if(commandOri.indexOf('view interaction pairs') == 0
+      || commandOri.indexOf('save interaction pairs') == 0) {
     var paraArray = commandOri.split(' | ');
     if(paraArray.length >= 3) {
         var setNameArray = paraArray[1].split(' ');
@@ -1708,16 +1850,45 @@ iCn3DUI.prototype.applyCommand = function (commandStr) { var me = this; //"use s
         var bInteraction = paraArray[2].indexOf('interactions') !== -1;
 
         var bHbondCalc;
-        if(paraArray.length == 4) {
+        if(paraArray.length >= 4) {
             bHbondCalc = (paraArray[3] == 'true') ? true : false;
         }
 
+        if(paraArray.length >= 5) {
+           thresholdArray = paraArray[4].split(' ');
+
+           if(thresholdArray.length == 4) {
+               $("#" + me.pre + "hbondthreshold").val(thresholdArray[1]);
+               $("#" + me.pre + "saltbridgethreshold").val(thresholdArray[2]);
+               $("#" + me.pre + "contactthreshold").val(thresholdArray[3]);
+           }
+        }
+
         if(commandOri.indexOf('view interaction pairs') == 0) {
-            me.viewInteractionPairs(nameArray2, nameArray, bHbondCalc, bHbond, bSaltbridge, bInteraction);
+            me.viewInteractionPairs(nameArray2, nameArray, bHbondCalc, bHbond, bSaltbridge, bInteraction, 'view');
         }
         else if(commandOri.indexOf('save interaction pairs') == 0) {
-            me.viewInteractionPairs(nameArray2, nameArray, bHbondCalc, bHbond, bSaltbridge, bInteraction, true);
+            me.viewInteractionPairs(nameArray2, nameArray, bHbondCalc, bHbond, bSaltbridge, bInteraction, 'save');
         }
+    }
+  }
+  else if(command.indexOf('graph label') == 0) {
+    var pos = command.lastIndexOf(' ');
+    var className = command.substr(pos + 1);
+
+    $("#" + me.svgid + "_label").val(className);
+
+    $("#" + me.svgid + " text").removeClass();
+    $("#" + me.svgid + " text").addClass(className);
+  }
+  else if(command.indexOf('graph center') == 0) {
+    var pos = command.lastIndexOf(' ');
+    me.pushcenter = parseInt(command.substr(pos + 1));
+
+    $("#" + me.svgid + "_pushcenter").val(me.pushcenter);
+
+    if(me.graphStr !== undefined && me.icn3d.bRender) {
+       me.drawGraph(me.graphStr);
     }
   }
   else if(command.indexOf('reset interaction pairs') == 0) {
@@ -1729,8 +1900,6 @@ iCn3DUI.prototype.applyCommand = function (commandStr) { var me = this; //"use s
 
     window.open(url, '_blank');
   }
-
-
 
 // start with, single word =============
   else if(command.indexOf('pickatom') == 0) {
@@ -1795,6 +1964,10 @@ iCn3DUI.prototype.applyCommand = function (commandStr) { var me = this; //"use s
 
             me.icn3d.queryresi2score[chainid][resi_score[0]] = resi_score[1];
         }
+    }
+    else if(color == "area" && strArray.length == 2) {
+        me.icn3d.midpercent = strArray[1];
+        $("#" + me.pre + 'midpercent').val(me.icn3d.midpercent);
     }
 
     me.icn3d.setColorByOptions(me.icn3d.opts, me.icn3d.hAtoms);

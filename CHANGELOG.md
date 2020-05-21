@@ -1,4 +1,6 @@
 ## Change Log
+[icn3d-2.16.0](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.16.0.zip) was release on May 21, 2020. Enabled to show interactions using force-directed graph in the menu "View > H-Bonds & Interactions > Force-Directed Graph". Enabled to calculate Solvent Accessible Surface Area (SASA) in the menu "View > Surface Area", or color by SASA in the menu "Color > Solvent Accessibility". Fixed ClinVar and SNP annotations.
+
 [icn3d-2.15.3](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.15.3.zip) was release on May 8, 2020. Enabled to update the short "Share Link" URL; enabled to save in a sharable URL the "Side by Side" view, which is useful to view two aligned structures.
 
 [icn3d-2.15.2](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.15.2.zip) was release on May 5, 2020. Fixed the display of electron density map and EM map.

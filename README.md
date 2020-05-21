@@ -4,7 +4,7 @@
 
 ## About iCn3D
 
-"I see in 3D" (iCn3D) Structure Viewer is a WebGL-based 3D viewer using Three.js and jQuery. iCn3D synchronizes the display of 3D structure, 2D interaction, and 1D sequences and annotations. Users' custom display can be saved in a short URL or a PNG image. <b>Complete package</b> of iCn3D including Three.js and jQuery can be downloaded from [https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.15.3.zip](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.15.3.zip). The "Download ZIP" link in this page does not include third-party libraries. 
+"I see in 3D" (iCn3D) Structure Viewer is a WebGL-based 3D viewer using Three.js and jQuery. iCn3D synchronizes the display of 3D structure, 2D interaction, and 1D sequences and annotations. Users' custom display can be saved in a short URL or a PNG image. <b>Complete package</b> of iCn3D including Three.js and jQuery can be downloaded from [https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.16.0.zip](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.16.0.zip). The "Download ZIP" link in this page does not include third-party libraries. 
 * <b>View a 3D structure in iCn3D</b>: 
     Open the link https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html, input a PDB ID, and click "Load". You can also click "File" menu to "Open File" or input other IDs.
 
@@ -20,16 +20,16 @@
 * <b>Save your work</b>: 
     You can save "iCn3D PNG Image" in the menu "File > Save Files". Both the PNG file and an HTML file are saved. Click the HTML file to see the PNG image, which is linked to the custom display via a shorten URL. The downloaded "iCn3D PNG Image" itself can also be used as an input in the menu "File > Open File" to reproduce the custom display. You can combine these HTML files to generate your own galleries.
 
-* <b>[Show binding site](https://icn3d.page.link/JR5B)</b>: 
+* <b>[Show binding site](https://structure.ncbi.nlm.nih.gov/icn3d/share.html?JR5B)</b>: 
     You can click "Chem. Binding" in "View" menu to show all hydrogen bonds around chemicals. You can also click "H-Bonds & Interactions" in "View" menu to list or highlight each hydrogen bond or contact.
 
 * <b>[Export models for 3D printing](https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?mmdbid=1tup&command=export+stl+stabilizer+file)</b>: 
     You can click "3D Printing" in "File" menu to export models for 3D printing. Both STL and VRML files are supported.
 
-* <b>[Show transmembrane proteins](https://icn3d.page.link/TuSd)</b>: 
+* <b>[Show transmembrane proteins](https://structure.ncbi.nlm.nih.gov/icn3d/share.html?TuSd)</b>: 
     If the protein is a transmembrane protein, you can click "File > Retrieve by ID > OPM PDB ID" to input a PDB ID to view the membranes.
 
-* <b>Show [surface](https://icn3d.page.link/aYAjP4S3NbrBJX3x6), [EM map](https://icn3d.page.link/L4C4WYE85tYRiFeK7), or [electron density map](https://icn3d.page.link/QpqNZ3k65ToYFvUB6)</b>: 
+* <b>Show [surface](https://structure.ncbi.nlm.nih.gov/icn3d/share.html?aYAjP4S3NbrBJX3x6), [EM map](https://structure.ncbi.nlm.nih.gov/icn3d/share.html?L4C4WYE85tYRiFeK7), or [electron density map](https://structure.ncbi.nlm.nih.gov/icn3d/share.html?QpqNZ3k65ToYFvUB6)</b>: 
     You can click "Style > Surface Type", "Style > EM Density Map", or "Style > Electron Density".
 
 * <b>View 1D sequences and 2D interactions</b>: 
@@ -42,11 +42,18 @@
 
     To select on 2D interaction diagram: click on the nodes or lines. The nodes are chains and can be united with the Ctrl key. The lines are interactions and can NOT be united. Each click on the lines selects half of the lines, i.e., select the interacting residues in one of the two chains.
 
-* <b>[Align two structures](https://icn3d.page.link/wPoW56e8QnzVfuZw6), [align two chains](https://icn3d.page.link/ijnf), or [align a protein sequence to a structure](https://icn3d.page.link/Mmm82craCwGMAxru9)</b>: 
-    You can click "File > Align" to see all three alignment options.
+* <b>[Align two structures](https://structure.ncbi.nlm.nih.gov/icn3d/share.html?wPoW56e8QnzVfuZw6), [align two chains](https://structure.ncbi.nlm.nih.gov/icn3d/share.html?ijnf), or [align a protein sequence to a structure](https://structure.ncbi.nlm.nih.gov/icn3d/share.html?Mmm82craCwGMAxru9)</b>: 
+    You can click "File > Align" to see all three alignment options. You can also [realign](https://structure.ncbi.nlm.nih.gov/icn3d/share.html?gXW2CKcEDdJzk6uL6) a subset of the structures. 
 
-* <b>[Add custom tracks](https://icn3d.page.link/pUzP)</b>:
+* <b>[Add custom tracks](https://structure.ncbi.nlm.nih.gov/icn3d/share.html?pUzP)</b>:
     You can add custom tracks in various formats (FASTA, bed file, etc.) in the annotation window by clicking the menu "Windows > View Sequences & Annotations".
+
+* <b>[Force-directed graph](https://structure.ncbi.nlm.nih.gov/icn3d/share.html?6UiwgaoLAte8vpom8)</b>:
+    You can show the interactions using 2D force-directed graph in the menu "View > H-Bonds & Interactions > Force-Directed Graph".
+    
+* <b>[Solvent accessible surface area (SASA)](https://structure.ncbi.nlm.nih.gov/icn3d/share.html?Hn3SVz5iUHLLZaPU7)</b>:
+    You can color structures with SASA, or show the SASA for each residue.
+  
 
 ## Embed iCn3D with iframe or JavaScript libraries
 

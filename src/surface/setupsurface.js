@@ -14,7 +14,7 @@ $3Dmol.SetupSurface = function (data) {
     var threshbox = data.threshbox; // maximum possible boxsize, default 180
 
     var ps = new $3Dmol.ProteinSurface(threshbox);
-    ps.initparm(data.extent, (data.type === 1) ? false : true);
+    ps.initparm(data.extent, (data.type === 1) ? false : true, data.bCalcArea, data.atomsToShow);
 
     ps.fillvoxels(data.allatoms, data.extendedAtoms);
 
@@ -28,13 +28,16 @@ $3Dmol.SetupSurface = function (data) {
     }
 
     //ps.marchingcube(data.type);
-    ps.marchingcube();
+    var area_serial2area = ps.marchingcube();
 
     ps.vpBits = null; // uint8 array of bitmasks
     ps.vpDistance = null; // floatarray of _squared_ distances
     ps.vpAtomID = null; // intarray
 
     var result = ps.getFacesAndVertices(data.atomsToShow);
+    result.area = area_serial2area.area;
+    result.serial2area = area_serial2area.serial2area;
+    result.scaleFactor = area_serial2area.scaleFactor;
 
     ps.faces = null;
     ps.verts = null;

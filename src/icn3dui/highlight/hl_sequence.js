@@ -21,6 +21,7 @@ iCn3DUI.prototype.selectResidues = function(id, that) { var me = this; //"use st
           for(var j in me.icn3d.residues[residueid]) {
             me.icn3d.hAtoms[j] = 1;
           }
+
           me.selectedResidues[residueid] = 1;
 
           if(me.bAnnotations && $(that).attr('disease') !== undefined) {

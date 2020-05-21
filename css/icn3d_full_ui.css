@@ -67,6 +67,15 @@ button, select, input { font-size: 10px; }
 .icn3d-node {cursor:pointer!important; } 
 .icn3d-interaction {cursor:pointer!important; } 
 
+/* force-directed graph node text */
+.icn3d-node-text0 {font-size: 0px; font-weight: bold}
+.icn3d-node-text4 {font-size: 4px; font-weight: bold}
+.icn3d-node-text8 {font-size: 8px; font-weight: bold}
+.icn3d-node-text12 {font-size: 12px; font-weight: bold}
+.icn3d-node-text16 {font-size: 16px; font-weight: bold}
+.icn3d-node-text24 {font-size: 24px; font-weight: bold}
+.icn3d-node-text32 {font-size: 32px; font-weight: bold}
+
 .ui-dialog .ui-resizable-se {
     width: 14px;
     height: 14px;

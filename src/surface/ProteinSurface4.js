@@ -54,6 +54,8 @@ $3Dmol.ProteinSurface = function(threshbox) {
     var scaleFactor = defaultScaleFactor; // 2 is .5A grid; if this is made user configurable,
                             // also have to adjust offset used to find non-shown
                             // atoms
+    var finalScaleFactor = {};
+
     var pHeight = 0, pWidth = 0, pLength = 0;
     var cutRadius = 0;
     var vpBits = null; // uint8 array of bitmasks
@@ -61,6 +63,9 @@ $3Dmol.ProteinSurface = function(threshbox) {
     var vpAtomID = null; // intarray
     var vertnumber = 0, facenumber = 0;
     var pminx = 0, pminy = 0, pminz = 0, pmaxx = 0, pmaxy = 0, pmaxz = 0;
+
+    var bCalcArea = false;
+    var atomsToShow = {};
 
     var vdwRadii = {
             "H" : 1.2,
@@ -129,11 +134,8 @@ $3Dmol.ProteinSurface = function(threshbox) {
         return true;
     };
 
-    this.getFacesAndVertices = function(atomlist) {
-        var atomsToShow = {};
+    this.getFacesAndVertices = function() {
         var i, il;
-        for (i = 0, il = atomlist.length; i < il; i++)
-            atomsToShow[atomlist[i]] = 1;
         var vertices = verts;
         for (i = 0, il = vertices.length; i < il; i++) {
             vertices[i].x = vertices[i].x / scaleFactor - ptranx;
@@ -148,17 +150,14 @@ $3Dmol.ProteinSurface = function(threshbox) {
             var a = vertices[fa]['atomid'], b = vertices[fb]['atomid'], c = vertices[fc]['atomid'];
 
             // must be a unique face for each atom
-            var which = a;
-            if (b < which)
-                which = b;
-            if (c < which)
-                which = c;
-            if (!atomsToShow[which]) {
+            //var which = a;
+            //if (b < which)
+            //    which = b;
+            //if (c < which)
+            //    which = c;
+            if (!atomsToShow[a] || !atomsToShow[b] || !atomsToShow[c]) {
                 continue;
             }
-            //var av = vertices[faces[i]];
-            //var bv = vertices[faces[i+1]];
-            //var cv = vertices[faces[i+2]];
 
             if (fa !== fb && fb !== fc && fa !== fc){
                 //finalfaces.push(fa);
@@ -183,7 +182,12 @@ $3Dmol.ProteinSurface = function(threshbox) {
     };
 
 
-    this.initparm = function(extent, btype, volume) {
+    this.initparm = function(extent, btype, in_bCalcArea, atomlist) {
+        bCalcArea = in_bCalcArea;
+
+        for (i = 0, il = atomlist.length; i < il; i++)
+            atomsToShow[atomlist[i]] = 1;
+
         // !!! different between 3Dmol and iCn3D
         //if(volume > 1000000) //heuristical decrease resolution to avoid large memory consumption
         //    scaleFactor = defaultScaleFactor/2;
@@ -225,24 +229,30 @@ $3Dmol.ProteinSurface = function(threshbox) {
         // !!! different between 3Dmol and iCn3D
         // copied from surface.js from iview
         var boxLength = 128;
-        scaleFactor = pmaxx - pminx;
-        if ((pmaxy - pminy) > scaleFactor) scaleFactor = pmaxy - pminy;
-        if ((pmaxz - pminz) > scaleFactor) scaleFactor = pmaxz - pminz;
-        scaleFactor = (boxLength - 1.0) / scaleFactor;
+        //maxLen = pmaxx - pminx + 2*(probeRadius + 5.5/2)
+        var maxLen = pmaxx - pminx;
+        if ((pmaxy - pminy) > maxLen) maxLen = pmaxy - pminy;
+        if ((pmaxz - pminz) > maxLen) maxLen = pmaxz - pminz;
+        scaleFactor = (boxLength - 1.0) / maxLen;
 
-        boxLength = Math.floor(boxLength * defaultScaleFactor / scaleFactor);
+        // 1. typically (size < 90) use the default scale factor 2
         scaleFactor = defaultScaleFactor;
+
+        // 2. If size > 90, change scale
         //var threshbox = 180; // maximum possible boxsize
-        if (boxLength > threshbox) {
-            var sfthresh = threshbox / boxLength;
+        if (bCalcArea || defaultScaleFactor * maxLen > threshbox) {
             boxLength = Math.floor(threshbox);
-            scaleFactor = scaleFactor * sfthresh;
+            scaleFactor = (threshbox - 1.0) / maxLen;
         }
         // end of surface.js part
 
         pLength = Math.ceil(scaleFactor * (pmaxx - pminx)) + 1;
         pWidth = Math.ceil(scaleFactor * (pmaxy - pminy)) + 1;
         pHeight = Math.ceil(scaleFactor * (pmaxz - pminz)) + 1;
+
+        finalScaleFactor.x = (pLength - 1.0) / (pmaxx - pminx);
+        finalScaleFactor.y = (pWidth - 1.0) / (pmaxy - pminy);
+        finalScaleFactor.z = (pHeight - 1.0) / (pmaxz - pminz);
 
         this.boundingatom(btype);
         cutRadius = probeRadius * scaleFactor;
@@ -886,8 +896,85 @@ $3Dmol.ProteinSurface = function(threshbox) {
                     verts[i].y + verts[i].z];
         }
 
-        $3Dmol.MarchingCube.laplacianSmooth(1, verts, faces);
+        // calculate surface area
+        var area = 0;
+        if(bCalcArea) {
+            var faceHash = {};
+            var serial2area = {};
+            for(var i = 0, il = faces.length; i < il; i += 3) {
+                var fa = faces[i], fb = faces[i+1], fc = faces[i+2];
 
+                if (fa == fb || fb == fc || fa == fc) continue;
+
+                var fmin = Math.min(fa, fb, fc);
+                var fmax = Math.max(fa, fb, fc);
+                var fmid = fa + fb + fc - fmin - fmax;
+                var fmin_fmid_fmax = fmin + '_' + fmid + '_' + fmax;
+
+                if(faceHash.hasOwnProperty(fmin_fmid_fmax)) {
+                    continue;
+                }
+
+                faceHash[fmin_fmid_fmax] = 1;
+
+                var ai = verts[fa]['atomid'], bi = verts[fb]['atomid'], ci = verts[fc]['atomid'];
+
+                if (!atomsToShow[ai] || !atomsToShow[bi] || !atomsToShow[ci]) {
+                    continue;
+                }
+
+                //if (fa !== fb && fb !== fc && fa !== fc){
+                    var a = verts[fa];
+                    var b = verts[fb];
+                    var c = verts[fc];
+
+                    var ab2 = (a.x - b.x) * (a.x - b.x) + (a.y - b.y) * (a.y - b.y) + (a.z - b.z) * (a.z - b.z);
+                    var ac2 = (a.x - c.x) * (a.x - c.x) + (a.y - c.y) * (a.y - c.y) + (a.z - c.z) * (a.z - c.z);
+                    var cb2 = (c.x - b.x) * (c.x - b.x) + (c.y - b.y) * (c.y - b.y) + (c.z - b.z) * (c.z - b.z);
+
+                    var min = Math.min(ab2, ac2, cb2);
+                    var max = Math.max(ab2, ac2, cb2);
+                    var mid = ab2 + ac2 + cb2 - min - max;
+
+                    // there are only three kinds of triangles as shown at
+                    // https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0008140
+                    // case 1: 1, 1, sqrt(2)     area: 0.5 * a * a;
+                    // case 2: sqrt(2), sqrt(2), sqrt(2)    area: 0.5 * a * a * sqrt(3) * 0.5;
+                    // case 3: 1, sqrt(2), sqrt(3)      area: 0.5 * a * b
+                    var currArea = 0;
+                    if(parseInt((max - min)*100) == 0) { // case 2
+                        currArea = 0.433 * min;
+                    }
+                    else if(parseInt((mid - min)*100) == 0) { // case 1
+                        currArea = 0.5 * min;
+                    }
+                    else { // case 3
+                        currArea = 0.707 * min;
+                    }
+
+                    var partArea = currArea / 3;
+
+                    if(serial2area[ai] === undefined) serial2area[ai] = partArea;
+                    else serial2area[ai] += partArea;
+
+                    if(serial2area[bi] === undefined) serial2area[bi] = partArea;
+                    else serial2area[bi] += partArea;
+
+                    if(serial2area[ci] === undefined) serial2area[ci] = partArea;
+                    else serial2area[ci] += partArea;
+
+                    area += currArea;
+                //}
+            } // for loop
+
+            var maxScaleFactor = Math.max(finalScaleFactor.x, finalScaleFactor.y, finalScaleFactor.z);
+            area = area / maxScaleFactor / maxScaleFactor;
+            //area = area / scaleFactor / scaleFactor;
+        }
+
+        if(!bCalcArea) $3Dmol.MarchingCube.laplacianSmooth(1, verts, faces);
+
+        return {"area": area, "serial2area": serial2area, "scaleFactor": maxScaleFactor};
     };
 
 

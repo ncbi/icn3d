@@ -835,58 +835,60 @@ iCn3DUI.prototype.setSeqAlignChain = function () { var me = this; //"use strict"
           var end1 = me.qt_start_end[i].q_end - 1;
           var end2 = me.qt_start_end[i].t_end - 1;
 
-          var index1 = alignIndex;
-          for(var j = prevIndex1 + 1, jl = start1; prevIndex1 !== undefined && j < jl; ++j) {
-              if(me.icn3d.chainsSeq[chainid1] === undefined) break;
-              var resi = me.icn3d.chainsSeq[chainid1][j].resi;
-              var resn = me.icn3d.chainsSeq[chainid1][j].name.toLowerCase();
-
-              color = me.GREY8;
-              classname = 'icn3d-nalign';
-
-              me.nalignHash1[chainid1 + '_' + resi] = 1;
-              me.setSeqPerResi(chainid1, chainid1, chainid2, resi, resn, false, color, undefined, classname, true, false, index1);
-              ++index1;
-          }
-
-          var index2 = alignIndex;
-          for(var j = prevIndex2 + 1, jl = start2; prevIndex2 !== undefined && j < jl; ++j) {
-              if(me.icn3d.chainsSeq[chainid2] === undefined) break;
-              var resi = me.icn3d.chainsSeq[chainid2][j].resi;
-              var resn = me.icn3d.chainsSeq[chainid2][j].name.toLowerCase();
-
-              color = me.GREY8;
-              classname = 'icn3d-nalign';
-
-              me.nalignHash2[chainid2 + '_' + resi] = 1;
-              me.setSeqPerResi(chainid2, chainid1, chainid2, resi, resn, false, color, undefined, classname, false, false, index2);
-              ++index2; // count just once
-          }
-
-          if(index1 < index2) {
-              alignIndex = index2;
-
-              for(var j = 0; j < index2 - index1; ++j) {
-                  var resi = '';
-                  var resn = '-';
+          if(i > 0) {
+              var index1 = alignIndex;
+              for(var j = prevIndex1 + 1, jl = start1; j < jl; ++j) {
+                  if(me.icn3d.chainsSeq[chainid1] === undefined) break;
+                  var resi = me.icn3d.chainsSeq[chainid1][j].resi;
+                  var resn = me.icn3d.chainsSeq[chainid1][j].name.toLowerCase();
 
                   color = me.GREY8;
                   classname = 'icn3d-nalign';
 
-                  me.setSeqPerResi(chainid1, chainid1, chainid2, resi, resn, false, color, undefined, classname, true, false, index1 + j);
+                  me.nalignHash1[chainid1 + '_' + resi] = 1;
+                  me.setSeqPerResi(chainid1, chainid1, chainid2, resi, resn, false, color, undefined, classname, true, false, index1);
+                  ++index1;
               }
-          }
-          else {
-              alignIndex = index1;
 
-              for(var j = 0; j < index1 - index2; ++j) {
-                  var resi = '';
-                  var resn = '-';
+              var index2 = alignIndex;
+              for(var j = prevIndex2 + 1, jl = start2; j < jl; ++j) {
+                  if(me.icn3d.chainsSeq[chainid2] === undefined) break;
+                  var resi = me.icn3d.chainsSeq[chainid2][j].resi;
+                  var resn = me.icn3d.chainsSeq[chainid2][j].name.toLowerCase();
 
                   color = me.GREY8;
                   classname = 'icn3d-nalign';
 
-                  me.setSeqPerResi(chainid2, chainid1, chainid2, resi, resn, false, color, undefined, classname, false, false, index2 + j);
+                  me.nalignHash2[chainid2 + '_' + resi] = 1;
+                  me.setSeqPerResi(chainid2, chainid1, chainid2, resi, resn, false, color, undefined, classname, false, false, index2);
+                  ++index2; // count just once
+              }
+
+              if(index1 < index2) {
+                  alignIndex = index2;
+
+                  for(var j = 0; j < index2 - index1; ++j) {
+                      var resi = '';
+                      var resn = '-';
+
+                      color = me.GREY8;
+                      classname = 'icn3d-nalign';
+
+                      me.setSeqPerResi(chainid1, chainid1, chainid2, resi, resn, false, color, undefined, classname, true, false, index1 + j);
+                  }
+              }
+              else {
+                  alignIndex = index1;
+
+                  for(var j = 0; j < index1 - index2; ++j) {
+                      var resi = '';
+                      var resn = '-';
+
+                      color = me.GREY8;
+                      classname = 'icn3d-nalign';
+
+                      me.setSeqPerResi(chainid2, chainid1, chainid2, resi, resn, false, color, undefined, classname, false, false, index2 + j);
+                  }
               }
           }
 
@@ -945,6 +947,10 @@ iCn3DUI.prototype.setSeqAlignForRealign = function () { var me = this; //"use st
 
       me.icn3d.alnChainsSeq = {};
       me.icn3d.alnChains = {};
+
+//      var emptyResObject = {resid: '', resn:'', resi: 0, aligned: false};
+
+//      var prevChainid1 = '', prevChainid2 = '', cnt1 = 0, cnt2 = 0;
 
       for(var i = 0, il = me.realignResid[structure1].length; i < il; ++i) {
           var resObject1 = me.realignResid[structure1][i];
@@ -1055,56 +1061,6 @@ iCn3DUI.prototype.setSeqAlignForRealign = function () { var me = this; //"use st
       }
 };
 
-/*
-iCn3DUI.prototype.realign = function() { var me = this; //"use strict";
-    me.saveSelectionPrep();
-
-    var index = Object.keys(me.icn3d.defNames2Atoms).length;
-    var name = 'alseq_' + index;
-
-    me.saveSelection(name, name);
-
-    var structArray = Object.keys(structHash);
-
-    if(structArray.length >= 2) {
-        var toStruct = structArray[0];
-        var fromStruct = structArray[1];
-
-        me.realignResid = {};
-
-        var structHash = {};
-        var lastStruResi = '';
-        for(var serial in me.icn3d.hAtoms) {
-            var atom = me.icn3d.atoms[serial];
-            if( (me.icn3d.proteins.hasOwnProperty(serial) && atom.name == "CA")
-              || (me.icn3d.nucleotides.hasOwnProperty(serial) && (atom.name == "O3'" || atom.name == "O3*")) ) {
-                var resid = atom.structure + '_' + atom.chain + '_' + atom.resi;
-
-                if(resid == lastStruResi) continue; // e.g., Alt A and B
-
-                if(!structHash.hasOwnProperty(atom.structure)) {
-                    structHash[atom.structure] = [];
-                }
-
-                structHash[atom.structure].push(atom.coord.clone());
-
-                if(me.realignResid[atom.structure] === undefined) me.realignResid[atom.structure] = [];
-                me.realignResid[atom.structure].push(resid);
-
-                lastStruResi = resid;
-            }
-        }
-
-
-        // transform from the second structure to the first structure
-        var coordsFrom = structHash[fromStruct];
-        var coordsTo = structHash[toStruct];
-
-        me.alignCoords(coordsFrom, coordsTo, fromStruct);
-    }
-};
-*/
-
 iCn3DUI.prototype.realignOnSeqAlign = function () { var me = this; //"use strict";
     me.saveSelectionPrep();
 
@@ -1194,15 +1150,25 @@ iCn3DUI.prototype.realignOnSeqAlign = function () { var me = this; //"use strict
                   var segArray = target.segs;
                   for(var i = 0, il = segArray.length; i < il; ++i) {
                       var seg = segArray[i];
+                      var prevChain1 = '', prevChain2 = '';
                       for(var j = 0; j <= seg.orito - seg.orifrom; ++j) {
+                          var chainid1 = residArray1[j + seg.orifrom].substr(0, residArray1[j + seg.orifrom].lastIndexOf('_'));
+                          var chainid2 = residArray2[j + seg.from].substr(0, residArray2[j + seg.from].lastIndexOf('_'));
+
                           coordsTo.push(coord1[j + seg.orifrom]);
                           coordsFrom.push(coord2[j + seg.from]);
 
                           seqto += seq1[j + seg.orifrom];
                           seqfrom += seq2[j + seg.from];
 
-                          me.realignResid[toStruct].push({'resid':residArray1[j + seg.orifrom], 'resn':seq1[j + seg.orifrom]});
-                          me.realignResid[fromStruct].push({'resid':residArray2[j + seg.from], 'resn':seq2[j + seg.from]});
+                          // one chaincould be longer than the other
+                          if(j == 0 || (prevChain1 == chainid1 && prevChain2 == chainid2) || (prevChain1 != chainid1 && prevChain2 != chainid2)) {
+                              me.realignResid[toStruct].push({'resid':residArray1[j + seg.orifrom], 'resn':seq1[j + seg.orifrom]});
+                              me.realignResid[fromStruct].push({'resid':residArray2[j + seg.from], 'resn':seq2[j + seg.from]});
+                          }
+
+                          prevChain1 = chainid1;
+                          prevChain2 = chainid2;
                       }
                   }
 
