@@ -119,7 +119,8 @@ var iCn3DUI = function(cfg) { var me = this; //"use strict";
 
     me.clbondValue = 14;
 
-    me.baseUrl = "https://structure.ncbi.nlm.nih.gov/";
+    //me.baseUrl = "https://structure.ncbi.nlm.nih.gov/";
+    me.baseUrl = "https://www.ncbi.nlm.nih.gov/Structure/";
     me.divStr = "<div id='" + me.pre;
     me.divNowrapStr = "<div style='white-space:nowrap'>";
     me.spanNowrapStr = "<span style='white-space:nowrap'>";
@@ -2031,7 +2032,10 @@ iCn3DUI.prototype = {
 
                 //shorturl: https://icn3d.page.link/NvbAh1Vmiwc4bgX87
                 var urlArray = shorturl.split('page.link/');
-                if(urlArray.length == 2) shorturl = me.baseUrl + 'icn3d/share.html?' + urlArray[1];
+                //if(urlArray.length == 2) shorturl = me.baseUrl + 'icn3d/share.html?' + urlArray[1];
+                // When the baseURL is structure.ncbi.nlm.nih.gov, mmcifparser.cgi has a problem to past posted data in Mac/iphone
+                // So the base URL is still www.ncbi.nlm.nih.gov/Structure,just use short URL here
+                if(urlArray.length == 2) shorturl = 'https://structure.ncbi.nlm.nih.gov/icn3d/share.html?' + urlArray[1];
 
                 $("#" + me.pre + "ori_url").val(url);
                 $("#" + me.pre + "short_url").val(shorturl);
