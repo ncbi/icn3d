@@ -43,17 +43,19 @@
     To select on 2D interaction diagram: click on the nodes or lines. The nodes are chains and can be united with the Ctrl key. The lines are interactions and can NOT be united. Each click on the lines selects half of the lines, i.e., select the interacting residues in one of the two chains.
 
 * <b>[Align two structures](https://structure.ncbi.nlm.nih.gov/icn3d/share.html?wPoW56e8QnzVfuZw6), [align two chains](https://structure.ncbi.nlm.nih.gov/icn3d/share.html?ijnf), or [align a protein sequence to a structure](https://structure.ncbi.nlm.nih.gov/icn3d/share.html?Mmm82craCwGMAxru9)</b>: 
-    You can click "File > Align" to see all three alignment options. You can also [realign](https://structure.ncbi.nlm.nih.gov/icn3d/share.html?gXW2CKcEDdJzk6uL6) a subset of the structures. 
+    You can click "File > Align" to see all three alignment options. You can also [realign](https://structure.ncbi.nlm.nih.gov/icn3d/share.html?tu166KaK8jQYUAVf7) a subset of the structures. 
 
 * <b>[Add custom tracks](https://structure.ncbi.nlm.nih.gov/icn3d/share.html?pUzP)</b>:
     You can add custom tracks in various formats (FASTA, bed file, etc.) in the annotation window by clicking the menu "Windows > View Sequences & Annotations".
 
-* <b>[Force-directed graph](https://structure.ncbi.nlm.nih.gov/icn3d/share.html?6UiwgaoLAte8vpom8)</b>:
+* <b>[Show force-directed graph for interactions](https://structure.ncbi.nlm.nih.gov/icn3d/share.html?rshvjTFXpAFu8GDa9)</b>:
     You can show the interactions using 2D force-directed graph in the menu "View > H-Bonds & Interactions > Force-Directed Graph".
     
-* <b>[Solvent accessible surface area (SASA)](https://structure.ncbi.nlm.nih.gov/icn3d/share.html?Hn3SVz5iUHLLZaPU7)</b>:
+* <b>[Calculate and show Solvent accessible surface area (SASA)](https://structure.ncbi.nlm.nih.gov/icn3d/share.html?xKSyfd1umbKstGh29)</b>:
     You can color structures with SASA, or show the SASA for each residue.
   
+* <b>[Show symmetry](https://structure.ncbi.nlm.nih.gov/icn3d/share.html?bGH1BfLsiGFhhTDn8)</b>:
+    You can show symmetry when available.
 
 ## Embed iCn3D with iframe or JavaScript libraries
 
