@@ -361,8 +361,7 @@ iCn3DUI.prototype.execCommandsBase = function (start, end, steps, bFinalStep) { 
 
         if(title !== 'none') {
             if(me.icn3d.symmetryHash === undefined) {
-                $.when(me.retrieveSymmetry(Object.keys(me.icn3d.structures)[0])).then(function() {
-                   //me.icn3d.applySymmetry(title);
+                $.when(me.applyCommandSymmetry(command)).then(function() {
                    dialog.dialog( "close" );
 
                    me.icn3d.draw();
@@ -370,7 +369,6 @@ iCn3DUI.prototype.execCommandsBase = function (start, end, steps, bFinalStep) { 
                 });
             }
             else {
-                //me.icn3d.applySymmetry(title);
                 me.icn3d.draw();
                 me.execCommandsBase(i + 1, end, steps);
             }
@@ -379,6 +377,8 @@ iCn3DUI.prototype.execCommandsBase = function (start, end, steps, bFinalStep) { 
             me.icn3d.draw();
             me.execCommandsBase(i + 1, end, steps);
         }
+
+        return;
       }
       else if(me.icn3d.commands[i].trim().indexOf('realign on seq align') == 0) {
         var strArray = me.icn3d.commands[i].split("|||");
@@ -387,65 +387,30 @@ iCn3DUI.prototype.execCommandsBase = function (start, end, steps, bFinalStep) { 
         var paraArray = command.split(' | ');
         if(paraArray.length == 2) {
             var nameArray = paraArray[1].split(',');
-            me.icn3d.hAtom = me.getAtomsFromNameArray(nameArray);
+            me.icn3d.hAtoms = me.getAtomsFromNameArray(nameArray);
         }
 
-        $.when(me.realignOnSeqAlign()).then(function() {
+        $.when(me.applyCommandRealign(command)).then(function() {
            me.execCommandsBase(i + 1, end, steps);
         });
+
+        return;
       }
       else if(me.icn3d.commands[i].trim().indexOf('graph interaction pairs') == 0) {
         var strArray = me.icn3d.commands[i].split("|||");
         var command = strArray[0].trim();
 
-        var paraArray = command.split(' | ');
-        if(paraArray.length >= 3) {
-            var setNameArray = paraArray[1].split(' ');
-            var nameArray2 = setNameArray[0].split(',');
-            var nameArray = setNameArray[1].split(',');
-
-            var bHbond = paraArray[2].indexOf('hbonds') !== -1;
-            var bSaltbridge = paraArray[2].indexOf('salt bridge') !== -1;
-            var bInteraction = paraArray[2].indexOf('interactions') !== -1;
-
-            var bHbondCalc;
-            if(paraArray.length >= 4) {
-                bHbondCalc = (paraArray[3] == 'true') ? true : false;
-            }
-
-            if(paraArray.length >= 5) {
-               thresholdArray = paraArray[4].split(' ');
-
-               if(thresholdArray.length == 4) {
-                   $("#" + me.pre + "hbondthreshold").val(thresholdArray[1]);
-                   $("#" + me.pre + "saltbridgethreshold").val(thresholdArray[2]);
-                   $("#" + me.pre + "contactthreshold").val(thresholdArray[3]);
-               }
-            }
-
-            if(paraArray.length == 6) {
-                var thicknessArray = paraArray[5].split(' ');
-
-                if(thicknessArray.length == 6) {
-                    $("#" + me.pre + "dist_ss").val(thicknessArray[0]);
-                    $("#" + me.pre + "dist_coil").val(thicknessArray[1]);
-                    $("#" + me.pre + "dist_hbond").val(thicknessArray[2]);
-                    $("#" + me.pre + "dist_inter").val(thicknessArray[3]);
-                    $("#" + me.pre + "dist_ssbond").val(thicknessArray[4]);
-                    $("#" + me.pre + "dist_ionic").val(thicknessArray[5]);
-                }
-            }
-
-            if(me.bD3) {
-                me.viewInteractionPairs(nameArray2, nameArray, bHbondCalc, bHbond, bSaltbridge, bInteraction, 'graph');
+        if(me.bD3 === undefined) {
+            $.when(me.applyCommandGraphinteraction(command)).then(function() {
                 me.execCommandsBase(i + 1, end, steps);
-            }
-            else {
-                $.when(me.viewInteractionPairs(nameArray2, nameArray, bHbondCalc, bHbond, bSaltbridge, bInteraction, 'graph')).then(function() {
-                   me.execCommandsBase(i + 1, end, steps);
-                });
-            }
+            });
         }
+        else {
+            me.applyCommandGraphinteraction(command);
+            me.execCommandsBase(i + 1, end, steps);
+        }
+
+        return;
       }
       else {
           me.applyCommand(me.icn3d.commands[i]);
@@ -467,6 +432,31 @@ iCn3DUI.prototype.execCommandsBase = function (start, end, steps, bFinalStep) { 
 
       me.renderFinalStep(i);
   }
+};
+
+iCn3DUI.prototype.setStrengthPara = function(paraArray) { var me = this; //"use strict";
+    if(paraArray.length >= 5) {
+       var thresholdArray = paraArray[4].split(' ');
+
+       if(thresholdArray.length == 4) {
+           $("#" + me.pre + "hbondthreshold").val(thresholdArray[1]);
+           $("#" + me.pre + "saltbridgethreshold").val(thresholdArray[2]);
+           $("#" + me.pre + "contactthreshold").val(thresholdArray[3]);
+       }
+    }
+
+    if(paraArray.length == 6) {
+        var thicknessArray = paraArray[5].split(' ');
+
+        if(thicknessArray.length == 6) {
+            $("#" + me.pre + "dist_ss").val(thicknessArray[0]);
+            $("#" + me.pre + "dist_coil").val(thicknessArray[1]);
+            $("#" + me.pre + "dist_hbond").val(thicknessArray[2]);
+            $("#" + me.pre + "dist_inter").val(thicknessArray[3]);
+            $("#" + me.pre + "dist_ssbond").val(thicknessArray[4]);
+            $("#" + me.pre + "dist_ionic").val(thicknessArray[5]);
+        }
+    }
 };
 
 iCn3DUI.prototype.oneStructurePerWindow = function() { var me = this; //"use strict";
@@ -662,18 +652,15 @@ iCn3DUI.prototype.applyCommandMap = function (command) { var me = this; //"use s
       //"set map 2fofc sigma 1.5"
       // or "set map 2fofc sigma 1.5 | [url]"
       var urlArray = command.split(" | ");
-console.log("command: " + command);
 
       var str = urlArray[0].substr(8);
       var paraArray = str.split(" ");
-console.log("paraArray: " + paraArray);
 
       if(paraArray.length == 3 && paraArray[1] == 'sigma') {
           var sigma = paraArray[2];
           var type = paraArray[0];
 
           if(urlArray.length == 2) {
-console.log("url: " + urlArray[1]);
               me.Dsn6ParserBase(urlArray[1], type, sigma);
           }
           else {
@@ -727,6 +714,63 @@ iCn3DUI.prototype.applyCommandEmmap = function (command) { var me = this; //"use
   }); // end of me.deferred = $.Deferred(function() {
 
   return me.deferredEmmap.promise();
+};
+
+iCn3DUI.prototype.applyCommandSymmetryBase = function (command) { var me = this; //"use strict";
+    me.retrieveSymmetry(Object.keys(me.icn3d.structures)[0])
+};
+
+iCn3DUI.prototype.applyCommandSymmetry = function (command) { var me = this; //"use strict";
+  // chain functions together
+  me.deferredSymmetry = $.Deferred(function() {
+     me.applyCommandSymmetryBase(command);
+  }); // end of me.deferred = $.Deferred(function() {
+
+  return me.deferredSymmetry.promise();
+};
+
+iCn3DUI.prototype.applyCommandRealignBase = function (command) { var me = this; //"use strict";
+    me.realignOnSeqAlign();
+};
+
+iCn3DUI.prototype.applyCommandRealign = function (command) { var me = this; //"use strict";
+  // chain functions together
+  me.deferredRealign = new $.Deferred(function() {
+     me.applyCommandRealignBase(command);
+  }); // end of me.deferred = $.Deferred(function() {
+
+  return me.deferredRealign.promise();
+};
+
+iCn3DUI.prototype.applyCommandGraphinteractionBase = function (command) { var me = this; //"use strict";
+    var paraArray = command.split(' | ');
+    if(paraArray.length >= 3) {
+        var setNameArray = paraArray[1].split(' ');
+        var nameArray2 = setNameArray[0].split(',');
+        var nameArray = setNameArray[1].split(',');
+
+        var bHbond = paraArray[2].indexOf('hbonds') !== -1;
+        var bSaltbridge = paraArray[2].indexOf('salt bridge') !== -1;
+        var bInteraction = paraArray[2].indexOf('interactions') !== -1;
+
+        var bHbondCalc;
+        if(paraArray.length >= 4) {
+            bHbondCalc = (paraArray[3] == 'true') ? true : false;
+        }
+
+        me.setStrengthPara(paraArray);
+
+        me.viewInteractionPairs(nameArray2, nameArray, bHbondCalc, bHbond, bSaltbridge, bInteraction, 'graph');
+    }
+};
+
+iCn3DUI.prototype.applyCommandGraphinteraction = function (command) { var me = this; //"use strict";
+  // chain functions together
+  me.deferredGraphinteraction = $.Deferred(function() {
+     me.applyCommandGraphinteractionBase(command);
+  }); // end of me.deferred = $.Deferred(function() {
+
+  return me.deferredGraphinteraction.promise();
 };
 
 iCn3DUI.prototype.getAxisColor = function (symbol, order) { var me = this; //"use strict";
@@ -804,116 +848,111 @@ iCn3DUI.prototype.getPolygonColor = function (symbol) { var me = this; //"use st
 };
 
 iCn3DUI.prototype.retrieveSymmetry = function (pdbid) { var me = this; //"use strict";
-  // chain functions together
-  me.deferredSymmetry = $.Deferred(function() {
-       //var url = "https://rest.rcsb.org/rest/structures/3dview/" + pdbid;
-       //var url = "https://data-beta.rcsb.org/rest/v3/core/assembly/" + pdbid + "/1";
-       //var url = "https://data-beta.rcsb.org/rest/v1/core/assembly/" + pdbid + "/1";
-       var url = "https://data.rcsb.org/rest/v1/core/assembly/" + pdbid + "/1";
+   //var url = "https://rest.rcsb.org/rest/structures/3dview/" + pdbid;
+   //var url = "https://data-beta.rcsb.org/rest/v3/core/assembly/" + pdbid + "/1";
+   //var url = "https://data-beta.rcsb.org/rest/v1/core/assembly/" + pdbid + "/1";
+   var url = "https://data.rcsb.org/rest/v1/core/assembly/" + pdbid + "/1";
 
-       $.ajax({
-          url: url,
-          dataType: "json",
-          cache: true,
-          tryCount : 0,
-          retryLimit : 1,
-          success: function(data) {
-              var symmetryArray = data.rcsb_struct_symmetry;
+   $.ajax({
+      url: url,
+      dataType: "json",
+      cache: true,
+      tryCount : 0,
+      retryLimit : 1,
+      success: function(data) {
+          var symmetryArray = data.rcsb_struct_symmetry;
 
-              if(symmetryArray !== undefined) {
-                  if(me.icn3d.rmsd_supr !== undefined && me.icn3d.rmsd_supr.rot !== undefined) {
-                      var rot = me.icn3d.rmsd_supr.rot;
-                      var centerFrom = me.icn3d.rmsd_supr.trans1;
-                      var centerTo = me.icn3d.rmsd_supr.trans2;
-                  }
-
-                  me.icn3d.symmetryHash = {};
-                  for(var i = 0, il = symmetryArray.length; i < il; ++i) {
-                      if(symmetryArray[i].symbol == 'C1') continue;
-                      var title = 'no title';
-                      if(symmetryArray[i].kind == "Pseudo Symmetry") {
-                          title = symmetryArray[i].symbol + ' (pseudo)';
-                      }
-                      else if(symmetryArray[i].kind == "Global Symmetry") {
-                          title = symmetryArray[i].symbol + ' (global)';
-                      }
-                      else if(symmetryArray[i].kind == "Local Symmetry") {
-                          title = symmetryArray[i].symbol + ' (local)';
-                      }
-
-                      var rotation_axes = symmetryArray[i].rotation_axes;
-                      var axesArray = [];
-                      for(var j = 0, jl = rotation_axes.length; j < jl; ++j) {
-                          var tmpArray = [];
-                          var start = new THREE.Vector3(rotation_axes[j].start[0], rotation_axes[j].start[1], rotation_axes[j].start[2]);
-                          var end = new THREE.Vector3(rotation_axes[j].end[0], rotation_axes[j].end[1], rotation_axes[j].end[2]);
-
-                          // apply matrix for each atom
-                          if(me.icn3d.rmsd_supr !== undefined && me.icn3d.rmsd_supr.rot !== undefined) {
-                              start = me.icn3d.transformMemPro(start, rot, centerFrom, centerTo);
-                              end = me.icn3d.transformMemPro(end, rot, centerFrom, centerTo);
-                          }
-
-                          tmpArray.push(start);
-                          tmpArray.push(end);
-
-                          // https://www.rcsb.org/pages/help/viewers/jmol_symmetry_view
-                          var colorAxis = me.getAxisColor(symmetryArray[i].symbol, rotation_axes[j].order);
-                          var colorPolygon = me.getPolygonColor(symmetryArray[i].symbol);
-                          tmpArray.push(colorAxis);
-                          tmpArray.push(colorPolygon);
-
-                          tmpArray.push(rotation_axes[j].order);
-
-                          // selected chain
-                          tmpArray.push(symmetryArray[i].clusters[0].members[0].asym_id);
-
-                          axesArray.push(tmpArray);
-                      }
-
-                      me.icn3d.symmetryHash[title] = axesArray;
-                  }
-
-                  if(Object.keys(me.icn3d.symmetryHash).length == 0) {
-                      $("#" + me.pre + "dl_symmetry").html("<br>This structure has no symmetry.");
-                  }
-                  else {
-                      var html = "<option value='none'>None</option>", index = 0;
-                      for(var title in me.icn3d.symmetryHash) {
-                          var selected = (index == 0) ? 'selected' : '';
-                          html += "<option value=" + "'" + title + "' " + selected + ">" + title + "</option>";
-                          ++index;
-                      }
-
-                      $("#" + me.pre + "selectSymmetry").html(html);
-                  }
+          if(symmetryArray !== undefined) {
+              if(me.icn3d.rmsd_supr !== undefined && me.icn3d.rmsd_supr.rot !== undefined) {
+                  var rot = me.icn3d.rmsd_supr.rot;
+                  var centerFrom = me.icn3d.rmsd_supr.trans1;
+                  var centerTo = me.icn3d.rmsd_supr.trans2;
               }
-              else {
+
+              me.icn3d.symmetryHash = {};
+              for(var i = 0, il = symmetryArray.length; i < il; ++i) {
+                  if(symmetryArray[i].symbol == 'C1') continue;
+                  var title = 'no title';
+                  if(symmetryArray[i].kind == "Pseudo Symmetry") {
+                      title = symmetryArray[i].symbol + ' (pseudo)';
+                  }
+                  else if(symmetryArray[i].kind == "Global Symmetry") {
+                      title = symmetryArray[i].symbol + ' (global)';
+                  }
+                  else if(symmetryArray[i].kind == "Local Symmetry") {
+                      title = symmetryArray[i].symbol + ' (local)';
+                  }
+
+                  var rotation_axes = symmetryArray[i].rotation_axes;
+                  var axesArray = [];
+                  for(var j = 0, jl = rotation_axes.length; j < jl; ++j) {
+                      var tmpArray = [];
+                      var start = new THREE.Vector3(rotation_axes[j].start[0], rotation_axes[j].start[1], rotation_axes[j].start[2]);
+                      var end = new THREE.Vector3(rotation_axes[j].end[0], rotation_axes[j].end[1], rotation_axes[j].end[2]);
+
+                      // apply matrix for each atom
+                      if(me.icn3d.rmsd_supr !== undefined && me.icn3d.rmsd_supr.rot !== undefined) {
+                          start = me.icn3d.transformMemPro(start, rot, centerFrom, centerTo);
+                          end = me.icn3d.transformMemPro(end, rot, centerFrom, centerTo);
+                      }
+
+                      tmpArray.push(start);
+                      tmpArray.push(end);
+
+                      // https://www.rcsb.org/pages/help/viewers/jmol_symmetry_view
+                      var colorAxis = me.getAxisColor(symmetryArray[i].symbol, rotation_axes[j].order);
+                      var colorPolygon = me.getPolygonColor(symmetryArray[i].symbol);
+                      tmpArray.push(colorAxis);
+                      tmpArray.push(colorPolygon);
+
+                      tmpArray.push(rotation_axes[j].order);
+
+                      // selected chain
+                      tmpArray.push(symmetryArray[i].clusters[0].members[0].asym_id);
+
+                      axesArray.push(tmpArray);
+                  }
+
+                  me.icn3d.symmetryHash[title] = axesArray;
+              }
+
+              if(Object.keys(me.icn3d.symmetryHash).length == 0) {
                   $("#" + me.pre + "dl_symmetry").html("<br>This structure has no symmetry.");
               }
+              else {
+                  var html = "<option value='none'>None</option>", index = 0;
+                  for(var title in me.icn3d.symmetryHash) {
+                      var selected = (index == 0) ? 'selected' : '';
+                      html += "<option value=" + "'" + title + "' " + selected + ">" + title + "</option>";
+                      ++index;
+                  }
 
-              me.openDialog(me.pre + 'dl_symmetry', 'Symmetry');
-
-              if(me.deferredSymmetry !== undefined) me.deferredSymmetry.resolve();
-          },
-          error : function(xhr, textStatus, errorThrown ) {
-            this.tryCount++;
-            if (this.tryCount <= this.retryLimit) {
-                //try again
-                $.ajax(this);
-                return;
-            }
-            $("#" + me.pre + "dl_symmetry").html("<br>This structure has no symmetry.");
-
-            me.openDialog(me.pre + 'dl_symmetry', 'Symmetry');
-
-            if(me.deferredSymmetry !== undefined) me.deferredSymmetry.resolve();
-            return;
+                  $("#" + me.pre + "selectSymmetry").html(html);
+              }
           }
-       });
-  }); // end of me.deferred = $.Deferred(function() {
+          else {
+              $("#" + me.pre + "dl_symmetry").html("<br>This structure has no symmetry.");
+          }
 
-  return me.deferredSymmetry.promise();
+          me.openDialog(me.pre + 'dl_symmetry', 'Symmetry');
+
+          if(me.deferredSymmetry !== undefined) me.deferredSymmetry.resolve();
+      },
+      error : function(xhr, textStatus, errorThrown ) {
+        this.tryCount++;
+        if (this.tryCount <= this.retryLimit) {
+            //try again
+            $.ajax(this);
+            return;
+        }
+        $("#" + me.pre + "dl_symmetry").html("<br>This structure has no symmetry.");
+
+        me.openDialog(me.pre + 'dl_symmetry', 'Symmetry');
+
+        if(me.deferredSymmetry !== undefined) me.deferredSymmetry.resolve();
+        return;
+      }
+   });
 };
 
 iCn3DUI.prototype.applyCommandAnnotationsAndCddSiteBase = function (command) { var me = this; //"use strict";
@@ -1981,6 +2020,25 @@ iCn3DUI.prototype.applyCommand = function (commandStr) { var me = this; //"use s
     var style = secondPart.substr(secondPart.indexOf(' ') + 1);
 
     me.setStyle(selectionType, style);
+  }
+  else if(command.indexOf('window') == 0) {
+    var secondPart = command.substr(command.indexOf(' ') + 1);
+
+    //if(secondPart == "window annotations") {
+    //    me.openDialog(me.pre + 'dl_selectannotations', 'Sequences and Annotations');
+    //}
+    //else
+
+    if(secondPart == "aligned sequences") {
+        me.openDialog(me.pre + 'dl_alignment', 'Select residues in aligned sequences');
+    }
+
+    //else if(secondPart == "window interactions") {
+    //    me.openDialog(me.pre + 'dl_2ddgm', 'Interactions');
+    //}
+    //else if(secondPart == "window defined sets") {
+    //    me.openDialog(me.pre + 'dl_definedsets', 'Select sets');
+    //}
   }
 
 // special, select ==========

@@ -303,6 +303,8 @@ iCn3DUI.prototype.transformToOpmOriForAlign = function(pdbid, chainresiCalphaHas
               var rmsd = me.icn3d.rmsd_supr.rmsd;
 
               me.setLogCmd("alignment RMSD: " + rmsd.toPrecision(4), false);
+              $("#" + me.pre + "realignrmsd").val(rmsd.toPrecision(4));
+              if(!me.cfg.bSidebyside) me.openDialog(me.pre + 'dl_rmsd', 'Realignment RMSD');
 
               var dxymaxsq = 0;
               for(var i in me.icn3d.atoms) {
@@ -358,7 +360,10 @@ iCn3DUI.prototype.alignCoords = function(coordsFrom, coordsTo, secondStruct) { v
           var centerFrom = me.icn3d.rmsd_supr.trans1;
           var centerTo = me.icn3d.rmsd_supr.trans2;
           var rmsd = me.icn3d.rmsd_supr.rmsd;
+
           me.setLogCmd("alignment RMSD: " + rmsd.toPrecision(4), false);
+          $("#" + me.pre + "realignrmsd").val(rmsd.toPrecision(4));
+          if(!me.cfg.bSidebyside) me.openDialog(me.pre + 'dl_rmsd', 'Realignment RMSD');
 
           for(var i = 0, il = me.icn3d.structures[secondStruct].length; i < il; ++i) {
               var chainid = me.icn3d.structures[secondStruct][i];
@@ -379,6 +384,9 @@ iCn3DUI.prototype.alignCoords = function(coordsFrom, coordsTo, secondStruct) { v
           $("#" + me.pre + "dl_sequence2").width(me.RESIDUE_WIDTH * seqObj.maxSeqCnt + 200);
 
           me.openDialog(me.pre + 'dl_alignment', 'Select residues in aligned sequences');
+
+          me.opts['color'] = 'grey';
+          me.icn3d.setColorByOptions(me.opts, me.icn3d.dAtoms);
 
           me.opts['color'] = 'identity';
           me.icn3d.setColorByOptions(me.opts, me.icn3d.hAtoms);

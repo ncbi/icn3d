@@ -35,6 +35,7 @@ iCn3DUI.prototype.changeSeqColor = function(residueArray) { var me = this; //"us
          var color = (atom.color !== undefined) ? colorStr : "CCCCCC";
          // annotations will have their own color, only the chain will have the changed color
          $("[id=giseq_" + me.pre + pickedResidue + "]").attr('style', 'color:#' + color);
+         $("[id=align_" + me.pre + pickedResidue + "]").attr('style', 'color:#' + color);
          if(me.cfg.align !== undefined || me.cfg.chainalign !== undefined || me.bRealign) $("[id=align_" + me.pre + pickedResidue + "]").attr('style', 'color:#' + color);
        //}
    }
@@ -354,6 +355,11 @@ iCn3DUI.prototype.hlSeq = function(residueArray) { var me = this; //"use strict"
          resElem.addClass('icn3d-highlightSeq');
        }
 
+       resElem = $("[id=align_" + me.pre + pickedResidue + "]");
+       if(resElem.length !== 0) {
+         resElem.addClass('icn3d-highlightSeq');
+       }
+
        var pos = pickedResidue.lastIndexOf('_');
        var chainid = pickedResidue.substr(0, pos);
 
@@ -379,6 +385,9 @@ iCn3DUI.prototype.hlSeqInChain = function(chainid) { var me = this; //"use stric
        // too expensive to highlight all annotations
        if($("#giseq_" + me.pre + pickedResidue).length !== 0) {
          $("#giseq_" + me.pre + pickedResidue).addClass('icn3d-highlightSeq');
+       }
+       if($("#align_" + me.pre + pickedResidue).length !== 0) {
+         $("#align_" + me.pre + pickedResidue).addClass('icn3d-highlightSeq');
        }
    }
 

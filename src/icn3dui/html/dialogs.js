@@ -300,7 +300,12 @@ iCn3DUI.prototype.openDialog = function (id, title) {  var me = this; //"use str
                 height = 300;
             }
             else {
-                position ={ my: "left top", at: "left top+50", of: "#" + me.pre + "canvas", collision: "none" };
+                if(me.cfg.align) {
+                    position ={ my: "left top", at: "left top+90", of: "#" + me.pre + "canvas", collision: "none" };
+                }
+                else {
+                    position ={ my: "left top", at: "left top+50", of: "#" + me.pre + "canvas", collision: "none" };
+                }
             }
 
             window.dialog = $( "#" + id ).dialog({
