@@ -13,7 +13,7 @@ if (!$.ui.dialog.prototype._makeDraggableBase) {
 }
 
 var iCn3DUI = function(cfg) { var me = this; //"use strict";
-    this.REVISION = '2.16.0';
+    this.REVISION = '2.16.1';
 
     me.bFullUi = true;
 
@@ -2179,13 +2179,37 @@ iCn3DUI.prototype = {
         return hbondStr;
     },
 
+    convertLabel2Resid: function(residLabel) { var me = this; //"use strict";
+        //ASN $1KQ2.A:6@ND2
+        //or ASN $1KQ2.A:6
+        var pos1 = residLabel.indexOf(' ');
+        var pos2Tmp = residLabel.indexOf('@');
+        var pos2 = (pos2Tmp !== -1) ? pos2Tmp : residLabel.length;
+        var pos3 = residLabel.indexOf('$');
+        var pos4 = residLabel.indexOf('.');
+        var pos5 = residLabel.indexOf(':');
+
+        var resid = residLabel.substr(pos3 + 1, pos4 - pos3 - 1) + '_' + residLabel.substr(pos4 + 1, pos5 - pos4 - 1)
+            + '_' + residLabel.substr(pos5 + 1, pos2 - pos5 - 1);
+
+        return resid;
+    },
+
     exportHbondPairs: function(type, labelType) { var me = this; //"use strict";
         var tmpText = '';
         var cnt = 0;
 
         for(var resid1 in me.resid2ResidhashHbond) {
+            var resid1Real = me.convertLabel2Resid(resid1);
+            var atom1 = me.icn3d.getFirstAtomObj(me.icn3d.residues[resid1Real]);
+            var color1 = atom1.color.getHexString();
+
             for(var resid2 in me.resid2ResidhashHbond[resid1]) {
-                tmpText += '<tr><td><input type="checkbox" class="' + me.pre + 'seloneres" id="' + me.pre + 'hbond_' +  cnt + 'a" resid="' + resid1 + '"/> ' + resid1 + '</td><td><input type="checkbox" class="' + me.pre + 'seloneres" id="' + me.pre + 'hbond_' +  cnt + 'b" resid="' + resid2 + '"/> ' + resid2 + '</td>';
+                var resid2Real = me.convertLabel2Resid(resid2);
+                var atom2 = me.icn3d.getFirstAtomObj(me.icn3d.residues[resid2Real]);
+                var color2 = atom2.color.getHexString();
+
+                tmpText += '<tr><td style="color:#' + color1 + '"><input type="checkbox" class="' + me.pre + 'seloneres" id="' + me.pre + 'hbond_' +  cnt + 'a" resid="' + resid1 + '"/> ' + resid1 + '</td><td style="color:#' + color2 + '"><input type="checkbox" class="' + me.pre + 'seloneres" id="' + me.pre + 'hbond_' +  cnt + 'b" resid="' + resid2 + '"/> ' + resid2 + '</td>';
                 if(type == 'view') tmpText += '<td align="center"><button class="' + me.pre + 'selres" resid="' + resid1 + '|' + resid2 + '">Highlight</button></td>';
                 tmpText += '</tr>';
                 ++cnt;
@@ -2215,8 +2239,16 @@ iCn3DUI.prototype = {
         var tmpText = '';
         var cnt = 0;
         for(var resid1 in me.resid2ResidhashSaltbridge) {
+            var resid1Real = me.convertLabel2Resid(resid1);
+            var atom1 = me.icn3d.getFirstAtomObj(me.icn3d.residues[resid1Real]);
+            var color1 = atom1.color.getHexString();
+
             for(var resid2 in me.resid2ResidhashSaltbridge[resid1]) {
-                tmpText += '<tr><td><input type="checkbox" class="' + me.pre + 'seloneres" id="' + me.pre + 'saltb_' +  cnt + 'a" resid="' + resid1 + '"/> ' + resid1 + '</td><td><input type="checkbox" class="' + me.pre + 'seloneres" id="' + me.pre + 'saltb_' +  cnt + 'b" resid="' + resid2 + '"/> ' + resid2 + '</td>';
+                var resid2Real = me.convertLabel2Resid(resid2);
+                var atom2 = me.icn3d.getFirstAtomObj(me.icn3d.residues[resid2Real]);
+                var color2 = atom2.color.getHexString();
+
+                tmpText += '<tr><td style="color:#' + color1 + '"><input type="checkbox" class="' + me.pre + 'seloneres" id="' + me.pre + 'saltb_' +  cnt + 'a" resid="' + resid1 + '"/> ' + resid1 + '</td><td style="color:#' + color2 + '"><input type="checkbox" class="' + me.pre + 'seloneres" id="' + me.pre + 'saltb_' +  cnt + 'b" resid="' + resid2 + '"/> ' + resid2 + '</td>';
                 if(type == 'view') tmpText += '<td align="center"><button class="' + me.pre + 'selres" resid="' + resid1 + '|' + resid2 + '">Highlight</button></td>';
                 tmpText += '</tr>';
                 ++cnt;
@@ -2248,11 +2280,19 @@ iCn3DUI.prototype = {
         var residHash = (bInteraction) ? me.resid2ResidhashInteractions : me.resid2ResidhashSphere;
 
         for(var resid1 in residHash) { // e.g., resid1: TYR $1KQ2.A:42
+            var resid1Real = me.convertLabel2Resid(resid1);
+            var atom1 = me.icn3d.getFirstAtomObj(me.icn3d.residues[resid1Real]);
+            var color1 = atom1.color.getHexString();
+
             for(var resid2 in residHash[resid1]) {
+                var resid2Real = me.convertLabel2Resid(resid2);
+                var atom2 = me.icn3d.getFirstAtomObj(me.icn3d.residues[resid2Real]);
+                var color2 = atom2.color.getHexString();
+
                 var dist1_dist2 = residHash[resid1][resid2].split('_');
 
                 if(bInteraction) {
-                    tmpText += '<tr><td><input type="checkbox" class="' + me.pre + 'seloneres" id="' + me.pre + 'inter_' +  cnt + 'a" resid="' + resid1 + '"/> ' + resid1 + '</td><td><input type="checkbox" class="' + me.pre + 'seloneres" id="' + me.pre + 'inter_' +  cnt + 'b" resid="' + resid2 + '"/> ' + resid2 + '</td><td align="center">' + dist1_dist2[0] + '</td><td align="center">' + dist1_dist2[1] + '</td>';
+                    tmpText += '<tr><td style="color:#' + color1 + '"><input type="checkbox" class="' + me.pre + 'seloneres" id="' + me.pre + 'inter_' +  cnt + 'a" resid="' + resid1 + '"/> ' + resid1 + '</td><td style="color:#' + color2 + '"><input type="checkbox" class="' + me.pre + 'seloneres" id="' + me.pre + 'inter_' +  cnt + 'b" resid="' + resid2 + '"/> ' + resid2 + '</td><td align="center">' + dist1_dist2[0] + '</td><td align="center">' + dist1_dist2[1] + '</td>';
                     if(type == 'view') tmpText += '<td align="center"><button class="' + me.pre + 'selres" resid="' + resid1 + '|' + resid2 + '">Highlight</button></td>';
                     tmpText += '</tr>';
                 }
@@ -2291,40 +2331,6 @@ iCn3DUI.prototype = {
         else {
             return text;
         }
-/*
-        if(type == 'graph') {
-            var interStr = '';
-            for(var resid1 in residHash) {
-                //$1KQ2.A:42 TYR
-                var pos1a = resid1.indexOf(' ');
-                var pos1b = resid1.indexOf(':');
-                var pos1c = resid1.indexOf('.');
-                var pos1d = resid1.indexOf('$');
-                var resn1 = me.icn3d.residueName2Abbr(resid1.substr(pos1a + 1));
-                var resName1 = resn1 + resid1.substr(pos1b + 1, pos1a - pos1b - 1);
-                if(labelType == 'chain' || labelType == 'structure') resName1 += '.' + resid1.substr(pos1c + 1, pos1b - pos1c - 1);
-                if(labelType == 'structure') resName1 += '.' + resid1.substr(pos1d + 1, pos1c - pos1d - 1);
-
-                for(var resid2 in residHash[resid1]) {
-                    var pos2a = resid2.indexOf(' ');
-                    var pos2b = resid2.indexOf(':');
-                    var pos2c = resid2.indexOf('.');
-                    var pos2d = resid2.indexOf('$');
-                    var resn2 = me.icn3d.residueName2Abbr(resid2.substr(pos2a + 1));
-                    var resName2 = resn2 + resid2.substr(pos2b + 1, pos2a - pos2b - 1);
-                    if(labelType == 'chain' || labelType == 'structure') resName2 += '.' + resid2.substr(pos2c + 1, pos2b - pos2c - 1);
-                    if(labelType == 'structure') resName2 += '.' + resid2.substr(pos2d + 1, pos2c - pos2d - 1);
-
-                    interStr += ', {"source": "' + resName1 + '", "target": "' + resName2 + '", "v": 0.5, "c": "222"}';
-                }
-            }
-
-            return interStr;
-        }
-        else {
-            return text;
-        }
-*/
     },
 
     saveColor: function() { var me = this; //"use strict";
@@ -2660,7 +2666,7 @@ iCn3DUI.prototype = {
                 $("#" + me.pre + "atomsCustomRealign2").html(definedAtomsHtml);
             }
 
-            me.openDialog(me.pre + 'dl_realign', 'Please select two sets to realign');
+            if(me.icn3d.bRender) me.openDialog(me.pre + 'dl_realign', 'Please select two sets to realign');
 
             $("#" + me.pre + "atomsCustomRealign").resizable();
             $("#" + me.pre + "atomsCustomRealign2").resizable();
@@ -3286,6 +3292,7 @@ iCn3DUI.prototype = {
         $("#" + me.pre + "mn6_selectannotations").click(function(e) {
            me.showAnnotations();
            me.setLogCmd("view annotations", true);
+           //me.setLogCmd("window annotations", true);
 
            //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
@@ -3374,6 +3381,7 @@ iCn3DUI.prototype = {
     clkMn2_alignment: function() { var me = this; //"use strict";
         $("#" + me.pre + "mn2_alignment").click(function(e) {
            me.openDialog(me.pre + 'dl_alignment', 'Select residues in aligned sequences');
+           me.setLogCmd("window aligned sequences", true);
 
            //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
@@ -3413,6 +3421,7 @@ iCn3DUI.prototype = {
            me.showSets();
 
            me.setLogCmd('defined sets', true);
+           //me.setLogCmd('window defined sets', true);
         });
 
         $("#" + me.pre + "setOr").click(function(e) {
@@ -5578,6 +5587,7 @@ iCn3DUI.prototype = {
              me.retrieveInteractionData();
 
              me.setLogCmd("view interactions", true);
+             //me.setLogCmd("window interactions", true);
 
            //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
@@ -6979,6 +6989,8 @@ iCn3DUI.prototype = {
                        $("#" + me.svgid).empty();
                        me.openDialog(me.pre + 'dl_graph', 'Force-directed graph');
                        if(me.icn3d.bRender) me.drawGraph(me.graphStr);
+
+                       if(me.deferredGraphinteraction !== undefined) me.deferredGraphinteraction.resolve();
                   },
                   error : function(xhr, textStatus, errorThrown ) {
                     this.tryCount++;
@@ -6987,6 +6999,9 @@ iCn3DUI.prototype = {
                         $.ajax(this);
                         return;
                     }
+
+                    if(me.deferredGraphinteraction !== undefined) me.deferredGraphinteraction.resolve();
+
                     return;
                   }
                });
@@ -7136,7 +7151,7 @@ iCn3DUI.prototype = {
        var nodeArray = [], linkArray = [];
        var cnt = 0, linkCnt = 0;
        var thickness = me.coilValue;
-       var prevChain = '', prevResName = '', preResi = '', prevAtom;
+       var prevChain = '', prevResName = '', prevResi = 0, prevAtom;
        // proteins and nucleotides
        for(var i in atomSet) {
            var atom = me.icn3d.atoms[i];
@@ -7154,7 +7169,7 @@ iCn3DUI.prototype = {
                nodeArray.push('{"id": "' + resName + '", "r": "' + resid + '", "x": ' + atom.coord.x.toFixed(0)
                    + ', "y": ' + atom.coord.y.toFixed(0) + ', "c": "' + atom.color.getHexString().toUpperCase() + '"}');
 
-               if(cnt > 0 && prevChain == atom.chain) {
+               if(cnt > 0 && prevChain == atom.chain && (atom.resi == prevResi + 1 || atom.resi == prevResi) ) {
                    //if(linkCnt > 0) linkStr += ', ';
                    linkArray.push('{"source": "' + prevResName + '", "target": "' + resName
                        + '", "v": ' + thickness + ', "c": "' + atom.color.getHexString().toUpperCase() + '"}');
@@ -7166,11 +7181,9 @@ iCn3DUI.prototype = {
 
                prevChain = atom.chain;
                prevResName = resName;
+               prevResi = atom.resi;
                ++cnt;
            }
-
-           preResi = atom.resi;
-           prevChain = atom.chain;
        }
 
        return {"node": nodeArray, "link":linkArray};
@@ -7630,6 +7643,31 @@ iCn3DUI.prototype = {
                         .then(me.applyCommand3ddomain(lastCommand));
 
                     me.setAnnoTabAll();
+                }
+                else if(lastCommand.indexOf('view interactions') == 0 && me.cfg.align !== undefined) {
+                    me.applyCommandViewinteraction(lastCommand);
+                }
+                else if(lastCommand.indexOf('symmetry') == 0) {
+                    var title = lastCommand.substr(lastCommand.indexOf(' ') + 1);
+                    me.icn3d.symmetrytitle = (title === 'none') ? undefined : title;
+
+                    if(title !== 'none') {
+                        if(me.icn3d.symmetryHash === undefined) {
+                            me.applyCommandSymmetry(lastCommand);
+                        }
+                    }
+                }
+                else if(lastCommand.indexOf('realign on seq align') == 0) {
+                    var paraArray = lastCommand.split(' | ');
+                    if(paraArray.length == 2) {
+                        var nameArray = paraArray[1].split(',');
+                        me.icn3d.hAtoms = me.getAtomsFromNameArray(nameArray);
+                    }
+
+                    me.applyCommandRealign(lastCommand);
+                }
+                else if(lastCommand.indexOf('graph interaction pairs') == 0) {
+                    me.applyCommandGraphinteraction(lastCommand);
                 }
                 else {
                     me.applyCommand(lastCommand + '|||' + me.getTransformationStr(transformation));

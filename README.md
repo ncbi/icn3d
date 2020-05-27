@@ -4,7 +4,7 @@
 
 ## About iCn3D
 
-"I see in 3D" (iCn3D) Structure Viewer is a WebGL-based 3D viewer using Three.js and jQuery. iCn3D synchronizes the display of 3D structure, 2D interaction, and 1D sequences and annotations. Users' custom display can be saved in a short URL or a PNG image. <b>Complete package</b> of iCn3D including Three.js and jQuery can be downloaded from [https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.16.0.zip](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.16.0.zip). The "Download ZIP" link in this page does not include third-party libraries. 
+"I see in 3D" (iCn3D) Structure Viewer is a WebGL-based 3D viewer using Three.js and jQuery. iCn3D synchronizes the display of 3D structure, 2D interaction, and 1D sequences and annotations. Users' custom display can be saved in a short URL or a PNG image. <b>Complete package</b> of iCn3D including Three.js and jQuery can be downloaded from [https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.16.1.zip](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.16.1.zip). The "Download ZIP" link in this page does not include third-party libraries. 
 * <b>View a 3D structure in iCn3D</b>: 
     Open the link https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html, input a PDB ID, and click "Load". You can also click "File" menu to "Open File" or input other IDs.
 
@@ -49,7 +49,7 @@
     You can add custom tracks in various formats (FASTA, bed file, etc.) in the annotation window by clicking the menu "Windows > View Sequences & Annotations".
 
 * <b>[Show force-directed graph for interactions](https://structure.ncbi.nlm.nih.gov/icn3d/share.html?rshvjTFXpAFu8GDa9)</b>:
-    You can show the interactions using 2D force-directed graph in the menu "View > H-Bonds & Interactions > Force-Directed Graph".
+    You can show the interactions using 2D force-directed graph in the menu "View > H-Bonds & Interactions > 2D Graph (Force-Directed)".
     
 * <b>[Calculate and show Solvent accessible surface area (SASA)](https://structure.ncbi.nlm.nih.gov/icn3d/share.html?xKSyfd1umbKstGh29)</b>:
     You can color structures with SASA, or show the SASA for each residue.
@@ -86,6 +86,7 @@ iCn3D also accepts the following file types: PDB, mmCIF, Mol2, SDF, and XYZ. The
 
 * **[jQuery and jQuery UI](https://jquery.com/)**: used as a general tool to write Javascript code. Some jQuery UI features are used.
 * **[Three.js](http://threejs.org/)**: used to set up the 3D view.
+* **[D3.js](https://d3js.org/)**: used to draw force-directed graph .
 
 ## Tools based on
 
@@ -95,6 +96,7 @@ iCn3D also accepts the following file types: PDB, mmCIF, Mol2, SDF, and XYZ. The
 * **[NGL Viewer](https://github.com/arose/ngl)**: The Imposter shaders are based on NGL Viewer.
 * **[LiteMol](https://github.com/dsehnal/LiteMol)**: The parser of EM density data from PDBe is based on LiteMol.
 * **[Orientations of Proteins in Membranes (OPM)](https://opm.phar.umich.edu/)**: The membrane data of transmembrane proteins are from OPM.
+* **[Force-Directed Graph](https://gist.github.com/pkerpedjiev/f2e6ebb2532dae603de13f0606563f5b)**: "2D Graph (Force-Directed)" in the menu "View > H-Bonds & Interactions" is based on Force-Directed Graph.
 
 ## Building
 

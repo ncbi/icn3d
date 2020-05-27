@@ -1564,10 +1564,12 @@ iCn3DUI.prototype.setDialogs = function() { var me = this; //"use strict";
     html += optionStr + "'3.2'>3.2</option>";
     html += optionStr + "'3.3'>3.3</option>";
     html += optionStr + "'3.4'>3.4</option>";
-    html += optionStr + "'3.5' selected>3.5</option>";
+    //html += optionStr + "'3.5' selected>3.5</option>";
+    html += optionStr + "'3.5'>3.5</option>";
     html += optionStr + "'3.6'>3.6</option>";
     html += optionStr + "'3.7'>3.7</option>";
-    html += optionStr + "'3.8'>3.8</option>";
+    //html += optionStr + "'3.8'>3.8</option>";
+    html += optionStr + "'3.8' selected>3.8</option>";
     html += optionStr + "'3.9'>3.9</option>";
     html += optionStr + "'4.0'>4.0</option>";
     html += "</select> &#197;</div></td>";
@@ -1603,10 +1605,10 @@ iCn3DUI.prototype.setDialogs = function() { var me = this; //"use strict";
 
     html += "</td></tr></table>";
 
-    html += "<div>4. " + me.buttonStr + "applyhbonds'>Display</button> H-bonds/Contacts in 3D</div><br>";
-    html += "<div style='text-indent:1.1em'>" + me.buttonStr + "hbondWindow'>Highlight</button> H-bond/Contact pairs in a window</div><br>";
+    html += "<div>4. " + me.buttonStr + "applyhbonds'>3D Display</button> H-bonds/contact</div><br>";
+    html += "<div style='text-indent:1.1em'>" + me.buttonStr + "hbondWindow'>Highlight in Table</button> H-bond/contact pairs</div><br>";
 
-    html += "<div style='text-indent:1.1em'>" + me.buttonStr + "hbondGraph'>Force-Directed Graph</button> to show interactions with strength parameters in 0-200:</div>";
+    html += "<div style='text-indent:1.1em'>" + me.buttonStr + "hbondGraph'>2D Graph (Force-Directed)</button> to show interactions with strength parameters in 0-200:</div>";
     html += '<div style="text-indent:1.1em">Helix or Sheet: <input type="text" id="' + me.pre + 'dist_ss" size="4" value="100"> &nbsp;&nbsp;&nbsp;';
     html += 'Coil or Nucleotide: <input type="text" id="' + me.pre + 'dist_coil" size="4" value="50">&nbsp;&nbsp;&nbsp;';
     html += 'Disulfide Bonds: <input type="text" id="' + me.pre + 'dist_ssbond" size="4" value="50"></div>';
@@ -1615,7 +1617,7 @@ iCn3DUI.prototype.setDialogs = function() { var me = this; //"use strict";
     html += 'Contacts: <input type="text" id="' + me.pre + 'dist_inter" size="4" value="25"></div>';
     html += '<div style="text-indent:1.1em">(Note: you can also adjust thresholds at #1 to add/remove interactions.)</div><br>';
 
-    html += "<div style='text-indent:1.1em'>" + me.buttonStr + "hbondExport'>Save</button> H-bond/Contact pairs in a file</div><br>";
+    html += "<div style='text-indent:1.1em'>" + me.buttonStr + "hbondExport'>Save</button> H-bond/contact pairs in a file</div><br>";
     html += "<div>5. " + me.buttonStr + "hbondReset'>Reset</button> and select new sets</div>";
     html += "</div>";
 
@@ -1917,7 +1919,7 @@ iCn3DUI.prototype.setDialogs = function() { var me = this; //"use strict";
       + me.pre + 'dl_svgcolor_expand" class="ui-icon ui-icon-plus icn3d-expand icn3d-link" style="width:15px;" title="Expand"></span><span id="'
       + me.pre + 'dl_svgcolor_shrink" class="ui-icon ui-icon-minus icn3d-shrink icn3d-link" style="display:none; width:15px;" title="Shrink"></span></div></div>';
     html += me.divStr + "dl_svgcolor' style='display:none;'>";
-    html += me.divNowrapStr + '<span style="margin-left:33px">Click "View > H-Bonds & Interactions" to relaunch the graph</span></div>';
+    html += me.divNowrapStr + '<span style="margin-left:33px">Click "View > H-Bonds & Interactions" to adjust parameters and relaunch the graph</span></div>';
     html += me.divNowrapStr + '<span style="margin-left:33px; color:#00FF00; font-weight:bold">Green</span>: H-bonds in interface; ';
     html += '<span style="color:#98FB98; font-weight:bold">Light Green</span>: H-bonds in each set; ';
     html += '<span style="color:#00FFFF; font-weight:bold">Cyan</span>: Ionic Interactions</div>';
@@ -1957,6 +1959,10 @@ iCn3DUI.prototype.setDialogs = function() { var me = this; //"use strict";
     html += "<div style='width:500px'>Color each residue based on the percentage of solvent accessilbe surface area. The color ranges from blue, to white, to red for a percentage of 0, 35 (variable), and 100, respectively.</div><br>";
     html += "<b>Middle Percentage (White)</b>: " + me.inputTextStr + "id='" + me.pre + "midpercent' value='35' size='10'>% <br><br>";
     html += "<button style='white-space:nowrap;' id='" + me.pre + "applycolorbyarea'>Color</button><br/><br/>";
+    html += "</div>";
+
+    html += me.divStr + "dl_rmsd'>";
+    html += "<br><b>Realignment RMSD</b>: " + me.inputTextStr + "id='" + me.pre + "realignrmsd' value='35' size='10'>&#8491;<br><br>";
     html += "</div>";
 
     html += "</div>";

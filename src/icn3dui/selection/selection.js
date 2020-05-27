@@ -266,9 +266,11 @@ iCn3DUI.prototype.selectAChain = function (chainid, commandname, bAlign, bUnion)
     //chainHash[chainid] = 1;
 
     var chnsSeq = (bAlign) ? me.icn3d.alnChainsSeq[chainid] : me.icn3d.chainsSeq[chainid];
+    if(chnsSeq === undefined) chnsSeqLen = 0;
+    else chnsSeqLen = chnsSeq.length;
 
     var oriResidueHash = {};
-    for(var i = 0, il = chnsSeq.length; i < il; ++i) { // get residue number
+    for(var i = 0, il = chnsSeqLen; i < il; ++i) { // get residue number
         var resObj = chnsSeq[i];
         var residueid = chainid + "_" + resObj.resi;
 

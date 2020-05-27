@@ -243,21 +243,21 @@ iCn3DUI.prototype.alignSequenceToStructure = function(chainid, data, title) { va
       var querySeq = query.seqdata;
 
       var segArray = target.segs;
-      me.icn3d.target2queryHash = {};
+      var target2queryHash = {};
       for(var i = 0, il = segArray.length; i < il; ++i) {
           var seg = segArray[i];
           for(var j = 0; j <= seg.orito - seg.orifrom; ++j) {
-              me.icn3d.target2queryHash[j + seg.orifrom] = j + seg.from;
+              target2queryHash[j + seg.orifrom] = j + seg.from;
           }
       }
 
       var cssColorArray = [];
       // the missing residuesatthe end ofthe seq will be filled up in the API showNewTrack()
       for(var i = 0, il = targetSeq.length; i < il; ++i) {
-          if(me.icn3d.target2queryHash.hasOwnProperty(i)) {
-              text += querySeq[me.icn3d.target2queryHash[i]];
+          if(target2queryHash.hasOwnProperty(i)) {
+              text += querySeq[target2queryHash[i]];
 
-              var colorHexStr = me.getColorhexFromBlosum62(targetSeq[i], querySeq[me.icn3d.target2queryHash[i]]);
+              var colorHexStr = me.getColorhexFromBlosum62(targetSeq[i], querySeq[target2queryHash[i]]);
               cssColorArray.push("#" + colorHexStr);
 
               var resi = i + 1;
@@ -279,7 +279,7 @@ iCn3DUI.prototype.alignSequenceToStructure = function(chainid, data, title) { va
       text += "cannot be aligned";
   }
 
-  me.showNewTrack(chainid, title, text, cssColorArray, me.icn3d.target2queryHash, 'seq');
+  me.showNewTrack(chainid, title, text, cssColorArray, target2queryHash, 'seq');
 
   me.updateHlAll();
   me.icn3d.draw();
@@ -408,20 +408,66 @@ iCn3DUI.prototype.clickAddTrackButton = function() { var me = this; //"use stric
 
        if(startposGiSeq === undefined) alert("Please double check the start position before clicking \"Add Track\"");
 
+
+       // set up gap for the master seq
+       // don't count gaps in both ends
+       me.targetGapHash = {};
+       var prevSeq = '-', prevPos = 0, from, to, cnt = 0, dashCnt = 0;
+       var bFound = false, seqStart = 0, seqEnd = 0;
+       for(var i = 0, il = seqFirst.length; i < il; ++i) {
+          if(seqFirst[i] == '-' && seqFirst[i] != prevSeq) { // start of gap
+              from = cnt;
+              dashCnt = 0;
+          }
+
+          if(prevSeq == '-' && seqFirst[i] != prevSeq && cnt > 0) { // end of gap
+              to = prevPos;
+              me.targetGapHash[from] = {'from': from, 'to': to + dashCnt - 1};
+          }
+
+          prevSeq = seqFirst[i];
+          prevPos = cnt;
+
+          if(seqFirst[i] != '-') {
+              ++cnt;
+              seqEnd = i;
+
+              if(!bFound) {
+                  seqStart = i;
+                  bFound = true;
+              }
+          }
+          else {
+              ++dashCnt;
+          }
+       }
+
+       // reset annotations
+       $("#" + me.pre + "dl_annotations").html("");
+       me.bAnnoShown = false;
+       me.showAnnotations();
+
+       //if($("#" + me.pre + "dt_giseq_" + chainid).css("display") != 'block') {
+       //    me.setAnnoViewAndDisplay('overview');
+       //}
+       //else {
+           me.setAnnoViewAndDisplay('detailed view');
+       //}
+       me.resetAnnoTabAll();
+
+       // add tracks
        for(var j = 0, jl = trackSeqArray.length; j < jl; ++j) {
-           var i = startposGiSeq;
+           //var i = startposGiSeq;
            var text = '';
-           for(var k = 0, kl = seqFirst.length; k < kl; ++k) {
-              if(seqFirst[k] == '-') continue;
-
+           for(var k = seqStart; k <= seqEnd; ++k) {
+              //if(seqFirst[k] == '-') continue;
               text += trackSeqArray[j][k]; //me.giSeq[chainid][i];
-
-              ++i;
+              //++i;
            }
 
            var title = (trackTitleArray[j].length < 20) ? trackTitleArray[j] : trackTitleArray[j].substr(0, 20) + '...';
-
-           me.showNewTrack(chainid, title, text, undefined, undefined, type, undefined);
+           var bNoGap = true;
+           me.showNewTrack(chainid, title, text, undefined, undefined, type, undefined, bNoGap);
 
            me.setLogCmd("add track | chainid " + chainid + " | title " + title + " | text " + me.simplifyText(text) + " | type " + type, true);
         }
@@ -605,7 +651,7 @@ iCn3DUI.prototype.clickAddTrackButton = function() { var me = this; //"use stric
 
 };
 
-iCn3DUI.prototype.showNewTrack = function(chnid, title, text, cssColorArray, inTarget2queryHash, type, color) {  var me = this; //"use strict";
+iCn3DUI.prototype.showNewTrack = function(chnid, title, text, cssColorArray, inTarget2queryHash, type, color, bNoGap) {  var me = this; //"use strict";
     //if(me.customTracks[chnid] === undefined) {
     //    me.customTracks[chnid] = {};
     //}
@@ -621,18 +667,20 @@ iCn3DUI.prototype.showNewTrack = function(chnid, title, text, cssColorArray, inT
         resCnt = me.giSeq[chnid].length;
     }
 
-    if(text.length > me.giSeq[chnid].length) {
-        text = text.substr(0, me.giSeq[chnid].length);
-    }
-    else if(text.length < me.giSeq[chnid].length && !bErrorMess) {
-        // .fill is not supported in IE
-        //var extra = Array(me.giSeq[chnid].length - text.length).fill(' ').join('');
-        var extra = '';
-        for(var i = 0, il = me.giSeq[chnid].length - text.length; i < il; ++i) {
-            extra += '-';
+    if(!bNoGap) {
+        if(text.length > me.giSeq[chnid].length) {
+            text = text.substr(0, me.giSeq[chnid].length);
         }
+        else if(text.length < me.giSeq[chnid].length && !bErrorMess) {
+            // .fill is not supported in IE
+            //var extra = Array(me.giSeq[chnid].length - text.length).fill(' ').join('');
+            var extra = '';
+            for(var i = 0, il = me.giSeq[chnid].length - text.length; i < il; ++i) {
+                extra += '-';
+            }
 
-        text += extra;
+            text += extra;
+        }
     }
 
     var simpTitle = title.replace(/\s/g, '_').replace(/\./g, 'dot').replace(/\W/g, '');
@@ -678,17 +726,25 @@ iCn3DUI.prototype.showNewTrack = function(chnid, title, text, cssColorArray, inT
 
     var bIdentityColor = (type === 'identity') && text.indexOf('cannot-be-aligned') == -1 && text.indexOf('cannot be aligned') == -1 ? true : false;
 
+    var gapCnt = 0;
     for(var i = 0, il = text.length; i < il; ++i) {
-      html += me.insertGap(chnid, i, '-');
+      if(!bNoGap) {
+          html += me.insertGap(chnid, i, '-');
+      }
+      else {
+          if(me.targetGapHash.hasOwnProperty(i)) {
+            gapCnt += me.targetGapHash[i].to - me.targetGapHash[i].from + 1;
+          }
+      }
 
       var c = text.charAt(i);
 
-      var colorHexStr = me.getColorhexFromBlosum62(c, me.icn3d.chainsSeq[chnid][i].name);
-      var identityColorStr = (c == me.icn3d.chainsSeq[chnid][i].name) ? 'FF0000' : '0000FF';
-
       if(c != ' ' && c != '-') {
+          var colorHexStr = me.getColorhexFromBlosum62(c, me.icn3d.chainsSeq[chnid][i-gapCnt].name);
+          var identityColorStr = (c == me.icn3d.chainsSeq[chnid][i-gapCnt].name) ? 'FF0000' : '0000FF';
+
           //var pos = me.icn3d.chainsSeq[chnid][i - me.matchedPos[chnid] ].resi;
-          var pos = me.icn3d.chainsSeq[chnid][i].resi - me.matchedPos[chnid];
+          var pos = me.icn3d.chainsSeq[chnid][i-gapCnt].resi - me.matchedPos[chnid];
 
           if(inTarget2queryHash !== undefined) pos = inTarget2queryHash[i] + 1; // 0-based
 

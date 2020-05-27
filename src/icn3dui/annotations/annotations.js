@@ -214,7 +214,7 @@ iCn3DUI.prototype.showAnnoSeqData = function(nucleotide_chainid, chemical_chaini
 
     setTimeout(function(){
       //me.setAnnoViewAndDisplay('overview');
-      me.hideAllAnno();
+      me.hideAllAnnoBase();
       me.clickCdd();
     }, 0);
 };
@@ -362,6 +362,209 @@ iCn3DUI.prototype.getColorhexFromBlosum62 = function(resA, resB) { var me = this
     return color;
 };
 
+iCn3DUI.prototype.processSeqData = function(chainid_seq) { var me = this; //"use strict";
+    for(var chnid in me.protein_chainid) {
+        var chnidBase = me.protein_chainid[chnid];
+
+        if(chainid_seq.hasOwnProperty(chnid)) {
+            var allSeq = chainid_seq[chnid];
+            me.giSeq[chnid] = allSeq;
+
+            // the first 10 residues from sequences with structure
+            var startResStr = '';
+            for(var i = 0; i < 10 && i < me.icn3d.chainsSeq[chnid].length; ++i) {
+                startResStr += me.icn3d.chainsSeq[chnid][i].name.substr(0, 1);
+            }
+
+            var pos = allSeq.toLowerCase().indexOf(startResStr.toLowerCase());
+            if(pos == -1) {
+                console.log("The gi sequence didn't match the protein sequence. The start of 3D protein sequence: " + startResStr + ". The gi sequence: " + allSeq.substr(0, 10) + ".");
+
+                me.setAlternativeSeq(chnid, chnidBase);
+            }
+            else {
+                me.matchedPos[chnid] = pos;
+                me.baseResi[chnid] = me.icn3d.chainsSeq[chnid][0].resi - me.matchedPos[chnid] - 1;
+            }
+        }
+        else {
+            console.log( "No data were found for the protein " + chnid + "..." );
+
+            me.setAlternativeSeq(chnid, chnidBase);
+        }
+
+        if(me.cfg.blast_rep_id != chnid) {
+            me.showSeq(chnid, chnidBase);
+        }
+        else if(me.cfg.blast_rep_id == chnid && me.seqStructAlignData.data === undefined) {
+          var title;
+          if(me.cfg.query_id.length > 14) {
+              title = 'Query: ' + me.cfg.query_id.substr(0, 6) + '...';
+          }
+          else {
+              title = (isNaN(me.cfg.query_id)) ? 'Query: ' + me.cfg.query_id : 'Query: gi ' + me.cfg.query_id;
+          }
+
+          compTitle = undefined;
+          compText = undefined;
+
+          var text = "cannot be aligned";
+
+          me.queryStart = '';
+          me.queryEnd = '';
+
+          alert('The sequence can NOT be aligned to the structure');
+
+          me.showSeq(chnid, chnidBase, undefined, title, compTitle, text, compText);
+        }
+        else if(me.cfg.blast_rep_id == chnid && me.seqStructAlignData.data !== undefined) { // align sequence to structure
+          //var title = 'Query: ' + me.cfg.query_id.substr(0, 6);
+          var title;
+          if(me.cfg.query_id.length > 14) {
+              title = 'Query: ' + me.cfg.query_id.substr(0, 6) + '...';
+          }
+          else {
+              title = (isNaN(me.cfg.query_id)) ? 'Query: ' + me.cfg.query_id : 'Query: gi ' + me.cfg.query_id;
+          }
+
+          var data = me.seqStructAlignData;
+
+          var query, target;
+
+          if(data.data !== undefined) {
+              query = data.data[0].query;
+              target = data.data[0].targets[chnid.replace(/_/g, '')];
+
+              target = (target.hsps.length > 0) ? target.hsps[0] : undefined;
+          }
+
+          var text = '', compText = '';
+
+          me.queryStart = '';
+          me.queryEnd = '';
+
+          if(query !== undefined && target !== undefined) {
+              var evalue = target.scores.e_value.toPrecision(2);
+              if(evalue > 1e-200) evalue = parseFloat(evalue).toExponential();
+
+              var bitscore = target.scores.bit_score;
+
+              var targetSeq = data.targets[chnid.replace(/_/g, '')].seqdata;
+              var querySeq = query.seqdata;
+
+              var segArray = target.segs;
+              var target2queryHash = {};
+              if(me.targetGapHash === undefined) me.targetGapHash = {};
+              me.fullpos2ConsTargetpos = {};
+              me.consrvResPosArray = [];
+
+              var prevTargetTo = 0, prevQueryTo = 0;
+              me.nTotalGap = 0;
+              me.queryStart = segArray[0].from + 1;
+              me.queryEnd = segArray[segArray.length - 1].to + 1;
+
+              for(var i = 0, il = segArray.length; i < il; ++i) {
+                  var seg = segArray[i];
+                  if(i > 0) { // determine gap
+                    if(seg.orifrom - prevTargetTo < seg.from - prevQueryTo) { // gap in target
+                        me.targetGapHash[seg.orifrom] = {'from': prevQueryTo + 1, 'to': seg.from - 1};
+                        me.nTotalGap += me.targetGapHash[seg.orifrom].to - me.targetGapHash[seg.orifrom].from + 1;
+                    }
+                    else if(seg.orifrom - prevTargetTo > seg.from - prevQueryTo) { // gap in query
+                        for(var j = prevTargetTo + 1; j < seg.orifrom; ++j) {
+                          target2queryHash[j] = -1; // means gap in query
+                        }
+                    }
+                  }
+
+                  for(var j = 0; j <= seg.orito - seg.orifrom; ++j) {
+                      target2queryHash[j + seg.orifrom] = j + seg.from;
+                  }
+                  prevTargetTo = seg.orito;
+                  prevQueryTo = seg.to;
+              }
+
+              // the missing residuesatthe end ofthe seq will be filled up in the API showNewTrack()
+              var nGap = 0;
+              me.icn3d.alnChainsSeq[chnid] = [];
+
+              for(var i = 0, il = targetSeq.length; i < il; ++i) {
+                  //text += me.insertGap(chnid, i, '-', true);
+                  if(me.targetGapHash.hasOwnProperty(i)) {
+                      for(var j = me.targetGapHash[i].from; j <= me.targetGapHash[i].to; ++j) {
+                          text += querySeq[j];
+                      }
+                  }
+
+                  compText += me.insertGap(chnid, i, '-', true);
+                  if(me.targetGapHash.hasOwnProperty(i)) nGap += me.targetGapHash[i].to - me.targetGapHash[i].from + 1;
+
+                  if(target2queryHash.hasOwnProperty(i) && target2queryHash[i] !== -1) {
+                      text += querySeq[target2queryHash[i]];
+                      var colorHexStr = me.getColorhexFromBlosum62(targetSeq[i], querySeq[target2queryHash[i]]);
+
+                      if(targetSeq[i] == querySeq[target2queryHash[i]]) {
+                          compText += targetSeq[i];
+                          me.fullpos2ConsTargetpos[i + nGap] = {'same': 1, 'pos': i+1, 'res': targetSeq[i], 'color': colorHexStr};
+                          me.consrvResPosArray.push(i+1);
+
+                          me.icn3d.alnChainsSeq[chnid].push({'resi': i+1, 'color': '#FF0000', 'color2': '#' + colorHexStr});
+                      }
+                      else if(me.conservativeReplacement(targetSeq[i], querySeq[target2queryHash[i]])) {
+                          compText += '+';
+                          me.fullpos2ConsTargetpos[i + nGap] = {'same': 0, 'pos': i+1, 'res': targetSeq[i], 'color': colorHexStr};
+                          me.consrvResPosArray.push(i+1);
+
+                          me.icn3d.alnChainsSeq[chnid].push({'resi': i+1, 'color': '#0000FF', 'color2': '#' + colorHexStr});
+                      }
+                      else {
+                          compText += ' ';
+                          me.fullpos2ConsTargetpos[i + nGap] = {'same': -1, 'pos': i+1, 'res': targetSeq[i], 'color': colorHexStr};
+
+                          me.icn3d.alnChainsSeq[chnid].push({'resi': i+1, 'color': me.GREYC, 'color2': '#' + colorHexStr});
+                      }
+                  }
+                  else {
+                      text += '-';
+                      compText += ' ';
+                  }
+              }
+
+              //title += ', E: ' + evalue;
+          }
+          else {
+              text += "cannot be aligned";
+
+              alert('The sequence can NOT be aligned to the structure');
+          }
+
+          var compTitle = 'BLAST, E: ' + evalue;
+          me.showSeq(chnid, chnidBase, undefined, title, compTitle, text, compText);
+
+          var residueidHash = {};
+          var residueid;
+          if(me.consrvResPosArray !== undefined) {
+            for(var i = 0, il = me.consrvResPosArray.length; i < il; ++i) {
+                residueid = chnidBase + '_' + me.consrvResPosArray[i];
+
+                residueidHash[residueid] = 1;
+                //atomHash = me.icn3d.unionHash(atomHash, me.icn3d.residues[residueid]);
+            }
+          }
+
+          var prevHAtoms = me.icn3d.cloneHash(me.icn3d.hAtoms);
+          //me.selectResidueList(residueidHash, chnidBase + '_blast', compTitle, false);
+          me.selectResidueList(residueidHash, 'aligned_protein', compTitle, false);
+          me.icn3d.hAtoms = me.icn3d.cloneHash(prevHAtoms);
+        } // align seq to structure
+    } // for loop
+
+    me.enableHlSeq();
+
+    // get CDD/Binding sites
+    me.showCddSiteAll();
+};
+
 iCn3DUI.prototype.getAnnotationData = function() { var me = this; //"use strict";
     var chnidBaseArray = $.map(me.protein_chainid, function(v) { return v; });
 
@@ -417,259 +620,46 @@ iCn3DUI.prototype.getAnnotationData = function() { var me = this; //"use strict"
     //var url = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=protein&retmode=json&rettype=fasta&id=" + chnidBaseArray;
     var url = me.baseUrl + "/vastdyn/vastdyn.cgi?chainlist=" + chnidBaseArray;
 
-    $.ajax({
-      url: url,
-      dataType: 'jsonp', //'text',
-      cache: true,
-      tryCount : 0,
-      retryLimit : 1,
-      success: function(data) {
-/*
-        var chainArray = data.split('\n\n');
+    if(me.chainid_seq !== undefined) {
+        me.processSeqData(me.chainid_seq);
+    }
+    else {
+        $.ajax({
+          url: url,
+          dataType: 'jsonp', //'text',
+          cache: true,
+          tryCount : 0,
+          retryLimit : 1,
+          success: function(data) {
+            me.chainid_seq = data;
 
-        var chainid_seq = {};
-        for(var i = 0, il = chainArray.length; i < il; ++i) {
-            var strArray = chainArray[i].split('\n');
-
-            if(strArray.length > 0) {
-                var title = strArray[0]; // >pdb|1HHO|B Chain B, Hemoglobin A (oxy) (beta Chain)
-                var fieldArray = title.split(' ');
-                var idArray = fieldArray[0].split('|');
-                var chainid = idArray[1] + '_' + idArray[2];
-
-                strArray.shift();
-                var allSeq = strArray.join('');
-                chainid_seq[chainid] = allSeq;
+            me.processSeqData(me.chainid_seq);
+          },
+          error : function(xhr, textStatus, errorThrown ) {
+            this.tryCount++;
+            if (this.tryCount <= this.retryLimit) {
+                //try again
+                $.ajax(this);
+                return;
             }
-        }
-*/
-        var chainid_seq = data;
 
-        for(var chnid in me.protein_chainid) {
-            var chnidBase = me.protein_chainid[chnid];
+            me.enableHlSeq();
 
-            if(chainid_seq.hasOwnProperty(chnid)) {
-                var allSeq = chainid_seq[chnid];
-                me.giSeq[chnid] = allSeq;
+            console.log( "No data were found for the protein " + chnidBaseArray + "..." );
 
-                // the first 10 residues from sequences with structure
-                var startResStr = '';
-                for(var i = 0; i < 10 && i < me.icn3d.chainsSeq[chnid].length; ++i) {
-                    startResStr += me.icn3d.chainsSeq[chnid][i].name.substr(0, 1);
-                }
-
-                var pos = allSeq.toLowerCase().indexOf(startResStr.toLowerCase());
-                if(pos == -1) {
-                    console.log("The gi sequence didn't match the protein sequence. The start of 3D protein sequence: " + startResStr + ". The gi sequence: " + allSeq.substr(0, 10) + ".");
-
-                    me.setAlternativeSeq(chnid, chnidBase);
-                }
-                else {
-                    me.matchedPos[chnid] = pos;
-                    me.baseResi[chnid] = me.icn3d.chainsSeq[chnid][0].resi - me.matchedPos[chnid] - 1;
-                }
-            }
-            else {
-                console.log( "No data were found for the protein " + chnid + "..." );
-
+            for(var chnid in me.protein_chainid) {
+                var chnidBase = me.protein_chainid[chnid];
                 me.setAlternativeSeq(chnid, chnidBase);
-            }
-
-            if(me.cfg.blast_rep_id != chnid) {
                 me.showSeq(chnid, chnidBase);
             }
-            else if(me.cfg.blast_rep_id == chnid && me.seqStructAlignData.data === undefined) {
-              var title;
-              if(me.cfg.query_id.length > 14) {
-                  title = 'Query: ' + me.cfg.query_id.substr(0, 6) + '...';
-              }
-              else {
-                  title = (isNaN(me.cfg.query_id)) ? 'Query: ' + me.cfg.query_id : 'Query: gi ' + me.cfg.query_id;
-              }
 
-              compTitle = undefined;
-              compText = undefined;
+            // get CDD/Binding sites
+            me.showCddSiteAll();
 
-              var text = "cannot be aligned";
-
-              me.queryStart = '';
-              me.queryEnd = '';
-
-              alert('The sequence can NOT be aligned to the structure');
-
-              me.showSeq(chnid, chnidBase, undefined, title, compTitle, text, compText);
-            }
-            else if(me.cfg.blast_rep_id == chnid && me.seqStructAlignData.data !== undefined) { // align sequence to structure
-              //var title = 'Query: ' + me.cfg.query_id.substr(0, 6);
-              var title;
-              if(me.cfg.query_id.length > 14) {
-                  title = 'Query: ' + me.cfg.query_id.substr(0, 6) + '...';
-              }
-              else {
-                  title = (isNaN(me.cfg.query_id)) ? 'Query: ' + me.cfg.query_id : 'Query: gi ' + me.cfg.query_id;
-              }
-
-              var data = me.seqStructAlignData;
-
-              var query, target;
-
-              if(data.data !== undefined) {
-                  query = data.data[0].query;
-                  target = data.data[0].targets[chnid.replace(/_/g, '')];
-
-                  target = (target.hsps.length > 0) ? target.hsps[0] : undefined;
-              }
-
-              var text = '', compText = '';
-
-              me.queryStart = '';
-              me.queryEnd = '';
-
-              if(query !== undefined && target !== undefined) {
-                  var evalue = target.scores.e_value.toPrecision(2);
-                  if(evalue > 1e-200) evalue = parseFloat(evalue).toExponential();
-
-                  var bitscore = target.scores.bit_score;
-
-                  var targetSeq = data.targets[chnid.replace(/_/g, '')].seqdata;
-                  var querySeq = query.seqdata;
-
-                  var segArray = target.segs;
-                  me.icn3d.target2queryHash = {};
-                  me.targetGapHash = {};
-                  me.fullpos2ConsTargetpos = {};
-                  me.consrvResPosArray = [];
-
-                  var prevTargetTo = 0, prevQueryTo = 0;
-                  me.nTotalGap = 0;
-                  me.queryStart = segArray[0].from + 1;
-                  me.queryEnd = segArray[segArray.length - 1].to + 1;
-
-                  for(var i = 0, il = segArray.length; i < il; ++i) {
-                      var seg = segArray[i];
-                      if(i > 0) { // determine gap
-                        if(seg.orifrom - prevTargetTo < seg.from - prevQueryTo) { // gap in target
-                            me.targetGapHash[seg.orifrom] = {'from': prevQueryTo + 1, 'to': seg.from - 1};
-                            me.nTotalGap += me.targetGapHash[seg.orifrom].to - me.targetGapHash[seg.orifrom].from + 1;
-                        }
-                        else if(seg.orifrom - prevTargetTo > seg.from - prevQueryTo) { // gap in query
-                            for(var j = prevTargetTo + 1; j < seg.orifrom; ++j) {
-                              me.icn3d.target2queryHash[j] = -1; // means gap in query
-                            }
-                        }
-                      }
-
-                      for(var j = 0; j <= seg.orito - seg.orifrom; ++j) {
-                          me.icn3d.target2queryHash[j + seg.orifrom] = j + seg.from;
-                      }
-                      prevTargetTo = seg.orito;
-                      prevQueryTo = seg.to;
-                  }
-
-                  // the missing residuesatthe end ofthe seq will be filled up in the API showNewTrack()
-                  var nGap = 0;
-                  me.icn3d.alnChainsSeq[chnid] = [];
-
-                  for(var i = 0, il = targetSeq.length; i < il; ++i) {
-                      //text += me.insertGap(chnid, i, '-', true);
-                      if(me.targetGapHash.hasOwnProperty(i)) {
-                          for(var j = me.targetGapHash[i].from; j <= me.targetGapHash[i].to; ++j) {
-                              text += querySeq[j];
-                          }
-                      }
-
-                      compText += me.insertGap(chnid, i, '-', true);
-                      if(me.targetGapHash.hasOwnProperty(i)) nGap += me.targetGapHash[i].to - me.targetGapHash[i].from + 1;
-
-                      if(me.icn3d.target2queryHash.hasOwnProperty(i) && me.icn3d.target2queryHash[i] !== -1) {
-                          text += querySeq[me.icn3d.target2queryHash[i]];
-                          var colorHexStr = me.getColorhexFromBlosum62(targetSeq[i], querySeq[me.icn3d.target2queryHash[i]]);
-
-                          if(targetSeq[i] == querySeq[me.icn3d.target2queryHash[i]]) {
-                              compText += targetSeq[i];
-                              me.fullpos2ConsTargetpos[i + nGap] = {'same': 1, 'pos': i+1, 'res': targetSeq[i], 'color': colorHexStr};
-                              me.consrvResPosArray.push(i+1);
-
-                              me.icn3d.alnChainsSeq[chnid].push({'resi': i+1, 'color': '#FF0000', 'color2': '#' + colorHexStr});
-                          }
-                          else if(me.conservativeReplacement(targetSeq[i], querySeq[me.icn3d.target2queryHash[i]])) {
-                              compText += '+';
-                              me.fullpos2ConsTargetpos[i + nGap] = {'same': 0, 'pos': i+1, 'res': targetSeq[i], 'color': colorHexStr};
-                              me.consrvResPosArray.push(i+1);
-
-                              me.icn3d.alnChainsSeq[chnid].push({'resi': i+1, 'color': '#0000FF', 'color2': '#' + colorHexStr});
-                          }
-                          else {
-                              compText += ' ';
-                              me.fullpos2ConsTargetpos[i + nGap] = {'same': -1, 'pos': i+1, 'res': targetSeq[i], 'color': colorHexStr};
-
-                              me.icn3d.alnChainsSeq[chnid].push({'resi': i+1, 'color': me.GREYC, 'color2': '#' + colorHexStr});
-                          }
-                      }
-                      else {
-                          text += '-';
-                          compText += ' ';
-                      }
-                  }
-
-                  //title += ', E: ' + evalue;
-              }
-              else {
-                  text += "cannot be aligned";
-
-                  alert('The sequence can NOT be aligned to the structure');
-              }
-
-              var compTitle = 'BLAST, E: ' + evalue;
-              me.showSeq(chnid, chnidBase, undefined, title, compTitle, text, compText);
-
-              var residueidHash = {};
-              var residueid;
-              if(me.consrvResPosArray !== undefined) {
-                for(var i = 0, il = me.consrvResPosArray.length; i < il; ++i) {
-                    residueid = chnidBase + '_' + me.consrvResPosArray[i];
-
-                    residueidHash[residueid] = 1;
-                    //atomHash = me.icn3d.unionHash(atomHash, me.icn3d.residues[residueid]);
-                }
-              }
-
-              var prevHAtoms = me.icn3d.cloneHash(me.icn3d.hAtoms);
-              //me.selectResidueList(residueidHash, chnidBase + '_blast', compTitle, false);
-              me.selectResidueList(residueidHash, 'aligned_protein', compTitle, false);
-              me.icn3d.hAtoms = me.icn3d.cloneHash(prevHAtoms);
-            } // align seq to structure
-        } // for loop
-
-        me.enableHlSeq();
-
-        // get CDD/Binding sites
-        me.showCddSiteAll();
-      },
-      error : function(xhr, textStatus, errorThrown ) {
-        this.tryCount++;
-        if (this.tryCount <= this.retryLimit) {
-            //try again
-            $.ajax(this);
             return;
-        }
-
-        me.enableHlSeq();
-
-        console.log( "No data were found for the protein " + chnidBaseArray + "..." );
-
-        for(var chnid in me.protein_chainid) {
-            var chnidBase = me.protein_chainid[chnid];
-            me.setAlternativeSeq(chnid, chnidBase);
-            me.showSeq(chnid, chnidBase);
-        }
-
-        // get CDD/Binding sites
-        me.showCddSiteAll();
-
-        return;
-      }
-    });
+          }
+        });
+    }
 };
 
 iCn3DUI.prototype.setAlternativeSeq = function(chnid, chnidBase) { var me = this; //"use strict";
@@ -833,7 +823,8 @@ iCn3DUI.prototype.getCombinedSequenceData = function(name, residArray, index) { 
 iCn3DUI.prototype.insertGap = function(chnid, seqIndex, text, bNohtml) {  var me = this; //"use strict";
   var html = '';
 
-  if(me.cfg.blast_rep_id == chnid && me.targetGapHash!== undefined && me.targetGapHash.hasOwnProperty(seqIndex)) {
+  //if(me.cfg.blast_rep_id == chnid && me.targetGapHash!== undefined && me.targetGapHash.hasOwnProperty(seqIndex)) {
+  if(me.targetGapHash!== undefined && me.targetGapHash.hasOwnProperty(seqIndex)) {
       for(var j = 0; j < (me.targetGapHash[seqIndex].to - me.targetGapHash[seqIndex].from + 1); ++j) {
           if(bNohtml) {
              html += text;
@@ -1422,7 +1413,6 @@ iCn3DUI.prototype.showClinVarLabelOn3D = function(chnid) { var me = this; //"use
       var label = '';
 
       var diseaseArray = me.resi2disease_nonempty[chnid][resiArray[me.currClin[chnid]]];
-
       for(var k = 0, kl = diseaseArray.length; k < kl; ++k) {
           if(diseaseArray[k] != '' && diseaseArray[k] != 'not specified' && diseaseArray[k] != 'not provided') {
             label = diseaseArray[k];
@@ -1862,7 +1852,7 @@ iCn3DUI.prototype.processSnpClinvar = function(data, chnid, chnidBase, bSnpOnly)
     var resi2snp = {};
     var resi2index = {};
     var resi2disease = {};
-    me.resi2disease_nonempty[chnid] = {};
+    if(me.resi2disease_nonempty[chnid] === undefined) me.resi2disease_nonempty[chnid] = {};
     var resi2sig = {};
 
     var resi2rsnum = {};
@@ -2015,7 +2005,6 @@ iCn3DUI.prototype.processSnpClinvar = function(data, chnid, chnidBase, bSnpOnly)
 iCn3DUI.prototype.showClinvarPart2 = function(chnid, chnidBase, gi) { var me = this; //"use strict";
     //var url = "https://www.ncbi.nlm.nih.gov/projects/SNP/beVarSearch_mt.cgi?appname=iCn3D&format=bed&report=pdb2bed&acc=" + chnidBase;
     var url = "https://www.ncbi.nlm.nih.gov/Structure/icn3d/clinvar.txt";
-
     $.ajax({
       url: url,
       dataType: 'text',
@@ -2043,6 +2032,8 @@ iCn3DUI.prototype.showClinvarPart2 = function(chnid, chnidBase, gi) { var me = t
         else {
             me.processNoClinvar(chnid);
         }
+
+        //if(me.deferredClinvar !== undefined) me.deferredClinvar.resolve();
       },
       error : function(xhr, textStatus, errorThrown ) {
         this.tryCount++;
@@ -2053,6 +2044,8 @@ iCn3DUI.prototype.showClinvarPart2 = function(chnid, chnidBase, gi) { var me = t
         }
 
         me.processNoClinvar(chnid);
+
+        //if(me.deferredClinvar !== undefined) me.deferredClinvar.resolve();
 
         return;
       }
@@ -2134,6 +2127,8 @@ iCn3DUI.prototype.showSnpPart2 = function(chnid, chnidBase, gi) { var me = this;
             else {
                 me.processNoSnp(chnid);
             }
+
+            //if(me.deferredSnp !== undefined) me.deferredSnp.resolve();
           },
           error : function(xhr, textStatus, errorThrown ) {
             this.tryCount++;
@@ -2144,6 +2139,8 @@ iCn3DUI.prototype.showSnpPart2 = function(chnid, chnidBase, gi) { var me = this;
             }
 
             me.processNoSnp(chnid);
+            //if(me.deferredSnp !== undefined) me.deferredSnp.resolve();
+
             return;
           }
         });
@@ -2983,6 +2980,7 @@ iCn3DUI.prototype.showInteraction_base = function(chnid, chnidBase) {
 };
 
 iCn3DUI.prototype.showSsbond = function(chnid, chnidBase) { var me = this; //"use strict";
+console.log("showSsbond");
     if(me.icn3d.ssbondpnts === undefined) {
         // didn't finish loading atom data yet
         setTimeout(function(){
@@ -2995,6 +2993,7 @@ iCn3DUI.prototype.showSsbond = function(chnid, chnidBase) { var me = this; //"us
 };
 
 iCn3DUI.prototype.showSsbond_base = function(chnid, chnidBase) { var me = this; //"use strict";
+console.log("showSsbond_base");
 
     var chainid = chnidBase;
 
@@ -3333,13 +3332,19 @@ iCn3DUI.prototype.showAnnoType = function(chnid, chnidBase, type, title, residue
 };
 
 iCn3DUI.prototype.hideAllAnno = function() { var me = this; //"use strict";
+        me.hideAllAnnoBase();
+
+        $("[id^=" + me.pre + "custom]").hide();
+};
+
+iCn3DUI.prototype.hideAllAnnoBase = function() { var me = this; //"use strict";
         $("[id^=" + me.pre + "site]").hide();
         $("[id^=" + me.pre + "snp]").hide();
         $("[id^=" + me.pre + "clinvar]").hide();
         $("[id^=" + me.pre + "cdd]").hide();
         $("[id^=" + me.pre + "domain]").hide();
         $("[id^=" + me.pre + "interaction]").hide();
-        $("[id^=" + me.pre + "custom]").hide();
+        //$("[id^=" + me.pre + "custom]").hide();
         $("[id^=" + me.pre + "ssbond]").hide();
         $("[id^=" + me.pre + "transmem]").hide();
 };
@@ -3390,6 +3395,57 @@ iCn3DUI.prototype.hideAnnoTabAll = function () {  var me = this; //"use strict";
     if($("#" + me.pre + "anno_transmem").length) $("#" + me.pre + "anno_transmem")[0].checked = false;
 
     me.hideAllAnno();
+};
+
+iCn3DUI.prototype.resetAnnoTabAll = function () {  var me = this; //"use strict";
+    if($("#" + me.pre + "anno_binding").length && $("#" + me.pre + "anno_binding")[0].checked) {
+        $("[id^=" + me.pre + "site]").show();
+    }
+
+    if($("#" + me.pre + "anno_snp").length && $("#" + me.pre + "anno_snp")[0].checked) {
+        $("[id^=" + me.pre + "snp]").show();
+        me.bSnpShown = false;
+        me.updateSnp();
+    }
+
+    if($("#" + me.pre + "anno_clinvar").length && $("#" + me.pre + "anno_clinvar")[0].checked) {
+        $("[id^=" + me.pre + "clinvar]").show();
+        me.bClinvarShown = false;
+        me.updateClinvar();
+    }
+
+    if($("#" + me.pre + "anno_cdd").length && $("#" + me.pre + "anno_cdd")[0].checked) {
+        $("[id^=" + me.pre + "cdd]").show();
+    }
+
+    if($("#" + me.pre + "anno_3dd").length && $("#" + me.pre + "anno_3dd")[0].checked) {
+        $("[id^=" + me.pre + "domain]").show();
+        me.bDomainShown = false;
+        me.updateDomain();
+    }
+
+    if($("#" + me.pre + "anno_interact").length && $("#" + me.pre + "anno_interact")[0].checked) {
+        $("[id^=" + me.pre + "interaction]").show();
+        me.bInteractionShown = false;
+        me.updateInteraction();
+    }
+
+    if($("#" + me.pre + "anno_custom").length && $("#" + me.pre + "anno_custom")[0].checked) {
+        $("[id^=" + me.pre + "custom]").show();
+    }
+
+    if($("#" + me.pre + "anno_ssbond").length && $("#" + me.pre + "anno_ssbond")[0].checked) {
+        $("[id^=" + me.pre + "ssbond]").show();
+        me.bSSbondShown = false;
+        me.updateSsbond();
+    }
+
+    if($("#" + me.pre + "anno_transmem").length && $("#" + me.pre + "anno_transmem")[0].checked) {
+        $("[id^=" + me.pre + "transmem]").show();
+        me.bTranememShown = false;
+        me.updateTransmem();
+
+    }
 };
 
 iCn3DUI.prototype.setAnnoTabCustom = function () {  var me = this; //"use strict";
