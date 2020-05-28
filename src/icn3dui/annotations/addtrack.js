@@ -287,6 +287,27 @@ iCn3DUI.prototype.alignSequenceToStructure = function(chainid, data, title) { va
   me.setLogCmd("add track | chainid " + chainid + " | title " + title + " | text " + me.simplifyText(text) + " | type seq", true);
 };
 
+
+iCn3DUI.prototype.resetAnnoAll = function () {  var me = this; //"use strict";
+   // reset annotations
+   //$("#" + me.pre + "dl_annotations").html("");
+   //me.bAnnoShown = false;
+   //me.showAnnotations();
+
+   $("[id^=" + me.pre + "dt_]").html("");
+   $("[id^=" + me.pre + "tt_]").html("");
+   $("[id^=" + me.pre + "ov_]").html("");
+   me.processSeqData(me.chainid_seq);
+
+   //if($("#" + me.pre + "dt_giseq_" + chainid).css("display") != 'block') {
+   //    me.setAnnoViewAndDisplay('overview');
+   //}
+   //else {
+       me.setAnnoViewAndDisplay('detailed view');
+   //}
+   me.resetAnnoTabAll();
+};
+
 iCn3DUI.prototype.clickAddTrackButton = function() { var me = this; //"use strict";
     // ncbi gi/accession
     $(document).on('click', "#" + me.pre + "addtrack_button1", function(e) {
@@ -442,18 +463,17 @@ iCn3DUI.prototype.clickAddTrackButton = function() { var me = this; //"use stric
           }
        }
 
-       // reset annotations
-       $("#" + me.pre + "dl_annotations").html("");
-       me.bAnnoShown = false;
-       me.showAnnotations();
+       me.resetAnnoAll();
 
-       //if($("#" + me.pre + "dt_giseq_" + chainid).css("display") != 'block') {
-       //    me.setAnnoViewAndDisplay('overview');
-       //}
-       //else {
-           me.setAnnoViewAndDisplay('detailed view');
-       //}
-       me.resetAnnoTabAll();
+       var targetGapHashStr = '';
+       var cntTmp = 0;
+       for(var i in me.targetGapHash) {
+           if(cntTmp > 0) targetGapHashStr += ' ';
+           targetGapHashStr += i + '_' + me.targetGapHash[i].from + '_' + me.targetGapHash[i].to;
+           ++cntTmp;
+       }
+
+       me.setLogCmd("msa | " + targetGapHashStr, true);
 
        // add tracks
        for(var j = 0, jl = trackSeqArray.length; j < jl; ++j) {
@@ -466,10 +486,11 @@ iCn3DUI.prototype.clickAddTrackButton = function() { var me = this; //"use stric
            }
 
            var title = (trackTitleArray[j].length < 20) ? trackTitleArray[j] : trackTitleArray[j].substr(0, 20) + '...';
-           var bNoGap = true;
-           me.showNewTrack(chainid, title, text, undefined, undefined, type, undefined, bNoGap);
+           var bMsa = true;
+           me.showNewTrack(chainid, title, text, undefined, undefined, type, undefined, bMsa);
 
-           me.setLogCmd("add track | chainid " + chainid + " | title " + title + " | text " + me.simplifyText(text) + " | type " + type, true);
+           me.setLogCmd("add track | chainid " + chainid + " | title " + title + " | text " + me.simplifyText(text)
+            + " | type " + type + " | color 0 | msa 1", true);
         }
     });
 
@@ -651,7 +672,7 @@ iCn3DUI.prototype.clickAddTrackButton = function() { var me = this; //"use stric
 
 };
 
-iCn3DUI.prototype.showNewTrack = function(chnid, title, text, cssColorArray, inTarget2queryHash, type, color, bNoGap) {  var me = this; //"use strict";
+iCn3DUI.prototype.showNewTrack = function(chnid, title, text, cssColorArray, inTarget2queryHash, type, color, bMsa) {  var me = this; //"use strict";
     //if(me.customTracks[chnid] === undefined) {
     //    me.customTracks[chnid] = {};
     //}
@@ -667,7 +688,7 @@ iCn3DUI.prototype.showNewTrack = function(chnid, title, text, cssColorArray, inT
         resCnt = me.giSeq[chnid].length;
     }
 
-    if(!bNoGap) {
+    if(!bMsa) {
         if(text.length > me.giSeq[chnid].length) {
             text = text.substr(0, me.giSeq[chnid].length);
         }
@@ -728,7 +749,7 @@ iCn3DUI.prototype.showNewTrack = function(chnid, title, text, cssColorArray, inT
 
     var gapCnt = 0;
     for(var i = 0, il = text.length; i < il; ++i) {
-      if(!bNoGap) {
+      if(!bMsa) {
           html += me.insertGap(chnid, i, '-');
       }
       else {
@@ -751,8 +772,8 @@ iCn3DUI.prototype.showNewTrack = function(chnid, title, text, cssColorArray, inT
           if(cssColorArray !== undefined && cssColorArray[i] != '') {
               html += '<span id="' + pre + '_' + me.pre + chnid + '_' + pos + '" title="' + c + pos + '" class="icn3d-residue" style="color:' + cssColorArray[i] + '">' + c + '</span>';
           }
-          else if(color !== undefined) {
-              html += '<span id="' + pre + '_' + me.pre + chnid + '_' + pos + '" title="' + c + pos + '" class="icn3d-residue" style="color:rgb(' + rgbColor + ')">' + c + '</span>';
+          else if(color) {
+              html += '<span id="' + pre + '_' + me.pre + chnid + '_' + pos + '" title="' + c + pos + '" class="icn3d-residue" style="color:rgb(' + color + ')">' + c + '</span>';
           }
           else if(bAlignColor) {
               html += '<span id="' + pre + '_' + me.pre + chnid + '_' + pos + '" title="' + c + pos + '" class="icn3d-residue" style="color:#' + colorHexStr + '">' + c + '</span>';
@@ -773,8 +794,8 @@ iCn3DUI.prototype.showNewTrack = function(chnid, title, text, cssColorArray, inT
           if(cssColorArray !== undefined && cssColorArray[i] != '') {
               html2 += '<div style="display:inline-block; background-color:' + cssColorArray[i] + '; width:' + widthPerRes + 'px;" title="' + c + (i+1).toString() + '">&nbsp;</div>';
           }
-          else if(color !== undefined) {
-              html2 += '<div style="display:inline-block; background-color:rgb(' + rgbColor + '); width:' + widthPerRes + 'px;" title="' + c + (i+1).toString() + '">&nbsp;</div>';
+          else if(color) {
+              html2 += '<div style="display:inline-block; background-color:rgb(' + color + '); width:' + widthPerRes + 'px;" title="' + c + (i+1).toString() + '">&nbsp;</div>';
           }
           else if(bAlignColor) {
               html2 += '<div style="display:inline-block; background-color:#' + colorHexStr + '; width:' + widthPerRes + 'px;" title="' + c + (i+1).toString() + '">&nbsp;</div>';
@@ -811,17 +832,17 @@ iCn3DUI.prototype.showNewTrack = function(chnid, title, text, cssColorArray, inT
     $("#" + me.pre + "tt_custom_" + chnid + "_" + simpTitle).html(html3);
 };
 
-iCn3DUI.prototype.checkGiSeq = function (chainid, title, text, type, color, index) { var me = this; //"use strict";
+iCn3DUI.prototype.checkGiSeq = function (chainid, title, text, type, color, bMsa, index) { var me = this; //"use strict";
     if(index > 20) return false;
 
     if(me.giSeq !== undefined && me.giSeq[chainid] !== undefined) {
         text = me.getFullText(text);
-        me.showNewTrack(chainid, title, text, undefined, undefined, type, color);
+        me.showNewTrack(chainid, title, text, undefined, undefined, type, color, bMsa);
         return false;
     }
 
     // wait for me.giSeq to be available
-    setTimeout(function(){ me.checkGiSeq(chainid, title, text, type, color, index + 1); }, 100);
+    setTimeout(function(){ me.checkGiSeq(chainid, title, text, type, color, bMsa, index + 1); }, 100);
 };
 
 iCn3DUI.prototype.getFullText = function (text) { var me = this; //"use strict";

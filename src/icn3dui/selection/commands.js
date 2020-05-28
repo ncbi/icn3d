@@ -1812,8 +1812,23 @@ iCn3DUI.prototype.applyCommand = function (commandStr) { var me = this; //"use s
     me.addLabel(text, x,y,z, size, color, background, type);
     me.icn3d.draw();
   }
+  else if(commandOri.indexOf('msa') == 0) {
+      //"msa | " + JSON.stringify(me.targetGapHash)
+      var paraArray = commandOri.split(' | ');
+
+      var pos_from_toArray = paraArray[1].split(' ');
+
+      me.targetGapHash = {};
+      for(var i = 0, il = pos_from_toArray.length; i < il; ++i) {
+          var pos_from_to = pos_from_toArray[i].split('_');
+          me.targetGapHash[parseInt(pos_from_to[0])] = {"from": parseInt(pos_from_to[1]), "to": parseInt(pos_from_to[2])};
+      }
+
+      me.resetAnnoAll();
+  }
   else if(commandOri.indexOf('add track') == 0) {
-      //"add track | chainid " + chainid + " | title " + title + " | text " + text + " | type " + type + " | color " + color
+      //"add track | chainid " + chainid + " | title " + title + " | text " + text
+      // + " | type " + type + " | color " + color + " | msa " + color
       var paraArray = commandOri.split(' | ');
 
       var chainid = paraArray[1].substr(8);
@@ -1823,11 +1838,15 @@ iCn3DUI.prototype.applyCommand = function (commandStr) { var me = this; //"use s
       if(paraArray.length >= 5) type = paraArray[4].substr(5);
       var color;
       if(paraArray.length >= 6) color = paraArray[5].substr(6);
+      var msa;
+      if(paraArray.length >= 7) msa = paraArray[6].substr(4);
 
       $("#" + me.pre + "anno_custom")[0].checked = true;
       $("[id^=" + me.pre + "custom]").show();
 
-      me.checkGiSeq(chainid, title, text, type, color, 0);
+      if(color == '0') color = undefined;
+
+      me.checkGiSeq(chainid, title, text, type, color, msa, 0);
   }
   else if(command.indexOf('remove one stabilizer') == 0) {
     var paraArray = command.split(' | ');
