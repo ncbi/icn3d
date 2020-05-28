@@ -213,8 +213,7 @@ iCn3DUI.prototype.showAnnoSeqData = function(nucleotide_chainid, chemical_chaini
     me.enableHlSeq();
 
     setTimeout(function(){
-      //me.setAnnoViewAndDisplay('overview');
-      me.hideAllAnnoBase();
+      me.hideAllAnno();
       me.clickCdd();
     }, 0);
 };
@@ -2980,7 +2979,6 @@ iCn3DUI.prototype.showInteraction_base = function(chnid, chnidBase) {
 };
 
 iCn3DUI.prototype.showSsbond = function(chnid, chnidBase) { var me = this; //"use strict";
-console.log("showSsbond");
     if(me.icn3d.ssbondpnts === undefined) {
         // didn't finish loading atom data yet
         setTimeout(function(){
@@ -2993,14 +2991,13 @@ console.log("showSsbond");
 };
 
 iCn3DUI.prototype.showSsbond_base = function(chnid, chnidBase) { var me = this; //"use strict";
-console.log("showSsbond_base");
-
     var chainid = chnidBase;
 
     var resid2resids = {};
 
     var structure = chainid.substr(0, chainid.indexOf('_'));
     var ssbondArray = me.icn3d.ssbondpnts[structure];
+
     if(ssbondArray === undefined) {
         $("#" + me.pre + "dt_ssbond_" + chnid).html('');
         $("#" + me.pre + "ov_ssbond_" + chnid).html('');
@@ -3032,159 +3029,6 @@ console.log("showSsbond_base");
     var title = "Disulfide Bonds";
 
     me.showAnnoType(chnid, chnidBase, 'ssbond', title, residueArray, resid2resids);
-
-
-/*
-    var chainArray = Object.keys(me.icn3d.chains);
-
-    //var chainid = chnid;
-    var chainid = chnidBase;
-
-    //var pos = Math.round(chainid.indexOf('_'));
-    //if(pos > 4) return; // NMR structures with structure id such as 2K042,2K043, ...
-
-    var atom = me.icn3d.getFirstCalphaAtomObj(me.icn3d.chains[chainid]);
-
-    var html = '<div id="' + me.pre + chnid + '_ssbondseq_sequence" class="icn3d-dl_sequence">';
-    var html2 = html;
-    var html3 = html;
-
-    //me.icn3d.ssbondpnts[atom1.structure].push(resid1);
-    var resid2resids = {};
-
-    var structure = chainid.substr(0, chainid.indexOf('_'));
-    var ssbondArray = me.icn3d.ssbondpnts[structure];
-    if(ssbondArray === undefined) {
-        $("#" + me.pre + "dt_ssbond_" + chnid).html('');
-        $("#" + me.pre + "ov_ssbond_" + chnid).html('');
-        $("#" + me.pre + "tt_ssbond_" + chnid).html('');
-
-        return;
-    }
-
-    for(var i = 0, il = ssbondArray.length; i < il; i = i + 2) {
-        var resid1 = ssbondArray[i];
-        var resid2 = ssbondArray[i+1];
-
-        var chainid1 = resid1.substr(0, resid1.lastIndexOf('_'));
-        var chainid2 = resid2.substr(0, resid2.lastIndexOf('_'));
-
-        if(chainid === chainid1) {
-            if(resid2resids[resid1] === undefined) resid2resids[resid1] = [];
-            resid2resids[resid1].push(resid2);
-        }
-
-        if(chainid === chainid2) {
-            if(resid2resids[resid2] === undefined) resid2resids[resid2] = [];
-            resid2resids[resid2].push(resid1);
-        }
-    }
-
-    var residueArray = Object.keys(resid2resids);
-
-    var title = "Disulfide Bonds";
-    if(title.length > 17) title = title.substr(0, 17) + '...';
-
-    var fulltitle = title;
-
-    var resPosArray = [];
-    for(var i = 0, il = residueArray.length; i < il; ++i) {
-        var resid = residueArray[i];
-        var resi = Math.round(resid.substr(residueArray[i].lastIndexOf('_') + 1) );
-        // exclude chemical, water and ions
-        //var serial = Object.keys(me.icn3d.residues[resid])[0];
-        //if(me.icn3d.proteins.hasOwnProperty(serial) || me.icn3d.nucleotides.hasOwnProperty(serial)) {
-        //    resPosArray.push( resi );
-        //}
-        resPosArray.push( resi );
-    }
-
-    if(resPosArray.length === 0) {
-        $("#" + me.pre + "dt_ssbond_" + chnid).html('');
-        $("#" + me.pre + "ov_ssbond_" + chnid).html('');
-        $("#" + me.pre + "tt_ssbond_" + chnid).html('');
-
-        return;
-    }
-
-    var resCnt = resPosArray.length;
-
-    var chainnameNospace = 'ssbond'; //chainname.replace(/\s/g, '');
-
-    var htmlTmp2 = '<div class="icn3d-seqTitle icn3d-link icn3d-blue" ssbond="" posarray="' + resPosArray.toString() + '" shorttitle="' + title + '" setname="' + chnid + '_' + chainnameNospace + '" anno="sequence" chain="' + chnid + '" title="' + fulltitle + '">' + title + ' </div>';
-    var htmlTmp3 = '<span class="icn3d-residueNum" title="residue count">' + resCnt.toString() + ' Res</span>';
-
-    html3 += htmlTmp2 + htmlTmp3 + '<br>';
-
-    var htmlTmp = '<span class="icn3d-seqLine">';
-
-    html += htmlTmp2 + htmlTmp3 + htmlTmp;
-    html2 += htmlTmp2 + htmlTmp3 + htmlTmp;
-
-    var pre = 'ssbond';
-
-    var prevEmptyWidth = 0;
-    var prevLineWidth = 0;
-    var widthPerRes = 1;
-
-    for(var i = 0, il = me.giSeq[chnid].length; i < il; ++i) {
-      html += me.insertGap(chnid, i, '-');
-
-      if(resPosArray.indexOf(i+1 + me.baseResi[chnid]) != -1) {
-          var cFull = me.giSeq[chnid][i];
-
-          var c = cFull;
-          if(cFull.length > 1) {
-              c = cFull[0] + '..';
-          }
-
-          var pos = (i >= me.matchedPos[chnid] && i - me.matchedPos[chnid] < me.icn3d.chainsSeq[chnid].length) ? me.icn3d.chainsSeq[chnid][i - me.matchedPos[chnid]].resi : me.baseResi[chnid] + 1 + i;
-
-          var resid = chnid + '_' + (i+1 + me.baseResi[chnid]).toString();
-          var title = 'Residue ' + resid + ' has disulfide bond with';
-          if(resid2resids[resid] !== undefined) {
-              for(var j = 0, jl = resid2resids[resid].length; j < jl; ++j) {
-                  title += ' residue ' + resid2resids[resid][j];
-              }
-          }
-
-          html += '<span id="' + pre + '_' + me.pre + chnid + '_' + pos + '" title="' + title + '" class="icn3d-residue">' + c + '</span>';
-
-          html2 += me.insertGapOverview(chnid, i);
-
-          var emptyWidth = (me.cfg.blast_rep_id == chnid) ? Math.round(me.seqAnnWidth * i / (me.maxAnnoLength + me.nTotalGap) - prevEmptyWidth - prevLineWidth) : Math.round(me.seqAnnWidth * i / me.maxAnnoLength - prevEmptyWidth - prevLineWidth);
-
-            //if(emptyWidth < 0) emptyWidth = 0;
-
-            if(emptyWidth >= 0) {
-            html2 += '<div style="display:inline-block; width:' + emptyWidth + 'px;">&nbsp;</div>';
-            html2 += '<div style="display:inline-block; background-color:#000; width:' + widthPerRes + 'px;" title="' + title + '">&nbsp;</div>';
-
-            prevEmptyWidth += emptyWidth;
-            prevLineWidth += widthPerRes;
-            }
-      }
-      else {
-        html += '<span>-</span>'; //'<span>-</span>';
-      }
-    }
-
-    htmlTmp = '<span class="icn3d-residueNum" title="residue count">&nbsp;' + resCnt.toString() + ' Residues</span>';
-    htmlTmp += '</span>';
-    htmlTmp += '<br>';
-
-    html += htmlTmp;
-    html2 += htmlTmp;
-
-
-    html += '</div>';
-    html2 += '</div>';
-    html3 += '</div>';
-
-    $("#" + me.pre + "dt_ssbond_" + chnid).html(html);
-    $("#" + me.pre + "ov_ssbond_" + chnid).html(html2);
-    $("#" + me.pre + "tt_ssbond_" + chnid).html(html3);
-*/
 };
 
 iCn3DUI.prototype.showTransmem = function(chnid, chnidBase) { var me = this; //"use strict";
@@ -3216,18 +3060,9 @@ iCn3DUI.prototype.showTransmem_base = function(chnid, chnidBase) { var me = this
 };
 
 iCn3DUI.prototype.showAnnoType = function(chnid, chnidBase, type, title, residueArray, resid2resids) { var me = this; //"use strict";
-//    var chainArray = Object.keys(me.icn3d.chains);
-
-    //var chainid = chnid;
-//    var chainid = chnidBase;
-
-//    var atom = me.icn3d.getFirstCalphaAtomObj(me.icn3d.chains[chainid]);
-
     var html = '<div id="' + me.pre + chnid + '_' + type + 'seq_sequence" class="icn3d-dl_sequence">';
     var html2 = html;
     var html3 = html;
-
-//    var structure = chainid.substr(0, chainid.indexOf('_'));
 
     if(residueArray.length == 0) {
         $("#" + me.pre + "dt_" + type + "_" + chnid).html('');
@@ -3434,6 +3269,7 @@ iCn3DUI.prototype.resetAnnoTabAll = function () {  var me = this; //"use strict"
         $("[id^=" + me.pre + "custom]").show();
     }
 
+
     if($("#" + me.pre + "anno_ssbond").length && $("#" + me.pre + "anno_ssbond")[0].checked) {
         $("[id^=" + me.pre + "ssbond]").show();
         me.bSSbondShown = false;
@@ -3444,7 +3280,6 @@ iCn3DUI.prototype.resetAnnoTabAll = function () {  var me = this; //"use strict"
         $("[id^=" + me.pre + "transmem]").show();
         me.bTranememShown = false;
         me.updateTransmem();
-
     }
 };
 
