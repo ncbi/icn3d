@@ -1067,8 +1067,8 @@ iCn3DUI.prototype.setSeqAlignForRealign = function () { var me = this; //"use st
           me.icn3d.alnChainsAnno[chainid1][1].push(numberStr); // symbol: 10, 20, etc, empty for rest
       }
 
-        var commandname = 'aligned_protein';
-        var commanddescr = 'aligned protein';
+        var commandname = 'protein_aligned';
+        var commanddescr = 'protein aligned';
         var select = "select " + me.residueids2spec(Object.keys(residuesHash));
 
         me.addCustomSelection(Object.keys(residuesHash), commandname, commanddescr, select, true);

@@ -553,7 +553,7 @@ iCn3DUI.prototype.processSeqData = function(chainid_seq) { var me = this; //"use
 
           var prevHAtoms = me.icn3d.cloneHash(me.icn3d.hAtoms);
           //me.selectResidueList(residueidHash, chnidBase + '_blast', compTitle, false);
-          me.selectResidueList(residueidHash, 'aligned_protein', compTitle, false);
+          me.selectResidueList(residueidHash, 'protein_aligned', compTitle, false);
           me.icn3d.hAtoms = me.icn3d.cloneHash(prevHAtoms);
         } // align seq to structure
     } // for loop
@@ -588,7 +588,7 @@ iCn3DUI.prototype.getAnnotationData = function() { var me = this; //"use strict"
             + "&nbsp;&nbsp;&nbsp;";
 
         //if(me.cfg.blast_rep_id !== undefined && me.cfg.blast_rep_id == chnid) {
-            chainHtml += me.addButton(chnid, "icn3d-customcolor", "Custom Color", "Use a custom file to define the colors in 3D structure", 80, buttonStyle) + "&nbsp;&nbsp;&nbsp;";
+            chainHtml += me.addButton(chnid, "icn3d-customcolor", "Custom Color/Tube", "Use a custom file to define the colors or tubes in 3D structure", 110, buttonStyle) + "&nbsp;&nbsp;&nbsp;";
         //}
             chainHtml += me.addButton(chnid, "icn3d-helixsets", "Helix Sets", "Define sets for each helix in this chain and add them to the menu of \"Defined Sets\"", 60, buttonStyle) + "&nbsp;"
             + me.addButton(chnid, "icn3d-sheetsets", "Sheet Sets", "Define sets for each sheet in this chain and add them to the menu of \"Defined Sets\"", 60, buttonStyle) + "&nbsp;"

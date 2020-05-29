@@ -221,3 +221,5 @@ input:checked + .icn3d-slider:before {
 }
 
 .icn3d-popup {display:none; position:absolute; z-index:9999; top:-1000px; left:-1000px; background-color:#DDDDDD; text-align:center; width:80px; height:18px; padding:3px;}
+
+.icn3d-saveicon {cursor:pointer; margin:4px 16px 0 0; float: right;}

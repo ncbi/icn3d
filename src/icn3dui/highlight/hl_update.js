@@ -334,7 +334,7 @@ iCn3DUI.prototype.setPredefinedInMenu = function() { var me = this; //"use stric
             chains[chainid] = 1;
         }
 
-        var commandname = 'aligned_protein';
+        var commandname = 'protein_aligned';
         var commanddescr = 'aligned protein and nucleotides';
         var select = "select " + me.residueids2spec(Object.keys(residuesHash));
 

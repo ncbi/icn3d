@@ -1193,7 +1193,6 @@ iCn3D.prototype = {
         'GLU': new THREE.Color(0xFF0000),
         'HIS': new THREE.Color(0x8080FF),
 
-// hydrophobic
         'GLY': new THREE.Color(0x888888),
         'PRO': new THREE.Color(0x888888),
         'ALA': new THREE.Color(0x888888),
@@ -1202,8 +1201,6 @@ iCn3D.prototype = {
         'ILE': new THREE.Color(0x888888),
         'PHE': new THREE.Color(0x888888),
 
-// polar
-//        'HIS': new THREE.Color(0x888888),
         'SER': new THREE.Color(0x888888),
         'THR': new THREE.Color(0x888888),
         'ASN': new THREE.Color(0x888888),
@@ -1213,55 +1210,7 @@ iCn3D.prototype = {
         'CYS': new THREE.Color(0x888888),
         'TRP': new THREE.Color(0x888888)
     },
-/*
-    hydrophobicColors: {
-// charged residues
-        '  G': new THREE.Color(0x888888),
-        '  A': new THREE.Color(0x888888),
-        '  T': new THREE.Color(0x888888),
-        '  C': new THREE.Color(0x888888),
-        '  U': new THREE.Color(0x888888),
-        ' DG': new THREE.Color(0x888888),
-        ' DA': new THREE.Color(0x888888),
-        ' DT': new THREE.Color(0x888888),
-        ' DC': new THREE.Color(0x888888),
-        ' DU': new THREE.Color(0x888888),
-          'G': new THREE.Color(0x888888),
-          'A': new THREE.Color(0x888888),
-          'T': new THREE.Color(0x888888),
-          'C': new THREE.Color(0x888888),
-          'U': new THREE.Color(0x888888),
-         'DG': new THREE.Color(0x888888),
-         'DA': new THREE.Color(0x888888),
-         'DT': new THREE.Color(0x888888),
-         'DC': new THREE.Color(0x888888),
-         'DU': new THREE.Color(0x888888),
-        'ARG': new THREE.Color(0x888888),
-        'LYS': new THREE.Color(0x888888),
-        'ASP': new THREE.Color(0x888888),
-        'GLU': new THREE.Color(0x888888),
 
-// hydrophobic
-        'GLY': new THREE.Color(0x00FF00),
-        'PRO': new THREE.Color(0x00FF00),
-        'ALA': new THREE.Color(0x00FF00),
-        'VAL': new THREE.Color(0x00FF00),
-        'LEU': new THREE.Color(0x00FF00),
-        'ILE': new THREE.Color(0x00FF00),
-        'PHE': new THREE.Color(0x00FF00),
-
-// polar
-        'HIS': new THREE.Color(0x888888),
-        'SER': new THREE.Color(0x888888),
-        'THR': new THREE.Color(0x888888),
-        'ASN': new THREE.Color(0x888888),
-        'GLN': new THREE.Color(0x888888),
-        'TYR': new THREE.Color(0x888888),
-        'MET': new THREE.Color(0x888888),
-        'CYS': new THREE.Color(0x888888),
-        'TRP': new THREE.Color(0x888888)
-    },
-*/
     hydrophobicColors: {
 // charged residues
         '  G': new THREE.Color(0xFF0000),

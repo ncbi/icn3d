@@ -320,26 +320,6 @@ iCn3D.prototype.setColorByOptions = function (options, atoms, bUseInputColor) {
             break;
 
         case 'b factor':
-/*
-            //http://proteopedia.org/wiki/index.php/Disorder
-            // < 30: blue; > 60: red; use 45 as the middle value
-            if (!this.middB) {
-                var minB = 1000, maxB = -1000;
-                for (var i in this.atoms) {
-                    var atom = this.atoms[i];
-                    if (minB > atom.b) minB = atom.b;
-                    if (maxB < atom.b) maxB = atom.b;
-                }
-
-                if(minB > 30) minB = 30;
-                if(maxB < 60) maxB = 60;
-
-                this.middB = 45; //(maxB + minB) * 0.5;
-                this.spanBinv1 = (this.middB > minB) ? 1.0 / (this.middB - minB) : 0;
-                this.spanBinv2 = (this.middB < maxB) ? 1.0 / (maxB - this.middB) : 0;
-            }
-*/
-
             // http://proteopedia.org/wiki/index.php/Temperature_color_schemes
             // Fixed: Middle (white): 50, red: >= 100, blue: 0
             this.middB = 50;
@@ -702,6 +682,9 @@ iCn3D.prototype.applyDisplayOptions = function (options, atoms, bHighlight) { va
       }
       else if(style === 'b factor tube') {
         this.createTube(this.hash2Atoms(atomHash), 'CA', null, bHighlight);
+      }
+      else if(style === 'custom tube') {
+        this.createTube(this.hash2Atoms(atomHash), 'CA', null, bHighlight, true);
       }
       else if(style === 'lines') {
         if(bHighlight === 1) {

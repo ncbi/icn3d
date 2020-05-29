@@ -13,7 +13,7 @@ if (!$.ui.dialog.prototype._makeDraggableBase) {
 }
 
 var iCn3DUI = function(cfg) { var me = this; //"use strict";
-    this.REVISION = '2.16.1';
+    this.REVISION = '2.16.2';
 
     me.bFullUi = true;
 
@@ -3378,6 +3378,140 @@ iCn3DUI.prototype = {
         });
     },
 
+    clkMn2_propperty: function() { var me = this; //"use strict";
+        $("#" + me.pre + "mn2_propPos").click(function(e) {
+           me.setLogCmd("select prop positive", true);
+
+           me.selectProperty('positive');
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
+        });
+
+        $("#" + me.pre + "mn2_propNeg").click(function(e) {
+           me.setLogCmd("select prop negative", true);
+
+           me.selectProperty('negative');
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
+        });
+
+        $("#" + me.pre + "mn2_propHydro").click(function(e) {
+           me.setLogCmd("select prop hydrophobic", true);
+
+           me.selectProperty('hydrophobic');
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
+        });
+
+        $("#" + me.pre + "mn2_propPolar").click(function(e) {
+           me.setLogCmd("select prop polar", true);
+
+           me.selectProperty('polar');
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
+        });
+
+        $("#" + me.pre + "mn2_propBfactor").click(function(e) {
+           me.openDialog(me.pre + 'dl_propbybfactor', 'Select residue based on B-factor');
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
+        });
+
+        $("#" + me.pre + "mn2_propSolAcc").click(function(e) {
+           me.openDialog(me.pre + 'dl_propbypercentout', 'Select residue based on the percentage of solvent accessilbe surface area');
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
+        });
+
+        $("#" + me.pre + "applypropbybfactor").click(function(e) {
+           var from = $("#" + me.pre + "minbfactor").val();
+           var to = $("#" + me.pre + "maxbfactor").val();
+
+           me.setLogCmd("select prop b factor | " + from + '_' + to, true);
+
+           me.selectProperty('b factor', from, to);
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
+        });
+
+        $("#" + me.pre + "applypropbypercentout").click(function(e) {
+           var from = $("#" + me.pre + "minpercentout").val();
+           var to = $("#" + me.pre + "maxpercentout").val();
+
+           me.setLogCmd("select prop percent out | " + from + '_' + to, true);
+
+           me.selectProperty('percent out', from, to);
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
+        });
+    },
+
+    selectProperty: function(property, from, to) { var me = this; //"use strict";
+        var prevHAtoms = me.icn3d.cloneHash(me.icn3d.hAtoms);
+
+        if(property == 'positive') {
+            var select = ':r,k,h';
+            me.icn3d.hAtoms = {};
+            me.selectBySpec(select, select, select);
+        }
+        else if(property == 'negative') {
+            var select = ':d,e';
+            me.icn3d.hAtoms = {};
+            me.selectBySpec(select, select, select);
+        }
+        else if(property == 'hydrophobic') {
+            var select = ':w,f,y,l,i,c,m';
+            me.icn3d.hAtoms = {};
+            me.selectBySpec(select, select, select);
+        }
+        else if(property == 'polar') {
+            var select = ':g,v,s,t,a,n,p,q';
+            me.icn3d.hAtoms = {};
+            me.selectBySpec(select, select, select);
+        }
+        else if(property == 'b factor') {
+            var atoms = me.icn3d.cloneHash(me.icn3d.calphas);
+            atoms = me.icn3d.unionHash(atoms, me.icn3d.nucleotidesO3);
+            atoms = me.icn3d.unionHash(atoms, me.icn3d.chemicals);
+            atoms = me.icn3d.unionHash(atoms, me.icn3d.ions);
+            atoms = me.icn3d.unionHash(atoms, me.icn3d.water);
+
+            me.icn3d.hAtoms = {};
+            for(var i in atoms) {
+                var atom = me.icn3d.atoms[i];
+                if(atom.b >= from && atom.b <= to) {
+                    me.icn3d.hAtoms = me.icn3d.unionHash(me.icn3d.hAtoms, me.icn3d.residues[atom.structure + '_' + atom.chain + '_' + atom.resi]);
+                }
+            }
+        }
+        else if(property == 'percent out') {
+           me.icn3d.bCalcArea = true;
+           me.icn3d.opts.surface = 'solvent accessible surface';
+           me.icn3d.applySurfaceOptions();
+
+           me.icn3d.bCalcArea = false;
+
+           me.icn3d.hAtoms = {};
+           for(var resid in me.icn3d.resid2area) { // resid: structure_chain_resi_resn
+                var idArray = resid.split('_');
+                if(me.icn3d.residueArea.hasOwnProperty(idArray[3])) {
+                    var percent = parseInt(me.icn3d.resid2area[resid] / me.icn3d.residueArea[idArray[3]] * 100);
+
+                    if(percent >= from && percent <= to) {
+                        var residReal = idArray[0] + '_' + idArray[1] + '_' + idArray[2];
+                        me.icn3d.hAtoms = me.icn3d.unionHash(me.icn3d.hAtoms, me.icn3d.residues[residReal]);
+                    }
+                }
+           }
+        }
+
+        me.icn3d.hAtoms = me.icn3d.intHash(me.icn3d.hAtoms, prevHAtoms);
+
+        me.icn3d.draw();
+
+        me.updateHlAll();
+    },
+
     clkMn2_alignment: function() { var me = this; //"use strict";
         $("#" + me.pre + "mn2_alignment").click(function(e) {
            me.openDialog(me.pre + 'dl_alignment', 'Select residues in aligned sequences');
@@ -3399,7 +3533,11 @@ iCn3DUI.prototype = {
         $("#" + me.pre + "applyyournote").click(function(e) {
            me.yournote = $("#" + me.pre + "yournote").val();
 
-           me.setLogCmd('saved your note: ' + me.yournote, false);
+           document.title = me.yournote;
+
+           dialog.dialog( "close" );
+
+           me.setLogCmd('your note | ' + me.yournote, true);
 
            //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
@@ -4067,90 +4205,86 @@ iCn3DUI.prototype = {
         });
     },
 
+    setCustomFile: function(type) { var me = this; //"use strict";
+       var chainid = $("#" + me.pre + "customcolor_chainid").val();
+       var file = $("#" + me.pre + "cstcolorfile")[0].files[0];
+
+       if(!file) {
+         alert("Please select a file before clicking 'Load'");
+       }
+       else {
+         if (!window.File || !window.FileReader || !window.FileList || !window.Blob) {
+            alert('The File APIs are not fully supported in this browser.');
+         }
+
+         var reader = new FileReader();
+         reader.onload = function (e) {
+            var dataStr = e.target.result; // or = reader.result;
+            var lineArray = dataStr.split('\n');
+
+            if(me.icn3d.queryresi2score === undefined) me.icn3d.queryresi2score = {};
+            //if(me.icn3d.queryresi2score[chainid] === undefined) me.icn3d.queryresi2score[chainid] = {};
+            me.icn3d.queryresi2score[chainid] = {};
+
+            for(var i = 0, il = lineArray.length; i < il; ++i) {
+                if(lineArray[i].trim() !== '') {
+                    var columnArray = lineArray[i].split(/\s+/);
+
+                    me.icn3d.queryresi2score[chainid][columnArray[0]] = columnArray[1];
+                }
+            }
+
+            var resiArray = Object.keys(me.icn3d.queryresi2score[chainid]);
+            var start = Math.min.apply(null, resiArray);
+            var end = Math.max.apply(null, resiArray);
+
+            var resiScoreStr = '';
+            for(var resi = start; resi <= end; ++resi) {
+                if(me.icn3d.queryresi2score[chainid].hasOwnProperty(resi)) {
+                    resiScoreStr += Math.round(me.icn3d.queryresi2score[chainid][resi]/11); // max 9
+                }
+                else {
+                    resiScoreStr += '_';
+                }
+            }
+
+            if(type == 'color') {
+                me.icn3d.opts['color'] = 'align custom';
+                me.icn3d.setColorByOptions(me.icn3d.opts, me.icn3d.hAtoms);
+
+                me.updateHlAll();
+
+                me.setLogCmd('custom tube | ' + chainid + ' | range ' + start + '_' + end + ' | ' + resiScoreStr, true);
+            }
+            else if(type == 'tube') {
+                me.setStyle('proteins', 'custom tube');
+                me.setLogCmd('color align custom | ' + chainid + ' | range ' + start + '_' + end + ' | ' + resiScoreStr, true);
+            }
+
+            me.icn3d.draw();
+         };
+
+         reader.readAsText(file);
+       }
+    },
+
     clkMn4_reloadCustomcolorfile: function() { var me = this; //"use strict";
         $("#" + me.pre + "reload_customcolorfile").click(function(e) {
            e.preventDefault();
 
            dialog.dialog( "close" );
 
-           var chainid = $("#" + me.pre + "customcolor_chainid").val();
-           var file = $("#" + me.pre + "cstcolorfile")[0].files[0];
+           me.setCustomFile('color');
 
-           if(!file) {
-             alert("Please select a file before clicking 'Load'");
-           }
-           else {
-             if (!window.File || !window.FileReader || !window.FileList || !window.Blob) {
-                alert('The File APIs are not fully supported in this browser.');
-             }
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
+        });
 
-             var reader = new FileReader();
-             reader.onload = function (e) {
-                var dataStr = e.target.result; // or = reader.result;
-                var lineArray = dataStr.split('\n');
+        $("#" + me.pre + "reload_customtubefile").click(function(e) {
+           e.preventDefault();
 
-                // http://proteopedia.org/wiki/index.php/Temperature_color_schemes
-                // Fixed: Middle (white): 50, red: >= 100, blue: 0
-                var middB = 50;
-                var spanBinv1 = 0.02;
-                var spanBinv2 = 0.02;
+           dialog.dialog( "close" );
 
-                var queryresi2color = {}, queryresi2score = {};
-                for(var i = 0, il = lineArray.length; i < il; ++i) {
-                    var columnArray = lineArray[i].split(/\s+/);
-
-                    var b = columnArray[1]; // score
-                    if(b > 100) b = 100;
-
-                    var color = b < middB ? new THREE.Color().setRGB(1 - (s = (middB - b) * spanBinv1), 1 - s, 1) : new THREE.Color().setRGB(1, 1 - (s = (b - middB) * spanBinv2), 1 - s);
-
-                    queryresi2color[columnArray[0]] = color;
-                    queryresi2score[columnArray[0]] = b;
-                }
-
-                var resi2score = {};
-                for(var serail in me.icn3d.chains[chainid]) {
-                    //var resi = me.icn3d.atoms[serail].resi - 1;
-                    var color;
-                    //if(me.icn3d.target2queryHash.hasOwnProperty(resi) && me.icn3d.target2queryHash[resi] !== -1) { // -1 means gap
-                        //var queryresi = me.icn3d.target2queryHash[resi] + 1;
-                        var queryresi = me.icn3d.atoms[serail].resi;
-
-                        if(queryresi2color.hasOwnProperty(queryresi)) {
-                            color = queryresi2color[queryresi];
-
-                            resi2score[queryresi] = parseInt(100*queryresi2score[queryresi])/100.0;
-                        }
-                        else {
-                            color = me.icn3d.defaultAtomColor;
-                        }
-                    //}
-                    //else {
-                    //    color = me.icn3d.defaultAtomColor;
-                    //}
-
-                    me.icn3d.atoms[serail].color = color;
-                    me.icn3d.atomPrevColors[serail] = color;
-
-                    me.icn3d.hAtoms[serail] = 1;
-                }
-
-                var resiScoreStr = '', bFound = false;
-                for(var resi in resi2score) {
-                    if(bFound) resiScoreStr += ', ';
-                    resiScoreStr += resi + ' ' + resi2score[resi];
-                    bFound = true;
-                }
-
-                me.updateHlAll();
-
-                me.icn3d.draw();
-
-                me.setLogCmd('color align custom | ' + chainid + ' | ' + resiScoreStr, true);
-             };
-
-             reader.readAsText(file);
-           }
+           me.setCustomFile('tube');
 
            //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
@@ -6618,6 +6752,50 @@ iCn3DUI.prototype = {
        me.bHbondCalc = true;
     },
 
+    calcBuriedSurface: function(nameArray2, nameArray) { var me = this; //"use strict";
+       if(nameArray2.length == 0) {
+           alert("Please select the first set");
+       }
+       else {
+           var prevHAtoms = me.icn3d.cloneHash(me.icn3d.hAtoms);
+
+           var atomSet2 = me.getAtomsFromNameArray(nameArray2);
+           var atomSet1 = me.getAtomsFromNameArray(nameArray);
+
+           me.icn3d.bCalcArea = true;
+           me.icn3d.opts.surface = 'solvent accessible surface';
+
+           me.icn3d.hAtoms = me.icn3d.cloneHash(atomSet2);
+           me.icn3d.applySurfaceOptions();
+           var area2 = me.icn3d.areavalue;
+
+           me.icn3d.hAtoms = me.icn3d.cloneHash(atomSet1);
+           me.icn3d.applySurfaceOptions();
+           var area1 = me.icn3d.areavalue;
+
+           me.icn3d.hAtoms = me.icn3d.unionHash(me.icn3d.hAtoms, atomSet2);
+           me.icn3d.applySurfaceOptions();
+           var areaTotal = me.icn3d.areavalue;
+
+           me.icn3d.bCalcArea = false;
+           me.icn3d.hAtoms = me.icn3d.cloneHash(prevHAtoms);
+
+           var buriedArea = (parseFloat(area1) + parseFloat(area2) - parseFloat(areaTotal)).toFixed(2);
+
+           var html = '<br>Calculate solvent accessible surface area in the interface:<br><br>';
+
+           html += 'Set 1: ' + nameArray2 + ', Surface: ' +  area2 + ' &#8491;<sup>2</sup><br>';
+           html += 'Set 2: ' + nameArray + ', Surface: ' +  area1 + ' &#8491;<sup>2</sup><br>';
+           html += 'Total Surface: ' +  areaTotal + ' &#8491;<sup>2</sup><br>';
+           html += '<b>Buried Surface</b>: ' +  buriedArea + ' &#8491;<sup>2</sup><br><br>';
+
+           $("#" + me.pre + "dl_buriedarea").html(html);
+           me.openDialog(me.pre + 'dl_buriedarea', 'Buried solvent accessible surface area in the interface');
+
+           me.setLogCmd('buried surface ' + buriedArea, false);
+       }
+    },
+
     showInteractions: function(type) { var me = this; //"use strict";
        var nameArray = $("#" + me.pre + "atomsCustomHbond").val();
        var nameArray2 = $("#" + me.pre + "atomsCustomHbond2").val();
@@ -6747,6 +6925,18 @@ iCn3DUI.prototype = {
            //dialog.dialog( "close" );
 
            me.showInteractions('view');
+        });
+
+        $("#" + me.pre + "areaWindow").click(function(e) {
+           e.preventDefault();
+           //dialog.dialog( "close" );
+
+           var nameArray = $("#" + me.pre + "atomsCustomHbond").val();
+           var nameArray2 = $("#" + me.pre + "atomsCustomHbond2").val();
+
+           me.calcBuriedSurface(nameArray2, nameArray);
+
+           me.setLogCmd("calc buried surface | " + nameArray2 + " " + nameArray, true);
         });
 
         $("#" + me.pre + "hbondExport").click(function(e) {
@@ -6896,14 +7086,11 @@ iCn3DUI.prototype = {
 
        html += '<div style="text-align:center"><b>Note</b>: Each checkbox below selects the corresponding residue. '
          + 'You<br> can click "Save Selection" in the "Select" menu to save the selection<br> '
-         + 'and click on "Highlight" button to clear the checkboxes.</div><br>'
+         + 'and click on "Highlight" button to clear the checkboxes.</div><br>';
 
        if(type == 'graph') html = '';
 
        var interactionTypes = '';
-
-       var atomSet2 = me.getAtomsFromNameArray(nameArray2);
-       var atomSet1 = me.getAtomsFromNameArray(nameArray);
 
        if(bHbond) {
            var threshold = parseFloat($("#" + me.pre + "hbondthreshold" ).val());
@@ -7748,6 +7935,27 @@ iCn3DUI.prototype = {
         });
     },
 
+    clickSaveDailog: function() { var me = this; //"use strict";
+        $(document).on("click", ".icn3d-saveicon", function(e) {
+           e.stopImmediatePropagation();
+
+           var id = $(this).attr('pid');
+
+           var html = '';
+
+           html += '<link rel="stylesheet" href="https:///structure.ncbi.nlm.nih.gov/icn3d/lib/jquery-ui-1.12.1.min.css">\n';
+           html += '<link rel="stylesheet" href="https:///structure.ncbi.nlm.nih.gov/icn3d/icn3d_full_ui_2.16.1.css">\n';
+           html += $("#" + id).html();
+
+           var idArray = id.split('_');
+           var idStr = (idArray.length > 2) ? idArray[2] : id;
+
+           var structureStr = Object.keys(me.icn3d.structures)[0];
+           if(Object.keys(me.icn3d.structures).length > 1) structureStr += '-' + Object.keys(me.icn3d.structures)[1];
+
+           me.saveFile(structureStr + '-' + idStr + '.html', 'html', encodeURIComponent(html));
+        });
+    },
 
     selectOneResid: function(idStr, bUnchecked) { var me = this; //"use strict";
       //var idStr = idArray[i]; // TYR $1KQ2.B:56@OH, $1KQ2.B:40 ASP
@@ -8033,6 +8241,7 @@ iCn3DUI.prototype = {
         me.clkMn2_selectcomplement();
         me.clkMn2_selectmainchains();
         me.clkMn2_selectsidechains();
+        me.clkMn2_propperty();
         me.clkMn2_selectall();
         me.clkMn2_selectdisplayed();
         me.clkMn2_fullstru();
@@ -8287,6 +8496,7 @@ iCn3DUI.prototype = {
         me.clickSeqSaveSelection();
         me.clickAlignSeqSaveSelection();
         me.clickOutputSelection();
+        me.clickSaveDailog();
         me.clickResidueOnInteraction();
         me.click2Ddgm();
         me.bindMouseup();

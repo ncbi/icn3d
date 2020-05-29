@@ -455,6 +455,18 @@ iCn3DUI.prototype.setMenu2_base = function() { var me = this; //"use strict";
 //            html += me.getRadio('mn2_select', 'mn2_select_chain', 'Defined Sets');
 //        }
     html += me.getLink('mn2_aroundsphere', 'by Distance');
+
+    html += "<li><span>by Property</span>";
+    html += "<ul>";
+    html += me.getLink('mn2_propPos', 'Positive');
+    html += me.getLink('mn2_propNeg', 'Negative');
+    html += me.getLink('mn2_propHydro', 'Hydrophobic');
+    html += me.getLink('mn2_propPolar', 'Polar');
+    html += me.getLink('mn2_propBfactor', 'B-factor');
+    html += me.getLink('mn2_propSolAcc', 'Solvent Accessibility');
+    html += "</ul>";
+    html += "</li>";
+
     html += me.getLink('mn2_selectcomplement', 'Inverse');
     html += me.getLink('mn2_selectmainchains', 'Main Chains');
     html += me.getLink('mn2_selectsidechains', 'Side Chains');
@@ -1116,7 +1128,7 @@ iCn3DUI.prototype.setMenu5_base = function() { var me = this; //"use strict";
         html += me.getLink('definedsets2', 'Defined Sets');
     }
 
-    html += me.getLink('mn6_yournote', 'Your Note');
+    html += me.getLink('mn6_yournote', 'Your Note /<br>Window Title');
 
     if(me.cfg.cid !== undefined) {
         html += "<li><span>Links</span>";
@@ -1362,9 +1374,13 @@ iCn3DUI.prototype.setDialogs = function() { var me = this; //"use strict";
 
     html += me.divStr + "dl_customcolor'>";
     html += " <input type='hidden' id='" + me.pre + "customcolor_chainid' value=''>";
-    html += '<div style="width:450px;">The custom color file for the structure has two columns separated by space or tab: residue number, and color score in the range of 0-100, where scores 0 and 100 mean blue and red, respectively.</div><br>';
-    html += "Color File: " + me.inputFileStr + "id='" + me.pre + "cstcolorfile' size=8> ";
-    html += me.buttonStr + "reload_customcolorfile'>Load</button>";
+    html += '<div style="width:450px;">The custom file for the structure has two columns separated by space or tab: ';
+    html += 'residue number, and score in the range of 0-100. If you click "Custom Color" button, ';
+    html += 'scores 0 and 100 mean blue and red, respectively. If you click "Custom Tube", ';
+    html += 'the selected residues will be displayed in a style similar to "B-factor Tube".</div><br>';
+    html += "Custom File: " + me.inputFileStr + "id='" + me.pre + "cstcolorfile' size=8> ";
+    html += me.buttonStr + "reload_customcolorfile' style='margin-left:15px'>Custom Color</button>";
+    html += me.buttonStr + "reload_customtubefile' style='margin-left:15px'>Custom Tube</button>";
 
     html += "</div>";
 
@@ -1606,7 +1622,7 @@ iCn3DUI.prototype.setDialogs = function() { var me = this; //"use strict";
     html += "</td></tr></table>";
 
     html += "<div>4. " + me.buttonStr + "applyhbonds'>3D Display</button> H-bonds/contact</div><br>";
-    html += "<div style='text-indent:1.1em'>" + me.buttonStr + "hbondWindow'>Highlight in Table</button> H-bond/contact pairs</div><br>";
+    html += "<div style='text-indent:1.1em'>" + me.buttonStr + "hbondWindow'>Highlight in Table</button> H-bond/contact pairs" + me.buttonStr + "areaWindow' style='margin-left:30px'>Buried Surface Area</button></div><br>";
 
     html += "<div style='text-indent:1.1em'>" + me.buttonStr + "hbondGraph'>2D Graph (Force-Directed)</button> to show interactions with strength parameters in 0-200:</div>";
     html += '<div style="text-indent:1.1em">Helix or Sheet: <input type="text" id="' + me.pre + 'dist_ss" size="4" value="100"> &nbsp;&nbsp;&nbsp;';
@@ -1963,6 +1979,23 @@ iCn3DUI.prototype.setDialogs = function() { var me = this; //"use strict";
 
     html += me.divStr + "dl_rmsd'>";
     html += "<br><b>Realignment RMSD</b>: " + me.inputTextStr + "id='" + me.pre + "realignrmsd' value='35' size='10'>&#8491;<br><br>";
+    html += "</div>";
+
+    html += me.divStr + "dl_buriedarea'>";
+    html += "</div>";
+
+    html += me.divStr + "dl_propbypercentout'>";
+    html += "<div style='width:400px'>Select residue based on the percentage of solvent accessilbe surface area. The values are in the range of 0-100.</div><br>";
+    html += "<b>Min Percentage</b>: " + me.inputTextStr + "id='" + me.pre + "minpercentout' value='0' size='10'>% <br>";
+    html += "<b>Max Percentage</b>: " + me.inputTextStr + "id='" + me.pre + "maxpercentout' value='100' size='10'>% <br>";
+    html += "<button style='white-space:nowrap;' id='" + me.pre + "applypropbypercentout'>Apply</button><br/><br/>";
+    html += "</div>";
+
+    html += me.divStr + "dl_propbybfactor'>";
+    html += "<div style='width:400px'>Select residue based on B-factor. The values are in the range of 0-100.</div><br>";
+    html += "<b>Min B-factor</b>: " + me.inputTextStr + "id='" + me.pre + "minbfactor' value='0' size='10'>% <br>";
+    html += "<b>Max B-factor</b>: " + me.inputTextStr + "id='" + me.pre + "maxbfactor' value='100' size='10'>% <br>";
+    html += "<button style='white-space:nowrap;' id='" + me.pre + "applypropbybfactor'>Apply</button><br/><br/>";
     html += "</div>";
 
     html += "</div>";

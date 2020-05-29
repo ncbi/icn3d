@@ -2076,8 +2076,18 @@ iCn3D.prototype.getRadius = function (radius, atom) { var me = this; //"use stri
     return radiusFinal;
 };
 
+iCn3D.prototype.getCustomtubesize = function (resid) { var me = this; //"use strict";
+    var pos = resid.lastIndexOf('_');
+    var resi = resid.substr(pos + 1);
+    var chainid = resid.substr(0, pos);
+
+    var radiusFinal = (this.queryresi2score[chainid].hasOwnProperty(resi)) ? this.queryresi2score[chainid][resi] * 0.01 : this.coilWidth;
+
+    return radiusFinal;
+};
+
 // modified from iview (http://istar.cse.cuhk.edu.hk/iview/)
-iCn3D.prototype.createTube = function (atoms, atomName, radius, bHighlight) { var me = this; //"use strict";
+iCn3D.prototype.createTube = function (atoms, atomName, radius, bHighlight, bCustom) { var me = this; //"use strict";
     var pnts = [], colors = [], radii = [], prevone = [], nexttwo = [];
     var currentChain, currentResi;
     var index = 0;
@@ -2114,7 +2124,12 @@ iCn3D.prototype.createTube = function (atoms, atomName, radius, bHighlight) { va
                             nexttwoResid = prevAtom.structure + '_' + prevAtom.chain + '_' + (prevAtom.resi + 3).toString();
 
                             pnts.push(nextAtom.coord);
-                            radii.push(this.getRadius(radius, nextAtom));
+                            if(bCustom) {
+                                radii.push(this.getCustomtubesize(nextoneResid));
+                            }
+                            else {
+                                radii.push(this.getRadius(radius, nextAtom));
+                            }
                             colors.push(nextAtom.color);
                         }
                     }
@@ -2141,14 +2156,25 @@ iCn3D.prototype.createTube = function (atoms, atomName, radius, bHighlight) { va
                     var prevAtom = this.getAtomFromResi(prevoneResid, atomName);
                     if(prevAtom !== undefined && prevAtom.ssend) { // include the residue
                         pnts.push(prevAtom.coord);
-                        radii.push(this.getRadius(radius, prevAtom));
+                        if(bCustom) {
+                            radii.push(this.getCustomtubesize(prevoneResid));
+                        }
+                        else {
+                            radii.push(this.getRadius(radius, prevAtom));
+                        }
                         colors.push(prevAtom.color);
                     }
                 }
             }
             pnts.push(atom.coord);
 
-            var radiusFinal = this.getRadius(radius, atom);
+            var radiusFinal;
+            if(bCustom) {
+                radiusFinal = this.getCustomtubesize(atom.structure + '_' + atom.chain + '_' + atom.resi);
+            }
+            else {
+                radiusFinal = this.getRadius(radius, atom);
+            }
 
             //radii.push(radius || (atom.b > 0 ? atom.b * 0.01 : this.coilWidth));
             radii.push(radiusFinal);
