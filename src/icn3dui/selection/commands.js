@@ -1895,6 +1895,16 @@ iCn3DUI.prototype.applyCommand = function (commandStr) { var me = this; //"use s
   else if(command.indexOf('toggle membrane') == 0) {
     me.toggleMembrane();
   }
+  else if(commandOri.indexOf('calc buried surface') == 0) {
+    var paraArray = commandOri.split(' | ');
+    if(paraArray.length == 2) {
+        var setNameArray = paraArray[1].split(' ');
+        var nameArray2 = setNameArray[0].split(',');
+        var nameArray = setNameArray[1].split(',');
+
+        me.calcBuriedSurface(nameArray2, nameArray);
+    }
+  }
   else if(commandOri.indexOf('view interaction pairs') == 0
       || commandOri.indexOf('save interaction pairs') == 0) {
     var paraArray = commandOri.split(' | ');
@@ -1957,6 +1967,13 @@ iCn3DUI.prototype.applyCommand = function (commandStr) { var me = this; //"use s
     var url = paraArray[1];
 
     window.open(url, '_blank');
+  }
+  else if(command.indexOf('your note') == 0) {
+    var paraArray = command.split(' | ');
+    var yournote = paraArray[1];
+
+    $("#" + me.pre + "yournote").val(yournote);
+    document.title = yournote;
   }
 
 // start with, single word =============
@@ -2023,6 +2040,10 @@ iCn3DUI.prototype.applyCommand = function (commandStr) { var me = this; //"use s
             me.icn3d.queryresi2score[chainid][resi_score[0]] = resi_score[1];
         }
     }
+    else if(color == "align custom" && strArray.length == 4) {
+        // me.setLogCmd('color align custom | ' + chainid + ' | range ' + start + '_' + end + ' | ' + resiScoreStr, true);
+        me.setQueryresi2score(strArray);
+    }
     else if(color == "area" && strArray.length == 2) {
         me.icn3d.midpercent = strArray[1];
         $("#" + me.pre + 'midpercent').val(me.icn3d.midpercent);
@@ -2031,6 +2052,14 @@ iCn3DUI.prototype.applyCommand = function (commandStr) { var me = this; //"use s
     me.icn3d.setColorByOptions(me.icn3d.opts, me.icn3d.hAtoms);
 
     me.updateHlAll();
+  }
+  else if(commandOri.indexOf('custom tube') == 0) {
+    var strArray = commandOri.split(" | ");
+
+    // me.setLogCmd('custom tube | ' + chainid + ' | range ' + start + '_' + end + ' | ' + resiScoreStr, true);
+    me.setQueryresi2score(strArray);
+
+    me.setStyle('proteins', 'custom tube');
   }
   else if(command.indexOf('style') == 0) {
     var secondPart = command.substr(command.indexOf(' ') + 1);
@@ -2065,6 +2094,20 @@ iCn3DUI.prototype.applyCommand = function (commandStr) { var me = this; //"use s
   else if(command.indexOf('select displayed set') !== -1) {
     me.icn3d.hAtoms = me.icn3d.cloneHash(me.icn3d.dAtoms);
     me.updateHlAll();
+  }
+  else if(command.indexOf('select prop') !== -1) {
+    var paraArray = commandOri.split(' | ');
+
+    var property = paraArray[0].substr('select prop'.length + 1);
+
+    var from, to;
+    if(paraArray.length == 2) {
+        var from_to = paraArray[1].split('_');
+        from = from_to[0];
+        to = from_to[1];
+    }
+
+    me.selectProperty(property, from, to);
   }
   else if(command.indexOf('select') == 0 && command.indexOf('name') !== -1) {
     var paraArray = commandOri.split(' | '); // atom names might be case-sensitive
@@ -2116,4 +2159,19 @@ iCn3DUI.prototype.applyCommand = function (commandStr) { var me = this; //"use s
   }
 
   me.bAddCommands = true;
+};
+
+iCn3DUI.prototype.setQueryresi2score = function() { var me = this; //"use strict";
+    var chainid = strArray[1];
+    var start_end = strArray[2].split(' ')[1].split('_');
+    var resiScoreStr = strArray[3]; // score 0-9
+    if(me.icn3d.queryresi2score === undefined) me.icn3d.queryresi2score = {};
+    //if(me.icn3d.queryresi2score[chainid] === undefined) me.icn3d.queryresi2score[chainid] = {};
+    me.icn3d.queryresi2score[chainid] = {};
+    var factor = 100 / 9;
+    for(var resi = parseInt(start_end[0]), i = 0; resi <= parseInt(start_end[1]); ++resi, ++i) {
+        if(resiScoreStr[i] != '_') {
+            me.icn3d.queryresi2score[chainid][resi] = parseInt(resiScoreStr[i]) * factor; // convert from 0-9 to 0-100
+        }
+    }
 };

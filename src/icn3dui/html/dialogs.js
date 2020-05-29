@@ -75,6 +75,8 @@ iCn3DUI.prototype.openDialogHalfWindow = function (id, title, dialogWidth, bForc
           }
       }
     });
+
+    me.addSaveButton(id);
 };
 
 iCn3DUI.prototype.openDialog2Ddgm = function (id, inHeight, bDefinedSets) {  var me = this; //"use strict";
@@ -128,6 +130,8 @@ iCn3DUI.prototype.openDialog2Ddgm = function (id, inHeight, bDefinedSets) {  var
           }
       }
     });
+
+    me.addSaveButton(id);
 };
 
 iCn3DUI.prototype.openDialog = function (id, title) {  var me = this; //"use strict";
@@ -183,20 +187,6 @@ iCn3DUI.prototype.openDialog = function (id, title) {  var me = this; //"use str
               modal: false,
               position: position,
               close: function(e) {
-/*
-                    // determine whether dialogs initilaized
-                    var bSelectannotationsInit = $('#' + me.pre + 'dl_selectannotations').hasClass('ui-dialog-content'); // initialized
-                    var bAlignmentInit = $('#' + me.pre + 'dl_alignment').hasClass('ui-dialog-content'); // initialized
-                    var bTwoddgmInit = $('#' + me.pre + 'dl_2ddgm').hasClass('ui-dialog-content'); // initialized
-                    var bSetsInit = $('#' + me.pre + 'dl_definedsets').hasClass('ui-dialog-content'); // initialized
-
-                    var bSelectannotationsInit2 = false, bAlignmentInit2 = false, bTwoddgmInit2 = false, bSetsInit2 = false;
-                    if(bSelectannotationsInit) bSelectannotationsInit2 = $('#' + me.pre + 'dl_selectannotations').dialog( 'isOpen' );
-                    if(bAlignmentInit) bAlignmentInit2 = $('#' + me.pre + 'dl_alignment').dialog( 'isOpen' );
-                    if(bTwoddgmInit) bTwoddgmInit2 = $('#' + me.pre + 'dl_2ddgm').dialog( 'isOpen' );
-                    if(bSetsInit) bSetsInit2 = $('#' + me.pre + 'dl_definedsets').dialog( 'isOpen' );
-*/
-
                   if((id === me.pre + 'dl_selectannotations' && (!bAlignmentInit2) &&(!bGraph2) )
                     || (id === me.pre + 'dl_graph' &&(!bSelectannotationsInit2) && (!bAlignmentInit2) )
                     || (id === me.pre + 'dl_alignment' &&(!bSelectannotationsInit2) &&(!bGraph2) )
@@ -227,6 +217,8 @@ iCn3DUI.prototype.openDialog = function (id, title) {  var me = this; //"use str
                   }
               }
             });
+
+            me.addSaveButton(id);
         }
     }
     else if(id === me.pre + 'dl_2ddgm') {
@@ -294,7 +286,7 @@ iCn3DUI.prototype.openDialog = function (id, title) {  var me = this; //"use str
             if(me.isMobile()) {
                 position ={ my: "left top", at: "left bottom-50", of: "#" + me.pre + "canvas", collision: "none" };
             }
-            else if(id === me.pre + 'dl_allinteraction') {
+            else if(id === me.pre + 'dl_allinteraction' || id === me.pre + 'dl_buriedarea') {
                 position ={ my: "right top", at: "right top+50", of: "#" + me.pre + "canvas", collision: "none" };
 
                 height = 300;
@@ -316,10 +308,22 @@ iCn3DUI.prototype.openDialog = function (id, title) {  var me = this; //"use str
               modal: false,
               position: position
             });
+
+            me.addSaveButton(id);
         }
     }
 
     $(".ui-dialog .ui-button span")
       .removeClass("ui-icon-closethick")
       .addClass("ui-icon-close");
+};
+
+iCn3DUI.prototype.addSaveButton = function (id) {  var me = this; //"use strict";
+    // adda save button
+    if(me.dialogHash === undefined || !me.dialogHash.hasOwnProperty(id)) {
+        $("#" + id).parent().children('.ui-dialog-titlebar').append("<span pid='" + id + "' class='icn3d-saveicon ui-icon ui-icon-disk' title='Save as an HTML file'></span>");
+
+        if(me.dialogHash === undefined) me.dialogHash = {};
+        me.dialogHash[id] = 1;
+    }
 };

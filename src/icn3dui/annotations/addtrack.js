@@ -24,7 +24,7 @@ iCn3DUI.prototype.clickCustomColor = function() { var me = this; //"use strict";
       //e.preventDefault();
       var chainid = $(this).attr('chainid');
       $("#" + me.pre + "customcolor_chainid").val(chainid);
-      me.openDialog(me.pre + 'dl_customcolor', 'Use custom color for Chain: ' + chainid);
+      me.openDialog(me.pre + 'dl_customcolor', 'Apply custom color or tube for Chain: ' + chainid);
     });
 };
 
@@ -476,13 +476,21 @@ iCn3DUI.prototype.clickAddTrackButton = function() { var me = this; //"use stric
        me.setLogCmd("msa | " + targetGapHashStr, true);
 
        // add tracks
+       var resi2cntSameRes = {}; // count of same residue at each position
        for(var j = 0, jl = trackSeqArray.length; j < jl; ++j) {
-           //var i = startposGiSeq;
+           var resi = startposGiSeq + 1;
            var text = '';
            for(var k = seqStart; k <= seqEnd; ++k) {
               //if(seqFirst[k] == '-') continue;
+
+              if(j == 0) resi2cntSameRes[resi] = 0;
+
               text += trackSeqArray[j][k]; //me.giSeq[chainid][i];
-              //++i;
+
+              if(seqFirst[k] != '-') {
+                  if(seqFirst[k] == trackSeqArray[j][k]) ++resi2cntSameRes[resi];
+                  ++resi;
+              }
            }
 
            var title = (trackTitleArray[j].length < 20) ? trackTitleArray[j] : trackTitleArray[j].substr(0, 20) + '...';
@@ -491,7 +499,42 @@ iCn3DUI.prototype.clickAddTrackButton = function() { var me = this; //"use stric
 
            me.setLogCmd("add track | chainid " + chainid + " | title " + title + " | text " + me.simplifyText(text)
             + " | type " + type + " | color 0 | msa 1", true);
-        }
+       }
+
+       // set colot for the master seq
+       if(trackSeqArray.length > 0) {
+            if(me.icn3d.queryresi2score === undefined) me.icn3d.queryresi2score = {};
+            if(me.icn3d.queryresi2score[chainid] === undefined) me.icn3d.queryresi2score[chainid] = {};
+
+            var nSeq = trackSeqArray.length;
+            for(var resi in resi2cntSameRes) {
+                var score = parseInt(resi2cntSameRes[resi] / nSeq * 100);
+                me.icn3d.queryresi2score[chainid][resi] = score;
+            }
+
+            var resiArray = Object.keys(resi2cntSameRes);
+            var start = Math.min.apply(null, resiArray);
+            var end = Math.max.apply(null, resiArray);
+
+            var resiScoreStr = '';
+            for(var resi = start; resi <= end; ++resi) {
+                if(resi2cntSameRes.hasOwnProperty(resi)) {
+                    resiScoreStr += Math.round(resi2cntSameRes[resi] / nSeq * 9); // max 9
+                }
+                else {
+                    resiScoreStr += '_';
+                }
+            }
+
+            me.icn3d.opts['color'] = 'align custom';
+            me.icn3d.setColorByOptions(me.icn3d.opts, me.icn3d.hAtoms);
+
+            me.updateHlAll();
+
+            me.icn3d.draw();
+
+            me.setLogCmd('color align custom | ' + chainid + ' | range ' + start + '_' + end + ' | ' + resiScoreStr, true);
+       }
     });
 
     // BED file

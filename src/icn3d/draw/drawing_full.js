@@ -145,10 +145,10 @@ iCn3D.prototype.createSurfaceRepresentation = function (atoms, type, wireframe, 
             chainStr = (Object.keys(chainHash).length > 1) ? '<td>' + idArray[1] + '</td>' : '';
             // outside: >= 50%; Inside: < 20%; middle: 35
             var inoutStr = '', percent = '';
-            var  area = (this.resid2area[resid] / scaleFactorSq).toFixed(2);
+            this.resid2area[resid] = (this.resid2area[resid] / scaleFactorSq).toFixed(2);
             if(this.residueArea.hasOwnProperty(idArray[3])) {
                 var middle = 35;
-                percent = parseInt(area / this.residueArea[idArray[3]] * 100);
+                percent = parseInt(this.resid2area[resid] / this.residueArea[idArray[3]] * 100);
                 if(percent > 100) percent = 100;
 
                 if(percent >= 50) inoutStr = 'out';
@@ -156,7 +156,7 @@ iCn3D.prototype.createSurfaceRepresentation = function (atoms, type, wireframe, 
             }
 
             html += '<tr align="center">' + structureStr + chainStr + '<td>' + idArray[3] + '</td><td align="right">' + idArray[2] + '</td><td align="right">'
-                + area + '</td><td align="right">' + percent + '%</td><td>' + inoutStr + '</td></tr>';
+                + this.resid2area[resid] + '</td><td align="right">' + percent + '%</td><td>' + inoutStr + '</td></tr>';
         }
 
         html += '</table>';
