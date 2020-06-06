@@ -25,6 +25,8 @@ iCn3DUI.prototype.downloadMmcif = function (mmcifid) { var me = this; //"use str
 
    me.icn3d.bCid = undefined;
 
+   document.title = mmcifid.toUpperCase() + ' (MMCIF) in iCn3D';
+
    $.ajax({
       url: url,
       dataType: dataType,

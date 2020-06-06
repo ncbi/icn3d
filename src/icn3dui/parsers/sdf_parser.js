@@ -5,6 +5,8 @@
 iCn3DUI.prototype.downloadCid = function (cid) { var me = this; //"use strict";
     var uri = "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/cid/" + cid + "/record/SDF/?record_type=3d&response_type=display";
 
+    document.title = 'PubChem CID ' + cid + ' in iCn3D';
+
     me.opts['pk'] = 'atom';
     me.opts['chemicals'] = 'ball and stick';
 

@@ -131,6 +131,9 @@ iCn3DUI.prototype.downloadAlignment = function (align) { var me = this; //"use s
                     me.mmdbidArray.push(data.alignedStructures[0][i].pdbId);
                 }
 
+
+                document.title = (me.mmdbidArray[0] + ',' + me.mmdbidArray[1]).toUpperCase() + ' (VAST+) in iCn3D';
+
                 me.loadOpmDataForAlign(data, seqalign, me.mmdbidArray);
             });
 
@@ -256,6 +259,8 @@ iCn3DUI.prototype.downloadChainAlignment = function (chainalign) { var me = this
     me.chain_t = alignArray[1].substr(pos2+1);
 
     var chainalignFinal = me.mmdbid_q + "_" + me.chain_q + "," + me.mmdbid_t + "_" + me.chain_t;
+
+    document.title = chainalign.toUpperCase() + ' in iCn3D';
 
     var urlalign = me.baseUrl + "vastdyn/vastdyn.cgi?chainpairs=" + chainalignFinal;
     var url_t = me.baseUrl + "mmdb/mmdb_strview.cgi?v=2&program=icn3d&b=1&s=1&ft=1&uid=" + me.mmdbid_t;

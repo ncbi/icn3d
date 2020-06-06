@@ -789,7 +789,19 @@ iCn3D.prototype.subdivide = function (_pnts, _clrs, DIV, bShowArray, bHighlight,
     var prevoneLen = (prevone !== undefined) ? prevone.length : 0;
     var nexttwoLenOri = (nexttwo !== undefined) ? nexttwo.length : 0;
 
-    if(prevoneLen > 0) pnts.push(prevone[0]);
+    var maxDist = 6.0;
+
+    if(prevoneLen > 0
+        && Math.abs(prevone[0].x - _pnts[0].x) <= maxDist
+        && Math.abs(prevone[0].y - _pnts[0].y) <= maxDist
+        && Math.abs(prevone[0].z - _pnts[0].z) <= maxDist
+        ) {
+      pnts.push(prevone[0]);
+      prevoneLen = 1;
+    }
+    else {
+      prevoneLen = 0;
+    }
 
     pnts.push(_pnts[0]);
     for (var i = 1, lim = _pnts.length - 1; i < lim; ++i) {
@@ -798,14 +810,30 @@ iCn3D.prototype.subdivide = function (_pnts, _clrs, DIV, bShowArray, bHighlight,
     }
     pnts.push(_pnts[_pnts.length - 1]);
 
-    if(nexttwoLenOri > 0) pnts.push(nexttwo[0]);
-    if(nexttwoLenOri > 1) pnts.push(nexttwo[1]);
+    var nexttwoLen = 0
+    if(nexttwoLenOri > 0
+        && Math.abs(nexttwo[0].x - _pnts[_pnts.length - 1].x) <= maxDist
+        && Math.abs(nexttwo[0].y - _pnts[_pnts.length - 1].y) <= maxDist
+        && Math.abs(nexttwo[0].z - _pnts[_pnts.length - 1].z) <= maxDist
+        ) {
+      pnts.push(nexttwo[0]);
+      ++nexttwoLen;
+    }
+
+    if(nexttwoLenOri > 1
+        && Math.abs(nexttwo[0].x - nexttwo[1].x) <= maxDist
+        && Math.abs(nexttwo[0].y - nexttwo[1].y) <= maxDist
+        && Math.abs(nexttwo[0].z - nexttwo[1].z) <= maxDist
+        ) {
+      pnts.push(nexttwo[1]);
+      ++nexttwoLen;
+    }
 
     var savedPoints = [];
     var savedPos = [];
     var savedColor = [];
 
-    var nexttwoLen = nexttwoLenOri;
+    //var nexttwoLen = nexttwoLenOri;
     if(bExtendLastRes) {
         nexttwoLen = (nexttwoLenOri > 0) ? nexttwoLenOri - 1 : 0;
     }
@@ -2096,7 +2124,7 @@ iCn3D.prototype.createTube = function (atoms, atomName, radius, bHighlight, bCus
     var maxDist2 = 3.0; // avoid tube between the residues in 3 residue helix
 
     var pnts_colors_radii_prevone_nexttwo = [];
-    var firstAtom, atom;
+    var firstAtom, atom, prevAtom;
 
     for (var i in atoms) {
         atom = atoms[i];
@@ -2153,7 +2181,7 @@ iCn3D.prototype.createTube = function (atoms, atomName, radius, bHighlight, bCus
             if(pnts.length == 0) {
                 var prevoneResid = atom.structure + '_' + atom.chain + '_' + (atom.resi - 1).toString();
                 if(this.residues.hasOwnProperty(prevoneResid)) {
-                    var prevAtom = this.getAtomFromResi(prevoneResid, atomName);
+                    prevAtom = this.getAtomFromResi(prevoneResid, atomName);
                     if(prevAtom !== undefined && prevAtom.ssend) { // include the residue
                         pnts.push(prevAtom.coord);
                         if(bCustom) {

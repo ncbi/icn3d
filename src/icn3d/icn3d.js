@@ -204,6 +204,9 @@ var iCn3D = function (id) { var me = this; //"use strict";
         hbonds: 'no',
         saltbridge: 'no',
         contact: 'no',
+        halogen: 'no',
+        'pi-cation': 'no',
+        'pi-stacking': 'no',
         //stabilizer: 'no',
         ssbonds: 'yes',
         clbonds: 'yes',
@@ -784,10 +787,13 @@ iCn3D.prototype = {
     },
 
     // added nucleotides and ions
-    nucleotidesArray: ['  G', '  A', '  T', '  C', '  U', ' DG', ' DA', ' DT', ' DC', ' DU'],
-    nucleotidesTrimArray: ['G', 'A', 'T', 'C', 'U', 'DG', 'DA', 'DT', 'DC', 'DU'],
+    nucleotidesArray: ['  G', '  A', '  T', '  C', '  U', ' DG', ' DA', ' DT', ' DC', ' DU',
+        'G', 'A', 'T', 'C', 'U', 'DG', 'DA', 'DT', 'DC', 'DU'],
 
-    ionsArray: ['  K', ' NA', ' MG', ' AL', ' CA', ' TI', ' MN', ' FE', ' NI', ' CU', ' ZN', ' AG', ' BA', '  F', ' CL', ' BR', '  I'],
+    ionsArray: ['  K', ' NA', ' MG', ' AL', ' CA', ' TI', ' MN', ' FE', ' NI', ' CU', ' ZN', ' AG', ' BA',
+        '  F', ' CL', ' BR', '  I',
+        'K', 'NA', 'MG', 'AL', 'CA', 'TI', 'MN', 'FE', 'NI', 'CU', 'ZN', 'AG', 'BA',
+        'F', 'CL', 'BR', 'I'],
     cationsTrimArray: ['K', 'NA', 'MG', 'AL', 'CA', 'TI', 'MN', 'FE', 'NI', 'CU', 'ZN', 'AG', 'BA'],
     anionsTrimArray: ['F', 'CL', 'BR', 'I'],
 
@@ -1352,7 +1358,10 @@ iCn3D.prototype = {
         this.saltbridgepnts = [];
         this.contactpnts = [];
         this.stabilizerpnts = [];
-        //this.ncbondpnts = []; // non-covalent bonds
+
+        this.halogenpnts = [];
+        this.picationpnts = [];
+        this.pistackingpnts = [];
 
         this.doublebonds = {};
         this.triplebonds = {};

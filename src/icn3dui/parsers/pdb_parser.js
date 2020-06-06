@@ -11,6 +11,8 @@ iCn3DUI.prototype.downloadPdb = function (pdbid) { var me = this; //"use strict"
 
    me.icn3d.bCid = undefined;
 
+   document.title = pdbid.toUpperCase() + ' (PDB) in iCn3D';
+
    $.ajax({
       url: url,
       dataType: dataType,
@@ -48,6 +50,8 @@ iCn3DUI.prototype.downloadOpm = function (opmid) { var me = this; //"use strict"
    var url, dataType;
 
    url = "https://opm-assets.storage.googleapis.com/pdb/" + opmid.toLowerCase()+ ".pdb";
+
+   document.title = opmid.toUpperCase() + ' (OPM) in iCn3D';
 
    dataType = "text";
 
@@ -704,34 +708,7 @@ iCn3DUI.prototype.loadOpmData = function(data, pdbid, bFull, type, pdbid2) { var
           $("#" + me.pre + "extra_mem_z").val(me.icn3d.halfBilayerSize);
           $("#" + me.pre + "intra_mem_z").val(-me.icn3d.halfBilayerSize);
 
-          if(type === 'mmtf') {
-              me.parseMmtfData(data, pdbid, bFull);
-              if(me.deferredOpm !== undefined) me.deferredOpm.resolve();
-          }
-          else if(type === 'mmcif') {
-              me.loadAtomDataIn(data, data.mmcif, 'mmcifid', undefined, undefined);
-              me.loadMmcifOpmDataPart2(data, pdbid);
-              if(me.deferredOpm !== undefined) me.deferredOpm.resolve();
-          }
-          else if(type === 'pdb') {
-              me.loadPdbData(data, pdbid);
-              if(me.deferredOpm !== undefined) me.deferredOpm.resolve();
-          }
-          else if(type === 'align') {
-              if(me.icn3d.bOpm) {
-                  me.downloadAlignmentPart2(pdbid);
-                  if(me.deferredOpm !== undefined) me.deferredOpm.resolve();
-              }
-              else {
-                  if(pdbid2 !== undefined) {
-                      me.loadOpmData(data, pdbid2, bFull, type);
-                  }
-                  else {
-                      me.downloadAlignmentPart2(pdbid);
-                      if(me.deferredOpm !== undefined) me.deferredOpm.resolve();
-                  }
-              }
-          }
+          me.parseAtomData(data, pdbid, bFull, type, pdbid2);
 
           //if(me.deferredOpm !== undefined) me.deferredOpm.resolve();
       },
@@ -743,20 +720,37 @@ iCn3DUI.prototype.loadOpmData = function(data, pdbid, bFull, type, pdbid2) { var
             return;
         }
 
-          if(type === 'mmtf') {
-              me.parseMmtfData(data, pdbid, bFull);
+        me.parseAtomData(data, pdbid, bFull, type, pdbid2);
+
+        //if(me.deferredOpm !== undefined) me.deferredOpm.resolve();
+        return;
+      }
+    });
+};
+
+iCn3DUI.prototype.parseAtomData = function(data, pdbid, bFull, type, pdbid2) { var me = this; //"use strict";
+      if(type === 'mmtf') {
+          me.parseMmtfData(data, pdbid, bFull);
+
+          if(me.deferredOpm !== undefined) me.deferredOpm.resolve();
+      }
+      else if(type === 'mmcif') {
+          me.loadAtomDataIn(data, data.mmcif, 'mmcifid', undefined, undefined);
+          me.loadMmcifOpmDataPart2(data, pdbid);
+
+          if(me.deferredOpm !== undefined) me.deferredOpm.resolve();
+      }
+      else if(type === 'pdb') {
+          me.loadPdbData(data, pdbid);
+
+          if(me.deferredOpm !== undefined) me.deferredOpm.resolve();
+      }
+      else if(type === 'align') {
+          if(me.icn3d.bOpm) {
+              me.downloadAlignmentPart2(pdbid);
               if(me.deferredOpm !== undefined) me.deferredOpm.resolve();
           }
-          else if(type === 'mmcif') {
-              me.loadAtomDataIn(data, data.mmcif, 'mmcifid', undefined, undefined);
-              me.loadMmcifOpmDataPart2(data, pdbid);
-              if(me.deferredOpm !== undefined) me.deferredOpm.resolve();
-          }
-          else if(type === 'pdb') {
-              me.loadPdbData(data, pdbid);
-              if(me.deferredOpm !== undefined) me.deferredOpm.resolve();
-          }
-          else if(type === 'align') {
+          else {
               if(pdbid2 !== undefined) {
                   me.loadOpmData(data, pdbid2, bFull, type);
               }
@@ -765,11 +759,7 @@ iCn3DUI.prototype.loadOpmData = function(data, pdbid, bFull, type, pdbid2) { var
                   if(me.deferredOpm !== undefined) me.deferredOpm.resolve();
               }
           }
-
-        //if(me.deferredOpm !== undefined) me.deferredOpm.resolve();
-        return;
       }
-    });
 };
 
 iCn3DUI.prototype.loadOpmDataForAlign = function(data, seqalign, mmdbidArray) { var me = this; //"use strict";
@@ -1016,6 +1006,8 @@ iCn3DUI.prototype.loadMmcifOpmData = function(data, pdbid) { var me = this; //"u
 iCn3DUI.prototype.loadMmdbOpmDataPart2 = function(data, pdbid, type) { var me = this; //"use strict";
     // set 3d domains
     var structure = data.pdbId;
+
+    if(type === undefined) document.title = structure.toUpperCase() + ' (MMDB) in iCn3D';
 
     for(var molid in data.domains) {
         var chain = data.domains[molid].chain;

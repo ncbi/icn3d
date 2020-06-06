@@ -6,6 +6,8 @@
 // Contributors: Jiyao Wang, Alexander Rose, Peter Rose
 // requires the library mmtf.js
 iCn3DUI.prototype.downloadMmtf = function (mmtfid) { var me = this; //"use strict";
+    document.title = mmtfid.toUpperCase() + ' (MMTF) in iCn3D';
+
     MMTF.fetchReduced(
         mmtfid,
         // onLoad callback

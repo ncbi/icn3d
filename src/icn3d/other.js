@@ -12,13 +12,12 @@ iCn3D.prototype.cloneHash = function(from) { var me = this; //"use strict";
 };
 
 iCn3D.prototype.residueName2Abbr = function(residueName) { var me = this; //"use strict";
-  if(residueName !== undefined && residueName.charAt(0) !== ' ' && residueName.charAt(1) === ' ') {
-    //residueName = 'n' + residueName.charAt(0);
-    residueName = residueName.charAt(0);
-  }
+  //if(residueName !== undefined && residueName.charAt(0) !== ' ' && residueName.charAt(1) === ' ') {
+  //  residueName = residueName.charAt(0);
+  //}
 
   var pos = residueName.indexOf(' ');
-  if(pos !== -1) {
+  if(pos > 0) {
       residueName = residueName.substr(0, pos);
   }
 
