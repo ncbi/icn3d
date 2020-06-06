@@ -438,23 +438,34 @@ iCn3DUI.prototype.setStrengthPara = function(paraArray) { var me = this; //"use 
     if(paraArray.length >= 5) {
        var thresholdArray = paraArray[4].split(' ');
 
-       if(thresholdArray.length == 4) {
+       if(thresholdArray.length >= 4) {
            $("#" + me.pre + "hbondthreshold").val(thresholdArray[1]);
            $("#" + me.pre + "saltbridgethreshold").val(thresholdArray[2]);
            $("#" + me.pre + "contactthreshold").val(thresholdArray[3]);
+           if(thresholdArray.length >= 7) {
+               $("#" + me.pre + "halogenthreshold").val(thresholdArray[4]);
+               $("#" + me.pre + "picationthreshold").val(thresholdArray[5]);
+               $("#" + me.pre + "pistackingthreshold").val(thresholdArray[6]);
+           }
        }
     }
 
     if(paraArray.length == 6) {
         var thicknessArray = paraArray[5].split(' ');
 
-        if(thicknessArray.length == 6) {
+        if(thicknessArray.length >= 6) {
             $("#" + me.pre + "dist_ss").val(thicknessArray[0]);
             $("#" + me.pre + "dist_coil").val(thicknessArray[1]);
             $("#" + me.pre + "dist_hbond").val(thicknessArray[2]);
             $("#" + me.pre + "dist_inter").val(thicknessArray[3]);
             $("#" + me.pre + "dist_ssbond").val(thicknessArray[4]);
             $("#" + me.pre + "dist_ionic").val(thicknessArray[5]);
+
+            if(thicknessArray.length == 9) {
+                $("#" + me.pre + "dist_halogen").val(thicknessArray[6]);
+                $("#" + me.pre + "dist_pication").val(thicknessArray[7]);
+                $("#" + me.pre + "dist_pistacking").val(thicknessArray[8]);
+            }
         }
     }
 };
@@ -753,6 +764,10 @@ iCn3DUI.prototype.applyCommandGraphinteractionBase = function (command) { var me
         var bSaltbridge = paraArray[2].indexOf('salt bridge') !== -1;
         var bInteraction = paraArray[2].indexOf('interactions') !== -1;
 
+        var bHalogen = paraArray[2].indexOf('halogen') !== -1;
+        var bPication = paraArray[2].indexOf('pi-cation') !== -1;
+        var bPistacking = paraArray[2].indexOf('pi-stacking') !== -1;
+
         var bHbondCalc;
         if(paraArray.length >= 4) {
             bHbondCalc = (paraArray[3] == 'true') ? true : false;
@@ -760,7 +775,8 @@ iCn3DUI.prototype.applyCommandGraphinteractionBase = function (command) { var me
 
         me.setStrengthPara(paraArray);
 
-        me.viewInteractionPairs(nameArray2, nameArray, bHbondCalc, bHbond, bSaltbridge, bInteraction, 'graph');
+        me.viewInteractionPairs(nameArray2, nameArray, bHbondCalc, 'graph',
+            bHbond, bSaltbridge, bInteraction, bHalogen, bPication, bPistacking);
     }
 };
 
@@ -1265,6 +1281,10 @@ iCn3DUI.prototype.applyCommand = function (commandStr) { var me = this; //"use s
     me.icn3d.hideContact();
     me.icn3d.draw();
   }
+  else if(command == 'set halogen pi off') {
+    me.icn3d.hideHalogenpi();
+    me.icn3d.draw();
+  }
 
   else if(command == 'hydrogens') {
     me.showHydrogens();
@@ -1600,6 +1620,12 @@ iCn3DUI.prototype.applyCommand = function (commandStr) { var me = this; //"use s
   else if(command == 'area') {
      me.calculateArea();
   }
+  else if(command == 'table inter count only') {
+     $(".icn3d-border").hide();
+  }
+  else if(command == 'table inter details') {
+     $(".icn3d-border").show();
+  }
 
 // start with =================
   else if(commandOri.indexOf('define helix sets') == 0) {
@@ -1905,8 +1931,30 @@ iCn3DUI.prototype.applyCommand = function (commandStr) { var me = this; //"use s
         me.calcBuriedSurface(nameArray2, nameArray);
     }
   }
-  else if(commandOri.indexOf('view interaction pairs') == 0
-      || commandOri.indexOf('save interaction pairs') == 0) {
+/*
+  else if(commandOri.indexOf('display interaction 3d') == 0) {
+    var paraArray = commandOri.split(' | ');
+    if(paraArray.length >= 3) {
+        var setNameArray = paraArray[1].split(' ');
+        var nameArray2 = setNameArray[0].split(',');
+        var nameArray = setNameArray[1].split(',');
+
+        var interactionTypes = paraArray[2].split(',');
+
+        var bHbondCalc;
+        if(paraArray.length == 4) {
+            bHbondCalc = (paraArray[3] == 'true') ? true : false;
+        }
+
+        me.displayInteraction3d(nameArray2, nameArray, bHbondCalc, interactionTypes);
+    }
+  }
+*/
+  else if(commandOri.indexOf('display interaction 3d') == 0
+      || commandOri.indexOf('view interaction pairs') == 0
+      || commandOri.indexOf('save1 interaction pairs') == 0
+      || commandOri.indexOf('save2 interaction pairs') == 0
+      ) {
     var paraArray = commandOri.split(' | ');
     if(paraArray.length >= 3) {
         var setNameArray = paraArray[1].split(' ');
@@ -1917,6 +1965,10 @@ iCn3DUI.prototype.applyCommand = function (commandStr) { var me = this; //"use s
         var bSaltbridge = paraArray[2].indexOf('salt bridge') !== -1;
         var bInteraction = paraArray[2].indexOf('interactions') !== -1;
 
+        var bHalogen = paraArray[2].indexOf('halogen') !== -1;
+        var bPication = paraArray[2].indexOf('pi-cation') !== -1;
+        var bPistacking = paraArray[2].indexOf('pi-stacking') !== -1;
+
         var bHbondCalc;
         if(paraArray.length >= 4) {
             bHbondCalc = (paraArray[3] == 'true') ? true : false;
@@ -1925,19 +1977,34 @@ iCn3DUI.prototype.applyCommand = function (commandStr) { var me = this; //"use s
         if(paraArray.length >= 5) {
            thresholdArray = paraArray[4].split(' ');
 
-           if(thresholdArray.length == 4) {
+           if(thresholdArray.length >= 4) {
                $("#" + me.pre + "hbondthreshold").val(thresholdArray[1]);
                $("#" + me.pre + "saltbridgethreshold").val(thresholdArray[2]);
                $("#" + me.pre + "contactthreshold").val(thresholdArray[3]);
+
+               if(thresholdArray.length == 7) {
+                   $("#" + me.pre + "halogenthreshold").val(thresholdArray[1]);
+                   $("#" + me.pre + "picationthreshold").val(thresholdArray[2]);
+                   $("#" + me.pre + "pistackingthreshold").val(thresholdArray[3]);
+               }
            }
         }
 
-        if(commandOri.indexOf('view interaction pairs') == 0) {
-            me.viewInteractionPairs(nameArray2, nameArray, bHbondCalc, bHbond, bSaltbridge, bInteraction, 'view');
+        var type;
+        if(commandOri.indexOf('display interaction 3d') == 0) {
+            type = '3d';
         }
-        else if(commandOri.indexOf('save interaction pairs') == 0) {
-            me.viewInteractionPairs(nameArray2, nameArray, bHbondCalc, bHbond, bSaltbridge, bInteraction, 'save');
+        else if(commandOri.indexOf('view interaction pairs') == 0) {
+            type = 'view';
         }
+        else if(commandOri.indexOf('save1 interaction pairs') == 0) {
+            type = 'save1';
+        }
+        else if(commandOri.indexOf('save2 interaction pairs') == 0) {
+            type = 'save2';
+        }
+
+        me.viewInteractionPairs(nameArray2, nameArray, bHbondCalc, type, bHbond, bSaltbridge, bInteraction, bHalogen, bPication, bPistacking);
     }
   }
   else if(command.indexOf('graph label') == 0) {
@@ -1954,6 +2021,27 @@ iCn3DUI.prototype.applyCommand = function (commandStr) { var me = this; //"use s
     me.pushcenter = parseInt(command.substr(pos + 1));
 
     $("#" + me.svgid + "_pushcenter").val(me.pushcenter);
+
+    if(me.graphStr !== undefined && me.icn3d.bRender) {
+       me.drawGraph(me.graphStr);
+    }
+  }
+  else if(command.indexOf('hide edges') == 0) {
+    var pos = command.lastIndexOf(' ');
+    me.hideedges = parseInt(command.substr(pos + 1));
+
+    $("#" + me.svgid + "_hideedges").val(me.hideedges);
+
+    if(me.hideedges) {
+        me.contactInsideColor = 'FFF';
+        me.hbondInsideColor = 'FFF';
+        me.ionicInsideColor = 'FFF';
+    }
+    else {
+        me.contactInsideColor = 'DDD';
+        me.hbondInsideColor = 'AFA';
+        me.ionicInsideColor = '8FF';
+    }
 
     if(me.graphStr !== undefined && me.icn3d.bRender) {
        me.drawGraph(me.graphStr);
@@ -1983,40 +2071,6 @@ iCn3DUI.prototype.applyCommand = function (commandStr) { var me = this; //"use s
     me.icn3d.pAtom = me.icn3d.atoms[atomid];
 
     me.icn3d.showPicking(me.icn3d.pAtom);
-  }
-/*
-  else if(commandOri.indexOf('hbonds') == 0) {
-    var ret = me.getThresholdNameArrays(commandOri);
-
-    if(!isNaN(ret.threshold)) me.showHbonds(ret.threshold, ret.nameArray2, ret.nameArray, ret.bHbondCalc);
-  }
-  else if(commandOri.indexOf('salt bridges') == 0) {
-    var ret = me.getThresholdNameArrays(commandOri);
-
-    if(!isNaN(ret.threshold)) me.showHbonds(ret.threshold, ret.nameArray2, ret.nameArray, ret.bHbondCalc, true);
-  }
-  else if(commandOri.indexOf('interactions') == 0) {
-    var ret = me.getThresholdNameArrays(commandOri);
-
-    if(!isNaN(ret.threshold)) me.showHbonds(ret.threshold, ret.nameArray2, ret.nameArray, ret.bHbondCalc);
-  }
-*/
-  else if(commandOri.indexOf('display interaction 3d') == 0) {
-    var paraArray = commandOri.split(' | ');
-    if(paraArray.length >= 3) {
-        var setNameArray = paraArray[1].split(' ');
-        var nameArray2 = setNameArray[0].split(',');
-        var nameArray = setNameArray[1].split(',');
-
-        var interactionTypes = paraArray[2].split(',');
-
-        var bHbondCalc;
-        if(paraArray.length == 4) {
-            bHbondCalc = (paraArray[3] == 'true') ? true : false;
-        }
-
-        me.displayInteraction3d(nameArray2, nameArray, bHbondCalc, interactionTypes);
-    }
   }
   else if(commandOri.indexOf('color') == 0) {
     var strArray = commandOri.split(" | ");
@@ -2161,7 +2215,7 @@ iCn3DUI.prototype.applyCommand = function (commandStr) { var me = this; //"use s
   me.bAddCommands = true;
 };
 
-iCn3DUI.prototype.setQueryresi2score = function() { var me = this; //"use strict";
+iCn3DUI.prototype.setQueryresi2score = function(strArray) { var me = this; //"use strict";
     var chainid = strArray[1];
     var start_end = strArray[2].split(' ')[1].split('_');
     var resiScoreStr = strArray[3]; // score 0-9

@@ -78,12 +78,24 @@ iCn3DUI.prototype.drawGraph = function (jsonStr) {  var me = this; //"use strict
         .selectAll("line")
         .data(graph.links)
         .enter().append("line")
-        .attr("stroke", function(d) { return "#" + d.c; })
+        //.attr("stroke", function(d) { return "#" + d.c; })
+        .attr("stroke", function(d) {
+            if(d.v == me.contactInsideValue) return "#" + me.contactInsideColor;
+            else if(d.v == me.hbondInsideValue) return "#" + me.hbondInsideColor;
+            else if(d.v == me.ionicInsideValue) return "#" + me.ionicInsideColor;
+            else if(d.v == me.halogenInsideValue) return "#" + me.halogenInsideColor;
+            else if(d.v == me.picationInsideValue) return "#" + me.picationInsideColor;
+            else if(d.v == me.pistackingInsideValue) return "#" + me.pistackingInsideColor;
+            else return "#" + d.c;
+          })
         .attr("stroke-width", function(d) {
             if(d.v == me.contactValue || d.v == me.contactInsideValue
-              || d.v == me.hbondInsideValue || d.v == me.ionicInsideValue) return "1px";
-            else if(d.v == me.ssbondValue || d.v == me.ionicValue
-                || d.v == me.hbondValue || d.v == me.clbondValue) return "2px";
+              || d.v == me.hbondValue || d.v == me.hbondInsideValue
+              || d.v == me.ionicValue || d.v == me.ionicInsideValue
+              || d.v == me.halogenValue || d.v == me.halogenInsideValue
+              || d.v == me.picationValue || d.v == me.picationInsideValue
+              || d.v == me.pistackingValue || d.v == me.pistackingInsideValue) return "1px";
+            else if(d.v == me.ssbondValue || d.v == me.clbondValue) return "2px";
             else return d.v + "px";
           });
 
@@ -134,6 +146,10 @@ iCn3DUI.prototype.drawGraph = function (jsonStr) {  var me = this; //"use strict
     var dist_ssbond = parseInt($("#" + me.pre + "dist_ssbond").val());
     var dist_ionic = parseInt($("#" + me.pre + "dist_ionic").val());
 
+    var dist_halogen = parseInt($("#" + me.pre + "dist_halogen").val());
+    var dist_pication = parseInt($("#" + me.pre + "dist_pication").val());
+    var dist_pistacking = parseInt($("#" + me.pre + "dist_pistacking").val());
+
     var simulation = d3v4.forceSimulation()
         .force("link", d3v4.forceLink()
                 .id(function(d) { return d.id; })
@@ -164,6 +180,15 @@ iCn3DUI.prototype.drawGraph = function (jsonStr) {  var me = this; //"use strict
                     }
                     else if(d.v == me.ionicValue || d.v == me.ionicInsideValue ) { // ionic interaction
                         return !isNaN(dist_ionic) ? dist_ionic / 100.0 : 0.5;
+                    }
+                    else if(d.v == me.halogenValue || d.v == me.halogenInsideValue ) {
+                        return !isNaN(dist_halogen) ? dist_halogen / 100.0 : 0.5;
+                    }
+                    else if(d.v == me.picationValue || d.v == me.picationInsideValue ) {
+                        return !isNaN(dist_pication) ? dist_pication / 100.0 : 0.5;
+                    }
+                    else if(d.v == me.pistackingValue || d.v == me.pistackingInsideValue ) {
+                        return !isNaN(dist_pistacking) ? dist_pistacking / 100.0 : 0.5;
                     }
                     else {
                         return 0;

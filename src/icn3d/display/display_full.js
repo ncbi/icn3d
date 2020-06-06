@@ -115,6 +115,35 @@ iCn3D.prototype.hideContact = function () { var me = this; //"use strict";
         }
 };
 
+iCn3D.prototype.hideHalogenPi = function () { var me = this; //"use strict";
+        this.opts["halogen"] = "no";
+        this.opts["pi-cation"] = "no";
+        this.opts["pi-stacking"] = "no";
+        if(this.lines === undefined) this.lines = {};
+        this.lines['halogen'] = [];
+        this.lines['pi-cation'] = [];
+        this.lines['pi-stacking'] = [];
+        this.halogenpnts = [];
+        this.picationpnts = [];
+        this.pistackingpnts = [];
+
+        for(var i in this.atoms) {
+            this.atoms[i].style2 = 'nothing';
+        }
+
+        for(var i in this.sidec) {
+            if(this.hAtoms.hasOwnProperty(i)) {
+                this.atoms[i].style2 = this.opts["sidec"];
+            }
+        }
+
+        for(var i in this.water) {
+            if(this.hAtoms.hasOwnProperty(i)) {
+                this.atoms[i].style = this.opts["water"];
+            }
+        }
+};
+
 iCn3D.prototype.applySsbondsOptions = function (options) { var me = this; //"use strict";
     if(options === undefined) options = this.opts;
 
@@ -601,19 +630,31 @@ iCn3D.prototype.setHbondsContacts = function (options, type) { var me = this; //
     this.lines[hbond_contact] = [];
 
     if (options[hbonds_contact].toLowerCase() === 'yes') {
-        var color; // = (type == 'contact') ? "#888888" : '#00FF00';
+        var color;
         var pnts;
         if(type == 'hbond') {
             pnts = this.hbondpnts;
-            color = '#00FF00';
+            color = '#0F0';
         }
         else if(type == 'saltbridge') {
             pnts = this.saltbridgepnts;
-            color = '#00FFFF'; // cyan
+            color = '#0FF';
         }
         else if(type == 'contact') {
             pnts = this.contactpnts;
-            color = '#222222';
+            color = '#222';
+        }
+        else if(type == 'halogen') {
+            pnts = this.halogenpnts;
+            color = '#F0F';
+        }
+        else if(type == 'pi-cation') {
+            pnts = this.picationpnts;
+            color = '#F00';
+        }
+        else if(type == 'pi-stacking') {
+            pnts = this.pistackingpnts;
+            color = '#00F';
         }
 
          for (var i = 0, lim = Math.floor(pnts.length / 2); i < lim; i++) {
@@ -643,13 +684,20 @@ iCn3D.prototype.applyOtherOptions = function (options) { var me = this; //"use s
 
         //common part options
 
+        // contact lines
+        this.setHbondsContacts(options, 'contact');
+
+        // halogen lines
+        this.setHbondsContacts(options, 'halogen');
+        // pi-cation lines
+        this.setHbondsContacts(options, 'pi-cation');
+        // pi-stacking lines
+        this.setHbondsContacts(options, 'pi-stacking');
+
         // hbond lines
         this.setHbondsContacts(options, 'hbond');
         // salt bridge lines
         this.setHbondsContacts(options, 'saltbridge');
-        // contact lines
-        this.setHbondsContacts(options, 'contact');
-
         if (this.pairArray !== undefined && this.pairArray.length > 0) {
             this.updateStabilizer(); // to update this.stabilizerpnts
 
