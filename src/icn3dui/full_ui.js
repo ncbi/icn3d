@@ -149,7 +149,7 @@ var iCn3DUI = function(cfg) { var me = this; //"use strict";
     me.pistackingInsideColor = 'FFF';
 
     me.hideedges = 1;
-    me.pushcenter = 0;
+    //me.pushcenter = 0;
     me.force = 1;
 
     //me.baseUrl = "https://structure.ncbi.nlm.nih.gov/";
@@ -5080,6 +5080,16 @@ iCn3DUI.prototype = {
         });
     },
 
+    clkMn6_addlabelResnum: function() { var me = this; //"use strict";
+        $("#" + me.pre + "mn6_addlabelResnum").click(function(e) {
+           me.icn3d.addResiudeLabels(me.icn3d.hAtoms, undefined, undefined, true);
+
+           me.saveSelectionIfSelected();
+           me.setLogCmd('add residue number labels', true);
+           me.icn3d.draw();
+        });
+    },
+
     clkMn6_addlabelChains: function() { var me = this; //"use strict";
         $("#" + me.pre + "mn6_addlabelChains").click(function(e) {
            me.addChainLabels(me.icn3d.hAtoms);
@@ -7181,7 +7191,7 @@ iCn3DUI.prototype = {
                me.setLogCmd("hide edges " + me.hideedges, true);
            }
         });
-
+/*
         $("#" + me.svgid + "_pushcenter").change(function(e) {
            e.preventDefault();
            //dialog.dialog( "close" );
@@ -7194,7 +7204,7 @@ iCn3DUI.prototype = {
                me.setLogCmd("graph center " + me.pushcenter, true);
            }
         });
-
+*/
         $("#" + me.svgid + "_force").change(function(e) {
            e.preventDefault();
            //dialog.dialog( "close" );
@@ -7746,8 +7756,8 @@ iCn3DUI.prototype = {
 
        var nodeArray = [], linkArray = [];
 
-       var node_link1 = me.getNodesLinksForSet(atomSet2, labelType);
-       var node_link2 = me.getNodesLinksForSet(atomSet1, labelType);
+       var node_link1 = me.getNodesLinksForSet(atomSet2, labelType, 'a');
+       var node_link2 = me.getNodesLinksForSet(atomSet1, labelType, 'b');
 
        nodeArray = node_link1.node.concat(node_link2.node);
 
@@ -7874,7 +7884,7 @@ iCn3DUI.prototype = {
        return resStr;
     },
 
-    getNodesLinksForSet: function(atomSet, labelType) { var me = this; //"use strict";
+    getNodesLinksForSet: function(atomSet, labelType, setName) { var me = this; //"use strict";
        //var nodeStr = '', linkStr = '';
        var nodeArray = [], linkArray = [];
        var cnt = 0, linkCnt = 0;
@@ -7894,7 +7904,7 @@ iCn3DUI.prototype = {
 
 
                //if(cnt > 0) nodeStr += ', ';
-               nodeArray.push('{"id": "' + resName + '", "r": "' + resid + '", "x": ' + atom.coord.x.toFixed(0)
+               nodeArray.push('{"id": "' + resName + '", "r": "' + resid + '", "s": "' + setName + '", "x": ' + atom.coord.x.toFixed(0)
                    + ', "y": ' + atom.coord.y.toFixed(0) + ', "c": "' + atom.color.getHexString().toUpperCase() + '"}');
 
                if(cnt > 0 && prevChain == atom.chain && (atom.resi == prevResi + 1 || atom.resi == prevResi) ) {
@@ -8952,6 +8962,7 @@ iCn3DUI.prototype = {
         me.clkMn6_assemblyYes();
         me.clkMn6_assemblyNo();
         me.clkMn6_addlabelResidues();
+        me.clkMn6_addlabelResnum();
         me.clkMn6_addlabelAtoms();
         me.clkMn6_addlabelChains();
         me.clkMn6_addlabelTermini();

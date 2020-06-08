@@ -633,6 +633,7 @@ iCn3DUI.prototype.setMenu2b_base = function() { var me = this; //"use strict";
     html += me.getRadio('mn6_addlabel', 'mn6_addlabelAtoms', 'per Atom');
     if(me.cfg.cid === undefined) {
         html += me.getRadio('mn6_addlabel', 'mn6_addlabelResidues', 'per Residue');
+        html += me.getRadio('mn6_addlabel', 'mn6_addlabelResnum', 'per Residue & Number');
         html += me.getRadio('mn6_addlabel', 'mn6_addlabelChains', 'per Chain');
         html += me.getRadio('mn6_addlabel', 'mn6_addlabelTermini', 'N- & C-Termini');
     }
@@ -2003,13 +2004,16 @@ iCn3DUI.prototype.setDialogs = function() { var me = this; //"use strict";
     html += optionStr + "'1' selected>Hide</option>";
     html += optionStr + "'0'>Show</option>";
     html += "</select>";
-    html += "&nbsp;&nbsp;&nbsp;<b>Center</b>: <select id='" + me.svgid + "_pushcenter'>";
-    html += optionStr + "'1'>Yes</option>";
-    html += optionStr + "'0' selected>No</option>";
-    html += "</select>";
-    html += "&nbsp;&nbsp;&nbsp;<b>Force</b>: <select id='" + me.svgid + "_force'>";
-    html += optionStr + "'1' selected>Yes</option>";
+    //html += "&nbsp;&nbsp;&nbsp;<b>Center</b>: <select id='" + me.svgid + "_pushcenter'>";
+    //html += optionStr + "'1'>Yes</option>";
+    //html += optionStr + "'0' selected>No</option>";
+    //html += "</select>";
+    html += "&nbsp;&nbsp;&nbsp;<b>Force on Nodes</b>: <select id='" + me.svgid + "_force'>";
     html += optionStr + "'0'>No</option>";
+    html += optionStr + "'1' selected>X-axis</option>";
+    html += optionStr + "'2'>Y-axis</option>";
+    html += optionStr + "'3'>Circle</option>";
+    html += optionStr + "'4'>Random</option>";
     html += "</select>";
     html += "</div>";
 

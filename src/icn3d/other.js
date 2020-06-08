@@ -821,7 +821,7 @@ iCn3D.prototype.addNonCarbonAtomLabels = function (atoms) { var me = this; //"us
     this.removeHlObjects();
 };
 
-iCn3D.prototype.addResiudeLabels = function (atoms, bSchematic, alpha) { var me = this; //"use strict";
+iCn3D.prototype.addResiudeLabels = function (atoms, bSchematic, alpha, bNumber) { var me = this; //"use strict";
     var size = 18;
     var background = "#CCCCCC";
     if(alpha === undefined) alpha = 1.0;
@@ -856,6 +856,7 @@ iCn3D.prototype.addResiudeLabels = function (atoms, bSchematic, alpha) { var me 
             if(bSchematic) label.bSchematic = 1;
 
             label.text = this.residueName2Abbr(atom.resn);
+            if(bNumber) label.text += atom.resi;
             label.size = size;
 
             var atomColorStr = atom.color.getHexString().toUpperCase();
