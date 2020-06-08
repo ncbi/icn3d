@@ -1435,6 +1435,11 @@ iCn3DUI.prototype.applyCommand = function (commandStr) { var me = this; //"use s
 
     me.icn3d.draw();
   }
+  else if(command == 'add residue number labels') {
+    me.icn3d.addResiudeLabels(me.icn3d.hAtoms, undefined, undefined, true);
+
+    me.icn3d.draw();
+  }
   else if(command == 'add atom labels') {
     me.icn3d.addAtomLabels(me.icn3d.hAtoms);
 
@@ -2019,6 +2024,7 @@ iCn3DUI.prototype.applyCommand = function (commandStr) { var me = this; //"use s
     $("#" + me.svgid + " text").removeClass();
     $("#" + me.svgid + " text").addClass(className);
   }
+/*
   else if(command.indexOf('graph center') == 0) {
     var pos = command.lastIndexOf(' ');
     me.pushcenter = parseInt(command.substr(pos + 1));
@@ -2029,6 +2035,7 @@ iCn3DUI.prototype.applyCommand = function (commandStr) { var me = this; //"use s
        me.drawGraph(me.graphStr);
     }
   }
+*/
   else if(command.indexOf('graph force') == 0) {
     var pos = command.lastIndexOf(' ');
     me.force = parseInt(command.substr(pos + 1));

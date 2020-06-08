@@ -257,9 +257,43 @@ iCn3DUI.prototype.drawGraph = function (jsonStr) {  var me = this; //"use strict
         simulation.force("charge", d3v4.forceManyBody());
     }
 
-    if(me.pushcenter && me.force) {
-        simulation.force("x", d3v4.forceX(parentWidth/2))
-            .force("y", d3v4.forceY(parentHeight/2));
+    //simulation.force("x", d3v4.forceX(parentWidth/2))
+    //    .force("y", d3v4.forceY(parentHeight/2));
+
+    if(me.force == 1) {  // x-axis
+        simulation.force("x", d3v4.forceX(function(d) {
+            if(d.s == 'a') {
+                return parentWidth/4;
+            }
+            else {
+                return parentWidth * 0.75;
+            }
+        }).strength(function(d) { return 0.4;}) );
+
+    }
+    else if(me.force == 2) { // y-axis
+        simulation.force("y", d3v4.forceY(function(d) {
+            if(d.s == 'a') {
+                return parentHeight * 0.75;
+            }
+            else {
+                return parentHeight/4;
+            }
+        }).strength(function(d) { return 0.4;}) );
+    }
+    else if(me.force == 3) { // circle
+        simulation.force("r", d3v4.forceRadial(function(d) {
+            if(d.s == 'a') {
+                return 200;
+            }
+            else {
+                return 100;
+            }
+
+        }, parentWidth/2, parentHeight/2).strength(function(d) { return 0.8;}) );
+    }
+    else if(me.force == 4) { // random
+        // do nothing
     }
 
     simulation
