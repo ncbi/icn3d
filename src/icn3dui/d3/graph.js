@@ -8,6 +8,8 @@ iCn3DUI.prototype.drawGraph = function (jsonStr) {  var me = this; //"use strict
     if (typeof d3v4 == 'undefined')
         d3v4 = d3;
 
+    if(me.icn3d.bRender !== true) return;
+
     var graph = JSON.parse(jsonStr);
 
     //var width = +svg.attr("width"),
@@ -61,11 +63,60 @@ iCn3DUI.prototype.drawGraph = function (jsonStr) {  var me = this; //"use strict
         return;
     }
 
+    // clean graph.links
+    var linkArray = [];
+
+    var nodeHash = {};
+    for(var i = 0, il = graph.nodes.length; i < il; ++i) {
+      var node = graph.nodes[i];
+      nodeHash[node.id] = 1;
+    }
+
+    var bError = false;
+    for(var i = 0, il = graph.links.length; i < il; ++i) {
+      var link = graph.links[i];
+
+      if(nodeHash.hasOwnProperty(link.source) && nodeHash.hasOwnProperty(link.target)) {
+          linkArray.push(link);
+      }
+      else {
+          if(!nodeHash.hasOwnProperty(link.source)) {
+            console.log("The node " + link.source + " is not found... " );
+          }
+          if(!nodeHash.hasOwnProperty(link.target)) {
+            console.log("The node " + link.target + " is not found... " );
+          }
+
+          bError = true;
+      }
+    }
+
+    if(bError) console.log(JSON.stringify(graph));
+
+    graph.links = linkArray;
+
     var nodes = {};
     var i;
     for (i = 0; i < graph.nodes.length; i++) {
+        // enlarge the distance when no force
+        if(!me.force) {
+            graph.nodes[i].x *= 10;
+            graph.nodes[i].y *= 10;
+        }
         nodes[graph.nodes[i].id] = graph.nodes[i];
         graph.nodes[i].weight = 1.01;
+    }
+
+    // remove the internal edges when no force
+    if(!me.force && me.hideedges) {
+        var links2 = [];
+        for (i = 0; i < graph.links.length; i++) {
+            if(graph.links[i].c != 'FFF') {
+                links2.push(graph.links[i]);
+            }
+        }
+
+        graph.links = links2;
     }
 
     // the brush needs to go before the nodes so that it doesn't
@@ -152,14 +203,18 @@ iCn3DUI.prototype.drawGraph = function (jsonStr) {  var me = this; //"use strict
 
     var simulation = d3v4.forceSimulation()
         .force("link", d3v4.forceLink()
-                .id(function(d) { return d.id; })
-                .distance(function(d) {
-                    //var dist = 20 / d.value;
-                    //return dist;
+            .id(function(d) { return d.id; })
+            .distance(function(d) {
+                //var dist = 20 / d.value;
+                //return dist;
 
-                    return 30;
-                })
-                .strength(function(d) {
+                return 30;
+            })
+            .strength(function(d) {
+                if(!me.force) {
+                    return 0;
+                }
+                else {
                     //return 1 / Math.min(count(d.source), count(d.target));
 
                     // larger distance means more relaxed
@@ -193,14 +248,16 @@ iCn3DUI.prototype.drawGraph = function (jsonStr) {  var me = this; //"use strict
                     else {
                         return 0;
                     }
-                })
-              )
-        .force("charge", d3v4.forceManyBody())
+                } // else
+            })
+          )
         .force("center", d3v4.forceCenter(parentWidth / 2, parentHeight / 2));
-        //.force("x", d3v4.forceX(parentWidth/2))
-        //.force("y", d3v4.forceY(parentHeight/2))
 
-    if(me.pushcenter) {
+    if(me.force) {
+        simulation.force("charge", d3v4.forceManyBody());
+    }
+
+    if(me.pushcenter && me.force) {
         simulation.force("x", d3v4.forceX(parentWidth/2))
             .force("y", d3v4.forceY(parentHeight/2));
     }

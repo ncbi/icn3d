@@ -13,7 +13,7 @@ if (!$.ui.dialog.prototype._makeDraggableBase) {
 }
 
 var iCn3DUI = function(cfg) { var me = this; //"use strict";
-    this.REVISION = '2.16.3';
+    this.REVISION = '2.16.4';
 
     me.bFullUi = true;
 
@@ -147,6 +147,10 @@ var iCn3DUI = function(cfg) { var me = this; //"use strict";
 
     me.pistackingColor = '00F';
     me.pistackingInsideColor = 'FFF';
+
+    me.hideedges = 1;
+    me.pushcenter = 0;
+    me.force = 1;
 
     //me.baseUrl = "https://structure.ncbi.nlm.nih.gov/";
     me.baseUrl = "https://www.ncbi.nlm.nih.gov/Structure/";
@@ -868,7 +872,7 @@ iCn3DUI.prototype = {
           var residueHash = me.icn3d.getResiduesFromCalphaAtoms(me.icn3d.hAtoms);
           me.changeSeqColor(Object.keys(residueHash));
 
-          // change graphcolor
+          // change graph color
           if(me.graphStr !== undefined) {
               var graphJson = JSON.parse(me.graphStr);
 
@@ -1213,7 +1217,8 @@ iCn3DUI.prototype = {
              atoms[atomArray[j]] = 1;
          }
 
-         var residueHash = me.icn3d.getResiduesFromCalphaAtoms(atoms);
+         //var residueHash = me.icn3d.getResiduesFromCalphaAtoms(atoms);
+         var residueHash = me.icn3d.getResiduesFromAtoms(atoms);
 
          return Object.keys(residueHash);
     },
@@ -1473,7 +1478,7 @@ iCn3DUI.prototype = {
 
         if(firstAtom !== undefined) {
             commandname = "sphere." + firstAtom.chain + ":" + me.icn3d.residueName2Abbr(firstAtom.resn.substr(0, 3)).trim() + firstAtom.resi + "-" + radius + "A";
-            if(bInteraction) commandname = "interactions." + firstAtom.chain + ":" + me.icn3d.residueName2Abbr(firstAtom.resn.substr(0, 3)).trim() + firstAtom.resi + "-" + $("#" + me.pre + "contactthreshold").val() + "A";
+            if(bInteraction) commandname = "contact." + firstAtom.chain + ":" + me.icn3d.residueName2Abbr(firstAtom.resn.substr(0, 3)).trim() + firstAtom.resi + "-" + $("#" + me.pre + "contactthreshold").val() + "A";
             //commanddesc = "select a sphere around currently selected " + Object.keys(me.icn3d.hAtoms).length + " atoms with a radius of " + radius + " angstrom";
             commanddesc = commandname;
 
@@ -1581,7 +1586,7 @@ iCn3DUI.prototype = {
         var firstAtom = me.icn3d.getFirstAtomObj(firstSetAtoms);
 
         if(Object.keys(complement).length > 0 && Object.keys(firstSetAtoms).length > 0) {
-            var selectedAtoms = me.icn3d.calculateIonicInteractions(me.icn3d.intHash2Atoms(me.icn3d.dAtoms, firstSetAtoms), me.icn3d.intHash2Atoms(me.icn3d.dAtoms, complement), parseFloat(threshold), bSaltbridge );
+            var selectedAtoms = me.icn3d.calculateIonicInteractions(me.icn3d.intHash2Atoms(me.icn3d.dAtoms, complement), me.icn3d.intHash2Atoms(me.icn3d.dAtoms, firstSetAtoms), parseFloat(threshold), bSaltbridge );
 
             var commanddesc;
             me.resid2ResidhashSaltbridge = me.icn3d.cloneHash(me.icn3d.resid2Residhash);
@@ -2236,6 +2241,8 @@ iCn3DUI.prototype = {
         for(var resid1 in hash1) {
             //ASN $1KQ2.A:6@ND2
             //or ASN $1KQ2.A:6
+            resid1 = resid1.trim();
+
             var pos1a = resid1.indexOf(' ');
             var pos1b = resid1.indexOf(':');
             var posTmp1 = resid1.indexOf('@');
@@ -2247,6 +2254,8 @@ iCn3DUI.prototype = {
             if(labelType == 'structure') resName1 += '.' + resid1.substr(pos1e + 1, pos1d - pos1e - 1);
 
             for(var resid2 in hash2[resid1]) {
+                resid2 = resid2.trim();
+
                 var pos2a = resid2.indexOf(' ');
                 var pos2b = resid2.indexOf(':');
                 var posTmp2 = resid2.indexOf('@');
@@ -2302,7 +2311,7 @@ iCn3DUI.prototype = {
                 var color2 = atom2.color.getHexString();
                 var dist = Math.sqrt(me.resid2ResidhashHbond[resid1][resid2]).toFixed(1);
 
-                tmpText += '<tr><td><input type="checkbox" class="' + me.pre + 'seloneres" resid="' + resid1 + '"/> ' + resid1 + colorText1 + color1 + colorText2 + '</td><td><input type="checkbox" class="' + me.pre + 'seloneres" resid="' + resid2 + '"/> ' + resid2 + colorText1 + color2 + colorText2 + '</td><td align="center">' + dist + '</td>';
+                tmpText += '<tr><td><input type="checkbox" class="' + me.pre + 'seloneres" id="' + me.pre + 'hbond_' +  cnt + 'a" resid="' + resid1 + '"/> ' + resid1 + colorText1 + color1 + colorText2 + '</td><td><input type="checkbox" class="' + me.pre + 'seloneres" id="' + me.pre + 'hbond_' +  cnt + 'b" resid="' + resid2 + '"/> ' + resid2 + colorText1 + color2 + colorText2 + '</td><td align="center">' + dist + '</td>';
                 if(type == 'view') tmpText += '<td align="center"><button class="' + me.pre + 'selres" resid="' + resid1 + '|' + resid2 + '">Highlight</button></td>';
                 tmpText += '</tr>';
                 ++cnt;
@@ -2349,7 +2358,7 @@ iCn3DUI.prototype = {
                 var color2 = atom2.color.getHexString();
                 var dist = Math.sqrt(me.resid2ResidhashSaltbridge[resid1][resid2]).toFixed(1);
 
-                tmpText += '<tr><td><input type="checkbox" class="' + me.pre + 'seloneres" resid="' + resid1 + '"/> ' + resid1 + colorText1 + color1 + colorText2 + '</td><td><input type="checkbox" class="' + me.pre + 'seloneres" resid="' + resid2 + '"/> ' + resid2 + colorText1 + color2 + colorText2 + '</td><td align="center">' + dist + '</td>';
+                tmpText += '<tr><td><input type="checkbox" class="' + me.pre + 'seloneres" id="' + me.pre + 'saltb_' +  cnt + 'a" resid="' + resid1 + '"/> ' + resid1 + colorText1 + color1 + colorText2 + '</td><td><input type="checkbox" class="' + me.pre + 'seloneres" id="' + me.pre + 'saltb_' +  cnt + 'b" resid="' + resid2 + '"/> ' + resid2 + colorText1 + color2 + colorText2 + '</td><td align="center">' + dist + '</td>';
                 if(type == 'view') tmpText += '<td align="center"><button class="' + me.pre + 'selres" resid="' + resid1 + '|' + resid2 + '">Highlight</button></td>';
                 tmpText += '</tr>';
                 ++cnt;
@@ -2413,7 +2422,7 @@ iCn3DUI.prototype = {
                 var color2 = atom2.color.getHexString();
                 var dist = Math.sqrt(resid2Residhash[resid1][resid2]).toFixed(1);
 
-                tmpText += '<tr><td><input type="checkbox" class="' + me.pre + 'seloneres" resid="' + resid1 + '"/> ' + resid1 + colorText1 + color1 + colorText2 + '</td><td><input type="checkbox" class="' + me.pre + 'seloneres" resid="' + resid2 + '"/> ' + resid2 + colorText1 + color2 + colorText2 + '</td><td align="center">' + dist + '</td>';
+                tmpText += '<tr><td><input type="checkbox" class="' + me.pre + 'seloneres" id="' + me.pre + interactionType + '_' +  cnt + 'a" resid="' + resid1 + '"/> ' + resid1 + colorText1 + color1 + colorText2 + '</td><td><input type="checkbox" class="' + me.pre + 'seloneres" id="' + me.pre + interactionType + '_' +  cnt + 'b" resid="' + resid2 + '"/> ' + resid2 + colorText1 + color2 + colorText2 + '</td><td align="center">' + dist + '</td>';
                 if(type == 'view') tmpText += '<td align="center"><button class="' + me.pre + 'selres" resid="' + resid1 + '|' + resid2 + '">Highlight</button></td>';
                 tmpText += '</tr>';
                 ++cnt;
@@ -2468,7 +2477,7 @@ iCn3DUI.prototype = {
                 var contactCnt = dist1_dist2_atom1_atom2[4];
 
                 if(bInteraction) {
-                    tmpText += '<tr><td><input type="checkbox" class="' + me.pre + 'seloneres" resid="' + resid1 + '"/> ' + resid1 + '@' + atom1 + colorText1 + color1 + colorText2 + '</td><td><input type="checkbox" class="' + me.pre + 'seloneres" resid="' + resid2 + '"/> ' + resid2 + '@' + atom2 + colorText1 + color2 + colorText2 + '</td><td align="center">' + contactCnt + '</td><td align="center">' + dist1 + '</td><td align="center">' + dist2 + '</td>';
+                    tmpText += '<tr><td><input type="checkbox" class="' + me.pre + 'seloneres" id="' + me.pre + 'inter_' +  cnt + 'a" resid="' + resid1 + '"/> ' + resid1 + '@' + atom1 + colorText1 + color1 + colorText2 + '</td><td><input type="checkbox" class="' + me.pre + 'seloneres" id="' + me.pre + 'inter_' +  cnt + 'b" resid="' + resid2 + '"/> ' + resid2 + '@' + atom2 + colorText1 + color2 + colorText2 + '</td><td align="center">' + contactCnt + '</td><td align="center">' + dist1 + '</td><td align="center">' + dist2 + '</td>';
                     if(type == 'view') tmpText += '<td align="center"><button class="' + me.pre + 'selres" resid="' + resid1 + '|' + resid2 + '">Highlight</button></td>';
                     tmpText += '</tr>';
                 }
@@ -7186,6 +7195,19 @@ iCn3DUI.prototype = {
            }
         });
 
+        $("#" + me.svgid + "_force").change(function(e) {
+           e.preventDefault();
+           //dialog.dialog( "close" );
+
+           me.force = parseInt($("#" + me.svgid + "_force").val());
+
+           if(me.graphStr !== undefined) {
+               me.drawGraph(me.graphStr);
+
+               me.setLogCmd("graph force " + me.force, true);
+           }
+        });
+
         $("#" + me.pre + "hbondReset").click(function(e) {
            e.preventDefault();
            //dialog.dialog( "close" );
@@ -7215,6 +7237,10 @@ iCn3DUI.prototype = {
        me.hideHbondsContacts();
 
        me.clearHighlight();
+
+       // reset the interaction pairs
+       me.icn3d.resids2inter = {};
+       me.icn3d.resids2interAll = {};
     },
 
     viewInteractionPairs: function(nameArray2, nameArray, bHbondCalc, type,
@@ -7223,7 +7249,6 @@ iCn3DUI.prototype = {
        me.icn3d.bRender = false;
        var hAtoms = {};
        var prevHatoms = me.icn3d.cloneHash(me.icn3d.hAtoms);
-       var html = '<div style="text-align:center"><b>Hydrogen Bonds, Salt Bridges, Interactions, Halogen Bonds, &pi;-cation, &pi;-stacking between Two Sets:</b><br>';
 
        var atomSet1 = me.getAtomsFromNameArray(nameArray2);
        var atomSet2 = me.getAtomsFromNameArray(nameArray);
@@ -7248,23 +7273,6 @@ iCn3DUI.prototype = {
        if(cntStructure > 1) labelType = 'structure';
        else if(cntChain > 1) labelType = 'chain';
        else labelType = 'residue';
-
-       var residueArray1 = me.atoms2residues(Object.keys(atomSet1));
-       var residueArray2 = me.atoms2residues(Object.keys(atomSet2));
-
-       var cmd1 = 'select ' + me.residueids2spec(residueArray1);
-       var cmd2 = 'select ' + me.residueids2spec(residueArray2);
-
-       html += 'Set 1: ' + nameArray2 + ' <button class="' + me.pre + 'selset" cmd="' + cmd1 + '">Highlight in 3D</button><br>';
-       html += 'Set 2: ' + nameArray + ' <button class="' + me.pre + 'selset" cmd="' + cmd2 + '">Highlight in 3D</button><br><br></div>';
-
-       html += '<div><b>Note</b>: Each checkbox below selects the corresponding residue. '
-         + 'You can click "Save Selection" in the "Select" menu to save the selection '
-         + 'and click on "Highlight" button to clear the checkboxes.</div><br>';
-
-       var header = html;
-
-       if(type == 'graph') html = '';
 
        var interactionTypes = [];
        if(bHbond) {
@@ -7291,6 +7299,7 @@ iCn3DUI.prototype = {
            me.icn3d.resids2interAll = {};
        }
 
+       var tableHtml = '';
        if(bSaltbridge) {
            var threshold = parseFloat($("#" + me.pre + "saltbridgethreshold" ).val());
 
@@ -7302,7 +7311,7 @@ iCn3DUI.prototype = {
 
            hAtoms = me.icn3d.unionHash(hAtoms, me.icn3d.hAtoms);
 
-           html += me.exportSaltbridgePairs(type, labelType);
+           tableHtml += me.exportSaltbridgePairs(type, labelType);
        }
 
        if(bHbond) {
@@ -7315,7 +7324,7 @@ iCn3DUI.prototype = {
 
            hAtoms = me.icn3d.unionHash(hAtoms, me.icn3d.hAtoms);
 
-           html += me.exportHbondPairs(type, labelType);
+           tableHtml += me.exportHbondPairs(type, labelType);
        }
 
        if(bHalogen) {
@@ -7328,7 +7337,7 @@ iCn3DUI.prototype = {
 
            hAtoms = me.icn3d.unionHash(hAtoms, me.icn3d.hAtoms);
 
-           html += me.exportHalogenPiPairs(type, labelType, 'halogen');
+           tableHtml += me.exportHalogenPiPairs(type, labelType, 'halogen');
        }
 
        if(bPication) {
@@ -7341,7 +7350,7 @@ iCn3DUI.prototype = {
 
            hAtoms = me.icn3d.unionHash(hAtoms, me.icn3d.hAtoms);
 
-           html += me.exportHalogenPiPairs(type, labelType, 'pi-cation');
+           tableHtml += me.exportHalogenPiPairs(type, labelType, 'pi-cation');
        }
 
        if(bPistacking) {
@@ -7354,7 +7363,7 @@ iCn3DUI.prototype = {
 
            hAtoms = me.icn3d.unionHash(hAtoms, me.icn3d.hAtoms);
 
-           html += me.exportHalogenPiPairs(type, labelType, 'pi-stacking');
+           tableHtml += me.exportHalogenPiPairs(type, labelType, 'pi-stacking');
        }
 
        if(bInteraction) {
@@ -7367,7 +7376,7 @@ iCn3DUI.prototype = {
 
            hAtoms = me.icn3d.unionHash(hAtoms, me.icn3d.hAtoms);
 
-           html += me.exportSpherePairs(true, type, labelType);
+           tableHtml += me.exportSpherePairs(true, type, labelType);
        }
 
        me.icn3d.hAtoms = me.icn3d.cloneHash(hAtoms);
@@ -7375,6 +7384,60 @@ iCn3DUI.prototype = {
        me.icn3d.bRender = true;
        //me.updateHlAll();
        me.icn3d.draw();
+
+       var residHash, select, commandname, commanddesc;
+
+       residHash = me.icn3d.getResiduesFromAtoms(hAtoms);
+       select = "select " + me.residueids2spec(Object.keys(residHash));
+       commandname = 'interface_all';
+       commanddesc = commandname;
+       me.addCustomSelection(Object.keys(residHash), commandname, commanddesc, select, true);
+
+       var interface1 = me.icn3d.intHash(hAtoms, atomSet1);
+       residHash = me.icn3d.getResiduesFromAtoms(interface1);
+       select = "select " + me.residueids2spec(Object.keys(residHash));
+       commandname = 'interface_1';
+       commanddesc = commandname;
+       me.addCustomSelection(Object.keys(residHash), commandname, commanddesc, select, true);
+
+       var interface2 = me.icn3d.intHash(hAtoms, atomSet2);
+       residHash = me.icn3d.getResiduesFromAtoms(interface2);
+       select = "select " + me.residueids2spec(Object.keys(residHash));
+       commandname = 'interface_2';
+       commanddesc = commandname;
+       me.addCustomSelection(Object.keys(residHash), commandname, commanddesc, select, true);
+
+       var html = '<div style="text-align:center"><b>Hydrogen Bonds, Salt Bridges, Interactions, Halogen Bonds, &pi;-cation, &pi;-stacking between Two Sets:</b><br>';
+
+       var residueArray1 = me.atoms2residues(Object.keys(atomSet1));
+       var residueArray2 = me.atoms2residues(Object.keys(atomSet2));
+
+       var cmd1 = 'select ' + me.residueids2spec(residueArray1);
+       var cmd2 = 'select ' + me.residueids2spec(residueArray2);
+
+       html += 'Set 1: ' + nameArray2 + ' <button class="' + me.pre + 'selset" cmd="' + cmd1 + '">Highlight in 3D</button><br>';
+       html += 'Set 2: ' + nameArray + ' <button class="' + me.pre + 'selset" cmd="' + cmd2 + '">Highlight in 3D</button><br><br></div>';
+
+       html += '<div style="text-align:center"><b>The interfaces are:</b><br>';
+
+       var residueArray3 = me.atoms2residues(Object.keys(interface1));
+       var residueArray4 = me.atoms2residues(Object.keys(interface2));
+
+       var cmd3 = 'select ' + me.residueids2spec(residueArray3);
+       var cmd4 = 'select ' + me.residueids2spec(residueArray4);
+
+       html += 'interface_1 <button class="' + me.pre + 'selset" cmd="' + cmd3 + '">Highlight in 3D</button><br>';
+       html += 'interface_2 <button class="' + me.pre + 'selset" cmd="' + cmd4 + '">Highlight in 3D</button><br><br></div>';
+
+       html += '<div><b>Note</b>: Each checkbox below selects the corresponding residue. '
+         + 'You can click "Save Selection" in the "Select" menu to save the selection '
+         + 'and click on "Highlight" button to clear the checkboxes.</div><br>';
+
+       var header = html;
+
+       if(type == 'graph') html = '';
+
+       html += tableHtml;
 
        if(type == 'save1' || type == 'save2') {
            var html = header;
@@ -7406,7 +7469,13 @@ iCn3DUI.prototype = {
            me.openDialog(me.pre + 'dl_allinteraction', 'Show interactions');
        }
        else if(type == 'graph') {
-           me.graphStr = me.getGraphData(atomSet2, atomSet1, nameArray2, nameArray, html, labelType);
+           // atomSet1 and atomSet2 are in the right order here
+           me.graphStr = me.getGraphData(atomSet1, atomSet2, nameArray2, nameArray, html, labelType);
+
+           // showonly displayed set in 2D graph
+           if(Object.keys(atomSet2).length + Object.keys(atomSet1).length > Object.keys(me.icn3d.dAtoms).length) {
+               me.graphStr = me.getGraphDataForDisplayed();
+           }
 
            if(me.bD3 === undefined) {
                var url = "https://d3js.org/d3.v4.min.js";
@@ -7522,32 +7591,32 @@ iCn3DUI.prototype = {
             var labels2dist, result;
 
             labels2dist = me.icn3d.resids2inter[resids]['hbond'];
-            result = me.getInteractionPairDetails(labels2dist, type);
+            result = me.getInteractionPairDetails(labels2dist, type, 'hbond');
             strHbond += result.html;
             cntHbond += result.cnt;
 
             labels2dist = me.icn3d.resids2inter[resids]['ionic'];
-            result = me.getInteractionPairDetails(labels2dist, type);
+            result = me.getInteractionPairDetails(labels2dist, type, 'ionic');
             strIonic += result.html;
             cntIonic += result.cnt;
 
             labels2dist = me.icn3d.resids2inter[resids]['contact'];
-            result = me.getContactPairDetails(labels2dist, type);
+            result = me.getContactPairDetails(labels2dist, type, 'contact');
             strContact += result.html;
             cntContact += result.cnt;
 
             labels2dist = me.icn3d.resids2inter[resids]['halogen'];
-            result = me.getInteractionPairDetails(labels2dist, type);
+            result = me.getInteractionPairDetails(labels2dist, type, 'halogen');
             strHalegen += result.html;
             cntHalegen += result.cnt;
 
             labels2dist = me.icn3d.resids2inter[resids]['pi-cation'];
-            result = me.getInteractionPairDetails(labels2dist, type);
+            result = me.getInteractionPairDetails(labels2dist, type, 'pi-cation');
             strPication += result.html;
             cntPication += result.cnt;
 
             labels2dist = me.icn3d.resids2inter[resids]['pi-stacking'];
-            result = me.getInteractionPairDetails(labels2dist, type);
+            result = me.getInteractionPairDetails(labels2dist, type, 'pi-stacking');
             strPistacking += result.html;
             cntPistacking += result.cnt;
 
@@ -7600,7 +7669,7 @@ iCn3DUI.prototype = {
         return tmpText;
     },
 
-    getInteractionPairDetails: function(labels2dist, type) { var me = this; //"use strict";
+    getInteractionPairDetails: function(labels2dist, type, interactionType) { var me = this; //"use strict";
         var tmpText = '', cnt = 0;
         var colorText1 = ' <span style="background-color:#';
         var colorText2 = '">&nbsp;&nbsp;&nbsp;</span>';
@@ -7622,7 +7691,7 @@ iCn3DUI.prototype = {
 
                 var dist = Math.sqrt(labels2dist[labels]).toFixed(1);
 
-                tmpText += '<tr><td><span style="white-space:nowrap"><input type="checkbox" class="' + me.pre + 'seloneres" resid="' + resid1 + '"/> ' + resid1 + colorText1 + color1 + colorText2 + '</span></td><td><span style="white-space:nowrap"><input type="checkbox" class="' + me.pre + 'seloneres" resid="' + resid2 + '"/> ' + resid2 + colorText1 + color2 + colorText2 + '</span></td><td align="center">' + dist + '</td>';
+                tmpText += '<tr><td><span style="white-space:nowrap"><input type="checkbox" class="' + me.pre + 'seloneres" id="' + me.pre + interactionType + '2_' +  cnt + 'a" resid="' + resid1 + '"/> ' + resid1 + colorText1 + color1 + colorText2 + '</span></td><td><span style="white-space:nowrap"><input type="checkbox" class="' + me.pre + 'seloneres" id="' + me.pre + interactionType + '2_' +  cnt + 'b" resid="' + resid2 + '"/> ' + resid2 + colorText1 + color2 + colorText2 + '</span></td><td align="center">' + dist + '</td>';
                 tmpText += '<td align="center"><button class="' + me.pre + 'selres" resid="' + resid1 + '|' + resid2 + '">Highlight</button></td>';
                 tmpText += '</tr>';
 
@@ -7660,7 +7729,7 @@ iCn3DUI.prototype = {
                 var atom2 = dist1_dist2_atom1_atom2[3];
                 var contactCnt = dist1_dist2_atom1_atom2[4];
 
-                tmpText += '<tr><td><span style="white-space:nowrap"><input type="checkbox" class="' + me.pre + 'seloneres" resid="' + resid1 + '"/> ' + resid1 + '@' + atom1 + colorText1 + color1 + colorText2 + '</span></td><td><span style="white-space:nowrap"><input type="checkbox" class="' + me.pre + 'seloneres" resid="' + resid2 + '"/> ' + resid2 + '@' + atom2 + colorText1 + color2 + colorText2 + '</span></td><td align="center">' + contactCnt + '</td><td align="center">' + dist1 + '</td><td align="center">' + dist2 + '</td>';
+                tmpText += '<tr><td><span style="white-space:nowrap"><input type="checkbox" class="' + me.pre + 'seloneres" id="' + me.pre + 'inter2_' +  cnt + 'a" resid="' + resid1 + '"/> ' + resid1 + '@' + atom1 + colorText1 + color1 + colorText2 + '</span></td><td><span style="white-space:nowrap"><input type="checkbox" class="' + me.pre + 'seloneres" id="' + me.pre + 'inter2_' +  cnt + 'b" resid="' + resid2 + '"/> ' + resid2 + '@' + atom2 + colorText1 + color2 + colorText2 + '</span></td><td align="center">' + contactCnt + '</td><td align="center">' + dist1 + '</td><td align="center">' + dist2 + '</td>';
                 tmpText += '<td align="center"><button class="' + me.pre + 'selres" resid="' + resid1 + '|' + resid2 + '">Highlight</button></td>';
                 tmpText += '</tr>';
 
@@ -7772,7 +7841,7 @@ iCn3DUI.prototype = {
            }
        }
 
-       // add cross linkage in blue
+       // add cross linkage
        var crossLinkStr = ''
        for(var structure in me.icn3d.clbondpnts) {
            for(var i = 0, il = me.icn3d.clbondpnts[structure].length; i < il; i += 2) {
@@ -7890,11 +7959,10 @@ iCn3DUI.prototype = {
 
         if(Object.keys(complement).length > 0 && Object.keys(firstSetAtoms).length > 0) {
             var bSaltbridge = false;
-            var selectedAtoms = me.icn3d.calculateIonicInteractions(me.icn3d.intHash2Atoms(me.icn3d.dAtoms, firstSetAtoms), me.icn3d.intHash2Atoms(me.icn3d.dAtoms, complement), parseFloat(threshold), bSaltbridge, 'graph', true );
+            var selectedAtoms = me.icn3d.calculateIonicInteractions(me.icn3d.intHash2Atoms(me.icn3d.dAtoms, complement), me.icn3d.intHash2Atoms(me.icn3d.dAtoms, firstSetAtoms), parseFloat(threshold), bSaltbridge, 'graph', true );
 
             resid2Residhash = me.icn3d.cloneHash(me.icn3d.resid2Residhash);
         }
-
         var ionicStr = me.getGraphLinks(resid2Residhash, resid2Residhash, me.ionicInsideColor, labelType, me.ionicInsideValue);
 
         return ionicStr;
