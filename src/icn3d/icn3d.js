@@ -1375,6 +1375,10 @@ iCn3D.prototype = {
         this.lines = {};     // hash of name -> a list of solid or dashed lines. Each line contains 'position1', 'position2', 'color', and a boolean of 'dashed'
                             // line name could be custom, hbond, ssbond, distance
 
+        // used for interactions
+        this.resids2inter = {};
+        this.resids2interAll = {};
+
         this.rotateCount = 0;
         this.rotateCountMax = 20;
     },

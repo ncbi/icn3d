@@ -46,6 +46,47 @@ iCn3DUI.prototype.showSelection = function () { var me = this; //"use strict";
 
     // show selected chains in annotation window
     me.showAnnoSelectedChains();
+
+    // update 2d graph
+    if(me.graphStr !== undefined) {
+      me.graphStr = me.getGraphDataForDisplayed();
+
+      me.drawGraph(me.graphStr);
+    }
+};
+
+iCn3DUI.prototype.getGraphDataForDisplayed = function () { var me = this; //"use strict";
+      var graphJson = JSON.parse(me.graphStr);
+
+      var residHash = me.icn3d.getResiduesFromAtoms(me.icn3d.dAtoms);
+
+      var nodeArray = [], linkArray = [];
+
+      var nodeHash = {};
+      for(var i = 0, il = graphJson.nodes.length; i < il; ++i) {
+          var node = graphJson.nodes[i];
+          var resid = node.r.substr(4); // 1_1_1KQ2_A_1
+
+          if(residHash.hasOwnProperty(resid)) {
+              nodeArray.push(node);
+              nodeHash[node.id] = 1;
+          }
+      }
+
+      for(var i = 0, il = graphJson.links.length; i < il; ++i) {
+          var link = graphJson.links[i];
+
+          if(nodeHash.hasOwnProperty(link.source) && nodeHash.hasOwnProperty(link.target)) {
+              linkArray.push(link);
+          }
+      }
+
+      graphJson.nodes = nodeArray;
+      graphJson.links = linkArray;
+
+      me.graphStr = JSON.stringify(graphJson);
+
+      return me.graphStr;
 };
 
 iCn3DUI.prototype.hideSelection = function () { var me = this; //"use strict";

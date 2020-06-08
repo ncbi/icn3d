@@ -133,7 +133,7 @@ iCn3D.prototype.residueName2Abbr = function(residueName) { var me = this; //"use
       break;
 
     default:
-      return residueName;
+      return residueName.trim();
   }
 };
 

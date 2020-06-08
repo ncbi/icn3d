@@ -1282,7 +1282,7 @@ iCn3DUI.prototype.applyCommand = function (commandStr) { var me = this; //"use s
     me.icn3d.draw();
   }
   else if(command == 'set halogen pi off') {
-    me.icn3d.hideHalogenpi();
+    me.icn3d.hideHalogenPi();
     me.icn3d.draw();
   }
 
@@ -1657,6 +1657,9 @@ iCn3DUI.prototype.applyCommand = function (commandStr) { var me = this; //"use s
   }
 
   else if(commandOri.indexOf('select saved atoms') == 0 || commandOri.indexOf('select sets') == 0) {
+    // backward compatible: convert previous aligned_protein to protein_aligned
+    commandOri = commandOri.replace(/aligned_protein/g, 'protein_aligned');
+
     var paraArray = commandOri.split(' | '); // atom names might be case-sensitive
 
     var select = paraArray[0].replace(/,/g, ' or ');
@@ -2021,6 +2024,16 @@ iCn3DUI.prototype.applyCommand = function (commandStr) { var me = this; //"use s
     me.pushcenter = parseInt(command.substr(pos + 1));
 
     $("#" + me.svgid + "_pushcenter").val(me.pushcenter);
+
+    if(me.graphStr !== undefined && me.icn3d.bRender) {
+       me.drawGraph(me.graphStr);
+    }
+  }
+  else if(command.indexOf('graph force') == 0) {
+    var pos = command.lastIndexOf(' ');
+    me.force = parseInt(command.substr(pos + 1));
+
+    $("#" + me.svgid + "_force").val(me.force);
 
     if(me.graphStr !== undefined && me.icn3d.bRender) {
        me.drawGraph(me.graphStr);

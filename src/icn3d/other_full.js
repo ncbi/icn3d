@@ -7,8 +7,8 @@
 iCn3D.prototype.isHbondDonorAcceptor = function (atom) { var me = this; //"use strict";
   if( (atom.name == 'N' && !atom.het ) // backbone
     || (atom.elem == 'N' && atom.resn == 'Arg')
-    //|| (atom.elem == 'N' && atom.resn == 'Asn')
-    //|| (atom.elem == 'N' && atom.resn == 'Gln')
+    || (atom.elem == 'N' && atom.resn == 'Asn')
+    || (atom.elem == 'N' && atom.resn == 'Gln')
     || (atom.elem == 'N' && atom.resn == 'Lys')
     || (atom.elem == 'N' && atom.resn == 'Trp')
     ) {
@@ -16,9 +16,9 @@ iCn3D.prototype.isHbondDonorAcceptor = function (atom) { var me = this; //"use s
   }
   else if( (atom.name == 'O' && !atom.het ) // backbone
     || (atom.elem == 'S' && atom.resn == 'Met')
-    //|| (atom.elem == 'O' && atom.resn == 'Asn')
+    || (atom.elem == 'O' && atom.resn == 'Asn')
     || (atom.elem == 'O' && atom.resn == 'Asp')
-    //|| (atom.elem == 'O' && atom.resn == 'Gln')
+    || (atom.elem == 'O' && atom.resn == 'Gln')
     || (atom.elem == 'O' && atom.resn == 'Glu')
     ) {
       return 'acceptor';
@@ -28,11 +28,6 @@ iCn3D.prototype.isHbondDonorAcceptor = function (atom) { var me = this; //"use s
     || (atom.elem == 'O' && atom.resn == 'Ser')
     || (atom.elem == 'O' && atom.resn == 'Thr')
     || (atom.elem == 'O' && atom.resn == 'Tyr')
-    // X-ray can not differentiate N and O
-    || (atom.elem == 'N' && atom.resn == 'Asn')
-    || (atom.elem == 'O' && atom.resn == 'Asn')
-    || (atom.elem == 'N' && atom.resn == 'Gln')
-    || (atom.elem == 'O' && atom.resn == 'Gln')
     ) {
       return 'both';
   }
@@ -41,6 +36,9 @@ iCn3D.prototype.isHbondDonorAcceptor = function (atom) { var me = this; //"use s
   }
   // if the Nitrogen has one or two non-hydrogen bonded atom, the nitrogen is a donor
   else if(atom.elem == 'N') {
+      // X-ray can not differentiate N and O
+      if(atom.resn == 'Asn' || atom.resn == 'Gln') return 'both';
+
       var cnt = 0, cntN = 0;
       for(var k = 0, kl = atom.bonds.length; k < kl; ++k) {
           if(this.atoms[atom.bonds[k]].elem == 'H') {
@@ -81,6 +79,9 @@ iCn3D.prototype.isHbondDonorAcceptor = function (atom) { var me = this; //"use s
   }
   // if the neighboring C of Oxygen has two or more bonds with O or N, the oxygen is an acceptor
   else if(atom.elem == 'O' && atom.bonds.length == 1) {
+      // X-ray can not differentiate N and O
+      if(atom.resn == 'Asn' || atom.resn == 'Gln') return 'both';
+
       for(var k = 0, kl = atom.bonds.length; k < kl; ++k) {
           if(this.atoms[atom.bonds[k]].elem == 'H') {
               return 'donor';
@@ -202,13 +203,13 @@ iCn3D.prototype.isValidHbond = function (atom, atomHbond, threshold) { var me = 
       var donorAtom, acceptorAtom;
 
       if( (atomType == 'donor' &&  (atomHbondType == 'acceptor' || atomHbondType == 'both' || atomHbondType == 'ring'))
-        || (atomHbondType == 'acceptor ' && (atomType == 'donor' || atomType == 'both' || atomType == 'ring'))
+        || (atomHbondType == 'acceptor' && (atomType == 'donor' || atomType == 'both' || atomType == 'ring'))
         ) {
           donorAtom = atom;
           acceptorAtom = atomHbond;
       }
       else if( (atomType == 'acceptor' &&  (atomHbondType == 'donor' || atomHbondType == 'both' || atomHbondType == 'ring'))
-        || (atomHbondType == 'donor ' && (atomType == 'acceptor' || atomType == 'both' || atomType == 'ring'))
+        || (atomHbondType == 'donor' && (atomType == 'acceptor' || atomType == 'both' || atomType == 'ring'))
         ) {
           acceptorAtom = atom;
           donorAtom = atomHbond;
@@ -245,6 +246,7 @@ iCn3D.prototype.isValidHbond = function (atom, atomHbond, threshold) { var me = 
 
       //if (idealGeometry[donor.index] === AtomGeometry.Trigonal){ // 120
         var outOfPlane1 = this.calcPlaneAngle(donorAtom, acceptorAtom);
+
         if (outOfPlane1 !== undefined && outOfPlane1 > maxHbondDonPlaneAngle) {
             return false;
         }
@@ -419,6 +421,11 @@ iCn3D.prototype.calculateChemicalHbonds = function (startAtoms, targetAtoms, thr
               if(!this.isValidHbond(atom, atomHbond[j], threshold)) continue;
           }
 
+          // too many hydrogen bonds for one atom
+          if(hbondCnt[atom.serial] > 2 || hbondCnt[atomHbond[j].serial] > 2) {
+              continue;
+          }
+
           if(hbondCnt[atom.serial] === undefined) {
               hbondCnt[atom.serial] = 1;
           }
@@ -431,11 +438,6 @@ iCn3D.prototype.calculateChemicalHbonds = function (startAtoms, targetAtoms, thr
           }
           else {
               ++hbondCnt[atomHbond[j].serial];
-          }
-
-          // too many hydrogen bonds for one atom
-          if(hbondCnt[atom.serial] > 2 || hbondCnt[atomHbond[j].serial] > 2) {
-              continue;
           }
 
           // output hydrogen bonds
