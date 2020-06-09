@@ -8,7 +8,7 @@ iCn3DUI.prototype.drawGraph = function (jsonStr) {  var me = this; //"use strict
     if (typeof d3v4 == 'undefined')
         d3v4 = d3;
 
-    if(me.icn3d.bRender !== true) return;
+    //if(me.icn3d.bRender !== true) return;
 
     var graph = JSON.parse(jsonStr);
 
@@ -108,7 +108,7 @@ iCn3DUI.prototype.drawGraph = function (jsonStr) {  var me = this; //"use strict
     }
 
     // remove the internal edges when no force
-    if(!me.force && me.hideedges) {
+    if(me.hideedges) {
         var links2 = [];
         for (i = 0; i < graph.links.length; i++) {
             if(graph.links[i].c != 'FFF') {
@@ -141,12 +141,13 @@ iCn3DUI.prototype.drawGraph = function (jsonStr) {  var me = this; //"use strict
           })
         .attr("stroke-width", function(d) {
             if(d.v == me.contactValue || d.v == me.contactInsideValue
-              || d.v == me.hbondValue || d.v == me.hbondInsideValue
-              || d.v == me.ionicValue || d.v == me.ionicInsideValue
-              || d.v == me.halogenValue || d.v == me.halogenInsideValue
-              || d.v == me.picationValue || d.v == me.picationInsideValue
-              || d.v == me.pistackingValue || d.v == me.pistackingInsideValue) return "1px";
-            else if(d.v == me.ssbondValue || d.v == me.clbondValue) return "2px";
+              || d.v == me.hbondInsideValue || d.v == me.ionicInsideValue
+              || d.v == me.halogenInsideValue || d.v == me.picationInsideValue
+              || d.v == me.pistackingInsideValue) return "1px";
+            else if(d.v == me.hbondValue || d.v == me.ionicValue
+              || d.v == me.halogenValue || d.v == me.picationValue
+              || d.v == me.pistackingValue) return "2px";
+            else if(d.v == me.ssbondValue || d.v == me.clbondValue) return "3px";
             else return d.v + "px";
           });
 
@@ -201,7 +202,7 @@ iCn3DUI.prototype.drawGraph = function (jsonStr) {  var me = this; //"use strict
     var dist_pication = parseInt($("#" + me.pre + "dist_pication").val());
     var dist_pistacking = parseInt($("#" + me.pre + "dist_pistacking").val());
 
-    var simulation = d3v4.forceSimulation()
+    me.simulation = d3v4.forceSimulation()
         .force("link", d3v4.forceLink()
             .id(function(d) { return d.id; })
             .distance(function(d) {
@@ -254,35 +255,37 @@ iCn3DUI.prototype.drawGraph = function (jsonStr) {  var me = this; //"use strict
         .force("center", d3v4.forceCenter(parentWidth / 2, parentHeight / 2));
 
     if(me.force) {
-        simulation.force("charge", d3v4.forceManyBody());
+        me.simulation.force("charge", d3v4.forceManyBody());
     }
 
-    //simulation.force("x", d3v4.forceX(parentWidth/2))
+    //me.simulation.force("x", d3v4.forceX(parentWidth/2))
     //    .force("y", d3v4.forceY(parentHeight/2));
 
     if(me.force == 1) {  // x-axis
-        simulation.force("x", d3v4.forceX(function(d) {
+        me.simulation.force("x", d3v4.forceX(function(d) {
             if(d.s == 'a') {
                 return parentWidth/4;
             }
             else {
                 return parentWidth * 0.75;
             }
-        }).strength(function(d) { return 0.4;}) );
+        }).strength(function(d) { return 0.4;}) )
+        .force("y", d3v4.forceY(parentHeight/2).strength(function(d) { return 0.02;}));
 
     }
     else if(me.force == 2) { // y-axis
-        simulation.force("y", d3v4.forceY(function(d) {
+        me.simulation.force("y", d3v4.forceY(function(d) {
             if(d.s == 'a') {
                 return parentHeight * 0.75;
             }
             else {
                 return parentHeight/4;
             }
-        }).strength(function(d) { return 0.4;}) );
+        }).strength(function(d) { return 0.4;}) )
+        .force("x", d3v4.forceX(parentWidth/2).strength(function(d) { return 0.02;}));
     }
     else if(me.force == 3) { // circle
-        simulation.force("r", d3v4.forceRadial(function(d) {
+        me.simulation.force("r", d3v4.forceRadial(function(d) {
             if(d.s == 'a') {
                 return 200;
             }
@@ -296,19 +299,19 @@ iCn3DUI.prototype.drawGraph = function (jsonStr) {  var me = this; //"use strict
         // do nothing
     }
 
-    simulation
+    me.simulation
         .nodes(graph.nodes)
         .on("tick", ticked);
 
-    simulation.force("link")
+    me.simulation.force("link")
         .links(graph.links);
 
-//    simulation.stop();
-//    simulation.restart();
+//    me.simulation.stop();
+//    me.simulation.restart();
 
     function ticked() {
         // update node and line positions at every step of
-        // the force simulation
+        // the force me.simulation
         link.attr("x1", function(d) { return d.source.x; })
             .attr("y1", function(d) { return parentHeight - d.source.y; })
             .attr("x2", function(d) { return d.target.x; })
@@ -415,7 +418,7 @@ iCn3DUI.prototype.drawGraph = function (jsonStr) {  var me = this; //"use strict
     }
 
     function dragstarted(d) {
-      if (!d3v4.event.active) simulation.alphaTarget(0.9).restart();
+      if (!d3v4.event.active) me.simulation.alphaTarget(0.9).restart();
 
         if (!d.selected && !ctrlKey) {
             // if this node isn't selected, then we have to unselect every other node
@@ -445,7 +448,7 @@ iCn3DUI.prototype.drawGraph = function (jsonStr) {  var me = this; //"use strict
     }
 
     function dragended(d) {
-      if (!d3v4.event.active) simulation.alphaTarget(0);
+      if (!d3v4.event.active) me.simulation.alphaTarget(0);
       d.fx = null;
       d.fy = null;
         node.filter(function(d) { return d.selected; })
@@ -498,7 +501,7 @@ iCn3DUI.prototype.drawGraph = function (jsonStr) {  var me = this; //"use strict
 //        .style("stroke", "#4679BD")
 //        .style("opacity", "0.6");
 
-    var simulation = d3.forceSimulation()
+    var me.simulation = d3.forceSimulation()
         .force("link", d3.forceLink().id(function(d) { return d.id; }))
         .force("charge", d3.forceManyBody())
         .force("center", d3.forceCenter(width / 2, height / 2));
@@ -530,7 +533,7 @@ iCn3DUI.prototype.drawGraph = function (jsonStr) {  var me = this; //"use strict
           .attr("fill", function(d) { return "#" + d.c; })
           .call(d3.drag()
               .on("start", function (d) {  var me = this; //"use strict";
-                  if (!d3.event.active) simulation.alphaTarget(0.3).restart();
+                  if (!d3.event.active) me.simulation.alphaTarget(0.3).restart();
                   d.fx = d.x;
                   d.fy = d.y;
                 })
@@ -539,7 +542,7 @@ iCn3DUI.prototype.drawGraph = function (jsonStr) {  var me = this; //"use strict
                   d.fy = d3.event.y;
                 })
               .on("end", function (d) {  var me = this; //"use strict";
-                  if (!d3.event.active) simulation.alphaTarget(0);
+                  if (!d3.event.active) me.simulation.alphaTarget(0);
                   d.fx = null;
                   d.fy = null;
                 }));
@@ -555,11 +558,11 @@ iCn3DUI.prototype.drawGraph = function (jsonStr) {  var me = this; //"use strict
       node.append("title")
           .text(function(d) { return d.id; });
 
-      simulation
+      me.simulation
           .nodes(graph.nodes)
           .on("tick", ticked);
 
-      simulation.force("link")
+      me.simulation.force("link")
           .links(graph.links);
 
       function ticked() {
