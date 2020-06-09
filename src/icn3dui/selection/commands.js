@@ -1962,6 +1962,7 @@ iCn3DUI.prototype.applyCommand = function (commandStr) { var me = this; //"use s
       || commandOri.indexOf('view interaction pairs') == 0
       || commandOri.indexOf('save1 interaction pairs') == 0
       || commandOri.indexOf('save2 interaction pairs') == 0
+      || commandOri.indexOf('line graph interaction pairs') == 0
       ) {
     var paraArray = commandOri.split(' | ');
     if(paraArray.length >= 3) {
@@ -2010,6 +2011,9 @@ iCn3DUI.prototype.applyCommand = function (commandStr) { var me = this; //"use s
         }
         else if(commandOri.indexOf('save2 interaction pairs') == 0) {
             type = 'save2';
+        }
+        else if(commandOri.indexOf('line graph interaction pairs') == 0) {
+            type = 'linegraph';
         }
 
         me.viewInteractionPairs(nameArray2, nameArray, bHbondCalc, type, bHbond, bSaltbridge, bInteraction, bHalogen, bPication, bPistacking);

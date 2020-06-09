@@ -1660,6 +1660,8 @@ iCn3DUI.prototype.setDialogs = function() { var me = this; //"use strict";
     html += "<div>4. " + me.buttonStr + "applyhbonds'>3D Display Interactions</button></div><br>";
     html += "<div style='text-indent:1.1em'>" + me.buttonStr + "hbondWindow'>Highlight Interactions in Table</button><span style='margin-left:30px; font-wieght:bold'>Sort Interactions on</span>: " + me.buttonStr + "sortSet1'> Set 1</button>" + me.buttonStr + "sortSet2' style='margin-left:20px'>Set 2</button></div><br>";
 
+    html += "<div style='text-indent:1.1em'>" + me.buttonStr + "hbondLineGraph'>2D Interaction Graph</button> to show interactions in two lines of residue nodes</div><br>";
+
     html += "<div style='text-indent:1.1em'>" + me.buttonStr + "hbondGraph'>2D Graph (Force-Directed)</button> to show interactions with strength parameters in 0-200:</div>";
     html += '<div style="text-indent:1.1em"><table><tr><td>Helix or Sheet: </td><td><input style="margin-left:-12px" type="text" id="' + me.pre + 'dist_ss" size="4" value="100"></td>';
     html += '<td>Coil or Nucleotide: </td><td><input style="margin-left:-12px" type="text" id="' + me.pre + 'dist_coil" size="4" value="50"></td>';
@@ -1691,6 +1693,28 @@ iCn3DUI.prototype.setDialogs = function() { var me = this; //"use strict";
     html += "</div>";
 
     html += me.divStr + "dl_interactionsorted' style='background-color:white'>";
+    html += "</div>";
+
+    html += me.divStr + "dl_linegraph' style='background-color:white'>";
+
+    html += me.divNowrapStr + "Hold Ctrl key to select multiple nodes/lines.&nbsp;&nbsp;&nbsp;";
+
+    html += '<div style="width:20px; margin-top:6px; display:inline-block;"><span id="'
+      + me.pre + 'dl_linegraphcolor_expand" class="ui-icon ui-icon-plus icn3d-expand icn3d-link" style="width:15px;" title="Expand"></span><span id="'
+      + me.pre + 'dl_linegraphcolor_shrink" class="ui-icon ui-icon-minus icn3d-shrink icn3d-link" style="display:none; width:15px;" title="Shrink"></span></div></div>';
+    html += me.divStr + "dl_linegraphcolor' style='display:none;'>";
+    html += me.divNowrapStr + '<span style="margin-left:33px; color:#00FF00; font-weight:bold">Green</span>: H-Bonds; ';
+    html += '<span style="color:#00FFFF; font-weight:bold">Cyan</span>: Salt Bridge/Ionic; ';
+    html += '<span style="font-weight:bold">Grey</span>: contacts</div>';
+    html += me.divNowrapStr + '<span style="margin-left:33px; color:#FF00FF; font-weight:bold">Magenta</span>: Halogen Bonds; ';
+    html += '<span style="color:#FF0000; font-weight:bold">Red</span>: &pi;-Cation; ';
+    html += '<span style="color:#0000FF; font-weight:bold">Blue</span>: &pi;-Stacking</div>';
+    html += "</div>";
+
+    html += me.divNowrapStr + '<button class="icn3d-commandTitle" style="-webkit-appearance:button; height:24px;background-color:#DDDDDD;" id="' + me.linegraphid + '_svg">SVG</button>&nbsp;&nbsp;';
+    html += '<button class="icn3d-commandTitle" style="-webkit-appearance:button; height:24px;background-color:#DDDDDD;" id="' + me.linegraphid + '_png">PNG</button></div><br>';
+    html += '<div id="' + me.pre + 'linegraphDiv"></div>';
+
     html += "</div>";
 
     html += me.divStr + "dl_elecmap2fofc'>";
@@ -1990,8 +2014,15 @@ iCn3DUI.prototype.setDialogs = function() { var me = this; //"use strict";
     html += "</div>";
 
     html += me.divNowrapStr + '<button class="icn3d-commandTitle" style="-webkit-appearance:button; height:24px;background-color:#DDDDDD;" id="' + me.svgid + '_svg">SVG</button>&nbsp;&nbsp;';
-    html += '<button class="icn3d-commandTitle" style="-webkit-appearance:button; height:24px;background-color:#DDDDDD;" id="' + me.svgid + '_png">PNG</button>&nbsp;&nbsp;&nbsp;';
-    html += "<b>Label Size</b>: <select id='" + me.svgid + "_label'>";
+    html += '<button class="icn3d-commandTitle" style="-webkit-appearance:button; height:24px;background-color:#DDDDDD;" id="' + me.svgid + '_png">PNG</button>';
+    html += "&nbsp;&nbsp;&nbsp;<b>Force on Nodes</b>: <select id='" + me.svgid + "_force'>";
+    html += optionStr + "'0'>No</option>";
+    html += optionStr + "'1'>X-axis</option>";
+    html += optionStr + "'2'>Y-axis</option>";
+    html += optionStr + "'3'>Circle</option>";
+    html += optionStr + "'4' selected>Random</option>";
+    html += "</select>";
+    html += "&nbsp;&nbsp;&nbsp;<b>Label Size</b>: <select id='" + me.svgid + "_label'>";
     html += optionStr + "'icn3d-node-text0'>No</option>";
     html += optionStr + "'icn3d-node-text4'>4px</option>";
     html += optionStr + "'icn3d-node-text8' selected>8px</option>";
@@ -2008,13 +2039,6 @@ iCn3DUI.prototype.setDialogs = function() { var me = this; //"use strict";
     //html += optionStr + "'1'>Yes</option>";
     //html += optionStr + "'0' selected>No</option>";
     //html += "</select>";
-    html += "&nbsp;&nbsp;&nbsp;<b>Force on Nodes</b>: <select id='" + me.svgid + "_force'>";
-    html += optionStr + "'0'>No</option>";
-    html += optionStr + "'1' selected>X-axis</option>";
-    html += optionStr + "'2'>Y-axis</option>";
-    html += optionStr + "'3'>Circle</option>";
-    html += optionStr + "'4'>Random</option>";
-    html += "</select>";
     html += "</div>";
 
     html += '<svg id="' + me.svgid + '" style="margin-top:6px;"></svg>';

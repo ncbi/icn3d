@@ -539,12 +539,20 @@ iCn3DUI.prototype.highlightNode = function(type, highlight, base, ratio) { var m
     }
 };
 
+iCn3DUI.prototype.removeLineGraphSelection = function() { var me = this; //"use strict";
+      $("#" + me.pre + "dl_linegraph circle").attr('stroke', '#000000');
+      $("#" + me.pre + "dl_linegraph circle").attr('stroke-width', 1);
+
+      $("#" + me.pre + "dl_linegraph svg line").attr('stroke', '#000000');
+      $("#" + me.pre + "dl_linegraph line").attr('stroke-width', 1);
+};
+
 iCn3DUI.prototype.click2Ddgm = function() { var me = this; //"use strict";
     $("#" + me.pre + "dl_2ddgm").on("click", ".icn3d-node", function(e) {
           e.stopImmediatePropagation();
         if(Object.keys(me.icn3d.hAtoms).length < Object.keys(me.icn3d.atoms).length) me.setMode('selection');
 
-        me.bClickInteraction = false;
+        //me.bClickInteraction = false;
 
         var chainid = $(this).attr('chainid');
 
@@ -581,33 +589,6 @@ iCn3DUI.prototype.click2Ddgm = function() { var me = this; //"use strict";
         else {
             me.icn3d.hAtoms = me.icn3d.unionHash(me.icn3d.hAtoms, me.icn3d.chains[chainid]);
         }
-
-/*
-        // highlight on 3D structure
-        me.icn3d.removeHlObjects();
-
-        me.icn3d.addHlObjects();
-
-        // highlight on 2D diagram
-        if(!me.icn3d.bCtrl && !me.icn3d.bShift) {
-            me.chainArray2d = [chainid];
-        }
-        else {
-            if(me.chainArray2d === undefined) me.chainArray2d = [];
-            me.chainArray2d.push(chainid);
-        }
-
-        // highlight residues in annotation window and alignment window
-        var residueArray = [];
-        for(var i = 0, il = me.chainArray2d.length; i < il; ++i) {
-            var chainid = me.chainArray2d[i];
-            for(var j = 0, jl = me.icn3d.chainsSeq[chainid].length; j < jl; ++j) {
-                residueArray.push(chainid + '_' + me.icn3d.chainsSeq[chainid][j].resi);
-            }
-        }
-
-        me.hlSeq(residueArray);
-*/
 
         // get the name array
         if(!me.icn3d.bCtrl && !me.icn3d.bShift) {
@@ -655,6 +636,58 @@ iCn3DUI.prototype.click2Ddgm = function() { var me = this; //"use strict";
         me.setLogCmd(select, true);
 
         me.bClickInteraction = false;
+    });
+
+    $("#" + me.pre + "dl_linegraph").on("click", ".icn3d-node", function(e) {
+          e.stopImmediatePropagation();
+        if(Object.keys(me.icn3d.hAtoms).length < Object.keys(me.icn3d.atoms).length) me.setMode('selection');
+
+        var resid = $(this).attr('resid');
+
+        if(!me.icn3d.bCtrl && !me.icn3d.bShift) {
+          me.icn3d.hAtoms = {};
+
+          me.removeLineGraphSelection();
+        }
+
+        var strokeWidth = 3;
+        $(this).find('circle').attr('stroke', me.ORANGE);
+        $(this).find('circle').attr('stroke-width', strokeWidth);
+
+        me.icn3d.hAtoms = me.icn3d.unionHash(me.icn3d.hAtoms, me.icn3d.residues[resid]);
+
+        var select = 'select ' + me.residueids2spec([resid]);
+
+        me.updateHlAll();
+
+        me.setLogCmd(select, true);
+
+        me.bSelectResidue = false;
+    });
+
+    $("#" + me.pre + "dl_linegraph").on("click", ".icn3d-interaction", function(e) {
+          e.stopImmediatePropagation();
+        if(Object.keys(me.icn3d.hAtoms).length < Object.keys(me.icn3d.atoms).length) me.setMode('selection');
+
+        var resid1 = $(this).attr('resid1');
+        var resid2 = $(this).attr('resid2');
+
+        if(!me.icn3d.bCtrl && !me.icn3d.bShift) {
+          me.icn3d.hAtoms = {};
+
+          me.removeLineGraphSelection();
+        }
+
+        $(this).find('line').attr('stroke', me.ORANGE);
+
+        me.icn3d.hAtoms = me.icn3d.unionHash(me.icn3d.hAtoms, me.icn3d.residues[resid1]);
+        me.icn3d.hAtoms = me.icn3d.unionHash(me.icn3d.hAtoms, me.icn3d.residues[resid2]);
+
+        var select = 'select ' + me.residueids2spec([resid1, resid2]);
+
+        me.updateHlAll();
+
+        me.setLogCmd(select, true);
     });
 };
 
