@@ -106,7 +106,7 @@ var iCn3DUI = function(cfg) { var me = this; //"use strict";
 
     // used in graph
     me.ssValue = 3;
-    me.coilValue = 2;
+    me.coilValue = 3;
 
     me.contactValue = 11;
     me.contactInsideValue = 12;
@@ -7186,7 +7186,7 @@ iCn3DUI.prototype = {
            }
 
            if(me.graphStr !== undefined) {
-               me.drawGraph(me.graphStr);
+               if(me.icn3d.bRender && me.force) me.drawGraph(me.graphStr);
 
                me.setLogCmd("hide edges " + me.hideedges, true);
            }
@@ -7212,9 +7212,9 @@ iCn3DUI.prototype = {
            me.force = parseInt($("#" + me.svgid + "_force").val());
 
            if(me.graphStr !== undefined) {
-               me.drawGraph(me.graphStr);
-
                me.setLogCmd("graph force " + me.force, true);
+
+               me.handleForce();
            }
         });
 
@@ -7227,6 +7227,22 @@ iCn3DUI.prototype = {
            me.setLogCmd("reset interaction pairs", true);
         });
 
+    },
+
+    handleForce: function() { var me = this; //"use strict";
+       if(me.force == 0 && me.simulation !== undefined) {
+           me.simulation.stop();
+
+           me.simulation.force("charge", null);
+           me.simulation.force("x", null);
+           me.simulation.force("y", null);
+           me.simulation.force("r", null);
+
+           me.simulation.force("link", null);
+       }
+       else {
+           me.drawGraph(me.graphStr);
+       }
     },
 
     resetInteractionPairs: function() { var me = this; //"use strict";
@@ -7500,7 +7516,8 @@ iCn3DUI.prototype = {
 
                        $("#" + me.svgid).empty();
                        me.openDialog(me.pre + 'dl_graph', 'Force-directed graph');
-                       if(me.icn3d.bRender) me.drawGraph(me.graphStr);
+                       //if(me.icn3d.bRender) me.drawGraph(me.graphStr);
+                       me.drawGraph(me.graphStr);
 
                        if(me.deferredGraphinteraction !== undefined) me.deferredGraphinteraction.resolve();
                   },
@@ -7521,7 +7538,8 @@ iCn3DUI.prototype = {
            else {
                $("#" + me.svgid).empty();
                me.openDialog(me.pre + 'dl_graph', 'Force-directed graph');
-               if(me.icn3d.bRender) me.drawGraph(me.graphStr);
+               //if(me.icn3d.bRender) me.drawGraph(me.graphStr);
+               me.drawGraph(me.graphStr);
            }
        }
 

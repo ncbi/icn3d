@@ -2042,9 +2042,7 @@ iCn3DUI.prototype.applyCommand = function (commandStr) { var me = this; //"use s
 
     $("#" + me.svgid + "_force").val(me.force);
 
-    if(me.graphStr !== undefined && me.icn3d.bRender) {
-       me.drawGraph(me.graphStr);
-    }
+    me.handleForce();
   }
   else if(command.indexOf('hide edges') == 0) {
     var pos = command.lastIndexOf(' ');
@@ -2063,7 +2061,7 @@ iCn3DUI.prototype.applyCommand = function (commandStr) { var me = this; //"use s
         me.ionicInsideColor = '8FF';
     }
 
-    if(me.graphStr !== undefined && me.icn3d.bRender) {
+    if(me.graphStr !== undefined && me.icn3d.bRender && me.force) {
        me.drawGraph(me.graphStr);
     }
   }
