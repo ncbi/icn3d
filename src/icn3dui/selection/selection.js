@@ -50,9 +50,10 @@ iCn3DUI.prototype.showSelection = function () { var me = this; //"use strict";
     // update 2d graph
     if(me.graphStr !== undefined) {
       me.graphStr = me.getGraphDataForDisplayed();
-
-      me.drawGraph(me.graphStr);
     }
+
+    if(me.bGraph) me.drawGraph(me.graphStr);
+    if(me.bLinegraph) me.drawLineGraph(me.graphStr);
 };
 
 iCn3DUI.prototype.getGraphDataForDisplayed = function () { var me = this; //"use strict";

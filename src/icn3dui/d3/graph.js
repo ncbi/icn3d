@@ -461,9 +461,9 @@ iCn3DUI.prototype.drawGraph = function (jsonStr) {  var me = this; //"use strict
     return graph;
 };
 
-iCn3DUI.prototype.getSvgXml = function () {  var me = this; //"use strict";
+iCn3DUI.prototype.getSvgXml = function (id) {  var me = this; //"use strict";
     // font is not good
-    var svg_data = document.getElementById(me.svgid).innerHTML; //put id of your svg element here
+    var svg_data = document.getElementById(id).innerHTML; //put id of your svg element here
 
     var head = "<svg title=\"graph\" version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\">";
 
@@ -475,20 +475,17 @@ iCn3DUI.prototype.getSvgXml = function () {  var me = this; //"use strict";
     return full_svg;
 };
 
-iCn3DUI.prototype.saveSvg = function (filename) {  var me = this; //"use strict";
-    var svg = me.getSvgXml();
+iCn3DUI.prototype.saveSvg = function (id, filename) {  var me = this; //"use strict";
+    var svg = me.getSvgXml(id);
 
     var blob = new Blob([svg], {type: "image/svg+xml"});
     saveAs(blob, filename);
 };
 
-iCn3DUI.prototype.savePng = function (filename) {  var me = this; //"use strict";
+iCn3DUI.prototype.savePng = function (id, filename, width, height) {  var me = this; //"use strict";
     // https://stackoverflow.com/questions/3975499/convert-svg-to-image-jpeg-png-etc-in-the-browser
-    var svg = document.getElementById(me.svgid);
+    var svg = document.getElementById(id);
     var bbox = svg.getBBox();
-
-    var width = $("#" + me.pre + "dl_graph").width();
-    var height = $("#" + me.pre + "dl_graph").height();
 
     var copy = svg.cloneNode(true);
     me.copyStylesInline(copy, svg);
@@ -499,7 +496,7 @@ iCn3DUI.prototype.savePng = function (filename) {  var me = this; //"use strict"
     var ctx = canvas.getContext("2d");
     ctx.clearRect(0, 0, bbox.width, bbox.height);
 
-    var data = me.getSvgXml(); //(new XMLSerializer()).serializeToString(copy); //me.getSvgXml();
+    var data = me.getSvgXml(id); //(new XMLSerializer()).serializeToString(copy); //me.getSvgXml();
     var DOMURL = window.URL || window.webkitURL || window;
     var svgBlob = new Blob([data], {type: "image/svg+xml;charset=utf-8"});
 
