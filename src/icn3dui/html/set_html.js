@@ -73,6 +73,8 @@ iCn3DUI.prototype.setTopMenusHtmlMobile = function (id) { var me = this; //"use 
 
     html += me.divStr + "popup' class='icn3d-text icn3d-popup'></div>";
 
+    html += me.setReplayHtml();
+
     if(!me.isMobile()) {
         var marginLeft = me.WIDTH - 40 + 5;
 
@@ -177,12 +179,32 @@ iCn3DUI.prototype.setTopMenusHtmlMobile = function (id) { var me = this; //"use 
     $("#" + me.pre + "accordion0").hover( function(){ $("#" + me.pre + "accordion0 div").css("display", "block"); }, function(){ $("#" + me.pre + "accordion0 div").css("display", "none"); } );
 };
 
+iCn3DUI.prototype.setReplayHtml = function (id) { var me = this; //"use strict";
+    var html = '';
+
+    html += me.divStr + "replay' style='display:none; position:absolute; z-index:1; top:" + parseInt(me.HEIGHT - 100).toString() + "px; left:20px;'>";
+    html += "<div title='Click to replay one step'><svg style='cursor:pointer;' fill='#f8b84e' viewBox='0 0 60 60' width='40' height='40'>";
+    html += '<circle style="fill:#EBBA16;" cx="29" cy="29" r="29"/>';
+    html += '<g>';
+    html += '<polygon style="fill:#FFFFFF;" points="44,29 22,44 22,29.273 22,14"/>';
+    html += '<path style="fill:#FFFFFF;" d="M22,45c-0.16,0-0.321-0.038-0.467-0.116C21.205,44.711,21,44.371,21,44V14c0-0.371,0.205-0.711,0.533-0.884c0.328-0.174,0.724-0.15,1.031,0.058l22,15C44.836,28.36,45,28.669,45,29s-0.164,0.64-0.437,0.826l-22,15C22.394,44.941,22.197,45,22,45z M23,15.893v26.215L42.225,29L23,15.893z"/>';
+    html += '</g>';
+    html += "</svg></div>";
+    html += me.divStr + "replay_menu' style='background-color:#DDDDDD; padding:3px; font-weight:bold;'></div>";
+    html += me.divStr + "replay_cmd' style='background-color:#DDDDDD; padding:3px; max-width:250px'></div>";
+    html += "</div>";
+
+    return html;
+};
+
 iCn3DUI.prototype.setTopMenusHtml = function (id) { var me = this; //"use strict";
     var html = "";
 
     html += "<div style='position:relative;'>";
 
     html += me.divStr + "popup' class='icn3d-text icn3d-popup'></div>";
+
+    html += me.setReplayHtml();
 
     html += "<!--https://forum.jquery.com/topic/looking-for-a-jquery-horizontal-menu-bar-->";
     html += me.divStr + "mnlist' style='position:absolute; z-index:999; float:left; display:table-row; margin-top: -2px;'>";
@@ -359,15 +381,15 @@ iCn3DUI.prototype.setMenu1_base = function() { var me = this; //"use strict";
     html += "</ul>";
     html += "</li>";
 
-    html += me.getLink('mn2_realignonseqalign', 'Realign Selection');
-/*
+    //html += me.getLink('mn2_realignonseqalign', 'Realign Selection');
+
     html += "<li id='" + me.pre + "mn2_realignWrap'><span>Realign Selection</span>";
     html += "<ul>";
     html += me.getRadio('mn2_realign', 'mn2_realignonseqalign', 'on Sequence Alignment', true);
     html += me.getRadio('mn2_realign', 'mn2_realignresbyres', 'Residue by Residue');
     html += "</ul>";
     html += "</li>";
-*/
+
     html += "<li><span>3D Printing</span>";
     html += "<ul>";
     if(me.cfg.cid === undefined) {
@@ -418,6 +440,13 @@ iCn3DUI.prototype.setMenu1_base = function() { var me = this; //"use strict";
     html += "</li>";
 
     html += me.getLink('mn1_sharelink', 'Share Link');
+
+    html += "<li><span>Replay Each Step</span>";
+    html += "<ul>";
+    html += me.getLink('mn1_replayon', 'On');
+    html += me.getLink('mn1_replayoff', 'Off');
+    html += "</ul>";
+    html += "</li>";
 
     html += "<li><br/></li>";
 
@@ -1586,6 +1615,8 @@ iCn3DUI.prototype.setDialogs = function() { var me = this; //"use strict";
     html += optionStr + "'3.8' selected>3.8</option>";
     html += optionStr + "'3.9'>3.9</option>";
     html += optionStr + "'4.0'>4.0</option>";
+    html += optionStr + "'4.1'>4.1</option>";
+    html += optionStr + "'4.2'>4.2</option>";
     html += "</select> &#197;&nbsp;&nbsp;&nbsp;</div></td>";
     html += "<td style='white-space:nowrap'>" + me.inputCheckStr + "id='" + me.pre + "analysis_saltbridge' checked>Salt Bridge/Ionic <span style='background-color:#" + me.ionicColor + "'>&nbsp;&nbsp;&nbsp;</span></td>";
     html += "<td>";
@@ -1594,6 +1625,7 @@ iCn3DUI.prototype.setDialogs = function() { var me = this; //"use strict";
     html += optionStr + "'4'>4</option>";
     html += optionStr + "'5'>5</option>";
     html += optionStr + "'6' selected>6</option>";
+    html += optionStr + "'7'>7</option>";
     html += optionStr + "'8'>8</option>";
     html += "</select> &#197;&nbsp;&nbsp;&nbsp;</div></td>";
     html += "<td style='white-space:nowrap'>" + me.inputCheckStr + "id='" + me.pre + "analysis_contact' checked>Contacts/Interactions <span style='background-color:#" + me.contactColor + "'>&nbsp;&nbsp;&nbsp;</span></td>";
@@ -1603,6 +1635,7 @@ iCn3DUI.prototype.setDialogs = function() { var me = this; //"use strict";
     html += optionStr + "'4' selected>4</option>";
     html += optionStr + "'5'>5</option>";
     html += optionStr + "'6'>6</option>";
+    html += optionStr + "'7'>7</option>";
     html += optionStr + "'8'>8</option>";
     html += "</select> &#197;&nbsp;&nbsp;&nbsp;</div></td>";
     html += "</tr>";
@@ -1622,6 +1655,8 @@ iCn3DUI.prototype.setDialogs = function() { var me = this; //"use strict";
     html += optionStr + "'3.8' selected>3.8</option>";
     html += optionStr + "'3.9'>3.9</option>";
     html += optionStr + "'4.0'>4.0</option>";
+    html += optionStr + "'4.1'>4.1</option>";
+    html += optionStr + "'4.2'>4.2</option>";
     html += "</select> &#197;&nbsp;&nbsp;&nbsp;</div></td>";
     html += "<td style='white-space:nowrap'>" + me.inputCheckStr + "id='" + me.pre + "analysis_pication' checked>&pi;-Cation <span style='background-color:#" + me.picationColor + "'>&nbsp;&nbsp;&nbsp;</span></td>";
     html += "<td>";
@@ -1630,6 +1665,7 @@ iCn3DUI.prototype.setDialogs = function() { var me = this; //"use strict";
     html += optionStr + "'4'>4</option>";
     html += optionStr + "'5'>5</option>";
     html += optionStr + "'6' selected>6</option>";
+    html += optionStr + "'7'>7</option>";
     html += optionStr + "'8'>8</option>";
     html += "</select> &#197;&nbsp;&nbsp;&nbsp;</div></td>";
     html += "<td style='white-space:nowrap'>" + me.inputCheckStr + "id='" + me.pre + "analysis_pistacking' checked>&pi;-Stacking <span style='background-color:#" + me.pistackingColor + "'>&nbsp;&nbsp;&nbsp;</span></td>";
@@ -1639,6 +1675,7 @@ iCn3DUI.prototype.setDialogs = function() { var me = this; //"use strict";
     html += optionStr + "'4'>4</option>";
     html += optionStr + "'5'>5</option>";
     html += optionStr + "'6' selected>6</option>";
+    html += optionStr + "'7'>7</option>";
     html += optionStr + "'8'>8</option>";
     html += "</select> &#197;&nbsp;&nbsp;&nbsp;</div></td>";
     html += "</tr></table></div>";

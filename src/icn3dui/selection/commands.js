@@ -21,13 +21,47 @@ iCn3DUI.prototype.loadScript = function (dataStr, bStatefile) { var me = this; /
   me.icn3d.commands = preCommands.concat(me.icn3d.commands);
   me.STATENUMBER = me.icn3d.commands.length;
 
-  if(bStatefile) {
-      me.execCommands(0, me.STATENUMBER-1, me.STATENUMBER);
+  if(bStatefile || me.cfg.replay) {
+      me.CURRENTNUMBER = 0;
   }
   else {
       // skip the first loading step
-      me.execCommands(1, me.STATENUMBER-1, me.STATENUMBER);
+      me.CURRENTNUMBER = 1;
   }
+
+  if(me.cfg.replay) {
+      me.replayFirstStep(me.CURRENTNUMBER);
+  }
+  else {
+      me.execCommands(me.CURRENTNUMBER, me.STATENUMBER-1, me.STATENUMBER);
+  }
+};
+
+iCn3DUI.prototype.replayFirstStep = function (currentNumber) { var me = this; //"use strict";
+      // fresh start
+      me.icn3d.reinitAfterLoad();
+
+      me.icn3d.opts = me.icn3d.cloneHash(me.opts);
+
+      me.execCommandsBase(currentNumber, currentNumber, me.STATENUMBER);
+
+      var pos = me.icn3d.commands[currentNumber].indexOf(' | ');
+      var cmdStrOri = me.icn3d.commands[currentNumber].substr(0, pos);
+      var maxLen = 20;
+      var cmdStr = (cmdStrOri.length > maxLen) ? cmdStrOri.substr(0, maxLen) + '...' : cmdStrOri;
+
+      var menuStr = me.getMenuFromCmd(cmdStr); // 'File > Retrieve by ID, Align';
+
+      $("#" + me.pre + "replay_cmd").html('Cmd: ' + cmdStr);
+      $("#" + me.pre + "replay_menu").html('Menu: ' + menuStr);
+
+      me.bCommandLoad = false;
+
+      // hide "loading ..."
+      me.hideLoading();
+
+      me.icn3d.bRender = true;
+      me.icn3d.draw();
 };
 
 iCn3DUI.prototype.loadSelection = function (dataStr) { var me = this; //"use strict";
@@ -1498,12 +1532,7 @@ iCn3DUI.prototype.applyCommand = function (commandStr) { var me = this; //"use s
       me.icn3d.setRotation(axis, angle);
   }
   else if(command === 'reset') {
-    //location.reload();
-    me.icn3d.reinitAfterLoad();
-    me.renderFinalStep(1);
-
-    // need to render
-    if(me.icn3d.bRender) me.icn3d.render();
+      me.resetAll();
   }
   else if(command === 'reset orientation') {
     me.icn3d.resetOrientation();
@@ -1619,9 +1648,9 @@ iCn3DUI.prototype.applyCommand = function (commandStr) { var me = this; //"use s
   else if(command == 'select side chains') {
      me.selectSideChains();
   }
-//  else if(command == 'realign') {
-//     me.realign();
-//  }
+  else if(command == 'realign') {
+     me.realign();
+  }
   else if(command == 'area') {
      me.calculateArea();
   }
@@ -2085,6 +2114,12 @@ iCn3DUI.prototype.applyCommand = function (commandStr) { var me = this; //"use s
     $("#" + me.pre + "yournote").val(yournote);
     document.title = yournote;
   }
+  else if(command == 'replay on') {
+    me.replayon();
+  }
+  else if(command == 'replay off') {
+    me.replayoff();
+  }
 
 // start with, single word =============
   else if(command.indexOf('pickatom') == 0) {
@@ -2128,6 +2163,9 @@ iCn3DUI.prototype.applyCommand = function (commandStr) { var me = this; //"use s
     me.icn3d.setColorByOptions(me.icn3d.opts, me.icn3d.hAtoms);
 
     me.updateHlAll();
+
+    // change graph color
+    me.updateGraphCOlor();
   }
   else if(commandOri.indexOf('custom tube') == 0) {
     var strArray = commandOri.split(" | ");
@@ -2251,3 +2289,173 @@ iCn3DUI.prototype.setQueryresi2score = function(strArray) { var me = this; //"us
         }
     }
 };
+
+iCn3DUI.prototype.getMenuFromCmd = function (cmd) { var me = this; //"use strict";
+    cmd = cmd.trim();
+
+    if(cmd.indexOf('load') == 0) return 'File > Retrieve by ID, Align';
+    else if(cmd.indexOf('set map') == 0 && cmd.indexOf('set map wireframe') == -1) return 'Style > Electron Density';
+    else if(cmd.indexOf('set emmap') == 0 && cmd.indexOf('set emmap wireframe') == -1) return 'Style > EM Density Map';
+    else if(cmd.indexOf('view annotations') == 0) return 'Windows > View Sequences & Annotations';
+    else if(cmd.indexOf('set annotation all') == 0) return 'Windows > Sequences & Annotations: "All" checkbox';
+    else if(cmd.indexOf('set annotation clinvar') == 0) return 'Windows > Sequences & Annotations: "ClinVar" checkbox';
+    else if(cmd.indexOf('set annotation snp') == 0) return 'Windows > Sequences & Annotations: "SNP" checkbox';
+    else if(cmd.indexOf('set annotation 3ddomain') == 0) return 'Windows > Sequences & Annotations: "3D Domains" checkbox';
+    else if(cmd.indexOf('view interactions') == 0) return 'Windows > View Interactions';
+    else if(cmd.indexOf('symmetry') == 0) return 'View > Symmetry';
+    else if(cmd.indexOf('realign on seq align') == 0) return 'File > Realign Selection > on Sequence Alignment';
+    else if(cmd.indexOf('realign') == 0) return 'File > Realign Selection > Residue by Residue';
+    else if(cmd.indexOf('graph interaction pairs') == 0) return 'View > H-Bonds & Interactions > 2D Graph (Force-Directed)';
+    else if(cmd.indexOf('export canvas') == 0) return 'File > Save Files > iCn3D PNG Image';
+    else if(cmd == 'export stl file') return 'File > 3D Printing > STL';
+    else if(cmd == 'export vrml file') return 'File > 3D Printing > VRML (Color)';
+    else if(cmd == 'export stl stabilizer file') return 'File > 3D Printing > STL W/ Stabilizers';
+    else if(cmd == 'export vrml stabilizer file') return 'File > 3D Printing > VRML (Color, W/ Stabilizers)';
+    else if(cmd == 'select all') return 'Select > All; or Toggle to "All" (next to "Help")';
+    else if(cmd == 'show all') return 'View > View Full Structure';
+    else if(cmd == 'select complement') return 'Select > Inverse';
+    else if(cmd == 'set pk atom') return 'Select > Select on 3D > Atom';
+    else if(cmd == 'set pk residue') return 'Select > Select on 3D > Residue';
+    else if(cmd == 'set pk strand') return 'Select > Select on 3D > Strand/Helix';
+    else if(cmd == 'set pk domain') return 'Select > Select on 3D > 3D Domain';
+    else if(cmd == 'set pk chain') return 'Select > Select on 3D > Chain';
+    else if(cmd == 'set surface wireframe on') return 'Style > Surface Wireframe > Yes';
+    else if(cmd == 'set surface wireframe off') return 'Style > Surface Wireframe > No';
+    else if(cmd == 'set map wireframe on') return 'Style > Map Wireframe > Yes';
+    else if(cmd == 'set map wireframe off') return 'Style > Map Wireframe > No';
+    else if(cmd == 'set emmap wireframe on') return 'Style > EM Map Wireframe > Yes';
+    else if(cmd == 'set emmap wireframe off') return 'Style > EM Map Wireframe > No';
+    else if(cmd == 'set surface neighbors on') return 'Style > Surface Type > ... with Context';
+    //else if(cmd == 'set surface neighbors off') return 'Style > Surface Type > ... without Context';
+    else if(cmd == 'set axis on') return 'View > XYZ-axes > Show';
+    else if(cmd == 'set axis off') return 'View > XYZ-axes > Hide';
+    else if(cmd == 'set fog on') return 'View > Fog for Selection > On';
+    else if(cmd == 'set fog off') return 'View > Fog for Selection > Off';
+    else if(cmd == 'set slab on') return 'View > Slab for Selection > On';
+    else if(cmd == 'set slab off') return 'View > Slab for Selection > Off';
+    else if(cmd == 'set assembly on') return 'View > Assembly > Biological Assembly';
+    else if(cmd == 'set assembly off') return 'View > Assembly > Asymmetric Unit';
+    else if(cmd == 'set chemicalbinding show') return 'View CHem. Binding > Show';
+    else if(cmd == 'set chemicalbinding hide') return 'View CHem. Binding > Hide';
+    else if(cmd == 'set hbonds off' || cmd == 'set salt bridge off' || cmd == 'set contact off'
+      || cmd == 'set halogen pi off') return 'View > H-Bonds & Interactions > Reset';
+    else if(cmd == 'hydrogens') return 'Style > Hydrogens > Show';
+    else if(cmd == 'set hydrogens off') return 'Style > Hydrogens > Hide';
+    else if(cmd == 'set stabilizer off') return 'File > 3D Printing > Remove All Stabilizers';
+    else if(cmd == 'set disulfide bonds off') return 'View > Disulfide Bonds > Hide';
+    else if(cmd == 'set cross linkage off') return 'View > Cross-Linkages > Hide';
+    else if(cmd == 'set lines off') return 'View > Distance > Hide';
+    else if(cmd == 'set labels off') return 'View > Label > Remove';
+    else if(cmd == 'set mode all') return 'Toggle to "All" (next to "Help")';
+    else if(cmd == 'set mode selection') return 'Toggle to "Selection" (next to "Help")';
+    else if(cmd == 'set view detailed view') return 'Windows > Sequences & Annotations: "Details" tab';
+    else if(cmd== 'set view overview') return 'Windows > Sequences & Annotations: "Summary" tab';
+    else if(cmd == 'set annotation custom') return 'Windows > Sequences & Annotations: "Custom" checkbox';
+    else if(cmd == 'set annotation interaction') return 'Windows > Sequences & Annotations: "Interactions" checkbox';
+    else if(cmd == 'set annotation cdd') return 'Windows > Sequences & Annotations: "Conserved Domains" checkbox';
+    else if(cmd == 'set annotation site') return 'Windows > Sequences & Annotations: "Functional Sites" checkbox';
+    else if(cmd == 'set annotation ssbond') return 'Windows > Sequences & Annotations: "Disulfide Bonds" checkbox';
+    else if(cmd == 'set annotation transmembrane') return 'Windows > Sequences & Annotations: "Transmembrane" checkbox';
+    else if(cmd == 'highlight level up') return 'Keyboard Arrow Up';
+    else if(cmd == 'highlight level down') return 'Keyboard Arrow Down';
+    else if(cmd.indexOf('hide annotation') == 0) return 'Windows > Sequences & Annotations: checkboxes off';
+    else if(cmd == 'add residue labels') return 'View > Label > per Residue';
+    else if(cmd == 'add residue number labels') return 'View > Label > per Residue & Number';
+    else if(cmd == 'add atom labels') return 'View > Label > per Atom';
+    else if(cmd == 'add chain labels') return 'View > Label > per Chain';
+    else if(cmd == 'add terminal labels') return 'View > Label > N- & C- Termini';
+    else if(cmd == 'rotate left') return 'View > Rotate > Auto Rotation > Rotate Left; or Key l';
+    else if(cmd == 'rotate right') return 'View > Rotate > Auto Rotation > Rotate Right; or Key j';
+    else if(cmd == 'rotate up') return 'View > Rotate > Auto Rotation > Rotate Up; or Key i';
+    else if(cmd == 'rotate down') return 'View > Rotate > Auto Rotation > Rotate Down; or Key m';
+    else if(cmd == 'rotate x') return 'View > Rotate > Rotate 90 deg > X-axis';
+    else if(cmd == 'rotate y') return 'View > Rotate > Rotate 90 deg > Y-axis';
+    else if(cmd == 'rotate z') return 'View > Rotate > Rotate 90 deg > Z-axis';
+    else if(cmd == 'reset') return 'View > Reset > All';
+    else if(cmd == 'reset orientation') return 'View > Reset > Orientation';
+    else if(cmd == 'reset thickness') return 'File > 3D Printing > Reset Thickness';
+    else if(cmd == 'clear selection') return 'Select > Clear Selection';
+    else if(cmd == 'zoom selection') return 'Select > Zoom in Selection';
+    else if(cmd == 'center selection') return 'Select > Center Selection';
+    else if(cmd == 'show selection') return 'Select > View Only Selection';
+    else if(cmd == 'hide selection') return 'Select > Hide Selection';
+    else if(cmd == 'output selection') return 'Select > Clear Selection';
+    else if(cmd == 'toggle highlight') return 'Select > Toggle Highlight';
+    else if(cmd == 'stabilizer') return 'File > 3D Printing > Add all Stabilizers';
+    else if(cmd == 'disulfide bonds') return 'View > Disulfide Bonds > Show';
+    else if(cmd == 'cross linkage') return 'View > Cross-Linkages > Show';
+    else if(cmd == 'back') return 'View > Undo';
+    else if(cmd == 'forward') return 'View > Redo';
+    else if(cmd == 'clear all') return 'Select > Clear Selection';
+    else if(cmd == 'defined sets') return 'Windows > Defined Sets';
+    else if(cmd == 'delete selected sets') return 'Windows > Defined Sets: "Delete Selected Sets" button';
+    else if(cmd == 'view interactions') return 'Windows > View Interactions';
+    else if(cmd == 'show annotations all chains') return 'Windows > Sequences & Annotations: "Show All Chains" button';
+    else if(cmd == 'save color') return 'Color > Save Color';
+    else if(cmd == 'apply saved color') return 'Color > Apply Saved Color';
+    else if(cmd == 'save style') return 'Style > Save Style';
+    else if(cmd == 'apply saved style') return 'Style > Apply Saved Style';
+    else if(cmd == 'select main chains') return 'Select > Main Chains';
+    else if(cmd == 'select side chains') return 'Select > Side Chains';
+    else if(cmd == 'area') return 'View > Surface Area';
+    else if(cmd == 'table inter count only') return 'View > H-Bonds & Interactions: "Set 1" button: "Show Count Only" button';
+    else if(cmd == 'table inter details') return 'View > H-Bonds & Interactions: "Set 1" button: "Show Details" button';
+    else if(cmd.indexOf('define helix sets') == 0) return 'Windows > Sequences & Annotations: "Helix Sets" button';
+    else if(cmd.indexOf('define sheet sets') == 0) return 'Windows > Sequences & Annotations: "Sheet Sets" button';
+    else if(cmd.indexOf('define coil sets') == 0) return 'Windows > Sequences & Annotations: "Coil Sets" button';
+    else if(cmd.indexOf('select interaction') == 0) return 'Windows > View Interactions: click on edges';
+    else if(cmd.indexOf('select saved atoms') == 0 || cmd.indexOf('select sets') == 0) return 'Windows > Defined Sets: select in menu';
+    else if(cmd.indexOf('select chain') !== -1) return 'Windows > Sequences & Annotations: click on chain names';
+    else if(cmd.indexOf('select alignChain') !== -1) return 'Windows > View Aligned Sequences: click on chain names';
+    else if(cmd.indexOf('select zone cutoff') == 0) return 'Select > by Distance';
+    else if(cmd.indexOf('set surface opacity') == 0) return 'Style > Surface Opacity';
+    else if(cmd.indexOf('set label scale') == 0) return 'View > Label Scale';
+    else if(cmd.indexOf('set surface') == 0) return 'Style > Surface Type';
+    else if(cmd.indexOf('set camera') == 0) return 'View > Camera';
+    else if(cmd.indexOf('set background') == 0) return 'Style > Background';
+    else if(cmd.indexOf('set thickness') == 0) return 'File > 3D Printing > Set Thickness';
+    else if(cmd.indexOf('set highlight color') == 0) return 'Select > Highlight Color';
+    else if(cmd.indexOf('set highlight style') == 0) return 'Select > Highlight Style';
+    else if(cmd.indexOf('add line') == 0) return 'View > Distance > Measure';
+    else if(cmd.indexOf('add label') == 0) return 'View > Distance > Measure';
+    else if(cmd.indexOf('msa') == 0) return 'Windows > Sequences & Annotations: "Add Track" button: "FASTA Alignment" button';
+    else if(cmd.indexOf('add track') == 0) return 'Windows > Sequences & Annotations: "Add Track" button';
+    else if(cmd.indexOf('remove one stabilizer') == 0) return 'File > 3D Printing > Remove One Stablizer';
+    else if(cmd.indexOf('add one stabilizer') == 0) return 'File > 3D Printing > Add One Stablizer';
+    else if(cmd.indexOf('select planes z-axis') == 0) return 'View > Select between Two X-Y Planes';
+    else if(cmd.indexOf('adjust membrane z-axis') == 0) return 'View > Adjust Membrane';
+    else if(cmd.indexOf('toggle membrane') == 0) return 'View > Toggle Membrane';
+    else if(cmd.indexOf('calc buried surface') == 0) return 'View > H-Bonds & Interactions: "Buried Surface Area" button';
+    else if(cmd.indexOf('display interaction 3d') == 0) return 'View > H-Bonds & Interactions: "3D Display Interactions" button';
+    else if(cmd.indexOf('view interaction pairs') == 0) return 'View > H-Bonds & Interactions: "Highlight Interactions in Table" button';
+    else if(cmd.indexOf('save1 interaction pairs') == 0) return 'View > H-Bonds & Interactions: "Set 1" button';
+    else if(cmd.indexOf('save2 interaction pairs') == 0) return 'View > H-Bonds & Interactions: "Set 2" button';
+    else if(cmd.indexOf('line graph interaction pairs') == 0) return 'View > H-Bonds & Interactions: "2D Interaction Graph" button';
+    else if(cmd.indexOf('graph label') == 0) return 'View > H-Bonds & Interactions > 2D Graph (Force-Directed): "Label Size" menu';
+    else if(cmd.indexOf('graph force') == 0) return 'View > H-Bonds & Interactions > 2D Graph (Force-Directed): "Force on Nodes" menu';
+    else if(cmd.indexOf('hide edges') == 0) return 'View > H-Bonds & Interactions > 2D Graph (Force-Directed): "Internal Edges" menu';
+    else if(cmd.indexOf('reset interaction pairs') == 0) return 'View > H-Bonds & Interactions > Reset';
+    else if(cmd.indexOf('side by side') == 0) return 'View > Side by Side';
+    else if(cmd.indexOf('your note') == 0) return 'Windows > Your Notes / Window Title';
+    else if(cmd.indexOf('pickatom') == 0) return 'Hold Alt key and click on 3D structure';
+    else if(cmd.indexOf('color') == 0) return 'Color menu';
+    else if(cmd.indexOf('custom tube') == 0) return 'Windows > Sequences & Annotations: "Custom Color/Tube" button: "Custom Tube" button';
+    else if(cmd.indexOf('style') == 0) return 'Style menu';
+    else if(cmd.indexOf('select displayed set') !== -1) return 'Select > Displayed Set';
+    else if(cmd.indexOf('select prop') !== -1) return 'Select > by Property';
+    else if(cmd.indexOf('select') == 0 && cmd.indexOf('name') !== -1) return 'Windows > Sequences & Annotations: drag on residues to select';
+    else if(cmd.indexOf('select $') !== -1 || cmd.indexOf('select .') !== -1 || cmd.indexOf('select :') !== -1 || cmd.indexOf('select @') !== -1) return 'Select > Advanced; or other selection';
+    else if(cmd.indexOf('replay on') !== -1) return 'File > Replay Each Step > On';
+    else if(cmd.indexOf('replay off') !== -1) return 'File > Replay Each Step > Off';
+    else return '';
+};
+
+iCn3DUI.prototype.resetAll = function() { var me = this; //"use strict";
+    //location.reload();
+    me.icn3d.reinitAfterLoad();
+    me.renderFinalStep(1);
+
+    // need to render
+    if(me.icn3d.bRender) me.icn3d.render();
+};
+

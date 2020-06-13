@@ -113,6 +113,8 @@
 
     var showsets = getValue(params.showsets);
 
+    var replay = getValue(params.replay);
+
     var rotate = params.rotate;
 
     var options = (params.options !== undefined) ? JSON.parse(params.options) : undefined;
@@ -157,6 +159,7 @@
               blast_rep_id: blast_rep_id,
               query_id: query_id,
               options: options,
+              replay: replay,
               command: command
           };
           if(idName !== '') cfg[idName] = idArray[i];
@@ -222,6 +225,7 @@
               mobilemenu: mobilemenu,
               closepopup: closepopup,
               align: align,
+              replay: replay,
               command: command
           };
 
@@ -248,6 +252,7 @@
               mobilemenu: mobilemenu,
               closepopup: closepopup,
               chainalign: chainalign,
+              replay: replay,
               command: command
           };
 

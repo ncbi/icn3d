@@ -589,6 +589,15 @@ iCn3D.prototype.addHlObjects = function (color, bRender, atomsHash) { var me = t
    if( (bRender) || (this.bRender) ) this.render();
 };
 
+iCn3D.prototype.resetAll = function() { var me = this; //"use strict";
+    //location.reload();
+    me.icn3d.reinitAfterLoad();
+    me.renderFinalStep(1);
+
+    // need to render
+    if(me.icn3d.bRender) me.icn3d.render();
+};
+
 iCn3D.prototype.resetOrientation = function() { var me = this; //"use strict";
     var bSet = false;
     if(this.commands.length > 0) {
