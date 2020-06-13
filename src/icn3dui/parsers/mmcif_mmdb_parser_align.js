@@ -1105,7 +1105,7 @@ iCn3DUI.prototype.realignOnSeqAlign = function () { var me = this; //"use strict
                 struct2resid[atom.structure] = [];
             }
 
-            var oneLetterRes = me.icn3d.residueName2Abbr(atom.resn.substr(0, 3));
+            var oneLetterRes = me.icn3d.residueName2Abbr(atom.resn.substr(0, 3)).substr(0, 1);
 
             struct2SeqHash[atom.structure] += oneLetterRes;
             struct2CoorHash[atom.structure].push(atom.coord.clone());
@@ -1189,6 +1189,8 @@ iCn3DUI.prototype.realignOnSeqAlign = function () { var me = this; //"use strict
               }
 
               me.alignCoords(coordsFrom, coordsTo, fromStruct);
+
+              me.updateHlAll();
           }
           else {
               if(fromStruct === undefined && !me.cfg.command) {
@@ -1226,4 +1228,51 @@ iCn3DUI.prototype.realignOnSeqAlign = function () { var me = this; //"use strict
       }
     });
 
+};
+
+iCn3DUI.prototype.realign = function() { var me = this; //"use strict";
+    me.saveSelectionPrep();
+
+    var index = Object.keys(me.icn3d.defNames2Atoms).length;
+    var name = 'alseq_' + index;
+
+    me.saveSelection(name, name);
+
+    var structHash = {};
+    me.realignResid = {};
+    var lastStruResi = '';
+    for(var serial in me.icn3d.hAtoms) {
+        var atom = me.icn3d.atoms[serial];
+        if( (me.icn3d.proteins.hasOwnProperty(serial) && atom.name == "CA")
+          || (me.icn3d.nucleotides.hasOwnProperty(serial) && (atom.name == "O3'" || atom.name == "O3*")) ) {
+            if(atom.structure + '_' + atom.resi == lastStruResi) continue; // e.g., Alt A and B
+
+            if(!structHash.hasOwnProperty(atom.structure)) {
+                structHash[atom.structure] = [];
+            }
+            structHash[atom.structure].push(atom.coord.clone());
+
+            if(!me.realignResid.hasOwnProperty(atom.structure)) {
+                me.realignResid[atom.structure] = [];
+            }
+
+            me.realignResid[atom.structure].push({'resid': atom.structure + '_' + atom.chain + '_' + atom.resi, 'resn': me.icn3d.residueName2Abbr(atom.resn.substr(0, 3)).substr(0, 1)});
+
+            lastStruResi = atom.structure + '_' + atom.resi;
+        }
+    }
+
+    var structArray = Object.keys(structHash);
+
+    var toStruct = structArray[0];
+    var fromStruct = structArray[1];
+
+    // transform from the second structure to the first structure
+    var coordsFrom = structHash[fromStruct];
+    var coordsTo = structHash[toStruct];
+
+    var bKeepSeq = true;
+    me.alignCoords(coordsFrom, coordsTo, fromStruct, bKeepSeq);
+
+    me.updateHlAll();
 };

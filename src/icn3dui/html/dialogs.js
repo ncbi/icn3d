@@ -34,23 +34,26 @@ iCn3DUI.prototype.openDialogHalfWindow = function (id, title, dialogWidth, bForc
             // determine whether dialogs initilaized
             var bSelectannotationsInit = $('#' + me.pre + 'dl_selectannotations').hasClass('ui-dialog-content'); // initialized
             var bGraph = $('#' + me.pre + 'dl_graph').hasClass('ui-dialog-content'); // initialized
+            var bLineGraph = $('#' + me.pre + 'dl_linegraph').hasClass('ui-dialog-content'); // initialized
             var bTable = $('#' + me.pre + 'dl_interactionsorted').hasClass('ui-dialog-content'); // initialized
             var bAlignmentInit = $('#' + me.pre + 'dl_alignment').hasClass('ui-dialog-content'); // initialized
             var bTwoddgmInit = $('#' + me.pre + 'dl_2ddgm').hasClass('ui-dialog-content'); // initialized
             var bSetsInit = $('#' + me.pre + 'dl_definedsets').hasClass('ui-dialog-content'); // initialized
 
-            var bSelectannotationsInit2 = false, bGraph2 = false, bTable2 = false, bAlignmentInit2 = false, bTwoddgmInit2 = false, bSetsInit2 = false;
+            var bSelectannotationsInit2 = false, bGraph2 = false, bLineGraph2 = false, bTable2 = false, bAlignmentInit2 = false, bTwoddgmInit2 = false, bSetsInit2 = false;
             if(bSelectannotationsInit) bSelectannotationsInit2 = $('#' + me.pre + 'dl_selectannotations').dialog( 'isOpen' );
             if(bGraph) bGraph2 = $('#' + me.pre + 'dl_graph').dialog( 'isOpen' );
+            if(bLineGraph) bLineGraph2 = $('#' + me.pre + 'dl_linegraph').dialog( 'isOpen' );
             if(bTable) bTable2 = $('#' + me.pre + 'dl_interactionsorted').dialog( 'isOpen' );
             if(bAlignmentInit) bAlignmentInit2 = $('#' + me.pre + 'dl_alignment').dialog( 'isOpen' );
             if(bTwoddgmInit) bTwoddgmInit2 = $('#' + me.pre + 'dl_2ddgm').dialog( 'isOpen' );
             if(bSetsInit) bSetsInit2 = $('#' + me.pre + 'dl_definedsets').dialog( 'isOpen' );
 
-          if((id === me.pre + 'dl_selectannotations' && (!bAlignmentInit2) && !bGraph2 && !bTable2 )
-            || (id === me.pre + 'dl_graph' && (!bSelectannotationsInit2) && (!bAlignmentInit2) && !bTable2 )
-            || (id === me.pre + 'dl_alignment' && (!bSelectannotationsInit2) && !bGraph2 && !bTable2 )
-            || (id === me.pre + 'dl_interactionsorted' && (!bSelectannotationsInit2) && !bGraph2 && !bAlignmentInit2 )
+          if((id === me.pre + 'dl_selectannotations' && (!bAlignmentInit2) && !bGraph2 && !bTable2 && !bLineGraph2)
+            || (id === me.pre + 'dl_graph' && (!bSelectannotationsInit2) && (!bAlignmentInit2) && !bTable2 && !bLineGraph2 )
+            || (id === me.pre + 'dl_alignment' && (!bSelectannotationsInit2) && !bGraph2 && !bTable2 && !bLineGraph2 )
+            || (id === me.pre + 'dl_interactionsorted' && (!bSelectannotationsInit2) && !bGraph2 && !bAlignmentInit2 && !bLineGraph2 )
+            || (id === me.pre + 'dl_linegraph' && (!bSelectannotationsInit2) && !bGraph2 && !bAlignmentInit2 && !bTable2 )
             ) {
               if(bTwoddgmInit2 || bSetsInit2) {
                   //me.resizeCanvas(me.WIDTH - me.LESSWIDTH - twoddgmWidth, me.HEIGHT - me.LESSHEIGHT - me.EXTRAHEIGHT, true);
@@ -75,6 +78,21 @@ iCn3DUI.prototype.openDialogHalfWindow = function (id, title, dialogWidth, bForc
               var height = $("#" + id).height();
 
               d3.select("#" + me.svgid).attr("width", width).attr("height", height);
+          }
+          else if(id == me.pre + 'dl_linegraph') {
+                var bTwoddgmInit = $('#' + me.pre + 'dl_2ddgm').hasClass('ui-dialog-content'); // initialized
+                var bSetsInit = $('#' + me.pre + 'dl_definedsets').hasClass('ui-dialog-content'); // initialized
+
+                var bTwoddgmInit2 = false, bSetsInit2 = false;
+                if(bTwoddgmInit) bTwoddgmInit2 = $('#' + me.pre + 'dl_2ddgm').dialog( 'isOpen' );
+                if(bSetsInit) bSetsInit2 = $('#' + me.pre + 'dl_definedsets').dialog( 'isOpen' );
+
+              var oriWidth = (bTwoddgmInit2 || bSetsInit2) ? (me.WIDTH - twoddgmWidth)/2 : me.WIDTH / 2;
+              var ratio = $("#" + id).width() / oriWidth;
+
+              var width = me.linegraphWidth * ratio;
+
+              $("#" + me.linegraphid).attr("width", width);
           }
       }
     });
@@ -116,20 +134,22 @@ iCn3DUI.prototype.openDialog2Ddgm = function (id, inHeight, bDefinedSets) {  var
             // determine whether dialogs initilaized
             var bSelectannotationsInit = $('#' + me.pre + 'dl_selectannotations').hasClass('ui-dialog-content'); // initialized
             var bGraph = $('#' + me.pre + 'dl_graph').hasClass('ui-dialog-content'); // initialized
+            var bLineGraph = $('#' + me.pre + 'dl_linegraph').hasClass('ui-dialog-content'); // initialized
             var bTable = $('#' + me.pre + 'dl_interactionsorted').hasClass('ui-dialog-content'); // initialized
             var bAlignmentInit = $('#' + me.pre + 'dl_alignment').hasClass('ui-dialog-content'); // initialized
             var bTwoddgmInit = $('#' + me.pre + 'dl_2ddgm').hasClass('ui-dialog-content'); // initialized
             var bSetsInit = $('#' + me.pre + 'dl_definedsets').hasClass('ui-dialog-content'); // initialized
 
-            var bSelectannotationsInit2 = false, bGraph2 = false, bTable2 = false, bAlignmentInit2 = false, bTwoddgmInit2 = false, bSetsInit2 = false;
+            var bSelectannotationsInit2 = false, bGraph2 = false, bLineGraph2 = false, bTable2 = false, bAlignmentInit2 = false, bTwoddgmInit2 = false, bSetsInit2 = false;
             if(bSelectannotationsInit) bSelectannotationsInit2 = $('#' + me.pre + 'dl_selectannotations').dialog( 'isOpen' );
             if(bGraph) bGraph2 = $('#' + me.pre + 'dl_graph').dialog( 'isOpen' );
+            if(bLineGraph) bLineGraph2 = $('#' + me.pre + 'dl_linegraph').dialog( 'isOpen' );
             if(bTable) bTable2 = $('#' + me.pre + 'dl_interactionsorted').dialog( 'isOpen' );
             if(bAlignmentInit) bAlignmentInit2 = $('#' + me.pre + 'dl_alignment').dialog( 'isOpen' );
             if(bTwoddgmInit) bTwoddgmInit2 = $('#' + me.pre + 'dl_2ddgm').dialog( 'isOpen' );
             if(bSetsInit) bSetsInit2 = $('#' + me.pre + 'dl_definedsets').dialog( 'isOpen' );
 
-          if( (!bSelectannotationsInit2) && (!bGraph2) && (!bTable2) && (!bAlignmentInit2) ) {
+          if( (!bSelectannotationsInit2) && (!bGraph2) && (!bLineGraph2) && (!bTable2) && (!bAlignmentInit2) ) {
                 //me.resizeCanvas(me.WIDTH - me.LESSWIDTH, me.HEIGHT - me.LESSHEIGHT - me.EXTRAHEIGHT, true);
                 me.resizeCanvas(me.WIDTH, me.HEIGHT, true);
           }
@@ -145,20 +165,22 @@ iCn3DUI.prototype.openDialog = function (id, title) {  var me = this; //"use str
 
     var bSelectannotationsInit = $('#' + me.pre + 'dl_selectannotations').hasClass('ui-dialog-content'); // initialized
     var bGraph = $('#' + me.pre + 'dl_graph').hasClass('ui-dialog-content'); // initialized
+    var bLineGraph = $('#' + me.pre + 'dl_linegraph').hasClass('ui-dialog-content'); // initialized
     var bTable = $('#' + me.pre + 'dl_interactionsorted').hasClass('ui-dialog-content'); // initialized
     var bAlignmentInit = $('#' + me.pre + 'dl_alignment').hasClass('ui-dialog-content'); // initialized
     var bTwoddgmInit = $('#' + me.pre + 'dl_2ddgm').hasClass('ui-dialog-content'); // initialized
     var bSetsInit = $('#' + me.pre + 'dl_definedsets').hasClass('ui-dialog-content'); // initialized
 
-    var bSelectannotationsInit2 = false, bGraph2 = false, bTable2 = false, bAlignmentInit2 = false, bTwoddgmInit2 = false, bSetsInit2 = false;
+    var bSelectannotationsInit2 = false, bGraph2 = false, bLineGraph2 = false, bTable2 = false, bAlignmentInit2 = false, bTwoddgmInit2 = false, bSetsInit2 = false;
     if(bSelectannotationsInit) bSelectannotationsInit2 = $('#' + me.pre + 'dl_selectannotations').dialog( 'isOpen' );
     if(bGraph) bGraph2 = $('#' + me.pre + 'dl_graph').dialog( 'isOpen' );
+    if(bLineGraph) bLineGraph2 = $('#' + me.pre + 'dl_linegraph').dialog( 'isOpen' );
     if(bTable) bTable2 = $('#' + me.pre + 'dl_interactionsorted').dialog( 'isOpen' );
     if(bAlignmentInit) bAlignmentInit2 = $('#' + me.pre + 'dl_alignment').dialog( 'isOpen' );
     if(bTwoddgmInit) bTwoddgmInit2 = $('#' + me.pre + 'dl_2ddgm').dialog( 'isOpen' );
     if(bSetsInit) bSetsInit2 = $('#' + me.pre + 'dl_definedsets').dialog( 'isOpen' );
 
-    if(id === me.pre + 'dl_selectannotations' || id === me.pre + 'dl_graph' || id === me.pre + 'dl_interactionsorted' || id === me.pre + 'dl_alignment') {
+    if(id === me.pre + 'dl_selectannotations' || id === me.pre + 'dl_graph' || id === me.pre + 'dl_linegraph' || id === me.pre + 'dl_interactionsorted' || id === me.pre + 'dl_alignment') {
         //var dialogWidth = 0.5 * (me.WIDTH - me.LESSWIDTH) - twoddgmWidth * 0.5;
         var dialogWidth = 0.5 * (me.WIDTH) - twoddgmWidth * 0.5;
 
@@ -194,10 +216,11 @@ iCn3DUI.prototype.openDialog = function (id, title) {  var me = this; //"use str
               modal: false,
               position: position,
               close: function(e) {
-                  if((id === me.pre + 'dl_selectannotations' && (!bAlignmentInit2) &&(!bGraph2) &&(!bTable2))
-                    || (id === me.pre + 'dl_graph' &&(!bSelectannotationsInit2) && (!bAlignmentInit2) &&(!bTable2) )
-                    || (id === me.pre + 'dl_alignment' &&(!bSelectannotationsInit2) &&(!bGraph2) &&(!bTable2) )
-                    || (id === me.pre + 'dl_interactionsorted' &&(!bSelectannotationsInit2) &&(!bGraph2) &&(!bAlignmentInit2) )
+                  if((id === me.pre + 'dl_selectannotations' && (!bAlignmentInit2) &&(!bGraph2) &&(!bTable2) &&(!bLineGraph2))
+                    || (id === me.pre + 'dl_graph' &&(!bSelectannotationsInit2) && (!bAlignmentInit2) &&(!bTable2) &&(!bLineGraph2) )
+                    || (id === me.pre + 'dl_alignment' &&(!bSelectannotationsInit2) &&(!bGraph2) &&(!bTable2) &&(!bLineGraph2) )
+                    || (id === me.pre + 'dl_interactionsorted' &&(!bSelectannotationsInit2) &&(!bGraph2) &&(!bAlignmentInit2) &&(!bLineGraph2) )
+                    || (id === me.pre + 'dl_linegraph' &&(!bSelectannotationsInit2) &&(!bGraph2) &&(!bAlignmentInit2) &&(!bTable2) )
                     ) {
                       if(bTwoddgmInit2 || bSetsInit2) {
                           //me.resizeCanvas(me.WIDTH - me.LESSWIDTH - twoddgmWidth, me.HEIGHT - me.LESSHEIGHT - me.EXTRAHEIGHT, true);
@@ -223,6 +246,21 @@ iCn3DUI.prototype.openDialog = function (id, title) {  var me = this; //"use str
 
                       d3.select("#" + me.svgid).attr("width", width).attr("height", height);
                   }
+                  else if(id == me.pre + 'dl_linegraph') {
+                        var bTwoddgmInit = $('#' + me.pre + 'dl_2ddgm').hasClass('ui-dialog-content'); // initialized
+                        var bSetsInit = $('#' + me.pre + 'dl_definedsets').hasClass('ui-dialog-content'); // initialized
+
+                        var bTwoddgmInit2 = false, bSetsInit2 = false;
+                        if(bTwoddgmInit) bTwoddgmInit2 = $('#' + me.pre + 'dl_2ddgm').dialog( 'isOpen' );
+                        if(bSetsInit) bSetsInit2 = $('#' + me.pre + 'dl_definedsets').dialog( 'isOpen' );
+
+                      var oriWidth = (bTwoddgmInit2 || bSetsInit2) ? (me.WIDTH - twoddgmWidth)/2 : me.WIDTH / 2;
+                      var ratio = $("#" + id).width() / oriWidth;
+
+                      var width = me.linegraphWidth * ratio;
+
+                      $("#" + me.linegraphid).attr("width", width);
+                  }
               }
             });
 
@@ -234,7 +272,7 @@ iCn3DUI.prototype.openDialog = function (id, title) {  var me = this; //"use str
 
         //if(me.WIDTH - me.LESSWIDTH >= me.HEIGHT - me.LESSHEIGHT - me.EXTRAHEIGHT) {
         if(me.WIDTH >= me.HEIGHT) {
-            if(bSelectannotationsInit2 || bGraph2 || bTable2 || bAlignmentInit2) {
+            if(bSelectannotationsInit2 || bGraph2 || bLineGraph2 || bTable2 || bAlignmentInit2) {
                 //tmpWidth = 0.5 * (me.WIDTH - me.LESSWIDTH) - twoddgmWidth * 0.5;
                 tmpWidth = 0.5 * (me.WIDTH) - twoddgmWidth * 0.5;
             }
@@ -269,7 +307,7 @@ iCn3DUI.prototype.openDialog = function (id, title) {  var me = this; //"use str
 
             //if(me.WIDTH - me.LESSWIDTH >= me.HEIGHT - me.LESSHEIGHT - me.EXTRAHEIGHT) {
             if(me.WIDTH >= me.HEIGHT) {
-                if(bSelectannotationsInit2 || bGraph2 || bTable2 || bAlignmentInit2) {
+                if(bSelectannotationsInit2 || bGraph2 || bLineGraph2 || bTable2 || bAlignmentInit2) {
                     //tmpWidth = 0.5 * (me.WIDTH - me.LESSWIDTH) - twoddgmWidth * 0.5;
                     tmpWidth = 0.5 * (me.WIDTH) - twoddgmWidth * 0.5;
                 }
@@ -300,9 +338,9 @@ iCn3DUI.prototype.openDialog = function (id, title) {  var me = this; //"use str
                 width = 700;
                 height = 500;
             }
-            else if(id === me.pre + 'dl_linegraph') {
-                position ={ my: "right top", at: "right top+50", of: "#" + me.divid, collision: "none" };
-            }
+            //else if(id === me.pre + 'dl_linegraph') {
+            //    position ={ my: "right top", at: "right top+50", of: "#" + me.divid, collision: "none" };
+            //}
             else {
                 if(me.cfg.align) {
                     position ={ my: "left top", at: "left top+90", of: "#" + me.pre + "canvas", collision: "none" };

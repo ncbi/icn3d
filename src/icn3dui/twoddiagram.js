@@ -650,7 +650,7 @@ iCn3DUI.prototype.click2Ddgm = function() { var me = this; //"use strict";
           me.removeLineGraphSelection();
         }
 
-        var strokeWidth = 3;
+        var strokeWidth = 2;
         $(this).find('circle').attr('stroke', me.ORANGE);
         $(this).find('circle').attr('stroke-width', strokeWidth);
 

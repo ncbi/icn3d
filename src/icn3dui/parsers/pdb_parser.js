@@ -348,7 +348,7 @@ iCn3DUI.prototype.transformToOpmOriForAlign = function(pdbid, chainresiCalphaHas
   }
 };
 
-iCn3DUI.prototype.alignCoords = function(coordsFrom, coordsTo, secondStruct) { var me = this; //"use strict";
+iCn3DUI.prototype.alignCoords = function(coordsFrom, coordsTo, secondStruct, bKeepSeq) { var me = this; //"use strict";
   //var n = coordsFrom.length;
   var n = (coordsFrom.length < coordsTo.length) ? coordsFrom.length : coordsTo.length;
 
@@ -379,7 +379,7 @@ iCn3DUI.prototype.alignCoords = function(coordsFrom, coordsTo, secondStruct) { v
 
           me.bRealign = true;
 
-          me.setSeqAlignForRealign();
+          if(!bKeepSeq) me.setSeqAlignForRealign();
 
           var bShowHighlight = false;
           var seqObj = me.getAlignSequencesAnnotations(Object.keys(me.icn3d.alnChains), undefined, undefined, bShowHighlight);
