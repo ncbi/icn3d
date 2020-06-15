@@ -13,7 +13,7 @@ if (!$.ui.dialog.prototype._makeDraggableBase) {
 }
 
 var iCn3DUI = function(cfg) { var me = this; //"use strict";
-    this.REVISION = '2.17.0';
+    this.REVISION = '2.17.1';
 
     me.bFullUi = true;
 
@@ -42,6 +42,7 @@ var iCn3DUI = function(cfg) { var me = this; //"use strict";
 
     if(me.cfg.rotate === undefined) me.cfg.rotate = 'right';
 
+/*
     if(me.cfg.blast_rep_id !== undefined) {
       var pos1 = me.cfg.blast_rep_id.indexOf(':');
       var pos2 = me.cfg.query_id.indexOf(':');
@@ -55,6 +56,7 @@ var iCn3DUI = function(cfg) { var me = this; //"use strict";
         me.cfg.query_id = me.cfg.query_id.substr(0, pos2);
       }
     }
+*/
 
     me.inputid = '';
 
@@ -764,11 +766,68 @@ iCn3DUI.prototype = {
            me.downloadGi(me.cfg.gi);
         }
         else if(me.cfg.blast_rep_id !== undefined) {
-           me.inputid = me.cfg.query_id + '_' + me.cfg.blast_rep_id;
+           if(me.cfg.query_id !== undefined) {
+               me.inputid = me.cfg.query_id + '_' + me.cfg.blast_rep_id;
 
-           me.setLogCmd('load seq_struct_ids ' + me.cfg.query_id + ',' + me.cfg.blast_rep_id, true);
+               me.setLogCmd('load seq_struct_ids ' + me.cfg.query_id + ',' + me.cfg.blast_rep_id, true);
 
-           me.downloadBlast_rep_id(me.cfg.query_id + ',' + me.cfg.blast_rep_id);
+               me.downloadBlast_rep_id(me.cfg.query_id + ',' + me.cfg.blast_rep_id);
+           }
+           else if(me.cfg.rid !== undefined) {
+               var url = "https://blast.ncbi.nlm.nih.gov/Blast.cgi?RESULTS_FILE=on&FORMAT_TYPE=JSON2_S&FORMAT_OBJECT=Alignment&CMD=Get&RID=" + me.cfg.rid; // e.g., RID=EFTRU3W5014
+
+               $.ajax({
+                  url: url,
+                  dataType: 'json',
+                  tryCount : 0,
+                  retryLimit : 1,
+                  success: function(data) {
+                      var hitArray = data.BlastOutput2[0].report.results.search.hits;
+                      var qseq = undefined;
+                      for(var i = 0, il = hitArray.length; i < il; ++i) {
+                        var hit = hitArray[i];
+                        var bFound = false;
+                        for(var j = 0, jl = hit.description.length; j < jl; ++j) {
+                          var acc = hit.description[j].accession;
+                          if(acc == me.cfg.blast_rep_id) {
+                            bFound = true;
+                            break;
+                          }
+                        }
+
+                        if(bFound) {
+                          qseq = hit.hsps[0].qseq;
+                          //remove gap '-'
+                          qseq = qseq.replace(/-/g, '');
+
+                          break;
+                        }
+                      }
+
+                      if(qseq !== undefined) me.cfg.query_id = qseq;
+
+                      me.inputid = me.cfg.query_id + '_' + me.cfg.blast_rep_id;
+
+                      me.setLogCmd('load seq_struct_ids ' + me.cfg.query_id + ',' + me.cfg.blast_rep_id, true);
+
+                      me.downloadBlast_rep_id(me.cfg.query_id + ',' + me.cfg.blast_rep_id);
+                  },
+                  error : function(xhr, textStatus, errorThrown ) {
+                    this.tryCount++;
+                    if (this.tryCount <= this.retryLimit) {
+                        //try again
+                        $.ajax(this);
+                        return;
+                    }
+                    else {
+                        alert('The RID ' + me.cfg.rid + ' may have expired...');
+                    }
+                    return;
+                  }
+               });
+           }
+           else {
+           }
         }
         else if(me.cfg.cid !== undefined) {
            me.inputid = me.cfg.cid;
