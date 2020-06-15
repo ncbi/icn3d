@@ -54,6 +54,7 @@
     var gi = params.gi;
     var blast_rep_id = params.blast_rep_id;
     var query_id = params.query_id;
+    var rid = params.RID;
 
     var mmdbid = params.mmdbid;
     var mmtfid = params.mmtfid;
@@ -160,6 +161,7 @@
               query_id: query_id,
               options: options,
               replay: replay,
+              rid: rid,
               command: command
           };
           if(idName !== '') cfg[idName] = idArray[i];
