@@ -108,7 +108,7 @@ iCn3DUI.prototype.drawGraph = function (jsonStr) {  var me = this; //"use strict
     }
 
     // remove the internal edges when no force
-    if(me.hideedges) {
+    if(me.hideedges && !me.force) {
         var links2 = [];
         for (i = 0; i < graph.links.length; i++) {
             if(graph.links[i].c != 'FFF') {

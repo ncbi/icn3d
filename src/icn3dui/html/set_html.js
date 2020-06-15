@@ -182,9 +182,9 @@ iCn3DUI.prototype.setTopMenusHtmlMobile = function (id) { var me = this; //"use 
 iCn3DUI.prototype.setReplayHtml = function (id) { var me = this; //"use strict";
     var html = '';
 
-    html += me.divStr + "replay' style='display:none; position:absolute; z-index:1; top:" + parseInt(me.HEIGHT - 100).toString() + "px; left:20px;'>";
+    html += me.divStr + "replay' style='display:none; position:absolute; z-index:9999; top:" + parseInt(me.HEIGHT - 100).toString() + "px; left:20px;'>";
     html += "<div title='Click to replay one step'><svg style='cursor:pointer;' fill='#f8b84e' viewBox='0 0 60 60' width='40' height='40'>";
-    html += '<circle style="fill:#EBBA16;" cx="29" cy="29" r="29"/>';
+    html += '<circle style="fill:#f8b84e;" cx="29" cy="29" r="29"/>';
     html += '<g>';
     html += '<polygon style="fill:#FFFFFF;" points="44,29 22,44 22,29.273 22,14"/>';
     html += '<path style="fill:#FFFFFF;" d="M22,45c-0.16,0-0.321-0.038-0.467-0.116C21.205,44.711,21,44.371,21,44V14c0-0.371,0.205-0.711,0.533-0.884c0.328-0.174,0.724-0.15,1.031,0.058l22,15C44.836,28.36,45,28.669,45,29s-0.164,0.64-0.437,0.826l-22,15C22.394,44.941,22.197,45,22,45z M23,15.893v26.215L42.225,29L23,15.893z"/>';
@@ -315,6 +315,14 @@ iCn3DUI.prototype.getRadio = function(radioid, id, text, bChecked) { var me = th
 
     //https://stackoverflow.com/questions/17541614/use-images-instead-of-radio-buttons/17541916
     return "<li><label for='" + me.pre + id + "' class='icn3d-rad'>" + me.inputRadioStr + "name='" + me.pre + radioid + "' id='" + me.pre + id + "'" + checkedStr + "><span class='ui-icon ui-icon-blank'></span> <span class='icn3d-rad-text'>" + text + "</span></label></li>";
+};
+
+iCn3DUI.prototype.getRadioColor = function(radioid, id, text, color, bChecked) { var me = this; //"use strict";
+    var checkedStr = (bChecked) ? ' checked' : '';
+    //return "<li>" + me.inputRadioStr + "name='" + me.pre + radioid + "' id='" + me.pre + id + "'" + checkedStr + "><label for='" + me.pre + id + "'>" + text + "</label></li>";
+
+    //https://stackoverflow.com/questions/17541614/use-images-instead-of-radio-buttons/17541916
+    return "<li><label for='" + me.pre + id + "' class='icn3d-rad'>" + me.inputRadioStr + "name='" + me.pre + radioid + "' id='" + me.pre + id + "'" + checkedStr + "><span class='ui-icon ui-icon-blank'></span> <span class='icn3d-color-rad-text' color='" + color + "'><span style='background-color:#" + color + "'>&nbsp;&nbsp;&nbsp;</span> " + text + "</span></label></li>";
 };
 
 iCn3DUI.prototype.setMenu1 = function() { var me = this; //"use strict";
@@ -1045,6 +1053,209 @@ iCn3DUI.prototype.setMenu4_base = function() { var me = this; //"use strict";
 
     html += "<ul class='icn3d-mn'>";
 
+    html += "<li><span style='padding-left:2.3em;'>Unicolor</span>";
+    html += "<ul>";
+
+    html += "<li><span>Red</span>";
+    html += "<ul>";
+    //html += me.getRadio('mn4_clr', 'mn4_clrRed', 'Red');
+    html += me.getRadioColor('mn4_clr', 'mn4_clrRed1', 'Red', 'F00');
+    html += me.getRadioColor('mn4_clr', 'mn4_clrRed2', 'Indian Red', 'CD5C5C');
+    html += me.getRadioColor('mn4_clr', 'mn4_clrRed3', 'Light Coral', 'F08080');
+    html += me.getRadioColor('mn4_clr', 'mn4_clrRed4', 'Salmon', 'FA8072');
+    html += me.getRadioColor('mn4_clr', 'mn4_clrRed5', 'Dark Salmon', 'E9967A');
+    html += me.getRadioColor('mn4_clr', 'mn4_clrRed6', 'Light Salmon', 'FFA07A');
+    html += me.getRadioColor('mn4_clr', 'mn4_clrRed7', 'Crimson', 'DC143C');
+    html += me.getRadioColor('mn4_clr', 'mn4_clrRed8', 'Fire Brick', 'B22222');
+    html += me.getRadioColor('mn4_clr', 'mn4_clrRed9', 'Dark Red', '8B0000');
+    html += "</ul>";
+
+    html += "<li><span>Pink</span>";
+    html += "<ul>";
+    html += me.getRadioColor('mn4_clr', 'mn4_clrPink1', 'Pink', 'FFC0CB');
+    html += me.getRadioColor('mn4_clr', 'mn4_clrPink2', 'Light Pink', 'FFB6C1');
+    html += me.getRadioColor('mn4_clr', 'mn4_clrPink3', 'Hot Pink', 'FF69B4');
+    html += me.getRadioColor('mn4_clr', 'mn4_clrPink4', 'Deep Pink', 'FF1493');
+    html += me.getRadioColor('mn4_clr', 'mn4_clrPink5', 'Medium Violet Red', 'C71585');
+    html += me.getRadioColor('mn4_clr', 'mn4_clrPink6', 'Pale Violet Red', 'DB7093');
+    html += "</ul>";
+
+    html += "<li><span>Orange</span>";
+    html += "<ul>";
+    html += me.getRadioColor('mn4_clr', 'mn4_clrOrange1', 'Orange', 'FFA500');
+    html += me.getRadioColor('mn4_clr', 'mn4_clrOrange2', 'Dark Orange', 'FF8C00');
+    html += me.getRadioColor('mn4_clr', 'mn4_clrOrange3', 'Orange Red', 'FF4500');
+    html += me.getRadioColor('mn4_clr', 'mn4_clrOrange4', 'Tomato', 'FF6347');
+    html += me.getRadioColor('mn4_clr', 'mn4_clrOrange5', 'Coral', 'FF7F50');
+    html += me.getRadioColor('mn4_clr', 'mn4_clrOrange6', 'Light Salmon', 'FFA07A');
+    html += "</ul>";
+
+    html += "<li><span>Yellow</span>";
+    html += "<ul>";
+    //html += me.getRadio('mn4_clr', 'mn4_clrYellow', 'Yellow');
+    html += me.getRadioColor('mn4_clr', 'mn4_clrYellow1', 'Yellow', 'FF0');
+    html += me.getRadioColor('mn4_clr', 'mn4_clrYellow2', 'Gold', 'FFD700');
+    html += me.getRadioColor('mn4_clr', 'mn4_clrYellow3', 'Light Yellow', 'FFFFE0');
+    html += me.getRadioColor('mn4_clr', 'mn4_clrYellow4', 'Lemon Chiffon', 'FFFACD');
+    //html += me.getRadioColor('mn4_clr', 'mn4_clrYellow5', 'Light Golden Rod Yellow', 'FAFAD2');
+    html += me.getRadioColor('mn4_clr', 'mn4_clrYellow5', 'Light Golden Rod', 'FAFAD2');
+    html += me.getRadioColor('mn4_clr', 'mn4_clrYellow6', 'Papaya Whip', 'FFEFD5');
+    html += me.getRadioColor('mn4_clr', 'mn4_clrYellow7', 'Moccasin', 'FFE4B5');
+    html += me.getRadioColor('mn4_clr', 'mn4_clrYellow8', 'Peach Puff', 'FFDAB9');
+    html += me.getRadioColor('mn4_clr', 'mn4_clrYellow9', 'Pale Golden Rod', 'EEE8AA');
+    html += me.getRadioColor('mn4_clr', 'mn4_clrYellow10', 'Khaki', 'F0E68C');
+    html += me.getRadioColor('mn4_clr', 'mn4_clrYellow11', 'Dark Khaki', 'BDB76B');
+    html += "</ul>";
+
+    html += "<li><span>Magenta</span>";
+    html += "<ul>";
+    //html += me.getRadio('mn4_clr', 'mn4_clrMagenta', 'Magenta');
+    html += me.getRadioColor('mn4_clr', 'mn4_clrMagenta1', 'Magenta', 'F0F');
+    html += me.getRadioColor('mn4_clr', 'mn4_clrMagenta2', 'Orchid', 'DA70D6');
+    html += me.getRadioColor('mn4_clr', 'mn4_clrMagenta3', 'Violet', 'EE82EE');
+    html += me.getRadioColor('mn4_clr', 'mn4_clrMagenta4', 'Plum', 'DDA0DD');
+    html += me.getRadioColor('mn4_clr', 'mn4_clrMagenta5', 'Thistle', 'D8BFD8');
+    html += me.getRadioColor('mn4_clr', 'mn4_clrMagenta6', 'Lavender', 'E6E6FA');
+    html += me.getRadioColor('mn4_clr', 'mn4_clrMagenta7', 'Medium Orchid', 'BA55D3');
+    html += me.getRadioColor('mn4_clr', 'mn4_clrMagenta8', 'Medium Purple', '9370DB');
+    html += me.getRadioColor('mn4_clr', 'mn4_clrMagenta9', 'Rebecca Purple', '663399');
+    html += me.getRadioColor('mn4_clr', 'mn4_clrMagenta10', 'Blue Violet', '8A2BE2');
+    html += me.getRadioColor('mn4_clr', 'mn4_clrMagenta11', 'Dark Violet', '9400D3');
+    html += me.getRadioColor('mn4_clr', 'mn4_clrMagenta12', 'Dark Orchid', '9932CC');
+    html += me.getRadioColor('mn4_clr', 'mn4_clrMagenta13', 'Dark Magenta', '8B008B');
+    html += me.getRadioColor('mn4_clr', 'mn4_clrMagenta14', 'Purple', '800080');
+    html += me.getRadioColor('mn4_clr', 'mn4_clrMagenta15', 'Indigo', '4B0082');
+    html += me.getRadioColor('mn4_clr', 'mn4_clrMagenta16', 'Slat Blue', '6A5ACD');
+    html += me.getRadioColor('mn4_clr', 'mn4_clrMagenta17', 'Dark Slate Blue', '483D8B');
+    html += me.getRadioColor('mn4_clr', 'mn4_clrMagenta18', 'Medium Slat Blue', '6A5ACD');
+    html += "</ul>";
+
+    html += "<li><span>Green</span>";
+    html += "<ul>";
+    //html += me.getRadio('mn4_clr', 'mn4_clrGreen', 'Green');
+    html += me.getRadioColor('mn4_clr', 'mn4_clrGreen1', 'Green', '0F0');
+    html += me.getRadioColor('mn4_clr', 'mn4_clrGreen2', 'Dark Green', '006400');
+    html += me.getRadioColor('mn4_clr', 'mn4_clrGreen3', 'Yellow Green', '9ACD32');
+    html += me.getRadioColor('mn4_clr', 'mn4_clrGreen4', 'Olive Drab', '6B8E23');
+    html += me.getRadioColor('mn4_clr', 'mn4_clrGreen5', 'Olive', '808000');
+    html += me.getRadioColor('mn4_clr', 'mn4_clrGreen6', 'Dark Olive Green', '556B2F');
+    html += me.getRadioColor('mn4_clr', 'mn4_clrGreen7', 'Medium Aquamarine', '66CDAA');
+    html += me.getRadioColor('mn4_clr', 'mn4_clrGreen8', 'Dark Sea Green', '8FBC8B');
+    html += me.getRadioColor('mn4_clr', 'mn4_clrGreen9', 'Lignt Sea Green', '20B2AA');
+    html += me.getRadioColor('mn4_clr', 'mn4_clrGreen10', 'Dark Cyan', '008B8B');
+    html += me.getRadioColor('mn4_clr', 'mn4_clrGreen11', 'Teal', '008080');
+    html += me.getRadioColor('mn4_clr', 'mn4_clrGreen12', 'Forest Green', '228B22');
+    html += me.getRadioColor('mn4_clr', 'mn4_clrGreen13', 'Sea Green', '2E8B57');
+    html += me.getRadioColor('mn4_clr', 'mn4_clrGreen14', 'Medium Sea Green', '3CB371');
+    html += me.getRadioColor('mn4_clr', 'mn4_clrGreen15', 'Spring Green', '00FF7F');
+    //html += me.getRadioColor('mn4_clr', 'mn4_clrGreen16', 'Medium Spring Green', '00FA9A');
+    html += me.getRadioColor('mn4_clr', 'mn4_clrGreen16', 'Medium Spring', '00FA9A');
+    html += me.getRadioColor('mn4_clr', 'mn4_clrGreen17', 'Light Green', '90EE90');
+    html += me.getRadioColor('mn4_clr', 'mn4_clrGreen18', 'Pale Green', '98FB98');
+    html += me.getRadioColor('mn4_clr', 'mn4_clrGreen19', 'Lime Green', '32CD32');
+    html += me.getRadioColor('mn4_clr', 'mn4_clrGreen20', 'Lawn Green', '7CFC00');
+    html += me.getRadioColor('mn4_clr', 'mn4_clrGreen21', 'Chartreuse', '7FFF00');
+    html += me.getRadioColor('mn4_clr', 'mn4_clrGreen22', 'Green Yellow', 'ADFF2F');
+    html += "</ul>";
+
+    html += "<li><span>Cyan</span>";
+    html += "<ul>";
+    //html += me.getRadio('mn4_clr', 'mn4_clrCyan', 'Cyan');
+    html += me.getRadioColor('mn4_clr', 'mn4_clrCyan1', 'Cyan', '0FF');
+    html += me.getRadioColor('mn4_clr', 'mn4_clrCyan2', 'Light Cyan', 'E0FFFF');
+    html += me.getRadioColor('mn4_clr', 'mn4_clrCyan3', 'Pale Turquoise', 'AFEEEE');
+    html += me.getRadioColor('mn4_clr', 'mn4_clrCyan4', 'Aquamarine', '7FFFD4');
+    html += me.getRadioColor('mn4_clr', 'mn4_clrCyan5', 'Turquoise', '40E0D0');
+    html += me.getRadioColor('mn4_clr', 'mn4_clrCyan6', 'Medium Turquoise', '48D1CC');
+    html += me.getRadioColor('mn4_clr', 'mn4_clrCyan7', 'Dark Turquoise', '00CED1');
+    html += "</ul>";
+
+    html += "<li><span>Blue</span>";
+    html += "<ul>";
+    //html += me.getRadio('mn4_clr', 'mn4_clrBlue', 'Blue');
+    html += me.getRadioColor('mn4_clr', 'mn4_clrBlue1', 'Blue', '00F');
+    html += me.getRadioColor('mn4_clr', 'mn4_clrBlue2', 'Medium Blue', '0000CD');
+    html += me.getRadioColor('mn4_clr', 'mn4_clrBlue3', 'Dark Blue', '00008B');
+    html += me.getRadioColor('mn4_clr', 'mn4_clrBlue4', 'Navy', '000080');
+    html += me.getRadioColor('mn4_clr', 'mn4_clrBlue5', 'Midnight Blue', '191970');
+    html += me.getRadioColor('mn4_clr', 'mn4_clrBlue6', 'Royal Blue', '4169E1');
+    html += me.getRadioColor('mn4_clr', 'mn4_clrBlue7', 'Medium Slate Blue', '7B68EE');
+    html += me.getRadioColor('mn4_clr', 'mn4_clrBlue8', 'Corn Flower Blue', '6495ED');
+    html += me.getRadioColor('mn4_clr', 'mn4_clrBlue9', 'Dodger Blue', '1E90FF');
+    html += me.getRadioColor('mn4_clr', 'mn4_clrBlue10', 'Deep Sky Blue', '00BFFF');
+    html += me.getRadioColor('mn4_clr', 'mn4_clrBlue11', 'Light Sky Blue', '87CEFA');
+    html += me.getRadioColor('mn4_clr', 'mn4_clrBlue12', 'Sky Blue', '87CEEB');
+    html += me.getRadioColor('mn4_clr', 'mn4_clrBlue13', 'Light Blue', 'ADD8E6');
+    html += me.getRadioColor('mn4_clr', 'mn4_clrBlue14', 'Powder Blue', 'B0E0E6');
+    html += me.getRadioColor('mn4_clr', 'mn4_clrBlue15', 'Light Steel Blue', 'B0C4DE');
+    html += me.getRadioColor('mn4_clr', 'mn4_clrBlue16', 'Steel Blue', '4682B4');
+    html += me.getRadioColor('mn4_clr', 'mn4_clrBlue17', 'Cadet Blue', '5F9EA0');
+    html += "</ul>";
+
+    html += "<li><span>Brown</span>";
+    html += "<ul>";
+    //html += me.getRadio('mn4_clr', 'mn4_clrBrown', 'Brown');
+    html += me.getRadioColor('mn4_clr', 'mn4_clrBrown1', 'Brown', 'A52A2A');
+    html += me.getRadioColor('mn4_clr', 'mn4_clrBrown2', 'Maroon', '800000');
+    html += me.getRadioColor('mn4_clr', 'mn4_clrBrown3', 'Sienna', 'A0522D');
+    html += me.getRadioColor('mn4_clr', 'mn4_clrBrown4', 'Saddle Brown', '8B4513');
+    html += me.getRadioColor('mn4_clr', 'mn4_clrBrown5', 'Chocolate', 'D2691E');
+    html += me.getRadioColor('mn4_clr', 'mn4_clrBrown6', 'Peru', 'CD853F');
+    html += me.getRadioColor('mn4_clr', 'mn4_clrBrown7', 'Dark Golden Rod', 'B8860B');
+    html += me.getRadioColor('mn4_clr', 'mn4_clrBrown8', 'Golden Rod', 'DAA520');
+    html += me.getRadioColor('mn4_clr', 'mn4_clrBrown9', 'Sandy Brown', 'F4A460');
+    html += me.getRadioColor('mn4_clr', 'mn4_clrBrown10', 'Rosy Brown', 'BC8F8F');
+    html += me.getRadioColor('mn4_clr', 'mn4_clrBrown11', 'Tan', 'D2B48C');
+    html += me.getRadioColor('mn4_clr', 'mn4_clrBrown12', 'Burlywood', 'DEB887');
+    html += me.getRadioColor('mn4_clr', 'mn4_clrBrown13', 'Wheat', 'F5DEB3');
+    html += me.getRadioColor('mn4_clr', 'mn4_clrBrown14', 'Navajo White', 'FFDEAD');
+    html += me.getRadioColor('mn4_clr', 'mn4_clrBrown15', 'Bisque', 'FFE4C4');
+    html += me.getRadioColor('mn4_clr', 'mn4_clrBrown16', 'Blanched Almond', 'FFEBCD');
+    html += me.getRadioColor('mn4_clr', 'mn4_clrBrown17', 'Corn Silk', 'FFF8DC');
+    html += "</ul>";
+
+    html += "<li><span>White</span>";
+    html += "<ul>";
+    //html += me.getRadio('mn4_clr', 'mn4_clrWhite', 'White');
+    html += me.getRadioColor('mn4_clr', 'mn4_clrWhite1', 'White', 'FFF');
+    html += me.getRadioColor('mn4_clr', 'mn4_clrWhite2', 'Snow', 'FFFAFA');
+    html += me.getRadioColor('mn4_clr', 'mn4_clrWhite3', 'Honey Dew', 'F0FFF0');
+    html += me.getRadioColor('mn4_clr', 'mn4_clrWhite4', 'Mint Cream', 'F5FFFA');
+    html += me.getRadioColor('mn4_clr', 'mn4_clrWhite5', 'Azure', 'F0FFFF');
+    html += me.getRadioColor('mn4_clr', 'mn4_clrWhite6', 'Alice Blue', 'F0F8FF');
+    html += me.getRadioColor('mn4_clr', 'mn4_clrWhite7', 'Ghost White', 'F8F8FF');
+    html += me.getRadioColor('mn4_clr', 'mn4_clrWhite8', 'White Smoke', 'F5F5F5');
+    html += me.getRadioColor('mn4_clr', 'mn4_clrWhite9', 'Sea Shell', 'FFF5EE');
+    html += me.getRadioColor('mn4_clr', 'mn4_clrWhite10', 'Beige', 'F5F5DC');
+    html += me.getRadioColor('mn4_clr', 'mn4_clrWhite11', 'Old Lace', 'FDF5E6');
+    html += me.getRadioColor('mn4_clr', 'mn4_clrWhite12', 'Floral White', 'FFFAF0');
+    html += me.getRadioColor('mn4_clr', 'mn4_clrWhite13', 'Ivory', 'FFFFF0');
+    html += me.getRadioColor('mn4_clr', 'mn4_clrWhite14', 'Antique White', 'FAEBD7');
+    html += me.getRadioColor('mn4_clr', 'mn4_clrWhite15', 'Linen', 'FAF0E6');
+    html += me.getRadioColor('mn4_clr', 'mn4_clrWhite16', 'Lavenderblush', 'FFF0F5');
+    html += me.getRadioColor('mn4_clr', 'mn4_clrWhite17', 'Misty Rose', 'FFE4E1');
+    html += "</ul>";
+
+    html += "<li><span>Grey</span>";
+    html += "<ul>";
+    //html += me.getRadio('mn4_clr', 'mn4_clrGray', 'Gray');
+    html += me.getRadioColor('mn4_clr', 'mn4_clrGray1', 'Gray', '808080');
+    html += me.getRadioColor('mn4_clr', 'mn4_clrGray2', 'Dim Gray', '696969');
+    html += me.getRadioColor('mn4_clr', 'mn4_clrGray3', 'Light Slate Gray', '778899');
+    html += me.getRadioColor('mn4_clr', 'mn4_clrGray4', 'Slate Gray', '708090');
+    html += me.getRadioColor('mn4_clr', 'mn4_clrGray5', 'Dark Slate Gray', '2F4F4F');
+    html += me.getRadioColor('mn4_clr', 'mn4_clrGray6', 'Black', '000000');
+    html += me.getRadioColor('mn4_clr', 'mn4_clrGray7', 'Dark Gray', 'A9A9A9');
+    html += me.getRadioColor('mn4_clr', 'mn4_clrGray8', 'Silver', 'C0C0C0');
+    html += me.getRadioColor('mn4_clr', 'mn4_clrGray9', 'Light Gray', 'D3D3D3');
+    html += me.getRadioColor('mn4_clr', 'mn4_clrGray10', 'Gainsboro', 'DCDCDC');
+    html += "</ul>";
+
+    html += "</ul>";
+
+    html += me.getRadio('mn4_clr', 'mn4_clrCustom', 'Color Picker');
+    html += "<li>-</li>";
+
     if(me.cfg.cid === undefined) {
         html += me.getRadio('mn4_clr', 'mn4_clrSpectrum', 'Spectrum');
         html += "<li><span style='padding-left:2.3em;'>Secondary</span>";
@@ -1100,21 +1311,10 @@ iCn3DUI.prototype.setMenu4_base = function() { var me = this; //"use strict";
     }
 
     html += "<li>-</li>";
-    html += "<li><span style='padding-left:2.3em;'>Unicolor</span>";
-    html += "<ul>";
-    html += me.getRadio('mn4_clr', 'mn4_clrRed', 'Red');
-    html += me.getRadio('mn4_clr', 'mn4_clrGreen', 'Green');
-    html += me.getRadio('mn4_clr', 'mn4_clrBlue', 'Blue');
-    html += me.getRadio('mn4_clr', 'mn4_clrMagenta', 'Magenta');
-    html += me.getRadio('mn4_clr', 'mn4_clrYellow', 'Yellow');
-    html += me.getRadio('mn4_clr', 'mn4_clrCyan', 'Cyan');
-    html += me.getRadio('mn4_clr', 'mn4_clrWhite', 'White');
-    html += me.getRadio('mn4_clr', 'mn4_clrGrey', 'Grey');
-    html += "</ul>";
-    html += me.getRadio('mn4_clr', 'mn4_clrCustom', 'Color Picker');
-    html += "<li>-</li>";
+
     html += me.getLink('mn4_clrSave', 'Save Color');
     html += me.getLink('mn4_clrApplySave', 'Apply Saved Color');
+
     html += "<li><br/></li>";
     html += "</ul>";
 

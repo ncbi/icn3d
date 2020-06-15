@@ -216,7 +216,7 @@ input:checked + .icn3d-slider:before {
     padding-left: 0.4em;
 }
 
-.icn3d-rad-text {
+.icn3d-rad-text, .icn3d-color-rad-text {
     padding-left: 2em;
 }
 
