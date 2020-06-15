@@ -281,6 +281,10 @@ iCn3DUI.prototype = {
     switchHighlightLevelUp: function() { var me = this; //"use strict";
           if(!me.icn3d.bShift && !me.icn3d.bCtrl) me.icn3d.removeHlObjects();
 
+          if(me.icn3d.pickedAtomList === undefined || Object.keys(me.icn3d.pickedAtomList).length === 0) {
+              me.icn3d.pickedAtomList = me.icn3d.cloneHash(me.icn3d.hAtoms);
+          }
+
           if(me.icn3d.highlightlevel === 1) { // atom -> residue
               me.icn3d.highlightlevel = 2;
 
@@ -361,6 +365,10 @@ iCn3DUI.prototype = {
 
     switchHighlightLevelDown: function() { var me = this; //"use strict";
           me.icn3d.removeHlObjects();
+
+          if(me.icn3d.pickedAtomList === undefined || Object.keys(me.icn3d.pickedAtomList).length === 0) {
+              me.icn3d.pickedAtomList = me.icn3d.cloneHash(me.icn3d.hAtoms);
+          }
 
           if( (me.icn3d.highlightlevel === 2 || me.icn3d.highlightlevel === 1) && Object.keys(me.icn3d.pickedAtomList).length === 1) { // residue -> atom
               me.icn3d.highlightlevel = 1;
@@ -4715,6 +4723,17 @@ iCn3DUI.prototype = {
         });
     },
 
+    clkMn4_clrOther: function() { var me = this; //"use strict";
+        $(document).on('click', ".icn3d-color-rad-text", function(e) {
+          e.stopImmediatePropagation();
+
+          //e.preventDefault();
+          var color = $(this).attr('color');
+          me.setOption("color", color);
+          me.setLogCmd("color " + color, true);
+        });
+    },
+
     clkMn4_clrSave: function() { var me = this; //"use strict";
         $("#" + me.pre + "mn4_clrSave").click(function(e) {
            me.saveColor();
@@ -7898,7 +7917,7 @@ iCn3DUI.prototype = {
         return {html: tmpText, cnt: cnt};
     },
 
-    getGraphData: function(atomSet2, atomSet1, nameArray2, nameArray, html, labelType, bLine) { var me = this; //"use strict";
+    getGraphData: function(atomSet2, atomSet1, nameArray2, nameArray, html, labelType) { var me = this; //"use strict";
        // get the nodes and links data
        var nodeStr = '', linkStr = '';
 
@@ -7910,11 +7929,30 @@ iCn3DUI.prototype = {
        nodeArray = node_link1.node.concat(node_link2.node);
 
        // removed duplicated nodes
-       var nodeStrArray = [];
+       var nodeJsonArray = [];
+       var checkedNodeidHash = {};
+       var cnt = 0;
        for(var i = 0, il = nodeArray.length; i < il; ++i) {
            var node = nodeArray[i];
-           if(nodeStrArray.indexOf(node) == -1) nodeStrArray.push(node);
+           var nodeJson = JSON.parse(node);
+
+           if(!checkedNodeidHash.hasOwnProperty(nodeJson.id)) {
+               nodeJsonArray.push(nodeJson);
+               checkedNodeidHash[nodeJson.id] = cnt;
+               ++cnt;
+           }
+           else {
+               var pos = checkedNodeidHash[nodeJson.id];
+               nodeJsonArray[pos].s = 'ab'; // appear in both sets
+           }
        }
+
+       var nodeStrArray = [];
+       for(var i = 0, il = nodeJsonArray.length; i < il; ++i) {
+           var nodeJson = nodeJsonArray[i];
+           nodeStrArray.push(JSON.stringify(nodeJson));
+       }
+
        nodeStr = nodeStrArray.join(', ');
 
        // linkStr
@@ -7946,7 +7984,7 @@ iCn3DUI.prototype = {
 
        var hBondLinkStr = '', ionicLinkStr = '', halogenpiLinkStr = '', contactLinkStr = '',
          disulfideLinkStr = '', crossLinkStr = '';
-       if(bLine) {
+
            // add hydrogen bonds for each set
 
            if(!(nameArray2.length == 1 && nameArray.length == 1 && nameArray2[0] == nameArray[0])) {
@@ -8020,7 +8058,6 @@ iCn3DUI.prototype = {
                    }
                }
            }
-       }
 
        var resStr = '{"nodes": [' + nodeStr + chemicalNodeStr + '], "links": [';
 
@@ -8092,7 +8129,11 @@ iCn3DUI.prototype = {
             if(node.s == 'a') {
                 nodeArray1.push(node);
             }
-            else {
+            else if(node.s == 'b') {
+                nodeArray2.push(node);
+            }
+            else if(node.s == 'ab') {
+                nodeArray1.push(node);
                 nodeArray2.push(node);
             }
         }
@@ -8134,15 +8175,15 @@ iCn3DUI.prototype = {
 
         var h1 = 30, h2 = 80;
         var nodeHtml = '';
-        var node2pos = {};
+        var node2posSet1 = {}, node2posSet2 = {};
         for(var i = 0; i < len1; ++i) {
             nodeHtml += me.drawResNode(nodeArray1[i], i, r, gap, margin1, h1, 'a');
-            node2pos[nodeArray1[i].id] = {x: margin1 + i * (r + gap), y: h1};
+            node2posSet1[nodeArray1[i].id] = {x: margin1 + i * (r + gap), y: h1};
         }
 
         for(var i = 0; i < len2; ++i) {
             nodeHtml += me.drawResNode(nodeArray2[i], i, r, gap, margin2, h2, 'b');
-            node2pos[nodeArray2[i].id] = {x: margin2 + i * (r + gap), y: h2};
+            node2posSet2[nodeArray2[i].id] = {x: margin2 + i * (r + gap), y: h2};
         }
 
         // draw lines
@@ -8155,8 +8196,8 @@ iCn3DUI.prototype = {
             var resid1 = node1.r.substr(4);
             var resid2 = node2.r.substr(4);
 
-            var pos1 = node2pos[node1.id];
-            var pos2 = node2pos[node2.id];
+            var pos1 = node2posSet1[node1.id];
+            var pos2 = node2posSet2[node2.id];
 
             var linestrokewidth;
             if(link.v == me.contactValue) {
@@ -9285,6 +9326,7 @@ iCn3DUI.prototype = {
         me.clkMn4_clrWhite();
         me.clkMn4_clrGrey();
         me.clkMn4_clrCustom();
+        me.clkMn4_clrOther();
         me.clkMn4_clrSave();
         me.clkMn4_clrApplySave();
         me.clkMn3_styleSave();
