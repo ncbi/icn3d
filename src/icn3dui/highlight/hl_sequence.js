@@ -305,7 +305,7 @@ iCn3DUI.prototype.selectSequenceNonMobile = function() { var me = this; //"use s
           me.updateHl2D(chainArray2d);
 
           // select annotation title
-          $("div.ui-selected", this).each(function() {
+          $("#" + me.divid + " div.ui-selected", this).each(function() {
               if($(this).attr('chain') !== undefined) {
 
                   me.selectTitle(this);
