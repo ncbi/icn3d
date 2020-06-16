@@ -814,6 +814,8 @@ iCn3DUI.prototype = {
                       me.setLogCmd('load seq_struct_ids ' + me.cfg.query_id + ',' + me.cfg.blast_rep_id, true);
 
                       me.downloadBlast_rep_id(me.cfg.query_id + ',' + me.cfg.blast_rep_id);
+
+                      break;
                     }
                   },
                   error : function(xhr, textStatus, errorThrown ) {
