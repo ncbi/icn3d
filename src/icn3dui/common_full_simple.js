@@ -512,7 +512,8 @@ iCn3DUI.prototype.resizeCanvas = function (width, height, bForceResize, bDraw) {
     $("#" + me.pre + "canvas").width(width).height(heightTmp);
     $("#" + me.pre + "viewer").width(width).height(height);
 
-    $("div:has(#" + me.pre + "canvas)").width(width).height(heightTmp);
+    //$("div:has(#" + me.pre + "canvas)").width(width).height(heightTmp);
+    $("#" + me.divid + " div:has(#" + me.pre + "canvas)").width(width).height(heightTmp);
 
     me.icn3d.setWidthHeight(width, heightTmp);
 
@@ -752,9 +753,14 @@ iCn3DUI.prototype.shareLinkUrl = function(bAllCommands) { var me = this; //"use 
 
        if(me.bInputfile || url.length > 4000) url = statefile;
 
+       var id;
        if(me.icn3d.structures !== undefined && Object.keys(me.icn3d.structures).length == 1 && me.inputid !== undefined) {
-           var id = Object.keys(me.icn3d.structures)[0];
+           id = Object.keys(me.icn3d.structures)[0];
            url = url.replace(new RegExp(id + '_','g'), '!');
+       }
+
+       if(me.cfg.blast_rep_id !== undefined) {
+           url = url.replace(new RegExp('blast_rep_id=!','g'), 'blast_rep_id=' + id + '_');
        }
 
        return url;
