@@ -766,7 +766,7 @@ iCn3DUI.prototype = {
            me.downloadGi(me.cfg.gi);
         }
         else if(me.cfg.blast_rep_id !== undefined) {
-           if(me.cfg.query_id !== undefined) {
+           if(me.cfg.query_id.substr(0,5) !== 'Query') { //Query_78989
                me.inputid = me.cfg.query_id + '_' + me.cfg.blast_rep_id;
 
                me.setLogCmd('load seq_struct_ids ' + me.cfg.query_id + ',' + me.cfg.blast_rep_id, true);
@@ -782,7 +782,10 @@ iCn3DUI.prototype = {
                   tryCount : 0,
                   retryLimit : 1,
                   success: function(data) {
-                      var hitArray = data.BlastOutput2[0].report.results.search.hits;
+                    for(var q = 0, ql = data.BlastOutput2.length; q < ql; ++q) {
+                      if(data.BlastOutput2[q].report.results.search.query_id != me.cfg.query_id) continue;
+
+                      var hitArray = data.BlastOutput2[q].report.results.search.hits;
                       var qseq = undefined;
                       for(var i = 0, il = hitArray.length; i < il; ++i) {
                         var hit = hitArray[i];
@@ -811,6 +814,7 @@ iCn3DUI.prototype = {
                       me.setLogCmd('load seq_struct_ids ' + me.cfg.query_id + ',' + me.cfg.blast_rep_id, true);
 
                       me.downloadBlast_rep_id(me.cfg.query_id + ',' + me.cfg.blast_rep_id);
+                    }
                   },
                   error : function(xhr, textStatus, errorThrown ) {
                     this.tryCount++;
