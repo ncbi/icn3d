@@ -831,6 +831,7 @@ iCn3DUI.prototype = {
                });
            }
            else {
+               alert('BLAST "RID" is a required parameter...');
            }
         }
         else if(me.cfg.cid !== undefined) {
