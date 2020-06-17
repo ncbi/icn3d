@@ -239,7 +239,7 @@ make_js_task("full", common_js.concat(full_js).concat("src/icn3dui/full_ui.js").
 gulp.task('html',
   //gulp.series('clean'),
   function() {
-    return gulp.src(['index.html', 'full.html', 'full2.html', 'icn3d.html', 'share.html'])
+    return gulp.src(['index.html', 'full.html', 'full2.html', 'icn3d.html', 'share.html', 'example.html'])
         .pipe(dom(function() {
             var elems = this.querySelectorAll(
                 "script[src],link[rel='stylesheet']");
@@ -248,19 +248,13 @@ gulp.task('html',
                 var src_attr = (e.tagName == "SCRIPT") ? "src" : "href";
                 var src_file = e.getAttribute(src_attr);
 
-                var new_src, m,
-                    set_attr = true;
-                if (m = src_file.match(/^(.*firebase.*)$/))
-                    new_src = m[1];
-                else if (m = src_file.match(/^lib\/(.*)/))
-                    new_src = "lib/" + m[1];
-                else if (m = src_file.match(/^(.*)\.css$/))
+                var new_src, m, set_attr = true;
+                if (m = src_file.match(/^(.*)\.css$/))
                     new_src = m[1] + "_" + package.version + ".css";
                 else if (m = src_file.match(/^(.*_ui.*)\.min\.js/))
                     new_src = m[1] + "_" + package.version + ".min.js";
-                else {
-                    e.parentNode.removeChild(e);
-                    set_attr = false;
+                else if (m = src_file.match(/^(.*)$/)) {
+                    new_src = m[1];
                 }
                 if (set_attr) e.setAttribute(src_attr, new_src);
             }
