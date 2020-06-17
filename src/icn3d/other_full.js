@@ -673,7 +673,8 @@ iCn3D.prototype.calculateIonicInteractions = function (startAtoms, targetAtoms, 
 
 iCn3D.prototype.getHalogenDonar = function (atom) { var me = this; //"use strict";
       var name2atom = {};
-      if(atom.elem === "F" || atom.elem === "CL" || atom.elem === "BR" || atom.elem === "I") {
+      //if(atom.elem === "F" || atom.elem === "CL" || atom.elem === "BR" || atom.elem === "I") {
+      if(atom.elem === "CL" || atom.elem === "BR" || atom.elem === "I") {
           var chain_resi_atom = atom.structure + "_" + atom.chain + "_" + atom.resi + "_" + atom.name;
           name2atom[chain_resi_atom] = atom;
       }
@@ -841,8 +842,8 @@ iCn3D.prototype.calculateHalogenPiInteractions = function (startAtoms, targetAto
           // only parallel or perpendicular
           if(interactionType == 'pi-stacking' && atom1.normal !== undefined && atom2.normal !== undefined) {
               var dotResult = Math.abs(atom1.normal.dot(atom2.normal));
-              // perpendicular 20 degree || parellel, 20 degree
-              if(dotResult > 0.342 && dotResult < 0.940) continue;
+              // perpendicular 30 degree || parellel, 30 degree
+              if(dotResult > 0.5 && dotResult < 0.866) continue;
           }
 
           var bResult = this.getHalogenPiInteractions(atom1, atom2, type, interactionType, threshold, maxlengthSq, oriResidName, bInternal);
@@ -1319,14 +1320,17 @@ iCn3D.prototype.getAromaticRings = function(resn, resid, type) { var me = this; 
                 }
             }
 
-            pos1.multiplyScalar(1.0 / 6);
-            pos2.multiplyScalar(1.0 / 5);
+            if(coordArray1.length == 6) {
+                pos1.multiplyScalar(1.0 / 6);
+                piPosArray.push(pos1);
+                normalArray.push(this.getRingNormal(coordArray1));
+            }
 
-            piPosArray.push(pos1);
-            piPosArray.push(pos2);
-
-            normalArray.push(this.getRingNormal(coordArray1));
-            normalArray.push(this.getRingNormal(coordArray2));
+            if(coordArray2.length == 5) {
+                pos2.multiplyScalar(1.0 / 5);
+                piPosArray.push(pos2);
+                normalArray.push(this.getRingNormal(coordArray2));
+            }
         }
         else if(resn.trim().toUpperCase() == 'C' || resn.trim().toUpperCase() == 'DC'
           || resn.trim().toUpperCase() == 'T' || resn.trim().toUpperCase() == 'DT'
@@ -1345,11 +1349,13 @@ iCn3D.prototype.getAromaticRings = function(resn, resid, type) { var me = this; 
                 }
             }
 
-            pos1.multiplyScalar(1.0 / 6);
+            if(coordArray1.length == 6) {
+                pos1.multiplyScalar(1.0 / 6);
 
-            piPosArray.push(pos1);
+                piPosArray.push(pos1);
 
-            normalArray.push(this.getRingNormal(coordArray1));
+                normalArray.push(this.getRingNormal(coordArray1));
+            }
         }
     }
     else if(type == 'protein') {
@@ -1365,10 +1371,12 @@ iCn3D.prototype.getAromaticRings = function(resn, resid, type) { var me = this; 
                 }
             }
 
-            pos1.multiplyScalar(1.0 / 6);
+            if(coordArray1.length == 6) {
+                pos1.multiplyScalar(1.0 / 6);
 
-            piPosArray.push(pos1);
-            normalArray.push(this.getRingNormal(coordArray1));
+                piPosArray.push(pos1);
+                normalArray.push(this.getRingNormal(coordArray1));
+            }
         }
         else if(resn.toUpperCase() == 'HIS') {
             for(var i in this.residues[resid]) {
@@ -1380,10 +1388,12 @@ iCn3D.prototype.getAromaticRings = function(resn, resid, type) { var me = this; 
                 }
             }
 
-            pos1.multiplyScalar(1.0 / 5);
+            if(coordArray1.length == 5) {
+                pos1.multiplyScalar(1.0 / 5);
 
-            piPosArray.push(pos1);
-            normalArray.push(this.getRingNormal(coordArray1));
+                piPosArray.push(pos1);
+                normalArray.push(this.getRingNormal(coordArray1));
+            }
         }
         else if(resn.toUpperCase() == 'TRP') {
             for(var i in this.residues[resid]) {
@@ -1404,14 +1414,17 @@ iCn3D.prototype.getAromaticRings = function(resn, resid, type) { var me = this; 
                 }
             }
 
-            pos1.multiplyScalar(1.0 / 6);
-            pos2.multiplyScalar(1.0 / 5);
+            if(coordArray1.length == 6) {
+                pos1.multiplyScalar(1.0 / 6);
+                piPosArray.push(pos1);
+                normalArray.push(this.getRingNormal(coordArray1));
+            }
 
-            piPosArray.push(pos1);
-            piPosArray.push(pos2);
-
-            normalArray.push(this.getRingNormal(coordArray1));
-            normalArray.push(this.getRingNormal(coordArray2));
+            if(coordArray2.length == 5) {
+                pos2.multiplyScalar(1.0 / 5);
+                piPosArray.push(pos2);
+                normalArray.push(this.getRingNormal(coordArray2));
+            }
         }
     }
 

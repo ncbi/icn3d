@@ -13,7 +13,7 @@ if (!$.ui.dialog.prototype._makeDraggableBase) {
 }
 
 var iCn3DUI = function(cfg) { var me = this; //"use strict";
-    this.REVISION = '2.17.1';
+    this.REVISION = '2.17.2';
 
     me.bFullUi = true;
 
@@ -5994,7 +5994,7 @@ iCn3DUI.prototype = {
            //me.icn3d.bShowCrossResidueBond = true;
            //me.setStyle('proteins', 'lines')
 
-           me.showClbonds(true);
+           me.showClbonds();
 
            //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
@@ -8127,7 +8127,8 @@ iCn3DUI.prototype = {
 
        var resStr = '{"nodes": [' + nodeStr + chemicalNodeStr + '], "links": [';
 
-       resStr += linkStr + html + hBondLinkStr + ionicLinkStr + halogenpiLinkStr + disulfideLinkStr + crossLinkStr + contactLinkStr;
+       //resStr += linkStr + html + hBondLinkStr + ionicLinkStr + halogenpiLinkStr + disulfideLinkStr + crossLinkStr + contactLinkStr;
+       resStr += linkStr + html + disulfideLinkStr + crossLinkStr + contactLinkStr + hBondLinkStr + ionicLinkStr + halogenpiLinkStr;
 
        resStr += ']}';
 

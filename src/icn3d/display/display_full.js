@@ -316,11 +316,13 @@ iCn3D.prototype.applyClbondsOptions = function (options) { var me = this; //"use
 
      for (var i in me.chemicals) {
         var atom0 = me.atoms[i];
-        if(!this.hAtoms.hasOwnProperty(atom0.serial) || atom0.style == 'nothing') continue;
+        //if(!this.hAtoms.hasOwnProperty(atom0.serial) || atom0.style == 'nothing') continue;
+        if(!this.dAtoms.hasOwnProperty(atom0.serial) || atom0.style == 'nothing') continue;
 
         for (var j in atom0.bonds) {
             var atom1 = me.atoms[atom0.bonds[j]];
-            if(!this.hAtoms.hasOwnProperty(atom1.serial) || atom1.style == 'nothing') continue;
+            //if(!this.hAtoms.hasOwnProperty(atom1.serial) || atom1.style == 'nothing') continue;
+            if(!this.dAtoms.hasOwnProperty(atom1.serial) || atom1.style == 'nothing') continue;
 
             //if (atom1 === undefined || atom1.serial < atom0.serial) continue;
             if (atom1 === undefined) continue;

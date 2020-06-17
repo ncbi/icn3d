@@ -1,4 +1,6 @@
 ## Change Log
+[icn3d-2.17.2](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.17.1.zip) was release on June 17, 2020. Added pinger to log usage.
+
 [icn3d-2.17.1](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.17.1.zip) was release on June 15, 2020. Enabled to accept RID from BLAST result page.
 
 [icn3d-2.17.0](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.17.0.zip) was release on June 12, 2020. Users can now show "2D Interaction Graph" and also "Highlight Interactions in Table" in the menu "View > H-Bonds & Interactions". Users can also replay the share link step by step to learn how to generate a custom display in the menu "File > Replay Each Step".
