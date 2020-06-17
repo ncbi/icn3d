@@ -314,10 +314,14 @@ iCn3D.prototype.applyClbondsOptions = function (options) { var me = this; //"use
      var color = '#006400';
      var colorObj = new THREE.Color(0x006400);
 
+     var chemical2protein = {};
      for (var i in me.chemicals) {
         var atom0 = me.atoms[i];
         //if(!this.hAtoms.hasOwnProperty(atom0.serial) || atom0.style == 'nothing') continue;
         if(!this.dAtoms.hasOwnProperty(atom0.serial) || atom0.style == 'nothing') continue;
+
+        var resid0 = atom0.structure + '_' + atom0.chain + '_' + atom0.resi;
+        if(!chemical2protein.hasOwnProperty(resid0)) chemical2protein[resid0] = {};
 
         for (var j in atom0.bonds) {
             var atom1 = me.atoms[atom0.bonds[j]];
@@ -327,8 +331,20 @@ iCn3D.prototype.applyClbondsOptions = function (options) { var me = this; //"use
             //if (atom1 === undefined || atom1.serial < atom0.serial) continue;
             if (atom1 === undefined) continue;
             if (atom1.chain !== atom0.chain || atom1.resi !== atom0.resi) {
-                var resid0 = atom0.structure + '_' + atom0.chain + '_' + atom0.resi;
-                var resid1 = atom1.structure + '_' + atom1.chain + '_' + atom1.resi;
+                var chain1 = atom1.structure + '_' + atom1.chain;
+                var resid1 = chain1 + '_' + atom1.resi;
+
+                // add the chemical to the protein residue
+                if(!me.bAddCrossLinkage && (me.proteins.hasOwnProperty(atom1.serial)
+                  || me.proteins.hasOwnProperty(atom1.serial)) ) {
+                    if(!chemical2protein[resid0].hasOwnProperty(resid1)) {
+                        // add resid0 to resid1
+                        me.residues[resid1] = me.unionHash(me.residues[resid1], me.residues[resid0]);
+                        me.chains[chain1] = me.unionHash(me.chains[chain1], me.residues[resid0]);
+
+                        chemical2protein[resid0][resid1] = 1;
+                    }
+                }
 
                 //if(atom0.structure == atom1.structure) {
                     if(me.clbondpnts[atom0.structure] === undefined) me.clbondpnts[atom0.structure] = [];
@@ -366,9 +382,11 @@ iCn3D.prototype.applyClbondsOptions = function (options) { var me = this; //"use
                     residues[resid1] = 1;
                 //}
             }
-        }
-    }
-  }
+        } // for j
+    } // for i
+
+    if(!me.bAddCrossLinkage) me.bAddCrossLinkage = true;
+  } // if
 
   return residues;
 };

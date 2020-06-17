@@ -249,9 +249,9 @@ gulp.task('html',
                 var src_file = e.getAttribute(src_attr);
 
                 var new_src, m, set_attr = true;
-                if (m = src_file.match(/^(.*)\.css$/))
+                if (m = src_file.match(/^(icn3d.*)\.css$/))
                     new_src = m[1] + "_" + package.version + ".css";
-                else if (m = src_file.match(/^(.*_ui.*)\.min\.js/))
+                else if (m = src_file.match(/^(icn3d.*)\.min\.js/))
                     new_src = m[1] + "_" + package.version + ".min.js";
                 else if (m = src_file.match(/^(.*)$/)) {
                     new_src = m[1];
