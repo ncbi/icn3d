@@ -205,6 +205,10 @@ iCn3DUI.prototype.showAnnoSeqData = function(nucleotide_chainid, chemical_chaini
     me.ssbondChainChainbase = me.icn3d.unionHash(me.ssbondChainChainbase, me.protein_chainid);
     me.ssbondChainChainbase = me.icn3d.unionHash(me.ssbondChainChainbase, chemical_chainid);
 
+    me.crosslinkChainChainbase = me.icn3d.unionHash(me.crosslinkChainChainbase, me.protein_chainid);
+    me.crosslinkChainChainbase = me.icn3d.unionHash(me.crosslinkChainChainbase, nucleotide_chainid);
+    //me.crosslinkChainChainbase = me.icn3d.unionHash(me.crosslinkChainChainbase, chemical_chainid);
+
     for(var name in chemical_set) {
         me.getCombinedSequenceData(name, chemical_set[name], i);
         ++i;
@@ -287,12 +291,23 @@ iCn3DUI.prototype.updateInteraction = function() { var me = this; //"use strict"
 iCn3DUI.prototype.updateSsbond = function() { var me = this; //"use strict";
     if(me.bSSbondShown === undefined || !me.bSSbondShown) {
         for(var chainid in me.ssbondChainChainbase) {
-            var chainidBase = me.interactChainChainbase[chainid];
+            var chainidBase = me.ssbondChainChainbase[chainid];
             me.showSsbond(chainid, chainidBase);
         }
     }
 
     me.bSSbondShown = true;
+};
+
+iCn3DUI.prototype.updateCrosslink = function() { var me = this; //"use strict";
+    if(me.bCrosslinkShown === undefined || !me.bCrosslinkShown) {
+        for(var chainid in me.crosslinkChainChainbase) {
+            var chainidBase = me.crosslinkChainChainbase[chainid];
+            me.showCrosslink(chainid, chainidBase);
+        }
+    }
+
+    me.bCrosslinkShown = true;
 };
 
 iCn3DUI.prototype.updateTransmem = function() { var me = this; //"use strict";
@@ -606,6 +621,7 @@ iCn3DUI.prototype.getAnnotationData = function() { var me = this; //"use strict"
         $("#" + me.pre + "anno_" + chnid).append(me.getAnDiv(chnid, 'interaction'));
         $("#" + me.pre + "anno_" + chnid).append(me.getAnDiv(chnid, 'custom'));
         $("#" + me.pre + "anno_" + chnid).append(me.getAnDiv(chnid, 'ssbond'));
+        $("#" + me.pre + "anno_" + chnid).append(me.getAnDiv(chnid, 'crosslink'));
         $("#" + me.pre + "anno_" + chnid).append(me.getAnDiv(chnid, 'transmem'));
 
         $("#" + me.pre + "anno_" + chnid).append("<br><hr><br>");
@@ -884,6 +900,7 @@ iCn3DUI.prototype.showSeq = function(chnid, chnidBase, type, queryTitle, compTit
     $("#" + me.pre + "giseq_" + chnid).width(divLength);
     $("#" + me.pre + "interaction_" + chnid).width(divLength);
     $("#" + me.pre + "ssbond_" + chnid).width(divLength);
+    $("#" + me.pre + "crosslink_" + chnid).width(divLength);
     if($("#" + me.pre + "transmem_" + chnid).length) $("#" + me.pre + "transmem_" + chnid).width(divLength);
     if($("#" + me.pre + "custom_" + chnid).length) $("#" + me.pre + "custom_" + chnid).width(divLength);
     if($("#" + me.pre + "clinvar_" + chnid).length) $("#" + me.pre + "clinvar_" + chnid).width(divLength);
@@ -3031,6 +3048,59 @@ iCn3DUI.prototype.showSsbond_base = function(chnid, chnidBase) { var me = this; 
     me.showAnnoType(chnid, chnidBase, 'ssbond', title, residueArray, resid2resids);
 };
 
+iCn3DUI.prototype.showCrosslink = function(chnid, chnidBase) { var me = this; //"use strict";
+    if(me.icn3d.clbondpnts === undefined) {
+        // didn't finish loading atom data yet
+        setTimeout(function(){
+          me.showCrosslink_base(chnid, chnidBase);
+        }, 1000);
+    }
+    else {
+        me.showCrosslink_base(chnid, chnidBase);
+    }
+};
+
+iCn3DUI.prototype.showCrosslink_base = function(chnid, chnidBase) { var me = this; //"use strict";
+    var chainid = chnidBase;
+
+    var resid2resids = {};
+
+    var structure = chainid.substr(0, chainid.indexOf('_'));
+    var clbondArray = me.icn3d.clbondpnts[structure];
+
+    if(clbondArray === undefined) {
+        $("#" + me.pre + "dt_crosslink_" + chnid).html('');
+        $("#" + me.pre + "ov_crosslink_" + chnid).html('');
+        $("#" + me.pre + "tt_crosslink_" + chnid).html('');
+
+        return;
+    }
+
+    for(var i = 0, il = clbondArray.length; i < il; i = i + 2) {
+        var resid1 = clbondArray[i]; // chemical
+        var resid2 = clbondArray[i+1]; // protein or chemical
+
+        var chainid1 = resid1.substr(0, resid1.lastIndexOf('_'));
+        var chainid2 = resid2.substr(0, resid2.lastIndexOf('_'));
+
+        //if(chainid === chainid1) {
+        //    if(resid2resids[resid1] === undefined) resid2resids[resid1] = [];
+        //    resid2resids[resid1].push(resid2);
+        //}
+
+        if(chainid === chainid2) {
+            if(resid2resids[resid2] === undefined) resid2resids[resid2] = [];
+            resid2resids[resid2].push(resid1);
+        }
+    }
+
+    var residueArray = Object.keys(resid2resids);
+
+    var title = "Cross-Linkages";
+
+    me.showAnnoType(chnid, chnidBase, 'crosslink', title, residueArray, resid2resids);
+};
+
 iCn3DUI.prototype.showTransmem = function(chnid, chnidBase) { var me = this; //"use strict";
     if(me.icn3d.ssbondpnts === undefined) {
         // didn't finish loading atom data yet
@@ -3126,6 +3196,14 @@ iCn3DUI.prototype.showAnnoType = function(chnid, chnidBase, type, title, residue
                   }
               }
           }
+          else if(type == 'crosslink') {
+              title = 'Residue ' + resid + ' has cross-linkage with';
+              if(resid2resids[resid] !== undefined) {
+                  for(var j = 0, jl = resid2resids[resid].length; j < jl; ++j) {
+                      title += ' residue ' + resid2resids[resid][j];
+                  }
+              }
+          }
 
           html += '<span id="' + pre + '_' + me.pre + chnid + '_' + pos + '" title="' + title + '" class="icn3d-residue">' + c + '</span>';
 
@@ -3181,6 +3259,7 @@ iCn3DUI.prototype.hideAllAnnoBase = function() { var me = this; //"use strict";
         $("[id^=" + me.pre + "interaction]").hide();
         //$("[id^=" + me.pre + "custom]").hide();
         $("[id^=" + me.pre + "ssbond]").hide();
+        $("[id^=" + me.pre + "crosslink]").hide();
         $("[id^=" + me.pre + "transmem]").hide();
 };
 
@@ -3195,6 +3274,7 @@ iCn3DUI.prototype.setAnnoTabAll = function () {  var me = this; //"use strict";
     if($("#" + me.pre + "anno_interact").length) $("#" + me.pre + "anno_interact")[0].checked = true;
     if($("#" + me.pre + "anno_custom").length) $("#" + me.pre + "anno_custom")[0].checked = true;
     if($("#" + me.pre + "anno_ssbond").length) $("#" + me.pre + "anno_ssbond")[0].checked = true;
+    if($("#" + me.pre + "anno_crosslink").length) $("#" + me.pre + "anno_crosslink")[0].checked = true;
     if($("#" + me.pre + "anno_transmem").length) $("#" + me.pre + "anno_transmem")[0].checked = true;
 
     //$("[id^=" + me.pre + "custom]").show();
@@ -3206,6 +3286,7 @@ iCn3DUI.prototype.setAnnoTabAll = function () {  var me = this; //"use strict";
     $("[id^=" + me.pre + "interaction]").show();
     $("[id^=" + me.pre + "custom]").show();
     $("[id^=" + me.pre + "ssbond]").show();
+    $("[id^=" + me.pre + "crosslink]").show();
     $("[id^=" + me.pre + "transmem]").show();
 
     me.updateClinvar();
@@ -3213,6 +3294,7 @@ iCn3DUI.prototype.setAnnoTabAll = function () {  var me = this; //"use strict";
     me.updateDomain();
     me.updateInteraction();
     me.updateSsbond();
+    me.updateCrosslink();
     me.updateTransmem();
 };
 
@@ -3227,6 +3309,7 @@ iCn3DUI.prototype.hideAnnoTabAll = function () {  var me = this; //"use strict";
     if($("#" + me.pre + "anno_interact").length) $("#" + me.pre + "anno_interact")[0].checked = false;
     if($("#" + me.pre + "anno_custom").length) $("#" + me.pre + "anno_custom")[0].checked = false;
     if($("#" + me.pre + "anno_ssbond").length) $("#" + me.pre + "anno_ssbond")[0].checked = false;
+    if($("#" + me.pre + "anno_crosslink").length) $("#" + me.pre + "anno_crosslink")[0].checked = false;
     if($("#" + me.pre + "anno_transmem").length) $("#" + me.pre + "anno_transmem")[0].checked = false;
 
     me.hideAllAnno();
@@ -3274,6 +3357,12 @@ iCn3DUI.prototype.resetAnnoTabAll = function () {  var me = this; //"use strict"
         $("[id^=" + me.pre + "ssbond]").show();
         me.bSSbondShown = false;
         me.updateSsbond();
+    }
+
+    if($("#" + me.pre + "anno_crosslink").length && $("#" + me.pre + "anno_crosslink")[0].checked) {
+        $("[id^=" + me.pre + "crosslink]").show();
+        me.bCrosslinkShown = false;
+        me.updateCrosslink();
     }
 
     if($("#" + me.pre + "anno_transmem").length && $("#" + me.pre + "anno_transmem")[0].checked) {
@@ -3371,6 +3460,18 @@ iCn3DUI.prototype.setAnnoTabSsbond = function () {  var me = this; //"use strict
 iCn3DUI.prototype.hideAnnoTabSsbond = function () {  var me = this; //"use strict";
     $("[id^=" + me.pre + "ssbond]").hide();
     if($("#" + me.pre + "anno_ssbond").length) $("#" + me.pre + "anno_ssbond")[0].checked = false;
+};
+
+iCn3DUI.prototype.setAnnoTabCrosslink = function () {  var me = this; //"use strict";
+    $("[id^=" + me.pre + "crosslink]").show();
+    if($("#" + me.pre + "anno_crosslink").length) $("#" + me.pre + "anno_crosslink")[0].checked = true;
+
+    me.updateCrosslink();
+};
+
+iCn3DUI.prototype.hideAnnoTabCrosslink = function () {  var me = this; //"use strict";
+    $("[id^=" + me.pre + "crosslink]").hide();
+    if($("#" + me.pre + "anno_crosslink").length) $("#" + me.pre + "anno_crosslink")[0].checked = false;
 };
 
 iCn3DUI.prototype.setAnnoTabTransmem = function () {  var me = this; //"use strict";
@@ -3483,6 +3584,17 @@ iCn3DUI.prototype.setTabs = function () {  var me = this; //"use strict";
     }
     });
 
+    $("#" + me.pre + "anno_crosslink").click(function (e) {
+    if($("#" + me.pre + "anno_crosslink")[0].checked) {
+        me.setAnnoTabCrosslink();
+        me.setLogCmd("set annotation crosslink", true);
+    }
+    else{
+        me.hideAnnoTabCrosslink();
+        me.setLogCmd("hide annotation crosslink", true);
+    }
+    });
+
     $("#" + me.pre + "anno_transmem").click(function (e) {
     if($("#" + me.pre + "anno_transmem").length && $("#" + me.pre + "anno_transmem")[0].checked) {
         me.setAnnoTabTransmem();
@@ -3511,7 +3623,7 @@ iCn3DUI.prototype.clickCdd = function() { var me = this; //"use strict";
 // jquery tooltip
 //https://stackoverflow.com/questions/18231315/jquery-ui-tooltip-html-with-links
 iCn3DUI.prototype.setToolTip = function () {  var me = this; //"use strict";
-  $("[id^=" + me.pre + "snp]").add("[id^=" + me.pre + "clinvar]").add("[id^=" + me.pre + "ssbond]").tooltip({
+  $("[id^=" + me.pre + "snp]").add("[id^=" + me.pre + "clinvar]").add("[id^=" + me.pre + "ssbond]").add("[id^=" + me.pre + "crosslink]").tooltip({
     content: function () {
         return $(this).prop('title');
     },
@@ -3597,6 +3709,7 @@ iCn3DUI.prototype.showFixedTitle = function() { var me = this; //"use strict";
         $("[id^=" + me.pre + "tt_domain]").attr('style', style);
         $("[id^=" + me.pre + "tt_interaction]").attr('style', style);
         $("[id^=" + me.pre + "tt_ssbond]").attr('style', style);
+        $("[id^=" + me.pre + "tt_crosslink]").attr('style', style);
         $("[id^=" + me.pre + "tt_transmem]").attr('style', style);
 };
 
@@ -3611,6 +3724,7 @@ iCn3DUI.prototype.hideFixedTitle = function() { var me = this; //"use strict";
         $("[id^=" + me.pre + "tt_domain]").attr('style', style);
         $("[id^=" + me.pre + "tt_interaction]").attr('style', style);
         $("[id^=" + me.pre + "tt_ssbond]").attr('style', style);
+        $("[id^=" + me.pre + "tt_crosslink]").attr('style', style);
         $("[id^=" + me.pre + "tt_transmem]").attr('style', style);
 };
 
@@ -3628,6 +3742,7 @@ iCn3DUI.prototype.setAnnoViewAndDisplay = function(view) { var me = this; //"use
         $("[id^=" + me.pre + "dt_domain]").attr('style', style);
         $("[id^=" + me.pre + "dt_interaction]").attr('style', style);
         $("[id^=" + me.pre + "dt_ssbond]").attr('style', style);
+        $("[id^=" + me.pre + "dt_crosslink]").attr('style', style);
         $("[id^=" + me.pre + "dt_transmem]").attr('style', style);
 
         $("#" + me.pre + "seqguide_wrapper").attr('style', style);
@@ -3642,6 +3757,7 @@ iCn3DUI.prototype.setAnnoViewAndDisplay = function(view) { var me = this; //"use
         $("[id^=" + me.pre + "ov_domain]").attr('style', style);
         $("[id^=" + me.pre + "ov_interaction]").attr('style', style);
         $("[id^=" + me.pre + "ov_ssbond]").attr('style', style);
+        $("[id^=" + me.pre + "ov_crosslink]").attr('style', style);
         $("[id^=" + me.pre + "ov_transmem]").attr('style', style);
     }
     else { // overview
@@ -3659,6 +3775,7 @@ iCn3DUI.prototype.setAnnoViewAndDisplay = function(view) { var me = this; //"use
         $("[id^=" + me.pre + "dt_domain]").attr('style', style);
         $("[id^=" + me.pre + "dt_interaction]").attr('style', style);
         $("[id^=" + me.pre + "dt_ssbond]").attr('style', style);
+        $("[id^=" + me.pre + "dt_crosslink]").attr('style', style);
         $("[id^=" + me.pre + "dt_transmem]").attr('style', style);
 
         $("#" + me.pre + "seqguide_wrapper").attr('style', style);
@@ -3673,6 +3790,7 @@ iCn3DUI.prototype.setAnnoViewAndDisplay = function(view) { var me = this; //"use
         $("[id^=" + me.pre + "ov_domain]").attr('style', style);
         $("[id^=" + me.pre + "ov_interaction]").attr('style', style);
         $("[id^=" + me.pre + "ov_ssbond]").attr('style', style);
+        $("[id^=" + me.pre + "ov_crosslink]").attr('style', style);
         $("[id^=" + me.pre + "ov_transmem]").attr('style', style);
     }
 };
