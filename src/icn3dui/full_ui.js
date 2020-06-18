@@ -286,6 +286,9 @@ iCn3DUI.prototype = {
           if(me.icn3d.pickedAtomList === undefined || Object.keys(me.icn3d.pickedAtomList).length === 0) {
               me.icn3d.pickedAtomList = me.icn3d.cloneHash(me.icn3d.hAtoms);
           }
+          if(Object.keys(me.icn3d.pickedAtomList).length === 0) {
+              me.icn3d.pickedAtomList = me.icn3d.dAtoms;
+          }
 
           if(me.icn3d.highlightlevel === 1) { // atom -> residue
               me.icn3d.highlightlevel = 2;
