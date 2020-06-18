@@ -7,6 +7,74 @@
 // requires the library mmtf.js
 iCn3DUI.prototype.downloadMmtf = function (mmtfid) { var me = this; //"use strict";
     document.title = mmtfid.toUpperCase() + ' (MMTF) in iCn3D';
+    me.icn3d.bCid = undefined;
+
+    //https://mmtf.rcsb.org/v1.0/reduced/1TUP
+    //https://mmtf.rcsb.org/v1.0/full/1TUP
+
+    var url1, url2;
+
+    url1 = "https://mmtf.rcsb.org/v1.0/reduced/" + mmtfid.toUpperCase();
+    url2 = "https://mmtf.rcsb.org/v1.0/full/" + mmtfid.toUpperCase();
+
+    var oReq1 = new XMLHttpRequest();
+    oReq1.open("GET", url1, true);
+    oReq1.responseType = "arraybuffer";
+
+    oReq1.onload = function (oEvent) {
+      var arrayBuffer = oReq1.response; // Note: not oReq.responseText
+      if (arrayBuffer) {
+        var byteArray = new Uint8Array(arrayBuffer);
+        var mmtfData = MMTF.decode( byteArray );
+
+        if(mmtfData.numAtoms * 10 > me.icn3d.maxatomcnt) {
+            var bFull = false;
+            me.deferredOpm = $.Deferred(function() {
+                if(Object.keys(mmtfData).length == 0) {
+                    alert('This PDB structure is not found at RCSB...');
+                    return me.deferredOpm.promise();
+                }
+                me.loadOpmData(mmtfData, mmtfid, bFull, 'mmtf');
+            });
+
+            return me.deferredOpm.promise();
+        }
+        else {
+            mmtfData = null;
+
+            var oReq2 = new XMLHttpRequest();
+            oReq2.open("GET", url2, true);
+            oReq2.responseType = "arraybuffer";
+
+            oReq2.onload = function (oEvent) {
+              var arrayBuffer = oReq2.response; // Note: not oReq.responseText
+              if (arrayBuffer) {
+                var byteArray = new Uint8Array(arrayBuffer);
+                var mmtfData2 = MMTF.decode( byteArray );
+
+                var bFull = true;
+                me.deferredOpm = $.Deferred(function() {
+                    if(Object.keys(mmtfData2).length == 0) {
+                        alert('This PDB structure is not found at RCSB...');
+                        return me.deferredOpm.promise();
+                    }
+
+                    me.loadOpmData(mmtfData2, mmtfid, bFull, 'mmtf');
+                });
+
+                return me.deferredOpm.promise();
+              }
+            };
+
+            oReq2.send(null);
+        }
+      }
+    };
+
+    oReq1.send(null);
+
+/*
+    // MMTF.fetch had problem at NCBI servers on June 18, 2020
 
     MMTF.fetchReduced(
         mmtfid,
@@ -61,6 +129,7 @@ iCn3DUI.prototype.downloadMmtf = function (mmtfid) { var me = this; //"use stric
             //console.error( error )
         }
     );
+*/
 };
 
 iCn3DUI.prototype.parseMmtfData = function (mmtfData, mmtfid, bFull) { var me = this; //"use strict";

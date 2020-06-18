@@ -21,6 +21,8 @@ iCn3DUI.prototype.clickHide_selected = function() { var me = this; //"use strict
 iCn3DUI.prototype.showSelection = function () { var me = this; //"use strict";
     me.icn3d.dAtoms = {};
 
+    if(Object.keys(me.icn3d.hAtoms).length == 0) me.selectAll_base();
+
     me.icn3d.dAtoms = me.icn3d.cloneHash(me.icn3d.hAtoms);
 
     var centerAtomsResults = me.icn3d.centerAtoms(me.icn3d.hash2Atoms(me.icn3d.dAtoms));
@@ -139,13 +141,18 @@ iCn3DUI.prototype.clickModeswitch = function() { var me = this; //"use strict";
     });
 };
 
-iCn3DUI.prototype.selectAll = function() { var me = this; //"use strict";
+iCn3DUI.prototype.selectAll_base = function() { var me = this; //"use strict";
     me.icn3d.hAtoms = {};
+    me.icn3d.dAtoms = {};
 
     for(var i in me.icn3d.chains) {
        me.icn3d.hAtoms = me.icn3d.unionHash(me.icn3d.hAtoms, me.icn3d.chains[i]);
        me.icn3d.dAtoms = me.icn3d.unionHash(me.icn3d.dAtoms, me.icn3d.chains[i]);
     }
+};
+
+iCn3DUI.prototype.selectAll = function() { var me = this; //"use strict";
+    me.selectAll_base();
 
     me.icn3d.removeHlObjects();
     me.removeHl2D();
