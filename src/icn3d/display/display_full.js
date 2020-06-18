@@ -315,12 +315,14 @@ iCn3D.prototype.applyClbondsOptions = function (options) { var me = this; //"use
      var colorObj = new THREE.Color(0x006400);
 
      var chemical2protein = {};
+     var protein2chemical = {};
      for (var i in me.chemicals) {
         var atom0 = me.atoms[i];
         //if(!this.hAtoms.hasOwnProperty(atom0.serial) || atom0.style == 'nothing') continue;
         if(!this.dAtoms.hasOwnProperty(atom0.serial) || atom0.style == 'nothing') continue;
 
-        var resid0 = atom0.structure + '_' + atom0.chain + '_' + atom0.resi;
+        var chain0 = atom0.structure + '_' + atom0.chain;
+        var resid0 = chain0 + '_' + atom0.resi;
         if(!chemical2protein.hasOwnProperty(resid0)) chemical2protein[resid0] = {};
 
         for (var j in atom0.bonds) {
@@ -334,15 +336,27 @@ iCn3D.prototype.applyClbondsOptions = function (options) { var me = this; //"use
                 var chain1 = atom1.structure + '_' + atom1.chain;
                 var resid1 = chain1 + '_' + atom1.resi;
 
-                // add the chemical to the protein residue
+                if(!protein2chemical.hasOwnProperty(resid1)) protein2chemical[resid1] = {};
+
+
                 if(!me.bAddCrossLinkage && (me.proteins.hasOwnProperty(atom1.serial)
-                  || me.proteins.hasOwnProperty(atom1.serial)) ) {
+                  || me.nucleotides.hasOwnProperty(atom1.serial)) ) {
+                    // add the chemical to the protein residue
                     if(!chemical2protein[resid0].hasOwnProperty(resid1)) {
                         // add resid0 to resid1
                         me.residues[resid1] = me.unionHash(me.residues[resid1], me.residues[resid0]);
                         me.chains[chain1] = me.unionHash(me.chains[chain1], me.residues[resid0]);
 
                         chemical2protein[resid0][resid1] = 1;
+                    }
+
+                    // add the protein residue to the chemical
+                    if(!protein2chemical[resid1].hasOwnProperty(resid0)) {
+                        // add resid1 to resid0
+                        me.residues[resid0] = me.unionHash(me.residues[resid0], me.residues[resid1]);
+                        me.chains[chain0] = me.unionHash(me.chains[chain0], me.residues[resid1]);
+
+                        protein2chemical[resid1][resid0] = 1;
                     }
                 }
 

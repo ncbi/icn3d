@@ -2192,23 +2192,25 @@ iCn3DUI.prototype.setDialogs = function() { var me = this; //"use strict";
     html += "</div>";
 
     html += "<div class='icn3d-box' style='width:520px;'><b>Annotations:&nbsp;</b><br><table border=0><tr>";
-    html += "<td style='min-width:60px;'>" + me.inputCheckStr + "id='" + me.pre + "anno_all'>All&nbsp;&nbsp;</td>";
+    html += "<td style='min-width:110px;'>" + me.inputCheckStr + "id='" + me.pre + "anno_all'>All&nbsp;&nbsp;</td>";
     html += "<td style='min-width:130px;'>" + me.inputCheckStr + "id='" + me.pre + "anno_cdd' checked>Conserved Domains&nbsp;&nbsp;</td>";
-    html += "<td style='min-width:60px;'>" + me.inputCheckStr + "id='" + me.pre + "anno_clinvar'>ClinVar&nbsp;&nbsp;</td>";
+    html += "<td style='min-width:110px;'>" + me.inputCheckStr + "id='" + me.pre + "anno_clinvar'>ClinVar&nbsp;&nbsp;</td>";
     html += "<td style='min-width:110px;'>" + me.inputCheckStr + "id='" + me.pre + "anno_binding'>Functional Sites&nbsp;&nbsp;</td>";
-    html += "<td style='min-width:110px;'>" + me.inputCheckStr + "id='" + me.pre + "anno_ssbond'>Disulfide Bonds&nbsp;&nbsp;</td>";
     html += "</tr><tr>";
-    html += "<td style='min-width:60px;'>" + me.inputCheckStr + "id='" + me.pre + "anno_custom'>Custom&nbsp;&nbsp;</td>";
+    html += "<td style='min-width:110px;'>" + me.inputCheckStr + "id='" + me.pre + "anno_custom'>Custom&nbsp;&nbsp;</td>";
     html += "<td style='min-width:130px;'>" + me.inputCheckStr + "id='" + me.pre + "anno_3dd'>3D Domains&nbsp;&nbsp;</td>";
-    html += "<td style='min-width:60px;'>" + me.inputCheckStr + "id='" + me.pre + "anno_snp'>SNPs&nbsp;&nbsp;</td>";
+    html += "<td style='min-width:110px;'>" + me.inputCheckStr + "id='" + me.pre + "anno_snp'>SNPs&nbsp;&nbsp;</td>";
     html += "<td style='min-width:110px;'>" + me.inputCheckStr + "id='" + me.pre + "anno_interact'>Interactions&nbsp;&nbsp;</td>";
+    html += "<td></td>";
+    html += "</tr><tr>";
+    html += "<td style='min-width:110px;'>" + me.inputCheckStr + "id='" + me.pre + "anno_ssbond'>Disulfide Bonds&nbsp;&nbsp;</td>";
+    html += "<td style='min-width:110px;'>" + me.inputCheckStr + "id='" + me.pre + "anno_crosslink'>Cross-Linkages&nbsp;&nbsp;</td>";
     if(me.cfg.opmid !== undefined) {
         html += "<td style='min-width:110px;'><span id='" + me.pre + "anno_transmemli'>" + me.inputCheckStr + "id='" + me.pre + "anno_transmem'>Transmembrane&nbsp;&nbsp;</span></td>";
     }
     else {
         html += "<td style='min-width:110px;'><span id='" + me.pre + "anno_transmemli' style='display:none'>" + me.inputCheckStr + "id='" + me.pre + "anno_transmem'>Transmembrane&nbsp;&nbsp;</span></td>";
     }
-
     html += "<td></td>";
     html += "</tr></table></div>";
 

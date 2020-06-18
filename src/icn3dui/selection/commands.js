@@ -1420,6 +1420,9 @@ iCn3DUI.prototype.applyCommand = function (commandStr) { var me = this; //"use s
   else if(command == 'set annotation ssbond') {
       me.setAnnoTabSsbond();
   }
+  else if(command == 'set annotation crosslink') {
+      me.setAnnoTabCrosslink();
+  }
   else if(command == 'set annotation transmembrane') {
       me.setAnnoTabTransmem();
   }
@@ -1459,6 +1462,9 @@ iCn3DUI.prototype.applyCommand = function (commandStr) { var me = this; //"use s
       }
       else if(type == 'ssbond') {
           me.hideAnnoTabSsbond();
+      }
+      else if(type == 'crosslink') {
+          me.hideAnnoTabCrosslink();
       }
       else if(type == 'transmembrane') {
           me.hideAnnoTabTransmem();
@@ -2355,6 +2361,7 @@ iCn3DUI.prototype.getMenuFromCmd = function (cmd) { var me = this; //"use strict
     else if(cmd == 'set annotation cdd') return 'Windows > Sequences & Annotations: "Conserved Domains" checkbox';
     else if(cmd == 'set annotation site') return 'Windows > Sequences & Annotations: "Functional Sites" checkbox';
     else if(cmd == 'set annotation ssbond') return 'Windows > Sequences & Annotations: "Disulfide Bonds" checkbox';
+    else if(cmd == 'set annotation crosslink') return 'Windows > Sequences & Annotations: "Cross-Linkages" checkbox';
     else if(cmd == 'set annotation transmembrane') return 'Windows > Sequences & Annotations: "Transmembrane" checkbox';
     else if(cmd == 'highlight level up') return 'Keyboard Arrow Up';
     else if(cmd == 'highlight level down') return 'Keyboard Arrow Down';

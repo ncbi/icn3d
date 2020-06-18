@@ -1,5 +1,7 @@
 ## Change Log
-[icn3d-2.17.2](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.17.1.zip) was release on June 17, 2020. Added pinger to log usage.
+[icn3d-2.17.3](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.17.31.zip) was release on June 18, 2020. Added the track "Cross-Linkages" for glycans, etc.
+
+[icn3d-2.17.2](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.17.2.zip) was release on June 17, 2020. Added pinger to log usage.
 
 [icn3d-2.17.1](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.17.1.zip) was release on June 15, 2020. Enabled to accept RID from BLAST result page.
 

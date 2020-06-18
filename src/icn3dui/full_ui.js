@@ -13,7 +13,7 @@ if (!$.ui.dialog.prototype._makeDraggableBase) {
 }
 
 var iCn3DUI = function(cfg) { var me = this; //"use strict";
-    this.REVISION = '2.17.2';
+    this.REVISION = '2.17.3';
 
     me.bFullUi = true;
 
@@ -8030,6 +8030,8 @@ iCn3DUI.prototype = {
 
        // add chemicals, no links for chemicals
        var selectedAtoms = me.icn3d.unionHash(me.icn3d.cloneHash(atomSet1), atomSet2);
+
+/*
        var chemcicalAtoms = me.icn3d.exclHash(me.icn3d.cloneHash(selectedAtoms), me.icn3d.proteins);
        chemcicalAtoms = me.icn3d.exclHash(chemcicalAtoms, me.icn3d.nucleotides);
 
@@ -8050,6 +8052,8 @@ iCn3DUI.prototype = {
            prevResi = atom.resi;
            prevChain = atom.chain;
        }
+*/
+       var chemicalNodeStr = '';
 
        var hBondLinkStr = '', ionicLinkStr = '', halogenpiLinkStr = '', contactLinkStr = '',
          disulfideLinkStr = '', crossLinkStr = '';
@@ -8217,6 +8221,14 @@ iCn3DUI.prototype = {
           return me.compNode(a, b);
         });
 
+        var html = me.drawLineGraph_base(nodeArray1, nodeArray2, linkArray);
+
+        $("#" + me.pre + "linegraphDiv").html(html);
+
+        return html;
+    },
+
+    drawLineGraph_base: function(nodeArray1, nodeArray2, linkArray) { var me = this; //"use strict";
         var len1 = nodeArray1.length, len2 = nodeArray2.length;
 
         var factor = 1;
@@ -8269,6 +8281,8 @@ iCn3DUI.prototype = {
             var pos1 = node2posSet1[node1.id];
             var pos2 = node2posSet2[node2.id];
 
+            if(pos1 === undefined || pos2 === undefined) continue;
+
             var linestrokewidth;
             if(link.v == me.contactValue) {
                 linestrokewidth = 1;
@@ -8305,7 +8319,7 @@ iCn3DUI.prototype = {
         // show nodes later
         html += nodeHtml;
 
-        $("#" + me.pre + "linegraphDiv").html(html);
+        html += "</svg>";
 
         return html;
     },
@@ -8340,21 +8354,31 @@ iCn3DUI.prototype = {
        var cnt = 0, linkCnt = 0;
        var thickness = me.coilValue;
        var prevChain = '', prevResName = '', prevResi = 0, prevAtom;
-       // proteins and nucleotides
+       // add chemicals as well
+       var residHash = {};
        for(var i in atomSet) {
            var atom = me.icn3d.atoms[i];
-           if(atom.chain != 'DUM' && ((atom.name == "CA" && atom.elem == "C") || atom.name == "O3'" || atom.name == "O3*")) {
+           if(atom.chain != 'DUM' && (atom.het || (atom.name == "CA" && atom.elem == "C") || atom.name == "O3'" || atom.name == "O3*" || atom.name == "P")) {
            // starting nucleotide have "P"
            //if(atom.chain != 'DUM' && (atom.name == "CA" || atom.name == "P")) {
+               var resid = atom.structure + '_' + atom.chain + '_' + atom.resi;
+
+               if(residHash.hasOwnProperty(resid)) {
+                   continue;
+               }
+               else {
+                   residHash[resid] = 1;
+               }
+
                var resName = me.icn3d.residueName2Abbr(atom.resn) + atom.resi;
                if(labelType == 'chain' || labelType == 'structure') resName += '.' + atom.chain;
                if(labelType == 'structure') resName += '.' + atom.structure;
                // add 1_1_ to match other conventionssuch as seq_div0_1KQ2_A_50
-               var resid = '1_1_' + atom.structure + '_' + atom.chain + '_' + atom.resi;
+               var residLabel = '1_1_' + resid;
 
 
                //if(cnt > 0) nodeStr += ', ';
-               nodeArray.push('{"id": "' + resName + '", "r": "' + resid + '", "s": "' + setName + '", "x": ' + atom.coord.x.toFixed(0)
+               nodeArray.push('{"id": "' + resName + '", "r": "' + residLabel + '", "s": "' + setName + '", "x": ' + atom.coord.x.toFixed(0)
                    + ', "y": ' + atom.coord.y.toFixed(0) + ', "c": "' + atom.color.getHexString().toUpperCase() + '"}');
 
                if(cnt > 0 && prevChain == atom.chain && (atom.resi == prevResi + 1 || atom.resi == prevResi) ) {
