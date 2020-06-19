@@ -8221,14 +8221,6 @@ iCn3DUI.prototype = {
           return me.compNode(a, b);
         });
 
-        var html = me.drawLineGraph_base(nodeArray1, nodeArray2, linkArray);
-
-        $("#" + me.pre + "linegraphDiv").html(html);
-
-        return html;
-    },
-
-    drawLineGraph_base: function(nodeArray1, nodeArray2, linkArray) { var me = this; //"use strict";
         var len1 = nodeArray1.length, len2 = nodeArray2.length;
 
         var factor = 1;
@@ -8320,6 +8312,8 @@ iCn3DUI.prototype = {
         html += nodeHtml;
 
         html += "</svg>";
+
+        $("#" + me.pre + "linegraphDiv").html(html);
 
         return html;
     },

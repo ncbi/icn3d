@@ -64,10 +64,10 @@ iCn3DUI.prototype.showAnnotations = function() { var me = this; //"use strict";
             }
 
             //if(me.cfg.mmdbid !== undefined) { // protein and chemicals/ions are in different chains
-            if(me.icn3d.proteins.hasOwnProperty(atom.serial)) {
+            if(me.icn3d.proteins.hasOwnProperty(atom.serial) && me.icn3d.chainsSeq[chainArray[i]].length > 1) {
                 me.protein_chainid[chainArray[i]] = chainidBase;
             }
-            else if(me.icn3d.nucleotides.hasOwnProperty(atom.serial)) {
+            else if(me.icn3d.nucleotides.hasOwnProperty(atom.serial) && me.icn3d.chainsSeq[chainArray[i]].length > 1) {
                 nucleotide_chainid[chainArray[i]] = chainidBase;
             }
             else {
@@ -207,7 +207,7 @@ iCn3DUI.prototype.showAnnoSeqData = function(nucleotide_chainid, chemical_chaini
 
     me.crosslinkChainChainbase = me.icn3d.unionHash(me.crosslinkChainChainbase, me.protein_chainid);
     me.crosslinkChainChainbase = me.icn3d.unionHash(me.crosslinkChainChainbase, nucleotide_chainid);
-    //me.crosslinkChainChainbase = me.icn3d.unionHash(me.crosslinkChainChainbase, chemical_chainid);
+    me.crosslinkChainChainbase = me.icn3d.unionHash(me.crosslinkChainChainbase, chemical_chainid);
 
     for(var name in chemical_set) {
         me.getCombinedSequenceData(name, chemical_set[name], i);
