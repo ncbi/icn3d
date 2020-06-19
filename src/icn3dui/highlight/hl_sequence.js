@@ -78,7 +78,6 @@ iCn3DUI.prototype.selectTitle = function(that) { var me = this; //"use strict";
 
         me.currSelectedSets = [];
     }
-console.log("chainid: " + chainid);
 
     $(that).toggleClass('icn3d-highlightSeq');
 
@@ -95,10 +94,8 @@ console.log("chainid: " + chainid);
         commandname = $(that).attr('setname');
         commanddescr = $(that).attr('title');
     }
-console.log("commandname: " + commandname);
 
     if($(that).hasClass('icn3d-highlightSeq')) {
-console.log("highlighted");
         if(!me.bAnnotations) {
             if(me.icn3d.bCtrl || me.icn3d.bShift) {
                 me.currSelectedSets.push(commandname);
@@ -178,7 +175,6 @@ console.log("highlighted");
                     //else if($(that).attr('site') !== undefined || $(that).attr('clinvar') !== undefined) {
                     else if($(that).attr('posarray') !== undefined) {
                         var posArray = $(that).attr('posarray').split(',');
-console.log("posArray: " + posArray);
                         //me.icn3d.hAtoms = {};
 
                         //removeAllLabels();
