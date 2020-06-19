@@ -306,34 +306,79 @@ iCn3D.prototype.applyClbondsOptions = function (options) { var me = this; //"use
    if(options === undefined) options = this.opts;
 
    if (options.clbonds.toLowerCase() === 'yes') {
-     // find all bonds to chemicals
-     this.clbondpnts = {};
-     this.lines['clbond'] = [];
+     if(!me.bCalcCrossLink) {
+         // find all bonds to chemicals
+         this.clbondpnts = {};
+         me.clbondResid2serial = {};
 
+         me.chemical2protein = {};
+         me.protein2chemical = {};
+
+         // chemical to chemical first
+         me.applyClbondsOptions_base('chemical');
+
+         // chemical to protein/nucleotide
+         me.applyClbondsOptions_base('all');
+
+         me.bCalcCrossLink = true;
+     }
+
+     var color = '#006400';
+     var colorObj = new THREE.Color(0x006400);
+
+     this.lines['clbond'] = [];
      me.residuesHashClbonds = {};
 
-     me.chemical2protein = {};
-     me.protein2chemical = {};
+     var strucArray = Object.keys(me.structures);
+     for(var i = 0, il = strucArray.length; i < il; ++i) {
+         var struc = strucArray[i];
+         for(var j = 0, jl = me.clbondpnts[struc].length; j < jl; j += 2) {
+            var resid0 = me.clbondpnts[struc][j];
+            var resid1 = me.clbondpnts[struc][j+1];
 
-     // chemical to chemical first
-     me.applyClbondsOptions_base('chemical');
+            var line = {};
+            line.color = color;
+            line.dashed = false;
 
-     // chemical to protein/nucleotide
-     me.applyClbondsOptions_base('all');
+            line.serial1 = me.clbondResid2serial[resid0];
+            line.serial2 = me.clbondResid2serial[resid1];
+
+            if(!me.dAtoms.hasOwnProperty(line.serial1) || !me.dAtoms.hasOwnProperty(line.serial2)) continue;
+
+            line.position1 = me.atoms[line.serial1].coord;
+            line.position2 = me.atoms[line.serial2].coord;
+
+            this.lines['clbond'].push(line);
+            this.createCylinder(line.position1, line.position2, this.cylinderRadius, colorObj);
+
+            // show stick for these two residues
+            var residueAtoms = {};
+            residueAtoms = this.unionHash(residueAtoms, this.residues[resid0]);
+            residueAtoms = this.unionHash(residueAtoms, this.residues[resid1]);
+
+            // show side chains for the selected atoms
+            var atoms = this.intHash(residueAtoms, this.sidec);
+
+            // draw sidec separatedly
+            for(var j in atoms) {
+              this.atoms[j].style2 = 'stick';
+            }
+
+            // return the residues
+            me.residuesHashClbonds[resid0] = 1;
+            me.residuesHashClbonds[resid1] = 1;
+        } // for j
+    } // for i
   } // if
 
   return me.residuesHashClbonds;
 };
 
 iCn3D.prototype.applyClbondsOptions_base = function (type) { var me = this; //"use strict";
-     var color = '#006400';
-     var colorObj = new THREE.Color(0x006400);
-
      // chemical to chemical first
      for (var i in me.chemicals) {
         var atom0 = me.atoms[i];
-        //if(!this.hAtoms.hasOwnProperty(atom0.serial) || atom0.style == 'nothing') continue;
-        if(!this.dAtoms.hasOwnProperty(atom0.serial) || atom0.style == 'nothing') continue;
+        //if(!this.dAtoms.hasOwnProperty(atom0.serial) || atom0.style == 'nothing') continue;
 
         var chain0 = atom0.structure + '_' + atom0.chain;
         var resid0 = chain0 + '_' + atom0.resi;
@@ -341,8 +386,7 @@ iCn3D.prototype.applyClbondsOptions_base = function (type) { var me = this; //"u
 
         for (var j in atom0.bonds) {
             var atom1 = me.atoms[atom0.bonds[j]];
-            //if(!this.hAtoms.hasOwnProperty(atom1.serial) || atom1.style == 'nothing') continue;
-            if(!this.dAtoms.hasOwnProperty(atom1.serial) || atom1.style == 'nothing') continue;
+            //if(!this.dAtoms.hasOwnProperty(atom1.serial) || atom1.style == 'nothing') continue;
 
             //if (atom1 === undefined || atom1.serial < atom0.serial) continue;
             if (atom1 === undefined) continue;
@@ -374,39 +418,14 @@ iCn3D.prototype.applyClbondsOptions_base = function (type) { var me = this; //"u
                         me.protein2chemical[resid1][resid0] = 1;
                     }
 
+                    if(type == 'chemical') continue; // just connect checmicals together
+
                     if(me.clbondpnts[atom0.structure] === undefined) me.clbondpnts[atom0.structure] = [];
                     me.clbondpnts[atom0.structure].push(resid0);
-                    me.clbondpnts[atom0.structure].push(resid1);
+                    me.clbondpnts[atom1.structure].push(resid1);
 
-                    var line = {};
-                    line.color = color;
-                    line.dashed = false;
-
-                    line.serial1 = atom0.serial;
-                    line.position1 = atom0.coord;
-
-                    line.serial2 = atom1.serial;
-                    line.position2 = atom1.coord;
-
-                    this.lines['clbond'].push(line);
-                    this.createCylinder(line.position1, line.position2, this.cylinderRadius, colorObj);
-
-                    // show stick for these two residues
-                    var residueAtoms = {};
-                    residueAtoms = this.unionHash(residueAtoms, this.residues[resid0]);
-                    residueAtoms = this.unionHash(residueAtoms, this.residues[resid1]);
-
-                    // show side chains for the selected atoms
-                    var atoms = this.intHash(residueAtoms, this.sidec);
-
-                    // draw sidec separatedly
-                    for(var j in atoms) {
-                      this.atoms[j].style2 = 'stick';
-                    }
-
-                    // return the residues
-                    me.residuesHashClbonds[resid0] = 1;
-                    me.residuesHashClbonds[resid1] = 1;
+                    me.clbondResid2serial[resid0] = atom0.serial;
+                    me.clbondResid2serial[resid1] = atom1.serial;
                 }
             }
         } // for j
