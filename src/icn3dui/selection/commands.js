@@ -10,12 +10,21 @@ iCn3DUI.prototype.loadScript = function (dataStr, bStatefile) { var me = this; /
   me.icn3d.bStopRotate = true;
 
   // firebase dynamic links replace " " with "+". So convert it back
-  dataStr = dataStr.replace(/\+/g, ' ').replace(/;/g, '\n');
+  dataStr = (bStatefile) ? dataStr.replace(/\+/g, ' ') : dataStr.replace(/\+/g, ' ').replace(/;/g, '\n');
 
   var preCommands = [];
   if(me.icn3d.commands.length > 0) preCommands[0] = me.icn3d.commands[0];
 
-  me.icn3d.commands = dataStr.trim().split('\n');
+  var commandArray = dataStr.trim().split('\n');
+  me.icn3d.commands = commandArray;
+
+  var pos = commandArray[0].indexOf('command=');
+  if(bStatefile && pos != -1) {
+      var commandFirst = commandArray[0].substr(0, pos - 1);
+      me.icn3d.commands.splice(0, 1, commandFirst);
+  }
+
+  //me.icn3d.commands = dataStr.trim().split('\n');
   me.STATENUMBER = me.icn3d.commands.length;
 
   me.icn3d.commands = preCommands.concat(me.icn3d.commands);
