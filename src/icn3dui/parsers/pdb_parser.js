@@ -306,9 +306,9 @@ iCn3DUI.prototype.transformToOpmOriForAlign = function(pdbid, chainresiCalphaHas
               var centerTo = me.icn3d.rmsd_supr.trans2;
               var rmsd = me.icn3d.rmsd_supr.rmsd;
 
-              me.setLogCmd("alignment RMSD: " + rmsd.toPrecision(4), false);
+              me.setLogCmd("RMSD of alignment to OPM: " + rmsd.toPrecision(4), false);
               $("#" + me.pre + "realignrmsd").val(rmsd.toPrecision(4));
-              if(!me.cfg.bSidebyside) me.openDialog(me.pre + 'dl_rmsd', 'Realignment RMSD');
+              if(!me.cfg.bSidebyside) me.openDialog(me.pre + 'dl_rmsd', 'RMSD of alignment to OPM');
 
               var dxymaxsq = 0;
               for(var i in me.icn3d.atoms) {
@@ -365,7 +365,7 @@ iCn3DUI.prototype.alignCoords = function(coordsFrom, coordsTo, secondStruct, bKe
           var centerTo = me.icn3d.rmsd_supr.trans2;
           var rmsd = me.icn3d.rmsd_supr.rmsd;
 
-          me.setLogCmd("alignment RMSD: " + rmsd.toPrecision(4), false);
+          me.setLogCmd("realignment RMSD: " + rmsd.toPrecision(4), false);
           $("#" + me.pre + "realignrmsd").val(rmsd.toPrecision(4));
           if(!me.cfg.bSidebyside) me.openDialog(me.pre + 'dl_rmsd', 'Realignment RMSD');
 

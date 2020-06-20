@@ -305,70 +305,71 @@ iCn3D.prototype.applySsbondsOptions = function (options) { var me = this; //"use
 iCn3D.prototype.applyClbondsOptions = function (options) { var me = this; //"use strict";
    if(options === undefined) options = this.opts;
 
+   if(!me.bCalcCrossLink) {
+     // find all bonds to chemicals
+     this.clbondpnts = {};
+     me.clbondResid2serial = {};
+
+     // chemical to chemical first
+     me.applyClbondsOptions_base('chemical');
+
+     // chemical to protein/nucleotide
+     me.applyClbondsOptions_base('all');
+
+     me.bCalcCrossLink = true;
+   }
+
    if (options.clbonds.toLowerCase() === 'yes') {
-     if(!me.bCalcCrossLink) {
-         // find all bonds to chemicals
-         this.clbondpnts = {};
-         me.clbondResid2serial = {};
-
-         me.chemical2protein = {};
-         me.protein2chemical = {};
-
-         // chemical to chemical first
-         me.applyClbondsOptions_base('chemical');
-
-         // chemical to protein/nucleotide
-         me.applyClbondsOptions_base('all');
-
-         me.bCalcCrossLink = true;
-     }
-
      var color = '#006400';
      var colorObj = new THREE.Color(0x006400);
 
      this.lines['clbond'] = [];
      me.residuesHashClbonds = {};
 
-     var strucArray = Object.keys(me.structures);
-     for(var i = 0, il = strucArray.length; i < il; ++i) {
-         var struc = strucArray[i];
-         for(var j = 0, jl = me.clbondpnts[struc].length; j < jl; j += 2) {
-            var resid0 = me.clbondpnts[struc][j];
-            var resid1 = me.clbondpnts[struc][j+1];
+     if(me.structures) {
+         var strucArray = Object.keys(me.structures);
+         for(var i = 0, il = strucArray.length; i < il; ++i) {
+             var struc = strucArray[i];
+             if(!me.clbondpnts[struc]) continue;
 
-            var line = {};
-            line.color = color;
-            line.dashed = false;
+             for(var j = 0, jl = me.clbondpnts[struc].length; j < jl; j += 2) {
+                var resid0 = me.clbondpnts[struc][j];
+                var resid1 = me.clbondpnts[struc][j+1];
 
-            line.serial1 = me.clbondResid2serial[resid0];
-            line.serial2 = me.clbondResid2serial[resid1];
+                var line = {};
+                line.color = color;
+                line.dashed = false;
 
-            if(!me.dAtoms.hasOwnProperty(line.serial1) || !me.dAtoms.hasOwnProperty(line.serial2)) continue;
+                line.serial1 = me.clbondResid2serial[resid0 + ',' + resid1];
+                line.serial2 = me.clbondResid2serial[resid1 + ',' + resid0];
 
-            line.position1 = me.atoms[line.serial1].coord;
-            line.position2 = me.atoms[line.serial2].coord;
+                if(!me.dAtoms.hasOwnProperty(line.serial1) || !me.dAtoms.hasOwnProperty(line.serial2)) continue;
 
-            this.lines['clbond'].push(line);
-            this.createCylinder(line.position1, line.position2, this.cylinderRadius, colorObj);
+                line.position1 = me.atoms[line.serial1].coord;
+                line.position2 = me.atoms[line.serial2].coord;
 
-            // show stick for these two residues
-            var residueAtoms = {};
-            residueAtoms = this.unionHash(residueAtoms, this.residues[resid0]);
-            residueAtoms = this.unionHash(residueAtoms, this.residues[resid1]);
+                this.lines['clbond'].push(line);
+                this.createCylinder(line.position1, line.position2, this.cylinderRadius, colorObj);
 
-            // show side chains for the selected atoms
-            var atoms = this.intHash(residueAtoms, this.sidec);
+                // show stick for these two residues
+                var residueAtoms = {};
+                residueAtoms = this.unionHash(residueAtoms, this.residues[resid0]);
+                residueAtoms = this.unionHash(residueAtoms, this.residues[resid1]);
 
-            // draw sidec separatedly
-            for(var j in atoms) {
-              this.atoms[j].style2 = 'stick';
-            }
+                // show side chains for the selected atoms
+                var atoms = this.intHash(residueAtoms, this.sidec);
 
-            // return the residues
-            me.residuesHashClbonds[resid0] = 1;
-            me.residuesHashClbonds[resid1] = 1;
-        } // for j
-    } // for i
+                // draw sidec separatedly
+                for(var k in atoms) {
+                  this.atoms[k].style2 = 'stick';
+                }
+
+                // return the residues
+                me.residuesHashClbonds[resid0] = 1;
+                me.residuesHashClbonds[resid1] = 1;
+            } // for j
+        } // for i
+    } // if
   } // if
 
   return me.residuesHashClbonds;
@@ -378,45 +379,28 @@ iCn3D.prototype.applyClbondsOptions_base = function (type) { var me = this; //"u
      // chemical to chemical first
      for (var i in me.chemicals) {
         var atom0 = me.atoms[i];
-        //if(!this.dAtoms.hasOwnProperty(atom0.serial) || atom0.style == 'nothing') continue;
 
         var chain0 = atom0.structure + '_' + atom0.chain;
         var resid0 = chain0 + '_' + atom0.resi;
-        if(!me.chemical2protein.hasOwnProperty(resid0)) me.chemical2protein[resid0] = {};
 
         for (var j in atom0.bonds) {
             var atom1 = me.atoms[atom0.bonds[j]];
-            //if(!this.dAtoms.hasOwnProperty(atom1.serial) || atom1.style == 'nothing') continue;
 
-            //if (atom1 === undefined || atom1.serial < atom0.serial) continue;
             if (atom1 === undefined) continue;
             if (atom1.chain !== atom0.chain || atom1.resi !== atom0.resi) {
                 var chain1 = atom1.structure + '_' + atom1.chain;
                 var resid1 = chain1 + '_' + atom1.resi;
 
-                if(!me.protein2chemical.hasOwnProperty(resid1)) me.protein2chemical[resid1] = {};
-
-
                 var bType = (type == 'chemical') ? atom1.het : true; //(me.proteins.hasOwnProperty(atom1.serial) || me.nucleotides.hasOwnProperty(atom1.serial));
 
                 if(bType ) {
-                    // add the chemical to the protein residue
-                    if(!me.chemical2protein[resid0].hasOwnProperty(resid1)) {
-                        // add resid0 to resid1
-                        me.residues[resid1] = me.unionHash(me.residues[resid1], me.residues[resid0]);
-                        me.chains[chain1] = me.unionHash(me.chains[chain1], me.residues[resid0]);
+                    // add resid0 to resid1
+                    me.residues[resid1] = me.unionHash(me.residues[resid1], me.residues[resid0]);
+                    me.chains[chain1] = me.unionHash(me.chains[chain1], me.residues[resid0]);
 
-                        me.chemical2protein[resid0][resid1] = 1;
-                    }
-
-                    // add the protein residue to the chemical
-                    if(!me.protein2chemical[resid1].hasOwnProperty(resid0)) {
-                        // add resid1 to resid0
-                        me.residues[resid0] = me.unionHash(me.residues[resid0], me.residues[resid1]);
-                        me.chains[chain0] = me.unionHash(me.chains[chain0], me.residues[resid1]);
-
-                        me.protein2chemical[resid1][resid0] = 1;
-                    }
+                    // add resid1 to resid0
+                    me.residues[resid0] = me.unionHash(me.residues[resid0], me.residues[resid1]);
+                    me.chains[chain0] = me.unionHash(me.chains[chain0], me.residues[resid1]);
 
                     if(type == 'chemical') continue; // just connect checmicals together
 
@@ -424,8 +408,9 @@ iCn3D.prototype.applyClbondsOptions_base = function (type) { var me = this; //"u
                     me.clbondpnts[atom0.structure].push(resid0);
                     me.clbondpnts[atom1.structure].push(resid1);
 
-                    me.clbondResid2serial[resid0] = atom0.serial;
-                    me.clbondResid2serial[resid1] = atom1.serial;
+                    // one residue may have different atom for different clbond
+                    me.clbondResid2serial[resid0 + ',' + resid1] = atom0.serial;
+                    me.clbondResid2serial[resid1 + ',' + resid0] = atom1.serial;
                 }
             }
         } // for j

@@ -342,6 +342,7 @@ iCn3DUI.prototype.saveFile = function(filename, type, text) { var me = this; //"
 
     if(type === 'command') {
         var dataStr = '';
+console.log("2 me.icn3d.commands.length: " + me.icn3d.commands.length);
         for(var i = 0, il = me.icn3d.commands.length; i < il; ++i) {
             var command = me.icn3d.commands[i].trim();
             if(i == il - 1) {

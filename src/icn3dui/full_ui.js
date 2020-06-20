@@ -8221,19 +8221,107 @@ iCn3DUI.prototype = {
           return me.compNode(a, b);
         });
 
+        if(Object.keys(me.icn3d.structures).length > 1) {
+            var nodeArray1a = [], nodeArray1b = [], nodeArray2a = [], nodeArray2b = []
+            var struc1 = Object.keys(me.icn3d.structures)[0], struc2 = Object.keys(me.icn3d.structures)[1];
+
+            var nodeNameHashA = {}, nodeNameHashB = {};
+
+            for(var i = 0, il = nodeArray1.length; i < il; ++i) {
+                var node = nodeArray1[i];
+                var idArray = node.r.split('_'); // 1_1_1KQ2_A_1
+                if(idArray[2] == struc1) {
+                    nodeArray1a.push(node);
+                    nodeNameHashA[node.id] = 1;
+                }
+                else {
+                    nodeArray1b.push(node);
+                    nodeNameHashB[node.id] = 1;
+                }
+            }
+
+            for(var i = 0, il = nodeArray2.length; i < il; ++i) {
+                var node = nodeArray2[i];
+                var idArray = node.r.split('_'); // 1_1_1KQ2_A_1
+                if(idArray[2] == struc1) {
+                    nodeArray2a.push(node);
+                    nodeNameHashA[node.id] = 1;
+                }
+                else {
+                    nodeArray2b.push(node);
+                    nodeNameHashB[node.id] = 1;
+                }
+            }
+
+            var linkArrayA = [], linkArrayB = [];
+            for(var i = 0, il = linkArray.length; i < il; ++i) {
+                var link = linkArray[i];
+                if(nodeNameHashA.hasOwnProperty(link.source) && nodeNameHashA.hasOwnProperty(link.target)) {
+                    linkArrayA.push(link);
+                }
+
+                if(nodeNameHashB.hasOwnProperty(link.source) && nodeNameHashB.hasOwnProperty(link.target)) {
+                    linkArrayB.push(link);
+                }
+            }
+
+            var len1a = nodeArray1a.length, len1b = nodeArray1b.length, len2a = nodeArray2a.length, len2b = nodeArray2b.length;
+            var maxLen = Math.max(len1a, len1b, len2a, len2b);
+
+            var factor = 1;
+            var r = 3 * factor;
+            var gap = 10 * factor;
+
+            var height = 110;
+            var heightAll = height * 2;
+            var margin = 10;
+            var width = maxLen * (r + gap) + 2 * margin;
+            me.linegraphWidth = 2 * width;
+
+            me.linegraphid = me.pre + 'linegraph';
+            var html = "2D integration graph for structures <b>" + struc1 + " (top)</b> and <b>" + struc2 + " (bottom)</b><br><br>";
+            html += "<svg id='" + me.linegraphid + "' viewBox='0,0," + width + "," + heightAll + "' width='" + me.linegraphWidth + "px'>";
+
+            html += me.drawLineGraph_base(nodeArray1a, nodeArray2a, linkArrayA, name2node, 0);
+            html += me.drawLineGraph_base(nodeArray1b, nodeArray2b, linkArrayB, name2node, height);
+
+            html += "</svg>";
+        }
+        else {
+            var len1 = nodeArray1.length, len2 = nodeArray2.length;
+
+            var factor = 1;
+            var r = 3 * factor;
+            var gap = 10 * factor;
+
+            var height = 110;
+            var margin = 10;
+            var width = (len1 > len2) ? len1 * (r + gap) + 2 * margin : len2 * (r + gap) + 2 * margin;
+            me.linegraphWidth = 2 * width;
+
+            me.linegraphid = me.pre + 'linegraph';
+            var html = "<svg id='" + me.linegraphid + "' viewBox='0,0," + width + "," + height + "' width='" + me.linegraphWidth + "px'>";
+
+            html += me.drawLineGraph_base(nodeArray1, nodeArray2, linkArray, name2node, 0);
+
+            html += "</svg>";
+        }
+
+        $("#" + me.pre + "linegraphDiv").html(html);
+
+        return html;
+    },
+
+    drawLineGraph_base: function(nodeArray1, nodeArray2, linkArray, name2node, height) { var me = this; //"use strict";
+        var html = '';
+
         var len1 = nodeArray1.length, len2 = nodeArray2.length;
 
         var factor = 1;
         var r = 3 * factor;
         var gap = 10 * factor;
 
-        var height = 110;
         var margin = 10;
-        var width = (len1 > len2) ? len1 * (r + gap) + 2 * margin : len2 * (r + gap) + 2 * margin;
-        me.linegraphWidth = 2 * width;
-
-        me.linegraphid = me.pre + 'linegraph';
-        var html = "<svg id='" + me.linegraphid + "' viewBox='0,0," + width + "," + height + "' width='" + me.linegraphWidth + "px'>";
 
         // draw nodes
         var margin1, margin2;
@@ -8247,7 +8335,7 @@ iCn3DUI.prototype = {
             margin1 = Math.abs(len1 - len2) * (r + gap) * 0.5 + margin;
         }
 
-        var h1 = 30, h2 = 80;
+        var h1 = 30 + height, h2 = 80 + height;
         var nodeHtml = '';
         var node2posSet1 = {}, node2posSet2 = {};
         for(var i = 0; i < len1; ++i) {
@@ -8310,10 +8398,6 @@ iCn3DUI.prototype = {
 
         // show nodes later
         html += nodeHtml;
-
-        html += "</svg>";
-
-        $("#" + me.pre + "linegraphDiv").html(html);
 
         return html;
     },

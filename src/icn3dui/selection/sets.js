@@ -141,6 +141,7 @@ iCn3DUI.prototype.setHAtomsFromSets = function (nameArray, type) { var me = this
      if((me.icn3d.defNames2Atoms === undefined || !me.icn3d.defNames2Atoms.hasOwnProperty(selectedSet)) && (me.icn3d.defNames2Residues === undefined || !me.icn3d.defNames2Residues.hasOwnProperty(selectedSet)) ) continue;
 
      if(me.icn3d.defNames2Atoms !== undefined && me.icn3d.defNames2Atoms.hasOwnProperty(selectedSet)) {
+
          var atomArray = me.icn3d.defNames2Atoms[selectedSet];
 
          if(type === 'or') {
@@ -157,9 +158,16 @@ iCn3DUI.prototype.setHAtomsFromSets = function (nameArray, type) { var me = this
              me.icn3d.hAtoms = me.icn3d.intHash(me.icn3d.hAtoms, atomHash);
          }
          else if(type === 'not') {
+             //for(var j = 0, jl = atomArray.length; j < jl; ++j) {
+             //    me.icn3d.hAtoms[atomArray[j]] = undefined;
+             //}
+
+             var atomHash = {};
              for(var j = 0, jl = atomArray.length; j < jl; ++j) {
-                 me.icn3d.hAtoms[atomArray[j]] = undefined;
+                 atomHash[atomArray[j]] = 1;
              }
+
+             me.icn3d.hAtoms = me.icn3d.exclHash(me.icn3d.hAtoms, atomHash);
          }
      }
 
