@@ -1663,6 +1663,9 @@ iCn3DUI.prototype.applyCommand = function (commandStr) { var me = this; //"use s
   else if(command == 'select side chains') {
      me.selectSideChains();
   }
+  else if(command == 'select main side chains') {
+     me.selectMainSideChains();
+  }
   else if(command == 'realign') {
      me.realign();
   }
@@ -2072,6 +2075,14 @@ iCn3DUI.prototype.applyCommand = function (commandStr) { var me = this; //"use s
     $("#" + me.svgid + " text").removeClass();
     $("#" + me.svgid + " text").addClass(className);
   }
+  else if(command.indexOf('line graph scale') == 0) {
+    var pos = command.lastIndexOf(' ');
+    var scale = command.substr(pos + 1);
+
+    $("#" + me.svgid + "_label").val(scale);
+
+    $("#" + me.linegraphid).attr("width", (me.linegraphWidth * parseFloat(scale)).toString() + "px");
+  }
 /*
   else if(command.indexOf('graph center') == 0) {
     var pos = command.lastIndexOf(' ');
@@ -2413,6 +2424,7 @@ iCn3DUI.prototype.getMenuFromCmd = function (cmd) { var me = this; //"use strict
     else if(cmd == 'apply saved style') return 'Style > Apply Saved Style';
     else if(cmd == 'select main chains') return 'Select > Main Chains';
     else if(cmd == 'select side chains') return 'Select > Side Chains';
+    else if(cmd == 'select main side chains') return 'Select > Main & Side Chains';
     else if(cmd == 'area') return 'View > Surface Area';
     else if(cmd == 'table inter count only') return 'View > H-Bonds & Interactions: "Set 1" button: "Show Count Only" button';
     else if(cmd == 'table inter details') return 'View > H-Bonds & Interactions: "Set 1" button: "Show Details" button';

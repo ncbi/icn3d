@@ -1580,8 +1580,8 @@ iCn3DUI.prototype = {
 
         if(firstAtom !== undefined) {
             commandname = "sphere." + firstAtom.chain + ":" + me.icn3d.residueName2Abbr(firstAtom.resn.substr(0, 3)).trim() + firstAtom.resi + "-" + radius + "A";
-            if(bInteraction) commandname = "contact." + firstAtom.chain + ":" + me.icn3d.residueName2Abbr(firstAtom.resn.substr(0, 3)).trim() + firstAtom.resi + "-" + $("#" + me.pre + "contactthreshold").val() + "A";
-            //commanddesc = "select a sphere around currently selected " + Object.keys(me.icn3d.hAtoms).length + " atoms with a radius of " + radius + " angstrom";
+            //if(bInteraction) commandname = "contact." + firstAtom.chain + ":" + me.icn3d.residueName2Abbr(firstAtom.resn.substr(0, 3)).trim() + firstAtom.resi + "-" + $("#" + me.pre + "contactthreshold").val() + "A";
+            if(bInteraction) commandname = "interactions." + firstAtom.chain + ":" + me.icn3d.residueName2Abbr(firstAtom.resn.substr(0, 3)).trim() + firstAtom.resi + "-" + $("#" + me.pre + "contactthreshold").val() + "A";
             commanddesc = commandname;
 
             me.addCustomSelection(residueArray, commandname, commanddesc, select, true);
@@ -3717,6 +3717,16 @@ iCn3DUI.prototype = {
            me.setLogCmd("select side chains", true);
 
            me.selectSideChains();
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
+        });
+    },
+
+    clkMn2_selectmainsidechains: function() { var me = this; //"use strict";
+        $("#" + me.pre + "mn2_selectmainsidechains").click(function(e) {
+           me.setLogCmd("select main side chains", true);
+
+           me.selectMainSideChains();
 
            //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
@@ -7354,6 +7364,17 @@ iCn3DUI.prototype = {
            me.savePng(me.linegraphid, me.inputid + "_line_graph.png", width, height);
         });
 
+        $("#" + me.linegraphid + "_scale").change(function(e) {
+           e.preventDefault();
+           //dialog.dialog( "close" );
+
+           var scale = $("#" + me.linegraphid + "_scale").val();
+
+           $("#" + me.linegraphid).attr("width", (me.linegraphWidth * parseFloat(scale)).toString() + "px");
+
+           me.setLogCmd("line graph scale " + scale, true);
+        });
+
         $("#" + me.svgid + "_label").change(function(e) {
            e.preventDefault();
            //dialog.dialog( "close" );
@@ -8269,6 +8290,7 @@ iCn3DUI.prototype = {
             var maxLen = Math.max(len1a, len1b, len2a, len2b);
 
             var factor = 1;
+
             var r = 3 * factor;
             var gap = 10 * factor;
 
@@ -8278,12 +8300,20 @@ iCn3DUI.prototype = {
             var width = maxLen * (r + gap) + 2 * margin;
             me.linegraphWidth = 2 * width;
 
-            me.linegraphid = me.pre + 'linegraph';
-            var html = "2D integration graph for structures <b>" + struc1 + " (top)</b> and <b>" + struc2 + " (bottom)</b><br><br>";
+            var strucArray = [];
+            if(linkArrayA.length > 0) strucArray.push(struc1);
+            if(linkArrayB.length > 0) strucArray.push(struc2);
+            var html = (strucArray.length == 0) ? "No interactions found for each structure<br><br>" :
+              "2D integration graph for structure(s) <b>" + strucArray + "</b><br><br>";
             html += "<svg id='" + me.linegraphid + "' viewBox='0,0," + width + "," + heightAll + "' width='" + me.linegraphWidth + "px'>";
 
-            html += me.drawLineGraph_base(nodeArray1a, nodeArray2a, linkArrayA, name2node, 0);
-            html += me.drawLineGraph_base(nodeArray1b, nodeArray2b, linkArrayB, name2node, height);
+            if(linkArrayA.length > 0) {
+                html += me.drawLineGraph_base(nodeArray1a, nodeArray2a, linkArrayA, name2node, 0);
+            }
+
+            if(linkArrayB.length > 0) {
+                html += me.drawLineGraph_base(nodeArray1b, nodeArray2b, linkArrayB, name2node, height);
+            }
 
             html += "</svg>";
         }
@@ -8291,6 +8321,7 @@ iCn3DUI.prototype = {
             var len1 = nodeArray1.length, len2 = nodeArray2.length;
 
             var factor = 1;
+
             var r = 3 * factor;
             var gap = 10 * factor;
 
@@ -8299,8 +8330,8 @@ iCn3DUI.prototype = {
             var width = (len1 > len2) ? len1 * (r + gap) + 2 * margin : len2 * (r + gap) + 2 * margin;
             me.linegraphWidth = 2 * width;
 
-            me.linegraphid = me.pre + 'linegraph';
-            var html = "<svg id='" + me.linegraphid + "' viewBox='0,0," + width + "," + height + "' width='" + me.linegraphWidth + "px'>";
+            var html = (linkArray.length > 0) ? "" : "No interactions found for these two sets<br><br>";
+            html += "<svg id='" + me.linegraphid + "' viewBox='0,0," + width + "," + height + "' width='" + me.linegraphWidth + "px'>";
 
             html += me.drawLineGraph_base(nodeArray1, nodeArray2, linkArray, name2node, 0);
 
@@ -8318,6 +8349,7 @@ iCn3DUI.prototype = {
         var len1 = nodeArray1.length, len2 = nodeArray2.length;
 
         var factor = 1;
+
         var r = 3 * factor;
         var gap = 10 * factor;
 
@@ -9411,6 +9443,7 @@ iCn3DUI.prototype = {
         me.clkMn2_selectcomplement();
         me.clkMn2_selectmainchains();
         me.clkMn2_selectsidechains();
+        me.clkMn2_selectmainsidechains();
         me.clkMn2_propperty();
         me.clkMn2_selectall();
         me.clkMn2_selectdisplayed();

@@ -16,6 +16,16 @@ iCn3DUI.prototype.downloadCid = function (cid) { var me = this; //"use strict";
     me.icn3d.bCid = true;
 
     $.ajax({
+      //beforeSend: function(xhrObj){
+        //xhrObj.setRequestHeader("Access-Control-Allow-Origin", "*");
+        //xhrObj.setRequestHeader("Access-Control-Allow-Credentials", "true");
+        //xhrObj.setRequestHeader("Access-Control-Allow-Methods", "GET,HEAD,OPTIONS,POST,PUT");
+        //xhrObj.setRequestHeader("Access-Control-Allow-Headers", "NCBI-PHID, Access-Control-Allow-Headers, Origin, Accept, X-Requested-With, Content-Type, Access-Control-Request-Methods, Access-Control-Request-Headers");
+      //},
+      //headers: {
+      //  "Access-Control-Allow-Origin": "*",
+      //  "Access-Control-Allow-Headers": "Access-Control-Allow-Headers, Origin, Accept, X-Requested-With, Content-Type, Access-Control-Request-Methods, Access-Control-Request-Headers, NCBI-PHID"
+      //},
       url: uri,
       dataType: 'text',
       cache: true,
