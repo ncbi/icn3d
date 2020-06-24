@@ -13,7 +13,7 @@ if (!$.ui.dialog.prototype._makeDraggableBase) {
 }
 
 var iCn3DUI = function(cfg) { var me = this; //"use strict";
-    this.REVISION = '2.17.3';
+    this.REVISION = '2.17.4';
 
     me.bFullUi = true;
 
@@ -132,7 +132,7 @@ var iCn3DUI = function(cfg) { var me = this; //"use strict";
     me.pistackingValue = 21;
     me.pistackingInsideValue = 22;
 
-    me.contactColor = '222';
+    me.contactColor = '888';
     me.contactInsideColor = 'FFF'; //'DDD';
     me.hbondColor = '0F0';
     me.hbondInsideColor = 'FFF'; //'AFA';
@@ -1507,8 +1507,6 @@ iCn3DUI.prototype = {
     },
 
     pickCustomSphere: function (radius, nameArray2, nameArray, bSphereCalc, bInteraction, type) {   var me = this; //"use strict";  // me.icn3d.pAtom is set already
-//        me.removeHlMenus();
-
         if(bSphereCalc) return;
 
         var select = "select zone cutoff " + radius + " | sets " + nameArray2 + " " + nameArray + " | " + bSphereCalc;
@@ -1520,23 +1518,42 @@ iCn3DUI.prototype = {
         var atomlistTarget, otherAtoms;
 
         // could be ligands
-/*
-        if(type == 'graph') { // only consider protein or nucleotide
-            var atoms = me.getAtomsFromNameArray(nameArray2);
-            atomlistTarget = me.icn3d.intHash(atoms, me.icn3d.proteins);
-            atomlistTarget = me.icn3d.unionHash2Atoms(atomlistTarget, me.icn3d.intHash(atoms, me.icn3d.nucleotides));
+        atomlistTarget = me.getAtomsFromNameArray(nameArray2);
+        otherAtoms = me.getAtomsFromNameArray(nameArray);
 
-            atoms = me.getAtomsFromNameArray(nameArray);
-            otherAtoms = me.icn3d.intHash(atoms, me.icn3d.proteins);
-            otherAtoms = me.icn3d.unionHash2Atoms(otherAtoms, me.icn3d.intHash(atoms, me.icn3d.nucleotides));
+        var result = me.pickCustomSphere_base(radius, atomlistTarget, otherAtoms, bSphereCalc, bInteraction, type, select);
+
+        var residueArray = Object.keys(result.residues);
+
+        me.icn3d.hAtoms = {};
+        for(var index = 0, indexl = residueArray.length; index < indexl; ++index) {
+          var residueid = residueArray[index];
+          for(var i in me.icn3d.residues[residueid]) {
+            me.icn3d.hAtoms[i] = 1;
+          }
         }
-        else {
-*/
-            atomlistTarget = me.getAtomsFromNameArray(nameArray2);
-            otherAtoms = me.getAtomsFromNameArray(nameArray);
-//        }
 
-        // select all atom, not just displayed atoms
+        // do not change the set of displaying atoms
+        //me.icn3d.dAtoms = me.icn3d.cloneHash(me.icn3d.atoms);
+
+        var commandname, commanddesc;
+        var firstAtom = me.icn3d.getFirstAtomObj(atomlistTarget);
+
+        if(firstAtom !== undefined) {
+            commandname = "sphere." + firstAtom.chain + ":" + me.icn3d.residueName2Abbr(firstAtom.resn.substr(0, 3)).trim() + firstAtom.resi + "-" + radius + "A";
+            if(bInteraction) commandname = "interactions." + firstAtom.chain + ":" + me.icn3d.residueName2Abbr(firstAtom.resn.substr(0, 3)).trim() + firstAtom.resi + "-" + $("#" + me.pre + "contactthreshold").val() + "A";
+            commanddesc = commandname;
+
+            me.addCustomSelection(residueArray, commandname, commanddesc, select, true);
+        }
+
+        me.saveSelectionIfSelected();
+
+        me.icn3d.draw();
+    },
+
+    pickCustomSphere_base: function (radius, atomlistTarget, otherAtoms, bSphereCalc, bInteraction, type, select) {   var me = this; //"use strict";  // me.icn3d.pAtom is set already
+
         var bGetPairs = true;
 
         var atoms;
@@ -1562,38 +1579,7 @@ iCn3DUI.prototype = {
             residues[residueid] = 1;
         }
 
-        var residueArray = Object.keys(residues);
-
-        me.icn3d.hAtoms = {};
-        for(var index = 0, indexl = residueArray.length; index < indexl; ++index) {
-          var residueid = residueArray[index];
-          for(var i in me.icn3d.residues[residueid]) {
-            me.icn3d.hAtoms[i] = 1;
-          }
-        }
-
-        // do not change the set of displaying atoms
-        //me.icn3d.dAtoms = me.icn3d.cloneHash(me.icn3d.atoms);
-
-        var commandname, commanddesc;
-        var firstAtom = me.icn3d.getFirstAtomObj(atomlistTarget);
-
-        if(firstAtom !== undefined) {
-            commandname = "sphere." + firstAtom.chain + ":" + me.icn3d.residueName2Abbr(firstAtom.resn.substr(0, 3)).trim() + firstAtom.resi + "-" + radius + "A";
-            //if(bInteraction) commandname = "contact." + firstAtom.chain + ":" + me.icn3d.residueName2Abbr(firstAtom.resn.substr(0, 3)).trim() + firstAtom.resi + "-" + $("#" + me.pre + "contactthreshold").val() + "A";
-            if(bInteraction) commandname = "interactions." + firstAtom.chain + ":" + me.icn3d.residueName2Abbr(firstAtom.resn.substr(0, 3)).trim() + firstAtom.resi + "-" + $("#" + me.pre + "contactthreshold").val() + "A";
-            commanddesc = commandname;
-
-            me.addCustomSelection(residueArray, commandname, commanddesc, select, true);
-        }
-
-        //var nameArray = [commandname];
-
-        //me.changeCustomResidues(nameArray);
-
-        me.saveSelectionIfSelected();
-
-        me.icn3d.draw();
+        return {"residues": residues, "resid2Residhash": me.icn3d.resid2Residhash};
     },
 
     // between the highlighted and atoms in nameArray
@@ -2483,6 +2469,7 @@ iCn3DUI.prototype = {
 
         if(type == 'graph' || type == 'linegraph') {
             var hbondStr = me.getGraphLinks(me.resid2ResidhashSaltbridge, me.resid2ResidhashSaltbridge, me.ionicColor, labelType, me.ionicValue);
+
             return hbondStr;
         }
         else {
@@ -7206,20 +7193,21 @@ iCn3DUI.prototype = {
            var interactionTypes = me.viewInteractionPairs(nameArray2, nameArray, me.bHbondCalc, type,
                 bHbond, bSaltbridge, bInteraction, bHalogen, bPication, bPistacking);
 
+           var bHbondCalcStr = (me.bHbondCalc) ? "true" : "false";
            if(type == '3d') {
-               me.setLogCmd("display interaction 3d | " + nameArray2 + " " + nameArray + " | " + interactionTypes + " | false | " + thresholdStr, true);
+               me.setLogCmd("display interaction 3d | " + nameArray2 + " " + nameArray + " | " + interactionTypes + " | " + bHbondCalcStr + " | " + thresholdStr, true);
            }
            else if(type == 'view') {
-               me.setLogCmd("view interaction pairs | " + nameArray2 + " " + nameArray + " | " + interactionTypes + " | false | " + thresholdStr, true);
+               me.setLogCmd("view interaction pairs | " + nameArray2 + " " + nameArray + " | " + interactionTypes + " | " + bHbondCalcStr + " | " + thresholdStr, true);
            }
            else if(type == 'save1') {
-               me.setLogCmd("save1 interaction pairs | " + nameArray2 + " " + nameArray + " | " + interactionTypes + " | false | " + thresholdStr, true);
+               me.setLogCmd("save1 interaction pairs | " + nameArray2 + " " + nameArray + " | " + interactionTypes + " | " + bHbondCalcStr + " | " + thresholdStr, true);
            }
            else if(type == 'save2') {
-               me.setLogCmd("save2 interaction pairs | " + nameArray2 + " " + nameArray + " | " + interactionTypes + " | false | " + thresholdStr, true);
+               me.setLogCmd("save2 interaction pairs | " + nameArray2 + " " + nameArray + " | " + interactionTypes + " | " + bHbondCalcStr + " | " + thresholdStr, true);
            }
            else if(type == 'linegraph') {
-               me.setLogCmd("line graph interaction pairs | " + nameArray2 + " " + nameArray + " | " + interactionTypes + " | false | " + thresholdStr, true);
+               me.setLogCmd("line graph interaction pairs | " + nameArray2 + " " + nameArray + " | " + interactionTypes + " | " + bHbondCalcStr + " | " + thresholdStr, true);
            }
            else if(type == 'graph') { // force-directed graph
                 var dist_ss = parseInt($("#" + me.pre + "dist_ss").val());
@@ -7234,10 +7222,13 @@ iCn3DUI.prototype = {
                 var dist_pistacking = parseInt($("#" + me.pre + "dist_pistacking").val());
 
                 me.setLogCmd("graph interaction pairs | " + nameArray2 + " " + nameArray + " | " + interactionTypes
-                    + " | false | " + thresholdStr + " | " + dist_ss + " " + dist_coil
+                    + " | " + bHbondCalcStr + " | " + thresholdStr + " | " + dist_ss + " " + dist_coil
                     + " " + dist_hbond + " " + dist_inter + " " + dist_ssbond + " " + dist_ionic
                     + " " + dist_halogen + " " + dist_pication + " " + dist_pistacking, true);
            }
+
+           // avoid repeated calculation
+           me.bHbondCalc = true;
        }
     },
 
@@ -7247,10 +7238,18 @@ iCn3DUI.prototype = {
             //me.setLogCmd('set calculate hbond false', true);
         });
 
-        $("#" + me.pre + "applyhbonds").click(function(e) {
+        $("#" + me.pre + "crossstrucinter").change(function(e) {
            e.preventDefault();
            //dialog.dialog( "close" );
 
+           me.icn3d.crossstrucinter = parseInt($("#" + me.pre + "crossstrucinter").val());
+
+           me.setLogCmd("cross structure interaction " + me.icn3d.crossstrucinter, true);
+        });
+
+        $("#" + me.pre + "applyhbonds").click(function(e) {
+           e.preventDefault();
+           //dialog.dialog( "close" );
            me.showInteractions('3d');
         });
 
@@ -7620,14 +7619,96 @@ iCn3DUI.prototype = {
        if(bInteraction) {
            var threshold = parseFloat($("#" + me.pre + "contactthreshold" ).val());
 
-           if(!bHbondCalc) {
-               me.icn3d.hAtoms = me.icn3d.cloneHash(prevHatoms);
-               me.pickCustomSphere(threshold, nameArray2, nameArray, bHbondCalc, true, type);
+           if(!(nameArray2.length == 1 && nameArray.length == 1 && nameArray2[0] == nameArray[0])) {
+                if(!bHbondCalc) {
+                    me.icn3d.hAtoms = me.icn3d.cloneHash(prevHatoms);
+                    me.pickCustomSphere(threshold, nameArray2, nameArray, bHbondCalc, true, type);
+                }
+
+                hAtoms = me.icn3d.unionHash(hAtoms, me.icn3d.hAtoms);
+
+                tableHtml += me.exportSpherePairs(true, type, labelType);
            }
+           else { // contact in a set, atomSet1 same as atomSet2
+                if(!bHbondCalc) {
+                    var ssAtomsArray = [];
+                    var prevSS = '', prevChain = '';
+                    var ssAtoms = {};
 
-           hAtoms = me.icn3d.unionHash(hAtoms, me.icn3d.hAtoms);
+                    for(var i in atomSet1) {
+                        var atom = me.icn3d.atoms[i];
+                        if(atom.ss != prevSS || atom.chain != prevChain) {
+                            if(Object.keys(ssAtoms).length > 0) ssAtomsArray.push(ssAtoms);
+                            ssAtoms = {};
+                        }
 
-           tableHtml += me.exportSpherePairs(true, type, labelType);
+                        ssAtoms[atom.serial] = 1;
+
+                        prevSS = atom.ss;
+                        prevChain = atom.chain;
+                    }
+
+                    // last ss
+                    if(Object.keys(ssAtoms).length > 0) ssAtomsArray.push(ssAtoms);
+
+                    var len = ssAtomsArray.length;
+                    var interStr = '';
+
+                    select = "interactions " + threshold + " | sets " + nameArray2 + " " + nameArray + " | true";
+                    me.icn3d.opts['contact'] = "yes";
+
+                    var residues = {};
+                    var resid2ResidhashInteractions = {};
+                    for(var i = 0; i < len; ++i) {
+                        for(var j = i + 1; j < len; ++j) {
+                            me.icn3d.hAtoms = me.icn3d.cloneHash(prevHatoms);
+
+                            var result = me.pickCustomSphere_base(threshold, ssAtomsArray[i], ssAtomsArray[j], bHbondCalc, true, type, select);
+                            residues = me.icn3d.unionHash(residues, result.residues);
+
+                            for(var resid in result.resid2Residhash) {
+                                resid2ResidhashInteractions[resid] = me.icn3d.unionHash(resid2ResidhashInteractions[resid], result.resid2Residhash[resid]);
+                            }
+
+                            //hAtoms = me.icn3d.unionHash(hAtoms, me.icn3d.hAtoms);
+
+                            //tableHtml += me.exportSpherePairs(true, type, labelType);
+                        }
+                    }
+                    me.resid2ResidhashInteractions = resid2ResidhashInteractions;
+
+                    var residueArray = Object.keys(residues);
+
+                    me.icn3d.hAtoms = {};
+                    for(var index = 0, indexl = residueArray.length; index < indexl; ++index) {
+                      var residueid = residueArray[index];
+                      for(var i in me.icn3d.residues[residueid]) {
+                        me.icn3d.hAtoms[i] = 1;
+                      }
+                    }
+
+                    // do not change the set of displaying atoms
+                    //me.icn3d.dAtoms = me.icn3d.cloneHash(me.icn3d.atoms);
+
+                    var commandname, commanddesc;
+                    var firstAtom = me.icn3d.getFirstAtomObj(residues);
+
+                    if(firstAtom !== undefined) {
+                        commandname = "sphere." + firstAtom.chain + ":" + me.icn3d.residueName2Abbr(firstAtom.resn.substr(0, 3)).trim() + firstAtom.resi + "-" + radius + "A";
+                        if(bInteraction) commandname = "interactions." + firstAtom.chain + ":" + me.icn3d.residueName2Abbr(firstAtom.resn.substr(0, 3)).trim() + firstAtom.resi + "-" + $("#" + me.pre + "contactthreshold").val() + "A";
+                        commanddesc = commandname;
+
+                        me.addCustomSelection(residueArray, commandname, commanddesc, select, true);
+                    }
+
+                    me.saveSelectionIfSelected();
+
+                    me.icn3d.draw();
+                }
+
+                hAtoms = me.icn3d.unionHash(hAtoms, me.icn3d.hAtoms);
+                tableHtml += me.exportSpherePairs(true, type, labelType);
+           } // same set
        }
 
        me.icn3d.hAtoms = me.icn3d.cloneHash(hAtoms);
@@ -7658,7 +7739,8 @@ iCn3DUI.prototype = {
        commanddesc = commandname;
        me.addCustomSelection(Object.keys(residHash), commandname, commanddesc, select, true);
 
-       var html = '<div style="text-align:center"><b>Hydrogen Bonds, Salt Bridges, Contacts, Halogen Bonds, &pi;-cation, &pi;-stacking between Two Sets:</b><br>';
+       //var html = '<div style="text-align:center"><b>Hydrogen Bonds, Salt Bridges, Contacts, Halogen Bonds, &pi;-cation, &pi;-stacking between Two Sets:</b><br>';
+       var html = '<div style="text-align:center"><b>' + interactionTypes.join(', ') + ' between Two Sets:</b><br>';
 
        var residueArray1 = me.atoms2residues(Object.keys(atomSet1));
        var residueArray2 = me.atoms2residues(Object.keys(atomSet2));
@@ -7737,7 +7819,7 @@ iCn3DUI.prototype = {
            me.graphStr = me.getGraphData(atomSet1, atomSet2, nameArray2, nameArray, html, labelType);
            me.bGraph = true;
 
-           // showonly displayed set in 2D graph
+           // show only displayed set in 2D graph
            if(Object.keys(atomSet2).length + Object.keys(atomSet1).length > Object.keys(me.icn3d.dAtoms).length) {
                me.graphStr = me.getGraphDataForDisplayed();
            }
@@ -7781,9 +7863,6 @@ iCn3DUI.prototype = {
                me.drawGraph(me.graphStr);
            }
        }
-
-       me.bHbondCalc = true;
-       //me.setLogCmd('set calculate hbond true', true);
 
        return interactionTypes.toString();
     },
@@ -8103,9 +8182,9 @@ iCn3DUI.prototype = {
                contactLinkStr += me.getContactLinksForSet(atomSet2, labelType);
                contactLinkStr += me.getContactLinksForSet(atomSet1, labelType);
            }
-           else {
-               contactLinkStr += me.getContactLinksForSet(atomSet1, labelType);
-           }
+           //else {
+           //    contactLinkStr += me.getContactLinksForSet(atomSet1, labelType);
+           //}
 
            // add disulfide bonds
            for(var structure in me.icn3d.ssbondpnts) {
@@ -8194,6 +8273,35 @@ iCn3DUI.prototype = {
         return html;
     },
 
+    getNodeTopBottom: function(nameHash, name2node, bReverseNode) { var me = this; //"use strict";
+        var nodeArray1 = [], nodeArray2 = [];
+
+        for(var name in nameHash) {
+            var node = name2node[name];
+            if(node.s == 'a') {
+                nodeArray1.push(node);
+            }
+            else if(node.s == 'b') {
+                nodeArray2.push(node);
+            }
+            else if(node.s == 'ab') {
+                nodeArray1.push(node);
+                nodeArray2.push(node);
+            }
+        }
+
+        // sort array
+        nodeArray1.sort(function(a,b) {
+          return me.compNode(a, b);
+        });
+
+        nodeArray2.sort(function(a,b) {
+          return me.compNode(a, b, bReverseNode);
+        });
+
+        return {"nodeArray1": nodeArray1, "nodeArray2": nodeArray2};
+    },
+
     drawLineGraph: function(lineGraphStr) { var me = this; //"use strict";
         var graph = JSON.parse(lineGraphStr);
 
@@ -8218,76 +8326,63 @@ iCn3DUI.prototype = {
             }
         }
 
-        // get involved nodes
-        for(var name in nameHash) {
-            var node = name2node[name];
-            if(node.s == 'a') {
-                nodeArray1.push(node);
-            }
-            else if(node.s == 'b') {
-                nodeArray2.push(node);
-            }
-            else if(node.s == 'ab') {
-                nodeArray1.push(node);
-                nodeArray2.push(node);
-            }
-        }
-
-        // sort array
-        nodeArray1.sort(function(a,b) {
-          return me.compNode(a, b);
-        });
-
-        nodeArray2.sort(function(a,b) {
-          return me.compNode(a, b);
-        });
+        var nodeArrays = me.getNodeTopBottom(nameHash, name2node);
+        nodeArray1 = nodeArrays.nodeArray1;
+        nodeArray2 = nodeArrays.nodeArray2;
 
         if(Object.keys(me.icn3d.structures).length > 1) {
-            var nodeArray1a = [], nodeArray1b = [], nodeArray2a = [], nodeArray2b = []
+            var nodeArray1a = [], nodeArray1b = [], nodeArray2a = [], nodeArray2b = [], nodeArray3a = [], nodeArray3b = [];
+            var nodeArray1aTmp = [], nodeArray1bTmp = [], nodeArray2aTmp = [], nodeArray2bTmp = [];
+
             var struc1 = Object.keys(me.icn3d.structures)[0], struc2 = Object.keys(me.icn3d.structures)[1];
 
-            var nodeNameHashA = {}, nodeNameHashB = {};
-
-            for(var i = 0, il = nodeArray1.length; i < il; ++i) {
-                var node = nodeArray1[i];
-                var idArray = node.r.split('_'); // 1_1_1KQ2_A_1
-                if(idArray[2] == struc1) {
-                    nodeArray1a.push(node);
-                    nodeNameHashA[node.id] = 1;
-                }
-                else {
-                    nodeArray1b.push(node);
-                    nodeNameHashB[node.id] = 1;
-                }
-            }
-
-            for(var i = 0, il = nodeArray2.length; i < il; ++i) {
-                var node = nodeArray2[i];
-                var idArray = node.r.split('_'); // 1_1_1KQ2_A_1
-                if(idArray[2] == struc1) {
-                    nodeArray2a.push(node);
-                    nodeNameHashA[node.id] = 1;
-                }
-                else {
-                    nodeArray2b.push(node);
-                    nodeNameHashB[node.id] = 1;
-                }
-            }
-
-            var linkArrayA = [], linkArrayB = [];
+            var linkArrayA = [], linkArrayB = [], linkArrayAB = [];
+            var nameHashA = {}, nameHashB = {}, nameHashAB = {};
             for(var i = 0, il = linkArray.length; i < il; ++i) {
                 var link = linkArray[i];
-                if(nodeNameHashA.hasOwnProperty(link.source) && nodeNameHashA.hasOwnProperty(link.target)) {
-                    linkArrayA.push(link);
-                }
+                var nodeA = name2node[link.source];
+                var nodeB = name2node[link.target];
+                var idArrayA = nodeA.r.split('_'); // 1_1_1KQ2_A_1
+                var idArrayB = nodeB.r.split('_'); // 1_1_1KQ2_A_1
 
-                if(nodeNameHashB.hasOwnProperty(link.source) && nodeNameHashB.hasOwnProperty(link.target)) {
+                if(idArrayA[2] == struc1 && idArrayB[2] == struc1) {
+                    linkArrayA.push(link);
+                    nameHashA[link.source] = 1;
+                    nameHashA[link.target] = 1;
+                }
+                else if(idArrayA[2] == struc2 && idArrayB[2] == struc2) {
                     linkArrayB.push(link);
+                    nameHashB[link.source] = 1;
+                    nameHashB[link.target] = 1;
+                }
+                else {
+                    linkArrayAB.push(link);
+                    nameHashAB[link.source] = 1;
+                    nameHashAB[link.target] = 1;
                 }
             }
 
-            var len1a = nodeArray1a.length, len1b = nodeArray1b.length, len2a = nodeArray2a.length, len2b = nodeArray2b.length;
-            var maxLen = Math.max(len1a, len1b, len2a, len2b);
+            var nodeArraysA = me.getNodeTopBottom(nameHashA, name2node);
+            nodeArray1a = nodeArraysA.nodeArray1;
+            nodeArray1b = nodeArraysA.nodeArray2;
+
+            var nodeArraysB = me.getNodeTopBottom(nameHashB, name2node);
+            nodeArray2a = nodeArraysB.nodeArray1;
+            nodeArray2b = nodeArraysB.nodeArray2;
+
+            var nodeArraysAB = me.getNodeTopBottom(nameHashAB, name2node, true);
+            nodeArray3a = nodeArraysAB.nodeArray1;
+            nodeArray3b = nodeArraysAB.nodeArray2;
+
+            var len1a = nodeArray1a.length, len1b = nodeArray1b.length;
+            var len2a = nodeArray2a.length, len2b = nodeArray2b.length;
+            var len3a = nodeArray3a.length, len3b = nodeArray3b.length;
+            var maxLen = Math.max(len1a, len1b, len2a, len2b, len3a, len3b);
+
+            var strucArray = [];
+            if(linkArrayA.length > 0) strucArray.push(struc1);
+            if(linkArrayB.length > 0) strucArray.push(struc2);
+            if(linkArrayAB.length > 0) strucArray.push(struc1 + '_' + struc2);
 
             var factor = 1;
 
@@ -8295,24 +8390,28 @@ iCn3DUI.prototype = {
             var gap = 10 * factor;
 
             var height = 110;
-            var heightAll = height * 2;
+            var heightAll = height * strucArray.length;
             var margin = 10;
             var width = maxLen * (r + gap) + 2 * margin;
             me.linegraphWidth = 2 * width;
 
-            var strucArray = [];
-            if(linkArrayA.length > 0) strucArray.push(struc1);
-            if(linkArrayB.length > 0) strucArray.push(struc2);
             var html = (strucArray.length == 0) ? "No interactions found for each structure<br><br>" :
               "2D integration graph for structure(s) <b>" + strucArray + "</b><br><br>";
             html += "<svg id='" + me.linegraphid + "' viewBox='0,0," + width + "," + heightAll + "' width='" + me.linegraphWidth + "px'>";
 
+            var heightFinal = 0;
             if(linkArrayA.length > 0) {
-                html += me.drawLineGraph_base(nodeArray1a, nodeArray2a, linkArrayA, name2node, 0);
+                html += me.drawLineGraph_base(nodeArray1a, nodeArray1b, linkArrayA, name2node, heightFinal);
+                heightFinal += height;
             }
 
             if(linkArrayB.length > 0) {
-                html += me.drawLineGraph_base(nodeArray1b, nodeArray2b, linkArrayB, name2node, height);
+                html += me.drawLineGraph_base(nodeArray2a, nodeArray2b, linkArrayB, name2node, heightFinal);
+                heightFinal += height;
+            }
+
+            if(linkArrayAB.length > 0) {
+                html += me.drawLineGraph_base(nodeArray3a, nodeArray3b, linkArrayAB, name2node, heightFinal);
             }
 
             html += "</svg>";
@@ -8425,6 +8524,7 @@ iCn3DUI.prototype = {
 
             html += "<g class='icn3d-interaction' resid1='" + resid1 + "' resid2='" + resid2 + "' >";
             html += "<title>Interaction of residue " + node1.id + " with residue " + node2.id + "</title>";
+            //html += "<line class='icn3d-hlline' x1='" + pos1.x + "' y1='" + pos1.y + "' x2='" + pos2.x + "' y2='" + pos2.y + "' stroke='#FFF' stroke-width='" + (linestrokewidth + 1).toString() + "' />";
             html += "<line x1='" + pos1.x + "' y1='" + pos1.y + "' x2='" + pos2.x + "' y2='" + pos2.y + "' stroke='" + strokecolor + "' stroke-width='" + linestrokewidth + "' /></g>";
         }
 
@@ -8434,7 +8534,7 @@ iCn3DUI.prototype = {
         return html;
     },
 
-    compNode: function(a, b, type) { var me = this; //"use strict";
+    compNode: function(a, b, bReverseChain) { var me = this; //"use strict";
       var resid1 = a.r.substr(4); // 1_1_1KQ2_A_1
       var resid2 = b.r.substr(4); // 1_1_1KQ2_A_1
 
@@ -8448,10 +8548,12 @@ iCn3DUI.prototype = {
       var bResi = parseInt(bIdArray[2]);
 
       if(aChainid > bChainid){
-        return 1;
+          if(bReverseChain) return -1;
+          else return 1;
       }
       else if(aChainid < bChainid){
-        return -1;
+          if(bReverseChain) return 1;
+          else return -1;
       }
       else if(aChainid == bChainid){
         return (aResi > bResi) ? 1 : (aResi < bResi) ? -1 : 0;

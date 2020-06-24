@@ -2140,6 +2140,11 @@ iCn3DUI.prototype.applyCommand = function (commandStr) { var me = this; //"use s
     $("#" + me.pre + "yournote").val(yournote);
     document.title = yournote;
   }
+  else if(command.indexOf('cross structure interaction') == 0) {
+    me.icn3d.crossstrucinter = parseInt(command.substr(command.lastIndexOf(' ') + 1));
+
+    $("#" + me.pre + "crossstrucinter").val(me.icn3d.crossstrucinter);
+  }
   else if(command == 'replay on') {
     me.replayon();
   }

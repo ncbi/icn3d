@@ -333,14 +333,12 @@ iCn3DUI.prototype.openDialog = function (id, title) {  var me = this; //"use str
                 position ={ my: "left top", at: "left bottom-50", of: "#" + me.pre + "canvas", collision: "none" };
             }
             else if(id === me.pre + 'dl_allinteraction' || id === me.pre + 'dl_buriedarea') {
+                //position ={ my: "right top", at: "right top+50", of: "#" + me.pre + "dl_selectannotations", collision: "none" };
                 position ={ my: "right top", at: "right top+50", of: "#" + me.divid, collision: "none" };
 
                 width = 700;
                 height = 500;
             }
-            //else if(id === me.pre + 'dl_linegraph') {
-            //    position ={ my: "right top", at: "right top+50", of: "#" + me.divid, collision: "none" };
-            //}
             else {
                 if(me.cfg.align) {
                     position ={ my: "left top", at: "left top+90", of: "#" + me.pre + "canvas", collision: "none" };

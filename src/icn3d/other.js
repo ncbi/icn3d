@@ -883,6 +883,7 @@ iCn3D.prototype.addAtomLabels = function (atoms) { var me = this; //"use strict"
     var background = "#CCCCCC";
 
     var atomsHash = this.intHash(this.hAtoms, atoms);
+    atomsHash = this.intHash(this.dAtoms, atomsHash);
 
     if(this.labels['residue'] === undefined) this.labels['residue'] = [];
 

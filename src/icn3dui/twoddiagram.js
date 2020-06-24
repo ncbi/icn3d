@@ -543,8 +543,8 @@ iCn3DUI.prototype.removeLineGraphSelection = function() { var me = this; //"use 
       $("#" + me.pre + "dl_linegraph circle").attr('stroke', '#000000');
       $("#" + me.pre + "dl_linegraph circle").attr('stroke-width', 1);
 
-      $("#" + me.pre + "dl_linegraph svg line").attr('stroke', '#000000');
-      $("#" + me.pre + "dl_linegraph line").attr('stroke-width', 1);
+      $("#" + me.pre + "dl_linegraph svg line.icn3d-hlline").attr('stroke', '#FFF');
+      //$("#" + me.pre + "dl_linegraph svg line .icn3d-hlline").attr('stroke-width', 1);
 };
 
 iCn3DUI.prototype.click2Ddgm = function() { var me = this; //"use strict";
@@ -678,7 +678,7 @@ iCn3DUI.prototype.click2Ddgm = function() { var me = this; //"use strict";
           me.removeLineGraphSelection();
         }
 
-        $(this).find('line').attr('stroke', me.ORANGE);
+        $(this).find('line.icn3d-hlline').attr('stroke', me.ORANGE);
 
         me.icn3d.hAtoms = me.icn3d.unionHash(me.icn3d.hAtoms, me.icn3d.residues[resid1]);
         me.icn3d.hAtoms = me.icn3d.unionHash(me.icn3d.hAtoms, me.icn3d.residues[resid2]);

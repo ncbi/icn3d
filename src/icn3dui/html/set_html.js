@@ -1897,7 +1897,17 @@ iCn3DUI.prototype.setDialogs = function() { var me = this; //"use strict";
 
     html += "</td></tr></table>";
 
-    html += "<div>4. " + me.buttonStr + "applyhbonds'>3D Display Interactions</button></div><br>";
+    if(me.cfg.align !== undefined || me.cfg.chainalign !== undefined) {
+        html += "<div>4. <b>Cross Structure Interactions</b>: <select id='" + me.pre + "crossstrucinter'>";
+        html += optionStr + "'1'>Yes</option>";
+        html += optionStr + "'0' selected>No</option>";
+        html += "</select></div><br>";
+        html += "<div style='text-indent:1.1em'>" + me.buttonStr + "applyhbonds'>3D Display Interactions</button></div><br>";
+    }
+    else {
+        html += "<div>4. " + me.buttonStr + "applyhbonds'>3D Display Interactions</button></div><br>";
+    }
+
     html += "<div style='text-indent:1.1em'>" + me.buttonStr + "hbondWindow'>Highlight Interactions in Table</button><span style='margin-left:30px; font-wieght:bold'>Sort Interactions on</span>: " + me.buttonStr + "sortSet1'> Set 1</button>" + me.buttonStr + "sortSet2' style='margin-left:20px'>Set 2</button></div><br>";
 
     html += "<div style='text-indent:1.1em'>" + me.buttonStr + "hbondLineGraph'>2D Interaction Graph</button> to show interactions in two lines of residue nodes</div><br>";

@@ -425,7 +425,10 @@ iCn3DUI.prototype.selectMainSideChains = function () { var me = this; //"use str
     me.icn3d.hAtoms = {};
     for(var resid in residHash) {
         me.icn3d.hAtoms = me.icn3d.unionHash(me.icn3d.hAtoms, me.icn3d.residues[resid]);
+        me.icn3d.dAtoms = me.icn3d.unionHash(me.icn3d.dAtoms, me.icn3d.residues[resid]);
     }
+
+    me.icn3d.draw();
 
     me.showHighlight();
 };
