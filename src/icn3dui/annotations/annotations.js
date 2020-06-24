@@ -2020,7 +2020,8 @@ iCn3DUI.prototype.processSnpClinvar = function(data, chnid, chnidBase, bSnpOnly)
 
 iCn3DUI.prototype.showClinvarPart2 = function(chnid, chnidBase, gi) { var me = this; //"use strict";
     //var url = "https://www.ncbi.nlm.nih.gov/projects/SNP/beVarSearch_mt.cgi?appname=iCn3D&format=bed&report=pdb2bed&acc=" + chnidBase;
-    var url = "https://www.ncbi.nlm.nih.gov/Structure/icn3d/clinvar.txt";
+    //var url = "https://www.ncbi.nlm.nih.gov/Structure/icn3d/clinvar.txt";
+    var url = "https://www.ncbi.nlm.nih.gov/Structure/vastdyn/vastdyn.cgi?chainid_clinvar=" + chnidBase;
     $.ajax({
       url: url,
       dataType: 'text',
@@ -2030,6 +2031,8 @@ iCn3DUI.prototype.showClinvarPart2 = function(chnid, chnidBase, gi) { var me = t
       success: function(indata) {
         if(indata != "") {
             var bSnpOnly = false;
+
+            /*
             var lineArray = indata.split('\n');
             var data = '';
             var bFound = false;
@@ -2042,6 +2045,9 @@ iCn3DUI.prototype.showClinvarPart2 = function(chnid, chnidBase, gi) { var me = t
 
                 if(bFound && idArray[0] != gi) break;
             }
+            */
+
+            var data = indata;
 
             me.processSnpClinvar(data, chnid, chnidBase, bSnpOnly);
         }

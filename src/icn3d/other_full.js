@@ -350,6 +350,8 @@ iCn3D.prototype.calculateChemicalHbonds = function (startAtoms, targetAtoms, thr
                 }
           }
 
+          if(!me.crossstrucinter && atom.structure != atomHbond[j].structure) continue;
+
           // skip same residue
           if(chain_resi == j.substr(0, j.lastIndexOf('_') ) ) continue;
 
@@ -594,6 +596,8 @@ iCn3D.prototype.calculateIonicInteractions = function (startAtoms, targetAtoms, 
           // skip same residue
           if(chain_resi == j.substr(0, j.lastIndexOf('_') )) continue;
 
+          if(!me.crossstrucinter && atom.structure != atomHbond[j].structure) continue;
+
             var otherAtom2 = undefined, resid2 = atomHbond[j].structure + '_' + atomHbond[j].chain + '_' + atomHbond[j].resi;
             if( bAtomCondAnion && atomHbond[j].resn === 'ARG' && atomHbond[j].name === "NH1") {
                 otherAtom2 = this.getFirstAtomObjByName(this.residues[resid2], 'NH2');
@@ -825,6 +829,8 @@ iCn3D.prototype.calculateHalogenPiInteractions = function (startAtoms, targetAto
         for (var j in atoms1b) {
           var atom2 = atoms1b[j];
 
+          if(!me.crossstrucinter && atom1.structure != atom2.structure) continue;
+
           // skip same residue
           if(i.substr(0, i.lastIndexOf('_')) == j.substr(0, j.lastIndexOf('_')) ) continue;
 
@@ -875,6 +881,8 @@ iCn3D.prototype.calculateHalogenPiInteractions = function (startAtoms, targetAto
 
         for (var j in atoms2b) {
           var atom2 = atoms2b[j];
+
+          if(!me.crossstrucinter && atom1.structure != atom2.structure) continue;
 
           // skip same residue
           if(i.substr(0, i.lastIndexOf('_')) == j.substr(0, j.lastIndexOf('_')) ) continue;
@@ -1013,7 +1021,6 @@ iCn3D.prototype.getChainsFromAtoms = function(atomsHash) { var me = this; //"use
  // modified from iview (http://istar.cse.cuhk.edu.hk/iview/)
  iCn3D.prototype.getAtomsWithinAtom = function(atomlist, atomlistTarget, distance, bGetPairs, bInteraction, bInternal) { var me = this; //"use strict";
     var neighbors = this.getNeighboringAtoms(atomlist, atomlistTarget, distance);
-
     if(bGetPairs) me.resid2Residhash = {};
 
     //var maxDistSq = (radius + distance) * (radius + distance);
@@ -1047,6 +1054,8 @@ iCn3D.prototype.getChainsFromAtoms = function(atomsHash) { var me = this; //"use
 
         for (var j in neighbors) {
            var atom = neighbors[j];
+
+           if(!me.crossstrucinter && oriAtom.structure != atom.structure) continue;
 
            // exclude the target atoms
            if(atom.serial in atomlistTarget) continue;

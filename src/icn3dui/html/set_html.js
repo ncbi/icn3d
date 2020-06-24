@@ -507,6 +507,7 @@ iCn3DUI.prototype.setMenu2_base = function() { var me = this; //"use strict";
     html += me.getLink('mn2_selectcomplement', 'Inverse');
     html += me.getLink('mn2_selectmainchains', 'Main Chains');
     html += me.getLink('mn2_selectsidechains', 'Side Chains');
+    html += me.getLink('mn2_selectmainsidechains', 'Main & Side Chains');
     html += me.getLink('mn2_command', 'Advanced');
 
 
@@ -1546,6 +1547,7 @@ iCn3DUI.prototype.setDialogs = function() { var me = this; //"use strict";
 
     if(me.cfg.align !== undefined || me.cfg.chainalign !== undefined || me.bRealign) {
       html += me.divStr + "dl_alignment' style='background-color:white;'>";
+      html += me.divStr + "alignseqguide_wrapper'><br>" + me.setAlignSequenceGuide() + "</div>";
       html += me.divStr + "dl_sequence2' class='icn3d-dl_sequence'>";
       html += "</div>";
       html += "</div>";
@@ -1895,7 +1897,17 @@ iCn3DUI.prototype.setDialogs = function() { var me = this; //"use strict";
 
     html += "</td></tr></table>";
 
-    html += "<div>4. " + me.buttonStr + "applyhbonds'>3D Display Interactions</button></div><br>";
+    if(me.cfg.align !== undefined || me.cfg.chainalign !== undefined) {
+        html += "<div>4. <b>Cross Structure Interactions</b>: <select id='" + me.pre + "crossstrucinter'>";
+        html += optionStr + "'1'>Yes</option>";
+        html += optionStr + "'0' selected>No</option>";
+        html += "</select></div><br>";
+        html += "<div style='text-indent:1.1em'>" + me.buttonStr + "applyhbonds'>3D Display Interactions</button></div><br>";
+    }
+    else {
+        html += "<div>4. " + me.buttonStr + "applyhbonds'>3D Display Interactions</button></div><br>";
+    }
+
     html += "<div style='text-indent:1.1em'>" + me.buttonStr + "hbondWindow'>Highlight Interactions in Table</button><span style='margin-left:30px; font-wieght:bold'>Sort Interactions on</span>: " + me.buttonStr + "sortSet1'> Set 1</button>" + me.buttonStr + "sortSet2' style='margin-left:20px'>Set 2</button></div><br>";
 
     html += "<div style='text-indent:1.1em'>" + me.buttonStr + "hbondLineGraph'>2D Interaction Graph</button> to show interactions in two lines of residue nodes</div><br>";
@@ -1949,8 +1961,22 @@ iCn3DUI.prototype.setDialogs = function() { var me = this; //"use strict";
     html += '<span style="color:#0000FF; font-weight:bold">Blue</span>: &pi;-Stacking</div>';
     html += "</div>";
 
+    me.linegraphid = me.pre + 'linegraph';
     html += me.divNowrapStr + '<button class="icn3d-commandTitle" style="-webkit-appearance:button; height:24px;background-color:#DDDDDD;" id="' + me.linegraphid + '_svg">SVG</button>&nbsp;&nbsp;';
-    html += '<button class="icn3d-commandTitle" style="-webkit-appearance:button; height:24px;background-color:#DDDDDD;" id="' + me.linegraphid + '_png">PNG</button></div><br>';
+    html += '<button class="icn3d-commandTitle" style="-webkit-appearance:button; height:24px;background-color:#DDDDDD;" id="' + me.linegraphid + '_png">PNG</button>&nbsp;&nbsp;&nbsp;&nbsp;';
+    html += "<b>Scale</b>: <select id='" + me.linegraphid + "_scale'>";
+    html += optionStr + "'0.1'>0.1</option>";
+    html += optionStr + "'0.2'>0.2</option>";
+    html += optionStr + "'0.4'>0.4</option>";
+    html += optionStr + "'0.6'>0.6</option>";
+    html += optionStr + "'0.8'>0.8</option>";
+    html += optionStr + "'1' selected>1</option>";
+    html += optionStr + "'2'>2</option>";
+    html += optionStr + "'4'>4</option>";
+    html += optionStr + "'6'>6</option>";
+    html += optionStr + "'8'>8</option>";
+    html += optionStr + "'10'>10</option>";
+    html += "</select></div><br>";
     html += '<div id="' + me.pre + 'linegraphDiv"></div>';
 
     html += "</div>";
@@ -2364,7 +2390,6 @@ iCn3DUI.prototype.setSequenceGuide = function (suffix, bShown) { var me = this; 
  else {
      sequencesHtml += '<div style="width:20px; margin-left:3px; display:inline-block;"><span id="' + me.pre + 'seqguide' + suffix + '_expand" class="ui-icon ui-icon-plus icn3d-expand icn3d-link" style="width:15px;" title="Expand"></span><span id="' + me.pre + 'seqguide' + suffix + '_shrink" class="ui-icon ui-icon-minus icn3d-shrink icn3d-link" style="display:none; width:15px;" title="Shrink"></span></div> ';
 
-     //sequencesHtml += "<div style='min-width:200px; display:inline-block;'><b>Selection:</b> Name: " + me.inputTextStr + "id='" + me.pre + "seq_command_name" + suffix + "' value='seq_" + index + "' size='5'> &nbsp;&nbsp;Description: " + me.inputTextStr + "id='" + me.pre + "seq_command_desc" + suffix + "' value='seq_desc_" + index + "' size='10'> &nbsp;&nbsp;<button style='white-space:nowrap;' id='" + me.pre + "seq_saveselection" + suffix + "'>Save</button> <button style='white-space:nowrap; margin-left:20px;' id='" + me.pre + "seq_clearselection" + suffix + "'>Clear</button></div><br/>";
      sequencesHtml += "<div style='min-width:200px; display:inline-block;'><b>Selection:</b> Name: " + me.inputTextStr + "id='" + me.pre + "seq_command_name" + suffix + "' value='seq_" + index + "' size='5'> &nbsp;&nbsp;<button style='white-space:nowrap;' id='" + me.pre + "seq_saveselection" + suffix + "'>Save</button> <button style='white-space:nowrap; margin-left:20px;' id='" + me.pre + "seq_clearselection" + suffix + "'>Clear</button></div><br/>";
 
      sequencesHtml += me.divStr + "seqguide" + suffix + "' style='display:none; white-space:normal;' class='icn3d-box'>";
@@ -2392,30 +2417,41 @@ iCn3DUI.prototype.setSequenceGuide = function (suffix, bShown) { var me = this; 
   return sequencesHtml;
 };
 
-iCn3DUI.prototype.getAlignSequencesAnnotations = function (alignChainArray, bUpdateHighlightAtoms, residueArray, bShowHighlight) { var me = this; //"use strict";
-  var resCategories = "<b>Residue labeling:</b> aligned residue with coordinates: UPPER case letter; non-aligned residue with coordinates: lower case letter which can be highlighted; residue missing coordinates: lower case letter which can NOT be highlighted.";
-  var scroll = (me.isMac() && !me.isMobile()) ? "<br/><b>Turn on scroll bar:</b> System preferences -> General -> show scroll bars -> check Always" : "";
+iCn3DUI.prototype.setAlignSequenceGuide = function (suffix, bShown) { var me = this; //"use strict";
+  var sequencesHtml = '', suffix = '';
 
-  var sequencesHtml;
+  var index = (me.icn3d) ? Object.keys(me.icn3d.defNames2Atoms).length : 1;
+
+  sequencesHtml += '<div style="width:20px; margin-left:3px; display:inline-block;"><span id="' + me.pre + 'alignseqguide' + suffix + '_expand" class="ui-icon ui-icon-plus icn3d-expand icn3d-link" style="width:15px;" title="Expand"></span><span id="' + me.pre + 'alignseqguide' + suffix + '_shrink" class="ui-icon ui-icon-minus icn3d-shrink icn3d-link" style="display:none; width:15px;" title="Shrink"></span></div> ';
+
+  sequencesHtml += "<div style='min-width:200px; display:inline-block;''><b>Selection:</b> Name: " + me.inputTextStr + "id='" + me.pre + "alignseq_command_name' value='alseq_" + index + "' size='10'> &nbsp;&nbsp;<button style='white-space:nowrap;' id='" + me.pre + "alignseq_saveselection'>Save</button> <button style='white-space:nowrap; margin-left:20px;' id='" + me.pre + "alignseq_clearselection'>Clear</button></div><br/>";
+
+  sequencesHtml += me.divStr + "alignseqguide" + suffix + "' style='display:none; white-space:normal;' class='icn3d-box'>";
 
   if(!me.isMobile()) {
-      sequencesHtml = "<b>Select on 1D sequences:</b> drag to select, drag again to deselect, multiple selection is allowed without Ctrl key, click \"Save Selection\" to save the current selection.<br/>";
+      sequencesHtml += "<b>Select on 1D sequences:</b> drag to select, drag again to deselect, multiple selection is allowed without Ctrl key, click \"Save Selection\" to save the current selection.<br/><br/>";
 
       sequencesHtml += "<b>Select on 2D interaction diagram:</b> click on the nodes or lines. The nodes are chains and can be united with the Ctrl key. The lines are interactions and can NOT be united. Each click on the lines selects half of the lines, i.e., select the interacting residues in one of the two chains.<br/><br/>";
 
       var tmpStr = me.isMobile() ? 'use finger to pick' : 'hold "Alt" and use mouse to pick';
-      sequencesHtml += "<b>Select on 3D structures:</b> " + tmpStr + ", click the second time to deselect, hold \"Ctrl\" to union selection, hold \"Shift\" to select a range, press the up/down arrow to switch among atom/residue/strand/chain/structure, click \"Save Selection\" to save the current selection.<br/>";
+      sequencesHtml += "<b>Select on 3D structures:</b> " + tmpStr + ", click the second time to deselect, hold \"Ctrl\" to union selection, hold \"Shift\" to select a range, press the up/down arrow to switch among atom/residue/strand/chain/structure, click \"Save Selection\" to save the current selection.<br/><br/>";
 
       sequencesHtml += "<b>Save the current selection</b> (either on 3D structure, 2D interactions, or 1D sequence): open the menu \"Select -> Save Selection\", specify the name and description for the selection, and click \"Save\".<br/><br/>";
   }
   else {
-        sequencesHtml = "<b>Select Aligned Sequences:</b> touch to select, touch again to deselect, multiple selection is allowed without Ctrl key, click \"Save Selection\" to save the current selection.<br/>";
+        sequencesHtml += "<b>Select Aligned Sequences:</b> touch to select, touch again to deselect, multiple selection is allowed without Ctrl key, click \"Save Selection\" to save the current selection.<br/>";
   }
 
-  //sequencesHtml += "<div style='min-width:200px;'><b>Selection:</b> Name: " + me.inputTextStr + "id='" + me.pre + "alignseq_command_name' value='alseq_" + Object.keys(me.icn3d.defNames2Atoms).length + "' size='10'> &nbsp;&nbsp;Description: " + me.inputTextStr + "id='" + me.pre + "alignseq_command_desc' value='alseq_desc_" + Object.keys(me.icn3d.defNames2Atoms).length + "' size='20'> <button style='white-space:nowrap;' id='" + me.pre + "alignseq_saveselection'>Save</button> <button style='white-space:nowrap; margin-left:20px;' id='" + me.pre + "alignseq_clearselection'>Clear</button></div><br/>";
-  sequencesHtml += "<div style='min-width:200px;'><b>Selection:</b> Name: " + me.inputTextStr + "id='" + me.pre + "alignseq_command_name' value='alseq_" + Object.keys(me.icn3d.defNames2Atoms).length + "' size='10'> &nbsp;&nbsp;<button style='white-space:nowrap;' id='" + me.pre + "alignseq_saveselection'>Save</button> <button style='white-space:nowrap; margin-left:20px;' id='" + me.pre + "alignseq_clearselection'>Clear</button></div><br/>";
+  var resCategories = "<b>Residue labeling:</b> aligned residue with coordinates: UPPER case letter; non-aligned residue with coordinates: lower case letter which can be highlighted; residue missing coordinates: lower case letter which can NOT be highlighted.";
+  var scroll = (me.isMac() && !me.isMobile()) ? "<br/><br/><b>Turn on scroll bar:</b> System preferences -> General -> show scroll bars -> check Always" : "";
 
-  sequencesHtml += resCategories + scroll + "<br/>";
+  sequencesHtml += resCategories + scroll + "<br/></div>";
+
+  return sequencesHtml;
+};
+
+iCn3DUI.prototype.getAlignSequencesAnnotations = function (alignChainArray, bUpdateHighlightAtoms, residueArray, bShowHighlight) { var me = this; //"use strict";
+  var sequencesHtml = '';
 
   var maxSeqCnt = 0;
 

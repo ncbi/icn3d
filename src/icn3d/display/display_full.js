@@ -319,7 +319,7 @@ iCn3D.prototype.applyClbondsOptions = function (options) { var me = this; //"use
      me.bCalcCrossLink = true;
    }
 
-   if (options.clbonds.toLowerCase() === 'yes') {
+   if (options.clbonds.toLowerCase() === 'yes' && options.chemicals !== 'nothing') {
      var color = '#006400';
      var colorObj = new THREE.Color(0x006400);
 
