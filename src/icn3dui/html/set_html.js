@@ -1361,6 +1361,14 @@ iCn3DUI.prototype.setMenu5_base = function() { var me = this; //"use strict";
 
     html += me.getLink('mn6_yournote', 'Your Note /<br>Window Title');
 
+    html += "<li><span>Show Windows</span>";
+    html += "<ul>";
+    html += me.getLink('mn1_window_table', 'Highlight Interactions in Table');
+    html += me.getLink('mn1_window_linegraph', '2D Interaction Graph');
+    html += me.getLink('mn1_window_graph', '2D Graph (Force-Directed)');
+    html += "</ul>";
+    html += "</li>";
+
     if(me.cfg.cid !== undefined) {
         html += "<li><span>Links</span>";
         html += "<ul>";
