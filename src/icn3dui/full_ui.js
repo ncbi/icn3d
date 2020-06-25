@@ -1264,6 +1264,7 @@ iCn3DUI.prototype = {
         if($('#' + me.pre + 'dl_definedsets').hasClass('ui-dialog-content') && $('#' + me.pre + 'dl_definedsets').dialog( 'isOpen' )) $('#' + me.pre + 'dl_definedsets').dialog( 'close' );
         if($('#' + me.pre + 'dl_graph').hasClass('ui-dialog-content') && $('#' + me.pre + 'dl_graph').dialog( 'isOpen' )) $('#' + me.pre + 'dl_graph').dialog( 'close' );
         if($('#' + me.pre + 'dl_linegraph').hasClass('ui-dialog-content') && $('#' + me.pre + 'dl_linegraph').dialog( 'isOpen' )) $('#' + me.pre + 'dl_linegraph').dialog( 'close' );
+        if($('#' + me.pre + 'dl_allinteraction').hasClass('ui-dialog-content') && $('#' + me.pre + 'dl_allinteraction').dialog( 'isOpen' )) $('#' + me.pre + 'dl_allinteraction').dialog( 'close' );
 
         me.resizeCanvas(me.WIDTH, me.HEIGHT, true);
     },
@@ -3862,6 +3863,29 @@ iCn3DUI.prototype = {
         });
     },
 
+    clkMn2_windows: function() { var me = this; //"use strict";
+        $("#" + me.pre + "mn1_window_table").click(function(e) {
+           me.openDialog(me.pre + 'dl_allinteraction', 'Show interactions');
+           me.setLogCmd("window interaction table", true);
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
+        });
+
+        $("#" + me.pre + "mn1_window_linegraph").click(function(e) {
+           me.openDialog(me.pre + 'dl_linegraph', 'Show interactions with two lines of residue nodes');
+           me.setLogCmd("window interaction graph", true);
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
+        });
+
+        $("#" + me.pre + "mn1_window_graph").click(function(e) {
+           me.openDialog(me.pre + 'dl_graph', 'Force-directed graph');
+           me.setLogCmd("window force-directed graph", true);
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
+        });
+    },
+
     clkMn6_yournote: function() { var me = this; //"use strict";
         $("#" + me.pre + "mn6_yournote").click(function(e) {
            me.openDialog(me.pre + 'dl_yournote', 'Your note about the current display');
@@ -5824,7 +5848,7 @@ iCn3DUI.prototype = {
                 $("#" + me.pre + "atomsCustomHbond2").html("  <option value='selected' selected>selected</option>" + definedAtomsHtml);
             }
 
-           me.openDialog(me.pre + 'dl_hbonds', 'Hydrogen bonds/contacts between two sets of atoms');
+           me.openDialog(me.pre + 'dl_hbonds', 'Hydrogen bonds/interactions between two sets of atoms');
            me.bHbondCalc = false;
            //me.setLogCmd('set calculate hbond false', true);
 
@@ -9551,6 +9575,7 @@ iCn3DUI.prototype = {
         me.clkMn2_selectdisplayed();
         me.clkMn2_fullstru();
         me.clkMn2_alignment();
+        me.clkMn2_windows();
         me.clkMn6_yournote();
         me.clkApplyYournote();
         me.clkMn2_command();

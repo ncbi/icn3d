@@ -2217,21 +2217,18 @@ iCn3DUI.prototype.applyCommand = function (commandStr) { var me = this; //"use s
   else if(command.indexOf('window') == 0) {
     var secondPart = command.substr(command.indexOf(' ') + 1);
 
-    //if(secondPart == "window annotations") {
-    //    me.openDialog(me.pre + 'dl_selectannotations', 'Sequences and Annotations');
-    //}
-    //else
-
     if(secondPart == "aligned sequences") {
         me.openDialog(me.pre + 'dl_alignment', 'Select residues in aligned sequences');
     }
-
-    //else if(secondPart == "window interactions") {
-    //    me.openDialog(me.pre + 'dl_2ddgm', 'Interactions');
-    //}
-    //else if(secondPart == "window defined sets") {
-    //    me.openDialog(me.pre + 'dl_definedsets', 'Select sets');
-    //}
+    else if(secondPart == "interaction table") {
+        me.openDialog(me.pre + 'dl_allinteraction', 'Show interactions');
+    }
+    else if(secondPart == "interaction graph") {
+        me.openDialog(me.pre + 'dl_linegraph', 'Show interactions with two lines of residue nodes');
+    }
+    else if(secondPart == "force-directed graph") {
+        me.openDialog(me.pre + 'dl_graph', 'Force-directed graph');
+    }
   }
 
 // special, select ==========
