@@ -604,7 +604,7 @@ iCn3DUI.prototype.setViewerWidthHeight = function() { var me = this; //"use stri
 };
 
 iCn3DUI.prototype.shareLinkUrl = function(bAllCommands) { var me = this; //"use strict";
-       var url = me.baseUrl + "icn3d/full_" + me.REVISION + ".html?";
+       var url = me.baseUrl + "icn3d/full.html?";
        if(me.cfg.bSidebyside) url = me.baseUrl + "icn3d/full2.html?";
 
        var paraHash = {};
