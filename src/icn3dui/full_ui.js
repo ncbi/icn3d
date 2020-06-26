@@ -13,7 +13,7 @@ if (!$.ui.dialog.prototype._makeDraggableBase) {
 }
 
 var iCn3DUI = function(cfg) { var me = this; //"use strict";
-    this.REVISION = '2.17.4';
+    this.REVISION = '2.17.5';
 
     me.bFullUi = true;
 
@@ -2153,7 +2153,8 @@ iCn3DUI.prototype = {
 
            if(bPngHtml) url += "&random=" + parseInt(Math.random() * 1000); // generate a new shorten URL and thus image name everytime
 
-           var inputid = (me.inputid) ? me.inputid : "custom";
+           //var inputid = (me.inputid) ? me.inputid : "custom";
+           var inputid = Object.keys(me.icn3d.structures).join('_');
 
            if(!bPngHtml) {
                if(me.bInputfile) {
@@ -2197,11 +2198,11 @@ iCn3DUI.prototype = {
                         me.saveFile(inputid + '-' + shortName + '.png', 'png');
 
                         var text = '<div style="float:left; border: solid 1px #0000ff; padding: 5px; margin: 10px; text-align:center;">';
-                        text += '<a href="https://icn3d.page.link/' + shortName + '" target="_blank">';
+                        text += '<a href="https://structure.ncbi.nlm.nih.gov/icn3d/share.html?' + shortName + '" target="_blank">';
                         text += '<img style="height:300px" src ="' + inputid + '-' + shortName + '.png"><br>\n';
                         text += '<!--Start of your comments==================-->\n';
-                        var yournote = (me.yournote) ? ': ' + me.yournote.replace(/\n/g, "<br>") : '';
-                        text += 'PDB ' + inputid + yournote + '\n';
+                        var yournote = (me.yournote) ? ': ' + me.yournote.replace(/\n/g, "<br>").replace(/; /g, ", ") : '';
+                        text += 'PDB ' + inputid.toUpperCase() + yournote + '\n';
                         text += '<!--End of your comments====================-->\n';
                         text += '</a>';
                         text += '</div>\n\n';
