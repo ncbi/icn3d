@@ -339,6 +339,9 @@ iCn3DUI.prototype.openDialog = function (id, title) {  var me = this; //"use str
                 width = 700;
                 height = 500;
             }
+            else if(id === me.pre + 'dl_rmsd') {
+                position ={ my: "left top", at: "right bottom-90", of: "#" + me.pre + "canvas", collision: "none" };
+            }
             else {
                 if(me.cfg.align) {
                     position ={ my: "left top", at: "left top+90", of: "#" + me.pre + "canvas", collision: "none" };

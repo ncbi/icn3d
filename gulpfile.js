@@ -239,7 +239,7 @@ make_js_task("full", common_js.concat(full_js).concat("src/icn3dui/full_ui.js").
 gulp.task('html',
   //gulp.series('clean'),
   function() {
-    return gulp.src(['index.html', 'full.html', 'full2.html', 'icn3d.html', 'share.html', 'example.html'])
+    return gulp.src(['index.html', 'full2.html', 'icn3d.html', 'share.html', 'example.html'])
         .pipe(dom(function() {
             var elems = this.querySelectorAll(
                 "script[src],link[rel='stylesheet']");
@@ -263,10 +263,39 @@ gulp.task('html',
         .pipe(gulp.dest(dist));
   });
 
+gulp.task('html2',
+  //gulp.series('clean'),
+  function() {
+    return gulp.src(['full.html'])
+        .pipe(dom(function() {
+            var elems = this.querySelectorAll(
+                "script[src],link[rel='stylesheet']");
+            for (i = 0; i < elems.length; ++i) {
+                var e = elems[i];
+                var src_attr = (e.tagName == "SCRIPT") ? "src" : "href";
+                var src_file = e.getAttribute(src_attr);
+
+                var new_src, m, set_attr = true;
+                if (m = src_file.match(/^(icn3d.*)\.css$/))
+                    new_src = m[1] + "_" + package.version + ".css";
+                else if (m = src_file.match(/^(icn3d.*)\.min\.js/))
+                    new_src = m[1] + "_" + package.version + ".min.js";
+                else if (m = src_file.match(/^(.*)$/)) {
+                    new_src = m[1];
+                }
+                if (set_attr) e.setAttribute(src_attr, new_src);
+            }
+            return this;
+        }))
+        .pipe(gulp.dest(dist))
+        .pipe(rename('full_' + package.version + '.html'))
+        .pipe(gulp.dest(dist));
+  });
+
 //  'Prepare all the distribution files (except the .zip).',
 gulp.task('dist',
   gulp.series('clean', 'libs-three','libs-jquery','libs-jquery-ui','libs-jquery-ui-css','libs-jquery-ui-images1','libs-jquery-ui-images2',
-   'ssimages','copy','copy-rename1','copy-rename2','src-js-simple','src-js-full','html')
+   'ssimages','copy','copy-rename1','copy-rename2','src-js-simple','src-js-full','html','html2')
 );
 
 //  'Zip up the dist into icn3d-<version>.zip',

@@ -2135,10 +2135,10 @@ iCn3DUI.prototype.applyCommand = function (commandStr) { var me = this; //"use s
   }
   else if(command.indexOf('your note') == 0) {
     var paraArray = command.split(' | ');
-    var yournote = paraArray[1];
+    me.yournote = paraArray[1];
 
-    $("#" + me.pre + "yournote").val(yournote);
-    document.title = yournote;
+    $("#" + me.pre + "yournote").val(me.yournote);
+    document.title = me.yournote;
   }
   else if(command.indexOf('cross structure interaction') == 0) {
     me.icn3d.crossstrucinter = parseInt(command.substr(command.lastIndexOf(' ') + 1));
