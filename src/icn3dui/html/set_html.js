@@ -1709,10 +1709,12 @@ iCn3DUI.prototype.setDialogs = function() { var me = this; //"use strict";
     html += me.buttonStr + "reload_state' style='margin-top: 6px;'>Load</button>";
     html += "</div>";
 
-    html += me.divStr + "dl_fixedversion' style='max-width:450px'>";
-    html += "Since July 2020, each Share Link URL has a \"date\" stamp. It may be used to find the archived version of iCn3D that was used to generate it. (For any Share_Link URL prior to that date, you can find any prior version of iCn3D directly <a href='https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d.html#log' target='_blank'>online</a>. For example, to choose \"2.1.0\" instead of the latest (default), replace \"full.html\" with \"full_2.1.0.html\" in your URL.)<br><br>";
+    html += me.divStr + "dl_fixedversion' style='max-width:500px'>";
+    html += "To show the static view with the original version of iCn3D, you can choose one of the options:<br>";
+    html += "<ul><li>If your Share Link URL was generated after June 30, 2020, you can paste your URL below and click \"Show Static View\".<br><br>";
     html += "Share Link URL: " + me.inputTextStr + "id='" + me.pre + "sharelinkurl' size=70><br>";
-    html += me.buttonStr + "reload_fixedversion'>Show Static View</button>";
+    html += me.buttonStr + "reload_fixedversion'>Show Static View</button><br><br>";
+    html += "<li>If your URL was generated before June 30, 2020, you can find the archived version of iCn3D <a href='https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d.html#log' target='_blank'>online</a>, e.g., \"2.1.0\". Then paste your Share Link URL into the browser to see the expanded full-length URL. Finally replace \"full.html\" with \"full_2.1.0.html\" in the URL.</ul>";
     html += "</div>";
 
 
