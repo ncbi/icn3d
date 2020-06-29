@@ -93,6 +93,16 @@
         return input;
     }
 
+    var date = getValue(params.date);
+    if(date !== undefined && window.localStorage && localStorage.getItem('fixedversion')) {
+        var version = getVersion(date);
+
+        var fixedUrl = url.replace('full2.html', 'full2_' + version + '.html');
+        window.open(fixedUrl, '_self');
+
+        localStorage.removeItem('fixedversion');
+    }
+
     var resize = getValue(params.resize);
 
     var showmenu = getValue(params.showmenu);

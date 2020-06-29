@@ -3064,7 +3064,7 @@ iCn3DUI.prototype = {
     },
     clkMn1_fixedversion: function() { var me = this; //"use strict";
         $("#" + me.pre + "mn1_fixedversion").click(function(e) {
-           me.openDialog(me.pre + 'dl_fixedversion', 'Open Share Link URL in the fixed version of iCn3D');
+           me.openDialog(me.pre + 'dl_fixedversion', 'Open Share Link URL in the archived version of iCn3D');
 
            //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
