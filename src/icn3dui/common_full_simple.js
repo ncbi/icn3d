@@ -266,13 +266,13 @@ iCn3DUI.prototype.getBlobFromBufferAndText = function(arrayBuffer, text) { var m
 
 iCn3DUI.prototype.getTransformationStr = function(transformation) { var me = this; //"use strict";
     var transformation2 = {"factor": 1.0, "mouseChange": {"x": 0, "y": 0}, "quaternion": {"_x": 0, "_y": 0, "_z": 0, "_w": 1} };
-    transformation2.factor = parseFloat(transformation.factor).toPrecision(5);
-    transformation2.mouseChange.x = parseFloat(transformation.mouseChange.x).toPrecision(5);
-    transformation2.mouseChange.y = parseFloat(transformation.mouseChange.y).toPrecision(5);
-    transformation2.quaternion._x = parseFloat(transformation.quaternion._x).toPrecision(5);
-    transformation2.quaternion._y = parseFloat(transformation.quaternion._y).toPrecision(5);
-    transformation2.quaternion._z = parseFloat(transformation.quaternion._z).toPrecision(5);
-    transformation2.quaternion._w = parseFloat(transformation.quaternion._w).toPrecision(5);
+    transformation2.factor = parseFloat(transformation.factor).toPrecision(4);
+    transformation2.mouseChange.x = parseFloat(transformation.mouseChange.x).toPrecision(4);
+    transformation2.mouseChange.y = parseFloat(transformation.mouseChange.y).toPrecision(4);
+    transformation2.quaternion._x = parseFloat(transformation.quaternion._x).toPrecision(4);
+    transformation2.quaternion._y = parseFloat(transformation.quaternion._y).toPrecision(4);
+    transformation2.quaternion._z = parseFloat(transformation.quaternion._z).toPrecision(4);
+    transformation2.quaternion._w = parseFloat(transformation.quaternion._w).toPrecision(4);
 
     if(transformation2.factor == '1.0000') transformation2.factor = 1;
     if(transformation2.mouseChange.x == '0.0000') transformation2.mouseChange.x = 0;
@@ -670,6 +670,12 @@ iCn3DUI.prototype.shareLinkUrl = function(bAllCommands) { var me = this; //"use 
        for(var key in paraHash) {
            url += key + '=' + paraHash[key] + '&';
        }
+
+       // add time stamp
+       var date = new Date();
+       var dateStr = date.getFullYear().toString() + (date.getMonth() + 1).toString() + date.getDate().toString();
+       url += 'date=' + dateStr + '&';
+
        url += 'command=';
 
        var start = (inparaWithoutCommand !== undefined) ? 1 : 0;

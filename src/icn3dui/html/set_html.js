@@ -364,10 +364,11 @@ iCn3DUI.prototype.setMenu1_base = function() { var me = this; //"use strict";
     html += me.getLink('mn1_mol2file', 'Mol2 File');
     html += me.getLink('mn1_sdffile', 'SDF File');
     html += me.getLink('mn1_xyzfile', 'XYZ File');
-    html += me.getLink('mn1_urlfile', 'Url (Same Host) ');
+    html += me.getLink('mn1_urlfile', 'URL (Same Host) ');
     html += "<li>-</li>";
     html += me.getLink('mn1_pngimage', 'iCn3D PNG Image');
     html += me.getLink('mn1_state', 'State/Script File');
+    html += me.getLink('mn1_fixedversion', 'Share Link URL in Fixed Ver.');
     html += me.getLink('mn1_selection', 'Selection File');
     html += "<li>-</li>";
 
@@ -1707,6 +1708,13 @@ iCn3DUI.prototype.setDialogs = function() { var me = this; //"use strict";
     html += "State file: " + me.inputFileStr + "id='" + me.pre + "state'><br/>";
     html += me.buttonStr + "reload_state' style='margin-top: 6px;'>Load</button>";
     html += "</div>";
+
+    html += me.divStr + "dl_fixedversion' style='max-width:450px'>";
+    html += "Since July 2020, each Share Link URL has a \"date\" parameter, which can be used to find the fixed version of iCn3D to show the fixed view. (For any other Share Link URLs, you can find a version of iCn3D, e.g., \"2.1.0\", <a href='https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d.html#log' target='_blank'>here</a> and replace \"full.html\" with \"full_2.1.0.html\" in your URL.)<br><br>";
+    html += "Share Link URL: " + me.inputTextStr + "id='" + me.pre + "sharelinkurl' size=70><br>";
+    html += me.buttonStr + "reload_fixedversion'>Show Fixed View</button>";
+    html += "</div>";
+
 
     html += me.divStr + "dl_selection'>";
     html += "Selection file: " + me.inputFileStr + "id='" + me.pre + "selectionfile'><br/>";

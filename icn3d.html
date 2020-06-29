@@ -57,30 +57,6 @@ body {font-family: Verdana, Arial, Helvetica, sans-serif;}
 <li><b><a href="#gallery">iCn3D gallery with live examples</a></b></li>
 <br>
 
-<!--li>What is iCn3D Structure Viewer?</li><br/>
-"I see in 3D" (iCn3D) Structure Viewer is a WebGL-based 3D viewer using Three.js and jQuery. iCn3D has a feature-rich user interface and allows users to:<br/><br/>
-<ul>
-<li><a href="https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?mmdbid=1tup&command=view annotations; set annotation cdd; set view detailed view; set annotation all">Display and integrate annotations</a> from NCBI resources including dbSNP, ClinVar, conserved domains, 3D domains, and binding sites</li>
-<li><a href="https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?mmdbid=1tup&showanno=1&show2d=1&showsets=1&command=view annotations; set view detailed view; add track | chainid 1TUP_B | title Custom Key Sites | text 82 R, 152 G, 155-156 RR, 180 R, 189 R; select .B:82,152,155-156,180,189 | name mutation">Add custom tracks</a> in various formats (FASTA, bed file, etc) in the annotation window</li>
-<li>Use a url (e.g., <a href="https://structure.ncbi.nlm.nih.gov/icn3d/share.html?uRL4mitQdG6J3gGg8">https://structure.ncbi.nlm.nih.gov/icn3d/share.html?uRL4mitQdG6J3gGg8</a>) or a state file to capture the custom display of 3D structures. The saved static "iCn3D PNG Image" can be loaded using "File > Open File > iCn3D PNG Image" to reproduce the interactive display.</li>
-<li>Select residues by searching sequences or select on 3D structures, 2D interactions, and 1D sequences</li>
-<li>Display/highlight selected residues in 3D structures, 2D interactions, and 1D sequences</li>
-<li>Show <a href="https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?mmdbid=3gvu&command=style+proteins+b+factor+tube;+color+b+factor;+set+map+2fofc+sigma+1.5">electron density map</a> or <a href="https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?mmdbid=6eny&command=set+emmap+percentage+20">EM density map</a></li>
-<li>Export STL or VRML files for <a href="https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?mmdbid=1tup&command=export stl stabilizer file">3D printing</a></li>
-<li>Display NCBI pre-calculated <a href="https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?align=1hho,4n7n&showalignseq=1">aligned 3D structures</a> by providing two PDB IDs or MMDB IDs</li>
-</ul>
-<br/>
-
-We provided two types of iCn3D widgets: <a href="https://www.ncbi.nlm.nih.gov/Structure/icn3d/index.html?mmdbid=1tup">basic interface</a> and <a href="https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?mmdbid=1tup">advanced interface</a>.<br><br/>
-<ol>
-<li>The basic interface has the minimum javascript code for the interface. It has the basic features such as changing color and styles.</li>
-<li>The advanced interface has a library for the interface. It is recommended since it has many features and can have simple UI using <a href="https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d.html#parameters" target="_blank">URL parameters</a> such as <a href="https://structure.ncbi.nlm.nih.gov/icn3d/share.html?2J9Zv4i74yxyagtFA" target="_blank">https://structure.ncbi.nlm.nih.gov/icn3d/share.html?2J9Zv4i74yxyagtFA</a>.</li>
-</ol>
-<br/>
-
-This page describes Web APIs and how to embed iCn3D in your html page. Other details are described in the <a href="https://www.ncbi.nlm.nih.gov/Structure/icn3d/docs/icn3d_help.html">help</a> page. The source code of iCn3D is available at <a href="https://github.com/ncbi/icn3d">github.com/ncbi/icn3d</a>.<br/>
-<br/-->
-
 <li><b>What is iCn3D Structure Viewer?</b></li><br/>
 "I see in 3D" (iCn3D) Structure Viewer is a WebGL-based 3D viewer using Three.js and jQuery. iCn3D synchronizes the display of 3D structure, 2D interaction, and 1D sequences and annotations. Users' custom display can be saved in a short URL or a PNG image.<br/><br/>
 <ol>
@@ -100,6 +76,8 @@ Each operation has a corresponding command as listed at https://www.ncbi.nlm.nih
 You can save "iCn3D PNG Image" in the menu "File > Save Files". Both the PNG file and an HTML file are saved. Click the HTML file to see the PNG image, which is linked to the custom display via a shorten URL. The downloaded "iCn3D PNG Image" itself can also be used as an input in the menu "File > Open File" to reproduce the custom display. You can combine these HTML files to generate your own galleries.<br/>
 <br/>
 You can also save "Share Link" in "File" menu to share with your colleagues. You can click "Replay Each Step > On" in "File" menu to learn how a <a href="https://structure.ncbi.nlm.nih.gov/icn3d/share.html?u7gp4xS9rn4hahcLA">custom display</a> was generated.<br/>
+<br/>
+All "Share Link" URLs can show the fixed view using the fixed version of iCn3D by clicking "Open File > Share Link URL in Fixed Ver." in "File" menu.<br/>
 <br/>
 <li><b><a href="https://structure.ncbi.nlm.nih.gov/icn3d/share.html?JR5B">Show binding site</a></b><br/>
 You can click "Chem. Binding" in "View" menu to show all hydrogen bonds around chemicals. You can also <a href="https://structure.ncbi.nlm.nih.gov/icn3d/share.html?CuXYgGLCukDeUKnJ6">Show interaction interface</a> by clicking "H-Bonds & Interactions > 2D Interaction Graph, or Highlight Interactionsin Table" in "View" menu.<br/>
@@ -2227,6 +2205,9 @@ Update the highlight of sequences in the annotation window according to the curr
 
 <a name="log"></a>
 <h2>Change Log:<img src="https://www.ncbi.nlm.nih.gov/Structure/IMG/spacer.gif" width="25" height="1" border="0"><a href="#Top"><img src="https://www.ncbi.nlm.nih.gov/Structure/IMG/arrowup_blue.gif" width="12" height="12" border="0" alt="back to top"></a></h2>
+<a href="https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.17.6.zip">icn3d-2.17.6</a> was release on June 29, 2020. All "Share Link" URLs can show the fixed view using the fixed version of iCn3D at "File > Open File > Share Link URL in Fixed Ver.".
+<br><br>
+
 <a href="https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.17.5.zip">icn3d-2.17.5</a> was release on June 26, 2020. Made a versioned full_[version].html file so that "Share Link" URL could point to a fixed version by replacing "full.html" with "full_[version].html".
 <br><br>
 

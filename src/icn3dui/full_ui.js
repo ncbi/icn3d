@@ -13,7 +13,7 @@ if (!$.ui.dialog.prototype._makeDraggableBase) {
 }
 
 var iCn3DUI = function(cfg) { var me = this; //"use strict";
-    this.REVISION = '2.17.5';
+    this.REVISION = '2.17.6';
 
     me.bFullUi = true;
 
@@ -3060,6 +3060,22 @@ iCn3DUI.prototype = {
            me.openDialog(me.pre + 'dl_urlfile', 'Load data by URL');
 
            //$( ".icn3d-accordion" ).accordion(me.closeAc);
+        });
+    },
+    clkMn1_fixedversion: function() { var me = this; //"use strict";
+        $("#" + me.pre + "mn1_fixedversion").click(function(e) {
+           me.openDialog(me.pre + 'dl_fixedversion', 'Open Share Link URL in the fixed version of iCn3D');
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
+        });
+
+        $("#" + me.pre + "reload_fixedversion").click(function(e) {
+           var url = $("#" + me.pre + "sharelinkurl").val();
+           me.setLogCmd("open " + url, false);
+
+           localStorage.setItem('fixedversion', '1');
+
+           window.open(url, '_blank');
         });
     },
 
@@ -9536,6 +9552,7 @@ iCn3DUI.prototype = {
         me.clkMn1_sdffile();
         me.clkMn1_xyzfile();
         me.clkMn1_urlfile();
+        me.clkMn1_fixedversion();
         me.clkMn1_mmciffile();
         me.clkMn1_mmcifid();
         me.clkMn1_mmdbid();
