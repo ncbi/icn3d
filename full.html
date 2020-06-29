@@ -93,6 +93,16 @@
         return input;
     }
 
+    var date = getValue(params.date);
+    if(date !== undefined && window.localStorage && localStorage.getItem('fixedversion')) {
+        var version = getVersion(date);
+
+        var fixedUrl = url.replace('full.html', 'full_' + version + '.html');
+        window.open(fixedUrl, '_self');
+
+        localStorage.removeItem('fixedversion');
+    }
+
     var resize = getValue(params.resize);
 
     var showmenu = getValue(params.showmenu);
@@ -274,6 +284,13 @@
       }
     }); // document ready
 
+    function getVersion(date) {
+        var version;
+
+        if(date >= '20200629') version = '2.17.6';
+
+        return version;
+    }
   </script>
 
   <!-- log & Google Analytics -->
