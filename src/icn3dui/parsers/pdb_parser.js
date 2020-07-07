@@ -109,14 +109,10 @@ iCn3DUI.prototype.downloadUrl = function (url, type) { var me = this; //"use str
       tryCount : 0,
       retryLimit : 1,
       beforeSend: function() {
-          if($("#" + me.pre + "wait")) $("#" + me.pre + "wait").show();
-          if($("#" + me.pre + "canvas")) $("#" + me.pre + "canvas").hide();
-          if($("#" + me.pre + "cmdlog")) $("#" + me.pre + "cmdlog").hide();
+          me.showLoading();
       },
       complete: function() {
-          if($("#" + me.pre + "wait")) $("#" + me.pre + "wait").hide();
-          if($("#" + me.pre + "canvas")) $("#" + me.pre + "canvas").show();
-          if($("#" + me.pre + "cmdlog")) $("#" + me.pre + "cmdlog").show();
+          //me.hideLoading();
       },
       success: function(data) {
         me.InputfileData = data;

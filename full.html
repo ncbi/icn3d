@@ -94,9 +94,9 @@
     }
 
     var date = getValue(params.date);
+
     if(date !== undefined && window.localStorage && localStorage.getItem('fixedversion')) {
         var version = getVersion(date);
-
         var fixedUrl = url.replace('full.html', 'full_' + version + '.html');
         window.open(fixedUrl, '_self');
 

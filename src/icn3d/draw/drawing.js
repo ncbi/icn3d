@@ -1634,7 +1634,7 @@ iCn3D.prototype.createStrand = function (atoms, num, div, fill, coilWidth, helix
     for(var i in atomsAdjust) {
         var atom = atomsAdjust[i];
 
-        residueid = atom.structure + '_' + atom.chain + '_' + atom.resi;
+        var residueid = atom.structure + '_' + atom.chain + '_' + atom.resi;
         residueHash[residueid] = 1;
     }
     var totalResidueCount = Object.keys(residueHash).length;
