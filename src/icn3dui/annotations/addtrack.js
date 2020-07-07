@@ -727,9 +727,9 @@ iCn3DUI.prototype.showNewTrack = function(chnid, title, text, cssColorArray, inT
 
     var textForCnt = text.replace(/-/g, '');
     var resCnt = textForCnt.length;
-    if(resCnt > me.giSeq[chnid].length) {
-        resCnt = me.giSeq[chnid].length;
-    }
+    //if(resCnt > me.giSeq[chnid].length) {
+    //    resCnt = me.giSeq[chnid].length;
+    //}
 
     if(!bMsa) {
         if(text.length > me.giSeq[chnid].length) {
@@ -790,25 +790,30 @@ iCn3DUI.prototype.showNewTrack = function(chnid, title, text, cssColorArray, inT
 
     var bIdentityColor = (type === 'identity') && text.indexOf('cannot-be-aligned') == -1 && text.indexOf('cannot be aligned') == -1 ? true : false;
 
-    var gapCnt = 0;
+    var parsedResn = {};
+    var gapCnt = 0, currResi = 1;
     for(var i = 0, il = text.length; i < il; ++i) {
+      var resNum = i-gapCnt;
+
       if(!bMsa) {
           html += me.insertGap(chnid, i, '-');
       }
       else {
-          if(me.targetGapHash.hasOwnProperty(i)) {
-            gapCnt += me.targetGapHash[i].to - me.targetGapHash[i].from + 1;
+          if(me.targetGapHash.hasOwnProperty(resNum) && !parsedResn.hasOwnProperty(resNum)) {
+              gapCnt += me.targetGapHash[resNum].to - me.targetGapHash[resNum].from + 1;
+
+              parsedResn[resNum] = 1;
           }
       }
 
       var c = text.charAt(i);
 
       if(c != ' ' && c != '-') {
-          var colorHexStr = me.getColorhexFromBlosum62(c, me.icn3d.chainsSeq[chnid][i-gapCnt].name);
-          var identityColorStr = (c == me.icn3d.chainsSeq[chnid][i-gapCnt].name) ? 'FF0000' : '0000FF';
+          var colorHexStr = me.getColorhexFromBlosum62(c, me.icn3d.chainsSeq[chnid][resNum].name);
+          var identityColorStr = (c == me.icn3d.chainsSeq[chnid][resNum].name) ? 'FF0000' : '0000FF';
 
-          //var pos = me.icn3d.chainsSeq[chnid][i - me.matchedPos[chnid] ].resi;
-          var pos = me.icn3d.chainsSeq[chnid][i-gapCnt].resi - me.matchedPos[chnid];
+          //var pos = (resNum >= me.matchedPos[chnid] && resNum - me.matchedPos[chnid] < me.icn3d.chainsSeq[chnid].length) ? me.icn3d.chainsSeq[chnid][resNum - me.matchedPos[chnid]].resi : me.baseResi[chnid] + 1 + resNum;
+          var pos = currResi;
 
           if(inTarget2queryHash !== undefined) pos = inTarget2queryHash[i] + 1; // 0-based
 
@@ -849,6 +854,8 @@ iCn3DUI.prototype.showNewTrack = function(chnid, title, text, cssColorArray, inT
 
           prevEmptyWidth += emptyWidth;
           prevLineWidth += widthPerRes;
+
+          ++currResi;
       }
       else {
           if(bErrorMess) {

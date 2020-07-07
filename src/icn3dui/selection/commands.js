@@ -30,7 +30,7 @@ iCn3DUI.prototype.loadScript = function (dataStr, bStatefile) { var me = this; /
   me.icn3d.commands = preCommands.concat(me.icn3d.commands);
   me.STATENUMBER = me.icn3d.commands.length;
 
-  if(bStatefile || me.cfg.replay) {
+  if(bStatefile || me.bReplay) {
       me.CURRENTNUMBER = 0;
   }
   else {
@@ -38,7 +38,7 @@ iCn3DUI.prototype.loadScript = function (dataStr, bStatefile) { var me = this; /
       me.CURRENTNUMBER = 1;
   }
 
-  if(me.cfg.replay) {
+  if(me.bReplay) {
       me.replayFirstStep(me.CURRENTNUMBER);
   }
   else {
@@ -2039,11 +2039,39 @@ iCn3DUI.prototype.applyCommand = function (commandStr) { var me = this; //"use s
                $("#" + me.pre + "contactthreshold").val(thresholdArray[3]);
 
                if(thresholdArray.length == 7) {
-                   $("#" + me.pre + "halogenthreshold").val(thresholdArray[1]);
-                   $("#" + me.pre + "picationthreshold").val(thresholdArray[2]);
-                   $("#" + me.pre + "pistackingthreshold").val(thresholdArray[3]);
+                   $("#" + me.pre + "halogenthreshold").val(thresholdArray[4]);
+                   $("#" + me.pre + "picationthreshold").val(thresholdArray[5]);
+                   $("#" + me.pre + "pistackingthreshold").val(thresholdArray[6]);
                }
            }
+
+/*
+           var index = 1;
+           if(bHbond) {
+               $("#" + me.pre + "hbondthreshold").val(thresholdArray[index]);
+               index++;
+           }
+           if(bSaltbridge) {
+               $("#" + me.pre + "saltbridgethreshold").val(thresholdArray[index]);
+               index++;
+           }
+           if(bInteraction) {
+               $("#" + me.pre + "contactthreshold").val(thresholdArray[index]);
+               index++;
+           }
+           if(bHalogen) {
+               $("#" + me.pre + "halogenthreshold").val(thresholdArray[index]);
+               index++;
+           }
+           if(bPication) {
+               $("#" + me.pre + "picationthreshold").val(thresholdArray[index]);
+               index++;
+           }
+           if(bPistacking) {
+               $("#" + me.pre + "pistackingthreshold").val(thresholdArray[index]);
+               index++;
+           }
+*/
         }
 
         var type;

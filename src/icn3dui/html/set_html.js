@@ -91,8 +91,8 @@ iCn3DUI.prototype.setTopMenusHtmlMobile = function (id) { var me = this; //"use 
 
     //html += "<div class='icn3d-menu'>";
     html += "<div>";
-    html += "<accordion id='" + me.pre + "accordion0' class='icn3d-accordion'>";
-    html += "<h3 style='width:20px'>&nbsp;&nbsp;&#9776;</h3>";
+    html += "<accordion id='" + me.pr2e + "accordion0' class='icn3d-accordion'>";
+    html += "<h3 style='width:20px; height:24px; position:relative'><span style='position:absolute; left:5px; top:6px;'>&#9776;</span></h3>";
     html += "<div>";
 
     var liStr = "<li><span class='icn3d-menu-color'";
@@ -450,12 +450,16 @@ iCn3DUI.prototype.setMenu1_base = function() { var me = this; //"use strict";
 
     html += me.getLink('mn1_sharelink', 'Share Link');
 
+/*
     html += "<li><span>Replay Each Step</span>";
     html += "<ul>";
     html += me.getLink('mn1_replayon', 'On');
     html += me.getLink('mn1_replayoff', 'Off');
     html += "</ul>";
     html += "</li>";
+*/
+
+    html += me.getLink('mn1_replayon', 'Replay Each Step');
 
     html += "<li><br/></li>";
 
@@ -1711,9 +1715,9 @@ iCn3DUI.prototype.setDialogs = function() { var me = this; //"use strict";
 
     html += me.divStr + "dl_fixedversion' style='max-width:500px'>";
     html += "To show the original view with the archived version of iCn3D, you can choose one of the options:<br><br>";
-    html += "1. If your Share Link URL was generated after June 30, 2020, you can paste your URL below and click \"Show Static View\".<br><br>";
+    html += "1. If your Share Link URL was generated after June 30, 2020, you can paste your URL below and click \"Show Originial View\".<br><br>";
     html += "Share Link URL: " + me.inputTextStr + "id='" + me.pre + "sharelinkurl' size=60><br>";
-    html += me.buttonStr + "reload_fixedversion'>Show Static View</button><br><br>";
+    html += me.buttonStr + "reload_fixedversion'>Show Original View</button><br><br>";
     html += "2. If your URL was generated before June 30, 2020, you can find the archived version of iCn3D <a href='https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d.html#log' target='_blank'>online</a>, e.g., \"2.1.0\". Then paste your Share Link URL into the browser to see the expanded full-length URL. Finally replace \"full.html\" with \"full_2.1.0.html\" in the URL.<br><br>";
     html += "</div>";
 

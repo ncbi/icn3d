@@ -676,9 +676,11 @@ iCn3DUI.prototype = {
         me.icn3d = new iCn3D(me.pre + 'canvas');
 
         if(me.cfg.replay) {
+            me.bReplay = 1;
             $("#" + me.pre + "replay").show();
         }
         else {
+            me.bReplay = 0;
             $("#" + me.pre + "replay").hide();
         }
 
@@ -3473,10 +3475,15 @@ iCn3DUI.prototype = {
     replayon: function() { var me = this; //"use strict";
       me.CURRENTNUMBER = 0;
 
-      me.cfg.replay = 1;
+      me.bReplay = 1;
       $("#" + me.pre + "replay").show();
 
       me.closeDialogs();
+
+      // remove all labels
+      for(var name in me.icn3d.labels) {
+         me.icn3d.labels[name] = [];
+      }
 
       // select all
       me.selectAll();
@@ -3497,7 +3504,7 @@ iCn3DUI.prototype = {
     },
 
     replayoff: function() { var me = this; //"use strict";
-        me.cfg.replay = 0;
+        me.bReplay = 0;
         $("#" + me.pre + "replay").hide();
 
         // replay all steps
@@ -7654,7 +7661,10 @@ iCn3DUI.prototype = {
 
            hAtoms = me.icn3d.unionHash(hAtoms, me.icn3d.hAtoms);
 
-           tableHtml += me.exportHalogenPiPairs(type, labelType, 'pi-stacking');
+           //tableHtml += me.exportHalogenPiPairs(type, labelType, 'pi-stacking');
+
+           var tmp = me.exportHalogenPiPairs(type, labelType, 'pi-stacking');
+           tableHtml += tmp;
        }
 
        if(bInteraction) {
@@ -9095,7 +9105,13 @@ iCn3DUI.prototype = {
 
              me.CURRENTNUMBER++;
 
-             if(me.CURRENTNUMBER < me.STATENUMBER) {
+             var currentNumber = (me.cfg.replay) ? me.STATENUMBER : me.STATENUMBER - 1;
+
+
+             if(me.CURRENTNUMBER == currentNumber) {
+                  me.bReplay = 0;
+                  $("#" + me.pre + "replay").hide();
+             } else {
                   me.execCommandsBase(me.CURRENTNUMBER, me.CURRENTNUMBER, me.STATENUMBER);
 
                   var pos = me.icn3d.commands[me.CURRENTNUMBER].indexOf('|||');
