@@ -13,7 +13,7 @@ if (!$.ui.dialog.prototype._makeDraggableBase) {
 }
 
 var iCn3DUI = function(cfg) { var me = this; //"use strict";
-    this.REVISION = '2.17.6';
+    this.REVISION = '2.17.7';
 
     me.bFullUi = true;
 
@@ -3480,9 +3480,19 @@ iCn3DUI.prototype = {
 
       me.closeDialogs();
 
-      // remove all labels
-      for(var name in me.icn3d.labels) {
-         me.icn3d.labels[name] = [];
+      // remove surface
+      me.icn3d.prevSurfaces = [];
+      me.icn3d.prevMaps = [];
+      me.icn3d.prevEmmaps = [];
+
+      // remove lines and labels
+      me.icn3d.labels = {};     // hash of name -> a list of labels. Each label contains 'position', 'text', 'size', 'color', 'background'
+                            // label name could be custom, residue, schmatic, distance
+      me.icn3d.lines = {};     // hash of name -> a list of solid or dashed lines. Each line contains 'position1', 'position2', 'color', and a boolean of 'dashed'
+
+      //remove side chains
+      for(var i in me.icn3d.atoms) {
+          me.icn3d.atoms[i].style2 = undefined;
       }
 
       // select all

@@ -1017,9 +1017,9 @@ iCn3DUI.prototype.retrieveSymmetry = function (pdbid) { var me = this; //"use st
 iCn3DUI.prototype.applyCommandAnnotationsAndCddSiteBase = function (command) { var me = this; //"use strict";
   // chain functions together
       if(command == "view annotations") {
-          if(me.cfg.showanno === undefined || !me.cfg.showanno) {
+          //if(me.cfg.showanno === undefined || !me.cfg.showanno) {
               me.showAnnotations();
-          }
+          //}
       }
 };
 

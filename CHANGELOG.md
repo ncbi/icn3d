@@ -1,4 +1,6 @@
 ## Change Log
+[icn3d-2.17.7](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.17.7.zip) was release on July 7, 2020. Added iCn3D tutorial videos and slides.
+
 [icn3d-2.17.6](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.17.6.zip) was release on June 29, 2020. All "Share Link" URLs can show the original view using the archived version of iCn3D at "File > Open File > Share Link URL in Fixed Ver.".
 
 [icn3d-2.17.5](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.17.5.zip) was release on June 26, 2020. Made a versioned full_[version].html file so that "Share Link" URL could point to a fixed version by replacing "full.html" with "full_[version].html".
