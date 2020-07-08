@@ -1,10 +1,10 @@
 # iCn3D Structure Viewer
 
-## [Gallery with live examples](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d.html#gallery)
+## [Gallery with live examples](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d.html#gallery), [Tutorial](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d.html#Tutorial)
 
 ## About iCn3D
 
-"I see in 3D" (iCn3D) Structure Viewer is a WebGL-based 3D viewer using Three.js and jQuery. iCn3D synchronizes the display of 3D structure, 2D interaction, and 1D sequences and annotations. Users' custom display can be saved in a short URL or a PNG image. <b>Complete package</b> of iCn3D including Three.js and jQuery can be downloaded from [https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.17.6.zip](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.17.6.zip). The "Download ZIP" link in this page does not include third-party libraries. 
+"I see in 3D" (iCn3D) Structure Viewer is a WebGL-based 3D viewer using Three.js and jQuery. iCn3D synchronizes the display of 3D structure, 2D interaction, and 1D sequences and annotations. Users' custom display can be saved in a short URL or a PNG image. <b>Complete package</b> of iCn3D including Three.js and jQuery can be downloaded from [https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.17.7.zip](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.17.7.zip). The "Download ZIP" link in this page does not include third-party libraries. 
 * <b>View a 3D structure in iCn3D</b>: 
     Open the link https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html, input a PDB ID, and click "Load". You can also click "File" menu to "Open File" or input other IDs.
 
@@ -25,10 +25,6 @@
     All "Share Link" URLs can show the original view using the archived version of iCn3D by clicking "Open File > Share Link in Archived Ver." in "File" menu.    
 
 * More features are listed at [www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d.html](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d.html): [binding site](https://structure.ncbi.nlm.nih.gov/icn3d/share.html?JR5B), [interaction interface](https://structure.ncbi.nlm.nih.gov/icn3d/share.html?CuXYgGLCukDeUKnJ6), [3D printing](https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?mmdbid=1tup&command=export+stl+stabilizer+file), [transmembrane proteins](https://structure.ncbi.nlm.nih.gov/icn3d/share.html?TuSd), [surface](https://structure.ncbi.nlm.nih.gov/icn3d/share.html?aYAjP4S3NbrBJX3x6), [EM map](https://structure.ncbi.nlm.nih.gov/icn3d/share.html?L4C4WYE85tYRiFeK7), [electron density map](https://structure.ncbi.nlm.nih.gov/icn3d/share.html?QpqNZ3k65ToYFvUB6), 1D sequences and 2D interactions, [align two structures](https://structure.ncbi.nlm.nih.gov/icn3d/share.html?wPoW56e8QnzVfuZw6), [align two chains](https://structure.ncbi.nlm.nih.gov/icn3d/share.html?ijnf), [align a protein sequence to a structure](https://structure.ncbi.nlm.nih.gov/icn3d/share.html?Mmm82craCwGMAxru9), [realign](https://structure.ncbi.nlm.nih.gov/icn3d/share.html?tu166KaK8jQYUAVf7), [custom tracks](https://structure.ncbi.nlm.nih.gov/icn3d/share.html?pUzP), [force-directed graph for interactions](https://structure.ncbi.nlm.nih.gov/icn3d/share.html?rshvjTFXpAFu8GDa9), [solvent accessible surface area](https://structure.ncbi.nlm.nih.gov/icn3d/share.html?xKSyfd1umbKstGh29), [symmetry](https://structure.ncbi.nlm.nih.gov/icn3d/share.html?bGH1BfLsiGFhhTDn8), etc. 
-
-* <b>Tutorial</b>: 
-    [Slide 1](https://www.ncbi.nlm.nih.gov/Structure/icn3d/guide/icn3d_tutorial_part1.pptx)
-    [Slide 2](https://www.ncbi.nlm.nih.gov/Structure/icn3d/guide/icn3d_tutorial_part2.pptx)    
 
 ## Embed iCn3D with iframe or JavaScript libraries
 
