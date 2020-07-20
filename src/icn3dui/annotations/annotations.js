@@ -30,7 +30,7 @@ iCn3DUI.prototype.showAnnotations = function() { var me = this; //"use strict";
 
         //me.customTracks = {};
 
-        var dialogWidth = $("#" + me.pre + "dl_selectannotations").dialog( "option", "width" );
+        var dialogWidth = (me.cfg.notebook) ? me.WIDTH / 2 : $("#" + me.pre + "dl_selectannotations").dialog( "option", "width" );
         me.seqAnnWidth = dialogWidth - 120 - 30*2 - 50; // title: 120px, start and end resi: 30px, extra space on the left and right: 50px
 
         me.maxAnnoLength = 1;
@@ -1863,7 +1863,7 @@ iCn3DUI.prototype.processSnpClinvar = function(data, chnid, chnidBase, bSnpOnly)
     var htmlClinvar2 = htmlClinvar;
     var htmlClinvar3 = htmlClinvar;
 
-    var lineArray = data.split('\n');
+    var lineArray = (!bSnpOnly) ? data.data : data.split('\n');
 
     var resi2snp = {};
     var resi2index = {};
@@ -1886,7 +1886,7 @@ iCn3DUI.prototype.processSnpClinvar = function(data, chnid, chnidBase, bSnpOnly)
      //1310770    13    14    14Y>H    1111111
 
      if(lineArray[i] != '') {
-      var fieldArray = lineArray[i].split('\t');
+      var fieldArray = (!bSnpOnly) ? lineArray[i] : lineArray[i].split('\t');
 
       var snpStr = fieldArray[3];
 
@@ -2024,7 +2024,7 @@ iCn3DUI.prototype.showClinvarPart2 = function(chnid, chnidBase, gi) { var me = t
     var url = "https://www.ncbi.nlm.nih.gov/Structure/vastdyn/vastdyn.cgi?chainid_clinvar=" + chnidBase;
     $.ajax({
       url: url,
-      dataType: 'text',
+      dataType: 'jsonp',
       cache: true,
       tryCount : 0,
       retryLimit : 1,

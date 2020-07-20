@@ -13,7 +13,7 @@ if (!$.ui.dialog.prototype._makeDraggableBase) {
 }
 
 var iCn3DUI = function(cfg) { var me = this; //"use strict";
-    this.REVISION = '2.17.7';
+    this.REVISION = '2.18.0';
 
     me.bFullUi = true;
 
@@ -979,8 +979,9 @@ iCn3DUI.prototype = {
           me.graphStr = JSON.stringify(graphJson);
       }
 
-      if(me.bGraph) me.drawGraph(me.graphStr);
+      if(me.bGraph) me.drawGraph(me.graphStr, me.pre + 'dl_graph');
       if(me.bLinegraph) me.drawLineGraph(me.graphStr);
+      if(me.bScatterplot) me.drawLineGraph(me.graphStr, true);
     },
 
     setOption: function (id, value) { var me = this; //"use strict";
@@ -1260,15 +1261,28 @@ iCn3DUI.prototype = {
     },
 
     closeDialogs: function () { var me = this; //"use strict";
-        if($('#' + me.pre + 'dl_selectannotations').hasClass('ui-dialog-content') && $('#' + me.pre + 'dl_selectannotations').dialog( 'isOpen' )) $('#' + me.pre + 'dl_selectannotations').dialog( 'close' );
-        if($('#' + me.pre + 'dl_alignment').hasClass('ui-dialog-content') && $('#' + me.pre + 'dl_alignment').dialog( 'isOpen' )) $('#' + me.pre + 'dl_alignment').dialog( 'close' );
-        if($('#' + me.pre + 'dl_2ddgm').hasClass('ui-dialog-content') && $('#' + me.pre + 'dl_2ddgm').dialog( 'isOpen' )) $('#' + me.pre + 'dl_2ddgm').dialog( 'close' );
-        if($('#' + me.pre + 'dl_definedsets').hasClass('ui-dialog-content') && $('#' + me.pre + 'dl_definedsets').dialog( 'isOpen' )) $('#' + me.pre + 'dl_definedsets').dialog( 'close' );
-        if($('#' + me.pre + 'dl_graph').hasClass('ui-dialog-content') && $('#' + me.pre + 'dl_graph').dialog( 'isOpen' )) $('#' + me.pre + 'dl_graph').dialog( 'close' );
-        if($('#' + me.pre + 'dl_linegraph').hasClass('ui-dialog-content') && $('#' + me.pre + 'dl_linegraph').dialog( 'isOpen' )) $('#' + me.pre + 'dl_linegraph').dialog( 'close' );
-        if($('#' + me.pre + 'dl_allinteraction').hasClass('ui-dialog-content') && $('#' + me.pre + 'dl_allinteraction').dialog( 'isOpen' )) $('#' + me.pre + 'dl_allinteraction').dialog( 'close' );
+        if(!me.cfg.notebook) {
+            if($('#' + me.pre + 'dl_selectannotations').hasClass('ui-dialog-content') && $('#' + me.pre + 'dl_selectannotations').dialog( 'isOpen' )) $('#' + me.pre + 'dl_selectannotations').dialog( 'close' );
+            if($('#' + me.pre + 'dl_alignment').hasClass('ui-dialog-content') && $('#' + me.pre + 'dl_alignment').dialog( 'isOpen' )) $('#' + me.pre + 'dl_alignment').dialog( 'close' );
+            if($('#' + me.pre + 'dl_2ddgm').hasClass('ui-dialog-content') && $('#' + me.pre + 'dl_2ddgm').dialog( 'isOpen' )) $('#' + me.pre + 'dl_2ddgm').dialog( 'close' );
+            if($('#' + me.pre + 'dl_definedsets').hasClass('ui-dialog-content') && $('#' + me.pre + 'dl_definedsets').dialog( 'isOpen' )) $('#' + me.pre + 'dl_definedsets').dialog( 'close' );
+            if($('#' + me.pre + 'dl_graph').hasClass('ui-dialog-content') && $('#' + me.pre + 'dl_graph').dialog( 'isOpen' )) $('#' + me.pre + 'dl_graph').dialog( 'close' );
+            if($('#' + me.pre + 'dl_linegraph').hasClass('ui-dialog-content') && $('#' + me.pre + 'dl_linegraph').dialog( 'isOpen' )) $('#' + me.pre + 'dl_linegraph').dialog( 'close' );
+            if($('#' + me.pre + 'dl_scatterplot').hasClass('ui-dialog-content') && $('#' + me.pre + 'dl_scatterplot').dialog( 'isOpen' )) $('#' + me.pre + 'dl_scatterplot').dialog( 'close' );
+            if($('#' + me.pre + 'dl_allinteraction').hasClass('ui-dialog-content') && $('#' + me.pre + 'dl_allinteraction').dialog( 'isOpen' )) $('#' + me.pre + 'dl_allinteraction').dialog( 'close' );
 
-        me.resizeCanvas(me.WIDTH, me.HEIGHT, true);
+            me.resizeCanvas(me.WIDTH, me.HEIGHT, true);
+        }
+        else {
+            $('#' + me.pre + 'dl_selectannotations').hide();
+            $('#' + me.pre + 'dl_alignment').hide();
+            $('#' + me.pre + 'dl_2ddgm').hide();
+            $('#' + me.pre + 'dl_definedsets').hide();
+            $('#' + me.pre + 'dl_graph').hide();
+            $('#' + me.pre + 'dl_linegraph').hide();
+            $('#' + me.pre + 'dl_scatterplot').hide();
+            $('#' + me.pre + 'dl_allinteraction').hide();
+        }
     },
 
     exportCustomAtoms: function () { var me = this; //"use strict";
@@ -2424,7 +2438,7 @@ iCn3DUI.prototype = {
             text += '</table><br/>';
         }
 
-        if(type == 'graph' || type == 'linegraph') {
+        if(type == 'graph' || type == 'linegraph' || type == 'scatterplot') {
             var hbondStr = me.getGraphLinks(me.resid2ResidhashHbond, me.resid2ResidhashHbond, me.hbondColor, labelType, me.hbondValue);
             return hbondStr;
         }
@@ -2471,7 +2485,7 @@ iCn3DUI.prototype = {
             text += '</table><br/>';
         }
 
-        if(type == 'graph' || type == 'linegraph') {
+        if(type == 'graph' || type == 'linegraph' || type == 'scatterplot') {
             var hbondStr = me.getGraphLinks(me.resid2ResidhashSaltbridge, me.resid2ResidhashSaltbridge, me.ionicColor, labelType, me.ionicValue);
 
             return hbondStr;
@@ -2536,7 +2550,7 @@ iCn3DUI.prototype = {
             text += '</table><br/>';
         }
 
-        if(type == 'graph' || type == 'linegraph') {
+        if(type == 'graph' || type == 'linegraph' || type == 'scatterplot') {
             var hbondStr = me.getGraphLinks(resid2Residhash, resid2Residhash, color, labelType, value);
             return hbondStr;
         }
@@ -2603,7 +2617,7 @@ iCn3DUI.prototype = {
             text += '</table><br/>';
         }
 
-        if(type == 'graph' || type == 'linegraph') {
+        if(type == 'graph' || type == 'linegraph' || type == 'scatterplot') {
             var interStr = me.getGraphLinks(residHash, residHash, me.contactColor, labelType, me.contactValue);
 
             return interStr;
@@ -2956,7 +2970,7 @@ iCn3DUI.prototype = {
     clickApplyRealign: function() { var me = this; //"use strict";
         $("#" + me.pre + "applyRealign").click(function(e) {
            e.preventDefault();
-           dialog.dialog( "close" );
+           if(!me.cfg.notebook) dialog.dialog( "close" );
 
            var nameArray = $("#" + me.pre + "atomsCustomRealign").val();
 
@@ -3906,8 +3920,15 @@ iCn3DUI.prototype = {
         });
 
         $("#" + me.pre + "mn1_window_linegraph").click(function(e) {
-           me.openDialog(me.pre + 'dl_linegraph', 'Show interactions with two lines of residue nodes');
+           me.openDialog(me.pre + 'dl_linegraph', 'Show interactions between two lines of residue nodes');
            me.setLogCmd("window interaction graph", true);
+
+           //$( ".icn3d-accordion" ).accordion(me.closeAc);
+        });
+
+        $("#" + me.pre + "mn1_window_scatterplot").click(function(e) {
+           me.openDialog(me.pre + 'dl_scatterplot', 'Show interactions as map');
+           me.setLogCmd("window interaction scatterplot", true);
 
            //$( ".icn3d-accordion" ).accordion(me.closeAc);
         });
@@ -3934,7 +3955,7 @@ iCn3DUI.prototype = {
 
            document.title = me.yournote;
 
-           dialog.dialog( "close" );
+           if(!me.cfg.notebook) dialog.dialog( "close" );
 
            me.setLogCmd('your note | ' + me.yournote, true);
 
@@ -4571,7 +4592,7 @@ iCn3DUI.prototype = {
         $("#" + me.pre + "reload_rescolorfile").click(function(e) {
            e.preventDefault();
 
-           dialog.dialog( "close" );
+           if(!me.cfg.notebook) dialog.dialog( "close" );
 
            var file = $("#" + me.pre + "rescolorfile")[0].files[0];
 
@@ -4671,7 +4692,7 @@ iCn3DUI.prototype = {
         $("#" + me.pre + "reload_customcolorfile").click(function(e) {
            e.preventDefault();
 
-           dialog.dialog( "close" );
+           if(!me.cfg.notebook) dialog.dialog( "close" );
 
            me.setCustomFile('color');
 
@@ -4681,7 +4702,7 @@ iCn3DUI.prototype = {
         $("#" + me.pre + "reload_customtubefile").click(function(e) {
            e.preventDefault();
 
-           dialog.dialog( "close" );
+           if(!me.cfg.notebook) dialog.dialog( "close" );
 
            me.setCustomFile('tube');
 
@@ -5130,7 +5151,7 @@ iCn3DUI.prototype = {
     clickApplymap2fofc: function() { var me = this; //"use strict";
         $("#" + me.pre + "applymap2fofc").click(function(e) {
            e.preventDefault();
-           //dialog.dialog( "close" );
+           //if(!me.cfg.notebook) dialog.dialog( "close" );
 
            var sigma2fofc = parseFloat($("#" + me.pre + "sigma2fofc" ).val());
 
@@ -5147,7 +5168,7 @@ iCn3DUI.prototype = {
     clickApplymapfofc: function() { var me = this; //"use strict";
         $("#" + me.pre + "applymapfofc").click(function(e) {
            e.preventDefault();
-           //dialog.dialog( "close" );
+           //if(!me.cfg.notebook) dialog.dialog( "close" );
 
            var sigmafofc = parseFloat($("#" + me.pre + "sigmafofc" ).val());
 
@@ -5201,7 +5222,7 @@ iCn3DUI.prototype = {
     clickApplyemmap: function() { var me = this; //"use strict";
         $("#" + me.pre + "applyemmap").click(function(e) {
            e.preventDefault();
-           //dialog.dialog( "close" );
+           //if(!me.cfg.notebook) dialog.dialog( "close" );
 
            var empercentage = parseFloat($("#" + me.pre + "empercentage" ).val());
 
@@ -6199,7 +6220,7 @@ iCn3DUI.prototype = {
         $("#" + me.pre + "reload_mmtf").click(function(e) {
            e.preventDefault();
 
-           dialog.dialog( "close" );
+           if(!me.cfg.notebook) dialog.dialog( "close" );
 
            me.setLogCmd("load mmtf " + $("#" + me.pre + "mmtfid").val(), false);
 
@@ -6213,7 +6234,7 @@ iCn3DUI.prototype = {
         $("#" + me.pre + "reload_pdb").click(function(e) {
            e.preventDefault();
 
-           dialog.dialog( "close" );
+           if(!me.cfg.notebook) dialog.dialog( "close" );
 
            me.setLogCmd("load pdb " + $("#" + me.pre + "pdbid").val(), false);
 
@@ -6227,7 +6248,7 @@ iCn3DUI.prototype = {
         $("#" + me.pre + "reload_opm").click(function(e) {
            e.preventDefault();
 
-           dialog.dialog( "close" );
+           if(!me.cfg.notebook) dialog.dialog( "close" );
 
            me.setLogCmd("load opm " + $("#" + me.pre + "opmid").val(), false);
 
@@ -6241,7 +6262,7 @@ iCn3DUI.prototype = {
         $("#" + me.pre + "reload_align_refined").click(function(e) {
            e.preventDefault();
 
-           dialog.dialog( "close" );
+           if(!me.cfg.notebook) dialog.dialog( "close" );
 
            var alignment = $("#" + me.pre + "alignid1").val() + "," + $("#" + me.pre + "alignid2").val();
 
@@ -6257,7 +6278,7 @@ iCn3DUI.prototype = {
         $("#" + me.pre + "reload_align_ori").click(function(e) {
            e.preventDefault();
 
-           dialog.dialog( "close" );
+           if(!me.cfg.notebook) dialog.dialog( "close" );
 
            var alignment = $("#" + me.pre + "alignid1").val() + "," + $("#" + me.pre + "alignid2").val();
 
@@ -6273,7 +6294,7 @@ iCn3DUI.prototype = {
         $("#" + me.pre + "reload_chainalign").click(function(e) {
            e.preventDefault();
 
-           dialog.dialog( "close" );
+           if(!me.cfg.notebook) dialog.dialog( "close" );
 
            var alignment = $("#" + me.pre + "chainalignid1").val() + "," + $("#" + me.pre + "chainalignid2").val();
 
@@ -6289,7 +6310,7 @@ iCn3DUI.prototype = {
         $("#" + me.pre + "reload_mmcif").click(function(e) {
            e.preventDefault();
 
-           dialog.dialog( "close" );
+           if(!me.cfg.notebook) dialog.dialog( "close" );
 
            me.setLogCmd("load mmcif " + $("#" + me.pre + "mmcifid").val(), false);
 
@@ -6303,7 +6324,7 @@ iCn3DUI.prototype = {
         $("#" + me.pre + "reload_mmdb").click(function(e) {
            e.preventDefault();
 
-           dialog.dialog( "close" );
+           if(!me.cfg.notebook) dialog.dialog( "close" );
 
            me.setLogCmd("load mmdb " + $("#" + me.pre + "mmdbid").val(), false);
 
@@ -6318,7 +6339,7 @@ iCn3DUI.prototype = {
         $("#" + me.pre + "reload_blast_rep_id").click(function(e) {
            e.preventDefault();
 
-           dialog.dialog( "close" );
+           if(!me.cfg.notebook) dialog.dialog( "close" );
 
            //var query_id = $("#" + me.pre + "query_id").val().toUpperCase();
            var query_id = $("#" + me.pre + "query_id").val();
@@ -6369,7 +6390,7 @@ iCn3DUI.prototype = {
         $("#" + me.pre + "reload_gi").click(function(e) {
            e.preventDefault();
 
-           dialog.dialog( "close" );
+           if(!me.cfg.notebook) dialog.dialog( "close" );
 
            me.setLogCmd("load gi " + $("#" + me.pre + "gi").val(), false);
 
@@ -6383,7 +6404,7 @@ iCn3DUI.prototype = {
         $("#" + me.pre + "reload_cid").click(function(e) {
            e.preventDefault();
 
-           dialog.dialog( "close" );
+           if(!me.cfg.notebook) dialog.dialog( "close" );
 
            me.setLogCmd("load cid " + $("#" + me.pre + "cid").val(), false);
 
@@ -6397,9 +6418,14 @@ iCn3DUI.prototype = {
         $("#" + me.pre + "reload_pngimage").click(function(e) {
            e.preventDefault();
 
-           dialog.dialog( "close" );
+           if(!me.cfg.notebook) dialog.dialog( "close" );
            //close all dialog
-           $(".ui-dialog-content").dialog("close");
+           if(!me.cfg.notebook) {
+               $(".ui-dialog-content").dialog("close");
+           }
+           else {
+               me.closeDialogs();
+           }
 
            // initialize icn3dui
            me.init();
@@ -6519,9 +6545,14 @@ iCn3DUI.prototype = {
         $("#" + me.pre + "reload_state").click(function(e) {
            e.preventDefault();
 
-           dialog.dialog( "close" );
+           if(!me.cfg.notebook) dialog.dialog( "close" );
            //close all dialog
-           $(".ui-dialog-content").dialog("close");
+           if(!me.cfg.notebook) {
+               $(".ui-dialog-content").dialog("close");
+           }
+           else {
+               me.closeDialogs();
+           }
 
            // initialize icn3dui
            //Do NOT clear data if iCn3D loads a pdb or other data file and then load a state file
@@ -6564,7 +6595,7 @@ iCn3DUI.prototype = {
         $("#" + me.pre + "reload_selectionfile").click(function(e) {
            e.preventDefault();
 
-           dialog.dialog( "close" );
+           if(!me.cfg.notebook) dialog.dialog( "close" );
 
            var file = $("#" + me.pre + "selectionfile")[0].files[0];
 
@@ -6673,7 +6704,7 @@ iCn3DUI.prototype = {
         $("#" + me.pre + "reload_dsn6file2fofc").click(function(e) {
            e.preventDefault();
 
-           dialog.dialog( "close" );
+           if(!me.cfg.notebook) dialog.dialog( "close" );
 
            me.loadDsn6File('2fofc');
         });
@@ -6681,7 +6712,7 @@ iCn3DUI.prototype = {
         $("#" + me.pre + "reload_dsn6filefofc").click(function(e) {
            e.preventDefault();
 
-           dialog.dialog( "close" );
+           if(!me.cfg.notebook) dialog.dialog( "close" );
 
            me.loadDsn6File('fofc');
         });
@@ -6689,7 +6720,7 @@ iCn3DUI.prototype = {
         $("#" + me.pre + "reload_dsn6fileurl2fofc").click(function(e) {
            e.preventDefault();
 
-           dialog.dialog( "close" );
+           if(!me.cfg.notebook) dialog.dialog( "close" );
 
            me.loadDsn6FileUrl('2fofc');
         });
@@ -6697,7 +6728,7 @@ iCn3DUI.prototype = {
         $("#" + me.pre + "reload_dsn6fileurlfofc").click(function(e) {
            e.preventDefault();
 
-           dialog.dialog( "close" );
+           if(!me.cfg.notebook) dialog.dialog( "close" );
 
            me.loadDsn6FileUrl('fofc');
         });
@@ -6711,9 +6742,14 @@ iCn3DUI.prototype = {
 
            me.icn3d.bInitial = true;
 
-           dialog.dialog( "close" );
+           if(!me.cfg.notebook) dialog.dialog( "close" );
            //close all dialog
-           $(".ui-dialog-content").dialog("close");
+           if(!me.cfg.notebook) {
+               $(".ui-dialog-content").dialog("close");
+           }
+           else {
+               me.closeDialogs();
+           }
 
            var file = $("#" + me.pre + "pdbfile")[0].files[0];
 
@@ -6756,9 +6792,14 @@ iCn3DUI.prototype = {
 
            me.icn3d.bInitial = true;
 
-           dialog.dialog( "close" );
+           if(!me.cfg.notebook) dialog.dialog( "close" );
            //close all dialog
-           $(".ui-dialog-content").dialog("close");
+           if(!me.cfg.notebook) {
+               $(".ui-dialog-content").dialog("close");
+           }
+           else {
+               me.closeDialogs();
+           }
 
            var file = $("#" + me.pre + "mol2file")[0].files[0];
 
@@ -6803,9 +6844,14 @@ iCn3DUI.prototype = {
 
            me.icn3d.bInitial = true;
 
-           dialog.dialog( "close" );
+           if(!me.cfg.notebook) dialog.dialog( "close" );
            //close all dialog
-           $(".ui-dialog-content").dialog("close");
+           if(!me.cfg.notebook) {
+               $(".ui-dialog-content").dialog("close");
+           }
+           else {
+               me.closeDialogs();
+           }
 
            var file = $("#" + me.pre + "sdffile")[0].files[0];
 
@@ -6849,9 +6895,14 @@ iCn3DUI.prototype = {
 
            me.icn3d.bInitial = true;
 
-           dialog.dialog( "close" );
+           if(!me.cfg.notebook) dialog.dialog( "close" );
            //close all dialog
-           $(".ui-dialog-content").dialog("close");
+           if(!me.cfg.notebook) {
+               $(".ui-dialog-content").dialog("close");
+           }
+           else {
+               me.closeDialogs();
+           }
 
            var file = $("#" + me.pre + "xyzfile")[0].files[0];
 
@@ -6895,9 +6946,14 @@ iCn3DUI.prototype = {
 
            me.icn3d.bInitial = true;
 
-           dialog.dialog( "close" );
+           if(!me.cfg.notebook) dialog.dialog( "close" );
            //close all dialog
-           $(".ui-dialog-content").dialog("close");
+           if(!me.cfg.notebook) {
+               $(".ui-dialog-content").dialog("close");
+           }
+           else {
+               me.closeDialogs();
+           }
 
            var type = $("#" + me.pre + "filetype").val();
            var url = $("#" + me.pre + "urlfile").val();
@@ -6919,9 +6975,14 @@ iCn3DUI.prototype = {
 
            me.icn3d.bInitial = true;
 
-           dialog.dialog( "close" );
+           if(!me.cfg.notebook) dialog.dialog( "close" );
            //close all dialog
-           $(".ui-dialog-content").dialog("close");
+           if(!me.cfg.notebook) {
+               $(".ui-dialog-content").dialog("close");
+           }
+           else {
+               me.closeDialogs();
+           }
 
            var file = $("#" + me.pre + "mmciffile")[0].files[0];
 
@@ -6991,7 +7052,7 @@ iCn3DUI.prototype = {
     clickApplycustomcolor: function() { var me = this; //"use strict";
         $("#" + me.pre + "applycustomcolor").click(function(e) {
            e.preventDefault();
-           dialog.dialog( "close" );
+           if(!me.cfg.notebook) dialog.dialog( "close" );
 
            me.setOption("color", $("#" + me.pre + "colorcustom").val());
            me.setLogCmd("color " + $("#" + me.pre + "colorcustom").val(), true);
@@ -7008,7 +7069,7 @@ iCn3DUI.prototype = {
 
         $("#" + me.pre + "applypick_aroundsphere").click(function(e) {
             //e.preventDefault();
-            //dialog.dialog( "close" );
+            //if(!me.cfg.notebook) dialog.dialog( "close" );
 
             var radius = parseFloat($("#" + me.pre + "radius_aroundsphere").val());
             var nameArray = $("#" + me.pre + "atomsCustomSphere").val();
@@ -7032,7 +7093,7 @@ iCn3DUI.prototype = {
 
         $("#" + me.pre + "sphereExport").click(function(e) {
             e.preventDefault();
-            //dialog.dialog( "close" );
+            //if(!me.cfg.notebook) dialog.dialog( "close" );
 
             var radius = parseFloat($("#" + me.pre + "radius_aroundsphere").val());
             var nameArray = $("#" + me.pre + "atomsCustomSphere").val();
@@ -7059,7 +7120,7 @@ iCn3DUI.prototype = {
     clickApply_adjustmem: function() { var me = this; //"use strict";
         $("#" + me.pre + "apply_adjustmem").click(function(e) {
             //e.preventDefault();
-            dialog.dialog( "close" );
+            if(!me.cfg.notebook) dialog.dialog( "close" );
 
             var extra_mem_z = parseFloat($("#" + me.pre + "extra_mem_z").val());
             var intra_mem_z = parseFloat($("#" + me.pre + "intra_mem_z").val());
@@ -7096,7 +7157,7 @@ iCn3DUI.prototype = {
     clickApply_selectplane: function() { var me = this; //"use strict";
         $("#" + me.pre + "apply_selectplane").click(function(e) {
             //e.preventDefault();
-            dialog.dialog( "close" );
+            if(!me.cfg.notebook) dialog.dialog( "close" );
 
             var large = parseFloat($("#" + me.pre + "selectplane_z1").val());
             var small = parseFloat($("#" + me.pre + "selectplane_z2").val());
@@ -7267,6 +7328,9 @@ iCn3DUI.prototype = {
            else if(type == 'linegraph') {
                me.setLogCmd("line graph interaction pairs | " + nameArray2 + " " + nameArray + " | " + interactionTypes + " | " + bHbondCalcStr + " | " + thresholdStr, true);
            }
+           else if(type == 'scatterplot') {
+               me.setLogCmd("scatterplot interaction pairs | " + nameArray2 + " " + nameArray + " | " + interactionTypes + " | " + bHbondCalcStr + " | " + thresholdStr, true);
+           }
            else if(type == 'graph') { // force-directed graph
                 var dist_ss = parseInt($("#" + me.pre + "dist_ss").val());
                 var dist_coil = parseInt($("#" + me.pre + "dist_coil").val());
@@ -7298,7 +7362,7 @@ iCn3DUI.prototype = {
 
         $("#" + me.pre + "crossstrucinter").change(function(e) {
            e.preventDefault();
-           //dialog.dialog( "close" );
+           //if(!me.cfg.notebook) dialog.dialog( "close" );
 
            me.icn3d.crossstrucinter = parseInt($("#" + me.pre + "crossstrucinter").val());
 
@@ -7307,20 +7371,20 @@ iCn3DUI.prototype = {
 
         $("#" + me.pre + "applyhbonds").click(function(e) {
            e.preventDefault();
-           //dialog.dialog( "close" );
+           //if(!me.cfg.notebook) dialog.dialog( "close" );
            me.showInteractions('3d');
         });
 
         $("#" + me.pre + "hbondWindow").click(function(e) {
            e.preventDefault();
-           //dialog.dialog( "close" );
+           //if(!me.cfg.notebook) dialog.dialog( "close" );
 
            me.showInteractions('view');
         });
 
         $("#" + me.pre + "areaWindow").click(function(e) {
            e.preventDefault();
-           //dialog.dialog( "close" );
+           //if(!me.cfg.notebook) dialog.dialog( "close" );
 
            var nameArray = $("#" + me.pre + "atomsCustomHbond").val();
            var nameArray2 = $("#" + me.pre + "atomsCustomHbond2").val();
@@ -7332,7 +7396,7 @@ iCn3DUI.prototype = {
 
         $("#" + me.pre + "sortSet1").click(function(e) {
            e.preventDefault();
-           //dialog.dialog( "close" );
+           //if(!me.cfg.notebook) dialog.dialog( "close" );
 
            me.showInteractions('save1');
         });
@@ -7353,23 +7417,30 @@ iCn3DUI.prototype = {
 
         $("#" + me.pre + "sortSet2").click(function(e) {
            e.preventDefault();
-           //dialog.dialog( "close" );
+           //if(!me.cfg.notebook) dialog.dialog( "close" );
 
            me.showInteractions('save2');
         });
 
         $("#" + me.pre + "hbondGraph").click(function(e) {
            e.preventDefault();
-           //dialog.dialog( "close" );
+           //if(!me.cfg.notebook) dialog.dialog( "close" );
 
            me.showInteractions('graph');
         });
 
         $("#" + me.pre + "hbondLineGraph").click(function(e) {
            e.preventDefault();
-           //dialog.dialog( "close" );
+           //if(!me.cfg.notebook) dialog.dialog( "close" );
 
            me.showInteractions('linegraph');
+        });
+
+        $("#" + me.pre + "hbondScatterplot").click(function(e) {
+           e.preventDefault();
+           //if(!me.cfg.notebook) dialog.dialog( "close" );
+
+           me.showInteractions('scatterplot');
         });
 
         // select residues
@@ -7389,14 +7460,14 @@ iCn3DUI.prototype = {
 
         $("#" + me.svgid + "_svg").click(function(e) {
            e.preventDefault();
-           //dialog.dialog( "close" );
+           //if(!me.cfg.notebook) dialog.dialog( "close" );
 
            me.saveSvg(me.svgid, me.inputid + "_force_directed_graph.svg");
         });
 
         $("#" + me.svgid + "_png").click(function(e) {
            e.preventDefault();
-           //dialog.dialog( "close" );
+           //if(!me.cfg.notebook) dialog.dialog( "close" );
 
            var width = $("#" + me.pre + "dl_graph").width();
            var height = $("#" + me.pre + "dl_graph").height();
@@ -7404,16 +7475,43 @@ iCn3DUI.prototype = {
            me.savePng(me.svgid, me.inputid + "_force_directed_graph.png", width, height);
         });
 
+        $("#" + me.svgid + "_json").click(function(e) {
+            e.preventDefault();
+            //if(!me.cfg.notebook) dialog.dialog( "close" );
+
+            var graphStr2 = me.graphStr.substr(0, me.graphStr.lastIndexOf('}'));
+
+            graphStr2 += ', linkmap: {\n';
+            graphStr2 += '3: {"type": "peptidebond", "c":""},\n';
+            graphStr2 += '4: {"type": "ssbond", "c":"FFA500"},\n';
+            graphStr2 += '5: {"type": "ionic", "c":"0FF"},\n';
+            graphStr2 += '6: {"type": "ionicInside", "c":"FFF"},\n';
+            graphStr2 += '11: {"type": "contact", "c":"888"},\n';
+            graphStr2 += '12: {"type": "contactInside", "c":"FFF"},\n';
+            graphStr2 += '13: {"type": "hbond", "c":"0F0"},\n';
+            graphStr2 += '14: {"type": "hbondInside", "c":"FFF"},\n';
+            graphStr2 += '15: {"type": "clbond", "c":"006400"},\n';
+            graphStr2 += '17: {"type": "halogen", "c":"F0F"},\n';
+            graphStr2 += '18: {"type": "halogenInside", "c":"FFF"},\n';
+            graphStr2 += '19: {"type": "pication", "c":"F00"},\n';
+            graphStr2 += '20: {"type": "picationInside", "c":"FFF"},\n';
+            graphStr2 += '21: {"type": "pistacking", "c":"00F"},\n';
+            graphStr2 += '22: {"type": "pistackingInside", "c":"FFF"}\n';
+            graphStr2 += '}}\n';
+
+            me.saveFile(me.inputid + "_force_directed_graph.json", "text", [graphStr2]);
+        });
+
         $("#" + me.linegraphid + "_svg").click(function(e) {
            e.preventDefault();
-           //dialog.dialog( "close" );
+           //if(!me.cfg.notebook) dialog.dialog( "close" );
 
            me.saveSvg(me.linegraphid, me.inputid + "_line_graph.svg");
         });
 
         $("#" + me.linegraphid + "_png").click(function(e) {
            e.preventDefault();
-           //dialog.dialog( "close" );
+           //if(!me.cfg.notebook) dialog.dialog( "close" );
 
            var width = $("#" + me.pre + "dl_linegraph").width();
            var height = $("#" + me.pre + "dl_linegraph").height();
@@ -7421,9 +7519,36 @@ iCn3DUI.prototype = {
            me.savePng(me.linegraphid, me.inputid + "_line_graph.png", width, height);
         });
 
+        $("#" + me.linegraphid + "_json").click(function(e) {
+            e.preventDefault();
+            //if(!me.cfg.notebook) dialog.dialog( "close" );
+
+            var graphStr2 = me.lineGraphStr.substr(0, me.lineGraphStr.lastIndexOf('}'));
+
+            graphStr2 += ', linkmap: {\n';
+            graphStr2 += '3: {"type": "peptidebond", "c":""},\n';
+            graphStr2 += '4: {"type": "ssbond", "c":"FFA500"},\n';
+            graphStr2 += '5: {"type": "ionic", "c":"0FF"},\n';
+            graphStr2 += '6: {"type": "ionicInside", "c":"FFF"},\n';
+            graphStr2 += '11: {"type": "contact", "c":"888"},\n';
+            graphStr2 += '12: {"type": "contactInside", "c":"FFF"},\n';
+            graphStr2 += '13: {"type": "hbond", "c":"0F0"},\n';
+            graphStr2 += '14: {"type": "hbondInside", "c":"FFF"},\n';
+            graphStr2 += '15: {"type": "clbond", "c":"006400"},\n';
+            graphStr2 += '17: {"type": "halogen", "c":"F0F"},\n';
+            graphStr2 += '18: {"type": "halogenInside", "c":"FFF"},\n';
+            graphStr2 += '19: {"type": "pication", "c":"F00"},\n';
+            graphStr2 += '20: {"type": "picationInside", "c":"FFF"},\n';
+            graphStr2 += '21: {"type": "pistacking", "c":"00F"},\n';
+            graphStr2 += '22: {"type": "pistackingInside", "c":"FFF"}\n';
+            graphStr2 += '}}\n';
+
+            me.saveFile(me.inputid + "_line_graph.json", "text", [graphStr2]);
+        });
+
         $("#" + me.linegraphid + "_scale").change(function(e) {
            e.preventDefault();
-           //dialog.dialog( "close" );
+           //if(!me.cfg.notebook) dialog.dialog( "close" );
 
            var scale = $("#" + me.linegraphid + "_scale").val();
 
@@ -7432,9 +7557,64 @@ iCn3DUI.prototype = {
            me.setLogCmd("line graph scale " + scale, true);
         });
 
+        $("#" + me.scatterplotid + "_svg").click(function(e) {
+           e.preventDefault();
+           //if(!me.cfg.notebook) dialog.dialog( "close" );
+
+           me.saveSvg(me.scatterplotid, me.inputid + "_scatterplot.svg");
+        });
+
+        $("#" + me.scatterplotid + "_png").click(function(e) {
+           e.preventDefault();
+           //if(!me.cfg.notebook) dialog.dialog( "close" );
+
+           var width = $("#" + me.pre + "dl_scatterplot").width();
+           var height = $("#" + me.pre + "dl_scatterplot").height();
+
+           me.savePng(me.scatterplotid, me.inputid + "_scatterplot.png", width, height);
+        });
+
+        $("#" + me.scatterplotid + "_json").click(function(e) {
+            e.preventDefault();
+            //if(!me.cfg.notebook) dialog.dialog( "close" );
+
+            var graphStr2 = me.scatterplotStr.substr(0, me.scatterplotStr.lastIndexOf('}'));
+
+            graphStr2 += ', linkmap: {\n';
+            graphStr2 += '3: {"type": "peptidebond", "c":""},\n';
+            graphStr2 += '4: {"type": "ssbond", "c":"FFA500"},\n';
+            graphStr2 += '5: {"type": "ionic", "c":"0FF"},\n';
+            graphStr2 += '6: {"type": "ionicInside", "c":"FFF"},\n';
+            graphStr2 += '11: {"type": "contact", "c":"888"},\n';
+            graphStr2 += '12: {"type": "contactInside", "c":"FFF"},\n';
+            graphStr2 += '13: {"type": "hbond", "c":"0F0"},\n';
+            graphStr2 += '14: {"type": "hbondInside", "c":"FFF"},\n';
+            graphStr2 += '15: {"type": "clbond", "c":"006400"},\n';
+            graphStr2 += '17: {"type": "halogen", "c":"F0F"},\n';
+            graphStr2 += '18: {"type": "halogenInside", "c":"FFF"},\n';
+            graphStr2 += '19: {"type": "pication", "c":"F00"},\n';
+            graphStr2 += '20: {"type": "picationInside", "c":"FFF"},\n';
+            graphStr2 += '21: {"type": "pistacking", "c":"00F"},\n';
+            graphStr2 += '22: {"type": "pistackingInside", "c":"FFF"}\n';
+            graphStr2 += '}}\n';
+
+            me.saveFile(me.inputid + "_scatterplot.json", "text", [graphStr2]);
+        });
+
+        $("#" + me.scatterplotid + "_scale").change(function(e) {
+           e.preventDefault();
+           //if(!me.cfg.notebook) dialog.dialog( "close" );
+
+           var scale = $("#" + me.scatterplotid + "_scale").val();
+
+           $("#" + me.scatterplotid).attr("width", (me.scatterplotWidth * parseFloat(scale)).toString() + "px");
+
+           me.setLogCmd("scatterplot scale " + scale, true);
+        });
+
         $("#" + me.svgid + "_label").change(function(e) {
            e.preventDefault();
-           //dialog.dialog( "close" );
+           //if(!me.cfg.notebook) dialog.dialog( "close" );
 
            var className = $("#" + me.svgid + "_label").val();
 
@@ -7446,7 +7626,7 @@ iCn3DUI.prototype = {
 
         $("#" + me.svgid + "_hideedges").change(function(e) {
            e.preventDefault();
-           //dialog.dialog( "close" );
+           //if(!me.cfg.notebook) dialog.dialog( "close" );
 
            me.hideedges = parseInt($("#" + me.svgid + "_hideedges").val());
 
@@ -7462,7 +7642,7 @@ iCn3DUI.prototype = {
            }
 
            if(me.graphStr !== undefined) {
-               if(me.icn3d.bRender && me.force) me.drawGraph(me.graphStr);
+               if(me.icn3d.bRender && me.force) me.drawGraph(me.graphStr, me.pre + 'dl_graph');
 
                me.setLogCmd("hide edges " + me.hideedges, true);
            }
@@ -7470,12 +7650,12 @@ iCn3DUI.prototype = {
 /*
         $("#" + me.svgid + "_pushcenter").change(function(e) {
            e.preventDefault();
-           //dialog.dialog( "close" );
+           //if(!me.cfg.notebook) dialog.dialog( "close" );
 
            me.pushcenter = parseInt($("#" + me.svgid + "_pushcenter").val());
 
            if(me.graphStr !== undefined) {
-               me.drawGraph(me.graphStr);
+               me.drawGraph(me.graphStr, me.pre + 'dl_graph');
 
                me.setLogCmd("graph center " + me.pushcenter, true);
            }
@@ -7483,7 +7663,7 @@ iCn3DUI.prototype = {
 */
         $("#" + me.svgid + "_force").change(function(e) {
            e.preventDefault();
-           //dialog.dialog( "close" );
+           //if(!me.cfg.notebook) dialog.dialog( "close" );
 
            me.force = parseInt($("#" + me.svgid + "_force").val());
 
@@ -7496,7 +7676,7 @@ iCn3DUI.prototype = {
 
         $("#" + me.pre + "hbondReset").click(function(e) {
            e.preventDefault();
-           //dialog.dialog( "close" );
+           //if(!me.cfg.notebook) dialog.dialog( "close" );
 
            me.resetInteractionPairs();
 
@@ -7517,7 +7697,7 @@ iCn3DUI.prototype = {
            me.simulation.force("link", null);
        }
        else {
-           me.drawGraph(me.graphStr);
+           me.drawGraph(me.graphStr, me.pre + 'dl_graph');
        }
     },
 
@@ -7829,7 +8009,7 @@ iCn3DUI.prototype = {
 
        var header = html;
 
-       if(type == 'graph' || type == 'linegraph') html = '';
+       if(type == 'graph' || type == 'linegraph' || type == 'scatterplot') html = '';
 
        html += tableHtml;
 
@@ -7863,7 +8043,7 @@ iCn3DUI.prototype = {
            me.openDialog(me.pre + 'dl_allinteraction', 'Show interactions');
        }
        else if(type == 'linegraph') {
-           me.openDialog(me.pre + 'dl_linegraph', 'Show interactions with two lines of residue nodes');
+           me.openDialog(me.pre + 'dl_linegraph', 'Show interactions between two lines of residue nodes');
 
            var bLine = true;
            me.graphStr = me.getGraphData(atomSet1, atomSet2, nameArray2, nameArray, html, labelType);
@@ -7874,6 +8054,19 @@ iCn3DUI.prototype = {
            var svgHtml = me.drawLineGraph(me.graphStr);
 
            $("#" + me.pre + "linegraphDiv").html(svgHtml);
+       }
+       else if(type == 'scatterplot') {
+           me.openDialog(me.pre + 'dl_scatterplot', 'Show interactions as scatterplot');
+
+           var bLine = true;
+           me.graphStr = me.getGraphData(atomSet1, atomSet2, nameArray2, nameArray, html, labelType);
+
+           me.bScatterplot = true;
+
+           // draw SVG
+           var svgHtml = me.drawLineGraph(me.graphStr, true);
+
+           $("#" + me.pre + "scatterplotDiv").html(svgHtml);
        }
        else if(type == 'graph') {
            // atomSet1 and atomSet2 are in the right order here
@@ -7898,8 +8091,7 @@ iCn3DUI.prototype = {
 
                        $("#" + me.svgid).empty();
                        me.openDialog(me.pre + 'dl_graph', 'Force-directed graph');
-                       //if(me.icn3d.bRender) me.drawGraph(me.graphStr);
-                       me.drawGraph(me.graphStr);
+                       me.drawGraph(me.graphStr, me.pre + 'dl_graph');
 
                        if(me.deferredGraphinteraction !== undefined) me.deferredGraphinteraction.resolve();
                   },
@@ -7920,8 +8112,7 @@ iCn3DUI.prototype = {
            else {
                $("#" + me.svgid).empty();
                me.openDialog(me.pre + 'dl_graph', 'Force-directed graph');
-               //if(me.icn3d.bRender) me.drawGraph(me.graphStr);
-               me.drawGraph(me.graphStr);
+               me.drawGraph(me.graphStr, me.pre + 'dl_graph');
            }
        }
 
@@ -8303,9 +8494,14 @@ iCn3DUI.prototype = {
        return resStr;
     },
 
-    drawResNode: function(node, i, r, gap, margin, y, setName) { var me = this; //"use strict";
+    drawResNode: function(node, i, r, gap, margin, y, setName, bVertical) { var me = this; //"use strict";
         var resid = node.r.substr(4);
-        var x = margin + i * (r + gap);
+        if(bVertical) {
+            var x = margin - i * (r + gap);
+        }
+        else {
+            var x = margin + i * (r + gap);
+        }
 
         var atom = me.icn3d.getFirstAtomObj(me.icn3d.residues[resid]);
         //var color = "#" + atom.color.getHexString().toUpperCase();
@@ -8325,9 +8521,17 @@ iCn3DUI.prototype = {
 
         var html = "<g class='icn3d-node' resid='" + resid + "' >";
         html += "<title>" + node.id + "</title>";
-        html += "<circle cx='" + x + "' cy='" + y + "' r='" + r + "' fill='" + color + "' stroke-width='" + strokewidth + "' stroke='" + strokecolor + "' resid='" + resid + "' />";
 
-        html += "<text x='" + (x + adjustx).toString() + "' y='" + (y + adjusty).toString() + "' fill='" + textcolor + "' stroke='none' style='font-size:" + fontsize + "; text-anchor:middle' >" + nodeName + "</text>";
+        if(bVertical) {
+            html += "<circle cx='" + y + "' cy='" + x + "' r='" + r + "' fill='" + color + "' stroke-width='" + strokewidth + "' stroke='" + strokecolor + "' resid='" + resid + "' />";
+
+            html += "<text x='" + (y - 20).toString() + "' y='" + (x + 2).toString() + "' fill='" + textcolor + "' stroke='none' style='font-size:" + fontsize + "; text-anchor:middle' >" + nodeName + "</text>";
+        }
+        else {
+            html += "<circle cx='" + x + "' cy='" + y + "' r='" + r + "' fill='" + color + "' stroke-width='" + strokewidth + "' stroke='" + strokecolor + "' resid='" + resid + "' />";
+
+            html += "<text x='" + (x + adjustx).toString() + "' y='" + (y + adjusty).toString() + "' fill='" + textcolor + "' stroke='none' style='font-size:" + fontsize + "; text-anchor:middle' >" + nodeName + "</text>";
+        }
 
         html += "</g>";
 
@@ -8339,6 +8543,7 @@ iCn3DUI.prototype = {
 
         for(var name in nameHash) {
             var node = name2node[name];
+
             if(node.s == 'a') {
                 nodeArray1.push(node);
             }
@@ -8363,7 +8568,7 @@ iCn3DUI.prototype = {
         return {"nodeArray1": nodeArray1, "nodeArray2": nodeArray2};
     },
 
-    drawLineGraph: function(lineGraphStr) { var me = this; //"use strict";
+    drawLineGraph: function(lineGraphStr, bScatterplot) { var me = this; //"use strict";
         var graph = JSON.parse(lineGraphStr);
 
         var linkArray = [], nodeArray1 = [], nodeArray2 = [];
@@ -8390,6 +8595,8 @@ iCn3DUI.prototype = {
         var nodeArrays = me.getNodeTopBottom(nameHash, name2node);
         nodeArray1 = nodeArrays.nodeArray1;
         nodeArray2 = nodeArrays.nodeArray2;
+
+        me.lineGraphStr = '{\n';
 
         if(Object.keys(me.icn3d.structures).length > 1) {
             var nodeArray1a = [], nodeArray1b = [], nodeArray2a = [], nodeArray2b = [], nodeArray3a = [], nodeArray3b = [];
@@ -8448,59 +8655,185 @@ iCn3DUI.prototype = {
             var factor = 1;
 
             var r = 3 * factor;
-            var gap = 10 * factor;
+            var gap = 7  * factor;
 
-            var height = 110;
-            var heightAll = height * strucArray.length;
-            var margin = 10;
-            var width = maxLen * (r + gap) + 2 * margin;
-            me.linegraphWidth = 2 * width;
+            var height, width, heightAll;
+            var marginX = 10, marginY = 10, legendWidth = 30;
+            if(bScatterplot) {
+                heightAll = (len1b + 2 + len2b + 2) * (r + gap) + 4 * marginY + 2*legendWidth;
+                width = (Math.max(len1a, len2a) + 2) * (r + gap) + 2 * marginX + legendWidth;
+            }
+            else {
+                height = 110;
+                heightAll = height * strucArray.length;
+                width = maxLen * (r + gap) + 2 * marginX;
+            }
+
+            var id, graphWidth;
+            if(bScatterplot) {
+                me.scatterplotWidth = 2 * width;
+                graphWidth = me.scatterplotWidth;
+                id = me.scatterplotid;
+            }
+            else {
+                me.linegraphWidth = 2 * width;
+                graphWidth = me.linegraphWidth;
+                id = me.linegraphid;
+            }
 
             var html = (strucArray.length == 0) ? "No interactions found for each structure<br><br>" :
               "2D integration graph for structure(s) <b>" + strucArray + "</b><br><br>";
-            html += "<svg id='" + me.linegraphid + "' viewBox='0,0," + width + "," + heightAll + "' width='" + me.linegraphWidth + "px'>";
+            html += "<svg id='" + id + "' viewBox='0,0," + width + "," + heightAll + "' width='" + graphWidth + "px'>";
 
             var heightFinal = 0;
             if(linkArrayA.length > 0) {
-                html += me.drawLineGraph_base(nodeArray1a, nodeArray1b, linkArrayA, name2node, heightFinal);
+                if(bScatterplot) {
+                    heightFinal -= 15;
+                    html += me.drawScatterplot_base(nodeArray1a, nodeArray1b, linkArrayA, name2node, heightFinal);
+                    heightFinal = 15;
+                    height = (len1b + 1) * (r + gap) + 2 * marginY;
+                }
+                else {
+                    html += me.drawLineGraph_base(nodeArray1a, nodeArray1b, linkArrayA, name2node, heightFinal);
+                }
                 heightFinal += height;
+
+                me.lineGraphStr += '"structure1": {"id": "' + struc1 + '", "nodes1":[';
+                me.lineGraphStr += me.getJSONFromArray(nodeArray1a);
+                me.lineGraphStr += '], \n"nodes2":[';
+                me.lineGraphStr += me.getJSONFromArray(nodeArray1b);
+                me.lineGraphStr += '], \n"links":[';
+                me.lineGraphStr += me.getJSONFromArray(linkArrayA);
+                me.lineGraphStr += ']}';
             }
 
             if(linkArrayB.length > 0) {
-                html += me.drawLineGraph_base(nodeArray2a, nodeArray2b, linkArrayB, name2node, heightFinal);
+                if(bScatterplot) {
+                    html += me.drawScatterplot_base(nodeArray2a, nodeArray2b, linkArrayB, name2node, heightFinal);
+                    height = (len2b + 1) * (r + gap) + 2 * marginY;
+                }
+                else {
+                    html += me.drawLineGraph_base(nodeArray2a, nodeArray2b, linkArrayB, name2node, heightFinal);
+                }
                 heightFinal += height;
+
+                if(linkArrayA.length > 0) me.lineGraphStr += ', \n';
+
+                me.lineGraphStr += '"structure2": {"id": "' + struc2 + '", "nodes1":[';
+                me.lineGraphStr += me.getJSONFromArray(nodeArray2a);
+                me.lineGraphStr += '], \n"nodes2":[';
+                me.lineGraphStr += me.getJSONFromArray(nodeArray2b);
+                me.lineGraphStr += '], \n"links":[';
+                me.lineGraphStr += me.getJSONFromArray(linkArrayB);
+                me.lineGraphStr += ']}';
             }
 
-            if(linkArrayAB.length > 0) {
+            if(linkArrayAB.length > 0 && !bScatterplot) {
                 html += me.drawLineGraph_base(nodeArray3a, nodeArray3b, linkArrayAB, name2node, heightFinal);
+
+                if(linkArrayA.length > 0 || linkArrayB.length > 0) me.lineGraphStr += ', \n';
+
+                me.lineGraphStr += '"structure1_2": {"id1": "' + struc1 + '", "id2": "' + struc2 + '", "nodes1":[';
+                me.lineGraphStr += me.getJSONFromArray(nodeArray3a);
+                me.lineGraphStr += '], \n"nodes2":[';
+                me.lineGraphStr += me.getJSONFromArray(nodeArray3b);
+                me.lineGraphStr += '], \n"links":[';
+                me.lineGraphStr += me.getJSONFromArray(linkArrayAB);
+                me.lineGraphStr += ']}';
             }
 
             html += "</svg>";
         }
         else {
-            var len1 = nodeArray1.length, len2 = nodeArray2.length;
+            if(!bScatterplot) {
+                var struc1 = Object.keys(me.icn3d.structures)[0];
 
-            var factor = 1;
+                var len1 = nodeArray1.length, len2 = nodeArray2.length;
 
-            var r = 3 * factor;
-            var gap = 10 * factor;
+                var factor = 1;
 
-            var height = 110;
-            var margin = 10;
-            var width = (len1 > len2) ? len1 * (r + gap) + 2 * margin : len2 * (r + gap) + 2 * margin;
-            me.linegraphWidth = 2 * width;
+                var r = 3 * factor;
+                var gap = 7  * factor;
 
-            var html = (linkArray.length > 0) ? "" : "No interactions found for these two sets<br><br>";
-            html += "<svg id='" + me.linegraphid + "' viewBox='0,0," + width + "," + height + "' width='" + me.linegraphWidth + "px'>";
+                var height = 110;
+                var margin = 10;
+                var width = (len1 > len2) ? len1 * (r + gap) + 2 * margin : len2 * (r + gap) + 2 * margin;
+                me.linegraphWidth = 2 * width;
 
-            html += me.drawLineGraph_base(nodeArray1, nodeArray2, linkArray, name2node, 0);
+                var html = (linkArray.length > 0) ? "" : "No interactions found for these two sets<br><br>";
+                html += "<svg id='" + me.linegraphid + "' viewBox='0,0," + width + "," + height + "' width='" + me.linegraphWidth + "px'>";
 
-            html += "</svg>";
+                html += me.drawLineGraph_base(nodeArray1, nodeArray2, linkArray, name2node, 0);
+
+                me.lineGraphStr += '"structure1": {"id": "' + struc1 + '", "nodes1":[';
+                me.lineGraphStr += me.getJSONFromArray(nodeArray1);
+                me.lineGraphStr += '], \n"nodes2":[';
+                me.lineGraphStr += me.getJSONFromArray(nodeArray2);
+                me.lineGraphStr += '], \n"links":[';
+                me.lineGraphStr += me.getJSONFromArray(linkArray);
+                me.lineGraphStr += ']}';
+
+                html += "</svg>";
+            }
+            else {
+                var struc1 = Object.keys(me.icn3d.structures)[0];
+
+                var len1 = nodeArray1.length, len2 = nodeArray2.length;
+
+                var factor = 1;
+
+                var r = 3 * factor;
+                var gap = 7  * factor;
+
+                var height, width, heightAll;
+                var marginX = 10, marginY = 10, legendWidth = 30;
+                heightAll = (len2 + 2) * (r + gap) + 2 * marginY + legendWidth;
+                width = (len1 + 2) * (r + gap) + 2 * marginX + legendWidth;
+
+                var id, graphWidth;
+                me.scatterplotWidth = 2 * width;
+                graphWidth = me.scatterplotWidth;
+                id = me.scatterplotid;
+
+                var html = (linkArray.length > 0) ? "" : "No interactions found for these two sets<br><br>";
+                html += "<svg id='" + id + "' viewBox='0,0," + width + "," + heightAll + "' width='" + graphWidth + "px'>";
+
+                html += me.drawScatterplot_base(nodeArray1, nodeArray2, linkArray, name2node, 0);
+
+                me.lineGraphStr += '"structure1": {"id": "' + struc1 + '", "nodes1":[';
+                me.lineGraphStr += me.getJSONFromArray(nodeArray1);
+                me.lineGraphStr += '], \n"nodes2":[';
+                me.lineGraphStr += me.getJSONFromArray(nodeArray2);
+                me.lineGraphStr += '], \n"links":[';
+                me.lineGraphStr += me.getJSONFromArray(linkArray);
+                me.lineGraphStr += ']}';
+
+                html += "</svg>";
+            }
         }
 
-        $("#" + me.pre + "linegraphDiv").html(html);
+        me.lineGraphStr += '}\n';
+
+        me.scatterplotStr = me.lineGraphStr;
+
+        if(bScatterplot) {
+            $("#" + me.pre + "scatterplotDiv").html(html);
+        }
+        else {
+            $("#" + me.pre + "linegraphDiv").html(html);
+        }
 
         return html;
+    },
+
+    getJSONFromArray: function(inArray) { var me = this; //"use strict";
+        var jsonStr = '';
+        for(var i = 0, il= inArray.length; i < il; ++i) {
+            jsonStr += JSON.stringify(inArray[i]);
+            if(i != il - 1) jsonStr += ', ';
+        }
+
+        return jsonStr;
     },
 
     drawLineGraph_base: function(nodeArray1, nodeArray2, linkArray, name2node, height) { var me = this; //"use strict";
@@ -8511,7 +8844,7 @@ iCn3DUI.prototype = {
         var factor = 1;
 
         var r = 3 * factor;
-        var gap = 10 * factor;
+        var gap = 7  * factor;
 
         var margin = 10;
 
@@ -8587,6 +8920,93 @@ iCn3DUI.prototype = {
             html += "<title>Interaction of residue " + node1.id + " with residue " + node2.id + "</title>";
             //html += "<line class='icn3d-hlline' x1='" + pos1.x + "' y1='" + pos1.y + "' x2='" + pos2.x + "' y2='" + pos2.y + "' stroke='#FFF' stroke-width='" + (linestrokewidth + 1).toString() + "' />";
             html += "<line x1='" + pos1.x + "' y1='" + pos1.y + "' x2='" + pos2.x + "' y2='" + pos2.y + "' stroke='" + strokecolor + "' stroke-width='" + linestrokewidth + "' /></g>";
+        }
+
+        // show nodes later
+        html += nodeHtml;
+
+        return html;
+    },
+
+    drawScatterplot_base: function(nodeArray1, nodeArray2, linkArray, name2node, height) { var me = this; //"use strict";
+        var html = '';
+
+        var len1 = nodeArray1.length, len2 = nodeArray2.length;
+
+        var factor = 1;
+
+        var r = 3 * factor;
+        var gap = 7  * factor;
+        var legendWidth = 30;
+        var marginX = 10, marginY = 20;
+
+        var heightTotal = (len1 + 1) * (r + gap) + legendWidth + 2 * marginY;
+
+        var margin1 = height + heightTotal - (legendWidth + marginY + (r+gap)); // y-axis
+        var margin2 = legendWidth + marginX + (r+gap); // x-axis
+
+        var x = legendWidth + marginX;
+        var nodeHtml = '';
+        var node2posSet1 = {}, node2posSet2 = {};
+        for(var i = 0; i < len1; ++i) {
+            nodeHtml += me.drawResNode(nodeArray1[i], i, r, gap, margin1, x, 'a', true);
+            node2posSet1[nodeArray1[i].id] = {x: x, y: margin1 - i * (r + gap)};
+        }
+
+        var y = height + heightTotal - (legendWidth + marginY);
+        for(var i = 0; i < len2; ++i) {
+            nodeHtml += me.drawResNode(nodeArray2[i], i, r, gap, margin2, y, 'b');
+            node2posSet2[nodeArray2[i].id] = {x: margin2 + i * (r + gap), y: y};
+        }
+
+        // draw rect
+        var rectSize = 1.5 * r;
+        var halfSize = 0.5 * rectSize;
+        for(var i = 0, il = linkArray.length; i < il; ++i) {
+            var link = linkArray[i];
+
+            var node1 = name2node[link.source];
+            var node2 = name2node[link.target];
+
+            var resid1 = node1.r.substr(4);
+            var resid2 = node2.r.substr(4);
+
+            var pos1 = node2posSet1[node1.id];
+            var pos2 = node2posSet2[node2.id];
+
+            if(pos1 === undefined || pos2 === undefined) continue;
+
+            var strokecolor;
+            if(link.v == me.hbondValue) {
+                strokecolor = "#" + me.hbondColor;
+            }
+            else if(link.v == me.ionicValue) {
+                strokecolor = "#" + me.ionicColor;
+            }
+            else if(link.v == me.halogenValue) {
+                strokecolor = "#" + me.halogenColor;
+            }
+            else if(link.v == me.picationValue) {
+                strokecolor = "#" + me.picationColor;
+            }
+            else if(link.v == me.pistackingValue) {
+                strokecolor = "#" + me.pistackingColor;
+            }
+            else if(link.v == me.contactValue) {
+                strokecolor = "#" + me.contactColor;
+            }
+
+            var linestrokewidth;
+            if(link.v == me.contactValue) {
+                linestrokewidth = 1;
+            }
+            else {
+                linestrokewidth = 2;
+            }
+
+            html += "<g class='icn3d-interaction' resid1='" + resid1 + "' resid2='" + resid2 + "' >";
+            html += "<title>Interaction of residue " + node1.id + " with residue " + node2.id + "</title>";
+            html += "<rect x='" + (pos2.x - halfSize).toString() + "' y='" + (pos1.y - halfSize).toString() + "' width='" + rectSize + "' height='" + rectSize + "' fill='" + strokecolor + "' fill-opacity='0.6' stroke-width='" + linestrokewidth + "' stroke='" + strokecolor + "' />";
         }
 
         // show nodes later
@@ -8821,7 +9241,7 @@ iCn3DUI.prototype = {
     clickApplypick_labels: function() { var me = this; //"use strict";
         $("#" + me.pre + "applypick_labels").click(function(e) {
            e.preventDefault();
-           dialog.dialog( "close" );
+           if(!me.cfg.notebook) dialog.dialog( "close" );
 
            var text = $("#" + me.pre + "labeltext" ).val();
            var size = $("#" + me.pre + "labelsize" ).val();
@@ -8861,7 +9281,7 @@ iCn3DUI.prototype = {
     clickApplyselection_labels: function() { var me = this; //"use strict";
         $("#" + me.pre + "applyselection_labels").click(function(e) {
            e.preventDefault();
-           dialog.dialog( "close" );
+           if(!me.cfg.notebook) dialog.dialog( "close" );
 
            var text = $("#" + me.pre + "labeltext2" ).val();
            var size = $("#" + me.pre + "labelsize2" ).val();
@@ -8896,7 +9316,7 @@ iCn3DUI.prototype = {
     clickApplypick_stabilizer: function() { var me = this; //"use strict";
         $("#" + me.pre + "applypick_stabilizer").click(function(e) {
            e.preventDefault();
-           dialog.dialog( "close" );
+           if(!me.cfg.notebook) dialog.dialog( "close" );
 
            if(me.icn3d.pAtom === undefined || me.icn3d.pAtom2 === undefined) {
              alert("Please pick another atom");
@@ -8938,7 +9358,7 @@ iCn3DUI.prototype = {
     clickApplypick_stabilizer_rm: function() { var me = this; //"use strict";
         $("#" + me.pre + "applypick_stabilizer_rm").click(function(e) {
            e.preventDefault();
-           dialog.dialog( "close" );
+           if(!me.cfg.notebook) dialog.dialog( "close" );
 
            if(me.icn3d.pAtom === undefined || me.icn3d.pAtom2 === undefined) {
              alert("Please pick another atom");
@@ -8966,7 +9386,7 @@ iCn3DUI.prototype = {
     clickApplypick_measuredistance: function() { var me = this; //"use strict";
         $("#" + me.pre + "applypick_measuredistance").click(function(e) {
            e.preventDefault();
-           dialog.dialog( "close" );
+           if(!me.cfg.notebook) dialog.dialog( "close" );
            me.bMeasureDistance = false;
 
            if(me.icn3d.pAtom === undefined || me.icn3d.pAtom2 === undefined) {
@@ -9007,7 +9427,7 @@ iCn3DUI.prototype = {
     clickApply_thickness: function() { var me = this; //"use strict";
         $("#" + me.pre + "apply_thickness_3dprint").click(function(e) {
             e.preventDefault();
-            //dialog.dialog( "close" );
+            //if(!me.cfg.notebook) dialog.dialog( "close" );
 
             me.bSetThickness = true;
 
@@ -9030,7 +9450,7 @@ iCn3DUI.prototype = {
 
         $("#" + me.pre + "apply_thickness_style").click(function(e) {
             e.preventDefault();
-            //dialog.dialog( "close" );
+            //if(!me.cfg.notebook) dialog.dialog( "close" );
 
             me.bSetThickness = true;
 
@@ -9087,7 +9507,7 @@ iCn3DUI.prototype = {
 
         $(document).on("click", "#" + me.pre + "seq_clearselection", function(e) {
             e.stopImmediatePropagation();
-            dialog.dialog( "close" );
+            if(!me.cfg.notebook) dialog.dialog( "close" );
 
             me.clearHighlight();
             me.setLogCmd("clear selection", true);
@@ -9240,9 +9660,15 @@ iCn3DUI.prototype = {
     },
 
     saveSelectionPrep: function() { var me = this; //"use strict";
-           if(!$('#' + me.pre + 'dl_definedsets').hasClass('ui-dialog-content') || !$('#' + me.pre + 'dl_definedsets').dialog( 'isOpen' )) {
-             me.openDialog(me.pre + 'dl_definedsets', 'Select sets');
-             $("#" + me.pre + "atomsCustom").resizable();
+           if(!me.cfg.notebook) {
+               if(!$('#' + me.pre + 'dl_definedsets').hasClass('ui-dialog-content') || !$('#' + me.pre + 'dl_definedsets').dialog( 'isOpen' )) {
+                 me.openDialog(me.pre + 'dl_definedsets', 'Select sets');
+                 $("#" + me.pre + "atomsCustom").resizable();
+               }
+           }
+           else {
+               $('#' + me.pre + 'dl_definedsets').show();
+               $("#" + me.pre + "atomsCustom").resizable();
            }
 
            me.bSelectResidue = false;
@@ -9252,7 +9678,7 @@ iCn3DUI.prototype = {
     clickSeqSaveSelection: function() { var me = this; //"use strict";
         $(document).on("click", "#" + me.pre + "seq_saveselection", function(e) {
            e.stopImmediatePropagation();
-           dialog.dialog( "close" );
+           if(!me.cfg.notebook) dialog.dialog( "close" );
 
            me.saveSelectionPrep();
 
@@ -9305,7 +9731,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    clickSaveDailog: function() { var me = this; //"use strict";
+    clickSaveDialog: function() { var me = this; //"use strict";
         $(document).on("click", ".icn3d-saveicon", function(e) {
            e.stopImmediatePropagation();
 
@@ -9324,6 +9750,53 @@ iCn3DUI.prototype = {
            if(Object.keys(me.icn3d.structures).length > 1) structureStr += '-' + Object.keys(me.icn3d.structures)[1];
 
            me.saveFile(structureStr + '-' + idStr + '.html', 'html', encodeURIComponent(html));
+        });
+    },
+
+    clickHideDialog: function() { var me = this; //"use strict";
+        $(document).on("click", ".icn3d-hideicon", function(e) {
+           e.stopImmediatePropagation();
+
+           var id = $(this).attr('pid');
+
+           if(!me.cfg.notebook) {
+               if(me.dialogHashHideDone === undefined) me.dialogHashHideDone = {};
+               if(me.dialogHashPosToRight === undefined) me.dialogHashPosToRight = {};
+               if(!me.dialogHashHideDone.hasOwnProperty(id)) {
+                   me.dialogHashHideDone[id] = {"width": $("#" + id).dialog( "option", "width"), "height": $("#" + id).dialog( "option", "height"), "position": $("#" + id).dialog( "option", "position")};
+
+                   var dialogWidth = 160;
+                   var dialogHeight = 80;
+
+                   $("#" + id).dialog( "option", "width", dialogWidth );
+                   $("#" + id).dialog( "option", "height", dialogHeight );
+
+                   var posToRight;
+
+                   if(me.dialogHashPosToRight.hasOwnProperty(id)) {
+                       posToRight = me.dialogHashPosToRight[id];
+                   }
+                   else {
+                       posToRight = Object.keys(me.dialogHashPosToRight).length * (dialogWidth + 10);
+                       me.dialogHashPosToRight[id] = posToRight;
+                   }
+
+                   var position ={ my: "right bottom", at: "right-" + posToRight + " bottom+60", of: "#" + me.divid, collision: "none" };
+                   $("#" + id).dialog( "option", "position", position );
+               }
+               else {
+                   var width = me.dialogHashHideDone[id].width;
+                   var height = me.dialogHashHideDone[id].height;
+                   var position = me.dialogHashHideDone[id].position;
+
+                   $("#" + id).dialog( "option", "width", width );
+                   $("#" + id).dialog( "option", "height", height );
+
+                   $("#" + id).dialog( "option", "position", position );
+
+                   delete me.dialogHashHideDone[id];
+               }
+           }
         });
     },
 
@@ -9873,7 +10346,8 @@ iCn3DUI.prototype = {
         me.clickSeqSaveSelection();
         me.clickAlignSeqSaveSelection();
         me.clickOutputSelection();
-        me.clickSaveDailog();
+        me.clickSaveDialog();
+        me.clickHideDialog();
         me.clickResidueOnInteraction();
         me.click2Ddgm();
         me.bindMouseup();

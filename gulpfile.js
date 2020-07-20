@@ -159,7 +159,7 @@ var common_js = [
     "src/trackball/TrackballControls.js",
     "src/trackball/OrthographicTrackballControls.js",
     "src/Projector.js",
-    "src/mmtf.js",
+    "src/mmtf_es5.js",
     "src/shader/NGL_Shaders.js",
     "src/shader/SphereImpostor.frag",
     "src/shader/SphereImpostor.vert",

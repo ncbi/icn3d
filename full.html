@@ -133,6 +133,8 @@
 
     var replay = getValue(params.replay);
 
+    var notebook = getValue(params.notebook);
+
     var rotate = params.rotate;
 
     var options = (params.options !== undefined) ? JSON.parse(params.options) : undefined;
@@ -178,6 +180,7 @@
               query_id: query_id,
               options: options,
               replay: replay,
+              notebook: notebook,
               rid: rid,
               command: command
           };
@@ -245,6 +248,7 @@
               closepopup: closepopup,
               align: align,
               replay: replay,
+              notebook: notebook,
               command: command
           };
 
@@ -272,6 +276,7 @@
               closepopup: closepopup,
               chainalign: chainalign,
               replay: replay,
+              notebook: notebook,
               command: command
           };
 

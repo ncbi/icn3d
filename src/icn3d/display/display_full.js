@@ -724,7 +724,7 @@ iCn3D.prototype.setHbondsContacts = function (options, type) { var me = this; //
 iCn3D.prototype.applyOtherOptions = function (options) { var me = this; //"use strict";
     if(options === undefined) options = this.opts;
 
-    if(this.lines !== undefined) {
+//    if(this.lines !== undefined) {
         //this.lines['hbond'] = [];
         //this.lines['saltbridge'] = [];
 
@@ -762,7 +762,7 @@ iCn3D.prototype.applyOtherOptions = function (options) { var me = this; //"use s
         }
 
         this.createLines(this.lines);
-    }
+//    }
 
     // maps
     if(this.prevMaps !== undefined) {

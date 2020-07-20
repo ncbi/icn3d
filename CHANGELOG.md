@@ -1,4 +1,6 @@
 ## Change Log
+[icn3d-2.18.0](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.18.0.zip) was release on July 20, 2020. Generated icn3dpy (the Jupyter Notebook widget of iCn3D) at https://pypi.org/project/icn3dpy; added "2D Interaction Map" in the menu "View > H-Bonds & Interactions"; added the shrink/expand icon in each orange dialog/window.
+
 [icn3d-2.17.7](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.17.7.zip) was release on July 7, 2020. Added iCn3D tutorial videos and slides.
 
 [icn3d-2.17.6](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.17.6.zip) was release on June 29, 2020. All "Share Link" URLs can show the original view using the archived version of iCn3D at "File > Open File > Share Link URL in Fixed Ver.".

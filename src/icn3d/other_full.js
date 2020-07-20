@@ -521,14 +521,30 @@ iCn3D.prototype.calculateIonicInteractions = function (startAtoms, targetAtoms, 
           continue;
       }
 
+      // For ligand, "N" with one single bond only may be positively charged. => to be improved
       var bAtomCondCation = ( (atom.resn === 'LYS' || atom.resn === 'HIS') && atom.elem === "N" && atom.name !== "N")
         || ( atom.resn === 'ARG' && (atom.name === "NH1" || atom.name === "NH2"))
-        || (atom.het && me.cationsTrimArray.indexOf(atom.elem) !== -1);
+        || (atom.het && me.cationsTrimArray.indexOf(atom.elem) !== -1)
+        || (atom.het && atom.elem === "N" && atom.bonds.length == 1);
+
+      // For ligand, "O" in carboxy group may be negatively charged. => to be improved
+      var bLigNeg = undefined;
+      if(atom.het && atom.elem === "O" && atom.bonds.length == 1) {
+           var cAtom = me.icn3d.atoms[atom.bonds[0]];
+           for(var j = 0; j < cAtom.bonds.length; j < jl) {
+               var serial = cAtom.bonds[j];
+               if(me.atoms[serial].elem == "O" && serial != atom.serial) {
+                   bLigNeg = true;
+                   break;
+               }
+           }
+      }
 
       var bAtomCondAnion = ( atom.resn === 'GLU' && (atom.name === "OE1" || atom.name === "OE2") )
         || ( atom.resn === 'ASP' && (atom.name === "OD1" || atom.name === "OD2") )
         || ( me.nucleotidesArray.indexOf(atom.resn) !== -1 && (atom.name === "OP1" || atom.name === "OP2" || atom.name === "O1P" || atom.name === "O2P"))
-        || (atom.het && me.anionsTrimArray.indexOf(atom.elem) !== -1);
+        || (atom.het && me.anionsTrimArray.indexOf(atom.elem) !== -1)
+        || bLigNeg;
 
       bAtomCondCation = (this.bOpm) ? bAtomCondCation && atom.resn !== 'DUM' : bAtomCondCation;
       bAtomCondAnion = (this.bOpm) ? bAtomCondAnion && atom.resn !== 'DUM' : bAtomCondAnion;
@@ -743,13 +759,15 @@ iCn3D.prototype.getPi = function (atom, bStacking) { var me = this; //"use stric
 iCn3D.prototype.getCation = function (atom) { var me = this; //"use strict";
       var name2atom = {};
 
-      // use of of the two atoms
+      // use of the two atoms
       if( atom.resn === 'ARG' && atom.name === "NH2") return;
 
       // remove HIS:  || atom.resn === 'HIS'
+      // For ligands, "N" with one single bond only may be positively charged. => to be improved
       var bAtomCond = ( atom.resn === 'LYS' && atom.elem === "N" && atom.name !== "N")
         || ( atom.resn === 'ARG' && (atom.name === "NH1" || atom.name === "NH2"))
-        || (atom.het && me.cationsTrimArray.indexOf(atom.elem) !== -1);
+        || (atom.het && me.cationsTrimArray.indexOf(atom.elem) !== -1)
+        || (atom.het && atom.elem === "N" && atom.bonds.length == 1);
       bAtomCond = (this.bOpm) ? bAtomCond && atom.resn !== 'DUM' : bAtomCond;
       if(bAtomCond) {
           var chain_resi_atom = atom.structure + "_" + atom.chain + "_" + atom.resi + "_" + atom.name;

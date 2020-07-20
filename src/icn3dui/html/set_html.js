@@ -1369,7 +1369,8 @@ iCn3DUI.prototype.setMenu5_base = function() { var me = this; //"use strict";
     html += "<li><span>Show Windows</span>";
     html += "<ul>";
     html += me.getLink('mn1_window_table', 'Highlight Interactions in Table');
-    html += me.getLink('mn1_window_linegraph', '2D Interaction Graph');
+    html += me.getLink('mn1_window_linegraph', '2D Interaction Network');
+    html += me.getLink('mn1_window_scatterplot', '2D Interaction Map');
     html += me.getLink('mn1_window_graph', '2D Graph (Force-Directed)');
     html += "</ul>";
     html += "</li>";
@@ -1497,7 +1498,8 @@ iCn3DUI.prototype.setLogWindow = function() { var me = this; //"use strict";
 iCn3DUI.prototype.setAdvanced = function(index) { var me = this; //"use strict";
     var indexStr = (index === undefined) ? '' : index;
 
-    var html = me.divStr + "dl_advanced" + indexStr + "'>";
+    var dialogClass = (me.cfg.notebook) ? 'icn3d-hidden' : '';
+    var html = me.divStr + "dl_advanced" + indexStr + "' class='" + dialogClass + "'>";
 
     html += "<table width='500'><tr><td valign='top'><table cellspacing='0'>";
     html += "<tr><td><b>Select:</b></td><td>" + me.inputTextStr + "id='" + me.pre + "command" + indexStr + "' placeholder='$[structures].[chains]:[residues]@[atoms]' size='60'></td></tr>";
@@ -1545,28 +1547,22 @@ iCn3DUI.prototype.setDialogs = function() { var me = this; //"use strict";
 
     html += "<!-- dialog will not be part of the form -->";
 
-    html += me.divStr + "alldialogs' class='icn3d-hidden icn3d-dialog'>";
+    var divClass = (me.cfg.notebook) ? '' : 'icn3d-hidden';
+    var dialogClass = (me.cfg.notebook) ? 'icn3d-hidden' : '';
+    html += me.divStr + "alldialogs' class='" + divClass + " icn3d-dialog'>";
 
-    // filter for large structure
-    //html += me.divStr + "dl_filter' style='overflow:auto; position:relative;'>";
-    //html += "<div style='text-align:center; margin-bottom:10px;'>" + me.buttonStr + "filter'><span style='white-space:nowrap'><b>Show Structure</b></span></button>";
-    //html += me.buttonStr + "highlight_3d_dgm' style='margin-left:10px;'><span style='white-space:nowrap'><b>Highlight</b></span></button></div>";
-    //html += "<div id='" + me.pre + "dl_filter_table' class='icn3d-box'>";
-    //html += "</div>";
-    //html += "</div>";
-
-    html += me.divStr + "dl_2ddgm' class='icn3d-dl_2ddgm'>";
+    html += me.divStr + "dl_2ddgm' class='" + dialogClass + " icn3d-dl_2ddgm'>";
     html += "</div>";
 
     if(me.cfg.align !== undefined || me.cfg.chainalign !== undefined || me.bRealign) {
-      html += me.divStr + "dl_alignment' style='background-color:white;'>";
+      html += me.divStr + "dl_alignment' class='" + dialogClass + "' style='background-color:white;'>";
       html += me.divStr + "alignseqguide_wrapper'><br>" + me.setAlignSequenceGuide() + "</div>";
       html += me.divStr + "dl_sequence2' class='icn3d-dl_sequence'>";
       html += "</div>";
       html += "</div>";
     }
 
-    html += me.divStr + "dl_definedsets'>";
+    html += me.divStr + "dl_definedsets' class='" + dialogClass + "'>";
     html += me.divStr + "dl_setsmenu'>";
     html += "<b>Defined Sets:</b> <br/>";
     html += "<select id='" + me.pre + "atomsCustom' multiple size='6' style='min-width:130px;'>";
@@ -1589,35 +1585,35 @@ iCn3DUI.prototype.setDialogs = function() { var me = this; //"use strict";
 
     html += me.setAdvanced(2);
 
-    html += me.divStr + "dl_mmtfid'>";
+    html += me.divStr + "dl_mmtfid' class='" + dialogClass + "'>";
     html += "MMTF ID: " + me.inputTextStr + "id='" + me.pre + "mmtfid' value='1TUP' size=8> ";
     html += me.buttonStr + "reload_mmtf'>Load</button>";
     html += "</div>";
 
-    html += me.divStr + "dl_pdbid'>";
+    html += me.divStr + "dl_pdbid' class='" + dialogClass + "'>";
     html += "PDB ID: " + me.inputTextStr + "id='" + me.pre + "pdbid' value='1TUP' size=8> ";
     html += me.buttonStr + "reload_pdb'>Load</button>";
     html += "</div>";
 
-    html += me.divStr + "dl_opmid'>";
+    html += me.divStr + "dl_opmid' class='" + dialogClass + "'>";
     html += "<a href='https://opm.phar.umich.edu' target='_blank'>Orientations of Proteins in Membranes(OPM)</a> PDB ID: " + me.inputTextStr + "id='" + me.pre + "opmid' value='6JXR' size=8> ";
     html += me.buttonStr + "reload_opm'>Load</button>";
     html += "</div>";
 
-    html += me.divStr + "dl_pdbfile'>";
+    html += me.divStr + "dl_pdbfile' class='" + dialogClass + "'>";
     html += "Note: Several PDB files could be concatenated into a single PDB file. Use the line \"ENDMDL\" to separate PDB files.<br><br>";
     html += "PDB File: " + me.inputFileStr + " id='" + me.pre + "pdbfile' size=8> ";
     html += me.buttonStr + "reload_pdbfile'>Load</button>";
     html += "</div>";
 
-    html += me.divStr + "dl_rescolorfile'>";
+    html += me.divStr + "dl_rescolorfile' class='" + dialogClass + "'>";
     html += '<div style="width:450px;">The custom JSON file on residue colors has the following format for proteins ("ALA" and "ARG") and nucleotides ("G" and "A"):<br>';
     html += '{"ALA":"#C8C8C8", "ARG":"#145AFF", ..., "G":"#008000", "A":"#6080FF", ...}</div><br>';
     html += "Residue Color File: " + me.inputFileStr + "id='" + me.pre + "rescolorfile' size=8> ";
     html += me.buttonStr + "reload_rescolorfile'>Load</button>";
     html += "</div>";
 
-    html += me.divStr + "dl_customcolor'>";
+    html += me.divStr + "dl_customcolor' class='" + dialogClass + "'>";
     html += " <input type='hidden' id='" + me.pre + "customcolor_chainid' value=''>";
     html += '<div style="width:450px;">The custom file for the structure has two columns separated by space or tab: ';
     html += 'residue number, and score in the range of 0-100. If you click "Custom Color" button, ';
@@ -1629,30 +1625,30 @@ iCn3DUI.prototype.setDialogs = function() { var me = this; //"use strict";
 
     html += "</div>";
 
-    html += me.divStr + "dl_align'>";
+    html += me.divStr + "dl_align' class='" + dialogClass + "'>";
     html += "Enter the PDB IDs or MMDB IDs of two structures that have been found to be similar by <A HREF=' " + me.baseUrl + "vastplus/vastplus.cgi'>VAST+</A> : <br/><br/>ID1: " + me.inputTextStr + "id='" + me.pre + "alignid1' value='1HHO' size=8>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ID2: " + me.inputTextStr + "id='" + me.pre + "alignid2' value='4N7N' size=8><br/><br/>";
     html += me.buttonStr + "reload_align_ori'>All Matching Molecules Superposed</button>&nbsp;&nbsp;&nbsp;" + me.buttonStr + "reload_align_refined'>Invariant Substructure Superposed</button>";
     html += "</div>";
 
-    html += me.divStr + "dl_chainalign'>";
+    html += me.divStr + "dl_chainalign' class='" + dialogClass + "'>";
     html += "Enter the PDB chain IDs in the form of pdbid_chain (e.g., 1HHO_A, case sensitive): <br/><br/>ID1: " + me.inputTextStr + "id='" + me.pre + "chainalignid1' value='1HHO_A' size=8>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ID2: " + me.inputTextStr + "id='" + me.pre + "chainalignid2' value='4N7N_A' size=8><br/><br/>";
     html += me.buttonStr + "reload_chainalign'>Align</button><br/><br/>";
     html += "<div style='width:450px'>(Note: To align chains in custom PDB files, you could concatenate PDB files in a single PDB file with the separation line \"ENDMDL\". Then load it in \"Open File > PDB File\" in the \"File\" menu and click \"View Sequences & Annotations\" in the \"Window\" menu. Finally select two chains in the sequence window and click \"Realign Selection\" in the \"File\" menu.)</div>";
     html += "</div>";
 
-    html += me.divStr + "dl_mol2file'>";
+    html += me.divStr + "dl_mol2file' class='" + dialogClass + "'>";
     html += "Mol2 File: " + me.inputFileStr + "id='" + me.pre + "mol2file' size=8> ";
     html += me.buttonStr + "reload_mol2file'>Load</button>";
     html += "</div>";
-    html += me.divStr + "dl_sdffile'>";
+    html += me.divStr + "dl_sdffile' class='" + dialogClass + "'>";
     html += "SDF File: " + me.inputFileStr + "id='" + me.pre + "sdffile' size=8> ";
     html += me.buttonStr + "reload_sdffile'>Load</button>";
     html += "</div>";
-    html += me.divStr + "dl_xyzfile'>";
+    html += me.divStr + "dl_xyzfile' class='" + dialogClass + "'>";
     html += "XYZ File: " + me.inputFileStr + "id='" + me.pre + "xyzfile' size=8> ";
     html += me.buttonStr + "reload_xyzfile'>Load</button>";
     html += "</div>";
-    html += me.divStr + "dl_urlfile'>";
+    html += me.divStr + "dl_urlfile' class='" + dialogClass + "'>";
     html += "File type: ";
     html += "<select id='" + me.pre + "filetype'>";
     html += optionStr + "'pdb' selected>pdb</option>";
@@ -1664,22 +1660,22 @@ iCn3DUI.prototype.setDialogs = function() { var me = this; //"use strict";
     html += me.buttonStr + "reload_urlfile'>Load</button>";
     html += "</div>";
 
-    html += me.divStr + "dl_mmciffile'>";
+    html += me.divStr + "dl_mmciffile' class='" + dialogClass + "'>";
     html += "mmCIF File: " + me.inputFileStr + "id='" + me.pre + "mmciffile' value='1TUP' size=8> ";
     html += me.buttonStr + "reload_mmciffile'>Load</button>";
     html += "</div>";
 
-    html += me.divStr + "dl_mmcifid'>";
+    html += me.divStr + "dl_mmcifid' class='" + dialogClass + "'>";
     html += "mmCIF ID: " + me.inputTextStr + "id='" + me.pre + "mmcifid' value='1TUP' size=8> ";
     html += me.buttonStr + "reload_mmcif'>Load</button>";
     html += "</div>";
 
-    html += me.divStr + "dl_mmdbid'>";
+    html += me.divStr + "dl_mmdbid' class='" + dialogClass + "'>";
     html += "MMDB or PDB ID: " + me.inputTextStr + "id='" + me.pre + "mmdbid' value='1TUP' size=8> ";
     html += me.buttonStr + "reload_mmdb'>Load</button>";
     html += "</div>";
 
-    html += me.divStr + "dl_blast_rep_id' style='max-width:500px;'>";
+    html += me.divStr + "dl_blast_rep_id' style='max-width:500px;' class='" + dialogClass + "'>";
     html += "Enter a Sequence ID (or FASTA sequence) and the aligned Structure ID, which can be found using the <a href='https://blast.ncbi.nlm.nih.gov/Blast.cgi?PROGRAM=blastp&PAGE_TYPE=BlastSearch&DATABASE=pdb' target='_blank'>BLAST</a> search against the pdb database with the Sequence ID or FASTA sequence as input.<br><br> ";
     html += "<b>Sequence ID</b> (NCBI protein accession of a sequence): " + me.inputTextStr + "id='" + me.pre + "query_id' value='NP_001108451.1' size=8><br> ";
     html += "or FASTA sequence: <br><textarea id='" + me.pre + "query_fasta' rows='5' style='width: 100%; height: " + (me.LOG_HEIGHT) + "px; padding: 0px; border: 0px;'></textarea><br><br>";
@@ -1687,33 +1683,33 @@ iCn3DUI.prototype.setDialogs = function() { var me = this; //"use strict";
     html += me.buttonStr + "reload_blast_rep_id'>Load</button>";
     html += "</div>";
 
-    html += me.divStr + "dl_yournote'>";
+    html += me.divStr + "dl_yournote' class='" + dialogClass + "'>";
     html += "Your note will be saved in the HTML file when you click \"File > Save Files > iCn3D PNG Image\".<br><br>";
     html += "<textarea id='" + me.pre + "yournote' rows='5' style='width: 100%; height: " + (me.LOG_HEIGHT) + "px; padding: 0px; border: 0px;' placeholder='Enter your note here'></textarea><br>";
     html += me.buttonStr + "applyyournote'>Save</button>";
     html += "</div>";
 
-    html += me.divStr + "dl_gi'>";
+    html += me.divStr + "dl_gi' class='" + dialogClass + "'>";
     html += "Protein gi: " + me.inputTextStr + "id='" + me.pre + "gi' value='1310960' size=8> ";
     html += me.buttonStr + "reload_gi'>Load</button>";
     html += "</div>";
 
-    html += me.divStr + "dl_cid'>";
+    html += me.divStr + "dl_cid' class='" + dialogClass + "'>";
     html += "PubChem CID: " + me.inputTextStr + "id='" + me.pre + "cid' value='2244' size=8> ";
     html += me.buttonStr + "reload_cid'>Load</button>";
     html += "</div>";
 
-    html += me.divStr + "dl_pngimage'>";
+    html += me.divStr + "dl_pngimage' class='" + dialogClass + "'>";
     html += "iCn3D PNG image: " + me.inputFileStr + "id='" + me.pre + "pngimage'><br/>";
     html += me.buttonStr + "reload_pngimage' style='margin-top: 6px;'>Load</button>";
     html += "</div>";
 
-    html += me.divStr + "dl_state'>";
+    html += me.divStr + "dl_state' class='" + dialogClass + "'>";
     html += "State file: " + me.inputFileStr + "id='" + me.pre + "state'><br/>";
     html += me.buttonStr + "reload_state' style='margin-top: 6px;'>Load</button>";
     html += "</div>";
 
-    html += me.divStr + "dl_fixedversion' style='max-width:500px'>";
+    html += me.divStr + "dl_fixedversion' style='max-width:500px' class='" + dialogClass + "'>";
     html += "To show the original view with the archived version of iCn3D, you can choose one of the options:<br><br>";
     html += "1. If your Share Link URL was generated after June 30, 2020, you can paste your URL below and click \"Show Originial View\".<br><br>";
     html += "Share Link URL: " + me.inputTextStr + "id='" + me.pre + "sharelinkurl' size=60><br>";
@@ -1722,12 +1718,12 @@ iCn3DUI.prototype.setDialogs = function() { var me = this; //"use strict";
     html += "</div>";
 
 
-    html += me.divStr + "dl_selection'>";
+    html += me.divStr + "dl_selection' class='" + dialogClass + "'>";
     html += "Selection file: " + me.inputFileStr + "id='" + me.pre + "selectionfile'><br/>";
     html += me.buttonStr + "reload_selectionfile' style='margin-top: 6px;'>Load</button>";
     html += "</div>";
 
-    html += me.divStr + "dl_dsn6'>";
+    html += me.divStr + "dl_dsn6' class='" + dialogClass + "'>";
     html += "<b>Note</b>: Always load a PDB file before loading DSN6 files. <br/><br/><br/>";
 
     html += "<span style='white-space:nowrap;font-weight:bold;'>2fofc contour at: <select id='" + me.pre + "dsn6sigma2fofc'>";
@@ -1768,7 +1764,7 @@ iCn3DUI.prototype.setDialogs = function() { var me = this; //"use strict";
 
     html += "</div>";
 
-    html += me.divStr + "dl_dsn6url'>";
+    html += me.divStr + "dl_dsn6url' class='" + dialogClass + "'>";
     html += "<b>Note</b>: Always load a PDB file before loading DSN6 files. <br/><br/><br/>";
 
     html += "<span style='white-space:nowrap;font-weight:bold;'>2fofc contour at: <select id='" + me.pre + "dsn6sigmaurl2fofc'>";
@@ -1809,20 +1805,20 @@ iCn3DUI.prototype.setDialogs = function() { var me = this; //"use strict";
 
     html += "</div>";
 
-    html += me.divStr + "dl_clr'>";
+    html += me.divStr + "dl_clr' class='" + dialogClass + "'>";
     html += "Click in the input box to use the color picker:<br><br> ";
     html += "Custom Color: " + me.inputTextStr + "id='" + me.pre + "colorcustom' value='FF0000' size=8> ";
     html += me.buttonStr + "applycustomcolor'>Apply</button>";
     html += "</div>";
 
-    html += me.divStr + "dl_symmetry'><br>";
+    html += me.divStr + "dl_symmetry' class='" + dialogClass + "'><br>";
     html += me.divNowrapStr + "Symmetry: <select id='" + me.pre + "selectSymmetry'>";
     html += "</select>&nbsp;&nbsp;&nbsp;";
     html += me.buttonStr + "applysymmetry'>Apply</button>&nbsp;&nbsp;&nbsp;";
     html += me.buttonStr + "clearsymmetry'>Clear</button></div>";
     html += "</div>";
 
-    html += me.divStr + "dl_hbonds'>";
+    html += me.divStr + "dl_hbonds' class='" + dialogClass + "'>";
     html += "1. Choose interaction types and their thresholds:<br>";
     html += "<div class='icn3d-box'><table border=0 width=450><tr>";
     html += "<td style='white-space:nowrap'>" + me.inputCheckStr + "id='" + me.pre + "analysis_hbond' checked>Hydrogen Bonds <span style='background-color:#" + me.hbondColor + "'>&nbsp;&nbsp;&nbsp;</span></td>";
@@ -1932,7 +1928,9 @@ iCn3DUI.prototype.setDialogs = function() { var me = this; //"use strict";
 
     html += "<div style='text-indent:1.1em'>" + me.buttonStr + "hbondWindow'>Highlight Interactions in Table</button><span style='margin-left:30px; font-wieght:bold'>Sort Interactions on</span>: " + me.buttonStr + "sortSet1'> Set 1</button>" + me.buttonStr + "sortSet2' style='margin-left:20px'>Set 2</button></div><br>";
 
-    html += "<div style='text-indent:1.1em'>" + me.buttonStr + "hbondLineGraph'>2D Interaction Graph</button> to show interactions in two lines of residue nodes</div><br>";
+    html += "<div style='text-indent:1.1em'>" + me.buttonStr + "hbondLineGraph'>2D Interaction Network</button> to show interactions between two lines of residue nodes</div><br>";
+
+    html += "<div style='text-indent:1.1em'>" + me.buttonStr + "hbondScatterplot'>2D Interaction Map</button> to show interactions as map</div><br>";
 
     html += "<div style='text-indent:1.1em'>" + me.buttonStr + "hbondGraph'>2D Graph (Force-Directed)</button> to show interactions with strength parameters in 0-200:</div>";
     html += '<div style="text-indent:1.1em"><table><tr><td>Helix or Sheet: </td><td><input style="margin-left:-12px" type="text" id="' + me.pre + 'dist_ss" size="4" value="100"></td>';
@@ -1952,7 +1950,7 @@ iCn3DUI.prototype.setDialogs = function() { var me = this; //"use strict";
     html += "<div>5. " + me.buttonStr + "hbondReset'>Reset</button> and select new sets</div>";
     html += "</div>";
 
-    html += me.divStr + "dl_realign'>";
+    html += me.divStr + "dl_realign' class='" + dialogClass + "'>";
 
     html += me.divNowrapStr + "1. Select sets from two structures below <br>or use your current selection:</div><br>";
     html += "<div style='text-indent:1.1em'><select id='" + me.pre + "atomsCustomRealign' multiple size='5' style='min-width:130px;'>";
@@ -1961,13 +1959,13 @@ iCn3DUI.prototype.setDialogs = function() { var me = this; //"use strict";
     html += "<div>2. " + me.buttonStr + "applyRealign'>Realign</button></div><br>";
     html += "</div>";
 
-    html += me.divStr + "dl_allinteraction' style='background-color:white'>";
+    html += me.divStr + "dl_allinteraction' style='background-color:white' class='" + dialogClass + "'>";
     html += "</div>";
 
-    html += me.divStr + "dl_interactionsorted' style='background-color:white'>";
+    html += me.divStr + "dl_interactionsorted' style='background-color:white' class='" + dialogClass + "'>";
     html += "</div>";
 
-    html += me.divStr + "dl_linegraph' style='background-color:white'>";
+    html += me.divStr + "dl_linegraph' style='background-color:white' class='" + dialogClass + "'>";
 
     html += me.divNowrapStr + "Hold Ctrl key to select multiple nodes/lines.&nbsp;&nbsp;&nbsp;";
 
@@ -1985,7 +1983,8 @@ iCn3DUI.prototype.setDialogs = function() { var me = this; //"use strict";
 
     me.linegraphid = me.pre + 'linegraph';
     html += me.divNowrapStr + '<button class="icn3d-commandTitle" style="-webkit-appearance:button; height:24px;background-color:#DDDDDD;" id="' + me.linegraphid + '_svg">SVG</button>&nbsp;&nbsp;';
-    html += '<button class="icn3d-commandTitle" style="-webkit-appearance:button; height:24px;background-color:#DDDDDD;" id="' + me.linegraphid + '_png">PNG</button>&nbsp;&nbsp;&nbsp;&nbsp;';
+    html += '<button class="icn3d-commandTitle" style="-webkit-appearance:button; height:24px;background-color:#DDDDDD;" id="' + me.linegraphid + '_png">PNG</button>&nbsp;&nbsp;';
+    html += '<button class="icn3d-commandTitle" style="-webkit-appearance:button; height:24px;background-color:#DDDDDD;" id="' + me.linegraphid + '_json">JSON</button>&nbsp;&nbsp;&nbsp;&nbsp;';
     html += "<b>Scale</b>: <select id='" + me.linegraphid + "_scale'>";
     html += optionStr + "'0.1'>0.1</option>";
     html += optionStr + "'0.2'>0.2</option>";
@@ -2003,7 +2002,44 @@ iCn3DUI.prototype.setDialogs = function() { var me = this; //"use strict";
 
     html += "</div>";
 
-    html += me.divStr + "dl_elecmap2fofc'>";
+    html += me.divStr + "dl_scatterplot' style='background-color:white' class='" + dialogClass + "'>";
+
+    html += me.divNowrapStr + "Hold Ctrl key to select multiple nodes.&nbsp;&nbsp;&nbsp;";
+
+    html += '<div style="width:20px; margin-top:6px; display:inline-block;"><span id="'
+      + me.pre + 'dl_scatterplotcolor_expand" class="ui-icon ui-icon-plus icn3d-expand icn3d-link" style="width:15px;" title="Expand"></span><span id="'
+      + me.pre + 'dl_scatterplotcolor_shrink" class="ui-icon ui-icon-minus icn3d-shrink icn3d-link" style="display:none; width:15px;" title="Shrink"></span></div></div>';
+    html += me.divStr + "dl_scatterplotcolor' style='display:none;'>";
+    html += me.divNowrapStr + '<span style="margin-left:33px; color:#00FF00; font-weight:bold">Green</span>: H-Bonds; ';
+    html += '<span style="color:#00FFFF; font-weight:bold">Cyan</span>: Salt Bridge/Ionic; ';
+    html += '<span style="font-weight:bold">Grey</span>: contacts</div>';
+    html += me.divNowrapStr + '<span style="margin-left:33px; color:#FF00FF; font-weight:bold">Magenta</span>: Halogen Bonds; ';
+    html += '<span style="color:#FF0000; font-weight:bold">Red</span>: &pi;-Cation; ';
+    html += '<span style="color:#0000FF; font-weight:bold">Blue</span>: &pi;-Stacking</div>';
+    html += "</div>";
+
+    me.scatterplotid = me.pre + 'scatterplot';
+    html += me.divNowrapStr + '<button class="icn3d-commandTitle" style="-webkit-appearance:button; height:24px;background-color:#DDDDDD;" id="' + me.scatterplotid + '_svg">SVG</button>&nbsp;&nbsp;';
+    html += '<button class="icn3d-commandTitle" style="-webkit-appearance:button; height:24px;background-color:#DDDDDD;" id="' + me.scatterplotid + '_png">PNG</button>&nbsp;&nbsp;';
+    html += '<button class="icn3d-commandTitle" style="-webkit-appearance:button; height:24px;background-color:#DDDDDD;" id="' + me.scatterplotid + '_json">JSON</button>&nbsp;&nbsp;&nbsp;&nbsp;';
+    html += "<b>Scale</b>: <select id='" + me.scatterplotid + "_scale'>";
+    html += optionStr + "'0.1'>0.1</option>";
+    html += optionStr + "'0.2'>0.2</option>";
+    html += optionStr + "'0.4'>0.4</option>";
+    html += optionStr + "'0.6'>0.6</option>";
+    html += optionStr + "'0.8'>0.8</option>";
+    html += optionStr + "'1' selected>1</option>";
+    html += optionStr + "'2'>2</option>";
+    html += optionStr + "'4'>4</option>";
+    html += optionStr + "'6'>6</option>";
+    html += optionStr + "'8'>8</option>";
+    html += optionStr + "'10'>10</option>";
+    html += "</select></div><br>";
+    html += '<div id="' + me.pre + 'scatterplotDiv"></div>';
+
+    html += "</div>";
+
+    html += me.divStr + "dl_elecmap2fofc' class='" + dialogClass + "'>";
     html += "<span style='white-space:nowrap;font-weight:bold;'>Contour at: <select id='" + me.pre + "sigma2fofc'>";
     html += optionStr + "'0'>0</option>";
     html += optionStr + "'0.5'>0.5</option>";
@@ -2021,7 +2057,7 @@ iCn3DUI.prototype.setDialogs = function() { var me = this; //"use strict";
     html += "</select> &sigma;</span> <span style='white-space:nowrap; margin-left:30px;'>" + me.buttonStr + "applymap2fofc'>Display</button></span> <span style='white-space:nowrap; margin-left:30px;'>" + me.buttonStr + "elecmapNo2'>Remove Map</button></span>";
     html += "</div>";
 
-    html += me.divStr + "dl_elecmapfofc'>";
+    html += me.divStr + "dl_elecmapfofc' class='" + dialogClass + "'>";
     html += "<span style='white-space:nowrap;font-weight:bold;'>Contour at: <select id='" + me.pre + "sigmafofc'>";
     html += optionStr + "'0'>0</option>";
     html += optionStr + "'0.5'>0.5</option>";
@@ -2039,7 +2075,7 @@ iCn3DUI.prototype.setDialogs = function() { var me = this; //"use strict";
     html += "</select> &sigma;</span> <span style='white-space:nowrap; margin-left:30px;'>" + me.buttonStr + "applymapfofc'>Display</button></span> <span style='white-space:nowrap; margin-left:30px;'>" + me.buttonStr + "elecmapNo3'>Remove Map</button></span>";
     html += "</div>";
 
-    html += me.divStr + "dl_emmap'>";
+    html += me.divStr + "dl_emmap' class='" + dialogClass + "'>";
     html += "<span style='white-space:nowrap;font-weight:bold;'>Contour at: <select id='" + me.pre + "empercentage'>";
     html += optionStr + "'0'>0</option>";
     html += optionStr + "'10'>10</option>";
@@ -2055,7 +2091,7 @@ iCn3DUI.prototype.setDialogs = function() { var me = this; //"use strict";
     html += "</select> % of maximum EM values</span><br><span style='white-space:nowrap; margin-left:30px;'>" + me.buttonStr + "applyemmap'>Display</button></span> <span style='white-space:nowrap; margin-left:30px;'>" + me.buttonStr + "emmapNo2'>Remove EM Map</button></span>";
     html += "</div>";
 
-    html += me.divStr + "dl_aroundsphere'>";
+    html += me.divStr + "dl_aroundsphere' class='" + dialogClass + "'>";
     html += me.divNowrapStr + "1. Select the first set:</div>";
     html += "<div style='text-indent:1.1em'><select id='" + me.pre + "atomsCustomSphere2' multiple size='3' style='min-width:130px;'>";
     html += "</select></div><br>";
@@ -2069,30 +2105,21 @@ iCn3DUI.prototype.setDialogs = function() { var me = this; //"use strict";
     html += "<div style='text-indent:1.1em'>" + me.buttonStr + "sphereExport'>Save</button> interacting/contacting residue pairs in a file</div>";
     html += "</div>";
 
-    html += me.divStr + "dl_adjustmem'>";
+    html += me.divStr + "dl_adjustmem' class='" + dialogClass + "'>";
     html += "<b>Note</b>: The membranes are parallel to the X-Y plane. The center of the membranes is at Z = 0. <br/><br/>";
     html += me.divNowrapStr + "1. Extracellular membrane Z-axis position: " + me.inputTextStr + "id='" + me.pre + "extra_mem_z' value='' size='3'> &#197;</div><br/>";
     html += me.divNowrapStr + "2. intracellular membrane Z-axis position: " + me.inputTextStr + "id='" + me.pre + "intra_mem_z' value='' size='3'> &#197;</div><br/>";
     html += me.divNowrapStr + "3. " + me.buttonStr + "apply_adjustmem'>Display</button> the adjusted membranes</div><br>";
     html += "</div>";
 
-/*
-    html += me.divStr + "dl_addplane'>";
-    html += "<b>Note</b>: The membranes are parallel to the X-Y plane. The center of the membranes is at Z = 0. <br/><br/>";
-    html += me.divNowrapStr + "1. Z-axis position of the added plane: " + me.inputTextStr + "id='" + me.pre + "addplane_z' value='0' size='3'> &#197;</div><br/>";
-    html += me.divNowrapStr + "2. " + me.buttonStr + "apply_addplane'>Display</button> the added plane</div><br>";
-    html += "<div style='white-space:nowrap; text-indent:1.1em'>" + me.buttonStr + "apply_removeplane'>Remove</button> the added plane</div><br>";
-    html += "</div>";
-*/
-
-    html += me.divStr + "dl_selectplane'>";
+    html += me.divStr + "dl_selectplane' class='" + dialogClass + "'>";
     html += "<b>Note</b>: The membranes are parallel to the X-Y plane. The center of the membranes is at Z = 0. <br/><br/>";
     html += me.divNowrapStr + "1. Z-axis position of the first X-Y plane: " + me.inputTextStr + "id='" + me.pre + "selectplane_z1' value='15' size='3'> &#197;</div><br/>";
     html += me.divNowrapStr + "2. Z-axis position of the second X-Y plane: " + me.inputTextStr + "id='" + me.pre + "selectplane_z2' value='-15' size='3'> &#197;</div><br/>";
     html += me.divNowrapStr + "3. " + me.buttonStr + "apply_selectplane'>Save</button> the region between the planes to Defined Sets</div><br>";
     html += "</div>";
 
-    html += me.divStr + "dl_addlabel'>";
+    html += me.divStr + "dl_addlabel' class='" + dialogClass + "'>";
     html += "1. Text: " + me.inputTextStr + "id='" + me.pre + "labeltext' value='Text' size=4><br/>";
     html += "2. Size: " + me.inputTextStr + "id='" + me.pre + "labelsize' value='18' size=4 maxlength=2><br/>";
     html += "3. Color: " + me.inputTextStr + "id='" + me.pre + "labelcolor' value='ffff00' size=4><br/>";
@@ -2106,7 +2133,7 @@ iCn3DUI.prototype.setDialogs = function() { var me = this; //"use strict";
     html += me.spanNowrapStr + "6. " + me.buttonStr + "applypick_labels'>Display</button></span>";
     html += "</div>";
 
-    html += me.divStr + "dl_addlabelselection'>";
+    html += me.divStr + "dl_addlabelselection' class='" + dialogClass + "'>";
     html += "1. Text: " + me.inputTextStr + "id='" + me.pre + "labeltext2' value='Text' size=4><br/>";
     html += "2. Size: " + me.inputTextStr + "id='" + me.pre + "labelsize2' value='18' size=4 maxlength=2><br/>";
     html += "3. Color: " + me.inputTextStr + "id='" + me.pre + "labelcolor2' value='ffff00' size=4><br/>";
@@ -2114,7 +2141,7 @@ iCn3DUI.prototype.setDialogs = function() { var me = this; //"use strict";
     html += me.spanNowrapStr + "5. " + me.buttonStr + "applyselection_labels'>Display</button></span>";
     html += "</div>";
 
-    html += me.divStr + "dl_distance'>";
+    html += me.divStr + "dl_distance' class='" + dialogClass + "'>";
     if(me.isMobile()) {
         html += me.spanNowrapStr + "1. Touch TWO atoms</span><br/>";
     }
@@ -2125,7 +2152,7 @@ iCn3DUI.prototype.setDialogs = function() { var me = this; //"use strict";
     html += me.spanNowrapStr + "3. " + me.buttonStr + "applypick_measuredistance'>Display</button></span>";
     html += "</div>";
 
-    html += me.divStr + "dl_stabilizer'>";
+    html += me.divStr + "dl_stabilizer' class='" + dialogClass + "'>";
     if(me.isMobile()) {
         html += me.spanNowrapStr + "1. Touch TWO atoms</span><br/>";
     }
@@ -2136,7 +2163,7 @@ iCn3DUI.prototype.setDialogs = function() { var me = this; //"use strict";
     html += me.spanNowrapStr + "3. " + me.buttonStr + "applypick_stabilizer'>Add</button></span>";
     html += "</div>";
 
-    html += me.divStr + "dl_stabilizer_rm'>";
+    html += me.divStr + "dl_stabilizer_rm' class='" + dialogClass + "'>";
     if(me.isMobile()) {
         html += me.spanNowrapStr + "1. Touch TWO atoms</span><br/>";
     }
@@ -2146,15 +2173,15 @@ iCn3DUI.prototype.setDialogs = function() { var me = this; //"use strict";
     html += me.spanNowrapStr + "2. " + me.buttonStr + "applypick_stabilizer_rm'>Remove</button></span>";
     html += "</div>";
 
-    html += me.divStr + "dl_thickness'>";
+    html += me.divStr + "dl_thickness' class='" + dialogClass + "'>";
     html += me.setThicknessHtml('3dprint');
     html += "</div>";
 
-    html += me.divStr + "dl_thickness2'>";
+    html += me.divStr + "dl_thickness2' class='" + dialogClass + "'>";
     html += me.setThicknessHtml('style');
     html += "</div>";
 
-    html += me.divStr + "dl_addtrack'>";
+    html += me.divStr + "dl_addtrack' class='" + dialogClass + "'>";
     html += " <input type='hidden' id='" + me.pre + "track_chainid' value=''>";
 
     html += me.divStr + "dl_addtrack_tabs' style='border:0px;'>";
@@ -2209,7 +2236,7 @@ iCn3DUI.prototype.setDialogs = function() { var me = this; //"use strict";
 
     html += "</div>";
 
-    html += me.divStr + "dl_saveselection'>";
+    html += me.divStr + "dl_saveselection' class='" + dialogClass + "'>";
     var index = (me.icn3d) ? Object.keys(me.icn3d.defNames2Atoms).length : 1;
     var suffix = '';
     html += "Name: " + me.inputTextStr + "id='" + me.pre + "seq_command_name" + suffix + "' value='seq_" + index + "' size='5'> <br>";
@@ -2218,13 +2245,13 @@ iCn3DUI.prototype.setDialogs = function() { var me = this; //"use strict";
     html += "</div>";
 
 
-    html += me.divStr + "dl_copyurl' style='width:500px;'>";
+    html += me.divStr + "dl_copyurl' style='width:500px;' class='" + dialogClass + "'>";
     html += "Please copy one of the URLs below. They show the same result.<br>(To add a title to share link, click \"Windows > Your Note\" and click \"File > Share Link\" again.)<br><br>";
     html += "Original URL with commands: <br><textarea id='" + me.pre + "ori_url' rows='4' style='width:100%'></textarea><br><br>";
     html += "Short URL: (To replace this URL, send a pull request to update share.html at <a href='https://github.com/ncbi/icn3d' target='_blank'>iCn3D GitHub</a>)<br>" + me.inputTextStr + "id='" + me.pre + "short_url' value='' style='width:100%'><br><br>";
     html += "</div>";
 
-    html += me.divStr + "dl_selectannotations' class='icn3d-annotation' style='background-color:white;'>";
+    html += me.divStr + "dl_selectannotations' class='" + dialogClass + " icn3d-annotation' style='background-color:white;'>";
 
     html += me.divStr + "dl_annotations_tabs'>";
 
@@ -2240,24 +2267,24 @@ iCn3DUI.prototype.setDialogs = function() { var me = this; //"use strict";
     html += "</div>";
 
     html += "<div class='icn3d-box' style='width:520px;'><b>Annotations:&nbsp;</b><br><table border=0><tr>";
-    html += "<td style='min-width:110px;'>" + me.inputCheckStr + "id='" + me.pre + "anno_all'>All&nbsp;&nbsp;</td>";
-    html += "<td style='min-width:130px;'>" + me.inputCheckStr + "id='" + me.pre + "anno_cdd' checked>Conserved Domains&nbsp;&nbsp;</td>";
-    html += "<td style='min-width:110px;'>" + me.inputCheckStr + "id='" + me.pre + "anno_clinvar'>ClinVar&nbsp;&nbsp;</td>";
-    html += "<td style='min-width:110px;'>" + me.inputCheckStr + "id='" + me.pre + "anno_binding'>Functional Sites&nbsp;&nbsp;</td>";
+    html += "<td style='min-width:110px;'><span style='white-space:nowrap'>" + me.inputCheckStr + "id='" + me.pre + "anno_all'>All&nbsp;&nbsp;</span></td>";
+    html += "<td style='min-width:130px;'><span style='white-space:nowrap'>" + me.inputCheckStr + "id='" + me.pre + "anno_cdd' checked>Conserved Domains&nbsp;&nbsp;</span></td>";
+    html += "<td style='min-width:110px;'><span style='white-space:nowrap'>" + me.inputCheckStr + "id='" + me.pre + "anno_clinvar'>ClinVar&nbsp;&nbsp;</span></td>";
+    html += "<td style='min-width:110px;'><span style='white-space:nowrap'>" + me.inputCheckStr + "id='" + me.pre + "anno_binding'>Functional Sites&nbsp;&nbsp;</span></td>";
     html += "</tr><tr>";
-    html += "<td style='min-width:110px;'>" + me.inputCheckStr + "id='" + me.pre + "anno_custom'>Custom&nbsp;&nbsp;</td>";
-    html += "<td style='min-width:130px;'>" + me.inputCheckStr + "id='" + me.pre + "anno_3dd'>3D Domains&nbsp;&nbsp;</td>";
-    html += "<td style='min-width:110px;'>" + me.inputCheckStr + "id='" + me.pre + "anno_snp'>SNPs&nbsp;&nbsp;</td>";
-    html += "<td style='min-width:110px;'>" + me.inputCheckStr + "id='" + me.pre + "anno_interact'>Interactions&nbsp;&nbsp;</td>";
+    html += "<td style='min-width:110px;'><span style='white-space:nowrap'>" + me.inputCheckStr + "id='" + me.pre + "anno_custom'>Custom&nbsp;&nbsp;</span></td>";
+    html += "<td style='min-width:130px;'><span style='white-space:nowrap'>" + me.inputCheckStr + "id='" + me.pre + "anno_3dd'>3D Domains&nbsp;&nbsp;</span></td>";
+    html += "<td style='min-width:110px;'><span style='white-space:nowrap'>" + me.inputCheckStr + "id='" + me.pre + "anno_snp'>SNPs&nbsp;&nbsp;</span></td>";
+    html += "<td style='min-width:110px;'><span style='white-space:nowrap'>" + me.inputCheckStr + "id='" + me.pre + "anno_interact'>Interactions&nbsp;&nbsp;</span></td>";
     html += "<td></td>";
     html += "</tr><tr>";
-    html += "<td style='min-width:110px;'>" + me.inputCheckStr + "id='" + me.pre + "anno_ssbond'>Disulfide Bonds&nbsp;&nbsp;</td>";
-    html += "<td style='min-width:110px;'>" + me.inputCheckStr + "id='" + me.pre + "anno_crosslink'>Cross-Linkages&nbsp;&nbsp;</td>";
+    html += "<td style='min-width:110px;'><span style='white-space:nowrap'>" + me.inputCheckStr + "id='" + me.pre + "anno_ssbond'>Disulfide Bonds&nbsp;&nbsp;</span></td>";
+    html += "<td style='min-width:110px;'><span style='white-space:nowrap'>" + me.inputCheckStr + "id='" + me.pre + "anno_crosslink'>Cross-Linkages&nbsp;&nbsp;</span></td>";
     if(me.cfg.opmid !== undefined) {
-        html += "<td style='min-width:110px;'><span id='" + me.pre + "anno_transmemli'>" + me.inputCheckStr + "id='" + me.pre + "anno_transmem'>Transmembrane&nbsp;&nbsp;</span></td>";
+        html += "<td style='min-width:110px;'><span id='" + me.pre + "anno_transmemli' style='white-space:nowrap'>" + me.inputCheckStr + "id='" + me.pre + "anno_transmem'>Transmembrane&nbsp;&nbsp;</span></td>";
     }
     else {
-        html += "<td style='min-width:110px;'><span id='" + me.pre + "anno_transmemli' style='display:none'>" + me.inputCheckStr + "id='" + me.pre + "anno_transmem'>Transmembrane&nbsp;&nbsp;</span></td>";
+        html += "<td style='min-width:110px;'><span id='" + me.pre + "anno_transmemli' style='display:none; white-space:nowrap'>" + me.inputCheckStr + "id='" + me.pre + "anno_transmem'>Transmembrane&nbsp;&nbsp;</span></td>";
     }
     html += "<td></td>";
     html += "</tr></table></div>";
@@ -2273,7 +2300,7 @@ iCn3DUI.prototype.setDialogs = function() { var me = this; //"use strict";
 
     html += "</div>";
 
-    html += me.divStr + "dl_graph' style='background-color:white;'>";
+    html += me.divStr + "dl_graph' style='background-color:white;' class='" + dialogClass + "'>";
     me.svgid = me.pre + 'icn3d_viz';
     html += '<style>';
     html += '#' + me.svgid + ' svg { border: 1px solid; font: 13px sans-serif; text-anchor: end; }';
@@ -2302,7 +2329,8 @@ iCn3DUI.prototype.setDialogs = function() { var me = this; //"use strict";
     html += "</div>";
 
     html += me.divNowrapStr + '<button class="icn3d-commandTitle" style="-webkit-appearance:button; height:24px;background-color:#DDDDDD;" id="' + me.svgid + '_svg">SVG</button>&nbsp;&nbsp;';
-    html += '<button class="icn3d-commandTitle" style="-webkit-appearance:button; height:24px;background-color:#DDDDDD;" id="' + me.svgid + '_png">PNG</button>';
+    html += '<button class="icn3d-commandTitle" style="-webkit-appearance:button; height:24px;background-color:#DDDDDD;" id="' + me.svgid + '_png">PNG</button>&nbsp;&nbsp;';
+    html += '<button class="icn3d-commandTitle" style="-webkit-appearance:button; height:24px;background-color:#DDDDDD;" id="' + me.svgid + '_json">JSON</button>';
     html += "&nbsp;&nbsp;&nbsp;<b>Force on Nodes</b>: <select id='" + me.svgid + "_force'>";
     html += optionStr + "'0'>No</option>";
     html += optionStr + "'1'>X-axis</option>";
@@ -2332,34 +2360,34 @@ iCn3DUI.prototype.setDialogs = function() { var me = this; //"use strict";
     html += '<svg id="' + me.svgid + '" style="margin-top:6px;"></svg>';
     html += "</div>";
 
-    html += me.divStr + "dl_area'>";
+    html += me.divStr + "dl_area' class='" + dialogClass + "'>";
     html += "Solvent Accessible Surface Area (SASA) calculated using the <a href='https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0008140' target='_blank'>EDTSurf algorithm</a>: <br>";
     html += '(0-20% out is considered "in". 50-100% out is considered "out".)<br><br>';
     html += "<b>Toal</b>: " + me.inputTextStr + "id='" + me.pre + "areavalue' value='' size='10'> &#8491;<sup>2</sup><br><br>";
     html += "<div id='" + me.pre + "areatable' style='max-height:400px; overflow:auto'></div>";
     html += "</div>";
 
-    html += me.divStr + "dl_colorbyarea'>";
+    html += me.divStr + "dl_colorbyarea' class='" + dialogClass + "'>";
     html += "<div style='width:500px'>Color each residue based on the percentage of solvent accessilbe surface area. The color ranges from blue, to white, to red for a percentage of 0, 35 (variable), and 100, respectively.</div><br>";
     html += "<b>Middle Percentage (White)</b>: " + me.inputTextStr + "id='" + me.pre + "midpercent' value='35' size='10'>% <br><br>";
     html += "<button style='white-space:nowrap;' id='" + me.pre + "applycolorbyarea'>Color</button><br/><br/>";
     html += "</div>";
 
-    html += me.divStr + "dl_rmsd'>";
+    html += me.divStr + "dl_rmsd' class='" + dialogClass + "'>";
     html += "<br><b>Alignment RMSD</b>: " + me.inputTextStr + "id='" + me.pre + "realignrmsd' value='35' size='10'>&#8491;<br><br>";
     html += "</div>";
 
-    html += me.divStr + "dl_buriedarea'>";
+    html += me.divStr + "dl_buriedarea' class='" + dialogClass + "'>";
     html += "</div>";
 
-    html += me.divStr + "dl_propbypercentout'>";
+    html += me.divStr + "dl_propbypercentout' class='" + dialogClass + "'>";
     html += "<div style='width:400px'>Select residue based on the percentage of solvent accessilbe surface area. The values are in the range of 0-100.</div><br>";
     html += "<b>Min Percentage</b>: " + me.inputTextStr + "id='" + me.pre + "minpercentout' value='0' size='10'>% <br>";
     html += "<b>Max Percentage</b>: " + me.inputTextStr + "id='" + me.pre + "maxpercentout' value='100' size='10'>% <br>";
     html += "<button style='white-space:nowrap;' id='" + me.pre + "applypropbypercentout'>Apply</button><br/><br/>";
     html += "</div>";
 
-    html += me.divStr + "dl_propbybfactor'>";
+    html += me.divStr + "dl_propbybfactor' class='" + dialogClass + "'>";
     html += "<div style='width:400px'>Select residue based on B-factor. The values are in the range of 0-100.</div><br>";
     html += "<b>Min B-factor</b>: " + me.inputTextStr + "id='" + me.pre + "minbfactor' value='0' size='10'>% <br>";
     html += "<b>Max B-factor</b>: " + me.inputTextStr + "id='" + me.pre + "maxbfactor' value='100' size='10'>% <br>";
