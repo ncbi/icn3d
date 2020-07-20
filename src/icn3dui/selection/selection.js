@@ -56,6 +56,7 @@ iCn3DUI.prototype.showSelection = function () { var me = this; //"use strict";
 
     if(me.bGraph) me.drawGraph(me.graphStr);
     if(me.bLinegraph) me.drawLineGraph(me.graphStr);
+    if(me.bScatterplot) me.drawLineGraph(me.graphStr, true);
 };
 
 iCn3DUI.prototype.getGraphDataForDisplayed = function () { var me = this; //"use strict";

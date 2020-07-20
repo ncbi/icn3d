@@ -139,7 +139,7 @@ iCn3DUI.prototype.selectTitle = function(that) { var me = this; //"use strict";
                 }
                 else {
                     var residueidHash = {};
-                    if($(that).attr('domain') !== undefined || $(that).attr('3ddomain') !== undefined) {
+                    if($(that).attr('domain') !== undefined || $(that).attr('3ddomain') !== undefined || $(that).attr('custom') !== undefined) {
                         me.hlSummaryDomain3ddomain(that);
 
                         var fromArray = $(that).attr('from').split(',');
@@ -248,8 +248,8 @@ iCn3DUI.prototype.selectTitle = function(that) { var me = this; //"use strict";
 
 iCn3DUI.prototype.selectSequenceNonMobile = function() { var me = this; //"use strict";
   //$("#" + me.pre + "dl_sequence").add("#" + me.pre + "dl_sequence2").add("#" + me.pre + "dl_annotations").selectable({
-  $("#" + me.pre + "dl_sequence2").add("[id^=" + me.pre + "dt_giseq]").add("[id^=" + me.pre + "dt_site]").add("[id^=" + me.pre + "dt_snp]").add("[id^=" + me.pre + "dt_clinvar]").add("[id^=" + me.pre + "dt_cdd]").add("[id^=" + me.pre + "dt_domain]").add("[id^=" + me.pre + "dt_interaction]").add("[id^=" + me.pre + "dt_ssbond]").add("[id^=" + me.pre + "dt_crosslink]").add("[id^=" + me.pre + "dt_transmem]")
-  .add("[id^=" + me.pre + "tt_giseq]").add("[id^=" + me.pre + "tt_site]").add("[id^=" + me.pre + "tt_snp]").add("[id^=" + me.pre + "tt_clinvar]").add("[id^=" + me.pre + "tt_cdd]").add("[id^=" + me.pre + "tt_domain]").add("[id^=" + me.pre + "tt_interaction]").add("[id^=" + me.pre + "tt_ssbond]").add("[id^=" + me.pre + "tt_crosslink]").add("[id^=" + me.pre + "tt_transmem]")
+  $("#" + me.pre + "dl_sequence2").add("[id^=" + me.pre + "dt_giseq]").add("[id^=" + me.pre + "dt_custom]").add("[id^=" + me.pre + "dt_site]").add("[id^=" + me.pre + "dt_snp]").add("[id^=" + me.pre + "dt_clinvar]").add("[id^=" + me.pre + "dt_cdd]").add("[id^=" + me.pre + "dt_domain]").add("[id^=" + me.pre + "dt_interaction]").add("[id^=" + me.pre + "dt_ssbond]").add("[id^=" + me.pre + "dt_crosslink]").add("[id^=" + me.pre + "dt_transmem]")
+  .add("[id^=" + me.pre + "tt_giseq]").add("[id^=" + me.pre + "tt_custom]").add("[id^=" + me.pre + "tt_site]").add("[id^=" + me.pre + "tt_snp]").add("[id^=" + me.pre + "tt_clinvar]").add("[id^=" + me.pre + "tt_cdd]").add("[id^=" + me.pre + "tt_domain]").add("[id^=" + me.pre + "tt_interaction]").add("[id^=" + me.pre + "tt_ssbond]").add("[id^=" + me.pre + "tt_crosslink]").add("[id^=" + me.pre + "tt_transmem]")
   .selectable({
   //$(".icn3d-dl_sequence").selectable({
       stop: function() {
@@ -314,8 +314,8 @@ iCn3DUI.prototype.selectSequenceNonMobile = function() { var me = this; //"use s
       }
   });
 
-  $("[id^=" + me.pre + "ov_giseq]").add("[id^=" + me.pre + "ov_site]").add("[id^=" + me.pre + "ov_snp]").add("[id^=" + me.pre + "ov_clinvar]").add("[id^=" + me.pre + "ov_cdd]").add("[id^=" + me.pre + "ov_domain]").add("[id^=" + me.pre + "ov_interaction]").add("[id^=" + me.pre + "ov_ssbond]").add("[id^=" + me.pre + "ov_crosslink]").add("[id^=" + me.pre + "ov_transmem]")
-  .add("[id^=" + me.pre + "tt_giseq]").add("[id^=" + me.pre + "tt_site]").add("[id^=" + me.pre + "tt_snp]").add("[id^=" + me.pre + "tt_clinvar]").add("[id^=" + me.pre + "tt_cdd]").add("[id^=" + me.pre + "tt_domain]").add("[id^=" + me.pre + "tt_interaction]").add("[id^=" + me.pre + "tt_ssbond]").add("[id^=" + me.pre + "tt_crosslink]").add("[id^=" + me.pre + "tt_transmem]")
+  $("[id^=" + me.pre + "ov_giseq]").add("[id^=" + me.pre + "ov_custom]").add("[id^=" + me.pre + "ov_site]").add("[id^=" + me.pre + "ov_snp]").add("[id^=" + me.pre + "ov_clinvar]").add("[id^=" + me.pre + "ov_cdd]").add("[id^=" + me.pre + "ov_domain]").add("[id^=" + me.pre + "ov_interaction]").add("[id^=" + me.pre + "ov_ssbond]").add("[id^=" + me.pre + "ov_crosslink]").add("[id^=" + me.pre + "ov_transmem]")
+  .add("[id^=" + me.pre + "tt_giseq]").add("[id^=" + me.pre + "tt_custom]").add("[id^=" + me.pre + "tt_site]").add("[id^=" + me.pre + "tt_snp]").add("[id^=" + me.pre + "tt_clinvar]").add("[id^=" + me.pre + "tt_cdd]").add("[id^=" + me.pre + "tt_domain]").add("[id^=" + me.pre + "tt_interaction]").add("[id^=" + me.pre + "tt_ssbond]").add("[id^=" + me.pre + "tt_crosslink]").add("[id^=" + me.pre + "tt_transmem]")
   .on('click', '.icn3d-seqTitle', function(e) {
       e.stopImmediatePropagation();
 
@@ -363,7 +363,7 @@ iCn3DUI.prototype.hlSummaryDomain3ddomain = function(that) { var me = this; //"u
 };
 
 iCn3DUI.prototype.selectSequenceMobile = function() { var me = this; //"use strict";
-  $("#" + me.pre + "dl_sequence2").add("[id^=" + me.pre + "giseq]").add("[id^=" + me.pre + "site]").add("[id^=" + me.pre + "clinvar]").add("[id^=" + me.pre + "snp]").add("[id^=" + me.pre + "cdd]").add("[id^=" + me.pre + "domain]").add("[id^=" + me.pre + "interaction]").add("[id^=" + me.pre + "ssbond]").add("[id^=" + me.pre + "crosslink]").add("[id^=" + me.pre + "transmem]").on('click', '.icn3d-residue', function(e) {
+  $("#" + me.pre + "dl_sequence2").add("[id^=" + me.pre + "giseq]").add("[id^=" + me.pre + "custom]").add("[id^=" + me.pre + "site]").add("[id^=" + me.pre + "clinvar]").add("[id^=" + me.pre + "snp]").add("[id^=" + me.pre + "cdd]").add("[id^=" + me.pre + "domain]").add("[id^=" + me.pre + "interaction]").add("[id^=" + me.pre + "ssbond]").add("[id^=" + me.pre + "crosslink]").add("[id^=" + me.pre + "transmem]").on('click', '.icn3d-residue', function(e) {
   //$(".icn3d-dl_sequence").on('click', '.icn3d-residue', function(e) {
       e.stopImmediatePropagation();
 
@@ -419,7 +419,7 @@ iCn3DUI.prototype.selectSequenceMobile = function() { var me = this; //"use stri
 };
 
 iCn3DUI.prototype.selectChainMobile = function() { var me = this; //"use strict";
-  $("#" + me.pre + "dl_sequence2").add("[id^=" + me.pre + "giseq]").add("[id^=" + me.pre + "site]").add("[id^=" + me.pre + "clinvar]").add("[id^=" + me.pre + "snp]").add("[id^=" + me.pre + "cdd]").add("[id^=" + me.pre + "domain]").add("[id^=" + me.pre + "interaction]").add("[id^=" + me.pre + "ssbond]").add("[id^=" + me.pre + "crosslink]").add("[id^=" + me.pre + "transmem]").on('click', '.icn3d-seqTitle', function(e) {
+  $("#" + me.pre + "dl_sequence2").add("[id^=" + me.pre + "giseq]").add("[id^=" + me.pre + "custom]").add("[id^=" + me.pre + "site]").add("[id^=" + me.pre + "clinvar]").add("[id^=" + me.pre + "snp]").add("[id^=" + me.pre + "cdd]").add("[id^=" + me.pre + "domain]").add("[id^=" + me.pre + "interaction]").add("[id^=" + me.pre + "ssbond]").add("[id^=" + me.pre + "crosslink]").add("[id^=" + me.pre + "transmem]").on('click', '.icn3d-seqTitle', function(e) {
   //$(".icn3d-dl_sequence").on('click', '.icn3d-seqTitle', function(e) {
       e.stopImmediatePropagation();
 

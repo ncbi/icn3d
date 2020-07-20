@@ -547,6 +547,14 @@ iCn3DUI.prototype.removeLineGraphSelection = function() { var me = this; //"use 
       //$("#" + me.pre + "dl_linegraph svg line .icn3d-hlline").attr('stroke-width', 1);
 };
 
+iCn3DUI.prototype.removeScatterplotSelection = function() { var me = this; //"use strict";
+      $("#" + me.pre + "dl_scatterplot circle").attr('stroke', '#000000');
+      $("#" + me.pre + "dl_scatterplot circle").attr('stroke-width', 1);
+
+      $("#" + me.pre + "dl_scatterplot rect").attr('stroke', '#000000');
+      $("#" + me.pre + "dl_scatterplot rect").attr('stroke-width', 1);
+};
+
 iCn3DUI.prototype.click2Ddgm = function() { var me = this; //"use strict";
     $("#" + me.pre + "dl_2ddgm").on("click", ".icn3d-node", function(e) {
           e.stopImmediatePropagation();
@@ -639,7 +647,7 @@ iCn3DUI.prototype.click2Ddgm = function() { var me = this; //"use strict";
     });
 
     $("#" + me.pre + "dl_linegraph").on("click", ".icn3d-node", function(e) {
-          e.stopImmediatePropagation();
+        e.stopImmediatePropagation();
         if(Object.keys(me.icn3d.hAtoms).length < Object.keys(me.icn3d.atoms).length) me.setMode('selection');
 
         var resid = $(this).attr('resid');
@@ -648,6 +656,33 @@ iCn3DUI.prototype.click2Ddgm = function() { var me = this; //"use strict";
           me.icn3d.hAtoms = {};
 
           me.removeLineGraphSelection();
+        }
+
+        var strokeWidth = 2;
+        $(this).find('circle').attr('stroke', me.ORANGE);
+        $(this).find('circle').attr('stroke-width', strokeWidth);
+
+        me.icn3d.hAtoms = me.icn3d.unionHash(me.icn3d.hAtoms, me.icn3d.residues[resid]);
+
+        var select = 'select ' + me.residueids2spec([resid]);
+
+        me.updateHlAll();
+
+        me.setLogCmd(select, true);
+
+        me.bSelectResidue = false;
+    });
+
+    $("#" + me.pre + "dl_scatterplot").on("click", ".icn3d-node", function(e) {
+        e.stopImmediatePropagation();
+        if(Object.keys(me.icn3d.hAtoms).length < Object.keys(me.icn3d.atoms).length) me.setMode('selection');
+
+        var resid = $(this).attr('resid');
+
+        if(!me.icn3d.bCtrl && !me.icn3d.bShift) {
+          me.icn3d.hAtoms = {};
+
+          me.removeScatterplotSelection();
         }
 
         var strokeWidth = 2;
@@ -679,6 +714,33 @@ iCn3DUI.prototype.click2Ddgm = function() { var me = this; //"use strict";
         }
 
         $(this).find('line.icn3d-hlline').attr('stroke', me.ORANGE);
+
+        me.icn3d.hAtoms = me.icn3d.unionHash(me.icn3d.hAtoms, me.icn3d.residues[resid1]);
+        me.icn3d.hAtoms = me.icn3d.unionHash(me.icn3d.hAtoms, me.icn3d.residues[resid2]);
+
+        var select = 'select ' + me.residueids2spec([resid1, resid2]);
+
+        me.updateHlAll();
+
+        me.setLogCmd(select, true);
+    });
+
+    $("#" + me.pre + "dl_scatterplot").on("click", ".icn3d-interaction", function(e) {
+        e.stopImmediatePropagation();
+        if(Object.keys(me.icn3d.hAtoms).length < Object.keys(me.icn3d.atoms).length) me.setMode('selection');
+
+        var resid1 = $(this).attr('resid1');
+        var resid2 = $(this).attr('resid2');
+
+        if(!me.icn3d.bCtrl && !me.icn3d.bShift) {
+          me.icn3d.hAtoms = {};
+
+          me.removeScatterplotSelection();
+        }
+
+        var strokeWidth = 2;
+        $(this).find('rect').attr('stroke', me.ORANGE);
+        $(this).find('rect').attr('stroke-width', strokeWidth);
 
         me.icn3d.hAtoms = me.icn3d.unionHash(me.icn3d.hAtoms, me.icn3d.residues[resid1]);
         me.icn3d.hAtoms = me.icn3d.unionHash(me.icn3d.hAtoms, me.icn3d.residues[resid2]);

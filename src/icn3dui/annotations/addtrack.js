@@ -663,8 +663,10 @@ iCn3DUI.prototype.clickAddTrackButton = function() { var me = this; //"use stric
 
        //me.showNewTrack(chainid, title, text);
        //me.setLogCmd("add track | chainid " + chainid + " | title " + title + " | text " + me.simplifyText(text), true);
+       var result = me.getFullText(text);
 
-       me.showNewTrack(chainid, title,  me.getFullText(text), undefined, 'custom', undefined);
+       me.showNewTrack(chainid, title,  result.text, undefined, undefined, 'custom', undefined, undefined, result.fromArray, result.toArray);
+
        me.setLogCmd("add track | chainid " + chainid + " | title " + title + " | text " + text + " | type custom", true);
     });
 
@@ -715,7 +717,7 @@ iCn3DUI.prototype.clickAddTrackButton = function() { var me = this; //"use stric
 
 };
 
-iCn3DUI.prototype.showNewTrack = function(chnid, title, text, cssColorArray, inTarget2queryHash, type, color, bMsa) {  var me = this; //"use strict";
+iCn3DUI.prototype.showNewTrack = function(chnid, title, text, cssColorArray, inTarget2queryHash, type, color, bMsa, fromArray, toArray) {  var me = this; //"use strict";
     //if(me.customTracks[chnid] === undefined) {
     //    me.customTracks[chnid] = {};
     //}
@@ -768,7 +770,9 @@ iCn3DUI.prototype.showNewTrack = function(chnid, title, text, cssColorArray, inT
     var html3 = html;
 
     //var htmlTmp2 = '<div class="icn3d-seqTitle icn3d-link icn3d-blue" gi="' + chnid + '" anno="sequence" chain="' + chnid + '"><span style="white-space:nowrap;">' + title + '</span></div>';
-    var htmlTmp2 = '<div class="icn3d-seqTitle" gi="' + chnid + '" anno="sequence" chain="' + chnid + '"><span style="white-space:nowrap;">' + title + '</span></div>';
+    //var htmlTmp2 = '<div class="icn3d-seqTitle" gi="' + chnid + '" anno="sequence" chain="' + chnid + '"><span style="white-space:nowrap;">' + title + '</span></div>';
+    var index = parseInt(Math.random()*10);
+    var htmlTmp2 = '<div class="icn3d-seqTitle icn3d-link icn3d-blue" custom="' + (index+1).toString() + '" from="' + fromArray + '" to="' + toArray + '" shorttitle="' + simpTitle + '" index="' + index + '" setname="' + chnid + '_custom_' + (index+1).toString() + '" anno="sequence" chain="' + chnid + '" title="' + title + '">' + simpTitle + ' </div>';
     var htmlTmp3 = '<span class="icn3d-residueNum" title="residue count">' + resCnt.toString() + ' Pos</span>';
 
     html3 += htmlTmp2 + htmlTmp3 + '<br>';
@@ -780,7 +784,8 @@ iCn3DUI.prototype.showNewTrack = function(chnid, title, text, cssColorArray, inT
 
     //var pre ='cst' + me.customTracks[chnid].length;
     var posTmp = chnid.indexOf('_');
-    var pre ='cst' + chnid.substr(posTmp);
+    //var pre ='cst' + chnid.substr(posTmp);
+    var pre ='cst' + chnid.substr(posTmp + 1);
 
     var prevEmptyWidth = 0;
     var prevLineWidth = 0;
@@ -886,7 +891,8 @@ iCn3DUI.prototype.checkGiSeq = function (chainid, title, text, type, color, bMsa
     if(index > 20) return false;
 
     if(me.giSeq !== undefined && me.giSeq[chainid] !== undefined) {
-        text = me.getFullText(text);
+        var result = me.getFullText(text);
+        text = result.text;
         me.showNewTrack(chainid, title, text, undefined, undefined, type, color, bMsa);
         return false;
     }
@@ -896,7 +902,7 @@ iCn3DUI.prototype.checkGiSeq = function (chainid, title, text, type, color, bMsa
 };
 
 iCn3DUI.prototype.getFullText = function (text) { var me = this; //"use strict";
-    var out = '';
+    var out = '', fromArray = [], toArray = [];
 
     var textArray = text.split(',');
     var lastTextPos = -1;
@@ -923,6 +929,9 @@ iCn3DUI.prototype.getFullText = function (text) { var me = this; //"use strict";
             continue;
         }
 
+        fromArray.push(start);
+        toArray.push(end);
+
         // previous empty text
         for(var j = 0; j < start - lastTextPos - 1; ++j) {
             out += '-';
@@ -945,5 +954,5 @@ iCn3DUI.prototype.getFullText = function (text) { var me = this; //"use strict";
         lastTextPos = end;
     }
 
-    return out;
+    return {"text": out, "fromArray": fromArray, "toArray": toArray};
 };

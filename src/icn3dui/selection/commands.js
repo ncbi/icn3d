@@ -405,7 +405,7 @@ iCn3DUI.prototype.execCommandsBase = function (start, end, steps, bFinalStep) { 
         if(title !== 'none') {
             if(me.icn3d.symmetryHash === undefined) {
                 $.when(me.applyCommandSymmetry(command)).then(function() {
-                   dialog.dialog( "close" );
+                   if(!me.cfg.notebook) dialog.dialog( "close" );
 
                    me.icn3d.draw();
                    me.execCommandsBase(i + 1, end, steps);
@@ -601,10 +601,7 @@ iCn3DUI.prototype.renderFinalStep = function(steps) { var me = this; //"use stri
     }
 
     if(me.cfg.closepopup) {
-        if($('#' + me.pre + 'dl_selectannotations').hasClass('ui-dialog-content') && $('#' + me.pre + 'dl_selectannotations').dialog( 'isOpen' )) $('#' + me.pre + 'dl_selectannotations').dialog( 'close' );
-        if($('#' + me.pre + 'dl_alignment').hasClass('ui-dialog-content') && $('#' + me.pre + 'dl_alignment').dialog( 'isOpen' )) $('#' + me.pre + 'dl_alignment').dialog( 'close' );
-        if($('#' + me.pre + 'dl_2ddgm').hasClass('ui-dialog-content') && $('#' + me.pre + 'dl_2ddgm').dialog( 'isOpen' )) $('#' + me.pre + 'dl_2ddgm').dialog( 'close' );
-        if($('#' + me.pre + 'dl_definedsets').hasClass('ui-dialog-content') && $('#' + me.pre + 'dl_definedsets').dialog( 'isOpen' )) $('#' + me.pre + 'dl_definedsets').dialog( 'close' );
+        me.closeDialogs();
 
         me.resizeCanvas(me.WIDTH, me.HEIGHT, true);
     }
@@ -2010,6 +2007,7 @@ iCn3DUI.prototype.applyCommand = function (commandStr) { var me = this; //"use s
       || commandOri.indexOf('save1 interaction pairs') == 0
       || commandOri.indexOf('save2 interaction pairs') == 0
       || commandOri.indexOf('line graph interaction pairs') == 0
+      || commandOri.indexOf('scatterplot interaction pairs') == 0
       ) {
     var paraArray = commandOri.split(' | ');
     if(paraArray.length >= 3) {
@@ -2090,6 +2088,9 @@ iCn3DUI.prototype.applyCommand = function (commandStr) { var me = this; //"use s
         else if(commandOri.indexOf('line graph interaction pairs') == 0) {
             type = 'linegraph';
         }
+        else if(commandOri.indexOf('scatterplot interaction pairs') == 0) {
+            type = 'scatterplot';
+        }
 
         me.viewInteractionPairs(nameArray2, nameArray, bHbondCalc, type, bHbond, bSaltbridge, bInteraction, bHalogen, bPication, bPistacking);
     }
@@ -2107,9 +2108,17 @@ iCn3DUI.prototype.applyCommand = function (commandStr) { var me = this; //"use s
     var pos = command.lastIndexOf(' ');
     var scale = command.substr(pos + 1);
 
-    $("#" + me.svgid + "_label").val(scale);
+    $("#" + me.linegraphid + "_label").val(scale);
 
     $("#" + me.linegraphid).attr("width", (me.linegraphWidth * parseFloat(scale)).toString() + "px");
+  }
+  else if(command.indexOf('scatterplot scale') == 0) {
+    var pos = command.lastIndexOf(' ');
+    var scale = command.substr(pos + 1);
+
+    $("#" + me.scatterplotid + "_label").val(scale);
+
+    $("#" + me.scatterplot).attr("width", (me.scatterplotWidth * parseFloat(scale)).toString() + "px");
   }
 /*
   else if(command.indexOf('graph center') == 0) {
@@ -2161,8 +2170,8 @@ iCn3DUI.prototype.applyCommand = function (commandStr) { var me = this; //"use s
 
     window.open(url, '_blank');
   }
-  else if(command.indexOf('your note') == 0) {
-    var paraArray = command.split(' | ');
+  else if(commandOri.indexOf('your note') == 0) {
+    var paraArray = commandOri.split(' | ');
     me.yournote = paraArray[1];
 
     $("#" + me.pre + "yournote").val(me.yournote);
@@ -2252,7 +2261,10 @@ iCn3DUI.prototype.applyCommand = function (commandStr) { var me = this; //"use s
         me.openDialog(me.pre + 'dl_allinteraction', 'Show interactions');
     }
     else if(secondPart == "interaction graph") {
-        me.openDialog(me.pre + 'dl_linegraph', 'Show interactions with two lines of residue nodes');
+        me.openDialog(me.pre + 'dl_linegraph', 'Show interactions between two lines of residue nodes');
+    }
+    else if(secondPart == "interaction scatterplot") {
+        me.openDialog(me.pre + 'dl_scatterplot', 'Show interactions as scatterplot');
     }
     else if(secondPart == "force-directed graph") {
         me.openDialog(me.pre + 'dl_graph', 'Force-directed graph');
@@ -2488,7 +2500,8 @@ iCn3DUI.prototype.getMenuFromCmd = function (cmd) { var me = this; //"use strict
     else if(cmd.indexOf('view interaction pairs') == 0) return 'View > H-Bonds & Interactions: "Highlight Interactions in Table" button';
     else if(cmd.indexOf('save1 interaction pairs') == 0) return 'View > H-Bonds & Interactions: "Set 1" button';
     else if(cmd.indexOf('save2 interaction pairs') == 0) return 'View > H-Bonds & Interactions: "Set 2" button';
-    else if(cmd.indexOf('line graph interaction pairs') == 0) return 'View > H-Bonds & Interactions: "2D Interaction Graph" button';
+    else if(cmd.indexOf('line graph interaction pairs') == 0) return 'View > H-Bonds & Interactions: "2D Interaction Network" button';
+    else if(cmd.indexOf('scatterplot interaction pairs') == 0) return 'View > H-Bonds & Interactions: "2D Interaction Map" button';
     else if(cmd.indexOf('graph label') == 0) return 'View > H-Bonds & Interactions > 2D Graph (Force-Directed): "Label Size" menu';
     else if(cmd.indexOf('graph force') == 0) return 'View > H-Bonds & Interactions > 2D Graph (Force-Directed): "Force on Nodes" menu';
     else if(cmd.indexOf('hide edges') == 0) return 'View > H-Bonds & Interactions > 2D Graph (Force-Directed): "Internal Edges" menu';

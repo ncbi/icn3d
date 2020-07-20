@@ -58,6 +58,24 @@ iCn3D.prototype.residueName2Abbr = function(residueName) { var me = this; //"use
     case ' DI':
       return 'I';
       break;
+    case 'DA':
+      return 'A';
+      break;
+    case 'DC':
+      return 'C';
+      break;
+    case 'DG':
+      return 'G';
+      break;
+    case 'DT':
+      return 'T';
+      break;
+    case 'DU':
+      return 'U';
+      break;
+    case 'DI':
+      return 'I';
+      break;
     case 'ALA':
       return 'A';
       break;

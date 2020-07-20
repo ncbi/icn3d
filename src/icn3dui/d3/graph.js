@@ -1,6 +1,6 @@
 //http://emptypipes.org/2017/04/29/d3v4-selectable-zoomable-force-directed-graph/
 //https://gist.github.com/pkerpedjiev/f2e6ebb2532dae603de13f0606563f5b
-iCn3DUI.prototype.drawGraph = function (jsonStr) {  var me = this; //"use strict";
+iCn3DUI.prototype.drawGraph = function (jsonStr, divid) {  var me = this; //"use strict";
 //function createV4SelectableForceDirectedGraph(svg, graph) {
     // if both d3v3 and d3v4 are loaded, we'll assume
     // that d3v4 is called d3v4, otherwise we'll assume
@@ -15,8 +15,8 @@ iCn3DUI.prototype.drawGraph = function (jsonStr) {  var me = this; //"use strict
     //var width = +svg.attr("width"),
     //    height = +svg.attr("height");
 
-    var width = $("#" + me.pre + "dl_graph").width();
-    var height = $("#" + me.pre + "dl_graph").height();
+    var width = $("#" + divid).width();
+    var height = $("#" + divid).height();
 
     var widthView = width * 1.0;
     var heightView = height * 1.0;
