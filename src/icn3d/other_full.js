@@ -530,8 +530,8 @@ iCn3D.prototype.calculateIonicInteractions = function (startAtoms, targetAtoms, 
       // For ligand, "O" in carboxy group may be negatively charged. => to be improved
       var bLigNeg = undefined;
       if(atom.het && atom.elem === "O" && atom.bonds.length == 1) {
-           var cAtom = me.icn3d.atoms[atom.bonds[0]];
-           for(var j = 0; j < cAtom.bonds.length; j < jl) {
+           var cAtom = me.atoms[atom.bonds[0]];
+           for(var j = 0; j < cAtom.bonds.length; ++j) {
                var serial = cAtom.bonds[j];
                if(me.atoms[serial].elem == "O" && serial != atom.serial) {
                    bLigNeg = true;
