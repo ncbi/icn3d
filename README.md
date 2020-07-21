@@ -24,6 +24,9 @@
     
     All "Share Link" URLs can show the original view using the archived version of iCn3D by clicking "Open File > Share Link in Archived Ver." in "File" menu.    
 
+* <b>SNPs of 2019-nCov protein</b>: 
+    You can view the [SNPs of SARS-CoV-2 structures](https://structure.ncbi.nlm.nih.gov/icn3d/share.html?X3whJjau5t91j6i98) in the menu "Windows > Sequences & Annotations > SNP".
+
 * <b>Use iCn3D in Jupyter Notebook</b>: 
     You can use iCn3D in Jupyter Notebook with the widget "icn3dpy". The instructions are at [pypi.org/project/icn3dpy](https://pypi.org/project/icn3dpy/).
 

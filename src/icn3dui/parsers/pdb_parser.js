@@ -1050,9 +1050,14 @@ iCn3DUI.prototype.loadMmdbOpmDataPart2 = function(data, pdbid, type) { var me = 
         me.bAssemblyUseAsu = false;
     }
 
-    $.when(me.downloadMmcifSymmetry(pdbid)).then(function() {
+    if(!me.cfg.notebook) {
+        $.when(me.downloadMmcifSymmetry(pdbid)).then(function() {
+            me.downloadMmdbPart2(type);
+        });
+    }
+    else {
         me.downloadMmdbPart2(type);
-    });
+    }
 };
 
 iCn3DUI.prototype.loadMmdbOpmData = function(data, pdbid, type) { var me = this; //"use strict";

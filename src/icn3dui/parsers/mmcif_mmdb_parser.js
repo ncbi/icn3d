@@ -183,6 +183,7 @@ iCn3DUI.prototype.downloadMmcifSymmetryBase = function (mmcifid, type) { var me 
             return;
         }
 
+        if(me.deferredSymmetry !== undefined) me.deferredSymmetry.resolve();
         return;
       }
     });
