@@ -415,7 +415,7 @@ iCn3DUI.prototype.clickAddTrackButton = function() { var me = this; //"use stric
            trackSeqArray.push(seq);
        }
 
-       var startposGiSeq;
+       var startposGiSeq = undefined;
        for(var i = 0, il = me.giSeq[chainid].length; i < il; ++i) {
            var pos = (i >= me.matchedPos[chainid] && i - me.matchedPos[chainid] < me.icn3d.chainsSeq[chainid].length) ? me.icn3d.chainsSeq[chainid][i - me.matchedPos[chainid]].resi : me.baseResi[chainid] + 1 + i;
 
@@ -443,7 +443,7 @@ iCn3DUI.prototype.clickAddTrackButton = function() { var me = this; //"use stric
 
           if(prevSeq == '-' && seqFirst[i] != prevSeq && cnt > 0) { // end of gap
               to = prevPos;
-              me.targetGapHash[from] = {'from': from, 'to': to + dashCnt - 1};
+              me.targetGapHash[from + startposGiSeq] = {'from': from + startposGiSeq, 'to': to + dashCnt - 1 + startposGiSeq};
           }
 
           prevSeq = seqFirst[i];
@@ -480,6 +480,16 @@ iCn3DUI.prototype.clickAddTrackButton = function() { var me = this; //"use stric
        for(var j = 0, jl = trackSeqArray.length; j < jl; ++j) {
            var resi = startposGiSeq + 1;
            var text = '';
+           for(var k = 0; k < startposGiSeq; ++k) {
+               if(me.targetGapHash.hasOwnProperty(k)) {
+                   for(var m = 0; m < me.targetGapHash[k].to - me.targetGapHash[k].from + 1; ++m) {
+                       text += '-';
+                   }
+               }
+
+               text += '-';
+           }
+
            for(var k = seqStart; k <= seqEnd; ++k) {
               //if(seqFirst[k] == '-') continue;
 
@@ -814,8 +824,9 @@ iCn3DUI.prototype.showNewTrack = function(chnid, title, text, cssColorArray, inT
       var c = text.charAt(i);
 
       if(c != ' ' && c != '-') {
-          var colorHexStr = me.getColorhexFromBlosum62(c, me.icn3d.chainsSeq[chnid][resNum].name);
-          var identityColorStr = (c == me.icn3d.chainsSeq[chnid][resNum].name) ? 'FF0000' : '0000FF';
+          var resName = (me.icn3d.chainsSeq[chnid][resNum]) ? me.icn3d.chainsSeq[chnid][resNum].name : ' ';
+          var colorHexStr = me.getColorhexFromBlosum62(c, resName);
+          var identityColorStr = (c == resName) ? 'FF0000' : '0000FF';
 
           //var pos = (resNum >= me.matchedPos[chnid] && resNum - me.matchedPos[chnid] < me.icn3d.chainsSeq[chnid].length) ? me.icn3d.chainsSeq[chnid][resNum - me.matchedPos[chnid]].resi : me.baseResi[chnid] + 1 + resNum;
           var pos = currResi;

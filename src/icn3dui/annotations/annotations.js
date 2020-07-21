@@ -121,9 +121,14 @@ iCn3DUI.prototype.showAnnotations = function() { var me = this; //"use strict";
                if(me.cfg.mmtfid !== undefined) { // mmtf data do NOT have the missing residues
                    var id = chainArray[0].substr(0, chainArray[0].indexOf('_'));
 
-                   $.when(me.downloadMmcifSymmetry(id, 'mmtfid')).then(function() {
+                   if(!me.cfg.notebook) {
+                       $.when(me.downloadMmcifSymmetry(id, 'mmtfid')).then(function() {
+                           me.showAnnoSeqData(nucleotide_chainid, chemical_chainid, chemical_set);
+                       });
+                   }
+                   else {
                        me.showAnnoSeqData(nucleotide_chainid, chemical_chainid, chemical_set);
-                   });
+                   }
                }
                else {
                    me.showAnnoSeqData(nucleotide_chainid, chemical_chainid, chemical_set);

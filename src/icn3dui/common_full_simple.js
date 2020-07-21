@@ -333,6 +333,8 @@ iCn3DUI.prototype.getPngText = function() { var me = this; //"use strict";
         }
     }
 
+    text = text.replace(/!/g, Object.keys(me.icn3d.structures)[0] + '_');
+
     return text;
 };
 
@@ -757,6 +759,7 @@ iCn3DUI.prototype.shareLinkUrl = function(bAllCommands) { var me = this; //"use 
 //           url = url.substr(0, url.length - 9);
 //       }
 
+       statefile = statefile.replace(/!/g, Object.keys(me.icn3d.structures)[0] + '_');
        if(me.bInputfile || url.length > 4000) url = statefile;
 
        var id;
