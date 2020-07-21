@@ -1476,9 +1476,22 @@ iCn3DUI.prototype.getSnpLine = function(line, totalLineNum, resi2snp, resi2rsnum
 
     var altName = bClinvar ? 'clinvar' : 'snp';
 
+    // determine whether the SNPis from virus directly
+    var bVirus = false;
+    for(var resi in resi2rsnum) {
+        for(var i = 0, il = resi2rsnum[resi].length; i < il; ++i) {
+            if(resi2rsnum[resi][i] == 0) {
+                bVirus = true;
+                break;
+            }
+        }
+
+        if(bVirus) break;
+    }
+
     if(bStartEndRes) {
         var title1 = 'ClinVar', title2 = 'SNP', title2b = 'SNP', warning = "", warning2 = "";
-        if(me.icn3d.organism !== undefined && me.icn3d.organism !== 'human' && me.icn3d.organism !== 'homo sapiens') {
+        if(!bVirus && me.icn3d.organism !== undefined && me.icn3d.organism !== 'human' && me.icn3d.organism !== 'homo sapiens') {
             warning = " <span style='color:#FFA500'>(from human)</span>";
             warning2 = " <span style='color:#FFA500'>(based on human sequences and mapped to this structure by sequence similarity)</span>";
         }
@@ -1741,7 +1754,7 @@ iCn3DUI.prototype.getSnpLine = function(line, totalLineNum, resi2snp, resi2rsnum
                             }
                         }
                         else { //if(bSnpOnly) {
-                            snpTitle += "<br>Link: <a href='https://www.ncbi.nlm.nih.gov/snp/?term=" + resi2rsnum[i][j] + "' target='_blank'>dbSNP (rs" + resi2rsnum[i][j] + ")</a>"
+                            if(resi2rsnum[i][j] != 0) snpTitle += "<br>Link: <a href='https://www.ncbi.nlm.nih.gov/snp/?term=" + resi2rsnum[i][j] + "' target='_blank'>dbSNP (rs" + resi2rsnum[i][j] + ")</a>"
 
                             if(j < jl - 1) {
                                 snpTitle += '<br>';
@@ -1852,7 +1865,7 @@ iCn3DUI.prototype.getSnpLine = function(line, totalLineNum, resi2snp, resi2rsnum
     return html;
 };
 
-iCn3DUI.prototype.processSnpClinvar = function(data, chnid, chnidBase, bSnpOnly) {
+iCn3DUI.prototype.processSnpClinvar = function(data, chnid, chnidBase, bSnpOnly, bVirus) {
     var me = this; //"use strict";
 
     var html = '<div id="' + me.pre + chnid + '_snpseq_sequence" class="icn3d-dl_sequence">';
@@ -1863,7 +1876,7 @@ iCn3DUI.prototype.processSnpClinvar = function(data, chnid, chnidBase, bSnpOnly)
     var htmlClinvar2 = htmlClinvar;
     var htmlClinvar3 = htmlClinvar;
 
-    var lineArray = (!bSnpOnly) ? data.data : data.split('\n');
+    var lineArray = (!bSnpOnly || bVirus) ? data.data : data.split('\n');
 
     var resi2snp = {};
     var resi2index = {};
@@ -1886,7 +1899,7 @@ iCn3DUI.prototype.processSnpClinvar = function(data, chnid, chnidBase, bSnpOnly)
      //1310770    13    14    14Y>H    1111111
 
      if(lineArray[i] != '') {
-      var fieldArray = (!bSnpOnly) ? lineArray[i] : lineArray[i].split('\t');
+      var fieldArray = (!bSnpOnly || bVirus) ? lineArray[i] : lineArray[i].split('\t');
 
       var snpStr = fieldArray[3];
 
@@ -2029,7 +2042,7 @@ iCn3DUI.prototype.showClinvarPart2 = function(chnid, chnidBase, gi) { var me = t
       tryCount : 0,
       retryLimit : 1,
       success: function(indata) {
-        if(indata != "") {
+        if(indata && indata.data && indata.data.length > 0) {
             var bSnpOnly = false;
 
             /*
@@ -2142,12 +2155,45 @@ iCn3DUI.prototype.showSnpPart2 = function(chnid, chnidBase, gi) { var me = this;
           tryCount : 0,
           retryLimit : 1,
           success: function(data3) {
-            if(data3 != "") {
+            if(data3) {
                 var bSnpOnly = true;
                 me.processSnpClinvar(data3, chnid, chnidBase, bSnpOnly);
             } //if(data3 != "") {
             else {
-                me.processNoSnp(chnid);
+                var url4 = "https://www.ncbi.nlm.nih.gov/Structure/vastdyn/vastdyn.cgi?chainid_snp=" + chnidBase;
+
+                $.ajax({
+                  url: url4,
+                  dataType: 'jsonp', //'text',
+                  cache: true,
+                  tryCount : 0,
+                  retryLimit : 1,
+                  success: function(data4) {
+                    if(data4 && data4.data && data4.data.length > 0) {
+                        var bSnpOnly = true;
+                        var bVirus = true;
+                        me.processSnpClinvar(data4, chnid, chnidBase, bSnpOnly, bVirus);
+                    } //if(data4 != "") {
+                    else {
+                        me.processNoSnp(chnid);
+                    }
+
+                    //if(me.deferredSnp !== undefined) me.deferredSnp.resolve();
+                  },
+                  error : function(xhr, textStatus, errorThrown ) {
+                    this.tryCount++;
+                    if (this.tryCount <= this.retryLimit) {
+                        //try again
+                        $.ajax(this);
+                        return;
+                    }
+
+                    me.processNoSnp(chnid);
+                    //if(me.deferredSnp !== undefined) me.deferredSnp.resolve();
+
+                    return;
+                  }
+                });
             }
 
             //if(me.deferredSnp !== undefined) me.deferredSnp.resolve();
