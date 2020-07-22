@@ -33,30 +33,37 @@ and issue Python script as follows:
 
     import icn3dpy
 
+"mmdbid" as input:
+
+    view = icn3dpy.view(q='mmdbid=6hjr')
+
+    view
+
+You can also try other input besides "mmdbid".
 "pdbid" as input:
 
-    view = icn3dpy.view(q='pdbid=1tup',command='color spectrum')
+    view = icn3dpy.view(q='pdbid=2bbv')
 
     view
 
-You can also try other input besides "pdbid".
+
 "mmtfid" as input:
 
-    view = icn3dpy.view(q='mmtfid=1ffk',command='color spectrum')
+    view = icn3dpy.view(q='mmtfid=6vxx')
 
     view
 
 
-"mmdbid" as input (works in Chrome, but not in Safari for now):
+"cid" as input:
 
-    view = icn3dpy.view(q='mmdbid=1ffk',command='color spectrum')
+    view = icn3dpy.view(q='cid=2244')
 
     view
 
 
 Use predefined commands (see commands in [iCn3D Gallery](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d.html#gallery) for reference):
 
-    view = icn3dpy.view(q='pdbid=6m0j',command='line graph interaction pairs | !A !E | hbonds,salt bridge,interactions,halogen,pi-cation,pi-stacking | false | threshold 3.8 6 4 3.8 6 6; show selection; add residue number labels')
+    view = icn3dpy.view(q='mmdbid=6m0j',command='scatterplot interaction pairs | !A !E | hbonds,salt bridge,interactions,halogen,pi-cation,pi-stacking | false | threshold 3.8 6 4 3.8 6 6; show selection; add residue number labels')
 
     view
 
