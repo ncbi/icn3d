@@ -2169,6 +2169,7 @@ iCn3DUI.prototype = {
 
     shareLink: function(bPngHtml) { var me = this; //"use strict";
            var url = me.shareLinkUrl();
+
            var bTooLong = (url.length > 4000 || url.indexOf('http') !== 0) ? true : false;
 
            if(bPngHtml) url += "&random=" + parseInt(Math.random() * 1000); // generate a new shorten URL and thus image name everytime
@@ -2177,7 +2178,7 @@ iCn3DUI.prototype = {
            var inputid = Object.keys(me.icn3d.structures).join('_');
 
            if(!bPngHtml) {
-               if(me.bInputfile) {
+               if(me.bInputfile && !me.bInputUrlfile) {
                    alert("Share Link does NOT work when the data is from custom files. Please save 'iCn3D PNG Image' in the File menu and open it in iCn3D.");
                    return;
                }
@@ -6962,10 +6963,13 @@ iCn3DUI.prototype = {
            var type = $("#" + me.pre + "filetype").val();
            var url = $("#" + me.pre + "urlfile").val();
 
+           me.inputurl = 'type=' + type + '&url=' + encodeURIComponent(url);
+
            me.init();
            me.icn3d.init();
 
            me.bInputfile = true;
+           me.bInputUrlfile = true;
 
            me.downloadUrl(url, type);
 

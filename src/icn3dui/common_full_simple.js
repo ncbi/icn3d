@@ -609,6 +609,11 @@ iCn3DUI.prototype.shareLinkUrl = function(bAllCommands) { var me = this; //"use 
        var url = me.baseUrl + "icn3d/full.html?";
        if(me.cfg.bSidebyside) url = me.baseUrl + "icn3d/full2.html?";
 
+       if(me.bInputUrlfile) {
+           var urlArray = window.location.href.split('?');
+           url = urlArray[0] + '?' + me.inputurl + '&';
+       }
+
        var paraHash = {};
        for(var key in me.cfg) {
            var value = me.cfg[key];
@@ -669,8 +674,10 @@ iCn3DUI.prototype.shareLinkUrl = function(bAllCommands) { var me = this; //"use 
            if(key_value.length == 2) paraHash[key_value[0]] = key_value[1];
        }
 
-       for(var key in paraHash) {
-           url += key + '=' + paraHash[key] + '&';
+       if(!me.bInputUrlfile) {
+           for(var key in paraHash) {
+               url += key + '=' + paraHash[key] + '&';
+           }
        }
 
        // add time stamp
@@ -760,8 +767,7 @@ iCn3DUI.prototype.shareLinkUrl = function(bAllCommands) { var me = this; //"use 
 //       }
 
        statefile = statefile.replace(/!/g, Object.keys(me.icn3d.structures)[0] + '_');
-       if(me.bInputfile || url.length > 4000) url = statefile;
-
+       if((me.bInputfile && !me.bInputUrlfile) || url.length > 4000) url = statefile;
        var id;
        if(me.icn3d.structures !== undefined && Object.keys(me.icn3d.structures).length == 1 && me.inputid !== undefined) {
            id = Object.keys(me.icn3d.structures)[0];
