@@ -189,9 +189,7 @@ iCn3DUI.prototype.downloadAlignmentPart2 = function (data, seqalign, chainresiCa
         me.set2DDiagramsForAlign(me.mmdbidArray[0].toUpperCase(), me.mmdbidArray[1].toUpperCase());
     }
 
-    //if(me.cfg.showseq !== undefined && me.cfg.showseq) me.openDialog(me.pre + 'dl_selectresidues', 'Select residues in sequences');
-
-    if(me.deferred !== undefined) me.deferred.resolve(); if(me.deferred2 !== undefined) me.deferred2.resolve();
+    //if(me.deferred !== undefined) me.deferred.resolve(); if(me.deferred2 !== undefined) me.deferred2.resolve();
 };
 
 iCn3DUI.prototype.downloadChainalignmentPart2 = function (data1, data2, chainresiCalphaHash2) { var me = this; //"use strict";
@@ -243,7 +241,7 @@ iCn3DUI.prototype.downloadChainalignmentPart2 = function (data1, data2, chainres
         }
     }
 
-    if(me.deferred !== undefined) me.deferred.resolve(); if(me.deferred2 !== undefined) me.deferred2.resolve();
+    //if(me.deferred !== undefined) me.deferred.resolve(); if(me.deferred2 !== undefined) me.deferred2.resolve();
 };
 
 iCn3DUI.prototype.downloadChainAlignment = function (chainalign) { var me = this; //"use strict";
@@ -338,8 +336,6 @@ iCn3DUI.prototype.downloadChainAlignment = function (chainalign) { var me = this
                 me.mmdbidArray.push(me.mmdbid_t);
 
                 me.loadOpmDataForChainalign(data1, data2, me.mmdbidArray);
-
-                //if(me.deferred !== undefined) me.deferred.resolve(); if(me.deferred2 !== undefined) me.deferred2.resolve();
               } // success
             }); // ajax
           } // success

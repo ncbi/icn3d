@@ -534,9 +534,7 @@ iCn3DUI.prototype.parseMmtfData = function (mmtfData, mmtfid, bFull) { var me = 
 
     if(me.cfg.rotate !== undefined) me.rotStruc(me.cfg.rotate, true);
 
-    //if(me.cfg.showseq !== undefined && me.cfg.showseq) me.openDialog(me.pre + 'dl_selectresidues', 'Select residues in sequences');
-
-    if(me.deferred !== undefined) me.deferred.resolve(); if(me.deferred2 !== undefined) me.deferred2.resolve();
+    //if(me.deferred !== undefined) me.deferred.resolve(); if(me.deferred2 !== undefined) me.deferred2.resolve();
 };
 
 

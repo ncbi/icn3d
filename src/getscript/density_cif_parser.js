@@ -7,7 +7,7 @@
 
 iCn3DUI.prototype.DensityCifParser = function(pdbid, type, sigma, emd) { var me = this; //"use strict";
    var url;
-   var detail = (me.isMobile()) ? 0 : 4; //4;
+   var detail = (me.isMobile() || me.cfg.notebook) ? 0 : 4; //4;
 
    //https://www.ebi.ac.uk/pdbe/densities/doc.html
    if(type == '2fofc' || type == 'fofc') {

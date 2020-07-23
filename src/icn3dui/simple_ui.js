@@ -463,6 +463,8 @@ iCn3DUI.prototype = {
         }
 
         me.icn3d.bInitial = false;
+
+        if(me.deferred !== undefined) me.deferred.resolve(); if(me.deferred2 !== undefined) me.deferred2.resolve();
     },
 
     selectAll: function() { var me = this; //"use strict";

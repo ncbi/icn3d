@@ -807,6 +807,7 @@ iCn3DUI.prototype.showNewTrack = function(chnid, title, text, cssColorArray, inT
 
     var parsedResn = {};
     var gapCnt = 0, currResi = 1;
+    var htmlTmp2 = '';
     for(var i = 0, il = text.length; i < il; ++i) {
       var resNum = i-gapCnt;
 
@@ -849,23 +850,23 @@ iCn3DUI.prototype.showNewTrack = function(chnid, title, text, cssColorArray, inT
               html += '<span id="' + pre + '_' + me.pre + chnid + '_' + pos + '" title="' + c + pos + '" class="icn3d-residue">' + c + '</span>';
           }
 
-          html2 += me.insertGapOverview(chnid, i);
+          htmlTmp2 += me.insertGapOverview(chnid, i);
 
           var emptyWidth = (me.cfg.blast_rep_id == chnid) ? Math.round(me.seqAnnWidth * i / (me.maxAnnoLength + me.nTotalGap) - prevEmptyWidth - prevLineWidth) : Math.round(me.seqAnnWidth * i / me.maxAnnoLength - prevEmptyWidth - prevLineWidth);
           if(emptyWidth < 0) emptyWidth = 0;
 
-          html2 += '<div style="display:inline-block; width:' + emptyWidth + 'px;">&nbsp;</div>';
+          htmlTmp2 += '<div style="display:inline-block; width:' + emptyWidth + 'px;">&nbsp;</div>';
           if(cssColorArray !== undefined && cssColorArray[i] != '') {
-              html2 += '<div style="display:inline-block; background-color:' + cssColorArray[i] + '; width:' + widthPerRes + 'px;" title="' + c + (i+1).toString() + '">&nbsp;</div>';
+              htmlTmp2 += '<div style="display:inline-block; background-color:' + cssColorArray[i] + '; width:' + widthPerRes + 'px;" title="' + c + (i+1).toString() + '">&nbsp;</div>';
           }
           else if(color) {
-              html2 += '<div style="display:inline-block; background-color:rgb(' + color + '); width:' + widthPerRes + 'px;" title="' + c + (i+1).toString() + '">&nbsp;</div>';
+              htmlTmp2 += '<div style="display:inline-block; background-color:rgb(' + color + '); width:' + widthPerRes + 'px;" title="' + c + (i+1).toString() + '">&nbsp;</div>';
           }
           else if(bAlignColor) {
-              html2 += '<div style="display:inline-block; background-color:#' + colorHexStr + '; width:' + widthPerRes + 'px;" title="' + c + (i+1).toString() + '">&nbsp;</div>';
+              htmlTmp2 += '<div style="display:inline-block; background-color:#' + colorHexStr + '; width:' + widthPerRes + 'px;" title="' + c + (i+1).toString() + '">&nbsp;</div>';
           }
           else {
-              html2 += '<div style="display:inline-block; background-color:#333; width:' + widthPerRes + 'px;" title="' + c + (i+1).toString() + '">&nbsp;</div>';
+              htmlTmp2 += '<div style="display:inline-block; background-color:#333; width:' + widthPerRes + 'px;" title="' + c + (i+1).toString() + '">&nbsp;</div>';
           }
 
           prevEmptyWidth += emptyWidth;
@@ -882,6 +883,42 @@ iCn3DUI.prototype.showNewTrack = function(chnid, title, text, cssColorArray, inT
           }
       }
     }
+
+    if(fromArray !== undefined) {
+        htmlTmp2 = '';
+        var fromArray2 = [], toArray2 = [];
+        for(var i = 0, il = fromArray.length; i < il; ++i) {
+            fromArray2.push(fromArray[i]);
+
+            for(var j = fromArray[i]; j <= toArray[i]; ++j) {
+                if(me.targetGapHash !== undefined && me.targetGapHash.hasOwnProperty(j)) {
+                    toArray2.push(j - 1);
+                    fromArray2.push(j);
+                }
+            }
+
+            toArray2.push(toArray[i]);
+        }
+
+        me.nTotalGap = 0;
+        for(var i in me.targetGapHash) {
+            me.nTotalGap += me.targetGapHash[i].to - me.targetGapHash[i].from + 1;
+        }
+
+        var atom = me.icn3d.getFirstCalphaAtomObj(me.icn3d.chains[chnid]);
+        var colorStr = (atom.color === undefined || atom.color.getHexString() === 'FFFFFF') ? 'DDDDDD' : atom.color.getHexString();
+        var color = (atom.color !== undefined) ? colorStr : "CCCCCC";
+
+        for(var i = 0, il = fromArray2.length; i < il; ++i) {
+            htmlTmp2 += me.insertGapOverview(chnid, fromArray2[i]);
+
+            var emptyWidth = (i == 0) ? Math.round(me.seqAnnWidth * (fromArray2[i] - me.baseResi[chnid] - 1) / (me.maxAnnoLength + me.nTotalGap)) : Math.round(me.seqAnnWidth * (fromArray2[i] - toArray2[i-1] - 1) / (me.maxAnnoLength + me.nTotalGap));
+            htmlTmp2 += '<div style="display:inline-block; width:' + emptyWidth + 'px;">&nbsp;</div>';
+
+            htmlTmp2 += '<div style="display:inline-block; color:white!important; font-weight:bold; background-color:#' + color + '; width:' + Math.round(me.seqAnnWidth * (toArray2[i] - fromArray2[i] + 1) / (me.maxAnnoLength + me.nTotalGap)) + 'px;" class="icn3d-seqTitle icn3d-link icn3d-blue" custom="' + (index+1).toString() + '" from="' + fromArray2 + '" to="' + toArray2 + '" shorttitle="' + simpTitle + '" index="' + index + '" setname="' + chnid + '_custom_' + (index+1).toString() + '" id="' + chnid + '_custom_' + index + '" anno="sequence" chain="' + chnid + '" title="' + title + '">' + title + '</div>';
+        }
+    }
+
     var htmlTmp = '<span class="icn3d-residueNum" title="residue count">' + resCnt.toString() + ' Pos</span>';
     htmlTmp += '</span>';
     htmlTmp += '<br>';
@@ -889,7 +926,7 @@ iCn3DUI.prototype.showNewTrack = function(chnid, title, text, cssColorArray, inT
     htmlTmp += '</div>';
 
     html += htmlTmp;
-    html2 += htmlTmp;
+    html2 += htmlTmp2 + htmlTmp;
 
     html3 += '</div>';
 

@@ -13,7 +13,7 @@ if (!$.ui.dialog.prototype._makeDraggableBase) {
 }
 
 var iCn3DUI = function(cfg) { var me = this; //"use strict";
-    this.REVISION = '2.18.0';
+    this.REVISION = '2.18.1';
 
     me.bFullUi = true;
 
@@ -1204,7 +1204,11 @@ iCn3DUI.prototype = {
               var id = Object.keys(me.icn3d.structures)[0];
               me.cfg.command = me.cfg.command.replace(new RegExp('!','g'), id + '_');
           }
+          // final step resolved me.deferred
           me.loadScript(me.cfg.command);
+      }
+      else {
+          if(me.deferred !== undefined) me.deferred.resolve(); if(me.deferred2 !== undefined) me.deferred2.resolve();
       }
 
       if(me.cfg.align !== undefined || me.cfg.chainalign !== undefined || me.bRealign || ( me.bInputfile && me.InputfileType == 'pdb' && Object.keys(me.icn3d.structures).length >= 2) ) {
