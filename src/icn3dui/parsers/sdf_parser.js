@@ -46,7 +46,7 @@ iCn3DUI.prototype.downloadCid = function (cid) { var me = this; //"use strict";
 
           if(me.cfg.rotate !== undefined) me.rotStruc(me.cfg.rotate, true);
 
-          if(me.deferred !== undefined) me.deferred.resolve(); if(me.deferred2 !== undefined) me.deferred2.resolve();
+          //if(me.deferred !== undefined) me.deferred.resolve(); if(me.deferred2 !== undefined) me.deferred2.resolve();
         }
       },
       error : function(xhr, textStatus, errorThrown ) {
@@ -84,7 +84,7 @@ iCn3DUI.prototype.loadSdfData = function(data) {
 
       if(me.cfg.rotate !== undefined) me.rotStruc(me.cfg.rotate, true);
 
-      if(me.deferred !== undefined) me.deferred.resolve(); if(me.deferred2 !== undefined) me.deferred2.resolve();
+      //if(me.deferred !== undefined) me.deferred.resolve(); if(me.deferred2 !== undefined) me.deferred2.resolve();
     }
 };
 

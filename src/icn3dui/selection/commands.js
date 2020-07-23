@@ -608,6 +608,8 @@ iCn3DUI.prototype.renderFinalStep = function(steps) { var me = this; //"use stri
 
     // an extra render to remove artifacts in transparent surface
     if(me.bTransparentSurface && me.icn3d.bRender) me.icn3d.render();
+
+    if(me.deferred !== undefined) me.deferred.resolve(); if(me.deferred2 !== undefined) me.deferred2.resolve();
 };
 
 iCn3DUI.prototype.applyCommandLoad = function (commandStr) { var me = this; //"use strict";

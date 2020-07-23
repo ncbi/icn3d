@@ -20,7 +20,7 @@ iCn3DUI.prototype.loadXyzData = function(data) { var me = this; //"use strict";
 
       if(me.cfg.rotate !== undefined) me.rotStruc(me.cfg.rotate, true);
 
-      if(me.deferred !== undefined) me.deferred.resolve(); if(me.deferred2 !== undefined) me.deferred2.resolve();
+      //if(me.deferred !== undefined) me.deferred.resolve(); if(me.deferred2 !== undefined) me.deferred2.resolve();
     }
 };
 

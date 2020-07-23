@@ -111,6 +111,153 @@ iCn3DUI.prototype.downloadMmcifSymmetryBase = function (mmcifid, type) { var me 
       tryCount : 0,
       retryLimit : 1,
       success: function(data) {
+          // notebook has a problem in posting data to mmcifparser.cgi
+          if(me.cfg.notebook) {
+            var lines = data.split('\n');
+
+            var bEmd = false;
+            var bOrganism = false, bStartOrganism = false;
+            var bMatrix = false, bStartMatrix = false, matrixLineCnt = 0, matrixStr = '', comLine = '';
+            var bResidues = false, bStartResidues = false, resStr = '';
+
+            var prevLine = '';
+            for (var i in lines) {
+                var line = lines[i];
+
+                //EMDB  EMD-3906
+                if(line.substr(0, 10) == 'EMDB  EMD-') {
+                    me.icn3d.emd = line.substr(6).trim();
+                    bEmd = true;
+                }
+                else if(line.substr(0, 27) == '_entity_src_nat.common_name') {
+                    me.icn3d.organism = line.substr(27).trim();
+                    if(me.icn3d.organism) bOrganism = true;
+                    bStartOrganism = true;
+                }
+                else if(bStartOrganism && !bOrganism && prevLine.substr(0, 23) == '_entity_src_nat.details') {
+                    //1 1 sample 1 99  Human 'Homo sapiens' 9606 ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ?
+                    var itemArray = line.split(/\s+/);
+                    me.icn3d.organism = (itemArray.length > 5) ? itemArray[5] : '';
+                    bOrganism = true;
+                }
+                else if(prevLine.substr(0, 29) == '_pdbx_struct_oper_list.vector' && line.split(/\s+/).length > 2) {
+                    //1 'identity operation'         1_555 x,y,z     1.0000000000  0.0000000000  0.0000000000 0.0000000000 0.0000000000  1.0000000000
+                    //0.0000000000 0.0000000000 0.0000000000 0.0000000000 1.0000000000 0.0000000000
+
+                    bStartMatrix = true;
+                    ++matrixLineCnt;
+
+                    var pos1 = line.indexOf(' ');
+                    var pos2 = line.indexOf("' ");
+                    comLine += line.substr(0, pos1) + line.substr(pos2 + 1);
+
+                    matrixStr += '[';
+                }
+                else if(bStartMatrix && line.trim() == '#') {
+                    // remove the last ','
+                    if(matrixStr != '[') matrixStr = matrixStr.substr(0, matrixStr.length - 1);
+
+                    matrixStr += ']';
+                    bMatrix = true;
+                    bStartMatrix = false;
+                }
+                else if(bStartMatrix && !bMatrix) {
+                    ++matrixLineCnt;
+
+                    if(matrixLineCnt % 2 == 0) {
+                        comLine += line;
+                        var itemArray = comLine.split(/\s+/);
+
+                        if(itemArray[0] != 'X0' && itemArray[0] != 'P' && itemArray.length > 14) {
+                            var m11 = itemArray[3], m12 = itemArray[4], m13 = itemArray[5], m14 = itemArray[6];
+                            var m21 = itemArray[7], m22 = itemArray[8], m23 = itemArray[9], m24 = itemArray[10];
+                            var m31 = itemArray[11], m32 = itemArray[12], m33 = itemArray[13], m34 = itemArray[14];
+
+                            matrixStr += "[" + m11 + "," + m21 + "," + m31 + ", 0, " + m12 + "," + m22 + "," + m32 + ", 0, "
+                              + m13 + "," + m23 + "," + m33 + ", 0, " + m14 + "," + m24 + "," + m34 + ", 1" + "],";
+                        }
+
+                        comLine = '';
+                    }
+                    else {
+                        var pos1 = line.indexOf(' ');
+                        var pos2 = line.indexOf("' ");
+                        comLine += line.substr(0, pos1) + line.substr(pos2 + 1);
+                    }
+                }
+                else if(bStartResidues && line.trim() == '#') {
+                    // remove the last ','
+                    if(resStr != '[') resStr = resStr.substr(0, resStr.length - 1);
+
+                    resStr += ']';
+                    bResidues = true;
+                    bStartResidues = false;
+                }
+                else if(prevLine.trim() == '_pdbx_poly_seq_scheme.hetero' || (bStartResidues && !bResidues)) {
+                    if(prevLine.trim() == '_pdbx_poly_seq_scheme.hetero') {
+                        bStartResidues = true;
+                        resStr += '[';
+                    }
+
+                    //A 1 1   ASP 1   1   ?   ?   ?   A . n
+                    var itemArray = line.split(/\s+/);
+                    var resn = itemArray[3];
+                    var chain = itemArray[9];
+                    var resi = itemArray[5];
+
+                    var authResi = itemArray[6];
+
+                    if(authResi == "?") {
+                      resStr += "{\"resn\": \"" + resn + "\", \"chain\": \"" + chain + "\", \"resi\": " + resi + "},";
+                    }
+                }
+
+                if(bOrganism && bMatrix && bResidues) {
+                    break;
+                }
+
+                prevLine = line;
+            }
+
+            if(me.bAssemblyUseAsu) me.loadMmcifSymmetry(JSON.parse(matrixStr));
+
+            var missingseq = JSON.parse(resStr);
+            if(type === 'mmtfid' && missingseq !== undefined) {
+                // adjust missing residues
+                var maxMissingResi = 0, prevMissingChain = '';
+                var chainMissingResidueArray = {};
+                for(var i = 0, il = missingseq.length; i < il; ++i) {
+
+                    var resn = missingseq[i].resn;
+                    var chain = missingseq[i].chain;
+                    var resi = missingseq[i].resi;
+
+                    var chainNum = mmcifid + '_' + chain;
+
+                    if(chainMissingResidueArray[chainNum] === undefined) chainMissingResidueArray[chainNum] = [];
+                    var resObject = {};
+                    resObject.resi = resi;
+                    resObject.name = me.icn3d.residueName2Abbr(resn).toLowerCase();
+
+                    if(chain != prevMissingChain) {
+                        maxMissingResi = 0;
+                    }
+
+                    // not all listed residues are considered missing, e.g., PDB ID 4OR2, only the firts four residues are considered missing
+                    if(!isNaN(resi) && (prevMissingChain == '' || (chain != prevMissingChain) || (chain == prevMissingChain && resi > maxMissingResi)) ) {
+                        chainMissingResidueArray[chainNum].push(resObject);
+
+                        maxMissingResi = resi;
+                        prevMissingChain = chain;
+                    }
+                }
+
+                me.icn3d.adjustSeq(chainMissingResidueArray);
+            }
+
+            if(me.deferredSymmetry !== undefined) me.deferredSymmetry.resolve();
+        }
+        else { // if(!me.cfg.notebook) {
            url = me.baseUrl + "mmcifparser/mmcifparser.cgi";
 
            $.ajax({
@@ -174,6 +321,7 @@ iCn3DUI.prototype.downloadMmcifSymmetryBase = function (mmcifid, type) { var me 
                 return;
               }
             });
+        } // if(!me.cfg.notebook
       },
       error : function(xhr, textStatus, errorThrown ) {
         this.tryCount++;
@@ -221,10 +369,10 @@ iCn3DUI.prototype.loadMmcifData = function(data, mmcifid) { var me = this; //"us
     }
 };
 
-iCn3DUI.prototype.loadMmcifSymmetry = function(data) { var me = this; //"use strict";
+iCn3DUI.prototype.loadMmcifSymmetry = function(assembly) { var me = this; //"use strict";
     // load assembly info
-    var assembly = data.assembly;
-    var pmatrix = data.pmatrix;
+    //var assembly = data.assembly;
+    //var pmatrix = data.pmatrix;
 
     for(var i = 0, il = assembly.length; i < il; ++i) {
       var mat4 = new THREE.Matrix4();
@@ -510,7 +658,7 @@ iCn3DUI.prototype.downloadMmdbPart2 = function (type) { var me = this; //"use st
         if($("#" + me.pre + "alternateWrapper") !== null) $("#" + me.pre + "alternateWrapper").hide();
     }
 
-    if(me.deferred !== undefined) me.deferred.resolve(); if(me.deferred2 !== undefined) me.deferred2.resolve();
+    //if(me.deferred !== undefined) me.deferred.resolve(); if(me.deferred2 !== undefined) me.deferred2.resolve();
 };
 
 iCn3DUI.prototype.downloadGi = function (gi) { var me = this; //"use strict";
