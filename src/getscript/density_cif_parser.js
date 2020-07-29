@@ -5,7 +5,7 @@
  */
 
 
-iCn3DUI.prototype.DensityCifParser = function(pdbid, type, sigma, emd) { var me = this; //"use strict";
+iCn3DUI.prototype.DensityCifParser = function(pdbid, type, sigma, emd) { var me = this, ic = me.icn3d; "use strict";
    var url;
    var detail = (me.isMobile() || me.cfg.notebook) ? 0 : 4; //4;
 
@@ -21,15 +21,15 @@ iCn3DUI.prototype.DensityCifParser = function(pdbid, type, sigma, emd) { var me 
 
     //https://stackoverflow.com/questions/33902299/using-jquery-ajax-to-download-a-binary-file
     if(type == '2fofc' && me.bAjax2fofc) {
-        me.icn3d.mapData.sigma2 = sigma;
+        ic.mapData.sigma2 = sigma;
         me.setOption('map', type);
     }
     else if(type == 'fofc' && me.bAjaxfofc) {
-        me.icn3d.mapData.sigma = sigma;
+        ic.mapData.sigma = sigma;
         me.setOption('map', type);
     }
     else if(type == 'em' && me.bAjaxEm) {
-        me.icn3d.mapData.sigmaEm = sigma;
+        ic.mapData.sigmaEm = sigma;
         me.setOption('emmap', type);
     }
     else {
@@ -78,7 +78,7 @@ iCn3DUI.prototype.DensityCifParser = function(pdbid, type, sigma, emd) { var me 
     }
 };
 
-iCn3DUI.prototype.parseChannels = function(densitydata, type, sigma) { var me = this; //"use strict";
+iCn3DUI.prototype.parseChannels = function(densitydata, type, sigma) { var me = this, ic = me.icn3d; "use strict";
     var cif = me.BinaryParse(densitydata);
 
     if(type == '2fofc' || type == 'fofc') {
@@ -89,9 +89,9 @@ iCn3DUI.prototype.parseChannels = function(densitydata, type, sigma) { var me = 
         var density = twoDensity;
         var sampleCount = density.box.sampleCount;
         var header = {xExtent: sampleCount[0], yExtent: sampleCount[1], zExtent: sampleCount[2], mean: density.valuesInfo.mean, sigma: density.valuesInfo.sigma};
-        me.icn3d.mapData.header2 = header;
+        ic.mapData.header2 = header;
 
-        me.icn3d.mapData.data2 = density.data;
+        ic.mapData.data2 = density.data;
 
         var origin = density.box.origin;
         var dimensions = density.box.dimensions;
@@ -110,47 +110,47 @@ iCn3DUI.prototype.parseChannels = function(densitydata, type, sigma) { var me = 
         //var toFrac = new LiteMol.Visualization.THREE.Matrix4().getInverse(fromFrac);
         var matrix = fromFrac.multiply(translate).multiply(scale);
 
-        me.icn3d.mapData.matrix2 = matrix;
+        ic.mapData.matrix2 = matrix;
 
-        me.icn3d.mapData.type2 = type;
-        me.icn3d.mapData.sigma2 = sigma;
+        ic.mapData.type2 = type;
+        ic.mapData.sigma2 = sigma;
 
         // 'fofc'
-        var density = oneDensity;
-        var sampleCount = density.box.sampleCount;
-        var header = {xExtent: sampleCount[0], yExtent: sampleCount[1], zExtent: sampleCount[2], mean: density.valuesInfo.mean, sigma: density.valuesInfo.sigma};
-        me.icn3d.mapData.header = header;
+        density = oneDensity;
+        sampleCount = density.box.sampleCount;
+        header = {xExtent: sampleCount[0], yExtent: sampleCount[1], zExtent: sampleCount[2], mean: density.valuesInfo.mean, sigma: density.valuesInfo.sigma};
+        ic.mapData.header = header;
 
-        me.icn3d.mapData.data = density.data;
+        ic.mapData.data = density.data;
 
-        var origin = density.box.origin;
-        var dimensions = density.box.dimensions;
-        var basis = density.spacegroup.basis;
-        var scale = new THREE.Matrix4().makeScale(
+        origin = density.box.origin;
+        dimensions = density.box.dimensions;
+        basis = density.spacegroup.basis;
+        scale = new THREE.Matrix4().makeScale(
             dimensions[0] / (sampleCount[0] ),
             dimensions[1] / (sampleCount[1] ),
             dimensions[2] / (sampleCount[2] ));
-        var translate = new THREE.Matrix4().makeTranslation(origin[0], origin[1], origin[2]);
-        var fromFrac = new THREE.Matrix4().set(
+        translate = new THREE.Matrix4().makeTranslation(origin[0], origin[1], origin[2]);
+        fromFrac = new THREE.Matrix4().set(
             basis.x[0], basis.y[0], basis.z[0], 0.0,
             0.0, basis.y[1], basis.z[1], 0.0,
             0.0, 0.0, basis.z[2], 0.0,
             0.0, 0.0, 0.0, 1.0);
         //var toFrac = new LiteMol.Visualization.THREE.Matrix4().getInverse(fromFrac);
-        var matrix = fromFrac.multiply(translate).multiply(scale);
-        me.icn3d.mapData.matrix = matrix;
+        matrix = fromFrac.multiply(translate).multiply(scale);
+        ic.mapData.matrix = matrix;
 
-        me.icn3d.mapData.type = type;
-        me.icn3d.mapData.sigma = sigma;
+        ic.mapData.type = type;
+        ic.mapData.sigma = sigma;
     }
     else if(type == 'em') {
         var density = me.getChannel(cif, 'EM');
 
         var sampleCount = density.box.sampleCount;
         var header = {xExtent: sampleCount[0], yExtent: sampleCount[1], zExtent: sampleCount[2], max: density.valuesInfo.max, min: density.valuesInfo.min};
-        me.icn3d.mapData.headerEm = header;
+        ic.mapData.headerEm = header;
 
-        me.icn3d.mapData.dataEm = density.data;
+        ic.mapData.dataEm = density.data;
 
         var origin = density.box.origin;
         var dimensions = density.box.dimensions;
@@ -167,15 +167,14 @@ iCn3DUI.prototype.parseChannels = function(densitydata, type, sigma) { var me = 
             0.0, 0.0, 0.0, 1.0);
         //var toFrac = new LiteMol.Visualization.THREE.Matrix4().getInverse(fromFrac);
         var matrix = fromFrac.multiply(translate).multiply(scale);
-        me.icn3d.mapData.matrixEm = matrix;
+        ic.mapData.matrixEm = matrix;
 
-        me.icn3d.mapData.typeEm = type;
-        //me.icn3d.mapData.sigmaEm = sigma;
-        me.icn3d.mapData.sigmaEm = sigma;
+        ic.mapData.typeEm = type;
+        ic.mapData.sigmaEm = sigma;
     }
 };
 
-iCn3DUI.prototype.getChannel = function(data, name) { var me = this; //"use strict";
+iCn3DUI.prototype.getChannel = function(data, name) { var me = this, ic = me.icn3d; "use strict";
     //var block = data.dataBlocks.filter(b => b.header === name)[0];
     //var block = data.dataBlocks.filter(b => b.id === name)[0];
 
@@ -191,7 +190,7 @@ iCn3DUI.prototype.getChannel = function(data, name) { var me = this; //"use stri
     return density;
 };
 
-iCn3DUI.prototype.CIFParse = function(block) { var me = this; //"use strict";
+iCn3DUI.prototype.CIFParse = function(block) { var me = this, ic = me.icn3d; "use strict";
     var info = block.getCategory('_volume_data_3d_info');
 
     if (!info) {
@@ -315,7 +314,7 @@ iCn3DUI.prototype.CIFParse = function(block) { var me = this; //"use strict";
     return data;
 };
 
-iCn3DUI.prototype.BinaryParse = function(data) { var me = this; //"use strict";
+iCn3DUI.prototype.BinaryParse = function(data) { var me = this, ic = me.icn3d; "use strict";
 //    var minVersion = [0, 3];
 //    try {
         var array = new Uint8Array(data);
@@ -751,7 +750,7 @@ iCn3DUI.prototype.BinaryParse = function(data) { var me = this; //"use strict";
 //    }
 };
 
-iCn3DUI.prototype.MessagePackParse = function(state) { var me = this; //"use strict";
+iCn3DUI.prototype.MessagePackParse = function(state) { var me = this, ic = me.icn3d; "use strict";
     /*
      * Adapted from https://github.com/rcsb/mmtf-javascript
      * by Alexander Rose <alexander.rose@weirdbyte.de>, MIT License, Copyright (c) 2016

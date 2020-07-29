@@ -2,7 +2,7 @@
  * @author Jiyao Wang <wangjiy@ncbi.nlm.nih.gov> / https://github.com/ncbi/icn3d
  */
 
-iCn3D.prototype.positionFromGeometry = function( mesh ){ var me = this; //"use strict";
+iCn3D.prototype.positionFromGeometry = function( mesh ){ var me = this, ic = me.icn3d; "use strict";
     var geometry = mesh.geometry;
 
     var vertices = geometry.vertices;
@@ -40,10 +40,10 @@ iCn3D.prototype.positionFromGeometry = function( mesh ){ var me = this; //"use s
 };
 
 
-iCn3D.prototype.colorFromGeometry = function( mesh ){ var me = this; //"use strict";
+iCn3D.prototype.colorFromGeometry = function( mesh ){ var me = this, ic = me.icn3d; "use strict";
     var geometry = mesh.geometry;
 
-    var meshColor = new THREE.Color(1, 1, 1);
+    var meshColor = this.thr(1, 1, 1);
     if(geometry.type == 'SphereGeometry' || geometry.type == 'BoxGeometry' || geometry.type == 'CylinderGeometry') {
          if(mesh.material !== undefined) meshColor = mesh.material.color;
     }
@@ -100,7 +100,7 @@ iCn3D.prototype.colorFromGeometry = function( mesh ){ var me = this; //"use stri
 };
 
 
-iCn3D.prototype.indexFromGeometry = function( mesh ){  var me = this; //"use strict";
+iCn3D.prototype.indexFromGeometry = function( mesh ){  var me = this, ic = me.icn3d; "use strict";
     var geometry = mesh.geometry;
 
     var faces = geometry.faces;
@@ -127,7 +127,7 @@ iCn3D.prototype.indexFromGeometry = function( mesh ){  var me = this; //"use str
 };
 
 
-iCn3D.prototype.normalFromGeometry = function( mesh ){  var me = this; //"use strict";
+iCn3D.prototype.normalFromGeometry = function( mesh ){  var me = this, ic = me.icn3d; "use strict";
     var geometry = mesh.geometry;
 
     var faces = geometry.faces;
@@ -167,7 +167,7 @@ iCn3D.prototype.normalFromGeometry = function( mesh ){  var me = this; //"use st
 
 };
 
-iCn3D.prototype.hashvalue2array = function(hash) {  var me = this; //"use strict";
+iCn3D.prototype.hashvalue2array = function(hash) {  var me = this, ic = me.icn3d; "use strict";
     //return $.map(hash, function(v) { return v; });
 
     var array = [];
@@ -178,7 +178,7 @@ iCn3D.prototype.hashvalue2array = function(hash) {  var me = this; //"use strict
     return array;
 };
 
-iCn3D.prototype.drawSymmetryMates = function() {  var me = this; //"use strict";
+iCn3D.prototype.drawSymmetryMates = function() {  var me = this, ic = me.icn3d; "use strict";
     if(this.bInstanced && Object.keys(this.atoms).length * this.biomtMatrices.length > this.maxatomcnt) {
         this.drawSymmetryMatesInstancing();
     }
@@ -187,7 +187,7 @@ iCn3D.prototype.drawSymmetryMates = function() {  var me = this; //"use strict";
     }
 };
 
-iCn3D.prototype.applyMat = function(obj, mat, bVector3) {  var me = this; //"use strict";
+iCn3D.prototype.applyMat = function(obj, mat, bVector3) {  var me = this, ic = me.icn3d; "use strict";
     if(this.rmsd_supr === undefined) {
       if(bVector3 === undefined) {
           obj.applyMatrix(mat);
@@ -252,7 +252,7 @@ iCn3D.prototype.applyMat = function(obj, mat, bVector3) {  var me = this; //"use
     }
 };
 
-iCn3D.prototype.drawSymmetryMatesNoInstancing = function() {  var me = this; //"use strict";
+iCn3D.prototype.drawSymmetryMatesNoInstancing = function() {  var me = this, ic = me.icn3d; "use strict";
    if (this.biomtMatrices === undefined || this.biomtMatrices.length == 0) return;
    var cnt = 1; // itself
    var centerSum = this.center.clone();
@@ -344,7 +344,7 @@ iCn3D.prototype.drawSymmetryMatesNoInstancing = function() {  var me = this; //"
    this.bSetInstancing = true;
 };
 
-iCn3D.prototype.createInstancedGeometry = function(mesh) {  var me = this; //"use strict";
+iCn3D.prototype.createInstancedGeometry = function(mesh) {  var me = this, ic = me.icn3d; "use strict";
    var baseGeometry = mesh.geometry;
 
    var geometry = new THREE.InstancedBufferGeometry();
@@ -483,7 +483,7 @@ iCn3D.prototype.createInstancedGeometry = function(mesh) {  var me = this; //"us
    return geometry;
 };
 
-iCn3D.prototype.getInstancedMaterial = function(name) {  var me = this; //"use strict";
+iCn3D.prototype.getInstancedMaterial = function(name) {  var me = this, ic = me.icn3d; "use strict";
    //var material = new THREE.RawShaderMaterial({
    var material = new THREE.ShaderMaterial({
       defines: this.defines,
@@ -503,7 +503,7 @@ iCn3D.prototype.getInstancedMaterial = function(name) {  var me = this; //"use s
    return material;
 };
 
-iCn3D.prototype.createInstancedMesh = function(mdl) { var me = this; //"use strict";
+iCn3D.prototype.createInstancedMesh = function(mdl) { var me = this, ic = me.icn3d; "use strict";
    for(var i = 0, il = mdl.children.length; i < il; ++i) {
        var mesh = mdl.children[i];
 
@@ -525,7 +525,7 @@ iCn3D.prototype.createInstancedMesh = function(mdl) { var me = this; //"use stri
    }
 };
 
-iCn3D.prototype.drawSymmetryMatesInstancing = function() { var me = this; //"use strict";
+iCn3D.prototype.drawSymmetryMatesInstancing = function() { var me = this, ic = me.icn3d; "use strict";
    if (this.biomtMatrices === undefined || this.biomtMatrices.length == 0) return;
    var cnt = 1; // itself
    var centerSum = this.center.clone();
@@ -567,47 +567,6 @@ iCn3D.prototype.drawSymmetryMatesInstancing = function() { var me = this; //"use
 
    this.createInstancedMesh(this.mdl);
    this.createInstancedMesh(this.mdlImpostor);
-
-/*
-   for(var i = 0, il = this.mdl.children.length; i < il; ++i) {
-       var mesh = this.mdl.children[i];
-
-       if(mesh.type === 'Sprite') continue;
-
-       var geometry = this.createInstancedGeometry(mesh);
-
-       var mesh2 = new THREE.Mesh(geometry, this.instancedMaterial);
-
-       mesh2.onBeforeRender = this.onBeforeRender;
-
-       // important: https://stackoverflow.com/questions/21184061/mesh-suddenly-disappears-in-three-js-clipping
-       // You are moving the camera in the CPU. You are moving the vertices of the plane in the GPU
-       mesh2.frustumCulled = false;
-
-       geometry = undefined;
-
-       this.mdl.add(mesh2);
-   }
-
-   for(var i = 0, il = this.mdlImpostor.children.length; i < il; ++i) {
-       var mesh = this.mdlImpostor.children[i];
-
-       var geometry = this.createInstancedGeometry(mesh);
-
-       var mesh2 = new THREE.Mesh(geometry, this.instancedMaterial);
-       //var mesh2 = new THREE.Mesh(geometry, material);
-
-       mesh2.onBeforeRender = this.onBeforeRender;
-
-       // important: https://stackoverflow.com/questions/21184061/mesh-suddenly-disappears-in-three-js-clipping
-       // You are moving the camera in the CPU. You are moving the vertices of the plane in the GPU
-       mesh2.frustumCulled = false;
-
-       geometry = null;
-
-       this.mdlImpostor.add(mesh2);
-   }
-*/
 
    if(this.bSetInstancing === undefined || !this.bSetInstancing) {
        this.maxD *= Math.sqrt(cnt);

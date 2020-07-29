@@ -1,10 +1,10 @@
-/*! setupsurface.js from SurfaceWorker.js
+/* setupsurface.js from SurfaceWorker.js
  * @author David Koes  / https://github.com/3dmol/3Dmol.js/tree/master/3Dmol
  * Modified by Jiyao Wang / https://github.com/ncbi/icn3d
  */
 
 $3Dmol.SetupSurface = function (data) {
-    var me = this; //"use strict";
+    var me = this, ic = me.icn3d; "use strict";
 
     //var $3Dmol = $3Dmol || {};
 

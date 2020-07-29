@@ -5,7 +5,7 @@
 iCn3D.prototype.setAtmClr = function(atoms, hex) {
     for (var i in atoms) {
         var atom = this.atoms[i];
-        atom.color = new THREE.Color().setHex(hex);
+        atom.color = this.thr().setHex(hex);
 
         this.atomPrevColors[i] = atom.color;
     }
@@ -36,14 +36,6 @@ iCn3D.prototype.setMmdbChainColor = function (inAtoms) {
 };
 
 iCn3D.prototype.setConservationColor = function (atoms, bIdentity) {
-/*
-    for (var i in atoms) {
-        var atom = this.atoms[i];
-        atom.color = this.defaultAtomColor;
-
-        this.atomPrevColors[i] = atom.color;
-    }
-*/
     this.setMmdbChainColor(atoms);
 
     for(var chainid in this.alnChainsSeq) {
@@ -54,7 +46,7 @@ iCn3D.prototype.setConservationColor = function (atoms, bIdentity) {
 
             for(var j in this.residues[residueid]) {
                 if(atoms.hasOwnProperty(j)) {
-                    var color = (bIdentity) ? new THREE.Color(resObjectArray[i].color) : new THREE.Color(resObjectArray[i].color2);
+                    var color = (bIdentity) ? this.thr(resObjectArray[i].color) : this.thr(resObjectArray[i].color2);
                     this.atoms[j].color = color;
                     this.atomPrevColors[j] = color;
                 }
@@ -75,28 +67,29 @@ iCn3D.prototype.setColorByOptions = function (options, atoms, bUseInputColor) {
   else if(options.color.indexOf("#") === 0) {
     for (var i in atoms) {
         var atom = this.atoms[i];
-        atom.color = new THREE.Color().setStyle(options.color.toLowerCase());
+        atom.color = this.thr().setStyle(options.color.toLowerCase());
 
         this.atomPrevColors[i] = atom.color;
     }
   }
   else {
+    var idx, cnt, lastTerSerialInv;
+    var minB, maxB;
+
     switch (options.color.toLowerCase()) {
         case 'spectrum':
-            var idx = 0;
-            //var lastTerSerialInv = 1 / this.lastTerSerial;
-            //var lastTerSerialInv = 1 / this.cnt;
-            var cnt = 0;
+            idx = 0;
+            cnt = 0;
             for (var i in atoms) {
                 var atom = this.atoms[i];
                 if(!atom.het) ++cnt;
             }
 
-            var lastTerSerialInv = (cnt > 1) ? 1 / (cnt - 1) : 1;
+            lastTerSerialInv = (cnt > 1) ? 1 / (cnt - 1) : 1;
             for (var i in atoms) {
                 var atom = this.atoms[i];
-                //atom.color = atom.het ? this.atomColors[atom.elem] || this.defaultAtomColor : new THREE.Color().setHSL(2 / 3 * (1 - idx++ * lastTerSerialInv), 1, 0.45);
-                atom.color = atom.het ? this.atomColors[atom.elem] || this.defaultAtomColor : new THREE.Color().setHSL(3 / 4 * (1 - idx++ * lastTerSerialInv), 1, 0.45);
+                //atom.color = atom.het ? this.atomColors[atom.elem] || this.defaultAtomColor : this.thr().setHSL(2 / 3 * (1 - idx++ * lastTerSerialInv), 1, 0.45);
+                atom.color = atom.het ? this.atomColors[atom.elem] || this.defaultAtomColor : this.thr().setHSL(3 / 4 * (1 - idx++ * lastTerSerialInv), 1, 0.45);
 
                 this.atomPrevColors[i] = atom.color;
             }
@@ -134,12 +127,13 @@ iCn3D.prototype.setColorByOptions = function (options, atoms, bUseInputColor) {
             break;
 
         case 'domain':
-            var idx = 0, cnt = 0;
+            idx = 0;
+            cnt = 0;
             var domainArray = Object.keys(this.tddomains);
             cnt = domainArray.length;
-            var lastTerSerialInv = (cnt > 1) ? 1 / (cnt - 1) : 1;
+            lastTerSerialInv = (cnt > 1) ? 1 / (cnt - 1) : 1;
             for (var i = 0, il = domainArray.length; i < il; ++i) {
-                var color = new THREE.Color().setHSL(3 / 4 * (1 - idx++ * lastTerSerialInv), 1, 0.45);
+                var color = this.thr().setHSL(3 / 4 * (1 - idx++ * lastTerSerialInv), 1, 0.45);
 
                 for(var resid in this.tddomains[domainArray[i]]) {
                     for(var serial in this.residues[resid]) {
@@ -155,8 +149,8 @@ iCn3D.prototype.setColorByOptions = function (options, atoms, bUseInputColor) {
             this.sheetcolor = 'green';
             for (var i in atoms) {
                 var atom = this.atoms[i];
-                // secondary color of nucleotide: blue (new THREE.Color(0x0000FF))
-                atom.color = atom.het ? this.atomColors[atom.elem] || this.defaultAtomColor : this.ssColors[atom.ss] || new THREE.Color(0xFF00FF);
+                // secondary color of nucleotide: blue (this.thr(0x0000FF))
+                atom.color = atom.het ? this.atomColors[atom.elem] || this.defaultAtomColor : this.ssColors[atom.ss] || this.thr(0xFF00FF);
 
                 this.atomPrevColors[i] = atom.color;
             }
@@ -168,8 +162,8 @@ iCn3D.prototype.setColorByOptions = function (options, atoms, bUseInputColor) {
             this.sheetcolor = 'yellow';
             for (var i in atoms) {
                 var atom = this.atoms[i];
-                // secondary color of nucleotide: blue (new THREE.Color(0x0000FF))
-                atom.color = atom.het ? this.atomColors[atom.elem] || this.defaultAtomColor : this.ssColors2[atom.ss] || new THREE.Color(0xFF00FF);
+                // secondary color of nucleotide: blue (this.thr(0x0000FF))
+                atom.color = atom.het ? this.atomColors[atom.elem] || this.defaultAtomColor : this.ssColors2[atom.ss] || this.thr(0xFF00FF);
 
                 this.atomPrevColors[i] = atom.color;
             }
@@ -177,7 +171,8 @@ iCn3D.prototype.setColorByOptions = function (options, atoms, bUseInputColor) {
             break;
 
         case 'secondary structure spectrum':
-            var idx = 0, cnt = 0;
+            idx = 0;
+            cnt = 0;
 
             var ssArray = [], coilArray = [];
             var prevI = -9999, start;
@@ -212,10 +207,10 @@ iCn3D.prototype.setColorByOptions = function (options, atoms, bUseInputColor) {
             }
 
             cnt = ssArray.length;
-            var lastTerSerialInv = (cnt > 1) ? 1 / (cnt - 1) : 1;
+            lastTerSerialInv = (cnt > 1) ? 1 / (cnt - 1) : 1;
             for (var i = 0, il = ssArray.length; i < il; ++i) {
-                //var color = new THREE.Color().setHSL(2 / 3 * (1 - idx++ * lastTerSerialInv), 1, 0.45);
-                var color = new THREE.Color().setHSL(3 / 4 * (1 - idx++ * lastTerSerialInv), 1, 0.45);
+                //var color = this.thr().setHSL(2 / 3 * (1 - idx++ * lastTerSerialInv), 1, 0.45);
+                var color = this.thr().setHSL(3 / 4 * (1 - idx++ * lastTerSerialInv), 1, 0.45);
 
                 for(var serial = ssArray[i][0]; serial <= ssArray[i][1]; ++serial) {
                     var atom = this.atoms[serial];
@@ -255,7 +250,7 @@ iCn3D.prototype.setColorByOptions = function (options, atoms, bUseInputColor) {
         case 'align custom':
             // http://proteopedia.org/wiki/index.php/Temperature_color_schemes
             // Fixed: Middle (white): 50, red: >= 100, blue: 0
-            var middB = 50;
+            middB = 50;
             var spanBinv1 = 0.02;
             var spanBinv2 = 0.02;
 
@@ -273,7 +268,7 @@ iCn3D.prototype.setColorByOptions = function (options, atoms, bUseInputColor) {
                         var b = this.queryresi2score[chainid][queryresi];
 
                         if(b > 100) b = 100;
-                        color = b < middB ? new THREE.Color().setRGB(1 - (s = (middB - b) * spanBinv1), 1 - s, 1) : new THREE.Color().setRGB(1, 1 - (s = (b - middB) * spanBinv2), 1 - s);
+                        color = b < middB ? this.thr().setRGB(1 - (s = (middB - b) * spanBinv1), 1 - s, 1) : this.thr().setRGB(1, 1 - (s = (b - middB) * spanBinv2), 1 - s);
                     }
                     else {
                         color = this.defaultAtomColor;
@@ -329,13 +324,13 @@ iCn3D.prototype.setColorByOptions = function (options, atoms, bUseInputColor) {
             for (var i in atoms) {
                 var atom = this.atoms[i];
                 if(atom.b === undefined || parseInt(atom.b * 1000) == 0) { // invalid b-factor
-                    atom.color =  new THREE.Color().setRGB(0, 1, 0);
+                    atom.color =  this.thr().setRGB(0, 1, 0);
                 }
                 else {
                     var b = atom.b;
                     if(b > 100) b = 100;
 
-                    atom.color = b < this.middB ? new THREE.Color().setRGB(1 - (s = (this.middB - b) * this.spanBinv1), 1 - s, 1) : new THREE.Color().setRGB(1, 1 - (s = (b - this.middB) * this.spanBinv2), 1 - s);
+                    atom.color = b < this.middB ? this.thr().setRGB(1 - (s = (this.middB - b) * this.spanBinv1), 1 - s, 1) : this.thr().setRGB(1, 1 - (s = (b - this.middB) * this.spanBinv2), 1 - s);
                 }
 
                 if(this.bOpm && atom.resn == 'DUM') atom.color = this.atomColors[atom.elem];
@@ -347,7 +342,8 @@ iCn3D.prototype.setColorByOptions = function (options, atoms, bUseInputColor) {
         case 'b factor percentile':
             //http://proteopedia.org/wiki/index.php/Disorder
             // percentile normalize B-factor values from 0 to 1
-            var minB = 1000, maxB = -1000;
+            minB = 1000;
+            maxB = -1000;
             if (!this.bfactorArray) {
                 this.bfactorArray = [];
                 for (var i in this.atoms) {
@@ -365,12 +361,12 @@ iCn3D.prototype.setColorByOptions = function (options, atoms, bUseInputColor) {
             for (var i in atoms) {
                 var atom = this.atoms[i];
                 if(atom.b === undefined || parseInt(atom.b * 1000) == 0 || this.bfactorArray.length == 0) { // invalid b-factor
-                    atom.color =  new THREE.Color().setRGB(0, 1, 0);
+                    atom.color =  this.thr().setRGB(0, 1, 0);
                 }
                 else {
                     var percentile = this.bfactorArray.indexOf(atom.b) / totalCnt;
 
-                    atom.color = percentile < 0.5 ? new THREE.Color().setRGB(percentile * 2, percentile * 2, 1) : new THREE.Color().setRGB(1, (1 - percentile) * 2, (1 - percentile) * 2);
+                    atom.color = percentile < 0.5 ? this.thr().setRGB(percentile * 2, percentile * 2, 1) : this.thr().setRGB(1, (1 - percentile) * 2, (1 - percentile) * 2);
                 }
 
                 this.atomPrevColors[i] = atom.color;
@@ -396,7 +392,7 @@ iCn3D.prototype.setColorByOptions = function (options, atoms, bUseInputColor) {
 
             // http://proteopedia.org/wiki/index.php/Temperature_color_schemes
             // Fixed: Middle (white): 50, red: >= 100, blue: 0
-            var middB = (this.midpercent !== undefined) ? this.midpercent : 35;
+            middB = (this.midpercent !== undefined) ? this.midpercent : 35;
             this.spanBinv1 = 0.02;
             this.spanBinv2 = 0.02;
 
@@ -408,7 +404,7 @@ iCn3D.prototype.setColorByOptions = function (options, atoms, bUseInputColor) {
 
                 if(b > 100) b = 100;
 
-                atom.color = b < middB ? new THREE.Color().setRGB(1 - (s = (middB - b) * this.spanBinv1), 1 - s, 1) : new THREE.Color().setRGB(1, 1 - (s = (b - middB) * this.spanBinv2), 1 - s);
+                atom.color = b < middB ? this.thr().setRGB(1 - (s = (middB - b) * this.spanBinv1), 1 - s, 1) : this.thr().setRGB(1, 1 - (s = (b - middB) * this.spanBinv2), 1 - s);
 
                 if(this.bOpm && atom.resn == 'DUM') atom.color = this.atomColors[atom.elem];
 
@@ -461,7 +457,7 @@ iCn3D.prototype.setColorByOptions = function (options, atoms, bUseInputColor) {
         default: // the "#" was missed in order to make sharelink work
             for (var i in atoms) {
                 var atom = this.atoms[i];
-                atom.color = new THREE.Color().setStyle("#" + options.color.toLowerCase());
+                atom.color = this.thr().setStyle("#" + options.color.toLowerCase());
 
                 this.atomPrevColors[i] = atom.color;
             }
@@ -472,7 +468,7 @@ iCn3D.prototype.setColorByOptions = function (options, atoms, bUseInputColor) {
  }
 };
 
-iCn3D.prototype.applyDisplayOptions = function (options, atoms, bHighlight) { var me = this; //"use strict";  // atoms: hash of key -> 1
+iCn3D.prototype.applyDisplayOptions = function (options, atoms, bHighlight) { var me = this, ic = me.icn3d; "use strict";  // atoms: hash of key -> 1
     if(options === undefined) options = this.opts;
 
     var residueHash = {};
@@ -701,7 +697,7 @@ iCn3D.prototype.applyDisplayOptions = function (options, atoms, bHighlight) { va
         this.createConnCalphSidechain(this.hash2Atoms(atomHash), style);
       }
       else if(style === 'backbone') {
-        var atomHash = this.selectMainChainSubset(atomHash);
+        atomHash = this.selectMainChainSubset(atomHash);
         this.createStickRepresentation(this.hash2Atoms(atomHash), this.cylinderRadius, this.cylinderRadius, undefined, bHighlight, undefined);
       }
       else if(style === 'ball and stick') {
@@ -729,7 +725,7 @@ iCn3D.prototype.applyDisplayOptions = function (options, atoms, bHighlight) { va
     }
 };
 
-iCn3D.prototype.hideLabels = function () { var me = this; //"use strict";
+iCn3D.prototype.hideLabels = function () { var me = this, ic = me.icn3d; "use strict";
     // remove previous labels
     if(this.mdl !== undefined) {
         for(var i = 0, il = this.mdl.children.length; i < il; ++i) {
@@ -816,7 +812,7 @@ iCn3D.prototype.setAtomStyleByOptions = function (options) {
     }
 };
 
-iCn3D.prototype.rebuildSceneBase = function (options) { var me = this; //"use strict";
+iCn3D.prototype.rebuildSceneBase = function (options) { var me = this, ic = me.icn3d; "use strict";
     jQuery.extend(me.opts, options);
 
     this.cam_z = this.maxD * 2;
@@ -1125,6 +1121,7 @@ iCn3D.prototype.applyTransformation = function (_zoomFactor, mouseChange, quater
 iCn3D.prototype.applyCenterOptions = function (options) {
     if(options === undefined) options = this.opts;
 
+    var center;
     switch (options.rotationcenter.toLowerCase()) {
         case 'molecule center':
             // move the molecule to the origin
@@ -1138,11 +1135,11 @@ iCn3D.prototype.applyCenterOptions = function (options) {
             }
             break;
         case 'display center':
-            var center = this.centerAtoms(this.dAtoms).center;
+            center = this.centerAtoms(this.dAtoms).center;
             this.setRotationCenter(center);
             break;
         case 'highlight center':
-            var center = this.centerAtoms(this.hAtoms).center;
+            center = this.centerAtoms(this.hAtoms).center;
             this.setRotationCenter(center);
             break;
     }

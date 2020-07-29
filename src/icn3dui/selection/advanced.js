@@ -2,36 +2,32 @@
  * @author Jiyao Wang <wangjiy@ncbi.nlm.nih.gov> / https://github.com/ncbi/icn3d
  */
 
-iCn3DUI.prototype.clickCommand_apply = function() { var me = this; //"use strict";
-    $("#" + me.pre + "command_apply").click(function(e) {
-       e.preventDefault();
+iCn3DUI.prototype.commandSelect = function(postfix) { var me = this, ic = me.icn3d; "use strict";
+       var select = $("#" + me.pre + "command" + postfix).val();
 
-       var select = $("#" + me.pre + "command").val();
-
-       var commandname = $("#" + me.pre + "command_name").val().replace(/;/g, '_').replace(/\s+/g, '_');
+       var commandname = $("#" + me.pre + "command_name" + postfix).val().replace(/;/g, '_').replace(/\s+/g, '_');
 
        if(select) {
            me.selectByCommand(select, commandname, commandname);
            me.setLogCmd('select ' + select + ' | name ' + commandname, true);
        }
+};
+
+iCn3DUI.prototype.clickCommand_apply = function() { var me = this, ic = me.icn3d; "use strict";
+    $("#" + me.pre + "command_apply").click(function(e) { var ic = me.icn3d;
+       e.preventDefault();
+
+       me.commandSelect('');
     });
 
-    $("#" + me.pre + "command_apply2").click(function(e) {
+    $("#" + me.pre + "command_apply2").click(function(e) { var ic = me.icn3d;
        e.preventDefault();
-
-       var select = $("#" + me.pre + "command2").val();
-
-       var commandname = $("#" + me.pre + "command_name2").val().replace(/;/g, '_').replace(/\s+/g, '_');
-
-       if(select) {
-           me.selectByCommand(select, commandname, commandname);
-           me.setLogCmd('select ' + select + ' | name ' + commandname, true);
-       }
+       me.commandSelect('2');
     });
 
 };
 
-iCn3DUI.prototype.selectCombinedSets = function(strSets, commandname) { var me = this; //"use strict";
+iCn3DUI.prototype.selectCombinedSets = function(strSets, commandname) { var me = this, ic = me.icn3d; "use strict";
     var idArray = strSets.split(' ');
 
     var orArray = [], andArray = [], notArray = [];
@@ -58,7 +54,7 @@ iCn3DUI.prototype.selectCombinedSets = function(strSets, commandname) { var me =
     if(idArray !== null) me.combineSets(orArray, andArray, notArray, commandname);
 };
 
-iCn3DUI.prototype.selectByCommand = function (select, commandname, commanddesc) { var me = this; //"use strict";
+iCn3DUI.prototype.selectByCommand = function (select, commandname, commanddesc) { var me = this, ic = me.icn3d; "use strict";
        if(select.indexOf('saved atoms') === 0) {
             var pos = 12; // 'saved atoms '
             var strSets = select.substr(pos);
@@ -78,28 +74,28 @@ iCn3DUI.prototype.selectByCommand = function (select, commandname, commanddesc) 
                var command = commandArray[i].trim().replace(/\s+/g, ' ');
                var pos = command.indexOf(' ');
 
-               me.icn3d.hAtoms = {};
+               ic.hAtoms = {};
 
                if(command.substr(0, pos).toLowerCase() === 'and') { // intersection
                        me.applyCommand('select ' + command.substr(pos + 1));
 
-                       allHighlightAtoms = me.icn3d.intHash(allHighlightAtoms, me.icn3d.hAtoms);
+                       allHighlightAtoms = ic.intHash(allHighlightAtoms, ic.hAtoms);
                }
                else if(command.substr(0, pos).toLowerCase() === 'not') { // negation
                        me.applyCommand('select ' + command.substr(pos + 1));
 
-                       allHighlightAtoms = me.icn3d.exclHash(allHighlightAtoms, me.icn3d.hAtoms);
+                       allHighlightAtoms = ic.exclHash(allHighlightAtoms, ic.hAtoms);
                }
                else { // union
                        me.applyCommand('select ' + command);
 
-                       allHighlightAtoms = me.icn3d.unionHash(allHighlightAtoms, me.icn3d.hAtoms);
+                       allHighlightAtoms = ic.unionHash(allHighlightAtoms, ic.hAtoms);
                }
            }
 
-           me.icn3d.hAtoms = me.icn3d.cloneHash(allHighlightAtoms);
+           ic.hAtoms = ic.cloneHash(allHighlightAtoms);
 
-           var atomArray = Object.keys(me.icn3d.hAtoms);
+           var atomArray = Object.keys(ic.hAtoms);
            var residueArray = undefined;
 
            if(commandname !== "") {
@@ -113,10 +109,10 @@ iCn3DUI.prototype.selectByCommand = function (select, commandname, commanddesc) 
        }
 };
 
-iCn3DUI.prototype.selectBySpec = function (select, commandname, commanddesc, bDisplay) { var me = this; //"use strict";
+iCn3DUI.prototype.selectBySpec = function (select, commandname, commanddesc, bDisplay) { var me = this, ic = me.icn3d; "use strict";
    select = (select.trim().substr(0, 6) === 'select') ? select.trim().substr(7) : select.trim();
 
-   me.icn3d.hAtoms = {};
+   ic.hAtoms = {};
 
    // selection definition is similar to Chimera: https://www.cgl.ucsf.edu/chimera/docs/UsersGuide/midas/frameatom_spec.html
    // There will be no ' or ' in the spec. It's already separated in selectByCommand()
@@ -183,14 +179,14 @@ iCn3DUI.prototype.selectBySpec = function (select, commandname, commanddesc, bDi
        var molecule, chain, molecule_chain, moleculeArray=[], Molecule_ChainArray=[], start, end;
 
        if(moleculeStr === '*') {
-         moleculeArray = Object.keys(me.icn3d.structures);
+         moleculeArray = Object.keys(ic.structures);
        }
        else {
          moleculeArray = moleculeStr.split(",")
        }
 
        if(chainStr === '*') {
-         var tmpArray = Object.keys(me.icn3d.chains);  // 1_A (molecule_chain)
+         var tmpArray = Object.keys(ic.chains);  // 1_A (molecule_chain)
 
          for(var j = 0, jl = tmpArray.length; j < jl; ++j) {
            molecule_chain = tmpArray[j];
@@ -238,7 +234,7 @@ iCn3DUI.prototype.selectBySpec = function (select, commandname, commanddesc, bDi
              }
              else if(residueStrArray[j] !== 'proteins' && residueStrArray[j] !== 'nucleotides' && residueStrArray[j] !== 'chemicals' && residueStrArray[j] !== 'ions' && residueStrArray[j] !== 'water') { // residue name
                var tmpStr = residueStrArray[j].toUpperCase();
-               //oneLetterResidue = (residueStrArray[j].length === 1) ? tmpStr : me.icn3d.residueName2Abbr(tmpStr);
+               //oneLetterResidue = (residueStrArray[j].length === 1) ? tmpStr : ic.residueName2Abbr(tmpStr);
                oneLetterResidueStr = tmpStr;
                bResidueArray = true;
              }
@@ -259,10 +255,10 @@ iCn3DUI.prototype.selectBySpec = function (select, commandname, commanddesc, bDi
                      if(!residueHash.hasOwnProperty(residueId)) delete residueHash[residueId];
                  }
 
-                 for(var m in me.icn3d.residues[residueId]) {
+                 for(var m in ic.residues[residueId]) {
                    for(var n = 0, nl = atomStrArray.length; n < nl; ++n) {
                        var atomStr = atomStrArray[n];
-                       if(atomStr === '*' || atomStr === me.icn3d.atoms[m].name) {
+                       if(atomStr === '*' || atomStr === ic.atoms[m].name) {
                          if(i === 0) {
                              //currHighlightAtoms[m] = 1;
                              atomHash[m] = 1;
@@ -278,25 +274,25 @@ iCn3DUI.prototype.selectBySpec = function (select, commandname, commanddesc, bDi
                }
              }
              else {
-               if(molecule_chain in me.icn3d.chains) {
-                 var chainAtomHash = me.icn3d.chains[molecule_chain];
+               if(molecule_chain in ic.chains) {
+                 var chainAtomHash = ic.chains[molecule_chain];
                  for(var m in chainAtomHash) {
                    // residue could also be 'proteins', 'nucleotides', 'chemicals', 'ions', and 'water'
-                   var tmpStr = me.icn3d.atoms[m].resn.substr(0,3).toUpperCase();
+                   var tmpStr = ic.atoms[m].resn.substr(0,3).toUpperCase();
                    if(bAllResidues
-                       //|| me.icn3d.residueName2Abbr(tmpStr) === oneLetterResidue
-                       || (residueStrArray[j] === 'proteins' && m in me.icn3d.proteins)
-                       || (residueStrArray[j] === 'nucleotides' && m in me.icn3d.nucleotides)
-                       || (residueStrArray[j] === 'chemicals' && m in me.icn3d.chemicals)
-                       || (residueStrArray[j] === 'ions' && m in me.icn3d.ions)
-                       || (residueStrArray[j] === 'water' && m in me.icn3d.water)
+                       //|| ic.residueName2Abbr(tmpStr) === oneLetterResidue
+                       || (residueStrArray[j] === 'proteins' && m in ic.proteins)
+                       || (residueStrArray[j] === 'nucleotides' && m in ic.nucleotides)
+                       || (residueStrArray[j] === 'chemicals' && m in ic.chemicals)
+                       || (residueStrArray[j] === 'ions' && m in ic.ions)
+                       || (residueStrArray[j] === 'water' && m in ic.water)
                        ) {
                      // many duplicates
                      if(i === 0) {
-                         residueHash[molecule_chain + '_' + me.icn3d.atoms[m].resi] = 1;
+                         residueHash[molecule_chain + '_' + ic.atoms[m].resi] = 1;
                      }
                      else {
-                         var residTmp = molecule_chain + '_' + me.icn3d.atoms[m].resi;
+                         var residTmp = molecule_chain + '_' + ic.atoms[m].resi;
                          //if(!residueHash.hasOwnProperty(residTmp)) residueHash[residTmp] = undefined;
                          if(!residueHash.hasOwnProperty(residTmp)) delete residueHash[residTmp];
                      }
@@ -304,7 +300,7 @@ iCn3DUI.prototype.selectBySpec = function (select, commandname, commanddesc, bDi
                      for(var n = 0, nl = atomStrArray.length; n < nl; ++n) {
                          var atomStr = atomStrArray[n];
 
-                         if(atomStr === '*' || atomStr === me.icn3d.atoms[m].name) {
+                         if(atomStr === '*' || atomStr === ic.atoms[m].name) {
                              if(i === 0) {
                                  //currHighlightAtoms[m] = 1;
                                  atomHash[m] = 1;
@@ -323,10 +319,10 @@ iCn3DUI.prototype.selectBySpec = function (select, commandname, commanddesc, bDi
                  if(bResidueArray) {
                    //oneLetterResidueStr.length;
                    var chainSeq = '', resiArray = [];
-                   for(var s = 0, sl = me.icn3d.chainsSeq[molecule_chain].length; s < sl;  ++s) {
-                       //chainSeq += (me.icn3d.chainsSeq[molecule_chain][s].name.length == 1) ? me.icn3d.chainsSeq[molecule_chain][s].name : me.icn3d.chainsSeq[molecule_chain][s].name.substr(0, 1);
-                       chainSeq += (me.icn3d.chainsSeq[molecule_chain][s].name.length == 1) ? me.icn3d.chainsSeq[molecule_chain][s].name : ' ';
-                       resiArray.push(me.icn3d.chainsSeq[molecule_chain][s].resi);
+                   for(var s = 0, sl = ic.chainsSeq[molecule_chain].length; s < sl;  ++s) {
+                       //chainSeq += (ic.chainsSeq[molecule_chain][s].name.length == 1) ? ic.chainsSeq[molecule_chain][s].name : ic.chainsSeq[molecule_chain][s].name.substr(0, 1);
+                       chainSeq += (ic.chainsSeq[molecule_chain][s].name.length == 1) ? ic.chainsSeq[molecule_chain][s].name : ' ';
+                       resiArray.push(ic.chainsSeq[molecule_chain][s].resi);
                    }
 
                    chainSeq = chainSeq.toUpperCase();
@@ -359,10 +355,10 @@ iCn3DUI.prototype.selectBySpec = function (select, commandname, commanddesc, bDi
                              if(!residueHash.hasOwnProperty(residueId)) delete residueHash[residueId];
                          }
 
-                         for(var m in me.icn3d.residues[residueId]) {
+                         for(var m in ic.residues[residueId]) {
                            for(var n = 0, nl = atomStrArray.length; n < nl; ++n) {
                                var atomStr = atomStrArray[n];
-                               if(atomStr === '*' || atomStr === me.icn3d.atoms[m].name) {
+                               if(atomStr === '*' || atomStr === ic.atoms[m].name) {
                                  if(i === 0) {
                                      //currHighlightAtoms[m] = 1;
                                      atomHash[m] = 1;
@@ -382,19 +378,11 @@ iCn3DUI.prototype.selectBySpec = function (select, commandname, commanddesc, bDi
              } // end else
            } // end for(var mc = 0
        } // for (j
-/*
-       if(i === 0) {
-           me.icn3d.hAtoms = me.icn3d.cloneHash(currHighlightAtoms);
-       }
-       else {
-           me.icn3d.hAtoms = me.icn3d.intHash(me.icn3d.hAtoms, currHighlightAtoms);
-       }
-*/
    }  // for (i
 
-   me.icn3d.hAtoms = me.icn3d.cloneHash(atomHash);
+   ic.hAtoms = ic.cloneHash(atomHash);
 
-   if(Object.keys(me.icn3d.hAtoms).length == 0) {
+   if(Object.keys(ic.hAtoms).length == 0) {
        console.log("No residues were selected. Please try another search.");
    }
 
@@ -407,8 +395,6 @@ iCn3DUI.prototype.selectBySpec = function (select, commandname, commanddesc, bDi
    else {
        residueAtomArray = Object.keys(atomHash);
    }
-
-//   if(commandname == "") commandname = "tmp_" + select;
 
    if(commandname != "") {
        me.addCustomSelection(residueAtomArray, commandname, commanddesc, select, bSelectResidues);

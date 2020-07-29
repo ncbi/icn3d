@@ -460,7 +460,7 @@ You can show symmetry when available.<br/>
 <div style="float:left; margin-left:10px;">
 <span style="font-weight:bold; font-size:1em;">Set Html</span><br>
 <a href="#getAlignSequencesAnnotations">getAlignSequencesAnnotations</a><br>
-<a href="#openDialog">openDialog</a><br>
+<a href="#openDlg">openDlg</a><br>
 <a href="#setAlignChainMenu">setAlignChainMenu</a><br>
 <a href="#setAtomMenu">setAtomMenu</a><br>
 <a href="#setDialogs">setDialogs</a><br>
@@ -1044,7 +1044,7 @@ You can show symmetry when available.<br/>
 <tr><td valign='top'><span class="indent">Delete selected sets:</span></td>    <td valign='top'>delete selected sets</td> <td valign='top'><a href="#deleteSelectedSets">deleteSelectedSets</a></td></tr>
 
 <tr><td valign='top'>b) All:</td>     <td valign='top'>select all</td> <td valign='top'><a href="#selectAll">selectAll</a></td></tr>
-<tr><td valign='top'>c) Displayed Set:</td>     <td valign='top'>select displayed set</td> <td valign='top'>me.icn3d.hAtoms = me.icn3d.cloneHash(me.icn3d.dAtoms)</td></tr>
+<tr><td valign='top'>c) Displayed Set:</td>     <td valign='top'>select displayed set</td> <td valign='top'>ic.hAtoms = ic.cloneHash(ic.dAtoms)</td></tr>
 
 <tr><td colspan="3">d) by Distance</td> </tr>
 <tr><td valign='top'><span class="indent">Display:</span></td>            <td valign='top'>select zone cutoff [cutoff in angstrom]</td> <td valign='top'><a href="#pickCustomSphere">pickCustomSphere</a></td></tr>
@@ -1064,11 +1064,11 @@ You can show symmetry when available.<br/>
 <tr><td valign='top'>i) Advanced</td><td valign='top'>select [command] | name [commandname]</td> <td valign='top'><a href="#selectByCommand">selectByCommand</a></td></tr>
 
 <tr><td colspan="3"><br>j) Select on 3D</td> </tr>
-<tr><td valign='top'><span class="indent">Chain (Alt):</span></td>  <td valign='top'>set pk chain</td> <td valign='top'>me.icn3d.pk = 5; me.icn3d.opts['pk'] = 'chain';</td></tr>
-<tr><td valign='top'><span class="indent">3D Domain (Alt):</span></td>  <td valign='top'>set pk domain</td> <td valign='top'>me.icn3d.pk = 4; me.icn3d.opts['pk'] = 'domain';</td></tr>
-<tr><td valign='top'><span class="indent">Strand/Helix (Alt):</span></td>  <td valign='top'>set pk strand</td> <td valign='top'>me.icn3d.pk = 3; me.icn3d.opts['pk'] = 'strand';</td></tr>
-<tr><td valign='top'><span class="indent">Residue (Alt):</span></td>  <td valign='top'>set pk residue</td> <td valign='top'>me.icn3d.pk = 2; me.icn3d.opts['pk'] = 'residue';</td></tr>
-<tr><td valign='top'><span class="indent">Atom (Alt):</span></td>     <td valign='top'>set pk atom</td> <td valign='top'>me.icn3d.pk = 1; me.icn3d.opts['pk'] = 'atom';</td></tr>
+<tr><td valign='top'><span class="indent">Chain (Alt):</span></td>  <td valign='top'>set pk chain</td> <td valign='top'>ic.pk = 5; ic.opts['pk'] = 'chain';</td></tr>
+<tr><td valign='top'><span class="indent">3D Domain (Alt):</span></td>  <td valign='top'>set pk domain</td> <td valign='top'>ic.pk = 4; ic.opts['pk'] = 'domain';</td></tr>
+<tr><td valign='top'><span class="indent">Strand/Helix (Alt):</span></td>  <td valign='top'>set pk strand</td> <td valign='top'>ic.pk = 3; ic.opts['pk'] = 'strand';</td></tr>
+<tr><td valign='top'><span class="indent">Residue (Alt):</span></td>  <td valign='top'>set pk residue</td> <td valign='top'>ic.pk = 2; ic.opts['pk'] = 'residue';</td></tr>
+<tr><td valign='top'><span class="indent">Atom (Alt):</span></td>     <td valign='top'>set pk atom</td> <td valign='top'>ic.pk = 1; ic.opts['pk'] = 'atom';</td></tr>
 
 <tr><td valign='top'>k) Save Selection:</td>      <td valign='top'>select [command] | name [commandname]</td> <td valign='top'><a href="#selectByCommand">selectByCommand</a></td></tr>
 <tr><td valign='top'>l) Clear Selection:</td>      <td valign='top'>clear all</td> <td valign='top'><a href="#selectAll">selectAll</a></td></tr>
@@ -1079,8 +1079,8 @@ You can show symmetry when available.<br/>
 <tr><td valign='top'><span class="indent">Red:</span></td>        <td valign='top'>set highlight color red</td> <td valign='top'></td></tr>
 
 <tr><td colspan="3"><br>n) Highlight Style</td> </tr>
-<tr><td valign='top'><span class="indent">Outline:</span></td>              <td valign='top'>set highlight style outline</td> <td valign='top'>me.icn3d.bHighlight = 1;</td></tr>
-<tr><td valign='top'><span class="indent">3D Objects:</span></td>         <td valign='top'>set highlight style 3d</td> <td valign='top'>me.icn3d.bHighlight = 2;</td></tr>
+<tr><td valign='top'><span class="indent">Outline:</span></td>              <td valign='top'>set highlight style outline</td> <td valign='top'>ic.bHighlight = 1;</td></tr>
+<tr><td valign='top'><span class="indent">3D Objects:</span></td>         <td valign='top'>set highlight style 3d</td> <td valign='top'>ic.bHighlight = 2;</td></tr>
 
 <tr><td valign='top'>o) Toggle Highlight</td><td valign='top'>toggle highlight</td> <td valign='top'><a href="#toggleHighlight">toggleHighlight</a></td></tr>
 
@@ -1133,22 +1133,22 @@ In the dialog Select -&gt; Advanced, users can use simple specification to selec
 <tr><td colspan="3"><br>g) View -&gt; Disulfide Bonds</td> </tr>
 <tr><td valign='top'><span class="indent">Show:</span></td>            <td valign='top'>disulfide bonds</td> <td valign='top'><a href="#showSsbonds">showSsbonds</a></td></tr>
 <tr><td valign='top'><span class="indent">Export Pairs:</span></td>            <td valign='top'>[no command available]</td> <td valign='top'></td></tr>
-<tr><td valign='top'><span class="indent">Hide:</span></td>            <td valign='top'>set disulfide bonds off</td> <td valign='top'>me.icn3d.opts["ssbonds"] = "no";</td></tr>
+<tr><td valign='top'><span class="indent">Hide:</span></td>            <td valign='top'>set disulfide bonds off</td> <td valign='top'>ic.opts["ssbonds"] = "no";</td></tr>
 
 <tr><td colspan="3"><br>h) View -&gt; Cross-Linkages</td> </tr>
-<tr><td valign='top'><span class="indent">Show:</span></td>            <td valign='top'>cross linkage</td> <td valign='top'>me.icn3d.bShowCrossResidueBond = true;</td></tr>
-<tr><td valign='top'><span class="indent">Hide:</span></td>            <td valign='top'>set cross linkage off</td> <td valign='top'>me.icn3d.bShowCrossResidueBond = false;</td></tr>
+<tr><td valign='top'><span class="indent">Show:</span></td>            <td valign='top'>cross linkage</td> <td valign='top'>ic.bShowCrossResidueBond = true;</td></tr>
+<tr><td valign='top'><span class="indent">Hide:</span></td>            <td valign='top'>set cross linkage off</td> <td valign='top'>ic.bShowCrossResidueBond = false;</td></tr>
 
 <tr><td colspan="3"><br>i) View -&gt; Assembly (PDB, mmCIF, or MMTF files only)</td> </tr>
-<tr><td valign='top'><span class="indent">yes:</span></td>                <td valign='top'>set assembly on</td> <td valign='top'>me.icn3d.bAssembly = true;</td></tr>
-<tr><td valign='top'><span class="indent">no:</span></td>                 <td valign='top'>set assembly off</td> <td valign='top'>me.icn3d.bAssembly = false;</td></tr>
+<tr><td valign='top'><span class="indent">yes:</span></td>                <td valign='top'>set assembly on</td> <td valign='top'>ic.bAssembly = true;</td></tr>
+<tr><td valign='top'><span class="indent">no:</span></td>                 <td valign='top'>set assembly off</td> <td valign='top'>ic.bAssembly = false;</td></tr>
 
 <tr><td valign='top'>j) View -&gt; Symmetry:</td>  <td valign='top'>symmetry C6 (global)</td> <td valign='top'>retrieveSymmetry; applySymmetry</td></tr>
 
 <tr><td colspan="3"><br>k) View -&gt; Distance</td> </tr>
 <tr><td valign='top' rowspan="2"><span class="indent">Measure:</span></td>            <td valign='top'>add label [label text] | x [x] y [y] z [z] | size [label size] | color [FF0000] | background [FFFFFF]</td> <td valign='top'><a href="#addLabel">addLabel</a></td></tr>
 <tr>                                                               <td valign='top'>add line | x1 [x1] y1 [y1] z1 [z1] | x2 [x2] y2 [y2] z2 [z2] | color [FFFF00] | dashed [true]</td> <td valign='top'><a href="#addLine">addLine</a></td></tr>
-<tr><td valign='top'><span class="indent">Hide:</span></td>            <td valign='top'>set lines off</td> <td valign='top'>me.icn3d.labels['distance'] = []; me.icn3d.lines['distance'] = [];</td></tr>
+<tr><td valign='top'><span class="indent">Hide:</span></td>            <td valign='top'>set lines off</td> <td valign='top'>ic.labels['distance'] = []; ic.lines['distance'] = [];</td></tr>
 
 <tr><td colspan="3"><br>l) View -&gt; Label</td> </tr>
 <tr><td valign='top'><span class="indent">by Picking Atoms:</span></td>            <td valign='top'>add label [label text] | x [x] y [y] z [z] | size [label size] | color [FF0000] | background [FFFFFF]</td> <td valign='top'><a href="#addLabel">addLabel</a></td></tr>
@@ -1160,17 +1160,17 @@ In the dialog Select -&gt; Advanced, users can use simple specification to selec
 <tr><td valign='top'><span class="indent">Remove:</span></td>            <td valign='top'>set labels off</td> <td valign='top'><a href="#addChainLabels">addChainLabels</a></td></tr>
 
 <tr><td colspan="3"><br>m) View -&gt; Label Scale</td> </tr>
-<tr><td valign='top'><span class="indent">0.1:</span></td>                <td valign='top'>set label scale 0.1</td> <td valign='top'>me.icn3d.labelScale=0.1</td></tr>
-<tr><td valign='top'><span class="indent">0.2:</span></td>                <td valign='top'>set label scale 0.2</td> <td valign='top'>me.icn3d.labelScale=0.2</td></tr>
-<tr><td valign='top'><span class="indent">0.4:</span></td>                <td valign='top'>set label scale 0.4</td> <td valign='top'>me.icn3d.labelScale=0.4</td></tr>
-<tr><td valign='top'><span class="indent">0.6:</span></td>                <td valign='top'>set label scale 0.6</td> <td valign='top'>me.icn3d.labelScale=0.6</td></tr>
-<tr><td valign='top'><span class="indent">0.8:</span></td>                <td valign='top'>set label scale 0.8</td> <td valign='top'>me.icn3d.labelScale=0.8</td></tr>
-<tr><td valign='top'><span class="indent">1.0:</span></td>                <td valign='top'>set label scale 1.0</td> <td valign='top'>me.icn3d.labelScale=1.0</td></tr>
-<tr><td valign='top'><span class="indent">2.0:</span></td>                <td valign='top'>set label scale 2.0</td> <td valign='top'>me.icn3d.labelScale=2.0</td></tr>
-<tr><td valign='top'><span class="indent">4.0:</span></td>                <td valign='top'>set label scale 4.0</td> <td valign='top'>me.icn3d.labelScale=4.0</td></tr>
-<tr><td valign='top'><span class="indent">6.0:</span></td>                <td valign='top'>set label scale 6.0</td> <td valign='top'>me.icn3d.labelScale=6.0</td></tr>
-<tr><td valign='top'><span class="indent">8.0:</span></td>                <td valign='top'>set label scale 8.0</td> <td valign='top'>me.icn3d.labelScale=8.0</td></tr>
-<tr><td valign='top'><span class="indent">10.0:</span></td>                <td valign='top'>set label scale 10.0</td> <td valign='top'>me.icn3d.labelScale=10.0</td></tr>
+<tr><td valign='top'><span class="indent">0.1:</span></td>                <td valign='top'>set label scale 0.1</td> <td valign='top'>ic.labelScale=0.1</td></tr>
+<tr><td valign='top'><span class="indent">0.2:</span></td>                <td valign='top'>set label scale 0.2</td> <td valign='top'>ic.labelScale=0.2</td></tr>
+<tr><td valign='top'><span class="indent">0.4:</span></td>                <td valign='top'>set label scale 0.4</td> <td valign='top'>ic.labelScale=0.4</td></tr>
+<tr><td valign='top'><span class="indent">0.6:</span></td>                <td valign='top'>set label scale 0.6</td> <td valign='top'>ic.labelScale=0.6</td></tr>
+<tr><td valign='top'><span class="indent">0.8:</span></td>                <td valign='top'>set label scale 0.8</td> <td valign='top'>ic.labelScale=0.8</td></tr>
+<tr><td valign='top'><span class="indent">1.0:</span></td>                <td valign='top'>set label scale 1.0</td> <td valign='top'>ic.labelScale=1.0</td></tr>
+<tr><td valign='top'><span class="indent">2.0:</span></td>                <td valign='top'>set label scale 2.0</td> <td valign='top'>ic.labelScale=2.0</td></tr>
+<tr><td valign='top'><span class="indent">4.0:</span></td>                <td valign='top'>set label scale 4.0</td> <td valign='top'>ic.labelScale=4.0</td></tr>
+<tr><td valign='top'><span class="indent">6.0:</span></td>                <td valign='top'>set label scale 6.0</td> <td valign='top'>ic.labelScale=6.0</td></tr>
+<tr><td valign='top'><span class="indent">8.0:</span></td>                <td valign='top'>set label scale 8.0</td> <td valign='top'>ic.labelScale=8.0</td></tr>
+<tr><td valign='top'><span class="indent">10.0:</span></td>                <td valign='top'>set label scale 10.0</td> <td valign='top'>ic.labelScale=10.0</td></tr>
 
 <tr><td valign='top'>n) View -&gt; Show Side by Side:</td>     <td valign='top'>side by side | [url]</td> <td valign='top'>window.open()</td></tr>
 
@@ -1188,20 +1188,20 @@ In the dialog Select -&gt; Advanced, users can use simple specification to selec
 <tr><td valign='top'><span class="indent">Rotate Down:</span></td>              <td valign='top'>rotate down</td> <td valign='top'><a href="#rotStruc">rotStruc</a></td></tr>
 
 <tr><td colspan="3"><br>p) View -&gt; Camera</td> </tr>
-<tr><td valign='top'><span class="indent">Perspective:</span></td>        <td valign='top'>set camera perspective</td> <td valign='top'>me.icn3d.opts['camera'] = 'perspective';</td></tr>
-<tr><td valign='top'><span class="indent">Orthographic:</span></td>       <td valign='top'>set camera orthographic</td> <td valign='top'>me.icn3d.opts['camera'] = 'orthographic';</td></tr>
+<tr><td valign='top'><span class="indent">Perspective:</span></td>        <td valign='top'>set camera perspective</td> <td valign='top'>ic.opts['camera'] = 'perspective';</td></tr>
+<tr><td valign='top'><span class="indent">Orthographic:</span></td>       <td valign='top'>set camera orthographic</td> <td valign='top'>ic.opts['camera'] = 'orthographic';</td></tr>
 
 <tr><td colspan="3"><br>q) View -&gt; Fog for Selection</td> </tr>
-<tr><td valign='top'><span class="indent">On:</span></td>                <td valign='top'>set fog on</td> <td valign='top'>me.icn3d.opts['fog'] = 'yes';</td></tr>
-<tr><td valign='top'><span class="indent">Off:</span></td>                 <td valign='top'>set fog off</td> <td valign='top'>me.icn3d.opts['fog'] = 'no';</td></tr>
+<tr><td valign='top'><span class="indent">On:</span></td>                <td valign='top'>set fog on</td> <td valign='top'>ic.opts['fog'] = 'yes';</td></tr>
+<tr><td valign='top'><span class="indent">Off:</span></td>                 <td valign='top'>set fog off</td> <td valign='top'>ic.opts['fog'] = 'no';</td></tr>
 
 <tr><td colspan="3"><br>r) View -&gt; Slab for Selection</td> </tr>
-<tr><td valign='top'><span class="indent">On:</span></td>                <td valign='top'>set slab on</td> <td valign='top'>me.icn3d.opts['slab'] = 'yes';</td></tr>
-<tr><td valign='top'><span class="indent">Off:</span></td>                 <td valign='top'>set slab off</td> <td valign='top'>me.icn3d.opts['slab'] = 'no';</td></tr>
+<tr><td valign='top'><span class="indent">On:</span></td>                <td valign='top'>set slab on</td> <td valign='top'>ic.opts['slab'] = 'yes';</td></tr>
+<tr><td valign='top'><span class="indent">Off:</span></td>                 <td valign='top'>set slab off</td> <td valign='top'>ic.opts['slab'] = 'no';</td></tr>
 
 <tr><td colspan="3"><br>s) View -&gt; XYZ-axes</td> </tr>
-<tr><td valign='top'><span class="indent">Show:</span></td>                <td valign='top'>set axis on</td> <td valign='top'>me.icn3d.opts['axis'] = 'yes';</td></tr>
-<tr><td valign='top'><span class="indent">Hide:</span></td>                 <td valign='top'>set axis off</td> <td valign='top'>me.icn3d.opts['axis'] = 'no';</td></tr>
+<tr><td valign='top'><span class="indent">Show:</span></td>                <td valign='top'>set axis on</td> <td valign='top'>ic.opts['axis'] = 'yes';</td></tr>
+<tr><td valign='top'><span class="indent">Hide:</span></td>                 <td valign='top'>set axis off</td> <td valign='top'>ic.opts['axis'] = 'no';</td></tr>
 
 <tr><td colspan="3"><br>t) View -&gt; Reset:</td> </tr>
 <tr><td valign='top'><span class="indent">All:</span></td>                <td valign='top'>reset</td> <td valign='top'><a href="#renderFinalStep">renderFinalStep</a></td></tr>
@@ -1323,10 +1323,10 @@ In the dialog Select -&gt; Advanced, users can use simple specification to selec
 <tr><td valign='top'><span class="indent">No</span></td>                  <td valign='top'>set emmap wireframe off</td> <td valign='top'><a href="#applyEmmapOptions">applyEmmapOptions</a></td></tr>
 
 <tr><td colspan="3"><br>t) Style -&gt; Background</td> </tr>
-<tr><td valign='top'><span class="indent">Transparent:</span></td>        <td valign='top'>set background transparent</td> <td valign='top'>me.icn3d.opts['background'] = 'transparent'</td></tr>
-<tr><td valign='top'><span class="indent">Black:</span></td>              <td valign='top'>set background black</td> <td valign='top'>me.icn3d.opts['background'] = 'black'</td></tr>
-<tr><td valign='top'><span class="indent">Grey:</span></td>               <td valign='top'>set background grey</td> <td valign='top'>me.icn3d.opts['background'] = 'grey'</td></tr>
-<tr><td valign='top'><span class="indent">White:</span></td>              <td valign='top'>set background white</td> <td valign='top'>me.icn3d.opts['background'] = 'white'</td></tr>
+<tr><td valign='top'><span class="indent">Transparent:</span></td>        <td valign='top'>set background transparent</td> <td valign='top'>ic.opts['background'] = 'transparent'</td></tr>
+<tr><td valign='top'><span class="indent">Black:</span></td>              <td valign='top'>set background black</td> <td valign='top'>ic.opts['background'] = 'black'</td></tr>
+<tr><td valign='top'><span class="indent">Grey:</span></td>               <td valign='top'>set background grey</td> <td valign='top'>ic.opts['background'] = 'grey'</td></tr>
+<tr><td valign='top'><span class="indent">White:</span></td>              <td valign='top'>set background white</td> <td valign='top'>ic.opts['background'] = 'white'</td></tr>
 
 </tbody></table>
 <br>
@@ -2019,7 +2019,7 @@ Hold all modification to the core iCn3D library.
 <br><br><a name="modifyIcn3dshowPicking"></a><b>modifyIcn3dshowPicking()</b> <a href="#Top"><span class="top">&nbsp;&nbsp;&nbsp;</span></a><br>
 Modify the function "showPicking" in the core iCn3D library.
 
-<br><br><a name="openDialog"></a><b>openDialog(id, title)</b> <a href="#Top"><span class="top">&nbsp;&nbsp;&nbsp;</span></a><br>
+<br><br><a name="openDlg"></a><b>openDlg(id, title)</b> <a href="#Top"><span class="top">&nbsp;&nbsp;&nbsp;</span></a><br>
 Open a dialog to input parameters. "id" is the id of the div section holding the html content. "title" is the title of the dialog. The dialog can be out of the viewing area.
 
 <br><br><a name="outputSelection"></a><b>outputSelection()</b> <a href="#Top"><span class="top">&nbsp;&nbsp;&nbsp;</span></a><br>
@@ -2232,6 +2232,9 @@ Update the highlight of sequences in the annotation window according to the curr
 
 <a name="log"></a>
 <h2>Change Log:<img src="https://www.ncbi.nlm.nih.gov/Structure/IMG/spacer.gif" width="25" height="1" border="0"><a href="#Top"><img src="https://www.ncbi.nlm.nih.gov/Structure/IMG/arrowup_blue.gif" width="12" height="12" border="0" alt="back to top"></a></h2>
+<a href="https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.18.2.zip">icn3d-2.18.2</a> was release on July 28, 2020. Use strict mode and shrink code size.
+<br><br>
+
 <a href="https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.18.1.zip">icn3d-2.18.1</a> was release on July 23, 2020. Fixed the issue in the Jupyter Notebook widget icn3dpy; fixed the synchronized issue of the function show3DStructure().
 <br><br>
 

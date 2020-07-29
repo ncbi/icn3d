@@ -2,56 +2,20 @@
  * @author Jiyao Wang <wangjiy@ncbi.nlm.nih.gov> / https://github.com/ncbi/icn3d
  */
 
-/*! The following are shared by full_ui.js and simple_ui.js */
+/* The following are shared by full_ui.js and simple_ui.js */
 
 if (typeof jQuery === 'undefined') { throw new Error('iCn3DUI requires jQuery') }
 if (typeof iCn3D === 'undefined') { throw new Error('iCn3DUI requires iCn3D') }
 
-/*
-iCn3DUI.prototype.clickHighlight_3d_dgm = function() { var me = this; //"use strict";
-    $("#" + me.pre + "highlight_3d_dgm").click(function (e) {
-       //e.preventDefault();
-       me.icn3d.removeHlObjects();
-
-       var ckbxes = document.getElementsByName(me.pre + "filter_ckbx");
-
-       var mols = "";
-
-       var molid2ssTmp = {}, molid2colorTmp = {};
-
-       me.icn3d.hAtoms = {};
-       for(var i = 0, il = ckbxes.length; i < il; ++i) { // skip the first "all" checkbox
-         if(ckbxes[i].checked && ckbxes[i].value != 'chemicals') {
-           var value = ckbxes[i].value;
-           var chain = ckbxes[i].getAttribute('chain');
-
-           if(me.icn3d.molid2ss.hasOwnProperty(value)) { // condensed view
-               molid2ssTmp[value] = me.icn3d.molid2ss[value];
-               molid2colorTmp[value] = me.icn3d.molid2color[value];
-           }
-           else { // all atom view
-               me.icn3d.hAtoms = me.icn3d.unionHash(me.icn3d.hAtoms, me.icn3d.chains[chain]);
-           }
-         }
-       }
-
-       me.icn3d.drawHelixBrick(molid2ssTmp, molid2colorTmp, me.icn3d.bHighlight); // condensed view
-       me.icn3d.addHlObjects(undefined, false); // all atom view
-
-       if(me.icn3d.bRender) me.icn3d.render();
-    });
-};
-*/
-
-iCn3DUI.prototype.rotStruc = function (direction, bInitial) { var me = this; //"use strict";
-    if(me.icn3d.bStopRotate) return false;
-    if(me.icn3d.rotateCount > me.icn3d.rotateCountMax) {
+iCn3DUI.prototype.rotStruc = function (direction, bInitial) { var me = this, ic = me.icn3d; "use strict";
+    if(ic.bStopRotate) return false;
+    if(ic.rotateCount > ic.rotateCountMax) {
         // back to the original orientation
-        me.icn3d.resetOrientation();
+        ic.resetOrientation();
 
         return false;
     }
-    ++me.icn3d.rotateCount;
+    ++ic.rotateCount;
 
     if(bInitial) {
         if(direction === 'left') {
@@ -72,16 +36,16 @@ iCn3DUI.prototype.rotStruc = function (direction, bInitial) { var me = this; //"
     }
 
     if(direction === 'left' && me.ROT_DIR === 'left') {
-      me.icn3d.rotateLeft(1);
+      ic.rotateLeft(1);
     }
     else if(direction === 'right' && me.ROT_DIR === 'right') {
-      me.icn3d.rotateRight(1);
+      ic.rotateRight(1);
     }
     else if(direction === 'up' && me.ROT_DIR === 'up') {
-      me.icn3d.rotateUp(1);
+      ic.rotateUp(1);
     }
     else if(direction === 'down' && me.ROT_DIR === 'down') {
-      me.icn3d.rotateDown(1);
+      ic.rotateDown(1);
     }
     else {
       return false;
@@ -90,14 +54,14 @@ iCn3DUI.prototype.rotStruc = function (direction, bInitial) { var me = this; //"
     setTimeout(function(){ me.rotStruc(direction); }, 100);
 };
 
-iCn3DUI.prototype.showTitle = function() { var me = this; //"use strict";
-    if(me.icn3d.molTitle !== undefined && me.icn3d.molTitle !== '') {
-        var title = me.icn3d.molTitle;
+iCn3DUI.prototype.showTitle = function() { var me = this, ic = me.icn3d; "use strict";
+    if(ic.molTitle !== undefined && ic.molTitle !== '') {
+        var title = ic.molTitle;
 
         var titlelinkColor = (me.opts['background'] == 'white' || me.opts['background'] == 'grey') ? 'black' : me.GREYD;
 
         if(me.inputid === undefined) {
-            if(me.icn3d.molTitle.length > 40) title = me.icn3d.molTitle.substr(0, 40) + "...";
+            if(ic.molTitle.length > 40) title = ic.molTitle.substr(0, 40) + "...";
 
             $("#" + me.pre + "title").html(title);
         }
@@ -118,7 +82,7 @@ iCn3DUI.prototype.showTitle = function() { var me = this; //"use strict";
         else {
             var url = me.getLinkToStructureSummary();
 
-            if(me.icn3d.molTitle.length > 40) title = me.icn3d.molTitle.substr(0, 40) + "...";
+            if(ic.molTitle.length > 40) title = ic.molTitle.substr(0, 40) + "...";
 
             //var asymmetricStr = (me.bAssemblyUseAsu) ? " (Asymmetric Unit)" : "";
             var asymmetricStr = "";
@@ -131,7 +95,7 @@ iCn3DUI.prototype.showTitle = function() { var me = this; //"use strict";
     }
 };
 
-iCn3DUI.prototype.getLinkToStructureSummary = function(bLog) { var me = this; //"use strict";
+iCn3DUI.prototype.getLinkToStructureSummary = function(bLog) { var me = this, ic = me.icn3d; "use strict";
 
        var url = "https://www.ncbi.nlm.nih.gov/structure/?term=";
 
@@ -140,7 +104,7 @@ iCn3DUI.prototype.getLinkToStructureSummary = function(bLog) { var me = this; //
        }
        else {
            //if(me.inputid.indexOf(",") !== -1) {
-           if(Object.keys(me.icn3d.structures).length > 1) {
+           if(Object.keys(ic.structures).length > 1) {
                url = "https://www.ncbi.nlm.nih.gov/structure/?term=";
            }
            else {
@@ -168,7 +132,7 @@ iCn3DUI.prototype.getLinkToStructureSummary = function(bLog) { var me = this; //
        return url;
 },
 
-iCn3DUI.prototype.isIE = function() { var me = this; //"use strict";
+iCn3DUI.prototype.isIE = function() { var me = this, ic = me.icn3d; "use strict";
     //http://stackoverflow.com/questions/19999388/check-if-user-is-using-ie-with-jquery
     var ua = window.navigator.userAgent;
     var msie = ua.indexOf("MSIE ");
@@ -179,7 +143,7 @@ iCn3DUI.prototype.isIE = function() { var me = this; //"use strict";
         return false;
 };
 
-iCn3DUI.prototype.passFloat32 = function( array, output ){ var me = this; //"use strict";
+iCn3DUI.prototype.passFloat32 = function( array, output ){ var me = this, ic = me.icn3d; "use strict";
     var n = array.length;
     if( !output ) output = new Uint8Array( 4 * n );
     var dv = me.getDataView( output );
@@ -189,7 +153,7 @@ iCn3DUI.prototype.passFloat32 = function( array, output ){ var me = this; //"use
     return me.getUint8View( output );
 };
 
-iCn3DUI.prototype.passInt8 = function( array, output ){ var me = this; //"use strict";
+iCn3DUI.prototype.passInt8 = function( array, output ){ var me = this, ic = me.icn3d; "use strict";
     var n = array.length;
     if( !output ) output = new Uint8Array( 1 * n );
     var dv = me.getDataView( output );
@@ -199,7 +163,7 @@ iCn3DUI.prototype.passInt8 = function( array, output ){ var me = this; //"use st
     return me.getUint8View( output );
 };
 
-iCn3DUI.prototype.passInt16 = function( array, output ){ var me = this; //"use strict";
+iCn3DUI.prototype.passInt16 = function( array, output ){ var me = this, ic = me.icn3d; "use strict";
     var n = array.length;
     if( !output ) output = new Uint8Array( 2 * n );
     var dv = me.getDataView( output );
@@ -209,7 +173,7 @@ iCn3DUI.prototype.passInt16 = function( array, output ){ var me = this; //"use s
     return me.getUint8View( output );
 };
 
-iCn3DUI.prototype.passInt32 = function( array, output ){ var me = this; //"use strict";
+iCn3DUI.prototype.passInt32 = function( array, output ){ var me = this, ic = me.icn3d; "use strict";
     var n = array.length;
     if( !output ) output = new Uint8Array( 4 * n );
     var dv = me.getDataView( output );
@@ -221,15 +185,15 @@ iCn3DUI.prototype.passInt32 = function( array, output ){ var me = this; //"use s
 
 // ------------
 
-iCn3DUI.prototype.getUint8View = function( typedArray ){ var me = this; //"use strict";
+iCn3DUI.prototype.getUint8View = function( typedArray ){ var me = this, ic = me.icn3d; "use strict";
     return me.getView( Uint8Array, typedArray );
 };
 
-iCn3DUI.prototype.getDataView = function( typedArray ){ var me = this; //"use strict";
+iCn3DUI.prototype.getDataView = function( typedArray ){ var me = this, ic = me.icn3d; "use strict";
     return me.getView( DataView, typedArray );
 };
 
-iCn3DUI.prototype.getView = function( ctor, typedArray, elemSize ){ var me = this; //"use strict";
+iCn3DUI.prototype.getView = function( ctor, typedArray, elemSize ){ var me = this, ic = me.icn3d; "use strict";
     return typedArray ? new ctor(
         typedArray.buffer,
         typedArray.byteOffset,
@@ -237,14 +201,7 @@ iCn3DUI.prototype.getView = function( ctor, typedArray, elemSize ){ var me = thi
     ) : undefined;
 };
 
-iCn3DUI.prototype.getBlobFromBufferAndText = function(arrayBuffer, text) { var me = this; //"use strict";
-    //var start = "data:image/png;base64,";
-
-    //var strArray0 = new Uint8Array(start.length);
-    //for(var i = 0; i < start.length; ++i) {
-    //   strArray0[i] = me.passInt8([start.charCodeAt(i)])[0];
-    //}
-
+iCn3DUI.prototype.getBlobFromBufferAndText = function(arrayBuffer, text) { var me = this, ic = me.icn3d; "use strict";
     var strArray = new Uint8Array(arrayBuffer);
 
     var strArray2 = new Uint8Array(text.length);
@@ -264,7 +221,7 @@ iCn3DUI.prototype.getBlobFromBufferAndText = function(arrayBuffer, text) { var m
     return blob;
 };
 
-iCn3DUI.prototype.getTransformationStr = function(transformation) { var me = this; //"use strict";
+iCn3DUI.prototype.getTransformationStr = function(transformation) { var me = this, ic = me.icn3d; "use strict";
     var transformation2 = {"factor": 1.0, "mouseChange": {"x": 0, "y": 0}, "quaternion": {"_x": 0, "_y": 0, "_z": 0, "_w": 1} };
     transformation2.factor = parseFloat(transformation.factor).toPrecision(4);
     transformation2.mouseChange.x = parseFloat(transformation.mouseChange.x).toPrecision(4);
@@ -286,18 +243,7 @@ iCn3DUI.prototype.getTransformationStr = function(transformation) { var me = thi
     return JSON.stringify(transformation2);
 };
 
-/*
-iCn3DUI.prototype.createLinkForBlob = function(blob, filename) { var me = this; //"use strict";
-    var link = document.createElement('a');
-    link.href = window.URL.createObjectURL(blob);
-    link.setAttribute('download', filename);
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-};
-*/
-
-iCn3DUI.prototype.getPngText = function() { var me = this; //"use strict";
+iCn3DUI.prototype.getPngText = function() { var me = this, ic = me.icn3d; "use strict";
     var url; // output state file if me.bInputfile is true or the URL is mor than 4000 chars
     var bAllCommands = true;
 
@@ -333,26 +279,26 @@ iCn3DUI.prototype.getPngText = function() { var me = this; //"use strict";
         }
     }
 
-    text = text.replace(/!/g, Object.keys(me.icn3d.structures)[0] + '_');
+    text = text.replace(/!/g, Object.keys(ic.structures)[0] + '_');
 
     return text;
 };
 
-iCn3DUI.prototype.saveFile = function(filename, type, text) { var me = this; //"use strict";
+iCn3DUI.prototype.saveFile = function(filename, type, text) { var me = this, ic = me.icn3d; "use strict";
     //Save file
     var blob;
 
     if(type === 'command') {
         var dataStr = '';
-        for(var i = 0, il = me.icn3d.commands.length; i < il; ++i) {
-            var command = me.icn3d.commands[i].trim();
+        for(var i = 0, il = ic.commands.length; i < il; ++i) {
+            var command = ic.commands[i].trim();
             if(i == il - 1) {
                var command_tf = command.split('|||');
 
                var transformation = {};
-               transformation.factor = me.icn3d._zoomFactor;
-               transformation.mouseChange = me.icn3d.mouseChange;
-               transformation.quaternion = me.icn3d.quaternion;
+               transformation.factor = ic._zoomFactor;
+               transformation.mouseChange = ic.mouseChange;
+               transformation.quaternion = ic.quaternion;
 
                command = command_tf[0] + '|||' + me.getTransformationStr(transformation);
             }
@@ -364,12 +310,12 @@ iCn3DUI.prototype.saveFile = function(filename, type, text) { var me = this; //"
         blob = new Blob([data],{ type: "text;charset=utf-8;"});
     }
     else if(type === 'png') {
-        //me.icn3d.scaleFactor = 1.0;
+        //ic.scaleFactor = 1.0;
         var width = $("#" + me.pre + "canvas").width();
         var height = $("#" + me.pre + "canvas").height();
-        me.icn3d.setWidthHeight(width, height);
+        ic.setWidthHeight(width, height);
 
-        if(me.icn3d.bRender) me.icn3d.render();
+        if(ic.bRender) ic.render();
 
         var bAddURL = true;
         if (!window.File || !window.FileReader || !window.FileList || !window.Blob) {
@@ -377,7 +323,7 @@ iCn3DUI.prototype.saveFile = function(filename, type, text) { var me = this; //"
         }
 
         if(me.isIE()) {
-            blob = me.icn3d.renderer.domElement.msToBlob();
+            blob = ic.renderer.domElement.msToBlob();
 
             if(bAddURL) {
                 var reader = new FileReader();
@@ -404,7 +350,7 @@ iCn3DUI.prototype.saveFile = function(filename, type, text) { var me = this; //"
             }
         }
         else {
-            me.icn3d.renderer.domElement.toBlob(function(data) {
+            ic.renderer.domElement.toBlob(function(data) {
                 if(bAddURL) {
                     var reader = new FileReader();
                     reader.onload = function (e) {
@@ -434,10 +380,10 @@ iCn3DUI.prototype.saveFile = function(filename, type, text) { var me = this; //"
         }
 
         // reset the image size
-        me.icn3d.scaleFactor = 1.0;
-        me.icn3d.setWidthHeight(width, height);
+        ic.scaleFactor = 1.0;
+        ic.setWidthHeight(width, height);
 
-        if(me.icn3d.bRender) me.icn3d.render();
+        if(ic.bRender) ic.render();
     }
     else if(type === 'html') {
         var dataStr = text;
@@ -462,22 +408,6 @@ iCn3DUI.prototype.saveFile = function(filename, type, text) { var me = this; //"
         blob = new Blob(data,{ type: "application/octet-stream"});
     }
 
-/*
-    //https://github.com/mholt/PapaParse/issues/175
-    //IE11 & Edge
-    if(me.isIE() && window.navigator.msSaveBlob){
-        navigator.msSaveBlob(blob, filename);
-    } else {
-        //In FF link must be added to DOM to be clicked
-        var link = document.createElement('a');
-        link.href = window.URL.createObjectURL(blob);
-        link.setAttribute('download', filename);
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-    }
-*/
-
     if(type !== 'png') {
         //https://github.com/eligrey/FileSaver.js/
         saveAs(blob, filename);
@@ -494,20 +424,10 @@ iCn3DUI.prototype.isMac = function() {
 };
 
 iCn3DUI.prototype.isSessionStorageSupported = function() {
-/*
-  var testKey = 'test';
-  try {
-    sessionStorage.setItem(testKey, '1');
-    sessionStorage.removeItem(testKey);
-    return true;
-  } catch (error) {
-    return false;
-  }
-*/
     return window.sessionStorage;
 };
 
-iCn3DUI.prototype.resizeCanvas = function (width, height, bForceResize, bDraw) { var me = this; //"use strict";
+iCn3DUI.prototype.resizeCanvas = function (width, height, bForceResize, bDraw) { var me = this, ic = me.icn3d; "use strict";
   if( bForceResize || me.cfg.resize ) {
     //var heightTmp = parseInt(height) - me.EXTRAHEIGHT;
     var heightTmp = height;
@@ -517,15 +437,15 @@ iCn3DUI.prototype.resizeCanvas = function (width, height, bForceResize, bDraw) {
     //$("div:has(#" + me.pre + "canvas)").width(width).height(heightTmp);
     $("#" + me.divid + " div:has(#" + me.pre + "canvas)").width(width).height(heightTmp);
 
-    me.icn3d.setWidthHeight(width, heightTmp);
+    ic.setWidthHeight(width, heightTmp);
 
     if(bDraw === undefined || bDraw) {
-        me.icn3d.draw();
+        ic.draw();
     }
   }
 };
 
-iCn3DUI.prototype.handleContextLost = function() { var me = this; //"use strict";
+iCn3DUI.prototype.handleContextLost = function() { var me = this, ic = me.icn3d; "use strict";
     //https://www.khronos.org/webgl/wiki/HandlingContextLost
     // 1 add a lost context handler and tell it to prevent the default behavior
 
@@ -539,19 +459,19 @@ iCn3DUI.prototype.handleContextLost = function() { var me = this; //"use strict"
         // IE11 error: WebGL content is taking too long to render on your GPU. Temporarily switching to software rendering.
         console.log("WebGL context was lost. Reset WebGLRenderer and launch iCn3D again.");
 
-        me.icn3d.renderer = new THREE.WebGLRenderer({
-            canvas: me.icn3d.container.get(0),
+        ic.renderer = new THREE.WebGLRenderer({
+            canvas: ic.container.get(0),
             antialias: true,
             preserveDrawingBuffer: true,
             alpha: true
         });
 
-        me.icn3d.draw();
+        ic.draw();
 
     }, false);
 };
 
-iCn3DUI.prototype.windowResize = function() { var me = this; //"use strict";
+iCn3DUI.prototype.windowResize = function() { var me = this, ic = me.icn3d; "use strict";
     if(me.cfg.resize && !me.isMobile() ) {
         $(window).resize(function() {
             //me.WIDTH = $( window ).width();
@@ -561,12 +481,12 @@ iCn3DUI.prototype.windowResize = function() { var me = this; //"use strict";
             var width = me.WIDTH; // - me.LESSWIDTH_RESIZE;
             var height = me.HEIGHT; // - me.LESSHEIGHT - me.EXTRAHEIGHT;
 
-            if(me.icn3d !== undefined && !me.icn3d.bFullscreen) me.resizeCanvas(width, height);
+            if(ic !== undefined && !ic.bFullscreen) me.resizeCanvas(width, height);
         });
     }
 };
 
-iCn3DUI.prototype.setViewerWidthHeight = function() { var me = this; //"use strict";
+iCn3DUI.prototype.setViewerWidthHeight = function() { var me = this, ic = me.icn3d; "use strict";
     me.WIDTH = $( window ).width() - me.LESSWIDTH;
     me.HEIGHT = $( window ).height() - me.EXTRAHEIGHT - me.LESSHEIGHT;
 
@@ -605,7 +525,7 @@ iCn3DUI.prototype.setViewerWidthHeight = function() { var me = this; //"use stri
     if(viewer_height && me.HEIGHT > viewer_height) me.HEIGHT = viewer_height;
 };
 
-iCn3DUI.prototype.shareLinkUrl = function(bAllCommands) { var me = this; //"use strict";
+iCn3DUI.prototype.shareLinkUrl = function(bAllCommands) { var me = this, ic = me.icn3d; "use strict";
        var url = me.baseUrl + "icn3d/full.html?";
        if(me.cfg.bSidebyside) url = me.baseUrl + "icn3d/full2.html?";
 
@@ -641,7 +561,7 @@ iCn3DUI.prototype.shareLinkUrl = function(bAllCommands) { var me = this; //"use 
 
             if(key === 'rotate' && value === 'right') continue;
 
-            // commands will be added in the for loop below: for(var il = me.icn3d.commands...
+            // commands will be added in the for loop below: for(var il = ic.commands...
             if(key === 'command') continue;
 
            if(key === 'options') {
@@ -664,17 +584,18 @@ iCn3DUI.prototype.shareLinkUrl = function(bAllCommands) { var me = this; //"use 
            }
        }
 
-       var pos = -1;
-       if(me.cfg.inpara !== undefined) pos = me.cfg.inpara.indexOf('&command=');
-       var inparaWithoutCommand = (pos !== -1 ) ? me.cfg.inpara.substr(0, pos) : me.cfg.inpara;
-
-       inparaArray = inparaWithoutCommand.substr(1).split('&');
-       for(var i = 0, il = inparaArray.length; i < il; ++i) {
-           var key_value = inparaArray[i].split('=');
-           if(key_value.length == 2) paraHash[key_value[0]] = key_value[1];
-       }
-
+       var inparaWithoutCommand;
        if(!me.bInputUrlfile) {
+           var pos = -1;
+           if(me.cfg.inpara !== undefined) pos = me.cfg.inpara.indexOf('&command=');
+           inparaWithoutCommand = (pos !== -1 ) ? me.cfg.inpara.substr(0, pos) : me.cfg.inpara;
+
+           inparaArray = (inparaWithoutCommand && inparaWithoutCommand.substr(1)) ? inparaWithoutCommand.substr(1).split('&') : [];
+           for(var i = 0, il = inparaArray.length; i < il; ++i) {
+               var key_value = inparaArray[i].split('=');
+               if(key_value.length == 2) paraHash[key_value[0]] = key_value[1];
+           }
+
            for(var key in paraHash) {
                url += key + '=' + paraHash[key] + '&';
            }
@@ -692,9 +613,9 @@ iCn3DUI.prototype.shareLinkUrl = function(bAllCommands) { var me = this; //"use 
        if(bAllCommands) start = 0;
 
        var transformation = {};
-       transformation.factor = me.icn3d._zoomFactor;
-       transformation.mouseChange = me.icn3d.mouseChange;
-       transformation.quaternion = me.icn3d.quaternion;
+       transformation.factor = ic._zoomFactor;
+       transformation.mouseChange = ic.mouseChange;
+       transformation.quaternion = ic.quaternion;
 
        var bCommands = false;
        var statefile = "";
@@ -703,24 +624,24 @@ iCn3DUI.prototype.shareLinkUrl = function(bAllCommands) { var me = this; //"use 
        var toggleStr = 'toggle highlight';
        var cntToggle = 0;
 
-       if(me.icn3d.commands.length > start) {
-           var command_tf = me.icn3d.commands[start].split('|||');
+       if(ic.commands.length > start) {
+           var command_tf = ic.commands[start].split('|||');
            prevCommandStr = command_tf[0].trim();
 
-           //statefile += me.icn3d.commands[start] + "\n";
+           //statefile += ic.commands[start] + "\n";
 
            if(prevCommandStr.indexOf(toggleStr) !== -1) ++cntToggle;
        }
 
        var i = start + 1;
        var selectChainHash = {};
-       for(var il = me.icn3d.commands.length; i < il; ++i) {
+       for(var il = ic.commands.length; i < il; ++i) {
            bCommands = true;
 
-           var command_tf = me.icn3d.commands[i].split('|||');
+           var command_tf = ic.commands[i].split('|||');
            var commandStr = command_tf[0].trim();
 
-           //statefile += me.icn3d.commands[i] + "\n";
+           //statefile += ic.commands[i] + "\n";
 
            // only output the most recent 'select saved atoms...' without " | name ..."
            if( ( (prevCommandStr.indexOf('select saved atoms') !== -1 || prevCommandStr.indexOf('select sets') !== -1)
@@ -731,7 +652,7 @@ iCn3DUI.prototype.shareLinkUrl = function(bAllCommands) { var me = this; //"use 
                // do nothing
            }
            // remove all "show selection" except the last one
-           else if(prevCommandStr == 'show selection' && me.icn3d.commands.slice(i).toString().indexOf('show selection') != -1) {
+           else if(prevCommandStr == 'show selection' && ic.commands.slice(i).toString().indexOf('show selection') != -1) {
                // do nothing
            }
            else if(prevCommandStr.indexOf(toggleStr) !== -1) {
@@ -761,16 +682,11 @@ iCn3DUI.prototype.shareLinkUrl = function(bAllCommands) { var me = this; //"use 
            statefile += prevCommandStr + '|||' + me.getTransformationStr(transformation) + '\n';
        }
 
-       // remove "&command="
-//       if(!bCommands) {
-//           url = url.substr(0, url.length - 9);
-//       }
-
-       statefile = statefile.replace(/!/g, Object.keys(me.icn3d.structures)[0] + '_');
+       statefile = statefile.replace(/!/g, Object.keys(ic.structures)[0] + '_');
        if((me.bInputfile && !me.bInputUrlfile) || url.length > 4000) url = statefile;
        var id;
-       if(me.icn3d.structures !== undefined && Object.keys(me.icn3d.structures).length == 1 && me.inputid !== undefined) {
-           id = Object.keys(me.icn3d.structures)[0];
+       if(ic.structures !== undefined && Object.keys(ic.structures).length == 1 && me.inputid !== undefined) {
+           id = Object.keys(ic.structures)[0];
            url = url.replace(new RegExp(id + '_','g'), '!');
        }
 
@@ -781,7 +697,7 @@ iCn3DUI.prototype.shareLinkUrl = function(bAllCommands) { var me = this; //"use 
        return url;
 };
 
-iCn3DUI.prototype.addLabel = function (text, x, y, z, size, color, background, type) { var me = this; //"use strict";
+iCn3DUI.prototype.addLabel = function (text, x, y, z, size, color, background, type) { var me = this, ic = me.icn3d; "use strict";
     var label = {}; // Each label contains 'position', 'text', 'color', 'background'
 
     if(size === '0' || size === '' || size === 'undefined') size = undefined;
@@ -800,16 +716,16 @@ iCn3DUI.prototype.addLabel = function (text, x, y, z, size, color, background, t
     label.color = color;
     label.background = background;
 
-    if(me.icn3d.labels[type] === undefined) me.icn3d.labels[type] = [];
+    if(ic.labels[type] === undefined) ic.labels[type] = [];
 
     if(type !== undefined) {
-        me.icn3d.labels[type].push(label);
+        ic.labels[type].push(label);
     }
     else {
-        me.icn3d.labels['custom'].push(label);
+        ic.labels['custom'].push(label);
     }
 
-    me.icn3d.removeHlObjects();
+    ic.removeHlObjects();
 
-    //me.icn3d.draw();
+    //ic.draw();
 };

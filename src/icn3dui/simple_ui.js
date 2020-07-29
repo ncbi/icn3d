@@ -3,7 +3,7 @@
  */
 
 var iCn3DUI = function(cfg) {
-    var me = this; //"use strict";
+    var me = this, ic = me.icn3d; "use strict";
 
     me.bFullUi = false;
 
@@ -85,12 +85,12 @@ iCn3DUI.prototype = {
 
     constructor: iCn3DUI,
 
-    // modify me.icn3d function
-    modifyIcn3d: function() {var me = this; //"use strict";
+    // modify ic function
+    modifyIcn3d: function() { var  me = this; "use strict";
         me.modifyIcn3dshowPicking();
     },
 
-    modifyIcn3dshowPicking: function() {var me = this; //"use strict";
+    modifyIcn3dshowPicking: function() { var  me = this; "use strict";
         iCn3D.prototype.showPicking = function(atom, x, y) {
           if(me.cfg.cid !== undefined) {
               this.pk = 1; // atom
@@ -106,40 +106,6 @@ iCn3DUI.prototype = {
             $("#" + me.pre + "popup").html(text);
             $("#" + me.pre + "popup").css("top", y).css("left", x+20).show();
           }
-
-/*
-          var residueText = atom.resn + atom.resi;
-
-          var text;
-          if(me.cfg.cid !== undefined) {
-              text = atom.name;
-              this.pk = 1; // atom
-          }
-          else {
-              text = residueText + '@' + atom.name;
-              this.pk = 2; // residue
-          }
-
-          var labels = {};
-          labels['custom'] = [];
-
-          var label = {};
-          label.position = new THREE.Vector3(atom.coord.x + 1, atom.coord.y + 1, atom.coord.z + 1); // shifted by 1
-
-          if(this.pk === 1) {
-            label.text = text;
-          }
-          else if(this.pk === 2) {
-            label.text = residueText;
-          }
-
-          label.background = "#CCCCCC";
-
-          labels['custom'].push(label);
-
-          //http://www.johannes-raida.de/tutorials/three.js/tutorial13/tutorial13.htm
-          this.createLabelRepresentation(labels);
-*/
         };
     },
 
@@ -151,24 +117,6 @@ iCn3DUI.prototype = {
         $( "#" + me.divid).html(html);
 
         me.setViewerWidthHeight();
-
-/*
-        var width, height;
-
-        if(me.cfg.width.toString().indexOf('%') !== -1) {
-          width = me.WIDTH * me.cfg.width.substr(0, me.cfg.width.toString().indexOf('%')) / 100.0 - me.LESSWIDTH;
-        }
-        else {
-          width = me.cfg.width;
-        }
-
-        if(me.cfg.height.toString().indexOf('%') !== -1) {
-          height = me.HEIGHT * me.cfg.height.substr(0, me.cfg.height.toString().indexOf('%')) / 100.0 - me.EXTRAHEIGHT - me.LESSHEIGHT;
-        }
-        else {
-          height = me.cfg.height;
-        }
-*/
 
         var width = me.WIDTH; // - me.LESSWIDTH_RESIZE;
         var height = me.HEIGHT; // - me.LESSHEIGHT - me.EXTRAHEIGHT;
@@ -202,16 +150,18 @@ iCn3DUI.prototype = {
         }
 
         me.icn3d = new iCn3D(me.pre + 'canvas');
-        me.icn3d.setControl(); // rotation, translation, zoom, etc
+        var ic = me.icn3d;
+
+        ic.setControl(); // rotation, translation, zoom, etc
 
         me.handleContextLost();
 
-        if(me.cfg.bCalphaOnly !== undefined) me.icn3d.bCalphaOnly = me.cfg.bCalphaOnly;
+        if(me.cfg.bCalphaOnly !== undefined) ic.bCalphaOnly = me.cfg.bCalphaOnly;
 
         me.loadStructure();
     },
 
-    setHtml: function() { var me = this; //"use strict";
+    setHtml: function() { var me = this, ic = me.icn3d; "use strict";
         var html = "";
 
         html += "<div id='" + me.pre + "viewer' style='position:relative; width:100%; height:100%;'>";
@@ -229,60 +179,62 @@ iCn3DUI.prototype = {
         html += "<div class='icn3d-insideTab' style='overflow: auto;'>";
         html += "<form action='' id='" + me.pre + "paraform' method='POST'>";
 
+        var optStr = "<option value=";
+
         if(me.cfg.cid === undefined) {
         html += "<div class='icn3d-option'>";
         html += "<b>&nbsp;&nbsp;Proteins&nbsp;</b>";
         html += "<select id='" + me.pre + "proteins'>";
-        html += "<option value='ribbon' selected>Ribbon</option>";
-        html += "<option value='strand'>Strand</option>";
-        html += "<option value='cylinder and plate'>Cylinder and Plate</option>";
-        html += "<option value='schematic'>Schematic</option>";
-        html += "<option value='c alpha trace'>C Alpha Trace</option>";
-        html += "<option value='backbone'>Backbone</option>";
-        html += "<option value='b factor tube'>B Factor Tube</option>";
-        html += "<option value='lines'>Lines</option>";
-        html += "<option value='stick'>Stick</option>";
-        html += "<option value='ball and stick'>Ball and Stick</option>";
-        html += "<option value='sphere'>Sphere</option>";
-        html += "<option value='nothing'>Hide</option>";
+        html += optStr + "'ribbon' selected>Ribbon</option>";
+        html += optStr + "'strand'>Strand</option>";
+        html += optStr + "'cylinder and plate'>Cylinder and Plate</option>";
+        html += optStr + "'schematic'>Schematic</option>";
+        html += optStr + "'c alpha trace'>C Alpha Trace</option>";
+        html += optStr + "'backbone'>Backbone</option>";
+        html += optStr + "'b factor tube'>B Factor Tube</option>";
+        html += optStr + "'lines'>Lines</option>";
+        html += optStr + "'stick'>Stick</option>";
+        html += optStr + "'ball and stick'>Ball and Stick</option>";
+        html += optStr + "'sphere'>Sphere</option>";
+        html += optStr + "'nothing'>Hide</option>";
         html += "</select>";
         html += "</div>";
 
         html += "<div class='icn3d-option'>";
         html += "<b>&nbsp;&nbsp;Side Chains&nbsp;</b>";
         html += "<select id='" + me.pre + "sidec'>";
-        html += "<option value='lines'>Lines</option>";
-        html += "<option value='stick'>Stick</option>";
-        html += "<option value='ball and stick'>Ball and Stick</option>";
-        html += "<option value='sphere'>Sphere</option>";
-        html += "<option value='nothing' selected>Hide</option>";
+        html += optStr + "'lines'>Lines</option>";
+        html += optStr + "'stick'>Stick</option>";
+        html += optStr + "'ball and stick'>Ball and Stick</option>";
+        html += optStr + "'sphere'>Sphere</option>";
+        html += optStr + "'nothing' selected>Hide</option>";
         html += "</select>";
         html += "</div>";
 
         html += "<div class='icn3d-option'>";
         html += "<b>&nbsp;&nbsp;Nucleotides&nbsp;</b>";
         html += "<select id='" + me.pre + "nucleotides'>";
-        html += "<option value='nucleotide cartoon' selected>Cartoon</option>";
-        html += "<option value='o3 trace'>O3' Trace</option>";
-        html += "<option value='backbone'>Backbone</option>";
-        html += "<option value='schematic'>Schematic</option>";
-        html += "<option value='lines'>Lines</option>";
-        html += "<option value='stick'>Stick</option>";
-        html += "<option value='ball and stick'>Ball and Stick</option>";
-        html += "<option value='sphere'>Sphere</option>";
-        html += "<option value='nothing'>Hide</option>";
+        html += optStr + "'nucleotide cartoon' selected>Cartoon</option>";
+        html += optStr + "'o3 trace'>O3' Trace</option>";
+        html += optStr + "'backbone'>Backbone</option>";
+        html += optStr + "'schematic'>Schematic</option>";
+        html += optStr + "'lines'>Lines</option>";
+        html += optStr + "'stick'>Stick</option>";
+        html += optStr + "'ball and stick'>Ball and Stick</option>";
+        html += optStr + "'sphere'>Sphere</option>";
+        html += optStr + "'nothing'>Hide</option>";
         html += "</select>";
         html += "</div>";
 
         html += "<div class='icn3d-option'>";
         html += "<b>&nbsp;&nbsp;Chemicals&nbsp;</b>";
         html += "<select id='" + me.pre + "chemicals'>";
-        html += "<option value='lines'>Lines</option>";
-        html += "<option value='stick' selected>Stick</option>";
-        html += "<option value='ball and stick'>Ball and Stick</option>";
-        html += "<option value='schematic'>Schematic</option>";
-        html += "<option value='sphere'>Sphere</option>";
-        html += "<option value='nothing'>Hide</option>";
+        html += optStr + "'lines'>Lines</option>";
+        html += optStr + "'stick' selected>Stick</option>";
+        html += optStr + "'ball and stick'>Ball and Stick</option>";
+        html += optStr + "'schematic'>Schematic</option>";
+        html += optStr + "'sphere'>Sphere</option>";
+        html += optStr + "'nothing'>Hide</option>";
         html += "</select>";
         html += "</div>";
         }
@@ -290,12 +242,12 @@ iCn3DUI.prototype = {
         html += "<div class='icn3d-option'>";
         html += "<b>&nbsp;&nbsp;Chemicals&nbsp;</b>";
         html += "<select id='" + me.pre + "chemicals'>";
-        html += "<option value='lines'>Lines</option>";
-        html += "<option value='stick'>Stick</option>";
-        html += "<option value='ball and stick' selected>Ball and Stick</option>";
-        html += "<option value='schematic'>Schematic</option>";
-        html += "<option value='sphere'>Sphere</option>";
-        html += "<option value='nothing'>Hide</option>";
+        html += optStr + "'lines'>Lines</option>";
+        html += optStr + "'stick'>Stick</option>";
+        html += optStr + "'ball and stick' selected>Ball and Stick</option>";
+        html += optStr + "'schematic'>Schematic</option>";
+        html += optStr + "'sphere'>Sphere</option>";
+        html += optStr + "'nothing'>Hide</option>";
         html += "</select>";
         html += "</div>";
         }
@@ -304,40 +256,40 @@ iCn3DUI.prototype = {
         html += "<b>&nbsp;&nbsp;Color&nbsp;</b>";
         html += "<select id='" + me.pre + "color'>";
         if(me.cfg.cid === undefined) {
-            html += "<option value='spectrum'>Spectrum</option>";
+            html += optStr + "'spectrum'>Spectrum</option>";
 
-            html += "<option value='secondary structure'>Secondary Structure</option>";
+            html += optStr + "'secondary structure'>Secondary Structure</option>";
 
-            html += "<option value='charge'>Charge</option>";
-            html += "<option value='hydrophobic'>Hydrophobic</option>";
+            html += optStr + "'charge'>Charge</option>";
+            html += optStr + "'hydrophobic'>Hydrophobic</option>";
 
-            html += "<option value='chain' selected>Chain</option>";
+            html += optStr + "'chain' selected>Chain</option>";
 
-            html += "<option value='residue'>Residue</option>";
-            html += "<option value='atom'>Atom</option>";
-            html += "<option value='b factor'>B-factor</option>";
+            html += optStr + "'residue'>Residue</option>";
+            html += optStr + "'atom'>Atom</option>";
+            html += optStr + "'b factor'>B-factor</option>";
         }
         else {
-            html += "<option value='atom' selected>Atom</option>";
+            html += optStr + "'atom' selected>Atom</option>";
         }
 
         if(me.cfg.align !== undefined) {
-            html += "<option value='conserved'>Identity</option>";
+            html += optStr + "'conserved'>Identity</option>";
         }
-        html += "<option value='red'>Red</option>";
-        html += "<option value='green'>Green</option>";
-        html += "<option value='blue'>Blue</option>";
-        html += "<option value='magenta'>Magenta</option>";
-        html += "<option value='yellow'>Yellow</option>";
-        html += "<option value='cyan'>Cyan</option>";
+        html += optStr + "'red'>Red</option>";
+        html += optStr + "'green'>Green</option>";
+        html += optStr + "'blue'>Blue</option>";
+        html += optStr + "'magenta'>Magenta</option>";
+        html += optStr + "'yellow'>Yellow</option>";
+        html += optStr + "'cyan'>Cyan</option>";
         html += "</select>";
         html += "</div>";
 
         html += "<div class='icn3d-option'>";
         html += "<b>&nbsp;&nbsp;Camera&nbsp;</b>";
         html += "<select id='" + me.pre + "camera'>";
-        html += "<option value='perspective' selected>Perspective</option>";
-        html += "<option value='orthographic'>Orthographic</option>";
+        html += optStr + "'perspective' selected>Perspective</option>";
+        html += optStr + "'orthographic'>Orthographic</option>";
         html += "</select>";
         html += "</div>";
 
@@ -363,22 +315,13 @@ iCn3DUI.prototype = {
         html += "<!-- dialog will not be part of the form -->";
         html += "<div id='" + me.pre + "alldialogs' class='icn3d-hidden'>";
 
-        // filter for large structure
-        //html += "<div id='" + me.pre + "dl_filter' style='overflow:auto; position:relative'>";
-
-        //html += "  <div style='text-align:center; margin-bottom:10px;'><button id='" + me.pre + "filter'><span style='white-space:nowrap'><b>Show Structure</b></span></button>";
-        //html += "<button id='" + me.pre + "label_3d_dgm' style='margin-left:10px;'><span style='white-space:nowrap'><b>Show Labels</b></span></button></div>";
-        //html += "  <div id='" + me.pre + "dl_filter_table' class='icn3d-box'>";
-        //html += "  </div>";
-        //html += "</div>";
-
         html += "</div>";
 
         return html;
     },
 
-    loadStructure: function() { var me = this; //"use strict";
-        me.icn3d.molTitle = '';
+    loadStructure: function() { var me = this, ic = me.icn3d; "use strict";
+        ic.molTitle = '';
 
         if(me.cfg.mmtfid !== undefined) {
            me.inputid = me.cfg.mmtfid;
@@ -407,7 +350,7 @@ iCn3DUI.prototype = {
               tryCount : 0,
               retryLimit : 1,
               success: function(data) {
-                  if(data.InformationList !== undefined && data.InformationList.Information !== undefined) me.icn3d.molTitle = data.InformationList.Information[0].Title;
+                  if(data.InformationList !== undefined && data.InformationList.Information !== undefined) ic.molTitle = data.InformationList.Information[0].Title;
               },
               error : function(xhr, textStatus, errorThrown ) {
                 this.tryCount++;
@@ -444,99 +387,99 @@ iCn3DUI.prototype = {
         }
     },
 
-    renderStructure: function() { var me = this; //"use strict";
-        if(me.icn3d.bInitial) {
-          //me.icn3d.draw(me.opts);
+    renderStructure: function() { var me = this, ic = me.icn3d; "use strict";
+        if(ic.bInitial) {
+          //ic.draw(me.opts);
 
-          jQuery.extend(me.icn3d.opts, me.opts);
-          me.icn3d.draw();
+          jQuery.extend(ic.opts, me.opts);
+          ic.draw();
 
-          if(me.icn3d.bOpm) {
+          if(ic.bOpm) {
               var axis = new THREE.Vector3(1,0,0);
               var angle = -0.5 * Math.PI;
 
-              me.icn3d.setRotation(axis, angle);
+              ic.setRotation(axis, angle);
           }
         }
         else {
-          me.icn3d.draw();
+          ic.draw();
         }
 
-        me.icn3d.bInitial = false;
+        ic.bInitial = false;
 
         if(me.deferred !== undefined) me.deferred.resolve(); if(me.deferred2 !== undefined) me.deferred2.resolve();
     },
 
-    selectAll: function() { var me = this; //"use strict";
+    selectAll: function() { var me = this, ic = me.icn3d; "use strict";
           // select all atoms again
-          for(var i in me.icn3d.atoms) {
-              me.icn3d.hAtoms[i] = 1;
+          for(var i in ic.atoms) {
+              ic.hAtoms[i] = 1;
           }
     },
 
-    setCamera: function(id, value) { var me = this; //"use strict";
-      me.icn3d.opts[id] = value;
+    setCamera: function(id, value) { var me = this, ic = me.icn3d; "use strict";
+      ic.opts[id] = value;
 
-      me.icn3d.draw();
+      ic.draw();
     },
 
-    setColor: function(id, value) { var me = this; //"use strict";
-      me.icn3d.opts[id] = value;
+    setColor: function(id, value) { var me = this, ic = me.icn3d; "use strict";
+      ic.opts[id] = value;
 
       me.selectAll();
 
-      me.icn3d.setColorByOptions(me.icn3d.opts, me.icn3d.atoms);
+      ic.setColorByOptions(ic.opts, ic.atoms);
 
-      me.icn3d.draw();
+      ic.draw();
     },
 
-    setStyle: function(selectionType, style) { var me = this; //"use strict";
+    setStyle: function(selectionType, style) { var me = this, ic = me.icn3d; "use strict";
       var atoms = {};
 
       me.selectAll();
 
       switch (selectionType) {
           case 'proteins':
-              atoms = me.icn3d.intHash(me.icn3d.hAtoms, me.icn3d.proteins);
+              atoms = ic.intHash(ic.hAtoms, ic.proteins);
               break;
           case 'sidec':
-              atoms = me.icn3d.intHash(me.icn3d.hAtoms, me.icn3d.sidec);
-              calpha_atoms = me.icn3d.intHash(me.icn3d.hAtoms, me.icn3d.calphas);
+              atoms = ic.intHash(ic.hAtoms, ic.sidec);
+              calpha_atoms = ic.intHash(ic.hAtoms, ic.calphas);
               // include calphas
-              atoms = me.icn3d.unionHash(atoms, calpha_atoms);
+              atoms = ic.unionHash(atoms, calpha_atoms);
               break;
           case 'nucleotides':
-              atoms = me.icn3d.intHash(me.icn3d.hAtoms, me.icn3d.nucleotides);
+              atoms = ic.intHash(ic.hAtoms, ic.nucleotides);
               break;
           case 'chemicals':
-              atoms = me.icn3d.intHash(me.icn3d.hAtoms, me.icn3d.chemicals);
+              atoms = ic.intHash(ic.hAtoms, ic.chemicals);
               break;
           case 'ions':
-              atoms = me.icn3d.intHash(me.icn3d.hAtoms, me.icn3d.ions);
+              atoms = ic.intHash(ic.hAtoms, ic.ions);
               break;
           case 'water':
-              atoms = me.icn3d.intHash(me.icn3d.hAtoms, me.icn3d.water);
+              atoms = ic.intHash(ic.hAtoms, ic.water);
               break;
       }
 
       // draw sidec separatedly
       if(selectionType === 'sidec') {
           for(var i in atoms) {
-            me.icn3d.atoms[i].style2 = style;
+            ic.atoms[i].style2 = style;
           }
       }
       else {
           for(var i in atoms) {
-            me.icn3d.atoms[i].style = style;
+            ic.atoms[i].style = style;
           }
       }
 
-      me.icn3d.opts[selectionType] = style;
+      ic.opts[selectionType] = style;
 
-      me.icn3d.draw();
+      ic.draw();
     },
 
-    clickTab: function() { var me = this; //"use strict";
+    clickTab: function() { var me = this, ic = me.icn3d; "use strict";
         $("#" + me.pre + "toolbox > .icn3d-bottomTab").click(function (e) {
            var height = $("#" + me.pre + "toolbox > .icn3d-insideTab").height();
            if(height === 0) {
@@ -548,38 +491,7 @@ iCn3DUI.prototype = {
         });
     },
 
-/*
-    clickPicking: function() { var me = this; //"use strict";
-        $("#" + me.pre + "enablepick").click(function(e) {
-           e.preventDefault();
-
-           if(me.cfg.cid !== undefined) {
-               me.icn3d.pk = 1;
-               me.icn3d.opts['pk'] = 'atom';
-           }
-           else {
-               me.icn3d.pk = 2;
-               me.icn3d.opts['pk'] = 'residue';
-           }
-
-        });
-    },
-
-    clickNoPicking: function() { var me = this; //"use strict";
-        $("#" + me.pre + "disablepick").click(function(e) {
-           e.preventDefault();
-
-           me.icn3d.pk = 0;
-           me.icn3d.opts['pk'] = 'no';
-           //me.icn3d.draw(undefined, false);
-           me.icn3d.draw();
-           me.icn3d.removeHlObjects();
-
-        });
-    },
-*/
-
-    changeProteinStyle: function() { var me = this; //"use strict";
+    changeProteinStyle: function() { var me = this, ic = me.icn3d; "use strict";
         $("#" + me.pre + "proteins").change(function(e) {
            e.preventDefault();
 
@@ -587,18 +499,18 @@ iCn3DUI.prototype = {
         });
     },
 
-    clickReset: function() { var me = this; //"use strict";
+    clickReset: function() { var me = this, ic = me.icn3d; "use strict";
         $("#" + me.pre + "reset").click(function (e) {
             e.preventDefault();
 
             //me.loadStructure();
-            me.icn3d.resetOrientation();
+            ic.resetOrientation();
 
-            me.icn3d.draw();
+            ic.draw();
         });
     },
 
-    clickSaveimage: function() { var me = this; //"use strict";
+    clickSaveimage: function() { var me = this, ic = me.icn3d; "use strict";
         $("#" + me.pre + "saveimage").click(function (e) {
             e.preventDefault();
 
@@ -608,7 +520,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    clickHelp: function() { var me = this; //"use strict";
+    clickHelp: function() { var me = this, ic = me.icn3d; "use strict";
         $("#" + me.pre + "help").click(function (e) {
             e.preventDefault();
 
@@ -616,7 +528,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    showSubsets: function() { var me = this; //"use strict";
+    showSubsets: function() { var me = this, ic = me.icn3d; "use strict";
         $("#" + me.pre + "filter").click(function (e) {
             e.preventDefault();
 
@@ -647,7 +559,7 @@ iCn3DUI.prototype = {
         });
     },
 
-    changeSelection: function() { var me = this; //"use strict";
+    changeSelection: function() { var me = this, ic = me.icn3d; "use strict";
         ['camera', 'color', 'sidec', 'proteins', 'chemicals', 'water', 'ions', 'nucleotides'].forEach(function (opt) {
             $('#' + me.pre + opt).change(function (e) {
                 if(opt === 'camera') {
@@ -663,25 +575,23 @@ iCn3DUI.prototype = {
         });
     },
 
-    allEventFunctions: function() { var me = this; //"use strict";
+    allEventFunctions: function() { var me = this, ic = me.icn3d; "use strict";
         me.clickTab();
-//        me.clickPicking();
-//        me.clickNoPicking();
+
         me.changeProteinStyle();
         me.clickReset();
         me.clickSaveimage();
         me.clickHelp();
         me.showSubsets();
-        //me.clickHighlight_3d_dgm();
         me.windowResize();
         me.changeSelection();
     },
 
-    allCustomEvents: function() { var me = this; //"use strict";
+    allCustomEvents: function() { var me = this, ic = me.icn3d; "use strict";
       // add custom events here
     },
 
-    download2Ddgm: function(mmdbid, structureIndex) {var me = this; //"use strict";
+    download2Ddgm: function(mmdbid, structureIndex) { var  me = this; "use strict";
       // not used in simple version, but called in common API downloadMmdb()
     }
 };

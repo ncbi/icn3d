@@ -92,58 +92,8 @@ iCn3D.prototype.onBeforeRender = function(renderer, scene, camera, geometry, mat
   }
 };
 
-iCn3D.prototype.setParametersForShader = function (opacity) { var me = this; //"use strict";
-/*
-    var modelViewMatrix = new THREE.Uniform( new THREE.Matrix4() )
-            .onUpdate( function( object ){
-                this.value.copy( object.modelViewMatrix );
-    } );
-
-    var modelViewMatrixInverse = new THREE.Uniform( new THREE.Matrix4() )
-            .onUpdate( function( object ){
-                this.value.getInverse( object.modelViewMatrix );
-    } );
-
-    var modelViewMatrixInverseTranspose = new THREE.Uniform( new THREE.Matrix4() )
-            .onUpdate( function( object ){
-                this.value.getInverse( object.modelViewMatrix ).transpose();
-    } );
-
-    var modelViewProjectionMatrix = new THREE.Uniform( new THREE.Matrix4() )
-            .onUpdate( function( object ){
-                this.value.multiplyMatrices( me.cam.projectionMatrix, object.modelViewMatrix );
-    } );
-
-    var modelViewProjectionMatrixInverse = new THREE.Uniform( new THREE.Matrix4() )
-            .onUpdate( function( object ){
-                var tmpMatrix = new THREE.Matrix4();
-                tmpMatrix.multiplyMatrices(me.cam.projectionMatrix, object.modelViewMatrix);
-                this.value.getInverse(tmpMatrix);
-    } );
-
-    var projectionMatrix = new THREE.Uniform( new THREE.Matrix4() )
-            .onUpdate( function(  ){
-                this.value.copy( me.cam.projectionMatrix );
-    } );
-
-    var projectionMatrixInverse = new THREE.Uniform( new THREE.Matrix4() )
-            .onUpdate( function(  ){
-                this.value.getInverse( me.cam.projectionMatrix );
-    } );
-*/
-
+iCn3D.prototype.setParametersForShader = function (opacity) { var me = this, ic = me.icn3d; "use strict";
     var background = this.backgroundColors[this.opts.background.toLowerCase()];
-
-//    if(this.camMaxDFactorFog !== undefined) {
-//        var centerAtomsResults = this.centerAtoms(this.hAtoms);
-//        this.maxD = centerAtomsResults.maxD;
-//        if (this.maxD < 5) this.maxD = 5;
-//    }
-
-    //var near = 2 * this.maxD;
-    //var far = 2.5 * this.maxD;
-    //var near = 1.5 * this.maxD;
-    //var far = 3 * this.maxD;
 
     var near = 2.5*this.maxD;
     var far = 4*this.maxD;
@@ -173,16 +123,6 @@ iCn3D.prototype.setParametersForShader = function (opacity) { var me = this; //"
     this.uniforms = THREE.UniformsUtils.merge([
       THREE.UniformsLib.common,
       {
-/*
-        modelViewMatrix: modelViewMatrix,
-        modelViewMatrixInverse: modelViewMatrixInverse,
-        modelViewMatrixInverseTranspose: modelViewMatrixInverseTranspose,
-        modelViewProjectionMatrix: modelViewProjectionMatrix,
-        modelViewProjectionMatrixInverse: modelViewProjectionMatrixInverse,
-        projectionMatrix: projectionMatrix,
-        projectionMatrixInverse: projectionMatrixInverse,
-*/
-
         modelViewMatrix: { value: new THREE.Matrix4() },
         modelViewMatrixInverse: { value: new THREE.Matrix4() },
         modelViewMatrixInverseTranspose: { value: new THREE.Matrix4() },
@@ -209,19 +149,6 @@ iCn3D.prototype.setParametersForShader = function (opacity) { var me = this; //"
         THREE.UniformsLib.lights
     ]);
 
-    /*
-    //fog_pars_fragment
-    #ifdef USE_FOG
-        uniform vec3 fogColor;
-        #ifdef FOG_EXP2
-            uniform float fogDensity;
-        #else
-            uniform float fogNear;
-            uniform float fogFar;
-        #endif
-    #endif
-    */
-
     this.defines = {
         USE_COLOR: 1,
         //PICKING: 1,
@@ -242,7 +169,7 @@ iCn3D.prototype.setParametersForShader = function (opacity) { var me = this; //"
     }
 };
 
-iCn3D.prototype.drawImpostorShader = function () { var me = this; //"use strict";
+iCn3D.prototype.drawImpostorShader = function () { var me = this, ic = me.icn3d; "use strict";
     this.setParametersForShader();
 
     this.createImpostorShaderSphere("SphereImpostor");
@@ -250,7 +177,7 @@ iCn3D.prototype.drawImpostorShader = function () { var me = this; //"use strict"
     //this.createImpostorShaderCylinder("HyperballStickImpostor");
 };
 
-iCn3D.prototype.getShader = function (name) { var me = this; //"use strict";
+iCn3D.prototype.getShader = function (name) { var me = this, ic = me.icn3d; "use strict";
   var shaderText = $NGL_shaderTextHash[name];
   var reInclude = /#include\s+(\S+)/gmi;
 
@@ -268,7 +195,7 @@ iCn3D.prototype.getShader = function (name) { var me = this; //"use strict";
   return shaderText;
 };
 
-iCn3D.prototype.createImpostorShaderBase = function (shaderName, mapping, mappingIndices, data, attributeData, count, mappingSize, mappingIndicesSize, mappingItemSize) { var me = this; //"use strict";
+iCn3D.prototype.createImpostorShaderBase = function (shaderName, mapping, mappingIndices, data, attributeData, count, mappingSize, mappingIndicesSize, mappingItemSize) { var me = this, ic = me.icn3d; "use strict";
   var shaderMaterial =
     new THREE.ShaderMaterial({
       defines: me.defines,
@@ -411,7 +338,7 @@ iCn3D.prototype.createImpostorShaderBase = function (shaderName, mapping, mappin
     //this.objects.push(mesh);
 };
 
-iCn3D.prototype.createImpostorShaderCylinder = function (shaderName) { var me = this; //"use strict";
+iCn3D.prototype.createImpostorShaderCylinder = function (shaderName) { var me = this, ic = me.icn3d; "use strict";
     var positions = new Float32Array( me.posArray );
     var colors = new Float32Array( me.colorArray );
     var positions2 = new Float32Array( me.pos2Array );
@@ -476,7 +403,7 @@ iCn3D.prototype.createImpostorShaderCylinder = function (shaderName) { var me = 
   me.radiusArray = [];
 };
 
-iCn3D.prototype.createImpostorShaderSphere = function (shaderName) { var me = this; //"use strict";
+iCn3D.prototype.createImpostorShaderSphere = function (shaderName) { var me = this, ic = me.icn3d; "use strict";
     var positions = new Float32Array( me.posArraySphere );
     var colors = new Float32Array( me.colorArraySphere );
     var radii = new Float32Array( me.radiusArraySphere );

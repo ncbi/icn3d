@@ -3,7 +3,7 @@
  */
 
 // modified from iview (http://istar.cse.cuhk.edu.hk/iview/)
-iCn3D.prototype.createSphere = function (atom, defaultRadius, forceDefault, scale, bHighlight) { var me = this; //"use strict";
+iCn3D.prototype.createSphere = function (atom, defaultRadius, forceDefault, scale, bHighlight) { var me = this, ic = me.icn3d; "use strict";
     if(defaultRadius === undefined) defaultRadius = 0.8;
     if(forceDefault === undefined) forceDefault = false;
 
@@ -16,7 +16,7 @@ iCn3D.prototype.createSphere = function (atom, defaultRadius, forceDefault, scal
     this.createSphereBase(atom.coord, atom.color, radius, scale, bHighlight);
 };
 
-iCn3D.prototype.createSphereBase = function (pos, color, radius, scale, bHighlight) { var me = this; //"use strict";
+iCn3D.prototype.createSphereBase = function (pos, color, radius, scale, bHighlight) { var me = this, ic = me.icn3d; "use strict";
     var mesh;
 
     //if(defaultRadius === undefined) defaultRadius = 0.8;
@@ -93,7 +93,7 @@ iCn3D.prototype.createSphereBase = function (pos, color, radius, scale, bHighlig
 };
 
 // modified from iview (http://istar.cse.cuhk.edu.hk/iview/)
-iCn3D.prototype.createCylinder = function (p0, p1, radius, color, bHighlight, color2, bPicking) { var me = this; //"use strict";
+iCn3D.prototype.createCylinder = function (p0, p1, radius, color, bHighlight, color2, bPicking) { var me = this, ic = me.icn3d; "use strict";
     var mesh;
     if(bHighlight === 1) {
         mesh = new THREE.Mesh(this.cylinderGeometryOutline, this.matShader);
@@ -181,7 +181,7 @@ iCn3D.prototype.createCylinder = function (p0, p1, radius, color, bHighlight, co
 };
 
 // from iview (http://istar.cse.cuhk.edu.hk/iview/)
-iCn3D.prototype.createRepresentationSub = function (atoms, f0, f01) { var me = this; //"use strict";
+iCn3D.prototype.createRepresentationSub = function (atoms, f0, f01) { var me = this, ic = me.icn3d; "use strict";
     var clbondArray = [];
     var resiAtoms = {};
     for (var i in atoms) {
@@ -198,25 +198,16 @@ iCn3D.prototype.createRepresentationSub = function (atoms, f0, f01) { var me = t
             }
         }
     }
-/*
-    if (clbondArray.length > 0 && this.bShowCrossResidueBond) {
-        var color = new THREE.Color(0x00FF00);
-
-        for(var i = 0, il = clbondArray.length; i < il; ++i) {
-            me.createCylinder(clbondArray[i][0], clbondArray[i][1], this.cylinderRadius, color, 0);
-        }
-    }
-*/
 };
 
 // modified from iview (http://istar.cse.cuhk.edu.hk/iview/)
-iCn3D.prototype.createSphereRepresentation = function (atoms, defaultRadius, forceDefault, scale, bHighlight) { var me = this; //"use strict";
+iCn3D.prototype.createSphereRepresentation = function (atoms, defaultRadius, forceDefault, scale, bHighlight) { var me = this, ic = me.icn3d; "use strict";
     this.createRepresentationSub(atoms, function (atom0) {
         me.createSphere(atom0, defaultRadius, forceDefault, scale, bHighlight);
     });
 };
 
-iCn3D.prototype.createBoxRepresentation_P_CA = function (atoms, scale, bHighlight) { var me = this; //"use strict";
+iCn3D.prototype.createBoxRepresentation_P_CA = function (atoms, scale, bHighlight) { var me = this, ic = me.icn3d; "use strict";
     this.createRepresentationSub(atoms, function (atom0) {
         if(atom0.name === 'CA' || atom0.name === "O3'" || atom0.name === "O3*") {
             me.createBox(atom0, undefined, undefined, scale, undefined, bHighlight);
@@ -224,7 +215,7 @@ iCn3D.prototype.createBoxRepresentation_P_CA = function (atoms, scale, bHighligh
     });
 };
 
-iCn3D.prototype.createConnCalphSidechain = function (atoms, style) { var me = this; //"use strict";
+iCn3D.prototype.createConnCalphSidechain = function (atoms, style) { var me = this, ic = me.icn3d; "use strict";
     // find all residues with style2 as 'nothing' or undefined
     var residueHash = {};
     for(var i in atoms) {
@@ -285,7 +276,7 @@ iCn3D.prototype.createConnCalphSidechain = function (atoms, style) { var me = th
 };
 
 // modified from iview (http://istar.cse.cuhk.edu.hk/iview/)
-iCn3D.prototype.createStickRepresentation = function (atoms, atomR, bondR, scale, bHighlight, bSchematic) { var me = this; //"use strict";
+iCn3D.prototype.createStickRepresentation = function (atoms, atomR, bondR, scale, bHighlight, bSchematic) { var me = this, ic = me.icn3d; "use strict";
     var factor = (bSchematic !== undefined && bSchematic) ? atomR / me.cylinderRadius : 1;
 
         this.createRepresentationSub(atoms, function (atom0) {
@@ -550,7 +541,7 @@ iCn3D.prototype.createStickRepresentation = function (atoms, atomR, bondR, scale
 };
 
 // modified from iview (http://istar.cse.cuhk.edu.hk/iview/)
-iCn3D.prototype.createLineRepresentation = function (atoms, bHighlight) { var me = this; //"use strict";
+iCn3D.prototype.createLineRepresentation = function (atoms, bHighlight) { var me = this, ic = me.icn3d; "use strict";
     var geo = new THREE.Geometry();
     this.createRepresentationSub(atoms, undefined, function (atom0, atom1) {
         if (atom0.color === atom1.color) {
@@ -595,142 +586,14 @@ iCn3D.prototype.createLineRepresentation = function (atoms, bHighlight) { var me
     }
 };
 
-/*
-// modified from iview (http://istar.cse.cuhk.edu.hk/iview/)
-// Catmull–Rom subdivision
-iCn3D.prototype.subdivide = function (_pnts, _clrs, DIV, bShowArray, bHighlight, prevone, nexttwo, bExtendLastRes) {
-    var ret = [];
-    var pos = [];
-    var color = [];
-
-    var pnts = new Array(); // Smoothing test
-
-    var prevoneLen = (prevone !== undefined) ? prevone.length : 0;
-    var nexttwoLenOri = (nexttwo !== undefined) ? nexttwo.length : 0;
-
-    if(prevoneLen > 0) pnts.push(prevone[0]);
-
-    pnts.push(_pnts[0]);
-    for (var i = 1, lim = _pnts.length - 1; i < lim; ++i) {
-        var p0 = _pnts[i], p1 = _pnts[i + 1];
-        pnts.push(p0.smoothen ? p0.clone().add(p1).multiplyScalar(0.5) : p0);
-    }
-    pnts.push(_pnts[_pnts.length - 1]);
-
-    if(nexttwoLenOri > 0) pnts.push(nexttwo[0]);
-    if(nexttwoLenOri > 1) pnts.push(nexttwo[1]);
-
-    var savedPoints = [];
-    var savedPos = [];
-    var savedColor = [];
-
-    var nexttwoLen = nexttwoLenOri;
-    if(bExtendLastRes) {
-        nexttwoLen = (nexttwoLenOri > 0) ? nexttwoLenOri - 1 : 0;
-    }
-
-    for (var i = -1, size = pnts.length, DIVINV = 1 / DIV; i <= size - 3; ++i) {
-        var newI = i - prevoneLen;
-        var p0 = pnts[i === -1 ? 0 : i];
-        var p1 = pnts[i + 1];
-        var p2 = pnts[i + 2];
-        var p3 = pnts[i === size - 3 ? size - 1 : i + 3];
-        var v0 = p2.clone().sub(p0).multiplyScalar(0.5);
-        var v1 = p3.clone().sub(p1).multiplyScalar(0.5);
-
-        //if(i > -1 && bHighlight && bShowArray !== undefined && bShowArray[i + 1]) {
-        if(i > -1 && (bShowArray === undefined || bShowArray[newI + 1]) ) {
-            // get from previous i for the first half of residue
-            if(i >= -1 + prevoneLen && i <= size - 3 - nexttwoLen + 1) {
-                ret = ret.concat(savedPoints);
-                pos = pos.concat(savedPos);
-                color = color.concat(savedColor);
-            }
-        }
-
-        savedPoints = [];
-        savedPos = [];
-        savedColor = [];
-
-        for (var j = 0; j < DIV; ++j) {
-            var t = DIVINV * j;
-            var x = p1.x + t * v0.x
-                     + t * t * (-3 * p1.x + 3 * p2.x - 2 * v0.x - v1.x)
-                     + t * t * t * (2 * p1.x - 2 * p2.x + v0.x + v1.x);
-            var y = p1.y + t * v0.y
-                     + t * t * (-3 * p1.y + 3 * p2.y - 2 * v0.y - v1.y)
-                     + t * t * t * (2 * p1.y - 2 * p2.y + v0.y + v1.y);
-            var z = p1.z + t * v0.z
-                     + t * t * (-3 * p1.z + 3 * p2.z - 2 * v0.z - v1.z)
-                     + t * t * t * (2 * p1.z - 2 * p2.z + v0.z + v1.z);
-
-            if(!bShowArray) {
-                if(i >= -1 + prevoneLen && i <= size - 3 - nexttwoLen) {
-                    ret.push(new THREE.Vector3(x, y, z));
-                    pos.push(newI + 1);
-                    color.push(_clrs[newI+1]);
-                }
-            }
-            else {
-                if(i >= -1 + prevoneLen && i <= size - 3 - nexttwoLen) {
-                    if(bShowArray[newI + 1]) {
-                        if(j <= parseInt((DIV) / 2) ) {
-                            ret.push(new THREE.Vector3(x, y, z));
-                            pos.push(bShowArray[newI + 1]);
-                            color.push(_clrs[newI+1]);
-                        }
-                    }
-                }
-
-                if(i >= -1 + prevoneLen && i <= size - 3 - nexttwoLen + 1) {
-                    if(bShowArray[newI + 2]) {
-                        if(j > parseInt((DIV) / 2) ) {
-                            savedPoints.push(new THREE.Vector3(x, y, z));
-                            savedPos.push(bShowArray[newI + 2]);
-                            savedColor.push(_clrs[newI+2]);
-                        }
-                    }
-                }
-            } // end else
-
-        } // end for (var j = 0;
-    } // end for (var i = -1;
-
-    if(!bShowArray || bShowArray[newI + 1]) {
-        //if(bHighlight) {
-        ret = ret.concat(savedPoints);
-        pos = pos.concat(savedPos);
-        color = color.concat(savedColor);
-        //}
-
-        ret.push(pnts[pnts.length - 1 - nexttwoLen]);
-        pos.push(pnts.length - 1 - nexttwoLen);
-        color.push(_clrs[pnts.length - 1 - nexttwoLen]);
-    }
-
-    savedPoints = [];
-    savedPos = [];
-    savedColor = [];
-    pnts = [];
-
-    var pnts_positions = [];
-
-    pnts_positions.push(ret);
-    pnts_positions.push(pos);
-    pnts_positions.push(color);
-
-    return pnts_positions;
-};
-*/
-
-iCn3D.prototype.getKnot = function (alpha, ti, Pi, Pj) { var me = this; //"use strict";
-    var alpha = 1;
+iCn3D.prototype.getKnot = function (alpha, ti, Pi, Pj) { var me = this, ic = me.icn3d; "use strict";
+    //var alpha = 1;
 
     //return Math.pow(Pi.distanceTo(Pj), alpha) + ti;
     return Pi.distanceTo(Pj) + ti;
 }
 
-iCn3D.prototype.getValueFromKnot = function (t, t0, t1, t2, t3, y0, y1, y2, y3) { var me = this; //"use strict";
+iCn3D.prototype.getValueFromKnot = function (t, t0, t1, t2, t3, y0, y1, y2, y3) { var me = this, ic = me.icn3d; "use strict";
     var inf = 9999;
 
     // m(i) = ( t(i+1) - t(i) == 0 ) ? 0 : ( y(i+1) - y(i) ) / ( t(i+1) - t(i) )
@@ -779,7 +642,7 @@ iCn3D.prototype.getValueFromKnot = function (t, t0, t1, t2, t3, y0, y1, y2, y3) 
 
 // cubic splines for four points: http://thalestriangles.blogspot.com/2014/02/a-bit-of-ex-spline-ation.html
 // https://math.stackexchange.com/questions/577641/how-to-calculate-interpolating-splines-in-3d-space
-iCn3D.prototype.subdivide = function (_pnts, _clrs, DIV, bShowArray, bHighlight, prevone, nexttwo, bExtendLastRes) { var me = this; //"use strict";
+iCn3D.prototype.subdivide = function (_pnts, _clrs, DIV, bShowArray, bHighlight, prevone, nexttwo, bExtendLastRes) { var me = this, ic = me.icn3d; "use strict";
     var ret = [];
     var pos = [];
     var color = [];
@@ -838,10 +701,10 @@ iCn3D.prototype.subdivide = function (_pnts, _clrs, DIV, bShowArray, bHighlight,
         nexttwoLen = (nexttwoLenOri > 0) ? nexttwoLenOri - 1 : 0;
     }
 
-    var alpha = 1;
+    var alpha = 1, newI;
 
     for (var i = -1, size = pnts.length, DIVINV = 1 / DIV; i <= size - 3; ++i) {
-        var newI = i - prevoneLen;
+        newI = i - prevoneLen;
         var p0 = pnts[i === -1 ? 0 : i];
         var p1 = pnts[i + 1];
         var p2 = pnts[i + 2];
@@ -935,7 +798,7 @@ iCn3D.prototype.subdivide = function (_pnts, _clrs, DIV, bShowArray, bHighlight,
     return pnts_positions;
 };
 
-iCn3D.prototype.createCurveSubArrow = function (p, width, colors, div, bHighlight, bRibbon, num, positionIndex, pntsCA, prevCOArray, bShowArray, calphaIdArray, bShowArrow, prevone, nexttwo) { var me = this; //"use strict";
+iCn3D.prototype.createCurveSubArrow = function (p, width, colors, div, bHighlight, bRibbon, num, positionIndex, pntsCA, prevCOArray, bShowArray, calphaIdArray, bShowArrow, prevone, nexttwo) { var me = this, ic = me.icn3d; "use strict";
     var divPoints = [], positions = [];
 
     divPoints.push(p);
@@ -947,7 +810,7 @@ iCn3D.prototype.createCurveSubArrow = function (p, width, colors, div, bHighligh
     positions = [];
 };
 
-iCn3D.prototype.setCalphaDrawnCoord = function (pnts, div, calphaIdArray) { var me = this; //"use strict";
+iCn3D.prototype.setCalphaDrawnCoord = function (pnts, div, calphaIdArray) { var me = this, ic = me.icn3d; "use strict";
     var index = 0;
 
     if(calphaIdArray !== undefined) {
@@ -965,7 +828,7 @@ iCn3D.prototype.setCalphaDrawnCoord = function (pnts, div, calphaIdArray) { var 
 
 
 // modified from iview (http://star.cse.cuhk.edu.hk/iview/)
-iCn3D.prototype.createCurveSub = function (_pnts, width, colors, div, bHighlight, bRibbon, bNoSmoothen, bShowArray, calphaIdArray, positions, prevone, nexttwo) { var me = this; //"use strict";
+iCn3D.prototype.createCurveSub = function (_pnts, width, colors, div, bHighlight, bRibbon, bNoSmoothen, bShowArray, calphaIdArray, positions, prevone, nexttwo) { var me = this, ic = me.icn3d; "use strict";
     if (_pnts.length === 0) return;
     div = div || 5;
     var pnts;
@@ -1052,15 +915,15 @@ iCn3D.prototype.createCurveSub = function (_pnts, width, colors, div, bHighlight
                 // shift the highlight a little bit to avoid the overlap with ribbon
                 pnts[i].addScalar(0.6); // this.ribbonthickness is 0.4
                 geo.vertices.push(pnts[i]);
-                //geo.colors.push(new THREE.Color(colors[i === 0 ? 0 : Math.round((i - 1) * divInv)]));
-                geo.colors.push(new THREE.Color(colors[i]));
+                //geo.colors.push(this.thr(colors[i === 0 ? 0 : Math.round((i - 1) * divInv)]));
+                geo.colors.push(this.thr(colors[i]));
             }
         }
         else {
             for (var i = 0, divInv = 1 / div; i < pnts.length; ++i) {
                 geo.vertices.push(pnts[i]);
-                //geo.colors.push(new THREE.Color(colors[i === 0 ? 0 : Math.round((i - 1) * divInv)]));
-                geo.colors.push(new THREE.Color(colors[i]));
+                //geo.colors.push(this.thr(colors[i === 0 ? 0 : Math.round((i - 1) * divInv)]));
+                geo.colors.push(this.thr(colors[i]));
             }
         }
 
@@ -1079,16 +942,16 @@ iCn3D.prototype.createCurveSub = function (_pnts, width, colors, div, bHighlight
 };
 
 // modified from iview (http://istar.cse.cuhk.edu.hk/iview/)
-iCn3D.prototype.createCylinderCurve = function (atoms, atomNameArray, radius, bLines, bHighlight) { var me = this; //"use strict";
+iCn3D.prototype.createCylinderCurve = function (atoms, atomNameArray, radius, bLines, bHighlight) { var me = this, ic = me.icn3d; "use strict";
     var start = null;
     var currentChain, currentResi;
     var i;
     var pnts = [], colors = [], radii = [];
 
-    var maxDistance = 8.0; // max residue-residue (or nucleitide-nucleitide) distance allowed
+    var atom, maxDistance = 8.0; // max residue-residue (or nucleitide-nucleitide) distance allowed
 
     for (i in atoms) {
-        var atom = atoms[i];
+        atom = atoms[i];
         if (atom.het) continue;
 
         //if (atom.name !== atomName) continue;
@@ -1151,7 +1014,7 @@ iCn3D.prototype.createCylinderCurve = function (atoms, atomNameArray, radius, bL
     }
 };
 
-iCn3D.prototype.prepareStrand = function(divPoints, positions, width, colors, div, thickness, bHighlight, bRibbon, num, pntsCA, prevCOArray, bStrip, bShowArray, calphaIdArray, bShowArrow, prevone, nexttwo) { var me = this; //"use strict";
+iCn3D.prototype.prepareStrand = function(divPoints, positions, width, colors, div, thickness, bHighlight, bRibbon, num, pntsCA, prevCOArray, bStrip, bShowArray, calphaIdArray, bShowArrow, prevone, nexttwo) { var me = this, ic = me.icn3d; "use strict";
     if(pntsCA.length === 1) {
         return;
     }
@@ -1164,7 +1027,7 @@ iCn3D.prototype.prepareStrand = function(divPoints, positions, width, colors, di
     var numM1Inv2 = 2 / (num - 1);
     var delta, lastCAIndex, lastPrevCOIndex, v;
 
-    var pnts = {}, colorsTmp = [];
+    var pnts = {};
     for(var i = 0, il = positions.length; i < il; ++i) pnts[i] = [];
 
     // smooth C-alpha
@@ -1179,9 +1042,9 @@ iCn3D.prototype.prepareStrand = function(divPoints, positions, width, colors, di
     // draw the sheet without the last residue
     // use the sheet coord for n-2 residues
     var colorsTmp = [];
-    var lastIndex = (bShowArrow === undefined || bShowArrow) ? pntsCA.length - 2 : pntsCA.length;
+    var i, lastIndex = (bShowArrow === undefined || bShowArrow) ? pntsCA.length - 2 : pntsCA.length;
 
-    for (var i = 0, il = lastIndex; i < il; ++i) {
+    for (i = 0, il = lastIndex; i < il; ++i) {
         for(var index = 0, indexl = positions.length; index < indexl; ++index) {
             pnts[index].push(divPoints[index][i]);
         }
@@ -1280,7 +1143,7 @@ iCn3D.prototype.prepareStrand = function(divPoints, positions, width, colors, di
     pnts = {};
 };
 
-iCn3D.prototype.createStripArrow = function (p0, p1, colors, div, thickness, bHighlight, num, start, end, pntsCA, prevCOArray, bShowArray, calphaIdArray, bShowArrow, prevone, nexttwo) { var me = this; //"use strict";
+iCn3D.prototype.createStripArrow = function (p0, p1, colors, div, thickness, bHighlight, num, start, end, pntsCA, prevCOArray, bShowArray, calphaIdArray, bShowArrow, prevone, nexttwo) { var me = this, ic = me.icn3d; "use strict";
     var divPoints = [], positions = [];
 
     divPoints.push(p0);
@@ -1295,7 +1158,7 @@ iCn3D.prototype.createStripArrow = function (p0, p1, colors, div, thickness, bHi
 };
 
 // modified from iview (http://istar.cse.cuhk.edu.hk/iview/)
-iCn3D.prototype.createStrip = function (p0, p1, colors, div, thickness, bHighlight, bNoSmoothen, bShowArray, calphaIdArray, positions, prevone, nexttwo) { var me = this; //"use strict";
+iCn3D.prototype.createStrip = function (p0, p1, colors, div, thickness, bHighlight, bNoSmoothen, bShowArray, calphaIdArray, positions, prevone, nexttwo) { var me = this, ic = me.icn3d; "use strict";
     if (p0.length < 2) return;
     div = div || this.axisDIV;
     if(!bNoSmoothen) {
@@ -1434,8 +1297,8 @@ iCn3D.prototype.createStrip = function (p0, p1, colors, div, thickness, bHighlig
 
         for (var i = 1, lim = p0.length, divInv = 1 / div; i < lim; ++i) {
             var offset = 8 * i;
-            //var color = new THREE.Color(colors[Math.round((i - 1) * divInv)]);
-            var color = new THREE.Color(colors[i - 1]);
+            //var color = this.thr(colors[Math.round((i - 1) * divInv)]);
+            var color = this.thr(colors[i - 1]);
             for (var j = 0; j < 4; ++j) {
                 fs.push(new THREE.Face3(offset + faces[j][0], offset + faces[j][1], offset + faces[j][2], undefined, color));
                 fs.push(new THREE.Face3(offset + faces[j][3], offset + faces[j][0], offset + faces[j][2], undefined, color));
@@ -1474,7 +1337,7 @@ iCn3D.prototype.createStrip = function (p0, p1, colors, div, thickness, bHighlig
     p1 = null;
 };
 
-iCn3D.prototype.getSSExpandedAtoms = function (atoms, bHighlight) { var me = this; //"use strict";
+iCn3D.prototype.getSSExpandedAtoms = function (atoms, bHighlight) { var me = this, ic = me.icn3d; "use strict";
     var currChain, currResi, currAtom, prevChain, prevResi, prevAtom;
     var firstAtom, lastAtom;
     var index = 0, length = Object.keys(atoms).length;
@@ -1979,7 +1842,7 @@ iCn3D.prototype.createStrand = function (atoms, num, div, fill, coilWidth, helix
 };
 
 // modified from iview (http://istar.cse.cuhk.edu.hk/iview/)
-iCn3D.prototype.createTubeSub = function (_pnts, colors, radii, bHighlight, prevone, nexttwo) { var me = this; //"use strict";
+iCn3D.prototype.createTubeSub = function (_pnts, colors, radii, bHighlight, prevone, nexttwo) { var me = this, ic = me.icn3d; "use strict";
     if (_pnts.length < 2) return;
     var circleDiv = this.tubeDIV, axisDiv = this.axisDIV;
     var circleDivInv = 1 / circleDiv, axisDivInv = 1 / axisDiv;
@@ -2021,8 +1884,8 @@ iCn3D.prototype.createTubeSub = function (_pnts, colors, radii, bHighlight, prev
     }
     var offset = 0;
     for (var i = 0, lim = pnts.length - 1; i < lim; ++i) {
-        //var c = new THREE.Color(colors[Math.round((i - 1) * axisDivInv)]);
-        var c = new THREE.Color(colors[i]);
+        //var c = this.thr(colors[Math.round((i - 1) * axisDivInv)]);
+        var c = this.thr(colors[i]);
 
         var reg = 0;
         var r1 = geo.vertices[offset].clone().sub(geo.vertices[offset + circleDiv]).lengthSq();
@@ -2061,7 +1924,7 @@ iCn3D.prototype.createTubeSub = function (_pnts, colors, radii, bHighlight, prev
     }
 };
 
-iCn3D.prototype.getAtomFromResi = function (resid, atomName) { var me = this; //"use strict";
+iCn3D.prototype.getAtomFromResi = function (resid, atomName) { var me = this, ic = me.icn3d; "use strict";
     if(this.residues.hasOwnProperty(resid)) {
         for(var i in this.residues[resid]) {
             if(this.atoms[i].name === atomName && !this.atoms[i].het) {
@@ -2073,7 +1936,7 @@ iCn3D.prototype.getAtomFromResi = function (resid, atomName) { var me = this; //
     return undefined;
 };
 
-iCn3D.prototype.getAtomCoordFromResi = function (resid, atomName) { var me = this; //"use strict";
+iCn3D.prototype.getAtomCoordFromResi = function (resid, atomName) { var me = this, ic = me.icn3d; "use strict";
     var atom = this.getAtomFromResi(resid, atomName);
     if(atom !== undefined) {
         var coord = (atom.coord2 !== undefined) ? atom.coord2 : atom.coord;
@@ -2084,7 +1947,7 @@ iCn3D.prototype.getAtomCoordFromResi = function (resid, atomName) { var me = thi
     return undefined;
 };
 
-iCn3D.prototype.getRadius = function (radius, atom) { var me = this; //"use strict";
+iCn3D.prototype.getRadius = function (radius, atom) { var me = this, ic = me.icn3d; "use strict";
     var radiusFinal = radius;
     if(radius) {
         radiusFinal = radius;
@@ -2104,7 +1967,7 @@ iCn3D.prototype.getRadius = function (radius, atom) { var me = this; //"use stri
     return radiusFinal;
 };
 
-iCn3D.prototype.getCustomtubesize = function (resid) { var me = this; //"use strict";
+iCn3D.prototype.getCustomtubesize = function (resid) { var me = this, ic = me.icn3d; "use strict";
     var pos = resid.lastIndexOf('_');
     var resi = resid.substr(pos + 1);
     var chainid = resid.substr(0, pos);
@@ -2115,11 +1978,10 @@ iCn3D.prototype.getCustomtubesize = function (resid) { var me = this; //"use str
 };
 
 // modified from iview (http://istar.cse.cuhk.edu.hk/iview/)
-iCn3D.prototype.createTube = function (atoms, atomName, radius, bHighlight, bCustom) { var me = this; //"use strict";
+iCn3D.prototype.createTube = function (atoms, atomName, radius, bHighlight, bCustom) { var me = this, ic = me.icn3d; "use strict";
     var pnts = [], colors = [], radii = [], prevone = [], nexttwo = [];
     var currentChain, currentResi;
     var index = 0;
-    var prevAtom;
     var maxDist = 6.0;
     var maxDist2 = 3.0; // avoid tube between the residues in 3 residue helix
 
@@ -2266,7 +2128,7 @@ iCn3D.prototype.createTube = function (atoms, atomName, radius, bHighlight, bCus
 };
 
 // modified from iview (http://istar.cse.cuhk.edu.hk/iview/)
-iCn3D.prototype.createCylinderHelix = function (atoms, radius, bHighlight) { var me = this; //"use strict";
+iCn3D.prototype.createCylinderHelix = function (atoms, radius, bHighlight) { var me = this, ic = me.icn3d; "use strict";
     var start = null;
     var currentChain, currentResi;
     var others = {}, beta = {};
@@ -2309,7 +2171,7 @@ iCn3D.prototype.createCylinderHelix = function (atoms, radius, bHighlight) { var
 };
 
 // modified from GLmol (http://webglmol.osdn.jp/index-en.html)
-iCn3D.prototype.drawNucleicAcidStick = function(atomlist, bHighlight) { var me = this; //"use strict";
+iCn3D.prototype.drawNucleicAcidStick = function(atomlist, bHighlight) { var me = this, ic = me.icn3d; "use strict";
    var currentChain, currentResi, start = null, end = null;
    var i;
 
@@ -2338,7 +2200,7 @@ iCn3D.prototype.drawNucleicAcidStick = function(atomlist, bHighlight) { var me =
 };
 
 //iCn3D.prototype.isCalphaPhosOnly = function(atomlist, atomname1, atomname2) {
-iCn3D.prototype.isCalphaPhosOnly = function(atomlist) { var me = this; //"use strict";
+iCn3D.prototype.isCalphaPhosOnly = function(atomlist) { var me = this, ic = me.icn3d; "use strict";
       var bCalphaPhosOnly = false;
 
       var index = 0, testLength = 50; //30
@@ -2368,12 +2230,12 @@ iCn3D.prototype.isCalphaPhosOnly = function(atomlist) { var me = this; //"use st
 };
 
 // modified from GLmol (http://webglmol.osdn.jp/index-en.html)
-iCn3D.prototype.drawCartoonNucleicAcid = function(atomlist, div, thickness, bHighlight) { var me = this; //"use strict";
+iCn3D.prototype.drawCartoonNucleicAcid = function(atomlist, div, thickness, bHighlight) { var me = this, ic = me.icn3d; "use strict";
    this.drawStrandNucleicAcid(atomlist, 2, div, true, undefined, thickness, bHighlight);
 };
 
 // modified from GLmol (http://webglmol.osdn.jp/index-en.html)
-iCn3D.prototype.drawStrandNucleicAcid = function(atomlist, num, div, fill, nucleicAcidWidth, thickness, bHighlight) { var me = this; //"use strict";
+iCn3D.prototype.drawStrandNucleicAcid = function(atomlist, num, div, fill, nucleicAcidWidth, thickness, bHighlight) { var me = this, ic = me.icn3d; "use strict";
    if(bHighlight === 2) {
        num = undefined;
        thickness = undefined;
@@ -2406,7 +2268,7 @@ iCn3D.prototype.drawStrandNucleicAcid = function(atomlist, num, div, fill, nucle
                if (fill) this.createStrip(pnts[0], pnts[1], colors, div, thickness, bHighlight);
                for (j = 0; !thickness && j < num; j++)
                   this.createCurveSub(pnts[j], 1 ,colors, div, bHighlight);
-               var pnts = []; for (k = 0; k < num; k++) pnts[k] = [];
+               pnts = []; for (k = 0; k < num; k++) pnts[k] = [];
                colors = [];
                prevOO = null;
             }
@@ -2453,7 +2315,7 @@ iCn3D.prototype.drawStrandNucleicAcid = function(atomlist, num, div, fill, nucle
       this.createCurveSub(pnts[j], 1 ,colors, div, bHighlight);
 };
 
-iCn3D.prototype.createSingleLine = function ( src, dst, colorHex, dashed, dashSize ) { var me = this; //"use strict";
+iCn3D.prototype.createSingleLine = function ( src, dst, colorHex, dashed, dashSize ) { var me = this, ic = me.icn3d; "use strict";
     var geom = new THREE.Geometry();
     var mat;
 
@@ -2474,7 +2336,7 @@ iCn3D.prototype.createSingleLine = function ( src, dst, colorHex, dashed, dashSi
 };
 
 // used for highlight
-iCn3D.prototype.createBox = function (atom, defaultRadius, forceDefault, scale, color, bHighlight) { var me = this; //"use strict";
+iCn3D.prototype.createBox = function (atom, defaultRadius, forceDefault, scale, color, bHighlight) { var me = this, ic = me.icn3d; "use strict";
     var mesh;
 
     if(defaultRadius === undefined) defaultRadius = 0.8;
@@ -2508,7 +2370,7 @@ iCn3D.prototype.createBox = function (atom, defaultRadius, forceDefault, scale, 
 // modified from 3Dmol (http://3dmol.csb.pitt.edu/)
 // new: http://stackoverflow.com/questions/23514274/three-js-2d-text-sprite-labels
 // old: http://stemkoski.github.io/Three.js/Sprite-Text-Labels.html
-iCn3D.prototype.makeTextSprite = function ( message, parameters ) { var me = this; //"use strict";
+iCn3D.prototype.makeTextSprite = function ( message, parameters ) { var me = this, ic = me.icn3d; "use strict";
 
     if ( parameters === undefined ) parameters = {};
     var fontface = parameters.hasOwnProperty("fontface") ? parameters["fontface"] : "Arial";
@@ -2568,16 +2430,6 @@ iCn3D.prototype.makeTextSprite = function ( message, parameters ) { var me = thi
     var factor = 3 * this.oriMaxD / 100 * this.labelScale;
 
     var expandWidthFactor = 0.8 * textWidth / height;
-
-/*
-    // define width and height will make long text be squashed, but make the label to appear at the exact location
-    if(bSchematic || message.length <= textLengthThreshold) {
-        canvas.width = width;
-        canvas.height = height;
-
-        factor = 3 * this.oriMaxD / 100;
-    }
-*/
 
     canvas.width = width;
     canvas.height = height;
@@ -2646,7 +2498,7 @@ iCn3D.prototype.makeTextSprite = function ( message, parameters ) { var me = thi
 };
 
 // function for drawing rounded rectangles
-iCn3D.prototype.roundRect = function (ctx, x, y, w, h, r) { var me = this; //"use strict";
+iCn3D.prototype.roundRect = function (ctx, x, y, w, h, r) { var me = this, ic = me.icn3d; "use strict";
     ctx.beginPath();
     ctx.moveTo(x+r, y);
     ctx.lineTo(x+w-r, y);
@@ -2662,7 +2514,7 @@ iCn3D.prototype.roundRect = function (ctx, x, y, w, h, r) { var me = this; //"us
     ctx.stroke();
 };
 
-iCn3D.prototype.circle = function (ctx, x, y, w, h, r) { var me = this; //"use strict";
+iCn3D.prototype.circle = function (ctx, x, y, w, h, r) { var me = this, ic = me.icn3d; "use strict";
     ctx.beginPath();
     ctx.arc(x+w/2, y+h/2, r, 0, 2*Math.PI, true);
     ctx.closePath();
@@ -2671,7 +2523,7 @@ iCn3D.prototype.circle = function (ctx, x, y, w, h, r) { var me = this; //"use s
 };
 
 // modified from iview (http://istar.cse.cuhk.edu.hk/iview/)
-iCn3D.prototype.createLabelRepresentation = function (labels) { var me = this; //"use strict";
+iCn3D.prototype.createLabelRepresentation = function (labels) { var me = this, ic = me.icn3d; "use strict";
 //    var tmpMaxD = this.maxD;
 
     for(var name in labels) {

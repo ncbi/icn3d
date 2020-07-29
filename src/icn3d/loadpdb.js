@@ -3,7 +3,7 @@
  */
 
 // modified from iview (http://istar.cse.cuhk.edu.hk/iview/)
-iCn3D.prototype.loadPDB = function (src, pdbid, bOpm, bVector) { var me = this; //"use strict";
+iCn3D.prototype.loadPDB = function (src, pdbid, bOpm, bVector) { var me = this, ic = me.icn3d; "use strict";
     var helices = [], sheets = [];
     //this.atoms = {};
     var lines = src.split('\n');
@@ -472,7 +472,7 @@ iCn3D.prototype.loadPDB = function (src, pdbid, bOpm, bVector) { var me = this; 
     // remove the reference
     lines = null;
 
-    var curChain, curResi, curInsc, curResAtoms = [], me = this;
+    var curChain, curResi, curInsc, curResAtoms = [];
     // refresh for atoms in each residue
     var refreshBonds = function (f) {
         var n = curResAtoms.length;
@@ -596,7 +596,7 @@ iCn3D.prototype.loadPDB = function (src, pdbid, bOpm, bVector) { var me = this; 
     }
 };
 
-iCn3D.prototype.adjustSeq = function (chainMissingResidueArray) { var me = this; //"use strict";
+iCn3D.prototype.adjustSeq = function (chainMissingResidueArray) { var me = this, ic = me.icn3d; "use strict";
     // adjust sequences
     for(var chainNum in this.chainsSeq) {
         if(chainMissingResidueArray[chainNum] === undefined) continue;
@@ -667,7 +667,7 @@ iCn3D.prototype.adjustSeq = function (chainMissingResidueArray) { var me = this;
     }
 };
 
-iCn3D.prototype.setSsbond = function (structure2cys_resid) { var me = this; //"use strict";
+iCn3D.prototype.setSsbond = function (structure2cys_resid) { var me = this, ic = me.icn3d; "use strict";
     // determine whether there are disulfide bonds
     // disulfide bond is about 2.05 angstrom
     var distMax = 4; //3; // https://icn3d.page.link/5KRXx6XYfig1fkye7
@@ -711,7 +711,7 @@ iCn3D.prototype.setSsbond = function (structure2cys_resid) { var me = this; //"u
     }
 };
 
-iCn3D.prototype.getChainCalpha = function (chains, atoms, bResi_ori, pdbid) { var me = this; //"use strict";
+iCn3D.prototype.getChainCalpha = function (chains, atoms, bResi_ori, pdbid) { var me = this, ic = me.icn3d; "use strict";
     var chainCalphaHash = {};
 
     for(var chainid in chains) {

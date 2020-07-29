@@ -8,7 +8,7 @@
  *  Chymotrypsin", J. Mol. Biol. 128 (1979) 49-79.
  */
 
-iCn3DUI.prototype.rmsd_supr = function(co1, co2, n) { var me = this; //"use strict";
+iCn3DUI.prototype.rmsd_supr = function(co1, co2, n) { var me = this, ic = me.icn3d; "use strict";
     var TINY0 = 1.0e-10;
     var supr;
     var rot = new Array(9);
@@ -40,7 +40,6 @@ iCn3DUI.prototype.rmsd_supr = function(co1, co2, n) { var me = this; //"use stri
 
     // read in and reformat the coordinates
     // calculate the centroids
-    var cp = new THREE.Vector3(), cq = new THREE.Vector3();
     for (i = 0; i < n; i++) {
         ap.push(co1[i]);
         bp.push(co2[i]);
@@ -300,7 +299,7 @@ iCn3DUI.prototype.rmsd_supr = function(co1, co2, n) { var me = this; //"use stri
 
 }; // end rmsd_supr
 
-iCn3DUI.prototype.eigen_values = function(a0) { var me = this; //"use strict";
+iCn3DUI.prototype.eigen_values = function(a0) { var me = this, ic = me.icn3d; "use strict";
     var v00, v01, v02, v10, v11, v12, v20, v21, v22;
     var a, b, c, p, q, t, u, v, d1, d2, d3;
 
@@ -369,7 +368,7 @@ iCn3DUI.prototype.eigen_values = function(a0) { var me = this; //"use strict";
 }; // end eigen_values
 
 // Return the basis for the null space of the input matrix.
-iCn3DUI.prototype.null_basis = function(a0, v1, v2, v3, epsi) { var me = this; //"use strict";
+iCn3DUI.prototype.null_basis = function(a0, v1, v2, v3, epsi) { var me = this, ic = me.icn3d; "use strict";
     var k, spec;
     var a11, a12, a13, a21, a22, a23, a31, a32, a33;
     var b22, b23, b32, b33;

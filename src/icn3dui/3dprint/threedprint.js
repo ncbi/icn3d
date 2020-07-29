@@ -2,25 +2,25 @@
  * @author Jiyao Wang <wangjiy@ncbi.nlm.nih.gov> / https://github.com/ncbi/icn3d
  */
 
-iCn3DUI.prototype.setThichknessFor3Dprint = function(  ){ var me = this; //"use strict";
-    me.icn3d.lineRadius = 1; //0.1; // hbonds, distance lines
-    me.icn3d.coilWidth = 1.2; //0.3; // style cartoon-coil
-    me.icn3d.cylinderRadius = 0.8; //0.4; // style stick
-    me.icn3d.traceRadius = 1; //0.4; // style c alpha trace, nucleotide stick
-    me.icn3d.dotSphereScale = 0.6; //0.3; // style ball and stick, dot
+iCn3DUI.prototype.setThichknessFor3Dprint = function(  ){ var me = this, ic = me.icn3d; "use strict";
+    ic.lineRadius = 1; //0.1; // hbonds, distance lines
+    ic.coilWidth = 1.2; //0.3; // style cartoon-coil
+    ic.cylinderRadius = 0.8; //0.4; // style stick
+    ic.traceRadius = 1; //0.4; // style c alpha trace, nucleotide stick
+    ic.dotSphereScale = 0.6; //0.3; // style ball and stick, dot
 
-    me.icn3d.sphereRadius = 1.5; // style sphere
-    //me.icn3d.cylinderHelixRadius = 1.6; // style sylinder and plate
+    ic.sphereRadius = 1.5; // style sphere
+    //ic.cylinderHelixRadius = 1.6; // style sylinder and plate
 
-    me.icn3d.ribbonthickness = 1.0; //0.2; // style ribbon, nucleotide cartoon, stand thickness
-    me.icn3d.helixSheetWidth = 2.0; //1.3; // style ribbon, stand thickness
-    me.icn3d.nucleicAcidWidth = 1.4; //0.8; // nucleotide cartoon
+    ic.ribbonthickness = 1.0; //0.2; // style ribbon, nucleotide cartoon, stand thickness
+    ic.helixSheetWidth = 2.0; //1.3; // style ribbon, stand thickness
+    ic.nucleicAcidWidth = 1.4; //0.8; // nucleotide cartoon
 };
 
-iCn3DUI.prototype.prepareFor3Dprint = function(  ){ var me = this; //"use strict";
+iCn3DUI.prototype.prepareFor3Dprint = function(  ){ var me = this, ic = me.icn3d; "use strict";
     // turn off hilight
-    me.icn3d.bShowHighlight = false;
-    me.icn3d.removeHlObjects();
+    ic.bShowHighlight = false;
+    ic.removeHlObjects();
 
     me.bDashedLines = false;
 
@@ -29,77 +29,65 @@ iCn3DUI.prototype.prepareFor3Dprint = function(  ){ var me = this; //"use strict
     }
 
     // change hbond and distance lines from dashed to solid for 3d printing
-    if(me.icn3d.lines['hbond'] !== undefined) {
-        for(var i = 0, il = me.icn3d.lines['hbond'].length; i < il; ++i) {
-            var line = me.icn3d.lines['hbond'][i];
+    if(ic.lines['hbond'] !== undefined) {
+        for(var i = 0, il = ic.lines['hbond'].length; i < il; ++i) {
+            var line = ic.lines['hbond'][i];
             line.dashed = false;
 
             me.bDashedLines = true;
         }
     }
 
-/*
-    // hbonds within selection
-    if(me.icn3d.lines['stabilizer'] !== undefined) {
-        for(var i = 0, il = me.icn3d.lines['stabilizer'].length; i < il; ++i) {
-            var line = me.icn3d.lines['stabilizer'][i];
-            line.dashed = false;
-
-            me.bDashedLines = true;
-        }
-    }
-*/
-
-    if(me.icn3d.lines['distance'] !== undefined) {
-        for(var i = 0, il = me.icn3d.lines['distance'].length; i < il; ++i) {
-            var line = me.icn3d.lines['distance'][i];
+    if(ic.lines['distance'] !== undefined) {
+        for(var i = 0, il = ic.lines['distance'].length; i < il; ++i) {
+            var line = ic.lines['distance'][i];
             line.dashed = false;
 
             me.bDashedLines = true;
         }
     }
 
-    me.icn3d.draw();
+    ic.draw();
 };
 
-iCn3DUI.prototype.resetAfter3Dprint = function(  ){ var me = this; //"use strict";
+iCn3DUI.prototype.resetAfter3Dprint = function(  ){ var me = this, ic = me.icn3d; "use strict";
     // change hbond and distance lines from dashed to solid for 3d printing
     //if(me.bDashedLines) {
-      if(me.icn3d.lines['hbond'] !== undefined) {
-        for(var i = 0, il = me.icn3d.lines['hbond'].length; i < il; ++i) {
-            var line = me.icn3d.lines['hbond'][i];
+      if(ic.lines['hbond'] !== undefined) {
+        for(var i = 0, il = ic.lines['hbond'].length; i < il; ++i) {
+            var line = ic.lines['hbond'][i];
             line.dashed = true;
         }
       }
 
-      if(me.icn3d.lines['distance'] !== undefined) {
-        for(var i = 0, il = me.icn3d.lines['distance'].length; i < il; ++i) {
-            var line = me.icn3d.lines['distance'][i];
+      if(ic.lines['distance'] !== undefined) {
+        for(var i = 0, il = ic.lines['distance'].length; i < il; ++i) {
+            var line = ic.lines['distance'][i];
             line.dashed = true;
         }
       }
 
-      me.icn3d.lineRadius = 0.1; // hbonds, distance lines
-      me.icn3d.coilWidth = 0.3; // style cartoon-coil
-      me.icn3d.cylinderRadius = 0.4; // style stick
-      me.icn3d.traceRadius = 0.4; //0.2; // style c alpha trace, nucleotide stick
-      me.icn3d.dotSphereScale = 0.3; // style ball and stick, dot
-      me.icn3d.sphereRadius = 1.5; // style sphere
-      me.icn3d.cylinderHelixRadius = 1.6; // style sylinder and plate
+      ic.lineRadius = 0.1; // hbonds, distance lines
+      ic.coilWidth = 0.3; // style cartoon-coil
+      ic.cylinderRadius = 0.4; // style stick
+      ic.traceRadius = 0.4; //0.2; // style c alpha trace, nucleotide stick
+      ic.dotSphereScale = 0.3; // style ball and stick, dot
+      ic.sphereRadius = 1.5; // style sphere
+      ic.cylinderHelixRadius = 1.6; // style sylinder and plate
 
-      me.icn3d.ribbonthickness = 0.2; // style ribbon, nucleotide cartoon, stand thickness
-      me.icn3d.helixSheetWidth = 1.3; // style ribbon, nucleotide cartoon, stand thickness
-      me.icn3d.nucleicAcidWidth = 0.8; // nucleotide cartoon
+      ic.ribbonthickness = 0.2; // style ribbon, nucleotide cartoon, stand thickness
+      ic.helixSheetWidth = 1.3; // style ribbon, nucleotide cartoon, stand thickness
+      ic.nucleicAcidWidth = 0.8; // nucleotide cartoon
 
-      //me.icn3d.draw();
+      //ic.draw();
     //}
 };
 
-iCn3DUI.prototype.removeOneStabilizer = function(rmLineArray) { var me = this; //"use strict";
+iCn3DUI.prototype.removeOneStabilizer = function(rmLineArray) { var me = this, ic = me.icn3d; "use strict";
     var index;
-    for(var i = 0, il = me.icn3d.pairArray.length; i < il; i += 2) {
-        var atom1 = me.getResidueRepAtom(me.icn3d.pairArray[i]);
-        var atom2 = me.getResidueRepAtom(me.icn3d.pairArray[i+1]);
+    for(var i = 0, il = ic.pairArray.length; i < il; i += 2) {
+        var atom1 = me.getResidueRepAtom(ic.pairArray[i]);
+        var atom2 = me.getResidueRepAtom(ic.pairArray[i+1]);
 
         if(rmLineArray != undefined) {
             for(var j = 0, jl = rmLineArray.length; j < jl; j += 2) {
@@ -118,14 +106,14 @@ iCn3DUI.prototype.removeOneStabilizer = function(rmLineArray) { var me = this; /
     }
 
     if(index !== undefined) {
-        me.icn3d.pairArray.splice(index, 2); // removetwoelements at index i
+        ic.pairArray.splice(index, 2); // removetwoelements at index i
     }
 };
 
-iCn3DUI.prototype.outputSelection = function() { var me = this; //"use strict";
+iCn3DUI.prototype.outputSelection = function() { var me = this, ic = me.icn3d; "use strict";
     var residues = {};
-    for(var i in me.icn3d.hAtoms) {
-        var residueId = me.icn3d.atoms[i].structure + '_' + me.icn3d.atoms[i].chain + '_' + me.icn3d.atoms[i].resi;
+    for(var i in ic.hAtoms) {
+        var residueId = ic.atoms[i].structure + '_' + ic.atoms[i].chain + '_' + ic.atoms[i].resi;
         residues[residueId] = 1;
     }
 
@@ -167,14 +155,14 @@ iCn3DUI.prototype.outputSelection = function() { var me = this; //"use strict";
 // within the display atoms, show the bonds between C alpha or nucleotide N3
 // 1. add hbonds in protein and nucleotide
 // 2. add stabilizer between chemicals/ions and proteins
-iCn3DUI.prototype.addStabilizer = function () { var me = this; //"use strict";
+iCn3DUI.prototype.addStabilizer = function () { var me = this, ic = me.icn3d; "use strict";
     var threshold = 3.5; //between 3.2 and 4.0
 
     var minHbondLen = 3.2;
 
-    //me.icn3d.opts["water"] = "dot";
+    //ic.opts["water"] = "dot";
 
-    if(Object.keys(me.icn3d.dAtoms).length > 0) {
+    if(Object.keys(ic.dAtoms).length > 0) {
 
         // 1. add hbonds in nucleotide
         var atomHbond = {};
@@ -183,12 +171,12 @@ iCn3DUI.prototype.addStabilizer = function () { var me = this; //"use strict";
         var maxlengthSq = threshold * threshold;
         var minlengthSq = minHbondLen * minHbondLen;
 
-        for (var i in me.icn3d.dAtoms) {
-          var atom = me.icn3d.atoms[i];
+        for (var i in ic.dAtoms) {
+          var atom = ic.atoms[i];
 
           // protein: N, O
           // DNA: C: O2, N3, N4; G: N1, N2, O6; A: N1, N6; T: N1, N6
-          if(me.icn3d.nucleotides.hasOwnProperty(atom.serial) && (atom.name === "N1" || atom.name === "N2"
+          if(ic.nucleotides.hasOwnProperty(atom.serial) && (atom.name === "N1" || atom.name === "N2"
               || atom.name === "N3" || atom.name === "N4" || atom.name === "N6" || atom.name === "O2" || atom.name === "O6")
               ) { // calculate hydrogen bond in residue backbone
             chain_resi_atom = atom.structure + "_" + atom.chain + "_" + atom.resi + "_" + atom.name;
@@ -200,7 +188,7 @@ iCn3DUI.prototype.addStabilizer = function () { var me = this; //"use strict";
         var atomArray = Object.keys(atomHbond);
         var len = atomArray.length;
 
-        if(me.icn3d.pairArray === undefined) me.icn3d.pairArray = [];
+        if(ic.pairArray === undefined) ic.pairArray = [];
         for (var i = 0; i < len; ++i) {
             for (var j = i + 1; j < len; ++j) {
               var atomid1 = atomArray[i];
@@ -219,8 +207,8 @@ iCn3DUI.prototype.addStabilizer = function () { var me = this; //"use strict";
               if(dist > maxlengthSq || dist < minlengthSq) continue;
 
               // output hydrogen bonds
-              me.icn3d.pairArray.push(atomHbond[atomid1].serial);
-              me.icn3d.pairArray.push(atomHbond[atomid2].serial);
+              ic.pairArray.push(atomHbond[atomid1].serial);
+              ic.pairArray.push(atomHbond[atomid2].serial);
             } // end of for (var j
         } // end of for (var i
 
@@ -229,8 +217,8 @@ iCn3DUI.prototype.addStabilizer = function () { var me = this; //"use strict";
 
         //displayed residues
         var displayResidueHash = {};
-        for(var i in me.icn3d.dAtoms) {
-            var atom = me.icn3d.atoms[i];
+        for(var i in ic.dAtoms) {
+            var atom = ic.atoms[i];
 
             var residueid = atom.structure + "_" + atom.chain + "_" + atom.resi;
             displayResidueHash[residueid] = 1;
@@ -239,66 +227,66 @@ iCn3DUI.prototype.addStabilizer = function () { var me = this; //"use strict";
         // connect chemicals, ions, and every third protein residues to neighbors (within 4 angstrom)
         var residueHash = {};
         //chemicals
-        for(var i in me.icn3d.chemicals) {
-            var atom = me.icn3d.atoms[i];
+        for(var i in ic.chemicals) {
+            var atom = ic.atoms[i];
 
             var residueid = atom.structure + "_" + atom.chain + "_" + atom.resi;
             if(displayResidueHash.hasOwnProperty(residueid)) residueHash[residueid] = 1;
         }
         //ions
-        for(var i in me.icn3d.ions) {
-            var atom = me.icn3d.atoms[i];
+        for(var i in ic.ions) {
+            var atom = ic.atoms[i];
 
             var residueid = atom.structure + "_" + atom.chain + "_" + atom.resi;
             if(displayResidueHash.hasOwnProperty(residueid)) residueHash[residueid] = 1;
         }
 
         //every third protein residues
-        var chainArray = Object.keys(me.icn3d.chains);
+        var chainArray = Object.keys(ic.chains);
         for(var i = 0, il = chainArray.length; i < il; ++i) {
             var chainid = chainArray[i];
             var coilCnt = 0;
             var residueid;
             var prevResi = 0;
-            for(var j = 0, jl = me.icn3d.chainsSeq[chainid].length; j < jl; ++j) {
-                residueid = chainid + '_' + me.icn3d.chainsSeq[chainid][j].resi;
-                if(me.icn3d.secondaries[residueid] == 'c' || me.icn3d.secondaries[residueid] == 'E' || me.icn3d.secondaries[residueid] == 'H') {
+            for(var j = 0, jl = ic.chainsSeq[chainid].length; j < jl; ++j) {
+                residueid = chainid + '_' + ic.chainsSeq[chainid][j].resi;
+                if(ic.secondaries[residueid] == 'c' || ic.secondaries[residueid] == 'E' || ic.secondaries[residueid] == 'H') {
                     // add every third residue
-                    if(coilCnt % 3 == 0 || me.icn3d.chainsSeq[chainid][j].resi != prevResi + 1) {
+                    if(coilCnt % 3 == 0 || ic.chainsSeq[chainid][j].resi != prevResi + 1) {
                         if(displayResidueHash.hasOwnProperty(residueid)) residueHash[residueid] = 1;
                     }
 
                     ++coilCnt;
 
-                    prevResi = me.icn3d.chainsSeq[chainid][j].resi;
+                    prevResi = ic.chainsSeq[chainid][j].resi;
                 }
             }
 
             // last residue
-            if(me.icn3d.secondaries[residueid] == 'c' || me.icn3d.secondaries[residueid] == 'E' || me.icn3d.secondaries[residueid] == 'H') {
+            if(ic.secondaries[residueid] == 'c' || ic.secondaries[residueid] == 'E' || ic.secondaries[residueid] == 'H') {
                 if(displayResidueHash.hasOwnProperty(residueid)) residueHash[residueid] = 1;
             }
         }
 
         var residueArray = Object.keys(residueHash);
 
-        if(me.icn3d.pairArray === undefined) me.icn3d.pairArray = [];
+        if(ic.pairArray === undefined) ic.pairArray = [];
         // displayed atoms except water
-        var dAtomsNotWater = me.icn3d.exclHash(me.icn3d.dAtoms, me.icn3d.water);
+        var dAtomsNotWater = ic.exclHash(ic.dAtoms, ic.water);
 
         for(var i = 0, il = residueArray.length; i < il; ++i) {
             var residueid = residueArray[i];
-            var ss = me.icn3d.secondaries[residueid];
+            var ss = ic.secondaries[residueid];
 
-            //var sphere = me.icn3d.getNeighboringAtoms(me.icn3d.dAtoms, me.icn3d.hash2Atoms(me.icn3d.residues[residueid]), maxDistance);
-            var sphere = me.icn3d.getNeighboringAtoms(dAtomsNotWater, me.icn3d.hash2Atoms(me.icn3d.residues[residueid]), maxDistance);
+            //var sphere = ic.getNeighboringAtoms(ic.dAtoms, ic.hash2Atoms(ic.residues[residueid]), maxDistance);
+            var sphere = ic.getNeighboringAtoms(dAtomsNotWater, ic.hash2Atoms(ic.residues[residueid]), maxDistance);
 
             // original atoms
             var sphereArray = Object.keys(sphere).sort();
-            var atomArray = Object.keys(me.icn3d.residues[residueid]).sort();
+            var atomArray = Object.keys(ic.residues[residueid]).sort();
 
             var bProtein = false;
-            if(me.icn3d.proteins.hasOwnProperty(atomArray[0])) { // protein
+            if(ic.proteins.hasOwnProperty(atomArray[0])) { // protein
                 atomArray = [atomArray[0]]; // one atom from the residue
 
                 bProtein = true;
@@ -308,9 +296,9 @@ iCn3DUI.prototype.addStabilizer = function () { var me = this; //"use strict";
 
                 var simSphere = {};
                 for(var serial in sphere) {
-                    if(me.icn3d.chemicals.hasOwnProperty(serial) || me.icn3d.ions.hasOwnProperty(serial)) continue;
+                    if(ic.chemicals.hasOwnProperty(serial) || ic.ions.hasOwnProperty(serial)) continue;
 
-                    var atom = me.icn3d.atoms[serial];
+                    var atom = ic.atoms[serial];
                     if( (ss == 'c' && (atom.resi > resi + 1 || atom.resi < resi - 1) )
                       || (ss == 'E' && (atom.resi > resi + 2 || atom.resi < resi - 2) )
                       || (ss == 'H' && (atom.resi > resi + 4 || atom.resi < resi - 4) )
@@ -326,8 +314,8 @@ iCn3DUI.prototype.addStabilizer = function () { var me = this; //"use strict";
             if(sphereArray.length > 0 && atomArray.length > 0) {
                 if(bProtein) {
                         var inter2 = parseInt((sphereArray.length + 0.5) / 2.0);
-                        me.icn3d.pairArray.push(atomArray[0]);
-                        me.icn3d.pairArray.push(sphereArray[inter2]);
+                        ic.pairArray.push(atomArray[0]);
+                        ic.pairArray.push(sphereArray[inter2]);
                 }
                 else { // chemicals or ions
                     var n = 10;
@@ -337,12 +325,12 @@ iCn3DUI.prototype.addStabilizer = function () { var me = this; //"use strict";
                         if(j % n == 0) { // make one line for every other 10 atoms
                             var sphereIndex = parseInt(j/n) * step;
                             var inter2 = (sphereIndex < sphereArray.length) ?  sphereIndex : sphereArray.length - 1;
-                            me.icn3d.pairArray.push(atomArray[j]);
-                            me.icn3d.pairArray.push(sphereArray[inter2]);
+                            ic.pairArray.push(atomArray[j]);
+                            ic.pairArray.push(sphereArray[inter2]);
 
                             if(atomArray.length < n + 1) {
-                                me.icn3d.pairArray.push(atomArray[j]);
-                                me.icn3d.pairArray.push(sphereArray[sphereArray.length - 1]);
+                                ic.pairArray.push(atomArray[j]);
+                                ic.pairArray.push(sphereArray[sphereArray.length - 1]);
                             }
                         }
                     }
@@ -356,41 +344,41 @@ iCn3DUI.prototype.addStabilizer = function () { var me = this; //"use strict";
     }
 };
 
-iCn3DUI.prototype.hideStabilizer = function () { var me = this; //"use strict";
-    //me.icn3d.opts["stabilizer"] = "no";
-    me.icn3d.pairArray = [];
+iCn3DUI.prototype.hideStabilizer = function () { var me = this, ic = me.icn3d; "use strict";
+    //ic.opts["stabilizer"] = "no";
+    ic.pairArray = [];
 
-    me.icn3d.lines['stabilizer'] = [];
-    me.icn3d.stabilizerpnts = [];
+    ic.lines['stabilizer'] = [];
+    ic.stabilizerpnts = [];
 
-    for(var i in me.icn3d.water) {
-        me.icn3d.atoms[i].style = me.icn3d.opts["water"];
+    for(var i in ic.water) {
+        ic.atoms[i].style = ic.opts["water"];
     }
 
-    //me.icn3d.draw();
+    //ic.draw();
 };
 
-iCn3DUI.prototype.getResidueRepPos = function (serial) { var me = this; //"use strict";
-    var atomIn = me.icn3d.atoms[serial];
+iCn3DUI.prototype.getResidueRepPos = function (serial) { var me = this, ic = me.icn3d; "use strict";
+    var atomIn = ic.atoms[serial];
     var residueid = atomIn.structure + "_" + atomIn.chain + "_" + atomIn.resi;
 
     var pos;
-    if(!me.icn3d.proteins.hasOwnProperty(serial) && !me.icn3d.nucleotides.hasOwnProperty(serial)) { // chemicals or ions
+    if(!ic.proteins.hasOwnProperty(serial) && !ic.nucleotides.hasOwnProperty(serial)) { // chemicals or ions
         pos = atomIn.coord;
     }
     else {
-        for(var i in me.icn3d.residues[residueid]) {
-            var atom = me.icn3d.atoms[i];
+        for(var i in ic.residues[residueid]) {
+            var atom = ic.atoms[i];
             if(atom.name === 'N3') { // nucleotide: N3
-                pos = me.icn3d.atoms[i].coord;
+                pos = ic.atoms[i].coord;
                 break;
             }
             else if(atom.name === 'CA' && atom.ss == 'coil') { // protein coil: CA
-                pos = me.icn3d.atoms[i].coord;
+                pos = ic.atoms[i].coord;
                 break;
             }
             else if(atom.name === 'CA' && (atom.ss == 'helix' || atom.ss == 'sheet')) { // protein secondary: CA
-                pos = (me.icn3d.atoms[i].coord2 !== undefined) ? me.icn3d.atoms[i].coord2 : me.icn3d.atoms[i].coord;
+                pos = (ic.atoms[i].coord2 !== undefined) ? ic.atoms[i].coord2 : ic.atoms[i].coord;
                 break;
             }
         }
@@ -401,19 +389,19 @@ iCn3DUI.prototype.getResidueRepPos = function (serial) { var me = this; //"use s
     return pos;
 };
 
-iCn3DUI.prototype.getResidueRepAtom = function (serial) { var me = this; //"use strict";
-    var atomIn = me.icn3d.atoms[serial];
+iCn3DUI.prototype.getResidueRepAtom = function (serial) { var me = this, ic = me.icn3d; "use strict";
+    var atomIn = ic.atoms[serial];
     var residueid = atomIn.structure + "_" + atomIn.chain + "_" + atomIn.resi;
 
     var foundAtom;
-    if(!me.icn3d.proteins.hasOwnProperty(serial) && !me.icn3d.nucleotides.hasOwnProperty(serial)) { // chemicals or ions
+    if(!ic.proteins.hasOwnProperty(serial) && !ic.nucleotides.hasOwnProperty(serial)) { // chemicals or ions
         foundAtom = atomIn;
     }
     else {
-        for(var i in me.icn3d.residues[residueid]) {
-            var atom = me.icn3d.atoms[i];
+        for(var i in ic.residues[residueid]) {
+            var atom = ic.atoms[i];
             if(atom.name === 'CA' || atom.name === 'N3') { // protein: CA, nucleotide: N3
-                foundAtom = me.icn3d.atoms[i];
+                foundAtom = ic.atoms[i];
                 break;
             }
         }

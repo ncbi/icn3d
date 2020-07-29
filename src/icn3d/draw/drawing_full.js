@@ -3,7 +3,7 @@
  */
 
 // modified from iview (http://istar.cse.cuhk.edu.hk/iview/)
-iCn3D.prototype.createSurfaceRepresentation = function (atoms, type, wireframe, opacity) { var me = this; //"use strict";
+iCn3D.prototype.createSurfaceRepresentation = function (atoms, type, wireframe, opacity) { var me = this, ic = me.icn3d; "use strict";
     if(Object.keys(atoms).length == 0) return;
 
     if(opacity == undefined) opacity = 1.0;
@@ -37,73 +37,52 @@ iCn3D.prototype.createSurfaceRepresentation = function (atoms, type, wireframe, 
     var bTransparent = (parseInt(10*opacity) != 10 && !wireframe && !(this.bInstanced && Object.keys(this.atoms).length * this.biomtMatrices.length > this.maxatomcnt) ) ? true : false;
 
     var ps;
-    if(type == 11) { // 2fofc
-        //maxdist = (me.mapData.sigma2 < 1.5) ? 2 : 1;
 
-        ps = $3Dmol.SetupMap({
-            //extent: extent,
+    var cfg = {
             allatoms: this.atoms,
             atomsToShow: Object.keys(atoms),
             extendedAtoms: extendedAtoms,
             water: this.water,
-            //type: type,
-            //threshbox: this.threshbox,
-            header: me.mapData.header2,
-            data: me.mapData.data2,
-            matrix: me.mapData.matrix2,
-            isovalue: me.mapData.sigma2,
+            //header: me.mapData.header2,
+            //data: me.mapData.data2,
+            //matrix: me.mapData.matrix2,
+            //isovalue: me.mapData.sigma2,
             center: this.center,
             maxdist: maxdist,
             pmin: this.pmin,
             pmax: this.pmax,
-            type: '2fofc',
+            //type: '2fofc',
             rmsd_supr: this.rmsd_supr
-        });
+        };
+
+    if(type == 11) { // 2fofc
+        cfg.header = me.mapData.header2;
+        cfg.data = me.mapData.data2;
+        cfg.matrix = me.mapData.matrix2;
+        cfg.isovalue = me.mapData.sigma2;
+        cfg.type = '2fofc';
+
+        ps = $3Dmol.SetupMap(cfg);
     }
     else if(type == 12) { // fofc
-        //maxdist = (me.mapData.sigma < 3) ? 2 : 1;
-        ps = $3Dmol.SetupMap({
-            //extent: extent,
-            allatoms: this.atoms,
-            atomsToShow: Object.keys(atoms),
-            extendedAtoms: extendedAtoms,
-            water: this.water,
-            //type: type,
-            //threshbox: this.threshbox,
-            header: me.mapData.header,
-            data: me.mapData.data,
-            matrix: me.mapData.matrix,
-            isovalue: me.mapData.sigma,
-            center: this.center,
-            maxdist: maxdist,
-            pmin: this.pmin,
-            pmax: this.pmax,
-            type: 'fofc',
-            rmsd_supr: this.rmsd_supr
-        });
+        cfg.header = me.mapData.header;
+        cfg.data = me.mapData.data;
+        cfg.matrix = me.mapData.matrix;
+        cfg.isovalue = me.mapData.sigma;
+        cfg.type = 'fofc';
+
+        ps = $3Dmol.SetupMap(cfg);
     }
     else if(type == 13) { // em
         maxdist = 3; // EM map has no unit cell. It could include more gird space.
 
-        ps = $3Dmol.SetupMap({
-            //extent: extent,
-            allatoms: this.atoms,
-            atomsToShow: Object.keys(atoms),
-            extendedAtoms: extendedAtoms,
-            water: this.water,
-            //type: type,
-            //threshbox: this.threshbox,
-            header: me.mapData.headerEm,
-            data: me.mapData.dataEm,
-            matrix: me.mapData.matrixEm,
-            isovalue: me.mapData.sigmaEm,
-            center: this.center,
-            maxdist: maxdist,
-            pmin: this.pmin,
-            pmax: this.pmax,
-            type: 'em',
-            rmsd_supr: this.rmsd_supr
-        });
+        cfg.header = me.mapData.headerEm;
+        cfg.data = me.mapData.dataEm;
+        cfg.matrix = me.mapData.matrixEm;
+        cfg.isovalue = me.mapData.sigmaEm;
+        cfg.type = 'em';
+
+        ps = $3Dmol.SetupMap(cfg);
     }
     else {
         ps = $3Dmol.SetupSurface({
@@ -169,11 +148,11 @@ iCn3D.prototype.createSurfaceRepresentation = function (atoms, type, wireframe, 
     var verts = ps.vertices;
     var faces = ps.faces;
 
-    var colorFor2fofc = new THREE.Color('#00FFFF');
-    var colorForfofcPos = new THREE.Color('#00FF00');
-    //var colorForfofcNeg = new THREE.Color('#ff3300');
-    var colorForfofcNeg = new THREE.Color('#ff0000');
-    var colorForEm = new THREE.Color('#00FFFF');
+    var colorFor2fofc = this.thr('#00FFFF');
+    var colorForfofcPos = this.thr('#00FF00');
+    //var colorForfofcNeg = this.thr('#ff3300');
+    var colorForfofcNeg = this.thr('#ff0000');
+    var colorForEm = this.thr('#00FFFF');
 
     var rot, centerFrom, centerTo;
     if((type == 11 || type == 12 || type == 13) && this.rmsd_supr !== undefined && this.rmsd_supr.rot !== undefined) {
@@ -378,7 +357,7 @@ iCn3D.prototype.createSurfaceRepresentation = function (atoms, type, wireframe, 
 };
 
 // http://soledadpenades.com/articles/three-js-tutorials/drawing-the-coordinate-axes/
-iCn3D.prototype.buildAxes = function (radius) { var me = this; //"use strict";
+iCn3D.prototype.buildAxes = function (radius) { var me = this, ic = me.icn3d; "use strict";
     var axes = new THREE.Object3D();
 
     var x = 0, y = 0, z = 0;
@@ -402,7 +381,7 @@ iCn3D.prototype.buildAxes = function (radius) { var me = this; //"use strict";
 };
 
 // show extra lines, not used for pk, so no this.objects
-iCn3D.prototype.createLines = function(lines) {  var me = this; //"use strict";
+iCn3D.prototype.createLines = function(lines) {  var me = this, ic = me.icn3d; "use strict";
    if(lines !== undefined) {
      for(var name in lines) {
          var lineArray = lines[name];
@@ -422,7 +401,7 @@ iCn3D.prototype.createLines = function(lines) {  var me = this; //"use strict";
 
            var colorStr = '#' + line.color.replace(/\#/g, '');
 
-           var color = new THREE.Color(colorStr);
+           var color = this.thr(colorStr);
 
            if(!dashed) {
                 if(name == 'stabilizer') {
@@ -460,7 +439,7 @@ iCn3D.prototype.createLines = function(lines) {  var me = this; //"use strict";
    // do not add the artificial lines to raycasting objects
 };
 
-iCn3D.prototype.createBrick = function (p0, p1, radius, color) { var me = this; //"use strict";
+iCn3D.prototype.createBrick = function (p0, p1, radius, color) { var me = this, ic = me.icn3d; "use strict";
     var cylinderGeometry = new THREE.CylinderGeometry(1, 1, 1, 4, 1);
 
     var mesh = new THREE.Mesh(cylinderGeometry, new THREE.MeshPhongMaterial({ specular: this.frac, shininess: 30, emissive: 0x000000, color: color }));
@@ -475,7 +454,7 @@ iCn3D.prototype.createBrick = function (p0, p1, radius, color) { var me = this; 
     me.mdl.add(mesh);
 };
 
-iCn3D.prototype.applySymmetry = function (title) { var me = this; //"use strict";
+iCn3D.prototype.applySymmetry = function (title) { var me = this, ic = me.icn3d; "use strict";
     var dataArray = this.symmetryHash[title]; // start_end_colorAxis_colorPolygon
     var symmetryType = title.substr(0, 1);
     var nSide = parseInt(title.substring(1, title.indexOf(' ')));

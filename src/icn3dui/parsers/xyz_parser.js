@@ -2,10 +2,10 @@
  * @author Jiyao Wang <wangjiy@ncbi.nlm.nih.gov> / https://github.com/ncbi/icn3d
  */
 
-iCn3DUI.prototype.loadXyzData = function(data) { var me = this; //"use strict";
+iCn3DUI.prototype.loadXyzData = function(data) { var me = this, ic = me.icn3d; "use strict";
     var bResult = me.loadXyzAtomData(data);
 
-    if(me.cfg.align === undefined && Object.keys(me.icn3d.structures).length == 1) {
+    if(me.cfg.align === undefined && Object.keys(ic.structures).length == 1) {
         $("#" + me.pre + "alternateWrapper").hide();
     }
 
@@ -13,8 +13,8 @@ iCn3DUI.prototype.loadXyzData = function(data) { var me = this; //"use strict";
       alert('The XYZ file has the wrong format...');
     }
     else {
-      me.icn3d.setAtomStyleByOptions(me.opts);
-      me.icn3d.setColorByOptions(me.opts, me.icn3d.atoms);
+      ic.setAtomStyleByOptions(me.opts);
+      ic.setColorByOptions(me.opts, ic.atoms);
 
       me.renderStructure();
 
@@ -24,56 +24,49 @@ iCn3DUI.prototype.loadXyzData = function(data) { var me = this; //"use strict";
     }
 };
 
-iCn3DUI.prototype.setXyzAtomSeq = function (AtomHash, moleculeNum, chainNum, residueNum) { var me = this; //"use strict";
-    me.icn3d.dAtoms = me.icn3d.unionHash(me.icn3d.dAtoms, AtomHash);
-    me.icn3d.hAtoms= me.icn3d.unionHash(me.icn3d.hAtoms, AtomHash);
+iCn3DUI.prototype.setXyzAtomSeq = function (AtomHash, moleculeNum, chainNum, residueNum) { var me = this, ic = me.icn3d; "use strict";
+    ic.dAtoms = ic.unionHash(ic.dAtoms, AtomHash);
+    ic.hAtoms= ic.unionHash(ic.hAtoms, AtomHash);
 
-    me.icn3d.structures[moleculeNum] = [chainNum]; //AtomHash;
-    me.icn3d.chains[chainNum] = AtomHash;
-    me.icn3d.residues[residueNum] = AtomHash;
+    ic.structures[moleculeNum] = [chainNum]; //AtomHash;
+    ic.chains[chainNum] = AtomHash;
+    ic.residues[residueNum] = AtomHash;
 
-    me.icn3d.residueId2Name[residueNum] = 'LIG';
+    ic.residueId2Name[residueNum] = 'LIG';
 
-    if(me.icn3d.chainsSeq[chainNum] === undefined) me.icn3d.chainsSeq[chainNum] = [];
-/*
-    if(me.icn3d.chainsAn[chainNum] === undefined ) me.icn3d.chainsAn[chainNum] = [];
-    if(me.icn3d.chainsAn[chainNum][0] === undefined ) me.icn3d.chainsAn[chainNum][0] = [];
-    if(me.icn3d.chainsAnTitle[chainNum] === undefined ) me.icn3d.chainsAnTitle[chainNum] = [];
-    if(me.icn3d.chainsAnTitle[chainNum][0] === undefined ) me.icn3d.chainsAnTitle[chainNum][0] = [];
-*/
-      var resObject = {};
-      resObject.resi = 1;
-      resObject.name = 'LIG';
+    if(ic.chainsSeq[chainNum] === undefined) ic.chainsSeq[chainNum] = [];
 
-    me.icn3d.chainsSeq[chainNum].push(resObject);
-//        me.icn3d.chainsAn[chainNum][0].push(1);
-//        me.icn3d.chainsAnTitle[chainNum][0].push('');
+    var resObject = {};
+    resObject.resi = 1;
+    resObject.name = 'LIG';
+
+    ic.chainsSeq[chainNum].push(resObject);
 
     // determine bonds
     var serialArray = Object.keys(AtomHash);
     for(var j = 0, jl = serialArray.length; j < jl; ++j) {
-        var atom0 = me.icn3d.atoms[serialArray[j]];
+        var atom0 = ic.atoms[serialArray[j]];
 
         for(var k = j + 1, kl = serialArray.length; k < kl; ++k) {
-            var atom1 = me.icn3d.atoms[serialArray[k]];
-            var maxR = 1.2 * (me.icn3d.covalentRadii[atom0.elem.toUpperCase()] + me.icn3d.covalentRadii[atom1.elem.toUpperCase()]);
+            var atom1 = ic.atoms[serialArray[k]];
+            var maxR = 1.2 * (ic.covalentRadii[atom0.elem.toUpperCase()] + ic.covalentRadii[atom1.elem.toUpperCase()]);
             if(Math.abs(atom0.coord.x - atom1.coord.x) > maxR) continue;
             if(Math.abs(atom0.coord.y - atom1.coord.y) > maxR) continue;
             if(Math.abs(atom0.coord.z - atom1.coord.z) > maxR) continue;
 
-            if(me.icn3d.hasCovalentBond(atom0, atom1)) {
-                me.icn3d.atoms[serialArray[j]].bonds.push(serialArray[k]);
-                me.icn3d.atoms[serialArray[k]].bonds.push(serialArray[j]);
+            if(ic.hasCovalentBond(atom0, atom1)) {
+                ic.atoms[serialArray[j]].bonds.push(serialArray[k]);
+                ic.atoms[serialArray[k]].bonds.push(serialArray[j]);
             }
         }
     }
 },
 
-iCn3DUI.prototype.loadXyzAtomData = function (data) { var me = this; //"use strict";
+iCn3DUI.prototype.loadXyzAtomData = function (data) { var me = this, ic = me.icn3d; "use strict";
     var lines = data.split(/\r?\n|\r/);
     if (lines.length < 3) return false;
 
-    me.icn3d.init();
+    ic.init();
 
     var chain = 'A';
     var resn = 'LIG';
@@ -83,7 +76,7 @@ iCn3DUI.prototype.loadXyzAtomData = function (data) { var me = this; //"use stri
     var moleculeNum = 0, chainNum, residueNum;
     var structure, atomCount, serial=1, offset = 2;
 
-    me.icn3d.molTitle = "";
+    ic.molTitle = "";
 
     for (var i = 0, il = lines.length; i < il; ++i) {
         var line = lines[i].trim();
@@ -107,9 +100,9 @@ iCn3DUI.prototype.loadXyzAtomData = function (data) { var me = this; //"use stri
 
             atomCount = parseInt(line);
             if(moleculeNum > 1) {
-                me.icn3d.molTitle += "; ";
+                ic.molTitle += "; ";
             }
-            me.icn3d.molTitle += lines[i+1].trim();
+            ic.molTitle += lines[i+1].trim();
 
             i = i + offset;
         }
@@ -144,7 +137,7 @@ iCn3DUI.prototype.loadXyzAtomData = function (data) { var me = this; //"use stri
             bondOrder: []           // optional, specific for chemicals
         };
 
-        me.icn3d.atoms[serial] = atomDetails;
+        ic.atoms[serial] = atomDetails;
         AtomHash[serial] = 1;
 
         ++serial;
