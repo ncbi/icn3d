@@ -1,10 +1,11 @@
-/*! Projector.js from http://threejs.org/
+/* Projector.js from http://threejs.org/
  * @author mrdoob / http://mrdoob.com/
  * @author supereggbert / http://www.paulbrunt.co.uk/
  * @author julianwa / https://github.com/julianwa
  */
 
 THREE.RenderableObject = function () {
+    "use strict";
 
     this.id = 0;
 
@@ -16,6 +17,7 @@ THREE.RenderableObject = function () {
 //
 
 THREE.RenderableFace = function () {
+    "use strict";
 
     this.id = 0;
 
@@ -39,6 +41,7 @@ THREE.RenderableFace = function () {
 //
 
 THREE.RenderableVertex = function () {
+    "use strict";
 
     this.position = new THREE.Vector3();
     this.positionWorld = new THREE.Vector3();
@@ -49,6 +52,7 @@ THREE.RenderableVertex = function () {
 };
 
 THREE.RenderableVertex.prototype.copy = function ( vertex ) {
+    "use strict";
 
     this.positionWorld.copy( vertex.positionWorld );
     this.positionScreen.copy( vertex.positionScreen );
@@ -58,6 +62,7 @@ THREE.RenderableVertex.prototype.copy = function ( vertex ) {
 //
 
 THREE.RenderableLine = function () {
+    "use strict";
 
     this.id = 0;
 
@@ -74,6 +79,7 @@ THREE.RenderableLine = function () {
 //
 
 THREE.RenderableSprite = function () {
+    "use strict";
 
     this.id = 0;
 
@@ -93,6 +99,7 @@ THREE.RenderableSprite = function () {
 //
 
 THREE.Projector = function () {
+    "use strict";
 
     var _object, _objectCount, _objectPool = [], _objectPoolLength = 0,
     _vertex, _vertexCount, _vertexPool = [], _vertexPoolLength = 0,

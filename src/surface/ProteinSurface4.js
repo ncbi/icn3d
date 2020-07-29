@@ -1,4 +1,4 @@
-/*! ProteinSurface4.js
+/* ProteinSurface4.js
  * @author David Koes  / https://github.com/3dmol/3Dmol.js/tree/master/3Dmol
  * Modified by Jiyao Wang / https://github.com/ncbi/icn3d
  */
@@ -41,11 +41,11 @@ $3Dmol.ProteinSurface = function(threshbox) {
     //"use strict";
 
     // constants for vpbits bitmasks
-    /** @const */
+    /** @var */
     var INOUT = 1;
-    /** @const */
+    /** @var */
     var ISDONE = 2;
-    /** @const */
+    /** @var */
     var ISBOUND = 4;
 
     var ptranx = 0, ptrany = 0, ptranz = 0;
@@ -150,20 +150,11 @@ $3Dmol.ProteinSurface = function(threshbox) {
             var a = vertices[fa]['atomid'], b = vertices[fb]['atomid'], c = vertices[fc]['atomid'];
 
             // must be a unique face for each atom
-            //var which = a;
-            //if (b < which)
-            //    which = b;
-            //if (c < which)
-            //    which = c;
             if (!atomsToShow[a] || !atomsToShow[b] || !atomsToShow[c]) {
                 continue;
             }
 
             if (fa !== fb && fb !== fc && fa !== fc){
-                //finalfaces.push(fa);
-                //finalfaces.push(fb);
-                //finalfaces.push(fc);
-
                 // !!! different between 3Dmol and iCn3D
                 finalfaces.push({"a":fa, "b":fb, "c":fc});
             }
@@ -259,12 +250,6 @@ $3Dmol.ProteinSurface = function(threshbox) {
 
         vpBits = new Uint8Array(pLength * pWidth * pHeight);
         vpDistance = new Float64Array(pLength * pWidth * pHeight); // float 32
-        // doesn't
-        // play
-        // nicely
-        // with
-        // native
-        // floats
         vpAtomID = new Int32Array(pLength * pWidth * pHeight);
         //console.log("Box size: ", pLength, pWidth, pHeight, vpBits.length);
     };
@@ -330,9 +315,6 @@ $3Dmol.ProteinSurface = function(threshbox) {
     this.fillAtom = function(atom, atoms) {
         var cx, cy, cz, ox, oy, oz, mi, mj, mk, i, j, k, si, sj, sk;
         var ii, jj, kk, n;
-        //cx = Math.floor(0.5 + scaleFactor * (atom.x + ptranx));
-        //cy = Math.floor(0.5 + scaleFactor * (atom.y + ptrany));
-        //cz = Math.floor(0.5 + scaleFactor * (atom.z + ptranz));
 
         // !!! different between 3Dmol and iCn3D
         cx = Math.floor(0.5 + scaleFactor * (atom.coord.x + ptranx));
@@ -412,9 +394,6 @@ $3Dmol.ProteinSurface = function(threshbox) {
     this.fillAtomWaals = function(atom, atoms) {
         var cx, cy, cz, ox, oy, oz, nind = 0;
         var mi, mj, mk, si, sj, sk, i, j, k, ii, jj, kk, n;
-        //cx = Math.floor(0.5 + scaleFactor * (atom.x + ptranx));
-        //cy = Math.floor(0.5 + scaleFactor * (atom.y + ptrany));
-        //cz = Math.floor(0.5 + scaleFactor * (atom.z + ptranz));
 
         // !!! different between 3Dmol and iCn3D
         cx = Math.floor(0.5 + scaleFactor * (atom.coord.x + ptranx));
@@ -897,10 +876,10 @@ $3Dmol.ProteinSurface = function(threshbox) {
         }
 
         // calculate surface area
-        var area = 0;
+        var serial2area, maxScaleFactor, area = 0;
         if(bCalcArea) {
             var faceHash = {};
-            var serial2area = {};
+            serial2area = {};
             for(var i = 0, il = faces.length; i < il; i += 3) {
                 var fa = faces[i], fb = faces[i+1], fc = faces[i+2];
 
@@ -967,7 +946,7 @@ $3Dmol.ProteinSurface = function(threshbox) {
                 //}
             } // for loop
 
-            var maxScaleFactor = Math.max(finalScaleFactor.x, finalScaleFactor.y, finalScaleFactor.z);
+            maxScaleFactor = Math.max(finalScaleFactor.x, finalScaleFactor.y, finalScaleFactor.z);
             area = area / maxScaleFactor / maxScaleFactor;
             //area = area / scaleFactor / scaleFactor;
         }

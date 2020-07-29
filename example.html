@@ -39,7 +39,7 @@ body {font-family: Verdana, Arial, Helvetica, sans-serif;}
   <script type="text/javascript">
     $( document ).ready(function() {
       // --Modify iCn3D Method 3--: start modifying iCn3DUI and iCn3D =================================================================
-      iCn3DUI.prototype.setTools = function() { var me = this; //"use strict";
+      iCn3DUI.prototype.setTools = function() { var me = this, ic = me.icn3d; "use strict";
             var html = "";
             html += me.divStr + "selection' style='display:none;'><div style='position:absolute; z-index:555; float:left; display:table-row; margin: 32px 0px 0px 3px;'>";
             html += "<table style='margin-top: 3px; width:100px;'><tr valign='center'>";
@@ -58,7 +58,7 @@ body {font-family: Verdana, Arial, Helvetica, sans-serif;}
 
       iCn3DUI.prototype.allCustomEvents = function() { var me = this;
             // start adding custom events  ==========
-            // e.g., $("#" + me.pre + "toggle").add("#" + me.pre + "mn2_toggle").click(function(e) {
+            // e.g., $(me.pre + "toggle").add(me.pre + "mn2_toggle").click(function(e) {
             //       me.toggleSelection();
             //       var data = 'some data';
             //       $(this).trigger("from_icn3d", data);                       // => trigger event to send to other app
@@ -69,7 +69,7 @@ body {font-family: Verdana, Arial, Helvetica, sans-serif;}
             // end adding custom events  ==========
       };
 
-      iCn3DUI.prototype.setCustomDialogs = function() { var me = this; //"use strict";
+      iCn3DUI.prototype.setCustomDialogs = function() { var me = this, ic = me.icn3d; "use strict";
             var html = "";
 
             // start adding custom dialogs  ==========
@@ -82,12 +82,12 @@ body {font-family: Verdana, Arial, Helvetica, sans-serif;}
       };
 
       // modify iCn3D function
-      iCn3DUI.prototype.modifyIcn3d = function() {var me = this; //"use strict";
+      iCn3DUI.prototype.modifyIcn3d = function() { var  me = this; "use strict";
             me.modifyIcn3dshowPicking();
 
             // start modifying iCn3D, not iCn3DUI  ==========
             //iCn3D.prototype.rayCaster = function(e, bClick) {
-            //    me.icn3d.rayCasterBase(e, bClick);
+            //    ic.rayCasterBase(e, bClick);
             //};
             // end modifying iCn3D, not iCn3DUI  ==========
 

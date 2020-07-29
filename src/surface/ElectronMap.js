@@ -1,4 +1,4 @@
-/*! ProteinSurface4.js
+/* ProteinSurface4.js
  * @author David Koes  / https://github.com/3dmol/3Dmol.js/tree/master/3Dmol
  * Modified by Jiyao Wang / https://github.com/ncbi/icn3d
  */
@@ -41,11 +41,11 @@ $3Dmol.ElectronMap = function(threshbox) {
     //"use strict";
 
     // constants for vpbits bitmasks
-    /** @const */
+    /** @var */
     var INOUT = 1;
-    /** @const */
+    /** @var */
     var ISDONE = 2;
-    /** @const */
+    /** @var */
     var ISBOUND = 4;
 
     var isovalue = 1.5;
@@ -101,11 +101,6 @@ $3Dmol.ElectronMap = function(threshbox) {
         var vertices = verts;
 
         for (i = 0, il = vertices.length; i < il; i++) {
-/*
-            vertices[i].x = vertices[i].x / scaleFactor - ptranx;
-            vertices[i].y = vertices[i].y / scaleFactor - ptrany;
-            vertices[i].z = vertices[i].z / scaleFactor - ptranz;
-*/
             var r = new THREE.Vector3(vertices[i].x, vertices[i].y, vertices[i].z).applyMatrix4(matrix);
             vertices[i].x = r.x / scaleFactor - ptranx;
             vertices[i].y = r.y / scaleFactor - ptrany;
@@ -289,19 +284,6 @@ $3Dmol.ElectronMap = function(threshbox) {
                 //vpAtomID[index] = (dataArray[index] >= 0) ? 1 : 0; // determine whether it's positive
             }
         }
-
-/*
-        var index = 0;
-        for(i = 0; i < pLength; ++i) {
-            for(j = 0; j < pWidth; ++j) {
-                for(k = 0; k < pHeight; ++k) {
-                    vpBits[index] = (dataArray[index] >= isovalue || dataArray[index] <= -isovalue) ? 1 : 0;
-                    vpAtomID[index] = (dataArray[index] >= 0) ? 1 : 0;
-                    ++index;
-                }
-            }
-        }
-*/
 
         for (i = 0, il = vpBits.length; i < il; i++)
             if (vpBits[i] & INOUT)

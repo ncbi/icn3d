@@ -2,33 +2,33 @@
  * @author Jiyao Wang <wangjiy@ncbi.nlm.nih.gov> / https://github.com/ncbi/icn3d
  */
 
-iCn3DUI.prototype.loadScript = function (dataStr, bStatefile) { var me = this; //"use strict";
+iCn3DUI.prototype.loadScript = function (dataStr, bStatefile) { var me = this, ic = me.icn3d; "use strict";
   // allow the "loading structure..." message to be shown while loading script
   me.bCommandLoad = true;
 
-  me.icn3d.bRender = false;
-  me.icn3d.bStopRotate = true;
+  ic.bRender = false;
+  ic.bStopRotate = true;
 
   // firebase dynamic links replace " " with "+". So convert it back
   dataStr = (bStatefile) ? dataStr.replace(/\+/g, ' ') : dataStr.replace(/\+/g, ' ').replace(/;/g, '\n');
 
   var preCommands = [];
-  if(me.icn3d.commands.length > 0) preCommands[0] = me.icn3d.commands[0];
+  if(ic.commands.length > 0) preCommands[0] = ic.commands[0];
 
   var commandArray = dataStr.trim().split('\n');
-  me.icn3d.commands = commandArray;
+  ic.commands = commandArray;
 
   var pos = commandArray[0].indexOf('command=');
   if(bStatefile && pos != -1) {
       var commandFirst = commandArray[0].substr(0, pos - 1);
-      me.icn3d.commands.splice(0, 1, commandFirst);
+      ic.commands.splice(0, 1, commandFirst);
   }
 
-  //me.icn3d.commands = dataStr.trim().split('\n');
-  me.STATENUMBER = me.icn3d.commands.length;
+  //ic.commands = dataStr.trim().split('\n');
+  me.STATENUMBER = ic.commands.length;
 
-  me.icn3d.commands = preCommands.concat(me.icn3d.commands);
-  me.STATENUMBER = me.icn3d.commands.length;
+  ic.commands = preCommands.concat(ic.commands);
+  me.STATENUMBER = ic.commands.length;
 
   if(bStatefile || me.bReplay) {
       me.CURRENTNUMBER = 0;
@@ -46,16 +46,16 @@ iCn3DUI.prototype.loadScript = function (dataStr, bStatefile) { var me = this; /
   }
 };
 
-iCn3DUI.prototype.replayFirstStep = function (currentNumber) { var me = this; //"use strict";
+iCn3DUI.prototype.replayFirstStep = function (currentNumber) { var me = this, ic = me.icn3d; "use strict";
       // fresh start
-      me.icn3d.reinitAfterLoad();
+      ic.reinitAfterLoad();
 
-      me.icn3d.opts = me.icn3d.cloneHash(me.opts);
+      ic.opts = ic.cloneHash(me.opts);
 
       me.execCommandsBase(currentNumber, currentNumber, me.STATENUMBER);
 
-      var pos = me.icn3d.commands[currentNumber].indexOf(' | ');
-      var cmdStrOri = me.icn3d.commands[currentNumber].substr(0, pos);
+      var pos = ic.commands[currentNumber].indexOf(' | ');
+      var cmdStrOri = ic.commands[currentNumber].substr(0, pos);
       var maxLen = 20;
       var cmdStr = (cmdStrOri.length > maxLen) ? cmdStrOri.substr(0, maxLen) + '...' : cmdStrOri;
 
@@ -69,11 +69,11 @@ iCn3DUI.prototype.replayFirstStep = function (currentNumber) { var me = this; //
       // hide "loading ..."
       me.hideLoading();
 
-      me.icn3d.bRender = true;
-      me.icn3d.draw();
+      ic.bRender = true;
+      ic.draw();
 };
 
-iCn3DUI.prototype.loadSelection = function (dataStr) { var me = this; //"use strict";
+iCn3DUI.prototype.loadSelection = function (dataStr) { var me = this, ic = me.icn3d; "use strict";
   var nameCommandArray = dataStr.trim().split('\n');
 
   for(var i = 0, il = nameCommandArray.length; i < il; ++i) {
@@ -87,39 +87,36 @@ iCn3DUI.prototype.loadSelection = function (dataStr) { var me = this; //"use str
   }
 };
 
-iCn3DUI.prototype.execCommands = function (start, end, steps) { var me = this; //"use strict";
-    me.icn3d.bRender = false;
-
-    // initialize icn3dui
-//    me.init();
-//    me.icn3d.init();
+iCn3DUI.prototype.execCommands = function (start, end, steps) { var me = this, ic = me.icn3d; "use strict";
+    ic.bRender = false;
 
     // fresh start
-    me.icn3d.reinitAfterLoad();
+    ic.reinitAfterLoad();
 
-    me.icn3d.opts = me.icn3d.cloneHash(me.opts);
+    ic.opts = ic.cloneHash(me.opts);
 
     //me.execCommandsBase(0, steps-1, steps);
     me.execCommandsBase(start, end, steps);
 };
 
-iCn3DUI.prototype.execCommandsBase = function (start, end, steps, bFinalStep) { var me = this; //"use strict";
-  for(var i=start; i <= end; ++i) {
+iCn3DUI.prototype.execCommandsBase = function (start, end, steps, bFinalStep) { var me = this, ic = me.icn3d; "use strict";
+  var i;
+  for(i=start; i <= end; ++i) {
       var bFinalStep = (i === steps - 1) ? true : false;
 
-      if(me.icn3d.commands[i].indexOf('load') !== -1) {
+      if(ic.commands[i].indexOf('load') !== -1) {
           if(end === 0 && start === end) {
               if(me.bNotLoadStructure) {
-                    me.icn3d.hAtoms = me.icn3d.cloneHash(me.icn3d.atoms);
+                    ic.hAtoms = ic.cloneHash(ic.atoms);
 
                     // end of all commands
-                    if(1 === me.icn3d.commands.length) me.bAddCommands = true;
+                    if(1 === ic.commands.length) me.bAddCommands = true;
                     if(bFinalStep) me.renderFinalStep(steps);                  }
               else {
-                  $.when(me.applyCommandLoad(me.icn3d.commands[i])).then(function() {
+                  $.when(me.applyCommandLoad(ic.commands[i])).then(function() {
 
                     // end of all commands
-                    if(1 === me.icn3d.commands.length) me.bAddCommands = true;
+                    if(1 === ic.commands.length) me.bAddCommands = true;
                     if(bFinalStep) me.renderFinalStep(steps);
                   });
               }
@@ -127,7 +124,7 @@ iCn3DUI.prototype.execCommandsBase = function (start, end, steps, bFinalStep) { 
           }
           else {
               if(me.bNotLoadStructure) {
-                  me.icn3d.hAtoms = me.icn3d.cloneHash(me.icn3d.atoms);
+                  ic.hAtoms = ic.cloneHash(ic.atoms);
 
                   // undo/redo requires render the first step
                   if(me.backForward) me.renderFinalStep(1);
@@ -135,7 +132,7 @@ iCn3DUI.prototype.execCommandsBase = function (start, end, steps, bFinalStep) { 
                   me.execCommandsBase(i + 1, end, steps);
               }
               else {
-                  $.when(me.applyCommandLoad(me.icn3d.commands[i])).then(function() {
+                  $.when(me.applyCommandLoad(ic.commands[i])).then(function() {
                       // undo/redo requires render the first step
                       if(me.backForward) me.renderFinalStep(1);
 
@@ -146,9 +143,9 @@ iCn3DUI.prototype.execCommandsBase = function (start, end, steps, bFinalStep) { 
               return;
           }
       }
-      else if(me.icn3d.commands[i].trim().indexOf('set map') == 0 && me.icn3d.commands[i].trim().indexOf('set map wireframe') == -1) {
+      else if(ic.commands[i].trim().indexOf('set map') == 0 && ic.commands[i].trim().indexOf('set map wireframe') == -1) {
           //set map 2fofc sigma 1.5
-          var strArray = me.icn3d.commands[i].split("|||");
+          var strArray = ic.commands[i].split("|||");
 
           var urlArray = strArray[0].trim().split(' | ');
 
@@ -173,9 +170,9 @@ iCn3DUI.prototype.execCommandsBase = function (start, end, steps, bFinalStep) { 
             return;
           }
       }
-      else if(me.icn3d.commands[i].trim().indexOf('set emmap') == 0 && me.icn3d.commands[i].trim().indexOf('set emmap wireframe') == -1) {
+      else if(ic.commands[i].trim().indexOf('set emmap') == 0 && ic.commands[i].trim().indexOf('set emmap wireframe') == -1) {
           //set emmap percentage 70
-          var strArray = me.icn3d.commands[i].split("|||");
+          var strArray = ic.commands[i].split("|||");
 
           var str = strArray[0].trim().substr(10);
           var paraArray = str.split(" ");
@@ -196,18 +193,18 @@ iCn3DUI.prototype.execCommandsBase = function (start, end, steps, bFinalStep) { 
             return;
           }
       }
-      else if(me.icn3d.commands[i].trim().indexOf('view annotations') == 0
-        //|| me.icn3d.commands[i].trim().indexOf('set annotation cdd') == 0
-        //|| me.icn3d.commands[i].trim().indexOf('set annotation site') == 0
+      else if(ic.commands[i].trim().indexOf('view annotations') == 0
+        //|| ic.commands[i].trim().indexOf('set annotation cdd') == 0
+        //|| ic.commands[i].trim().indexOf('set annotation site') == 0
         ) { // the command may have "|||{"factor"...
-          var strArray = me.icn3d.commands[i].split("|||");
-          if(Object.keys(me.icn3d.proteins).length > 0 && (me.bAjaxCddSite === undefined || !me.bAjaxCddSite) ) {
+          var strArray = ic.commands[i].split("|||");
+          if(Object.keys(ic.proteins).length > 0 && (me.bAjaxCddSite === undefined || !me.bAjaxCddSite) ) {
               $.when(me.applyCommandAnnotationsAndCddSite(strArray[0].trim())).then(function() {
                   me.execCommandsBase(i + 1, end, steps);
               });
           }
           else {
-              if(Object.keys(me.icn3d.proteins).length > 0) {
+              if(Object.keys(ic.proteins).length > 0) {
                   me.applyCommandAnnotationsAndCddSiteBase(strArray[0].trim());
               }
 
@@ -216,16 +213,16 @@ iCn3DUI.prototype.execCommandsBase = function (start, end, steps, bFinalStep) { 
 
           return;
       }
-      else if(me.icn3d.commands[i].trim().indexOf('set annotation clinvar') == 0 ) { // the command may have "|||{"factor"...
-          var strArray = me.icn3d.commands[i].split("|||");
+      else if(ic.commands[i].trim().indexOf('set annotation clinvar') == 0 ) { // the command may have "|||{"factor"...
+          var strArray = ic.commands[i].split("|||");
 
-          if(Object.keys(me.icn3d.proteins).length > 0 && (me.bAjaxClinvar === undefined || !me.bAjaxClinvar) ) {
+          if(Object.keys(ic.proteins).length > 0 && (me.bAjaxClinvar === undefined || !me.bAjaxClinvar) ) {
               $.when(me.applyCommandClinvar(strArray[0].trim())).then(function() {
                   me.execCommandsBase(i + 1, end, steps);
               });
           }
           else {
-              if(Object.keys(me.icn3d.proteins).length > 0) {
+              if(Object.keys(ic.proteins).length > 0) {
                   me.applyCommandClinvar(strArray[0].trim());
               }
 
@@ -234,16 +231,16 @@ iCn3DUI.prototype.execCommandsBase = function (start, end, steps, bFinalStep) { 
 
           return;
       }
-      else if(me.icn3d.commands[i].trim().indexOf('set annotation snp') == 0) { // the command may have "|||{"factor"...
-          var strArray = me.icn3d.commands[i].split("|||");
+      else if(ic.commands[i].trim().indexOf('set annotation snp') == 0) { // the command may have "|||{"factor"...
+          var strArray = ic.commands[i].split("|||");
 
-          if(Object.keys(me.icn3d.proteins).length > 0 && (me.bAjaxSnp === undefined || !me.bAjaxSnp) ) {
+          if(Object.keys(ic.proteins).length > 0 && (me.bAjaxSnp === undefined || !me.bAjaxSnp) ) {
               $.when(me.applyCommandSnp(strArray[0].trim())).then(function() {
                   me.execCommandsBase(i + 1, end, steps);
               });
           }
           else {
-              if(Object.keys(me.icn3d.proteins).length > 0) {
+              if(Object.keys(ic.proteins).length > 0) {
                   me.applyCommandSnp(strArray[0].trim());
               }
 
@@ -252,16 +249,16 @@ iCn3DUI.prototype.execCommandsBase = function (start, end, steps, bFinalStep) { 
 
           return;
       }
-      else if(me.icn3d.commands[i].trim().indexOf('set annotation 3ddomain') == 0) { // the command may have "|||{"factor"...
-          var strArray = me.icn3d.commands[i].split("|||");
+      else if(ic.commands[i].trim().indexOf('set annotation 3ddomain') == 0) { // the command may have "|||{"factor"...
+          var strArray = ic.commands[i].split("|||");
 
-          if(Object.keys(me.icn3d.proteins).length > 0 && me.mmdb_data === undefined && (me.bAjax3ddomain === undefined || !me.bAjax3ddomain)) {
+          if(Object.keys(ic.proteins).length > 0 && me.mmdb_data === undefined && (me.bAjax3ddomain === undefined || !me.bAjax3ddomain)) {
               $.when(me.applyCommand3ddomain(strArray[0].trim())).then(function() {
                   me.execCommandsBase(i + 1, end, steps);
               });
           }
           else {
-              if(Object.keys(me.icn3d.proteins).length > 0) {
+              if(Object.keys(ic.proteins).length > 0) {
                   me.applyCommand3ddomain(strArray[0].trim());
               }
 
@@ -270,12 +267,12 @@ iCn3DUI.prototype.execCommandsBase = function (start, end, steps, bFinalStep) { 
 
           return;
       }
-      else if(me.icn3d.commands[i].trim().indexOf('set annotation all') == 0) { // the command may have "|||{"factor"...
-          var strArray = me.icn3d.commands[i].split("|||");
+      else if(ic.commands[i].trim().indexOf('set annotation all') == 0) { // the command may have "|||{"factor"...
+          var strArray = ic.commands[i].split("|||");
           //$.when(me.applyCommandAnnotationsAndCddSite(strArray[0].trim()))
           //  .then(me.applyCommandSnpClinvar(strArray[0].trim()))
 
-          if( Object.keys(me.icn3d.proteins).length > 0 && (me.bAjaxClinvar === undefined || !me.bAjaxClinvar)
+          if( Object.keys(ic.proteins).length > 0 && (me.bAjaxClinvar === undefined || !me.bAjaxClinvar)
             && (me.bAjaxSnp === undefined || !me.bAjaxSnp)
             && (me.bAjax3ddomain === undefined || !me.bAjax3ddomain || me.mmdb_data === undefined) ) {
               $.when(me.applyCommandClinvar(strArray[0].trim()))
@@ -287,7 +284,7 @@ iCn3DUI.prototype.execCommandsBase = function (start, end, steps, bFinalStep) { 
                   me.execCommandsBase(i + 1, end, steps);
               });
           }
-          else if(Object.keys(me.icn3d.proteins).length > 0 && (me.bAjaxClinvar === undefined || !me.bAjaxClinvar)
+          else if(Object.keys(ic.proteins).length > 0 && (me.bAjaxClinvar === undefined || !me.bAjaxClinvar)
             && (me.bAjaxSnp === undefined || !me.bAjaxSnp)) {
               $.when(me.applyCommandClinvar(strArray[0].trim()))
                 .then(me.applyCommandSnp(strArray[0].trim()))
@@ -297,7 +294,7 @@ iCn3DUI.prototype.execCommandsBase = function (start, end, steps, bFinalStep) { 
                   me.execCommandsBase(i + 1, end, steps);
               });
           }
-          else if(Object.keys(me.icn3d.proteins).length > 0 && (me.bAjaxClinvar === undefined || !me.bAjaxClinvar)
+          else if(Object.keys(ic.proteins).length > 0 && (me.bAjaxClinvar === undefined || !me.bAjaxClinvar)
             && (me.bAjax3ddomain === undefined || !me.bAjax3ddomain || me.mmdb_data === undefined)) {
               $.when(me.applyCommandClinvar(strArray[0].trim()))
                 .then(me.applyCommand3ddomain(strArray[0].trim()))
@@ -307,7 +304,7 @@ iCn3DUI.prototype.execCommandsBase = function (start, end, steps, bFinalStep) { 
                   me.execCommandsBase(i + 1, end, steps);
               });
           }
-          else if(Object.keys(me.icn3d.proteins).length > 0 && (me.bAjax3ddomain === undefined || !me.bAjax3ddomain || me.mmdb_data === undefined)
+          else if(Object.keys(ic.proteins).length > 0 && (me.bAjax3ddomain === undefined || !me.bAjax3ddomain || me.mmdb_data === undefined)
             && (me.bAjaxSnp === undefined || !me.bAjaxSnp)) {
               $.when(me.applyCommand3ddomain(strArray[0].trim()))
                 .then(me.applyCommandSnp(strArray[0].trim()))
@@ -317,7 +314,7 @@ iCn3DUI.prototype.execCommandsBase = function (start, end, steps, bFinalStep) { 
                   me.execCommandsBase(i + 1, end, steps);
               });
           }
-          else if(Object.keys(me.icn3d.proteins).length > 0 && (me.bAjaxClinvar === undefined || !me.bAjaxClinvar) ) {
+          else if(Object.keys(ic.proteins).length > 0 && (me.bAjaxClinvar === undefined || !me.bAjaxClinvar) ) {
               $.when(me.applyCommandClinvar(strArray[0].trim()))
                 .then(function() {
                   me.setAnnoTabAll();
@@ -325,7 +322,7 @@ iCn3DUI.prototype.execCommandsBase = function (start, end, steps, bFinalStep) { 
                   me.execCommandsBase(i + 1, end, steps);
               });
           }
-          else if(Object.keys(me.icn3d.proteins).length > 0 && (me.bAjaxSnp === undefined || !me.bAjaxSnp) ) {
+          else if(Object.keys(ic.proteins).length > 0 && (me.bAjaxSnp === undefined || !me.bAjaxSnp) ) {
               $.when(me.applyCommandSnp(strArray[0].trim()))
                 .then(function() {
                   me.setAnnoTabAll();
@@ -333,7 +330,7 @@ iCn3DUI.prototype.execCommandsBase = function (start, end, steps, bFinalStep) { 
                   me.execCommandsBase(i + 1, end, steps);
               });
           }
-          else if(Object.keys(me.icn3d.proteins).length > 0 && (me.bAjax3ddomain === undefined || !me.bAjax3ddomain || me.mmdb_data === undefined) ) {
+          else if(Object.keys(ic.proteins).length > 0 && (me.bAjax3ddomain === undefined || !me.bAjax3ddomain || me.mmdb_data === undefined) ) {
               $.when(me.applyCommand3ddomain(strArray[0].trim()))
                 .then(function() {
                   me.setAnnoTabAll();
@@ -342,25 +339,7 @@ iCn3DUI.prototype.execCommandsBase = function (start, end, steps, bFinalStep) { 
               });
           }
           else {
-/*
-              if(Object.keys(me.icn3d.proteins).length > 0) {
-                  if((me.bAjaxClinvar === undefined || !me.bAjaxClinvar)
-                    && (me.bAjaxSnp === undefined || !me.bAjaxSnp)
-                    && (me.bAjax3ddomain === undefined || !me.bAjax3ddomain || me.mmdb_data === undefined)) {
-                      me.applyCommandClinvarBase(strArray[0].trim());
-                      me.applyCommandSnpBase(strArray[0].trim());
-                      me.applyCommand3ddomainBase(strArray[0].trim());
-                  }
-                  else if(me.bAjaxSnpClinvar === undefined || !me.bAjaxSnpClinvar) {
-                      me.applyCommandSnpClinvarBase(strArray[0].trim());
-                  }
-                  else if(me.bAjax3ddomain === undefined || !me.bAjax3ddomain || me.mmdb_data === undefined) {
-                      me.applyCommand3ddomainBase(strArray[0].trim());
-                  }
-              }
-*/
-
-              if(Object.keys(me.icn3d.proteins).length > 0) {
+              if(Object.keys(ic.proteins).length > 0) {
                   if(me.bAjaxClinvar) {
                       me.applyCommandClinvarBase(strArray[0].trim());
                   }
@@ -381,8 +360,8 @@ iCn3DUI.prototype.execCommandsBase = function (start, end, steps, bFinalStep) { 
 
           return;
       }
-      else if(me.icn3d.commands[i].trim().indexOf('view interactions') == 0 && me.cfg.align !== undefined) { // the command may have "|||{"factor"...
-          var strArray = me.icn3d.commands[i].split("|||");
+      else if(ic.commands[i].trim().indexOf('view interactions') == 0 && me.cfg.align !== undefined) { // the command may have "|||{"factor"...
+          var strArray = ic.commands[i].split("|||");
 
           if(me.b2DShown === undefined || !me.b2DShown) {
               $.when(me.applyCommandViewinteraction(strArray[0].trim())).then(function() {
@@ -395,42 +374,42 @@ iCn3DUI.prototype.execCommandsBase = function (start, end, steps, bFinalStep) { 
 
           return;
       }
-      else if(me.icn3d.commands[i].trim().indexOf('symmetry') == 0) {
-        var strArray = me.icn3d.commands[i].split("|||");
+      else if(ic.commands[i].trim().indexOf('symmetry') == 0) {
+        var strArray = ic.commands[i].split("|||");
         var command = strArray[0].trim();
 
         var title = command.substr(command.indexOf(' ') + 1);
-        me.icn3d.symmetrytitle = (title === 'none') ? undefined : title;
+        ic.symmetrytitle = (title === 'none') ? undefined : title;
 
         if(title !== 'none') {
-            if(me.icn3d.symmetryHash === undefined) {
+            if(ic.symmetryHash === undefined) {
                 $.when(me.applyCommandSymmetry(command)).then(function() {
                    if(!me.cfg.notebook) dialog.dialog( "close" );
 
-                   me.icn3d.draw();
+                   ic.draw();
                    me.execCommandsBase(i + 1, end, steps);
                 });
             }
             else {
-                me.icn3d.draw();
+                ic.draw();
                 me.execCommandsBase(i + 1, end, steps);
             }
         }
         else {
-            me.icn3d.draw();
+            ic.draw();
             me.execCommandsBase(i + 1, end, steps);
         }
 
         return;
       }
-      else if(me.icn3d.commands[i].trim().indexOf('realign on seq align') == 0) {
-        var strArray = me.icn3d.commands[i].split("|||");
+      else if(ic.commands[i].trim().indexOf('realign on seq align') == 0) {
+        var strArray = ic.commands[i].split("|||");
         var command = strArray[0].trim();
 
         var paraArray = command.split(' | ');
         if(paraArray.length == 2) {
             var nameArray = paraArray[1].split(',');
-            me.icn3d.hAtoms = me.getAtomsFromNameArray(nameArray);
+            ic.hAtoms = me.getAtomsFromNameArray(nameArray);
         }
 
         $.when(me.applyCommandRealign(command)).then(function() {
@@ -439,8 +418,8 @@ iCn3DUI.prototype.execCommandsBase = function (start, end, steps, bFinalStep) { 
 
         return;
       }
-      else if(me.icn3d.commands[i].trim().indexOf('graph interaction pairs') == 0) {
-        var strArray = me.icn3d.commands[i].split("|||");
+      else if(ic.commands[i].trim().indexOf('graph interaction pairs') == 0) {
+        var strArray = ic.commands[i].split("|||");
         var command = strArray[0].trim();
 
         if(me.bD3 === undefined) {
@@ -456,7 +435,7 @@ iCn3DUI.prototype.execCommandsBase = function (start, end, steps, bFinalStep) { 
         return;
       }
       else {
-          me.applyCommand(me.icn3d.commands[i]);
+          me.applyCommand(ic.commands[i]);
       }
   }
 
@@ -468,16 +447,16 @@ iCn3DUI.prototype.execCommandsBase = function (start, end, steps, bFinalStep) { 
       // hide "loading ..."
       me.hideLoading();
 
-      //me.icn3d.bRender = true;
+      //ic.bRender = true;
 
       // end of all commands
-      if(i + 1 === me.icn3d.commands.length) me.bAddCommands = true;
+      if(i + 1 === ic.commands.length) me.bAddCommands = true;
 
       me.renderFinalStep(i);
   }
 };
 
-iCn3DUI.prototype.setStrengthPara = function(paraArray) { var me = this; //"use strict";
+iCn3DUI.prototype.setStrengthPara = function(paraArray) { var me = this, ic = me.icn3d; "use strict";
     if(paraArray.length >= 5) {
        var thresholdArray = paraArray[4].split(' ');
 
@@ -513,91 +492,91 @@ iCn3DUI.prototype.setStrengthPara = function(paraArray) { var me = this; //"use 
     }
 };
 
-iCn3DUI.prototype.oneStructurePerWindow = function() { var me = this; //"use strict";
+iCn3DUI.prototype.oneStructurePerWindow = function() { var me = this, ic = me.icn3d; "use strict";
     // only display one of the two aligned structures
-    var structureArray = Object.keys(me.icn3d.structures);
+    var structureArray = Object.keys(ic.structures);
     if(me.cfg.bSidebyside && structureArray.length == 2) {
         var dividArray = Object.keys(window.icn3duiHash);
         var pos = dividArray.indexOf(me.divid);
 
         var structure = structureArray[pos];
-        var chainArray = me.icn3d.structures[structure];
+        var chainArray = ic.structures[structure];
         var structAtoms = {};
         for(var i = 0, il = chainArray.length; i < il; ++i) {
-            structAtoms = me.icn3d.unionHash(structAtoms, me.icn3d.chains[chainArray[i]]);
+            structAtoms = ic.unionHash(structAtoms, ic.chains[chainArray[i]]);
         }
 
-        me.icn3d.dAtoms = me.icn3d.intHash(structAtoms, me.icn3d.dAtoms);
-        me.icn3d.hAtoms = me.icn3d.cloneHash(me.icn3d.dAtoms);
+        ic.dAtoms = ic.intHash(structAtoms, ic.dAtoms);
+        ic.hAtoms = ic.cloneHash(ic.dAtoms);
     }
 };
 
-iCn3DUI.prototype.renderFinalStep = function(steps) { var me = this; //"use strict";
-    me.icn3d.bRender = true;
+iCn3DUI.prototype.renderFinalStep = function(steps) { var me = this, ic = me.icn3d; "use strict";
+    ic.bRender = true;
 
-    var commandTransformation = me.icn3d.commands[steps-1].split('|||');
+    var commandTransformation = ic.commands[steps-1].split('|||');
 
     if(commandTransformation.length == 2) {
         var transformation = JSON.parse(commandTransformation[1]);
 
-        me.icn3d._zoomFactor = transformation.factor;
+        ic._zoomFactor = transformation.factor;
 
-        me.icn3d.mouseChange.x = transformation.mouseChange.x;
-        me.icn3d.mouseChange.y = transformation.mouseChange.y;
+        ic.mouseChange.x = transformation.mouseChange.x;
+        ic.mouseChange.y = transformation.mouseChange.y;
 
-        me.icn3d.quaternion._x = transformation.quaternion._x;
-        me.icn3d.quaternion._y = transformation.quaternion._y;
-        me.icn3d.quaternion._z = transformation.quaternion._z;
-        me.icn3d.quaternion._w = transformation.quaternion._w;
+        ic.quaternion._x = transformation.quaternion._x;
+        ic.quaternion._y = transformation.quaternion._y;
+        ic.quaternion._z = transformation.quaternion._z;
+        ic.quaternion._w = transformation.quaternion._w;
     }
 
     me.oneStructurePerWindow();
 
     // simple if all atoms are modified
-    //if( me.cfg.command === undefined && (steps === 1 || (Object.keys(me.icn3d.hAtoms).length === Object.keys(me.icn3d.atoms).length) || (me.icn3d.optsHistory[steps - 1] !== undefined && me.icn3d.optsHistory[steps - 1].hasOwnProperty('hlatomcount') && me.icn3d.optsHistory[steps - 1].hlatomcount === Object.keys(me.icn3d.atoms).length) ) ) {
+    //if( me.cfg.command === undefined && (steps === 1 || (Object.keys(ic.hAtoms).length === Object.keys(ic.atoms).length) || (ic.optsHistory[steps - 1] !== undefined && ic.optsHistory[steps - 1].hasOwnProperty('hlatomcount') && ic.optsHistory[steps - 1].hlatomcount === Object.keys(ic.atoms).length) ) ) {
     if(steps === 1
-      || (Object.keys(me.icn3d.hAtoms).length === Object.keys(me.icn3d.atoms).length)
-      || (me.icn3d.optsHistory[steps - 1] !== undefined && me.icn3d.optsHistory[steps - 1].hasOwnProperty('hlatomcount') && me.icn3d.optsHistory[steps - 1].hlatomcount === Object.keys(me.icn3d.atoms).length) ) {
+      || (Object.keys(ic.hAtoms).length === Object.keys(ic.atoms).length)
+      || (ic.optsHistory[steps - 1] !== undefined && ic.optsHistory[steps - 1].hasOwnProperty('hlatomcount') && ic.optsHistory[steps - 1].hlatomcount === Object.keys(ic.atoms).length) ) {
         if(steps === 1) {
             // assign styles and color using the options at that stage
-            me.icn3d.setAtomStyleByOptions(me.icn3d.optsHistory[steps - 1]);
-            me.icn3d.setColorByOptions(me.icn3d.optsHistory[steps - 1], me.icn3d.hAtoms);
+            ic.setAtomStyleByOptions(ic.optsHistory[steps - 1]);
+            ic.setColorByOptions(ic.optsHistory[steps - 1], ic.hAtoms);
         }
 
-        if(me.icn3d.optsHistory.length >= steps) {
-            var pkOption = me.icn3d.optsHistory[steps - 1].pk;
+        if(ic.optsHistory.length >= steps) {
+            var pkOption = ic.optsHistory[steps - 1].pk;
             if(pkOption === 'no') {
-                me.icn3d.pk = 0;
+                ic.pk = 0;
             }
             else if(pkOption === 'atom') {
-                me.icn3d.pk = 1;
+                ic.pk = 1;
             }
             else if(pkOption === 'residue') {
-                me.icn3d.pk = 2;
+                ic.pk = 2;
             }
             else if(pkOption === 'strand') {
-                me.icn3d.pk = 3;
+                ic.pk = 3;
             }
 
             if(steps === 1) {
-                me.icn3d.applyOriginalColor();
+                ic.applyOriginalColor();
             }
 
             me.updateHlAll();
 
-            jQuery.extend(me.icn3d.opts, me.icn3d.optsHistory[steps - 1]);
-            me.icn3d.draw();
+            jQuery.extend(ic.opts, ic.optsHistory[steps - 1]);
+            ic.draw();
         }
         else {
             me.updateHlAll();
 
-            me.icn3d.draw();
+            ic.draw();
         }
     }
     else { // more complicated if partial atoms are modified
         me.updateHlAll();
 
-        me.icn3d.draw();
+        ic.draw();
     }
 
     if(me.cfg.closepopup) {
@@ -607,15 +586,15 @@ iCn3DUI.prototype.renderFinalStep = function(steps) { var me = this; //"use stri
     }
 
     // an extra render to remove artifacts in transparent surface
-    if(me.bTransparentSurface && me.icn3d.bRender) me.icn3d.render();
+    if(me.bTransparentSurface && ic.bRender) ic.render();
 
     if(me.deferred !== undefined) me.deferred.resolve(); if(me.deferred2 !== undefined) me.deferred2.resolve();
 };
 
-iCn3DUI.prototype.applyCommandLoad = function (commandStr) { var me = this; //"use strict";
+iCn3DUI.prototype.applyCommandLoad = function (commandStr) { var me = this, ic = me.icn3d; "use strict";
   //me.bCommandLoad = true;
 
-  if(me.icn3d.atoms !== undefined && Object.keys(me.icn3d.atoms).length > 0) return;
+  if(ic.atoms !== undefined && Object.keys(ic.atoms).length > 0) return;
 
   // chain functions together
   me.deferred2 = $.Deferred(function() {
@@ -699,7 +678,7 @@ iCn3DUI.prototype.applyCommandLoad = function (commandStr) { var me = this; //"u
   return me.deferred2.promise();
 };
 
-iCn3DUI.prototype.applyCommandMap = function (command) { var me = this; //"use strict";
+iCn3DUI.prototype.applyCommandMap = function (command) { var me = this, ic = me.icn3d; "use strict";
   // chain functions together
   me.deferredMap = $.Deferred(function() {
       //"set map 2fofc sigma 1.5"
@@ -725,7 +704,7 @@ iCn3DUI.prototype.applyCommandMap = function (command) { var me = this; //"use s
   return me.deferredMap.promise();
 };
 
-iCn3DUI.prototype.applyCommandEmmap = function (command) { var me = this; //"use strict";
+iCn3DUI.prototype.applyCommandEmmap = function (command) { var me = this, ic = me.icn3d; "use strict";
   // chain functions together
   me.deferredEmmap = $.Deferred(function() {
       var str = command.substr(10);
@@ -733,7 +712,7 @@ iCn3DUI.prototype.applyCommandEmmap = function (command) { var me = this; //"use
 
       if(paraArray.length == 2 && paraArray[0] == 'percentage') {
            if(iCn3DUI.prototype.DensityCifParser === undefined) {
-               var url = "https://www.ncbi.nlm.nih.gov/Structure/icn3d/density_cif_parser.min.js";
+               var url = "https://www.ncbi.nlm.nih.gov/Structure/icn3d/script/density_cif_parser.min.js";
                $.ajax({
                   url: url,
                   dataType: "script",
@@ -744,7 +723,7 @@ iCn3DUI.prototype.applyCommandEmmap = function (command) { var me = this; //"use
                       var percentage = paraArray[1];
                       var type = 'em';
 
-                      me.DensityCifParser(me.inputid, type, percentage, me.icn3d.emd);
+                      me.DensityCifParser(me.inputid, type, percentage, ic.emd);
                   },
                   error : function(xhr, textStatus, errorThrown ) {
                     this.tryCount++;
@@ -761,7 +740,7 @@ iCn3DUI.prototype.applyCommandEmmap = function (command) { var me = this; //"use
               var percentage = paraArray[1];
               var type = 'em';
 
-              me.DensityCifParser(me.inputid, type, percentage, me.icn3d.emd);
+              me.DensityCifParser(me.inputid, type, percentage, ic.emd);
            }
       }
   }); // end of me.deferred = $.Deferred(function() {
@@ -769,11 +748,11 @@ iCn3DUI.prototype.applyCommandEmmap = function (command) { var me = this; //"use
   return me.deferredEmmap.promise();
 };
 
-iCn3DUI.prototype.applyCommandSymmetryBase = function (command) { var me = this; //"use strict";
-    me.retrieveSymmetry(Object.keys(me.icn3d.structures)[0])
+iCn3DUI.prototype.applyCommandSymmetryBase = function (command) { var me = this, ic = me.icn3d; "use strict";
+    me.retrieveSymmetry(Object.keys(ic.structures)[0])
 };
 
-iCn3DUI.prototype.applyCommandSymmetry = function (command) { var me = this; //"use strict";
+iCn3DUI.prototype.applyCommandSymmetry = function (command) { var me = this, ic = me.icn3d; "use strict";
   // chain functions together
   me.deferredSymmetry = $.Deferred(function() {
      me.applyCommandSymmetryBase(command);
@@ -782,11 +761,11 @@ iCn3DUI.prototype.applyCommandSymmetry = function (command) { var me = this; //"
   return me.deferredSymmetry.promise();
 };
 
-iCn3DUI.prototype.applyCommandRealignBase = function (command) { var me = this; //"use strict";
+iCn3DUI.prototype.applyCommandRealignBase = function (command) { var me = this, ic = me.icn3d; "use strict";
     me.realignOnSeqAlign();
 };
 
-iCn3DUI.prototype.applyCommandRealign = function (command) { var me = this; //"use strict";
+iCn3DUI.prototype.applyCommandRealign = function (command) { var me = this, ic = me.icn3d; "use strict";
   // chain functions together
   me.deferredRealign = new $.Deferred(function() {
      me.applyCommandRealignBase(command);
@@ -795,7 +774,7 @@ iCn3DUI.prototype.applyCommandRealign = function (command) { var me = this; //"u
   return me.deferredRealign.promise();
 };
 
-iCn3DUI.prototype.applyCommandGraphinteractionBase = function (command) { var me = this; //"use strict";
+iCn3DUI.prototype.applyCommandGraphinteractionBase = function (command) { var me = this, ic = me.icn3d; "use strict";
     var paraArray = command.split(' | ');
     if(paraArray.length >= 3) {
         var setNameArray = paraArray[1].split(' ');
@@ -822,7 +801,7 @@ iCn3DUI.prototype.applyCommandGraphinteractionBase = function (command) { var me
     }
 };
 
-iCn3DUI.prototype.applyCommandGraphinteraction = function (command) { var me = this; //"use strict";
+iCn3DUI.prototype.applyCommandGraphinteraction = function (command) { var me = this, ic = me.icn3d; "use strict";
   // chain functions together
   me.deferredGraphinteraction = $.Deferred(function() {
      me.applyCommandGraphinteractionBase(command);
@@ -831,84 +810,81 @@ iCn3DUI.prototype.applyCommandGraphinteraction = function (command) { var me = t
   return me.deferredGraphinteraction.promise();
 };
 
-iCn3DUI.prototype.getAxisColor = function (symbol, order) { var me = this; //"use strict";
+iCn3DUI.prototype.getAxisColor = function (symbol, order) { var me = this, ic = me.icn3d; "use strict";
     var type = symbol.substr(0, 1);
 
     //https://www.rcsb.org/pages/help/viewers/jmol_symmetry_view
     if(type == 'C') { // Cyclic Cn
-        return new THREE.Color(0xFF0000); // red
+        return ic.thr(0xFF0000); // red
     }
     else if(type == 'D') { // Dihedral Dn
         if(order == 2) {
-            return new THREE.Color(0x00FFFF); // cyan
+            return ic.thr(0x00FFFF); // cyan
         }
         else {
-            return new THREE.Color(0xFF0000); // red
+            return ic.thr(0xFF0000); // red
         }
     }
     else if(type == 'T') { // Tetrahedral T
         if(order == 2) {
-            return new THREE.Color(0x00FFFF); // cyan
+            return ic.thr(0x00FFFF); // cyan
         }
         else {
-            return new THREE.Color(0x00FF00); // green
+            return ic.thr(0x00FF00); // green
         }
     }
     else if(type == 'O') { // Octahedral O
         if(order == 2) {
-            return new THREE.Color(0x00FFFF); // cyan
+            return ic.thr(0x00FFFF); // cyan
         }
         else if(order == 3) {
-            return new THREE.Color(0x00FF00); // green
+            return ic.thr(0x00FF00); // green
         }
         else {
-            return new THREE.Color(0xFF0000); // red
+            return ic.thr(0xFF0000); // red
         }
     }
     else if(type == 'I') { // Icosahedral I
         if(order == 2) {
-            return new THREE.Color(0x00FFFF); // cyan
+            return ic.thr(0x00FFFF); // cyan
         }
         else if(order == 3) {
-            return new THREE.Color(0x00FF00); // green
+            return ic.thr(0x00FF00); // green
         }
         else {
-            return new THREE.Color(0xFF0000); // red
+            return ic.thr(0xFF0000); // red
         }
     }
     else { // Helical H, etc
-        return new THREE.Color(0xFF0000); // red
+        return ic.thr(0xFF0000); // red
     }
 };
 
-iCn3DUI.prototype.getPolygonColor = function (symbol) { var me = this; //"use strict";
+iCn3DUI.prototype.getPolygonColor = function (symbol) { var me = this, ic = me.icn3d; "use strict";
     var type = symbol.substr(0, 1);
 
     //https://www.rcsb.org/pages/help/viewers/jmol_symmetry_view
     if(type == 'C') { // Cyclic Cn
-        return new THREE.Color(0xFF8C00); // dark orange
+        return ic.thr(0xFF8C00); // dark orange
     }
     else if(type == 'D') { // Dihedral Dn
-        return new THREE.Color(0x00FFFF); // cyan
+        return ic.thr(0x00FFFF); // cyan
     }
     else if(type == 'T') { // Tetrahedral T
-        return new THREE.Color(0xEE82EE); //0x800080); // purple
+        return ic.thr(0xEE82EE); //0x800080); // purple
     }
     else if(type == 'O') { // Octahedral O
-        return new THREE.Color(0xFFA500); // orange
+        return ic.thr(0xFFA500); // orange
     }
     else if(type == 'I') { // Icosahedral I
-        return new THREE.Color(0x00FF00); // green
+        return ic.thr(0x00FF00); // green
     }
     else { // Helical H, etc
-        return new THREE.Color(0xA9A9A9); // dark grey
+        return ic.thr(0xA9A9A9); // dark grey
     }
 };
 
-iCn3DUI.prototype.retrieveSymmetry = function (pdbid) { var me = this; //"use strict";
-   //var url = "https://rest.rcsb.org/rest/structures/3dview/" + pdbid;
-   //var url = "https://data-beta.rcsb.org/rest/v3/core/assembly/" + pdbid + "/1";
-   //var url = "https://data-beta.rcsb.org/rest/v1/core/assembly/" + pdbid + "/1";
+iCn3DUI.prototype.retrieveSymmetry = function (pdbid) { var me = this, ic = me.icn3d; "use strict";
    var url = "https://data.rcsb.org/rest/v1/core/assembly/" + pdbid + "/1";
 
    $.ajax({
@@ -919,15 +895,16 @@ iCn3DUI.prototype.retrieveSymmetry = function (pdbid) { var me = this; //"use st
       retryLimit : 1,
       success: function(data) {
           var symmetryArray = data.rcsb_struct_symmetry;
+          var rot, centerFrom, centerTo;
 
           if(symmetryArray !== undefined) {
-              if(me.icn3d.rmsd_supr !== undefined && me.icn3d.rmsd_supr.rot !== undefined) {
-                  var rot = me.icn3d.rmsd_supr.rot;
-                  var centerFrom = me.icn3d.rmsd_supr.trans1;
-                  var centerTo = me.icn3d.rmsd_supr.trans2;
+              if(ic.rmsd_supr !== undefined && ic.rmsd_supr.rot !== undefined) {
+                  rot = ic.rmsd_supr.rot;
+                  centerFrom = ic.rmsd_supr.trans1;
+                  centerTo = ic.rmsd_supr.trans2;
               }
 
-              me.icn3d.symmetryHash = {};
+              ic.symmetryHash = {};
               for(var i = 0, il = symmetryArray.length; i < il; ++i) {
                   if(symmetryArray[i].symbol == 'C1') continue;
                   var title = 'no title';
@@ -949,9 +926,9 @@ iCn3DUI.prototype.retrieveSymmetry = function (pdbid) { var me = this; //"use st
                       var end = new THREE.Vector3(rotation_axes[j].end[0], rotation_axes[j].end[1], rotation_axes[j].end[2]);
 
                       // apply matrix for each atom
-                      if(me.icn3d.rmsd_supr !== undefined && me.icn3d.rmsd_supr.rot !== undefined) {
-                          start = me.icn3d.transformMemPro(start, rot, centerFrom, centerTo);
-                          end = me.icn3d.transformMemPro(end, rot, centerFrom, centerTo);
+                      if(ic.rmsd_supr !== undefined && ic.rmsd_supr.rot !== undefined) {
+                          start = ic.transformMemPro(start, rot, centerFrom, centerTo);
+                          end = ic.transformMemPro(end, rot, centerFrom, centerTo);
                       }
 
                       tmpArray.push(start);
@@ -971,15 +948,15 @@ iCn3DUI.prototype.retrieveSymmetry = function (pdbid) { var me = this; //"use st
                       axesArray.push(tmpArray);
                   }
 
-                  me.icn3d.symmetryHash[title] = axesArray;
+                  ic.symmetryHash[title] = axesArray;
               }
 
-              if(Object.keys(me.icn3d.symmetryHash).length == 0) {
+              if(Object.keys(ic.symmetryHash).length == 0) {
                   $("#" + me.pre + "dl_symmetry").html("<br>This structure has no symmetry.");
               }
               else {
                   var html = "<option value='none'>None</option>", index = 0;
-                  for(var title in me.icn3d.symmetryHash) {
+                  for(var title in ic.symmetryHash) {
                       var selected = (index == 0) ? 'selected' : '';
                       html += "<option value=" + "'" + title + "' " + selected + ">" + title + "</option>";
                       ++index;
@@ -992,7 +969,7 @@ iCn3DUI.prototype.retrieveSymmetry = function (pdbid) { var me = this; //"use st
               $("#" + me.pre + "dl_symmetry").html("<br>This structure has no symmetry.");
           }
 
-          me.openDialog(me.pre + 'dl_symmetry', 'Symmetry');
+          me.openDlg('dl_symmetry', 'Symmetry');
 
           if(me.deferredSymmetry !== undefined) me.deferredSymmetry.resolve();
       },
@@ -1005,7 +982,7 @@ iCn3DUI.prototype.retrieveSymmetry = function (pdbid) { var me = this; //"use st
         }
         $("#" + me.pre + "dl_symmetry").html("<br>This structure has no symmetry.");
 
-        me.openDialog(me.pre + 'dl_symmetry', 'Symmetry');
+        me.openDlg('dl_symmetry', 'Symmetry');
 
         if(me.deferredSymmetry !== undefined) me.deferredSymmetry.resolve();
         return;
@@ -1013,7 +990,7 @@ iCn3DUI.prototype.retrieveSymmetry = function (pdbid) { var me = this; //"use st
    });
 };
 
-iCn3DUI.prototype.applyCommandAnnotationsAndCddSiteBase = function (command) { var me = this; //"use strict";
+iCn3DUI.prototype.applyCommandAnnotationsAndCddSiteBase = function (command) { var me = this, ic = me.icn3d; "use strict";
   // chain functions together
       if(command == "view annotations") {
           //if(me.cfg.showanno === undefined || !me.cfg.showanno) {
@@ -1022,7 +999,7 @@ iCn3DUI.prototype.applyCommandAnnotationsAndCddSiteBase = function (command) { v
       }
 };
 
-iCn3DUI.prototype.applyCommandAnnotationsAndCddSite = function (command) { var me = this; //"use strict";
+iCn3DUI.prototype.applyCommandAnnotationsAndCddSite = function (command) { var me = this, ic = me.icn3d; "use strict";
   // chain functions together
   me.deferredAnnoCddSite = $.Deferred(function() {
       me.applyCommandAnnotationsAndCddSiteBase(command);
@@ -1031,7 +1008,7 @@ iCn3DUI.prototype.applyCommandAnnotationsAndCddSite = function (command) { var m
   return me.deferredAnnoCddSite.promise();
 };
 
-iCn3DUI.prototype.applyCommandClinvarBase = function (command) { var me = this; //"use strict";
+iCn3DUI.prototype.applyCommandClinvarBase = function (command) { var me = this, ic = me.icn3d; "use strict";
   // chain functions together
       var pos = command.lastIndexOf(' '); // set annotation clinvar
       var type = command.substr(pos + 1);
@@ -1039,7 +1016,7 @@ iCn3DUI.prototype.applyCommandClinvarBase = function (command) { var me = this; 
       me.setAnnoTabClinvar();
 };
 
-iCn3DUI.prototype.applyCommandSnpBase = function (command) { var me = this; //"use strict";
+iCn3DUI.prototype.applyCommandSnpBase = function (command) { var me = this, ic = me.icn3d; "use strict";
   // chain functions together
       var pos = command.lastIndexOf(' '); // set annotation clinvar
       var type = command.substr(pos + 1);
@@ -1047,7 +1024,7 @@ iCn3DUI.prototype.applyCommandSnpBase = function (command) { var me = this; //"u
       me.setAnnoTabSnp();
 };
 
-iCn3DUI.prototype.applyCommandClinvar = function (command) { var me = this; //"use strict";
+iCn3DUI.prototype.applyCommandClinvar = function (command) { var me = this, ic = me.icn3d; "use strict";
   // chain functions together
   me.deferredClinvar = $.Deferred(function() {
       me.applyCommandClinvarBase(command);
@@ -1056,7 +1033,7 @@ iCn3DUI.prototype.applyCommandClinvar = function (command) { var me = this; //"u
   return me.deferredClinvar.promise();
 };
 
-iCn3DUI.prototype.applyCommandSnp = function (command) { var me = this; //"use strict";
+iCn3DUI.prototype.applyCommandSnp = function (command) { var me = this, ic = me.icn3d; "use strict";
   // chain functions together
   me.deferredSnp = $.Deferred(function() {
       me.applyCommandSnpBase(command);
@@ -1065,7 +1042,7 @@ iCn3DUI.prototype.applyCommandSnp = function (command) { var me = this; //"use s
   return me.deferredSnp.promise();
 };
 
-iCn3DUI.prototype.applyCommand3ddomainBase = function (command) { var me = this; //"use strict";
+iCn3DUI.prototype.applyCommand3ddomainBase = function (command) { var me = this, ic = me.icn3d; "use strict";
   // chain functions together
       var pos = command.lastIndexOf(' ');
       var type = command.substr(pos + 1);
@@ -1075,7 +1052,7 @@ iCn3DUI.prototype.applyCommand3ddomainBase = function (command) { var me = this;
       }
 };
 
-iCn3DUI.prototype.applyCommand3ddomain = function (command) { var me = this; //"use strict";
+iCn3DUI.prototype.applyCommand3ddomain = function (command) { var me = this, ic = me.icn3d; "use strict";
   // chain functions together
   me.deferred3ddomain = $.Deferred(function() {
       me.applyCommand3ddomainBase(command);
@@ -1084,15 +1061,15 @@ iCn3DUI.prototype.applyCommand3ddomain = function (command) { var me = this; //"
   return me.deferred3ddomain.promise();
 };
 
-iCn3DUI.prototype.applyCommandViewinteractionBase = function (command) { var me = this; //"use strict";
+iCn3DUI.prototype.applyCommandViewinteractionBase = function (command) { var me = this, ic = me.icn3d; "use strict";
   // chain functions together
      if(me.cfg.align !== undefined || me.cfg.chainalign !== undefined) {
-         var structureArray = Object.keys(me.icn3d.structures);
+         var structureArray = Object.keys(ic.structures);
          me.set2DDiagramsForAlign(structureArray[0].toUpperCase(), structureArray[1].toUpperCase());
      }
 };
 
-iCn3DUI.prototype.applyCommandViewinteraction = function (command) { var me = this; //"use strict";
+iCn3DUI.prototype.applyCommandViewinteraction = function (command) { var me = this, ic = me.icn3d; "use strict";
   // chain functions together
   me.deferredViewinteraction = $.Deferred(function() {
      me.applyCommandViewinteractionBase(command);
@@ -1101,14 +1078,14 @@ iCn3DUI.prototype.applyCommandViewinteraction = function (command) { var me = th
   return me.deferredViewinteraction.promise();
 };
 
-iCn3DUI.prototype.getThresholdNameArrays = function (commandOri) { var me = this; //"use strict";
+iCn3DUI.prototype.getThresholdNameArrays = function (commandOri) { var me = this, ic = me.icn3d; "use strict";
     if(me.bSetChainsAdvancedMenu === undefined || !me.bSetChainsAdvancedMenu) {
-       var prevHAtoms = me.icn3d.cloneHash(me.icn3d.hAtoms);
+       var prevHAtoms = ic.cloneHash(ic.hAtoms);
 
        me.setPredefinedInMenu();
        me.bSetChainsAdvancedMenu = true;
 
-       me.icn3d.hAtoms = me.icn3d.cloneHash(prevHAtoms);
+       ic.hAtoms = ic.cloneHash(prevHAtoms);
     }
 
     var paraArray = commandOri.split(' | ');
@@ -1133,7 +1110,7 @@ iCn3DUI.prototype.getThresholdNameArrays = function (commandOri) { var me = this
     return {'threshold': threshold, 'nameArray2': nameArray2, 'nameArray': nameArray, 'bHbondCalc': bHbondCalc};
 };
 
-iCn3DUI.prototype.applyCommand = function (commandStr) { var me = this; //"use strict";
+iCn3DUI.prototype.applyCommand = function (commandStr) { var me = this, ic = me.icn3d; "use strict";
   me.bAddCommands = false;
 
   var commandTransformation = commandStr.split('|||');
@@ -1154,7 +1131,7 @@ iCn3DUI.prototype.applyCommand = function (commandStr) { var me = this; //"use s
     setTimeout(function(){
            //me.saveFile(file_pref + '_icn3d_loadable.png', 'png');
            var scaleStr = command.substr(13).trim();
-           me.icn3d.scaleFactor = (scaleStr === '') ? 1: parseInt(scaleStr);
+           ic.scaleFactor = (scaleStr === '') ? 1: parseInt(scaleStr);
            me.shareLink(true);
         }, 500);
   }
@@ -1163,57 +1140,35 @@ iCn3DUI.prototype.applyCommand = function (commandStr) { var me = this; //"use s
   }
   else if(command == 'export stl file') {
     setTimeout(function(){
-           //var text = me.saveStlFile();
-           //me.saveFile(file_pref + '.stl', 'binary', text);
-           //text = '';
-
            me.exportStlFile('');
         }, 500);
   }
   else if(command == 'export vrml file') {
     setTimeout(function(){
-           //var text = me.saveVrmlFile();
-           //me.saveFile(file_pref + '.wrl', 'text', text);
-           //text = '';
-
            me.exportVrmlFile('');
         }, 500);
   }
   else if(command == 'export stl stabilizer file') {
     setTimeout(function(){
-           //me.icn3d.bRender = false;
-
            me.hideStabilizer();
            me.resetAfter3Dprint();
            me.addStabilizer();
-
-           //var text = me.saveStlFile();
-
-           //me.saveFile(file_pref + '_stab.stl', 'binary', text);
-           //text = '';
 
            me.exportStlFile('_stab');
         }, 500);
   }
   else if(command == 'export vrml stabilizer file') {
     setTimeout(function(){
-           //me.icn3d.bRender = false;
-
            me.hideStabilizer();
            me.resetAfter3Dprint();
            me.addStabilizer();
-
-           //var text = me.saveVrmlFile();
-
-           //me.saveFile(file_pref + '_stab.wrl', 'text', text);
-           //text = '';
 
            me.exportVrmlFile('_stab');
         }, 500);
   }
   else if(command == 'select all') {
      me.selectAll();
-     //me.icn3d.addHlObjects();
+     //ic.addHlObjects();
   }
   else if(command == 'show all') {
      me.showAll();
@@ -1222,88 +1177,88 @@ iCn3DUI.prototype.applyCommand = function (commandStr) { var me = this; //"use s
      me.selectComplement();
   }
   else if(command == 'set pk atom') {
-    me.icn3d.pk = 1;
-    me.icn3d.opts['pk'] = 'atom';
+    ic.pk = 1;
+    ic.opts['pk'] = 'atom';
   }
   else if(command == 'set pk off') {
-    me.icn3d.pk = 0;
-    me.icn3d.opts['pk'] = 'no';
-    me.icn3d.draw();
-    me.icn3d.removeHlObjects();
+    ic.pk = 0;
+    ic.opts['pk'] = 'no';
+    ic.draw();
+    ic.removeHlObjects();
   }
   else if(command == 'set pk residue') {
-    me.icn3d.pk = 2;
-    me.icn3d.opts['pk'] = 'residue';
+    ic.pk = 2;
+    ic.opts['pk'] = 'residue';
   }
   else if(command == 'set pk strand') {
-    me.icn3d.pk = 3;
-    me.icn3d.opts['pk'] = 'strand';
+    ic.pk = 3;
+    ic.opts['pk'] = 'strand';
   }
   else if(command == 'set pk domain') {
-    me.icn3d.pk = 4;
-    me.icn3d.opts['pk'] = 'domain';
+    ic.pk = 4;
+    ic.opts['pk'] = 'domain';
   }
   else if(command == 'set pk chain') {
-    me.icn3d.pk = 5;
-    me.icn3d.opts['pk'] = 'chain';
+    ic.pk = 5;
+    ic.opts['pk'] = 'chain';
   }
   else if(command == 'set surface wireframe on') {
-    me.icn3d.opts['wireframe'] = 'yes';
-    me.icn3d.applySurfaceOptions();
+    ic.opts['wireframe'] = 'yes';
+    ic.applySurfaceOptions();
   }
   else if(command == 'set surface wireframe off') {
-    me.icn3d.opts['wireframe'] = 'no';
-    me.icn3d.applySurfaceOptions();
+    ic.opts['wireframe'] = 'no';
+    ic.applySurfaceOptions();
   }
   else if(command == 'set map wireframe on') {
-    me.icn3d.opts['mapwireframe'] = 'yes';
-    me.icn3d.applyMapOptions();
+    ic.opts['mapwireframe'] = 'yes';
+    ic.applyMapOptions();
   }
   else if(command == 'set map wireframe off') {
-    me.icn3d.opts['mapwireframe'] = 'no';
-    me.icn3d.applyMapOptions();
+    ic.opts['mapwireframe'] = 'no';
+    ic.applyMapOptions();
   }
   else if(command == 'set emmap wireframe on') {
-    me.icn3d.opts['emmapwireframe'] = 'yes';
-    me.icn3d.applyEmmapOptions();
+    ic.opts['emmapwireframe'] = 'yes';
+    ic.applyEmmapOptions();
   }
   else if(command == 'set emmap wireframe off') {
-    me.icn3d.opts['emmapwireframe'] = 'no';
-    me.icn3d.applyEmmapOptions();
+    ic.opts['emmapwireframe'] = 'no';
+    ic.applyEmmapOptions();
   }
   else if(command == 'set surface neighbors on') {
-    me.icn3d.bConsiderNeighbors = true;
-    me.icn3d.applySurfaceOptions();
+    ic.bConsiderNeighbors = true;
+    ic.applySurfaceOptions();
   }
   else if(command == 'set surface neighbors off') {
-    me.icn3d.bConsiderNeighbors = false;
-    me.icn3d.applySurfaceOptions();
+    ic.bConsiderNeighbors = false;
+    ic.applySurfaceOptions();
   }
   else if(command == 'set axis on') {
-    me.icn3d.opts['axis'] = 'yes';
+    ic.opts['axis'] = 'yes';
   }
   else if(command == 'set axis off') {
-    me.icn3d.opts['axis'] = 'no';
+    ic.opts['axis'] = 'no';
   }
   else if(command == 'set fog on') {
-    me.icn3d.opts['fog'] = 'yes';
-    me.icn3d.setFog(true);
+    ic.opts['fog'] = 'yes';
+    ic.setFog(true);
   }
   else if(command == 'set fog off') {
-    me.icn3d.opts['fog'] = 'no';
-    me.icn3d.setFog(true);
+    ic.opts['fog'] = 'no';
+    ic.setFog(true);
   }
   else if(command == 'set slab on') {
-    me.icn3d.opts['slab'] = 'yes';
+    ic.opts['slab'] = 'yes';
   }
   else if(command == 'set slab off') {
-    me.icn3d.opts['slab'] = 'no';
+    ic.opts['slab'] = 'no';
   }
   else if(command == 'set assembly on') {
-    me.icn3d.bAssembly = true;
+    ic.bAssembly = true;
   }
   else if(command == 'set assembly off') {
-    me.icn3d.bAssembly = false;
+    ic.bAssembly = false;
   }
   else if(command == 'set chemicalbinding show') {
     me.setOption('chemicalbinding', 'show');
@@ -1312,63 +1267,63 @@ iCn3DUI.prototype.applyCommand = function (commandStr) { var me = this; //"use s
     me.setOption('chemicalbinding', 'hide');
   }
   else if(command == 'set hbonds off') {
-    me.icn3d.hideHbonds();
-    me.icn3d.draw();
+    ic.hideHbonds();
+    ic.draw();
   }
   else if(command == 'set salt bridge off') {
-    me.icn3d.hideSaltbridge();
-    me.icn3d.draw();
+    ic.hideSaltbridge();
+    ic.draw();
   }
   else if(command == 'set contact off') {
-    me.icn3d.hideContact();
-    me.icn3d.draw();
+    ic.hideContact();
+    ic.draw();
   }
   else if(command == 'set halogen pi off') {
-    me.icn3d.hideHalogenPi();
-    me.icn3d.draw();
+    ic.hideHalogenPi();
+    ic.draw();
   }
 
   else if(command == 'hydrogens') {
     me.showHydrogens();
-    me.icn3d.draw();
+    ic.draw();
   }
   else if(command == 'set hydrogens off') {
     me.hideHydrogens();
-    me.icn3d.draw();
+    ic.draw();
   }
 
   else if(command == 'set stabilizer off') {
     me.hideStabilizer();
-    me.icn3d.draw();
+    ic.draw();
   }
   else if(command == 'set disulfide bonds off') {
-    me.icn3d.opts["ssbonds"] = "no";
-    me.icn3d.draw();
+    ic.opts["ssbonds"] = "no";
+    ic.draw();
   }
   else if(command == 'set cross linkage off') {
-    //me.icn3d.bShowCrossResidueBond = false;
+    //ic.bShowCrossResidueBond = false;
     //me.setStyle('proteins', 'ribbon');
 
-    me.icn3d.opts["clbonds"] = "no";
-    me.icn3d.draw();
+    ic.opts["clbonds"] = "no";
+    ic.draw();
   }
   else if(command == 'set lines off') {
-    me.icn3d.labels['distance'] = [];
-    me.icn3d.lines['distance'] = [];
+    ic.labels['distance'] = [];
+    ic.lines['distance'] = [];
 
-    me.icn3d.draw();
+    ic.draw();
   }
   else if(command == 'set labels off') {
-    //me.icn3d.labels['residue'] = [];
-    //me.icn3d.labels['custom'] = [];
+    //ic.labels['residue'] = [];
+    //ic.labels['custom'] = [];
 
-    for(var name in me.icn3d.labels) {
+    for(var name in ic.labels) {
        //if(name === 'residue' || name === 'custom') {
-           me.icn3d.labels[name] = [];
+           ic.labels[name] = [];
        //}
     }
 
-    me.icn3d.draw();
+    ic.draw();
   }
   else if(command == 'set mode all') {
      me.setModeAndDisplay('all');
@@ -1382,37 +1337,6 @@ iCn3DUI.prototype.applyCommand = function (commandStr) { var me = this; //"use s
   else if(command == 'set view overview') {
      me.setAnnoViewAndDisplay('overview');
   }
-/*
-  else if(command.indexOf('set annotation') == 0) {
-      var pos = command.lastIndexOf(' ');
-      var type = command.substr(pos + 1);
-
-      if(type == 'all') {
-          me.setAnnoTabAll();
-      }
-      else if(type == 'custom') {
-          me.setAnnoTabCustom();
-      }
-      else if(type == 'clinvar') {
-          me.setAnnoTabClinvar();
-      }
-      else if(type == 'snp') {
-          me.setAnnoTabSnp();
-      }
-      else if(type == 'cdd') {
-          me.setAnnoTabCdd();
-      }
-      else if(type == '3ddomain') {
-          me.setAnnoTab3ddomain();
-      }
-      else if(type == 'site') {
-          me.setAnnoTabSite();
-      }
-      else if(type == 'interaction') {
-          me.setAnnoTabInteraction();
-      }
-  }
-*/
   else if(command == 'set annotation custom') {
       me.setAnnoTabCustom();
   }
@@ -1479,50 +1403,50 @@ iCn3DUI.prototype.applyCommand = function (commandStr) { var me = this; //"use s
       }
   }
   else if(command == 'add residue labels') {
-    me.icn3d.addResiudeLabels(me.icn3d.hAtoms);
+    ic.addResiudeLabels(ic.hAtoms);
 
-    me.icn3d.draw();
+    ic.draw();
   }
   else if(command == 'add residue number labels') {
-    me.icn3d.addResiudeLabels(me.icn3d.hAtoms, undefined, undefined, true);
+    ic.addResiudeLabels(ic.hAtoms, undefined, undefined, true);
 
-    me.icn3d.draw();
+    ic.draw();
   }
   else if(command == 'add atom labels') {
-    me.icn3d.addAtomLabels(me.icn3d.hAtoms);
+    ic.addAtomLabels(ic.hAtoms);
 
-    me.icn3d.draw();
+    ic.draw();
   }
   else if(command == 'add chain labels') {
-    me.addChainLabels(me.icn3d.hAtoms);
+    me.addChainLabels(ic.hAtoms);
 
-    me.icn3d.draw();
+    ic.draw();
   }
   else if(command == 'add terminal labels') {
-    me.addTerminiLabels(me.icn3d.hAtoms);
+    me.addTerminiLabels(ic.hAtoms);
 
-    me.icn3d.draw();
+    ic.draw();
   }
   else if(command == 'rotate left') {
-     me.icn3d.bStopRotate = false;
+     ic.bStopRotate = false;
      me.ROT_DIR = 'left';
 
      me.rotStruc('left');
   }
   else if(command == 'rotate right') {
-     me.icn3d.bStopRotate = false;
+     ic.bStopRotate = false;
      me.ROT_DIR = 'right';
 
      me.rotStruc('right');
   }
   else if(command == 'rotate up') {
-     me.icn3d.bStopRotate = false;
+     ic.bStopRotate = false;
      me.ROT_DIR = 'up';
 
      me.rotStruc('up');
   }
   else if(command == 'rotate down') {
-     me.icn3d.bStopRotate = false;
+     ic.bStopRotate = false;
      me.ROT_DIR = 'down';
 
      me.rotStruc('down');
@@ -1531,45 +1455,45 @@ iCn3DUI.prototype.applyCommand = function (commandStr) { var me = this; //"use s
       var axis = new THREE.Vector3(1,0,0);
       var angle = 0.5 * Math.PI;
 
-      me.icn3d.setRotation(axis, angle);
+      ic.setRotation(axis, angle);
   }
   else if(command == 'rotate y') {
       var axis = new THREE.Vector3(0,1,0);
       var angle = 0.5 * Math.PI;
 
-      me.icn3d.setRotation(axis, angle);
+      ic.setRotation(axis, angle);
   }
   else if(command == 'rotate z') {
       var axis = new THREE.Vector3(0,0,1);
       var angle = 0.5 * Math.PI;
 
-      me.icn3d.setRotation(axis, angle);
+      ic.setRotation(axis, angle);
   }
   else if(command === 'reset') {
       me.resetAll();
   }
   else if(command === 'reset orientation') {
-    me.icn3d.resetOrientation();
-    me.icn3d.draw();
+    ic.resetOrientation();
+    ic.draw();
   }
   else if(command == 'reset thickness') {
     me.resetAfter3Dprint();
-    me.icn3d.draw();
+    ic.draw();
   }
   else if(command == 'clear selection') {
-    me.icn3d.removeHlObjects();
+    ic.removeHlObjects();
     me.removeHl2D();
-    me.icn3d.bShowHighlight = false;
+    ic.bShowHighlight = false;
 
     me.bSelectResidue = false;
   }
   else if(command == 'zoom selection') {
-    me.icn3d.zoominSelection();
-    me.icn3d.draw();
+    ic.zoominSelection();
+    ic.draw();
   }
   else if(command == 'center selection') {
-    me.icn3d.centerSelection();
-    me.icn3d.draw();
+    ic.centerSelection();
+    ic.draw();
   }
   else if(command == 'show selection') {
     me.showSelection();
@@ -1585,30 +1509,17 @@ iCn3DUI.prototype.applyCommand = function (commandStr) { var me = this; //"use s
   }
   else if(command == 'toggle highlight') {
     me.toggleHighlight();
-/*
-    if(me.icn3d.prevHighlightObjects.length > 0 || me.icn3d.prevHighlightObjects_ghost.length > 0) { // remove
-        me.icn3d.removeHlObjects();
-        me.icn3d.bShowHighlight = false;
-    }
-    else { // add
-        me.icn3d.addHlObjects();
-        me.icn3d.bShowHighlight = true;
-    }
-*/
   }
   else if(command == 'stabilizer') {
     me.addStabilizer();
 
     me.prepareFor3Dprint();
-    //me.icn3d.draw();
+    //ic.draw();
   }
   else if(command == 'disulfide bonds') {
     me.showSsbonds();
   }
   else if(command == 'cross linkage') {
-    //me.icn3d.bShowCrossResidueBond = true;
-    //me.setStyle('proteins', 'lines');
-
     me.showClbonds();
   }
   else if(command == 'back') {
@@ -1630,16 +1541,7 @@ iCn3DUI.prototype.applyCommand = function (commandStr) { var me = this; //"use s
      if(me.cfg.mmdbid !== undefined || me.cfg.gi !== undefined) {
          me.set2DDiagrams(me.inputid);
      }
-     //else if(me.cfg.align !== undefined) {
-     //    var structureArray = Object.keys(me.icn3d.structures);
-     //    me.set2DDiagramsForAlign(structureArray[0].toUpperCase(), structureArray[1].toUpperCase());
-     //}
   }
-//      else if(command == 'view annotations') {
-//          if(me.cfg.showanno === undefined || !me.cfg.showanno) { // previously done the following call
-//              me.showAnnotations();
-//          }
-//      }
   else if(command == 'show annotations all chains') {
      me.showAnnoAllChains();
   }
@@ -1751,34 +1653,28 @@ iCn3DUI.prototype.applyCommand = function (commandStr) { var me = this; //"use s
   }
   else if(command.indexOf('set surface opacity') == 0) {
     var value = command.substr(command.lastIndexOf(' ') + 1);
-    me.icn3d.opts['opacity'] = parseFloat(value);
-    me.icn3d.applySurfaceOptions();
+    ic.opts['opacity'] = parseFloat(value);
+    ic.applySurfaceOptions();
 
     if(parseInt(100*value) < 100) me.bTransparentSurface = true;
   }
   else if(command.indexOf('set label scale') == 0) {
     var value = command.substr(command.lastIndexOf(' ') + 1);
-    me.icn3d.labelScale = parseFloat(value);
+    ic.labelScale = parseFloat(value);
   }
   else if(command.indexOf('set surface') == 0) {
     var value = command.substr(12);
 
-    me.icn3d.opts['surface'] = value;
-    me.icn3d.applySurfaceOptions();
+    ic.opts['surface'] = value;
+    ic.applySurfaceOptions();
   }
-//  else if(command.indexOf('set map') == 0) {
-//    var value = command.substr(8);
-
-//    me.icn3d.opts['map'] = value;
-//    me.icn3d.applyMapOptions();
-//  }
   else if(command.indexOf('set camera') == 0) {
     var value = command.substr(command.lastIndexOf(' ') + 1);
-    me.icn3d.opts['camera'] = value;
+    ic.opts['camera'] = value;
   }
   else if(command.indexOf('set background') == 0) {
     var value = command.substr(command.lastIndexOf(' ') + 1);
-    me.icn3d.opts['background'] = value;
+    ic.opts['background'] = value;
 
     if(value == 'white' || value == 'grey') {
         $("#" + me.pre + "title").css("color", "black");
@@ -1800,46 +1696,46 @@ iCn3DUI.prototype.applyCommand = function (commandStr) { var me = this; //"use s
         var para = p1Array[0];
         var value = parseFloat(p1Array[1]);
 
-        if(para == 'linerad') me.icn3d.lineRadius = value;
-        if(para == 'coilrad') me.icn3d.coilWidth = value;
-        if(para == 'stickrad') me.icn3d.cylinderRadius = value;
-        if(para == 'tracerad') me.icn3d.traceRadius = value;
-        if(para == 'ballscale') me.icn3d.dotSphereScale = value;
+        if(para == 'linerad') ic.lineRadius = value;
+        if(para == 'coilrad') ic.coilWidth = value;
+        if(para == 'stickrad') ic.cylinderRadius = value;
+        if(para == 'tracerad') ic.traceRadius = value;
+        if(para == 'ballscale') ic.dotSphereScale = value;
 
-        if(para == 'ribbonthick') me.icn3d.ribbonthickness = value;
-        if(para == 'proteinwidth') me.icn3d.helixSheetWidth = value;
-        if(para == 'nucleotidewidth') me.icn3d.nucleicAcidWidth = value;
+        if(para == 'ribbonthick') ic.ribbonthickness = value;
+        if(para == 'proteinwidth') ic.helixSheetWidth = value;
+        if(para == 'nucleotidewidth') ic.nucleicAcidWidth = value;
 
-        me.icn3d.draw();
+        ic.draw();
     }
   }
   else if(command.indexOf('set highlight color') == 0) {
        var color = command.substr(20);
        if(color === 'yellow') {
-           me.icn3d.hColor = new THREE.Color(0xFFFF00);
-           me.icn3d.matShader = me.icn3d.setOutlineColor('yellow');
+           ic.hColor = ic.thr(0xFFFF00);
+           ic.matShader = ic.setOutlineColor('yellow');
        }
        else if(color === 'green') {
-           me.icn3d.hColor = new THREE.Color(0x00FF00);
-           me.icn3d.matShader = me.icn3d.setOutlineColor('green');
+           ic.hColor = ic.thr(0x00FF00);
+           ic.matShader = ic.setOutlineColor('green');
        }
        else if(color === 'red') {
-           me.icn3d.hColor = new THREE.Color(0xFF0000);
-           me.icn3d.matShader = me.icn3d.setOutlineColor('red');
+           ic.hColor = ic.thr(0xFF0000);
+           ic.matShader = ic.setOutlineColor('red');
        }
-       me.icn3d.draw(); // required to make it work properly
+       ic.draw(); // required to make it work properly
   }
   else if(command.indexOf('set highlight style') == 0) {
         var style = command.substr(20);
 
        if(style === 'outline') {
-           me.icn3d.bHighlight = 1;
+           ic.bHighlight = 1;
        }
        else if(style === '3d') {
-           me.icn3d.bHighlight = 2;
+           ic.bHighlight = 2;
        }
 
-       me.icn3d.draw();
+       ic.draw();
   }
   else if(command.indexOf('add line') == 0) {
     var paraArray = command.split(' | ');
@@ -1850,7 +1746,7 @@ iCn3DUI.prototype.applyCommand = function (commandStr) { var me = this; //"use s
     var type = paraArray[5].substr(paraArray[5].lastIndexOf(' ') + 1);
 
     me.addLine(parseFloat(p1Array[1]), parseFloat(p1Array[3]), parseFloat(p1Array[5]), parseFloat(p2Array[1]), parseFloat(p2Array[3]), parseFloat(p2Array[5]), color, dashed, type);
-    me.icn3d.draw();
+    ic.draw();
   }
   else if(commandOri.indexOf('add label') == 0) {
     var paraArray = commandOri.split(' | ');
@@ -1883,14 +1779,14 @@ iCn3DUI.prototype.applyCommand = function (commandStr) { var me = this; //"use s
     }
 
     if(!bPosition) {
-      var position = me.icn3d.centerAtoms(me.icn3d.hash2Atoms(me.icn3d.hAtoms));
+      var position = ic.centerAtoms(ic.hash2Atoms(ic.hAtoms));
       x = position.center.x;
       y = position.center.y;
       z = position.center.z;
     }
 
     me.addLabel(text, x,y,z, size, color, background, type);
-    me.icn3d.draw();
+    ic.draw();
   }
   else if(commandOri.indexOf('msa') == 0) {
       //"msa | " + JSON.stringify(me.targetGapHash)
@@ -1938,21 +1834,17 @@ iCn3DUI.prototype.applyCommand = function (commandStr) { var me = this; //"use s
 
     me.removeOneStabilizer(rmLineArray);
 
-    //me.updateStabilizer();
-
-    me.icn3d.draw();
+    ic.draw();
   }
   else if(command.indexOf('add one stabilizer') == 0) {
     var paraArray = command.split(' | ');
     var p1Array = paraArray[1].split(' ');
 
-     if(me.icn3d.pairArray === undefined) me.icn3d.pairArray = [];
-     me.icn3d.pairArray.push(parseInt(p1Array[0]));
-     me.icn3d.pairArray.push(parseInt(p1Array[1]));
+     if(ic.pairArray === undefined) ic.pairArray = [];
+     ic.pairArray.push(parseInt(p1Array[0]));
+     ic.pairArray.push(parseInt(p1Array[1]));
 
-     //me.updateStabilizer();
-
-     me.icn3d.draw();
+     ic.draw();
   }
   else if(command.indexOf('select planes z-axis') == 0) {
     var paraArray = command.split(' ');
@@ -1985,25 +1877,6 @@ iCn3DUI.prototype.applyCommand = function (commandStr) { var me = this; //"use s
         me.calcBuriedSurface(nameArray2, nameArray);
     }
   }
-/*
-  else if(commandOri.indexOf('display interaction 3d') == 0) {
-    var paraArray = commandOri.split(' | ');
-    if(paraArray.length >= 3) {
-        var setNameArray = paraArray[1].split(' ');
-        var nameArray2 = setNameArray[0].split(',');
-        var nameArray = setNameArray[1].split(',');
-
-        var interactionTypes = paraArray[2].split(',');
-
-        var bHbondCalc;
-        if(paraArray.length == 4) {
-            bHbondCalc = (paraArray[3] == 'true') ? true : false;
-        }
-
-        me.displayInteraction3d(nameArray2, nameArray, bHbondCalc, interactionTypes);
-    }
-  }
-*/
   else if(commandOri.indexOf('display interaction 3d') == 0
       || commandOri.indexOf('view interaction pairs') == 0
       || commandOri.indexOf('save1 interaction pairs') == 0
@@ -2044,34 +1917,6 @@ iCn3DUI.prototype.applyCommand = function (commandStr) { var me = this; //"use s
                    $("#" + me.pre + "pistackingthreshold").val(thresholdArray[6]);
                }
            }
-
-/*
-           var index = 1;
-           if(bHbond) {
-               $("#" + me.pre + "hbondthreshold").val(thresholdArray[index]);
-               index++;
-           }
-           if(bSaltbridge) {
-               $("#" + me.pre + "saltbridgethreshold").val(thresholdArray[index]);
-               index++;
-           }
-           if(bInteraction) {
-               $("#" + me.pre + "contactthreshold").val(thresholdArray[index]);
-               index++;
-           }
-           if(bHalogen) {
-               $("#" + me.pre + "halogenthreshold").val(thresholdArray[index]);
-               index++;
-           }
-           if(bPication) {
-               $("#" + me.pre + "picationthreshold").val(thresholdArray[index]);
-               index++;
-           }
-           if(bPistacking) {
-               $("#" + me.pre + "pistackingthreshold").val(thresholdArray[index]);
-               index++;
-           }
-*/
         }
 
         var type;
@@ -2122,18 +1967,6 @@ iCn3DUI.prototype.applyCommand = function (commandStr) { var me = this; //"use s
 
     $("#" + me.scatterplot).attr("width", (me.scatterplotWidth * parseFloat(scale)).toString() + "px");
   }
-/*
-  else if(command.indexOf('graph center') == 0) {
-    var pos = command.lastIndexOf(' ');
-    me.pushcenter = parseInt(command.substr(pos + 1));
-
-    $("#" + me.svgid + "_pushcenter").val(me.pushcenter);
-
-    if(me.graphStr !== undefined && me.icn3d.bRender) {
-       me.drawGraph(me.graphStr);
-    }
-  }
-*/
   else if(command.indexOf('graph force') == 0) {
     var pos = command.lastIndexOf(' ');
     me.force = parseInt(command.substr(pos + 1));
@@ -2159,7 +1992,7 @@ iCn3DUI.prototype.applyCommand = function (commandStr) { var me = this; //"use s
         me.ionicInsideColor = '8FF';
     }
 
-    if(me.graphStr !== undefined && me.icn3d.bRender && me.force) {
+    if(me.graphStr !== undefined && ic.bRender && me.force) {
        me.drawGraph(me.graphStr);
     }
   }
@@ -2180,9 +2013,9 @@ iCn3DUI.prototype.applyCommand = function (commandStr) { var me = this; //"use s
     document.title = me.yournote;
   }
   else if(command.indexOf('cross structure interaction') == 0) {
-    me.icn3d.crossstrucinter = parseInt(command.substr(command.lastIndexOf(' ') + 1));
+    ic.crossstrucinter = parseInt(command.substr(command.lastIndexOf(' ') + 1));
 
-    $("#" + me.pre + "crossstrucinter").val(me.icn3d.crossstrucinter);
+    $("#" + me.pre + "crossstrucinter").val(ic.crossstrucinter);
   }
   else if(command == 'replay on') {
     me.replayon();
@@ -2195,30 +2028,30 @@ iCn3DUI.prototype.applyCommand = function (commandStr) { var me = this; //"use s
   else if(command.indexOf('pickatom') == 0) {
     var atomid = parseInt(command.substr(command.lastIndexOf(' ') + 1));
 
-    me.icn3d.pAtom = me.icn3d.atoms[atomid];
+    ic.pAtom = ic.atoms[atomid];
 
-    me.icn3d.showPicking(me.icn3d.pAtom);
+    ic.showPicking(ic.pAtom);
   }
   else if(commandOri.indexOf('color') == 0) {
     var strArray = commandOri.split(" | ");
     var color = strArray[0].substr(strArray[0].indexOf(' ') + 1);
-    me.icn3d.opts['color'] = color;
+    ic.opts['color'] = color;
 
     if(color == "residue custom" && strArray.length == 2) {
-        me.icn3d.customResidueColors = JSON.parse(strArray[1]);
-        for(var res in me.icn3d.customResidueColors) {
-            me.icn3d.customResidueColors[res.toUpperCase()] = new THREE.Color("#" + me.icn3d.customResidueColors[res]);
+        ic.customResidueColors = JSON.parse(strArray[1]);
+        for(var res in ic.customResidueColors) {
+            ic.customResidueColors[res.toUpperCase()] = ic.thr("#" + ic.customResidueColors[res]);
         }
     }
     else if(color == "align custom" && strArray.length == 3) {
         var chainid = strArray[1];
         var resiScoreArray = strArray[2].split(', ');
-        me.icn3d.queryresi2score = {};
-        me.icn3d.queryresi2score[chainid] = {};
+        ic.queryresi2score = {};
+        ic.queryresi2score[chainid] = {};
         for(var i = 0, il = resiScoreArray.length; i < il; ++i) {
             var resi_score = resiScoreArray[i].split(' ');
 
-            me.icn3d.queryresi2score[chainid][resi_score[0]] = resi_score[1];
+            ic.queryresi2score[chainid][resi_score[0]] = resi_score[1];
         }
     }
     else if(color == "align custom" && strArray.length == 4) {
@@ -2226,11 +2059,11 @@ iCn3DUI.prototype.applyCommand = function (commandStr) { var me = this; //"use s
         me.setQueryresi2score(strArray);
     }
     else if(color == "area" && strArray.length == 2) {
-        me.icn3d.midpercent = strArray[1];
-        $("#" + me.pre + 'midpercent').val(me.icn3d.midpercent);
+        ic.midpercent = strArray[1];
+        $("#" + me.pre + 'midpercent').val(ic.midpercent);
     }
 
-    me.icn3d.setColorByOptions(me.icn3d.opts, me.icn3d.hAtoms);
+    ic.setColorByOptions(ic.opts, ic.hAtoms);
 
     me.updateHlAll();
 
@@ -2240,7 +2073,6 @@ iCn3DUI.prototype.applyCommand = function (commandStr) { var me = this; //"use s
   else if(commandOri.indexOf('custom tube') == 0) {
     var strArray = commandOri.split(" | ");
 
-    // me.setLogCmd('custom tube | ' + chainid + ' | range ' + start + '_' + end + ' | ' + resiScoreStr, true);
     me.setQueryresi2score(strArray);
 
     me.setStyle('proteins', 'custom tube');
@@ -2257,26 +2089,26 @@ iCn3DUI.prototype.applyCommand = function (commandStr) { var me = this; //"use s
     var secondPart = command.substr(command.indexOf(' ') + 1);
 
     if(secondPart == "aligned sequences") {
-        me.openDialog(me.pre + 'dl_alignment', 'Select residues in aligned sequences');
+        me.openDlg('dl_alignment', 'Select residues in aligned sequences');
     }
     else if(secondPart == "interaction table") {
-        me.openDialog(me.pre + 'dl_allinteraction', 'Show interactions');
+        me.openDlg('dl_allinteraction', 'Show interactions');
     }
     else if(secondPart == "interaction graph") {
-        me.openDialog(me.pre + 'dl_linegraph', 'Show interactions between two lines of residue nodes');
+        me.openDlg('dl_linegraph', 'Show interactions between two lines of residue nodes');
     }
     else if(secondPart == "interaction scatterplot") {
-        me.openDialog(me.pre + 'dl_scatterplot', 'Show interactions as scatterplot');
+        me.openDlg('dl_scatterplot', 'Show interactions as scatterplot');
     }
     else if(secondPart == "force-directed graph") {
-        me.openDialog(me.pre + 'dl_graph', 'Force-directed graph');
+        me.openDlg('dl_graph', 'Force-directed graph');
     }
   }
 
 // special, select ==========
 
   else if(command.indexOf('select displayed set') !== -1) {
-    me.icn3d.hAtoms = me.icn3d.cloneHash(me.icn3d.dAtoms);
+    ic.hAtoms = ic.cloneHash(ic.dAtoms);
     me.updateHlAll();
   }
   else if(command.indexOf('select prop') !== -1) {
@@ -2345,50 +2177,59 @@ iCn3DUI.prototype.applyCommand = function (commandStr) { var me = this; //"use s
   me.bAddCommands = true;
 };
 
-iCn3DUI.prototype.setQueryresi2score = function(strArray) { var me = this; //"use strict";
+iCn3DUI.prototype.setQueryresi2score = function(strArray) { var me = this, ic = me.icn3d; "use strict";
     var chainid = strArray[1];
     var start_end = strArray[2].split(' ')[1].split('_');
     var resiScoreStr = strArray[3]; // score 0-9
-    if(me.icn3d.queryresi2score === undefined) me.icn3d.queryresi2score = {};
-    //if(me.icn3d.queryresi2score[chainid] === undefined) me.icn3d.queryresi2score[chainid] = {};
-    me.icn3d.queryresi2score[chainid] = {};
+    if(ic.queryresi2score === undefined) ic.queryresi2score = {};
+    //if(ic.queryresi2score[chainid] === undefined) ic.queryresi2score[chainid] = {};
+    ic.queryresi2score[chainid] = {};
     var factor = 100 / 9;
     for(var resi = parseInt(start_end[0]), i = 0; resi <= parseInt(start_end[1]); ++resi, ++i) {
         if(resiScoreStr[i] != '_') {
-            me.icn3d.queryresi2score[chainid][resi] = parseInt(resiScoreStr[i]) * factor; // convert from 0-9 to 0-100
+            ic.queryresi2score[chainid][resi] = parseInt(resiScoreStr[i]) * factor; // convert from 0-9 to 0-100
         }
     }
 };
 
-iCn3DUI.prototype.getMenuFromCmd = function (cmd) { var me = this; //"use strict";
+iCn3DUI.prototype.getMenuFromCmd = function (cmd) { var me = this, ic = me.icn3d; "use strict";
     cmd = cmd.trim();
+
+    var seqAnnoStr = 'Windows > View Sequences & Annotations';
+    var hbondIntStr = 'View > H-Bonds & Interactions';
+    var forceStr = hbondIntStr + ' > 2D Graph (Force-Directed)';
+    var rotStr1 = 'View > Rotate > Auto Rotation > Rotate ';
+    var rotStr2 = 'View > Rotate > Rotate 90 deg > ';
+    var sel3dStr = 'Select > Select on 3D > ';
+    var labelStr = 'View > Label > ';
+    var printStr = 'File > 3D Printing > ';
 
     if(cmd.indexOf('load') == 0) return 'File > Retrieve by ID, Align';
     else if(cmd.indexOf('set map') == 0 && cmd.indexOf('set map wireframe') == -1) return 'Style > Electron Density';
     else if(cmd.indexOf('set emmap') == 0 && cmd.indexOf('set emmap wireframe') == -1) return 'Style > EM Density Map';
-    else if(cmd.indexOf('view annotations') == 0) return 'Windows > View Sequences & Annotations';
-    else if(cmd.indexOf('set annotation all') == 0) return 'Windows > Sequences & Annotations: "All" checkbox';
-    else if(cmd.indexOf('set annotation clinvar') == 0) return 'Windows > Sequences & Annotations: "ClinVar" checkbox';
-    else if(cmd.indexOf('set annotation snp') == 0) return 'Windows > Sequences & Annotations: "SNP" checkbox';
-    else if(cmd.indexOf('set annotation 3ddomain') == 0) return 'Windows > Sequences & Annotations: "3D Domains" checkbox';
+    else if(cmd.indexOf('view annotations') == 0) return seqAnnoStr;
+    else if(cmd.indexOf('set annotation all') == 0) return seqAnnoStr + ': "All" checkbox';
+    else if(cmd.indexOf('set annotation clinvar') == 0) return seqAnnoStr + ': "ClinVar" checkbox';
+    else if(cmd.indexOf('set annotation snp') == 0) return seqAnnoStr + ': "SNP" checkbox';
+    else if(cmd.indexOf('set annotation 3ddomain') == 0) return seqAnnoStr + ': "3D Domains" checkbox';
     else if(cmd.indexOf('view interactions') == 0) return 'Windows > View Interactions';
     else if(cmd.indexOf('symmetry') == 0) return 'View > Symmetry';
     else if(cmd.indexOf('realign on seq align') == 0) return 'File > Realign Selection > on Sequence Alignment';
     else if(cmd.indexOf('realign') == 0) return 'File > Realign Selection > Residue by Residue';
-    else if(cmd.indexOf('graph interaction pairs') == 0) return 'View > H-Bonds & Interactions > 2D Graph (Force-Directed)';
+    else if(cmd.indexOf('graph interaction pairs') == 0) return hbondIntStr + ' > 2D Graph (Force-Directed)';
     else if(cmd.indexOf('export canvas') == 0) return 'File > Save Files > iCn3D PNG Image';
-    else if(cmd == 'export stl file') return 'File > 3D Printing > STL';
-    else if(cmd == 'export vrml file') return 'File > 3D Printing > VRML (Color)';
-    else if(cmd == 'export stl stabilizer file') return 'File > 3D Printing > STL W/ Stabilizers';
-    else if(cmd == 'export vrml stabilizer file') return 'File > 3D Printing > VRML (Color, W/ Stabilizers)';
+    else if(cmd == 'export stl file') return printStr + 'STL';
+    else if(cmd == 'export vrml file') return printStr + 'VRML (Color)';
+    else if(cmd == 'export stl stabilizer file') return printStr + 'STL W/ Stabilizers';
+    else if(cmd == 'export vrml stabilizer file') return printStr + 'VRML (Color, W/ Stabilizers)';
     else if(cmd == 'select all') return 'Select > All; or Toggle to "All" (next to "Help")';
     else if(cmd == 'show all') return 'View > View Full Structure';
     else if(cmd == 'select complement') return 'Select > Inverse';
-    else if(cmd == 'set pk atom') return 'Select > Select on 3D > Atom';
-    else if(cmd == 'set pk residue') return 'Select > Select on 3D > Residue';
-    else if(cmd == 'set pk strand') return 'Select > Select on 3D > Strand/Helix';
-    else if(cmd == 'set pk domain') return 'Select > Select on 3D > 3D Domain';
-    else if(cmd == 'set pk chain') return 'Select > Select on 3D > Chain';
+    else if(cmd == 'set pk atom') return sel3dStr + 'Atom';
+    else if(cmd == 'set pk residue') return sel3dStr + 'Residue';
+    else if(cmd == 'set pk strand') return sel3dStr + 'Strand/Helix';
+    else if(cmd == 'set pk domain') return sel3dStr + '3D Domain';
+    else if(cmd == 'set pk chain') return sel3dStr + 'Chain';
     else if(cmd == 'set surface wireframe on') return 'Style > Surface Wireframe > Yes';
     else if(cmd == 'set surface wireframe off') return 'Style > Surface Wireframe > No';
     else if(cmd == 'set map wireframe on') return 'Style > Map Wireframe > Yes';
@@ -2405,10 +2246,10 @@ iCn3DUI.prototype.getMenuFromCmd = function (cmd) { var me = this; //"use strict
     else if(cmd == 'set slab off') return 'View > Slab for Selection > Off';
     else if(cmd == 'set assembly on') return 'View > Assembly > Biological Assembly';
     else if(cmd == 'set assembly off') return 'View > Assembly > Asymmetric Unit';
-    else if(cmd == 'set chemicalbinding show') return 'View CHem. Binding > Show';
-    else if(cmd == 'set chemicalbinding hide') return 'View CHem. Binding > Hide';
+    else if(cmd == 'set chemicalbinding show') return 'View Chem. Binding > Show';
+    else if(cmd == 'set chemicalbinding hide') return 'View Chem. Binding > Hide';
     else if(cmd == 'set hbonds off' || cmd == 'set salt bridge off' || cmd == 'set contact off'
-      || cmd == 'set halogen pi off') return 'View > H-Bonds & Interactions > Reset';
+      || cmd == 'set halogen pi off') return hbondIntStr + ' > Reset';
     else if(cmd == 'hydrogens') return 'Style > Hydrogens > Show';
     else if(cmd == 'set hydrogens off') return 'Style > Hydrogens > Hide';
     else if(cmd == 'set stabilizer off') return 'File > 3D Printing > Remove All Stabilizers';
@@ -2418,30 +2259,30 @@ iCn3DUI.prototype.getMenuFromCmd = function (cmd) { var me = this; //"use strict
     else if(cmd == 'set labels off') return 'View > Label > Remove';
     else if(cmd == 'set mode all') return 'Toggle to "All" (next to "Help")';
     else if(cmd == 'set mode selection') return 'Toggle to "Selection" (next to "Help")';
-    else if(cmd == 'set view detailed view') return 'Windows > Sequences & Annotations: "Details" tab';
-    else if(cmd== 'set view overview') return 'Windows > Sequences & Annotations: "Summary" tab';
-    else if(cmd == 'set annotation custom') return 'Windows > Sequences & Annotations: "Custom" checkbox';
-    else if(cmd == 'set annotation interaction') return 'Windows > Sequences & Annotations: "Interactions" checkbox';
-    else if(cmd == 'set annotation cdd') return 'Windows > Sequences & Annotations: "Conserved Domains" checkbox';
-    else if(cmd == 'set annotation site') return 'Windows > Sequences & Annotations: "Functional Sites" checkbox';
-    else if(cmd == 'set annotation ssbond') return 'Windows > Sequences & Annotations: "Disulfide Bonds" checkbox';
-    else if(cmd == 'set annotation crosslink') return 'Windows > Sequences & Annotations: "Cross-Linkages" checkbox';
-    else if(cmd == 'set annotation transmembrane') return 'Windows > Sequences & Annotations: "Transmembrane" checkbox';
+    else if(cmd == 'set view detailed view') return seqAnnoStr + ': "Details" tab';
+    else if(cmd== 'set view overview') return seqAnnoStr + ': "Summary" tab';
+    else if(cmd == 'set annotation custom') return seqAnnoStr + ': "Custom" checkbox';
+    else if(cmd == 'set annotation interaction') return seqAnnoStr + ': "Interactions" checkbox';
+    else if(cmd == 'set annotation cdd') return seqAnnoStr + ': "Conserved Domains" checkbox';
+    else if(cmd == 'set annotation site') return seqAnnoStr + ': "Functional Sites" checkbox';
+    else if(cmd == 'set annotation ssbond') return seqAnnoStr + ': "Disulfide Bonds" checkbox';
+    else if(cmd == 'set annotation crosslink') return seqAnnoStr + ': "Cross-Linkages" checkbox';
+    else if(cmd == 'set annotation transmembrane') return seqAnnoStr + ': "Transmembrane" checkbox';
     else if(cmd == 'highlight level up') return 'Keyboard Arrow Up';
     else if(cmd == 'highlight level down') return 'Keyboard Arrow Down';
-    else if(cmd.indexOf('hide annotation') == 0) return 'Windows > Sequences & Annotations: checkboxes off';
-    else if(cmd == 'add residue labels') return 'View > Label > per Residue';
-    else if(cmd == 'add residue number labels') return 'View > Label > per Residue & Number';
-    else if(cmd == 'add atom labels') return 'View > Label > per Atom';
-    else if(cmd == 'add chain labels') return 'View > Label > per Chain';
-    else if(cmd == 'add terminal labels') return 'View > Label > N- & C- Termini';
-    else if(cmd == 'rotate left') return 'View > Rotate > Auto Rotation > Rotate Left; or Key l';
-    else if(cmd == 'rotate right') return 'View > Rotate > Auto Rotation > Rotate Right; or Key j';
-    else if(cmd == 'rotate up') return 'View > Rotate > Auto Rotation > Rotate Up; or Key i';
-    else if(cmd == 'rotate down') return 'View > Rotate > Auto Rotation > Rotate Down; or Key m';
-    else if(cmd == 'rotate x') return 'View > Rotate > Rotate 90 deg > X-axis';
-    else if(cmd == 'rotate y') return 'View > Rotate > Rotate 90 deg > Y-axis';
-    else if(cmd == 'rotate z') return 'View > Rotate > Rotate 90 deg > Z-axis';
+    else if(cmd.indexOf('hide annotation') == 0) return seqAnnoStr + ': checkboxes off';
+    else if(cmd == 'add residue labels') return labelStr + 'per Residue';
+    else if(cmd == 'add residue number labels') return labelStr + 'per Residue & Number';
+    else if(cmd == 'add atom labels') return labelStr + 'per Atom';
+    else if(cmd == 'add chain labels') return labelStr + 'per Chain';
+    else if(cmd == 'add terminal labels') return labelStr + 'N- & C- Termini';
+    else if(cmd == 'rotate left') return rotStr1 + 'Left; or Key l';
+    else if(cmd == 'rotate right') return rotStr1 + 'Right; or Key j';
+    else if(cmd == 'rotate up') return rotStr1 + 'Up; or Key i';
+    else if(cmd == 'rotate down') return rotStr1 + 'Down; or Key m';
+    else if(cmd == 'rotate x') return rotStr2 + 'X-axis';
+    else if(cmd == 'rotate y') return rotStr2 + 'Y-axis';
+    else if(cmd == 'rotate z') return rotStr2 + 'Z-axis';
     else if(cmd == 'reset') return 'View > Reset > All';
     else if(cmd == 'reset orientation') return 'View > Reset > Orientation';
     else if(cmd == 'reset thickness') return 'File > 3D Printing > Reset Thickness';
@@ -2461,7 +2302,7 @@ iCn3DUI.prototype.getMenuFromCmd = function (cmd) { var me = this; //"use strict
     else if(cmd == 'defined sets') return 'Windows > Defined Sets';
     else if(cmd == 'delete selected sets') return 'Windows > Defined Sets: "Delete Selected Sets" button';
     else if(cmd == 'view interactions') return 'Windows > View Interactions';
-    else if(cmd == 'show annotations all chains') return 'Windows > Sequences & Annotations: "Show All Chains" button';
+    else if(cmd == 'show annotations all chains') return seqAnnoStr + ': "Show All Chains" button';
     else if(cmd == 'save color') return 'Color > Save Color';
     else if(cmd == 'apply saved color') return 'Color > Apply Saved Color';
     else if(cmd == 'save style') return 'Style > Save Style';
@@ -2470,14 +2311,14 @@ iCn3DUI.prototype.getMenuFromCmd = function (cmd) { var me = this; //"use strict
     else if(cmd == 'select side chains') return 'Select > Side Chains';
     else if(cmd == 'select main side chains') return 'Select > Main & Side Chains';
     else if(cmd == 'area') return 'View > Surface Area';
-    else if(cmd == 'table inter count only') return 'View > H-Bonds & Interactions: "Set 1" button: "Show Count Only" button';
-    else if(cmd == 'table inter details') return 'View > H-Bonds & Interactions: "Set 1" button: "Show Details" button';
-    else if(cmd.indexOf('define helix sets') == 0) return 'Windows > Sequences & Annotations: "Helix Sets" button';
-    else if(cmd.indexOf('define sheet sets') == 0) return 'Windows > Sequences & Annotations: "Sheet Sets" button';
-    else if(cmd.indexOf('define coil sets') == 0) return 'Windows > Sequences & Annotations: "Coil Sets" button';
+    else if(cmd == 'table inter count only') return hbondIntStr + ': "Set 1" button: "Show Count Only" button';
+    else if(cmd == 'table inter details') return hbondIntStr + ': "Set 1" button: "Show Details" button';
+    else if(cmd.indexOf('define helix sets') == 0) return seqAnnoStr + ': "Helix Sets" button';
+    else if(cmd.indexOf('define sheet sets') == 0) return seqAnnoStr + ': "Sheet Sets" button';
+    else if(cmd.indexOf('define coil sets') == 0) return seqAnnoStr + ': "Coil Sets" button';
     else if(cmd.indexOf('select interaction') == 0) return 'Windows > View Interactions: click on edges';
     else if(cmd.indexOf('select saved atoms') == 0 || cmd.indexOf('select sets') == 0) return 'Windows > Defined Sets: select in menu';
-    else if(cmd.indexOf('select chain') !== -1) return 'Windows > Sequences & Annotations: click on chain names';
+    else if(cmd.indexOf('select chain') !== -1) return seqAnnoStr + ': click on chain names';
     else if(cmd.indexOf('select alignChain') !== -1) return 'Windows > View Aligned Sequences: click on chain names';
     else if(cmd.indexOf('select zone cutoff') == 0) return 'Select > by Distance';
     else if(cmd.indexOf('set surface opacity') == 0) return 'Style > Surface Opacity';
@@ -2490,45 +2331,45 @@ iCn3DUI.prototype.getMenuFromCmd = function (cmd) { var me = this; //"use strict
     else if(cmd.indexOf('set highlight style') == 0) return 'Select > Highlight Style';
     else if(cmd.indexOf('add line') == 0) return 'View > Distance > Measure';
     else if(cmd.indexOf('add label') == 0) return 'View > Distance > Measure';
-    else if(cmd.indexOf('msa') == 0) return 'Windows > Sequences & Annotations: "Add Track" button: "FASTA Alignment" button';
-    else if(cmd.indexOf('add track') == 0) return 'Windows > Sequences & Annotations: "Add Track" button';
+    else if(cmd.indexOf('msa') == 0) return seqAnnoStr + ': "Add Track" button: "FASTA Alignment" button';
+    else if(cmd.indexOf('add track') == 0) return seqAnnoStr + ': "Add Track" button';
     else if(cmd.indexOf('remove one stabilizer') == 0) return 'File > 3D Printing > Remove One Stablizer';
     else if(cmd.indexOf('add one stabilizer') == 0) return 'File > 3D Printing > Add One Stablizer';
     else if(cmd.indexOf('select planes z-axis') == 0) return 'View > Select between Two X-Y Planes';
     else if(cmd.indexOf('adjust membrane z-axis') == 0) return 'View > Adjust Membrane';
     else if(cmd.indexOf('toggle membrane') == 0) return 'View > Toggle Membrane';
-    else if(cmd.indexOf('calc buried surface') == 0) return 'View > H-Bonds & Interactions: "Buried Surface Area" button';
-    else if(cmd.indexOf('display interaction 3d') == 0) return 'View > H-Bonds & Interactions: "3D Display Interactions" button';
-    else if(cmd.indexOf('view interaction pairs') == 0) return 'View > H-Bonds & Interactions: "Highlight Interactions in Table" button';
-    else if(cmd.indexOf('save1 interaction pairs') == 0) return 'View > H-Bonds & Interactions: "Set 1" button';
-    else if(cmd.indexOf('save2 interaction pairs') == 0) return 'View > H-Bonds & Interactions: "Set 2" button';
-    else if(cmd.indexOf('line graph interaction pairs') == 0) return 'View > H-Bonds & Interactions: "2D Interaction Network" button';
-    else if(cmd.indexOf('scatterplot interaction pairs') == 0) return 'View > H-Bonds & Interactions: "2D Interaction Map" button';
-    else if(cmd.indexOf('graph label') == 0) return 'View > H-Bonds & Interactions > 2D Graph (Force-Directed): "Label Size" menu';
-    else if(cmd.indexOf('graph force') == 0) return 'View > H-Bonds & Interactions > 2D Graph (Force-Directed): "Force on Nodes" menu';
-    else if(cmd.indexOf('hide edges') == 0) return 'View > H-Bonds & Interactions > 2D Graph (Force-Directed): "Internal Edges" menu';
-    else if(cmd.indexOf('reset interaction pairs') == 0) return 'View > H-Bonds & Interactions > Reset';
+    else if(cmd.indexOf('calc buried surface') == 0) return hbondIntStr + ': "Buried Surface Area" button';
+    else if(cmd.indexOf('display interaction 3d') == 0) return hbondIntStr + ': "3D Display Interactions" button';
+    else if(cmd.indexOf('view interaction pairs') == 0) return hbondIntStr + ': "Highlight Interactions in Table" button';
+    else if(cmd.indexOf('save1 interaction pairs') == 0) return hbondIntStr + ': "Set 1" button';
+    else if(cmd.indexOf('save2 interaction pairs') == 0) return hbondIntStr + ': "Set 2" button';
+    else if(cmd.indexOf('line graph interaction pairs') == 0) return hbondIntStr + ': "2D Interaction Network" button';
+    else if(cmd.indexOf('scatterplot interaction pairs') == 0) return hbondIntStr + ': "2D Interaction Map" button';
+    else if(cmd.indexOf('graph label') == 0) return forceStr + ': "Label Size" menu';
+    else if(cmd.indexOf('graph force') == 0) return forceStr + ': "Force on Nodes" menu';
+    else if(cmd.indexOf('hide edges') == 0) return forceStr + ': "Internal Edges" menu';
+    else if(cmd.indexOf('reset interaction pairs') == 0) return hbondIntStr + ' > Reset';
     else if(cmd.indexOf('side by side') == 0) return 'View > Side by Side';
     else if(cmd.indexOf('your note') == 0) return 'Windows > Your Notes / Window Title';
     else if(cmd.indexOf('pickatom') == 0) return 'Hold Alt key and click on 3D structure';
     else if(cmd.indexOf('color') == 0) return 'Color menu';
-    else if(cmd.indexOf('custom tube') == 0) return 'Windows > Sequences & Annotations: "Custom Color/Tube" button: "Custom Tube" button';
+    else if(cmd.indexOf('custom tube') == 0) return seqAnnoStr + ': "Custom Color/Tube" button: "Custom Tube" button';
     else if(cmd.indexOf('style') == 0) return 'Style menu';
     else if(cmd.indexOf('select displayed set') !== -1) return 'Select > Displayed Set';
     else if(cmd.indexOf('select prop') !== -1) return 'Select > by Property';
-    else if(cmd.indexOf('select') == 0 && cmd.indexOf('name') !== -1) return 'Windows > Sequences & Annotations: drag on residues to select';
+    else if(cmd.indexOf('select') == 0 && cmd.indexOf('name') !== -1) return seqAnnoStr + ': drag on residues to select';
     else if(cmd.indexOf('select $') !== -1 || cmd.indexOf('select .') !== -1 || cmd.indexOf('select :') !== -1 || cmd.indexOf('select @') !== -1) return 'Select > Advanced; or other selection';
     else if(cmd.indexOf('replay on') !== -1) return 'File > Replay Each Step > On';
     else if(cmd.indexOf('replay off') !== -1) return 'File > Replay Each Step > Off';
     else return '';
 };
 
-iCn3DUI.prototype.resetAll = function() { var me = this; //"use strict";
+iCn3DUI.prototype.resetAll = function() { var me = this, ic = me.icn3d; "use strict";
     //location.reload();
-    me.icn3d.reinitAfterLoad();
+    ic.reinitAfterLoad();
     me.renderFinalStep(1);
 
     // need to render
-    if(me.icn3d.bRender) me.icn3d.render();
+    if(ic.bRender) ic.render();
 };
 

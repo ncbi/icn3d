@@ -1,11 +1,11 @@
-/*! OrthographicTrackballControls.js from http://threejs.org/
+/* OrthographicTrackballControls.js from http://threejs.org/
  * @author Eberhard Graether / http://egraether.com/
  * @author Mark Lundin  / http://mark-lundin.com
  * @author Patrick Fuller / http://patrick-fuller.com
  * modified by Jiyao Wang
  */
 
-THREE.OrthographicTrackballControls = function ( object, domElement, icn3d ) { var me = this; //"use strict";
+THREE.OrthographicTrackballControls = function ( object, domElement, icn3d ) { var me = this, ic = me.icn3d; "use strict";
     var _this = this;
     var STATE = { NONE: -1, ROTATE: 0, ZOOM: 1, PAN: 2, TOUCH_ROTATE: 3, TOUCH_ZOOM_PAN: 4 };
 

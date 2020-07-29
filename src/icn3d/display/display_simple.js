@@ -2,7 +2,7 @@
  * @author Jiyao Wang <wangjiy@ncbi.nlm.nih.gov> / https://github.com/ncbi/icn3d
  */
 
-iCn3D.prototype.rebuildScene = function (options) { var me = this; //"use strict";
+iCn3D.prototype.rebuildScene = function (options) { var me = this, ic = me.icn3d; "use strict";
     this.rebuildSceneBase(options);
 
     this.applyDisplayOptions(this.opts, this.dAtoms);
@@ -14,7 +14,7 @@ iCn3D.prototype.rebuildScene = function (options) { var me = this; //"use strict
     me.scene_ghost.updateMatrixWorld(true);
 };
 
-iCn3D.prototype.draw = function () { var me = this; //"use strict";
+iCn3D.prototype.draw = function () { var me = this, ic = me.icn3d; "use strict";
     this.rebuildScene();
 
     // Impostor display using the saved arrays

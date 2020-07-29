@@ -4,7 +4,7 @@
 
 if (typeof jQuery === 'undefined') { throw new Error('iCn3D requires jQuery') }
 
-var iCn3D = function (id) { var me = this; //"use strict";
+var iCn3D = function (id) { var me = this, ic = me.icn3d; "use strict";
 
     this.id = id;
     this.pre = id.substr(0, id.indexOf('_') + 1);
@@ -61,7 +61,7 @@ var iCn3D = function (id) { var me = this; //"use strict";
     }
 
     this.matShader = this.setOutlineColor('yellow');
-    this.frac = new THREE.Color(0.1, 0.1, 0.1);
+    this.frac = this.thr(0.1, 0.1, 0.1);
 
     // mobile has a problem when the scaleFactor is 2.0
     // the scaleFactor improve the image quality, but it has some centering and picking problems in some Mac when it is not 1
@@ -151,7 +151,7 @@ var iCn3D = function (id) { var me = this; //"use strict";
     this.bRender = true; // a flag to turn off rendering when loading state file
 
     // Default values
-    this.hColor = new THREE.Color(0xFFFF00);
+    this.hColor = this.thr(0xFFFF00);
 
     this.sphereGeometry = new THREE.SphereGeometry(1, 32, 32);
     this.boxGeometry = new THREE.BoxGeometry(1, 1, 1);
@@ -222,11 +222,17 @@ var iCn3D = function (id) { var me = this; //"use strict";
         nucleotides: 'nucleotide cartoon',
         chemicalbinding: 'hide'
     };
+
+    this.setColor();
 };
 
 iCn3D.prototype = {
 
     constructor: iCn3D,
+
+    thr: function(color) { var me = this;
+        return new THREE.Color(color);
+    },
 
     setControl: function() { var me = this;
         // adjust the size
@@ -523,7 +529,7 @@ iCn3D.prototype = {
         });
     },
 
-    isIntersect: function(objects, mdl, bClick, popupX, popupY) { var me = this; //"use strict";
+    isIntersect: function(objects, mdl, bClick, popupX, popupY) { var me = this, ic = me.icn3d; "use strict";
         var intersects = me.raycaster.intersectObjects( objects ); // not all "mdl" group will be used for pk
 
         var bFound = false;
@@ -575,11 +581,11 @@ iCn3D.prototype = {
         return bFound;
     },
 
-    rayCaster: function(e, bClick) { var me = this; //"use strict";
+    rayCaster: function(e, bClick) { var me = this, ic = me.icn3d; "use strict";
         me.rayCasterBase(e, bClick);
     },
 
-    rayCasterBase: function(e, bClick) { var me = this; //"use strict";
+    rayCasterBase: function(e, bClick) { var me = this, ic = me.icn3d; "use strict";
 //        if(this.bChainAlign) return; // no picking for chain alignment
 
         var x = e.pageX, y = e.pageY;
@@ -618,58 +624,30 @@ iCn3D.prototype = {
             }
 
             // similar to setFromCamera() except mouse3.z is the opposite sign from the value in setFromCamera()
-/*
-            if(me.bControlGl) {
-                if(window.cam === me.perspectiveCamera) { // perspective
-                    if(this.cam_z > 0) {
-                      mouse3.z = -1.0;
-                    }
-                    else {
-                      mouse3.z = 1.0;
-                    }
-                    //me.projector.unprojectVector( mouse3, me.cam );  // works for all versions
-                    mouse3.unproject(window.cam );  // works for all versions
-                    me.raycaster.set(window.cam.position, mouse3.sub(window.cam.position).normalize()); // works for all versions
-                }
-                else if(window.cam === me.orthographicCamera) {  // orthographics
-                    if(this.cam_z > 0) {
-                      mouse3.z = 1.0;
-                    }
-                    else {
-                      mouse3.z = -1.0;
-                    }
-                    //me.projector.unprojectVector( mouse3, me.cam );  // works for all versions
-                    mouse3.unproject(window.cam );  // works for all versions
-                    me.raycaster.set(mouse3, new THREE.Vector3(0,0,-1).transformDirection( window.cam.matrixWorld )); // works for all versions
-                }
-            }
-            else {
-*/
-                // use itsown camera for picking
+            // use itsown camera for picking
 
-                if(me.cam === me.perspectiveCamera) { // perspective
-                    if(this.cam_z > 0) {
-                      mouse3.z = -1.0;
-                    }
-                    else {
-                      mouse3.z = 1.0;
-                    }
-                    //me.projector.unprojectVector( mouse3, me.cam );  // works for all versions
-                    mouse3.unproject(me.cam );  // works for all versions
-                    me.raycaster.set(me.cam.position, mouse3.sub(me.cam.position).normalize()); // works for all versions
+            if(me.cam === me.perspectiveCamera) { // perspective
+                if(this.cam_z > 0) {
+                  mouse3.z = -1.0;
                 }
-                else if(me.cam === me.orthographicCamera) {  // orthographics
-                    if(this.cam_z > 0) {
-                      mouse3.z = 1.0;
-                    }
-                    else {
-                      mouse3.z = -1.0;
-                    }
-                    //me.projector.unprojectVector( mouse3, me.cam );  // works for all versions
-                    mouse3.unproject(me.cam );  // works for all versions
-                    me.raycaster.set(mouse3, new THREE.Vector3(0,0,-1).transformDirection( me.cam.matrixWorld )); // works for all versions
+                else {
+                  mouse3.z = 1.0;
                 }
-//            }
+                //me.projector.unprojectVector( mouse3, me.cam );  // works for all versions
+                mouse3.unproject(me.cam );  // works for all versions
+                me.raycaster.set(me.cam.position, mouse3.sub(me.cam.position).normalize()); // works for all versions
+            }
+            else if(me.cam === me.orthographicCamera) {  // orthographics
+                if(this.cam_z > 0) {
+                  mouse3.z = 1.0;
+                }
+                else {
+                  mouse3.z = -1.0;
+                }
+                //me.projector.unprojectVector( mouse3, me.cam );  // works for all versions
+                mouse3.unproject(me.cam );  // works for all versions
+                me.raycaster.set(mouse3, new THREE.Vector3(0,0,-1).transformDirection( me.cam.matrixWorld )); // works for all versions
+            }
 
             var bFound = this.isIntersect(me.objects, me.mdl, bClick, popupX, popupY);
 
@@ -679,7 +657,7 @@ iCn3D.prototype = {
         //}
     },
 
-    setRotation: function(axis, angle) { var me = this; //"use strict";
+    setRotation: function(axis, angle) { var me = this, ic = me.icn3d; "use strict";
           if(me.bControlGl) {
               axis.applyQuaternion( window.cam.quaternion ).normalize();
           }
@@ -704,7 +682,7 @@ iCn3D.prototype = {
           if(me.bRender) me.render();
     },
 
-    setOutlineColor: function(colorStr) { var me = this; //"use strict";
+    setOutlineColor: function(colorStr) { var me = this, ic = me.icn3d; "use strict";
         // outline using ShaderMaterial: http://jsfiddle.net/Eskel/g593q/9/
         var shader = {
             'outline' : {
@@ -1001,141 +979,142 @@ iCn3D.prototype = {
     },
 
     //rasmol-like element colors
-    atomColors: {
-        'H': new THREE.Color(0xFFFFFF),
-        'He': new THREE.Color(0xFFC0CB),
-        'HE': new THREE.Color(0xFFC0CB),
-        'Li': new THREE.Color(0xB22222),
-        'LI': new THREE.Color(0xB22222),
-        'B': new THREE.Color(0x00FF00),
-        'C': new THREE.Color(0xC8C8C8),
-        //'N': new THREE.Color(0x8F8FFF),
-        'N': new THREE.Color(0x0000FF),
-        'O': new THREE.Color(0xF00000),
-        'F': new THREE.Color(0xDAA520),
-        'Na': new THREE.Color(0x0000FF),
-        'NA': new THREE.Color(0x0000FF),
-        'Mg': new THREE.Color(0x228B22),
-        'MG': new THREE.Color(0x228B22),
-        'Al': new THREE.Color(0x808090),
-        'AL': new THREE.Color(0x808090),
-        'Si': new THREE.Color(0xDAA520),
-        'SI': new THREE.Color(0xDAA520),
-        'P': new THREE.Color(0xFFA500),
-        'S': new THREE.Color(0xFFC832),
-        'Cl': new THREE.Color(0x00FF00),
-        'CL': new THREE.Color(0x00FF00),
-        'Ca': new THREE.Color(0x808090),
-        'CA': new THREE.Color(0x808090),
-        'Ti': new THREE.Color(0x808090),
-        'TI': new THREE.Color(0x808090),
-        'Cr': new THREE.Color(0x808090),
-        'CR': new THREE.Color(0x808090),
-        'Mn': new THREE.Color(0x808090),
-        'MN': new THREE.Color(0x808090),
-        'Fe': new THREE.Color(0xFFA500),
-        'FE': new THREE.Color(0xFFA500),
-        'Ni': new THREE.Color(0xA52A2A),
-        'NI': new THREE.Color(0xA52A2A),
-        'Cu': new THREE.Color(0xA52A2A),
-        'CU': new THREE.Color(0xA52A2A),
-        'Zn': new THREE.Color(0xA52A2A),
-        'ZN': new THREE.Color(0xA52A2A),
-        'Br': new THREE.Color(0xA52A2A),
-        'BR': new THREE.Color(0xA52A2A),
-        'Ag': new THREE.Color(0x808090),
-        'AG': new THREE.Color(0x808090),
-        'I': new THREE.Color(0xA020F0),
-        'Ba': new THREE.Color(0xFFA500),
-        'BA': new THREE.Color(0xFFA500),
-        'Au': new THREE.Color(0xDAA520),
-        'AU': new THREE.Color(0xDAA520)
-    },
+    setColor: function() {
+        this.atomColors = {
+        'H': this.thr(0xFFFFFF),
+        'He': this.thr(0xFFC0CB),
+        'HE': this.thr(0xFFC0CB),
+        'Li': this.thr(0xB22222),
+        'LI': this.thr(0xB22222),
+        'B': this.thr(0x00FF00),
+        'C': this.thr(0xC8C8C8),
+        //'N': this.thr(0x8F8FFF),
+        'N': this.thr(0x0000FF),
+        'O': this.thr(0xF00000),
+        'F': this.thr(0xDAA520),
+        'Na': this.thr(0x0000FF),
+        'NA': this.thr(0x0000FF),
+        'Mg': this.thr(0x228B22),
+        'MG': this.thr(0x228B22),
+        'Al': this.thr(0x808090),
+        'AL': this.thr(0x808090),
+        'Si': this.thr(0xDAA520),
+        'SI': this.thr(0xDAA520),
+        'P': this.thr(0xFFA500),
+        'S': this.thr(0xFFC832),
+        'Cl': this.thr(0x00FF00),
+        'CL': this.thr(0x00FF00),
+        'Ca': this.thr(0x808090),
+        'CA': this.thr(0x808090),
+        'Ti': this.thr(0x808090),
+        'TI': this.thr(0x808090),
+        'Cr': this.thr(0x808090),
+        'CR': this.thr(0x808090),
+        'Mn': this.thr(0x808090),
+        'MN': this.thr(0x808090),
+        'Fe': this.thr(0xFFA500),
+        'FE': this.thr(0xFFA500),
+        'Ni': this.thr(0xA52A2A),
+        'NI': this.thr(0xA52A2A),
+        'Cu': this.thr(0xA52A2A),
+        'CU': this.thr(0xA52A2A),
+        'Zn': this.thr(0xA52A2A),
+        'ZN': this.thr(0xA52A2A),
+        'Br': this.thr(0xA52A2A),
+        'BR': this.thr(0xA52A2A),
+        'Ag': this.thr(0x808090),
+        'AG': this.thr(0x808090),
+        'I': this.thr(0xA020F0),
+        'Ba': this.thr(0xFFA500),
+        'BA': this.thr(0xFFA500),
+        'Au': this.thr(0xDAA520),
+        'AU': this.thr(0xDAA520)
+        };
 
-    defaultAtomColor: new THREE.Color(0xCCCCCC),
+        this.defaultAtomColor = this.thr(0xCCCCCC);
 
-    stdChainColors: [
+        this.stdChainColors = [
             // first 6 colors from MMDB
-            new THREE.Color(0xFF00FF),
-            new THREE.Color(0x0000FF),
-            new THREE.Color(0x996633),
-            new THREE.Color(0x00FF99),
-            new THREE.Color(0xFF9900),
-            new THREE.Color(0xFF6666),
+            this.thr(0xFF00FF),
+            this.thr(0x0000FF),
+            this.thr(0x996633),
+            this.thr(0x00FF99),
+            this.thr(0xFF9900),
+            this.thr(0xFF6666),
 
-            new THREE.Color(0x32CD32),
-            new THREE.Color(0x1E90FF),
-            new THREE.Color(0xFA8072),
-            new THREE.Color(0xFFA500),
-            new THREE.Color(0x00CED1),
-            new THREE.Color(0xFF69B4),
+            this.thr(0x32CD32),
+            this.thr(0x1E90FF),
+            this.thr(0xFA8072),
+            this.thr(0xFFA500),
+            this.thr(0x00CED1),
+            this.thr(0xFF69B4),
 
-            new THREE.Color(0x00FF00),
-            new THREE.Color(0x0000FF),
-            new THREE.Color(0xFF0000),
-            new THREE.Color(0xFFFF00),
-            new THREE.Color(0x00FFFF),
-            new THREE.Color(0xFF00FF),
+            this.thr(0x00FF00),
+            this.thr(0x0000FF),
+            this.thr(0xFF0000),
+            this.thr(0xFFFF00),
+            this.thr(0x00FFFF),
+            this.thr(0xFF00FF),
 
-            new THREE.Color(0x3CB371),
-            new THREE.Color(0x4682B4),
-            new THREE.Color(0xCD5C5C),
-            new THREE.Color(0xFFE4B5),
-            new THREE.Color(0xAFEEEE),
-            new THREE.Color(0xEE82EE),
+            this.thr(0x3CB371),
+            this.thr(0x4682B4),
+            this.thr(0xCD5C5C),
+            this.thr(0xFFE4B5),
+            this.thr(0xAFEEEE),
+            this.thr(0xEE82EE),
 
-            new THREE.Color(0x006400),
-            new THREE.Color(0x00008B),
-            new THREE.Color(0x8B0000),
-            new THREE.Color(0xCD853F),
-            new THREE.Color(0x008B8B),
-            new THREE.Color(0x9400D3)
-        ],
+            this.thr(0x006400),
+            this.thr(0x00008B),
+            this.thr(0x8B0000),
+            this.thr(0xCD853F),
+            this.thr(0x008B8B),
+            this.thr(0x9400D3)
+        ];
 
-    backgroundColors: {
-        black: new THREE.Color(0x000000),
-         grey: new THREE.Color(0xCCCCCC),
-        white: new THREE.Color(0xFFFFFF),
-        transparent: new THREE.Color(0x000000)
-    },
+        this.backgroundColors = {
+        black: this.thr(0x000000),
+         grey: this.thr(0xCCCCCC),
+        white: this.thr(0xFFFFFF),
+        transparent: this.thr(0x000000)
+        };
 
-    residueColors: {
-        ALA: new THREE.Color(0xC8C8C8),
-        ARG: new THREE.Color(0x145AFF),
-        ASN: new THREE.Color(0x00DCDC),
-        ASP: new THREE.Color(0xE60A0A),
-        CYS: new THREE.Color(0xE6E600),
-        GLN: new THREE.Color(0x00DCDC),
-        GLU: new THREE.Color(0xE60A0A),
-        GLY: new THREE.Color(0xEBEBEB),
-        HIS: new THREE.Color(0x8282D2),
-        ILE: new THREE.Color(0x0F820F),
-        LEU: new THREE.Color(0x0F820F),
-        LYS: new THREE.Color(0x145AFF),
-        MET: new THREE.Color(0xE6E600),
-        PHE: new THREE.Color(0x3232AA),
-        PRO: new THREE.Color(0xDC9682),
-        SER: new THREE.Color(0xFA9600),
-        THR: new THREE.Color(0xFA9600),
-        TRP: new THREE.Color(0xB45AB4),
-        TYR: new THREE.Color(0x3232AA),
-        VAL: new THREE.Color(0x0F820F),
-        ASX: new THREE.Color(0xFF69B4),
-        GLX: new THREE.Color(0xFF69B4),
-          'G': new THREE.Color(0x008000),
-          'A': new THREE.Color(0x6080FF),
-          'T': new THREE.Color(0xFF8000),
-          'C': new THREE.Color(0xFF0000),
-          'U': new THREE.Color(0xFF8000),
-         'DG': new THREE.Color(0x008000),
-         'DA': new THREE.Color(0x6080FF),
-         'DT': new THREE.Color(0xFF8000),
-         'DC': new THREE.Color(0xFF0000),
-         'DU': new THREE.Color(0xFF8000)
-    },
+        this.residueColors = {
+        ALA: this.thr(0xC8C8C8),
+        ARG: this.thr(0x145AFF),
+        ASN: this.thr(0x00DCDC),
+        ASP: this.thr(0xE60A0A),
+        CYS: this.thr(0xE6E600),
+        GLN: this.thr(0x00DCDC),
+        GLU: this.thr(0xE60A0A),
+        GLY: this.thr(0xEBEBEB),
+        HIS: this.thr(0x8282D2),
+        ILE: this.thr(0x0F820F),
+        LEU: this.thr(0x0F820F),
+        LYS: this.thr(0x145AFF),
+        MET: this.thr(0xE6E600),
+        PHE: this.thr(0x3232AA),
+        PRO: this.thr(0xDC9682),
+        SER: this.thr(0xFA9600),
+        THR: this.thr(0xFA9600),
+        TRP: this.thr(0xB45AB4),
+        TYR: this.thr(0x3232AA),
+        VAL: this.thr(0x0F820F),
+        ASX: this.thr(0xFF69B4),
+        GLX: this.thr(0xFF69B4),
+          'G': this.thr(0x008000),
+          'A': this.thr(0x6080FF),
+          'T': this.thr(0xFF8000),
+          'C': this.thr(0xFF0000),
+          'U': this.thr(0xFF8000),
+         'DG': this.thr(0x008000),
+         'DA': this.thr(0x6080FF),
+         'DT': this.thr(0xFF8000),
+         'DC': this.thr(0xFF0000),
+         'DU': this.thr(0xFF8000)
+        };
 
-    // calculated in iCn3D, the value could fluctuate 10-20 in different proteins
-    residueArea: {
+        // calculated in iCn3D, the value could fluctuate 10-20 in different proteins
+        this.residueArea = {
         ALA: 247,
         ARG: 366,
         ASN: 290,
@@ -1168,126 +1147,127 @@ iCn3D.prototype = {
          'DT': 515,
          'DC': 467,
          'DU': 482
-    },
+        };
 
-    defaultResidueColor: new THREE.Color(0xBEA06E),
+        this.defaultResidueColor = this.thr(0xBEA06E);
 
-    chargeColors: {
-// charged residues
-        '  G': new THREE.Color(0xFF0000),
-        '  A': new THREE.Color(0xFF0000),
-        '  T': new THREE.Color(0xFF0000),
-        '  C': new THREE.Color(0xFF0000),
-        '  U': new THREE.Color(0xFF0000),
-        ' DG': new THREE.Color(0xFF0000),
-        ' DA': new THREE.Color(0xFF0000),
-        ' DT': new THREE.Color(0xFF0000),
-        ' DC': new THREE.Color(0xFF0000),
-        ' DU': new THREE.Color(0xFF0000),
-          'G': new THREE.Color(0xFF0000),
-          'A': new THREE.Color(0xFF0000),
-          'T': new THREE.Color(0xFF0000),
-          'C': new THREE.Color(0xFF0000),
-          'U': new THREE.Color(0xFF0000),
-         'DG': new THREE.Color(0xFF0000),
-         'DA': new THREE.Color(0xFF0000),
-         'DT': new THREE.Color(0xFF0000),
-         'DC': new THREE.Color(0xFF0000),
-         'DU': new THREE.Color(0xFF0000),
-        'ARG': new THREE.Color(0x0000FF),
-        'LYS': new THREE.Color(0x0000FF),
-        'ASP': new THREE.Color(0xFF0000),
-        'GLU': new THREE.Color(0xFF0000),
-        'HIS': new THREE.Color(0x8080FF),
+        this.chargeColors = {
+    // charged residues
+        '  G': this.thr(0xFF0000),
+        '  A': this.thr(0xFF0000),
+        '  T': this.thr(0xFF0000),
+        '  C': this.thr(0xFF0000),
+        '  U': this.thr(0xFF0000),
+        ' DG': this.thr(0xFF0000),
+        ' DA': this.thr(0xFF0000),
+        ' DT': this.thr(0xFF0000),
+        ' DC': this.thr(0xFF0000),
+        ' DU': this.thr(0xFF0000),
+          'G': this.thr(0xFF0000),
+          'A': this.thr(0xFF0000),
+          'T': this.thr(0xFF0000),
+          'C': this.thr(0xFF0000),
+          'U': this.thr(0xFF0000),
+         'DG': this.thr(0xFF0000),
+         'DA': this.thr(0xFF0000),
+         'DT': this.thr(0xFF0000),
+         'DC': this.thr(0xFF0000),
+         'DU': this.thr(0xFF0000),
+        'ARG': this.thr(0x0000FF),
+        'LYS': this.thr(0x0000FF),
+        'ASP': this.thr(0xFF0000),
+        'GLU': this.thr(0xFF0000),
+        'HIS': this.thr(0x8080FF),
 
-        'GLY': new THREE.Color(0x888888),
-        'PRO': new THREE.Color(0x888888),
-        'ALA': new THREE.Color(0x888888),
-        'VAL': new THREE.Color(0x888888),
-        'LEU': new THREE.Color(0x888888),
-        'ILE': new THREE.Color(0x888888),
-        'PHE': new THREE.Color(0x888888),
+        'GLY': this.thr(0x888888),
+        'PRO': this.thr(0x888888),
+        'ALA': this.thr(0x888888),
+        'VAL': this.thr(0x888888),
+        'LEU': this.thr(0x888888),
+        'ILE': this.thr(0x888888),
+        'PHE': this.thr(0x888888),
 
-        'SER': new THREE.Color(0x888888),
-        'THR': new THREE.Color(0x888888),
-        'ASN': new THREE.Color(0x888888),
-        'GLN': new THREE.Color(0x888888),
-        'TYR': new THREE.Color(0x888888),
-        'MET': new THREE.Color(0x888888),
-        'CYS': new THREE.Color(0x888888),
-        'TRP': new THREE.Color(0x888888)
-    },
+        'SER': this.thr(0x888888),
+        'THR': this.thr(0x888888),
+        'ASN': this.thr(0x888888),
+        'GLN': this.thr(0x888888),
+        'TYR': this.thr(0x888888),
+        'MET': this.thr(0x888888),
+        'CYS': this.thr(0x888888),
+        'TRP': this.thr(0x888888)
+        };
 
-    hydrophobicColors: {
-// charged residues
-        '  G': new THREE.Color(0xFF0000),
-        '  A': new THREE.Color(0xFF0000),
-        '  T': new THREE.Color(0xFF0000),
-        '  C': new THREE.Color(0xFF0000),
-        '  U': new THREE.Color(0xFF0000),
-        ' DG': new THREE.Color(0xFF0000),
-        ' DA': new THREE.Color(0xFF0000),
-        ' DT': new THREE.Color(0xFF0000),
-        ' DC': new THREE.Color(0xFF0000),
-        ' DU': new THREE.Color(0xFF0000),
-          'G': new THREE.Color(0xFF0000),
-          'A': new THREE.Color(0xFF0000),
-          'T': new THREE.Color(0xFF0000),
-          'C': new THREE.Color(0xFF0000),
-          'U': new THREE.Color(0xFF0000),
-         'DG': new THREE.Color(0xFF0000),
-         'DA': new THREE.Color(0xFF0000),
-         'DT': new THREE.Color(0xFF0000),
-         'DC': new THREE.Color(0xFF0000),
-         'DU': new THREE.Color(0xFF0000),
-        'ARG': new THREE.Color(0x0000FF),
-        'LYS': new THREE.Color(0x0000FF),
-        'ASP': new THREE.Color(0xFF0000),
-        'GLU': new THREE.Color(0xFF0000),
-        'HIS': new THREE.Color(0x8080FF),
+        this.hydrophobicColors = {
+    // charged residues
+        '  G': this.thr(0xFF0000),
+        '  A': this.thr(0xFF0000),
+        '  T': this.thr(0xFF0000),
+        '  C': this.thr(0xFF0000),
+        '  U': this.thr(0xFF0000),
+        ' DG': this.thr(0xFF0000),
+        ' DA': this.thr(0xFF0000),
+        ' DT': this.thr(0xFF0000),
+        ' DC': this.thr(0xFF0000),
+        ' DU': this.thr(0xFF0000),
+          'G': this.thr(0xFF0000),
+          'A': this.thr(0xFF0000),
+          'T': this.thr(0xFF0000),
+          'C': this.thr(0xFF0000),
+          'U': this.thr(0xFF0000),
+         'DG': this.thr(0xFF0000),
+         'DA': this.thr(0xFF0000),
+         'DT': this.thr(0xFF0000),
+         'DC': this.thr(0xFF0000),
+         'DU': this.thr(0xFF0000),
+        'ARG': this.thr(0x0000FF),
+        'LYS': this.thr(0x0000FF),
+        'ASP': this.thr(0xFF0000),
+        'GLU': this.thr(0xFF0000),
+        'HIS': this.thr(0x8080FF),
 
-//new THREE.Color().setHSL(1/3.0, 1, 0.5 + 0.5 * ( + 0.81)/(1.14 + 0.81)),
+//this.thr().setHSL(1/3.0, 1, 0.5 + 0.5 * ( + 0.81)/(1.14 + 0.81)),
 // hydrophobic
 // https://en.m.wikipedia.org/wiki/Hydrophobicity_scales#Wimley%E2%80%93White_whole_residue_hydrophobicity_scales
-        'TRP': new THREE.Color().setHSL(1/3.0, 1, 0.5 + 0.5 * (-1.85 + 1.85)/(0 + 1.85)),
-        'PHE': new THREE.Color().setHSL(1/3.0, 1, 0.5 + 0.5 * (-1.13 + 1.85)/(0 + 1.85)),
-        'TYR': new THREE.Color().setHSL(1/3.0, 1, 0.5 + 0.5 * (-0.94 + 1.85)/(0 + 1.85)),
-        'LEU': new THREE.Color().setHSL(1/3.0, 1, 0.5 + 0.5 * (-0.56 + 1.85)/(0 + 1.85)),
-        'ILE': new THREE.Color().setHSL(1/3.0, 1, 0.5 + 0.5 * (-0.31 + 1.85)/(0 + 1.85)),
-        'CYS': new THREE.Color().setHSL(1/3.0, 1, 0.5 + 0.5 * (-0.24 + 1.85)/(0 + 1.85)),
-        'MET': new THREE.Color().setHSL(1/3.0, 1, 0.5 + 0.5 * (-0.23 + 1.85)/(0 + 1.85)),
+        'TRP': this.thr().setHSL(1/3.0, 1, 0.5 + 0.5 * (-1.85 + 1.85)/(0 + 1.85)),
+        'PHE': this.thr().setHSL(1/3.0, 1, 0.5 + 0.5 * (-1.13 + 1.85)/(0 + 1.85)),
+        'TYR': this.thr().setHSL(1/3.0, 1, 0.5 + 0.5 * (-0.94 + 1.85)/(0 + 1.85)),
+        'LEU': this.thr().setHSL(1/3.0, 1, 0.5 + 0.5 * (-0.56 + 1.85)/(0 + 1.85)),
+        'ILE': this.thr().setHSL(1/3.0, 1, 0.5 + 0.5 * (-0.31 + 1.85)/(0 + 1.85)),
+        'CYS': this.thr().setHSL(1/3.0, 1, 0.5 + 0.5 * (-0.24 + 1.85)/(0 + 1.85)),
+        'MET': this.thr().setHSL(1/3.0, 1, 0.5 + 0.5 * (-0.23 + 1.85)/(0 + 1.85)),
 
 // polar
-        'GLY': new THREE.Color().setHSL(1/6.0, 1, 0.5 + 0.5 * (-0.01 + 0.58)/(0 + 0.58)),
-        'VAL': new THREE.Color().setHSL(1/6.0, 1, 0.5 + 0.5 * (-0.07 + 0.58)/(0 + 0.58)),
-        'SER': new THREE.Color().setHSL(1/6.0, 1, 0.5 + 0.5 * (-0.13 + 0.58)/(0 + 0.58)),
-        'THR': new THREE.Color().setHSL(1/6.0, 1, 0.5 + 0.5 * (-0.14 + 0.58)/(0 + 0.58)),
-        'ALA': new THREE.Color().setHSL(1/6.0, 1, 0.5 + 0.5 * (-0.17 + 0.58)/(0 + 0.58)),
-        'ASN': new THREE.Color().setHSL(1/6.0, 1, 0.5 + 0.5 * (-0.42 + 0.58)/(0 + 0.58)),
-        'PRO': new THREE.Color().setHSL(1/6.0, 1, 0.5 + 0.5 * (-0.45 + 0.58)/(0 + 0.58)),
-        'GLN': new THREE.Color().setHSL(1/6.0, 1, 0.5 + 0.5 * (-0.58 + 0.58)/(0 + 0.58))
+        'GLY': this.thr().setHSL(1/6.0, 1, 0.5 + 0.5 * (-0.01 + 0.58)/(0 + 0.58)),
+        'VAL': this.thr().setHSL(1/6.0, 1, 0.5 + 0.5 * (-0.07 + 0.58)/(0 + 0.58)),
+        'SER': this.thr().setHSL(1/6.0, 1, 0.5 + 0.5 * (-0.13 + 0.58)/(0 + 0.58)),
+        'THR': this.thr().setHSL(1/6.0, 1, 0.5 + 0.5 * (-0.14 + 0.58)/(0 + 0.58)),
+        'ALA': this.thr().setHSL(1/6.0, 1, 0.5 + 0.5 * (-0.17 + 0.58)/(0 + 0.58)),
+        'ASN': this.thr().setHSL(1/6.0, 1, 0.5 + 0.5 * (-0.42 + 0.58)/(0 + 0.58)),
+        'PRO': this.thr().setHSL(1/6.0, 1, 0.5 + 0.5 * (-0.45 + 0.58)/(0 + 0.58)),
+        'GLN': this.thr().setHSL(1/6.0, 1, 0.5 + 0.5 * (-0.58 + 0.58)/(0 + 0.58))
+        };
+
+        this.sheetcolor = 'green';
+
+        this.ssColors = {
+        //helix: this.thr(0xFF0080),
+        helix: this.thr(0xFF0000),
+        //sheet: this.thr(0xFFC800),
+        sheet: this.thr(0x008000),
+         coil: this.thr(0x6080FF)
+        };
+
+        this.ssColors2 = {
+        //helix: this.thr(0xFF0080),
+        helix: this.thr(0xFF0000),
+        sheet: this.thr(0xFFC800),
+        //sheet: this.thr(0x008000),
+         coil: this.thr(0x6080FF)
+        };
+
+        //defaultBondColor: this.thr(0x2194D6),
+        this.defaultBondColor = this.thr(0xBBBBBB); // cross residue bonds
     },
-
-    sheetcolor: 'green',
-
-    ssColors: {
-        //helix: new THREE.Color(0xFF0080),
-        helix: new THREE.Color(0xFF0000),
-        //sheet: new THREE.Color(0xFFC800),
-        sheet: new THREE.Color(0x008000),
-         coil: new THREE.Color(0x6080FF)
-    },
-
-    ssColors2: {
-        //helix: new THREE.Color(0xFF0080),
-        helix: new THREE.Color(0xFF0000),
-        sheet: new THREE.Color(0xFFC800),
-        //sheet: new THREE.Color(0x008000),
-         coil: new THREE.Color(0x6080FF)
-    },
-
-    //defaultBondColor: new THREE.Color(0x2194D6),
-    defaultBondColor: new THREE.Color(0xBBBBBB), // cross residue bonds
 
     surfaces: {
         1: undefined,

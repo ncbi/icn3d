@@ -1,4 +1,4 @@
-/*! setupsurface.js from SurfaceWorker.js
+/* setupsurface.js from SurfaceWorker.js
  * @author David Koes  / https://github.com/3dmol/3Dmol.js/tree/master/3Dmol
  * Modified by Jiyao Wang / https://github.com/ncbi/icn3d
  */

@@ -1,4 +1,4 @@
-/*! marchingcube.js
+/* marchingcube.js
  * @author David Koes  / https://github.com/3dmol/3Dmol.js/tree/master/3Dmol
  * Modified by Jiyao Wang / https://github.com/ncbi/icn3d
  */
@@ -7,7 +7,7 @@ var $3Dmol = $3Dmol || {};
 
 //Encapsulate marching cube algorithm for isosurface generation
 // (currently used by protein surface rendering and generic volumetric data reading)
-$3Dmol.MarchingCubeInitializer = function() { var me = this; //"use strict";
+$3Dmol.MarchingCubeInitializer = function() { var me = this, ic = me.icn3d; "use strict";
 
     //Marching cube algorithm - assume data has been pre-treated so isovalue is 0
     // (i.e. select points greater than 0)
