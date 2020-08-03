@@ -1,3 +1,22 @@
+/* theme: orange */
+/*
+.ui-widget-header{border:1px solid #e78f08;background:#f6a828 url("lib/images/ui-bg_gloss-wave_35_f6a828_500x100.png") 50% 50% repeat-x;color:#fff;font-weight:bold}
+.ui-button .ui-icon {background-image: url(lib/images/ui-icons_ef8c08_256x240.png);}
+.ui-state-active a, .ui-state-active a:link, .ui-state-active a:visited {color: #eb8f00;text-decoration: none;}
+*/
+
+/* theme: black */
+/*
+.ui-widget-header{border:1px solid #333333;background:#333333 url("lib/images/ui-bg_gloss-wave_25_333333_500x100.png") 50% 50% repeat-x;color:#fff;font-weight:bold}
+.ui-button .ui-icon {background-image: url(lib/images/ui-icons_222222_256x240.png);}
+.ui-state-active a, .ui-state-active a:link, .ui-state-active a:visited {color: #222222;text-decoration: none;}
+*/
+
+/* theme: blue */
+.ui-widget-header {border:1px solid #4297d7;background:#5c9ccc url("lib/images/ui-bg_gloss-wave_55_5c9ccc_500x100.png") 50% 50% repeat-x;color:#fff;font-weight:bold}
+.ui-button .ui-icon {background-image: url(lib/images/ui-icons_228ef1_256x240.png);}
+.ui-state-active a, .ui-state-active a:link, .ui-state-active a:visited {color: #444;text-decoration: none;}
+
 .icn3d-text {font-family: Verdana, Arial, Helvetica, sans-serif; font-size:12px!important;}
 
 .ui-dialog { font-size: 12px;}
@@ -222,8 +241,8 @@ input:checked + .icn3d-slider:before {
 
 .icn3d-popup {display:none; position:absolute; z-index:9999; top:-1000px; left:-1000px; background-color:#DDDDDD; text-align:center; width:80px; height:18px; padding:3px;}
 
-.icn3d-saveicon {cursor:pointer; margin:4px 8px 0 0; float: right;}
-.icn3d-hideicon {cursor:pointer; margin:4px 8px 0 0; float: right;}
+.icn3d-saveicon, .icn3d-hideicon {cursor:pointer; position:absolute; top:8px; right:20px;}
+.icn3d-hideicon {cursor:pointer; position:absolute; top:8px; right:40px;}
 
 .icn3d-border tr th, .icn3d-border tr td {border-right: solid 1px;}
 

@@ -16,6 +16,12 @@ iCn3DUI.prototype.hideLoading = function () { var me = this, ic = me.icn3d; "use
     //}
 };
 
+iCn3DUI.prototype.setYourNote = function (yournote) { var me = this, ic = me.icn3d; "use strict";
+    me.yournote = yournote;
+    $("#" + me.pre + "yournote").val(me.yournote);
+    if(me.cfg.shownote) document.title = me.yournote;
+};
+
 iCn3DUI.prototype.downloadMmcif = function (mmcifid) { var me = this, ic = me.icn3d; "use strict";
    var url, dataType;
 
@@ -25,7 +31,7 @@ iCn3DUI.prototype.downloadMmcif = function (mmcifid) { var me = this, ic = me.ic
 
    ic.bCid = undefined;
 
-   document.title = mmcifid.toUpperCase() + ' (MMCIF) in iCn3D';
+   me.setYourNote(mmcifid.toUpperCase() + ' (MMCIF) in iCn3D');
 
    $.ajax({
       url: url,

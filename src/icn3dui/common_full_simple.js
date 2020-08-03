@@ -471,9 +471,9 @@ iCn3DUI.prototype.handleContextLost = function() { var me = this, ic = me.icn3d;
     }, false);
 };
 
-iCn3DUI.prototype.windowResize = function() { var me = this, ic = me.icn3d; "use strict";
+iCn3DUI.prototype.windowResize = function() { var me = this; "use strict";
     if(me.cfg.resize && !me.isMobile() ) {
-        $(window).resize(function() {
+        $(window).resize(function() { var ic = me.icn3d;
             //me.WIDTH = $( window ).width();
             //me.HEIGHT = $( window ).height();
             me.setViewerWidthHeight();

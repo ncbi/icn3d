@@ -95,7 +95,7 @@ iCn3DUI.prototype.setTopMenusHtmlMobile = function (id, str1, str2) { var me = t
     html += me.setMenu3_base();
     html += liStr + " id='" + me.pre + "color'>Color</span>";
     html += me.setMenu4_base();
-    html += liStr + ">Windows</span>";
+    html += liStr + ">Analysis</span>";
     html += me.setMenu5_base();
     html += liStr + ">Help</span>";
     html += me.setMenu6_base();
@@ -554,100 +554,12 @@ iCn3DUI.prototype.setMenu2b_base = function() { var me = this, ic = me.icn3d; "u
     html += me.getLink('mn2_fullstru', 'View Full Structure');
     html += "<li id='" + me.pre + "mn2_alternateWrap'><span id='" + me.pre + "mn2_alternate' class='icn3d-link'>Alternate (Key \"a\")</span></li>";
 
-    html += "<li>-</li>";
-
-    if(me.cfg.cid === undefined) {
-        html += "<li><span>Chem. Binding</span>";
-        html += "<ul>";
-        html += me.getRadio('mn6_chemicalbinding', 'mn6_chemicalbindingshow', 'Show');
-        html += me.getRadio('mn6_chemicalbinding', 'mn6_chemicalbindinghide', 'Hide', true);
-        html += "</ul>";
-        html += "</li>";
-
-        html += me.getLink('mn6_hbondsYes', 'H-Bonds <br>& Interactions');
-        //html += me.getLink('mn6_hbondsNo', 'Remove H-Bonds <br>& Interactions');
-
-        html += "<li><span>Disulfide Bonds</span>";
-        html += "<ul>";
-        html += me.getRadio('mn6_ssbonds', 'mn6_ssbondsYes', 'Show', true);
-        html += me.getRadio('mn6_ssbonds', 'mn6_ssbondsExport', 'Export Pairs');
-        html += me.getRadio('mn6_ssbonds', 'mn6_ssbondsNo', 'Hide');
-        html += "</ul>";
-        html += "</li>";
-
-        html += "<li><span>Cross-Linkages</span>";
-        html += "<ul>";
-        html += me.getRadio('mn6_clbonds', 'mn6_clbondsYes', 'Show', true);
-        html += me.getRadio('mn6_ssbonds', 'mn6_clbondsExport', 'Export Pairs');
-        html += me.getRadio('mn6_clbonds', 'mn6_clbondsNo', 'Hide');
-        html += "</ul>";
-        html += "</li>";
-
-        if(me.cfg.mmtfid !== undefined || me.cfg.pdbid !== undefined || me.cfg.opmid !== undefined || me.cfg.mmcifid !== undefined || me.cfg.mmdbid !== undefined || me.cfg.gi !== undefined || me.cfg.blast_rep_id !== undefined) {
-          html += "<li id='" + me.pre + "assemblyWrapper'><span>Assembly</span>";
-          html += "<ul>";
-
-          html += me.getRadio('mn6_assembly', 'mn6_assemblyYes', 'Biological Assembly', true);
-          html += me.getRadio('mn6_assembly', 'mn6_assemblyNo', 'Asymmetric Unit');
-
-          html += "</ul>";
-          html += "</li>";
-
-          html += me.getLink('mn6_symmetry', 'Symmetry');
-        }
-    }
-
-    html += "<li><span>Distance</span>";
-    html += "<ul>";
-    html += me.getRadio('mn6_distance', 'mn6_distanceYes', 'Measure');
-    html += me.getRadio('mn6_distance', 'mn6_distanceNo', 'Hide', true);
-    html += "</ul>";
-    html += "</li>";
-
-    html += me.getLink('mn6_area', 'Surface Area');
-
-    html += "<li><span>Label</span>";
-    html += "<ul>";
-    html += me.getRadio('mn6_addlabel', 'mn6_addlabelYes', 'by Picking Atoms');
-    html += me.getRadio('mn6_addlabel', 'mn6_addlabelSelection', 'per Selection');
-    html += me.getRadio('mn6_addlabel', 'mn6_addlabelAtoms', 'per Atom');
-    if(me.cfg.cid === undefined) {
-        html += me.getRadio('mn6_addlabel', 'mn6_addlabelResidues', 'per Residue');
-        html += me.getRadio('mn6_addlabel', 'mn6_addlabelResnum', 'per Residue & Number');
-        html += me.getRadio('mn6_addlabel', 'mn6_addlabelChains', 'per Chain');
-        html += me.getRadio('mn6_addlabel', 'mn6_addlabelTermini', 'N- & C-Termini');
-    }
-    html += me.getRadio('mn6_addlabel', 'mn6_addlabelNo', 'Remove', true);
-    html += "</ul>";
-    html += "</li>";
-
-    html += "<li><span>Label Scale</span>";
-    html += "<ul>";
-
-    for(var i = 1; i <= 9; ++i) {
-        if(i == 3) {
-            html += me.getRadio('mn6_labelscale', 'mn6_labelscale0' + i, '0.' + i, true);
-        }
-        else {
-            html += me.getRadio('mn6_labelscale', 'mn6_labelscale0' + i, '0.' + i);
-        }
-    }
-
-    for(var i = 1; i <= 4; i *= 2) {
-        html += me.getRadio('mn6_labelscale', 'mn6_labelscale' + i + '0', i + '.0');
-    }
-
-    html += "</ul>";
-    html += "</li>";
-
     if(me.cfg.opmid !== undefined) {
-        html += "<li>-</li>";
         html += "<li id='" + me.pre + "togglememli'><span id='" + me.pre + "togglemem' class='icn3d-link'>Toggle Membrane</span></li>";
         html += "<li id='" + me.pre + "adjustmemli'><span id='" + me.pre + "adjustmem' class='icn3d-link'>Adjust Membrane</span></li>";
         html += "<li id='" + me.pre + "selectplaneli'><span id='" + me.pre + "selectplane' class='icn3d-link'>Select between<br>Two X-Y Planes</span></li>";
     }
     else {
-        html += "<li>-</li>";
         html += "<li id='" + me.pre + "togglememli' style='display:none'><span id='" + me.pre + "togglemem' class='icn3d-link'>Toggle Membrane</span></li>";
         html += "<li id='" + me.pre + "adjustmemli' style='display:none'><span id='" + me.pre + "adjustmem' class='icn3d-link'>Adjust Membrane</span></li>";
         html += "<li id='" + me.pre + "selectplaneli' style='display:none'><span id='" + me.pre + "selectplane' class='icn3d-link'>Select between<br>Two X-Y Planes</span></li>";
@@ -927,6 +839,14 @@ iCn3DUI.prototype.setMenu3_base = function() { var me = this, ic = me.icn3d; "us
     html += me.getRadio('mn6_bkgd', 'mn6_bkgdBlack', 'Black');
     html += me.getRadio('mn6_bkgd', 'mn6_bkgdGrey', 'Grey');
     html += me.getRadio('mn6_bkgd', 'mn6_bkgdWhite', 'White');
+    html += "</ul>";
+    html += "</li>";
+
+    html += "<li><span>Dialog Color</span>";
+    html += "<ul>";
+    html += me.getRadio('mn6_theme', 'mn6_themeBlue', 'Blue', true);
+    html += me.getRadio('mn6_theme', 'mn6_themeOrange', 'Orange');
+    html += me.getRadio('mn6_theme', 'mn6_themeBlack', 'Black');
     html += "</ul>";
     html += "</li>";
 
@@ -1232,7 +1152,7 @@ iCn3DUI.prototype.setMenu5 = function() { var me = this, ic = me.icn3d; "use str
 
     html += "<div class='icn3d-menu'>";
     html += "<accordion id='" + me.pre + "accordion5' class='icn3d-accordion'>";
-    html += "<h3 id='" + me.pre + "windows' style='font-size:1.2em'>&nbsp;Windows</h3>";
+    html += "<h3 id='" + me.pre + "analysis' style='font-size:1.2em'>&nbsp;Analysis</h3>";
     html += "<div>";
 
     html += me.setMenu5_base();
@@ -1258,22 +1178,114 @@ iCn3DUI.prototype.setMenu5_base = function() { var me = this, ic = me.icn3d; "us
 
         //html += me.getLink('mn2_selectresidues', 'View Sequences');
         if(me.cfg.mmdbid !== undefined || me.cfg.gi !== undefined || me.cfg.blast_rep_id !== undefined || me.cfg.align !== undefined || me.cfg.chainalign !== undefined) {
-          html += me.getLink('mn2_2ddgm', 'View Interactions');
+          html += me.getLink('mn2_2ddgm', 'View 2D Diagram');
         }
 
         html += me.getLink('definedsets2', 'Defined Sets');
+
+        html += "<li>-</li>";
+
+        html += me.getLink('mn6_hbondsYes', 'H-Bonds <br>& Interactions');
+        //html += me.getLink('mn6_hbondsNo', 'Remove H-Bonds <br>& Interactions');
+
+        html += "<li><span>Bring to Front</span>";
+        html += "<ul>";
+        html += me.getLink('mn1_window_table', 'Interaction Table');
+        html += me.getLink('mn1_window_linegraph', '2D Interaction Network');
+        html += me.getLink('mn1_window_scatterplot', '2D Interaction Map');
+        html += me.getLink('mn1_window_graph', '2D Graph (Force-Directed)');
+        html += "</ul>";
+        html += "</li>";
+
+        html += "<li>-</li>";
+    }
+
+    html += "<li><span>Distance</span>";
+    html += "<ul>";
+    html += me.getRadio('mn6_distance', 'mn6_distanceYes', 'Measure');
+    html += me.getRadio('mn6_distance', 'mn6_distanceNo', 'Hide', true);
+    html += "</ul>";
+    html += "</li>";
+
+    html += me.getLink('mn6_area', 'Surface Area');
+
+    html += "<li><span>Label</span>";
+    html += "<ul>";
+    html += me.getRadio('mn6_addlabel', 'mn6_addlabelYes', 'by Picking Atoms');
+    html += me.getRadio('mn6_addlabel', 'mn6_addlabelSelection', 'per Selection');
+    html += me.getRadio('mn6_addlabel', 'mn6_addlabelAtoms', 'per Atom');
+    if(me.cfg.cid === undefined) {
+        html += me.getRadio('mn6_addlabel', 'mn6_addlabelResidues', 'per Residue');
+        html += me.getRadio('mn6_addlabel', 'mn6_addlabelResnum', 'per Residue & Number');
+        html += me.getRadio('mn6_addlabel', 'mn6_addlabelChains', 'per Chain');
+        html += me.getRadio('mn6_addlabel', 'mn6_addlabelTermini', 'N- & C-Termini');
+    }
+    html += me.getRadio('mn6_addlabel', 'mn6_addlabelNo', 'Remove', true);
+    html += "</ul>";
+    html += "</li>";
+
+    html += "<li><span>Label Scale</span>";
+    html += "<ul>";
+
+    for(var i = 1; i <= 9; ++i) {
+        if(i == 3) {
+            html += me.getRadio('mn6_labelscale', 'mn6_labelscale0' + i, '0.' + i, true);
+        }
+        else {
+            html += me.getRadio('mn6_labelscale', 'mn6_labelscale0' + i, '0.' + i);
+        }
+    }
+
+    for(var i = 1; i <= 4; i *= 2) {
+        html += me.getRadio('mn6_labelscale', 'mn6_labelscale' + i + '0', i + '.0');
+    }
+
+    html += "</ul>";
+    html += "</li>";
+
+    html += "<li>-</li>";
+
+    if(me.cfg.cid === undefined) {
+        html += "<li><span>Chem. Binding</span>";
+        html += "<ul>";
+        html += me.getRadio('mn6_chemicalbinding', 'mn6_chemicalbindingshow', 'Show');
+        html += me.getRadio('mn6_chemicalbinding', 'mn6_chemicalbindinghide', 'Hide', true);
+        html += "</ul>";
+        html += "</li>";
+
+        html += "<li><span>Disulfide Bonds</span>";
+        html += "<ul>";
+        html += me.getRadio('mn6_ssbonds', 'mn6_ssbondsYes', 'Show', true);
+        html += me.getRadio('mn6_ssbonds', 'mn6_ssbondsExport', 'Export Pairs');
+        html += me.getRadio('mn6_ssbonds', 'mn6_ssbondsNo', 'Hide');
+        html += "</ul>";
+        html += "</li>";
+
+        html += "<li><span>Cross-Linkages</span>";
+        html += "<ul>";
+        html += me.getRadio('mn6_clbonds', 'mn6_clbondsYes', 'Show', true);
+        html += me.getRadio('mn6_ssbonds', 'mn6_clbondsExport', 'Export Pairs');
+        html += me.getRadio('mn6_clbonds', 'mn6_clbondsNo', 'Hide');
+        html += "</ul>";
+        html += "</li>";
+
+        if(me.cfg.mmtfid !== undefined || me.cfg.pdbid !== undefined || me.cfg.opmid !== undefined || me.cfg.mmcifid !== undefined || me.cfg.mmdbid !== undefined || me.cfg.gi !== undefined || me.cfg.blast_rep_id !== undefined) {
+          html += "<li id='" + me.pre + "assemblyWrapper'><span>Assembly</span>";
+          html += "<ul>";
+
+          html += me.getRadio('mn6_assembly', 'mn6_assemblyYes', 'Biological Assembly', true);
+          html += me.getRadio('mn6_assembly', 'mn6_assemblyNo', 'Asymmetric Unit');
+
+          html += "</ul>";
+          html += "</li>";
+
+          html += me.getLink('mn6_symmetry', 'Symmetry');
+        }
+
+        html += "<li>-</li>";
     }
 
     html += me.getLink('mn6_yournote', 'Your Note /<br>Window Title');
-
-    html += "<li><span>Show Windows</span>";
-    html += "<ul>";
-    html += me.getLink('mn1_window_table', 'Highlight Interactions in Table');
-    html += me.getLink('mn1_window_linegraph', '2D Interaction Network');
-    html += me.getLink('mn1_window_scatterplot', '2D Interaction Map');
-    html += me.getLink('mn1_window_graph', '2D Graph (Force-Directed)');
-    html += "</ul>";
-    html += "</li>";
 
     if(me.cfg.cid !== undefined) {
         html += "<li><span>Links</span>";

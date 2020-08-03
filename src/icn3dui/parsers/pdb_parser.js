@@ -11,7 +11,7 @@ iCn3DUI.prototype.downloadPdb = function (pdbid) { var me = this, ic = me.icn3d;
 
    ic.bCid = undefined;
 
-   document.title = pdbid.toUpperCase() + ' (PDB) in iCn3D';
+   me.setYourNote(pdbid.toUpperCase() + ' (PDB) in iCn3D');
 
    $.ajax({
       url: url,
@@ -51,7 +51,7 @@ iCn3DUI.prototype.downloadOpm = function (opmid) { var me = this, ic = me.icn3d;
 
    url = "https://opm-assets.storage.googleapis.com/pdb/" + opmid.toLowerCase()+ ".pdb";
 
-   document.title = opmid.toUpperCase() + ' (OPM) in iCn3D';
+   me.setYourNote(opmid.toUpperCase() + ' (OPM) in iCn3D');
 
    dataType = "text";
 
@@ -846,7 +846,7 @@ iCn3DUI.prototype.loadMmdbOpmDataPart2 = function(data, pdbid, type) { var me = 
     // set 3d domains
     var structure = data.pdbId;
 
-    if(type === undefined) document.title = structure.toUpperCase() + ' (MMDB) in iCn3D';
+    if(type === undefined) me.setYourNote(structure.toUpperCase() + ' (MMDB) in iCn3D');
 
     for(var molid in data.domains) {
         var chain = data.domains[molid].chain;

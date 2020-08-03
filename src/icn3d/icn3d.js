@@ -61,7 +61,7 @@ var iCn3D = function (id) { var me = this, ic = me.icn3d; "use strict";
     }
 
     this.matShader = this.setOutlineColor('yellow');
-    this.frac = this.thr(0.1, 0.1, 0.1);
+    this.frac = new THREE.Color(0.1, 0.1, 0.1);
 
     // mobile has a problem when the scaleFactor is 2.0
     // the scaleFactor improve the image quality, but it has some centering and picking problems in some Mac when it is not 1
@@ -151,7 +151,7 @@ var iCn3D = function (id) { var me = this, ic = me.icn3d; "use strict";
     this.bRender = true; // a flag to turn off rendering when loading state file
 
     // Default values
-    this.hColor = this.thr(0xFFFF00);
+    this.hColor = new THREE.Color(0xFFFF00);
 
     this.sphereGeometry = new THREE.SphereGeometry(1, 32, 32);
     this.boxGeometry = new THREE.BoxGeometry(1, 1, 1);

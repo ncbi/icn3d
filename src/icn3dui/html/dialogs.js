@@ -11,6 +11,8 @@ iCn3DUI.prototype.openDlg = function (id, title) {  var me = this, ic = me.icn3d
     else {
         me.openDlgNotebook(id, title);
     }
+
+    me.setTheme(me.themecolor);
 };
 
 iCn3DUI.prototype.addSaveButton = function (id) {  var me = this, ic = me.icn3d; "use strict";
@@ -166,7 +168,7 @@ iCn3DUI.prototype.openDlg2Ddgm = function (id, inHeight, bDefinedSets) {  var me
             at = "right top";
         }
 
-        title = 'Interactions';
+        title = '2D Diagram';
     }
 
     //var position ={ my: "left top", at: at, of: "#" + me.pre + "canvas", collision: "none" };

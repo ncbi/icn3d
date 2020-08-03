@@ -11,7 +11,7 @@ if (!$.ui.dialog.prototype._makeDraggableBase) {
     };
 }
 var iCn3DUI = function(cfg) { var me = this, ic = me.icn3d; "use strict";
-    this.REVISION = '2.18.2';
+    this.REVISION = '2.18.3';
     me.bFullUi = true;
     me.cfg = cfg;
     me.divid = me.cfg.divid;
