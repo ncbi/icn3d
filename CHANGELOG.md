@@ -1,4 +1,6 @@
 ## Change Log
+[icn3d-2.18.3](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.18.3.zip) was release on August 3, 2020. Moved "H-Bonds & Interactions" to "Analysis" menu and merged "Windows" menu with "Analysis" menu. Changed the default dialog color to blue. Users can change it at the menu "Style > Dialog Color".
+
 [icn3d-2.18.2](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.18.2.zip) was release on July 28, 2020. Use strict mode and shrink code size.
 
 [icn3d-2.18.1](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.18.1.zip) was release on July 23, 2020. Fixed the issue in the Jupyter Notebook widget icn3dpy; fixed the synchronized issue of the function show3DStructure().

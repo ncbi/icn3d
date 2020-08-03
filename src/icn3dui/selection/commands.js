@@ -2104,6 +2104,10 @@ iCn3DUI.prototype.applyCommand = function (commandStr) { var me = this, ic = me.
         me.openDlg('dl_graph', 'Force-directed graph');
     }
   }
+  else if(command.indexOf('set theme') == 0) {
+    var color = command.substr(command.lastIndexOf(' ') + 1);
+    me.setTheme(color);
+  }
 
 // special, select ==========
 
@@ -2196,12 +2200,12 @@ iCn3DUI.prototype.getMenuFromCmd = function (cmd) { var me = this, ic = me.icn3d
     cmd = cmd.trim();
 
     var seqAnnoStr = 'Windows > View Sequences & Annotations';
-    var hbondIntStr = 'View > H-Bonds & Interactions';
+    var hbondIntStr = 'Analysis > H-Bonds & Interactions';
     var forceStr = hbondIntStr + ' > 2D Graph (Force-Directed)';
     var rotStr1 = 'View > Rotate > Auto Rotation > Rotate ';
     var rotStr2 = 'View > Rotate > Rotate 90 deg > ';
     var sel3dStr = 'Select > Select on 3D > ';
-    var labelStr = 'View > Label > ';
+    var labelStr = 'Analysis > Label > ';
     var printStr = 'File > 3D Printing > ';
 
     if(cmd.indexOf('load') == 0) return 'File > Retrieve by ID, Align';
@@ -2212,8 +2216,8 @@ iCn3DUI.prototype.getMenuFromCmd = function (cmd) { var me = this, ic = me.icn3d
     else if(cmd.indexOf('set annotation clinvar') == 0) return seqAnnoStr + ': "ClinVar" checkbox';
     else if(cmd.indexOf('set annotation snp') == 0) return seqAnnoStr + ': "SNP" checkbox';
     else if(cmd.indexOf('set annotation 3ddomain') == 0) return seqAnnoStr + ': "3D Domains" checkbox';
-    else if(cmd.indexOf('view interactions') == 0) return 'Windows > View Interactions';
-    else if(cmd.indexOf('symmetry') == 0) return 'View > Symmetry';
+    else if(cmd.indexOf('view interactions') == 0) return 'Windows > View 2D Diagram';
+    else if(cmd.indexOf('symmetry') == 0) return 'Analysis > Symmetry';
     else if(cmd.indexOf('realign on seq align') == 0) return 'File > Realign Selection > on Sequence Alignment';
     else if(cmd.indexOf('realign') == 0) return 'File > Realign Selection > Residue by Residue';
     else if(cmd.indexOf('graph interaction pairs') == 0) return hbondIntStr + ' > 2D Graph (Force-Directed)';
@@ -2244,19 +2248,19 @@ iCn3DUI.prototype.getMenuFromCmd = function (cmd) { var me = this, ic = me.icn3d
     else if(cmd == 'set fog off') return 'View > Fog for Selection > Off';
     else if(cmd == 'set slab on') return 'View > Slab for Selection > On';
     else if(cmd == 'set slab off') return 'View > Slab for Selection > Off';
-    else if(cmd == 'set assembly on') return 'View > Assembly > Biological Assembly';
-    else if(cmd == 'set assembly off') return 'View > Assembly > Asymmetric Unit';
-    else if(cmd == 'set chemicalbinding show') return 'View Chem. Binding > Show';
-    else if(cmd == 'set chemicalbinding hide') return 'View Chem. Binding > Hide';
+    else if(cmd == 'set assembly on') return 'Analysis > Assembly > Biological Assembly';
+    else if(cmd == 'set assembly off') return 'Analysis > Assembly > Asymmetric Unit';
+    else if(cmd == 'set chemicalbinding show') return 'Analysis > Chem. Binding > Show';
+    else if(cmd == 'set chemicalbinding hide') return 'Analysis > Chem. Binding > Hide';
     else if(cmd == 'set hbonds off' || cmd == 'set salt bridge off' || cmd == 'set contact off'
       || cmd == 'set halogen pi off') return hbondIntStr + ' > Reset';
     else if(cmd == 'hydrogens') return 'Style > Hydrogens > Show';
     else if(cmd == 'set hydrogens off') return 'Style > Hydrogens > Hide';
     else if(cmd == 'set stabilizer off') return 'File > 3D Printing > Remove All Stabilizers';
-    else if(cmd == 'set disulfide bonds off') return 'View > Disulfide Bonds > Hide';
-    else if(cmd == 'set cross linkage off') return 'View > Cross-Linkages > Hide';
-    else if(cmd == 'set lines off') return 'View > Distance > Hide';
-    else if(cmd == 'set labels off') return 'View > Label > Remove';
+    else if(cmd == 'set disulfide bonds off') return 'Analysis > Disulfide Bonds > Hide';
+    else if(cmd == 'set cross linkage off') return 'Analysis > Cross-Linkages > Hide';
+    else if(cmd == 'set lines off') return 'Analysis > Distance > Hide';
+    else if(cmd == 'set labels off') return 'Analysis > Label > Remove';
     else if(cmd == 'set mode all') return 'Toggle to "All" (next to "Help")';
     else if(cmd == 'set mode selection') return 'Toggle to "Selection" (next to "Help")';
     else if(cmd == 'set view detailed view') return seqAnnoStr + ': "Details" tab';
@@ -2294,8 +2298,8 @@ iCn3DUI.prototype.getMenuFromCmd = function (cmd) { var me = this, ic = me.icn3d
     else if(cmd == 'output selection') return 'Select > Clear Selection';
     else if(cmd == 'toggle highlight') return 'Select > Toggle Highlight';
     else if(cmd == 'stabilizer') return 'File > 3D Printing > Add all Stabilizers';
-    else if(cmd == 'disulfide bonds') return 'View > Disulfide Bonds > Show';
-    else if(cmd == 'cross linkage') return 'View > Cross-Linkages > Show';
+    else if(cmd == 'disulfide bonds') return 'Analysis > Disulfide Bonds > Show';
+    else if(cmd == 'cross linkage') return 'Analysis > Cross-Linkages > Show';
     else if(cmd == 'back') return 'View > Undo';
     else if(cmd == 'forward') return 'View > Redo';
     else if(cmd == 'clear all') return 'Select > Clear Selection';
@@ -2316,7 +2320,7 @@ iCn3DUI.prototype.getMenuFromCmd = function (cmd) { var me = this, ic = me.icn3d
     else if(cmd.indexOf('define helix sets') == 0) return seqAnnoStr + ': "Helix Sets" button';
     else if(cmd.indexOf('define sheet sets') == 0) return seqAnnoStr + ': "Sheet Sets" button';
     else if(cmd.indexOf('define coil sets') == 0) return seqAnnoStr + ': "Coil Sets" button';
-    else if(cmd.indexOf('select interaction') == 0) return 'Windows > View Interactions: click on edges';
+    else if(cmd.indexOf('select interaction') == 0) return 'Windows > View 2D Diagram: click on edges';
     else if(cmd.indexOf('select saved atoms') == 0 || cmd.indexOf('select sets') == 0) return 'Windows > Defined Sets: select in menu';
     else if(cmd.indexOf('select chain') !== -1) return seqAnnoStr + ': click on chain names';
     else if(cmd.indexOf('select alignChain') !== -1) return 'Windows > View Aligned Sequences: click on chain names';
@@ -2329,8 +2333,8 @@ iCn3DUI.prototype.getMenuFromCmd = function (cmd) { var me = this, ic = me.icn3d
     else if(cmd.indexOf('set thickness') == 0) return 'File > 3D Printing > Set Thickness';
     else if(cmd.indexOf('set highlight color') == 0) return 'Select > Highlight Color';
     else if(cmd.indexOf('set highlight style') == 0) return 'Select > Highlight Style';
-    else if(cmd.indexOf('add line') == 0) return 'View > Distance > Measure';
-    else if(cmd.indexOf('add label') == 0) return 'View > Distance > Measure';
+    else if(cmd.indexOf('add line') == 0) return 'Analysis > Distance > Measure';
+    else if(cmd.indexOf('add label') == 0) return 'Analysis > Distance > Measure';
     else if(cmd.indexOf('msa') == 0) return seqAnnoStr + ': "Add Track" button: "FASTA Alignment" button';
     else if(cmd.indexOf('add track') == 0) return seqAnnoStr + ': "Add Track" button';
     else if(cmd.indexOf('remove one stabilizer') == 0) return 'File > 3D Printing > Remove One Stablizer';
@@ -2361,6 +2365,7 @@ iCn3DUI.prototype.getMenuFromCmd = function (cmd) { var me = this, ic = me.icn3d
     else if(cmd.indexOf('select $') !== -1 || cmd.indexOf('select .') !== -1 || cmd.indexOf('select :') !== -1 || cmd.indexOf('select @') !== -1) return 'Select > Advanced; or other selection';
     else if(cmd.indexOf('replay on') !== -1) return 'File > Replay Each Step > On';
     else if(cmd.indexOf('replay off') !== -1) return 'File > Replay Each Step > Off';
+    else if(cmd.indexOf('set theme') !== -1) return 'Style > Theme Color';
     else return '';
 };
 

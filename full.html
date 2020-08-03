@@ -136,6 +136,8 @@
 
     var rotate = params.rotate;
 
+    var shownote = 1; //params.shownote;
+
     var options = (params.options !== undefined) ? JSON.parse(params.options) : undefined;
 
     $( document ).ready(function() {
@@ -181,6 +183,7 @@
               replay: replay,
               notebook: notebook,
               rid: rid,
+              shownote: shownote,
               command: command
           };
           if(idName !== '') cfg[idName] = idArray[i];
@@ -248,6 +251,7 @@
               align: align,
               replay: replay,
               notebook: notebook,
+              shownote: shownote,
               command: command
           };
 
@@ -276,6 +280,7 @@
               chainalign: chainalign,
               replay: replay,
               notebook: notebook,
+              shownote: shownote,
               command: command
           };
 
