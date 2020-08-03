@@ -12,6 +12,8 @@ iCn3DUI.prototype.openDlg = function (id, title) {  var me = this, ic = me.icn3d
         me.openDlgNotebook(id, title);
     }
 
+    if(!me.themecolor) me.themecolor = 'blue';
+
     me.setTheme(me.themecolor);
 };
 
