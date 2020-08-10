@@ -274,6 +274,11 @@ iCn3DUI.prototype.allEventFunctions = function() { var me = this;
        me.openDlg('dl_dsn6', 'Please input the DSN6 file to display electron density map');
     });
 //    },
+
+    $("#" + me.pre + "mn1_delphi").click(function(e) { var ic = me.icn3d;
+       me.openDlg('dl_delphi', 'Please input the phi file to display Delphi potential map');
+    });
+
 //    clkMn1_dsn6url: function() {
     $("#" + me.pre + "mn1_dsn6url").click(function(e) { var ic = me.icn3d;
        me.openDlg('dl_dsn6url', 'Please input the DSN6 file to display electron density map');
@@ -1242,14 +1247,14 @@ iCn3DUI.prototype.allEventFunctions = function() { var me = this;
     });
 //    },
 
-  for(var i = 1; i <= 10; ++i) {
-    var iStr = (i / 10).toFixed(1).toString();
-    var iPadStart = (i < 10) ? '0' + i : i;
-    $("#" + me.pre + "mn5_opacity" + iPadStart).click(function(e) { var ic = me.icn3d;
-       me.setOption('opacity', iStr);
-       me.setLogCmd('set surface opacity ' + iStr, true);
+    $("." + me.pre + "mn5_opacity").each(function () {
+       var value = $(this).attr('v');
+
+       $(this).click(function(e) { var ic = me.icn3d;
+           me.setOption('opacity', value);
+           me.setLogCmd('set surface opacity ' + value, true);
+       });
     });
-  }
 
 //    clkMn5_wireframeYes: function() {
     $("#" + me.pre + "mn5_wireframeYes").click(function(e) { var ic = me.icn3d;
@@ -1279,6 +1284,11 @@ iCn3DUI.prototype.allEventFunctions = function() { var me = this;
        me.setLogCmd('set map nothing', true);
     });
 //    },
+    $("#" + me.pre + "phimapNo").click(function(e) { var ic = me.icn3d;
+       me.setOption('phimap', 'nothing');
+       me.setLogCmd('set phimap nothing', true);
+    });
+
 //    clickApplymap2fofc: function() {
     $("#" + me.pre + "applymap2fofc").click(function(e) { var ic = me.icn3d;
        e.preventDefault();
@@ -1464,23 +1474,15 @@ iCn3DUI.prototype.allEventFunctions = function() { var me = this;
     });
 //    },
 
-  for(var i = 1; i <= 10; ++i) {
-    var iStr = (i / 10).toFixed(1).toString();
-    var iPadStart = (i < 10) ? '0' + i : i;
-    $("#" + me.pre + "mn6_labelscale" + iPadStart).click(function(e) { var ic = me.icn3d;
-       ic.labelScale = i/10;
-       ic.draw();
-       me.setLogCmd('set label scale ' + iStr, true);
-    });
-  }
+    $("." + me.pre + "mn6_labelscale").each(function () {
+       var value = $(this).attr('v');
 
-  for(var i = 2; i <= 4; i += 2) {
-    $("#" + me.pre + "mn6_labelscale" + i + "0").click(function(e) { var ic = me.icn3d;
-       ic.labelScale = i;
-       ic.draw();
-       me.setLogCmd('set label scale ' + i + '.0', true);
+       $(this).click(function(e) { var ic = me.icn3d;
+           ic.labelScale = value;
+           ic.draw();
+           me.setLogCmd('set label scale ' + value, true);
+       });
     });
-  }
 
 //    clkMn6_distanceYes: function() {
     $("#" + me.pre + "mn6_distanceYes").click(function(e) { var ic = me.icn3d;
@@ -1540,16 +1542,6 @@ iCn3DUI.prototype.allEventFunctions = function() { var me = this;
        me.setLogCmd('set chemicalbinding hide', true);
     });
 //    },
-//    clkMn6_rotateleft: function() {
-    $("#" + me.pre + "mn6_rotateleft").click(function(e) { var ic = me.icn3d;
-       me.setLogCmd('rotate left', true);
-       ic.bStopRotate = false;
-       ic.rotateCount = 0;
-       ic.rotateCountMax = 6000;
-       me.ROT_DIR = 'left';
-       me.rotStruc('left');
-    });
-//    },
 //    clkMn6_sidebyside: function() {
     $("#" + me.pre + "mn6_sidebyside").click(function(e) { var ic = me.icn3d;
        var bSidebyside = true;
@@ -1564,52 +1556,43 @@ iCn3DUI.prototype.allEventFunctions = function() { var me = this;
        }
     });
 //    },
-//    clkMn6_rotateright: function() {
-    $("#" + me.pre + "mn6_rotateright").click(function(e) { var ic = me.icn3d;
-       me.setLogCmd('rotate right', true);
-       ic.bStopRotate = false;
-       ic.rotateCount = 0;
-       ic.rotateCountMax = 6000;
-       me.ROT_DIR = 'right';
-       me.rotStruc('right');
-    });
-//    },
-//    clkMn6_rotateup: function() {
-    var itemArray = ['up', 'down'];
-    for(var i in itemArray) {
-        var item = itemArray[i];
-        $("#" + me.pre + "mn6_rotate" + item).click(function(e) { var ic = me.icn3d;
-           me.setLogCmd('rotate ' + item, true);
+
+    $("." + me.pre + "mn6_rotate").each(function () {
+       var value = $(this).attr('v').toLowerCase();
+       var direction = value.split(' ')[1];
+
+       $(this).click(function(e) { var ic = me.icn3d;
+           me.setLogCmd(value, true);
            ic.bStopRotate = false;
            ic.rotateCount = 0;
            ic.rotateCountMax = 6000;
-           me.ROT_DIR = item;
-           me.rotStruc(item);
-        });
-    }
-//    },
+           me.ROT_DIR = direction;
+           me.rotStruc(direction);
+       });
+    });
 
-//    clkMn6_rotatex: function() {
-    itemArray = ['x', 'y', 'z'];
-    for(var i in itemArray) {
-        var item = itemArray[i];
-        $("#" + me.pre + "mn6_rotate" + item).click(function(e) { var ic = me.icn3d;
-          me.setLogCmd('rotate ' + item, true);
+    $("." + me.pre + "mn6_rotate90").each(function () {
+       var value = $(this).attr('v').toLowerCase();
+       var direction = value.split('-')[0];
+
+       $(this).click(function(e) { var ic = me.icn3d;
+          me.setLogCmd(value, true);
           var axis;
-          if(item == 'x') {
+          if(direction == 'x') {
               axis = new THREE.Vector3(1,0,0);
           }
-          else if(item == 'y') {
+          else if(direction == 'y') {
               axis = new THREE.Vector3(0,1,0);
           }
-          else if(item == 'z') {
+          else if(direction == 'z') {
               axis = new THREE.Vector3(0,0,1);
           }
           var angle = 0.5 * Math.PI;
           ic.setRotation(axis, angle);
-        });
-    }
-//    },
+       });
+    });
+
+
 //    clkMn6_cameraPers: function() {
     $("#" + me.pre + "mn6_cameraPers").click(function(e) { var ic = me.icn3d;
        me.setOption('camera', 'perspective');
@@ -2159,6 +2142,11 @@ iCn3DUI.prototype.allEventFunctions = function() { var me = this;
        e.preventDefault();
        if(!me.cfg.notebook) dialog.dialog( "close" );
        me.loadDsn6File('fofc');
+    });
+    $("#" + me.pre + "reload_phifile").click(function(e) { var ic = me.icn3d;
+       e.preventDefault();
+       //if(!me.cfg.notebook) dialog.dialog( "close" );
+       me.loadPhiFile();
     });
     $("#" + me.pre + "reload_dsn6fileurl2fofc").click(function(e) { var ic = me.icn3d;
        e.preventDefault();

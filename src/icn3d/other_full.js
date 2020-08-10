@@ -1230,6 +1230,15 @@ iCn3D.prototype.removeEmmaps = function () { var me = this, ic = me.icn3d; "use 
    this.prevEmmaps = [];
 };
 
+iCn3D.prototype.removePhimaps = function () { var me = this, ic = me.icn3d; "use strict";
+   // remove prevous highlight
+   for(var i = 0, il = this.prevPhimaps.length; i < il; ++i) {
+       this.mdl.remove(this.prevPhimaps[i]);
+   }
+
+   this.prevPhimaps = [];
+};
+
 iCn3D.prototype.removeLastMap = function () { var me = this, ic = me.icn3d; "use strict";
    // remove prevous highlight
    if(this.prevMaps.length > 0) {
@@ -1243,6 +1252,14 @@ iCn3D.prototype.removeLastEmmap = function () { var me = this, ic = me.icn3d; "u
    if(this.prevEmmaps.length > 0) {
        this.mdl.remove(this.prevEmmaps[this.prevEmmaps.length - 1]);
        this.prevEmmaps.slice(this.prevEmmaps.length - 1, 1);
+   }
+};
+
+iCn3D.prototype.removeLastPhimap = function () { var me = this, ic = me.icn3d; "use strict";
+   // remove prevous highlight
+   if(this.prevPhimaps.length > 0) {
+       this.mdl.remove(this.prevPhimaps[this.prevPhimaps.length - 1]);
+       this.prevPhimaps.slice(this.prevPhimaps.length - 1, 1);
    }
 };
 
