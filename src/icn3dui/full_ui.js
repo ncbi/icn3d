@@ -11,7 +11,7 @@ if (!$.ui.dialog.prototype._makeDraggableBase) {
     };
 }
 var iCn3DUI = function(cfg) { var me = this, ic = me.icn3d; "use strict";
-    this.REVISION = '2.18.3';
+    this.REVISION = '2.18.4';
     me.bFullUi = true;
     me.cfg = cfg;
     me.divid = me.cfg.divid;
@@ -161,6 +161,8 @@ var iCn3DUI = function(cfg) { var me = this, ic = me.icn3d; "use strict";
     me.opts['mapwireframe']       = 'yes';                //yes, no
     me.opts['emmap']              = 'nothing';            //em, nothing
     me.opts['emmapwireframe']     = 'yes';                //yes, no
+    me.opts['phimap']              = 'nothing';            //phi, nothing
+    me.opts['phimapwireframe']     = 'yes';                //yes, no
     me.opts['chemicals']          = 'stick';              //lines, stick, ball and stick, schematic, sphere, nothing
     me.opts['water']              = 'nothing';            //sphere, dot, nothing
     me.opts['ions']               = 'sphere';             //sphere, dot, nothing
@@ -783,6 +785,14 @@ iCn3DUI.prototype = {
               ic.removeLastEmmap();
           }
           ic.applyEmmapOptions();
+          //if(ic.bRender) ic.render();
+          ic.draw(); // to make surface work in assembly
+      }
+      else if(id === 'phimap' || id === 'phimapwireframe') {
+          if(id === 'phimapwireframe') {
+              ic.removeLastPhimap();
+          }
+          ic.applyPhimapOptions();
           //if(ic.bRender) ic.render();
           ic.draw(); // to make surface work in assembly
       }
@@ -2241,6 +2251,7 @@ iCn3DUI.prototype = {
       ic.prevSurfaces = [];
       ic.prevMaps = [];
       ic.prevEmmaps = [];
+      ic.prevPhimaps = [];
       // remove lines and labels
       ic.labels = {};     // hash of name -> a list of labels. Each label contains 'position', 'text', 'size', 'color', 'background'
                             // label name could be custom, residue, schmatic, distance
@@ -2353,9 +2364,7 @@ iCn3DUI.prototype = {
          alert("Please select a file before clicking 'Load'");
        }
        else {
-         if (!window.File || !window.FileReader || !window.FileList || !window.Blob) {
-            alert('The File APIs are not fully supported in this browser.');
-         }
+         me.checkFileAPI();
          var reader = new FileReader();
          reader.onload = function (e) { var ic = me.icn3d;
             var dataStr = e.target.result; // or = reader.result;
@@ -2454,9 +2463,7 @@ iCn3DUI.prototype = {
          alert("Please select a file before clicking 'Load'");
        }
        else {
-         if (!window.File || !window.FileReader || !window.FileList || !window.Blob) {
-            alert('The File APIs are not fully supported in this browser.');
-         }
+         me.checkFileAPI();
          var reader = new FileReader();
          reader.onload = function (e) { var ic = me.icn3d;
            var arrayBuffer = e.target.result; // or = reader.result;
@@ -2469,6 +2476,30 @@ iCn3DUI.prototype = {
            }
            me.setOption('map', type);
            me.setLogCmd('load dsn6 file ' + $("#" + me.pre + "dsn6file" + type).val(), false);
+         };
+         reader.readAsArrayBuffer(file);
+       }
+    },
+    checkFileAPI: function() { var me = this, ic = me.icn3d; "use strict";
+         if (!window.File || !window.FileReader || !window.FileList || !window.Blob) {
+            alert('The File APIs are not fully supported in this browser.');
+         }
+    },
+    loadPhiFile: function() { var me = this, ic = me.icn3d; "use strict";
+       var file = $("#" + me.pre + "phifile")[0].files[0];
+       var phicontour = $("#" + me.pre + "phicontour").val();
+       if(!file) {
+         alert("Please select a file before clicking 'Load'");
+       }
+       else {
+         me.checkFileAPI();
+         var reader = new FileReader();
+         reader.onload = function (e) { var ic = me.icn3d;
+           var arrayBuffer = e.target.result; // or = reader.result;
+           me.loadPhiData(arrayBuffer, phicontour);
+           me.bAjaxPhi = true;
+           me.setOption('phimap', 'phi');
+           me.setLogCmd('load phi file ' + $("#" + me.pre + "phifile").val(), false);
          };
          reader.readAsArrayBuffer(file);
        }

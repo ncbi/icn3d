@@ -214,6 +214,7 @@ var full_uijs = [
     "src/icn3dui/parsers/mol2_parser.js",
     "src/icn3dui/parsers/xyz_parser.js",
     "src/icn3dui/parsers/dsn6_parser.js",
+    "src/icn3dui/parsers/phi_parser.js",
     //"src/icn3dui/parsers/density_cif_parser.js",
     "src/icn3dui/annotations/annotations.js",
     "src/icn3dui/annotations/addtrack.js",

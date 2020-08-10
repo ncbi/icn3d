@@ -69,6 +69,10 @@
     var cid = params.cid;
     var mmcifid = params.mmcifid;
     var urlname = params.url;
+    if(urlname && urlname.indexOf('%3A%2F%2F') === -1) { // decoded URL
+        // should encode it
+        urlname = encodeURIComponent(urlname);
+    }
     var urltype = (params.type === undefined) ? 'pdb' : params.type;
 
     var align = params.align;
@@ -90,6 +94,14 @@
         }
 
         return input;
+    }
+
+    function getVersion(date) {
+        var version;
+
+        if(date >= '20200629') version = '2.17.6';
+
+        return version;
     }
 
     var date = getValue(params.date);
@@ -134,54 +146,60 @@
 
     var options = (params.options !== undefined) ? JSON.parse(params.options) : undefined;
 
+    var cfg = {
+      inpara: inpara,
+      width: width,
+      height: height,
+      resize: resize,
+      rotate: rotate,
+      showmenu: showmenu,
+      showtitle: showtitle,
+      showcommand: showcommand,
+      showanno: showanno,
+      show2d: show2d,
+      showsets: showsets,
+      simplemenu: simplemenu,
+      mobilemenu: mobilemenu,
+      closepopup: closepopup,
+      replay: replay,
+      notebook: notebook,
+      shownote: shownote,
+      options: options,
+      command: command
+    };
+
     $( document ).ready(function() {
       // use the FIXED name "icn3duiHash", which is used in iCn3DUI
       window.icn3duiHash = {};
 
-      function setupViewer(idName, idValue) {
+      function setupViewer(idName, idValue, cfg) {
         var maxStructure = 5; // show max 5 structures
 
         var idArray = idValue.replace(/\s/g, '').split(',');
 
         if(idArray.length > 1) {
-          resize = false;
+          cfg.resize = false;
 
-          if(width.indexOf('%') != -1) {
-            width = 400;
-            height = 400;
+          if(cfg.width && cfg.width.indexOf('%') != -1) {
+            cfg.width = 400;
+            cfg.height = 400;
           }
         }
 
-        if(options === undefined || options === 'undefined') options = {};
+        if(cfg.options === undefined || cfg.options === 'undefined') cfg.options = {};
 
         //Options are available at: https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d.html#DisplayOptions
-        //options['chemicalbinding'] = 'show';
+        //cfg.options['chemicalbinding'] = 'show';
 
         //for(var i = 0, il = idArray.length; i < il && i < maxStructure; ++i) {
           var i = 0;
-          var cfg = {
-              divid: 'div' + i,
-              inpara: inpara,
-              width: '49%', //width,
-              height: height,
-              resize: resize,
-              rotate: rotate,
-              showmenu: showmenu,
-              showtitle: showtitle,
-              showcommand: showcommand,
-              showanno: showanno,
-              show2d: show2d,
-              showsets: showsets,
-              simplemenu: simplemenu,
-              mobilemenu: true, //mobilemenu,
-              closepopup: true, //closepopup,
-              blast_rep_id: blast_rep_id,
-              query_id: query_id,
-              options: options,
-              controlGl: true,
-              command: command,
-              bSidebyside: true
-          };
+          cfg.divid = 'div' + i;
+          cfg.width = '49%'; //width,
+          cfg.mobilemenu = true; //mobilemenu,
+          cfg.closepopup = true; //closepopup,
+          cfg.controlGl = true;
+          cfg.bSidebyside = true;
+
           if(idName !== '') cfg[idName] = idArray[i];
 
           var icn3dui = new iCn3DUI(cfg);
@@ -201,25 +219,25 @@
       }
 
       if(mmtfid !== undefined) {
-          setupViewer('mmtfid', mmtfid);
+          setupViewer('mmtfid', mmtfid, cfg);
       }
       else if(pdbid !== undefined) {
-          setupViewer('pdbid', pdbid);
+          setupViewer('pdbid', pdbid, cfg);
       }
       else if(opmid !== undefined) {
-          setupViewer('opmid', opmid);
+          setupViewer('opmid', opmid, cfg);
       }
       else if(cid !== undefined) {
-          setupViewer('cid', cid);
+          setupViewer('cid', cid, cfg);
       }
       else if(mmcifid !== undefined) {
-          setupViewer('mmcifid', mmcifid);
+          setupViewer('mmcifid', mmcifid, cfg);
       }
       else if(mmdbid !== undefined) {
-          setupViewer('mmdbid', mmdbid);
+          setupViewer('mmdbid', mmdbid, cfg);
       }
       else if(gi !== undefined) {
-          setupViewer('gi', gi);
+          setupViewer('gi', gi, cfg);
       }
       else if(blast_rep_id !== undefined) {
           if( (from === 'blast' || from === 'icn3d') && command == '') {
@@ -227,36 +245,23 @@
               + blast_rep_id + ';+show+selection';
           }
 
-          setupViewer('blast_rep_id', blast_rep_id);
+          setupViewer('blast_rep_id', blast_rep_id, cfg);
       }
       else if(urlname !== undefined) {
-        urlname = decodeURIComponent(urlname);
-          setupViewer('url', urltype + '|' + urlname);
+          urlname = decodeURIComponent(urlname);
+          setupViewer('url', urltype + '|' + urlname, cfg);
       }
       // e.g., align=103701,1,4,68563,1,167 [mmdbid1,biounit,molecule,mmdbid2,biounit,molecule]
       else if(align !== undefined) {
-          var cfg = {
-              divid: 'div0',
-              inpara: inpara,
-              width: '49%', //width,
-              height: height,
-              resize: resize,
-              rotate: rotate,
-              showmenu: showmenu,
-              showtitle: showtitle,
-              showcommand: showcommand,
-              showanno: showanno,
-              showalignseq: showalignseq,
-              show2d: show2d,
-              showsets: showsets,
-              simplemenu: simplemenu,
-              mobilemenu: true, //mobilemenu,
-              closepopup: true, //closepopup,
-              align: align,
-              controlGl: true,
-              command: command,
-              bSidebyside: true
-          };
+          cfg.width = '49%'; //width,
+          cfg.mobilemenu = true; //mobilemenu,
+          cfg.closepopup = true; //closepopup,
+          cfg.controlGl = true;
+          cfg.bSidebyside = true;
+
+          cfg.divid = 'div0';
+          cfg.align = align;
+          cfg.showalignseq = showalignseq;
 
           var icn3dui = new iCn3DUI(cfg);
           icn3dui.show3DStructure();
@@ -269,28 +274,15 @@
           window.icn3duiHash['div1'] = icn3dui2;
       }
       else if(chainalign !== undefined) {
-          var cfg = {
-              divid: 'div0',
-              inpara: inpara,
-              width: '49%', //width,
-              height: height,
-              resize: resize,
-              rotate: rotate,
-              showmenu: showmenu,
-              showtitle: showtitle,
-              showcommand: showcommand,
-              showanno: showanno,
-              showalignseq: showalignseq,
-              show2d: show2d,
-              showsets: showsets,
-              simplemenu: simplemenu,
-              mobilemenu: true, //mobilemenu,
-              closepopup: true, //closepopup,
-              chainalign: chainalign,
-              controlGl: true,
-              command: command,
-              bSidebyside: true
-          };
+          cfg.width = '49%'; //width,
+          cfg.mobilemenu = true; //mobilemenu,
+          cfg.closepopup = true; //closepopup,
+          cfg.controlGl = true;
+          cfg.bSidebyside = true;
+
+          cfg.divid = 'div0';
+          cfg.chainalign = chainalign;
+          cfg.showalignseq = showalignseq;
 
           var icn3dui = new iCn3DUI(cfg);
           icn3dui.show3DStructure();
@@ -303,7 +295,7 @@
           window.icn3duiHash['div1'] = icn3dui2;
       }
       else {
-          setupViewer('', '');
+          setupViewer('', '', cfg);
       }
 
     }); // document ready

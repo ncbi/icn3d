@@ -42,10 +42,14 @@ iCn3DUI.prototype.showSelection = function () { var me = this, ic = me.icn3d; "u
     // show selected chains in annotation window
     me.showAnnoSelectedChains();
 
+console.log("before: " + JSON.stringify(me.graphStr));
+
     // update 2d graph
     if(me.graphStr !== undefined) {
       me.graphStr = me.getGraphDataForDisplayed();
     }
+
+console.log("after: " + JSON.stringify(me.graphStr));
 
     if(me.bGraph) me.drawGraph(me.graphStr);
     if(me.bLinegraph) me.drawLineGraph(me.graphStr);

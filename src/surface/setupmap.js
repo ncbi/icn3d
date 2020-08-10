@@ -7,7 +7,8 @@ $3Dmol.SetupMap = function (data) {
     "use strict";
 
     var ps = new $3Dmol.ElectronMap();
-    ps.initparm(data.header, data.data, data.matrix, data.isovalue, data.center, data.maxdist, data.pmin, data.pmax, data.water, data.type, data.rmsd_supr);
+    ps.initparm(data.header, data.data, data.matrix, data.isovalue, data.center, data.maxdist,
+      data.pmin, data.pmax, data.water, data.type, data.rmsd_supr);
 
     ps.fillvoxels(data.allatoms, data.extendedAtoms);
 

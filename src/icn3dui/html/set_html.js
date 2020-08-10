@@ -279,7 +279,7 @@ iCn3DUI.prototype.getRadio = function(radioid, id, text, bChecked) { var me = th
     var checkedStr = (bChecked) ? ' checked' : '';
 
     //https://stackoverflow.com/questions/17541614/use-images-instead-of-radio-buttons/17541916
-    return "<li><label for='" + me.pre + id + "' class='icn3d-rad'>" + me.inputRadioStr + "name='" + me.pre + radioid + "' id='" + me.pre + id + "'" + checkedStr + "><span class='ui-icon ui-icon-blank'></span> <span class='icn3d-rad-text'>" + text + "</span></label></li>";
+    return "<li><label for='" + me.pre + id + "' class='icn3d-rad'>" + me.inputRadioStr + "name='" + me.pre + radioid + "' " + "class='" + me.pre + radioid + "' " + "v='" + text + "' id='" + me.pre + id + "'" + checkedStr + "><span class='ui-icon ui-icon-blank'></span> <span class='icn3d-rad-text'>" + text + "</span></label></li>";
 };
 
 iCn3DUI.prototype.getRadioColor = function(radioid, id, text, color, bChecked) { var me = this, ic = me.icn3d; "use strict";
@@ -336,7 +336,7 @@ iCn3DUI.prototype.setMenu1_base = function() { var me = this, ic = me.icn3d; "us
     html += me.getLink('mn1_selection', 'Selection File');
     html += "<li>-</li>";
 
-    //html += me.getLink('mn1_dsn6', 'Electron Density (DSN6)');
+//    html += me.getLink('mn1_delphi', 'Delphi Potential (phi)');
     html += "<li><span>Electron Density (DSN6)</span>";
     html += "<ul>";
     html += me.getLink('mn1_dsn6', 'Local File');
@@ -1700,6 +1700,21 @@ iCn3DUI.prototype.setDialogs = function() { var me = this, ic = me.icn3d; "use s
     html += "Click in the input box to use the color picker:<br><br> ";
     html += "Custom Color: " + me.inputTextStr + "id='" + me.pre + "colorcustom' value='FF0000' size=8> ";
     html += me.buttonStr + "applycustomcolor'>Apply</button>";
+    html += "</div>";
+
+    html += me.divStr + "dl_delphi' class='" + dialogClass + "'>";
+    html += "<b>Note</b>: Always load a PDB file before loading Delphi potential files. <br/><br/><br/>";
+
+    html += "<span style='white-space:nowrap;font-weight:bold;'>Potential contour at: <select id='" + me.pre + "phicontour'>";
+
+    var optArray1b = ['0.5', '1', '2', '4', '6', '8', '10'];
+    html += me.getOptionHtml(optArray1b, 1);
+
+    html += "</select> kT/e (25.6mV at 298K)</span><br/>";
+    html += me.inputFileStr + "id='" + me.pre + "phifile'> " + me.buttonStr + "reload_phifile' style='margin-top: 6px;'>Load</button><br><br><br/>";
+
+    html += me.buttonStr + "phimapNo'>Remove Map</button><br>";
+
     html += "</div>";
 
     html += me.divStr + "dl_symmetry' class='" + dialogClass + "'><br>";

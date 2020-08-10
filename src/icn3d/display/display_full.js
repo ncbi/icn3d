@@ -480,6 +480,36 @@ iCn3D.prototype.applyEmmapOptions = function (options) { var me = this, ic = me.
     }
 };
 
+iCn3D.prototype.applyPhimapOptions = function (options) { var me = this, ic = me.icn3d; "use strict";
+    if(options === undefined) options = this.opts;
+
+    switch (options.phimapwireframe) {
+        case 'yes':
+            options.phimapwireframe = true;
+            break;
+        case 'no':
+            options.phimapwireframe = false;
+            break;
+    }
+
+    var atoms, currAtoms;
+
+    // only show the surface for atoms which are displaying
+    atoms = this.intHash(this.dAtoms, this.hAtoms);
+
+    currAtoms = this.hash2Atoms(atoms);
+
+    switch (options.phimap.toLowerCase()) {
+        case 'phi':
+            this.createSurfaceRepresentation(currAtoms, 14, options.phimapwireframe);
+            break;
+        case 'nothing':
+            // remove surfaces
+            this.removePhimaps();
+            break;
+    }
+};
+
 iCn3D.prototype.setFog = function(bZoomin) { var me = this, ic = me.icn3d; "use strict";
     var background = this.backgroundColors[this.opts.background.toLowerCase()];
 
@@ -564,6 +594,9 @@ iCn3D.prototype.alternateStructures = function () { var me = this, ic = me.icn3d
 
     this.removeEmmaps();
     this.applyEmmapOptions();
+
+    this.removePhimaps();
+    this.applyPhimapOptions();
 
     this.draw();
 
@@ -770,6 +803,12 @@ iCn3D.prototype.applyOtherOptions = function (options) { var me = this, ic = me.
     if(this.prevEmmaps !== undefined) {
         for(var i = 0, il = this.prevEmmaps.length; i < il; ++i) {
             this.mdl.add(this.prevEmmaps[i]);
+        }
+    }
+
+    if(this.prevPhimaps !== undefined) {
+        for(var i = 0, il = this.prevPhimaps.length; i < il; ++i) {
+            this.mdl.add(this.prevPhimaps[i]);
         }
     }
 

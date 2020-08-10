@@ -74,13 +74,22 @@ iCn3D.prototype.createSurfaceRepresentation = function (atoms, type, wireframe, 
         ps = $3Dmol.SetupMap(cfg);
     }
     else if(type == 13) { // em
-        maxdist = 3; // EM map has no unit cell. It could include more gird space.
+        cfg.maxdist = 3; // EM map has no unit cell. It could include more gird space.
 
         cfg.header = me.mapData.headerEm;
         cfg.data = me.mapData.dataEm;
         cfg.matrix = me.mapData.matrixEm;
         cfg.isovalue = me.mapData.sigmaEm;
         cfg.type = 'em';
+
+        ps = $3Dmol.SetupMap(cfg);
+    }
+    else if(type == 14) { // phi
+        cfg.header = me.mapData.headerPhi;
+        cfg.data = me.mapData.dataPhi;
+        cfg.matrix = me.mapData.matrixPhi;
+        cfg.isovalue = me.mapData.contourPhi;
+        cfg.type = 'phi';
 
         ps = $3Dmol.SetupMap(cfg);
     }
@@ -154,6 +163,9 @@ iCn3D.prototype.createSurfaceRepresentation = function (atoms, type, wireframe, 
     var colorForfofcNeg = this.thr('#ff0000');
     var colorForEm = this.thr('#00FFFF');
 
+    var colorForPhiPos = this.thr('#0000FF');
+    var colorForPhiNeg = this.thr('#FF0000');
+
     var rot, centerFrom, centerTo;
     if((type == 11 || type == 12 || type == 13) && this.rmsd_supr !== undefined && this.rmsd_supr.rot !== undefined) {
       rot = me.rmsd_supr.rot;
@@ -183,6 +195,9 @@ iCn3D.prototype.createSurfaceRepresentation = function (atoms, type, wireframe, 
             }
             else if(type == 13) { // em
                 return colorForEm;
+            }
+            else if(type == 14) { // phi
+                return (geo.vertices[f[d]].atomid) ? colorForPhiPos : colorForPhiNeg;
             }
             else {
                 var atomid = geo.vertices[f[d]].atomid;
@@ -311,6 +326,9 @@ iCn3D.prototype.createSurfaceRepresentation = function (atoms, type, wireframe, 
         else if(type == 13) {
             this.prevEmmaps.push(mesh);
         }
+        else if(type == 14) {
+            this.prevPhimaps.push(mesh);
+        }
         else {
             this.prevSurfaces.push(mesh);
         }
@@ -339,6 +357,9 @@ iCn3D.prototype.createSurfaceRepresentation = function (atoms, type, wireframe, 
         }
         else if(type == 13) {
             this.prevEmmaps.push(mesh);
+        }
+        else if(type == 14) {
+            this.prevPhimaps.push(mesh);
         }
         else {
             this.prevSurfaces.push(mesh);

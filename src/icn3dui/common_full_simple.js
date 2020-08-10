@@ -585,12 +585,12 @@ iCn3DUI.prototype.shareLinkUrl = function(bAllCommands) { var me = this, ic = me
        }
 
        var inparaWithoutCommand;
-       if(!me.bInputUrlfile) {
-           var pos = -1;
-           if(me.cfg.inpara !== undefined) pos = me.cfg.inpara.indexOf('&command=');
-           inparaWithoutCommand = (pos !== -1 ) ? me.cfg.inpara.substr(0, pos) : me.cfg.inpara;
+       var pos = -1;
+       if(me.cfg.inpara !== undefined) pos = me.cfg.inpara.indexOf('&command=');
+       inparaWithoutCommand = (pos !== -1 ) ? me.cfg.inpara.substr(0, pos) : me.cfg.inpara;
 
-           inparaArray = (inparaWithoutCommand && inparaWithoutCommand.substr(1)) ? inparaWithoutCommand.substr(1).split('&') : [];
+       if(!me.bInputUrlfile) {
+           var inparaArray = (inparaWithoutCommand && inparaWithoutCommand.substr(1)) ? inparaWithoutCommand.substr(1).split('&') : [];
            for(var i = 0, il = inparaArray.length; i < il; ++i) {
                var key_value = inparaArray[i].split('=');
                if(key_value.length == 2) paraHash[key_value[0]] = key_value[1];
@@ -610,7 +610,7 @@ iCn3DUI.prototype.shareLinkUrl = function(bAllCommands) { var me = this, ic = me
 
        var start = (inparaWithoutCommand !== undefined) ? 1 : 0;
 
-       if(bAllCommands) start = 0;
+       if(bAllCommands || me.bInputUrlfile) start = 0;
 
        var transformation = {};
        transformation.factor = ic._zoomFactor;
@@ -674,7 +674,7 @@ iCn3DUI.prototype.shareLinkUrl = function(bAllCommands) { var me = this, ic = me
        }
 
        // last command
-       if(prevCommandStr !== undefined) {
+       if(!prevCommandStr) {
            if(bCommands) url += '; ';
            if(cntToggle > 0 && cntToggle %2 == 0 && prevCommandStr !== toggleStr) url += toggleStr + '; ';
 
