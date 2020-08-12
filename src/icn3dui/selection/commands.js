@@ -30,6 +30,7 @@ iCn3DUI.prototype.loadScript = function (dataStr, bStatefile) { var me = this, i
   ic.commands = preCommands.concat(ic.commands);
   me.STATENUMBER = ic.commands.length;
 
+/*
   if(bStatefile || me.bReplay) {
       me.CURRENTNUMBER = 0;
   }
@@ -37,6 +38,9 @@ iCn3DUI.prototype.loadScript = function (dataStr, bStatefile) { var me = this, i
       // skip the first loading step
       me.CURRENTNUMBER = 1;
   }
+*/
+
+  me.CURRENTNUMBER = 0;
 
   if(me.bReplay) {
       me.replayFirstStep(me.CURRENTNUMBER);
@@ -189,6 +193,33 @@ iCn3DUI.prototype.execCommandsBase = function (start, end, steps, bFinalStep) { 
                 me.applyCommandEmmap(strArray[0].trim());
                 me.execCommandsBase(i + 1, end, steps);
             }
+
+            return;
+          }
+      }
+      else if(ic.commands[i].trim().indexOf('set phimap') == 0 && ic.commands[i].trim().indexOf('set phimap wireframe') == -1) {
+          //set map 2fofc sigma 1.5
+          var strArray = ic.commands[i].split("|||");
+
+          var urlArray = strArray[0].trim().split(' | ');
+
+          var str = urlArray[0].substr(11);
+          var paraArray = str.split(" ");
+
+          if(paraArray.length == 3 && paraArray[1] == 'contour') {
+            var contour = paraArray[2];
+            var type = paraArray[0];
+
+            if( (type == 'phiurl')
+              || (type == 'cubeurl') ) {
+                $.when(me.applyCommandPhimap(strArray[0].trim())).then(function() {
+                    me.execCommandsBase(i + 1, end, steps);
+                });
+            }
+            //else {
+            //    me.applyCommandMap(strArray[0].trim());
+            //    me.execCommandsBase(i + 1, end, steps);
+            //}
 
             return;
           }
@@ -746,6 +777,31 @@ iCn3DUI.prototype.applyCommandEmmap = function (command) { var me = this, ic = m
   }); // end of me.deferred = $.Deferred(function() {
 
   return me.deferredEmmap.promise();
+};
+
+iCn3DUI.prototype.applyCommandPhimap = function (command) { var me = this, ic = me.icn3d; "use strict";
+  // chain functions together
+  me.deferredPhimap = $.Deferred(function() {
+      //"set phimap cubeurl contour 1 | [url]"
+      var urlArray = command.split(" | ");
+
+      var str = urlArray[0].substr(11);
+      var paraArray = str.split(" ");
+
+      if(paraArray.length == 3 && paraArray[1] == 'contour') {
+          var contour = paraArray[2];
+          var type = paraArray[0];
+
+          if(urlArray.length == 2) {
+              me.PhiParserBase(urlArray[1], type, contour);
+          }
+          //else {
+          //    me.PhiParserBase(me.inputid, type, sigma);
+          //}
+      }
+  }); // end of me.deferred = $.Deferred(function() {
+
+  return me.deferredPhimap.promise();
 };
 
 iCn3DUI.prototype.applyCommandSymmetryBase = function (command) { var me = this, ic = me.icn3d; "use strict";
@@ -1579,6 +1635,15 @@ iCn3DUI.prototype.applyCommand = function (commandStr) { var me = this, ic = me.
   else if(command == 'table inter details') {
      $(".icn3d-border").show();
   }
+  else if(command == 'setoption map nothing') {
+     me.setOption('map', 'nothing');
+  }
+  else if(command == 'setoption emmap nothing') {
+     me.setOption('emmap', 'nothing');
+  }
+  else if(command == 'setoption phimap nothing') {
+     me.setOption('phimap', 'nothing');
+  }
 
 // start with =================
   else if(commandOri.indexOf('define helix sets') == 0) {
@@ -2211,6 +2276,10 @@ iCn3DUI.prototype.getMenuFromCmd = function (cmd) { var me = this, ic = me.icn3d
     if(cmd.indexOf('load') == 0) return 'File > Retrieve by ID, Align';
     else if(cmd.indexOf('set map') == 0 && cmd.indexOf('set map wireframe') == -1) return 'Style > Electron Density';
     else if(cmd.indexOf('set emmap') == 0 && cmd.indexOf('set emmap wireframe') == -1) return 'Style > EM Density Map';
+    else if(cmd.indexOf('set phimap') == 0 && cmd.indexOf('set phimap wireframe') == -1) return 'Analysis > Delphi Potential';
+    else if(cmd.indexOf('setoption map') == 0) return 'Style > Remove Map';
+    else if(cmd.indexOf('setoption emmap') == 0) return 'Style > Remove EM Map';
+    else if(cmd.indexOf('setoption phimap') == 0) return 'Analysis > Remove Potential';
     else if(cmd.indexOf('view annotations') == 0) return seqAnnoStr;
     else if(cmd.indexOf('set annotation all') == 0) return seqAnnoStr + ': "All" checkbox';
     else if(cmd.indexOf('set annotation clinvar') == 0) return seqAnnoStr + ': "ClinVar" checkbox';

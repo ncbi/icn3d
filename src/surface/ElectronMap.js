@@ -101,7 +101,7 @@ $3Dmol.ElectronMap = function(threshbox) {
         var vertices = verts;
 
         for (i = 0, il = vertices.length; i < il; i++) {
-            var r = new THREE.Vector3(vertices[i].x, vertices[i].y, vertices[i].z).applyMatrix4(matrix);
+            var r = new THREE.Vector3(vertices[i].x, vertices[i].y, vertices[i].z).multiplyScalar(1.0/header.scale).applyMatrix4(matrix);
 //            vertices[i].x = r.x / scaleFactor - ptranx;
 //            vertices[i].y = r.y / scaleFactor - ptrany;
 //            vertices[i].z = r.z / scaleFactor - ptranz;
@@ -171,9 +171,7 @@ $3Dmol.ElectronMap = function(threshbox) {
         if ((pmaxy - pminy) > maxLen) maxLen = pmaxy - pminy;
         if ((pmaxz - pminz) > maxLen) maxLen = pmaxz - pminz;
 
-        var RBohr = 0.5291772108;
-        //scaleFactor = (type == 'phi') ? 1.0 / header.scale / RBohr : 1; // angstrom / grid
-        scaleFactor = (type == 'phi') ? 1.0 / header.scale : 1; // angstrom / grid
+        scaleFactor = 1; // angstrom / grid
         var boxLength = maxLen;
 
         pLength = Math.floor(0.5 + scaleFactor * (pmaxx - pminx)) + 1;
@@ -184,8 +182,6 @@ $3Dmol.ElectronMap = function(threshbox) {
         cutRadius = probeRadius * scaleFactor;
 
         vpBits = new Uint8Array(pLength * pWidth * pHeight);
-        //vpDistance = new Float64Array(pLength * pWidth * pHeight); // float 32
-        //vpAtomID = new Int32Array(pLength * pWidth * pHeight);
         vpAtomID = new Uint8Array(pLength * pWidth * pHeight);
     };
 
@@ -215,46 +211,24 @@ $3Dmol.ElectronMap = function(threshbox) {
             vpAtomID[i] = 0;
         }
 
-        var inverseMatrix = new THREE.Matrix4().getInverse(matrix);
-
-        var indexArray = [];
-        maxdist = parseInt(maxdist); // has to be integer
         var widthHeight = pWidth * pHeight;
         var height = pHeight;
 
-        var rot, inverseRot = new Array(9), centerFrom, centerTo;
-        if(rmsd_supr !== undefined && rmsd_supr.rot !== undefined) {
-          rot = rmsd_supr.rot;
-          centerFrom = rmsd_supr.trans1;
-          centerTo = rmsd_supr.trans2;
-
-          var m = new THREE.Matrix3(), inverseM = new THREE.Matrix3();
-          m.set(rot[0], rot[1], rot[2], rot[3], rot[4], rot[5], rot[6], rot[7], rot[8]);
-          inverseM.getInverse(m);
-
-          inverseRot[0] = inverseM.elements[0];
-          inverseRot[1] = inverseM.elements[3];
-          inverseRot[2] = inverseM.elements[6];
-          inverseRot[3] = inverseM.elements[1];
-          inverseRot[4] = inverseM.elements[4];
-          inverseRot[5] = inverseM.elements[7];
-          inverseRot[6] = inverseM.elements[2];
-          inverseRot[7] = inverseM.elements[5];
-          inverseRot[8] = inverseM.elements[8];
-        }
-
         if(type == 'phi') {
-            //scaleFactor = 1.0 / header.scale;
-            var height2 = (pHeight - 1) * header.scale + 1;
-            var widthHeight2 = ((pWidth - 1) * header.scale + 1) * height2;
-
             // Do NOT exclude map far away from the atoms
             //var index = 0;
             for(i = 0; i < pLength; ++i) {
                 for(j = 0; j < pWidth; ++j) {
                     for(k = 0; k < pHeight; ++k) {
                         var index = i * widthHeight + j * height + k;
-                        var index2 = Math.floor(0.5 + (i * widthHeight2 + j * height2 + k ) * header.scale);
+
+                        var index2;
+                        if(header.filetype == 'phi') { // loop z, y, x
+                            index2 = k * widthHeight + j * height + i;
+                        }
+                        else if(header.filetype == 'cube') { // loop x, y, z
+                            index2 = i * widthHeight + j * height + k;
+                        }
 
                         if(index2 < dataArray.length) {
                             vpBits[index] = (dataArray[index2] >= isovalue || dataArray[index2] <= -isovalue) ? 1 : 0;
@@ -266,6 +240,32 @@ $3Dmol.ElectronMap = function(threshbox) {
             }
         }
         else {
+            var inverseMatrix = new THREE.Matrix4().getInverse(matrix);
+
+            var indexArray = [];
+            maxdist = parseInt(maxdist); // has to be integer
+
+            var rot, inverseRot = new Array(9), centerFrom, centerTo;
+            if(rmsd_supr !== undefined && rmsd_supr.rot !== undefined) {
+              rot = rmsd_supr.rot;
+              centerFrom = rmsd_supr.trans1;
+              centerTo = rmsd_supr.trans2;
+
+              var m = new THREE.Matrix3(), inverseM = new THREE.Matrix3();
+              m.set(rot[0], rot[1], rot[2], rot[3], rot[4], rot[5], rot[6], rot[7], rot[8]);
+              inverseM.getInverse(m);
+
+              inverseRot[0] = inverseM.elements[0];
+              inverseRot[1] = inverseM.elements[3];
+              inverseRot[2] = inverseM.elements[6];
+              inverseRot[3] = inverseM.elements[1];
+              inverseRot[4] = inverseM.elements[4];
+              inverseRot[5] = inverseM.elements[7];
+              inverseRot[6] = inverseM.elements[2];
+              inverseRot[7] = inverseM.elements[5];
+              inverseRot[8] = inverseM.elements[8];
+            }
+
             var index2ori = {};
             for (var serial in atomlist) {
                 var atom = atoms[atomlist[serial]];

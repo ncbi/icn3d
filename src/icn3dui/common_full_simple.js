@@ -608,7 +608,8 @@ iCn3DUI.prototype.shareLinkUrl = function(bAllCommands) { var me = this, ic = me
 
        url += 'command=';
 
-       var start = (inparaWithoutCommand !== undefined) ? 1 : 0;
+       //var start = (inparaWithoutCommand !== undefined) ? 1 : 0;
+       var start = 0;
 
        if(bAllCommands || me.bInputUrlfile) start = 0;
 
@@ -674,7 +675,7 @@ iCn3DUI.prototype.shareLinkUrl = function(bAllCommands) { var me = this, ic = me
        }
 
        // last command
-       if(!prevCommandStr) {
+       if(prevCommandStr) {
            if(bCommands) url += '; ';
            if(cntToggle > 0 && cntToggle %2 == 0 && prevCommandStr !== toggleStr) url += toggleStr + '; ';
 
