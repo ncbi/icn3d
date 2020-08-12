@@ -275,8 +275,11 @@ iCn3DUI.prototype.allEventFunctions = function() { var me = this;
     });
 //    },
 
-    $("#" + me.pre + "mn1_delphi").click(function(e) { var ic = me.icn3d;
-       me.openDlg('dl_delphi', 'Please input the phi file to display Delphi potential map');
+    $("#" + me.pre + "mn1_phi").click(function(e) { var ic = me.icn3d;
+       me.openDlg('dl_phi', 'Please input the phi or cube file to display Delphi potential map');
+    });
+    $("#" + me.pre + "mn1_phiurl").click(function(e) { var ic = me.icn3d;
+       me.openDlg('dl_phiurl', 'Please input the phi or cube file to display Delphi potential map');
     });
 
 //    clkMn1_dsn6url: function() {
@@ -1281,12 +1284,13 @@ iCn3DUI.prototype.allEventFunctions = function() { var me = this;
 //    clkMn5_elecmapNo: function() {
     $("#" + me.pre + "mn5_elecmapNo").add("#" + me.pre + "elecmapNo2").add("#" + me.pre + "elecmapNo3").add("#" + me.pre + "elecmapNo4").add("#" + me.pre + "elecmapNo5").click(function(e) { var ic = me.icn3d;
        me.setOption('map', 'nothing');
-       me.setLogCmd('set map nothing', true);
+       me.setLogCmd('setoption map nothing', true);
     });
 //    },
-    $("#" + me.pre + "phimapNo").click(function(e) { var ic = me.icn3d;
+    $("#" + me.pre + "phimapNo").add("#" + me.pre + "phiurlmapNo")
+      .add("#" + me.pre + "mn1_phimapNo").click(function(e) { var ic = me.icn3d;
        me.setOption('phimap', 'nothing');
-       me.setLogCmd('set phimap nothing', true);
+       me.setLogCmd('setoption phimap nothing', true);
     });
 
 //    clickApplymap2fofc: function() {
@@ -1332,7 +1336,7 @@ iCn3DUI.prototype.allEventFunctions = function() { var me = this;
 //    clkMn5_emmapNo: function() {
     $("#" + me.pre + "mn5_emmapNo").add("#" + me.pre + "emmapNo2").click(function(e) { var ic = me.icn3d;
        me.setOption('emmap', 'nothing');
-       me.setLogCmd('set emmap nothing', true);
+       me.setLogCmd('setoption emmap nothing', true);
     });
 //    },
 //    clickApplyemmap: function() {
@@ -2145,9 +2149,25 @@ iCn3DUI.prototype.allEventFunctions = function() { var me = this;
     });
     $("#" + me.pre + "reload_phifile").click(function(e) { var ic = me.icn3d;
        e.preventDefault();
-       //if(!me.cfg.notebook) dialog.dialog( "close" );
-       me.loadPhiFile();
+       if(!me.cfg.notebook) dialog.dialog( "close" );
+       me.loadPhiFile('phi');
     });
+    $("#" + me.pre + "reload_cubefile").click(function(e) { var ic = me.icn3d;
+       e.preventDefault();
+       if(!me.cfg.notebook) dialog.dialog( "close" );
+       me.loadPhiFile('cube');
+    });
+    $("#" + me.pre + "reload_phiurlfile").click(function(e) { var ic = me.icn3d;
+       e.preventDefault();
+       if(!me.cfg.notebook) dialog.dialog( "close" );
+       me.loadPhiFileUrl('phiurl');
+    });
+    $("#" + me.pre + "reload_cubeurlfile").click(function(e) { var ic = me.icn3d;
+       e.preventDefault();
+       if(!me.cfg.notebook) dialog.dialog( "close" );
+       me.loadPhiFileUrl('cubeurl');
+    });
+
     $("#" + me.pre + "reload_dsn6fileurl2fofc").click(function(e) { var ic = me.icn3d;
        e.preventDefault();
        if(!me.cfg.notebook) dialog.dialog( "close" );
@@ -2858,7 +2878,7 @@ iCn3DUI.prototype.allEventFunctions = function() { var me = this;
     });
 //    },
 //    pressCommandtext: function() {
-    $("#" + me.pre + "logtext").keypress(function(e){
+    $("#" + me.pre + "logtext").keypress(function(e){ var ic = me.icn3d;
        me.bAddLogs = false; // turn off log
        var code = (e.keyCode ? e.keyCode : e.which);
        if(code == 13) { //Enter keycode

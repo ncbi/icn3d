@@ -72,7 +72,7 @@ $3Dmol.MarchingCubeInitializer = function() { var me = this, ic = me.icn3d; "use
                 i++;
 
             if(transform) {
-                pt = new $3Dmol.Vector3(i,j,k);
+                pt = new THREE.Vector3(i,j,k);
                 pt = pt.applyMatrix4(transform);
                 pt = {x: pt.x, y: pt.y, z: pt.z}; //remove vector gunk
             } else {

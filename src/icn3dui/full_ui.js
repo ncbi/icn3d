@@ -11,7 +11,7 @@ if (!$.ui.dialog.prototype._makeDraggableBase) {
     };
 }
 var iCn3DUI = function(cfg) { var me = this, ic = me.icn3d; "use strict";
-    this.REVISION = '2.18.4';
+    this.REVISION = '2.19.0';
     me.bFullUi = true;
     me.cfg = cfg;
     me.divid = me.cfg.divid;
@@ -685,6 +685,7 @@ iCn3DUI.prototype = {
             me.downloadChainAlignment(me.cfg.chainalign);
         }
         else if(me.cfg.command !== undefined && me.cfg.command !== '') {
+            if(me.cfg.command.indexOf('url=') !== -1) me.bInputUrlfile = true;
             me.loadScript(me.cfg.command);
         }
         else {
@@ -2485,9 +2486,9 @@ iCn3DUI.prototype = {
             alert('The File APIs are not fully supported in this browser.');
          }
     },
-    loadPhiFile: function() { var me = this, ic = me.icn3d; "use strict";
-       var file = $("#" + me.pre + "phifile")[0].files[0];
-       var phicontour = $("#" + me.pre + "phicontour").val();
+    loadPhiFile: function(type) { var me = this, ic = me.icn3d; "use strict";
+       var file = $("#" + me.pre + type + "file")[0].files[0];
+       var contour = $("#" + me.pre + "phicontour").val();
        if(!file) {
          alert("Please select a file before clicking 'Load'");
        }
@@ -2495,20 +2496,47 @@ iCn3DUI.prototype = {
          me.checkFileAPI();
          var reader = new FileReader();
          reader.onload = function (e) { var ic = me.icn3d;
-           var arrayBuffer = e.target.result; // or = reader.result;
-           me.loadPhiData(arrayBuffer, phicontour);
+           var data = e.target.result; // or = reader.result;
+           if(type == 'phi') {
+             me.loadPhiData(data, contour);
+           }
+           else {
+             me.loadCubeData(data, contour);
+           }
+
            me.bAjaxPhi = true;
            me.setOption('phimap', 'phi');
-           me.setLogCmd('load phi file ' + $("#" + me.pre + "phifile").val(), false);
+           me.setLogCmd('load ' + type + ' file ' + $("#" + me.pre + type + "file").val(), false);
          };
-         reader.readAsArrayBuffer(file);
+         if(type == 'phi') {
+             reader.readAsArrayBuffer(file);
+         }
+         else {
+             reader.readAsText(file);
+         }
+       }
+    },
+    loadPhiFileUrl: function(type) { var me = this, ic = me.icn3d; "use strict";
+       var url = $("#" + me.pre + type + "file").val();
+       var contour = $("#" + me.pre + "phiurlcontour").val();
+       if(!url) {
+            alert("Please input the file URL before clicking 'Load'");
+       }
+       else {
+           me.PhiParserBase(url, type, contour);
+           me.setLogCmd('set phimap ' + type + ' contour ' + contour + ' | ' + encodeURIComponent(url), true);
        }
     },
     loadDsn6FileUrl: function(type) { var me = this, ic = me.icn3d; "use strict";
        var url = $("#" + me.pre + "dsn6fileurl" + type).val();
        var sigma = $("#" + me.pre + "dsn6sigmaurl" + type).val();
-       me.Dsn6ParserBase(url, type, sigma);
-       me.setLogCmd('set map ' + type + ' sigma ' + sigma + ' | ' + encodeURIComponent(url), true);
+       if(!url) {
+            alert("Please input the file URL before clicking 'Load'");
+       }
+       else {
+           me.Dsn6ParserBase(url, type, sigma);
+           me.setLogCmd('set map ' + type + ' sigma ' + sigma + ' | ' + encodeURIComponent(url), true);
+       }
     },
     adjustMembrane: function(extra_mem_z, intra_mem_z) { var me = this, ic = me.icn3d; "use strict";
         for(var i in ic.chains[me.inputid.toUpperCase() + '_MEM']) {

@@ -531,6 +531,12 @@ You can show symmetry when available.<br/>
 </div>
 
 <div class="gallery">
+<a href="https://structure.ncbi.nlm.nih.gov/icn3d/share.html?LkGJv5SvRras7ZM77" target="_blank">
+<img style="height:300px" src ="https://www.ncbi.nlm.nih.gov/Structure/icn3d/gallery/6M17-LkGJv5SvRras7ZM77.png"><br>Delphi Electrostatic Potential of<br>2019-nCoV RBD/ACE2-B0AT1 complex (PDB 6M17)
+</a>
+</div>
+
+<div class="gallery">
 <a href="https://structure.ncbi.nlm.nih.gov/icn3d/share.html?pvSYXSfVZSKzapuZA" target="_blank">
 <img style="height:300px" src ="https://www.ncbi.nlm.nih.gov/Structure/icn3d/gallery/6M0J-pvSYXSfVZSKzapuZA.png"><br>SARS-COV-2 Receptor Binding domain <br>interacting with ACE2 receptor (PDB 6M0J)
 </a>
@@ -1334,32 +1340,38 @@ In the dialog Select -&gt; Advanced, users can use simple specification to selec
 <tr><td valign='top'>c) Analysis -&gt; Defined Sets</td>     <td valign='top'>defined sets</td> <td valign='top'><a href="#showSets">showSets</a></td></tr>
 
 <tr><td valign='top'>d) Analysis -&gt; H-Bonds & Interactions:</td>  <td valign='top'>hbonds 3.5 | sets non-selected selected;<br>salt bridges 4 | sets non-selected selected;<br>interactions 4 | sets non-selected selected</td> <td valign='top'><a href="#showHbonds">showHbonds;showSaltbridge;pickCustomSphere</a></td></tr>
+<tr><td valign='top'>e) Analysis -&gt; Bring to Front:</td>  <td valign='top'>window ...</td> <td valign='top'>openDlg</td></tr>
 
-<tr><td colspan="3"><br>e) Analysis -&gt; Chemical Binding</td> </tr>
+<tr><td colspan="3"><br>f) Analysis -&gt; Delphi Potential</td> </tr>
+<tr><td valign='top'><span class="indent">Local Phi/Cube File:</span></td> <td valign='top'>[no command available]</td> <td valign='top'>loadPhiFile</td></tr>
+<tr><td valign='top'><span class="indent">URL (Same Host) Phi/Cube:</span></td> <td valign='top'>set phimap cubeurl contour 1 | [url]</td> <td valign='top'>loadPhiFileUrl</td></tr>
+<tr><td valign='top'>g) Analysis -&gt; Remove Potential:</td>  <td valign='top'>setoption phimap nothing</td> <td valign='top'>setOption('phimap', 'nothing')</td></tr>
+
+<tr><td colspan="3"><br>h) Analysis -&gt; Chemical Binding</td> </tr>
 <tr><td valign='top'><span class="indent">Show:</span></td>            <td valign='top'>set chemicalbinding show</td> <td valign='top'>me.setOption('chemicalbinding', 'show');</td></tr>
 <tr><td valign='top'><span class="indent">Hide:</span></td>            <td valign='top'>set hbonds off</td> <td valign='top'>me.setOption('chemicalbinding', 'hide');</td></tr>
 
-<tr><td colspan="3"><br>f) Analysis -&gt; Disulfide Bonds</td> </tr>
+<tr><td colspan="3"><br>i) Analysis -&gt; Disulfide Bonds</td> </tr>
 <tr><td valign='top'><span class="indent">Show:</span></td>            <td valign='top'>disulfide bonds</td> <td valign='top'><a href="#showSsbonds">showSsbonds</a></td></tr>
 <tr><td valign='top'><span class="indent">Export Pairs:</span></td>            <td valign='top'>[no command available]</td> <td valign='top'></td></tr>
 <tr><td valign='top'><span class="indent">Hide:</span></td>            <td valign='top'>set disulfide bonds off</td> <td valign='top'>ic.opts["ssbonds"] = "no";</td></tr>
 
-<tr><td colspan="3"><br>g) Analysis -&gt; Cross-Linkages</td> </tr>
+<tr><td colspan="3"><br>j) Analysis -&gt; Cross-Linkages</td> </tr>
 <tr><td valign='top'><span class="indent">Show:</span></td>            <td valign='top'>cross linkage</td> <td valign='top'>ic.bShowCrossResidueBond = true;</td></tr>
 <tr><td valign='top'><span class="indent">Hide:</span></td>            <td valign='top'>set cross linkage off</td> <td valign='top'>ic.bShowCrossResidueBond = false;</td></tr>
 
-<tr><td colspan="3"><br>h) Analysis -&gt; Assembly (PDB, mmCIF, or MMTF files only)</td> </tr>
+<tr><td colspan="3"><br>k) Analysis -&gt; Assembly (PDB, mmCIF, or MMTF files only)</td> </tr>
 <tr><td valign='top'><span class="indent">yes:</span></td>                <td valign='top'>set assembly on</td> <td valign='top'>ic.bAssembly = true;</td></tr>
 <tr><td valign='top'><span class="indent">no:</span></td>                 <td valign='top'>set assembly off</td> <td valign='top'>ic.bAssembly = false;</td></tr>
 
-<tr><td valign='top'>i) Analysis -&gt; Symmetry:</td>  <td valign='top'>symmetry C6 (global)</td> <td valign='top'>retrieveSymmetry; applySymmetry</td></tr>
+<tr><td valign='top'>l) Analysis -&gt; Symmetry:</td>  <td valign='top'>symmetry C6 (global)</td> <td valign='top'>retrieveSymmetry; applySymmetry</td></tr>
 
-<tr><td colspan="3"><br>j) Analysis -&gt; Distance</td> </tr>
+<tr><td colspan="3"><br>m) Analysis -&gt; Distance</td> </tr>
 <tr><td valign='top' rowspan="2"><span class="indent">Measure:</span></td>            <td valign='top'>add label [label text] | x [x] y [y] z [z] | size [label size] | color [FF0000] | background [FFFFFF]</td> <td valign='top'><a href="#addLabel">addLabel</a></td></tr>
 <tr>                                                               <td valign='top'>add line | x1 [x1] y1 [y1] z1 [z1] | x2 [x2] y2 [y2] z2 [z2] | color [FFFF00] | dashed [true]</td> <td valign='top'><a href="#addLine">addLine</a></td></tr>
 <tr><td valign='top'><span class="indent">Hide:</span></td>            <td valign='top'>set lines off</td> <td valign='top'>ic.labels['distance'] = []; ic.lines['distance'] = [];</td></tr>
 
-<tr><td colspan="3"><br>k) Analysis -&gt; Label</td> </tr>
+<tr><td colspan="3"><br>n) Analysis -&gt; Label</td> </tr>
 <tr><td valign='top'><span class="indent">by Picking Atoms:</span></td>            <td valign='top'>add label [label text] | x [x] y [y] z [z] | size [label size] | color [FF0000] | background [FFFFFF]</td> <td valign='top'><a href="#addLabel">addLabel</a></td></tr>
 <tr><td valign='top'><span class="indent">per Selection:</span></td>            <td valign='top'>add label [label text] | size [label size] | color [FF0000] | background [FFFFFF]</td> <td valign='top'><a href="#addLabel">addLabel</a></td></tr>
 <tr><td valign='top'><span class="indent">per Atom:</span></td>            <td valign='top'>add atom labels</td> <td valign='top'><a href="#addAtomLabels">addAtomLabels</a></td></tr>
@@ -1368,7 +1380,7 @@ In the dialog Select -&gt; Advanced, users can use simple specification to selec
 <tr><td valign='top'><span class="indent">N- & C- Termini:</span></td>            <td valign='top'>add terminal labels</td> <td valign='top'><a href="#addTerminiLabels">addTerminiLabels</a></td></tr>
 <tr><td valign='top'><span class="indent">Remove:</span></td>            <td valign='top'>set labels off</td> <td valign='top'><a href="#addChainLabels">addChainLabels</a></td></tr>
 
-<tr><td colspan="3"><br>l) Analysis -&gt; Label Scale</td> </tr>
+<tr><td colspan="3"><br>o) Analysis -&gt; Label Scale</td> </tr>
 <tr><td valign='top'><span class="indent">0.1:</span></td>                <td valign='top'>set label scale 0.1</td> <td valign='top'>ic.labelScale=0.1</td></tr>
 <tr><td valign='top'><span class="indent">0.2:</span></td>                <td valign='top'>set label scale 0.2</td> <td valign='top'>ic.labelScale=0.2</td></tr>
 <tr><td valign='top'><span class="indent">0.4:</span></td>                <td valign='top'>set label scale 0.4</td> <td valign='top'>ic.labelScale=0.4</td></tr>
@@ -1381,9 +1393,9 @@ In the dialog Select -&gt; Advanced, users can use simple specification to selec
 <tr><td valign='top'><span class="indent">8.0:</span></td>                <td valign='top'>set label scale 8.0</td> <td valign='top'>ic.labelScale=8.0</td></tr>
 <tr><td valign='top'><span class="indent">10.0:</span></td>                <td valign='top'>set label scale 10.0</td> <td valign='top'>ic.labelScale=10.0</td></tr>
 
-<tr><td valign='top'>m) Analysis -&gt; Your Note / Window Title</td>     <td valign='top'>your note | [text]</td> <td valign='top'></td></tr>
+<tr><td valign='top'>p) Analysis -&gt; Your Note / Window Title</td>     <td valign='top'>your note | [text]</td> <td valign='top'></td></tr>
 
-<tr><td colspan="3"><br>n) Analysis -&gt; View Links</td> </tr>
+<tr><td colspan="3"><br>q) Analysis -&gt; View Links</td> </tr>
 <tr><td valign='top'><span class="indent">Structure Summary:</span></td>          <td valign='top'>[no command available]</td> <td valign='top'></td></tr>
 <tr><td valign='top'><span class="indent">Find Similar Structures:</span></td>   <td valign='top'>[no command available]</td> <td valign='top'></td></tr>
 <tr><td valign='top'><span class="indent">Literature:</span></td>                <td valign='top'>[no command available]</td> <td valign='top'></td></tr>
@@ -2241,6 +2253,9 @@ Update the highlight of sequences in the annotation window according to the curr
 
 <a name="log"></a>
 <h2>Change Log:<img src="https://www.ncbi.nlm.nih.gov/Structure/IMG/spacer.gif" width="25" height="1" border="0"><a href="#Top"><img src="https://www.ncbi.nlm.nih.gov/Structure/IMG/arrowup_blue.gif" width="12" height="12" border="0" alt="back to top"></a></h2>
+<a href="https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.19.0zip">icn3d-2.19.0</a> was release on August 12, 2020. Delphi potential map can be displayed for PDB structures at "Analysis > Delphi Potential". The PDB file can be loaded in the URL with "pdbid=" or at "File > Open File". The Delphi potential file can be calculated at Delphi Web Server and be exported as a Cube file. The potential file can be accessed in a URL if it is located in the same host as iCn3D.
+<br><br>
+
 <a href="https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.18.4.zip">icn3d-2.18.4</a> was release on August 10, 2020. Fixed bugs in recently modified dropdown menus.
 <br><br>
 

@@ -336,7 +336,6 @@ iCn3DUI.prototype.setMenu1_base = function() { var me = this, ic = me.icn3d; "us
     html += me.getLink('mn1_selection', 'Selection File');
     html += "<li>-</li>";
 
-//    html += me.getLink('mn1_delphi', 'Delphi Potential (phi)');
     html += "<li><span>Electron Density (DSN6)</span>";
     html += "<ul>";
     html += me.getLink('mn1_dsn6', 'Local File');
@@ -1198,6 +1197,16 @@ iCn3DUI.prototype.setMenu5_base = function() { var me = this, ic = me.icn3d; "us
         html += "</li>";
 
         html += "<li>-</li>";
+
+        html += "<li><span>Delphi Potential</span>";
+        html += "<ul>";
+        html += me.getLink('mn1_phi', 'Local Phi/Cube File');
+        html += me.getLink('mn1_phiurl', 'URL (Same Host) Phi/Cube');
+        html += "</ul>";
+
+        html += me.getLink('mn1_phimapNo', 'Remove Potential');
+
+        html += "<li>-</li>";
     }
 
     html += "<li><span>Distance</span>";
@@ -1470,6 +1479,54 @@ iCn3DUI.prototype.getOptionHtml = function(optArray, selIndex) { var me = this, 
     return html;
 };
 
+iCn3DUI.prototype.getPotentialHtml = function(type, dialogClass) { var me = this, ic = me.icn3d; "use strict";
+    var html = '';
+
+    var name1, name2;
+
+    if(type == 'local') {
+        name1 = 'phi';
+        name2 = 'cube';
+    }
+    else if(type == 'url') {
+        name1 = 'phiurl';
+        name2 = 'cubeurl';
+    }
+
+    html += me.divStr + "dl_" + name1 + "' class='" + dialogClass + "'>";
+    html += "<div style='width:450px;'>";
+    html += "<b>Note</b>: Always load a PDB file before loading a Delphi potential file. <br/>";
+    html += "The PDB file can be loaded in the URL with \"pdbid=\" or at \"File > Open File\". The Delphi potential file can be calculated at <a href='http://compbio.clemson.edu/sapp/delphi_webserver/'>Delphi Web Server</a> and be exported as a Cube file. ";
+
+    if(type == 'url') html += "The potential file can be accessed in a URL if it is located in the same host as iCn3D.";
+
+    html += "<br/><br/><br/>";
+
+    html += "<span style='white-space:nowrap;font-weight:bold;'>Potential contour at: <select id='" + me.pre + name1 + "contour'>";
+
+    var optArray1b = ['0.5', '1', '2', '4', '6', '8', '10'];
+    html += me.getOptionHtml(optArray1b, 1);
+
+    html += "</select> kT/e (25.6mV at 298K)</span><br/><br/>";
+
+    if(type == 'local') {
+        html += "<b>Phi File</b>: " + me.inputFileStr + "id='" + me.pre + name1 + "file'> " + me.buttonStr + "reload_" + name1 + "file' style='margin-top: 6px;'>Load Phi</button> or <br><br>";
+        html += "<b>Cube File</b>: " + me.inputFileStr + "id='" + me.pre + name2 + "file'> " + me.buttonStr + "reload_" + name2 + "file' style='margin-top: 6px;'>Load Cube</button><br><br><br/>";
+    }
+    else if(type == 'url') {
+        html += "<b>Phi URL</b> in the same host: " + me.inputTextStr + "id='" + me.pre + name1 + "file'> " + me.buttonStr + "reload_" + name1 + "file' style='margin-top: 6px;'>Load Phi</button> or <br><br>";
+        html += "<b>Cube URL</b> in the same host: " + me.inputTextStr + "id='" + me.pre + name2 + "file'> " + me.buttonStr + "reload_" + name2 + "file' style='margin-top: 6px;'>Load Cube</button><br><br><br/>";
+    }
+
+    html += me.buttonStr + name1 + "mapNo'>Remove Map</button><br>";
+
+    html += "</div>";
+    html += "</div>";
+
+    return html;
+};
+
+
 iCn3DUI.prototype.setDialogs = function() { var me = this, ic = me.icn3d; "use strict";
     var html = "";
 
@@ -1702,20 +1759,8 @@ iCn3DUI.prototype.setDialogs = function() { var me = this, ic = me.icn3d; "use s
     html += me.buttonStr + "applycustomcolor'>Apply</button>";
     html += "</div>";
 
-    html += me.divStr + "dl_delphi' class='" + dialogClass + "'>";
-    html += "<b>Note</b>: Always load a PDB file before loading Delphi potential files. <br/><br/><br/>";
-
-    html += "<span style='white-space:nowrap;font-weight:bold;'>Potential contour at: <select id='" + me.pre + "phicontour'>";
-
-    var optArray1b = ['0.5', '1', '2', '4', '6', '8', '10'];
-    html += me.getOptionHtml(optArray1b, 1);
-
-    html += "</select> kT/e (25.6mV at 298K)</span><br/>";
-    html += me.inputFileStr + "id='" + me.pre + "phifile'> " + me.buttonStr + "reload_phifile' style='margin-top: 6px;'>Load</button><br><br><br/>";
-
-    html += me.buttonStr + "phimapNo'>Remove Map</button><br>";
-
-    html += "</div>";
+    html += me.getPotentialHtml('local', dialogClass);
+    html += me.getPotentialHtml('url', dialogClass);
 
     html += me.divStr + "dl_symmetry' class='" + dialogClass + "'><br>";
     html += me.divNowrapStr + "Symmetry: <select id='" + me.pre + "selectSymmetry'>";
