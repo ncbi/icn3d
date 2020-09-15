@@ -101,7 +101,14 @@ $3Dmol.ElectronMap = function(threshbox) {
         var vertices = verts;
 
         for (i = 0, il = vertices.length; i < il; i++) {
-            var r = new THREE.Vector3(vertices[i].x, vertices[i].y, vertices[i].z).multiplyScalar(1.0/header.scale).applyMatrix4(matrix);
+            var r;
+            if(type == 'phi') {
+                r = new THREE.Vector3(vertices[i].x, vertices[i].y, vertices[i].z).multiplyScalar(1.0/header.scale).applyMatrix4(matrix);
+            }
+            else {
+                r = new THREE.Vector3(vertices[i].x, vertices[i].y, vertices[i].z).applyMatrix4(matrix);
+            }
+
 //            vertices[i].x = r.x / scaleFactor - ptranx;
 //            vertices[i].y = r.y / scaleFactor - ptrany;
 //            vertices[i].z = r.z / scaleFactor - ptranz;

@@ -252,7 +252,7 @@ iCn3DUI.prototype.selectSequenceNonMobile = function() { var me = this, ic = me.
   .add("[id^=" + me.pre + "tt_giseq]").add("[id^=" + me.pre + "tt_custom]").add("[id^=" + me.pre + "tt_site]").add("[id^=" + me.pre + "tt_snp]").add("[id^=" + me.pre + "tt_clinvar]").add("[id^=" + me.pre + "tt_cdd]").add("[id^=" + me.pre + "tt_domain]").add("[id^=" + me.pre + "tt_interaction]").add("[id^=" + me.pre + "tt_ssbond]").add("[id^=" + me.pre + "tt_crosslink]").add("[id^=" + me.pre + "tt_transmem]")
   .selectable({
   //$(".icn3d-dl_sequence").selectable({
-      stop: function() {
+      stop: function() { var ic = me.icn3d;
           if($(this).attr('id') === me.pre + "dl_sequence2") {
               me.bAlignSeq = true;
               me.bAnnotations = false;

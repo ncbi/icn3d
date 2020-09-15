@@ -839,13 +839,36 @@ iCn3D.prototype.rebuildSceneBase = function (options) { var me = this, ic = me.i
     }
 
     //this.directionalLight = new THREE.DirectionalLight(0xFFFFFF, 1.2);
+//    this.directionalLight = new THREE.DirectionalLight(0xFFFFFF, 1.0);
+
+//    if(this.cam_z > 0) {
+//      this.directionalLight.position.set(0, 0, 1);
+//    }
+//    else {
+//      this.directionalLight.position.set(0, 0, -1);
+//    }
+
     this.directionalLight = new THREE.DirectionalLight(0xFFFFFF, 1.0);
+    this.directionalLight2 = new THREE.DirectionalLight(0xFFFFFF, 0.4);
+    this.directionalLight3 = new THREE.DirectionalLight(0xFFFFFF, 0.2);
 
     if(this.cam_z > 0) {
-      this.directionalLight.position.set(0, 0, 1);
+      this.directionalLight.position.set(0, 1, 1);
+      this.directionalLight2.position.set(0, -1, 1);
+      this.directionalLight3.position.set(0, 1, -1);
+
+      this.lightPos = new THREE.Vector3(0, 1, 1);
+      this.lightPos2 = new THREE.Vector3(0, -1, 1);
+      this.lightPos3 = new THREE.Vector3(0, 1, -1);
     }
     else {
-      this.directionalLight.position.set(0, 0, -1);
+      this.directionalLight.position.set(0, 1, -1);
+      this.directionalLight2.position.set(0, -1, -1);
+      this.directionalLight3.position.set(0, 1, 1);
+
+      this.lightPos = new THREE.Vector3(0, 1, -1);
+      this.lightPos2 = new THREE.Vector3(0, -1, -1);
+      this.lightPos3 = new THREE.Vector3(0, 1, 1);
     }
 
     //var ambientLight = new THREE.AmbientLight(0x202020);
@@ -1062,25 +1085,20 @@ iCn3D.prototype.setCamera = function() {
 };
 
 iCn3D.prototype.render = function () {
-    if(this.bControlGl) {
-        if(this.directionalLight) this.directionalLight.position.copy(window.cam.position);
+    var cam = (this.bControlGl) ? window.cam : this.cam;
 
-        this.renderer.gammaInput = true
-        this.renderer.gammaOutput = true
+    //if(this.directionalLight) this.directionalLight.position.copy(cam.position);
+    var quaternion = new THREE.Quaternion();
+    quaternion.setFromUnitVectors( new THREE.Vector3(0, 0, 1), cam.position.clone().normalize() );
+    this.directionalLight.position.copy(this.lightPos.clone().applyQuaternion( quaternion ).normalize());
+    this.directionalLight2.position.copy(this.lightPos2.clone().applyQuaternion( quaternion ).normalize());
+    this.directionalLight3.position.copy(this.lightPos3.clone().applyQuaternion( quaternion ).normalize());
 
-        this.renderer.setPixelRatio( window.devicePixelRatio ); // r71
-        if(this.scene) this.renderer.render(this.scene, window.cam);
-    }
-    else {
-        if(this.directionalLight) this.directionalLight.position.copy(this.cam.position);
+    this.renderer.gammaInput = true
+    this.renderer.gammaOutput = true
 
-        this.renderer.gammaInput = true
-        this.renderer.gammaOutput = true
-
-        this.renderer.setPixelRatio( window.devicePixelRatio ); // r71
-        this.renderer.render(this.scene, this.cam);
-        //this.renderer.render(this.scene_ghost, this.cam);
-    }
+    this.renderer.setPixelRatio( window.devicePixelRatio ); // r71
+    if(this.scene) this.renderer.render(this.scene, cam);
 };
 
 iCn3D.prototype.clearImpostors = function () {
