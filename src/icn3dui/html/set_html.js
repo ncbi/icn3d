@@ -80,19 +80,11 @@ iCn3DUI.prototype.setTopMenusHtmlMobile = function (id, str1, str2) { var me = t
     html += "<div>";
     html += "<accordion id='" + me.pr2e + "accordion0' class='icn3d-accordion'>";
     if(me.cfg.notebook) {
-<<<<<<< HEAD
         html += "<h3 style='width:20px; height:24px; position:relative'><span style='position:absolute; left:3px; top:4px;'>&#9776;</span></h3>";
-=======
-        html += "<h3 style='width:20px; height:24px; position:relative'><span style='position:absolute; left:5px; top:6px;'>&#9776;</span></h3>";
->>>>>>> a8469054f25ea10e20e7bf162282c21cf16a7bf5
     }
     else {
         html += "<h3 style='width:20px; height:20px; position:relative'><span style='position:absolute; left:7px; top:8px;'>&#9776;</span></h3>";
     }
-<<<<<<< HEAD
-=======
-
->>>>>>> a8469054f25ea10e20e7bf162282c21cf16a7bf5
     html += "<div>";
 
     var liStr = "<li><span class='icn3d-menu-color'";

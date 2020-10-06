@@ -20,19 +20,19 @@ iCn3DUI.prototype.defineSecondary = function(chainid, type) { var me = this, ic 
     var prevName = chainid + '_C(Nterm', currName, setName;
 
     // clear selection
-    me.icn3d.hAtoms = {};
+    ic.hAtoms = {};
 
     //for(var i = 0, il = me.giSeq[chainid].length; i < il; ++i) {
-      //var currResi = (i >= me.matchedPos[chainid] && i - me.matchedPos[chainid] < me.icn3d.chainsSeq[chainid].length) ? me.icn3d.chainsSeq[chainid][i - me.matchedPos[chainid]].resi : me.baseResi[chainid] + 1 + i;
-    for(var i = 0, il = me.icn3d.chainsSeq[chainid].length; i < il; ++i) {
-      var currResi = me.icn3d.chainsSeq[chainid][i].resi;
+      //var currResi = (i >= me.matchedPos[chainid] && i - me.matchedPos[chainid] < ic.chainsSeq[chainid].length) ? ic.chainsSeq[chainid][i - me.matchedPos[chainid]].resi : me.baseResi[chainid] + 1 + i;
+    for(var i = 0, il = ic.chainsSeq[chainid].length; i < il; ++i) {
+      var currResi = ic.chainsSeq[chainid][i].resi;
 
       // name of secondary structures
       var residueid = chainid + '_' + currResi;
 
-      if( me.icn3d.residues.hasOwnProperty(residueid) ) {
-        var atom = me.icn3d.getFirstCalphaAtomObj(me.icn3d.residues[residueid]);
-        var currSS = me.icn3d.secondaries[residueid];
+      if( ic.residues.hasOwnProperty(residueid) ) {
+        var atom = ic.getFirstCalphaAtomObj(ic.residues[residueid]);
+        var currSS = ic.secondaries[residueid];
 
         if(currSS == 'H') {
             if(atom.ssbegin) {
@@ -102,7 +102,7 @@ iCn3DUI.prototype.defineSecondary = function(chainid, type) { var me = this, ic 
             currName = prevName + '-';
             selectedResidues[residueid] = 1;
         }
-      } // end if( me.icn3d.residues.hasOwnProperty(residueid) ) {
+      } // end if( ic.residues.hasOwnProperty(residueid) ) {
     } // for loop
 
     if(Object.keys(selectedResidues).length > 0) {
@@ -189,10 +189,10 @@ iCn3DUI.prototype.alignSequenceToStructure = function(chainid, data, title) { va
               cssColorArray.push("#" + colorHexStr);
 
               var resi = i + 1;
-              for(var serial in me.icn3d.residues[chainid + '_' + resi]) {
-                  var color = me.icn3d.thr("#" + colorHexStr);
-                  me.icn3d.atoms[serial].color = color;
-                  me.icn3d.atomPrevColors[serial] = color;
+              for(var serial in ic.residues[chainid + '_' + resi]) {
+                  var color = ic.thr("#" + colorHexStr);
+                  ic.atoms[serial].color = color;
+                  ic.atomPrevColors[serial] = color;
               }
           }
           else {
@@ -210,7 +210,7 @@ iCn3DUI.prototype.alignSequenceToStructure = function(chainid, data, title) { va
   me.showNewTrack(chainid, title, text, cssColorArray, target2queryHash, 'seq');
 
   me.updateHlAll();
-  me.icn3d.draw();
+  ic.draw();
 
   me.setLogCmd("add track | chainid " + chainid + " | title " + title + " | text " + me.simplifyText(text) + " | type seq", true);
 };
@@ -345,7 +345,7 @@ iCn3DUI.prototype.clickAddTrackButton = function() { var me = this, ic = me.icn3
 
        var startposGiSeq = undefined;
        for(var i = 0, il = me.giSeq[chainid].length; i < il; ++i) {
-           var pos = (i >= me.matchedPos[chainid] && i - me.matchedPos[chainid] < me.icn3d.chainsSeq[chainid].length) ? me.icn3d.chainsSeq[chainid][i - me.matchedPos[chainid]].resi : me.baseResi[chainid] + 1 + i;
+           var pos = (i >= me.matchedPos[chainid] && i - me.matchedPos[chainid] < ic.chainsSeq[chainid].length) ? ic.chainsSeq[chainid][i - me.matchedPos[chainid]].resi : me.baseResi[chainid] + 1 + i;
 
            if(pos != startpos) {
                continue;
@@ -441,13 +441,13 @@ iCn3DUI.prototype.clickAddTrackButton = function() { var me = this, ic = me.icn3
 
        // set colot for the master seq
        if(trackSeqArray.length > 0) {
-            if(me.icn3d.queryresi2score === undefined) me.icn3d.queryresi2score = {};
-            if(me.icn3d.queryresi2score[chainid] === undefined) me.icn3d.queryresi2score[chainid] = {};
+            if(ic.queryresi2score === undefined) ic.queryresi2score = {};
+            if(ic.queryresi2score[chainid] === undefined) ic.queryresi2score[chainid] = {};
 
             var nSeq = trackSeqArray.length;
             for(var resi in resi2cntSameRes) {
                 var score = parseInt(resi2cntSameRes[resi] / nSeq * 100);
-                me.icn3d.queryresi2score[chainid][resi] = score;
+                ic.queryresi2score[chainid][resi] = score;
             }
 
             var resiArray = Object.keys(resi2cntSameRes);
@@ -464,12 +464,12 @@ iCn3DUI.prototype.clickAddTrackButton = function() { var me = this, ic = me.icn3
                 }
             }
 
-            me.icn3d.opts['color'] = 'align custom';
-            me.icn3d.setColorByOptions(me.icn3d.opts, me.icn3d.hAtoms);
+            ic.opts['color'] = 'align custom';
+            ic.setColorByOptions(ic.opts, ic.hAtoms);
 
             me.updateHlAll();
 
-            me.icn3d.draw();
+            ic.draw();
 
             me.setLogCmd('color align custom | ' + chainid + ' | range ' + start + '_' + end + ' | ' + resiScoreStr, true);
        }
@@ -620,9 +620,9 @@ iCn3DUI.prototype.clickAddTrackButton = function() { var me = this, ic = me.icn3
        var title = $("#" + me.pre + "track_selection").val();
        var text = '';
 
-       var selectedAtoms = me.icn3d.intHash(me.icn3d.hAtoms, me.icn3d.chains[chainid]);
+       var selectedAtoms = ic.intHash(ic.hAtoms, ic.chains[chainid]);
 
-       var residueHash = me.icn3d.getResiduesFromCalphaAtoms(selectedAtoms);
+       var residueHash = ic.getResiduesFromCalphaAtoms(selectedAtoms);
 
        var cssColorArray = [];
        for(var i = 0, il = me.giSeq[chainid].length; i < il; ++i) {
@@ -634,10 +634,10 @@ iCn3DUI.prototype.clickAddTrackButton = function() { var me = this, ic = me.icn3
               c = cFull[0]; // one letter for each residue
           }
 
-          var pos = (i >= me.matchedPos[chainid] && i - me.matchedPos[chainid] < me.icn3d.chainsSeq[chainid].length) ? me.icn3d.chainsSeq[chainid][i - me.matchedPos[chainid]].resi : me.baseResi[chainid] + 1 + i;
+          var pos = (i >= me.matchedPos[chainid] && i - me.matchedPos[chainid] < ic.chainsSeq[chainid].length) ? ic.chainsSeq[chainid][i - me.matchedPos[chainid]].resi : me.baseResi[chainid] + 1 + i;
 
           if( residueHash.hasOwnProperty(chainid + '_' + pos) ) {
-              var atom = me.icn3d.getFirstCalphaAtomObj(me.icn3d.residues[chainid + '_' + pos]);
+              var atom = ic.getFirstCalphaAtomObj(ic.residues[chainid + '_' + pos]);
               var colorStr = (atom.color === undefined || atom.color.getHexString().toUpperCase() === 'FFFFFF') ? 'DDDDDD' : atom.color.getHexString();
               var color = (atom.color !== undefined) ? colorStr : "CCCCCC";
 
@@ -755,11 +755,11 @@ iCn3DUI.prototype.showNewTrack = function(chnid, title, text, cssColorArray, inT
       var c = text.charAt(i);
 
       if(c != ' ' && c != '-') {
-          var resName = (me.icn3d.chainsSeq[chnid][resNum]) ? me.icn3d.chainsSeq[chnid][resNum].name : ' ';
+          var resName = (ic.chainsSeq[chnid][resNum]) ? ic.chainsSeq[chnid][resNum].name : ' ';
           var colorHexStr = me.getColorhexFromBlosum62(c, resName);
           var identityColorStr = (c == resName) ? 'FF0000' : '0000FF';
 
-          //var pos = (resNum >= me.matchedPos[chnid] && resNum - me.matchedPos[chnid] < me.icn3d.chainsSeq[chnid].length) ? me.icn3d.chainsSeq[chnid][resNum - me.matchedPos[chnid]].resi : me.baseResi[chnid] + 1 + resNum;
+          //var pos = (resNum >= me.matchedPos[chnid] && resNum - me.matchedPos[chnid] < ic.chainsSeq[chnid].length) ? ic.chainsSeq[chnid][resNum - me.matchedPos[chnid]].resi : me.baseResi[chnid] + 1 + resNum;
           var pos = currResi;
 
           if(inTarget2queryHash !== undefined) pos = inTarget2queryHash[i] + 1; // 0-based
@@ -840,7 +840,7 @@ iCn3DUI.prototype.showNewTrack = function(chnid, title, text, cssColorArray, inT
             me.nTotalGap += me.targetGapHash[i].to - me.targetGapHash[i].from + 1;
         }
 
-        var atom = me.icn3d.getFirstCalphaAtomObj(me.icn3d.chains[chnid]);
+        var atom = ic.getFirstCalphaAtomObj(ic.chains[chnid]);
         var colorStr = (atom.color === undefined || atom.color.getHexString() === 'FFFFFF') ? 'DDDDDD' : atom.color.getHexString();
         var color = (atom.color !== undefined) ? colorStr : "CCCCCC";
 

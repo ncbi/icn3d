@@ -572,14 +572,9 @@ iCn3DUI.prototype.renderFinalStep = function(steps) { var me = this, ic = me.icn
     if(steps === 1
       || (Object.keys(ic.hAtoms).length === Object.keys(ic.atoms).length)
       || (ic.optsHistory[steps - 1] !== undefined && ic.optsHistory[steps - 1].hasOwnProperty('hlatomcount') && ic.optsHistory[steps - 1].hlatomcount === Object.keys(ic.atoms).length) ) {
-<<<<<<< HEAD
 // the following code caused problem for many links,e.g., https://structure.ncbi.nlm.nih.gov/icn3d/share.html?17g3r1JDvZ7ZL39e6
 //        if(steps === 1) {
             // assign styles and color using the options at that stage
-=======
-//        if(steps === 1) {
-//            // assign styles and color using the options at that stage
->>>>>>> a8469054f25ea10e20e7bf162282c21cf16a7bf5
 //            ic.setAtomStyleByOptions(ic.optsHistory[steps - 1]);
 //            ic.setColorByOptions(ic.optsHistory[steps - 1], ic.hAtoms);
 //        }
@@ -599,10 +594,7 @@ iCn3DUI.prototype.renderFinalStep = function(steps) { var me = this, ic = me.icn
                 ic.pk = 3;
             }
 
-<<<<<<< HEAD
 // the following code caused problem for many links,e.g., https://structure.ncbi.nlm.nih.gov/icn3d/share.html?17g3r1JDvZ7ZL39e6
-=======
->>>>>>> a8469054f25ea10e20e7bf162282c21cf16a7bf5
 //            if(steps === 1) {
 //                ic.applyOriginalColor();
 //            }
