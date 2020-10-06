@@ -103,23 +103,23 @@ iCn3DUI.prototype.draw2Ddgm = function(data, mmdbid, structureIndex, bUpdate) { 
 
                 chainid2 = secondChainid;
 
-                var atom2 = ic.getFirstCalphaAtomObj(ic.chains[chainid2]);
+                var atom2 = me.icn3d.getFirstCalphaAtomObj(me.icn3d.chains[chainid2]);
                 //if(me.chainname2residues[chainid2] === undefined) me.chainname2residues[chainid2] = {};
 
                 var type2;
-                if(ic.chemicals.hasOwnProperty(atom2.serial)) { // 1. chemical interacting with proteins
+                if(me.icn3d.chemicals.hasOwnProperty(atom2.serial)) { // 1. chemical interacting with proteins
                     type2 = 'chemical';
                 }
-                else if(ic.nucleotides.hasOwnProperty(atom2.serial)) { // 2. DNA interacting with proteins
+                else if(me.icn3d.nucleotides.hasOwnProperty(atom2.serial)) { // 2. DNA interacting with proteins
                     type2 = 'nucleotide';
                 }
-                else if(ic.ions.hasOwnProperty(atom2.serial)) { // 3. ions interacting with proteins
+                else if(me.icn3d.ions.hasOwnProperty(atom2.serial)) { // 3. ions interacting with proteins
                     type2 = 'ion';
                 }
-                else if(ic.proteins.hasOwnProperty(atom2.serial)) { // 4. protein interacting with proteins
+                else if(me.icn3d.proteins.hasOwnProperty(atom2.serial)) { // 4. protein interacting with proteins
                     type2 = 'protein';
                 }
-                else if(ic.water.hasOwnProperty(atom2.serial)) { // 5. water interacting with proteins
+                else if(me.icn3d.water.hasOwnProperty(atom2.serial)) { // 5. water interacting with proteins
                     type2 = 'water';
                 }
 
@@ -158,8 +158,8 @@ iCn3DUI.prototype.draw2Ddgm = function(data, mmdbid, structureIndex, bUpdate) { 
     var displayedMolids = {};
     if(bUpdate) {
         // get all displayed chains
-        for(var i in ic.dAtoms) {
-            var atom = ic.atoms[i];
+        for(var i in me.icn3d.dAtoms) {
+            var atom = me.icn3d.atoms[i];
             var chainid = atom.structure + '_' + atom.chain;
             var molid = chainid2molid[chainid];
 
@@ -235,14 +235,14 @@ iCn3DUI.prototype.draw2Ddgm = function(data, mmdbid, structureIndex, bUpdate) { 
         var color = "#FFFFFF";
         var oricolor = molid2color[molid];
         if(chainid !== undefined) {
-            var atomArray = Object.keys(ic.chains[chainid]);
+            var atomArray = Object.keys(me.icn3d.chains[chainid]);
             if(atomArray.length > 0) {
-                oricolor = "#" + ic.atoms[atomArray[0]].color.getHexString().toUpperCase();
+                oricolor = "#" + me.icn3d.atoms[atomArray[0]].color.getHexString().toUpperCase();
             }
         }
 
         var alignNum = "";
-        if(ic.bInitial) {
+        if(me.icn3d.bInitial) {
             if(structureIndex !== undefined && structureIndex === 0) {
                 if(me.alignmolid2color !== undefined && me.alignmolid2color[0].hasOwnProperty(molid)) {
                     //color = me.alignmolid2color[0][molid];
@@ -288,16 +288,16 @@ iCn3DUI.prototype.draw2Ddgm = function(data, mmdbid, structureIndex, bUpdate) { 
         }
 
         var ratio = 1.0;
-        if(ic.bInitial && ic.alnChains[chainid] !== undefined) {
-            //ratio = 1.0 * Object.keys(ic.alnChains[chainid]).length / Object.keys(ic.chains[chainid]).length;
+        if(me.icn3d.bInitial && me.icn3d.alnChains[chainid] !== undefined) {
+            //ratio = 1.0 * Object.keys(me.icn3d.alnChains[chainid]).length / Object.keys(me.icn3d.chains[chainid]).length;
             var alignedAtomCnt = 0;
-            for(var i in ic.alnChains[chainid]) {
-                var colorStr = ic.atoms[i].color.getHexString().toUpperCase();
+            for(var i in me.icn3d.alnChains[chainid]) {
+                var colorStr = me.icn3d.atoms[i].color.getHexString().toUpperCase();
                 if(colorStr === 'FF0000' || colorStr === '00FF00') {
                     ++alignedAtomCnt;
                 }
             }
-            ratio = 1.0 * alignedAtomCnt / Object.keys(ic.chains[chainid]).length;
+            ratio = 1.0 * alignedAtomCnt / Object.keys(me.icn3d.chains[chainid]).length;
         }
         if(ratio < 0.2) ratio = 0.2;
 
@@ -337,7 +337,7 @@ iCn3DUI.prototype.draw2Ddgm = function(data, mmdbid, structureIndex, bUpdate) { 
 
               var x = x0, y = y1;
 
-              var atom = ic.getFirstAtomObj(ic.chains[chainid]);
+              var atom = me.icn3d.getFirstAtomObj(me.icn3d.chains[chainid]);
 
               chemNodeHtml += me.draw2DChemical(x, y, chainid, oriChain, chain, chainname, alignNum, color, oricolor, factor, ratio);
 
@@ -388,7 +388,7 @@ iCn3DUI.prototype.draw2Ddgm = function(data, mmdbid, structureIndex, bUpdate) { 
 
             var x = xCenter, y = yCenter;
 
-            var atom = ic.getFirstAtomObj(ic.chains[chainid]);
+            var atom = me.icn3d.getFirstAtomObj(me.icn3d.chains[chainid]);
 
             var bBiopolymer = true;
             chemNodeHtml += me.draw2DChemical(x, y, chainid, oriChain, chain, chainname, alignNum, color, oricolor, factor, ratio, bBiopolymer);
@@ -527,14 +527,14 @@ iCn3DUI.prototype.removeScatterplotSelection = function() { var me = this, ic = 
 iCn3DUI.prototype.click2Ddgm = function() { var me = this; //"use strict";
     $("#" + me.pre + "dl_2ddgm").on("click", ".icn3d-node", function(e) { var ic = me.icn3d;
           e.stopImmediatePropagation();
-        if(Object.keys(ic.hAtoms).length < Object.keys(ic.atoms).length) me.setMode('selection');
+        if(Object.keys(me.icn3d.hAtoms).length < Object.keys(me.icn3d.atoms).length) me.setMode('selection');
 
         //me.bClickInteraction = false;
 
         var chainid = $(this).attr('chainid');
 
         // clear all nodes
-        if(!ic.bCtrl && !ic.bShift) {
+        if(!me.icn3d.bCtrl && !me.icn3d.bShift) {
             me.removeSelection();
 
             // me.lineArray2d is used to highlight lines in 2D diagram
@@ -542,7 +542,7 @@ iCn3DUI.prototype.click2Ddgm = function() { var me = this; //"use strict";
         }
 
         var ratio = 1.0;
-        if(ic.alnChains[chainid] !== undefined) ratio = 1.0 * Object.keys(ic.alnChains[chainid]).length / Object.keys(ic.chains[chainid]).length;
+        if(me.icn3d.alnChains[chainid] !== undefined) ratio = 1.0 * Object.keys(me.icn3d.alnChains[chainid]).length / Object.keys(me.icn3d.chains[chainid]).length;
 
         var target = $(this).find("rect[class='icn3d-hlnode']");
         var base = $(this).find("rect[class='icn3d-basenode']");
@@ -556,15 +556,15 @@ iCn3DUI.prototype.click2Ddgm = function() { var me = this; //"use strict";
         base = $(this).find("polygon[class='icn3d-basenode']");
         me.highlightNode('polygon', target, base, ratio);
 
-        if(!ic.bCtrl && !ic.bShift) {
-            ic.hAtoms = ic.cloneHash(ic.chains[chainid]);
+        if(!me.icn3d.bCtrl && !me.icn3d.bShift) {
+            me.icn3d.hAtoms = me.icn3d.cloneHash(me.icn3d.chains[chainid]);
         }
         else {
-            ic.hAtoms = ic.unionHash(ic.hAtoms, ic.chains[chainid]);
+            me.icn3d.hAtoms = me.icn3d.unionHash(me.icn3d.hAtoms, me.icn3d.chains[chainid]);
         }
 
         // get the name array
-        if(!ic.bCtrl && !ic.bShift) {
+        if(!me.icn3d.bCtrl && !me.icn3d.bShift) {
             me.chainArray2d = [chainid];
         }
         else {
@@ -585,7 +585,7 @@ iCn3DUI.prototype.click2Ddgm = function() { var me = this; //"use strict";
 
     $("#" + me.pre + "dl_2ddgm").on("click", ".icn3d-interaction", function(e) { var ic = me.icn3d;
           e.stopImmediatePropagation();
-        if(Object.keys(ic.hAtoms).length < Object.keys(ic.atoms).length) me.setMode('selection');
+        if(Object.keys(me.icn3d.hAtoms).length < Object.keys(me.icn3d.atoms).length) me.setMode('selection');
 
         me.bClickInteraction = true;
 
@@ -608,12 +608,12 @@ iCn3DUI.prototype.click2Ddgm = function() { var me = this; //"use strict";
 
     $("#" + me.pre + "dl_linegraph").on("click", ".icn3d-node", function(e) { var ic = me.icn3d;
         e.stopImmediatePropagation();
-        if(Object.keys(ic.hAtoms).length < Object.keys(ic.atoms).length) me.setMode('selection');
+        if(Object.keys(me.icn3d.hAtoms).length < Object.keys(me.icn3d.atoms).length) me.setMode('selection');
 
         var resid = $(this).attr('resid');
 
-        if(!ic.bCtrl && !ic.bShift) {
-          ic.hAtoms = {};
+        if(!me.icn3d.bCtrl && !me.icn3d.bShift) {
+          me.icn3d.hAtoms = {};
 
           me.removeLineGraphSelection();
         }
@@ -622,7 +622,7 @@ iCn3DUI.prototype.click2Ddgm = function() { var me = this; //"use strict";
         $(this).find('circle').attr('stroke', me.ORANGE);
         $(this).find('circle').attr('stroke-width', strokeWidth);
 
-        ic.hAtoms = ic.unionHash(ic.hAtoms, ic.residues[resid]);
+        me.icn3d.hAtoms = me.icn3d.unionHash(me.icn3d.hAtoms, me.icn3d.residues[resid]);
 
         var select = 'select ' + me.residueids2spec([resid]);
 
@@ -635,12 +635,12 @@ iCn3DUI.prototype.click2Ddgm = function() { var me = this; //"use strict";
 
     $("#" + me.pre + "dl_scatterplot").on("click", ".icn3d-node", function(e) { var ic = me.icn3d;
         e.stopImmediatePropagation();
-        if(Object.keys(ic.hAtoms).length < Object.keys(ic.atoms).length) me.setMode('selection');
+        if(Object.keys(me.icn3d.hAtoms).length < Object.keys(me.icn3d.atoms).length) me.setMode('selection');
 
         var resid = $(this).attr('resid');
 
-        if(!ic.bCtrl && !ic.bShift) {
-          ic.hAtoms = {};
+        if(!me.icn3d.bCtrl && !me.icn3d.bShift) {
+          me.icn3d.hAtoms = {};
 
           me.removeScatterplotSelection();
         }
@@ -649,7 +649,7 @@ iCn3DUI.prototype.click2Ddgm = function() { var me = this; //"use strict";
         $(this).find('circle').attr('stroke', me.ORANGE);
         $(this).find('circle').attr('stroke-width', strokeWidth);
 
-        ic.hAtoms = ic.unionHash(ic.hAtoms, ic.residues[resid]);
+        me.icn3d.hAtoms = me.icn3d.unionHash(me.icn3d.hAtoms, me.icn3d.residues[resid]);
 
         var select = 'select ' + me.residueids2spec([resid]);
 
@@ -662,21 +662,21 @@ iCn3DUI.prototype.click2Ddgm = function() { var me = this; //"use strict";
 
     $("#" + me.pre + "dl_linegraph").on("click", ".icn3d-interaction", function(e) { var ic = me.icn3d;
           e.stopImmediatePropagation();
-        if(Object.keys(ic.hAtoms).length < Object.keys(ic.atoms).length) me.setMode('selection');
+        if(Object.keys(me.icn3d.hAtoms).length < Object.keys(me.icn3d.atoms).length) me.setMode('selection');
 
         var resid1 = $(this).attr('resid1');
         var resid2 = $(this).attr('resid2');
 
-        if(!ic.bCtrl && !ic.bShift) {
-          ic.hAtoms = {};
+        if(!me.icn3d.bCtrl && !me.icn3d.bShift) {
+          me.icn3d.hAtoms = {};
 
           me.removeLineGraphSelection();
         }
 
         $(this).find('line.icn3d-hlline').attr('stroke', me.ORANGE);
 
-        ic.hAtoms = ic.unionHash(ic.hAtoms, ic.residues[resid1]);
-        ic.hAtoms = ic.unionHash(ic.hAtoms, ic.residues[resid2]);
+        me.icn3d.hAtoms = me.icn3d.unionHash(me.icn3d.hAtoms, me.icn3d.residues[resid1]);
+        me.icn3d.hAtoms = me.icn3d.unionHash(me.icn3d.hAtoms, me.icn3d.residues[resid2]);
 
         var select = 'select ' + me.residueids2spec([resid1, resid2]);
 
@@ -687,13 +687,13 @@ iCn3DUI.prototype.click2Ddgm = function() { var me = this; //"use strict";
 
     $("#" + me.pre + "dl_scatterplot").on("click", ".icn3d-interaction", function(e) { var ic = me.icn3d;
         e.stopImmediatePropagation();
-        if(Object.keys(ic.hAtoms).length < Object.keys(ic.atoms).length) me.setMode('selection');
+        if(Object.keys(me.icn3d.hAtoms).length < Object.keys(me.icn3d.atoms).length) me.setMode('selection');
 
         var resid1 = $(this).attr('resid1');
         var resid2 = $(this).attr('resid2');
 
-        if(!ic.bCtrl && !ic.bShift) {
-          ic.hAtoms = {};
+        if(!me.icn3d.bCtrl && !me.icn3d.bShift) {
+          me.icn3d.hAtoms = {};
 
           me.removeScatterplotSelection();
         }
@@ -702,8 +702,8 @@ iCn3DUI.prototype.click2Ddgm = function() { var me = this; //"use strict";
         $(this).find('rect').attr('stroke', me.ORANGE);
         $(this).find('rect').attr('stroke-width', strokeWidth);
 
-        ic.hAtoms = ic.unionHash(ic.hAtoms, ic.residues[resid1]);
-        ic.hAtoms = ic.unionHash(ic.hAtoms, ic.residues[resid2]);
+        me.icn3d.hAtoms = me.icn3d.unionHash(me.icn3d.hAtoms, me.icn3d.residues[resid1]);
+        me.icn3d.hAtoms = me.icn3d.unionHash(me.icn3d.hAtoms, me.icn3d.residues[resid2]);
 
         var select = 'select ' + me.residueids2spec([resid1, resid2]);
 
@@ -715,9 +715,9 @@ iCn3DUI.prototype.click2Ddgm = function() { var me = this; //"use strict";
 
 iCn3DUI.prototype.selectInteraction = function (chainid1, chainid2) {   var me = this, ic = me.icn3d; "use strict";
         me.removeHl2D();
-        ic.removeHlObjects();
+        me.icn3d.removeHlObjects();
 
-        if(!ic.bCtrl && !ic.bShift) {
+        if(!me.icn3d.bCtrl && !me.icn3d.bShift) {
             // me.lineArray2d is used to highlight lines in 2D diagram
             me.lineArray2d = [chainid1, chainid2];
         }
@@ -729,25 +729,25 @@ iCn3DUI.prototype.selectInteraction = function (chainid1, chainid2) {   var me =
 
         me.selectInteractionAtoms(chainid1, chainid2);
 
-        ic.addHlObjects();
+        me.icn3d.addHlObjects();
 
         me.updateHlAll();
 };
 
-iCn3DUI.prototype.selectInteractionAtoms = function (chainid1, chainid2) {   var me = this, ic = me.icn3d; "use strict";  // ic.pAtom is set already
+iCn3DUI.prototype.selectInteractionAtoms = function (chainid1, chainid2) {   var me = this, ic = me.icn3d; "use strict";  // me.icn3d.pAtom is set already
     var radius = 4;
 
     // method 2. Retrieved from the cgi (This previously had problems in sharelink where the data from ajax is async. Now the data is from the same cgi as the atom data and there is no problem.)
     var residueArray = me.chainids2resids[chainid1][chainid2];
 
-    if(!ic.bCtrl && !ic.bShift) ic.hAtoms = {};
+    if(!me.icn3d.bCtrl && !me.icn3d.bShift) me.icn3d.hAtoms = {};
 
     for(var i = 0, il = residueArray.length; i < il; ++i) {
-        ic.hAtoms = ic.unionHash(ic.hAtoms, ic.residues[residueArray[i]]);
+        me.icn3d.hAtoms = me.icn3d.unionHash(me.icn3d.hAtoms, me.icn3d.residues[residueArray[i]]);
     }
 
     var commandname, commanddesc;
-    if(Object.keys(ic.structures).length > 1) {
+    if(Object.keys(me.icn3d.structures).length > 1) {
         commandname = "inter_" + chainid1 + "_" + chainid2;
     }
     else {

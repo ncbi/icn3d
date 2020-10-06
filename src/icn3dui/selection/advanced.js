@@ -127,7 +127,7 @@ iCn3DUI.prototype.selectBySpec = function (select, commandname, commanddesc, bDi
        //$1,2,3.A,B,C:5-10,LYS,chemicals@CA,C
        // $1,2,3: Structure
        // .A,B,C: chain
-       // :5-10,LYS,chemicals: residues, could be 'proteins', 'nucleotides', 'chemicals', 'ions', and 'water'
+       // :5-10,K,chemicals: residues, could be 'proteins', 'nucleotides', 'chemicals', 'ions', and 'water'
        // @CA,C: atoms
        // wild card * can be used to select all
        //var currHighlightAtoms = {};
@@ -214,9 +214,10 @@ iCn3DUI.prototype.selectBySpec = function (select, commandname, commanddesc, bDi
 
            var hyphenPos = residueStrArray[j].indexOf('-');
 
-           var oneLetterResidueStr;
+           var oneLetterResidueStr = undefined, threeLetterResidueStr = undefined;
            var bAllResidues = false;
            var bResidueArray = false;
+           var bResidueArrayThree = false; // three letter residues
 
            if(hyphenPos !== -1) {
              start = residueStrArray[j].substr(0, hyphenPos);
@@ -231,6 +232,11 @@ iCn3DUI.prototype.selectBySpec = function (select, commandname, commanddesc, bDi
              }
              else if(residueStrArray[j] === '*') { // all resiues
                bAllResidues = true;
+             }
+             else if(residueStrArray[j][0] === '3' && (residueStrArray[j].length - 1) % 3 === 0) { // three letter residue string, such as :3LysArg
+               var tmpStr = residueStrArray[j].toUpperCase();
+               threeLetterResidueStr = tmpStr.substr(1);
+               bResidueArrayThree = true;
              }
              else if(residueStrArray[j] !== 'proteins' && residueStrArray[j] !== 'nucleotides' && residueStrArray[j] !== 'chemicals' && residueStrArray[j] !== 'ions' && residueStrArray[j] !== 'water') { // residue name
                var tmpStr = residueStrArray[j].toUpperCase();
@@ -316,37 +322,44 @@ iCn3DUI.prototype.selectBySpec = function (select, commandname, commanddesc, bDi
                    }
                  } // end for(var m in atomHash) {
 
-                 if(bResidueArray) {
-                   //oneLetterResidueStr.length;
+                 if(bResidueArray || bResidueArrayThree) {
+                   var n = (bResidueArray) ? 1 : 3;
+                   var residueStrTmp = (bResidueArray) ? oneLetterResidueStr : threeLetterResidueStr;
+
                    var chainSeq = '', resiArray = [];
                    for(var s = 0, sl = ic.chainsSeq[molecule_chain].length; s < sl;  ++s) {
-                       //chainSeq += (ic.chainsSeq[molecule_chain][s].name.length == 1) ? ic.chainsSeq[molecule_chain][s].name : ic.chainsSeq[molecule_chain][s].name.substr(0, 1);
-                       chainSeq += (ic.chainsSeq[molecule_chain][s].name.length == 1) ? ic.chainsSeq[molecule_chain][s].name : ' ';
+                       if(bResidueArray) {
+                           chainSeq += (ic.chainsSeq[molecule_chain][s].name.length == 1) ? ic.chainsSeq[molecule_chain][s].name : ' ';
+                       }
+                       else if(bResidueArrayThree) {
+                           var threeLetter = ic.residueAbbr2Name(ic.chainsSeq[molecule_chain][s].name);
+                           chainSeq += (threeLetter.length == 3) ? threeLetter : '   ';
+                       }
                        resiArray.push(ic.chainsSeq[molecule_chain][s].resi);
                    }
 
                    chainSeq = chainSeq.toUpperCase();
 
-                   var seqReg = oneLetterResidueStr.replace(/x/gi, ".");
+                   var seqReg = residueStrTmp.replace(/x/gi, ".");
                    var posArray = [];
 
                    var searchReg = new RegExp(seqReg, 'i');
 
                    var targetStr = chainSeq;
                    var pos = targetStr.search(searchReg);
-                   var sumPos = pos;
+                   var sumPos = pos / n;
                    while(pos !== -1) {
                        posArray.push(sumPos);
-                       targetStr = targetStr.substr(pos + 1);
+                       targetStr = targetStr.substr(pos + n);
                        pos = targetStr.search(searchReg);
-                       sumPos += pos + 1;
+                       sumPos += pos / n + 1;
                    }
 
                    for(var s = 0, sl = posArray.length; s < sl; ++s) {
                        var pos = posArray[s];
 
-                       for(var t = 0, tl = oneLetterResidueStr.length; t < tl;  ++t) {
-                         var residueId = molecule_chain + '_' + resiArray[t + pos];
+                       for(var t = 0, tl = residueStrTmp.length; t < tl;  t += n) {
+                         var residueId = molecule_chain + '_' + resiArray[t/n + pos];
                          if(i === 0) {
                              residueHash[residueId] = 1;
                          }
@@ -373,7 +386,8 @@ iCn3DUI.prototype.selectBySpec = function (select, commandname, commanddesc, bDi
                          }
                        } // for
                    } // end for(s = 0
-                 }
+                 } // end if
+
                } // end if(molecule_chain
              } // end else
            } // end for(var mc = 0

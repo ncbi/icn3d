@@ -8,7 +8,7 @@ iCn3DUI.prototype.drawGraph = function (jsonStr, divid) {  var me = this, ic = m
     if (typeof d3v4 == 'undefined')
         d3v4 = d3;
 
-    //if(ic.bRender !== true) return;
+    //if(me.icn3d.bRender !== true) return;
 
     var graph = JSON.parse(jsonStr);
 

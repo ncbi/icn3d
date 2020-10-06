@@ -776,7 +776,7 @@ iCn3DUI.prototype.loadAtomDataIn = function (data, id, type, seqalign, alignType
     if(type === 'align') {
       //serial2structure
       me.pmid = "";
-      var refinedStr = (me.cfg.inpara.indexOf('atype=1') !== -1) ? 'Invariant Core ' : '';
+      var refinedStr = (me.cfg.inpara && me.cfg.inpara.indexOf('atype=1') !== -1) ? 'Invariant Core ' : '';
       ic.molTitle = refinedStr + 'Structure Alignment of ';
 
       for (var i = 0, il = data.alignedStructures[0].length; i < il; ++i) {

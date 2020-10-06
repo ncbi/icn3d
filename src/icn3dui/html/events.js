@@ -275,11 +275,25 @@ iCn3DUI.prototype.allEventFunctions = function() { var me = this;
     });
 //    },
 
+    $("#" + me.pre + "mn1_delphi").add("#" + me.pre + "mn1_delphi2").click(function(e) { var ic = me.icn3d;
+       ic.loadPhiFrom = 'delphi';
+       $("#" + me.pre + "dl_delphi_tabs").tabs();
+       me.openDlg('dl_delphi', 'Please set parameters to display DelPhi potential map');
+    });
+
     $("#" + me.pre + "mn1_phi").click(function(e) { var ic = me.icn3d;
-       me.openDlg('dl_phi', 'Please input the phi or cube file to display Delphi potential map');
+       ic.loadPhiFrom = 'phi';
+       $("#" + me.pre + "dl_phi_tabs").tabs();
+       $("#" + me.pre + "phitab1_tabs").tabs();
+       $("#" + me.pre + "phitab2_tabs").tabs();
+       me.openDlg('dl_phi', 'Please input local phi or cube file to display DelPhi potential map');
     });
     $("#" + me.pre + "mn1_phiurl").click(function(e) { var ic = me.icn3d;
-       me.openDlg('dl_phiurl', 'Please input the phi or cube file to display Delphi potential map');
+       ic.loadPhiFrom = 'phiurl';
+       $("#" + me.pre + "dl_phiurl_tabs").tabs();
+       $("#" + me.pre + "phiurltab1_tabs").tabs();
+       $("#" + me.pre + "phiurltab2_tabs").tabs();
+       me.openDlg('dl_phiurl', 'Please input URL phi or cube file to display DelPhi potential map');
     });
 
 //    clkMn1_dsn6url: function() {
@@ -294,6 +308,29 @@ iCn3DUI.prototype.allEventFunctions = function() { var me = this;
        me.saveFile(file_pref + '_statefile.txt', 'command');
     });
 //    },
+
+    $("#" + me.pre + "mn1_exportPdbRes").click(function(e) { var ic = me.icn3d;
+       var  pdbStr = me.getAtomPDB(ic.hAtoms);
+
+       me.setLogCmd("export PDB of selected residues", false);
+       var file_pref = (me.inputid) ? me.inputid : "custom";
+       me.saveFile(file_pref + '_icn3d_residues.pdb', 'text', [pdbStr]);
+    });
+
+    $("#" + me.pre + "mn1_exportPdbChain").add("#" + me.pre + "delphipdb")
+      .add("#" + me.pre + "phipdb").add("#" + me.pre + "phiurlpdb").click(function(e) { var ic = me.icn3d;
+       var  pdbStr = me.getSelectedChainPDB();
+
+       me.setLogCmd("export PDB of selected chains", false);
+       var file_pref = (me.inputid) ? me.inputid : "custom";
+       me.saveFile(file_pref + '_icn3d_chains.pdb', 'text', [pdbStr]);
+    });
+
+    $("#" + me.pre + "delphipqr").add("#" + me.pre + "phipqr").add("#" + me.pre + "phiurlpqr").click(function(e) { var ic = me.icn3d;
+       me.exportPqr();
+       me.setLogCmd("export pqr", true);
+    });
+
 //    clkMn1_exportStl: function() {
     $("#" + me.pre + "mn1_exportStl").click(function(e) { var ic = me.icn3d;
        me.setLogCmd("export stl file", false);
@@ -1287,10 +1324,16 @@ iCn3DUI.prototype.allEventFunctions = function() { var me = this;
        me.setLogCmd('setoption map nothing', true);
     });
 //    },
-    $("#" + me.pre + "phimapNo").add("#" + me.pre + "phiurlmapNo")
+    $("#" + me.pre + "delphimapNo").add("#" + me.pre + "phimapNo").add("#" + me.pre + "phiurlmapNo")
       .add("#" + me.pre + "mn1_phimapNo").click(function(e) { var ic = me.icn3d;
        me.setOption('phimap', 'nothing');
        me.setLogCmd('setoption phimap nothing', true);
+    });
+
+    $("#" + me.pre + "delphimapNo2").add("#" + me.pre + "phimapNo2").add("#" + me.pre + "phiurlmapNo2")
+      .click(function(e) { var ic = me.icn3d;
+       me.setOption('surface', 'nothing');
+       me.setLogCmd('set surface nothing', true);
     });
 
 //    clickApplymap2fofc: function() {
@@ -1498,6 +1541,30 @@ iCn3DUI.prototype.allEventFunctions = function() { var me = this;
        me.bMeasureDistance = true;
     });
 //    },
+
+    $("#" + me.pre + "mn6_distTwoSets").click(function(e) { var ic = me.icn3d;
+        me.openDlg('dl_disttwosets', 'Measure the distance between two sets');
+
+        if(me.bSetChainsAdvancedMenu === undefined || !me.bSetChainsAdvancedMenu) {
+           var prevHAtoms = ic.cloneHash(ic.hAtoms);
+           me.setPredefinedInMenu();
+           me.bSetChainsAdvancedMenu = true;
+           ic.hAtoms = ic.cloneHash(prevHAtoms);
+        }
+        var definedAtomsHtml = me.setAtomMenu(['protein']);
+        if($("#" + me.pre + "atomsCustomDist").length) {
+            $("#" + me.pre + "atomsCustomDist").html("  <option value='selected'>selected</option>" + definedAtomsHtml);
+        }
+        if($("#" + me.pre + "atomsCustomDist2").length) {
+            $("#" + me.pre + "atomsCustomDist2").html("  <option value='selected' selected>selected</option>" + definedAtomsHtml);
+        }
+
+       $("#" + me.pre + "atomsCustomDist").resizable();
+       $("#" + me.pre + "atomsCustomDist2").resizable();
+
+       me.bMeasureDistance = true;
+    });
+
 //    clkMn6_distanceNo: function() {
     $("#" + me.pre + "mn6_distanceNo").click(function(e) { var ic = me.icn3d;
        ic.pickpair = false;
@@ -2147,6 +2214,17 @@ iCn3DUI.prototype.allEventFunctions = function() { var me = this;
        if(!me.cfg.notebook) dialog.dialog( "close" );
        me.loadDsn6File('fofc');
     });
+
+    $("#" + me.pre + "reload_delphifile").click(function(e) { var ic = me.icn3d;
+       e.preventDefault();
+       if(!me.cfg.notebook) dialog.dialog( "close" );
+       me.loadDelphiFile('delphi');
+    });
+    $("#" + me.pre + "reload_pqrfile").click(function(e) { var ic = me.icn3d;
+       e.preventDefault();
+       if(!me.cfg.notebook) dialog.dialog( "close" );
+       me.loadPhiFile('pqr');
+    });
     $("#" + me.pre + "reload_phifile").click(function(e) { var ic = me.icn3d;
        e.preventDefault();
        if(!me.cfg.notebook) dialog.dialog( "close" );
@@ -2157,6 +2235,11 @@ iCn3DUI.prototype.allEventFunctions = function() { var me = this;
        if(!me.cfg.notebook) dialog.dialog( "close" );
        me.loadPhiFile('cube');
     });
+    $("#" + me.pre + "reload_pqrurlfile").click(function(e) { var ic = me.icn3d;
+       e.preventDefault();
+       if(!me.cfg.notebook) dialog.dialog( "close" );
+       me.loadPhiFileUrl('pqrurl');
+    });
     $("#" + me.pre + "reload_phiurlfile").click(function(e) { var ic = me.icn3d;
        e.preventDefault();
        if(!me.cfg.notebook) dialog.dialog( "close" );
@@ -2166,6 +2249,57 @@ iCn3DUI.prototype.allEventFunctions = function() { var me = this;
        e.preventDefault();
        if(!me.cfg.notebook) dialog.dialog( "close" );
        me.loadPhiFileUrl('cubeurl');
+    });
+
+    $("#" + me.pre + "reload_delphifile2").click(function(e) { var ic = me.icn3d;
+       e.preventDefault();
+       me.updateSurfPara('delphi');
+
+       if(!me.cfg.notebook) dialog.dialog( "close" );
+
+       me.loadDelphiFile('delphi2');
+    });
+    $("#" + me.pre + "reload_pqrfile2").click(function(e) { var ic = me.icn3d;
+       e.preventDefault();
+       me.updateSurfPara('phi');
+
+       if(!me.cfg.notebook) dialog.dialog( "close" );
+       me.loadPhiFile('pqr2');
+    });
+    $("#" + me.pre + "reload_phifile2").click(function(e) { var ic = me.icn3d;
+       e.preventDefault();
+       me.updateSurfPara('phi');
+
+       if(!me.cfg.notebook) dialog.dialog( "close" );
+       me.loadPhiFile('phi2');
+    });
+    $("#" + me.pre + "reload_cubefile2").click(function(e) { var ic = me.icn3d;
+       e.preventDefault();
+       me.updateSurfPara('phi');
+
+       if(!me.cfg.notebook) dialog.dialog( "close" );
+       me.loadPhiFile('cube2');
+    });
+    $("#" + me.pre + "reload_pqrurlfile2").click(function(e) { var ic = me.icn3d;
+       e.preventDefault();
+       me.updateSurfPara('phiurl');
+
+       if(!me.cfg.notebook) dialog.dialog( "close" );
+       me.loadPhiFileUrl('pqrurl2');
+    });
+    $("#" + me.pre + "reload_phiurlfile2").click(function(e) { var ic = me.icn3d;
+       e.preventDefault();
+       me.updateSurfPara('phiurl');
+
+       if(!me.cfg.notebook) dialog.dialog( "close" );
+       me.loadPhiFileUrl('phiurl2');
+    });
+    $("#" + me.pre + "reload_cubeurlfile2").click(function(e) { var ic = me.icn3d;
+       e.preventDefault();
+       me.updateSurfPara('phiurl');
+
+       if(!me.cfg.notebook) dialog.dialog( "close" );
+       me.loadPhiFileUrl('cubeurl2');
     });
 
     $("#" + me.pre + "reload_dsn6fileurl2fofc").click(function(e) { var ic = me.icn3d;
@@ -2446,11 +2580,11 @@ iCn3DUI.prototype.allEventFunctions = function() { var me = this;
         else {
             me.pickCustomSphere(radius, nameArray2, nameArray, me.bSphereCalc);
             me.bSphereCalc = true;
-            //me.setLogCmd('set calculate sphere true', true);
-            me.setLogCmd("export pairs in the sphere", false);
             var text = me.exportSpherePairs();
             var file_pref = (me.inputid) ? me.inputid : "custom";
             me.saveFile(file_pref + '_sphere_pairs.html', 'html', text);
+
+            me.setLogCmd("export pairs | " + nameArray2 + " " + nameArray + " | dist " + radius, true);
         }
     });
 //    },
@@ -2804,6 +2938,19 @@ iCn3DUI.prototype.allEventFunctions = function() { var me = this;
        }
     });
 //    },
+
+    $("#" + me.pre + "applydist2").click(function(e) { var ic = me.icn3d;
+       e.preventDefault();
+       if(!me.cfg.notebook) dialog.dialog( "close" );
+       me.bMeasureDistance = false;
+
+       var nameArray = $("#" + me.pre + "atomsCustomDist").val();
+       var nameArray2 = $("#" + me.pre + "atomsCustomDist2").val();
+
+       me.measureDistTwoSets(nameArray, nameArray2);
+       me.setLogCmd("dist | " + nameArray2 + " " + nameArray, true);
+    });
+
 //    clickApply_thickness: function() {
     $("#" + me.pre + "apply_thickness_3dprint").click(function(e) { var ic = me.icn3d;
         e.preventDefault();
@@ -2904,6 +3051,15 @@ iCn3DUI.prototype.allEventFunctions = function() { var me = this;
             }
             else if(lastCommand.indexOf('set map') !== -1 && lastCommand.indexOf('set map wireframe') === -1) {
                 me.applyCommandMap(lastCommand);
+            }
+            else if(lastCommand.indexOf('set emmap') !== -1 && lastCommand.indexOf('set emmap wireframe') === -1) {
+                me.applyCommandEmmap(lastCommand);
+            }
+            else if(lastCommand.indexOf('set phi') !== -1) {
+                me.applyCommandPhi(lastCommand);
+            }
+            else if(lastCommand.indexOf('set delphi') !== -1) {
+                me.applyCommandDelphi(lastCommand);
             }
             else if(lastCommand.indexOf('view annotations') == 0
               //|| lastCommand.indexOf('set annotation cdd') == 0
@@ -3249,6 +3405,17 @@ iCn3DUI.prototype.allEventFunctions = function() { var me = this;
        me.setLogCmd("set theme black", true);
     });
 
+    $("#" + me.pre + "mn6_doublecolorYes").click(function(e) { var ic = me.icn3d;
+       ic.bDoublecolor = true;
+       ic.draw();
+       me.setLogCmd("set double color on", true);
+    });
+    $("#" + me.pre + "mn6_doublecolorNo").click(function(e) { var ic = me.icn3d;
+       ic.bDoublecolor = false;
+       ic.draw();
+       me.setLogCmd("set double color off", true);
+    });
+
 };
 
 iCn3DUI.prototype.setTheme = function(color) { var me = this, ic = me.icn3d; "use strict";
@@ -3336,4 +3503,81 @@ iCn3DUI.prototype.setLineThickness = function(postfix) { var me = this, ic = me.
     ic.nucleicAcidWidth = parseFloat($("#" + me.pre + "nucleotideribbonwidth_" + postfix ).val()); //0.8; // nucleotide cartoon
     me.setLogCmd('set thickness | linerad ' + ic.lineRadius + ' | coilrad ' + ic.coilWidth + ' | stickrad ' + ic.cylinderRadius + ' | tracerad ' + ic.traceRadius + ' | ribbonthick ' + ic.ribbonthickness + ' | proteinwidth ' + ic.helixSheetWidth + ' | nucleotidewidth ' + ic.nucleicAcidWidth  + ' | ballscale ' + ic.dotSphereScale, true);
     ic.draw();
+};
+
+iCn3DUI.prototype.updateSurfPara = function(type) { var me = this, ic = me.icn3d; "use strict";
+   ic.phisurftype = $("#" + me.pre + type + "surftype").val();
+   ic.phisurfop = $("#" + me.pre + type + "surfop").val();
+   ic.phisurfwf = $("#" + me.pre + type + "surfwf").val();
+};
+
+iCn3DUI.prototype.exportPqr = function() { var me = this, ic = me.icn3d; "use strict";
+   var chainHash = {}, ionHash = {};
+   for(var i in ic.hAtoms) {
+       var atom = ic.atoms[i];
+
+       if(ic.ions.hasOwnProperty(i)) {
+         ionHash[i] = 1;
+       }
+       else {
+         chainHash[atom.structure + '_' + atom.chain] = 1;
+       }
+   }
+
+   var atomHash = {};
+   for(var chainid in chainHash) {
+       atomHash = ic.unionHash(atomHash, ic.chains[chainid]);
+   }
+
+   if(me.cfg.cid) {
+      var pqrStr = me.getAtomPDB(atomHash, true) + me.getAtomPDB(ionHash, true);
+
+      var file_pref = (me.inputid) ? me.inputid : "custom";
+      me.saveFile(file_pref + '_icn3d_chains.pqr', 'text', [pqrStr]);
+   }
+   else {
+       var bCalphaOnly = ic.isCalphaPhosOnly(ic.hash2Atoms(atomHash));
+       if(bCalphaOnly) {
+           alert("The potential will not be shown because the side chains are missing in the structure...");
+           return;
+       }
+
+       var pdbstr = me.getAtomPDB(atomHash);
+       pdbstr += me.getAtomPDB(ionHash, true);
+
+       var url = "https://www.ncbi.nlm.nih.gov/Structure/delphi/delphi.fcgi";
+
+       var pdbid = (me.cfg.cid) ? me.cfg.cid : Object.keys(ic.structures).toString();
+
+       $.ajax({
+          url: url,
+          type: 'POST',
+          data : {'pdb2pqr': pdbstr, 'pdbid': pdbid},
+          dataType: 'text',
+          cache: true,
+          tryCount : 0,
+          retryLimit : 0, //1,
+          beforeSend: function() {
+              me.showLoading();
+          },
+          complete: function() {
+              me.hideLoading();
+          },
+          success: function(data) {
+              var pqrStr = data;
+
+              var file_pref = (me.inputid) ? me.inputid : "custom";
+              me.saveFile(file_pref + '_icn3d_chains.pqr', 'text', [pqrStr]);
+          },
+          error : function(xhr, textStatus, errorThrown ) {
+            this.tryCount++;
+            if (this.tryCount <= this.retryLimit) {
+                //try again
+                $.ajax(this);
+                return;
+            }
+            return;
+          }
+       });
+   }
 };
