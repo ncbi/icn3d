@@ -4,7 +4,7 @@
 
 iCn3DUI.prototype.downloadAlignment = function (align) { var me = this, ic = me.icn3d; "use strict";
     me.opts['proteins'] = 'c alpha trace';
-    me.icn3d.opts['proteins'] = 'c alpha trace';
+    ic.opts['proteins'] = 'c alpha trace';
 
     var alignArray = align.split(',');
     //var ids_str = (alignArray.length === 2? 'uids=' : 'ids=') + align;
@@ -18,10 +18,10 @@ iCn3DUI.prototype.downloadAlignment = function (align) { var me = this, ic = me.
       url2 += me.cfg.inpara;
     }
 
-    me.icn3d.bCid = undefined;
+    ic.bCid = undefined;
 
     // define for 'align' only
-    me.icn3d.pdbid_chain2title = {};
+    ic.pdbid_chain2title = {};
 
     if(me.chainids2resids === undefined) me.chainids2resids = {}; // me.chainids2resids[chainid1][chainid2] = [resid, resid]
 
@@ -40,9 +40,9 @@ iCn3DUI.prototype.downloadAlignment = function (align) { var me = this, ic = me.
             return false;
         }
 
-        // set me.icn3d.pdbid_molid2chain and me.icn3d.chainsColor
-        me.icn3d.pdbid_molid2chain = {};
-        me.icn3d.chainsColor = {};
+        // set ic.pdbid_molid2chain and ic.chainsColor
+        ic.pdbid_molid2chain = {};
+        ic.chainsColor = {};
         //me.mmdbidArray = [];
         //for(var i in data) {
 
@@ -66,10 +66,10 @@ iCn3DUI.prototype.downloadAlignment = function (align) { var me = this, ic = me.
 
               var finalChain = (chainNameHash[chainName] === 1) ? chainName : chainName + chainNameHash[chainName].toString();
 
-              me.icn3d.pdbid_molid2chain[pdbid + '_' + molid] = finalChain;
+              ic.pdbid_molid2chain[pdbid + '_' + molid] = finalChain;
 
               if(mmdbTmp.molecules[molid].kind === 'p' || mmdbTmp.molecules[molid].kind === 'n') {
-                  me.icn3d.chainsColor[pdbid + '_' + finalChain] = me.icn3d.thr(me.GREY8);
+                  ic.chainsColor[pdbid + '_' + finalChain] = ic.thr(me.GREY8);
               }
             }
         }
@@ -85,7 +85,7 @@ iCn3DUI.prototype.downloadAlignment = function (align) { var me = this, ic = me.
                 var molecule = mmdbTmp.molecules;
                 for(var molname in molecule) {
                     var chain = molecule[molname].chain;
-                    me.icn3d.pdbid_chain2title[pdbid + '_' + chain] = molecule[molname].name;
+                    ic.pdbid_chain2title[pdbid + '_' + chain] = molecule[molname].name;
                 }
             //}
 
@@ -96,7 +96,7 @@ iCn3DUI.prototype.downloadAlignment = function (align) { var me = this, ic = me.
         me.alignmolid2color = [];
         me.alignmolid2color[0] = {};
         me.alignmolid2color[1] = {};
-        var colorLength = me.icn3d.stdChainColors.length;
+        var colorLength = ic.stdChainColors.length;
 
         for(var i = 0, il = seqalign.length; i < il; ++i) {
             var molid1 = seqalign[i][0].moleculeId;
@@ -145,24 +145,24 @@ iCn3DUI.prototype.downloadAlignment = function (align) { var me = this, ic = me.
 };
 
 iCn3DUI.prototype.downloadAlignmentPart2 = function (data, seqalign, chainresiCalphaHash2) { var me = this, ic = me.icn3d; "use strict";
-    //me.icn3d.init();
+    //ic.init();
     me.loadAtomDataIn(data, undefined, 'align', seqalign);
 
-    if(me.cfg.align === undefined && Object.keys(me.icn3d.structures).length == 1) {
+    if(me.cfg.align === undefined && Object.keys(ic.structures).length == 1) {
         $("#" + me.pre + "alternateWrapper").hide();
     }
 
     // show all
     var allAtoms = {};
-    for(var i in me.icn3d.atoms) {
+    for(var i in ic.atoms) {
         allAtoms[i] = 1;
     }
-    me.icn3d.dAtoms = allAtoms;
-    me.icn3d.hAtoms = allAtoms;
+    ic.dAtoms = allAtoms;
+    ic.hAtoms = allAtoms;
 
-    me.icn3d.setAtomStyleByOptions(me.opts);
+    ic.setAtomStyleByOptions(me.opts);
     // change the default color to "Identity"
-    me.icn3d.setColorByOptions(me.opts, me.icn3d.atoms);
+    ic.setColorByOptions(me.opts, ic.atoms);
 
     // memebrane is determined by one structure. But transform both structures
     if(chainresiCalphaHash2 !== undefined) me.transformToOpmOriForAlign(me.selectedPdbid, chainresiCalphaHash2, true);
@@ -192,17 +192,17 @@ iCn3DUI.prototype.downloadChainalignmentPart2 = function (data1, data2, chainres
 
     // show all
     var allAtoms = {};
-    for(var i in me.icn3d.atoms) {
+    for(var i in ic.atoms) {
         allAtoms[i] = 1;
     }
-    me.icn3d.dAtoms = allAtoms;
-    me.icn3d.hAtoms = allAtoms;
+    ic.dAtoms = allAtoms;
+    ic.hAtoms = allAtoms;
 
-    me.icn3d.setAtomStyleByOptions(me.opts);
+    ic.setAtomStyleByOptions(me.opts);
     // change the6 default color to "Identity"
-    me.icn3d.setColorByOptions(me.opts, me.icn3d.atoms);
+    ic.setColorByOptions(me.opts, ic.atoms);
 
-    //me.mmdbidArray = Object.keys(me.icn3d.structures);
+    //me.mmdbidArray = Object.keys(ic.structures);
 
     // memebrane is determined by one structure. But transform both structures
     if(chainresiCalphaHash2 !== undefined) me.transformToOpmOriForAlign(me.selectedPdbid, chainresiCalphaHash2, true);
@@ -222,7 +222,7 @@ iCn3DUI.prototype.downloadChainalignmentPart2 = function (data1, data2, chainres
     if(me.cfg.show2d && me.bFullUi) {
         me.openDlg('dl_2ddgm', 'Interactions');
         if(me.bFullUi) {
-            if(!me.icn3d.bChainAlign) {
+            if(!ic.bChainAlign) {
                 me.download2Ddgm(me.inputid.toUpperCase());
             }
             else {
@@ -236,7 +236,7 @@ iCn3DUI.prototype.downloadChainalignmentPart2 = function (data1, data2, chainres
 
 iCn3DUI.prototype.downloadChainAlignment = function (chainalign) { var me = this, ic = me.icn3d; "use strict";
     me.opts['proteins'] = 'c alpha trace';
-    me.icn3d.opts['proteins'] = 'c alpha trace';
+    ic.opts['proteins'] = 'c alpha trace';
 
     var alignArray = chainalign.split(',');
     var pos1 = alignArray[0].indexOf('_');
@@ -259,10 +259,10 @@ iCn3DUI.prototype.downloadChainAlignment = function (chainalign) { var me = this
       url_q += me.cfg.inpara;
     }
 
-    me.icn3d.bCid = undefined;
+    ic.bCid = undefined;
 
     // define for 'align' only
-    me.icn3d.pdbid_chain2title = {};
+    ic.pdbid_chain2title = {};
 
     if(me.chainids2resids === undefined) me.chainids2resids = {}; // me.chainids2resids[chainid1][chainid2] = [resid, resid]
 
@@ -282,7 +282,7 @@ iCn3DUI.prototype.downloadChainAlignment = function (chainalign) { var me = this
             me.q_trans_sub = {"x":0, "y":0, "z":0};
             me.q_rotation = {"x1":1, "y1":0, "z1":0, "x2":0, "y2":1, "z2":0, "x3":0, "y3":0, "z3":1};
 
-            //var chainLen = me.icn3d.chainsSeq[me.mmdbid_q + '_' + me.chain_q].length;
+            //var chainLen = ic.chainsSeq[me.mmdbid_q + '_' + me.chain_q].length;
             //me.qt_start_end =  [{"q_start":1, "q_end": chainLen, "t_start":1, "t_end": chainLen}];
         }
         else if(align === undefined || align.length == 0) {
@@ -468,7 +468,7 @@ iCn3DUI.prototype.setSeqAlign = function (seqalign, alignedStructures) { var me 
           var alignData = seqalign[i][0];
           var molid1 = alignData.moleculeId;
 
-          var chain1 = me.icn3d.pdbid_molid2chain[mmdbid1 + '_' + molid1];
+          var chain1 = ic.pdbid_molid2chain[mmdbid1 + '_' + molid1];
           var chainid1 = mmdbid1 + '_' + chain1;
 
           var id2aligninfo = {};
@@ -498,31 +498,31 @@ iCn3DUI.prototype.setSeqAlign = function (seqalign, alignedStructures) { var me 
           alignData = seqalign[i][1];
           var molid2 = alignData.moleculeId;
 
-          var chain2 = me.icn3d.pdbid_molid2chain[mmdbid2 + '_' + molid2];
+          var chain2 = ic.pdbid_molid2chain[mmdbid2 + '_' + molid2];
           var chainid2 = mmdbid2 + '_' + chain2;
 
           // annoation title for the master seq only
-          if(me.icn3d.alnChainsAnTtl[chainid1] === undefined ) me.icn3d.alnChainsAnTtl[chainid1] = [];
-          if(me.icn3d.alnChainsAnTtl[chainid1][0] === undefined ) me.icn3d.alnChainsAnTtl[chainid1][0] = [];
-          if(me.icn3d.alnChainsAnTtl[chainid1][1] === undefined ) me.icn3d.alnChainsAnTtl[chainid1][1] = [];
-          if(me.icn3d.alnChainsAnTtl[chainid1][2] === undefined ) me.icn3d.alnChainsAnTtl[chainid1][2] = [];
-          if(me.icn3d.alnChainsAnTtl[chainid1][3] === undefined ) me.icn3d.alnChainsAnTtl[chainid1][3] = [];
-          if(me.icn3d.alnChainsAnTtl[chainid1][4] === undefined ) me.icn3d.alnChainsAnTtl[chainid1][4] = [];
-          if(me.icn3d.alnChainsAnTtl[chainid1][5] === undefined ) me.icn3d.alnChainsAnTtl[chainid1][5] = [];
-          if(me.icn3d.alnChainsAnTtl[chainid1][6] === undefined ) me.icn3d.alnChainsAnTtl[chainid1][6] = [];
+          if(ic.alnChainsAnTtl[chainid1] === undefined ) ic.alnChainsAnTtl[chainid1] = [];
+          if(ic.alnChainsAnTtl[chainid1][0] === undefined ) ic.alnChainsAnTtl[chainid1][0] = [];
+          if(ic.alnChainsAnTtl[chainid1][1] === undefined ) ic.alnChainsAnTtl[chainid1][1] = [];
+          if(ic.alnChainsAnTtl[chainid1][2] === undefined ) ic.alnChainsAnTtl[chainid1][2] = [];
+          if(ic.alnChainsAnTtl[chainid1][3] === undefined ) ic.alnChainsAnTtl[chainid1][3] = [];
+          if(ic.alnChainsAnTtl[chainid1][4] === undefined ) ic.alnChainsAnTtl[chainid1][4] = [];
+          if(ic.alnChainsAnTtl[chainid1][5] === undefined ) ic.alnChainsAnTtl[chainid1][5] = [];
+          if(ic.alnChainsAnTtl[chainid1][6] === undefined ) ic.alnChainsAnTtl[chainid1][6] = [];
 
           // two annotations without titles
-          me.icn3d.alnChainsAnTtl[chainid1][0].push(chainid2);
-          me.icn3d.alnChainsAnTtl[chainid1][1].push(chainid1);
-          me.icn3d.alnChainsAnTtl[chainid1][2].push("");
-          me.icn3d.alnChainsAnTtl[chainid1][3].push("");
+          ic.alnChainsAnTtl[chainid1][0].push(chainid2);
+          ic.alnChainsAnTtl[chainid1][1].push(chainid1);
+          ic.alnChainsAnTtl[chainid1][2].push("");
+          ic.alnChainsAnTtl[chainid1][3].push("");
 
           // 2nd chain title
-          me.icn3d.alnChainsAnTtl[chainid1][4].push(chainid2);
+          ic.alnChainsAnTtl[chainid1][4].push(chainid2);
           // master chain title
-          me.icn3d.alnChainsAnTtl[chainid1][5].push(chainid1);
+          ic.alnChainsAnTtl[chainid1][5].push(chainid1);
           // empty line
-          me.icn3d.alnChainsAnTtl[chainid1][6].push("");
+          ic.alnChainsAnTtl[chainid1][6].push("");
 
           var alignIndex = 1;
           //for(var j = 0, jl = alignData.sseq.length; j < jl; ++j) {
@@ -557,8 +557,8 @@ iCn3DUI.prototype.setSeqAlign = function (seqalign, alignedStructures) { var me 
                   color2 = '#' + me.getColorhexFromBlosum62(id2aligninfo[j].resn, resn);
 
                   // expensive and thus remove
-                  //alignedAtoms = me.icn3d.unionHash(alignedAtoms, me.icn3d.residues[chainid1 + '_' + id2aligninfo[j].resi]);
-                  //alignedAtoms = me.icn3d.unionHash(alignedAtoms, me.icn3d.residues[chainid2 + '_' + resi]);
+                  //alignedAtoms = ic.unionHash(alignedAtoms, ic.residues[chainid1 + '_' + id2aligninfo[j].resi]);
+                  //alignedAtoms = ic.unionHash(alignedAtoms, ic.residues[chainid2 + '_' + resi]);
               }
               else {
                   color = me.GREY8;
@@ -569,7 +569,7 @@ iCn3DUI.prototype.setSeqAlign = function (seqalign, alignedStructures) { var me 
               }
 
               // chain1
-              if(me.icn3d.alnChainsSeq[chainid1] === undefined) me.icn3d.alnChainsSeq[chainid1] = [];
+              if(ic.alnChainsSeq[chainid1] === undefined) ic.alnChainsSeq[chainid1] = [];
 
               var resObject = {};
               resObject.mmdbid = mmdbid1;
@@ -583,15 +583,15 @@ iCn3DUI.prototype.setSeqAlign = function (seqalign, alignedStructures) { var me 
               resObject.color2 = (resObject.resi === '') ? me.GREYC : color2; // color by conservation
               resObject.class = classname;
 
-              me.icn3d.alnChainsSeq[chainid1].push(resObject);
+              ic.alnChainsSeq[chainid1].push(resObject);
 
               if(id2aligninfo[j].resi !== '') {
-                  if(me.icn3d.alnChains[chainid1] === undefined) me.icn3d.alnChains[chainid1] = {};
-                  $.extend(me.icn3d.alnChains[chainid1], me.icn3d.residues[chainid1 + '_' + id2aligninfo[j].resi] );
+                  if(ic.alnChains[chainid1] === undefined) ic.alnChains[chainid1] = {};
+                  $.extend(ic.alnChains[chainid1], ic.residues[chainid1 + '_' + id2aligninfo[j].resi] );
               }
 
               // chain2
-              if(me.icn3d.alnChainsSeq[chainid2] === undefined) me.icn3d.alnChainsSeq[chainid2] = [];
+              if(ic.alnChainsSeq[chainid2] === undefined) ic.alnChainsSeq[chainid2] = [];
 
               resObject = {};
               resObject.mmdbid = mmdbid2;
@@ -605,59 +605,59 @@ iCn3DUI.prototype.setSeqAlign = function (seqalign, alignedStructures) { var me 
               resObject.color2 = (resObject.resi === '') ? me.GREYC : color2; // color by conservation
               resObject.class = classname;
 
-              me.icn3d.alnChainsSeq[chainid2].push(resObject);
+              ic.alnChainsSeq[chainid2].push(resObject);
 
               if(resObject.resi !== '') {
-                  if(me.icn3d.alnChains[chainid2] === undefined) me.icn3d.alnChains[chainid2] = {};
-                  $.extend(me.icn3d.alnChains[chainid2], me.icn3d.residues[chainid2 + '_' + resi] );
+                  if(ic.alnChains[chainid2] === undefined) ic.alnChains[chainid2] = {};
+                  $.extend(ic.alnChains[chainid2], ic.residues[chainid2 + '_' + resi] );
               }
 
               // annotation is for the master seq only
-              if(me.icn3d.alnChainsAnno[chainid1] === undefined ) me.icn3d.alnChainsAnno[chainid1] = [];
-              if(me.icn3d.alnChainsAnno[chainid1][0] === undefined ) me.icn3d.alnChainsAnno[chainid1][0] = [];
-              if(me.icn3d.alnChainsAnno[chainid1][1] === undefined ) me.icn3d.alnChainsAnno[chainid1][1] = [];
-              if(me.icn3d.alnChainsAnno[chainid1][2] === undefined ) me.icn3d.alnChainsAnno[chainid1][2] = [];
-              if(me.icn3d.alnChainsAnno[chainid1][3] === undefined ) me.icn3d.alnChainsAnno[chainid1][3] = [];
+              if(ic.alnChainsAnno[chainid1] === undefined ) ic.alnChainsAnno[chainid1] = [];
+              if(ic.alnChainsAnno[chainid1][0] === undefined ) ic.alnChainsAnno[chainid1][0] = [];
+              if(ic.alnChainsAnno[chainid1][1] === undefined ) ic.alnChainsAnno[chainid1][1] = [];
+              if(ic.alnChainsAnno[chainid1][2] === undefined ) ic.alnChainsAnno[chainid1][2] = [];
+              if(ic.alnChainsAnno[chainid1][3] === undefined ) ic.alnChainsAnno[chainid1][3] = [];
               if(j === start) {
                   // empty line
                   // 2nd chain title
-                  if(me.icn3d.alnChainsAnno[chainid1][4] === undefined ) me.icn3d.alnChainsAnno[chainid1][4] = [];
+                  if(ic.alnChainsAnno[chainid1][4] === undefined ) ic.alnChainsAnno[chainid1][4] = [];
                   // master chain title
-                  if(me.icn3d.alnChainsAnno[chainid1][5] === undefined ) me.icn3d.alnChainsAnno[chainid1][5] = [];
+                  if(ic.alnChainsAnno[chainid1][5] === undefined ) ic.alnChainsAnno[chainid1][5] = [];
                   // empty line
-                  if(me.icn3d.alnChainsAnno[chainid1][6] === undefined ) me.icn3d.alnChainsAnno[chainid1][6] = [];
+                  if(ic.alnChainsAnno[chainid1][6] === undefined ) ic.alnChainsAnno[chainid1][6] = [];
 
-                  me.icn3d.alnChainsAnno[chainid1][4].push(me.icn3d.pdbid_chain2title[chainid2]);
-                  me.icn3d.alnChainsAnno[chainid1][5].push(me.icn3d.pdbid_chain2title[chainid1]);
-                  me.icn3d.alnChainsAnno[chainid1][6].push('');
+                  ic.alnChainsAnno[chainid1][4].push(ic.pdbid_chain2title[chainid2]);
+                  ic.alnChainsAnno[chainid1][5].push(ic.pdbid_chain2title[chainid1]);
+                  ic.alnChainsAnno[chainid1][6].push('');
               }
 
               var residueid1 = chainid1 + '_' + id2aligninfo[j].resi;
               var residueid2 = chainid2 + '_' + resi;
-              var ss1 = me.icn3d.secondaries[residueid1];
-              var ss2 = me.icn3d.secondaries[residueid2];
+              var ss1 = ic.secondaries[residueid1];
+              var ss2 = ic.secondaries[residueid2];
               if(ss2 !== undefined) {
-                  me.icn3d.alnChainsAnno[chainid1][0].push(ss2);
+                  ic.alnChainsAnno[chainid1][0].push(ss2);
               }
               else {
-                  me.icn3d.alnChainsAnno[chainid1][0].push('-');
+                  ic.alnChainsAnno[chainid1][0].push('-');
               }
 
               if(ss1 !== undefined) {
-                  me.icn3d.alnChainsAnno[chainid1][1].push(ss1);
+                  ic.alnChainsAnno[chainid1][1].push(ss1);
               }
               else {
-                  me.icn3d.alnChainsAnno[chainid1][1].push('-');
+                  ic.alnChainsAnno[chainid1][1].push('-');
               }
 
               var symbol = '.';
               if(alignIndex % 5 === 0) symbol = '*';
               if(alignIndex % 10 === 0) symbol = '|';
-              me.icn3d.alnChainsAnno[chainid1][2].push(symbol); // symbol: | for 10th, * for 5th, . for rest
+              ic.alnChainsAnno[chainid1][2].push(symbol); // symbol: | for 10th, * for 5th, . for rest
 
               var numberStr = '';
               if(alignIndex % 10 === 0) numberStr = alignIndex.toString();
-              me.icn3d.alnChainsAnno[chainid1][3].push(numberStr); // symbol: 10, 20, etc, empty for rest
+              ic.alnChainsAnno[chainid1][3].push(numberStr); // symbol: 10, 20, etc, empty for rest
 
               ++alignIndex;
           } // end for(var j
@@ -667,7 +667,7 @@ iCn3DUI.prototype.setSeqAlign = function (seqalign, alignedStructures) { var me 
 };
 
 iCn3DUI.prototype.setSeqPerResi = function (chainid, chainid1, chainid2, resi, resn, bAligned, color, color2, classname, bFirstChain, bFirstResi, alignIndex) { var me = this, ic = me.icn3d; "use strict";
-      if(me.icn3d.alnChainsSeq[chainid] === undefined) me.icn3d.alnChainsSeq[chainid] = [];
+      if(ic.alnChainsSeq[chainid] === undefined) ic.alnChainsSeq[chainid] = [];
 
       var resObject = {};
       var pos = chainid.indexOf('_');
@@ -682,69 +682,69 @@ iCn3DUI.prototype.setSeqPerResi = function (chainid, chainid1, chainid2, resi, r
       resObject.color2 = (resObject.resi === '') ? me.GREYC : color2; // color by conservation
       resObject.class = classname;
 
-      me.icn3d.alnChainsSeq[chainid].push(resObject);
+      ic.alnChainsSeq[chainid].push(resObject);
 
       if(resObject.resi !== '') {
-          if(me.icn3d.alnChains[chainid] === undefined) me.icn3d.alnChains[chainid] = {};
-          $.extend(me.icn3d.alnChains[chainid], me.icn3d.residues[chainid + '_' + resObject.resi] );
+          if(ic.alnChains[chainid] === undefined) ic.alnChains[chainid] = {};
+          $.extend(ic.alnChains[chainid], ic.residues[chainid + '_' + resObject.resi] );
       }
 
       if(bFirstChain) {
           // annotation is for the master seq only
-          if(me.icn3d.alnChainsAnno[chainid] === undefined ) me.icn3d.alnChainsAnno[chainid] = [];
-          if(me.icn3d.alnChainsAnno[chainid][0] === undefined ) me.icn3d.alnChainsAnno[chainid][0] = [];
-          if(me.icn3d.alnChainsAnno[chainid][1] === undefined ) me.icn3d.alnChainsAnno[chainid][1] = [];
-          if(me.icn3d.alnChainsAnno[chainid][2] === undefined ) me.icn3d.alnChainsAnno[chainid][2] = [];
-          if(me.icn3d.alnChainsAnno[chainid][3] === undefined ) me.icn3d.alnChainsAnno[chainid][3] = [];
+          if(ic.alnChainsAnno[chainid] === undefined ) ic.alnChainsAnno[chainid] = [];
+          if(ic.alnChainsAnno[chainid][0] === undefined ) ic.alnChainsAnno[chainid][0] = [];
+          if(ic.alnChainsAnno[chainid][1] === undefined ) ic.alnChainsAnno[chainid][1] = [];
+          if(ic.alnChainsAnno[chainid][2] === undefined ) ic.alnChainsAnno[chainid][2] = [];
+          if(ic.alnChainsAnno[chainid][3] === undefined ) ic.alnChainsAnno[chainid][3] = [];
           if(bFirstResi) {
               // empty line
               // 2nd chain title
-              if(me.icn3d.alnChainsAnno[chainid][4] === undefined ) me.icn3d.alnChainsAnno[chainid][4] = [];
+              if(ic.alnChainsAnno[chainid][4] === undefined ) ic.alnChainsAnno[chainid][4] = [];
               // master chain title
-              if(me.icn3d.alnChainsAnno[chainid][5] === undefined ) me.icn3d.alnChainsAnno[chainid][5] = [];
+              if(ic.alnChainsAnno[chainid][5] === undefined ) ic.alnChainsAnno[chainid][5] = [];
               // empty line
-              if(me.icn3d.alnChainsAnno[chainid][6] === undefined ) me.icn3d.alnChainsAnno[chainid][6] = [];
+              if(ic.alnChainsAnno[chainid][6] === undefined ) ic.alnChainsAnno[chainid][6] = [];
 
-              var title1 = me.icn3d.pdbid_chain2title && me.icn3d.pdbid_chain2title.hasOwnProperty(chainid2) ? me.icn3d.pdbid_chain2title[chainid2] : ""
-              var title2 = me.icn3d.pdbid_chain2title && me.icn3d.pdbid_chain2title.hasOwnProperty(chainid) ? me.icn3d.pdbid_chain2title[chainid] : ""
-              me.icn3d.alnChainsAnno[chainid][4].push(title1);
-              me.icn3d.alnChainsAnno[chainid][5].push(title2);
-              me.icn3d.alnChainsAnno[chainid][6].push('');
+              var title1 = ic.pdbid_chain2title && ic.pdbid_chain2title.hasOwnProperty(chainid2) ? ic.pdbid_chain2title[chainid2] : ""
+              var title2 = ic.pdbid_chain2title && ic.pdbid_chain2title.hasOwnProperty(chainid) ? ic.pdbid_chain2title[chainid] : ""
+              ic.alnChainsAnno[chainid][4].push(title1);
+              ic.alnChainsAnno[chainid][5].push(title2);
+              ic.alnChainsAnno[chainid][6].push('');
           }
 
           var symbol = '.';
           if(alignIndex % 5 === 0) symbol = '*';
           if(alignIndex % 10 === 0) symbol = '|';
-          me.icn3d.alnChainsAnno[chainid][2].push(symbol); // symbol: | for 10th, * for 5th, . for rest
+          ic.alnChainsAnno[chainid][2].push(symbol); // symbol: | for 10th, * for 5th, . for rest
 
           var numberStr = '';
           if(alignIndex % 10 === 0) numberStr = alignIndex.toString();
-          me.icn3d.alnChainsAnno[chainid][3].push(numberStr); // symbol: 10, 20, etc, empty for rest
+          ic.alnChainsAnno[chainid][3].push(numberStr); // symbol: 10, 20, etc, empty for rest
 
           var residueid = chainid + '_' + resi;
-          var ss = me.icn3d.secondaries[residueid];
+          var ss = ic.secondaries[residueid];
 
           if(ss !== undefined) {
-              me.icn3d.alnChainsAnno[chainid][1].push(ss);
+              ic.alnChainsAnno[chainid][1].push(ss);
           }
           else {
-              me.icn3d.alnChainsAnno[chainid][1].push('-');
+              ic.alnChainsAnno[chainid][1].push('-');
           }
       }
       else {
           var residueid = chainid + '_' + resi;
-          var ss = me.icn3d.secondaries[residueid];
+          var ss = ic.secondaries[residueid];
 
-          if(me.icn3d.alnChainsAnno.hasOwnProperty(chainid1) && me.icn3d.alnChainsAnno[chainid1].length > 0) {
+          if(ic.alnChainsAnno.hasOwnProperty(chainid1) && ic.alnChainsAnno[chainid1].length > 0) {
               if(ss !== undefined) {
-                  me.icn3d.alnChainsAnno[chainid1][0].push(ss);
+                  ic.alnChainsAnno[chainid1][0].push(ss);
               }
               else {
-                  me.icn3d.alnChainsAnno[chainid1][0].push('-');
+                  ic.alnChainsAnno[chainid1][0].push('-');
               }
           }
           else {
-              console.log("Error: me.icn3d.alnChainsAnno[chainid1] is undefined");
+              console.log("Error: ic.alnChainsAnno[chainid1] is undefined");
           }
       }
 };
@@ -763,7 +763,7 @@ iCn3DUI.prototype.setSeqAlignChain = function () { var me = this, ic = me.icn3d;
       var chain2 = chainidArray[1].substr(pos2 + 1);
 
       if(mmdbid1 == mmdbid2 && chain1 == chain2) {
-        var chainLen = me.icn3d.chainsSeq[me.mmdbid_q + '_' + me.chain_q].length;
+        var chainLen = ic.chainsSeq[me.mmdbid_q + '_' + me.chain_q].length;
         me.qt_start_end =  [{"q_start":1, "q_end": chainLen, "t_start":1, "t_end": chainLen}];
       }
 
@@ -792,23 +792,23 @@ iCn3DUI.prototype.setSeqAlignChain = function () { var me = this, ic = me.icn3d;
       me.nalignHash2 = {};
 
       // annoation title for the master seq only
-      if(me.icn3d.alnChainsAnTtl[chainid1] === undefined ) me.icn3d.alnChainsAnTtl[chainid1] = [];
+      if(ic.alnChainsAnTtl[chainid1] === undefined ) ic.alnChainsAnTtl[chainid1] = [];
       for(var i = 0; i < 7; ++i) {
-          if(me.icn3d.alnChainsAnTtl[chainid1][i] === undefined ) me.icn3d.alnChainsAnTtl[chainid1][i] = [];
+          if(ic.alnChainsAnTtl[chainid1][i] === undefined ) ic.alnChainsAnTtl[chainid1][i] = [];
       }
 
       // two annotations without titles
-      me.icn3d.alnChainsAnTtl[chainid1][0].push(chainid2);
-      me.icn3d.alnChainsAnTtl[chainid1][1].push(chainid1);
-      me.icn3d.alnChainsAnTtl[chainid1][2].push("");
-      me.icn3d.alnChainsAnTtl[chainid1][3].push("");
+      ic.alnChainsAnTtl[chainid1][0].push(chainid2);
+      ic.alnChainsAnTtl[chainid1][1].push(chainid1);
+      ic.alnChainsAnTtl[chainid1][2].push("");
+      ic.alnChainsAnTtl[chainid1][3].push("");
 
       // 2nd chain title
-      me.icn3d.alnChainsAnTtl[chainid1][4].push(chainid2);
+      ic.alnChainsAnTtl[chainid1][4].push(chainid2);
       // master chain title
-      me.icn3d.alnChainsAnTtl[chainid1][5].push(chainid1);
+      ic.alnChainsAnTtl[chainid1][5].push(chainid1);
       // empty line
-      me.icn3d.alnChainsAnTtl[chainid1][6].push("");
+      ic.alnChainsAnTtl[chainid1][6].push("");
 
       var color, color2, classname;
       var firstIndex1 = 0;
@@ -825,9 +825,9 @@ iCn3DUI.prototype.setSeqAlignChain = function () { var me = this, ic = me.icn3d;
           if(i > 0) {
               var index1 = alignIndex;
               for(var j = prevIndex1 + 1, jl = start1; j < jl; ++j) {
-                  if(me.icn3d.chainsSeq[chainid1] === undefined) break;
-                  var resi = me.icn3d.chainsSeq[chainid1][j].resi;
-                  var resn = me.icn3d.chainsSeq[chainid1][j].name.toLowerCase();
+                  if(ic.chainsSeq[chainid1] === undefined) break;
+                  var resi = ic.chainsSeq[chainid1][j].resi;
+                  var resn = ic.chainsSeq[chainid1][j].name.toLowerCase();
 
                   color = me.GREY8;
                   classname = 'icn3d-nalign';
@@ -839,9 +839,9 @@ iCn3DUI.prototype.setSeqAlignChain = function () { var me = this, ic = me.icn3d;
 
               var index2 = alignIndex;
               for(var j = prevIndex2 + 1, jl = start2; j < jl; ++j) {
-                  if(me.icn3d.chainsSeq[chainid2] === undefined) break;
-                  var resi = me.icn3d.chainsSeq[chainid2][j].resi;
-                  var resn = me.icn3d.chainsSeq[chainid2][j].name.toLowerCase();
+                  if(ic.chainsSeq[chainid2] === undefined) break;
+                  var resi = ic.chainsSeq[chainid2][j].resi;
+                  var resn = ic.chainsSeq[chainid2][j].name.toLowerCase();
 
                   color = me.GREY8;
                   classname = 'icn3d-nalign';
@@ -880,12 +880,12 @@ iCn3DUI.prototype.setSeqAlignChain = function () { var me = this, ic = me.icn3d;
           }
 
           for(var j = 0; j <= end1 - start1; ++j) {
-              if(me.icn3d.chainsSeq[chainid1] === undefined || me.icn3d.chainsSeq[chainid2] === undefined) break;
+              if(ic.chainsSeq[chainid1] === undefined || ic.chainsSeq[chainid2] === undefined) break;
 
-              var resi1 = me.icn3d.chainsSeq[chainid1][j + start1].resi;
-              var resi2 = me.icn3d.chainsSeq[chainid2][j + start2].resi;
-              var resn1 = me.icn3d.chainsSeq[chainid1][j + start1].name.toUpperCase();
-              var resn2 = me.icn3d.chainsSeq[chainid2][j + start2].name.toUpperCase();
+              var resi1 = ic.chainsSeq[chainid1][j + start1].resi;
+              var resi2 = ic.chainsSeq[chainid2][j + start2].resi;
+              var resn1 = ic.chainsSeq[chainid1][j + start1].name.toUpperCase();
+              var resn2 = ic.chainsSeq[chainid2][j + start2].name.toUpperCase();
 
               if(resn1 === resn2) {
                   color = '#FF0000';
@@ -919,7 +919,7 @@ iCn3DUI.prototype.setSeqAlignChain = function () { var me = this, ic = me.icn3d;
 iCn3DUI.prototype.setSeqAlignForRealign = function () { var me = this, ic = me.icn3d; "use strict";
       //loadSeqAlignment
       var alignedAtoms = {};
-      var structureArray = Object.keys(me.icn3d.structures);
+      var structureArray = Object.keys(ic.structures);
       var structure1 = structureArray[0];
       var structure2 = structureArray[1];
 
@@ -929,17 +929,17 @@ iCn3DUI.prototype.setSeqAlignForRealign = function () { var me = this, ic = me.i
       me.consHash1 = {};
       me.consHash2 = {};
 
-      me.icn3d.alnChainsAnTtl = {};
-      me.icn3d.alnChainsAnno = {};
+      ic.alnChainsAnTtl = {};
+      ic.alnChainsAnno = {};
 
-      me.icn3d.alnChainsSeq = {};
-      me.icn3d.alnChains = {};
+      ic.alnChainsSeq = {};
+      ic.alnChains = {};
 
 //      var emptyResObject = {resid: '', resn:'', resi: 0, aligned: false};
 
 //      var prevChainid1 = '', prevChainid2 = '', cnt1 = 0, cnt2 = 0;
 
-      me.icn3d.alnChainsSeq = {};
+      ic.alnChainsSeq = {};
 
       var residuesHash = {};
 
@@ -976,55 +976,55 @@ iCn3DUI.prototype.setSeqAlignForRealign = function () { var me = this, ic = me.i
           resObject1.color2 = color2;
           resObject2.color2 = color2;
 
-          for(var j in me.icn3d.residues[resObject1.resid]) {
-              me.icn3d.atoms[j].color = me.icn3d.thr(color);
+          for(var j in ic.residues[resObject1.resid]) {
+              ic.atoms[j].color = ic.thr(color);
           }
-          for(var j in me.icn3d.residues[resObject2.resid]) {
-              me.icn3d.atoms[j].color = me.icn3d.thr(color);
+          for(var j in ic.residues[resObject2.resid]) {
+              ic.atoms[j].color = ic.thr(color);
           }
 
           // annoation title for the master seq only
-          if(me.icn3d.alnChainsAnTtl[chainid1] === undefined ) me.icn3d.alnChainsAnTtl[chainid1] = [];
+          if(ic.alnChainsAnTtl[chainid1] === undefined ) ic.alnChainsAnTtl[chainid1] = [];
 
           for(var j = 0; j < 3; ++j) {
-              if(me.icn3d.alnChainsAnTtl[chainid1][j] === undefined ) me.icn3d.alnChainsAnTtl[chainid1][j] = [];
+              if(ic.alnChainsAnTtl[chainid1][j] === undefined ) ic.alnChainsAnTtl[chainid1][j] = [];
           }
 
           // two annotations without titles
           for(var j = 0; j < 3; ++j) {
-              me.icn3d.alnChainsAnTtl[chainid1][j].push("");
+              ic.alnChainsAnTtl[chainid1][j].push("");
           }
 
-          if(me.icn3d.alnChainsSeq[chainid1] === undefined) me.icn3d.alnChainsSeq[chainid1] = [];
-          if(me.icn3d.alnChainsSeq[chainid2] === undefined) me.icn3d.alnChainsSeq[chainid2] = [];
+          if(ic.alnChainsSeq[chainid1] === undefined) ic.alnChainsSeq[chainid1] = [];
+          if(ic.alnChainsSeq[chainid2] === undefined) ic.alnChainsSeq[chainid2] = [];
 
-          me.icn3d.alnChainsSeq[chainid1].push(resObject1);
-          me.icn3d.alnChainsSeq[chainid2].push(resObject2);
+          ic.alnChainsSeq[chainid1].push(resObject1);
+          ic.alnChainsSeq[chainid2].push(resObject2);
 
-          if(me.icn3d.alnChains[chainid1] === undefined) me.icn3d.alnChains[chainid1] = {};
-          if(me.icn3d.alnChains[chainid2] === undefined) me.icn3d.alnChains[chainid2] = {};
-          $.extend(me.icn3d.alnChains[chainid1], me.icn3d.residues[chainid1 + '_' + resObject1.resi] );
-          $.extend(me.icn3d.alnChains[chainid2], me.icn3d.residues[chainid2 + '_' + resObject2.resi] );
+          if(ic.alnChains[chainid1] === undefined) ic.alnChains[chainid1] = {};
+          if(ic.alnChains[chainid2] === undefined) ic.alnChains[chainid2] = {};
+          $.extend(ic.alnChains[chainid1], ic.residues[chainid1 + '_' + resObject1.resi] );
+          $.extend(ic.alnChains[chainid2], ic.residues[chainid2 + '_' + resObject2.resi] );
 
           me.consHash1[chainid1 + '_' + resObject1.resi] = 1;
           me.consHash2[chainid2 + '_' + resObject2.resi] = 1;
 
           // annotation is for the master seq only
-          if(me.icn3d.alnChainsAnno[chainid1] === undefined ) me.icn3d.alnChainsAnno[chainid1] = [];
-          //if(me.icn3d.alnChainsAnno[chainid2] === undefined ) me.icn3d.alnChainsAnno[chainid2] = [];
+          if(ic.alnChainsAnno[chainid1] === undefined ) ic.alnChainsAnno[chainid1] = [];
+          //if(ic.alnChainsAnno[chainid2] === undefined ) ic.alnChainsAnno[chainid2] = [];
 
           for(var j = 0; j < 3; ++j) {
-              if(me.icn3d.alnChainsAnno[chainid1][j] === undefined ) me.icn3d.alnChainsAnno[chainid1][j] = [];
+              if(ic.alnChainsAnno[chainid1][j] === undefined ) ic.alnChainsAnno[chainid1][j] = [];
           }
 
           var symbol = '.';
           if(i % 5 === 0) symbol = '*';
           if(i % 10 === 0) symbol = '|';
-          me.icn3d.alnChainsAnno[chainid1][0].push(symbol); // symbol: | for 10th, * for 5th, . for rest
+          ic.alnChainsAnno[chainid1][0].push(symbol); // symbol: | for 10th, * for 5th, . for rest
 
           var numberStr = '';
           if(i % 10 === 0) numberStr = i.toString();
-          me.icn3d.alnChainsAnno[chainid1][1].push(numberStr); // symbol: 10, 20, etc, empty for rest
+          ic.alnChainsAnno[chainid1][1].push(numberStr); // symbol: 10, 20, etc, empty for rest
       }
 
         var commandname = 'protein_aligned';
@@ -1037,7 +1037,7 @@ iCn3DUI.prototype.setSeqAlignForRealign = function () { var me = this, ic = me.i
 iCn3DUI.prototype.realignOnSeqAlign = function () { var me = this, ic = me.icn3d; "use strict";
     me.saveSelectionPrep();
 
-    var index = Object.keys(me.icn3d.defNames2Atoms).length;
+    var index = Object.keys(ic.defNames2Atoms).length;
     var name = 'alseq_' + index;
 
     me.saveSelection(name, name);
@@ -1046,10 +1046,10 @@ iCn3DUI.prototype.realignOnSeqAlign = function () { var me = this, ic = me.icn3d
     var struct2CoorHash = {};
     var struct2resid = {};
     var lastStruResi = '';
-    for(var serial in me.icn3d.hAtoms) {
-        var atom = me.icn3d.atoms[serial];
-        if( (me.icn3d.proteins.hasOwnProperty(serial) && atom.name == "CA")
-          || (me.icn3d.nucleotides.hasOwnProperty(serial) && (atom.name == "O3'" || atom.name == "O3*")) ) {
+    for(var serial in ic.hAtoms) {
+        var atom = ic.atoms[serial];
+        if( (ic.proteins.hasOwnProperty(serial) && atom.name == "CA")
+          || (ic.nucleotides.hasOwnProperty(serial) && (atom.name == "O3'" || atom.name == "O3*")) ) {
             var resid = atom.structure + '_' + atom.chain + '_' + atom.resi;
 
             if(resid == lastStruResi) continue; // e.g., Alt A and B
@@ -1060,7 +1060,7 @@ iCn3DUI.prototype.realignOnSeqAlign = function () { var me = this, ic = me.icn3d
                 struct2resid[atom.structure] = [];
             }
 
-            var oneLetterRes = me.icn3d.residueName2Abbr(atom.resn.substr(0, 3)).substr(0, 1);
+            var oneLetterRes = ic.residueName2Abbr(atom.resn.substr(0, 3)).substr(0, 1);
 
             struct2SeqHash[atom.structure] += oneLetterRes;
             struct2CoorHash[atom.structure].push(atom.coord.clone());
@@ -1188,7 +1188,7 @@ iCn3DUI.prototype.realignOnSeqAlign = function () { var me = this, ic = me.icn3d
 iCn3DUI.prototype.realign = function() { var me = this, ic = me.icn3d; "use strict";
     me.saveSelectionPrep();
 
-    var index = Object.keys(me.icn3d.defNames2Atoms).length;
+    var index = Object.keys(ic.defNames2Atoms).length;
     var name = 'alseq_' + index;
 
     me.saveSelection(name, name);
@@ -1196,10 +1196,10 @@ iCn3DUI.prototype.realign = function() { var me = this, ic = me.icn3d; "use stri
     var structHash = {};
     me.realignResid = {};
     var lastStruResi = '';
-    for(var serial in me.icn3d.hAtoms) {
-        var atom = me.icn3d.atoms[serial];
-        if( (me.icn3d.proteins.hasOwnProperty(serial) && atom.name == "CA")
-          || (me.icn3d.nucleotides.hasOwnProperty(serial) && (atom.name == "O3'" || atom.name == "O3*")) ) {
+    for(var serial in ic.hAtoms) {
+        var atom = ic.atoms[serial];
+        if( (ic.proteins.hasOwnProperty(serial) && atom.name == "CA")
+          || (ic.nucleotides.hasOwnProperty(serial) && (atom.name == "O3'" || atom.name == "O3*")) ) {
             if(atom.structure + '_' + atom.resi == lastStruResi) continue; // e.g., Alt A and B
 
             if(!structHash.hasOwnProperty(atom.structure)) {
@@ -1211,7 +1211,7 @@ iCn3DUI.prototype.realign = function() { var me = this, ic = me.icn3d; "use stri
                 me.realignResid[atom.structure] = [];
             }
 
-            me.realignResid[atom.structure].push({'resid': atom.structure + '_' + atom.chain + '_' + atom.resi, 'resn': me.icn3d.residueName2Abbr(atom.resn.substr(0, 3)).substr(0, 1)});
+            me.realignResid[atom.structure].push({'resid': atom.structure + '_' + atom.chain + '_' + atom.resi, 'resn': ic.residueName2Abbr(atom.resn.substr(0, 3)).substr(0, 1)});
 
             lastStruResi = atom.structure + '_' + atom.resi;
         }

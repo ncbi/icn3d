@@ -838,7 +838,6 @@ iCn3D.prototype.rebuildSceneBase = function (options) { var me = this, ic = me.i
         this.scene_ghost = new THREE.Scene();
     }
 
-<<<<<<< HEAD
 /*
     if(!this.bShade) {
         this.directionalLight = new THREE.DirectionalLight(0xFFFFFF, 1.0);
@@ -875,40 +874,6 @@ iCn3D.prototype.rebuildSceneBase = function (options) { var me = this, ic = me.i
           this.lightPos3 = new THREE.Vector3(0, 1, 1);
         }
 //    }
-=======
-    //this.directionalLight = new THREE.DirectionalLight(0xFFFFFF, 1.2);
-//    this.directionalLight = new THREE.DirectionalLight(0xFFFFFF, 1.0);
-
-//    if(this.cam_z > 0) {
-//      this.directionalLight.position.set(0, 0, 1);
-//    }
-//    else {
-//      this.directionalLight.position.set(0, 0, -1);
-//    }
-
-    this.directionalLight = new THREE.DirectionalLight(0xFFFFFF, 1.0);
-    this.directionalLight2 = new THREE.DirectionalLight(0xFFFFFF, 0.4);
-    this.directionalLight3 = new THREE.DirectionalLight(0xFFFFFF, 0.2);
-
-    if(this.cam_z > 0) {
-      this.directionalLight.position.set(0, 1, 1);
-      this.directionalLight2.position.set(0, -1, 1);
-      this.directionalLight3.position.set(0, 1, -1);
-
-      this.lightPos = new THREE.Vector3(0, 1, 1);
-      this.lightPos2 = new THREE.Vector3(0, -1, 1);
-      this.lightPos3 = new THREE.Vector3(0, 1, -1);
-    }
-    else {
-      this.directionalLight.position.set(0, 1, -1);
-      this.directionalLight2.position.set(0, -1, -1);
-      this.directionalLight3.position.set(0, 1, 1);
-
-      this.lightPos = new THREE.Vector3(0, 1, -1);
-      this.lightPos2 = new THREE.Vector3(0, -1, -1);
-      this.lightPos3 = new THREE.Vector3(0, 1, 1);
-    }
->>>>>>> a8469054f25ea10e20e7bf162282c21cf16a7bf5
 
     //var ambientLight = new THREE.AmbientLight(0x202020);
     //var ambientLight = new THREE.AmbientLight(0xdddddd, 0.2);
@@ -1125,7 +1090,6 @@ iCn3D.prototype.setCamera = function() {
 
 iCn3D.prototype.render = function () {
     var cam = (this.bControlGl) ? window.cam : this.cam;
-<<<<<<< HEAD
 
 //    if(this.bShade) {
         var quaternion = new THREE.Quaternion();
@@ -1138,15 +1102,6 @@ iCn3D.prototype.render = function () {
 //    else {
 //        this.directionalLight.position.copy(cam.position);
 //    }
-=======
-
-    //if(this.directionalLight) this.directionalLight.position.copy(cam.position);
-    var quaternion = new THREE.Quaternion();
-    quaternion.setFromUnitVectors( new THREE.Vector3(0, 0, 1), cam.position.clone().normalize() );
-    this.directionalLight.position.copy(this.lightPos.clone().applyQuaternion( quaternion ).normalize());
-    this.directionalLight2.position.copy(this.lightPos2.clone().applyQuaternion( quaternion ).normalize());
-    this.directionalLight3.position.copy(this.lightPos3.clone().applyQuaternion( quaternion ).normalize());
->>>>>>> a8469054f25ea10e20e7bf162282c21cf16a7bf5
 
     this.renderer.gammaInput = true
     this.renderer.gammaOutput = true

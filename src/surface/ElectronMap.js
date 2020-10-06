@@ -108,10 +108,6 @@ $3Dmol.ElectronMap = function(threshbox) {
             else {
                 r = new THREE.Vector3(vertices[i].x, vertices[i].y, vertices[i].z).applyMatrix4(matrix);
             }
-<<<<<<< HEAD
-=======
-
->>>>>>> a8469054f25ea10e20e7bf162282c21cf16a7bf5
 //            vertices[i].x = r.x / scaleFactor - ptranx;
 //            vertices[i].y = r.y / scaleFactor - ptrany;
 //            vertices[i].z = r.z / scaleFactor - ptranz;

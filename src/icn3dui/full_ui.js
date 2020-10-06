@@ -52,11 +52,7 @@ $.ajaxTransport("+binary", function (options, originalOptions, jqXHR) {
 });
 
 var iCn3DUI = function(cfg) { var me = this, ic = me.icn3d; "use strict";
-<<<<<<< HEAD
     this.REVISION = '2.20.0';
-=======
-    this.REVISION = '2.19.1';
->>>>>>> a8469054f25ea10e20e7bf162282c21cf16a7bf5
     me.bFullUi = true;
     me.cfg = cfg;
     me.divid = me.cfg.divid;

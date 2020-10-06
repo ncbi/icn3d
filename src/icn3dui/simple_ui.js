@@ -152,11 +152,11 @@ iCn3DUI.prototype = {
         me.icn3d = new iCn3D(me.pre + 'canvas');
         var ic = me.icn3d;
 
-        me.icn3d.setControl(); // rotation, translation, zoom, etc
+        ic.setControl(); // rotation, translation, zoom, etc
 
         me.handleContextLost();
 
-        if(me.cfg.bCalphaOnly !== undefined) me.icn3d.bCalphaOnly = me.cfg.bCalphaOnly;
+        if(me.cfg.bCalphaOnly !== undefined) ic.bCalphaOnly = me.cfg.bCalphaOnly;
 
         me.loadStructure();
     },
@@ -321,7 +321,7 @@ iCn3DUI.prototype = {
     },
 
     loadStructure: function() { var me = this, ic = me.icn3d; "use strict";
-        me.icn3d.molTitle = '';
+        ic.molTitle = '';
 
         if(me.cfg.mmtfid !== undefined) {
            me.inputid = me.cfg.mmtfid;
@@ -350,7 +350,7 @@ iCn3DUI.prototype = {
               tryCount : 0,
               retryLimit : 1,
               success: function(data) {
-                  if(data.InformationList !== undefined && data.InformationList.Information !== undefined) me.icn3d.molTitle = data.InformationList.Information[0].Title;
+                  if(data.InformationList !== undefined && data.InformationList.Information !== undefined) ic.molTitle = data.InformationList.Information[0].Title;
               },
               error : function(xhr, textStatus, errorThrown ) {
                 this.tryCount++;
@@ -388,49 +388,49 @@ iCn3DUI.prototype = {
     },
 
     renderStructure: function() { var me = this, ic = me.icn3d; "use strict";
-        if(me.icn3d.bInitial) {
-          //me.icn3d.draw(me.opts);
+        if(ic.bInitial) {
+          //ic.draw(me.opts);
 
-          jQuery.extend(me.icn3d.opts, me.opts);
-          me.icn3d.draw();
+          jQuery.extend(ic.opts, me.opts);
+          ic.draw();
 
-          if(me.icn3d.bOpm) {
+          if(ic.bOpm) {
               var axis = new THREE.Vector3(1,0,0);
               var angle = -0.5 * Math.PI;
 
-              me.icn3d.setRotation(axis, angle);
+              ic.setRotation(axis, angle);
           }
         }
         else {
-          me.icn3d.draw();
+          ic.draw();
         }
 
-        me.icn3d.bInitial = false;
+        ic.bInitial = false;
 
         if(me.deferred !== undefined) me.deferred.resolve(); if(me.deferred2 !== undefined) me.deferred2.resolve();
     },
 
     selectAll: function() { var me = this, ic = me.icn3d; "use strict";
           // select all atoms again
-          for(var i in me.icn3d.atoms) {
-              me.icn3d.hAtoms[i] = 1;
+          for(var i in ic.atoms) {
+              ic.hAtoms[i] = 1;
           }
     },
 
     setCamera: function(id, value) { var me = this, ic = me.icn3d; "use strict";
-      me.icn3d.opts[id] = value;
+      ic.opts[id] = value;
 
-      me.icn3d.draw();
+      ic.draw();
     },
 
     setColor: function(id, value) { var me = this, ic = me.icn3d; "use strict";
-      me.icn3d.opts[id] = value;
+      ic.opts[id] = value;
 
       me.selectAll();
 
-      me.icn3d.setColorByOptions(me.icn3d.opts, me.icn3d.atoms);
+      ic.setColorByOptions(ic.opts, ic.atoms);
 
-      me.icn3d.draw();
+      ic.draw();
     },
 
     setStyle: function(selectionType, style) { var me = this, ic = me.icn3d; "use strict";
@@ -440,43 +440,43 @@ iCn3DUI.prototype = {
 
       switch (selectionType) {
           case 'proteins':
-              atoms = me.icn3d.intHash(me.icn3d.hAtoms, me.icn3d.proteins);
+              atoms = ic.intHash(ic.hAtoms, ic.proteins);
               break;
           case 'sidec':
-              atoms = me.icn3d.intHash(me.icn3d.hAtoms, me.icn3d.sidec);
-              calpha_atoms = me.icn3d.intHash(me.icn3d.hAtoms, me.icn3d.calphas);
+              atoms = ic.intHash(ic.hAtoms, ic.sidec);
+              calpha_atoms = ic.intHash(ic.hAtoms, ic.calphas);
               // include calphas
-              atoms = me.icn3d.unionHash(atoms, calpha_atoms);
+              atoms = ic.unionHash(atoms, calpha_atoms);
               break;
           case 'nucleotides':
-              atoms = me.icn3d.intHash(me.icn3d.hAtoms, me.icn3d.nucleotides);
+              atoms = ic.intHash(ic.hAtoms, ic.nucleotides);
               break;
           case 'chemicals':
-              atoms = me.icn3d.intHash(me.icn3d.hAtoms, me.icn3d.chemicals);
+              atoms = ic.intHash(ic.hAtoms, ic.chemicals);
               break;
           case 'ions':
-              atoms = me.icn3d.intHash(me.icn3d.hAtoms, me.icn3d.ions);
+              atoms = ic.intHash(ic.hAtoms, ic.ions);
               break;
           case 'water':
-              atoms = me.icn3d.intHash(me.icn3d.hAtoms, me.icn3d.water);
+              atoms = ic.intHash(ic.hAtoms, ic.water);
               break;
       }
 
       // draw sidec separatedly
       if(selectionType === 'sidec') {
           for(var i in atoms) {
-            me.icn3d.atoms[i].style2 = style;
+            ic.atoms[i].style2 = style;
           }
       }
       else {
           for(var i in atoms) {
-            me.icn3d.atoms[i].style = style;
+            ic.atoms[i].style = style;
           }
       }
 
-      me.icn3d.opts[selectionType] = style;
+      ic.opts[selectionType] = style;
 
-      me.icn3d.draw();
+      ic.draw();
     },
 
     clickTab: function() { var me = this, ic = me.icn3d; "use strict";
@@ -504,9 +504,9 @@ iCn3DUI.prototype = {
             e.preventDefault();
 
             //me.loadStructure();
-            me.icn3d.resetOrientation();
+            ic.resetOrientation();
 
-            me.icn3d.draw();
+            ic.draw();
         });
     },
 
