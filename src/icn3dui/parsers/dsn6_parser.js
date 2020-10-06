@@ -20,11 +20,11 @@ iCn3DUI.prototype.Dsn6ParserBase = function(url, type, sigma) { var me = this, i
 
     //https://stackoverflow.com/questions/33902299/using-jquery-ajax-to-download-a-binary-file
     if(type == '2fofc' && me.bAjax2fofc) {
-        ic.mapData.sigma2 = sigma;
+        me.icn3d.mapData.sigma2 = sigma;
         me.setOption('map', type);
     }
     else if(type == 'fofc' && me.bAjaxfofc) {
-        ic.mapData.sigma = sigma;
+        me.icn3d.mapData.sigma = sigma;
         me.setOption('map', type);
     }
     else {
@@ -179,18 +179,18 @@ iCn3DUI.prototype.loadDsn6Data = function(dsn6data, type, sigma) { var me = this
     }
 
     if(type == '2fofc') {
-        ic.mapData.header2 = header;
-        ic.mapData.data2 = data;
-        ic.mapData.matrix2 = me.getMatrix(header);
-        ic.mapData.type2 = type;
-        ic.mapData.sigma2 = sigma;
+        me.icn3d.mapData.header2 = header;
+        me.icn3d.mapData.data2 = data;
+        me.icn3d.mapData.matrix2 = me.getMatrix(header);
+        me.icn3d.mapData.type2 = type;
+        me.icn3d.mapData.sigma2 = sigma;
     }
     else {
-        ic.mapData.header = header;
-        ic.mapData.data = data;
-        ic.mapData.matrix = me.getMatrix(header);
-        ic.mapData.type = type;
-        ic.mapData.sigma = sigma;
+        me.icn3d.mapData.header = header;
+        me.icn3d.mapData.data = data;
+        me.icn3d.mapData.matrix = me.getMatrix(header);
+        me.icn3d.mapData.type = type;
+        me.icn3d.mapData.sigma = sigma;
     }
 };
 

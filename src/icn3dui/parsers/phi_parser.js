@@ -5,16 +5,130 @@
  * Modified by Jiyao Wang / https://github.com/ncbi/icn3d
  */
 
+iCn3DUI.prototype.CalcPhiUrl = function(gsize, salt, contour, bSurface, url) { var me = this, ic = me.icn3d; "use strict";
+    var oReq = new XMLHttpRequest();
+    oReq.open("GET", url, true);
 
-iCn3DUI.prototype.PhiParser = function(pdbid, type, contour) { var me = this, ic = me.icn3d; "use strict";
-    //var url = "https://edmaps.rcsb.org/maps/" + pdbid.toLowerCase() + "_" + type + ".dsn6";
-    //me.PhiParserBase(url, type, contour);
+    oReq.responseType = "text";
+
+    oReq.onreadystatechange = function() {
+        if (this.readyState == 4) {
+           //me.hideLoading();
+
+           if(this.status == 200) {
+               var data = oReq.response;
+
+               me.CalcPhi(gsize, salt, contour, bSurface, data);
+            }
+            else {
+                alert("The PQR file is unavailable...");
+            }
+        }
+        else {
+            me.showLoading();
+        }
+    };
+
+    oReq.send();
 };
 
-iCn3DUI.prototype.PhiParserBase = function(url, type, contour) { var me = this, ic = me.icn3d; "use strict";
-    var dataType;
+iCn3DUI.prototype.CalcPhi = function(gsize, salt, contour, bSurface, data) { var me = this, ic = me.icn3d; "use strict";
+   ic.loadPhiFrom = 'delphi';
 
-    var bCid = undefined;
+   var url = "https://www.ncbi.nlm.nih.gov/Structure/delphi/delphi.fcgi";
+   var pdbid = (me.cfg.cid) ? me.cfg.cid : Object.keys(ic.structures).toString();
+   var dataObj = {};
+
+   if(data) {
+       dataObj = {'pqr2phi': data, 'gsize': gsize, 'salt': salt, 'pdbid': pdbid};
+   }
+   else {
+       var chainHash = {}, ionHash = {};
+       for(var i in ic.hAtoms) {
+           var atom = ic.atoms[i];
+
+           chainHash[atom.structure + '_' + atom.chain] = 1;
+       }
+
+       var atomHash = {};
+       for(var chainid in chainHash) {
+           for(var i in ic.chains[chainid]) {
+               var atom = ic.atoms[i];
+
+               if(ic.ions.hasOwnProperty(i)) {
+                 ionHash[i] = 1;
+               }
+               else {
+                 atomHash[i] = 1;
+               }
+           }
+       }
+
+       var atomCnt = Object.keys(atomHash).length;
+       var bCalphaOnly = ic.isCalphaPhosOnly(ic.hash2Atoms(atomHash));
+       if(bCalphaOnly) {
+           alert("The potential will not be shown because the side chains are missing in the structure...");
+           return;
+       }
+
+       if(atomCnt > 30000) {
+           alert("The maximum number of allowed atoms is 30,000. Please try it again with selected chains...");
+           return;
+       }
+
+       var pdbstr = (me.cfg.cid) ? me.getAtomPDB(atomHash, true) : me.getAtomPDB(atomHash);
+       pdbstr += me.getAtomPDB(ionHash, true);
+
+       dataObj = {'pdb2phi': pdbstr, 'gsize': gsize, 'salt': salt, 'pdbid': pdbid};
+   }
+
+   // see full_ui.js for ajaxTransport
+   $.ajax({
+      url: url,
+      type: 'POST',
+      data : dataObj,
+      dataType: 'binary',
+      responseType: 'arraybuffer',
+      cache: true,
+      tryCount : 0,
+      retryLimit : 0, //1,
+      beforeSend: function() {
+          me.showLoading();
+      },
+      complete: function() {
+          me.hideLoading();
+      },
+      success: function(data) {
+           me.loadPhiData(data, contour, bSurface);
+
+           me.bAjaxPhi = true;
+
+           if(bSurface) {
+             me.setOption('phisurface', 'phi');
+           }
+           else {
+             me.setOption('phimap', 'phi');
+           }
+
+           if(me.deferredDelphi !== undefined) me.deferredDelphi.resolve();
+           if(me.deferredPhi !== undefined) me.deferredPhi.resolve();
+      },
+      error : function(xhr, textStatus, errorThrown ) {
+        this.tryCount++;
+        if (this.tryCount <= this.retryLimit) {
+            //try again
+            $.ajax(this);
+            return;
+        }
+        return;
+      }
+    });
+};
+
+iCn3DUI.prototype.PhiParser = function(url, type, contour, bSurface) { var me = this, ic = me.icn3d; "use strict";
+    //var dataType;
+
+    //var bCid = undefined;
 
     //https://stackoverflow.com/questions/33902299/using-jquery-ajax-to-download-a-binary-file
 /*
@@ -31,7 +145,7 @@ iCn3DUI.prototype.PhiParserBase = function(url, type, contour) { var me = this, 
         var oReq = new XMLHttpRequest();
         oReq.open("GET", url, true);
 
-        if(type == 'phiurl') {
+        if(type == 'phiurl' || type == 'phiurl2') {
             oReq.responseType = "arraybuffer";
         }
         else {
@@ -45,22 +159,27 @@ iCn3DUI.prototype.PhiParserBase = function(url, type, contour) { var me = this, 
                if(this.status == 200) {
                    var data = oReq.response;
 
-                   if(type == 'phiurl') {
-                       me.loadPhiData(data, contour);
+                   if(type == 'phiurl' || type == 'phiurl2') {
+                       me.loadPhiData(data, contour, bSurface);
                    }
                    else {
-                       me.loadCubeData(data, contour);
+                       me.loadCubeData(data, contour, bSurface);
                    }
 
                    me.bAjaxPhi = true;
 
-                   me.setOption('phimap', 'phi');
+                   if(bSurface) {
+                     me.setOption('phisurface', 'phi');
+                   }
+                   else {
+                     me.setOption('phimap', 'phi');
+                   }
                 }
                 else {
                     alert("The potential file is unavailable...");
                 }
 
-                if(me.deferredPhimap !== undefined) me.deferredPhimap.resolve();
+                if(me.deferredPhi !== undefined) me.deferredPhi.resolve();
             }
             else {
                 me.showLoading();
@@ -71,7 +190,7 @@ iCn3DUI.prototype.PhiParserBase = function(url, type, contour) { var me = this, 
 //    }
 };
 
-iCn3DUI.prototype.loadPhiData = function(data, contour) { var me = this, ic = me.icn3d; "use strict";
+iCn3DUI.prototype.loadPhiData = function(data, contour, bSurface) { var me = this, ic = me.icn3d; "use strict";
     // http://compbio.clemson.edu/downloadDir/delphi/delphi_manual8.pdf
     // Delphi phi map is almost the same as GRASP potential map except the last line in Delphi phi map
     //   has five float values and the last value is the grid size.
@@ -115,6 +234,8 @@ iCn3DUI.prototype.loadPhiData = function(data, contour) { var me = this, ic = me
     // In .phi file, correctly loop x, then y, then z
     var floatView = new Float32Array(bin.slice(110, bin.byteLength-56) ); // 4 values
 
+    header.bSurface = bSurface;
+
     ic.mapData.headerPhi = header;
     ic.mapData.dataPhi = floatView;
     ic.mapData.contourPhi = contour;
@@ -127,7 +248,7 @@ iCn3DUI.prototype.loadPhiData = function(data, contour) { var me = this, ic = me
     ic.mapData.matrixPhi = matrix;
 };
 
-iCn3DUI.prototype.loadCubeData = function(data, contour) { var me = this, ic = me.icn3d; "use strict";
+iCn3DUI.prototype.loadCubeData = function(data, contour, bSurface) { var me = this, ic = me.icn3d; "use strict";
     // http://compbio.clemson.edu/downloadDir/delphi/delphi_manual8.pdf
 //  2.000000   117 22.724000 42.148000  8.968000 // scale, grid size, center x, y, z
 //Gaussian cube format phimap
@@ -182,6 +303,8 @@ iCn3DUI.prototype.loadCubeData = function(data, contour) { var me = this, ic = m
     if(dataPhi.length != header.n * header.n * header.n) {
         console.log("the data array size " + dataPhi.length + " didn't match the grid size " + header.n * header.n * header.n + "...");
     }
+
+    header.bSurface = bSurface;
 
     ic.mapData.headerPhi = header;
     ic.mapData.dataPhi = dataPhi;

@@ -197,32 +197,23 @@ iCn3DUI.prototype.execCommandsBase = function (start, end, steps, bFinalStep) { 
             return;
           }
       }
-      else if(ic.commands[i].trim().indexOf('set phimap') == 0 && ic.commands[i].trim().indexOf('set phimap wireframe') == -1) {
-          //set map 2fofc sigma 1.5
+      else if(ic.commands[i].trim().indexOf('set phi') == 0) {
           var strArray = ic.commands[i].split("|||");
 
-          var urlArray = strArray[0].trim().split(' | ');
+          $.when(me.applyCommandPhi(strArray[0].trim())).then(function() {
+              me.execCommandsBase(i + 1, end, steps);
+          });
 
-          var str = urlArray[0].substr(11);
-          var paraArray = str.split(" ");
+          return;
+      }
+      else if(ic.commands[i].trim().indexOf('set delphi') == 0) {
+          var strArray = ic.commands[i].split("|||");
 
-          if(paraArray.length == 3 && paraArray[1] == 'contour') {
-            var contour = paraArray[2];
-            var type = paraArray[0];
+          $.when(me.applyCommandDelphi(strArray[0].trim())).then(function() {
+              me.execCommandsBase(i + 1, end, steps);
+          });
 
-            if( (type == 'phiurl')
-              || (type == 'cubeurl') ) {
-                $.when(me.applyCommandPhimap(strArray[0].trim())).then(function() {
-                    me.execCommandsBase(i + 1, end, steps);
-                });
-            }
-            //else {
-            //    me.applyCommandMap(strArray[0].trim());
-            //    me.execCommandsBase(i + 1, end, steps);
-            //}
-
-            return;
-          }
+          return;
       }
       else if(ic.commands[i].trim().indexOf('view annotations') == 0
         //|| ic.commands[i].trim().indexOf('set annotation cdd') == 0
@@ -472,6 +463,7 @@ iCn3DUI.prototype.execCommandsBase = function (start, end, steps, bFinalStep) { 
 
   //if(i === steps - 1) {
   if(i === steps || bFinalStep) {
+/*
       // enable me.hideLoading
       me.bCommandLoad = false;
 
@@ -482,7 +474,7 @@ iCn3DUI.prototype.execCommandsBase = function (start, end, steps, bFinalStep) { 
 
       // end of all commands
       if(i + 1 === ic.commands.length) me.bAddCommands = true;
-
+*/
       me.renderFinalStep(i);
   }
 };
@@ -543,6 +535,18 @@ iCn3DUI.prototype.oneStructurePerWindow = function() { var me = this, ic = me.ic
 };
 
 iCn3DUI.prototype.renderFinalStep = function(steps) { var me = this, ic = me.icn3d; "use strict";
+    // enable me.hideLoading
+    me.bCommandLoad = false;
+
+    // hide "loading ..."
+    me.hideLoading();
+
+    //ic.bRender = true;
+
+    // end of all commands
+    if(steps + 1 === ic.commands.length) me.bAddCommands = true;
+
+
     ic.bRender = true;
 
     var commandTransformation = ic.commands[steps-1].split('|||');
@@ -568,8 +572,14 @@ iCn3DUI.prototype.renderFinalStep = function(steps) { var me = this, ic = me.icn
     if(steps === 1
       || (Object.keys(ic.hAtoms).length === Object.keys(ic.atoms).length)
       || (ic.optsHistory[steps - 1] !== undefined && ic.optsHistory[steps - 1].hasOwnProperty('hlatomcount') && ic.optsHistory[steps - 1].hlatomcount === Object.keys(ic.atoms).length) ) {
+<<<<<<< HEAD
+// the following code caused problem for many links,e.g., https://structure.ncbi.nlm.nih.gov/icn3d/share.html?17g3r1JDvZ7ZL39e6
+//        if(steps === 1) {
+            // assign styles and color using the options at that stage
+=======
 //        if(steps === 1) {
 //            // assign styles and color using the options at that stage
+>>>>>>> a8469054f25ea10e20e7bf162282c21cf16a7bf5
 //            ic.setAtomStyleByOptions(ic.optsHistory[steps - 1]);
 //            ic.setColorByOptions(ic.optsHistory[steps - 1], ic.hAtoms);
 //        }
@@ -589,13 +599,18 @@ iCn3DUI.prototype.renderFinalStep = function(steps) { var me = this, ic = me.icn
                 ic.pk = 3;
             }
 
+<<<<<<< HEAD
+// the following code caused problem for many links,e.g., https://structure.ncbi.nlm.nih.gov/icn3d/share.html?17g3r1JDvZ7ZL39e6
+=======
+>>>>>>> a8469054f25ea10e20e7bf162282c21cf16a7bf5
 //            if(steps === 1) {
 //                ic.applyOriginalColor();
 //            }
 
             me.updateHlAll();
 
-            jQuery.extend(ic.opts, ic.optsHistory[steps - 1]);
+            // caused some problem witht the following line
+//            jQuery.extend(ic.opts, ic.optsHistory[steps - 1]);
             ic.draw();
         }
         else {
@@ -709,9 +724,9 @@ iCn3DUI.prototype.applyCommandLoad = function (commandStr) { var me = this, ic =
   return me.deferred2.promise();
 };
 
-iCn3DUI.prototype.applyCommandMap = function (command) { var me = this, ic = me.icn3d; "use strict";
+iCn3DUI.prototype.applyCommandMap = function (command) { var me = this; "use strict";
   // chain functions together
-  me.deferredMap = $.Deferred(function() {
+  me.deferredMap = $.Deferred(function() { var ic = me.icn3d;
       //"set map 2fofc sigma 1.5"
       // or "set map 2fofc sigma 1.5 | [url]"
       var urlArray = command.split(" | ");
@@ -735,9 +750,9 @@ iCn3DUI.prototype.applyCommandMap = function (command) { var me = this, ic = me.
   return me.deferredMap.promise();
 };
 
-iCn3DUI.prototype.applyCommandEmmap = function (command) { var me = this, ic = me.icn3d; "use strict";
+iCn3DUI.prototype.applyCommandEmmap = function (command) { var me = this; "use strict";
   // chain functions together
-  me.deferredEmmap = $.Deferred(function() {
+  me.deferredEmmap = $.Deferred(function() { var ic = me.icn3d;
       var str = command.substr(10);
       var paraArray = str.split(" ");
 
@@ -779,29 +794,102 @@ iCn3DUI.prototype.applyCommandEmmap = function (command) { var me = this, ic = m
   return me.deferredEmmap.promise();
 };
 
-iCn3DUI.prototype.applyCommandPhimap = function (command) { var me = this, ic = me.icn3d; "use strict";
+iCn3DUI.prototype.applyCommandPhi = function (command) { var me = this; "use strict";
   // chain functions together
-  me.deferredPhimap = $.Deferred(function() {
-      //"set phimap cubeurl contour 1 | [url]"
-      var urlArray = command.split(" | ");
+  me.deferredPhi = $.Deferred(function() { var ic = me.icn3d;
+      //me.setLogCmd('set phi phiurl2/cubeurl2 | contour ' + contour + ' | url ' + encodeURIComponent(url)
+      //       + ' | gsize ' + gsize + ' | salt ' + salt
+      //       + ' | surface ' + ic.phisurftype + ' | opacity ' + ic.phisurfop + ' | wireframe ' + ic.phisurfwf, true);
+      //me.setLogCmd('set phi phiurl/cubeurl | contour ' + contour + ' | url ' + encodeURIComponent(url)
+      //       + ' | gsize ' + gsize + ' | salt ' + salt, true);
+      var paraArray = command.split(" | ");
 
-      var str = urlArray[0].substr(11);
-      var paraArray = str.split(" ");
+      var typeArray = paraArray[0].split(" ");
+      var contourArray = paraArray[1].split(" ");
+      var urlArray = paraArray[2].split(" ");
+      var gsizeArray = paraArray[3].split(" ");
+      var saltArray = paraArray[4].split(" ");
 
-      if(paraArray.length == 3 && paraArray[1] == 'contour') {
-          var contour = paraArray[2];
-          var type = paraArray[0];
+      var type = typeArray[2];
+      var contour = parseFloat(contourArray[1]);
+      var url = urlArray[1];
+      var gsize = gsizeArray[1];
+      var salt = saltArray[1];
 
-          if(urlArray.length == 2) {
-              me.PhiParserBase(urlArray[1], type, contour);
-          }
-          //else {
-          //    me.PhiParserBase(me.inputid, type, sigma);
-          //}
+      //var pdbid = Object.keys(ic.structures)[0];
+      //url = url.replace(/!/g, pdbid + '_');
+
+      if(paraArray.length == 8) {
+          var surfaceArray = paraArray[5].split(" ");
+          var opacityArray = paraArray[6].split(" ");
+          var wireframeArray = paraArray[7].split(" ");
+
+          ic.phisurftype = surfaceArray[1];
+          ic.phisurfop = parseFloat(opacityArray[1]);
+          ic.phisurfwf = wireframeArray[1];
+
+          $("#" + me.pre + "delphi" + "surftype").val(ic.phisurftype);
+          $("#" + me.pre + "delphi" + "surfop").val(ic.phisurfop);
+          $("#" + me.pre + "delphi" + "surfwf").val(ic.phisurfwf);
+      }
+
+      var bSurface = (type == 'pqrurl2' || type == 'phiurl2' || type == 'cubeurl2') ? true : false;
+
+      if(type == 'pqrurl' || type == 'pqrurl2') {
+          me.CalcPhiUrl(gsize, salt, contour, bSurface, url);
+      }
+      else {
+          me.PhiParser(url, type, contour, bSurface);
       }
   }); // end of me.deferred = $.Deferred(function() {
 
-  return me.deferredPhimap.promise();
+  return me.deferredPhi.promise();
+};
+
+iCn3DUI.prototype.applyCommandDelphi = function (command) { var me = this; "use strict";
+  // chain functions together
+  me.deferredDelphi = $.Deferred(function() { var ic = me.icn3d;
+       //me.setLogCmd('set delphi surface | contour ' + contour + ' | gsize ' + gsize + ' | salt ' + salt
+       //  + ' | surface ' + ic.phisurftype + ' | opacity ' + ic.phisurfop + ' | wireframe ' + ic.phisurfwf, true);
+
+       //me.setLogCmd('set delphi map | contour ' + contour + ' | gsize ' + gsize + ' | salt ' + salt, true);
+
+      var paraArray = command.split(" | ");
+
+      var typeArray = paraArray[0].split(" ");
+      var contourArray = paraArray[1].split(" ");
+      var gsizeArray = paraArray[2].split(" ");
+      var saltArray = paraArray[3].split(" ");
+
+      var type = typeArray[2];
+      var contour = contourArray[1]; //parseFloat(contourArray[1]);
+      var gsize = gsizeArray[1]; //parseInt(gsizeArray[1]);
+      var salt = saltArray[1]; //parseFloat(saltArray[1]);
+
+      // The values should be string
+      $("#" + me.pre + "delphigsize").val(gsize);
+      $("#" + me.pre + "delphisalt").val(salt);
+
+      if(paraArray.length == 7) {
+          var surfaceArray = paraArray[4].split(" ");
+          var opacityArray = paraArray[5].split(" ");
+          var wireframeArray = paraArray[6].split(" ");
+
+          ic.phisurftype = surfaceArray[1];
+          ic.phisurfop = opacityArray[1]; //parseFloat(opacityArray[1]);
+          ic.phisurfwf = wireframeArray[1];
+
+          $("#" + me.pre + "delphi" + "surftype").val(ic.phisurftype);
+          $("#" + me.pre + "delphi" + "surfop").val(ic.phisurfop);
+          $("#" + me.pre + "delphi" + "surfwf").val(ic.phisurfwf);
+      }
+
+      var bSurface = (type == 'surface') ? true : false;
+
+      me.CalcPhi(gsize, salt, contour, bSurface);
+  }); // end of me.deferred = $.Deferred(function() {
+
+  return me.deferredDelphi.promise();
 };
 
 iCn3DUI.prototype.applyCommandSymmetryBase = function (command) { var me = this, ic = me.icn3d; "use strict";
@@ -1942,6 +2030,16 @@ iCn3DUI.prototype.applyCommand = function (commandStr) { var me = this, ic = me.
         me.calcBuriedSurface(nameArray2, nameArray);
     }
   }
+  else if(commandOri.indexOf('dist') == 0) {
+    var paraArray = commandOri.split(' | ');
+    if(paraArray.length == 2) {
+        var setNameArray = paraArray[1].split(' ');
+        var nameArray = setNameArray[0].split(',');
+        var nameArray2 = setNameArray[1].split(',');
+
+        me.measureDistTwoSets(nameArray, nameArray2);
+    }
+  }
   else if(commandOri.indexOf('display interaction 3d') == 0
       || commandOri.indexOf('view interaction pairs') == 0
       || commandOri.indexOf('save1 interaction pairs') == 0
@@ -2006,6 +2104,26 @@ iCn3DUI.prototype.applyCommand = function (commandStr) { var me = this, ic = me.
 
         me.viewInteractionPairs(nameArray2, nameArray, bHbondCalc, type, bHbond, bSaltbridge, bInteraction, bHalogen, bPication, bPistacking);
     }
+  }
+  else if(commandOri.indexOf('export pairs') == 0) {
+    var paraArray = commandOri.split(' | ');
+    if(paraArray.length == 3) {
+        var setNameArray = paraArray[1].split(' ');
+        var nameArray2 = setNameArray[0].split(',');
+        var nameArray = setNameArray[1].split(',');
+
+        var distArray = paraArray[2].split(' ');
+        var radius = distArray[1];
+
+        me.pickCustomSphere(radius, nameArray2, nameArray, me.bSphereCalc);
+        me.bSphereCalc = true;
+        var text = me.exportSpherePairs();
+        var file_pref = (me.inputid) ? me.inputid : "custom";
+        me.saveFile(file_pref + '_sphere_pairs.html', 'html', text);
+    }
+  }
+  else if(commandOri.indexOf('export pqr') == 0) {
+       me.exportPqr();
   }
   else if(command.indexOf('graph label') == 0) {
     var pos = command.lastIndexOf(' ');
@@ -2173,6 +2291,15 @@ iCn3DUI.prototype.applyCommand = function (commandStr) { var me = this, ic = me.
     var color = command.substr(command.lastIndexOf(' ') + 1);
     me.setTheme(color);
   }
+  else if(command.indexOf('set double color') == 0) {
+    var value = command.substr(command.lastIndexOf(' ') + 1);
+    if(value == 'on') {
+        ic.bDoublecolor = true;
+    }
+    else if(value == 'off') {
+        ic.bDoublecolor = false;
+    }
+  }
 
 // special, select ==========
 
@@ -2276,7 +2403,8 @@ iCn3DUI.prototype.getMenuFromCmd = function (cmd) { var me = this, ic = me.icn3d
     if(cmd.indexOf('load') == 0) return 'File > Retrieve by ID, Align';
     else if(cmd.indexOf('set map') == 0 && cmd.indexOf('set map wireframe') == -1) return 'Style > Electron Density';
     else if(cmd.indexOf('set emmap') == 0 && cmd.indexOf('set emmap wireframe') == -1) return 'Style > EM Density Map';
-    else if(cmd.indexOf('set phimap') == 0 && cmd.indexOf('set phimap wireframe') == -1) return 'Analysis > Delphi Potential';
+    else if(cmd.indexOf('set phi') == 0) return 'Analysis > Load Potential > URL (Same Host) Phi/Cube';
+    else if(cmd.indexOf('set delphi') == 0) return 'Analysis > DelPhi Potential';
     else if(cmd.indexOf('setoption map') == 0) return 'Style > Remove Map';
     else if(cmd.indexOf('setoption emmap') == 0) return 'Style > Remove EM Map';
     else if(cmd.indexOf('setoption phimap') == 0) return 'Analysis > Remove Potential';
@@ -2402,8 +2530,9 @@ iCn3DUI.prototype.getMenuFromCmd = function (cmd) { var me = this, ic = me.icn3d
     else if(cmd.indexOf('set thickness') == 0) return 'File > 3D Printing > Set Thickness';
     else if(cmd.indexOf('set highlight color') == 0) return 'Select > Highlight Color';
     else if(cmd.indexOf('set highlight style') == 0) return 'Select > Highlight Style';
-    else if(cmd.indexOf('add line') == 0) return 'Analysis > Distance > Measure';
-    else if(cmd.indexOf('add label') == 0) return 'Analysis > Distance > Measure';
+    else if(cmd.indexOf('add line') == 0) return 'Analysis > Distance > between Two Atoms';
+    else if(cmd.indexOf('add label') == 0) return 'Analysis > Distance > between Two Atoms';
+    else if(cmd.indexOf('dist') == 0) return 'Analysis > Distance > between Two Sets';
     else if(cmd.indexOf('msa') == 0) return seqAnnoStr + ': "Add Track" button: "FASTA Alignment" button';
     else if(cmd.indexOf('add track') == 0) return seqAnnoStr + ': "Add Track" button';
     else if(cmd.indexOf('remove one stabilizer') == 0) return 'File > 3D Printing > Remove One Stablizer';
@@ -2435,6 +2564,7 @@ iCn3DUI.prototype.getMenuFromCmd = function (cmd) { var me = this, ic = me.icn3d
     else if(cmd.indexOf('replay on') !== -1) return 'File > Replay Each Step > On';
     else if(cmd.indexOf('replay off') !== -1) return 'File > Replay Each Step > Off';
     else if(cmd.indexOf('set theme') !== -1) return 'Style > Theme Color';
+    else if(cmd.indexOf('set double color') !== -1) return 'Style > Shade';
     else return '';
 };
 

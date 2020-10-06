@@ -1621,7 +1621,12 @@ iCn3DUI.prototype.showSnpClinvar = function(chnid, chnidBase, bSnpOnly) { var me
 };
 iCn3DUI.prototype.showSnpPart2 = function(chnid, chnidBase, gi) { var me = this, ic = me.icn3d; "use strict";
     if(gi !== undefined) {
+<<<<<<< HEAD
+        var url3 = "https://www.ncbi.nlm.nih.gov/projects/SNP/beVarSearch.cgi?appname=iCn3D&format=bed&report=pdb2bed&connect=MSSNPSUBMISSION1&gi=" + gi;
+
+=======
 	var url3 = "https://www.ncbi.nlm.nih.gov/projects/SNP/beVarSearch.cgi?appname=iCn3D&format=bed&report=pdb2bed&connect=MSSNPSUBMISSION1&gi=" + gi;	    
+>>>>>>> a8469054f25ea10e20e7bf162282c21cf16a7bf5
         $.ajax({
           url: url3,
           dataType: 'text',

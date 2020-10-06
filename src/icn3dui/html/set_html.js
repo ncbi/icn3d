@@ -80,12 +80,19 @@ iCn3DUI.prototype.setTopMenusHtmlMobile = function (id, str1, str2) { var me = t
     html += "<div>";
     html += "<accordion id='" + me.pr2e + "accordion0' class='icn3d-accordion'>";
     if(me.cfg.notebook) {
+<<<<<<< HEAD
+        html += "<h3 style='width:20px; height:24px; position:relative'><span style='position:absolute; left:3px; top:4px;'>&#9776;</span></h3>";
+=======
         html += "<h3 style='width:20px; height:24px; position:relative'><span style='position:absolute; left:5px; top:6px;'>&#9776;</span></h3>";
+>>>>>>> a8469054f25ea10e20e7bf162282c21cf16a7bf5
     }
     else {
         html += "<h3 style='width:20px; height:20px; position:relative'><span style='position:absolute; left:7px; top:8px;'>&#9776;</span></h3>";
     }
+<<<<<<< HEAD
+=======
 
+>>>>>>> a8469054f25ea10e20e7bf162282c21cf16a7bf5
     html += "<div>";
 
     var liStr = "<li><span class='icn3d-menu-color'";
@@ -410,6 +417,15 @@ iCn3DUI.prototype.setMenu1_base = function() { var me = this, ic = me.icn3d; "us
     html += me.getLink('mn1_exportState', 'State File');
     html += me.getLink('mn1_exportSelections', 'Selection File');
     html += me.getLink('mn1_exportCounts', 'Residue Counts');
+
+    html += "<li><span>PDB</span>";
+    html += "<ul>";
+    html += me.getLink('mn1_exportPdbRes', 'Selected Residues');
+    html += me.getLink('mn1_exportPdbChain', 'Selected Chains');
+    html += "<li><br/></li>";
+    html += "</ul>";
+    html += "</li>";
+    html += "<li><br/></li>";
 
     html += "</ul>";
     html += "</li>";
@@ -855,6 +871,14 @@ iCn3DUI.prototype.setMenu3_base = function() { var me = this, ic = me.icn3d; "us
     html += "</ul>";
     html += "</li>";
 
+    html += "<li><span>Two-color Helix</span>";
+    html += "<ul>";
+    html += me.getRadio('mn6_doublecolor', 'mn6_doublecolorYes', 'Yes');
+    html += me.getRadio('mn6_doublecolor', 'mn6_doublecolorNo', 'No', true);
+    html += "</ul>";
+    html += "</li>";
+
+
     html += "<li><br/></li>";
 
     html += "</ul>";
@@ -1097,6 +1121,11 @@ iCn3DUI.prototype.setMenu4_base = function() { var me = this, ic = me.icn3d; "us
         html += "</ul>";
 
         html += me.getRadio('mn4_clr', 'mn4_clrCharge', 'Charge');
+
+        if(!me.cfg.notebook) {
+            html += me.getRadio('mn4_clr', 'mn1_delphi2', 'DelPhi<br><span style="padding-left:1.5em;">Potential</span>');
+        }
+
         html += me.getRadio('mn4_clr', 'mn4_clrHydrophobic', 'Wimley-White<br><span style="padding-left:1.5em;">Hydrophobicity</span>');
 
         html += "<li><span style='padding-left:2.3em;'>B-factor</span>";
@@ -1138,6 +1167,7 @@ iCn3DUI.prototype.setMenu4_base = function() { var me = this, ic = me.icn3d; "us
         }
     }
     else {
+        html += me.getRadio('mn4_clr', 'mn1_delphi2', 'DelPhi<br><span style="padding-left:1.5em;">Potential</span>');
         html += me.getRadio('mn4_clr', 'mn4_clrAtom', 'Atom', true);
     }
 
@@ -1203,21 +1233,24 @@ iCn3DUI.prototype.setMenu5_base = function() { var me = this, ic = me.icn3d; "us
         html += "</li>";
 
         html += "<li>-</li>";
+    }
 
-        html += "<li><span>Delphi Potential</span>";
+    if(!me.cfg.notebook) {
+        html += me.getLink('mn1_delphi', 'DelPhi Potential');
+        html += "<li><span>Load PQR/Phi</span>";
         html += "<ul>";
-        html += me.getLink('mn1_phi', 'Local Phi/Cube File');
-        html += me.getLink('mn1_phiurl', 'URL (Same Host) Phi/Cube');
+        html += me.getLink('mn1_phi', 'Local PQR/Phi/Cube File');
+        html += me.getLink('mn1_phiurl', 'URL PQR/Phi/Cube File');
         html += "</ul>";
-
-        html += me.getLink('mn1_phimapNo', 'Remove Potential');
+        html += me.getLink('delphipqr', 'Download PQR');
 
         html += "<li>-</li>";
     }
 
     html += "<li><span>Distance</span>";
     html += "<ul>";
-    html += me.getRadio('mn6_distance', 'mn6_distanceYes', 'Measure');
+    html += me.getRadio('mn6_distance', 'mn6_distanceYes', 'between Two Atoms');
+    html += me.getRadio('mn6_distance', 'mn6_distTwoSets', 'between Two Sets');
     html += me.getRadio('mn6_distance', 'mn6_distanceNo', 'Hide', true);
     html += "</ul>";
     html += "</li>";
@@ -1243,16 +1276,16 @@ iCn3DUI.prototype.setMenu5_base = function() { var me = this, ic = me.icn3d; "us
     html += "<ul>";
 
     for(var i = 1; i <= 9; ++i) {
-        if(i == 3) {
-            html += me.getRadio('mn6_labelscale', 'mn6_labelscale0' + i, '0.' + i, true);
-        }
-        else {
-            html += me.getRadio('mn6_labelscale', 'mn6_labelscale0' + i, '0.' + i);
-        }
+        html += me.getRadio('mn6_labelscale', 'mn6_labelscale0' + i, '0.' + i);
     }
 
     for(var i = 1; i <= 4; i *= 2) {
-        html += me.getRadio('mn6_labelscale', 'mn6_labelscale' + i + '0', i + '.0');
+        if(i == 1) {
+            html += me.getRadio('mn6_labelscale', 'mn6_labelscale' + i + '0', i + '.0', true);
+        }
+        else {
+            html += me.getRadio('mn6_labelscale', 'mn6_labelscale' + i + '0', i + '.0');
+        }
     }
 
     html += "</ul>";
@@ -1442,10 +1475,10 @@ iCn3DUI.prototype.setAdvanced = function(index) { var me = this, ic = me.icn3d; 
 
     html += me.divStr + "specguide" + indexStr + "' style='display:none; width:500px' class='icn3d-box'>";
 
-    html += "<b>Specification:</b> In the selection \"$1HHO,4N7N.A,B,C:5-10,KRDE,chemicals@CA,C\":";
+    html += "<b>Specification:</b> In the selection \"$1HHO,4N7N.A,B,C:5-10,LV,3AlaVal,chemicals@CA,C\":";
     html += "<ul><li>\"$1HHO,4N7N\" uses \"$\" to indicate structure selection.<br/>";
     html += "<li>\".A,B,C\" uses \".\" to indicate chain selection.<br/>";
-    html += "<li>\":5-10,KRDE,chemicals\" uses the colon \":\" to indicate residue selection. Residue selection could be residue number (5-10), one-letter IUPAC abbreviations (KRDE), or predefined names: \"proteins\", \"nucleotides\", \"chemicals\", \"ions\", and \"water\". IUPAC abbreviations can be written either as a contiguous string (e.g., \":KRDE\"), in order to find all instances of that sequence in the structure, or they can be separated by commas (e.g., \":K,R,D,E\") to select all residues of a given type in the structure (in the latter case, select all Lysine, Arginine, Aspartic Acid, and Glutamic Acid in the structure).<br/>";
+    html += "<li>\":5-10,LV,3LeuVal,chemicals\" uses the colon \":\" to indicate residue selection. Residue selection could be residue number (5-10), one-letter IUPAC residue name abbreviations (LV), three-letter residue names (AlaVal, \"3\" indicates each residue name has three letters), or predefined names: \"proteins\", \"nucleotides\", \"chemicals\", \"ions\", and \"water\". IUPAC abbreviations can be written either as a contiguous string (e.g., \":LV\"), in order to find all instances of that sequence in the structure, or they can be separated by commas (e.g., \":L,V\") to select all residues of a given type in the structure (in the latter case, select all Leucine and Valine in the structure).<br/>";
     html += "<li>\"@CA,C\" uses \"@\" to indicate atom selection.<br/>";
     html += "<li>Partial definition is allowed, e.g., \":1-10\" selects all residue IDs 1-10 in all chains.<br/>";
     html += "<li>Different selections can be unioned (with \"<b>or</b>\", default), intersected (with \"<b>and</b>\"), or negated (with \"<b>not</b>\"). For example, \":1-10 or :K\" selects all residues 1-10 and all Lys residues. \":1-10 and :K\" selects all Lys residues in the range of residue number 1-10. \":1-10 or not :K\" selects all residues 1-10, which are not Lys residues.<br/>";
@@ -1455,9 +1488,9 @@ iCn3DUI.prototype.setAdvanced = function(index) { var me = this, ic = me.icn3d; 
     html += "<ul><li>Users can select multiple sets in the menu \"Select > Defined Sets\".<br/>";
     html += "<li>Different sets can be unioned (with \"<b>or</b>\", default), intersected (with \"<b>and</b>\"), or negated (with \"<b>not</b>\"). For example, if the \"Defined Sets\" menu has four sets \":1-10\", \":11-20\", \":5-15\", and \":7-8\", the command \"saved atoms :1-10 or :11-20 and :5-15 not :7-8\" unions all residues 1-10 and 11-20 to get the residues 1-20, then intersects with the residues 5-15 to get the residues 5-15, then exclude the residues 7-8 to get the final residues 5-6 and 9-15.</ul>";
     html += "<b>Full commands in url or command window:</b>";
-    html += "<ul><li>Select without saving the set: select $1HHO,4N7N.A,B,C:5-10,KRDE,chemicals@CA,C<br/>";
-    //html += "<li>Select and save: select $1HHO,4N7N.A,B,C:5-10,KRDE,chemicals@CA,C | name my_name | description my_description</ul>";
-    html += "<li>Select and save: select $1HHO,4N7N.A,B,C:5-10,KRDE,chemicals@CA,C | name my_name</ul>";
+    html += "<ul><li>Select without saving the set: select $1HHO,4N7N.A,B,C:5-10,LV,chemicals@CA,C<br/>";
+    //html += "<li>Select and save: select $1HHO,4N7N.A,B,C:5-10,LV,chemicals@CA,C | name my_name | description my_description</ul>";
+    html += "<li>Select and save: select $1HHO,4N7N.A,B,C:5-10,LV,chemicals@CA,C | name my_name</ul>";
 
     html += "</div>";
 
@@ -1489,24 +1522,35 @@ iCn3DUI.prototype.getPotentialHtml = function(type, dialogClass) { var me = this
     var html = '';
 
     var name1, name2;
+    var tab1, tab2, tab3;
+    tab1 = 'Equipotential Map';
+    tab2 = 'Surface with Potential';
+    //tab3 = 'Download PQR';
 
-    if(type == 'local') {
+    if(type == 'delphi') {
+        name1 = 'delphi';
+    }
+    else if(type == 'local') {
+        name0 = 'pqr';
         name1 = 'phi';
         name2 = 'cube';
     }
     else if(type == 'url') {
+        name0 = 'pqrurl';
         name1 = 'phiurl';
         name2 = 'cubeurl';
     }
 
     html += me.divStr + "dl_" + name1 + "' class='" + dialogClass + "'>";
-    html += "<div style='width:450px;'>";
-    html += "<b>Note</b>: Always load a PDB file before loading a Delphi potential file. <br/>";
-    html += "The PDB file can be loaded in the URL with \"pdbid=\" or at \"File > Open File\". The Delphi potential file can be calculated at <a href='http://compbio.clemson.edu/sapp/delphi_webserver/'>Delphi Web Server</a> and be exported as a Cube file. ";
+    html += me.divStr + "dl_" + name1 + "_tabs' style='border:0px;'>";
+    html += "<ul>";
+    html += "<li><a href='#" + me.pre + name1 + "tab1'>" + tab1 + "</a></li>";
+    html += "<li><a href='#" + me.pre + name1 + "tab2'>" + tab2 + "</a></li>";
+    //html += "<li><a href='#" + me.pre + name1 + "tab3'>" + tab3 + "</a></li>";
+    html += "</ul>";
 
-    if(type == 'url') html += "The potential file can be accessed in a URL if it is located in the same host as iCn3D.";
-
-    html += "<br/><br/><br/>";
+    html += me.divStr + name1 + "tab1'>";
+    if(type == 'delphi') html += me.addGsizeSalt(name1) + "<br>";
 
     html += "<span style='white-space:nowrap;font-weight:bold;'>Potential contour at: <select id='" + me.pre + name1 + "contour'>";
 
@@ -1515,16 +1559,149 @@ iCn3DUI.prototype.getPotentialHtml = function(type, dialogClass) { var me = this
 
     html += "</select> kT/e (25.6mV at 298K)</span><br/><br/>";
 
-    if(type == 'local') {
-        html += "<b>Phi File</b>: " + me.inputFileStr + "id='" + me.pre + name1 + "file'> " + me.buttonStr + "reload_" + name1 + "file' style='margin-top: 6px;'>Load Phi</button> or <br><br>";
-        html += "<b>Cube File</b>: " + me.inputFileStr + "id='" + me.pre + name2 + "file'> " + me.buttonStr + "reload_" + name2 + "file' style='margin-top: 6px;'>Load Cube</button><br><br><br/>";
+    var htmlTmp;
+
+    // tab1: equipotential map
+    if(type == 'delphi') {
+        html += me.buttonStr + "reload_" + name1 + "file' style='margin-top: 6px;'>Equipotential Map</button>";
+        html += me.buttonStr + name1 + "mapNo' style='margin-left:30px;'>Remove Map</button><br>";
+    }
+    else if(type == 'local') {
+        html += me.divStr + name1 + "tab1_tabs' style='border:0px;'>";
+        html += "<ul>";
+        html += "<li><a href='#" + me.pre + name1 + "tab1_" + name0 + "'>PQR</a></li>";
+        html += "<li><a href='#" + me.pre + name1 + "tab1_" + name1 + "'>Phi</a></li>";
+        html += "<li><a href='#" + me.pre + name1 + "tab1_" + name2 + "'>Cube</a></li>";
+        html += "</ul>";
+
+        htmlTmp = "<span style='margin-left:30px'>" + me.buttonStr + name1 + "mapNo'>Remove Map</button></span></div>";
+
+        html += me.divStr + name1 + "tab1_" + name0 + "'>";
+        html += me.addGsizeSalt(name0) + "<br>";
+        html += "<b>PQR File</b>: " + me.inputFileStr + "id='" + me.pre + name0 + "file'> <br><br>" + me.buttonStr + "reload_" + name0 + "file' style='margin-top: 6px;'>Equipotential Map</button>" + htmlTmp;
+
+        html += me.divStr + name1 + "tab1_" + name1 + "'>";
+        html += "<b>Phi File</b>: " + me.inputFileStr + "id='" + me.pre + name1 + "file'> <br><br>" + me.buttonStr + "reload_" + name1 + "file' style='margin-top: 6px;'>Equipotential Map</button>" + htmlTmp;
+
+        html += me.divStr + name1 + "tab1_" + name2 + "'>";
+        html += "<b>Cube File</b>: " + me.inputFileStr + "id='" + me.pre + name2 + "file'> <br><br>" + me.buttonStr + "reload_" + name2 + "file' style='margin-top: 6px;'>Equipotential Map</button>" + htmlTmp;
+
+        html += "</div>";
     }
     else if(type == 'url') {
-        html += "<b>Phi URL</b> in the same host: " + me.inputTextStr + "id='" + me.pre + name1 + "file'> " + me.buttonStr + "reload_" + name1 + "file' style='margin-top: 6px;'>Load Phi</button> or <br><br>";
-        html += "<b>Cube URL</b> in the same host: " + me.inputTextStr + "id='" + me.pre + name2 + "file'> " + me.buttonStr + "reload_" + name2 + "file' style='margin-top: 6px;'>Load Cube</button><br><br><br/>";
+        html += me.divStr + name1 + "tab1_tabs' style='border:0px;'>";
+        html += "<ul>";
+        html += "<li><a href='#" + me.pre + name1 + "tab1_" + name0 + "2'>PQR</a></li>";
+        html += "<li><a href='#" + me.pre + name1 + "tab1_" + name1 + "2'>Phi</a></li>";
+        html += "<li><a href='#" + me.pre + name1 + "tab1_" + name2 + "2'>Cube</a></li>";
+        html += "</ul>";
+
+        htmlTmp = "<span style='margin-left:30px'>" + me.buttonStr + name1 + "mapNo'>Remove Map</button></span></div>";
+
+        html += me.divStr + name1 + "tab1_" + name0 + "2'>";
+        html += me.addGsizeSalt(name0) + "<br>";
+        html += "<b>PQR URL</b> in the same host: " + me.inputTextStr + "id='" + me.pre + name0 + "file'> <br><br>" + me.buttonStr + "reload_" + name0 + "file' style='margin-top: 6px;'>Equipotential Map</button>" + htmlTmp;
+
+        html += me.divStr + name1 + "tab1_" + name1 + "2'>";
+        html += "<b>Phi URL</b> in the same host: " + me.inputTextStr + "id='" + me.pre + name1 + "file'> <br><br>" + me.buttonStr + "reload_" + name1 + "file' style='margin-top: 6px;'>Equipotential Map</button>" + htmlTmp;
+
+        html += me.divStr + name1 + "tab1_" + name2 + "2'>";
+        html += "<b>Cube URL</b> in the same host: " + me.inputTextStr + "id='" + me.pre + name2 + "file'> <br><br>" + me.buttonStr + "reload_" + name2 + "file' style='margin-top: 6px;'>Equipotential Map</button>" + htmlTmp;
+
+        html += "</div>";
     }
 
-    html += me.buttonStr + name1 + "mapNo'>Remove Map</button><br>";
+    html += "<br>" + me.getFootHtml(type, name1 + "tab1_foot");
+    html += "</div>";
+
+    html += me.divStr + name1 + "tab2'>";
+    if(type == 'delphi') html += me.addGsizeSalt(name1) + "<br>";
+
+    html += "<span style='white-space:nowrap;font-weight:bold;'>Surface with max potential at: <select id='" + me.pre + name1 + "contour2'>";
+
+    var optArray1c = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10'];
+    html += me.getOptionHtml(optArray1c, 2);
+
+    html += "</select> kT/e (25.6mV at 298K)</span><br/><br/>";
+
+    html += "<b>Surface</b>: <select id='" + me.pre + name1 + "surftype'>";
+    html += "<option value='21'>Van der Waals</option>";
+    html += "<option value='22' selected>Molecular Surface</option>";
+    html += "<option value='23'>Solvent Accessible</option>";
+    html += "</select>";
+
+    html += "<span style='margin-left:20px'><b>Opacity</b>: <select id='" + me.pre + name1 + "surfop'>";
+    var surfOp = ['1.0', '0.9', '0.8', '0.7', '0.6', '0.5', '0.4', '0.3', '0.2', '0.1'];
+    html += me.getOptionHtml(surfOp, 0);
+    html += "</select></span>";
+
+    html += "<span style='margin-left:20px'><b>Wireframe</b>: <select id='" + me.pre + name1 + "surfwf'>";
+    html += "<option value='yes'>Yes</option>";
+    html += "<option value='no' selected>No</option>";
+    html += "</select></span><br/>";
+
+    html += "<br/>";
+
+    // tab2: surface with potential
+    if(type == 'delphi') {
+        html += me.buttonStr + "reload_" + name1 + "file2' style='margin-top: 6px;'>Surface with Potential</button>";
+        html += me.buttonStr + name1 + "mapNo2' style='margin-left:30px;'>Remove Surface</button><br>";
+    }
+    else if(type == 'local') {
+        html += me.divStr + name1 + "tab2_tabs' style='border:0px;'>";
+        html += "<ul>";
+        html += "<li><a href='#" + me.pre + name1 + "tab2_" + name0 + "'>PQR</a></li>";
+        html += "<li><a href='#" + me.pre + name1 + "tab2_" + name1 + "'>Phi</a></li>";
+        html += "<li><a href='#" + me.pre + name1 + "tab2_" + name2 + "'>Cube</a></li>";
+        html += "</ul>";
+
+        htmlTmp = "<span style='margin-left:30px'>" + me.buttonStr + name1 + "mapNo2'>Remove Surface</button></span></div>";
+
+        html += me.divStr + name1 + "tab2_" + name0 + "'>";
+        html += me.addGsizeSalt(name0 + "2") + "<br>";
+        html += "<b>PQR File</b>: " + me.inputFileStr + "id='" + me.pre + name0 + "file2'> <br><br>" + me.buttonStr + "reload_" + name0 + "file2' style='margin-top: 6px;'>Surface with Potential</button>" + htmlTmp;
+
+        html += me.divStr + name1 + "tab2_" + name1 + "'>";
+        html += "<b>Phi File</b>: " + me.inputFileStr + "id='" + me.pre + name1 + "file2'> <br><br>" + me.buttonStr + "reload_" + name1 + "file2' style='margin-top: 6px;'>Surface with Potential</button>" + htmlTmp;
+
+        html += me.divStr + name1 + "tab2_" + name2 + "'>";
+        html += "<b>Cube File</b>: " + me.inputFileStr + "id='" + me.pre + name2 + "file2'> <br><br>" + me.buttonStr + "reload_" + name2 + "file2' style='margin-top: 6px;'>Surface with Potential</button>" + htmlTmp;
+
+        html += "</div>";
+    }
+    else if(type == 'url') {
+        html += me.divStr + name1 + "tab2_tabs' style='border:0px;'>";
+        html += "<ul>";
+        html += "<li><a href='#" + me.pre + name1 + "tab2_" + name0 + "2'>PQR</a></li>";
+        html += "<li><a href='#" + me.pre + name1 + "tab2_" + name1 + "2'>Phi</a></li>";
+        html += "<li><a href='#" + me.pre + name1 + "tab2_" + name2 + "2'>Cube</a></li>";
+        html += "</ul>";
+
+        htmlTmp = "<span style='margin-left:30px'>" + me.buttonStr + name1 + "mapNo2'>Remove Surface</button></span></div>";
+
+        html += me.divStr + name1 + "tab2_" + name0 + "2'>";
+        html += me.addGsizeSalt(name0 + "2") + "<br>";
+        html += "<b>PQR URL</b> in the same host: " + me.inputTextStr + "id='" + me.pre + name0 + "file2'> <br><br>" + me.buttonStr + "reload_" + name0 + "file2' style='margin-top: 6px;'>Surface with Potential</button>" + htmlTmp;
+
+        html += me.divStr + name1 + "tab2_" + name1 + "2'>";
+        html += "<b>Phi URL</b> in the same host: " + me.inputTextStr + "id='" + me.pre + name1 + "file2'> <br><br>" + me.buttonStr + "reload_" + name1 + "file2' style='margin-top: 6px;'>Surface with Potential</button>" + htmlTmp;
+
+        html += me.divStr + name1 + "tab2_" + name2 + "2'>";
+        html += "<b>Cube URL</b> in the same host: " + me.inputTextStr + "id='" + me.pre + name2 + "file2'> <br><br>" + me.buttonStr + "reload_" + name2 + "file2' style='margin-top: 6px;'>Surface with Potential</button>" + htmlTmp;
+
+        html += "</div>";
+    }
+
+    html += "<br>" + me.getFootHtml(type, name1 + "tab2_foot");
+    html += "</div>";
+
+    //html += me.divStr + name1 + "tab3'>";
+
+    //html += me.buttonStr + name1 + "pdb'>Download PDB</button> ";
+    //html += me.buttonStr + name1 + "pqr' style='margin-left:30px'>Download PQR</button> (with partial charges)<br>";
+
+    //html += "<br>" + footHtml;
+    //html += "</div>";
 
     html += "</div>";
     html += "</div>";
@@ -1764,6 +1941,8 @@ iCn3DUI.prototype.setDialogs = function() { var me = this, ic = me.icn3d; "use s
     html += "Custom Color: " + me.inputTextStr + "id='" + me.pre + "colorcustom' value='FF0000' size=8> ";
     html += me.buttonStr + "applycustomcolor'>Apply</button>";
     html += "</div>";
+
+    html += me.getPotentialHtml('delphi', dialogClass);
 
     html += me.getPotentialHtml('local', dialogClass);
     html += me.getPotentialHtml('url', dialogClass);
@@ -2046,6 +2225,26 @@ iCn3DUI.prototype.setDialogs = function() { var me = this, ic = me.icn3d; "use s
     }
     html += me.spanNowrapStr + "2. Color: " + me.inputTextStr + "id='" + me.pre + "stabilizercolor' value='ffffff' size=4><br/>";
     html += me.spanNowrapStr + "3. " + me.buttonStr + "applypick_stabilizer'>Add</button></span>";
+    html += "</div>";
+
+    html += me.divStr + "dl_disttwosets' class='" + dialogClass + "'>";
+    html += me.spanNowrapStr + "1. Select two sets</span><br/>";
+    html += "<table border=0 width=400 cellspacing=10><tr><td>";
+
+    html += me.divNowrapStr + "First set:</div>";
+    html += "<div style='text-indent:1.1em'><select style='max-width:200px' id='" + me.pre + "atomsCustomDist2' multiple size='5' style='min-width:130px;'>";
+    html += "</select></div>";
+
+    html += "</td><td>";
+
+    html += me.divNowrapStr + "Second set:</div>";
+    html += "<div style='text-indent:1.1em'><select style='max-width:200px' id='" + me.pre + "atomsCustomDist' multiple size='5' style='min-width:130px;'>";
+    html += "</select></div>";
+
+    html += "</td></tr></table>";
+
+    html += me.spanNowrapStr + "2. Color: " + me.inputTextStr + "id='" + me.pre + "distancecolor2' value='ffff00' size=4><br/><br/>";
+    html += me.spanNowrapStr + "3. " + me.buttonStr + "applydist2'>Display</button></span>";
     html += "</div>";
 
     html += me.divStr + "dl_stabilizer_rm' class='" + dialogClass + "'>";
@@ -2562,4 +2761,67 @@ iCn3DUI.prototype.getAlignSequencesAnnotations = function (alignChainArray, bUpd
   }
 
   return {"sequencesHtml": sequencesHtml, "maxSeqCnt":maxSeqCnt};
+};
+
+iCn3DUI.prototype.addGsizeSalt = function(name) { var me = this, ic = me.icn3d; "use strict";
+    var html = "";
+
+    html += "<span style='white-space:nowrap;font-weight:bold;'>Grid Size: <select id='" + me.pre + name + "gsize'>";
+
+    var optArray1c = ['65', '97', '129'];
+    html += me.getOptionHtml(optArray1c, 0);
+
+    html += "</select></span>";
+
+    html += "<span style='white-space:nowrap;font-weight:bold;margin-left:30px;'>Salt Concentration: <select id='" + me.pre + name + "salt'>";
+
+    var optArray1d = ['0', '0.15'];
+    html += me.getOptionHtml(optArray1d, 1);
+
+    html += "</select> M</span><br/>";
+
+    return html;
+};
+
+iCn3DUI.prototype.getFootHtml = function(type, tabName) { var me = this, ic = me.icn3d; "use strict";
+    var footHtml = "<div style='width:500px;'>";
+
+    if(type == 'delphi') {
+        if(me.cfg.cid) {
+            footHtml += "<b>Note</b>: Partial charges (MMFF94) are from PubChem Compound SDF files.<br/><br/>";
+        }
+        else {
+            footHtml += "<b>Note</b>: The WHOLE CHAINS of selected residues are used for <a href='http://honig.c2b2.columbia.edu/delphi'>DelPhi</a> potential calculation.";
+
+            footHtml += '<div style="width:20px; margin-top:6px; display:inline-block;"><span id="'
+              + me.pre + tabName + '_expand" class="ui-icon ui-icon-plus icn3d-expand icn3d-link" style="width:15px;" title="Expand"></span><span id="'
+              + me.pre + tabName + '_shrink" class="ui-icon ui-icon-minus icn3d-shrink icn3d-link" style="display:none; width:15px;" title="Shrink"></span></div><br>';
+            footHtml += me.divStr + tabName + "' style='display:none;'>";
+
+            footHtml += "The hydrogens and partial charges of proteins and nucleotides are added using <a href='http://compbio.clemson.edu/pka_webserver'>DelPhiPKa</a> with the Amber charge and size files. The hydrogens of ligands are added using <a href='http://openbabel.org/wiki/Main_Page'>Open Babel</a>. The partial charges of ligands are calculated using <a href='http://ambermd.org/antechamber/ac.html'>Antechamber</a> with the Gasteiger charge method.<br/><br/>";
+
+            footHtml += "Lipids are treated as ligands. Please use \"HETATM\" instead of \"ATOM  \" for each lipid atom in your PDB file. Each phosphate in lipids is assigned with a charge of -1. You can \"Download PQR\" above and modify it, or prepare your PQR file using other tools. Then load the PQR file at the menu \"Analysis > Load PQR/Potential\".<br/><br/>";
+
+            footHtml += "</div>";
+        }
+    }
+    else {
+        footHtml += "<b>Note</b>: Always load a PDB file before loading a PQR or DelPhi potential file.";
+
+        footHtml += '<div style="width:20px; margin-top:6px; display:inline-block;"><span id="'
+          + me.pre + tabName + '_expand" class="ui-icon ui-icon-plus icn3d-expand icn3d-link" style="width:15px;" title="Expand"></span><span id="'
+          + me.pre + tabName + '_shrink" class="ui-icon ui-icon-minus icn3d-shrink icn3d-link" style="display:none; width:15px;" title="Shrink"></span></div><br>';
+        footHtml += me.divStr + tabName + "' style='display:none;'>";
+
+        footHtml += "The PDB file can be loaded in the URL with \"pdbid=\" or at \"File > Open File\". The PQR file can be prepared at the menu \"Analysis > DelPhi Potential > Download PQR\" with your modification or using other tools. The DelPhi potential file can be calculated at <a href='http://compbio.clemson.edu/sapp/delphi_webserver/'>DelPhi Web Server</a> and be exported as a Cube file. ";
+
+        if(type == 'url') footHtml += "The PQR or potential file can be accessed in a URL if it is located in the same host as iCn3D.";
+
+        footHtml += "<br/><br/>";
+
+        footHtml += "</div>";
+    }
+    footHtml += "</div>";
+
+    return footHtml;
 };

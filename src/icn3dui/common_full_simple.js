@@ -8,14 +8,14 @@ if (typeof jQuery === 'undefined') { throw new Error('iCn3DUI requires jQuery') 
 if (typeof iCn3D === 'undefined') { throw new Error('iCn3DUI requires iCn3D') }
 
 iCn3DUI.prototype.rotStruc = function (direction, bInitial) { var me = this, ic = me.icn3d; "use strict";
-    if(ic.bStopRotate) return false;
-    if(ic.rotateCount > ic.rotateCountMax) {
+    if(me.icn3d.bStopRotate) return false;
+    if(me.icn3d.rotateCount > me.icn3d.rotateCountMax) {
         // back to the original orientation
-        ic.resetOrientation();
+        me.icn3d.resetOrientation();
 
         return false;
     }
-    ++ic.rotateCount;
+    ++me.icn3d.rotateCount;
 
     if(bInitial) {
         if(direction === 'left') {
@@ -36,16 +36,16 @@ iCn3DUI.prototype.rotStruc = function (direction, bInitial) { var me = this, ic 
     }
 
     if(direction === 'left' && me.ROT_DIR === 'left') {
-      ic.rotateLeft(1);
+      me.icn3d.rotateLeft(1);
     }
     else if(direction === 'right' && me.ROT_DIR === 'right') {
-      ic.rotateRight(1);
+      me.icn3d.rotateRight(1);
     }
     else if(direction === 'up' && me.ROT_DIR === 'up') {
-      ic.rotateUp(1);
+      me.icn3d.rotateUp(1);
     }
     else if(direction === 'down' && me.ROT_DIR === 'down') {
-      ic.rotateDown(1);
+      me.icn3d.rotateDown(1);
     }
     else {
       return false;
@@ -55,13 +55,13 @@ iCn3DUI.prototype.rotStruc = function (direction, bInitial) { var me = this, ic 
 };
 
 iCn3DUI.prototype.showTitle = function() { var me = this, ic = me.icn3d; "use strict";
-    if(ic.molTitle !== undefined && ic.molTitle !== '') {
-        var title = ic.molTitle;
+    if(me.icn3d.molTitle !== undefined && me.icn3d.molTitle !== '') {
+        var title = me.icn3d.molTitle;
 
         var titlelinkColor = (me.opts['background'] == 'white' || me.opts['background'] == 'grey') ? 'black' : me.GREYD;
 
         if(me.inputid === undefined) {
-            if(ic.molTitle.length > 40) title = ic.molTitle.substr(0, 40) + "...";
+            if(me.icn3d.molTitle.length > 40) title = me.icn3d.molTitle.substr(0, 40) + "...";
 
             $("#" + me.pre + "title").html(title);
         }
@@ -82,7 +82,7 @@ iCn3DUI.prototype.showTitle = function() { var me = this, ic = me.icn3d; "use st
         else {
             var url = me.getLinkToStructureSummary();
 
-            if(ic.molTitle.length > 40) title = ic.molTitle.substr(0, 40) + "...";
+            if(me.icn3d.molTitle.length > 40) title = me.icn3d.molTitle.substr(0, 40) + "...";
 
             //var asymmetricStr = (me.bAssemblyUseAsu) ? " (Asymmetric Unit)" : "";
             var asymmetricStr = "";
@@ -104,7 +104,7 @@ iCn3DUI.prototype.getLinkToStructureSummary = function(bLog) { var me = this, ic
        }
        else {
            //if(me.inputid.indexOf(",") !== -1) {
-           if(Object.keys(ic.structures).length > 1) {
+           if(Object.keys(me.icn3d.structures).length > 1) {
                url = "https://www.ncbi.nlm.nih.gov/structure/?term=";
            }
            else {
@@ -279,7 +279,7 @@ iCn3DUI.prototype.getPngText = function() { var me = this, ic = me.icn3d; "use s
         }
     }
 
-    text = text.replace(/!/g, Object.keys(ic.structures)[0] + '_');
+    text = text.replace(/!/g, Object.keys(me.icn3d.structures)[0] + '_');
 
     return text;
 };
@@ -290,15 +290,15 @@ iCn3DUI.prototype.saveFile = function(filename, type, text) { var me = this, ic 
 
     if(type === 'command') {
         var dataStr = '';
-        for(var i = 0, il = ic.commands.length; i < il; ++i) {
-            var command = ic.commands[i].trim();
+        for(var i = 0, il = me.icn3d.commands.length; i < il; ++i) {
+            var command = me.icn3d.commands[i].trim();
             if(i == il - 1) {
                var command_tf = command.split('|||');
 
                var transformation = {};
-               transformation.factor = ic._zoomFactor;
-               transformation.mouseChange = ic.mouseChange;
-               transformation.quaternion = ic.quaternion;
+               transformation.factor = me.icn3d._zoomFactor;
+               transformation.mouseChange = me.icn3d.mouseChange;
+               transformation.quaternion = me.icn3d.quaternion;
 
                command = command_tf[0] + '|||' + me.getTransformationStr(transformation);
             }
@@ -310,12 +310,12 @@ iCn3DUI.prototype.saveFile = function(filename, type, text) { var me = this, ic 
         blob = new Blob([data],{ type: "text;charset=utf-8;"});
     }
     else if(type === 'png') {
-        //ic.scaleFactor = 1.0;
+        //me.icn3d.scaleFactor = 1.0;
         var width = $("#" + me.pre + "canvas").width();
         var height = $("#" + me.pre + "canvas").height();
-        ic.setWidthHeight(width, height);
+        me.icn3d.setWidthHeight(width, height);
 
-        if(ic.bRender) ic.render();
+        if(me.icn3d.bRender) me.icn3d.render();
 
         var bAddURL = true;
         if (!window.File || !window.FileReader || !window.FileList || !window.Blob) {
@@ -323,7 +323,7 @@ iCn3DUI.prototype.saveFile = function(filename, type, text) { var me = this, ic 
         }
 
         if(me.isIE()) {
-            blob = ic.renderer.domElement.msToBlob();
+            blob = me.icn3d.renderer.domElement.msToBlob();
 
             if(bAddURL) {
                 var reader = new FileReader();
@@ -350,7 +350,7 @@ iCn3DUI.prototype.saveFile = function(filename, type, text) { var me = this, ic 
             }
         }
         else {
-            ic.renderer.domElement.toBlob(function(data) {
+            me.icn3d.renderer.domElement.toBlob(function(data) {
                 if(bAddURL) {
                     var reader = new FileReader();
                     reader.onload = function (e) {
@@ -380,10 +380,10 @@ iCn3DUI.prototype.saveFile = function(filename, type, text) { var me = this, ic 
         }
 
         // reset the image size
-        ic.scaleFactor = 1.0;
-        ic.setWidthHeight(width, height);
+        me.icn3d.scaleFactor = 1.0;
+        me.icn3d.setWidthHeight(width, height);
 
-        if(ic.bRender) ic.render();
+        if(me.icn3d.bRender) me.icn3d.render();
     }
     else if(type === 'html') {
         var dataStr = text;
@@ -437,10 +437,10 @@ iCn3DUI.prototype.resizeCanvas = function (width, height, bForceResize, bDraw) {
     //$("div:has(#" + me.pre + "canvas)").width(width).height(heightTmp);
     $("#" + me.divid + " div:has(#" + me.pre + "canvas)").width(width).height(heightTmp);
 
-    ic.setWidthHeight(width, heightTmp);
+    me.icn3d.setWidthHeight(width, heightTmp);
 
     if(bDraw === undefined || bDraw) {
-        ic.draw();
+        me.icn3d.draw();
     }
   }
 };
@@ -459,14 +459,14 @@ iCn3DUI.prototype.handleContextLost = function() { var me = this, ic = me.icn3d;
         // IE11 error: WebGL content is taking too long to render on your GPU. Temporarily switching to software rendering.
         console.log("WebGL context was lost. Reset WebGLRenderer and launch iCn3D again.");
 
-        ic.renderer = new THREE.WebGLRenderer({
-            canvas: ic.container.get(0),
+        me.icn3d.renderer = new THREE.WebGLRenderer({
+            canvas: me.icn3d.container.get(0),
             antialias: true,
             preserveDrawingBuffer: true,
             alpha: true
         });
 
-        ic.draw();
+        me.icn3d.draw();
 
     }, false);
 };
@@ -481,7 +481,7 @@ iCn3DUI.prototype.windowResize = function() { var me = this; "use strict";
             var width = me.WIDTH; // - me.LESSWIDTH_RESIZE;
             var height = me.HEIGHT; // - me.LESSHEIGHT - me.EXTRAHEIGHT;
 
-            if(ic !== undefined && !ic.bFullscreen) me.resizeCanvas(width, height);
+            if(ic !== undefined && !me.icn3d.bFullscreen) me.resizeCanvas(width, height);
         });
     }
 };
@@ -561,7 +561,7 @@ iCn3DUI.prototype.shareLinkUrl = function(bAllCommands) { var me = this, ic = me
 
             if(key === 'rotate' && value === 'right') continue;
 
-            // commands will be added in the for loop below: for(var il = ic.commands...
+            // commands will be added in the for loop below: for(var il = me.icn3d.commands...
             if(key === 'command') continue;
 
            if(key === 'options') {
@@ -614,9 +614,9 @@ iCn3DUI.prototype.shareLinkUrl = function(bAllCommands) { var me = this, ic = me
        if(bAllCommands || me.bInputUrlfile) start = 0;
 
        var transformation = {};
-       transformation.factor = ic._zoomFactor;
-       transformation.mouseChange = ic.mouseChange;
-       transformation.quaternion = ic.quaternion;
+       transformation.factor = me.icn3d._zoomFactor;
+       transformation.mouseChange = me.icn3d.mouseChange;
+       transformation.quaternion = me.icn3d.quaternion;
 
        var bCommands = false;
        var statefile = "";
@@ -625,24 +625,24 @@ iCn3DUI.prototype.shareLinkUrl = function(bAllCommands) { var me = this, ic = me
        var toggleStr = 'toggle highlight';
        var cntToggle = 0;
 
-       if(ic.commands.length > start) {
-           var command_tf = ic.commands[start].split('|||');
+       if(me.icn3d.commands.length > start) {
+           var command_tf = me.icn3d.commands[start].split('|||');
            prevCommandStr = command_tf[0].trim();
 
-           //statefile += ic.commands[start] + "\n";
+           //statefile += me.icn3d.commands[start] + "\n";
 
            if(prevCommandStr.indexOf(toggleStr) !== -1) ++cntToggle;
        }
 
        var i = start + 1;
        var selectChainHash = {};
-       for(var il = ic.commands.length; i < il; ++i) {
+       for(var il = me.icn3d.commands.length; i < il; ++i) {
            bCommands = true;
 
-           var command_tf = ic.commands[i].split('|||');
+           var command_tf = me.icn3d.commands[i].split('|||');
            var commandStr = command_tf[0].trim();
 
-           //statefile += ic.commands[i] + "\n";
+           //statefile += me.icn3d.commands[i] + "\n";
 
            // only output the most recent 'select saved atoms...' without " | name ..."
            if( ( (prevCommandStr.indexOf('select saved atoms') !== -1 || prevCommandStr.indexOf('select sets') !== -1)
@@ -653,7 +653,7 @@ iCn3DUI.prototype.shareLinkUrl = function(bAllCommands) { var me = this, ic = me
                // do nothing
            }
            // remove all "show selection" except the last one
-           else if(prevCommandStr == 'show selection' && ic.commands.slice(i).toString().indexOf('show selection') != -1) {
+           else if(prevCommandStr == 'show selection' && me.icn3d.commands.slice(i).toString().indexOf('show selection') != -1) {
                // do nothing
            }
            else if(prevCommandStr.indexOf(toggleStr) !== -1) {
@@ -683,11 +683,11 @@ iCn3DUI.prototype.shareLinkUrl = function(bAllCommands) { var me = this, ic = me
            statefile += prevCommandStr + '|||' + me.getTransformationStr(transformation) + '\n';
        }
 
-       statefile = statefile.replace(/!/g, Object.keys(ic.structures)[0] + '_');
+       statefile = statefile.replace(/!/g, Object.keys(me.icn3d.structures)[0] + '_');
        if((me.bInputfile && !me.bInputUrlfile) || url.length > 4000) url = statefile;
        var id;
-       if(ic.structures !== undefined && Object.keys(ic.structures).length == 1 && me.inputid !== undefined) {
-           id = Object.keys(ic.structures)[0];
+       if(me.icn3d.structures !== undefined && Object.keys(me.icn3d.structures).length == 1 && me.inputid !== undefined) {
+           id = Object.keys(me.icn3d.structures)[0];
            url = url.replace(new RegExp(id + '_','g'), '!');
        }
 
@@ -717,16 +717,16 @@ iCn3DUI.prototype.addLabel = function (text, x, y, z, size, color, background, t
     label.color = color;
     label.background = background;
 
-    if(ic.labels[type] === undefined) ic.labels[type] = [];
+    if(me.icn3d.labels[type] === undefined) me.icn3d.labels[type] = [];
 
     if(type !== undefined) {
-        ic.labels[type].push(label);
+        me.icn3d.labels[type].push(label);
     }
     else {
-        ic.labels['custom'].push(label);
+        me.icn3d.labels['custom'].push(label);
     }
 
-    ic.removeHlObjects();
+    me.icn3d.removeHlObjects();
 
-    //ic.draw();
+    //me.icn3d.draw();
 };

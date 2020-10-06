@@ -30,6 +30,10 @@ var iCn3D = function (id) { var me = this, ic = me.icn3d; "use strict";
 
     this.bInitial = true; // first 3d display
 
+    this.bDoublecolor = false;
+
+    this.originSize = 1; // radius
+
     this.ALTERNATE_STRUCTURE = -1;
 
     if(Detector.webgl){
@@ -68,7 +72,7 @@ var iCn3D = function (id) { var me = this, ic = me.icn3d; "use strict";
     this.scaleFactor = 1.0;
 
     // scale all labels
-    this.labelScale = 0.3; // 1.0;
+    this.labelScale = 1.0;
 
     // Impostor shaders
     this.bImpo = true;
@@ -128,6 +132,8 @@ var iCn3D = function (id) { var me = this, ic = me.icn3d; "use strict";
 
     this.bShowCrossResidueBond = true;
 
+    this.bExtrude = true;
+
     this.effects = {
         //'anaglyph': new THREE.AnaglyphEffect(this.renderer),
         //'parallax barrier': new THREE.ParallaxBarrierEffect(this.renderer),
@@ -157,7 +163,7 @@ var iCn3D = function (id) { var me = this, ic = me.icn3d; "use strict";
     this.boxGeometry = new THREE.BoxGeometry(1, 1, 1);
     this.cylinderGeometry = new THREE.CylinderGeometry(1, 1, 1, 32, 1);
     this.cylinderGeometryOutline = new THREE.CylinderGeometry(1, 1, 1, 32, 1, true);
-    this.axisDIV = 5; // 3
+    this.axisDIV = 5 * 3; //5; // 3;
     this.strandDIV = 6;
     this.tubeDIV = 8;
     this.nucleicAcidStrandDIV = 6; //4;
@@ -198,6 +204,9 @@ var iCn3D = function (id) { var me = this, ic = me.icn3d; "use strict";
         emmapwireframe: 'yes',
         phimap: 'nothing',
         phimapwireframe: 'yes',
+        phisurface: 'nothing',
+        phisurftype: 'nothing',
+        phisurfwf: 'no',
         opacity: '1.0',
         chemicals: 'stick',
         water: 'nothing',
@@ -778,6 +787,8 @@ iCn3D.prototype = {
     cationsTrimArray: ['K', 'NA', 'MG', 'AL', 'CA', 'TI', 'MN', 'FE', 'NI', 'CU', 'ZN', 'AG', 'BA'],
     anionsTrimArray: ['F', 'CL', 'BR', 'I'],
 
+    ionCharges: {K: 1, NA: 1, MG: 2, AL: 3, CA: 2, TI: 3, MN: 2, FE: 3, NI: 2, CU: 2, ZN: 2, AG: 1, BA: 2},
+
     vdwRadii: { // Hu, S.Z.; Zhou, Z.H.; Tsai, K.R. Acta Phys.-Chim. Sin., 2003, 19:1073.
          H: 1.08,
         HE: 1.34,
@@ -1317,6 +1328,8 @@ iCn3D.prototype = {
         this.prevEmmaps = [];
         this.prevPhimaps = [];
 
+        this.prevOtherMesh = [];
+
         this.defNames2Residues = {}; // custom defined selection name -> residue array
         this.defNames2Atoms = {}; // custom defined selection name -> atom array
         this.defNames2Descr = {}; // custom defined selection name -> description
@@ -1398,6 +1411,8 @@ iCn3D.prototype = {
         this.prevMaps = [];
         this.prevEmmaps = [];
         this.prevPhimaps = [];
+
+        this.prevOtherMesh = [];
 
         this.labels = {};   // hash of name -> a list of labels. Each label contains 'position', 'text', 'size', 'color', 'background'
                             // label name could be custom, residue, schmatic, distance

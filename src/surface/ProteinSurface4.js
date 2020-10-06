@@ -40,6 +40,11 @@ if (typeof console === 'undefined') {
 $3Dmol.ProteinSurface = function(threshbox) {
     //"use strict";
 
+    // for delphi
+    var dataArray = {};
+    var header, data, matrix, isovalue, loadPhiFrom;
+    var vpColor = null; // intarray
+
     // constants for vpbits bitmasks
     /** @var */
     var INOUT = 1;
@@ -166,6 +171,8 @@ $3Dmol.ProteinSurface = function(threshbox) {
         vpDistance = null; // floatarray
         vpAtomID = null; // intarray
 
+        vpColor = null; // intarray
+
         return {
             'vertices' : vertices,
             'faces' : finalfaces
@@ -173,7 +180,15 @@ $3Dmol.ProteinSurface = function(threshbox) {
     };
 
 
-    this.initparm = function(extent, btype, in_bCalcArea, atomlist) {
+    this.initparm = function(extent, btype, in_bCalcArea, atomlist
+      , inHeader, inData, inMatrix, inIsovalue, inLoadPhiFrom) {
+        // for delphi
+        header = inHeader;
+        dataArray = inData;
+        matrix = inMatrix;
+        isovalue = inIsovalue;
+        loadPhiFrom = inLoadPhiFrom;
+
         bCalcArea = in_bCalcArea;
 
         for (i = 0, il = atomlist.length; i < il; i++)
@@ -219,7 +234,7 @@ $3Dmol.ProteinSurface = function(threshbox) {
 
         // !!! different between 3Dmol and iCn3D
         // copied from surface.js from iview
-        var boxLength = 128;
+        var boxLength = 129;
         //maxLen = pmaxx - pminx + 2*(probeRadius + 5.5/2)
         var maxLen = pmaxx - pminx;
         if ((pmaxy - pminy) > maxLen) maxLen = pmaxy - pminy;
@@ -251,7 +266,8 @@ $3Dmol.ProteinSurface = function(threshbox) {
         vpBits = new Uint8Array(pLength * pWidth * pHeight);
         vpDistance = new Float64Array(pLength * pWidth * pHeight); // float 32
         vpAtomID = new Int32Array(pLength * pWidth * pHeight);
-        //console.log("Box size: ", pLength, pWidth, pHeight, vpBits.length);
+
+        vpColor = [];
     };
 
     this.boundingatom = function(btype) {
@@ -296,6 +312,8 @@ $3Dmol.ProteinSurface = function(threshbox) {
             vpBits[i] = 0;
             vpDistance[i] = -1.0;
             vpAtomID[i] = -1;
+
+            vpColor[i] = new THREE.Color();
         }
 
         for (i in atomlist) {
@@ -303,6 +321,120 @@ $3Dmol.ProteinSurface = function(threshbox) {
             if (atom === undefined || atom.resn === 'DUM')
                 continue;
             this.fillAtom(atom, atoms);
+        }
+
+        // show delphi potential on surface
+        if(dataArray) {
+            var pminx2 = 0, pmaxx2 = header.xExtent - 1;
+            var pminy2 = 0, pmaxy2 = header.yExtent - 1;
+            var pminz2 = 0, pmaxz2 = header.zExtent - 1;
+
+            var scaleFactor2 = 1; // angstrom / grid
+
+            var pLength2 = Math.floor(0.5 + scaleFactor2 * (pmaxx2 - pminx2)) + 1;
+            var pWidth2 = Math.floor(0.5 + scaleFactor2 * (pmaxy2 - pminy2)) + 1;
+            var pHeight2 = Math.floor(0.5 + scaleFactor2 * (pmaxz2 - pminz2)) + 1;
+
+            // fill the color
+            var widthHeight2 = pWidth2 * pHeight2;
+            var height2 = pHeight2;
+
+            // generate the correctly ordered dataArray
+            var vData = new Float32Array(pLength2 * pWidth2 * pHeight2);
+
+            // loop through the delphi box
+            for(i = 0; i < pLength2; ++i) {
+                for(j = 0; j < pWidth2; ++j) {
+                    for(k = 0; k < pHeight2; ++k) {
+                        var index = i * widthHeight2 + j * height2 + k;
+
+                        var index2;
+                        if(header.filetype == 'phi') { // loop z, y, x
+                            index2 = k * widthHeight2 + j * height2 + i;
+                        }
+                        else if(header.filetype == 'cube') { // loop x, y, z
+                            index2 = i * widthHeight2 + j * height2 + k;
+                        }
+
+                        if(index2 < dataArray.length) {
+                            vData[index] = dataArray[index2];
+                        }
+                    }
+                }
+            }
+
+            var widthHeight = pWidth * pHeight;
+            var height = pHeight;
+
+            // loop through the surface box
+            for(i = 0; i < pLength; ++i) {
+                for(j = 0; j < pWidth; ++j) {
+                    for(k = 0; k < pHeight; ++k) {
+                        var x = i / finalScaleFactor.x - ptranx;
+                        var y = j / finalScaleFactor.y - ptrany;
+                        var z = k / finalScaleFactor.z - ptranz;
+
+                        var r = new THREE.Vector3(x, y, z);
+
+                        // scale to the grid
+                        r.sub(header.ori).multiplyScalar(header.scale);
+
+                        // determine the neighboring grid coordinate
+                        var nx0 = Math.floor(r.x), nx1 = Math.ceil(r.x);
+                        var ny0 = Math.floor(r.y), ny1 = Math.ceil(r.y);
+                        var nz0 = Math.floor(r.z), nz1 = Math.ceil(r.z);
+                        if(nx1 == nx0) nx1 = nx0 + 1;
+                        if(ny1 == ny0) ny1 = ny0 + 1;
+                        if(nz1 == nz0) nz1 = nz0 + 1;
+
+                        if(nx1 > pLength2) nx1 = pLength2;
+                        if(ny1 > pWidth2) ny1 = pWidth2;
+                        if(nz1 > pHeight2) nz1 = pHeight2;
+
+                        //https://en.wikipedia.org/wiki/Trilinear_interpolation
+                        var c000 = vData[nx0 * widthHeight2 + ny0 * height2 + nz0];
+                        var c100 = vData[nx1 * widthHeight2 + ny0 * height2 + nz0];
+                        var c010 = vData[nx0 * widthHeight2 + ny1 * height2 + nz0];
+                        var c001 = vData[nx0 * widthHeight2 + ny0 * height2 + nz1];
+                        var c110 = vData[nx1 * widthHeight2 + ny1 * height2 + nz0];
+                        var c011 = vData[nx0 * widthHeight2 + ny1 * height2 + nz1];
+                        var c101 = vData[nx1 * widthHeight2 + ny0 * height2 + nz1];
+                        var c111 = vData[nx1 * widthHeight2 + ny1 * height2 + nz1];
+
+                        var xd = r.x - nx0;
+                        var yd = r.y - ny0;
+                        var zd = r.z - nz0;
+
+                        var c00 = c000 * (1 - xd) + c100 * xd;
+                        var c01 = c001 * (1 - xd) + c101 * xd;
+                        var c10 = c010 * (1 - xd) + c110 * xd;
+                        var c11 = c011 * (1 - xd) + c111 * xd;
+
+                        var c0 = c00 * (1 - yd) + c10 * yd;
+                        var c1 = c01 * (1 - yd) + c11 * yd;
+
+                        var c = c0 * (1 - zd) + c1 * zd;
+
+                        // determine the color based on the potential value
+                        if(c > isovalue) c = isovalue;
+                        if(c < -isovalue) c = -isovalue;
+
+                        var color;
+                        if(c > 0) {
+                            c /= 1.0 * isovalue;
+                            color = new THREE.Color(1-c, 1-c, 1);
+                        }
+                        else {
+                            c /= -1.0 * isovalue;
+                            color = new THREE.Color(1, 1-c, 1-c);
+                        }
+
+                        var index = i * widthHeight + j * height + k;
+
+                        vpColor[index] = color;
+                    } // for k
+                } // for j
+            } // for i
         }
 
         for (i = 0, il = vpBits.length; i < il; i++)
@@ -660,8 +792,6 @@ $3Dmol.ProteinSurface = function(threshbox) {
             }
         }
 
-        // console.log("part1", positout);
-
         for (i = 0, n = inarray.length; i < n; i++) {
             tx = inarray[i].ix;
             ty = inarray[i].iy;
@@ -714,8 +844,6 @@ $3Dmol.ProteinSurface = function(threshbox) {
                 }
             }
         }
-
-        // console.log("part2", positout);
 
         for (i = 0, n = inarray.length; i < n; i++) {
             tx = inarray[i].ix;
@@ -771,7 +899,6 @@ $3Dmol.ProteinSurface = function(threshbox) {
             }
         }
 
-        // console.log("part3", positout);
         return outarray;
     };
 
@@ -832,7 +959,6 @@ $3Dmol.ProteinSurface = function(threshbox) {
                 str += "0x" + code.toString(16) + ", ";
             }
             str += "]";
-            //console.log(str);
         };
 
         this.print = function() {
@@ -854,7 +980,6 @@ $3Dmol.ProteinSurface = function(threshbox) {
                 }
                 newtable.push(newarr);
             }
-            //console.log(JSON.stringify(newtable));
             redoTable(newtable);
         };
     };
@@ -872,6 +997,8 @@ $3Dmol.ProteinSurface = function(threshbox) {
         var pWH = pWidth*pHeight;
         for (var i = 0, vlen = verts.length; i < vlen; i++) {
             verts[i]['atomid'] = vpAtomID[verts[i].x * pWH + pHeight *
+                    verts[i].y + verts[i].z];
+            if(dataArray) verts[i]['color'] = vpColor[verts[i].x * pWH + pHeight *
                     verts[i].y + verts[i].z];
         }
 

@@ -180,6 +180,20 @@ iCn3D.prototype.createCylinder = function (p0, p1, radius, color, bHighlight, co
     }
 };
 
+iCn3D.prototype.createCylinder_base = function (p0, p1, radius, color, bHighlight, color2, bPicking) { var me = this, ic = me.icn3d; "use strict";
+    var mesh = new THREE.Mesh(this.cylinderGeometry, new THREE.MeshPhongMaterial({ specular: this.frac, shininess: 30, emissive: 0x000000, color: color }));
+
+    mesh.position.copy(p0).add(p1).multiplyScalar(0.5);
+    mesh.matrixAutoUpdate = false;
+    //mesh.lookAt(p0);
+    mesh.lookAt(p1.clone().sub(p0));
+    mesh.updateMatrix();
+
+    mesh.matrix.multiply(new THREE.Matrix4().makeScale(radius, radius, p0.distanceTo(p1))).multiply(new THREE.Matrix4().makeRotationX(Math.PI * 0.5));
+
+    return mesh;
+};
+
 // from iview (http://istar.cse.cuhk.edu.hk/iview/)
 iCn3D.prototype.createRepresentationSub = function (atoms, f0, f01) { var me = this, ic = me.icn3d; "use strict";
     var clbondArray = [];
@@ -643,6 +657,7 @@ iCn3D.prototype.getValueFromKnot = function (t, t0, t1, t2, t3, y0, y1, y2, y3) 
 // cubic splines for four points: http://thalestriangles.blogspot.com/2014/02/a-bit-of-ex-spline-ation.html
 // https://math.stackexchange.com/questions/577641/how-to-calculate-interpolating-splines-in-3d-space
 iCn3D.prototype.subdivide = function (_pnts, _clrs, DIV, bShowArray, bHighlight, prevone, nexttwo, bExtendLastRes) { var me = this, ic = me.icn3d; "use strict";
+
     var ret = [];
     var pos = [];
     var color = [];
@@ -1019,6 +1034,9 @@ iCn3D.prototype.prepareStrand = function(divPoints, positions, width, colors, di
         return;
     }
 
+    var oriColors = colors;
+    var bHelix = (bShowArrow) ? false : true;
+
     var colorsLastTwo = [];
     colorsLastTwo.push(colors[colors.length - 2]);
     colorsLastTwo.push(colors[colors.length - 1]);
@@ -1075,7 +1093,17 @@ iCn3D.prototype.prepareStrand = function(divPoints, positions, width, colors, di
     }
 
     if(bStrip) {
-        this.createStrip(pnts[0], pnts[1], colors, div, thickness, bHighlight, true, undefined, calphaIdArray, posIndex, prevone, nexttwo);
+        if(bHelix) {
+            if(!this.bDoublecolor) {
+                this.createStrip(pnts[0], pnts[1], colors, div, thickness, bHighlight, true, undefined, calphaIdArray, posIndex, prevone, nexttwo, pntsCA, prevCOArray);
+            }
+            else {
+                this.createStrip(pnts[0], pnts[1], oriColors, div, thickness, bHighlight, true, undefined, calphaIdArray, posIndex, prevone, nexttwo, pntsCA, prevCOArray);
+            }
+        }
+        else {
+            this.createStrip(pnts[0], pnts[1], colors, div, thickness, bHighlight, true, undefined, calphaIdArray, posIndex, prevone, nexttwo);
+        }
     }
     else {
         this.createCurveSub(pnts[0], width, colors, div, bHighlight, bRibbon, true, undefined, calphaIdArray, posIndex, prevone, nexttwo);
@@ -1158,20 +1186,42 @@ iCn3D.prototype.createStripArrow = function (p0, p1, colors, div, thickness, bHi
 };
 
 // modified from iview (http://istar.cse.cuhk.edu.hk/iview/)
-iCn3D.prototype.createStrip = function (p0, p1, colors, div, thickness, bHighlight, bNoSmoothen, bShowArray, calphaIdArray, positions, prevone, nexttwo) { var me = this, ic = me.icn3d; "use strict";
+iCn3D.prototype.createStrip = function (p0, p1, colors, div, thickness, bHighlight, bNoSmoothen, bShowArray, calphaIdArray, positions, prevone, nexttwo, pntsCA, prevCOArray) { var me = this, ic = me.icn3d; "use strict";
     if (p0.length < 2) return;
     div = div || this.axisDIV;
-    if(!bNoSmoothen) {
-        var bExtendLastRes = true;
-        var pnts_clrs0 = this.subdivide(p0, colors, div, bShowArray, bHighlight, prevone, nexttwo, bExtendLastRes);
-        var pnts_clrs1 = this.subdivide(p1, colors, div, bShowArray, bHighlight, prevone, nexttwo, bExtendLastRes);
-        p0 = pnts_clrs0[0];
-        p1 = pnts_clrs1[0];
-        colors = pnts_clrs0[2];
-    }
-    if (p0.length < 2) return;
 
-    this.setCalphaDrawnCoord(p0, div, calphaIdArray);
+    if(pntsCA && this.bDoublecolor && !this.bCalphaOnly) {
+        var bExtendLastRes = false; //true;
+
+        var pnts_clrs = this.subdivide(pntsCA, colors, div, bShowArray, bHighlight, prevone, nexttwo, bExtendLastRes);
+        pntsCA = pnts_clrs[0];
+
+        this.setCalphaDrawnCoord(pntsCA, div, calphaIdArray);
+
+        for(var i = 0, il = prevCOArray.length; i < il; ++i) {
+            prevCOArray[i].normalize();
+        }
+
+        var pnts_clrs2 = this.subdivide(prevCOArray, colors, div, bShowArray, bHighlight, prevone, nexttwo, bExtendLastRes);
+        prevCOArray = pnts_clrs2[0];
+
+        colors = pnts_clrs[2];
+    }
+    else {
+
+        if(!bNoSmoothen) {
+            //var bExtendLastRes = true;
+            var bExtendLastRes = false;
+            var pnts_clrs0 = this.subdivide(p0, colors, div, bShowArray, bHighlight, prevone, nexttwo, bExtendLastRes);
+            var pnts_clrs1 = this.subdivide(p1, colors, div, bShowArray, bHighlight, prevone, nexttwo, bExtendLastRes);
+            p0 = pnts_clrs0[0];
+            p1 = pnts_clrs1[0];
+            colors = pnts_clrs0[2];
+        }
+        if (p0.length < 2) return;
+
+        this.setCalphaDrawnCoord(p0, div, calphaIdArray);
+    }
 
     if(bHighlight === 1) {
         //mesh = new THREE.Mesh(geo, this.matShader);
@@ -1277,45 +1327,159 @@ iCn3D.prototype.createStrip = function (p0, p1, colors, div, thickness, bHighlig
         }
     }
     else {
-        var geo = new THREE.Geometry();
-        var vs = geo.vertices, fs = geo.faces;
-        var axis, p0v, p1v, a0v, a1v;
-        for (var i = 0, lim = p0.length; i < lim; ++i) {
-            vs.push(p0v = p0[i]); // 0
-            vs.push(p0v); // 1
-            vs.push(p1v = p1[i]); // 2
-            vs.push(p1v); // 3
-            if (i < lim - 1) {
-                axis = p1[i].clone().sub(p0[i]).cross(p0[i + 1].clone().sub(p0[i])).normalize().multiplyScalar(thickness);
+        if(!pntsCA || !this.bDoublecolor || this.bCalphaOnly) {
+            var geo = new THREE.Geometry();
+            var vs = geo.vertices, fs = geo.faces;
+            var axis, p0v, p1v, a0v, a1v;
+            for (var i = 0, lim = p0.length; i < lim; ++i) {
+                vs.push(p0v = p0[i]); // 0
+                vs.push(p0v); // 1
+                vs.push(p1v = p1[i]); // 2
+                vs.push(p1v); // 3
+                if (i < lim - 1) {
+                    axis = p1[i].clone().sub(p0[i]).cross(p0[i + 1].clone().sub(p0[i])).normalize().multiplyScalar(thickness);
+                }
+                vs.push(a0v = p0[i].clone().add(axis)); // 4
+                vs.push(a0v); // 5
+                vs.push(a1v = p1[i].clone().add(axis)); // 6
+                vs.push(a1v); // 7
             }
-            vs.push(a0v = p0[i].clone().add(axis)); // 4
-            vs.push(a0v); // 5
-            vs.push(a1v = p1[i].clone().add(axis)); // 6
-            vs.push(a1v); // 7
-        }
-        var faces = [[0, 2, -6, -8], [-4, -2, 6, 4], [7, 3, -5, -1], [-3, -7, 1, 5]];
+            var faces = [[0, 2, -6, -8], [-4, -2, 6, 4], [7, 3, -5, -1], [-3, -7, 1, 5]];
 
-        for (var i = 1, lim = p0.length, divInv = 1 / div; i < lim; ++i) {
-            var offset = 8 * i;
-            //var color = this.thr(colors[Math.round((i - 1) * divInv)]);
-            var color = this.thr(colors[i - 1]);
-            for (var j = 0; j < 4; ++j) {
-                fs.push(new THREE.Face3(offset + faces[j][0], offset + faces[j][1], offset + faces[j][2], undefined, color));
-                fs.push(new THREE.Face3(offset + faces[j][3], offset + faces[j][0], offset + faces[j][2], undefined, color));
+            for (var i = 1, lim = p0.length, divInv = 1 / div; i < lim; ++i) {
+                var offset = 8 * i;
+                //var color = this.thr(colors[Math.round((i - 1) * divInv)]);
+                var color = this.thr(colors[i - 1]);
+                for (var j = 0; j < 4; ++j) {
+                    fs.push(new THREE.Face3(offset + faces[j][0], offset + faces[j][1], offset + faces[j][2], undefined, color));
+                    fs.push(new THREE.Face3(offset + faces[j][3], offset + faces[j][0], offset + faces[j][2], undefined, color));
+                }
             }
+            var vsize = vs.length - 8; // Cap
+            for (var i = 0; i < 4; ++i) {
+                vs.push(vs[i * 2]);
+                vs.push(vs[vsize + i * 2]);
+            };
+            vsize += 8;
+            fs.push(new THREE.Face3(vsize, vsize + 2, vsize + 6, undefined, fs[0].color));
+            fs.push(new THREE.Face3(vsize + 4, vsize, vsize + 6, undefined, fs[0].color));
+            fs.push(new THREE.Face3(vsize + 1, vsize + 5, vsize + 7, undefined, fs[fs.length - 3].color));
+            fs.push(new THREE.Face3(vsize + 3, vsize + 1, vsize + 7, undefined, fs[fs.length - 3].color));
+            geo.computeFaceNormals();
+            geo.computeVertexNormals(false);
+
         }
-        var vsize = vs.length - 8; // Cap
-        for (var i = 0; i < 4; ++i) {
-            vs.push(vs[i * 2]);
-            vs.push(vs[vsize + i * 2]);
-        };
-        vsize += 8;
-        fs.push(new THREE.Face3(vsize, vsize + 2, vsize + 6, undefined, fs[0].color));
-        fs.push(new THREE.Face3(vsize + 4, vsize, vsize + 6, undefined, fs[0].color));
-        fs.push(new THREE.Face3(vsize + 1, vsize + 5, vsize + 7, undefined, fs[fs.length - 3].color));
-        fs.push(new THREE.Face3(vsize + 3, vsize + 1, vsize + 7, undefined, fs[fs.length - 3].color));
-        geo.computeFaceNormals();
-        geo.computeVertexNormals(false);
+        else {
+            var path = new THREE.CatmullRomCurve3(pntsCA);
+
+            var normal = new THREE.Vector3();
+
+            var tangents = [];
+            var normals = [];
+            var binormals = [];
+
+            var i, u, theta;
+            var segments = pntsCA.length;
+
+            // compute the tangent vectors for each segment on the curve
+            for ( i = 0; i <= segments; i ++ ) {
+                u = i / segments;
+
+                tangents[ i ] = path.getTangentAt( u );
+                tangents[ i ].normalize();
+            }
+
+            normals[ 0 ] = prevCOArray[0].normalize();
+
+            binormals[ 0 ] = new THREE.Vector3();
+            binormals[ 0 ].crossVectors( tangents[ 0 ], normals[ 0 ] );
+
+            var helixAxis = pntsCA[segments - 1].clone().sub(pntsCA[0]);
+
+            var cntIn = 0
+            for ( i = 1; i <= segments; i ++ ) {
+                normals[i] = prevCOArray[i-1];
+
+                binormals[ i ] = new THREE.Vector3();
+                binormals[ i ].crossVectors( tangents[ i ], normals[ i ] );
+
+                if(helixAxis.dot(binormals[i]) > 0 ) ++cntIn;
+            }
+
+            // most binormals are facing inward
+            var colorOut = (cntIn > 0.5 * segments) ? true : false;
+
+            var normalObj = {
+                tangents: tangents,
+                normals: normals,
+                binormals: binormals
+            };
+
+            var extrudeSettings = {
+              steps: segments,
+              extrudePath: path,
+              frames: normalObj
+            };
+
+            var circleRadius = this.coilWidth;
+            var width = 4.2 * circleRadius;
+            var height = 1.1 * circleRadius;
+
+            //https://stackoverflow.com/questions/42934609/extrude-3d-shape-from-three-line-object-in-three-js/42955930#42955930
+            var ellipse = new THREE.EllipseCurve(
+                    0,  0,            // ax, aY
+                    width, height,    // xRadius, yRadius
+                    0,  2 * Math.PI,  // aStartAngle, aEndAngle
+                    false,            // aClockwise
+                    Math.PI //0       // aRotation
+            );
+
+            var shape = new THREE.Shape();
+            shape.curves.push(ellipse);
+            var geo = new THREE.ExtrudeGeometry(shape, extrudeSettings);
+
+            //https://stemkoski.github.io/Three.js/Graphulus-Curve.html
+            var color, face, numberOfSides, vertexIndex;
+            // faces are indexed using characters
+            var faceIndices = [ 'a', 'b', 'c', 'd' ];
+
+            // first, assign colors to vertices as desired
+            var numVerticesPerSeg = parseInt(geo.vertices.length / (segments + 1) );
+
+            var prevColor;
+            var half = parseInt(numVerticesPerSeg/2);
+            for ( var r = 0; r < numVerticesPerSeg; r++ ) {
+                for ( var s = 0; s <= segments; s++ ) {
+                    vertexIndex = s + r * (segments + 1);
+
+                    // the color of a residue spans across several residues in the back side of the helix
+                    color = (s == segments) ? colors[s - 1] : colors[s];
+
+                    if(!color) color = prevColor;
+
+                    var bFront = (colorOut) ? (r > half) : (r < half);
+
+                    geo.colors[vertexIndex] = bFront ? color : this.thr(0x888888); // use this array for convenience
+                    prevColor = color;
+                }
+            }
+
+            // copy the colors as necessary to the face's vertexColors array.
+            for ( var i = 0; i < geo.faces.length; i++ )
+            {
+                face = geo.faces[ i ];
+
+                numberOfSides = ( face instanceof THREE.Face3 ) ? 3 : 4;
+                for( var j = 0; j < numberOfSides; j++ )
+                {
+                    vertexIndex = face[ faceIndices[ j ] ];
+                    face.vertexColors[ j ] = geo.colors[ vertexIndex ];
+                }
+            }
+
+            geo.computeFaceNormals();
+            geo.computeVertexNormals(false);
+        }
 
         var mesh;
 
@@ -1335,6 +1499,10 @@ iCn3D.prototype.createStrip = function (p0, p1, colors, div, thickness, bHighlig
 
     p0 = null;
     p1 = null;
+};
+
+iCn3D.prototype.clamp = function ( value, min, max ) {
+    return Math.max( min, Math.min( max, value ) );
 };
 
 iCn3D.prototype.getSSExpandedAtoms = function (atoms, bHighlight) { var me = this, ic = me.icn3d; "use strict";
@@ -1581,7 +1749,8 @@ iCn3D.prototype.createStrand = function (atoms, num, div, fill, coilWidth, helix
                                 if(caArray.length > resSpan + 1) { // use the calpha and the previous 4th c-alpha to calculate the helix direction
                                     O = prevCoorCA.clone();
                                     oldCA = this.atoms[caArray[caArray.length - 1 - resSpan - 1]].coord.clone();
-                                    O.sub(oldCA);
+                                    //O.sub(oldCA);
+                                    oldCA.sub(O);
                                 }
                                 else {
                                     O = new THREE.Vector3(Math.random(),Math.random(),Math.random());
@@ -1592,7 +1761,8 @@ iCn3D.prototype.createStrand = function (atoms, num, div, fill, coilWidth, helix
                             if(caArray.length > resSpan + 1) { // use the calpha and the previous 4th c-alpha to calculate the helix direction
                                 O = prevCoorCA.clone();
                                 oldCA = this.atoms[caArray[caArray.length - 1 - resSpan - 1]].coord.clone();
-                                O.sub(oldCA);
+                                //O.sub(oldCA);
+                                oldCA.sub(O);
                             }
                             else {
                                 O = new THREE.Vector3(Math.random(),Math.random(),Math.random());
@@ -1684,7 +1854,8 @@ iCn3D.prototype.createStrand = function (atoms, num, div, fill, coilWidth, helix
                             if(caArray.length > resSpan) { // use the calpha and the previous 4th c-alpha to calculate the helix direction
                                 O = currentCA.clone();
                                 oldCA = this.atoms[caArray[caArray.length - 1 - resSpan]].coord.clone();
-                                O.sub(oldCA);
+                                //O.sub(oldCA);
+                                oldCA.sub(O);
                             }
                             else {
                                 O = new THREE.Vector3(Math.random(),Math.random(),Math.random());
@@ -1741,16 +1912,16 @@ iCn3D.prototype.createStrand = function (atoms, num, div, fill, coilWidth, helix
                             }
                             else if(bHelixSegment) {
                                 if(bFullAtom) {
-                                    this.createStrip(pnts[0], pnts[num - 1], colors, div, thickness, bHighlight, false, bShowArray, calphaIdArray, undefined, prevone, nexttwo);
+                                    this.createStrip(pnts[0], pnts[num - 1], colors, div, thickness, bHighlight, false, bShowArray, calphaIdArray, undefined, prevone, nexttwo, pntsCA, prevCOArray);
                                 }
                                 else {
                                     var start = 0, end = num - 1;
-                                    this.createStripArrow(pnts[0], pnts[num - 1], colors, div, thickness, bHighlight, num, start, end, pntsCA, prevCOArray, bShowArray, calphaIdArray, true, prevone, nexttwo);
+                                    this.createStripArrow(pnts[0], pnts[num - 1], colors, div, thickness, bHighlight, num, start, end, pntsCA, prevCOArray, bShowArray, calphaIdArray, false, prevone, nexttwo);
                                 }
                             }
                             else {
                                 if(bHighlight === 2) { // draw coils only when highlighted. if not highlighted, coils will be drawn as tubes separately
-                                    this.createStrip(pnts[0], pnts[num - 1], colors, div, thickness, bHighlight, false, bShowArray, calphaIdArray, undefined, prevone, nexttwo);
+                                    this.createStrip(pnts[0], pnts[num - 1], colors, div, thickness, bHighlight, false, bShowArray, calphaIdArray, undefined, prevone, nexttwo, pntsCA, prevCOArray);
                                 }
                             }
                         }
@@ -1797,7 +1968,7 @@ iCn3D.prototype.createStrand = function (atoms, num, div, fill, coilWidth, helix
                             }
                             else if(bHelixSegment) {
                                 if(bFullAtom) {
-                                    this.createStrip(pnts[0], pnts[num - 1], colors, div, thickness, bHighlight, false, bShowArray, calphaIdArray, undefined, prevone, nexttwo);
+                                    this.createStrip(pnts[0], pnts[num - 1], colors, div, thickness, bHighlight, false, bShowArray, calphaIdArray, undefined, prevone, nexttwo, pntsCA, prevCOArray);
                                 }
                                 else {
                                     var start = 0, end = num - 1;
@@ -1842,67 +2013,133 @@ iCn3D.prototype.createStrand = function (atoms, num, div, fill, coilWidth, helix
 };
 
 // modified from iview (http://istar.cse.cuhk.edu.hk/iview/)
-iCn3D.prototype.createTubeSub = function (_pnts, colors, radii, bHighlight, prevone, nexttwo) { var me = this, ic = me.icn3d; "use strict";
+iCn3D.prototype.createTubeSub = function (_pnts, colors, radii, bHighlight, prevone, nexttwo, bRadiusArray) { var me = this, ic = me.icn3d; "use strict";
     if (_pnts.length < 2) return;
-    var circleDiv = this.tubeDIV, axisDiv = this.axisDIV;
-    var circleDivInv = 1 / circleDiv, axisDivInv = 1 / axisDiv;
-    var geo = new THREE.Geometry();
-    var pnts_clrs = this.subdivide(_pnts, colors, axisDiv, undefined, undefined, prevone, nexttwo);
 
-    var pnts = pnts_clrs[0];
-    colors = pnts_clrs[2];
+    var segments, radiusSegments;
 
-    var prevAxis1 = new THREE.Vector3(), prevAxis2;
-    for (var i = 0, lim = pnts.length; i < lim; ++i) {
-        var r, idx = (i - 1) * axisDivInv;
-        if (i === 0) r = radii[0];
-        else {
-            if (idx % 1 === 0) r = radii[idx];
+    if(bRadiusArray) {
+        var circleDiv = this.tubeDIV, axisDiv = this.axisDIV;
+        var circleDivInv = 1 / circleDiv, axisDivInv = 1 / axisDiv;
+        var geo = new THREE.Geometry();
+        var pnts_clrs = this.subdivide(_pnts, colors, axisDiv, undefined, undefined, prevone, nexttwo);
+
+        var pnts = pnts_clrs[0];
+        colors = pnts_clrs[2];
+
+        var prevAxis1 = new THREE.Vector3(), prevAxis2;
+        for (var i = 0, lim = pnts.length; i < lim; ++i) {
+            var r, idx = (i - 1) * axisDivInv;
+            if (i === 0) r = radii[0];
             else {
-                var floored = Math.floor(idx);
-                var tmp = idx - floored;
-                r = radii[floored] * tmp + radii[floored + 1] * (1 - tmp);
+                if (idx % 1 === 0) r = radii[idx];
+                else {
+                    var floored = Math.floor(idx);
+                    var tmp = idx - floored;
+                    r = radii[floored] * tmp + radii[floored + 1] * (1 - tmp);
+                }
+            }
+            var delta, axis1, axis2;
+            if (i < lim - 1) {
+                delta = pnts[i].clone().sub(pnts[i + 1]);
+                axis1 = new THREE.Vector3(0, -delta.z, delta.y).normalize().multiplyScalar(r);
+                axis2 = delta.clone().cross(axis1).normalize().multiplyScalar(r);
+                //      var dir = 1, offset = 0;
+                if (prevAxis1.dot(axis1) < 0) {
+                    axis1.negate(); axis2.negate();  //dir = -1;//offset = 2 * Math.PI / axisDiv;
+                }
+                prevAxis1 = axis1; prevAxis2 = axis2;
+            } else {
+                axis1 = prevAxis1; axis2 = prevAxis2;
+            }
+            for (var j = 0; j < circleDiv; ++j) {
+                var angle = 2 * Math.PI * circleDivInv * j; //* dir  + offset;
+                geo.vertices.push(pnts[i].clone().add(axis1.clone().multiplyScalar(Math.cos(angle))).add(axis2.clone().multiplyScalar(Math.sin(angle))));
             }
         }
-        var delta, axis1, axis2;
-        if (i < lim - 1) {
-            delta = pnts[i].clone().sub(pnts[i + 1]);
-            axis1 = new THREE.Vector3(0, -delta.z, delta.y).normalize().multiplyScalar(r);
-            axis2 = delta.clone().cross(axis1).normalize().multiplyScalar(r);
-            //      var dir = 1, offset = 0;
-            if (prevAxis1.dot(axis1) < 0) {
-                axis1.negate(); axis2.negate();  //dir = -1;//offset = 2 * Math.PI / axisDiv;
-            }
-            prevAxis1 = axis1; prevAxis2 = axis2;
-        } else {
-            axis1 = prevAxis1; axis2 = prevAxis2;
-        }
-        for (var j = 0; j < circleDiv; ++j) {
-            var angle = 2 * Math.PI * circleDivInv * j; //* dir  + offset;
-            geo.vertices.push(pnts[i].clone().add(axis1.clone().multiplyScalar(Math.cos(angle))).add(axis2.clone().multiplyScalar(Math.sin(angle))));
-        }
-    }
-    var offset = 0;
-    for (var i = 0, lim = pnts.length - 1; i < lim; ++i) {
-        //var c = this.thr(colors[Math.round((i - 1) * axisDivInv)]);
-        var c = this.thr(colors[i]);
+        var offset = 0;
+        for (var i = 0, lim = pnts.length - 1; i < lim; ++i) {
+            //var c = this.thr(colors[Math.round((i - 1) * axisDivInv)]);
+            var c = this.thr(colors[i]);
 
-        var reg = 0;
-        var r1 = geo.vertices[offset].clone().sub(geo.vertices[offset + circleDiv]).lengthSq();
-        var r2 = geo.vertices[offset].clone().sub(geo.vertices[offset + circleDiv + 1]).lengthSq();
-        if (r1 > r2) { r1 = r2; reg = 1; };
-        for (var j = 0; j < circleDiv; ++j) {
-            geo.faces.push(new THREE.Face3(offset + j, offset + (j + reg) % circleDiv + circleDiv, offset + (j + 1) % circleDiv, undefined, c));
-            geo.faces.push(new THREE.Face3(offset + (j + 1) % circleDiv, offset + (j + reg) % circleDiv + circleDiv, offset + (j + reg + 1) % circleDiv + circleDiv, undefined, c));
+            var reg = 0;
+            var r1 = geo.vertices[offset].clone().sub(geo.vertices[offset + circleDiv]).lengthSq();
+            var r2 = geo.vertices[offset].clone().sub(geo.vertices[offset + circleDiv + 1]).lengthSq();
+            if (r1 > r2) { r1 = r2; reg = 1; };
+            for (var j = 0; j < circleDiv; ++j) {
+                geo.faces.push(new THREE.Face3(offset + j, offset + (j + reg) % circleDiv + circleDiv, offset + (j + 1) % circleDiv, undefined, c));
+                geo.faces.push(new THREE.Face3(offset + (j + 1) % circleDiv, offset + (j + reg) % circleDiv + circleDiv, offset + (j + reg + 1) % circleDiv + circleDiv, undefined, c));
+            }
+            offset += circleDiv;
         }
-        offset += circleDiv;
+        geo.computeFaceNormals();
+        geo.computeVertexNormals(false);
     }
-    geo.computeFaceNormals();
-    geo.computeVertexNormals(false);
+    else {
+        var axisDiv = this.axisDIV;
+
+        var pnts_clrs = this.subdivide(_pnts, colors, axisDiv, undefined, undefined, prevone, nexttwo);
+        // extend one residue
+        //var pnts_clrs = this.subdivide(_pnts, colors, axisDiv, undefined, undefined, prevone, nexttwo, true);
+
+        _pnts = pnts_clrs[0];
+        colors = pnts_clrs[2];
+
+        var radius = this.coilWidth;
+        segments = _pnts.length;
+        //radiusSegments = 8;
+        radiusSegments = 4; // save memory
+        var closed = false;
+
+        // when using radiusArray with modified three.js, the tube didn't work in picking
+        var geo = new THREE.TubeGeometry(
+            new THREE.CatmullRomCurve3(_pnts), // path
+            segments,
+            radius, //radiusArray, //radius,
+            radiusSegments,
+            closed
+        );
+
+        //https://stemkoski.github.io/Three.js/Graphulus-Curve.html
+        var color, face, numberOfSides, vertexIndex;
+        // faces are indexed using characters
+        var faceIndices = [ 'a', 'b', 'c', 'd' ];
+
+        // first, assign colors to vertices as desired
+        var prevColor;
+        for ( var s = 0; s <= segments; s++ ) {
+            for ( var r = 0; r < radiusSegments; r++ )
+            {
+                vertexIndex = r + s * radiusSegments;
+                color = colors[s];
+                if(!color) color = prevColor;
+
+                geo.colors[vertexIndex] = color; // use this array for convenience
+
+                prevColor = color;
+            }
+        }
+        // copy the colors as necessary to the face's vertexColors array.
+        for ( var i = 0; i < geo.faces.length; i++ )
+        {
+            face = geo.faces[ i ];
+
+            numberOfSides = ( face instanceof THREE.Face3 ) ? 3 : 4;
+            for( var j = 0; j < numberOfSides; j++ )
+            {
+                vertexIndex = face[ faceIndices[ j ] ];
+                face.vertexColors[ j ] = geo.colors[ vertexIndex ];
+            }
+        }
+
+        geo.computeFaceNormals();
+        geo.computeVertexNormals(false);
+    }
 
     var mesh;
     if(bHighlight === 2) {
       mesh = new THREE.Mesh(geo, new THREE.MeshPhongMaterial({ transparent: true, opacity: 0.5, specular: this.frac, shininess: 30, emissive: 0x000000, vertexColors: THREE.FaceColors, side: THREE.DoubleSide }));
+
       this.mdl.add(mesh);
     }
     else if(bHighlight === 1) {
@@ -1913,6 +2150,7 @@ iCn3D.prototype.createTubeSub = function (_pnts, colors, radii, bHighlight, prev
     }
     else {
       mesh = new THREE.Mesh(geo, new THREE.MeshPhongMaterial({ specular: this.frac, shininess: 30, emissive: 0x000000, vertexColors: THREE.FaceColors, side: THREE.DoubleSide }));
+
       this.mdl.add(mesh);
     }
 
@@ -1978,7 +2216,7 @@ iCn3D.prototype.getCustomtubesize = function (resid) { var me = this, ic = me.ic
 };
 
 // modified from iview (http://istar.cse.cuhk.edu.hk/iview/)
-iCn3D.prototype.createTube = function (atoms, atomName, radius, bHighlight, bCustom) { var me = this, ic = me.icn3d; "use strict";
+iCn3D.prototype.createTube = function (atoms, atomName, radius, bHighlight, bCustom, bRadiusArray) { var me = this, ic = me.icn3d; "use strict";
     var pnts = [], colors = [], radii = [], prevone = [], nexttwo = [];
     var currentChain, currentResi;
     var index = 0;
@@ -2087,8 +2325,6 @@ iCn3D.prototype.createTube = function (atoms, atomName, radius, bHighlight, bCus
         }
     }
     if(bHighlight !== 2) {
-        //this.createTubeSub(pnts, colors, radii, bHighlight);
-
         prevone = [];
         if(firstAtom !== undefined) {
             var prevoneResid = firstAtom.structure + '_' + firstAtom.chain + '_' + (firstAtom.resi - 1).toString();
@@ -2121,7 +2357,7 @@ iCn3D.prototype.createTube = function (atoms, atomName, radius, bHighlight, bCus
         var prevone = pnts_colors_radii_prevone_nexttwo[i].prevone;
         var nexttwo = pnts_colors_radii_prevone_nexttwo[i].nexttwo;
 
-        this.createTubeSub(pnts, colors, radii, bHighlight, prevone, nexttwo);
+        this.createTubeSub(pnts, colors, radii, bHighlight, prevone, nexttwo, bRadiusArray);
     }
 
     pnts_colors_radii_prevone_nexttwo = [];
@@ -2337,30 +2573,42 @@ iCn3D.prototype.createSingleLine = function ( src, dst, colorHex, dashed, dashSi
 
 // used for highlight
 iCn3D.prototype.createBox = function (atom, defaultRadius, forceDefault, scale, color, bHighlight) { var me = this, ic = me.icn3d; "use strict";
-    var mesh;
-
     if(defaultRadius === undefined) defaultRadius = 0.8;
     if(forceDefault === undefined) forceDefault = false;
     if(scale === undefined) scale = 0.8;
 
     if(bHighlight) {
         if(color === undefined) color = this.hColor;
-
-          mesh = new THREE.Mesh(this.boxGeometry, new THREE.MeshPhongMaterial({ transparent: true, opacity: 0.5, specular: this.frac, shininess: 30, emissive: 0x000000, color: color }));
     }
     else {
         if(color === undefined) color = atom.color;
+    }
 
+    var radius = forceDefault ? defaultRadius : (this.vdwRadii[atom.elem.toUpperCase()] || defaultRadius) * (scale ? scale : 1);
+
+    this.createBox_base(atom.coord, radius, color, bHighlight);
+};
+
+iCn3D.prototype.createBox_base = function (coord, radius, color, bHighlight, bOther) { var me = this, ic = me.icn3d; "use strict";
+    var mesh;
+
+    if(bHighlight) {
+          mesh = new THREE.Mesh(this.boxGeometry, new THREE.MeshPhongMaterial({ transparent: true, opacity: 0.5, specular: this.frac, shininess: 30, emissive: 0x000000, color: color }));
+    }
+    else {
           mesh = new THREE.Mesh(this.boxGeometry, new THREE.MeshPhongMaterial({ specular: this.frac, shininess: 30, emissive: 0x000000, color: color }));
     }
 
-    mesh.scale.x = mesh.scale.y = mesh.scale.z = forceDefault ? defaultRadius : (this.vdwRadii[atom.elem.toUpperCase()] || defaultRadius) * (scale ? scale : 1);
+    mesh.scale.x = mesh.scale.y = mesh.scale.z = radius;
 
-    mesh.position.copy(atom.coord);
+    mesh.position.copy(coord);
     this.mdl.add(mesh);
 
     if(bHighlight) {
         this.prevHighlightObjects.push(mesh);
+    }
+    else if(bOther) {
+        this.prevOtherMesh.push(mesh);
     }
     else {
         this.objects.push(mesh);

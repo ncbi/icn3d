@@ -9,7 +9,7 @@ iCn3DUI.prototype.downloadPdb = function (pdbid) { var me = this, ic = me.icn3d;
 
    dataType = "text";
 
-   ic.bCid = undefined;
+   me.icn3d.bCid = undefined;
 
    me.setYourNote(pdbid.toUpperCase() + ' (PDB) in iCn3D');
 
@@ -55,10 +55,10 @@ iCn3DUI.prototype.downloadOpm = function (opmid) { var me = this, ic = me.icn3d;
 
    dataType = "text";
 
-   ic.bCid = undefined;
+   me.icn3d.bCid = undefined;
 
    // no rotation
-   ic.bStopRotate = true;
+   me.icn3d.bStopRotate = true;
 
    $.ajax({
       url: url,
@@ -73,14 +73,14 @@ iCn3DUI.prototype.downloadOpm = function (opmid) { var me = this, ic = me.icn3d;
           //me.hideLoading();
       },
       success: function(data) {
-          ic.bOpm = true;
-          me.loadPdbData(data, opmid, ic.bOpm);
+          me.icn3d.bOpm = true;
+          me.loadPdbData(data, opmid, me.icn3d.bOpm);
 
-          $("#" + me.pre + "selectplane_z1").val(ic.halfBilayerSize);
-          $("#" + me.pre + "selectplane_z2").val(-ic.halfBilayerSize);
+          $("#" + me.pre + "selectplane_z1").val(me.icn3d.halfBilayerSize);
+          $("#" + me.pre + "selectplane_z2").val(-me.icn3d.halfBilayerSize);
 
-          $("#" + me.pre + "extra_mem_z").val(ic.halfBilayerSize);
-          $("#" + me.pre + "intra_mem_z").val(-ic.halfBilayerSize);
+          $("#" + me.pre + "extra_mem_z").val(me.icn3d.halfBilayerSize);
+          $("#" + me.pre + "intra_mem_z").val(-me.icn3d.halfBilayerSize);
       },
       error : function(xhr, textStatus, errorThrown ) {
         this.tryCount++;
@@ -98,7 +98,7 @@ iCn3DUI.prototype.downloadOpm = function (opmid) { var me = this, ic = me.icn3d;
 iCn3DUI.prototype.downloadUrl = function (url, type) { var me = this, ic = me.icn3d; "use strict";
    var dataType = "text";
 
-   ic.bCid = undefined;
+   me.icn3d.bCid = undefined;
 
    //var url = '//www.ncbi.nlm.nih.gov/Structure/mmcifparser/mmcifparser.cgi?dataurl=' + encodeURIComponent(url);
 
@@ -168,17 +168,17 @@ iCn3DUI.prototype.addOneDumAtom = function(pdbid, atomName, x, y, z, lastSerial)
           ss: '',             // optional, used to show secondary structures
           ssbegin: false,         // optional, used to show the beginning of secondary structures
           ssend: false,            // optional, used to show the end of secondary structures
-          color: ic.atomColors[atomName]
+          color: me.icn3d.atomColors[atomName]
       };
-      ic.atoms[lastSerial] = atomDetails;
+      me.icn3d.atoms[lastSerial] = atomDetails;
 
-      ic.chains[pdbid + '_MEM'][lastSerial] = 1;
-      ic.residues[pdbid + '_MEM_1'][lastSerial] = 1;
+      me.icn3d.chains[pdbid + '_MEM'][lastSerial] = 1;
+      me.icn3d.residues[pdbid + '_MEM_1'][lastSerial] = 1;
 
-      ic.chemicals[lastSerial] = 1;
+      me.icn3d.chemicals[lastSerial] = 1;
 
-      ic.dAtoms[lastSerial] = 1;
-      ic.hAtoms[lastSerial] = 1;
+      me.icn3d.dAtoms[lastSerial] = 1;
+      me.icn3d.hAtoms[lastSerial] = 1;
 
       return lastSerial;
 };
@@ -193,16 +193,16 @@ iCn3DUI.prototype.addMemAtoms = function(dmem, pdbid, dxymax) { var me = this, i
 
       pdbid = pdbid.toUpperCase();
 
-      ic.structures[pdbid].push(pdbid + '_MEM');
-      ic.chains[pdbid + '_MEM'] = {};
-      ic.residues[pdbid + '_MEM_1'] = {};
+      me.icn3d.structures[pdbid].push(pdbid + '_MEM');
+      me.icn3d.chains[pdbid + '_MEM'] = {};
+      me.icn3d.residues[pdbid + '_MEM_1'] = {};
 
-      ic.chainsSeq[pdbid + '_MEM'] = [{'name':'DUM', 'resi': 1}];
+      me.icn3d.chainsSeq[pdbid + '_MEM'] = [{'name':'DUM', 'resi': 1}];
 
       var m=0;
-      var lastSerial = Object.keys(ic.atoms).length;
+      var lastSerial = Object.keys(me.icn3d.atoms).length;
       for(var i = 0; i < 1000; ++i) {
-          if(!ic.atoms.hasOwnProperty(lastSerial + i)) {
+          if(!me.icn3d.atoms.hasOwnProperty(lastSerial + i)) {
               lastSerial = lastSerial + i - 1;
               break;
           }
@@ -229,33 +229,33 @@ iCn3DUI.prototype.addMemAtoms = function(dmem, pdbid, dxymax) { var me = this, i
 
 iCn3DUI.prototype.transformToOpmOri = function(pdbid) { var me = this, ic = me.icn3d; "use strict";
   // apply matrix for each atom
-  if(ic.rmsd_supr !== undefined && ic.rmsd_supr.rot !== undefined) {
-      var rot = ic.rmsd_supr.rot;
-      var centerFrom = ic.rmsd_supr.trans1;
-      var centerTo = ic.rmsd_supr.trans2;
-      var rmsd = ic.rmsd_supr.rmsd;
+  if(me.icn3d.rmsd_supr !== undefined && me.icn3d.rmsd_supr.rot !== undefined) {
+      var rot = me.icn3d.rmsd_supr.rot;
+      var centerFrom = me.icn3d.rmsd_supr.trans1;
+      var centerTo = me.icn3d.rmsd_supr.trans2;
+      var rmsd = me.icn3d.rmsd_supr.rmsd;
 
       var dxymaxsq = 0;
-      for(var i in ic.atoms) {
-        var atom = ic.atoms[i];
+      for(var i in me.icn3d.atoms) {
+        var atom = me.icn3d.atoms[i];
 
-        atom.coord = ic.transformMemPro(atom.coord, rot, centerFrom, centerTo);
+        atom.coord = me.icn3d.transformMemPro(atom.coord, rot, centerFrom, centerTo);
         var xysq = atom.coord.x * atom.coord.x + atom.coord.y * atom.coord.y;
         if(Math.abs(atom.coord.z) <= 25 && xysq > dxymaxsq) {
             dxymaxsq = xysq;
         }
       }
 
-      //ic.center = chainresiCalphaHash2.center;
-      //ic.oriCenter = ic.center.clone();
+      //me.icn3d.center = chainresiCalphaHash2.center;
+      //me.icn3d.oriCenter = me.icn3d.center.clone();
 
       // add membranes
-      me.addMemAtoms(ic.halfBilayerSize, pdbid, Math.sqrt(dxymaxsq));
+      me.addMemAtoms(me.icn3d.halfBilayerSize, pdbid, Math.sqrt(dxymaxsq));
 
       // no rotation
-      ic.bStopRotate = true;
+      me.icn3d.bStopRotate = true;
 
-      ic.bOpm = true;
+      me.icn3d.bOpm = true;
 
       // show transmembrane features
       $("#" + me.pre + "togglememli").show();
@@ -264,13 +264,13 @@ iCn3DUI.prototype.transformToOpmOri = function(pdbid) { var me = this, ic = me.i
       $("#" + me.pre + "anno_transmemli").show();
   }
   else {
-      ic.bOpm = false;
+      me.icn3d.bOpm = false;
   }
 };
 
 iCn3DUI.prototype.transformToOpmOriForAlign = function(pdbid, chainresiCalphaHash2, bResi_ori) { var me = this, ic = me.icn3d; "use strict";
   if(chainresiCalphaHash2 !== undefined) {
-      var chainresiCalphaHash1 = ic.getChainCalpha(ic.chains, ic.atoms, bResi_ori, pdbid);
+      var chainresiCalphaHash1 = me.icn3d.getChainCalpha(me.icn3d.chains, me.icn3d.atoms, bResi_ori, pdbid);
 
       var bOneChain = (Object.keys(chainresiCalphaHash1.chainresiCalphaHash).length == 1 || Object.keys(chainresiCalphaHash2.chainresiCalphaHash).length == 1) ? true : false;
 
@@ -293,40 +293,40 @@ iCn3DUI.prototype.transformToOpmOriForAlign = function(pdbid, chainresiCalphaHas
       var n = (coordsFrom.length < coordsTo.length) ? coordsFrom.length : coordsTo.length;
 
       if(n >= 4) {
-          ic.rmsd_supr = me.rmsd_supr(coordsFrom, coordsTo, n);
+          me.icn3d.rmsd_supr = me.rmsd_supr(coordsFrom, coordsTo, n);
 
           // apply matrix for each atom
-          if(ic.rmsd_supr.rot !== undefined && ic.rmsd_supr.rmsd < 0.1) {
-              var rot = ic.rmsd_supr.rot;
-              var centerFrom = ic.rmsd_supr.trans1;
-              var centerTo = ic.rmsd_supr.trans2;
-              var rmsd = ic.rmsd_supr.rmsd;
+          if(me.icn3d.rmsd_supr.rot !== undefined && me.icn3d.rmsd_supr.rmsd < 0.1) {
+              var rot = me.icn3d.rmsd_supr.rot;
+              var centerFrom = me.icn3d.rmsd_supr.trans1;
+              var centerTo = me.icn3d.rmsd_supr.trans2;
+              var rmsd = me.icn3d.rmsd_supr.rmsd;
 
               me.setLogCmd("RMSD of alignment to OPM: " + rmsd.toPrecision(4), false);
               $("#" + me.pre + "realignrmsd").val(rmsd.toPrecision(4));
               if(!me.cfg.bSidebyside) me.openDlg('dl_rmsd', 'RMSD of alignment to OPM');
 
               var dxymaxsq = 0;
-              for(var i in ic.atoms) {
-                var atom = ic.atoms[i];
+              for(var i in me.icn3d.atoms) {
+                var atom = me.icn3d.atoms[i];
 
-                atom.coord = ic.transformMemPro(atom.coord, rot, centerFrom, centerTo);
+                atom.coord = me.icn3d.transformMemPro(atom.coord, rot, centerFrom, centerTo);
                 var xysq = atom.coord.x * atom.coord.x + atom.coord.y * atom.coord.y;
                 if(Math.abs(atom.coord.z) <= 25 && xysq > dxymaxsq) {
                     dxymaxsq = xysq;
                 }
               }
 
-              ic.center = chainresiCalphaHash2.center;
-              ic.oriCenter = ic.center.clone();
+              me.icn3d.center = chainresiCalphaHash2.center;
+              me.icn3d.oriCenter = me.icn3d.center.clone();
 
               // add membranes
-              me.addMemAtoms(ic.halfBilayerSize, pdbid, Math.sqrt(dxymaxsq));
+              me.addMemAtoms(me.icn3d.halfBilayerSize, pdbid, Math.sqrt(dxymaxsq));
 
               // no rotation
-              ic.bStopRotate = true;
+              me.icn3d.bStopRotate = true;
 
-              ic.bOpm = true;
+              me.icn3d.bOpm = true;
 
               // show transmembrane features
               $("#" + me.pre + "togglememli").show();
@@ -335,11 +335,11 @@ iCn3DUI.prototype.transformToOpmOriForAlign = function(pdbid, chainresiCalphaHas
               $("#" + me.pre + "anno_transmemli").show();
           }
           else {
-              ic.bOpm = false;
+              me.icn3d.bOpm = false;
           }
       }
       else {
-          ic.bOpm = false;
+          me.icn3d.bOpm = false;
       }
   }
 };
@@ -350,26 +350,26 @@ iCn3DUI.prototype.alignCoords = function(coordsFrom, coordsTo, secondStruct, bKe
 
   if(n < 4) alert("Please select at least four residues in each structure...");
   if(n >= 4) {
-      ic.rmsd_supr = me.rmsd_supr(coordsFrom, coordsTo, n);
+      me.icn3d.rmsd_supr = me.rmsd_supr(coordsFrom, coordsTo, n);
 
       // apply matrix for each atom
-      if(ic.rmsd_supr.rot !== undefined) {
-          var rot = ic.rmsd_supr.rot;
+      if(me.icn3d.rmsd_supr.rot !== undefined) {
+          var rot = me.icn3d.rmsd_supr.rot;
           if(rot[0] === null) alert("Please select more residues in each structure...");
 
-          var centerFrom = ic.rmsd_supr.trans1;
-          var centerTo = ic.rmsd_supr.trans2;
-          var rmsd = ic.rmsd_supr.rmsd;
+          var centerFrom = me.icn3d.rmsd_supr.trans1;
+          var centerTo = me.icn3d.rmsd_supr.trans2;
+          var rmsd = me.icn3d.rmsd_supr.rmsd;
 
           me.setLogCmd("realignment RMSD: " + rmsd.toPrecision(4), false);
           $("#" + me.pre + "realignrmsd").val(rmsd.toPrecision(4));
           if(!me.cfg.bSidebyside) me.openDlg('dl_rmsd', 'Realignment RMSD');
 
-          for(var i = 0, il = ic.structures[secondStruct].length; i < il; ++i) {
-              var chainid = ic.structures[secondStruct][i];
-              for(var j in ic.chains[chainid]) {
-                var atom = ic.atoms[j];
-                atom.coord = ic.transformMemPro(atom.coord, rot, centerFrom, centerTo);
+          for(var i = 0, il = me.icn3d.structures[secondStruct].length; i < il; ++i) {
+              var chainid = me.icn3d.structures[secondStruct][i];
+              for(var j in me.icn3d.chains[chainid]) {
+                var atom = me.icn3d.atoms[j];
+                atom.coord = me.icn3d.transformMemPro(atom.coord, rot, centerFrom, centerTo);
               }
           }
 
@@ -378,7 +378,7 @@ iCn3DUI.prototype.alignCoords = function(coordsFrom, coordsTo, secondStruct, bKe
           if(!bKeepSeq) me.setSeqAlignForRealign();
 
           var bShowHighlight = false;
-          var seqObj = me.getAlignSequencesAnnotations(Object.keys(ic.alnChains), undefined, undefined, bShowHighlight);
+          var seqObj = me.getAlignSequencesAnnotations(Object.keys(me.icn3d.alnChains), undefined, undefined, bShowHighlight);
 
           $("#" + me.pre + "dl_sequence2").html(seqObj.sequencesHtml);
           $("#" + me.pre + "dl_sequence2").width(me.RESIDUE_WIDTH * seqObj.maxSeqCnt + 200);
@@ -386,31 +386,31 @@ iCn3DUI.prototype.alignCoords = function(coordsFrom, coordsTo, secondStruct, bKe
           me.openDlg('dl_alignment', 'Select residues in aligned sequences');
 
           me.opts['color'] = 'grey';
-          ic.setColorByOptions(me.opts, ic.dAtoms);
+          me.icn3d.setColorByOptions(me.opts, me.icn3d.dAtoms);
 
           me.opts['color'] = 'identity';
-          ic.setColorByOptions(me.opts, ic.hAtoms);
+          me.icn3d.setColorByOptions(me.opts, me.icn3d.hAtoms);
 
-          ic.draw();
+          me.icn3d.draw();
       }
   }
 };
 
 iCn3DUI.prototype.loadPdbData = function(data, pdbid, bOpm) { var me = this, ic = me.icn3d; "use strict";
-      ic.loadPDB(data, pdbid, bOpm); // defined in the core library
+      me.icn3d.loadPDB(data, pdbid, bOpm); // defined in the core library
 
       if(me.cfg.opmid === undefined) me.transformToOpmOri(pdbid);
 
-      if(ic.biomtMatrices !== undefined && ic.biomtMatrices.length > 1) {
+      if(me.icn3d.biomtMatrices !== undefined && me.icn3d.biomtMatrices.length > 1) {
         $("#" + me.pre + "assemblyWrapper").show();
 
-        ic.asuCnt = ic.biomtMatrices.length;
+        me.icn3d.asuCnt = me.icn3d.biomtMatrices.length;
       }
       else {
         $("#" + me.pre + "assemblyWrapper").hide();
       }
 
-      if(ic.emd !== undefined) {
+      if(me.icn3d.emd !== undefined) {
           $("#" + me.pre + "mapWrapper1").hide();
           $("#" + me.pre + "mapWrapper2").hide();
           $("#" + me.pre + "mapWrapper3").hide();
@@ -423,10 +423,10 @@ iCn3DUI.prototype.loadPdbData = function(data, pdbid, bOpm) { var me = this, ic 
 
     // calculate secondary structures if not available
     // DSSP only works for structures with all atoms. The Calpha only strucutres didn't work
-    //if(!ic.bSecondaryStructure && !bCalphaOnly) {
-    if(!ic.bSecondaryStructure) {
+    //if(!me.icn3d.bSecondaryStructure && !bCalphaOnly) {
+    if(!me.icn3d.bSecondaryStructure) {
       me.deferredSecondary = $.Deferred(function() {
-          var bCalphaOnly = ic.isCalphaPhosOnly(ic.hash2Atoms(ic.proteins));//, 'CA');
+          var bCalphaOnly = me.icn3d.isCalphaPhosOnly(me.icn3d.hash2Atoms(me.icn3d.proteins));//, 'CA');
           var calphaonly = (bCalphaOnly) ? '1' : '0';
 
           me.loadPdbDataBase(data, calphaonly, bOpm);
@@ -472,11 +472,11 @@ iCn3DUI.prototype.loadPdbDataBase = function(data, calphaonly, bOpm) { var me = 
         var ssHash = ssdata;
 
         if(JSON.stringify(ssdata).indexOf('Oops there was a problem') === -1) {
-          for(var chainNum in ic.chainsSeq) {
+          for(var chainNum in me.icn3d.chainsSeq) {
               var pos = chainNum.indexOf('_');
               var chain = chainNum.substr(pos + 1);
 
-              var residueObjectArray = ic.chainsSeq[chainNum];
+              var residueObjectArray = me.icn3d.chainsSeq[chainNum];
               var prevSS = 'coil';
 
               for(var i = 0, il = residueObjectArray.length; i < il; ++i) {
@@ -506,12 +506,12 @@ iCn3DUI.prototype.loadPdbDataBase = function(data, calphaonly, bOpm) { var me = 
                 }
 
                 // update ss in sequence window
-                //ic.chainsAn[chainNum][1][i] = ssOneLetter;
+                //me.icn3d.chainsAn[chainNum][1][i] = ssOneLetter;
 
                 // assign atom ss, ssbegin, and ssend
                 var resid = chainNum + '_' + resi;
 
-                ic.secondaries[resid] = ssOneLetter;
+                me.icn3d.secondaries[resid] = ssOneLetter;
 
                 // no residue can be both ssbegin and ssend in DSSP calculated secondary structures
                 var bSetPrevResidue = 0; // 0: no need to reset, 1: reset previous residue to "ssbegin = true", 2: reset previous residue to "ssend = true"
@@ -540,24 +540,24 @@ iCn3DUI.prototype.loadPdbDataBase = function(data, calphaonly, bOpm) { var me = 
 
                 if(bSetPrevResidue == 1) { //1: reset previous residue to "ssbegin = true"
                     var prevResid = chainNum + '_' + (resi - 1).toString();
-                    for(var j in ic.residues[prevResid]) {
-                        ic.atoms[j].ssbegin = true;
-                        ic.atoms[j].ssend = false;
+                    for(var j in me.icn3d.residues[prevResid]) {
+                        me.icn3d.atoms[j].ssbegin = true;
+                        me.icn3d.atoms[j].ssend = false;
                     }
                 }
                 else if(bSetPrevResidue == 2) { //2: reset previous residue to "ssend = true"
                     var prevResid = chainNum + '_' + (resi - 1).toString();
-                    for(var j in ic.residues[prevResid]) {
-                        ic.atoms[j].ssbegin = false;
-                        ic.atoms[j].ssend = true;
+                    for(var j in me.icn3d.residues[prevResid]) {
+                        me.icn3d.atoms[j].ssbegin = false;
+                        me.icn3d.atoms[j].ssend = true;
                     }
                 }
 
                 // set the current residue
-                for(var j in ic.residues[resid]) {
-                    ic.atoms[j].ss = ss;
-                    ic.atoms[j].ssbegin = ssbegin;
-                    ic.atoms[j].ssend = ssend;
+                for(var j in me.icn3d.residues[resid]) {
+                    me.icn3d.atoms[j].ss = ss;
+                    me.icn3d.atoms[j].ssbegin = ssbegin;
+                    me.icn3d.atoms[j].ssend = ssend;
                 }
 
                 prevSS = ss;
@@ -602,13 +602,13 @@ iCn3DUI.prototype.loadOpmData = function(data, pdbid, bFull, type, pdbid2) { var
       tryCount : 0,
       retryLimit : 1,
       success: function(opmdata) {
-          me.setOpmData(opmdata); // set ic.bOpm
+          me.setOpmData(opmdata); // set me.icn3d.bOpm
 
-          $("#" + me.pre + "selectplane_z1").val(ic.halfBilayerSize);
-          $("#" + me.pre + "selectplane_z2").val(-ic.halfBilayerSize);
+          $("#" + me.pre + "selectplane_z1").val(me.icn3d.halfBilayerSize);
+          $("#" + me.pre + "selectplane_z2").val(-me.icn3d.halfBilayerSize);
 
-          $("#" + me.pre + "extra_mem_z").val(ic.halfBilayerSize);
-          $("#" + me.pre + "intra_mem_z").val(-ic.halfBilayerSize);
+          $("#" + me.pre + "extra_mem_z").val(me.icn3d.halfBilayerSize);
+          $("#" + me.pre + "intra_mem_z").val(-me.icn3d.halfBilayerSize);
 
           me.parseAtomData(data, pdbid, bFull, type, pdbid2);
 
@@ -648,7 +648,7 @@ iCn3DUI.prototype.parseAtomData = function(data, pdbid, bFull, type, pdbid2) { v
           if(me.deferredOpm !== undefined) me.deferredOpm.resolve();
       }
       else if(type === 'align') {
-          if(ic.bOpm) {
+          if(me.icn3d.bOpm) {
               me.downloadAlignmentPart2(pdbid);
               if(me.deferredOpm !== undefined) me.deferredOpm.resolve();
           }
@@ -680,17 +680,17 @@ iCn3DUI.prototype.loadOpmDataForAlign = function(data, seqalign, mmdbidArray) { 
       success: function(opmdata) {
           me.selectedPdbid = mmdbidArray[0];
 
-          ic.bOpm = true;
+          me.icn3d.bOpm = true;
           var bVector = true;
-          var chainresiCalphaHash = ic.loadPDB(opmdata, mmdbidArray[0], ic.bOpm, bVector); // defined in the core library
+          var chainresiCalphaHash = me.icn3d.loadPDB(opmdata, mmdbidArray[0], me.icn3d.bOpm, bVector); // defined in the core library
 
-          $("#" + me.pre + "selectplane_z1").val(ic.halfBilayerSize);
-          $("#" + me.pre + "selectplane_z2").val(-ic.halfBilayerSize);
+          $("#" + me.pre + "selectplane_z1").val(me.icn3d.halfBilayerSize);
+          $("#" + me.pre + "selectplane_z2").val(-me.icn3d.halfBilayerSize);
 
-          $("#" + me.pre + "extra_mem_z").val(ic.halfBilayerSize);
-          $("#" + me.pre + "intra_mem_z").val(-ic.halfBilayerSize);
+          $("#" + me.pre + "extra_mem_z").val(me.icn3d.halfBilayerSize);
+          $("#" + me.pre + "intra_mem_z").val(-me.icn3d.halfBilayerSize);
 
-          ic.init(); // remove all previously loaded data
+          me.icn3d.init(); // remove all previously loaded data
           me.downloadAlignmentPart2(data, seqalign, chainresiCalphaHash);
 
           if(me.deferredOpm !== undefined) me.deferredOpm.resolve();
@@ -707,23 +707,23 @@ iCn3DUI.prototype.loadOpmDataForAlign = function(data, seqalign, mmdbidArray) { 
           success: function(opmdata) {
               me.selectedPdbid = mmdbidArray[1];
 
-              ic.bOpm = true;
+              me.icn3d.bOpm = true;
               var bVector = true;
-              var chainresiCalphaHash = ic.loadPDB(opmdata, mmdbidArray[1], ic.bOpm, bVector); // defined in the core library
+              var chainresiCalphaHash = me.icn3d.loadPDB(opmdata, mmdbidArray[1], me.icn3d.bOpm, bVector); // defined in the core library
 
-              $("#" + me.pre + "selectplane_z1").val(ic.halfBilayerSize);
-              $("#" + me.pre + "selectplane_z2").val(-ic.halfBilayerSize);
+              $("#" + me.pre + "selectplane_z1").val(me.icn3d.halfBilayerSize);
+              $("#" + me.pre + "selectplane_z2").val(-me.icn3d.halfBilayerSize);
 
-              $("#" + me.pre + "extra_mem_z").val(ic.halfBilayerSize);
-              $("#" + me.pre + "intra_mem_z").val(-ic.halfBilayerSize);
+              $("#" + me.pre + "extra_mem_z").val(me.icn3d.halfBilayerSize);
+              $("#" + me.pre + "intra_mem_z").val(-me.icn3d.halfBilayerSize);
 
-              ic.init(); // remove all previously loaded data
+              me.icn3d.init(); // remove all previously loaded data
               me.downloadAlignmentPart2(data, seqalign, chainresiCalphaHash);
 
               if(me.deferredOpm !== undefined) me.deferredOpm.resolve();
           },
           error : function(xhr, textStatus, errorThrown ) {
-              ic.init(); // remove all previously loaded data
+              me.icn3d.init(); // remove all previously loaded data
               me.downloadAlignmentPart2(data, seqalign);
 
               if(me.deferredOpm !== undefined) me.deferredOpm.resolve();
@@ -752,17 +752,17 @@ iCn3DUI.prototype.loadOpmDataForChainalign = function(data1, data2, mmdbidArray)
       success: function(opmdata) {
           me.selectedPdbid = mmdbidArray[0];
 
-          ic.bOpm = true;
+          me.icn3d.bOpm = true;
           var bVector = true;
-          var chainresiCalphaHash = ic.loadPDB(opmdata, mmdbidArray[0], ic.bOpm, bVector); // defined in the core library
+          var chainresiCalphaHash = me.icn3d.loadPDB(opmdata, mmdbidArray[0], me.icn3d.bOpm, bVector); // defined in the core library
 
-          $("#" + me.pre + "selectplane_z1").val(ic.halfBilayerSize);
-          $("#" + me.pre + "selectplane_z2").val(-ic.halfBilayerSize);
+          $("#" + me.pre + "selectplane_z1").val(me.icn3d.halfBilayerSize);
+          $("#" + me.pre + "selectplane_z2").val(-me.icn3d.halfBilayerSize);
 
-          $("#" + me.pre + "extra_mem_z").val(ic.halfBilayerSize);
-          $("#" + me.pre + "intra_mem_z").val(-ic.halfBilayerSize);
+          $("#" + me.pre + "extra_mem_z").val(me.icn3d.halfBilayerSize);
+          $("#" + me.pre + "intra_mem_z").val(-me.icn3d.halfBilayerSize);
 
-          ic.init(); // remove all previously loaded data
+          me.icn3d.init(); // remove all previously loaded data
           me.downloadChainalignmentPart2(data1, data2, chainresiCalphaHash);
 
           if(me.deferredOpm !== undefined) me.deferredOpm.resolve();
@@ -779,23 +779,23 @@ iCn3DUI.prototype.loadOpmDataForChainalign = function(data1, data2, mmdbidArray)
           success: function(opmdata) {
               me.selectedPdbid = mmdbidArray[1];
 
-              ic.bOpm = true;
+              me.icn3d.bOpm = true;
               var bVector = true;
-              var chainresiCalphaHash = ic.loadPDB(opmdata, mmdbidArray[1], ic.bOpm, bVector); // defined in the core library
+              var chainresiCalphaHash = me.icn3d.loadPDB(opmdata, mmdbidArray[1], me.icn3d.bOpm, bVector); // defined in the core library
 
-              $("#" + me.pre + "selectplane_z1").val(ic.halfBilayerSize);
-              $("#" + me.pre + "selectplane_z2").val(-ic.halfBilayerSize);
+              $("#" + me.pre + "selectplane_z1").val(me.icn3d.halfBilayerSize);
+              $("#" + me.pre + "selectplane_z2").val(-me.icn3d.halfBilayerSize);
 
-              $("#" + me.pre + "extra_mem_z").val(ic.halfBilayerSize);
-              $("#" + me.pre + "intra_mem_z").val(-ic.halfBilayerSize);
+              $("#" + me.pre + "extra_mem_z").val(me.icn3d.halfBilayerSize);
+              $("#" + me.pre + "intra_mem_z").val(-me.icn3d.halfBilayerSize);
 
-              ic.init(); // remove all previously loaded data
+              me.icn3d.init(); // remove all previously loaded data
               me.downloadChainalignmentPart2(data1, data2, chainresiCalphaHash);
 
               if(me.deferredOpm !== undefined) me.deferredOpm.resolve();
           },
           error : function(xhr, textStatus, errorThrown ) {
-              ic.init(); // remove all previously loaded data
+              me.icn3d.init(); // remove all previously loaded data
               me.downloadChainalignmentPart2(data1, data2);
 
               if(me.deferredOpm !== undefined) me.deferredOpm.resolve();
@@ -809,31 +809,31 @@ iCn3DUI.prototype.loadOpmDataForChainalign = function(data1, data2, mmdbidArray)
 };
 
 iCn3DUI.prototype.loadMmcifOpmDataPart2 = function(data, pdbid) { var me = this, ic = me.icn3d; "use strict";
-    if(Object.keys(ic.structures).length == 1) {
+    if(Object.keys(me.icn3d.structures).length == 1) {
         $("#" + me.pre + "alternateWrapper").hide();
     }
 
     // load assembly info
     var assembly = (data.assembly !== undefined) ? data.assembly : [];
     for(var i = 0, il = assembly.length; i < il; ++i) {
-      if (ic.biomtMatrices[i] == undefined) ic.biomtMatrices[i] = new THREE.Matrix4().identity();
+      if (me.icn3d.biomtMatrices[i] == undefined) me.icn3d.biomtMatrices[i] = new THREE.Matrix4().identity();
 
       for(var j = 0, jl = assembly[i].length; j < jl; ++j) {
-        ic.biomtMatrices[i].elements[j] = assembly[i][j];
+        me.icn3d.biomtMatrices[i].elements[j] = assembly[i][j];
       }
     }
 
-    if(ic.biomtMatrices !== undefined && ic.biomtMatrices.length > 1) {
+    if(me.icn3d.biomtMatrices !== undefined && me.icn3d.biomtMatrices.length > 1) {
         $("#" + me.pre + "assemblyWrapper").show();
 
-        ic.asuCnt = ic.biomtMatrices.length;
+        me.icn3d.asuCnt = me.icn3d.biomtMatrices.length;
     }
     else {
         $("#" + me.pre + "assemblyWrapper").hide();
     }
 
-    ic.setAtomStyleByOptions(me.opts);
-    ic.setColorByOptions(me.opts, ic.atoms);
+    me.icn3d.setAtomStyleByOptions(me.opts);
+    me.icn3d.setColorByOptions(me.opts, me.icn3d.atoms);
 
     me.renderStructure();
 
@@ -854,7 +854,7 @@ iCn3DUI.prototype.loadMmdbOpmDataPart2 = function(data, pdbid, type) { var me = 
 
         for(var index = 0, indexl = domainArray.length; index < indexl; ++index) {
             var domainName = structure + '_' + chain + '_3d_domain_' + (index+1).toString();
-            ic.tddomains[domainName] = {};
+            me.icn3d.tddomains[domainName] = {};
 
             var subdomainArray = domainArray[index].intervals;
 
@@ -881,7 +881,7 @@ iCn3DUI.prototype.loadMmdbOpmDataPart2 = function(data, pdbid, type) { var me = 
 
                 for(var j = domainFrom; j <= domainTo; ++j) {
                     var resid = structure + '_' + chain + '_' + (j+1).toString();
-                    ic.tddomains[domainName][resid] = 1;
+                    me.icn3d.tddomains[domainName][resid] = 1;
                 }
             }
         } // for each domainArray
@@ -900,7 +900,7 @@ iCn3DUI.prototype.loadMmdbOpmDataPart2 = function(data, pdbid, type) { var me = 
 
 iCn3DUI.prototype.loadMmdbOpmData = function(data, pdbid, type) { var me = this, ic = me.icn3d; "use strict";
   if(data.opm !== undefined && data.opm.rot !== undefined) {
-      ic.bOpm = true;
+      me.icn3d.bOpm = true;
 
       me.setOpmData(data);
 
@@ -918,29 +918,29 @@ iCn3DUI.prototype.loadMmdbOpmData = function(data, pdbid, type) { var me = this,
 
 iCn3DUI.prototype.setOpmData = function(data) { var me = this, ic = me.icn3d; "use strict";
     if(data.opm !== undefined && data.opm.rot !== undefined) {
-        ic.bOpm = true;
+        me.icn3d.bOpm = true;
 
-        ic.halfBilayerSize = data.opm.thickness;
-        ic.rmsd_supr = {};
-        ic.rmsd_supr.rot = data.opm.rot;
-        ic.rmsd_supr.trans1 = new THREE.Vector3(data.opm.trans1[0], data.opm.trans1[1], data.opm.trans1[2]);
-        ic.rmsd_supr.trans2 = new THREE.Vector3(data.opm.trans2[0], data.opm.trans2[1], data.opm.trans2[2]);
-        ic.rmsd_supr.rmsd = data.opm.rmsd;
+        me.icn3d.halfBilayerSize = data.opm.thickness;
+        me.icn3d.rmsd_supr = {};
+        me.icn3d.rmsd_supr.rot = data.opm.rot;
+        me.icn3d.rmsd_supr.trans1 = new THREE.Vector3(data.opm.trans1[0], data.opm.trans1[1], data.opm.trans1[2]);
+        me.icn3d.rmsd_supr.trans2 = new THREE.Vector3(data.opm.trans2[0], data.opm.trans2[1], data.opm.trans2[2]);
+        me.icn3d.rmsd_supr.rmsd = data.opm.rmsd;
     }
     else {
-        ic.bOpm = false;
+        me.icn3d.bOpm = false;
     }
 };
 
 iCn3DUI.prototype.loadPdbDataRender = function() { var me = this, ic = me.icn3d; "use strict";
-    me.pmid = ic.pmid;
+    me.pmid = me.icn3d.pmid;
 
-    if(me.cfg.align === undefined && Object.keys(ic.structures).length == 1) {
+    if(me.cfg.align === undefined && Object.keys(me.icn3d.structures).length == 1) {
         $("#" + me.pre + "alternateWrapper").hide();
     }
 
-    ic.setAtomStyleByOptions(me.opts);
-    ic.setColorByOptions(me.opts, ic.atoms);
+    me.icn3d.setAtomStyleByOptions(me.opts);
+    me.icn3d.setColorByOptions(me.opts, me.icn3d.atoms);
 
     me.renderStructure();
 

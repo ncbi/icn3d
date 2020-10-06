@@ -84,25 +84,65 @@ iCn3D.prototype.createSurfaceRepresentation = function (atoms, type, wireframe, 
 
         ps = $3Dmol.SetupMap(cfg);
     }
-    else if(type == 14) { // phi
+    else if(type == 14) { // phimap, equipotential
         cfg.header = me.mapData.headerPhi;
         cfg.data = me.mapData.dataPhi;
         cfg.matrix = me.mapData.matrixPhi;
         cfg.isovalue = me.mapData.contourPhi;
         cfg.type = 'phi';
+        cfg.loadPhiFrom = me.loadPhiFrom;
 
         ps = $3Dmol.SetupMap(cfg);
     }
     else {
-        ps = $3Dmol.SetupSurface({
+/*
+        if(type == 21 || type == 22 || type == 23) { // phisurface, surface with potential
+            // set atom colors
+
+            cfg.header = me.mapData.headerPhi; // header.bSurface is true
+            cfg.data = me.mapData.dataPhi;
+            cfg.matrix = me.mapData.matrixPhi;
+            cfg.isovalue = me.mapData.contourPhi;
+            cfg.type = 'phi';
+            cfg.loadPhiFrom = me.loadPhiFrom;
+            cfg.icn3d = me;
+
+            ps = $3Dmol.SetupMap(cfg);
+        }
+*/
+
+        //1: van der waals surface, 2: molecular surface, 3: solvent accessible surface
+
+        //exclude water
+        var atomsToShow = this.exclHash(atoms, this.water);
+        extendedAtoms = Object.keys(atomsToShow);
+
+        var realType = type;
+        if(realType == 21) realType = 1;
+        else if(realType == 22) realType = 2;
+        else if(realType == 23) realType = 3;
+
+        cfg = {
             extent: extent,
             allatoms: this.atoms,
-            atomsToShow: Object.keys(atoms),
+            atomsToShow: Object.keys(atomsToShow),
             extendedAtoms: extendedAtoms,
-            type: type,
+            type: realType,
             threshbox: (bTransparent) ? 60 : this.threshbox,
             bCalcArea: this.bCalcArea
-        });
+        };
+
+        cfg.header = me.mapData.headerPhi; // header.bSurface is true
+        cfg.data = me.mapData.dataPhi;
+        cfg.matrix = me.mapData.matrixPhi;
+        cfg.isovalue = me.mapData.contourPhi;
+        //cfg.type = 'phi';
+        cfg.loadPhiFrom = me.loadPhiFrom;
+        //cfg.icn3d = me;
+
+        //cfg.rmsd_supr: this.rmsd_supr
+
+        ps = $3Dmol.SetupSurface(cfg);
     }
 
     if(this.bCalcArea) {
@@ -167,20 +207,25 @@ iCn3D.prototype.createSurfaceRepresentation = function (atoms, type, wireframe, 
     var colorForPhiNeg = this.thr('#FF0000');
 
     var rot, centerFrom, centerTo;
-    if((type == 11 || type == 12 || type == 13 || type == 14) && this.rmsd_supr !== undefined && this.rmsd_supr.rot !== undefined) {
+    if((type == 11 || type == 12 || type == 13 || type == 14 ) && this.rmsd_supr !== undefined && this.rmsd_supr.rot !== undefined) {
       rot = me.rmsd_supr.rot;
       centerFrom = me.rmsd_supr.trans1;
       centerTo = me.rmsd_supr.trans2;
     }
 
+    // Direct "delphi" calculation uses the transformed PDB file, not the original PDB
+    var bTrans = (type == 11 || type == 12 || type == 13 || (type == 14 && me.loadPhiFrom != 'delphi') )
+      && me.rmsd_supr !== undefined && me.rmsd_supr.rot !== undefined;
+
     geo = new THREE.Geometry();
     geo.vertices = verts.map(function (v) {
         var r = new THREE.Vector3(v.x, v.y, v.z);
-        if((type == 11 || type == 12 || type == 13 || type == 14) && me.rmsd_supr !== undefined && me.rmsd_supr.rot !== undefined) {
+        if(bTrans) {
             r = me.transformMemPro(r, rot, centerFrom, centerTo);
         }
 
         r.atomid = v.atomid;
+        r.color = v.color;
         return r;
     });
 
@@ -198,6 +243,9 @@ iCn3D.prototype.createSurfaceRepresentation = function (atoms, type, wireframe, 
             }
             else if(type == 14) { // phi
                 return (geo.vertices[f[d]].atomid) ? colorForPhiPos : colorForPhiNeg;
+            }
+            else if(type == 21 || type == 22 || type == 23) { // potential on surface
+                return geo.vertices[f[d]].color;
             }
             else {
                 var atomid = geo.vertices[f[d]].atomid;
@@ -220,10 +268,12 @@ iCn3D.prototype.createSurfaceRepresentation = function (atoms, type, wireframe, 
 
     geo.type = 'Surface'; // to be recognized in vrml.js for 3D printing
 
-    //var normalArray = geo.data.normals;
-    var normalArray = JSON.parse(JSON.stringify(geo)).data.normals;
-
+    // use the regular way to show transparency for type == 15 (surface with potential)
+//    if(bTransparent && (type == 1 || type == 2 || type == 3)) { // WebGL has some ordering problem when dealing with transparency
     if(bTransparent) { // WebGL has some ordering problem when dealing with transparency
+      //var normalArray = geo.data.normals;
+      var normalArray = JSON.parse(JSON.stringify(geo)).data.normals;
+
       // the following method minimize the number of objects by a factor of 3
       var va2faces = {};
 
@@ -382,23 +432,79 @@ iCn3D.prototype.buildAxes = function (radius) { var me = this, ic = me.icn3d; "u
     var axes = new THREE.Object3D();
 
     var x = 0, y = 0, z = 0;
+//    var x = this.oriCenter.x;
+//    var y = this.oriCenter.y;
+//    var z = this.oriCenter.z;
 
-    if(this.bOpm) {
-        x = -this.oriCenter.x;
-        y = -this.oriCenter.y;
-        z = -this.oriCenter.z;
+    x -= radius * 0.6; //0.707; // move to the left
+    y -= radius * 0.6; //0.707; // move to the botom
+
+ //   if(this.bOpm) {
+ //       x = -this.oriCenter.x;
+ //       y = -this.oriCenter.y;
+ //       z = -this.oriCenter.z;
+ //   }
+
+    var axisLen = radius / 10;
+    var r = radius / 100;
+
+    var origin = new THREE.Vector3( x, y, z );
+
+    var meshX = this.createCylinder_base( new THREE.Vector3( x, y, z ), new THREE.Vector3( x + axisLen, y, z ), r, this.thr(0xFF0000)); // +X
+    var meshY = this.createCylinder_base( new THREE.Vector3( x, y, z ), new THREE.Vector3( x, y + axisLen, z ), r, this.thr(0x00FF00)); // +Y
+    var meshZ = this.createCylinder_base( new THREE.Vector3( x, y, z ), new THREE.Vector3( x, y, z + axisLen ), r, this.thr(0x0000FF)); // +Z
+
+    this.scene.add( meshX );
+    this.scene.add( meshY );
+    this.scene.add( meshZ );
+
+    var dirX = new THREE.Vector3( 1, 0, 0 );
+    var colorX = 0xff0000;
+    var posX = new THREE.Vector3(origin.x + axisLen, origin.y, origin.z);
+    var arrowX = this.createArrow( dirX, posX, axisLen, colorX, 4*r, 4*r);
+    this.scene.add( arrowX );
+
+    var dirY = new THREE.Vector3( 0, 1, 0 );
+    var colorY = 0x00ff00;
+    var posY = new THREE.Vector3(origin.x, origin.y + axisLen, origin.z);
+    var arrowY = this.createArrow( dirY, posY, axisLen, colorY, 4*r, 4*r);
+    this.scene.add( arrowY );
+
+    var dirZ = new THREE.Vector3( 0, 0, 1 );
+    var colorZ = 0x0000ff;
+    var posZ = new THREE.Vector3(origin.x, origin.y, origin.z + axisLen);
+    var arrowZ = this.createArrow( dirZ, posZ, axisLen, colorZ, 4*r, 4*r);
+    this.scene.add( arrowZ );
+};
+
+iCn3D.prototype.createArrow = function(dir, origin, axisLen, color, headLength, headWidth) {  var me = this, ic = me.icn3d; "use strict";
+    var coneGeometry = new THREE.CylinderBufferGeometry( 0, 0.5, 1, 32, 1 );
+    //coneGeometry.translate( 0, - 0.5, 0 );
+    coneGeometry.translate( 0, 0.5, 0 );
+    var material = new THREE.MeshPhongMaterial({ specular: this.frac, shininess: 30, emissive: 0x000000, side: THREE.DoubleSide, color: color});
+
+    var cone = new THREE.Mesh( coneGeometry, material);
+//    cone.matrixAutoUpdate = false;
+
+    var quaternion = new THREE.Quaternion();
+    // dir is assumed to be normalized
+    if ( dir.y > 0.99999 ) {
+        quaternion.set( 0, 0, 0, 1 );
+    } else if ( dir.y < - 0.99999 ) {
+        quaternion.set( 1, 0, 0, 0 );
+    } else {
+        var axis = new THREE.Vector3();
+        axis.set( dir.z, 0, - dir.x ).normalize();
+        var radians = Math.acos( dir.y );
+        quaternion.setFromAxisAngle( axis, radians );
     }
 
-    axes.add( this.createSingleLine( new THREE.Vector3( x, y, z ), new THREE.Vector3( x + radius, y, z ), 0xFF0000, false, 0.5 ) ); // +X
-    //axes.add( this.createSingleLine( new THREE.Vector3( x, y, z ), new THREE.Vector3( x - radius, y, z ), 0x800000, true, 0.5) ); // -X
+    cone.applyQuaternion(quaternion);
+    cone.scale.set( headWidth, headLength, headWidth );
+    //origin.add(new THREE.Vector3(0, axisLen, 0));
+    cone.position.copy( origin );
 
-    axes.add( this.createSingleLine( new THREE.Vector3( x, y, z ), new THREE.Vector3( x, y + radius, z ), 0x00FF00, false, 0.5 ) ); // +Y
-    //axes.add( this.createSingleLine( new THREE.Vector3( x, y, z ), new THREE.Vector3( x, y - radius, z ), 0x008000, true, 0.5 ) ); // -Y
-
-    axes.add( this.createSingleLine( new THREE.Vector3( x, y, z ), new THREE.Vector3( x, y, z + radius ), 0x0000FF, false, 0.5 ) ); // +Z
-    //axes.add( this.createSingleLine( new THREE.Vector3( x, y, z ), new THREE.Vector3( x, y, z - radius ), 0x000080, true, 0.5 ) ); // -Z
-
-    this.scene.add( axes );
+    return cone;
 };
 
 // show extra lines, not used for pk, so no this.objects

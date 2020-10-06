@@ -50,7 +50,7 @@ $3Dmol.ElectronMap = function(threshbox) {
 
     var isovalue = 1.5;
     var dataArray = {};
-    var matrix, center, maxdist, pmin, pmax, water, header, type, rmsd_supr;
+    var matrix, center, maxdist, pmin, pmax, water, header, type, rmsd_supr, loadPhiFrom, icn3d;
 
     var ptranx = 0, ptrany = 0, ptranz = 0;
     var probeRadius = 1.4;
@@ -108,7 +108,10 @@ $3Dmol.ElectronMap = function(threshbox) {
             else {
                 r = new THREE.Vector3(vertices[i].x, vertices[i].y, vertices[i].z).applyMatrix4(matrix);
             }
+<<<<<<< HEAD
+=======
 
+>>>>>>> a8469054f25ea10e20e7bf162282c21cf16a7bf5
 //            vertices[i].x = r.x / scaleFactor - ptranx;
 //            vertices[i].y = r.y / scaleFactor - ptrany;
 //            vertices[i].z = r.z / scaleFactor - ptranz;
@@ -142,8 +145,10 @@ $3Dmol.ElectronMap = function(threshbox) {
 
 
     this.initparm = function(inHeader, inData, inMatrix, inIsovalue, inCenter, inMaxdist,
-      inPmin, inPmax, inWater, inType, inRmsd_supr) {
+      inPmin, inPmax, inWater, inType, inRmsd_supr, inLoadPhiFrom, inIcn3d) {
         header = inHeader;
+        loadPhiFrom = inLoadPhiFrom;
+        icn3d = inIcn3d;
 
         if(header.max !== undefined) { // EM density map from EBI
             isovalue = header.min + (header.max - header.min) * inIsovalue / 100.0;
@@ -221,7 +226,7 @@ $3Dmol.ElectronMap = function(threshbox) {
         var widthHeight = pWidth * pHeight;
         var height = pHeight;
 
-        if(type == 'phi') {
+        if(type == 'phi' && !header.bSurface) { // equipotential map
             // Do NOT exclude map far away from the atoms
             //var index = 0;
             for(i = 0; i < pLength; ++i) {
@@ -273,48 +278,150 @@ $3Dmol.ElectronMap = function(threshbox) {
               inverseRot[8] = inverseM.elements[8];
             }
 
-            var index2ori = {};
-            for (var serial in atomlist) {
-                var atom = atoms[atomlist[serial]];
+            if(type == 'phi' && header.bSurface) { // surface with potential
+                // Do NOT exclude map far away from the atoms
 
-                if(atom.resn === 'DUM') continue;
+                // generate the correctly ordered dataArray
+                var vData = new Float32Array(pLength * pWidth * pHeight);
 
-                var r;
-                if(rmsd_supr !== undefined && rmsd_supr.rot !== undefined) {
-                    // revert to the orginal coord
-                    var coord = this.transformMemPro(atom.coord, inverseRot, centerTo, centerFrom);
-                    r = coord.applyMatrix4(inverseMatrix);
-                }
-                else {
-                    r = atom.coord.clone().applyMatrix4(inverseMatrix);
-                }
-
-                for(i = Math.floor(r.x) - maxdist, il = Math.ceil(r.x) + maxdist; i <= il; ++i) {
-                    if(i < 0 || i > header.xExtent*scaleFactor - 1) continue;
-                    for(j = Math.floor(r.y) - maxdist, jl = Math.ceil(r.y) + maxdist; j<= jl; ++j) {
-                        if(j < 0 || j > header.yExtent*scaleFactor - 1) continue;
-                        for(k = Math.floor(r.z) - maxdist, kl = Math.ceil(r.z) + maxdist; k<= kl; ++k) {
-                            if(k < 0 || k > header.zExtent*scaleFactor - 1) continue;
+                for(i = 0; i < pLength; ++i) {
+                    for(j = 0; j < pWidth; ++j) {
+                        for(k = 0; k < pHeight; ++k) {
                             var index = i * widthHeight + j * height + k;
-                            indexArray.push(index);
+
+                            var index2;
+                            if(header.filetype == 'phi') { // loop z, y, x
+                                index2 = k * widthHeight + j * height + i;
+                            }
+                            else if(header.filetype == 'cube') { // loop x, y, z
+                                index2 = i * widthHeight + j * height + k;
+                            }
+
+                            if(index2 < dataArray.length) {
+                                vData[index] = dataArray[index2];
+                            }
                         }
                     }
                 }
-            }
 
-            for(i = 0, il = indexArray.length; i < il; ++i) {
-                var index = indexArray[i];
-                if(type == '2fofc') {
-                    vpBits[index] = (dataArray[index] >= isovalue) ? 1 : 0;
-                    //vpAtomID[index] = (dataArray[index] >= 0) ? 1 : 0; // determine whether it's positive
+                for (var serial in atomlist) {
+                    var atom = atoms[atomlist[serial]];
+
+                    if(atom.resn === 'DUM') continue;
+
+                    var r = atom.coord.clone();
+                    if(loadPhiFrom != 'delphi') { // transform to the original position if the potential file is imported
+                        if(rmsd_supr !== undefined && rmsd_supr.rot !== undefined) {
+                            // revert to the orginal coord
+                            var coord = this.transformMemPro(atom.coord, inverseRot, centerTo, centerFrom);
+                            r = coord.applyMatrix4(inverseMatrix);
+                        }
+                        else {
+                            r = atom.coord.clone().applyMatrix4(inverseMatrix);
+                        }
+                    }
+
+                    // scale to the grid
+                    r.sub(header.ori).multiplyScalar(header.scale);
+
+                    // determine the neighboring grid coordinate
+                    var nx0 = Math.floor(r.x), nx1 = Math.ceil(r.x);
+                    var ny0 = Math.floor(r.y), ny1 = Math.ceil(r.y);
+                    var nz0 = Math.floor(r.z), nz1 = Math.ceil(r.z);
+                    if(nx1 == nx0) nx1 = nx0 + 1;
+                    if(ny1 == ny0) ny1 = ny0 + 1;
+                    if(nz1 == nz0) nz1 = nz0 + 1;
+
+                    if(nx1 > pLength) nx1 = pLength;
+                    if(ny1 > pWidth) ny1 = pWidth;
+                    if(nz1 > pHeight) nz1 = pHeight;
+
+                    //https://en.wikipedia.org/wiki/Trilinear_interpolation
+                    var c000 = vData[nx0 * widthHeight + ny0 * height + nz0];
+                    var c100 = vData[nx1 * widthHeight + ny0 * height + nz0];
+                    var c010 = vData[nx0 * widthHeight + ny1 * height + nz0];
+                    var c001 = vData[nx0 * widthHeight + ny0 * height + nz1];
+                    var c110 = vData[nx1 * widthHeight + ny1 * height + nz0];
+                    var c011 = vData[nx0 * widthHeight + ny1 * height + nz1];
+                    var c101 = vData[nx1 * widthHeight + ny0 * height + nz1];
+                    var c111 = vData[nx1 * widthHeight + ny1 * height + nz1];
+
+                    var xd = r.x - nx0;
+                    var yd = r.y - ny0;
+                    var zd = r.z - nz0;
+
+                    var c00 = c000 * (1 - xd) + c100 * xd;
+                    var c01 = c001 * (1 - xd) + c101 * xd;
+                    var c10 = c010 * (1 - xd) + c110 * xd;
+                    var c11 = c011 * (1 - xd) + c111 * xd;
+
+                    var c0 = c00 * (1 - yd) + c10 * yd;
+                    var c1 = c01 * (1 - yd) + c11 * yd;
+
+                    var c = c0 * (1 - zd) + c1 * zd;
+
+                    // determine the color based on the potential value
+                    if(c > isovalue) c = isovalue;
+                    if(c < -isovalue) c = -isovalue;
+
+                    var color;
+                    if(c > 0) {
+                        c /= 1.0 * isovalue;
+                        color = new THREE.Color(1-c, 1-c, 1);
+                    }
+                    else {
+                        c /= -1.0 * isovalue;
+                        color = new THREE.Color(1, 1-c, 1-c);
+                    }
+
+                    icn3d.atoms[atomlist[serial]].color = color;
+                    icn3d.atomPrevColors[atomlist[serial]] = color;
                 }
-                else if(type == 'fofc') {
-                    vpBits[index] = (dataArray[index] >= isovalue || dataArray[index] <= -isovalue) ? 1 : 0;
-                    vpAtomID[index] = (dataArray[index] >= 0) ? 1 : 0; // determine whether it's positive
+            }
+            else {
+                var index2ori = {};
+                for (var serial in atomlist) {
+                    var atom = atoms[atomlist[serial]];
+
+                    if(atom.resn === 'DUM') continue;
+
+                    var r;
+                    if(rmsd_supr !== undefined && rmsd_supr.rot !== undefined) {
+                        // revert to the orginal coord
+                        var coord = this.transformMemPro(atom.coord, inverseRot, centerTo, centerFrom);
+                        r = coord.applyMatrix4(inverseMatrix);
+                    }
+                    else {
+                        r = atom.coord.clone().applyMatrix4(inverseMatrix);
+                    }
+
+                    for(i = Math.floor(r.x) - maxdist, il = Math.ceil(r.x) + maxdist; i <= il; ++i) {
+                        if(i < 0 || i > header.xExtent*scaleFactor - 1) continue;
+                        for(j = Math.floor(r.y) - maxdist, jl = Math.ceil(r.y) + maxdist; j<= jl; ++j) {
+                            if(j < 0 || j > header.yExtent*scaleFactor - 1) continue;
+                            for(k = Math.floor(r.z) - maxdist, kl = Math.ceil(r.z) + maxdist; k<= kl; ++k) {
+                                if(k < 0 || k > header.zExtent*scaleFactor - 1) continue;
+                                var index = i * widthHeight + j * height + k;
+                                indexArray.push(index);
+                            }
+                        }
+                    }
                 }
-                else if(type == 'em') {
-                    vpBits[index] = (dataArray[index] >= isovalue) ? 1 : 0;
-                    //vpAtomID[index] = (dataArray[index] >= 0) ? 1 : 0; // determine whether it's positive
+
+                for(i = 0, il = indexArray.length; i < il; ++i) {
+                    var index = indexArray[i];
+                    if(type == '2fofc') {
+                        vpBits[index] = (dataArray[index] >= isovalue) ? 1 : 0;
+                        //vpAtomID[index] = (dataArray[index] >= 0) ? 1 : 0; // determine whether it's positive
+                    }
+                    else if(type == 'fofc') {
+                        vpBits[index] = (dataArray[index] >= isovalue || dataArray[index] <= -isovalue) ? 1 : 0;
+                        vpAtomID[index] = (dataArray[index] >= 0) ? 1 : 0; // determine whether it's positive
+                    }
+                    else if(type == 'em') {
+                        vpBits[index] = (dataArray[index] >= isovalue) ? 1 : 0;
+                        //vpAtomID[index] = (dataArray[index] >= 0) ? 1 : 0; // determine whether it's positive
+                    }
                 }
             }
         }

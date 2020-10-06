@@ -510,6 +510,41 @@ iCn3D.prototype.applyPhimapOptions = function (options) { var me = this, ic = me
     }
 };
 
+iCn3D.prototype.applyphisurfaceOptions = function (options) { var me = this, ic = me.icn3d; "use strict";
+    if(options === undefined) options = this.opts;
+
+    //switch (options.wireframe.toLowerCase()) {
+    switch (this.phisurfwf) {
+        case 'yes':
+            options.phisurfwf = true;
+            break;
+        case 'no':
+            options.phisurfwf = false;
+            break;
+    }
+
+    options.phisurfop = parseFloat(this.phisurfop);
+
+    var atoms, currAtoms;
+
+    // only show the surface for atoms which are displaying
+    atoms = this.intHash(this.dAtoms, this.hAtoms);
+    // exclude water molecules
+    if(options['water'] === 'nothing') atoms = this.exclHash(atoms, this.water);
+
+    currAtoms = this.hash2Atoms(atoms);
+
+    switch (options.phisurface.toLowerCase()) {
+        case 'phi':
+            this.createSurfaceRepresentation(currAtoms, parseInt(this.phisurftype), options.phisurfwf, options.phisurfop);
+            break;
+        case 'nothing':
+            // remove surfaces
+            this.removeSurfaces();
+            break;
+    }
+};
+
 iCn3D.prototype.setFog = function(bZoomin) { var me = this, ic = me.icn3d; "use strict";
     var background = this.backgroundColors[this.opts.background.toLowerCase()];
 
@@ -597,6 +632,9 @@ iCn3D.prototype.alternateStructures = function () { var me = this, ic = me.icn3d
 
     this.removePhimaps();
     this.applyPhimapOptions();
+
+    this.removeSurfaces();
+    this.applyphisurfaceOptions();
 
     this.draw();
 
@@ -756,7 +794,6 @@ iCn3D.prototype.setHbondsContacts = function (options, type) { var me = this, ic
 
 iCn3D.prototype.applyOtherOptions = function (options) { var me = this, ic = me.icn3d; "use strict";
     if(options === undefined) options = this.opts;
-
 //    if(this.lines !== undefined) {
         // contact lines
         this.setHbondsContacts(options, 'contact');
@@ -822,6 +859,13 @@ iCn3D.prototype.applyOtherOptions = function (options) { var me = this, ic = me.
     // symmetry axes and polygon
     if(this.symmetryHash !== undefined && this.symmetrytitle !== undefined) {
         this.applySymmetry(this.symmetrytitle);
+    }
+
+    // other meshes
+    if(this.prevOtherMesh !== undefined) {
+        for(var i = 0, il = this.prevOtherMesh.length; i < il; ++i) {
+            this.mdl.add(this.prevOtherMesh[i]);
+        }
     }
 
     this.applyCenterOptions(options);

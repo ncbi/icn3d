@@ -1,4 +1,9 @@
 ## Change Log
+<<<<<<< HEAD
+[icn3d-2.20.0](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.20.0.zip) was release on October 6, 2020. Users can show electrostatic potential on surface or as equipotential map for any subsets of proteins/nucleotides/membrane/ligands. The PQR file (modified PDB file with partial charges and radii) can also be downloaded. The display of helices, tubes, and axes were improved. Users can change the helix display at the menu "Style > Two-color Helix".
+
+=======
+>>>>>>> a8469054f25ea10e20e7bf162282c21cf16a7bf5
 [icn3d-2.19.1](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.19.1.zip) was release on September 15, 2020. Added shade to 3D display using multiple lights.
 
 [icn3d-2.19.0](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.19.0.zip) was release on August 12, 2020. Delphi potential map can be displayed for PDB structures at "Analysis > Delphi Potential". The PDB file can be loaded in the URL with "pdbid=" or at "File > Open File". The Delphi potential file can be calculated at Delphi Web Server and be exported as a Cube file. The potential file can be accessed in a URL if it is located in the same host as iCn3D.

@@ -10,8 +10,53 @@ if (!$.ui.dialog.prototype._makeDraggableBase) {
         this.uiDialog.draggable("option", "containment", false);
     };
 }
+
+// https://gist.github.com/Artistan/c8d9d439c70117c8b9dd3e9bd8822d2c
+$.ajaxTransport("+binary", function (options, originalOptions, jqXHR) {
+    // check for conditions and support for blob / arraybuffer response type
+    if (window.FormData && ((options.dataType && (options.dataType == 'binary')) || (options.data && ((window.ArrayBuffer && options.data instanceof ArrayBuffer) || (window.Blob && options.data instanceof Blob))))) {
+        return {
+            // create new XMLHttpRequest
+            send: function (headers, callback) {
+                // setup all variables
+                var xhr = new XMLHttpRequest(),
+                    url = options.url,
+                    type = options.type,
+                    async = options.async || true,
+                    // blob or arraybuffer. Default is blob
+                    responseType = options.responseType || "blob",
+                    data = options.data || null;
+
+                xhr.addEventListener('load', function () {
+                    var data = {};
+                    data[options.dataType] = xhr.response;
+                    // make callback and send data
+                    callback(xhr.status, xhr.statusText, data, xhr.getAllResponseHeaders());
+                });
+
+                xhr.open(type, url, async);
+
+                // setup custom headers
+                for (var i in headers) {
+                    xhr.setRequestHeader(i, headers[i]);
+                }
+
+                xhr.responseType = responseType;
+                xhr.send(data);
+            },
+            abort: function () {
+                jqXHR.abort();
+            }
+        };
+    }
+});
+
 var iCn3DUI = function(cfg) { var me = this, ic = me.icn3d; "use strict";
+<<<<<<< HEAD
+    this.REVISION = '2.20.0';
+=======
     this.REVISION = '2.19.1';
+>>>>>>> a8469054f25ea10e20e7bf162282c21cf16a7bf5
     me.bFullUi = true;
     me.cfg = cfg;
     me.divid = me.cfg.divid;
@@ -161,8 +206,12 @@ var iCn3DUI = function(cfg) { var me = this, ic = me.icn3d; "use strict";
     me.opts['mapwireframe']       = 'yes';                //yes, no
     me.opts['emmap']              = 'nothing';            //em, nothing
     me.opts['emmapwireframe']     = 'yes';                //yes, no
-    me.opts['phimap']              = 'nothing';            //phi, nothing
-    me.opts['phimapwireframe']     = 'yes';                //yes, no
+    me.opts['phimap']             = 'nothing';            //phi, nothing
+    me.opts['phimapwireframe']    = 'yes';                //yes, no
+    me.opts['phisurface']         = 'nothing';            //phi, nothing
+    me.opts['phisurftype']        = 'nothing';            //Van der Waals surface, molecular surface, solvent accessible surface, nothing
+    me.opts['phisurfop']          = '1.0';                //1.0, 0.9, 0.8, 0.7, 0.6, 0.5
+    me.opts['phisurfwf']          = 'yes';                //yes, no
     me.opts['chemicals']          = 'stick';              //lines, stick, ball and stick, schematic, sphere, nothing
     me.opts['water']              = 'nothing';            //sphere, dot, nothing
     me.opts['ions']               = 'sphere';             //sphere, dot, nothing
@@ -170,9 +219,9 @@ var iCn3DUI = function(cfg) { var me = this, ic = me.icn3d; "use strict";
     me.opts['saltbridge']         = 'no';                 //yes, no
     me.opts['contact']            = 'no';                 //yes, no
     me.opts['halogen']            = 'no';                 //yes, no
-    me.opts['pi-cation']            = 'no';                 //yes, no
-    me.opts['pi-stacking']            = 'no';                 //yes, no
-    //me.opts['stabilizer']           = 'no';                 //yes, no
+    me.opts['pi-cation']          = 'no';                 //yes, no
+    me.opts['pi-stacking']        = 'no';                 //yes, no
+    //me.opts['stabilizer']         = 'no';                 //yes, no
     me.opts['ssbonds']            = 'yes';                 //yes, no
     me.opts['clbonds']            = 'yes';                 //yes, no
     me.opts['rotationcenter']     = 'molecule center';    //molecule center, pick center, display center
@@ -180,7 +229,7 @@ var iCn3DUI = function(cfg) { var me = this, ic = me.icn3d; "use strict";
     me.opts['fog']                = 'no';                 //yes, no
     me.opts['slab']               = 'no';                 //yes, no
     me.opts['pk']                 = 'residue';            //no, atom, residue, strand, chain
-    me.opts['chemicalbinding']      = 'hide';               //show, hide
+    me.opts['chemicalbinding']    = 'hide';               //show, hide
     if(me.cfg.align !== undefined) me.opts['color'] = 'identity';
     if(me.cfg.chainalign !== undefined) me.opts['color'] = 'identity';
     if(me.cfg.blast_rep_id !== undefined) me.opts['color'] = 'conservation';
@@ -579,7 +628,8 @@ iCn3DUI.prototype = {
            me.downloadGi(me.cfg.gi);
         }
         else if(me.cfg.blast_rep_id !== undefined) {
-           if(me.cfg.query_id.substr(0,5) !== 'Query') { //Query_78989
+           // custom seqeunce has query_id such as "Query_78989" in BLAST
+           if(me.cfg.query_id.substr(0,5) !== 'Query' && me.cfg.rid === undefined) {
                me.inputid = me.cfg.query_id + '_' + me.cfg.blast_rep_id;
                me.setLogCmd('load seq_struct_ids ' + me.cfg.query_id + ',' + me.cfg.blast_rep_id, true);
                me.downloadBlast_rep_id(me.cfg.query_id + ',' + me.cfg.blast_rep_id);
@@ -794,6 +844,11 @@ iCn3DUI.prototype = {
               ic.removeLastPhimap();
           }
           ic.applyPhimapOptions();
+          //if(ic.bRender) ic.render();
+          ic.draw(); // to make surface work in assembly
+      }
+      else if(id === 'phisurface') {
+          ic.applyphisurfaceOptions();
           //if(ic.bRender) ic.render();
           ic.draw(); // to make surface work in assembly
       }
@@ -1624,15 +1679,15 @@ iCn3DUI.prototype = {
        }
     },
     addLineFromPicking: function(type) { var me = this, ic = me.icn3d; "use strict";
-             var size = 0, background = 0;
-             var color = $("#" + me.pre + type + "color" ).val();
-             var x = (ic.pAtom.coord.x + ic.pAtom2.coord.x) / 2;
-             var y = (ic.pAtom.coord.y + ic.pAtom2.coord.y) / 2;
-             var z = (ic.pAtom.coord.z + ic.pAtom2.coord.z) / 2;
-             var dashed = (type == 'stabilizer') ? false : true;
-             me.setLogCmd('add line | x1 ' + ic.pAtom.coord.x.toPrecision(4)  + ' y1 ' + ic.pAtom.coord.y.toPrecision(4) + ' z1 ' + ic.pAtom.coord.z.toPrecision(4) + ' | x2 ' + ic.pAtom2.coord.x.toPrecision(4)  + ' y2 ' + ic.pAtom2.coord.y.toPrecision(4) + ' z2 ' + ic.pAtom2.coord.z.toPrecision(4) + ' | color ' + color + ' | dashed ' + dashed + ' | type ' + type, true);
-             me.addLine(ic.pAtom.coord.x, ic.pAtom.coord.y, ic.pAtom.coord.z, ic.pAtom2.coord.x, ic.pAtom2.coord.y, ic.pAtom2.coord.z, color, dashed, type);
-             ic.pickpair = false;
+        var size = 0, background = 0;
+        var color = $("#" + me.pre + type + "color" ).val();
+        var x = (ic.pAtom.coord.x + ic.pAtom2.coord.x) / 2;
+        var y = (ic.pAtom.coord.y + ic.pAtom2.coord.y) / 2;
+        var z = (ic.pAtom.coord.z + ic.pAtom2.coord.z) / 2;
+        var dashed = (type == 'stabilizer') ? false : true;
+        me.setLogCmd('add line | x1 ' + ic.pAtom.coord.x.toPrecision(4)  + ' y1 ' + ic.pAtom.coord.y.toPrecision(4) + ' z1 ' + ic.pAtom.coord.z.toPrecision(4) + ' | x2 ' + ic.pAtom2.coord.x.toPrecision(4)  + ' y2 ' + ic.pAtom2.coord.y.toPrecision(4) + ' z2 ' + ic.pAtom2.coord.z.toPrecision(4) + ' | color ' + color + ' | dashed ' + dashed + ' | type ' + type, true);
+        me.addLine(ic.pAtom.coord.x, ic.pAtom.coord.y, ic.pAtom.coord.z, ic.pAtom2.coord.x, ic.pAtom2.coord.y, ic.pAtom2.coord.z, color, dashed, type);
+        ic.pickpair = false;
     },
     setEntrezLinks: function(db) { var me = this, ic = me.icn3d; "use strict";
       var structArray = Object.keys(ic.structures);
@@ -1990,7 +2045,7 @@ iCn3DUI.prototype = {
                     tmpText += '</tr>';
                 }
                 else {
-                    tmpText += '<tr><td>' + resid1 + '</td><td>' + resid2 + '</td><td align="center">' + contactCnt + '</td><td align="center">' + dist1_dist2[0] + '</td><td align="center">' + dist1_dist2[1] + '</td></tr>';
+                    tmpText += '<tr><td>' + resid1 + '</td><td>' + resid2 + '</td><td align="center">' + contactCnt + '</td><td align="center">' + dist1 + '</td><td align="center">' + dist2 + '</td></tr>';
                 }
                 ++cnt;
             }
@@ -2486,9 +2541,42 @@ iCn3DUI.prototype = {
             alert('The File APIs are not fully supported in this browser.');
          }
     },
+    loadDelphiFile: function(type) { var me = this, ic = me.icn3d; "use strict";
+       var gsize = $("#" + me.pre + "delphigsize").val();
+       var salt = $("#" + me.pre + "delphisalt").val();
+       var contour = (type == 'delphi2') ? $("#" + me.pre + "delphicontour2").val() : $("#" + me.pre + "delphicontour").val();
+
+       var bSurface = (type == 'delphi2') ? true: false;
+
+       me.CalcPhi(gsize, salt, contour, bSurface);
+
+       var displayType = (type == 'delphi2') ? 'surface' : 'map';
+
+       if(bSurface) {
+           me.setLogCmd('set delphi ' + displayType + ' | contour ' + contour + ' | gsize ' + gsize + ' | salt ' + salt
+             + ' | surface ' + ic.phisurftype + ' | opacity ' + ic.phisurfop + ' | wireframe ' + ic.phisurfwf, true);
+       }
+       else {
+           me.setLogCmd('set delphi ' + displayType + ' | contour ' + contour + ' | gsize ' + gsize + ' | salt ' + salt, true);
+       }
+    },
+
     loadPhiFile: function(type) { var me = this, ic = me.icn3d; "use strict";
-       var file = $("#" + me.pre + type + "file")[0].files[0];
-       var contour = $("#" + me.pre + "phicontour").val();
+       var file;
+       if(type == 'pqr' || type == 'phi' || type == 'cube') {
+           file = $("#" + me.pre + type + "file")[0].files[0];
+       }
+       else if(type == 'pqr2') {
+           file = $("#" + me.pre + "pqrfile2")[0].files[0];
+       }
+       else if(type == 'phi2') {
+           file = $("#" + me.pre + "phifile2")[0].files[0];
+       }
+       else if(type == 'cube2') {
+           file = $("#" + me.pre + "cubefile2")[0].files[0];
+       }
+
+       var contour = (type == 'pqr' || type == 'phi' || type == 'cube') ? $("#" + me.pre + "phicontour").val() : $("#" + me.pre + "phicontour2").val();
        if(!file) {
          alert("Please select a file before clicking 'Load'");
        }
@@ -2497,18 +2585,44 @@ iCn3DUI.prototype = {
          var reader = new FileReader();
          reader.onload = function (e) { var ic = me.icn3d;
            var data = e.target.result; // or = reader.result;
-           if(type == 'phi') {
-             me.loadPhiData(data, contour);
+
+           var gsize = 0, salt = 0;
+           if(type == 'pqr' || type == 'pqr2') {
+             var bSurface = (type == 'pqr2') ? true: false;
+
+             gsize = $("#" + me.pre + type + "gsize").val();
+             salt = $("#" + me.pre + type + "salt").val();
+             me.CalcPhi(gsize, salt, contour, bSurface, data);
            }
-           else {
-             me.loadCubeData(data, contour);
+           else if(type == 'phi' || type == 'phi2') {
+             var bSurface = (type == 'phi2') ? true: false;
+             me.loadPhiData(data, contour, bSurface);
+           }
+           else if(type == 'cube' || type == 'cube2') {
+             var bSurface = (type == 'cube2') ? true: false;
+             me.loadCubeData(data, contour, bSurface);
            }
 
            me.bAjaxPhi = true;
-           me.setOption('phimap', 'phi');
-           me.setLogCmd('load ' + type + ' file ' + $("#" + me.pre + type + "file").val(), false);
+
+           if(bSurface) {
+             me.setOption('phisurface', 'phi');
+           }
+           else {
+             me.setOption('phimap', 'phi');
+           }
+
+           if(bSurface) {
+               me.setLogCmd('load phi ' + type + ' | contour ' + contour + ' | file ' + $("#" + me.pre + type + "file").val()
+                 + ' | gsize ' + gsize + ' | salt ' + salt
+                 + ' | surface ' + ic.phisurftype + ' | opacity ' + ic.phisurfop + ' | wireframe ' + ic.phisurfwf, false);
+           }
+           else {
+               me.setLogCmd('load phi ' + type + ' | contour ' + contour + ' | file ' + $("#" + me.pre + type + "file").val()
+                 + ' | gsize ' + gsize + ' | salt ' + salt, false);
+           }
          };
-         if(type == 'phi') {
+         if(type == 'phi' || type == 'phi2') {
              reader.readAsArrayBuffer(file);
          }
          else {
@@ -2517,14 +2631,47 @@ iCn3DUI.prototype = {
        }
     },
     loadPhiFileUrl: function(type) { var me = this, ic = me.icn3d; "use strict";
-       var url = $("#" + me.pre + type + "file").val();
-       var contour = $("#" + me.pre + "phiurlcontour").val();
+       var url;
+       if(type == 'pqrurl' || type == 'phiurl' || type == 'cubeurl') {
+           url = $("#" + me.pre + type + "file").val();
+       }
+       else if(type == 'pqrurl2') {
+           url = $("#" + me.pre + "pqrurlfile2").val();
+       }
+       else if(type == 'phiurl2') {
+           url = $("#" + me.pre + "phiurlfile2").val();
+       }
+       else if(type == 'cubeurl2') {
+           url = $("#" + me.pre + "cubeurlfile2").val();
+       }
+
+       var contour = (type == 'pqrurl' || type == 'phiurl' || type == 'cubeurl') ? $("#" + me.pre + "phiurlcontour").val() :  $("#" + me.pre + "phiurlcontour2").val();
        if(!url) {
             alert("Please input the file URL before clicking 'Load'");
        }
        else {
-           me.PhiParserBase(url, type, contour);
-           me.setLogCmd('set phimap ' + type + ' contour ' + contour + ' | ' + encodeURIComponent(url), true);
+           var bSurface = (type == 'pqrurl2' || type == 'phiurl2' || type == 'cubeurl2') ? true: false;
+
+           var gsize = 0, salt = 0;
+
+           if(type == 'pqrurl' || type == 'pqrurl2') {
+               gsize = $("#" + me.pre + type + "gsize").val();
+               salt = $("#" + me.pre + type + "salt").val();
+               me.CalcPhiUrl(gsize, salt, contour, bSurface, url);
+           }
+           else {
+               me.PhiParser(url, type, contour, bSurface);
+           }
+
+           if(bSurface) {
+               me.setLogCmd('set phi ' + type + ' | contour ' + contour + ' | url ' + encodeURIComponent(url)
+                 + ' | gsize ' + gsize + ' | salt ' + salt
+                 + ' | surface ' + ic.phisurftype + ' | opacity ' + ic.phisurfop + ' | wireframe ' + ic.phisurfwf, true);
+           }
+           else {
+               me.setLogCmd('set phi ' + type + ' | contour ' + contour + ' | url ' + encodeURIComponent(url)
+                 + ' | gsize ' + gsize + ' | salt ' + salt, true);
+           }
        }
     },
     loadDsn6FileUrl: function(type) { var me = this, ic = me.icn3d; "use strict";
@@ -3904,6 +4051,241 @@ iCn3DUI.prototype = {
                 });
             }
         };
+    },
+    getAtomPDB: function (atomHash, bPqr) {  var me = this, ic = me.icn3d; "use strict";
+        var pdbStr = '';
+
+        pdbStr += 'HEADER    PDB From iCn3D'.padEnd(62, ' ') + Object.keys(ic.structures)[0] + '\n';
+        var title = (ic.molTitle.lendth > 80) ? ic.molTitle.substr(0,77) + '...' : ic.molTitle;
+        pdbStr += 'TITLE     ' + title + '\n';
+
+        // get all phosphate groups in lipids
+        var phosPHash = {}, phosOHash = {};
+        for(var i in ic.chemicals) {
+            var atom = ic.atoms[i];
+            if(atom.elem == 'P') {
+                phosPHash[i] = 1;
+
+                for(var j = 0, jl = atom.bonds.length; j < jl; ++j) {
+                    var serial = atom.bonds[j];
+                    if(serial && ic.atoms[serial].elem == 'O') { // could be null
+                        phosOHash[serial] = 1;
+                    }
+                }
+            }
+        }
+/*
+HELIX    1  NT MET A    3  ALA A   12  1                                  10
+            var startChain = (line.substr(19, 1) == ' ') ? 'A' : line.substr(19, 1);
+            var startResi = parseInt(line.substr(21, 4));
+            var endResi = parseInt(line.substr(33, 4));
+SHEET    1  B1 2 GLY A  35  THR A  39  0
+            var startChain = (line.substr(21, 1) == ' ') ? 'A' : line.substr(21, 1);
+            var startResi = parseInt(line.substr(22, 4));
+            var endResi = parseInt(line.substr(33, 4));
+*/
+
+        var calphaHash = ic.intHash(atomHash, ic.calphas);
+        var helixStr = 'HELIX', sheetStr = 'SHEET';
+        for(var i in calphaHash) {
+            var atom = ic.atoms[i];
+
+            if(atom.ssbegin) {
+                if(atom.ss == 'helix') {
+                    pdbStr += helixStr.padEnd(15, ' ') + atom.resn.padStart(3, ' ') + atom.chain.padStart(2, ' ')
+                        + atom.resi.toString().padStart(5, ' ');
+                }
+                else if(atom.ss == 'sheet') {
+                    pdbStr += sheetStr.padEnd(17, ' ') + atom.resn.padStart(3, ' ') + atom.chain.padStart(2, ' ')
+                        + atom.resi.toString().padStart(4, ' ');
+                }
+            }
+
+            if(atom.ssend) {
+                if(atom.ss == 'helix') {
+                    pdbStr += atom.resn.padStart(5, ' ') + atom.chain.padStart(2, ' ')
+                        + atom.resi.toString().padStart(5, ' ') + '\n';
+                }
+                else if(atom.ss == 'sheet') {
+                    pdbStr += atom.resn.padStart(5, ' ') + atom.chain.padStart(2, ' ')
+                        + atom.resi.toString().padStart(4, ' ') + '\n';
+                }
+            }
+        }
+
+        var connStr = '';
+        for(var i in atomHash) {
+            var atom = ic.atoms[i];
+            var line = '';
+/*
+ 1 - 6 Record name "ATOM "
+ 7 - 11 Integer serial Atom serial number.
+13 - 16 Atom name Atom name.
+17 Character altLoc Alternate location indicator.
+18 - 20 Residue name resName Residue name.
+22 Character chainID Chain identifier.
+23 - 26 Integer resSeq Residue sequence number.
+27 AChar iCode Code for insertion of residues.
+31 - 38 Real(8.3) x Orthogonal coordinates for X in
+ Angstroms.
+39 - 46 Real(8.3) y Orthogonal coordinates for Y in
+ Angstroms.
+47 - 54 Real(8.3) z Orthogonal coordinates for Z in
+ Angstroms.
+55 - 60 Real(6.2) occupancy Occupancy.
+61 - 66 Real(6.2) tempFactor Temperature factor.
+73 - 76 LString(4) segID Segment identifier, left-justified.
+77 - 78 LString(2) element Element symbol, right-justified.
+79 - 80 LString(2) charge Charge on the atom.
+*/
+            line += (atom.het) ? 'HETATM' : 'ATOM  ';
+            line += i.toString().padStart(5, ' ');
+            line += ' ';
+
+            var atomName = atom.name.trim();
+            if(!isNaN(atomName.substr(0, 1)) ) atomName = atomName.substr(1) + atomName.substr(0, 1);
+
+            if(atomName.length == 4) {
+                line += atomName;
+            }
+            else {
+                line += ' ';
+                atomName = atomName.replace(/\*/g, "'");
+                if(atomName == 'O1P') atomName = 'OP1';
+                else if(atomName == 'O2P') atomName = 'OP2';
+                line += atomName.padEnd(3, ' ');
+            }
+
+            line += ' ';
+            line += (atom.resn.length <= 3) ? atom.resn.padStart(3, ' ') : atom.resn.substr(0, 3);
+            line += ' ';
+            line += (atom.chain.length <= 1) ? atom.chain.padStart(1, ' ') : atom.chain.substr(0, 1);
+            var resi = atom.resi;
+            if(atom.chain.length > 3 && !isNaN(atom.chain.substr(3)) ) { // such as: chain = NAG2, resi=1 => chain = NAG, resi=2
+                resi = resi - 1 + parseInt(atom.chain.substr(3));
+            }
+            line += (resi.toString().length <= 4) ? resi.toString().padStart(4, ' ') : resi.toString().substr(0, 4);
+            line += ' '.padStart(4, ' ');
+            line += atom.coord.x.toFixed(3).toString().padStart(8, ' ');
+            line += atom.coord.y.toFixed(3).toString().padStart(8, ' ');
+            line += atom.coord.z.toFixed(3).toString().padStart(8, ' ');
+
+            if( (bPqr && atom.het) || phosPHash.hasOwnProperty(i) || phosOHash.hasOwnProperty(i) ) {
+                var size = 1.5, charge = 0;
+
+/*
+                // use antechamber atom size
+                if(atom.elem == 'C') size = 1.7; //1.9080;
+                else if(atom.elem == 'N') size = 1.55; //1.8240;
+                else if(atom.elem == 'O') size = 1.52; //1.6612;
+                else if(atom.elem == 'H') size = 1.2; //1.2500;
+                else if(atom.elem == 'S') size = 1.8; //2.0000;
+                else if(atom.elem == 'P') size = 1.8; //2.1000;
+                else if(ic.vdwRadii.hasOwnProperty(atom.elem)) {
+                    size = ic.vdwRadii[atom.elem];
+                }
+*/
+
+                // use amber atom size
+                if(atom.elem == 'C') size = 1.9080;
+                else if(atom.elem == 'N') size = 1.8240;
+                else if(atom.elem == 'O') size = 1.6612;
+                else if(atom.elem == 'H') size = 1.2500;
+                else if(atom.elem == 'S') size = 2.0000;
+                else if(atom.elem == 'P') size = 2.1000;
+                else if(ic.vdwRadii.hasOwnProperty(atom.elem)) {
+                    size = ic.vdwRadii[atom.elem];
+                }
+
+                if(me.cfg.cid !== undefined && atom.crg !== undefined) {
+                    charge = atom.crg;
+                }
+                else if(phosPHash.hasOwnProperty(i)) {
+                    charge = 1.3800; // P in phosphate
+                }
+                else if(phosOHash.hasOwnProperty(i)) {
+                    charge = -0.5950; // O in phosphate
+                }
+                else if(ic.ionCharges.hasOwnProperty(atom.elem)) {
+                    charge = ic.ionCharges[atom.elem];
+                }
+
+                line += charge.toFixed(4).toString().padStart(8, ' ');
+                line += size.toFixed(4).toString().padStart(7, ' ');
+            }
+            else {
+                line += "1.00".padStart(6, ' ');
+                line += (atom.b) ? atom.b.toFixed(2).toString().padStart(6, ' ') : ' '.padStart(6, ' ');
+                line += ' '.padStart(10, ' ');
+                line += atom.elem.padStart(2, ' ');
+                line += ' '.padStart(2, ' ');
+            }
+
+            // connection info
+            if(atom.het && atom.bonds.length > 0) {
+                connStr += 'CONECT' + i.toString().padStart(5, ' ');
+                for(var j = 0, jl = atom.bonds.length; j < jl; ++j) {
+                    if(atom.bonds[j]) { // could be null
+                        connStr += atom.bonds[j].toString().padStart(5, ' ');
+                    }
+                }
+                connStr += '\n';
+            }
+
+            pdbStr += line + '\n';
+        }
+
+        pdbStr += connStr;
+
+        return pdbStr;
+    },
+    getSelectedChainPDB: function () {  var me = this, ic = me.icn3d; "use strict";
+       var chainHash = {};
+       for(var i in ic.hAtoms) {
+           var atom = ic.atoms[i];
+           chainHash[atom.structure + '_' + atom.chain] = 1;
+       }
+
+       var atomHash = {};
+       for(var chainid in chainHash) {
+           atomHash = ic.unionHash(atomHash, ic.chains[chainid]);
+       }
+
+       return me.getAtomPDB(atomHash);
+    },
+    measureDistTwoSets: function(nameArray, nameArray2) { var me = this, ic = me.icn3d; "use strict";
+       if(nameArray.length == 0 || nameArray2.length == 0) {
+           alert("Please select two sets");
+       }
+       else {
+           var prevHAtoms = ic.cloneHash(ic.hAtoms);
+           var atomSet1 = me.getAtomsFromNameArray(nameArray);
+           var atomSet2 = me.getAtomsFromNameArray(nameArray2);
+
+           var posArray1 = ic.getExtent(atomSet1);
+           var posArray2 = ic.getExtent(atomSet2);
+
+           var pos1 = new THREE.Vector3(posArray1[2][0], posArray1[2][1], posArray1[2][2]);
+           var pos2 = new THREE.Vector3(posArray2[2][0], posArray2[2][1], posArray2[2][2]);
+
+           ic.hAtoms = ic.cloneHash(prevHAtoms);
+
+           var bOther = true;
+           ic.createBox_base(pos1, ic.originSize, ic.hColor, false, bOther);
+           ic.createBox_base(pos2, ic.originSize, ic.hColor, false, bOther);
+
+           var color = $("#" + me.pre + "distancecolor2" ).val();
+
+           me.addLine(pos1.x, pos1.y, pos1.z, pos2.x, pos2.y, pos2.z, color, true, 'distance');
+
+           var size = 0, background = 0;
+           var labelPos = pos1.clone().add(pos2).multiplyScalar(0.5);
+           var distance = parseInt(pos1.distanceTo(pos2) * 10) / 10;
+           var text = distance.toString() + " A";
+           me.addLabel(text, labelPos.x, labelPos.y, labelPos.z, size, color, background, 'distance');
+           ic.draw();
+       }
     }
+
     // ====== functions end ===============
 };

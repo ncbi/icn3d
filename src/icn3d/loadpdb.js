@@ -100,11 +100,11 @@ iCn3D.prototype.loadPDB = function (src, pdbid, bOpm, bVector) { var me = this, 
             bCalculateHbond = false;
 
             var chemicalChain = line.substr(6, 1);
-            var chemicalResi = line.substr(8, 4).replace(/ /g, "");
-            var chemicalAtom = line.substr(14, 4).replace(/ /g, "");
+            var chemicalResi = line.substr(8, 4).trim();
+            var chemicalAtom = line.substr(14, 4).trim();
             var proteinChain = line.substr(18, 1);
-            var proteinResi = line.substr(20, 4).replace(/ /g, "");
-            var proteinAtom = line.substr(25, 4).replace(/ /g, "");
+            var proteinResi = line.substr(20, 4).trim();
+            var proteinAtom = line.substr(25, 4).trim();
 
             var chemical_x = parseFloat(line.substr(30, 8));
             var chemical_y = parseFloat(line.substr(38, 8));
@@ -113,7 +113,7 @@ iCn3D.prototype.loadPDB = function (src, pdbid, bOpm, bVector) { var me = this, 
             var protein_y = parseFloat(line.substr(62, 8));
             var protein_z = parseFloat(line.substr(70, 8));
 
-            var dist = line.substr(78, 8).replace(/ /g, "");
+            var dist = line.substr(78, 8).trim();
 
             this.hbondpnts.push(new THREE.Vector3(chemical_x, chemical_y, chemical_z));
             this.hbondpnts.push(new THREE.Vector3(protein_x, protein_y, protein_z));
@@ -122,11 +122,11 @@ iCn3D.prototype.loadPDB = function (src, pdbid, bOpm, bVector) { var me = this, 
             this.bSsbondProvided = true;
             //SSBOND   1 CYS E   48    CYS E   51                          2555
             var chain1 = (line.substr(15, 1) == ' ') ? 'A' : line.substr(15, 1);
-            var resi1 = line.substr(17, 4).replace(/ /g, "");
+            var resi1 = line.substr(17, 4).trim();
             var resid1 = id + '_' + chain1 + '_' + resi1;
 
             var chain2 = (line.substr(29, 1) == ' ') ? 'A' : line.substr(29, 1);
-            var resi2 = line.substr(31, 4).replace(/ /g, "");
+            var resi2 = line.substr(31, 4).trim();
             var resid2 = id + '_' + chain2 + '_' + resi2;
 
             if(this.ssbondpnts[id] === undefined) this.ssbondpnts[id] = [];
@@ -210,11 +210,11 @@ iCn3D.prototype.loadPDB = function (src, pdbid, bOpm, bVector) { var me = this, 
             var serial2 = parseInt(line.substr(6, 5));
             oriSerial2NewSerial[serial2] = serial;
 
-            var elem = line.substr(76, 2).replace(/ /g, "");
+            var elem = line.substr(76, 2).trim();
             if (elem === '') { // for some incorrect PDB files, important to use substr(12,2), not (12,4)
-               elem = line.substr(12, 2).replace(/ /g,"");
+               elem = line.substr(12, 2).trim();
             }
-            var atom = line.substr(12, 4).replace(/ /g, '');
+            var atom = line.substr(12, 4).trim();
             var resn = line.substr(17, 3);
 
             var chain = line.substr(21, 1);
