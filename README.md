@@ -65,7 +65,7 @@ iCn3D also accepts the following file types: PDB, mmCIF, Mol2, SDF, and XYZ. The
 * **[jQuery and jQuery UI](https://jquery.com/)**: used as a general tool to write Javascript code. Some jQuery UI features are used.
 * **[Three.js](http://threejs.org/)**: used to set up the 3D view. (Replaced "splineTube = extrudePath.computeFrenetFrames( steps, false )" with "splineTube = options.frames !== undefined ? options.frames: extrudePath.computeFrenetFrames( steps, false )" to enable custom frames in ExtrudeGeometry.)
 * **[D3.js](https://d3js.org/)**: used to draw force-directed graph.
-* **[DelPhi](http://honig.c2b2.columbia.edu/delphi)**: used to calculate electrostatic potential.
+* **[DelPhi](http://honig.c2b2.columbia.edu/delphi)**: used to calculate electrostatic potential and is licensed from Columnbia University.
 * **[DelPhiPKa](http://compbio.clemson.edu/pka_webserver)**: used to add hydrogens and partial charges to proteins and nucleotides.
 * **[Open Babel](http://openbabel.org/wiki/Main_Page)**: used to add hydrogens to ligands.
 * **[Antechamber](http://ambermd.org/antechamber/ac.html)**: used to add partial charges to ligands.
