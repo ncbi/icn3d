@@ -317,15 +317,23 @@ iCn3DUI.prototype.allEventFunctions = function() { var me = this;
        me.saveFile(file_pref + '_icn3d_residues.pdb', 'text', [pdbStr]);
     });
 
-    $("#" + me.pre + "mn1_exportPdbChain").add("#" + me.pre + "delphipdb")
+    $("#" + me.pre + "delphipdb")
       .add("#" + me.pre + "phipdb").add("#" + me.pre + "phiurlpdb").click(function(e) { var ic = me.icn3d;
+       var  pdbStr = me.getSelectedResiduePDB();
+
+       me.setLogCmd("export PDB of selected residues", false);
+       var file_pref = (me.inputid) ? me.inputid : "custom";
+       me.saveFile(file_pref + '_icn3d_residues.pdb', 'text', [pdbStr]);
+    });
+/*
+    $("#" + me.pre + "mn1_exportPdbChain").click(function(e) { var ic = me.icn3d;
        var  pdbStr = me.getSelectedChainPDB();
 
        me.setLogCmd("export PDB of selected chains", false);
        var file_pref = (me.inputid) ? me.inputid : "custom";
        me.saveFile(file_pref + '_icn3d_chains.pdb', 'text', [pdbStr]);
     });
-
+*/
     $("#" + me.pre + "delphipqr").add("#" + me.pre + "phipqr").add("#" + me.pre + "phiurlpqr").click(function(e) { var ic = me.icn3d;
        me.exportPqr();
        me.setLogCmd("export pqr", true);
@@ -3513,6 +3521,8 @@ iCn3DUI.prototype.updateSurfPara = function(type) { var me = this, ic = me.icn3d
 
 iCn3DUI.prototype.exportPqr = function() { var me = this, ic = me.icn3d; "use strict";
    var chainHash = {}, ionHash = {};
+   var atomHash = {};
+/*
    for(var i in ic.hAtoms) {
        var atom = ic.atoms[i];
 
@@ -3524,16 +3534,27 @@ iCn3DUI.prototype.exportPqr = function() { var me = this, ic = me.icn3d; "use st
        }
    }
 
-   var atomHash = {};
    for(var chainid in chainHash) {
        atomHash = ic.unionHash(atomHash, ic.chains[chainid]);
+   }
+*/
+
+   for(var i in ic.hAtoms) {
+       var atom = ic.atoms[i];
+
+       if(ic.ions.hasOwnProperty(i)) {
+         ionHash[i] = 1;
+       }
+       else {
+         atomHash[i] = 1;
+       }
    }
 
    if(me.cfg.cid) {
       var pqrStr = me.getAtomPDB(atomHash, true) + me.getAtomPDB(ionHash, true);
 
       var file_pref = (me.inputid) ? me.inputid : "custom";
-      me.saveFile(file_pref + '_icn3d_chains.pqr', 'text', [pqrStr]);
+      me.saveFile(file_pref + '_icn3d.pqr', 'text', [pqrStr]);
    }
    else {
        var bCalphaOnly = ic.isCalphaPhosOnly(ic.hash2Atoms(atomHash));
@@ -3567,7 +3588,7 @@ iCn3DUI.prototype.exportPqr = function() { var me = this, ic = me.icn3d; "use st
               var pqrStr = data;
 
               var file_pref = (me.inputid) ? me.inputid : "custom";
-              me.saveFile(file_pref + '_icn3d_chains.pqr', 'text', [pqrStr]);
+              me.saveFile(file_pref + '_icn3d_residues.pqr', 'text', [pqrStr]);
           },
           error : function(xhr, textStatus, errorThrown ) {
             this.tryCount++;

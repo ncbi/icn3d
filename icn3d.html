@@ -535,7 +535,7 @@ You can show symmetry when available.<br/>
 </div>
 
 <div class="gallery">
-<a href="https://structure.ncbi.nlm.nih.gov/icn3d/share.html?LkGJv5SvRras7ZM77" target="_blank">
+<a href="https://structure.ncbi.nlm.nih.gov/icn3d/share.html?GXrsxjtBeLWCLNkXA" target="_blank">
 <img style="height:300px" src ="https://www.ncbi.nlm.nih.gov/Structure/icn3d/gallery/6M17-LkGJv5SvRras7ZM77.png"><br>Delphi Electrostatic Potential (25 mV) of<br>2019-nCoV RBD/ACE2-B0AT1 complex (PDB 6M17)
 </a>
 </div>
@@ -655,6 +655,12 @@ You can show symmetry when available.<br/>
 </div>
 
 <div class="gallery">
+<a href="https://structure.ncbi.nlm.nih.gov/icn3d/share.html?j45sXGcukpPKfL1cA" target="_blank">
+<img style="height:300px" src ="https://www.ncbi.nlm.nih.gov/Structure/icn3d/gallery/3GVU-j45sXGcukpPKfL1cA.png"><br>Ligand Binding with Two-color Helices (PDB 3GVU)
+</a>
+</div>
+
+<div class="gallery">
 <a href="https://structure.ncbi.nlm.nih.gov/icn3d/share.html?D6LC" target="_blank">
 <img style="height:300px" src ="https://www.ncbi.nlm.nih.gov/Structure/icn3d/gallery/3GVU-D6LC.png"><br>Ligand Binding with Thinner Coils (PDB 3GVU)
 </a>
@@ -663,6 +669,12 @@ You can show symmetry when available.<br/>
 <div class="gallery">
 <a href="https://structure.ncbi.nlm.nih.gov/icn3d/share.html?vzTs" target="_blank">
 <img style="height:300px" src ="https://www.ncbi.nlm.nih.gov/Structure/icn3d/gallery/3GVU-vzTs.png"><br>Ligand Binding with Surfaces and Labels (PDB 3GVU)
+</a>
+</div>
+
+<div class="gallery">
+<a href="https://structure.ncbi.nlm.nih.gov/icn3d/share.html?XCxR6fSTmXHxR3o1A" target="_blank">
+<img style="height:300px" src ="https://www.ncbi.nlm.nih.gov/Structure/icn3d/gallery/3GVU-XCxR6fSTmXHxR3o1A.png"><br>Ligand Binding with Electrostatic Potentials (PDB 3GVU)
 </a>
 </div>
 
@@ -1039,6 +1051,7 @@ You can show symmetry when available.<br/>
 <tr><td valign='top'><span class="indent">State File:</span></td>            <td valign='top'>[no command available]</td> <td valign='top'><a href="#saveFile">saveFile</a></td></tr>
 <tr><td valign='top'><span class="indent">All Selections:</span></td>   <td valign='top'>[no command available]</td> <td valign='top'><a href="#saveFile">saveFile</a></td></tr>
 <tr><td valign='top'><span class="indent">Residue Counts:</span></td>   <td valign='top'>[no command available]</td> <td valign='top'><a href="#saveFile">saveFile</a></td></tr>
+<tr><td valign='top'><span class="indent">PDB:</span></td>   <td valign='top'>[no command available]</td> <td valign='top'>getAtomPDB</td></tr>
 </tr>
 
 <tr><td valign='top'>g) Share Link:</td>         <td valign='top'>[no command available]</td> <td valign='top'><a href="#shareLink">shareLink</a></td></tr>
@@ -1295,6 +1308,11 @@ In the dialog Select -&gt; Advanced, users can use simple specification to selec
 <tr><td valign='top'><span class="indent">Orange:</span></td>        <td valign='top'>set theme orange</td> <td valign='top'>setTheme</td></tr>
 <tr><td valign='top'><span class="indent">Black:</span></td>        <td valign='top'>set theme black</td> <td valign='top'>setTheme</td></tr>
 
+<tr><td colspan="3"><br>v) Style -&gt; Two-color Helix</td> </tr>
+<tr><td valign='top'><span class="indent">Yes</span></td>                 <td valign='top'>set double color on</td> <td valign='top'>ic.bDoublecolor = true</td></tr>
+<tr><td valign='top'><span class="indent">No</span></td>                  <td valign='top'>set double color off</td> <td valign='top'>ic.bDoublecolor = false</td></tr>
+
+
 </tbody></table>
 <br>
 <a name="color"></a><b>5. Color</b> <a href="#Top"><span class="top">&nbsp;&nbsp;&nbsp;</span></a><br>
@@ -1371,8 +1389,9 @@ In the dialog Select -&gt; Advanced, users can use simple specification to selec
 <tr><td valign='top'>l) Analysis -&gt; Symmetry:</td>  <td valign='top'>symmetry C6 (global)</td> <td valign='top'>retrieveSymmetry; applySymmetry</td></tr>
 
 <tr><td colspan="3"><br>m) Analysis -&gt; Distance</td> </tr>
-<tr><td valign='top' rowspan="2"><span class="indent">Measure:</span></td>            <td valign='top'>add label [label text] | x [x] y [y] z [z] | size [label size] | color [FF0000] | background [FFFFFF]</td> <td valign='top'><a href="#addLabel">addLabel</a></td></tr>
+<tr><td valign='top' rowspan="2"><span class="indent">between Two Atoms:</span></td>            <td valign='top'>add label [label text] | x [x] y [y] z [z] | size [label size] | color [FF0000] | background [FFFFFF]</td> <td valign='top'><a href="#addLabel">addLabel</a></td></tr>
 <tr>                                                               <td valign='top'>add line | x1 [x1] y1 [y1] z1 [z1] | x2 [x2] y2 [y2] z2 [z2] | color [FFFF00] | dashed [true]</td> <td valign='top'><a href="#addLine">addLine</a></td></tr>
+<tr><td valign='top'><span class="indent">between Two Sets:</span></td>            <td valign='top'>dist | [set1] [set2]</td> <td valign='top'>measureDistTwoSets</td></tr>
 <tr><td valign='top'><span class="indent">Hide:</span></td>            <td valign='top'>set lines off</td> <td valign='top'>ic.labels['distance'] = []; ic.lines['distance'] = [];</td></tr>
 
 <tr><td colspan="3"><br>n) Analysis -&gt; Label</td> </tr>

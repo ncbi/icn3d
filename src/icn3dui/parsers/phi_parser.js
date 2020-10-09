@@ -44,13 +44,15 @@ iCn3DUI.prototype.CalcPhi = function(gsize, salt, contour, bSurface, data) { var
    }
    else {
        var chainHash = {}, ionHash = {};
+       var atomHash = {};
+
+/*
        for(var i in ic.hAtoms) {
            var atom = ic.atoms[i];
 
            chainHash[atom.structure + '_' + atom.chain] = 1;
        }
 
-       var atomHash = {};
        for(var chainid in chainHash) {
            for(var i in ic.chains[chainid]) {
                var atom = ic.atoms[i];
@@ -61,6 +63,18 @@ iCn3DUI.prototype.CalcPhi = function(gsize, salt, contour, bSurface, data) { var
                else {
                  atomHash[i] = 1;
                }
+           }
+       }
+*/
+
+       for(var i in ic.hAtoms) {
+           var atom = ic.atoms[i];
+
+           if(ic.ions.hasOwnProperty(i)) {
+             ionHash[i] = 1;
+           }
+           else {
+             atomHash[i] = 1;
            }
        }
 
