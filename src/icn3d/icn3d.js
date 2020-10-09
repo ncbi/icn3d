@@ -72,7 +72,7 @@ var iCn3D = function (id) { var me = this, ic = me.icn3d; "use strict";
     this.scaleFactor = 1.0;
 
     // scale all labels
-    this.labelScale = 1.0;
+    this.labelScale = 0.3; //1.0;
 
     // Impostor shaders
     this.bImpo = true;

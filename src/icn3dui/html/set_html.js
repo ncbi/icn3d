@@ -410,6 +410,7 @@ iCn3DUI.prototype.setMenu1_base = function() { var me = this, ic = me.icn3d; "us
     html += me.getLink('mn1_exportSelections', 'Selection File');
     html += me.getLink('mn1_exportCounts', 'Residue Counts');
 
+/*
     html += "<li><span>PDB</span>";
     html += "<ul>";
     html += me.getLink('mn1_exportPdbRes', 'Selected Residues');
@@ -417,6 +418,9 @@ iCn3DUI.prototype.setMenu1_base = function() { var me = this, ic = me.icn3d; "us
     html += "<li><br/></li>";
     html += "</ul>";
     html += "</li>";
+*/
+
+    html += me.getLink('mn1_exportPdbRes', 'PDB');
     html += "<li><br/></li>";
 
     html += "</ul>";
@@ -1268,16 +1272,16 @@ iCn3DUI.prototype.setMenu5_base = function() { var me = this, ic = me.icn3d; "us
     html += "<ul>";
 
     for(var i = 1; i <= 9; ++i) {
-        html += me.getRadio('mn6_labelscale', 'mn6_labelscale0' + i, '0.' + i);
+        if(i == 3) {
+            html += me.getRadio('mn6_labelscale', 'mn6_labelscale0' + i, '0.' + i, true);
+        }
+        else {
+            html += me.getRadio('mn6_labelscale', 'mn6_labelscale0' + i, '0.' + i);
+        }
     }
 
     for(var i = 1; i <= 4; i *= 2) {
-        if(i == 1) {
-            html += me.getRadio('mn6_labelscale', 'mn6_labelscale' + i + '0', i + '.0', true);
-        }
-        else {
-            html += me.getRadio('mn6_labelscale', 'mn6_labelscale' + i + '0', i + '.0');
-        }
+        html += me.getRadio('mn6_labelscale', 'mn6_labelscale' + i + '0', i + '.0');
     }
 
     html += "</ul>";
@@ -2783,16 +2787,16 @@ iCn3DUI.prototype.getFootHtml = function(type, tabName) { var me = this, ic = me
             footHtml += "<b>Note</b>: Partial charges (MMFF94) are from PubChem Compound SDF files.<br/><br/>";
         }
         else {
-            footHtml += "<b>Note</b>: The WHOLE CHAINS of selected residues are used for <a href='http://honig.c2b2.columbia.edu/delphi'>DelPhi</a> potential calculation.";
+            footHtml += "<b>Note</b>: Only the selected residues are used for <a href='http://honig.c2b2.columbia.edu/delphi'>DelPhi</a> potential calculation by solving linear Poisson-Boltzmann equation.";
 
             footHtml += '<div style="width:20px; margin-top:6px; display:inline-block;"><span id="'
               + me.pre + tabName + '_expand" class="ui-icon ui-icon-plus icn3d-expand icn3d-link" style="width:15px;" title="Expand"></span><span id="'
               + me.pre + tabName + '_shrink" class="ui-icon ui-icon-minus icn3d-shrink icn3d-link" style="display:none; width:15px;" title="Shrink"></span></div><br>';
             footHtml += me.divStr + tabName + "' style='display:none;'>";
 
-            footHtml += "The hydrogens and partial charges of proteins and nucleotides are added using <a href='http://compbio.clemson.edu/pka_webserver'>DelPhiPKa</a> with the Amber charge and size files. The hydrogens of ligands are added using <a href='http://openbabel.org/wiki/Main_Page'>Open Babel</a>. The partial charges of ligands are calculated using <a href='http://ambermd.org/antechamber/ac.html'>Antechamber</a> with the Gasteiger charge method.<br/><br/>";
+            footHtml += "<br>The hydrogens and partial charges of proteins and nucleotides are added using <a href='http://compbio.clemson.edu/pka_webserver'>DelPhiPKa</a> with the Amber charge and size files. The hydrogens of ligands are added using <a href='http://openbabel.org/wiki/Main_Page'>Open Babel</a>. The partial charges of ligands are calculated using <a href='http://ambermd.org/antechamber/ac.html'>Antechamber</a> with the Gasteiger charge method. All partial charges are calculated at pH 7.<br/><br/>";
 
-            footHtml += "Lipids are treated as ligands. Please use \"HETATM\" instead of \"ATOM  \" for each lipid atom in your PDB file. Each phosphate in lipids is assigned with a charge of -1. You can \"Download PQR\" above and modify it, or prepare your PQR file using other tools. Then load the PQR file at the menu \"Analysis > Load PQR/Potential\".<br/><br/>";
+            footHtml += "Lipids are treated as ligands. Please use \"HETATM\" instead of \"ATOM  \" for each lipid atom in your PDB file. Each phosphate in lipids is assigned with a charge of -1. You can download PQR and modify it, or prepare your PQR file using other tools. Then load the PQR file at the menu \"Analysis > Load PQR/Potential\".<br/><br/>";
 
             footHtml += "</div>";
         }
@@ -2805,7 +2809,7 @@ iCn3DUI.prototype.getFootHtml = function(type, tabName) { var me = this, ic = me
           + me.pre + tabName + '_shrink" class="ui-icon ui-icon-minus icn3d-shrink icn3d-link" style="display:none; width:15px;" title="Shrink"></span></div><br>';
         footHtml += me.divStr + tabName + "' style='display:none;'>";
 
-        footHtml += "The PDB file can be loaded in the URL with \"pdbid=\" or at \"File > Open File\". The PQR file can be prepared at the menu \"Analysis > DelPhi Potential > Download PQR\" with your modification or using other tools. The DelPhi potential file can be calculated at <a href='http://compbio.clemson.edu/sapp/delphi_webserver/'>DelPhi Web Server</a> and be exported as a Cube file. ";
+        footHtml += "The PDB file can be loaded in the URL with \"pdbid=\" or at \"File > Open File\". The PQR file can be prepared at the menu \"Analysis > Download PQR\" with your modification or using other tools. The DelPhi potential file can be calculated at <a href='http://compbio.clemson.edu/sapp/delphi_webserver/'>DelPhi Web Server</a> and be exported as a Cube file. ";
 
         if(type == 'url') footHtml += "The PQR or potential file can be accessed in a URL if it is located in the same host as iCn3D.";
 

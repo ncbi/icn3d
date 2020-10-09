@@ -4235,6 +4235,7 @@ SHEET    1  B1 2 GLY A  35  THR A  39  0
 
         return pdbStr;
     },
+/*
     getSelectedChainPDB: function () {  var me = this, ic = me.icn3d; "use strict";
        var chainHash = {};
        for(var i in ic.hAtoms) {
@@ -4248,6 +4249,10 @@ SHEET    1  B1 2 GLY A  35  THR A  39  0
        }
 
        return me.getAtomPDB(atomHash);
+    },
+*/
+    getSelectedResiduePDB: function () {  var me = this, ic = me.icn3d; "use strict";
+       return me.getAtomPDB(ic.hAtoms);
     },
     measureDistTwoSets: function(nameArray, nameArray2) { var me = this, ic = me.icn3d; "use strict";
        if(nameArray.length == 0 || nameArray2.length == 0) {
