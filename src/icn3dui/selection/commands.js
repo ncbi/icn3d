@@ -1427,7 +1427,9 @@ iCn3DUI.prototype.applyCommand = function (commandStr) { var me = this, ic = me.
     me.hideHydrogens();
     ic.draw();
   }
-
+  else if(command == 'close popup') {
+      me.closeDialogs();
+  }
   else if(command == 'set stabilizer off') {
     me.hideStabilizer();
     ic.draw();

@@ -52,7 +52,7 @@ $.ajaxTransport("+binary", function (options, originalOptions, jqXHR) {
 });
 
 var iCn3DUI = function(cfg) { var me = this, ic = me.icn3d; "use strict";
-    this.REVISION = '2.20.0';
+    this.REVISION = '2.20.1';
     me.bFullUi = true;
     me.cfg = cfg;
     me.divid = me.cfg.divid;
@@ -4149,11 +4149,22 @@ SHEET    1  B1 2 GLY A  35  THR A  39  0
                 atomName = atomName.replace(/\*/g, "'");
                 if(atomName == 'O1P') atomName = 'OP1';
                 else if(atomName == 'O2P') atomName = 'OP2';
+                else if(atomName == 'C5M') atomName = 'C7 ';
                 line += atomName.padEnd(3, ' ');
             }
 
             line += ' ';
-            line += (atom.resn.length <= 3) ? atom.resn.padStart(3, ' ') : atom.resn.substr(0, 3);
+            var resn = atom.resn;
+/*
+            // add "D" in front of nucleotide residue names
+            if(resn == 'A') resn = 'DA';
+            else if(resn == 'T') resn = 'DT';
+            else if(resn == 'C') resn = 'DC';
+            else if(resn == 'G') resn = 'DG';
+            else if(resn == 'U') resn = 'DU';
+*/
+
+            line += (resn.length <= 3) ? resn.padStart(3, ' ') : resn.substr(0, 3);
             line += ' ';
             line += (atom.chain.length <= 1) ? atom.chain.padStart(1, ' ') : atom.chain.substr(0, 1);
             var resi = atom.resi;
@@ -4211,7 +4222,7 @@ SHEET    1  B1 2 GLY A  35  THR A  39  0
             }
             else {
                 line += "1.00".padStart(6, ' ');
-                line += (atom.b) ? atom.b.toFixed(2).toString().padStart(6, ' ') : ' '.padStart(6, ' ');
+                line += (atom.b) ? parseFloat(atom.b).toFixed(2).toString().padStart(6, ' ') : ' '.padStart(6, ' ');
                 line += ' '.padStart(10, ' ');
                 line += atom.elem.padStart(2, ' ');
                 line += ' '.padStart(2, ' ');

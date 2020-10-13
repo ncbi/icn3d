@@ -111,6 +111,8 @@ iCn3DUI.prototype.downloadAlignment = function (align) { var me = this, ic = me.
           dataType: 'jsonp',
           //jsonp: 'jpf',
           cache: true,
+          tryCount : 0,
+          retryLimit : 1,
           beforeSend: function() {
               me.showLoading();
           },
@@ -141,6 +143,15 @@ iCn3DUI.prototype.downloadAlignment = function (align) { var me = this, ic = me.
             alert('invalid atoms data.');
             return false;
         }
+    })
+    .fail(function() {
+        this.tryCount++;
+        if (this.tryCount <= this.retryLimit) {
+            //try again
+            $.ajax(this);
+            return;
+        }
+        return;
     });
 };
 
