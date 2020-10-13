@@ -28,6 +28,7 @@ body {font-family: Verdana, Arial, Helvetica, sans-serif;}
   <div id="div2" class="gallery"></div>
   <div id="div3" class="gallery"></div>
   <div id="div4" class="gallery"></div>
+  <div id="div5" class="gallery"></div>
 
 <link rel="stylesheet" href="https://www.ncbi.nlm.nih.gov/Structure/icn3d/lib/jquery-ui.min.css">
 <link rel="stylesheet" href="https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d_full_ui.css">
@@ -146,6 +147,10 @@ body {font-family: Verdana, Arial, Helvetica, sans-serif;}
       var urltype = 'pdb';
       urlname = decodeURIComponent(urlname);
       setupViewer('url', urltype + '|' + urlname, 'div4');
+
+      var command = "defined sets; select sets 4L03_A; color 87CEEB; style proteins cylinder and plate; select sets 6KDY_A; color FA8072; style proteins cylinder and plate; select sets 4L03_A or 6KDY_A; show selection; set background white; close popup";
+
+      setupViewer('align', '4L03,6KDY', 'div5', command);
 
     }); // document ready
 

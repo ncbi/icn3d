@@ -1,4 +1,6 @@
 ## Change Log
+[icn3d-2.20.1](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.20.1.zip) was release on October 13, 2020. Reverted the label scale to 0.3. Updated the LICENSE.
+
 [icn3d-2.20.0](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.20.0.zip) was release on October 6, 2020. Users can show electrostatic potential on surface or as equipotential map for any subsets of proteins/nucleotides/membrane/ligands. The PQR file (modified PDB file with partial charges and radii) can also be downloaded. The display of helices, tubes, and axes were improved. Users can change the helix display at the menu "Style > Two-color Helix".
 
 [icn3d-2.19.1](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.19.1.zip) was release on September 15, 2020. Added shade to 3D display using multiple lights.
