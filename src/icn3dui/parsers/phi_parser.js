@@ -67,7 +67,8 @@ iCn3DUI.prototype.CalcPhi = function(gsize, salt, contour, bSurface, data) { var
        }
 */
 
-       for(var i in ic.hAtoms) {
+       var atoms = ic.intHash(ic.dAtoms, ic.hAtoms);
+       for(var i in atoms) {
            var atom = ic.atoms[i];
 
            if(ic.ions.hasOwnProperty(i)) {
@@ -90,7 +91,10 @@ iCn3DUI.prototype.CalcPhi = function(gsize, salt, contour, bSurface, data) { var
            return;
        }
 
-       var pdbstr = (me.cfg.cid) ? me.getAtomPDB(atomHash, true) : me.getAtomPDB(atomHash);
+       var pdbstr = '';
+       pdbstr += me.getPDBHeader();
+
+       pdbstr += (me.cfg.cid) ? me.getAtomPDB(atomHash, true) : me.getAtomPDB(atomHash);
        pdbstr += me.getAtomPDB(ionHash, true);
 
        dataObj = {'pdb2phi': pdbstr, 'gsize': gsize, 'salt': salt, 'pdbid': pdbid};

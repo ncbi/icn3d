@@ -395,12 +395,12 @@ iCn3D.prototype.applyClbondsOptions_base = function (type) { var me = this, ic =
 
                 if(bType ) {
                     // add resid0 to resid1
-                    me.residues[resid1] = me.unionHash(me.residues[resid1], me.residues[resid0]);
-                    me.chains[chain1] = me.unionHash(me.chains[chain1], me.residues[resid0]);
+//                    me.residues[resid1] = me.unionHash(me.residues[resid1], me.residues[resid0]);
+//                    me.chains[chain1] = me.unionHash(me.chains[chain1], me.residues[resid0]);
 
                     // add resid1 to resid0
-                    me.residues[resid0] = me.unionHash(me.residues[resid0], me.residues[resid1]);
-                    me.chains[chain0] = me.unionHash(me.chains[chain0], me.residues[resid1]);
+//                    me.residues[resid0] = me.unionHash(me.residues[resid0], me.residues[resid1]);
+//                    me.chains[chain0] = me.unionHash(me.chains[chain0], me.residues[resid1]);
 
                     if(type == 'chemical') continue; // just connect checmicals together
 
@@ -630,11 +630,16 @@ iCn3D.prototype.alternateStructures = function () { var me = this, ic = me.icn3d
     this.removeEmmaps();
     this.applyEmmapOptions();
 
+// disallow the alternation of DelPhi map
     this.removePhimaps();
-    this.applyPhimapOptions();
+//    this.applyPhimapOptions();
+    // should recalculate the potential
+    //me.loadDelphiFileBase('delphi');
 
     this.removeSurfaces();
-    this.applyphisurfaceOptions();
+//    this.applyphisurfaceOptions();
+    // should recalculate the potential
+    //me.loadDelphiFileBase('delphi2');
 
     this.draw();
 

@@ -618,7 +618,9 @@ iCn3DUI.prototype.renderFinalStep = function(steps) { var me = this, ic = me.icn
     }
 
     if(me.cfg.closepopup) {
-        me.closeDialogs();
+        setTimeout(function(){
+            me.closeDialogs();
+        }, 100);
 
         me.resizeCanvas(me.WIDTH, me.HEIGHT, true);
     }
@@ -1259,8 +1261,10 @@ iCn3DUI.prototype.applyCommand = function (commandStr) { var me = this, ic = me.
 // exact match =============
 
   //var file_pref = (me.inputid) ? me.inputid : "custom";
-
-  if(command == 'export state file') { // last step to update transformation
+  if(command == 'share link') {
+    me.shareLink();
+  }
+  else if(command == 'export state file') { // last step to update transformation
     // the last transformation will be applied
   }
   else if(command.indexOf('export canvas') == 0) {
@@ -1301,6 +1305,9 @@ iCn3DUI.prototype.applyCommand = function (commandStr) { var me = this, ic = me.
 
            me.exportVrmlFile('_stab');
         }, 500);
+  }
+  else if(command == 'export pdb') {
+     me.exportPdb();
   }
   else if(command == 'select all') {
      me.selectAll();
@@ -1725,6 +1732,9 @@ iCn3DUI.prototype.applyCommand = function (commandStr) { var me = this, ic = me.
   }
   else if(command == 'setoption phimap nothing') {
      me.setOption('phimap', 'nothing');
+  }
+  else if(command == 'setoption phisurface nothing') {
+     me.setOption('phisurface', 'nothing');
   }
 
 // start with =================
@@ -2401,7 +2411,7 @@ iCn3DUI.prototype.getMenuFromCmd = function (cmd) { var me = this, ic = me.icn3d
     else if(cmd.indexOf('set delphi') == 0) return 'Analysis > DelPhi Potential';
     else if(cmd.indexOf('setoption map') == 0) return 'Style > Remove Map';
     else if(cmd.indexOf('setoption emmap') == 0) return 'Style > Remove EM Map';
-    else if(cmd.indexOf('setoption phimap') == 0) return 'Analysis > Remove Potential';
+    //else if(cmd.indexOf('setoption phimap') == 0) return 'Analysis > Remove Potential';
     else if(cmd.indexOf('view annotations') == 0) return seqAnnoStr;
     else if(cmd.indexOf('set annotation all') == 0) return seqAnnoStr + ': "All" checkbox';
     else if(cmd.indexOf('set annotation clinvar') == 0) return seqAnnoStr + ': "ClinVar" checkbox';

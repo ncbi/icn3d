@@ -310,11 +310,9 @@ iCn3DUI.prototype.allEventFunctions = function() { var me = this;
 //    },
 
     $("#" + me.pre + "mn1_exportPdbRes").click(function(e) { var ic = me.icn3d;
-       var  pdbStr = me.getAtomPDB(ic.hAtoms);
+       me.exportPdb();
 
-       me.setLogCmd("export PDB of selected residues", false);
-       var file_pref = (me.inputid) ? me.inputid : "custom";
-       me.saveFile(file_pref + '_icn3d_residues.pdb', 'text', [pdbStr]);
+       me.setLogCmd("export pdb", true);
     });
 
     $("#" + me.pre + "delphipdb")
@@ -1340,8 +1338,10 @@ iCn3DUI.prototype.allEventFunctions = function() { var me = this;
 
     $("#" + me.pre + "delphimapNo2").add("#" + me.pre + "phimapNo2").add("#" + me.pre + "phiurlmapNo2")
       .click(function(e) { var ic = me.icn3d;
-       me.setOption('surface', 'nothing');
-       me.setLogCmd('set surface nothing', true);
+       //me.setOption('surface', 'nothing');
+       //me.setLogCmd('set surface nothing', true);
+       me.setOption('phisurface', 'nothing');
+       me.setLogCmd('setoption phisurface nothing', true);
     });
 
 //    clickApplymap2fofc: function() {
@@ -3519,6 +3519,16 @@ iCn3DUI.prototype.updateSurfPara = function(type) { var me = this, ic = me.icn3d
    ic.phisurfwf = $("#" + me.pre + type + "surfwf").val();
 };
 
+iCn3DUI.prototype.exportPdb = function() { var me = this, ic = me.icn3d; "use strict";
+   var pdbStr = '';
+   pdbStr += me.getPDBHeader();
+   var atoms = ic.intHash(ic.dAtoms, ic.hAtoms);
+   pdbStr += me.getAtomPDB(atoms, undefined, true);
+
+   var file_pref = (me.inputid) ? me.inputid : "custom";
+   me.saveFile(file_pref + '_icn3d.pdb', 'text', [pdbStr]);
+};
+
 iCn3DUI.prototype.exportPqr = function() { var me = this, ic = me.icn3d; "use strict";
    var chainHash = {}, ionHash = {};
    var atomHash = {};
@@ -3539,7 +3549,8 @@ iCn3DUI.prototype.exportPqr = function() { var me = this, ic = me.icn3d; "use st
    }
 */
 
-   for(var i in ic.hAtoms) {
+   var atoms = ic.intHash(ic.dAtoms, ic.hAtoms);
+   for(var i in atoms) {
        var atom = ic.atoms[i];
 
        if(ic.ions.hasOwnProperty(i)) {
@@ -3551,7 +3562,9 @@ iCn3DUI.prototype.exportPqr = function() { var me = this, ic = me.icn3d; "use st
    }
 
    if(me.cfg.cid) {
-      var pqrStr = me.getAtomPDB(atomHash, true) + me.getAtomPDB(ionHash, true);
+      var pqrStr = '';
+      pqrStr += me.getPDBHeader();
+      pqrStr += me.getAtomPDB(atomHash, true) + me.getAtomPDB(ionHash, true);
 
       var file_pref = (me.inputid) ? me.inputid : "custom";
       me.saveFile(file_pref + '_icn3d.pqr', 'text', [pqrStr]);
@@ -3563,7 +3576,10 @@ iCn3DUI.prototype.exportPqr = function() { var me = this, ic = me.icn3d; "use st
            return;
        }
 
-       var pdbstr = me.getAtomPDB(atomHash);
+       var pdbstr = '';
+       pdbstr += me.getPDBHeader();
+
+       pdbstr += me.getAtomPDB(atomHash);
        pdbstr += me.getAtomPDB(ionHash, true);
 
        var url = "https://www.ncbi.nlm.nih.gov/Structure/delphi/delphi.fcgi";

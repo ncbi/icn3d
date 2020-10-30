@@ -358,7 +358,7 @@ iCn3DUI.prototype.selectBySpec = function (select, commandname, commanddesc, bDi
                    for(var s = 0, sl = posArray.length; s < sl; ++s) {
                        var pos = posArray[s];
 
-                       for(var t = 0, tl = residueStrTmp.length; t < tl;  t += n) {
+                       for(var t = 0, tl = residueStrTmp.length / n; t < tl;  t += n) {
                          var residueId = molecule_chain + '_' + resiArray[t/n + pos];
                          if(i === 0) {
                              residueHash[residueId] = 1;
