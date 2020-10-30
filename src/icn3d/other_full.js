@@ -1232,6 +1232,7 @@ iCn3D.prototype.removeEmmaps = function () { var me = this, ic = me.icn3d; "use 
 
 iCn3D.prototype.removePhimaps = function () { var me = this, ic = me.icn3d; "use strict";
    // remove prevous highlight
+
    for(var i = 0, il = this.prevPhimaps.length; i < il; ++i) {
        this.mdl.remove(this.prevPhimaps[i]);
    }

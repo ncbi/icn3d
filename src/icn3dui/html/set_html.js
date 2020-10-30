@@ -496,6 +496,7 @@ iCn3DUI.prototype.setMenu2_base = function() { var me = this, ic = me.icn3d; "us
         html += me.getRadio('mn2_pk', 'mn2_pkStrand', 'Strand/Helix');
         html += me.getRadio('mn2_pk', 'mn2_pkResidue', 'Residue', true);
         html += me.getRadio('mn2_pk', 'mn2_pkYes', 'Atom');
+        html += me.getRadio('mn2_pk', 'mn2_pkNo', 'None');
         html += "</ul>";
         html += "</li>";
     }
@@ -1385,6 +1386,8 @@ iCn3DUI.prototype.setMenu6_base = function() { var me = this, ic = me.icn3d; "us
     html += "<ul class='icn3d-mn'>";
 
     html += liStr + me.baseUrl + "icn3d/docs/icn3d_about.html' target='_blank'>About iCn3D<span style='font-size:0.9em'> " + me.REVISION + "</span></a></li>";
+
+    html += liStr + me.baseUrl + "icn3d/docs/icn3d_publications.html' target='_blank'>Citing iCn3D</a></li>";
 
     html += liStr + me.baseUrl + "icn3d/docs/icn3d_help.html' target='_blank'>Help Doc</a></li>";
 

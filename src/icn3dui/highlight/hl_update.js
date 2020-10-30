@@ -30,7 +30,7 @@ iCn3DUI.prototype.changeSeqColor = function(residueArray) { var me = this, ic = 
        var pickedResidue = residueArray[i];
        //[id$= is expensive
        //if($("[id$=" + me.pre + pickedResidue + "]").length !== 0) {
-         var atom = me.icn3d.getFirstCalphaAtomObj(me.icn3d.residues[pickedResidue]);
+         var atom = ic.getFirstCalphaAtomObj(ic.residues[pickedResidue]);
          var colorStr = (atom.color === undefined || atom.color.getHexString().toUpperCase() === 'FFFFFF') ? 'DDDDDD' : atom.color.getHexString();
          var color = (atom.color !== undefined) ? colorStr : "CCCCCC";
          // annotations will have their own color, only the chain will have the changed color
@@ -49,7 +49,7 @@ iCn3DUI.prototype.removeHlAll = function() { var me = this, ic = me.icn3d; "use 
 };
 
 iCn3DUI.prototype.removeHlObjects = function() { var me = this, ic = me.icn3d; "use strict";
-       me.icn3d.removeHlObjects();
+       ic.removeHlObjects();
 };
 
 // remove highlight in sequence
@@ -82,7 +82,7 @@ iCn3DUI.prototype.removeHlMenus = function() { var me = this, ic = me.icn3d; "us
 
 iCn3DUI.prototype.updateHlAll = function(commandnameArray, bSetMenu, bUnion, bForceHighlight) { var me = this, ic = me.icn3d; "use strict";
        // update the previously highlisghted atoms for switching between all and selection
-       me.icn3d.prevHighlightAtoms = me.icn3d.cloneHash(me.icn3d.hAtoms);
+       ic.prevHighlightAtoms = ic.cloneHash(ic.hAtoms);
 
        me.updateHlObjects(bForceHighlight);
 
@@ -100,10 +100,10 @@ iCn3DUI.prototype.updateHlAll = function(commandnameArray, bSetMenu, bUnion, bFo
 };
 
 iCn3DUI.prototype.updateHlObjects = function(bForceHighlight) { var me = this, ic = me.icn3d; "use strict";
-       me.icn3d.removeHlObjects();
+       ic.removeHlObjects();
 
-       if((me.icn3d.hAtoms !== undefined && Object.keys(me.icn3d.hAtoms).length < Object.keys(me.icn3d.atoms).length) || bForceHighlight) {
-          me.icn3d.addHlObjects();
+       if((ic.hAtoms !== undefined && Object.keys(ic.hAtoms).length < Object.keys(ic.atoms).length) || bForceHighlight) {
+          ic.addHlObjects();
           me.setMode('selection');
        }
 };
@@ -114,9 +114,9 @@ iCn3DUI.prototype.updateHlSeq = function(bShowHighlight, residueHash, bUnion) { 
            me.removeHlSeq();
        }
 
-       if(residueHash === undefined) residueHash = me.icn3d.getResiduesFromCalphaAtoms(me.icn3d.hAtoms);
+       if(residueHash === undefined) residueHash = ic.getResiduesFromCalphaAtoms(ic.hAtoms);
 
-       if(Object.keys(me.icn3d.hAtoms).length < Object.keys(me.icn3d.atoms).length) me.hlSeq(Object.keys(residueHash));
+       if(ic.hAtoms && Object.keys(ic.hAtoms).length < Object.keys(ic.atoms).length) me.hlSeq(Object.keys(residueHash));
        me.changeSeqColor(Object.keys(residueHash));
 };
 
@@ -124,29 +124,29 @@ iCn3DUI.prototype.updateHlSeqInChain = function(commandnameArray, bUnion) { var 
        if(bUnion === undefined || !bUnion) {
            me.removeHlSeq();
        }
-       //if(residueHash === undefined) residueHash = me.icn3d.getResiduesFromCalphaAtoms(me.icn3d.hAtoms);
+       //if(residueHash === undefined) residueHash = ic.getResiduesFromCalphaAtoms(ic.hAtoms);
 
-       if(Object.keys(me.icn3d.hAtoms).length == Object.keys(me.icn3d.atoms).length) return;
+       if(Object.keys(ic.hAtoms).length == Object.keys(ic.atoms).length) return;
 
        //me.hlSeq(Object.keys(residueHash));
        // speed up with chain highlight
        for(var i = 0, il = commandnameArray.length; i < il; ++i) {
            var commandname = commandnameArray[i];
-           if(Object.keys(me.icn3d.chains).indexOf(commandname) !== -1) {
+           if(Object.keys(ic.chains).indexOf(commandname) !== -1) {
                me.hlSeqInChain(commandname);
            }
            else {
                var residueArray = [];
 
-               if(me.icn3d.defNames2Residues[commandname] !== undefined && me.icn3d.defNames2Residues[commandname].length > 0) {
-                   residueArray = me.icn3d.defNames2Residues[commandname];
+               if(ic.defNames2Residues[commandname] !== undefined && ic.defNames2Residues[commandname].length > 0) {
+                   residueArray = ic.defNames2Residues[commandname];
                }
 
                var residueHash = {};
-               if(me.icn3d.defNames2Atoms[commandname] !== undefined && me.icn3d.defNames2Atoms[commandname].length > 0) {
-                   for(var j = 0, jl = me.icn3d.defNames2Atoms[commandname].length; j < jl; ++j) {
-                       var serial = me.icn3d.defNames2Atoms[commandname][j];
-                       var atom = me.icn3d.atoms[serial];
+               if(ic.defNames2Atoms[commandname] !== undefined && ic.defNames2Atoms[commandname].length > 0) {
+                   for(var j = 0, jl = ic.defNames2Atoms[commandname].length; j < jl; ++j) {
+                       var serial = ic.defNames2Atoms[commandname][j];
+                       var atom = ic.atoms[serial];
                        var resid = atom.structure + '_' + atom.chain + '_' + atom.resi;
 
                        residueHash[resid] = 1;
@@ -166,22 +166,22 @@ iCn3DUI.prototype.updateHlSeqInChain = function(commandnameArray, bUnion) { var 
 iCn3DUI.prototype.updateHl2D = function(chainArray2d) { var me = this, ic = me.icn3d; "use strict";
   me.removeHl2D();
 
-  if(Object.keys(me.icn3d.hAtoms).length == Object.keys(me.icn3d.atoms).length) return;
+  if(Object.keys(ic.hAtoms).length == Object.keys(ic.atoms).length) return;
 
   if(chainArray2d === undefined) {
-      var chainHash = me.icn3d.getChainsFromAtoms(me.icn3d.hAtoms);
+      var chainHash = ic.getChainsFromAtoms(ic.hAtoms);
       chainArray2d = Object.keys(chainHash);
   }
 
   if(chainArray2d !== undefined) {
       for(var i = 0, il = chainArray2d.length; i < il; ++i) {
-          var hlatoms = me.icn3d.intHash(me.icn3d.chains[chainArray2d[i]], me.icn3d.hAtoms);
-          var ratio = 1.0 * Object.keys(hlatoms).length / Object.keys(me.icn3d.chains[chainArray2d[i]]).length;
+          var hlatoms = ic.intHash(ic.chains[chainArray2d[i]], ic.hAtoms);
+          var ratio = 1.0 * Object.keys(hlatoms).length / Object.keys(ic.chains[chainArray2d[i]]).length;
 
-          var firstAtom = me.icn3d.getFirstCalphaAtomObj(hlatoms);
-          if(me.icn3d.alnChains[chainArray2d[i]] !== undefined) {
-                var alignedAtoms = me.icn3d.intHash(me.icn3d.alnChains[chainArray2d[i]], hlatoms);
-                if(Object.keys(alignedAtoms).length > 0) firstAtom = me.icn3d.getFirstCalphaAtomObj(alignedAtoms);
+          var firstAtom = ic.getFirstCalphaAtomObj(hlatoms);
+          if(ic.alnChains[chainArray2d[i]] !== undefined) {
+                var alignedAtoms = ic.intHash(ic.alnChains[chainArray2d[i]], hlatoms);
+                if(Object.keys(alignedAtoms).length > 0) firstAtom = ic.getFirstCalphaAtomObj(alignedAtoms);
             }
           var color = (firstAtom !== undefined && firstAtom.color !== undefined) ? '#' + firstAtom.color.getHexString() : '#FFFFFF';
 
@@ -216,7 +216,7 @@ iCn3DUI.prototype.updateHl2D = function(chainArray2d) { var me = this, ic = me.i
   }
 
   // update the previously highlisghted atoms for switching between all and selection
-  me.icn3d.prevHighlightAtoms = me.icn3d.cloneHash(me.icn3d.hAtoms);
+  ic.prevHighlightAtoms = ic.cloneHash(ic.hAtoms);
 
   me.setMode('selection');
 };
@@ -236,8 +236,8 @@ iCn3DUI.prototype.updateHlMenus = function(commandnameArray) { var me = this, ic
 iCn3DUI.prototype.setAtomMenu = function (commandnameArray) { var me = this, ic = me.icn3d; "use strict";
   var html = "";
 
-  var nameArray1 = (me.icn3d.defNames2Residues !== undefined) ? Object.keys(me.icn3d.defNames2Residues) : [];
-  var nameArray2 = (me.icn3d.defNames2Atoms !== undefined) ? Object.keys(me.icn3d.defNames2Atoms) : [];
+  var nameArray1 = (ic.defNames2Residues !== undefined) ? Object.keys(ic.defNames2Residues) : [];
+  var nameArray2 = (ic.defNames2Atoms !== undefined) ? Object.keys(ic.defNames2Atoms) : [];
 
   var nameArrayTmp = nameArray1.concat(nameArray2).sort();
 
@@ -246,22 +246,22 @@ iCn3DUI.prototype.setAtomMenu = function (commandnameArray) { var me = this, ic 
        if($.inArray(el, nameArray) === -1) nameArray.push(el);
   });
 
-  //for(var i in me.icn3d.defNames2Atoms) {
+  //for(var i in ic.defNames2Atoms) {
   for(var i = 0, il = nameArray.length; i < il; ++i) {
       var name = nameArray[i];
 
       var atom, atomHash;
-      if(me.icn3d.defNames2Atoms !== undefined && me.icn3d.defNames2Atoms.hasOwnProperty(name)) {
-          var atomArray = me.icn3d.defNames2Atoms[name];
+      if(ic.defNames2Atoms !== undefined && ic.defNames2Atoms.hasOwnProperty(name)) {
+          var atomArray = ic.defNames2Atoms[name];
 
-          if(atomArray.length > 0) atom = me.icn3d.atoms[atomArray[0]];
+          if(atomArray.length > 0) atom = ic.atoms[atomArray[0]];
       }
-      else if(me.icn3d.defNames2Residues !== undefined && me.icn3d.defNames2Residues.hasOwnProperty(name)) {
-          var residueArray = me.icn3d.defNames2Residues[name];
+      else if(ic.defNames2Residues !== undefined && ic.defNames2Residues.hasOwnProperty(name)) {
+          var residueArray = ic.defNames2Residues[name];
           if(residueArray.length > 0) {
-              atomHash = me.icn3d.residues[residueArray[0]]
+              atomHash = ic.residues[residueArray[0]]
               if(atomHash) {
-                  atom = me.icn3d.atoms[Object.keys(atomHash)[0]];
+                  atom = ic.atoms[Object.keys(atomHash)[0]];
               }
           }
       }
@@ -289,8 +289,8 @@ iCn3DUI.prototype.setPredefinedInMenu = function() { var me = this, ic = me.icn3
 
       // show 3d domains for mmdbid
       if(me.cfg.mmdbid !== undefined || me.cfg.gi !== undefined || me.cfg.chainalign !== undefined) {
-          for(var tddomainName in me.icn3d.tddomains) {
-              me.selectResidueList(me.icn3d.tddomains[tddomainName], tddomainName, tddomainName, false, false);
+          for(var tddomainName in ic.tddomains) {
+              me.selectResidueList(ic.tddomains[tddomainName], tddomainName, tddomainName, false, false);
           }
       }
 
@@ -306,13 +306,13 @@ iCn3DUI.prototype.setPredefinedInMenu = function() { var me = this, ic = me.icn3
 
         // for alignment, show aligned residues, chemicals, and ions
         var dAtoms = {};
-        for(var alignChain in me.icn3d.alnChains) {
-            dAtoms = me.icn3d.unionHash(dAtoms, me.icn3d.alnChains[alignChain]);
+        for(var alignChain in ic.alnChains) {
+            dAtoms = ic.unionHash(dAtoms, ic.alnChains[alignChain]);
         }
 
         var residuesHash = {}, chains = {};
         for(var i in dAtoms) {
-            var atom = me.icn3d.atoms[i];
+            var atom = ic.atoms[i];
 
             var chainid = atom.structure + '_' + atom.chain;
             var resid = chainid + '_' + atom.resi;
@@ -361,8 +361,8 @@ iCn3DUI.prototype.hlSeq = function(residueArray) { var me = this, ic = me.icn3d;
 
 iCn3DUI.prototype.hlSeqInChain = function(chainid) { var me = this, ic = me.icn3d; "use strict";
    // update annotation windows and alignment sequences
-   for(var i = 0, il = me.icn3d.chainsSeq[chainid].length; i < il; ++i) {
-       var resi = me.icn3d.chainsSeq[chainid][i].resi;
+   for(var i = 0, il = ic.chainsSeq[chainid].length; i < il; ++i) {
+       var resi = ic.chainsSeq[chainid][i].resi;
        var pickedResidue = chainid + '_' + resi;
 
        //if($("[id$=" + me.pre + pickedResidue + "]").length !== 0) {
@@ -385,25 +385,25 @@ iCn3DUI.prototype.hlSeqInChain = function(chainid) { var me = this, ic = me.icn3
 iCn3DUI.prototype.toggleHighlight = function() { var me = this, ic = me.icn3d; "use strict";
     //me.setLogCmd("toggle highlight", true);
 
-    if(me.icn3d.prevHighlightObjects.length > 0 || me.icn3d.prevHighlightObjects_ghost.length > 0) { // remove
+    if(ic.prevHighlightObjects.length > 0 || ic.prevHighlightObjects_ghost.length > 0) { // remove
         me.clearHighlight();
-        me.icn3d.bShowHighlight = false;
+        ic.bShowHighlight = false;
     }
     else { // add
         me.showHighlight();
-        me.icn3d.bShowHighlight = true;
+        ic.bShowHighlight = true;
     }
 
     //me.setLogCmd("toggle highlight", true);
 };
 
 iCn3DUI.prototype.clearHighlight = function() { var me = this, ic = me.icn3d; "use strict";
-    me.icn3d.labels['picking']=[];
-    me.icn3d.draw();
+    ic.labels['picking']=[];
+    ic.draw();
 
-    me.icn3d.removeHlObjects();
+    ic.removeHlObjects();
     me.removeHl2D();
-    if(me.icn3d.bRender) me.icn3d.render();
+    if(ic.bRender) ic.render();
 
     me.removeSeqChainBkgd();
     me.removeSeqResidueBkgd();
@@ -412,23 +412,23 @@ iCn3DUI.prototype.clearHighlight = function() { var me = this, ic = me.icn3d; "u
 };
 
 iCn3DUI.prototype.showHighlight = function() { var me = this, ic = me.icn3d; "use strict";
-    me.icn3d.addHlObjects();
+    ic.addHlObjects();
     me.updateHlAll();
     //me.bSelectResidue = true;
 };
 
 iCn3DUI.prototype.highlightChains = function(chainArray) { var me = this, ic = me.icn3d; "use strict";
-    me.icn3d.removeHlObjects();
+    ic.removeHlObjects();
     me.removeHl2D();
 
-    me.icn3d.addHlObjects();
+    ic.addHlObjects();
     me.updateHl2D(chainArray);
 
     var residueHash = {};
     for(var c = 0, cl = chainArray.length; c < cl; ++c) {
         var chainid = chainArray[c];
-        for(var i in me.icn3d.chainsSeq[chainid]) { // get residue number
-            var resObj = me.icn3d.chainsSeq[chainid][i];
+        for(var i in ic.chainsSeq[chainid]) { // get residue number
+            var resObj = ic.chainsSeq[chainid][i];
             var residueid = chainid + "_" + resObj.resi;
 
             if(resObj.name !== '' && resObj.name !== '-') {

@@ -52,7 +52,7 @@ $.ajaxTransport("+binary", function (options, originalOptions, jqXHR) {
 });
 
 var iCn3DUI = function(cfg) { var me = this, ic = me.icn3d; "use strict";
-    this.REVISION = '2.20.1';
+    this.REVISION = '2.20.2';
     me.bFullUi = true;
     me.cfg = cfg;
     me.divid = me.cfg.divid;
@@ -445,7 +445,7 @@ iCn3DUI.prototype = {
         };
         iCn3D.prototype.showPicking = function(atom, x, y) {
           me = me.setIcn3dui(this.id);
-          if(me.cfg.cid !== undefined) {
+          if(me.cfg.cid !== undefined && this.pk != 0) {
               this.pk = 1; // atom
           }
           else {
@@ -453,49 +453,52 @@ iCn3DUI.prototype = {
           }
           me.icn3d.highlightlevel = this.pk;
           this.showPickingBase(atom, x, y);
-          if(x !== undefined && y !== undefined) { // mouse over
-            if(me.cfg.showmenu != undefined && me.cfg.showmenu == true) {
-                y += me.MENU_HEIGHT;
-            }
-            var text = (this.pk == 1) ? atom.resn + atom.resi + '@' + atom.name : atom.resn + atom.resi;
-            if(this.structures !== undefined && Object.keys(this.structures).length > 1) {
-                text = atom.structure + '_' + atom.chain + ' ' + text;
-                $("#" + me.pre + "popup").css("width", "140px");
-            }
-            else {
-                $("#" + me.pre + "popup").css("width", "80px");
-            }
-            $("#" + me.pre + "popup").html(text);
-            $("#" + me.pre + "popup").css("top", y).css("left", x+20).show();
-          }
-          else {
-              // highlight the sequence background
-              me.updateHlAll();
-              var transformation = {};
-              transformation.factor = this._zoomFactor;
-              transformation.mouseChange = this.mouseChange;
-              //transformation.quaternion = this.quaternion;
-              transformation.quaternion = {};
-              transformation.quaternion._x = parseFloat(this.quaternion._x).toPrecision(5);
-              transformation.quaternion._y = parseFloat(this.quaternion._y).toPrecision(5);
-              transformation.quaternion._z = parseFloat(this.quaternion._z).toPrecision(5);
-              transformation.quaternion._w = parseFloat(this.quaternion._w).toPrecision(5);
-              if(me.bAddCommands) {
-                  this.commands.push('pickatom ' + atom.serial + '|||' + me.getTransformationStr(transformation));
-                  this.optsHistory.push(this.cloneHash(this.opts));
-                  this.optsHistory[this.optsHistory.length - 1].hlatomcount = Object.keys(this.hAtoms).length;
-                  if(me.isSessionStorageSupported()) me.saveCommandsToSession();
-                  me.STATENUMBER = this.commands.length;
+
+          if(this.pk != 0) {
+              if(x !== undefined && y !== undefined) { // mouse over
+                if(me.cfg.showmenu != undefined && me.cfg.showmenu == true) {
+                    y += me.MENU_HEIGHT;
+                }
+                var text = (this.pk == 1) ? atom.resn + atom.resi + '@' + atom.name : atom.resn + atom.resi;
+                if(this.structures !== undefined && Object.keys(this.structures).length > 1) {
+                    text = atom.structure + '_' + atom.chain + ' ' + text;
+                    $("#" + me.pre + "popup").css("width", "140px");
+                }
+                else {
+                    $("#" + me.pre + "popup").css("width", "80px");
+                }
+                $("#" + me.pre + "popup").html(text);
+                $("#" + me.pre + "popup").css("top", y).css("left", x+20).show();
               }
-              this.logs.push('pickatom ' + atom.serial + ' (chain: ' + atom.structure + '_' + atom.chain + ', residue: ' + atom.resn + ', number: ' + atom.resi + ', atom: ' + atom.name + ')');
-              if ( $( "#" + me.pre + "logtext" ).length )  {
-                $("#" + me.pre + "logtext").val("> " + this.logs.join("\n> ") + "\n> ").scrollTop($("#" + me.pre + "logtext")[0].scrollHeight);
+              else {
+                  // highlight the sequence background
+                  me.updateHlAll();
+                  var transformation = {};
+                  transformation.factor = this._zoomFactor;
+                  transformation.mouseChange = this.mouseChange;
+                  //transformation.quaternion = this.quaternion;
+                  transformation.quaternion = {};
+                  transformation.quaternion._x = parseFloat(this.quaternion._x).toPrecision(5);
+                  transformation.quaternion._y = parseFloat(this.quaternion._y).toPrecision(5);
+                  transformation.quaternion._z = parseFloat(this.quaternion._z).toPrecision(5);
+                  transformation.quaternion._w = parseFloat(this.quaternion._w).toPrecision(5);
+                  if(me.bAddCommands) {
+                      this.commands.push('pickatom ' + atom.serial + '|||' + me.getTransformationStr(transformation));
+                      this.optsHistory.push(this.cloneHash(this.opts));
+                      this.optsHistory[this.optsHistory.length - 1].hlatomcount = Object.keys(this.hAtoms).length;
+                      if(me.isSessionStorageSupported()) me.saveCommandsToSession();
+                      me.STATENUMBER = this.commands.length;
+                  }
+                  this.logs.push('pickatom ' + atom.serial + ' (chain: ' + atom.structure + '_' + atom.chain + ', residue: ' + atom.resn + ', number: ' + atom.resi + ', atom: ' + atom.name + ')');
+                  if ( $( "#" + me.pre + "logtext" ).length )  {
+                    $("#" + me.pre + "logtext").val("> " + this.logs.join("\n> ") + "\n> ").scrollTop($("#" + me.pre + "logtext")[0].scrollHeight);
+                  }
+                  // update the interaction flag
+                  me.bSphereCalc = false;
+                  //me.setLogCmd('set calculate sphere false', true);
+                  me.bHbondCalc = false;
+                  //me.setLogCmd('set calculate hbond false', true);
               }
-              // update the interaction flag
-              me.bSphereCalc = false;
-              //me.setLogCmd('set calculate sphere false', true);
-              me.bHbondCalc = false;
-              //me.setLogCmd('set calculate hbond false', true);
           }
         };
     },
@@ -1037,7 +1040,8 @@ iCn3DUI.prototype = {
       }, 0);
     },
     closeDialogs: function () { var me = this, ic = me.icn3d; "use strict";
-        var itemArray = ['dl_selectannotations', 'dl_alignment', 'dl_2ddgm', 'dl_definedsets', 'dl_graph', 'dl_linegraph', 'dl_scatterplot', 'dl_allinteraction'];
+        var itemArray = ['dl_selectannotations', 'dl_alignment', 'dl_2ddgm', 'dl_definedsets', 'dl_graph',
+            'dl_linegraph', 'dl_scatterplot', 'dl_allinteraction', 'dl_copyurl'];
         for(var i in itemArray) {
             var item = itemArray[i];
             if(!me.cfg.notebook) {
@@ -4048,12 +4052,16 @@ iCn3DUI.prototype = {
             }
         };
     },
-    getAtomPDB: function (atomHash, bPqr) {  var me = this, ic = me.icn3d; "use strict";
-        var pdbStr = '';
+    getPDBHeader: function () {  var me = this, ic = me.icn3d; "use strict";
+       var pdbStr = '';
+       pdbStr += 'HEADER    PDB From iCn3D'.padEnd(62, ' ') + Object.keys(ic.structures)[0] + '\n';
+       var title = (ic.molTitle.lendth > 50) ? ic.molTitle.substr(0,47) + '...' : ic.molTitle;
+       pdbStr += 'TITLE     ' + title + '\n';
 
-        pdbStr += 'HEADER    PDB From iCn3D'.padEnd(62, ' ') + Object.keys(ic.structures)[0] + '\n';
-        var title = (ic.molTitle.lendth > 80) ? ic.molTitle.substr(0,77) + '...' : ic.molTitle;
-        pdbStr += 'TITLE     ' + title + '\n';
+       return pdbStr;
+    },
+    getAtomPDB: function (atomHash, bPqr, bPdb) {  var me = this, ic = me.icn3d; "use strict";
+        var pdbStr = '';
 
         // get all phosphate groups in lipids
         var phosPHash = {}, phosOHash = {};
@@ -4177,7 +4185,7 @@ SHEET    1  B1 2 GLY A  35  THR A  39  0
             line += atom.coord.y.toFixed(3).toString().padStart(8, ' ');
             line += atom.coord.z.toFixed(3).toString().padStart(8, ' ');
 
-            if( (bPqr && atom.het) || phosPHash.hasOwnProperty(i) || phosOHash.hasOwnProperty(i) ) {
+            if( (bPqr && atom.het) || (phosPHash.hasOwnProperty(i) && !bPdb) || (phosOHash.hasOwnProperty(i) && !bPdb) ) {
                 var size = 1.5, charge = 0;
 
 /*
@@ -4231,9 +4239,11 @@ SHEET    1  B1 2 GLY A  35  THR A  39  0
             // connection info
             if(atom.het && atom.bonds.length > 0) {
                 connStr += 'CONECT' + i.toString().padStart(5, ' ');
+                var bondHash = {};
                 for(var j = 0, jl = atom.bonds.length; j < jl; ++j) {
-                    if(atom.bonds[j]) { // could be null
+                    if(atom.bonds[j] && !bondHash.hasOwnProperty(atom.bonds[j])) { // could be null
                         connStr += atom.bonds[j].toString().padStart(5, ' ');
+                        bondHash[atom.bonds[j]] = 1;
                     }
                 }
                 connStr += '\n';
@@ -4249,7 +4259,8 @@ SHEET    1  B1 2 GLY A  35  THR A  39  0
 /*
     getSelectedChainPDB: function () {  var me = this, ic = me.icn3d; "use strict";
        var chainHash = {};
-       for(var i in ic.hAtoms) {
+       var atoms = ic.intHash(ic.dAtoms, ic.hAtoms);
+       for(var i in atoms) {
            var atom = ic.atoms[i];
            chainHash[atom.structure + '_' + atom.chain] = 1;
        }
@@ -4259,11 +4270,22 @@ SHEET    1  B1 2 GLY A  35  THR A  39  0
            atomHash = ic.unionHash(atomHash, ic.chains[chainid]);
        }
 
-       return me.getAtomPDB(atomHash);
+       var pdbStr = '';
+       pdbStr += me.getPDBHeader();
+
+       pdbStr += me.getAtomPDB(atomHash);
+
+       return pdbStr;
     },
 */
     getSelectedResiduePDB: function () {  var me = this, ic = me.icn3d; "use strict";
-       return me.getAtomPDB(ic.hAtoms);
+       var pdbStr = '';
+       pdbStr += me.getPDBHeader();
+
+       var atoms = ic.intHash(ic.dAtoms, ic.hAtoms);
+       pdbStr += me.getAtomPDB(atoms);
+
+       return pdbStr;
     },
     measureDistTwoSets: function(nameArray, nameArray2) { var me = this, ic = me.icn3d; "use strict";
        if(nameArray.length == 0 || nameArray2.length == 0) {
