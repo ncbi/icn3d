@@ -636,7 +636,7 @@ iCn3D.prototype.alternateStructures = function () { var me = this, ic = me.icn3d
     // should recalculate the potential
     //me.loadDelphiFileBase('delphi');
 
-    this.removeSurfaces();
+//    this.removeSurfaces();
 //    this.applyphisurfaceOptions();
     // should recalculate the potential
     //me.loadDelphiFileBase('delphi2');
@@ -864,6 +864,11 @@ iCn3D.prototype.applyOtherOptions = function (options) { var me = this, ic = me.
     // symmetry axes and polygon
     if(this.symmetryHash !== undefined && this.symmetrytitle !== undefined) {
         this.applySymmetry(this.symmetrytitle);
+    }
+
+    if(this.symdHash !== undefined && this.symdtitle !== undefined) {
+        var bSymd = true;
+        this.applySymmetry(this.symdtitle, bSymd);
     }
 
     // other meshes

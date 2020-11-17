@@ -305,6 +305,7 @@ iCn3DUI.prototype.allEventFunctions = function() { var me = this;
     $("#" + me.pre + "mn1_exportState").click(function(e) { var ic = me.icn3d;
        me.setLogCmd("export state file", false);
        var file_pref = (me.inputid) ? me.inputid : "custom";
+
        me.saveFile(file_pref + '_statefile.txt', 'command');
     });
 //    },
@@ -1751,6 +1752,15 @@ iCn3DUI.prototype.allEventFunctions = function() { var me = this;
        me.retrieveSymmetry(Object.keys(ic.structures)[0]);
        //me.openDlg('dl_symmetry', 'Symmetry');
     });
+
+    $("#" + me.pre + "mn6_symd").click(function(e) { var ic = me.icn3d;
+       me.retrieveSymd();
+       //me.openDlg('dl_symmetry', 'Symmetry');
+
+       var title = $("#" + me.pre + "selectSymd" ).val();
+       me.setLogCmd('symd symmetry ' + title, true);
+    });
+
 //    },
 //    clkMn6_area: function() {
     $("#" + me.pre + "mn6_area").click(function(e) { var ic = me.icn3d;
@@ -1772,6 +1782,20 @@ iCn3DUI.prototype.allEventFunctions = function() { var me = this;
        ic.draw();
        me.setLogCmd('symmetry ' + title, true);
     });
+
+    $("#" + me.pre + "applysymd").click(function(e) { var ic = me.icn3d;
+       var title = $("#" + me.pre + "selectSymd" ).val();
+       ic.symdtitle = (title === 'none') ? undefined : title;
+       ic.draw();
+       me.setLogCmd('symd symmetry ' + title, true);
+    });
+    $("#" + me.pre + "clearsymd").click(function(e) { var ic = me.icn3d;
+       var title = 'none';
+       ic.symdtitle = undefined;
+       ic.draw();
+       me.setLogCmd('symd symmetry ' + title, true);
+    });
+
 //    },
 //    clkMn6_hbondsYes: function() {
     $("#" + me.pre + "mn6_hbondsYes").add("#" + me.pre + "hbondsYes").click(function(e) { var ic = me.icn3d;
@@ -2180,6 +2204,8 @@ iCn3DUI.prototype.allEventFunctions = function() { var me = this;
          me.fileSupport();
          var reader = new FileReader();
          reader.onload = function (e) {
+           me.bStatefile = true;
+
            var dataStr = e.target.result; // or = reader.result;
            me.setLogCmd('load state file ' + $("#" + me.pre + "state").val(), false);
            ic.commands = [];
@@ -3104,6 +3130,18 @@ iCn3DUI.prototype.allEventFunctions = function() { var me = this;
                     }
                 }
             }
+            else if(lastCommand.indexOf('symd symmetry') == 0) {
+                var title = lastCommand.substr(lastCommand.indexOf(' ') + 1);
+                ic.symdtitle = (title === 'none') ? undefined : title;
+                if(title !== 'none') {
+                    if(ic.symdHash === undefined) {
+                        me.applyCommandSymd(lastCommand);
+                    }
+                }
+            }
+            else if(lastCommand.indexOf('scap ') == 0) {
+                me.applyCommandScap(lastCommand);
+            }
             else if(lastCommand.indexOf('realign on seq align') == 0) {
                 var paraArray = lastCommand.split(' | ');
                 if(paraArray.length == 2) {
@@ -3422,6 +3460,15 @@ iCn3DUI.prototype.allEventFunctions = function() { var me = this;
        ic.bDoublecolor = false;
        ic.draw();
        me.setLogCmd("set double color off", true);
+    });
+
+    $(document).on("click", "." + me.pre + "snpin3d", function(e) { var ic = me.icn3d;
+        e.stopImmediatePropagation();
+
+        var snp = $(this).attr('snp');
+
+        me.retrieveScap(snp);
+        me.setLogCmd('scap ' + snp, true);
     });
 
 };

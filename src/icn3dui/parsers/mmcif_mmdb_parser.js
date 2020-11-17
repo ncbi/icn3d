@@ -401,7 +401,7 @@ iCn3DUI.prototype.parseMmdbDataPart1 = function (data, type) { var me = this, ic
         }
 
         if(type === undefined || type === 'target') {
-            ic.init();
+            if(!me.bStatefile) ic.init();
 
             ic.chainsColor = {};
             ic.chainsGene = {};
@@ -681,7 +681,7 @@ iCn3DUI.prototype.getMissingResidues = function (seqArray, type, chainid) { var 
 
     for(var i = 0, il = seqArray.length; i < il; ++i) {
         var seqName, resiPos;
-        // mmdbid: ["0","R","ARG"],["502","V","VAL"]; mmcifid: [1, "ARG"]; align: [1, "0","R","ARG"]
+        // mmdbid: ["0","R","ARG"],["502","V","VAL"]; mmcifid: [1, "ARG"]; align: ["0","R","ARG"] //align: [1, "0","R","ARG"]
         if(type === 'mmdbid') {
             seqName = seqArray[i][1];
             resiPos = 0;
@@ -692,8 +692,9 @@ iCn3DUI.prototype.getMissingResidues = function (seqArray, type, chainid) { var 
             resiPos = 0;
         }
         else if(type === 'align') {
-            seqName = seqArray[i][2];
-            resiPos = 1;
+            //seqName = seqArray[i][2];
+            seqName = seqArray[i][1];
+            resiPos = 0;
         }
 
         // fixe some missing residue names such as residue 6 in 5C1M_A
@@ -798,12 +799,12 @@ iCn3DUI.prototype.loadAtomDataIn = function (data, id, type, seqalign, alignType
               var chain = structure.molecules[j].chain;
               var kind = structure.molecules[j].kind;
               var title = structure.molecules[j].name;
-              var seq = structure.molecules[j].sequence;
+              //var seq = structure.molecules[j].sequence;
               var sid = structure.molecules[j].sid;
 
               var chainid = pdbidTmp + '_' + chain;
 
-              if(me.bFullUi) chainid2seq[chainid] = seq;
+              //if(me.bFullUi) chainid2seq[chainid] = seq;
               chainid2kind[chainid] = kind;
 
               me.chainid2title[chainid] = title;
@@ -898,8 +899,9 @@ iCn3DUI.prototype.loadAtomDataIn = function (data, id, type, seqalign, alignType
             }
         }
         else if(type === 'align') {
-            for(var chainid in chainid2seq) {
-                var seqArray = chainid2seq[chainid];
+            //for(var chainid in chainid2seq) {
+            for(var chainid in me.chainid2seq) {
+                var seqArray = me.chainid2seq[chainid];
 
                 me.getMissingResidues(seqArray, type, chainid);
             }
@@ -1387,14 +1389,14 @@ iCn3DUI.prototype.loadAtomDataIn = function (data, id, type, seqalign, alignType
     else if(type === 'align') { // calculate disulfide bonds
         // get all Cys residues
         var structure2cys_resid = {};
-        for(var chainid in chainid2seq) {
+        for(var chainid in me.chainid2seq) {
             if(chainid2kind[chainid] == 'protein') {
-                var seq = chainid2seq[chainid];
+                var seq = me.chainid2seq[chainid];
                 var structure = chainid.substr(0, chainid.indexOf('_'));
 
                 for(var i = 0, il = seq.length; i < il; ++i) {
-                    // each seq[i] = [1,"1","V","VAL NH3+"],
-                    if(seq[i][2] == 'C') {
+                    // each seq[i] = ["1","V","VAL NH3+"], //[1,"1","V","VAL NH3+"],
+                    if(seq[i][1] == 'C') {
                         if(structure2cys_resid[structure] == undefined) structure2cys_resid[structure] = [];
                         structure2cys_resid[structure].push(chainid + '_' + seq[i][0]);
                     }

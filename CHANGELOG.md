@@ -1,4 +1,6 @@
 ## Change Log
+[icn3d-2.21.0](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.21.0.zip) was release on November 17, 2020. Symmetry can be calculated dynamically for selected residues using SymD. The menu is at "Analysis > Symmetry (SymD, dynamic)". Speeded up the loading of VAST+ structure alignment.
+
 [icn3d-2.20.2](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.20.2.zip) was release on October 29, 2020. Fixed the DelPhi potential map in VAST+ alignment. Added back the usage tracking.
 
 [icn3d-2.20.1](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.20.1.zip) was release on October 13, 2020. Reverted the label scale to 0.3. Updated the LICENSE.

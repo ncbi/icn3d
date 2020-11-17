@@ -3,7 +3,7 @@
  */
 
 // modified from iview (http://istar.cse.cuhk.edu.hk/iview/)
-iCn3D.prototype.loadPDB = function (src, pdbid, bOpm, bVector) { var me = this, ic = me.icn3d; "use strict";
+iCn3D.prototype.loadPDB = function (src, pdbid, bOpm, bVector, bAddition) { var me = this, ic = me.icn3d; "use strict";
     var helices = [], sheets = [];
     //this.atoms = {};
     var lines = src.split('\n');
@@ -11,14 +11,36 @@ iCn3D.prototype.loadPDB = function (src, pdbid, bOpm, bVector) { var me = this, 
     var chainsTmp = {}; // serial -> atom
     var residuesTmp = {}; // serial -> atom
 
-    this.init();
+    var serial, moleculeNum;
+    if(!bAddition) {
+        this.init();
+        moleculeNum = 1;
+        serial = 0;
+    }
+    else {
+        // remove structure 2
+        if(this.alertAlt) {
+            var nStru = 2; //Object.keys(this.structures).length;
+            var  chainArray = this.structures[nStru - 1];
+            for(var i = 0, il = (chainArray) ? chainArray.length : 0; i < il; ++i) {
+                for(var j in this.chains[chainArray[i]]) {
+                    delete this.atoms[j];
+                    delete this.hAtoms[j];
+                    delete this.dAtoms[j];
+                }
+                delete this.chains[chainArray[i]];
+            }
+
+            delete this.structures[nStru - 1];
+        }
+
+        moleculeNum = 2; //Object.keys(this.structures).length + 1;
+        // Concatenation of two pdbs will have several atoms for the same serial
+        serial = Object.keys(this.atoms).length;
+    }
 
     var sheetArray = [], sheetStart = [], sheetEnd = [], helixArray = [], helixStart = [], helixEnd = [];
 
-    // Concatenation of two pdbs will have several atoms for the same serial
-    var serial = 0;
-
-    var moleculeNum = 1;
     var chainNum, residueNum, oriResidueNum;
     var prevChainNum = '', prevResidueNum = '', prevOriResidueNum = '', prevResi = 0;
     var prevRecord = '';
@@ -419,7 +441,7 @@ iCn3D.prototype.loadPDB = function (src, pdbid, bOpm, bVector) { var me = this, 
     if(this.chains[chainNum] === undefined) this.chains[chainNum] = {};
     this.chains[chainNum] = this.unionHash2Atoms(this.chains[chainNum], chainsTmp);
 
-    this.adjustSeq(chainMissingResidueArray);
+    if(!bAddition) this.adjustSeq(chainMissingResidueArray);
 
 //    this.missingResidues = [];
 //    for(var chainid in chainMissingResidueArray) {
