@@ -335,3 +335,101 @@ iCn3DUI.prototype.loadCubeData = function(data, contour, bSurface) { var me = th
     ));
     ic.mapData.matrixPhi = matrix;
 };
+
+iCn3DUI.prototype.applyCommandPhi = function (command) { var me = this; "use strict";
+  // chain functions together
+  me.deferredPhi = $.Deferred(function() { var ic = me.icn3d;
+      //me.setLogCmd('set phi phiurl2/cubeurl2 | contour ' + contour + ' | url ' + encodeURIComponent(url)
+      //       + ' | gsize ' + gsize + ' | salt ' + salt
+      //       + ' | surface ' + ic.phisurftype + ' | opacity ' + ic.phisurfop + ' | wireframe ' + ic.phisurfwf, true);
+      //me.setLogCmd('set phi phiurl/cubeurl | contour ' + contour + ' | url ' + encodeURIComponent(url)
+      //       + ' | gsize ' + gsize + ' | salt ' + salt, true);
+      var paraArray = command.split(" | ");
+
+      var typeArray = paraArray[0].split(" ");
+      var contourArray = paraArray[1].split(" ");
+      var urlArray = paraArray[2].split(" ");
+      var gsizeArray = paraArray[3].split(" ");
+      var saltArray = paraArray[4].split(" ");
+
+      var type = typeArray[2];
+      var contour = parseFloat(contourArray[1]);
+      var url = urlArray[1];
+      var gsize = gsizeArray[1];
+      var salt = saltArray[1];
+
+      //var pdbid = Object.keys(ic.structures)[0];
+      //url = url.replace(/!/g, pdbid + '_');
+
+      if(paraArray.length == 8) {
+          var surfaceArray = paraArray[5].split(" ");
+          var opacityArray = paraArray[6].split(" ");
+          var wireframeArray = paraArray[7].split(" ");
+
+          ic.phisurftype = surfaceArray[1];
+          ic.phisurfop = parseFloat(opacityArray[1]);
+          ic.phisurfwf = wireframeArray[1];
+
+          $("#" + me.pre + "delphi" + "surftype").val(ic.phisurftype);
+          $("#" + me.pre + "delphi" + "surfop").val(ic.phisurfop);
+          $("#" + me.pre + "delphi" + "surfwf").val(ic.phisurfwf);
+      }
+
+      var bSurface = (type == 'pqrurl2' || type == 'phiurl2' || type == 'cubeurl2') ? true : false;
+
+      if(type == 'pqrurl' || type == 'pqrurl2') {
+          me.CalcPhiUrl(gsize, salt, contour, bSurface, url);
+      }
+      else {
+          me.PhiParser(url, type, contour, bSurface);
+      }
+  }); // end of me.deferred = $.Deferred(function() {
+
+  return me.deferredPhi.promise();
+};
+
+iCn3DUI.prototype.applyCommandDelphi = function (command) { var me = this; "use strict";
+  // chain functions together
+  me.deferredDelphi = $.Deferred(function() { var ic = me.icn3d;
+       //me.setLogCmd('set delphi surface | contour ' + contour + ' | gsize ' + gsize + ' | salt ' + salt
+       //  + ' | surface ' + ic.phisurftype + ' | opacity ' + ic.phisurfop + ' | wireframe ' + ic.phisurfwf, true);
+
+       //me.setLogCmd('set delphi map | contour ' + contour + ' | gsize ' + gsize + ' | salt ' + salt, true);
+
+      var paraArray = command.split(" | ");
+
+      var typeArray = paraArray[0].split(" ");
+      var contourArray = paraArray[1].split(" ");
+      var gsizeArray = paraArray[2].split(" ");
+      var saltArray = paraArray[3].split(" ");
+
+      var type = typeArray[2];
+      var contour = contourArray[1]; //parseFloat(contourArray[1]);
+      var gsize = gsizeArray[1]; //parseInt(gsizeArray[1]);
+      var salt = saltArray[1]; //parseFloat(saltArray[1]);
+
+      // The values should be string
+      $("#" + me.pre + "delphigsize").val(gsize);
+      $("#" + me.pre + "delphisalt").val(salt);
+
+      if(paraArray.length == 7) {
+          var surfaceArray = paraArray[4].split(" ");
+          var opacityArray = paraArray[5].split(" ");
+          var wireframeArray = paraArray[6].split(" ");
+
+          ic.phisurftype = surfaceArray[1];
+          ic.phisurfop = opacityArray[1]; //parseFloat(opacityArray[1]);
+          ic.phisurfwf = wireframeArray[1];
+
+          $("#" + me.pre + "delphi" + "surftype").val(ic.phisurftype);
+          $("#" + me.pre + "delphi" + "surfop").val(ic.phisurfop);
+          $("#" + me.pre + "delphi" + "surfwf").val(ic.phisurfwf);
+      }
+
+      var bSurface = (type == 'surface') ? true : false;
+
+      me.CalcPhi(gsize, salt, contour, bSurface);
+  }); // end of me.deferred = $.Deferred(function() {
+
+  return me.deferredDelphi.promise();
+};

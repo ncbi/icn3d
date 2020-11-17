@@ -167,7 +167,13 @@ iCn3D.prototype.createSurfaceRepresentation = function (atoms, type, wireframe, 
         var chainStr = (Object.keys(chainHash).length > 1) ? '<th>Chain</th>' : '';
         html += '<tr>' + structureStr + chainStr + '<th>Residue</th><th>Number</th><th>SASA (&#8491;<sup>2</sup>)</th><th>Percent Out</th><th>In/Out</th></tr>';
         for(var resid in this.resid2area) {
-            var idArray = resid.split('_');
+            //var idArray = resid.split('_');
+            var idArray = [];
+            var pos1 = resid.indexOf('_');
+            var pos2 = resid.lastIndexOf('_');
+            idArray.push(resid.substr(0, pos1));
+            idArray.push(resid.substr(pos1 + 1, pos2 - pos1 - 1));
+            idArray.push(resid.substr(pos2 + 1));
 
             structureStr = (Object.keys(structureHash).length > 1) ? '<td>' + idArray[0] + '</td>' : '';
             chainStr = (Object.keys(chainHash).length > 1) ? '<td>' + idArray[1] + '</td>' : '';
@@ -581,8 +587,8 @@ iCn3D.prototype.createBrick = function (p0, p1, radius, color) { var me = this, 
     me.mdl.add(mesh);
 };
 
-iCn3D.prototype.applySymmetry = function (title) { var me = this, ic = me.icn3d; "use strict";
-    var dataArray = this.symmetryHash[title]; // start_end_colorAxis_colorPolygon
+iCn3D.prototype.applySymmetry = function (title, bSymd) { var me = this, ic = me.icn3d; "use strict";
+    var dataArray = (bSymd) ? this.symdHash[title] : this.symmetryHash[title]; // start_end_colorAxis_colorPolygon_order_chain
     var symmetryType = title.substr(0, 1);
     var nSide = parseInt(title.substring(1, title.indexOf(' ')));
 
@@ -609,22 +615,59 @@ iCn3D.prototype.applySymmetry = function (title) { var me = this, ic = me.icn3d;
 
         if(symmetryType == 'C' || (symmetryType == 'D' && order == nSide) ) {
             // find the center and size of the selected protein chain
-            var selectedChain = Object.keys(this.structures)[0] + '_' + chain;
 
-            if(!this.chains.hasOwnProperty(selectedChain)) {
-                selectedChain = Object.keys(this.structures)[0] + '_' + chain.toLowerCase();
-            }
+            var selection = {};
+            // check the number of chains
+            var nChain = Object.keys(this.chains).length;
+            var bMultiChain = false;
+            if(bSymd && Object.keys(this.hAtoms).length < Object.keys(this.atoms).length) {
+                var chainHashTmp = {};
+                for(var serial in this.hAtoms) {
+                    var atom = this.atoms[serial];
+                    var chainid = atom.structure + '_' + atom.chain;
+                    chainHashTmp[chainid] = 1;
+                }
 
-            if(!this.chains.hasOwnProperty(selectedChain)) {
-                selectedChain = Object.keys(this.chains)[0];
-                for(var chainid in this.chains) {
-                    var firstSerial = Object.keys(this.chains[chainid])[0];
-                    if(this.proteins.hasOwnProperty(firstSerial)) {
-                        selectedChain = chainid;
-                        break;
-                    }
+                if(Object.keys(chainHashTmp).length > 1) {
+                    bMultiChain = true;
                 }
             }
+
+            if(!bSymd || bMultiChain || Object.keys(this.hAtoms).length < Object.keys(this.atoms).length) {
+                var selectedChain = Object.keys(this.structures)[0] + '_' + chain;
+
+                if(!this.chains.hasOwnProperty(selectedChain)) {
+                    selectedChain = Object.keys(this.structures)[0] + '_' + chain.toLowerCase();
+                }
+
+                if(!this.chains.hasOwnProperty(selectedChain)) {
+                    selectedChain = Object.keys(this.chains)[0];
+                    for(var chainid in this.chains) {
+                        var firstSerial = Object.keys(this.chains[chainid])[0];
+                        if(this.proteins.hasOwnProperty(firstSerial)) {
+                            selectedChain = chainid;
+                            break;
+                        }
+                    }
+                }
+                selection = this.chains[selectedChain];
+            }
+            else { // bSymd, subset, and one chain
+                // pick the first 1/order of selection
+                var cnt = parseInt(Object.keys(this.hAtoms).length / order);
+                var i = 0, lastSerial;
+                for(var serial in this.hAtoms) {
+                    selection[serial] = 1;
+                    lastSerial = serial;
+                    ++i;
+                    if(i > cnt) break;
+                }
+
+                // add the whole residue for the last serial
+                var resid = this.atoms[lastSerial].structure + '_' + this.atoms[lastSerial].chain + '_' + this.atoms[lastSerial].resi;
+                selection = this.unionHash(selection, this.residues[resid]);
+            }
+
 
             var middle = start.clone().add(end).multiplyScalar(0.5);
 
@@ -639,7 +682,7 @@ iCn3D.prototype.applySymmetry = function (title) { var me = this, ic = me.icn3d;
             quaternion.setFromUnitVectors (axis, vTo)
 
             var distSqMax = -9999;
-            for (var serial in this.chains[selectedChain]) {
+            for (var serial in selection) {
                 var atom = this.atoms[serial];
                 var coord = atom.coord.clone();
                 psum.add(coord);

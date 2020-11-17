@@ -52,7 +52,7 @@ $.ajaxTransport("+binary", function (options, originalOptions, jqXHR) {
 });
 
 var iCn3DUI = function(cfg) { var me = this, ic = me.icn3d; "use strict";
-    this.REVISION = '2.20.2';
+    this.REVISION = '2.21.0';
     me.bFullUi = true;
     me.cfg = cfg;
     me.divid = me.cfg.divid;
@@ -593,44 +593,52 @@ iCn3DUI.prototype = {
             }
         }
         ic.molTitle = '';
+        me.loadCmd;
         if(me.cfg.url !== undefined) {
             var type_url = me.cfg.url.split('|');
             var type = type_url[0];
             var url = type_url[1];
             ic.molTitle = "";
             me.inputid = url;
-            me.setLogCmd('load url ' + url + ' | type ' + type, true);
+            me.loadCmd = 'load url ' + url + ' | type ' + type;
+            me.setLogCmd(me.loadCmd, true);
             me.downloadUrl(url, type);
         }
         else if(me.cfg.mmtfid !== undefined) {
            me.inputid = me.cfg.mmtfid;
-           me.setLogCmd('load mmtf ' + me.cfg.mmtfid, true);
+           me.loadCmd = 'load mmtf ' + me.cfg.mmtfid;
+           me.setLogCmd(me.loadCmd, true);
            me.downloadMmtf(me.cfg.mmtfid);
         }
         else if(me.cfg.pdbid !== undefined) {
            me.inputid = me.cfg.pdbid;
-           me.setLogCmd('load pdb ' + me.cfg.pdbid, true);
+           me.loadCmd = 'load pdb ' + me.cfg.pdbid;
+           me.setLogCmd(me.loadCmd, true);
            me.downloadPdb(me.cfg.pdbid);
         }
         else if(me.cfg.opmid !== undefined) {
            me.inputid = me.cfg.opmid;
-           me.setLogCmd('load opm ' + me.cfg.opmid, true);
+           me.loadCmd = 'load opm ' + me.cfg.opmid;
+           me.setLogCmd(me.loadCmd, true);
            me.downloadOpm(me.cfg.opmid);
         }
         else if(me.cfg.mmdbid !== undefined) {
            me.inputid = me.cfg.mmdbid;
-           me.setLogCmd('load mmdb ' + me.cfg.mmdbid + ' | parameters ' + me.cfg.inpara, true);
+           me.loadCmd = 'load mmdb ' + me.cfg.mmdbid + ' | parameters ' + me.cfg.inpara;
+           me.setLogCmd(me.loadCmd, true);
            me.downloadMmdb(me.cfg.mmdbid);
         }
         else if(me.cfg.gi !== undefined) {
-           me.setLogCmd('load gi ' + me.cfg.gi, true);
+           me.loadCmd = 'load gi ' + me.cfg.gi;
+           me.setLogCmd(me.loadCmd, true);
            me.downloadGi(me.cfg.gi);
         }
         else if(me.cfg.blast_rep_id !== undefined) {
            // custom seqeunce has query_id such as "Query_78989" in BLAST
            if(me.cfg.query_id.substr(0,5) !== 'Query' && me.cfg.rid === undefined) {
                me.inputid = me.cfg.query_id + '_' + me.cfg.blast_rep_id;
-               me.setLogCmd('load seq_struct_ids ' + me.cfg.query_id + ',' + me.cfg.blast_rep_id, true);
+               me.loadCmd = 'load seq_struct_ids ' + me.cfg.query_id + ',' + me.cfg.blast_rep_id;
+               me.setLogCmd(me.loadCmd, true);
                me.downloadBlast_rep_id(me.cfg.query_id + ',' + me.cfg.blast_rep_id);
            }
            else if(me.cfg.rid !== undefined) {
@@ -664,7 +672,8 @@ iCn3DUI.prototype = {
                       }
                       if(qseq !== undefined) me.cfg.query_id = qseq;
                       me.inputid = me.cfg.query_id + '_' + me.cfg.blast_rep_id;
-                      me.setLogCmd('load seq_struct_ids ' + me.cfg.query_id + ',' + me.cfg.blast_rep_id, true);
+                      me.loadCmd = 'load seq_struct_ids ' + me.cfg.query_id + ',' + me.cfg.blast_rep_id;
+                      me.setLogCmd(me.loadCmd, true);
                       me.downloadBlast_rep_id(me.cfg.query_id + ',' + me.cfg.blast_rep_id);
                       break;
                     }
@@ -708,12 +717,14 @@ iCn3DUI.prototype = {
                 return;
               }
            });
-            me.setLogCmd('load cid ' + me.cfg.cid, true);
+            me.loadCmd = 'load cid ' + me.cfg.cid;
+            me.setLogCmd(me.loadCmd, true);
             me.downloadCid(me.cfg.cid);
         }
         else if(me.cfg.mmcifid !== undefined) {
             me.inputid = me.cfg.mmcifid;
-            me.setLogCmd('load mmcif ' + me.cfg.mmcifid, true);
+            me.loadCmd = 'load mmcif ' + me.cfg.mmcifid;
+            me.setLogCmd(me.loadCmd, true);
             me.downloadMmcif(me.cfg.mmcifid);
         }
         else if(me.cfg.align !== undefined) {
@@ -724,13 +735,15 @@ iCn3DUI.prototype = {
             else if(alignArray.length === 2) {
                 me.inputid = alignArray[0] + "_" + alignArray[1];
             }
-            me.setLogCmd('load alignment ' + me.cfg.align + ' | parameters ' + me.cfg.inpara, true);
+            me.loadCmd = 'load alignment ' + me.cfg.align + ' | parameters ' + me.cfg.inpara;
+            me.setLogCmd(me.loadCmd, true);
             me.downloadAlignment(me.cfg.align);
         }
         else if(me.cfg.chainalign !== undefined) {
             ic.bChainAlign = true;
             me.inputid = me.cfg.chainalign;
-            me.setLogCmd('load chainalignment ' + me.cfg.chainalign + ' | parameters ' + me.cfg.inpara, true);
+            me.loadCmd = 'load chainalignment ' + me.cfg.chainalign + ' | parameters ' + me.cfg.inpara;
+            me.setLogCmd(me.loadCmd, true);
             me.downloadChainAlignment(me.cfg.chainalign);
         }
         else if(me.cfg.command !== undefined && me.cfg.command !== '') {
@@ -782,7 +795,14 @@ iCn3DUI.prototype = {
           for(var i = 0, il = graphJson.nodes.length; i < il; ++i) {
               var node = graphJson.nodes[i];
               //node.r: 1_1_1KQ2_A_1
-              var idArray = node.r.split('_');
+              //var idArray = node.r.split('_');
+              var idArray = [];
+              idArray.push('');
+              idArray.push('');
+
+              var tmpStr = node.r.substr(4);
+              idArray = idArray.concat(me.getIdArray(tmpStr));
+
               var resid = idArray[2] + '_' + idArray[3] + '_' + idArray[4];
               node.c = resid2color[resid];
               target2resid[node.id] = resid;
@@ -1191,6 +1211,40 @@ iCn3DUI.prototype = {
          }
          return spec;
     },
+    atoms2spec: function(atomHash) { var me = this, ic = me.icn3d; "use strict";
+        var spec = "";
+
+        var i = 0;
+        var structureHash = {}, chainHash = {}, resiHash = {};
+        for(var serial in atomHash) {
+            var atom = ic.atoms[serial];
+            if(i > 0) {
+                spec += ' or ';
+            }
+            spec += '$' + atom.structure + '.' + atom.chain + ':' + atom.resi + '@' + atom.name;
+
+            structureHash[atom.structure] = 1;
+            chainHash[atom.structure + '_' + atom.chain] = 1;
+            resiHash[atom.structure + '_' + atom.chain + '_' + atom.resi] = 1;
+
+            ++i;
+        }
+
+        if(Object.keys(resiHash).length == 1) {
+            var tmpStr = '\\$' + atom.structure + '\\.' + atom.chain + ':' + atom.resi;
+            spec = spec.replace(new RegExp(tmpStr,'g'), '');
+        }
+        else if(Object.keys(chainHash).length == 1) {
+            var tmpStr = '\\$' + atom.structure + '\\.' + atom.chain;
+            spec = spec.replace(new RegExp(tmpStr,'g'), '');
+        }
+        else if(Object.keys(structureHash).length == 1) {
+            var tmpStr = '\\$' + atom.structure;
+            spec = spec.replace(new RegExp(tmpStr,'g'), '');
+        }
+
+        return spec;
+    },
     getAtomsFromSets: function (nameArray) {   var me = this, ic = me.icn3d; "use strict";  // ic.pAtom is set already
        var residuesHash = {};
        for(var i = 0, il = nameArray.length; i < il; ++i) {
@@ -1263,7 +1317,8 @@ iCn3DUI.prototype = {
         // could be ligands
         atomlistTarget = me.getAtomsFromNameArray(nameArray2);
         otherAtoms = me.getAtomsFromNameArray(nameArray);
-        var result = me.pickCustomSphere_base(radius, atomlistTarget, otherAtoms, bSphereCalc, bInteraction, type, select);
+        var bGetPairs = true;
+        var result = me.pickCustomSphere_base(radius, atomlistTarget, otherAtoms, bSphereCalc, bInteraction, type, select, bGetPairs);
         var residueArray = Object.keys(result.residues);
         ic.hAtoms = {};
         for(var index = 0, indexl = residueArray.length; index < indexl; ++index) {
@@ -1285,8 +1340,7 @@ iCn3DUI.prototype = {
         me.saveSelectionIfSelected();
         ic.draw();
     },
-    pickCustomSphere_base: function (radius, atomlistTarget, otherAtoms, bSphereCalc, bInteraction, type, select) {   var me = this, ic = me.icn3d; "use strict";  // ic.pAtom is set already
-        var bGetPairs = true;
+    pickCustomSphere_base: function (radius, atomlistTarget, otherAtoms, bSphereCalc, bInteraction, type, select, bGetPairs) {   var me = this, ic = me.icn3d; "use strict";  // ic.pAtom is set already
         var atoms;
         if(bInteraction) {
             atoms = ic.getAtomsWithinAtom(ic.intHash2Atoms(ic.dAtoms, otherAtoms), ic.intHash2Atoms(ic.dAtoms, atomlistTarget), parseFloat(radius), bGetPairs, bInteraction);
@@ -2378,7 +2432,9 @@ iCn3DUI.prototype = {
            ic.bCalcArea = false;
            ic.hAtoms = {};
            for(var resid in ic.resid2area) { // resid: structure_chain_resi_resn
-                var idArray = resid.split('_');
+                //var idArray = resid.split('_');
+                var idArray = me.getIdArray(resid);
+
                 if(ic.residueArea.hasOwnProperty(idArray[3])) {
                     var percent = parseInt(ic.resid2area[resid] / ic.residueArea[idArray[3]] * 100);
                     if(percent >= from && percent <= to) {
@@ -2978,7 +3034,7 @@ iCn3DUI.prototype = {
                     for(var i = 0; i < len; ++i) {
                         for(var j = i + 1; j < len; ++j) {
                             ic.hAtoms = ic.cloneHash(prevHatoms);
-                            var result = me.pickCustomSphere_base(threshold, ssAtomsArray[i], ssAtomsArray[j], bHbondCalc, true, type, select);
+                            var result = me.pickCustomSphere_base(threshold, ssAtomsArray[i], ssAtomsArray[j], bHbondCalc, true, type, select, true);
                             residues = ic.unionHash(residues, result.residues);
                             for(var resid in result.resid2Residhash) {
                                 resid2ResidhashInteractions[resid] = ic.unionHash(resid2ResidhashInteractions[resid], result.resid2Residhash[resid]);
@@ -3153,17 +3209,28 @@ iCn3DUI.prototype = {
        }
        return interactionTypes.toString();
     },
+    getIdArray: function(resid) { var me = this, ic = me.icn3d; "use strict";
+        //var idArray = resid.split('_');
+        var idArray = [];
+        var pos1 = resid.indexOf('_');
+        var pos2 = resid.lastIndexOf('_');
+        idArray.push(resid.substr(0, pos1));
+        idArray.push(resid.substr(pos1 + 1, pos2 - pos1 - 1));
+        idArray.push(resid.substr(pos2 + 1));
+
+        return idArray;
+    },
     compResid: function(a, b, type) { var me = this, ic = me.icn3d; "use strict";
       var aArray = a.split(',');
       var bArray = b.split(',');
       var aIdArray, bIdArray;
       if(type == 'save1') {
-        aIdArray = aArray[0].split('_');
-        bIdArray = bArray[0].split('_');
+        aIdArray = me.getIdArray(aArray[0]); //aArray[0].split('_');
+        bIdArray = me.getIdArray(bArray[0]); //bArray[0].split('_');
       }
       else if(type == 'save2') {
-        aIdArray = aArray[1].split('_');
-        bIdArray = bArray[1].split('_');
+        aIdArray = me.getIdArray(aArray[1]); //aArray[1].split('_');
+        bIdArray = me.getIdArray(bArray[1]); //bArray[1].split('_');
       }
       var aChainid = aIdArray[0] + '_' + aIdArray[1];
       var bChainid = bIdArray[0] + '_' + bIdArray[1];
@@ -3469,6 +3536,8 @@ iCn3DUI.prototype = {
         var nodeArray1 = [], nodeArray2 = [];
         for(var name in nameHash) {
             var node = name2node[name];
+            if(!node) continue;
+
             if(node.s == 'a') {
                 nodeArray1.push(node);
             }
@@ -3533,8 +3602,22 @@ iCn3DUI.prototype = {
                 var link = linkArray[i];
                 var nodeA = name2node[link.source];
                 var nodeB = name2node[link.target];
-                var idArrayA = nodeA.r.split('_'); // 1_1_1KQ2_A_1
-                var idArrayB = nodeB.r.split('_'); // 1_1_1KQ2_A_1
+                //var idArrayA = nodeA.r.split('_'); // 1_1_1KQ2_A_1
+                var idArrayA = [];
+                idArrayA.push('');
+                idArrayA.push('');
+
+                var tmpStr = nodeA.r.substr(4);
+                idArrayA = idArrayA.concat(me.getIdArray(tmpStr));
+
+                //var idArrayB = nodeB.r.split('_'); // 1_1_1KQ2_A_1
+                var idArrayB = [];
+                idArrayB.push('');
+                idArrayB.push('');
+
+                tmpStr = nodeB.r.substr(4);
+                idArrayB = idArrayB.concat(me.getIdArray(tmpStr));
+
                 if(idArrayA[2] == struc1 && idArrayB[2] == struc1) {
                     linkArrayA.push(link);
                     nameHashA[link.source] = 1;
@@ -3837,8 +3920,8 @@ iCn3DUI.prototype = {
     compNode: function(a, b, bReverseChain) { var me = this, ic = me.icn3d; "use strict";
       var resid1 = a.r.substr(4); // 1_1_1KQ2_A_1
       var resid2 = b.r.substr(4); // 1_1_1KQ2_A_1
-      var aIdArray = resid1.split('_');
-      var bIdArray = resid2.split('_');
+      var aIdArray = me.getIdArray(resid1); //resid1.split('_');
+      var bIdArray = me.getIdArray(resid2); //resid2.split('_');
       var aChainid = aIdArray[0] + '_' + aIdArray[1];
       var bChainid = bIdArray[0] + '_' + bIdArray[1];
       var aResi = parseInt(aIdArray[2]);

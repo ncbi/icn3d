@@ -1324,7 +1324,8 @@ iCn3DUI.prototype.setMenu5_base = function() { var me = this, ic = me.icn3d; "us
           html += "</ul>";
           html += "</li>";
 
-          html += me.getLink('mn6_symmetry', 'Symmetry');
+          html += me.getLink('mn6_symmetry', 'Symmetry (RCSB,<br>precalculated)');
+          html += me.getLink('mn6_symd', 'Symmetry (SymD,<br>Dynamic)');
         }
 
         html += "<li>-</li>";
@@ -1951,6 +1952,16 @@ iCn3DUI.prototype.setDialogs = function() { var me = this, ic = me.icn3d; "use s
     html += "</select>" + me.space3;
     html += me.buttonStr + "applysymmetry'>Apply</button>" + me.space3;
     html += me.buttonStr + "clearsymmetry'>Clear</button></div>";
+    html += "</div>";
+
+    html += me.divStr + "dl_symd' style='max-width:400px' class='" + dialogClass + "'><br>";
+/*
+    html += "The symmetry is dynamically calculated using <a href='https://symd.nci.nih.gov/'>SymD</a><br><br>";
+    html += me.divNowrapStr + "Symmetry: <select id='" + me.pre + "selectSymd'>";
+    html += "</select>" + me.space3;
+    html += me.buttonStr + "applysymd'>Apply</button>" + me.space3;
+    html += me.buttonStr + "clearsymd'>Clear</button></div>";
+*/
     html += "</div>";
 
     html += me.divStr + "dl_hbonds' class='" + dialogClass + "'>";

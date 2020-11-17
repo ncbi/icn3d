@@ -345,7 +345,7 @@ iCn3DUI.prototype.setTransmemInMenu = function (posZ, negZ, bReset) { var me = t
 iCn3DUI.prototype.setChainsInMenu = function () { var me = this, ic = me.icn3d; "use strict";
     for(var chainid in ic.chains) {
         // skip chains with one residue/chemical
-        if(ic.chainsSeq[chainid].length > 1) {
+        if(ic.chainsSeq[chainid] && ic.chainsSeq[chainid].length > 1) {
           //ic.defNames2Atoms[chainid] = Object.keys(ic.chains[chainid]);
           ic.defNames2Residues[chainid] = Object.keys(ic.getResiduesFromAtoms(ic.chains[chainid]));
           ic.defNames2Descr[chainid] = chainid;

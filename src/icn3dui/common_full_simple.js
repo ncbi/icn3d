@@ -289,7 +289,7 @@ iCn3DUI.prototype.saveFile = function(filename, type, text) { var me = this, ic 
     var blob;
 
     if(type === 'command') {
-        var dataStr = '';
+        var dataStr = (me.loadCmd) ? me.loadCmd + '\n' : '';
         for(var i = 0, il = ic.commands.length; i < il; ++i) {
             var command = ic.commands[i].trim();
             if(i == il - 1) {

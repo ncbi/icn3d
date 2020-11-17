@@ -134,6 +134,7 @@ iCn3D.prototype.createCylinder = function (p0, p1, radius, color, bHighlight, co
           this.posArray.push(p0.y);
           this.posArray.push(p0.z);
 
+          if(!color) color = this.thr(0xFFFFFF);
           this.colorArray.push(color.r);
           this.colorArray.push(color.g);
           this.colorArray.push(color.b);

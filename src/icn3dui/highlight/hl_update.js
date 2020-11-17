@@ -102,7 +102,7 @@ iCn3DUI.prototype.updateHlAll = function(commandnameArray, bSetMenu, bUnion, bFo
 iCn3DUI.prototype.updateHlObjects = function(bForceHighlight) { var me = this, ic = me.icn3d; "use strict";
        ic.removeHlObjects();
 
-       if((ic.hAtoms !== undefined && Object.keys(ic.hAtoms).length < Object.keys(ic.atoms).length) || bForceHighlight) {
+       if((ic.hAtoms && Object.keys(ic.hAtoms).length < Object.keys(ic.atoms).length) || bForceHighlight) {
           ic.addHlObjects();
           me.setMode('selection');
        }
@@ -126,7 +126,7 @@ iCn3DUI.prototype.updateHlSeqInChain = function(commandnameArray, bUnion) { var 
        }
        //if(residueHash === undefined) residueHash = ic.getResiduesFromCalphaAtoms(ic.hAtoms);
 
-       if(Object.keys(ic.hAtoms).length == Object.keys(ic.atoms).length) return;
+       if(ic.hAtoms && Object.keys(ic.hAtoms).length == Object.keys(ic.atoms).length) return;
 
        //me.hlSeq(Object.keys(residueHash));
        // speed up with chain highlight
@@ -166,7 +166,7 @@ iCn3DUI.prototype.updateHlSeqInChain = function(commandnameArray, bUnion) { var 
 iCn3DUI.prototype.updateHl2D = function(chainArray2d) { var me = this, ic = me.icn3d; "use strict";
   me.removeHl2D();
 
-  if(Object.keys(ic.hAtoms).length == Object.keys(ic.atoms).length) return;
+  if(ic.hAtoms && Object.keys(ic.hAtoms).length == Object.keys(ic.atoms).length) return;
 
   if(chainArray2d === undefined) {
       var chainHash = ic.getChainsFromAtoms(ic.hAtoms);

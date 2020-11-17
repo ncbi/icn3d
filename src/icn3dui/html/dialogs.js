@@ -372,6 +372,9 @@ iCn3DUI.prototype.openDlgRegular = function (id, title) {  var me = this, ic = m
             else if(id === me.pre + 'dl_rmsd') {
                 position ={ my: "left top", at: "right bottom-90", of: "#" + me.pre + "canvas", collision: "none" };
             }
+            else if(id === me.pre + 'dl_symd') {
+                position ={ my: "left top", at: "right-200 bottom-200", of: "#" + me.pre + "canvas", collision: "none" };
+            }
             else {
                 if(me.cfg.align) {
                     position ={ my: "left top", at: "left top+90", of: "#" + me.pre + "canvas", collision: "none" };

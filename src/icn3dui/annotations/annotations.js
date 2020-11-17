@@ -293,8 +293,10 @@ iCn3DUI.prototype.getColorhexFromBlosum62 = function(resA, resB) { var me = this
 iCn3DUI.prototype.processSeqData = function(chainid_seq) { var me = this, ic = me.icn3d; "use strict";
     for(var chnid in me.protein_chainid) {
         var chnidBase = me.protein_chainid[chnid];
-        if(chainid_seq.hasOwnProperty(chnid)) {
-            var allSeq = chainid_seq[chnid];
+        //if(chainid_seq.hasOwnProperty(chnid)) {
+        //    var allSeq = chainid_seq[chnid];
+        if(chainid_seq.hasOwnProperty(chnidBase)) {
+            var allSeq = chainid_seq[chnidBase];
             me.giSeq[chnid] = allSeq;
             // the first 10 residues from sequences with structure
             var startResStr = '';
@@ -490,6 +492,7 @@ iCn3DUI.prototype.getAnnotationData = function() { var me = this, ic = me.icn3d;
     // show the sequence and 3D structure
     //var url = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=protein&retmode=json&rettype=fasta&id=" + chnidBaseArray;
     var url = me.baseUrl + "/vastdyn/vastdyn.cgi?chainlist=" + chnidBaseArray;
+
     if(me.chainid_seq !== undefined) {
         me.processSeqData(me.chainid_seq);
     }
@@ -581,6 +584,7 @@ iCn3DUI.prototype.getSequenceData = function(chnid, chnidBase, type, index) { va
     $("#" + me.pre + "anno_" + chnid).append("<br><hr><br>");
     // show the sequence and 3D structure
     me.giSeq[chnid] = [];
+
     for(var i = 0; i < ic.chainsSeq[chnid].length; ++i) {
         var res = ic.chainsSeq[chnid][i].name;
         //me.giSeq[chnid][i] = (res.length > 1) ? res.substr(0, 1) : res;
@@ -678,6 +682,7 @@ iCn3DUI.prototype.showSeq = function(chnid, chnidBase, type, queryTitle, compTit
     else {
         giSeq = me.giSeq[chnid];
     }
+
     // remove null giSeq[i]
     var giSeqTmp = [];
     for(var i = 0, il = giSeq.length; i < il; ++i) {
@@ -839,6 +844,7 @@ iCn3DUI.prototype.showSeq = function(chnid, chnidBase, type, queryTitle, compTit
     html += htmlTmp + htmlTmp2;
     html2 += htmlTmp + htmlTmp2;
     var pos, nGap = 0;
+
     for(var i = 0, il = giSeq.length; i < il; ++i) {
       html += me.insertGap(chnid, i, '-');
       if(me.targetGapHash !== undefined && me.targetGapHash.hasOwnProperty(i)) nGap += me.targetGapHash[i].to - me.targetGapHash[i].from + 1;
@@ -1314,9 +1320,11 @@ iCn3DUI.prototype.getSnpLine = function(line, totalLineNum, resi2snp, resi2rsnum
                             if(diseaseTitle != '') {
                                 //snpType = 'icn3d-clinvar';
                                 snpTitle += ': ' + diseaseTitle;
+                                //snpTitle += "<br>Links: <span class='" + me.pre + "snpin3d' snp='" + chnid + "_" + pos + "_" + resi2snp[i][j] + "' style='text-decoration: underline; cursor:pointer;'>Show in 3D</span>, <a href='https://www.ncbi.nlm.nih.gov/clinvar/?term=" + resi2clinAllele[i][j] + "[AlleleID]' target='_blank'>ClinVar</a>, <a href='https://www.ncbi.nlm.nih.gov/snp/?term=" + resi2rsnum[i][j] + "' target='_blank'>dbSNP (rs" + resi2rsnum[i][j] + ")</a>";
                                 snpTitle += "<br>Links: <a href='https://www.ncbi.nlm.nih.gov/clinvar/?term=" + resi2clinAllele[i][j] + "[AlleleID]' target='_blank'>ClinVar</a>, <a href='https://www.ncbi.nlm.nih.gov/snp/?term=" + resi2rsnum[i][j] + "' target='_blank'>dbSNP (rs" + resi2rsnum[i][j] + ")</a>";
                             }
                             else {
+                                //snpTitle += "<br>Links: <span class='" + me.pre + "snpin3d' snp='" + chnid + "_" + pos + "_" + resi2snp[i][j] + "' style='text-decoration: underline; cursor:pointer;'>Show in 3D</span>, <a href='https://www.ncbi.nlm.nih.gov/snp/?term=" + resi2rsnum[i][j] + "' target='_blank'>dbSNP (rs" + resi2rsnum[i][j] + ")</a>"
                                 snpTitle += "<br>Link: <a href='https://www.ncbi.nlm.nih.gov/snp/?term=" + resi2rsnum[i][j] + "' target='_blank'>dbSNP (rs" + resi2rsnum[i][j] + ")</a>"
                             }
                             if(j < jl - 1) {
@@ -1325,7 +1333,14 @@ iCn3DUI.prototype.getSnpLine = function(line, totalLineNum, resi2snp, resi2rsnum
                             }
                         }
                         else { //if(bSnpOnly) {
-                            if(resi2rsnum[i][j] != 0) snpTitle += "<br>Link: <a href='https://www.ncbi.nlm.nih.gov/snp/?term=" + resi2rsnum[i][j] + "' target='_blank'>dbSNP (rs" + resi2rsnum[i][j] + ")</a>"
+                            if(resi2rsnum[i][j] != 0) {
+                                //snpTitle += "<br>Links: <span class='" + me.pre + "snpin3d' snp='" + chnid + "_" + pos + "_" + resi2snp[i][j] + "' style='text-decoration: underline; cursor:pointer;'>Show in 3D</span>, <a href='https://www.ncbi.nlm.nih.gov/snp/?term=" + resi2rsnum[i][j] + "' target='_blank'>dbSNP (rs" + resi2rsnum[i][j] + ")</a>";
+                                snpTitle += "<br>Link: <a href='https://www.ncbi.nlm.nih.gov/snp/?term=" + resi2rsnum[i][j] + "' target='_blank'>dbSNP (rs" + resi2rsnum[i][j] + ")</a>";
+                            }
+                            else {
+                                //snpTitle += "<br>Link: <span class='" + me.pre + "snpin3d' snp='" + chnid + "_" + pos + "_" + resi2snp[i][j] + "' style='text-decoration: underline; cursor:pointer;'>Show in 3D</span>";
+                            }
+
                             if(j < jl - 1) {
                                 snpTitle += '<br>';
                             }
@@ -1359,6 +1374,7 @@ iCn3DUI.prototype.getSnpLine = function(line, totalLineNum, resi2snp, resi2rsnum
                             snpTitle += pos + c + '>' + resi2snp[i][j];
                             //snpType = 'icn3d-clinvar';
                             snpTitle += ': ' + diseaseTitle;
+                            //snpTitle += "<br>Links: <span class='" + me.pre + "snpin3d' snp='" + chnid + "_" + pos + "_" + resi2snp[i][j] + "' style='text-decoration: underline; cursor:pointer;'>Show in 3D</span>, <a href='https://www.ncbi.nlm.nih.gov/clinvar/?term=" + resi2clinAllele[i][j] + "[AlleleID]' target='_blank'>ClinVar</a>, <a href='https://www.ncbi.nlm.nih.gov/snp/?term=" + resi2rsnum[i][j] + "' target='_blank'>dbSNP (rs" + resi2rsnum[i][j] + ")</a>";
                             snpTitle += "<br>Links: <a href='https://www.ncbi.nlm.nih.gov/clinvar/?term=" + resi2clinAllele[i][j] + "[AlleleID]' target='_blank'>ClinVar</a>, <a href='https://www.ncbi.nlm.nih.gov/snp/?term=" + resi2rsnum[i][j] + "' target='_blank'>dbSNP (rs" + resi2rsnum[i][j] + ")</a>";
                             if(j < jl - 1) {
                                 snpTitle += '<br><br>';
