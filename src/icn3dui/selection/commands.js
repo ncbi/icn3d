@@ -428,27 +428,27 @@ iCn3DUI.prototype.execCommandsBase = function (start, end, steps, bFinalStep) { 
         var strArray = ic.commands[i].split("|||");
         var command = strArray[0].trim();
 
-        var title = command.substr(command.indexOf(' ') + 1);
-        ic.symdtitle = (title === 'none') ? undefined : title;
+        //var title = command.substr(command.lastIndexOf(' ') + 1);
+        //ic.symdtitle = (title === 'none') ? undefined : title;
 
-        if(title !== 'none') {
-            if(ic.symdHash === undefined) {
+        //if(title !== 'none') {
+//            if(ic.symdHash === undefined) {
                 $.when(me.applyCommandSymd(command)).then(function() {
                    //if(!me.cfg.notebook) dialog.dialog( "close" );
 
                    ic.draw();
                    me.execCommandsBase(i + 1, end, steps);
                 });
-            }
-            else {
-                ic.draw();
-                me.execCommandsBase(i + 1, end, steps);
-            }
-        }
-        else {
-            ic.draw();
-            me.execCommandsBase(i + 1, end, steps);
-        }
+//            }
+//            else {
+//                ic.draw();
+//                me.execCommandsBase(i + 1, end, steps);
+//            }
+        //}
+        //else {
+        //    ic.draw();
+        //    me.execCommandsBase(i + 1, end, steps);
+        //}
 
         return;
       }
