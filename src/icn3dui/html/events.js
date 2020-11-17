@@ -1757,8 +1757,9 @@ iCn3DUI.prototype.allEventFunctions = function() { var me = this;
        me.retrieveSymd();
        //me.openDlg('dl_symmetry', 'Symmetry');
 
-       var title = $("#" + me.pre + "selectSymd" ).val();
-       me.setLogCmd('symd symmetry ' + title, true);
+       //var title = $("#" + me.pre + "selectSymd" ).val();
+       //me.setLogCmd('symd symmetry ' + title, true);
+       me.setLogCmd('symd symmetry', true);
     });
 
 //    },
@@ -1783,6 +1784,7 @@ iCn3DUI.prototype.allEventFunctions = function() { var me = this;
        me.setLogCmd('symmetry ' + title, true);
     });
 
+/*
     $("#" + me.pre + "applysymd").click(function(e) { var ic = me.icn3d;
        var title = $("#" + me.pre + "selectSymd" ).val();
        ic.symdtitle = (title === 'none') ? undefined : title;
@@ -1795,6 +1797,7 @@ iCn3DUI.prototype.allEventFunctions = function() { var me = this;
        ic.draw();
        me.setLogCmd('symd symmetry ' + title, true);
     });
+*/
 
 //    },
 //    clkMn6_hbondsYes: function() {
@@ -3131,13 +3134,13 @@ iCn3DUI.prototype.allEventFunctions = function() { var me = this;
                 }
             }
             else if(lastCommand.indexOf('symd symmetry') == 0) {
-                var title = lastCommand.substr(lastCommand.indexOf(' ') + 1);
-                ic.symdtitle = (title === 'none') ? undefined : title;
-                if(title !== 'none') {
-                    if(ic.symdHash === undefined) {
+                //var title = lastCommand.substr(lastCommand.indexOf(' ') + 1);
+                //ic.symdtitle = (title === 'none') ? undefined : title;
+                //if(title !== 'none') {
+                    //if(ic.symdHash === undefined) {
                         me.applyCommandSymd(lastCommand);
-                    }
-                }
+                    //}
+                //}
             }
             else if(lastCommand.indexOf('scap ') == 0) {
                 me.applyCommandScap(lastCommand);
