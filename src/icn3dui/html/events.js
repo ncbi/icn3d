@@ -1755,6 +1755,7 @@ iCn3DUI.prototype.allEventFunctions = function() { var me = this;
 
     $("#" + me.pre + "mn6_symd").click(function(e) { var ic = me.icn3d;
        me.retrieveSymd();
+       me.bSymd = true;
        //me.openDlg('dl_symmetry', 'Symmetry');
 
        //var title = $("#" + me.pre + "selectSymd" ).val();

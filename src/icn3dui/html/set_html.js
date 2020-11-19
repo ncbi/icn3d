@@ -1204,7 +1204,7 @@ iCn3DUI.prototype.setMenu5_base = function() { var me = this, ic = me.icn3d; "us
     if(me.cfg.cid === undefined) {
         html += me.getLink('mn6_selectannotations', 'View Sequences<br>& Annotations');
 
-        if(me.cfg.align !== undefined || me.cfg.chainalign !== undefined || me.bRealign) {
+        if(me.cfg.align !== undefined || me.cfg.chainalign !== undefined || me.bRealign || me.bSymd) {
             html += me.getLink('mn2_alignment', 'View Aligned<br>Sequences');
         }
 
@@ -1724,13 +1724,14 @@ iCn3DUI.prototype.setDialogs = function() { var me = this, ic = me.icn3d; "use s
     html += me.divStr + "dl_2ddgm' class='" + dialogClass + " icn3d-dl_2ddgm'>";
     html += "</div>";
 
-    if(me.cfg.align !== undefined || me.cfg.chainalign !== undefined || me.bRealign) {
+//    if(me.cfg.align !== undefined || me.cfg.chainalign !== undefined || me.bRealign || me.bSymd) {
       html += me.divStr + "dl_alignment' class='" + dialogClass + "' style='background-color:white;'>";
       html += me.divStr + "alignseqguide_wrapper'><br>" + me.setAlignSequenceGuide() + "</div>";
+      html += me.divStr + "symd_info'></div>";
       html += me.divStr + "dl_sequence2' class='icn3d-dl_sequence'>";
       html += "</div>";
       html += "</div>";
-    }
+//    }
 
     html += me.divStr + "dl_definedsets' class='" + dialogClass + "'>";
     html += me.divStr + "dl_setsmenu'>";
@@ -2604,7 +2605,7 @@ iCn3DUI.prototype.getSelectionHints = function () { var me = this, ic = me.icn3d
   return sequencesHtml;
 };
 
-iCn3DUI.prototype.getAlignSequencesAnnotations = function (alignChainArray, bUpdateHighlightAtoms, residueArray, bShowHighlight) { var me = this, ic = me.icn3d; "use strict";
+iCn3DUI.prototype.getAlignSequencesAnnotations = function (alignChainArray, bUpdateHighlightAtoms, residueArray, bShowHighlight, bOnechain) { var me = this, ic = me.icn3d; "use strict";
   var sequencesHtml = '';
 
   var maxSeqCnt = 0;
@@ -2623,8 +2624,19 @@ iCn3DUI.prototype.getAlignSequencesAnnotations = function (alignChainArray, bUpd
   }
 
   var bHighlightChain;
+  var index = 0, prevResCnt2nd = 0;
+  var firstChainid, oriChainid;
   for(var i in ic.alnChains) {
-      bHighlightChain = (alignChainArray !== undefined && chainHash.hasOwnProperty(i)) ? true : false;
+      if(index == 0) firstChainid = i;
+
+      if(bOnechain && index > 0) {
+          oriChainid = firstChainid;
+      }
+      else {
+          oriChainid = i;
+      }
+
+      //bHighlightChain = (alignChainArray !== undefined && chainHash.hasOwnProperty(oriChainid)) ? true : false;
 
       //if( bHighlightChain && (bUpdateHighlightAtoms === undefined || bUpdateHighlightAtoms) ) {
       // do not update isa subset is selected already
@@ -2637,13 +2649,13 @@ iCn3DUI.prototype.getAlignSequencesAnnotations = function (alignChainArray, bUpd
 
       if(seqLength > maxSeqCnt) maxSeqCnt = seqLength;
 
-      var dashPos = i.indexOf('_');
-      var structure = i.substr(0, dashPos);
-      var chain = i.substr(dashPos + 1);
+      var dashPos = oriChainid.indexOf('_');
+      var structure = oriChainid.substr(0, dashPos);
+      var chain = oriChainid.substr(dashPos + 1);
 
       var startResi = (ic.alnChainsSeq[i][0] !== undefined) ? ic.alnChainsSeq[i][0].resi : '';
       seqHtml += "<span class='icn3d-residueNum' title='starting residue number'>" + startResi + "</span>";
-      bHighlightChain = (alignChainArray !== undefined && chainHash.hasOwnProperty(i)) ? true : false;
+      bHighlightChain = (alignChainArray !== undefined && chainHash.hasOwnProperty(oriChainid)) ? true : false;
 
       for(var k=0, kl=seqLength; k < kl; ++k) {
         // resiId is empty if it's gap
@@ -2682,6 +2694,12 @@ iCn3DUI.prototype.getAlignSequencesAnnotations = function (alignChainArray, bUpd
 
         var bWithCoord = (resIdFull !== '') ? true : false;
 
+        if(k == 0) {
+            var letterSpace = 10;
+            var empthWidth = prevResCnt2nd * letterSpace;
+            seqHtml += "<span style='width:" + empthWidth + "px'></span>";
+        }
+
         if(bWithCoord) {
             if(ic.alnChainsSeq[i][k].resi != -1) {
                 // add "align" in front of id so that full sequence and aligned sequence will not conflict
@@ -2705,7 +2723,7 @@ iCn3DUI.prototype.getAlignSequencesAnnotations = function (alignChainArray, bUpd
       for(var j=0, jl=annoLength; j < jl; ++j) {
         resiHtmlArray[j] = "";
 
-        var chainid = (j == 0 && annoLength >= 7) ? ic.alnChainsAnTtl[i][4][0] : i; // bottom secondary, j == 0: chain2,  next secondary, j == 1: chain1,
+        var chainid = (j == 0 && annoLength >= 7) ? ic.alnChainsAnTtl[i][4][0] : oriChainid; // bottom secondary, j == 0: chain2,  next secondary, j == 1: chain1,
 
         resiHtmlArray[j] += "<span class='icn3d-residueNum'></span>"; // a spot corresponding to the starting and ending residue number
         for(var k=0, kl=ic.alnChainsAnno[i][j].length; k < kl; ++k) {
@@ -2757,7 +2775,7 @@ iCn3DUI.prototype.getAlignSequencesAnnotations = function (alignChainArray, bUpd
         resiHtmlArray[j] += "<span class='icn3d-residueNum'></span>"; // a spot corresponding to the starting and ending residue number
       }
 
-      var chainidTmp = i, title = (ic.pdbid_chain2title !== undefined) ? ic.pdbid_chain2title[i] : '';
+      var chainidTmp = i, title = (ic.pdbid_chain2title !== undefined) ? ic.pdbid_chain2title[oriChainid] : '';
 
       // add markers and residue numbers
       for(var j=annoLength-1; j >= 0; --j) {
@@ -2768,6 +2786,10 @@ iCn3DUI.prototype.getAlignSequencesAnnotations = function (alignChainArray, bUpd
       }
 
       sequencesHtml += '<div class="icn3d-seqTitle icn3d-link icn3d-blue" chain="' + i + '" anno="sequence" title="' + title + '">' + chainidTmp + ' </div><span class="icn3d-seqLine">' + seqHtml + '</span><br/>';
+
+      if(index > 0) prevResCnt2nd += seqLength;
+
+      ++index;
   }
 
   return {"sequencesHtml": sequencesHtml, "maxSeqCnt":maxSeqCnt};

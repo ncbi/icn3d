@@ -20,6 +20,8 @@ iCn3DUI.prototype.retrieveSymd = function () { var me = this, ic = me.icn3d; "us
    // just output C-alpha atoms
    // the number of residues matters
 //   atomHash = ic.intHash(atomHash, ic.calphas);
+   // just output proteins
+   atomHash = ic.intHash(atomHash, ic.proteins);
 
    var atomCnt = Object.keys(atomHash).length;
 //   var bCalphaOnly = ic.isCalphaPhosOnly(ic.hash2Atoms(atomHash));
@@ -75,6 +77,7 @@ iCn3DUI.prototype.retrieveSymd = function () { var me = this, ic = me.icn3d; "us
               }
 
               ic.symdHash = {};
+              var order;
               for(var i = 0, il = symmetryArray.length; i < il; ++i) {
                   if(symmetryArray[i].symbol == 'C1') continue;
                   title = symmetryArray[i].symbol + " ";
@@ -94,6 +97,8 @@ iCn3DUI.prototype.retrieveSymd = function () { var me = this, ic = me.icn3d; "us
                       var tmpArray = [];
                       var start = new THREE.Vector3(rotation_axes[j].start[0], rotation_axes[j].start[1], rotation_axes[j].start[2]);
                       var end = new THREE.Vector3(rotation_axes[j].end[0], rotation_axes[j].end[1], rotation_axes[j].end[2]);
+
+                      order = rotation_axes[j].order;
 
                       // apply matrix for each atom
                       if(ic.rmsd_supr !== undefined && ic.rmsd_supr.rot !== undefined) {
@@ -144,6 +149,7 @@ iCn3DUI.prototype.retrieveSymd = function () { var me = this, ic = me.icn3d; "us
                   var residArrayHash1 = {}, residArrayHash2 = {};
                   var residArray1 = [], residArray2 = [];
                   var index1 = 0, index2 = 0;
+                  var chainCntHash = {};
                   for(var i = 0, il = ori_permSeq[0].length; i < il; ++i) {
                       var resn1 = ori_permSeq[0][i];
                       var resn2 = ori_permSeq[1][i];
@@ -154,6 +160,13 @@ iCn3DUI.prototype.retrieveSymd = function () { var me = this, ic = me.icn3d; "us
 
                              var idArray1 = me.getIdArray(oriResidArray[index1]);
                              residArray1.push(resn1 + ' $' + idArray1[0] + '.' + idArray1[1] + ':' + idArray1[2]);
+
+                             var chainid = idArray1[0] + '_' + idArray1[1];
+                             if(!chainCntHash.hasOwnProperty(chainid)) {
+                                 chainCntHash[chainid] = [];
+                             }
+
+                             chainCntHash[chainid].push(residArray1.length - 1); // the position in the array
                           }
                           ++index1;
                       }
@@ -170,33 +183,54 @@ iCn3DUI.prototype.retrieveSymd = function () { var me = this, ic = me.icn3d; "us
                       }
                   }
 
-                  var name = 'sym1';
-                  me.selectResidueList(residArrayHash1, name, name);
-                  me.updateSelectionNameDesc();
-                  me.setLogCmd('select ' + me.residueids2spec(Object.keys(residArrayHash1)) + ' | name ' + name, true);
+                  var residArrayHashFinal1 = {}, residArrayHashFinal2 = {};
+                  var residArrayFinal1 = [], residArrayFinal2 = [];
 
-                  name = 'sym2';
-                  me.selectResidueList(residArrayHash2, name, name);
-                  me.updateSelectionNameDesc();
-                  me.setLogCmd('select ' + me.residueids2spec(Object.keys(residArrayHash2)) + ' | name ' + name, true);
+                  var bOnechain = false;
+                  if(Object.keys(chainCntHash).length == 1) {
+                      bOnechain = true;
+                      var nResUnit = parseInt(residArray1.length / order + 0.5);
+                      var residArrayFromHash1 = Object.keys(residArrayHash1), residArrayFromHash2 = Object.keys(residArrayHash2);
+                      for(var i = 0; i < nResUnit; ++i) {
+                        if(!residArrayHashFinal1.hasOwnProperty(residArrayFromHash2[i])) { // do not appear in both original and permuted
+                          residArrayFinal1.push(residArray1[i]);
+                          residArrayFinal2.push(residArray2[i]);
+                          residArrayHashFinal1[residArrayFromHash1[i]] = 1;
+                          residArrayHashFinal2[residArrayFromHash2[i]] = 1;
+                        }
+                      }
+                  }
+                  else {
+                      var selChainid, selCnt = 0;
+                      for(var chainid in chainCntHash) {
+                          if(chainCntHash[chainid].length > selCnt) {
+                              selCnt = chainCntHash[chainid].length;
+                              selChainid = chainid;
+                          }
+                      }
 
-                  name = 'symBoth';
-                  var residArrayHash1 = ic.unionHash(residArrayHash1, residArrayHash2);
-                  me.selectResidueList(residArrayHash1, name, name);
-                  me.updateSelectionNameDesc();
-                  me.setLogCmd('select ' + me.residueids2spec(Object.keys(residArrayHash1)) + ' | name ' + name, true);
+                      var residArrayFromHash1 = Object.keys(residArrayHash1), residArrayFromHash2 = Object.keys(residArrayHash2);
+                      for(var i = 0, il = chainCntHash[selChainid].length; i < il; ++i) {
+                        var pos = chainCntHash[selChainid][i];
+                        if(!residArrayHashFinal1.hasOwnProperty(residArrayFromHash2[pos])) { // do not appear in both original and permuted
+                          residArrayFinal1.push(residArray1[pos]);
+                          residArrayFinal2.push(residArray2[pos]);
+                          residArrayHashFinal1[residArrayFromHash1[pos]] = 1;
+                          residArrayHashFinal2[residArrayFromHash2[pos]] = 1;
+                        }
+                      }
+                  }
 
-                  //me.toggleHighlight();
-
+/*
                   var html = '<br>';
-                  html += "The symmetry " + symmetryArray[0].symbol + " was calculated dynamically using the program <a href='https://symd.nci.nih.gov/' target='_blank'>SymD</a>. The Z score " + data.zscore + " is greater than the threshold Z score 8. The following table (" + residArray1.length + " rows) shows the residue mapping of the best aligned sets.<br><br>";
+                  html += "The symmetry " + symmetryArray[0].symbol + " was calculated dynamically using the program <a href='https://symd.nci.nih.gov/' target='_blank'>SymD</a>. The Z score " + data.zscore + " is greater than the threshold Z score 8. The following table (" + residArrayFinal1.length + " rows) shows the residue mapping of the best aligned sets.<br><br>";
 
                   html += '<div style="height:150px; overflow:auto;"><table border="1" cellpadding="10" cellspacing="0">\n';
                   html += '<tr><th>Original</th><th>Permuted</th><th>Highlight in 3D</th></tr>\n';
 
-                  for(var i = 0, il = residArray1.length; i < il; ++i) {
-                      var resid1 = residArray1[i];
-                      var resid2 = residArray2[i];
+                  for(var i = 0, il = residArrayFinal1.length; i < il; ++i) {
+                      var resid1 = residArrayFinal1[i];
+                      var resid2 = residArrayFinal2[i];
 
                       html += '<tr><td>';
                       //html += '<input type="checkbox" class="' + me.pre + 'seloneres" resid="' + resid1 + '"> ';
@@ -210,6 +244,46 @@ iCn3DUI.prototype.retrieveSymd = function () { var me = this, ic = me.icn3d; "us
 
                   $("#" + me.pre + "dl_symd").html(html);
                   me.openDlg('dl_symd', 'Dynamically Calculated Symmetry Using SymD');
+*/
+
+                  var html = '<br>';
+                  html += "The symmetry " + symmetryArray[0].symbol + " was calculated dynamically using the program <a href='https://symd.nci.nih.gov/' target='_blank'>SymD</a>. The Z score " + data.zscore + " is greater than the threshold Z score 8. <br><br>The following sequence alignment shows the residue mapping of the best aligned sets: \"symOri\" and \"symPerm\", which are also available in the menu \"Analysis > Defined Sets\".<br><br>";
+
+                  $("#" + me.pre + "symd_info").html(html);
+
+                  me.setSeqAlignForSymmetry(residArrayFinal1, residArrayFinal2, bOnechain);
+
+                  var bShowHighlight = false;
+                  var seqObj = me.getAlignSequencesAnnotations(Object.keys(ic.alnChains), undefined, undefined, bShowHighlight, bOnechain);
+
+                  $("#" + me.pre + "dl_sequence2").html(seqObj.sequencesHtml);
+                  $("#" + me.pre + "dl_sequence2").width(me.RESIDUE_WIDTH * seqObj.maxSeqCnt + 200);
+
+                  me.openDlg('dl_alignment', 'Select residues in aligned sequences from SymD');
+
+                  me.opts['color'] = 'grey';
+                  ic.setColorByOptions(me.opts, ic.dAtoms);
+
+                  me.opts['color'] = 'identity';
+                  ic.setColorByOptions(me.opts, ic.hAtoms);
+
+                  var name = 'symOri';
+                  me.selectResidueList(residArrayHashFinal1, name, name);
+                  me.updateSelectionNameDesc();
+                  me.setLogCmd('select ' + me.residueids2spec(Object.keys(residArrayHashFinal1)) + ' | name ' + name, true);
+
+                  name = 'symPerm';
+                  me.selectResidueList(residArrayHashFinal2, name, name);
+                  me.updateSelectionNameDesc();
+                  me.setLogCmd('select ' + me.residueids2spec(Object.keys(residArrayHashFinal2)) + ' | name ' + name, true);
+
+                  name = 'symBoth';
+                  var residArrayHashFinal1 = ic.unionHash(residArrayHashFinal1, residArrayHashFinal2);
+                  me.selectResidueList(residArrayHashFinal1, name, name);
+                  me.updateSelectionNameDesc();
+                  me.setLogCmd('select ' + me.residueids2spec(Object.keys(residArrayHashFinal1)) + ' | name ' + name, true);
+
+                  //me.toggleHighlight();
               }
           }
           else {
@@ -242,3 +316,134 @@ iCn3DUI.prototype.retrieveSymd = function () { var me = this, ic = me.icn3d; "us
    });
 };
 
+iCn3DUI.prototype.getResObj = function (resn_resid) { var me = this, ic = me.icn3d; "use strict";
+    // K $1KQ2.A:2
+
+    var resn = resn_resid.substr(0, resn_resid.indexOf(' '));
+    var pos1 = resn_resid.indexOf('$');
+    var pos2 = resn_resid.indexOf('.');
+    var pos3 = resn_resid.indexOf(':');
+
+    var structure = resn_resid.substr(pos1 + 1, pos2 - pos1 - 1);
+    var chain = resn_resid.substr(pos2 + 1, pos3 - pos2 - 1);
+    var resi = resn_resid.substr(pos3 + 1);
+    var resid = structure + '_' + chain + '_' + resi;
+
+    var resObject = {'resn': resn, 'resid': resid, 'resi': resi, 'aligned': true};
+
+    return resObject;
+}
+
+iCn3DUI.prototype.setSeqAlignForSymmetry = function (residArray1, residArray2, bOnechain) { var me = this, ic = me.icn3d; "use strict";
+      //loadSeqAlignment
+      var alignedAtoms = {};
+      //var structureArray = Object.keys(ic.structures);
+      //var structure1 = structureArray[0];
+      //var structure2 = structureArray[1];
+
+      me.conservedName1 = 'symOri_cons'; //structure1 + '_cons';
+      me.conservedName2 = 'symPerm_cons'; //structure2 + '_cons';
+
+      me.consHash1 = {};
+      me.consHash2 = {};
+
+      ic.alnChainsAnTtl = {};
+      ic.alnChainsAnno = {};
+
+      ic.alnChainsSeq = {};
+      ic.alnChains = {};
+
+      ic.alnChainsSeq = {};
+
+      var residuesHash = {};
+
+      for(var i = 0, il = residArray1.length; i < il; ++i) { // K $1KQ2.A:2
+          var resObject1 = me.getResObj(residArray1[i]);
+          var resObject2 = me.getResObj(residArray2[i]);
+
+          var chainid1 = resObject1.resid.substr(0, resObject1.resid.lastIndexOf('_'));
+          var chainid2Ori = resObject2.resid.substr(0, resObject2.resid.lastIndexOf('_'));
+          var chainid2 = chainid2Ori;
+          // if one chain, separate it into two chains to show seq alignment
+          if(bOnechain) {
+              var stucture = chainid2Ori.substr(0, chainid2Ori.indexOf('_'));
+              chainid2 = stucture + '2' + chainid2Ori.substr(chainid2Ori.indexOf('_'));
+          }
+
+          residuesHash[resObject1.resid] = 1;
+          residuesHash[resObject2.resid] = 1;
+
+          var color;
+          if(resObject1.resn == resObject2.resn) {
+              color = "#FF0000";
+          }
+          else {
+              color = "#0000FF";
+          }
+          var color2 = '#' + me.getColorhexFromBlosum62(resObject1.resn, resObject2.resn);
+
+          resObject1.color = color;
+          resObject2.color = color;
+
+          resObject1.color2 = color2;
+          resObject2.color2 = color2;
+
+          for(var j in ic.residues[resObject1.resid]) {
+              ic.atoms[j].color = ic.thr(color);
+          }
+          for(var j in ic.residues[resObject2.resid]) {
+              ic.atoms[j].color = ic.thr(color);
+          }
+
+          // annoation title for the master seq only
+          if(ic.alnChainsAnTtl[chainid1] === undefined ) ic.alnChainsAnTtl[chainid1] = [];
+
+          for(var j = 0; j < 3; ++j) {
+              if(ic.alnChainsAnTtl[chainid1][j] === undefined ) ic.alnChainsAnTtl[chainid1][j] = [];
+          }
+
+          // two annotations without titles
+          for(var j = 0; j < 3; ++j) {
+              ic.alnChainsAnTtl[chainid1][j].push("");
+          }
+
+          if(ic.alnChainsSeq[chainid1] === undefined) ic.alnChainsSeq[chainid1] = [];
+          if(ic.alnChainsSeq[chainid2] === undefined) ic.alnChainsSeq[chainid2] = [];
+
+          ic.alnChainsSeq[chainid1].push(resObject1);
+          ic.alnChainsSeq[chainid2].push(resObject2);
+
+          if(ic.alnChains[chainid1] === undefined) ic.alnChains[chainid1] = {};
+          if(ic.alnChains[chainid2] === undefined) ic.alnChains[chainid2] = {};
+          $.extend(ic.alnChains[chainid1], ic.residues[chainid1 + '_' + resObject1.resi] );
+          $.extend(ic.alnChains[chainid2], ic.residues[chainid2 + '_' + resObject2.resi] );
+
+          me.consHash1[chainid1 + '_' + resObject1.resi] = 1;
+          me.consHash2[chainid2 + '_' + resObject2.resi] = 1;
+
+          // annotation is for the master seq only
+          if(ic.alnChainsAnno[chainid1] === undefined ) ic.alnChainsAnno[chainid1] = [];
+          //if(ic.alnChainsAnno[chainid2] === undefined ) ic.alnChainsAnno[chainid2] = [];
+
+          for(var j = 0; j < 3; ++j) {
+              if(ic.alnChainsAnno[chainid1][j] === undefined ) ic.alnChainsAnno[chainid1][j] = [];
+          }
+
+          var symbol = '.';
+          if(i % 5 === 0) symbol = '*';
+          if(i % 10 === 0) symbol = '|';
+          ic.alnChainsAnno[chainid1][0].push(symbol); // symbol: | for 10th, * for 5th, . for rest
+
+          var numberStr = '';
+          if(i % 10 === 0) numberStr = i.toString();
+          ic.alnChainsAnno[chainid1][1].push(numberStr); // symbol: 10, 20, etc, empty for rest
+      }
+
+/*
+        var commandname = 'symBoth_aligned'; //'protein_aligned';
+        var commanddescr = 'symBoth aligned'; //'protein aligned';
+        var select = "select " + me.residueids2spec(Object.keys(residuesHash));
+
+        me.addCustomSelection(Object.keys(residuesHash), commandname, commanddescr, select, true);
+*/
+};

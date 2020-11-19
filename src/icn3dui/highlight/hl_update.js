@@ -36,7 +36,7 @@ iCn3DUI.prototype.changeSeqColor = function(residueArray) { var me = this, ic = 
          // annotations will have their own color, only the chain will have the changed color
          $("[id=giseq_" + me.pre + pickedResidue + "]").attr('style', 'color:#' + color);
          $("[id=align_" + me.pre + pickedResidue + "]").attr('style', 'color:#' + color);
-         if(me.cfg.align !== undefined || me.cfg.chainalign !== undefined || me.bRealign) $("[id=align_" + me.pre + pickedResidue + "]").attr('style', 'color:#' + color);
+         if(me.cfg.align !== undefined || me.cfg.chainalign !== undefined || me.bRealign || me.bSymd) $("[id=align_" + me.pre + pickedResidue + "]").attr('style', 'color:#' + color);
        //}
    }
 };
