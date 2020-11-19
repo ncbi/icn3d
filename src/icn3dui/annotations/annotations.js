@@ -553,7 +553,7 @@ iCn3DUI.prototype.getProteinName= function(chnid) { var me = this, ic = me.icn3d
             }
         }
     }
-    else if((me.cfg.align !== undefined || me.cfg.chainalign !== undefined || me.bRealign) && me.chainid2title !== undefined) {
+    else if((me.cfg.align !== undefined || me.cfg.chainalign !== undefined || me.bRealign || me.bSymd) && me.chainid2title !== undefined) {
         if(me.chainid2title[chnid] !== undefined) {
             fullProteinName = me.chainid2title[chnid];
         }
