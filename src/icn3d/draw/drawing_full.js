@@ -434,53 +434,74 @@ iCn3D.prototype.createSurfaceRepresentation = function (atoms, type, wireframe, 
 };
 
 // http://soledadpenades.com/articles/three-js-tutorials/drawing-the-coordinate-axes/
-iCn3D.prototype.buildAxes = function (radius) { var me = this, ic = me.icn3d; "use strict";
+iCn3D.prototype.buildAxes = function (radius, center, positionX, positionY, positionZ, bSelection) { var me = this, ic = me.icn3d; "use strict";
     var axes = new THREE.Object3D();
 
     var x = 0, y = 0, z = 0;
-//    var x = this.oriCenter.x;
-//    var y = this.oriCenter.y;
-//    var z = this.oriCenter.z;
 
-    x -= radius * 0.6; //0.707; // move to the left
-    y -= radius * 0.6; //0.707; // move to the botom
-
- //   if(this.bOpm) {
- //       x = -this.oriCenter.x;
- //       y = -this.oriCenter.y;
- //       z = -this.oriCenter.z;
- //   }
+    if(bSelection) {
+        x = center.x;
+        y = center.y;
+        z = center.z;
+    }
+    else {
+        x -= radius * 0.3; //0.707; // move to the left
+        y -= radius * 0.3; //0.707; // move to the botom
+    }
+    var origin = new THREE.Vector3( x, y, z );
 
     var axisLen = radius / 10;
     var r = radius / 100;
 
-    var origin = new THREE.Vector3( x, y, z );
+    var axisVecX, axisVecY, axisVecZ;
+    var axisLenX = axisLenY = axisLenZ = axisLen;
+    if(bSelection) {
+        axisVecX = positionX.clone().sub(center);
+        axisVecY = positionY.clone().sub(center);
+        axisVecZ = positionZ.clone().sub(center);
 
-    var meshX = this.createCylinder_base( new THREE.Vector3( x, y, z ), new THREE.Vector3( x + axisLen, y, z ), r, this.thr(0xFF0000)); // +X
-    var meshY = this.createCylinder_base( new THREE.Vector3( x, y, z ), new THREE.Vector3( x, y + axisLen, z ), r, this.thr(0x00FF00)); // +Y
-    var meshZ = this.createCylinder_base( new THREE.Vector3( x, y, z ), new THREE.Vector3( x, y, z + axisLen ), r, this.thr(0x0000FF)); // +Z
+        axisLenX = axisVecX.length();
+        axisLenY = axisVecY.length();
+        axisLenZ = axisVecZ.length();
 
-    this.scene.add( meshX );
-    this.scene.add( meshY );
-    this.scene.add( meshZ );
+        r = axisLenX / 100;
 
-    var dirX = new THREE.Vector3( 1, 0, 0 );
+        if(r < 0.4) r = 0.4;
+    }
+
+    var meshX, meshY, meshZ;
+    if(bSelection) {
+        meshX = this.createCylinder_base( center, positionX, r, this.thr(0xFF0000)); // +X
+        meshY = this.createCylinder_base( center, positionY, r, this.thr(0x00FF00)); // +Y
+        meshZ = this.createCylinder_base( center, positionZ, r, this.thr(0x0000FF)); // +Z
+    }
+    else {
+        meshX = this.createCylinder_base( new THREE.Vector3( x, y, z ), new THREE.Vector3( x + axisLenX, y, z ), r, this.thr(0xFF0000)); // +X
+        meshY = this.createCylinder_base( new THREE.Vector3( x, y, z ), new THREE.Vector3( x, y + axisLenY, z ), r, this.thr(0x00FF00)); // +Y
+        meshZ = this.createCylinder_base( new THREE.Vector3( x, y, z ), new THREE.Vector3( x, y, z + axisLenZ ), r, this.thr(0x0000FF)); // +Z
+    }
+
+    this.mdl.add( meshX );
+    this.mdl.add( meshY );
+    this.mdl.add( meshZ );
+
+    var dirX = (bSelection) ? axisVecX.normalize() : new THREE.Vector3( 1, 0, 0 );
     var colorX = 0xff0000;
-    var posX = new THREE.Vector3(origin.x + axisLen, origin.y, origin.z);
-    var arrowX = this.createArrow( dirX, posX, axisLen, colorX, 4*r, 4*r);
-    this.scene.add( arrowX );
+    var posX = (bSelection) ? positionX : new THREE.Vector3(origin.x + axisLen, origin.y, origin.z);
+    var arrowX = this.createArrow( dirX, posX, axisLenX, colorX, 4*r, 4*r);
+    this.mdl.add( arrowX );
 
-    var dirY = new THREE.Vector3( 0, 1, 0 );
+    var dirY = (bSelection) ? axisVecY.normalize() : new THREE.Vector3( 0, 1, 0 );
     var colorY = 0x00ff00;
-    var posY = new THREE.Vector3(origin.x, origin.y + axisLen, origin.z);
-    var arrowY = this.createArrow( dirY, posY, axisLen, colorY, 4*r, 4*r);
-    this.scene.add( arrowY );
+    var posY = (bSelection) ? positionY : new THREE.Vector3(origin.x, origin.y + axisLen, origin.z);
+    var arrowY = this.createArrow( dirY, posY, axisLenY, colorY, 4*r, 4*r);
+    this.mdl.add( arrowY );
 
-    var dirZ = new THREE.Vector3( 0, 0, 1 );
+    var dirZ = (bSelection) ? axisVecZ.normalize() : new THREE.Vector3( 0, 0, 1 );
     var colorZ = 0x0000ff;
-    var posZ = new THREE.Vector3(origin.x, origin.y, origin.z + axisLen);
-    var arrowZ = this.createArrow( dirZ, posZ, axisLen, colorZ, 4*r, 4*r);
-    this.scene.add( arrowZ );
+    var posZ = (bSelection) ? positionZ : new THREE.Vector3(origin.x, origin.y, origin.z + axisLen);
+    var arrowZ = this.createArrow( dirZ, posZ, axisLenZ, colorZ, 4*r, 4*r);
+    this.mdl.add( arrowZ );
 };
 
 iCn3D.prototype.createArrow = function(dir, origin, axisLen, color, headLength, headWidth) {  var me = this, ic = me.icn3d; "use strict";
@@ -620,6 +641,7 @@ iCn3D.prototype.applySymmetry = function (title, bSymd) { var me = this, ic = me
             // check the number of chains
             var nChain = Object.keys(this.chains).length;
             var bMultiChain = false;
+
             if(bSymd && Object.keys(this.hAtoms).length < Object.keys(this.atoms).length) {
                 var chainHashTmp = {};
                 for(var serial in this.hAtoms) {
@@ -633,7 +655,8 @@ iCn3D.prototype.applySymmetry = function (title, bSymd) { var me = this, ic = me
                 }
             }
 
-            if(!bSymd || bMultiChain || Object.keys(this.hAtoms).length < Object.keys(this.atoms).length) {
+            //if(!bSymd || bMultiChain || Object.keys(this.hAtoms).length < Object.keys(this.atoms).length) {
+            if(!bSymd || bMultiChain) {
                 var selectedChain = Object.keys(this.structures)[0] + '_' + chain;
 
                 if(!this.chains.hasOwnProperty(selectedChain)) {
@@ -655,12 +678,13 @@ iCn3D.prototype.applySymmetry = function (title, bSymd) { var me = this, ic = me
             else { // bSymd, subset, and one chain
                 // pick the first 1/order of selection
                 var cnt = parseInt(Object.keys(this.hAtoms).length / order);
-                var i = 0, lastSerial;
+                var j = 0, lastSerial;
+
                 for(var serial in this.hAtoms) {
                     selection[serial] = 1;
                     lastSerial = serial;
-                    ++i;
-                    if(i > cnt) break;
+                    ++j;
+                    if(j > cnt) break;
                 }
 
                 // add the whole residue for the last serial

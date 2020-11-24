@@ -629,7 +629,8 @@ iCn3DUI.prototype.setMenu2b_base = function() { var me = this, ic = me.icn3d; "u
     html += "</li>";
     html += "<li><span>XYZ-axes</span>";
     html += "<ul>";
-    html += me.getRadio('mn6_showaxis', 'mn6_showaxisYes', 'Show');
+    html += me.getRadio('mn6_showaxis', 'mn6_showaxisYes', 'Original');
+    html += me.getRadio('mn6_showaxis', 'mn6_showaxisSel', '1st Prin. Comp. on Sel.');
     html += me.getRadio('mn6_showaxis', 'mn6_showaxisNo', 'Hide', true);
     html += "</ul>";
     html += "</li>";
@@ -1726,8 +1727,8 @@ iCn3DUI.prototype.setDialogs = function() { var me = this, ic = me.icn3d; "use s
 
 //    if(me.cfg.align !== undefined || me.cfg.chainalign !== undefined || me.bRealign || me.bSymd) {
       html += me.divStr + "dl_alignment' class='" + dialogClass + "' style='background-color:white;'>";
-      html += me.divStr + "alignseqguide_wrapper'><br>" + me.setAlignSequenceGuide() + "</div>";
       html += me.divStr + "symd_info'></div>";
+      html += me.divStr + "alignseqguide_wrapper'><br>" + me.setAlignSequenceGuide() + "</div>";
       html += me.divStr + "dl_sequence2' class='icn3d-dl_sequence'>";
       html += "</div>";
       html += "</div>";
@@ -2089,16 +2090,17 @@ iCn3DUI.prototype.setDialogs = function() { var me = this, ic = me.icn3d; "use s
 
     html += me.divStr + "dl_linegraph' style='background-color:white' class='" + dialogClass + "'>";
 
-    html += me.divNowrapStr + "Hold Ctrl key to select multiple nodes/lines." + me.space3;
+    html += me.divNowrapStr + '<div style="width:20px; margin-top:6px; display:inline-block;"><span id="'
+      + me.pre + 'dl_linegraphcolor_expand" class="ui-icon ui-icon-plus icn3d-expand icn3d-link" style="display:none; width:15px;" title="Expand"></span><span id="'
+      + me.pre + 'dl_linegraphcolor_shrink" class="ui-icon ui-icon-minus icn3d-shrink icn3d-link" style="width:15px;" title="Shrink"></span></div>';
 
-    html += '<div style="width:20px; margin-top:6px; display:inline-block;"><span id="'
-      + me.pre + 'dl_linegraphcolor_expand" class="ui-icon ui-icon-plus icn3d-expand icn3d-link" style="width:15px;" title="Expand"></span><span id="'
-      + me.pre + 'dl_linegraphcolor_shrink" class="ui-icon ui-icon-minus icn3d-shrink icn3d-link" style="display:none; width:15px;" title="Shrink"></span></div></div>';
-    html += me.divStr + "dl_linegraphcolor' style='display:none;'>";
+    html += me.space2 + "Hold Ctrl key to select multiple nodes/lines.</div>";
+
+    html += me.divStr + "dl_linegraphcolor' style='display:block;'>";
 
     html += me.setColorHints();
 
-    html += "</div>";
+    html += "</div><br>";
 
     var buttonStrTmp = '<button class="icn3d-commandTitle" style="-webkit-appearance:button; height:24px;background-color:#DDD;" id="';
 

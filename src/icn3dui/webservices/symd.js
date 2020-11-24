@@ -144,6 +144,7 @@ iCn3DUI.prototype.retrieveSymd = function () { var me = this, ic = me.icn3d; "us
                   var ori_permSeq = data.seqalign.replace(/ /g, '').split(','); //oriSeq,permSeq
                   var nres = data.nres;
                   var shift = data.shift;
+                  var rmsd = data.rmsd;
 
                   var oriResidArray = Object.keys(residHash);
                   var residArrayHash1 = {}, residArrayHash2 = {};
@@ -247,7 +248,7 @@ iCn3DUI.prototype.retrieveSymd = function () { var me = this, ic = me.icn3d; "us
 */
 
                   var html = '<br>';
-                  html += "The symmetry " + symmetryArray[0].symbol + " was calculated dynamically using the program <a href='https://symd.nci.nih.gov/' target='_blank'>SymD</a>. The Z score " + data.zscore + " is greater than the threshold Z score 8. <br><br>The following sequence alignment shows the residue mapping of the best aligned sets: \"symOri\" and \"symPerm\", which are also available in the menu \"Analysis > Defined Sets\".<br><br>";
+                  html += "The symmetry " + symmetryArray[0].symbol + " was calculated dynamically using the program <a href='https://symd.nci.nih.gov/' target='_blank'>SymD</a>. The Z score " + data.zscore + " is greater than the threshold Z score 8. The RMSD is " + rmsd + " angstrom. <br><br>The following sequence alignment shows the residue mapping of the best aligned sets: \"symOri\" and \"symPerm\", which are also available in the menu \"Analysis > Defined Sets\".<br>";
 
                   $("#" + me.pre + "symd_info").html(html);
 
@@ -261,11 +262,13 @@ iCn3DUI.prototype.retrieveSymd = function () { var me = this, ic = me.icn3d; "us
 
                   me.openDlg('dl_alignment', 'Select residues in aligned sequences from SymD');
 
+/*
                   me.opts['color'] = 'grey';
                   ic.setColorByOptions(me.opts, ic.dAtoms);
 
                   me.opts['color'] = 'identity';
                   ic.setColorByOptions(me.opts, ic.hAtoms);
+*/
 
                   var name = 'symOri';
                   me.selectResidueList(residArrayHashFinal1, name, name);
@@ -390,9 +393,11 @@ iCn3DUI.prototype.setSeqAlignForSymmetry = function (residArray1, residArray2, b
 
           for(var j in ic.residues[resObject1.resid]) {
               ic.atoms[j].color = ic.thr(color);
+              ic.atomPrevColors[j] = ic.thr(color);
           }
           for(var j in ic.residues[resObject2.resid]) {
               ic.atoms[j].color = ic.thr(color);
+              ic.atomPrevColors[j] = ic.thr(color);
           }
 
           // annoation title for the master seq only

@@ -8,6 +8,7 @@
  *  Chymotrypsin", J. Mol. Biol. 128 (1979) 49-79.
  */
 
+/*
 iCn3DUI.prototype.rmsd_supr = function(co1, co2, n) { var me = this, ic = me.icn3d; "use strict";
     var TINY0 = 1.0e-10;
     var supr;
@@ -200,6 +201,187 @@ iCn3DUI.prototype.rmsd_supr = function(co1, co2, n) { var me = this, ic = me.icn
             }
         }
     }
+
+    if (k != 1) {
+        supr = 100.0;
+        rot[0] = 1.0; rot[1] = 0.0; rot[2] = 0.0;
+        rot[3] = 0.0; rot[4] = 1.0; rot[5] = 0.0;
+        rot[6] = 0.0; rot[7] = 0.0; rot[8] = 1.0;
+        return {'rot': rot, 'trans1': xc1, 'trans2': xc2, 'rmsd': supr};
+    }
+
+    if (flag == 1) {
+        // compute the k-vectors via the h-vectors
+        k1[0] = u00*h1[0] + u10*h1[1] + u20*h1[2];
+        k1[1] = u01*h1[0] + u11*h1[1] + u21*h1[2];
+        k1[2] = u02*h1[0] + u12*h1[1] + u22*h1[2];
+        da = Math.sqrt(d1);
+        k1[0] /= da;
+        k1[1] /= da;
+        k1[2] /= da;
+        k2[0] = u00*h2[0] + u10*h2[1] + u20*h2[2];
+        k2[1] = u01*h2[0] + u11*h2[1] + u21*h2[2];
+        k2[2] = u02*h2[0] + u12*h2[1] + u22*h2[2];
+        da = Math.sqrt(d2);
+        k2[0] /= da;
+        k2[1] /= da;
+        k2[2] /= da;
+        k3[0] = u00*h3[0] + u10*h3[1] + u20*h3[2];
+        k3[1] = u01*h3[0] + u11*h3[1] + u21*h3[2];
+        k3[2] = u02*h3[0] + u12*h3[1] + u22*h3[2];
+        da = Math.sqrt(d3);
+        k3[0] /= da;
+        k3[1] /= da;
+        k3[2] /= da;
+    }
+    else if (flag == 2) {
+        // compute the h-vectors via the k-vectors
+        h1[0] = u00*k1[0] + u01*k1[1] + u02*k1[2];
+        h1[1] = u10*k1[0] + u11*k1[1] + u12*k1[2];
+        h1[2] = u20*k1[0] + u21*k1[1] + u22*k1[2];
+        da = Math.sqrt(d1);
+        h1[0] /= da;
+        h1[1] /= da;
+        h1[2] /= da;
+        h2[0] = u00*k2[0] + u01*k2[1] + u02*k2[2];
+        h2[1] = u10*k2[0] + u11*k2[1] + u12*k2[2];
+        h2[2] = u20*k2[0] + u21*k2[1] + u22*k2[2];
+        da = Math.sqrt(d2);
+        h2[0] /= da;
+        h2[1] /= da;
+        h2[2] /= da;
+        h3[0] = u00*k3[0] + u01*k3[1] + u02*k3[2];
+        h3[1] = u10*k3[0] + u11*k3[1] + u12*k3[2];
+        h3[2] = u20*k3[0] + u21*k3[1] + u22*k3[2];
+        da = Math.sqrt(d3);
+        h3[0] /= da;
+        h3[1] /= da;
+        h3[2] /= da;
+    }
+
+    if (s > 0.0) {
+        rot[0] = (k1[0]*h1[0] + k2[0]*h2[0] + k3[0]*h3[0]);
+        rot[1] = (k1[0]*h1[1] + k2[0]*h2[1] + k3[0]*h3[1]);
+        rot[2] = (k1[0]*h1[2] + k2[0]*h2[2] + k3[0]*h3[2]);
+        rot[3] = (k1[1]*h1[0] + k2[1]*h2[0] + k3[1]*h3[0]);
+        rot[4] = (k1[1]*h1[1] + k2[1]*h2[1] + k3[1]*h3[1]);
+        rot[5] = (k1[1]*h1[2] + k2[1]*h2[2] + k3[1]*h3[2]);
+        rot[6] = (k1[2]*h1[0] + k2[2]*h2[0] + k3[2]*h3[0]);
+        rot[7] = (k1[2]*h1[1] + k2[2]*h2[1] + k3[2]*h3[1]);
+        rot[8] = (k1[2]*h1[2] + k2[2]*h2[2] + k3[2]*h3[2]);
+    }
+    else {
+        rot[0] = (k1[0]*h1[0] + k2[0]*h2[0] - k3[0]*h3[0]);
+        rot[1] = (k1[0]*h1[1] + k2[0]*h2[1] - k3[0]*h3[1]);
+        rot[2] = (k1[0]*h1[2] + k2[0]*h2[2] - k3[0]*h3[2]);
+        rot[3] = (k1[1]*h1[0] + k2[1]*h2[0] - k3[1]*h3[0]);
+        rot[4] = (k1[1]*h1[1] + k2[1]*h2[1] - k3[1]*h3[1]);
+        rot[5] = (k1[1]*h1[2] + k2[1]*h2[2] - k3[1]*h3[2]);
+        rot[6] = (k1[2]*h1[0] + k2[2]*h2[0] - k3[2]*h3[0]);
+        rot[7] = (k1[2]*h1[1] + k2[2]*h2[1] - k3[2]*h3[1]);
+        rot[8] = (k1[2]*h1[2] + k2[2]*h2[2] - k3[2]*h3[2]);
+    }
+
+    // optimal rotation correction via eigenvalues
+    d1 = Math.sqrt(d1);
+    d2 = Math.sqrt(d2);
+    d3 = Math.sqrt(d3);
+    v = d1 + d2 + s*d3;
+    e = ra + rb - 2.0*v;
+
+    if (e > 0.0) {
+        supr = Math.sqrt(e);
+    }
+    else {
+        supr = undefined;
+    }
+
+    return {'rot': rot, 'trans1': xc1, 'trans2': xc2, 'rmsd': supr};
+
+}; // end rmsd_supr
+*/
+
+iCn3DUI.prototype.rmsd_supr = function(co1, co2, n) { var me = this, ic = me.icn3d; "use strict";
+//    var TINY0 = 1.0e-10;
+    var supr;
+    var rot = new Array(9);
+
+    var i, k, flag;
+    //double cp[3], cq[3];
+    var cp = new THREE.Vector3(), cq = new THREE.Vector3();
+
+    var da, ra, rb, dU, d1, d2, d3, e, s, v, over_n;
+    //double ap[MAX_RES][3], bp[MAX_RES][3], mat[9];
+    var ap = [], bp = [];
+//    var mat = new Array(9);
+
+    //double h1[3], h2[3], h3[3], k1[3], k2[3], k3[3];
+    var h1 = new Array(3), h2 = new Array(3), h3 = new Array(3), k1 = new Array(3), k2 = new Array(3), k3 = new Array(3);
+
+    supr = 0.0;
+
+    if (n <= 1) return {'rot': undefined, 'trans1': undefined, 'trans2': undefined, 'rmsd': 999};
+
+    // read in and reformat the coordinates
+    // calculate the centroids
+    for (i = 0; i < n; i++) {
+        ap.push(co1[i]);
+        bp.push(co2[i]);
+
+        cp.add(co1[i]);
+        cq.add(co2[i]);
+    }
+
+    cp.multiplyScalar(1.0 / n);
+    cq.multiplyScalar(1.0 / n);
+
+    // save the translation vectors
+    var xc1 = cp;
+    var xc2 = cq;
+
+    // translate coordinates
+    for (i = 0; i < n; i++) {
+        ap[i].sub(cp);
+        bp[i].sub(cq);
+    }
+
+    // radii of gyration
+    for (i = 0, ra = rb = 0.0; i < n; i++) {
+        ra += ap[i].x*ap[i].x + ap[i].y*ap[i].y + ap[i].z*ap[i].z;
+        rb += bp[i].x*bp[i].x + bp[i].y*bp[i].y + bp[i].z*bp[i].z;
+    }
+
+    ra /= n;
+    rb /= n;
+
+    var u = new Array(9); //var u00, u01, u02, u10, u11, u12, u20, u21, u22;
+
+    // correlation matrix U
+    for (i = 0; i < 9; ++i) {
+        u[i] = 0;
+    }
+
+    for (i = 0; i < n; i++) {
+        u[0] += ap[i].x*bp[i].x;
+        u[1] += ap[i].x*bp[i].y;
+        u[2] += ap[i].x*bp[i].z;
+        u[3] += ap[i].y*bp[i].x;
+        u[4] += ap[i].y*bp[i].y;
+        u[5] += ap[i].y*bp[i].z;
+        u[6] += ap[i].z*bp[i].x;
+        u[7] += ap[i].z*bp[i].y;
+        u[8] += ap[i].z*bp[i].z;
+    }
+
+    for (i = 0; i < 9; ++i) {
+        u[i] /= n;
+    }
+
+    var basis = me.getEigenVectors(u);
+    k = basis.k;
+    h1 = basis.v1;
+    h2 = basis.v2;
+    h3 = basis.v3;
 
     if (k != 1) {
         supr = 100.0;
@@ -556,3 +738,186 @@ iCn3DUI.prototype.null_basis = function(a0, v1, v2, v3, epsi) { var me = this, i
 
     return {'k': k0, 'v1': v1, 'v2': v2, 'v3': v3};
 }; // end null_basis
+
+
+iCn3DUI.prototype.getEigenForSelection = function(coord, n) { var me = this, ic = me.icn3d; "use strict";
+    var i;
+    var cp = new THREE.Vector3();
+    var ap = [];
+
+    // read in and reformat the coordinates
+    // calculate the centroids
+    for (i = 0; i < n; i++) {
+        ap.push(coord[i]);
+
+        cp.add(coord[i]);
+    }
+
+    cp.multiplyScalar(1.0 / n);
+
+    // translate coordinates
+    for (i = 0; i < n; i++) {
+        ap[i].sub(cp);
+    }
+
+    var u = new Array(9); //var u00, u01, u02, u10, u11, u12, u20, u21, u22;
+
+    for (i = 0; i < 9; ++i) {
+        u[i] = 0;
+    }
+
+    // http://individual.utoronto.ca/rav/Web/FR/cov.htm
+    // https://builtin.com/data-science/step-step-explanation-principal-component-analysis
+    for (i = 0; i < n; i++) {
+        u[0] += ap[i].x*ap[i].x;
+        u[1] += ap[i].x*ap[i].y;
+        u[2] += ap[i].x*ap[i].z;
+        u[3] += ap[i].y*ap[i].x;
+        u[4] += ap[i].y*ap[i].y;
+        u[5] += ap[i].y*ap[i].z;
+        u[6] += ap[i].z*ap[i].x;
+        u[7] += ap[i].z*ap[i].y;
+        u[8] += ap[i].z*ap[i].z;
+    }
+
+    for (i = 0; i < 9; ++i) {
+        u[i] /= n;
+    }
+
+    var bJustPc1 = true;
+    var basis = me.getEigenVectors(u, bJustPc1);
+
+    return basis;
+};
+
+iCn3DUI.prototype.getEigenVectors = function(u, bJustPc1) { var me = this, ic = me.icn3d; "use strict";
+    var TINY0 = 1.0e-10;
+    var k, flag;
+    var mat = new Array(9);
+
+    var h1 = new Array(3), h2 = new Array(3), h3 = new Array(3), k1 = new Array(3), k2 = new Array(3), k3 = new Array(3);
+
+    var da, ra, rb, dU, d1, d2, d3, e, s, v, over_n;
+
+    // determinant of U
+    dU = u[0]*(u[4]*u[8] - u[5]*u[7]);
+    dU -= u[1]*(u[3]*u[8] - u[5]*u[6]);
+    dU += u[2]*(u[3]*u[7] - u[4]*u[6]);
+    s = (dU < 0.0) ? -1.0 : 1.0;
+
+    var v1 = new Array(3), v2 = new Array(3);
+    for(i = 0; i < 3; ++i) {
+        v1[i] = new THREE.Vector3();
+        v2[i] = new THREE.Vector3();
+    }
+
+    // compute V = UU' (it is symmetric)
+    v1[0].x = u[0]*u[0] + u[1]*u[1] + u[2]*u[2];
+    v1[0].y = u[0]*u[3] + u[1]*u[4] + u[2]*u[5];
+    v1[0].z = u[0]*u[6] + u[1]*u[7] + u[2]*u[8];
+    v1[1].x = v1[0].y;
+    v1[1].y = u[3]*u[3] + u[4]*u[4] + u[5]*u[5];
+    v1[1].z = u[3]*u[6] + u[4]*u[7] + u[5]*u[8];
+    v1[2].x = v1[0].z;
+    v1[2].y = v1[1].z;
+    v1[2].z = u[6]*u[6] + u[7]*u[7] + u[8]*u[8];
+
+    // also compute V = U'U, as it may be needed
+    v2[0].x = u[0]*u[0] + u[3]*u[3] + u[6]*u[6];
+    v2[0].y = u[0]*u[1] + u[3]*u[4] + u[6]*u[7];
+    v2[0].z = u[0]*u[2] + u[3]*u[5] + u[6]*u[8];
+    v2[1].x = v2[0].y;
+    v2[1].y = u[1]*u[1] + u[4]*u[4] + u[7]*u[7];
+    v2[1].z = u[1]*u[2] + u[4]*u[5] + u[7]*u[8];
+    v2[2].x = v2[0].z;
+    v2[2].y = v2[1].z;
+    v2[2].z = u[2]*u[2] + u[5]*u[5] + u[8]*u[8];
+
+    // compute the eigenvalues
+    mat[0] = v1[0].x; mat[1] = v1[0].y; mat[2] = v1[0].z;
+    mat[3] = v1[1].x; mat[4] = v1[1].y; mat[5] = v1[1].z;
+    mat[6] = v1[2].x; mat[7] = v1[2].y; mat[8] = v1[2].z;
+
+    var eigen = me.eigen_values(mat);
+
+    d1 = eigen.d1;
+    d2 = eigen.d2;
+    d3 = eigen.d3;
+
+    // now we need the eigenvectors
+    flag = 1;
+    mat[0] -= d1;
+    mat[4] -= d1;
+    mat[8] -= d1;
+    var basis = me.null_basis(mat, h1, h2, h3, TINY0);
+    k = basis.k;
+    h1 = basis.v1;
+    h2 = basis.v2;
+    h3 = basis.v3;
+
+    if(bJustPc1) return basis;
+
+    if (k == 1) {
+        mat[0] += d1 - d2;
+        mat[4] += d1 - d2;
+        mat[8] += d1 - d2;
+        basis = me.null_basis(mat, h2, h3, h1, TINY0);
+        k = basis.k;
+        h2 = basis.v1;
+        h3 = basis.v2;
+        h1 = basis.v3;
+
+        if (k == 1) {
+            mat[0] += d2 - d3;
+            mat[4] += d2 - d3;
+            mat[8] += d2 - d3;
+            basis = me.null_basis(mat, h3, h1, h2, TINY0);
+            k = basis.k;
+            h3 = basis.v1;
+            h1 = basis.v2;
+            h2 = basis.v3;
+        }
+    }
+
+    if (k != 1) {
+        // retry the computation, but using V = U'U
+        mat[0] = v2[0].x; mat[1] = v2[0].y; mat[2] = v2[0].z;
+        mat[3] = v2[1].x; mat[4] = v2[1].y; mat[5] = v2[1].z;
+        mat[6] = v2[2].x; mat[7] = v2[2].y; mat[8] = v2[2].z;
+
+        // now we need the eigenvectors
+        flag = 2;
+        mat[0] -= d1;
+        mat[4] -= d1;
+        mat[8] -= d1;
+        basis = me.null_basis(mat, k1, k2, k3, TINY0);
+        k = basis.k;
+        k1 = basis.v1;
+        k2 = basis.v2;
+        k3 = basis.v3;
+
+        if (k == 1) {
+            mat[0] += d1 - d2;
+            mat[4] += d1 - d2;
+            mat[8] += d1 - d2;
+            basis = me.null_basis(mat, k2, k3, k1, TINY0);
+            k = basis.k;
+            k2 = basis.v1;
+            k3 = basis.v2;
+            k1 = basis.v3;
+
+            if (k == 1) {
+                mat[0] += d2 - d3;
+                mat[4] += d2 - d3;
+                mat[8] += d2 - d3;
+                basis = me.null_basis(mat, k3, k1, k2, TINY0);
+                k = basis.k;
+                k3 = basis.v1;
+                k1 = basis.v2;
+                k2 = basis.v3;
+            }
+        }
+    }
+
+    return basis;
+}

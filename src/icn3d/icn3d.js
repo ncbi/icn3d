@@ -1380,6 +1380,8 @@ iCn3D.prototype = {
         this.rotateCountMax = 20;
 
         this.commands = [];
+
+        this.axes = [];
     },
 
     init: function () {
@@ -1398,6 +1400,8 @@ iCn3D.prototype = {
         this.bDrawn = false;
         this.bSecondaryStructure = false;
         this.bHighlight = 1; // undefined: no highlight, 1: highlight by outline, 2: highlight by 3D object
+
+        this.axes = [];
     },
 
     reinitAfterLoad: function () {

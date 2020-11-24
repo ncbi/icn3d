@@ -251,11 +251,13 @@ input:checked + .icn3d-slider:before {
     position: sticky;
     background-color: rgba(255, 255, 255, 1);
     top: 0;
-  }
+}
 
 .icn3d-sticky tbody th {
     position: -webkit-sticky; /* for Safari */
     position: sticky;
     background-color: rgba(255, 255, 255, 1);
     left: 0;
-  }
+}
+  
+.icn3d-snplink {text-decoration: underline; cursor:pointer;}
