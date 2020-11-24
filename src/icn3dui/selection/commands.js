@@ -452,7 +452,7 @@ iCn3DUI.prototype.execCommandsBase = function (start, end, steps, bFinalStep) { 
 
         return;
       }
-      else if(ic.commands[i].trim().indexOf('scap ') == 0) {
+      else if(ic.commands[i].trim().indexOf('scap') == 0) {
         var strArray = ic.commands[i].split("|||");
         var command = strArray[0].trim();
 
@@ -1324,8 +1324,13 @@ iCn3DUI.prototype.applyCommand = function (commandStr) { var me = this, ic = me.
   else if(command == 'set axis on') {
     ic.opts['axis'] = 'yes';
   }
+  else if(command == 'set pc1 axis') {
+    ic.pc1 = true;
+    me.setPc1Axes();
+  }
   else if(command == 'set axis off') {
     ic.opts['axis'] = 'no';
+    ic.pc1 = false;
   }
   else if(command == 'set fog on') {
     ic.opts['fog'] = 'yes';

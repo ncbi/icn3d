@@ -259,6 +259,9 @@ iCn3DUI.prototype.getAnDiv = function(chnid, anno) { var me = this, ic = me.icn3
 iCn3DUI.prototype.addButton = function(chnid, classvalue, name, desc, width, buttonStyle) { var me = this, ic = me.icn3d; "use strict";
     return "<div class='" + classvalue + "' chainid='" + chnid + "' style='display:inline-block; font-size:11px; font-weight:bold; width:" + width + "px!important;'><button style='-webkit-appearance:" + buttonStyle + "; height:18px; width:" + width + "px;'><span style='white-space:nowrap; margin-left:-3px;' title='" + desc + "'>" + name + "</span></button></div>";
 };
+iCn3DUI.prototype.addSnpButton = function(snp, classvalue, name, desc, width, buttonStyle) { var me = this, ic = me.icn3d; "use strict";
+    return "<div class='" + me.pre + classvalue + "' snp='" + snp + "' style='margin:3px 0 3px 0; display:inline-block; font-size:11px; font-weight:bold; width:" + width + "px!important;'><button style='-webkit-appearance:" + buttonStyle + "; height:18px; width:" + width + "px;'><span style='white-space:nowrap; margin-left:-3px;' title='" + desc + "'>" + name + "</span></button></div>";
+};
 iCn3DUI.prototype.conservativeReplacement = function(resA, resB) { var me = this, ic = me.icn3d; "use strict";
     var iA = (me.b62ResArray.indexOf(resA) !== -1) ? me.b62ResArray.indexOf(resA) : me.b62ResArray.length - 1; // or the last one "*"
     var iB = (me.b62ResArray.indexOf(resB) !== -1) ? me.b62ResArray.indexOf(resB) : me.b62ResArray.length - 1; // or the last one "*"
@@ -1287,17 +1290,28 @@ iCn3DUI.prototype.getSnpLine = function(line, totalLineNum, resi2snp, resi2rsnum
                 var shownResCnt;
                 if(line == 2) {
                     start = 0;
-                    end = 1;
-                }
-                else if(line == 3) {
-                    start = 1;
+                    //end = 1;
                     end = jl;
                 }
+                //else if(line == 3) {
+                //    start = 1;
+                //    end = jl;
+                //}
                 if(!bClinvar) {
-                    shownResCnt = 2;
+                    //shownResCnt = 2;
+                    shownResCnt = 1;
                     for(var j = start; j < jl && j < end; ++j) {
+                        var snpTmpStr = chnid + "_" + pos + "_" + resi2snp[i][j];
+                        var buttonStyle = me.isMobile() ? 'none' : 'button';
+
+                        var bCoord = true;
+                        if( !ic.residues.hasOwnProperty(chnid + '_' + pos) ) {
+                            bCoord = false;
+                        }
+
                         if(j < shownResCnt) snpStr += resi2snp[i][j];
                         snpTitle += pos + c + '>' + resi2snp[i][j];
+
                         if(!bSnpOnly) {
                             // disease and significace
                             var diseaseArray = resi2disease[i][j].split('; ');
@@ -1316,15 +1330,29 @@ iCn3DUI.prototype.getSnpLine = function(line, totalLineNum, resi2snp, resi2rsnum
                                     ++index;
                                 }
                             }
+
                             //resi2rsnum, resi2clinAllele,
                             if(diseaseTitle != '') {
                                 //snpType = 'icn3d-clinvar';
                                 snpTitle += ': ' + diseaseTitle;
-                                //snpTitle += "<br>Links: <span class='" + me.pre + "snpin3d' snp='" + chnid + "_" + pos + "_" + resi2snp[i][j] + "' style='text-decoration: underline; cursor:pointer;'>Show in 3D</span>, <a href='https://www.ncbi.nlm.nih.gov/clinvar/?term=" + resi2clinAllele[i][j] + "[AlleleID]' target='_blank'>ClinVar</a>, <a href='https://www.ncbi.nlm.nih.gov/snp/?term=" + resi2rsnum[i][j] + "' target='_blank'>dbSNP (rs" + resi2rsnum[i][j] + ")</a>";
+
+                                if(bCoord) {
+                                    snpTitle += '<br>' + me.addSnpButton(snpTmpStr, 'snpin3d', '3D with scap', 'SNP in 3D with scap', 70, buttonStyle) + '&nbsp;&nbsp;';
+                                    snpTitle += me.addSnpButton(snpTmpStr, 'snpinter', 'Interactions', 'SNP Interactions in 3D', 70, buttonStyle) + '&nbsp;&nbsp;';
+                                    snpTitle += me.addSnpButton(snpTmpStr, 'snppdb', 'PDB', 'Download SNP PDB', 35, buttonStyle);
+                                }
+
+                                //snpTitle += "<br>Links: <span class='" + me.pre + "snpin3d icn3d-snplink' snp='" + chnid + "_" + pos + "_" + resi2snp[i][j] + "'>SNP in 3D with scap</span>, <span class='" + me.pre + "snpinter icn3d-snplink' snp='" + chnid + "_" + pos + "_" + resi2snp[i][j] + "'>SNP Interactions in 3D</span>, <span class='" + me.pre + "snppdb icn3d-snplink' snp='" + chnid + "_" + pos + "_" + resi2snp[i][j] + "'>SNP PDB</span>, <a href='https://www.ncbi.nlm.nih.gov/clinvar/?term=" + resi2clinAllele[i][j] + "[AlleleID]' target='_blank'>ClinVar</a>, <a href='https://www.ncbi.nlm.nih.gov/snp/?term=" + resi2rsnum[i][j] + "' target='_blank'>dbSNP (rs" + resi2rsnum[i][j] + ")</a>";
                                 snpTitle += "<br>Links: <a href='https://www.ncbi.nlm.nih.gov/clinvar/?term=" + resi2clinAllele[i][j] + "[AlleleID]' target='_blank'>ClinVar</a>, <a href='https://www.ncbi.nlm.nih.gov/snp/?term=" + resi2rsnum[i][j] + "' target='_blank'>dbSNP (rs" + resi2rsnum[i][j] + ")</a>";
                             }
                             else {
-                                //snpTitle += "<br>Links: <span class='" + me.pre + "snpin3d' snp='" + chnid + "_" + pos + "_" + resi2snp[i][j] + "' style='text-decoration: underline; cursor:pointer;'>Show in 3D</span>, <a href='https://www.ncbi.nlm.nih.gov/snp/?term=" + resi2rsnum[i][j] + "' target='_blank'>dbSNP (rs" + resi2rsnum[i][j] + ")</a>"
+                                if(bCoord) {
+                                    snpTitle += '<br>' + me.addSnpButton(snpTmpStr, 'snpin3d', '3D with scap', 'SNP in 3D with scap', 70, buttonStyle) + '&nbsp;&nbsp;';
+                                    snpTitle += me.addSnpButton(snpTmpStr, 'snpinter', 'Interactions', 'SNP Interactions in 3D', 70, buttonStyle) + '&nbsp;&nbsp;';
+                                    snpTitle += me.addSnpButton(snpTmpStr, 'snppdb', 'PDB', 'Download SNP PDB', 35, buttonStyle);
+                                }
+
+                                //snpTitle += "<br>Links: <span class='" + me.pre + "snpin3d icn3d-snplink' snp='" + chnid + "_" + pos + "_" + resi2snp[i][j] + "'>SNP in 3D with scap</span>, <span class='" + me.pre + "snpinter icn3d-snplink' snp='" + chnid + "_" + pos + "_" + resi2snp[i][j] + "'>SNP Interactions in 3D</span>, <span class='" + me.pre + "snppdb icn3d-snplink' snp='" + chnid + "_" + pos + "_" + resi2snp[i][j] + "'>SNP PDB</span>, <a href='https://www.ncbi.nlm.nih.gov/snp/?term=" + resi2rsnum[i][j] + "' target='_blank'>dbSNP (rs" + resi2rsnum[i][j] + ")</a>"
                                 snpTitle += "<br>Link: <a href='https://www.ncbi.nlm.nih.gov/snp/?term=" + resi2rsnum[i][j] + "' target='_blank'>dbSNP (rs" + resi2rsnum[i][j] + ")</a>"
                             }
                             if(j < jl - 1) {
@@ -1333,25 +1361,40 @@ iCn3DUI.prototype.getSnpLine = function(line, totalLineNum, resi2snp, resi2rsnum
                             }
                         }
                         else { //if(bSnpOnly) {
+                            if(bCoord) {
+                                snpTitle += '<br>' + me.addSnpButton(snpTmpStr, 'snpin3d', '3D with scap', 'SNP in 3D with scap', 70, buttonStyle) + '&nbsp;&nbsp;';
+                                snpTitle += me.addSnpButton(snpTmpStr, 'snpinter', 'Interactions', 'SNP Interactions in 3D', 70, buttonStyle) + '&nbsp;&nbsp;';
+                                snpTitle += me.addSnpButton(snpTmpStr, 'snppdb', 'PDB', 'Download SNP PDB', 35, buttonStyle);
+                            }
+
                             if(resi2rsnum[i][j] != 0) {
-                                //snpTitle += "<br>Links: <span class='" + me.pre + "snpin3d' snp='" + chnid + "_" + pos + "_" + resi2snp[i][j] + "' style='text-decoration: underline; cursor:pointer;'>Show in 3D</span>, <a href='https://www.ncbi.nlm.nih.gov/snp/?term=" + resi2rsnum[i][j] + "' target='_blank'>dbSNP (rs" + resi2rsnum[i][j] + ")</a>";
+                                //snpTitle += "<br>Links: <span class='" + me.pre + "snpin3d icn3d-snplink' snp='" + chnid + "_" + pos + "_" + resi2snp[i][j] + "'>SNP in 3D with scap</span>, <span class='" + me.pre + "snpinter icn3d-snplink' snp='" + chnid + "_" + pos + "_" + resi2snp[i][j] + "'>SNP Interactions in 3D</span>, <span class='" + me.pre + "snppdb icn3d-snplink' snp='" + chnid + "_" + pos + "_" + resi2snp[i][j] + "'>SNP PDB</span>, <a href='https://www.ncbi.nlm.nih.gov/snp/?term=" + resi2rsnum[i][j] + "' target='_blank'>dbSNP (rs" + resi2rsnum[i][j] + ")</a>";
                                 snpTitle += "<br>Link: <a href='https://www.ncbi.nlm.nih.gov/snp/?term=" + resi2rsnum[i][j] + "' target='_blank'>dbSNP (rs" + resi2rsnum[i][j] + ")</a>";
                             }
                             else {
-                                //snpTitle += "<br>Link: <span class='" + me.pre + "snpin3d' snp='" + chnid + "_" + pos + "_" + resi2snp[i][j] + "' style='text-decoration: underline; cursor:pointer;'>Show in 3D</span>";
+                                //snpTitle += "<br>Links: <span class='" + me.pre + "snpin3d icn3d-snplink' snp='" + chnid + "_" + pos + "_" + resi2snp[i][j] + "'>SNP in 3D with scap</span>, <span class='" + me.pre + "snpinter icn3d-snplink' snp='" + chnid + "_" + pos + "_" + resi2snp[i][j] + "'>SNP Interactions in 3D</span>, <span class='" + me.pre + "snppdb icn3d-snplink' snp='" + chnid + "_" + pos + "_" + resi2snp[i][j] + "'>SNP PDB</span>";
                             }
 
                             if(j < jl - 1) {
-                                snpTitle += '<br>';
+                                snpTitle += '<br><br>';
                             }
                         }
                     }
-                    if(jl > shownResCnt && line == 3) snpStr += '..';
+                    //if(jl > shownResCnt && line == 3) snpStr += '..';
+                    if(jl > shownResCnt && line == 2) snpStr += '..';
                 }
                 else { // if(bClinvar)
                     shownResCnt = 1;
                     var diseaseCnt = 0;
                     for(var j = start; j < jl && j < end; ++j) {
+                        var snpTmpStr = chnid + "_" + pos + "_" + resi2snp[i][j];
+                        var buttonStyle = me.isMobile() ? 'none' : 'button';
+
+                        var bCoord = true;
+                        if( !ic.residues.hasOwnProperty(chnid + '_' + pos) ) {
+                            bCoord = false;
+                        }
+
                         // disease and significace
                         var diseaseArray = resi2disease[i][j].split('; ');
                         var sigArray = resi2sig[i][j].split('; ');
@@ -1374,7 +1417,14 @@ iCn3DUI.prototype.getSnpLine = function(line, totalLineNum, resi2snp, resi2rsnum
                             snpTitle += pos + c + '>' + resi2snp[i][j];
                             //snpType = 'icn3d-clinvar';
                             snpTitle += ': ' + diseaseTitle;
-                            //snpTitle += "<br>Links: <span class='" + me.pre + "snpin3d' snp='" + chnid + "_" + pos + "_" + resi2snp[i][j] + "' style='text-decoration: underline; cursor:pointer;'>Show in 3D</span>, <a href='https://www.ncbi.nlm.nih.gov/clinvar/?term=" + resi2clinAllele[i][j] + "[AlleleID]' target='_blank'>ClinVar</a>, <a href='https://www.ncbi.nlm.nih.gov/snp/?term=" + resi2rsnum[i][j] + "' target='_blank'>dbSNP (rs" + resi2rsnum[i][j] + ")</a>";
+
+                            if(bCoord) {
+                                snpTitle += '<br>' + me.addSnpButton(snpTmpStr, 'snpin3d', '3D with scap', 'SNP in 3D with scap', 70, buttonStyle) + '&nbsp;&nbsp;';
+                                snpTitle += me.addSnpButton(snpTmpStr, 'snpinter', 'Interactions', 'SNP Interactions in 3D', 70, buttonStyle) + '&nbsp;&nbsp;';
+                                snpTitle += me.addSnpButton(snpTmpStr, 'snppdb', 'PDB', 'Download SNP PDB', 35, buttonStyle);
+                            }
+
+                            //snpTitle += "<br>Links: <span class='" + me.pre + "snpin3d icn3d-snplink' snp='" + chnid + "_" + pos + "_" + resi2snp[i][j] + "'>SNP in 3D with scap</span>, <span class='" + me.pre + "snpinter icn3d-snplink' snp='" + chnid + "_" + pos + "_" + resi2snp[i][j] + "'>SNP Interactions in 3D</span>, <span class='" + me.pre + "snppdb icn3d-snplink' snp='" + chnid + "_" + pos + "_" + resi2snp[i][j] + "'>SNP PDB</span>, <a href='https://www.ncbi.nlm.nih.gov/clinvar/?term=" + resi2clinAllele[i][j] + "[AlleleID]' target='_blank'>ClinVar</a>, <a href='https://www.ncbi.nlm.nih.gov/snp/?term=" + resi2rsnum[i][j] + "' target='_blank'>dbSNP (rs" + resi2rsnum[i][j] + ")</a>";
                             snpTitle += "<br>Links: <a href='https://www.ncbi.nlm.nih.gov/clinvar/?term=" + resi2clinAllele[i][j] + "[AlleleID]' target='_blank'>ClinVar</a>, <a href='https://www.ncbi.nlm.nih.gov/snp/?term=" + resi2rsnum[i][j] + "' target='_blank'>dbSNP (rs" + resi2rsnum[i][j] + ")</a>";
                             if(j < jl - 1) {
                                 snpTitle += '<br><br>';
@@ -1382,7 +1432,8 @@ iCn3DUI.prototype.getSnpLine = function(line, totalLineNum, resi2snp, resi2rsnum
                             ++diseaseCnt;
                         } // if(diseaseTitle != '') {
                     } // for(var j = start; j < jl && j < end; ++j) {
-                    if(diseaseCnt > shownResCnt && line == 3) snpStr += '..';
+                    //if(diseaseCnt > shownResCnt && line == 3) snpStr += '..';
+                    if(diseaseCnt > shownResCnt && line == 2) snpStr += '..';
                 } // else { // if(bClinvar)
                 snpTitle += '</div>';
                 if(bClinvar) {
@@ -1412,7 +1463,7 @@ iCn3DUI.prototype.getSnpLine = function(line, totalLineNum, resi2snp, resi2rsnum
                             html += '<span id="' + pre + '_' + me.pre + chnid + '_' + pos + '" label title="' + snpTitle + '" ' + diseaseStr + ' class="icn3d-tooltip icn3d-residue ' + currSnpTypeHash[i] + '">' + snpStr + '</span>';
                         }
                         else {
-                            html += '<span id="' + pre + '_' + me.pre + chnid + '_' + pos + '" label title="' + snpTitle + '" class="icn3d-residue ' + currSnpTypeHash[i] + '">' + snpStr + '</span>';
+                            html += '<span id="' + pre + '_' + me.pre + chnid + '_' + pos + '" label title="' + snpTitle + '" class="icn3d-tooltip icn3d-residue ' + currSnpTypeHash[i] + '">' + snpStr + '</span>';
                         }
                     }
                 }
@@ -1510,13 +1561,13 @@ iCn3DUI.prototype.processSnpClinvar = function(data, chnid, chnidBase, bSnpOnly,
     var posClinArray = Object.keys(posClinHash);
     if(bSnpOnly) {
         var bClinvar = false;
-        html += me.getSnpLine(1, 3, resi2snp, resi2rsnum, resi2clinAllele, resi2disease, resi2index, resi2sig, posarray, posClinArray, 1, chnid, false, bClinvar, undefined, bSnpOnly);
-        html += me.getSnpLine(2, 3, resi2snp, resi2rsnum, resi2clinAllele, resi2disease, resi2index, resi2sig, posarray, posClinArray, 0, chnid, false, bClinvar, undefined, bSnpOnly);
-        html += me.getSnpLine(3, 3, resi2snp, resi2rsnum, resi2clinAllele, resi2disease, resi2index, resi2sig, posarray, posClinArray, 0, chnid, false, bClinvar, undefined, bSnpOnly);
-        html3 += me.getSnpLine(1, 3, resi2snp, resi2rsnum, resi2clinAllele, resi2disease, resi2index, resi2sig, posarray, posClinArray, 1, chnid, false, bClinvar, true, bSnpOnly);
-        html3 += me.getSnpLine(2, 3, resi2snp, resi2rsnum, resi2clinAllele, resi2disease, resi2index, resi2sig, posarray, posClinArray, 0, chnid, false, bClinvar, true, bSnpOnly);
-        html3 += me.getSnpLine(3, 3, resi2snp, resi2rsnum, resi2clinAllele, resi2disease, resi2index, resi2sig, posarray, posClinArray, 0, chnid, false, bClinvar, true, bSnpOnly);
-        html2 += me.getSnpLine(1, 3, resi2snp, resi2rsnum, resi2clinAllele, resi2disease, resi2index, resi2sig, posarray, posClinArray, 1, chnid, true, bClinvar, undefined, bSnpOnly);
+        html += me.getSnpLine(1, 2, resi2snp, resi2rsnum, resi2clinAllele, resi2disease, resi2index, resi2sig, posarray, posClinArray, 1, chnid, false, bClinvar, undefined, bSnpOnly);
+        html += me.getSnpLine(2, 2, resi2snp, resi2rsnum, resi2clinAllele, resi2disease, resi2index, resi2sig, posarray, posClinArray, 0, chnid, false, bClinvar, undefined, bSnpOnly);
+        //html += me.getSnpLine(3, 3, resi2snp, resi2rsnum, resi2clinAllele, resi2disease, resi2index, resi2sig, posarray, posClinArray, 0, chnid, false, bClinvar, undefined, bSnpOnly);
+        html3 += me.getSnpLine(1, 2, resi2snp, resi2rsnum, resi2clinAllele, resi2disease, resi2index, resi2sig, posarray, posClinArray, 1, chnid, false, bClinvar, true, bSnpOnly);
+        html3 += me.getSnpLine(2, 2, resi2snp, resi2rsnum, resi2clinAllele, resi2disease, resi2index, resi2sig, posarray, posClinArray, 0, chnid, false, bClinvar, true, bSnpOnly);
+        //html3 += me.getSnpLine(3, 3, resi2snp, resi2rsnum, resi2clinAllele, resi2disease, resi2index, resi2sig, posarray, posClinArray, 0, chnid, false, bClinvar, true, bSnpOnly);
+        html2 += me.getSnpLine(1, 2, resi2snp, resi2rsnum, resi2clinAllele, resi2disease, resi2index, resi2sig, posarray, posClinArray, 1, chnid, true, bClinvar, undefined, bSnpOnly);
         html += '</div>';
         html2 += '</div>';
         html3 += '</div>';
@@ -1527,13 +1578,13 @@ iCn3DUI.prototype.processSnpClinvar = function(data, chnid, chnidBase, bSnpOnly,
     else {
     //if(!bSnpOnly && me.bClinvarCnt) {
         bClinvar = true;
-        htmlClinvar += me.getSnpLine(1, 3, resi2snp, resi2rsnum, resi2clinAllele, resi2disease, resi2index, resi2sig, posarray, posClinArray, 1, chnid, false, bClinvar, undefined, bSnpOnly);
-        htmlClinvar += me.getSnpLine(2, 3, resi2snp, resi2rsnum, resi2clinAllele, resi2disease, resi2index, resi2sig, posarray, posClinArray, 0, chnid, false, bClinvar, undefined, bSnpOnly);
-        htmlClinvar += me.getSnpLine(3, 3, resi2snp, resi2rsnum, resi2clinAllele, resi2disease, resi2index, resi2sig, posarray, posClinArray, 0, chnid, false, bClinvar, undefined, bSnpOnly);
-        htmlClinvar3 += me.getSnpLine(1, 3, resi2snp, resi2rsnum, resi2clinAllele, resi2disease, resi2index, resi2sig, posarray, posClinArray, 1, chnid, false, bClinvar, true, bSnpOnly);
-        htmlClinvar3 += me.getSnpLine(2, 3, resi2snp, resi2rsnum, resi2clinAllele, resi2disease, resi2index, resi2sig, posarray, posClinArray, 0, chnid, false, bClinvar, true, bSnpOnly);
-        htmlClinvar3 += me.getSnpLine(3, 3, resi2snp, resi2rsnum, resi2clinAllele, resi2disease, resi2index, resi2sig, posarray, posClinArray, 0, chnid, false, bClinvar, true, bSnpOnly);
-        htmlClinvar2 += me.getSnpLine(1, 3, resi2snp, resi2rsnum, resi2clinAllele, resi2disease, resi2index, resi2sig, posarray, posClinArray, 1, chnid, true, bClinvar, undefined, bSnpOnly);
+        htmlClinvar += me.getSnpLine(1, 2, resi2snp, resi2rsnum, resi2clinAllele, resi2disease, resi2index, resi2sig, posarray, posClinArray, 1, chnid, false, bClinvar, undefined, bSnpOnly);
+        htmlClinvar += me.getSnpLine(2, 2, resi2snp, resi2rsnum, resi2clinAllele, resi2disease, resi2index, resi2sig, posarray, posClinArray, 0, chnid, false, bClinvar, undefined, bSnpOnly);
+        //htmlClinvar += me.getSnpLine(3, 3, resi2snp, resi2rsnum, resi2clinAllele, resi2disease, resi2index, resi2sig, posarray, posClinArray, 0, chnid, false, bClinvar, undefined, bSnpOnly);
+        htmlClinvar3 += me.getSnpLine(1, 2, resi2snp, resi2rsnum, resi2clinAllele, resi2disease, resi2index, resi2sig, posarray, posClinArray, 1, chnid, false, bClinvar, true, bSnpOnly);
+        htmlClinvar3 += me.getSnpLine(2, 2, resi2snp, resi2rsnum, resi2clinAllele, resi2disease, resi2index, resi2sig, posarray, posClinArray, 0, chnid, false, bClinvar, true, bSnpOnly);
+        //htmlClinvar3 += me.getSnpLine(3, 3, resi2snp, resi2rsnum, resi2clinAllele, resi2disease, resi2index, resi2sig, posarray, posClinArray, 0, chnid, false, bClinvar, true, bSnpOnly);
+        htmlClinvar2 += me.getSnpLine(1, 2, resi2snp, resi2rsnum, resi2clinAllele, resi2disease, resi2index, resi2sig, posarray, posClinArray, 1, chnid, true, bClinvar, undefined, bSnpOnly);
         htmlClinvar += '</div>';
         htmlClinvar2 += '</div>';
         htmlClinvar3 += '</div>';
@@ -2809,7 +2860,7 @@ iCn3DUI.prototype.setToolTip = function () {  var me = this, ic = me.icn3d; "use
             $(this).stop(true).fadeTo(400, 1);
         },
         function () {
-            $(this).fadeOut("200", function () {
+            $(this).fadeOut("400", function () {
                 $(this).remove();
             })
         });

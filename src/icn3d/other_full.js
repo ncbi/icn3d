@@ -1192,7 +1192,7 @@ iCn3D.prototype.centerAtoms = function(atoms) { var me = this, ic = me.icn3d; "u
 
     var maxD = pmax.distanceTo(pmin);
 
-    return {"center": psum.multiplyScalar(1.0 / cnt), "maxD": maxD};
+    return {"center": psum.multiplyScalar(1.0 / cnt), "maxD": maxD, "pmin": pmin, "pmax": pmax};
 };
 
 iCn3D.prototype.removeSurfaces = function () { var me = this, ic = me.icn3d; "use strict";

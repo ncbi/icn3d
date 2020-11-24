@@ -1740,10 +1740,22 @@ iCn3DUI.prototype.allEventFunctions = function() { var me = this;
        me.setOption('axis', 'yes');
        me.setLogCmd('set axis on', true);
     });
+
+    $("#" + me.pre + "mn6_showaxisSel").click(function(e) { var ic = me.icn3d;
+       ic.pc1 = true;
+
+       me.setPc1Axes();
+       me.setLogCmd('set pc1 axis', true);
+    });
+
 //    },
 //    clkMn6_showaxisNo: function() {
     $("#" + me.pre + "mn6_showaxisNo").click(function(e) { var ic = me.icn3d;
+       ic.pc1 = false;
+       ic.axes = [];
+
        me.setOption('axis', 'no');
+
        me.setLogCmd('set axis off', true);
     });
 //    },
@@ -3472,7 +3484,27 @@ iCn3DUI.prototype.allEventFunctions = function() { var me = this;
         var snp = $(this).attr('snp');
 
         me.retrieveScap(snp);
-        me.setLogCmd('scap ' + snp, true);
+        me.setLogCmd('scap 3d ' + snp, true);
+    });
+
+    $(document).on("click", "." + me.pre + "snpinter", function(e) { var ic = me.icn3d;
+        e.stopImmediatePropagation();
+
+        var snp = $(this).attr('snp');
+
+        var bInteraction = true;
+        me.retrieveScap(snp, bInteraction);
+        me.setLogCmd('scap interaction ' + snp, true);
+    });
+
+    $(document).on("click", "." + me.pre + "snppdb", function(e) { var ic = me.icn3d;
+        e.stopImmediatePropagation();
+
+        var snp = $(this).attr('snp');
+
+        var bPdb = true;
+        me.retrieveScap(snp, undefined, bPdb);
+        me.setLogCmd('scap pdb ' + snp, true);
     });
 
 };
@@ -3668,4 +3700,87 @@ iCn3DUI.prototype.exportPqr = function() { var me = this, ic = me.icn3d; "use st
           }
        });
    }
+};
+
+iCn3DUI.prototype.setPc1Axes = function() { var me = this, ic = me.icn3d; "use strict";
+   var atomHash = ic.intHash(ic.hAtoms, ic.dAtoms);
+
+   // do PCA, get first eigen vector
+   var coordArray = [];
+   var prevResid = '';
+   var bSmall = (Object.keys(atomHash).length < 100) ? true : false;
+   for(var serial in atomHash) {
+       var atom = ic.atoms[serial];
+       var resid = atom.structure + '_' + atom.chain + '_' + atom.resi;
+       if(!bSmall && resid == prevResid) continue; // speed up
+       coordArray.push(atom.coord.clone());
+   }
+
+   var basis = me.getEigenForSelection(coordArray, coordArray.length);
+   var vecX = new THREE.Vector3(basis.v1[0], basis.v1[1], basis.v1[2]);
+
+   if(basis.k == 0 && ic.bRender) {
+       alert("Can't determine the first principal component. Please select a subset and try it again.");
+       return;
+   }
+
+   var result = ic.centerAtoms(atomHash);
+   var maxD = result.maxD;
+   var center = result.center;
+
+   //var positionX = center.clone().add(vecX.normalize().multiplyScalar(maxD * 0.5));
+   var positionX = center.clone().add(vecX.normalize().multiplyScalar(maxD * 0.4));
+   var positionXMinus = center.clone().multiplyScalar(2).sub(positionX);
+
+   var linex = new THREE.Line3( positionXMinus, positionX );
+
+   var maxLen = 0, coordY, coordYInLine;
+   prevResid = '';
+   for(var serial in atomHash) {
+       var atom = ic.atoms[serial];
+       var resid = atom.structure + '_' + atom.chain + '_' + atom.resi;
+       if(!bSmall && resid == prevResid) continue; // speed up
+
+       var posInLine = new THREE.Vector3();
+       linex.closestPointToPoint ( atom.coord, false, posInLine);
+
+       var len = posInLine.distanceTo(atom.coord);
+       if(len > maxLen) {
+           coordY = atom.coord;
+           coordYInLine = posInLine;
+
+           maxLen = len;
+       }
+   }
+
+   // translate
+   centerTrans = center.clone().sub(coordYInLine);
+   var positionY = coordY.clone().add(centerTrans);
+
+   var vecZ = new THREE.Vector3();
+   var vecY = positionY.clone().sub(center);
+   vecZ.crossVectors( positionX.clone().sub(center), vecY ).normalize();
+   vecZ.multiplyScalar(vecY.length());
+
+   positionZ = center.clone().add(vecZ);
+
+   ic.buildAxes(undefined, center, positionX, positionY, positionZ, true);
+
+   var axisPos = [center, positionX, positionY, positionZ];
+   ic.axes.push(axisPos);
+
+   ic.draw();
+
+/*
+   var vecY = new THREE.Vector3(basis.v2[0], basis.v2[1], basis.v2[2]);
+   var positionY = center.clone().add(vecY.normalize().multiplyScalar(maxD * 0.3));
+
+   var vecZ = new THREE.Vector3(basis.v3[0], basis.v3[1], basis.v3[2]);
+   var positionZ = center.clone().add(vecZ.normalize().multiplyScalar(maxD * 0.3));
+
+   ic.buildAxes(undefined, center, positionX, positionY, positionZ, true);
+
+   var axisPos = [center, positionX, positionY, positionZ];
+   ic.axes.push(axisPos);
+*/
 };

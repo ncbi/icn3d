@@ -52,7 +52,7 @@ $.ajaxTransport("+binary", function (options, originalOptions, jqXHR) {
 });
 
 var iCn3DUI = function(cfg) { var me = this, ic = me.icn3d; "use strict";
-    this.REVISION = '2.21.0';
+    this.REVISION = '2.22.0';
     me.bFullUi = true;
     me.cfg = cfg;
     me.divid = me.cfg.divid;
@@ -3209,6 +3209,21 @@ iCn3DUI.prototype = {
        }
        return interactionTypes.toString();
     },
+    clearInteractions: function() { var me = this, ic = me.icn3d; "use strict";
+        ic.lines['hbond'] = [];
+        ic.hbondpnts = [];
+        ic.lines['saltbridge'] = [];
+        ic.saltbridgepnts = [];
+        ic.lines['contact'] = [];
+        ic.contactpnts = [];
+
+        ic.lines['halogen'] = [];
+        ic.lines['pi-cation'] = [];
+        ic.lines['pi-stacking'] = [];
+        ic.halogenpnts = [];
+        ic.picationpnts = [];
+        ic.pistackingpnts = [];
+    },
     getIdArray: function(resid) { var me = this, ic = me.icn3d; "use strict";
         //var idArray = resid.split('_');
         var idArray = [];
@@ -4174,35 +4189,62 @@ SHEET    1  B1 2 GLY A  35  THR A  39  0
 
         var calphaHash = ic.intHash(atomHash, ic.calphas);
         var helixStr = 'HELIX', sheetStr = 'SHEET';
+        var bHelixBegin = false, bHelixEnd = true;
+        var bSheetBegin = false, bSheetEnd = true;
+
         for(var i in calphaHash) {
             var atom = ic.atoms[i];
 
             if(atom.ssbegin) {
                 if(atom.ss == 'helix') {
-                    pdbStr += helixStr.padEnd(15, ' ') + atom.resn.padStart(3, ' ') + atom.chain.padStart(2, ' ')
+                    bHelixBegin = true;
+                    if(bHelixEnd) pdbStr += helixStr.padEnd(15, ' ') + atom.resn.padStart(3, ' ') + atom.chain.padStart(2, ' ')
                         + atom.resi.toString().padStart(5, ' ');
+                    bHelixEnd = false;
                 }
                 else if(atom.ss == 'sheet') {
-                    pdbStr += sheetStr.padEnd(17, ' ') + atom.resn.padStart(3, ' ') + atom.chain.padStart(2, ' ')
+                    bSheetBegin = true;
+                    if(bSheetEnd) pdbStr += sheetStr.padEnd(17, ' ') + atom.resn.padStart(3, ' ') + atom.chain.padStart(2, ' ')
                         + atom.resi.toString().padStart(4, ' ');
+                    bSheetEnd = false;
                 }
             }
 
             if(atom.ssend) {
                 if(atom.ss == 'helix') {
-                    pdbStr += atom.resn.padStart(5, ' ') + atom.chain.padStart(2, ' ')
+                    bHelixEnd = true;
+                    if(bHelixBegin) pdbStr += atom.resn.padStart(5, ' ') + atom.chain.padStart(2, ' ')
                         + atom.resi.toString().padStart(5, ' ') + '\n';
+                    bHelixBegin = false;
                 }
                 else if(atom.ss == 'sheet') {
-                    pdbStr += atom.resn.padStart(5, ' ') + atom.chain.padStart(2, ' ')
+                    bSheetEnd = true;
+                    if(bSheetBegin) pdbStr += atom.resn.padStart(5, ' ') + atom.chain.padStart(2, ' ')
                         + atom.resi.toString().padStart(4, ' ') + '\n';
+                    bSheetBegin = false;
                 }
             }
         }
 
         var connStr = '';
+        var struArray = Object.keys(ic.structures);
+        var bMulStruc = (struArray.length > 1) ? true : false;
+
+        var molNum = 1, prevStru = '';
+        pdbStr += '\n';
         for(var i in atomHash) {
             var atom = ic.atoms[i];
+
+            if(bMulStruc && atom.structure != prevStru) {
+                pdbStr += connStr;
+                connStr = '';
+
+                if(molNum > 1)  pdbStr += 'ENDMDL\n';
+                pdbStr += 'MODEL        ' + molNum + '\n';
+                prevStru = atom.structure;
+                ++molNum;
+            }
+
             var line = '';
 /*
  1 - 6 Record name "ATOM "
@@ -4336,6 +4378,8 @@ SHEET    1  B1 2 GLY A  35  THR A  39  0
         }
 
         pdbStr += connStr;
+
+        if(bMulStruc) pdbStr += 'ENDMDL\n';
 
         return pdbStr;
     },

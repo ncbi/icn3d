@@ -880,10 +880,20 @@ iCn3D.prototype.applyOtherOptions = function (options) { var me = this, ic = me.
 
     this.applyCenterOptions(options);
 
+    if(this.pc1) {
+        for(var i = 0, il = this.axes.length; i < il; ++i) {
+           var center = this.axes[i][0];
+           var positionX = this.axes[i][1];
+           var positionY = this.axes[i][2];
+           var positionZ = this.axes[i][3];
+
+           this.buildAxes(undefined, center, positionX, positionY, positionZ, true);
+        }
+    }
+
     switch (options.axis.toLowerCase()) {
         case 'yes':
             this.axis = true;
-
             this.buildAxes(this.maxD/2);
 
             break;
