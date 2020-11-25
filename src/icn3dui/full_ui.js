@@ -4154,6 +4154,8 @@ iCn3DUI.prototype = {
        var pdbStr = '';
        pdbStr += 'HEADER    PDB From iCn3D'.padEnd(62, ' ') + Object.keys(ic.structures)[0] + '\n';
        var title = (ic.molTitle.lendth > 50) ? ic.molTitle.substr(0,47) + '...' : ic.molTitle;
+       // remove quotes
+       if(title.indexOf('"') != -1) title = '';
        pdbStr += 'TITLE     ' + title + '\n';
 
        return pdbStr;

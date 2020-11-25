@@ -1326,8 +1326,9 @@ iCn3DUI.prototype.setMenu5_base = function() { var me = this, ic = me.icn3d; "us
           html += "</li>";
 
           html += me.getLink('mn6_symmetry', 'Symmetry (RCSB,<br>precalculated)');
-          html += me.getLink('mn6_symd', 'Symmetry (SymD,<br>Dynamic)');
         }
+
+        html += me.getLink('mn6_symd', 'Symmetry (SymD,<br>Dynamic)');
 
         html += "<li>-</li>";
     }
