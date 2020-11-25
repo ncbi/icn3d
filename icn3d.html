@@ -83,8 +83,8 @@ All "Share Link" URLs can show the original view using the archived version of i
 You can <a href="https://structure.ncbi.nlm.nih.gov/icn3d/share.html?fNpzDuUE287SBFtz8">alternate in 3D wild type and mutant of SNPs</a> by clicking the menu "Analysis > Sequences & Annotations", the tab "Details", the checkbox "SNP", and mouseover on SNPs.<br/>
 <br/>
 
-<li><b>Delphi Electrostatic Potential</b>:
-    You can view the <a href="https://structure.ncbi.nlm.nih.gov/icn3d/share.html?31DFceJiYw7SfStQA">Delphi Electrostatic Potential</a> in the menu "Analysis > Delphi Potential".<br/>
+<li><b>DelPhi Electrostatic Potential</b>:
+    You can view the <a href="https://structure.ncbi.nlm.nih.gov/icn3d/share.html?31DFceJiYw7SfStQA">DelPhi Electrostatic Potential</a> in the menu "Analysis > DelPhi Potential".<br/>
 <br/>
 
 <li><b>Use iCn3D in Jupyter Notebook</b><br/>
@@ -359,7 +359,7 @@ You can color structures with SASA, or show the SASA for each residue.<br/>
 <a href="#addLabel">addLabel</a><br>
 <a href="#addLine">addLine</a><br>
 <a href="#addStabilizer">addStabilizer</a><br>
-<a href="#applyCommandAnnotationsAndCddSite">applyCommandAnnotationsAndCddSite</a><br>
+<a href="#applyCommandAnnotationsAndCddSite">applyCommandAnno...</a><br>
 <a href="#applyCommandEmmap">applyCommandEmmap</a><br>
 <a href="#applyCommandMap">applyCommandMap</a><br>
 <a href="#applySavedColor">applySavedColor</a><br>
@@ -535,7 +535,7 @@ You can color structures with SASA, or show the SASA for each residue.<br/>
 
 <div class="gallery">
 <a href="https://structure.ncbi.nlm.nih.gov/icn3d/share.html?GXrsxjtBeLWCLNkXA" target="_blank">
-<img style="height:300px" src ="https://www.ncbi.nlm.nih.gov/Structure/icn3d/gallery/6M17-LkGJv5SvRras7ZM77.png"><br>Delphi Electrostatic Potential (25 mV) of<br>2019-nCoV RBD/ACE2-B0AT1 complex (PDB 6M17)
+<img style="height:300px" src ="https://www.ncbi.nlm.nih.gov/Structure/icn3d/gallery/6M17-LkGJv5SvRras7ZM77.png"><br>DelPhi Electrostatic Potential (25 mV) of<br>2019-nCoV RBD/ACE2-B0AT1 complex (PDB 6M17)
 </a>
 </div>
 
@@ -866,6 +866,9 @@ You can color structures with SASA, or show the SASA for each residue.<br/>
 
           //Options are available at: https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d.html#DisplayOptions
           //options['proteins'] = 'sphere';
+
+          // use the FIXED name "icn3duiHash", which is used in iCn3DUI
+          window.icn3duiHash = {};
 
           var cfg = {
               divid: 'icn3dwrap',
@@ -1369,7 +1372,7 @@ In the dialog Select -&gt; Advanced, users can use simple specification to selec
 <tr><td valign='top'>d) Analysis -&gt; H-Bonds & Interactions:</td>  <td valign='top'>hbonds 3.5 | sets non-selected selected;<br>salt bridges 4 | sets non-selected selected;<br>interactions 4 | sets non-selected selected</td> <td valign='top'><a href="#showHbonds">showHbonds;showSaltbridge;pickCustomSphere</a></td></tr>
 <tr><td valign='top'>e) Analysis -&gt; Bring to Front:</td>  <td valign='top'>window ...</td> <td valign='top'>openDlg</td></tr>
 
-<tr><td colspan="3"><br>f) Analysis -&gt; Delphi Potential</td> </tr>
+<tr><td colspan="3"><br>f) Analysis -&gt; DelPhi Potential</td> </tr>
 <tr><td valign='top'><span class="indent">Local Phi/Cube File:</span></td> <td valign='top'>[no command available]</td> <td valign='top'>loadPhiFile</td></tr>
 <tr><td valign='top'><span class="indent">URL (Same Host) Phi/Cube:</span></td> <td valign='top'>set phimap cubeurl contour 1 | [url]</td> <td valign='top'>loadPhiFileUrl</td></tr>
 <tr><td valign='top'>g) Analysis -&gt; Remove Potential:</td>  <td valign='top'>setoption phimap nothing</td> <td valign='top'>setOption('phimap', 'nothing')</td></tr>
@@ -2299,7 +2302,7 @@ Update the highlight of sequences in the annotation window according to the curr
 <a href="https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.19.1.zip">icn3d-2.19.1</a> was release on September 15, 2020. Added shade to 3D display using multiple lights.
 <br><br>
 
-<a href="https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.19.0zip">icn3d-2.19.0</a> was release on August 12, 2020. Delphi potential map can be displayed for PDB structures at "Analysis > Delphi Potential". The PDB file can be loaded in the URL with "pdbid=" or at "File > Open File". The Delphi potential file can be calculated at Delphi Web Server and be exported as a Cube file. The potential file can be accessed in a URL if it is located in the same host as iCn3D.
+<a href="https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.19.0zip">icn3d-2.19.0</a> was release on August 12, 2020. DelPhi potential map can be displayed for PDB structures at "Analysis > DelPhi Potential". The PDB file can be loaded in the URL with "pdbid=" or at "File > Open File". The DelPhi potential file can be calculated at DelPhi Web Server and be exported as a Cube file. The potential file can be accessed in a URL if it is located in the same host as iCn3D.
 <br><br>
 
 <a href="https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.18.4.zip">icn3d-2.18.4</a> was release on August 10, 2020. Fixed bugs in recently modified dropdown menus.

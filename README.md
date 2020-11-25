@@ -27,8 +27,8 @@
 * <b>Alternate SNPs in 3D</b>: 
     You can [alternate in 3D wild type and mutant of SNPs](https://structure.ncbi.nlm.nih.gov/icn3d/share.html?fNpzDuUE287SBFtz8) by clicking the menu "Analysis > Sequences & Annotations", the tab "Details", the checkbox "SNP", and mouseover on SNPs.
 
-* <b>Delphi Electrostatic Potential</b>: 
-    You can view the [Delphi Electrostatic Potential](https://structure.ncbi.nlm.nih.gov/icn3d/share.html?31DFceJiYw7SfStQA) in the menu "Analysis > Delphi Potential".
+* <b>DelPhi Electrostatic Potential</b>: 
+    You can view the [DelPhi Electrostatic Potential](https://structure.ncbi.nlm.nih.gov/icn3d/share.html?31DFceJiYw7SfStQA) in the menu "Analysis > DelPhi Potential".
 
 * <b>Symmetry</b>:
     You can show [precalculated symmetry](https://structure.ncbi.nlm.nih.gov/icn3d/share.html?bGH1BfLsiGFhhTDn8), or calculate [symmetry dynamically](https://structure.ncbi.nlm.nih.gov/icn3d/share.html?6NvhQ45XrnbuXyGe6) using SymD.
