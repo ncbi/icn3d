@@ -3716,10 +3716,10 @@ iCn3DUI.prototype.setPc1Axes = function() { var me = this, ic = me.icn3d; "use s
        coordArray.push(atom.coord.clone());
    }
 
-   var basis = me.getEigenForSelection(coordArray, coordArray.length);
-   var vecX = new THREE.Vector3(basis.v1[0], basis.v1[1], basis.v1[2]);
+   var eigenRet = me.getEigenForSelection(coordArray, coordArray.length);
+   var vecX = new THREE.Vector3(eigenRet.h1[0], eigenRet.h1[1], eigenRet.h1[2]);
 
-   if(basis.k == 0 && ic.bRender) {
+   if(eigenRet.k == 0 && ic.bRender) {
        alert("Can't determine the first principal component. Please select a subset and try it again.");
        return;
    }
@@ -3728,13 +3728,12 @@ iCn3DUI.prototype.setPc1Axes = function() { var me = this, ic = me.icn3d; "use s
    var maxD = result.maxD;
    var center = result.center;
 
-   //var positionX = center.clone().add(vecX.normalize().multiplyScalar(maxD * 0.5));
-   var positionX = center.clone().add(vecX.normalize().multiplyScalar(maxD * 0.4));
-   var positionXMinus = center.clone().multiplyScalar(2).sub(positionX);
+   var positionXTmp = center.clone().add(vecX.normalize().multiplyScalar(maxD * 0.5));
+   var positionXMinusTmp = center.clone().multiplyScalar(2).sub(positionXTmp);
 
-   var linex = new THREE.Line3( positionXMinus, positionX );
+   var linex = new THREE.Line3( positionXMinusTmp, positionXTmp );
 
-   var maxLen = 0, coordY, coordYInLine;
+   var maxLenY = 0, maxLenX = 0, coordY, coordYInLine;
    prevResid = '';
    for(var serial in atomHash) {
        var atom = ic.atoms[serial];
@@ -3744,14 +3743,21 @@ iCn3DUI.prototype.setPc1Axes = function() { var me = this, ic = me.icn3d; "use s
        var posInLine = new THREE.Vector3();
        linex.closestPointToPoint ( atom.coord, false, posInLine);
 
-       var len = posInLine.distanceTo(atom.coord);
-       if(len > maxLen) {
+       var lenY = posInLine.distanceTo(atom.coord);
+       if(lenY > maxLenY) {
            coordY = atom.coord;
            coordYInLine = posInLine;
 
-           maxLen = len;
+           maxLenY = lenY;
+       }
+
+       var lenX = posInLine.distanceTo(center);
+       if(lenX > maxLenX) {
+           maxLenX = lenX;
        }
    }
+
+   var positionX = center.clone().add(vecX.normalize().multiplyScalar(maxLenX));
 
    // translate
    centerTrans = center.clone().sub(coordYInLine);
@@ -3772,15 +3778,19 @@ iCn3DUI.prototype.setPc1Axes = function() { var me = this, ic = me.icn3d; "use s
    ic.draw();
 
 /*
-   var vecY = new THREE.Vector3(basis.v2[0], basis.v2[1], basis.v2[2]);
+   var positionX = center.clone().add(vecX.normalize().multiplyScalar(maxD * 0.5));
+
+   var vecY = new THREE.Vector3(eigenRet.h2[0], eigenRet.h2[1], eigenRet.h2[2]);
    var positionY = center.clone().add(vecY.normalize().multiplyScalar(maxD * 0.3));
 
-   var vecZ = new THREE.Vector3(basis.v3[0], basis.v3[1], basis.v3[2]);
+   var vecZ = new THREE.Vector3(eigenRet.h3[0], eigenRet.h3[1], eigenRet.h3[2]);
    var positionZ = center.clone().add(vecZ.normalize().multiplyScalar(maxD * 0.3));
 
    ic.buildAxes(undefined, center, positionX, positionY, positionZ, true);
 
    var axisPos = [center, positionX, positionY, positionZ];
    ic.axes.push(axisPos);
+
+   ic.draw();
 */
 };

@@ -630,7 +630,7 @@ iCn3DUI.prototype.setMenu2b_base = function() { var me = this, ic = me.icn3d; "u
     html += "<li><span>XYZ-axes</span>";
     html += "<ul>";
     html += me.getRadio('mn6_showaxis', 'mn6_showaxisYes', 'Original');
-    html += me.getRadio('mn6_showaxis', 'mn6_showaxisSel', '1st Prin. Comp. on Sel.');
+    html += me.getRadio('mn6_showaxis', 'mn6_showaxisSel', 'Prin. Comp. on Sel.');
     html += me.getRadio('mn6_showaxis', 'mn6_showaxisNo', 'Hide', true);
     html += "</ul>";
     html += "</li>";

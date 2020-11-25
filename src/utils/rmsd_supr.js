@@ -377,11 +377,23 @@ iCn3DUI.prototype.rmsd_supr = function(co1, co2, n) { var me = this, ic = me.icn
         u[i] /= n;
     }
 
-    var basis = me.getEigenVectors(u);
-    k = basis.k;
-    h1 = basis.v1;
-    h2 = basis.v2;
-    h3 = basis.v3;
+    var eigenRet = me.getEigenVectors(u);
+    k = eigenRet.k;
+    h1 = eigenRet.h1;
+    h2 = eigenRet.h2;
+    h3 = eigenRet.h3;
+
+    k1 = eigenRet.k1;
+    k2 = eigenRet.k2;
+    k3 = eigenRet.k3;
+
+    d1 = eigenRet.d1;
+    d2 = eigenRet.d2;
+    d3 = eigenRet.d3;
+
+    flag = eigenRet.flag;
+
+    s = eigenRet.s;
 
     if (k != 1) {
         supr = 100.0;
@@ -393,23 +405,23 @@ iCn3DUI.prototype.rmsd_supr = function(co1, co2, n) { var me = this, ic = me.icn
 
     if (flag == 1) {
         // compute the k-vectors via the h-vectors
-        k1[0] = u00*h1[0] + u10*h1[1] + u20*h1[2];
-        k1[1] = u01*h1[0] + u11*h1[1] + u21*h1[2];
-        k1[2] = u02*h1[0] + u12*h1[1] + u22*h1[2];
+        k1[0] = u[0]*h1[0] + u[3]*h1[1] + u[6]*h1[2];
+        k1[1] = u[1]*h1[0] + u[4]*h1[1] + u[7]*h1[2];
+        k1[2] = u[2]*h1[0] + u[5]*h1[1] + u[8]*h1[2];
         da = Math.sqrt(d1);
         k1[0] /= da;
         k1[1] /= da;
         k1[2] /= da;
-        k2[0] = u00*h2[0] + u10*h2[1] + u20*h2[2];
-        k2[1] = u01*h2[0] + u11*h2[1] + u21*h2[2];
-        k2[2] = u02*h2[0] + u12*h2[1] + u22*h2[2];
+        k2[0] = u[0]*h2[0] + u[3]*h2[1] + u[6]*h2[2];
+        k2[1] = u[1]*h2[0] + u[4]*h2[1] + u[7]*h2[2];
+        k2[2] = u[2]*h2[0] + u[5]*h2[1] + u[8]*h2[2];
         da = Math.sqrt(d2);
         k2[0] /= da;
         k2[1] /= da;
         k2[2] /= da;
-        k3[0] = u00*h3[0] + u10*h3[1] + u20*h3[2];
-        k3[1] = u01*h3[0] + u11*h3[1] + u21*h3[2];
-        k3[2] = u02*h3[0] + u12*h3[1] + u22*h3[2];
+        k3[0] = u[0]*h3[0] + u[3]*h3[1] + u[6]*h3[2];
+        k3[1] = u[1]*h3[0] + u[4]*h3[1] + u[7]*h3[2];
+        k3[2] = u[2]*h3[0] + u[5]*h3[1] + u[8]*h3[2];
         da = Math.sqrt(d3);
         k3[0] /= da;
         k3[1] /= da;
@@ -417,23 +429,23 @@ iCn3DUI.prototype.rmsd_supr = function(co1, co2, n) { var me = this, ic = me.icn
     }
     else if (flag == 2) {
         // compute the h-vectors via the k-vectors
-        h1[0] = u00*k1[0] + u01*k1[1] + u02*k1[2];
-        h1[1] = u10*k1[0] + u11*k1[1] + u12*k1[2];
-        h1[2] = u20*k1[0] + u21*k1[1] + u22*k1[2];
+        h1[0] = u[0]*k1[0] + u[1]*k1[1] + u[2]*k1[2];
+        h1[1] = u[3]*k1[0] + u[4]*k1[1] + u[5]*k1[2];
+        h1[2] = u[6]*k1[0] + u[7]*k1[1] + u[8]*k1[2];
         da = Math.sqrt(d1);
         h1[0] /= da;
         h1[1] /= da;
         h1[2] /= da;
-        h2[0] = u00*k2[0] + u01*k2[1] + u02*k2[2];
-        h2[1] = u10*k2[0] + u11*k2[1] + u12*k2[2];
-        h2[2] = u20*k2[0] + u21*k2[1] + u22*k2[2];
+        h2[0] = u[0]*k2[0] + u[1]*k2[1] + u[2]*k2[2];
+        h2[1] = u[3]*k2[0] + u[4]*k2[1] + u[5]*k2[2];
+        h2[2] = u[6]*k2[0] + u[7]*k2[1] + u[8]*k2[2];
         da = Math.sqrt(d2);
         h2[0] /= da;
         h2[1] /= da;
         h2[2] /= da;
-        h3[0] = u00*k3[0] + u01*k3[1] + u02*k3[2];
-        h3[1] = u10*k3[0] + u11*k3[1] + u12*k3[2];
-        h3[2] = u20*k3[0] + u21*k3[1] + u22*k3[2];
+        h3[0] = u[0]*k3[0] + u[1]*k3[1] + u[2]*k3[2];
+        h3[1] = u[3]*k3[0] + u[4]*k3[1] + u[5]*k3[2];
+        h3[2] = u[6]*k3[0] + u[7]*k3[1] + u[8]*k3[2];
         da = Math.sqrt(d3);
         h3[0] /= da;
         h3[1] /= da;
@@ -480,6 +492,7 @@ iCn3DUI.prototype.rmsd_supr = function(co1, co2, n) { var me = this, ic = me.icn
     return {'rot': rot, 'trans1': xc1, 'trans2': xc2, 'rmsd': supr};
 
 }; // end rmsd_supr
+
 
 iCn3DUI.prototype.eigen_values = function(a0) { var me = this, ic = me.icn3d; "use strict";
     var v00, v01, v02, v10, v11, v12, v20, v21, v22;
@@ -785,9 +798,8 @@ iCn3DUI.prototype.getEigenForSelection = function(coord, n) { var me = this, ic 
     }
 
     var bJustPc1 = true;
-    var basis = me.getEigenVectors(u, bJustPc1);
-
-    return basis;
+    return me.getEigenVectors(u, bJustPc1);
+    //return me.getEigenVectors(u);
 };
 
 iCn3DUI.prototype.getEigenVectors = function(u, bJustPc1) { var me = this, ic = me.icn3d; "use strict";
@@ -855,7 +867,7 @@ iCn3DUI.prototype.getEigenVectors = function(u, bJustPc1) { var me = this, ic = 
     h2 = basis.v2;
     h3 = basis.v3;
 
-    if(bJustPc1) return basis;
+    if(bJustPc1) return {"k": k, "h1": h1, "h2": h2, "h3": h3, "k1": k1, "k2": k2, "k3": k3, "d1": d1, "d2": d2, "d3": d3, "flag": flag, "s": s};
 
     if (k == 1) {
         mat[0] += d1 - d2;
@@ -919,5 +931,5 @@ iCn3DUI.prototype.getEigenVectors = function(u, bJustPc1) { var me = this, ic = 
         }
     }
 
-    return basis;
+    return {"k": k, "h1": h1, "h2": h2, "h3": h3, "k1": k1, "k2": k2, "k3": k3, "d1": d1, "d2": d2, "d3": d3, "flag": flag, "s": s};
 }
