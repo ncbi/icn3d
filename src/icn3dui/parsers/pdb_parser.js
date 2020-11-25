@@ -361,9 +361,11 @@ iCn3DUI.prototype.alignCoords = function(coordsFrom, coordsTo, secondStruct, bKe
           var centerTo = ic.rmsd_supr.trans2;
           var rmsd = ic.rmsd_supr.rmsd;
 
-          me.setLogCmd("realignment RMSD: " + rmsd.toPrecision(4), false);
-          $("#" + me.pre + "realignrmsd").val(rmsd.toPrecision(4));
-          if(!me.cfg.bSidebyside) me.openDlg('dl_rmsd', 'Realignment RMSD');
+          if(rmsd) {
+              me.setLogCmd("realignment RMSD: " + rmsd.toPrecision(4), false);
+              $("#" + me.pre + "realignrmsd").val(rmsd.toPrecision(4));
+              if(!me.cfg.bSidebyside) me.openDlg('dl_rmsd', 'Realignment RMSD');
+          }
 
           for(var i = 0, il = ic.structures[secondStruct].length; i < il; ++i) {
               var chainid = ic.structures[secondStruct][i];
