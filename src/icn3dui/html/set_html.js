@@ -2697,7 +2697,7 @@ iCn3DUI.prototype.getAlignSequencesAnnotations = function (alignChainArray, bUpd
 
         var bWithCoord = (resIdFull !== '') ? true : false;
 
-        if(k == 0) {
+        if(bOnechain && k == 0) {
             var letterSpace = 10;
             var empthWidth = prevResCnt2nd * letterSpace;
             seqHtml += "<span style='width:" + empthWidth + "px'></span>";
