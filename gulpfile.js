@@ -192,6 +192,7 @@ var full_js = [
     "src/surface/setupsurface.js",
     "src/surface/ElectronMap.js",
     "src/surface/setupmap.js",
+    "src/utils/rmsd_supr.js",
     "src/icn3d/draw/drawing_full.js",
     "src/icn3d/display/display_full.js",
     "src/icn3d/other_full.js"
@@ -199,7 +200,6 @@ var full_js = [
 
 var common_uijs = [
     "src/icn3dui/common_full_simple.js",
-    "src/utils/rmsd_supr.js",
     "src/icn3dui/parsers/mmcif_mmdb_parser.js",
     "src/icn3dui/parsers/mmtf_parser.js",
     "src/icn3dui/parsers/pdb_parser.js",

@@ -209,7 +209,7 @@ iCn3DUI.prototype.execCommandsBase = function (start, end, steps, bFinalStep) { 
       else if(ic.commands[i].trim().indexOf('set delphi') == 0) {
           var strArray = ic.commands[i].split("|||");
 
-          $.when(me.applyCommandDelphi(strArray[0].trim())).then(function() {
+          $.when(me.applyCommandDelPhi(strArray[0].trim())).then(function() {
               me.execCommandsBase(i + 1, end, steps);
           });
 
@@ -1326,7 +1326,7 @@ iCn3DUI.prototype.applyCommand = function (commandStr) { var me = this, ic = me.
   }
   else if(command == 'set pc1 axis') {
     ic.pc1 = true;
-    me.setPc1Axes();
+    ic.setPc1Axes();
   }
   else if(command == 'set axis off') {
     ic.opts['axis'] = 'no';

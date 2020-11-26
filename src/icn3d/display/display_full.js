@@ -641,6 +641,12 @@ iCn3D.prototype.alternateStructures = function () { var me = this, ic = me.icn3d
     // should recalculate the potential
     //me.loadDelphiFileBase('delphi2');
 
+    // alternate the PCA axes
+    this.axes = [];
+    if(this.pc1) {
+       this.setPc1Axes();
+    }
+
     this.draw();
 
     this.bShowHighlight = true;
@@ -880,16 +886,7 @@ iCn3D.prototype.applyOtherOptions = function (options) { var me = this, ic = me.
 
     this.applyCenterOptions(options);
 
-    if(this.pc1) {
-        for(var i = 0, il = this.axes.length; i < il; ++i) {
-           var center = this.axes[i][0];
-           var positionX = this.axes[i][1];
-           var positionY = this.axes[i][2];
-           var positionZ = this.axes[i][3];
-
-           this.buildAxes(undefined, center, positionX, positionY, positionZ, true);
-        }
-    }
+    this.buildAllAxes(undefined, true);
 
     switch (options.axis.toLowerCase()) {
         case 'yes':
@@ -914,6 +911,19 @@ iCn3D.prototype.applyOtherOptions = function (options) { var me = this, ic = me.
         case 'strand':
             this.pk = 3;
             break;
+    }
+};
+
+iCn3D.prototype.buildAllAxes = function (radius, bSelection) { var me = this, ic = me.icn3d; "use strict";
+    if(this.pc1) {
+        for(var i = 0, il = this.axes.length; i < il; ++i) {
+           var center = this.axes[i][0];
+           var positionX = this.axes[i][1];
+           var positionY = this.axes[i][2];
+           var positionZ = this.axes[i][3];
+
+           this.buildAxes(radius, center, positionX, positionY, positionZ, bSelection);
+        }
     }
 };
 

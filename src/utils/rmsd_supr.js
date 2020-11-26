@@ -9,7 +9,7 @@
  */
 
 /*
-iCn3DUI.prototype.rmsd_supr = function(co1, co2, n) { var me = this, ic = me.icn3d; "use strict";
+iCn3D.prototype.getRmsdSupr = function(co1, co2, n) { var me = this, ic = me.icn3d; "use strict";
     var TINY0 = 1.0e-10;
     var supr;
     var rot = new Array(9);
@@ -301,7 +301,7 @@ iCn3DUI.prototype.rmsd_supr = function(co1, co2, n) { var me = this, ic = me.icn
 }; // end rmsd_supr
 */
 
-iCn3DUI.prototype.rmsd_supr = function(co1, co2, n) { var me = this, ic = me.icn3d; "use strict";
+iCn3D.prototype.getRmsdSupr = function(co1, co2, n) { var me = this, ic = me.icn3d; "use strict";
 //    var TINY0 = 1.0e-10;
     var supr;
     var rot = new Array(9);
@@ -494,7 +494,7 @@ iCn3DUI.prototype.rmsd_supr = function(co1, co2, n) { var me = this, ic = me.icn
 }; // end rmsd_supr
 
 
-iCn3DUI.prototype.eigen_values = function(a0) { var me = this, ic = me.icn3d; "use strict";
+iCn3D.prototype.eigen_values = function(a0) { var me = this, ic = me.icn3d; "use strict";
     var v00, v01, v02, v10, v11, v12, v20, v21, v22;
     var a, b, c, p, q, t, u, v, d1, d2, d3;
 
@@ -563,7 +563,7 @@ iCn3DUI.prototype.eigen_values = function(a0) { var me = this, ic = me.icn3d; "u
 }; // end eigen_values
 
 // Return the basis for the null space of the input matrix.
-iCn3DUI.prototype.null_basis = function(a0, v1, v2, v3, epsi) { var me = this, ic = me.icn3d; "use strict";
+iCn3D.prototype.null_basis = function(a0, v1, v2, v3, epsi) { var me = this, ic = me.icn3d; "use strict";
     var k, spec;
     var a11, a12, a13, a21, a22, a23, a31, a32, a33;
     var b22, b23, b32, b33;
@@ -753,7 +753,7 @@ iCn3DUI.prototype.null_basis = function(a0, v1, v2, v3, epsi) { var me = this, i
 }; // end null_basis
 
 
-iCn3DUI.prototype.getEigenForSelection = function(coord, n) { var me = this, ic = me.icn3d; "use strict";
+iCn3D.prototype.getEigenForSelection = function(coord, n) { var me = this, ic = me.icn3d; "use strict";
     var i;
     var cp = new THREE.Vector3();
     var ap = [];
@@ -802,7 +802,7 @@ iCn3DUI.prototype.getEigenForSelection = function(coord, n) { var me = this, ic 
     //return me.getEigenVectors(u);
 };
 
-iCn3DUI.prototype.getEigenVectors = function(u, bJustPc1) { var me = this, ic = me.icn3d; "use strict";
+iCn3D.prototype.getEigenVectors = function(u, bJustPc1) { var me = this, ic = me.icn3d; "use strict";
     var TINY0 = 1.0e-10;
     var k, flag;
     var mat = new Array(9);

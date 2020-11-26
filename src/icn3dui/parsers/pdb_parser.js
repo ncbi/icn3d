@@ -293,7 +293,7 @@ iCn3DUI.prototype.transformToOpmOriForAlign = function(pdbid, chainresiCalphaHas
       var n = (coordsFrom.length < coordsTo.length) ? coordsFrom.length : coordsTo.length;
 
       if(n >= 4) {
-          ic.rmsd_supr = me.rmsd_supr(coordsFrom, coordsTo, n);
+          ic.rmsd_supr = ic.getRmsdSupr(coordsFrom, coordsTo, n);
 
           // apply matrix for each atom
           if(ic.rmsd_supr.rot !== undefined && ic.rmsd_supr.rmsd < 0.1) {
@@ -350,7 +350,7 @@ iCn3DUI.prototype.alignCoords = function(coordsFrom, coordsTo, secondStruct, bKe
 
   if(n < 4) alert("Please select at least four residues in each structure...");
   if(n >= 4) {
-      ic.rmsd_supr = me.rmsd_supr(coordsFrom, coordsTo, n);
+      ic.rmsd_supr = ic.getRmsdSuprcp(coordsFrom, coordsTo, n);
 
       // apply matrix for each atom
       if(ic.rmsd_supr.rot !== undefined) {
