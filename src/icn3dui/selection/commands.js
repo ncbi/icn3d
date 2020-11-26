@@ -209,7 +209,7 @@ iCn3DUI.prototype.execCommandsBase = function (start, end, steps, bFinalStep) { 
       else if(ic.commands[i].trim().indexOf('set delphi') == 0) {
           var strArray = ic.commands[i].split("|||");
 
-          $.when(me.applyCommandDelPhi(strArray[0].trim())).then(function() {
+          $.when(me.applyCommandDelphi(strArray[0].trim())).then(function() {
               me.execCommandsBase(i + 1, end, steps);
           });
 
