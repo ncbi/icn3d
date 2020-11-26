@@ -1326,7 +1326,7 @@ iCn3DUI.prototype.applyCommand = function (commandStr) { var me = this, ic = me.
   }
   else if(command == 'set pc1 axis') {
     ic.pc1 = true;
-    me.setPc1Axes();
+    ic.setPc1Axes();
   }
   else if(command == 'set axis off') {
     ic.opts['axis'] = 'no';
