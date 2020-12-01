@@ -18,9 +18,9 @@ iCn3D.prototype.loadPDB = function (src, pdbid, bOpm, bVector, bAddition) { var 
         serial = 0;
     }
     else {
-        // remove structure 2
+        // remove the last structure
         if(this.alertAlt) {
-            var nStru = 2; //Object.keys(this.structures).length;
+            var nStru = this.oriNStru + 1; //Object.keys(this.structures).length;
             var  chainArray = this.structures[nStru - 1];
             for(var i = 0, il = (chainArray) ? chainArray.length : 0; i < il; ++i) {
                 for(var j in this.chains[chainArray[i]]) {
@@ -33,8 +33,11 @@ iCn3D.prototype.loadPDB = function (src, pdbid, bOpm, bVector, bAddition) { var 
 
             delete this.structures[nStru - 1];
         }
+        else {
+            this.oriNStru = Object.keys(this.structures).length;
+        }
 
-        moleculeNum = 2; //Object.keys(this.structures).length + 1;
+        moleculeNum = this.oriNStru + 1; //Object.keys(this.structures).length + 1;
         // Concatenation of two pdbs will have several atoms for the same serial
         serial = Object.keys(this.atoms).length;
     }

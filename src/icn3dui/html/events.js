@@ -998,6 +998,19 @@ iCn3DUI.prototype.allEventFunctions = function() { var me = this;
        me.setLogCmd('style chemicals nothing', true);
     });
 //    },
+
+    $("#" + me.pre + "mn3_glycansCartYes").click(function(e) { var ic = me.icn3d;
+       ic.bGlycansCartoon = true;
+       ic.draw();
+       me.setLogCmd('glycans cartoon yes', true);
+    });
+    $("#" + me.pre + "mn3_glycansCartNo").click(function(e) { var ic = me.icn3d;
+       ic.bGlycansCartoon = false;
+       ic.draw();
+       me.setLogCmd('glycans cartoon no', true);
+    });
+
+
 //    clkMn3_hydrogensYes: function() {
     $("#" + me.pre + "mn3_hydrogensYes").click(function(e) { var ic = me.icn3d;
        me.showHydrogens();
@@ -3485,6 +3498,7 @@ iCn3DUI.prototype.allEventFunctions = function() { var me = this;
 
         me.retrieveScap(snp);
         me.setLogCmd('scap 3d ' + snp, true);
+        me.setLogCmd("select displayed set", true);
     });
 
     $(document).on("click", "." + me.pre + "snpinter", function(e) { var ic = me.icn3d;
@@ -3495,6 +3509,14 @@ iCn3DUI.prototype.allEventFunctions = function() { var me = this;
         var bInteraction = true;
         me.retrieveScap(snp, bInteraction);
         me.setLogCmd('scap interaction ' + snp, true);
+
+        var idArray = snp.split('_'); //stru_chain_resi_snp
+        var select = '.' + idArray[1] + ':' + idArray[2];
+        var name = 'snp_' + idArray[1] + '_' + idArray[2];
+        me.setLogCmd("select " + select + " | name " + name, true);
+        me.setLogCmd("line graph interaction pairs | selected non-selected | hbonds,salt bridge,interactions,halogen,pi-cation,pi-stacking | false | threshold 3.8 6 4 3.8 6 5.5", true);
+        me.setLogCmd("adjust dialog dl_linegraph", true);
+        me.setLogCmd("select displayed set", true);
     });
 
     $(document).on("click", "." + me.pre + "snppdb", function(e) { var ic = me.icn3d;

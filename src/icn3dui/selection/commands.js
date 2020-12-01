@@ -2253,6 +2253,19 @@ iCn3DUI.prototype.applyCommand = function (commandStr) { var me = this, ic = me.
         ic.bDoublecolor = false;
     }
   }
+  else if(command.indexOf('adjust dialog') == 0) {
+    var id = command.substr(command.lastIndexOf(' ') + 1);
+    me.adjust2DWidth(id);
+  }
+  else if(command.indexOf('glycans cartoon') == 0) {
+    var value = command.substr(command.lastIndexOf(' ') + 1);
+    if(value == 'yes') {
+        ic.bGlycansCartoon = true;
+    }
+    else {
+        ic.bGlycansCartoon = false;
+    }
+  }
 
 // special, select ==========
 

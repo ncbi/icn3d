@@ -52,7 +52,7 @@ $.ajaxTransport("+binary", function (options, originalOptions, jqXHR) {
 });
 
 var iCn3DUI = function(cfg) { var me = this, ic = me.icn3d; "use strict";
-    this.REVISION = '2.22.0';
+    this.REVISION = '2.22.1';
     me.bFullUi = true;
     me.cfg = cfg;
     me.divid = me.cfg.divid;
@@ -4153,7 +4153,7 @@ iCn3DUI.prototype = {
     getPDBHeader: function () {  var me = this, ic = me.icn3d; "use strict";
        var pdbStr = '';
        pdbStr += 'HEADER    PDB From iCn3D'.padEnd(62, ' ') + Object.keys(ic.structures)[0] + '\n';
-       var title = (ic.molTitle.lendth > 50) ? ic.molTitle.substr(0,47) + '...' : ic.molTitle;
+       var title = (ic.molTitle.length > 50) ? ic.molTitle.substr(0,47) + '...' : ic.molTitle;
        // remove quotes
        if(title.indexOf('"') != -1) title = '';
        pdbStr += 'TITLE     ' + title + '\n';
