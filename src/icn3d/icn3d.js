@@ -991,8 +991,114 @@ iCn3D.prototype = {
         CM: 1.69,
     },
 
+    //glycanArray: ['A2G', 'AFL', 'AGC', 'ALT', 'ALL', 'ARB', 'BGC', 'BMA', 'BOG', 'DEO', 'FCA', 'FCB', 'FMF', 'FRU', 'FUC', 'FUL', 'G4S', 'GAL', 'GLA', 'GLB', 'GLC', 'GLS', 'GSA', 'GUL', 'IDO', 'LAK', 'LAT', 'LYF', 'MAF', 'MAL', 'MAN', 'NAG', 'NAN', 'NDG', 'NGA', 'RHM', 'RIB', 'SIA', 'SLB', 'TAL', 'THP', 'XYL', 'XYF'],
+
     //rasmol-like element colors
     setColor: function() {
+        // https://pubs.acs.org/doi/pdf/10.1021/acs.jproteome.8b00473
+        //this.glycanColors = [this.thr(0x008B8B), this.thr(0x6B8E23), this.thr(0x90EE90), this.thr(0xD2691E), this.thr(0xF4A460), this.thr(0xBC8F8F), this.thr(0x1E90FF), this.thr(0x87CEEB)];
+        this.glycanHash = {
+            'GLC': {'c': '1E90FF', 's': 'sphere'},
+            'BGC': {'c': '1E90FF', 's': 'sphere'},
+
+            'NAG': {'c': '1E90FF', 's': 'cube'},
+            'NDG': {'c': '1E90FF', 's': 'cube'},
+            'GCS': {'c': '1E90FF', 's': 'cube'},
+            'PA1': {'c': '1E90FF', 's': 'cube'},
+
+            'GCU': {'c': '1E90FF', 's': 'cone'},
+            'BDP': {'c': '1E90FF', 's': 'cone'},
+            'G6D': {'c': '1E90FF', 's': 'cone'},
+
+            'DDA': {'c': '1E90FF', 's': 'cylinder'},
+            'B6D': {'c': '1E90FF', 's': 'cylinder'},
+            'XXM': {'c': '1E90FF', 's': 'cylinder'},
+
+
+            'MAN': {'c': '00FF00', 's': 'sphere'},
+            'BMA': {'c': '00FF00', 's': 'sphere'},
+
+            'BM3': {'c': '00FF00', 's': 'cube'},
+            '95Z': {'c': '00FF00', 's': 'cube'},
+
+            'MAV': {'c': '00FF00', 's': 'cone'},
+            'BEM': {'c': '00FF00', 's': 'cone'},
+            'RAM': {'c': '00FF00', 's': 'cone'},
+            'RM4': {'c': '00FF00', 's': 'cone'},
+
+            'TYV': {'c': '00FF00', 's': 'cylinder'},
+            'ARA': {'c': '00FF00', 's': 'cylinder'},
+            'ARB': {'c': '00FF00', 's': 'cylinder'},
+            'KDN': {'c': '00FF00', 's': 'cylinder'},
+            'KDM': {'c': '00FF00', 's': 'cylinder'},
+            '6PZ': {'c': '00FF00', 's': 'cylinder'},
+            'GMH': {'c': '00FF00', 's': 'cylinder'},
+            'BDF': {'c': '00FF00', 's': 'cylinder'},
+
+
+            'GAL': {'c': 'FFFF00', 's': 'sphere'},
+            'GLA': {'c': 'FFFF00', 's': 'sphere'},
+
+            'NGA': {'c': 'FFFF00', 's': 'cube'},
+            'A2G': {'c': 'FFFF00', 's': 'cube'},
+            'X6X': {'c': 'FFFF00', 's': 'cube'},
+            '1GN': {'c': 'FFFF00', 's': 'cube'},
+
+            'ADA': {'c': 'FFFF00', 's': 'cone'},
+            'GTR': {'c': 'FFFF00', 's': 'cone'},
+
+            'LDY': {'c': 'FFFF00', 's': 'cylinder'},
+            'KDO': {'c': 'FFFF00', 's': 'cylinder'},
+            'T6T': {'c': 'FFFF00', 's': 'cylinder'},
+
+
+            'GUP': {'c': 'A52A2A', 's': 'sphere'},
+            'GL0': {'c': 'A52A2A', 's': 'sphere'},
+
+            'LGU': {'c': 'A52A2A', 's': 'cone'},
+
+            'ABE': {'c': 'A52A2A', 's': 'cylinder'},
+            'XYS': {'c': 'A52A2A', 's': 'cylinder'},
+            'XYP': {'c': 'A52A2A', 's': 'cylinder'},
+            'SOE': {'c': 'A52A2A', 's': 'cylinder'},
+
+
+            'PZU': {'c': 'FF69B4', 's': 'cylinder'},
+            'RIP': {'c': 'FF69B4', 's': 'cylinder'},
+            '0MK': {'c': 'FF69B4', 's': 'cylinder'},
+
+
+            'ALL': {'c': '8A2BE2', 's': 'sphere'},
+            'AFD': {'c': '8A2BE2', 's': 'sphere'},
+
+            'NAA': {'c': '8A2BE2', 's': 'cube'},
+
+            'SIA': {'c': '8A2BE2', 's': 'cylinder'},
+            'SIB': {'c': '8A2BE2', 's': 'cylinder'},
+            'AMU': {'c': '8A2BE2', 's': 'cylinder'},
+
+
+            'X0X': {'c': '1E90FF', 's': 'cone'},
+            'X1X': {'c': '1E90FF', 's': 'cone'},
+
+            'NGC': {'c': '1E90FF', 's': 'cylinder'},
+            'NGE': {'c': '1E90FF', 's': 'cylinder'},
+
+
+            '4N2': {'c': 'A0522D', 's': 'sphere'},
+
+            'HSQ': {'c': 'A0522D', 's': 'cube'},
+
+            'IDR': {'c': 'A0522D', 's': 'cone'},
+
+            'MUR': {'c': 'A0522D', 's': 'cylinder'},
+
+
+            'FUC': {'c': 'FF0000', 's': 'cone'},
+            'FUL': {'c': 'FF0000', 's': 'cone'}
+        };
+
+
         this.atomColors = {
         'H': this.thr(0xFFFFFF),
         'He': this.thr(0xFFC0CB),
@@ -1382,6 +1488,8 @@ iCn3D.prototype = {
         this.commands = [];
 
         this.axes = [];
+
+        this.bGlycansCartoon = true;
     },
 
     init: function () {

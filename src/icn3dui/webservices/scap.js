@@ -21,6 +21,17 @@ iCn3DUI.prototype.applyCommandScap = function (command) { var me = this, ic = me
   return me.deferredScap.promise();
 };
 
+iCn3DUI.prototype.adjust2DWidth = function (id) { var me = this, ic = me.icn3d; "use strict";
+    var halfWidth = 125;
+    var id = me.pre + id;
+    var height = $("#" + me.pre + 'dl_selectannotations').dialog( "option", "height");
+    $("#" + id).dialog( "option", "width", halfWidth * 2 );
+    $("#" + id).dialog( "option", "height", height);
+    var position = { my: "left-" + halfWidth + " top+" + me.MENU_HEIGHT, at: "right top", of: "#" + me.pre + "viewer", collision: "none" };
+
+     $("#" + id).dialog( "option", "position", position );
+};
+
 iCn3DUI.prototype.retrieveScap = function (snp, bInteraction, bPdb) { var me = this, ic = me.icn3d; "use strict";
     var idArray = snp.split('_'); //stru_chain_resi_snp
 
@@ -117,23 +128,17 @@ console.log("free energy: " + energy + " kcal/mol");
               me.clearInteractions();
 
               if(bInteraction) {
-                var halfWidth = 125;
-                me.setLogCmd("select " + select + " | name " + name, true);
+                //me.setLogCmd("select " + select + " | name " + name, true);
 
                 var type = 'linegraph';
                 me.viewInteractionPairs(['selected'], ['non-selected'], false, type, true, true, true, true, true, true);
-                me.setLogCmd("line graph interaction pairs | selected non-selected | hbonds,salt bridge,interactions,halogen,pi-cation,pi-stacking | false | threshold 3.8 6 4 3.8 6 5.5", true);
+                //me.setLogCmd("line graph interaction pairs | selected non-selected | hbonds,salt bridge,interactions,halogen,pi-cation,pi-stacking | false | threshold 3.8 6 4 3.8 6 5.5", true);
 
-                var id = me.pre + 'dl_linegraph';
-                var height = $("#" + me.pre + 'dl_selectannotations').dialog( "option", "height");
-                $("#" + id).dialog( "option", "width", halfWidth * 2 );
-                $("#" + id).dialog( "option", "height", height);
-                var position = { my: "left-" + halfWidth + " top+" + me.MENU_HEIGHT, at: "right top", of: "#" + me.pre + "viewer", collision: "none" };
-                $("#" + id).dialog( "option", "position", position );
+                me.adjust2DWidth('dl_linegraph');
               }
 
               ic.hAtoms = ic.dAtoms;
-              me.setLogCmd("select displayed set", true);
+              //me.setLogCmd("select displayed set", true);
 
               ic.draw();
 

@@ -1,4 +1,6 @@
 ## Change Log
+[icn3d-2.22.1](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.22.1.zip) was release on December 1, 2020. Added cartoons for glycan display by default. The cartoons can be toggled in the menu "Style > Glycans". 
+
 [icn3d-2.22.0](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.22.0.zip) was release on November 24, 2020. Users now can alternate  wild type and mutant, and their interaction networks in 3D for each SNP/ClinVar in the "Sequences & Annotation" window. 
 
 [icn3d-2.21.0](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.21.0.zip) was release on November 17, 2020. Symmetry can be calculated dynamically for selected residues using SymD. The menu is at "Analysis > Symmetry (SymD, dynamic)". Speeded up the loading of VAST+ structure alignment.
@@ -11,7 +13,7 @@
 
 [icn3d-2.19.1](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.19.1.zip) was release on September 15, 2020. Added shade to 3D display using multiple lights.
 
-[icn3d-2.19.0](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.19.0.zip) was release on August 12, 2020. Delphi potential map can be displayed for PDB structures at "Analysis > Delphi Potential". The PDB file can be loaded in the URL with "pdbid=" or at "File > Open File". The Delphi potential file can be calculated at Delphi Web Server and be exported as a Cube file. The potential file can be accessed in a URL if it is located in the same host as iCn3D.
+[icn3d-2.19.0](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.19.0.zip) was release on August 12, 2020. DelPhi potential map can be displayed for PDB structures at "Analysis > DelPhi Potential". The PDB file can be loaded in the URL with "pdbid=" or at "File > Open File". The DelPhi potential file can be calculated at DelPhi Web Server and be exported as a Cube file. The potential file can be accessed in a URL if it is located in the same host as iCn3D.
 
 [icn3d-2.18.4](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.18.4.zip) was release on August 10, 2020. Fixed bugs in recently modified dropdown menus.
 

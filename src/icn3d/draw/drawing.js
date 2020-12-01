@@ -16,7 +16,7 @@ iCn3D.prototype.createSphere = function (atom, defaultRadius, forceDefault, scal
     this.createSphereBase(atom.coord, atom.color, radius, scale, bHighlight);
 };
 
-iCn3D.prototype.createSphereBase = function (pos, color, radius, scale, bHighlight) { var me = this, ic = me.icn3d; "use strict";
+iCn3D.prototype.createSphereBase = function (pos, color, radius, scale, bHighlight, bGlycan) { var me = this, ic = me.icn3d; "use strict";
     var mesh;
 
     //if(defaultRadius === undefined) defaultRadius = 0.8;
@@ -50,8 +50,13 @@ iCn3D.prototype.createSphereBase = function (pos, color, radius, scale, bHighlig
       }
 
       //var color = atom.color;
+      if(bGlycan) {
+          mesh = new THREE.Mesh(this.sphereGeometry, new THREE.MeshPhongMaterial({ transparent: true, opacity: 0.5, specular: this.frac, shininess: 30, emissive: 0x000000, color: color }));
+      }
+      else {
+          mesh = new THREE.Mesh(this.sphereGeometry, new THREE.MeshPhongMaterial({ specular: this.frac, shininess: 30, emissive: 0x000000, color: color }));
+      }
 
-      mesh = new THREE.Mesh(this.sphereGeometry, new THREE.MeshPhongMaterial({ specular: this.frac, shininess: 30, emissive: 0x000000, color: color }));
       mesh.scale.x = mesh.scale.y = mesh.scale.z = radius * (scale ? scale : 1);
       mesh.position.copy(pos);
 
@@ -2590,11 +2595,14 @@ iCn3D.prototype.createBox = function (atom, defaultRadius, forceDefault, scale, 
     this.createBox_base(atom.coord, radius, color, bHighlight);
 };
 
-iCn3D.prototype.createBox_base = function (coord, radius, color, bHighlight, bOther) { var me = this, ic = me.icn3d; "use strict";
+iCn3D.prototype.createBox_base = function (coord, radius, color, bHighlight, bOther, bGlycan) { var me = this, ic = me.icn3d; "use strict";
     var mesh;
 
     if(bHighlight) {
           mesh = new THREE.Mesh(this.boxGeometry, new THREE.MeshPhongMaterial({ transparent: true, opacity: 0.5, specular: this.frac, shininess: 30, emissive: 0x000000, color: color }));
+    }
+    else if(bGlycan) {
+          mesh = new THREE.Mesh(this.boxGeometry, new THREE.MeshPhongMaterial({ transparent: true, opacity: 0.3, specular: this.frac, shininess: 30, emissive: 0x000000, color: color }));
     }
     else {
           mesh = new THREE.Mesh(this.boxGeometry, new THREE.MeshPhongMaterial({ specular: this.frac, shininess: 30, emissive: 0x000000, color: color }));

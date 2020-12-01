@@ -761,6 +761,14 @@ iCn3DUI.prototype.setMenu3_base = function() { var me = this, ic = me.icn3d; "us
         html += "</ul>";
         html += "</li>";
     }
+    else {
+        html += "<li><span>Glycans</span>";
+        html += "<ul>";
+        html += me.getRadio('mn3_glycansCart', 'mn3_glycansCartYes', 'Add Cartoon', true);
+        html += me.getRadio('mn3_glycansCart', 'mn3_glycansCartNo', 'Remove Cartoon');
+        html += "</ul>";
+        html += "</li>";
+    }
 
     html += "<li><span>Ions</span>";
     html += "<ul>";
@@ -1310,12 +1318,13 @@ iCn3DUI.prototype.setMenu5_base = function() { var me = this, ic = me.icn3d; "us
         html += "<li><span>Cross-Linkages</span>";
         html += "<ul>";
         html += me.getRadio('mn6_clbonds', 'mn6_clbondsYes', 'Show', true);
-        html += me.getRadio('mn6_ssbonds', 'mn6_clbondsExport', 'Export Pairs');
+        html += me.getRadio('mn6_clbonds', 'mn6_clbondsExport', 'Export Pairs');
         html += me.getRadio('mn6_clbonds', 'mn6_clbondsNo', 'Hide');
         html += "</ul>";
         html += "</li>";
 
-        if(me.cfg.mmtfid !== undefined || me.cfg.pdbid !== undefined || me.cfg.opmid !== undefined || me.cfg.mmcifid !== undefined || me.cfg.mmdbid !== undefined || me.cfg.gi !== undefined || me.cfg.blast_rep_id !== undefined) {
+        var bOnePdb = me.cfg.mmtfid !== undefined || me.cfg.pdbid !== undefined || me.cfg.opmid !== undefined || me.cfg.mmcifid !== undefined || me.cfg.mmdbid !== undefined || me.cfg.gi !== undefined || me.cfg.blast_rep_id !== undefined;
+        if(bOnePdb) {
           html += "<li id='" + me.pre + "assemblyWrapper'><span>Assembly</span>";
           html += "<ul>";
 
@@ -1325,10 +1334,14 @@ iCn3DUI.prototype.setMenu5_base = function() { var me = this, ic = me.icn3d; "us
           html += "</ul>";
           html += "</li>";
 
-          html += me.getLink('mn6_symmetry', 'Symmetry (RCSB,<br>precalculated)');
         }
 
-        html += me.getLink('mn6_symd', 'Symmetry (SymD,<br>Dynamic)');
+        html += "<li><span>Symmetry</span>";
+        html += "<ul>";
+        if(bOnePdb) html += me.getLink('mn6_symmetry', 'from RCSB (precalculated)');
+        html += me.getLink('mn6_symd', 'from SymD (Dynamic)');
+        html += "</ul>";
+        html += "</li>";
 
         html += "<li>-</li>";
     }
