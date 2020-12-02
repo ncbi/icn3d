@@ -60,7 +60,7 @@ iCn3D.prototype.createSphereBase = function (pos, color, radius, scale, bHighlig
       mesh.scale.x = mesh.scale.y = mesh.scale.z = radius * (scale ? scale : 1);
       mesh.position.copy(pos);
 
-      if(this.bImpo) {
+      if(this.bImpo && !bGlycan) {
           this.posArraySphere.push(pos.x);
           this.posArraySphere.push(pos.y);
           this.posArraySphere.push(pos.z);
@@ -98,7 +98,7 @@ iCn3D.prototype.createSphereBase = function (pos, color, radius, scale, bHighlig
 };
 
 // modified from iview (http://istar.cse.cuhk.edu.hk/iview/)
-iCn3D.prototype.createCylinder = function (p0, p1, radius, color, bHighlight, color2, bPicking) { var me = this, ic = me.icn3d; "use strict";
+iCn3D.prototype.createCylinder = function (p0, p1, radius, color, bHighlight, color2, bPicking, bGlycan) { var me = this, ic = me.icn3d; "use strict";
     var mesh;
     if(bHighlight === 1) {
         mesh = new THREE.Mesh(this.cylinderGeometryOutline, this.matShader);
@@ -122,6 +122,9 @@ iCn3D.prototype.createCylinder = function (p0, p1, radius, color, bHighlight, co
 
           radius *= 1.5;
         }
+        else if(bGlycan) {
+          mesh = new THREE.Mesh(this.cylinderGeometry, new THREE.MeshPhongMaterial({ transparent: true, opacity: 0.5, specular: this.frac, shininess: 30, emissive: 0x000000, color: color }));
+        }
         else {
           mesh = new THREE.Mesh(this.cylinderGeometry, new THREE.MeshPhongMaterial({ specular: this.frac, shininess: 30, emissive: 0x000000, color: color }));
         }
@@ -134,7 +137,7 @@ iCn3D.prototype.createCylinder = function (p0, p1, radius, color, bHighlight, co
 
         mesh.matrix.multiply(new THREE.Matrix4().makeScale(radius, radius, p0.distanceTo(p1))).multiply(new THREE.Matrix4().makeRotationX(Math.PI * 0.5));
 
-        if(this.bImpo) {
+        if(this.bImpo && !bGlycan) {
           this.posArray.push(p0.x);
           this.posArray.push(p0.y);
           this.posArray.push(p0.z);
@@ -2598,11 +2601,8 @@ iCn3D.prototype.createBox = function (atom, defaultRadius, forceDefault, scale, 
 iCn3D.prototype.createBox_base = function (coord, radius, color, bHighlight, bOther, bGlycan) { var me = this, ic = me.icn3d; "use strict";
     var mesh;
 
-    if(bHighlight) {
+    if(bHighlight || bGlycan) {
           mesh = new THREE.Mesh(this.boxGeometry, new THREE.MeshPhongMaterial({ transparent: true, opacity: 0.5, specular: this.frac, shininess: 30, emissive: 0x000000, color: color }));
-    }
-    else if(bGlycan) {
-          mesh = new THREE.Mesh(this.boxGeometry, new THREE.MeshPhongMaterial({ transparent: true, opacity: 0.3, specular: this.frac, shininess: 30, emissive: 0x000000, color: color }));
     }
     else {
           mesh = new THREE.Mesh(this.boxGeometry, new THREE.MeshPhongMaterial({ specular: this.frac, shininess: 30, emissive: 0x000000, color: color }));
