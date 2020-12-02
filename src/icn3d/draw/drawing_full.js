@@ -504,11 +504,18 @@ iCn3D.prototype.buildAxes = function (radius, center, positionX, positionY, posi
     this.mdl.add( arrowZ );
 };
 
-iCn3D.prototype.createArrow = function(dir, origin, axisLen, color, headLength, headWidth) {  var me = this, ic = me.icn3d; "use strict";
+iCn3D.prototype.createArrow = function(dir, origin, axisLen, color, headLength, headWidth, bGlycan) {  var me = this, ic = me.icn3d; "use strict";
     var coneGeometry = new THREE.CylinderBufferGeometry( 0, 0.5, 1, 32, 1 );
     //coneGeometry.translate( 0, - 0.5, 0 );
     coneGeometry.translate( 0, 0.5, 0 );
-    var material = new THREE.MeshPhongMaterial({ specular: this.frac, shininess: 30, emissive: 0x000000, side: THREE.DoubleSide, color: color});
+    var material;
+    if(bGlycan) {
+        material = new THREE.MeshPhongMaterial({ transparent: true, opacity: 0.5, specular: this.frac, shininess: 30, emissive: 0x000000, color: color });
+
+    }
+    else {
+        material = new THREE.MeshPhongMaterial({ specular: this.frac, shininess: 30, emissive: 0x000000, side: THREE.DoubleSide, color: color});
+    }
 
     var cone = new THREE.Mesh( coneGeometry, material);
 //    cone.matrixAutoUpdate = false;

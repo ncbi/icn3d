@@ -416,7 +416,9 @@ iCn3D.prototype = {
 
             else if(e.keyCode === 65 ) { // A, alternate
                if(Object.keys(me.structures).length > 1) {
+                   me.bAlternate = true;
                    me.alternateStructures();
+                   me.bAlternate = false;
                }
             }
 
