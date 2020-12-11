@@ -928,7 +928,8 @@ iCn3D.prototype.applyOtherOptions = function (options) { var me = this, ic = me.
 
     if(this.symdHash !== undefined && this.symdtitle !== undefined) {
         var bSymd = true;
-        this.applySymmetry(this.symdtitle, bSymd);
+        //this.applySymmetry(this.symdtitle, bSymd);
+        this.applySymd();
     }
 
     // other meshes

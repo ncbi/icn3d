@@ -245,6 +245,12 @@ iCn3D.prototype = {
         return new THREE.Color(color);
     },
 
+    alternateWrapper: function() { var me = this;
+       me.bAlternate = true;
+       me.alternateStructures();
+       me.bAlternate = false;
+    },
+
     setControl: function() { var me = this;
         // adjust the size
         this.WIDTH = this.container.width(), this.HEIGHT = this.container.height();
@@ -416,9 +422,7 @@ iCn3D.prototype = {
 
             else if(e.keyCode === 65 ) { // A, alternate
                if(Object.keys(me.structures).length > 1) {
-                   me.bAlternate = true;
-                   me.alternateStructures();
-                   me.bAlternate = false;
+                   me.alternateWrapper();
                }
             }
 

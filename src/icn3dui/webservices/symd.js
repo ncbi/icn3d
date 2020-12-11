@@ -76,7 +76,8 @@ iCn3DUI.prototype.retrieveSymd = function () { var me = this, ic = me.icn3d; "us
                   centerTo = ic.rmsd_supr.trans2;
               }
 
-              ic.symdHash = {};
+              //ic.symdHash = {};
+              if(ic.symdHash === undefined) ic.symdHash = {};
               var order;
               for(var i = 0, il = symmetryArray.length; i < il; ++i) {
                   if(symmetryArray[i].symbol == 'C1') continue;

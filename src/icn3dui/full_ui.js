@@ -255,6 +255,7 @@ iCn3DUI.prototype = {
     // modify iCn3D function
     modifyIcn3d: function() { var  me = this; "use strict";
         me.modifyIcn3dshowPicking();
+        me.modifyAlternateWrapper();
     },
     switchHighlightLevelUp: function() { var me = this, ic = me.icn3d; "use strict";
           if(!ic.bShift && !ic.bCtrl) ic.removeHlObjects();
@@ -438,6 +439,20 @@ iCn3DUI.prototype = {
         var html = "";
         return html;
     },
+    modifyAlternateWrapper: function() { var me = this; "use strict";
+       iCn3D.prototype.alternateWrapper = function() {
+           me = me.setIcn3dui(this.id);
+
+           this.bAlternate = true;
+           this.alternateStructures();
+           this.bAlternate = false;
+
+           var structures = Object.keys(this.structures);
+           me.setLogCmd("select $" + structures[this.ALTERNATE_STRUCTURE] + " | name " + structures[this.ALTERNATE_STRUCTURE], true);
+           me.setLogCmd("show selection", true);
+       };
+    },
+
     modifyIcn3dshowPicking: function() { var  me = this; //"use strict";
         iCn3D.prototype.rayCaster = function(e, bClick) {
             me = me.setIcn3dui(this.id);

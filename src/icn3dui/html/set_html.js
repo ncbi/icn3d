@@ -1340,6 +1340,7 @@ iCn3DUI.prototype.setMenu5_base = function() { var me = this, ic = me.icn3d; "us
         html += "<ul>";
         if(bOnePdb) html += me.getLink('mn6_symmetry', 'from RCSB (precalculated)');
         html += me.getLink('mn6_symd', 'from SymD (Dynamic)');
+        html += me.getLink('mn6_clear_sym', 'Clear SymD Symmetry');
         html += "</ul>";
         html += "</li>";
 
