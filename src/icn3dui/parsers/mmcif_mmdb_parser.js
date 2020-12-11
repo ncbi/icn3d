@@ -913,7 +913,7 @@ iCn3DUI.prototype.loadAtomDataIn = function (data, id, type, seqalign, alignType
     var structureNum = '', chainNum = '', residueNum = '';
     var currContinueSeq = '';
     var oldResi, prevOldResi = -999;
-    var prevResi = 0; // continuous from 1 for each chain
+    var prevResi = 0, prevResn = ''; // continuous from 1 for each chain
     var missingResIndex = 0;
     var bChainSeqSet = true;
     var bAddedNewSeq = false;
@@ -971,10 +971,12 @@ iCn3DUI.prototype.loadAtomDataIn = function (data, id, type, seqalign, alignType
               else {
                   var miscName = 'Misc';
 
-                  ++miscCnt;
-                  if(chainid2kind[chainNum] === 'solvent' || atm.resn === 'HOH') {
-                      atm.resi = miscCnt;
+                  if(atm.resn != prevResn || chainid2kind[chainNum] === 'solvent' || atm.resn === 'HOH' || atm.name == atm.elem) {
+                    ++miscCnt;
                   }
+                  //if(chainid2kind[chainNum] === 'solvent' || atm.resn === 'HOH') {
+                      atm.resi = miscCnt;
+                  //}
 
                   //if all are defined in the chain section, no "Misc" should appear
                   atm.chain = miscName;
@@ -992,10 +994,13 @@ iCn3DUI.prototype.loadAtomDataIn = function (data, id, type, seqalign, alignType
               }
               else {
                   var miscName = 'Misc';
-                  ++miscCnt;
-                  if(chainid2kind[chainNum] === 'solvent' || atm.resn === 'HOH') {
-                      atm.resi = miscCnt;
+
+                  if(atm.resn != prevResn || chainid2kind[chainNum] === 'solvent' || atm.resn === 'HOH' || atm.name == atm.elem) {
+                    ++miscCnt;
                   }
+                  //if(chainid2kind[chainNum] === 'solvent' || atm.resn === 'HOH') {
+                      atm.resi = miscCnt;
+                  //}
 
                   // chemicals do not have assigned chains.
                   atm.chain = miscName;
@@ -1253,6 +1258,7 @@ iCn3DUI.prototype.loadAtomDataIn = function (data, id, type, seqalign, alignType
         }
 
         prevResi = atm.resi;
+        prevResn = atm.resn;
 
         prevStructureNum = structureNum;
         prevChainNum = chainNum;

@@ -1685,6 +1685,9 @@ iCn3DUI.prototype.applyCommand = function (commandStr) { var me = this, ic = me.
   else if(command == 'setoption phisurface nothing') {
      me.setOption('phisurface', 'nothing');
   }
+  else if(command == 'clear symd symmetry') {
+     ic.symdHash = {};
+  }
 
 // start with =================
   else if(commandOri.indexOf('define helix sets') == 0) {

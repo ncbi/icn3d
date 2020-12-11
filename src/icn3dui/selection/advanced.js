@@ -192,7 +192,9 @@ iCn3DUI.prototype.selectBySpec = function (select, commandname, commanddesc, bDi
            molecule_chain = tmpArray[j];
 
            molecule = molecule_chain.substr(0, molecule_chain.indexOf('_'));
-           if(moleculeArray.toString().toLowerCase().indexOf(molecule.toLowerCase()) !== -1) {
+           //if(moleculeArray.toString().toLowerCase().indexOf(molecule.toLowerCase()) !== -1) {
+           var moleculeArrayLower = moleculeArray.map(function(x){ return x.toLowerCase(); });
+           if(moleculeArrayLower.indexOf(molecule.toLowerCase()) !== -1 ) {
              Molecule_ChainArray.push(molecule_chain);
            }
          }

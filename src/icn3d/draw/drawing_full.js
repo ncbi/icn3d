@@ -615,8 +615,16 @@ iCn3D.prototype.createBrick = function (p0, p1, radius, color) { var me = this, 
     me.mdl.add(mesh);
 };
 
+iCn3D.prototype.applySymd = function () { var me = this, ic = me.icn3d; "use strict";
+    for(var title in this.symdHash) {
+        this.applySymmetry(title, true);
+    }
+};
+
 iCn3D.prototype.applySymmetry = function (title, bSymd) { var me = this, ic = me.icn3d; "use strict";
     var dataArray = (bSymd) ? this.symdHash[title] : this.symmetryHash[title]; // start_end_colorAxis_colorPolygon_order_chain
+    if(!dataArray) dataArray = [];
+
     var symmetryType = title.substr(0, 1);
     var nSide = parseInt(title.substring(1, title.indexOf(' ')));
 

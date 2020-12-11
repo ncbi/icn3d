@@ -111,11 +111,13 @@ iCn3DUI.prototype.allEventFunctions = function() { var me = this;
 //    },
 //    clickAlternate: function() {
     $("#" + me.pre + "alternate").add("#" + me.pre + "mn2_alternate").add("#" + me.pre + "alternate2").click(function(e) { var ic = me.icn3d;
-       //me.setLogCmd("alternate structures", false);
        ic.bAlternate = true;
        ic.alternateStructures();
        ic.bAlternate = false;
-       me.setLogCmd("alternate structures", false);
+       //me.setLogCmd("alternate structures", false);
+       var structures = Object.keys(me.structures);
+       me.setLogCmd("select $" + structures[ic.ALTERNATE_STRUCTURE] + " | name " + structures[ic.ALTERNATE_STRUCTURE], true);
+       me.setLogCmd("show selection", true);
     });
 //    },
 //    clickRealign: function() {
@@ -1786,6 +1788,11 @@ iCn3DUI.prototype.allEventFunctions = function() { var me = this;
        //var title = $("#" + me.pre + "selectSymd" ).val();
        //me.setLogCmd('symd symmetry ' + title, true);
        me.setLogCmd('symd symmetry', true);
+    });
+    $("#" + me.pre + "mn6_clear_sym").click(function(e) { var ic = me.icn3d;
+       ic.symdHash = {};
+       ic.draw();
+       me.setLogCmd('clear symd symmetry', true);
     });
 
 //    },

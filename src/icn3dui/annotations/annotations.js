@@ -505,7 +505,7 @@ iCn3DUI.prototype.getAnnotationData = function() { var me = this, ic = me.icn3d;
           dataType: 'jsonp', //'text',
           cache: true,
           tryCount : 0,
-          retryLimit : 1,
+          retryLimit : 0, //1,
           success: function(data) {
             me.chainid_seq = data;
             me.processSeqData(me.chainid_seq);
@@ -724,6 +724,7 @@ iCn3DUI.prototype.showSeq = function(chnid, chnidBase, type, queryTitle, compTit
         html3 += htmlTmp + '<br>';
         html += htmlTmp + '<span class="icn3d-seqLine">';
         var helixCnt = 0, sheetCnt = 0;
+        var savedSsName = '';
         for(var i = 0, il = giSeq.length; i < il; ++i) {
           html += me.insertGap(chnid, i, '-');
           var currResi;
@@ -735,24 +736,47 @@ iCn3DUI.prototype.showSeq = function(chnid, chnidBase, type, queryTitle, compTit
           }
           html += '<span>'
           if( currResi % 10 === 0) {
-            html += currResi + ' ';
+            //html += currResi + ' ';
+            html += currResi;
           }
+
           // name of secondary structures
           var residueid = chnid + '_' + currResi;
+          // do not overlap residue number with ss label
+          var bshowSsName = (currResi % 10 != 0 && currResi % 10 != 1 && currResi % 10 != 9) ? true : false;
           if( ic.residues.hasOwnProperty(residueid) ) {
             var atom = ic.getFirstCalphaAtomObj(ic.residues[residueid]);
             if(ic.secondaries[residueid] == 'H' && atom.ssbegin) {
                 ++helixCnt;
-                html += '<span class="icn3d-helix-color">H' + helixCnt + '</span>';
+
+                savedSsName = '<span class="icn3d-helix-color">H' + helixCnt + '</span>';
+
+                if(bshowSsName) {
+                    html += savedSsName;
+                    savedSsName = '';
+                }
             }
             else if(ic.secondaries[residueid] == 'E' && atom.ssbegin) {
                 ++sheetCnt;
                 if(ic.sheetcolor == 'green') {
-                    html += '<span class="icn3d-sheet-color">S' + sheetCnt + '</span>';
+                    savedSsName = '<span class="icn3d-sheet-color">S' + sheetCnt + '</span>';
                 }
                 else if(ic.sheetcolor == 'yellow') {
-                    html += '<span class="icn3d-sheet-colory">S' + sheetCnt + '</span>';
+                    savedSsName = '<span class="icn3d-sheet-colory">S' + sheetCnt + '</span>';
                 }
+
+                if(bshowSsName) {
+                    html += savedSsName;
+                    savedSsName = '';
+                }
+            }
+            else if(atom.ssend) {
+                savedSsName = '';
+            }
+
+            if(savedSsName != '' && bshowSsName) {
+                html += savedSsName;
+                savedSsName = '';
             }
           }
           html += '</span>'
