@@ -1686,7 +1686,7 @@ iCn3DUI.prototype.applyCommand = function (commandStr) { var me = this, ic = me.
      me.setOption('phisurface', 'nothing');
   }
   else if(command == 'clear symd symmetry') {
-     ic.symdHash = {};
+     ic.symdArray = [];
   }
 
 // start with =================
