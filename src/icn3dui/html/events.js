@@ -1790,7 +1790,7 @@ iCn3DUI.prototype.allEventFunctions = function() { var me = this;
        me.setLogCmd('symd symmetry', true);
     });
     $("#" + me.pre + "mn6_clear_sym").click(function(e) { var ic = me.icn3d;
-       ic.symdHash = {};
+       ic.symdArray = [];
        ic.draw();
        me.setLogCmd('clear symd symmetry', true);
     });

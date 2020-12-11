@@ -926,8 +926,8 @@ iCn3D.prototype.applyOtherOptions = function (options) { var me = this, ic = me.
         this.applySymmetry(this.symmetrytitle);
     }
 
-    if(this.symdHash !== undefined && this.symdtitle !== undefined) {
-        var bSymd = true;
+    if(this.symdArray !== undefined && this.symdArray.length > 0) {
+        //var bSymd = true;
         //this.applySymmetry(this.symdtitle, bSymd);
         this.applySymd();
     }

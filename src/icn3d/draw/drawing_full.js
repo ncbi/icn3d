@@ -616,13 +616,16 @@ iCn3D.prototype.createBrick = function (p0, p1, radius, color) { var me = this, 
 };
 
 iCn3D.prototype.applySymd = function () { var me = this, ic = me.icn3d; "use strict";
-    for(var title in this.symdHash) {
-        this.applySymmetry(title, true);
+    for(var i = 0, il = this.symdArray.length; i < il; ++i) {
+        var symdHash = this.symdArray[i];
+        var title = Object.keys(symdHash)[0];
+        this.applySymmetry(title, true, symdHash[title]);
     }
 };
 
-iCn3D.prototype.applySymmetry = function (title, bSymd) { var me = this, ic = me.icn3d; "use strict";
-    var dataArray = (bSymd) ? this.symdHash[title] : this.symmetryHash[title]; // start_end_colorAxis_colorPolygon_order_chain
+iCn3D.prototype.applySymmetry = function (title, bSymd, inDataArray) { var me = this, ic = me.icn3d; "use strict";
+    //var dataArray = (bSymd) ? this.symdHash[title] : this.symmetryHash[title]; // start_end_colorAxis_colorPolygon_order_chain
+    var dataArray = (bSymd) ? inDataArray : this.symmetryHash[title]; // start_end_colorAxis_colorPolygon_order_chain
     if(!dataArray) dataArray = [];
 
     var symmetryType = title.substr(0, 1);
@@ -656,9 +659,9 @@ iCn3D.prototype.applySymmetry = function (title, bSymd) { var me = this, ic = me
             // check the number of chains
             var nChain = Object.keys(this.chains).length;
             var bMultiChain = false;
+            var chainHashTmp = {};
 
             if(bSymd && Object.keys(this.hAtoms).length < Object.keys(this.atoms).length) {
-                var chainHashTmp = {};
                 for(var serial in this.hAtoms) {
                     var atom = this.atoms[serial];
                     var chainid = atom.structure + '_' + atom.chain;
@@ -671,7 +674,7 @@ iCn3D.prototype.applySymmetry = function (title, bSymd) { var me = this, ic = me
             }
 
             //if(!bSymd || bMultiChain || Object.keys(this.hAtoms).length < Object.keys(this.atoms).length) {
-            if(!bSymd || bMultiChain) {
+            if(!bSymd) {
                 var selectedChain = Object.keys(this.structures)[0] + '_' + chain;
 
                 if(!this.chains.hasOwnProperty(selectedChain)) {
@@ -688,6 +691,10 @@ iCn3D.prototype.applySymmetry = function (title, bSymd) { var me = this, ic = me
                         }
                     }
                 }
+                selection = this.chains[selectedChain];
+            }
+            else if(bMultiChain) {
+                var selectedChain = Object.keys(chainHashTmp)[0];
                 selection = this.chains[selectedChain];
             }
             else { // bSymd, subset, and one chain

@@ -77,7 +77,7 @@ iCn3DUI.prototype.retrieveSymd = function () { var me = this, ic = me.icn3d; "us
               }
 
               //ic.symdHash = {};
-              if(ic.symdHash === undefined) ic.symdHash = {};
+              if(ic.symdArray === undefined) ic.symdArray = [];
               var order;
               for(var i = 0, il = symmetryArray.length; i < il; ++i) {
                   if(symmetryArray[i].symbol == 'C1') continue;
@@ -123,25 +123,16 @@ iCn3DUI.prototype.retrieveSymd = function () { var me = this, ic = me.icn3d; "us
 
                       axesArray.push(tmpArray);
                   }
-                  ic.symdHash[title] = axesArray;
+                  var symdHash = {};
+                  symdHash[title] = axesArray;
+                  ic.symdArray.push(symdHash);
               }
 
-              if(Object.keys(ic.symdHash).length == 0) {
+              if(ic.symdArray.length == 0) {
                   $("#" + me.pre + "dl_symd").html("<br>The selected residues have no detected symmetry with a Z score of " + data.zscore + " from the program <a href='https://symd.nci.nih.gov/' target='_blank'>SymD</a>.");
                   me.openDlg('dl_symd', 'Dynamically Calculated Symmetry Using SymD');
               }
               else {
-/*
-                  var html = "<option value='none'>None</option>", index = 0;
-                  for(var title in ic.symdHash) {
-                      var selected = (index == 0) ? 'selected' : '';
-                      html += "<option value=" + "'" + title + "' " + selected + ">" + title + "</option>";
-                      ++index;
-                  }
-
-                  $("#" + me.pre + "selectSymd").html(html);
-*/
-
                   var ori_permSeq = data.seqalign.replace(/ /g, '').split(','); //oriSeq,permSeq
                   var nres = data.nres;
                   var shift = data.shift;
@@ -223,31 +214,6 @@ iCn3DUI.prototype.retrieveSymd = function () { var me = this, ic = me.icn3d; "us
                       }
                   }
 
-/*
-                  var html = '<br>';
-                  html += "The symmetry " + symmetryArray[0].symbol + " was calculated dynamically using the program <a href='https://symd.nci.nih.gov/' target='_blank'>SymD</a>. The Z score " + data.zscore + " is greater than the threshold Z score 8. The following table (" + residArrayFinal1.length + " rows) shows the residue mapping of the best aligned sets.<br><br>";
-
-                  html += '<div style="height:150px; overflow:auto;"><table border="1" cellpadding="10" cellspacing="0">\n';
-                  html += '<tr><th>Original</th><th>Permuted</th><th>Highlight in 3D</th></tr>\n';
-
-                  for(var i = 0, il = residArrayFinal1.length; i < il; ++i) {
-                      var resid1 = residArrayFinal1[i];
-                      var resid2 = residArrayFinal2[i];
-
-                      html += '<tr><td>';
-                      //html += '<input type="checkbox" class="' + me.pre + 'seloneres" resid="' + resid1 + '"> ';
-                      html += resid1 + '</td><td>';
-                      //html += '<input type="checkbox" class="' + me.pre + 'seloneres" resid="' + resid2 + '"> ';
-                      html += resid2 + '</td><td>';
-                      html += '<button class="' + me.pre + 'selres" resid="' + resid1 + '|' + resid2 + '">Highlight</button>';
-                      html += '</td></tr>\n';
-                  }
-                  html += '</table></div><br>\n';
-
-                  $("#" + me.pre + "dl_symd").html(html);
-                  me.openDlg('dl_symd', 'Dynamically Calculated Symmetry Using SymD');
-*/
-
                   var html = '<br>';
                   html += "The symmetry " + symmetryArray[0].symbol + " was calculated dynamically using the program <a href='https://symd.nci.nih.gov/' target='_blank'>SymD</a>. The Z score " + data.zscore + " is greater than the threshold Z score 8. The RMSD is " + rmsd + " angstrom. <br><br>The following sequence alignment shows the residue mapping of the best aligned sets: \"symOri\" and \"symPerm\", which are also available in the menu \"Analysis > Defined Sets\".<br>";
 
@@ -262,14 +228,6 @@ iCn3DUI.prototype.retrieveSymd = function () { var me = this, ic = me.icn3d; "us
                   $("#" + me.pre + "dl_sequence2").width(me.RESIDUE_WIDTH * seqObj.maxSeqCnt + 200);
 
                   me.openDlg('dl_alignment', 'Select residues in aligned sequences from SymD');
-
-/*
-                  me.opts['color'] = 'grey';
-                  ic.setColorByOptions(me.opts, ic.dAtoms);
-
-                  me.opts['color'] = 'identity';
-                  ic.setColorByOptions(me.opts, ic.hAtoms);
-*/
 
                   var name = 'symOri';
                   me.selectResidueList(residArrayHashFinal1, name, name);
