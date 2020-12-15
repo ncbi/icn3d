@@ -1,4 +1,6 @@
 ## Change Log
+[icn3d-2.22.2](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.22.2.zip) was release on December 15, 2020. Enabled to show secondary structures for a PDB file containing multiple structures. 
+
 [icn3d-2.22.1](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.22.1.zip) was release on December 1, 2020. Added cartoons for glycan display by default. The cartoons can be toggled in the menu "Style > Glycans". 
 
 [icn3d-2.22.0](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.22.0.zip) was release on November 24, 2020. Users now can alternate  wild type and mutant, and their interaction networks in 3D for each SNP/ClinVar in the "Sequences & Annotation" window. 

@@ -63,7 +63,7 @@ iCn3D.prototype.loadPDB = function (src, pdbid, bOpm, bVector, bAddition) { var 
         var record = line.substr(0, 6);
 
         if (record === 'HEADER') {
-            if(bOpm === undefined || !bOpm) this.bSecondaryStructure = true;
+            // if(bOpm === undefined || !bOpm) this.bSecondaryStructure = true;
 
             id = line.substr(62, 4);
 
@@ -97,7 +97,8 @@ iCn3D.prototype.loadPDB = function (src, pdbid, bOpm, bVector, bAddition) { var 
                 terminalInscode: line.substr(37, 1),
             });
         } else if (record === 'SHEET ') {
-            this.bSecondaryStructure = true;
+            //this.bSecondaryStructure = true;
+            if(bOpm === undefined || !bOpm) this.bSecondaryStructure = true;
 
             var startChain = (line.substr(21, 1) == ' ') ? 'A' : line.substr(21, 1);
             var startResi = parseInt(line.substr(22, 4));
@@ -120,6 +121,7 @@ iCn3D.prototype.loadPDB = function (src, pdbid, bOpm, bVector, bAddition) { var 
             });
 
         } else if (record === 'HBOND ') {
+            if(bOpm === undefined || !bOpm) this.bSecondaryStructure = true;
 /*
             //HBOND A 1536   N2 A   59  ND2  -19.130  83.151  52.266 -18.079  81.613  49.427    3.40
             bCalculateHbond = false;
@@ -223,7 +225,10 @@ iCn3D.prototype.loadPDB = function (src, pdbid, bOpm, bVector, bAddition) { var 
             //    id = pdbid;
             //}
 
-            var structure = (moleculeNum === 1) ? id : id + moleculeNum.toString();
+            var structure = id;
+            if(id == 'stru') {
+                structure = (moleculeNum === 1) ? id : id + moleculeNum.toString();
+            }
 
             var alt = line.substr(16, 1);
             //if (alt !== " " && alt !== "A") continue;

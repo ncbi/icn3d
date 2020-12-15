@@ -111,7 +111,8 @@ console.log("free energy: " + energy + " kcal/mol");
           if(bPdb) {
              var pdbStr = '';
              pdbStr += me.getPDBHeader();
-             pdbStr += me.getAtomPDB(ic.hAtoms, undefined, true);
+             //pdbStr += me.getAtomPDB(ic.hAtoms, undefined, true);
+             pdbStr += me.getAtomPDB(ic.hAtoms);
 
              var file_pref = (me.inputid) ? me.inputid : "custom";
              me.saveFile(file_pref + '_' + snpStr + '.pdb', 'text', [pdbStr]);

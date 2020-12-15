@@ -52,7 +52,7 @@ $.ajaxTransport("+binary", function (options, originalOptions, jqXHR) {
 });
 
 var iCn3DUI = function(cfg) { var me = this, ic = me.icn3d; "use strict";
-    this.REVISION = '2.22.1';
+    this.REVISION = '2.22.2';
     me.bFullUi = true;
     me.cfg = cfg;
     me.divid = me.cfg.divid;
@@ -4165,9 +4165,11 @@ iCn3DUI.prototype = {
             }
         };
     },
-    getPDBHeader: function () {  var me = this, ic = me.icn3d; "use strict";
+    getPDBHeader: function (struNum) {  var me = this, ic = me.icn3d; "use strict";
+       if(struNum === undefined) struNum = 0;
+
        var pdbStr = '';
-       pdbStr += 'HEADER    PDB From iCn3D'.padEnd(62, ' ') + Object.keys(ic.structures)[0] + '\n';
+       pdbStr += 'HEADER    PDB From iCn3D'.padEnd(62, ' ') + Object.keys(ic.structures)[struNum] + '\n';
        var title = (ic.molTitle.length > 50) ? ic.molTitle.substr(0,47) + '...' : ic.molTitle;
        // remove quotes
        if(title.indexOf('"') != -1) title = '';
@@ -4175,7 +4177,8 @@ iCn3DUI.prototype = {
 
        return pdbStr;
     },
-    getAtomPDB: function (atomHash, bPqr, bPdb) {  var me = this, ic = me.icn3d; "use strict";
+    //getAtomPDB: function (atomHash, bPqr, bPdb, bNoChem) {  var me = this, ic = me.icn3d; "use strict";
+    getAtomPDB: function (atomHash, bPqr, bNoChem) {  var me = this, ic = me.icn3d; "use strict";
         var pdbStr = '';
 
         // get all phosphate groups in lipids
@@ -4252,6 +4255,9 @@ SHEET    1  B1 2 GLY A  35  THR A  39  0
         for(var i in atomHash) {
             var atom = ic.atoms[i];
 
+            // remove chemicals
+            if(bNoChem && atom.het) continue;
+
             if(bMulStruc && atom.structure != prevStru) {
                 pdbStr += connStr;
                 connStr = '';
@@ -4327,7 +4333,8 @@ SHEET    1  B1 2 GLY A  35  THR A  39  0
             line += atom.coord.y.toFixed(3).toString().padStart(8, ' ');
             line += atom.coord.z.toFixed(3).toString().padStart(8, ' ');
 
-            if( (bPqr && atom.het) || (phosPHash.hasOwnProperty(i) && !bPdb) || (phosOHash.hasOwnProperty(i) && !bPdb) ) {
+            //if( (bPqr && atom.het) || (phosPHash.hasOwnProperty(i) && !bPdb) || (phosOHash.hasOwnProperty(i) && !bPdb) ) {
+            if( (bPqr && atom.het) || (phosPHash.hasOwnProperty(i)) || (phosOHash.hasOwnProperty(i)) ) {
                 var size = 1.5, charge = 0;
 
 /*
