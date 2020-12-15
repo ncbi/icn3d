@@ -3635,7 +3635,8 @@ iCn3DUI.prototype.exportPdb = function() { var me = this, ic = me.icn3d; "use st
    var pdbStr = '';
    pdbStr += me.getPDBHeader();
    var atoms = ic.intHash(ic.dAtoms, ic.hAtoms);
-   pdbStr += me.getAtomPDB(atoms, undefined, true);
+   //pdbStr += me.getAtomPDB(atoms, undefined, true);
+   pdbStr += me.getAtomPDB(atoms);
 
    var file_pref = (me.inputid) ? me.inputid : "custom";
    me.saveFile(file_pref + '_icn3d.pdb', 'text', [pdbStr]);
