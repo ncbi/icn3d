@@ -226,7 +226,7 @@ iCn3D.prototype.loadPDB = function (src, pdbid, bOpm, bVector, bAddition) { var 
             //}
 
             var structure = id;
-            if(id == 'stru') {
+            if(id == 'stru' || bAddition) { // bAddition: side chain prediction
                 structure = (moleculeNum === 1) ? id : id + moleculeNum.toString();
             }
 
