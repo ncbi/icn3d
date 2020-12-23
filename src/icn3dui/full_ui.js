@@ -578,6 +578,20 @@ iCn3DUI.prototype = {
         if(me.cfg.usepdbnum !== undefined) {
             me.icn3d.bUsePdbNum = me.cfg.usepdbnum;
         }
+        else {
+            if(me.cfg.date !== undefined) {
+                me.icn3d.bUsePdbNum = (me.cfg.date >= '20201222') ? true : false;
+            }
+            else {
+                // iCn3D paper
+                if(me.cfg.mmdbid == '1tup' && me.cfg.showanno == 1 && me.cfg.show2d == 1 && me.cfg.showsets == 1) {
+                    me.icn3d.bUsePdbNum = false;
+                }
+                else {
+                    me.icn3d.bUsePdbNum = true;
+                }
+            }
+        }
 
         if(me.cfg.replay) {
             me.bReplay = 1;
@@ -767,10 +781,6 @@ iCn3DUI.prototype = {
             me.downloadChainAlignment(me.cfg.chainalign);
         }
         else if(me.cfg.command !== undefined && me.cfg.command !== '') {
-            if(me.cfg.usepdbnum === undefined) {
-                me.icn3d.bUsePdbNum = (me.cfg.date !== undefined && me.cfg.date >= '20201222') ? true : false;
-            }
-
             if(me.cfg.command.indexOf('url=') !== -1) me.bInputUrlfile = true;
             me.loadScript(me.cfg.command);
         }
