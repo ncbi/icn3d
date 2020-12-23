@@ -1,5 +1,5 @@
 ## Change Log
-[icn3d-2.23.0](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.23.0.zip) was release on December 23, 2020. Use PDB residue numbers when the input is MMDB ID. 
+[icn3d-2.23.0](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.23.0.zip) was release on December 22, 2020. Use PDB residue numbers when the input is MMDB ID. 
 
 [icn3d-2.22.2](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.22.2.zip) was release on December 15, 2020. Enabled to show secondary structures for a PDB file containing multiple structures. 
 
