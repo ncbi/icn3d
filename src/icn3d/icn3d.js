@@ -36,6 +36,8 @@ var iCn3D = function (id) { var me = this, ic = me.icn3d; "use strict";
 
     this.ALTERNATE_STRUCTURE = -1;
 
+    this.bUsePdbNum = true;
+
     if(Detector.webgl){
         this.renderer = new THREE.WebGLRenderer({
             canvas: this.oriContainer.get(0), //this.container.get(0),
@@ -1498,7 +1500,6 @@ iCn3D.prototype = {
         this.bGlycansCartoon = true;
 
         this.chainid2offset = {};
-        this.bUsePdbNum = true;
     },
 
     init: function () {

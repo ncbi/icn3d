@@ -704,6 +704,7 @@ iCn3DUI.prototype.getMissingResidues = function (seqArray, type, chainid) { var 
         }
 
         var resObject = {};
+
         if(!ic.bUsePdbNum) {
             resObject.resi = i + 1;
         }
