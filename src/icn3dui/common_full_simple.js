@@ -537,7 +537,9 @@ iCn3DUI.prototype.shareLinkUrl = function(bAllCommands) { var me = this, ic = me
        var paraHash = {};
        for(var key in me.cfg) {
            var value = me.cfg[key];
-           if(key === 'inpara' || me.key === 'command' || value === undefined) continue;
+           //if(key === 'inpara' || me.key === 'command' || value === undefined) continue;
+           if(key === 'inpara' || key === 'command' || key === 'usepdbnum'
+             || key === 'date' || value === undefined) continue;
 
             // check the default values as defined at the beginning of full_ui.js
             //if(key === 'command' && value === '') continue;

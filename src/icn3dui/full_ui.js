@@ -575,7 +575,9 @@ iCn3DUI.prototype = {
         me.icn3d = new iCn3D(me.pre + 'canvas');
         var ic = me.icn3d;
 
-        if(me.cfg.usepdbnum !== undefined) me.icn3d.bUsePdbNum = me.cfg.usepdbnum;
+        if(me.cfg.usepdbnum !== undefined) {
+            me.icn3d.bUsePdbNum = me.cfg.usepdbnum;
+        }
 
         if(me.cfg.replay) {
             me.bReplay = 1;
@@ -765,6 +767,10 @@ iCn3DUI.prototype = {
             me.downloadChainAlignment(me.cfg.chainalign);
         }
         else if(me.cfg.command !== undefined && me.cfg.command !== '') {
+            if(me.cfg.usepdbnum === undefined) {
+                me.icn3d.bUsePdbNum = (me.cfg.date !== undefined && me.cfg.date >= '20201222') ? true : false;
+            }
+
             if(me.cfg.command.indexOf('url=') !== -1) me.bInputUrlfile = true;
             me.loadScript(me.cfg.command);
         }
