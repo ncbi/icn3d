@@ -99,20 +99,24 @@
     function getVersion(date) {
         var version;
 
-        if(date >= '20200629') version = '2.17.6';
+        if(date >= '20201222') version = '2.23.0';
 
         return version;
     }
 
     var date = getValue(params.date);
+
     if(date !== undefined && window.localStorage && localStorage.getItem('fixedversion')) {
         var version = getVersion(date);
-
-        var fixedUrl = url.replace('full2.html', 'full2_' + version + '.html');
+        var fixedUrl = url.replace('full.html', 'full_' + version + '.html');
         window.open(fixedUrl, '_self');
 
         localStorage.removeItem('fixedversion');
     }
+
+    // use PDB residue number in MMDB input
+    var usepdbnum = getValue(params.usepdbnum);
+    if(usepdbnum === undefined) usepdbnum = (date !== undefined && date >= '20201222') ? true : false;
 
     var resize = getValue(params.resize);
 
@@ -171,6 +175,7 @@
       notebook: notebook,
       shownote: shownote,
       options: options,
+      usepdbnum: usepdbnum,
       command: command
     };
 
