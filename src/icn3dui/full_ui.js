@@ -580,7 +580,7 @@ iCn3DUI.prototype = {
         }
         else {
             if(me.cfg.date !== undefined) {
-                me.icn3d.bUsePdbNum = (me.cfg.date >= '20201222') ? true : false;
+                me.icn3d.bUsePdbNum = (parseInt(me.cfg.date) >= 20201222) ? true : false;
             }
             else {
                 // iCn3D paper
