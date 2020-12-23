@@ -393,9 +393,10 @@ iCn3DUI.prototype.processSeqData = function(chainid_seq) { var me = this, ic = m
                   prevTargetTo = seg.orito;
                   prevQueryTo = seg.to;
               }
-              // the missing residuesatthe end ofthe seq will be filled up in the API showNewTrack()
+              // the missing residues at the end of the seq will be filled up in the API showNewTrack()
               var nGap = 0;
               ic.alnChainsSeq[chnid] = [];
+              var offset = (ic.chainid2offset[chnid]) ? ic.chainid2offset[chnid] : 0;
               for(var i = 0, il = targetSeq.length; i < il; ++i) {
                   //text += me.insertGap(chnid, i, '-', true);
                   if(me.targetGapHash.hasOwnProperty(i)) {
@@ -405,25 +406,26 @@ iCn3DUI.prototype.processSeqData = function(chainid_seq) { var me = this, ic = m
                   }
                   compText += me.insertGap(chnid, i, '-', true);
                   if(me.targetGapHash.hasOwnProperty(i)) nGap += me.targetGapHash[i].to - me.targetGapHash[i].from + 1;
+                  var pos = (ic.bUsePdbNum) ? i+1 + offset : i+1;
                   if(target2queryHash.hasOwnProperty(i) && target2queryHash[i] !== -1) {
                       text += querySeq[target2queryHash[i]];
                       var colorHexStr = me.getColorhexFromBlosum62(targetSeq[i], querySeq[target2queryHash[i]]);
                       if(targetSeq[i] == querySeq[target2queryHash[i]]) {
                           compText += targetSeq[i];
-                          me.fullpos2ConsTargetpos[i + nGap] = {'same': 1, 'pos': i+1, 'res': targetSeq[i], 'color': colorHexStr};
-                          me.consrvResPosArray.push(i+1);
-                          ic.alnChainsSeq[chnid].push({'resi': i+1, 'color': '#FF0000', 'color2': '#' + colorHexStr});
+                          me.fullpos2ConsTargetpos[i + nGap] = {'same': 1, 'pos': pos, 'res': targetSeq[i], 'color': colorHexStr};
+                          me.consrvResPosArray.push(pos);
+                          ic.alnChainsSeq[chnid].push({'resi': pos, 'color': '#FF0000', 'color2': '#' + colorHexStr});
                       }
                       else if(me.conservativeReplacement(targetSeq[i], querySeq[target2queryHash[i]])) {
                           compText += '+';
-                          me.fullpos2ConsTargetpos[i + nGap] = {'same': 0, 'pos': i+1, 'res': targetSeq[i], 'color': colorHexStr};
-                          me.consrvResPosArray.push(i+1);
-                          ic.alnChainsSeq[chnid].push({'resi': i+1, 'color': '#0000FF', 'color2': '#' + colorHexStr});
+                          me.fullpos2ConsTargetpos[i + nGap] = {'same': 0, 'pos': pos, 'res': targetSeq[i], 'color': colorHexStr};
+                          me.consrvResPosArray.push(pos);
+                          ic.alnChainsSeq[chnid].push({'resi': pos, 'color': '#0000FF', 'color2': '#' + colorHexStr});
                       }
                       else {
                           compText += ' ';
-                          me.fullpos2ConsTargetpos[i + nGap] = {'same': -1, 'pos': i+1, 'res': targetSeq[i], 'color': colorHexStr};
-                          ic.alnChainsSeq[chnid].push({'resi': i+1, 'color': me.GREYC, 'color2': '#' + colorHexStr});
+                          me.fullpos2ConsTargetpos[i + nGap] = {'same': -1, 'pos': pos, 'res': targetSeq[i], 'color': colorHexStr};
+                          ic.alnChainsSeq[chnid].push({'resi': pos, 'color': me.GREYC, 'color2': '#' + colorHexStr});
                       }
                   }
                   else {
