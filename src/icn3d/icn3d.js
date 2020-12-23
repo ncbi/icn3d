@@ -1496,6 +1496,9 @@ iCn3D.prototype = {
         this.axes = [];
 
         this.bGlycansCartoon = true;
+
+        this.chainid2offset = {};
+        this.bUsePdbNum = true;
     },
 
     init: function () {

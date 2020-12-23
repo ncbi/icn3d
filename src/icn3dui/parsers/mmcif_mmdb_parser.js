@@ -676,9 +676,10 @@ iCn3DUI.prototype.downloadBlast_rep_id = function (sequence_structure_ids) { var
 
 iCn3DUI.prototype.getMissingResidues = function (seqArray, type, chainid) { var me = this, ic = me.icn3d; "use strict";
     var prevResi = -9999;
-    var missingResBegin = 0;
-    var bCount = true;
+    //var missingResBegin = 0;
+    //var bCount = true;
 
+    ic.chainsSeq[chainid] = [];
     for(var i = 0, il = seqArray.length; i < il; ++i) {
         var seqName, resiPos;
         // mmdbid: ["0","R","ARG"],["502","V","VAL"]; mmcifid: [1, "ARG"]; align: ["0","R","ARG"] //align: [1, "0","R","ARG"]
@@ -703,42 +704,50 @@ iCn3DUI.prototype.getMissingResidues = function (seqArray, type, chainid) { var 
         }
 
         var resObject = {};
-        resObject.resi = i + 1;
+        if(!ic.bUsePdbNum) {
+            resObject.resi = i + 1;
+        }
+        else {
+            var offset = (ic.chainid2offset[chainid]) ? ic.chainid2offset[chainid] : 0;
+            resObject.resi = (seqArray[i][resiPos] == '0') ? i + 1 + offset : seqArray[i][resiPos];
+        }
+
         var resi = parseInt(seqArray[i][resiPos]);
         var nextResi = (i == il - 1) ? 9999 : parseInt(seqArray[i+1][resiPos]);
 
         if(resi !== 0 ||
           (resi === 0 && (prevResi === -1 || nextResi == 1) )
           ) {
-            resObject.name = seqName.toLowerCase();
+            resObject.name = seqName.toUpperCase();
 
-            if(bCount && missingResBegin > 0) {
-                if(me.countNextresiArray[chainid] === undefined) me.countNextresiArray[chainid] = [];
+            //if(bCount && missingResBegin > 0) {
+                //if(me.countNextresiArray[chainid] === undefined) me.countNextresiArray[chainid] = [];
 
-                var count_nextresi = [missingResBegin, parseInt(seqArray[i][0])];
+                //var count_nextresi = [missingResBegin, parseInt(seqArray[i][0])];
 
-                me.countNextresiArray[chainid].push(count_nextresi);
+                //me.countNextresiArray[chainid].push(count_nextresi);
 
-                missingResBegin = 0;
-            }
+            //    missingResBegin = 0;
+            //}
 
-            bCount = false;
+            //bCount = false;
         }
         //else if(resi === 0 && prevResi !== -1) { // sometimes resi could be -4, -3, -2, -1, 0 e.g., PDBID 4YPS
         else { // sometimes resi could be -4, -3, -2, -1, 0 e.g., PDBID 4YPS
             resObject.name = seqName.toLowerCase();
-            ++missingResBegin;
+
+            //++missingResBegin;
 
             //if(me.chainMissingResidueArray[chainid] === undefined) me.chainMissingResidueArray[chainid] = [];
             //me.chainMissingResidueArray[chainid].push(resObject);
 
-            bCount = true;
+            //bCount = true;
         }
 
-        if(ic.chainsSeq[chainid] === undefined) ic.chainsSeq[chainid] = [];
+        //if(ic.chainsSeq[chainid] === undefined) ic.chainsSeq[chainid] = [];
 
-        var numberStr = '';
-        if(resObject.resi % 10 === 0) numberStr = resObject.resi.toString();
+        //var numberStr = '';
+        //if(resObject.resi % 10 === 0) numberStr = resObject.resi.toString();
 
         ic.chainsSeq[chainid].push(resObject);
 
@@ -882,32 +891,6 @@ iCn3DUI.prototype.loadAtomDataIn = function (data, id, type, seqalign, alignType
         }
     }
 
-    me.countNextresiArray = {};
-    //me.chainMissingResidueArray = {};
-    if(me.bFullUi) {
-        if(type === 'mmdbid' || type === 'mmcifid') {
-            for(var chain in data.sequences) {
-                var seqArray = data.sequences[chain];
-                var chainid = id + '_' + chain;
-
-                if(me.mmdbid_q !== undefined && me.mmdbid_q === me.mmdbid_t && alignType === 'query') {
-                    //chainid += me.postfix;
-                    chainid = id + me.postfix + '_' + chain;
-                }
-
-                me.getMissingResidues(seqArray, type, chainid); // assign ic.chainsSeq
-            }
-        }
-        else if(type === 'align') {
-            //for(var chainid in chainid2seq) {
-            for(var chainid in me.chainid2seq) {
-                var seqArray = me.chainid2seq[chainid];
-
-                me.getMissingResidues(seqArray, type, chainid);
-            }
-        }
-    }
-
     var atomid2serial = {};
     var prevStructureNum = '', prevChainNum = '', prevResidueNum = '';
     var structureNum = '', chainNum = '', residueNum = '';
@@ -943,20 +926,6 @@ iCn3DUI.prototype.loadAtomDataIn = function (data, id, type, seqalign, alignType
         }
         else if(type === 'align') {
           mmdbId = serial2structure[serial]; // here mmdbId is pdbid
-        }
-
-        var resiCorrection = 0;
-        if(type === 'mmdbid' || type === 'align') {
-            atm.resi_ori = parseInt(atm.resi); // original PDB residue number, has to be integer
-            atm.resi = atm.ids.r; // corrected for residue insertion code
-
-            resiCorrection = atm.resi - atm.resi_ori;
-
-            var pos = atm.resn.indexOf(' ');
-            if(pos !== -1 && pos != 0) atm.resn = atm.resn.substr(0, pos);
-        }
-        else {
-            atm.resi = parseInt(atm.resi);
         }
 
         //if(mmdbId !== prevmmdbId) resiArray = [];
@@ -1026,6 +995,27 @@ iCn3DUI.prototype.loadAtomDataIn = function (data, id, type, seqalign, alignType
 
         chainNum = structureNum + '_' + atm.chain;
         //if(me.mmdbid_q !== undefined && me.mmdbid_q === me.mmdbid_t && alignType === 'query') chainNum += me.postfix;
+
+        //var resiCorrection = 0;
+        if(type === 'mmdbid' || type === 'align') {
+            atm.resi_ori = parseInt(atm.resi); // original PDB residue number, has to be integer
+            if(!ic.bUsePdbNum) {
+                atm.resi = atm.ids.r; // corrected for residue insertion code
+            }
+            else {
+                // make MMDB residue number consistent with PDB residue number
+                atm.resi = atm.resi_ori; // corrected for residue insertion code
+                if(!ic.chainid2offset[chainNum]) ic.chainid2offset[chainNum] = atm.resi_ori - atm.ids.r;
+            }
+
+            //resiCorrection = atm.resi - atm.resi_ori;
+
+            var pos = atm.resn.indexOf(' ');
+            if(pos !== -1 && pos != 0) atm.resn = atm.resn.substr(0, pos);
+        }
+        else {
+            atm.resi = parseInt(atm.resi);
+        }
 
         if(chainNum !== prevChainNum) {
             missingResIndex = 0;
@@ -1304,6 +1294,32 @@ iCn3DUI.prototype.loadAtomDataIn = function (data, id, type, seqalign, alignType
     // add the last residue set
     if(ic.structures[structureNum] === undefined) ic.structures[structureNum] = [];
     ic.structures[structureNum].push(chainNum);
+
+    //me.countNextresiArray = {};
+    //me.chainMissingResidueArray = {};
+    if(me.bFullUi) {
+        if(type === 'mmdbid' || type === 'mmcifid') {
+            for(var chain in data.sequences) {
+                var seqArray = data.sequences[chain];
+                var chainid = id + '_' + chain;
+
+                if(me.mmdbid_q !== undefined && me.mmdbid_q === me.mmdbid_t && alignType === 'query') {
+                    //chainid += me.postfix;
+                    chainid = id + me.postfix + '_' + chain;
+                }
+
+                me.getMissingResidues(seqArray, type, chainid); // assign ic.chainsSeq
+            }
+        }
+        else if(type === 'align') {
+            //for(var chainid in chainid2seq) {
+            for(var chainid in me.chainid2seq) {
+                var seqArray = me.chainid2seq[chainid];
+
+                me.getMissingResidues(seqArray, type, chainid);
+            }
+        }
+    }
 
     // update bonds info
     if(type !== 'mmcifid') {

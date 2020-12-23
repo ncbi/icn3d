@@ -217,6 +217,7 @@ var full_uijs = [
     "src/icn3dui/webservices/delphi.js",
     "src/icn3dui/webservices/symd.js",
     "src/icn3dui/webservices/scap.js",
+    "src/icn3dui/webservices/dssp.js",
     "src/icn3dui/annotations/annotations.js",
     "src/icn3dui/annotations/addtrack.js",
     "src/icn3dui/selection/selection.js",

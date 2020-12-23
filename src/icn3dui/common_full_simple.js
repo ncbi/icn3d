@@ -603,8 +603,14 @@ iCn3DUI.prototype.shareLinkUrl = function(bAllCommands) { var me = this, ic = me
 
        // add time stamp
        var date = new Date();
-       var dateStr = date.getFullYear().toString() + (date.getMonth() + 1).toString() + date.getDate().toString();
-       url += 'date=' + dateStr + '&';
+       var monthStr = (date.getMonth() + 1).toString();
+       if(date.getMonth() + 1 < 10) monthStr = '0' + monthStr;
+
+       var dateStr = date.getDate().toString();
+       if(date.getDate() < 10) dateStr = '0' + dateStr;
+
+       var dateAllStr = date.getFullYear().toString() + monthStr + dateStr;
+       url += 'date=' + dateAllStr + '&';
 
        url += 'command=';
 

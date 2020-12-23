@@ -53,7 +53,7 @@ iCn3DUI.prototype.retrieveSymd = function () { var me = this, ic = me.icn3d; "us
       url: url,
       type: 'POST',
       data : dataObj,
-      dataType: "json",
+      dataType: "jsonp",
       cache: true,
       tryCount : 0,
       retryLimit : 1,

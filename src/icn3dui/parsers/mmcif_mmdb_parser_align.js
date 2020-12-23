@@ -661,7 +661,8 @@ iCn3DUI.prototype.setSeqAlign = function (seqalign, alignedStructures) { var me 
           for(var j = 0, jl = alignData.sequence.length; j < jl; ++j) {
               // 0: internal resi id, 1: pdb resi id, 2: resn, 3: aligned or not
               //var resi = alignData.sequence[j][1];
-              var resi = alignData.sequence[j][0];
+              var offset = (ic.chainid2offset[chainid1]) ? ic.chainid2offset[chainid1] : 0;
+              var resi = (ic.bUsePdbNum) ? alignData.sequence[j][0] + offset : alignData.sequence[j][0];
               var resn = (alignData.sequence[j][2] === '~') ? '-' : alignData.sequence[j][2];
               //resn = resn.toUpperCase();
 
@@ -713,7 +714,9 @@ iCn3DUI.prototype.setSeqAlign = function (seqalign, alignedStructures) { var me 
           for(var j = start; j <= end; ++j) {
               // 0: internal resi id, 1: pdb resi id, 2: resn, 3: aligned or not
               //var resi = alignData.sequence[j][1];
-              var resi = alignData.sequence[j][0];
+              //var resi = alignData.sequence[j][0];
+              var offset = (ic.chainid2offset[chainid2]) ? ic.chainid2offset[chainid2] : 0;
+              var resi = (ic.bUsePdbNum) ? alignData.sequence[j][0] + offset : alignData.sequence[j][0];
               var resn = (alignData.sequence[j][2] === '~') ? '-' : alignData.sequence[j][2];
               //resn = resn.toUpperCase();
 

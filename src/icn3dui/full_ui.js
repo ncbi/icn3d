@@ -52,7 +52,7 @@ $.ajaxTransport("+binary", function (options, originalOptions, jqXHR) {
 });
 
 var iCn3DUI = function(cfg) { var me = this, ic = me.icn3d; "use strict";
-    this.REVISION = '2.22.2';
+    this.REVISION = '2.23.0';
     me.bFullUi = true;
     me.cfg = cfg;
     me.divid = me.cfg.divid;
@@ -73,6 +73,7 @@ var iCn3DUI = function(cfg) { var me = this, ic = me.icn3d; "use strict";
     if(me.cfg.show2d === undefined) me.cfg.show2d = false;
     if(me.cfg.showsets === undefined) me.cfg.showsets = false;
     if(me.cfg.rotate === undefined) me.cfg.rotate = 'right';
+
     me.inputid = '';
     me.setOperation = 'or'; // by default the set operation is 'or'
     me.currSelectedSets = []; // for selecting multiple sets in sequence & annotations
@@ -573,6 +574,8 @@ iCn3DUI.prototype = {
         });
         me.icn3d = new iCn3D(me.pre + 'canvas');
         var ic = me.icn3d;
+
+        if(me.cfg.usepdbnum !== undefined) me.icn3d.bUsePdbNum = me.cfg.usepdbnum;
 
         if(me.cfg.replay) {
             me.bReplay = 1;
