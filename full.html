@@ -116,7 +116,7 @@
 
     // use PDB residue number in MMDB input
     var usepdbnum = getValue(params.usepdbnum);
-    if(usepdbnum === undefined) usepdbnum = (date !== undefined && date >= '20201222') ? true : false;
+    //if(usepdbnum === undefined) usepdbnum = (date !== undefined && date >= '20201222') ? true : false;
 
     var resize = getValue(params.resize);
 
@@ -176,6 +176,7 @@
       shownote: shownote,
       options: options,
       usepdbnum: usepdbnum,
+      date: date,
       command: command
     };
 
