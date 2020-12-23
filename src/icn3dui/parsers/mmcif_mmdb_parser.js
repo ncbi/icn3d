@@ -513,7 +513,7 @@ iCn3DUI.prototype.downloadMmdb = function (mmdbid, bGi) { var me = this, ic = me
    }
 
    // use asymmetric unit for BLAST search, e.g., https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?from=blast&blast_rep_id=5XZC_B&query_id=1TUP_A&command=view+annotations;set+annotation+cdd;set+annotation+site;set+view+detailed+view;select+chain+5XZC_B;show+selection&log$=align&blast_rank=1&RID=EPUCYNVV014&buidx=0
-   if(me.cfg.blast_rep_id !== undefined) url += '&buidx=0';
+//!!!   if(me.cfg.blast_rep_id !== undefined) url += '&buidx=0';
 
    ic.bCid = undefined;
 
@@ -929,6 +929,8 @@ iCn3DUI.prototype.loadAtomDataIn = function (data, id, type, seqalign, alignType
           mmdbId = serial2structure[serial]; // here mmdbId is pdbid
         }
 
+        var bSetResi = false;
+
         //if(mmdbId !== prevmmdbId) resiArray = [];
         if(atm.chain === undefined && (type === 'mmdbid' || type === 'align')) {
             if(type === 'mmdbid') {
@@ -946,6 +948,7 @@ iCn3DUI.prototype.loadAtomDataIn = function (data, id, type, seqalign, alignType
                   }
                   //if(chainid2kind[chainNum] === 'solvent' || atm.resn === 'HOH') {
                       atm.resi = miscCnt;
+                      bSetResi = true;
                   //}
 
                   //if all are defined in the chain section, no "Misc" should appear
@@ -970,6 +973,7 @@ iCn3DUI.prototype.loadAtomDataIn = function (data, id, type, seqalign, alignType
                   }
                   //if(chainid2kind[chainNum] === 'solvent' || atm.resn === 'HOH') {
                       atm.resi = miscCnt;
+                      bSetResi = true;
                   //}
 
                   // chemicals do not have assigned chains.
@@ -999,14 +1003,16 @@ iCn3DUI.prototype.loadAtomDataIn = function (data, id, type, seqalign, alignType
 
         //var resiCorrection = 0;
         if(type === 'mmdbid' || type === 'align') {
-            atm.resi_ori = parseInt(atm.resi); // original PDB residue number, has to be integer
-            if(!ic.bUsePdbNum) {
-                atm.resi = atm.ids.r; // corrected for residue insertion code
-            }
-            else {
-                // make MMDB residue number consistent with PDB residue number
-                atm.resi = atm.resi_ori; // corrected for residue insertion code
-                if(!ic.chainid2offset[chainNum]) ic.chainid2offset[chainNum] = atm.resi_ori - atm.ids.r;
+            if(!bSetResi) {
+                atm.resi_ori = parseInt(atm.resi); // original PDB residue number, has to be integer
+                if(!ic.bUsePdbNum) {
+                    atm.resi = atm.ids.r; // corrected for residue insertion code
+                }
+                else {
+                    // make MMDB residue number consistent with PDB residue number
+                    atm.resi = atm.resi_ori; // corrected for residue insertion code
+                    if(!ic.chainid2offset[chainNum]) ic.chainid2offset[chainNum] = atm.resi_ori - atm.ids.r;
+                }
             }
 
             //resiCorrection = atm.resi - atm.resi_ori;
@@ -1015,7 +1021,9 @@ iCn3DUI.prototype.loadAtomDataIn = function (data, id, type, seqalign, alignType
             if(pos !== -1 && pos != 0) atm.resn = atm.resn.substr(0, pos);
         }
         else {
-            atm.resi = parseInt(atm.resi);
+            if(!bSetResi) {
+                atm.resi = parseInt(atm.resi);
+            }
         }
 
         if(chainNum !== prevChainNum) {
