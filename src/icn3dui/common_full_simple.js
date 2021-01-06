@@ -539,7 +539,7 @@ iCn3DUI.prototype.shareLinkUrl = function(bAllCommands) { var me = this, ic = me
            var value = me.cfg[key];
            //if(key === 'inpara' || me.key === 'command' || value === undefined) continue;
            if(key === 'inpara' || key === 'command' || key === 'usepdbnum'
-             || key === 'date' || value === undefined) continue;
+             || key === 'date' || key === 'v' || value === undefined) continue;
 
             // check the default values as defined at the beginning of full_ui.js
             //if(key === 'command' && value === '') continue;
@@ -613,6 +613,7 @@ iCn3DUI.prototype.shareLinkUrl = function(bAllCommands) { var me = this, ic = me
 
        var dateAllStr = date.getFullYear().toString() + monthStr + dateStr;
        url += 'date=' + dateAllStr + '&';
+       url += 'v=' + me.REVISION + '&';
 
        url += 'command=';
 
