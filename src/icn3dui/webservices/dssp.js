@@ -1,4 +1,4 @@
-iCn3DUI.prototype.applyDssp = function (bCalphaonly) { var me = this, ic = me.icn3d; "use strict";
+iCn3DUI.prototype.applyDssp = function (bCalphaOnly) { var me = this, ic = me.icn3d; "use strict";
   var calphaonly = (bCalphaOnly) ? '1' : '0';
 
   // make it work for concatenated multiple PDB files
