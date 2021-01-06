@@ -96,18 +96,11 @@
         return input;
     }
 
-    function getVersion(date) {
-        var version;
-
-        if(parseInt(date) >= 20201222) version = '2.23.0';
-
-        return version;
-    }
-
     var date = getValue(params.date);
+    var version = getValue(params.v);
 
-    if(date !== undefined && window.localStorage && localStorage.getItem('fixedversion')) {
-        var version = getVersion(date);
+    if(version !== undefined && window.localStorage && localStorage.getItem('fixedversion')) {
+        //var version = getVersion(date);
         var fixedUrl = url.replace('full.html', 'full_' + version + '.html');
         window.open(fixedUrl, '_self');
 

@@ -430,7 +430,7 @@ iCn3DUI.prototype.loadPdbData = function(data, pdbid, bOpm) { var me = this, ic 
     if(!ic.bSecondaryStructure) {
       me.deferredSecondary = $.Deferred(function() {
           var bCalphaOnly = ic.isCalphaPhosOnly(ic.hash2Atoms(ic.proteins));//, 'CA');
-          me.applyDssp(bCalphaonly);
+          me.applyDssp(bCalphaOnly);
       }); // end of me.deferred = $.Deferred(function() {
 
       return me.deferredSecondary.promise();

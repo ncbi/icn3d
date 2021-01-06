@@ -1620,6 +1620,7 @@ iCn3D.prototype.setPc1Axes = function() { var me = this, ic = me.icn3d; "use str
    var maxD = result.maxD;
    var center = result.center;
 
+/*
    var positionXTmp = center.clone().add(vecX.normalize().multiplyScalar(maxD * 0.5));
    var positionXMinusTmp = center.clone().multiplyScalar(2).sub(positionXTmp);
 
@@ -1668,9 +1669,9 @@ iCn3D.prototype.setPc1Axes = function() { var me = this, ic = me.icn3d; "use str
    this.axes.push(axisPos);
 
    this.draw();
+*/
 
-/*
-   var positionX = center.clone().add(vecX.normalize().multiplyScalar(maxD * 0.5));
+   var positionX = center.clone().add(vecX.normalize().multiplyScalar(maxD * 0.4));
 
    var vecY = new THREE.Vector3(eigenRet.h2[0], eigenRet.h2[1], eigenRet.h2[2]);
    var positionY = center.clone().add(vecY.normalize().multiplyScalar(maxD * 0.3));
@@ -1684,5 +1685,4 @@ iCn3D.prototype.setPc1Axes = function() { var me = this, ic = me.icn3d; "use str
    this.axes.push(axisPos);
 
    this.draw();
-*/
 };

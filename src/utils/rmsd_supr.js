@@ -797,13 +797,14 @@ iCn3D.prototype.getEigenForSelection = function(coord, n) { var me = this, ic = 
         u[i] /= n;
     }
 
-    var bJustPc1 = true;
-    return me.getEigenVectors(u, bJustPc1);
-    //return me.getEigenVectors(u);
+//    var bJustPc1 = true;
+//    return me.getEigenVectors(u, bJustPc1);
+    return me.getEigenVectors(u);
 };
 
 iCn3D.prototype.getEigenVectors = function(u, bJustPc1) { var me = this, ic = me.icn3d; "use strict";
-    var TINY0 = 1.0e-10;
+//    var TINY0 = 1.0e-10;
+    var TINY0 = 1.0e-8;
     var k, flag;
     var mat = new Array(9);
 
