@@ -308,6 +308,9 @@ iCn3DUI.prototype.setTransmemInMenu = function (posZ, negZ, bReset) { var me = t
       var transmembraneHash = {}, extracellularHash = {}, intracellularHash = {};
       for(var serial in ic.atoms) {
           var atom = ic.atoms[serial];
+
+          if(atom.resn === 'DUM') continue;
+
           var residueid = atom.structure + '_' + atom.chain + '_' + atom.resi;
           if(atom.coord.z > posZ) {
               extracellularHash[residueid] = 1;
@@ -315,7 +318,7 @@ iCn3DUI.prototype.setTransmemInMenu = function (posZ, negZ, bReset) { var me = t
           else if(atom.coord.z < negZ) {
               intracellularHash[residueid] = 1;
           }
-          else if(atom.resn !== 'DUM') {
+          else {
               transmembraneHash[residueid] = 1;
           }
       }

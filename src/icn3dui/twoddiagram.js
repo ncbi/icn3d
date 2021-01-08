@@ -103,6 +103,8 @@ iCn3DUI.prototype.draw2Ddgm = function(data, mmdbid, structureIndex, bUpdate) { 
 
                 chainid2 = secondChainid;
 
+                if(!ic.chains.hasOwnProperty(chainid2)) continue;
+
                 var atom2 = ic.getFirstCalphaAtomObj(ic.chains[chainid2]);
                 //if(me.chainname2residues[chainid2] === undefined) me.chainname2residues[chainid2] = {};
 
@@ -234,7 +236,7 @@ iCn3DUI.prototype.draw2Ddgm = function(data, mmdbid, structureIndex, bUpdate) { 
         var dgm = data.intrac[molid];
         var color = "#FFFFFF";
         var oricolor = molid2color[molid];
-        if(chainid !== undefined) {
+        if(chainid !== undefined && ic.chains[chainid] !== undefined) {
             var atomArray = Object.keys(ic.chains[chainid]);
             if(atomArray.length > 0) {
                 oricolor = "#" + ic.atoms[atomArray[0]].color.getHexString().toUpperCase();

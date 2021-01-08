@@ -591,6 +591,7 @@ iCn3DUI.prototype.shareLinkUrl = function(bAllCommands) { var me = this, ic = me
        if(me.cfg.inpara !== undefined) pos = me.cfg.inpara.indexOf('&command=');
        inparaWithoutCommand = (pos !== -1 ) ? me.cfg.inpara.substr(0, pos) : me.cfg.inpara;
 
+       var bPrevDate = false;
        if(!me.bInputUrlfile) {
            var inparaArray = (inparaWithoutCommand && inparaWithoutCommand.substr(1)) ? inparaWithoutCommand.substr(1).split('&') : [];
            for(var i = 0, il = inparaArray.length; i < il; ++i) {
@@ -599,6 +600,9 @@ iCn3DUI.prototype.shareLinkUrl = function(bAllCommands) { var me = this, ic = me
            }
 
            for(var key in paraHash) {
+               if(key === 'v') continue;
+
+               if(key === 'date') bPrevDate = true;
                url += key + '=' + paraHash[key] + '&';
            }
        }
@@ -612,7 +616,7 @@ iCn3DUI.prototype.shareLinkUrl = function(bAllCommands) { var me = this, ic = me
        if(date.getDate() < 10) dateStr = '0' + dateStr;
 
        var dateAllStr = date.getFullYear().toString() + monthStr + dateStr;
-       url += 'date=' + dateAllStr + '&';
+       if(!bPrevDate) url += 'date=' + dateAllStr + '&';
        url += 'v=' + me.REVISION + '&';
 
        url += 'command=';
