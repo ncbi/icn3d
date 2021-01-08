@@ -1,4 +1,6 @@
 ## Change Log
+[icn3d-2.23.2](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.23.2.zip) was release on January 8, 2021. Adjust the chain IDs according to the data from the backend cgi that aligns a sequence to a structure. 
+
 [icn3d-2.23.1](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.23.1.zip) was release on January 6, 2021. Added version number and improved Principle Axes view. 
 
 [icn3d-2.23.0](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.23.0.zip) was release on December 22, 2020. Use PDB residue numbers when the input is MMDB ID. 

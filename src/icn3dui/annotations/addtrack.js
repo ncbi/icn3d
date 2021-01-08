@@ -154,7 +154,8 @@ iCn3DUI.prototype.alignSequenceToStructure = function(chainid, data, title) { va
 
   if(data.data !== undefined) {
       query = data.data[0].query;
-      target = data.data[0].targets[chainid.replace(/_/g, '')];
+      //target = data.data[0].targets[chainid.replace(/_/g, '')];
+      target = data.data[0].targets[chainid];
 
       target = target.hsps[0];
   }
@@ -167,7 +168,8 @@ iCn3DUI.prototype.alignSequenceToStructure = function(chainid, data, title) { va
 
       var bitscore = target.scores.bit_score;
 
-      var targetSeq = data.targets[chainid.replace(/_/g, '')].seqdata;
+      //var targetSeq = data.targets[chainid.replace(/_/g, '')].seqdata;
+      var targetSeq = data.targets[chainid].seqdata;
       var querySeq = query.seqdata;
 
       var segArray = target.segs;

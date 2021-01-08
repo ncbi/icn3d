@@ -349,11 +349,13 @@ iCn3DUI.prototype.processSeqData = function(chainid_seq) { var me = this, ic = m
               title = (isNaN(me.cfg.query_id)) ? 'Query: ' + me.cfg.query_id : 'Query: gi ' + me.cfg.query_id;
           }
           var data = me.seqStructAlignData;
+
           var query, target;
           if(data.data !== undefined) {
               query = data.data[0].query;
-              target = data.data[0].targets[chnid.replace(/_/g, '')];
-              target = (target.hsps.length > 0) ? target.hsps[0] : undefined;
+              //target = data.data[0].targets[chnid.replace(/_/g, '')];
+              target = data.data[0].targets[chnid];
+              target = (target !== undefined && target.hsps.length > 0) ? target.hsps[0] : undefined;
           }
           var text = '', compText = '';
           me.queryStart = '';
@@ -363,7 +365,8 @@ iCn3DUI.prototype.processSeqData = function(chainid_seq) { var me = this, ic = m
               evalue = target.scores.e_value.toPrecision(2);
               if(evalue > 1e-200) evalue = parseFloat(evalue).toExponential();
               var bitscore = target.scores.bit_score;
-              var targetSeq = data.targets[chnid.replace(/_/g, '')].seqdata;
+              //var targetSeq = data.targets[chnid.replace(/_/g, '')].seqdata;
+              var targetSeq = data.targets[chnid].seqdata;
               var querySeq = query.seqdata;
               var segArray = target.segs;
               var target2queryHash = {};

@@ -2231,7 +2231,7 @@ iCn3DUI.prototype.applyCommand = function (commandStr) { var me = this, ic = me.
         me.openDlg('dl_alignment', 'Select residues in aligned sequences');
     }
     else if(secondPart == "interaction table") {
-        me.openDlg('dl_allinteraction', 'Show interactions');
+        me.openDlg('dl_allinteraction', 'Show interactions');rotein
     }
     else if(secondPart == "interaction graph") {
         me.openDlg('dl_linegraph', 'Show interactions between two lines of residue nodes');
@@ -2251,6 +2251,7 @@ iCn3DUI.prototype.applyCommand = function (commandStr) { var me = this, ic = me.
     var value = command.substr(command.lastIndexOf(' ') + 1);
     if(value == 'on') {
         ic.bDoublecolor = true;
+        me.setStyle('proteins', 'ribbon');
     }
     else if(value == 'off') {
         ic.bDoublecolor = false;
@@ -2533,7 +2534,7 @@ iCn3DUI.prototype.getMenuFromCmd = function (cmd) { var me = this, ic = me.icn3d
     else if(cmd.indexOf('replay on') !== -1) return 'File > Replay Each Step > On';
     else if(cmd.indexOf('replay off') !== -1) return 'File > Replay Each Step > Off';
     else if(cmd.indexOf('set theme') !== -1) return 'Style > Theme Color';
-    else if(cmd.indexOf('set double color') !== -1) return 'Style > Shade';
+    else if(cmd.indexOf('set double color') !== -1) return 'Style > Two-color Helix';
     else return '';
 };
 

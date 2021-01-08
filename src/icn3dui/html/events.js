@@ -3489,7 +3489,8 @@ iCn3DUI.prototype.allEventFunctions = function() { var me = this;
 
     $("#" + me.pre + "mn6_doublecolorYes").click(function(e) { var ic = me.icn3d;
        ic.bDoublecolor = true;
-       ic.draw();
+       me.setStyle('proteins', 'ribbon');
+       //ic.draw();
        me.setLogCmd("set double color on", true);
     });
     $("#" + me.pre + "mn6_doublecolorNo").click(function(e) { var ic = me.icn3d;

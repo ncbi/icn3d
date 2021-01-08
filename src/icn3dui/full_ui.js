@@ -52,7 +52,7 @@ $.ajaxTransport("+binary", function (options, originalOptions, jqXHR) {
 });
 
 var iCn3DUI = function(cfg) { var me = this, ic = me.icn3d; "use strict";
-    this.REVISION = '2.23.1';
+    this.REVISION = '2.23.2';
     me.bFullUi = true;
     me.cfg = cfg;
     me.divid = me.cfg.divid;
@@ -585,6 +585,10 @@ iCn3DUI.prototype = {
             else {
                 // iCn3D paper
                 if(me.cfg.mmdbid == '1tup' && me.cfg.showanno == 1 && me.cfg.show2d == 1 && me.cfg.showsets == 1) {
+                    me.icn3d.bUsePdbNum = false;
+                }
+                //https://link.springer.com/article/10.1007/s00239-020-09934-4/figures/1
+                else if(me.cfg.mmdbid == '118496' && me.cfg.showanno == 0 && me.cfg.inpara.indexOf('bu=1') != -1) {
                     me.icn3d.bUsePdbNum = false;
                 }
                 else {
