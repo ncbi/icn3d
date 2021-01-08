@@ -2231,7 +2231,7 @@ iCn3DUI.prototype.applyCommand = function (commandStr) { var me = this, ic = me.
         me.openDlg('dl_alignment', 'Select residues in aligned sequences');
     }
     else if(secondPart == "interaction table") {
-        me.openDlg('dl_allinteraction', 'Show interactions');rotein
+        me.openDlg('dl_allinteraction', 'Show interactions');
     }
     else if(secondPart == "interaction graph") {
         me.openDlg('dl_linegraph', 'Show interactions between two lines of residue nodes');
