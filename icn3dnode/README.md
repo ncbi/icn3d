@@ -25,12 +25,12 @@ where "6M0J" is the PDB ID, "E" is the chain ID, "501" is the residue number tha
 Example Output
 --------------
 
-free energy (kcal/mol): 429.634
-Change Hbond: -1
-Change Ionic: 0
-Change Contact: 9
-Change Halegen: 0
-Change Pi-Cation: 1
-Change Pi-Stacking: 1
+    free energy (kcal/mol): 429.634
+    Change Hbond: -1
+    Change Ionic: 0
+    Change Contact: 9
+    Change Halegen: 0
+    Change Pi-Cation: 1
+    Change Pi-Stacking: 1
 
 where "Change Hbond: -1" means the mutant has one less hydrogen bond than the wild type.
