@@ -1066,8 +1066,13 @@ iCn3DUI.prototype.allEventFunctions = function() { var me = this;
 // mn 4
 //    clkMn4_clrSpectrum: function() {
     $("#" + me.pre + "mn4_clrSpectrum").click(function(e) { var ic = me.icn3d;
+console.log("spectrum 1 ic.maxD " + ic.maxD);
+console.log("spectrum 1 me.icn3d.maxD " + me.icn3d.maxD);
+console.log("spectrum 1 ic.structures " + JSON.stringiy(ic.structures));
+console.log("spectrum 1 this.oriMaxD " + ic.oriMaxD);
        me.setOption('color', 'spectrum');
        me.setLogCmd('color spectrum', true);
+console.log("spectrum 2 this.maxD " + ic.maxD);
     });
 //    },
 //    clkMn4_clrChain: function() {

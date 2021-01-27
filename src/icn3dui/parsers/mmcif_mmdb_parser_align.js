@@ -1129,11 +1129,11 @@ iCn3DUI.prototype.setSeqAlignChain = function (chainid, chainIndex) { var me = t
       } // end for(var i
 };
 
-iCn3DUI.prototype.setSeqAlignForRealign = function (chainid, chainIndex) { var me = this, ic = me.icn3d; "use strict";
+iCn3DUI.prototype.setSeqAlignForRealign = function (chainid_t, chainid, chainIndex) { var me = this, ic = me.icn3d; "use strict";
       //loadSeqAlignment
       var alignedAtoms = {};
 
-      var chainid_t = me.chainidArray[0];
+      //var chainid_t = me.chainidArray[0];
 
 //      var structureArray = Object.keys(ic.structures);
       var structure1 = chainid_t.substr(0, chainid_t.indexOf('_')); //structureArray[0];
@@ -1365,7 +1365,7 @@ iCn3DUI.prototype.realignOnSeqAlign = function () { var me = this, ic = me.icn3d
                   }
               }
 
-              me.alignCoords(coordsFrom, coordsTo, fromStruct, undefined, chainid2, 1);
+              me.alignCoords(coordsFrom, coordsTo, fromStruct, undefined, chainid1, chainid2, 1);
 
               ic.draw();
               me.updateHlAll();
@@ -1587,7 +1587,7 @@ iCn3DUI.prototype.parseChainRealignData = function (ajaxData, chainidArray, stru
           var chainTo = chainidArray[0];
           var chainFrom = chainidArray[index + 1];
 
-          me.alignCoords(coordsFrom, coordsTo, fromStruct, undefined, chainFrom, index + 1);
+          me.alignCoords(coordsFrom, coordsTo, fromStruct, undefined, chainTo, chainFrom, index + 1);
 
           //me.updateHlAll();
       }

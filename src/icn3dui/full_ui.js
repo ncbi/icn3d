@@ -824,7 +824,7 @@ iCn3DUI.prototype = {
           me.bSelectAlignResidue = false;
       }
     },
-    updateGraphCOlor: function () { var me = this, ic = me.icn3d; "use strict";
+    updateGraphColor: function () { var me = this, ic = me.icn3d; "use strict";
       // change graph color
       if(me.graphStr !== undefined) {
           var graphJson = JSON.parse(me.graphStr);
@@ -863,18 +863,22 @@ iCn3DUI.prototype = {
       if(me.bScatterplot) me.drawLineGraph(me.graphStr, true);
     },
     setOption: function (id, value) { var me = this, ic = me.icn3d; "use strict";
+console.log("setOption 1 this.maxD " + ic.maxD);
       //var options2 = {};
       //options2[id] = value;
       // remember the options
       ic.opts[id] = value;
       me.saveSelectionIfSelected();
       if(id === 'color') {
+console.log("setOption 2 this.maxD " + ic.maxD);
           ic.setColorByOptions(ic.opts, ic.hAtoms);
+console.log("setOption 3 this.maxD " + ic.maxD);
           ic.draw();
           var residueHash = ic.getResiduesFromCalphaAtoms(ic.hAtoms);
           me.changeSeqColor(Object.keys(residueHash));
           // change graph color
-          me.updateGraphCOlor();
+          me.updateGraphColor();
+console.log("setOption 4 this.maxD " + ic.maxD);
       }
       else if(id === 'surface' || id === 'opacity' || id === 'wireframe') {
           if(id === 'opacity' || id === 'wireframe') {
@@ -1048,6 +1052,8 @@ iCn3DUI.prototype = {
           me.saveSelectionIfSelected();
           ic.draw();
       }
+console.log("renderStructure 1 this.maxD " + ic.maxD);
+
       if(ic.bInitial && me.cfg.command !== undefined && me.cfg.command !== '') {
           if(Object.keys(ic.structures).length == 1) {
               var id = Object.keys(ic.structures)[0];
@@ -1067,12 +1073,14 @@ iCn3DUI.prototype = {
           $("#" + me.pre + "mn2_alternateWrap").hide();
           $("#" + me.pre + "mn2_realignWrap").hide();
       }
+console.log("renderStructure 2 this.maxD " + ic.maxD);
       // display the structure right away. load the mns and sequences later
       setTimeout(function(){
           if(ic.bInitial) {
               if(me.cfg.showsets) {
                    me.showSets();
               }
+console.log("renderStructure 3 this.maxD " + ic.maxD);
               if(me.cfg.align !== undefined || me.cfg.chainalign !== undefined) {
                   // expand the toolbar
                   var id = me.pre + 'selection';
@@ -1087,6 +1095,7 @@ iCn3DUI.prototype = {
                       $("#" + me.pre + "dl_sequence2").width(me.RESIDUE_WIDTH * seqObj.maxSeqCnt + 200);
                   }
               }
+console.log("renderStructure 4 this.maxD " + ic.maxD);
               //me.setProtNuclLigInMenu();
               if(me.cfg.showanno) {
                    var cmd = "view annotations";
@@ -1096,12 +1105,14 @@ iCn3DUI.prototype = {
               if(me.cfg.closepopup) {
                   me.closeDialogs();
               }
+console.log("renderStructure 5 this.maxD " + ic.maxD);
           }
           else {
               me.updateHlAll();
           }
           if($("#" + me.pre + "atomsCustom").length > 0) $("#" + me.pre + "atomsCustom")[0].blur();
           ic.bInitial = false;
+console.log("renderStructure 6 this.maxD " + ic.maxD);
       }, 0);
     },
     closeDialogs: function () { var me = this, ic = me.icn3d; "use strict";

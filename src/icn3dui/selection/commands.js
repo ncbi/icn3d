@@ -2213,7 +2213,7 @@ iCn3DUI.prototype.applyCommand = function (commandStr) { var me = this, ic = me.
     me.updateHlAll();
 
     // change graph color
-    me.updateGraphCOlor();
+    me.updateGraphColor();
   }
   else if(commandOri.indexOf('custom tube') == 0) {
     var strArray = commandOri.split(" | ");

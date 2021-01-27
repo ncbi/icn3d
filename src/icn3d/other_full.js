@@ -1290,6 +1290,7 @@ iCn3D.prototype.zoominSelection = function(atoms) { var me = this, ic = me.icn3d
 
            this.center = centerAtomsResults.center;
            this.setCenter(this.center);
+console.log("setCamera zoominSelection");
 
            // reset cameara
            this.setCamera();
@@ -1316,6 +1317,7 @@ iCn3D.prototype.centerSelection = function(atoms) { var me = this, ic = me.icn3d
 
            this.center = centerAtomsResults.center;
            this.setCenter(this.center);
+console.log("setCamera centerSelection");
 
            // reset cameara
            this.setCamera();
