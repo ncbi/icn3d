@@ -42,8 +42,8 @@ iCn3D.prototype.getRmsdSupr = function(co1, co2, n) { var me = this, ic = me.icn
     // read in and reformat the coordinates
     // calculate the centroids
     for (i = 0; i < n; i++) {
-        ap.push(co1[i]);
-        bp.push(co2[i]);
+        ap.push(co1[i].clone());
+        bp.push(co2[i].clone());
 
         cp.add(co1[i]);
         cq.add(co2[i]);
@@ -325,8 +325,8 @@ iCn3D.prototype.getRmsdSupr = function(co1, co2, n) { var me = this, ic = me.icn
     // read in and reformat the coordinates
     // calculate the centroids
     for (i = 0; i < n; i++) {
-        ap.push(co1[i]);
-        bp.push(co2[i]);
+        ap.push(co1[i].clone());
+        bp.push(co2[i].clone());
 
         cp.add(co1[i]);
         cq.add(co2[i]);

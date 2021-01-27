@@ -244,26 +244,13 @@ iCn3DUI.prototype.draw2Ddgm = function(data, mmdbid, structureIndex, bUpdate) { 
         }
 
         var alignNum = "";
-        if(ic.bInitial) {
-            if(structureIndex !== undefined && structureIndex === 0) {
-                if(me.alignmolid2color !== undefined && me.alignmolid2color[0].hasOwnProperty(molid)) {
-                    //color = me.alignmolid2color[0][molid];
-                    alignNum = me.alignmolid2color[0][molid];
-                    oricolor = "#FF0000";
-                }
-                else {
-                    oricolor = "#FFFFFF";
-                }
+        if(ic.bInitial && structureIndex !== undefined) {
+            if(me.alignmolid2color !== undefined && me.alignmolid2color[structureIndex].hasOwnProperty(molid)) {
+                alignNum = me.alignmolid2color[structureIndex][molid];
+                oricolor = "#FF0000";
             }
-            else if(structureIndex !== undefined && structureIndex === 1) {
-                if(me.alignmolid2color !== undefined && me.alignmolid2color[1].hasOwnProperty(molid)) {
-                    //color = me.alignmolid2color[1][molid];
-                    alignNum = me.alignmolid2color[1][molid];
-                    oricolor = "#FF0000";
-                }
-                else {
-                    oricolor = "#FFFFFF";
-                }
+            else {
+                oricolor = "#FFFFFF";
             }
         }
 

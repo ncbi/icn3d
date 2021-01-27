@@ -4,7 +4,7 @@
 
 ## About iCn3D
 
-"I see in 3D" (iCn3D) Structure Viewer is a WebGL-based 3D viewer using Three.js and jQuery. iCn3D synchronizes the display of 3D structure, 2D interaction, and 1D sequences and annotations. Users' custom display can be saved in a short URL or a PNG image. <b>Complete package</b> of iCn3D including Three.js and jQuery can be downloaded from [https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.23.2.zip](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.23.2.zip). The "Download ZIP" link in this page does not include third-party libraries. 
+"I see in 3D" (iCn3D) Structure Viewer is a WebGL-based 3D viewer using Three.js and jQuery. iCn3D synchronizes the display of 3D structure, 2D interaction, and 1D sequences and annotations. Users' custom display can be saved in a short URL or a PNG image. <b>Complete package</b> of iCn3D including Three.js and jQuery can be downloaded from [https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.24.0.zip](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.24.0.zip). The "Download ZIP" link in this page does not include third-party libraries. 
 * <b>View a 3D structure in iCn3D</b>: 
     Open the link https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html, input a PDB ID, and click "Load". You can also click "File" menu to "Open File" or input other IDs.
 
@@ -20,7 +20,7 @@
 * <b>Save your work</b>: 
     You can save "iCn3D PNG Image" in the menu "File > Save Files". Both the PNG file and an HTML file are saved. Click the HTML file to see the PNG image, which is linked to the custom display via a shorten URL. The downloaded "iCn3D PNG Image" itself can also be used as an input in the menu "File > Open File" to reproduce the custom display. You can combine these HTML files to generate your own galleries.
     
-    You can also save "Share Link" in "File" menu to share with your colleagues. You can click "Replay Each Step > On" in "File" menu to learn how a [custom display](https://structure.ncbi.nlm.nih.gov/icn3d/share.html?u7gp4xS9rn4hahcLA) was generated.
+    You can also save "Share Link" in "File" menu to share with your colleagues. These URLs are lifelong. You can click "Replay Each Step > On" in "File" menu to learn how a [custom display](https://structure.ncbi.nlm.nih.gov/icn3d/share.html?u7gp4xS9rn4hahcLA) was generated.
     
     All "Share Link" URLs can show the original view using the archived version of iCn3D by clicking "Open File > Share Link in Archived Ver." in "File" menu.    
 

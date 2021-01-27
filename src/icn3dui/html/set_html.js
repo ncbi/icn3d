@@ -353,7 +353,8 @@ iCn3DUI.prototype.setMenu1_base = function() { var me = this, ic = me.icn3d; "us
     html += "<ul>";
     html += me.getLink('mn1_blast_rep_id', 'Sequence to Structure');
     html += me.getLink('mn1_align', 'Structure to Structure');
-    html += me.getLink('mn1_chainalign', 'Chain to Chain');
+    //html += me.getLink('mn1_chainalign', 'Chain to Chain');
+    html += me.getLink('mn1_chainalign', 'Multiple Chains');
 
     html += "</ul>";
     html += "</li>";
@@ -1818,10 +1819,19 @@ iCn3DUI.prototype.setDialogs = function() { var me = this, ic = me.icn3d; "use s
     html += "</div>";
 
     html += me.divStr + "dl_chainalign' class='" + dialogClass + "'>";
+/*
     html += "Enter the PDB chain IDs in the form of pdbid_chain (e.g., 1HHO_A, case sensitive): <br/><br/>ID1: " + me.inputTextStr + "id='" + me.pre + "chainalignid1' value='1HHO_A' size=8>" + me.space3 + me.space3 + "ID2: " + me.inputTextStr + "id='" + me.pre + "chainalignid2' value='4N7N_A' size=8><br/><br/>";
     html += me.buttonStr + "reload_chainalign'>Align</button><br/><br/>";
     html += "<div style='width:450px'>(Note: To align chains in custom PDB files, you could concatenate PDB files in a single PDB file with the separation line \"ENDMDL\". Then load it in \"Open File > PDB File\" in the \"File\" menu and click \"View Sequences & Annotations\" in the \"Window\" menu. Finally select two chains in the sequence window and click \"Realign Selection\" in the \"File\" menu.)</div>";
     html += "</div>";
+*/
+    html += "<div style='width:500px'>";
+    html += "All chains will be aligned to the first chain in the comma-separated chain IDs. Each chain ID has the form of pdbid_chain (e.g., 1HHO_A, case sensitive). If the residue numbers to be aligned in the first chain is not defined, the full chain will be used for sequence alignment.<br/><br/>";
+    html += "<div style='display:inline-block; width:110px'>Chain IDs: </div>" + me.inputTextStr + "id='" + me.pre + "chainalignids' placeholder='1HHO_A,4N7N_A' size=50><br>";
+    html += "<div style='display:inline-block; width:110px'>Residue Numbers (optional): </div>" + me.inputTextStr + "id='" + me.pre + "resalignids' placeholder='1,5,10-50' size=50><br/><br/>";
+    html += me.buttonStr + "reload_chainalign'>Align</button><br/><br/>";
+    html += "(Note: To align chains in custom PDB files, you could concatenate PDB files in a single PDB file with the separation line \"ENDMDL\". Then load it in \"Open File > PDB File\" in the \"File\" menu and click \"View Sequences & Annotations\" in the \"Window\" menu. Finally select multiple chains in the sequence window and click \"Realign Selection\" in the \"File\" menu.)<br><br>";
+    html += "</div></div>";
 
     html += me.divStr + "dl_mol2file' class='" + dialogClass + "'>";
     html += "Mol2 File: " + me.inputFileStr + "id='" + me.pre + "mol2file' size=8> ";
@@ -2355,10 +2365,10 @@ iCn3DUI.prototype.setDialogs = function() { var me = this, ic = me.icn3d; "use s
     html += "</div>";
 
 
-    html += me.divStr + "dl_copyurl' style='width:500px;' class='" + dialogClass + "'>";
+    html += me.divStr + "dl_copyurl' style='width:520px;' class='" + dialogClass + "'>";
     html += "Please copy one of the URLs below. They show the same result.<br>(To add a title to share link, click \"Windows > Your Note\" and click \"File > Share Link\" again.)<br><br>";
     html += "Original URL with commands: <br><textarea id='" + me.pre + "ori_url' rows='4' style='width:100%'></textarea><br><br>";
-    html += "Short URL: (To replace this URL, send a pull request to update share.html at <a href='https://github.com/ncbi/icn3d' target='_blank'>iCn3D GitHub</a>)<br>" + me.inputTextStr + "id='" + me.pre + "short_url' value='' style='width:100%'><br><br>";
+    html += "Lifelong Short URL: (To replace this URL, send a pull request to update share.html at <a href='https://github.com/ncbi/icn3d' target='_blank'>iCn3D GitHub</a>)<br>" + me.inputTextStr + "id='" + me.pre + "short_url' value='' style='width:100%'><br><br>";
     html += "</div>";
 
     html += me.divStr + "dl_selectannotations' class='" + dialogClass + " icn3d-annotation' style='background-color:white;'>";
@@ -2620,8 +2630,12 @@ iCn3DUI.prototype.getSelectionHints = function () { var me = this, ic = me.icn3d
   return sequencesHtml;
 };
 
-iCn3DUI.prototype.getAlignSequencesAnnotations = function (alignChainArray, bUpdateHighlightAtoms, residueArray, bShowHighlight, bOnechain) { var me = this, ic = me.icn3d; "use strict";
+iCn3DUI.prototype.getAlignSequencesAnnotations = function (alignChainArray, bUpdateHighlightAtoms, residueArray, bShowHighlight, bOnechain, bReverse) { var me = this, ic = me.icn3d; "use strict";
   var sequencesHtml = '';
+
+  alignChainArray = Object.keys(ic.alnChains);
+
+  if(bReverse) alignChainArray = alignChainArray.reverse();
 
   var maxSeqCnt = 0;
 
@@ -2641,7 +2655,10 @@ iCn3DUI.prototype.getAlignSequencesAnnotations = function (alignChainArray, bUpd
   var bHighlightChain;
   var index = 0, prevResCnt2nd = 0;
   var firstChainid, oriChainid;
-  for(var i in ic.alnChains) {
+//  for(var i in ic.alnChains) {
+  for(var m = 0, ml = alignChainArray.length; m < ml; ++m) {
+      var i = alignChainArray[m];
+
       if(index == 0) firstChainid = i;
 
       if(bOnechain && index > 0) {

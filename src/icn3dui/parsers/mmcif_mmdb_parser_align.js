@@ -11,7 +11,6 @@ iCn3DUI.prototype.downloadAlignment = function (align) { var me = this, ic = me.
     var ids_str = 'ids=' + align;
 
 //    var url2 = me.baseUrl + 'vastplus/vastplus.cgi?v=2&cmd=c&b=1&s=1&w3d&' + ids_str;
-    //!!!
 //    var url2 = me.baseUrl + 'vastplus/vastplus.cgi?v=2&cmd=c&b=1&s=1&w3d&' + ids_str;
 //    var url1 = me.baseUrl + 'vastplus/vastplus.cgi?v=2&cmd=c1&b=1&s=1&d=1&' + ids_str;
 
@@ -110,31 +109,26 @@ iCn3DUI.prototype.downloadAlignment = function (align) { var me = this, ic = me.
 
         // get the color for each aligned chain pair
         me.alignmolid2color = [];
-        me.alignmolid2color[0] = {};
-        me.alignmolid2color[1] = {};
+        //me.alignmolid2color[0] = {};
+        //me.alignmolid2color[1] = {};
         var colorLength = ic.stdChainColors.length;
 
         for(var i = 0, il = seqalign.length; i < il; ++i) {
             var molid1 = seqalign[i][0].moleculeId;
             var molid2 = seqalign[i][1].moleculeId;
 
-            me.alignmolid2color[0][molid1] = (i+1).toString();
-            me.alignmolid2color[1][molid2] = (i+1).toString();
+            //me.alignmolid2color[0][molid1] = (i+1).toString();
+            //me.alignmolid2color[1][molid2] = (i+1).toString();
+
+            var tmpHash = {};
+            tmpHash[molid1] = (i+1).toString();
+            me.alignmolid2color.push(tmpHash);
+
+            tmpHash = {};
+            tmpHash[molid2] = (i+1).toString();
+            me.alignmolid2color.push(tmpHash);
         }
-/*
-        var d2 = $.ajax({
-          url: url2,
-          dataType: 'jsonp',
-          cache: true,
-          beforeSend: function() {
-              me.showLoading();
-          },
-          complete: function() {
-              //me.hideLoading();
-          }
-        });
-*/
-        //!!!
+
         //var url3 = me.baseUrl + 'mmdb/mmdb_strview.cgi?v=2&program=icn3d&b=1&s=1&ft=1&atomonly=1&uid=' + me.mmdbidArray[0];
         //var url4 = me.baseUrl + 'mmdb/mmdb_strview.cgi?v=2&program=icn3d&b=1&s=1&ft=1&atomonly=1&uid=' + me.mmdbidArray[1];
         // need the parameter moleculeInfor
@@ -274,58 +268,7 @@ iCn3DUI.prototype.downloadAlignment = function (align) { var me = this, ic = me.
                 return false;
             }
         });
-
-/*
-        return $.ajax({
-          url: url2,
-          dataType: 'jsonp',
-          //jsonp: 'jpf',
-          cache: true,
-          tryCount : 0,
-          retryLimit : 1,
-          beforeSend: function() {
-              me.showLoading();
-          },
-          complete: function() {
-              //me.hideLoading();
-          }
-        });
-*/
     });
-
-/*
-    chained.done(function( data ) { // url2
-        if (data.atoms !== undefined) {
-            me.deferredOpm = $.Deferred(function() {
-                //var mmdbidArray = me.inputid.split('_');
-                me.mmdbidArray = [];
-                for(var i = 0, il = data.alignedStructures[0].length; i < il; ++i) {
-                    me.mmdbidArray.push(data.alignedStructures[0][i].pdbId);
-                }
-
-
-                me.setYourNote((me.mmdbidArray[0] + ',' + me.mmdbidArray[1]).toUpperCase() + ' (VAST+) in iCn3D');
-
-                me.loadOpmDataForAlign(data, seqalign, me.mmdbidArray);
-            });
-
-            return me.deferredOpm.promise();
-        }
-        else {
-            alert('invalid atoms data.');
-            return false;
-        }
-    })
-    .fail(function() {
-        this.tryCount++;
-        if (this.tryCount <= this.retryLimit) {
-            //try again
-            $.ajax(this);
-            return;
-        }
-        return;
-    });
-*/
 };
 
 iCn3DUI.prototype.downloadAlignmentPart2 = function (data, seqalign, chainresiCalphaHash2) { var me = this, ic = me.icn3d; "use strict";
@@ -370,9 +313,20 @@ iCn3DUI.prototype.downloadAlignmentPart2 = function (data, seqalign, chainresiCa
     //if(me.deferred !== undefined) me.deferred.resolve(); if(me.deferred2 !== undefined) me.deferred2.resolve();
 };
 
-iCn3DUI.prototype.downloadChainalignmentPart2 = function (data1, data2, chainresiCalphaHash2) { var me = this, ic = me.icn3d; "use strict";
-    me.parseMmdbData(data1, 'target');
-    me.parseMmdbData(data2, 'query');
+iCn3DUI.prototype.downloadChainalignmentPart2 = function (data1, data2Array, chainresiCalphaHash2, chainidArray) { var me = this, ic = me.icn3d; "use strict";
+    //me.interactionData_q = [];
+    //me.mmdb_data_q = [];
+
+    me.parseMmdbData(data1, 'target', chainidArray[0], 0);
+
+    var bLastQuery = false;
+    for(var i = 0, il = data2Array.length; i < il; ++i) {
+        if(i == data2Array.length - 1) bLastQuery = true;
+        // each alignment has a chainIndex i
+        me.parseMmdbData(data2Array[i], 'query', chainidArray[i + 1], i, bLastQuery);
+    }
+
+    if(me.cfg.resnum) me.realignChainOnSeqAlign(chainidArray);
 
     // show all
     var allAtoms = {};
@@ -410,7 +364,8 @@ iCn3DUI.prototype.downloadChainalignmentPart2 = function (data1, data2, chainres
                 me.download2Ddgm(me.inputid.toUpperCase());
             }
             else {
-                me.set2DDiagramsForAlign(me.inputid2.toUpperCase(), me.inputid.toUpperCase());
+                //me.set2DDiagramsForAlign(me.inputid2.toUpperCase(), me.inputid.toUpperCase());
+                me.set2DDiagramsForChainalign(chainidArray);
             }
         }
     }
@@ -418,108 +373,152 @@ iCn3DUI.prototype.downloadChainalignmentPart2 = function (data1, data2, chainres
     //if(me.deferred !== undefined) me.deferred.resolve(); if(me.deferred2 !== undefined) me.deferred2.resolve();
 };
 
-iCn3DUI.prototype.downloadChainAlignment = function (chainalign) { var me = this, ic = me.icn3d; "use strict";
+iCn3DUI.prototype.downloadChainAlignment = function (chainalign, resnum) { var me = this, ic = me.icn3d; "use strict";
     me.opts['proteins'] = 'c alpha trace';
     ic.opts['proteins'] = 'c alpha trace';
 
     var alignArray = chainalign.split(',');
-    var pos1 = alignArray[0].indexOf('_');
-    var pos2 = alignArray[1].indexOf('_');
-    me.mmdbid_q = alignArray[0].substr(0, pos1).toUpperCase();
-    me.mmdbid_t = alignArray[1].substr(0, pos2).toUpperCase();
-    me.chain_q = alignArray[0].substr(pos1+1);
-    me.chain_t = alignArray[1].substr(pos2+1);
-
-    var chainalignFinal = me.mmdbid_q + "_" + me.chain_q + "," + me.mmdbid_t + "_" + me.chain_t;
-
-    me.setYourNote(chainalign.toUpperCase() + ' in iCn3D');
-
-    var urlalign = me.baseUrl + "vastdyn/vastdyn.cgi?chainpairs=" + chainalignFinal;
-    var url_t = me.baseUrl + "mmdb/mmdb_strview.cgi?v=2&program=icn3d&b=1&s=1&ft=1&uid=" + me.mmdbid_t;
-    var url_q = me.baseUrl + "mmdb/mmdb_strview.cgi?v=2&program=icn3d&b=1&s=1&ft=1&uid=" + me.mmdbid_q;
-
-    if(me.cfg.inpara !== undefined) {
-      url_t += me.cfg.inpara;
-      url_q += me.cfg.inpara;
+    for(var i = 0, il = alignArray.length; i < il; ++i) {
+        var chainid = alignArray[i];
+        var pos = chainid.indexOf('_');
+        alignArray[i] = chainid.substr(0, pos).toUpperCase() + chainid.substr(pos);
     }
 
-    ic.bCid = undefined;
+    me.chainidArray = alignArray;
 
+    var pos1 = alignArray[0].indexOf('_');
+    me.mmdbid_t = alignArray[0].substr(0, pos1).toUpperCase();
+    me.chain_t = alignArray[0].substr(pos1+1);
+    var url_t = me.baseUrl + "mmdb/mmdb_strview.cgi?v=2&program=icn3d&b=1&s=1&ft=1&uid=" + me.mmdbid_t;
+    if(me.cfg.inpara !== undefined) url_t += me.cfg.inpara;
+
+    var ajaxArray = [];
+    var targetAjax = $.ajax({
+      url: url_t,
+      dataType: 'jsonp',
+      cache: true
+    });
+
+    ajaxArray.push(targetAjax);
+
+    me.setYourNote(chainalign.toUpperCase() + ' in iCn3D');
+    ic.bCid = undefined;
     // define for 'align' only
     ic.pdbid_chain2title = {};
-
     if(me.chainids2resids === undefined) me.chainids2resids = {}; // me.chainids2resids[chainid1][chainid2] = [resid, resid]
 
-    $.ajax({
-      url: urlalign,
-      dataType: 'jsonp',
-      cache: true,
-      beforeSend: function() {
-          me.showLoading();
-      },
-      complete: function() {
-          //me.hideLoading();
-      },
-      success: function(align) {
-        if((align === undefined || align.length == 0) && me.mmdbid_q == me.mmdbid_t && me.chain_q == me.chain_t) {
-            me.t_trans_add = {"x":0, "y":0, "z":0};
-            me.q_trans_sub = {"x":0, "y":0, "z":0};
-            me.q_rotation = {"x1":1, "y1":0, "z1":0, "x2":0, "y2":1, "z2":0, "x3":0, "y3":0, "z3":1};
+    for(var index = 1, indexLen = alignArray.length; index < indexLen; ++index) {
+        var pos2 = alignArray[index].indexOf('_');
+        me.mmdbid_q = alignArray[index].substr(0, pos2).toUpperCase();
+        me.chain_q = alignArray[index].substr(pos2+1);
 
-            //var chainLen = ic.chainsSeq[me.mmdbid_q + '_' + me.chain_q].length;
-            //me.qt_start_end =  [{"q_start":1, "q_end": chainLen, "t_start":1, "t_end": chainLen}];
+        var chainalignFinal = me.mmdbid_q + "_" + me.chain_q + "," + me.mmdbid_t + "_" + me.chain_t;
+
+        var urlalign = me.baseUrl + "vastdyn/vastdyn.cgi?chainpairs=" + chainalignFinal;
+        var url_q = me.baseUrl + "mmdb/mmdb_strview.cgi?v=2&program=icn3d&b=1&s=1&ft=1&uid=" + me.mmdbid_q;
+
+        if(me.cfg.inpara !== undefined) url_q += me.cfg.inpara;
+
+        var queryAjax = $.ajax({
+          url: url_q,
+          dataType: 'jsonp',
+          cache: true
+        });
+
+        ajaxArray.push(queryAjax);
+
+        if(!me.cfg.resnum) {
+            var alignAjax = $.ajax({
+              url: urlalign,
+              dataType: 'jsonp',
+              cache: true
+            });
+
+            ajaxArray.push(alignAjax);
         }
-        else if(align === undefined || align.length == 0) {
-            if(!me.cfg.command) alert('These two chains ' + chainalign + ' can not align to each other. ' + 'Please select sequences from these two chains in the "Sequences & Annotations" window, ' + 'and click "Realign Selection" in the "File" menu to align your selection.');
+    }
 
-            me.cfg.showanno = 1;
-            me.cfg.showalignseq = 0;
-            //return false;
+    //https://stackoverflow.com/questions/14352139/multiple-ajax-calls-from-array-and-handle-callback-when-completed
+    //https://stackoverflow.com/questions/5518181/jquery-deferreds-when-and-the-fail-callback-arguments
+    $.when.apply(undefined, ajaxArray).then(function() {
+      me.parseChainAlignData(arguments, alignArray, me.mmdbid_t, me.chain_t);
+    })
+    .fail(function() {
+      me.parseChainAlignData(arguments, alignArray, me.mmdbid_t, me.chain_t);
+    });
+};
+
+iCn3DUI.prototype.parseChainAlignData = function (data, chainidArray, mmdbid_t, chain_t) { var me = this, ic = me.icn3d; "use strict";
+    var dataArray = (chainidArray.length == 1) ? [data] : data;
+
+    // Each argument is an array with the following structure: [ data, statusText, jqXHR ]
+    //var data2 = v2[0];
+    // index = 0: the mmdb data of target
+    var targetData = dataArray[0][0];
+
+    me.t_trans_add = [];
+    me.q_trans_sub = [];
+    me.q_rotation = [];
+    me.qt_start_end = [];
+
+    me.mmdbidArray = [];
+    me.mmdbidArray.push(mmdbid_t);
+
+    var queryDataArray = [];
+
+    var step = (me.cfg.resnum) ? 1 : 2;
+
+    for(var index = 1, indexl = dataArray.length; index < indexl; index += step) {
+        var queryData = dataArray[index][0];
+
+        var index2 = parseInt(index / step);
+        var pos2 = chainidArray[index2].indexOf('_');
+        var mmdbid_q = chainidArray[index2].substr(0, pos2).toUpperCase();
+        var chain_q = chainidArray[index2].substr(pos2+1);
+
+        if(me.cfg.resnum) {
+            if(queryData !== undefined && JSON.stringify(queryData).indexOf('Oops there was a problem') === -1
+              ) {
+                me.mmdbidArray.push(mmdbid_q);
+
+                queryDataArray.push(queryData);
+            }
         }
         else {
-            me.t_trans_add = align[0].t_trans_add;
-            me.q_trans_sub = align[0].q_trans_sub;
-            me.q_rotation = align[0].q_rotation;
-            me.qt_start_end = align[0].segs;
+            var align = dataArray[index + 1][0];
+
+            if(queryData !== undefined && JSON.stringify(queryData).indexOf('Oops there was a problem') === -1
+                && align !== undefined && JSON.stringify(align).indexOf('Oops there was a problem') === -1
+              ) {
+                if((align === undefined || align.length == 0) && mmdbid_q == mmdbid_t && chain_q == chain_t) {
+                    me.t_trans_add.push({"x":0, "y":0, "z":0});
+                    me.q_trans_sub.push({"x":0, "y":0, "z":0});
+                    me.q_rotation.push({"x1":1, "y1":0, "z1":0, "x2":0, "y2":1, "z2":0, "x3":0, "y3":0, "z3":1});
+                    me.qt_start_end.push(undefined);
+                }
+                else if(align === undefined || align.length == 0) {
+                    if(!me.cfg.command) alert('These two chains ' + chainidArray[index2] + ' can not align to each other. ' + 'Please select sequences from these two chains in the "Sequences & Annotations" window, ' + 'and click "Realign Selection" in the "File" menu to align your selection.');
+
+                    me.cfg.showanno = 1;
+                    me.cfg.showalignseq = 0;
+                }
+                else {
+                    me.t_trans_add.push(align[0].t_trans_add);
+                    me.q_trans_sub.push(align[0].q_trans_sub);
+                    me.q_rotation.push(align[0].q_rotation);
+                    me.qt_start_end.push(align[0].segs);
+                }
+
+                me.mmdbidArray.push(mmdbid_q);
+
+                queryDataArray.push(queryData);
+            }
         }
+    }
 
-        $.ajax({
-          url: url_t,
-          dataType: 'jsonp',
-          cache: true,
-          beforeSend: function() {
-              me.showLoading();
-          },
-          complete: function() {
-              //me.hideLoading();
-          },
-          success: function(data1) {
-            $.ajax({
-              url: url_q,
-              dataType: 'jsonp',
-              cache: true,
-              beforeSend: function() {
-                  me.showLoading();
-              },
-              complete: function() {
-                  //me.hideLoading();
-              },
-              success: function(data2) {
-                me.mmdbidArray = [];
-                me.mmdbidArray.push(me.mmdbid_q);
-                me.mmdbidArray.push(me.mmdbid_t);
+    me.mmdb_data_q = queryDataArray;
 
-                me.loadOpmDataForChainalign(data1, data2, me.mmdbidArray);
-              } // success
-            }); // ajax
-          } // success
-        }); // ajax
-      }, // success
-      error : function(xhr, textStatus, errorThrown ) {
-        alert("One of the chains is unavailable in the NCBI MMDB database.");
-        return;
-      }
-    }); // ajax
+    me.loadOpmDataForChainalign(targetData, queryDataArray, chainidArray, me.mmdbidArray);
 };
 
 iCn3DUI.prototype.set2DDiagramsForAlign = function (mmdbid1, mmdbid2) { var me = this, ic = me.icn3d; "use strict";
@@ -572,41 +571,61 @@ iCn3DUI.prototype.set2DDiagramsForAlign = function (mmdbid1, mmdbid2) { var me =
    });
 };
 
-iCn3DUI.prototype.download2Ddgm = function(mmdbid, structureIndex) { var  me = this; "use strict";
-/*
-  me.deferred3 = $.Deferred(function() {
-    var url="https://www.ncbi.nlm.nih.gov/Structure/mmdb/mmdb_strview.cgi?uid="+mmdbid+"&format=json&intrac=3";
+iCn3DUI.prototype.set2DDiagramsForChainalign = function (chainidArray) { var me = this, ic = me.icn3d; "use strict";
+    me.openDlg('dl_2ddgm', 'Interactions');
 
-   if(me.cfg.inpara !== undefined) {
-      url += me.cfg.inpara;
-   }
+    var ajaxArray = [];
+    for(var index = 0, indexLen = chainidArray.length; index < indexLen; ++index) {
+       var pos = chainidArray[index].indexOf('_');
+       var mmdbid = chainidArray[index].substr(0, pos).toUpperCase();
 
-    $.ajax({
-        url: url,
-        dataType: 'jsonp',
-        tryCount : 0,
-        retryLimit : 1,
-        success: function( data ) {
-            me.draw2Ddgm(data, mmdbid, structureIndex);
+       var url = me.baseUrl + "mmdb/mmdb_strview.cgi?v=2&program=icn3d&uid="+mmdbid+"&intrac=1";
 
-            if(me.cfg.show2d !== undefined && me.cfg.show2d) me.openDlg('dl_2ddgm', 'Interactions');
-            if(me.deferred3 !== undefined) me.deferred3.resolve();
-        },
-        error : function(xhr, textStatus, errorThrown ) {
-            this.tryCount++;
-            if (this.tryCount <= this.retryLimit) {
-                //try again
-                $.ajax(this);
-                return;
-            }
-            return;
-        }
+       if(me.cfg.inpara !== undefined) url += me.cfg.inpara;
+
+       var twodAjax = $.ajax({
+            url: url,
+            dataType: 'jsonp',
+            cache: true
+       });
+
+       ajaxArray.push(twodAjax);
+    }
+
+    //https://stackoverflow.com/questions/14352139/multiple-ajax-calls-from-array-and-handle-callback-when-completed
+    //https://stackoverflow.com/questions/5518181/jquery-deferreds-when-and-the-fail-callback-arguments
+    $.when.apply(undefined, ajaxArray).then(function() {
+      me.parse2DDiagramsData(arguments, chainidArray);
+    })
+    .fail(function() {
+      me.parse2DDiagramsData(arguments, chainidArray);
     });
-  });
+};
 
-  return me.deferred3.promise();
-*/
+iCn3DUI.prototype.parse2DDiagramsData = function (dataInput, chainidArray) { var me = this, ic = me.icn3d; "use strict";
+    var dataArray = (chainidArray.length == 1) ? [dataInput] : dataInput;
 
+    me.html2ddgm = '';
+
+    // Each argument is an array with the following structure: [ data, statusText, jqXHR ]
+    //var data2 = v2[0];
+    for(var index = 0, indexl = chainidArray.length; index < indexl; ++index) {
+        var data = dataArray[index][0];
+        var mmdbid = chainidArray[index].substr(0, chainidArray[index].indexOf('_'));
+
+        me.draw2Ddgm(data, mmdbid, 0);
+    }
+
+    me.html2ddgm += "<br>" + me.set2DdgmNote(true);
+
+    me.b2DShown = true;
+    $("#" + me.pre + "dl_2ddgm").html(me.html2ddgm);
+    if(me.cfg.show2d) me.openDlg('dl_2ddgm', 'Interactions');
+
+    if(me.deferredViewinteraction !== undefined) me.deferredViewinteraction.resolve();
+};
+
+iCn3DUI.prototype.download2Ddgm = function(mmdbid, structureIndex) { var  me = this; "use strict";
     me.set2DDiagrams(mmdbid);
 };
 
@@ -936,30 +955,31 @@ iCn3DUI.prototype.setSeqPerResi = function (chainid, chainid1, chainid2, resi, r
       }
 };
 
-iCn3DUI.prototype.setSeqAlignChain = function () { var me = this, ic = me.icn3d; "use strict";
+iCn3DUI.prototype.setSeqAlignChain = function (chainid, chainIndex) { var me = this, ic = me.icn3d; "use strict";
       //loadSeqAlignment
       var alignedAtoms = {};
-      var mmdbid1 = me.inputid2;
-      var mmdbid2 = me.inputid;
 
-      var chainidArray = me.cfg.chainalign.split(',');
-      var pos1 = chainidArray[0].indexOf('_');
-      var pos2 = chainidArray[1].indexOf('_');
+      //var chainidArray = me.cfg.chainalign.split(',');
+      var pos1 = me.chainidArray[0].indexOf('_');
+      var pos2 = chainid.indexOf('_');
 
-      var chain1 = chainidArray[0].substr(pos1 + 1);
-      var chain2 = chainidArray[1].substr(pos2 + 1);
+      var mmdbid1 = me.mmdbid_t; //me.chainidArray[0].substr(0, pos1).toUpperCase();
+      var mmdbid2 = chainid.substr(0, pos2).toUpperCase();
+
+      var chain1 = me.chainidArray[0].substr(pos1 + 1);
+      var chain2 = chainid.substr(pos2 + 1);
 
       if(mmdbid1 == mmdbid2 && chain1 == chain2) {
         var chainLen = ic.chainsSeq[me.mmdbid_q + '_' + me.chain_q].length;
-        me.qt_start_end =  [{"q_start":1, "q_end": chainLen, "t_start":1, "t_end": chainLen}];
+        me.qt_start_end[chainIndex] =  {"q_start":1, "q_end": chainLen, "t_start":1, "t_end": chainLen};
       }
 
-      var chainid1 = chainidArray[0].substr(0, pos1).toUpperCase() + "_" + chain1;
-      var chainid2 = chainidArray[1].substr(0, pos2).toUpperCase() + "_" + chain2;
+      var chainid1 = mmdbid1 + "_" + chain1;
+      var chainid2 = mmdbid2 + "_" + chain2;
 
-      if(me.mmdbid_q !== undefined && me.mmdbid_q === me.mmdbid_t) {
+      if(mmdbid2 !== undefined && mmdbid2 === me.mmdbid_t) {
           //chainid1 += me.postfix;
-          chainid1 = chainidArray[0].substr(0, pos1).toUpperCase() + me.postfix + "_" + chain1;
+          chainid2 = mmdbid2 + me.postfix + "_" + chain2;
       }
 
       me.conservedName1 = chainid1 + '_cons';
@@ -978,7 +998,13 @@ iCn3DUI.prototype.setSeqAlignChain = function () { var me = this, ic = me.icn3d;
       me.nconsHash2 = {};
       me.nalignHash2 = {};
 
-      // annoation title for the master seq only
+      ic.alnChains = {};
+
+      ic.alnChainsSeq[chainid1] = [];
+      ic.alnChains[chainid1] = {};
+      ic.alnChainsAnno[chainid1] = [];
+      ic.alnChainsAnTtl[chainid1] = [];
+
       if(ic.alnChainsAnTtl[chainid1] === undefined ) ic.alnChainsAnTtl[chainid1] = [];
       for(var i = 0; i < 7; ++i) {
           if(ic.alnChainsAnTtl[chainid1][i] === undefined ) ic.alnChainsAnTtl[chainid1][i] = [];
@@ -1003,11 +1029,11 @@ iCn3DUI.prototype.setSeqAlignChain = function () { var me = this, ic = me.icn3d;
       var prevIndex1, prevIndex2;
 
       var alignIndex = 1;
-      for (var i = 0, il = me.qt_start_end.length; i < il; ++i) {
-          var start1 = me.qt_start_end[i].q_start - 1;
-          var start2 = me.qt_start_end[i].t_start - 1;
-          var end1 = me.qt_start_end[i].q_end - 1;
-          var end2 = me.qt_start_end[i].t_end - 1;
+      for (var i = 0, il = me.qt_start_end[chainIndex].length; i < il; ++i) {
+          var start1 = me.qt_start_end[chainIndex][i].q_start - 1;
+          var start2 = me.qt_start_end[chainIndex][i].t_start - 1;
+          var end1 = me.qt_start_end[chainIndex][i].q_end - 1;
+          var end2 = me.qt_start_end[chainIndex][i].t_end - 1;
 
           if(i > 0) {
               var index1 = alignIndex;
@@ -1103,12 +1129,15 @@ iCn3DUI.prototype.setSeqAlignChain = function () { var me = this, ic = me.icn3d;
       } // end for(var i
 };
 
-iCn3DUI.prototype.setSeqAlignForRealign = function () { var me = this, ic = me.icn3d; "use strict";
+iCn3DUI.prototype.setSeqAlignForRealign = function (chainid, chainIndex) { var me = this, ic = me.icn3d; "use strict";
       //loadSeqAlignment
       var alignedAtoms = {};
-      var structureArray = Object.keys(ic.structures);
-      var structure1 = structureArray[0];
-      var structure2 = structureArray[1];
+
+      var chainid_t = me.chainidArray[0];
+
+//      var structureArray = Object.keys(ic.structures);
+      var structure1 = chainid_t.substr(0, chainid_t.indexOf('_')); //structureArray[0];
+      var structure2 = chainid.substr(0, chainid.indexOf('_')); //structureArray[1];
 
       me.conservedName1 = structure1 + '_cons';
       me.conservedName2 = structure2 + '_cons';
@@ -1122,11 +1151,14 @@ iCn3DUI.prototype.setSeqAlignForRealign = function () { var me = this, ic = me.i
       ic.alnChainsSeq = {};
       ic.alnChains = {};
 
+      ic.alnChainsSeq[chainid_t] = [];
+      ic.alnChains[chainid_t] = {};
+      ic.alnChainsAnno[chainid_t] = [];
+      ic.alnChainsAnTtl[chainid_t] = [];
+
 //      var emptyResObject = {resid: '', resn:'', resi: 0, aligned: false};
 
 //      var prevChainid1 = '', prevChainid2 = '', cnt1 = 0, cnt2 = 0;
-
-      ic.alnChainsSeq = {};
 
       var residuesHash = {};
 
@@ -1229,6 +1261,9 @@ iCn3DUI.prototype.realignOnSeqAlign = function () { var me = this, ic = me.icn3d
 
     me.saveSelection(name, name);
 
+    me.opts['color'] = 'grey';
+    ic.setColorByOptions(me.opts, ic.dAtoms);
+
     var struct2SeqHash = {};
     var struct2CoorHash = {};
     var struct2resid = {};
@@ -1330,8 +1365,9 @@ iCn3DUI.prototype.realignOnSeqAlign = function () { var me = this, ic = me.icn3d
                   }
               }
 
-              me.alignCoords(coordsFrom, coordsTo, fromStruct);
+              me.alignCoords(coordsFrom, coordsTo, fromStruct, undefined, chainid2, 1);
 
+              ic.draw();
               me.updateHlAll();
           }
           else {
@@ -1370,6 +1406,208 @@ iCn3DUI.prototype.realignOnSeqAlign = function () { var me = this, ic = me.icn3d
       }
     });
 
+};
+
+iCn3DUI.prototype.realignChainOnSeqAlign = function (chainidArray) { var me = this, ic = me.icn3d; "use strict";
+//    me.saveSelectionPrep();
+
+//    var index = Object.keys(ic.defNames2Atoms).length;
+//    var name = 'alseq_' + index;
+
+//    me.saveSelection(name, name);
+
+    me.opts['color'] = 'grey';
+    ic.setColorByOptions(me.opts, ic.dAtoms);
+
+    var struct2SeqHash = {};
+    var struct2CoorHash = {};
+    var struct2resid = {};
+    var lastStruResi = '';
+
+    var mmdbid_t;
+    var ajaxArray = [];
+    var url = 'https://www.ncbi.nlm.nih.gov/Structure/pwaln/pwaln.fcgi?from=chainalign';
+
+//    for(var serial in ic.hAtoms) {
+    for(var i = 0, il = chainidArray.length; i < il; ++i) {
+        var pos = chainidArray[i].indexOf('_');
+        var mmdbid = chainidArray[i].substr(0, pos).toUpperCase();
+        if(i == 0) mmdbid_t = mmdbid;
+        var chainid = mmdbid + chainidArray[i].substr(pos);
+
+        if(!struct2SeqHash.hasOwnProperty(mmdbid)) {
+            struct2SeqHash[mmdbid] = '';
+            struct2CoorHash[mmdbid] = [];
+            struct2resid[mmdbid] = [];
+        }
+
+        if(i == 0) { // master
+            var resiArray = me.cfg.resnum.split(",");
+            var base = ic.chainsSeq[chainid][0].resi;
+            for(var j = 0, jl = resiArray.length; j < jl; ++j) {
+                if(resiArray[j].indexOf('-') != -1) {
+                    var startEnd = resiArray[j].split('-');
+                    for(var k = parseInt(startEnd[0]); k <= parseInt(startEnd[1]); ++k) {
+                        struct2SeqHash[mmdbid] += ic.chainsSeq[chainid][k - base].name;
+                        for(var serial in ic.residues[chainid + '_' + k]) {
+                            var atom = ic.atoms[serial];
+                            if( (ic.proteins.hasOwnProperty(serial) && atom.name == "CA")
+                              || (ic.nucleotides.hasOwnProperty(serial) && (atom.name == "O3'" || atom.name == "O3*")) ) {
+                                struct2CoorHash[mmdbid].push(atom.coord.clone());
+                            }
+                        }
+                        struct2resid[mmdbid].push(chainid + '_' + k);
+                    }
+                }
+                else { // one residue
+                    var k = parseInt(resiArray[j]);
+                    struct2SeqHash[mmdbid] += ic.chainsSeq[chainid][k - base].name;
+                    for(var serial in ic.residues[chainid + '_' + k]) {
+                        var atom = ic.atoms[serial];
+                        if( (ic.proteins.hasOwnProperty(serial) && atom.name == "CA")
+                          || (ic.nucleotides.hasOwnProperty(serial) && (atom.name == "O3'" || atom.name == "O3*")) ) {
+                            struct2CoorHash[mmdbid].push(atom.coord.clone());
+                        }
+                    }
+                    struct2resid[mmdbid].push(chainid + '_' + k);
+                }
+            }
+        }
+        else {
+            for(var j = 0, jl = ic.chainsSeq[chainid].length; j < jl; ++j) {
+                struct2SeqHash[mmdbid] += ic.chainsSeq[chainid][j].name;
+                for(var serial in ic.chains[chainid]) {
+                    var atom = ic.atoms[serial];
+                    if( (ic.proteins.hasOwnProperty(serial) && atom.name == "CA")
+                      || (ic.nucleotides.hasOwnProperty(serial) && (atom.name == "O3'" || atom.name == "O3*")) ) {
+                        struct2CoorHash[mmdbid].push(atom.coord.clone());
+                    }
+                }
+                struct2resid[mmdbid].push(chainid + '_' + ic.chainsSeq[chainid][j].resi);
+            }
+        }
+
+        if(i > 0) {
+            var toStruct = mmdbid_t;
+            var fromStruct = mmdbid;
+
+            var seq1 = struct2SeqHash[toStruct];
+            var seq2 = struct2SeqHash[fromStruct];
+
+            var queryAjax = $.ajax({
+               url: url,
+               type: 'POST',
+               data : {'targets': seq1, 'queries': seq2},
+               dataType: 'jsonp',
+               cache: true
+            });
+
+            ajaxArray.push(queryAjax);
+        }
+    } // for
+
+    //https://stackoverflow.com/questions/14352139/multiple-ajax-calls-from-array-and-handle-callback-when-completed
+    //https://stackoverflow.com/questions/5518181/jquery-deferreds-when-and-the-fail-callback-arguments
+    $.when.apply(undefined, ajaxArray).then(function() {
+       me.parseChainRealignData(arguments, chainidArray, struct2SeqHash, struct2CoorHash, struct2resid);
+    })
+    .fail(function() {
+       me.parseChainRealignData(arguments, chainidArray, struct2SeqHash, struct2CoorHash, struct2resid);
+    });
+};
+
+iCn3DUI.prototype.parseChainRealignData = function (ajaxData, chainidArray, struct2SeqHash, struct2CoorHash, struct2resid) { var me = this, ic = me.icn3d; "use strict";
+  var dataArray = (chainidArray.length == 2) ? [ajaxData] : ajaxData;
+
+  var toStruct = chainidArray[0].substr(0, chainidArray[0].indexOf('_')).toUpperCase();
+
+  // Each argument is an array with the following structure: [ data, statusText, jqXHR ]
+  //var data2 = v2[0];
+  for(var index = 0, indexl = dataArray.length; index < indexl; ++index) {
+//  for(var index = 1, indexl = dataArray.length; index < indexl; ++index) {
+      var data = dataArray[index][0];
+
+      var fromStruct = chainidArray[index + 1].substr(0, chainidArray[index + 1].indexOf('_')).toUpperCase();
+
+      var seq1 = struct2SeqHash[toStruct];
+      var seq2 = struct2SeqHash[fromStruct];
+
+      var coord1 = struct2CoorHash[toStruct];
+      var coord2 = struct2CoorHash[fromStruct];
+
+      var residArray1 = struct2resid[toStruct];
+      var residArray2 = struct2resid[fromStruct];
+
+      var query, target;
+
+      if(data.data !== undefined) {
+          query = data.data[0].query;
+          var targetName = Object.keys(data.data[0].targets)[0];
+          target = data.data[0].targets[targetName];
+
+          target = target.hsps[0];
+      }
+
+      if(query !== undefined && target !== undefined) {
+          // transform from the second structure to the first structure
+          var coordsTo = [];
+          var coordsFrom = [];
+
+          var seqto = '', seqfrom = ''
+
+          me.realignResid = {};
+          me.realignResid[toStruct] = [];
+          me.realignResid[fromStruct] = [];
+
+          var segArray = target.segs;
+          for(var i = 0, il = segArray.length; i < il; ++i) {
+              var seg = segArray[i];
+              var prevChain1 = '', prevChain2 = '';
+              for(var j = 0; j <= seg.orito - seg.orifrom; ++j) {
+                  var chainid1 = residArray1[j + seg.orifrom].substr(0, residArray1[j + seg.orifrom].lastIndexOf('_'));
+                  var chainid2 = residArray2[j + seg.from].substr(0, residArray2[j + seg.from].lastIndexOf('_'));
+
+                  coordsTo.push(coord1[j + seg.orifrom]);
+                  coordsFrom.push(coord2[j + seg.from]);
+
+                  seqto += seq1[j + seg.orifrom];
+                  seqfrom += seq2[j + seg.from];
+
+                  // one chaincould be longer than the other
+                  if(j == 0 || (prevChain1 == chainid1 && prevChain2 == chainid2) || (prevChain1 != chainid1 && prevChain2 != chainid2)) {
+                      me.realignResid[toStruct].push({'resid':residArray1[j + seg.orifrom], 'resn':seq1[j + seg.orifrom]});
+                      me.realignResid[fromStruct].push({'resid':residArray2[j + seg.from], 'resn':seq2[j + seg.from]});
+                  }
+
+                  prevChain1 = chainid1;
+                  prevChain2 = chainid2;
+              }
+          }
+
+          var chainTo = chainidArray[0];
+          var chainFrom = chainidArray[index + 1];
+
+          me.alignCoords(coordsFrom, coordsTo, fromStruct, undefined, chainFrom, index + 1);
+
+          //me.updateHlAll();
+      }
+      else {
+          if(fromStruct === undefined && !me.cfg.command) {
+             alert('Please do not align residues in the same structure');
+          }
+          else if((seq1.length < 6 || seq2.length < 6) && !me.cfg.command) {
+             alert('These sequences are too short for alignment');
+          }
+          else if(seq1.length >= 6 && seq2.length >= 6 && !me.cfg.command) {
+             alert('These sequences can not be aligned to each other');
+          }
+      }
+
+      //if(me.deferredRealign !== undefined) me.deferredRealign.resolve();
+  }
+
+  ic.draw();
+  me.updateHlAll();
 };
 
 iCn3DUI.prototype.realign = function() { var me = this, ic = me.icn3d; "use strict";

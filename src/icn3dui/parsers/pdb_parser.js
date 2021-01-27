@@ -250,6 +250,7 @@ iCn3DUI.prototype.transformToOpmOri = function(pdbid) { var me = this, ic = me.i
       //ic.oriCenter = ic.center.clone();
 
       // add membranes
+      // the membrane atoms belongs to the structure "pdbid"
       me.addMemAtoms(ic.halfBilayerSize, pdbid, Math.sqrt(dxymaxsq));
 
       // no rotation
@@ -344,7 +345,7 @@ iCn3DUI.prototype.transformToOpmOriForAlign = function(pdbid, chainresiCalphaHas
   }
 };
 
-iCn3DUI.prototype.alignCoords = function(coordsFrom, coordsTo, secondStruct, bKeepSeq) { var me = this, ic = me.icn3d; "use strict";
+iCn3DUI.prototype.alignCoords = function(coordsFrom, coordsTo, secondStruct, bKeepSeq, chainid, chainIndex) { var me = this, ic = me.icn3d; "use strict";
   //var n = coordsFrom.length;
   var n = (coordsFrom.length < coordsTo.length) ? coordsFrom.length : coordsTo.length;
 
@@ -368,8 +369,9 @@ iCn3DUI.prototype.alignCoords = function(coordsFrom, coordsTo, secondStruct, bKe
           }
 
           for(var i = 0, il = ic.structures[secondStruct].length; i < il; ++i) {
-              var chainid = ic.structures[secondStruct][i];
-              for(var j in ic.chains[chainid]) {
+              var chainidTmp = ic.structures[secondStruct][i];
+
+              for(var j in ic.chains[chainidTmp]) {
                 var atom = ic.atoms[j];
                 atom.coord = ic.transformMemPro(atom.coord, rot, centerFrom, centerTo);
               }
@@ -377,23 +379,24 @@ iCn3DUI.prototype.alignCoords = function(coordsFrom, coordsTo, secondStruct, bKe
 
           me.bRealign = true;
 
-          if(!bKeepSeq) me.setSeqAlignForRealign();
+          if(!bKeepSeq) me.setSeqAlignForRealign(chainid, chainIndex);
 
           var bShowHighlight = false;
           var seqObj = me.getAlignSequencesAnnotations(Object.keys(ic.alnChains), undefined, undefined, bShowHighlight);
 
-          $("#" + me.pre + "dl_sequence2").html(seqObj.sequencesHtml);
+          var oriHtml = (chainIndex === 1) ? '' : $("#" + me.pre + "dl_sequence2").html();
+          $("#" + me.pre + "dl_sequence2").html(oriHtml + seqObj.sequencesHtml);
           $("#" + me.pre + "dl_sequence2").width(me.RESIDUE_WIDTH * seqObj.maxSeqCnt + 200);
 
           me.openDlg('dl_alignment', 'Select residues in aligned sequences');
 
-          me.opts['color'] = 'grey';
-          ic.setColorByOptions(me.opts, ic.dAtoms);
+//          me.opts['color'] = 'grey';
+//          ic.setColorByOptions(me.opts, ic.dAtoms);
 
           me.opts['color'] = 'identity';
           ic.setColorByOptions(me.opts, ic.hAtoms);
 
-          ic.draw();
+          //ic.draw();
       }
   }
 };
@@ -457,11 +460,11 @@ iCn3DUI.prototype.loadOpmData = function(data, pdbid, bFull, type, pdbid2) { var
       success: function(opmdata) {
           me.setOpmData(opmdata); // set ic.bOpm
 
-          $("#" + me.pre + "selectplane_z1").val(ic.halfBilayerSize);
-          $("#" + me.pre + "selectplane_z2").val(-ic.halfBilayerSize);
+//          $("#" + me.pre + "selectplane_z1").val(ic.halfBilayerSize);
+//          $("#" + me.pre + "selectplane_z2").val(-ic.halfBilayerSize);
 
-          $("#" + me.pre + "extra_mem_z").val(ic.halfBilayerSize);
-          $("#" + me.pre + "intra_mem_z").val(-ic.halfBilayerSize);
+//          $("#" + me.pre + "extra_mem_z").val(ic.halfBilayerSize);
+//          $("#" + me.pre + "intra_mem_z").val(-ic.halfBilayerSize);
 
           me.parseAtomData(data, pdbid, bFull, type, pdbid2);
 
@@ -589,76 +592,76 @@ iCn3DUI.prototype.loadOpmDataForAlign = function(data, seqalign, mmdbidArray) { 
     });
 };
 
-iCn3DUI.prototype.loadOpmDataForChainalign = function(data1, data2, mmdbidArray) { var me = this, ic = me.icn3d; "use strict";
-    var url, dataType;
 
-    url = "https://opm-assets.storage.googleapis.com/pdb/" + mmdbidArray[0].toLowerCase()+ ".pdb";
+iCn3DUI.prototype.loadOpmDataForChainalign = function(data1, data2, chainidArray, mmdbidArray) { var me = this, ic = me.icn3d; "use strict";
+    if(me.cfg.resnum) {
+        ic.init(); // remove all previously loaded data
+        me.downloadChainalignmentPart2(data1, data2, undefined, chainidArray);
 
-    dataType = "text";
-
-    $.ajax({
-      url: url,
-      dataType: dataType,
-      cache: true,
-      //tryCount : 0,
-      //retryLimit : 1,
-      success: function(opmdata) {
-          me.selectedPdbid = mmdbidArray[0];
-
-          ic.bOpm = true;
-          var bVector = true;
-          var chainresiCalphaHash = ic.loadPDB(opmdata, mmdbidArray[0], ic.bOpm, bVector); // defined in the core library
-
-          $("#" + me.pre + "selectplane_z1").val(ic.halfBilayerSize);
-          $("#" + me.pre + "selectplane_z2").val(-ic.halfBilayerSize);
-
-          $("#" + me.pre + "extra_mem_z").val(ic.halfBilayerSize);
-          $("#" + me.pre + "intra_mem_z").val(-ic.halfBilayerSize);
-
-          ic.init(); // remove all previously loaded data
-          me.downloadChainalignmentPart2(data1, data2, chainresiCalphaHash);
-
-          if(me.deferredOpm !== undefined) me.deferredOpm.resolve();
-      },
-      error : function(xhr, textStatus, errorThrown ) {
-        var url2 = "https://opm-assets.storage.googleapis.com/pdb/" + mmdbidArray[1].toLowerCase()+ ".pdb";
+        if(me.deferredOpm !== undefined) me.deferredOpm.resolve();
+    }
+    else {
+        var url = me.baseUrl + "vastdyn/vastdyn.cgi?mmdbids2opm=" + mmdbidArray.join("','");
 
         $.ajax({
-          url: url2,
-          dataType: dataType,
+          url: url,
+          dataType: 'jsonp',
           cache: true,
           //tryCount : 0,
           //retryLimit : 1,
-          success: function(opmdata) {
-              me.selectedPdbid = mmdbidArray[1];
+          success: function(data) {
+            var mmdbid = data.mmdbid;
+            me.selectedPdbid = mmdbid;
 
-              ic.bOpm = true;
-              var bVector = true;
-              var chainresiCalphaHash = ic.loadPDB(opmdata, mmdbidArray[1], ic.bOpm, bVector); // defined in the core library
-
-              $("#" + me.pre + "selectplane_z1").val(ic.halfBilayerSize);
-              $("#" + me.pre + "selectplane_z2").val(-ic.halfBilayerSize);
-
-              $("#" + me.pre + "extra_mem_z").val(ic.halfBilayerSize);
-              $("#" + me.pre + "intra_mem_z").val(-ic.halfBilayerSize);
-
+            if(!mmdbid) {
               ic.init(); // remove all previously loaded data
-              me.downloadChainalignmentPart2(data1, data2, chainresiCalphaHash);
+              me.downloadChainalignmentPart2(data1, data2, undefined, chainidArray);
 
               if(me.deferredOpm !== undefined) me.deferredOpm.resolve();
+            }
+            else {
+                var url2 = "https://opm-assets.storage.googleapis.com/pdb/" + mmdbid.toLowerCase()+ ".pdb";
+                $.ajax({
+                  url: url2,
+                  dataType: 'text',
+                  cache: true,
+                  //tryCount : 0,
+                  //retryLimit : 1,
+                  success: function(opmdata) {
+                      ic.bOpm = true;
+                      var bVector = true;
+                      var chainresiCalphaHash = ic.loadPDB(opmdata, mmdbid, ic.bOpm, bVector); // defined in the core library
+
+                      $("#" + me.pre + "selectplane_z1").val(ic.halfBilayerSize);
+                      $("#" + me.pre + "selectplane_z2").val(-ic.halfBilayerSize);
+
+                      $("#" + me.pre + "extra_mem_z").val(ic.halfBilayerSize);
+                      $("#" + me.pre + "intra_mem_z").val(-ic.halfBilayerSize);
+
+                      ic.init(); // remove all previously loaded data
+                      me.downloadChainalignmentPart2(data1, data2, chainresiCalphaHash, chainidArray);
+
+                      if(me.deferredOpm !== undefined) me.deferredOpm.resolve();
+                  },
+                  error : function(xhr, textStatus, errorThrown ) {
+                      ic.init(); // remove all previously loaded data
+                      me.downloadChainalignmentPart2(data1, data2, undefined, chainidArray);
+
+                      if(me.deferredOpm !== undefined) me.deferredOpm.resolve();
+                      return;
+                  }
+                });
+            }
           },
           error : function(xhr, textStatus, errorThrown ) {
               ic.init(); // remove all previously loaded data
-              me.downloadChainalignmentPart2(data1, data2);
+              me.downloadChainalignmentPart2(data1, data2, undefined, chainidArray);
 
               if(me.deferredOpm !== undefined) me.deferredOpm.resolve();
               return;
           }
         });
-
-        return;
-      }
-    });
+    }
 };
 
 iCn3DUI.prototype.loadMmcifOpmDataPart2 = function(data, pdbid) { var me = this, ic = me.icn3d; "use strict";
@@ -744,16 +747,21 @@ iCn3DUI.prototype.loadMmdbOpmDataPart2 = function(data, pdbid, type) { var me = 
     me.bAssemblyUseAsu = (data.asuAtomCount !== undefined) ? true : false;
     if(type !== undefined) {
         me.bAssemblyUseAsu = false;
-    }
 
-    $.when(me.downloadMmcifSymmetry(pdbid)).then(function() {
         me.downloadMmdbPart2(type);
-    });
+    }
+    else {
+        $.when(me.downloadMmcifSymmetry(pdbid)).then(function() {
+            me.downloadMmdbPart2(type);
+        });
+    }
 };
 
 iCn3DUI.prototype.loadMmdbOpmData = function(data, pdbid, type) { var me = this, ic = me.icn3d; "use strict";
   if(data.opm !== undefined && data.opm.rot !== undefined) {
       ic.bOpm = true;
+
+//      me.selectedPdbid = pdbid;
 
       me.setOpmData(data);
 
@@ -779,6 +787,12 @@ iCn3DUI.prototype.setOpmData = function(data) { var me = this, ic = me.icn3d; "u
         ic.rmsd_supr.trans1 = new THREE.Vector3(data.opm.trans1[0], data.opm.trans1[1], data.opm.trans1[2]);
         ic.rmsd_supr.trans2 = new THREE.Vector3(data.opm.trans2[0], data.opm.trans2[1], data.opm.trans2[2]);
         ic.rmsd_supr.rmsd = data.opm.rmsd;
+
+      $("#" + me.pre + "selectplane_z1").val(ic.halfBilayerSize);
+      $("#" + me.pre + "selectplane_z2").val(-ic.halfBilayerSize);
+
+      $("#" + me.pre + "extra_mem_z").val(ic.halfBilayerSize);
+      $("#" + me.pre + "intra_mem_z").val(-ic.halfBilayerSize);
     }
     else {
         ic.bOpm = false;

@@ -542,7 +542,7 @@ iCn3D.prototype.calculateIonicInteractions = function (startAtoms, targetAtoms, 
 
       var bAtomCondAnion = ( atom.resn === 'GLU' && (atom.name === "OE1" || atom.name === "OE2") )
         || ( atom.resn === 'ASP' && (atom.name === "OD1" || atom.name === "OD2") )
-        || ( me.nucleotidesArray.indexOf(atom.resn) !== -1 && (atom.name === "OP1" || atom.name === "OP2" || atom.name === "O1P" || atom.name === "O2P"))
+        || ( me.nucleotides.hasOwnProperty(atom.serial) && (atom.name === "OP1" || atom.name === "OP2" || atom.name === "O1P" || atom.name === "O2P"))
         || (atom.het && me.anionsTrimArray.indexOf(atom.elem) !== -1)
         || bLigNeg;
 
@@ -577,7 +577,7 @@ iCn3D.prototype.calculateIonicInteractions = function (startAtoms, targetAtoms, 
 
       var bAtomCondAnion = ( atom.resn === 'GLU' && (atom.name === "OE1" || atom.name === "OE2") )
         || ( atom.resn === 'ASP' && (atom.name === "OD1" || atom.name === "OD2") )
-        || ( me.nucleotidesArray.indexOf(atom.resn) !== -1 && (atom.name === "OP1" || atom.name === "OP2" || atom.name === "O1P" || atom.name === "O2P"))
+        || ( me.nucleotides.hasOwnProperty(atom.serial) && (atom.name === "OP1" || atom.name === "OP2" || atom.name === "O1P" || atom.name === "O2P"))
         || (atom.het && me.anionsTrimArray.indexOf(atom.elem) !== -1);
 
       bAtomCondCation = (this.bOpm) ? bAtomCondCation && atom.resn !== 'DUM' : bAtomCondCation;
@@ -719,7 +719,7 @@ iCn3D.prototype.getPi = function (atom, bStacking) { var me = this, ic = me.icn3
 
       var chain_resi = atom.structure + "_" + atom.chain + "_" + atom.resi;
 
-      var bAromatic = atom.het || $.inArray(atom.resn, this.nucleotidesArray) !== -1 || atom.resn === "PHE"
+      var bAromatic = atom.het || me.nucleotides.hasOwnProperty(atom.serial) || atom.resn === "PHE"
         || atom.resn === "TYR" || atom.resn === "TRP";
       if(bStacking) bAromatic = bAromatic || atom.resn === "HIS";
 
@@ -731,7 +731,7 @@ iCn3D.prototype.getPi = function (atom, bStacking) { var me = this, ic = me.icn3
               }
               else {
                   var piPosArray = undefined, normalArray = undefined, result = undefined;
-                  if($.inArray(atom.resn, this.nucleotidesArray) !== -1) {
+                  if(me.nucleotides.hasOwnProperty(atom.serial)) {
                       result = this.getAromaticRings(atom.resn, chain_resi, 'nucleotide');
                   }
                   else {
@@ -1013,7 +1013,7 @@ iCn3D.prototype.getChainsFromAtoms = function(atomsHash) { var me = this, ic = m
        var atom = me.atoms[i];
 
        // exclude the target atoms
-       if(atom.serial in atomlistTarget) continue;
+       if(atomlistTarget.hasOwnProperty(atom.serial)) continue;
 
        if(this.bOpm && atom.resn === 'DUM') continue;
 
