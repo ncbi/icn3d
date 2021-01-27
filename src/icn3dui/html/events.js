@@ -186,7 +186,7 @@ iCn3DUI.prototype.allEventFunctions = function() { var me = this;
 //    },
 //    clkMn1_chainalign: function() {
     $("#" + me.pre + "mn1_chainalign").click(function(e) { var ic = me.icn3d;
-       me.openDlg('dl_chainalign', 'Align two chains of 3D structures');
+       me.openDlg('dl_chainalign', 'Align multiple chains of 3D structures');
     });
 //    },
 //    clkMn1_pdbfile: function() {
@@ -2065,9 +2065,11 @@ iCn3DUI.prototype.allEventFunctions = function() { var me = this;
     $("#" + me.pre + "reload_chainalign").click(function(e) { var ic = me.icn3d;
        e.preventDefault();
        if(!me.cfg.notebook) dialog.dialog( "close" );
-       var alignment = $("#" + me.pre + "chainalignid1").val() + "," + $("#" + me.pre + "chainalignid2").val();
-       me.setLogCmd("load chain alignment " + alignment, false);
-       window.open(me.baseUrl + 'icn3d/full.html?chainalign=' + alignment + '&showalignseq=1', '_blank');
+//       var alignment = $("#" + me.pre + "chainalignid1").val() + "," + $("#" + me.pre + "chainalignid2").val();
+       var alignment = $("#" + me.pre + "chainalignids").val();
+       var resalign = $("#" + me.pre + "resalignids").val();
+       me.setLogCmd("load chains " + alignment + " | residues " + resalign, false);
+       window.open(me.baseUrl + 'icn3d/full.html?chainalign=' + alignment + '&resnum=' + resalign + '&showalignseq=1', '_blank');
     });
 //    },
 //    clickReload_mmcif: function() {

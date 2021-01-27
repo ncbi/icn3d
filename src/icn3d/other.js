@@ -255,7 +255,9 @@ iCn3D.prototype.intHash = function(atoms1, atoms2) { var me = this, ic = me.icn3
 };
 
 // get atoms in allAtoms, but not in "atoms"
-iCn3D.prototype.exclHash = function(includeAtoms, excludeAtoms) { var me = this, ic = me.icn3d; "use strict";
+iCn3D.prototype.exclHash = function(includeAtomsInput, excludeAtoms) { var me = this, ic = me.icn3d; "use strict";
+    var includeAtoms = me.cloneHash(includeAtomsInput);
+
     for (var i in includeAtoms) {
         if (excludeAtoms !== undefined && excludeAtoms[i]) {
             delete includeAtoms[i];
@@ -987,10 +989,11 @@ iCn3D.prototype.selectMainChainSubset = function (atoms) { var me = this, ic = m
     return atomHash;
 };
 
-iCn3D.prototype.transformMemPro = function(inCoord, rot, centerFrom, centerTo) { var me = this, ic = me.icn3d; "use strict";
+iCn3D.prototype.transformMemPro = function(inCoord, rot, centerFrom, centerTo, bOut) { var me = this, ic = me.icn3d; "use strict";
     var coord = inCoord.clone();
 
     coord.sub(centerFrom);
+if(bOut) console.log("sub coord: " + JSON.stringify(coord));
 
     var x = coord.x*rot[0] + coord.y*rot[1] + coord.z*rot[2] + centerTo.x;
     var y = coord.x*rot[3] + coord.y*rot[4] + coord.z*rot[5] + centerTo.y;
@@ -999,6 +1002,7 @@ iCn3D.prototype.transformMemPro = function(inCoord, rot, centerFrom, centerTo) {
     coord.x = x;
     coord.y = y;
     coord.z = z;
+if(bOut) console.log("out coord: " + JSON.stringify(coord));
 
     return coord;
 };

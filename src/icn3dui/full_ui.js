@@ -52,7 +52,7 @@ $.ajaxTransport("+binary", function (options, originalOptions, jqXHR) {
 });
 
 var iCn3DUI = function(cfg) { var me = this, ic = me.icn3d; "use strict";
-    this.REVISION = '2.23.2';
+    this.REVISION = '2.24.0';
     me.bFullUi = true;
     me.cfg = cfg;
     me.divid = me.cfg.divid;
@@ -591,6 +591,10 @@ iCn3DUI.prototype = {
                 else if(me.cfg.mmdbid == '118496' && me.cfg.showanno == 0 && me.cfg.inpara.indexOf('bu=1') != -1) {
                     me.icn3d.bUsePdbNum = false;
                 }
+                //https://link.springer.com/article/10.1007/s00239-020-09934-4/figures/6
+                else if(me.cfg.align == '163605,1,91105,1,1,1' && me.cfg.inpara.indexOf('atype=1') != -1) {
+                    me.icn3d.bUsePdbNum = false;
+                }
                 else {
                     me.icn3d.bUsePdbNum = true;
                 }
@@ -780,9 +784,9 @@ iCn3DUI.prototype = {
         else if(me.cfg.chainalign !== undefined) {
             ic.bChainAlign = true;
             me.inputid = me.cfg.chainalign;
-            me.loadCmd = 'load chainalignment ' + me.cfg.chainalign + ' | parameters ' + me.cfg.inpara;
+            me.loadCmd = 'load chainalignment ' + me.cfg.chainalign + ' | resnum ' + me.cfg.resnum + ' | parameters ' + me.cfg.inpara;
             me.setLogCmd(me.loadCmd, true);
-            me.downloadChainAlignment(me.cfg.chainalign);
+            me.downloadChainAlignment(me.cfg.chainalign, me.cfg.resnum);
         }
         else if(me.cfg.command !== undefined && me.cfg.command !== '') {
             if(me.cfg.command.indexOf('url=') !== -1) me.bInputUrlfile = true;
@@ -1075,10 +1079,13 @@ iCn3DUI.prototype = {
                   $("#" + id).show();
                   $("#" + id + "_expand").hide();
                   $("#" + id + "_shrink").show();
-                  var bShowHighlight = false;
-                  var seqObj = me.getAlignSequencesAnnotations(Object.keys(ic.alnChains), undefined, undefined, bShowHighlight);
-                  $("#" + me.pre + "dl_sequence2").html(seqObj.sequencesHtml);
-                  $("#" + me.pre + "dl_sequence2").width(me.RESIDUE_WIDTH * seqObj.maxSeqCnt + 200);
+
+                  if(me.cfg.align !== undefined) {
+                      var bShowHighlight = false;
+                      var seqObj = me.getAlignSequencesAnnotations(Object.keys(ic.alnChains), undefined, undefined, bShowHighlight);
+                      $("#" + me.pre + "dl_sequence2").html(seqObj.sequencesHtml);
+                      $("#" + me.pre + "dl_sequence2").width(me.RESIDUE_WIDTH * seqObj.maxSeqCnt + 200);
+                  }
               }
               //me.setProtNuclLigInMenu();
               if(me.cfg.showanno) {
@@ -2594,12 +2601,13 @@ iCn3DUI.prototype = {
              }
              else if(me.cfg.chainalign !== undefined) {
                  var structureArray = Object.keys(ic.structures);
-                 if(structureArray.length == 2) {
-                    me.set2DDiagramsForAlign(structureArray[1].toUpperCase(), structureArray[0].toUpperCase());
-                 }
-                 else if(structureArray.length == 1) {
-                    me.set2DDiagramsForAlign(structureArray[0].toUpperCase(), structureArray[0].toUpperCase());
-                 }
+                 //if(structureArray.length == 2) {
+                 //   me.set2DDiagramsForAlign(structureArray[1].toUpperCase(), structureArray[0].toUpperCase());
+                 //}
+                 //else if(structureArray.length == 1) {
+                 //   me.set2DDiagramsForAlign(structureArray[0].toUpperCase(), structureArray[0].toUpperCase());
+                 //}
+                 me.set2DDiagramsForChainalign(me.chainidArray);
              }
              else {
                  me.download2Ddgm(me.inputid.toUpperCase());
@@ -2939,6 +2947,7 @@ iCn3DUI.prototype = {
        var prevHatoms = ic.cloneHash(ic.hAtoms);
        var atomSet1 = me.getAtomsFromNameArray(nameArray2);
        var atomSet2 = me.getAtomsFromNameArray(nameArray);
+
        var labelType; // residue, chain, structure
        var cntChain = 0, cntStructure = 0;
        for(var structure in ic.structures) {
@@ -3149,7 +3158,7 @@ iCn3DUI.prototype = {
        if(type == 'graph' || type == 'linegraph' || type == 'scatterplot') html = '';
        html += tableHtml;
        if(type == 'save1' || type == 'save2') {
-           var html = header;
+           html = header;
            var tmpText = '';
            if(type == 'save1') {
                tmpText = 'Set 1';
@@ -3265,11 +3274,14 @@ iCn3DUI.prototype = {
     getIdArray: function(resid) { var me = this, ic = me.icn3d; "use strict";
         //var idArray = resid.split('_');
         var idArray = [];
-        var pos1 = resid.indexOf('_');
-        var pos2 = resid.lastIndexOf('_');
-        idArray.push(resid.substr(0, pos1));
-        idArray.push(resid.substr(pos1 + 1, pos2 - pos1 - 1));
-        idArray.push(resid.substr(pos2 + 1));
+
+        if(resid) {
+            var pos1 = resid.indexOf('_');
+            var pos2 = resid.lastIndexOf('_');
+            idArray.push(resid.substr(0, pos1));
+            idArray.push(resid.substr(pos1 + 1, pos2 - pos1 - 1));
+            idArray.push(resid.substr(pos2 + 1));
+        }
 
         return idArray;
     },

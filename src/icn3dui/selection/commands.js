@@ -737,8 +737,14 @@ iCn3DUI.prototype.applyCommandLoad = function (commandStr) { var me = this, ic =
       me.downloadAlignment(id);
     }
     else if(command.indexOf('load chainalignment') !== -1) {
+      //load chainalignment [id] | resnum [resnum] | parameters [inpara]
+      var urlArray = command.split(" | ");
+      if(urlArray[1].indexOf('resnum') != -1) {
+          me.cfg.resnum = urlArray[1].substr(urlArray[1].indexOf('resnum') + 7);
+      }
+
       me.cfg.chainalign = id;
-      me.downloadChainAlignment(id);
+      me.downloadChainAlignment(id, me.cfg.resnum);
     }
     else if(command.indexOf('load url') !== -1) {
         var typeStr = load_parameters[1]; // type pdb
