@@ -397,8 +397,12 @@ iCn3DUI.prototype.alignCoords = function(coordsFrom, coordsTo, secondStruct, bKe
           ic.setColorByOptions(me.opts, ic.hAtoms);
 
           //ic.draw();
+
+          return seqObj.hAtoms;
       }
   }
+
+  return;
 };
 
 iCn3DUI.prototype.loadPdbData = function(data, pdbid, bOpm) { var me = this, ic = me.icn3d; "use strict";

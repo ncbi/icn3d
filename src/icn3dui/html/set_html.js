@@ -2646,7 +2646,9 @@ iCn3DUI.prototype.getAlignSequencesAnnotations = function (alignChainArray, bUpd
       }
   }
 
-  var bModifyHAtoms = Object.keys(ic.hAtoms).length == Object.keys(ic.atoms).length && bHighlightChain && (bUpdateHighlightAtoms === undefined || bUpdateHighlightAtoms);
+//  var bModifyHAtoms = Object.keys(ic.hAtoms).length == Object.keys(ic.atoms).length && bHighlightChain && (bUpdateHighlightAtoms === undefined || bUpdateHighlightAtoms);
+//  var bModifyHAtoms = Object.keys(ic.hAtoms).length == Object.keys(ic.atoms).length && (bUpdateHighlightAtoms === undefined || bUpdateHighlightAtoms);
+  var bModifyHAtoms = (bUpdateHighlightAtoms === undefined || bUpdateHighlightAtoms);
 
   if(bModifyHAtoms) {
       ic.hAtoms = {};

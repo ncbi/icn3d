@@ -19,7 +19,7 @@ In your command line, run the following:
 
     node interaction.js 6M0J E 501 Y
 
-where "6M0J" is the PDB ID, "E" is the chain ID, "501" is the residue number that corresponding to the residue N501, "Y" is the mutant residue name.
+where "6M0J" is the PDB ID, "E" is the chain ID, "501" is the residue number that corresponding to the residue N501, "Y" is the mutant residue name. If it's a deletion, the mutant will be "-".
 
 
 Example Output

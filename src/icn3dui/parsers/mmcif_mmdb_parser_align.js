@@ -337,8 +337,12 @@ iCn3DUI.prototype.downloadChainalignmentPart2 = function (data1, data2Array, cha
     ic.hAtoms = allAtoms;
 
     ic.setAtomStyleByOptions(me.opts);
-    // change the6 default color to "Identity"
+    // change the default color to "Identity"
+
+    me.opts['color'] = 'identity';
     ic.setColorByOptions(me.opts, ic.atoms);
+
+    me.updateHlAll();
 
     //me.mmdbidArray = Object.keys(ic.structures);
 
@@ -1028,6 +1032,8 @@ iCn3DUI.prototype.setSeqAlignChain = function (chainid, chainIndex) { var me = t
       var firstIndex2 = 0;
       var prevIndex1, prevIndex2;
 
+      if(me.qt_start_end[chainIndex] === undefined) return;
+
       var alignIndex = 1;
       for (var i = 0, il = me.qt_start_end[chainIndex].length; i < il; ++i) {
           var start1 = me.qt_start_end[chainIndex][i].q_start - 1;
@@ -1589,6 +1595,9 @@ iCn3DUI.prototype.parseChainRealignData = function (ajaxData, chainidArray, stru
 
           me.alignCoords(coordsFrom, coordsTo, fromStruct, undefined, chainTo, chainFrom, index + 1);
 
+//          me.opts['color'] = 'identity';
+//          ic.setColorByOptions(me.opts, ic.hAtoms);
+
           //me.updateHlAll();
       }
       else {
@@ -1603,11 +1612,13 @@ iCn3DUI.prototype.parseChainRealignData = function (ajaxData, chainidArray, stru
           }
       }
 
+      // update all residue color
+
       //if(me.deferredRealign !== undefined) me.deferredRealign.resolve();
   }
 
-  ic.draw();
-  me.updateHlAll();
+//  ic.draw();
+//  me.updateHlAll();
 };
 
 iCn3DUI.prototype.realign = function() { var me = this, ic = me.icn3d; "use strict";

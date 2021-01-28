@@ -488,15 +488,19 @@ iCn3DUI.prototype.parseMmdbData = function (data, type, chainid, chainIndex, bLa
             //});
 
             //return me.deferredOpm.promise();
+
+            return;
         }
         else {
             me.parseMmdbDataPart1(data, type);
 
             var id = (data.pdbId !== undefined) ? data.pdbId : data.mmdbId;
 
-            me.loadAtomDataIn(data, id, 'mmdbid', undefined, type, chainid, chainIndex, bLastQuery);
+            var hAtoms = me.loadAtomDataIn(data, id, 'mmdbid', undefined, type, chainid, chainIndex, bLastQuery);
 
             me.loadMmdbOpmDataPart2(data, id, type);
+
+            return hAtoms;
         }
 };
 
