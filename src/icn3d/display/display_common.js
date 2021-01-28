@@ -924,7 +924,6 @@ iCn3D.prototype.rebuildSceneBase = function (options) { var me = this, ic = me.i
 };
 
 iCn3D.prototype.setCamera = function() {
-console.log("setCamera this.maxD " + this.maxD);
     if(this.bControlGl) {
         window.cam = this.cams[this.opts.camera.toLowerCase()];
 

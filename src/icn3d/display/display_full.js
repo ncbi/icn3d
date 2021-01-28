@@ -989,14 +989,12 @@ iCn3D.prototype.buildAllAxes = function (radius, bSelection) { var me = this, ic
 
 iCn3D.prototype.rebuildScene = function (options) { var me = this, ic = me.icn3d; "use strict";
     if(options === undefined) options = this.opts;
-console.log("1 this.maxD " + this.maxD);
 
     this.rebuildSceneBase(options);
 
     this.setFog();
 
     this.setCamera();
-console.log("2 this.maxD " + this.maxD);
 
     if(this.bSkipChemicalbinding === undefined || !this.bSkipChemicalbinding) this.applyChemicalbindingOptions();
     this.bSkipChemicalbinding = true;
@@ -1007,7 +1005,6 @@ console.log("2 this.maxD " + this.maxD);
 
     // show disulfide bonds, set side chains
     this.applySsbondsOptions();
-console.log("3 this.maxD " + this.maxD);
 
     // show cross-linkages, set side chains
     this.applyClbondsOptions();
@@ -1015,7 +1012,6 @@ console.log("3 this.maxD " + this.maxD);
     this.applyDisplayOptions(this.opts, this.dAtoms);
 
     this.applyOtherOptions();
-console.log("4 this.maxD " + this.maxD);
 
     //this.setFog();
 
@@ -1034,7 +1030,6 @@ iCn3D.prototype.draw = function () { var me = this, ic = me.icn3d; "use strict";
     }
 
     this.applyPrevColor();
-console.log("5 this.maxD " + this.maxD);
 
     if(this.biomtMatrices !== undefined && this.biomtMatrices.length > 1) {
         if(this.bAssembly) {
@@ -1052,7 +1047,6 @@ console.log("5 this.maxD " + this.maxD);
         this.removeHlObjects();
         if(this.bShowHighlight === undefined || this.bShowHighlight) this.addHlObjects();
     }
-console.log("6 this.maxD " + this.maxD);
 
     if(this.bRender === true) {
       if(this.bInitial || $("#" + this.pre + "wait").is(":visible")) {
@@ -1064,8 +1058,6 @@ console.log("6 this.maxD " + this.maxD);
       this.applyTransformation(this._zoomFactor, this.mouseChange, this.quaternion);
       this.render();
     }
-console.log("7 this.maxD " + this.maxD);
 
     this.clearImpostors();
-console.log("8 this.maxD " + this.maxD);
 };

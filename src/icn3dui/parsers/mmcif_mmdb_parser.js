@@ -480,14 +480,12 @@ iCn3DUI.prototype.parseMmdbDataPart1 = function (data, type) { var me = this, ic
 };
 
 iCn3DUI.prototype.parseMmdbData = function (data, type, chainid, chainIndex, bLastQuery) { var me = this, ic = me.icn3d; "use strict";
-console.log("parseMmdbData 1 ic.maxD " + ic.maxD);
         if(type === undefined) {
             //me.deferredOpm = $.Deferred(function() {
                   var id = (data.pdbId !== undefined) ? data.pdbId : data.mmdbId;
 
                   me.loadMmdbOpmData(data, id, type);
             //});
-console.log("parseMmdbData 2 ic.maxD " + ic.maxD);
 
             //return me.deferredOpm.promise();
         }
@@ -495,19 +493,15 @@ console.log("parseMmdbData 2 ic.maxD " + ic.maxD);
             me.parseMmdbDataPart1(data, type);
 
             var id = (data.pdbId !== undefined) ? data.pdbId : data.mmdbId;
-console.log("parseMmdbData 2a ic.maxD " + ic.maxD);
 
             me.loadAtomDataIn(data, id, 'mmdbid', undefined, type, chainid, chainIndex, bLastQuery);
-console.log("parseMmdbData 2b ic.maxD " + ic.maxD);
 
             me.loadMmdbOpmDataPart2(data, id, type);
-console.log("parseMmdbData 2c ic.maxD " + ic.maxD);
         }
 };
 
 iCn3DUI.prototype.downloadMmdb = function (mmdbid, bGi) { var me = this, ic = me.icn3d; "use strict";
    var url;
-console.log("downloadMmdb 1 ic.maxD " + ic.maxD);
 
    // b: b-factor, s: water, ft: pdbsite
    //&ft=1
@@ -1371,6 +1365,8 @@ iCn3DUI.prototype.loadAtomDataIn = function (data, id, type, seqalign, alignType
     ic.maxD = ic.pmax.distanceTo(ic.pmin);
     ic.center = ic.psum.multiplyScalar(1.0 / ic.cnt);
     if (ic.maxD < 5) ic.maxD = 5;
+
+    ic.oriMaxD = ic.maxD;
 
     // set up disulfide bonds
     if(type === 'mmdbid') {

@@ -751,11 +751,8 @@ iCn3DUI.prototype.loadMmdbOpmDataPart2 = function(data, pdbid, type) { var me = 
         me.downloadMmdbPart2(type);
     }
     else {
-console.log("loadMmdbOpmDataPart2 1 this.maxD " + ic.maxD);
         $.when(me.downloadMmcifSymmetry(pdbid)).then(function() {
-console.log("loadMmdbOpmDataPart2 2 this.maxD " + ic.maxD);
             me.downloadMmdbPart2(type);
-console.log("loadMmdbOpmDataPart2 3this.maxD " + ic.maxD);
         });
     }
 };
@@ -774,13 +771,9 @@ iCn3DUI.prototype.loadMmdbOpmData = function(data, pdbid, type) { var me = this,
       me.loadMmdbOpmDataPart2(data, pdbid, type);
   }
   else {
-console.log("loadMmdbOpmData 1 this.maxD " + ic.maxD);
       me.parseMmdbDataPart1(data, type);
-console.log("loadMmdbOpmData 2 this.maxD " + ic.maxD);
       me.loadAtomDataIn(data, pdbid, 'mmdbid', undefined, type);
-console.log("loadMmdbOpmData 3 this.maxD " + ic.maxD);
       me.loadMmdbOpmDataPart2(data, pdbid, type);
-console.log("loadMmdbOpmData 4 this.maxD " + ic.maxD);
   }
 };
 
