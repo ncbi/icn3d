@@ -23,7 +23,7 @@ let axios = require('axios');
 let qs = require('querystring');
 
 let myArgs = process.argv.slice(2);
-let pdbid = myArgs[0]; //'6jxr'; //myArgs[0];
+let pdbid = myArgs[0].toUpperCase(); //'6jxr'; //myArgs[0];
 let chain = myArgs[1];
 let resi = myArgs[2];
 let mutant = myArgs[3];
@@ -56,26 +56,56 @@ https.get(urlMmdb, function(res1) {
       let pdbStr = getPdbStr.getPdbStr(objAll, pdbid, chain, resi);
       //console.log("pdbStr: " + pdbStr);
 
-      let snpStr = chain + ',' + resi + ',' + mutant;
-      let dataObj = {'pdb': pdbStr, 'snp': snpStr, 'pdbid': pdbid, 'json': 1};
+      if(mutant == '-') { // deletion
+        let pdbData = pdbStr;
+        console.log("free energy (kcal/mol): deletion");
 
-      //https://attacomsian.com/blog/node-http-post-request
-      // 'https' didn't work for posting PDB data, use 'application/x-www-form-urlencoded'
-      const config = { headers: { 'Content-Type': 'application/x-www-form-urlencoded' } };
+        let bAddition = true;
 
-      axios.post('https://www.ncbi.nlm.nih.gov/Structure/scap/scap.cgi', qs.stringify(dataObj), config)
-      .then(function(res) {
-          //console.log(`Status: ${res.status}`);
-          //console.log('Body: ', res.data);
-          let mutantPDB = res.data.data.replace(/\\n/g, '\n');
-          //console.log('mutantPDB: ', mutantPDB);
+        // all atoms, including the mutant
+        loadPdb.loadPdb(pdbData, pdbid, bAddition, objAll);
+        //let pdbStr = getPdbStr.getPdbStr(objAll, pdbid, undefined, undefined, true);
+        //console.log(pdbStr);
 
-          showInteraction(mutantPDB, objAll, pdbid, chain, resi);
-      })
-      .catch(function(err) {
-          //console.error("scap.cgi error..." + err);
-          utils.dumpError(err);
-      });
+        let type = 'save1';
+
+        let resid = pdbid + '_' + chain + '_' + resi;
+
+        let atomSet1 = objAll.residues[resid];
+        let atomSet2 = utils.exclHash(objAll.atoms, atomSet1);
+
+        let bondCntWild = viewInteractionPairs(objAll, atomSet1, atomSet2, false, type, true, true, true, true, true, true);
+
+    //    console.log(html);
+        console.log("Change Hbond: " + (- bondCntWild[0].cntHbond).toString());
+        console.log("Change Ionic: " + (- bondCntWild[0].cntIonic).toString());
+        console.log("Change Contact: " + (- bondCntWild[0].cntContact).toString());
+        console.log("Change Halegen: " + (- bondCntWild[0].cntHalegen).toString());
+        console.log("Change Pi-Cation: " + (- bondCntWild[0].cntPication).toString());
+        console.log("Change Pi-Stacking: " + (- bondCntWild[0].cntPistacking).toString());
+      }
+      else {
+          let snpStr = chain + ',' + resi + ',' + mutant;
+          let dataObj = {'pdb': pdbStr, 'snp': snpStr, 'pdbid': pdbid, 'json': 1};
+
+          //https://attacomsian.com/blog/node-http-post-request
+          // 'https' didn't work for posting PDB data, use 'application/x-www-form-urlencoded'
+          const config = { headers: { 'Content-Type': 'application/x-www-form-urlencoded' } };
+
+          axios.post('https://www.ncbi.nlm.nih.gov/Structure/scap/scap.cgi', qs.stringify(dataObj), config)
+          .then(function(res) {
+              //console.log(`Status: ${res.status}`);
+              //console.log('Body: ', res.data);
+              let mutantPDB = res.data.data.replace(/\\n/g, '\n');
+              //console.log('mutantPDB: ', mutantPDB);
+
+              showInteraction(mutantPDB, objAll, pdbid, chain, resi);
+          })
+          .catch(function(err) {
+              //console.error("scap.cgi error..." + err);
+              utils.dumpError(err);
+          });
+      }
     });
 }).on('error', function(e) {
     console.error("Error: " + pdbid + " has no MMDB data...");
@@ -1034,6 +1064,9 @@ function calculateChemicalHbonds(objAll, startAtoms, targetAtoms, threshold, bSa
                         break;
                     }
                 }
+
+                if(C_atom === undefined) continue;
+
                 let inAcceptorC = C_atom.coord;
                 let inAcceptorO = inAcceptor.coord;
 
