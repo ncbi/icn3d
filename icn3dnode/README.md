@@ -1,7 +1,7 @@
 icn3dnode
 =========
 
-iCn3D JavaScript code can be converted into Node.js to run as commands. Here shows the example for the mutation of a residue in a structure using the licensed (from Columbia University) program scap, which is free to academic use. You can run the file "interaction.js" to get the change of all kinds of interactions (such as hydrogen bonds, salt bridges/ionic interactions, contacts/interactions, halogen bonds, pi-cation interactions, and pi stacking) due to the mutation.
+iCn3D JavaScript code can be converted to run as commands using Node. Here shows the example for the mutation of a residue in a structure using the licensed (from Columbia University) program scap, which is free to academic use. You can run the file "interaction.js" to get the change of all kinds of interactions (such as hydrogen bonds, salt bridges/ionic interactions, contacts/interactions, halogen bonds, pi-cation interactions, and pi stacking) due to the mutation.
 
 Installation
 ------------
