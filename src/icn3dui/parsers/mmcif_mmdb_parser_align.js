@@ -328,6 +328,11 @@ iCn3DUI.prototype.downloadChainalignmentPart2 = function (data1, data2Array, cha
 
     if(me.cfg.resnum) me.realignChainOnSeqAlign(chainidArray);
 
+    // memebrane is determined by one structure. But transform both structures
+    if(chainresiCalphaHash2 !== undefined) me.transformToOpmOriForAlign(me.selectedPdbid, chainresiCalphaHash2, true);
+
+    me.renderStructure();
+
     // show all
     var allAtoms = {};
     for(var i in ic.atoms) {
@@ -343,13 +348,6 @@ iCn3DUI.prototype.downloadChainalignmentPart2 = function (data1, data2Array, cha
     ic.setColorByOptions(me.opts, ic.atoms);
 
     me.updateHlAll();
-
-    //me.mmdbidArray = Object.keys(ic.structures);
-
-    // memebrane is determined by one structure. But transform both structures
-    if(chainresiCalphaHash2 !== undefined) me.transformToOpmOriForAlign(me.selectedPdbid, chainresiCalphaHash2, true);
-
-    me.renderStructure();
 
     if(me.cfg.rotate !== undefined) me.rotStruc(me.cfg.rotate, true);
 

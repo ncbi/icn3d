@@ -1,4 +1,6 @@
 ## Change Log
+[icn3d-2.24.1](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.24.1.zip) was release on February 1, 2021. Enabled to show multiple mutations together ( https://structure.ncbi.nlm.nih.gov/icn3d/share.html?tKz5GiA2pTVQEWwy6). Fixed the alternation in multiple chain alignment. 
+
 [icn3d-2.24.0](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.24.0.zip) was release on January 27, 2021. Converted the interaction part of iCn3D to Node.js (in the directory icn3dnode) to allow batch-mode analysis. Expanded the chain-chain alignment to multiple chain alignment in the menu "File > Align > Multiple Chains". You could focus on part of the chains for the multiple chain alignment.
 
 [icn3d-2.23.2](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.23.2.zip) was release on January 8, 2021. Adjust the chain IDs according to the data from the backend cgi that aligns a sequence to a structure. 
