@@ -33,6 +33,8 @@ iCn3DUI.prototype.adjust2DWidth = function (id) { var me = this, ic = me.icn3d; 
 };
 
 iCn3DUI.prototype.retrieveScap = function (snp, bInteraction, bPdb) { var me = this, ic = me.icn3d; "use strict";
+/*
+    //snp: 6M0J_E_501_Y
     var idArray = snp.split('_'); //stru_chain_resi_snp
 
     var snpStr = idArray[1] + ',' + idArray[2] + ',' + idArray[3];
@@ -44,16 +46,42 @@ iCn3DUI.prototype.retrieveScap = function (snp, bInteraction, bPdb) { var me = t
     var bGetPairs = false;
     var radius = 10; //4;
     var result = me.pickCustomSphere_base(radius, ic.hash2Atoms(ic.residues[resid]), ic.atoms, false, false, undefined, select, bGetPairs);
-    var residueArray = Object.keys(result.residues);
+*/
+
+    //snp: 6M0J_E_484_K,6M0J_E_501_Y,6M0J_E_417_N
+    var snpStr = '';
+    var snpArray = snp.split(','); //stru_chain_resi_snp
+    var atomHash = {}, residArray = [];
+    for(var i = 0, il = snpArray.length; i < il; ++i) {
+        var idArray = snpArray[i].split('_'); //stru_chain_resi_snp
+
+        var resid = idArray[0] + '_' + idArray[1] + '_' + idArray[2];
+        atomHash = ic.unionHash(atomHash, ic.residues[resid]);
+        residArray.push(resid);
+
+        snpStr += idArray[1] + '_' + idArray[2] + '_' + idArray[3];
+        if(i != il -1) snpStr += ',';
+    }
+
+    var select = "select " + me.residueids2spec(residArray);
+
+    var bGetPairs = false;
+    var radius = 10; //4;
+    // find neighboring residues
+    var result = me.pickCustomSphere_base(radius, atomHash, ic.atoms, false, false, undefined, select, bGetPairs);
+
+
+    residArray = Object.keys(result.residues);
     ic.hAtoms = {};
-    for(var index = 0, indexl = residueArray.length; index < indexl; ++index) {
-      var residueid = residueArray[index];
+    for(var index = 0, indexl = residArray.length; index < indexl; ++index) {
+      var residueid = residArray[index];
       for(var i in ic.residues[residueid]) {
         ic.hAtoms[i] = 1;
       }
     }
 
-    ic.hAtoms = ic.unionHash(ic.hAtoms, ic.residues[resid]);
+//    ic.hAtoms = ic.unionHash(ic.hAtoms, ic.residues[resid]);
+    ic.hAtoms = ic.unionHash(ic.hAtoms, atomHash);
 
     // the displayed atoms are for each SNP only
     //var atomHash = ic.intHash(ic.dAtoms, ic.hAtoms);
@@ -63,7 +91,7 @@ iCn3DUI.prototype.retrieveScap = function (snp, bInteraction, bPdb) { var me = t
     var url = "https://www.ncbi.nlm.nih.gov/Structure/scap/scap.cgi";
 
     var pdbid = Object.keys(ic.structures)[0]; //Object.keys(ic.structures).toString();
-    var dataObj = {'pdb': pdbStr, 'snp': snpStr, 'pdbid': pdbid};
+    var dataObj = {'pdb': pdbStr, 'snp': snpStr, 'pdbid': pdbid, 'v': '2'};
 
     $.ajax({
       url: url,
@@ -120,8 +148,9 @@ console.log("free energy: " + energy + " kcal/mol");
              ic.draw();
           }
           else {
-              var select = '.' + idArray[1] + ':' + idArray[2];
-              var name = 'snp_' + idArray[1] + '_' + idArray[2];
+              //var select = '.' + idArray[1] + ':' + idArray[2];
+              //var name = 'snp_' + idArray[1] + '_' + idArray[2];
+              var name = 'snp_' + snpStr;
               me.selectBySpec(select, name, name);
               ic.opts['color'] = 'atom';
               ic.setColorByOptions(ic.opts, ic.hAtoms);
