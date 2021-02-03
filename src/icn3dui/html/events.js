@@ -188,6 +188,11 @@ iCn3DUI.prototype.allEventFunctions = function() { var me = this;
     $("#" + me.pre + "mn1_chainalign").click(function(e) { var ic = me.icn3d;
        me.openDlg('dl_chainalign', 'Align multiple chains of 3D structures');
     });
+
+    $("#" + me.pre + "mn1_mutation").click(function(e) { var ic = me.icn3d;
+       me.openDlg('dl_mutation', 'Show the mutations in 3D');
+    });
+
 //    },
 //    clkMn1_pdbfile: function() {
     $("#" + me.pre + "mn1_pdbfile").click(function(e) { var ic = me.icn3d;
@@ -2071,6 +2076,51 @@ iCn3DUI.prototype.allEventFunctions = function() { var me = this;
        me.setLogCmd("load chains " + alignment + " | residues " + resalign, false);
        window.open(me.baseUrl + 'icn3d/full.html?chainalign=' + alignment + '&resnum=' + resalign + '&showalignseq=1', '_blank');
     });
+
+    $("#" + me.pre + "reload_mutation_3d").click(function(e) { var ic = me.icn3d;
+       e.preventDefault();
+       if(!me.cfg.notebook) dialog.dialog( "close" );
+       var mutationids = $("#" + me.pre + "mutationids").val();
+       var mmdbid = mutationids.substr(0, mutationids.indexOf('_'));
+       me.setLogCmd("3d of mutation " + mutationids, false);
+       window.open(me.baseUrl + 'icn3d/full.html?mmdbid=' + mmdbid + '&command=scap 3d ' + mutationids + '; select displayed set', '_blank');
+    });
+
+    $("#" + me.pre + "reload_mutation_pdb").click(function(e) { var ic = me.icn3d;
+       e.preventDefault();
+       if(!me.cfg.notebook) dialog.dialog( "close" );
+       var mutationids = $("#" + me.pre + "mutationids").val();
+       var mmdbid = mutationids.substr(0, mutationids.indexOf('_'));
+       me.setLogCmd("pdb of mutation " + mutationids, false);
+       window.open(me.baseUrl + 'icn3d/full.html?mmdbid=' + mmdbid + '&command=scap pdb ' + mutationids + '; select displayed set', '_blank');
+    });
+
+    $("#" + me.pre + "reload_mutation_inter").click(function(e) { var ic = me.icn3d;
+       e.preventDefault();
+       if(!me.cfg.notebook) dialog.dialog( "close" );
+       var mutationids = $("#" + me.pre + "mutationids").val();
+
+       var mutationArray = mutationids.split(',');
+       var residArray = [];
+       for(var i = 0, il = mutationArray.length; i < il; ++i) {
+           var pos = mutationArray[i].lastIndexOf('_');
+           var resid = mutationArray[i].substr(0, pos);
+           residArray.push(resid);
+       }
+
+       var mmdbid = mutationids.substr(0, mutationids.indexOf('_'));
+
+       // if no structures are loaded yet
+       if(!ic.structures) {
+           ic.structures = {};
+           ic.structures[mmdbid] = 1;
+       }
+       var selectSpec = me.residueids2spec(residArray);
+
+       me.setLogCmd("interaction change of mutation " + mutationids, false);
+       window.open(me.baseUrl + 'icn3d/full.html?mmdbid=' + mmdbid + '&command=scap interaction ' + mutationids + '; select ' + selectSpec + ' | name test; line graph interaction pairs | selected non-selected | hbonds,salt bridge,interactions,halogen,pi-cation,pi-stacking | false | threshold 3.8 6 4 3.8 6 5.5; adjust dialog dl_linegraph; select displayed set', '_blank');
+    });
+
 //    },
 //    clickReload_mmcif: function() {
     $("#" + me.pre + "reload_mmcif").click(function(e) { var ic = me.icn3d;

@@ -63,7 +63,8 @@ iCn3DUI.prototype.retrieveScap = function (snp, bInteraction, bPdb) { var me = t
         if(i != il -1) snpStr += ',';
     }
 
-    var select = "select " + me.residueids2spec(residArray);
+    var selectSpec = me.residueids2spec(residArray);
+    var select = "select " + selectSpec;
 
     var bGetPairs = false;
     var radius = 10; //4;
@@ -82,6 +83,7 @@ iCn3DUI.prototype.retrieveScap = function (snp, bInteraction, bPdb) { var me = t
 
 //    ic.hAtoms = ic.unionHash(ic.hAtoms, ic.residues[resid]);
     ic.hAtoms = ic.unionHash(ic.hAtoms, atomHash);
+    ic.hAtoms = ic.exclHash(ic.hAtoms, ic.chemicals);
 
     // the displayed atoms are for each SNP only
     //var atomHash = ic.intHash(ic.dAtoms, ic.hAtoms);
@@ -130,9 +132,15 @@ console.log("free energy: " + energy + " kcal/mol");
           ic.setColorByOptions(ic.opts, ic.dAtoms);
 
           for(var serial in hAtom2) {
-              if(!ic.atoms[serial].het) {
-                  ic.atoms[serial].color = ic.thr(0xA52A2A); // brown
-                  ic.atomPrevColors[serial] = ic.thr(0xA52A2A); // brown
+              var atom = ic.atoms[serial];
+              if(!atom.het) {
+                  //ic.atoms[serial].color = ic.thr(0xA52A2A); // brown
+                  //ic.atomPrevColors[serial] = ic.thr(0xA52A2A); // brown
+                  // use the same color as the wild type
+                  var resid = atom.structure.substr(0, 4) + '_' + atom.chain + '_' + atom.resi;
+                  var atomWT = ic.getFirstAtomObj(ic.residues[resid]);
+                  ic.atoms[serial].color = atomWT.color;
+                  ic.atomPrevColors[serial] = atomWT.color;
               }
           }
 
@@ -150,8 +158,10 @@ console.log("free energy: " + energy + " kcal/mol");
           else {
               //var select = '.' + idArray[1] + ':' + idArray[2];
               //var name = 'snp_' + idArray[1] + '_' + idArray[2];
+              var select = selectSpec;
+
               var name = 'snp_' + snpStr;
-              me.selectBySpec(select, name, name);
+              me.selectByCommand(select, name, name);
               ic.opts['color'] = 'atom';
               ic.setColorByOptions(ic.opts, ic.hAtoms);
 
