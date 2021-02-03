@@ -1239,6 +1239,8 @@ iCn3DUI.prototype.setMenu5_base = function() { var me = this, ic = me.icn3d; "us
         html += "</ul>";
         html += "</li>";
 
+        if(!me.cfg.notebook) html += me.getLink('mn1_mutation', 'Mutation');
+
         html += "<li>-</li>";
     }
 
@@ -1827,11 +1829,20 @@ iCn3DUI.prototype.setDialogs = function() { var me = this, ic = me.icn3d; "use s
 */
     html += "<div style='width:500px'>";
     html += "All chains will be aligned to the first chain in the comma-separated chain IDs. Each chain ID has the form of pdbid_chain (e.g., 1HHO_A, case sensitive). If the residue numbers to be aligned in the first chain is not defined, the full chain will be used for sequence alignment.<br/><br/>";
-    html += "<div style='display:inline-block; width:110px'>Chain IDs: </div>" + me.inputTextStr + "id='" + me.pre + "chainalignids' placeholder='1HHO_A,4N7N_A' size=50><br>";
+    html += "<div style='display:inline-block; width:110px'>Chain IDs: </div>" + me.inputTextStr + "id='" + me.pre + "chainalignids' placeholder='1HHO_A,4N7N_A' size=50><br/>";
     html += "<div style='display:inline-block; width:110px'>Residue Numbers (optional): </div>" + me.inputTextStr + "id='" + me.pre + "resalignids' placeholder='1,5,10-50' size=50><br/><br/>";
     html += me.buttonStr + "reload_chainalign'>Align</button><br/><br/>";
     html += "(Note: To align chains in custom PDB files, you could concatenate PDB files in a single PDB file with the separation line \"ENDMDL\". Then load it in \"Open File > PDB File\" in the \"File\" menu and click \"View Sequences & Annotations\" in the \"Window\" menu. Finally select multiple chains in the sequence window and click \"Realign Selection\" in the \"File\" menu.)<br><br>";
     html += "</div></div>";
+
+    html += me.divStr + "dl_mutation' class='" + dialogClass + "'>";
+    html += "<div style='width:500px'>";
+    html += 'Please specify the mutations with a comma separated mutation list. Each mutation can be specified as "[PDB ID]_[Chain ID]_[Residue Number]_[One Letter Mutatnt Residue]". E.g., the mutation of N501Y in the E chain of PDB 6M0J can be specified as "6M0J_E_501_Y". <br/><br/>';
+    html += "<div style='display:inline-block; width:110px'>Mutations: </div>" + me.inputTextStr + "id='" + me.pre + "mutationids' placeholder='6M0J_E_484_K,6M0J_E_501_Y,6M0J_E_417_N' size=50><br/><br/>";
+    html += me.buttonStr + "reload_mutation_3d' title='Show the mutations in 3D using the scap program'>3D with scap</button>";
+    html += me.buttonStr + "reload_mutation_inter' style='margin-left:20px' title='Show the mutations in 3D and the change of interactions'>Interactions</button>";
+    html += me.buttonStr + "reload_mutation_pdb' style='margin-left:20px' title='Show the mutations in 3D and export the PDB of the mutant within 10 angstrom'>PDB</button>";
+    html += "<br/><br/></div></div>";
 
     html += me.divStr + "dl_mol2file' class='" + dialogClass + "'>";
     html += "Mol2 File: " + me.inputFileStr + "id='" + me.pre + "mol2file' size=8> ";

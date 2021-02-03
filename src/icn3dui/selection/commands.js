@@ -457,7 +457,7 @@ iCn3DUI.prototype.execCommandsBase = function (start, end, steps, bFinalStep) { 
         var command = strArray[0].trim();
 
         $.when(me.applyCommandScap(command)).then(function() {
-           if(!me.cfg.notebook) dialog.dialog( "close" );
+           //if(!me.cfg.notebook && dialog) dialog.dialog( "close" );
 
            //ic.draw();
            me.execCommandsBase(i + 1, end, steps);
