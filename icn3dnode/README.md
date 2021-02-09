@@ -12,8 +12,10 @@ Install the packages axios, querystring, and three:
     npm install querystring
     npm install three
 
-1. Ligand-Protein Interactions
-------------------------------
+Examples
+------------
+
+* <b>Ligand-Protein Interactions</b>
 
 In the command line, run the following:
 
@@ -24,8 +26,8 @@ This finds the residues in the PDB structure "5R7Y" interacting with the ligand 
     5R7Y, Chain A 164H, 3C-like proteinase, Ligand JFM
     ...
     
-2. Protein-Protein Interactions
--------------------------------
+    
+* <b>Protein-Protein Interactions</b>
 
 In the command line, run the following:
 
@@ -36,8 +38,8 @@ This finds the residues in the chain "E" of the PDB structure "7BWJ" interacting
     7BWJ, Chain E 483V, SARS-CoV-2 receptor binding domain, Chain L 31G, antibody light chain
     ...
     
-3. Protein-Protein Interactions Due to Mutations
-------------------------------------------------
+    
+* <b>Protein-Protein Interactions Due to Mutations</b>
 
 In the command line, run the following:
 
@@ -49,8 +51,8 @@ This finds the change of interactions between the RDB domain (chain "E") of SAR-
     
 where "0, 0, 9, 0, 1, 1" means the change of hydrogen bonds, salt bridges, contacts, halogen bonds, Pi-Cation interactions, Pi-Stacking interactions are 0, 0, 9, 0, 1, 1, respectively for the mutation N to Y at position 501.
 
-4. Residue-Protein Interactions Due to Mutation
-------------------------------------------------
+
+* <b>Residue-Protein Interactions Due to Mutation</b>
 
 In the command line, run the following:
 
@@ -68,8 +70,8 @@ This finds the change of interactions between the residue (at position "614" of 
 
 where "Change Ionic: -1" means the mutant has one less salt bridge/ionic than the wild type.
 
-5. Show Domain and Site Information for a Protein
--------------------------------------------------
+
+* <b>Show Domain and Site Information for a Protein</b>
 
 In the command line, run the following:
 
