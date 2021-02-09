@@ -1,3 +1,4 @@
+// Include the interaction in the same chain
 // usage: node interaction.js 1TOP A 10 V
 
 /*
@@ -7,22 +8,27 @@ npm install querystring
 npm install three
 */
 
-let THREE = require('three');
+let THREE = require('../share/node_modules/three');
 
 let http = require('http');
 let https = require('https');
 //let fs = require('fs');
-let utils = require('./utils.js');
-let para = require('./para.js');
-let loadMmdb = require('./loadMmdb.js');
-let loadPdb = require('./loadPdb.js');
-let getPdbStr = require('./getPdbStr.js');
-let pickCustomSphere = require('./pickCustomSphere.js');
+let utils = require('../share/utils.js');
+let para = require('../share/para.js');
+let loadMmdb = require('../share/loadMmdb.js');
+let loadPdb = require('../share/loadPdb.js');
+let getPdbStr = require('../share/getPdbStr.js');
+let pickCustomSphere = require('../share/pickCustomSphere.js');
 
-let axios = require('axios');
-let qs = require('querystring');
+let axios = require('../share/node_modules/axios');
+let qs = require('../share/node_modules/querystring');
 
 let myArgs = process.argv.slice(2);
+if(myArgs.length != 4) {
+    console.log("Usage: node interaction.js [PDB ID] [Chain ID] [Residue number] [One letter mutant]");
+    return;
+}
+
 let pdbid = myArgs[0].toUpperCase(); //'6jxr'; //myArgs[0];
 let chain = myArgs[1];
 let resi = myArgs[2];
@@ -63,7 +69,7 @@ https.get(urlMmdb, function(res1) {
         let bAddition = true;
 
         // all atoms, including the mutant
-        loadPdb.loadPdb(pdbData, pdbid, bAddition, objAll);
+        objAll = loadPdb.loadPdb(pdbData, pdbid, bAddition, objAll);
         //let pdbStr = getPdbStr.getPdbStr(objAll, pdbid, undefined, undefined, true);
         //console.log(pdbStr);
 
@@ -99,7 +105,7 @@ https.get(urlMmdb, function(res1) {
               let mutantPDB = res.data.data.replace(/\\n/g, '\n');
               //console.log('mutantPDB: ', mutantPDB);
 
-              showInteraction(mutantPDB, objAll, pdbid, chain, resi);
+              showInteractionChange(mutantPDB, objAll, pdbid, chain, resi);
           })
           .catch(function(err) {
               //console.error("scap.cgi error..." + err);
@@ -111,7 +117,7 @@ https.get(urlMmdb, function(res1) {
     console.error("Error: " + pdbid + " has no MMDB data...");
 });
 
-function showInteraction(data, objAll, pdbid, chain, resi) {
+function showInteractionChange(data, objAll, pdbid, chain, resi) {
     let pos = data.indexOf('\n');
     let energy = data.substr(0, pos);
     let pdbData = data.substr(pos + 1);
@@ -172,10 +178,16 @@ function viewInteractionPairs(objAll, atomSet1, atomSet2, bHbondCalc, type,
 //     let atomSet1 = me.getAtomsFromNameArray(nameArray2);
 //     let atomSet2 = me.getAtomsFromNameArray(nameArray);
 
+  let tsHbond = 3.8;
+  let tsIonic = 6;
+  let tsContact = 4;
+  let tsHalogen = 3.8;
+  let tsPication = 6;
+  let tsPistacking = 5.5;
+
   let nameArray2 = ['selected'];
   let nameArray = ['non-selected'];
   let pre = 'div0_';
-
 
 /*
    let labelType; // residue, chain, structure
@@ -228,7 +240,7 @@ function viewInteractionPairs(objAll, atomSet1, atomSet2, bHbondCalc, type,
 
    let resid2ResidhashHbond, resid2ResidhashSaltbridge, resid2ResidhashHalogen, resid2ResidhashPication, resid2ResidhashPistacking, resid2ResidhashInter;
    if(bSaltbridge) {
-       let threshold = 6; //parseFloat($("#" + pre + "saltbridgethreshold" ).val());
+       let threshold = tsIonic; //parseFloat($("#" + pre + "saltbridgethreshold" ).val());
        if(!bHbondCalc) {
            //ic.hAtoms = ic.cloneHash(prevHatoms);
            resid2ResidhashHbond = showIonicInteractions(objAll, threshold, atomSet1, atomSet2, bHbondCalc, true, type, resids2inter, resids2interAll);
@@ -237,7 +249,7 @@ function viewInteractionPairs(objAll, atomSet1, atomSet2, bHbondCalc, type,
    }
 
    if(bHbond) {
-       let threshold = 3.8; //parseFloat($("#" + pre + "hbondthreshold" ).val());
+       let threshold = tsHbond; //parseFloat($("#" + pre + "hbondthreshold" ).val());
        if(!bHbondCalc) {
            //ic.hAtoms = ic.cloneHash(prevHatoms);
            resid2ResidhashSaltbridge = showHbonds(objAll, threshold, atomSet1, atomSet2, bHbondCalc, undefined, type, resids2inter, resids2interAll);
@@ -253,7 +265,7 @@ function viewInteractionPairs(objAll, atomSet1, atomSet2, bHbondCalc, type,
        tableHtml += exportSaltbridgePairs(objAll, type, labelType, resid2ResidhashSaltbridge);
    }
    if(bHalogen) {
-       let threshold = 3.8; //parseFloat($("#" + pre + "halogenthreshold" ).val());
+       let threshold = tsHalogen; //parseFloat($("#" + pre + "halogenthreshold" ).val());
        if(!bHbondCalc) {
            //ic.hAtoms = ic.cloneHash(prevHatoms);
            resid2ResidhashHalogen = showHalogenPi(objAll, threshold, atomSet1, atomSet2, bHbondCalc, type, 'halogen', resids2inter, resids2interAll);
@@ -262,7 +274,7 @@ function viewInteractionPairs(objAll, atomSet1, atomSet2, bHbondCalc, type,
        tableHtml += exportHalogenPiPairs(objAll, type, labelType, 'halogen', resid2ResidhashHalogen);
    }
    if(bPication) {
-       let threshold = 6; //parseFloat($("#" + pre + "picationthreshold" ).val());
+       let threshold = tsPication; //parseFloat($("#" + pre + "picationthreshold" ).val());
        if(!bHbondCalc) {
            //ic.hAtoms = ic.cloneHash(prevHatoms);
            resid2ResidhashPication = showHalogenPi(objAll, threshold, atomSet1, atomSet2, bHbondCalc, type, 'pi-cation', resids2inter, resids2interAll);
@@ -271,7 +283,7 @@ function viewInteractionPairs(objAll, atomSet1, atomSet2, bHbondCalc, type,
        tableHtml += exportHalogenPiPairs(objAll, type, labelType, 'pi-cation', resid2ResidhashPication);
    }
    if(bPistacking) {
-       let threshold = 5.5; //parseFloat($("#" + pre + "pistackingthreshold" ).val());
+       let threshold = tsPistacking; //parseFloat($("#" + pre + "pistackingthreshold" ).val());
        if(!bHbondCalc) {
            //ic.hAtoms = ic.cloneHash(prevHatoms);
            resid2ResidhashPistacking = showHalogenPi(objAll, threshold, atomSet1, atomSet2, bHbondCalc, type, 'pi-stacking', resids2inter, resids2interAll);
@@ -282,7 +294,7 @@ function viewInteractionPairs(objAll, atomSet1, atomSet2, bHbondCalc, type,
    }
 
    if(bInteraction) {
-       let threshold = 4; //parseFloat($("#" + pre + "contactthreshold" ).val());
+       let threshold = tsContact; //parseFloat($("#" + pre + "contactthreshold" ).val());
        if(!(nameArray2.length == 1 && nameArray.length == 1 && nameArray2[0] == nameArray[0])) {
             if(!bHbondCalc) {
                 //ic.hAtoms = ic.cloneHash(prevHatoms);

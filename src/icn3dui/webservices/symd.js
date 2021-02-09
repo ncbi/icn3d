@@ -102,10 +102,10 @@ iCn3DUI.prototype.retrieveSymd = function () { var me = this, ic = me.icn3d; "us
                       order = rotation_axes[j].order;
 
                       // apply matrix for each atom
-                      if(ic.rmsd_supr !== undefined && ic.rmsd_supr.rot !== undefined) {
-                          start = ic.transformMemPro(start, rot, centerFrom, centerTo);
-                          end = ic.transformMemPro(end, rot, centerFrom, centerTo);
-                      }
+                      //if(ic.rmsd_supr !== undefined && ic.rmsd_supr.rot !== undefined) {
+                      //    start = ic.transformMemPro(start, rot, centerFrom, centerTo);
+                      //    end = ic.transformMemPro(end, rot, centerFrom, centerTo);
+                      //}
 
                       tmpArray.push(start);
                       tmpArray.push(end);

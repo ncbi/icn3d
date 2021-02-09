@@ -11,7 +11,7 @@ iCn3DUI.prototype.update2DdgmContent = function () { var me = this, ic = me.icn3
 
       $("#" + me.pre + "dl_2ddgm").html(html2ddgm);
    }
-   else if(me.cfg.align !== undefined || me.cfg.chainalign !== undefined || me.bRealign) {
+   else if(me.mmdbidArray && (me.cfg.align !== undefined || me.cfg.chainalign !== undefined || me.bRealign)) {
       html2ddgm += me.draw2Ddgm(me.interactionData1, me.mmdbidArray[0].toUpperCase(), 0, true);
       if(me.mmdbid_q !== undefined && me.mmdbid_q === me.mmdbid_t) {
           html2ddgm += me.draw2Ddgm(me.interactionData2, me.mmdbidArray[0].toUpperCase(), 1, true);
@@ -294,7 +294,9 @@ iCn3DUI.prototype.setPredefinedInMenu = function() { var me = this, ic = me.icn3
           }
       }
 
-      if((me.cfg.align !== undefined || me.cfg.chainalign !== undefined) && me.bFullUi) {
+      //if((me.cfg.align !== undefined || me.cfg.chainalign !== undefined) && me.bFullUi) {
+      // deal with multiple chain align separately
+      if((me.cfg.align !== undefined || (me.cfg.chainalign !== undefined && me.chainidArray.length == 2) ) && me.bFullUi) {
         me.selectResidueList(me.consHash1, me.conservedName1, me.conservedName1, false, false);
         me.selectResidueList(me.consHash2, me.conservedName2, me.conservedName2, false, false);
 

@@ -4,6 +4,7 @@
 //  'use strict';
 
 let THREE = require('three');
+let utils = require('./utils.js');
 
 let loadMmdb = function (dataStr, pdbid) {
     let data = JSON.parse(dataStr);
@@ -15,6 +16,8 @@ let loadMmdb = function (dataStr, pdbid) {
     let chains = {};
     let structures = {};
     let nucleotides = {};
+    let residueId2Name = {};
+    let moleculeInfor = {};
 
     let bUsePdbNum = true;
 
@@ -134,6 +137,9 @@ let loadMmdb = function (dataStr, pdbid) {
         if(!chains.hasOwnProperty(chainid)) chains[chainid] = {};
         chains[chainid][serial] = 1;
 
+        let oneLetterRes = utils.residueName2Abbr(atm.resn.substr(0, 3));
+        residueId2Name[resid] = oneLetterRes;
+
         prevResi = atm.resi;
         prevChainid = chainid;
 
@@ -142,7 +148,7 @@ let loadMmdb = function (dataStr, pdbid) {
 
     structures[pdbid] = Object.keys(chains);
 
-    return {"atoms": atoms, "residues": residues, "chemicals": chemicals, "calphas": calphas, "pdbid": pdbid, "structures": structures, "chains": chains, "nucleotides": nucleotides};
+    return {"atoms": atoms, "residues": residues, "chemicals": chemicals, "calphas": calphas, "pdbid": pdbid, "structures": structures, "chains": chains, "nucleotides": nucleotides, "residueId2Name": residueId2Name, "moleculeInfor": data.moleculeInfor};
 }
 
 exports.loadMmdb = loadMmdb;
