@@ -5,21 +5,30 @@
 
 let THREE = require('three');
 let para = require('./para.js');
+let utils = require('./utils.js');
 
 let loadPdb = function (src, pdbidInput, bAddition, objAll) {
-    if(bAddition) pdbid = pdbidInput + '2';
+    let pdbid = (bAddition) ? pdbidInput + '2' : pdbidInput;
 
-    let residues = objAll.residues, chemicals = objAll.chemicals, calphas = objAll.calphas;
+    let atoms = (objAll) ? objAll.atoms : {};
+    let residues = (objAll) ? objAll.residues : {};
+    let chemicals = (objAll) ? objAll.chemicals : {};
+    let calphas = (objAll) ? objAll.calphas : {};
+    let chains = (objAll) ? objAll.chains : {};
+    let structures = (objAll) ? objAll.structures : {};
+    let nucleotides = (objAll) ? objAll.nucleotides : {};
+    let residueId2Name = (objAll) ? objAll.residueId2Name : {};
+    let moleculeInfor = (objAll) ? objAll.moleculeInfor : {};
 
     let lines = src.split('\n');
 
-    let atoms = {};
-    let chains = {};
+    let atomsAdd = {};
+    let chainsAdd = {};
 
     let CSerial, prevCSerial, OSerial, prevOSerial;
     let prevResi, prevChainid;
 
-    let serial = Object.keys(objAll.atoms).length + 1;
+    let serial = Object.keys(atoms).length + 1;
     for (let i in lines) {
         let line = lines[i];
         let record = line.substr(0, 6);
@@ -92,17 +101,17 @@ let loadPdb = function (src, pdbidInput, bAddition, objAll) {
 
             // from DSSP C++ code
             if(!atom.het && atom.name === 'N' && prevCSerial !== undefined && prevOSerial !== undefined) {
-                let dist = objAll.atoms[prevCSerial].coord.distanceTo(objAll.atoms[prevOSerial].coord);
+                let dist = atoms[prevCSerial].coord.distanceTo(atoms[prevOSerial].coord);
 
-                let x2 = atom.coord.x + (objAll.atoms[prevCSerial].coord.x - objAll.atoms[prevOSerial].coord.x) / dist;
-                let y2 = atom.coord.y + (objAll.atoms[prevCSerial].coord.y - objAll.atoms[prevOSerial].coord.y) / dist;
-                let z2 = atom.coord.z + (objAll.atoms[prevCSerial].coord.z - objAll.atoms[prevOSerial].coord.z) / dist;
+                let x2 = atom.coord.x + (atoms[prevCSerial].coord.x - atoms[prevOSerial].coord.x) / dist;
+                let y2 = atom.coord.y + (atoms[prevCSerial].coord.y - atoms[prevOSerial].coord.y) / dist;
+                let z2 = atom.coord.z + (atoms[prevCSerial].coord.z - atoms[prevOSerial].coord.z) / dist;
 
                 atom.hcoord = new THREE.Vector3(x2, y2, z2);
             }
 
-            objAll.atoms[serial] = atom;
             atoms[serial] = atom;
+            atomsAdd[serial] = atom;
 
             if(atomName == "CA" || atomName == "O3'" || atomName == "O3*") {
                 calphas[serial] = 1;
@@ -110,13 +119,16 @@ let loadPdb = function (src, pdbidInput, bAddition, objAll) {
 
             if(atom.het) chemicals[serial] = 1;
 
-            if(!atom.het && para.nucleotidesArray.indexOf(line.substr(17, 3)) != -1) objAll.nucleotides[serial] = 1;
+            if(!atom.het && para.nucleotidesArray.indexOf(line.substr(17, 3)) != -1) nucleotides[serial] = 1;
+
+            if(!chainsAdd.hasOwnProperty(chainid)) chainsAdd[chainid] = {};
+            chainsAdd[chainid][serial] = 1;
 
             if(!chains.hasOwnProperty(chainid)) chains[chainid] = {};
             chains[chainid][serial] = 1;
 
-            if(!objAll.chains.hasOwnProperty(chainid)) objAll.chains[chainid] = {};
-            objAll.chains[chainid][serial] = 1;
+            let oneLetterRes = utils.residueName2Abbr(atom.resn.substr(0, 3));
+            residueId2Name[resid] = oneLetterRes;
 
             prevResi = atom.resi;
             prevChainid = chainid;
@@ -125,7 +137,7 @@ let loadPdb = function (src, pdbidInput, bAddition, objAll) {
         }
     }
 
-    objAll.structures[pdbid] = Object.keys(chains);
+    structures[pdbid] = Object.keys(chainsAdd);
 
     let curChain, curResi, curInsc, curResAtoms = [];
     // refresh for atoms in each residue
@@ -144,8 +156,8 @@ let loadPdb = function (src, pdbidInput, bAddition, objAll) {
         }
     };
 
-    for (let i in atoms) {
-        let atom = atoms[i];
+    for (let i in atomsAdd) {
+        let atom = atomsAdd[i];
         let coord = atom.coord;
 
         if (!(curChain === atom.chain && curResi === atom.resi)) {
@@ -166,7 +178,7 @@ let loadPdb = function (src, pdbidInput, bAddition, objAll) {
     // last residue
     refreshBonds();
 
-//    return {"atoms": atoms, "residues": residues, "chemicals": chemicals, "calphas": calphas, "pdbid": pdbidInput, "structures": structures};
+    return {"atoms": atoms, "residues": residues, "chemicals": chemicals, "calphas": calphas, "pdbid": pdbid, "structures": structures, "chains": chains, "nucleotides": nucleotides, "residueId2Name": residueId2Name, "moleculeInfor": moleculeInfor};
 }
 
 function hasCovalentBond(atom0, atom1) {

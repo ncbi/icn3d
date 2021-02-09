@@ -317,23 +317,27 @@ iCn3DUI.prototype.downloadChainalignmentPart2 = function (data1, data2Array, cha
     //me.interactionData_q = [];
     //me.mmdb_data_q = [];
 
-    me.parseMmdbData(data1, 'target', chainidArray[0], 0);
+    var hAtoms = {};
+    hAtoms = me.parseMmdbData(data1, 'target', chainidArray[0], 0);
 
     var bLastQuery = false;
     for(var i = 0, il = data2Array.length; i < il; ++i) {
         if(i == data2Array.length - 1) bLastQuery = true;
         // each alignment has a chainIndex i
-        me.parseMmdbData(data2Array[i], 'query', chainidArray[i + 1], i, bLastQuery);
+        var hAtomsTmp = me.parseMmdbData(data2Array[i], 'query', chainidArray[i + 1], i, bLastQuery);
+        hAtoms = ic.unionHash(hAtoms, hAtomsTmp);
     }
 
-    if(me.cfg.resnum) me.realignChainOnSeqAlign(chainidArray);
+    if(me.cfg.resnum) {
+        me.realignChainOnSeqAlign(chainresiCalphaHash2, chainidArray);
+    }
+    else {
+        me.downloadChainalignmentPart3(chainresiCalphaHash2, chainidArray, hAtoms);
+    }
+};
 
-    // memebrane is determined by one structure. But transform both structures
-    if(chainresiCalphaHash2 !== undefined) me.transformToOpmOriForAlign(me.selectedPdbid, chainresiCalphaHash2, true);
-
-    me.renderStructure();
-
-    // show all
+iCn3DUI.prototype.downloadChainalignmentPart3 = function (chainresiCalphaHash2, chainidArray, hAtoms) { var me = this, ic = me.icn3d; "use strict";
+    // select all
     var allAtoms = {};
     for(var i in ic.atoms) {
         allAtoms[i] = 1;
@@ -346,6 +350,29 @@ iCn3DUI.prototype.downloadChainalignmentPart2 = function (data1, data2Array, cha
 
     me.opts['color'] = 'identity';
     ic.setColorByOptions(me.opts, ic.atoms);
+
+    // memebrane is determined by one structure. But transform both structures
+    if(chainresiCalphaHash2 !== undefined) me.transformToOpmOriForAlign(me.selectedPdbid, chainresiCalphaHash2, true);
+
+    ic.dAtoms = hAtoms;
+    ic.hAtoms = hAtoms;
+
+    me.renderStructure();
+
+    if(me.chainidArray.length > 2) {
+        var residuesHash = {};
+        for(var i in hAtoms) {
+            var atom = ic.atoms[i];
+            var resid = atom.structure + '_' + atom.chain + '_' + atom.resi;
+            residuesHash[resid] = 1;
+        }
+
+        var commandname = 'protein_aligned';
+        var commanddescr = 'protein aligned';
+        var select = "select " + me.residueids2spec(Object.keys(residuesHash));
+
+        me.addCustomSelection(Object.keys(residuesHash), commandname, commanddescr, select, true);
+    }
 
     me.updateHlAll();
 
@@ -1253,7 +1280,6 @@ iCn3DUI.prototype.setSeqAlignForRealign = function (chainid_t, chainid, chainInd
         var commandname = 'protein_aligned';
         var commanddescr = 'protein aligned';
         var select = "select " + me.residueids2spec(Object.keys(residuesHash));
-
         me.addCustomSelection(Object.keys(residuesHash), commandname, commanddescr, select, true);
 };
 
@@ -1412,7 +1438,7 @@ iCn3DUI.prototype.realignOnSeqAlign = function () { var me = this, ic = me.icn3d
 
 };
 
-iCn3DUI.prototype.realignChainOnSeqAlign = function (chainidArray) { var me = this, ic = me.icn3d; "use strict";
+iCn3DUI.prototype.realignChainOnSeqAlign = function (chainresiCalphaHash2, chainidArray) { var me = this, ic = me.icn3d; "use strict";
 //    me.saveSelectionPrep();
 
 //    var index = Object.keys(ic.defNames2Atoms).length;
@@ -1513,17 +1539,21 @@ iCn3DUI.prototype.realignChainOnSeqAlign = function (chainidArray) { var me = th
     //https://stackoverflow.com/questions/14352139/multiple-ajax-calls-from-array-and-handle-callback-when-completed
     //https://stackoverflow.com/questions/5518181/jquery-deferreds-when-and-the-fail-callback-arguments
     $.when.apply(undefined, ajaxArray).then(function() {
-       me.parseChainRealignData(arguments, chainidArray, struct2SeqHash, struct2CoorHash, struct2resid);
+       me.parseChainRealignData(arguments, chainresiCalphaHash2, chainidArray, struct2SeqHash, struct2CoorHash, struct2resid);
     })
     .fail(function() {
-       me.parseChainRealignData(arguments, chainidArray, struct2SeqHash, struct2CoorHash, struct2resid);
+       me.parseChainRealignData(arguments, chainresiCalphaHash2, chainidArray, struct2SeqHash, struct2CoorHash, struct2resid);
     });
 };
 
-iCn3DUI.prototype.parseChainRealignData = function (ajaxData, chainidArray, struct2SeqHash, struct2CoorHash, struct2resid) { var me = this, ic = me.icn3d; "use strict";
+iCn3DUI.prototype.parseChainRealignData = function (ajaxData, chainresiCalphaHash2, chainidArray, struct2SeqHash, struct2CoorHash, struct2resid) { var me = this, ic = me.icn3d; "use strict";
   var dataArray = (chainidArray.length == 2) ? [ajaxData] : ajaxData;
 
   var toStruct = chainidArray[0].substr(0, chainidArray[0].indexOf('_')).toUpperCase();
+
+  var hAtoms = {};
+
+  me.realignResid = {};
 
   // Each argument is an array with the following structure: [ data, statusText, jqXHR ]
   //var data2 = v2[0];
@@ -1559,7 +1589,6 @@ iCn3DUI.prototype.parseChainRealignData = function (ajaxData, chainidArray, stru
 
           var seqto = '', seqfrom = ''
 
-          me.realignResid = {};
           me.realignResid[toStruct] = [];
           me.realignResid[fromStruct] = [];
 
@@ -1591,7 +1620,9 @@ iCn3DUI.prototype.parseChainRealignData = function (ajaxData, chainidArray, stru
           var chainTo = chainidArray[0];
           var chainFrom = chainidArray[index + 1];
 
-          me.alignCoords(coordsFrom, coordsTo, fromStruct, undefined, chainTo, chainFrom, index + 1);
+          var bChainAlign = true;
+          var hAtomsTmp = me.alignCoords(coordsFrom, coordsTo, fromStruct, undefined, chainTo, chainFrom, index + 1, bChainAlign);
+          hAtoms = ic.unionHash(hAtoms, hAtomsTmp);
 
 //          me.opts['color'] = 'identity';
 //          ic.setColorByOptions(me.opts, ic.hAtoms);
@@ -1614,6 +1645,8 @@ iCn3DUI.prototype.parseChainRealignData = function (ajaxData, chainidArray, stru
 
       //if(me.deferredRealign !== undefined) me.deferredRealign.resolve();
   }
+
+  me.downloadChainalignmentPart3(chainresiCalphaHash2, chainidArray, hAtoms);
 
 //  ic.draw();
 //  me.updateHlAll();

@@ -191,7 +191,7 @@ iCn3DUI.prototype.addMemAtoms = function(dmem, pdbid, dxymax) { var me = this, i
 
       //var dxymax = npoint / 2.0 * step;
 
-      pdbid = pdbid.toUpperCase();
+      pdbid = (pdbid) ? pdbid.toUpperCase() : 'stru';
 
       ic.structures[pdbid].push(pdbid + '_MEM');
       ic.chains[pdbid + '_MEM'] = {};
@@ -345,22 +345,24 @@ iCn3DUI.prototype.transformToOpmOriForAlign = function(pdbid, chainresiCalphaHas
   }
 };
 
-iCn3DUI.prototype.alignCoords = function(coordsFrom, coordsTo, secondStruct, bKeepSeq, chainid_t, chainid, chainIndex) { var me = this, ic = me.icn3d; "use strict";
+iCn3DUI.prototype.alignCoords = function(coordsFrom, coordsTo, secondStruct, bKeepSeq, chainid_t, chainid, chainIndex, bChainAlign) { var me = this, ic = me.icn3d; "use strict";
   //var n = coordsFrom.length;
   var n = (coordsFrom.length < coordsTo.length) ? coordsFrom.length : coordsTo.length;
 
+  var hAtoms = {};
+
   if(n < 4) alert("Please select at least four residues in each structure...");
   if(n >= 4) {
-      ic.rmsd_supr = ic.getRmsdSupr(coordsFrom, coordsTo, n);
+      ic.rmsd_suprTmp = ic.getRmsdSupr(coordsFrom, coordsTo, n);
 
       // apply matrix for each atom
-      if(ic.rmsd_supr.rot !== undefined) {
-          var rot = ic.rmsd_supr.rot;
+      if(ic.rmsd_suprTmp.rot !== undefined) {
+          var rot = ic.rmsd_suprTmp.rot;
           if(rot[0] === null) alert("Please select more residues in each structure...");
 
-          var centerFrom = ic.rmsd_supr.trans1;
-          var centerTo = ic.rmsd_supr.trans2;
-          var rmsd = ic.rmsd_supr.rmsd;
+          var centerFrom = ic.rmsd_suprTmp.trans1;
+          var centerTo = ic.rmsd_suprTmp.trans2;
+          var rmsd = ic.rmsd_suprTmp.rmsd;
 
           if(rmsd) {
               me.setLogCmd("realignment RMSD: " + rmsd.toPrecision(4), false);
@@ -390,19 +392,18 @@ iCn3DUI.prototype.alignCoords = function(coordsFrom, coordsTo, secondStruct, bKe
 
           me.openDlg('dl_alignment', 'Select residues in aligned sequences');
 
-//          me.opts['color'] = 'grey';
-//          ic.setColorByOptions(me.opts, ic.dAtoms);
-
-          me.opts['color'] = 'identity';
-          ic.setColorByOptions(me.opts, ic.hAtoms);
+          if(!bChainAlign) {
+              me.opts['color'] = 'identity';
+              ic.setColorByOptions(me.opts, ic.hAtoms);
+          }
 
           //ic.draw();
 
-          return seqObj.hAtoms;
+          hAtoms = ic.hAtoms;
       }
   }
 
-  return;
+  return hAtoms;
 };
 
 iCn3DUI.prototype.loadPdbData = function(data, pdbid, bOpm) { var me = this, ic = me.icn3d; "use strict";

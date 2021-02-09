@@ -1,4 +1,6 @@
 ## Change Log
+[icn3d-2.24.3](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.24.3.zip) was release on February 9, 2021. Added a few more Node.js scripts in icn3dnode to retrieve ligand-protein and protein-protein interactions, change of interactions, binding site and domain information in the command line.
+
 [icn3d-2.24.2](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.24.2.zip) was release on February 3, 2021. Enabled to show multiple mutations together in the menu "Analysis > Mutation". 
 
 [icn3d-2.24.1](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.24.1.zip) was release on February 1, 2021. Enabled to show multiple mutations together ( https://structure.ncbi.nlm.nih.gov/icn3d/share.html?tKz5GiA2pTVQEWwy6). Fixed the alternation in multiple chain alignment. 

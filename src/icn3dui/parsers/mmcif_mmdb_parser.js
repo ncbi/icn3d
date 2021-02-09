@@ -1461,6 +1461,7 @@ iCn3DUI.prototype.loadAtomDataIn = function (data, id, type, seqalign, alignType
     // set up sequence alignment
     // display the structure right away. load the mns and sequences later
 //        setTimeout(function(){
+    var hAtoms = {};
     if(type === 'align' && seqalign !== undefined && me.bFullUi) {
         me.setSeqAlign(seqalign, data.alignedStructures);
     } // if(align
@@ -1470,6 +1471,8 @@ iCn3DUI.prototype.loadAtomDataIn = function (data, id, type, seqalign, alignType
         var bReverse = false;
         var seqObj = me.getAlignSequencesAnnotations(Object.keys(ic.alnChains), undefined, undefined, false, undefined, bReverse);
         var oriHtml = $("#" + me.pre + "dl_sequence2").html();
+
+        hAtoms = ic.hAtoms;
 
         $("#" + me.pre + "dl_sequence2").html(oriHtml + seqObj.sequencesHtml);
         $("#" + me.pre + "dl_sequence2").width(me.RESIDUE_WIDTH * seqObj.maxSeqCnt + 200);
@@ -1506,4 +1509,6 @@ iCn3DUI.prototype.loadAtomDataIn = function (data, id, type, seqalign, alignType
     me.showTitle();
 
     data = {};
+
+    return hAtoms;
 };
