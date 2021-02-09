@@ -13,10 +13,14 @@ Install the packages axios, querystring, and three:
     npm install three
 
 Examples
-------------
+--------
 
 * <b>Ligand-Protein Interactions</b>
 
+    Go to the directory "nodescript":
+
+        cd nodescript
+        
     In the command line, run the following:
 
         node ligand.js 5R7Y JFM
@@ -25,8 +29,7 @@ Examples
 
         5R7Y, Chain A 164H, 3C-like proteinase, Ligand JFM
         ...
-    
-    
+        
 * <b>Protein-Protein Interactions</b>
 
     In the command line, run the following:
@@ -36,8 +39,7 @@ Examples
     This finds the residues in the chain "E" of the PDB structure "7BWJ" interacting with the chain "L". The output looks like the following:
 
         7BWJ, Chain E 483V, SARS-CoV-2 receptor binding domain, Chain L 31G, antibody light chain
-        ...
-        
+        ...        
     
 * <b>Protein-Protein Interactions Due to Mutations</b>
 
@@ -50,7 +52,6 @@ Examples
         6M0J, E, 501, N501Y, 0, 0, 9, 0, 1, 1
         
     where "0, 0, 9, 0, 1, 1" means the change of hydrogen bonds, salt bridges, contacts, halogen bonds, Pi-Cation interactions, Pi-Stacking interactions are 0, 0, 9, 0, 1, 1, respectively for the mutation N to Y at position 501.
-
 
 * <b>Residue-Protein Interactions Due to Mutation</b>
 
@@ -69,7 +70,6 @@ Examples
         Change Pi-Stacking: 0
     
     where "Change Ionic: -1" means the mutant has one less salt bridge/ionic than the wild type.
-
 
 * <b>Show Domain and Site Information for a Protein</b>
 
