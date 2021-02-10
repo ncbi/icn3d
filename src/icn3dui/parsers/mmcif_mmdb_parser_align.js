@@ -1479,26 +1479,35 @@ iCn3DUI.prototype.realignChainOnSeqAlign = function (chainresiCalphaHash2, chain
                     var startEnd = resiArray[j].split('-');
                     for(var k = parseInt(startEnd[0]); k <= parseInt(startEnd[1]); ++k) {
                         struct2SeqHash[mmdbid] += ic.chainsSeq[chainid][k - base].name;
+                        var bFound = false;
                         for(var serial in ic.residues[chainid + '_' + k]) {
                             var atom = ic.atoms[serial];
-                            if( (ic.proteins.hasOwnProperty(serial) && atom.name == "CA")
-                              || (ic.nucleotides.hasOwnProperty(serial) && (atom.name == "O3'" || atom.name == "O3*")) ) {
+                            if( (ic.proteins.hasOwnProperty(serial) && atom.name == "CA" && atom.elem == "C")
+                              || (ic.nucleotides.hasOwnProperty(serial) && (atom.name == "O3'" || atom.name == "O3*") && atom.elem == "O") ) {
                                 struct2CoorHash[mmdbid].push(atom.coord.clone());
+                                bFound = true;
+                                break;
                             }
                         }
+                        if(!bFound) struct2CoorHash[mmdbid].push(undefined);
+
                         struct2resid[mmdbid].push(chainid + '_' + k);
                     }
                 }
                 else { // one residue
                     var k = parseInt(resiArray[j]);
                     struct2SeqHash[mmdbid] += ic.chainsSeq[chainid][k - base].name;
+                    var bFound = false;
                     for(var serial in ic.residues[chainid + '_' + k]) {
                         var atom = ic.atoms[serial];
-                        if( (ic.proteins.hasOwnProperty(serial) && atom.name == "CA")
-                          || (ic.nucleotides.hasOwnProperty(serial) && (atom.name == "O3'" || atom.name == "O3*")) ) {
+                        if( (ic.proteins.hasOwnProperty(serial) && atom.name == "CA" && atom.elem == "C")
+                          || (ic.nucleotides.hasOwnProperty(serial) && (atom.name == "O3'" || atom.name == "O3*") && atom.elem == "O") ) {
                             struct2CoorHash[mmdbid].push(atom.coord.clone());
+                            bFound = true;
+                            break;
                         }
                     }
+                    if(!bFound) struct2CoorHash[mmdbid].push(undefined);
                     struct2resid[mmdbid].push(chainid + '_' + k);
                 }
             }
@@ -1506,14 +1515,20 @@ iCn3DUI.prototype.realignChainOnSeqAlign = function (chainresiCalphaHash2, chain
         else {
             for(var j = 0, jl = ic.chainsSeq[chainid].length; j < jl; ++j) {
                 struct2SeqHash[mmdbid] += ic.chainsSeq[chainid][j].name;
-                for(var serial in ic.chains[chainid]) {
+                var resid = chainid + '_' + ic.chainsSeq[chainid][j].resi;
+                var bFound = false;
+                for(var serial in ic.residues[resid]) {
                     var atom = ic.atoms[serial];
-                    if( (ic.proteins.hasOwnProperty(serial) && atom.name == "CA")
-                      || (ic.nucleotides.hasOwnProperty(serial) && (atom.name == "O3'" || atom.name == "O3*")) ) {
+                    if( (ic.proteins.hasOwnProperty(serial) && atom.name == "CA" && atom.elem == "C")
+                      || (ic.nucleotides.hasOwnProperty(serial) && (atom.name == "O3'" || atom.name == "O3*") && atom.elem == "O") ) {
                         struct2CoorHash[mmdbid].push(atom.coord.clone());
+                        bFound = true;
+                        break;
                     }
                 }
-                struct2resid[mmdbid].push(chainid + '_' + ic.chainsSeq[chainid][j].resi);
+                if(!bFound) struct2CoorHash[mmdbid].push(undefined);
+
+                struct2resid[mmdbid].push(resid);
             }
         }
 

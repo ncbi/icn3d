@@ -1103,10 +1103,10 @@ iCn3DUI.prototype.loadAtomDataIn = function (data, id, type, seqalign, alignType
         var bChemicalIons = (me.cfg.mmcifid === undefined && me.InputfileType != 'mmcif') ? (chainid2kind[chainNum] === 'ligand' || (chainid2kind[chainNum] !== undefined && chainid2kind[chainNum].indexOf('other') !== -1) || chainid2kind[chainNum] === undefined) : atm.mt === 'l';
 
         if((atm.chain === 'Misc' || chainid2kind[chainNum] === 'other') && biopolymerChainsHash[chainNum] !== 'protein' && biopolymerChainsHash[chainNum] !== 'nucleotide') { // biopolymer, could be protein or nucleotide
-            if(atm.name === 'CA') {
+            if(atm.name === 'CA' && atm.elem === 'C') {
                 biopolymerChainsHash[chainNum] = 'protein';
             }
-            else if(atm.name === 'P') {
+            else if(atm.name === 'P' && atm.elem === 'P') {
                 biopolymerChainsHash[chainNum] = 'nucleotide';
             }
             else {
