@@ -266,7 +266,6 @@ iCn3D.prototype.setColorByOptions = function (options, atoms, bUseInputColor) {
 
                     if(this.queryresi2score[chainid].hasOwnProperty(queryresi)) {
                         var b = this.queryresi2score[chainid][queryresi];
-
                         if(b > 100) b = 100;
                         color = b < middB ? this.thr().setRGB(1 - (s = (middB - b) * spanBinv1), 1 - s, 1) : this.thr().setRGB(1, 1 - (s = (b - middB) * spanBinv2), 1 - s);
                     }

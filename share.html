@@ -28,6 +28,10 @@
            // replace share link URLs
            //if(shortUrl == 'abcd') shortUrl = 'efgh';
 
+           var pos2 = shortUrl.indexOf('&t=');
+           if(pos2 != -1) {
+               shortUrl = shortUrl.substr(0, pos2);
+           }
 
            shareLink = 'https://icn3d.page.link/' + shortUrl;
        }

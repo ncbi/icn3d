@@ -52,7 +52,7 @@ $.ajaxTransport("+binary", function (options, originalOptions, jqXHR) {
 });
 
 var iCn3DUI = function(cfg) { var me = this, ic = me.icn3d; "use strict";
-    this.REVISION = '2.24.3';
+    this.REVISION = '2.24.4';
     me.bFullUi = true;
     me.cfg = cfg;
     me.divid = me.cfg.divid;
@@ -1867,12 +1867,14 @@ iCn3DUI.prototype = {
                 if(urlArray.length == 2) shorturl = 'https://structure.ncbi.nlm.nih.gov/icn3d/share.html?' + urlArray[1];
                 $("#" + me.pre + "ori_url").val(url);
                 $("#" + me.pre + "short_url").val(shorturl);
+                $("#" + me.pre + "short_url_title").val(shorturl + '&t=' + me.yournote);
                 if(!bPngHtml) me.openDlg('dl_copyurl', 'Copy a Share Link URL');
               },
               error : function(xhr, textStatus, errorThrown ) {
                 var shorturl = 'Problem in getting shortened URL';
                 $("#" + me.pre + "ori_url").val(url);
                 $("#" + me.pre + "short_url").val(shorturl);
+                $("#" + me.pre + "short_url_title").val(shorturl + '&t=' + me.yournote);
                 if(!bPngHtml) me.openDlg('dl_copyurl', 'Copy a Share Link URL');
               }
            });
@@ -2552,11 +2554,11 @@ iCn3DUI.prototype = {
                 ic.opts['color'] = 'align custom';
                 ic.setColorByOptions(ic.opts, ic.hAtoms);
                 me.updateHlAll();
-                me.setLogCmd('custom tube | ' + chainid + ' | range ' + start + '_' + end + ' | ' + resiScoreStr, true);
+                me.setLogCmd('color align custom | ' + chainid + ' | range ' + start + '_' + end + ' | ' + resiScoreStr, true);
             }
             else if(type == 'tube') {
                 me.setStyle('proteins', 'custom tube');
-                me.setLogCmd('color align custom | ' + chainid + ' | range ' + start + '_' + end + ' | ' + resiScoreStr, true);
+                me.setLogCmd('color tube | ' + chainid + ' | range ' + start + '_' + end + ' | ' + resiScoreStr, true);
             }
             ic.draw();
          };

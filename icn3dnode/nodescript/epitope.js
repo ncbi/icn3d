@@ -97,7 +97,7 @@ https.get(urlMmdb, function(res1) {
               let chainid2 = resid2.substr(0, resid2.lastIndexOf('_'));
               let chain2 = chainid2.substr(chainid2.indexOf('_') + 1);
 
-              if(chain2 != 'Misc') console.log(pdbid + ", Chain " + chain + " " + resi + resn + ", " + getProteinName(objAll, chainid) + ", " + "Chain " + chain2 + " " + resi2 + resn2 + ", " + getProteinName(objAll, chainid2));
+              if(chain2 != 'Misc') console.log(pdbid + ", " + pdbid + "_" + chain + ", " + resi + ", " + resn + ", " + getProteinName(objAll, chainid) + ", " + pdbid +  "_" + chain2 + ", " + resi2 + ", " + resn2 + ", " + getProteinName(objAll, chainid2));
             }
         }
     });
@@ -112,9 +112,8 @@ function getProteinName(objAll, chnid) {
     let chain = chnid.substr(chnid.indexOf('_') + 1);
     for(let i in moleculeInfor) {
         if(moleculeInfor[i].chain == chain) {
-            fullProteinName = moleculeInfor[i].name.replace(/\'/g, '&prime;');
-            let proteinName = fullProteinName;
-            //if(proteinName.length > 40) proteinName = proteinName.substr(0, 40) + "...";
+            let proteinName = moleculeInfor[i].name.replace(/\'/g, '&prime;');
+            fullProteinName = proteinName.replace(/,/g, ';');
             break;
         }
     }

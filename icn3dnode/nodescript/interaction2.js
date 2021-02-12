@@ -93,7 +93,7 @@ https.get(urlMmdb, function(res1) {
 */
         let resn = objAll.residueId2Name[resid];
 
-        console.log(pdbid + ", " + chain + ", " + resi + ", " + resn + resi + mutant + ", " + (- bondCntWild[0].cntHbond).toString() + ", " + (- bondCntWild[0].cntIonic).toString() + ", " + (- bondCntWild[0].cntContact).toString() + ", " + (- bondCntWild[0].cntHalegen).toString() + ", " + (- bondCntWild[0].cntPication).toString() + ", " + (- bondCntWild[0].cntPistacking).toString());
+        console.log(pdbid + ", " + pdbid + "_" + chain + ", " + resi + ", " + resn + resi + mutant + ", " + (- bondCntWild[0].cntHbond).toString() + ", " + (- bondCntWild[0].cntIonic).toString() + ", " + (- bondCntWild[0].cntContact).toString() + ", " + (- bondCntWild[0].cntHalegen).toString() + ", " + (- bondCntWild[0].cntPication).toString() + ", " + (- bondCntWild[0].cntPistacking).toString());
       }
       else {
           let snpStr = chain + ',' + resi + ',' + mutant;
@@ -172,7 +172,7 @@ function showInteractionChange(data, objAll, pdbid, chain, resi) {
 
     let resn = objAll.residueId2Name[resid];
 
-    console.log(pdbid + ", " + chain + ", " + resi + ", " + resn + resi + mutant + ", " + (bondCntMutant[0].cntHbond - bondCntWild[0].cntHbond).toString() + ", " + (bondCntMutant[0].cntIonic - bondCntWild[0].cntIonic).toString() + ", " + (bondCntMutant[0].cntContact - bondCntWild[0].cntContact).toString() + ", " + (bondCntMutant[0].cntHalegen - bondCntWild[0].cntHalegen).toString() + ", " + (bondCntMutant[0].cntPication - bondCntWild[0].cntPication).toString() + ", " + (bondCntMutant[0].cntPistacking - bondCntWild[0].cntPistacking).toString());
+    console.log(pdbid + ", " + pdbid + "_" + chain + ", " + resi + ", " + resn + resi + mutant + ", " + (bondCntMutant[0].cntHbond - bondCntWild[0].cntHbond).toString() + ", " + (bondCntMutant[0].cntIonic - bondCntWild[0].cntIonic).toString() + ", " + (bondCntMutant[0].cntContact - bondCntWild[0].cntContact).toString() + ", " + (bondCntMutant[0].cntHalegen - bondCntWild[0].cntHalegen).toString() + ", " + (bondCntMutant[0].cntPication - bondCntWild[0].cntPication).toString() + ", " + (bondCntMutant[0].cntPistacking - bondCntWild[0].cntPistacking).toString());
 }
 
 function viewInteractionPairs(objAll, atomSet1, atomSet2, bHbondCalc, type,
