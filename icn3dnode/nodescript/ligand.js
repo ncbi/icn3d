@@ -93,7 +93,7 @@ function getLigandInteractio(url, pdbid, ligName, bPdb) {
                 let chainid = resid.substr(0, resid.lastIndexOf('_'));
                 let chain = chainid.substr(chainid.indexOf('_') + 1);
 
-                if(chain != 'Misc') console.log(pdbid + ", Chain " + chain + " " + resi + resn + ", " + getProteinName(objAll, chainid) + ", " + "Ligand " + ligName);
+                if(chain != 'Misc') console.log(pdbid + ", " + pdbid + "_" + chain + ", " + resi + ", " +  resn + ", " + getProteinName(objAll, chainid) + ", " + ligName);
             }
         });
     }).on('error', function(e) {
@@ -108,9 +108,8 @@ function getProteinName(objAll, chnid) {
     let chain = chnid.substr(chnid.indexOf('_') + 1);
     for(let i in moleculeInfor) {
         if(moleculeInfor[i].chain == chain) {
-            fullProteinName = moleculeInfor[i].name.replace(/\'/g, '&prime;');
-            let proteinName = fullProteinName;
-            //if(proteinName.length > 40) proteinName = proteinName.substr(0, 40) + "...";
+            let proteinName = moleculeInfor[i].name.replace(/\'/g, '&prime;');
+            fullProteinName = proteinName.replace(/,/g, ';');
             break;
         }
     }

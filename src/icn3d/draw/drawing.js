@@ -2219,7 +2219,7 @@ iCn3D.prototype.getCustomtubesize = function (resid) { var me = this, ic = me.ic
     var resi = resid.substr(pos + 1);
     var chainid = resid.substr(0, pos);
 
-    var radiusFinal = (this.queryresi2score[chainid].hasOwnProperty(resi)) ? this.queryresi2score[chainid][resi] * 0.01 : this.coilWidth;
+    var radiusFinal = (this.queryresi2score[chainid] && this.queryresi2score[chainid].hasOwnProperty(resi)) ? this.queryresi2score[chainid][resi] * 0.01 : this.coilWidth;
 
     return radiusFinal;
 };

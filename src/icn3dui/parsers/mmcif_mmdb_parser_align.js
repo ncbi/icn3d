@@ -1179,7 +1179,7 @@ iCn3DUI.prototype.setSeqAlignForRealign = function (chainid_t, chainid, chainInd
       ic.alnChainsAnTtl = {};
       ic.alnChainsAnno = {};
 
-      ic.alnChainsSeq = {};
+      if(ic.alnChainsSeq === undefined) ic.alnChainsSeq = {};
       ic.alnChains = {};
 
       ic.alnChainsSeq[chainid_t] = [];
