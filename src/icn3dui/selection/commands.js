@@ -406,7 +406,7 @@ iCn3DUI.prototype.execCommandsBase = function (start, end, steps, bFinalStep) { 
         if(title !== 'none') {
             if(ic.symmetryHash === undefined) {
                 $.when(me.applyCommandSymmetry(command)).then(function() {
-                   if(!me.cfg.notebook) dialog.dialog( "close" );
+                   //if(!me.cfg.notebook && dialog && dialog.hasClass("ui-dialog-content")) dialog.dialog( "close" );
 
                    ic.draw();
                    me.execCommandsBase(i + 1, end, steps);
@@ -434,7 +434,7 @@ iCn3DUI.prototype.execCommandsBase = function (start, end, steps, bFinalStep) { 
         //if(title !== 'none') {
 //            if(ic.symdHash === undefined) {
                 $.when(me.applyCommandSymd(command)).then(function() {
-                   //if(!me.cfg.notebook) dialog.dialog( "close" );
+                   //if(!me.cfg.notebook && dialog && dialog.hasClass("ui-dialog-content")) dialog.dialog( "close" );
 
                    ic.draw();
                    me.execCommandsBase(i + 1, end, steps);
@@ -457,7 +457,7 @@ iCn3DUI.prototype.execCommandsBase = function (start, end, steps, bFinalStep) { 
         var command = strArray[0].trim();
 
         $.when(me.applyCommandScap(command)).then(function() {
-           //if(!me.cfg.notebook && dialog) dialog.dialog( "close" );
+           //if(!me.cfg.notebook && dialog && dialog.hasClass("ui-dialog-content")) dialog.dialog( "close" );
 
            //ic.draw();
            me.execCommandsBase(i + 1, end, steps);

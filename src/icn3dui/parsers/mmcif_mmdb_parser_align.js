@@ -1615,6 +1615,8 @@ iCn3DUI.prototype.parseChainRealignData = function (ajaxData, chainresiCalphaHas
                   var chainid1 = residArray1[j + seg.orifrom].substr(0, residArray1[j + seg.orifrom].lastIndexOf('_'));
                   var chainid2 = residArray2[j + seg.from].substr(0, residArray2[j + seg.from].lastIndexOf('_'));
 
+                  if(!coord1[j + seg.orifrom] || !coord2[j + seg.from]) continue;
+
                   coordsTo.push(coord1[j + seg.orifrom]);
                   coordsFrom.push(coord2[j + seg.from]);
 

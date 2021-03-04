@@ -241,7 +241,7 @@ make_js_task("full", common_js.concat(full_js).concat("src/icn3dui/full_ui.js").
 gulp.task('html',
   //gulp.series('clean'),
   function() {
-    return gulp.src(['index.html', 'icn3d.html', 'share.html', 'example.html'])
+    return gulp.src(['simple.html', 'icn3d.html', 'share.html', 'example.html'])
         .pipe(dom(function() {
             var elems = this.querySelectorAll(
                 "script[src],link[rel='stylesheet']");
@@ -268,7 +268,7 @@ gulp.task('html',
 gulp.task('html2',
   //gulp.series('clean'),
   function() {
-    return gulp.src(['full.html'])
+    return gulp.src(['index.html', 'full.html'])
         .pipe(dom(function() {
             var elems = this.querySelectorAll(
                 "script[src],link[rel='stylesheet']");

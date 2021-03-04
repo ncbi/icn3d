@@ -1,4 +1,6 @@
 ## Change Log
+[icn3d-2.24.5](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.24.5.zip) was release on March 4, 2021. Changed the default 3D view (https://www.ncbi.nlm.nih.gov/Structure/icn3d/index.html) from the basic view (https://www.ncbi.nlm.nih.gov/Structure/icn3d/simple.html) to the advanced view (https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html).
+
 [icn3d-2.24.4](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.24.4.zip) was release on February 12, 2021. Added an option to save a sharable link with your note/window title in the menu "File > Share Link".
 
 [icn3d-2.24.3](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.24.3.zip) was release on February 9, 2021. Added a few more Node.js scripts in icn3dnode to retrieve ligand-protein and protein-protein interactions, change of interactions, binding site and domain information in the command line.

@@ -85,6 +85,7 @@ function getLigandInteractio(url, pdbid, ligName, bPdb) {
 
             let residueArray = Object.keys(result.residHash);
             // get the interacting residues for each residue
+            let targetTypeId = 8; // drug candidate
             for(let i = 0, il = residueArray.length; i < il; ++i) {
                 let resid = residueArray[i];
                 //let idArray = resid.split('_');
@@ -93,7 +94,7 @@ function getLigandInteractio(url, pdbid, ligName, bPdb) {
                 let chainid = resid.substr(0, resid.lastIndexOf('_'));
                 let chain = chainid.substr(chainid.indexOf('_') + 1);
 
-                if(chain != 'Misc') console.log(pdbid + ", " + pdbid + "_" + chain + ", " + resi + ", " +  resn + ", " + getProteinName(objAll, chainid) + ", " + ligName);
+                if(chain != 'Misc') console.log(pdbid + ", " + pdbid + "_" + chain + ", " + resi + ", " +  resn + ", " + getProteinName(objAll, chainid) + ", " + ligName + ", " + targetTypeId);
             }
         });
     }).on('error', function(e) {

@@ -31,6 +31,8 @@ iCn3DUI.prototype.showAnnotations = function() { var me = this, ic = me.icn3d; "
             //if(pos > 4) continue; // NMR structures with structure id such as 2K042,2K043, ...
             var atom = ic.getFirstCalphaAtomObj(ic.chains[chainArray[i]]);
             if(atom === undefined) atom = ic.getFirstAtomObj(ic.chains[chainArray[i]]);
+            if(atom === undefined) continue;
+
             // only single letter chain has accession such as 1P9M_A
             var chainLetter = chainArray[i].substr(chainArray[i].indexOf('_') + 1);
             var chainidBase;

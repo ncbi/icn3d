@@ -49,7 +49,7 @@ Examples
     
     This finds the change of interactions between the RDB domain (chain "E") of SAR-Cov-2 (PDB ID 6M0J) and ACE2 due to the mutation N501Y. The output looks like the following:
     
-        6M0J, 6M0J_E, 501, N501Y, 0, 0, 9, 0, 1, 1
+        6M0J, 6M0J_E, 501, N, Y, 0, 0, 9, 0, 1, 1
         
     where "0, 0, 9, 0, 1, 1" means the change of hydrogen bonds, salt bridges, contacts, halogen bonds, Pi-Cation interactions, Pi-Stacking interactions are 0, 0, 9, 0, 1, 1, respectively for the mutation N to Y at position 501.
 
