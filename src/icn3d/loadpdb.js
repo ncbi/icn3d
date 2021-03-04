@@ -216,6 +216,7 @@ iCn3D.prototype.loadPDB = function (src, pdbid, bOpm, bVector, bAddition) { var 
             this.organism = this.organism.substr(0, this.organism.length - 1);
         } else if (record === 'ENDMDL') {
             ++moleculeNum;
+            id = 'stru';
         } else if (record === 'JRNL  ') {
             if(line.substr(12, 4) === 'PMID') {
                 this.pmid = line.substr(19).trim();

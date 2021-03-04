@@ -24,8 +24,11 @@ iCn3DUI.prototype.applyCommandScap = function (command) { var me = this, ic = me
 iCn3DUI.prototype.adjust2DWidth = function (id) { var me = this, ic = me.icn3d; "use strict";
     var halfWidth = 125;
     var id = me.pre + id;
-    var height = $("#" + me.pre + 'dl_selectannotations').dialog( "option", "height");
-    $("#" + id).dialog( "option", "width", halfWidth * 2 );
+
+    var height = ($("#" + me.pre + 'dl_selectannotations').hasClass("ui-dialog-content")) ? $("#" + me.pre + 'dl_selectannotations').dialog( "option", "height") : me.HEIGHT;
+    var width = ($("#" + me.pre + 'dl_selectannotations').hasClass("ui-dialog-content")) ? halfWidth * 2 : me.WIDTH * 0.5;
+
+    $("#" + id).dialog( "option", "width", width );
     $("#" + id).dialog( "option", "height", height);
     var position = { my: "left-" + halfWidth + " top+" + me.MENU_HEIGHT, at: "right top", of: "#" + me.pre + "viewer", collision: "none" };
 
