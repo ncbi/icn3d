@@ -91,7 +91,10 @@ https.get(urlSeq, function(resSeq) {
   utils.dumpError(e);
 });
 
-let url = 'https://www.ncbi.nlm.nih.gov/Structure/bwrpsb/bwrpsb.cgi?queries=' + queries + '&tdata=' + tdata + '&cddefl=false&qdefl=false&smode=auto&useid1=true&maxhit=250&filter=true&db=cdd&evalue=0.01&dmode=rep&clonly=false';
+// smode=auto: retrieve pre-computed results from CDART
+//let url = 'https://www.ncbi.nlm.nih.gov/Structure/bwrpsb/bwrpsb.cgi?queries=' + queries + '&tdata=' + tdata + '&cddefl=false&qdefl=false&smode=auto&useid1=true&maxhit=250&filter=true&db=cdd&evalue=0.01&dmode=rep&clonly=false';
+// smode=live: retrieve live search results from CDART
+let url = 'https://www.ncbi.nlm.nih.gov/Structure/bwrpsb/bwrpsb.cgi?queries=' + queries + '&tdata=' + tdata + '&cddefl=false&qdefl=false&smode=live&useid1=true&maxhit=250&filter=true&db=cdd&evalue=0.01&dmode=rep&clonly=false';
 
 // get cdsid
 https.get(url, function(res1) {
@@ -115,7 +118,7 @@ https.get(url, function(res1) {
 
       // wait for 5 secs to get data
       setTimeout(function(){
-          let url2 = 'https://www.ncbi.nlm.nih.gov/Structure/bwrpsb/bwrpsb.cgi?cdsid=' + cdsid + '&tdata=' + tdata + '&cddefl=false&qdefl=false&smode=auto&useid1=true&maxhit=250&filter=true&db=cdd&evalue=0.01&dmode=rep&clonly=false';
+          let url2 = 'https://www.ncbi.nlm.nih.gov/Structure/bwrpsb/bwrpsb.cgi?cdsid=' + cdsid + '&tdata=' + tdata + '&cddefl=false&qdefl=false&smode=live&useid1=true&maxhit=250&filter=true&db=cdd&evalue=0.01&dmode=rep&clonly=false';
 
           https.get(url2, function(res2) {
               let response2 = [];
@@ -182,10 +185,20 @@ https.get(url, function(res1) {
                                       let residue = residueArrayOut[j];
 
                                       let resiArray = [];
-                                      if(residue.indexOf('-') != -1) { // e.g., E16-V24
+                                      if(residue.indexOf('-') != -1) {
                                           let start_end = residue.split('-');
-                                          let start = parseInt(start_end[0].substr(1));
-                                          let end = parseInt(start_end[1].substr(1));
+
+                                          let start, end;
+                                          // feats: E16-V24
+                                          // hits: 16-24
+                                          if(tdata == 'feats') {
+                                              start = parseInt(start_end[0].substr(1));
+                                              end = parseInt(start_end[1].substr(1));
+                                          }
+                                          else {
+                                              start = parseInt(start_end[0]);
+                                              end = parseInt(start_end[1]);
+                                          }
 
                                           for(let k = start; k <= end; ++k) {
                                               resiArray.push(k);
@@ -216,7 +229,7 @@ https.get(url, function(res1) {
           }).on('error', function(e) {
               utils.dumpError(e);
           }); // end of 2nd https
-      }, 5000);
+      }, 30000);
     });
 }).on('error', function(e) {
     utils.dumpError(e);
@@ -225,7 +238,7 @@ https.get(url, function(res1) {
 /*
 let url = 'https://www.ncbi.nlm.nih.gov/Structure/bwrpsb/bwrpsb.cgi';
 let tdata = 'hits'; // or 'feats'
-let dataObj = {'queries': queries, tdata: tdata, cdsid: "", cddefl: "false", qdefl: "false", smode: "auto", useid1: "true", maxhit: 250, filter: "true", db: "cdd", evalue: 0.01, dmode: "rep", clonly: "false"};
+let dataObj = {'queries': queries, tdata: tdata, cdsid: "", cddefl: "false", qdefl: "false", smode: "live", useid1: "true", maxhit: 250, filter: "true", db: "cdd", evalue: 0.01, dmode: "rep", clonly: "false"};
 
 //https://attacomsian.com/blog/node-http-post-request
 // 'https' didn't work for posting PDB data, use 'application/x-www-form-urlencoded'

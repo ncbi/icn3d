@@ -261,3 +261,6 @@ input:checked + .icn3d-slider:before {
 }
   
 .icn3d-snplink {text-decoration: underline; cursor:pointer;}
+
+.icn3d-wifi {width:16px; display:inline-block; background-image: url("ssimages/wifi.png"); background-size: contain; background-repeat: no-repeat;}
+.icn3d-license {width:16px; display:inline-block; background-image: url("ssimages/license.png"); background-size: contain; background-repeat: no-repeat;}

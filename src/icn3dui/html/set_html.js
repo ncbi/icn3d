@@ -317,13 +317,13 @@ iCn3DUI.prototype.setMenu1_base = function() { var me = this, ic = me.icn3d; "us
     html += "<ul class='icn3d-mn'>";
     html += "<li><span>Retrieve by ID</span>";
     html += "<ul>";
-    html += me.getLink('mn1_mmdbid', 'MMDB ID');
-    html += me.getLink('mn1_mmtfid', 'MMTF ID');
-    html += me.getLink('mn1_pdbid', 'PDB ID');
-    html += me.getLink('mn1_opmid', 'OPM PDB ID');
-    html += me.getLink('mn1_mmcifid', 'mmCIF ID');
-    html += me.getLink('mn1_gi', 'NCBI gi');
-    html += me.getLink('mn1_cid', 'PubChem CID');
+    html += me.getLink('mn1_mmdbid', 'MMDB ID ' + me.wifiStr);
+    html += me.getLink('mn1_mmtfid', 'MMTF ID ' + me.wifiStr);
+    html += me.getLink('mn1_pdbid', 'PDB ID ' + me.wifiStr);
+    html += me.getLink('mn1_opmid', 'OPM PDB ID ' + me.wifiStr);
+    html += me.getLink('mn1_mmcifid', 'mmCIF ID ' + me.wifiStr);
+    html += me.getLink('mn1_gi', 'NCBI gi ' + me.wifiStr);
+    html += me.getLink('mn1_cid', 'PubChem CID ' + me.wifiStr);
     html += "</ul>";
     html += "</li>";
     html += "<li><span>Open File</span>";
@@ -333,28 +333,28 @@ iCn3DUI.prototype.setMenu1_base = function() { var me = this, ic = me.icn3d; "us
     html += me.getLink('mn1_mol2file', 'Mol2 File');
     html += me.getLink('mn1_sdffile', 'SDF File');
     html += me.getLink('mn1_xyzfile', 'XYZ File');
-    html += me.getLink('mn1_urlfile', 'URL (Same Host) ');
+    html += me.getLink('mn1_urlfile', 'URL (Same Host) ' + me.wifiStr);
     html += "<li>-</li>";
     html += me.getLink('mn1_pngimage', 'iCn3D PNG Image');
     html += me.getLink('mn1_state', 'State/Script File');
-    html += me.getLink('mn1_fixedversion', 'Share Link in Archived Ver.');
+    html += me.getLink('mn1_fixedversion', 'Share Link in Archived Ver. ' + me.wifiStr);
     html += me.getLink('mn1_selection', 'Selection File');
     html += "<li>-</li>";
 
     html += "<li><span>Electron Density (DSN6)</span>";
     html += "<ul>";
     html += me.getLink('mn1_dsn6', 'Local File');
-    html += me.getLink('mn1_dsn6url', 'URL (Same Host)');
+    html += me.getLink('mn1_dsn6url', 'URL (Same Host) ' + me.wifiStr);
     html += "</ul>";
 
     html += "</ul>";
     html += "</li>";
     html += "<li><span>Align</span>";
     html += "<ul>";
-    html += me.getLink('mn1_blast_rep_id', 'Sequence to Structure');
-    html += me.getLink('mn1_align', 'Structure to Structure');
+    html += me.getLink('mn1_blast_rep_id', 'Sequence to Structure ' + me.wifiStr);
+    html += me.getLink('mn1_align', 'Structure to Structure ' + me.wifiStr);
     //html += me.getLink('mn1_chainalign', 'Chain to Chain');
-    html += me.getLink('mn1_chainalign', 'Multiple Chains');
+    html += me.getLink('mn1_chainalign', 'Multiple Chains ' + me.wifiStr);
 
     html += "</ul>";
     html += "</li>";
@@ -363,7 +363,7 @@ iCn3DUI.prototype.setMenu1_base = function() { var me = this, ic = me.icn3d; "us
 
     html += "<li id='" + me.pre + "mn2_realignWrap'><span>Realign Selection</span>";
     html += "<ul>";
-    html += me.getRadio('mn2_realign', 'mn2_realignonseqalign', 'on Sequence Alignment', true);
+    html += me.getRadio('mn2_realign', 'mn2_realignonseqalign', 'on Sequence Alignment ' + me.wifiStr, true);
     html += me.getRadio('mn2_realign', 'mn2_realignresbyres', 'Residue by Residue');
     html += "</ul>";
     html += "</li>";
@@ -427,7 +427,7 @@ iCn3DUI.prototype.setMenu1_base = function() { var me = this, ic = me.icn3d; "us
     html += "</ul>";
     html += "</li>";
 
-    html += me.getLink('mn1_sharelink', 'Share Link');
+    html += me.getLink('mn1_sharelink', 'Share Link ' + me.wifiStr);
 
     html += me.getLink('mn1_replayon', 'Replay Each Step');
 
@@ -1130,7 +1130,7 @@ iCn3DUI.prototype.setMenu4_base = function() { var me = this, ic = me.icn3d; "us
         html += me.getRadio('mn4_clr', 'mn4_clrCharge', 'Charge');
 
         if(!me.cfg.notebook) {
-            html += me.getRadio('mn4_clr', 'mn1_delphi2', 'DelPhi<br><span style="padding-left:1.5em;">Potential</span>');
+            html += me.getRadio('mn4_clr', 'mn1_delphi2', 'DelPhi<br><span style="padding-left:1.5em;">Potential ' + me.licenseStr + '</span>');
         }
 
         html += me.getRadio('mn4_clr', 'mn4_clrHydrophobic', 'Wimley-White<br><span style="padding-left:1.5em;">Hydrophobicity</span>');
@@ -1174,7 +1174,7 @@ iCn3DUI.prototype.setMenu4_base = function() { var me = this, ic = me.icn3d; "us
         }
     }
     else {
-        html += me.getRadio('mn4_clr', 'mn1_delphi2', 'DelPhi<br><span style="padding-left:1.5em;">Potential</span>');
+        html += me.getRadio('mn4_clr', 'mn1_delphi2', 'DelPhi<br><span style="padding-left:1.5em;">Potential ' + me.licenseStr + '</span>');
         html += me.getRadio('mn4_clr', 'mn4_clrAtom', 'Atom', true);
     }
 
@@ -1212,15 +1212,15 @@ iCn3DUI.prototype.setMenu5_base = function() { var me = this, ic = me.icn3d; "us
     html += "<ul class='icn3d-mn'>";
 
     if(me.cfg.cid === undefined) {
-        html += me.getLink('mn6_selectannotations', 'View Sequences<br>& Annotations');
+        html += me.getLink('mn6_selectannotations', 'View Sequences<br>& Annotations ' + me.wifiStr);
 
         if(me.cfg.align !== undefined || me.cfg.chainalign !== undefined || me.bRealign || me.bSymd) {
-            html += me.getLink('mn2_alignment', 'View Aligned<br>Sequences');
+            html += me.getLink('mn2_alignment', 'View Aligned<br>Sequences ' + me.wifiStr);
         }
 
         //html += me.getLink('mn2_selectresidues', 'View Sequences');
         if(me.cfg.mmdbid !== undefined || me.cfg.gi !== undefined || me.cfg.blast_rep_id !== undefined || me.cfg.align !== undefined || me.cfg.chainalign !== undefined) {
-          html += me.getLink('mn2_2ddgm', 'View 2D Diagram');
+          html += me.getLink('mn2_2ddgm', 'View 2D Diagram ' + me.wifiStr);
         }
 
         html += me.getLink('definedsets2', 'Defined Sets');
@@ -1239,13 +1239,13 @@ iCn3DUI.prototype.setMenu5_base = function() { var me = this, ic = me.icn3d; "us
         html += "</ul>";
         html += "</li>";
 
-        if(!me.cfg.notebook) html += me.getLink('mn1_mutation', 'Mutation');
+        if(!me.cfg.notebook) html += me.getLink('mn1_mutation', 'Mutation ' + me.licenseStr);
 
         html += "<li>-</li>";
     }
 
     if(!me.cfg.notebook) {
-        html += me.getLink('mn1_delphi', 'DelPhi Potential');
+        html += me.getLink('mn1_delphi', 'DelPhi Potential ' + me.licenseStr);
         html += "<li><span>Load PQR/Phi</span>";
         html += "<ul>";
         html += me.getLink('mn1_phi', 'Local PQR/Phi/Cube File');
@@ -1341,8 +1341,8 @@ iCn3DUI.prototype.setMenu5_base = function() { var me = this, ic = me.icn3d; "us
 
         html += "<li><span>Symmetry</span>";
         html += "<ul>";
-        if(bOnePdb) html += me.getLink('mn6_symmetry', 'from RCSB (precalculated)');
-        html += me.getLink('mn6_symd', 'from SymD (Dynamic)');
+        if(bOnePdb) html += me.getLink('mn6_symmetry', 'from RCSB (precalculated) ' + me.wifiStr);
+        html += me.getLink('mn6_symd', 'from SymD (Dynamic) ' + me.wifiStr);
         html += me.getLink('mn6_clear_sym', 'Clear SymD Symmetry');
         html += "</ul>";
         html += "</li>";
@@ -1355,19 +1355,19 @@ iCn3DUI.prototype.setMenu5_base = function() { var me = this, ic = me.icn3d; "us
     if(me.cfg.cid !== undefined) {
         html += "<li><span>Links</span>";
         html += "<ul>";
-        html += me.getLink('mn1_link_structure', 'Compound Summary');
-        html += me.getLink('mn1_link_vast', 'Similar Compounds');
-        html += me.getLink('mn1_link_bind', 'Structures Bound');
+        html += me.getLink('mn1_link_structure', 'Compound Summary ' + me.wifiStr);
+        html += me.getLink('mn1_link_vast', 'Similar Compounds ' + me.wifiStr);
+        html += me.getLink('mn1_link_bind', 'Structures Bound ' + me.wifiStr);
         html += "</ul>";
         html += "</li>";
     }
     else {
         html += "<li><span>Links</span>";
         html += "<ul>";
-        html += me.getLink('mn1_link_structure', 'Structure Summary');
-        html += me.getLink('mn1_link_vast', 'Similar Structures');
-        html += me.getLink('mn1_link_pubmed', 'Literature');
-        html += me.getLink('mn1_link_protein', 'Protein');
+        html += me.getLink('mn1_link_structure', 'Structure Summary ' + me.wifiStr);
+        html += me.getLink('mn1_link_vast', 'Similar Structures ' + me.wifiStr);
+        html += me.getLink('mn1_link_pubmed', 'Literature ' + me.wifiStr);
+        html += me.getLink('mn1_link_protein', 'Protein ' + me.wifiStr);
         //html += me.getLink('mn1_link_gene', 'Gene');
         //html += me.getLink('mn1_link_chemicals', 'Chemicals');
         html += "</ul>";
@@ -1405,13 +1405,13 @@ iCn3DUI.prototype.setMenu6_base = function() { var me = this, ic = me.icn3d; "us
 
     html += "<ul class='icn3d-mn'>";
 
-    html += liStr + me.baseUrl + "icn3d/docs/icn3d_about.html' target='_blank'>About iCn3D<span style='font-size:0.9em'> " + me.REVISION + "</span></a></li>";
+    html += liStr + me.baseUrl + "icn3d/docs/icn3d_about.html' target='_blank'>About iCn3D<span style='font-size:0.9em'> " + me.REVISION + " " + me.wifiStr + "</span></a></li>";
 
-    html += liStr + me.baseUrl + "icn3d/docs/icn3d_publications.html' target='_blank'>Citing iCn3D</a></li>";
+    html += liStr + me.baseUrl + "icn3d/docs/icn3d_publications.html' target='_blank'>Citing iCn3D " + me.wifiStr + "</a></li>";
 
-    html += liStr + me.baseUrl + "icn3d/docs/icn3d_help.html' target='_blank'>Help Doc</a></li>";
+    html += liStr + me.baseUrl + "icn3d/docs/icn3d_help.html' target='_blank'>Help Doc " + me.wifiStr + "</a></li>";
 
-    html += liStr + me.baseUrl + "icn3d/icn3d.html#gallery' target='_blank'>Gallery</a></li>";
+    html += liStr + me.baseUrl + "icn3d/icn3d.html#gallery' target='_blank'>Gallery " + me.wifiStr + "</a></li>";
 
     html += "<li><span>Web APIs</span>";
     html += "<ul>";
@@ -1421,7 +1421,7 @@ iCn3DUI.prototype.setMenu6_base = function() { var me = this, ic = me.icn3d; "us
     html += "</ul>";
     html += "</li>";
 
-    html += liStr + "https://github.com/ncbi/icn3d' target='_blank'>Source Code</a></li>";
+    html += liStr + "https://github.com/ncbi/icn3d' target='_blank'>Source Code " + me.wifiStr + "</a></li>";
 
     html += "<li>-</li>";
 
