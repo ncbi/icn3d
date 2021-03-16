@@ -261,3 +261,14 @@ input:checked + .icn3d-slider:before {
 }
   
 .icn3d-snplink {text-decoration: underline; cursor:pointer;}
+
+/* https://www.w3schools.com/icons/tryit.asp?filename=tryicons_google-wifi */
+@font-face {
+  font-family: 'Material Icons';
+  font-style: normal;
+  font-weight: 400;
+  src: url(https://www.ncbi.nlm.nih.gov/Structure/icn3d/ssimages/wifi.woff2) format('woff2');
+}
+
+.icn3d-wifi {width:16px; display:inline-block; background-image: url("ssimages/wifi.png"); background-size: contain; background-repeat: no-repeat;}
+.icn3d-license {width:16px; display:inline-block; background-image: url("ssimages/license.png"); background-size: contain; background-repeat: no-repeat;}

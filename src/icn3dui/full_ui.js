@@ -158,6 +158,10 @@ var iCn3DUI = function(cfg) { var me = this, ic = me.icn3d; "use strict";
     me.space2 = "&nbsp;&nbsp;";
     me.space3 = me.space2 + "&nbsp;";
     me.space4 = me.space2 + me.space2;
+    //me.wifiStr = '<i class="icn3d-wifi" title="requires internet">&nbsp;</i>';
+    me.wifiStr = '';
+    //me.licenseStr = '<i class="icn3d-license" title="requires license">&nbsp;</i>';
+    me.licenseStr = '';
     me.closeAc = {collapsible: true, active: false}; // close accordion
 
     // https://www.ncbi.nlm.nih.gov/Class/FieldGuide/BLOSUM62.txt, range from -4 to 11
