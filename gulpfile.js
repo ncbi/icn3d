@@ -143,7 +143,7 @@ function make_js_task(name, src) {
         return gulp.src(src)
             .pipe(concat('icn3d_' + name + '_ui.js'))
             .pipe(gulp.dest(dist))
-//            .pipe(uglify())
+            .pipe(uglify())
             .pipe(rename({ extname: '.min.js' }))
             .pipe(gulp.dest(dist))
             .pipe(rename('icn3d_' + name + '_ui_' + package.version + '.min.js'))
