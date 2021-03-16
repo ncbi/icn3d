@@ -1126,6 +1126,8 @@ iCn3DUI.prototype.setSeqAlignChain = function (chainid, chainIndex) { var me = t
           for(var j = 0; j <= end1 - start1; ++j) {
               if(ic.chainsSeq[chainid1] === undefined || ic.chainsSeq[chainid2] === undefined) break;
 
+              if(ic.chainsSeq[chainid1][j + start1] === undefined || ic.chainsSeq[chainid2][j + start2] === undefined) continue;
+
               var resi1 = ic.chainsSeq[chainid1][j + start1].resi;
               var resi2 = ic.chainsSeq[chainid2][j + start2].resi;
               var resn1 = ic.chainsSeq[chainid1][j + start1].name.toUpperCase();
