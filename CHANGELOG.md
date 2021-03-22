@@ -1,4 +1,6 @@
 ## Change Log
+[icn3d-2.24.6](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.24.6.zip) was release on March 22, 2021. Broke large files into small ones and stopped upgrading the basic/simple UI.
+
 [icn3d-2.24.5](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.24.5.zip) was release on March 4, 2021. Changed the default 3D view (https://www.ncbi.nlm.nih.gov/Structure/icn3d/index.html) from the basic view (https://www.ncbi.nlm.nih.gov/Structure/icn3d/simple.html) to the advanced view (https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html).
 
 [icn3d-2.24.4](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.24.4.zip) was release on February 12, 2021. Added an option to save a sharable link with your note/window title in the menu "File > Share Link".
