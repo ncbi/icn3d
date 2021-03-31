@@ -279,8 +279,18 @@ iCn3DUI.prototype.allEventFunctions = function() { var me = this;
 //       var alignment = $("#" + me.pre + "chainalignid1").val() + "," + $("#" + me.pre + "chainalignid2").val();
        var alignment = $("#" + me.pre + "chainalignids").val();
        var resalign = $("#" + me.pre + "resalignids").val();
-       me.setLogCmd("load chains " + alignment + " | residues " + resalign, false);
+       me.setLogCmd("load chains " + alignment + " on biological unit | residues " + resalign, false);
        window.open(me.baseUrl + 'icn3d/full.html?chainalign=' + alignment + '&resnum=' + resalign + '&showalignseq=1', '_blank');
+    });
+
+    $("#" + me.pre + "reload_chainalign_asym").click(function(e) { var ic = me.icn3d;
+       e.preventDefault();
+       if(!me.cfg.notebook) dialog.dialog( "close" );
+//       var alignment = $("#" + me.pre + "chainalignid1").val() + "," + $("#" + me.pre + "chainalignid2").val();
+       var alignment = $("#" + me.pre + "chainalignids").val();
+       var resalign = $("#" + me.pre + "resalignids").val();
+       me.setLogCmd("load chains " + alignment + " on asymmetric unit | residues " + resalign, false);
+       window.open(me.baseUrl + 'icn3d/full.html?chainalign=' + alignment + '&resnum=' + resalign + '&showalignseq=1&buidx=0', '_blank');
     });
 
     $("#" + me.pre + "reload_mutation_3d").click(function(e) { var ic = me.icn3d;

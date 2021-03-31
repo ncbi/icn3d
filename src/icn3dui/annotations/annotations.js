@@ -134,10 +134,12 @@ iCn3DUI.prototype.hideAnnoTab3ddomain = function () {  var me = this, ic = me.ic
 };
 iCn3DUI.prototype.setAnnoTabSite = function () {  var me = this, ic = me.icn3d; "use strict";
     $("[id^=" + me.pre + "site]").show();
+    $("[id^=" + me.pre + "feat]").show();
     if($("#" + me.pre + "anno_binding").length) $("#" + me.pre + "anno_binding")[0].checked = true;
 };
 iCn3DUI.prototype.hideAnnoTabSite = function () {  var me = this, ic = me.icn3d; "use strict";
     $("[id^=" + me.pre + "site]").hide();
+    $("[id^=" + me.pre + "feat]").hide();
     if($("#" + me.pre + "anno_binding").length) $("#" + me.pre + "anno_binding")[0].checked = false;
 };
 iCn3DUI.prototype.setAnnoTabInteraction = function () {  var me = this, ic = me.icn3d; "use strict";

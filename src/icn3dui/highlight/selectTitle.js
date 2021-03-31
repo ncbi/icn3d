@@ -88,7 +88,7 @@ iCn3DUI.prototype.selectTitle = function(that) { var me = this, ic = me.icn3d; "
                 }
                 else {
                     var residueidHash = {};
-                    if($(that).attr('domain') !== undefined || $(that).attr('3ddomain') !== undefined || $(that).attr('custom') !== undefined) {
+                    if($(that).attr('domain') !== undefined || $(that).attr('feat') !== undefined || $(that).attr('3ddomain') !== undefined || $(that).attr('custom') !== undefined) {
                         me.hlSummaryDomain3ddomain(that);
 
                         var fromArray = $(that).attr('from').split(',');

@@ -37,7 +37,7 @@ iCn3DUI.prototype.getFaceCnt = function( mdl ){ var me = this, ic = me.icn3d; "u
 };
 
 iCn3DUI.prototype.saveStlFile = function( mat ){ var me = this, ic = me.icn3d; "use strict";
-    if(Object.keys(me.icn3d.dAtoms).length > 70000) {
+    if(Object.keys(ic.dAtoms).length > 70000) {
         alert('Please display a subset of the structure to export 3D files. Then merge the files for 3D printing...');
         return [''];
     }
@@ -46,8 +46,8 @@ iCn3DUI.prototype.saveStlFile = function( mat ){ var me = this, ic = me.icn3d; "
 
     var cntFaces = 0;
 
-    cntFaces += me.getFaceCnt(me.icn3d.mdl);
-    cntFaces += me.getFaceCnt(me.icn3d.mdl_ghost);
+    cntFaces += me.getFaceCnt(ic.mdl);
+    cntFaces += me.getFaceCnt(ic.mdl_ghost);
 
     var blobArray = []; // hold blobs
 
@@ -55,7 +55,7 @@ iCn3DUI.prototype.saveStlFile = function( mat ){ var me = this, ic = me.icn3d; "
 
     // UINT8[80] – Header
     var title = 'STL file for the structure(s) ';
-    var structureArray = Object.keys(me.icn3d.structures);
+    var structureArray = Object.keys(ic.structures);
     for(var i = 0, il = structureArray.length; i < il; ++i) {
         title += structureArray[i];
         if(i < il - 1) title += ', ';
@@ -73,9 +73,9 @@ iCn3DUI.prototype.saveStlFile = function( mat ){ var me = this, ic = me.icn3d; "
     }
 
     // UINT32 – Number of triangles
-    if(me.icn3d.biomtMatrices !== undefined && me.icn3d.biomtMatrices.length > 1 && me.icn3d.bAssembly
-      && Object.keys(me.icn3d.dAtoms).length * me.icn3d.biomtMatrices.length <= me.icn3d.maxAtoms3DMultiFile ) {
-        stlArray = me.updateArray( stlArray, me.passInt32([cntFaces * me.icn3d.biomtMatrices.length]), 80 );
+    if(ic.biomtMatrices !== undefined && ic.biomtMatrices.length > 1 && ic.bAssembly
+      && Object.keys(ic.dAtoms).length * ic.biomtMatrices.length <= ic.maxAtoms3DMultiFile ) {
+        stlArray = me.updateArray( stlArray, me.passInt32([cntFaces * ic.biomtMatrices.length]), 80 );
     }
     else {
         stlArray = me.updateArray( stlArray, me.passInt32([cntFaces]), 80 );
@@ -83,26 +83,26 @@ iCn3DUI.prototype.saveStlFile = function( mat ){ var me = this, ic = me.icn3d; "
 
     blobArray.push(new Blob([stlArray],{ type: "application/octet-stream"}));
 
-    blobArray = me.processStlMeshGroup( me.icn3d.mdl, blobArray, mat );
+    blobArray = me.processStlMeshGroup( ic.mdl, blobArray, mat );
 
-    blobArray = me.processStlMeshGroup( me.icn3d.mdl_ghost, blobArray, mat );
+    blobArray = me.processStlMeshGroup( ic.mdl_ghost, blobArray, mat );
 
    // assemblies
-   if(me.icn3d.biomtMatrices !== undefined && me.icn3d.biomtMatrices.length > 1 && me.icn3d.bAssembly
-     && Object.keys(me.icn3d.dAtoms).length * me.icn3d.biomtMatrices.length <= me.icn3d.maxAtoms3DMultiFile ) {
+   if(ic.biomtMatrices !== undefined && ic.biomtMatrices.length > 1 && ic.bAssembly
+     && Object.keys(ic.dAtoms).length * ic.biomtMatrices.length <= ic.maxAtoms3DMultiFile ) {
         var identity = new THREE.Matrix4();
         identity.identity();
 
-        for (var i = 0; i < me.icn3d.biomtMatrices.length; i++) {  // skip itself
-          var mat1 = me.icn3d.biomtMatrices[i];
+        for (var i = 0; i < ic.biomtMatrices.length; i++) {  // skip itself
+          var mat1 = ic.biomtMatrices[i];
           if (mat1 === undefined) continue;
 
           // skip itself
           if(mat1.equals(identity)) continue;
 
-          blobArray = me.processStlMeshGroup( me.icn3d.mdl, blobArray, mat1 );
+          blobArray = me.processStlMeshGroup( ic.mdl, blobArray, mat1 );
 
-          blobArray = me.processStlMeshGroup( me.icn3d.mdl_ghost, blobArray, mat1 );
+          blobArray = me.processStlMeshGroup( ic.mdl_ghost, blobArray, mat1 );
         }
     }
 

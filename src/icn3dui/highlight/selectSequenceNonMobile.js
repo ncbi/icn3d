@@ -133,7 +133,7 @@ iCn3DUI.prototype.selectSequenceMobile = function() { var me = this, ic = me.icn
 };
 
 iCn3DUI.prototype.selectChainMobile = function() { var me = this, ic = me.icn3d; "use strict";
-  $("#" + me.pre + "dl_sequence2").add("[id^=" + me.pre + "giseq]").add("[id^=" + me.pre + "custom]").add("[id^=" + me.pre + "site]").add("[id^=" + me.pre + "clinvar]").add("[id^=" + me.pre + "snp]").add("[id^=" + me.pre + "cdd]").add("[id^=" + me.pre + "domain]").add("[id^=" + me.pre + "interaction]").add("[id^=" + me.pre + "ssbond]").add("[id^=" + me.pre + "crosslink]").add("[id^=" + me.pre + "transmem]").on('click', '.icn3d-seqTitle', function(e) { var ic = me.icn3d;
+  $("#" + me.pre + "dl_sequence2").add("[id^=" + me.pre + "giseq]").add("[id^=" + me.pre + "custom]").add("[id^=" + me.pre + "site]").add("[id^=" + me.pre + "feat]").add("[id^=" + me.pre + "clinvar]").add("[id^=" + me.pre + "snp]").add("[id^=" + me.pre + "cdd]").add("[id^=" + me.pre + "domain]").add("[id^=" + me.pre + "interaction]").add("[id^=" + me.pre + "ssbond]").add("[id^=" + me.pre + "crosslink]").add("[id^=" + me.pre + "transmem]").on('click', '.icn3d-seqTitle', function(e) { var ic = me.icn3d;
   //$(".icn3d-dl_sequence").on('click', '.icn3d-seqTitle', function(e) { var ic = me.icn3d;
       e.stopImmediatePropagation();
 

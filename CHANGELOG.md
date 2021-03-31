@@ -1,4 +1,6 @@
 ## Change Log
+[icn3d-2.24.7](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.24.7.zip) was release on March 30, 2021. Fixed the memory leak when removing gemoetry and materials.
+
 [icn3d-2.24.6](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.24.6.zip) was release on March 22, 2021. Broke large files into small ones and stopped upgrading the basic/simple UI.
 
 [icn3d-2.24.5](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.24.5.zip) was release on March 4, 2021. Changed the default 3D view (https://www.ncbi.nlm.nih.gov/Structure/icn3d/index.html) from the basic view (https://www.ncbi.nlm.nih.gov/Structure/icn3d/simple.html) to the advanced view (https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html).

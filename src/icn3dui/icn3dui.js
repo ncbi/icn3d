@@ -3,7 +3,7 @@
  */
 
 var iCn3DUI = function(cfg) { var me = this, ic = me.icn3d; "use strict";
-    this.REVISION = '2.24.6';
+    this.REVISION = '2.24.7';
     me.bFullUi = true;
     me.cfg = cfg;
     me.divid = me.cfg.divid;

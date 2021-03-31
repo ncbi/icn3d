@@ -21,15 +21,15 @@ iCn3DUI.prototype.DensityCifParser = function(pdbid, type, sigma, emd) { var me 
 
     //https://stackoverflow.com/questions/33902299/using-jquery-ajax-to-download-a-binary-file
     if(type == '2fofc' && me.bAjax2fofc) {
-        me.icn3d.mapData.sigma2 = sigma;
+        ic.mapData.sigma2 = sigma;
         me.setOption('map', type);
     }
     else if(type == 'fofc' && me.bAjaxfofc) {
-        me.icn3d.mapData.sigma = sigma;
+        ic.mapData.sigma = sigma;
         me.setOption('map', type);
     }
     else if(type == 'em' && me.bAjaxEm) {
-        me.icn3d.mapData.sigmaEm = sigma;
+        ic.mapData.sigmaEm = sigma;
         me.setOption('emmap', type);
     }
     else {
@@ -89,9 +89,9 @@ iCn3DUI.prototype.parseChannels = function(densitydata, type, sigma) { var me = 
         var density = twoDensity;
         var sampleCount = density.box.sampleCount;
         var header = {xExtent: sampleCount[0], yExtent: sampleCount[1], zExtent: sampleCount[2], mean: density.valuesInfo.mean, sigma: density.valuesInfo.sigma};
-        me.icn3d.mapData.header2 = header;
+        ic.mapData.header2 = header;
 
-        me.icn3d.mapData.data2 = density.data;
+        ic.mapData.data2 = density.data;
 
         var origin = density.box.origin;
         var dimensions = density.box.dimensions;
@@ -110,18 +110,18 @@ iCn3DUI.prototype.parseChannels = function(densitydata, type, sigma) { var me = 
         //var toFrac = new LiteMol.Visualization.THREE.Matrix4().getInverse(fromFrac);
         var matrix = fromFrac.multiply(translate).multiply(scale);
 
-        me.icn3d.mapData.matrix2 = matrix;
+        ic.mapData.matrix2 = matrix;
 
-        me.icn3d.mapData.type2 = type;
-        me.icn3d.mapData.sigma2 = sigma;
+        ic.mapData.type2 = type;
+        ic.mapData.sigma2 = sigma;
 
         // 'fofc'
         density = oneDensity;
         sampleCount = density.box.sampleCount;
         header = {xExtent: sampleCount[0], yExtent: sampleCount[1], zExtent: sampleCount[2], mean: density.valuesInfo.mean, sigma: density.valuesInfo.sigma};
-        me.icn3d.mapData.header = header;
+        ic.mapData.header = header;
 
-        me.icn3d.mapData.data = density.data;
+        ic.mapData.data = density.data;
 
         origin = density.box.origin;
         dimensions = density.box.dimensions;
@@ -138,19 +138,19 @@ iCn3DUI.prototype.parseChannels = function(densitydata, type, sigma) { var me = 
             0.0, 0.0, 0.0, 1.0);
         //var toFrac = new LiteMol.Visualization.THREE.Matrix4().getInverse(fromFrac);
         matrix = fromFrac.multiply(translate).multiply(scale);
-        me.icn3d.mapData.matrix = matrix;
+        ic.mapData.matrix = matrix;
 
-        me.icn3d.mapData.type = type;
-        me.icn3d.mapData.sigma = sigma;
+        ic.mapData.type = type;
+        ic.mapData.sigma = sigma;
     }
     else if(type == 'em') {
         var density = me.getChannel(cif, 'EM');
 
         var sampleCount = density.box.sampleCount;
         var header = {xExtent: sampleCount[0], yExtent: sampleCount[1], zExtent: sampleCount[2], max: density.valuesInfo.max, min: density.valuesInfo.min};
-        me.icn3d.mapData.headerEm = header;
+        ic.mapData.headerEm = header;
 
-        me.icn3d.mapData.dataEm = density.data;
+        ic.mapData.dataEm = density.data;
 
         var origin = density.box.origin;
         var dimensions = density.box.dimensions;
@@ -167,10 +167,10 @@ iCn3DUI.prototype.parseChannels = function(densitydata, type, sigma) { var me = 
             0.0, 0.0, 0.0, 1.0);
         //var toFrac = new LiteMol.Visualization.THREE.Matrix4().getInverse(fromFrac);
         var matrix = fromFrac.multiply(translate).multiply(scale);
-        me.icn3d.mapData.matrixEm = matrix;
+        ic.mapData.matrixEm = matrix;
 
-        me.icn3d.mapData.typeEm = type;
-        me.icn3d.mapData.sigmaEm = sigma;
+        ic.mapData.typeEm = type;
+        ic.mapData.sigmaEm = sigma;
     }
 };
 
