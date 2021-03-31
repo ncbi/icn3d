@@ -104,7 +104,7 @@ iCn3DUI.prototype.setDialogs = function() { var me = this, ic = me.icn3d; "use s
     html += "All chains will be aligned to the first chain in the comma-separated chain IDs. Each chain ID has the form of pdbid_chain (e.g., 1HHO_A, case sensitive). If the residue numbers to be aligned in the first chain is not defined, the full chain will be used for sequence alignment.<br/><br/>";
     html += "<div style='display:inline-block; width:110px'>Chain IDs: </div>" + me.inputTextStr + "id='" + me.pre + "chainalignids' value='1HHO_A,4N7N_A' size=50><br/>";
     html += "<div style='display:inline-block; width:110px'>Residue Numbers (optional): </div>" + me.inputTextStr + "id='" + me.pre + "resalignids' placeholder='1,5,10-50' size=50><br/><br/>";
-    html += me.buttonStr + "reload_chainalign'>Align</button><br/><br/>";
+    html += me.buttonStr + "reload_chainalign'>Align Biological Unit</button>" + me.buttonStr + "reload_chainalign_asym' style='margin-left:30px'>Align Asymmetric Unit</button><br/><br/>";
     html += "(Note: To align chains in custom PDB files, you could concatenate PDB files in a single PDB file with the separation line \"ENDMDL\". Then load it in \"Open File > PDB File\" in the \"File\" menu and click \"View Sequences & Annotations\" in the \"Window\" menu. Finally select multiple chains in the sequence window and click \"Realign Selection\" in the \"File\" menu.)<br><br>";
     html += "</div></div>";
 

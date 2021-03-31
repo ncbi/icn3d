@@ -39,7 +39,9 @@ iCn3DUI.prototype.loadSelection = function (dataStr) { var me = this, ic = me.ic
 
       var pos = command.indexOf(' '); // select ...
 
-      me.selectByCommand(command.substr(pos + 1), name, name, false);
+      me.selectByCommand(command.substr(pos + 1), name, name);
+
+      me.setLogCmd('select ' + command.substr(pos + 1) + ' | name ' + name, true);
   }
 };
 

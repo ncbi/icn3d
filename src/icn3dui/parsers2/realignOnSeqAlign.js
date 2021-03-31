@@ -123,10 +123,10 @@ iCn3DUI.prototype.realignOnSeqAlign = function () { var me = this, ic = me.icn3d
               if(fromStruct === undefined && !me.cfg.command) {
                  alert('Please do not align residues in the same chain');
               }
-              else if((seq1.length < 6 || seq2.length < 6) && !me.cfg.command) {
+              else if(((seq1 && seq1.length < 6) || (seq2 && seq2.length < 6)) && !me.cfg.command) {
                  alert('These sequences are too short for alignment');
               }
-              else if(seq1.length >= 6 && seq2.length >= 6 && !me.cfg.command) {
+              else if(seq1 && seq2 && seq1.length >= 6 && seq2.length >= 6 && !me.cfg.command) {
                  alert('These sequences can not be aligned to each other');
               }
           }
@@ -144,10 +144,10 @@ iCn3DUI.prototype.realignOnSeqAlign = function () { var me = this, ic = me.icn3d
            if(fromStruct === undefined && !me.cfg.command) {
               alert('Please do not align residues in the same structure');
            }
-           else if((seq1.length < 6 || seq2.length < 6) && !me.cfg.command) {
+           else if(((seq1 && seq1.length < 6) || (seq2 && seq2.length < 6)) && !me.cfg.command) {
               alert('These sequences are too short for alignment');
            }
-           else if(seq1.length >= 6 && seq2.length >= 6 && !me.cfg.command) {
+           else if(seq1 && seq2 && seq1.length >= 6 && seq2.length >= 6 && !me.cfg.command) {
               alert('These sequences can not be aligned to each other');
            }
 

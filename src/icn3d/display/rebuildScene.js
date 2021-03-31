@@ -28,10 +28,6 @@ iCn3D.prototype.rebuildScene = function (options) { var me = this, ic = me.icn3d
 
     this.applyOtherOptions();
 
-    //this.setFog();
-
-    //this.setCamera();
-
     //https://stackoverflow.com/questions/15726560/three-js-raycaster-intersection-empty-when-objects-not-part-of-scene
     me.scene_ghost.updateMatrixWorld(true);
 };
@@ -62,19 +58,6 @@ iCn3D.prototype.rebuildSceneBase = function (options) { var me = this, ic = me.i
         this.scene_ghost = new THREE.Scene();
     }
 
-/*
-    if(!this.bShade) {
-        this.directionalLight = new THREE.DirectionalLight(0xFFFFFF, 1.0);
-
-        if(this.cam_z > 0) {
-          this.directionalLight.position.set(0, 0, 1);
-        }
-        else {
-          this.directionalLight.position.set(0, 0, -1);
-        }
-    }
-    else {
-*/
         this.directionalLight = new THREE.DirectionalLight(0xFFFFFF, 1.0);
         this.directionalLight2 = new THREE.DirectionalLight(0xFFFFFF, 0.4);
         this.directionalLight3 = new THREE.DirectionalLight(0xFFFFFF, 0.2);
@@ -105,6 +88,30 @@ iCn3D.prototype.rebuildSceneBase = function (options) { var me = this, ic = me.i
 
     this.scene.add(this.directionalLight);
     this.scene.add(ambientLight);
+
+    if(this.mdl !== undefined) {
+        for(var i = this.mdl.children.length - 1; i >= 0; i--) {
+             var obj = this.mdl.children[i];
+             obj.geometry.dispose();
+             obj.material.dispose();
+             this.mdl.remove(obj);
+        }
+    }
+
+    if(this.mdlImpostor !== undefined) {
+        for(var i = this.mdlImpostor.children.length - 1; i >= 0; i--) {
+             var obj = this.mdlImpostor.children[i];
+             obj.geometry.dispose();
+             obj.material.dispose();
+             this.mdlImpostor.remove(obj);
+        }
+
+        this.mdlImpostor.children.length = 0;
+    }
+
+    // https://discourse.threejs.org/t/correctly-remove-mesh-from-scene-and-dispose-material-and-geometry/5448/2
+    // clear memory
+    this.renderer.renderLists.dispose();
 
     this.mdl = new THREE.Object3D();  // regular display
     this.mdlImpostor = new THREE.Object3D();  // Impostor display

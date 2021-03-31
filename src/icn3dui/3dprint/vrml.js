@@ -4,7 +4,7 @@
 
 //http://gun.teipir.gr/VRML-amgem/spec/part1/examples.html
 iCn3DUI.prototype.saveVrmlFile = function( mat ){ var me = this, ic = me.icn3d; "use strict";
-    if(Object.keys(me.icn3d.dAtoms).length > 50000) {
+    if(Object.keys(ic.dAtoms).length > 50000) {
         alert('Please display a subset of the structure to export 3D files. Then merge the files for 3D printing...');
         return [''];
     }
@@ -15,32 +15,32 @@ iCn3DUI.prototype.saveVrmlFile = function( mat ){ var me = this, ic = me.icn3d; 
     vrmlStrArray.push('#VRML V2.0 utf8\n');
 
     var vertexCnt = 0;
-    var result = me.processVrmlMeshGroup( me.icn3d.mdl, vrmlStrArray, vertexCnt, mat );
+    var result = me.processVrmlMeshGroup( ic.mdl, vrmlStrArray, vertexCnt, mat );
     vrmlStrArray = result.vrmlStrArray;
     vertexCnt = result.vertexCnt;
 
-    result = me.processVrmlMeshGroup( me.icn3d.mdl_ghost, vrmlStrArray, vertexCnt, mat );
+    result = me.processVrmlMeshGroup( ic.mdl_ghost, vrmlStrArray, vertexCnt, mat );
     vrmlStrArray = result.vrmlStrArray;
     vertexCnt = result.vertexCnt;
 
    // assemblies
-   if(me.icn3d.biomtMatrices !== undefined && me.icn3d.biomtMatrices.length > 1 && me.icn3d.bAssembly
-     && Object.keys(me.icn3d.dAtoms).length * me.icn3d.biomtMatrices.length <= me.icn3d.maxAtoms3DMultiFile ) {
+   if(ic.biomtMatrices !== undefined && ic.biomtMatrices.length > 1 && ic.bAssembly
+     && Object.keys(ic.dAtoms).length * ic.biomtMatrices.length <= ic.maxAtoms3DMultiFile ) {
         var identity = new THREE.Matrix4();
         identity.identity();
 
-        for (var i = 0; i < me.icn3d.biomtMatrices.length; i++) {  // skip itself
-          var mat1 = me.icn3d.biomtMatrices[i];
+        for (var i = 0; i < ic.biomtMatrices.length; i++) {  // skip itself
+          var mat1 = ic.biomtMatrices[i];
           if (mat1 === undefined) continue;
 
           // skip itself
           if(mat1.equals(identity)) continue;
 
-            result = me.processVrmlMeshGroup( me.icn3d.mdl, vrmlStrArray, vertexCnt, mat1 );
+            result = me.processVrmlMeshGroup( ic.mdl, vrmlStrArray, vertexCnt, mat1 );
             vrmlStrArray = result.vrmlStrArray;
             vertexCnt = result.vertexCnt;
 
-            result = me.processVrmlMeshGroup( me.icn3d.mdl_ghost, vrmlStrArray, vertexCnt, mat1 );
+            result = me.processVrmlMeshGroup( ic.mdl_ghost, vrmlStrArray, vertexCnt, mat1 );
             vrmlStrArray = result.vrmlStrArray;
             vertexCnt = result.vertexCnt;
         }
@@ -73,7 +73,7 @@ iCn3DUI.prototype.processVrmlMeshGroup = function( mdl, vrmlStrArray, vertexCnt,
 
          var matrix = mesh.matrix;
 
-         var meshColor = me.icn3d.thr(1, 1, 1);
+         var meshColor = ic.thr(1, 1, 1);
          if(geometry.type == 'SphereGeometry' || geometry.type == 'BoxGeometry' || geometry.type == 'CylinderGeometry') {
              if(mesh.material !== undefined) meshColor = mesh.material.color;
          }
@@ -103,7 +103,7 @@ iCn3DUI.prototype.processVrmlMeshGroup = function( mdl, vrmlStrArray, vertexCnt,
 
              if(j < jl - 1) vrmlStrArray.push(', ');
 
-             vertexColorStrArray.push(me.icn3d.thr(1, 1, 1));
+             vertexColorStrArray.push(ic.thr(1, 1, 1));
          }
          vrmlStrArray.push(' ] }\n');
 
