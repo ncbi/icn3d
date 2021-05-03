@@ -30,75 +30,15 @@ body {font-family: Verdana, Arial, Helvetica, sans-serif;}
   <div id="div4" class="gallery"></div>
   <div id="div5" class="gallery"></div>
 
-<link rel="stylesheet" href="https://www.ncbi.nlm.nih.gov/Structure/icn3d/lib/jquery-ui.min.css">
-<link rel="stylesheet" href="https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d_full_ui.css">
-<script src="https://www.ncbi.nlm.nih.gov/Structure/icn3d/lib/jquery.min.js"></script>
-<script src="https://www.ncbi.nlm.nih.gov/Structure/icn3d/lib/jquery-ui.min.js"></script>
-<script src="https://www.ncbi.nlm.nih.gov/Structure/icn3d/lib/three.min.js"></script>
-<script src="https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d_full_ui.min.js"></script>
+<link rel="stylesheet" href="lib/jquery-ui.min.css">
+<link rel="stylesheet" href="icn3d.css">
+<script src="lib/jquery.min.js"></script>
+<script src="lib/jquery-ui.min.js"></script>
+<script src="lib/three.min.js"></script>
+<script src="icn3d.min.js"></script>
 
   <script type="text/javascript">
     $( document ).ready(function() {
-      // --Modify iCn3D Method 3--: start modifying iCn3DUI and iCn3D =================================================================
-      iCn3DUI.prototype.setTools = function() { var me = this, ic = me.icn3d; "use strict";
-            var html = "";
-            html += me.divStr + "selection' style='display:none;'><div style='position:absolute; z-index:555; float:left; display:table-row; margin: 32px 0px 0px 3px;'>";
-            html += "<table style='margin-top: 3px; width:100px;'><tr valign='center'>";
-            html += me.setTools_base();
-            var buttonStyle = me.isMobile() ? 'none' : 'button';
-            var tdStr = "<td valign='top'>";
-
-            // start adding custom buttons ==========
-            // e.g., html += tdStr + me.setButton(buttonStyle, 'saveimage', 'Save iCn3D PNG Image', 'Save iCn3D<br/>PNG Image') + "</td>";
-            // end adding custom buttons ==========
-
-            html += "</tr></table>";
-            html += "</div></div>";
-            return html;
-      };
-
-      iCn3DUI.prototype.allCustomEvents = function() { var me = this;
-            // start adding custom events  ==========
-            // e.g., $(me.pre + "toggle").add(me.pre + "mn2_toggle").click(function(e) {
-            //       me.toggleSelection();
-            //       var data = 'some data';
-            //       $(this).trigger("from_icn3d", data);                       // => trigger event to send to other app
-            //       // in other app
-            //       $("#other_app").on("from_icn3d", function(event, data) {   // => other app to get the event and data
-            //       ...});
-            //};
-            // end adding custom events  ==========
-      };
-
-      iCn3DUI.prototype.setCustomDialogs = function() { var me = this, ic = me.icn3d; "use strict";
-            var html = "";
-
-            // start adding custom dialogs  ==========
-            // e.g., html += "<div id='" + me.pre + "dl_rmsd'>";
-            //html += "<br><b>Alignment RMSD</b>: " + me.inputTextStr + "id='" + me.pre + "realignrmsd' value='35' size='10'>&#8491;<br><br>";
-            //html += "</div>";
-            // end adding custom dialogs  ==========
-
-            return html;
-      };
-
-      // modify iCn3D function
-      iCn3DUI.prototype.modifyIcn3d = function() { var  me = this; "use strict";
-            me.modifyIcn3dshowPicking();
-
-            // start modifying iCn3D, not iCn3DUI  ==========
-            //iCn3D.prototype.rayCaster = function(e, bClick) {
-            //    ic.rayCasterBase(e, bClick);
-            //};
-            // end modifying iCn3D, not iCn3DUI  ==========
-
-      };
-      // end modifying iCn3D ============================================================
-
-
-      // use the FIXED name "icn3duiHash", which is used in iCn3DUI
-      window.icn3duiHash = {};
-
       function setupViewer(idName, idValue, divid, command) {
         var options = {};
 
@@ -122,7 +62,7 @@ body {font-family: Verdana, Arial, Helvetica, sans-serif;}
         };
         if(idName !== '') cfg[idName] = idValue;
 
-        var icn3dui = new iCn3DUI(cfg);
+        var icn3dui = new icn3d.iCn3DUI(cfg);
         //icn3dui.show3DStructure();
 
         //communicate with the 3D viewer with chained functions
@@ -130,8 +70,6 @@ body {font-family: Verdana, Arial, Helvetica, sans-serif;}
             // add functions here
             //icn3dui.updateHlAll();
         });
-
-        window.icn3duiHash[divid] = icn3dui;
       }
 
       setupViewer('pdbid', '1tup', 'div0');

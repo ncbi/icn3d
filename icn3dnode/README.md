@@ -1,16 +1,19 @@
 icn3dnode
 =========
 
-iCn3D JavaScript code can be converted to Node.js scripts to run from the command line. Here show a few examples.
+iCn3D JavaScript functions can be directly called in Node.js scripts to run from the command line. Here show a few examples.
 
 Installation
 ------------
 
-Install the packages axios, querystring, and three:
+Install the following packages:
 
+    npm install three
+    npm install jquery
+    npm install icn3d
+    
     npm install axios
     npm install querystring
-    npm install three
 
 Examples
 --------
@@ -52,24 +55,6 @@ Examples
         6M0J, 6M0J_E, 501, N, Y, 0, 0, 9, 0, 1, 1
         
     where "0, 0, 9, 0, 1, 1" means the change of hydrogen bonds, salt bridges, contacts, halogen bonds, Pi-Cation interactions, Pi-Stacking interactions are 0, 0, 9, 0, 1, 1, respectively for the mutation N to Y at position 501.
-
-* <b>Residue-Protein Interactions Due to Mutation</b>
-
-    In the command line, run the following:
-    
-        node interaction.js 6VSB A 614 G
-    
-    This finds the change of interactions between the residue (at position "614" of chain "A") and SAR-Cov-2 (PDB ID 6VSB) due to the mutation D614G. The output looks like the following:
-    
-        free energy (kcal/mol): 0
-        Change Hbond: 0
-        Change Ionic: -1
-        Change Contact: -2
-        Change Halegen: 0
-        Change Pi-Cation: 0
-        Change Pi-Stacking: 0
-    
-    where "Change Ionic: -1" means the mutant has one less salt bridge/ionic than the wild type.
 
 * <b>Show Domain and Site Information for a Protein</b>
 

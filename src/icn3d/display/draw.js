@@ -2,58 +2,118 @@
  * @author Jiyao Wang <wangjiy@ncbi.nlm.nih.gov> / https://github.com/ncbi/icn3d
  */
 
-iCn3D.prototype.draw = function () { var me = this, ic = me.icn3d; "use strict";
-    this.rebuildScene();
+//import * as THREE from 'three';
 
-    // Impostor display using the saved arrays
-    if(this.bImpo) {
-        this.drawImpostorShader(); // target
+import {HashUtilsCls} from '../../utils/hashUtilsCls.js';
+
+import {Scene} from '../display/scene.js';
+import {Impostor} from '../geometry/impostor.js';
+import {Instancing} from '../geometry/instancing.js';
+import {SetColor} from '../display/setColor.js';
+import {ApplyCenter} from '../display/applyCenter.js';
+import {HlObjects} from '../highlight/hlObjects.js';
+
+class Draw {
+    constructor(icn3d) {
+        this.icn3d = icn3d;
     }
 
-    this.applyPrevColor();
+    //Draw the 3D structure. It rebuilds scene, applies previous color, applies the transformation, and renders the image.
+    draw() { var ic = this.icn3d, me = ic.icn3dui;
+        if(ic.bRender && Object.keys(ic.hAtoms) == 0) ic.hAtoms = me.hashUtilsCls.cloneHash(ic.atoms);
 
-    if(this.biomtMatrices !== undefined && this.biomtMatrices.length > 1) {
-        if(this.bAssembly) {
-            this.drawSymmetryMates();
+        ic.sceneCls.rebuildScene();
+
+        // Impostor display using the saved arrays
+        if(ic.bImpo) {
+            ic.impostorCls.drawImpostorShader(); // target
+        }
+
+        ic.setColorCls.applyPrevColor();
+
+        if(ic.biomtMatrices !== undefined && ic.biomtMatrices.length > 1) {
+            if(ic.bAssembly) {
+                ic.instancingCls.drawSymmetryMates();
+            }
+            else {
+                ic.applyCenterCls.centerSelection();
+            }
+        }
+
+        // show the hAtoms
+        var hAtomsLen = (ic.hAtoms !== undefined) ? Object.keys(ic.hAtoms).length : 0;
+
+        if(hAtomsLen > 0 && hAtomsLen < Object.keys(ic.dAtoms).length) {
+            ic.hlObjectsCls.removeHlObjects();
+            if(ic.bShowHighlight === undefined || ic.bShowHighlight) ic.hlObjectsCls.addHlObjects();
+        }
+
+        if(ic.bRender === true) {
+          if(ic.bInitial || $("#" + ic.pre + "wait").is(":visible")) {
+              if($("#" + ic.pre + "wait")) $("#" + ic.pre + "wait").hide();
+              if($("#" + ic.pre + "canvas")) $("#" + ic.pre + "canvas").show();
+              if($("#" + ic.pre + "cmdlog")) $("#" + ic.pre + "cmdlog").show();
+          }
+
+          this.applyTransformation(ic._zoomFactor, ic.mouseChange, ic.quaternion);
+          this.render();
+        }
+
+        ic.impostorCls.clearImpostors();
+    }
+
+    //Update the rotation, translation, and zooming before rendering. Typically used before the function render().
+    applyTransformation(_zoomFactor, mouseChange, quaternion) { var ic = this.icn3d, me = ic.icn3dui;
+        if(ic.icn3dui.bNode) return;
+
+        var para = {};
+        para.update = false;
+
+        // zoom
+        para._zoomFactor = _zoomFactor;
+
+        // translate
+        para.mouseChange = new THREE.Vector2();
+        para.mouseChange.copy(mouseChange);
+
+        // rotation
+        para.quaternion = new THREE.Quaternion();
+        para.quaternion.copy(quaternion);
+
+        if(ic.bControlGl && !ic.icn3dui.bNode) {
+            window.controls.update(para);
         }
         else {
-            this.centerSelection();
+            ic.controls.update(para);
         }
     }
 
-    // show the hAtoms
-    var hAtomsLen = (this.hAtoms !== undefined) ? Object.keys(this.hAtoms).length : 0;
+    //Render the scene and objects into pixels.
+    render() { var ic = this.icn3d, me = ic.icn3dui;
+        if(ic.icn3dui.bNode) return;
 
-    if(hAtomsLen > 0 && hAtomsLen < Object.keys(this.dAtoms).length) {
-        this.removeHlObjects();
-        if(this.bShowHighlight === undefined || this.bShowHighlight) this.addHlObjects();
+        var cam = (ic.bControlGl && !ic.icn3dui.bNode) ? window.cam : ic.cam;
+
+    //    if(ic.bShade) {
+            var quaternion = new THREE.Quaternion();
+            quaternion.setFromUnitVectors( new THREE.Vector3(0, 0, ic.cam_z).normalize(), cam.position.clone().normalize() );
+
+            ic.directionalLight.position.copy(ic.lightPos.clone().applyQuaternion( quaternion ).normalize());
+            ic.directionalLight2.position.copy(ic.lightPos2.clone().applyQuaternion( quaternion ).normalize());
+            ic.directionalLight3.position.copy(ic.lightPos3.clone().applyQuaternion( quaternion ).normalize());
+    //    }
+    //    else {
+    //        ic.directionalLight.position.copy(cam.position);
+    //    }
+
+        ic.renderer.gammaInput = true
+        ic.renderer.gammaOutput = true
+
+        ic.renderer.setPixelRatio( window.devicePixelRatio ); // r71
+        if(ic.scene) ic.renderer.render(ic.scene, cam);
     }
 
-    if(this.bRender === true) {
-      if(this.bInitial || $("#" + this.pre + "wait").is(":visible")) {
-          if($("#" + this.pre + "wait")) $("#" + this.pre + "wait").hide();
-          if($("#" + this.pre + "canvas")) $("#" + this.pre + "canvas").show();
-          if($("#" + this.pre + "cmdlog")) $("#" + this.pre + "cmdlog").show();
-      }
+}
 
-      this.applyTransformation(this._zoomFactor, this.mouseChange, this.quaternion);
-      this.render();
-    }
-
-    this.clearImpostors();
-};
-
-iCn3D.prototype.updateStabilizer = function () { var me = this, ic = me.icn3d; "use strict";
-    this.stabilizerpnts = [];
-
-    if(this.pairArray !== undefined) {
-        for(var i = 0, il = this.pairArray.length; i < il; i += 2) {
-            var coordI = this.getResidueRepPos(this.pairArray[i]);
-            var coordJ = this.getResidueRepPos(this.pairArray[i + 1]);
-
-            this.stabilizerpnts.push(coordI);
-            this.stabilizerpnts.push(coordJ);
-        }
-    }
-};
+export {Draw}
 
