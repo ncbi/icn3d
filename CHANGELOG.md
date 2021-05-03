@@ -1,5 +1,5 @@
 ## Change Log
-[icn3d-2.24.7](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.24.7.zip) was release on March 30, 2021. Fixed the memory leak when removing gemoetry and materials.
+[icn3d-3.0.0](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.0.0.zip) was release on May 3, 2021. iCn3D version 3.0.0 was converted to ES6 with classes and is available in npm with the package "icn3d". Users can use npm to install icn3d and generate Node.js scripts by calling icn3d functions. All previously embedded iCn3D will not be affected. To embed iCn3D version 3, iCn3D JavaScript and CSS library files were renamed from "icn3d_full_ui" to "icn3d". A global variable "icn3d" was used to access the class iCn3DUI: "var icn3dui = new icn3d.iCn3DUI(cfg)".
 
 [icn3d-2.24.6](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.24.6.zip) was release on March 22, 2021. Broke large files into small ones and stopped upgrading the basic/simple UI.
 
