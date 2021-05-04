@@ -249,7 +249,7 @@ class Surface {
         geo.vertices = verts.map(function (v) {
             var r = new THREE.Vector3(v.x, v.y, v.z);
             if(bTrans) {
-                r = this.transformMemPro(r, rot, centerFrom, centerTo);
+                r = thisClass.transformMemPro(r, rot, centerFrom, centerTo);
             }
 
             r.atomid = v.atomid;

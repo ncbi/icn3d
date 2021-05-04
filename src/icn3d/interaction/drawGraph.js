@@ -27,8 +27,8 @@ class DrawGraph {
         var width = $("#" + divid).width();
         var height = $("#" + divid).height();
 
-        var widthView = width * 1.0;
-        var heightView = height * 1.0;
+        var widthView = (!isNaN(width)) ? width * 1.0 : 300;
+        var heightView = (!isNaN(height)) ? height * 1.0 : 300;
 
         var parentWidth = width;
         var parentHeight = height;

@@ -1004,7 +1004,7 @@ class ApplyCommand {
         }
 
         if(ic.graphStr !== undefined && ic.bRender && ic.icn3dui.htmlCls.force) {
-           ic.icn3dui.drawGraph(ic.graphStr);
+           ic.drawGraphCls.drawGraph(ic.graphStr);
         }
       }
       else if(command.indexOf('reset interaction pairs') == 0) {

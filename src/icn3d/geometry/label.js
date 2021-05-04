@@ -7,12 +7,14 @@
 import {UtilsCls} from '../../utils/utilsCls.js';
 
 class TextSprite {
-    constructor() {}
+    constructor(icn3d) {
+        this.icn3d = icn3d;
+    }
 
     // modified from 3Dmol (http://3dmol.csb.pitt.edu/)
     // new: http://stackoverflow.com/questions/23514274/three-js-2d-text-sprite-labels
     // old: http://stemkoski.github.io/Three.js/Sprite-Text-Labels.html
-    static makeTextSprite( message, parameters ) {
+    makeTextSprite( message, parameters ) { var ic = this.icn3d, me = ic.icn3dui;
         if(ic.icn3dui.bNode) return;
 
         if ( parameters === undefined ) parameters = {};
@@ -88,13 +90,13 @@ class TextSprite {
 
             if(bSchematic) {
                 var r = width * 0.35;
-                TextSprite.circle(context, 0, 0, width, height, r);
+                this.circle(context, 0, 0, width, height, r);
             }
             else {
                 //var r = (message.length <= textLengthThreshold) ? height * 0.5 : 0;
                 //var r = height * 0.8;
                 var r = 0;
-                TextSprite.roundRect(context, 0, 0, width, height, r);
+                this.roundRect(context, 0, 0, width, height, r);
             }
         }
 
@@ -139,7 +141,7 @@ class TextSprite {
     }
 
     // function for drawing rounded rectangles
-    static roundRect(ctx, x, y, w, h, r) {
+    roundRect(ctx, x, y, w, h, r) {
         ctx.beginPath();
         ctx.moveTo(x+r, y);
         ctx.lineTo(x+w-r, y);
@@ -155,7 +157,7 @@ class TextSprite {
         ctx.stroke();
     }
 
-    static circle(ctx, x, y, w, h, r) {
+    circle(ctx, x, y, w, h, r) {
         ctx.beginPath();
         ctx.arc(x+w/2, y+h/2, r, 0, 2*Math.PI, true);
         ctx.closePath();
@@ -167,6 +169,8 @@ class TextSprite {
 class Label {
     constructor(icn3d) {
         this.icn3d = icn3d;
+
+        this.textSpriteCls = new TextSprite(icn3d);
     }
 
     // modified from iview (http://istar.cse.cuhk.edu.hk/iview/)
@@ -200,14 +204,14 @@ class Label {
                 var bb;
                 if(label.bSchematic !== undefined && label.bSchematic) {
 
-                    bb = TextSprite.makeTextSprite(label.text, {fontsize: parseInt(labelsize), textColor: labelcolor, borderColor: labelbackground, backgroundColor: labelbackground, alpha: labelalpha, bSchematic: 1, factor: factor});
+                    bb = this.textSpriteCls.makeTextSprite(label.text, {fontsize: parseInt(labelsize), textColor: labelcolor, borderColor: labelbackground, backgroundColor: labelbackground, alpha: labelalpha, bSchematic: 1, factor: factor});
                 }
                 else {
                     if(label.text.length === 1) {
-                        bb = TextSprite.makeTextSprite(label.text, {fontsize: parseInt(labelsize), textColor: labelcolor, borderColor: labelbackground, backgroundColor: labelbackground, alpha: labelalpha, bSchematic: 1, factor: factor});
+                        bb = this.textSpriteCls.makeTextSprite(label.text, {fontsize: parseInt(labelsize), textColor: labelcolor, borderColor: labelbackground, backgroundColor: labelbackground, alpha: labelalpha, bSchematic: 1, factor: factor});
                     }
                     else {
-                        bb = TextSprite.makeTextSprite(label.text, {fontsize: parseInt(labelsize), textColor: labelcolor, borderColor: labelbackground, backgroundColor: labelbackground, alpha: labelalpha, bSchematic: 0, factor: factor});
+                        bb = this.textSpriteCls.makeTextSprite(label.text, {fontsize: parseInt(labelsize), textColor: labelcolor, borderColor: labelbackground, backgroundColor: labelbackground, alpha: labelalpha, bSchematic: 0, factor: factor});
                     }
                 }
 
