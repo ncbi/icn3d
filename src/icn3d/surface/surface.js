@@ -24,8 +24,6 @@ class Surface {
     //the surface as a mesh. "opacity" is a value between 0 and 1. "1" means not transparent at all.
     //"0" means 100% transparent.
     createSurfaceRepresentation(atoms, type, wireframe, opacity) { var ic = this.icn3d, me = ic.icn3dui;
-        var thisClass = this;
-
         if(ic.icn3dui.bNode) return;
 
         var thisClass = this;
