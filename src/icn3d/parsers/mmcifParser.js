@@ -233,6 +233,7 @@ class MmcifParser {
 
                 if(ic.bAssemblyUseAsu) thisClass.loadMmcifSymmetry(JSON.parse(matrixStr));
 
+                if(resStr == "") resStr = "[]";
                 var missingseq = JSON.parse(resStr);
                 if(type === 'mmtfid' && missingseq !== undefined) {
                     // adjust missing residues

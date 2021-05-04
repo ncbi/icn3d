@@ -9,7 +9,7 @@ class view(object):
        under the 3D view. If you have a predefined cutom view, 
        you can use the predefined commands in icn3dpy.
     '''
-    def __init__(self,width=640,height=480,q="",para="",command="",full=1,v=""):
+    def __init__(self,width=640,height=480,q="",para="",command="",v=""):
         '''Create a iCn3D view.
             width -- width of 3D canvas in pixels
             height -- height of 3D canvas in pixels
@@ -22,14 +22,9 @@ class view(object):
         if v != '':
             v = '_' + v
         
-        if full == 1:
-            jsfile = 'https://www.ncbi.nlm.nih.gov/Structure/icn3d/es5/icn3d_all_full' + v + '.min.js'
-            css1file = 'https://www.ncbi.nlm.nih.gov/Structure/icn3d/lib/jquery-ui' + v + '.min.css'
-            css2file = 'https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d_full_ui' + v + '.css'
-        else:
-            jsfile = 'https://www.ncbi.nlm.nih.gov/Structure/icn3d/es5/icn3d_all_simple' + v + '.min.js'
-            css1file = 'https://www.ncbi.nlm.nih.gov/Structure/icn3d/lib/jquery-ui' + v + '.min.css'
-            css2file = 'https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d_simple_ui' + v + '.css'
+	jsfile = 'https://www.ncbi.nlm.nih.gov/Structure/icn3d/es5/icn3d_all_full' + v + '.min.js'
+	css1file = 'https://www.ncbi.nlm.nih.gov/Structure/icn3d/lib/jquery-ui' + v + '.min.css'
+	css2file = 'https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d' + v + '.css'
         
         divid = "icn3dviewerUNIQUEID"
         warnid = "icn3dwarningUNIQUEID"
@@ -104,7 +99,7 @@ css1
 
         self.startjs += 'cfg = {divid: "%s", %swidth: "%spx", height: "%spx", mobilemenu: 1, notebook: 1, command: \'%s\', %s};\n' % (divid, inputid, width, height, command, para)
 
-        self.startjs += 'viewerUNIQUEID = new iCn3DUI(cfg);\n'
+        self.startjs += 'viewerUNIQUEID = new icn3d.iCn3DUI(cfg);\n'
         
         self.endjs = "viewerUNIQUEID.show3DStructure();\n" + self.endjs;
         
