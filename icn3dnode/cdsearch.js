@@ -2,11 +2,10 @@
 
 let http = require('http');
 let https = require('https');
-//let fs = require('fs');
-let utils = require('../share/utils.js');
+let utils = require('./utils.js');
 
-let axios = require('../share/node_modules/axios');
-let qs = require('../share/node_modules/querystring');
+let axios = require('axios');
+let qs = require('querystring');
 
 let myArgs = process.argv.slice(2);
 if(myArgs.length != 2) {

@@ -11,19 +11,18 @@ npm install querystring
 */
 
 // https://github.com/Jam3/three-buffer-vertex-data/issues/2
-global.THREE = require('../share/node_modules/three');
-//global.$ = require('../share/node_modules/jquery');
-let jsdom = require('../share/node_modules/jsdom');
-global.$ = require('../share/node_modules/jquery')(new jsdom.JSDOM().window);
+global.THREE = require('three');
+let jsdom = require('jsdom');
+global.$ = require('jquery')(new jsdom.JSDOM().window);
 
-let icn3d = require('../share/icn3d.js');
+let icn3d = require('icn3d');
 let me = new icn3d.iCn3DUI({});
 
 let https = require('https');
-let axios = require('../share/node_modules/axios');
-let qs = require('../share/node_modules/querystring');
+let axios = require('axios');
+let qs = require('querystring');
 
-let utils = require('../share/utils.js');
+let utils = require('./utils.js');
 
 let myArgs = process.argv.slice(2);
 if(myArgs.length != 3) {

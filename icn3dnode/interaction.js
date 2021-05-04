@@ -1,5 +1,5 @@
-// Exclude the interaction in the same chain
-// usage: node interaction2.js 6M0J E 501 Y
+// Include the interaction in the same chain
+// usage: node interaction.js 1TOP A 10 V
 
 /*
 Please install the following three packages in your directory with the file interaction.js
@@ -12,23 +12,22 @@ npm install querystring
 */
 
 // https://github.com/Jam3/three-buffer-vertex-data/issues/2
-global.THREE = require('../share/node_modules/three');
-//global.$ = require('../share/node_modules/jquery');
-let jsdom = require('../share/node_modules/jsdom');
-global.$ = require('../share/node_modules/jquery')(new jsdom.JSDOM().window);
+global.THREE = require('three');
+let jsdom = require('jsdom');
+global.$ = require('jquery')(new jsdom.JSDOM().window);
 
-let icn3d = require('../share/icn3d.js');
+let icn3d = require('icn3d');
 let me = new icn3d.iCn3DUI({});
 
 let https = require('https');
-let axios = require('../share/node_modules/axios');
-let qs = require('../share/node_modules/querystring');
+let axios = require('axios');
+let qs = require('querystring');
 
-let utils = require('../share/utils.js');
+let utils = require('./utils.js');
 
 let myArgs = process.argv.slice(2);
 if(myArgs.length != 4) {
-    console.log("Usage: node interaction2.js [PDB ID] [Chain ID] [Residue number] [One letter mutant]");
+    console.log("Usage: node interaction.js [PDB ID] [Chain ID] [Residue number] [One letter mutant]");
     return;
 }
 
@@ -68,7 +67,7 @@ https.get(urlMmdb, function(res1) {
 
       if(mutant == '-') { // deletion
         let pdbData = pdbStr;
-        //console.log("free energy (kcal/mol): deletion");
+        console.log("free energy (kcal/mol): deletion");
 
         let bAddition = true;
 
@@ -98,9 +97,12 @@ https.get(urlMmdb, function(res1) {
               true, true, true, true, true, true);
         let bondCntWild = result.bondCnt;
 
-        let resn = ic.residueId2Name[resid];
-
-        console.log(pdbid + ", " + pdbid + "_" + chain + ", " + resi + ", " + resn + ", " + mutant + ", " + (- bondCntWild[0].cntHbond).toString() + ", " + (- bondCntWild[0].cntIonic).toString() + ", " + (- bondCntWild[0].cntContact).toString() + ", " + (- bondCntWild[0].cntHalegen).toString() + ", " + (- bondCntWild[0].cntPication).toString() + ", " + (- bondCntWild[0].cntPistacking).toString());
+        console.log("Change Hbond: " + (- bondCntWild[0].cntHbond).toString());
+        console.log("Change Ionic: " + (- bondCntWild[0].cntIonic).toString());
+        console.log("Change Contact: " + (- bondCntWild[0].cntContact).toString());
+        console.log("Change Halegen: " + (- bondCntWild[0].cntHalegen).toString());
+        console.log("Change Pi-Cation: " + (- bondCntWild[0].cntPication).toString());
+        console.log("Change Pi-Stacking: " + (- bondCntWild[0].cntPistacking).toString());
       }
       else {
           let snpStr = chain + ',' + resi + ',' + mutant;
@@ -162,7 +164,7 @@ function showInteractionChange(ic, data, pdbid, chain, resi) {
     let pos = data.indexOf('\n');
     let energy = data.substr(0, pos);
     let pdbData = data.substr(pos + 1);
-//    console.log("free energy (kcal/mol): " + energy);
+    console.log("free energy (kcal/mol): " + energy);
 
     let bAddition = true;
 
@@ -182,7 +184,7 @@ function showInteractionChange(ic, data, pdbid, chain, resi) {
     let atomSet2 = ic.residues[resid];
     let tmpSet = me.hashUtilsCls.exclHash(ic.atoms, mutantSet);
     // only for interaction in different chain
-    let atomSet = me.hashUtilsCls.exclHash(tmpSet, ic.chains[pdbid + '_' + chain]);
+    let atomSet = me.hashUtilsCls.exclHash(tmpSet, atomSet2);
 
     // prepare names for two sets
     let command2 = resid;
@@ -202,7 +204,7 @@ function showInteractionChange(ic, data, pdbid, chain, resi) {
 
     let atomSetMutant2 = ic.residues[residMutant];
     // only for interaction in different chain
-    let atomSetMutant = me.hashUtilsCls.exclHash(mutantSet, ic.chains[pdbid + '2_' + chain]);
+    let atomSetMutant = me.hashUtilsCls.exclHash(mutantSet, atomSetMutant2);
 
     // prepare names for two sets
     command2 = residMutant;
@@ -220,7 +222,10 @@ function showInteractionChange(ic, data, pdbid, chain, resi) {
               true, true, true, true, true, true);
     let bondCntMutant = resultMutant.bondCnt;
 
-    let resn = ic.residueId2Name[resid];
-
-    console.log(pdbid + ", " + pdbid + "_" + chain + ", " + resi + ", " + resn + ", " + mutant + ", " + (bondCntMutant[0].cntHbond - bondCntWild[0].cntHbond).toString() + ", " + (bondCntMutant[0].cntIonic - bondCntWild[0].cntIonic).toString() + ", " + (bondCntMutant[0].cntContact - bondCntWild[0].cntContact).toString() + ", " + (bondCntMutant[0].cntHalegen - bondCntWild[0].cntHalegen).toString() + ", " + (bondCntMutant[0].cntPication - bondCntWild[0].cntPication).toString() + ", " + (bondCntMutant[0].cntPistacking - bondCntWild[0].cntPistacking).toString());
+    console.log("Change Hbond: " + (bondCntMutant[0].cntHbond - bondCntWild[0].cntHbond).toString());
+    console.log("Change Ionic: " + (bondCntMutant[0].cntIonic - bondCntWild[0].cntIonic).toString());
+    console.log("Change Contact: " + (bondCntMutant[0].cntContact - bondCntWild[0].cntContact).toString());
+    console.log("Change Halegen: " + (bondCntMutant[0].cntHalegen - bondCntWild[0].cntHalegen).toString());
+    console.log("Change Pi-Cation: " + (bondCntMutant[0].cntPication - bondCntWild[0].cntPication).toString());
+    console.log("Change Pi-Stacking: " + (bondCntMutant[0].cntPistacking - bondCntWild[0].cntPistacking).toString());
 }
