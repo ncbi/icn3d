@@ -230,7 +230,7 @@ class GetGraph {
           }
           ic.graphStr = JSON.stringify(graphJson);
       }
-      if(ic.bGraph) ic.icn3dui.drawGraph(ic.graphStr, ic.pre + 'dl_graph');
+      if(ic.bGraph) ic.drawGraphCls.drawGraph(ic.graphStr, ic.pre + 'dl_graph');
       if(ic.bLinegraph) ic.lineGraphCls.drawLineGraph(ic.graphStr);
       if(ic.bScatterplot) ic.lineGraphCls.drawLineGraph(ic.graphStr, true);
     }
@@ -245,7 +245,7 @@ class GetGraph {
            ic.simulation.force("link", null);
        }
        else {
-           ic.icn3dui.drawGraph(ic.graphStr, ic.pre + 'dl_graph');
+           ic.drawGraphCls.drawGraph(ic.graphStr, ic.pre + 'dl_graph');
        }
     }
 

@@ -24,6 +24,8 @@ class Surface {
     //the surface as a mesh. "opacity" is a value between 0 and 1. "1" means not transparent at all.
     //"0" means 100% transparent.
     createSurfaceRepresentation(atoms, type, wireframe, opacity) { var ic = this.icn3d, me = ic.icn3dui;
+        var thisClass = this;
+
         if(ic.icn3dui.bNode) return;
 
         var thisClass = this;
@@ -249,7 +251,7 @@ class Surface {
         geo.vertices = verts.map(function (v) {
             var r = new THREE.Vector3(v.x, v.y, v.z);
             if(bTrans) {
-                r = this.transformMemPro(r, rot, centerFrom, centerTo);
+                r = thisClass.transformMemPro(r, rot, centerFrom, centerTo);
             }
 
             r.atomid = v.atomid;

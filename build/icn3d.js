@@ -11742,7 +11742,11 @@ var icn3d = (function (exports) {
         //the surface as a mesh. "opacity" is a value between 0 and 1. "1" means not transparent at all.
         //"0" means 100% transparent.
         createSurfaceRepresentation(atoms, type, wireframe, opacity) { var ic = this.icn3d, me = ic.icn3dui;
+            var thisClass = this;
+
             if(ic.icn3dui.bNode) return;
+
+            var thisClass = this;
 
             if(Object.keys(atoms).length == 0) return;
 
@@ -11964,7 +11968,7 @@ var icn3d = (function (exports) {
             geo.vertices = verts.map(function (v) {
                 var r = new THREE.Vector3(v.x, v.y, v.z);
                 if(bTrans) {
-                    r = this.transformMemPro(r, rot, centerFrom, centerTo);
+                    r = thisClass.transformMemPro(r, rot, centerFrom, centerTo);
                 }
 
                 r.atomid = v.atomid;
@@ -16053,7 +16057,7 @@ var icn3d = (function (exports) {
               }
               ic.graphStr = JSON.stringify(graphJson);
           }
-          if(ic.bGraph) ic.icn3dui.drawGraph(ic.graphStr, ic.pre + 'dl_graph');
+          if(ic.bGraph) ic.drawGraphCls.drawGraph(ic.graphStr, ic.pre + 'dl_graph');
           if(ic.bLinegraph) ic.lineGraphCls.drawLineGraph(ic.graphStr);
           if(ic.bScatterplot) ic.lineGraphCls.drawLineGraph(ic.graphStr, true);
         }
@@ -16068,7 +16072,7 @@ var icn3d = (function (exports) {
                ic.simulation.force("link", null);
            }
            else {
-               ic.icn3dui.drawGraph(ic.graphStr, ic.pre + 'dl_graph');
+               ic.drawGraphCls.drawGraph(ic.graphStr, ic.pre + 'dl_graph');
            }
         }
 
@@ -19145,7 +19149,8 @@ var icn3d = (function (exports) {
           return ic.deferredPhi.promise();
         }
 
-        applyCommandDelphi(command) {      var thisClass = this;
+        applyCommandDelphi(command) { var ic = this.icn3d; ic.icn3dui;
+          var thisClass = this;
 
           // chain functions together
           ic.deferredDelphi = $.Deferred(function() { var ic = thisClass.icn3d;
@@ -24237,7 +24242,8 @@ var icn3d = (function (exports) {
               ic.hAtoms = hAtoms;
 
               ic.opts['color'] = 'identity';
-              ic.setColorCls.setColorByOptions(ic.opts, ic.atoms);
+              //ic.setColorCls.setColorByOptions(ic.opts, ic.atoms);
+              ic.setColorCls.setColorByOptions(ic.opts, ic.hAtoms);
 
               ic.drawCls.draw();
               ic.hlUpdateCls.updateHlAll();
@@ -29579,7 +29585,7 @@ var icn3d = (function (exports) {
             }
 
             if(ic.graphStr !== undefined && ic.bRender && ic.icn3dui.htmlCls.force) {
-               ic.icn3dui.drawGraph(ic.graphStr);
+               ic.drawGraphCls.drawGraph(ic.graphStr);
             }
           }
           else if(command.indexOf('reset interaction pairs') == 0) {
@@ -36818,7 +36824,7 @@ var icn3d = (function (exports) {
               ic.graphStr = this.getGraphDataForDisplayed();
             }
 
-            if(ic.bGraph) ic.icn3dui.drawGraph(ic.graphStr);
+            if(ic.bGraph) ic.drawGraphCls.drawGraph(ic.graphStr);
             if(ic.bLinegraph) ic.lineGraphCls.drawLineGraph(ic.graphStr);
             if(ic.bScatterplot) ic.lineGraphCls.drawLineGraph(ic.graphStr, true);
         }
@@ -37833,12 +37839,14 @@ var icn3d = (function (exports) {
      */
 
     class TextSprite {
-        constructor() {}
+        constructor(icn3d) {
+            this.icn3d = icn3d;
+        }
 
         // modified from 3Dmol (http://3dmol.csb.pitt.edu/)
         // new: http://stackoverflow.com/questions/23514274/three-js-2d-text-sprite-labels
         // old: http://stemkoski.github.io/Three.js/Sprite-Text-Labels.html
-        static makeTextSprite( message, parameters ) {
+        makeTextSprite( message, parameters ) { var ic = this.icn3d, me = ic.icn3dui;
             if(ic.icn3dui.bNode) return;
 
             if ( parameters === undefined ) parameters = {};
@@ -37914,13 +37922,13 @@ var icn3d = (function (exports) {
 
                 if(bSchematic) {
                     var r = width * 0.35;
-                    TextSprite.circle(context, 0, 0, width, height, r);
+                    this.circle(context, 0, 0, width, height, r);
                 }
                 else {
                     //var r = (message.length <= textLengthThreshold) ? height * 0.5 : 0;
                     //var r = height * 0.8;
                     var r = 0;
-                    TextSprite.roundRect(context, 0, 0, width, height, r);
+                    this.roundRect(context, 0, 0, width, height, r);
                 }
             }
 
@@ -37965,7 +37973,7 @@ var icn3d = (function (exports) {
         }
 
         // function for drawing rounded rectangles
-        static roundRect(ctx, x, y, w, h, r) {
+        roundRect(ctx, x, y, w, h, r) {
             ctx.beginPath();
             ctx.moveTo(x+r, y);
             ctx.lineTo(x+w-r, y);
@@ -37981,7 +37989,7 @@ var icn3d = (function (exports) {
             ctx.stroke();
         }
 
-        static circle(ctx, x, y, w, h, r) {
+        circle(ctx, x, y, w, h, r) {
             ctx.beginPath();
             ctx.arc(x+w/2, y+h/2, r, 0, 2*Math.PI, true);
             ctx.closePath();
@@ -37993,6 +38001,8 @@ var icn3d = (function (exports) {
     class Label {
         constructor(icn3d) {
             this.icn3d = icn3d;
+
+            this.textSpriteCls = new TextSprite(icn3d);
         }
 
         // modified from iview (http://istar.cse.cuhk.edu.hk/iview/)
@@ -38026,14 +38036,14 @@ var icn3d = (function (exports) {
                     var bb;
                     if(label.bSchematic !== undefined && label.bSchematic) {
 
-                        bb = TextSprite.makeTextSprite(label.text, {fontsize: parseInt(labelsize), textColor: labelcolor, borderColor: labelbackground, backgroundColor: labelbackground, alpha: labelalpha, bSchematic: 1, factor: factor});
+                        bb = this.textSpriteCls.makeTextSprite(label.text, {fontsize: parseInt(labelsize), textColor: labelcolor, borderColor: labelbackground, backgroundColor: labelbackground, alpha: labelalpha, bSchematic: 1, factor: factor});
                     }
                     else {
                         if(label.text.length === 1) {
-                            bb = TextSprite.makeTextSprite(label.text, {fontsize: parseInt(labelsize), textColor: labelcolor, borderColor: labelbackground, backgroundColor: labelbackground, alpha: labelalpha, bSchematic: 1, factor: factor});
+                            bb = this.textSpriteCls.makeTextSprite(label.text, {fontsize: parseInt(labelsize), textColor: labelcolor, borderColor: labelbackground, backgroundColor: labelbackground, alpha: labelalpha, bSchematic: 1, factor: factor});
                         }
                         else {
-                            bb = TextSprite.makeTextSprite(label.text, {fontsize: parseInt(labelsize), textColor: labelcolor, borderColor: labelbackground, backgroundColor: labelbackground, alpha: labelalpha, bSchematic: 0, factor: factor});
+                            bb = this.textSpriteCls.makeTextSprite(label.text, {fontsize: parseInt(labelsize), textColor: labelcolor, borderColor: labelbackground, backgroundColor: labelbackground, alpha: labelalpha, bSchematic: 0, factor: factor});
                         }
                     }
 
@@ -48936,8 +48946,8 @@ var icn3d = (function (exports) {
             var width = $("#" + divid).width();
             var height = $("#" + divid).height();
 
-            var widthView = width * 1.0;
-            var heightView = height * 1.0;
+            var widthView = (!isNaN(width)) ? width * 1.0 : 300;
+            var heightView = (!isNaN(height)) ? height * 1.0 : 300;
 
             var parentWidth = width;
             var parentHeight = height;

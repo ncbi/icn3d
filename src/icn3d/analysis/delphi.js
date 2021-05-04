@@ -408,7 +408,7 @@ class Delphi {
       return ic.deferredPhi.promise();
     }
 
-    applyCommandDelphi(command) { var me = this; "use strict";
+    applyCommandDelphi(command) { var ic = this.icn3d, me = ic.icn3dui;
       var thisClass = this;
 
       // chain functions together

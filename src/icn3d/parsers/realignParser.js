@@ -182,7 +182,8 @@ class RealignParser {
           ic.hAtoms = hAtoms;
 
           ic.opts['color'] = 'identity';
-          ic.setColorCls.setColorByOptions(ic.opts, ic.atoms);
+          //ic.setColorCls.setColorByOptions(ic.opts, ic.atoms);
+          ic.setColorCls.setColorByOptions(ic.opts, ic.hAtoms);
 
           ic.drawCls.draw();
           ic.hlUpdateCls.updateHlAll();
