@@ -245,62 +245,116 @@ class Surface {
         var bTrans = (type == 11 || type == 12 || type == 13 || (type == 14 && ic.loadPhiFrom != 'delphi') )
           && ic.rmsd_supr !== undefined && ic.rmsd_supr.rot !== undefined;
 
-        geo = new THREE.Geometry();
-        geo.vertices = verts.map(function (v) {
+        //geo = new THREE.Geometry();
+        geo = new THREE.BufferGeometry();
+        var verticeArray = [], colorArray = [], indexArray = [], color;
+
+        //var geoVertices = verts.map(function (v) {
+        var offset = 0;
+        for(var i = 0, il = verts.length; i < il; ++i, offset += 3) {
+            var v = verts[i];
+
             var r = new THREE.Vector3(v.x, v.y, v.z);
             if(bTrans) {
-                r = thisClass.transformMemPro(r, rot, centerFrom, centerTo);
+               r = thisClass.transformMemPro(r, rot, centerFrom, centerTo);
             }
 
-            r.atomid = v.atomid;
-            r.color = v.color;
-            return r;
-        });
+            //verticeArray = verticeArray.concat(r.toArray());
+            verticeArray[offset] = r.x;
+            verticeArray[offset + 1] = r.y;
+            verticeArray[offset + 2] = r.z;
 
-        geo.faces = faces.map(function (f) {
+            if(type == 11) { // 2fofc
+                color = colorFor2fofc;
+            }
+            else if(type == 12) { // fofc
+                color = (v.atomid) ? colorForfofcPos : colorForfofcNeg;
+            }
+            else if(type == 13) { // em
+                color = colorForEm;
+            }
+            else if(type == 14) { // phi
+                color = (v.atomid) ? colorForPhiPos : colorForPhiNeg;
+            }
+            else if(type == 21 || type == 22 || type == 23) { // potential on surface
+                color = v.color;
+            }
+            else {
+                var atomid = v.atomid;
+                color = ic.atoms[atomid].color;
+            }
+
+            //colorArray = colorArray.concat(color.toArray());
+            colorArray[offset] = color.r;
+            colorArray[offset + 1] = color.g;
+            colorArray[offset + 2] = color.b;
+
+            //r.atomid = v.atomid;
+            //r.color = v.color;
+            //return r;
+        }
+        //});
+
+/*
+        var geoFaces = faces.map(function (f) {
             //return new THREE.Face3(f.a, f.b, f.c);
             var vertexColors = ['a', 'b', 'c' ].map(function (d) {
                 if(type == 11) { // 2fofc
                     return colorFor2fofc;
                 }
                 else if(type == 12) { // fofc
-                    return (geo.vertices[f[d]].atomid) ? colorForfofcPos : colorForfofcNeg;
+                    return (geoVertices[f[d]].atomid) ? colorForfofcPos : colorForfofcNeg;
                 }
                 else if(type == 13) { // em
                     return colorForEm;
                 }
                 else if(type == 14) { // phi
-                    return (geo.vertices[f[d]].atomid) ? colorForPhiPos : colorForPhiNeg;
+                    return (geoVertices[f[d]].atomid) ? colorForPhiPos : colorForPhiNeg;
                 }
                 else if(type == 21 || type == 22 || type == 23) { // potential on surface
-                    return geo.vertices[f[d]].color;
+                    return geoVertices[f[d]].color;
                 }
                 else {
-                    var atomid = geo.vertices[f[d]].atomid;
+                    var atomid = geoVertices[f[d]].atomid;
                     return ic.atoms[atomid].color;
                 }
             });
 
             return new THREE.Face3(f.a, f.b, f.c, undefined, vertexColors);
         });
+*/
+
+        offset = 0;
+        for(var i = 0, il = faces.length; i < il; ++i, offset += 3) {
+            var f = faces[i];
+
+            //indexArray = indexArray.concat(f.a, f.b, f.c);
+            indexArray[offset] = f.a;
+            indexArray[offset + 1] = f.b;
+            indexArray[offset + 2] = f.c;
+        }
+
+        var nComp = 3;
+        geo.setAttribute('position', new THREE.BufferAttribute(new Float32Array(verticeArray), nComp));
+        geo.setAttribute('color', new THREE.BufferAttribute(new Float32Array(colorArray), nComp));
+
+        geo.setIndex(new THREE.BufferAttribute(new Uint32Array(indexArray), 1));
+        //geo.setIndex(indexArray);
 
         //http://analyticphysics.com/Coding%20Methods/Special%20Topics%20in%20Three.js.htm
-        //var c = geo.center();
+        //geo.computeVertexNormals(true);
+        //geo.colorsNeedUpdate = true;
+        //geo.normalsNeedUpdate = true;
 
-        //geo.computeFaceNormals();
-        //geo.computeVertexNormals(false);
-        geo.computeVertexNormals(true);
-
-        geo.colorsNeedUpdate = true;
-        geo.normalsNeedUpdate = true;
+        geo.computeVertexNormals();
 
         geo.type = 'Surface'; // to be recognized in vrml.js for 3D printing
 
         // use the regular way to show transparency for type == 15 (surface with potential)
     //    if(bTransparent && (type == 1 || type == 2 || type == 3)) { // WebGL has some ordering problem when dealing with transparency
         if(bTransparent) { // WebGL has some ordering problem when dealing with transparency
-          //var normalArray = geo.data.normals;
-          var normalArray = JSON.parse(JSON.stringify(geo)).data.normals;
+          //var normalArrayIn = JSON.parse(JSON.stringify(geo)).data.normals;
+          //var normalArrayIn = geo.getAttribute('normal').array;
 
           // the following method minimize the number of objects by a factor of 3
           var va2faces = {};
@@ -318,44 +372,90 @@ class Surface {
           }
 
           for(var va in va2faces) {
-            this.geometry = new THREE.Geometry();
-            this.geometry.vertices = [];
-            this.geometry.faces = [];
+            //this.geometry = new THREE.Geometry();
+            this.geometry = new THREE.BufferGeometry();
+            //this.geometry.vertices = [];
+            //this.geometry.faces = [];
+            var verticeArray = [], colorArray = [], indexArray = [], normalArray = [];
+            var offset = 0, offset2 = 0, offset3 = 0, offsetNorm = 0;
 
             var faceVertices = va2faces[va];
+            var sum = new THREE.Vector3(0,0,0);
+            var nComp = 3;
+
+            var verticesLen = 0;
             for(var i = 0, il = faceVertices.length; i < il; i += 2) {
                 var vb = faceVertices[i];
                 var vc = faceVertices[i + 1];
 
-                this.geometry.vertices.push(new THREE.Vector3(verts[va].x, verts[va].y, verts[va].z));
-                this.geometry.vertices.push(new THREE.Vector3(verts[vb].x, verts[vb].y, verts[vb].z));
-                this.geometry.vertices.push(new THREE.Vector3(verts[vc].x, verts[vc].y, verts[vc].z));
+                //this.geometry.vertices.push(new THREE.Vector3(verts[va].x, verts[va].y, verts[va].z));
+                //this.geometry.vertices.push(new THREE.Vector3(verts[vb].x, verts[vb].y, verts[vb].z));
+                //this.geometry.vertices.push(new THREE.Vector3(verts[vc].x, verts[vc].y, verts[vc].z));
 
-                var vertexColors = [];
-                vertexColors.push(ic.atoms[verts[va].atomid].color);
-                vertexColors.push(ic.atoms[verts[vb].atomid].color);
-                vertexColors.push(ic.atoms[verts[vc].atomid].color);
+                verticeArray[offset++] = verts[va].x;
+                verticeArray[offset++] = verts[va].y;
+                verticeArray[offset++] = verts[va].z;
 
-                var normals = [];
-                normals.push(normalArray[va]);
-                normals.push(normalArray[vb]);
-                normals.push(normalArray[vc]);
+                verticeArray[offset++] = verts[vb].x;
+                verticeArray[offset++] = verts[vb].y;
+                verticeArray[offset++] = verts[vb].z;
+
+                verticeArray[offset++] = verts[vc].x;
+                verticeArray[offset++] = verts[vc].y;
+                verticeArray[offset++] = verts[vc].z;
+
+                //var vertexColors = [];
+                //vertexColors.push(ic.atoms[verts[va].atomid].color);
+                //vertexColors.push(ic.atoms[verts[vb].atomid].color);
+                //vertexColors.push(ic.atoms[verts[vc].atomid].color);
+
+                colorArray[offset2++] = ic.atoms[verts[va].atomid].color.r;
+                colorArray[offset2++] = ic.atoms[verts[va].atomid].color.g;
+                colorArray[offset2++] = ic.atoms[verts[va].atomid].color.b;
+
+                colorArray[offset2++] = ic.atoms[verts[vb].atomid].color.r;
+                colorArray[offset2++] = ic.atoms[verts[vb].atomid].color.g;
+                colorArray[offset2++] = ic.atoms[verts[vb].atomid].color.b;
+
+                colorArray[offset2++] = ic.atoms[verts[vc].atomid].color.r;
+                colorArray[offset2++] = ic.atoms[verts[vc].atomid].color.g;
+                colorArray[offset2++] = ic.atoms[verts[vc].atomid].color.b;
+
+                //var normals = [];
+                //normals.push(normalArrayIn[va]);
+                //normals.push(normalArrayIn[vb]);
+                //normals.push(normalArrayIn[vc]);
 
                 var initPos = i / 2 * 3;
-                this.geometry.faces.push(new THREE.Face3(initPos, initPos + 1, initPos + 2, normals, vertexColors));
+                //this.geometry.faces.push(new THREE.Face3(initPos, initPos + 1, initPos + 2, normals, vertexColors));
+
+                indexArray[offset3++] = initPos;
+                indexArray[offset3++] = initPos + 1;
+                indexArray[offset3++] = initPos + 2;
+
+                sum = sum.add(new THREE.Vector3(verts[initPos].x, verts[initPos].y, verts[initPos].z));
+                sum = sum.add(new THREE.Vector3(verts[initPos + 1].x, verts[initPos + 1].y, verts[initPos + 1].z));
+                sum = sum.add(new THREE.Vector3(verts[initPos + 2].x, verts[initPos + 2].y, verts[initPos + 2].z));
+
+                verticesLen += 3;
             }
 
-            //geometry.computeVertexNormals(false);
+            this.geometry.setAttribute('position', new THREE.BufferAttribute(new Float32Array(verticeArray), nComp));
+            this.geometry.setAttribute('color', new THREE.BufferAttribute(new Float32Array(colorArray), nComp));
+//            this.geometry.setAttribute('normal', new THREE.BufferAttribute(new Float32Array(normalArray), nComp));
 
-            this.geometry.colorsNeedUpdate = true;
-            //geometry.normalsNeedUpdate = true;
+            this.geometry.setIndex(new THREE.BufferAttribute(new Uint32Array(indexArray), 1));
+            //geo.setIndex(indexArray);
+
+            //this.geometry.colorsNeedUpdate = true;
+            this.geometry.computeVertexNormals();
 
             this.geometry.type = 'Surface'; // to be recognized in vrml.js for 3D printing
 
             var mesh = new THREE.Mesh(this.geometry, new THREE.MeshPhongMaterial({
                 specular: ic.frac,
                 shininess: 10, //30,
-                emissive: 0x000000,
+                emissive: ic.emissive,
                 vertexColors: THREE.VertexColors,
                 wireframe: wireframe,
                 opacity: opacity,
@@ -365,33 +465,39 @@ class Surface {
 
             //http://www.html5gamedevs.com/topic/7288-threejs-transparency-bug-or-limitation-or-what/
             //mesh.renderOrder = 0; // default 0
-            var sum = new THREE.Vector3(0,0,0);
-            for(var i = 0, il = mesh.geometry.vertices.length; i < il; ++i) {
-                sum = sum.add(mesh.geometry.vertices[i]);
-            }
+            //var sum = new THREE.Vector3(0,0,0);
+            //for(var i = 0, il = mesh.geometry.vertices.length; i < il; ++i) {
+            //    sum = sum.add(mesh.geometry.vertices[i]);
+            //}
 
             var realPos;
             if(ic.bControlGl && !ic.icn3dui.bNode) {
-                realPos = sum.multiplyScalar(1.0 / mesh.geometry.vertices.length).sub(ic.oriCenter).applyMatrix4(window.cam.matrixWorldInverse);
+                //realPos = sum.multiplyScalar(1.0 / mesh.geometry.vertices.length).sub(ic.oriCenter).applyMatrix4(window.cam.matrixWorldInverse);
+                realPos = sum.multiplyScalar(1.0 / verticesLen).sub(ic.oriCenter).applyMatrix4(window.cam.matrixWorldInverse);
             }
             else {
-                realPos = sum.multiplyScalar(1.0 / mesh.geometry.vertices.length).sub(ic.oriCenter).applyMatrix4(ic.cam.matrixWorldInverse);
+                //realPos = sum.multiplyScalar(1.0 / mesh.geometry.vertices.length).sub(ic.oriCenter).applyMatrix4(ic.cam.matrixWorldInverse);
+                realPos = sum.multiplyScalar(1.0 / verticesLen).sub(ic.oriCenter).applyMatrix4(ic.cam.matrixWorldInverse);
             }
             mesh.renderOrder = (ic.cam_z > 0) ? -parseInt(realPos.z) : parseInt(realPos.z);
 
             mesh.onBeforeRender = function(renderer, scene, camera, geometry, material, group) {
                 //https://juejin.im/post/5a0872d4f265da43062a4156
                 var sum = new THREE.Vector3(0,0,0);
-                for(var i = 0, il = this.geometry.vertices.length; i < il; ++i) {
-                    sum = sum.add(this.geometry.vertices[i]);
+                var vertices = geometry.getAttribute('position').array;
+                for(var i = 0, il = vertices.length; i < il; i += 3) {
+                    sum = sum.add(new THREE.Vector3(vertices[i], vertices[i+1], vertices[i+2]));
                 }
 
                 var realPos;
                 if(ic.bControlGl && !ic.icn3dui.bNode) {
-                    realPos = sum.multiplyScalar(1.0 / this.geometry.vertices.length).sub(ic.oriCenter).applyMatrix4(window.cam.matrixWorldInverse);
+                    //realPos = sum.multiplyScalar(1.0 / this.geometry.vertices.length).sub(ic.oriCenter).applyMatrix4(window.cam.matrixWorldInverse);
+                    realPos = sum.multiplyScalar(3.0 / vertices.length).sub(ic.oriCenter).applyMatrix4(window.cam.matrixWorldInverse);
                 }
                 else {
-                    realPos = sum.multiplyScalar(1.0 / this.geometry.vertices.length).sub(ic.oriCenter).applyMatrix4(ic.cam.matrixWorldInverse);
+                    //realPos = sum.multiplyScalar(1.0 / this.geometry.vertices.length).sub(ic.oriCenter).applyMatrix4(ic.cam.matrixWorldInverse);
+                    //realPos = thisClass.sum.multiplyScalar(1.0 / thisClass.verticesLen).sub(ic.oriCenter).applyMatrix4(ic.cam.matrixWorldInverse);
+                    realPos = sum.multiplyScalar(3.0 / vertices.length).sub(ic.oriCenter).applyMatrix4(ic.cam.matrixWorldInverse);
                 }
                 this.renderOrder = (ic.cam_z > 0) ? -parseInt(realPos.z) : parseInt(realPos.z);
             };
@@ -416,7 +522,7 @@ class Surface {
             var mesh = new THREE.Mesh(geo, new THREE.MeshPhongMaterial({
                 specular: ic.frac,
                 shininess: 10, //30,
-                emissive: 0x000000,
+                emissive: ic.emissive,
                 vertexColors: THREE.VertexColors,
                 wireframe: wireframe,
                 opacity: opacity,

@@ -115,11 +115,11 @@ class Axes {
         coneGeometry.translate( 0, 0.5, 0 );
         var material;
         if(bGlycan) {
-            material = new THREE.MeshPhongMaterial({ transparent: true, opacity: 0.5, specular: ic.frac, shininess: 30, emissive: 0x000000, color: color });
+            material = new THREE.MeshPhongMaterial({ transparent: true, opacity: 0.5, specular: ic.frac, shininess: ic.shininess, emissive: ic.emissive, color: color });
 
         }
         else {
-            material = new THREE.MeshPhongMaterial({ specular: ic.frac, shininess: 30, emissive: 0x000000, side: THREE.DoubleSide, color: color});
+            material = new THREE.MeshPhongMaterial({ specular: ic.frac, shininess: ic.shininess, emissive: ic.emissive, side: THREE.DoubleSide, color: color});
         }
 
         var cone = new THREE.Mesh( coneGeometry, material);

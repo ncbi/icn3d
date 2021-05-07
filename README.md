@@ -4,7 +4,7 @@
 
 ## About iCn3D
 
-"I see in 3D" (iCn3D) Structure Viewer is a WebGL-based 3D viewer using Three.js and jQuery. iCn3D synchronizes the display of 3D structure, 2D interaction, and 1D sequences and annotations. Users' custom display can be saved in a short URL or a PNG image. <b>Complete package</b> of iCn3D including Three.js and jQuery can be downloaded from [https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.24.6.zip](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-2.24.6.zip). The "Download ZIP" link in this page does not include third-party libraries. 
+"I see in 3D" (iCn3D) Structure Viewer is a WebGL-based 3D viewer using Three.js and jQuery. iCn3D synchronizes the display of 3D structure, 2D interaction, and 1D sequences and annotations. Users' custom display can be saved in a short URL or a PNG image. <b>Complete package</b> of iCn3D including Three.js and jQuery can be downloaded from [https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.1.0.zip](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.1.0.zip). The "Download ZIP" link in this page does not include third-party libraries. 
 * <b>View a 3D structure in iCn3D</b>: 
     Open the link https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html, input a PDB ID, and click "Load". You can also click "File" menu to "Open File" or input other IDs.
 
@@ -24,6 +24,9 @@
     
     All "Share Link" URLs can show the original view using the archived version of iCn3D by clicking "Open File > Share Link in Archived Ver." in "File" menu.    
 
+* <b>Node.js scripts using npm "icn3d"</b>: 
+    You can download [npm "icn3d" package](https://www.npmjs.com/package/icn3d) to write Node.js scripts by calling iCn3D functions. These scripts can be used to process 3D structures (e.g., calculate interactions) in batch mode. The example scripts are at [icn3dnode](https://github.com/ncbi/icn3d/tree/master/icn3dnode).
+
 * <b>Alternate SNPs in 3D</b>: 
     You can [alternate in 3D wild type and mutant of SNPs](https://structure.ncbi.nlm.nih.gov/icn3d/share.html?fNpzDuUE287SBFtz8) by clicking the menu "Analysis > Sequences & Annotations", the tab "Details", the checkbox "SNP", and mouseover on SNPs.
 
@@ -42,7 +45,7 @@
 
 iCn3D can be embedded in a web page by including the URL in HTML iframe, e.g. <iframe src="https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?mmdbid=1tup&width=300&height=300&showcommand=0&mobilemenu=1&showtitle=0" width="320" height="320" style="border:none"></iframe>. This method always shows the most recent version of iCn3D.
 
-To embed iCn3D with JavaScript libraries, the following libraries need to be included: jQuery, jQuery UI, Three.js, and iCn3D library. An html div tag to hold the 3D viewer is added. The iCn3D widget is initialized with the custom defined parameter "cfg": "var icn3dui = new iCn3DUI(cfg); icn3dui.show3DStructure();". Multiple iCn3D widgets can be embedded in a single page. Please see the source code of the [example page](https://www.ncbi.nlm.nih.gov/Structure/icn3d/example.html) for reference.
+To embed iCn3D with JavaScript libraries, the following libraries need to be included: jQuery, jQuery UI, Three.js, and iCn3D library. An html div tag to hold the 3D viewer is added. The iCn3D widget is initialized with the custom defined parameter "cfg": "var icn3dui = new icn3d.iCn3DUI(cfg); icn3dui.show3DStructure();". Multiple iCn3D widgets can be embedded in a single page. Please see the source code of the [example page](https://www.ncbi.nlm.nih.gov/Structure/icn3d/example.html) for reference.
 
 Users can choose to show the most recent version of iCn3D, or a locked version of iCn3D. To show the most recent version, use the library files without the version postfix as shown in the [iCn3D Web API page](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d.html#HowToUse). To show a locked version, use the library files with the version postfix as shown in the source code of [iCn3D page](https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?mmdbid=1tup). If the input is provided as an MMDB ID, both library files and backend cgis are versioned so that the 3D display will be stable. 
 
@@ -66,7 +69,7 @@ iCn3D also accepts the following file types: PDB, mmCIF, Mol2, SDF, and XYZ. The
 ## Third-party libraries used
 
 * **[jQuery and jQuery UI](https://jquery.com/)**: used as a general tool to write Javascript code. Some jQuery UI features are used.
-* **[Three.js](http://threejs.org/)**: used to set up the 3D view. (Replaced "splineTube = extrudePath.computeFrenetFrames( steps, false )" with "splineTube = options.frames !== undefined ? options.frames: extrudePath.computeFrenetFrames( steps, false )" to enable custom frames in ExtrudeGeometry.)
+* **[Three.js](http://threejs.org/)**: used to set up the 3D view.
 * **[D3.js](https://d3js.org/)**: used to draw force-directed graph.
 * **[DelPhi](http://honig.c2b2.columbia.edu/delphi)**: used to calculate electrostatic potential dynamically and is <b>licensed</b> from Columbia University.
 * **[DelPhiPKa](http://compbio.clemson.edu/pka_webserver)**: used to add hydrogens and partial charges to proteins and nucleotides.

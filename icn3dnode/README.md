@@ -20,10 +20,6 @@ Examples
 
 * <b>Ligand-Protein Interactions</b>
 
-    Go to the directory "nodescript":
-
-        cd nodescript
-        
     In the command line, run the following:
 
         node ligand.js 5R7Y JFM

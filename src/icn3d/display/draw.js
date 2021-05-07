@@ -106,8 +106,8 @@ class Draw {
     //        ic.directionalLight.position.copy(cam.position);
     //    }
 
-        ic.renderer.gammaInput = true
-        ic.renderer.gammaOutput = true
+//        ic.renderer.gammaInput = true
+//        ic.renderer.gammaOutput = true
 
         ic.renderer.setPixelRatio( window.devicePixelRatio ); // r71
         if(ic.scene) ic.renderer.render(ic.scene, cam);

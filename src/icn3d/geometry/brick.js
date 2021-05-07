@@ -15,7 +15,7 @@ class Brick {
         var cylinderGeometry = new THREE.CylinderGeometry(1, 1, 1, 4, 1);
 
         var mesh = new THREE.Mesh(cylinderGeometry, new THREE.MeshPhongMaterial(
-            { specular: ic.frac, shininess: 30, emissive: 0x000000, color: color }));
+            { specular: ic.frac, shininess: ic.shininess, emissive: ic.emissive, color: color }));
 
         mesh.position.copy(p0).add(p1).multiplyScalar(0.5);
         mesh.matrixAutoUpdate = false;

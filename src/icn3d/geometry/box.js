@@ -24,7 +24,7 @@ class Box {
         if(scale === undefined) scale = 0.8;
 
         if(bHighlight) {
-            if(color === undefined) color = this.hColor;
+            if(color === undefined) color = ic.hColor;
         }
         else {
             if(color === undefined) color = atom.color;
@@ -45,11 +45,11 @@ class Box {
 
         if(bHighlight || bGlycan) {
           mesh = new THREE.Mesh(ic.boxGeometry, new THREE.MeshPhongMaterial({ transparent: true, opacity: 0.5,
-              specular: ic.frac, shininess: 30, emissive: 0x000000, color: color }));
+              specular: ic.frac, shininess: ic.shininess, emissive: ic.emissive, color: color }));
         }
         else {
           mesh = new THREE.Mesh(ic.boxGeometry, new THREE.MeshPhongMaterial({
-              specular: ic.frac, shininess: 30, emissive: 0x000000, color: color }));
+              specular: ic.frac, shininess: ic.shininess, emissive: ic.emissive, color: color }));
         }
 
         mesh.scale.x = mesh.scale.y = mesh.scale.z = radius;

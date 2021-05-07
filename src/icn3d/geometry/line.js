@@ -24,25 +24,60 @@ class Line {
     createLineRepresentation(atoms, bHighlight) { var ic = this.icn3d, me = ic.icn3dui;
         if(ic.icn3dui.bNode) return;
 
-        var geo = new THREE.Geometry();
+        //var geo = new THREE.Geometry();
+        var geo = new THREE.BufferGeometry();
+        var vertices = [], colors = [], offset = 0, offset2 = 0;
+
         ic.reprSubCls.createRepresentationSub(atoms, undefined, function (atom0, atom1) {
             if (atom0.color === atom1.color) {
-                geo.vertices.push(atom0.coord);
-                geo.vertices.push(atom1.coord);
-                geo.colors.push(atom0.color);
-                geo.colors.push(atom1.color);
+                vertices[offset++] = atom0.coord.x;
+                vertices[offset++] = atom0.coord.y;
+                vertices[offset++] = atom0.coord.z;
+                vertices[offset++] = atom1.coord.x;
+                vertices[offset++] = atom1.coord.y;
+                vertices[offset++] = atom1.coord.z;
+
+                colors[offset2++] = atom0.color.r;
+                colors[offset2++] = atom0.color.g;
+                colors[offset2++] = atom0.color.b;
+                colors[offset2++] = atom1.color.r;
+                colors[offset2++] = atom1.color.g;
+                colors[offset2++] = atom1.color.b;
             } else {
                 var mp = atom0.coord.clone().add(atom1.coord).multiplyScalar(0.5);
-                geo.vertices.push(atom0.coord);
-                geo.vertices.push(mp);
-                geo.vertices.push(atom1.coord);
-                geo.vertices.push(mp);
-                geo.colors.push(atom0.color);
-                geo.colors.push(atom0.color);
-                geo.colors.push(atom1.color);
-                geo.colors.push(atom1.color);
+                vertices[offset++] = atom0.coord.x;
+                vertices[offset++] = atom0.coord.y;
+                vertices[offset++] = atom0.coord.z;
+                vertices[offset++] = mp.x;
+                vertices[offset++] = mp.y;
+                vertices[offset++] = mp.z;
+                vertices[offset++] = atom1.coord.x;
+                vertices[offset++] = atom1.coord.y;
+                vertices[offset++] = atom1.coord.z;
+                vertices[offset++] = mp.x;
+                vertices[offset++] = mp.y;
+                vertices[offset++] = mp.z;
+
+                colors[offset2++] = atom0.color.r;
+                colors[offset2++] = atom0.color.g;
+                colors[offset2++] = atom0.color.b;
+                colors[offset2++] = atom0.color.r;
+                colors[offset2++] = atom0.color.g;
+                colors[offset2++] = atom0.color.b;
+                colors[offset2++] = atom1.color.r;
+                colors[offset2++] = atom1.color.g;
+                colors[offset2++] = atom1.color.b;
+                colors[offset2++] = atom1.color.r;
+                colors[offset2++] = atom1.color.g;
+                colors[offset2++] = atom1.color.b;
             }
         });
+
+        var nComp = 3;
+        geo.setAttribute('position', new THREE.BufferAttribute(new Float32Array(vertices), nComp));
+        geo.setAttribute('color', new THREE.BufferAttribute(new Float32Array(colors), nComp));
+
+        //geo.computeVertexNormals();
 
         if(bHighlight !== 2) {
             var line;
@@ -51,7 +86,6 @@ class Line {
                 //line = new THREE.Mesh(geo, ic.matShader);
             }
             else {
-                //line = new THREE.Line(geo, new THREE.LineBasicMaterial({ linewidth: ic.linewidth, vertexColors: true }), THREE.LineSegments);
                 line = new THREE.LineSegments(geo, new THREE.LineBasicMaterial(
                     { linewidth: ic.linewidth, vertexColors: true }));
                 ic.mdl.add(line);
@@ -135,7 +169,10 @@ class Line {
     createSingleLine( src, dst, colorHex, dashed, dashSize ) { var ic = this.icn3d, me = ic.icn3dui;
         if(ic.icn3dui.bNode) return;
 
-        var geom = new THREE.Geometry();
+        //var geom = new THREE.Geometry();
+        var geo = new THREE.BufferGeometry();
+        var vertices = [];
+
         var mat;
 
         if(dashed) {
@@ -144,12 +181,21 @@ class Line {
             mat = new THREE.LineBasicMaterial({ linewidth: 1, color: colorHex });
         }
 
-        geom.vertices.push( src );
-        geom.vertices.push( dst );
-        if(dashed) geom.computeLineDistances(); // This one is SUPER important, otherwise dashed lines will appear as simple plain lines
+        vertices[0] = src.x;
+        vertices[1] = src.y;
+        vertices[2] = src.z;
+        vertices[3] = dst.x;
+        vertices[4] = dst.y;
+        vertices[5] = dst.z;
 
-        //var axis = new THREE.Line( geom, mat, THREE.LineSegments );
-        var axis = new THREE.LineSegments( geom, mat );
+        var nComp = 3;
+        geo.setAttribute('position', new THREE.BufferAttribute(new Float32Array(vertices), nComp));
+
+        //geo.computeVertexNormals();
+
+        //if(dashed) geo.computeLineDistances(); // This one is SUPER important, otherwise dashed lines will appear as simple plain lines
+        var axis = new THREE.LineSegments( geo, mat );
+        if(dashed) axis.computeLineDistances(); // This one is SUPER important, otherwise dashed lines will appear as simple plain lines
 
         return axis;
     }

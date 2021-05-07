@@ -27,7 +27,8 @@ class Impostor {
       }
 
       if (u.modelViewMatrixInverse) {
-        u.modelViewMatrixInverse.value.getInverse(this.modelViewMatrix);
+        //u.modelViewMatrixInverse.value.getInverse(this.modelViewMatrix);
+        u.modelViewMatrixInverse.value.copy( this.modelViewMatrix ).invert();
         updateList.push('modelViewMatrixInverse');
       }
 
@@ -37,8 +38,12 @@ class Impostor {
             u.modelViewMatrixInverse.value
           ).transpose();
         } else {
+          //u.modelViewMatrixInverseTranspose.value
+          //  .getInverse(this.modelViewMatrix)
+          //  .transpose();
           u.modelViewMatrixInverseTranspose.value
-            .getInverse(this.modelViewMatrix)
+            .copy( this.modelViewMatrix )
+            .invert()
             .transpose();
         }
         updateList.push('modelViewMatrixInverseTranspose');
@@ -58,17 +63,19 @@ class Impostor {
           tmpMatrix.copy(
             u.modelViewProjectionMatrix.value
           );
-          u.modelViewProjectionMatrixInverse.value.getInverse(
-            tmpMatrix
-          );
+          //u.modelViewProjectionMatrixInverse.value.getInverse(
+          //  tmpMatrix
+          //);
+          u.modelViewProjectionMatrixInverse.value.copy( tmpMatrix ).invert();
         } else {
           camera.updateProjectionMatrix();
           tmpMatrix.multiplyMatrices(
             camera.projectionMatrix, this.modelViewMatrix
           );
-          u.modelViewProjectionMatrixInverse.value.getInverse(
-            tmpMatrix
-          );
+          //u.modelViewProjectionMatrixInverse.value.getInverse(
+          //  tmpMatrix
+          //);
+          u.modelViewProjectionMatrixInverse.value.copy( tmpMatrix ).invert();
         }
         updateList.push('modelViewProjectionMatrixInverse');
       }
@@ -81,7 +88,8 @@ class Impostor {
 
       if (u.projectionMatrixInverse) {
         camera.updateProjectionMatrix();
-        u.projectionMatrixInverse.value.getInverse(camera.projectionMatrix);
+        //u.projectionMatrixInverse.value.getInverse(camera.projectionMatrix);
+        u.projectionMatrixInverse.value.copy( camera.projectionMatrix ).invert();
         updateList.push('projectionMatrixInverse');
       }
 
@@ -276,7 +284,7 @@ class Impostor {
                     attributeSize * itemSize[ a.type ]
                 );
 
-            geometry.addAttribute(
+            geometry.setAttribute(
                 name,
                 new THREE.BufferAttribute( buf, itemSize[ a.type ] )
                     .setDynamic( dynamic )

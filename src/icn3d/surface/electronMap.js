@@ -272,7 +272,8 @@ ElectronMap.prototype.fillvoxels = function(atoms, atomlist) { //(int seqinit,in
         }
     }
     else {
-        var inverseMatrix = new THREE.Matrix4().getInverse(this.matrix);
+        //var inverseMatrix = new THREE.Matrix4().getInverse(this.matrix);
+        var inverseMatrix = new THREE.Matrix4().copy( this.matrix ).invert();
 
         var indexArray = [];
         this.maxdist = parseInt(this.maxdist); // has to be integer
@@ -285,7 +286,8 @@ ElectronMap.prototype.fillvoxels = function(atoms, atomlist) { //(int seqinit,in
 
           var m = new THREE.Matrix3(), inverseM = new THREE.Matrix3();
           m.set(rot[0], rot[1], rot[2], rot[3], rot[4], rot[5], rot[6], rot[7], rot[8]);
-          inverseM.getInverse(m);
+          //inverseM.getInverse(m);
+          inverseM.copy(m).invert();
 
           inverseRot[0] = inverseM.elements[0];
           inverseRot[1] = inverseM.elements[3];

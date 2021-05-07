@@ -107,7 +107,7 @@ class Scene {
           ic.lightPos3 = new THREE.Vector3(0, 1, 1);
         }
 
-        var ambientLight = new THREE.AmbientLight(0x404040);
+        var ambientLight = new THREE.AmbientLight(0x888888); //(0x404040);
 
         ic.scene.add(ic.directionalLight);
         ic.scene.add(ambientLight);

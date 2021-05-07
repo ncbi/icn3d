@@ -22,10 +22,14 @@
   <script src="lib/jquery-3.5.0.min.js"></script>
   <script src="lib/jquery-ui-1.12.1.min.js"></script>
   <script src="lib/three_0.128.0.min.js"></script>
-  <script src="icn3d.min.js"></script>
+  <!--script src="icn3d.min.js"></script-->
 
-  <script type="text/javascript">
-    $( document ).ready(function() {
+  <script type="module">
+    import * as icn3d from './icn3d.module.js';
+    // add new classes
+    import {LoadStateFile} from './loadStateFile.js';
+
+    //$( document ).ready(function() {
       if (navigator.userAgent.indexOf("MSIE ") > 0 || !!navigator.userAgent.match(/Trident.*rv\:11\./)) { // If Internet Explorer
           $.getScript('icn3d_full_ui_2.24.7.min.js', function() {
             var version = 2;
@@ -137,7 +141,9 @@
           var icn3dui = (params.version == 2) ? new iCn3DUI(cfg) : new icn3d.iCn3DUI(cfg);
 
           $.when(icn3dui.show3DStructure()).then(function() {
-               //icn3dui.setOption('color', 'spectrum');
+               // call classes here
+               var loadStateFileCls = new LoadStateFile(icn3dui.icn3d);
+               loadStateFileCls.loadStateFile('color spectrum');
           });
 
           if(idName === '') $("#div" + i + "_wait").hide();
@@ -320,7 +326,7 @@
 
         return input;
       }
-    }); // document ready
+    //}); // document ready
   </script>
 
   <!-- log & Google Analytics -->
