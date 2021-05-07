@@ -1635,6 +1635,7 @@ class Events {
            me.htmlCls.clickMenuCls.setLogCmd("set theme black", true);
         });
 
+/*
         me.myEventCls.onIds("#" + me.pre + "mn6_doublecolorYes", "click", function(e) { var ic = me.icn3d;
            ic.bDoublecolor = true;
            ic.setOptionCls.setStyle('proteins', 'ribbon');
@@ -1646,6 +1647,7 @@ class Events {
            ic.drawCls.draw();
            me.htmlCls.clickMenuCls.setLogCmd("set double color off", true);
         });
+*/
 
         $(document).on("click", "." + me.pre + "snpin3d", function(e) { var ic = me.icn3d;
             e.stopImmediatePropagation();

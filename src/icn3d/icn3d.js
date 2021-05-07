@@ -23,10 +23,14 @@ import {Strand} from './geometry/strand.js';
 import {Strip} from './geometry/strip.js';
 import {Tube} from './geometry/tube.js';
 import {CartoonNucl} from './geometry/cartoonNucl.js';
-import {Surface} from './surface/surface.js';
 import {Label} from './geometry/label.js';
 import {Axes} from './geometry/axes.js';
 import {Glycan} from './geometry/glycan.js';
+
+import {Surface} from './surface/surface.js';
+import {ElectronMap} from './surface/electronMap.js';
+import {MarchingCube} from './surface/marchingCube.js';
+import {ProteinSurface} from './surface/proteinSurface.js';
 
 import {ApplyCenter} from './display/applyCenter.js';
 import {ApplyClbonds} from './display/applyClbonds.js';
@@ -167,7 +171,9 @@ class iCn3D {
         var bWebGL = !! ( window.WebGLRenderingContext && ( canvas.getContext( 'webgl' ) || canvas.getContext( 'experimental-webgl' ) ) );
 
         if(bWebGL){
-            this.renderer = new THREE.WebGLRenderer({
+            //https://discourse.threejs.org/t/three-js-r128-ext-frag-depth-and-angle-instanced-arrays-extensions-are-not-supported/26037
+            //this.renderer = new THREE.WebGLRenderer({
+            this.renderer = new THREE.WebGL1Renderer({
                 canvas: this.oriContainer.get(0), //this.container.get(0),
                 antialias: true,
                 preserveDrawingBuffer: true,
@@ -183,6 +189,8 @@ class iCn3D {
     }
 
     this.frac = new THREE.Color(0.1, 0.1, 0.1);
+    this.shininess = 40; //30
+    this.emissive = 0x111111; //0x000000
 
     // mobile has a problem when the scaleFactor is 2.0
     // the scaleFactor improve the image quality, but it has some centering and picking problems in some Mac when it is not 1

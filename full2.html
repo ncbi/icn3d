@@ -22,7 +22,7 @@
   <link rel="stylesheet" href="icn3d.css">
   <script src="lib/jquery-3.5.0.min.js"></script>
   <script src="lib/jquery-ui-1.12.1.min.js"></script>
-  <script src="lib/three_0.103.0.min.js"></script>
+  <script src="lib/three_0.128.0.min.js"></script>
   <script src="icn3d.min.js"></script>
 
   <script type="text/javascript">
@@ -163,16 +163,23 @@
           if(idName !== '') cfg[idName] = idArray[i];
 
           var icn3dui = (params.version == 2) ? new iCn3DUI(cfg) : new icn3d.iCn3DUI(cfg);
-          icn3dui.show3DStructure();
+
+          $.when(icn3dui.show3DStructure()).then(function() {
+               //icn3dui.setOption('color', 'spectrum');
+          });
+
           window.icn3duiHash['div0'] = icn3dui;
           if(idName === '') $("#div" + i + "_wait").hide();
-
 
           i = 1;
           var cfg2 = cfg;
           cfg2.divid = 'div' + i;
           var icn3dui2 = (params.version == 2) ? new iCn3DUI(cfg2) : new icn3d.iCn3DUI(cfg2);
-          icn3dui2.show3DStructure();
+
+          $.when(icn3dui2.show3DStructure()).then(function() {
+               //icn3dui2.setOption('color', 'spectrum');
+          });
+
           window.icn3duiHash['div1'] = icn3dui2;
           if(idName === '') $("#div" + i + "_wait").hide();
         //}
@@ -229,7 +236,7 @@
 
                var hashes = decodeSearch.split('&');
                for (var i = 0; i < hashes.length; i++) {
-                   hash = hashes[i].split('=');
+                   var hash = hashes[i].split('=');
                    params[hash[0].trim()] = (hash[1] !== undefined) ? hash[1].trim() : undefined;
                }
 

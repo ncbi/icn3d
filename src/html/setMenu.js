@@ -960,12 +960,12 @@ class SetMenu {
         html += "</ul>";
         html += "</li>";
 
-        html += "<li><span>Two-color Helix</span>";
-        html += "<ul>";
-        html += me.htmlCls.setHtmlCls.getRadio('mn6_doublecolor', 'mn6_doublecolorYes', 'Yes');
-        html += me.htmlCls.setHtmlCls.getRadio('mn6_doublecolor', 'mn6_doublecolorNo', 'No', true);
-        html += "</ul>";
-        html += "</li>";
+//        html += "<li><span>Two-color Helix</span>";
+//        html += "<ul>";
+//        html += me.htmlCls.setHtmlCls.getRadio('mn6_doublecolor', 'mn6_doublecolorYes', 'Yes');
+//        html += me.htmlCls.setHtmlCls.getRadio('mn6_doublecolor', 'mn6_doublecolorNo', 'No', true);
+//        html += "</ul>";
+//        html += "</li>";
 
 
         html += "<li><br/></li>";
@@ -1526,9 +1526,10 @@ class SetMenu {
 
         html += "<li><span>Develop</span>";
         html += "<ul>";
-        html += liStr + me.htmlCls.baseUrl + "icn3d/icn3d.html#embed' target='_blank'>How to Embed</a></li>";
+        html += liStr + me.htmlCls.baseUrl + "icn3d/icn3d.html#HowToUse' target='_blank'>How to Embed</a></li>";
         html += liStr + me.htmlCls.baseUrl + "icn3d/icn3d.html#datastructure' target='_blank'>Data Structure</a></li>";
         html += liStr + me.htmlCls.baseUrl + "icn3d/icn3d.html#classstructure' target='_blank'>Class Structure</a></li>";
+        html += liStr + me.htmlCls.baseUrl + "icn3d/icn3d.html#addclass' target='_blank'>Add New Classes</a></li>";
         html += "</ul>";
         html += "</li>";
 

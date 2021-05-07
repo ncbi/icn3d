@@ -41,7 +41,7 @@ class Sphere {
 
           color = ic.hColor;
 
-          mesh = new THREE.Mesh(ic.sphereGeometry, new THREE.MeshPhongMaterial({ transparent: true, opacity: 0.5, specular: ic.frac, shininess: 30, emissive: 0x000000, color: color }));
+          mesh = new THREE.Mesh(ic.sphereGeometry, new THREE.MeshPhongMaterial({ transparent: true, opacity: 0.5, specular: ic.frac, shininess: ic.shininess, emissive: ic.emissive, color: color }));
 
           mesh.scale.x = mesh.scale.y = mesh.scale.z = radius * (scale ? scale : 1);
           mesh.position.copy(pos);
@@ -62,10 +62,10 @@ class Sphere {
 
           //var color = atom.color;
           if(bGlycan) {
-              mesh = new THREE.Mesh(ic.sphereGeometry, new THREE.MeshPhongMaterial({ transparent: true, opacity: 0.5, specular: ic.frac, shininess: 30, emissive: 0x000000, color: color }));
+              mesh = new THREE.Mesh(ic.sphereGeometry, new THREE.MeshPhongMaterial({ transparent: true, opacity: 0.5, specular: ic.frac, shininess: ic.shininess, emissive: ic.emissive, color: color }));
           }
           else {
-              mesh = new THREE.Mesh(ic.sphereGeometry, new THREE.MeshPhongMaterial({ specular: ic.frac, shininess: 30, emissive: 0x000000, color: color }));
+              mesh = new THREE.Mesh(ic.sphereGeometry, new THREE.MeshPhongMaterial({ specular: ic.frac, shininess: ic.shininess, emissive: ic.emissive, color: color }));
           }
 
           mesh.scale.x = mesh.scale.y = mesh.scale.z = radius * (scale ? scale : 1);

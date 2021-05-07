@@ -98,24 +98,54 @@ class Curve {
             }
         }
         else {
-            var geo = new THREE.Geometry();
+            //var geo = new THREE.Geometry();
+            var geo = new THREE.BufferGeometry();
 
+            var vertices = [], colors = [];
+
+            var offset = 0, color;
             if(bHighlight === 2 && bRibbon) {
-                for (var i = 0, divInv = 1 / div; i < pnts.length; ++i) {
+                for (var i = 0, divInv = 1 / div; i < pnts.length; ++i, offset += 3) {
                     // shift the highlight a little bit to avoid the overlap with ribbon
                     pnts[i].addScalar(0.6); // ic.ribbonthickness is 0.4
-                    geo.vertices.push(pnts[i]);
-                    //geo.colors.push(me.parasCls.thr(colors[i === 0 ? 0 : Math.round((i - 1) * divInv)]));
-                    geo.colors.push(me.parasCls.thr(colors[i]));
+                    //geo.vertices.push(pnts[i]);
+                    //geo.colors.push(me.parasCls.thr(colors[i]));
+
+                    //vertices = vertices.concat(pnts[i].toArray());
+                    vertices[offset] = pnts[i].x;
+                    vertices[offset+1] = pnts[i].y;
+                    vertices[offset+2] = pnts[i].z;
+
+                    //colors = colors.concat(me.parasCls.thr(colors[i]).toArray());
+                    color = me.parasCls.thr(colors[i]);
+                    colors[offset] = color.r;
+                    colors[offset+1] = color.g;
+                    colors[offset+2] = color.b;
                 }
             }
             else {
-                for (var i = 0, divInv = 1 / div; i < pnts.length; ++i) {
-                    geo.vertices.push(pnts[i]);
-                    //geo.colors.push(me.parasCls.thr(colors[i === 0 ? 0 : Math.round((i - 1) * divInv)]));
-                    geo.colors.push(me.parasCls.thr(colors[i]));
+                for (var i = 0, divInv = 1 / div; i < pnts.length; ++i, offset += 3) {
+                    //geo.vertices.push(pnts[i]);
+                    //geo.colors.push(me.parasCls.thr(colors[i]));
+
+                    //vertices = vertices.concat(pnts[i].toArray());
+                    vertices[offset] = pnts[i].x;
+                    vertices[offset+1] = pnts[i].y;
+                    vertices[offset+2] = pnts[i].z;
+
+                    //colors = colors.concat(me.parasCls.thr(colors[i]).toArray());
+                    color = me.parasCls.thr(colors[i]);
+                    colors[offset] = color.r;
+                    colors[offset+1] = color.g;
+                    colors[offset+2] = color.b;
                 }
             }
+
+            var nComp = 3;
+            geo.setAttribute('position', new THREE.BufferAttribute(new Float32Array(vertices), nComp));
+            geo.setAttribute('color', new THREE.BufferAttribute(new Float32Array(colors), nComp));
+
+            //geo.computeVertexNormals();
 
             //var line = new THREE.Line(geo, new THREE.LineBasicMaterial({ linewidth: width, vertexColors: true }), THREE.LineStrip);
             var line = new THREE.Line(geo, new THREE.LineBasicMaterial({ linewidth: width, vertexColors: true }));

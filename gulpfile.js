@@ -36,7 +36,7 @@ gulp.task('libs-three',
             "node_modules/three/build/three.min.js"
         ])
         .pipe(gulp.dest(dist + '/lib'))
-        .pipe(rename('three_0.103.0.min.js'))
+        .pipe(rename('three_0.128.0.min.js'))
         .pipe(gulp.dest(dist + '/lib'));
   });
 
@@ -225,6 +225,38 @@ gulp.task('rollupnode', () => {
   });
 });
 
+gulp.task('rollupmodule', () => {
+  return rollup.rollup({
+    input: 'src/icn3dui.js',
+    plugins: [
+      resolve(),
+      //terser(),
+    ]
+  }).then(bundle => {
+    return bundle.write({
+      name: 'icn3d',
+      file: './tmpdir/icn3d_rollup_module.js',
+      format: 'es',
+    });
+  });
+});
+
+gulp.task('rollupmodulemin', () => {
+  return rollup.rollup({
+    input: 'src/icn3dui.js',
+    plugins: [
+      resolve(),
+      terser(),
+    ]
+  }).then(bundle => {
+    return bundle.write({
+      name: 'icn3d',
+      file: './tmpdir/icn3d_rollup_module.min.js',
+      format: 'es',
+    });
+  });
+});
+
 var alljs = [
     "tmpdir/third.js",
     "tmpdir/icn3d_rollup.js"
@@ -238,6 +270,12 @@ var allminjs = [
 var allnodejs = [
     "tmpdir/third_node.js",
     "tmpdir/icn3d_rollup_node.js"
+];
+
+var allmodulejs = [
+    "tmpdir/third.js",
+    "tmpdir/icn3d_rollup_module.js",
+    "src/thirdparty/moduleExport.js"
 ];
 
 // Create the gulp tasks for simple and full:
@@ -264,6 +302,14 @@ gulp.task("allnode",
     return gulp.src(allnodejs)
         .pipe(concat('icn3d.js'))
         .pipe(gulp.dest(icn3dnpm));
+  });
+
+gulp.task("allmodule",
+  function() {
+    return gulp.src(allmodulejs)
+        .pipe(concat('icn3d.module.js'))
+        .pipe(gulp.dest(dist))
+        .pipe(gulp.dest(build));
   });
 
 /*
@@ -298,21 +344,26 @@ gulp.task('html',
 
 gulp.task("html",
   function() {
-    return gulp.src(['index.html', 'full.html', 'full2.html', 'icn3d.html', 'share.html', 'example.html'])
+    return gulp.src(['index.html', 'full.html', 'full2.html'])
       .pipe(replace('icn3d.css', 'icn3d_' + package.version + '.css'))
       .pipe(replace('icn3d.min.js', 'icn3d_' + package.version + '.min.js'))
       .pipe(gulp.dest(dist));
   });
 
+gulp.task("html2",
+  function() {
+    return gulp.src(['icn3d.html', 'share.html', 'example.html'])
+      .pipe(gulp.dest(dist));
+  });
 
-gulp.task('html2',
+gulp.task('html3',
   function() {
     return gulp.src(['full.html'])
         .pipe(rename('full_' + package.version + '.html'))
         .pipe(gulp.dest(dist));
   });
 
-gulp.task('html3',
+gulp.task('html4',
   function() {
     return gulp.src(['full2.html'])
         .pipe(rename('full2_' + package.version + '.html'))
@@ -321,8 +372,16 @@ gulp.task('html3',
 
 //  'Prepare all the distribution files (except the .zip).',
 gulp.task('dist',
-  gulp.series('clean', 'libs-three','libs-jquery','libs-jquery-ui','libs-jquery-ui-css','libs-jquery-ui-images1','libs-jquery-ui-images2',
-   'ssimages','copy','copy-rename2','third','third_node','rollup','rollupmin','rollupnode','all','allmin','allnode','html','html2','html3')
+  gulp.series('clean', 'libs-three','libs-jquery','libs-jquery-ui','libs-jquery-ui-css','libs-jquery-ui-images1',
+    'libs-jquery-ui-images2','ssimages','copy','copy-rename2','third','third_node','rollup','rollupmin',
+    'rollupnode','rollupmodule','all','allmin','allnode','allmodule',
+    'html','html2','html3','html4')
+/*
+  gulp.series('clean', 'libs-three','libs-jquery','libs-jquery-ui','libs-jquery-ui-css','libs-jquery-ui-images1',
+    'libs-jquery-ui-images2','ssimages','copy','copy-rename2','third','third_node','rollup','rollupmin',
+    'all','allmin',
+    'html','html2','html3','html4')
+*/
 );
 
 //  'Zip up the dist into icn3d-<version>.zip',

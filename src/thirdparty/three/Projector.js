@@ -333,7 +333,8 @@ THREE.Projector = function () {
         if ( scene.autoUpdate === true ) scene.updateMatrixWorld();
         if ( camera.parent === undefined ) camera.updateMatrixWorld();
 
-        _viewMatrix.copy( camera.matrixWorldInverse.getInverse( camera.matrixWorld ) );
+        //_viewMatrix.copy( camera.matrixWorldInverse.getInverse( camera.matrixWorld ) );
+        _viewMatrix.copy( camera.matrixWorldInverse.copy(camera.matrixWorld).invert() );
         _viewProjectionMatrix.multiplyMatrices( camera.projectionMatrix, _viewMatrix );
 
         _frustum.setFromMatrix( _viewProjectionMatrix );
@@ -472,7 +473,9 @@ THREE.Projector = function () {
 
                     }
 
-                } else if ( geometry instanceof THREE.Geometry ) {
+                }
+                /*
+                else if ( geometry instanceof THREE.Geometry ) {
 
                     var vertices = geometry.vertices;
                     var faces = geometry.faces;
@@ -618,6 +621,7 @@ THREE.Projector = function () {
                     }
 
                 }
+                */
 
             } else if ( object instanceof THREE.Line ) {
 
@@ -659,7 +663,9 @@ THREE.Projector = function () {
 
                     }
 
-                } else if ( geometry instanceof THREE.Geometry ) {
+                }
+                /*
+                else if ( geometry instanceof THREE.Geometry ) {
 
                     _modelViewProjectionMatrix.multiplyMatrices( _viewProjectionMatrix, _modelMatrix );
 
@@ -715,6 +721,7 @@ THREE.Projector = function () {
                     }
 
                 }
+                */
 
             } else if ( object instanceof THREE.Sprite ) {
 

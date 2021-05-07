@@ -20,15 +20,15 @@
 <link rel="stylesheet" href="icn3d.css">
 <script src="lib/jquery-3.5.0.min.js"></script>
 <script src="lib/jquery-ui-1.12.1.min.js"></script>
-<script src="lib/three_0.103.0.min.js"></script>
+<script src="lib/three_0.128.0.min.js"></script>
 <script src="icn3d.min.js"></script>
 
 <style type="text/css">
 /* header */
 html {font-size: 10px;}
 
-.icn3d-main {font-size: 1.7em; padding: 120px 40px 0 40px;}
-.anchor { position: absolute; transform: translateY(-120px); }
+.icn3d-main {font-size: 1.5em; color:#444444; padding: 110px 40px 0 40px;}
+.anchor { position: absolute; transform: translateY(-110px); }
 @media screen and (max-device-width: 800px) {
     .icn3d-main {font-size: 1.7em; padding: 150px 40px 0 40px;}
     .anchor { position: absolute; transform: translateY(-150px); }
@@ -134,10 +134,10 @@ body {font-family: Verdana, Arial, Helvetica, sans-serif;}
 <!--div style='position:absolute; z-index:999; float:left; display:table-row;'-->
 <table border='0' cellpadding='0' cellspacing='0' style="width:100%; margin-left: 40px; background-color:#FFF"><tr>
 <td style="padding:6px 0 6px 0;">
-<span style="font-weight:bold; font-size:3em;">iCn3D</span>
+<span style="font-weight:bold; font-size:2.5em; color:#444444">iCn3D</span>
 </td>
 
-<td valign="top"><div class='icn3d-menu' style="margin:6px 0 0 30px; position:absolute; z-index:999;">
+<td valign="top"><div class='icn3d-menu' style="margin:4px 0 0 30px; position:absolute; z-index:999;">
 <accordion id='icn3d-accordion1' class='icn3d-accordion'>
 <h3>Menu</h3>
 <div>
@@ -162,6 +162,7 @@ body {font-family: Verdana, Arial, Helvetica, sans-serif;}
     <li><a href="#HowToUse"><span>Embed</span></a></li>
     <li><a href="#datastructure"><span>Data Structure</span></a></li>
     <li><a href="#classstructure"><span>Class Structure</span></a></li>
+    <li><a href="#addclass"><span>Add New Classes</span></a></li>
   </ul></li>
 <li><a href="https://www.ncbi.nlm.nih.gov/Structure/icn3d/docs/icn3d_help.html"><span>Help Doc</span></a></li>
 </ul>
@@ -186,7 +187,7 @@ body {font-family: Verdana, Arial, Helvetica, sans-serif;}
 
 <h3>What is iCn3D Structure Viewer?</h3>
 "I see in 3D" (iCn3D) Structure Viewer is a WebGL-based 3D viewer using Three.js and jQuery. iCn3D synchronizes the display of 3D structure, 2D interaction, and 1D sequences and annotations. Users' custom display can be saved in a short URL or a PNG image. Some features are listed below.<br/>
-
+<br/>
 <br/>
 <div id="icn3dwrap" style="font-size: 0.8em"></div>
 <br/>
@@ -212,12 +213,16 @@ You can also save "Share Link" in "File" menu to share with your colleagues. The
 All "Share Link" URLs can show the original view using the archived version of iCn3D by clicking "Open File > Share Link in Archived Ver." in "File" menu.<br/>
 <br/>
 
+<li><b>Node.js scripts using npm "icn3d"</b>:
+You can download <a href="https://www.npmjs.com/package/icn3d">npm "icn3d" package</a> to write Node.js scripts by calling iCn3D functions. These scripts can be used to process 3D structures (e.g., calculate interactions) in batch mode. The example scripts are at <a href="https://github.com/ncbi/icn3d/tree/master/icn3dnode">icn3dnode</a>.<br/>
+<br/>
+
 <li><b>Alternate SNPs in 3D</b><br/>
 You can <a href="https://structure.ncbi.nlm.nih.gov/icn3d/share.html?fNpzDuUE287SBFtz8">alternate in 3D wild type and mutant of SNPs</a> by clicking the menu "Analysis > Sequences & Annotations", the tab "Details", the checkbox "SNP", and mouseover on SNPs.<br/>
 <br/>
 
 <li><b>DelPhi Electrostatic Potential</b>:
-    You can view the <a href="https://structure.ncbi.nlm.nih.gov/icn3d/share.html?31DFceJiYw7SfStQA">DelPhi Electrostatic Potential</a> in the menu "Analysis > DelPhi Potential".<br/>
+You can view the <a href="https://structure.ncbi.nlm.nih.gov/icn3d/share.html?31DFceJiYw7SfStQA">DelPhi Electrostatic Potential</a> in the menu "Analysis > DelPhi Potential".<br/>
 <br/>
 
 <li><b>Use iCn3D in Jupyter Notebook</b><br/>
@@ -417,11 +422,11 @@ You can color structures with SASA, or show the SASA for each residue.<br/>
 </a>
 </div>
 
-<div class="gallery">
+<!--div class="gallery">
 <a href="https://structure.ncbi.nlm.nih.gov/icn3d/share.html?j45sXGcukpPKfL1cA" target="_blank">
 <img style="height:300px" src ="https://www.ncbi.nlm.nih.gov/Structure/icn3d/gallery/3GVU-j45sXGcukpPKfL1cA.png"><br>Ligand Binding with Two-color Helices (PDB 3GVU)
 </a>
-</div>
+</div-->
 
 <div class="gallery">
 <a href="https://structure.ncbi.nlm.nih.gov/icn3d/share.html?WYqJduJLuyqC4kZFA" target="_blank">
@@ -564,6 +569,8 @@ You can color structures with SASA, or show the SASA for each residue.<br/>
 <div style="clear:both;"></div>
 <br>
 
+<span class="anchor" id="Tutorial"></span>
+<a name="Tutorial"></a>
 <h3>Tutorial</h3>
 
 <span class="anchor" id="useicn3d"></span>
@@ -776,7 +783,10 @@ You can color structures with SASA, or show the SASA for each residue.<br/>
 
 </tbody></table>
 <br>
-<a name="selectb"></a><b>2b. Selection Definition</b> <a href="#Top"><span class="top">&nbsp;&nbsp;&nbsp;</span></a><br>
+
+<span class="anchor" id="selectb"></span>
+<a name="selectb"></a>
+<b>2b. Selection Definition</b> <a href="#Top"><span class="top">&nbsp;&nbsp;&nbsp;</span></a><br>
 <div>
 In the dialog Select -&gt; Advanced, users can use simple specification to select atoms: <br/><br/>
 <b>Specification:</b> In the selection "$1HHO,4N7N.A,B,C:5-10,KRDE,chemicals@CA,C":
@@ -971,9 +981,9 @@ In the dialog Select -&gt; Advanced, users can use simple specification to selec
 <tr><td valign='top'><span class="indent">Orange:</span></td>        <td valign='top'>set theme orange</td> <td valign='top'>setTheme</td></tr>
 <tr><td valign='top'><span class="indent">Black:</span></td>        <td valign='top'>set theme black</td> <td valign='top'>setTheme</td></tr>
 
-<tr><td colspan="3"><br>v) Style -&gt; Two-color Helix</td> </tr>
+<!--tr><td colspan="3"><br>v) Style -&gt; Two-color Helix</td> </tr>
 <tr><td valign='top'><span class="indent">Yes</span></td>                 <td valign='top'>set double color on</td> <td valign='top'>ic.bDoublecolor = true</td></tr>
-<tr><td valign='top'><span class="indent">No</span></td>                  <td valign='top'>set double color off</td> <td valign='top'>ic.bDoublecolor = false</td></tr>
+<tr><td valign='top'><span class="indent">No</span></td>                  <td valign='top'>set double color off</td> <td valign='top'>ic.bDoublecolor = false</td></tr-->
 
 
 </tbody></table>
@@ -1355,6 +1365,50 @@ Each function in classes in the directory "html" has a variable "me" to represen
 <tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>resizeCanvasCls (transform)</td></tr>
 <tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>transformCls (transform)</td></tr>
 </table>
+<br>
+
+<span class="anchor" id="addclass"></span>
+<a name="addclass"></a>
+
+<h3>Add New Classes<img src="https://www.ncbi.nlm.nih.gov/Structure/IMG/spacer.gif" width="25" height="1" border="0"><a href="#Top"><img src="https://www.ncbi.nlm.nih.gov/Structure/IMG/arrowup_blue.gif" width="12" height="12" border="0" alt="back to top"></a></h3>
+To contribute new classes to iCn3D, you can follow the example of "module.html". You need to do the following steps:<br>
+<ol>
+<li>Comment out icn3d library: &lt;!--script src="icn3d.min.js"&gt;&lt;/script--&gt;</li>
+<li>Script type should be "module": &lt;script type="module"&gt; </li>
+<li>Import iCn3D module: "import * as icn3d from './icn3d.module.js';"</li>
+<li>Import your custom class (e.g., "LoadStateFile"): "import {LoadStateFile} from './loadStateFile.js';"</li>
+<li>Remove "$( document ).ready(function() {" and the coresponding "//});" since module will always be run after the document is ready.</li>
+<li>Call your class inside the function "$.when(icn3dui.show3DStructure()).then(function() {". You first define the class instance "loadStateFileCls" and pass the iCn3D instance "icn3dui.icn3d". Then call the functions of your class.<br>
+<pre>
+    var loadStateFileCls = new LoadStateFile(icn3dui.icn3d);
+    loadStateFileCls.loadStateFile('color spectrum');
+</pre>
+</li>
+<li>Your custom class could look like the following.
+<br>
+<pre>
+    // import any classes from icn3d.module.js to be used in your class
+    import {LoadScript} from './icn3d.module.js';
+
+    // class name starts with a upper-case letter
+    class LoadStateFile {
+        // pass the instance of the class iCn3D
+        constructor(icn3d) {
+            this.icn3d = icn3d;
+        }
+
+        // functions start with a lower-case letter
+        // use "ic" to access the instance of iCn3D class
+        loadStateFile(fileStr) { var ic = this.icn3d;
+            // "ic" has a lot of class instances such as "loadScriptCls"
+            ic.loadScriptCls.loadScript(fileStr, true);
+        }
+    }
+
+    // export your class
+    export {LoadStateFile}
+</pre>
+</li>
 <br>
 
 <span class="anchor" id="helpdoc"></span>

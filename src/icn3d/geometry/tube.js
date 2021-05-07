@@ -187,10 +187,14 @@ class Tube {
 
         var segments, radiusSegments;
 
-        if(bRadiusArray) {
+//        if(bRadiusArray) {
             var circleDiv = ic.tubeDIV, axisDiv = ic.axisDIV;
             var circleDivInv = 1 / circleDiv, axisDivInv = 1 / axisDiv;
-            var geo = new THREE.Geometry();
+            //var geo = new THREE.Geometry();
+            var geo = new THREE.BufferGeometry();
+            var verticeArray = [], colorArray = [],indexArray = [], color;
+            var offset = 0, offset2 = 0, offset3 = 0
+
             var pnts_clrs = me.subdivideCls.subdivide(_pnts, colors, axisDiv, undefined, undefined, prevone, nexttwo);
 
             var pnts = pnts_clrs[0];
@@ -223,26 +227,58 @@ class Tube {
                 }
                 for (var j = 0; j < circleDiv; ++j) {
                     var angle = 2 * Math.PI * circleDivInv * j; //* dir  + offset;
-                    geo.vertices.push(pnts[i].clone().add(axis1.clone().multiplyScalar(Math.cos(angle))).add(axis2.clone().multiplyScalar(Math.sin(angle))));
+                    var point = pnts[i].clone().add(axis1.clone().multiplyScalar(Math.cos(angle))).add(axis2.clone().multiplyScalar(Math.sin(angle)));
+                    verticeArray[offset++] = point.x;
+                    verticeArray[offset++] = point.y;
+                    verticeArray[offset++] = point.z;
+
+                    color = (i == colors.length - 1 && colors.length > 1) ? me.parasCls.thr(colors[colors.length - 2]) : me.parasCls.thr(colors[i]);
+                    colorArray[offset2++] = color.r;
+                    colorArray[offset2++] = color.g;
+                    colorArray[offset2++] = color.b;
                 }
             }
-            var offset = 0;
+            var offsetTmp = 0, nComp = 3;
             for (var i = 0, lim = pnts.length - 1; i < lim; ++i) {
-                //var c = me.parasCls.thr(colors[Math.round((i - 1) * axisDivInv)]);
-                var c = me.parasCls.thr(colors[i]);
-
                 var reg = 0;
-                var r1 = geo.vertices[offset].clone().sub(geo.vertices[offset + circleDiv]).lengthSq();
-                var r2 = geo.vertices[offset].clone().sub(geo.vertices[offset + circleDiv + 1]).lengthSq();
+                //var r1 = geo.vertices[offset].clone().sub(geo.vertices[offset + circleDiv]).lengthSq();
+                //var r2 = geo.vertices[offset].clone().sub(geo.vertices[offset + circleDiv + 1]).lengthSq();
+                var pos = offsetTmp * nComp;
+                var point1 = new THREE.Vector3(verticeArray[pos], verticeArray[pos + 1], verticeArray[pos + 2]);
+                pos = (offsetTmp + circleDiv) * nComp;
+                var point2 = new THREE.Vector3(verticeArray[pos], verticeArray[pos + 1], verticeArray[pos + 2]);
+                pos = (offsetTmp + circleDiv + 1) * nComp;
+                var point3 = new THREE.Vector3(verticeArray[pos], verticeArray[pos + 1], verticeArray[pos + 2]);
+
+                var r1 = point1.clone().sub(point2).lengthSq();
+                var r2 = point1.clone().sub(point3).lengthSq();
                 if (r1 > r2) { r1 = r2; reg = 1; };
                 for (var j = 0; j < circleDiv; ++j) {
-                    geo.faces.push(new THREE.Face3(offset + j, offset + (j + reg) % circleDiv + circleDiv, offset + (j + 1) % circleDiv, undefined, c));
-                    geo.faces.push(new THREE.Face3(offset + (j + 1) % circleDiv, offset + (j + reg) % circleDiv + circleDiv, offset + (j + reg + 1) % circleDiv + circleDiv, undefined, c));
+                    //geo.faces.push(new THREE.Face3(offset + j, offset + (j + reg) % circleDiv + circleDiv, offset + (j + 1) % circleDiv, undefined, c));
+                    //geo.faces.push(new THREE.Face3(offset + (j + 1) % circleDiv, offset + (j + reg) % circleDiv + circleDiv, offset + (j + reg + 1) % circleDiv + circleDiv, undefined, c));
+                    //indexArray = indexArray.concat([offset + j, offset + (j + reg) % circleDiv + circleDiv, offset + (j + 1) % circleDiv]);
+                    indexArray[offset3++] = offsetTmp + j;
+                    indexArray[offset3++] = offsetTmp + (j + reg) % circleDiv + circleDiv;
+                    indexArray[offset3++] = offsetTmp + (j + 1) % circleDiv;
+
+                    //indexArray = indexArray.concat([offset + (j + 1) % circleDiv, offset + (j + reg) % circleDiv + circleDiv, offset + (j + reg + 1) % circleDiv + circleDiv]);
+                    indexArray[offset3++] = offsetTmp + (j + 1) % circleDiv;
+                    indexArray[offset3++] = offsetTmp + (j + reg) % circleDiv + circleDiv;
+                    indexArray[offset3++] = offsetTmp + (j + reg + 1) % circleDiv + circleDiv;
                 }
-                offset += circleDiv;
+                offsetTmp += circleDiv;
             }
-            geo.computeFaceNormals();
-            geo.computeVertexNormals(false);
+
+            geo.setAttribute('position', new THREE.BufferAttribute(new Float32Array(verticeArray), nComp));
+            geo.setAttribute('color', new THREE.BufferAttribute(new Float32Array(colorArray), nComp));
+
+            geo.setIndex(new THREE.BufferAttribute(new Uint32Array(indexArray), 1));
+            //geo.setIndex(indexArray);
+
+            //geo.computeFaceNormals();
+            //geo.computeVertexNormals(false);
+            geo.computeVertexNormals();
+/*
         }
         else {
             var axisDiv = ic.axisDIV;
@@ -275,7 +311,7 @@ class Tube {
             var faceIndices = [ 'a', 'b', 'c', 'd' ];
 
             // first, assign colors to vertices as desired
-            var prevColor;
+            var prevColor,  geoColors = {};
             for ( var s = 0; s <= segments; s++ ) {
                 for ( var r = 0; r < radiusSegments; r++ )
                 {
@@ -283,13 +319,15 @@ class Tube {
                     color = colors[s];
                     if(!color) color = prevColor;
 
-                    geo.colors[vertexIndex] = color; // use this array for convenience
+                    geoColors[vertexIndex] = color; // use this array for convenience
 
                     prevColor = color;
                 }
             }
+
             // copy the colors as necessary to the face's vertexColors array.
-            for ( var i = 0; i < geo.faces.length; i++ )
+            // after version r125, geo.faces is undefined for TubeGeometry
+            for ( var i = 0; geo.faces && i < geo.faces.length; i++ )
             {
                 face = geo.faces[ i ];
 
@@ -297,17 +335,17 @@ class Tube {
                 for( var j = 0; j < numberOfSides; j++ )
                 {
                     vertexIndex = face[ faceIndices[ j ] ];
-                    face.vertexColors[ j ] = geo.colors[ vertexIndex ];
+                    face.vertexColors[ j ] = geoColors[ vertexIndex ];
                 }
             }
 
             geo.computeFaceNormals();
             geo.computeVertexNormals(false);
         }
-
+*/
         var mesh;
         if(bHighlight === 2) {
-          mesh = new THREE.Mesh(geo, new THREE.MeshPhongMaterial({ transparent: true, opacity: 0.5, specular: ic.frac, shininess: 30, emissive: 0x000000, vertexColors: THREE.FaceColors, side: THREE.DoubleSide }));
+          mesh = new THREE.Mesh(geo, new THREE.MeshPhongMaterial({ transparent: true, opacity: 0.5, specular: ic.frac, shininess: ic.shininess, emissive: ic.emissive, vertexColors: THREE.FaceColors, side: THREE.DoubleSide }));
 
           ic.mdl.add(mesh);
         }
@@ -318,7 +356,8 @@ class Tube {
           ic.mdl.add(mesh);
         }
         else {
-          mesh = new THREE.Mesh(geo, new THREE.MeshPhongMaterial({ specular: ic.frac, shininess: 30, emissive: 0x000000, vertexColors: THREE.FaceColors, side: THREE.DoubleSide }));
+          mesh = new THREE.Mesh(geo, new THREE.MeshPhongMaterial({ specular: ic.frac, shininess: ic.shininess, emissive: ic.emissive, vertexColors: THREE.FaceColors, side: THREE.DoubleSide }));
+          //mesh = new THREE.Mesh(geo, new THREE.MeshPhongMaterial({ specular: ic.frac, shininess: ic.shininess, emissive: ic.emissive, color: 0xFFFFFF, side: THREE.DoubleSide }));
 
           ic.mdl.add(mesh);
         }
