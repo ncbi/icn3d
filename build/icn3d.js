@@ -7122,9 +7122,10 @@ var icn3d = (function (exports) {
 
                         for(var j = 0; j < 8; ++j) {
                             //colorArray = colorArray.concat(colors[i].toArray());
-                            colorArray[offset2++] = colors[i].r;
-                            colorArray[offset2++] = colors[i].g;
-                            colorArray[offset2++] = colors[i].b;
+                            var color = (colors[i]) ? colors[i] : (colors[i-1] ? colors[i-1] : {r:0, g:0, b:0});
+                            colorArray[offset2++] = color.r;
+                            colorArray[offset2++] = color.g;
+                            colorArray[offset2++] = color.b;
                        }
                     }
                     var faces = [[0, 2, -6, -8], [-4, -2, 6, 4], [7, 3, -5, -1], [-3, -7, 1, 5]];
@@ -7164,9 +7165,10 @@ var icn3d = (function (exports) {
                         colorArray[offset2++] = colors[0].g;
                         colorArray[offset2++] = colors[0].b;
                         //colorArray = colorArray.concat(colors[p0.length - 1].toArray());
-                        colorArray[offset2++] = colors[p0.length - 1].r;
-                        colorArray[offset2++] = colors[p0.length - 1].g;
-                        colorArray[offset2++] = colors[p0.length - 1].b;
+                        var color = (colors[p0.length - 1]) ? colors[p0.length - 1] : (colors[p0.length - 2] ? colors[p0.length - 2] : {r:0, g:0, b:0});
+                        colorArray[offset2++] = color.r;
+                        colorArray[offset2++] = color.g;
+                        colorArray[offset2++] = color.b;
                     }                vsize += 8;
                     //fs.push(new THREE.Face3(vsize, vsize + 2, vsize + 6, undefined, fs[0].color));
                     //fs.push(new THREE.Face3(vsize + 4, vsize, vsize + 6, undefined, fs[0].color));
@@ -15313,7 +15315,7 @@ var icn3d = (function (exports) {
                 }
                 else if(type == 'contact') {
                     pnts = ic.contactpnts;
-                    color = '#222';
+                    color = '#888';
                 }
                 else if(type == 'halogen') {
                     pnts = ic.halogenpnts;
@@ -19019,7 +19021,10 @@ var icn3d = (function (exports) {
                     if(bSchematic) label.bSchematic = 1;
 
                     label.text = me.utilsCls.residueName2Abbr(atom.resn);
-                    if(bNumber) label.text += atom.resi;
+                    if(bNumber) {
+                        label.text += atom.resi;
+                        label.factor = 0.3;
+                    }
                     label.size = size;
 
                     var atomColorStr = atom.color.getHexString().toUpperCase();
@@ -38370,7 +38375,7 @@ var icn3d = (function (exports) {
         //Create labels for a list of "labels", each of which has the properties 'position',
         //'text', 'size', 'color', and 'background'.
         createLabelRepresentation(labels) { var ic = this.icn3d; ic.icn3dui;
-            var factor = 3 * ic.oriMaxD / 100 * ic.labelScale;
+            var oriFactor = 3 * ic.oriMaxD / 100 * ic.labelScale;
 
             for(var name in labels) {
                 var labelArray = (labels[name] !== undefined) ? labels[name] : [];
@@ -38387,6 +38392,8 @@ var icn3d = (function (exports) {
                     var labelcolor = (label.color !== undefined) ? label.color : '#ffff00';
                     var labelbackground = (label.background !== undefined) ? label.background : '#cccccc';
                     var labelalpha = (label.alpha !== undefined) ? label.alpha : 1.0;
+                    var factor = (label.factor) ? oriFactor * label.factor : oriFactor;
+
                     // if label.background is undefined, no background will be drawn
                     labelbackground = label.background;
 
@@ -49141,10 +49148,10 @@ var icn3d = (function (exports) {
             this.EXTRAHEIGHT -= this.CMD_HEIGHT;
         }
 
-        this.GREY8 = "#888888"; // style protein grey
-        this.GREYB = "#BBBBBB";
-        this.GREYC = "#CCCCCC"; // grey background
-        this.GREYD = "#DDDDDD";
+        this.GREY8 = "#AAAAAA"; //"#888888"; // style protein grey
+        this.GREYB = "#CCCCCC"; //"#BBBBBB";
+        this.GREYC = "#DDDDDD"; //"#CCCCCC"; // grey background
+        this.GREYD = "#EEEEEE"; //"#DDDDDD";
         this.ORANGE = "#FFA500";
 
         this.themecolor = 'blue';

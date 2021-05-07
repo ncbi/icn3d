@@ -253,9 +253,10 @@ class Strip {
 
                     for(var j = 0; j < 8; ++j) {
                         //colorArray = colorArray.concat(colors[i].toArray());
-                        colorArray[offset2++] = colors[i].r;
-                        colorArray[offset2++] = colors[i].g;
-                        colorArray[offset2++] = colors[i].b;
+                        var color = (colors[i]) ? colors[i] : (colors[i-1] ? colors[i-1] : {r:0, g:0, b:0});
+                        colorArray[offset2++] = color.r;
+                        colorArray[offset2++] = color.g;
+                        colorArray[offset2++] = color.b;
                    }
                 }
                 var faces = [[0, 2, -6, -8], [-4, -2, 6, 4], [7, 3, -5, -1], [-3, -7, 1, 5]];
@@ -295,9 +296,10 @@ class Strip {
                     colorArray[offset2++] = colors[0].g;
                     colorArray[offset2++] = colors[0].b;
                     //colorArray = colorArray.concat(colors[p0.length - 1].toArray());
-                    colorArray[offset2++] = colors[p0.length - 1].r;
-                    colorArray[offset2++] = colors[p0.length - 1].g;
-                    colorArray[offset2++] = colors[p0.length - 1].b;
+                    var color = (colors[p0.length - 1]) ? colors[p0.length - 1] : (colors[p0.length - 2] ? colors[p0.length - 2] : {r:0, g:0, b:0});
+                    colorArray[offset2++] = color.r;
+                    colorArray[offset2++] = color.g;
+                    colorArray[offset2++] = color.b;
                 };
                 vsize += 8;
                 //fs.push(new THREE.Face3(vsize, vsize + 2, vsize + 6, undefined, fs[0].color));

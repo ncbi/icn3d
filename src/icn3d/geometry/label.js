@@ -177,7 +177,7 @@ class Label {
     //Create labels for a list of "labels", each of which has the properties 'position',
     //'text', 'size', 'color', and 'background'.
     createLabelRepresentation(labels) { var ic = this.icn3d, me = ic.icn3dui;
-        var factor = 3 * ic.oriMaxD / 100 * ic.labelScale;
+        var oriFactor = 3 * ic.oriMaxD / 100 * ic.labelScale;
 
         for(var name in labels) {
             var labelArray = (labels[name] !== undefined) ? labels[name] : [];
@@ -194,6 +194,8 @@ class Label {
                 var labelcolor = (label.color !== undefined) ? label.color : '#ffff00';
                 var labelbackground = (label.background !== undefined) ? label.background : '#cccccc';
                 var labelalpha = (label.alpha !== undefined) ? label.alpha : 1.0;
+                var factor = (label.factor) ? oriFactor * label.factor : oriFactor;
+
                 // if label.background is undefined, no background will be drawn
                 labelbackground = label.background;
 

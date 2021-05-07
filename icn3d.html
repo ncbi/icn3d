@@ -549,7 +549,7 @@ You can color structures with SASA, or show the SASA for each residue.<br/>
 </div>
 
 <div class="gallery">
-<a href="https://structure.ncbi.nlm.nih.gov/icn3d/share.html?M2koemdfWbewV1ri8" target="_blank">
+<a href="https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?mmtfid=3j3q" target="_blank">
 <img style="height:300px" src ="https://www.ncbi.nlm.nih.gov/Structure/icn3d/gallery/3J3Q-M2koemdfWbewV1ri8.png"><br>Large Structure (PDB 3J3Q)
 </a>
 </div>
@@ -1158,7 +1158,7 @@ In the dialog Select -&gt; Advanced, users can use simple specification to selec
 &lt;link rel="stylesheet" href="https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d.css"&gt;
 &lt;script src="https://www.ncbi.nlm.nih.gov/Structure/icn3d/lib/jquery.min.js"&gt;&lt;/script&gt;
 &lt;script src="https://www.ncbi.nlm.nih.gov/Structure/icn3d/lib/jquery-ui.min.js"&gt;&lt;/script&gt;
-&lt;script src="https://www.ncbi.nlm.nih.gov/Structure/icn3d/lib/three.min.js"&gt;&lt;/script&gt;
+&lt;script src="https://www.ncbi.nlm.nih.gov/Structure/icn3d/lib/three128.min.js"&gt;&lt;/script&gt;
 &lt;script src="https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d.min.js"&gt;&lt;/script&gt;</pre>
 
     <li><a name="HowToUseStep2"></a><b>Position the widget with an html div</b></li>
@@ -1409,6 +1409,9 @@ To contribute new classes to iCn3D, you can follow the example of "module.html".
     export {LoadStateFile}
 </pre>
 </li>
+<li>Install <a href="https://www.npmjs.com/package/static-server">static-server</a> and run "static-server -i index.html -o" to test your code. "import" and "export" do not work in "file://" protocol.
+</li>
+</ol>
 <br>
 
 <span class="anchor" id="helpdoc"></span>

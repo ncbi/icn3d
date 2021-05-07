@@ -51,7 +51,10 @@ class ResidueLabels {
                 if(bSchematic) label.bSchematic = 1;
 
                 label.text = me.utilsCls.residueName2Abbr(atom.resn);
-                if(bNumber) label.text += atom.resi;
+                if(bNumber) {
+                    label.text += atom.resi;
+                    label.factor = 0.3;
+                }
                 label.size = size;
 
                 var atomColorStr = atom.color.getHexString().toUpperCase();
