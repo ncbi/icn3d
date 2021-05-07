@@ -530,7 +530,7 @@ class HBond {
             }
             else if(type == 'contact') {
                 pnts = ic.contactpnts;
-                color = '#222';
+                color = '#888';
             }
             else if(type == 'halogen') {
                 pnts = ic.halogenpnts;

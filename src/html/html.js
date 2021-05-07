@@ -50,10 +50,10 @@ class Html {
         this.EXTRAHEIGHT -= this.CMD_HEIGHT;
     }
 
-    this.GREY8 = "#888888"; // style protein grey
-    this.GREYB = "#BBBBBB";
-    this.GREYC = "#CCCCCC"; // grey background
-    this.GREYD = "#DDDDDD";
+    this.GREY8 = "#AAAAAA"; //"#888888"; // style protein grey
+    this.GREYB = "#CCCCCC"; //"#BBBBBB";
+    this.GREYC = "#DDDDDD"; //"#CCCCCC"; // grey background
+    this.GREYD = "#EEEEEE"; //"#DDDDDD";
     this.ORANGE = "#FFA500";
 
     this.themecolor = 'blue';
