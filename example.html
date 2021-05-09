@@ -34,7 +34,7 @@ body {font-family: Verdana, Arial, Helvetica, sans-serif;}
 <link rel="stylesheet" href="icn3d.css">
 <script src="lib/jquery.min.js"></script>
 <script src="lib/jquery-ui.min.js"></script>
-<script src="lib/three128.min.js"></script>
+<script src="lib/threeClass.min.js"></script>
 <script src="icn3d.min.js"></script>
 
   <script type="text/javascript">
@@ -42,12 +42,7 @@ body {font-family: Verdana, Arial, Helvetica, sans-serif;}
       function setupViewer(idName, idValue, divid, command) {
         var options = {};
 
-        // --Three Methods to modify the iCn3D view--
-        // --Modify iCn3D Method 1--: You can change the default options.
-        //Options are available at: https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d.html#DisplayOptions
-        options['chemicalbinding'] = 'show';
-
-        // --Modify iCn3D Method 2--: add commands, e.g., 'color spectrum'
+        // --Modify iCn3D --: add commands, e.g., 'color spectrum'
         command = (command) ? command : '';
 
         var cfg = {
