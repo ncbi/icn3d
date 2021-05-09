@@ -64,6 +64,8 @@ A { text-decoration: none;}
 .gallery {float:left; border: solid 1px #0000ff; padding: 5px; margin: 10px; text-align:center;}
 
 body {font-family: Verdana, Arial, Helvetica, sans-serif;}
+
+pre span {color: red;}
 </style>
 
 <script type="text/javascript">
@@ -669,445 +671,1582 @@ You can color structures with SASA, or show the SASA for each residue.<br/>
 
 <span class="anchor" id="commands"></span>
 <a name="commands"></a>
-<h3>Menus, Commands, and Methods of the advanced interface<img src="https://www.ncbi.nlm.nih.gov/Structure/IMG/spacer.gif" width="25" height="1" border="0"><a href="#Top"><img src="https://www.ncbi.nlm.nih.gov/Structure/IMG/arrowup_blue.gif" width="12" height="12" border="0" alt="back to top"></a></h3>
+<h3>Menus, Commands, and Methods of the advanced interface<img src="https://www.ncbi.nlm.nih.gov/Structure/IMG/spacer.gif" width="25" height="1" border="0">
+    <a href="#Top"><img src="https://www.ncbi.nlm.nih.gov/Structure/IMG/arrowup_blue.gif" width="12" height="12" border="0" alt="back to top"></a>
+</h3>
 <a name="file"></a><b>1. File</b> <a href="#Top"><span class="top">&nbsp;&nbsp;&nbsp;</span></a><br>
-<table width='100%'><tr><td valign='top' width='30%'><b>Menu</b></td><td valign='top' width='40%'><b>Command</b></td><td valign='top'><b>Method</b></td></tr>
-<tbody>
-<tr><td colspan="3">a) Retrieve by ID</td></tr>
-<tr><td valign='top'><span class="indent">MMDB ID:</span></td>          <td valign='top'>load mmdb [1GPK]</td> <td valign='top'><a href="#downloadMmdb">downloadMmdb</a></td></tr>
-<tr><td width="240"><span class="indent">MMTF ID:</span></td>           <td valign='top'>load mmtf [1GPK]</td> <td valign='top'><a href="#downloadMmtf">downloadMmtf</a></td></tr>
-<tr><td valign='top'><span class="indent">PDB ID:</span></td>           <td valign='top'>load pdb [1GPK]</td> <td valign='top'><a href="#downloadPdb">downloadPdb</a></td></tr>
-<tr><td valign='top'><span class="indent">OPM PDB ID:</span></td>           <td valign='top'>load opm [6JXR]</td> <td valign='top'><a href="#downloadPdb">downloadOpm</a></td></tr>
-<tr><td valign='top'><span class="indent">mmCIF ID:</span></td>          <td valign='top'>load mmcif [1GPK]</td> <td valign='top'><a href="#downloadMmcif">downloadMmcif</a></td></tr>
-<tr><td valign='top'><span class="indent">NCBI gi:</span></td>               <td valign='top'>load gi [827343227]</td> <td valign='top'><a href="#downloadGi">downloadGi</a></td></tr>
-<tr><td valign='top'><span class="indent">PubChem CID:</span></td>              <td valign='top'>load cid [2244]</td> <td valign='top'><a href="#downloadCid">downloadCid</a></td></tr>
+<table width='100%'>
+    <tr>
+        <td valign='top' width='30%'><b>Menu</b></td>
+        <td valign='top' width='40%'><b>Command</b></td>
+        <td valign='top'><b>Method</b></td>
+    </tr>
+    <tbody>
+        <tr>
+            <td colspan="3">a) Retrieve by ID</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">MMDB ID:</span></td>
+            <td valign='top'>load mmdb [1GPK]</td>
+            <td valign='top'>ic.mmdbParserCls.downloadMmdb</td>
+        </tr>
+        <tr>
+            <td width="240"><span class="indent">MMTF ID:</span></td>
+            <td valign='top'>load mmtf [1GPK]</td>
+            <td valign='top'>ic.mmtfParserCls.downloadMmtf</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">PDB ID:</span></td>
+            <td valign='top'>load pdb [1GPK]</td>
+            <td valign='top'>ic.pdbParserCls.downloadPdb</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">OPM PDB ID:</span></td>
+            <td valign='top'>load opm [6JXR]</td>
+            <td valign='top'>ic.opmParserCls.downloadOpm</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">mmCIF ID:</span></td>
+            <td valign='top'>load mmcif [1GPK]</td>
+            <td valign='top'>ic.mmcifParserCls.downloadMmcif</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">NCBI gi:</span></td>
+            <td valign='top'>load gi [827343227]</td>
+            <td valign='top'>ic.mmdbParserCls.downloadGi</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">PubChem CID:</span></td>
+            <td valign='top'>load cid [2244]</td>
+            <td valign='top'>ic.sdfParserCls.downloadCid</td>
+        </tr>
 
-<tr><td colspan="3">b) Open File</td> </tr>
-<tr><td valign='top'><span class="indent">PDB File:</span></td>            <td valign='top'>[no command available]</td> <td valign='top'></td></tr>
-<tr><td valign='top'><span class="indent">mmCIF File:</span></td>          <td valign='top'>[no command available]</td> <td valign='top'></td></tr>
-<tr><td valign='top'><span class="indent">Mol2 File:</span></td>          <td valign='top'>[no command available]</td> <td valign='top'></td></tr>
-<tr><td valign='top'><span class="indent">SDF File:</span></td>          <td valign='top'>[no command available]</td> <td valign='top'></td></tr>
-<tr><td valign='top'><span class="indent">XYZ File:</span></td>          <td valign='top'>[no command available]</td> <td valign='top'></td></tr>
-<tr><td valign='top'><span class="indent">URL (Same Host):</span></td>          <td valign='top'>load url [https://files.rcsb.org/view/1gpk.pdb]</td> <td valign='top'><a href="#downloadUrl">downloadUrl</a></td></tr>
-<tr><td valign='top'><span class="indent">iCn3D PNG Image:</span></td>   <td valign='top'>[no command available]</td> <td valign='top'></td></tr>
-<tr><td valign='top'><span class="indent">State/Script File:</span></td>   <td valign='top'>[no command available]</td> <td valign='top'><a href="#loadScript">loadScript</a></td></tr>
-<tr><td valign='top'><span class="indent">Selection File:</span></td>   <td valign='top'>[no command available]</td> <td valign='top'></td></tr>
-<tr><td valign='top'><span class="indent">Electron Density (DSN6) - Local File:</span></td>   <td valign='top'>set map 2fofc sigma 1.5</td> <td valign='top'>loadDsn6Data()</td></tr>
-<tr><td valign='top'><span class="indent">Electron Density (DSN6) - URL (Same Host):</span></td>   <td valign='top'>set map 2fofc sigma 1.5 | [URL]</td> <td valign='top'>Dsn6ParserBase()</td></tr>
+        <tr>
+            <td colspan="3">b) Open File</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">PDB File:</span></td>
+            <td valign='top'>[no command available]</td>
+            <td valign='top'></td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">mmCIF File:</span></td>
+            <td valign='top'>[no command available]</td>
+            <td valign='top'></td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">Mol2 File:</span></td>
+            <td valign='top'>[no command available]</td>
+            <td valign='top'></td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">SDF File:</span></td>
+            <td valign='top'>[no command available]</td>
+            <td valign='top'></td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">XYZ File:</span></td>
+            <td valign='top'>[no command available]</td>
+            <td valign='top'></td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">URL (Same Host):</span></td>
+            <td valign='top'>load url [https://files.rcsb.org/view/1gpk.pdb]</td>
+            <td valign='top'>ic.pdbParserCls.downloadUrl</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">iCn3D PNG Image:</span></td>
+            <td valign='top'>[no command available]</td>
+            <td valign='top'></td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">State/Script File:</span></td>
+            <td valign='top'>[no command available]</td>
+            <td valign='top'>ic.loadScriptCls.loadScript</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">Selection File:</span></td>
+            <td valign='top'>[no command available]</td>
+            <td valign='top'></td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">Electron Density (DSN6) - Local File:</span></td>
+            <td valign='top'>set map 2fofc sigma 1.5</td>
+            <td valign='top'>ic.dsn6ParserCls.loadDsn6Data()</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">Electron Density (DSN6) - URL (Same Host):</span></td>
+            <td valign='top'>set map 2fofc sigma 1.5 | [URL]</td>
+            <td valign='top'>ic.dsn6ParserCls.dsn6ParserBase()</td>
+        </tr>
 
-<tr><td colspan="3">c) Align</td> </tr>
-<tr><td valign='top'><span class="indent">Sequence to Structure:</span></td>            <td valign='top'>load seq_struc_ids [23491729,1TUP_A]</td> <td valign='top'><a href="#downloadBlast_rep_id">downloadBlast_rep_id</a></td></tr>
-<tr><td valign='top'><span class="indent">Structure to Structure - Invariant Substructure Superposed:</span></td>          <td valign='top'>load alignment [1HHO,4N7N] | parameters atype=1</td> <td valign='top'><a href="#downloadAlignment">downloadAlignment</a></td></tr>
-<tr><td valign='top'><span class="indent">Structure to Structure - All Matching Molecules Superposed:</span></td>          <td valign='top'>load alignment [1HHO,4N7N] | parameters atype=0</td> <td valign='top'><a href="#downloadAlignment">downloadAlignment</a></td></tr>
-<tr><td valign='top'><span class="indent">Chain to Chain:</span></td>          <td valign='top'>load chainalignment [1HHO_A,4N7N_A]</td> <td valign='top'><a href="#downloadChainAlignment">downloadChainAlignment</a></td></tr>
+        <tr>
+            <td colspan="3">c) Align</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">Sequence to Structure:</span></td>
+            <td valign='top'>load seq_struc_ids [23491729,1TUP_A]</td>
+            <td valign='top'>ic.mmdbParserCls.downloadBlast_rep_id</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">Structure to Structure - Invariant Substructure Superposed:</span></td>
+            <td valign='top'>load alignment [1HHO,4N7N] | parameters atype=1</td>
+            <td valign='top'>ic.alignParserCls.downloadAlignment</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">Structure to Structure - All Matching Molecules Superposed:</span></td>
+            <td valign='top'>load alignment [1HHO,4N7N] | parameters atype=0</td>
+            <td valign='top'>ic.alignParserCls.downloadAlignment</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">Chain to Chain:</span></td>
+            <td valign='top'>load chainalignment [1HHO_A,4N7N_A]</td>
+            <td valign='top'>ic.chainalignParserCls.downloadChainAlignment</td>
+        </tr>
 
-<tr><td valign='top'>d) Realign Selection</td>         <td valign='top'>realign on seq align</td> <td valign='top'><a href="#shareLink">realignOnSeqAlign</a></td></tr>
+        <tr>
+            <td valign='top'>d) Realign Selection</td>
+            <td valign='top'>realign on seq align</td>
+            <td valign='top'>ic.realignParserCls.realignOnSeqAlign</td>
+        </tr>
 
-<tr><td colspan="3">e) 3D Printing</td> </tr>
-<tr><td valign='top'><span class="indent">VRML (Color, W/ Stabilizers):</span></td>          <td valign='top'>export vrml stabilizer file</td> <td valign='top'><a href="#saveVrmlFile">saveVrmlFile</a></td></tr>
-<tr><td valign='top'><span class="indent">STL (W/ Stabilizers):</span></td>          <td valign='top'>export stl stabilizer file</td> <td valign='top'><a href="#saveStlFile">saveStlFile</a></td></tr>
+        <tr>
+            <td colspan="3">e) 3D Printing</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">VRML (Color, W/ Stabilizers):</span></td>
+            <td valign='top'>export vrml stabilizer file</td>
+            <td valign='top'>ic.export3DCls.saveVrmlFile</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">STL (W/ Stabilizers):</span></td>
+            <td valign='top'>export stl stabilizer file</td>
+            <td valign='top'>ic.export3DCls.saveStlFile</td>
+        </tr>
 
-<tr><td valign='top'><span class="indent">VRML (Color):</span></td>          <td valign='top'>export vrml file</td> <td valign='top'><a href="#saveVrmlFile">saveVrmlFile</a></td></tr>
-<tr><td valign='top'><span class="indent">STL:</span></td>          <td valign='top'>export stl file</td> <td valign='top'><a href="#saveStlFile">saveStlFile</a></td></tr>
-<tr><td valign='top'><span class="indent">Add All Stabilizers:</span></td>          <td valign='top'>stabilizer</td> <td valign='top'><a href="#addStabilizer">addStabilizer</a></td></tr>
-<tr><td valign='top'><span class="indent">Remove All Stabilizers:</span></td>          <td valign='top'>set stabilizer off</td> <td valign='top'><a href="#hideStabilizer">hideStabilizer</a></td></tr>
-<tr><td valign='top'><span class="indent">Add One Stabilizer:</span></td>          <td valign='top'>add one stabilizer | [atom serial] [atom serial]</td> <td valign='top'></td></tr>
-<tr><td valign='top'><span class="indent">Remove One Stabilizer:</span></td>          <td valign='top'>remove one stabilizer | [atom serial] [atom serial]</td> <td valign='top'></td></tr>
-<tr><td valign='top'><span class="indent">Set Thickness:</span></td>          <td valign='top'>set thickness | linerad 0.6 | coilrad 1 | stickrad 0.8 | ribbonthick 0.8 | proteinwidth 2 | nucleotidewidth 1.2 | ballscale 0.6</td> <td valign='top'></td></tr>
-<tr><td valign='top'><span class="indent">Reset Thickness:</span></td>          <td valign='top'>reset thickness</td> <td valign='top'><a href="#resetAfter3Dprint">resetAfter3Dprint</a></td></tr>
+        <tr>
+            <td valign='top'><span class="indent">VRML (Color):</span></td>
+            <td valign='top'>export vrml file</td>
+            <td valign='top'>ic.export3DCls.saveVrmlFile</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">STL:</span></td>
+            <td valign='top'>export stl file</td>
+            <td valign='top'>ic.export3DCls.saveStlFile</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">Add All Stabilizers:</span></td>
+            <td valign='top'>stabilizer</td>
+            <td valign='top'>ic.threeDPrintCls.addStabilizer</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">Remove All Stabilizers:</span></td>
+            <td valign='top'>set stabilizer off</td>
+            <td valign='top'>ic.threeDPrintCls.hideStabilizer</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">Add One Stabilizer:</span></td>
+            <td valign='top'>add one stabilizer | [atom serial] [atom serial]</td>
+            <td valign='top'></td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">Remove One Stabilizer:</span></td>
+            <td valign='top'>remove one stabilizer | [atom serial] [atom serial]</td>
+            <td valign='top'></td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">Set Thickness:</span></td>
+            <td valign='top'>set thickness | linerad 0.6 | coilrad 1 | stickrad 0.8 | ribbonthick 0.8 | proteinwidth 2 | nucleotidewidth 1.2 | ballscale 0.6</td>
+            <td valign='top'></td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">Reset Thickness:</span></td>
+            <td valign='top'>reset thickness</td>
+            <td valign='top'>ic.threeDPrintCls.resetAfter3Dprint</td>
+        </tr>
 
-<tr><td colspan="3">f) Save Files</td> </tr>
-<tr><td valign='top'><span class="indent">iCn3D PNG Image:</span></td>          <td valign='top'>export canvas (URL example: <a href="https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?mmdbid=1top&command=export%20canvas" target="_blank">https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?mmdbid=1top&command=export%20canvas</a>)</td> <td valign='top'><a href="#saveFile">saveFile([filename], 'png')</a></td></tr>
-<tr><td valign='top'><span class="indent">State File:</span></td>            <td valign='top'>[no command available]</td> <td valign='top'><a href="#saveFile">saveFile</a></td></tr>
-<tr><td valign='top'><span class="indent">All Selections:</span></td>   <td valign='top'>[no command available]</td> <td valign='top'><a href="#saveFile">saveFile</a></td></tr>
-<tr><td valign='top'><span class="indent">Residue Counts:</span></td>   <td valign='top'>[no command available]</td> <td valign='top'><a href="#saveFile">saveFile</a></td></tr>
-<tr><td valign='top'><span class="indent">PDB:</span></td>   <td valign='top'>[no command available]</td> <td valign='top'>getAtomPDB</td></tr>
-</tr>
+        <tr>
+            <td colspan="3">f) Save Files</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">iCn3D PNG Image:</span></td>
+            <td valign='top'>export canvas (URL example: <a href="https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?mmdbid=1top&command=export%20canvas" target="_blank">https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?mmdbid=1top&command=export%20canvas</a>)</td>
+            <td valign='top'>ic.saveFileCls.saveFile([filename], 'png')</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">State File:</span></td>
+            <td valign='top'>[no command available]</td>
+            <td valign='top'>ic.saveFileCls.saveFile</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">All Selections:</span></td>
+            <td valign='top'>[no command available]</td>
+            <td valign='top'>ic.saveFileCls.saveFile</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">Residue Counts:</span></td>
+            <td valign='top'>[no command available]</td>
+            <td valign='top'>ic.saveFileCls.saveFile</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">PDB:</span></td>
+            <td valign='top'>[no command available]</td>
+            <td valign='top'>ic.saveFileCls.getAtomPDB</td>
+        </tr>
+        </tr>
 
-<tr><td valign='top'>g) Share Link:</td>         <td valign='top'>[no command available]</td> <td valign='top'><a href="#shareLink">shareLink</a></td></tr>
+        <tr>
+            <td valign='top'>g) Share Link:</td>
+            <td valign='top'>[no command available]</td>
+            <td valign='top'>ic.shareLinkCls.shareLink</td>
+        </tr>
 
-<tr><td valign='top'>g) Replay Each Step:</td>         <td valign='top'>replay on</td> <td valign='top'>replayon</td></tr>
+        <tr>
+            <td valign='top'>g) Replay Each Step:</td>
+            <td valign='top'>replay on</td>
+            <td valign='top'>replayon</td>
+        </tr>
 
-</tbody></table>
+    </tbody>
+</table>
 <br>
 <a name="select"></a><b>2. Select</b> <a href="#Top"><span class="top">&nbsp;&nbsp;&nbsp;</span></a><br>
-<table width='100%'><tr><td valign='top' width='30%'><b>Menu</b></td><td valign='top' width='40%'><b>Command</b></td><td valign='top'><b>Method</b></td></tr>
-<tr><td valign='top'>a) Defined Sets:</td>     <td valign='top'>defined sets</td> <td valign='top'><a href="#showSets">showSets</a></td></tr>
-<tr><td valign='top'><span class="indent">Select sets:</span></td>    <td valign='top'>select saved atoms [name1] or/and/not [name2]</td> <td valign='top'><a href="#changeCustomAtoms">changeCustomAtoms</a></td></tr>
-<tr><td valign='top'><span class="indent">Delete selected sets:</span></td>    <td valign='top'>delete selected sets</td> <td valign='top'><a href="#deleteSelectedSets">deleteSelectedSets</a></td></tr>
+<table width='100%'>
+    <tr>
+        <td valign='top' width='30%'><b>Menu</b></td>
+        <td valign='top' width='40%'><b>Command</b></td>
+        <td valign='top'><b>Method</b></td>
+    </tr>
+    <tr>
+        <td valign='top'>a) Defined Sets:</td>
+        <td valign='top'>defined sets</td>
+        <td valign='top'>ic.definedSetsCls.showSets</td>
+    </tr>
+    <tr>
+        <td valign='top'><span class="indent">Select sets:</span></td>
+        <td valign='top'>select saved atoms [name1] or/and/not [name2]</td>
+        <td valign='top'>ic.definedSetsCls.changeCustomAtoms</td>
+    </tr>
+    <tr>
+        <td valign='top'><span class="indent">Delete selected sets:</span></td>
+        <td valign='top'>delete selected sets</td>
+        <td valign='top'>ic.definedSetsCls.deleteSelectedSets</td>
+    </tr>
 
-<tr><td valign='top'>b) All:</td>     <td valign='top'>select all</td> <td valign='top'><a href="#selectAll">selectAll</a></td></tr>
-<tr><td valign='top'>c) Displayed Set:</td>     <td valign='top'>select displayed set</td> <td valign='top'>ic.hAtoms = ic.cloneHash(ic.dAtoms)</td></tr>
+    <tr>
+        <td valign='top'>b) All:</td>
+        <td valign='top'>select all</td>
+        <td valign='top'>ic.selectionCls.selectAll</td>
+    </tr>
+    <tr>
+        <td valign='top'>c) Displayed Set:</td>
+        <td valign='top'>select displayed set</td>
+        <td valign='top'>ic.hAtoms = me.HashUtilsCls.cloneHash(ic.dAtoms)</td>
+    </tr>
 
-<tr><td colspan="3">d) by Distance</td> </tr>
-<tr><td valign='top'><span class="indent">Display:</span></td>            <td valign='top'>select zone cutoff [cutoff in angstrom]</td> <td valign='top'><a href="#pickCustomSphere">pickCustomSphere</a></td></tr>
+    <tr>
+        <td colspan="3">d) by Distance</td>
+    </tr>
+    <tr>
+        <td valign='top'><span class="indent">Display:</span></td>
+        <td valign='top'>select zone cutoff [cutoff in angstrom]</td>
+        <td valign='top'>ic.showInterCls.pickCustomSphere</td>
+    </tr>
 
-<tr><td colspan="3"><br>e) by Property</td> </tr>
-<tr><td valign='top'><span class="indent">Positive:</span></td>  <td valign='top'>select prop positive</td> <td valign='top'>selectProperty</td></tr>
-<tr><td valign='top'><span class="indent">Negative:</span></td>  <td valign='top'>select prop negative</td> <td valign='top'>selectProperty</td></tr>
-<tr><td valign='top'><span class="indent">Hydrophobic:</span></td>  <td valign='top'>select prop hydrophobic</td> <td valign='top'>selectProperty</td></tr>
-<tr><td valign='top'><span class="indent">Polar:</span></td>  <td valign='top'>select prop polar</td> <td valign='top'>selectProperty</td></tr>
-<tr><td valign='top'><span class="indent">B-factor:</span></td>  <td valign='top'>select prop b factor</td> <td valign='top'>selectProperty</td></tr>
-<tr><td valign='top'><span class="indent">Solvent Accessibility:</span></td>  <td valign='top'>select prop percent out</td> <td valign='top'>selectProperty</td></tr>
+    <tr>
+        <td colspan="3"><br>e) by Property</td>
+    </tr>
+    <tr>
+        <td valign='top'><span class="indent">Positive:</span></td>
+        <td valign='top'>select prop positive</td>
+        <td valign='top'>ic.resid2specCls.selectProperty</td>
+    </tr>
+    <tr>
+        <td valign='top'><span class="indent">Negative:</span></td>
+        <td valign='top'>select prop negative</td>
+        <td valign='top'>ic.resid2specCls.selectProperty</td>
+    </tr>
+    <tr>
+        <td valign='top'><span class="indent">Hydrophobic:</span></td>
+        <td valign='top'>select prop hydrophobic</td>
+        <td valign='top'>ic.resid2specCls.selectProperty</td>
+    </tr>
+    <tr>
+        <td valign='top'><span class="indent">Polar:</span></td>
+        <td valign='top'>select prop polar</td>
+        <td valign='top'>ic.resid2specCls.selectProperty</td>
+    </tr>
+    <tr>
+        <td valign='top'><span class="indent">B-factor:</span></td>
+        <td valign='top'>select prop b factor</td>
+        <td valign='top'>ic.resid2specCls.selectProperty</td>
+    </tr>
+    <tr>
+        <td valign='top'><span class="indent">Solvent Accessibility:</span></td>
+        <td valign='top'>select prop percent out</td>
+        <td valign='top'>ic.resid2specCls.selectProperty</td>
+    </tr>
 
-<tr><td valign='top'>f) Inverse:</td>     <td valign='top'>select complement</td> <td valign='top'><a href="#selectComplement">selectComplement</a></td></tr>
-<tr><td valign='top'>g) Main Chains:</td>     <td valign='top'>select main chains</td> <td valign='top'><a href="#selectMainChains">selectMainChains</a></td></tr>
-<tr><td valign='top'>h) Side Chains:</td>     <td valign='top'>select side chains</td> <td valign='top'><a href="#selectSideChains">selectSideChains</a></td></tr>
+    <tr>
+        <td valign='top'>f) Inverse:</td>
+        <td valign='top'>select complement</td>
+        <td valign='top'>ic.resid2specCls.selectComplement</td>
+    </tr>
+    <tr>
+        <td valign='top'>g) Main Chains:</td>
+        <td valign='top'>select main chains</td>
+        <td valign='top'>ic.selectionCls.selectMainChains</td>
+    </tr>
+    <tr>
+        <td valign='top'>h) Side Chains:</td>
+        <td valign='top'>select side chains</td>
+        <td valign='top'>ic.selectionCls.selectSideChains</td>
+    </tr>
 
-<tr><td valign='top'>i) Advanced</td><td valign='top'>select [command] | name [commandname]</td> <td valign='top'><a href="#selectByCommand">selectByCommand</a></td></tr>
+    <tr>
+        <td valign='top'>i) Advanced</td>
+        <td valign='top'>select [command] | name [commandname]</td>
+        <td valign='top'>ic.selectByCommandCls.selectByCommand</td>
+    </tr>
 
-<tr><td colspan="3"><br>j) Select on 3D</td> </tr>
-<tr><td valign='top'><span class="indent">Chain (Alt):</span></td>  <td valign='top'>set pk chain</td> <td valign='top'>ic.pk = 5; ic.opts['pk'] = 'chain';</td></tr>
-<tr><td valign='top'><span class="indent">3D Domain (Alt):</span></td>  <td valign='top'>set pk domain</td> <td valign='top'>ic.pk = 4; ic.opts['pk'] = 'domain';</td></tr>
-<tr><td valign='top'><span class="indent">Strand/Helix (Alt):</span></td>  <td valign='top'>set pk strand</td> <td valign='top'>ic.pk = 3; ic.opts['pk'] = 'strand';</td></tr>
-<tr><td valign='top'><span class="indent">Residue (Alt):</span></td>  <td valign='top'>set pk residue</td> <td valign='top'>ic.pk = 2; ic.opts['pk'] = 'residue';</td></tr>
-<tr><td valign='top'><span class="indent">Atom (Alt):</span></td>     <td valign='top'>set pk atom</td> <td valign='top'>ic.pk = 1; ic.opts['pk'] = 'atom';</td></tr>
+    <tr>
+        <td colspan="3"><br>j) Select on 3D</td>
+    </tr>
+    <tr>
+        <td valign='top'><span class="indent">Chain (Alt):</span></td>
+        <td valign='top'>set pk chain</td>
+        <td valign='top'>ic.pk = 5; ic.opts['pk'] = 'chain';</td>
+    </tr>
+    <tr>
+        <td valign='top'><span class="indent">3D Domain (Alt):</span></td>
+        <td valign='top'>set pk domain</td>
+        <td valign='top'>ic.pk = 4; ic.opts['pk'] = 'domain';</td>
+    </tr>
+    <tr>
+        <td valign='top'><span class="indent">Strand/Helix (Alt):</span></td>
+        <td valign='top'>set pk strand</td>
+        <td valign='top'>ic.pk = 3; ic.opts['pk'] = 'strand';</td>
+    </tr>
+    <tr>
+        <td valign='top'><span class="indent">Residue (Alt):</span></td>
+        <td valign='top'>set pk residue</td>
+        <td valign='top'>ic.pk = 2; ic.opts['pk'] = 'residue';</td>
+    </tr>
+    <tr>
+        <td valign='top'><span class="indent">Atom (Alt):</span></td>
+        <td valign='top'>set pk atom</td>
+        <td valign='top'>ic.pk = 1; ic.opts['pk'] = 'atom';</td>
+    </tr>
 
-<tr><td valign='top'>k) Save Selection:</td>      <td valign='top'>select [command] | name [commandname]</td> <td valign='top'><a href="#selectByCommand">selectByCommand</a></td></tr>
-<tr><td valign='top'>l) Clear Selection:</td>      <td valign='top'>clear all</td> <td valign='top'><a href="#selectAll">selectAll</a></td></tr>
+    <tr>
+        <td valign='top'>k) Save Selection:</td>
+        <td valign='top'>select [command] | name [commandname]</td>
+        <td valign='top'>ic.selectByCommandCls.selectByCommand</td>
+    </tr>
+    <tr>
+        <td valign='top'>l) Clear Selection:</td>
+        <td valign='top'>clear all</td>
+        <td valign='top'>ic.selectionCls.selectAll</td>
+    </tr>
 
-<tr><td colspan="3"><br>m) Highlight Color</td> </tr>
-<tr><td valign='top'><span class="indent">Yellow:</span></td>   <td valign='top'>set highlight color yellow</td> <td valign='top'></td></tr>
-<tr><td valign='top'><span class="indent">Green:</span></td>    <td valign='top'>set highlight color green</td> <td valign='top'></td></tr>
-<tr><td valign='top'><span class="indent">Red:</span></td>        <td valign='top'>set highlight color red</td> <td valign='top'></td></tr>
+    <tr>
+        <td colspan="3"><br>m) Highlight Color</td>
+    </tr>
+    <tr>
+        <td valign='top'><span class="indent">Yellow:</span></td>
+        <td valign='top'>set highlight color yellow</td>
+        <td valign='top'></td>
+    </tr>
+    <tr>
+        <td valign='top'><span class="indent">Green:</span></td>
+        <td valign='top'>set highlight color green</td>
+        <td valign='top'></td>
+    </tr>
+    <tr>
+        <td valign='top'><span class="indent">Red:</span></td>
+        <td valign='top'>set highlight color red</td>
+        <td valign='top'></td>
+    </tr>
 
-<tr><td colspan="3"><br>n) Highlight Style</td> </tr>
-<tr><td valign='top'><span class="indent">Outline:</span></td>              <td valign='top'>set highlight style outline</td> <td valign='top'>ic.bHighlight = 1;</td></tr>
-<tr><td valign='top'><span class="indent">3D Objects:</span></td>         <td valign='top'>set highlight style 3d</td> <td valign='top'>ic.bHighlight = 2;</td></tr>
+    <tr>
+        <td colspan="3"><br>n) Highlight Style</td>
+    </tr>
+    <tr>
+        <td valign='top'><span class="indent">Outline:</span></td>
+        <td valign='top'>set highlight style outline</td>
+        <td valign='top'>ic.bHighlight = 1;</td>
+    </tr>
+    <tr>
+        <td valign='top'><span class="indent">3D Objects:</span></td>
+        <td valign='top'>set highlight style 3d</td>
+        <td valign='top'>ic.bHighlight = 2;</td>
+    </tr>
 
-<tr><td valign='top'>o) Toggle Highlight</td><td valign='top'>toggle highlight</td> <td valign='top'><a href="#toggleHighlight">toggleHighlight</a></td></tr>
+    <tr>
+        <td valign='top'>o) Toggle Highlight</td>
+        <td valign='top'>toggle highlight</td>
+        <td valign='top'>ic.hlUpdateCls.toggleHighlight</td>
+    </tr>
 
-<tr><td colspan="3"><br>p) Switch Highlight Level</td> </tr>
-<tr><td valign='top'><span class="indent">&uarr;:</span></td>              <td valign='top'>highlight level up</td> <td valign='top'><a href="#switchHighlightLevelUp">switchHighlightLevelUp<a></td></tr>
-<tr><td valign='top'><span class="indent">&darr;:</span></td>         <td valign='top'>highlight level down</td> <td valign='top'><a href="#switchHighlightLevelDown">switchHighlightLevelDown</a></td></tr>
+    <tr>
+        <td colspan="3"><br>p) Switch Highlight Level</td>
+    </tr>
+    <tr>
+        <td valign='top'><span class="indent">&uarr;:</span></td>
+        <td valign='top'>highlight level up</td>
+        <td valign='top'>ic.resid2specCls.switchHighlightLevelUp
+            <a></td>
+    </tr>
+    <tr>
+        <td valign='top'><span class="indent">&darr;:</span></td>
+        <td valign='top'>highlight level down</td>
+        <td valign='top'>ic.resid2specCls.switchHighlightLevelDown</td>
+    </tr>
 
-</tbody></table>
+    </tbody>
+</table>
 <br>
 
 <span class="anchor" id="selectb"></span>
 <a name="selectb"></a>
 <b>2b. Selection Definition</b> <a href="#Top"><span class="top">&nbsp;&nbsp;&nbsp;</span></a><br>
 <div>
-In the dialog Select -&gt; Advanced, users can use simple specification to select atoms: <br/><br/>
-<b>Specification:</b> In the selection "$1HHO,4N7N.A,B,C:5-10,KRDE,chemicals@CA,C":
-<ul>
-<li>"$1HHO,4N7N" uses "$" to indicate structure selection.<br/>
-<li>".A,B,C" uses "." to indicate chain selection.<br/>
-<li>":5-10,KRDE,chemicals" uses the colon ":" to indicate residue selection. Residue selection could be residue number (5-10), one-letter  IUPAC abbreviations (KRDE), or predefined names: "proteins", "nucleotides", "chemicals", "ions", and "water". IUPAC abbreviations can be written either as a contiguous string (e.g., ":KRDE"), in order to find all instances of that sequence in the structure, or they can be separated by commas (e.g., ":K,R,D,E") to select all residues of a given type in the structure (in the latter case, select all Lysine, Arginine, Aspartic Acid, and Glutamic Acid in the structure). <br/>
-<li>"@CA,C" uses "@" to indicate atom selection.<br/>
-<li>Partial definition is allowed, e.g., ":1-10" selects all residue IDs 1-10 in all chains.<br/>
-<li>Different selections can be united (with "<b>or</b>", default), intersected (with "<b>and</b>"), or negated (with "<b>not</b>"). For example, ":1-10 or :K" selects all residues 1-10 and all Lys residues. ":1-10 and :K" selects all Lys residues in the range of residue number 1-10. ":1-10 or not :K" selects all residues 1-10, which are not Lys residues.<br/>
-<li>The wild card character \"X\" or \"x\" can be used to represent any character.
-</ul>
-<b>Set Operation:</b>
-<ul>
-<li>Users can select multiple sets in the menu "Select > Defined Sets".<br/>
-<li>Different sets can be unioned (with "<b>or</b>", default), intersected (with "<b>and</b>"), or excluded (with "<b>not</b>"). For example, if the "Defined Sets" menu has four sets ":1-10", ":11-20", ":5-15", and ":7-8", the command "saved atoms :1-10 or :11-20 and :5-15 not :7-8" unions all residues 1-10 and 11-20 to get the residues 1-20, then intersects with the residues 5-15 to get the residues 5-15, then exclude the residues 7-8 to get the final residues 5-6 and 9-15.
-</ul>
-<b>Full commands in url or command window:</b>
-<ul>
-<li>Select without saving the set: select $1HHO,4N7N.A,B,C:5-10,KRDE,chemicals@CA,C<br/>
-<li>Select and save: select $1HHO,4N7N.A,B,C:5-10,KRDE,chemicals@CA,C | name my_name
-</ul>
+    In the dialog Select -&gt; Advanced, users can use simple specification to select atoms: <br/><br/>
+    <b>Specification:</b> In the selection "$1HHO,4N7N.A,B,C:5-10,KRDE,chemicals@CA,C":
+    <ul>
+        <li>"$1HHO,4N7N" uses "$" to indicate structure selection.<br/>
+            <li>".A,B,C" uses "." to indicate chain selection.<br/>
+                <li>":5-10,KRDE,chemicals" uses the colon ":" to indicate residue selection. Residue selection could be residue number (5-10), one-letter IUPAC abbreviations (KRDE), or predefined names: "proteins", "nucleotides", "chemicals", "ions", and
+                    "water". IUPAC abbreviations can be written either as a contiguous string (e.g., ":KRDE"), in order to find all instances of that sequence in the structure, or they can be separated by commas (e.g., ":K,R,D,E") to select all residues
+                    of a given type in the structure (in the latter case, select all Lysine, Arginine, Aspartic Acid, and Glutamic Acid in the structure). <br/>
+                    <li>"@CA,C" uses "@" to indicate atom selection.<br/>
+                        <li>Partial definition is allowed, e.g., ":1-10" selects all residue IDs 1-10 in all chains.<br/>
+                            <li>Different selections can be united (with "<b>or</b>", default), intersected (with "<b>and</b>"), or negated (with "<b>not</b>"). For example, ":1-10 or :K" selects all residues 1-10 and all Lys residues. ":1-10 and :K" selects
+                                all Lys residues in the range of residue number 1-10. ":1-10 or not :K" selects all residues 1-10, which are not Lys residues.<br/>
+                                <li>The wild card character \"X\" or \"x\" can be used to represent any character.
+    </ul>
+    <b>Set Operation:</b>
+    <ul>
+        <li>Users can select multiple sets in the menu "Select > Defined Sets".<br/>
+            <li>Different sets can be unioned (with "<b>or</b>", default), intersected (with "<b>and</b>"), or excluded (with "<b>not</b>"). For example, if the "Defined Sets" menu has four sets ":1-10", ":11-20", ":5-15", and ":7-8", the command "saved atoms
+                :1-10 or :11-20 and :5-15 not :7-8" unions all residues 1-10 and 11-20 to get the residues 1-20, then intersects with the residues 5-15 to get the residues 5-15, then exclude the residues 7-8 to get the final residues 5-6 and 9-15.
+    </ul>
+    <b>Full commands in url or command window:</b>
+    <ul>
+        <li>Select without saving the set: select $1HHO,4N7N.A,B,C:5-10,KRDE,chemicals@CA,C<br/>
+            <li>Select and save: select $1HHO,4N7N.A,B,C:5-10,KRDE,chemicals@CA,C | name my_name
+    </ul>
 </div>
 <br>
 <a name="view"></a><b>3. View</b> <a href="#Top"><span class="top">&nbsp;&nbsp;&nbsp;</span></a><br>
-<table width='100%'><tr><td valign='top' width='30%'><b>Menu</b></td><td valign='top' width='40%'><b>Command</b></td><td valign='top'><b>Method</b></td></tr>
-<tbody>
+<table width='100%'>
+    <tr>
+        <td valign='top' width='30%'><b>Menu</b></td>
+        <td valign='top' width='40%'><b>Command</b></td>
+        <td valign='top'><b>Method</b></td>
+    </tr>
+    <tbody>
 
-<tr><td valign='top'>a) View -&gt; View Only Selection:</td>  <td valign='top'>show selection</td> <td valign='top'><a href="#showSelection">showSelection</a></td></tr>
-<tr><td valign='top'>b) View -&gt; Zoom in Selection:</td>  <td valign='top'>zoom selection</td> <td valign='top'><a href="#zoominSelection">zoominSelection</a></td></tr>
-<tr><td valign='top'>c) View -&gt; Center Selection:</td>  <td valign='top'>center selection</td> <td valign='top'><a href="#centerSelection">centerSelection</a></td></tr>
-<tr><td valign='top'>d) View -&gt; View Full Structure:</td>  <td valign='top'>show all</td> <td valign='top'><a href="#selectAll">showAll</a></td></tr>
+        <tr>
+            <td valign='top'>a) View -&gt; View Only Selection:</td>
+            <td valign='top'>show selection</td>
+            <td valign='top'>ic.selectionCls.showSelection</td>
+        </tr>
+        <tr>
+            <td valign='top'>b) View -&gt; Zoom in Selection:</td>
+            <td valign='top'>zoom selection</td>
+            <td valign='top'>ic.resizeCanvasCls.zoominSelection</td>
+        </tr>
+        <tr>
+            <td valign='top'>c) View -&gt; Center Selection:</td>
+            <td valign='top'>center selection</td>
+            <td valign='top'>ic.applyCenterCls.centerSelection</td>
+        </tr>
+        <tr>
+            <td valign='top'>d) View -&gt; View Full Structure:</td>
+            <td valign='top'>show all</td>
+            <td valign='top'>ic.selectionCls.showAll</td>
+        </tr>
 
-<tr><td valign='top'>e) View -&gt; Show Side by Side:</td>     <td valign='top'>side by side | [url]</td> <td valign='top'>window.open()</td></tr>
+        <tr>
+            <td valign='top'>e) View -&gt; Show Side by Side:</td>
+            <td valign='top'>side by side | [url]</td>
+            <td valign='top'>window.open()</td>
+        </tr>
 
-<tr><td colspan="3"><br>f) View -&gt; Rotate</td> </tr>
+        <tr>
+            <td colspan="3"><br>f) View -&gt; Rotate</td>
+        </tr>
 
-<tr><td colspan="3"><br><span class="indent">f1) Rotate 90&deg;</span></td> </tr>
-<tr><td valign='top'><span class="indent">X-axis:</span></td>              <td valign='top'>rotate x</td> <td valign='top'><a href="#rotStruc">setRotation</a></td></tr>
-<tr><td valign='top'><span class="indent">Y-axis:</span></td>              <td valign='top'>rotate y</td> <td valign='top'><a href="#rotStruc">setRotation</a></td></tr>
-<tr><td valign='top'><span class="indent">Z-axis:</span></td>              <td valign='top'>rotate z</td> <td valign='top'><a href="#rotStruc">setRotation</a></td></tr>
+        <tr>
+            <td colspan="3"><br><span class="indent">f1) Rotate 90&deg;</span></td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">X-axis:</span></td>
+            <td valign='top'>rotate x</td>
+            <td valign='top'>ic.transformCls.setRotation</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">Y-axis:</span></td>
+            <td valign='top'>rotate y</td>
+            <td valign='top'>ic.transformCls.setRotation</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">Z-axis:</span></td>
+            <td valign='top'>rotate z</td>
+            <td valign='top'>ic.transformCls.setRotation</td>
+        </tr>
 
-<tr><td colspan="3"><br><span class="indent">f2) Auto Rotation</span></td> </tr>
-<tr><td valign='top'><span class="indent">Rotate Left:</span></td>              <td valign='top'>rotate left</td> <td valign='top'><a href="#rotStruc">rotStruc</a></td></tr>
-<tr><td valign='top'><span class="indent">Rotate Right:</span></td>              <td valign='top'>rotate right</td> <td valign='top'><a href="#rotStruc">rotStruc</a></td></tr>
-<tr><td valign='top'><span class="indent">Rotate Up:</span></td>              <td valign='top'>rotate up</td> <td valign='top'><a href="#rotStruc">rotStruc</a></td></tr>
-<tr><td valign='top'><span class="indent">Rotate Down:</span></td>              <td valign='top'>rotate down</td> <td valign='top'><a href="#rotStruc">rotStruc</a></td></tr>
+        <tr>
+            <td colspan="3"><br><span class="indent">f2) Auto Rotation</span></td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">Rotate Left:</span></td>
+            <td valign='top'>rotate left</td>
+            <td valign='top'>ic.transformCls.rotStruc</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">Rotate Right:</span></td>
+            <td valign='top'>rotate right</td>
+            <td valign='top'>ic.transformCls.rotStruc</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">Rotate Up:</span></td>
+            <td valign='top'>rotate up</td>
+            <td valign='top'>ic.transformCls.rotStruc</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">Rotate Down:</span></td>
+            <td valign='top'>rotate down</td>
+            <td valign='top'>ic.transformCls.rotStruc</td>
+        </tr>
 
-<tr><td colspan="3"><br>g) View -&gt; Camera</td> </tr>
-<tr><td valign='top'><span class="indent">Perspective:</span></td>        <td valign='top'>set camera perspective</td> <td valign='top'>ic.opts['camera'] = 'perspective';</td></tr>
-<tr><td valign='top'><span class="indent">Orthographic:</span></td>       <td valign='top'>set camera orthographic</td> <td valign='top'>ic.opts['camera'] = 'orthographic';</td></tr>
+        <tr>
+            <td colspan="3"><br>g) View -&gt; Camera</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">Perspective:</span></td>
+            <td valign='top'>set camera perspective</td>
+            <td valign='top'>ic.opts['camera'] = 'perspective';</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">Orthographic:</span></td>
+            <td valign='top'>set camera orthographic</td>
+            <td valign='top'>ic.opts['camera'] = 'orthographic';</td>
+        </tr>
 
-<tr><td colspan="3"><br>h) View -&gt; Fog for Selection</td> </tr>
-<tr><td valign='top'><span class="indent">On:</span></td>                <td valign='top'>set fog on</td> <td valign='top'>ic.opts['fog'] = 'yes';</td></tr>
-<tr><td valign='top'><span class="indent">Off:</span></td>                 <td valign='top'>set fog off</td> <td valign='top'>ic.opts['fog'] = 'no';</td></tr>
+        <tr>
+            <td colspan="3"><br>h) View -&gt; Fog for Selection</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">On:</span></td>
+            <td valign='top'>set fog on</td>
+            <td valign='top'>ic.opts['fog'] = 'yes';</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">Off:</span></td>
+            <td valign='top'>set fog off</td>
+            <td valign='top'>ic.opts['fog'] = 'no';</td>
+        </tr>
 
-<tr><td colspan="3"><br>i) View -&gt; Slab for Selection</td> </tr>
-<tr><td valign='top'><span class="indent">On:</span></td>                <td valign='top'>set slab on</td> <td valign='top'>ic.opts['slab'] = 'yes';</td></tr>
-<tr><td valign='top'><span class="indent">Off:</span></td>                 <td valign='top'>set slab off</td> <td valign='top'>ic.opts['slab'] = 'no';</td></tr>
+        <tr>
+            <td colspan="3"><br>i) View -&gt; Slab for Selection</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">On:</span></td>
+            <td valign='top'>set slab on</td>
+            <td valign='top'>ic.opts['slab'] = 'yes';</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">Off:</span></td>
+            <td valign='top'>set slab off</td>
+            <td valign='top'>ic.opts['slab'] = 'no';</td>
+        </tr>
 
-<tr><td colspan="3"><br>j) View -&gt; XYZ-axes</td> </tr>
-<tr><td valign='top'><span class="indent">Show:</span></td>                <td valign='top'>set axis on</td> <td valign='top'>ic.opts['axis'] = 'yes';</td></tr>
-<tr><td valign='top'><span class="indent">Hide:</span></td>                 <td valign='top'>set axis off</td> <td valign='top'>ic.opts['axis'] = 'no';</td></tr>
+        <tr>
+            <td colspan="3"><br>j) View -&gt; XYZ-axes</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">Show:</span></td>
+            <td valign='top'>set axis on</td>
+            <td valign='top'>ic.opts['axis'] = 'yes';</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">Hide:</span></td>
+            <td valign='top'>set axis off</td>
+            <td valign='top'>ic.opts['axis'] = 'no';</td>
+        </tr>
 
-<tr><td colspan="3"><br>k) View -&gt; Reset:</td> </tr>
-<tr><td valign='top'><span class="indent">All:</span></td>                <td valign='top'>reset</td> <td valign='top'><a href="#renderFinalStep">renderFinalStep</a></td></tr>
-<tr><td valign='top'><span class="indent">Orientation:</span></td>                 <td valign='top'>reset orientation</td> <td valign='top'><a href="#resetOrientation">resetOrientation</a></td></tr>
+        <tr>
+            <td colspan="3"><br>k) View -&gt; Reset:</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">All:</span></td>
+            <td valign='top'>reset</td>
+            <td valign='top'>ic.loadScriptCls.renderFinalStep</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">Orientation:</span></td>
+            <td valign='top'>reset orientation</td>
+            <td valign='top'>ic.transformCls.resetOrientation</td>
+        </tr>
 
-<tr><td valign='top'>l) View -&gt; Undo:</td>     <td valign='top'>back</td> <td valign='top'><a href="#back">back</a></td></tr>
+        <tr>
+            <td valign='top'>l) View -&gt; Undo:</td>
+            <td valign='top'>back</td>
+            <td valign='top'>ic.resizeCanvasCls.back</td>
+        </tr>
 
-<tr><td valign='top'>m) View -&gt; Redo:</td>     <td valign='top'>forward</td> <td valign='top'><a href="#forward">forward</a></td></tr>
+        <tr>
+            <td valign='top'>m) View -&gt; Redo:</td>
+            <td valign='top'>forward</td>
+            <td valign='top'>ic.resizeCanvasCls.forward</td>
+        </tr>
 
-<tr><td valign='top'>n) View -&gt; Full Screen:</td>     <td valign='top'>[no command available]</td> <td valign='top'></td></tr>
+        <tr>
+            <td valign='top'>n) View -&gt; Full Screen:</td>
+            <td valign='top'>[no command available]</td>
+            <td valign='top'></td>
+        </tr>
 
-</tbody></table>
+    </tbody>
+</table>
 
 <br>
 <a name="style"></a><b>4. Style</b> <a href="#Top"><span class="top">&nbsp;&nbsp;&nbsp;</span></a><br>
-<table width='100%'><tr><td valign='top' width='30%'><b>Menu</b></td><td valign='top' width='40%'><b>Command</b></td><td valign='top'><b>Method</b></td></tr>
-<tbody>
-<tr><td colspan="3">a) Style -&gt; Protein</td> </tr>
-<tr><td width="240"><span class="indent">Ribbon:</span></td>             <td valign='top'>style proteins ribbon</td> <td valign='top'><a href="#setStyle">setStyle</a></td></tr>
-<tr><td valign='top'><span class="indent">Strand:</span></td>             <td valign='top'>style proteins strand</td> <td valign='top'><a href="#setStyle">setStyle</a></td></tr>
-<tr><td valign='top'><span class="indent">Cylinder and Plate:</span></td>   <td valign='top'>style proteins cylinder and plate</td> <td valign='top'><a href="#setStyle">setStyle</a></td></tr>
-<tr><td valign='top'><span class="indent">Schematic:</span></td>           <td valign='top'>style proteins schematic</td> <td valign='top'><a href="#setStyle">setStyle</a></td></tr>
-<tr><td valign='top'><span class="indent">C Alpha Trace:</span></td>      <td valign='top'>style proteins c alpha trace</td> <td valign='top'><a href="#setStyle">setStyle</a></td></tr>
-<tr><td valign='top'><span class="indent">Backbone:</span></td>           <td valign='top'>style proteins backbone</td> <td valign='top'><a href="#setStyle">setStyle</a></td></tr>
-<tr><td valign='top'><span class="indent">B-factor Tube:</span></td>      <td valign='top'>style proteins b factor tube</td> <td valign='top'><a href="#setStyle">setStyle</a></td></tr>
-<tr><td valign='top'><span class="indent">Lines:</span></td>              <td valign='top'>style proteins lines</td> <td valign='top'><a href="#setStyle">setStyle</a></td></tr>
-<tr><td valign='top'><span class="indent">Stick:</span></td>              <td valign='top'>style proteins stick</td> <td valign='top'><a href="#setStyle">setStyle</a></td></tr>
-<tr><td valign='top'><span class="indent">Ball and Stick:</span></td>       <td valign='top'>style proteins ball and stick</td> <td valign='top'><a href="#setStyle">setStyle</a></td></tr>
-<tr><td valign='top'><span class="indent">Sphere:</span></td>             <td valign='top'>style proteins sphere</td> <td valign='top'><a href="#setStyle">setStyle</a></td></tr>
-<tr><td valign='top'><span class="indent">Hide:</span></td>            <td valign='top'>style proteins nothing</td> <td valign='top'><a href="#setStyle">setStyle</a></td></tr>
+<table width='100%'>
+    <tr>
+        <td valign='top' width='30%'><b>Menu</b></td>
+        <td valign='top' width='40%'><b>Command</b></td>
+        <td valign='top'><b>Method</b></td>
+    </tr>
+    <tbody>
+        <tr>
+            <td colspan="3">a) Style -&gt; Protein</td>
+        </tr>
+        <tr>
+            <td width="240"><span class="indent">Ribbon:</span></td>
+            <td valign='top'>style proteins ribbon</td>
+            <td valign='top'>ic.setOptionCls.setStyle</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">Strand:</span></td>
+            <td valign='top'>style proteins strand</td>
+            <td valign='top'>ic.setOptionCls.setStyle</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">Cylinder and Plate:</span></td>
+            <td valign='top'>style proteins cylinder and plate</td>
+            <td valign='top'>ic.setOptionCls.setStyle</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">Schematic:</span></td>
+            <td valign='top'>style proteins schematic</td>
+            <td valign='top'>ic.setOptionCls.setStyle</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">C Alpha Trace:</span></td>
+            <td valign='top'>style proteins c alpha trace</td>
+            <td valign='top'>ic.setOptionCls.setStyle</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">Backbone:</span></td>
+            <td valign='top'>style proteins backbone</td>
+            <td valign='top'>ic.setOptionCls.setStyle</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">B-factor Tube:</span></td>
+            <td valign='top'>style proteins b factor tube</td>
+            <td valign='top'>ic.setOptionCls.setStyle</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">Lines:</span></td>
+            <td valign='top'>style proteins lines</td>
+            <td valign='top'>ic.setOptionCls.setStyle</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">Stick:</span></td>
+            <td valign='top'>style proteins stick</td>
+            <td valign='top'>ic.setOptionCls.setStyle</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">Ball and Stick:</span></td>
+            <td valign='top'>style proteins ball and stick</td>
+            <td valign='top'>ic.setOptionCls.setStyle</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">Sphere:</span></td>
+            <td valign='top'>style proteins sphere</td>
+            <td valign='top'>ic.setOptionCls.setStyle</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">Hide:</span></td>
+            <td valign='top'>style proteins nothing</td>
+            <td valign='top'>ic.setOptionCls.setStyle</td>
+        </tr>
 
-<tr><td colspan="3"><br>b) Style -&gt; Side Chains</td> </tr>
-<tr><td valign='top'><span class="indent">Lines:</span></td>              <td valign='top'>style sidec lines</td> <td valign='top'><a href="#setStyle">setStyle</a></td></tr>
-<tr><td valign='top'><span class="indent">Stick:</span></td>              <td valign='top'>style sidec stick</td> <td valign='top'><a href="#setStyle">setStyle</a></td></tr>
-<tr><td valign='top'><span class="indent">Ball and Stick:</span></td>       <td valign='top'>style sidec ball and stick</td> <td valign='top'><a href="#setStyle">setStyle</a></td></tr>
-<tr><td valign='top'><span class="indent">Sphere:</span></td>             <td valign='top'>style sidec sphere</td> <td valign='top'><a href="#setStyle">setStyle</a></td></tr>
-<tr><td valign='top'><span class="indent">Hide:</span></td>            <td valign='top'>style sidec nothing</td> <td valign='top'><a href="#setStyle">setStyle</a></td></tr>
+        <tr>
+            <td colspan="3"><br>b) Style -&gt; Side Chains</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">Lines:</span></td>
+            <td valign='top'>style sidec lines</td>
+            <td valign='top'>ic.setOptionCls.setStyle</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">Stick:</span></td>
+            <td valign='top'>style sidec stick</td>
+            <td valign='top'>ic.setOptionCls.setStyle</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">Ball and Stick:</span></td>
+            <td valign='top'>style sidec ball and stick</td>
+            <td valign='top'>ic.setOptionCls.setStyle</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">Sphere:</span></td>
+            <td valign='top'>style sidec sphere</td>
+            <td valign='top'>ic.setOptionCls.setStyle</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">Hide:</span></td>
+            <td valign='top'>style sidec nothing</td>
+            <td valign='top'>ic.setOptionCls.setStyle</td>
+        </tr>
 
-<tr><td colspan="3"><br>c) Style -&gt; Nucleotides</td> </tr>
-<tr><td valign='top'><span class="indent">Nucleotide Cartoon:</span></td> <td valign='top'>style nucleotides nucleotide cartoon</td> <td valign='top'><a href="#setStyle">setStyle</a></td></tr>
-<tr><td valign='top'><span class="indent">O3' Trace:</span></td>   <td valign='top'>style nucleotides o3 trace</td> <td valign='top'><a href="#setStyle">setStyle</a></td></tr>
-<tr><td valign='top'><span class="indent">Backbone:</span></td>            <td valign='top'>style nucleotides backbone</td> <td valign='top'><a href="#setStyle">setStyle</a></td></tr>
-<tr><td valign='top'><span class="indent">Schematic:</span></td>            <td valign='top'>style nucleotides schematic</td> <td valign='top'><a href="#setStyle">setStyle</a></td></tr>
-<tr><td valign='top'><span class="indent">Lines:</span></td>              <td valign='top'>style nucleotides lines</td> <td valign='top'><a href="#setStyle">setStyle</a></td></tr>
-<tr><td valign='top'><span class="indent">Stick:</span></td>              <td valign='top'>style nucleotides stick</td> <td valign='top'><a href="#setStyle">setStyle</a></td></tr>
-<tr><td valign='top'><span class="indent">Ball and Stick:</span></td>       <td valign='top'>style nucleotides ball and stick</td> <td valign='top'><a href="#setStyle">setStyle</a></td></tr>
-<tr><td valign='top'><span class="indent">Sphere:</span></td>             <td valign='top'>style nucleotides sphere</td> <td valign='top'><a href="#setStyle">setStyle</a></td></tr>
-<tr><td valign='top'><span class="indent">Hide:</span></td>            <td valign='top'>style nucleotides nothing</td> <td valign='top'><a href="#setStyle">setStyle</a></td></tr>
+        <tr>
+            <td colspan="3"><br>c) Style -&gt; Nucleotides</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">Nucleotide Cartoon:</span></td>
+            <td valign='top'>style nucleotides nucleotide cartoon</td>
+            <td valign='top'>ic.setOptionCls.setStyle</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">O3' Trace:</span></td>
+            <td valign='top'>style nucleotides o3 trace</td>
+            <td valign='top'>ic.setOptionCls.setStyle</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">Backbone:</span></td>
+            <td valign='top'>style nucleotides backbone</td>
+            <td valign='top'>ic.setOptionCls.setStyle</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">Schematic:</span></td>
+            <td valign='top'>style nucleotides schematic</td>
+            <td valign='top'>ic.setOptionCls.setStyle</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">Lines:</span></td>
+            <td valign='top'>style nucleotides lines</td>
+            <td valign='top'>ic.setOptionCls.setStyle</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">Stick:</span></td>
+            <td valign='top'>style nucleotides stick</td>
+            <td valign='top'>ic.setOptionCls.setStyle</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">Ball and Stick:</span></td>
+            <td valign='top'>style nucleotides ball and stick</td>
+            <td valign='top'>ic.setOptionCls.setStyle</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">Sphere:</span></td>
+            <td valign='top'>style nucleotides sphere</td>
+            <td valign='top'>ic.setOptionCls.setStyle</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">Hide:</span></td>
+            <td valign='top'>style nucleotides nothing</td>
+            <td valign='top'>ic.setOptionCls.setStyle</td>
+        </tr>
 
-<tr><td colspan="3"><br>d) Style -&gt; Chemicals</td> </tr>
-<tr><td valign='top'><span class="indent">Lines:</span></td>              <td valign='top'>style chemicals lines</td> <td valign='top'><a href="#setStyle">setStyle</a></td></tr>
-<tr><td valign='top'><span class="indent">Stick:</span></td>              <td valign='top'>style chemicals stick</td> <td valign='top'><a href="#setStyle">setStyle</a></td></tr>
-<tr><td valign='top'><span class="indent">Ball and Stick:</span></td>       <td valign='top'>style chemicals ball and stick</td> <td valign='top'><a href="#setStyle">setStyle</a></td></tr>
-<tr><td valign='top'><span class="indent">Schematic:</span></td>           <td valign='top'>style chemicals schematic</td> <td valign='top'><a href="#setStyle">setStyle</a></td></tr>
-<tr><td valign='top'><span class="indent">Sphere:</span></td>             <td valign='top'>style chemicals sphere</td> <td valign='top'><a href="#setStyle">setStyle</a></td></tr>
-<tr><td valign='top'><span class="indent">Hide:</span></td>            <td valign='top'>style chemicals nothing</td> <td valign='top'><a href="#setStyle">setStyle</a></td></tr>
+        <tr>
+            <td colspan="3"><br>d) Style -&gt; Chemicals</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">Lines:</span></td>
+            <td valign='top'>style chemicals lines</td>
+            <td valign='top'>ic.setOptionCls.setStyle</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">Stick:</span></td>
+            <td valign='top'>style chemicals stick</td>
+            <td valign='top'>ic.setOptionCls.setStyle</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">Ball and Stick:</span></td>
+            <td valign='top'>style chemicals ball and stick</td>
+            <td valign='top'>ic.setOptionCls.setStyle</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">Schematic:</span></td>
+            <td valign='top'>style chemicals schematic</td>
+            <td valign='top'>ic.setOptionCls.setStyle</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">Sphere:</span></td>
+            <td valign='top'>style chemicals sphere</td>
+            <td valign='top'>ic.setOptionCls.setStyle</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">Hide:</span></td>
+            <td valign='top'>style chemicals nothing</td>
+            <td valign='top'>ic.setOptionCls.setStyle</td>
+        </tr>
 
-<tr><td colspan="3"><br>d2) Style -&gt; Hydrogens</td> </tr>
-<tr><td valign='top'><span class="indent">Show:</span></td>              <td valign='top'>hydrogens</td> <td valign='top'><a href="#setStyle">showHydrogens</a></td></tr>
-<tr><td valign='top'><span class="indent">Hide:</span></td>            <td valign='top'>set hydrogens off</td> <td valign='top'><a href="#setStyle">hideHydrogens</a></td></tr>
+        <tr>
+            <td colspan="3"><br>d2) Style -&gt; Hydrogens</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">Show:</span></td>
+            <td valign='top'>hydrogens</td>
+            <td valign='top'>ic.setOptionCls.showHydrogens</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">Hide:</span></td>
+            <td valign='top'>set hydrogens off</td>
+            <td valign='top'>ic.setOptionCls.hideHydrogens</td>
+        </tr>
 
-<tr><td colspan="3"><br>e) Style -&gt; Ions</td> </tr>
-<tr><td valign='top'><span class="indent">Sphere:</span></td>             <td valign='top'>style ions sphere</td> <td valign='top'><a href="#setStyle">setStyle</a></td></tr>
-<tr><td valign='top'><span class="indent">Dot:</span></td>                <td valign='top'>style ions dot</td> <td valign='top'><a href="#setStyle">setStyle</a></td></tr>
-<tr><td valign='top'><span class="indent">Hide:</span></td>            <td valign='top'>style ions nothing</td> <td valign='top'><a href="#setStyle">setStyle</a></td></tr>
+        <tr>
+            <td colspan="3"><br>e) Style -&gt; Ions</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">Sphere:</span></td>
+            <td valign='top'>style ions sphere</td>
+            <td valign='top'>ic.setOptionCls.setStyle</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">Dot:</span></td>
+            <td valign='top'>style ions dot</td>
+            <td valign='top'>ic.setOptionCls.setStyle</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">Hide:</span></td>
+            <td valign='top'>style ions nothing</td>
+            <td valign='top'>ic.setOptionCls.setStyle</td>
+        </tr>
 
-<tr><td colspan="3"><br>f) Style -&gt; Water</td> </tr>
-<tr><td valign='top'><span class="indent">Sphere:</span></td>             <td valign='top'>style water sphere</td> <td valign='top'><a href="#setStyle">setStyle</a></td></tr>
-<tr><td valign='top'><span class="indent">Dot:</span></td>                <td valign='top'>style water dot</td> <td valign='top'><a href="#setStyle">setStyle</a></td></tr>
-<tr><td valign='top'><span class="indent">Hide:</span></td>            <td valign='top'>style water nothing</td> <td valign='top'><a href="#setStyle">setStyle</a></td></tr>
+        <tr>
+            <td colspan="3"><br>f) Style -&gt; Water</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">Sphere:</span></td>
+            <td valign='top'>style water sphere</td>
+            <td valign='top'>ic.setOptionCls.setStyle</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">Dot:</span></td>
+            <td valign='top'>style water dot</td>
+            <td valign='top'>ic.setOptionCls.setStyle</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">Hide:</span></td>
+            <td valign='top'>style water nothing</td>
+            <td valign='top'>ic.setOptionCls.setStyle</td>
+        </tr>
 
-<tr><td valign='top'>g) Style -&gt; Set Thickness:</td>                    <td valign='top'>set thickness | linerad 0.6 | coilrad 1 | stickrad 0.8 | ribbonthick 0.8 | proteinwidth 2 | nucleotidewidth 1.2 | ballscale 0.6</td> <td valign='top'></td></tr>
+        <tr>
+            <td valign='top'>g) Style -&gt; Set Thickness:</td>
+            <td valign='top'>set thickness | linerad 0.6 | coilrad 1 | stickrad 0.8 | ribbonthick 0.8 | proteinwidth 2 | nucleotidewidth 1.2 | ballscale 0.6</td>
+            <td valign='top'></td>
+        </tr>
 
-<tr><td valign='top'>h) Style -&gt; Save Style:</td>                    <td valign='top'>save style</td> <td valign='top'><a href="#saveStyle">saveStyle</a></td></tr>
-<tr><td valign='top'>i) Style -&gt; Apply Saved Style:</td>             <td valign='top'>apply saved style</td> <td valign='top'><a href="#applySavedStyle">applySavedStyle</a></td></tr>
+        <tr>
+            <td valign='top'>h) Style -&gt; Save Style:</td>
+            <td valign='top'>save style</td>
+            <td valign='top'>ic.setOptionCls.saveStyle</td>
+        </tr>
+        <tr>
+            <td valign='top'>i) Style -&gt; Apply Saved Style:</td>
+            <td valign='top'>apply saved style</td>
+            <td valign='top'>ic.setOptionCls.applySavedStyle</td>
+        </tr>
 
-<tr><td colspan="3"><br>j) Style -&gt; Surface Type</td> </tr>
-<tr><td width="240"><span class="indent">Van der Waals:</span></td>      <td valign='top'>set surface Van der Waals surface</td> <td valign='top'><a href="#applySurfaceOptions">applySurfaceOptions</a></td></tr>
-<tr><td width="240"><span class="indent">VDW with Context:</span></td>      <td valign='top'>set surface Van der Waals surface with context</td> <td valign='top'><a href="#applySurfaceOptions">applySurfaceOptions</a></td></tr>
-<tr><td valign='top'><span class="indent">Molecular Surface:</span></td>          <td valign='top'>set surface molecular surface</td> <td valign='top'><a href="#applySurfaceOptions">applySurfaceOptions</a></td></tr>
-<tr><td valign='top'><span class="indent">MS with Context:</span></td>          <td valign='top'>set surface molecular surface with context</td> <td valign='top'><a href="#applySurfaceOptions">applySurfaceOptions</a></td></tr>
-<tr><td valign='top'><span class="indent">Solvent Accessible:</span></td> <td valign='top'>set surface solvent accessible surface</td> <td valign='top'><a href="#applySurfaceOptions">applySurfaceOptions</a></td></tr>
-<tr><td valign='top'><span class="indent">SA with Context:</span></td> <td valign='top'>set surface solvent accessible surface with context</td> <td valign='top'><a href="#applySurfaceOptions">applySurfaceOptions</a></td></tr>
+        <tr>
+            <td colspan="3"><br>j) Style -&gt; Surface Type</td>
+        </tr>
+        <tr>
+            <td width="240"><span class="indent">Van der Waals:</span></td>
+            <td valign='top'>set surface Van der Waals surface</td>
+            <td valign='top'>ic.applyMapCls.applySurfaceOptions</td>
+        </tr>
+        <tr>
+            <td width="240"><span class="indent">VDW with Context:</span></td>
+            <td valign='top'>set surface Van der Waals surface with context</td>
+            <td valign='top'>ic.applyMapCls.applySurfaceOptions</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">Molecular Surface:</span></td>
+            <td valign='top'>set surface molecular surface</td>
+            <td valign='top'>ic.applyMapCls.applySurfaceOptions</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">MS with Context:</span></td>
+            <td valign='top'>set surface molecular surface with context</td>
+            <td valign='top'>ic.applyMapCls.applySurfaceOptions</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">Solvent Accessible:</span></td>
+            <td valign='top'>set surface solvent accessible surface</td>
+            <td valign='top'>ic.applyMapCls.applySurfaceOptions</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">SA with Context:</span></td>
+            <td valign='top'>set surface solvent accessible surface with context</td>
+            <td valign='top'>ic.applyMapCls.applySurfaceOptions</td>
+        </tr>
 
-<tr><td valign='top'>k) Style -&gt; Remove Surface:</td>                    <td valign='top'>set surface nothing</td> <td valign='top'><a href="#applySurfaceOptions">applySurfaceOptions</a></td></tr>
+        <tr>
+            <td valign='top'>k) Style -&gt; Remove Surface:</td>
+            <td valign='top'>set surface nothing</td>
+            <td valign='top'>ic.applyMapCls.applySurfaceOptions</td>
+        </tr>
 
-<tr><td colspan="3"><br>l) Style -&gt; Surface Opacity</td> </tr>
-<tr><td valign='top'><span class="indent">1.0:</span></td>                <td valign='top'>set surface opacity 1.0</td> <td valign='top'><a href="#applySurfaceOptions">applySurfaceOptions</a></td></tr>
-<tr><td valign='top'><span class="indent">0.9:</span></td>                <td valign='top'>set surface opacity 0.9</td> <td valign='top'><a href="#applySurfaceOptions">applySurfaceOptions</a></td></tr>
-<tr><td valign='top'><span class="indent">0.8:</span></td>                <td valign='top'>set surface opacity 0.8</td> <td valign='top'><a href="#applySurfaceOptions">applySurfaceOptions</a></td></tr>
-<tr><td valign='top'><span class="indent">0.7:</span></td>                <td valign='top'>set surface opacity 0.7</td> <td valign='top'><a href="#applySurfaceOptions">applySurfaceOptions</a></td></tr>
-<tr><td valign='top'><span class="indent">0.6:</span></td>                <td valign='top'>set surface opacity 0.6</td> <td valign='top'><a href="#applySurfaceOptions">applySurfaceOptions</a></td></tr>
-<tr><td valign='top'><span class="indent">0.5:</span></td>                <td valign='top'>set surface opacity 0.5</td> <td valign='top'><a href="#applySurfaceOptions">applySurfaceOptions</a></td></tr>
-<tr><td valign='top'><span class="indent">0.4:</span></td>                <td valign='top'>set surface opacity 0.4</td> <td valign='top'><a href="#applySurfaceOptions">applySurfaceOptions</a></td></tr>
-<tr><td valign='top'><span class="indent">0.3:</span></td>                <td valign='top'>set surface opacity 0.3</td> <td valign='top'><a href="#applySurfaceOptions">applySurfaceOptions</a></td></tr>
-<tr><td valign='top'><span class="indent">0.2:</span></td>                <td valign='top'>set surface opacity 0.2</td> <td valign='top'><a href="#applySurfaceOptions">applySurfaceOptions</a></td></tr>
-<tr><td valign='top'><span class="indent">0.1:</span></td>                <td valign='top'>set surface opacity 0.1</td> <td valign='top'><a href="#applySurfaceOptions">applySurfaceOptions</a></td></tr>
+        <tr>
+            <td colspan="3"><br>l) Style -&gt; Surface Opacity</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">1.0:</span></td>
+            <td valign='top'>set surface opacity 1.0</td>
+            <td valign='top'>ic.applyMapCls.applySurfaceOptions</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">0.9:</span></td>
+            <td valign='top'>set surface opacity 0.9</td>
+            <td valign='top'>ic.applyMapCls.applySurfaceOptions</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">0.8:</span></td>
+            <td valign='top'>set surface opacity 0.8</td>
+            <td valign='top'>ic.applyMapCls.applySurfaceOptions</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">0.7:</span></td>
+            <td valign='top'>set surface opacity 0.7</td>
+            <td valign='top'>ic.applyMapCls.applySurfaceOptions</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">0.6:</span></td>
+            <td valign='top'>set surface opacity 0.6</td>
+            <td valign='top'>ic.applyMapCls.applySurfaceOptions</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">0.5:</span></td>
+            <td valign='top'>set surface opacity 0.5</td>
+            <td valign='top'>ic.applyMapCls.applySurfaceOptions</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">0.4:</span></td>
+            <td valign='top'>set surface opacity 0.4</td>
+            <td valign='top'>ic.applyMapCls.applySurfaceOptions</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">0.3:</span></td>
+            <td valign='top'>set surface opacity 0.3</td>
+            <td valign='top'>ic.applyMapCls.applySurfaceOptions</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">0.2:</span></td>
+            <td valign='top'>set surface opacity 0.2</td>
+            <td valign='top'>ic.applyMapCls.applySurfaceOptions</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">0.1:</span></td>
+            <td valign='top'>set surface opacity 0.1</td>
+            <td valign='top'>ic.applyMapCls.applySurfaceOptions</td>
+        </tr>
 
-<tr><td colspan="3"><br>m) Style -&gt; Surface Wireframe</td> </tr>
-<tr><td valign='top'><span class="indent">Yes</span></td>                 <td valign='top'>set surface wireframe on</td> <td valign='top'><a href="#applySurfaceOptions">applySurfaceOptions</a></td></tr>
-<tr><td valign='top'><span class="indent">No</span></td>                  <td valign='top'>set surface wireframe off</td> <td valign='top'><a href="#applySurfaceOptions">applySurfaceOptions</a></td></tr>
+        <tr>
+            <td colspan="3"><br>m) Style -&gt; Surface Wireframe</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">Yes</span></td>
+            <td valign='top'>set surface wireframe on</td>
+            <td valign='top'>ic.applyMapCls.applySurfaceOptions</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">No</span></td>
+            <td valign='top'>set surface wireframe off</td>
+            <td valign='top'>ic.applyMapCls.applySurfaceOptions</td>
+        </tr>
 
-<tr><td colspan="3"><br>n) Style -&gt; Electron Density</td> </tr>
-<tr><td width="240"><span class="indent">2Fo-Fc Map:</span></td>      <td valign='top'>set map 2fofc sigma 1.5</td> <td valign='top'><a href="#applyCommandMap">applyCommandMap</a></td></tr>
-<tr><td width="240"><span class="indent">Fo-Fc Map:</span></td>      <td valign='top'>set map 2fofc sigma 3</td> <td valign='top'><a href="#applyCommandMap">applyCommandMap</a></td></tr>
+        <tr>
+            <td colspan="3"><br>n) Style -&gt; Electron Density</td>
+        </tr>
+        <tr>
+            <td width="240"><span class="indent">2Fo-Fc Map:</span></td>
+            <td valign='top'>set map 2fofc sigma 1.5</td>
+            <td valign='top'>ic.loadScriptCls.applyCommandMap</td>
+        </tr>
+        <tr>
+            <td width="240"><span class="indent">Fo-Fc Map:</span></td>
+            <td valign='top'>set map 2fofc sigma 3</td>
+            <td valign='top'>ic.loadScriptCls.applyCommandMap</td>
+        </tr>
 
-<tr><td valign='top'>o) Style -&gt; Remove Map:</td>                    <td valign='top'>set map nothing</td> <td valign='top'><a href="#applyMapOptions">applyMapOptions</a></td></tr>
+        <tr>
+            <td valign='top'>o) Style -&gt; Remove Map:</td>
+            <td valign='top'>set map nothing</td>
+            <td valign='top'>ic.applyMapCls.applyMapOptions</td>
+        </tr>
 
-<tr><td colspan="3"><br>p) Style -&gt; Map Wireframe</td> </tr>
-<tr><td valign='top'><span class="indent">Yes</span></td>                 <td valign='top'>set map wireframe on</td> <td valign='top'><a href="#applyMapOptions">applyMapOptions</a></td></tr>
-<tr><td valign='top'><span class="indent">No</span></td>                  <td valign='top'>set map wireframe off</td> <td valign='top'><a href="#applyMapOptions">applyMapOptions</a></td></tr>
+        <tr>
+            <td colspan="3"><br>p) Style -&gt; Map Wireframe</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">Yes</span></td>
+            <td valign='top'>set map wireframe on</td>
+            <td valign='top'>ic.applyMapCls.applyMapOptions</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">No</span></td>
+            <td valign='top'>set map wireframe off</td>
+            <td valign='top'>ic.applyMapCls.applyMapOptions</td>
+        </tr>
 
-<tr><td valign='top'>q) Style -&gt; EM Density Map:</td>                    <td valign='top'>set emmap percentage 20</td> <td valign='top'><a href="#applyCommandEmmap">applyCommandEmmap</a></td></tr>
+        <tr>
+            <td valign='top'>q) Style -&gt; EM Density Map:</td>
+            <td valign='top'>set emmap percentage 20</td>
+            <td valign='top'>ic.loadScriptCls.applyCommandEmmap</td>
+        </tr>
 
-<tr><td valign='top'>r) Style -&gt; Remove EM Map:</td>                    <td valign='top'>set emmap nothing</td> <td valign='top'><a href="#applyEmmapOptions">applyEmmapOptions</a></td></tr>
+        <tr>
+            <td valign='top'>r) Style -&gt; Remove EM Map:</td>
+            <td valign='top'>set emmap nothing</td>
+            <td valign='top'>ic.applyMapCls.applyEmmapOptions</td>
+        </tr>
 
-<tr><td colspan="3"><br>s) Style -&gt; EM Map Wireframe</td> </tr>
-<tr><td valign='top'><span class="indent">Yes</span></td>                 <td valign='top'>set emmap wireframe on</td> <td valign='top'><a href="#applyEmmapOptions">applyEmmapOptions</a></td></tr>
-<tr><td valign='top'><span class="indent">No</span></td>                  <td valign='top'>set emmap wireframe off</td> <td valign='top'><a href="#applyEmmapOptions">applyEmmapOptions</a></td></tr>
+        <tr>
+            <td colspan="3"><br>s) Style -&gt; EM Map Wireframe</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">Yes</span></td>
+            <td valign='top'>set emmap wireframe on</td>
+            <td valign='top'>ic.applyMapCls.applyEmmapOptions</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">No</span></td>
+            <td valign='top'>set emmap wireframe off</td>
+            <td valign='top'>ic.applyMapCls.applyEmmapOptions</td>
+        </tr>
 
-<tr><td colspan="3"><br>t) Style -&gt; Background</td> </tr>
-<tr><td valign='top'><span class="indent">Transparent:</span></td>        <td valign='top'>set background transparent</td> <td valign='top'>ic.opts['background'] = 'transparent'</td></tr>
-<tr><td valign='top'><span class="indent">Black:</span></td>              <td valign='top'>set background black</td> <td valign='top'>ic.opts['background'] = 'black'</td></tr>
-<tr><td valign='top'><span class="indent">Grey:</span></td>               <td valign='top'>set background grey</td> <td valign='top'>ic.opts['background'] = 'grey'</td></tr>
-<tr><td valign='top'><span class="indent">White:</span></td>              <td valign='top'>set background white</td> <td valign='top'>ic.opts['background'] = 'white'</td></tr>
+        <tr>
+            <td colspan="3"><br>t) Style -&gt; Background</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">Transparent:</span></td>
+            <td valign='top'>set background transparent</td>
+            <td valign='top'>ic.opts['background'] = 'transparent'</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">Black:</span></td>
+            <td valign='top'>set background black</td>
+            <td valign='top'>ic.opts['background'] = 'black'</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">Grey:</span></td>
+            <td valign='top'>set background grey</td>
+            <td valign='top'>ic.opts['background'] = 'grey'</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">White:</span></td>
+            <td valign='top'>set background white</td>
+            <td valign='top'>ic.opts['background'] = 'white'</td>
+        </tr>
 
-<tr><td colspan="3"><br>u) Style -&gt; Dialog Color</td> </tr>
-<tr><td valign='top'><span class="indent">Blue:</span></td>        <td valign='top'>set theme blue</td> <td valign='top'>setTheme</td></tr>
-<tr><td valign='top'><span class="indent">Orange:</span></td>        <td valign='top'>set theme orange</td> <td valign='top'>setTheme</td></tr>
-<tr><td valign='top'><span class="indent">Black:</span></td>        <td valign='top'>set theme black</td> <td valign='top'>setTheme</td></tr>
+        <tr>
+            <td colspan="3"><br>u) Style -&gt; Dialog Color</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">Blue:</span></td>
+            <td valign='top'>set theme blue</td>
+            <td valign='top'>ic.setMenuCls.setTheme</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">Orange:</span></td>
+            <td valign='top'>set theme orange</td>
+            <td valign='top'>ic.setMenuCls.setTheme</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">Black:</span></td>
+            <td valign='top'>set theme black</td>
+            <td valign='top'>ic.setMenuCls.setTheme</td>
+        </tr>
 
-<!--tr><td colspan="3"><br>v) Style -&gt; Two-color Helix</td> </tr>
+        <!--tr><td colspan="3"><br>v) Style -&gt; Two-color Helix</td> </tr>
 <tr><td valign='top'><span class="indent">Yes</span></td>                 <td valign='top'>set double color on</td> <td valign='top'>ic.bDoublecolor = true</td></tr>
 <tr><td valign='top'><span class="indent">No</span></td>                  <td valign='top'>set double color off</td> <td valign='top'>ic.bDoublecolor = false</td></tr-->
 
 
-</tbody></table>
+    </tbody>
+</table>
 <br>
 <a name="color"></a><b>5. Color</b> <a href="#Top"><span class="top">&nbsp;&nbsp;&nbsp;</span></a><br>
-<table width='100%'><tr><td valign='top' width='30%'><b>Menu</b></td><td valign='top' width='40%'><b>Command</b></td><td valign='top'><b>Method</b></td></tr>
-<tbody><tr><td colspan="3">a)</td> </tr>
-<tr><td width="240">Color -&gt; Spectrum:</td>          <td valign='top'>color spectrum</td> <td valign='top'><a href="#setColorByOptions">setColorByOptions</a></td></tr>
-<tr><td width="240">Color -&gt; Secondary (Sheet in Green):</td>         <td valign='top'>color secondary structure</td> <td valign='top'><a href="#setColorByOptions">setColorByOptions</a></td></tr>
-<tr><td width="240">Color -&gt; Secondary (Sheet in Yellow):</td>        <td valign='top'>color secondary structure yellow</td> <td valign='top'><a href="#setColorByOptions">setColorByOptions</a></td></tr>
-<tr><td width="240">Color -&gt; Secondary (Spectrum):</td>        <td valign='top'>color secondary structure spectrum</td> <td valign='top'><a href="#setColorByOptions">setColorByOptions</a></td></tr>
-<tr><td valign='top'>Color -&gt; Charge:</td>           <td valign='top'>color charge</td> <td valign='top'><a href="#setColorByOptions">setColorByOptions</a></td></tr>
-<tr><td valign='top'>Color -&gt; Wimley-White Hydrophobicity:</td>      <td valign='top'>color hydrophobic</td> <td valign='top'><a href="#setColorByOptions">setColorByOptions</a></td></tr>
-<tr><td valign='top'>Color -&gt; B-factor (Original):</td>             <td valign='top'>color b factor</td> <td valign='top'><a href="#setColorByOptions">setColorByOptions</a></td></tr>
-<tr><td valign='top'>Color -&gt; B-factor (Percentile):</td>             <td valign='top'>color b factor percentile</td> <td valign='top'><a href="#setColorByOptions">setColorByOptions</a></td></tr>
-<tr><td valign='top'>Color -&gt; Solvent Accessibility:</td>             <td valign='top'>color area | 35</td> <td valign='top'><a href="#setColorByOptions">setColorByOptions</a></td></tr>
-<tr><td valign='top'>Color -&gt; Chain:</td>            <td valign='top'>color chain</td> <td valign='top'><a href="#setColorByOptions">setColorByOptions</a></td></tr>
-<tr><td valign='top'>Color -&gt; 3D Domain:</td>          <td valign='top'>color 3ddomain</td> <td valign='top'><a href="#setColorByOptions">setColorByOptions</a></td></tr>
-<tr><td valign='top'>Color -&gt; Residue - Default:</td>          <td valign='top'>color residue</td> <td valign='top'><a href="#setColorByOptions">setColorByOptions</a></td></tr>
-<tr><td valign='top'>Color -&gt; Residue - Custom:</td>          <td valign='top'>color residue custom</td> <td valign='top'><a href="#setColorByOptions">setColorByOptions</a></td></tr>
-<tr><td valign='top'>Color -&gt; Atom:</td>             <td valign='top'>color atom</td> <td valign='top'><a href="#setColorByOptions">setColorByOptions</a></td></tr>
+<table width='100%'>
+    <tr>
+        <td valign='top' width='30%'><b>Menu</b></td>
+        <td valign='top' width='40%'><b>Command</b></td>
+        <td valign='top'><b>Method</b></td>
+    </tr>
+    <tbody>
+        <tr>
+            <td colspan="3">a)</td>
+        </tr>
+        <tr>
+            <td width="240">Color -&gt; Spectrum:</td>
+            <td valign='top'>color spectrum</td>
+            <td valign='top'>ic.setColorCls.setColorByOptions</td>
+        </tr>
+        <tr>
+            <td width="240">Color -&gt; Secondary (Sheet in Green):</td>
+            <td valign='top'>color secondary structure</td>
+            <td valign='top'>ic.setColorCls.setColorByOptions</td>
+        </tr>
+        <tr>
+            <td width="240">Color -&gt; Secondary (Sheet in Yellow):</td>
+            <td valign='top'>color secondary structure yellow</td>
+            <td valign='top'>ic.setColorCls.setColorByOptions</td>
+        </tr>
+        <tr>
+            <td width="240">Color -&gt; Secondary (Spectrum):</td>
+            <td valign='top'>color secondary structure spectrum</td>
+            <td valign='top'>ic.setColorCls.setColorByOptions</td>
+        </tr>
+        <tr>
+            <td valign='top'>Color -&gt; Charge:</td>
+            <td valign='top'>color charge</td>
+            <td valign='top'>ic.setColorCls.setColorByOptions</td>
+        </tr>
+        <tr>
+            <td valign='top'>Color -&gt; Wimley-White Hydrophobicity:</td>
+            <td valign='top'>color hydrophobic</td>
+            <td valign='top'>ic.setColorCls.setColorByOptions</td>
+        </tr>
+        <tr>
+            <td valign='top'>Color -&gt; B-factor (Original):</td>
+            <td valign='top'>color b factor</td>
+            <td valign='top'>ic.setColorCls.setColorByOptions</td>
+        </tr>
+        <tr>
+            <td valign='top'>Color -&gt; B-factor (Percentile):</td>
+            <td valign='top'>color b factor percentile</td>
+            <td valign='top'>ic.setColorCls.setColorByOptions</td>
+        </tr>
+        <tr>
+            <td valign='top'>Color -&gt; Solvent Accessibility:</td>
+            <td valign='top'>color area | 35</td>
+            <td valign='top'>ic.setColorCls.setColorByOptions</td>
+        </tr>
+        <tr>
+            <td valign='top'>Color -&gt; Chain:</td>
+            <td valign='top'>color chain</td>
+            <td valign='top'>ic.setColorCls.setColorByOptions</td>
+        </tr>
+        <tr>
+            <td valign='top'>Color -&gt; 3D Domain:</td>
+            <td valign='top'>color 3ddomain</td>
+            <td valign='top'>ic.setColorCls.setColorByOptions</td>
+        </tr>
+        <tr>
+            <td valign='top'>Color -&gt; Residue - Default:</td>
+            <td valign='top'>color residue</td>
+            <td valign='top'>ic.setColorCls.setColorByOptions</td>
+        </tr>
+        <tr>
+            <td valign='top'>Color -&gt; Residue - Custom:</td>
+            <td valign='top'>color residue custom</td>
+            <td valign='top'>ic.setColorCls.setColorByOptions</td>
+        </tr>
+        <tr>
+            <td valign='top'>Color -&gt; Atom:</td>
+            <td valign='top'>color atom</td>
+            <td valign='top'>ic.setColorCls.setColorByOptions</td>
+        </tr>
 
-<tr><td colspan="3"><br>b) Color -&gt; Unicolor</td> </tr>
-<tr><td valign='top'><span class="indent">Red:</span></td>                <td valign='top'>color red</td> <td valign='top'><a href="#setColorByOptions">setColorByOptions</a></td></tr>
-<tr><td valign='top'><span class="indent">Green:</span></td>              <td valign='top'>color green</td> <td valign='top'><a href="#setColorByOptions">setColorByOptions</a></td></tr>
-<tr><td valign='top'><span class="indent">Blue:</span></td>               <td valign='top'>color blue</td> <td valign='top'><a href="#setColorByOptions">setColorByOptions</a></td></tr>
-<tr><td valign='top'><span class="indent">Magenta:</span></td>            <td valign='top'>color magenta</td> <td valign='top'><a href="#setColorByOptions">setColorByOptions</a></td></tr>
-<tr><td valign='top'><span class="indent">Yellow:</span></td>             <td valign='top'>color yellow</td> <td valign='top'><a href="#setColorByOptions">setColorByOptions</a></td></tr>
-<tr><td valign='top'><span class="indent">Cyan:</span></td>               <td valign='top'>color cyan</td> <td valign='top'><a href="#setColorByOptions">setColorByOptions</a></td></tr>
-<tr><td valign='top'><span class="indent">White:</span></td>              <td valign='top'>color white</td> <td valign='top'><a href="#setColorByOptions">setColorByOptions</a></td></tr>
-<tr><td valign='top'><span class="indent">Grey:</span></td>               <td valign='top'>color grey</td> <td valign='top'><a href="#setColorByOptions">setColorByOptions</a></td></tr>
+        <tr>
+            <td colspan="3"><br>b) Color -&gt; Unicolor</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">Red:</span></td>
+            <td valign='top'>color red</td>
+            <td valign='top'>ic.setColorCls.setColorByOptions</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">Green:</span></td>
+            <td valign='top'>color green</td>
+            <td valign='top'>ic.setColorCls.setColorByOptions</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">Blue:</span></td>
+            <td valign='top'>color blue</td>
+            <td valign='top'>ic.setColorCls.setColorByOptions</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">Magenta:</span></td>
+            <td valign='top'>color magenta</td>
+            <td valign='top'>ic.setColorCls.setColorByOptions</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">Yellow:</span></td>
+            <td valign='top'>color yellow</td>
+            <td valign='top'>ic.setColorCls.setColorByOptions</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">Cyan:</span></td>
+            <td valign='top'>color cyan</td>
+            <td valign='top'>ic.setColorCls.setColorByOptions</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">White:</span></td>
+            <td valign='top'>color white</td>
+            <td valign='top'>ic.setColorCls.setColorByOptions</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">Grey:</span></td>
+            <td valign='top'>color grey</td>
+            <td valign='top'>ic.setColorCls.setColorByOptions</td>
+        </tr>
 
-<tr><td colspan="3"><br>c) Color -&gt; Color Picker</td> </tr>
-<tr><td valign='top'><span class="indent">Apply:</span></td>              <td valign='top'>color [e.g., FF0000]</td> <td valign='top'><a href="#setColorByOptions">setColorByOptions</a></td></tr>
+        <tr>
+            <td colspan="3"><br>c) Color -&gt; Color Picker</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">Apply:</span></td>
+            <td valign='top'>color [e.g., FF0000]</td>
+            <td valign='top'>ic.setColorCls.setColorByOptions</td>
+        </tr>
 
-<tr><td valign='top'>Color -&gt; Save Color:</td>       <td valign='top'>save color</td> <td valign='top'><a href="#saveColor">saveColor</a></td></tr>
-<tr><td valign='top'>Color -&gt; Apply Saved Color:</td><td valign='top'>apply saved color</td> <td valign='top'><a href="#applySavedColor">applySavedColor</a></td></tr>
+        <tr>
+            <td valign='top'>Color -&gt; Save Color:</td>
+            <td valign='top'>save color</td>
+            <td valign='top'>ic.setOptionCls.saveColor</td>
+        </tr>
+        <tr>
+            <td valign='top'>Color -&gt; Apply Saved Color:</td>
+            <td valign='top'>apply saved color</td>
+            <td valign='top'>ic.setOptionCls.applySavedColor</td>
+        </tr>
 
-</tbody></table>
+    </tbody>
+</table>
 <br>
 
 <a name="analysis"></a><b>6. Analysis</b> <a href="#Top"><span class="top">&nbsp;&nbsp;&nbsp;</span></a><br>
-<table width='100%'><tr><td valign='top' width='30%'><b>Menu</b></td><td valign='top' width='40%'><b>Command</b></td><td valign='top'><b>Method</b></td></tr>
-<tbody>
+<table width='100%'>
+    <tr>
+        <td valign='top' width='30%'><b>Menu</b></td>
+        <td valign='top' width='40%'><b>Command</b></td>
+        <td valign='top'><b>Method</b></td>
+    </tr>
+    <tbody>
 
-<tr><td width="240">a) Analysis -&gt; View Sequences & Annotations:</td>                <td valign='top'>view annotations</td> <td valign='top'><a href="#applyCommandAnnotationsAndCddSite">applyCommandAnnotationsAndCddSite</a></td></tr>
+        <tr>
+            <td width="240">a) Analysis -&gt; View Sequences & Annotations:</td>
+            <td valign='top'>view annotations</td>
+            <td valign='top'>ic.loadScriptCls.applyCommandAnnotationsAndCddSite</td>
+        </tr>
 
-<tr><td valign='top'>b) Analysis -&gt; View 2D Diagram</td>         <td valign='top'>view interactions</td> <td valign='top'><a href="#set2DDiagrams">set2DDiagrams</a></td></tr>
-<tr><td valign='top'>c) Analysis -&gt; Defined Sets</td>     <td valign='top'>defined sets</td> <td valign='top'><a href="#showSets">showSets</a></td></tr>
+        <tr>
+            <td valign='top'>b) Analysis -&gt; View 2D Diagram</td>
+            <td valign='top'>view interactions</td>
+            <td valign='top'>ic.parserUtilsCls.set2DDiagrams</td>
+        </tr>
+        <tr>
+            <td valign='top'>c) Analysis -&gt; Defined Sets</td>
+            <td valign='top'>defined sets</td>
+            <td valign='top'>ic.definedSetsCls.showSets</td>
+        </tr>
 
-<tr><td valign='top'>d) Analysis -&gt; H-Bonds & Interactions:</td>  <td valign='top'>hbonds 3.5 | sets non-selected selected;<br>salt bridges 4 | sets non-selected selected;<br>interactions 4 | sets non-selected selected</td> <td valign='top'><a href="#showHbonds">showHbonds;showSaltbridge;pickCustomSphere</a></td></tr>
-<tr><td valign='top'>e) Analysis -&gt; Bring to Front:</td>  <td valign='top'>window ...</td> <td valign='top'>openDlg</td></tr>
+        <tr>
+            <td valign='top'>d) Analysis -&gt; H-Bonds & Interactions:</td>
+            <td valign='top'>hbonds 3.5 | sets non-selected selected;<br>salt bridges 4 | sets non-selected selected;<br>interactions 4 | sets non-selected selected</td>
+            <td valign='top'>ic.showInterCls.showHbonds;ic.showInterCls.showSaltbridge;ic.showInterCls.pickCustomSphere</td>
+        </tr>
+        <tr>
+            <td valign='top'>e) Analysis -&gt; Bring to Front:</td>
+            <td valign='top'>window ...</td>
+            <td valign='top'>ic.dialogCls.openDlg</td>
+        </tr>
 
-<tr><td colspan="3"><br>f) Analysis -&gt; DelPhi Potential</td> </tr>
-<tr><td valign='top'><span class="indent">Local Phi/Cube File:</span></td> <td valign='top'>[no command available]</td> <td valign='top'>loadPhiFile</td></tr>
-<tr><td valign='top'><span class="indent">URL (Same Host) Phi/Cube:</span></td> <td valign='top'>set phimap cubeurl contour 1 | [url]</td> <td valign='top'>loadPhiFileUrl</td></tr>
-<tr><td valign='top'>g) Analysis -&gt; Remove Potential:</td>  <td valign='top'>setoption phimap nothing</td> <td valign='top'>setOption('phimap', 'nothing')</td></tr>
+        <tr>
+            <td colspan="3"><br>f) Analysis -&gt; DelPhi Potential</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">Local Phi/Cube File:</span></td>
+            <td valign='top'>[no command available]</td>
+            <td valign='top'>ic.delphiCls.loadPhiFile</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">URL (Same Host) Phi/Cube:</span></td>
+            <td valign='top'>set phimap cubeurl contour 1 | [url]</td>
+            <td valign='top'>ic.delphiCls.loadPhiFileUrl</td>
+        </tr>
+        <tr>
+            <td valign='top'>g) Analysis -&gt; Remove Potential:</td>
+            <td valign='top'>setoption phimap nothing</td>
+            <td valign='top'>ic.setOptionCls.setOption('phimap', 'nothing')</td>
+        </tr>
 
-<tr><td colspan="3"><br>h) Analysis -&gt; Chemical Binding</td> </tr>
-<tr><td valign='top'><span class="indent">Show:</span></td>            <td valign='top'>set chemicalbinding show</td> <td valign='top'>me.setOption('chemicalbinding', 'show');</td></tr>
-<tr><td valign='top'><span class="indent">Hide:</span></td>            <td valign='top'>set hbonds off</td> <td valign='top'>me.setOption('chemicalbinding', 'hide');</td></tr>
+        <tr>
+            <td colspan="3"><br>h) Analysis -&gt; Chemical Binding</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">Show:</span></td>
+            <td valign='top'>set chemicalbinding show</td>
+            <td valign='top'>me.ic.setOptionCls.setOption('chemicalbinding', 'show');</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">Hide:</span></td>
+            <td valign='top'>set hbonds off</td>
+            <td valign='top'>me.ic.setOptionCls.setOption('chemicalbinding', 'hide');</td>
+        </tr>
 
-<tr><td colspan="3"><br>i) Analysis -&gt; Disulfide Bonds</td> </tr>
-<tr><td valign='top'><span class="indent">Show:</span></td>            <td valign='top'>disulfide bonds</td> <td valign='top'><a href="#showSsbonds">showSsbonds</a></td></tr>
-<tr><td valign='top'><span class="indent">Export Pairs:</span></td>            <td valign='top'>[no command available]</td> <td valign='top'></td></tr>
-<tr><td valign='top'><span class="indent">Hide:</span></td>            <td valign='top'>set disulfide bonds off</td> <td valign='top'>ic.opts["ssbonds"] = "no</td></tr>
+        <tr>
+            <td colspan="3"><br>i) Analysis -&gt; Disulfide Bonds</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">Show:</span></td>
+            <td valign='top'>disulfide bonds</td>
+            <td valign='top'>ic.showInterCls.showSsbonds</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">Export Pairs:</span></td>
+            <td valign='top'>[no command available]</td>
+            <td valign='top'></td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">Hide:</span></td>
+            <td valign='top'>set disulfide bonds off</td>
+            <td valign='top'>ic.opts["ssbonds"] = "no</td>
+        </tr>
 
-<tr><td colspan="3"><br>j) Analysis -&gt; Cross-Linkages</td> </tr>
-<tr><td valign='top'><span class="indent">Show:</span></td>            <td valign='top'>cross linkage</td> <td valign='top'>ic.bShowCrossResidueBond = true;</td></tr>
-<tr><td valign='top'><span class="indent">Hide:</span></td>            <td valign='top'>set cross linkage off</td> <td valign='top'>ic.bShowCrossResidueBond = false;</td></tr>
+        <tr>
+            <td colspan="3"><br>j) Analysis -&gt; Cross-Linkages</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">Show:</span></td>
+            <td valign='top'>cross linkage</td>
+            <td valign='top'>ic.bShowCrossResidueBond = true;</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">Hide:</span></td>
+            <td valign='top'>set cross linkage off</td>
+            <td valign='top'>ic.bShowCrossResidueBond = false;</td>
+        </tr>
 
-<tr><td colspan="3"><br>k) Analysis -&gt; Assembly (PDB, mmCIF, or MMTF files only)</td> </tr>
-<tr><td valign='top'><span class="indent">yes:</span></td>                <td valign='top'>set assembly on</td> <td valign='top'>ic.bAssembly = true;</td></tr>
-<tr><td valign='top'><span class="indent">no:</span></td>                 <td valign='top'>set assembly off</td> <td valign='top'>ic.bAssembly = false;</td></tr>
+        <tr>
+            <td colspan="3"><br>k) Analysis -&gt; Assembly (PDB, mmCIF, or MMTF files only)</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">yes:</span></td>
+            <td valign='top'>set assembly on</td>
+            <td valign='top'>ic.bAssembly = true;</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">no:</span></td>
+            <td valign='top'>set assembly off</td>
+            <td valign='top'>ic.bAssembly = false;</td>
+        </tr>
 
-<tr><td valign='top'>l) Analysis -&gt; Symmetry:</td>  <td valign='top'>symmetry C6 (global)</td> <td valign='top'>retrieveSymmetry; applySymmetry</td></tr>
+        <tr>
+            <td valign='top'>l) Analysis -&gt; Symmetry:</td>
+            <td valign='top'>symmetry C6 (global)</td>
+            <td valign='top'>ic.symdCls.retrieveSymmetry; ic.applySymdCls.applySymmetry</td>
+        </tr>
 
-<tr><td colspan="3"><br>m) Analysis -&gt; Distance</td> </tr>
-<tr><td valign='top' rowspan="2"><span class="indent">between Two Atoms:</span></td>            <td valign='top'>add label [label text] | x [x] y [y] z [z] | size [label size] | color [FF0000] | background [FFFFFF]</td> <td valign='top'><a href="#addLabel">addLabel</a></td></tr>
-<tr>                                                               <td valign='top'>add line | x1 [x1] y1 [y1] z1 [z1] | x2 [x2] y2 [y2] z2 [z2] | color [FFFF00] | dashed [true]</td> <td valign='top'><a href="#addLine">addLine</a></td></tr>
-<tr><td valign='top'><span class="indent">between Two Sets:</span></td>            <td valign='top'>dist | [set1] [set2]</td> <td valign='top'>measureDistTwoSets</td></tr>
-<tr><td valign='top'><span class="indent">Hide:</span></td>            <td valign='top'>set lines off</td> <td valign='top'>ic.labels['distance'] = []; ic.lines['distance'] = [];</td></tr>
+        <tr>
+            <td colspan="3"><br>m) Analysis -&gt; Distance</td>
+        </tr>
+        <tr>
+            <td valign='top' rowspan="2"><span class="indent">between Two Atoms:</span></td>
+            <td valign='top'>add label [label text] | x [x] y [y] z [z] | size [label size] | color [FF0000] | background [FFFFFF]</td>
+            <td valign='top'>ic.analysisCls.addLabel</td>
+        </tr>
+        <tr>
+            <td valign='top'>add line | x1 [x1] y1 [y1] z1 [z1] | x2 [x2] y2 [y2] z2 [z2] | color [FFFF00] | dashed [true]</td>
+            <td valign='top'>ic.analysisCls.addLine</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">between Two Sets:</span></td>
+            <td valign='top'>dist | [set1] [set2]</td>
+            <td valign='top'>ic.analysisCls.measureDistTwoSets</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">Hide:</span></td>
+            <td valign='top'>set lines off</td>
+            <td valign='top'>ic.labels['distance'] = []; ic.lines['distance'] = [];</td>
+        </tr>
 
-<tr><td colspan="3"><br>n) Analysis -&gt; Label</td> </tr>
-<tr><td valign='top'><span class="indent">by Picking Atoms:</span></td>            <td valign='top'>add label [label text] | x [x] y [y] z [z] | size [label size] | color [FF0000] | background [FFFFFF]</td> <td valign='top'><a href="#addLabel">addLabel</a></td></tr>
-<tr><td valign='top'><span class="indent">per Selection:</span></td>            <td valign='top'>add label [label text] | size [label size] | color [FF0000] | background [FFFFFF]</td> <td valign='top'><a href="#addLabel">addLabel</a></td></tr>
-<tr><td valign='top'><span class="indent">per Atom:</span></td>            <td valign='top'>add atom labels</td> <td valign='top'><a href="#addAtomLabels">addAtomLabels</a></td></tr>
-<tr><td valign='top'><span class="indent">per Residue:</span></td>            <td valign='top'>add residue labels</td> <td valign='top'><a href="#addResiudeLabels">addResiudeLabels</a></td></tr>
-<tr><td valign='top'><span class="indent">per Chain:</span></td>            <td valign='top'>add chain labels</td> <td valign='top'><a href="#addLabel">addLabel</a></td></tr>
-<tr><td valign='top'><span class="indent">N- & C- Termini:</span></td>            <td valign='top'>add terminal labels</td> <td valign='top'><a href="#addTerminiLabels">addTerminiLabels</a></td></tr>
-<tr><td valign='top'><span class="indent">Remove:</span></td>            <td valign='top'>set labels off</td> <td valign='top'><a href="#addChainLabels">addChainLabels</a></td></tr>
+        <tr>
+            <td colspan="3"><br>n) Analysis -&gt; Label</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">by Picking Atoms:</span></td>
+            <td valign='top'>add label [label text] | x [x] y [y] z [z] | size [label size] | color [FF0000] | background [FFFFFF]</td>
+            <td valign='top'>ic.analysisCls.addLabel</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">per Selection:</span></td>
+            <td valign='top'>add label [label text] | size [label size] | color [FF0000] | background [FFFFFF]</td>
+            <td valign='top'>ic.analysisCls.addLabel</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">per Atom:</span></td>
+            <td valign='top'>add atom labels</td>
+            <td valign='top'>ic.residueLabelsCls.addAtomLabels</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">per Residue:</span></td>
+            <td valign='top'>add residue labels</td>
+            <td valign='top'>ic.residueLabelsCls.addResiudeLabels</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">per Chain:</span></td>
+            <td valign='top'>add chain labels</td>
+            <td valign='top'>ic.analysisCls.addLabel</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">N- & C- Termini:</span></td>
+            <td valign='top'>add terminal labels</td>
+            <td valign='top'>ic.residueLabelsCls.addTerminiLabels</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">Remove:</span></td>
+            <td valign='top'>set labels off</td>
+            <td valign='top'>ic.residueLabelsCls.addChainLabels</td>
+        </tr>
 
-<tr><td colspan="3"><br>o) Analysis -&gt; Label Scale</td> </tr>
-<tr><td valign='top'><span class="indent">0.1:</span></td>                <td valign='top'>set label scale 0.1</td> <td valign='top'>ic.labelScale=0.1</td></tr>
-<tr><td valign='top'><span class="indent">0.2:</span></td>                <td valign='top'>set label scale 0.2</td> <td valign='top'>ic.labelScale=0.2</td></tr>
-<tr><td valign='top'><span class="indent">0.4:</span></td>                <td valign='top'>set label scale 0.4</td> <td valign='top'>ic.labelScale=0.4</td></tr>
-<tr><td valign='top'><span class="indent">0.6:</span></td>                <td valign='top'>set label scale 0.6</td> <td valign='top'>ic.labelScale=0.6</td></tr>
-<tr><td valign='top'><span class="indent">0.8:</span></td>                <td valign='top'>set label scale 0.8</td> <td valign='top'>ic.labelScale=0.8</td></tr>
-<tr><td valign='top'><span class="indent">1.0:</span></td>                <td valign='top'>set label scale 1.0</td> <td valign='top'>ic.labelScale=1.0</td></tr>
-<tr><td valign='top'><span class="indent">2.0:</span></td>                <td valign='top'>set label scale 2.0</td> <td valign='top'>ic.labelScale=2.0</td></tr>
-<tr><td valign='top'><span class="indent">4.0:</span></td>                <td valign='top'>set label scale 4.0</td> <td valign='top'>ic.labelScale=4.0</td></tr>
-<tr><td valign='top'><span class="indent">6.0:</span></td>                <td valign='top'>set label scale 6.0</td> <td valign='top'>ic.labelScale=6.0</td></tr>
-<tr><td valign='top'><span class="indent">8.0:</span></td>                <td valign='top'>set label scale 8.0</td> <td valign='top'>ic.labelScale=8.0</td></tr>
-<tr><td valign='top'><span class="indent">10.0:</span></td>                <td valign='top'>set label scale 10.0</td> <td valign='top'>ic.labelScale=10.0</td></tr>
+        <tr>
+            <td colspan="3"><br>o) Analysis -&gt; Label Scale</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">0.1:</span></td>
+            <td valign='top'>set label scale 0.1</td>
+            <td valign='top'>ic.labelScale=0.1</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">0.2:</span></td>
+            <td valign='top'>set label scale 0.2</td>
+            <td valign='top'>ic.labelScale=0.2</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">0.4:</span></td>
+            <td valign='top'>set label scale 0.4</td>
+            <td valign='top'>ic.labelScale=0.4</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">0.6:</span></td>
+            <td valign='top'>set label scale 0.6</td>
+            <td valign='top'>ic.labelScale=0.6</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">0.8:</span></td>
+            <td valign='top'>set label scale 0.8</td>
+            <td valign='top'>ic.labelScale=0.8</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">1.0:</span></td>
+            <td valign='top'>set label scale 1.0</td>
+            <td valign='top'>ic.labelScale=1.0</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">2.0:</span></td>
+            <td valign='top'>set label scale 2.0</td>
+            <td valign='top'>ic.labelScale=2.0</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">4.0:</span></td>
+            <td valign='top'>set label scale 4.0</td>
+            <td valign='top'>ic.labelScale=4.0</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">6.0:</span></td>
+            <td valign='top'>set label scale 6.0</td>
+            <td valign='top'>ic.labelScale=6.0</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">8.0:</span></td>
+            <td valign='top'>set label scale 8.0</td>
+            <td valign='top'>ic.labelScale=8.0</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">10.0:</span></td>
+            <td valign='top'>set label scale 10.0</td>
+            <td valign='top'>ic.labelScale=10.0</td>
+        </tr>
 
-<tr><td valign='top'>p) Analysis -&gt; Your Note / Window Title</td>     <td valign='top'>your note | [text]</td> <td valign='top'></td></tr>
+        <tr>
+            <td valign='top'>p) Analysis -&gt; Your Note / Window Title</td>
+            <td valign='top'>your note | [text]</td>
+            <td valign='top'></td>
+        </tr>
 
-<tr><td colspan="3"><br>q) Analysis -&gt; View Links</td> </tr>
-<tr><td valign='top'><span class="indent">Structure Summary:</span></td>          <td valign='top'>[no command available]</td> <td valign='top'></td></tr>
-<tr><td valign='top'><span class="indent">Find Similar Structures:</span></td>   <td valign='top'>[no command available]</td> <td valign='top'></td></tr>
-<tr><td valign='top'><span class="indent">Literature:</span></td>                <td valign='top'>[no command available]</td> <td valign='top'></td></tr>
-<tr><td valign='top'><span class="indent">Protein:</span></td>                <td valign='top'>[no command available]</td> <td valign='top'></td></tr>
+        <tr>
+            <td colspan="3"><br>q) Analysis -&gt; View Links</td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">Structure Summary:</span></td>
+            <td valign='top'>[no command available]</td>
+            <td valign='top'></td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">Find Similar Structures:</span></td>
+            <td valign='top'>[no command available]</td>
+            <td valign='top'></td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">Literature:</span></td>
+            <td valign='top'>[no command available]</td>
+            <td valign='top'></td>
+        </tr>
+        <tr>
+            <td valign='top'><span class="indent">Protein:</span></td>
+            <td valign='top'>[no command available]</td>
+            <td valign='top'></td>
+        </tr>
 
-</tbody></table>
+    </tbody>
+</table>
 <br>
 
 <a name="help"></a><b>7. Help</b> <a href="#Top"><span class="top">&nbsp;&nbsp;&nbsp;</span></a><br>
-<table width='100%'><tr><td width='30%'><b>Menu</b></td><td width='40%'><b>Command</b></td> <td></td></tr>
-<tr><td valign='top'>a) Help -&gt; About iCn3D:</td>      <td valign='top'>[no command available]</td> <td></td></tr>
-<tr><td valign='top'>b) Help -&gt; Help DOc:</td>      <td valign='top'>[no command available]</td> <td></td></tr>
-<tr><td valign='top'>c) Help -&gt; Web Methods:</td>      <td valign='top'>[no command available]</td> <td></td></tr>
-<tr><td valign='top'>d) Help -&gt; Transform Hints:</td>      <td valign='top'>[no command available]</td> <td></td></tr>
-<tr><td valign='top'>e) Help -&gt; Selection Hints:</td>      <td valign='top'>[no command available]</td> <td></td></tr>
-</tbody></table>
+<table width='100%'>
+    <tr>
+        <td width='30%'><b>Menu</b></td>
+        <td width='40%'><b>Command</b></td>
+        <td></td>
+    </tr>
+    <tr>
+        <td valign='top'>a) Help -&gt; About iCn3D:</td>
+        <td valign='top'>[no command available]</td>
+        <td></td>
+    </tr>
+    <tr>
+        <td valign='top'>b) Help -&gt; Help DOc:</td>
+        <td valign='top'>[no command available]</td>
+        <td></td>
+    </tr>
+    <tr>
+        <td valign='top'>c) Help -&gt; Web Methods:</td>
+        <td valign='top'>[no command available]</td>
+        <td></td>
+    </tr>
+    <tr>
+        <td valign='top'>d) Help -&gt; Transform Hints:</td>
+        <td valign='top'>[no command available]</td>
+        <td></td>
+    </tr>
+    <tr>
+        <td valign='top'>e) Help -&gt; Selection Hints:</td>
+        <td valign='top'>[no command available]</td>
+        <td></td>
+    </tr>
+    </tbody>
+</table>
 
 </ul>
 <br>
@@ -1150,16 +2289,16 @@ In the dialog Select -&gt; Advanced, users can use simple specification to selec
 </li>
 <li><a name="embedJS"></a><b>Embed using Javascript</b><br>
 
-<p>To embed iCn3D Structure Viewer in your own HTML page using the distribution files on NCBI servers, simply follow these 3 steps: (To embed multiple iCn3D viewers, see the source code of the <a href="https://www.ncbi.nlm.nih.gov/Structure/icn3d/example.html">example page</a> for reference)</p>
+<p>To embed iCn3D Structure Viewer in your own HTML page using the distribution files on NCBI servers, simply follow these 3 steps. Note the changes to iCn3D version 3 are colored in red. (To embed multiple iCn3D viewers, see the source code of the <a href="https://www.ncbi.nlm.nih.gov/Structure/icn3d/example.html">example page</a> for reference)</p>
 
 <ol>
     <li><a name="HowToUseStep1"></a><b>Include the CSS and JavaScript libraries in the &lt;head&gt; of your html page, as shown here.</b></li>
     <pre>&lt;link rel="stylesheet" href="https://www.ncbi.nlm.nih.gov/Structure/icn3d/lib/jquery-ui.min.css"&gt;
-&lt;link rel="stylesheet" href="https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d.css"&gt;
+&lt;link rel="stylesheet" href="https://www.ncbi.nlm.nih.gov/Structure/icn3d/<span>icn3d.css</span>"&gt;
 &lt;script src="https://www.ncbi.nlm.nih.gov/Structure/icn3d/lib/jquery.min.js"&gt;&lt;/script&gt;
 &lt;script src="https://www.ncbi.nlm.nih.gov/Structure/icn3d/lib/jquery-ui.min.js"&gt;&lt;/script&gt;
-&lt;script src="https://www.ncbi.nlm.nih.gov/Structure/icn3d/lib/three128.min.js"&gt;&lt;/script&gt;
-&lt;script src="https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d.min.js"&gt;&lt;/script&gt;</pre>
+&lt;script src="https://www.ncbi.nlm.nih.gov/Structure/icn3d/lib/<span>threeClass.min.js</span>"&gt;&lt;/script&gt;
+&lt;script src="https://www.ncbi.nlm.nih.gov/Structure/icn3d/<span>icn3d.min.js</span>"&gt;&lt;/script&gt;</pre>
 
     <li><a name="HowToUseStep2"></a><b>Position the widget with an html div</b></li>
     <pre>      &lt;div id="icn3dwrap"&gt;&lt;/div&gt;
@@ -1181,7 +2320,7 @@ In the dialog Select -&gt; Advanced, users can use simple specification to selec
           };
           cfg['mmdbid'] = '1tup';
 
-          var icn3dui = new icn3d.iCn3DUI(cfg);
+          var icn3dui = new <span>icn3d.</span>iCn3DUI(cfg);
 
           //communicate with the 3D viewer with chained functions
           $.when(icn3dui.show3DStructure()).then(function() {
@@ -1238,132 +2377,135 @@ Each function in classes in the directory "icn3d" has a variable "ic" to represe
 Each function in classes in the directory "html" has a variable "me" to represent the instance "icn3dui". "me.icn3d" can be used to represent the instance "icn3d".<br><br>
 
 <table border='1' cellpadding='5' cellspacing='0'>
-<tr><th>global</th><th>class (directory)</th><th>class (directory)</th><th>class (directory)</th></tr>
-<tr><td><b>icn3d</b></td><td><b>icn3dui (src)</b></td><td><b>UtilsCls (utils)</b></td><td></td></tr>
-<tr><td>icn3d</td><td>icn3dui</td><td>HashUtilsCls (utils)</td><td></td></tr>
-<tr><td>icn3d</td><td>icn3dui</td><td>ParasCls (utils)</td><td></td></tr>
-<tr><td>icn3d</td><td>icn3dui</td><td>MyEventCls (utils)</td><td></td></tr>
-<tr><td>icn3d</td><td>icn3dui</td><td>SubdivideCls (utils)</td><td></td></tr>
-<tr><td>icn3d</td><td>icn3dui</td><td>RmsdSuprCls (utils)</td><td></td></tr>
-<tr><td>icn3d</td><td>icn3dui</td><td>ConvertTypeCls (utils)</td><td></td></tr>
-<tr><td><b>icn3d</b></td><td><b>icn3dui (src)</b></td><td><b>htmlCls (html)</b></td><td><b>alignSeqCls (html)</b></td></tr>
-<tr><td>icn3d</td><td>icn3dui</td><td>htmlCls</td><td>clickMenuCls (html)</td></tr>
-<tr><td>icn3d</td><td>icn3dui</td><td>htmlCls</td><td>dialogCls (html)</td></tr>
-<tr><td>icn3d</td><td>icn3dui</td><td>htmlCls</td><td>eventsCls (html)</td></tr>
-<tr><td>icn3d</td><td>icn3dui</td><td>htmlCls</td><td>setDialogCls (html)</td></tr>
-<tr><td>icn3d</td><td>icn3dui</td><td>htmlCls</td><td>setHtmlCls (html)</td></tr>
-<tr><td>icn3d</td><td>icn3dui</td><td>htmlCls</td><td>setMenuCls (html)</td></tr>
-<tr><td><b>icn3d</b></td><td><b>icn3dui (src)</b></td><td><b>icn3d (icn3d)</b></td><td><b>analysisCls (analysis)</b></td></tr>
-<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>applySymdCls (analysis)</td></tr>
-<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>delphiCls (analysis)</td></tr>
-<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>diagram2dCls (analysis)</td></tr>
-<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>dsspCls (analysis)</td></tr>
-<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>scapCls (analysis)</td></tr>
-<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>symdCls (analysis)</td></tr>
+<tr><th>Global</th><th>Class (directory)</th><th>Class (directory)</th><th>Class (directory)</th><th>Functions</th></tr>
+<tr><td><b>icn3d</b></td><td><b>icn3dui (src)</b></td><td><b>UtilsCls (utils)</b></td><td></td><td>setIcn3d, setDialogAjax</td></tr>
+<tr><td>icn3d</td><td>icn3dui</td><td>UtilsCls (utils)</td><td></td><td>isIE, isMobile, isMac, isSessionStorageSupported, hexToRgb, isCalphaPhosOnly, hasCovalentBond, residueName2Abbr, residueAbbr2Name, getJSONFromArray, checkFileAPI, getIdArray, compResid, toggle, setViewerWidthHeight</td></tr>
+<tr><td>icn3d</td><td>icn3dui</td><td>HashUtilsCls (utils)</td><td></td><td>cloneHash, intHash, exclHash, unionHash, unionHashInPlace, unionHashNotInPlace, intHash2Atoms, exclHash2Atoms, unionHash2Atoms, hash2Atoms, hashvalue2array</td></tr>
+<tr><td>icn3d</td><td>icn3dui</td><td>ParasCls (utils)</td><td></td><td>Parameters: glycanHash, nucleotidesArray, ionsArray, cationsTrimArray, anionsTrimArray, ionCharges, vdwRadii, covalentRadii, surfaces, atomColors, defaultAtomColor, stdChainColors, backgroundColors, residueColors, residueArea, defaultResidueColor, chargeColors, hydrophobicColors, ssColors, ssColors2, b62ResArray, b62Matrix<br>Functions: thr</td></tr>
+<tr><td>icn3d</td><td>icn3dui</td><td>MyEventCls (utils)</td><td></td><td>onId, onIds</td></tr>
+<tr><td>icn3d</td><td>icn3dui</td><td>SubdivideCls (utils)</td><td></td><td>subdivide, getKnot, getValueFromKnot</td></tr>
+<tr><td>icn3d</td><td>icn3dui</td><td>RmsdSuprCls (utils)</td><td></td><td>getRmsdSuprCls, eigen_values, null_basis, getEigenForSelection, getEigenVectors</td></tr>
+<tr><td>icn3d</td><td>icn3dui</td><td>ConvertTypeCls (utils)</td><td></td><td>passFloat32, passInt8, passInt16, passInt32, getUint8View, getDataView, getView, getBlobFromBufferAndText</td></tr>
+<tr><td><b>icn3d</b></td><td><b>icn3dui (src)</b></td><td><b>htmlCls (html)</b></td><td></td><td>N/A</td></tr>
+<tr><td>icn3d</td><td>icn3dui</td><td>htmlCls</td><td>alignSeqCls (html)</td><td>getAlignSequencesAnnotations</td></tr>
+<tr><td>icn3d</td><td>icn3dui</td><td>htmlCls</td><td>clickMenuCls (html)</td><td>clickMenu1, clickMenu2, clickMenu3, clickMenu4, clickMenu5, clickMenu6, setLogCmd</td></tr>
+<tr><td>icn3d</td><td>icn3dui</td><td>htmlCls</td><td>dialogCls (html)</td><td>openDlg, addSaveButton, addHideButton, getDialogStatus, openDlgHalfWindow, openDlg2Ddgm, openDlgRegular, openDlgNotebook</td></tr>
+<tr><td>icn3d</td><td>icn3dui</td><td>htmlCls</td><td>eventsCls (html)</td><td>fullScreenChange, allEventFunctions</td></tr>
+<tr><td>icn3d</td><td>icn3dui</td><td>htmlCls</td><td>setDialogCls (html)</td><td>setCustomDialogs, setDialogs</td></tr>
+<tr><td>icn3d</td><td>icn3dui</td><td>htmlCls</td><td>setHtmlCls (html)</td><td>getLink, getLinkWrapper, getRadio, getRadioColor, setAdvanced, getOptionHtml, setColorHints, setThicknessHtml, setSequenceGuide, setAlignSequenceGuide, getSelectionHints, addGsizeSalt, getFootHtml, getPotentialHtml, exportPqr, clickReload_pngimage, setLineThickness, updateSurfPara, exportPdb</td></tr>
+<tr><td>icn3d</td><td>icn3dui</td><td>htmlCls</td><td>setMenuCls (html)</td><td>setTopMenusHtml, setTopMenusHtmlMobile, setReplayHtml, setTools, setButton, setTools_base, setTheme, setLogWindow, setMenu1, setMenu1_base, setMenu2, setMenu2_base, setMenu2b, setMenu2b_base, setMenu3, setMenu3_base, setMenu4, setMenu4_base, setMenu5, setMenu5_base, setMenu6, setMenu6_base, hideMenu, showMenu</td></tr>
+<tr><td><b>icn3d</b></td><td><b>icn3dui (src)</b></td><td><b>icn3d (icn3d)</b></td><td></td><td>init, init_base, reinitAfterLoad, resetConfig</td></tr>
+<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>analysisCls (analysis)</td><td>calculateArea, calcBuriedSurface, measureDistTwoSets, addLine, addLineFromPicking, addLabel, addChainLabels, addTerminiLabels</td></tr>
+<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>applySymdCls (analysis)</td><td>applySymd, applySymmetry</td></tr>
+<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>delphiCls (analysis)</td><td>CalcPhiUrl, CalcPhi, PhiParser, loadPhiData, loadCubeData, applyCommandPhi, applyCommandDelphi, loadDelphiFile, loadPhiFile, loadPhiFileUrl</td></tr>
+<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>diagram2dCls (analysis)</td><td>draw2Ddgm, set2DdgmNote, highlightNode, removeLineGraphSelection, removeScatterplotSelection, click2Ddgm, selectInteraction, selectInteractionAtoms, draw2DProtein, draw2DNucleotide, draw2DChemical</td></tr>
+<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>dsspCls (analysis)</td><td>applyDssp, parseDsspData</td></tr>
+<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>scapCls (analysis)</td><td>applyCommandScapBase, applyCommandScap, adjust2DWidth, retrieveScap</td></tr>
+<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>symdCls (analysis)</td><td>applyCommandSymdBase, applyCommandSymd, retrieveSymd, getResObj, setSeqAlignForSymmetry, retrieveSymmetry, getPolygonColor, getAxisColor</td></tr>
 
-<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>addTrackCls (annotations)</td></tr>
-<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>annoCddSiteCls (annotations)</td></tr>
-<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>annoContactCls (annotations)</td></tr>
-<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>annoCrossLinkCls (annotations)</td></tr>
-<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>annoDomainCls (annotations)</td></tr>
-<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>annoSnpClinVarCls (annotations)</td></tr>
-<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>annoSsbondCls (annotations)</td></tr>
-<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>annoTransMemCls (annotations)</td></tr>
-<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>annotationCls (annotations)</td></tr>
-<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>showAnnoCls (annotations)</td></tr>
-<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>showSeqCls (annotations)</td></tr>
+<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>addTrackCls (annotations)</td><td>clickAddTrackButton, showNewTrack, alignSequenceToStructure, defineSecondary, simplifyText, checkGiSeq, getFullText, setCustomFile</td></tr>
+<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>annoCddSiteCls (annotations)</td><td>showCddSiteAll, setDomainFeature, getAdjustedResi, showAnnoType, setToolTip</td></tr>
+<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>annoContactCls (annotations)</td><td>showInteraction, showInteraction_base</td></tr>
+<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>annoCrossLinkCls (annotations)</td><td>showCrosslink, showCrosslink_base</td></tr>
+<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>annoDomainCls (annotations)</td><td>showDomainPerStructure, showDomainAll, showDomainWithData</td></tr>
+<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>annoSnpClinVarCls (annotations)</td><td>navClinVar, showClinVarLabelOn3D, getSnpLine, processSnpClinvar, showClinvarPart2, showSnp, showClinvar, showSnpClinvar, showSnpPart2, processNoClinvar, processNoSnp</td></tr>
+<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>annoSsbondCls (annotations)</td><td>showSsbond, showSsbond_base</td></tr>
+<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>annoTransMemCls (annotations)</td><td>showTransmem, showTransmem_base</td></tr>
+<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>annotationCls (annotations)</td><td>hideAllAnno, hideAllAnnoBase, setAnnoSeqBase, setAnnoTabBase, setAnnoTabAll, hideAnnoTabAll, resetAnnoAll, resetAnnoTabAll, setAnnoTabCustom, hideAnnoTabCustom, setAnnoTabClinvar, hideAnnoTabClinvar, setAnnoTabSnp, hideAnnoTabSnp, setAnnoTabCdd, hideAnnoTabCdd, setAnnoTab3ddomain, hideAnnoTab3ddomain, setAnnoTabSite, hideAnnoTabSite, setAnnoTabInteraction, hideAnnoTabInteraction, setAnnoTabSsbond, hideAnnoTabSsbond, setAnnoTabCrosslink, hideAnnoTabCrosslink, setAnnoTabTransmem, hideAnnoTabTransmem, setTabs, clickCdd, showAnnoSelectedChains, showAnnoAllChains, setAnnoView, setAnnoDisplay, showFixedTitle, hideFixedTitle, setAnnoViewAndDisplay, updateClinvar, updateSnp, updateDomain, updateInteraction, updateSsbond, updateCrosslink, updateTransmem</td></tr>
+<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>showAnnoCls (annotations)</td><td>showAnnotations, showAnnoSeqData, getAnnotationData, getSequenceData, getCombinedSequenceData, processSeqData, enableHlSeq, getAnDiv, addButton, addSnpButton, conservativeReplacement, getColorhexFromBlosum62</td></tr>
+<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>showSeqCls (annotations)</td><td>showSeq, insertGap, insertGapOverview, setAlternativeSeq, getProteinName</td></tr>
 
-<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>alternateCls (display)</td></tr>
-<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>applyCenterCls (display)</td></tr>
-<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>applyClbondsCls (display)</td></tr>
-<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>applyDisplayCls (display)</td></tr>
-<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>applyOtherCls (display)</td></tr>
-<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>applySsbondsCls (display)</td></tr>
-<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>cameraCls (display)</td></tr>
-<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>drawCls (display)</td></tr>
-<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>fogCls (display)</td></tr>
-<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>sceneCls (display)</td></tr>
-<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>setColorCls (display)</td></tr>
-<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>setOptionCls (display)</td></tr>
-<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>setStyleCls (display)</td></tr>
+<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>alternateCls (display)</td><td>alternateStructures, alternateWrapper</td></tr>
+<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>applyCenterCls (display)</td><td>applyCenterOptions, setRotationCenter, setCenter, centerSelection, centerAtoms, setWidthHeight</td></tr>
+<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>applyClbondsCls (display)</td><td>applyClbondsOptions, applyClbondsOptions_base</td></tr>
+<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>applyDisplayCls (display)</td><td>applyDisplayOptions, selectMainChainSubset</td></tr>
+<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>applyOtherCls (display)</td><td>applyOtherOptions, applyChemicalbindingOptions, updateStabilizer, getResidueRepPos</td></tr>
+<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>applySsbondsCls (display)</td><td>applySsbondsOptions</td></tr>
+<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>cameraCls (display)</td><td>setCamera</td></tr>
+<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>drawCls (display)</td><td>draw, applyTransformation, render</td></tr>
+<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>fogCls (display)</td><td>setFog</td></tr>
+<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>sceneCls (display)</td><td>rebuildScene, rebuildSceneBase</td></tr>
+<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>setColorCls (display)</td><td>setColorByOptions, setAtmClr, updateChainsColor, setMmdbChainColor, setConservationColor, applyOriginalColor, applyPrevColor, setOutlineColor</td></tr>
+<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>setOptionCls (display)</td><td>setOption, setStyle, saveStyle, applySavedStyle, saveColor, applySavedColor</td></tr>
+<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>setStyleCls (display)</td><td>setStyle2Atoms, setAtomStyleByOptions, setBackground, saveCommandsToSession, getCommandsBeforeCrash, handleContextLost, adjustIcon</td></tr>
 
-<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>export3DCls (export)</td></tr>
-<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>saveFileCls (export)</td></tr>
-<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>shareLinkCls (export)</td></tr>
-<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>threeDPrintCls (export)</td></tr>
+<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>export3DCls (export)</td><td>exportStlFile, exportVrmlFile, getFaceCnt, saveStlFile, updateArray, processStlMeshGroup, saveVrmlFile, processVrmlMeshGroup</td></tr>
+<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>saveFileCls (export)</td><td>saveFile, saveSvg, getSvgXml, savePng, exportCustomAtoms, getAtomPDB, getSelectedResiduePDB, getPDBHeader, showTitle, getLinkToStructureSummary, setEntrezLinks</td></tr>
+<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>shareLinkCls (export)</td><td>shareLink, shareLinkUrl, getPngText</td></tr>
+<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>threeDPrintCls (export)</td><td>setThichknessFor3Dprint, prepareFor3Dprint, resetAfter3Dprint, removeOneStabilizer, outputSelection, addStabilizer, hideStabilizer, getResidueRepAtom</td></tr>
 
-<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>axesCls (geometry)</td></tr>
-<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>boxCls (geometry)</td></tr>
-<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>brickCls (geometry)</td></tr>
-<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>cartoonNuclCls (geometry)</td></tr>
-<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>curveCls (geometry)</td></tr>
-<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>curveStripArrowCls (geometry)</td></tr>
-<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>cylinderCls (geometry)</td></tr>
-<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>glycanCls (geometry)</td></tr>
-<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>impostorCls (geometry)</td></tr>
-<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>instancingCls (geometry)</td></tr>
-<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>labelCls (geometry)</td></tr>
-<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>lineCls (geometry)</td></tr>
-<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>reprSubCls (geometry)</td></tr>
-<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>residueLabelsCls (geometry)</td></tr>
-<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>sphereCls (geometry)</td></tr>
-<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>stickCls (geometry)</td></tr>
-<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>strandCls (geometry)</td></tr>
-<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>stripCls (geometry)</td></tr>
-<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>tubeCls (geometry)</td></tr>
+<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>axesCls (geometry)</td><td>buildAxes, buildAllAxes, createArrow, setPc1Axes</td></tr>
+<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>boxCls (geometry)</td><td>createBox, createBox_base, createBoxRepresentation_P_CA</td></tr>
+<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>brickCls (geometry)</td><td>createBrick</td></tr>
+<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>cartoonNuclCls (geometry)</td><td>drawStrandNucleicAcid, drawNucleicAcidStick</td></tr>
+<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>curveCls (geometry)</td><td>createCurveSub</td></tr>
+<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>curveStripArrowCls (geometry)</td><td>createCurveSubArrow, createStripArrow, prepareStrand</td></tr>
+<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>cylinderCls (geometry)</td><td>createCylinder, createCylinder_base, createCylinderHelix, createCylinderCurve</td></tr>
+<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>glycanCls (geometry)</td><td>showGlycans</td></tr>
+<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>impostorCls (geometry)</td><td>setParametersForShader , drawImpostorShader , getShader , createImpostorShaderBase, createImpostorShaderCylinder, createImpostorShaderSphere, clearImpostors</td></tr>
+<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>instancingCls (geometry)</td><td>positionFromGeometry, colorFromGeometry, indexFromGeometry, normalFromGeometry, drawSymmetryMates, applyMat, drawSymmetryMatesNoInstancing, createInstancedGeometry, getInstancedMaterial, createInstancedMesh, drawSymmetryMatesInstancing</td></tr>
+<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>labelCls (geometry)</td><td>makeTextSprite, createLabelRepresentation, hideLabels</td></tr>
+<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>lineCls (geometry)</td><td>createLineRepresentation, createConnCalphSidechain, createSingleLine, createLines</td></tr>
+<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>reprSubCls (geometry)</td><td>createRepresentationSub</td></tr>
+<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>residueLabelsCls (geometry)</td><td>addResidueLabels, addNonCarbonAtomLabels, addAtomLabels</td></tr>
+<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>sphereCls (geometry)</td><td>createSphere, createSphereBase, createSphereRepresentation</td></tr>
+<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>stickCls (geometry)</td><td>createStickRepresentation</td></tr>
+<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>strandCls (geometry)</td><td>createStrand, getSSExpandedAtoms</td></tr>
+<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>stripCls (geometry)</td><td>createStrip, setCalphaDrawnCoord</td></tr>
+<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>tubeCls (geometry)</td><td>createTube, getCustomtubesize, createTubeSub, getRadius</td></tr>
 
-<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>hlObjectsCls (highlight)</td></tr>
-<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>hlSeqCls (highlight)</td></tr>
-<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>hlUpdateCls (highlight)</td></tr>
+<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>hlObjectsCls (highlight)</td><td>addHlObjects, removeHlObjects</td></tr>
+<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>hlSeqCls (highlight)</td><td>selectSequenceNonMobile, selectSequenceMobile, selectChainMobile, selectTitle, selectResidues</td></tr>
+<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>hlUpdateCls (highlight)</td><td>update2DdgmContent, changeSeqColor, removeHlAll, removeHlObjects, removeHlSeq, removeHl2D, removeHlMenus, updateHlAll, updateHlObjects, updateHlSeq, updateHlSeqInChain, updateHl2D, updateHlMenus, hlSequence, hlSeqInChain, toggleHighlight, clearHighlight, showHighlight, highlightChains, hlSummaryDomain3ddomain, updateHlAll</td></tr>
 
-<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>contactCls (interaction)</td></tr>
-<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>drawGraphCls (interaction)</td></tr>
-<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>getGraphCls (interaction)</td></tr>
-<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>hBondCls (interaction)</td></tr>
-<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>lineGraphCls (interaction)</td></tr>
-<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>piHalogenCls (interaction)</td></tr>
-<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>saltbridgeCls (interaction)</td></tr>
-<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>showInterCls (interaction)</td></tr>
-<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>viewInterPairsCls (interaction)</td></tr>
+<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>contactCls (interaction)</td><td>getAtomsWithinAtom, getNeighboringAtoms, getExtent, hideContact</td></tr>
+<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>drawGraphCls (interaction)</td><td>drawGraph</td></tr>
+<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>getGraphCls (interaction)</td><td>getGraphData, drawResNode, getNodeTopBottom, updateGraphJson, updateGraphColor, handleForce, getNodesLinksForSet, getHbondLinksForSet, getIonicLinksForSet, getHalogenPiLinksForSet, getContactLinksForSet, getContactLinks, compNode, getGraphLinks, convertLabel2Resid</td></tr>
+<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>hBondCls (interaction)</td><td>isHbondDonorAcceptor, calcAngles, calcPlaneAngle, isValidHbond, calculateChemicalHbonds, setHbondsContacts, hideHbonds</td></tr>
+<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>lineGraphCls (interaction)</td><td>drawLineGraph, drawLineGraph_base, drawScatterplot_base, copyStylesInline</td></tr>
+<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>piHalogenCls (interaction)</td><td>calculateHalogenPiInteractions, getHalogenDonar, getHalogenAcceptor, getPi, getCation, getHalogenPiInteractions, getRingNormal, getAromaticRings, dfs_cycle, getAromaticPisLigand, hideHalogenPi</td></tr>
+<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>saltbridgeCls (interaction)</td><td>calculateIonicInteractions, hideSaltbridge</td></tr>
+<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>showInterCls (interaction)</td><td>showInteractions, showHbonds, showHydrogens, hideHydrogens, hideHbondsContacts, showIonicInteractions, showHalogenPi, showClbonds, showSsbonds, pickCustomSphere, pickCustomSphere_base</td></tr>
+<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>viewInterPairsCls (interaction)</td><td>viewInteractionPairs, clearInteractions, resetInteractionPairs, retrieveInteractionData, getAllInteractionTable, getInteractionPerResidue, getInteractionPairDetails, getContactPairDetails, exportInteractions, exportSsbondPairs, exportClbondPairs, exportHbondPairs, exportSaltbridgePairs, exportHalogenPiPairs, exportSpherePairs</td></tr>
 
-<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>alignParserCls (parsers)</td></tr>
-<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>chainalignParserCls (parsers)</td></tr>
-<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>densityCifParserCls (parsers)</td></tr>
-<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>dsn6ParserCls (parsers)</td></tr>
-<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>loadAtomDataCls (parsers)</td></tr>
-<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>loadPDBCls (parsers)</td></tr>
-<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>mmcifParserCls (parsers)</td></tr>
-<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>mmdbParserCls (parsers)</td></tr>
-<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>mmtfParserCls (parsers)</td></tr>
-<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>mol2ParserCls (parsers)</td></tr>
-<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>opmParserCls (parsers)</td></tr>
-<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>parserUtilsCls (parsers)</td></tr>
-<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>pdbParserCls (parsers)</td></tr>
-<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>realignParserCls (parsers)</td></tr>
-<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>sdfParserCls (parsers)</td></tr>
-<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>setSeqAlignCls (parsers)</td></tr>
-<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>xyzParserCls (parsers)</td></tr>
+<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>alignParserCls (parsers)</td><td>downloadAlignment, downloadAlignmentPart2, loadOpmDataForAlign</td></tr>
+<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>chainalignParserCls (parsers)</td><td>downloadChainalignmentPart2, downloadChainalignmentPart3, downloadChainalignment, parseChainAlignData, loadOpmDataForChainalign</td></tr>
+<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>densityCifParserCls (parsers)</td><td>densityCifParser, parseChannels, getChannel, CIFParse, BinaryParse, MessagePackParse</td></tr>
+<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>dsn6ParserCls (parsers)</td><td>dsn6Parser, dsn6ParserBase, loadDsn6Data, getMatrix, loadDsn6File, loadDsn6FileUrl</td></tr>
+<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>loadAtomDataCls (parsers)</td><td>loadAtomDataIn</td></tr>
+<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>loadPDBCls (parsers)</td><td>loadPDB, adjustSeq, setSsbond, getChainCalpha</td></tr>
+<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>mmcifParserCls (parsers)</td><td>downloadMmcif, downloadMmcifSymmetry, downloadMmcifSymmetryBase, loadMmcifData, loadMmcifSymmetry, loadMmcifOpmDataPart2</td></tr>
+<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>mmdbParserCls (parsers)</td><td>parseMmdbDataPart1, parseMmdbData, downloadMmdb, downloadMmdbPart2, downloadGi, downloadBlast_rep_id, loadMmdbOpmData, loadMmdbOpmDataPart2</td></tr>
+<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>mmtfParserCls (parsers)</td><td>downloadMmtf, parseMmtfData</td></tr>
+<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>mol2ParserCls (parsers)</td><td>loadMol2Data, loadMol2AtomData</td></tr>
+<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>opmParserCls (parsers)</td><td>downloadOpm, loadOpmData, setOpmData, parseAtomData</td></tr>
+<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>parserUtilsCls (parsers)</td><td>alignCoords, getMissingResidues, set2DDiagramsForAlign, set2DDiagramsForChainalign, parse2DDiagramsData, set2DDiagrams, showLoading, hideLoading, setYourNote, transformToOpmOri, transformToOpmOriForAlign, addOneDumAtom, addMemAtoms, setMaxD, renderStructure</td></tr>
+<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>pdbParserCls (parsers)</td><td>downloadPdb, downloadUrl, loadPdbData, loadPdbDataRender</td></tr>
+<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>realignParserCls (parsers)</td><td>realign, parseChainRealignData, realignOnSeqAlign, realignChainOnSeqAlign</td></tr>
+<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>sdfParserCls (parsers)</td><td>downloadCid, loadSdfData, loadSdfAtomData</td></tr>
+<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>setSeqAlignCls (parsers)</td><td>setSeqAlign, setSeqAlignChain, setSeqAlignForRealign, setSeqPerResi</td></tr>
+<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>xyzParserCls (parsers)</td><td>loadXyzData, setXyzAtomSeq, loadXyzAtomData</td></tr>
 
-<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>controlCls (picking)</td></tr>
-<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>pickingCls (picking)</td></tr>
-<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>rayCls (picking)</td></tr>
+<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>controlCls (picking)</td><td>setControl, mouseMove</td></tr>
+<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>pickingCls (picking)</td><td>showPicking, showPickingBase, showPickingHilight, select3ddomainFromAtom, selectStrandHelixFromAtom</td></tr>
+<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>rayCls (picking)</td><td>rayCasterBase, isIntersect, getAtomsFromPosition</td></tr>
 
-<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>applyCommandCls (selection)</td></tr>
-<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>definedSetsCls (selection)</td></tr>
-<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>firstAtomObjCls (selection)</td></tr>
-<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>loadScriptCls (selection)</td></tr>
-<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>resid2specCls (selection)</td></tr>
-<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>selectByCommandCls (selection)</td></tr>
-<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>selectionCls (selection)</td></tr>
+<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>applyCommandCls (selection)</td><td>applyCommand, setStrengthPara, getThresholdNameArrays, setQueryresi2score, getMenuFromCmd</td></tr>
+<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>definedSetsCls (selection)</td><td>setProtNuclLigInMenu, setPredefinedInMenu, setAtomMenu, setChainsInMenu, setTransmemInMenu, showSets, clickCustomAtoms, deleteSelectedSets, changeCustomAtoms, setHAtomsFromSets, updateAdvancedCommands, combineSets, commandSelect, clickCommand_apply, selectCombinedSets, clickModeswitch, setModeAndDisplay, setMode, getAtomsFromOneSet, getAtomsFromSets, getAtomsFromNameArray</td></tr>
+<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>firstAtomObjCls (selection)</td><td>getFirstAtomObj, getFirstCalphaAtomObj, getFirstAtomObjByName, getLastAtomObj, getResiduesFromAtoms, getResiduesFromCalphaAtoms, getChainsFromAtoms, getAtomFromResi, getAtomCoordFromResi</td></tr>
+<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>loadScriptCls (selection)</td><td>loadScript, execCommands, execCommandsBase, pressCommandtext, applyCommandLoad, applyCommandMap, applyCommandEmmap, applyCommandSymmetryBase, applyCommandSymmetry, applyCommandRealignBase, applyCommandRealign, applyCommandGraphinteractionBase, applyCommandGraphinteraction, applyCommandAnnotationsAndCddSiteBase, applyCommandAnnotationsAndCddSite, applyCommandClinvarBase, applyCommandSnpBase, applyCommandClinvar, applyCommandSnp, applyCommand3ddomainBase, applyCommand3ddomain, applyCommandViewinteractionBase, applyCommandViewinteraction, renderFinalStep, replayFirstStep</td></tr>
+<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>resid2specCls (selection)</td><td>residueids2spec, atoms2spec, atoms2residues, selectProperty, selectComplement, switchHighlightLevel, switchHighlightLevelUp, switchHighlightLevelDown</td></tr>
+<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>selectByCommandCls (selection)</td><td>selectByCommand, selectBySpec</td></tr>
+<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>selectionCls (selection)</td><td>selectAll, selectAll_base, selectAChain, selectResidueList, selectMainChains, selectSideChains, selectMainSideChains, clickShow_selected, clickHide_selected, getGraphDataForDisplayed, updateSelectionNameDesc, addCustomSelection, showSelection, hideSelection, saveSelection, removeSelection, resetAll, loadSelection, oneStructurePerWindow, showAll, saveSelectionIfSelected, saveSelectionPrep, selectOneResid, toggleSelection, toggleMembrane, adjustMembrane, selectBtwPlanes</td></tr>
 
-<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>applyMapCls (surface)</td></tr>
-<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>electronMapCls (surface)</td></tr>
-<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>marchingCubeCls (surface)</td></tr>
-<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>proteinSurfaceCls (surface)</td></tr>
-<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>surfaceCls (surface)</td></tr>
+<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>applyMapCls (surface)</td><td>applySurfaceOptions, applyMapOptions, applyEmmapOptions, applyPhimapOptions, applyphisurfaceOptions, removeSurfaces, removeLastSurface, removeMaps, removeEmmaps, removePhimaps, removeLastMap, removeLastEmmap, removeLastPhimap</td></tr>
+<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>electronMapCls (surface)</td><td>getFacesAndVertices, initparm, transformMemPro, fillvoxels, buildboundary, marchingcubeinit, counter, marchingcube</td></tr>
+<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>marchingCubeCls (surface)</td><td>march, laplacianSmooth</td></tr>
+<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>proteinSurfaceCls (surface)</td><td>getVDWIndex, inOrigExtent, getFacesAndVertices, initparm, boundingatom, fillvoxels, fillAtom, fillvoxelswaals, fillAtomWaals, buildboundary, fastdistancemap, fastoneshell, marchingcubeinit, counter, marchingcube</td></tr>
+<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>surfaceCls (surface)</td><td>createSurfaceRepresentation, transformMemPro, SetupSurface, SetupMap</td></tr>
 
-<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>resizeCanvasCls (transform)</td></tr>
-<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>transformCls (transform)</td></tr>
+<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>resizeCanvasCls (transform)</td><td>resizeCanvas, windowResize, openFullscreen, rotStruc, back, forward, replayon, replayoff, closeDialogs</td></tr>
+<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>transformCls (transform)</td><td>resetOrientation, rotateLeft , rotateRight , rotateUp , rotateDown , rotate_base , setRotation, translateLeft, translateRight, translateUp, translateDown, translate_base, zoomIn, zoomOut, zoominSelection, getTransformationStr</td></tr>
 </table>
 <br>
 

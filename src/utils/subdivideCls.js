@@ -11,7 +11,7 @@ class SubdivideCls {
 
     // cubic splines for four points: http://thalestriangles.blogspot.com/2014/02/a-bit-of-ex-spline-ation.html
     // https://math.stackexchange.com/questions/577641/how-to-calculate-interpolating-splines-in-3d-space
-    subdivide = function (_pnts, _clrs, DIV, bShowArray, bHighlight, prevone, nexttwo, bExtendLastRes) { var me = this.icn3dui;
+    subdivide(_pnts, _clrs, DIV, bShowArray, bHighlight, prevone, nexttwo, bExtendLastRes) { var me = this.icn3dui;
 
         var ret = [];
         var pos = [];
