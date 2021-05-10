@@ -159,11 +159,11 @@
         var getParams = url.split("?");
         // transforming the GET parameters into a dictionnary
         var search = getParams[getParams.length - 1];
-        var params = {};
-        var inpara = "";
 
-        var command;
+        var params = {};
+
         if(!bNopara) {
+            var command;
             var decodeSearch = decodeURIComponent(search);
 
             // command could contains '&', for example when loading statefile 'load mmdb 1kq2 | parameters &atype=1'
@@ -192,6 +192,7 @@
             else {
                 command = '';
             }
+            params.command = command;
 
             var hashes = decodeSearch.split('&');
             for (var i = 0; i < hashes.length; i++) {
@@ -200,41 +201,22 @@
             }
 
             // for mmdb structures, pass the parameters after the first "&" sign
-            inpara = "&" + url.substr(ampPos + 1);
+            params.inpara = "&" + url.substr(ampPos + 1);
         }
 
-        var gi = params.gi;
-        var blast_rep_id = params.blast_rep_id;
-        var query_id = params.query_id;
-        var rid = params.RID;
+        // changed some parameter names
+        params.rid = params.RID;
 
-        var mmdbid = params.mmdbid;
-        var mmtfid = params.mmtfid;
-        var pdbid = params.pdbid;
-        var opmid = params.opmid;
-        var cid = params.cid;
-        var mmcifid = params.mmcifid;
-        var urlname = params.url;
-        if(urlname && urlname.indexOf('%3A%2F%2F') === -1) { // decoded URL
+        params.urlname = params.url;
+        if(params.urlname && params.urlname.indexOf('%3A%2F%2F') === -1) { // decoded URL
             // should encode it
-            urlname = encodeURIComponent(urlname);
+            params.urlname = encodeURIComponent(params.urlname);
         }
-        var urltype = (params.type === undefined) ? 'pdb' : params.type;
+        params.urltype = (params.type === undefined) ? 'pdb' : params.type;
 
-        var align = params.align;
-        var chainalign = params.chainalign;
-        var resnum = params.resnum;
+        params.version = getValue(params.v);
 
-        var width = params.width;
-        var height = params.height;
-
-        var from = params.from;
-
-        var date = getValue(params.date);
-        var version = getValue(params.v);
-
-        if(version !== undefined && window.localStorage && localStorage.getItem('fixedversion')) {
-            //var version = getVersion(date);
+        if(params.version !== undefined && window.localStorage && localStorage.getItem('fixedversion')) {
             var fixedUrl = url.replace('full.html', 'full_' + version + '.html');
             window.open(fixedUrl, '_self');
 
@@ -242,70 +224,17 @@
         }
 
         // use PDB residue number in MMDB input
-        var usepdbnum = getValue(params.usepdbnum);
-        //if(usepdbnum === undefined) usepdbnum = (date !== undefined && date >= '20201222') ? true : false;
-
-        var resize = getValue(params.resize);
-
-        var showmenu = getValue(params.showmenu);
-
-        var showtitle = getValue(params.showtitle);
-
-        var showcommand = getValue(params.showcommand);
-
-        var simplemenu = getValue(params.simplemenu);
-
-        var mobilemenu = getValue(params.mobilemenu);
-
-        var closepopup = getValue(params.closepopup);
-
-        var showanno = getValue(params.showanno);
-
-        var showseq = getValue(params.showseq);
+        for(var i in params) {
+            params[i] = getValue(params[i]);
+        }
 
         // backward compatible with showseq
-        showanno = showanno || showseq;
+        params.showanno = params.showanno || params.showseq;
 
-        // for alignment
-        var showalignseq = getValue(params.showalignseq);
+        params.shownote = 1; //params.shownote;
+        params.options = (params.options !== undefined) ? JSON.parse(params.options) : undefined;
 
-        var show2d = getValue(params.show2d);
-
-        var showsets = getValue(params.showsets);
-
-        var replay = getValue(params.replay);
-
-        var notebook = getValue(params.notebook);
-
-        var rotate = params.rotate;
-
-        var shownote = 1; //params.shownote;
-
-        var options = (params.options !== undefined) ? JSON.parse(params.options) : undefined;
-
-        var cfg = {
-          inpara: inpara,
-          width: width,
-          height: height,
-          resize: resize,
-          rotate: rotate,
-          showmenu: showmenu,
-          showtitle: showtitle,
-          showcommand: showcommand,
-          showanno: showanno,
-          show2d: show2d,
-          showsets: showsets,
-          simplemenu: simplemenu,
-          mobilemenu: mobilemenu,
-          closepopup: closepopup,
-          replay: replay,
-          notebook: notebook,
-          shownote: shownote,
-          options: options,
-          usepdbnum: usepdbnum,
-          date: date,
-          command: command
-        };
+        var cfg = params;
 
         return {cfg: cfg, params: params};
       }

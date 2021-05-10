@@ -70,6 +70,8 @@ pre span {color: red;}
 
 <script type="text/javascript">
     $( document ).ready(function() {
+      $("accordion").show();
+
       var cfg = {
           divid: 'icn3dwrap',
           width: 400,
@@ -134,13 +136,13 @@ pre span {color: red;}
 </div>
 
 <!--div style='position:absolute; z-index:999; float:left; display:table-row;'-->
-<table border='0' cellpadding='0' cellspacing='0' style="width:100%; margin-left: 40px; background-color:#FFF"><tr>
+<table border='0' cellpadding='0' cellspacing='0' style="width:100%; padding-left: 40px; background-color:#FFF"><tr>
 <td style="padding:6px 0 6px 0;">
 <span style="font-weight:bold; font-size:2.5em; color:#444444">iCn3D</span>
 </td>
 
 <td valign="top"><div class='icn3d-menu' style="margin:4px 0 0 30px; position:absolute; z-index:999;">
-<accordion id='icn3d-accordion1' class='icn3d-accordion'>
+<accordion id='icn3d-accordion1' class='icn3d-accordion' style='display:none'>
 <h3>Menu</h3>
 <div>
 <ul class='icn3d-mn-item'>
@@ -153,6 +155,7 @@ pre span {color: red;}
     <li><a href="#parameters"><span>URL Parameters</span></a></li>
     <li><a href="#commands"><span>Commands</span></a></li>
   </ul></li>
+<li><a href="https://www.ncbi.nlm.nih.gov/structure"><span>Search Structure</span></a></li>
 <li><a href="#citing"><span>Citing iCn3D</span></a></li>
 <li><span>Source Code</span>
   <ul>
