@@ -45130,6 +45130,7 @@ class SetMenu {
         html += "</ul>";
         html += "</li>";
 
+        html += liStr + "https://www.ncbi.nlm.nih.gov/structure' target='_blank'>Search Structure</a></li>";
         html += liStr + me.htmlCls.baseUrl + "icn3d/icn3d.html#citing' target='_blank'>Citing iCn3D " + me.htmlCls.wifiStr + "</a></li>";
 
         html += "<li><span>Source Code</span>";
@@ -51872,7 +51873,7 @@ class iCn3DUI {
     //even when multiple iCn3D viewers are shown together.
     this.pre = this.cfg.divid + "_";
 
-    this.REVISION = '3.1.0';
+    this.REVISION = '3.1.1';
 
     // In nodejs, iCn3D defines "window = {navigator: {}}"
     this.bNode = (Object.keys(window).length < 2) ? true : false;
