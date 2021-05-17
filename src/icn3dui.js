@@ -35,7 +35,7 @@ class iCn3DUI {
     //even when multiple iCn3D viewers are shown together.
     this.pre = this.cfg.divid + "_";
 
-    this.REVISION = '3.1.1';
+    this.REVISION = '3.1.2';
 
     // In nodejs, iCn3D defines "window = {navigator: {}}"
     this.bNode = (Object.keys(window).length < 2) ? true : false;
@@ -56,6 +56,7 @@ class iCn3DUI {
     if(this.cfg.show2d === undefined) this.cfg.show2d = false;
     if(this.cfg.showsets === undefined) this.cfg.showsets = false;
     if(this.cfg.rotate === undefined) this.cfg.rotate = 'right';
+    if(this.cfg.hidelicense === undefined) this.cfg.hidelicense = false;
 
     // classes
     this.hashUtilsCls = new HashUtilsCls(this);

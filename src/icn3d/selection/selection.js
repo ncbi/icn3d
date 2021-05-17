@@ -309,13 +309,13 @@ class Selection {
         ic.annotationCls.showAnnoSelectedChains();
 
         // update 2d graph
-        if(ic.graphStr !== undefined) {
-          ic.graphStr = this.getGraphDataForDisplayed();
-        }
+        //if(ic.graphStr !== undefined) {
+        //  ic.graphStr = this.getGraphDataForDisplayed();
+        //}
 
-        if(ic.bGraph) ic.drawGraphCls.drawGraph(ic.graphStr);
-        if(ic.bLinegraph) ic.lineGraphCls.drawLineGraph(ic.graphStr);
-        if(ic.bScatterplot) ic.lineGraphCls.drawLineGraph(ic.graphStr, true);
+        //if(ic.bGraph) ic.drawGraphCls.drawGraph(ic.graphStr);
+        //if(ic.bLinegraph) ic.lineGraphCls.drawLineGraph(ic.graphStr);
+        //if(ic.bScatterplot) ic.lineGraphCls.drawLineGraph(ic.graphStr, true);
     }
 
     hideSelection() { var ic = this.icn3d, me = ic.icn3dui;
@@ -519,24 +519,31 @@ class Selection {
     }
 
     toggleMembrane() {var ic = this.icn3d, me = ic.icn3dui;
-        var structure = Object.keys(ic.structures)[0];
-        var atomsHash = ic.residues[structure + '_MEM_1'];
-        var firstAtom = ic.firstAtomObjCls.getFirstAtomObj(atomsHash);
-        var oriStyle = firstAtom.style;
-        if(!ic.dAtoms.hasOwnProperty(firstAtom.serial)) {
-            // add membrane to displayed atoms if the membrane is not part of the display
-            ic.dAtoms = me.hashUtilsCls.unionHash(ic.dAtoms, atomsHash);
-            oriStyle = 'nothing';
-        }
-        for(var i in atomsHash) {
-            var atom = ic.atoms[i];
-            if(oriStyle !== 'nothing') {
-                atom.style = 'nothing';
+        var structureArray = Object.keys(ic.structures);
+
+        for(var i = 0, il = structureArray.length; i < il; ++i) {
+            var structure = structureArray[i];
+            var atomsHash = ic.residues[structure + '_MEM_1'];
+            var firstAtom = ic.firstAtomObjCls.getFirstAtomObj(atomsHash);
+            if(firstAtom === undefined) continue;
+
+            var oriStyle = firstAtom.style;
+            if(!ic.dAtoms.hasOwnProperty(firstAtom.serial)) {
+                // add membrane to displayed atoms if the membrane is not part of the display
+                ic.dAtoms = me.hashUtilsCls.unionHash(ic.dAtoms, atomsHash);
+                oriStyle = 'nothing';
             }
-            else {
-                atom.style = 'stick';
+            for(var j in atomsHash) {
+                var atom = ic.atoms[j];
+                if(oriStyle !== 'nothing') {
+                    atom.style = 'nothing';
+                }
+                else {
+                    atom.style = 'stick';
+                }
             }
         }
+
         ic.drawCls.draw();
     }
 

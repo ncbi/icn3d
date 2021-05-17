@@ -205,6 +205,13 @@ class Scap {
                   }
               }
 
+              $("#" + ic.pre + "mn2_alternateWrap").show();
+              // expand the toolbar
+              var id = ic.pre + 'selection';
+              $("#" + id).show();
+              //$("#" + id + "_expand").hide();
+              //$("#" + id + "_shrink").show();
+
               if(ic.deferredScap !== undefined) ic.deferredScap.resolve();
           },
           error : function(xhr, textStatus, errorThrown ) {

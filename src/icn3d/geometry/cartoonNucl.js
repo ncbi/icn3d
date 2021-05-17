@@ -45,7 +45,7 @@ class CartoonNucl {
 
           if ((atom.name === 'O3\'' || atom.name === 'OP2' || atom.name === 'O3*' || atom.name === 'O2P') && !atom.het) {
              if (atom.name === 'O3\'' || atom.name === 'O3*') { // to connect 3' end. FIXME: better way to do?
-                if (currentChain !== atom.chain || currentResi + 1 !== atom.resi) {
+                if (currentChain !== atom.chain || parseInt(currentResi) + 1 !== parseInt(atom.resi)) {
     //            if (currentChain !== atom.chain) {
                    if (currentO3 && prevOO) {
                       for (j = 0; j < num; j++) {

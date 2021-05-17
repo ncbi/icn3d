@@ -43,7 +43,10 @@ class ApplyDisplay {
 
                 var last = i.lastIndexOf('_');
                 var base = i.substr(0, last + 1);
-                var lastResi = parseInt(i.substr(last + 1));
+                var lastResiStr = i.substr(last + 1);
+                if(isNaN(lastResiStr)) continue;
+
+                var lastResi = parseInt(lastResiStr);
 
                 var prevResidueid = base + (lastResi - 1).toString();
                 var nextResidueid = base + (lastResi + 1).toString();
@@ -71,8 +74,8 @@ class ApplyDisplay {
                     var calpha = ic.firstAtomObjCls.getFirstCalphaAtomObj(ic.residues[residueid]);
                     var atom = calpha;
 
-                    var prevResidueid = atom.structure + '_' + atom.chain + '_' + parseInt(atom.resi - 1);
-                    var nextResidueid = atom.structure + '_' + atom.chain + '_' + parseInt(atom.resi + 1);
+                    var prevResidueid = atom.structure + '_' + atom.chain + '_' + (parseInt(atom.resi) - 1).toString();
+                    var nextResidueid = atom.structure + '_' + atom.chain + '_' + (parseInt(atom.resi) + 1).toString();
 
                     //ribbon, strand, cylinder and plate, nucleotide cartoon, o3 trace, schematic, c alpha trace, b factor tube, lines, stick, ball and stick, sphere, dot
 
@@ -89,7 +92,7 @@ class ApplyDisplay {
 
                         var bAddResidue = false;
                         // add the next residue with same style
-                        if(!bAddResidue && ic.residues.hasOwnProperty(nextResidueid)) {
+                        if(!isNaN(atom.resi) && !bAddResidue && ic.residues.hasOwnProperty(nextResidueid)) {
                             var index2 = Object.keys(ic.residues[nextResidueid])[0];
                             var atom2 = me.hashUtilsCls.hash2Atoms(ic.residues[nextResidueid], ic.atoms)[index2];
                             if( (atom.style === atom2.style && !atom2.ssbegin) || atom2.ssbegin) {
@@ -108,7 +111,7 @@ class ApplyDisplay {
                         }
 
                         // add the previous residue with same style
-                        if(!bAddResidue && ic.residues.hasOwnProperty(prevResidueid)) {
+                        if(!isNaN(atom.resi) && !bAddResidue && ic.residues.hasOwnProperty(prevResidueid)) {
                             var index2 = Object.keys(ic.residues[prevResidueid])[0];
                             var atom2 = me.hashUtilsCls.hash2Atoms(ic.residues[prevResidueid], ic.atoms)[index2];
                             if(atom.style === atom2.style) {
@@ -124,7 +127,7 @@ class ApplyDisplay {
 
                         var bAddResidue = false;
                         // add the next residue with same style
-                        if(!bAddResidue && ic.residues.hasOwnProperty(nextResidueid)) {
+                        if(!isNaN(atom.resi) && !bAddResidue && ic.residues.hasOwnProperty(nextResidueid)) {
                             var index2 = Object.keys(ic.residues[nextResidueid])[0];
                             var atom2 = me.hashUtilsCls.hash2Atoms(ic.residues[nextResidueid], ic.atoms)[index2];
                             //if(atom.style === atom2.style && !atom2.ssbegin) {

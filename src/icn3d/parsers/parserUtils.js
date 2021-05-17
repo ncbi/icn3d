@@ -91,10 +91,6 @@ class ParserUtils {
     }
 
     getMissingResidues(seqArray, type, chainid) { var ic = this.icn3d, me = ic.icn3dui;
-        var prevResi = -9999;
-        //var missingResBegin = 0;
-        //var bCount = true;
-
         ic.chainsSeq[chainid] = [];
         for(var i = 0, il = seqArray.length; i < il; ++i) {
             var seqName, resiPos;
@@ -129,46 +125,9 @@ class ParserUtils {
                 resObject.resi =(seqArray[i][resiPos] == '0') ? i + 1 + offset : seqArray[i][resiPos];
             }
 
-            var resi = parseInt(seqArray[i][resiPos]);
-            var nextResi =(i == il - 1) ? 9999 : parseInt(seqArray[i+1][resiPos]);
-
-            if(resi !== 0 ||
-             (resi === 0 &&(prevResi === -1 || nextResi == 1) )
-              ) {
-                resObject.name = seqName.toUpperCase();
-
-                //if(bCount && missingResBegin > 0) {
-                    //if(ic.countNextresiArray[chainid] === undefined) ic.countNextresiArray[chainid] = [];
-
-                    //var count_nextresi = [missingResBegin, parseInt(seqArray[i][0])];
-
-                    //ic.countNextresiArray[chainid].push(count_nextresi);
-
-                //    missingResBegin = 0;
-                //}
-
-                //bCount = false;
-            }
-            //else if(resi === 0 && prevResi !== -1) { // sometimes resi could be -4, -3, -2, -1, 0 e.g., PDBID 4YPS
-            else { // sometimes resi could be -4, -3, -2, -1, 0 e.g., PDBID 4YPS
-                resObject.name = seqName.toLowerCase();
-
-                //++missingResBegin;
-
-                //if(ic.chainMissingResidueArray[chainid] === undefined) ic.chainMissingResidueArray[chainid] = [];
-                //ic.chainMissingResidueArray[chainid].push(resObject);
-
-                //bCount = true;
-            }
-
-            //if(ic.chainsSeq[chainid] === undefined) ic.chainsSeq[chainid] = [];
-
-            //var numberStr = '';
-            //if(resObject.resi % 10 === 0) numberStr = resObject.resi.toString();
+            resObject.name = seqName.toLowerCase();
 
             ic.chainsSeq[chainid].push(resObject);
-
-            prevResi = resi;
         }
     }
 
@@ -584,12 +543,14 @@ class ParserUtils {
               var angle = -0.5 * Math.PI;
               ic.transformCls.setRotation(axis, angle);
           }
-          if(Object.keys(ic.structures).length > 1) {
-              $("#" + ic.pre + "alternate").show();
-          }
-          else {
-              $("#" + ic.pre + "alternate").hide();
-          }
+          //if(Object.keys(ic.structures).length > 1) {
+          //    $("#" + ic.pre + "alternate").show();
+          //}
+          //else {
+          //    $("#" + ic.pre + "alternate").hide();
+          //}
+
+          $("#" + ic.pre + "alternate").show();
       }
       else {
           ic.selectionCls.saveSelectionIfSelected();

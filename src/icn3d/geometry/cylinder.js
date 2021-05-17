@@ -204,7 +204,7 @@ class Cylinder {
             //if (atom.name !== atomName) continue;
             if(atomNameArray.indexOf(atom.name) == -1) continue;
 
-            if (start !== null && currentChain === atom.chain && currentResi + 1 === atom.resi
+            if (start !== null && currentChain === atom.chain && currentResi != atom.resi //currentResi + 1 === atom.resi
                 && Math.abs(start.coord.x - atom.coord.x) < maxDistance
                 && Math.abs(start.coord.y - atom.coord.y) < maxDistance
                 && Math.abs(start.coord.z - atom.coord.z) < maxDistance ) {
@@ -241,7 +241,7 @@ class Cylinder {
 
             if(bHighlight === 2) ic.boxCls.createBox(atom, undefined, undefined, undefined, undefined, bHighlight);
         }
-        if (start !== null && currentChain === atom.chain && currentResi + 1 === atom.resi
+        if (start !== null && currentChain === atom.chain && currentResi != atom.resi //currentResi + 1 === atom.resi
             && Math.abs(start.coord.x - atom.coord.x) < maxDistance
             && Math.abs(start.coord.y - atom.coord.y) < maxDistance
             && Math.abs(start.coord.z - atom.coord.z) < maxDistance ) {

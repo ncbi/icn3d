@@ -39,43 +39,46 @@ class Tube {
                     firstAtom = atom;
                 }
 
-                //if (index > 0 && (currentChain !== atom.chain || currentResi + 1 !== atom.resi || Math.abs(atom.coord.x - prevAtom.coord.x) > maxDist || Math.abs(atom.coord.y - prevAtom.coord.y) > maxDist || Math.abs(atom.coord.z - prevAtom.coord.z) > maxDist) ) {
+                //if (index > 0 && (currentChain !== atom.chain || Math.abs(atom.coord.x - prevAtom.coord.x) > maxDist || Math.abs(atom.coord.y - prevAtom.coord.y) > maxDist || Math.abs(atom.coord.z - prevAtom.coord.z) > maxDist
+                //  || (currentResi + 1 !== atom.resi && (Math.abs(atom.coord.x - prevAtom.coord.x) > maxDist2 || Math.abs(atom.coord.y - prevAtom.coord.y) > maxDist2 || Math.abs(atom.coord.z - prevAtom.coord.z) > maxDist2) )
                 if (index > 0 && (currentChain !== atom.chain || Math.abs(atom.coord.x - prevAtom.coord.x) > maxDist || Math.abs(atom.coord.y - prevAtom.coord.y) > maxDist || Math.abs(atom.coord.z - prevAtom.coord.z) > maxDist
-                  || (currentResi + 1 !== atom.resi && (Math.abs(atom.coord.x - prevAtom.coord.x) > maxDist2 || Math.abs(atom.coord.y - prevAtom.coord.y) > maxDist2 || Math.abs(atom.coord.z - prevAtom.coord.z) > maxDist2) )
+                  || (parseInt(currentResi) + 1 !== parseInt(atom.resi) && (Math.abs(atom.coord.x - prevAtom.coord.x) > maxDist2 || Math.abs(atom.coord.y - prevAtom.coord.y) > maxDist2 || Math.abs(atom.coord.z - prevAtom.coord.z) > maxDist2) )
                   ) ) {
                     if(bHighlight !== 2) {
-                        var prevoneResid = firstAtom.structure + '_' + firstAtom.chain + '_' + (firstAtom.resi - 1).toString();
-                        var prevoneCoord = ic.firstAtomObjCls.getAtomCoordFromResi(prevoneResid, atomName);
-                        prevone = (prevoneCoord !== undefined) ? [prevoneCoord] : [];
+                        if(!isNaN(firstAtom.resi) && !isNaN(prevAtom.resi)) {
+                            var prevoneResid = firstAtom.structure + '_' + firstAtom.chain + '_' + (parseInt(firstAtom.resi) - 1).toString();
+                            var prevoneCoord = ic.firstAtomObjCls.getAtomCoordFromResi(prevoneResid, atomName);
+                            prevone = (prevoneCoord !== undefined) ? [prevoneCoord] : [];
 
-                        var nextoneResid = prevAtom.structure + '_' + prevAtom.chain + '_' + (prevAtom.resi + 1).toString();
-                        var nexttwoResid = prevAtom.structure + '_' + prevAtom.chain + '_' + (prevAtom.resi + 2).toString();
+                            var nextoneResid = prevAtom.structure + '_' + prevAtom.chain + '_' + (parseInt(prevAtom.resi) + 1).toString();
+                            var nexttwoResid = prevAtom.structure + '_' + prevAtom.chain + '_' + (parseInt(prevAtom.resi) + 2).toString();
 
-                        if(ic.residues.hasOwnProperty(nextoneResid)) {
-                            var nextAtom = ic.firstAtomObjCls.getAtomFromResi(nextoneResid, atomName);
-                            if(nextAtom !== undefined && nextAtom.ssbegin) { // include the residue
-                                nextoneResid = prevAtom.structure + '_' + prevAtom.chain + '_' + (prevAtom.resi + 2).toString();
-                                nexttwoResid = prevAtom.structure + '_' + prevAtom.chain + '_' + (prevAtom.resi + 3).toString();
+                            if(ic.residues.hasOwnProperty(nextoneResid)) {
+                                var nextAtom = ic.firstAtomObjCls.getAtomFromResi(nextoneResid, atomName);
+                                if(nextAtom !== undefined && nextAtom.ssbegin) { // include the residue
+                                    nextoneResid = prevAtom.structure + '_' + prevAtom.chain + '_' + (parseInt(prevAtom.resi) + 2).toString();
+                                    nexttwoResid = prevAtom.structure + '_' + prevAtom.chain + '_' + (parseInt(prevAtom.resi) + 3).toString();
 
-                                pnts.push(nextAtom.coord);
-                                if(bCustom) {
-                                    radii.push(Tube.getCustomtubesize(nextoneResid));
+                                    pnts.push(nextAtom.coord);
+                                    if(bCustom) {
+                                        radii.push(Tube.getCustomtubesize(nextoneResid));
+                                    }
+                                    else {
+                                        radii.push(this.getRadius(radius, nextAtom));
+                                    }
+                                    colors.push(nextAtom.color);
                                 }
-                                else {
-                                    radii.push(this.getRadius(radius, nextAtom));
-                                }
-                                colors.push(nextAtom.color);
                             }
-                        }
 
-                        var nextoneCoord = ic.firstAtomObjCls.getAtomCoordFromResi(nextoneResid, atomName);
-                        if(nextoneCoord !== undefined) {
-                            nexttwo.push(nextoneCoord);
-                        }
+                            var nextoneCoord = ic.firstAtomObjCls.getAtomCoordFromResi(nextoneResid, atomName);
+                            if(nextoneCoord !== undefined) {
+                                nexttwo.push(nextoneCoord);
+                            }
 
-                        var nexttwoCoord = ic.firstAtomObjCls.getAtomCoordFromResi(nexttwoResid, atomName);
-                        if(nexttwoCoord !== undefined) {
-                            nexttwo.push(nexttwoCoord);
+                            var nexttwoCoord = ic.firstAtomObjCls.getAtomCoordFromResi(nexttwoResid, atomName);
+                            if(nexttwoCoord !== undefined) {
+                                nexttwo.push(nexttwoCoord);
+                            }
                         }
 
                         pnts_colors_radii_prevone_nexttwo.push({'pnts':pnts, 'colors':colors, 'radii':radii, 'prevone':prevone, 'nexttwo':nexttwo});
@@ -84,8 +87,9 @@ class Tube {
                     firstAtom = atom;
                     index = 0;
                 }
-                if(pnts.length == 0) {
-                    var prevoneResid = atom.structure + '_' + atom.chain + '_' + (atom.resi - 1).toString();
+
+                if(pnts.length == 0 && !isNaN(atom.resi)) {
+                    var prevoneResid = atom.structure + '_' + atom.chain + '_' + (parseInt(atom.resi) - 1).toString();
                     if(ic.residues.hasOwnProperty(prevoneResid)) {
                         prevAtom = ic.firstAtomObjCls.getAtomFromResi(prevoneResid, atomName);
                         if(prevAtom !== undefined && prevAtom.ssend) { // include the residue
@@ -100,6 +104,7 @@ class Tube {
                         }
                     }
                 }
+
                 pnts.push(atom.coord);
 
                 var radiusFinal;
@@ -132,21 +137,21 @@ class Tube {
         }
         if(bHighlight !== 2) {
             prevone = [];
-            if(firstAtom !== undefined) {
-                var prevoneResid = firstAtom.structure + '_' + firstAtom.chain + '_' + (firstAtom.resi - 1).toString();
+            if(firstAtom !== undefined && !isNaN(firstAtom.resi)) {
+                var prevoneResid = firstAtom.structure + '_' + firstAtom.chain + '_' + (parseInt(firstAtom.resi) - 1).toString();
                 var prevoneCoord = ic.firstAtomObjCls.getAtomCoordFromResi(prevoneResid, atomName);
                 prevone = (prevoneCoord !== undefined) ? [prevoneCoord] : [];
             }
 
             nexttwo = [];
-            if(atom !== undefined) {
-                var nextoneResid = atom.structure + '_' + atom.chain + '_' + (atom.resi + 1).toString();
+            if(atom !== undefined && !isNaN(atom.resi)) {
+                var nextoneResid = atom.structure + '_' + atom.chain + '_' + (parseInt(atom.resi) + 1).toString();
                 var nextoneCoord = ic.firstAtomObjCls.getAtomCoordFromResi(nextoneResid, atomName);
                 if(nextoneCoord !== undefined) {
                     nexttwo.push(nextoneCoord);
                 }
 
-                var nexttwoResid = atom.structure + '_' + atom.chain + '_' + (atom.resi + 2).toString();
+                var nexttwoResid = atom.structure + '_' + atom.chain + '_' + (parseInt(atom.resi) + 2).toString();
                 var nexttwoCoord = ic.firstAtomObjCls.getAtomCoordFromResi(nexttwoResid, atomName);
                 if(nexttwoCoord !== undefined) {
                     nexttwo.push(nexttwoCoord);

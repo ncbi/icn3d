@@ -135,11 +135,11 @@ class LineGraph {
             if(bScatterplot) {
                 ic.scatterplotWidth = 2 * width;
                 graphWidth = ic.scatterplotWidth;
-                id = ic.scatterplotid;
+                id = me.scatterplotid;
             } else {
                 ic.linegraphWidth = 2 * width;
                 graphWidth = ic.linegraphWidth;
-                id = ic.linegraphid;
+                id = me.linegraphid;
             }
             html =(strucArray.length == 0) ? "No interactions found for each structure<br><br>" :
                 "2D integration graph for structure(s) <b>" + strucArray + "</b><br><br>";
@@ -193,7 +193,7 @@ class LineGraph {
                 var width =(len1 > len2) ? len1 *(r + gap) + 2 * margin : len2 *(r + gap) + 2 * margin;
                 ic.linegraphWidth = 2 * width;
                 html =(linkArray.length > 0) ? "" : "No interactions found for these two sets<br><br>";
-                html += "<svg id='" + ic.linegraphid + "' viewBox='0,0," + width + "," + height + "' width='" + ic.linegraphWidth + "px'>";
+                html += "<svg id='" + me.linegraphid + "' viewBox='0,0," + width + "," + height + "' width='" + ic.linegraphWidth + "px'>";
                 html += this.drawLineGraph_base(nodeArray1, nodeArray2, linkArray, name2node, 0);
                 ic.lineGraphStr += ic.getGraphCls.updateGraphJson(struc1, 1, nodeArray1, nodeArray2, linkArray);
                 html += "</svg>";
@@ -214,7 +214,7 @@ class LineGraph {
                 var id, graphWidth;
                 ic.scatterplotWidth = 2 * width;
                 graphWidth = ic.scatterplotWidth;
-                id = ic.scatterplotid;
+                id = me.scatterplotid;
                 html =(linkArray.length > 0) ? "" : "No interactions found for these two sets<br><br>";
                 html += "<svg id='" + id + "' viewBox='0,0," + width + "," + heightAll + "' width='" + graphWidth + "px'>";
                 html += this.drawScatterplot_base(nodeArray1, nodeArray2, linkArray, name2node, 0);
@@ -267,6 +267,9 @@ class LineGraph {
             var link = linkArray[i];
             var node1 = name2node[link.source];
             var node2 = name2node[link.target];
+
+            if(node1 === undefined || node2 === undefined) continue;
+
             var resid1 = node1.r.substr(4);
             var resid2 = node2.r.substr(4);
             var pos1 = node2posSet1[node1.id];

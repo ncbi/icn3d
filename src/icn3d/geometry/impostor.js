@@ -267,7 +267,8 @@ class Impostor {
             geometry.setIndex(
                 new THREE.BufferAttribute( index, 1 )
             );
-            geometry.getIndex().setDynamic( dynamic );
+            //https://discourse.threejs.org/t/what-is-setusage-on-bufferattribute/12441
+            geometry.getIndex().setUsage(THREE.DynamicDrawUsage); //.setDynamic( dynamic );
         }
 
         // add attributes from buffer.js
@@ -287,7 +288,7 @@ class Impostor {
             geometry.setAttribute(
                 name,
                 new THREE.BufferAttribute( buf, itemSize[ a.type ] )
-                    .setDynamic( dynamic )
+                    .setUsage(THREE.DynamicDrawUsage) //.setDynamic( dynamic )
             );
 
         }

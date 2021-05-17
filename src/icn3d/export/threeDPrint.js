@@ -269,7 +269,7 @@ class ThreeDPrint {
                     residueid = chainid + '_' + ic.chainsSeq[chainid][j].resi;
                     if(ic.secondaries[residueid] == 'c' || ic.secondaries[residueid] == 'E' || ic.secondaries[residueid] == 'H') {
                         // add every third residue
-                        if(coilCnt % 3 == 0 || ic.chainsSeq[chainid][j].resi != prevResi + 1) {
+                        if(coilCnt % 3 == 0 || ic.chainsSeq[chainid][j].resi != parseInt(prevResi) + 1) {
                             if(displayResidueHash.hasOwnProperty(residueid)) residueHash[residueid] = 1;
                         }
 
@@ -315,6 +315,7 @@ class ThreeDPrint {
                         if(ic.chemicals.hasOwnProperty(serial) || ic.ions.hasOwnProperty(serial)) continue;
 
                         var atom = ic.atoms[serial];
+                        if(isNaN(atom.resi)) continue;
                         if((ss == 'c' &&(atom.resi > resi + 1 || atom.resi < resi - 1) )
                           ||(ss == 'E' &&(atom.resi > resi + 2 || atom.resi < resi - 2) )
                           ||(ss == 'H' &&(atom.resi > resi + 4 || atom.resi < resi - 4) )
