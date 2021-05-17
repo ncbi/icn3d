@@ -277,7 +277,7 @@ class GetGraph {
                //if(cnt > 0) nodeStr += ', ';
                nodeArray.push('{"id": "' + resName + '", "r": "' + residLabel + '", "s": "' + setName + '", "x": ' + atom.coord.x.toFixed(0)
                    + ', "y": ' + atom.coord.y.toFixed(0) + ', "c": "' + atom.color.getHexString().toUpperCase() + '"}');
-               if(cnt > 0 && prevChain == atom.chain &&(atom.resi == prevResi + 1 || atom.resi == prevResi) ) {
+               if(cnt > 0 && prevChain == atom.chain &&(parseInt(atom.resi) == parseInt(prevResi) + 1 || atom.resi == prevResi) ) {
                    //if(linkCnt > 0) linkStr += ', ';
                    linkArray.push('{"source": "' + prevResName + '", "target": "' + resName
                        + '", "v": ' + thickness + ', "c": "' + atom.color.getHexString().toUpperCase() + '"}');

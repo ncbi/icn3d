@@ -283,7 +283,7 @@ class LoadAtomData {
             //var resiCorrection = 0;
             if(type === 'mmdbid' || type === 'align') {
                 if(!bSetResi) {
-                    atm.resi_ori = parseInt(atm.resi); // original PDB residue number, has to be integer
+                    atm.resi_ori = atm.resi; //parseInt(atm.resi); // original PDB residue number, has to be integer
                     if(!ic.bUsePdbNum) {
                         atm.resi = atm.ids.r; // corrected for residue insertion code
                     }
@@ -301,7 +301,7 @@ class LoadAtomData {
             }
             else {
                 if(!bSetResi) {
-                    atm.resi = parseInt(atm.resi);
+                    //atm.resi = parseInt(atm.resi);
                 }
             }
 
@@ -518,19 +518,21 @@ class LoadAtomData {
               }
 
               // ic.chainsSeq[chainid][atm.resi - 1] should have been defined for major chains
-              if( bChainSeqSet && !bAddedNewSeq && ic.chainsSeq[chainid][atm.resi - 1] !== undefined) {
-                  ic.chainsSeq[chainid][atm.resi - 1].name = oneLetterRes;
-              }
-              else if(!bChainSeqSet || !ic.chainsSeq[chainid].hasOwnProperty(atm.resi - 1)) {
-                  var resObject = {}
-                  resObject.resi = atm.resi;
-                  resObject.name = oneLetterRes;
-                  var numberStr = '';
-                  if(atm.resi % 10 === 0) numberStr = atm.resi.toString();
+              if(!isNaN(atm.resi)) {
+                  if( bChainSeqSet && !bAddedNewSeq && ic.chainsSeq[chainid][atm.resi - 1] !== undefined) {
+                      ic.chainsSeq[chainid][atm.resi - 1].name = oneLetterRes;
+                  }
+                  else if(!bChainSeqSet || !ic.chainsSeq[chainid].hasOwnProperty(atm.resi - 1)) {
+                      var resObject = {}
+                      resObject.resi = atm.resi;
+                      resObject.name = oneLetterRes;
+                      var numberStr = '';
+                      if(atm.resi % 10 === 0) numberStr = atm.resi.toString();
 
-                  ic.chainsSeq[chainid].push(resObject);
+                      ic.chainsSeq[chainid].push(resObject);
 
-                  bAddedNewSeq = true;
+                      bAddedNewSeq = true;
+                  }
               }
             }
 

@@ -291,7 +291,7 @@ class AnnoSnpClinVar {
                                     //snpType = 'icn3d-clinvar';
                                     snpTitle += ': ' + diseaseTitle;
 
-                                    if(bCoord) {
+                                    if(bCoord && !me.cfg.hidelicense) {
                                         snpTitle += '<br>' + ic.showAnnoCls.addSnpButton(snpTmpStr, 'snpin3d', '3D with scap', 'SNP in 3D with scap', 70, buttonStyle) + '&nbsp;&nbsp;';
                                         snpTitle += ic.showAnnoCls.addSnpButton(snpTmpStr, 'snpinter', 'Interactions', 'SNP Interactions in 3D', 70, buttonStyle) + '&nbsp;&nbsp;';
                                         snpTitle += ic.showAnnoCls.addSnpButton(snpTmpStr, 'snppdb', 'PDB', 'Download SNP PDB', 35, buttonStyle);
@@ -301,7 +301,7 @@ class AnnoSnpClinVar {
                                     snpTitle += "<br>Links: <a href='https://www.ncbi.nlm.nih.gov/clinvar/?term=" + resi2clinAllele[i][j] + "[AlleleID]' target='_blank'>ClinVar</a>, <a href='https://www.ncbi.nlm.nih.gov/snp/?term=" + resi2rsnum[i][j] + "' target='_blank'>dbSNP(rs" + resi2rsnum[i][j] + ")</a>";
                                 }
                                 else {
-                                    if(bCoord) {
+                                    if(bCoord && !me.cfg.hidelicense) {
                                         snpTitle += '<br>' + ic.showAnnoCls.addSnpButton(snpTmpStr, 'snpin3d', '3D with scap', 'SNP in 3D with scap', 70, buttonStyle) + '&nbsp;&nbsp;';
                                         snpTitle += ic.showAnnoCls.addSnpButton(snpTmpStr, 'snpinter', 'Interactions', 'SNP Interactions in 3D', 70, buttonStyle) + '&nbsp;&nbsp;';
                                         snpTitle += ic.showAnnoCls.addSnpButton(snpTmpStr, 'snppdb', 'PDB', 'Download SNP PDB', 35, buttonStyle);
@@ -316,7 +316,7 @@ class AnnoSnpClinVar {
                                 }
                             }
                             else { //if(bSnpOnly) {
-                                if(bCoord) {
+                                if(bCoord && !me.cfg.hidelicense) {
                                     snpTitle += '<br>' + ic.showAnnoCls.addSnpButton(snpTmpStr, 'snpin3d', '3D with scap', 'SNP in 3D with scap', 70, buttonStyle) + '&nbsp;&nbsp;';
                                     snpTitle += ic.showAnnoCls.addSnpButton(snpTmpStr, 'snpinter', 'Interactions', 'SNP Interactions in 3D', 70, buttonStyle) + '&nbsp;&nbsp;';
                                     snpTitle += ic.showAnnoCls.addSnpButton(snpTmpStr, 'snppdb', 'PDB', 'Download SNP PDB', 35, buttonStyle);
@@ -373,7 +373,7 @@ class AnnoSnpClinVar {
                                 //snpType = 'icn3d-clinvar';
                                 snpTitle += ': ' + diseaseTitle;
 
-                                if(bCoord) {
+                                if(bCoord && !me.cfg.hidelicense) {
                                     snpTitle += '<br>' + ic.showAnnoCls.addSnpButton(snpTmpStr, 'snpin3d', '3D with scap', 'SNP in 3D with scap', 70, buttonStyle) + '&nbsp;&nbsp;';
                                     snpTitle += ic.showAnnoCls.addSnpButton(snpTmpStr, 'snpinter', 'Interactions', 'SNP Interactions in 3D', 70, buttonStyle) + '&nbsp;&nbsp;';
                                     snpTitle += ic.showAnnoCls.addSnpButton(snpTmpStr, 'snppdb', 'PDB', 'Download SNP PDB', 35, buttonStyle);

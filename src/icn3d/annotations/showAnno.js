@@ -110,7 +110,7 @@ class ShowAnno {
                    if(ic.icn3dui.cfg.mmtfid !== undefined) { // mmtf data do NOT have the missing residues
                        var id = chainArray[0].substr(0, chainArray[0].indexOf('_'));
                        $.when(ic.mmcifParserCls.downloadMmcifSymmetry(id, 'mmtfid')).then(function() {
-                           this.showAnnoSeqData(nucleotide_chainid, chemical_chainid, chemical_set);
+                           thisClass.showAnnoSeqData(nucleotide_chainid, chemical_chainid, chemical_set);
                        });
                    }
                    else {

@@ -275,9 +275,9 @@ class SetMenu {
         var buttonStyle = me.utilsCls.isMobile() ? 'none' : 'button';
         var tdStr = "<td valign='top'>";
 
-        if(me.cfg.align !== undefined || me.cfg.chainalign !== undefined) {
+        //if(me.cfg.align !== undefined || me.cfg.chainalign !== undefined) {
             html += tdStr + this.setButton(buttonStyle, 'alternate', 'Alternate the structures', 'Alternate<br/>(Key \"a\")', me.htmlCls.ORANGE) + "</td>";
-        }
+        //}
 
         html += tdStr + this.setButton(buttonStyle, 'saveimage', 'Save iCn3D PNG Image', 'Save iCn3D<br/>PNG Image') + "</td>";
 
@@ -1216,7 +1216,7 @@ class SetMenu {
 
             html += me.htmlCls.setHtmlCls.getRadio('mn4_clr', 'mn4_clrCharge', 'Charge');
 
-            if(!me.cfg.notebook) {
+            if(!me.cfg.notebook && !me.cfg.hidelicense) {
                 html += me.htmlCls.setHtmlCls.getRadio('mn4_clr', 'mn1_delphi2', 'DelPhi<br><span style="padding-left:1.5em;">Potential ' + me.htmlCls.licenseStr + '</span>');
             }
 
@@ -1261,7 +1261,7 @@ class SetMenu {
             }
         }
         else {
-            html += me.htmlCls.setHtmlCls.getRadio('mn4_clr', 'mn1_delphi2', 'DelPhi<br><span style="padding-left:1.5em;">Potential ' + me.htmlCls.licenseStr + '</span>');
+            if(!me.cfg.hidelicense) html += me.htmlCls.setHtmlCls.getRadio('mn4_clr', 'mn1_delphi2', 'DelPhi<br><span style="padding-left:1.5em;">Potential ' + me.htmlCls.licenseStr + '</span>');
             html += me.htmlCls.setHtmlCls.getRadio('mn4_clr', 'mn4_clrAtom', 'Atom', true);
         }
 
@@ -1306,9 +1306,9 @@ class SetMenu {
         if(me.cfg.cid === undefined) {
             html += me.htmlCls.setHtmlCls.getLink('mn6_selectannotations', 'View Sequences<br>& Annotations ' + me.htmlCls.wifiStr);
 
-            if(me.cfg.align !== undefined || me.cfg.chainalign !== undefined) { // || ic.bRealign || ic.bSymd) {
+            //if(me.cfg.align !== undefined || me.cfg.chainalign !== undefined) { // || ic.bRealign || ic.bSymd || ic.bInputfile) {
                 html += me.htmlCls.setHtmlCls.getLink('mn2_alignment', 'View Aligned<br>Sequences ' + me.htmlCls.wifiStr);
-            }
+            //}
 
             //html += me.htmlCls.setHtmlCls.getLink('mn2_selectresidues', 'View Sequences');
             if(me.cfg.mmdbid !== undefined || me.cfg.gi !== undefined || me.cfg.blast_rep_id !== undefined || me.cfg.align !== undefined || me.cfg.chainalign !== undefined) {
@@ -1331,12 +1331,14 @@ class SetMenu {
             html += "</ul>";
             html += "</li>";
 
-            if(!me.cfg.notebook) html += me.htmlCls.setHtmlCls.getLink('mn1_mutation', 'Mutation ' + me.htmlCls.licenseStr);
+            if(!me.cfg.notebook && !me.cfg.hidelicense) {
+                html += me.htmlCls.setHtmlCls.getLink('mn1_mutation', 'Mutation ' + me.htmlCls.licenseStr);
+            }
 
             html += "<li>-</li>";
         }
 
-        if(!me.cfg.notebook) {
+        if(!me.cfg.notebook && !me.cfg.hidelicense) {
             html += me.htmlCls.setHtmlCls.getLink('mn1_delphi', 'DelPhi Potential ' + me.htmlCls.licenseStr);
             html += "<li><span>Load PQR/Phi</span>";
             html += "<ul>";

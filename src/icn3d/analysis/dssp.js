@@ -77,7 +77,7 @@ class Dssp {
                   var chain = chainNum.substr(pos + 1);
 
                   var residueObjectArray = ic.chainsSeq[chainNum];
-                  var prevSS = 'coil';
+                  var prevSS = 'coil', prevResi;
 
                   for(var i = 0, il = residueObjectArray.length; i < il; ++i) {
                     var resi = residueObjectArray[i].resi;
@@ -128,7 +128,8 @@ class Dssp {
                             ssend = false;
                         }
                         else if((prevSS === 'sheet' && ss === 'helix') ||(prevSS === 'helix' && ss === 'sheet')) {
-                            bSetPrevResidue = 1;
+                            //bSetPrevResidue = 1;
+                            bSetPrevResidue = 2;
                             ssbegin = true;
                             ssend = false;
                         }
@@ -139,14 +140,14 @@ class Dssp {
                     }
 
                     if(bSetPrevResidue == 1) { //1: reset previous residue to "ssbegin = true"
-                        var prevResid = chainNum + '_' +(resi - 1).toString();
+                        var prevResid = chainNum + '_' + prevResi; //(resi - 1).toString();
                         for(var j in ic.residues[prevResid]) {
                             ic.atoms[j].ssbegin = true;
                             ic.atoms[j].ssend = false;
                         }
                     }
                     else if(bSetPrevResidue == 2) { //2: reset previous residue to "ssend = true"
-                        var prevResid = chainNum + '_' +(resi - 1).toString();
+                        var prevResid = chainNum + '_' + prevResi; //(resi - 1).toString();
                         for(var j in ic.residues[prevResid]) {
                             ic.atoms[j].ssbegin = false;
                             ic.atoms[j].ssend = true;
@@ -161,6 +162,7 @@ class Dssp {
                     }
 
                     prevSS = ss;
+                    prevResi = resi;
                   } // for each residue
               } // for each chain
             } // if no error

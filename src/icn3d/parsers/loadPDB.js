@@ -266,7 +266,7 @@ class LoadPDB {
                 //var oriResi = line.substr(22, 4).trim();
                 var oriResi = line.substr(22, 5).trim();
 
-                var resi = parseInt(oriResi);
+                var resi = oriResi; //parseInt(oriResi);
                 if(oriResi != resi || bModifyResi) { // e.g., 99A and 99
                   bModifyResi = true;
                   //resi = (prevResi == 0) ? resi : prevResi + 1;
@@ -759,7 +759,7 @@ class LoadPDB {
 
         for(var chainid in chains) {
             if(pdbid !== undefined) {
-                textArray =  chainid.split('_');
+                var textArray =  chainid.split('_');
                 if(textArray[0] !== pdbid) continue; // skip different chain
             }
 
@@ -786,7 +786,7 @@ class LoadPDB {
                         baseResi = resi;
                         bBaseResi = false;
                     }
-                    resi = resi - baseResi + 1;
+                    //resi = resi - baseResi + 1;
 
                     //chainresiCalphaHash[atom.chain + '_' + resi] = atom.coord.clone();
 

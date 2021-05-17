@@ -40,71 +40,69 @@
           //});
       }
       function launchIcn3d(version) {
-          var cfg_params = getConfig();
-          var cfg = cfg_params.cfg;
-          var params = (cfg_params.params) ? cfg_params.params : {};
-          params.version = version;
+          var cfg = getConfig();
+          cfg.version = version;
 
-          if(params.mmtfid !== undefined) {
-              setupViewer('mmtfid', params.mmtfid, cfg, params);
+          if(cfg.mmtfid !== undefined) {
+              setupViewer('mmtfid', cfg.mmtfid, cfg);
           }
-          else if(params.pdbid !== undefined) {
-              setupViewer('pdbid', params.pdbid, cfg, params);
+          else if(cfg.pdbid !== undefined) {
+              setupViewer('pdbid', cfg.pdbid, cfg);
           }
-          else if(params.opmid !== undefined) {
-              setupViewer('opmid', params.opmid, cfg, params);
+          else if(cfg.opmid !== undefined) {
+              setupViewer('opmid', cfg.opmid, cfg);
           }
-          else if(params.cid !== undefined) {
-              setupViewer('cid', params.cid, cfg, params);
+          else if(cfg.cid !== undefined) {
+              setupViewer('cid', cfg.cid, cfg);
           }
-          else if(params.mmcifid !== undefined) {
-              setupViewer('mmcifid', params.mmcifid, cfg, params);
+          else if(cfg.mmcifid !== undefined) {
+              setupViewer('mmcifid', cfg.mmcifid, cfg);
           }
-          else if(params.mmdbid !== undefined) {
-              setupViewer('mmdbid', params.mmdbid, cfg, params);
+          else if(cfg.mmdbid !== undefined) {
+              setupViewer('mmdbid', cfg.mmdbid, cfg);
           }
-          else if(params.gi !== undefined) {
-              setupViewer('gi', params.gi, cfg, params);
+          else if(cfg.gi !== undefined) {
+              setupViewer('gi', cfg.gi, cfg);
           }
-          else if(params.blast_rep_id !== undefined) {
-              if( (params.from === 'blast' || params.from === 'icn3d') && params.command == '') {
+          else if(cfg.blast_rep_id !== undefined) {
+              if( (cfg.from === 'blast' || cfg.from === 'icn3d') && cfg.command == '') {
                 command = 'view+annotations;+set+annotation+cdd;+set+annotation+site;+set+view+detailed+view;+select+chain+'
-                  + params.blast_rep_id + ';+show+selection';
+                  + cfg.blast_rep_id + ';+show+selection';
               }
 
-              setupViewer('blast_rep_id', params.blast_rep_id, cfg, params);
+              setupViewer('blast_rep_id', cfg.blast_rep_id, cfg);
           }
-          else if(params.urlname !== undefined) {
-              var urlname = decodeURIComponent(params.urlname);
+          else if(cfg.urlname !== undefined) {
+              var urlname = decodeURIComponent(cfg.urlname);
 
-              setupViewer('url', params.urltype + '|' + urlname, cfg, params);
+              setupViewer('url', cfg.urltype + '|' + urlname, cfg);
           }
           // e.g., align=103701,1,4,68563,1,167 [mmdbid1,biounit,molecule,mmdbid2,biounit,molecule]
-          else if(params.align !== undefined) {
+          else if(cfg.align !== undefined) {
               cfg.divid = 'div0';
-              cfg.align = params.align;
-              cfg.showalignseq = params.showalignseq;
+              cfg.align = cfg.align;
+              cfg.showalignseq = cfg.showalignseq;
 
-              var icn3dui = (params.version == 2) ? new iCn3DUI(cfg) : new icn3d.iCn3DUI(cfg);
+              var icn3dui = (cfg.version == 2) ? new iCn3DUI(cfg) : new icn3d.iCn3DUI(cfg);
 
               icn3dui.show3DStructure();
           }
-          else if(params.chainalign !== undefined) {
+          else if(cfg.chainalign !== undefined) {
               cfg.divid = 'div0';
-              cfg.chainalign = params.chainalign;
-              cfg.resnum = params.resnum;
-              cfg.showalignseq = params.showalignseq;
+              cfg.chainalign = cfg.chainalign;
+              cfg.resnum = cfg.resnum;
+              cfg.showalignseq = cfg.showalignseq;
 
-              var icn3dui = (params.version == 2) ? new iCn3DUI(cfg) : new icn3d.iCn3DUI(cfg);
+              var icn3dui = (cfg.version == 2) ? new iCn3DUI(cfg) : new icn3d.iCn3DUI(cfg);
 
               icn3dui.show3DStructure();
           }
           else {
-              setupViewer('', '', cfg, params);
+              setupViewer('', '', cfg);
           }
       }
 
-      function setupViewer(idName, idValue, cfg, params) {
+      function setupViewer(idName, idValue, cfg) {
         var maxStructure = 5; // show max 5 structures
 
         var idArray = idValue.replace(/\s/g, '').split(',');
@@ -118,23 +116,12 @@
           }
         }
 
-        if(cfg.options === undefined || cfg.options === 'undefined') cfg.options = {};
-
-        //Options are available at: https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d.html#DisplayOptions
-        //cfg.options['chemicalbinding'] = 'show';
-
         for(var i = 0, il = idArray.length; i < il && i < maxStructure; ++i) {
           cfg.divid = 'div' + i;
 
-          if(params) {
-              cfg.blast_rep_id = params.blast_rep_id;
-              cfg.query_id = params.query_id;
-              cfg.rid = params.rid;
-          }
-
           if(idName !== '') cfg[idName] = idArray[i];
 
-          var icn3dui = (params.version == 2) ? new iCn3DUI(cfg) : new icn3d.iCn3DUI(cfg);
+          var icn3dui = (cfg.version == 2) ? new iCn3DUI(cfg) : new icn3d.iCn3DUI(cfg);
 
           $.when(icn3dui.show3DStructure()).then(function() {
                //icn3dui.setOption('color', 'spectrum');
@@ -156,87 +143,83 @@
             bNopara = true;
         }
 
-        var getParams = url.split("?");
+        var params = url.split("?");
         // transforming the GET parameters into a dictionnary
-        var search = getParams[getParams.length - 1];
+        var search = params[params.length - 1];
 
-        var params = {};
+        var cfg = {};
 
         if(!bNopara) {
-            var command;
             var decodeSearch = decodeURIComponent(search);
 
             // command could contains '&', for example when loading statefile 'load mmdb 1kq2 | parameters &atype=1'
             var commandPos = decodeSearch.indexOf('&command=');
             if(commandPos != -1) {
-                command = decodeSearch.substr(commandPos + 9); // ";" separated commands
+                cfg.command = decodeSearch.substr(commandPos + 9); // ";" separated commands
                 decodeSearch = decodeSearch.substr(0, commandPos);
 
                 var paraPos = decodeSearch.indexOf(' | parameters ');
 
                 if(paraPos != -1) { //When loading statefile (e.g., 'load mmdb 1kq2 | parameters &atype=1'), the commands ends with '}}'.
-                    var tmpPos = command.indexOf('}}&');
+                    var tmpPos = cfg.command.indexOf('}}&');
                     if(tmpPos != -1) { // more parameters after the command
-                      decodeSearch += command.substr(tmpPos + 2);
-                      command = command.substr(0, tmpPos + 2);
+                      decodeSearch += cfg.command.substr(tmpPos + 2);
+                      cfg.command = cfg.command.substr(0, tmpPos + 2);
                     }
                 }
                 else {
-                    var tmpPos = command.indexOf('&');
+                    var tmpPos = cfg.command.indexOf('&');
                     if(tmpPos != -1) {
-                      decodeSearch += command.substr(tmpPos);
-                      command = command.substr(0, tmpPos);
+                      decodeSearch += cfg.command.substr(tmpPos);
+                      cfg.command = cfg.command.substr(0, tmpPos);
                     }
                 }
             }
             else {
-                command = '';
+                cfg.command = '';
             }
-            params.command = command;
 
             var hashes = decodeSearch.split('&');
             for (var i = 0; i < hashes.length; i++) {
                 var hash = hashes[i].split('=');
-                params[hash[0].trim()] = (hash[1] !== undefined) ? hash[1].trim() : undefined;
+                cfg[hash[0].trim()] = (hash[1] !== undefined) ? hash[1].trim() : undefined;
             }
 
             // for mmdb structures, pass the parameters after the first "&" sign
-            params.inpara = "&" + url.substr(ampPos + 1);
+            cfg.inpara = "&" + url.substr(ampPos + 1);
         }
 
         // changed some parameter names
-        params.rid = params.RID;
+        cfg.rid = cfg.RID;
 
-        params.urlname = params.url;
-        if(params.urlname && params.urlname.indexOf('%3A%2F%2F') === -1) { // decoded URL
+        cfg.urlname = cfg.url;
+        if(cfg.urlname && cfg.urlname.indexOf('%3A%2F%2F') === -1) { // decoded URL
             // should encode it
-            params.urlname = encodeURIComponent(params.urlname);
+            cfg.urlname = encodeURIComponent(cfg.urlname);
         }
-        params.urltype = (params.type === undefined) ? 'pdb' : params.type;
+        cfg.urltype = (cfg.type === undefined) ? 'pdb' : cfg.type;
 
-        params.version = getValue(params.v);
+        cfg.version = getValue(cfg.v);
 
-        if(params.version !== undefined && window.localStorage && localStorage.getItem('fixedversion')) {
-            var fixedUrl = url.replace('full.html', 'full_' + version + '.html');
+        if(cfg.version !== undefined && window.localStorage && localStorage.getItem('fixedversion')) {
+            var fixedUrl = url.replace('full.html', 'full_' + cfg.version + '.html');
             window.open(fixedUrl, '_self');
 
             localStorage.removeItem('fixedversion');
         }
 
-        // use PDB residue number in MMDB input
-        for(var i in params) {
-            params[i] = getValue(params[i]);
+        // standardize the input values
+        for(var i in cfg) {
+            cfg[i] = getValue(cfg[i]);
         }
 
         // backward compatible with showseq
-        params.showanno = params.showanno || params.showseq;
+        cfg.showanno = cfg.showanno || cfg.showseq;
 
-        params.shownote = 1; //params.shownote;
-        params.options = (params.options !== undefined) ? JSON.parse(params.options) : undefined;
+        cfg.shownote = 1; //cfg.shownote;
+        cfg.options = (cfg.options !== undefined) ? JSON.parse(cfg.options) : undefined;
 
-        var cfg = params;
-
-        return {cfg: cfg, params: params};
+        return cfg;
       }
 
       function getValue(input) {

@@ -201,7 +201,7 @@ class Picking {
 
         // fill the beginning
         var beginResi = firstAtom.resi;
-        if(!firstAtom.ssbegin) {
+        if(!firstAtom.ssbegin && !isNaN(firstAtom.resi)) {
             for(var i = firstAtom.resi - 1; i > 0; --i) {
                 var residueid = firstAtom.structure + '_' + firstAtom.chain + '_' + i;
                 if(!ic.residues.hasOwnProperty(residueid)) break;
@@ -212,7 +212,7 @@ class Picking {
                 if( (firstAtom.ss !== 'coil' && atom.ss === firstAtom.ss && atom.ssbegin)
                   || (firstAtom.ss === 'coil' && atom.ss !== firstAtom.ss) ) {
                     if(firstAtom.ss === 'coil' && atom.ss !== firstAtom.ss) {
-                        beginResi = atom.resi + 1;
+                        beginResi = parseInt(atom.resi) + 1;
                     }
                     break;
                 }
@@ -227,7 +227,7 @@ class Picking {
         // fill the end
         var endResi = lastAtom.resi;
         var endChainResi = ic.firstAtomObjCls.getLastAtomObj(ic.chains[lastAtom.structure + '_' + lastAtom.chain]).resi;
-        for(var i = lastAtom.resi + 1; i <= endChainResi; ++i) {
+        for(var i = parseInt(lastAtom.resi) + 1; i <= parseInt(endChainResi); ++i) {
             var residueid = lastAtom.structure + '_' + lastAtom.chain + '_' + i;
             if(!ic.residues.hasOwnProperty(residueid)) break;
 
@@ -235,14 +235,14 @@ class Picking {
             endResi = atom.resi;
 
             if( (lastAtom.ss !== 'coil' && atom.ss === lastAtom.ss && atom.ssend) || (lastAtom.ss === 'coil' && atom.ss !== lastAtom.ss) ) {
-                if(lastAtom.ss === 'coil' && atom.ss !== lastAtom.ss) {
+                if(lastAtom.ss === 'coil' && atom.ss !== lastAtom.ss && !isNaN(atom.resi)) {
                     endResi = atom.resi - 1;
                 }
                 break;
             }
         }
 
-        for(var i = lastAtom.resi + 1; i <= endResi; ++i) {
+        for(var i = parseInt(lastAtom.resi) + 1; i <= parseInt(endResi); ++i) {
             var residueid = lastAtom.structure + '_' + lastAtom.chain + '_' + i;
             atomsHash = me.hashUtilsCls.unionHash(atomsHash, me.hashUtilsCls.hash2Atoms(ic.residues[residueid], ic.atoms));
         }

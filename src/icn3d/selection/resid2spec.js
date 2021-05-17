@@ -72,7 +72,7 @@ class Resid2spec {
                      startResi = resi;
                  }
                  else if(prevChain === chain) {
-                     if(resi !== prevResi + 1) {
+                     if(resi != parseInt(prevResi) + 1) {
                          if(prevResi === startResi) {
                              if(bMultipleStructures) {
                                  spec += '$' + struturePart + '.' + chainPart + ':' + startResi + ' or ';

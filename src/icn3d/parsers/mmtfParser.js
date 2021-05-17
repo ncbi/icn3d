@@ -221,7 +221,7 @@ class MmtfParser {
                     }
                 }
 
-                if(bSetPrevSsend) {
+                if(bSetPrevSsend && !isNaN(resi)) {
                     var prevResid = structure + '_' + chain + '_' +(resi - 1).toString();
                     for(var i in ic.residues[prevResid]) {
                         ic.atoms[i].ssbegin = false;

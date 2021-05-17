@@ -27,7 +27,7 @@ class SaveFile {
     //The type "png" is used to save the current canvas image. The type "html" is used to save html file with the
     //"data". This can be used to save any text. The type "text" is used to save an array of text, where "data" is
     //actually an array. The type "binary" is used to save an array of binary, where "data" is actually an array.
-    saveFile(filename, type, text) {var ic = this.icn3d, me = ic.icn3dui;
+    saveFile(filename, type, text) { var ic = this.icn3d, me = ic.icn3dui;
         //Save file
         var blob;
 
@@ -406,7 +406,7 @@ class SaveFile {
             line += ' ';
             line +=(atom.chain.length <= 1) ? atom.chain.padStart(1, ' ') : atom.chain.substr(0, 1);
             var resi = atom.resi;
-            if(atom.chain.length > 3 && !isNaN(atom.chain.substr(3)) ) { // such as: chain = NAG2, resi=1 => chain = NAG, resi=2
+            if(!isNaN(resi) && atom.chain.length > 3 && !isNaN(atom.chain.substr(3)) ) { // such as: chain = NAG2, resi=1 => chain = NAG, resi=2
                 resi = resi - 1 + parseInt(atom.chain.substr(3));
             }
             line +=(resi.toString().length <= 4) ? resi.toString().padStart(4, ' ') : resi.toString().substr(0, 4);

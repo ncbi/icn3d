@@ -302,13 +302,13 @@ class ParasCls {
         this.ssColors = {
             helix: this.thr(0xFF0000),
             sheet: this.thr(0x008000),
-             coil: this.thr(0xFFFFFF) //this.thr(0x6080FF)
+             coil: this.thr(0xEEEEEE) //this.thr(0x6080FF)
         };
 
         this.ssColors2 = {
             helix: this.thr(0xFF0000),
             sheet: this.thr(0xFFC800),
-             coil: this.thr(0xFFFFFF) //this.thr(0x6080FF)
+             coil: this.thr(0x6080FF) //this.thr(0xEEEEEE) //this.thr(0x6080FF)
         };
 
         // https://www.ncbi.nlm.nih.gov/Class/FieldGuide/BLOSUM62.txt, range from -4 to 11

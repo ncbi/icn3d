@@ -639,50 +639,53 @@ You can color structures with SASA, or show the SASA for each residue.<br/>
 
 <span class="anchor" id="parameters"></span>
 <a name="parameters"></a>
-<h3>URL parameters for the advanced interface<img src="https://www.ncbi.nlm.nih.gov/Structure/IMG/spacer.gif" width="25" height="1" border="0"><a href="#Top"><img src="https://www.ncbi.nlm.nih.gov/Structure/IMG/arrowup_blue.gif" width="12" height="12" border="0" alt="back to top"></a></h3>
-<table><tr valign='top'><th>Parameter</th><th>Basic interface<br/>(index.html)</th><th>Advanced interface<br/>(full.html)</th><th>Description</th></tr>
-<tr valign='top'><td>mmdbid</td><td>Yes</td><td>Yes</td><td>NCBI MMDB ID or PDB ID, e.g., <a href="full.html?mmdbid=1tup&showanno=1&show2d=1">?mmdbid=1tup&showanno=1&show2d=1</a></td></tr>
-<tr valign='top'><td>mmtfid</td><td>Yes</td><td>Yes</td><td>MMTF ID, e.g., <a href="full.html?mmtfid=1tup">?mmtfid=1tup</a></td></tr>
-<tr valign='top'><td>pdbid</td><td>Yes</td><td>Yes</td><td>PDB ID, e.g., <a href="full.html?pdbid=1tup">?pdbid=1tup</a></td></tr>
-<tr valign='top'><td>mmcifid</td><td>Yes</td><td>Yes</td><td>mmCIF ID, e.g., <a href="full.html?mmcifid=1tup">?mmcifid=1tup</a></td></tr>
-<tr valign='top'><td>gi</td><td>Yes</td><td>Yes</td><td>NCBI protein gi number, e.g., <a href="full.html?gi=827343227">?gi=827343227</a></td></tr>
-<tr valign='top'><td>cid</td><td>Yes</td><td>Yes</td><td>PubChem Compound ID, e.g., <a href="full.html?cid=2244">?cid=2244</a></td></tr>
-<tr valign='top'><td>blast_rep_id</td><td>No</td><td>Yes</td><td>NCBI protein accession of a chain of a 3D structure. "blast_rep_id" combines with the parameter "query_id" of a protein sequence to show the sequence-structure alignment, e.g., <a href="full.html?from=icn3d&blast_rep_id=1TSR_A&query_id=NP_001108451.1">from=icn3d&blast_rep_id=1TSR_A&query_id=NP_001108451.1</a></td></tr>
-<tr valign='top'><td>align</td><td>No</td><td>Yes</td><td>Two PDB IDs or MMDB IDs for structure alignment, e.g., <a href="full.html?align=1hho,4n7n">?align=1hho,4n7n</a></td></tr>
-<tr valign='top'><td>chainalign</td><td>No</td><td>Yes</td><td>Two chains for structure alignment, e.g., <a href="full.html?chainalign=1HHO_A,4N7N_A">?chainalign=1HHO_A,4N7N_A</a></td></tr>
-<tr valign='top'><td>url</td><td>Yes</td><td>Yes</td><td>Use the url (encoded) to retrieve the 3D structure. The url requires another parameter "type", e.g., <a href="full.html?type=pdb&url=https%3A%2F%2Ffiles.rcsb.org%2Fview%2F1gpk.pdb">?type=pdb&url=https%3A%2F%2Ffiles.rcsb.org%2Fview%2F1gpk.pdb</a></td></tr>
+<h3>URL parameters<img src="https://www.ncbi.nlm.nih.gov/Structure/IMG/spacer.gif" width="25" height="1" border="0"><a href="#Top"><img src="https://www.ncbi.nlm.nih.gov/Structure/IMG/arrowup_blue.gif" width="12" height="12" border="0" alt="back to top"></a></h3>
+<table><tr valign='top'><th>Parameter</th><th>Description</th></tr>
+<tr valign='top'><td>mmdbid</td><td>NCBI MMDB ID or PDB ID, e.g., <a href="full.html?mmdbid=1tup&showanno=1&show2d=1">?mmdbid=1tup&showanno=1&show2d=1</a></td></tr>
+<tr valign='top'><td>mmtfid</td><td>MMTF ID, e.g., <a href="full.html?mmtfid=1tup">?mmtfid=1tup</a></td></tr>
+<tr valign='top'><td>pdbid</td><td>PDB ID, e.g., <a href="full.html?pdbid=1tup">?pdbid=1tup</a></td></tr>
+<tr valign='top'><td>mmcifid</td><td>mmCIF ID, e.g., <a href="full.html?mmcifid=1tup">?mmcifid=1tup</a></td></tr>
+<tr valign='top'><td>gi</td><td>NCBI protein gi number, e.g., <a href="full.html?gi=827343227">?gi=827343227</a></td></tr>
+<tr valign='top'><td>cid</td><td>PubChem Compound ID, e.g., <a href="full.html?cid=2244">?cid=2244</a></td></tr>
+<tr valign='top'><td>blast_rep_id</td><td>NCBI protein accession of a chain of a 3D structure. "blast_rep_id" combines with the parameter "query_id" of a protein sequence to show the sequence-structure alignment, e.g., <a href="full.html?from=icn3d&blast_rep_id=1TSR_A&query_id=NP_001108451.1">from=icn3d&blast_rep_id=1TSR_A&query_id=NP_001108451.1</a></td></tr>
+<tr valign='top'><td>align</td><td>Two PDB IDs or MMDB IDs for structure alignment, e.g., <a href="full.html?align=1hho,4n7n">?align=1hho,4n7n</a></td></tr>
+<tr valign='top'><td>chainalign</td><td>Two chains for structure alignment, e.g., <a href="full.html?chainalign=1HHO_A,4N7N_A">?chainalign=1HHO_A,4N7N_A</a></td></tr>
+<tr valign='top'><td>url</td><td>Use the url (encoded) to retrieve the 3D structure. The url requires another parameter "type", e.g., <a href="full.html?type=pdb&url=https%3A%2F%2Ffiles.rcsb.org%2Fview%2F1gpk.pdb">?type=pdb&url=https%3A%2F%2Ffiles.rcsb.org%2Fview%2F1gpk.pdb</a></td></tr>
 
-<tr valign='top'><td>width</td><td>Yes</td><td>Yes</td><td>Width of the structure image. It can be percentage such as '100%', or pixel values such as 400. The default is "100%".</td></tr>
-<tr valign='top'><td>height</td><td>Yes</td><td>Yes</td><td>Height of the structure image. It can be percentage such as '100%', or pixel values such as 400. The default is "100%".</td></tr>
-<tr valign='top'><td>resize</td><td>Yes</td><td>Yes</td><td>Set "true" or "1" to resize the image when the container is resized. The default is "true".</td></tr>
-<tr valign='top'><td>rotate</td><td>Yes</td><td>Yes</td><td>Set "right", "left", "up", or "down" to rotate the structure when it is  displayed at the beginning. The default is "right".</td></tr>
+<tr valign='top'><td>width</td><td>Width of the structure image. It can be percentage such as '100%', or pixel values such as 400. The default is "100%".</td></tr>
+<tr valign='top'><td>height</td><td>Height of the structure image. It can be percentage such as '100%', or pixel values such as 400. The default is "100%".</td></tr>
+<tr valign='top'><td>resize</td><td>Set "true" or "1" to resize the image when the container is resized. The default is "true".</td></tr>
+<tr valign='top'><td>rotate</td><td>Set "right", "left", "up", or "down" to rotate the structure when it is  displayed at the beginning. The default is "right".</td></tr>
 
-<tr valign='top'><td>showanno</td><td>No</td><td>Yes</td><td>Set "true" or "1" to show annotations, such as SNPs, ClinVar, domains, binding sites. The default is "false".</td></tr>
-<tr valign='top'><td>showalignseq</td><td>No</td><td>Yes</td><td>Set "true" or "1" to show the aligned sequence window. The default is "false".</td></tr>
-<tr valign='top'><td>showsets</td><td>No</td><td>Yes</td><td>Set "true" or "1" to show the defined sets. The default is "false".</td></tr>
-<tr valign='top'><td>show2d</td><td>No</td><td>Yes</td><td>Set "true" or "1" to show the 2D interaction. The default is "false".</td></tr>
-<tr valign='top'><td>showmenu</td><td>Yes</td><td>Yes</td><td>Set "false" or "0" to hide the menus and buttons at the top of the structure canvas. The default is "true".</td></tr>
-<tr valign='top'><td>showtitle</td><td>Yes</td><td>Yes</td><td>Set "false" or "0" to hide the title at the top of the structure canvas. The default is "true".</td></tr>
-<tr valign='top'><td>showcommand</td><td>No</td><td>Yes</td><td>Set "false" or "0" to hide the command window. The default is "true".</td></tr>
-<tr valign='top'><td>simplemenu</td><td>No</td><td>Yes</td><td>Set "true" or "1" to show only the menus "File", "View", "Style", and "Color" to simplify the UI. The default is "false".</td></tr>
-<tr valign='top'><td>mobilemenu</td><td>No</td><td>Yes</td><td>Set "true" or "1" to show the mobile-style menu. Users can click to see all menus. The default is "false".</td></tr>
-<tr valign='top'><td>closepopup</td><td>No</td><td>Yes</td><td>Set "true" or "1" to close the dialogs of "Defined Sets", "Interactions", and "Sequences and Annotations". The default is "false".</td></tr>
-<tr valign='top'><td><a name="commandsUrl"></a>command</td><td>No</td><td>Yes</td><td>Besides the "Script/Log" section at the bottom of the canvas, commands can also be attached to the url parameter "command". The easy way to generate the commands is to operate manually to get your custom display and then click "File > Share Link" to find the URL with full commands or just the short URL.</td></tr>
-<tr valign='top'><td>replay</td><td>No</td><td>Yes</td><td>Set "true" or "1" to replay each step of a custom display.</td></tr>
-<tr valign='top'><td>usepdbnum</td><td>No</td><td>Yes</td><td>Set "true" or "1" to use PDB residue numbers instead of NCBI residue numbers when the input is MMDB ID and the residue numbers are different. The default is "true".</td></tr>
+<tr valign='top'><td>showanno</td><td>Set "true" or "1" to show annotations, such as SNPs, ClinVar, domains, binding sites. The default is "false".</td></tr>
+<tr valign='top'><td>showalignseq</td><td>Set "true" or "1" to show the aligned sequence window. The default is "false".</td></tr>
+<tr valign='top'><td>showsets</td><td>Set "true" or "1" to show the defined sets. The default is "false".</td></tr>
+<tr valign='top'><td>show2d</td><td>Set "true" or "1" to show the 2D interaction. The default is "false".</td></tr>
+<tr valign='top'><td>showmenu</td><td>Set "false" or "0" to hide the menus and buttons at the top of the structure canvas. The default is "true".</td></tr>
+<tr valign='top'><td>showtitle</td><td>Set "false" or "0" to hide the title at the top of the structure canvas. The default is "true".</td></tr>
+<tr valign='top'><td>showcommand</td><td>Set "false" or "0" to hide the command window. The default is "true".</td></tr>
+<tr valign='top'><td>simplemenu</td><td>Set "true" or "1" to show only the menus "File", "View", "Style", and "Color" to simplify the UI. The default is "false".</td></tr>
+<tr valign='top'><td>mobilemenu</td><td>Set "true" or "1" to show the mobile-style menu. Users can click to see all menus. The default is "false".</td></tr>
+<tr valign='top'><td>closepopup</td><td>Set "true" or "1" to close the dialogs of "Defined Sets", "Interactions", and "Sequences and Annotations". The default is "false".</td></tr>
+<tr valign='top'><td><a name="commandsUrl"></a>command</td><td>Besides the "Script/Log" section at the bottom of the canvas, commands can also be attached to the url parameter "command". The easy way to generate the commands is to operate manually to get your custom display and then click "File > Share Link" to find the URL with full commands or just the short URL.</td></tr>
+<tr valign='top'><td>replay</td><td>Set "true" or "1" to replay each step of a custom display.</td></tr>
+<tr valign='top'><td>usepdbnum</td><td>Set "true" or "1" to use PDB residue numbers instead of NCBI residue numbers when the input is MMDB ID and the residue numbers are different. The default is "true".</td></tr>
+<tr valign='top'><td>hidelicense</td><td>Set "true" or "1" to hide the features requiring licenses, such as "Analysis > DelPhi Potential" and "Analysis > Mutaion". The default is "false".</td></tr>
 </table>
 
 <span class="anchor" id="commands"></span>
 <a name="commands"></a>
-<h3>Menus, Commands, and Methods of the advanced interface<img src="https://www.ncbi.nlm.nih.gov/Structure/IMG/spacer.gif" width="25" height="1" border="0">
+<h3>Menus, Commands, and Functions of the advanced interface<img src="https://www.ncbi.nlm.nih.gov/Structure/IMG/spacer.gif" width="25" height="1" border="0">
     <a href="#Top"><img src="https://www.ncbi.nlm.nih.gov/Structure/IMG/arrowup_blue.gif" width="12" height="12" border="0" alt="back to top"></a>
 </h3>
+To find icn3d commands and functions, you can first generate a custom view in iCn3D interactively. Then you can click the menu "File > Share Link" to see the commands in the section "Original URL with commands". Most commands are processed with functions in the file "src/icn3d/selection/applyCommand.js". Other commands with asynchronized retrieval are processed with functions in the file "src/icn3d/selection/loadScript.js".<br><br>
+
 <a name="file"></a><b>1. File</b> <a href="#Top"><span class="top">&nbsp;&nbsp;&nbsp;</span></a><br>
 <table width='100%'>
     <tr>
         <td valign='top' width='30%'><b>Menu</b></td>
         <td valign='top' width='40%'><b>Command</b></td>
-        <td valign='top'><b>Method</b></td>
+        <td valign='top'><b>Function</b></td>
     </tr>
     <tbody>
         <tr>

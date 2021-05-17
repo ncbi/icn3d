@@ -1,4 +1,6 @@
 ## Change Log
+[icn3d-3.1.2](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.1.2.zip) was release on May 17, 2021. iCn3D could hide the features requiring licenses, such as "Analysis > DelPhi Potential" and "Analysis > Mutaion" using the URL parameter "hidelicense=1".
+
 [icn3d-3.1.1](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.1.1.zip) was release on May 10, 2021. Fixed the URL parameters in full.html.
 
 [icn3d-3.1.0](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.1.0.zip) was release on May 7, 2021. Added icn3d.module.js in the build directory. Upgraded three.js from version 103 to version 128. THREE.Geometry was replaced with THREE.BufferGeometry.
