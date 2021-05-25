@@ -39549,7 +39549,7 @@ class Scene {
             ic.scene_ghost = new THREE.Scene();
         }
 
-        ic.directionalLight = new THREE.DirectionalLight(0xFFFFFF, 1.0);
+        ic.directionalLight = new THREE.DirectionalLight(0xFFFFFF, 0.6); //1.0);
         ic.directionalLight2 = new THREE.DirectionalLight(0xFFFFFF, 0.4);
         ic.directionalLight3 = new THREE.DirectionalLight(0xFFFFFF, 0.2);
 
