@@ -1378,11 +1378,12 @@ class SetMenu {
         html += "<li><span>Label Scale</span>";
         html += "<ul>";
 
-        for(var i = 1; i <= 9; ++i) {
-            html += me.htmlCls.setHtmlCls.getRadio('mn6_labelscale', 'mn6_labelscale0' + i, '0.' + i);
+        for(var i = 1; i <= 4; ++i) {
+            var twoi = 2 * i;
+            html += me.htmlCls.setHtmlCls.getRadio('mn6_labelscale', 'mn6_labelscale0' + twoi, '0.' + twoi);
         }
 
-        for(var i = 1; i <= 4; i *= 2) {
+        for(var i = 1; i <= 5; ++i) {
             if(i == 1) {
                 html += me.htmlCls.setHtmlCls.getRadio('mn6_labelscale', 'mn6_labelscale' + i + '0', i + '.0', true);
             }
