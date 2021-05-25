@@ -194,7 +194,6 @@ class Label {
                 var labelcolor = (label.color !== undefined) ? label.color : '#ffff00';
                 var labelbackground = (label.background !== undefined) ? label.background : '#cccccc';
                 var labelalpha = (label.alpha !== undefined) ? label.alpha : 1.0;
-                var factor = (label.factor) ? oriFactor * label.factor : oriFactor;
 
                 // if label.background is undefined, no background will be drawn
                 labelbackground = label.background;
@@ -206,13 +205,15 @@ class Label {
                 var bb;
                 if(label.bSchematic !== undefined && label.bSchematic) {
 
-                    bb = this.textSpriteCls.makeTextSprite(label.text, {fontsize: parseInt(labelsize), textColor: labelcolor, borderColor: labelbackground, backgroundColor: labelbackground, alpha: labelalpha, bSchematic: 1, factor: factor});
+                    bb = this.textSpriteCls.makeTextSprite(label.text, {fontsize: parseInt(labelsize), textColor: labelcolor, borderColor: labelbackground, backgroundColor: labelbackground, alpha: labelalpha, bSchematic: 1, factor: oriFactor});
                 }
                 else {
                     if(label.text.length === 1) {
-                        bb = this.textSpriteCls.makeTextSprite(label.text, {fontsize: parseInt(labelsize), textColor: labelcolor, borderColor: labelbackground, backgroundColor: labelbackground, alpha: labelalpha, bSchematic: 1, factor: factor});
+                        bb = this.textSpriteCls.makeTextSprite(label.text, {fontsize: parseInt(labelsize), textColor: labelcolor, borderColor: labelbackground, backgroundColor: labelbackground, alpha: labelalpha, bSchematic: 1, factor: oriFactor});
                     }
                     else {
+                        var factor = (label.factor) ? oriFactor * label.factor : oriFactor;
+
                         bb = this.textSpriteCls.makeTextSprite(label.text, {fontsize: parseInt(labelsize), textColor: labelcolor, borderColor: labelbackground, backgroundColor: labelbackground, alpha: labelalpha, bSchematic: 0, factor: factor});
                     }
                 }

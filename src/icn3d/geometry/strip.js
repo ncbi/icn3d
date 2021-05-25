@@ -69,7 +69,7 @@ class Strip {
                 for(var i = 0, il = p0.length; i < il; ++i) {
                     currPos = positions[i];
 
-                    if((currPos !== prevPos && currPos !== prevPos + 1 && prevPos !== undefined) || (i === il -1) ) {
+                    if((currPos !== prevPos && parseInt(currPos) !== parseInt(prevPos) + 1 && prevPos !== undefined) || (i === il -1) ) {
                         // first tube
                         var geometry0 = new THREE.TubeGeometry(
                             new THREE.CatmullRomCurve3(currP0), // path

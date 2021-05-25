@@ -180,6 +180,8 @@ class SetColor {
                     }
                 }
 
+                // keep the color of coils untouched
+/*
                 var color = me.parasCls.ssColors2['coil']
                 for (var i = 0, il = coilArray.length; i < il; ++i) {
                     for(var serial = coilArray[i][0]; serial <= coilArray[i][1]; ++serial) {
@@ -188,6 +190,7 @@ class SetColor {
                         ic.atomPrevColors[serial] = atom.color;
                     }
                 }
+*/
                 break;
 
             case 'residue':

@@ -1723,11 +1723,13 @@ class ClickMenu {
     //    },
     //    clkMn6_symmetry: function() {
         me.myEventCls.onIds("#" + me.pre + "mn6_symmetry", "click", function(e) { var ic = me.icn3d;
+           ic.bAxisOnly = false;
            ic.symdCls.retrieveSymmetry(Object.keys(ic.structures)[0]);
            //me.htmlCls.dialogCls.openDlg('dl_symmetry', 'Symmetry');
         });
 
         me.myEventCls.onIds("#" + me.pre + "mn6_symd", "click", function(e) { var ic = me.icn3d;
+           ic.bAxisOnly = false;
            ic.symdCls.retrieveSymd();
            ic.bSymd = true;
            //me.htmlCls.dialogCls.openDlg('dl_symmetry', 'Symmetry');
@@ -1741,6 +1743,11 @@ class ClickMenu {
            ic.drawCls.draw();
            thisClass.setLogCmd('clear symd symmetry', true);
         });
+        me.myEventCls.onIds("#" + me.pre + "mn6_axes_only", "click", function(e) { var ic = me.icn3d;
+           ic.bAxisOnly = true;
+           ic.drawCls.draw();
+           thisClass.setLogCmd('show axis', true);
+        });
 
     //    },
     //    clkMn6_area: function() {
@@ -1751,6 +1758,8 @@ class ClickMenu {
     //    },
     //    clkMn6_applysymmetry: function() {
         me.myEventCls.onIds("#" + me.pre + "applysymmetry", "click", function(e) { var ic = me.icn3d;
+           ic.bAxisOnly = false;
+
            var title = $("#" + me.pre + "selectSymmetry" ).val();
 
            ic.symmetrytitle =(title === 'none') ? undefined : title;

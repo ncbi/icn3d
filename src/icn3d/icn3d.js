@@ -297,7 +297,8 @@ class iCn3D {
 
     // Default values
     //This defines the highlight color.
-    this.hColor = new THREE.Color(0xFFFF00);
+//    this.hColor = new THREE.Color(0xFFFF00);
+    this.hColor = new THREE.Color(0xFFFF33);
 
     this.sphereGeometry = new THREE.SphereGeometry(1, 32, 32);
     this.boxGeometry = new THREE.BoxGeometry(1, 1, 1);

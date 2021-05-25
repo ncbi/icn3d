@@ -302,7 +302,7 @@ class ParasCls {
         this.ssColors = {
             helix: this.thr(0xFF0000),
             sheet: this.thr(0x008000),
-             coil: this.thr(0xEEEEEE) //this.thr(0x6080FF)
+             coil: this.thr(0x6080FF) //this.thr(0xEEEEEE) //this.thr(0x6080FF)
         };
 
         this.ssColors2 = {

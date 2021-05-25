@@ -1,4 +1,6 @@
 ## Change Log
+[icn3d-3.1.3](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.1.3.zip) was release on May 25, 2021. Switched residue numbers from integers to strings such as "100A". 
+
 [icn3d-3.1.2](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.1.2.zip) was release on May 17, 2021. iCn3D could hide the features requiring licenses, such as "Analysis > DelPhi Potential" and "Analysis > Mutaion" using the URL parameter "hidelicense=1".
 
 [icn3d-3.1.1](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.1.1.zip) was release on May 10, 2021. Fixed the URL parameters in full.html.
