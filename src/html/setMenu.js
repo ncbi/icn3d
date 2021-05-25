@@ -1438,6 +1438,7 @@ class SetMenu {
             if(bOnePdb) html += me.htmlCls.setHtmlCls.getLink('mn6_symmetry', 'from RCSB(precalculated) ' + me.htmlCls.wifiStr);
             html += me.htmlCls.setHtmlCls.getLink('mn6_symd', 'from SymD(Dynamic) ' + me.htmlCls.wifiStr);
             html += me.htmlCls.setHtmlCls.getLink('mn6_clear_sym', 'Clear SymD Symmetry');
+            html += me.htmlCls.setHtmlCls.getLink('mn6_axes_only', 'Show Axes Only');
             html += "</ul>";
             html += "</li>";
 

@@ -309,13 +309,13 @@ class Selection {
         ic.annotationCls.showAnnoSelectedChains();
 
         // update 2d graph
-        //if(ic.graphStr !== undefined) {
-        //  ic.graphStr = this.getGraphDataForDisplayed();
-        //}
+        if(ic.graphStr !== undefined) {
+          ic.graphStr = this.getGraphDataForDisplayed();
+        }
 
-        //if(ic.bGraph) ic.drawGraphCls.drawGraph(ic.graphStr);
-        //if(ic.bLinegraph) ic.lineGraphCls.drawLineGraph(ic.graphStr);
-        //if(ic.bScatterplot) ic.lineGraphCls.drawLineGraph(ic.graphStr, true);
+        if(ic.bGraph) ic.drawGraphCls.drawGraph(ic.graphStr);
+        if(ic.bLinegraph) ic.lineGraphCls.drawLineGraph(ic.graphStr);
+        if(ic.bScatterplot) ic.lineGraphCls.drawLineGraph(ic.graphStr, true);
     }
 
     hideSelection() { var ic = this.icn3d, me = ic.icn3dui;

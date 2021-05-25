@@ -30,12 +30,15 @@ class ApplySymd {
         var symmetryType = title.substr(0, 1);
         var nSide = parseInt(title.substring(1, title.indexOf(' ')));
 
-        var axisRadius = 2 * ic.cylinderRadius * ic.oriMaxD / 150;
-        var polygonRadius = 1 * ic.cylinderRadius * ic.oriMaxD / 150;
+        //var axisRadius = 2 * ic.cylinderRadius * ic.oriMaxD / 150;
+        //var polygonRadius = 1 * ic.cylinderRadius * ic.oriMaxD / 150;
+
+        var axisRadius = 1.5 * ic.cylinderRadius;
+        var polygonRadius = 1 * ic.cylinderRadius;
 
         if(symmetryType == 'I') {
-            axisRadius *= 2;
-            polygonRadius *= 2;
+            //axisRadius *= 2;
+            //polygonRadius *= 2;
         }
 
         var pointArray = [];
@@ -50,6 +53,8 @@ class ApplySymd {
             var chain = dataArray[i][5];
 
             ic.cylinderCls.createCylinder(start, end, axisRadius, colorAxis, 0);
+
+            if(ic.bAxisOnly) continue;
 
             if(symmetryType == 'C' || (symmetryType == 'D' && order == nSide) ) {
                 // find the center and size of the selected protein chain

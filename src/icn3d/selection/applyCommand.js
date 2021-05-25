@@ -548,6 +548,9 @@ class ApplyCommand {
       else if(command == 'clear symd symmetry') {
          ic.symdArray = [];
       }
+      else if(command == 'show axis') {
+         ic.bAxisOnly = true;
+      }
 
     // start with =================
       else if(commandOri.indexOf('define helix sets') == 0) {

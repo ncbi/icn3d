@@ -4939,7 +4939,7 @@ var icn3d = (function (exports) {
             this.ssColors = {
                 helix: this.thr(0xFF0000),
                 sheet: this.thr(0x008000),
-                 coil: this.thr(0xEEEEEE) //this.thr(0x6080FF)
+                 coil: this.thr(0x6080FF) //this.thr(0xEEEEEE) //this.thr(0x6080FF)
             };
 
             this.ssColors2 = {
@@ -6938,7 +6938,7 @@ var icn3d = (function (exports) {
                     for(var i = 0, il = p0.length; i < il; ++i) {
                         currPos = positions[i];
 
-                        if((currPos !== prevPos && currPos !== prevPos + 1 && prevPos !== undefined) || (i === il -1) ) {
+                        if((currPos !== prevPos && parseInt(currPos) !== parseInt(prevPos) + 1 && prevPos !== undefined) || (i === il -1) ) {
                             // first tube
                             var geometry0 = new THREE.TubeGeometry(
                                 new THREE.CatmullRomCurve3(currP0), // path
@@ -7398,7 +7398,7 @@ var icn3d = (function (exports) {
                         for(var i = 0, il = pnts.length; i < il; ++i) {
                             currPos = positions[i];
 
-                            if( (currPos !== prevPos && currPos !== prevPos + 1 && prevPos !== undefined) || (i === il -1) ) {
+                            if( (currPos !== prevPos && parseInt(currPos) !== parseInt(prevPos) + 1 && prevPos !== undefined) || (i === il -1) ) {
                                 // first tube
                                 var geometry0 = new THREE.TubeGeometry(
                                     new THREE.CatmullRomCurve3(currPoints), // path
@@ -7451,7 +7451,7 @@ var icn3d = (function (exports) {
                 //var geo = new THREE.Geometry();
                 var geo = new THREE.BufferGeometry();
 
-                var vertices = [], colors = [];
+                var verticeArray = [], colorArray = [];
 
                 var offset = 0, color;
                 if(bHighlight === 2 && bRibbon) {
@@ -7462,15 +7462,16 @@ var icn3d = (function (exports) {
                         //geo.colors.push(me.parasCls.thr(colors[i]));
 
                         //vertices = vertices.concat(pnts[i].toArray());
-                        vertices[offset] = pnts[i].x;
-                        vertices[offset+1] = pnts[i].y;
-                        vertices[offset+2] = pnts[i].z;
+                        verticeArray[offset] = pnts[i].x;
+                        verticeArray[offset+1] = pnts[i].y;
+                        verticeArray[offset+2] = pnts[i].z;
 
                         //colors = colors.concat(me.parasCls.thr(colors[i]).toArray());
                         color = me.parasCls.thr(colors[i]);
-                        colors[offset] = color.r;
-                        colors[offset+1] = color.g;
-                        colors[offset+2] = color.b;
+
+                        colorArray[offset] = color.r;
+                        colorArray[offset+1] = color.g;
+                        colorArray[offset+2] = color.b;
                     }
                 }
                 else {
@@ -7479,21 +7480,22 @@ var icn3d = (function (exports) {
                         //geo.colors.push(me.parasCls.thr(colors[i]));
 
                         //vertices = vertices.concat(pnts[i].toArray());
-                        vertices[offset] = pnts[i].x;
-                        vertices[offset+1] = pnts[i].y;
-                        vertices[offset+2] = pnts[i].z;
+                        verticeArray[offset] = pnts[i].x;
+                        verticeArray[offset+1] = pnts[i].y;
+                        verticeArray[offset+2] = pnts[i].z;
 
                         //colors = colors.concat(me.parasCls.thr(colors[i]).toArray());
                         color = me.parasCls.thr(colors[i]);
-                        colors[offset] = color.r;
-                        colors[offset+1] = color.g;
-                        colors[offset+2] = color.b;
+
+                        colorArray[offset] = color.r;
+                        colorArray[offset+1] = color.g;
+                        colorArray[offset+2] = color.b;
                     }
                 }
 
                 var nComp = 3;
-                geo.setAttribute('position', new THREE.BufferAttribute(new Float32Array(vertices), nComp));
-                geo.setAttribute('color', new THREE.BufferAttribute(new Float32Array(colors), nComp));
+                geo.setAttribute('position', new THREE.BufferAttribute(new Float32Array(verticeArray), nComp));
+                geo.setAttribute('color', new THREE.BufferAttribute(new Float32Array(colorArray), nComp));
 
                 //geo.computeVertexNormals();
 
@@ -7857,7 +7859,7 @@ var icn3d = (function (exports) {
                     //if (index > 0 && (currentChain !== atom.chain || Math.abs(atom.coord.x - prevAtom.coord.x) > maxDist || Math.abs(atom.coord.y - prevAtom.coord.y) > maxDist || Math.abs(atom.coord.z - prevAtom.coord.z) > maxDist
                     //  || (currentResi + 1 !== atom.resi && (Math.abs(atom.coord.x - prevAtom.coord.x) > maxDist2 || Math.abs(atom.coord.y - prevAtom.coord.y) > maxDist2 || Math.abs(atom.coord.z - prevAtom.coord.z) > maxDist2) )
                     if (index > 0 && (currentChain !== atom.chain || Math.abs(atom.coord.x - prevAtom.coord.x) > maxDist || Math.abs(atom.coord.y - prevAtom.coord.y) > maxDist || Math.abs(atom.coord.z - prevAtom.coord.z) > maxDist
-                      || (parseInt(currentResi) + 1 !== parseInt(atom.resi) && (Math.abs(atom.coord.x - prevAtom.coord.x) > maxDist2 || Math.abs(atom.coord.y - prevAtom.coord.y) > maxDist2 || Math.abs(atom.coord.z - prevAtom.coord.z) > maxDist2) )
+                      || (parseInt(currentResi) + 1 < parseInt(atom.resi) && (Math.abs(atom.coord.x - prevAtom.coord.x) > maxDist2 || Math.abs(atom.coord.y - prevAtom.coord.y) > maxDist2 || Math.abs(atom.coord.z - prevAtom.coord.z) > maxDist2) )
                       ) ) {
                         if(bHighlight !== 2) {
                             if(!isNaN(firstAtom.resi) && !isNaN(prevAtom.resi)) {
@@ -8425,7 +8427,7 @@ var icn3d = (function (exports) {
                             prevone = [];
                         }
                         else {
-                            var prevoneResid = ic.atoms[prevAtomid].structure + '_' + ic.atoms[prevAtomid].chain + '_' + (ic.atoms[prevAtomid].resi - 1).toString();
+                            var prevoneResid = ic.atoms[prevAtomid].structure + '_' + ic.atoms[prevAtomid].chain + '_' + (parseInt(ic.atoms[prevAtomid].resi) - 1).toString();
                             var prevoneCoord = ic.firstAtomObjCls.getAtomCoordFromResi(prevoneResid, atomName);
                             prevone = (prevoneCoord !== undefined) ? [prevoneCoord] : [];
                         }
@@ -8569,7 +8571,7 @@ var icn3d = (function (exports) {
                             prevone = [];
                         }
                         else {
-                            var prevoneResid = ic.atoms[prevAtomid].structure + '_' + ic.atoms[prevAtomid].chain + '_' + (ic.atoms[prevAtomid].resi - 1).toString();
+                            var prevoneResid = ic.atoms[prevAtomid].structure + '_' + ic.atoms[prevAtomid].chain + '_' + (parseInt(ic.atoms[prevAtomid].resi) - 1).toString();
                             var prevoneCoord = ic.firstAtomObjCls.getAtomCoordFromResi(prevoneResid, atomName);
                             var prevone = (prevoneCoord !== undefined) ? [prevoneCoord] : [];
                         }
@@ -8664,7 +8666,7 @@ var icn3d = (function (exports) {
                 // fill the beginning
                 var beginResi = firstAtom.resi;
                 if(!isNaN(firstAtom.resi) && firstAtom.ss !== 'coil' && !(firstAtom.ssbegin) ) {
-                    for(var i = firstAtom.resi - 1; i > 0; --i) {
+                    for(var i = parseInt(firstAtom.resi) - 1; i > 0; --i) {
                         var residueid = firstAtom.structure + '_' + firstAtom.chain + '_' + i;
                         if(!ic.residues.hasOwnProperty(residueid)) break;
 
@@ -8685,7 +8687,7 @@ var icn3d = (function (exports) {
 
                 // add one extra residue for coils between strands/helix
                 if(!isNaN(firstAtom.resi) && ic.pk === 3 && bHighlight === 1 && firstAtom.ss === 'coil') {
-                        var residueid = firstAtom.structure + '_' + firstAtom.chain + '_' + (firstAtom.resi - 1).toString();
+                        var residueid = firstAtom.structure + '_' + firstAtom.chain + '_' + (parseInt(firstAtom.resi) - 1).toString();
                         if(ic.residues.hasOwnProperty(residueid)) {
                             atomsAdjust = me.hashUtilsCls.unionHash(atomsAdjust, me.hashUtilsCls.hash2Atoms(ic.residues[residueid],
                               ic.atoms));
@@ -18357,7 +18359,9 @@ var icn3d = (function (exports) {
                         }
                     }
 
-                    var color = me.parasCls.ssColors2['coil'];
+                    // keep the color of coils untouched
+    /*
+                    var color = me.parasCls.ssColors2['coil']
                     for (var i = 0, il = coilArray.length; i < il; ++i) {
                         for(var serial = coilArray[i][0]; serial <= coilArray[i][1]; ++serial) {
                             var atom = ic.atoms[serial];
@@ -18365,6 +18369,7 @@ var icn3d = (function (exports) {
                             ic.atomPrevColors[serial] = atom.color;
                         }
                     }
+    */
                     break;
 
                 case 'residue':
@@ -19043,9 +19048,10 @@ var icn3d = (function (exports) {
                     label.text = me.utilsCls.residueName2Abbr(atom.resn);
                     if(bNumber) {
                         label.text += atom.resi;
-                        label.factor = 0.3;
+                        //label.factor = 0.3;
                     }
                     label.size = size;
+                    label.factor = 0.3;
 
                     var atomColorStr = atom.color.getHexString().toUpperCase();
                     label.color = (atomColorStr === "CCCCCC" || atomColorStr === "C8C8C8") ? "#888888" : "#" + atomColorStr;
@@ -24705,7 +24711,7 @@ var icn3d = (function (exports) {
                 }
 
                 if(i == 0) { // master
-                    var base = ic.chainsSeq[chainid][0].resi;
+                    var base = parseInt(ic.chainsSeq[chainid][0].resi);
 
                     var resRange;
                     if(bRealign) {
@@ -24718,9 +24724,10 @@ var icn3d = (function (exports) {
                     for(var j = 0, jl = resiArray.length; j < jl; ++j) {
                         if(resiArray[j].indexOf('-') != -1) {
                             var startEnd = resiArray[j].split('-');
+
                             for(var k = parseInt(startEnd[0]); k <= parseInt(startEnd[1]); ++k) {
                                 // don't align solvent or chemicals
-                                if(!ic.chainsSeq[chainid][k - base] || me.parasCls.b62ResArray.indexOf(ic.chainsSeq[chainid][k - base].name) == -1) continue;
+                                if(!ic.chainsSeq[chainid][k - base] || me.parasCls.b62ResArray.indexOf(ic.chainsSeq[chainid][k - base].name.toUpperCase()) == -1) continue;
 
                                 struct2SeqHash[mmdbid] += ic.chainsSeq[chainid][k - base].name;
                                 var bFound = false;
@@ -25795,6 +25802,8 @@ var icn3d = (function (exports) {
                   return;
               }
               else if(ic.commands[i].trim().indexOf('symmetry') == 0) {
+                ic.bAxisOnly = false;
+
                 var strArray = ic.commands[i].split("|||");
                 var command = strArray[0].trim();
 
@@ -25823,6 +25832,8 @@ var icn3d = (function (exports) {
                 return;
               }
               else if(ic.commands[i].trim().indexOf('symd symmetry') == 0) {
+                ic.bAxisOnly = false;
+
                 var strArray = ic.commands[i].split("|||");
                 var command = strArray[0].trim();
 
@@ -25928,98 +25939,109 @@ var icn3d = (function (exports) {
                   var dataStr = $(this).val();
                   ic.bRender = true;
                   var commandArray = dataStr.split('\n');
-                  var lastCommand = commandArray[commandArray.length - 1].substr(2).trim(); // skip "> "
-                  ic.logs.push(lastCommand);
-                  $("#" + ic.pre + "logtext").val("> " + ic.logs.join("\n> ") + "\n> ").scrollTop($("#" + ic.pre + "logtext")[0].scrollHeight);
-                  if(lastCommand !== '') {
-                    var transformation = {};
-                    transformation.factor = ic._zoomFactor;
-                    transformation.mouseChange = ic.mouseChange;
-                    transformation.quaternion = ic.quaternion;
-                    ic.commands.push(lastCommand + '|||' + ic.transformCls.getTransformationStr(transformation));
-                    ic.optsHistory.push(me.hashUtilsCls.cloneHash(ic.opts));
-                    ic.optsHistory[ic.optsHistory.length - 1].hlatomcount = Object.keys(ic.hAtoms).length;
-                    if(me.utilsCls.isSessionStorageSupported()) ic.setStyleCls.saveCommandsToSession();
-                    ic.STATENUMBER = ic.commands.length;
-                    if(lastCommand.indexOf('load') !== -1) {
-                        thisClass.applyCommandLoad(lastCommand);
-                    }
-                    else if(lastCommand.indexOf('set map') !== -1 && lastCommand.indexOf('set map wireframe') === -1) {
-                        thisClass.applyCommandMap(lastCommand);
-                    }
-                    else if(lastCommand.indexOf('set emmap') !== -1 && lastCommand.indexOf('set emmap wireframe') === -1) {
-                        thisClass.applyCommandEmmap(lastCommand);
-                    }
-                    else if(lastCommand.indexOf('set phi') !== -1) {
-                        ic.delphiCls.applyCommandPhi(lastCommand);
-                    }
-                    else if(lastCommand.indexOf('set delphi') !== -1) {
-                        ic.delphiCls.applyCommandDelphi(lastCommand);
-                    }
-                    else if(lastCommand.indexOf('view annotations') == 0
-                      //|| lastCommand.indexOf('set annotation cdd') == 0
-                      //|| lastCommand.indexOf('set annotation site') == 0
-                      ) {
-                        thisClass.applyCommandAnnotationsAndCddSite(lastCommand);
-                    }
-                    else if(lastCommand.indexOf('set annotation clinvar') == 0 ) {
-                        thisClass.applyCommandClinvar(lastCommand);
-                    }
-                    else if(lastCommand.indexOf('set annotation snp') == 0) {
-                        thisClass.applyCommandSnp(lastCommand);
-                    }
-                    else if(lastCommand.indexOf('set annotation 3ddomain') == 0) {
-                        thisClass.applyCommand3ddomain(lastCommand);
-                    }
-                    else if(lastCommand.indexOf('set annotation all') == 0) {
-                        //$.when(thisClass.applyCommandAnnotationsAndCddSite(lastCommand))
-                        //    .then(thisClass.applyCommandSnpClinvar(lastCommand))
-                        $.when(thisClass.applyCommandClinvar(lastCommand))
-                            .then(thisClass.applyCommandSnp(lastCommand))
-                            .then(thisClass.applyCommand3ddomain(lastCommand));
-                        ic.annotationCls.setAnnoTabAll();
-                    }
-                    else if(lastCommand.indexOf('view interactions') == 0 && ic.icn3dui.cfg.align !== undefined) {
-                        thisClass.applyCommandViewinteraction(lastCommand);
-                    }
-                    else if(lastCommand.indexOf('symmetry') == 0) {
-                        var title = lastCommand.substr(lastCommand.indexOf(' ') + 1);
-                        ic.symmetrytitle =(title === 'none') ? undefined : title;
-                        if(title !== 'none') {
-                            if(ic.symmetryHash === undefined) {
-                                thisClass.applyCommandSymmetry(lastCommand);
+
+                  var prevLogLen = ic.logs.length;
+                  for(var i = prevLogLen, il = commandArray.length; i < il; ++i) {
+                      var lastCommand = (i == prevLogLen) ? commandArray[i].substr(2).trim() : commandArray[i].trim(); // skip "> "
+                      if(lastCommand === '') continue;
+
+                      ic.logs.push(lastCommand);
+                      //$("#" + ic.pre + "logtext").val("> " + ic.logs.join("\n> ") + "\n> ").scrollTop($("#" + ic.pre + "logtext")[0].scrollHeight);
+                      //if(lastCommand !== '') {
+                        var transformation = {};
+                        transformation.factor = ic._zoomFactor;
+                        transformation.mouseChange = ic.mouseChange;
+                        transformation.quaternion = ic.quaternion;
+                        ic.commands.push(lastCommand + '|||' + ic.transformCls.getTransformationStr(transformation));
+                        ic.optsHistory.push(me.hashUtilsCls.cloneHash(ic.opts));
+                        ic.optsHistory[ic.optsHistory.length - 1].hlatomcount = Object.keys(ic.hAtoms).length;
+                        if(me.utilsCls.isSessionStorageSupported()) ic.setStyleCls.saveCommandsToSession();
+                        ic.STATENUMBER = ic.commands.length;
+                        if(lastCommand.indexOf('load') !== -1) {
+                            thisClass.applyCommandLoad(lastCommand);
+                        }
+                        else if(lastCommand.indexOf('set map') !== -1 && lastCommand.indexOf('set map wireframe') === -1) {
+                            thisClass.applyCommandMap(lastCommand);
+                        }
+                        else if(lastCommand.indexOf('set emmap') !== -1 && lastCommand.indexOf('set emmap wireframe') === -1) {
+                            thisClass.applyCommandEmmap(lastCommand);
+                        }
+                        else if(lastCommand.indexOf('set phi') !== -1) {
+                            ic.delphiCls.applyCommandPhi(lastCommand);
+                        }
+                        else if(lastCommand.indexOf('set delphi') !== -1) {
+                            ic.delphiCls.applyCommandDelphi(lastCommand);
+                        }
+                        else if(lastCommand.indexOf('view annotations') == 0
+                          //|| lastCommand.indexOf('set annotation cdd') == 0
+                          //|| lastCommand.indexOf('set annotation site') == 0
+                          ) {
+                            thisClass.applyCommandAnnotationsAndCddSite(lastCommand);
+                        }
+                        else if(lastCommand.indexOf('set annotation clinvar') == 0 ) {
+                            thisClass.applyCommandClinvar(lastCommand);
+                        }
+                        else if(lastCommand.indexOf('set annotation snp') == 0) {
+                            thisClass.applyCommandSnp(lastCommand);
+                        }
+                        else if(lastCommand.indexOf('set annotation 3ddomain') == 0) {
+                            thisClass.applyCommand3ddomain(lastCommand);
+                        }
+                        else if(lastCommand.indexOf('set annotation all') == 0) {
+                            //$.when(thisClass.applyCommandAnnotationsAndCddSite(lastCommand))
+                            //    .then(thisClass.applyCommandSnpClinvar(lastCommand))
+                            $.when(thisClass.applyCommandClinvar(lastCommand))
+                                .then(thisClass.applyCommandSnp(lastCommand))
+                                .then(thisClass.applyCommand3ddomain(lastCommand));
+                            ic.annotationCls.setAnnoTabAll();
+                        }
+                        else if(lastCommand.indexOf('view interactions') == 0 && ic.icn3dui.cfg.align !== undefined) {
+                            thisClass.applyCommandViewinteraction(lastCommand);
+                        }
+                        else if(lastCommand.indexOf('symmetry') == 0) {
+                            var title = lastCommand.substr(lastCommand.indexOf(' ') + 1);
+                            ic.symmetrytitle =(title === 'none') ? undefined : title;
+                            if(title !== 'none') {
+                                if(ic.symmetryHash === undefined) {
+                                    thisClass.applyCommandSymmetry(lastCommand);
+                                }
                             }
                         }
-                    }
-                    else if(lastCommand.indexOf('symd symmetry') == 0) {
-                        //var title = lastCommand.substr(lastCommand.indexOf(' ') + 1);
-                        //ic.symdtitle =(title === 'none') ? undefined : title;
-                        //if(title !== 'none') {
-                            //if(ic.symdHash === undefined) {
-                                ic.symdCls.applyCommandSymd(lastCommand);
+                        else if(lastCommand.indexOf('symd symmetry') == 0) {
+                            //var title = lastCommand.substr(lastCommand.indexOf(' ') + 1);
+                            //ic.symdtitle =(title === 'none') ? undefined : title;
+                            //if(title !== 'none') {
+                                //if(ic.symdHash === undefined) {
+                                    ic.symdCls.applyCommandSymd(lastCommand);
+                                //}
                             //}
-                        //}
-                    }
-                    else if(lastCommand.indexOf('scap ') == 0) {
-                        ic.scapCls.applyCommandScap(lastCommand);
-                    }
-                    else if(lastCommand.indexOf('realign on seq align') == 0) {
-                        var paraArray = lastCommand.split(' | ');
-                        if(paraArray.length == 2) {
-                            var nameArray = paraArray[1].split(',');
-                            ic.hAtoms = ic.definedSetsCls.getAtomsFromNameArray(nameArray);
                         }
-                        thisClass.applyCommandRealign(lastCommand);
-                    }
-                    else if(lastCommand.indexOf('graph interaction pairs') == 0) {
-                        thisClass.applyCommandGraphinteraction(lastCommand);
-                    }
-                    else {
-                        ic.applyCommandCls.applyCommand(lastCommand + '|||' + ic.transformCls.getTransformationStr(transformation));
-                    }
-                    ic.selectionCls.saveSelectionIfSelected();
-                    ic.drawCls.draw();
-                  }
+                        else if(lastCommand.indexOf('scap ') == 0) {
+                            ic.scapCls.applyCommandScap(lastCommand);
+                        }
+                        else if(lastCommand.indexOf('realign on seq align') == 0) {
+                            var paraArray = lastCommand.split(' | ');
+                            if(paraArray.length == 2) {
+                                var nameArray = paraArray[1].split(',');
+                                ic.hAtoms = ic.definedSetsCls.getAtomsFromNameArray(nameArray);
+                            }
+                            thisClass.applyCommandRealign(lastCommand);
+                        }
+                        else if(lastCommand.indexOf('graph interaction pairs') == 0) {
+                            thisClass.applyCommandGraphinteraction(lastCommand);
+                        }
+                        else {
+                            ic.applyCommandCls.applyCommand(lastCommand + '|||' + ic.transformCls.getTransformationStr(transformation));
+                        }
+                        //ic.selectionCls.saveSelectionIfSelected();
+                        //ic.drawCls.draw();
+                      //} // if
+                  } // for
+
+                  ic.selectionCls.saveSelectionIfSelected();
+                  ic.drawCls.draw();
+
+                  $("#" + ic.pre + "logtext").val("> " + ic.logs.join("\n> ") + "\n> ").scrollTop($("#" + ic.pre + "logtext")[0].scrollHeight);
                }
                ic.bAddLogs = true;
             });
@@ -28513,6 +28535,7 @@ var icn3d = (function (exports) {
                 var type = domainArray[index].type;
                 type =(bDomain) ? 'domain' : 'feat';
                 var domain =(bDomain) ? domainArray[index].title.split(':')[0] : domainArray[index].title;
+
                 var defline =(bDomain) ? domainArray[index].defline : '';
                 var title = type + ': ' + domain;
 
@@ -28542,7 +28565,8 @@ var icn3d = (function (exports) {
                         resCnt += domainTo - domainFrom + 1;
                     }
 
-                    var setname = chnid + '_' + domain + '_' + index + '_' + r; //chnid + '_' + type + '_' + index + '_' + r;
+                    var setname = chnid + "_" + domain + "_" + index + "_" + r; //chnid + "_" + type + "_" + index + "_" + r;
+
                     var htmlTmp2 = '<div class="icn3d-seqTitle icn3d-link icn3d-blue" ' + type + '="' + acc + '" from="' + fromArray + '" to="' + toArray + '" shorttitle="' + title + '" setname="' + setname + '" anno="sequence" chain="' + chnid + '" title="' + fulltitle + '">' + title + ' </div>';
                     var htmlTmp3 = '<span class="icn3d-residueNum" title="residue count">' + resCnt.toString() + ' Res</span>';
                     html3 += htmlTmp2 + htmlTmp3 + '<br>';
@@ -29522,6 +29546,9 @@ var icn3d = (function (exports) {
           }
           else if(command == 'clear symd symmetry') {
              ic.symdArray = [];
+          }
+          else if(command == 'show axis') {
+             ic.bAxisOnly = true;
           }
 
         // start with =================
@@ -37175,13 +37202,13 @@ var icn3d = (function (exports) {
             ic.annotationCls.showAnnoSelectedChains();
 
             // update 2d graph
-            //if(ic.graphStr !== undefined) {
-            //  ic.graphStr = this.getGraphDataForDisplayed();
-            //}
+            if(ic.graphStr !== undefined) {
+              ic.graphStr = this.getGraphDataForDisplayed();
+            }
 
-            //if(ic.bGraph) ic.drawGraphCls.drawGraph(ic.graphStr);
-            //if(ic.bLinegraph) ic.lineGraphCls.drawLineGraph(ic.graphStr);
-            //if(ic.bScatterplot) ic.lineGraphCls.drawLineGraph(ic.graphStr, true);
+            if(ic.bGraph) ic.drawGraphCls.drawGraph(ic.graphStr);
+            if(ic.bLinegraph) ic.lineGraphCls.drawLineGraph(ic.graphStr);
+            if(ic.bScatterplot) ic.lineGraphCls.drawLineGraph(ic.graphStr, true);
         }
 
         hideSelection() { var ic = this.icn3d, me = ic.icn3dui;
@@ -38388,7 +38415,6 @@ var icn3d = (function (exports) {
                     var labelcolor = (label.color !== undefined) ? label.color : '#ffff00';
                     var labelbackground = (label.background !== undefined) ? label.background : '#cccccc';
                     var labelalpha = (label.alpha !== undefined) ? label.alpha : 1.0;
-                    var factor = (label.factor) ? oriFactor * label.factor : oriFactor;
 
                     // if label.background is undefined, no background will be drawn
                     labelbackground = label.background;
@@ -38400,13 +38426,15 @@ var icn3d = (function (exports) {
                     var bb;
                     if(label.bSchematic !== undefined && label.bSchematic) {
 
-                        bb = this.textSpriteCls.makeTextSprite(label.text, {fontsize: parseInt(labelsize), textColor: labelcolor, borderColor: labelbackground, backgroundColor: labelbackground, alpha: labelalpha, bSchematic: 1, factor: factor});
+                        bb = this.textSpriteCls.makeTextSprite(label.text, {fontsize: parseInt(labelsize), textColor: labelcolor, borderColor: labelbackground, backgroundColor: labelbackground, alpha: labelalpha, bSchematic: 1, factor: oriFactor});
                     }
                     else {
                         if(label.text.length === 1) {
-                            bb = this.textSpriteCls.makeTextSprite(label.text, {fontsize: parseInt(labelsize), textColor: labelcolor, borderColor: labelbackground, backgroundColor: labelbackground, alpha: labelalpha, bSchematic: 1, factor: factor});
+                            bb = this.textSpriteCls.makeTextSprite(label.text, {fontsize: parseInt(labelsize), textColor: labelcolor, borderColor: labelbackground, backgroundColor: labelbackground, alpha: labelalpha, bSchematic: 1, factor: oriFactor});
                         }
                         else {
+                            var factor = (label.factor) ? oriFactor * label.factor : oriFactor;
+
                             bb = this.textSpriteCls.makeTextSprite(label.text, {fontsize: parseInt(labelsize), textColor: labelcolor, borderColor: labelbackground, backgroundColor: labelbackground, alpha: labelalpha, bSchematic: 0, factor: factor});
                         }
                     }
@@ -38806,13 +38834,11 @@ var icn3d = (function (exports) {
             var symmetryType = title.substr(0, 1);
             var nSide = parseInt(title.substring(1, title.indexOf(' ')));
 
-            var axisRadius = 2 * ic.cylinderRadius * ic.oriMaxD / 150;
-            var polygonRadius = 1 * ic.cylinderRadius * ic.oriMaxD / 150;
+            //var axisRadius = 2 * ic.cylinderRadius * ic.oriMaxD / 150;
+            //var polygonRadius = 1 * ic.cylinderRadius * ic.oriMaxD / 150;
 
-            if(symmetryType == 'I') {
-                axisRadius *= 2;
-                polygonRadius *= 2;
-            }
+            var axisRadius = 1.5 * ic.cylinderRadius;
+            var polygonRadius = 1 * ic.cylinderRadius;
 
             var pointArray = [];
             for(var i = 0, il = dataArray.length; i < il; ++i) {
@@ -38824,6 +38850,8 @@ var icn3d = (function (exports) {
                 var chain = dataArray[i][5];
 
                 ic.cylinderCls.createCylinder(start, end, axisRadius, colorAxis, 0);
+
+                if(ic.bAxisOnly) continue;
 
                 if(symmetryType == 'C' || (symmetryType == 'D' && order == nSide) ) {
                     // find the center and size of the selected protein chain
@@ -43379,11 +43407,13 @@ var icn3d = (function (exports) {
         //    },
         //    clkMn6_symmetry: function() {
             me.myEventCls.onIds("#" + me.pre + "mn6_symmetry", "click", function(e) { var ic = me.icn3d;
+               ic.bAxisOnly = false;
                ic.symdCls.retrieveSymmetry(Object.keys(ic.structures)[0]);
                //me.htmlCls.dialogCls.openDlg('dl_symmetry', 'Symmetry');
             });
 
             me.myEventCls.onIds("#" + me.pre + "mn6_symd", "click", function(e) { var ic = me.icn3d;
+               ic.bAxisOnly = false;
                ic.symdCls.retrieveSymd();
                ic.bSymd = true;
                //me.htmlCls.dialogCls.openDlg('dl_symmetry', 'Symmetry');
@@ -43397,6 +43427,11 @@ var icn3d = (function (exports) {
                ic.drawCls.draw();
                thisClass.setLogCmd('clear symd symmetry', true);
             });
+            me.myEventCls.onIds("#" + me.pre + "mn6_axes_only", "click", function(e) { var ic = me.icn3d;
+               ic.bAxisOnly = true;
+               ic.drawCls.draw();
+               thisClass.setLogCmd('show axis', true);
+            });
 
         //    },
         //    clkMn6_area: function() {
@@ -43407,6 +43442,8 @@ var icn3d = (function (exports) {
         //    },
         //    clkMn6_applysymmetry: function() {
             me.myEventCls.onIds("#" + me.pre + "applysymmetry", "click", function(e) { var ic = me.icn3d;
+               ic.bAxisOnly = false;
+
                var title = $("#" + me.pre + "selectSymmetry" ).val();
 
                ic.symmetrytitle =(title === 'none') ? undefined : title;
@@ -45053,6 +45090,7 @@ var icn3d = (function (exports) {
                 if(bOnePdb) html += me.htmlCls.setHtmlCls.getLink('mn6_symmetry', 'from RCSB(precalculated) ' + me.htmlCls.wifiStr);
                 html += me.htmlCls.setHtmlCls.getLink('mn6_symd', 'from SymD(Dynamic) ' + me.htmlCls.wifiStr);
                 html += me.htmlCls.setHtmlCls.getLink('mn6_clear_sym', 'Clear SymD Symmetry');
+                html += me.htmlCls.setHtmlCls.getLink('mn6_axes_only', 'Show Axes Only');
                 html += "</ul>";
                 html += "</li>";
 
@@ -51443,7 +51481,8 @@ var icn3d = (function (exports) {
 
         // Default values
         //This defines the highlight color.
-        this.hColor = new THREE.Color(0xFFFF00);
+    //    this.hColor = new THREE.Color(0xFFFF00);
+        this.hColor = new THREE.Color(0xFFFF33);
 
         this.sphereGeometry = new THREE.SphereGeometry(1, 32, 32);
         this.boxGeometry = new THREE.BoxGeometry(1, 1, 1);
@@ -51869,7 +51908,7 @@ var icn3d = (function (exports) {
         //even when multiple iCn3D viewers are shown together.
         this.pre = this.cfg.divid + "_";
 
-        this.REVISION = '3.1.2';
+        this.REVISION = '3.1.3';
 
         // In nodejs, iCn3D defines "window = {navigator: {}}"
         this.bNode = (Object.keys(window).length < 2) ? true : false;

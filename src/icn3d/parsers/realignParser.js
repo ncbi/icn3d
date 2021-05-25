@@ -253,7 +253,7 @@ class RealignParser {
             }
 
             if(i == 0) { // master
-                var base = ic.chainsSeq[chainid][0].resi;
+                var base = parseInt(ic.chainsSeq[chainid][0].resi);
 
                 var resRange;
                 if(bRealign) {
@@ -266,9 +266,10 @@ class RealignParser {
                 for(var j = 0, jl = resiArray.length; j < jl; ++j) {
                     if(resiArray[j].indexOf('-') != -1) {
                         var startEnd = resiArray[j].split('-');
+
                         for(var k = parseInt(startEnd[0]); k <= parseInt(startEnd[1]); ++k) {
                             // don't align solvent or chemicals
-                            if(!ic.chainsSeq[chainid][k - base] || me.parasCls.b62ResArray.indexOf(ic.chainsSeq[chainid][k - base].name) == -1) continue;
+                            if(!ic.chainsSeq[chainid][k - base] || me.parasCls.b62ResArray.indexOf(ic.chainsSeq[chainid][k - base].name.toUpperCase()) == -1) continue;
 
                             struct2SeqHash[mmdbid] += ic.chainsSeq[chainid][k - base].name;
                             var bFound = false;

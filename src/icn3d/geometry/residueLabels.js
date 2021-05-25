@@ -53,9 +53,10 @@ class ResidueLabels {
                 label.text = me.utilsCls.residueName2Abbr(atom.resn);
                 if(bNumber) {
                     label.text += atom.resi;
-                    label.factor = 0.3;
+                    //label.factor = 0.3;
                 }
                 label.size = size;
+                label.factor = 0.3;
 
                 var atomColorStr = atom.color.getHexString().toUpperCase();
                 label.color = (atomColorStr === "CCCCCC" || atomColorStr === "C8C8C8") ? "#888888" : "#" + atomColorStr;

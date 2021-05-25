@@ -48,7 +48,7 @@ class Curve {
                     for(var i = 0, il = pnts.length; i < il; ++i) {
                         currPos = positions[i];
 
-                        if( (currPos !== prevPos && currPos !== prevPos + 1 && prevPos !== undefined) || (i === il -1) ) {
+                        if( (currPos !== prevPos && parseInt(currPos) !== parseInt(prevPos) + 1 && prevPos !== undefined) || (i === il -1) ) {
                             // first tube
                             var geometry0 = new THREE.TubeGeometry(
                                 new THREE.CatmullRomCurve3(currPoints), // path
@@ -101,7 +101,7 @@ class Curve {
             //var geo = new THREE.Geometry();
             var geo = new THREE.BufferGeometry();
 
-            var vertices = [], colors = [];
+            var verticeArray = [], colorArray = [];
 
             var offset = 0, color;
             if(bHighlight === 2 && bRibbon) {
@@ -112,15 +112,16 @@ class Curve {
                     //geo.colors.push(me.parasCls.thr(colors[i]));
 
                     //vertices = vertices.concat(pnts[i].toArray());
-                    vertices[offset] = pnts[i].x;
-                    vertices[offset+1] = pnts[i].y;
-                    vertices[offset+2] = pnts[i].z;
+                    verticeArray[offset] = pnts[i].x;
+                    verticeArray[offset+1] = pnts[i].y;
+                    verticeArray[offset+2] = pnts[i].z;
 
                     //colors = colors.concat(me.parasCls.thr(colors[i]).toArray());
                     color = me.parasCls.thr(colors[i]);
-                    colors[offset] = color.r;
-                    colors[offset+1] = color.g;
-                    colors[offset+2] = color.b;
+
+                    colorArray[offset] = color.r;
+                    colorArray[offset+1] = color.g;
+                    colorArray[offset+2] = color.b;
                 }
             }
             else {
@@ -129,21 +130,22 @@ class Curve {
                     //geo.colors.push(me.parasCls.thr(colors[i]));
 
                     //vertices = vertices.concat(pnts[i].toArray());
-                    vertices[offset] = pnts[i].x;
-                    vertices[offset+1] = pnts[i].y;
-                    vertices[offset+2] = pnts[i].z;
+                    verticeArray[offset] = pnts[i].x;
+                    verticeArray[offset+1] = pnts[i].y;
+                    verticeArray[offset+2] = pnts[i].z;
 
                     //colors = colors.concat(me.parasCls.thr(colors[i]).toArray());
                     color = me.parasCls.thr(colors[i]);
-                    colors[offset] = color.r;
-                    colors[offset+1] = color.g;
-                    colors[offset+2] = color.b;
+
+                    colorArray[offset] = color.r;
+                    colorArray[offset+1] = color.g;
+                    colorArray[offset+2] = color.b;
                 }
             }
 
             var nComp = 3;
-            geo.setAttribute('position', new THREE.BufferAttribute(new Float32Array(vertices), nComp));
-            geo.setAttribute('color', new THREE.BufferAttribute(new Float32Array(colors), nComp));
+            geo.setAttribute('position', new THREE.BufferAttribute(new Float32Array(verticeArray), nComp));
+            geo.setAttribute('color', new THREE.BufferAttribute(new Float32Array(colorArray), nComp));
 
             //geo.computeVertexNormals();
 

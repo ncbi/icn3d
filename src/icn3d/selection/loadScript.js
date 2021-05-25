@@ -393,6 +393,8 @@ class LoadScript {
               return;
           }
           else if(ic.commands[i].trim().indexOf('symmetry') == 0) {
+            ic.bAxisOnly = false;
+
             var strArray = ic.commands[i].split("|||");
             var command = strArray[0].trim();
 
@@ -421,6 +423,8 @@ class LoadScript {
             return;
           }
           else if(ic.commands[i].trim().indexOf('symd symmetry') == 0) {
+            ic.bAxisOnly = false;
+
             var strArray = ic.commands[i].split("|||");
             var command = strArray[0].trim();
 
@@ -526,98 +530,109 @@ class LoadScript {
               var dataStr = $(this).val();
               ic.bRender = true;
               var commandArray = dataStr.split('\n');
-              var lastCommand = commandArray[commandArray.length - 1].substr(2).trim(); // skip "> "
-              ic.logs.push(lastCommand);
-              $("#" + ic.pre + "logtext").val("> " + ic.logs.join("\n> ") + "\n> ").scrollTop($("#" + ic.pre + "logtext")[0].scrollHeight);
-              if(lastCommand !== '') {
-                var transformation = {}
-                transformation.factor = ic._zoomFactor;
-                transformation.mouseChange = ic.mouseChange;
-                transformation.quaternion = ic.quaternion;
-                ic.commands.push(lastCommand + '|||' + ic.transformCls.getTransformationStr(transformation));
-                ic.optsHistory.push(me.hashUtilsCls.cloneHash(ic.opts));
-                ic.optsHistory[ic.optsHistory.length - 1].hlatomcount = Object.keys(ic.hAtoms).length;
-                if(me.utilsCls.isSessionStorageSupported()) ic.setStyleCls.saveCommandsToSession();
-                ic.STATENUMBER = ic.commands.length;
-                if(lastCommand.indexOf('load') !== -1) {
-                    thisClass.applyCommandLoad(lastCommand);
-                }
-                else if(lastCommand.indexOf('set map') !== -1 && lastCommand.indexOf('set map wireframe') === -1) {
-                    thisClass.applyCommandMap(lastCommand);
-                }
-                else if(lastCommand.indexOf('set emmap') !== -1 && lastCommand.indexOf('set emmap wireframe') === -1) {
-                    thisClass.applyCommandEmmap(lastCommand);
-                }
-                else if(lastCommand.indexOf('set phi') !== -1) {
-                    ic.delphiCls.applyCommandPhi(lastCommand);
-                }
-                else if(lastCommand.indexOf('set delphi') !== -1) {
-                    ic.delphiCls.applyCommandDelphi(lastCommand);
-                }
-                else if(lastCommand.indexOf('view annotations') == 0
-                  //|| lastCommand.indexOf('set annotation cdd') == 0
-                  //|| lastCommand.indexOf('set annotation site') == 0
-                  ) {
-                    thisClass.applyCommandAnnotationsAndCddSite(lastCommand);
-                }
-                else if(lastCommand.indexOf('set annotation clinvar') == 0 ) {
-                    thisClass.applyCommandClinvar(lastCommand);
-                }
-                else if(lastCommand.indexOf('set annotation snp') == 0) {
-                    thisClass.applyCommandSnp(lastCommand);
-                }
-                else if(lastCommand.indexOf('set annotation 3ddomain') == 0) {
-                    thisClass.applyCommand3ddomain(lastCommand);
-                }
-                else if(lastCommand.indexOf('set annotation all') == 0) {
-                    //$.when(thisClass.applyCommandAnnotationsAndCddSite(lastCommand))
-                    //    .then(thisClass.applyCommandSnpClinvar(lastCommand))
-                    $.when(thisClass.applyCommandClinvar(lastCommand))
-                        .then(thisClass.applyCommandSnp(lastCommand))
-                        .then(thisClass.applyCommand3ddomain(lastCommand));
-                    ic.annotationCls.setAnnoTabAll();
-                }
-                else if(lastCommand.indexOf('view interactions') == 0 && ic.icn3dui.cfg.align !== undefined) {
-                    thisClass.applyCommandViewinteraction(lastCommand);
-                }
-                else if(lastCommand.indexOf('symmetry') == 0) {
-                    var title = lastCommand.substr(lastCommand.indexOf(' ') + 1);
-                    ic.symmetrytitle =(title === 'none') ? undefined : title;
-                    if(title !== 'none') {
-                        if(ic.symmetryHash === undefined) {
-                            thisClass.applyCommandSymmetry(lastCommand);
+
+              var prevLogLen = ic.logs.length;
+              for(var i = prevLogLen, il = commandArray.length; i < il; ++i) {
+                  var lastCommand = (i == prevLogLen) ? commandArray[i].substr(2).trim() : commandArray[i].trim(); // skip "> "
+                  if(lastCommand === '') continue;
+
+                  ic.logs.push(lastCommand);
+                  //$("#" + ic.pre + "logtext").val("> " + ic.logs.join("\n> ") + "\n> ").scrollTop($("#" + ic.pre + "logtext")[0].scrollHeight);
+                  //if(lastCommand !== '') {
+                    var transformation = {}
+                    transformation.factor = ic._zoomFactor;
+                    transformation.mouseChange = ic.mouseChange;
+                    transformation.quaternion = ic.quaternion;
+                    ic.commands.push(lastCommand + '|||' + ic.transformCls.getTransformationStr(transformation));
+                    ic.optsHistory.push(me.hashUtilsCls.cloneHash(ic.opts));
+                    ic.optsHistory[ic.optsHistory.length - 1].hlatomcount = Object.keys(ic.hAtoms).length;
+                    if(me.utilsCls.isSessionStorageSupported()) ic.setStyleCls.saveCommandsToSession();
+                    ic.STATENUMBER = ic.commands.length;
+                    if(lastCommand.indexOf('load') !== -1) {
+                        thisClass.applyCommandLoad(lastCommand);
+                    }
+                    else if(lastCommand.indexOf('set map') !== -1 && lastCommand.indexOf('set map wireframe') === -1) {
+                        thisClass.applyCommandMap(lastCommand);
+                    }
+                    else if(lastCommand.indexOf('set emmap') !== -1 && lastCommand.indexOf('set emmap wireframe') === -1) {
+                        thisClass.applyCommandEmmap(lastCommand);
+                    }
+                    else if(lastCommand.indexOf('set phi') !== -1) {
+                        ic.delphiCls.applyCommandPhi(lastCommand);
+                    }
+                    else if(lastCommand.indexOf('set delphi') !== -1) {
+                        ic.delphiCls.applyCommandDelphi(lastCommand);
+                    }
+                    else if(lastCommand.indexOf('view annotations') == 0
+                      //|| lastCommand.indexOf('set annotation cdd') == 0
+                      //|| lastCommand.indexOf('set annotation site') == 0
+                      ) {
+                        thisClass.applyCommandAnnotationsAndCddSite(lastCommand);
+                    }
+                    else if(lastCommand.indexOf('set annotation clinvar') == 0 ) {
+                        thisClass.applyCommandClinvar(lastCommand);
+                    }
+                    else if(lastCommand.indexOf('set annotation snp') == 0) {
+                        thisClass.applyCommandSnp(lastCommand);
+                    }
+                    else if(lastCommand.indexOf('set annotation 3ddomain') == 0) {
+                        thisClass.applyCommand3ddomain(lastCommand);
+                    }
+                    else if(lastCommand.indexOf('set annotation all') == 0) {
+                        //$.when(thisClass.applyCommandAnnotationsAndCddSite(lastCommand))
+                        //    .then(thisClass.applyCommandSnpClinvar(lastCommand))
+                        $.when(thisClass.applyCommandClinvar(lastCommand))
+                            .then(thisClass.applyCommandSnp(lastCommand))
+                            .then(thisClass.applyCommand3ddomain(lastCommand));
+                        ic.annotationCls.setAnnoTabAll();
+                    }
+                    else if(lastCommand.indexOf('view interactions') == 0 && ic.icn3dui.cfg.align !== undefined) {
+                        thisClass.applyCommandViewinteraction(lastCommand);
+                    }
+                    else if(lastCommand.indexOf('symmetry') == 0) {
+                        var title = lastCommand.substr(lastCommand.indexOf(' ') + 1);
+                        ic.symmetrytitle =(title === 'none') ? undefined : title;
+                        if(title !== 'none') {
+                            if(ic.symmetryHash === undefined) {
+                                thisClass.applyCommandSymmetry(lastCommand);
+                            }
                         }
                     }
-                }
-                else if(lastCommand.indexOf('symd symmetry') == 0) {
-                    //var title = lastCommand.substr(lastCommand.indexOf(' ') + 1);
-                    //ic.symdtitle =(title === 'none') ? undefined : title;
-                    //if(title !== 'none') {
-                        //if(ic.symdHash === undefined) {
-                            ic.symdCls.applyCommandSymd(lastCommand);
+                    else if(lastCommand.indexOf('symd symmetry') == 0) {
+                        //var title = lastCommand.substr(lastCommand.indexOf(' ') + 1);
+                        //ic.symdtitle =(title === 'none') ? undefined : title;
+                        //if(title !== 'none') {
+                            //if(ic.symdHash === undefined) {
+                                ic.symdCls.applyCommandSymd(lastCommand);
+                            //}
                         //}
-                    //}
-                }
-                else if(lastCommand.indexOf('scap ') == 0) {
-                    ic.scapCls.applyCommandScap(lastCommand);
-                }
-                else if(lastCommand.indexOf('realign on seq align') == 0) {
-                    var paraArray = lastCommand.split(' | ');
-                    if(paraArray.length == 2) {
-                        var nameArray = paraArray[1].split(',');
-                        ic.hAtoms = ic.definedSetsCls.getAtomsFromNameArray(nameArray);
                     }
-                    thisClass.applyCommandRealign(lastCommand);
-                }
-                else if(lastCommand.indexOf('graph interaction pairs') == 0) {
-                    thisClass.applyCommandGraphinteraction(lastCommand);
-                }
-                else {
-                    ic.applyCommandCls.applyCommand(lastCommand + '|||' + ic.transformCls.getTransformationStr(transformation));
-                }
-                ic.selectionCls.saveSelectionIfSelected();
-                ic.drawCls.draw();
-              }
+                    else if(lastCommand.indexOf('scap ') == 0) {
+                        ic.scapCls.applyCommandScap(lastCommand);
+                    }
+                    else if(lastCommand.indexOf('realign on seq align') == 0) {
+                        var paraArray = lastCommand.split(' | ');
+                        if(paraArray.length == 2) {
+                            var nameArray = paraArray[1].split(',');
+                            ic.hAtoms = ic.definedSetsCls.getAtomsFromNameArray(nameArray);
+                        }
+                        thisClass.applyCommandRealign(lastCommand);
+                    }
+                    else if(lastCommand.indexOf('graph interaction pairs') == 0) {
+                        thisClass.applyCommandGraphinteraction(lastCommand);
+                    }
+                    else {
+                        ic.applyCommandCls.applyCommand(lastCommand + '|||' + ic.transformCls.getTransformationStr(transformation));
+                    }
+                    //ic.selectionCls.saveSelectionIfSelected();
+                    //ic.drawCls.draw();
+                  //} // if
+              } // for
+
+              ic.selectionCls.saveSelectionIfSelected();
+              ic.drawCls.draw();
+
+              $("#" + ic.pre + "logtext").val("> " + ic.logs.join("\n> ") + "\n> ").scrollTop($("#" + ic.pre + "logtext")[0].scrollHeight);
            }
            ic.bAddLogs = true;
         });

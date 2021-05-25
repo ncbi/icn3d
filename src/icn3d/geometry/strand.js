@@ -230,7 +230,7 @@ class Strand {
                         prevone = [];
                     }
                     else {
-                        var prevoneResid = ic.atoms[prevAtomid].structure + '_' + ic.atoms[prevAtomid].chain + '_' + (ic.atoms[prevAtomid].resi - 1).toString();
+                        var prevoneResid = ic.atoms[prevAtomid].structure + '_' + ic.atoms[prevAtomid].chain + '_' + (parseInt(ic.atoms[prevAtomid].resi) - 1).toString();
                         var prevoneCoord = ic.firstAtomObjCls.getAtomCoordFromResi(prevoneResid, atomName);
                         prevone = (prevoneCoord !== undefined) ? [prevoneCoord] : [];
                     }
@@ -374,7 +374,7 @@ class Strand {
                         prevone = [];
                     }
                     else {
-                        var prevoneResid = ic.atoms[prevAtomid].structure + '_' + ic.atoms[prevAtomid].chain + '_' + (ic.atoms[prevAtomid].resi - 1).toString();
+                        var prevoneResid = ic.atoms[prevAtomid].structure + '_' + ic.atoms[prevAtomid].chain + '_' + (parseInt(ic.atoms[prevAtomid].resi) - 1).toString();
                         var prevoneCoord = ic.firstAtomObjCls.getAtomCoordFromResi(prevoneResid, atomName);
                         var prevone = (prevoneCoord !== undefined) ? [prevoneCoord] : [];
                     }
@@ -469,7 +469,7 @@ class Strand {
             // fill the beginning
             var beginResi = firstAtom.resi;
             if(!isNaN(firstAtom.resi) && firstAtom.ss !== 'coil' && !(firstAtom.ssbegin) ) {
-                for(var i = firstAtom.resi - 1; i > 0; --i) {
+                for(var i = parseInt(firstAtom.resi) - 1; i > 0; --i) {
                     var residueid = firstAtom.structure + '_' + firstAtom.chain + '_' + i;
                     if(!ic.residues.hasOwnProperty(residueid)) break;
 
@@ -490,7 +490,7 @@ class Strand {
 
             // add one extra residue for coils between strands/helix
             if(!isNaN(firstAtom.resi) && ic.pk === 3 && bHighlight === 1 && firstAtom.ss === 'coil') {
-                    var residueid = firstAtom.structure + '_' + firstAtom.chain + '_' + (firstAtom.resi - 1).toString();
+                    var residueid = firstAtom.structure + '_' + firstAtom.chain + '_' + (parseInt(firstAtom.resi) - 1).toString();
                     if(ic.residues.hasOwnProperty(residueid)) {
                         atomsAdjust = me.hashUtilsCls.unionHash(atomsAdjust, me.hashUtilsCls.hash2Atoms(ic.residues[residueid],
                           ic.atoms));
