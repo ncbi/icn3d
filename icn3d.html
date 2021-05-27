@@ -633,8 +633,8 @@ You can color structures with SASA, or show the SASA for each residue.<br/>
 <h3>iCn3D Videos<img src="https://www.ncbi.nlm.nih.gov/Structure/IMG/spacer.gif" width="25" height="1" border="0"><a href="#Top"><img src="https://www.ncbi.nlm.nih.gov/Structure/IMG/arrowup_blue.gif" width="12" height="12" border="0" alt="back to top"></a></h3>
 
 <ul>
-<li>Part 1: <a href="https://youtu.be/_z-8r3nz5a8">Basic Tutorial Video</a>, <a href="https://www.ncbi.nlm.nih.gov/Structure/icn3d/guide/icn3d_tutorial_part1.pptx">Slide</a>
-<li>Part 2: <a href="https://youtu.be/upTflTkWzjY">Advanced Tutorial Video</a>, <a href="https://www.ncbi.nlm.nih.gov/Structure/icn3d/guide/icn3d_tutorial_part2.pptx">Slide</a>
+<li>Part 1: <a href="https://youtu.be/TgKQutGc9iM">Basic Tutorial Video</a>, <a href="https://www.ncbi.nlm.nih.gov/Structure/icn3d/guide/icn3d_tutorial_part1.pptx">Slide</a>
+<li>Part 2: <a href="https://youtu.be/85Z2_M8ET6g">Advanced Tutorial Video</a>, <a href="https://www.ncbi.nlm.nih.gov/Structure/icn3d/guide/icn3d_tutorial_part2.pptx">Slide</a>
 </ul>
 
 <span class="anchor" id="parameters"></span>
@@ -2557,7 +2557,9 @@ To contribute new classes to iCn3D, you can follow the example of "module.html".
     export {LoadStateFile}
 </pre>
 </li>
-<li>Install <a href="https://www.npmjs.com/package/static-server">static-server</a> and run "static-server -i index.html -o" to test your code. "import" and "export" do not work in "file://" protocol.
+<li>Install <a href="https://www.npmjs.com/package/static-server">static-server</a> and run "static-server -i module.html -o" to test your code. "import" and "export" do not work in "file://" protocol.
+</li>
+<li>Specify the ID of the structure in the URL, e.g., "localhost:9080/module.html?mmdbid=1kq2".
 </li>
 </ol>
 <br>

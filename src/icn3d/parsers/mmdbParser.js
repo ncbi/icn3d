@@ -217,8 +217,7 @@ class MmdbParser {
                       alert("This gi " + mmdbid + " has no corresponding 3D structure...");
                     }
                     else {
-                      alert("This mmdbid " + mmdbid + " with the parameters " + ic.icn3dui.cfg.inpara
-                        + " may not have 3D structure data. Please visit the summary page for details: " + ic.icn3dui.htmlCls.baseUrl + "pdb/" + mmdbid);
+                      alert("This mmdbid " + mmdbid + " with the parameters " + ic.icn3dui.cfg.inpara + " may not have 3D structure data. Please visit the summary page for details: " + ic.icn3dui.htmlCls.baseUrl + "pdb/" + mmdbid);
                     }
 
                     return;
@@ -238,8 +237,7 @@ class MmdbParser {
               alert("This gi " + mmdbid + " has no corresponding 3D structure...");
             }
             else {
-              alert("This mmdbid " + mmdbid + " with the parameters " + ic.icn3dui.cfg.inpara
-                + " may not have 3D structure data. Please visit the summary page for details: " + ic.icn3dui.htmlCls.baseUrl + "pdb/" + mmdbid);
+              alert("This mmdbid " + mmdbid + " with the parameters " + ic.icn3dui.cfg.inpara + " may not have 3D structure data. Please visit the summary page for details: " + ic.icn3dui.htmlCls.baseUrl + "pdb/" + mmdbid);
             }
 
             return;

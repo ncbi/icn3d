@@ -24273,8 +24273,7 @@ class MmdbParser {
                       alert("This gi " + mmdbid + " has no corresponding 3D structure...");
                     }
                     else {
-                      alert("This mmdbid " + mmdbid + " with the parameters " + ic.icn3dui.cfg.inpara
-                        + " may not have 3D structure data. Please visit the summary page for details: " + ic.icn3dui.htmlCls.baseUrl + "pdb/" + mmdbid);
+                      alert("This mmdbid " + mmdbid + " with the parameters " + ic.icn3dui.cfg.inpara + " may not have 3D structure data. Please visit the summary page for details: " + ic.icn3dui.htmlCls.baseUrl + "pdb/" + mmdbid);
                     }
 
                     return;
@@ -24294,8 +24293,7 @@ class MmdbParser {
               alert("This gi " + mmdbid + " has no corresponding 3D structure...");
             }
             else {
-              alert("This mmdbid " + mmdbid + " with the parameters " + ic.icn3dui.cfg.inpara
-                + " may not have 3D structure data. Please visit the summary page for details: " + ic.icn3dui.htmlCls.baseUrl + "pdb/" + mmdbid);
+              alert("This mmdbid " + mmdbid + " with the parameters " + ic.icn3dui.cfg.inpara + " may not have 3D structure data. Please visit the summary page for details: " + ic.icn3dui.htmlCls.baseUrl + "pdb/" + mmdbid);
             }
 
             return;
@@ -28393,6 +28391,7 @@ class AnnoCddSite {
                 var domainArray = cddData.doms;
                 var result = thisClass.setDomainFeature(domainArray, chnid, true, html, html2, html3);
 
+                var acc2domain = result.acc2domain;
                 html = result.html + '</div>';
                 html2 = result.html2 + '</div>';
                 html3 = result.html3 + '</div>';
@@ -28406,7 +28405,7 @@ class AnnoCddSite {
 
                 // features
                 var featuteArray = cddData.motifs;
-                var result = thisClass.setDomainFeature(featuteArray, chnid, false, html, html2, html3);
+                var result = thisClass.setDomainFeature(featuteArray, chnid, false, html, html2, html3, acc2domain);
 
                 html = result.html; // + '</div>';
                 html2 = result.html2; // + '</div>';
@@ -28521,8 +28520,10 @@ class AnnoCddSite {
         });
     }
 
-    setDomainFeature(domainArray, chnid, bDomain, html, html2, html3) { var ic = this.icn3d; ic.icn3dui;
+    setDomainFeature(domainArray, chnid, bDomain, html, html2, html3, acc2domain) { var ic = this.icn3d; ic.icn3dui;
         var thisClass = this;
+
+        if(bDomain) acc2domain = {};
 
         var indexl =(domainArray !== undefined) ? domainArray.length : 0;
         var maxTextLen =(bDomain) ? 14 : 19;
@@ -28532,6 +28533,12 @@ class AnnoCddSite {
             var type = domainArray[index].type;
             type =(bDomain) ? 'domain' : 'feat';
             var domain =(bDomain) ? domainArray[index].title.split(':')[0] : domainArray[index].title;
+            // convert double quote
+            domain = domain.replace(/\"/g, "``");
+            // convert singe quote
+            domain = domain.replace(/'/g, "`");
+
+            if(bDomain) acc2domain[acc] = domain;
 
             var defline =(bDomain) ? domainArray[index].defline : '';
             var title = type + ': ' + domain;
@@ -28562,7 +28569,9 @@ class AnnoCddSite {
                     resCnt += domainTo - domainFrom + 1;
                 }
 
-                var setname = chnid + "_" + domain + "_" + index + "_" + r; //chnid + "_" + type + "_" + index + "_" + r;
+                //var setname = chnid + "_" + domain + "_" + index + "_" + r; //chnid + "_" + type + "_" + index + "_" + r;
+                var setname = chnid + "_" + domain;
+                if(!bDomain) setname += "_" + acc2domain[acc];
 
                 var htmlTmp2 = '<div class="icn3d-seqTitle icn3d-link icn3d-blue" ' + type + '="' + acc + '" from="' + fromArray + '" to="' + toArray + '" shorttitle="' + title + '" setname="' + setname + '" anno="sequence" chain="' + chnid + '" title="' + fulltitle + '">' + title + ' </div>';
                 var htmlTmp3 = '<span class="icn3d-residueNum" title="residue count">' + resCnt.toString() + ' Res</span>';
@@ -28631,7 +28640,7 @@ class AnnoCddSite {
             } // for(var r = 0,
         }
 
-        return {html: html, html2: html2, html3: html3}
+        return {html: html, html2: html2, html3: html3, acc2domain: acc2domain}
     }
 
     getAdjustedResi(resi, chnid, matchedPos, chainsSeq, baseResi) { var ic = this.icn3d; ic.icn3dui;
@@ -51371,7 +51380,7 @@ class iCn3D {
     }
 
     this.frac = new THREE.Color(0.1, 0.1, 0.1);
-    this.shininess = 30; //40; //30
+    this.shininess = 40; //30
     this.emissive = 0x111111; //0x000000
 
     // mobile has a problem when the scaleFactor is 2.0
@@ -51906,7 +51915,7 @@ class iCn3DUI {
     //even when multiple iCn3D viewers are shown together.
     this.pre = this.cfg.divid + "_";
 
-    this.REVISION = '3.1.3';
+    this.REVISION = '3.1.4';
 
     // In nodejs, iCn3D defines "window = {navigator: {}}"
     this.bNode = (Object.keys(window).length < 2) ? true : false;

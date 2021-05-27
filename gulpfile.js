@@ -301,6 +301,7 @@ gulp.task("allmin",
 gulp.task("allnode",
   function() {
     return gulp.src(allnodejs)
+        .pipe(replace('alert(', 'var aaa = 1; //alert('))
         .pipe(concat('icn3d.js'))
         .pipe(gulp.dest(icn3dnpm));
   });
@@ -353,7 +354,7 @@ gulp.task("html",
 
 gulp.task("html2",
   function() {
-    return gulp.src(['icn3d.html', 'share.html', 'example.html'])
+    return gulp.src(['icn3d.html', 'share.html', 'example.html', 'module.html'])
       .pipe(gulp.dest(dist));
   });
 
