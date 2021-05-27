@@ -189,7 +189,7 @@ class iCn3D {
     }
 
     this.frac = new THREE.Color(0.1, 0.1, 0.1);
-    this.shininess = 30; //40; //30
+    this.shininess = 40; //30
     this.emissive = 0x111111; //0x000000
 
     // mobile has a problem when the scaleFactor is 2.0
