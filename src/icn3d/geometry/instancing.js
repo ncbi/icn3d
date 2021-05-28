@@ -188,13 +188,17 @@ class Instancing {
     }
 
     applyMat(obj, mat, bVector3) {  var ic = this.icn3d, me = ic.icn3dui;
+        // applyMatrix was renamed to applyMatrix4
         if(ic.rmsd_supr === undefined) {
+/*
           if(bVector3 === undefined) {
               obj.applyMatrix(mat);
           }
           else if(bVector3) {
               obj.applyMatrix4(mat);
           }
+*/
+          obj.applyMatrix4(mat);
         }
         else {
           var rot = ic.rmsd_supr.rot;
@@ -212,6 +216,7 @@ class Instancing {
 
           var tmpMat = new THREE.Matrix4();
 
+/*
           if(bVector3 === undefined) {
               tmpMat.makeTranslation(-centerTo.x, -centerTo.y, -centerTo.z);
               obj.applyMatrix(tmpMat);
@@ -232,6 +237,7 @@ class Instancing {
               obj.applyMatrix(tmpMat);
           }
           else if(bVector3) {
+*/
               tmpMat.makeTranslation(-centerTo.x, -centerTo.y, -centerTo.z);
               obj.applyMatrix4(tmpMat);
 
@@ -249,7 +255,7 @@ class Instancing {
 
               tmpMat.makeTranslation(centerTo.x, centerTo.y, centerTo.z);
               obj.applyMatrix4(tmpMat);
-          }
+//          }
         }
     }
 
@@ -290,7 +296,8 @@ class Instancing {
               //symmetryMate.onBeforeRender = ic.impostorCls.onBeforeRender;
               for(var j = symmetryMate.children.length - 1; j >= 0; j--) {
                    var mesh = symmetryMate.children[j];
-                   mesh.onBeforeRender = ic.impostorCls.onBeforeRender;
+//                   mesh.onBeforeRender = ic.impostorCls.onBeforeRender;
+                   mesh.onBeforeRender = this.onBeforeRender;
               }
 
               mdlImpostorTmp.add(symmetryMate);
@@ -343,6 +350,104 @@ class Instancing {
        }
 
        ic.bSetInstancing = true;
+    }
+
+    onBeforeRender(renderer, scene, camera, geometry, material) {
+      var u = material.uniforms;
+      var updateList = [];
+
+      if (u.objectId) {
+        u.objectId.value = SupportsReadPixelsFloat ? this.id : this.id / 255
+        updateList.push('objectId')
+      }
+
+      if (u.modelViewMatrixInverse || u.modelViewMatrixInverseTranspose ||
+          u.modelViewProjectionMatrix || u.modelViewProjectionMatrixInverse
+      ) {
+        this.modelViewMatrix.multiplyMatrices(camera.matrixWorldInverse, this.matrixWorld);
+      }
+
+      if (u.modelViewMatrixInverse) {
+        //u.modelViewMatrixInverse.value.getInverse(this.modelViewMatrix);
+        u.modelViewMatrixInverse.value.copy( this.modelViewMatrix ).invert();
+        updateList.push('modelViewMatrixInverse');
+      }
+
+      if (u.modelViewMatrixInverseTranspose) {
+        if (u.modelViewMatrixInverse) {
+          u.modelViewMatrixInverseTranspose.value.copy(
+            u.modelViewMatrixInverse.value
+          ).transpose();
+        } else {
+          //u.modelViewMatrixInverseTranspose.value
+          //  .getInverse(this.modelViewMatrix)
+          //  .transpose();
+          u.modelViewMatrixInverseTranspose.value
+            .copy( this.modelViewMatrix )
+            .invert()
+            .transpose();
+        }
+        updateList.push('modelViewMatrixInverseTranspose');
+      }
+
+      if (u.modelViewProjectionMatrix) {
+        camera.updateProjectionMatrix();
+        u.modelViewProjectionMatrix.value.multiplyMatrices(
+          camera.projectionMatrix, this.modelViewMatrix
+        );
+        updateList.push('modelViewProjectionMatrix');
+      }
+
+      if (u.modelViewProjectionMatrixInverse) {
+        var tmpMatrix = new THREE.Matrix4();
+        if (u.modelViewProjectionMatrix) {
+          tmpMatrix.copy(
+            u.modelViewProjectionMatrix.value
+          );
+          //u.modelViewProjectionMatrixInverse.value.getInverse(
+          //  tmpMatrix
+          //);
+          u.modelViewProjectionMatrixInverse.value.copy( tmpMatrix ).invert();
+        } else {
+          camera.updateProjectionMatrix();
+          tmpMatrix.multiplyMatrices(
+            camera.projectionMatrix, this.modelViewMatrix
+          );
+          //u.modelViewProjectionMatrixInverse.value.getInverse(
+          //  tmpMatrix
+          //);
+          u.modelViewProjectionMatrixInverse.value.copy( tmpMatrix ).invert();
+        }
+        updateList.push('modelViewProjectionMatrixInverse');
+      }
+
+      if (u.projectionMatrix) {
+        camera.updateProjectionMatrix();
+        u.projectionMatrix.value.copy( camera.projectionMatrix );
+        updateList.push('projectionMatrix');
+      }
+
+      if (u.projectionMatrixInverse) {
+        camera.updateProjectionMatrix();
+        //u.projectionMatrixInverse.value.getInverse(camera.projectionMatrix);
+        u.projectionMatrixInverse.value.copy( camera.projectionMatrix ).invert();
+        updateList.push('projectionMatrixInverse');
+      }
+
+      if (updateList.length) {
+        var materialProperties = renderer.properties.get(material);
+
+        if (materialProperties.program) {
+          var gl = renderer.getContext();
+          var p = materialProperties.program;
+          gl.useProgram(p.program);
+          var pu = p.getUniforms();
+
+          updateList.forEach(function (name) {
+            pu.setValue(gl, name, u[ name ].value)
+          });
+        }
+      }
     }
 
     createInstancedGeometry(mesh) {  var ic = this.icn3d, me = ic.icn3dui;

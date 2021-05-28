@@ -350,7 +350,7 @@ class Impostor {
           mesh.type = 'Sphere';
         }
 
-        //mesh.onBeforeRender = ic.onBeforeRender(ic.renderer, ic.scene, ic.cam, geometry, shaderMaterial);
+        //mesh.onBeforeRender = this.onBeforeRender(ic.renderer, ic.scene, ic.cam, geometry, shaderMaterial);
         mesh.onBeforeRender = this.onBeforeRender;
 
         ic.mdlImpostor.add(mesh);

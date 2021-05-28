@@ -20,7 +20,7 @@ class Draw {
 
     //Draw the 3D structure. It rebuilds scene, applies previous color, applies the transformation, and renders the image.
     draw() { var ic = this.icn3d, me = ic.icn3dui;
-        if(ic.bRender && Object.keys(ic.hAtoms) == 0) ic.hAtoms = me.hashUtilsCls.cloneHash(ic.atoms);
+        if(ic.bRender && (!ic.hAtoms || Object.keys(ic.hAtoms) == 0)) ic.hAtoms = me.hashUtilsCls.cloneHash(ic.atoms);
 
         ic.sceneCls.rebuildScene();
 

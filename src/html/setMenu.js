@@ -47,9 +47,9 @@ class SetMenu {
             html += tdStr + "<div style='position:relative; margin-left:6px;'>" + str1;
             html += "<div class='icn3d-commandTitle' style='min-width:40px; margin-top: 3px; white-space: nowrap;'>" + str2;
 
-            html += tdStr + '<div class="icn3d-commandTitle" style="white-space:nowrap; margin-top:10px; border-left:solid 1px #888888"><span id="' + me.pre +  'selection_expand" class="icn3d-expand icn3d-link" title="Expand">' + me.htmlCls.space2 + 'Show Toolbar' + me.htmlCls.space2 + '</span><span id="' + me.pre +  'selection_shrink" class="icn3d-shrink icn3d-link" style="display:none;" title="Shrink">' + me.htmlCls.space2 + 'Hide Toolbar' + me.htmlCls.space2 + '</span></div></td>';
+            html += tdStr + '<div class="icn3d-commandTitle" style="white-space:nowrap; margin-top:10px; border-left:solid 1px #888888"><span id="' + me.pre +  'selection_expand" class="icn3d-expand icn3d-link" title="Expand">' + me.htmlCls.space2 + 'Toolbar <span class="ui-icon ui-icon-plus" style="width:15px"></span>' + me.htmlCls.space2 + '</span><span id="' + me.pre +  'selection_shrink" class="icn3d-shrink icn3d-link" style="display:none;" title="Shrink">' + me.htmlCls.space2 + 'Toolbar <span class="ui-icon ui-icon-minus" style="width:15px"></span>' + me.htmlCls.space2 + '</span></div></td>';
 
-            html += tdStr + '<div class="icn3d-commandTitle" style="white-space:nowrap; margin-top:8px; border-left:solid 1px #888888">' + me.htmlCls.space2 + '<input type="text" id="' + me.pre + 'search_seq" size="10" placeholder="one-letter seq."> <button style="white-space:nowrap;" id="' + me.pre + 'search_seq_button">Search Seq.</button> <a style="text-decoration: none;" href="' + me.htmlCls.baseUrl + 'icn3d/icn3d.html#selectb" target="_blank" title="Specification tips">?</a></div></td>';
+            html += tdStr + '<div class="icn3d-commandTitle" style="white-space:nowrap; margin-top:8px; border-left:solid 1px #888888">' + me.htmlCls.space2 + '<input type="text" id="' + me.pre + 'search_seq" size="10" placeholder="one-letter seq."> <button style="white-space:nowrap;" id="' + me.pre + 'search_seq_button">Search</button> <a style="text-decoration: none;" href="' + me.htmlCls.baseUrl + 'icn3d/icn3d.html#selectb" target="_blank" title="Specification tips">?</a></div></td>';
         }
 
         html += "</tr>";
@@ -285,7 +285,7 @@ class SetMenu {
             html += tdStr + this.setButton(buttonStyle, 'hbondsYes', 'View H-Bonds & Interactions', 'H-Bonds &<br/> Interactions') + "</td>";
         }
 
-        html += tdStr + this.setButton(buttonStyle, 'show_selected', 'View ONLY the selected atoms', 'View Only<br/>Selection') + "</td>";
+        html += tdStr + this.setButton(buttonStyle, 'show_selected', 'View ONLY the selected atoms', 'View<br/> Selection') + "</td>";
 
         html += tdStr + this.setButton(buttonStyle, 'toggleHighlight', 'Turn on and off the 3D highlight in the viewer', 'Toggle<br/>Highlight') + "</td>";
 
@@ -643,7 +643,7 @@ class SetMenu {
         var html = "";
         html += "<ul class='icn3d-mn-item'>";
 
-        html += me.htmlCls.setHtmlCls.getLink('mn2_show_selected', 'View Only <br>Selection');
+        html += me.htmlCls.setHtmlCls.getLink('mn2_show_selected', 'View Selection');
         html += me.htmlCls.setHtmlCls.getLink('mn2_hide_selected', 'Hide Selection');
         html += me.htmlCls.setHtmlCls.getLink('mn2_selectedcenter', 'Zoom in Selection');
         html += me.htmlCls.setHtmlCls.getLink('mn6_center', 'Center Selection');
@@ -900,7 +900,7 @@ class SetMenu {
         }
         html += "</ul>";
         html += "</li>";
-        html += "<li><span>Surface <br>Wireframe</span>";
+        html += "<li><span>Surface Wireframe</span>";
         html += "<ul>";
         html += me.htmlCls.setHtmlCls.getRadio('mn5_wireframe', 'mn5_wireframeYes', 'Yes');
         html += me.htmlCls.setHtmlCls.getRadio('mn5_wireframe', 'mn5_wireframeNo', 'No', true);
@@ -919,7 +919,7 @@ class SetMenu {
 
             html += me.htmlCls.setHtmlCls.getLinkWrapper('mn5_elecmapNo', 'Remove Map', 'mapWrapper2');
 
-            html += "<li id='" + me.pre + "mapWrapper3'><span>Map <br>Wireframe</span>";
+            html += "<li id='" + me.pre + "mapWrapper3'><span>Map Wireframe</span>";
             html += "<ul>";
             html += me.htmlCls.setHtmlCls.getRadio('mn5_mapwireframe', 'mn5_mapwireframeYes', 'Yes', true);
             html += me.htmlCls.setHtmlCls.getRadio('mn5_mapwireframe', 'mn5_mapwireframeNo', 'No');
@@ -932,7 +932,7 @@ class SetMenu {
                 html += me.htmlCls.setHtmlCls.getLinkWrapper('mn5_emmap', 'EM Density Map', 'emmapWrapper1');
                 html += me.htmlCls.setHtmlCls.getLinkWrapper('mn5_emmapNo', 'Remove EM Map', 'emmapWrapper2');
 
-                html += "<li id='" + me.pre + "emmapWrapper3'><span>EM Map <br>Wireframe</span>";
+                html += "<li id='" + me.pre + "emmapWrapper3'><span>EM Map Wireframe</span>";
                 html += "<ul>";
                 html += me.htmlCls.setHtmlCls.getRadio('mn5_emmapwireframe', 'mn5_emmapwireframeYes', 'Yes', true);
                 html += me.htmlCls.setHtmlCls.getRadio('mn5_emmapwireframe', 'mn5_emmapwireframeNo', 'No');
@@ -1304,22 +1304,22 @@ class SetMenu {
         html += "<ul class='icn3d-mn-item'>";
 
         if(me.cfg.cid === undefined) {
-            html += me.htmlCls.setHtmlCls.getLink('mn6_selectannotations', 'View Sequences<br>& Annotations ' + me.htmlCls.wifiStr);
+            html += me.htmlCls.setHtmlCls.getLink('mn6_selectannotations', 'Seq. & Annotations ' + me.htmlCls.wifiStr);
 
             //if(me.cfg.align !== undefined || me.cfg.chainalign !== undefined) { // || ic.bRealign || ic.bSymd || ic.bInputfile) {
-                html += me.htmlCls.setHtmlCls.getLink('mn2_alignment', 'View Aligned<br>Sequences ' + me.htmlCls.wifiStr);
+                html += me.htmlCls.setHtmlCls.getLink('mn2_alignment', 'Aligned Seq. ' + me.htmlCls.wifiStr);
             //}
 
             //html += me.htmlCls.setHtmlCls.getLink('mn2_selectresidues', 'View Sequences');
             if(me.cfg.mmdbid !== undefined || me.cfg.gi !== undefined || me.cfg.blast_rep_id !== undefined || me.cfg.align !== undefined || me.cfg.chainalign !== undefined) {
-              html += me.htmlCls.setHtmlCls.getLink('mn2_2ddgm', 'View 2D Diagram ' + me.htmlCls.wifiStr);
+              html += me.htmlCls.setHtmlCls.getLink('mn2_2ddgm', '2D Diagram ' + me.htmlCls.wifiStr);
             }
 
             html += me.htmlCls.setHtmlCls.getLink('definedsets2', 'Defined Sets');
 
             html += "<li>-</li>";
 
-            html += me.htmlCls.setHtmlCls.getLink('mn6_hbondsYes', 'H-Bonds <br>& Interactions');
+            html += me.htmlCls.setHtmlCls.getLink('mn6_hbondsYes', 'Interactions');
             //html += me.htmlCls.setHtmlCls.getLink('mn6_hbondsNo', 'Remove H-Bonds <br>& Interactions');
 
             html += "<li><span>Bring to Front</span>";
@@ -1446,7 +1446,7 @@ class SetMenu {
             html += "<li>-</li>";
         }
 
-        html += me.htmlCls.setHtmlCls.getLink('mn6_yournote', 'Your Note /<br>Window Title');
+        html += me.htmlCls.setHtmlCls.getLink('mn6_yournote', 'Window Title');
 
         if(me.cfg.cid !== undefined) {
             html += "<li><span>Links</span>";

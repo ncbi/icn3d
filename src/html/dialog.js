@@ -134,8 +134,8 @@ class Dialog {
                       var canvasWidth = me.utilsCls.isMobile() ? me.htmlCls.WIDTH : me.htmlCls.WIDTH - twoddgmWidth;
                       ic.resizeCanvasCls.resizeCanvas(canvasWidth, me.htmlCls.HEIGHT, true);
 
-                      if(status.bTwoddgmInit2) this.openDlg2Ddgm(me.pre + 'dl_2ddgm', undefined, status.bSetsInit2);
-                      if(status.bSetsInit2) this.openDlg2Ddgm(me.pre + 'dl_definedsets');
+                      if(status.bTwoddgmInit2) thisClass.openDlg2Ddgm(me.pre + 'dl_2ddgm', undefined, status.bSetsInit2);
+                      if(status.bSetsInit2) thisClass.openDlg2Ddgm(me.pre + 'dl_definedsets');
                   }
                   else {
                       //ic.resizeCanvasCls.resizeCanvas(me.htmlCls.WIDTH - me.htmlCls.LESSWIDTH, me.htmlCls.HEIGHT - me.htmlCls.LESSHEIGHT - me.htmlCls.EXTRAHEIGHT, true);
@@ -282,8 +282,8 @@ class Dialog {
                               var canvasWidth = me.utilsCls.isMobile() ? me.htmlCls.WIDTH : me.htmlCls.WIDTH - twoddgmWidth;
                               ic.resizeCanvasCls.resizeCanvas(canvasWidth, me.htmlCls.HEIGHT, true);
 
-                              if(status.bTwoddgmInit2) this.openDlg2Ddgm(me.pre + 'dl_2ddgm', undefined, status.bSetsInit2);
-                              if(status.bSetsInit2) this.openDlg2Ddgm(me.pre + 'dl_definedsets');
+                              if(status.bTwoddgmInit2) thisClass.openDlg2Ddgm(me.pre + 'dl_2ddgm', undefined, status.bSetsInit2);
+                              if(status.bSetsInit2) thisClass.openDlg2Ddgm(me.pre + 'dl_definedsets');
                           }
                           else {
                               //ic.resizeCanvasCls.resizeCanvas(me.htmlCls.WIDTH - me.htmlCls.LESSWIDTH, me.htmlCls.HEIGHT - me.htmlCls.LESSHEIGHT - me.htmlCls.EXTRAHEIGHT, true);
