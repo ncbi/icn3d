@@ -39589,8 +39589,8 @@ class Scene {
         if(ic.mdl !== undefined) {
             for(var i = ic.mdl.children.length - 1; i >= 0; i--) {
                  var obj = ic.mdl.children[i];
-                 obj.geometry.dispose();
-                 obj.material.dispose();
+                 if(obj.geometry) obj.geometry.dispose();
+                 if(obj.material) obj.material.dispose();
                  ic.mdl.remove(obj);
             }
         }
@@ -39598,8 +39598,8 @@ class Scene {
         if(ic.mdlImpostor !== undefined) {
             for(var i = ic.mdlImpostor.children.length - 1; i >= 0; i--) {
                  var obj = ic.mdlImpostor.children[i];
-                 obj.geometry.dispose();
-                 obj.material.dispose();
+                 if(obj.geometry) obj.geometry.dispose();
+                 if(obj.material) obj.material.dispose();
                  ic.mdlImpostor.remove(obj);
             }
 
@@ -39999,7 +39999,7 @@ class Impostor {
           mesh.type = 'Sphere';
         }
 
-        //mesh.onBeforeRender = ic.onBeforeRender(ic.renderer, ic.scene, ic.cam, geometry, shaderMaterial);
+        //mesh.onBeforeRender = this.onBeforeRender(ic.renderer, ic.scene, ic.cam, geometry, shaderMaterial);
         mesh.onBeforeRender = this.onBeforeRender;
 
         ic.mdlImpostor.add(mesh);
@@ -40316,13 +40316,17 @@ class Instancing {
     }
 
     applyMat(obj, mat, bVector3) {  var ic = this.icn3d; ic.icn3dui;
+        // applyMatrix was renamed to applyMatrix4
         if(ic.rmsd_supr === undefined) {
+/*
           if(bVector3 === undefined) {
               obj.applyMatrix(mat);
           }
           else if(bVector3) {
               obj.applyMatrix4(mat);
           }
+*/
+          obj.applyMatrix4(mat);
         }
         else {
           var rot = ic.rmsd_supr.rot;
@@ -40340,6 +40344,7 @@ class Instancing {
 
           var tmpMat = new THREE.Matrix4();
 
+/*
           if(bVector3 === undefined) {
               tmpMat.makeTranslation(-centerTo.x, -centerTo.y, -centerTo.z);
               obj.applyMatrix(tmpMat);
@@ -40360,6 +40365,7 @@ class Instancing {
               obj.applyMatrix(tmpMat);
           }
           else if(bVector3) {
+*/
               tmpMat.makeTranslation(-centerTo.x, -centerTo.y, -centerTo.z);
               obj.applyMatrix4(tmpMat);
 
@@ -40377,7 +40383,7 @@ class Instancing {
 
               tmpMat.makeTranslation(centerTo.x, centerTo.y, centerTo.z);
               obj.applyMatrix4(tmpMat);
-          }
+//          }
         }
     }
 
@@ -40418,7 +40424,8 @@ class Instancing {
               //symmetryMate.onBeforeRender = ic.impostorCls.onBeforeRender;
               for(var j = symmetryMate.children.length - 1; j >= 0; j--) {
                    var mesh = symmetryMate.children[j];
-                   mesh.onBeforeRender = ic.impostorCls.onBeforeRender;
+//                   mesh.onBeforeRender = ic.impostorCls.onBeforeRender;
+                   mesh.onBeforeRender = this.onBeforeRender;
               }
 
               mdlImpostorTmp.add(symmetryMate);
@@ -40471,6 +40478,104 @@ class Instancing {
        }
 
        ic.bSetInstancing = true;
+    }
+
+    onBeforeRender(renderer, scene, camera, geometry, material) {
+      var u = material.uniforms;
+      var updateList = [];
+
+      if (u.objectId) {
+        u.objectId.value = SupportsReadPixelsFloat ? this.id : this.id / 255;
+        updateList.push('objectId');
+      }
+
+      if (u.modelViewMatrixInverse || u.modelViewMatrixInverseTranspose ||
+          u.modelViewProjectionMatrix || u.modelViewProjectionMatrixInverse
+      ) {
+        this.modelViewMatrix.multiplyMatrices(camera.matrixWorldInverse, this.matrixWorld);
+      }
+
+      if (u.modelViewMatrixInverse) {
+        //u.modelViewMatrixInverse.value.getInverse(this.modelViewMatrix);
+        u.modelViewMatrixInverse.value.copy( this.modelViewMatrix ).invert();
+        updateList.push('modelViewMatrixInverse');
+      }
+
+      if (u.modelViewMatrixInverseTranspose) {
+        if (u.modelViewMatrixInverse) {
+          u.modelViewMatrixInverseTranspose.value.copy(
+            u.modelViewMatrixInverse.value
+          ).transpose();
+        } else {
+          //u.modelViewMatrixInverseTranspose.value
+          //  .getInverse(this.modelViewMatrix)
+          //  .transpose();
+          u.modelViewMatrixInverseTranspose.value
+            .copy( this.modelViewMatrix )
+            .invert()
+            .transpose();
+        }
+        updateList.push('modelViewMatrixInverseTranspose');
+      }
+
+      if (u.modelViewProjectionMatrix) {
+        camera.updateProjectionMatrix();
+        u.modelViewProjectionMatrix.value.multiplyMatrices(
+          camera.projectionMatrix, this.modelViewMatrix
+        );
+        updateList.push('modelViewProjectionMatrix');
+      }
+
+      if (u.modelViewProjectionMatrixInverse) {
+        var tmpMatrix = new THREE.Matrix4();
+        if (u.modelViewProjectionMatrix) {
+          tmpMatrix.copy(
+            u.modelViewProjectionMatrix.value
+          );
+          //u.modelViewProjectionMatrixInverse.value.getInverse(
+          //  tmpMatrix
+          //);
+          u.modelViewProjectionMatrixInverse.value.copy( tmpMatrix ).invert();
+        } else {
+          camera.updateProjectionMatrix();
+          tmpMatrix.multiplyMatrices(
+            camera.projectionMatrix, this.modelViewMatrix
+          );
+          //u.modelViewProjectionMatrixInverse.value.getInverse(
+          //  tmpMatrix
+          //);
+          u.modelViewProjectionMatrixInverse.value.copy( tmpMatrix ).invert();
+        }
+        updateList.push('modelViewProjectionMatrixInverse');
+      }
+
+      if (u.projectionMatrix) {
+        camera.updateProjectionMatrix();
+        u.projectionMatrix.value.copy( camera.projectionMatrix );
+        updateList.push('projectionMatrix');
+      }
+
+      if (u.projectionMatrixInverse) {
+        camera.updateProjectionMatrix();
+        //u.projectionMatrixInverse.value.getInverse(camera.projectionMatrix);
+        u.projectionMatrixInverse.value.copy( camera.projectionMatrix ).invert();
+        updateList.push('projectionMatrixInverse');
+      }
+
+      if (updateList.length) {
+        var materialProperties = renderer.properties.get(material);
+
+        if (materialProperties.program) {
+          var gl = renderer.getContext();
+          var p = materialProperties.program;
+          gl.useProgram(p.program);
+          var pu = p.getUniforms();
+
+          updateList.forEach(function (name) {
+            pu.setValue(gl, name, u[ name ].value);
+          });
+        }
+      }
     }
 
     createInstancedGeometry(mesh) {  var ic = this.icn3d, me = ic.icn3dui;
@@ -40746,7 +40851,7 @@ class Draw {
 
     //Draw the 3D structure. It rebuilds scene, applies previous color, applies the transformation, and renders the image.
     draw() { var ic = this.icn3d, me = ic.icn3dui;
-        if(ic.bRender && Object.keys(ic.hAtoms) == 0) ic.hAtoms = me.hashUtilsCls.cloneHash(ic.atoms);
+        if(ic.bRender && (!ic.hAtoms || Object.keys(ic.hAtoms) == 0)) ic.hAtoms = me.hashUtilsCls.cloneHash(ic.atoms);
 
         ic.sceneCls.rebuildScene();
 
@@ -43705,9 +43810,9 @@ class SetMenu {
             html += tdStr + "<div style='position:relative; margin-left:6px;'>" + str1;
             html += "<div class='icn3d-commandTitle' style='min-width:40px; margin-top: 3px; white-space: nowrap;'>" + str2;
 
-            html += tdStr + '<div class="icn3d-commandTitle" style="white-space:nowrap; margin-top:10px; border-left:solid 1px #888888"><span id="' + me.pre +  'selection_expand" class="icn3d-expand icn3d-link" title="Expand">' + me.htmlCls.space2 + 'Show Toolbar' + me.htmlCls.space2 + '</span><span id="' + me.pre +  'selection_shrink" class="icn3d-shrink icn3d-link" style="display:none;" title="Shrink">' + me.htmlCls.space2 + 'Hide Toolbar' + me.htmlCls.space2 + '</span></div></td>';
+            html += tdStr + '<div class="icn3d-commandTitle" style="white-space:nowrap; margin-top:10px; border-left:solid 1px #888888"><span id="' + me.pre +  'selection_expand" class="icn3d-expand icn3d-link" title="Expand">' + me.htmlCls.space2 + 'Toolbar <span class="ui-icon ui-icon-plus" style="width:15px"></span>' + me.htmlCls.space2 + '</span><span id="' + me.pre +  'selection_shrink" class="icn3d-shrink icn3d-link" style="display:none;" title="Shrink">' + me.htmlCls.space2 + 'Toolbar <span class="ui-icon ui-icon-minus" style="width:15px"></span>' + me.htmlCls.space2 + '</span></div></td>';
 
-            html += tdStr + '<div class="icn3d-commandTitle" style="white-space:nowrap; margin-top:8px; border-left:solid 1px #888888">' + me.htmlCls.space2 + '<input type="text" id="' + me.pre + 'search_seq" size="10" placeholder="one-letter seq."> <button style="white-space:nowrap;" id="' + me.pre + 'search_seq_button">Search Seq.</button> <a style="text-decoration: none;" href="' + me.htmlCls.baseUrl + 'icn3d/icn3d.html#selectb" target="_blank" title="Specification tips">?</a></div></td>';
+            html += tdStr + '<div class="icn3d-commandTitle" style="white-space:nowrap; margin-top:8px; border-left:solid 1px #888888">' + me.htmlCls.space2 + '<input type="text" id="' + me.pre + 'search_seq" size="10" placeholder="one-letter seq."> <button style="white-space:nowrap;" id="' + me.pre + 'search_seq_button">Search</button> <a style="text-decoration: none;" href="' + me.htmlCls.baseUrl + 'icn3d/icn3d.html#selectb" target="_blank" title="Specification tips">?</a></div></td>';
         }
 
         html += "</tr>";
@@ -43943,7 +44048,7 @@ class SetMenu {
             html += tdStr + this.setButton(buttonStyle, 'hbondsYes', 'View H-Bonds & Interactions', 'H-Bonds &<br/> Interactions') + "</td>";
         }
 
-        html += tdStr + this.setButton(buttonStyle, 'show_selected', 'View ONLY the selected atoms', 'View Only<br/>Selection') + "</td>";
+        html += tdStr + this.setButton(buttonStyle, 'show_selected', 'View ONLY the selected atoms', 'View<br/> Selection') + "</td>";
 
         html += tdStr + this.setButton(buttonStyle, 'toggleHighlight', 'Turn on and off the 3D highlight in the viewer', 'Toggle<br/>Highlight') + "</td>";
 
@@ -44301,7 +44406,7 @@ class SetMenu {
         var html = "";
         html += "<ul class='icn3d-mn-item'>";
 
-        html += me.htmlCls.setHtmlCls.getLink('mn2_show_selected', 'View Only <br>Selection');
+        html += me.htmlCls.setHtmlCls.getLink('mn2_show_selected', 'View Selection');
         html += me.htmlCls.setHtmlCls.getLink('mn2_hide_selected', 'Hide Selection');
         html += me.htmlCls.setHtmlCls.getLink('mn2_selectedcenter', 'Zoom in Selection');
         html += me.htmlCls.setHtmlCls.getLink('mn6_center', 'Center Selection');
@@ -44558,7 +44663,7 @@ class SetMenu {
         }
         html += "</ul>";
         html += "</li>";
-        html += "<li><span>Surface <br>Wireframe</span>";
+        html += "<li><span>Surface Wireframe</span>";
         html += "<ul>";
         html += me.htmlCls.setHtmlCls.getRadio('mn5_wireframe', 'mn5_wireframeYes', 'Yes');
         html += me.htmlCls.setHtmlCls.getRadio('mn5_wireframe', 'mn5_wireframeNo', 'No', true);
@@ -44577,7 +44682,7 @@ class SetMenu {
 
             html += me.htmlCls.setHtmlCls.getLinkWrapper('mn5_elecmapNo', 'Remove Map', 'mapWrapper2');
 
-            html += "<li id='" + me.pre + "mapWrapper3'><span>Map <br>Wireframe</span>";
+            html += "<li id='" + me.pre + "mapWrapper3'><span>Map Wireframe</span>";
             html += "<ul>";
             html += me.htmlCls.setHtmlCls.getRadio('mn5_mapwireframe', 'mn5_mapwireframeYes', 'Yes', true);
             html += me.htmlCls.setHtmlCls.getRadio('mn5_mapwireframe', 'mn5_mapwireframeNo', 'No');
@@ -44590,7 +44695,7 @@ class SetMenu {
                 html += me.htmlCls.setHtmlCls.getLinkWrapper('mn5_emmap', 'EM Density Map', 'emmapWrapper1');
                 html += me.htmlCls.setHtmlCls.getLinkWrapper('mn5_emmapNo', 'Remove EM Map', 'emmapWrapper2');
 
-                html += "<li id='" + me.pre + "emmapWrapper3'><span>EM Map <br>Wireframe</span>";
+                html += "<li id='" + me.pre + "emmapWrapper3'><span>EM Map Wireframe</span>";
                 html += "<ul>";
                 html += me.htmlCls.setHtmlCls.getRadio('mn5_emmapwireframe', 'mn5_emmapwireframeYes', 'Yes', true);
                 html += me.htmlCls.setHtmlCls.getRadio('mn5_emmapwireframe', 'mn5_emmapwireframeNo', 'No');
@@ -44962,22 +45067,22 @@ class SetMenu {
         html += "<ul class='icn3d-mn-item'>";
 
         if(me.cfg.cid === undefined) {
-            html += me.htmlCls.setHtmlCls.getLink('mn6_selectannotations', 'View Sequences<br>& Annotations ' + me.htmlCls.wifiStr);
+            html += me.htmlCls.setHtmlCls.getLink('mn6_selectannotations', 'Seq. & Annotations ' + me.htmlCls.wifiStr);
 
             //if(me.cfg.align !== undefined || me.cfg.chainalign !== undefined) { // || ic.bRealign || ic.bSymd || ic.bInputfile) {
-                html += me.htmlCls.setHtmlCls.getLink('mn2_alignment', 'View Aligned<br>Sequences ' + me.htmlCls.wifiStr);
+                html += me.htmlCls.setHtmlCls.getLink('mn2_alignment', 'Aligned Seq. ' + me.htmlCls.wifiStr);
             //}
 
             //html += me.htmlCls.setHtmlCls.getLink('mn2_selectresidues', 'View Sequences');
             if(me.cfg.mmdbid !== undefined || me.cfg.gi !== undefined || me.cfg.blast_rep_id !== undefined || me.cfg.align !== undefined || me.cfg.chainalign !== undefined) {
-              html += me.htmlCls.setHtmlCls.getLink('mn2_2ddgm', 'View 2D Diagram ' + me.htmlCls.wifiStr);
+              html += me.htmlCls.setHtmlCls.getLink('mn2_2ddgm', '2D Diagram ' + me.htmlCls.wifiStr);
             }
 
             html += me.htmlCls.setHtmlCls.getLink('definedsets2', 'Defined Sets');
 
             html += "<li>-</li>";
 
-            html += me.htmlCls.setHtmlCls.getLink('mn6_hbondsYes', 'H-Bonds <br>& Interactions');
+            html += me.htmlCls.setHtmlCls.getLink('mn6_hbondsYes', 'Interactions');
             //html += me.htmlCls.setHtmlCls.getLink('mn6_hbondsNo', 'Remove H-Bonds <br>& Interactions');
 
             html += "<li><span>Bring to Front</span>";
@@ -45104,7 +45209,7 @@ class SetMenu {
             html += "<li>-</li>";
         }
 
-        html += me.htmlCls.setHtmlCls.getLink('mn6_yournote', 'Your Note /<br>Window Title');
+        html += me.htmlCls.setHtmlCls.getLink('mn6_yournote', 'Window Title');
 
         if(me.cfg.cid !== undefined) {
             html += "<li><span>Links</span>";
@@ -45389,8 +45494,8 @@ class Dialog {
                       var canvasWidth = me.utilsCls.isMobile() ? me.htmlCls.WIDTH : me.htmlCls.WIDTH - twoddgmWidth;
                       ic.resizeCanvasCls.resizeCanvas(canvasWidth, me.htmlCls.HEIGHT, true);
 
-                      if(status.bTwoddgmInit2) this.openDlg2Ddgm(me.pre + 'dl_2ddgm', undefined, status.bSetsInit2);
-                      if(status.bSetsInit2) this.openDlg2Ddgm(me.pre + 'dl_definedsets');
+                      if(status.bTwoddgmInit2) thisClass.openDlg2Ddgm(me.pre + 'dl_2ddgm', undefined, status.bSetsInit2);
+                      if(status.bSetsInit2) thisClass.openDlg2Ddgm(me.pre + 'dl_definedsets');
                   }
                   else {
                       //ic.resizeCanvasCls.resizeCanvas(me.htmlCls.WIDTH - me.htmlCls.LESSWIDTH, me.htmlCls.HEIGHT - me.htmlCls.LESSHEIGHT - me.htmlCls.EXTRAHEIGHT, true);
@@ -45537,8 +45642,8 @@ class Dialog {
                               var canvasWidth = me.utilsCls.isMobile() ? me.htmlCls.WIDTH : me.htmlCls.WIDTH - twoddgmWidth;
                               ic.resizeCanvasCls.resizeCanvas(canvasWidth, me.htmlCls.HEIGHT, true);
 
-                              if(status.bTwoddgmInit2) this.openDlg2Ddgm(me.pre + 'dl_2ddgm', undefined, status.bSetsInit2);
-                              if(status.bSetsInit2) this.openDlg2Ddgm(me.pre + 'dl_definedsets');
+                              if(status.bTwoddgmInit2) thisClass.openDlg2Ddgm(me.pre + 'dl_2ddgm', undefined, status.bSetsInit2);
+                              if(status.bSetsInit2) thisClass.openDlg2Ddgm(me.pre + 'dl_definedsets');
                           }
                           else {
                               //ic.resizeCanvasCls.resizeCanvas(me.htmlCls.WIDTH - me.htmlCls.LESSWIDTH, me.htmlCls.HEIGHT - me.htmlCls.LESSHEIGHT - me.htmlCls.EXTRAHEIGHT, true);

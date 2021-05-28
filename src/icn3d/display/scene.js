@@ -115,8 +115,8 @@ class Scene {
         if(ic.mdl !== undefined) {
             for(var i = ic.mdl.children.length - 1; i >= 0; i--) {
                  var obj = ic.mdl.children[i];
-                 obj.geometry.dispose();
-                 obj.material.dispose();
+                 if(obj.geometry) obj.geometry.dispose();
+                 if(obj.material) obj.material.dispose();
                  ic.mdl.remove(obj);
             }
         }
@@ -124,8 +124,8 @@ class Scene {
         if(ic.mdlImpostor !== undefined) {
             for(var i = ic.mdlImpostor.children.length - 1; i >= 0; i--) {
                  var obj = ic.mdlImpostor.children[i];
-                 obj.geometry.dispose();
-                 obj.material.dispose();
+                 if(obj.geometry) obj.geometry.dispose();
+                 if(obj.material) obj.material.dispose();
                  ic.mdlImpostor.remove(obj);
             }
 
