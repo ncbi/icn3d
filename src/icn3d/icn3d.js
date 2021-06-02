@@ -192,6 +192,31 @@ class iCn3D {
     this.shininess = 40; //30
     this.emissive = 0x111111; //0x000000
 
+    this.light1 = 0.6; //1
+    this.light2 = 0.4;
+    this.light3 = 0.2;
+
+    //This is the line radius for stabilizers, hydrogen bonds, and distance lines. It's 0.1 by default.
+    this.lineRadius = 0.1; // hbonds, distance lines
+    //This is the coil radius for coils. It's 0.3 by default.
+    this.coilWidth = 0.3; //0.4; // style cartoon-coil
+    this.cylinderRadius = 0.4; // style stick
+    //This is the stick radius for C alpha trace and O3' trace. It's 0.4 by default.
+    this.traceRadius = 0.4; //0.2; // c alpha trace, nucleotide stick
+    //This is the ball scale for styles 'Ball and Stick' and 'Dot'. It's 0.3 by default.
+    this.dotSphereScale = 0.3; // style ball and stick, dot
+    //This is the sphere radius for the style 'Sphere'. It's 1.5 by default.
+    this.sphereRadius = 1.5; // style sphere
+    //This is the cylinder radius for the style 'Cylinder and Plate'. It's 1.6 by default.
+    this.cylinderHelixRadius = 1.6; // style sylinder and plate
+
+    //This is the ribbon thickness for helix and sheet ribbons, and nucleotide ribbons. It's 0.4 by default.
+    this.ribbonthickness = 0.2; // 0.4; // style ribbon, nucleotide cartoon, stand thickness
+    //This is the width of protein ribbons. It's 1.3 by default.
+    this.helixSheetWidth = 1.3; // style ribbon, nucleotide cartoon, stand thickness
+    //This is the width of nucleotide ribbons. It's 0.8 by default.
+    this.nucleicAcidWidth = 0.8; // nucleotide cartoon
+
     // mobile has a problem when the scaleFactor is 2.0
     // the scaleFactor improve the image quality, but it has some centering and picking problems in some Mac when it is not 1
     this.scaleFactor = 1.0;
@@ -312,27 +337,6 @@ class iCn3D {
     this.linewidth = 1;
     this.hlLineRadius = 0.1; // style line, highlight
     //this.curveWidth = 3;
-
-    //This is the line radius for stabilizers, hydrogen bonds, and distance lines. It's 0.1 by default.
-    this.lineRadius = 0.1; // hbonds, distance lines
-    //This is the coil radius for coils. It's 0.3 by default.
-    this.coilWidth = 0.3; //0.4; // style cartoon-coil
-    this.cylinderRadius = 0.4; // style stick
-    //This is the stick radius for C alpha trace and O3' trace. It's 0.4 by default.
-    this.traceRadius = 0.4; //0.2; // c alpha trace, nucleotide stick
-    //This is the ball scale for styles 'Ball and Stick' and 'Dot'. It's 0.3 by default.
-    this.dotSphereScale = 0.3; // style ball and stick, dot
-    //This is the sphere radius for the style 'Sphere'. It's 1.5 by default.
-    this.sphereRadius = 1.5; // style sphere
-    //This is the cylinder radius for the style 'Cylinder and Plate'. It's 1.6 by default.
-    this.cylinderHelixRadius = 1.6; // style sylinder and plate
-
-    //This is the ribbon thickness for helix and sheet ribbons, and nucleotide ribbons. It's 0.4 by default.
-    this.ribbonthickness = 0.2; // 0.4; // style ribbon, nucleotide cartoon, stand thickness
-    //This is the width of protein ribbons. It's 1.3 by default.
-    this.helixSheetWidth = 1.3; // style ribbon, nucleotide cartoon, stand thickness
-    //This is the width of nucleotide ribbons. It's 0.8 by default.
-    this.nucleicAcidWidth = 0.8; // nucleotide cartoon
 
     this.threshbox = 180; // maximum possible boxsize, default 180
     this.maxAtoms3DMultiFile = 40000; // above the threshold, multiple files wil be output for 3D printing

@@ -345,8 +345,15 @@ class Events {
     //       var alignment = $("#" + me.pre + "chainalignid1").val() + "," + $("#" + me.pre + "chainalignid2").val();
            var alignment = $("#" + me.pre + "chainalignids").val();
            var resalign = $("#" + me.pre + "resalignids").val();
-           me.htmlCls.clickMenuCls.setLogCmd("load chains " + alignment + " | residues " + resalign, false);
-           window.open(me.htmlCls.baseUrl + 'icn3d/full.html?chainalign=' + alignment + '&resnum=' + resalign + '&showalignseq=1', '_blank');
+           var predefinedres = $("#" + me.pre + "predefinedres").val().trim().replace(/\n/g, ' | ');
+
+           if(predefinedres && alignment.split(',').length != predefinedres.split(' | ').length) {
+               alert("Please make sure the number of chains and the lines of predefined residues are the same...");
+               return;
+           }
+
+           me.htmlCls.clickMenuCls.setLogCmd("load chains " + alignment + " | residues " + resalign + " | resdef " + predefinedres, false);
+           window.open(me.htmlCls.baseUrl + 'icn3d/full.html?chainalign=' + alignment + '&resnum=' + resalign + '&resdef=' + predefinedres + '&showalignseq=1', '_blank');
         });
 
         me.myEventCls.onIds("#" + me.pre + "reload_chainalign_asym", "click", function(e) { var ic = me.icn3d;
@@ -355,8 +362,14 @@ class Events {
     //       var alignment = $("#" + me.pre + "chainalignid1").val() + "," + $("#" + me.pre + "chainalignid2").val();
            var alignment = $("#" + me.pre + "chainalignids").val();
            var resalign = $("#" + me.pre + "resalignids").val();
-           me.htmlCls.clickMenuCls.setLogCmd("load chains " + alignment + " on asymmetric unit | residues " + resalign, false);
-           window.open(me.htmlCls.baseUrl + 'icn3d/full.html?chainalign=' + alignment + '&resnum=' + resalign + '&showalignseq=1&buidx=0', '_blank');
+           var predefinedres = $("#" + me.pre + "predefinedres").val().trim().replace(/\\n/g, ' | ');
+           if(predefinedres && alignment.split(',').length != predefinedres.split(' | ').length) {
+               alert("Please make sure the number of chains and the lines of predefined residues are the same...");
+               return;
+           }
+
+           me.htmlCls.clickMenuCls.setLogCmd("load chains " + alignment + " on asymmetric unit | residues " + resalign + " | resdef " + predefinedres, false);
+           window.open(me.htmlCls.baseUrl + 'icn3d/full.html?chainalign=' + alignment + '&resnum=' + resalign + '&resdef=' + predefinedres + '&showalignseq=1&buidx=0', '_blank');
         });
 
         me.myEventCls.onIds("#" + me.pre + "reload_mutation_3d", "click", function(e) { var ic = me.icn3d;

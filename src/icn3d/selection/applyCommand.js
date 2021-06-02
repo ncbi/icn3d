@@ -681,6 +681,29 @@ class ApplyCommand {
             ic.drawCls.draw();
         }
       }
+      else if(commandOri.indexOf('set light') == 0) {
+        var paraArray = command.split(' | ');
+
+        for(var i = 1, il = paraArray.length; i < il; ++i) {
+            var p1Array = paraArray[i].split(' ');
+
+            var para = p1Array[0];
+            var value = parseFloat(p1Array[1]);
+
+            if(para == 'light1') ic.light1 = value;
+            if(para == 'light2') ic.light2 = value;
+            if(para == 'light3') ic.light3 = value;
+
+            ic.drawCls.draw();
+        }
+      }
+      else if(commandOri.indexOf('set shininess') == 0) {
+        var pos = command.lastIndexOf(' ');
+
+        ic.shininess = parseFloat(command.substr(pos + 1));
+
+        ic.drawCls.draw();
+      }
       else if(command.indexOf('set highlight color') == 0) {
            var color = command.substr(20);
            if(color === 'yellow') {

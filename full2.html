@@ -28,11 +28,16 @@
   <script type="text/javascript">
     $( document ).ready(function() {
       if (navigator.userAgent.indexOf("MSIE ") > 0 || !!navigator.userAgent.match(/Trident.*rv\:11\./)) { // If Internet Explorer
-          $.getScript('icn3d_full_ui_2.24.7.min.js', function() {
-            var version = 2;
-            launchIcn3d(version);
-          });
-          alert("iCn3D version 3 (since May 2021) works in all browsers except IE. The old iCn3D version 2 is used instead.");
+          // iCn3D version 2.24.7 doesn't work with three_0.128.0.min.js
+          //$.getScript('icn3d_full_ui_2.24.7.min.js', function() {
+          //  var version = 2;
+          //  launchIcn3d(version);
+          //});
+
+          var fixedUrl = document.URL.replace('full2.html', 'full2_2.24.7.html');
+          window.open(fixedUrl, '_self');
+
+          alert("IE does NOT work with the current iCn3D version 3. The old iCn3D version 2 is used instead.");
       }
       else {
           //$.getScript('icn3d.min.js', function() {
@@ -93,13 +98,13 @@
               cfg.align = cfg.align;
               cfg.showalignseq = cfg.showalignseq;
 
-              var icn3dui = (cfg.version == 2) ? new iCn3DUI(cfg) : new icn3d.iCn3DUI(cfg);
+              var icn3dui = new icn3d.iCn3DUI(cfg);
               icn3dui.show3DStructure();
               window.icn3duiHash['div0'] = icn3dui;
 
               var cfg2 = cfg;
               cfg2.divid = 'div1';
-              var icn3dui2 = (cfg.version == 2) ? new iCn3DUI(cfg2) : new icn3d.iCn3DUI(cfg2);
+              var icn3dui2 = new icn3d.iCn3DUI(cfg2);
               icn3dui2.show3DStructure();
               window.icn3duiHash['div1'] = icn3dui2;
           }
@@ -115,13 +120,13 @@
               cfg.resnum = cfg.resnum;
               cfg.showalignseq = cfg.showalignseq;
 
-              var icn3dui = (cfg.version == 2) ? new iCn3DUI(cfg) : new icn3d.iCn3DUI(cfg);
+              var icn3dui = new icn3d.iCn3DUI(cfg);
               icn3dui.show3DStructure();
               window.icn3duiHash['div0'] = icn3dui;
 
               var cfg2 = cfg;
               cfg2.divid = 'div1';
-              var icn3dui2 = (cfg.version == 2) ? new iCn3DUI(cfg2) : new icn3d.iCn3DUI(cfg2);
+              var icn3dui2 = new icn3d.iCn3DUI(cfg2);
               icn3dui2.show3DStructure();
               window.icn3duiHash['div1'] = icn3dui2;
           }
@@ -155,7 +160,7 @@
 
           if(idName !== '') cfg[idName] = idArray[i];
 
-          var icn3dui = (cfg.version == 2) ? new iCn3DUI(cfg) : new icn3d.iCn3DUI(cfg);
+          var icn3dui = new icn3d.iCn3DUI(cfg);
 
           $.when(icn3dui.show3DStructure()).then(function() {
                //icn3dui.setOption('color', 'spectrum');
@@ -167,7 +172,7 @@
           i = 1;
           var cfg2 = cfg;
           cfg2.divid = 'div' + i;
-          var icn3dui2 = (cfg.version == 2) ? new iCn3DUI(cfg2) : new icn3d.iCn3DUI(cfg2);
+          var icn3dui2 = new icn3d.iCn3DUI(cfg2);
 
           $.when(icn3dui2.show3DStructure()).then(function() {
                //icn3dui2.setOption('color', 'spectrum');

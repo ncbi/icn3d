@@ -39,6 +39,9 @@ class ChainalignParser {
         if(ic.icn3dui.cfg.resnum) {
             ic.realignParserCls.realignChainOnSeqAlign(chainresiCalphaHash2, chainidArray);
         }
+        else if(ic.icn3dui.cfg.resdef) {
+            ic.realignParserCls.realignChainOnSeqAlign(chainresiCalphaHash2, chainidArray, undefined, true);
+        }
         else {
             this.downloadChainalignmentPart3(chainresiCalphaHash2, chainidArray, hAtoms);
         }
@@ -110,7 +113,7 @@ class ChainalignParser {
         //if(ic.icn3dui.deferred !== undefined) ic.icn3dui.deferred.resolve(); if(ic.deferred2 !== undefined) ic.deferred2.resolve();
     }
 
-    downloadChainalignment(chainalign, resnum) { var ic = this.icn3d, me = ic.icn3dui;
+    downloadChainalignment(chainalign, resnum, resdef) { var ic = this.icn3d, me = ic.icn3dui;
         var thisClass = this;
 
         ic.opts['proteins'] = 'c alpha trace';
@@ -166,7 +169,7 @@ class ChainalignParser {
 
             ajaxArray.push(queryAjax);
 
-            if(!ic.icn3dui.cfg.resnum) {
+            if(!ic.icn3dui.cfg.resnum && !ic.icn3dui.cfg.resdef) {
                 var alignAjax = $.ajax({
                   url: urlalign,
                   dataType: 'jsonp',
@@ -181,10 +184,10 @@ class ChainalignParser {
         //https://stackoverflow.com/questions/5518181/jquery-deferreds-when-and-the-fail-callback-arguments
         $.when.apply(undefined, ajaxArray).then(function() {
           thisClass.parseChainAlignData(arguments, alignArray, ic.mmdbid_t, ic.chain_t);
-        })
-        .fail(function() {
-          thisClass.parseChainAlignData(arguments, alignArray, ic.mmdbid_t, ic.chain_t);
         });
+//        .fail(function() {
+//          thisClass.parseChainAlignData(arguments, alignArray, ic.mmdbid_t, ic.chain_t);
+//        });
     }
 
     parseChainAlignData(data, chainidArray, mmdbid_t, chain_t) { var ic = this.icn3d, me = ic.icn3dui;
@@ -207,7 +210,7 @@ class ChainalignParser {
 
         var queryDataArray = [];
 
-        var step =(ic.icn3dui.cfg.resnum) ? 1 : 2;
+        var step =(ic.icn3dui.cfg.resnum || ic.icn3dui.cfg.resdef) ? 1 : 2;
 
         for(var index = 1, indexl = dataArray.length; index < indexl; index += step) {
             var queryData = dataArray[index][0];
@@ -217,7 +220,7 @@ class ChainalignParser {
             var mmdbid_q = chainidArray[index2].substr(0, pos2).toUpperCase();
             var chain_q = chainidArray[index2].substr(pos2+1);
 
-            if(ic.icn3dui.cfg.resnum) {
+            if(ic.icn3dui.cfg.resnum || ic.icn3dui.cfg.resdef) {
                 if(queryData !== undefined && JSON.stringify(queryData).indexOf('Oops there was a problem') === -1
                   ) {
                     ic.mmdbidArray.push(mmdbid_q);
@@ -265,7 +268,7 @@ class ChainalignParser {
     loadOpmDataForChainalign(data1, data2, chainidArray, mmdbidArray) { var ic = this.icn3d, me = ic.icn3dui;
         var thisClass = this;
 
-        if(ic.icn3dui.cfg.resnum) {
+        if(ic.icn3dui.cfg.resnum || ic.icn3dui.cfg.resdef) {
             if(!ic.bCommandLoad) ic.init(); // remove all previously loaded data
             this.downloadChainalignmentPart2(data1, data2, undefined, chainidArray);
 

@@ -27,6 +27,31 @@ class ApplyDisplay {
     applyDisplayOptions(options, atoms, bHighlight) { var ic = this.icn3d, me = ic.icn3dui;
         if(options === undefined) options = ic.opts;
 
+        // get parameters from cookies
+        if(!me.bNode && me.htmlCls.setHtmlCls.getCookie('lineRadius') != '') {
+            var lineRadius = parseFloat(me.htmlCls.setHtmlCls.getCookie('lineRadius'));
+            var coilWidth = parseFloat(me.htmlCls.setHtmlCls.getCookie('coilWidth'));
+            var cylinderRadius = parseFloat(me.htmlCls.setHtmlCls.getCookie('cylinderRadius'));
+            var traceRadius = parseFloat(me.htmlCls.setHtmlCls.getCookie('traceRadius'));
+            var dotSphereScale = parseFloat(me.htmlCls.setHtmlCls.getCookie('dotSphereScale'));
+            var ribbonthickness = parseFloat(me.htmlCls.setHtmlCls.getCookie('ribbonthickness'));
+            var helixSheetWidth = parseFloat(me.htmlCls.setHtmlCls.getCookie('helixSheetWidth'));
+            var nucleicAcidWidth = parseFloat(me.htmlCls.setHtmlCls.getCookie('nucleicAcidWidth'));
+
+            if(ic.lineRadius != lineRadius || ic.coilWidth != coilWidth || ic.cylinderRadius != cylinderRadius || ic.traceRadius != traceRadius || ic.dotSphereScale != dotSphereScale || ic.ribbonthickness != ribbonthickness || ic.helixSheetWidth != helixSheetWidth || ic.nucleicAcidWidth != nucleicAcidWidth) {
+                me.htmlCls.clickMenuCls.setLogCmd('set thickness | linerad ' + lineRadius + ' | coilrad ' + coilWidth + ' | stickrad ' + cylinderRadius + ' | tracerad ' + traceRadius + ' | ribbonthick ' + ribbonthickness + ' | proteinwidth ' + helixSheetWidth + ' | nucleotidewidth ' + nucleicAcidWidth  + ' | ballscale ' + dotSphereScale, true);
+            }
+
+            ic.lineRadius = lineRadius;
+            ic.coilWidth = coilWidth;
+            ic.cylinderRadius = cylinderRadius;
+            ic.traceRadius = traceRadius;
+            ic.dotSphereScale = dotSphereScale;
+            ic.ribbonthickness = ribbonthickness;
+            ic.helixSheetWidth = helixSheetWidth;
+            ic.nucleicAcidWidth = nucleicAcidWidth;
+        }
+
         var residueHash = {};
         var singletonResidueHash = {};
         var atomsObj = {};

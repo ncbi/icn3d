@@ -323,7 +323,7 @@ class LoadAtomData {
 
             if(type === 'mmdbid') {
                 atm.coord = new THREE.Vector3(atm.coord[0], atm.coord[1], atm.coord[2]);
-                if(ic.q_rotation !== undefined && !ic.icn3dui.cfg.resnum) {
+                if(ic.q_rotation !== undefined && !ic.icn3dui.cfg.resnum && !ic.icn3dui.cfg.resdef) {
                     if(alignType === 'target') {
                         atm.coord.x += ic.t_trans_add[chainIndex].x;
                         atm.coord.y += ic.t_trans_add[chainIndex].y;
@@ -736,7 +736,7 @@ class LoadAtomData {
         if(type === 'align' && seqalign !== undefined && ic.bFullUi) {
             ic.setSeqAlignCls.setSeqAlign(seqalign, data.alignedStructures);
         } // if(align
-        else if(type === 'mmdbid' && alignType === 'query' && ic.bFullUi && ic.q_rotation !== undefined && !ic.icn3dui.cfg.resnum) {
+        else if(type === 'mmdbid' && alignType === 'query' && ic.bFullUi && ic.q_rotation !== undefined && !ic.icn3dui.cfg.resnum && !ic.icn3dui.cfg.resdef) {
             ic.setSeqAlignCls.setSeqAlignChain(chainidInput, chainIndex);
 
             var bReverse = false;
