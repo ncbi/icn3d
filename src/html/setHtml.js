@@ -131,10 +131,48 @@ class SetHtml {
         var coilrad =(type == '3dprint') ? '1.2' : '0.3';
         var stickrad =(type == '3dprint') ? '0.8' : '0.4';
         var tracerad =(type == '3dprint') ? '1' : '0.2';
+        var ballscale =(type == '3dprint') ? '0.6' : '0.3';
         var ribbonthick =(type == '3dprint') ? '1' : '0.2';
         var prtribbonwidth =(type == '3dprint') ? '2' : '1.3';
         var nucleotideribbonwidth =(type == '3dprint') ? '1.4' : '0.8';
-        var ballscale =(type == '3dprint') ? '0.6' : '0.3';
+
+        var shininess = 40;
+        var light1 = 0.6;
+        var light2 = 0.4;
+        var light3 = 0.2;
+
+        // retrieve from cache
+        if(type == 'style') {
+            if(this.getCookie('shininess') != '') {
+                shininess = parseFloat(this.getCookie('shininess'));
+            }
+
+            if(this.getCookie('light1') != '') {
+                light1 = parseFloat(this.getCookie('light1'));
+                light2 = parseFloat(this.getCookie('light2'));
+                light3 = parseFloat(this.getCookie('light3'));
+            }
+
+            if(this.getCookie('lineRadius') != '') {
+                linerad = parseFloat(this.getCookie('lineRadius'));
+                coilrad = parseFloat(this.getCookie('coilWidth'));
+                stickrad = parseFloat(this.getCookie('cylinderRadius'));
+                tracerad = parseFloat(this.getCookie('traceRadius'));
+                ballscale = parseFloat(this.getCookie('dotSphereScale'));
+                ribbonthick = parseFloat(this.getCookie('ribbonthickness'));
+                prtribbonwidth = parseFloat(this.getCookie('helixSheetWidth'));
+                nucleotideribbonwidth = parseFloat(this.getCookie('nucleicAcidWidth'));
+            }
+
+            html += "<b>Note</b>: The following parameters will be saved in cache. You just need to set them once. <br><br>";
+
+            html += "<b>1. Shininess</b>: " + me.htmlCls.inputTextStr + "id='" + me.pre + "shininess' value='" + shininess + "' size=4>" + me.htmlCls.space3 + "(for the shininess of the 3D objects, default 40)<br/><br/>";
+            html += "<b>2. Three directional lights</b>: <br>";
+            html += "<b>Key Light</b>: " + me.htmlCls.inputTextStr + "id='" + me.pre + "light1' value='" + light1 + "' size=4>" + me.htmlCls.space3 + "(for the light strength of the key light, default 0.6)<br/>";
+            html += "<b>Fill Light</b>: " + me.htmlCls.inputTextStr + "id='" + me.pre + "light2' value='" + light2 + "' size=4>" + me.htmlCls.space3 + "(for the light strength of the fill light, default 0.4)<br/>";
+            html += "<b>Back Light</b>: " + me.htmlCls.inputTextStr + "id='" + me.pre + "light3' value='" + light3 + "' size=4>" + me.htmlCls.space3 + "(for the light strength of the back light, default 0.2)<br/><br/>";
+            html += "<b>3. Thickness</b>: <br>";
+        }
 
         html += "<b>Line Radius</b>: " + me.htmlCls.inputTextStr + "id='" + me.pre + "linerad_" + type + "' value='" + linerad + "' size=4>" + me.htmlCls.space3 + "(for stabilizers, hydrogen bonds, distance lines, default 0.1)<br/>";
         html += "<b>Coil Radius</b>: " + me.htmlCls.inputTextStr + "id='" + me.pre + "coilrad_" + type + "' value='" + coilrad + "' size=4>" + me.htmlCls.space3 + "(for coils, default 0.3)<br/>";
@@ -147,9 +185,25 @@ class SetHtml {
 
         html += "<b>Ball Scale</b>: " + me.htmlCls.inputTextStr + "id='" + me.pre + "ballscale_" + type + "' value='" + ballscale + "' size=4>" + me.htmlCls.space3 + "(for styles 'Ball and Stick' and 'Dot', default 0.3)<br/>";
 
-        html += me.htmlCls.spanNowrapStr + "" + me.htmlCls.buttonStr + "apply_thickness_" + type + "'>Preview</button></span>";
+        html += me.htmlCls.spanNowrapStr + "" + me.htmlCls.buttonStr + "apply_thickness_" + type + "'>Apply</button></span>";
 
         return html;
+    }
+
+    getCookie(cname) {
+      var name = cname + "=";
+      var decodedCookie = decodeURIComponent(document.cookie);
+      var ca = decodedCookie.split(';');
+      for(var i = 0; i <ca.length; i++) {
+        var c = ca[i];
+        while (c.charAt(0) == ' ') {
+          c = c.substring(1);
+        }
+        if (c.indexOf(name) == 0) {
+          return c.substring(name.length, c.length);
+        }
+      }
+      return "";
     }
 
     setSequenceGuide(suffix, bShown) { var me = this.icn3dui, ic = me.icn3d;
@@ -697,6 +751,14 @@ class SetHtml {
 
     setLineThickness(postfix) { var me = this.icn3dui, ic = me.icn3d;
         ic.bSetThickness = true;
+
+        if(postfix == 'style') {
+            ic.shininess = parseFloat($("#" + me.pre + "shininess").val()); //40;
+            ic.light1 = parseFloat($("#" + me.pre + "light1").val()); //0.6;
+            ic.light2 = parseFloat($("#" + me.pre + "light2").val()); //0.4;
+            ic.light3 = parseFloat($("#" + me.pre + "light3").val()); //0.2;
+        }
+
         ic.lineRadius = parseFloat($("#" + me.pre + "linerad_" + postfix ).val()); //0.1; // hbonds, distance lines
         ic.coilWidth = parseFloat($("#" + me.pre + "coilrad_" + postfix ).val()); //0.4; // style cartoon-coil
         ic.cylinderRadius = parseFloat($("#" + me.pre + "stickrad_" + postfix ).val()); //0.4; // style stick
@@ -705,8 +767,34 @@ class SetHtml {
         ic.ribbonthickness = parseFloat($("#" + me.pre + "ribbonthick_" + postfix ).val()); //0.4; // style ribbon, nucleotide cartoon, stand thickness
         ic.helixSheetWidth = parseFloat($("#" + me.pre + "prtribbonwidth_" + postfix ).val()); //1.3; // style ribbon, stand thickness
         ic.nucleicAcidWidth = parseFloat($("#" + me.pre + "nucleotideribbonwidth_" + postfix ).val()); //0.8; // nucleotide cartoon
+
+        // save to cache
+        if(!me.bNode && postfix == 'style') {
+            var exdays = 3650; // 10 years
+            this.setCookie('shininess', ic.shininess, exdays);
+            this.setCookie('light1', ic.light1, exdays);
+            this.setCookie('light2', ic.light2, exdays);
+            this.setCookie('light3', ic.light3, exdays);
+
+            this.setCookie('lineRadius', ic.lineRadius, exdays);
+            this.setCookie('coilWidth', ic.coilWidth, exdays);
+            this.setCookie('cylinderRadius', ic.cylinderRadius, exdays);
+            this.setCookie('traceRadius', ic.traceRadius, exdays);
+            this.setCookie('dotSphereScale', ic.dotSphereScale, exdays);
+            this.setCookie('ribbonthickness', ic.ribbonthickness, exdays);
+            this.setCookie('helixSheetWidth', ic.helixSheetWidth, exdays);
+            this.setCookie('nucleicAcidWidth', ic.nucleicAcidWidth, exdays);
+        }
+
         me.htmlCls.clickMenuCls.setLogCmd('set thickness | linerad ' + ic.lineRadius + ' | coilrad ' + ic.coilWidth + ' | stickrad ' + ic.cylinderRadius + ' | tracerad ' + ic.traceRadius + ' | ribbonthick ' + ic.ribbonthickness + ' | proteinwidth ' + ic.helixSheetWidth + ' | nucleotidewidth ' + ic.nucleicAcidWidth  + ' | ballscale ' + ic.dotSphereScale, true);
         ic.drawCls.draw();
+    }
+
+    setCookie(cname, cvalue, exdays) {
+      var d = new Date();
+      d.setTime(d.getTime() + (exdays*24*60*60*1000));
+      var expires = "expires="+ d.toUTCString();
+      document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
     }
 
     updateSurfPara(type) { var me = this.icn3dui, ic = me.icn3d;

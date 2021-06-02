@@ -59,7 +59,7 @@ class ApplyOther {
     //    }
 
         // distance sets
-        if(ic.distPnts.length > 0) {
+        if(ic.distPnts && ic.distPnts.length > 0) {
             for(var i = 0, il = ic.distPnts.length; i < il; ++i) {
                ic.boxCls.createBox_base(ic.distPnts[i], ic.originSize, ic.hColor, false);
             }

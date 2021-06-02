@@ -869,7 +869,7 @@ class SetMenu {
         html += "</ul>";
         html += "</li>";
 
-        html += me.htmlCls.setHtmlCls.getLink('mn3_setThickness', 'Set Thickness');
+        html += me.htmlCls.setHtmlCls.getLink('mn3_setThickness', 'Preferences');
 
         html += "<li>-</li>";
 

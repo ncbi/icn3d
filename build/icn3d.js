@@ -21636,7 +21636,7 @@ var icn3d = (function (exports) {
 
                 if(type === 'mmdbid') {
                     atm.coord = new THREE.Vector3(atm.coord[0], atm.coord[1], atm.coord[2]);
-                    if(ic.q_rotation !== undefined && !ic.icn3dui.cfg.resnum) {
+                    if(ic.q_rotation !== undefined && !ic.icn3dui.cfg.resnum && !ic.icn3dui.cfg.resdef) {
                         if(alignType === 'target') {
                             atm.coord.x += ic.t_trans_add[chainIndex].x;
                             atm.coord.y += ic.t_trans_add[chainIndex].y;
@@ -22047,7 +22047,7 @@ var icn3d = (function (exports) {
             if(type === 'align' && seqalign !== undefined && ic.bFullUi) {
                 ic.setSeqAlignCls.setSeqAlign(seqalign, data.alignedStructures);
             } // if(align
-            else if(type === 'mmdbid' && alignType === 'query' && ic.bFullUi && ic.q_rotation !== undefined && !ic.icn3dui.cfg.resnum) {
+            else if(type === 'mmdbid' && alignType === 'query' && ic.bFullUi && ic.q_rotation !== undefined && !ic.icn3dui.cfg.resnum && !ic.icn3dui.cfg.resdef) {
                 ic.setSeqAlignCls.setSeqAlignChain(chainidInput, chainIndex);
 
                 var bReverse = false;
@@ -24525,6 +24525,52 @@ var icn3d = (function (exports) {
             ic.hlUpdateCls.updateHlAll();
         }
 
+        parseChainRealignPredefined(chainidArray, struct2SeqHash, struct2CoorHash, struct2resid) { var ic = this.icn3d, me = ic.icn3dui;
+
+          var toStruct = chainidArray[0].substr(0, chainidArray[0].indexOf('_')); //.toUpperCase();
+          toStruct = toStruct.toUpperCase();
+
+          var hAtoms = {};
+
+          ic.realignResid = {};
+
+          ic.opts['color'] = 'grey';
+          ic.setColorCls.setColorByOptions(ic.opts, ic.dAtoms);
+
+          for(var index = 0, indexl = chainidArray.length; index < indexl; ++index) {
+              var fromStruct = chainidArray[index + 1].substr(0, chainidArray[index + 1].indexOf('_')); //.toUpperCase();
+              fromStruct = fromStruct.toUpperCase();
+
+              if(toStruct == fromStruct) fromStruct += ic.icn3dui.htmlCls.postfix;
+
+              var seq1 = struct2SeqHash[toStruct];
+              var seq2 = struct2SeqHash[fromStruct];
+
+              var coord1 = struct2CoorHash[toStruct];
+              var coord2 = struct2CoorHash[fromStruct];
+
+              var residArray1 = struct2resid[toStruct];
+              var residArray2 = struct2resid[fromStruct];
+
+              ic.realignResid[toStruct] = [];
+              ic.realignResid[fromStruct] = [];
+
+              for(var i = 0, il = seq1.length; i < il; ++i) {
+                  ic.realignResid[toStruct].push({'resid':residArray1[i], 'resn':seq1[i]});
+                  ic.realignResid[fromStruct].push({'resid':residArray2[i], 'resn':seq2[i]});
+              }
+
+              var chainTo = chainidArray[0];
+              var chainFrom = chainidArray[index + 1];
+
+              var bChainAlign = true;
+              var hAtomsTmp = ic.ParserUtilsCls.alignCoords(coord2, coord1, fromStruct, undefined, chainTo, chainFrom, index + 1, bChainAlign);
+              hAtoms = me.hashUtilsCls.unionHash(hAtoms, hAtomsTmp);
+          }
+
+          ic.chainalignParserCls.downloadChainalignmentPart3(undefined, chainidArray, hAtoms);
+        }
+
         parseChainRealignData(ajaxData, chainresiCalphaHash2, chainidArray, struct2SeqHash, struct2CoorHash, struct2resid, bRealign) { var ic = this.icn3d, me = ic.icn3dui;
           var dataArray =(chainidArray.length == 2) ? [ajaxData] : ajaxData;
 
@@ -24667,17 +24713,11 @@ var icn3d = (function (exports) {
             this.realignChainOnSeqAlign(undefined, chainidArray, bRealign);
         }
 
-        realignChainOnSeqAlign(chainresiCalphaHash2, chainidArray, bRealign) { var ic = this.icn3d, me = ic.icn3dui;
+        realignChainOnSeqAlign(chainresiCalphaHash2, chainidArray, bRealign, bPredefined) { var ic = this.icn3d, me = ic.icn3dui;
             var thisClass = this;
-        //    ic.selectionCls.saveSelectionPrep();
 
-        //    var index = Object.keys(ic.defNames2Atoms).length;
-        //    var name = 'alseq_' + index;
-
-        //    ic.selectionCls.saveSelection(name, name);
-
-            //ic.opts['color'] = 'grey';
-            //ic.setColorCls.setColorByOptions(ic.opts, ic.dAtoms);
+            //bRealign: realign based on seq alignment
+            //bPredefined: chain alignment with predefined matching residues
 
             var struct2SeqHash = {};
             var struct2CoorHash = {};
@@ -24687,8 +24727,19 @@ var icn3d = (function (exports) {
             var ajaxArray = [];
             var url = 'https://www.ncbi.nlm.nih.gov/Structure/pwaln/pwaln.fcgi?from=chainalign';
 
-        //    for(var serial in ic.hAtoms) {
+            var predefinedResArray, predefinedRes;
+
+            if(bPredefined) {
+                predefinedResArray = me.cfg.resdef.trim().split(' | ');
+                if(predefinedResArray.length != chainidArray.length) {
+                   alert("Please make sure the number of chains and the lines of predefined residues are the same...");
+                   return;
+                }
+            }
+
             for(var i = 0, il = chainidArray.length; i < il; ++i) {
+                if(bPredefined) predefinedRes = predefinedResArray[i].trim();
+
                 var pos = chainidArray[i].indexOf('_');
                 var mmdbid = chainidArray[i].substr(0, pos); //.toUpperCase();
                 if(!bRealign) mmdbid =  mmdbid.toUpperCase();
@@ -24708,7 +24759,7 @@ var icn3d = (function (exports) {
                     struct2resid[mmdbid] = [];
                 }
 
-                if(i == 0) { // master
+                if(i == 0 || bPredefined) { // master
                     var base = parseInt(ic.chainsSeq[chainid][0].resi);
 
                     var resRange;
@@ -24718,7 +24769,16 @@ var icn3d = (function (exports) {
                         resRange = base.toString() + '-' + lastResi.toString();
                     }
 
-                    var resiArray =(bRealign) ? [resRange] : ic.icn3dui.cfg.resnum.split(",");
+                    var resiArray;
+                    if(bRealign) {
+                        resiArray = [resRange];
+                    }
+                    else if(bPredefined) {
+                        resiArray = predefinedRes.split(",");
+                    }
+                    else {
+                        resiArray = ic.icn3dui.cfg.resnum.split(",");
+                    }
                     for(var j = 0, jl = resiArray.length; j < jl; ++j) {
                         if(resiArray[j].indexOf('-') != -1) {
                             var startEnd = resiArray[j].split('-');
@@ -24781,7 +24841,7 @@ var icn3d = (function (exports) {
                     }
                 }
 
-                if(i > 0) {
+                if(i > 0 && !bPredefined) {
                     var toStruct = mmdbid_t;
                     var fromStruct = mmdbid;
 
@@ -24800,15 +24860,20 @@ var icn3d = (function (exports) {
                 }
             } // for
 
-            //https://stackoverflow.com/questions/14352139/multiple-ajax-calls-from-array-and-handle-callback-when-completed
-            //https://stackoverflow.com/questions/5518181/jquery-deferreds-when-and-the-fail-callback-arguments
-            $.when.apply(undefined, ajaxArray).then(function() {
-               thisClass.parseChainRealignData(arguments, chainresiCalphaHash2, chainidArray, struct2SeqHash, struct2CoorHash, struct2resid, bRealign);
-            })
-            .fail(function() {
-               alert("The realignment did notwork...");
-               //thisClass.parseChainRealignData(arguments, chainresiCalphaHash2, chainidArray, struct2SeqHash, struct2CoorHash, struct2resid, bRealign);
-            });
+            if(bPredefined) {
+                thisClass.parseChainRealignPredefined(chainidArray, struct2SeqHash, struct2CoorHash, struct2resid);
+            }
+            else {
+                //https://stackoverflow.com/questions/14352139/multiple-ajax-calls-from-array-and-handle-callback-when-completed
+                //https://stackoverflow.com/questions/5518181/jquery-deferreds-when-and-the-fail-callback-arguments
+                $.when.apply(undefined, ajaxArray).then(function() {
+                   thisClass.parseChainRealignData(arguments, chainresiCalphaHash2, chainidArray, struct2SeqHash, struct2CoorHash, struct2resid, bRealign);
+                })
+                .fail(function() {
+                   alert("The realignment did notwork...");
+                   //thisClass.parseChainRealignData(arguments, chainresiCalphaHash2, chainidArray, struct2SeqHash, struct2CoorHash, struct2resid, bRealign);
+                });
+            }
         }
     }
 
@@ -24838,6 +24903,9 @@ var icn3d = (function (exports) {
 
             if(ic.icn3dui.cfg.resnum) {
                 ic.realignParserCls.realignChainOnSeqAlign(chainresiCalphaHash2, chainidArray);
+            }
+            else if(ic.icn3dui.cfg.resdef) {
+                ic.realignParserCls.realignChainOnSeqAlign(chainresiCalphaHash2, chainidArray, undefined, true);
             }
             else {
                 this.downloadChainalignmentPart3(chainresiCalphaHash2, chainidArray, hAtoms);
@@ -24910,7 +24978,7 @@ var icn3d = (function (exports) {
             //if(ic.icn3dui.deferred !== undefined) ic.icn3dui.deferred.resolve(); if(ic.deferred2 !== undefined) ic.deferred2.resolve();
         }
 
-        downloadChainalignment(chainalign, resnum) { var ic = this.icn3d; ic.icn3dui;
+        downloadChainalignment(chainalign, resnum, resdef) { var ic = this.icn3d; ic.icn3dui;
             var thisClass = this;
 
             ic.opts['proteins'] = 'c alpha trace';
@@ -24966,7 +25034,7 @@ var icn3d = (function (exports) {
 
                 ajaxArray.push(queryAjax);
 
-                if(!ic.icn3dui.cfg.resnum) {
+                if(!ic.icn3dui.cfg.resnum && !ic.icn3dui.cfg.resdef) {
                     var alignAjax = $.ajax({
                       url: urlalign,
                       dataType: 'jsonp',
@@ -24981,10 +25049,10 @@ var icn3d = (function (exports) {
             //https://stackoverflow.com/questions/5518181/jquery-deferreds-when-and-the-fail-callback-arguments
             $.when.apply(undefined, ajaxArray).then(function() {
               thisClass.parseChainAlignData(arguments, alignArray, ic.mmdbid_t, ic.chain_t);
-            })
-            .fail(function() {
-              thisClass.parseChainAlignData(arguments, alignArray, ic.mmdbid_t, ic.chain_t);
             });
+    //        .fail(function() {
+    //          thisClass.parseChainAlignData(arguments, alignArray, ic.mmdbid_t, ic.chain_t);
+    //        });
         }
 
         parseChainAlignData(data, chainidArray, mmdbid_t, chain_t) { var ic = this.icn3d; ic.icn3dui;
@@ -25006,7 +25074,7 @@ var icn3d = (function (exports) {
 
             var queryDataArray = [];
 
-            var step =(ic.icn3dui.cfg.resnum) ? 1 : 2;
+            var step =(ic.icn3dui.cfg.resnum || ic.icn3dui.cfg.resdef) ? 1 : 2;
 
             for(var index = 1, indexl = dataArray.length; index < indexl; index += step) {
                 var queryData = dataArray[index][0];
@@ -25016,7 +25084,7 @@ var icn3d = (function (exports) {
                 var mmdbid_q = chainidArray[index2].substr(0, pos2).toUpperCase();
                 var chain_q = chainidArray[index2].substr(pos2+1);
 
-                if(ic.icn3dui.cfg.resnum) {
+                if(ic.icn3dui.cfg.resnum || ic.icn3dui.cfg.resdef) {
                     if(queryData !== undefined && JSON.stringify(queryData).indexOf('Oops there was a problem') === -1
                       ) {
                         ic.mmdbidArray.push(mmdbid_q);
@@ -25064,7 +25132,7 @@ var icn3d = (function (exports) {
         loadOpmDataForChainalign(data1, data2, chainidArray, mmdbidArray) { var ic = this.icn3d; ic.icn3dui;
             var thisClass = this;
 
-            if(ic.icn3dui.cfg.resnum) {
+            if(ic.icn3dui.cfg.resnum || ic.icn3dui.cfg.resdef) {
                 if(!ic.bCommandLoad) ic.init(); // remove all previously loaded data
                 this.downloadChainalignmentPart2(data1, data2, undefined, chainidArray);
 
@@ -29688,6 +29756,29 @@ var icn3d = (function (exports) {
 
                 ic.drawCls.draw();
             }
+          }
+          else if(commandOri.indexOf('set light') == 0) {
+            var paraArray = command.split(' | ');
+
+            for(var i = 1, il = paraArray.length; i < il; ++i) {
+                var p1Array = paraArray[i].split(' ');
+
+                var para = p1Array[0];
+                var value = parseFloat(p1Array[1]);
+
+                if(para == 'light1') ic.light1 = value;
+                if(para == 'light2') ic.light2 = value;
+                if(para == 'light3') ic.light3 = value;
+
+                ic.drawCls.draw();
+            }
+          }
+          else if(commandOri.indexOf('set shininess') == 0) {
+            var pos = command.lastIndexOf(' ');
+
+            ic.shininess = parseFloat(command.substr(pos + 1));
+
+            ic.drawCls.draw();
           }
           else if(command.indexOf('set highlight color') == 0) {
                var color = command.substr(20);
@@ -38482,6 +38573,31 @@ var icn3d = (function (exports) {
         applyDisplayOptions(options, atoms, bHighlight) { var ic = this.icn3d, me = ic.icn3dui;
             if(options === undefined) options = ic.opts;
 
+            // get parameters from cookies
+            if(!me.bNode && me.htmlCls.setHtmlCls.getCookie('lineRadius') != '') {
+                var lineRadius = parseFloat(me.htmlCls.setHtmlCls.getCookie('lineRadius'));
+                var coilWidth = parseFloat(me.htmlCls.setHtmlCls.getCookie('coilWidth'));
+                var cylinderRadius = parseFloat(me.htmlCls.setHtmlCls.getCookie('cylinderRadius'));
+                var traceRadius = parseFloat(me.htmlCls.setHtmlCls.getCookie('traceRadius'));
+                var dotSphereScale = parseFloat(me.htmlCls.setHtmlCls.getCookie('dotSphereScale'));
+                var ribbonthickness = parseFloat(me.htmlCls.setHtmlCls.getCookie('ribbonthickness'));
+                var helixSheetWidth = parseFloat(me.htmlCls.setHtmlCls.getCookie('helixSheetWidth'));
+                var nucleicAcidWidth = parseFloat(me.htmlCls.setHtmlCls.getCookie('nucleicAcidWidth'));
+
+                if(ic.lineRadius != lineRadius || ic.coilWidth != coilWidth || ic.cylinderRadius != cylinderRadius || ic.traceRadius != traceRadius || ic.dotSphereScale != dotSphereScale || ic.ribbonthickness != ribbonthickness || ic.helixSheetWidth != helixSheetWidth || ic.nucleicAcidWidth != nucleicAcidWidth) {
+                    me.htmlCls.clickMenuCls.setLogCmd('set thickness | linerad ' + lineRadius + ' | coilrad ' + coilWidth + ' | stickrad ' + cylinderRadius + ' | tracerad ' + traceRadius + ' | ribbonthick ' + ribbonthickness + ' | proteinwidth ' + helixSheetWidth + ' | nucleotidewidth ' + nucleicAcidWidth  + ' | ballscale ' + dotSphereScale, true);
+                }
+
+                ic.lineRadius = lineRadius;
+                ic.coilWidth = coilWidth;
+                ic.cylinderRadius = cylinderRadius;
+                ic.traceRadius = traceRadius;
+                ic.dotSphereScale = dotSphereScale;
+                ic.ribbonthickness = ribbonthickness;
+                ic.helixSheetWidth = helixSheetWidth;
+                ic.nucleicAcidWidth = nucleicAcidWidth;
+            }
+
             var residueHash = {};
             var singletonResidueHash = {};
             var atomsObj = {};
@@ -39151,7 +39267,7 @@ var icn3d = (function (exports) {
         //    }
 
             // distance sets
-            if(ic.distPnts.length > 0) {
+            if(ic.distPnts && ic.distPnts.length > 0) {
                 for(var i = 0, il = ic.distPnts.length; i < il; ++i) {
                    ic.boxCls.createBox_base(ic.distPnts[i], ic.originSize, ic.hColor, false);
                 }
@@ -39561,27 +39677,52 @@ var icn3d = (function (exports) {
                 ic.scene_ghost = new THREE.Scene();
             }
 
-            ic.directionalLight = new THREE.DirectionalLight(0xFFFFFF, 0.6); //1.0);
-            ic.directionalLight2 = new THREE.DirectionalLight(0xFFFFFF, 0.4);
-            ic.directionalLight3 = new THREE.DirectionalLight(0xFFFFFF, 0.2);
+            // get parameters from cookies
+            if(me.htmlCls.setHtmlCls.getCookie('shininess') != '') {
+                var shininess = parseFloat(me.htmlCls.setHtmlCls.getCookie('shininess'));
+
+                if(ic.shininess != shininess) {
+                    me.htmlCls.clickMenuCls.setLogCmd('set shininess ' + shininess, true);
+                }
+
+                ic.shininess = shininess;
+            }
+
+            if(!me.bNode && me.htmlCls.setHtmlCls.getCookie('light1') != '') {
+                var light1 = parseFloat(me.htmlCls.setHtmlCls.getCookie('light1'));
+                var light2 = parseFloat(me.htmlCls.setHtmlCls.getCookie('light2'));
+                var light3 = parseFloat(me.htmlCls.setHtmlCls.getCookie('light3'));
+
+                if(ic.light1 != light1 || ic.light2 != light2 || ic.light3 != light3) {
+                    me.htmlCls.clickMenuCls.setLogCmd('set light | light1 ' + light1 + ' | light2 ' + light2 + ' | light3 ' + light3, true);
+                }
+
+                ic.light1 = light1;
+                ic.light2 = light2;
+                ic.light3 = light3;
+            }
+
+            ic.directionalLight = new THREE.DirectionalLight(0xFFFFFF, ic.light1); //1.0);
+            ic.directionalLight2 = new THREE.DirectionalLight(0xFFFFFF, ic.light2);
+            ic.directionalLight3 = new THREE.DirectionalLight(0xFFFFFF, ic.light3);
 
             if(ic.cam_z > 0) {
-              ic.directionalLight.position.set(0, 1, 1);
-              ic.directionalLight2.position.set(0, -1, 1);
-              ic.directionalLight3.position.set(0, 1, -1);
+              ic.directionalLight.position.set(-1, 1, 1); //(0, 1, 1);
+              ic.directionalLight2.position.set(1, 1, 1); //(0, -1, 1);
+              ic.directionalLight3.position.set(1, 1, -1); //(0, 1, -1);
 
-              ic.lightPos = new THREE.Vector3(0, 1, 1);
-              ic.lightPos2 = new THREE.Vector3(0, -1, 1);
-              ic.lightPos3 = new THREE.Vector3(0, 1, -1);
+              ic.lightPos = new THREE.Vector3(-1, 1, 1); //(0, 1, 1);
+              ic.lightPos2 = new THREE.Vector3(1, 1, 1); //(0, -1, 1);
+              ic.lightPos3 = new THREE.Vector3(1, 1, -1); //(0, 1, -1);
             }
             else {
-              ic.directionalLight.position.set(0, 1, -1);
-              ic.directionalLight2.position.set(0, -1, -1);
-              ic.directionalLight3.position.set(0, 1, 1);
+              ic.directionalLight.position.set(-1, 1, -1); //(0, 1, -1);
+              ic.directionalLight2.position.set(1, 1, -1); //(0, -1, -1);
+              ic.directionalLight3.position.set(1, 1, 1); //(0, 1, 1);
 
-              ic.lightPos = new THREE.Vector3(0, 1, -1);
-              ic.lightPos2 = new THREE.Vector3(0, -1, -1);
-              ic.lightPos3 = new THREE.Vector3(0, 1, 1);
+              ic.lightPos = new THREE.Vector3(-1, 1, -1); //(0, 1, -1);
+              ic.lightPos2 = new THREE.Vector3(1, 1, -1); //(0, -1, -1);
+              ic.lightPos3 = new THREE.Vector3(1, 1, 1); //(0, 1, 1);
             }
 
             var ambientLight = new THREE.AmbientLight(0x888888); //(0x404040);
@@ -44635,7 +44776,7 @@ var icn3d = (function (exports) {
             html += "</ul>";
             html += "</li>";
 
-            html += me.htmlCls.setHtmlCls.getLink('mn3_setThickness', 'Set Thickness');
+            html += me.htmlCls.setHtmlCls.getLink('mn3_setThickness', 'Preferences');
 
             html += "<li>-</li>";
 
@@ -45982,10 +46123,12 @@ var icn3d = (function (exports) {
             html += "<div style='width:450px'>(Note: To align chains in custom PDB files, you could concatenate PDB files in a single PDB file with the separation line \"ENDMDL\". Then load it in \"Open File > PDB File\" in the \"File\" menu and click \"View Sequences & Annotations\" in the \"Window\" menu. Finally select two chains in the sequence window and click \"Realign Selection\" in the \"File\" menu.)</div>";
             html += "</div>";
         */
-            html += "<div style='width:500px'>";
-            html += "All chains will be aligned to the first chain in the comma-separated chain IDs. Each chain ID has the form of pdbid_chain(e.g., 1HHO_A, case sensitive). If the residue numbers to be aligned in the first chain is not defined, the full chain will be used for sequence alignment.<br/><br/>";
-            html += "<div style='display:inline-block; width:110px'>Chain IDs: </div>" + me.htmlCls.inputTextStr + "id='" + me.pre + "chainalignids' value='1HHO_A,4N7N_A' size=50><br/>";
-            html += "<div style='display:inline-block; width:110px'>Residue Numbers(optional): </div>" + me.htmlCls.inputTextStr + "id='" + me.pre + "resalignids' placeholder='1,5,10-50' size=50><br/><br/>";
+            html += "<div style='width:550px'>";
+            html += "All chains will be aligned to the first chain in the comma-separated chain IDs. Each chain ID has the form of pdbid_chain(e.g., 1HHO_A, case sensitive).<br/><br/>";
+            html += "<b>Chain IDs</b>: " + me.htmlCls.inputTextStr + "id='" + me.pre + "chainalignids' value='1HHO_A,4N7N_A,2HCO_A' size=50><br/><br/>";
+            html += "<b>Optional 1</b>, full chains are used for structure alignment<br/><br/>";
+            html += "<b>Optional 2</b>, sequence alignment (followed by structure alignemnt) based on residue numbers in the First/Master chain: <br>" + me.htmlCls.inputTextStr + "id='" + me.pre + "resalignids' placeholder='1,5,10-50' size=50><br/><br/>";
+            html += "<b>Optional 3</b>, predefined alignment with residue numbers in each chain specified (one chain per line): <br><textarea id='" + me.pre + "predefinedres' rows='5' style='width: 100%; height: " +(me.htmlCls.LOG_HEIGHT) + "px; padding: 0px; border: 0px;' placeholder='1,5,10-50\n1,5,10-50\n1,5,10-50'></textarea><br/><br/>";
             html += me.htmlCls.buttonStr + "reload_chainalign'>Align Biological Unit</button>" + me.htmlCls.buttonStr + "reload_chainalign_asym' style='margin-left:30px'>Align Asymmetric Unit</button><br/><br/>";
             html += "(Note: To align chains in custom PDB files, you could concatenate PDB files in a single PDB file with the separation line \"ENDMDL\". Then load it in \"Open File > PDB File\" in the \"File\" menu and click \"View Sequences & Annotations\" in the \"Window\" menu. Finally select multiple chains in the sequence window and click \"Realign Selection\" in the \"File\" menu.)<br><br>";
             html += "</div></div>";
@@ -46991,8 +47134,15 @@ var icn3d = (function (exports) {
         //       var alignment = $("#" + me.pre + "chainalignid1").val() + "," + $("#" + me.pre + "chainalignid2").val();
                var alignment = $("#" + me.pre + "chainalignids").val();
                var resalign = $("#" + me.pre + "resalignids").val();
-               me.htmlCls.clickMenuCls.setLogCmd("load chains " + alignment + " | residues " + resalign, false);
-               window.open(me.htmlCls.baseUrl + 'icn3d/full.html?chainalign=' + alignment + '&resnum=' + resalign + '&showalignseq=1', '_blank');
+               var predefinedres = $("#" + me.pre + "predefinedres").val().trim().replace(/\n/g, ' | ');
+
+               if(predefinedres && alignment.split(',').length != predefinedres.split(' | ').length) {
+                   alert("Please make sure the number of chains and the lines of predefined residues are the same...");
+                   return;
+               }
+
+               me.htmlCls.clickMenuCls.setLogCmd("load chains " + alignment + " | residues " + resalign + " | resdef " + predefinedres, false);
+               window.open(me.htmlCls.baseUrl + 'icn3d/full.html?chainalign=' + alignment + '&resnum=' + resalign + '&resdef=' + predefinedres + '&showalignseq=1', '_blank');
             });
 
             me.myEventCls.onIds("#" + me.pre + "reload_chainalign_asym", "click", function(e) { me.icn3d;
@@ -47001,8 +47151,14 @@ var icn3d = (function (exports) {
         //       var alignment = $("#" + me.pre + "chainalignid1").val() + "," + $("#" + me.pre + "chainalignid2").val();
                var alignment = $("#" + me.pre + "chainalignids").val();
                var resalign = $("#" + me.pre + "resalignids").val();
-               me.htmlCls.clickMenuCls.setLogCmd("load chains " + alignment + " on asymmetric unit | residues " + resalign, false);
-               window.open(me.htmlCls.baseUrl + 'icn3d/full.html?chainalign=' + alignment + '&resnum=' + resalign + '&showalignseq=1&buidx=0', '_blank');
+               var predefinedres = $("#" + me.pre + "predefinedres").val().trim().replace(/\\n/g, ' | ');
+               if(predefinedres && alignment.split(',').length != predefinedres.split(' | ').length) {
+                   alert("Please make sure the number of chains and the lines of predefined residues are the same...");
+                   return;
+               }
+
+               me.htmlCls.clickMenuCls.setLogCmd("load chains " + alignment + " on asymmetric unit | residues " + resalign + " | resdef " + predefinedres, false);
+               window.open(me.htmlCls.baseUrl + 'icn3d/full.html?chainalign=' + alignment + '&resnum=' + resalign + '&resdef=' + predefinedres + '&showalignseq=1&buidx=0', '_blank');
             });
 
             me.myEventCls.onIds("#" + me.pre + "reload_mutation_3d", "click", function(e) { me.icn3d;
@@ -48657,10 +48813,48 @@ var icn3d = (function (exports) {
             var coilrad =(type == '3dprint') ? '1.2' : '0.3';
             var stickrad =(type == '3dprint') ? '0.8' : '0.4';
             var tracerad =(type == '3dprint') ? '1' : '0.2';
+            var ballscale =(type == '3dprint') ? '0.6' : '0.3';
             var ribbonthick =(type == '3dprint') ? '1' : '0.2';
             var prtribbonwidth =(type == '3dprint') ? '2' : '1.3';
             var nucleotideribbonwidth =(type == '3dprint') ? '1.4' : '0.8';
-            var ballscale =(type == '3dprint') ? '0.6' : '0.3';
+
+            var shininess = 40;
+            var light1 = 0.6;
+            var light2 = 0.4;
+            var light3 = 0.2;
+
+            // retrieve from cache
+            if(type == 'style') {
+                if(this.getCookie('shininess') != '') {
+                    shininess = parseFloat(this.getCookie('shininess'));
+                }
+
+                if(this.getCookie('light1') != '') {
+                    light1 = parseFloat(this.getCookie('light1'));
+                    light2 = parseFloat(this.getCookie('light2'));
+                    light3 = parseFloat(this.getCookie('light3'));
+                }
+
+                if(this.getCookie('lineRadius') != '') {
+                    linerad = parseFloat(this.getCookie('lineRadius'));
+                    coilrad = parseFloat(this.getCookie('coilWidth'));
+                    stickrad = parseFloat(this.getCookie('cylinderRadius'));
+                    tracerad = parseFloat(this.getCookie('traceRadius'));
+                    ballscale = parseFloat(this.getCookie('dotSphereScale'));
+                    ribbonthick = parseFloat(this.getCookie('ribbonthickness'));
+                    prtribbonwidth = parseFloat(this.getCookie('helixSheetWidth'));
+                    nucleotideribbonwidth = parseFloat(this.getCookie('nucleicAcidWidth'));
+                }
+
+                html += "<b>Note</b>: The following parameters will be saved in cache. You just need to set them once. <br><br>";
+
+                html += "<b>1. Shininess</b>: " + me.htmlCls.inputTextStr + "id='" + me.pre + "shininess' value='" + shininess + "' size=4>" + me.htmlCls.space3 + "(for the shininess of the 3D objects, default 40)<br/><br/>";
+                html += "<b>2. Three directional lights</b>: <br>";
+                html += "<b>Key Light</b>: " + me.htmlCls.inputTextStr + "id='" + me.pre + "light1' value='" + light1 + "' size=4>" + me.htmlCls.space3 + "(for the light strength of the key light, default 0.6)<br/>";
+                html += "<b>Fill Light</b>: " + me.htmlCls.inputTextStr + "id='" + me.pre + "light2' value='" + light2 + "' size=4>" + me.htmlCls.space3 + "(for the light strength of the fill light, default 0.4)<br/>";
+                html += "<b>Back Light</b>: " + me.htmlCls.inputTextStr + "id='" + me.pre + "light3' value='" + light3 + "' size=4>" + me.htmlCls.space3 + "(for the light strength of the back light, default 0.2)<br/><br/>";
+                html += "<b>3. Thickness</b>: <br>";
+            }
 
             html += "<b>Line Radius</b>: " + me.htmlCls.inputTextStr + "id='" + me.pre + "linerad_" + type + "' value='" + linerad + "' size=4>" + me.htmlCls.space3 + "(for stabilizers, hydrogen bonds, distance lines, default 0.1)<br/>";
             html += "<b>Coil Radius</b>: " + me.htmlCls.inputTextStr + "id='" + me.pre + "coilrad_" + type + "' value='" + coilrad + "' size=4>" + me.htmlCls.space3 + "(for coils, default 0.3)<br/>";
@@ -48673,9 +48867,25 @@ var icn3d = (function (exports) {
 
             html += "<b>Ball Scale</b>: " + me.htmlCls.inputTextStr + "id='" + me.pre + "ballscale_" + type + "' value='" + ballscale + "' size=4>" + me.htmlCls.space3 + "(for styles 'Ball and Stick' and 'Dot', default 0.3)<br/>";
 
-            html += me.htmlCls.spanNowrapStr + "" + me.htmlCls.buttonStr + "apply_thickness_" + type + "'>Preview</button></span>";
+            html += me.htmlCls.spanNowrapStr + "" + me.htmlCls.buttonStr + "apply_thickness_" + type + "'>Apply</button></span>";
 
             return html;
+        }
+
+        getCookie(cname) {
+          var name = cname + "=";
+          var decodedCookie = decodeURIComponent(document.cookie);
+          var ca = decodedCookie.split(';');
+          for(var i = 0; i <ca.length; i++) {
+            var c = ca[i];
+            while (c.charAt(0) == ' ') {
+              c = c.substring(1);
+            }
+            if (c.indexOf(name) == 0) {
+              return c.substring(name.length, c.length);
+            }
+          }
+          return "";
         }
 
         setSequenceGuide(suffix, bShown) { var me = this.icn3dui, ic = me.icn3d;
@@ -49223,6 +49433,14 @@ var icn3d = (function (exports) {
 
         setLineThickness(postfix) { var me = this.icn3dui, ic = me.icn3d;
             ic.bSetThickness = true;
+
+            if(postfix == 'style') {
+                ic.shininess = parseFloat($("#" + me.pre + "shininess").val()); //40;
+                ic.light1 = parseFloat($("#" + me.pre + "light1").val()); //0.6;
+                ic.light2 = parseFloat($("#" + me.pre + "light2").val()); //0.4;
+                ic.light3 = parseFloat($("#" + me.pre + "light3").val()); //0.2;
+            }
+
             ic.lineRadius = parseFloat($("#" + me.pre + "linerad_" + postfix ).val()); //0.1; // hbonds, distance lines
             ic.coilWidth = parseFloat($("#" + me.pre + "coilrad_" + postfix ).val()); //0.4; // style cartoon-coil
             ic.cylinderRadius = parseFloat($("#" + me.pre + "stickrad_" + postfix ).val()); //0.4; // style stick
@@ -49231,8 +49449,34 @@ var icn3d = (function (exports) {
             ic.ribbonthickness = parseFloat($("#" + me.pre + "ribbonthick_" + postfix ).val()); //0.4; // style ribbon, nucleotide cartoon, stand thickness
             ic.helixSheetWidth = parseFloat($("#" + me.pre + "prtribbonwidth_" + postfix ).val()); //1.3; // style ribbon, stand thickness
             ic.nucleicAcidWidth = parseFloat($("#" + me.pre + "nucleotideribbonwidth_" + postfix ).val()); //0.8; // nucleotide cartoon
+
+            // save to cache
+            if(!me.bNode && postfix == 'style') {
+                var exdays = 3650; // 10 years
+                this.setCookie('shininess', ic.shininess, exdays);
+                this.setCookie('light1', ic.light1, exdays);
+                this.setCookie('light2', ic.light2, exdays);
+                this.setCookie('light3', ic.light3, exdays);
+
+                this.setCookie('lineRadius', ic.lineRadius, exdays);
+                this.setCookie('coilWidth', ic.coilWidth, exdays);
+                this.setCookie('cylinderRadius', ic.cylinderRadius, exdays);
+                this.setCookie('traceRadius', ic.traceRadius, exdays);
+                this.setCookie('dotSphereScale', ic.dotSphereScale, exdays);
+                this.setCookie('ribbonthickness', ic.ribbonthickness, exdays);
+                this.setCookie('helixSheetWidth', ic.helixSheetWidth, exdays);
+                this.setCookie('nucleicAcidWidth', ic.nucleicAcidWidth, exdays);
+            }
+
             me.htmlCls.clickMenuCls.setLogCmd('set thickness | linerad ' + ic.lineRadius + ' | coilrad ' + ic.coilWidth + ' | stickrad ' + ic.cylinderRadius + ' | tracerad ' + ic.traceRadius + ' | ribbonthick ' + ic.ribbonthickness + ' | proteinwidth ' + ic.helixSheetWidth + ' | nucleotidewidth ' + ic.nucleicAcidWidth  + ' | ballscale ' + ic.dotSphereScale, true);
             ic.drawCls.draw();
+        }
+
+        setCookie(cname, cvalue, exdays) {
+          var d = new Date();
+          d.setTime(d.getTime() + (exdays*24*60*60*1000));
+          var expires = "expires="+ d.toUTCString();
+          document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
         }
 
         updateSurfPara(type) { var me = this.icn3dui, ic = me.icn3d;
@@ -51491,6 +51735,31 @@ var icn3d = (function (exports) {
         this.shininess = 40; //30
         this.emissive = 0x111111; //0x000000
 
+        this.light1 = 0.6; //1
+        this.light2 = 0.4;
+        this.light3 = 0.2;
+
+        //This is the line radius for stabilizers, hydrogen bonds, and distance lines. It's 0.1 by default.
+        this.lineRadius = 0.1; // hbonds, distance lines
+        //This is the coil radius for coils. It's 0.3 by default.
+        this.coilWidth = 0.3; //0.4; // style cartoon-coil
+        this.cylinderRadius = 0.4; // style stick
+        //This is the stick radius for C alpha trace and O3' trace. It's 0.4 by default.
+        this.traceRadius = 0.4; //0.2; // c alpha trace, nucleotide stick
+        //This is the ball scale for styles 'Ball and Stick' and 'Dot'. It's 0.3 by default.
+        this.dotSphereScale = 0.3; // style ball and stick, dot
+        //This is the sphere radius for the style 'Sphere'. It's 1.5 by default.
+        this.sphereRadius = 1.5; // style sphere
+        //This is the cylinder radius for the style 'Cylinder and Plate'. It's 1.6 by default.
+        this.cylinderHelixRadius = 1.6; // style sylinder and plate
+
+        //This is the ribbon thickness for helix and sheet ribbons, and nucleotide ribbons. It's 0.4 by default.
+        this.ribbonthickness = 0.2; // 0.4; // style ribbon, nucleotide cartoon, stand thickness
+        //This is the width of protein ribbons. It's 1.3 by default.
+        this.helixSheetWidth = 1.3; // style ribbon, nucleotide cartoon, stand thickness
+        //This is the width of nucleotide ribbons. It's 0.8 by default.
+        this.nucleicAcidWidth = 0.8; // nucleotide cartoon
+
         // mobile has a problem when the scaleFactor is 2.0
         // the scaleFactor improve the image quality, but it has some centering and picking problems in some Mac when it is not 1
         this.scaleFactor = 1.0;
@@ -51611,27 +51880,6 @@ var icn3d = (function (exports) {
         this.linewidth = 1;
         this.hlLineRadius = 0.1; // style line, highlight
         //this.curveWidth = 3;
-
-        //This is the line radius for stabilizers, hydrogen bonds, and distance lines. It's 0.1 by default.
-        this.lineRadius = 0.1; // hbonds, distance lines
-        //This is the coil radius for coils. It's 0.3 by default.
-        this.coilWidth = 0.3; //0.4; // style cartoon-coil
-        this.cylinderRadius = 0.4; // style stick
-        //This is the stick radius for C alpha trace and O3' trace. It's 0.4 by default.
-        this.traceRadius = 0.4; //0.2; // c alpha trace, nucleotide stick
-        //This is the ball scale for styles 'Ball and Stick' and 'Dot'. It's 0.3 by default.
-        this.dotSphereScale = 0.3; // style ball and stick, dot
-        //This is the sphere radius for the style 'Sphere'. It's 1.5 by default.
-        this.sphereRadius = 1.5; // style sphere
-        //This is the cylinder radius for the style 'Cylinder and Plate'. It's 1.6 by default.
-        this.cylinderHelixRadius = 1.6; // style sylinder and plate
-
-        //This is the ribbon thickness for helix and sheet ribbons, and nucleotide ribbons. It's 0.4 by default.
-        this.ribbonthickness = 0.2; // 0.4; // style ribbon, nucleotide cartoon, stand thickness
-        //This is the width of protein ribbons. It's 1.3 by default.
-        this.helixSheetWidth = 1.3; // style ribbon, nucleotide cartoon, stand thickness
-        //This is the width of nucleotide ribbons. It's 0.8 by default.
-        this.nucleicAcidWidth = 0.8; // nucleotide cartoon
 
         this.threshbox = 180; // maximum possible boxsize, default 180
         this.maxAtoms3DMultiFile = 40000; // above the threshold, multiple files wil be output for 3D printing
@@ -52023,7 +52271,7 @@ var icn3d = (function (exports) {
         //even when multiple iCn3D viewers are shown together.
         this.pre = this.cfg.divid + "_";
 
-        this.REVISION = '3.1.4';
+        this.REVISION = '3.1.5';
 
         // In nodejs, iCn3D defines "window = {navigator: {}}"
         this.bNode = (Object.keys(window).length < 2) ? true : false;
@@ -52327,9 +52575,9 @@ var icn3d = (function (exports) {
         else if(me.cfg.chainalign !== undefined) {
             ic.bChainAlign = true;
             ic.inputid = me.cfg.chainalign;
-            ic.loadCmd = 'load chainalignment ' + me.cfg.chainalign + ' | resnum ' + me.cfg.resnum + ' | parameters ' + me.cfg.inpara;
+            ic.loadCmd = 'load chainalignment ' + me.cfg.chainalign + ' | resnum ' + me.cfg.resnum + ' | resdef ' + me.cfg.resdef + ' | parameters ' + me.cfg.inpara;
             me.htmlCls.clickMenuCls.setLogCmd(ic.loadCmd, true);
-            ic.chainalignParserCls.downloadChainalignment(me.cfg.chainalign, me.cfg.resnum);
+            ic.chainalignParserCls.downloadChainalignment(me.cfg.chainalign, me.cfg.resnum, me.cfg.resdef);
         }
         else if(me.cfg.command !== undefined && me.cfg.command !== '') {
             if(me.cfg.command.indexOf('url=') !== -1) ic.bInputUrlfile = true;

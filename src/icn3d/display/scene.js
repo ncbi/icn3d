@@ -84,27 +84,52 @@ class Scene {
             ic.scene_ghost = new THREE.Scene();
         }
 
-        ic.directionalLight = new THREE.DirectionalLight(0xFFFFFF, 0.6); //1.0);
-        ic.directionalLight2 = new THREE.DirectionalLight(0xFFFFFF, 0.4);
-        ic.directionalLight3 = new THREE.DirectionalLight(0xFFFFFF, 0.2);
+        // get parameters from cookies
+        if(me.htmlCls.setHtmlCls.getCookie('shininess') != '') {
+            var shininess = parseFloat(me.htmlCls.setHtmlCls.getCookie('shininess'));
+
+            if(ic.shininess != shininess) {
+                me.htmlCls.clickMenuCls.setLogCmd('set shininess ' + shininess, true);
+            }
+
+            ic.shininess = shininess;
+        }
+
+        if(!me.bNode && me.htmlCls.setHtmlCls.getCookie('light1') != '') {
+            var light1 = parseFloat(me.htmlCls.setHtmlCls.getCookie('light1'));
+            var light2 = parseFloat(me.htmlCls.setHtmlCls.getCookie('light2'));
+            var light3 = parseFloat(me.htmlCls.setHtmlCls.getCookie('light3'));
+
+            if(ic.light1 != light1 || ic.light2 != light2 || ic.light3 != light3) {
+                me.htmlCls.clickMenuCls.setLogCmd('set light | light1 ' + light1 + ' | light2 ' + light2 + ' | light3 ' + light3, true);
+            }
+
+            ic.light1 = light1;
+            ic.light2 = light2;
+            ic.light3 = light3;
+        }
+
+        ic.directionalLight = new THREE.DirectionalLight(0xFFFFFF, ic.light1); //1.0);
+        ic.directionalLight2 = new THREE.DirectionalLight(0xFFFFFF, ic.light2);
+        ic.directionalLight3 = new THREE.DirectionalLight(0xFFFFFF, ic.light3);
 
         if(ic.cam_z > 0) {
-          ic.directionalLight.position.set(0, 1, 1);
-          ic.directionalLight2.position.set(0, -1, 1);
-          ic.directionalLight3.position.set(0, 1, -1);
+          ic.directionalLight.position.set(-1, 1, 1); //(0, 1, 1);
+          ic.directionalLight2.position.set(1, 1, 1); //(0, -1, 1);
+          ic.directionalLight3.position.set(1, 1, -1); //(0, 1, -1);
 
-          ic.lightPos = new THREE.Vector3(0, 1, 1);
-          ic.lightPos2 = new THREE.Vector3(0, -1, 1);
-          ic.lightPos3 = new THREE.Vector3(0, 1, -1);
+          ic.lightPos = new THREE.Vector3(-1, 1, 1); //(0, 1, 1);
+          ic.lightPos2 = new THREE.Vector3(1, 1, 1); //(0, -1, 1);
+          ic.lightPos3 = new THREE.Vector3(1, 1, -1); //(0, 1, -1);
         }
         else {
-          ic.directionalLight.position.set(0, 1, -1);
-          ic.directionalLight2.position.set(0, -1, -1);
-          ic.directionalLight3.position.set(0, 1, 1);
+          ic.directionalLight.position.set(-1, 1, -1); //(0, 1, -1);
+          ic.directionalLight2.position.set(1, 1, -1); //(0, -1, -1);
+          ic.directionalLight3.position.set(1, 1, 1); //(0, 1, 1);
 
-          ic.lightPos = new THREE.Vector3(0, 1, -1);
-          ic.lightPos2 = new THREE.Vector3(0, -1, -1);
-          ic.lightPos3 = new THREE.Vector3(0, 1, 1);
+          ic.lightPos = new THREE.Vector3(-1, 1, -1); //(0, 1, -1);
+          ic.lightPos2 = new THREE.Vector3(1, 1, -1); //(0, -1, -1);
+          ic.lightPos3 = new THREE.Vector3(1, 1, 1); //(0, 1, 1);
         }
 
         var ambientLight = new THREE.AmbientLight(0x888888); //(0x404040);

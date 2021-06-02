@@ -68,6 +68,59 @@ class RealignParser {
         ic.hlUpdateCls.updateHlAll();
     }
 
+    parseChainRealignPredefined(chainidArray, struct2SeqHash, struct2CoorHash, struct2resid) { var ic = this.icn3d, me = ic.icn3dui;
+      var bRealign = undefined;
+
+      var toStruct = chainidArray[0].substr(0, chainidArray[0].indexOf('_')); //.toUpperCase();
+      if(!bRealign) toStruct = toStruct.toUpperCase();
+
+      var hAtoms = {}
+
+      ic.realignResid = {}
+
+      ic.opts['color'] = 'grey';
+      ic.setColorCls.setColorByOptions(ic.opts, ic.dAtoms);
+
+      for(var index = 0, indexl = chainidArray.length; index < indexl; ++index) {
+          var fromStruct = chainidArray[index + 1].substr(0, chainidArray[index + 1].indexOf('_')); //.toUpperCase();
+          if(!bRealign) fromStruct = fromStruct.toUpperCase();
+
+          if(toStruct == fromStruct) fromStruct += ic.icn3dui.htmlCls.postfix;
+
+          var seq1 = struct2SeqHash[toStruct];
+          var seq2 = struct2SeqHash[fromStruct];
+
+          var coord1 = struct2CoorHash[toStruct];
+          var coord2 = struct2CoorHash[fromStruct];
+
+          var residArray1 = struct2resid[toStruct];
+          var residArray2 = struct2resid[fromStruct];
+
+          // transform from the second structure to the first structure
+          var coordsTo = [];
+          var coordsFrom = [];
+
+          var seqto = '', seqfrom = ''
+
+          ic.realignResid[toStruct] = [];
+          ic.realignResid[fromStruct] = [];
+
+          for(var i = 0, il = seq1.length; i < il; ++i) {
+              ic.realignResid[toStruct].push({'resid':residArray1[i], 'resn':seq1[i]});
+              ic.realignResid[fromStruct].push({'resid':residArray2[i], 'resn':seq2[i]});
+          }
+
+          var chainTo = chainidArray[0];
+          var chainFrom = chainidArray[index + 1];
+
+          var bChainAlign = true;
+          var hAtomsTmp = ic.ParserUtilsCls.alignCoords(coord2, coord1, fromStruct, undefined, chainTo, chainFrom, index + 1, bChainAlign);
+          hAtoms = me.hashUtilsCls.unionHash(hAtoms, hAtomsTmp);
+      }
+
+      ic.chainalignParserCls.downloadChainalignmentPart3(undefined, chainidArray, hAtoms);
+    }
+
     parseChainRealignData(ajaxData, chainresiCalphaHash2, chainidArray, struct2SeqHash, struct2CoorHash, struct2resid, bRealign) { var ic = this.icn3d, me = ic.icn3dui;
       var dataArray =(chainidArray.length == 2) ? [ajaxData] : ajaxData;
 
@@ -210,17 +263,11 @@ class RealignParser {
         this.realignChainOnSeqAlign(undefined, chainidArray, bRealign);
     }
 
-    realignChainOnSeqAlign(chainresiCalphaHash2, chainidArray, bRealign) { var ic = this.icn3d, me = ic.icn3dui;
+    realignChainOnSeqAlign(chainresiCalphaHash2, chainidArray, bRealign, bPredefined) { var ic = this.icn3d, me = ic.icn3dui;
         var thisClass = this;
-    //    ic.selectionCls.saveSelectionPrep();
 
-    //    var index = Object.keys(ic.defNames2Atoms).length;
-    //    var name = 'alseq_' + index;
-
-    //    ic.selectionCls.saveSelection(name, name);
-
-        //ic.opts['color'] = 'grey';
-        //ic.setColorCls.setColorByOptions(ic.opts, ic.dAtoms);
+        //bRealign: realign based on seq alignment
+        //bPredefined: chain alignment with predefined matching residues
 
         var struct2SeqHash = {}
         var struct2CoorHash = {}
@@ -231,8 +278,19 @@ class RealignParser {
         var ajaxArray = [];
         var url = 'https://www.ncbi.nlm.nih.gov/Structure/pwaln/pwaln.fcgi?from=chainalign';
 
-    //    for(var serial in ic.hAtoms) {
+        var predefinedResArray, predefinedRes;
+
+        if(bPredefined) {
+            predefinedResArray = me.cfg.resdef.trim().split(' | ');
+            if(predefinedResArray.length != chainidArray.length) {
+               alert("Please make sure the number of chains and the lines of predefined residues are the same...");
+               return;
+            }
+        }
+
         for(var i = 0, il = chainidArray.length; i < il; ++i) {
+            if(bPredefined) predefinedRes = predefinedResArray[i].trim();
+
             var pos = chainidArray[i].indexOf('_');
             var mmdbid = chainidArray[i].substr(0, pos); //.toUpperCase();
             if(!bRealign) mmdbid =  mmdbid.toUpperCase();
@@ -252,7 +310,7 @@ class RealignParser {
                 struct2resid[mmdbid] = [];
             }
 
-            if(i == 0) { // master
+            if(i == 0 || bPredefined) { // master
                 var base = parseInt(ic.chainsSeq[chainid][0].resi);
 
                 var resRange;
@@ -262,7 +320,16 @@ class RealignParser {
                     resRange = base.toString() + '-' + lastResi.toString();
                 }
 
-                var resiArray =(bRealign) ? [resRange] : ic.icn3dui.cfg.resnum.split(",");
+                var resiArray;
+                if(bRealign) {
+                    resiArray = [resRange];
+                }
+                else if(bPredefined) {
+                    resiArray = predefinedRes.split(",");
+                }
+                else {
+                    resiArray = ic.icn3dui.cfg.resnum.split(",");
+                }
                 for(var j = 0, jl = resiArray.length; j < jl; ++j) {
                     if(resiArray[j].indexOf('-') != -1) {
                         var startEnd = resiArray[j].split('-');
@@ -325,7 +392,7 @@ class RealignParser {
                 }
             }
 
-            if(i > 0) {
+            if(i > 0 && !bPredefined) {
                 var toStruct = mmdbid_t;
                 var fromStruct = mmdbid;
 
@@ -344,15 +411,20 @@ class RealignParser {
             }
         } // for
 
-        //https://stackoverflow.com/questions/14352139/multiple-ajax-calls-from-array-and-handle-callback-when-completed
-        //https://stackoverflow.com/questions/5518181/jquery-deferreds-when-and-the-fail-callback-arguments
-        $.when.apply(undefined, ajaxArray).then(function() {
-           thisClass.parseChainRealignData(arguments, chainresiCalphaHash2, chainidArray, struct2SeqHash, struct2CoorHash, struct2resid, bRealign);
-        })
-        .fail(function() {
-           alert("The realignment did notwork...");
-           //thisClass.parseChainRealignData(arguments, chainresiCalphaHash2, chainidArray, struct2SeqHash, struct2CoorHash, struct2resid, bRealign);
-        });
+        if(bPredefined) {
+            thisClass.parseChainRealignPredefined(chainidArray, struct2SeqHash, struct2CoorHash, struct2resid);
+        }
+        else {
+            //https://stackoverflow.com/questions/14352139/multiple-ajax-calls-from-array-and-handle-callback-when-completed
+            //https://stackoverflow.com/questions/5518181/jquery-deferreds-when-and-the-fail-callback-arguments
+            $.when.apply(undefined, ajaxArray).then(function() {
+               thisClass.parseChainRealignData(arguments, chainresiCalphaHash2, chainidArray, struct2SeqHash, struct2CoorHash, struct2resid, bRealign);
+            })
+            .fail(function() {
+               alert("The realignment did notwork...");
+               //thisClass.parseChainRealignData(arguments, chainresiCalphaHash2, chainidArray, struct2SeqHash, struct2CoorHash, struct2resid, bRealign);
+            });
+        }
     }
 }
 
