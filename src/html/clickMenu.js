@@ -1861,7 +1861,7 @@ class ClickMenu {
     //    },
     //    clkmn5_setThickness: function() {
         me.myEventCls.onIds("#" + me.pre + "mn3_setThickness", "click", function(e) { var ic = me.icn3d;
-           me.htmlCls.dialogCls.openDlg('dl_thickness2', 'Set Thickness');
+           me.htmlCls.dialogCls.openDlg('dl_thickness2', 'Preferences');
         });
     //    },
     //    clkmn1_thicknessReset: function() {

@@ -24537,7 +24537,7 @@ var icn3d = (function (exports) {
           ic.opts['color'] = 'grey';
           ic.setColorCls.setColorByOptions(ic.opts, ic.dAtoms);
 
-          for(var index = 0, indexl = chainidArray.length; index < indexl; ++index) {
+          for(var index = 0, indexl = chainidArray.length - 1; index < indexl; ++index) {
               var fromStruct = chainidArray[index + 1].substr(0, chainidArray[index + 1].indexOf('_')); //.toUpperCase();
               fromStruct = fromStruct.toUpperCase();
 
@@ -24586,7 +24586,7 @@ var icn3d = (function (exports) {
 
           // Each argument is an array with the following structure: [ data, statusText, jqXHR ]
           //var data2 = v2[0];
-          for(var index = 0, indexl = dataArray.length; index < indexl; ++index) {
+          for(var index = 0, indexl = dataArray.length - 1; index < indexl; ++index) {
         //  for(var index = 1, indexl = dataArray.length; index < indexl; ++index) {
               var data = dataArray[index][0];
 
@@ -24730,7 +24730,8 @@ var icn3d = (function (exports) {
             var predefinedResArray, predefinedRes;
 
             if(bPredefined) {
-                predefinedResArray = me.cfg.resdef.trim().split(' | ');
+                predefinedResArray = me.cfg.resdef.trim().replace(/\+/gi, ' ').split(' | ');
+
                 if(predefinedResArray.length != chainidArray.length) {
                    alert("Please make sure the number of chains and the lines of predefined residues are the same...");
                    return;
@@ -24779,6 +24780,7 @@ var icn3d = (function (exports) {
                     else {
                         resiArray = ic.icn3dui.cfg.resnum.split(",");
                     }
+
                     for(var j = 0, jl = resiArray.length; j < jl; ++j) {
                         if(resiArray[j].indexOf('-') != -1) {
                             var startEnd = resiArray[j].split('-');
@@ -43800,7 +43802,7 @@ var icn3d = (function (exports) {
         //    },
         //    clkmn5_setThickness: function() {
             me.myEventCls.onIds("#" + me.pre + "mn3_setThickness", "click", function(e) { me.icn3d;
-               me.htmlCls.dialogCls.openDlg('dl_thickness2', 'Set Thickness');
+               me.htmlCls.dialogCls.openDlg('dl_thickness2', 'Preferences');
             });
         //    },
         //    clkmn1_thicknessReset: function() {
