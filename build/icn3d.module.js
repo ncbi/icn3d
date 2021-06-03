@@ -12443,9 +12443,9 @@ class Surface {
 
             this.geometry.type = 'Surface'; // to be recognized in vrml.js for 3D printing
 
-            var mesh = new THREE.Mesh(this.geometry, new THREE.MeshPhongMaterial({
+            var mesh = new THREE.Mesh(this.geometry, new THREE.MeshBasicMaterial({ //new THREE.MeshPhongMaterial({
                 specular: ic.frac,
-                shininess: 10, //30,
+                shininess: 0, //10, //30,
                 emissive: ic.emissive,
                 vertexColors: THREE.VertexColors,
                 wireframe: wireframe,
@@ -12512,7 +12512,7 @@ class Surface {
         else {
             var mesh = new THREE.Mesh(geo, new THREE.MeshPhongMaterial({
                 specular: ic.frac,
-                shininess: 10, //30,
+                shininess: 20, //10, //30,
                 emissive: ic.emissive,
                 vertexColors: THREE.VertexColors,
                 wireframe: wireframe,
