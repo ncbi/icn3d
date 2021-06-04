@@ -1422,7 +1422,7 @@ class ApplyCommand {
         else if(cmd == 'rotate z') return rotStr2 + 'Z-axis';
         else if(cmd == 'reset') return 'View > Reset > All';
         else if(cmd == 'reset orientation') return 'View > Reset > Orientation';
-        else if(cmd == 'reset thickness') return 'File > 3D Printing > Reset Thickness';
+        //else if(cmd == 'reset thickness') return 'File > 3D Printing > Reset Thickness';
         else if(cmd == 'clear selection') return 'Select > Clear Selection';
         else if(cmd == 'zoom selection') return 'Select > Zoom in Selection';
         else if(cmd == 'center selection') return 'Select > Center Selection';

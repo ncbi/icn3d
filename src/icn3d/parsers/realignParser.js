@@ -136,7 +136,7 @@ class RealignParser {
 
       // Each argument is an array with the following structure: [ data, statusText, jqXHR ]
       //var data2 = v2[0];
-      for(var index = 0, indexl = dataArray.length - 1; index < indexl; ++index) {
+      for(var index = 0, indexl = dataArray.length; index < indexl; ++index) {
     //  for(var index = 1, indexl = dataArray.length; index < indexl; ++index) {
           var data = dataArray[index][0];
 

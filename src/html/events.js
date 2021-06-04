@@ -1300,6 +1300,18 @@ class Events {
 
             me.htmlCls.setHtmlCls.setLineThickness("style");
         });
+
+        me.myEventCls.onIds("#" + me.pre + "reset_thickness_3dprint", "click", function(e) { var ic = me.icn3d;
+            e.preventDefault();
+
+            me.htmlCls.setHtmlCls.setLineThickness("3dprint", true);
+        });
+        me.myEventCls.onIds("#" + me.pre + "reset_thickness_style", "click", function(e) { var ic = me.icn3d;
+            e.preventDefault();
+
+            me.htmlCls.setHtmlCls.setLineThickness("style", true);
+        });
+
     //    },
     //    clickReset: function() {
         me.myEventCls.onIds("#" + me.pre + "reset", "click", function(e) { var ic = me.icn3d;

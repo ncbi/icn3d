@@ -185,7 +185,9 @@ class SetHtml {
 
         html += "<b>Ball Scale</b>: " + me.htmlCls.inputTextStr + "id='" + me.pre + "ballscale_" + type + "' value='" + ballscale + "' size=4>" + me.htmlCls.space3 + "(for styles 'Ball and Stick' and 'Dot', default 0.3)<br/>";
 
-        html += me.htmlCls.spanNowrapStr + "" + me.htmlCls.buttonStr + "apply_thickness_" + type + "'>Apply</button></span>";
+        html += me.htmlCls.spanNowrapStr + "" + me.htmlCls.buttonStr + "apply_thickness_" + type + "'>Apply</button></span>&nbsp;&nbsp;&nbsp;";
+
+        html += me.htmlCls.spanNowrapStr + "" + me.htmlCls.buttonStr + "reset_thickness_" + type + "'>Reset</button></span>";
 
         return html;
     }
@@ -749,14 +751,47 @@ class SetHtml {
         return graphStr2;
     }
 
-    setLineThickness(postfix) { var me = this.icn3dui, ic = me.icn3d;
+    setCookieForThickness() { var me = this.icn3dui, ic = me.icn3d;
+        if(!me.bNode) { // && postfix == 'style') {
+            var exdays = 3650; // 10 years
+
+            this.setCookie('lineRadius', ic.lineRadius, exdays);
+            this.setCookie('coilWidth', ic.coilWidth, exdays);
+            this.setCookie('cylinderRadius', ic.cylinderRadius, exdays);
+            this.setCookie('traceRadius', ic.traceRadius, exdays);
+            this.setCookie('dotSphereScale', ic.dotSphereScale, exdays);
+            this.setCookie('ribbonthickness', ic.ribbonthickness, exdays);
+            this.setCookie('helixSheetWidth', ic.helixSheetWidth, exdays);
+            this.setCookie('nucleicAcidWidth', ic.nucleicAcidWidth, exdays);
+        }
+    }
+
+    setLineThickness(postfix, bReset) { var me = this.icn3dui, ic = me.icn3d;
         ic.bSetThickness = true;
 
         if(postfix == 'style') {
+            if(bReset) {
+                $("#" + me.pre + "shininess").val('40');
+                $("#" + me.pre + "light1").val('0.6');
+                $("#" + me.pre + "light2").val('0.4');
+                $("#" + me.pre + "light3").val('0.2');
+            }
+
             ic.shininess = parseFloat($("#" + me.pre + "shininess").val()); //40;
             ic.light1 = parseFloat($("#" + me.pre + "light1").val()); //0.6;
             ic.light2 = parseFloat($("#" + me.pre + "light2").val()); //0.4;
             ic.light3 = parseFloat($("#" + me.pre + "light3").val()); //0.2;
+        }
+
+        if(bReset) {
+            $("#" + me.pre + "linerad_" + postfix ).val(0.1); //0.1; // hbonds, distance lines
+            $("#" + me.pre + "coilrad_" + postfix ).val(0.4); //0.4; // style cartoon-coil
+            $("#" + me.pre + "stickrad_" + postfix ).val(0.4); //0.4; // style stick
+            $("#" + me.pre + "stickrad_" + postfix ).val(0.2); //0.2; // style c alpha trace, nucleotide stick
+            $("#" + me.pre + "ballscale_" + postfix ).val(0.3); //0.3; // style ball and stick, dot
+            $("#" + me.pre + "ribbonthick_" + postfix ).val(0.4); //0.4; // style ribbon, nucleotide cartoon, stand thickness
+            $("#" + me.pre + "prtribbonwidth_" + postfix ).val(1.3); //1.3; // style ribbon, stand thickness
+            $("#" + me.pre + "nucleotideribbonwidth_" + postfix ).val(0.8); //0.8; // nucleotide cartoon
         }
 
         ic.lineRadius = parseFloat($("#" + me.pre + "linerad_" + postfix ).val()); //0.1; // hbonds, distance lines
@@ -769,24 +804,26 @@ class SetHtml {
         ic.nucleicAcidWidth = parseFloat($("#" + me.pre + "nucleotideribbonwidth_" + postfix ).val()); //0.8; // nucleotide cartoon
 
         // save to cache
-        if(!me.bNode && postfix == 'style') {
+        if(!me.bNode) { // && postfix == 'style') {
             var exdays = 3650; // 10 years
             this.setCookie('shininess', ic.shininess, exdays);
             this.setCookie('light1', ic.light1, exdays);
             this.setCookie('light2', ic.light2, exdays);
             this.setCookie('light3', ic.light3, exdays);
-
-            this.setCookie('lineRadius', ic.lineRadius, exdays);
-            this.setCookie('coilWidth', ic.coilWidth, exdays);
-            this.setCookie('cylinderRadius', ic.cylinderRadius, exdays);
-            this.setCookie('traceRadius', ic.traceRadius, exdays);
-            this.setCookie('dotSphereScale', ic.dotSphereScale, exdays);
-            this.setCookie('ribbonthickness', ic.ribbonthickness, exdays);
-            this.setCookie('helixSheetWidth', ic.helixSheetWidth, exdays);
-            this.setCookie('nucleicAcidWidth', ic.nucleicAcidWidth, exdays);
         }
 
-        me.htmlCls.clickMenuCls.setLogCmd('set thickness | linerad ' + ic.lineRadius + ' | coilrad ' + ic.coilWidth + ' | stickrad ' + ic.cylinderRadius + ' | tracerad ' + ic.traceRadius + ' | ribbonthick ' + ic.ribbonthickness + ' | proteinwidth ' + ic.helixSheetWidth + ' | nucleotidewidth ' + ic.nucleicAcidWidth  + ' | ballscale ' + ic.dotSphereScale, true);
+        this.setCookieForThickness();
+
+        if(postfix = '3dprint' && bReset) {
+           var select = "reset thickness";
+           me.htmlCls.clickMenuCls.setLogCmd(select, true);
+           ic.bSetThickness = false;
+           ic.threeDPrintCls.resetAfter3Dprint();
+        }
+        else {
+            me.htmlCls.clickMenuCls.setLogCmd('set thickness | linerad ' + ic.lineRadius + ' | coilrad ' + ic.coilWidth + ' | stickrad ' + ic.cylinderRadius + ' | tracerad ' + ic.traceRadius + ' | ribbonthick ' + ic.ribbonthickness + ' | proteinwidth ' + ic.helixSheetWidth + ' | nucleotidewidth ' + ic.nucleicAcidWidth  + ' | ballscale ' + ic.dotSphereScale, true);
+        }
+
         ic.drawCls.draw();
     }
 

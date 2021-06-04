@@ -346,30 +346,28 @@ gulp.task('html',
 
 gulp.task("html",
   function() {
-    return gulp.src(['index.html', 'full.html', 'full2.html'])
+    return gulp.src(['index.html', 'full.html'])
       .pipe(replace('icn3d.css', 'icn3d_' + package.version + '.css'))
       .pipe(replace('icn3d.min.js', 'icn3d_' + package.version + '.min.js'))
+      .pipe(gulp.dest(dist))
+      .pipe(rename('full_' + package.version + '.html'))
       .pipe(gulp.dest(dist));
   });
 
 gulp.task("html2",
   function() {
-    return gulp.src(['icn3d.html', 'share.html', 'example.html', 'module.html'])
+    return gulp.src(['full2.html'])
+      .pipe(replace('icn3d.css', 'icn3d_' + package.version + '.css'))
+      .pipe(replace('icn3d.min.js', 'icn3d_' + package.version + '.min.js'))
+      .pipe(gulp.dest(dist))
+      .pipe(rename('full2_' + package.version + '.html'))
       .pipe(gulp.dest(dist));
   });
 
-gulp.task('html3',
+gulp.task("html3",
   function() {
-    return gulp.src(['full.html'])
-        .pipe(rename('full_' + package.version + '.html'))
-        .pipe(gulp.dest(dist));
-  });
-
-gulp.task('html4',
-  function() {
-    return gulp.src(['full2.html'])
-        .pipe(rename('full2_' + package.version + '.html'))
-        .pipe(gulp.dest(dist));
+    return gulp.src(['icn3d.html', 'share.html', 'example.html', 'module.html'])
+      .pipe(gulp.dest(dist));
   });
 
 //  'Prepare all the distribution files (except the .zip).',
@@ -377,7 +375,7 @@ gulp.task('dist',
   gulp.series('clean', 'libs-three','libs-jquery','libs-jquery-ui','libs-jquery-ui-css','libs-jquery-ui-images1',
     'libs-jquery-ui-images2','ssimages','copy','copy-rename2','third','third_node','rollup','rollupmin',
     'rollupnode','rollupmodule','all','allmin','allnode','allmodule',
-    'html','html2','html3','html4')
+    'html','html2','html3')
 /*
   gulp.series('clean', 'libs-three','libs-jquery','libs-jquery-ui','libs-jquery-ui-css','libs-jquery-ui-images1',
     'libs-jquery-ui-images2','ssimages','copy','copy-rename2','third','third_node','rollup','rollupmin',

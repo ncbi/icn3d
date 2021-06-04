@@ -27,6 +27,8 @@ class ThreeDPrint {
         ic.ribbonthickness = 1.0; //0.2; // style ribbon, nucleotide cartoon, stand thickness
         ic.helixSheetWidth = 2.0; //1.3; // style ribbon, stand thickness
         ic.nucleicAcidWidth = 1.4; //0.8; // nucleotide cartoon
+
+        me.htmlCls.setHtmlCls.setCookieForThickness();
     }
 
     //Prepare for 3D printing by changing dashed lines to solid lines, changing the thickness of the model.
@@ -64,7 +66,7 @@ class ThreeDPrint {
     }
 
     //Reset the hydrogen bonds, distance lines to dashed lines. Reset the thickness to the default values.
-    resetAfter3Dprint(  ){ var ic = this.icn3d, me = ic.icn3dui;
+    resetAfter3Dprint(){ var ic = this.icn3d, me = ic.icn3dui;
         // change hbond and distance lines from dashed to solid for 3d printing
         //if(ic.bDashedLines) {
           if(ic.lines['hbond'] !== undefined) {
@@ -92,6 +94,8 @@ class ThreeDPrint {
           ic.ribbonthickness = 0.2; // style ribbon, nucleotide cartoon, stand thickness
           ic.helixSheetWidth = 1.3; // style ribbon, nucleotide cartoon, stand thickness
           ic.nucleicAcidWidth = 0.8; // nucleotide cartoon
+
+          me.htmlCls.setHtmlCls.setCookieForThickness();
 
           //ic.drawCls.draw();
         //}

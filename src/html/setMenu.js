@@ -439,20 +439,20 @@ class SetMenu {
         html += "<li><span>3D Printing</span>";
         html += "<ul>";
         if(me.cfg.cid === undefined) {
-            html += me.htmlCls.setHtmlCls.getLink('mn1_exportVrmlStab', 'VRML(Color, W/  Stabilizers)');
-            html += me.htmlCls.setHtmlCls.getLink('mn1_exportStlStab', 'STL(W/  Stabilizers)');
+            html += me.htmlCls.setHtmlCls.getLink('mn1_exportVrmlStab', 'WRL/VRML(Color, W/ Stab.)');
+            html += me.htmlCls.setHtmlCls.getLink('mn1_exportStlStab', 'STL(W/ Stabilizers)');
             html += "<li>-</li>";
-            html += me.htmlCls.setHtmlCls.getLink('mn1_exportVrml', 'VRML(Color)');
+            html += me.htmlCls.setHtmlCls.getLink('mn1_exportVrml', 'WRL/VRML(Color)');
             html += me.htmlCls.setHtmlCls.getLink('mn1_exportStl', 'STL');
             html += "<li>-</li>";
-            html += me.htmlCls.setHtmlCls.getLink('mn1_stabilizerYes', 'Add All  Stabilizers');
-            html += me.htmlCls.setHtmlCls.getLink('mn1_stabilizerNo', 'Remove All  Stabilizers');
+            html += me.htmlCls.setHtmlCls.getLink('mn1_stabilizerYes', 'Add All Stabilizers');
+            html += me.htmlCls.setHtmlCls.getLink('mn1_stabilizerNo', 'Remove All Stabilizers');
             html += "<li>-</li>";
-            html += me.htmlCls.setHtmlCls.getLink('mn1_stabilizerOne', 'Add One  Stabilizer');
-            html += me.htmlCls.setHtmlCls.getLink('mn1_stabilizerRmOne', 'Remove One  Stabilizer');
+            html += me.htmlCls.setHtmlCls.getLink('mn1_stabilizerOne', 'Add One Stabilizer');
+            html += me.htmlCls.setHtmlCls.getLink('mn1_stabilizerRmOne', 'Remove One Stabilizer');
             html += "<li>-</li>";
             html += me.htmlCls.setHtmlCls.getLink('mn1_thicknessSet', 'Set Thickness');
-            html += me.htmlCls.setHtmlCls.getLink('mn1_thicknessReset', 'Reset Thickness');
+            //html += me.htmlCls.setHtmlCls.getLink('mn1_thicknessReset', 'Reset Thickness');
         }
         else {
             html += me.htmlCls.setHtmlCls.getLink('mn1_exportVrml', 'VRML(Color)');
