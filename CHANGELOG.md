@@ -1,4 +1,6 @@
 ## Change Log
+[icn3d-3.1.6](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.1.6.zip) was release on June 4, 2021. Fixed file export in 3D printing due to the change of Geometry to BufferGeometry in three.js version 128.
+
 [icn3d-3.1.5](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.1.5.zip) was release on June 2, 2021. Added an option to load predefined alignments in the menu "File > Align > Multiple Chains". Enabled to change the shininess, lights, and thickness in the menu "Style > Preferences".
 
 [icn3d-3.1.4](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.1.4.zip) was release on May 27, 2021. Remove "alert" in the npm icn3d package. 

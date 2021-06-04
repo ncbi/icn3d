@@ -1865,6 +1865,7 @@ class ClickMenu {
         });
     //    },
     //    clkmn1_thicknessReset: function() {
+/*
         me.myEventCls.onIds("#" + me.pre + "mn1_thicknessReset", "click", function(e) { var ic = me.icn3d;
            var select = "reset thickness";
            thisClass.setLogCmd(select, true);
@@ -1872,6 +1873,7 @@ class ClickMenu {
            ic.threeDPrintCls.resetAfter3Dprint();
            ic.drawCls.draw();
         });
+*/
     //    },
     //    clkMn6_ssbondsYes: function() {
         me.myEventCls.onIds("#" + me.pre + "mn6_ssbondsYes", "click", function(e) { var ic = me.icn3d;

@@ -70,8 +70,8 @@ class Export3D {
        }
        var text = this.saveVrmlFile();
        var file_pref =(ic.inputid) ? ic.inputid : "custom";
-       //ic.saveFileCls.saveFile(file_pref + postfix + '.wrl', 'text', text);
-       ic.saveFileCls.saveFile(file_pref + postfix + '.vrml', 'text', text);
+       ic.saveFileCls.saveFile(file_pref + postfix + '.wrl', 'text', text);
+       //ic.saveFileCls.saveFile(file_pref + postfix + '.vrml', 'text', text);
        // assemblies
        if(ic.biomtMatrices !== undefined && ic.biomtMatrices.length > 1 && ic.bAssembly
          && Object.keys(ic.dAtoms).length * ic.biomtMatrices.length > ic.maxAtoms3DMultiFile ) {
@@ -88,8 +88,8 @@ class Export3D {
               //https://stackoverflow.com/questions/1190642/how-can-i-pass-a-parameter-to-a-settimeout-callback
               setTimeout(function(mat, index){
                   text = this.saveVrmlFile(mat);
-                  //ic.saveFileCls.saveFile(ic.inputid + postfix + index + '.wrl', 'text', text);
-                  ic.saveFileCls.saveFile(file_pref + postfix + index + '.vrml', 'text', text);
+                  ic.saveFileCls.saveFile(ic.inputid + postfix + index + '.wrl', 'text', text);
+                  //ic.saveFileCls.saveFile(file_pref + postfix + index + '.vrml', 'text', text);
                   text = '';
               }.bind(this, mat, index), time);
               ++index;
@@ -122,12 +122,16 @@ class Export3D {
 
              var geometry = mesh.geometry;
 
-             var faces = geometry.faces;
-             if(faces !== undefined) {
-                 for(var j = 0, jl = faces.length; j < jl; ++j) {
-                     ++cntFaces;
-                 }
-             }
+//             var faces = geometry.faces;
+//             if(faces !== undefined) {
+//                 for(var j = 0, jl = faces.length; j < jl; ++j) {
+//                     ++cntFaces;
+//                 }
+//             }
+
+             var indexArray = geometry.getIndex().array;
+             cntFaces += indexArray.length / 3;
+
         }
 
         return cntFaces;
@@ -223,42 +227,66 @@ class Export3D {
 
              var geometry = mesh.geometry;
 
-             var vertices = geometry.vertices;
-             var faces = geometry.faces;
+//             var vertices = geometry.vertices;
+//             var faces = geometry.faces;
 
-             if(faces === undefined) continue;
+//             if(faces === undefined) continue;
+
+             var positionArray = geometry.getAttribute('position').array;
+             var indexArray = geometry.getIndex().array;
 
              var position = mesh.position;
              var scale = mesh.scale;
 
              var matrix = mesh.matrix;
 
-             var stlArray = new Uint8Array(faces.length * 50);
+//             var stlArray = new Uint8Array(faces.length * 50);
+             var stlArray = new Uint8Array(indexArray.length / 3 * 50);
 
              var index = 0;
 
-             for(var j = 0, jl = faces.length; j < jl; ++j) {
-                 var a = faces[j].a;
-                 var b = faces[j].b;
-                 var c = faces[j].c;
-                 var normal = faces[j].normal;
+//             for(var j = 0, jl = faces.length; j < jl; ++j) {
+             for(var j = 0, jl = indexArray.length; j < jl; j += 3) {
+//                 var a = faces[j].a;
+//                 var b = faces[j].b;
+//                 var c = faces[j].c;
+//                 var normal = faces[j].normal;
+
+                 var a = indexArray[j];
+                 var b = indexArray[j+1];
+                 var c = indexArray[j+2];
+
+                 var normal;
+
+                 var va = new THREE.Vector3(positionArray[3*a], positionArray[3*a+1], positionArray[3*a+2]);
+                 var vb = new THREE.Vector3(positionArray[3*b], positionArray[3*b+1], positionArray[3*b+2]);
+                 var vc = new THREE.Vector3(positionArray[3*c], positionArray[3*c+1], positionArray[3*c+2]);
 
                  var v1, v2, v3;
 
                  if(geometry.type == 'SphereGeometry' || geometry.type == 'BoxGeometry') {
-                     v1 = vertices[a].clone().multiply(scale).add(position);
-                     v2 = vertices[b].clone().multiply(scale).add(position);
-                     v3 = vertices[c].clone().multiply(scale).add(position);
+//                     v1 = vertices[a].clone().multiply(scale).add(position);
+//                     v2 = vertices[b].clone().multiply(scale).add(position);
+//                     v3 = vertices[c].clone().multiply(scale).add(position);
+                     v1 = va.clone().multiply(scale).add(position);
+                     v2 = vb.clone().multiply(scale).add(position);
+                     v3 = vc.clone().multiply(scale).add(position);
                  }
                   else if(geometry.type == 'CylinderGeometry') {
-                     v1 = vertices[a].clone().applyMatrix4(matrix);
-                     v2 = vertices[b].clone().applyMatrix4(matrix);
-                     v3 = vertices[c].clone().applyMatrix4(matrix);
+//                     v1 = vertices[a].clone().applyMatrix4(matrix);
+//                     v2 = vertices[b].clone().applyMatrix4(matrix);
+//                     v3 = vertices[c].clone().applyMatrix4(matrix);
+                     v1 = va.clone().applyMatrix4(matrix);
+                     v2 = vb.clone().applyMatrix4(matrix);
+                     v3 = vc.clone().applyMatrix4(matrix);
                  }
                  else {
-                     v1 = vertices[a].clone();
-                     v2 = vertices[b].clone();
-                     v3 = vertices[c].clone();
+//                     v1 = vertices[a].clone();
+//                     v2 = vertices[b].clone();
+//                     v3 = vertices[c].clone();
+                     v1 = va.clone();
+                     v2 = vb.clone();
+                     v3 = vc.clone();
                  }
 
                  //REAL32[3] – Normal vector
@@ -364,12 +392,16 @@ class Export3D {
              var materialType = mesh.material.type;
              var bSurfaceVertex =(geometry.type == 'Surface') ? true : false;
 
-             var vertices = geometry.vertices;
+//             var vertices = geometry.vertices;
 
-             if(vertices === undefined) continue;
-             vertexCnt += vertices.length;
+//             if(vertices === undefined) continue;
+//             vertexCnt += vertices.length;
 
-             var faces = geometry.faces;
+//             var faces = geometry.faces;
+
+             var positionArray = geometry.getAttribute('position').array;
+             var colorArray = (geometry.getAttribute('color')) ? geometry.getAttribute('color').array : [];
+             var indexArray = geometry.getIndex().array;
 
              var position = mesh.position;
              var scale = mesh.scale;
@@ -387,16 +419,22 @@ class Export3D {
              vrmlStrArray.push('coord Coordinate { point [ ');
 
              var vertexColorStrArray = [];
-             for(var j = 0, jl = vertices.length; j < jl; ++j) {
+//             for(var j = 0, jl = vertices.length; j < jl; ++j) {
+             for(var j = 0, jl = positionArray.length; j < jl; j += 3) {
+                 var va = new THREE.Vector3(positionArray[j], positionArray[j+1], positionArray[j+2]);
+
                  var vertex;
                  if(geometry.type == 'SphereGeometry' || geometry.type == 'BoxGeometry') {
-                     vertex = vertices[j].clone().multiply(scale).add(position);
+//                     vertex = vertices[j].clone().multiply(scale).add(position);
+                     vertex = va.clone().multiply(scale).add(position);
                  }
                   else if(geometry.type == 'CylinderGeometry') {
-                     vertex = vertices[j].clone().applyMatrix4(matrix);
+//                     vertex = vertices[j].clone().applyMatrix4(matrix);
+                     vertex = va.clone().applyMatrix4(matrix);
                  }
                  else {
-                     vertex = vertices[j].clone()
+//                     vertex = vertices[j].clone()
+                     vertex = va.clone()
                  }
 
                  if(mat !== undefined) vertex.applyMatrix4(mat);
@@ -404,13 +442,15 @@ class Export3D {
                  vrmlStrArray.push(vertex.x.toPrecision(5) + ' ' + vertex.y.toPrecision(5) + ' ' + vertex.z.toPrecision(5));
                  vertex = undefined;
 
-                 if(j < jl - 1) vrmlStrArray.push(', ');
+//                 if(j < jl - 1) vrmlStrArray.push(', ');
+                 if(j < jl - 3) vrmlStrArray.push(', ');
 
                  vertexColorStrArray.push(me.parasCls.thr(1, 1, 1));
              }
              vrmlStrArray.push(' ] }\n');
 
              var coordIndexStr = '', colorStr = '', colorIndexStr = '';
+/*
              if(bSurfaceVertex) {
                  for(var j = 0, jl = faces.length; j < jl; ++j) {
                      var a = faces[j].a;
@@ -438,22 +478,30 @@ class Export3D {
                  vrmlStrArray.push('color Color { color [ ' + colorStr + ' ] } colorPerVertex TRUE\n');
              }
              else {
-                 for(var j = 0, jl = faces.length; j < jl; ++j) {
-                     var a = faces[j].a;
-                     var b = faces[j].b;
-                     var c = faces[j].c;
+*/
+//                 for(var j = 0, jl = faces.length; j < jl; ++j) {
+                 for(var j = 0, jl = indexArray.length; j < jl; j += 3) {
+//                     var a = faces[j].a;
+//                     var b = faces[j].b;
+//                     var c = faces[j].c;
+                     var a = indexArray[j];
+                     var b = indexArray[j+1];
+                     var c = indexArray[j+2];
+
                      var color;
                      if(geometry.type == 'SphereGeometry' || geometry.type == 'BoxGeometry' || geometry.type == 'CylinderGeometry') {
                          color = meshColor;
                      }
                      else {
-                         color = faces[j].color;
+//                         color = faces[j].color;
+                         color = new THREE.Color(colorArray[3*a], colorArray[3*a+1], colorArray[3*a+2]);
                      }
 
                      coordIndexStr += a + ' ' + b + ' ' + c;
                      // http://www.lighthouse3d.com/vrml/tutorial/index.shtml?indfs
                      // use -1 to separate polygons
-                     if(j < jl - 1) coordIndexStr += ', -1, ';
+//                     if(j < jl - 1) coordIndexStr += ', -1, ';
+                     if(j < jl - 3) coordIndexStr += ', -1, ';
 
                      // update vertexColorStrArray
                      vertexColorStrArray[a] = color;
@@ -469,7 +517,7 @@ class Export3D {
 
                  vrmlStrArray.push('coordIndex [ ' + coordIndexStr + ' ]\n');
                  vrmlStrArray.push('color Color { color [ ' + colorStr + ' ] } colorPerVertex TRUE\n');
-             }
+//             }
 
              vrmlStrArray.push('  }\n');
              vrmlStrArray.push('}\n');

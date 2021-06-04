@@ -12995,7 +12995,7 @@ var icn3d = (function (exports) {
             this.icn3d = icn3d;
         }
 
-        setThichknessFor3Dprint(  ){ var ic = this.icn3d; ic.icn3dui;
+        setThichknessFor3Dprint(  ){ var ic = this.icn3d, me = ic.icn3dui;
             ic.lineRadius = 1; //0.1; // hbonds, distance lines
             ic.coilWidth = 1.2; //0.3; // style cartoon-coil
             ic.cylinderRadius = 0.8; //0.4; // style stick
@@ -13008,6 +13008,8 @@ var icn3d = (function (exports) {
             ic.ribbonthickness = 1.0; //0.2; // style ribbon, nucleotide cartoon, stand thickness
             ic.helixSheetWidth = 2.0; //1.3; // style ribbon, stand thickness
             ic.nucleicAcidWidth = 1.4; //0.8; // nucleotide cartoon
+
+            me.htmlCls.setHtmlCls.setCookieForThickness();
         }
 
         //Prepare for 3D printing by changing dashed lines to solid lines, changing the thickness of the model.
@@ -13045,7 +13047,7 @@ var icn3d = (function (exports) {
         }
 
         //Reset the hydrogen bonds, distance lines to dashed lines. Reset the thickness to the default values.
-        resetAfter3Dprint(  ){ var ic = this.icn3d; ic.icn3dui;
+        resetAfter3Dprint(){ var ic = this.icn3d, me = ic.icn3dui;
             // change hbond and distance lines from dashed to solid for 3d printing
             //if(ic.bDashedLines) {
               if(ic.lines['hbond'] !== undefined) {
@@ -13073,6 +13075,8 @@ var icn3d = (function (exports) {
               ic.ribbonthickness = 0.2; // style ribbon, nucleotide cartoon, stand thickness
               ic.helixSheetWidth = 1.3; // style ribbon, nucleotide cartoon, stand thickness
               ic.nucleicAcidWidth = 0.8; // nucleotide cartoon
+
+              me.htmlCls.setHtmlCls.setCookieForThickness();
 
               //ic.drawCls.draw();
             //}
@@ -13706,8 +13710,8 @@ var icn3d = (function (exports) {
            }
            var text = this.saveVrmlFile();
            var file_pref =(ic.inputid) ? ic.inputid : "custom";
-           //ic.saveFileCls.saveFile(file_pref + postfix + '.wrl', 'text', text);
-           ic.saveFileCls.saveFile(file_pref + postfix + '.vrml', 'text', text);
+           ic.saveFileCls.saveFile(file_pref + postfix + '.wrl', 'text', text);
+           //ic.saveFileCls.saveFile(file_pref + postfix + '.vrml', 'text', text);
            // assemblies
            if(ic.biomtMatrices !== undefined && ic.biomtMatrices.length > 1 && ic.bAssembly
              && Object.keys(ic.dAtoms).length * ic.biomtMatrices.length > ic.maxAtoms3DMultiFile ) {
@@ -13724,8 +13728,8 @@ var icn3d = (function (exports) {
                   //https://stackoverflow.com/questions/1190642/how-can-i-pass-a-parameter-to-a-settimeout-callback
                   setTimeout(function(mat, index){
                       text = this.saveVrmlFile(mat);
-                      //ic.saveFileCls.saveFile(ic.inputid + postfix + index + '.wrl', 'text', text);
-                      ic.saveFileCls.saveFile(file_pref + postfix + index + '.vrml', 'text', text);
+                      ic.saveFileCls.saveFile(ic.inputid + postfix + index + '.wrl', 'text', text);
+                      //ic.saveFileCls.saveFile(file_pref + postfix + index + '.vrml', 'text', text);
                       text = '';
                   }.bind(this, mat, index), time);
                   ++index;
@@ -13758,12 +13762,16 @@ var icn3d = (function (exports) {
 
                  var geometry = mesh.geometry;
 
-                 var faces = geometry.faces;
-                 if(faces !== undefined) {
-                     for(var j = 0, jl = faces.length; j < jl; ++j) {
-                         ++cntFaces;
-                     }
-                 }
+    //             var faces = geometry.faces;
+    //             if(faces !== undefined) {
+    //                 for(var j = 0, jl = faces.length; j < jl; ++j) {
+    //                     ++cntFaces;
+    //                 }
+    //             }
+
+                 var indexArray = geometry.getIndex().array;
+                 cntFaces += indexArray.length / 3;
+
             }
 
             return cntFaces;
@@ -13859,42 +13867,66 @@ var icn3d = (function (exports) {
 
                  var geometry = mesh.geometry;
 
-                 var vertices = geometry.vertices;
-                 var faces = geometry.faces;
+    //             var vertices = geometry.vertices;
+    //             var faces = geometry.faces;
 
-                 if(faces === undefined) continue;
+    //             if(faces === undefined) continue;
+
+                 var positionArray = geometry.getAttribute('position').array;
+                 var indexArray = geometry.getIndex().array;
 
                  var position = mesh.position;
                  var scale = mesh.scale;
 
                  var matrix = mesh.matrix;
 
-                 var stlArray = new Uint8Array(faces.length * 50);
+    //             var stlArray = new Uint8Array(faces.length * 50);
+                 var stlArray = new Uint8Array(indexArray.length / 3 * 50);
 
                  var index = 0;
 
-                 for(var j = 0, jl = faces.length; j < jl; ++j) {
-                     var a = faces[j].a;
-                     var b = faces[j].b;
-                     var c = faces[j].c;
-                     var normal = faces[j].normal;
+    //             for(var j = 0, jl = faces.length; j < jl; ++j) {
+                 for(var j = 0, jl = indexArray.length; j < jl; j += 3) {
+    //                 var a = faces[j].a;
+    //                 var b = faces[j].b;
+    //                 var c = faces[j].c;
+    //                 var normal = faces[j].normal;
+
+                     var a = indexArray[j];
+                     var b = indexArray[j+1];
+                     var c = indexArray[j+2];
+
+                     var normal;
+
+                     var va = new THREE.Vector3(positionArray[3*a], positionArray[3*a+1], positionArray[3*a+2]);
+                     var vb = new THREE.Vector3(positionArray[3*b], positionArray[3*b+1], positionArray[3*b+2]);
+                     var vc = new THREE.Vector3(positionArray[3*c], positionArray[3*c+1], positionArray[3*c+2]);
 
                      var v1, v2, v3;
 
                      if(geometry.type == 'SphereGeometry' || geometry.type == 'BoxGeometry') {
-                         v1 = vertices[a].clone().multiply(scale).add(position);
-                         v2 = vertices[b].clone().multiply(scale).add(position);
-                         v3 = vertices[c].clone().multiply(scale).add(position);
+    //                     v1 = vertices[a].clone().multiply(scale).add(position);
+    //                     v2 = vertices[b].clone().multiply(scale).add(position);
+    //                     v3 = vertices[c].clone().multiply(scale).add(position);
+                         v1 = va.clone().multiply(scale).add(position);
+                         v2 = vb.clone().multiply(scale).add(position);
+                         v3 = vc.clone().multiply(scale).add(position);
                      }
                       else if(geometry.type == 'CylinderGeometry') {
-                         v1 = vertices[a].clone().applyMatrix4(matrix);
-                         v2 = vertices[b].clone().applyMatrix4(matrix);
-                         v3 = vertices[c].clone().applyMatrix4(matrix);
+    //                     v1 = vertices[a].clone().applyMatrix4(matrix);
+    //                     v2 = vertices[b].clone().applyMatrix4(matrix);
+    //                     v3 = vertices[c].clone().applyMatrix4(matrix);
+                         v1 = va.clone().applyMatrix4(matrix);
+                         v2 = vb.clone().applyMatrix4(matrix);
+                         v3 = vc.clone().applyMatrix4(matrix);
                      }
                      else {
-                         v1 = vertices[a].clone();
-                         v2 = vertices[b].clone();
-                         v3 = vertices[c].clone();
+    //                     v1 = vertices[a].clone();
+    //                     v2 = vertices[b].clone();
+    //                     v3 = vertices[c].clone();
+                         v1 = va.clone();
+                         v2 = vb.clone();
+                         v3 = vc.clone();
                      }
 
                      //REAL32[3] � Normal vector
@@ -13998,14 +14030,18 @@ var icn3d = (function (exports) {
                  var geometry = mesh.geometry;
 
                  mesh.material.type;
-                 var bSurfaceVertex =(geometry.type == 'Surface') ? true : false;
+                 (geometry.type == 'Surface') ? true : false;
 
-                 var vertices = geometry.vertices;
+    //             var vertices = geometry.vertices;
 
-                 if(vertices === undefined) continue;
-                 vertexCnt += vertices.length;
+    //             if(vertices === undefined) continue;
+    //             vertexCnt += vertices.length;
 
-                 var faces = geometry.faces;
+    //             var faces = geometry.faces;
+
+                 var positionArray = geometry.getAttribute('position').array;
+                 var colorArray = (geometry.getAttribute('color')) ? geometry.getAttribute('color').array : [];
+                 var indexArray = geometry.getIndex().array;
 
                  var position = mesh.position;
                  var scale = mesh.scale;
@@ -14023,16 +14059,22 @@ var icn3d = (function (exports) {
                  vrmlStrArray.push('coord Coordinate { point [ ');
 
                  var vertexColorStrArray = [];
-                 for(var j = 0, jl = vertices.length; j < jl; ++j) {
+    //             for(var j = 0, jl = vertices.length; j < jl; ++j) {
+                 for(var j = 0, jl = positionArray.length; j < jl; j += 3) {
+                     var va = new THREE.Vector3(positionArray[j], positionArray[j+1], positionArray[j+2]);
+
                      var vertex;
                      if(geometry.type == 'SphereGeometry' || geometry.type == 'BoxGeometry') {
-                         vertex = vertices[j].clone().multiply(scale).add(position);
+    //                     vertex = vertices[j].clone().multiply(scale).add(position);
+                         vertex = va.clone().multiply(scale).add(position);
                      }
                       else if(geometry.type == 'CylinderGeometry') {
-                         vertex = vertices[j].clone().applyMatrix4(matrix);
+    //                     vertex = vertices[j].clone().applyMatrix4(matrix);
+                         vertex = va.clone().applyMatrix4(matrix);
                      }
                      else {
-                         vertex = vertices[j].clone();
+    //                     vertex = vertices[j].clone()
+                         vertex = va.clone();
                      }
 
                      if(mat !== undefined) vertex.applyMatrix4(mat);
@@ -14040,13 +14082,15 @@ var icn3d = (function (exports) {
                      vrmlStrArray.push(vertex.x.toPrecision(5) + ' ' + vertex.y.toPrecision(5) + ' ' + vertex.z.toPrecision(5));
                      vertex = undefined;
 
-                     if(j < jl - 1) vrmlStrArray.push(', ');
+    //                 if(j < jl - 1) vrmlStrArray.push(', ');
+                     if(j < jl - 3) vrmlStrArray.push(', ');
 
                      vertexColorStrArray.push(me.parasCls.thr(1, 1, 1));
                  }
                  vrmlStrArray.push(' ] }\n');
 
                  var coordIndexStr = '', colorStr = '';
+    /*
                  if(bSurfaceVertex) {
                      for(var j = 0, jl = faces.length; j < jl; ++j) {
                          var a = faces[j].a;
@@ -14074,22 +14118,30 @@ var icn3d = (function (exports) {
                      vrmlStrArray.push('color Color { color [ ' + colorStr + ' ] } colorPerVertex TRUE\n');
                  }
                  else {
-                     for(var j = 0, jl = faces.length; j < jl; ++j) {
-                         var a = faces[j].a;
-                         var b = faces[j].b;
-                         var c = faces[j].c;
+    */
+    //                 for(var j = 0, jl = faces.length; j < jl; ++j) {
+                     for(var j = 0, jl = indexArray.length; j < jl; j += 3) {
+    //                     var a = faces[j].a;
+    //                     var b = faces[j].b;
+    //                     var c = faces[j].c;
+                         var a = indexArray[j];
+                         var b = indexArray[j+1];
+                         var c = indexArray[j+2];
+
                          var color;
                          if(geometry.type == 'SphereGeometry' || geometry.type == 'BoxGeometry' || geometry.type == 'CylinderGeometry') {
                              color = meshColor;
                          }
                          else {
-                             color = faces[j].color;
+    //                         color = faces[j].color;
+                             color = new THREE.Color(colorArray[3*a], colorArray[3*a+1], colorArray[3*a+2]);
                          }
 
                          coordIndexStr += a + ' ' + b + ' ' + c;
                          // http://www.lighthouse3d.com/vrml/tutorial/index.shtml?indfs
                          // use -1 to separate polygons
-                         if(j < jl - 1) coordIndexStr += ', -1, ';
+    //                     if(j < jl - 1) coordIndexStr += ', -1, ';
+                         if(j < jl - 3) coordIndexStr += ', -1, ';
 
                          // update vertexColorStrArray
                          vertexColorStrArray[a] = color;
@@ -14105,7 +14157,7 @@ var icn3d = (function (exports) {
 
                      vrmlStrArray.push('coordIndex [ ' + coordIndexStr + ' ]\n');
                      vrmlStrArray.push('color Color { color [ ' + colorStr + ' ] } colorPerVertex TRUE\n');
-                 }
+    //             }
 
                  vrmlStrArray.push('  }\n');
                  vrmlStrArray.push('}\n');
@@ -24586,7 +24638,7 @@ var icn3d = (function (exports) {
 
           // Each argument is an array with the following structure: [ data, statusText, jqXHR ]
           //var data2 = v2[0];
-          for(var index = 0, indexl = dataArray.length - 1; index < indexl; ++index) {
+          for(var index = 0, indexl = dataArray.length; index < indexl; ++index) {
         //  for(var index = 1, indexl = dataArray.length; index < indexl; ++index) {
               var data = dataArray[index][0];
 
@@ -30500,7 +30552,7 @@ var icn3d = (function (exports) {
             else if(cmd == 'rotate z') return rotStr2 + 'Z-axis';
             else if(cmd == 'reset') return 'View > Reset > All';
             else if(cmd == 'reset orientation') return 'View > Reset > Orientation';
-            else if(cmd == 'reset thickness') return 'File > 3D Printing > Reset Thickness';
+            //else if(cmd == 'reset thickness') return 'File > 3D Printing > Reset Thickness';
             else if(cmd == 'clear selection') return 'Select > Clear Selection';
             else if(cmd == 'zoom selection') return 'Select > Zoom in Selection';
             else if(cmd == 'center selection') return 'Select > Center Selection';
@@ -43806,6 +43858,7 @@ var icn3d = (function (exports) {
             });
         //    },
         //    clkmn1_thicknessReset: function() {
+    /*
             me.myEventCls.onIds("#" + me.pre + "mn1_thicknessReset", "click", function(e) { var ic = me.icn3d;
                var select = "reset thickness";
                thisClass.setLogCmd(select, true);
@@ -43813,6 +43866,7 @@ var icn3d = (function (exports) {
                ic.threeDPrintCls.resetAfter3Dprint();
                ic.drawCls.draw();
             });
+    */
         //    },
         //    clkMn6_ssbondsYes: function() {
             me.myEventCls.onIds("#" + me.pre + "mn6_ssbondsYes", "click", function(e) { var ic = me.icn3d;
@@ -44348,20 +44402,20 @@ var icn3d = (function (exports) {
             html += "<li><span>3D Printing</span>";
             html += "<ul>";
             if(me.cfg.cid === undefined) {
-                html += me.htmlCls.setHtmlCls.getLink('mn1_exportVrmlStab', 'VRML(Color, W/  Stabilizers)');
-                html += me.htmlCls.setHtmlCls.getLink('mn1_exportStlStab', 'STL(W/  Stabilizers)');
+                html += me.htmlCls.setHtmlCls.getLink('mn1_exportVrmlStab', 'WRL/VRML(Color, W/ Stab.)');
+                html += me.htmlCls.setHtmlCls.getLink('mn1_exportStlStab', 'STL(W/ Stabilizers)');
                 html += "<li>-</li>";
-                html += me.htmlCls.setHtmlCls.getLink('mn1_exportVrml', 'VRML(Color)');
+                html += me.htmlCls.setHtmlCls.getLink('mn1_exportVrml', 'WRL/VRML(Color)');
                 html += me.htmlCls.setHtmlCls.getLink('mn1_exportStl', 'STL');
                 html += "<li>-</li>";
-                html += me.htmlCls.setHtmlCls.getLink('mn1_stabilizerYes', 'Add All  Stabilizers');
-                html += me.htmlCls.setHtmlCls.getLink('mn1_stabilizerNo', 'Remove All  Stabilizers');
+                html += me.htmlCls.setHtmlCls.getLink('mn1_stabilizerYes', 'Add All Stabilizers');
+                html += me.htmlCls.setHtmlCls.getLink('mn1_stabilizerNo', 'Remove All Stabilizers');
                 html += "<li>-</li>";
-                html += me.htmlCls.setHtmlCls.getLink('mn1_stabilizerOne', 'Add One  Stabilizer');
-                html += me.htmlCls.setHtmlCls.getLink('mn1_stabilizerRmOne', 'Remove One  Stabilizer');
+                html += me.htmlCls.setHtmlCls.getLink('mn1_stabilizerOne', 'Add One Stabilizer');
+                html += me.htmlCls.setHtmlCls.getLink('mn1_stabilizerRmOne', 'Remove One Stabilizer');
                 html += "<li>-</li>";
                 html += me.htmlCls.setHtmlCls.getLink('mn1_thicknessSet', 'Set Thickness');
-                html += me.htmlCls.setHtmlCls.getLink('mn1_thicknessReset', 'Reset Thickness');
+                //html += me.htmlCls.setHtmlCls.getLink('mn1_thicknessReset', 'Reset Thickness');
             }
             else {
                 html += me.htmlCls.setHtmlCls.getLink('mn1_exportVrml', 'VRML(Color)');
@@ -48091,6 +48145,18 @@ var icn3d = (function (exports) {
 
                 me.htmlCls.setHtmlCls.setLineThickness("style");
             });
+
+            me.myEventCls.onIds("#" + me.pre + "reset_thickness_3dprint", "click", function(e) { me.icn3d;
+                e.preventDefault();
+
+                me.htmlCls.setHtmlCls.setLineThickness("3dprint", true);
+            });
+            me.myEventCls.onIds("#" + me.pre + "reset_thickness_style", "click", function(e) { me.icn3d;
+                e.preventDefault();
+
+                me.htmlCls.setHtmlCls.setLineThickness("style", true);
+            });
+
         //    },
         //    clickReset: function() {
             me.myEventCls.onIds("#" + me.pre + "reset", "click", function(e) { var ic = me.icn3d;
@@ -48869,7 +48935,9 @@ var icn3d = (function (exports) {
 
             html += "<b>Ball Scale</b>: " + me.htmlCls.inputTextStr + "id='" + me.pre + "ballscale_" + type + "' value='" + ballscale + "' size=4>" + me.htmlCls.space3 + "(for styles 'Ball and Stick' and 'Dot', default 0.3)<br/>";
 
-            html += me.htmlCls.spanNowrapStr + "" + me.htmlCls.buttonStr + "apply_thickness_" + type + "'>Apply</button></span>";
+            html += me.htmlCls.spanNowrapStr + "" + me.htmlCls.buttonStr + "apply_thickness_" + type + "'>Apply</button></span>&nbsp;&nbsp;&nbsp;";
+
+            html += me.htmlCls.spanNowrapStr + "" + me.htmlCls.buttonStr + "reset_thickness_" + type + "'>Reset</button></span>";
 
             return html;
         }
@@ -49433,14 +49501,47 @@ var icn3d = (function (exports) {
             return graphStr2;
         }
 
-        setLineThickness(postfix) { var me = this.icn3dui, ic = me.icn3d;
+        setCookieForThickness() { var me = this.icn3dui, ic = me.icn3d;
+            if(!me.bNode) { // && postfix == 'style') {
+                var exdays = 3650; // 10 years
+
+                this.setCookie('lineRadius', ic.lineRadius, exdays);
+                this.setCookie('coilWidth', ic.coilWidth, exdays);
+                this.setCookie('cylinderRadius', ic.cylinderRadius, exdays);
+                this.setCookie('traceRadius', ic.traceRadius, exdays);
+                this.setCookie('dotSphereScale', ic.dotSphereScale, exdays);
+                this.setCookie('ribbonthickness', ic.ribbonthickness, exdays);
+                this.setCookie('helixSheetWidth', ic.helixSheetWidth, exdays);
+                this.setCookie('nucleicAcidWidth', ic.nucleicAcidWidth, exdays);
+            }
+        }
+
+        setLineThickness(postfix, bReset) { var me = this.icn3dui, ic = me.icn3d;
             ic.bSetThickness = true;
 
             if(postfix == 'style') {
+                if(bReset) {
+                    $("#" + me.pre + "shininess").val('40');
+                    $("#" + me.pre + "light1").val('0.6');
+                    $("#" + me.pre + "light2").val('0.4');
+                    $("#" + me.pre + "light3").val('0.2');
+                }
+
                 ic.shininess = parseFloat($("#" + me.pre + "shininess").val()); //40;
                 ic.light1 = parseFloat($("#" + me.pre + "light1").val()); //0.6;
                 ic.light2 = parseFloat($("#" + me.pre + "light2").val()); //0.4;
                 ic.light3 = parseFloat($("#" + me.pre + "light3").val()); //0.2;
+            }
+
+            if(bReset) {
+                $("#" + me.pre + "linerad_" + postfix ).val(0.1); //0.1; // hbonds, distance lines
+                $("#" + me.pre + "coilrad_" + postfix ).val(0.4); //0.4; // style cartoon-coil
+                $("#" + me.pre + "stickrad_" + postfix ).val(0.4); //0.4; // style stick
+                $("#" + me.pre + "stickrad_" + postfix ).val(0.2); //0.2; // style c alpha trace, nucleotide stick
+                $("#" + me.pre + "ballscale_" + postfix ).val(0.3); //0.3; // style ball and stick, dot
+                $("#" + me.pre + "ribbonthick_" + postfix ).val(0.4); //0.4; // style ribbon, nucleotide cartoon, stand thickness
+                $("#" + me.pre + "prtribbonwidth_" + postfix ).val(1.3); //1.3; // style ribbon, stand thickness
+                $("#" + me.pre + "nucleotideribbonwidth_" + postfix ).val(0.8); //0.8; // nucleotide cartoon
             }
 
             ic.lineRadius = parseFloat($("#" + me.pre + "linerad_" + postfix ).val()); //0.1; // hbonds, distance lines
@@ -49453,24 +49554,26 @@ var icn3d = (function (exports) {
             ic.nucleicAcidWidth = parseFloat($("#" + me.pre + "nucleotideribbonwidth_" + postfix ).val()); //0.8; // nucleotide cartoon
 
             // save to cache
-            if(!me.bNode && postfix == 'style') {
+            if(!me.bNode) { // && postfix == 'style') {
                 var exdays = 3650; // 10 years
                 this.setCookie('shininess', ic.shininess, exdays);
                 this.setCookie('light1', ic.light1, exdays);
                 this.setCookie('light2', ic.light2, exdays);
                 this.setCookie('light3', ic.light3, exdays);
-
-                this.setCookie('lineRadius', ic.lineRadius, exdays);
-                this.setCookie('coilWidth', ic.coilWidth, exdays);
-                this.setCookie('cylinderRadius', ic.cylinderRadius, exdays);
-                this.setCookie('traceRadius', ic.traceRadius, exdays);
-                this.setCookie('dotSphereScale', ic.dotSphereScale, exdays);
-                this.setCookie('ribbonthickness', ic.ribbonthickness, exdays);
-                this.setCookie('helixSheetWidth', ic.helixSheetWidth, exdays);
-                this.setCookie('nucleicAcidWidth', ic.nucleicAcidWidth, exdays);
             }
 
-            me.htmlCls.clickMenuCls.setLogCmd('set thickness | linerad ' + ic.lineRadius + ' | coilrad ' + ic.coilWidth + ' | stickrad ' + ic.cylinderRadius + ' | tracerad ' + ic.traceRadius + ' | ribbonthick ' + ic.ribbonthickness + ' | proteinwidth ' + ic.helixSheetWidth + ' | nucleotidewidth ' + ic.nucleicAcidWidth  + ' | ballscale ' + ic.dotSphereScale, true);
+            this.setCookieForThickness();
+
+            if(postfix = bReset) {
+               var select = "reset thickness";
+               me.htmlCls.clickMenuCls.setLogCmd(select, true);
+               ic.bSetThickness = false;
+               ic.threeDPrintCls.resetAfter3Dprint();
+            }
+            else {
+                me.htmlCls.clickMenuCls.setLogCmd('set thickness | linerad ' + ic.lineRadius + ' | coilrad ' + ic.coilWidth + ' | stickrad ' + ic.cylinderRadius + ' | tracerad ' + ic.traceRadius + ' | ribbonthick ' + ic.ribbonthickness + ' | proteinwidth ' + ic.helixSheetWidth + ' | nucleotidewidth ' + ic.nucleicAcidWidth  + ' | ballscale ' + ic.dotSphereScale, true);
+            }
+
             ic.drawCls.draw();
         }
 
@@ -52273,7 +52376,7 @@ var icn3d = (function (exports) {
         //even when multiple iCn3D viewers are shown together.
         this.pre = this.cfg.divid + "_";
 
-        this.REVISION = '3.1.5';
+        this.REVISION = '3.1.6';
 
         // In nodejs, iCn3D defines "window = {navigator: {}}"
         this.bNode = (Object.keys(window).length < 2) ? true : false;
