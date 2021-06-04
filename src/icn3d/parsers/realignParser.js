@@ -305,6 +305,11 @@ class RealignParser {
 
             var chainid = mmdbid + chainidArray[i].substr(pos);
 
+            if(!ic.chainsSeq[chainid]) {
+                alert("Please select one chain per structure and try it again...");
+                return;
+            }
+
             if(!struct2SeqHash.hasOwnProperty(mmdbid)) {
                 struct2SeqHash[mmdbid] = '';
                 struct2CoorHash[mmdbid] = [];
