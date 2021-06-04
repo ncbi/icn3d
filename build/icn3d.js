@@ -24806,6 +24806,11 @@ var icn3d = (function (exports) {
 
                 var chainid = mmdbid + chainidArray[i].substr(pos);
 
+                if(!ic.chainsSeq[chainid]) {
+                    alert("Please select one chain per structure and try it again...");
+                    return;
+                }
+
                 if(!struct2SeqHash.hasOwnProperty(mmdbid)) {
                     struct2SeqHash[mmdbid] = '';
                     struct2CoorHash[mmdbid] = [];
@@ -47207,7 +47212,7 @@ var icn3d = (function (exports) {
         //       var alignment = $("#" + me.pre + "chainalignid1").val() + "," + $("#" + me.pre + "chainalignid2").val();
                var alignment = $("#" + me.pre + "chainalignids").val();
                var resalign = $("#" + me.pre + "resalignids").val();
-               var predefinedres = $("#" + me.pre + "predefinedres").val().trim().replace(/\\n/g, ' | ');
+               var predefinedres = $("#" + me.pre + "predefinedres").val().trim().replace(/\n/g, ' | ');
                if(predefinedres && alignment.split(',').length != predefinedres.split(' | ').length) {
                    alert("Please make sure the number of chains and the lines of predefined residues are the same...");
                    return;
