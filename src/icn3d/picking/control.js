@@ -240,6 +240,7 @@ class Control {
         ic.container.bind('touchstart', function (e) {
         //document.getElementById(ic.id).addEventListener('touchstart', function (e) {
             //e.preventDefault();
+            e.preventDefault();
             ic.isDragging = true;
 
             if (!ic.scene) return;
@@ -279,6 +280,7 @@ class Control {
         ic.container.bind('mousewheel', function (e) {
         //document.getElementById(ic.id).addEventListener('mousewheel', function (e) {
             //e.preventDefault();
+            e.preventDefault();
             if (!ic.scene) return;
 
             ic.bStopRotate = true;
@@ -297,6 +299,7 @@ class Control {
         ic.container.bind('DOMMouseScroll', function (e) {
         //document.getElementById(ic.id).addEventListener('DOMMouseScroll', function (e) {
             //e.preventDefault();
+            e.preventDefault();
             if (!ic.scene) return;
 
             ic.bStopRotate = true;
@@ -318,6 +321,7 @@ class Control {
         if(ic.icn3dui.bNode) return;
 
         //e.preventDefault();
+        e.preventDefault();
         if (!ic.scene) return;
         // no action when no mouse button is clicked and no key was down
         //if (!ic.isDragging) return;

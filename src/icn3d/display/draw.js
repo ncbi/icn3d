@@ -95,12 +95,14 @@ class Draw {
         var cam = (ic.bControlGl && !ic.icn3dui.bNode) ? window.cam : ic.cam;
 
     //    if(ic.bShade) {
+        if(ic.directionalLight) {
             var quaternion = new THREE.Quaternion();
             quaternion.setFromUnitVectors( new THREE.Vector3(0, 0, ic.cam_z).normalize(), cam.position.clone().normalize() );
 
             ic.directionalLight.position.copy(ic.lightPos.clone().applyQuaternion( quaternion ).normalize());
             ic.directionalLight2.position.copy(ic.lightPos2.clone().applyQuaternion( quaternion ).normalize());
             ic.directionalLight3.position.copy(ic.lightPos3.clone().applyQuaternion( quaternion ).normalize());
+        }
     //    }
     //    else {
     //        ic.directionalLight.position.copy(cam.position);

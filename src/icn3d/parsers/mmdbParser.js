@@ -408,6 +408,42 @@ class MmdbParser {
             });
         }
     }
+
+    downloadUniprotid(uniprotid) { var ic = this.icn3d, me = ic.icn3dui;
+       // get gis
+       var url = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi?db=protein&retmode=json&id=" + uniprotid;
+
+       ic.bCid = undefined;
+
+       $.ajax({
+          url: url,
+          dataType: 'json',
+          cache: true,
+          tryCount : 0,
+          retryLimit : 1,
+          beforeSend: function() {
+              //ic.ParserUtilsCls.showLoading();
+          },
+          complete: function() {
+              //ic.ParserUtilsCls.hideLoading();
+          },
+          success: function(data) {
+               var giArray = data.result.uids;
+
+               var redirectUrl = "https://www.ncbi.nlm.nih.gov/structure?linkname=protein_structure&from_uid=" + giArray.join(',');
+               window.open(redirectUrl, '_self');
+          },
+          error : function(xhr, textStatus, errorThrown ) {
+            this.tryCount++;
+            if(this.tryCount <= this.retryLimit) {
+                //try again
+                $.ajax(this);
+                return;
+            }
+            return;
+          }
+        });
+    }
 }
 
 export {MmdbParser}

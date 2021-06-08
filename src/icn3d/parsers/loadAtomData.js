@@ -323,7 +323,7 @@ class LoadAtomData {
 
             if(type === 'mmdbid') {
                 atm.coord = new THREE.Vector3(atm.coord[0], atm.coord[1], atm.coord[2]);
-                if(ic.q_rotation !== undefined && !ic.icn3dui.cfg.resnum && !ic.icn3dui.cfg.resdef) {
+                if(ic.q_rotation !== undefined && ic.t_trans_add.length > 0 && !ic.icn3dui.cfg.resnum && !ic.icn3dui.cfg.resdef) {
                     if(alignType === 'target') {
                         atm.coord.x += ic.t_trans_add[chainIndex].x;
                         atm.coord.y += ic.t_trans_add[chainIndex].y;

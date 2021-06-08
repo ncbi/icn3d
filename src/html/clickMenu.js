@@ -146,6 +146,10 @@ class ClickMenu {
         me.myEventCls.onIds("#" + me.pre + "mn1_gi", "click", function(e) { var ic = me.icn3d;
            me.htmlCls.dialogCls.openDlg('dl_gi', 'Please input protein gi');
         });
+
+        me.myEventCls.onIds("#" + me.pre + "mn1_uniprotid", "click", function(e) { var ic = me.icn3d;
+           me.htmlCls.dialogCls.openDlg('dl_uniprotid', 'Please input UniProt ID');
+        });
     //    },
     //    clkMn1_cid: function() {
         me.myEventCls.onIds("#" + me.pre + "mn1_cid", "click", function(e) { var ic = me.icn3d;

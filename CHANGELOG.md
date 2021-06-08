@@ -1,4 +1,6 @@
 ## Change Log
+[icn3d-3.2.0](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.2.0.zip) was release on June 4, 2021. Added the option to load UniProt ID in the menu "File > Retrieve by ID > UniProt ID".
+
 [icn3d-3.1.6](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.1.6.zip) was release on June 4, 2021. Fixed file export in 3D printing due to the change of Geometry to BufferGeometry in three.js version 128.
 
 [icn3d-3.1.5](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.1.5.zip) was release on June 2, 2021. Added an option to load predefined alignments in the menu "File > Align > Multiple Chains". Enabled to change the shininess, lights, and thickness in the menu "Style > Preferences".

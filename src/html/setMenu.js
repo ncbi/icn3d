@@ -391,6 +391,7 @@ class SetMenu {
         html += me.htmlCls.setHtmlCls.getLink('mn1_opmid', 'OPM PDB ID ' + me.htmlCls.wifiStr);
         html += me.htmlCls.setHtmlCls.getLink('mn1_mmcifid', 'mmCIF ID ' + me.htmlCls.wifiStr);
         html += me.htmlCls.setHtmlCls.getLink('mn1_gi', 'NCBI gi ' + me.htmlCls.wifiStr);
+        html += me.htmlCls.setHtmlCls.getLink('mn1_uniprotid', 'UniProt ID ' + me.htmlCls.wifiStr);
         html += me.htmlCls.setHtmlCls.getLink('mn1_cid', 'PubChem CID ' + me.htmlCls.wifiStr);
         html += "</ul>";
         html += "</li>";
@@ -1436,7 +1437,7 @@ class SetMenu {
 
             html += "<li><span>Symmetry</span>";
             html += "<ul>";
-            if(bOnePdb) html += me.htmlCls.setHtmlCls.getLink('mn6_symmetry', 'from RCSB(precalculated) ' + me.htmlCls.wifiStr);
+            if(bOnePdb) html += me.htmlCls.setHtmlCls.getLink('mn6_symmetry', 'from PDB(precalculated) ' + me.htmlCls.wifiStr);
             html += me.htmlCls.setHtmlCls.getLink('mn6_symd', 'from SymD(Dynamic) ' + me.htmlCls.wifiStr);
             html += me.htmlCls.setHtmlCls.getLink('mn6_clear_sym', 'Clear SymD Symmetry');
             html += me.htmlCls.setHtmlCls.getLink('mn6_axes_only', 'Show Axes Only');
