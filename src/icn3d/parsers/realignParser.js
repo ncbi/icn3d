@@ -121,8 +121,8 @@ class RealignParser {
       ic.chainalignParserCls.downloadChainalignmentPart3(undefined, chainidArray, hAtoms);
     }
 
-    parseChainRealignData(ajaxData, chainresiCalphaHash2, chainidArray, struct2SeqHash, struct2CoorHash, struct2resid, bRealign) { var ic = this.icn3d, me = ic.icn3dui;
-      var dataArray =(chainidArray.length == 2) ? [ajaxData] : ajaxData;
+    parseChainRealignData(dataArray, chainresiCalphaHash2, chainidArray, struct2SeqHash, struct2CoorHash, struct2resid, bRealign) { var ic = this.icn3d, me = ic.icn3dui;
+      //var dataArray =(chainidArray.length == 2) ? [ajaxData] : ajaxData;
 
       var toStruct = chainidArray[0].substr(0, chainidArray[0].indexOf('_')); //.toUpperCase();
       if(!bRealign) toStruct = toStruct.toUpperCase();
@@ -425,10 +425,11 @@ class RealignParser {
             //https://stackoverflow.com/questions/14352139/multiple-ajax-calls-from-array-and-handle-callback-when-completed
             //https://stackoverflow.com/questions/5518181/jquery-deferreds-when-and-the-fail-callback-arguments
             $.when.apply(undefined, ajaxArray).then(function() {
-               thisClass.parseChainRealignData(arguments, chainresiCalphaHash2, chainidArray, struct2SeqHash, struct2CoorHash, struct2resid, bRealign);
+               var dataArray =(chainidArray.length == 2) ? [arguments] : Array.from(arguments);
+               thisClass.parseChainRealignData(Array.from(dataArray), chainresiCalphaHash2, chainidArray, struct2SeqHash, struct2CoorHash, struct2resid, bRealign);
             })
             .fail(function() {
-               alert("The realignment did notwork...");
+               alert("The realignment did not work...");
                //thisClass.parseChainRealignData(arguments, chainresiCalphaHash2, chainidArray, struct2SeqHash, struct2CoorHash, struct2resid, bRealign);
             });
         }

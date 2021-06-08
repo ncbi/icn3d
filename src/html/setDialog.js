@@ -197,6 +197,12 @@ class SetDialog {
         html += me.htmlCls.buttonStr + "reload_gi'>Load</button>";
         html += "</div>";
 
+        html += me.htmlCls.divStr + "dl_uniprotid' class='" + dialogClass + "'>";
+        html += "Note: A list of structures will be shown. Click \"View in iCn3D\" to view each structure in 3D.<br><br>";
+        html += "UniProt ID: " + me.htmlCls.inputTextStr + "id='" + me.pre + "uniprotid' value='P0DTC2' size=8> ";
+        html += me.htmlCls.buttonStr + "reload_uniprotid'>Load</button>";
+        html += "</div>";
+
         html += me.htmlCls.divStr + "dl_cid' class='" + dialogClass + "'>";
         html += "PubChem CID: " + me.htmlCls.inputTextStr + "id='" + me.pre + "cid' value='2244' size=8> ";
         html += me.htmlCls.buttonStr + "reload_cid'>Load</button>";

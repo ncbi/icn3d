@@ -459,6 +459,13 @@ class Events {
            me.htmlCls.clickMenuCls.setLogCmd("load gi " + $("#" + me.pre + "gi").val(), false);
            window.open(me.htmlCls.baseUrl + 'icn3d/full.html?gi=' + $("#" + me.pre + "gi").val(), '_blank');
         });
+
+        me.myEventCls.onIds("#" + me.pre + "reload_uniprotid", "click", function(e) { var ic = me.icn3d;
+           e.preventDefault();
+           if(!me.cfg.notebook) dialog.dialog( "close" );
+           me.htmlCls.clickMenuCls.setLogCmd("load uniprotid " + $("#" + me.pre + "uniprotid").val(), false);
+           window.open(me.htmlCls.baseUrl + 'icn3d/full.html?uniprotid=' + $("#" + me.pre + "uniprotid").val(), '_blank');
+        });
     //    },
     //    clickReload_cid: function() {
         me.myEventCls.onIds("#" + me.pre + "reload_cid", "click", function(e) { var ic = me.icn3d;

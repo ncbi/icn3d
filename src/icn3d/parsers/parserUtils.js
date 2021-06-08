@@ -209,15 +209,16 @@ class ParserUtils {
         //https://stackoverflow.com/questions/14352139/multiple-ajax-calls-from-array-and-handle-callback-when-completed
         //https://stackoverflow.com/questions/5518181/jquery-deferreds-when-and-the-fail-callback-arguments
         $.when.apply(undefined, ajaxArray).then(function() {
-          thisClass.parse2DDiagramsData(arguments, chainidArray);
+          var dataArray =(chainidArray.length == 1) ? [arguments] : Array.from(arguments);
+          thisClass.parse2DDiagramsData(dataArray, chainidArray);
         })
         .fail(function() {
-          thisClass.parse2DDiagramsData(arguments, chainidArray);
+          //thisClass.parse2DDiagramsData(arguments, chainidArray);
         });
     }
 
-    parse2DDiagramsData(dataInput, chainidArray) { var ic = this.icn3d, me = ic.icn3dui;
-        var dataArray =(chainidArray.length == 1) ? [dataInput] : dataInput;
+    parse2DDiagramsData(dataArray, chainidArray) { var ic = this.icn3d, me = ic.icn3dui;
+        //var dataArray =(chainidArray.length == 1) ? [dataInput] : dataInput;
 
         ic.html2ddgm = '';
 

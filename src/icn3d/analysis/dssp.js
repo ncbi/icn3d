@@ -52,15 +52,16 @@ class Dssp {
       //https://stackoverflow.com/questions/14352139/multiple-ajax-calls-from-array-and-handle-callback-when-completed
       //https://stackoverflow.com/questions/5518181/jquery-deferreds-when-and-the-fail-callback-arguments
       $.when.apply(undefined, ajaxArray).then(function() {
-          thisClass.parseDsspData(arguments, struArray);
+          var dataArray =(struArray.length == 1) ? [arguments] : Array.from(arguments);
+          thisClass.parseDsspData(dataArray, struArray);
       })
       .fail(function() {
-          thisClass.parseDsspData(arguments, struArray);
+          //thisClass.parseDsspData(arguments, struArray);
       });
     }
 
-    parseDsspData(data, struArray) { var ic = this.icn3d, me = ic.icn3dui;
-        var dataArray =(struArray.length == 1) ? [data] : data;
+    parseDsspData(dataArray, struArray) { var ic = this.icn3d, me = ic.icn3dui;
+        //var dataArray =(struArray.length == 1) ? [data] : data;
 
         // Each argument is an array with the following structure: [ data, statusText, jqXHR ]
         //var data2 = v2[0];

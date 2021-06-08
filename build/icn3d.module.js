@@ -21685,7 +21685,7 @@ class LoadAtomData {
 
             if(type === 'mmdbid') {
                 atm.coord = new THREE.Vector3(atm.coord[0], atm.coord[1], atm.coord[2]);
-                if(ic.q_rotation !== undefined && !ic.icn3dui.cfg.resnum && !ic.icn3dui.cfg.resdef) {
+                if(ic.q_rotation !== undefined && ic.t_trans_add.length > 0 && !ic.icn3dui.cfg.resnum && !ic.icn3dui.cfg.resdef) {
                     if(alignType === 'target') {
                         atm.coord.x += ic.t_trans_add[chainIndex].x;
                         atm.coord.y += ic.t_trans_add[chainIndex].y;
@@ -22819,15 +22819,16 @@ class Dssp {
       //https://stackoverflow.com/questions/14352139/multiple-ajax-calls-from-array-and-handle-callback-when-completed
       //https://stackoverflow.com/questions/5518181/jquery-deferreds-when-and-the-fail-callback-arguments
       $.when.apply(undefined, ajaxArray).then(function() {
-          thisClass.parseDsspData(arguments, struArray);
+          var dataArray =(struArray.length == 1) ? [arguments] : Array.from(arguments);
+          thisClass.parseDsspData(dataArray, struArray);
       })
       .fail(function() {
-          thisClass.parseDsspData(arguments, struArray);
+          //thisClass.parseDsspData(arguments, struArray);
       });
     }
 
-    parseDsspData(data, struArray) { var ic = this.icn3d; ic.icn3dui;
-        var dataArray =(struArray.length == 1) ? [data] : data;
+    parseDsspData(dataArray, struArray) { var ic = this.icn3d; ic.icn3dui;
+        //var dataArray =(struArray.length == 1) ? [data] : data;
 
         // Each argument is an array with the following structure: [ data, statusText, jqXHR ]
         //var data2 = v2[0];
@@ -24516,6 +24517,42 @@ class MmdbParser {
             });
         }
     }
+
+    downloadUniprotid(uniprotid) { var ic = this.icn3d; ic.icn3dui;
+       // get gis
+       var url = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi?db=protein&retmode=json&id=" + uniprotid;
+
+       ic.bCid = undefined;
+
+       $.ajax({
+          url: url,
+          dataType: 'json',
+          cache: true,
+          tryCount : 0,
+          retryLimit : 1,
+          beforeSend: function() {
+              //ic.ParserUtilsCls.showLoading();
+          },
+          complete: function() {
+              //ic.ParserUtilsCls.hideLoading();
+          },
+          success: function(data) {
+               var giArray = data.result.uids;
+
+               var redirectUrl = "https://www.ncbi.nlm.nih.gov/structure?linkname=protein_structure&from_uid=" + giArray.join(',');
+               window.open(redirectUrl, '_self');
+          },
+          error : function(xhr, textStatus, errorThrown ) {
+            this.tryCount++;
+            if(this.tryCount <= this.retryLimit) {
+                //try again
+                $.ajax(this);
+                return;
+            }
+            return;
+          }
+        });
+    }
 }
 
 /**
@@ -24620,8 +24657,8 @@ class RealignParser {
       ic.chainalignParserCls.downloadChainalignmentPart3(undefined, chainidArray, hAtoms);
     }
 
-    parseChainRealignData(ajaxData, chainresiCalphaHash2, chainidArray, struct2SeqHash, struct2CoorHash, struct2resid, bRealign) { var ic = this.icn3d, me = ic.icn3dui;
-      var dataArray =(chainidArray.length == 2) ? [ajaxData] : ajaxData;
+    parseChainRealignData(dataArray, chainresiCalphaHash2, chainidArray, struct2SeqHash, struct2CoorHash, struct2resid, bRealign) { var ic = this.icn3d, me = ic.icn3dui;
+      //var dataArray =(chainidArray.length == 2) ? [ajaxData] : ajaxData;
 
       var toStruct = chainidArray[0].substr(0, chainidArray[0].indexOf('_')); //.toUpperCase();
       if(!bRealign) toStruct = toStruct.toUpperCase();
@@ -24923,10 +24960,11 @@ class RealignParser {
             //https://stackoverflow.com/questions/14352139/multiple-ajax-calls-from-array-and-handle-callback-when-completed
             //https://stackoverflow.com/questions/5518181/jquery-deferreds-when-and-the-fail-callback-arguments
             $.when.apply(undefined, ajaxArray).then(function() {
-               thisClass.parseChainRealignData(arguments, chainresiCalphaHash2, chainidArray, struct2SeqHash, struct2CoorHash, struct2resid, bRealign);
+               var dataArray =(chainidArray.length == 2) ? [arguments] : Array.from(arguments);
+               thisClass.parseChainRealignData(Array.from(dataArray), chainresiCalphaHash2, chainidArray, struct2SeqHash, struct2CoorHash, struct2resid, bRealign);
             })
             .fail(function() {
-               alert("The realignment did notwork...");
+               alert("The realignment did not work...");
                //thisClass.parseChainRealignData(arguments, chainresiCalphaHash2, chainidArray, struct2SeqHash, struct2CoorHash, struct2resid, bRealign);
             });
         }
@@ -25104,16 +25142,18 @@ class ChainalignParser {
         //https://stackoverflow.com/questions/14352139/multiple-ajax-calls-from-array-and-handle-callback-when-completed
         //https://stackoverflow.com/questions/5518181/jquery-deferreds-when-and-the-fail-callback-arguments
         $.when.apply(undefined, ajaxArray).then(function() {
-          thisClass.parseChainAlignData(arguments, alignArray, ic.mmdbid_t, ic.chain_t);
-        });
-//        .fail(function() {
+          var dataArray =(alignArray.length == 1) ? [arguments] : Array.from(arguments);
+          thisClass.parseChainAlignData(dataArray, alignArray, ic.mmdbid_t, ic.chain_t);
+        })
+        .fail(function() {
+            alert("These chains can not be aligned by VAST server. You can specify the residue range and try it again...");
 //          thisClass.parseChainAlignData(arguments, alignArray, ic.mmdbid_t, ic.chain_t);
-//        });
+        });
     }
 
-    parseChainAlignData(data, chainidArray, mmdbid_t, chain_t) { var ic = this.icn3d; ic.icn3dui;
+    parseChainAlignData(dataArray, chainidArray, mmdbid_t, chain_t) { var ic = this.icn3d; ic.icn3dui;
 
-        var dataArray =(chainidArray.length == 1) ? [data] : data;
+        //var dataArray =(chainidArray.length == 1) ? [data] : data;
 
         // Each argument is an array with the following structure: [ data, statusText, jqXHR ]
         //var data2 = v2[0];
@@ -25150,6 +25190,10 @@ class ChainalignParser {
             }
             else {
                 var align = dataArray[index + 1][0];
+                if(!align) {
+                    alert("These chains can not be aligned by VAST server. You can specify the residue range and try it again...");
+                    return;
+                }
 
                 if(queryData !== undefined && JSON.stringify(queryData).indexOf('Oops there was a problem') === -1
                     && align !== undefined && JSON.stringify(align).indexOf('Oops there was a problem') === -1
@@ -32246,15 +32290,16 @@ class ParserUtils {
         //https://stackoverflow.com/questions/14352139/multiple-ajax-calls-from-array-and-handle-callback-when-completed
         //https://stackoverflow.com/questions/5518181/jquery-deferreds-when-and-the-fail-callback-arguments
         $.when.apply(undefined, ajaxArray).then(function() {
-          thisClass.parse2DDiagramsData(arguments, chainidArray);
+          var dataArray =(chainidArray.length == 1) ? [arguments] : Array.from(arguments);
+          thisClass.parse2DDiagramsData(dataArray, chainidArray);
         })
         .fail(function() {
-          thisClass.parse2DDiagramsData(arguments, chainidArray);
+          //thisClass.parse2DDiagramsData(arguments, chainidArray);
         });
     }
 
-    parse2DDiagramsData(dataInput, chainidArray) { var ic = this.icn3d; ic.icn3dui;
-        var dataArray =(chainidArray.length == 1) ? [dataInput] : dataInput;
+    parse2DDiagramsData(dataArray, chainidArray) { var ic = this.icn3d; ic.icn3dui;
+        //var dataArray =(chainidArray.length == 1) ? [dataInput] : dataInput;
 
         ic.html2ddgm = '';
 
@@ -41126,12 +41171,14 @@ class Draw {
         var cam = (ic.bControlGl && !ic.icn3dui.bNode) ? window.cam : ic.cam;
 
     //    if(ic.bShade) {
+        if(ic.directionalLight) {
             var quaternion = new THREE.Quaternion();
             quaternion.setFromUnitVectors( new THREE.Vector3(0, 0, ic.cam_z).normalize(), cam.position.clone().normalize() );
 
             ic.directionalLight.position.copy(ic.lightPos.clone().applyQuaternion( quaternion ).normalize());
             ic.directionalLight2.position.copy(ic.lightPos2.clone().applyQuaternion( quaternion ).normalize());
             ic.directionalLight3.position.copy(ic.lightPos3.clone().applyQuaternion( quaternion ).normalize());
+        }
     //    }
     //    else {
     //        ic.directionalLight.position.copy(cam.position);
@@ -42141,6 +42188,10 @@ class ClickMenu {
     //    clkMn1_gi: function() {
         me.myEventCls.onIds("#" + me.pre + "mn1_gi", "click", function(e) { me.icn3d;
            me.htmlCls.dialogCls.openDlg('dl_gi', 'Please input protein gi');
+        });
+
+        me.myEventCls.onIds("#" + me.pre + "mn1_uniprotid", "click", function(e) { me.icn3d;
+           me.htmlCls.dialogCls.openDlg('dl_uniprotid', 'Please input UniProt ID');
         });
     //    },
     //    clkMn1_cid: function() {
@@ -44356,6 +44407,7 @@ class SetMenu {
         html += me.htmlCls.setHtmlCls.getLink('mn1_opmid', 'OPM PDB ID ' + me.htmlCls.wifiStr);
         html += me.htmlCls.setHtmlCls.getLink('mn1_mmcifid', 'mmCIF ID ' + me.htmlCls.wifiStr);
         html += me.htmlCls.setHtmlCls.getLink('mn1_gi', 'NCBI gi ' + me.htmlCls.wifiStr);
+        html += me.htmlCls.setHtmlCls.getLink('mn1_uniprotid', 'UniProt ID ' + me.htmlCls.wifiStr);
         html += me.htmlCls.setHtmlCls.getLink('mn1_cid', 'PubChem CID ' + me.htmlCls.wifiStr);
         html += "</ul>";
         html += "</li>";
@@ -45401,7 +45453,7 @@ class SetMenu {
 
             html += "<li><span>Symmetry</span>";
             html += "<ul>";
-            if(bOnePdb) html += me.htmlCls.setHtmlCls.getLink('mn6_symmetry', 'from RCSB(precalculated) ' + me.htmlCls.wifiStr);
+            if(bOnePdb) html += me.htmlCls.setHtmlCls.getLink('mn6_symmetry', 'from PDB(precalculated) ' + me.htmlCls.wifiStr);
             html += me.htmlCls.setHtmlCls.getLink('mn6_symd', 'from SymD(Dynamic) ' + me.htmlCls.wifiStr);
             html += me.htmlCls.setHtmlCls.getLink('mn6_clear_sym', 'Clear SymD Symmetry');
             html += me.htmlCls.setHtmlCls.getLink('mn6_axes_only', 'Show Axes Only');
@@ -46256,6 +46308,12 @@ class SetDialog {
         html += me.htmlCls.divStr + "dl_gi' class='" + dialogClass + "'>";
         html += "Protein gi: " + me.htmlCls.inputTextStr + "id='" + me.pre + "gi' value='1310960' size=8> ";
         html += me.htmlCls.buttonStr + "reload_gi'>Load</button>";
+        html += "</div>";
+
+        html += me.htmlCls.divStr + "dl_uniprotid' class='" + dialogClass + "'>";
+        html += "Note: A list of structures will be shown. Click \"View in iCn3D\" to view each structure in 3D.<br><br>";
+        html += "UniProt ID: " + me.htmlCls.inputTextStr + "id='" + me.pre + "uniprotid' value='P0DTC2' size=8> ";
+        html += me.htmlCls.buttonStr + "reload_uniprotid'>Load</button>";
         html += "</div>";
 
         html += me.htmlCls.divStr + "dl_cid' class='" + dialogClass + "'>";
@@ -47305,6 +47363,13 @@ class Events {
            if(!me.cfg.notebook) dialog.dialog( "close" );
            me.htmlCls.clickMenuCls.setLogCmd("load gi " + $("#" + me.pre + "gi").val(), false);
            window.open(me.htmlCls.baseUrl + 'icn3d/full.html?gi=' + $("#" + me.pre + "gi").val(), '_blank');
+        });
+
+        me.myEventCls.onIds("#" + me.pre + "reload_uniprotid", "click", function(e) { me.icn3d;
+           e.preventDefault();
+           if(!me.cfg.notebook) dialog.dialog( "close" );
+           me.htmlCls.clickMenuCls.setLogCmd("load uniprotid " + $("#" + me.pre + "uniprotid").val(), false);
+           window.open(me.htmlCls.baseUrl + 'icn3d/full.html?uniprotid=' + $("#" + me.pre + "uniprotid").val(), '_blank');
         });
     //    },
     //    clickReload_cid: function() {
@@ -51665,6 +51730,7 @@ class Control {
         ic.container.bind('touchstart', function (e) {
         //document.getElementById(ic.id).addEventListener('touchstart', function (e) {
             //e.preventDefault();
+            e.preventDefault();
             ic.isDragging = true;
 
             if (!ic.scene) return;
@@ -51704,6 +51770,7 @@ class Control {
         ic.container.bind('mousewheel', function (e) {
         //document.getElementById(ic.id).addEventListener('mousewheel', function (e) {
             //e.preventDefault();
+            e.preventDefault();
             if (!ic.scene) return;
 
             ic.bStopRotate = true;
@@ -51722,6 +51789,7 @@ class Control {
         ic.container.bind('DOMMouseScroll', function (e) {
         //document.getElementById(ic.id).addEventListener('DOMMouseScroll', function (e) {
             //e.preventDefault();
+            e.preventDefault();
             if (!ic.scene) return;
 
             ic.bStopRotate = true;
@@ -51743,6 +51811,7 @@ class Control {
         if(ic.icn3dui.bNode) return;
 
         //e.preventDefault();
+        e.preventDefault();
         if (!ic.scene) return;
         // no action when no mouse button is clicked and no key was down
         //if (!ic.isDragging) return;
@@ -52378,7 +52447,7 @@ class iCn3DUI {
     //even when multiple iCn3D viewers are shown together.
     this.pre = this.cfg.divid + "_";
 
-    this.REVISION = '3.1.6';
+    this.REVISION = '3.2.0';
 
     // In nodejs, iCn3D defines "window = {navigator: {}}"
     this.bNode = (Object.keys(window).length < 2) ? true : false;
@@ -52572,6 +52641,11 @@ iCn3DUI.prototype.show3DStructure = function() { var me = this;
        ic.loadCmd = 'load gi ' + me.cfg.gi;
        me.htmlCls.clickMenuCls.setLogCmd(ic.loadCmd, true);
        ic.mmdbParserCls.downloadGi(me.cfg.gi);
+    }
+    else if(me.cfg.uniprotid !== undefined) {
+       ic.loadCmd = 'load uniprotid ' + me.cfg.uniprotid;
+       me.htmlCls.clickMenuCls.setLogCmd(ic.loadCmd, true);
+       ic.mmdbParserCls.downloadUniprotid(me.cfg.uniprotid);
     }
     else if(me.cfg.blast_rep_id !== undefined) {
        // custom seqeunce has query_id such as "Query_78989" in BLAST

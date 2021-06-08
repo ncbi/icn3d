@@ -183,17 +183,19 @@ class ChainalignParser {
         //https://stackoverflow.com/questions/14352139/multiple-ajax-calls-from-array-and-handle-callback-when-completed
         //https://stackoverflow.com/questions/5518181/jquery-deferreds-when-and-the-fail-callback-arguments
         $.when.apply(undefined, ajaxArray).then(function() {
-          thisClass.parseChainAlignData(arguments, alignArray, ic.mmdbid_t, ic.chain_t);
-        });
-//        .fail(function() {
+          var dataArray =(alignArray.length == 1) ? [arguments] : Array.from(arguments);
+          thisClass.parseChainAlignData(dataArray, alignArray, ic.mmdbid_t, ic.chain_t);
+        })
+        .fail(function() {
+            alert("These chains can not be aligned by VAST server. You can specify the residue range and try it again...");
 //          thisClass.parseChainAlignData(arguments, alignArray, ic.mmdbid_t, ic.chain_t);
-//        });
+        });
     }
 
-    parseChainAlignData(data, chainidArray, mmdbid_t, chain_t) { var ic = this.icn3d, me = ic.icn3dui;
+    parseChainAlignData(dataArray, chainidArray, mmdbid_t, chain_t) { var ic = this.icn3d, me = ic.icn3dui;
         var thisClass = this;
 
-        var dataArray =(chainidArray.length == 1) ? [data] : data;
+        //var dataArray =(chainidArray.length == 1) ? [data] : data;
 
         // Each argument is an array with the following structure: [ data, statusText, jqXHR ]
         //var data2 = v2[0];
@@ -230,6 +232,10 @@ class ChainalignParser {
             }
             else {
                 var align = dataArray[index + 1][0];
+                if(!align) {
+                    alert("These chains can not be aligned by VAST server. You can specify the residue range and try it again...");
+                    return;
+                }
 
                 if(queryData !== undefined && JSON.stringify(queryData).indexOf('Oops there was a problem') === -1
                     && align !== undefined && JSON.stringify(align).indexOf('Oops there was a problem') === -1
