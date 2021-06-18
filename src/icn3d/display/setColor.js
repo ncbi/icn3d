@@ -226,10 +226,12 @@ class SetColor {
                     var color;
                     //if(ic.target2queryHash.hasOwnProperty(resi) && ic.target2queryHash[resi] !== -1) { // -1 means gap
                         //var queryresi = ic.target2queryHash[resi] + 1;
+                        //var queryresi = ic.atoms[serial].resi;
                         var queryresi = ic.atoms[serial].resi;
 
                         if(ic.queryresi2score[chainid].hasOwnProperty(queryresi)) {
                             var b = ic.queryresi2score[chainid][queryresi];
+
                             if(b > 100) b = 100;
 
                             var s1 = (ic.middB - b) * ic.spanBinv1;

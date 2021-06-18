@@ -14,6 +14,7 @@ import {ConvertTypeCls} from './utils/convertTypeCls.js';
 import {Html} from './html/html.js';
 import {iCn3D} from './icn3d/icn3d.js';
 
+/*
 import {ResizeCanvas} from './icn3d/transform/resizeCanvas.js';
 import {SetStyle} from './icn3d/display/setStyle.js';
 import {ApplyCenter} from './icn3d/display/applyCenter.js';
@@ -26,6 +27,138 @@ import {SdfParser} from './icn3d/parsers/sdfParser.js';
 import {MmcifParser} from './icn3d/parsers/mmcifParser.js';
 import {AlignParser} from './icn3d/parsers/alignParser.js';
 import {ChainalignParser} from './icn3d/parsers/chainalignParser.js';
+*/
+
+// import all classes so that we can export all classes for modification
+// from Html
+import {ClickMenu} from './html/clickMenu.js';
+import {SetMenu} from './html/setMenu.js';
+import {Dialog} from './html/dialog.js';
+import {SetDialog} from './html/setDialog.js';
+import {Events} from './html/events.js';
+import {AlignSeq} from './html/alignSeq.js';
+import {SetHtml} from './html/setHtml.js';
+
+// from iCn3D
+import {Scene} from './icn3d/display/scene.js';
+import {Camera} from './icn3d/display/camera.js';
+import {Fog} from './icn3d/display/fog.js';
+
+import {Box} from './icn3d/geometry/box.js';
+import {Brick} from './icn3d/geometry/brick.js';
+import {CurveStripArrow} from './icn3d/geometry/curveStripArrow.js';
+import {Curve} from './icn3d/geometry/curve.js';
+import {Cylinder} from './icn3d/geometry/cylinder.js';
+import {Line} from './icn3d/geometry/line.js';
+import {ReprSub} from './icn3d/geometry/reprSub.js';
+import {Sphere} from './icn3d/geometry/sphere.js';
+import {Stick} from './icn3d/geometry/stick.js';
+import {Strand} from './icn3d/geometry/strand.js';
+import {Strip} from './icn3d/geometry/strip.js';
+import {Tube} from './icn3d/geometry/tube.js';
+import {CartoonNucl} from './icn3d/geometry/cartoonNucl.js';
+import {Label} from './icn3d/geometry/label.js';
+import {Axes} from './icn3d/geometry/axes.js';
+import {Glycan} from './icn3d/geometry/glycan.js';
+
+import {Surface} from './icn3d/surface/surface.js';
+import {ElectronMap} from './icn3d/surface/electronMap.js';
+import {MarchingCube} from './icn3d/surface/marchingCube.js';
+import {ProteinSurface} from './icn3d/surface/proteinSurface.js';
+
+import {ApplyCenter} from './icn3d/display/applyCenter.js';
+import {ApplyClbonds} from './icn3d/display/applyClbonds.js';
+import {ApplyDisplay} from './icn3d/display/applyDisplay.js';
+import {ApplyOther} from './icn3d/display/applyOther.js';
+import {ApplySsbonds} from './icn3d/display/applySsbonds.js';
+import {ApplySymd} from './icn3d/analysis/applySymd.js';
+import {ApplyMap} from './icn3d/surface/applyMap.js';
+
+import {ResidueLabels} from './icn3d/geometry/residueLabels.js';
+import {Impostor} from './icn3d/geometry/impostor.js';
+import {Instancing} from './icn3d/geometry/instancing.js';
+
+import {Alternate} from './icn3d/display/alternate.js';
+import {Draw} from './icn3d/display/draw.js';
+
+import {Contact} from './icn3d/interaction/contact.js';
+import {HBond} from './icn3d/interaction/hBond.js';
+import {PiHalogen} from './icn3d/interaction/piHalogen.js';
+import {Saltbridge} from './icn3d/interaction/saltbridge.js';
+
+import {SetStyle} from './icn3d/display/setStyle.js';
+import {SetColor} from './icn3d/display/setColor.js';
+import {SetOption} from './icn3d/display/setOption.js';
+
+    // classes from icn3dui
+import {AnnoCddSite} from './icn3d/annotations/annoCddSite.js';
+import {AnnoContact} from './icn3d/annotations/annoContact.js';
+import {AnnoCrossLink} from './icn3d/annotations/annoCrossLink.js';
+import {AnnoDomain} from './icn3d/annotations/annoDomain.js';
+import {AnnoSnpClinVar} from './icn3d/annotations/annoSnpClinVar.js';
+import {AnnoSsbond} from './icn3d/annotations/annoSsbond.js';
+import {AnnoTransMem} from './icn3d/annotations/annoTransMem.js';
+
+import {AddTrack} from './icn3d/annotations/addTrack.js';
+import {Annotation} from './icn3d/annotations/annotation.js';
+import {ShowAnno} from './icn3d/annotations/showAnno.js';
+import {ShowSeq} from './icn3d/annotations/showSeq.js';
+
+import {HlSeq} from './icn3d/highlight/hlSeq.js';
+import {HlUpdate} from './icn3d/highlight/hlUpdate.js';
+import {HlObjects} from './icn3d/highlight/hlObjects.js';
+
+import {LineGraph} from './icn3d/interaction/lineGraph.js';
+import {GetGraph} from './icn3d/interaction/getGraph.js';
+import {ShowInter} from './icn3d/interaction/showInter.js';
+import {ViewInterPairs} from './icn3d/interaction/viewInterPairs.js';
+import {DrawGraph} from './icn3d/interaction/drawGraph.js';
+
+import {AlignParser} from './icn3d/parsers/alignParser.js';
+import {ChainalignParser} from './icn3d/parsers/chainalignParser.js';
+import {Dsn6Parser} from './icn3d/parsers/dsn6Parser.js';
+import {MmcifParser} from './icn3d/parsers/mmcifParser.js';
+import {MmdbParser} from './icn3d/parsers/mmdbParser.js';
+import {MmtfParser} from './icn3d/parsers/mmtfParser.js';
+import {Mol2Parser} from './icn3d/parsers/mol2Parser.js';
+import {OpmParser} from './icn3d/parsers/opmParser.js';
+import {PdbParser} from './icn3d/parsers/pdbParser.js';
+import {SdfParser} from './icn3d/parsers/sdfParser.js';
+import {XyzParser} from './icn3d/parsers/xyzParser.js';
+import {RealignParser} from './icn3d/parsers/realignParser.js';
+import {DensityCifParser} from './icn3d/parsers/densityCifParser.js';
+import {ParserUtils} from './icn3d/parsers/parserUtils.js';
+import {LoadAtomData} from './icn3d/parsers/loadAtomData.js';
+import {SetSeqAlign} from './icn3d/parsers/setSeqAlign.js';
+import {LoadPDB} from './icn3d/parsers/loadPDB.js';
+
+import {ApplyCommand} from './icn3d/selection/applyCommand.js';
+import {DefinedSets} from './icn3d/selection/definedSets.js';
+import {LoadScript} from './icn3d/selection/loadScript.js';
+import {SelectByCommand} from './icn3d/selection/selectByCommand.js';
+import {Selection} from './icn3d/selection/selection.js';
+import {Resid2spec} from './icn3d/selection/resid2spec.js';
+import {FirstAtomObj} from './icn3d/selection/firstAtomObj.js';
+
+import {Delphi} from './icn3d/analysis/delphi.js';
+import {Dssp} from './icn3d/analysis/dssp.js';
+import {Scap} from './icn3d/analysis/scap.js';
+import {Symd} from './icn3d/analysis/symd.js';
+
+import {Analysis} from './icn3d/analysis/analysis.js';
+import {Diagram2d} from './icn3d/analysis/diagram2d.js';
+
+import {ResizeCanvas} from './icn3d/transform/resizeCanvas.js';
+import {Transform} from './icn3d/transform/transform.js';
+
+import {SaveFile} from './icn3d/export/saveFile.js';
+import {ShareLink} from './icn3d/export/shareLink.js';
+import {ThreeDPrint} from './icn3d/export/threeDPrint.js';
+import {Export3D} from './icn3d/export/export3D.js';
+
+import {Ray} from './icn3d/picking/ray.js';
+import {Control} from './icn3d/picking/control.js';
+import {Picking} from './icn3d/picking/picking.js';
 
 class iCn3DUI {
   constructor(cfg) {
@@ -35,7 +168,7 @@ class iCn3DUI {
     //even when multiple iCn3D viewers are shown together.
     this.pre = this.cfg.divid + "_";
 
-    this.REVISION = '3.2.0';
+    this.REVISION = '3.2.1';
 
     // In nodejs, iCn3D defines "window = {navigator: {}}"
     this.bNode = (Object.keys(window).length < 2) ? true : false;
@@ -473,4 +606,6 @@ class printMsg {
   }
 }
 
-export {iCn3DUI, printMsg}
+//export {iCn3DUI, printMsg}
+
+export {iCn3DUI, printMsg, HashUtilsCls, UtilsCls, ParasCls, MyEventCls, RmsdSuprCls, SubdivideCls, ConvertTypeCls, Html, iCn3D, ClickMenu, SetMenu, Dialog, SetDialog, Events, AlignSeq, SetHtml, Scene, Camera, Fog, Box, Brick, CurveStripArrow, Curve, Cylinder, Line, ReprSub, Sphere, Stick, Strand, Strip, Tube, CartoonNucl, Label, Axes, Glycan, Surface, ElectronMap, MarchingCube, ProteinSurface, ApplyCenter, ApplyClbonds, ApplyDisplay, ApplyOther, ApplySsbonds, ApplySymd, ApplyMap, ResidueLabels, Impostor, Instancing, Alternate, Draw, Contact, HBond, PiHalogen, Saltbridge, SetStyle, SetColor, SetOption, AnnoCddSite, AnnoContact, AnnoCrossLink, AnnoDomain, AnnoSnpClinVar, AnnoSsbond, AnnoTransMem, AddTrack, Annotation, ShowAnno, ShowSeq, HlSeq, HlUpdate, HlObjects, LineGraph, GetGraph, ShowInter, ViewInterPairs, DrawGraph, AlignParser, ChainalignParser, Dsn6Parser, MmcifParser, MmdbParser, MmtfParser, Mol2Parser, OpmParser, PdbParser, SdfParser, XyzParser, RealignParser, DensityCifParser, ParserUtils, LoadAtomData, SetSeqAlign, LoadPDB, ApplyCommand, DefinedSets, LoadScript, SelectByCommand, Selection, Resid2spec, FirstAtomObj, Delphi, Dssp, Scap, Symd, Analysis, Diagram2d, ResizeCanvas, Transform, SaveFile, ShareLink, ThreeDPrint, Export3D, Ray, Control, Picking}

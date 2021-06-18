@@ -12131,7 +12131,8 @@ class Surface {
 
             //exclude water
             var atomsToShow = me.hashUtilsCls.exclHash(atoms, ic.water);
-            extendedAtoms = Object.keys(atomsToShow);
+            //extendedAtoms = Object.keys(atomsToShow);
+            extendedAtoms = me.hashUtilsCls.exclHash(extendedAtoms, ic.water);
 
             var realType = type;
             if(realType == 21) realType = 1;
@@ -18454,10 +18455,12 @@ class SetColor {
                     var color;
                     //if(ic.target2queryHash.hasOwnProperty(resi) && ic.target2queryHash[resi] !== -1) { // -1 means gap
                         //var queryresi = ic.target2queryHash[resi] + 1;
+                        //var queryresi = ic.atoms[serial].resi;
                         var queryresi = ic.atoms[serial].resi;
 
                         if(ic.queryresi2score[chainid].hasOwnProperty(queryresi)) {
                             var b = ic.queryresi2score[chainid][queryresi];
+
                             if(b > 100) b = 100;
 
                             var s1 = (ic.middB - b) * ic.spanBinv1;
@@ -45543,6 +45546,7 @@ class SetMenu {
         html += "<ul>";
         html += liStr + "https://github.com/ncbi/icn3d' target='_blank'>GitHub (browser) " + me.htmlCls.wifiStr + "</a></li>";
         html += liStr + "https://www.npmjs.com/package/icn3d' target='_blank'>npm (Node.js) " + me.htmlCls.wifiStr + "</a></li>";
+        html += liStr + "https://pypi.org/project/icn3dpy' target='_blank'>Jupyter Notebook " + me.htmlCls.wifiStr + "</a></li>";
         html += "</ul>";
         html += "</li>";
 
@@ -47315,10 +47319,11 @@ class Events {
                ic.structures = {};
                ic.structures[mmdbid] = 1;
            }
-           var selectSpec = ic.resid2specCls.residueids2spec(residArray);
+           ic.resid2specCls.residueids2spec(residArray);
 
            me.htmlCls.clickMenuCls.setLogCmd("interaction change of mutation " + mutationids, false);
-           window.open(me.htmlCls.baseUrl + 'icn3d/full.html?mmdbid=' + mmdbid + '&command=scap interaction ' + mutationids + '; select ' + selectSpec + ' | name test; line graph interaction pairs | selected non-selected | hbonds,salt bridge,interactions,halogen,pi-cation,pi-stacking | false | threshold 3.8 6 4 3.8 6 5.5; adjust dialog dl_linegraph; select displayed set', '_blank');
+           //window.open(me.htmlCls.baseUrl + 'icn3d/full.html?mmdbid=' + mmdbid + '&command=scap interaction ' + mutationids + '; select ' + selectSpec + ' | name test; line graph interaction pairs | selected non-selected | hbonds,salt bridge,interactions,halogen,pi-cation,pi-stacking | false | threshold 3.8 6 4 3.8 6 5.5; adjust dialog dl_linegraph; select displayed set', '_blank');
+           window.open(me.htmlCls.baseUrl + 'icn3d/full.html?mmdbid=' + mmdbid + '&command=scap interaction ' + mutationids, '_blank');
         });
 
     //    },
@@ -52447,7 +52452,7 @@ class iCn3DUI {
     //even when multiple iCn3D viewers are shown together.
     this.pre = this.cfg.divid + "_";
 
-    this.REVISION = '3.2.0';
+    this.REVISION = '3.2.1';
 
     // In nodejs, iCn3D defines "window = {navigator: {}}"
     this.bNode = (Object.keys(window).length < 2) ? true : false;
@@ -52885,6 +52890,6 @@ class printMsg {
   }
 }
 
-export { iCn3DUI, printMsg };
+export { AddTrack, AlignParser, AlignSeq, Alternate, Analysis, AnnoCddSite, AnnoContact, AnnoCrossLink, AnnoDomain, AnnoSnpClinVar, AnnoSsbond, AnnoTransMem, Annotation, ApplyCenter, ApplyClbonds, ApplyCommand, ApplyDisplay, ApplyMap, ApplyOther, ApplySsbonds, ApplySymd, Axes, Box, Brick, Camera, CartoonNucl, ChainalignParser, ClickMenu, Contact, Control, ConvertTypeCls, Curve, CurveStripArrow, Cylinder, DefinedSets, Delphi, DensityCifParser, Diagram2d, Dialog, Draw, DrawGraph, Dsn6Parser, Dssp, ElectronMap, Events, Export3D, FirstAtomObj, Fog, GetGraph, Glycan, HBond, HashUtilsCls, HlObjects, HlSeq, HlUpdate, Html, Impostor, Instancing, Label, Line, LineGraph, LoadAtomData, LoadPDB, LoadScript, MarchingCube, MmcifParser, MmdbParser, MmtfParser, Mol2Parser, MyEventCls, OpmParser, ParasCls, ParserUtils, PdbParser, PiHalogen, Picking, ProteinSurface, Ray, RealignParser, ReprSub, Resid2spec, ResidueLabels, ResizeCanvas, RmsdSuprCls, Saltbridge, SaveFile, Scap, Scene, SdfParser, SelectByCommand, Selection, SetColor, SetDialog, SetHtml, SetMenu, SetOption, SetSeqAlign, SetStyle, ShareLink, ShowAnno, ShowInter, ShowSeq, Sphere, Stick, Strand, Strip, SubdivideCls, Surface, Symd, ThreeDPrint, Transform, Tube, UtilsCls, ViewInterPairs, XyzParser, iCn3D, iCn3DUI, printMsg };
 
 export {Html, iCn3D, HashUtilsCls, UtilsCls, ParasCls, MyEventCls, RmsdSuprCls, SubdivideCls, ConvertTypeCls, AlignSeq, ClickMenu, Dialog, Events, SetDialog, SetHtml, SetMenu, Scene, Camera, Fog, Box, Brick, CurveStripArrow, Curve, Cylinder, Line, ReprSub, Sphere, Stick, Strand, Strip, Tube, CartoonNucl, Surface, ElectronMap, MarchingCube, ProteinSurface, Label, Axes, Glycan, ApplyCenter, ApplyClbonds, ApplyDisplay, ApplyOther, ApplySsbonds, ApplySymd, ApplyMap, ResidueLabels, Impostor, Instancing, Alternate, Draw, Contact, HBond, PiHalogen, Saltbridge, SetStyle, SetColor, SetOption, AnnoCddSite, AnnoContact, AnnoCrossLink, AnnoDomain, AnnoSnpClinVar, AnnoSsbond, AnnoTransMem, AddTrack, Annotation, ShowAnno, ShowSeq, HlSeq, HlUpdate, HlObjects, LineGraph, GetGraph, ShowInter, ViewInterPairs, DrawGraph, AlignParser, ChainalignParser, Dsn6Parser, MmcifParser, MmdbParser, MmtfParser, Mol2Parser, OpmParser, PdbParser, SdfParser, XyzParser, RealignParser, DensityCifParser, ParserUtils, LoadAtomData, SetSeqAlign, LoadPDB, ApplyCommand, DefinedSets, LoadScript, SelectByCommand, Selection, Resid2spec, FirstAtomObj, Delphi, Dssp, Scap, Symd, Analysis, Diagram2d, ResizeCanvas, Transform, SaveFile, ShareLink, ThreeDPrint, Export3D, Ray, Control, Picking}

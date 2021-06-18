@@ -29,9 +29,11 @@ html {font-size: 10px;}
 
 .icn3d-main {font-size: 1.5em; color:#444444; padding: 110px 40px 0 40px;}
 .anchor { position: absolute; transform: translateY(-110px); }
+.icn3d-menupos {margin:4px 0 0 280px; position:absolute; z-index:999;}
 @media screen and (max-device-width: 800px) {
     .icn3d-main {font-size: 1.7em; padding: 150px 40px 0 40px;}
     .anchor { position: absolute; transform: translateY(-150px); }
+    .icn3d-menupos {margin:4px 0 0 30px; position:absolute; z-index:999;}
 }
 
 .graphbutton {text-decoration: none; color: #1c94c4; width: 110px;
@@ -141,7 +143,7 @@ pre span {color: red;}
 <span style="font-weight:bold; font-size:2.5em; color:#444444">iCn3D</span>
 </td>
 
-<td valign="top"><div class='icn3d-menu' style="margin:4px 0 0 30px; position:absolute; z-index:999;">
+<td valign="top"><div class='icn3d-menu icn3d-menupos'>
 <accordion id='icn3d-accordion1' class='icn3d-accordion' style='display:none'>
 <h3>Menu</h3>
 <div>
@@ -161,6 +163,7 @@ pre span {color: red;}
   <ul>
     <li><a href="https://github.com/ncbi/icn3d"><span>GitHub (browser)</span></a></li>
     <li><a href="https://www.npmjs.com/package/icn3d"><span>npm (Node.js)</span></a></li>
+    <li><a href="https://pypi.org/project/icn3dpy"><span>Jupyter Notebook</span></a></li>
   </ul></li>
 <li><span>Develop</span>
   <ul>
@@ -194,7 +197,7 @@ pre span {color: red;}
 "I see in 3D" (iCn3D) Structure Viewer is a WebGL-based 3D viewer using Three.js and jQuery. iCn3D synchronizes the display of 3D structure, 2D interaction, and 1D sequences and annotations. Users' custom display can be saved in a short URL or a PNG image. Some features are listed below.<br/>
 <br/>
 <br/>
-<div id="icn3dwrap" style="font-size: 0.8em"></div>
+<div id="icn3dwrap" style="font-size: 0.8em; width:420px"></div>
 <br/>
 
 <ol>
@@ -363,7 +366,7 @@ You can color structures with SASA, or show the SASA for each residue.<br/>
 </div>
 
 <div class="gallery">
-<a href="https://structure.ncbi.nlm.nih.gov/icn3d/share.html?LYdYPrfVMemd3yUAA" target="_blank">
+<a href="https://structure.ncbi.nlm.nih.gov/icn3d/share.html?gFXswHAPNzu2by8y5" target="_blank">
 <img style="height:300px" src ="https://www.ncbi.nlm.nih.gov/Structure/icn3d/gallery/6m0j-msa-BKYzBV6KXMvQL7sr9.png"><br>Show Multiple Sequence Alignment<br> as Tracks and Add Custom Color (PDB 6M0J)
 </a>
 </div>

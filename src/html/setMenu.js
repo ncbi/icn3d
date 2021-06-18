@@ -1527,6 +1527,7 @@ class SetMenu {
         html += "<ul>";
         html += liStr + "https://github.com/ncbi/icn3d' target='_blank'>GitHub (browser) " + me.htmlCls.wifiStr + "</a></li>";
         html += liStr + "https://www.npmjs.com/package/icn3d' target='_blank'>npm (Node.js) " + me.htmlCls.wifiStr + "</a></li>";
+        html += liStr + "https://pypi.org/project/icn3dpy' target='_blank'>Jupyter Notebook " + me.htmlCls.wifiStr + "</a></li>";
         html += "</ul>";
         html += "</li>";
 
