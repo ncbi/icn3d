@@ -39,52 +39,6 @@ body {font-family: Verdana, Arial, Helvetica, sans-serif;}
 
   <script type="text/javascript">
     $( document ).ready(function() {
-      function setupViewer(idName, idValue, divid, command) {
-        var options = {};
-
-        // --Modify iCn3D --: add commands, e.g., 'color spectrum'
-        command = (command) ? command : '';
-
-        var cfg = {
-          divid: divid,
-          width: 300,
-          height: 300,
-          mobilemenu: true,
-          showcommand: false,
-          showtitle: false,
-          command: command,
-          options: options
-        };
-        if(idName !== '') cfg[idName] = idValue;
-
-        var icn3dui = new icn3d.iCn3DUI(cfg);
-        //icn3dui.show3DStructure();
-
-        //communicate with the 3D viewer with chained functions
-        $.when(icn3dui.show3DStructure()).then(function() {
-            // add functions here
-            //icn3dui.updateHlAll();
-        });
-      }
-
-      setupViewer('pdbid', '1tup', 'div0');
-
-      setupViewer('pdbid', '1kq2', 'div1');
-
-      setupViewer('pdbid', '1gpk', 'div2');
-
-      setupViewer('pdbid', '1top', 'div3');
-
-      // load pdb from URL
-      var urlname = 'https://www.ncbi.nlm.nih.gov/Structure/icn3d/pdb/1GPK_sim.pdb';
-      var urltype = 'pdb';
-      urlname = decodeURIComponent(urlname);
-      setupViewer('url', urltype + '|' + urlname, 'div4');
-
-      var command = "defined sets; select sets 4L03_A; color 87CEEB; style proteins cylinder and plate; select sets 6KDY_A; color FA8072; style proteins cylinder and plate; select sets 4L03_A or 6KDY_A; show selection; set background white; close popup";
-
-      setupViewer('align', '4L03,6KDY', 'div5', command);
-
       //============ modify default functions =========
       // e.g., add the b-factor information in the mouseover
       icn3d.Picking.prototype.showPicking = function(atom, x, y) { var ic = this.icn3d, me = ic.icn3dui;
@@ -146,6 +100,53 @@ body {font-family: Verdana, Arial, Helvetica, sans-serif;}
               }
           }
       }
+      //============ End of: modify default functions =========
+
+      function setupViewer(idName, idValue, divid, command) {
+        var options = {};
+
+        // --Modify iCn3D --: add commands, e.g., 'color spectrum'
+        command = (command) ? command : '';
+
+        var cfg = {
+          divid: divid,
+          width: 300,
+          height: 300,
+          mobilemenu: true,
+          showcommand: false,
+          showtitle: false,
+          command: command,
+          options: options
+        };
+        if(idName !== '') cfg[idName] = idValue;
+
+        var icn3dui = new icn3d.iCn3DUI(cfg);
+        //icn3dui.show3DStructure();
+
+        //communicate with the 3D viewer with chained functions
+        $.when(icn3dui.show3DStructure()).then(function() {
+            // add functions here
+            //icn3dui.updateHlAll();
+        });
+      }
+
+      setupViewer('pdbid', '1tup', 'div0');
+
+      setupViewer('pdbid', '1kq2', 'div1');
+
+      setupViewer('pdbid', '1gpk', 'div2');
+
+      setupViewer('pdbid', '1top', 'div3');
+
+      // load pdb from URL
+      var urlname = 'https://www.ncbi.nlm.nih.gov/Structure/icn3d/pdb/1GPK_sim.pdb';
+      var urltype = 'pdb';
+      urlname = decodeURIComponent(urlname);
+      setupViewer('url', urltype + '|' + urlname, 'div4');
+
+      var command = "defined sets; select sets 4L03_A; color 87CEEB; style proteins cylinder and plate; select sets 6KDY_A; color FA8072; style proteins cylinder and plate; select sets 4L03_A or 6KDY_A; show selection; set background white; close popup";
+
+      setupViewer('align', '4L03,6KDY', 'div5', command);
     }); // document ready
 
   </script>
