@@ -12134,7 +12134,8 @@ var icn3d = (function (exports) {
 
                 //exclude water
                 var atomsToShow = me.hashUtilsCls.exclHash(atoms, ic.water);
-                extendedAtoms = Object.keys(atomsToShow);
+                //extendedAtoms = Object.keys(atomsToShow);
+                extendedAtoms = me.hashUtilsCls.exclHash(extendedAtoms, ic.water);
 
                 var realType = type;
                 if(realType == 21) realType = 1;
@@ -18457,10 +18458,12 @@ var icn3d = (function (exports) {
                         var color;
                         //if(ic.target2queryHash.hasOwnProperty(resi) && ic.target2queryHash[resi] !== -1) { // -1 means gap
                             //var queryresi = ic.target2queryHash[resi] + 1;
+                            //var queryresi = ic.atoms[serial].resi;
                             var queryresi = ic.atoms[serial].resi;
 
                             if(ic.queryresi2score[chainid].hasOwnProperty(queryresi)) {
                                 var b = ic.queryresi2score[chainid][queryresi];
+
                                 if(b > 100) b = 100;
 
                                 var s1 = (ic.middB - b) * ic.spanBinv1;
@@ -45546,6 +45549,7 @@ var icn3d = (function (exports) {
             html += "<ul>";
             html += liStr + "https://github.com/ncbi/icn3d' target='_blank'>GitHub (browser) " + me.htmlCls.wifiStr + "</a></li>";
             html += liStr + "https://www.npmjs.com/package/icn3d' target='_blank'>npm (Node.js) " + me.htmlCls.wifiStr + "</a></li>";
+            html += liStr + "https://pypi.org/project/icn3dpy' target='_blank'>Jupyter Notebook " + me.htmlCls.wifiStr + "</a></li>";
             html += "</ul>";
             html += "</li>";
 
@@ -47318,10 +47322,11 @@ var icn3d = (function (exports) {
                    ic.structures = {};
                    ic.structures[mmdbid] = 1;
                }
-               var selectSpec = ic.resid2specCls.residueids2spec(residArray);
+               ic.resid2specCls.residueids2spec(residArray);
 
                me.htmlCls.clickMenuCls.setLogCmd("interaction change of mutation " + mutationids, false);
-               window.open(me.htmlCls.baseUrl + 'icn3d/full.html?mmdbid=' + mmdbid + '&command=scap interaction ' + mutationids + '; select ' + selectSpec + ' | name test; line graph interaction pairs | selected non-selected | hbonds,salt bridge,interactions,halogen,pi-cation,pi-stacking | false | threshold 3.8 6 4 3.8 6 5.5; adjust dialog dl_linegraph; select displayed set', '_blank');
+               //window.open(me.htmlCls.baseUrl + 'icn3d/full.html?mmdbid=' + mmdbid + '&command=scap interaction ' + mutationids + '; select ' + selectSpec + ' | name test; line graph interaction pairs | selected non-selected | hbonds,salt bridge,interactions,halogen,pi-cation,pi-stacking | false | threshold 3.8 6 4 3.8 6 5.5; adjust dialog dl_linegraph; select displayed set', '_blank');
+               window.open(me.htmlCls.baseUrl + 'icn3d/full.html?mmdbid=' + mmdbid + '&command=scap interaction ' + mutationids, '_blank');
             });
 
         //    },
@@ -52450,7 +52455,7 @@ var icn3d = (function (exports) {
         //even when multiple iCn3D viewers are shown together.
         this.pre = this.cfg.divid + "_";
 
-        this.REVISION = '3.2.0';
+        this.REVISION = '3.2.1';
 
         // In nodejs, iCn3D defines "window = {navigator: {}}"
         this.bNode = (Object.keys(window).length < 2) ? true : false;
@@ -52888,6 +52893,122 @@ var icn3d = (function (exports) {
       }
     }
 
+    exports.AddTrack = AddTrack;
+    exports.AlignParser = AlignParser;
+    exports.AlignSeq = AlignSeq;
+    exports.Alternate = Alternate;
+    exports.Analysis = Analysis;
+    exports.AnnoCddSite = AnnoCddSite;
+    exports.AnnoContact = AnnoContact;
+    exports.AnnoCrossLink = AnnoCrossLink;
+    exports.AnnoDomain = AnnoDomain;
+    exports.AnnoSnpClinVar = AnnoSnpClinVar;
+    exports.AnnoSsbond = AnnoSsbond;
+    exports.AnnoTransMem = AnnoTransMem;
+    exports.Annotation = Annotation;
+    exports.ApplyCenter = ApplyCenter;
+    exports.ApplyClbonds = ApplyClbonds;
+    exports.ApplyCommand = ApplyCommand;
+    exports.ApplyDisplay = ApplyDisplay;
+    exports.ApplyMap = ApplyMap;
+    exports.ApplyOther = ApplyOther;
+    exports.ApplySsbonds = ApplySsbonds;
+    exports.ApplySymd = ApplySymd;
+    exports.Axes = Axes;
+    exports.Box = Box;
+    exports.Brick = Brick;
+    exports.Camera = Camera;
+    exports.CartoonNucl = CartoonNucl;
+    exports.ChainalignParser = ChainalignParser;
+    exports.ClickMenu = ClickMenu;
+    exports.Contact = Contact;
+    exports.Control = Control;
+    exports.ConvertTypeCls = ConvertTypeCls;
+    exports.Curve = Curve;
+    exports.CurveStripArrow = CurveStripArrow;
+    exports.Cylinder = Cylinder;
+    exports.DefinedSets = DefinedSets;
+    exports.Delphi = Delphi;
+    exports.DensityCifParser = DensityCifParser;
+    exports.Diagram2d = Diagram2d;
+    exports.Dialog = Dialog;
+    exports.Draw = Draw;
+    exports.DrawGraph = DrawGraph;
+    exports.Dsn6Parser = Dsn6Parser;
+    exports.Dssp = Dssp;
+    exports.ElectronMap = ElectronMap;
+    exports.Events = Events;
+    exports.Export3D = Export3D;
+    exports.FirstAtomObj = FirstAtomObj;
+    exports.Fog = Fog;
+    exports.GetGraph = GetGraph;
+    exports.Glycan = Glycan;
+    exports.HBond = HBond;
+    exports.HashUtilsCls = HashUtilsCls;
+    exports.HlObjects = HlObjects;
+    exports.HlSeq = HlSeq;
+    exports.HlUpdate = HlUpdate;
+    exports.Html = Html;
+    exports.Impostor = Impostor;
+    exports.Instancing = Instancing;
+    exports.Label = Label;
+    exports.Line = Line;
+    exports.LineGraph = LineGraph;
+    exports.LoadAtomData = LoadAtomData;
+    exports.LoadPDB = LoadPDB;
+    exports.LoadScript = LoadScript;
+    exports.MarchingCube = MarchingCube;
+    exports.MmcifParser = MmcifParser;
+    exports.MmdbParser = MmdbParser;
+    exports.MmtfParser = MmtfParser;
+    exports.Mol2Parser = Mol2Parser;
+    exports.MyEventCls = MyEventCls;
+    exports.OpmParser = OpmParser;
+    exports.ParasCls = ParasCls;
+    exports.ParserUtils = ParserUtils;
+    exports.PdbParser = PdbParser;
+    exports.PiHalogen = PiHalogen;
+    exports.Picking = Picking;
+    exports.ProteinSurface = ProteinSurface;
+    exports.Ray = Ray;
+    exports.RealignParser = RealignParser;
+    exports.ReprSub = ReprSub;
+    exports.Resid2spec = Resid2spec;
+    exports.ResidueLabels = ResidueLabels;
+    exports.ResizeCanvas = ResizeCanvas;
+    exports.RmsdSuprCls = RmsdSuprCls;
+    exports.Saltbridge = Saltbridge;
+    exports.SaveFile = SaveFile;
+    exports.Scap = Scap;
+    exports.Scene = Scene;
+    exports.SdfParser = SdfParser;
+    exports.SelectByCommand = SelectByCommand;
+    exports.Selection = Selection;
+    exports.SetColor = SetColor;
+    exports.SetDialog = SetDialog;
+    exports.SetHtml = SetHtml;
+    exports.SetMenu = SetMenu;
+    exports.SetOption = SetOption;
+    exports.SetSeqAlign = SetSeqAlign;
+    exports.SetStyle = SetStyle;
+    exports.ShareLink = ShareLink;
+    exports.ShowAnno = ShowAnno;
+    exports.ShowInter = ShowInter;
+    exports.ShowSeq = ShowSeq;
+    exports.Sphere = Sphere;
+    exports.Stick = Stick;
+    exports.Strand = Strand;
+    exports.Strip = Strip;
+    exports.SubdivideCls = SubdivideCls;
+    exports.Surface = Surface;
+    exports.Symd = Symd;
+    exports.ThreeDPrint = ThreeDPrint;
+    exports.Transform = Transform;
+    exports.Tube = Tube;
+    exports.UtilsCls = UtilsCls;
+    exports.ViewInterPairs = ViewInterPairs;
+    exports.XyzParser = XyzParser;
+    exports.iCn3D = iCn3D;
     exports.iCn3DUI = iCn3DUI;
     exports.printMsg = printMsg;
 

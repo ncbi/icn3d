@@ -139,7 +139,8 @@ class Surface {
 
             //exclude water
             var atomsToShow = me.hashUtilsCls.exclHash(atoms, ic.water);
-            extendedAtoms = Object.keys(atomsToShow);
+            //extendedAtoms = Object.keys(atomsToShow);
+            extendedAtoms = me.hashUtilsCls.exclHash(extendedAtoms, ic.water);
 
             var realType = type;
             if(realType == 21) realType = 1;

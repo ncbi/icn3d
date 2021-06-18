@@ -85,6 +85,67 @@ body {font-family: Verdana, Arial, Helvetica, sans-serif;}
 
       setupViewer('align', '4L03,6KDY', 'div5', command);
 
+      //============ modify default functions =========
+      // e.g., add the b-factor information in the mouseover
+      icn3d.Picking.prototype.showPicking = function(atom, x, y) { var ic = this.icn3d, me = ic.icn3dui;
+          //me = ic.setIcn3dui(ic.id);
+          if(ic.icn3dui.cfg.cid !== undefined && ic.pk != 0) {
+              ic.pk = 1; // atom
+          }
+          else {
+              // do not change the picking option
+          }
+          ic.highlightlevel = ic.pk;
+          this.showPickingBase(atom, x, y);
+
+          if(ic.pk != 0) {
+              if(x !== undefined && y !== undefined) { // mouse over
+                if(ic.icn3dui.cfg.showmenu != undefined && ic.icn3dui.cfg.showmenu == true) {
+                    y += ic.icn3dui.htmlCls.MENU_HEIGHT;
+                }
+                var text =(ic.pk == 1) ? atom.resn + atom.resi + '@' + atom.name : atom.resn + atom.resi;
+                text += ', b: ' + atom.b;
+                if(ic.structures !== undefined && Object.keys(ic.structures).length > 1) {
+                    text = atom.structure + '_' + atom.chain + ' ' + text;
+                    $("#" + ic.pre + "popup").css("width", "190px");
+                }
+                else {
+                    $("#" + ic.pre + "popup").css("width", "130px");
+                }
+                $("#" + ic.pre + "popup").html(text);
+                $("#" + ic.pre + "popup").css("top", y).css("left", x+20).show();
+              }
+              else {
+                  // highlight the sequence background
+                  ic.hlUpdateCls.updateHlAll();
+                  var transformation = {}
+                  transformation.factor = ic._zoomFactor;
+                  transformation.mouseChange = ic.mouseChange;
+                  //transformation.quaternion = ic.quaternion;
+                  transformation.quaternion = {}
+                  transformation.quaternion._x = parseFloat(ic.quaternion._x).toPrecision(5);
+                  transformation.quaternion._y = parseFloat(ic.quaternion._y).toPrecision(5);
+                  transformation.quaternion._z = parseFloat(ic.quaternion._z).toPrecision(5);
+                  transformation.quaternion._w = parseFloat(ic.quaternion._w).toPrecision(5);
+                  if(ic.bAddCommands) {
+                      ic.commands.push('pickatom ' + atom.serial + '|||' + ic.transformCls.getTransformationStr(transformation));
+                      ic.optsHistory.push(me.hashUtilsCls.cloneHash(ic.opts));
+                      ic.optsHistory[ic.optsHistory.length - 1].hlatomcount = Object.keys(ic.hAtoms).length;
+                      if(me.utilsCls.isSessionStorageSupported()) ic.setStyleCls.saveCommandsToSession();
+                      ic.STATENUMBER = ic.commands.length;
+                  }
+                  ic.logs.push('pickatom ' + atom.serial + '(chain: ' + atom.structure + '_' + atom.chain + ', residue: ' + atom.resn + ', number: ' + atom.resi + ', atom: ' + atom.name + ')');
+                  if( $( "#" + ic.pre + "logtext" ).length )  {
+                    $("#" + ic.pre + "logtext").val("> " + ic.logs.join("\n> ") + "\n> ").scrollTop($("#" + ic.pre + "logtext")[0].scrollHeight);
+                  }
+                  // update the interaction flag
+                  ic.bSphereCalc = false;
+                  //ic.icn3dui.htmlCls.clickMenuCls.setLogCmd('set calculate sphere false', true);
+                  ic.bHbondCalc = false;
+                  //ic.icn3dui.htmlCls.clickMenuCls.setLogCmd('set calculate hbond false', true);
+              }
+          }
+      }
     }); // document ready
 
   </script>
