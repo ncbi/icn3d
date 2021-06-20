@@ -156,7 +156,7 @@ class PdbParser {
         // DSSP only works for structures with all atoms. The Calpha only strucutres didn't work
         //if(!ic.bSecondaryStructure && !bCalphaOnly) {
 
-        if(!ic.bSecondaryStructure) {
+        if(!ic.bSecondaryStructure && Object.keys(ic.proteins).length > 0) {
           ic.deferredSecondary = $.Deferred(function() {
               var bCalphaOnly = me.utilsCls.isCalphaPhosOnly(me.hashUtilsCls.hash2Atoms(ic.proteins, ic.atoms));//, 'CA');
               ic.dsspCls.applyDssp(bCalphaOnly);

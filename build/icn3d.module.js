@@ -23090,7 +23090,7 @@ class PdbParser {
         // DSSP only works for structures with all atoms. The Calpha only strucutres didn't work
         //if(!ic.bSecondaryStructure && !bCalphaOnly) {
 
-        if(!ic.bSecondaryStructure) {
+        if(!ic.bSecondaryStructure && Object.keys(ic.proteins).length > 0) {
           ic.deferredSecondary = $.Deferred(function() {
               var bCalphaOnly = me.utilsCls.isCalphaPhosOnly(me.hashUtilsCls.hash2Atoms(ic.proteins, ic.atoms));//, 'CA');
               ic.dsspCls.applyDssp(bCalphaOnly);
@@ -52452,7 +52452,7 @@ class iCn3DUI {
     //even when multiple iCn3D viewers are shown together.
     this.pre = this.cfg.divid + "_";
 
-    this.REVISION = '3.2.1';
+    this.REVISION = '3.2.2';
 
     // In nodejs, iCn3D defines "window = {navigator: {}}"
     this.bNode = (Object.keys(window).length < 2) ? true : false;
