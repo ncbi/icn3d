@@ -40040,6 +40040,8 @@ var icn3d = (function (exports) {
 
             var opacityValue = (opacity !== undefined) ? opacity : 1.0;
 
+            var shiness = ic.shininess / 100.0 * 0.5;
+
             ic.uniforms = THREE.UniformsUtils.merge([
               THREE.UniformsLib.common,
               {
@@ -40053,9 +40055,9 @@ var icn3d = (function (exports) {
 
                 //ambientLightColor: { type: "v3", value: [0.25, 0.25, 0.25] },
                 diffuse: { type: "v3", value: [1.0, 1.0, 1.0] },
-                emissive: { type: "v3", value: [0.0,0.0,0.0] },
-                roughness: { type: "f", value: 0.5 }, // 0.4
-                metalness: { type: "f", value: 0.3 }, // 0.5
+                emissive: { type: "v3", value: [0.06,0.06,0.06] }, //[0.0,0.0,0.0] },
+                roughness: { type: "f", value: 0.5 },
+                metalness: { type: "f", value: shiness } , //0.3 },
                 opacity: { type: "f", value: opacityValue },
                 nearClip: { type: "f", value: nearClip },
                 ortho: { type: "f", value: 0.0 },
