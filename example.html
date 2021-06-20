@@ -38,7 +38,6 @@ body {font-family: Verdana, Arial, Helvetica, sans-serif;}
 <script src="icn3d.min.js"></script>
 
   <script type="text/javascript">
-    $( document ).ready(function() {
       //============ modify default functions =========
       // e.g., add the b-factor information in the mouseover
       icn3d.Picking.prototype.showPicking = function(atom, x, y) { var ic = this.icn3d, me = ic.icn3dui;
@@ -101,7 +100,10 @@ body {font-family: Verdana, Arial, Helvetica, sans-serif;}
           }
       }
       //============ End of: modify default functions =========
+  </script>
 
+  <script type="text/javascript">
+    $( document ).ready(function() {
       function setupViewer(idName, idValue, divid, command) {
         var options = {};
 
@@ -138,7 +140,7 @@ body {font-family: Verdana, Arial, Helvetica, sans-serif;}
 
       setupViewer('pdbid', '1top', 'div3');
 
-      // load pdb from URL
+      // load pdb from URL at the same host
       var urlname = 'https://www.ncbi.nlm.nih.gov/Structure/icn3d/pdb/1GPK_sim.pdb';
       var urltype = 'pdb';
       urlname = decodeURIComponent(urlname);
