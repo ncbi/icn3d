@@ -1520,8 +1520,8 @@ class SetMenu {
         html += "</ul>";
         html += "</li>";
 
-        html += liStr + "https://www.ncbi.nlm.nih.gov/structure' target='_blank'>Search Structure</a></li>";
-        html += liStr + me.htmlCls.baseUrl + "icn3d/icn3d.html#citing' target='_blank'>Citing iCn3D " + me.htmlCls.wifiStr + "</a></li>";
+        html += liStr + "https://www.ncbi.nlm.nih.gov/structure' target='_blank'>Search Structure " + me.htmlCls.wifiStr + "</a></li>";
+        html += liStr + me.htmlCls.baseUrl + "icn3d/icn3d.html#citing' target='_blank'>Citing iCn3D</a></li>";
 
         html += "<li><span>Source Code</span>";
         html += "<ul>";
