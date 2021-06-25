@@ -674,6 +674,8 @@ You can color structures with SASA, or show the SASA for each residue.<br/>
 <tr valign='top'><td>replay</td><td>Set "true" or "1" to replay each step of a custom display.</td></tr>
 <tr valign='top'><td>usepdbnum</td><td>Set "true" or "1" to use PDB residue numbers instead of NCBI residue numbers when the input is MMDB ID and the residue numbers are different. The default is "true".</td></tr>
 <tr valign='top'><td>hidelicense</td><td>Set "true" or "1" to hide the features requiring licenses, such as "Analysis > DelPhi Potential" and "Analysis > Mutaion". The default is "false".</td></tr>
+<tr valign='top'><td>shownote</td><td>Set "true" or "1" to show the content in "Analysis > Window Title" as the window title. The default is "false".</td></tr>
+<tr valign='top'><td>menumode</td><td>Set "0" to show all menus. Set "1" to show icons for those menus requiring internet or license. The default is "0".</td></tr>
 </table>
 
 <span class="anchor" id="commands"></span>
@@ -2292,8 +2294,8 @@ To find icn3d commands and functions, you can first generate a custom view in iC
 <h3>How to embed iCn3D Structure Viewer in your html page:<img src="https://www.ncbi.nlm.nih.gov/Structure/IMG/spacer.gif" width="25" height="1" border="0"><a href="#Top"><img src="https://www.ncbi.nlm.nih.gov/Structure/IMG/arrowup_blue.gif" width="12" height="12" border="0" alt="back to top"></a></h3>
 <ul>
 <li><a name="embedIframe"></a><b>Embed using iframe</b><br>
-<p>To embed iCn3D Structure Viewer in your own HTML page using iframe, simply add the following to your page:
-</p><div class="indent"><code>&lt;iframe src="https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?mmdbid=1tup&amp;width=300&amp;height=300&amp;showcommand=0&amp;mobilemenu=1&amp;showtitle=0" width="320" height="320" style="border:none"&gt;&lt;/iframe&gt;</code></div><br>
+<p>To embed iCn3D Structure Viewer in your own HTML page using iframe, simply add the following to your page. Note the URL should be the original URL with commands, not the shorten share link.
+</p><div class="indent"><code>&lt;iframe src="https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?mmdbid=1tup&amp;width=300&amp;height=300&amp;showcommand=0&amp;shownote=0&amp;mobilemenu=1&amp;showtitle=0" width="320" height="320" style="border:none"&gt;&lt;/iframe&gt;</code></div><br>
 
 </li>
 <li><a name="embedJS"></a><b>Embed using Javascript</b><br>

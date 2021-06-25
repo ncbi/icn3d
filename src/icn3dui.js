@@ -168,7 +168,7 @@ class iCn3DUI {
     //even when multiple iCn3D viewers are shown together.
     this.pre = this.cfg.divid + "_";
 
-    this.REVISION = '3.2.2';
+    this.REVISION = '3.2.3';
 
     // In nodejs, iCn3D defines "window = {navigator: {}}"
     this.bNode = (Object.keys(window).length < 2) ? true : false;
@@ -214,6 +214,15 @@ class iCn3DUI {
 iCn3DUI.prototype.show3DStructure = function() { var me = this;
   var thisClass = this;
   me.deferred = $.Deferred(function() {
+    if(me.cfg.menumode == 1) {
+        me.htmlCls.wifiStr = '<i class="icn3d-wifi" title="requires internet">&nbsp;</i>';
+        me.htmlCls.licenseStr = '<i class="icn3d-license" title="requires license">&nbsp;</i>';
+    }
+    else {
+        me.htmlCls.wifiStr = '';
+        me.htmlCls.licenseStr = '';
+    }
+
     me.setIcn3d();
     var ic = me.icn3d;
 

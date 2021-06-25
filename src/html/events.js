@@ -66,8 +66,21 @@ class Events {
         }
     }
 
+    searchSeq() { var me = this.icn3dui, ic = me.icn3d;
+       var select = $("#" + me.pre + "search_seq").val();
+       if(isNaN(select) && select.indexOf('$') == -1 && select.indexOf('.') == -1 && select.indexOf(':') == -1 && select.indexOf('@') == -1) {
+           select = ':' + select;
+       }
+       var commandname = select.replace(/\s+/g, '_');
+       var commanddesc = commandname;
+       ic.selByCommCls.selectByCommand(select, commandname, commanddesc);
+       me.htmlCls.clickMenuCls.setLogCmd('select ' + select + ' | name ' + commandname, true);
+    }
+
     //Hold all functions related to click events.
     allEventFunctions() { var me = this.icn3dui, ic = me.icn3d;
+        var thisClass = this;
+
         if(me.bNode) return;
 
         ic.definedSetsCls.clickCustomAtoms();
@@ -283,18 +296,16 @@ class Events {
     //    clickSearchSeq: function() {
         me.myEventCls.onIds("#" + me.pre + "search_seq_button", "click", function(e) { var ic = me.icn3d;
            e.stopImmediatePropagation();
-           var select = $("#" + me.pre + "search_seq").val();
-           if(isNaN(select) && select.indexOf('$') == -1 && select.indexOf('.') == -1 && select.indexOf(':') == -1 && select.indexOf('@') == -1) {
-               select = ':' + select;
-           }
-           var commandname = select.replace(/\s+/g, '_');
-           //var commanddesc = "search with the one-letter sequence " + select;
-           var commanddesc = commandname;
-           ic.selByCommCls.selectByCommand(select, commandname, commanddesc);
-           //me.htmlCls.clickMenuCls.setLogCmd('select ' + select + ' | name ' + commandname + ' | description ' + commanddesc, true);
-           me.htmlCls.clickMenuCls.setLogCmd('select ' + select + ' | name ' + commandname, true);
-           ////$( ".icn3d-accordion" ).accordion(me.htmlCls.closeAc);
+           thisClass.searchSeq();
         });
+
+        me.myEventCls.onIds("#" + me.pre + "search_seq", "keyup", function(e) { var ic = me.icn3d;
+           if (e.keyCode === 13) {
+               e.preventDefault();
+               thisClass.searchSeq();
+           }
+        });
+
     //    },
     //    clickReload_mmtf: function() {
         me.myEventCls.onIds("#" + me.pre + "reload_mmtf", "click", function(e) { var ic = me.icn3d;
@@ -303,6 +314,16 @@ class Events {
            me.htmlCls.clickMenuCls.setLogCmd("load mmtf " + $("#" + me.pre + "mmtfid").val(), false);
            window.open(me.htmlCls.baseUrl + 'icn3d/full.html?mmtfid=' + $("#" + me.pre + "mmtfid").val(), '_blank');
         });
+
+        me.myEventCls.onIds("#" + me.pre + "mmtfid", "keyup", function(e) { var ic = me.icn3d;
+           if (e.keyCode === 13) {
+               e.preventDefault();
+               if(!me.cfg.notebook) dialog.dialog( "close" );
+               me.htmlCls.clickMenuCls.setLogCmd("load mmtf " + $("#" + me.pre + "mmtfid").val(), false);
+               window.open(me.htmlCls.baseUrl + 'icn3d/full.html?mmtfid=' + $("#" + me.pre + "mmtfid").val(), '_blank');
+           }
+        });
+
     //    },
     //    clickReload_pdb: function() {
         me.myEventCls.onIds("#" + me.pre + "reload_pdb", "click", function(e) { var ic = me.icn3d;
@@ -311,6 +332,16 @@ class Events {
            me.htmlCls.clickMenuCls.setLogCmd("load pdb " + $("#" + me.pre + "pdbid").val(), false);
            window.open(me.htmlCls.baseUrl + 'icn3d/full.html?pdbid=' + $("#" + me.pre + "pdbid").val(), '_blank');
         });
+
+        me.myEventCls.onIds("#" + me.pre + "pdbid", "keyup", function(e) { var ic = me.icn3d;
+           if (e.keyCode === 13) {
+               e.preventDefault();
+               if(!me.cfg.notebook) dialog.dialog( "close" );
+               me.htmlCls.clickMenuCls.setLogCmd("load pdb " + $("#" + me.pre + "pdbid").val(), false);
+               window.open(me.htmlCls.baseUrl + 'icn3d/full.html?pdbid=' + $("#" + me.pre + "pdbid").val(), '_blank');
+           }
+        });
+
     //    },
     //    clickReload_opm: function() {
         me.myEventCls.onIds("#" + me.pre + "reload_opm", "click", function(e) { var ic = me.icn3d;
@@ -319,6 +350,16 @@ class Events {
            me.htmlCls.clickMenuCls.setLogCmd("load opm " + $("#" + me.pre + "opmid").val(), false);
            window.open(me.htmlCls.baseUrl + 'icn3d/full.html?opmid=' + $("#" + me.pre + "opmid").val(), '_blank');
         });
+
+        me.myEventCls.onIds("#" + me.pre + "opmid", "keyup", function(e) { var ic = me.icn3d;
+           if (e.keyCode === 13) {
+               e.preventDefault();
+               if(!me.cfg.notebook) dialog.dialog( "close" );
+               me.htmlCls.clickMenuCls.setLogCmd("load opm " + $("#" + me.pre + "opmid").val(), false);
+               window.open(me.htmlCls.baseUrl + 'icn3d/full.html?opmid=' + $("#" + me.pre + "opmid").val(), '_blank');
+           }
+        });
+
     //    },
     //    clickReload_align_refined: function() {
         me.myEventCls.onIds("#" + me.pre + "reload_align_refined", "click", function(e) { var ic = me.icn3d;
@@ -425,6 +466,16 @@ class Events {
            me.htmlCls.clickMenuCls.setLogCmd("load mmcif " + $("#" + me.pre + "mmcifid").val(), false);
            window.open(me.htmlCls.baseUrl + 'icn3d/full.html?mmcifid=' + $("#" + me.pre + "mmcifid").val(), '_blank');
         });
+
+        me.myEventCls.onIds("#" + me.pre + "mmcifid", "keyup", function(e) { var ic = me.icn3d;
+           if (e.keyCode === 13) {
+               e.preventDefault();
+               if(!me.cfg.notebook) dialog.dialog( "close" );
+               me.htmlCls.clickMenuCls.setLogCmd("load mmcif " + $("#" + me.pre + "mmcifid").val(), false);
+               window.open(me.htmlCls.baseUrl + 'icn3d/full.html?mmcifid=' + $("#" + me.pre + "mmcifid").val(), '_blank');
+           }
+        });
+
     //    },
     //    clickReload_mmdb: function() {
         me.myEventCls.onIds("#" + me.pre + "reload_mmdb", "click", function(e) { var ic = me.icn3d;
@@ -434,24 +485,32 @@ class Events {
            //ic.mmdbParserCls.downloadMmdb($("#" + me.pre + "mmdbid").val());
            window.open(me.htmlCls.baseUrl + 'icn3d/full.html?mmdbid=' + $("#" + me.pre + "mmdbid").val(), '_blank');
         });
+
+        me.myEventCls.onIds("#" + me.pre + "mmdbid", "keyup", function(e) { var ic = me.icn3d;
+           if (e.keyCode === 13) {
+               e.preventDefault();
+               if(!me.cfg.notebook) dialog.dialog( "close" );
+               me.htmlCls.clickMenuCls.setLogCmd("load mmdb " + $("#" + me.pre + "mmdbid").val(), false);
+               window.open(me.htmlCls.baseUrl + 'icn3d/full.html?mmdbid=' + $("#" + me.pre + "mmdbid").val(), '_blank');
+           }
+        });
+
     //    },
     //    clickReload_blast_rep_id: function() {
         me.myEventCls.onIds("#" + me.pre + "reload_blast_rep_id", "click", function(e) { var ic = me.icn3d;
            e.preventDefault();
            if(!me.cfg.notebook) dialog.dialog( "close" );
-           //var query_id = $("#" + me.pre + "query_id").val().toUpperCase();
            var query_id = $("#" + me.pre + "query_id").val();
            var query_fasta = encodeURIComponent($("#" + me.pre + "query_fasta").val());
-           //var blast_rep_id = $("#" + me.pre + "blast_rep_id").val().toUpperCase();
            var blast_rep_id = $("#" + me.pre + "blast_rep_id").val();
            me.htmlCls.clickMenuCls.setLogCmd("load seq_struc_ids " + query_id + "," + blast_rep_id, false);
            query_id =(query_id !== '' && query_id !== undefined) ? query_id : query_fasta;
-    //           if(query_id !== '' && query_id !== undefined) {
            window.open(me.htmlCls.baseUrl + 'icn3d/full.html?from=icn3d&blast_rep_id=' + blast_rep_id
              + '&query_id=' + query_id
              + '&command=view annotations; set annotation cdd; set annotation site; set view detailed view; select chain '
              + blast_rep_id + '; show selection', '_blank');
         });
+
     //    },
     //    clickReload_gi: function() {
         me.myEventCls.onIds("#" + me.pre + "reload_gi", "click", function(e) { var ic = me.icn3d;
@@ -461,12 +520,31 @@ class Events {
            window.open(me.htmlCls.baseUrl + 'icn3d/full.html?gi=' + $("#" + me.pre + "gi").val(), '_blank');
         });
 
+        me.myEventCls.onIds("#" + me.pre + "gi", "keyup", function(e) { var ic = me.icn3d;
+           if (e.keyCode === 13) {
+               e.preventDefault();
+               if(!me.cfg.notebook) dialog.dialog( "close" );
+               me.htmlCls.clickMenuCls.setLogCmd("load gi " + $("#" + me.pre + "gi").val(), false);
+               window.open(me.htmlCls.baseUrl + 'icn3d/full.html?gi=' + $("#" + me.pre + "gi").val(), '_blank');
+           }
+        });
+
         me.myEventCls.onIds("#" + me.pre + "reload_uniprotid", "click", function(e) { var ic = me.icn3d;
            e.preventDefault();
            if(!me.cfg.notebook) dialog.dialog( "close" );
            me.htmlCls.clickMenuCls.setLogCmd("load uniprotid " + $("#" + me.pre + "uniprotid").val(), false);
            window.open(me.htmlCls.baseUrl + 'icn3d/full.html?uniprotid=' + $("#" + me.pre + "uniprotid").val(), '_blank');
         });
+
+        me.myEventCls.onIds("#" + me.pre + "uniprotid", "keyup", function(e) { var ic = me.icn3d;
+           if (e.keyCode === 13) {
+               e.preventDefault();
+               if(!me.cfg.notebook) dialog.dialog( "close" );
+               me.htmlCls.clickMenuCls.setLogCmd("load uniprotid " + $("#" + me.pre + "uniprotid").val(), false);
+               window.open(me.htmlCls.baseUrl + 'icn3d/full.html?uniprotid=' + $("#" + me.pre + "uniprotid").val(), '_blank');
+           }
+        });
+
     //    },
     //    clickReload_cid: function() {
         me.myEventCls.onIds("#" + me.pre + "reload_cid", "click", function(e) { var ic = me.icn3d;
@@ -475,6 +553,16 @@ class Events {
            me.htmlCls.clickMenuCls.setLogCmd("load cid " + $("#" + me.pre + "cid").val(), false);
            window.open(me.htmlCls.baseUrl + 'icn3d/full.html?cid=' + $("#" + me.pre + "cid").val(), '_blank');
         });
+
+        me.myEventCls.onIds("#" + me.pre + "cid", "keyup", function(e) { var ic = me.icn3d;
+           if (e.keyCode === 13) {
+               e.preventDefault();
+               if(!me.cfg.notebook) dialog.dialog( "close" );
+               me.htmlCls.clickMenuCls.setLogCmd("load cid " + $("#" + me.pre + "cid").val(), false);
+               window.open(me.htmlCls.baseUrl + 'icn3d/full.html?cid=' + $("#" + me.pre + "cid").val(), '_blank');
+           }
+        });
+
     //    },
 
         me.htmlCls.setHtmlCls.clickReload_pngimage();

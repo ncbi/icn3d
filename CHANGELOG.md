@@ -1,4 +1,6 @@
 ## Change Log
+[icn3d-3.2.3](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.2.3.zip) was release on June 25, 2021. Enabled to set the URL parameter "menumode" to "1" to show icons for those menus requiring internet access or license.
+
 [icn3d-3.2.2](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.2.2.zip) was release on June 20, 2021. Skipped the secondary structure calculation when the input is a PDB file of nucleotides.
 
 [icn3d-3.2.1](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.2.1.zip) was release on June 18, 2021. Export all classes so that functions in these classes can be manually modified as shown in the file example.html.

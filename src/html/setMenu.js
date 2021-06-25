@@ -120,7 +120,7 @@ class SetMenu {
         if(!me.utilsCls.isMobile()) {
             var marginLeft = me.htmlCls.WIDTH - 40 + 5;
 
-            html += me.htmlCls.buttonStr + "fullscreen' style='position:absolute; z-index:1999; display:block; padding:0px; margin: 7px 0px 0px " + marginLeft + "px; width:30px; height:34px; border-radius:4px; border:none;' title='Full screen'>";
+            html += me.htmlCls.buttonStr + "fullscreen' style='position:absolute; z-index:1999; display:block; padding:0px; margin: 7px 0px 0px " + marginLeft + "px; width:30px; height:34px; border-radius:4px; border:none; background-color:#f6f6f6;' title='Full screen'>";
             html += "<svg fill='#1c94c4' viewBox='0 0 24 24' width='24' height='24'>";
             html += "<path d='M0 0h24v24H0z' fill='none'></path>";
             html += "<path d='M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z'></path>";
@@ -138,7 +138,7 @@ class SetMenu {
             html += "<h3 style='width:20px; height:24px; position:relative; padding: 0'><span style='position:absolute; left:3px; top:4px;'>&#9776;</span></h3>";
         }
         else {
-            html += "<h3 style='width:30px; height:34px; position:relative; padding: 0'><span style='position:absolute; left:7px; top:8px;'>&#9776;</span></h3>";
+            html += "<h3 style='width:30px; height:34px; position:relative; padding: 0; margin-top:7px!important; background-color:#f6f6f6;'><span style='position:absolute; left:7px; top:8px;'>&#9776;</span></h3>";
         }
         html += "<div>";
 
@@ -1217,9 +1217,9 @@ class SetMenu {
 
             html += me.htmlCls.setHtmlCls.getRadio('mn4_clr', 'mn4_clrCharge', 'Charge');
 
-            if(!me.cfg.notebook && !me.cfg.hidelicense) {
-                html += me.htmlCls.setHtmlCls.getRadio('mn4_clr', 'mn1_delphi2', 'DelPhi<br><span style="padding-left:1.5em;">Potential ' + me.htmlCls.licenseStr + '</span>');
-            }
+//            if(!me.cfg.notebook && !me.cfg.hidelicense) {
+//                html += me.htmlCls.setHtmlCls.getRadio('mn4_clr', 'mn1_delphi2', 'DelPhi<br><span style="padding-left:1.5em;">Potential ' + me.htmlCls.licenseStr + '</span>');
+//            }
 
             html += me.htmlCls.setHtmlCls.getRadio('mn4_clr', 'mn4_clrHydrophobic', 'Wimley-White<br><span style="padding-left:1.5em;">Hydrophobicity</span>');
 
@@ -1507,7 +1507,7 @@ class SetMenu {
 
         html += "<ul class='icn3d-mn-item'>";
 
-        html += liStr + me.htmlCls.baseUrl + "icn3d/icn3d.html#about' target='_blank'>About iCn3D<span style='font-size:0.9em'> " + me.REVISION + " " + me.htmlCls.wifiStr + "</span></a></li>";
+        html += liStr + me.htmlCls.baseUrl + "icn3d/icn3d.html#about' target='_blank'>About iCn3D<span style='font-size:0.9em'> " + me.REVISION + "</span></a></li>";
 
         html += liStr + me.htmlCls.baseUrl + "icn3d/icn3d.html#gallery' target='_blank'>Live Gallery " + me.htmlCls.wifiStr + "</a></li>";
 

@@ -222,7 +222,7 @@ class AnnoCddSite {
 
                 //var setname = chnid + "_" + domain + "_" + index + "_" + r; //chnid + "_" + type + "_" + index + "_" + r;
                 var setname = chnid + "_" + domain;
-                if(!bDomain) setname += "_" + acc2domain[acc];
+                if(!bDomain) setname += "_" + index + "_" + r; // + acc2domain[acc];
 
                 var htmlTmp2 = '<div class="icn3d-seqTitle icn3d-link icn3d-blue" ' + type + '="' + acc + '" from="' + fromArray + '" to="' + toArray + '" shorttitle="' + title + '" setname="' + setname + '" anno="sequence" chain="' + chnid + '" title="' + fulltitle + '">' + title + ' </div>';
                 var htmlTmp3 = '<span class="icn3d-residueNum" title="residue count">' + resCnt.toString() + ' Res</span>';

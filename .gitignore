@@ -1,4 +1,8 @@
 dist/
 node_modules/
-.gh-pages/
-.publish/
+icn3dnpm/
+cpes5.sh
+es5/
+script/
+tmpdir/
+package-lock.json

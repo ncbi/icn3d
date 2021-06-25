@@ -1047,7 +1047,7 @@ class ApplyCommand {
         ic.yournote = paraArray[1];
 
         $("#" + ic.pre + "yournote").val(ic.yournote);
-        document.title = ic.yournote;
+        if(ic.icn3dui.cfg.shownote) document.title = ic.yournote;
       }
       else if(command.indexOf('cross structure interaction') == 0) {
         ic.crossstrucinter = parseInt(command.substr(command.lastIndexOf(' ') + 1));
