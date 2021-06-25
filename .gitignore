@@ -1,8 +1,5 @@
 dist/
 node_modules/
 icn3dnpm/
-cpes5.sh
-es5/
-script/
 tmpdir/
 package-lock.json
