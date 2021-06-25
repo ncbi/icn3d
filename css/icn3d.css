@@ -1,20 +1,20 @@
 /* theme: orange */
 /*
-.ui-widget-header{border:1px solid #e78f08;background:#f6a828 url("lib/images/ui-bg_gloss-wave_35_f6a828_500x100.png") 50% 50% repeat-x;color:#fff;font-weight:bold}
-.ui-button .ui-icon {background-image: url("lib/images/ui-icons_ef8c08_256x240.png");}
+.ui-widget-header{border:1px solid #e78f08;background:#f6a828 url("https://www.ncbi.nlm.nih.gov/Structure/icn3d/lib/images/ui-bg_gloss-wave_35_f6a828_500x100.png") 50% 50% repeat-x;color:#fff;font-weight:bold}
+.ui-button .ui-icon {background-image: url("https://www.ncbi.nlm.nih.gov/Structure/icn3d/lib/images/ui-icons_ef8c08_256x240.png");}
 .ui-state-active a, .ui-state-active a:link, .ui-state-active a:visited {color: #eb8f00;text-decoration: none;}
 */
 
 /* theme: black */
 /*
-.ui-widget-header{border:1px solid #333333;background:#333333 url("lib/images/ui-bg_gloss-wave_25_333333_500x100.png") 50% 50% repeat-x;color:#fff;font-weight:bold}
-.ui-button .ui-icon {background-image: url("lib/images/ui-icons_222222_256x240.png");}
+.ui-widget-header{border:1px solid #333333;background:#333333 url("https://www.ncbi.nlm.nih.gov/Structure/icn3d/lib/images/ui-bg_gloss-wave_25_333333_500x100.png") 50% 50% repeat-x;color:#fff;font-weight:bold}
+.ui-button .ui-icon {background-image: url("https://www.ncbi.nlm.nih.gov/Structure/icn3d/lib/images/ui-icons_222222_256x240.png");}
 .ui-state-active a, .ui-state-active a:link, .ui-state-active a:visited {color: #222222;text-decoration: none;}
 */
 
 /* theme: blue */
-.ui-widget-header {border:1px solid #4297d7;background:#5c9ccc url("lib/images/ui-bg_gloss-wave_55_5c9ccc_500x100.png") 50% 50% repeat-x;color:#fff;font-weight:bold}
-.ui-button .ui-icon {background-image: url("lib/images/ui-icons_228ef1_256x240.png");}
+.ui-widget-header {border:1px solid #4297d7;background:#5c9ccc url("https://www.ncbi.nlm.nih.gov/Structure/icn3d/lib/images/ui-bg_gloss-wave_55_5c9ccc_500x100.png") 50% 50% repeat-x;color:#fff;font-weight:bold}
+.ui-button .ui-icon {background-image: url("https://www.ncbi.nlm.nih.gov/Structure/icn3d/lib/images/ui-icons_228ef1_256x240.png");}
 .ui-state-active a, .ui-state-active a:link, .ui-state-active a:visited {color: #444;text-decoration: none;}
 
 .icn3d-text {font-family: Verdana, Arial, Helvetica, sans-serif; font-size:12px!important;}
@@ -189,13 +189,13 @@ input:checked + .icn3d-slider:before {
 
 /*.icn3d-sheet {background-image: linear-gradient(transparent, transparent 25%, #FFC800 25%, #FFC800 75%, transparent 75%, transparent 100%);} */
 .icn3d-sheet {background-image: linear-gradient(transparent, transparent 25%, #008000 25%, #008000 75%, transparent 75%, transparent 100%);} 
-.icn3d-sheet2 {background-image: url("ssimages/trig.png"); background-size: contain; background-repeat: no-repeat;}
+.icn3d-sheet2 {background-image: url("https://www.ncbi.nlm.nih.gov/Structure/icn3d/ssimages/trig.png"); background-size: contain; background-repeat: no-repeat;}
 
 .icn3d-sheety {background-image: linear-gradient(transparent, transparent 25%, #FFC800 25%, #FFC800 75%, transparent 75%, transparent 100%);} 
-.icn3d-sheet2y {background-image: url("ssimages/triy.png"); background-size: contain; background-repeat: no-repeat;}
+.icn3d-sheet2y {background-image: url("https://www.ncbi.nlm.nih.gov/Structure/icn3d/ssimages/triy.png"); background-size: contain; background-repeat: no-repeat;}
 
-.icn3d-helix {background-image: url("ssimages/helix.png"); background-size: contain; background-repeat: no-repeat;}
-.icn3d-helix2 {background-image: url("ssimages/helix2.png"); background-size: contain; background-repeat: no-repeat;}
+.icn3d-helix {background-image: url("https://www.ncbi.nlm.nih.gov/Structure/icn3d/ssimages/helix.png"); background-size: contain; background-repeat: no-repeat;}
+.icn3d-helix2 {background-image: url("https://www.ncbi.nlm.nih.gov/Structure/icn3d/ssimages/helix2.png"); background-size: contain; background-repeat: no-repeat;}
 
 .icn3d-coil {background-image: linear-gradient(transparent, transparent 45%, #6080FF 45%, #6080FF 55%, transparent 55%, transparent 100%);} 
 .icn3d-other {background-image: linear-gradient(transparent, transparent 45%, #DDDDDD 45%, #DDDDDD 55%, transparent 55%, transparent 100%);} 
@@ -262,5 +262,5 @@ input:checked + .icn3d-slider:before {
   
 .icn3d-snplink {text-decoration: underline; cursor:pointer;}
 
-.icn3d-wifi {width:16px; display:inline-block; background-image: url("ssimages/wifi.png"); background-size: contain; background-repeat: no-repeat;}
-.icn3d-license {width:16px; display:inline-block; background-image: url("ssimages/license.png"); background-size: contain; background-repeat: no-repeat;}
+.icn3d-wifi {width:16px; display:inline-block; background-image: url("https://www.ncbi.nlm.nih.gov/Structure/icn3d/ssimages/wifi.png"); background-size: contain; background-repeat: no-repeat;}
+.icn3d-license {width:16px; display:inline-block; background-image: url("https://www.ncbi.nlm.nih.gov/Structure/icn3d/ssimages/license.png"); background-size: contain; background-repeat: no-repeat;}

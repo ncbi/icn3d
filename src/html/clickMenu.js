@@ -598,7 +598,7 @@ class ClickMenu {
     //    clkApplyYournote: function() {
         me.myEventCls.onIds("#" + me.pre + "applyyournote", "click", function(e) { var ic = me.icn3d;
            ic.yournote = $("#" + me.pre + "yournote").val();
-           document.title = ic.yournote;
+           if(ic.icn3dui.cfg.shownote) document.title = ic.yournote;
            if(!me.cfg.notebook) dialog.dialog( "close" );
            thisClass.setLogCmd('your note | ' + ic.yournote, true);
         });

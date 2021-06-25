@@ -28745,7 +28745,7 @@ class AnnoCddSite {
 
                 //var setname = chnid + "_" + domain + "_" + index + "_" + r; //chnid + "_" + type + "_" + index + "_" + r;
                 var setname = chnid + "_" + domain;
-                if(!bDomain) setname += "_" + acc2domain[acc];
+                if(!bDomain) setname += "_" + index + "_" + r; // + acc2domain[acc];
 
                 var htmlTmp2 = '<div class="icn3d-seqTitle icn3d-link icn3d-blue" ' + type + '="' + acc + '" from="' + fromArray + '" to="' + toArray + '" shorttitle="' + title + '" setname="' + setname + '" anno="sequence" chain="' + chnid + '" title="' + fulltitle + '">' + title + ' </div>';
                 var htmlTmp3 = '<span class="icn3d-residueNum" title="residue count">' + resCnt.toString() + ' Res</span>';
@@ -30226,7 +30226,7 @@ class ApplyCommand {
         ic.yournote = paraArray[1];
 
         $("#" + ic.pre + "yournote").val(ic.yournote);
-        document.title = ic.yournote;
+        if(ic.icn3dui.cfg.shownote) document.title = ic.yournote;
       }
       else if(command.indexOf('cross structure interaction') == 0) {
         ic.crossstrucinter = parseInt(command.substr(command.lastIndexOf(' ') + 1));
@@ -42646,7 +42646,7 @@ class ClickMenu {
     //    clkApplyYournote: function() {
         me.myEventCls.onIds("#" + me.pre + "applyyournote", "click", function(e) { var ic = me.icn3d;
            ic.yournote = $("#" + me.pre + "yournote").val();
-           document.title = ic.yournote;
+           if(ic.icn3dui.cfg.shownote) document.title = ic.yournote;
            if(!me.cfg.notebook) dialog.dialog( "close" );
            thisClass.setLogCmd('your note | ' + ic.yournote, true);
         });
@@ -44141,7 +44141,7 @@ class SetMenu {
         if(!me.utilsCls.isMobile()) {
             var marginLeft = me.htmlCls.WIDTH - 40 + 5;
 
-            html += me.htmlCls.buttonStr + "fullscreen' style='position:absolute; z-index:1999; display:block; padding:0px; margin: 7px 0px 0px " + marginLeft + "px; width:30px; height:34px; border-radius:4px; border:none;' title='Full screen'>";
+            html += me.htmlCls.buttonStr + "fullscreen' style='position:absolute; z-index:1999; display:block; padding:0px; margin: 7px 0px 0px " + marginLeft + "px; width:30px; height:34px; border-radius:4px; border:none; background-color:#f6f6f6;' title='Full screen'>";
             html += "<svg fill='#1c94c4' viewBox='0 0 24 24' width='24' height='24'>";
             html += "<path d='M0 0h24v24H0z' fill='none'></path>";
             html += "<path d='M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z'></path>";
@@ -44159,7 +44159,7 @@ class SetMenu {
             html += "<h3 style='width:20px; height:24px; position:relative; padding: 0'><span style='position:absolute; left:3px; top:4px;'>&#9776;</span></h3>";
         }
         else {
-            html += "<h3 style='width:30px; height:34px; position:relative; padding: 0'><span style='position:absolute; left:7px; top:8px;'>&#9776;</span></h3>";
+            html += "<h3 style='width:30px; height:34px; position:relative; padding: 0; margin-top:7px!important; background-color:#f6f6f6;'><span style='position:absolute; left:7px; top:8px;'>&#9776;</span></h3>";
         }
         html += "<div>";
 
@@ -45238,9 +45238,9 @@ class SetMenu {
 
             html += me.htmlCls.setHtmlCls.getRadio('mn4_clr', 'mn4_clrCharge', 'Charge');
 
-            if(!me.cfg.notebook && !me.cfg.hidelicense) {
-                html += me.htmlCls.setHtmlCls.getRadio('mn4_clr', 'mn1_delphi2', 'DelPhi<br><span style="padding-left:1.5em;">Potential ' + me.htmlCls.licenseStr + '</span>');
-            }
+//            if(!me.cfg.notebook && !me.cfg.hidelicense) {
+//                html += me.htmlCls.setHtmlCls.getRadio('mn4_clr', 'mn1_delphi2', 'DelPhi<br><span style="padding-left:1.5em;">Potential ' + me.htmlCls.licenseStr + '</span>');
+//            }
 
             html += me.htmlCls.setHtmlCls.getRadio('mn4_clr', 'mn4_clrHydrophobic', 'Wimley-White<br><span style="padding-left:1.5em;">Hydrophobicity</span>');
 
@@ -45528,7 +45528,7 @@ class SetMenu {
 
         html += "<ul class='icn3d-mn-item'>";
 
-        html += liStr + me.htmlCls.baseUrl + "icn3d/icn3d.html#about' target='_blank'>About iCn3D<span style='font-size:0.9em'> " + me.REVISION + " " + me.htmlCls.wifiStr + "</span></a></li>";
+        html += liStr + me.htmlCls.baseUrl + "icn3d/icn3d.html#about' target='_blank'>About iCn3D<span style='font-size:0.9em'> " + me.REVISION + "</span></a></li>";
 
         html += liStr + me.htmlCls.baseUrl + "icn3d/icn3d.html#gallery' target='_blank'>Live Gallery " + me.htmlCls.wifiStr + "</a></li>";
 
@@ -46977,8 +46977,21 @@ class Events {
         }
     }
 
+    searchSeq() { var me = this.icn3dui, ic = me.icn3d;
+       var select = $("#" + me.pre + "search_seq").val();
+       if(isNaN(select) && select.indexOf('$') == -1 && select.indexOf('.') == -1 && select.indexOf(':') == -1 && select.indexOf('@') == -1) {
+           select = ':' + select;
+       }
+       var commandname = select.replace(/\s+/g, '_');
+       var commanddesc = commandname;
+       ic.selByCommCls.selectByCommand(select, commandname, commanddesc);
+       me.htmlCls.clickMenuCls.setLogCmd('select ' + select + ' | name ' + commandname, true);
+    }
+
     //Hold all functions related to click events.
     allEventFunctions() { var me = this.icn3dui, ic = me.icn3d;
+        var thisClass = this;
+
         if(me.bNode) return;
 
         ic.definedSetsCls.clickCustomAtoms();
@@ -47192,20 +47205,18 @@ class Events {
         });
     //    },
     //    clickSearchSeq: function() {
-        me.myEventCls.onIds("#" + me.pre + "search_seq_button", "click", function(e) { var ic = me.icn3d;
+        me.myEventCls.onIds("#" + me.pre + "search_seq_button", "click", function(e) { me.icn3d;
            e.stopImmediatePropagation();
-           var select = $("#" + me.pre + "search_seq").val();
-           if(isNaN(select) && select.indexOf('$') == -1 && select.indexOf('.') == -1 && select.indexOf(':') == -1 && select.indexOf('@') == -1) {
-               select = ':' + select;
-           }
-           var commandname = select.replace(/\s+/g, '_');
-           //var commanddesc = "search with the one-letter sequence " + select;
-           var commanddesc = commandname;
-           ic.selByCommCls.selectByCommand(select, commandname, commanddesc);
-           //me.htmlCls.clickMenuCls.setLogCmd('select ' + select + ' | name ' + commandname + ' | description ' + commanddesc, true);
-           me.htmlCls.clickMenuCls.setLogCmd('select ' + select + ' | name ' + commandname, true);
-           ////$( ".icn3d-accordion" ).accordion(me.htmlCls.closeAc);
+           thisClass.searchSeq();
         });
+
+        me.myEventCls.onIds("#" + me.pre + "search_seq", "keyup", function(e) { me.icn3d;
+           if (e.keyCode === 13) {
+               e.preventDefault();
+               thisClass.searchSeq();
+           }
+        });
+
     //    },
     //    clickReload_mmtf: function() {
         me.myEventCls.onIds("#" + me.pre + "reload_mmtf", "click", function(e) { me.icn3d;
@@ -47214,6 +47225,16 @@ class Events {
            me.htmlCls.clickMenuCls.setLogCmd("load mmtf " + $("#" + me.pre + "mmtfid").val(), false);
            window.open(me.htmlCls.baseUrl + 'icn3d/full.html?mmtfid=' + $("#" + me.pre + "mmtfid").val(), '_blank');
         });
+
+        me.myEventCls.onIds("#" + me.pre + "mmtfid", "keyup", function(e) { me.icn3d;
+           if (e.keyCode === 13) {
+               e.preventDefault();
+               if(!me.cfg.notebook) dialog.dialog( "close" );
+               me.htmlCls.clickMenuCls.setLogCmd("load mmtf " + $("#" + me.pre + "mmtfid").val(), false);
+               window.open(me.htmlCls.baseUrl + 'icn3d/full.html?mmtfid=' + $("#" + me.pre + "mmtfid").val(), '_blank');
+           }
+        });
+
     //    },
     //    clickReload_pdb: function() {
         me.myEventCls.onIds("#" + me.pre + "reload_pdb", "click", function(e) { me.icn3d;
@@ -47222,6 +47243,16 @@ class Events {
            me.htmlCls.clickMenuCls.setLogCmd("load pdb " + $("#" + me.pre + "pdbid").val(), false);
            window.open(me.htmlCls.baseUrl + 'icn3d/full.html?pdbid=' + $("#" + me.pre + "pdbid").val(), '_blank');
         });
+
+        me.myEventCls.onIds("#" + me.pre + "pdbid", "keyup", function(e) { me.icn3d;
+           if (e.keyCode === 13) {
+               e.preventDefault();
+               if(!me.cfg.notebook) dialog.dialog( "close" );
+               me.htmlCls.clickMenuCls.setLogCmd("load pdb " + $("#" + me.pre + "pdbid").val(), false);
+               window.open(me.htmlCls.baseUrl + 'icn3d/full.html?pdbid=' + $("#" + me.pre + "pdbid").val(), '_blank');
+           }
+        });
+
     //    },
     //    clickReload_opm: function() {
         me.myEventCls.onIds("#" + me.pre + "reload_opm", "click", function(e) { me.icn3d;
@@ -47230,6 +47261,16 @@ class Events {
            me.htmlCls.clickMenuCls.setLogCmd("load opm " + $("#" + me.pre + "opmid").val(), false);
            window.open(me.htmlCls.baseUrl + 'icn3d/full.html?opmid=' + $("#" + me.pre + "opmid").val(), '_blank');
         });
+
+        me.myEventCls.onIds("#" + me.pre + "opmid", "keyup", function(e) { me.icn3d;
+           if (e.keyCode === 13) {
+               e.preventDefault();
+               if(!me.cfg.notebook) dialog.dialog( "close" );
+               me.htmlCls.clickMenuCls.setLogCmd("load opm " + $("#" + me.pre + "opmid").val(), false);
+               window.open(me.htmlCls.baseUrl + 'icn3d/full.html?opmid=' + $("#" + me.pre + "opmid").val(), '_blank');
+           }
+        });
+
     //    },
     //    clickReload_align_refined: function() {
         me.myEventCls.onIds("#" + me.pre + "reload_align_refined", "click", function(e) { me.icn3d;
@@ -47336,6 +47377,16 @@ class Events {
            me.htmlCls.clickMenuCls.setLogCmd("load mmcif " + $("#" + me.pre + "mmcifid").val(), false);
            window.open(me.htmlCls.baseUrl + 'icn3d/full.html?mmcifid=' + $("#" + me.pre + "mmcifid").val(), '_blank');
         });
+
+        me.myEventCls.onIds("#" + me.pre + "mmcifid", "keyup", function(e) { me.icn3d;
+           if (e.keyCode === 13) {
+               e.preventDefault();
+               if(!me.cfg.notebook) dialog.dialog( "close" );
+               me.htmlCls.clickMenuCls.setLogCmd("load mmcif " + $("#" + me.pre + "mmcifid").val(), false);
+               window.open(me.htmlCls.baseUrl + 'icn3d/full.html?mmcifid=' + $("#" + me.pre + "mmcifid").val(), '_blank');
+           }
+        });
+
     //    },
     //    clickReload_mmdb: function() {
         me.myEventCls.onIds("#" + me.pre + "reload_mmdb", "click", function(e) { me.icn3d;
@@ -47345,24 +47396,32 @@ class Events {
            //ic.mmdbParserCls.downloadMmdb($("#" + me.pre + "mmdbid").val());
            window.open(me.htmlCls.baseUrl + 'icn3d/full.html?mmdbid=' + $("#" + me.pre + "mmdbid").val(), '_blank');
         });
+
+        me.myEventCls.onIds("#" + me.pre + "mmdbid", "keyup", function(e) { me.icn3d;
+           if (e.keyCode === 13) {
+               e.preventDefault();
+               if(!me.cfg.notebook) dialog.dialog( "close" );
+               me.htmlCls.clickMenuCls.setLogCmd("load mmdb " + $("#" + me.pre + "mmdbid").val(), false);
+               window.open(me.htmlCls.baseUrl + 'icn3d/full.html?mmdbid=' + $("#" + me.pre + "mmdbid").val(), '_blank');
+           }
+        });
+
     //    },
     //    clickReload_blast_rep_id: function() {
         me.myEventCls.onIds("#" + me.pre + "reload_blast_rep_id", "click", function(e) { me.icn3d;
            e.preventDefault();
            if(!me.cfg.notebook) dialog.dialog( "close" );
-           //var query_id = $("#" + me.pre + "query_id").val().toUpperCase();
            var query_id = $("#" + me.pre + "query_id").val();
            var query_fasta = encodeURIComponent($("#" + me.pre + "query_fasta").val());
-           //var blast_rep_id = $("#" + me.pre + "blast_rep_id").val().toUpperCase();
            var blast_rep_id = $("#" + me.pre + "blast_rep_id").val();
            me.htmlCls.clickMenuCls.setLogCmd("load seq_struc_ids " + query_id + "," + blast_rep_id, false);
            query_id =(query_id !== '' && query_id !== undefined) ? query_id : query_fasta;
-    //           if(query_id !== '' && query_id !== undefined) {
            window.open(me.htmlCls.baseUrl + 'icn3d/full.html?from=icn3d&blast_rep_id=' + blast_rep_id
              + '&query_id=' + query_id
              + '&command=view annotations; set annotation cdd; set annotation site; set view detailed view; select chain '
              + blast_rep_id + '; show selection', '_blank');
         });
+
     //    },
     //    clickReload_gi: function() {
         me.myEventCls.onIds("#" + me.pre + "reload_gi", "click", function(e) { me.icn3d;
@@ -47372,12 +47431,31 @@ class Events {
            window.open(me.htmlCls.baseUrl + 'icn3d/full.html?gi=' + $("#" + me.pre + "gi").val(), '_blank');
         });
 
+        me.myEventCls.onIds("#" + me.pre + "gi", "keyup", function(e) { me.icn3d;
+           if (e.keyCode === 13) {
+               e.preventDefault();
+               if(!me.cfg.notebook) dialog.dialog( "close" );
+               me.htmlCls.clickMenuCls.setLogCmd("load gi " + $("#" + me.pre + "gi").val(), false);
+               window.open(me.htmlCls.baseUrl + 'icn3d/full.html?gi=' + $("#" + me.pre + "gi").val(), '_blank');
+           }
+        });
+
         me.myEventCls.onIds("#" + me.pre + "reload_uniprotid", "click", function(e) { me.icn3d;
            e.preventDefault();
            if(!me.cfg.notebook) dialog.dialog( "close" );
            me.htmlCls.clickMenuCls.setLogCmd("load uniprotid " + $("#" + me.pre + "uniprotid").val(), false);
            window.open(me.htmlCls.baseUrl + 'icn3d/full.html?uniprotid=' + $("#" + me.pre + "uniprotid").val(), '_blank');
         });
+
+        me.myEventCls.onIds("#" + me.pre + "uniprotid", "keyup", function(e) { me.icn3d;
+           if (e.keyCode === 13) {
+               e.preventDefault();
+               if(!me.cfg.notebook) dialog.dialog( "close" );
+               me.htmlCls.clickMenuCls.setLogCmd("load uniprotid " + $("#" + me.pre + "uniprotid").val(), false);
+               window.open(me.htmlCls.baseUrl + 'icn3d/full.html?uniprotid=' + $("#" + me.pre + "uniprotid").val(), '_blank');
+           }
+        });
+
     //    },
     //    clickReload_cid: function() {
         me.myEventCls.onIds("#" + me.pre + "reload_cid", "click", function(e) { me.icn3d;
@@ -47386,6 +47464,16 @@ class Events {
            me.htmlCls.clickMenuCls.setLogCmd("load cid " + $("#" + me.pre + "cid").val(), false);
            window.open(me.htmlCls.baseUrl + 'icn3d/full.html?cid=' + $("#" + me.pre + "cid").val(), '_blank');
         });
+
+        me.myEventCls.onIds("#" + me.pre + "cid", "keyup", function(e) { me.icn3d;
+           if (e.keyCode === 13) {
+               e.preventDefault();
+               if(!me.cfg.notebook) dialog.dialog( "close" );
+               me.htmlCls.clickMenuCls.setLogCmd("load cid " + $("#" + me.pre + "cid").val(), false);
+               window.open(me.htmlCls.baseUrl + 'icn3d/full.html?cid=' + $("#" + me.pre + "cid").val(), '_blank');
+           }
+        });
+
     //    },
 
         me.htmlCls.setHtmlCls.clickReload_pngimage();
@@ -52454,7 +52542,7 @@ class iCn3DUI {
     //even when multiple iCn3D viewers are shown together.
     this.pre = this.cfg.divid + "_";
 
-    this.REVISION = '3.2.2';
+    this.REVISION = '3.2.3';
 
     // In nodejs, iCn3D defines "window = {navigator: {}}"
     this.bNode = (Object.keys(window).length < 2) ? true : false;
@@ -52500,6 +52588,15 @@ class iCn3DUI {
 iCn3DUI.prototype.show3DStructure = function() { var me = this;
   var thisClass = this;
   me.deferred = $.Deferred(function() {
+    if(me.cfg.menumode == 1) {
+        me.htmlCls.wifiStr = '<i class="icn3d-wifi" title="requires internet">&nbsp;</i>';
+        me.htmlCls.licenseStr = '<i class="icn3d-license" title="requires license">&nbsp;</i>';
+    }
+    else {
+        me.htmlCls.wifiStr = '';
+        me.htmlCls.licenseStr = '';
+    }
+
     me.setIcn3d();
     var ic = me.icn3d;
 
