@@ -9538,8 +9538,8 @@ var icn3d = (function (exports) {
          //This function returns atoms within a certain "distance" (in angstrom) from the "targetAtoms".
          //The returned atoms are stored in a hash with atom indices as keys and 1 as values.
          //Only those atoms in "allAtoms" are considered.
-         getAtomsWithinAtom(atomlist, atomlistTarget, distance, bGetPairs, bInteraction, bInternal) { var ic = this.icn3d; ic.icn3dui;
-            var neighbors = this.getNeighboringAtoms(atomlist, atomlistTarget, distance);
+         getAtomsWithinAtom(atomlist, atomlistTarget, distance, bGetPairs, bInteraction, bInternal, bIncludeTarget) { var ic = this.icn3d; ic.icn3dui;
+            var neighbors = this.getNeighboringAtoms(atomlist, atomlistTarget, distance, bIncludeTarget);
             if(bGetPairs) ic.resid2Residhash = {};
 
             var ret = {};
@@ -9571,7 +9571,7 @@ var icn3d = (function (exports) {
                    if(!ic.crossstrucinter && oriAtom.structure != atom.structure) continue;
 
                    // exclude the target atoms
-                   if(atom.serial in atomlistTarget) continue;
+                   if(!bIncludeTarget && atom.serial in atomlistTarget) continue;
                    if(ic.bOpm && atom.resn === 'DUM') continue;
 
                    //var atomDistSq = (atom.coord.x - oriAtom.coord.x) * (atom.coord.x - oriAtom.coord.x) + (atom.coord.y - oriAtom.coord.y) * (atom.coord.y - oriAtom.coord.y) + (atom.coord.z - oriAtom.coord.z) * (atom.coord.z - oriAtom.coord.z);
@@ -9643,7 +9643,7 @@ var icn3d = (function (exports) {
             return ret;
          }
 
-         getNeighboringAtoms(atomlist, atomlistTarget, distance) { var ic = this.icn3d; ic.icn3dui;
+         getNeighboringAtoms(atomlist, atomlistTarget, distance, bIncludeTarget) { var ic = this.icn3d; ic.icn3dui;
             var extent = this.getExtent(atomlistTarget);
 
             var targetRadiusSq1 = (extent[2][0] - extent[0][0]) * (extent[2][0] - extent[0][0]) + (extent[2][1] - extent[0][1]) * (extent[2][1] - extent[0][1]) + (extent[2][2] - extent[0][2]) * (extent[2][2] - extent[0][2]);
@@ -9659,7 +9659,7 @@ var icn3d = (function (exports) {
                var atom = ic.atoms[i];
 
                // exclude the target atoms
-               if(atomlistTarget.hasOwnProperty(atom.serial)) continue;
+               if(!bIncludeTarget && atomlistTarget.hasOwnProperty(atom.serial)) continue;
 
                if(this.bOpm && atom.resn === 'DUM') continue;
 
@@ -16281,12 +16281,13 @@ var icn3d = (function (exports) {
             this.icn3d = icn3d;
         }
 
-        getGraphData(atomSet2, atomSet1, nameArray2, nameArray, html, labelType) { var ic = this.icn3d, me = ic.icn3dui;
+        getGraphData(atomSet2, atomSet1, nameArray2, nameArray, html, labelType, bAnyAtom) { var ic = this.icn3d, me = ic.icn3dui;
            // get the nodes and links data
            var nodeStr = '', linkStr = '';
            var nodeArray = [], linkArray = [];
-           var node_link1 = this.getNodesLinksForSet(atomSet2, labelType, 'a');
-           var node_link2 = this.getNodesLinksForSet(atomSet1, labelType, 'b');
+           var node_link1 = this.getNodesLinksForSet(atomSet2, labelType, 'a', bAnyAtom);
+           var node_link2 = this.getNodesLinksForSet(atomSet1, labelType, 'b', bAnyAtom);
+
            nodeArray = node_link1.node.concat(node_link2.node);
            // removed duplicated nodes
            var nodeJsonArray = [];
@@ -16382,11 +16383,17 @@ var icn3d = (function (exports) {
                }
            var resStr = '{"nodes": [' + nodeStr + chemicalNodeStr + '], "links": [';
            //resStr += linkStr + html + hBondLinkStr + ionicLinkStr + halogenpiLinkStr + disulfideLinkStr + crossLinkStr + contactLinkStr;
-           resStr += linkStr + html + disulfideLinkStr + crossLinkStr + contactLinkStr + hBondLinkStr + ionicLinkStr + halogenpiLinkStr;
+           if(linkStr == '') {
+               resStr += linkStr + html.substr(1) + disulfideLinkStr + crossLinkStr + contactLinkStr + hBondLinkStr + ionicLinkStr + halogenpiLinkStr;
+           }
+           else {
+               resStr += linkStr + html + disulfideLinkStr + crossLinkStr + contactLinkStr + hBondLinkStr + ionicLinkStr + halogenpiLinkStr;
+           }
            resStr += ']}';
            return resStr;
         }
-        drawResNode(node, i, r, gap, margin, y, setName, bVertical) { var ic = this.icn3d; ic.icn3dui;
+
+        drawResNode(node, i, r, gap, margin, y, setName, bVertical, bContactMap) { var ic = this.icn3d; ic.icn3dui;
             var x, resid = node.r.substr(4);
             if(bVertical) {
                 x = margin - i *(r + gap);
@@ -16402,6 +16409,12 @@ var icn3d = (function (exports) {
             var nodeName =(pos == -1) ? node.id : node.id.substr(0, pos);
             var adjustx = 0, adjusty =(setName == 'a') ? -7 : 10;
             if(i % 2 == 1) adjusty =(setName == 'a') ? adjusty - 7 : adjusty + 7;
+
+            if(bContactMap) {
+                nodeName = nodeName.substr(1);
+                if(!bVertical) adjusty += 4 * r;
+            }
+
             var strokecolor = '#000';
             var strokewidth = '1';
             var textcolor = '#000';
@@ -16511,7 +16524,7 @@ var icn3d = (function (exports) {
            }
         }
 
-        getNodesLinksForSet(atomSet, labelType, setName) { var ic = this.icn3d, me = ic.icn3dui;
+        getNodesLinksForSet(atomSet, labelType, setName, bAnyAtom) { var ic = this.icn3d, me = ic.icn3dui;
            //var nodeStr = '', linkStr = '';
            var nodeArray = [], linkArray = [];
            var cnt = 0;
@@ -16521,7 +16534,7 @@ var icn3d = (function (exports) {
            var residHash = {};
            for(var i in atomSet) {
                var atom = ic.atoms[i];
-               if(atom.chain != 'DUM' &&(atom.het ||(atom.name == "CA" && atom.elem == "C") || atom.name == "O3'" || atom.name == "O3*" || atom.name == "P")) {
+               if(atom.chain != 'DUM' &&(bAnyAtom || atom.het || (atom.name == "CA" && atom.elem == "C") || atom.name == "O3'" || atom.name == "O3*" || atom.name == "P")) {
                // starting nucleotide have "P"
                //if(atom.chain != 'DUM' &&(atom.name == "CA" || atom.name == "P")) {
                    var resid = atom.structure + '_' + atom.chain + '_' + atom.resi;
@@ -17010,13 +17023,13 @@ var icn3d = (function (exports) {
             return html;
         }
 
-        drawScatterplot_base(nodeArray1, nodeArray2, linkArray, name2node, height) { var ic = this.icn3d; ic.icn3dui;
+        drawScatterplot_base(nodeArray1, nodeArray2, linkArray, name2node, height, bContactMap) { var ic = this.icn3d; ic.icn3dui;
             var html = '';
             var len1 = nodeArray1.length,
                 len2 = nodeArray2.length;
             var factor = 1;
             var r = 3 * factor;
-            var gap = 7 * factor;
+            var gap = (bContactMap) ? r : 7 * factor;
             var legendWidth = 30;
             var marginX = 10,
                 marginY = 20;
@@ -17033,11 +17046,11 @@ var icn3d = (function (exports) {
             }
             var y = height + heightTotal -(legendWidth + marginY);
             for(var i = 0; i < len2; ++i) {
-                nodeHtml += ic.getGraphCls.drawResNode(nodeArray2[i], i, r, gap, margin2, y, 'b');
+                nodeHtml += ic.getGraphCls.drawResNode(nodeArray2[i], i, r, gap, margin2, y, 'b', false, bContactMap);
                 node2posSet2[nodeArray2[i].id] = { x: margin2 + i *(r + gap), y: y };
             }
             // draw rect
-            var rectSize = 1.5 * r;
+            var rectSize = (bContactMap) ? 2 * r : 1.5 * r;
             var halfSize = 0.5 * rectSize;
             for(var i = 0, il = linkArray.length; i < il; ++i) {
                 var link = linkArray[i];
@@ -17070,7 +17083,12 @@ var icn3d = (function (exports) {
                 }
                 html += "<g class='icn3d-interaction' resid1='" + resid1 + "' resid2='" + resid2 + "' >";
                 html += "<title>Interaction of residue " + node1.id + " with residue " + node2.id + "</title>";
-                html += "<rect x='" +(pos2.x - halfSize).toString() + "' y='" +(pos1.y - halfSize).toString() + "' width='" + rectSize + "' height='" + rectSize + "' fill='" + strokecolor + "' fill-opacity='0.6' stroke-width='" + linestrokewidth + "' stroke='" + strokecolor + "' />";
+                if(bContactMap) {
+                    html += "<rect x='" +(pos2.x - halfSize).toString() + "' y='" +(pos1.y - halfSize).toString() + "' width='" + rectSize + "' height='" + rectSize + "' fill='" + strokecolor + "' stroke-width='" + linestrokewidth + "' stroke='" + strokecolor + "' />";
+                }
+                else {
+                    html += "<rect x='" +(pos2.x - halfSize).toString() + "' y='" +(pos1.y - halfSize).toString() + "' width='" + rectSize + "' height='" + rectSize + "' fill='" + strokecolor + "' fill-opacity='0.6' stroke-width='" + linestrokewidth + "' stroke='" + strokecolor + "' />";
+                }
                 html += "</g>";
             }
             // show nodes later
@@ -17105,7 +17123,7 @@ var icn3d = (function (exports) {
         }
 
         viewInteractionPairs(nameArray2, nameArray, bHbondCalc, type,
-          bHbond, bSaltbridge, bInteraction, bHalogen, bPication, bPistacking) { var ic = this.icn3d, me = ic.icn3dui;
+          bHbond, bSaltbridge, bInteraction, bHalogen, bPication, bPistacking, contactDist) { var ic = this.icn3d, me = ic.icn3dui;
            var bondCnt;
 
            // type: view, save, forcegraph
@@ -17113,9 +17131,25 @@ var icn3d = (function (exports) {
            var hAtoms = {};
            var prevHatoms = me.hashUtilsCls.cloneHash(ic.hAtoms);
 
-           var atomSet1, atomSet2;
-           atomSet1 = ic.definedSetsCls.getAtomsFromNameArray(nameArray2);
-           atomSet2 = ic.definedSetsCls.getAtomsFromNameArray(nameArray);
+           var bContactMapLocal = (type == 'calpha' || type == 'cbeta' || type == 'heavyatoms');
+
+           var atomSet1 = {}, atomSet2 = {};
+           if(bContactMapLocal) { // contact map
+               for(var i in ic.hAtoms) {
+                   var atom = ic.atoms[i];
+                   if(atom.het) continue;
+
+                   if(type == 'calpha' && (atom.elem == 'C' && atom.name != 'CA')) continue;
+                   if(type == 'cbeta' && (atom.elem == 'C' && atom.name != 'CB')) continue;
+
+                   atomSet1[i] = atom;
+                   atomSet2[i] = atom;
+               }
+           }
+           else {
+               atomSet1 = ic.definedSetsCls.getAtomsFromNameArray(nameArray2);
+               atomSet2 = ic.definedSetsCls.getAtomsFromNameArray(nameArray);
+           }
 
            var labelType; // residue, chain, structure
            var cntChain = 0, cntStructure = 0;
@@ -17218,7 +17252,7 @@ var icn3d = (function (exports) {
                tableHtml += tmp;
            }
            if(bInteraction) {
-               var threshold = parseFloat($("#" + ic.pre + "contactthreshold" ).val());
+               var threshold = (bContactMapLocal) ? contactDist : parseFloat($("#" + ic.pre + "contactthreshold" ).val());
                if(!threshold || isNaN(threshold)) threshold = ic.tsContact;
                if(!(nameArray2.length == 1 && nameArray.length == 1 && nameArray2[0] == nameArray[0])) {
                     if(!bHbondCalc) {
@@ -17230,36 +17264,49 @@ var icn3d = (function (exports) {
                }
                else { // contact in a set, atomSet1 same as atomSet2
                     if(!bHbondCalc) {
-                        var ssAtomsArray = [];
-                        var prevSS = '', prevChain = '';
-                        var ssAtoms = {};
-                        for(var i in atomSet1) {
-                            var atom = ic.atoms[i];
-                            if(atom.ss != prevSS || atom.chain != prevChain) {
-                                if(Object.keys(ssAtoms).length > 0) ssAtomsArray.push(ssAtoms);
-                                ssAtoms = {};
-                            }
-                            ssAtoms[atom.serial] = 1;
-                            prevSS = atom.ss;
-                            prevChain = atom.chain;
-                        }
-                        // last ss
-                        if(Object.keys(ssAtoms).length > 0) ssAtomsArray.push(ssAtoms);
-                        var len = ssAtomsArray.length;
-                        select = "interactions " + threshold + " | sets " + nameArray2 + " " + nameArray + " | true";
-                        ic.opts['contact'] = "yes";
                         var residues = {};
                         var resid2ResidhashInteractions = {};
-                        for(var i = 0; i < len; ++i) {
-                            for(var j = i + 1; j < len; ++j) {
-                                ic.hAtoms = me.hashUtilsCls.cloneHash(prevHatoms);
-                                var result = ic.showInterCls.pickCustomSphere_base(threshold, ssAtomsArray[i], ssAtomsArray[j], bHbondCalc, true, type, select, true);
-                                residues = me.hashUtilsCls.unionHash(residues, result.residues);
-                                for(var resid in result.resid2Residhash) {
-                                    resid2ResidhashInteractions[resid] = me.hashUtilsCls.unionHash(resid2ResidhashInteractions[resid], result.resid2Residhash[resid]);
+
+                        if(bContactMapLocal) {
+                            var bIncludeTarget = true;
+                            var result = ic.showInterCls.pickCustomSphere_base(threshold, atomSet1, atomSet2, bHbondCalc, true, undefined, undefined, true, bIncludeTarget);
+                            residues = me.hashUtilsCls.unionHash(residues, result.residues);
+                            for(var resid in result.resid2Residhash) {
+                                resid2ResidhashInteractions[resid] = me.hashUtilsCls.unionHash(resid2ResidhashInteractions[resid], result.resid2Residhash[resid]);
+                            }
+                        }
+                        else {
+                            var ssAtomsArray = [];
+                            var prevSS = '', prevChain = '';
+                            var ssAtoms = {};
+                            for(var i in atomSet1) {
+                                var atom = ic.atoms[i];
+                                if(atom.ss != prevSS || atom.chain != prevChain) {
+                                    if(Object.keys(ssAtoms).length > 0) ssAtomsArray.push(ssAtoms);
+                                    ssAtoms = {};
+                                }
+                                ssAtoms[atom.serial] = 1;
+                                prevSS = atom.ss;
+                                prevChain = atom.chain;
+                            }
+                            // last ss
+                            if(Object.keys(ssAtoms).length > 0) ssAtomsArray.push(ssAtoms);
+                            var len = ssAtomsArray.length;
+                            select = "interactions " + threshold + " | sets " + nameArray2 + " " + nameArray + " | true";
+                            ic.opts['contact'] = "yes";
+
+                            for(var i = 0; i < len; ++i) {
+                                for(var j = i + 1; j < len; ++j) {
+                                    ic.hAtoms = me.hashUtilsCls.cloneHash(prevHatoms);
+                                    var result = ic.showInterCls.pickCustomSphere_base(threshold, ssAtomsArray[i], ssAtomsArray[j], bHbondCalc, true, type, select, true);
+                                    residues = me.hashUtilsCls.unionHash(residues, result.residues);
+                                    for(var resid in result.resid2Residhash) {
+                                        resid2ResidhashInteractions[resid] = me.hashUtilsCls.unionHash(resid2ResidhashInteractions[resid], result.resid2Residhash[resid]);
+                                    }
                                 }
                             }
                         }
+
                         ic.resid2ResidhashInteractions = resid2ResidhashInteractions;
                         var residueArray = Object.keys(residues);
                         ic.hAtoms = {};
@@ -17327,8 +17374,9 @@ var icn3d = (function (exports) {
              + 'You can click "Save Selection" in the "Select" menu to save the selection '
              + 'and click on "Highlight" button to clear the checkboxes.</div><br>';
            var header = html;
-           if(type == 'graph' || type == 'linegraph' || type == 'scatterplot') html = '';
+           if(type == 'graph' || type == 'linegraph' || type == 'scatterplot' || bContactMapLocal) html = '';
            html += tableHtml;
+
            if(type == 'save1' || type == 'save2') {
                html = header;
                var tmpText = '';
@@ -17364,6 +17412,15 @@ var icn3d = (function (exports) {
                // draw SVG
                var svgHtml = ic.lineGraphCls.drawLineGraph(ic.graphStr, true);
                $("#" + ic.pre + "scatterplotDiv").html(svgHtml);
+           }
+           else if(bContactMapLocal) {
+               ic.icn3dui.htmlCls.dialogCls.openDlg('dl_contactmap', 'Show contacts as contact map');
+               var bAnyAtom = true;
+               var graphStr = ic.getGraphCls.getGraphData(atomSet1, atomSet2, nameArray2, nameArray, html, labelType, bAnyAtom);
+               ic.bContactMap = true;
+               // draw SVG
+               var svgHtml = ic.contactMapCls.drawContactMap(graphStr);
+               $("#" + ic.pre + "contactmapDiv").html(svgHtml);
            }
            else if(type == 'graph') {
                // atomSet1 and atomSet2 are in the right order here
@@ -17857,7 +17914,8 @@ var icn3d = (function (exports) {
                 text += tmpText;
                 text += '</table><br/>';
             }
-            if(type == 'graph' || type == 'linegraph' || type == 'scatterplot') {
+            if(type == 'graph' || type == 'linegraph' || type == 'scatterplot'
+              || type == 'calpha' || type == 'cbeta' || type == 'heavyatoms') {
                 var interStr = ic.getGraphCls.getGraphLinks(residHash, residHash, ic.icn3dui.htmlCls.contactColor, labelType, ic.icn3dui.htmlCls.contactValue);
                 return interStr;
             }
@@ -18216,10 +18274,10 @@ var icn3d = (function (exports) {
             ic.selectionCls.saveSelectionIfSelected();
             ic.drawCls.draw();
         }
-        pickCustomSphere_base(radius, atomlistTarget, otherAtoms, bSphereCalc, bInteraction, type, select, bGetPairs) {  var ic = this.icn3d, me = ic.icn3dui;  // ic.pAtom is set already
+        pickCustomSphere_base(radius, atomlistTarget, otherAtoms, bSphereCalc, bInteraction, type, select, bGetPairs, bIncludeTarget) {  var ic = this.icn3d, me = ic.icn3dui;  // ic.pAtom is set already
             var atoms;
             if(bInteraction) {
-                atoms = ic.contactCls.getAtomsWithinAtom(me.hashUtilsCls.intHash2Atoms(ic.dAtoms, otherAtoms, ic.atoms), me.hashUtilsCls.intHash2Atoms(ic.dAtoms, atomlistTarget, ic.atoms), parseFloat(radius), bGetPairs, bInteraction);
+                atoms = ic.contactCls.getAtomsWithinAtom(me.hashUtilsCls.intHash2Atoms(ic.dAtoms, otherAtoms, ic.atoms), me.hashUtilsCls.intHash2Atoms(ic.dAtoms, atomlistTarget, ic.atoms), parseFloat(radius), bGetPairs, bInteraction, undefined, bIncludeTarget);
                 ic.resid2ResidhashInteractions = me.hashUtilsCls.cloneHash(ic.resid2Residhash);
             }
             else {
@@ -29293,7 +29351,7 @@ var icn3d = (function (exports) {
                 }, 500);
           }
           else if(command == 'export pdb') {
-             ic.icn3dui.htmlCls.setHtmlCls.exportPdb();
+             me.htmlCls.setHtmlCls.exportPdb();
           }
           else if(command == 'select all') {
              ic.selectionCls.selectAll();
@@ -29674,7 +29732,7 @@ var icn3d = (function (exports) {
              ic.definedSetsCls.deleteSelectedSets();
           }
           else if(command == 'view interactions') {
-             if(ic.icn3dui.cfg.mmdbid !== undefined || ic.icn3dui.cfg.gi !== undefined) {
+             if(me.cfg.mmdbid !== undefined || me.cfg.gi !== undefined) {
                  ic.ParserUtilsCls.set2DDiagrams(ic.inputid);
              }
           }
@@ -29835,8 +29893,8 @@ var icn3d = (function (exports) {
                 $("#" + ic.pre + "titlelink").css("color", "black");
             }
             else {
-                $("#" + ic.pre + "title").css("color", ic.icn3dui.htmlCls.GREYD);
-                $("#" + ic.pre + "titlelink").css("color", ic.icn3dui.htmlCls.GREYD);
+                $("#" + ic.pre + "title").css("color", me.htmlCls.GREYD);
+                $("#" + ic.pre + "titlelink").css("color", me.htmlCls.GREYD);
             }
           }
           else if(commandOri.indexOf('set thickness') == 0) {
@@ -30159,59 +30217,67 @@ var icn3d = (function (exports) {
             }
           }
           else if(commandOri.indexOf('export pqr') == 0) {
-               ic.icn3dui.htmlCls.setHtmlCls.exportPqr();
+               me.htmlCls.setHtmlCls.exportPqr();
           }
           else if(command.indexOf('graph label') == 0) {
             var pos = command.lastIndexOf(' ');
             var className = command.substr(pos + 1);
 
-            $("#" + ic.icn3dui.svgid + "_label").val(className);
+            $("#" + me.svgid + "_label").val(className);
 
-            $("#" + ic.icn3dui.svgid + " text").removeClass();
-            $("#" + ic.icn3dui.svgid + " text").addClass(className);
+            $("#" + me.svgid + " text").removeClass();
+            $("#" + me.svgid + " text").addClass(className);
           }
           else if(command.indexOf('line graph scale') == 0) {
             var pos = command.lastIndexOf(' ');
             var scale = command.substr(pos + 1);
 
-            $("#" + ic.linegraphid + "_label").val(scale);
+            $("#" + me.linegraphid + "_scale").val(scale);
 
-            $("#" + ic.linegraphid).attr("width",(ic.linegraphWidth * parseFloat(scale)).toString() + "px");
+            $("#" + me.linegraphid).attr("width",(ic.linegraphWidth * parseFloat(scale)).toString() + "px");
           }
           else if(command.indexOf('scatterplot scale') == 0) {
             var pos = command.lastIndexOf(' ');
             var scale = command.substr(pos + 1);
 
-            $("#" + ic.scatterplotid + "_label").val(scale);
+            $("#" + me.scatterplotid + "_scale").val(scale);
 
-            $("#" + ic.scatterplot).attr("width",(ic.scatterplotWidth * parseFloat(scale)).toString() + "px");
+            $("#" + me.scatterplotid).attr("width",(ic.scatterplotWidth * parseFloat(scale)).toString() + "px");
+          }
+          else if(command.indexOf('contactmap scale') == 0) {
+            var pos = command.lastIndexOf(' ');
+            var scale = command.substr(pos + 1);
+
+            $("#" + me.contactmapid + "_scale").val(scale);
+
+            $("#" + me.contactmapid).attr("width",(ic.contactmapWidth * parseFloat(scale)).toString() + "px");
           }
           else if(command.indexOf('graph force') == 0) {
             var pos = command.lastIndexOf(' ');
-            ic.icn3dui.htmlCls.force = parseInt(command.substr(pos + 1));
+            me.htmlCls.force = parseInt(command.substr(pos + 1));
 
-            $("#" + ic.icn3dui.svgid + "_force").val(ic.icn3dui.htmlCls.force);
+            $("#" + me.svgid + "_force").val(me.htmlCls.force);
 
             ic.getGraphCls.handleForce();
           }
           else if(command.indexOf('hide edges') == 0) {
             var pos = command.lastIndexOf(' ');
-            ic.icn3dui.htmlCls.hideedges = parseInt(command.substr(pos + 1));
+            me.htmlCls.hideedges = parseInt(command.substr(pos + 1));
 
-            $("#" + ic.icn3dui.svgid + "_hideedges").val(ic.icn3dui.htmlCls.hideedges);
+            $("#" + me.svgid + "_hideedges").val(me.htmlCls.hideedges);
 
-            if(ic.icn3dui.htmlCls.hideedges) {
-                ic.icn3dui.htmlCls.contactInsideColor = 'FFF';
-                ic.icn3dui.htmlCls.hbondInsideColor = 'FFF';
-                ic.icn3dui.htmlCls.ionicInsideColor = 'FFF';
+            if(me.htmlCls.hideedges) {
+                me.htmlCls.contactInsideColor = 'FFF';
+                me.htmlCls.hbondInsideColor = 'FFF';
+                me.htmlCls.ionicInsideColor = 'FFF';
             }
             else {
-                ic.icn3dui.htmlCls.contactInsideColor = 'DDD';
-                ic.icn3dui.htmlCls.hbondInsideColor = 'AFA';
-                ic.icn3dui.htmlCls.ionicInsideColor = '8FF';
+                me.htmlCls.contactInsideColor = 'DDD';
+                me.htmlCls.hbondInsideColor = 'AFA';
+                me.htmlCls.ionicInsideColor = '8FF';
             }
 
-            if(ic.graphStr !== undefined && ic.bRender && ic.icn3dui.htmlCls.force) {
+            if(ic.graphStr !== undefined && ic.bRender && me.htmlCls.force) {
                ic.drawGraphCls.drawGraph(ic.graphStr);
             }
           }
@@ -30229,7 +30295,7 @@ var icn3d = (function (exports) {
             ic.yournote = paraArray[1];
 
             $("#" + ic.pre + "yournote").val(ic.yournote);
-            if(ic.icn3dui.cfg.shownote) document.title = ic.yournote;
+            if(me.cfg.shownote) document.title = ic.yournote;
           }
           else if(command.indexOf('cross structure interaction') == 0) {
             ic.crossstrucinter = parseInt(command.substr(command.lastIndexOf(' ') + 1));
@@ -30244,6 +30310,16 @@ var icn3d = (function (exports) {
           }
 
         // start with, single word =============
+          else if(command.indexOf('contact map') == 0) {
+            var strArray = command.split(" | ");
+
+            if(strArray.length === 3) {
+                var contactdist = parseFloat(strArray[1].split(' ')[1]);
+                var contacttype = strArray[2].split(' ')[1];
+
+                ic.contactMapCls.contactMap(contactdist, contacttype);
+            }
+          }
           else if(command.indexOf('pickatom') == 0) {
             var atomid = parseInt(command.substr(command.lastIndexOf(' ') + 1));
 
@@ -30274,7 +30350,7 @@ var icn3d = (function (exports) {
                 }
             }
             else if(color == "align custom" && strArray.length == 4) {
-                // ic.icn3dui.htmlCls.clickMenuCls.setLogCmd('color align custom | ' + chainid + ' | range ' + start + '_' + end + ' | ' + resiScoreStr, true);
+                // me.htmlCls.clickMenuCls.setLogCmd('color align custom | ' + chainid + ' | range ' + start + '_' + end + ' | ' + resiScoreStr, true);
                 this.setQueryresi2score(strArray);
             }
             else if(color == "area" && strArray.length == 2) {
@@ -30308,24 +30384,24 @@ var icn3d = (function (exports) {
             var secondPart = command.substr(command.indexOf(' ') + 1);
 
             if(secondPart == "aligned sequences") {
-                ic.icn3dui.htmlCls.dialogCls.openDlg('dl_alignment', 'Select residues in aligned sequences');
+                me.htmlCls.dialogCls.openDlg('dl_alignment', 'Select residues in aligned sequences');
             }
             else if(secondPart == "interaction table") {
-                ic.icn3dui.htmlCls.dialogCls.openDlg('dl_allinteraction', 'Show interactions');
+                me.htmlCls.dialogCls.openDlg('dl_allinteraction', 'Show interactions');
             }
             else if(secondPart == "interaction graph") {
-                ic.icn3dui.htmlCls.dialogCls.openDlg('dl_linegraph', 'Show interactions between two lines of residue nodes');
+                me.htmlCls.dialogCls.openDlg('dl_linegraph', 'Show interactions between two lines of residue nodes');
             }
             else if(secondPart == "interaction scatterplot") {
-                ic.icn3dui.htmlCls.dialogCls.openDlg('dl_scatterplot', 'Show interactions as scatterplot');
+                me.htmlCls.dialogCls.openDlg('dl_scatterplot', 'Show interactions as scatterplot');
             }
             else if(secondPart == "force-directed graph") {
-                ic.icn3dui.htmlCls.dialogCls.openDlg('dl_graph', 'Force-directed graph');
+                me.htmlCls.dialogCls.openDlg('dl_graph', 'Force-directed graph');
             }
           }
           else if(command.indexOf('set theme') == 0) {
             var color = command.substr(command.lastIndexOf(' ') + 1);
-            ic.icn3dui.htmlCls.setMenuCls.setTheme(color);
+            me.htmlCls.setMenuCls.setTheme(color);
           }
           else if(command.indexOf('set double color') == 0) {
             var value = command.substr(command.lastIndexOf(' ') + 1);
@@ -30417,13 +30493,13 @@ var icn3d = (function (exports) {
           }
 
           {
-              ic.icn3dui.htmlCls.clickMenuCls.setLogCmd(commandOri, false);
+              me.htmlCls.clickMenuCls.setLogCmd(commandOri, false);
           }
 
           ic.bAddCommands = true;
         }
 
-        setStrengthPara(paraArray) { var ic = this.icn3d; ic.icn3dui;
+        setStrengthPara(paraArray) { var ic = this.icn3d;
             if(paraArray.length >= 5) {
                var thresholdArray = paraArray[4].split(' ');
 
@@ -30459,7 +30535,7 @@ var icn3d = (function (exports) {
             }
         }
 
-        getThresholdNameArrays(commandOri) { var ic = this.icn3d, me = ic.icn3dui;
+        getThresholdNameArrays(commandOri) { var ic = this.icn3d, me = me;
             if(ic.bSetChainsAdvancedMenu === undefined || !ic.bSetChainsAdvancedMenu) {
                var prevHAtoms = me.hashUtilsCls.cloneHash(ic.hAtoms);
 
@@ -30491,7 +30567,7 @@ var icn3d = (function (exports) {
             return {'threshold': threshold, 'nameArray2': nameArray2, 'nameArray': nameArray, 'bHbondCalc': bHbondCalc}
         }
 
-        setQueryresi2score(strArray) { var ic = this.icn3d; ic.icn3dui;
+        setQueryresi2score(strArray) { var ic = this.icn3d;
             var chainid = strArray[1];
             var start_end = strArray[2].split(' ')[1].split('_');
             var resiScoreStr = strArray[3]; // score 0-9
@@ -30506,7 +30582,7 @@ var icn3d = (function (exports) {
             }
         }
 
-        getMenuFromCmd(cmd) { var ic = this.icn3d; ic.icn3dui;
+        getMenuFromCmd(cmd) { this.icn3d;
             cmd = cmd.trim();
 
             var seqAnnoStr = 'Windows > View Sequences & Annotations';
@@ -36491,6 +36567,33 @@ var icn3d = (function (exports) {
 
             //$("#" + ic.pre + "dl_scatterplot .icn3d-interaction", "click", function(e) { var ic = this.icn3d, me = ic.icn3dui;
             $(document).on("click", "#" + ic.pre + "dl_scatterplot .icn3d-interaction", function(e) { var ic = thisClass.icn3d;
+                e.stopImmediatePropagation();
+                if(Object.keys(ic.hAtoms).length < Object.keys(ic.atoms).length) ic.definedSetsCls.setMode('selection');
+
+                var resid1 = $(this).attr('resid1');
+                var resid2 = $(this).attr('resid2');
+
+                if(!ic.bCtrl && !ic.bShift) {
+                  ic.hAtoms = {};
+
+                  thisClass.removeScatterplotSelection();
+                }
+
+                var strokeWidth = 2;
+                $(this).find('rect').attr('stroke', ic.icn3dui.htmlCls.ORANGE);
+                $(this).find('rect').attr('stroke-width', strokeWidth);
+
+                ic.hAtoms = me.hashUtilsCls.unionHash(ic.hAtoms, ic.residues[resid1]);
+                ic.hAtoms = me.hashUtilsCls.unionHash(ic.hAtoms, ic.residues[resid2]);
+
+                var select = 'select ' + ic.resid2specCls.residueids2spec([resid1, resid2]);
+
+                ic.hlUpdateCls.updateHlAll();
+
+                ic.icn3dui.htmlCls.clickMenuCls.setLogCmd(select, true);
+            });
+
+            $(document).on("click", "#" + ic.pre + "dl_contactmap .icn3d-interaction", function(e) { var ic = thisClass.icn3d;
                 e.stopImmediatePropagation();
                 if(Object.keys(ic.hAtoms).length < Object.keys(ic.atoms).length) ic.definedSetsCls.setMode('selection');
 
@@ -43865,6 +43968,11 @@ var icn3d = (function (exports) {
                $("#" + me.pre + "atomsCustomHbond").resizable();
                $("#" + me.pre + "atomsCustomHbond2").resizable();
             });
+
+            me.myEventCls.onIds(["#" + me.pre + "mn6_contactmap"], "click", function(e) { me.icn3d;
+                me.htmlCls.dialogCls.openDlg('dl_contact', 'Show contact map');
+            });
+
         //    },
         //    clkMn6_hbondsNo: function() {
             me.myEventCls.onIds("#" + me.pre + "mn6_hbondsNo", "click", function(e) { var ic = me.icn3d;
@@ -45347,6 +45455,8 @@ var icn3d = (function (exports) {
                 html += me.htmlCls.setHtmlCls.getLink('mn6_hbondsYes', 'Interactions');
                 //html += me.htmlCls.setHtmlCls.getLink('mn6_hbondsNo', 'Remove H-Bonds <br>& Interactions');
 
+                html += me.htmlCls.setHtmlCls.getLink('mn6_contactmap', 'Contact Map');
+
                 html += "<li><span>Bring to Front</span>";
                 html += "<ul>";
                 html += me.htmlCls.setHtmlCls.getLink('mn1_window_table', 'Interaction Table');
@@ -45561,6 +45671,7 @@ var icn3d = (function (exports) {
             html += liStr + me.htmlCls.baseUrl + "icn3d/icn3d.html#datastructure' target='_blank'>Data Structure</a></li>";
             html += liStr + me.htmlCls.baseUrl + "icn3d/icn3d.html#classstructure' target='_blank'>Class Structure</a></li>";
             html += liStr + me.htmlCls.baseUrl + "icn3d/icn3d.html#addclass' target='_blank'>Add New Classes</a></li>";
+            html += liStr + me.htmlCls.baseUrl + "icn3d/icn3d.html#modifyfunction' target='_blank'>Modify Functions</a></li>";
             html += "</ul>";
             html += "</li>";
 
@@ -46423,6 +46534,18 @@ var icn3d = (function (exports) {
         */
             html += "</div>";
 
+            html += me.htmlCls.divStr + "dl_contact' class='" + dialogClass + "'>";
+            html += "<span style='white-space:nowrap;font-weight:bold;'>Distance: <select id='" + me.pre + "contactdist'>";
+            html += me.htmlCls.setHtmlCls.getOptionHtml(['4', '5', '6', '7', '8', '9', '10'], 4);
+            html += "</select></span>";
+            html += "<span style='margin-left:30px; white-space:nowrap;font-weight:bold;'>Contact Type: <select id='" + me.pre + "contacttype'>";
+            html += me.htmlCls.optionStr + "'calpha' >between C-alpha Atoms</option>";
+            html += me.htmlCls.optionStr + "'cbeta' selected>between C-beta Atoms</option>";
+            html += me.htmlCls.optionStr + "'heavyatoms' >between Heavy Atoms</option>";
+            html += "</select></span><br><br>";
+            html += "<span style='white-space:nowrap;'>" + me.htmlCls.buttonStr + "applycontactmap'>Display</button></span><br>";
+            html += "</div>";
+
             html += me.htmlCls.divStr + "dl_hbonds' class='" + dialogClass + "'>";
             html += "1. Choose interaction types and their thresholds:<br>";
             html += "<div class='icn3d-box'><table border=0 width=450><tr>";
@@ -46598,6 +46721,24 @@ var icn3d = (function (exports) {
 
             html += "</select></div><br>";
             html += '<div id="' + me.pre + 'scatterplotDiv"></div>';
+
+            html += "</div>";
+
+            html += me.htmlCls.divStr + "dl_contactmap' style='background-color:white' class='" + dialogClass + "'>";
+
+            html += me.htmlCls.divNowrapStr + "Hold Ctrl key to select multiple nodes." + me.htmlCls.space3 + "</div>";
+
+            me.contactmapid = me.pre + 'contactmap';
+            html += me.htmlCls.divNowrapStr + buttonStrTmp + me.contactmapid + '_svg">SVG</button>' + me.htmlCls.space2;
+            html += buttonStrTmp + me.contactmapid + '_png">PNG</button>' + me.htmlCls.space2;
+            html += buttonStrTmp + me.contactmapid + '_json">JSON</button>' + me.htmlCls.space4;
+            html += "<b>Scale</b>: <select id='" + me.contactmapid + "_scale'>";
+
+            var optArray5 = ['0.01', '0.02', '0.04', '0.06', '0.08', '0.1', '0.2', '0.4', '0.6', '0.8', '1'];
+            html += me.htmlCls.setHtmlCls.getOptionHtml(optArray5, 10);
+
+            html += "</select></div><br>";
+            html += '<div id="' + me.pre + 'contactmapDiv"></div>';
 
             html += "</div>";
 
@@ -47962,6 +48103,16 @@ var icn3d = (function (exports) {
                //if(!me.cfg.notebook) dialog.dialog( "close" );
                ic.showInterCls.showInteractions('3d');
             });
+            me.myEventCls.onIds("#" + me.pre + "applycontactmap", "click", function(e) { var ic = me.icn3d;
+               e.preventDefault();
+               if(!me.cfg.notebook) dialog.dialog( "close" );
+
+               var contactdist = parseFloat($("#" + ic.pre + "contactdist").val());
+               var contacttype = $("#" + ic.pre + "contacttype").val();
+
+               ic.contactMapCls.contactMap(contactdist, contacttype);
+               me.htmlCls.clickMenuCls.setLogCmd('contact map | dist ' + contactdist + ' | type ' + contacttype, true);
+            });
             me.myEventCls.onIds("#" + me.pre + "hbondWindow", "click", function(e) { var ic = me.icn3d;
                e.preventDefault();
                //if(!me.cfg.notebook) dialog.dialog( "close" );
@@ -48098,6 +48249,36 @@ var icn3d = (function (exports) {
                $("#" + me.scatterplotid).attr("width",(ic.scatterplotWidth * parseFloat(scale)).toString() + "px");
                me.htmlCls.clickMenuCls.setLogCmd("scatterplot scale " + scale, true);
             });
+
+            me.myEventCls.onIds("#" + me.contactmapid + "_svg", "click", function(e) { var ic = me.icn3d;
+               e.preventDefault();
+               //if(!me.cfg.notebook) dialog.dialog( "close" );
+               ic.saveFileCls.saveSvg(me.contactmapid, ic.inputid + "_contactmap.svg");
+            });
+            me.myEventCls.onIds("#" + me.contactmapid + "_png", "click", function(e) { var ic = me.icn3d;
+               e.preventDefault();
+               //if(!me.cfg.notebook) dialog.dialog( "close" );
+               var width = $("#" + me.pre + "dl_contactmap").width();
+               var height = $("#" + me.pre + "dl_contactmap").height();
+               ic.saveFileCls.savePng(me.contactmapid, ic.inputid + "_contactmap.png", width, height);
+            });
+            me.myEventCls.onIds("#" + me.contactmapid + "_json", "click", function(e) { var ic = me.icn3d;
+                e.preventDefault();
+                //if(!me.cfg.notebook) dialog.dialog( "close" );
+                var graphStr2 = ic.contactmapStr.substr(0, ic.contactmapStr.lastIndexOf('}'));
+
+                graphStr2 += me.htmlCls.setHtmlCls.getLinkColor();
+
+                ic.saveFileCls.saveFile(ic.inputid + "_contactmap.json", "text", [graphStr2]);
+            });
+            me.myEventCls.onIds("#" + me.contactmapid + "_scale", "change", function(e) { var ic = me.icn3d;
+               e.preventDefault();
+               //if(!me.cfg.notebook) dialog.dialog( "close" );
+               var scale = $("#" + me.contactmapid + "_scale").val();
+               $("#" + me.contactmapid).attr("width",(ic.contactmapWidth * parseFloat(scale)).toString() + "px");
+               me.htmlCls.clickMenuCls.setLogCmd("contactmap scale " + scale, true);
+            });
+
             me.myEventCls.onIds("#" + me.svgid + "_label", "change", function(e) { me.icn3d;
                e.preventDefault();
                //if(!me.cfg.notebook) dialog.dialog( "close" );
@@ -50421,6 +50602,100 @@ var icn3d = (function (exports) {
     }
 
     /**
+     * @author Jiyao Wang <wangjiy@ncbi.nlm.nih.gov> / https://github.com/ncbi/icn3d
+     */
+
+    class ContactMap {
+        constructor(icn3d) {
+            this.icn3d = icn3d;
+        }
+
+        contactMap(contactDist, type) { var ic = this.icn3d; ic.icn3dui;
+           var nameArray = ['selected'];
+           var nameArray2 = ['selected'];
+           if(nameArray2.length == 0) {
+               alert("Please select the first set");
+           }
+           else {
+               ic.definedSetsCls.setMode('selection');
+               var bHbond = false;
+               var bSaltbridge = false;
+               var bInteraction = true;
+               var bHalogen = false;
+               var bPication = false;
+               var bPistacking = false;
+               ic.viewInterPairsCls.viewInteractionPairs(nameArray2, nameArray, false, type,
+                    bHbond, bSaltbridge, bInteraction, bHalogen, bPication, bPistacking, contactDist);
+           }
+        }
+
+        drawContactMap(lineGraphStr) { var ic = this.icn3d, me = ic.icn3dui;
+            var html, graph = JSON.parse(lineGraphStr);
+            var linkArray = graph.links;
+
+            var nodeArray1 = [], nodeArray2 = [];
+            var name2node = {};
+            for(var i = 0, il = graph.nodes.length; i < il; ++i) {
+                var node = graph.nodes[i];
+                if(!node) continue;
+
+                name2node[node.id] = node;
+
+                if(node.s == 'a') {
+                    nodeArray1.push(node);
+                }
+                else if(node.s == 'b') {
+                    nodeArray2.push(node);
+                }
+                else if(node.s == 'ab') {
+                    nodeArray1.push(node);
+                    nodeArray2.push(node);
+                }
+            }
+
+            // sort array
+            nodeArray1.sort(function(a,b) {
+              return ic.getGraphCls.compNode(a, b);
+            });
+            nodeArray2.sort(function(a,b) {
+              return ic.getGraphCls.compNode(a, b);
+            });
+
+            var graphStr = '{\n';
+
+            var struc1 = Object.keys(ic.structures)[0];
+            var len1 = nodeArray1.length,
+                len2 = nodeArray2.length;
+            var factor = 1;
+            var r = 3 * factor;
+            var gap = 7 * factor;
+            var width, heightAll;
+            var marginX = 10,
+                marginY = 10,
+                legendWidth = 30;
+            heightAll =(len1 + 2) *(r + gap) + 2 * marginY + legendWidth;
+            width =(len2 + 2) *(r + gap) + 2 * marginX + legendWidth;
+
+            var id, graphWidth;
+            ic.contactmapWidth = 2 * width;
+            graphWidth = ic.contactmapWidth;
+            id = me.contactmapid;
+            html =(linkArray.length > 0) ? "" : "No interactions found for these two sets<br><br>";
+            html += "<svg id='" + id + "' viewBox='0,0," + width + "," + heightAll + "' width='" + graphWidth + "px'>";
+            var bContactMap = true;
+            html += ic.lineGraphCls.drawScatterplot_base(nodeArray1, nodeArray2, linkArray, name2node, 0, bContactMap);
+            graphStr += ic.getGraphCls.updateGraphJson(struc1, 1, nodeArray1, nodeArray2, linkArray);
+            html += "</svg>";
+
+            graphStr += '}\n';
+            ic.contactmapStr = graphStr;
+
+            $("#" + ic.pre + "contactmapDiv").html(html);
+            return html;
+        }
+    }
+
+    /**
      * @file Density Cif Parser
      * @author David Sehnal dsehnal <alexander.rose@weirdbyte.de>
      * Modified by Jiyao Wang / https://github.com/ncbi/icn3d
@@ -52320,6 +52595,7 @@ var icn3d = (function (exports) {
         this.showInterCls = new ShowInter(this);
         this.viewInterPairsCls = new ViewInterPairs(this);
         this.drawGraphCls = new DrawGraph(this);
+        this.contactMapCls = new ContactMap(this);
 
         this.alignParserCls = new AlignParser(this);
         this.chainalignParserCls = new ChainalignParser(this);
@@ -52545,7 +52821,7 @@ var icn3d = (function (exports) {
         //even when multiple iCn3D viewers are shown together.
         this.pre = this.cfg.divid + "_";
 
-        this.REVISION = '3.2.3';
+        this.REVISION = '3.3.0';
 
         // In nodejs, iCn3D defines "window = {navigator: {}}"
         this.bNode = (Object.keys(window).length < 2) ? true : false;

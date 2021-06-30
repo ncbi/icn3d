@@ -79,6 +79,7 @@ import {GetGraph} from './interaction/getGraph.js';
 import {ShowInter} from './interaction/showInter.js';
 import {ViewInterPairs} from './interaction/viewInterPairs.js';
 import {DrawGraph} from './interaction/drawGraph.js';
+import {ContactMap} from './interaction/contactMap.js';
 
 import {AlignParser} from './parsers/alignParser.js';
 import {ChainalignParser} from './parsers/chainalignParser.js';
@@ -503,6 +504,7 @@ class iCn3D {
     this.showInterCls = new ShowInter(this);
     this.viewInterPairsCls = new ViewInterPairs(this);
     this.drawGraphCls = new DrawGraph(this);
+    this.contactMapCls = new ContactMap(this);
 
     this.alignParserCls = new AlignParser(this);
     this.chainalignParserCls = new ChainalignParser(this);

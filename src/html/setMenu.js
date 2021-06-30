@@ -1323,6 +1323,8 @@ class SetMenu {
             html += me.htmlCls.setHtmlCls.getLink('mn6_hbondsYes', 'Interactions');
             //html += me.htmlCls.setHtmlCls.getLink('mn6_hbondsNo', 'Remove H-Bonds <br>& Interactions');
 
+            html += me.htmlCls.setHtmlCls.getLink('mn6_contactmap', 'Contact Map');
+
             html += "<li><span>Bring to Front</span>";
             html += "<ul>";
             html += me.htmlCls.setHtmlCls.getLink('mn1_window_table', 'Interaction Table');
@@ -1537,6 +1539,7 @@ class SetMenu {
         html += liStr + me.htmlCls.baseUrl + "icn3d/icn3d.html#datastructure' target='_blank'>Data Structure</a></li>";
         html += liStr + me.htmlCls.baseUrl + "icn3d/icn3d.html#classstructure' target='_blank'>Class Structure</a></li>";
         html += liStr + me.htmlCls.baseUrl + "icn3d/icn3d.html#addclass' target='_blank'>Add New Classes</a></li>";
+        html += liStr + me.htmlCls.baseUrl + "icn3d/icn3d.html#modifyfunction' target='_blank'>Modify Functions</a></li>";
         html += "</ul>";
         html += "</li>";
 

@@ -19,12 +19,13 @@ class GetGraph {
         this.icn3d = icn3d;
     }
 
-    getGraphData(atomSet2, atomSet1, nameArray2, nameArray, html, labelType) { var ic = this.icn3d, me = ic.icn3dui;
+    getGraphData(atomSet2, atomSet1, nameArray2, nameArray, html, labelType, bAnyAtom) { var ic = this.icn3d, me = ic.icn3dui;
        // get the nodes and links data
        var nodeStr = '', linkStr = '';
        var nodeArray = [], linkArray = [];
-       var node_link1 = this.getNodesLinksForSet(atomSet2, labelType, 'a');
-       var node_link2 = this.getNodesLinksForSet(atomSet1, labelType, 'b');
+       var node_link1 = this.getNodesLinksForSet(atomSet2, labelType, 'a', bAnyAtom);
+       var node_link2 = this.getNodesLinksForSet(atomSet1, labelType, 'b', bAnyAtom);
+
        nodeArray = node_link1.node.concat(node_link2.node);
        // removed duplicated nodes
        var nodeJsonArray = [];
@@ -120,11 +121,17 @@ class GetGraph {
            }
        var resStr = '{"nodes": [' + nodeStr + chemicalNodeStr + '], "links": [';
        //resStr += linkStr + html + hBondLinkStr + ionicLinkStr + halogenpiLinkStr + disulfideLinkStr + crossLinkStr + contactLinkStr;
-       resStr += linkStr + html + disulfideLinkStr + crossLinkStr + contactLinkStr + hBondLinkStr + ionicLinkStr + halogenpiLinkStr;
+       if(linkStr == '') {
+           resStr += linkStr + html.substr(1) + disulfideLinkStr + crossLinkStr + contactLinkStr + hBondLinkStr + ionicLinkStr + halogenpiLinkStr;
+       }
+       else {
+           resStr += linkStr + html + disulfideLinkStr + crossLinkStr + contactLinkStr + hBondLinkStr + ionicLinkStr + halogenpiLinkStr;
+       }
        resStr += ']}';
        return resStr;
     }
-    drawResNode(node, i, r, gap, margin, y, setName, bVertical) { var ic = this.icn3d, me = ic.icn3dui;
+
+    drawResNode(node, i, r, gap, margin, y, setName, bVertical, bContactMap) { var ic = this.icn3d, me = ic.icn3dui;
         var x, resid = node.r.substr(4);
         if(bVertical) {
             x = margin - i *(r + gap);
@@ -140,6 +147,12 @@ class GetGraph {
         var nodeName =(pos == -1) ? node.id : node.id.substr(0, pos);
         var adjustx = 0, adjusty =(setName == 'a') ? -7 : 10;
         if(i % 2 == 1) adjusty =(setName == 'a') ? adjusty - 7 : adjusty + 7;
+
+        if(bContactMap) {
+            nodeName = nodeName.substr(1);
+            if(!bVertical) adjusty += 4 * r;
+        }
+
         var strokecolor = '#000';
         var strokewidth = '1';
         var textcolor = '#000';
@@ -249,7 +262,7 @@ class GetGraph {
        }
     }
 
-    getNodesLinksForSet(atomSet, labelType, setName) { var ic = this.icn3d, me = ic.icn3dui;
+    getNodesLinksForSet(atomSet, labelType, setName, bAnyAtom) { var ic = this.icn3d, me = ic.icn3dui;
        //var nodeStr = '', linkStr = '';
        var nodeArray = [], linkArray = [];
        var cnt = 0, linkCnt = 0;
@@ -259,7 +272,7 @@ class GetGraph {
        var residHash = {}
        for(var i in atomSet) {
            var atom = ic.atoms[i];
-           if(atom.chain != 'DUM' &&(atom.het ||(atom.name == "CA" && atom.elem == "C") || atom.name == "O3'" || atom.name == "O3*" || atom.name == "P")) {
+           if(atom.chain != 'DUM' &&(bAnyAtom || atom.het || (atom.name == "CA" && atom.elem == "C") || atom.name == "O3'" || atom.name == "O3*" || atom.name == "P")) {
            // starting nucleotide have "P"
            //if(atom.chain != 'DUM' &&(atom.name == "CA" || atom.name == "P")) {
                var resid = atom.structure + '_' + atom.chain + '_' + atom.resi;

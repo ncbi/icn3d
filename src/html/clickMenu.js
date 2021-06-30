@@ -1815,6 +1815,11 @@ class ClickMenu {
            $("#" + me.pre + "atomsCustomHbond").resizable();
            $("#" + me.pre + "atomsCustomHbond2").resizable();
         });
+
+        me.myEventCls.onIds(["#" + me.pre + "mn6_contactmap"], "click", function(e) { var ic = me.icn3d;
+            me.htmlCls.dialogCls.openDlg('dl_contact', 'Show contact map');
+        });
+
     //    },
     //    clkMn6_hbondsNo: function() {
         me.myEventCls.onIds("#" + me.pre + "mn6_hbondsNo", "click", function(e) { var ic = me.icn3d;

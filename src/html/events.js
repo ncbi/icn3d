@@ -1048,6 +1048,16 @@ class Events {
            //if(!me.cfg.notebook) dialog.dialog( "close" );
            ic.showInterCls.showInteractions('3d');
         });
+        me.myEventCls.onIds("#" + me.pre + "applycontactmap", "click", function(e) { var ic = me.icn3d;
+           e.preventDefault();
+           if(!me.cfg.notebook) dialog.dialog( "close" );
+
+           var contactdist = parseFloat($("#" + ic.pre + "contactdist").val());
+           var contacttype = $("#" + ic.pre + "contacttype").val();
+
+           ic.contactMapCls.contactMap(contactdist, contacttype);
+           me.htmlCls.clickMenuCls.setLogCmd('contact map | dist ' + contactdist + ' | type ' + contacttype, true);
+        });
         me.myEventCls.onIds("#" + me.pre + "hbondWindow", "click", function(e) { var ic = me.icn3d;
            e.preventDefault();
            //if(!me.cfg.notebook) dialog.dialog( "close" );
@@ -1184,6 +1194,36 @@ class Events {
            $("#" + me.scatterplotid).attr("width",(ic.scatterplotWidth * parseFloat(scale)).toString() + "px");
            me.htmlCls.clickMenuCls.setLogCmd("scatterplot scale " + scale, true);
         });
+
+        me.myEventCls.onIds("#" + me.contactmapid + "_svg", "click", function(e) { var ic = me.icn3d;
+           e.preventDefault();
+           //if(!me.cfg.notebook) dialog.dialog( "close" );
+           ic.saveFileCls.saveSvg(me.contactmapid, ic.inputid + "_contactmap.svg");
+        });
+        me.myEventCls.onIds("#" + me.contactmapid + "_png", "click", function(e) { var ic = me.icn3d;
+           e.preventDefault();
+           //if(!me.cfg.notebook) dialog.dialog( "close" );
+           var width = $("#" + me.pre + "dl_contactmap").width();
+           var height = $("#" + me.pre + "dl_contactmap").height();
+           ic.saveFileCls.savePng(me.contactmapid, ic.inputid + "_contactmap.png", width, height);
+        });
+        me.myEventCls.onIds("#" + me.contactmapid + "_json", "click", function(e) { var ic = me.icn3d;
+            e.preventDefault();
+            //if(!me.cfg.notebook) dialog.dialog( "close" );
+            var graphStr2 = ic.contactmapStr.substr(0, ic.contactmapStr.lastIndexOf('}'));
+
+            graphStr2 += me.htmlCls.setHtmlCls.getLinkColor();
+
+            ic.saveFileCls.saveFile(ic.inputid + "_contactmap.json", "text", [graphStr2]);
+        });
+        me.myEventCls.onIds("#" + me.contactmapid + "_scale", "change", function(e) { var ic = me.icn3d;
+           e.preventDefault();
+           //if(!me.cfg.notebook) dialog.dialog( "close" );
+           var scale = $("#" + me.contactmapid + "_scale").val();
+           $("#" + me.contactmapid).attr("width",(ic.contactmapWidth * parseFloat(scale)).toString() + "px");
+           me.htmlCls.clickMenuCls.setLogCmd("contactmap scale " + scale, true);
+        });
+
         me.myEventCls.onIds("#" + me.svgid + "_label", "change", function(e) { var ic = me.icn3d;
            e.preventDefault();
            //if(!me.cfg.notebook) dialog.dialog( "close" );

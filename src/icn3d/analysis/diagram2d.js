@@ -725,6 +725,33 @@ class Diagram2d {
 
             ic.icn3dui.htmlCls.clickMenuCls.setLogCmd(select, true);
         });
+
+        $(document).on("click", "#" + ic.pre + "dl_contactmap .icn3d-interaction", function(e) { var ic = thisClass.icn3d;
+            e.stopImmediatePropagation();
+            if(Object.keys(ic.hAtoms).length < Object.keys(ic.atoms).length) ic.definedSetsCls.setMode('selection');
+
+            var resid1 = $(this).attr('resid1');
+            var resid2 = $(this).attr('resid2');
+
+            if(!ic.bCtrl && !ic.bShift) {
+              ic.hAtoms = {}
+
+              thisClass.removeScatterplotSelection();
+            }
+
+            var strokeWidth = 2;
+            $(this).find('rect').attr('stroke', ic.icn3dui.htmlCls.ORANGE);
+            $(this).find('rect').attr('stroke-width', strokeWidth);
+
+            ic.hAtoms = me.hashUtilsCls.unionHash(ic.hAtoms, ic.residues[resid1]);
+            ic.hAtoms = me.hashUtilsCls.unionHash(ic.hAtoms, ic.residues[resid2]);
+
+            var select = 'select ' + ic.resid2specCls.residueids2spec([resid1, resid2]);
+
+            ic.hlUpdateCls.updateHlAll();
+
+            ic.icn3dui.htmlCls.clickMenuCls.setLogCmd(select, true);
+        });
     }
 
     selectInteraction(chainid1, chainid2) {  var ic = this.icn3d, me = ic.icn3dui;

@@ -304,13 +304,13 @@ class LineGraph {
         return html;
     }
 
-    drawScatterplot_base(nodeArray1, nodeArray2, linkArray, name2node, height) { var ic = this.icn3d, me = ic.icn3dui;
+    drawScatterplot_base(nodeArray1, nodeArray2, linkArray, name2node, height, bContactMap) { var ic = this.icn3d, me = ic.icn3dui;
         var html = '';
         var len1 = nodeArray1.length,
             len2 = nodeArray2.length;
         var factor = 1;
         var r = 3 * factor;
-        var gap = 7 * factor;
+        var gap = (bContactMap) ? r : 7 * factor;
         var legendWidth = 30;
         var marginX = 10,
             marginY = 20;
@@ -327,11 +327,11 @@ class LineGraph {
         }
         var y = height + heightTotal -(legendWidth + marginY);
         for(var i = 0; i < len2; ++i) {
-            nodeHtml += ic.getGraphCls.drawResNode(nodeArray2[i], i, r, gap, margin2, y, 'b');
+            nodeHtml += ic.getGraphCls.drawResNode(nodeArray2[i], i, r, gap, margin2, y, 'b', false, bContactMap);
             node2posSet2[nodeArray2[i].id] = { x: margin2 + i *(r + gap), y: y }
         }
         // draw rect
-        var rectSize = 1.5 * r;
+        var rectSize = (bContactMap) ? 2 * r : 1.5 * r;
         var halfSize = 0.5 * rectSize;
         for(var i = 0, il = linkArray.length; i < il; ++i) {
             var link = linkArray[i];
@@ -364,7 +364,12 @@ class LineGraph {
             }
             html += "<g class='icn3d-interaction' resid1='" + resid1 + "' resid2='" + resid2 + "' >";
             html += "<title>Interaction of residue " + node1.id + " with residue " + node2.id + "</title>";
-            html += "<rect x='" +(pos2.x - halfSize).toString() + "' y='" +(pos1.y - halfSize).toString() + "' width='" + rectSize + "' height='" + rectSize + "' fill='" + strokecolor + "' fill-opacity='0.6' stroke-width='" + linestrokewidth + "' stroke='" + strokecolor + "' />";
+            if(bContactMap) {
+                html += "<rect x='" +(pos2.x - halfSize).toString() + "' y='" +(pos1.y - halfSize).toString() + "' width='" + rectSize + "' height='" + rectSize + "' fill='" + strokecolor + "' stroke-width='" + linestrokewidth + "' stroke='" + strokecolor + "' />";
+            }
+            else {
+                html += "<rect x='" +(pos2.x - halfSize).toString() + "' y='" +(pos1.y - halfSize).toString() + "' width='" + rectSize + "' height='" + rectSize + "' fill='" + strokecolor + "' fill-opacity='0.6' stroke-width='" + linestrokewidth + "' stroke='" + strokecolor + "' />";
+            }
             html += "</g>";
         }
         // show nodes later

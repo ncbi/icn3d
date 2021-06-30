@@ -113,6 +113,7 @@ import {GetGraph} from './icn3d/interaction/getGraph.js';
 import {ShowInter} from './icn3d/interaction/showInter.js';
 import {ViewInterPairs} from './icn3d/interaction/viewInterPairs.js';
 import {DrawGraph} from './icn3d/interaction/drawGraph.js';
+import {ContactMap} from './icn3d/interaction/contactMap.js';
 
 import {AlignParser} from './icn3d/parsers/alignParser.js';
 import {ChainalignParser} from './icn3d/parsers/chainalignParser.js';
@@ -168,7 +169,7 @@ class iCn3DUI {
     //even when multiple iCn3D viewers are shown together.
     this.pre = this.cfg.divid + "_";
 
-    this.REVISION = '3.2.3';
+    this.REVISION = '3.3.0';
 
     // In nodejs, iCn3D defines "window = {navigator: {}}"
     this.bNode = (Object.keys(window).length < 2) ? true : false;

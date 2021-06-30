@@ -25,7 +25,7 @@ class ViewInterPairs {
     }
 
     viewInteractionPairs(nameArray2, nameArray, bHbondCalc, type,
-      bHbond, bSaltbridge, bInteraction, bHalogen, bPication, bPistacking) { var ic = this.icn3d, me = ic.icn3dui;
+      bHbond, bSaltbridge, bInteraction, bHalogen, bPication, bPistacking, contactDist) { var ic = this.icn3d, me = ic.icn3dui;
        var bondCnt;
 
        // type: view, save, forcegraph
@@ -33,9 +33,25 @@ class ViewInterPairs {
        var hAtoms = {}
        var prevHatoms = me.hashUtilsCls.cloneHash(ic.hAtoms);
 
-       var atomSet1, atomSet2;
-       atomSet1 = ic.definedSetsCls.getAtomsFromNameArray(nameArray2);
-       atomSet2 = ic.definedSetsCls.getAtomsFromNameArray(nameArray);
+       var bContactMapLocal = (type == 'calpha' || type == 'cbeta' || type == 'heavyatoms');
+
+       var atomSet1 = {}, atomSet2 = {};
+       if(bContactMapLocal) { // contact map
+           for(var i in ic.hAtoms) {
+               var atom = ic.atoms[i];
+               if(atom.het) continue;
+
+               if(type == 'calpha' && (atom.elem == 'C' && atom.name != 'CA')) continue;
+               if(type == 'cbeta' && (atom.elem == 'C' && atom.name != 'CB')) continue;
+
+               atomSet1[i] = atom;
+               atomSet2[i] = atom;
+           }
+       }
+       else {
+           atomSet1 = ic.definedSetsCls.getAtomsFromNameArray(nameArray2);
+           atomSet2 = ic.definedSetsCls.getAtomsFromNameArray(nameArray);
+       }
 
        var labelType; // residue, chain, structure
        var cntChain = 0, cntStructure = 0;
@@ -140,7 +156,7 @@ class ViewInterPairs {
            tableHtml += tmp;
        }
        if(bInteraction) {
-           var threshold = parseFloat($("#" + ic.pre + "contactthreshold" ).val());
+           var threshold = (bContactMapLocal) ? contactDist : parseFloat($("#" + ic.pre + "contactthreshold" ).val());
            if(!threshold || isNaN(threshold)) threshold = ic.tsContact;
            if(!(nameArray2.length == 1 && nameArray.length == 1 && nameArray2[0] == nameArray[0])) {
                 if(!bHbondCalc) {
@@ -152,37 +168,50 @@ class ViewInterPairs {
            }
            else { // contact in a set, atomSet1 same as atomSet2
                 if(!bHbondCalc) {
-                    var ssAtomsArray = [];
-                    var prevSS = '', prevChain = '';
-                    var ssAtoms = {}
-                    for(var i in atomSet1) {
-                        var atom = ic.atoms[i];
-                        if(atom.ss != prevSS || atom.chain != prevChain) {
-                            if(Object.keys(ssAtoms).length > 0) ssAtomsArray.push(ssAtoms);
-                            ssAtoms = {}
+                    var residues = {};
+                    var resid2ResidhashInteractions = {};
+
+                    if(bContactMapLocal) {
+                        var bIncludeTarget = true;
+                        var result = ic.showInterCls.pickCustomSphere_base(threshold, atomSet1, atomSet2, bHbondCalc, true, undefined, undefined, true, bIncludeTarget);
+                        residues = me.hashUtilsCls.unionHash(residues, result.residues);
+                        for(var resid in result.resid2Residhash) {
+                            resid2ResidhashInteractions[resid] = me.hashUtilsCls.unionHash(resid2ResidhashInteractions[resid], result.resid2Residhash[resid]);
                         }
-                        ssAtoms[atom.serial] = 1;
-                        prevSS = atom.ss;
-                        prevChain = atom.chain;
                     }
-                    // last ss
-                    if(Object.keys(ssAtoms).length > 0) ssAtomsArray.push(ssAtoms);
-                    var len = ssAtomsArray.length;
-                    var interStr = '';
-                    select = "interactions " + threshold + " | sets " + nameArray2 + " " + nameArray + " | true";
-                    ic.opts['contact'] = "yes";
-                    var residues = {}
-                    var resid2ResidhashInteractions = {}
-                    for(var i = 0; i < len; ++i) {
-                        for(var j = i + 1; j < len; ++j) {
-                            ic.hAtoms = me.hashUtilsCls.cloneHash(prevHatoms);
-                            var result = ic.showInterCls.pickCustomSphere_base(threshold, ssAtomsArray[i], ssAtomsArray[j], bHbondCalc, true, type, select, true);
-                            residues = me.hashUtilsCls.unionHash(residues, result.residues);
-                            for(var resid in result.resid2Residhash) {
-                                resid2ResidhashInteractions[resid] = me.hashUtilsCls.unionHash(resid2ResidhashInteractions[resid], result.resid2Residhash[resid]);
+                    else {
+                        var ssAtomsArray = [];
+                        var prevSS = '', prevChain = '';
+                        var ssAtoms = {}
+                        for(var i in atomSet1) {
+                            var atom = ic.atoms[i];
+                            if(atom.ss != prevSS || atom.chain != prevChain) {
+                                if(Object.keys(ssAtoms).length > 0) ssAtomsArray.push(ssAtoms);
+                                ssAtoms = {}
+                            }
+                            ssAtoms[atom.serial] = 1;
+                            prevSS = atom.ss;
+                            prevChain = atom.chain;
+                        }
+                        // last ss
+                        if(Object.keys(ssAtoms).length > 0) ssAtomsArray.push(ssAtoms);
+                        var len = ssAtomsArray.length;
+                        var interStr = '';
+                        select = "interactions " + threshold + " | sets " + nameArray2 + " " + nameArray + " | true";
+                        ic.opts['contact'] = "yes";
+
+                        for(var i = 0; i < len; ++i) {
+                            for(var j = i + 1; j < len; ++j) {
+                                ic.hAtoms = me.hashUtilsCls.cloneHash(prevHatoms);
+                                var result = ic.showInterCls.pickCustomSphere_base(threshold, ssAtomsArray[i], ssAtomsArray[j], bHbondCalc, true, type, select, true);
+                                residues = me.hashUtilsCls.unionHash(residues, result.residues);
+                                for(var resid in result.resid2Residhash) {
+                                    resid2ResidhashInteractions[resid] = me.hashUtilsCls.unionHash(resid2ResidhashInteractions[resid], result.resid2Residhash[resid]);
+                                }
                             }
                         }
                     }
+
                     ic.resid2ResidhashInteractions = resid2ResidhashInteractions;
                     var residueArray = Object.keys(residues);
                     ic.hAtoms = {}
@@ -250,8 +279,9 @@ class ViewInterPairs {
          + 'You can click "Save Selection" in the "Select" menu to save the selection '
          + 'and click on "Highlight" button to clear the checkboxes.</div><br>';
        var header = html;
-       if(type == 'graph' || type == 'linegraph' || type == 'scatterplot') html = '';
+       if(type == 'graph' || type == 'linegraph' || type == 'scatterplot' || bContactMapLocal) html = '';
        html += tableHtml;
+
        if(type == 'save1' || type == 'save2') {
            html = header;
            var tmpText = '';
@@ -289,6 +319,16 @@ class ViewInterPairs {
            // draw SVG
            var svgHtml = ic.lineGraphCls.drawLineGraph(ic.graphStr, true);
            $("#" + ic.pre + "scatterplotDiv").html(svgHtml);
+       }
+       else if(bContactMapLocal) {
+           ic.icn3dui.htmlCls.dialogCls.openDlg('dl_contactmap', 'Show contacts as contact map');
+           var bLine = true;
+           var bAnyAtom = true;
+           var graphStr = ic.getGraphCls.getGraphData(atomSet1, atomSet2, nameArray2, nameArray, html, labelType, bAnyAtom);
+           ic.bContactMap = true;
+           // draw SVG
+           var svgHtml = ic.contactMapCls.drawContactMap(graphStr);
+           $("#" + ic.pre + "contactmapDiv").html(svgHtml);
        }
        else if(type == 'graph') {
            // atomSet1 and atomSet2 are in the right order here
@@ -782,7 +822,8 @@ class ViewInterPairs {
             text += tmpText;
             text += '</table><br/>';
         }
-        if(type == 'graph' || type == 'linegraph' || type == 'scatterplot') {
+        if(type == 'graph' || type == 'linegraph' || type == 'scatterplot'
+          || type == 'calpha' || type == 'cbeta' || type == 'heavyatoms') {
             var interStr = ic.getGraphCls.getGraphLinks(residHash, residHash, ic.icn3dui.htmlCls.contactColor, labelType, ic.icn3dui.htmlCls.contactValue);
             return interStr;
         }
