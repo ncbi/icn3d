@@ -11,8 +11,8 @@ class Contact {
      //This function returns atoms within a certain "distance" (in angstrom) from the "targetAtoms".
      //The returned atoms are stored in a hash with atom indices as keys and 1 as values.
      //Only those atoms in "allAtoms" are considered.
-     getAtomsWithinAtom(atomlist, atomlistTarget, distance, bGetPairs, bInteraction, bInternal) { var ic = this.icn3d, me = ic.icn3dui;
-        var neighbors = this.getNeighboringAtoms(atomlist, atomlistTarget, distance);
+     getAtomsWithinAtom(atomlist, atomlistTarget, distance, bGetPairs, bInteraction, bInternal, bIncludeTarget) { var ic = this.icn3d, me = ic.icn3dui;
+        var neighbors = this.getNeighboringAtoms(atomlist, atomlistTarget, distance, bIncludeTarget);
         if(bGetPairs) ic.resid2Residhash = {};
 
         //var maxDistSq = (radius + distance) * (radius + distance);
@@ -50,7 +50,7 @@ class Contact {
                if(!ic.crossstrucinter && oriAtom.structure != atom.structure) continue;
 
                // exclude the target atoms
-               if(atom.serial in atomlistTarget) continue;
+               if(!bIncludeTarget && atom.serial in atomlistTarget) continue;
                if(ic.bOpm && atom.resn === 'DUM') continue;
 
                //var atomDistSq = (atom.coord.x - oriAtom.coord.x) * (atom.coord.x - oriAtom.coord.x) + (atom.coord.y - oriAtom.coord.y) * (atom.coord.y - oriAtom.coord.y) + (atom.coord.z - oriAtom.coord.z) * (atom.coord.z - oriAtom.coord.z);
@@ -122,7 +122,7 @@ class Contact {
         return ret;
      }
 
-     getNeighboringAtoms(atomlist, atomlistTarget, distance) { var ic = this.icn3d, me = ic.icn3dui;
+     getNeighboringAtoms(atomlist, atomlistTarget, distance, bIncludeTarget) { var ic = this.icn3d, me = ic.icn3dui;
         var extent = this.getExtent(atomlistTarget);
 
         var targetRadiusSq1 = (extent[2][0] - extent[0][0]) * (extent[2][0] - extent[0][0]) + (extent[2][1] - extent[0][1]) * (extent[2][1] - extent[0][1]) + (extent[2][2] - extent[0][2]) * (extent[2][2] - extent[0][2]);
@@ -138,7 +138,7 @@ class Contact {
            var atom = ic.atoms[i];
 
            // exclude the target atoms
-           if(atomlistTarget.hasOwnProperty(atom.serial)) continue;
+           if(!bIncludeTarget && atomlistTarget.hasOwnProperty(atom.serial)) continue;
 
            if(this.bOpm && atom.resn === 'DUM') continue;
 

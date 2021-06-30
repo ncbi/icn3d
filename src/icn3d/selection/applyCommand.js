@@ -111,7 +111,7 @@ class ApplyCommand {
             }, 500);
       }
       else if(command == 'export pdb') {
-         ic.icn3dui.htmlCls.setHtmlCls.exportPdb();
+         me.htmlCls.setHtmlCls.exportPdb();
       }
       else if(command == 'select all') {
          ic.selectionCls.selectAll();
@@ -492,7 +492,7 @@ class ApplyCommand {
          ic.definedSetsCls.deleteSelectedSets();
       }
       else if(command == 'view interactions') {
-         if(ic.icn3dui.cfg.mmdbid !== undefined || ic.icn3dui.cfg.gi !== undefined) {
+         if(me.cfg.mmdbid !== undefined || me.cfg.gi !== undefined) {
              ic.ParserUtilsCls.set2DDiagrams(ic.inputid);
          }
       }
@@ -653,8 +653,8 @@ class ApplyCommand {
             $("#" + ic.pre + "titlelink").css("color", "black");
         }
         else {
-            $("#" + ic.pre + "title").css("color", ic.icn3dui.htmlCls.GREYD);
-            $("#" + ic.pre + "titlelink").css("color", ic.icn3dui.htmlCls.GREYD);
+            $("#" + ic.pre + "title").css("color", me.htmlCls.GREYD);
+            $("#" + ic.pre + "titlelink").css("color", me.htmlCls.GREYD);
         }
       }
       else if(commandOri.indexOf('set thickness') == 0) {
@@ -977,59 +977,67 @@ class ApplyCommand {
         }
       }
       else if(commandOri.indexOf('export pqr') == 0) {
-           ic.icn3dui.htmlCls.setHtmlCls.exportPqr();
+           me.htmlCls.setHtmlCls.exportPqr();
       }
       else if(command.indexOf('graph label') == 0) {
         var pos = command.lastIndexOf(' ');
         var className = command.substr(pos + 1);
 
-        $("#" + ic.icn3dui.svgid + "_label").val(className);
+        $("#" + me.svgid + "_label").val(className);
 
-        $("#" + ic.icn3dui.svgid + " text").removeClass();
-        $("#" + ic.icn3dui.svgid + " text").addClass(className);
+        $("#" + me.svgid + " text").removeClass();
+        $("#" + me.svgid + " text").addClass(className);
       }
       else if(command.indexOf('line graph scale') == 0) {
         var pos = command.lastIndexOf(' ');
         var scale = command.substr(pos + 1);
 
-        $("#" + ic.linegraphid + "_label").val(scale);
+        $("#" + me.linegraphid + "_scale").val(scale);
 
-        $("#" + ic.linegraphid).attr("width",(ic.linegraphWidth * parseFloat(scale)).toString() + "px");
+        $("#" + me.linegraphid).attr("width",(ic.linegraphWidth * parseFloat(scale)).toString() + "px");
       }
       else if(command.indexOf('scatterplot scale') == 0) {
         var pos = command.lastIndexOf(' ');
         var scale = command.substr(pos + 1);
 
-        $("#" + ic.scatterplotid + "_label").val(scale);
+        $("#" + me.scatterplotid + "_scale").val(scale);
 
-        $("#" + ic.scatterplot).attr("width",(ic.scatterplotWidth * parseFloat(scale)).toString() + "px");
+        $("#" + me.scatterplotid).attr("width",(ic.scatterplotWidth * parseFloat(scale)).toString() + "px");
+      }
+      else if(command.indexOf('contactmap scale') == 0) {
+        var pos = command.lastIndexOf(' ');
+        var scale = command.substr(pos + 1);
+
+        $("#" + me.contactmapid + "_scale").val(scale);
+
+        $("#" + me.contactmapid).attr("width",(ic.contactmapWidth * parseFloat(scale)).toString() + "px");
       }
       else if(command.indexOf('graph force') == 0) {
         var pos = command.lastIndexOf(' ');
-        ic.icn3dui.htmlCls.force = parseInt(command.substr(pos + 1));
+        me.htmlCls.force = parseInt(command.substr(pos + 1));
 
-        $("#" + ic.icn3dui.svgid + "_force").val(ic.icn3dui.htmlCls.force);
+        $("#" + me.svgid + "_force").val(me.htmlCls.force);
 
         ic.getGraphCls.handleForce();
       }
       else if(command.indexOf('hide edges') == 0) {
         var pos = command.lastIndexOf(' ');
-        ic.icn3dui.htmlCls.hideedges = parseInt(command.substr(pos + 1));
+        me.htmlCls.hideedges = parseInt(command.substr(pos + 1));
 
-        $("#" + ic.icn3dui.svgid + "_hideedges").val(ic.icn3dui.htmlCls.hideedges);
+        $("#" + me.svgid + "_hideedges").val(me.htmlCls.hideedges);
 
-        if(ic.icn3dui.htmlCls.hideedges) {
-            ic.icn3dui.htmlCls.contactInsideColor = 'FFF';
-            ic.icn3dui.htmlCls.hbondInsideColor = 'FFF';
-            ic.icn3dui.htmlCls.ionicInsideColor = 'FFF';
+        if(me.htmlCls.hideedges) {
+            me.htmlCls.contactInsideColor = 'FFF';
+            me.htmlCls.hbondInsideColor = 'FFF';
+            me.htmlCls.ionicInsideColor = 'FFF';
         }
         else {
-            ic.icn3dui.htmlCls.contactInsideColor = 'DDD';
-            ic.icn3dui.htmlCls.hbondInsideColor = 'AFA';
-            ic.icn3dui.htmlCls.ionicInsideColor = '8FF';
+            me.htmlCls.contactInsideColor = 'DDD';
+            me.htmlCls.hbondInsideColor = 'AFA';
+            me.htmlCls.ionicInsideColor = '8FF';
         }
 
-        if(ic.graphStr !== undefined && ic.bRender && ic.icn3dui.htmlCls.force) {
+        if(ic.graphStr !== undefined && ic.bRender && me.htmlCls.force) {
            ic.drawGraphCls.drawGraph(ic.graphStr);
         }
       }
@@ -1047,7 +1055,7 @@ class ApplyCommand {
         ic.yournote = paraArray[1];
 
         $("#" + ic.pre + "yournote").val(ic.yournote);
-        if(ic.icn3dui.cfg.shownote) document.title = ic.yournote;
+        if(me.cfg.shownote) document.title = ic.yournote;
       }
       else if(command.indexOf('cross structure interaction') == 0) {
         ic.crossstrucinter = parseInt(command.substr(command.lastIndexOf(' ') + 1));
@@ -1062,6 +1070,16 @@ class ApplyCommand {
       }
 
     // start with, single word =============
+      else if(command.indexOf('contact map') == 0) {
+        var strArray = command.split(" | ");
+
+        if(strArray.length === 3) {
+            var contactdist = parseFloat(strArray[1].split(' ')[1]);
+            var contacttype = strArray[2].split(' ')[1];
+
+            ic.contactMapCls.contactMap(contactdist, contacttype);
+        }
+      }
       else if(command.indexOf('pickatom') == 0) {
         var atomid = parseInt(command.substr(command.lastIndexOf(' ') + 1));
 
@@ -1092,7 +1110,7 @@ class ApplyCommand {
             }
         }
         else if(color == "align custom" && strArray.length == 4) {
-            // ic.icn3dui.htmlCls.clickMenuCls.setLogCmd('color align custom | ' + chainid + ' | range ' + start + '_' + end + ' | ' + resiScoreStr, true);
+            // me.htmlCls.clickMenuCls.setLogCmd('color align custom | ' + chainid + ' | range ' + start + '_' + end + ' | ' + resiScoreStr, true);
             this.setQueryresi2score(strArray);
         }
         else if(color == "area" && strArray.length == 2) {
@@ -1126,24 +1144,24 @@ class ApplyCommand {
         var secondPart = command.substr(command.indexOf(' ') + 1);
 
         if(secondPart == "aligned sequences") {
-            ic.icn3dui.htmlCls.dialogCls.openDlg('dl_alignment', 'Select residues in aligned sequences');
+            me.htmlCls.dialogCls.openDlg('dl_alignment', 'Select residues in aligned sequences');
         }
         else if(secondPart == "interaction table") {
-            ic.icn3dui.htmlCls.dialogCls.openDlg('dl_allinteraction', 'Show interactions');
+            me.htmlCls.dialogCls.openDlg('dl_allinteraction', 'Show interactions');
         }
         else if(secondPart == "interaction graph") {
-            ic.icn3dui.htmlCls.dialogCls.openDlg('dl_linegraph', 'Show interactions between two lines of residue nodes');
+            me.htmlCls.dialogCls.openDlg('dl_linegraph', 'Show interactions between two lines of residue nodes');
         }
         else if(secondPart == "interaction scatterplot") {
-            ic.icn3dui.htmlCls.dialogCls.openDlg('dl_scatterplot', 'Show interactions as scatterplot');
+            me.htmlCls.dialogCls.openDlg('dl_scatterplot', 'Show interactions as scatterplot');
         }
         else if(secondPart == "force-directed graph") {
-            ic.icn3dui.htmlCls.dialogCls.openDlg('dl_graph', 'Force-directed graph');
+            me.htmlCls.dialogCls.openDlg('dl_graph', 'Force-directed graph');
         }
       }
       else if(command.indexOf('set theme') == 0) {
         var color = command.substr(command.lastIndexOf(' ') + 1);
-        ic.icn3dui.htmlCls.setMenuCls.setTheme(color);
+        me.htmlCls.setMenuCls.setTheme(color);
       }
       else if(command.indexOf('set double color') == 0) {
         var value = command.substr(command.lastIndexOf(' ') + 1);
@@ -1235,13 +1253,13 @@ class ApplyCommand {
       }
 
       if(bShowLog) {
-          ic.icn3dui.htmlCls.clickMenuCls.setLogCmd(commandOri, false);
+          me.htmlCls.clickMenuCls.setLogCmd(commandOri, false);
       }
 
       ic.bAddCommands = true;
     }
 
-    setStrengthPara(paraArray) { var ic = this.icn3d, me = ic.icn3dui;
+    setStrengthPara(paraArray) { var ic = this.icn3d, me = me;
         if(paraArray.length >= 5) {
            var thresholdArray = paraArray[4].split(' ');
 
@@ -1277,7 +1295,7 @@ class ApplyCommand {
         }
     }
 
-    getThresholdNameArrays(commandOri) { var ic = this.icn3d, me = ic.icn3dui;
+    getThresholdNameArrays(commandOri) { var ic = this.icn3d, me = me;
         if(ic.bSetChainsAdvancedMenu === undefined || !ic.bSetChainsAdvancedMenu) {
            var prevHAtoms = me.hashUtilsCls.cloneHash(ic.hAtoms);
 
@@ -1309,7 +1327,7 @@ class ApplyCommand {
         return {'threshold': threshold, 'nameArray2': nameArray2, 'nameArray': nameArray, 'bHbondCalc': bHbondCalc}
     }
 
-    setQueryresi2score(strArray) { var ic = this.icn3d, me = ic.icn3dui;
+    setQueryresi2score(strArray) { var ic = this.icn3d, me = me;
         var chainid = strArray[1];
         var start_end = strArray[2].split(' ')[1].split('_');
         var resiScoreStr = strArray[3]; // score 0-9
@@ -1324,7 +1342,7 @@ class ApplyCommand {
         }
     }
 
-    getMenuFromCmd(cmd) { var ic = this.icn3d, me = ic.icn3dui;
+    getMenuFromCmd(cmd) { var ic = this.icn3d, me = me;
         cmd = cmd.trim();
 
         var seqAnnoStr = 'Windows > View Sequences & Annotations';

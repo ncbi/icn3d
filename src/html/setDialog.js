@@ -301,6 +301,18 @@ class SetDialog {
     */
         html += "</div>";
 
+        html += me.htmlCls.divStr + "dl_contact' class='" + dialogClass + "'>";
+        html += "<span style='white-space:nowrap;font-weight:bold;'>Distance: <select id='" + me.pre + "contactdist'>";
+        html += me.htmlCls.setHtmlCls.getOptionHtml(['4', '5', '6', '7', '8', '9', '10'], 4);
+        html += "</select></span>";
+        html += "<span style='margin-left:30px; white-space:nowrap;font-weight:bold;'>Contact Type: <select id='" + me.pre + "contacttype'>";
+        html += me.htmlCls.optionStr + "'calpha' >between C-alpha Atoms</option>";
+        html += me.htmlCls.optionStr + "'cbeta' selected>between C-beta Atoms</option>";
+        html += me.htmlCls.optionStr + "'heavyatoms' >between Heavy Atoms</option>";
+        html += "</select></span><br><br>";
+        html += "<span style='white-space:nowrap;'>" + me.htmlCls.buttonStr + "applycontactmap'>Display</button></span><br>";
+        html += "</div>";
+
         html += me.htmlCls.divStr + "dl_hbonds' class='" + dialogClass + "'>";
         html += "1. Choose interaction types and their thresholds:<br>";
         html += "<div class='icn3d-box'><table border=0 width=450><tr>";
@@ -476,6 +488,24 @@ class SetDialog {
 
         html += "</select></div><br>";
         html += '<div id="' + me.pre + 'scatterplotDiv"></div>';
+
+        html += "</div>";
+
+        html += me.htmlCls.divStr + "dl_contactmap' style='background-color:white' class='" + dialogClass + "'>";
+
+        html += me.htmlCls.divNowrapStr + "Hold Ctrl key to select multiple nodes." + me.htmlCls.space3 + "</div>";
+
+        me.contactmapid = me.pre + 'contactmap';
+        html += me.htmlCls.divNowrapStr + buttonStrTmp + me.contactmapid + '_svg">SVG</button>' + me.htmlCls.space2;
+        html += buttonStrTmp + me.contactmapid + '_png">PNG</button>' + me.htmlCls.space2;
+        html += buttonStrTmp + me.contactmapid + '_json">JSON</button>' + me.htmlCls.space4;
+        html += "<b>Scale</b>: <select id='" + me.contactmapid + "_scale'>";
+
+        var optArray5 = ['0.01', '0.02', '0.04', '0.06', '0.08', '0.1', '0.2', '0.4', '0.6', '0.8', '1'];
+        html += me.htmlCls.setHtmlCls.getOptionHtml(optArray5, 10);
+
+        html += "</select></div><br>";
+        html += '<div id="' + me.pre + 'contactmapDiv"></div>';
 
         html += "</div>";
 
