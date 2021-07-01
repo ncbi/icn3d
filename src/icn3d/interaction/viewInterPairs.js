@@ -41,8 +41,8 @@ class ViewInterPairs {
                var atom = ic.atoms[i];
                if(atom.het) continue;
 
-               if(type == 'calpha' && (atom.elem == 'C' && atom.name != 'CA')) continue;
-               if(type == 'cbeta' && (atom.elem == 'C' && atom.name != 'CB')) continue;
+               if(type == 'calpha' && (atom.name != 'CA')) continue;
+               if(type == 'cbeta' && (atom.name != 'CB')) continue;
 
                atomSet1[i] = atom;
                atomSet2[i] = atom;

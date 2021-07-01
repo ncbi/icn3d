@@ -647,6 +647,10 @@ class Diagram2d {
         //$("#" + ic.pre + "dl_scatterplot .icn3d-node", "click", function(e) { var ic = this.icn3d, me = ic.icn3dui;
         $(document).on("click", "#" + ic.pre + "dl_scatterplot .icn3d-node", function(e) { var ic = thisClass.icn3d;
             e.stopImmediatePropagation();
+
+            thisClass.clickNode(this);
+
+/*
             if(Object.keys(ic.hAtoms).length < Object.keys(ic.atoms).length) ic.definedSetsCls.setMode('selection');
 
             var resid = $(this).attr('resid');
@@ -670,6 +674,7 @@ class Diagram2d {
             ic.icn3dui.htmlCls.clickMenuCls.setLogCmd(select, true);
 
             ic.bSelectResidue = false;
+*/
         });
 
         //$("#" + ic.pre + "dl_linegraph .icn3d-interaction", "click", function(e) { var ic = this.icn3d, me = ic.icn3dui;
@@ -701,6 +706,10 @@ class Diagram2d {
         //$("#" + ic.pre + "dl_scatterplot .icn3d-interaction", "click", function(e) { var ic = this.icn3d, me = ic.icn3dui;
         $(document).on("click", "#" + ic.pre + "dl_scatterplot .icn3d-interaction", function(e) { var ic = thisClass.icn3d;
             e.stopImmediatePropagation();
+
+            thisClass.clickInteraction(this);
+
+/*
             if(Object.keys(ic.hAtoms).length < Object.keys(ic.atoms).length) ic.definedSetsCls.setMode('selection');
 
             var resid1 = $(this).attr('resid1');
@@ -724,10 +733,14 @@ class Diagram2d {
             ic.hlUpdateCls.updateHlAll();
 
             ic.icn3dui.htmlCls.clickMenuCls.setLogCmd(select, true);
+*/
         });
 
         $(document).on("click", "#" + ic.pre + "dl_contactmap .icn3d-interaction", function(e) { var ic = thisClass.icn3d;
             e.stopImmediatePropagation();
+
+            thisClass.clickInteraction(this);
+/*
             if(Object.keys(ic.hAtoms).length < Object.keys(ic.atoms).length) ic.definedSetsCls.setMode('selection');
 
             var resid1 = $(this).attr('resid1');
@@ -751,7 +764,91 @@ class Diagram2d {
             ic.hlUpdateCls.updateHlAll();
 
             ic.icn3dui.htmlCls.clickMenuCls.setLogCmd(select, true);
+*/
         });
+
+        $(document).on("click", "#" + ic.pre + "dl_contactmap .icn3d-node", function(e) { var ic = thisClass.icn3d;
+            e.stopImmediatePropagation();
+
+            thisClass.clickNode(this);
+/*
+            if(Object.keys(ic.hAtoms).length < Object.keys(ic.atoms).length) ic.definedSetsCls.setMode('selection');
+
+            var resid = $(this).attr('resid');
+
+            if(!ic.bCtrl && !ic.bShift) {
+              ic.hAtoms = {}
+
+              thisClass.removeScatterplotSelection();
+            }
+
+            var strokeWidth = 2;
+            $(this).find('circle').attr('stroke', ic.icn3dui.htmlCls.ORANGE);
+            $(this).find('circle').attr('stroke-width', strokeWidth);
+
+            ic.hAtoms = me.hashUtilsCls.unionHash(ic.hAtoms, ic.residues[resid]);
+
+            var select = 'select ' + ic.resid2specCls.residueids2spec([resid]);
+
+            ic.hlUpdateCls.updateHlAll();
+
+            ic.icn3dui.htmlCls.clickMenuCls.setLogCmd(select, true);
+
+            ic.bSelectResidue = false;
+*/
+        });
+    }
+
+    clickNode(node) {  var ic = this.icn3d, me = ic.icn3dui;
+        if(Object.keys(ic.hAtoms).length < Object.keys(ic.atoms).length) ic.definedSetsCls.setMode('selection');
+
+        var resid = $(node).attr('resid');
+
+        if(!ic.bCtrl && !ic.bShift) {
+          ic.hAtoms = {}
+
+          this.removeScatterplotSelection();
+        }
+
+        var strokeWidth = 2;
+        $(node).find('circle').attr('stroke', ic.icn3dui.htmlCls.ORANGE);
+        $(node).find('circle').attr('stroke-width', strokeWidth);
+
+        ic.hAtoms = me.hashUtilsCls.unionHash(ic.hAtoms, ic.residues[resid]);
+
+        var select = 'select ' + ic.resid2specCls.residueids2spec([resid]);
+
+        ic.hlUpdateCls.updateHlAll();
+
+        ic.icn3dui.htmlCls.clickMenuCls.setLogCmd(select, true);
+
+        ic.bSelectResidue = false;
+    }
+
+    clickInteraction(node) {  var ic = this.icn3d, me = ic.icn3dui;
+        if(Object.keys(ic.hAtoms).length < Object.keys(ic.atoms).length) ic.definedSetsCls.setMode('selection');
+
+        var resid1 = $(node).attr('resid1');
+        var resid2 = $(node).attr('resid2');
+
+        if(!ic.bCtrl && !ic.bShift) {
+          ic.hAtoms = {}
+
+          this.removeScatterplotSelection();
+        }
+
+        var strokeWidth = 2;
+        $(node).find('rect').attr('stroke', ic.icn3dui.htmlCls.ORANGE);
+        $(node).find('rect').attr('stroke-width', strokeWidth);
+
+        ic.hAtoms = me.hashUtilsCls.unionHash(ic.hAtoms, ic.residues[resid1]);
+        ic.hAtoms = me.hashUtilsCls.unionHash(ic.hAtoms, ic.residues[resid2]);
+
+        var select = 'select ' + ic.resid2specCls.residueids2spec([resid1, resid2]);
+
+        ic.hlUpdateCls.updateHlAll();
+
+        ic.icn3dui.htmlCls.clickMenuCls.setLogCmd(select, true);
     }
 
     selectInteraction(chainid1, chainid2) {  var ic = this.icn3d, me = ic.icn3dui;
