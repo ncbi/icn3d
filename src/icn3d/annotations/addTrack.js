@@ -194,7 +194,7 @@ class AddTrack {
            // add tracks
            var resi2cntSameRes = {} // count of same residue at each position
            for(var j = 0, jl = trackSeqArray.length; j < jl; ++j) {
-               var resi = startposGiSeq + 1;
+               var resi = startpos; //startposGiSeq + 1;
                var text = '';
                for(var k = 0; k < startposGiSeq; ++k) {
                    if(ic.targetGapHash.hasOwnProperty(k)) {
@@ -221,9 +221,9 @@ class AddTrack {
 
                var title =(trackTitleArray[j].length < 20) ? trackTitleArray[j] : trackTitleArray[j].substr(0, 20) + '...';
                var bMsa = true;
-               this.showNewTrack(chainid, title, text, undefined, undefined, type, undefined, bMsa);
+               thisClass.showNewTrack(chainid, title, text, undefined, undefined, type, undefined, bMsa);
 
-               ic.icn3dui.htmlCls.clickMenuCls.setLogCmd("add track | chainid " + chainid + " | title " + title + " | text " + this.simplifyText(text)
+               ic.icn3dui.htmlCls.clickMenuCls.setLogCmd("add track | chainid " + chainid + " | title " + title + " | text " + thisClass.simplifyText(text)
                 + " | type " + type + " | color 0 | msa 1", true);
            }
 
@@ -368,9 +368,9 @@ class AddTrack {
                            }
                        }
 
-                       this.showNewTrack(chainid, title, text, cssColorArray, undefined, undefined, rgbColor);
+                       thisClass.showNewTrack(chainid, title, text, cssColorArray, undefined, undefined, rgbColor);
 
-                       ic.icn3dui.htmlCls.clickMenuCls.setLogCmd("add track | chainid " + chainid + " | title " + title + " | text " + this.simplifyText(text) + " | type bed | color " + rgbColor, true);
+                       ic.icn3dui.htmlCls.clickMenuCls.setLogCmd("add track | chainid " + chainid + " | title " + title + " | text " + thisClass.simplifyText(text) + " | type bed | color " + rgbColor, true);
                    }
                }
              };
@@ -393,7 +393,7 @@ class AddTrack {
            //ic.icn3dui.htmlCls.clickMenuCls.setLogCmd("add track | chainid " + chainid + " | title " + title + " | text " + this.simplifyText(text), true);
            var result = this.getFullText(text);
 
-           this.showNewTrack(chainid, title,  result.text, undefined, undefined, 'custom', undefined, undefined, result.fromArray, result.toArray);
+           thisClass.showNewTrack(chainid, title,  result.text, undefined, undefined, 'custom', undefined, undefined, result.fromArray, result.toArray);
 
            ic.icn3dui.htmlCls.clickMenuCls.setLogCmd("add track | chainid " + chainid + " | title " + title + " | text " + text + " | type custom", true);
         });
@@ -438,9 +438,9 @@ class AddTrack {
               }
            }
 
-           this.showNewTrack(chainid, title, text, cssColorArray, undefined, 'selection', undefined);
+           thisClass.showNewTrack(chainid, title, text, cssColorArray, undefined, 'selection', undefined);
 
-           ic.icn3dui.htmlCls.clickMenuCls.setLogCmd("add track | chainid " + chainid + " | title " + title + " | text " + this.simplifyText(text) + " | type selection", true);
+           ic.icn3dui.htmlCls.clickMenuCls.setLogCmd("add track | chainid " + chainid + " | title " + title + " | text " + thisClass.simplifyText(text) + " | type selection", true);
         });
 
     }
@@ -841,7 +841,7 @@ class AddTrack {
         var out = ''; // 1-based text positions
         var bFoundText = false;
 
-        var i, prevEmptyPos = -1;
+        var i, il, prevEmptyPos = -1;
         for(i = 0, il = text.length; i < il; ++i) {
             if(text[i] == '-' || text[i] == ' ') {
                 if(bFoundText && i !== prevEmptyPos) {
