@@ -272,7 +272,8 @@ class GetGraph {
        var residHash = {}
        for(var i in atomSet) {
            var atom = ic.atoms[i];
-           if(atom.chain != 'DUM' &&(bAnyAtom || atom.het || (atom.name == "CA" && atom.elem == "C") || atom.name == "O3'" || atom.name == "O3*" || atom.name == "P")) {
+
+           if(atom.chain != 'DUM' && (bAnyAtom || atom.het || (atom.name == "CA" && atom.elem == "C") || atom.name == "O3'" || atom.name == "O3*" || atom.name == "P")) {
            // starting nucleotide have "P"
            //if(atom.chain != 'DUM' &&(atom.name == "CA" || atom.name == "P")) {
                var resid = atom.structure + '_' + atom.chain + '_' + atom.resi;
@@ -304,6 +305,7 @@ class GetGraph {
                ++cnt;
            }
        }
+
        return {"node": nodeArray, "link":linkArray}
     }
     getHbondLinksForSet(atoms, labelType) { var ic = this.icn3d, me = ic.icn3dui;
