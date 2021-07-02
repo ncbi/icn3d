@@ -39,13 +39,17 @@ class ViewInterPairs {
        if(bContactMapLocal) { // contact map
            for(var i in ic.hAtoms) {
                var atom = ic.atoms[i];
-               if(atom.het) continue;
 
-               if(type == 'calpha' && (atom.name != 'CA')) continue;
-               if(type == 'cbeta' && (atom.name != 'CB')) continue;
+               // skip solvent
+               if(atom.resn == 'HOH' || atom.resn == 'WAT' || atom.resn == 'SOL') continue;
 
-               atomSet1[i] = atom;
-               atomSet2[i] = atom;
+               if( (type == 'calpha' && ( atom.het || atom.name == "CA" || atom.name == "O3'" || atom.name == "O3*"))
+                   || (type == 'cbeta' && ( atom.het || atom.name == "CB" || atom.name == "O3'" || atom.name == "O3*"))
+                   || (type == 'heavyatoms' && atom.elem != "H")
+               ) {
+                   atomSet1[i] = atom;
+                   atomSet2[i] = atom;
+               }
            }
        }
        else {
