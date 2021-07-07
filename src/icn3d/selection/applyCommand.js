@@ -1259,7 +1259,7 @@ class ApplyCommand {
       ic.bAddCommands = true;
     }
 
-    setStrengthPara(paraArray) { var ic = this.icn3d, me = me;
+    setStrengthPara(paraArray) { var ic = this.icn3d, me = ic.icn3dui;
         if(paraArray.length >= 5) {
            var thresholdArray = paraArray[4].split(' ');
 
@@ -1295,7 +1295,7 @@ class ApplyCommand {
         }
     }
 
-    getThresholdNameArrays(commandOri) { var ic = this.icn3d, me = me;
+    getThresholdNameArrays(commandOri) { var ic = this.icn3d, me = ic.icn3dui;
         if(ic.bSetChainsAdvancedMenu === undefined || !ic.bSetChainsAdvancedMenu) {
            var prevHAtoms = me.hashUtilsCls.cloneHash(ic.hAtoms);
 
@@ -1327,7 +1327,7 @@ class ApplyCommand {
         return {'threshold': threshold, 'nameArray2': nameArray2, 'nameArray': nameArray, 'bHbondCalc': bHbondCalc}
     }
 
-    setQueryresi2score(strArray) { var ic = this.icn3d, me = me;
+    setQueryresi2score(strArray) { var ic = this.icn3d, me = ic.icn3dui;
         var chainid = strArray[1];
         var start_end = strArray[2].split(' ')[1].split('_');
         var resiScoreStr = strArray[3]; // score 0-9
@@ -1342,7 +1342,7 @@ class ApplyCommand {
         }
     }
 
-    getMenuFromCmd(cmd) { var ic = this.icn3d, me = me;
+    getMenuFromCmd(cmd) { var ic = this.icn3d, me = ic.icn3dui;
         cmd = cmd.trim();
 
         var seqAnnoStr = 'Windows > View Sequences & Annotations';

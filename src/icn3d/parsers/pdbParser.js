@@ -112,6 +112,10 @@ class PdbParser {
             else if(type === 'mmcif') {
                 ic.mmcifParserCls.loadMmcifData(data);
             }
+            else if(type === 'icn3dpng') {
+                ic.mmcifParserCls.loadMmcifData(data);
+                me.htmlCls.setHtmlCls.loadPng(data);
+            }
           },
           error : function(xhr, textStatus, errorThrown ) {
             this.tryCount++;

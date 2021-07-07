@@ -325,7 +325,7 @@ class ViewInterPairs {
            $("#" + ic.pre + "scatterplotDiv").html(svgHtml);
        }
        else if(bContactMapLocal) {
-           ic.icn3dui.htmlCls.dialogCls.openDlg('dl_contactmap', 'Show contacts as contact map');
+           ic.icn3dui.htmlCls.dialogCls.openDlg('dl_contactmap', 'Show contact map');
            var bLine = true;
            var bAnyAtom = true;
            var graphStr = ic.getGraphCls.getGraphData(atomSet1, atomSet2, nameArray2, nameArray, html, labelType, bAnyAtom);

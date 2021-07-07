@@ -1817,7 +1817,7 @@ class ClickMenu {
         });
 
         me.myEventCls.onIds(["#" + me.pre + "mn6_contactmap"], "click", function(e) { var ic = me.icn3d;
-            me.htmlCls.dialogCls.openDlg('dl_contact', 'Show contact map');
+            me.htmlCls.dialogCls.openDlg('dl_contact', 'Set contact map');
         });
 
     //    },

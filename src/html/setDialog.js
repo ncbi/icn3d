@@ -154,10 +154,11 @@ class SetDialog {
         html += me.htmlCls.divStr + "dl_urlfile' class='" + dialogClass + "'>";
         html += "File type: ";
         html += "<select id='" + me.pre + "filetype'>";
-        html += me.htmlCls.optionStr + "'pdb' selected>pdb</option>";
-        html += me.htmlCls.optionStr + "'mol2'>mol2</option>";
-        html += me.htmlCls.optionStr + "'sdf'>sdf</option>";
-        html += me.htmlCls.optionStr + "'xyz'>xyz</option>";
+        html += me.htmlCls.optionStr + "'pdb' selected>PDB</option>";
+        html += me.htmlCls.optionStr + "'mol2'>Mol2</option>";
+        html += me.htmlCls.optionStr + "'sdf'>SDF</option>";
+        html += me.htmlCls.optionStr + "'xyz'>XYZ</option>";
+        html += me.htmlCls.optionStr + "'icn3dpng'>iCn3D PNG</option>";
         html += "</select><br/>";
         html += "URL in the same host: " + me.htmlCls.inputTextStr + "id='" + me.pre + "urlfile' size=20><br/> ";
         html += me.htmlCls.buttonStr + "reload_urlfile'>Load</button>";

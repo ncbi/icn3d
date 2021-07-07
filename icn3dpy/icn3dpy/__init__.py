@@ -23,7 +23,7 @@ class view(object):
             v = '_' + v
         
 	jsfile = 'https://www.ncbi.nlm.nih.gov/Structure/icn3d/es5/icn3d_all_full' + v + '.min.js'
-	css1file = 'https://www.ncbi.nlm.nih.gov/Structure/icn3d/lib/jquery-ui' + v + '.min.css'
+	css1file = 'https://www.ncbi.nlm.nih.gov/Structure/icn3d/lib/jquery-ui-1.12.1.min.css'
 	css2file = 'https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d' + v + '.css'
         
         divid = "icn3dviewerUNIQUEID"

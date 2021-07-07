@@ -179,7 +179,8 @@ class Instancing {
     drawSymmetryMates() {  var ic = this.icn3d, me = ic.icn3dui;
         if(ic.icn3dui.bNode) return;
 
-        if(ic.bInstanced && Object.keys(ic.atoms).length * ic.biomtMatrices.length > ic.maxatomcnt) {
+//        if(ic.bInstanced && Object.keys(ic.atoms).length * ic.biomtMatrices.length > ic.maxatomcnt) {
+        if(ic.bInstanced) {
             this.drawSymmetryMatesInstancing();
         }
         else {
@@ -289,6 +290,7 @@ class Instancing {
           }
 
           if(ic.mdlImpostor !== undefined) {
+              // after three.js version 128, the cylinder impostor seemed to have a problem in cloning!!!
               symmetryMate = ic.mdlImpostor.clone();
               //symmetryMate.applyMatrix(mat);
               this.applyMat(symmetryMate, mat);
@@ -296,8 +298,10 @@ class Instancing {
               //symmetryMate.onBeforeRender = ic.impostorCls.onBeforeRender;
               for(var j = symmetryMate.children.length - 1; j >= 0; j--) {
                    var mesh = symmetryMate.children[j];
-//                   mesh.onBeforeRender = ic.impostorCls.onBeforeRender;
-                   mesh.onBeforeRender = this.onBeforeRender;
+                   mesh.onBeforeRender = ic.impostorCls.onBeforeRender;
+                   //mesh.onBeforeRender = this.onBeforeRender;
+
+                   mesh.frustumCulled = false;
               }
 
               mdlImpostorTmp.add(symmetryMate);
@@ -352,6 +356,7 @@ class Instancing {
        ic.bSetInstancing = true;
     }
 
+/*
     onBeforeRender(renderer, scene, camera, geometry, material) {
       var u = material.uniforms;
       var updateList = [];
@@ -449,6 +454,7 @@ class Instancing {
         }
       }
     }
+*/
 
     createInstancedGeometry(mesh) {  var ic = this.icn3d, me = ic.icn3dui;
        var baseGeometry = mesh.geometry;
@@ -628,10 +634,14 @@ class Instancing {
            var mesh2 = new THREE.Mesh(geometry, ic.instancedMaterial);
 
            mesh2.onBeforeRender = ic.impostorCls.onBeforeRender;
+           //mesh2.onBeforeRender = this.onBeforeRender;
 
            // important: https://stackoverflow.com/questions/21184061/mesh-suddenly-disappears-in-three-js-clipping
            // You are moving the camera in the CPU. You are moving the vertices of the plane in the GPU
            mesh2.frustumCulled = false;
+
+           mesh2.scale.x = mesh2.scale.y = mesh2.scale.z = 1.0;
+           mesh2.type = mesh.type;
 
            geometry = null;
 

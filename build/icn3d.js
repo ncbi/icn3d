@@ -17420,7 +17420,7 @@ var icn3d = (function (exports) {
                $("#" + ic.pre + "scatterplotDiv").html(svgHtml);
            }
            else if(bContactMapLocal) {
-               ic.icn3dui.htmlCls.dialogCls.openDlg('dl_contactmap', 'Show contacts as contact map');
+               ic.icn3dui.htmlCls.dialogCls.openDlg('dl_contactmap', 'Show contact map');
                var bAnyAtom = true;
                var graphStr = ic.getGraphCls.getGraphData(atomSet1, atomSet2, nameArray2, nameArray, html, labelType, bAnyAtom);
                ic.bContactMap = true;
@@ -23073,7 +23073,7 @@ var icn3d = (function (exports) {
 
         //Load structures from a "URL". Due to the same domain policy of Ajax call, the URL should be in the same
         //domain. "type" could be "pdb", "mol2", "sdf", or "xyz" for pdb file, mol2file, sdf file, and xyz file, respectively.
-        downloadUrl(url, type) { var ic = this.icn3d; ic.icn3dui;
+        downloadUrl(url, type) { var ic = this.icn3d, me = ic.icn3dui;
            var thisClass = this;
 
            var dataType = "text";
@@ -23112,6 +23112,10 @@ var icn3d = (function (exports) {
                 }
                 else if(type === 'mmcif') {
                     ic.mmcifParserCls.loadMmcifData(data);
+                }
+                else if(type === 'icn3dpng') {
+                    ic.mmcifParserCls.loadMmcifData(data);
+                    me.htmlCls.setHtmlCls.loadPng(data);
                 }
               },
               error : function(xhr, textStatus, errorThrown ) {
@@ -26898,7 +26902,8 @@ var icn3d = (function (exports) {
 
         closeDialogs() {var ic = this.icn3d; ic.icn3dui;
             var itemArray = ['dl_selectannotations', 'dl_alignment', 'dl_2ddgm', 'dl_definedsets', 'dl_graph',
-                'dl_linegraph', 'dl_scatterplot', 'dl_allinteraction', 'dl_copyurl'];
+                'dl_linegraph', 'dl_scatterplot', 'dl_contactmap', 'dl_allinteraction', 'dl_copyurl',
+                'dl_symmetry', 'dl_symd'];
             for(var i in itemArray) {
                 var item = itemArray[i];
                 if(!ic.icn3dui.cfg.notebook) {
@@ -30505,7 +30510,7 @@ var icn3d = (function (exports) {
           ic.bAddCommands = true;
         }
 
-        setStrengthPara(paraArray) { var ic = this.icn3d;
+        setStrengthPara(paraArray) { var ic = this.icn3d; ic.icn3dui;
             if(paraArray.length >= 5) {
                var thresholdArray = paraArray[4].split(' ');
 
@@ -30541,7 +30546,7 @@ var icn3d = (function (exports) {
             }
         }
 
-        getThresholdNameArrays(commandOri) { var ic = this.icn3d, me = me;
+        getThresholdNameArrays(commandOri) { var ic = this.icn3d, me = ic.icn3dui;
             if(ic.bSetChainsAdvancedMenu === undefined || !ic.bSetChainsAdvancedMenu) {
                var prevHAtoms = me.hashUtilsCls.cloneHash(ic.hAtoms);
 
@@ -30573,7 +30578,7 @@ var icn3d = (function (exports) {
             return {'threshold': threshold, 'nameArray2': nameArray2, 'nameArray': nameArray, 'bHbondCalc': bHbondCalc}
         }
 
-        setQueryresi2score(strArray) { var ic = this.icn3d;
+        setQueryresi2score(strArray) { var ic = this.icn3d; ic.icn3dui;
             var chainid = strArray[1];
             var start_end = strArray[2].split(' ')[1].split('_');
             var resiScoreStr = strArray[3]; // score 0-9
@@ -30588,7 +30593,7 @@ var icn3d = (function (exports) {
             }
         }
 
-        getMenuFromCmd(cmd) { this.icn3d;
+        getMenuFromCmd(cmd) { var ic = this.icn3d; ic.icn3dui;
             cmd = cmd.trim();
 
             var seqAnnoStr = 'Windows > View Sequences & Annotations';
@@ -33150,7 +33155,7 @@ var icn3d = (function (exports) {
                 return ic.deferredOpm.promise();
             }
             else {
-                alert('invalid atoms data.');
+                //alert('invalid atoms data.');
                 return false;
             }
         }
@@ -40120,7 +40125,7 @@ var icn3d = (function (exports) {
             this.icn3d = icn3d;
         }
 
-        onBeforeRender(renderer, scene, camera, geometry, material) {
+        onBeforeRender(renderer, scene, camera, geometry, material, group) {
           var u = material.uniforms;
           var updateList = [];
 
@@ -40766,7 +40771,8 @@ var icn3d = (function (exports) {
         drawSymmetryMates() {  var ic = this.icn3d; ic.icn3dui;
             if(ic.icn3dui.bNode) return;
 
-            if(ic.bInstanced && Object.keys(ic.atoms).length * ic.biomtMatrices.length > ic.maxatomcnt) {
+    //        if(ic.bInstanced && Object.keys(ic.atoms).length * ic.biomtMatrices.length > ic.maxatomcnt) {
+            if(ic.bInstanced) {
                 this.drawSymmetryMatesInstancing();
             }
             else {
@@ -40876,6 +40882,7 @@ var icn3d = (function (exports) {
               }
 
               if(ic.mdlImpostor !== undefined) {
+                  // after three.js version 128, the cylinder impostor seemed to have a problem in cloning!!!
                   symmetryMate = ic.mdlImpostor.clone();
                   //symmetryMate.applyMatrix(mat);
                   this.applyMat(symmetryMate, mat);
@@ -40883,8 +40890,10 @@ var icn3d = (function (exports) {
                   //symmetryMate.onBeforeRender = ic.impostorCls.onBeforeRender;
                   for(var j = symmetryMate.children.length - 1; j >= 0; j--) {
                        var mesh = symmetryMate.children[j];
-    //                   mesh.onBeforeRender = ic.impostorCls.onBeforeRender;
-                       mesh.onBeforeRender = this.onBeforeRender;
+                       mesh.onBeforeRender = ic.impostorCls.onBeforeRender;
+                       //mesh.onBeforeRender = this.onBeforeRender;
+
+                       mesh.frustumCulled = false;
                   }
 
                   mdlImpostorTmp.add(symmetryMate);
@@ -40939,13 +40948,14 @@ var icn3d = (function (exports) {
            ic.bSetInstancing = true;
         }
 
+    /*
         onBeforeRender(renderer, scene, camera, geometry, material) {
           var u = material.uniforms;
           var updateList = [];
 
           if (u.objectId) {
-            u.objectId.value = SupportsReadPixelsFloat ? this.id : this.id / 255;
-            updateList.push('objectId');
+            u.objectId.value = SupportsReadPixelsFloat ? this.id : this.id / 255
+            updateList.push('objectId')
           }
 
           if (u.modelViewMatrixInverse || u.modelViewMatrixInverseTranspose ||
@@ -41031,11 +41041,12 @@ var icn3d = (function (exports) {
               var pu = p.getUniforms();
 
               updateList.forEach(function (name) {
-                pu.setValue(gl, name, u[ name ].value);
+                pu.setValue(gl, name, u[ name ].value)
               });
             }
           }
         }
+    */
 
         createInstancedGeometry(mesh) {  var ic = this.icn3d, me = ic.icn3dui;
            var baseGeometry = mesh.geometry;
@@ -41215,10 +41226,14 @@ var icn3d = (function (exports) {
                var mesh2 = new THREE.Mesh(geometry, ic.instancedMaterial);
 
                mesh2.onBeforeRender = ic.impostorCls.onBeforeRender;
+               //mesh2.onBeforeRender = this.onBeforeRender;
 
                // important: https://stackoverflow.com/questions/21184061/mesh-suddenly-disappears-in-three-js-clipping
                // You are moving the camera in the CPU. You are moving the vertices of the plane in the GPU
                mesh2.frustumCulled = false;
+
+               mesh2.scale.x = mesh2.scale.y = mesh2.scale.z = 1.0;
+               mesh2.type = mesh.type;
 
                geometry = null;
 
@@ -44073,7 +44088,7 @@ var icn3d = (function (exports) {
             });
 
             me.myEventCls.onIds(["#" + me.pre + "mn6_contactmap"], "click", function(e) { me.icn3d;
-                me.htmlCls.dialogCls.openDlg('dl_contact', 'Show contact map');
+                me.htmlCls.dialogCls.openDlg('dl_contact', 'Set contact map');
             });
 
         //    },
@@ -46504,10 +46519,11 @@ var icn3d = (function (exports) {
             html += me.htmlCls.divStr + "dl_urlfile' class='" + dialogClass + "'>";
             html += "File type: ";
             html += "<select id='" + me.pre + "filetype'>";
-            html += me.htmlCls.optionStr + "'pdb' selected>pdb</option>";
-            html += me.htmlCls.optionStr + "'mol2'>mol2</option>";
-            html += me.htmlCls.optionStr + "'sdf'>sdf</option>";
-            html += me.htmlCls.optionStr + "'xyz'>xyz</option>";
+            html += me.htmlCls.optionStr + "'pdb' selected>PDB</option>";
+            html += me.htmlCls.optionStr + "'mol2'>Mol2</option>";
+            html += me.htmlCls.optionStr + "'sdf'>SDF</option>";
+            html += me.htmlCls.optionStr + "'xyz'>XYZ</option>";
+            html += me.htmlCls.optionStr + "'icn3dpng'>iCn3D PNG</option>";
             html += "</select><br/>";
             html += "URL in the same host: " + me.htmlCls.inputTextStr + "id='" + me.pre + "urlfile' size=20><br/> ";
             html += me.htmlCls.buttonStr + "reload_urlfile'>Load</button>";
@@ -49859,6 +49875,8 @@ var icn3d = (function (exports) {
                  var reader = new FileReader();
                  reader.onload = function(e) {
                    var imageStr = e.target.result; // or = reader.result;
+                   thisClass.loadPng(imageStr);
+    /*
                    var matchedStr = 'Share Link: ';
                    var pos = imageStr.indexOf(matchedStr);
                    var matchedStrState = "Start of state file======\n";
@@ -49929,10 +49947,84 @@ var icn3d = (function (exports) {
                        }
                        me.htmlCls.clickMenuCls.setLogCmd('load iCn3D PNG image ' + $("#" + me.pre + "pngimage").val(), false);
                    }
+    */
                  };
                  reader.readAsText(file);
                }
             });
+        }
+
+        loadPng(imageStr) { var me = this.icn3dui, ic = me.icn3d;
+           var matchedStr = 'Share Link: ';
+           var pos = imageStr.indexOf(matchedStr);
+           var matchedStrState = "Start of state file======\n";
+           var posState = imageStr.indexOf(matchedStrState);
+           if(pos == -1 && posState == -1) {
+               alert('Please load a PNG image saved by clicking "Save Datas > PNG Image" in the Data menu...');
+           }
+           else if(pos != -1) {
+               var url = imageStr.substr(pos + matchedStr.length);
+               me.htmlCls.clickMenuCls.setLogCmd('load iCn3D PNG image ' + $("#" + me.pre + "pngimage").val(), false);
+               window.open(url);
+           }
+           else if(posState != -1) {
+               var matchedStrData = "Start of data file======\n";
+               var posData = imageStr.indexOf(matchedStrData);
+               ic.bInputfile =(posData == -1) ? false : true;
+               if(ic.bInputfile) {
+                   var posDataEnd = imageStr.indexOf("End of data file======\n");
+                   var data = imageStr.substr(posData + matchedStrData.length, posDataEnd - posData - matchedStrData.length);
+                   ic.InputfileData = data;
+
+                   var matchedStrType = "Start of type file======\n";
+                   var posType = imageStr.indexOf(matchedStrType);
+                   var posTypeEnd = imageStr.indexOf("End of type file======\n");
+                   var type = imageStr.substr(posType + matchedStrType.length, posTypeEnd - posType - matchedStrType.length - 1); // remove the new line char
+                   ic.InputfileType = type;
+
+                   //var matchedStrState = "Start of state file======\n";
+                   //var posState = imageStr.indexOf(matchedStrState);
+                   var posStateEnd = imageStr.indexOf("End of state file======\n");
+                   var statefile = imageStr.substr(posState + matchedStrState.length, posStateEnd - posState- matchedStrState.length);
+                   statefile = decodeURIComponent(statefile);
+                    if(type === 'pdb') {
+                        $.when( ic.pdbParserCls.loadPdbData(data))
+                         .then(function() {
+                             ic.commands = [];
+                             ic.optsHistory = [];
+                             ic.loadScriptCls.loadScript(statefile, true);
+                         });
+                    }
+                    else {
+                        if(type === 'mol2') {
+                            ic.mol2ParserCls.loadMol2Data(data);
+                        }
+                        else if(type === 'sdf') {
+                            ic.sdfParserCls.loadSdfData(data);
+                        }
+                        else if(type === 'xyz') {
+                            ic.xyzParserCls.loadXyzData(data);
+                        }
+                        else if(type === 'mmcif') {
+                            ic.mmcifParserCls.loadMmcifData(data);
+                        }
+                       ic.commands = [];
+                       ic.optsHistory = [];
+                       ic.loadScriptCls.loadScript(statefile, true);
+                   }
+               }
+               else { // url length > 4000
+                   //var matchedStrState = "Start of state file======\n";
+                   //var posState = imageStr.indexOf(matchedStrState);
+                   var posStateEnd = imageStr.indexOf("End of state file======\n");
+                   var statefile = imageStr.substr(posState + matchedStrState.length, posStateEnd - posState- matchedStrState.length);
+                   statefile = decodeURIComponent(statefile);
+                   ic.commands = [];
+                   ic.optsHistory = [];
+                   ic.loadScriptCls.loadScript(statefile, true);
+               }
+               me.htmlCls.clickMenuCls.setLogCmd('load iCn3D PNG image ' + $("#" + me.pre + "pngimage").val(), false);
+           }
         }
 
         fileSupport() {
@@ -52938,7 +53030,7 @@ var icn3d = (function (exports) {
         //even when multiple iCn3D viewers are shown together.
         this.pre = this.cfg.divid + "_";
 
-        this.REVISION = '3.3.0';
+        this.REVISION = '3.3.1';
 
         // In nodejs, iCn3D defines "window = {navigator: {}}"
         this.bNode = (Object.keys(window).length < 2) ? true : false;
