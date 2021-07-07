@@ -179,7 +179,8 @@ class ResizeCanvas {
 
     closeDialogs() {var ic = this.icn3d, me = ic.icn3dui;
         var itemArray = ['dl_selectannotations', 'dl_alignment', 'dl_2ddgm', 'dl_definedsets', 'dl_graph',
-            'dl_linegraph', 'dl_scatterplot', 'dl_allinteraction', 'dl_copyurl'];
+            'dl_linegraph', 'dl_scatterplot', 'dl_contactmap', 'dl_allinteraction', 'dl_copyurl',
+            'dl_symmetry', 'dl_symd'];
         for(var i in itemArray) {
             var item = itemArray[i];
             if(!ic.icn3dui.cfg.notebook) {

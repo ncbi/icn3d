@@ -646,6 +646,8 @@ class SetHtml {
              var reader = new FileReader();
              reader.onload = function(e) {
                var imageStr = e.target.result; // or = reader.result;
+               thisClass.loadPng(imageStr);
+/*
                var matchedStr = 'Share Link: ';
                var pos = imageStr.indexOf(matchedStr);
                var matchedStrState = "Start of state file======\n";
@@ -716,10 +718,84 @@ class SetHtml {
                    }
                    me.htmlCls.clickMenuCls.setLogCmd('load iCn3D PNG image ' + $("#" + me.pre + "pngimage").val(), false);
                }
+*/
              }
              reader.readAsText(file);
            }
         });
+    }
+
+    loadPng(imageStr) { var me = this.icn3dui, ic = me.icn3d;
+       var matchedStr = 'Share Link: ';
+       var pos = imageStr.indexOf(matchedStr);
+       var matchedStrState = "Start of state file======\n";
+       var posState = imageStr.indexOf(matchedStrState);
+       if(pos == -1 && posState == -1) {
+           alert('Please load a PNG image saved by clicking "Save Datas > PNG Image" in the Data menu...');
+       }
+       else if(pos != -1) {
+           var url = imageStr.substr(pos + matchedStr.length);
+           me.htmlCls.clickMenuCls.setLogCmd('load iCn3D PNG image ' + $("#" + me.pre + "pngimage").val(), false);
+           window.open(url);
+       }
+       else if(posState != -1) {
+           var matchedStrData = "Start of data file======\n";
+           var posData = imageStr.indexOf(matchedStrData);
+           ic.bInputfile =(posData == -1) ? false : true;
+           if(ic.bInputfile) {
+               var posDataEnd = imageStr.indexOf("End of data file======\n");
+               var data = imageStr.substr(posData + matchedStrData.length, posDataEnd - posData - matchedStrData.length);
+               ic.InputfileData = data;
+
+               var matchedStrType = "Start of type file======\n";
+               var posType = imageStr.indexOf(matchedStrType);
+               var posTypeEnd = imageStr.indexOf("End of type file======\n");
+               var type = imageStr.substr(posType + matchedStrType.length, posTypeEnd - posType - matchedStrType.length - 1); // remove the new line char
+               ic.InputfileType = type;
+
+               //var matchedStrState = "Start of state file======\n";
+               //var posState = imageStr.indexOf(matchedStrState);
+               var posStateEnd = imageStr.indexOf("End of state file======\n");
+               var statefile = imageStr.substr(posState + matchedStrState.length, posStateEnd - posState- matchedStrState.length);
+               statefile = decodeURIComponent(statefile);
+                if(type === 'pdb') {
+                    $.when( ic.pdbParserCls.loadPdbData(data))
+                     .then(function() {
+                         ic.commands = [];
+                         ic.optsHistory = [];
+                         ic.loadScriptCls.loadScript(statefile, true);
+                     });
+                }
+                else {
+                    if(type === 'mol2') {
+                        ic.mol2ParserCls.loadMol2Data(data);
+                    }
+                    else if(type === 'sdf') {
+                        ic.sdfParserCls.loadSdfData(data);
+                    }
+                    else if(type === 'xyz') {
+                        ic.xyzParserCls.loadXyzData(data);
+                    }
+                    else if(type === 'mmcif') {
+                        ic.mmcifParserCls.loadMmcifData(data);
+                    }
+                   ic.commands = [];
+                   ic.optsHistory = [];
+                   ic.loadScriptCls.loadScript(statefile, true);
+               }
+           }
+           else { // url length > 4000
+               //var matchedStrState = "Start of state file======\n";
+               //var posState = imageStr.indexOf(matchedStrState);
+               var posStateEnd = imageStr.indexOf("End of state file======\n");
+               var statefile = imageStr.substr(posState + matchedStrState.length, posStateEnd - posState- matchedStrState.length);
+               statefile = decodeURIComponent(statefile);
+               ic.commands = [];
+               ic.optsHistory = [];
+               ic.loadScriptCls.loadScript(statefile, true);
+           }
+           me.htmlCls.clickMenuCls.setLogCmd('load iCn3D PNG image ' + $("#" + me.pre + "pngimage").val(), false);
+       }
     }
 
     fileSupport() {

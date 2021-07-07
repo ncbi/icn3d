@@ -11,7 +11,7 @@ class Impostor {
         this.icn3d = icn3d;
     }
 
-    onBeforeRender(renderer, scene, camera, geometry, material) {
+    onBeforeRender(renderer, scene, camera, geometry, material, group) {
       var u = material.uniforms;
       var updateList = [];
 

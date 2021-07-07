@@ -382,7 +382,7 @@ class MmcifParser {
             return ic.deferredOpm.promise();
         }
         else {
-            alert('invalid atoms data.');
+            //alert('invalid atoms data.');
             return false;
         }
     }
