@@ -57,7 +57,6 @@ class PiHalogen {
             ic.processedRes = {}
             for (var i in startAtoms) {
               var atom = startAtoms[i];
-
               atoms1a = me.hashUtilsCls.unionHash(atoms1a, this.getPi(atom, true));
             }
 
@@ -204,6 +203,7 @@ class PiHalogen {
 
           if(bAromatic) {
               if(!ic.processedRes.hasOwnProperty(chain_resi)) {
+
                   if(atom.het) { // get aromatic for ligands
                       var currName2atom = this.getAromaticPisLigand(chain_resi);
                       name2atom = me.hashUtilsCls.unionHash(name2atom, currName2atom);
@@ -426,7 +426,7 @@ class PiHalogen {
             else if(resn.toUpperCase() == 'TRP') {
                 for(var i in ic.residues[resid]) {
                     var atom = ic.atoms[i];
-                    if(atom.name == 'CE2' || atom.name == 'CH2' || atom.name == 'CZ3' || atom.name == 'CE3') {
+                    if(atom.name == 'CZ2' || atom.name == 'CH2' || atom.name == 'CZ3' || atom.name == 'CE3') {
                         pos1.add(atom.coord);
                         coordArray1.push(atom.coord);
                     }
@@ -566,7 +566,8 @@ class PiHalogen {
                 var normal = v1.cross(v2).normalize();
                 var bPlane = normal.dot(v3);
 
-                if(Math.abs(bPlane) < 0.017) { // same plane, 89-90 degree
+                //if(Math.abs(bPlane) < 0.017) { // same plane, 89-90 degree
+                if(Math.abs(bPlane) < 0.052) { // same plane, 87-90 degree
                     coord.multiplyScalar(1.0 / cnt);
 
                     var atom = ic.atoms[serial];
