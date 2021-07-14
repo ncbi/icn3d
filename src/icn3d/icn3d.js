@@ -427,6 +427,14 @@ class iCn3D {
     //it is true so that the coordinates of the structure will not be loaded again.
     this.bNotLoadStructure = false;
 
+    // default color range for Add Custom Color button in the Sequence & Annotation window
+    this.startColor = 'blue';
+    this.midColor = 'white';
+    this.endColor = 'red';
+    this.startValue = 0;
+    this.midValue = 50;
+    this.endValue = 100;
+
     // classes
     this.sceneCls = new Scene(this);
     this.cameraCls = new Camera(this);

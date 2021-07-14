@@ -99,12 +99,27 @@ class SetDialog {
         html += me.htmlCls.divStr + "dl_customcolor' class='" + dialogClass + "'>";
         html += " <input type='hidden' id='" + me.pre + "customcolor_chainid' value=''>";
         html += '<div style="width:450px;">The custom file for the structure has two columns separated by space or tab: ';
-        html += 'residue number, and score in the range of 0-100. If you click "Custom Color" button, ';
-        html += 'scores 0 and 100 mean blue and red, respectively. If you click "Custom Tube", ';
+        html += 'residue number, and score in the range of 0-100. If you click "Apply Custom Color" button, ';
+        html += 'the scores 0, 50 and 100 correspond to the three colors specified below. If you click "Apply Custom Tube", ';
         html += 'the selected residues will be displayed in a style similar to "B-factor Tube".</div><br>';
-        html += "Custom File: " + me.htmlCls.inputFileStr + "id='" + me.pre + "cstcolorfile' size=8> ";
-        html += me.htmlCls.buttonStr + "reload_customcolorfile' style='margin-left:15px'>Custom Color</button>";
-        html += me.htmlCls.buttonStr + "reload_customtubefile' style='margin-left:15px'>Custom Tube</button>";
+        html += "Custom File: " + me.htmlCls.inputFileStr + "id='" + me.pre + "cstcolorfile' size=8> <br><br>";
+        html += "1. " + me.htmlCls.buttonStr + "reload_customcolorfile'>Apply Custom Color</button>" + me.htmlCls.buttonStr + "remove_legend' style='margin-left:30px;'>Remove Legend</button><br>";
+        html += "<span style='margin-left:15px'>Score to Color: 0:</span> <select id='" + me.pre + "startColor'>";
+        html += me.htmlCls.optionStr + "'red'>Red</option>";
+        html += me.htmlCls.optionStr + "'green'>Green</option>";
+        html += me.htmlCls.optionStr + "'blue' selected>Blue</option>";
+        html += "</select>";
+        html += "<span style='margin-left:30px'>50</span>: <select id='" + me.pre + "midColor'>";
+        html += me.htmlCls.optionStr + "'white' selected>White</option>";
+        html += me.htmlCls.optionStr + "'black'>Black</option>";
+        html += "</select>";
+        html += "<span style='margin-left:30px'>100</span>: <select id='" + me.pre + "endColor'>";
+        html += me.htmlCls.optionStr + "'red' selected>Red</option>";
+        html += me.htmlCls.optionStr + "'green'>Green</option>";
+        html += me.htmlCls.optionStr + "'blue'>Blue</option>";
+        html += "</select><br>";
+        html += "or<br><br>";
+        html += "2. " + me.htmlCls.buttonStr + "reload_customtubefile'>Apply Custom Tube</button>";
 
         html += "</div>";
 

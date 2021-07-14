@@ -1109,7 +1109,7 @@ class ApplyCommand {
                 ic.queryresi2score[chainid][resi_score[0]] = resi_score[1];
             }
         }
-        else if(color == "align custom" && strArray.length == 4) {
+        else if(color == "align custom" && strArray.length >= 4) {
             // me.htmlCls.clickMenuCls.setLogCmd('color align custom | ' + chainid + ' | range ' + start + '_' + end + ' | ' + resiScoreStr, true);
             this.setQueryresi2score(strArray);
         }
@@ -1124,6 +1124,9 @@ class ApplyCommand {
 
         // change graph color
         ic.getGraphCls.updateGraphColor();
+      }
+      else if(commandOri.indexOf('remove legend') == 0) {
+        $("#" + me.pre + "legend").hide();
       }
       else if(commandOri.indexOf('custom tube') == 0) {
         var strArray = commandOri.split(" | ");
@@ -1339,6 +1342,17 @@ class ApplyCommand {
             if(resiScoreStr[i] != '_') {
                 ic.queryresi2score[chainid][resi] = parseInt(resiScoreStr[i]) * factor; // convert from 0-9 to 0-100
             }
+        }
+
+        // color range
+        if(strArray.length > 4) {
+            var colorArray = strArray[4].split(' ');
+            ic.startColor = colorArray[1];
+            ic.midColor = colorArray[2];
+            ic.endColor = colorArray[3];
+
+            var legendHtml = me.htmlCls.clickMenuCls.setLegendHtml();
+            $("#" + me.pre + "legend").html(legendHtml).show();
         }
     }
 

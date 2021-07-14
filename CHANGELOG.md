@@ -1,4 +1,6 @@
 ## Change Log
+[icn3d-3.3.2](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.3.2.zip) was release on July 14, 2021. Now users can choose the color gradient and show the color legend for the "Custom Color" button in the Sequences & Annotations window.
+
 [icn3d-3.3.1](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.3.1.zip) was release on July 7, 2021. Enabled to use as an input a URL containing a saved iCn3D PNG image in the menu "File > Open File > URL (Same Host)". Fixed a bug in displaying an assembly with multiple copies of a structure.
 
 [icn3d-3.3.0](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.3.0.zip) was release on June 30, 2021. Added the feature to show contact map for any selected residues in the menu "Analysis > Contact Map".
