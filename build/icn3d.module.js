@@ -18521,21 +18521,41 @@ class SetColor {
                     //if(ic.target2queryHash.hasOwnProperty(resi) && ic.target2queryHash[resi] !== -1) { // -1 means gap
                         //var queryresi = ic.target2queryHash[resi] + 1;
                         //var queryresi = ic.atoms[serial].resi;
-                        var queryresi = ic.atoms[serial].resi;
+                    var queryresi = ic.atoms[serial].resi;
 
-                        if(ic.queryresi2score[chainid].hasOwnProperty(queryresi)) {
-                            var b = ic.queryresi2score[chainid][queryresi];
+                    if(ic.queryresi2score[chainid].hasOwnProperty(queryresi)) {
+                        var b = ic.queryresi2score[chainid][queryresi];
 
-                            if(b > 100) b = 100;
+                        if(b > 100) b = 100;
 
-                            var s1 = (ic.middB - b) * ic.spanBinv1;
-                            var s2 = (b - ic.middB) * ic.spanBinv2;
-
-                            color = b < ic.middB ? me.parasCls.thr().setRGB(1 - s1, 1 - s1, 1) : me.parasCls.thr().setRGB(1, 1 - s2, 1 - s2);
+                        var s1 = (ic.middB - b) * ic.spanBinv1;
+                        var s2 = (b - ic.middB) * ic.spanBinv2;
+                        if(b < ic.middB) {
+                            if(ic.startColor == 'blue') {
+                                color = (ic.midColor == 'white') ? me.parasCls.thr().setRGB(1 - s1, 1 - s1, 1) : me.parasCls.thr().setRGB(0, 0, s1);
+                            }
+                            else if(ic.startColor == 'red') {
+                                color = (ic.midColor == 'white') ? me.parasCls.thr().setRGB(1, 1 - s1, 1 - s1) : me.parasCls.thr().setRGB(s1, 0, 0);
+                            }
+                            else if(ic.startColor == 'green') {
+                                color = (ic.midColor == 'white') ? me.parasCls.thr().setRGB(1 - s1, 1, 1 - s1) : me.parasCls.thr().setRGB(0, s1, 0);
+                            }
                         }
                         else {
-                            color = me.parasCls.defaultAtomColor;
+                            if(ic.endColor == 'red') {
+                                color = (ic.midColor == 'white') ? me.parasCls.thr().setRGB(1, 1 - s2, 1 - s2) : me.parasCls.thr().setRGB(s2, 0, 0);
+                            }
+                            else if(ic.endColor == 'green') {
+                                color = (ic.midColor == 'white') ? me.parasCls.thr().setRGB(1 - s2, 1, 1 - s2) : me.parasCls.thr().setRGB(0, s2, 0);
+                            }
+                            else if(ic.endColor == 'blue') {
+                                color = (ic.midColor == 'white') ? me.parasCls.thr().setRGB(1 - s2, 1 - s2, 1) : me.parasCls.thr().setRGB(0, 0, s2);
+                            }
                         }
+                    }
+                    else {
+                        color = me.parasCls.defaultAtomColor;
+                    }
                     //}
                     //else {
                     //    color = me.parasCls.defaultAtomColor;
@@ -28326,7 +28346,7 @@ class AddTrack {
         return {"text": out, "fromArray": fromArray, "toArray": toArray}
     }
 
-    setCustomFile(type) {var ic = this.icn3d, me = ic.icn3dui;
+    setCustomFile(type, startColor, midColor, endColor) {var ic = this.icn3d, me = ic.icn3dui;
        var thisClass = this;
 
        var chainid = $("#" + ic.pre + "customcolor_chainid").val();
@@ -28361,11 +28381,17 @@ class AddTrack {
                     resiScoreStr += '_';
                 }
             }
+
             if(type == 'color') {
                 ic.opts['color'] = 'align custom';
+
                 ic.setColorCls.setColorByOptions(ic.opts, ic.hAtoms);
                 ic.hlUpdateCls.updateHlAll();
-                ic.icn3dui.htmlCls.clickMenuCls.setLogCmd('color align custom | ' + chainid + ' | range ' + start + '_' + end + ' | ' + resiScoreStr, true);
+                ic.icn3dui.htmlCls.clickMenuCls.setLogCmd('color align custom | ' + chainid + ' | range ' + start + '_' + end + ' | ' + resiScoreStr + ' | colorrange ' + startColor + ' ' + midColor + ' ' + endColor, true);
+
+                var legendHtml = me.htmlCls.clickMenuCls.setLegendHtml();
+
+                $("#" + me.pre + "legend").html(legendHtml);
             }
             else if(type == 'tube') {
                 ic.setOptionCls.setStyle('proteins', 'custom tube');
@@ -28411,12 +28437,35 @@ class Analysis {
            ic.hAtoms = me.hashUtilsCls.cloneHash(atomSet2);
            ic.applyMapCls.applySurfaceOptions();
            var area2 = ic.areavalue;
+           var resid2area2 = me.hashUtilsCls.cloneHash(ic.resid2area);
            ic.hAtoms = me.hashUtilsCls.cloneHash(atomSet1);
            ic.applyMapCls.applySurfaceOptions();
            var area1 = ic.areavalue;
+           var resid2area1 = me.hashUtilsCls.cloneHash(ic.resid2area);
+
            ic.hAtoms = me.hashUtilsCls.unionHash(ic.hAtoms, atomSet2);
            ic.applyMapCls.applySurfaceOptions();
            var areaTotal = ic.areavalue;
+           var resid2areaTotal = me.hashUtilsCls.cloneHash(ic.resid2area);
+
+           var buriedArea1 = 0, buriedArea2 = 0;
+           var areaSum1 = 0, areaSum2 = 0;
+           // set 1 buried
+           for(var resid in resid2area2) {
+               if(resid2areaTotal.hasOwnProperty(resid)) {
+                   areaSum2 += parseFloat(resid2areaTotal[resid]);
+               }
+           }
+           buriedArea2 = (area2 - areaSum2).toFixed(2);
+
+           // set 2 buried
+           for(var resid in resid2area1) {
+               if(resid2areaTotal.hasOwnProperty(resid)) {
+                   areaSum1 += parseFloat(resid2areaTotal[resid]);
+               }
+           }
+           buriedArea1 = (area1 - areaSum1).toFixed(2);
+
            ic.bCalcArea = false;
            ic.hAtoms = me.hashUtilsCls.cloneHash(prevHAtoms);
            var buriedArea =(parseFloat(area1) + parseFloat(area2) - parseFloat(areaTotal)).toFixed(2);
@@ -28424,7 +28473,9 @@ class Analysis {
            html += 'Set 1: ' + nameArray2 + ', Surface: ' +  area2 + ' &#8491;<sup>2</sup><br>';
            html += 'Set 2: ' + nameArray + ', Surface: ' +  area1 + ' &#8491;<sup>2</sup><br>';
            html += 'Total Surface: ' +  areaTotal + ' &#8491;<sup>2</sup><br>';
-           html += '<b>Buried Surface</b>: ' +  buriedArea + ' &#8491;<sup>2</sup><br><br>';
+           //html += '<b>Buried Surface for both Sets</b>: ' +  buriedArea + ' &#8491;<sup>2</sup><br>';
+           html += '<b>Buried Surface for Set 1</b>: ' +  buriedArea2 + ' &#8491;<sup>2</sup><br>';
+           html += '<b>Buried Surface for Set 2</b>: ' +  buriedArea1 + ' &#8491;<sup>2</sup><br><br>';
            $("#" + ic.pre + "dl_buriedarea").html(html);
            ic.icn3dui.htmlCls.dialogCls.openDlg('dl_buriedarea', 'Buried solvent accessible surface area in the interface');
            ic.icn3dui.htmlCls.clickMenuCls.setLogCmd('buried surface ' + buriedArea, false);
@@ -30358,7 +30409,7 @@ class ApplyCommand {
                 ic.queryresi2score[chainid][resi_score[0]] = resi_score[1];
             }
         }
-        else if(color == "align custom" && strArray.length == 4) {
+        else if(color == "align custom" && strArray.length >= 4) {
             // me.htmlCls.clickMenuCls.setLogCmd('color align custom | ' + chainid + ' | range ' + start + '_' + end + ' | ' + resiScoreStr, true);
             this.setQueryresi2score(strArray);
         }
@@ -30373,6 +30424,9 @@ class ApplyCommand {
 
         // change graph color
         ic.getGraphCls.updateGraphColor();
+      }
+      else if(commandOri.indexOf('remove legend') == 0) {
+        $("#" + me.pre + "legend").hide();
       }
       else if(commandOri.indexOf('custom tube') == 0) {
         var strArray = commandOri.split(" | ");
@@ -30576,7 +30630,7 @@ class ApplyCommand {
         return {'threshold': threshold, 'nameArray2': nameArray2, 'nameArray': nameArray, 'bHbondCalc': bHbondCalc}
     }
 
-    setQueryresi2score(strArray) { var ic = this.icn3d; ic.icn3dui;
+    setQueryresi2score(strArray) { var ic = this.icn3d, me = ic.icn3dui;
         var chainid = strArray[1];
         var start_end = strArray[2].split(' ')[1].split('_');
         var resiScoreStr = strArray[3]; // score 0-9
@@ -30588,6 +30642,17 @@ class ApplyCommand {
             if(resiScoreStr[i] != '_') {
                 ic.queryresi2score[chainid][resi] = parseInt(resiScoreStr[i]) * factor; // convert from 0-9 to 0-100
             }
+        }
+
+        // color range
+        if(strArray.length > 4) {
+            var colorArray = strArray[4].split(' ');
+            ic.startColor = colorArray[1];
+            ic.midColor = colorArray[2];
+            ic.endColor = colorArray[3];
+
+            var legendHtml = me.htmlCls.clickMenuCls.setLegendHtml();
+            $("#" + me.pre + "legend").html(legendHtml).show();
         }
     }
 
@@ -42320,6 +42385,17 @@ class ClickMenu {
         this.icn3dui = icn3dui;
     }
 
+    setLegendHtml() { var me = this.icn3dui, ic = me.icn3d;
+        var startColorStr = (ic.startColor == 'red') ? '#F00' : (ic.startColor == 'green') ? '#0F0' : '#00F';
+        var midColorStr = (ic.midColor == 'white') ? '#FFF' : '#000';
+        var endColorStr = (ic.endColor == 'red') ? '#F00' : (ic.endColor == 'green') ? '#0F0' : '#00F';
+        var rangeStr = startColorStr + ' 0%, ' + midColorStr + ' 50%, ' + endColorStr + ' 100%';
+
+        var legendHtml = "<div style='height: 20px; background: linear-gradient(to right, " + rangeStr + ");'></div><table width='100%' border='0' cellspacing='0' cellpadding='0'><tr><td width='33%'>" + ic.startValue + "</td><td width='33%' align='center'>" + ic.midValue + "</td><td width='33%' align='right'>" + ic.endValue + "</td></tr></table>";
+
+        return legendHtml;
+    }
+
     clickMenu1() { var me = this.icn3dui; me.icn3d;
         if(me.bNode) return;
 
@@ -43328,7 +43404,20 @@ class ClickMenu {
         me.myEventCls.onIds("#" + me.pre + "reload_customcolorfile", "click", function(e) { var ic = me.icn3d;
            e.preventDefault();
            if(!me.cfg.notebook) dialog.dialog( "close" );
-           ic.addTrackCls.setCustomFile('color');
+           ic.startColor = $("#" + me.pre + "startColor").val();
+           ic.midColor = $("#" + me.pre + "midColor").val();
+           ic.endColor = $("#" + me.pre + "endColor").val();
+
+           var legendHtml = thisClass.setLegendHtml();
+           $("#" + me.pre + "legend").html(legendHtml).show();
+
+           ic.addTrackCls.setCustomFile('color', ic.startColor, ic.midColor, ic.endColor);
+        });
+        me.myEventCls.onIds("#" + me.pre + "remove_legend", "click", function(e) { me.icn3d;
+           e.preventDefault();
+           $("#" + me.pre + "legend").hide();
+
+           thisClass.setLogCmd('remove legend', true);
         });
         me.myEventCls.onIds("#" + me.pre + "reload_customtubefile", "click", function(e) { var ic = me.icn3d;
            e.preventDefault();
@@ -44310,6 +44399,9 @@ class SetMenu {
         html += me.htmlCls.divStr + "title' class='icn3d-commandTitle' style='font-size:1.2em; font-weight:normal; position:absolute; z-index:1; float:left; display:table-row; margin: 85px 0px 0px 5px; color:" + me.htmlCls.GREYD + "; width:" + me.htmlCls.WIDTH + "px'></div>";
 
         html += me.htmlCls.divStr + "viewer' style='position:relative; width:100%; height:100%; background-color: " + me.htmlCls.GREYD + ";'>";
+
+        html += me.htmlCls.divStr + "legend' class='icn3d-text icn3d-legend'></div>";
+
         html += me.htmlCls.divStr + "mnLogSection'>";
         html += "<div style='height: " + me.htmlCls.MENU_HEIGHT + "px;'></div>";
     //        html += "<div style='height: " + me.htmlCls.MENU_HEIGHT + "px;'></div>";
@@ -46462,12 +46554,27 @@ class SetDialog {
         html += me.htmlCls.divStr + "dl_customcolor' class='" + dialogClass + "'>";
         html += " <input type='hidden' id='" + me.pre + "customcolor_chainid' value=''>";
         html += '<div style="width:450px;">The custom file for the structure has two columns separated by space or tab: ';
-        html += 'residue number, and score in the range of 0-100. If you click "Custom Color" button, ';
-        html += 'scores 0 and 100 mean blue and red, respectively. If you click "Custom Tube", ';
+        html += 'residue number, and score in the range of 0-100. If you click "Apply Custom Color" button, ';
+        html += 'the scores 0, 50 and 100 correspond to the three colors specified below. If you click "Apply Custom Tube", ';
         html += 'the selected residues will be displayed in a style similar to "B-factor Tube".</div><br>';
-        html += "Custom File: " + me.htmlCls.inputFileStr + "id='" + me.pre + "cstcolorfile' size=8> ";
-        html += me.htmlCls.buttonStr + "reload_customcolorfile' style='margin-left:15px'>Custom Color</button>";
-        html += me.htmlCls.buttonStr + "reload_customtubefile' style='margin-left:15px'>Custom Tube</button>";
+        html += "Custom File: " + me.htmlCls.inputFileStr + "id='" + me.pre + "cstcolorfile' size=8> <br><br>";
+        html += "1. " + me.htmlCls.buttonStr + "reload_customcolorfile'>Apply Custom Color</button>" + me.htmlCls.buttonStr + "remove_legend' style='margin-left:30px;'>Remove Legend</button><br>";
+        html += "<span style='margin-left:15px'>Score to Color: 0:</span> <select id='" + me.pre + "startColor'>";
+        html += me.htmlCls.optionStr + "'red'>Red</option>";
+        html += me.htmlCls.optionStr + "'green'>Green</option>";
+        html += me.htmlCls.optionStr + "'blue' selected>Blue</option>";
+        html += "</select>";
+        html += "<span style='margin-left:30px'>50</span>: <select id='" + me.pre + "midColor'>";
+        html += me.htmlCls.optionStr + "'white' selected>White</option>";
+        html += me.htmlCls.optionStr + "'black'>Black</option>";
+        html += "</select>";
+        html += "<span style='margin-left:30px'>100</span>: <select id='" + me.pre + "endColor'>";
+        html += me.htmlCls.optionStr + "'red' selected>Red</option>";
+        html += me.htmlCls.optionStr + "'green'>Green</option>";
+        html += me.htmlCls.optionStr + "'blue'>Blue</option>";
+        html += "</select><br>";
+        html += "or<br><br>";
+        html += "2. " + me.htmlCls.buttonStr + "reload_customtubefile'>Apply Custom Tube</button>";
 
         html += "</div>";
 
@@ -52725,6 +52832,14 @@ class iCn3D {
     //it is true so that the coordinates of the structure will not be loaded again.
     this.bNotLoadStructure = false;
 
+    // default color range for Add Custom Color button in the Sequence & Annotation window
+    this.startColor = 'blue';
+    this.midColor = 'white';
+    this.endColor = 'red';
+    this.startValue = 0;
+    this.midValue = 50;
+    this.endValue = 100;
+
     // classes
     this.sceneCls = new Scene(this);
     this.cameraCls = new Camera(this);
@@ -53028,7 +53143,7 @@ class iCn3DUI {
     //even when multiple iCn3D viewers are shown together.
     this.pre = this.cfg.divid + "_";
 
-    this.REVISION = '3.3.1';
+    this.REVISION = '3.3.2';
 
     // In nodejs, iCn3D defines "window = {navigator: {}}"
     this.bNode = (Object.keys(window).length < 2) ? true : false;

@@ -50,6 +50,17 @@ class ClickMenu {
         this.icn3dui = icn3dui;
     }
 
+    setLegendHtml() { var me = this.icn3dui, ic = me.icn3d;
+        var startColorStr = (ic.startColor == 'red') ? '#F00' : (ic.startColor == 'green') ? '#0F0' : '#00F';
+        var midColorStr = (ic.midColor == 'white') ? '#FFF' : '#000';
+        var endColorStr = (ic.endColor == 'red') ? '#F00' : (ic.endColor == 'green') ? '#0F0' : '#00F';
+        var rangeStr = startColorStr + ' 0%, ' + midColorStr + ' 50%, ' + endColorStr + ' 100%';
+
+        var legendHtml = "<div style='height: 20px; background: linear-gradient(to right, " + rangeStr + ");'></div><table width='100%' border='0' cellspacing='0' cellpadding='0'><tr><td width='33%'>" + ic.startValue + "</td><td width='33%' align='center'>" + ic.midValue + "</td><td width='33%' align='right'>" + ic.endValue + "</td></tr></table>";
+
+        return legendHtml;
+    }
+
     clickMenu1() { var me = this.icn3dui, ic = me.icn3d;
         if(me.bNode) return;
 
@@ -1058,7 +1069,20 @@ class ClickMenu {
         me.myEventCls.onIds("#" + me.pre + "reload_customcolorfile", "click", function(e) { var ic = me.icn3d;
            e.preventDefault();
            if(!me.cfg.notebook) dialog.dialog( "close" );
-           ic.addTrackCls.setCustomFile('color');
+           ic.startColor = $("#" + me.pre + "startColor").val();
+           ic.midColor = $("#" + me.pre + "midColor").val();
+           ic.endColor = $("#" + me.pre + "endColor").val();
+
+           var legendHtml = thisClass.setLegendHtml();
+           $("#" + me.pre + "legend").html(legendHtml).show();
+
+           ic.addTrackCls.setCustomFile('color', ic.startColor, ic.midColor, ic.endColor);
+        });
+        me.myEventCls.onIds("#" + me.pre + "remove_legend", "click", function(e) { var ic = me.icn3d;
+           e.preventDefault();
+           $("#" + me.pre + "legend").hide();
+
+           thisClass.setLogCmd('remove legend', true);
         });
         me.myEventCls.onIds("#" + me.pre + "reload_customtubefile", "click", function(e) { var ic = me.icn3d;
            e.preventDefault();

@@ -62,6 +62,9 @@ class SetMenu {
         html += me.htmlCls.divStr + "title' class='icn3d-commandTitle' style='font-size:1.2em; font-weight:normal; position:absolute; z-index:1; float:left; display:table-row; margin: 85px 0px 0px 5px; color:" + me.htmlCls.GREYD + "; width:" + me.htmlCls.WIDTH + "px'></div>";
 
         html += me.htmlCls.divStr + "viewer' style='position:relative; width:100%; height:100%; background-color: " + me.htmlCls.GREYD + ";'>";
+
+        html += me.htmlCls.divStr + "legend' class='icn3d-text icn3d-legend'></div>";
+
         html += me.htmlCls.divStr + "mnLogSection'>";
         html += "<div style='height: " + me.htmlCls.MENU_HEIGHT + "px;'></div>";
     //        html += "<div style='height: " + me.htmlCls.MENU_HEIGHT + "px;'></div>";

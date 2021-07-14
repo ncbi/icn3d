@@ -944,7 +944,7 @@ class AddTrack {
         return {"text": out, "fromArray": fromArray, "toArray": toArray}
     }
 
-    setCustomFile(type) {var ic = this.icn3d, me = ic.icn3dui;
+    setCustomFile(type, startColor, midColor, endColor) {var ic = this.icn3d, me = ic.icn3dui;
        var thisClass = this;
 
        var chainid = $("#" + ic.pre + "customcolor_chainid").val();
@@ -979,11 +979,17 @@ class AddTrack {
                     resiScoreStr += '_';
                 }
             }
+
             if(type == 'color') {
                 ic.opts['color'] = 'align custom';
+
                 ic.setColorCls.setColorByOptions(ic.opts, ic.hAtoms);
                 ic.hlUpdateCls.updateHlAll();
-                ic.icn3dui.htmlCls.clickMenuCls.setLogCmd('color align custom | ' + chainid + ' | range ' + start + '_' + end + ' | ' + resiScoreStr, true);
+                ic.icn3dui.htmlCls.clickMenuCls.setLogCmd('color align custom | ' + chainid + ' | range ' + start + '_' + end + ' | ' + resiScoreStr + ' | colorrange ' + startColor + ' ' + midColor + ' ' + endColor, true);
+
+                var legendHtml = me.htmlCls.clickMenuCls.setLegendHtml();
+
+                $("#" + me.pre + "legend").html(legendHtml);
             }
             else if(type == 'tube') {
                 ic.setOptionCls.setStyle('proteins', 'custom tube');

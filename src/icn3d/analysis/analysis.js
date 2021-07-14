@@ -41,12 +41,35 @@ class Analysis {
            ic.hAtoms = me.hashUtilsCls.cloneHash(atomSet2);
            ic.applyMapCls.applySurfaceOptions();
            var area2 = ic.areavalue;
+           var resid2area2 = me.hashUtilsCls.cloneHash(ic.resid2area);
            ic.hAtoms = me.hashUtilsCls.cloneHash(atomSet1);
            ic.applyMapCls.applySurfaceOptions();
            var area1 = ic.areavalue;
+           var resid2area1 = me.hashUtilsCls.cloneHash(ic.resid2area);
+
            ic.hAtoms = me.hashUtilsCls.unionHash(ic.hAtoms, atomSet2);
            ic.applyMapCls.applySurfaceOptions();
            var areaTotal = ic.areavalue;
+           var resid2areaTotal = me.hashUtilsCls.cloneHash(ic.resid2area);
+
+           var buriedArea1 = 0, buriedArea2 = 0;
+           var areaSum1 = 0, areaSum2 = 0;
+           // set 1 buried
+           for(var resid in resid2area2) {
+               if(resid2areaTotal.hasOwnProperty(resid)) {
+                   areaSum2 += parseFloat(resid2areaTotal[resid]);
+               }
+           }
+           buriedArea2 = (area2 - areaSum2).toFixed(2);
+
+           // set 2 buried
+           for(var resid in resid2area1) {
+               if(resid2areaTotal.hasOwnProperty(resid)) {
+                   areaSum1 += parseFloat(resid2areaTotal[resid]);
+               }
+           }
+           buriedArea1 = (area1 - areaSum1).toFixed(2);
+
            ic.bCalcArea = false;
            ic.hAtoms = me.hashUtilsCls.cloneHash(prevHAtoms);
            var buriedArea =(parseFloat(area1) + parseFloat(area2) - parseFloat(areaTotal)).toFixed(2);
@@ -54,7 +77,9 @@ class Analysis {
            html += 'Set 1: ' + nameArray2 + ', Surface: ' +  area2 + ' &#8491;<sup>2</sup><br>';
            html += 'Set 2: ' + nameArray + ', Surface: ' +  area1 + ' &#8491;<sup>2</sup><br>';
            html += 'Total Surface: ' +  areaTotal + ' &#8491;<sup>2</sup><br>';
-           html += '<b>Buried Surface</b>: ' +  buriedArea + ' &#8491;<sup>2</sup><br><br>';
+           //html += '<b>Buried Surface for both Sets</b>: ' +  buriedArea + ' &#8491;<sup>2</sup><br>';
+           html += '<b>Buried Surface for Set 1</b>: ' +  buriedArea2 + ' &#8491;<sup>2</sup><br>';
+           html += '<b>Buried Surface for Set 2</b>: ' +  buriedArea1 + ' &#8491;<sup>2</sup><br><br>';
            $("#" + ic.pre + "dl_buriedarea").html(html);
            ic.icn3dui.htmlCls.dialogCls.openDlg('dl_buriedarea', 'Buried solvent accessible surface area in the interface');
            ic.icn3dui.htmlCls.clickMenuCls.setLogCmd('buried surface ' + buriedArea, false);

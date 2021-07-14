@@ -227,21 +227,41 @@ class SetColor {
                     //if(ic.target2queryHash.hasOwnProperty(resi) && ic.target2queryHash[resi] !== -1) { // -1 means gap
                         //var queryresi = ic.target2queryHash[resi] + 1;
                         //var queryresi = ic.atoms[serial].resi;
-                        var queryresi = ic.atoms[serial].resi;
+                    var queryresi = ic.atoms[serial].resi;
 
-                        if(ic.queryresi2score[chainid].hasOwnProperty(queryresi)) {
-                            var b = ic.queryresi2score[chainid][queryresi];
+                    if(ic.queryresi2score[chainid].hasOwnProperty(queryresi)) {
+                        var b = ic.queryresi2score[chainid][queryresi];
 
-                            if(b > 100) b = 100;
+                        if(b > 100) b = 100;
 
-                            var s1 = (ic.middB - b) * ic.spanBinv1;
-                            var s2 = (b - ic.middB) * ic.spanBinv2;
-
-                            color = b < ic.middB ? me.parasCls.thr().setRGB(1 - s1, 1 - s1, 1) : me.parasCls.thr().setRGB(1, 1 - s2, 1 - s2);
+                        var s1 = (ic.middB - b) * ic.spanBinv1;
+                        var s2 = (b - ic.middB) * ic.spanBinv2;
+                        if(b < ic.middB) {
+                            if(ic.startColor == 'blue') {
+                                color = (ic.midColor == 'white') ? me.parasCls.thr().setRGB(1 - s1, 1 - s1, 1) : me.parasCls.thr().setRGB(0, 0, s1);
+                            }
+                            else if(ic.startColor == 'red') {
+                                color = (ic.midColor == 'white') ? me.parasCls.thr().setRGB(1, 1 - s1, 1 - s1) : me.parasCls.thr().setRGB(s1, 0, 0);
+                            }
+                            else if(ic.startColor == 'green') {
+                                color = (ic.midColor == 'white') ? me.parasCls.thr().setRGB(1 - s1, 1, 1 - s1) : me.parasCls.thr().setRGB(0, s1, 0);
+                            }
                         }
                         else {
-                            color = me.parasCls.defaultAtomColor;
+                            if(ic.endColor == 'red') {
+                                color = (ic.midColor == 'white') ? me.parasCls.thr().setRGB(1, 1 - s2, 1 - s2) : me.parasCls.thr().setRGB(s2, 0, 0);
+                            }
+                            else if(ic.endColor == 'green') {
+                                color = (ic.midColor == 'white') ? me.parasCls.thr().setRGB(1 - s2, 1, 1 - s2) : me.parasCls.thr().setRGB(0, s2, 0);
+                            }
+                            else if(ic.endColor == 'blue') {
+                                color = (ic.midColor == 'white') ? me.parasCls.thr().setRGB(1 - s2, 1 - s2, 1) : me.parasCls.thr().setRGB(0, 0, s2);
+                            }
                         }
+                    }
+                    else {
+                        color = me.parasCls.defaultAtomColor;
+                    }
                     //}
                     //else {
                     //    color = me.parasCls.defaultAtomColor;

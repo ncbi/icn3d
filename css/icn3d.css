@@ -241,6 +241,8 @@ input:checked + .icn3d-slider:before {
 
 .icn3d-popup {display:none; position:absolute; z-index:9999; top:-1000px; left:-1000px; background-color:#DDDDDD; text-align:center; width:80px; height:18px; padding:3px;}
 
+.icn3d-legend {display:none; position:absolute; z-index:9999; bottom:-20px; right:20px; background-color:#DDDDDD; width:200px; height:35px; padding:3px;}
+
 .icn3d-saveicon, .icn3d-hideicon {cursor:pointer; position:absolute; top:8px; right:20px;}
 .icn3d-hideicon {cursor:pointer; position:absolute; top:8px; right:40px;}
 
