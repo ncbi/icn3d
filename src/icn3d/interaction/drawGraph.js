@@ -44,6 +44,8 @@ class DrawGraph {
 
         // remove any previous graphs
         svg.selectAll('.g-main').remove();
+        // added
+        //$("#" + ic.icn3dui.svgid).empty();
 
         var gMain = svg.append('g')
             .classed('g-main', true);
@@ -304,16 +306,16 @@ class DrawGraph {
         function ticked() {
             // update node and line positions at every step of
             // the force me.htmlCls.simulation
-            link.attr("x1", function(d) { return d.source.x; })
-                .attr("y1", function(d) { return parentHeight - d.source.y; })
-                .attr("x2", function(d) { return d.target.x; })
-                .attr("y2", function(d) { return parentHeight - d.target.y; });
+            link.attr("x1", function(d) { var ret = d.source.x; return !isNaN(ret) ? ret : 0; })
+                .attr("y1", function(d) { var ret = parentHeight - d.source.y; return !isNaN(ret) ? ret : 0; })
+                .attr("x2", function(d) { var ret = d.target.x; return !isNaN(ret) ? ret : 0; })
+                .attr("y2", function(d) { var ret = parentHeight - d.target.y; return !isNaN(ret) ? ret : 0; });
 
-            node.attr("cx", function(d) { return d.x; })
-                .attr("cy", function(d) { return parentHeight - d.y; });
+            node.attr("cx", function(d) { var ret = d.x; return !isNaN(ret) ? ret : 0; })
+                .attr("cy", function(d) { var ret = parentHeight - d.y; return !isNaN(ret) ? ret : 0; });
 
-            label.attr("x", function(d) { return d.x + 6; })
-                .attr("y", function(d) { return parentHeight - (d.y + 3); });
+            label.attr("x", function(d) { var ret = d.x + 6; return !isNaN(ret) ? ret : 0; })
+                .attr("y", function(d) { var ret = parentHeight - (d.y + 3); return !isNaN(ret) ? ret : 0; });
 
         }
 

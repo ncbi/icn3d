@@ -704,6 +704,13 @@ class ApplyCommand {
 
         ic.drawCls.draw();
       }
+      else if(commandOri.indexOf('set glycan') == 0) {
+        var pos = command.lastIndexOf(' ');
+
+        ic.bGlycansCartoon = parseInt(command.substr(pos + 1));
+
+        ic.drawCls.draw();
+      }
       else if(command.indexOf('set highlight color') == 0) {
            var color = command.substr(20);
            if(color === 'yellow') {
@@ -1038,7 +1045,7 @@ class ApplyCommand {
         }
 
         if(ic.graphStr !== undefined && ic.bRender && me.htmlCls.force) {
-           ic.drawGraphCls.drawGraph(ic.graphStr);
+           ic.drawGraphCls.drawGraph(ic.graphStr, ic.pre + 'dl_graph');
         }
       }
       else if(command.indexOf('reset interaction pairs') == 0) {

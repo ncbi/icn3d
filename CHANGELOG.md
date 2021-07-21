@@ -1,4 +1,6 @@
 ## Change Log
+[icn3d-3.3.3](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.3.3.zip) was release on July 21, 2021. Changed the default view of glycan cartoons as hidden. Users can change the default at "Style > Prefereces > Show Glycan Cartoon" for your browser.
+
 [icn3d-3.3.2](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.3.2.zip) was release on July 14, 2021. Now users can choose the color gradient and show the color legend for the "Custom Color" button in the Sequences & Annotations window.
 
 [icn3d-3.3.1](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.3.1.zip) was release on July 7, 2021. Enabled to use as an input a URL containing a saved iCn3D PNG image in the menu "File > Open File > URL (Same Host)". Fixed a bug in displaying an assembly with multiple copies of a structure.

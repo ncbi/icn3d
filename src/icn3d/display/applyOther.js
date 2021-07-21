@@ -110,6 +110,16 @@ class ApplyOther {
             }
         }
 
+        if(me.htmlCls.setHtmlCls.getCookie('glycan') != '') {
+            var bGlycansCartoon = parseInt(me.htmlCls.setHtmlCls.getCookie('glycan'));
+
+            if(ic.bGlycansCartoon != bGlycansCartoon) {
+                me.htmlCls.clickMenuCls.setLogCmd('set glycan ' + bGlycansCartoon, true);
+            }
+
+            ic.bGlycansCartoon = bGlycansCartoon;
+        }
+
         // add cartoon for glycans
         if(ic.bGlycansCartoon && !ic.bAlternate) {
             ic.glycanCls.showGlycans();

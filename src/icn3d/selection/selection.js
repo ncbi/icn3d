@@ -313,7 +313,7 @@ class Selection {
           ic.graphStr = this.getGraphDataForDisplayed();
         }
 
-        if(ic.bGraph) ic.drawGraphCls.drawGraph(ic.graphStr);
+        if(ic.bGraph) ic.drawGraphCls.drawGraph(ic.graphStr, ic.pre + 'dl_graph');
         if(ic.bLinegraph) ic.lineGraphCls.drawLineGraph(ic.graphStr);
         if(ic.bScatterplot) ic.lineGraphCls.drawLineGraph(ic.graphStr, true);
     }
