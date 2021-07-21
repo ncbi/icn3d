@@ -674,7 +674,7 @@ iCn3D.prototype.init_base = function () {
 
     this.axes = [];
 
-    this.bGlycansCartoon = true;
+    this.bGlycansCartoon = false;
 
     this.chainid2offset = {};
 };

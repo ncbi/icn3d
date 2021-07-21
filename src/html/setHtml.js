@@ -140,6 +140,7 @@ class SetHtml {
         var light1 = 0.6;
         var light2 = 0.4;
         var light3 = 0.2;
+        var bGlycansCartoon = 0;
 
         // retrieve from cache
         if(type == 'style') {
@@ -164,6 +165,10 @@ class SetHtml {
                 nucleotideribbonwidth = parseFloat(this.getCookie('nucleicAcidWidth'));
             }
 
+            if(this.getCookie('glycan') != '') {
+                bGlycansCartoon = parseFloat(this.getCookie('glycan'));
+            }
+
             html += "<b>Note</b>: The following parameters will be saved in cache. You just need to set them once. <br><br>";
 
             html += "<b>1. Shininess</b>: " + me.htmlCls.inputTextStr + "id='" + me.pre + "shininess' value='" + shininess + "' size=4>" + me.htmlCls.space3 + "(for the shininess of the 3D objects, default 40)<br/><br/>";
@@ -184,6 +189,10 @@ class SetHtml {
         html += "<b>Nucleotide Ribbon Width</b>: " + me.htmlCls.inputTextStr + "id='" + me.pre + "nucleotideribbonwidth_" + type + "' value='" + nucleotideribbonwidth + "' size=4>" + me.htmlCls.space3 + "(for nucleotide ribbons, default 0.8)<br/>";
 
         html += "<b>Ball Scale</b>: " + me.htmlCls.inputTextStr + "id='" + me.pre + "ballscale_" + type + "' value='" + ballscale + "' size=4>" + me.htmlCls.space3 + "(for styles 'Ball and Stick' and 'Dot', default 0.3)<br/>";
+
+        if(type == 'style') {
+            html += "<br><b>4. Show Glycan Cartoon</b>: " + me.htmlCls.inputTextStr + "id='" + me.pre + "glycan' value='" + bGlycansCartoon + "' size=4>" + me.htmlCls.space3 + "(0: hide, 1: show, default 0)<br/><br/>";
+        }
 
         html += me.htmlCls.spanNowrapStr + "" + me.htmlCls.buttonStr + "apply_thickness_" + type + "'>Apply</button></span>&nbsp;&nbsp;&nbsp;";
 
@@ -851,12 +860,14 @@ class SetHtml {
                 $("#" + me.pre + "light1").val('0.6');
                 $("#" + me.pre + "light2").val('0.4');
                 $("#" + me.pre + "light3").val('0.2');
+                $("#" + me.pre + "glycan").val('0');
             }
 
             ic.shininess = parseFloat($("#" + me.pre + "shininess").val()); //40;
             ic.light1 = parseFloat($("#" + me.pre + "light1").val()); //0.6;
             ic.light2 = parseFloat($("#" + me.pre + "light2").val()); //0.4;
             ic.light3 = parseFloat($("#" + me.pre + "light3").val()); //0.2;
+            ic.bGlycansCartoon = parseInt($("#" + me.pre + "glycan").val()); //0;
         }
 
         if(bReset) {
@@ -886,6 +897,7 @@ class SetHtml {
             this.setCookie('light1', ic.light1, exdays);
             this.setCookie('light2', ic.light2, exdays);
             this.setCookie('light3', ic.light3, exdays);
+            this.setCookie('glycan', ic.bGlycansCartoon, exdays);
         }
 
         this.setCookieForThickness();

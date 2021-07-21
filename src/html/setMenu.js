@@ -851,8 +851,8 @@ class SetMenu {
         else {
             html += "<li><span>Glycans</span>";
             html += "<ul>";
-            html += me.htmlCls.setHtmlCls.getRadio('mn3_glycansCart', 'mn3_glycansCartYes', 'Add Cartoon', true);
-            html += me.htmlCls.setHtmlCls.getRadio('mn3_glycansCart', 'mn3_glycansCartNo', 'Remove Cartoon');
+            html += me.htmlCls.setHtmlCls.getRadio('mn3_glycansCart', 'mn3_glycansCartYes', 'Show Cartoon');
+            html += me.htmlCls.setHtmlCls.getRadio('mn3_glycansCart', 'mn3_glycansCartNo', 'Hide Cartoon', true);
             html += "</ul>";
             html += "</li>";
         }
