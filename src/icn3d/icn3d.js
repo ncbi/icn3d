@@ -114,6 +114,7 @@ import {Symd} from './analysis/symd.js';
 
 import {Analysis} from './analysis/analysis.js';
 import {Diagram2d} from './analysis/diagram2d.js';
+import {Cartoon2d} from './analysis/cartoon2d.js';
 
 import {ResizeCanvas} from './transform/resizeCanvas.js';
 import {Transform} from './transform/transform.js';
@@ -128,7 +129,7 @@ import {Control} from './picking/control.js';
 import {Picking} from './picking/picking.js';
 
 class iCn3D {
-  constructor(icn3dui) { var me = icn3dui;
+  constructor(icn3dui) { let me = icn3dui;
     this.icn3dui = icn3dui;
     this.id = this.icn3dui.pre + 'canvas';
 
@@ -168,8 +169,8 @@ class iCn3D {
     this.bUsePdbNum = true;
 
     if(!this.icn3dui.bNode) {
-        var canvas = document.createElement( 'canvas' );
-        var bWebGL = !! ( window.WebGLRenderingContext && ( canvas.getContext( 'webgl' ) || canvas.getContext( 'experimental-webgl' ) ) );
+        let canvas = document.createElement( 'canvas' );
+        let bWebGL = !! ( window.WebGLRenderingContext && ( canvas.getContext( 'webgl' ) || canvas.getContext( 'experimental-webgl' ) ) );
 
         if(bWebGL){
             //https://discourse.threejs.org/t/three-js-r128-ext-frag-depth-and-angle-instanced-arrays-extensions-are-not-supported/26037
@@ -549,6 +550,7 @@ class iCn3D {
     this.setOptionCls = new SetOption(this);
     this.shareLinkCls = new ShareLink(this);
     this.diagram2dCls = new Diagram2d(this);
+    this.cartoon2dCls = new Cartoon2d(this);
 
     this.rayCls = new Ray(this);
     this.controlCls = new Control(this);
@@ -680,7 +682,7 @@ iCn3D.prototype.init_base = function () {
 };
 
 //Reset parameters for displaying the loaded structure.
-iCn3D.prototype.reinitAfterLoad = function () { var ic = this, me = ic.icn3dui;
+iCn3D.prototype.reinitAfterLoad = function () { let ic = this, me = ic.icn3dui;
     ic.resetConfig();
 
     ic.setStyleCls.setAtomStyleByOptions();
@@ -707,7 +709,7 @@ iCn3D.prototype.reinitAfterLoad = function () { var ic = this, me = ic.icn3dui;
     ic.bAssembly = true;
 };
 
-iCn3D.prototype.resetConfig = function () { var ic = this, me = ic.icn3dui;
+iCn3D.prototype.resetConfig = function () { let ic = this, me = ic.icn3dui;
     this.opts = me.hashUtilsCls.cloneHash(this.optsOri);
 
     if(me.cfg.align !== undefined || me.cfg.chainalign !== undefined) {

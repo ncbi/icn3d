@@ -17,27 +17,27 @@ class Stick {
     //Create sticks for "atoms". "bondR" is the radius of the sticks. "atomR" is the radius of the spheres in the joints.
     //"scale" means scale on the radius. "bHighlight" is an option to draw the highlight for these atoms.
     //The highlight could be outlines with bHighlight=1 and 3D objects with bHighlight=2.
-    createStickRepresentation(atoms, atomR, bondR, scale, bHighlight, bSchematic) { var ic = this.icn3d, me = ic.icn3dui;
+    createStickRepresentation(atoms, atomR, bondR, scale, bHighlight, bSchematic) { let ic = this.icn3d, me = ic.icn3dui;
         if(ic.icn3dui.bNode) return;
 
-        var factor = (bSchematic !== undefined && bSchematic) ? atomR / ic.cylinderRadius : 1;
+        let factor = (bSchematic !== undefined && bSchematic) ? atomR / ic.cylinderRadius : 1;
 
             ic.reprSubCls.createRepresentationSub(atoms, function (atom0) {
                     ic.sphereCls.createSphere(atom0, atomR, !scale, scale, bHighlight);
             }, function (atom0, atom1) {
-                var mp = atom0.coord.clone().add(atom1.coord).multiplyScalar(0.5);
-                var pair = atom0.serial + '_' + atom1.serial;
+                let mp = atom0.coord.clone().add(atom1.coord).multiplyScalar(0.5);
+                let pair = atom0.serial + '_' + atom1.serial;
 
                 if(ic.doublebonds.hasOwnProperty(pair)) { // show double bond
-                    var a0, a1, a2;
+                    let a0, a1, a2;
 
-                    var v0;
-                    var random = new THREE.Vector3(Math.random(),Math.random(),Math.random());
+                    let v0;
+                    let random = new THREE.Vector3(Math.random(),Math.random(),Math.random());
                     if(atom0.bonds.length == 1 && atom1.bonds.length == 1) {
                         v0 = atom1.coord.clone();
                         v0.sub(atom0.coord);
 
-                        var v = random.clone();
+                        let v = random.clone();
                         v0.cross(v).normalize().multiplyScalar(0.2 * factor);
                     }
                     else {
@@ -57,9 +57,9 @@ class Stick {
                             return;
                         }
 
-                        var v1 = ic.atoms[a0].coord.clone();
+                        let v1 = ic.atoms[a0].coord.clone();
                         v1.sub(ic.atoms[a1].coord);
-                        var v2 = ic.atoms[a0].coord.clone();
+                        let v2 = ic.atoms[a0].coord.clone();
                         v2.sub(ic.atoms[a2].coord);
 
                         v1.cross(v2);
@@ -108,7 +108,7 @@ class Stick {
                     }
                 }
                 else if(ic.aromaticbonds.hasOwnProperty(pair)) { // show aromatic bond
-                    var a0, a1, a2;
+                    let a0, a1, a2;
                     if(atom0.bonds.length > atom1.bonds.length && atom0.bonds.length > 1) {
                         a0 = atom0.serial;
                         a1 = atom0.bonds[0];
@@ -123,43 +123,43 @@ class Stick {
                         return;
                     }
 
-                    var v1 = ic.atoms[a0].coord.clone();
+                    let v1 = ic.atoms[a0].coord.clone();
                     v1.sub(ic.atoms[a1].coord);
-                    var v2 = ic.atoms[a0].coord.clone();
+                    let v2 = ic.atoms[a0].coord.clone();
                     v2.sub(ic.atoms[a2].coord);
 
                     v1.cross(v2);
 
-                    var v0 = atom1.coord.clone();
+                    let v0 = atom1.coord.clone();
                     v0.sub(atom0.coord);
 
                     v0.cross(v1).normalize().multiplyScalar(0.2 * factor);
 
                     // find an aromatic neighbor
-                    var aromaticNeighbor = 0;
-                    for(var i = 0, il = atom0.bondOrder.length; i < il; ++i) {
+                    let aromaticNeighbor = 0;
+                    for(let i = 0, il = atom0.bondOrder.length; i < il; ++i) {
                         if(atom0.bondOrder[i] === '1.5' && atom0.bonds[i] !== atom1.serial) {
                             aromaticNeighbor = atom0.bonds[i];
                         }
                     }
 
-                    var dashed = "add";
+                    let dashed = "add";
                     if(aromaticNeighbor === 0 ) { // no neighbor found, atom order does not matter
                         dashed = "add";
                     }
                     else {
                         // calculate the angle between atom1, atom0add, atomNeighbor and the angle atom1, atom0sub, atomNeighbor
-                        var atom0add = atom0.coord.clone().add(v0);
-                        var atom0sub = atom0.coord.clone().sub(v0);
+                        let atom0add = atom0.coord.clone().add(v0);
+                        let atom0sub = atom0.coord.clone().sub(v0);
 
-                        var a = atom1.coord.clone().sub(atom0add).normalize();
-                        var b = ic.atoms[aromaticNeighbor].coord.clone().sub(atom0add).normalize();
+                        let a = atom1.coord.clone().sub(atom0add).normalize();
+                        let b = ic.atoms[aromaticNeighbor].coord.clone().sub(atom0add).normalize();
 
-                        var c = atom1.coord.clone().sub(atom0sub).normalize();
-                        var d = ic.atoms[aromaticNeighbor].coord.clone().sub(atom0sub).normalize();
+                        let c = atom1.coord.clone().sub(atom0sub).normalize();
+                        let d = ic.atoms[aromaticNeighbor].coord.clone().sub(atom0sub).normalize();
 
-                        var angleadd = Math.acos(a.dot(b));
-                        var anglesub = Math.acos(c.dot(d));
+                        let angleadd = Math.acos(a.dot(b));
+                        let anglesub = Math.acos(c.dot(d));
 
                         if(angleadd < anglesub) {
                             dashed = 'sub';
@@ -170,7 +170,7 @@ class Stick {
                     }
 
                     if (atom0.color === atom1.color) {
-                        var base, step;
+                        let base, step;
                         if(dashed === 'add') {
                             ic.cylinderCls.createCylinder(atom0.coord.clone().sub(v0), atom1.coord.clone().sub(v0), ic.cylinderRadius * factor * 0.3, atom0.color, bHighlight);
 
@@ -184,16 +184,16 @@ class Stick {
                             step = atom1.coord.clone().sub(v0).sub(base).multiplyScalar(1.0/11);
                         }
 
-                        for(var i = 0; i <= 10; ++i) {
+                        for(let i = 0; i <= 10; ++i) {
                             if(i % 2 == 0) {
-                                var pos1 = base.clone().add(step.clone().multiplyScalar(i));
-                                var pos2 = base.clone().add(step.clone().multiplyScalar(i + 1));
+                                let pos1 = base.clone().add(step.clone().multiplyScalar(i));
+                                let pos2 = base.clone().add(step.clone().multiplyScalar(i + 1));
                                 ic.cylinderCls.createCylinder(pos1, pos2, ic.cylinderRadius * factor * 0.3, atom0.color, bHighlight);
                             }
                         }
 
                     } else {
-                        var base, step;
+                        let base, step;
                         if(dashed === 'add') {
                             if(ic.dAtoms.hasOwnProperty(atom0.serial) && ic.dAtoms.hasOwnProperty(atom1.serial)) {
                                 ic.cylinderCls.createCylinder(atom0.coord.clone().sub(v0), mp.clone().sub(v0), ic.cylinderRadius * factor * 0.3, atom0.color, bHighlight);
@@ -213,10 +213,10 @@ class Stick {
                             step = atom1.coord.clone().sub(v0).sub(base).multiplyScalar(1.0/11);
                         }
 
-                        for(var i = 0; i <= 10; ++i) {
+                        for(let i = 0; i <= 10; ++i) {
                             if(i % 2 == 0 && ic.dAtoms.hasOwnProperty(atom0.serial) && ic.dAtoms.hasOwnProperty(atom1.serial)) {
-                                var pos1 = base.clone().add(step.clone().multiplyScalar(i));
-                                var pos2 = base.clone().add(step.clone().multiplyScalar(i + 1));
+                                let pos1 = base.clone().add(step.clone().multiplyScalar(i));
+                                let pos2 = base.clone().add(step.clone().multiplyScalar(i + 1));
                                 if(i < 5) {
                                     ic.cylinderCls.createCylinder(pos1, pos2, ic.cylinderRadius * factor * 0.3, atom0.color, bHighlight);
                                 }
@@ -228,11 +228,11 @@ class Stick {
                     }
                 }
                 else if(ic.triplebonds.hasOwnProperty(pair)) { // show triple bond
-                    var random = new THREE.Vector3(Math.random(),Math.random(),Math.random());
-                    var v = atom1.coord.clone();
+                    let random = new THREE.Vector3(Math.random(),Math.random(),Math.random());
+                    let v = atom1.coord.clone();
                     v.sub(atom0.coord);
 
-                    var c = random.clone();
+                    let c = random.clone();
                     c.cross(v).normalize().multiplyScalar(0.3 * factor);
 
                     if (atom0.color === atom1.color) {

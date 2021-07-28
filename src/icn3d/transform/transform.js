@@ -16,13 +16,13 @@ class Transform {
     }
 
     //Set the orientation to the original one, but leave the style, color, etc alone.
-    resetOrientation() { var ic = this.icn3d, me = ic.icn3dui;
-        var bSet = false;
+    resetOrientation() { let  ic = this.icn3d, me = ic.icn3dui;
+        let  bSet = false;
         if(ic.commands.length > 0) {
-            var commandTransformation = ic.commands[0].split('|||');
+            let  commandTransformation = ic.commands[0].split('|||');
 
             if(commandTransformation.length == 2) {
-                var transformation = JSON.parse(commandTransformation[1]);
+                let  transformation = JSON.parse(commandTransformation[1]);
 
                 ic._zoomFactor = transformation.factor;
 
@@ -57,9 +57,9 @@ class Transform {
     }
 
     //Rotate the structure certain degree to the left, e.g., 5 degree.
-    rotateLeft (degree) { var ic = this.icn3d, me = ic.icn3dui;
-      var axis = new THREE.Vector3(0,1,0);
-      var angle = -degree / 180.0 * Math.PI;
+    rotateLeft (degree) { let  ic = this.icn3d, me = ic.icn3dui;
+      let  axis = new THREE.Vector3(0,1,0);
+      let  angle = -degree / 180.0 * Math.PI;
 
       if(ic.bControlGl && !ic.icn3dui.bNode) {
           axis.applyQuaternion( window.cam.quaternion ).normalize();
@@ -68,10 +68,10 @@ class Transform {
           axis.applyQuaternion( ic.cam.quaternion ).normalize();
       }
 
-      var quaternion = new THREE.Quaternion();
+      let  quaternion = new THREE.Quaternion();
       quaternion.setFromAxisAngle( axis, -angle );
 
-      var para = {}
+      let  para = {}
       para.quaternion = quaternion;
       para.update = true;
 
@@ -86,9 +86,9 @@ class Transform {
     }
 
     //Rotate the structure certain degree to the right, e.g., 5 degree.
-    rotateRight (degree) { var ic = this.icn3d, me = ic.icn3dui;
-      var axis = new THREE.Vector3(0,1,0);
-      var angle = degree / 180.0 * Math.PI;
+    rotateRight (degree) { let  ic = this.icn3d, me = ic.icn3dui;
+      let  axis = new THREE.Vector3(0,1,0);
+      let  angle = degree / 180.0 * Math.PI;
 
       if(ic.bControlGl && !ic.icn3dui.bNode) {
           axis.applyQuaternion( window.cam.quaternion ).normalize();
@@ -97,10 +97,10 @@ class Transform {
           axis.applyQuaternion( ic.cam.quaternion ).normalize();
       }
 
-      var quaternion = new THREE.Quaternion();
+      let  quaternion = new THREE.Quaternion();
       quaternion.setFromAxisAngle( axis, -angle );
 
-      var para = {}
+      let  para = {}
       para.quaternion = quaternion;
       para.update = true;
 
@@ -114,19 +114,19 @@ class Transform {
       if(ic.bRender) ic.drawCls.render();
     }
 
-    rotateUp (degree) { var ic = this.icn3d, me = ic.icn3dui;
+    rotateUp (degree) { let  ic = this.icn3d, me = ic.icn3dui;
         this.rotate_base(-degree);
     }
 
     //Rotate the structure certain degree to the bottom, e.g., 5 degree.
-    rotateDown (degree) { var ic = this.icn3d, me = ic.icn3dui;
+    rotateDown (degree) { let  ic = this.icn3d, me = ic.icn3dui;
         this.rotate_base(degree);
     }
 
     //Rotate the structure certain degree to the top, e.g., 5 degree.
-    rotate_base (degree) { var ic = this.icn3d, me = ic.icn3dui;
-      var axis = new THREE.Vector3(1,0,0);
-      var angle = degree / 180.0 * Math.PI;
+    rotate_base (degree) { let  ic = this.icn3d, me = ic.icn3dui;
+      let  axis = new THREE.Vector3(1,0,0);
+      let  angle = degree / 180.0 * Math.PI;
 
       if(ic.bControlGl && !ic.icn3dui.bNode) {
           axis.applyQuaternion( window.cam.quaternion ).normalize();
@@ -135,10 +135,10 @@ class Transform {
           axis.applyQuaternion( ic.cam.quaternion ).normalize();
       }
 
-      var quaternion = new THREE.Quaternion();
+      let  quaternion = new THREE.Quaternion();
       quaternion.setFromAxisAngle( axis, -angle );
 
-      var para = {}
+      let  para = {}
       para.quaternion = quaternion;
       para.update = true;
 
@@ -152,7 +152,7 @@ class Transform {
       if(ic.bRender) ic.drawCls.render();
     }
 
-    setRotation(axis, angle) { var ic = this.icn3d, me = ic.icn3dui;
+    setRotation(axis, angle) { let  ic = this.icn3d, me = ic.icn3dui;
       if(ic.bControlGl && !ic.icn3dui.bNode) {
           axis.applyQuaternion( window.cam.quaternion ).normalize();
       }
@@ -160,10 +160,10 @@ class Transform {
           axis.applyQuaternion( ic.cam.quaternion ).normalize();
       }
 
-      var quaternion = new THREE.Quaternion();
+      let  quaternion = new THREE.Quaternion();
       quaternion.setFromAxisAngle( axis, -angle );
 
-      var para = {};
+      let  para = {};
       para.quaternion = quaternion;
       para.update = true;
 
@@ -178,32 +178,32 @@ class Transform {
     }
 
     //Translate the structure certain distance to the left, e.g., "percentScreenSize" 1 means 1% of the screen width.
-    translateLeft(percentScreenSize) {  var ic = this.icn3d, me = ic.icn3dui;
+    translateLeft(percentScreenSize) {  let  ic = this.icn3d, me = ic.icn3dui;
         this.translate_base(-percentScreenSize, 0);
     }
 
     //Translate the structure certain distance to the right, e.g., "percentScreenSize" 1 means 1% of the screen width.
-    translateRight(percentScreenSize) {  var ic = this.icn3d, me = ic.icn3dui;
+    translateRight(percentScreenSize) {  let  ic = this.icn3d, me = ic.icn3dui;
         this.translate_base(percentScreenSize, 0);
     }
 
     //Translate the structure certain distance to the top, e.g., "percentScreenSize" 1 means 1% of the screen height.
-    translateUp(percentScreenSize) {  var ic = this.icn3d, me = ic.icn3dui;
+    translateUp(percentScreenSize) {  let  ic = this.icn3d, me = ic.icn3dui;
         this.translate_base(0, -percentScreenSize);
     }
 
     //Translate the structure certain distance to the bottom, e.g., "percentScreenSize" 1 means 1% of the screen height.
-    translateDown(percentScreenSize) {  var ic = this.icn3d, me = ic.icn3dui;
+    translateDown(percentScreenSize) {  let  ic = this.icn3d, me = ic.icn3dui;
         this.translate_base(0, percentScreenSize);
     }
 
-    translate_base(x, y) {  var ic = this.icn3d, me = ic.icn3dui;
-      var mouseChange = new THREE.Vector2(0,0);
+    translate_base(x, y) {  let  ic = this.icn3d, me = ic.icn3dui;
+      let  mouseChange = new THREE.Vector2(0,0);
 
       mouseChange.x += x / 100.0;
       mouseChange.y += y / 100.0;
 
-      var para = {}
+      let  para = {}
       para.mouseChange = mouseChange;
       para.update = true;
 
@@ -218,8 +218,8 @@ class Transform {
     }
 
     //Zoom in the structure at certain ratio, e.g., 0.1 is a reasonable value.
-    zoomIn(normalizedFactor) {  var ic = this.icn3d, me = ic.icn3dui;
-      var para = {}
+    zoomIn(normalizedFactor) {  let  ic = this.icn3d, me = ic.icn3dui;
+      let  para = {}
       para._zoomFactor = 1 - normalizedFactor;
       para.update = true;
       if(ic.bControlGl && !ic.icn3dui.bNode) {
@@ -233,8 +233,8 @@ class Transform {
     }
 
     //Zoom out the structure at certain ratio, e.g., 0.1 is a reasonable value.
-    zoomOut(normalizedFactor) {  var ic = this.icn3d, me = ic.icn3dui;
-      var para = {}
+    zoomOut(normalizedFactor) {  let  ic = this.icn3d, me = ic.icn3dui;
+      let  para = {}
       para._zoomFactor = 1 + normalizedFactor;
       para.update = true;
 
@@ -248,8 +248,8 @@ class Transform {
     }
 
     //Center on the selected atoms and zoom in.
-    zoominSelection(atoms) { var ic = this.icn3d, me = ic.icn3dui;
-       var para = {}
+    zoominSelection(atoms) { let  ic = this.icn3d, me = ic.icn3dui;
+       let  para = {}
 
        para._zoomFactor = 1.0 / ic._zoomFactor;
        para.update = true;
@@ -267,7 +267,7 @@ class Transform {
 
        // center on the hAtoms if more than one residue is selected
        if(Object.keys(atoms).length > 1) {
-               var centerAtomsResults = ic.applyCenterCls.centerAtoms(atoms);
+               let  centerAtomsResults = ic.applyCenterCls.centerAtoms(atoms);
 
                ic.maxD = centerAtomsResults.maxD;
                if (ic.maxD < 5) ic.maxD = 5;
@@ -281,7 +281,7 @@ class Transform {
     }
 
     getTransformationStr(transformation) {var ic = this.icn3d, me = ic.icn3dui;
-        var transformation2 = {"factor": 1.0, "mouseChange": {"x": 0, "y": 0}, "quaternion": {"_x": 0, "_y": 0, "_z": 0, "_w": 1} }
+        let  transformation2 = {"factor": 1.0, "mouseChange": {"x": 0, "y": 0}, "quaternion": {"_x": 0, "_y": 0, "_z": 0, "_w": 1} }
         transformation2.factor = parseFloat(transformation.factor).toPrecision(4);
         transformation2.mouseChange.x = parseFloat(transformation.mouseChange.x).toPrecision(4);
         transformation2.mouseChange.y = parseFloat(transformation.mouseChange.y).toPrecision(4);

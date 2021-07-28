@@ -15,7 +15,7 @@ class Export3D {
         this.icn3d = icn3d;
     }
 
-    exportStlFile(postfix) { var ic = this.icn3d, me = ic.icn3dui;
+    exportStlFile(postfix) { let ic = this.icn3d, me = ic.icn3dui;
        // assemblies
        if(ic.biomtMatrices !== undefined && ic.biomtMatrices.length > 1 && ic.bAssembly) {
             // use a smaller grid to build the surface for assembly
@@ -27,22 +27,22 @@ class Export3D {
             ic.applyMapCls.removeEmmaps();
             ic.applyMapCls.applyEmmapOptions();
        }
-       var text = this.saveStlFile();
-       var file_pref =(ic.inputid) ? ic.inputid : "custom";
+       let text = this.saveStlFile();
+       let file_pref =(ic.inputid) ? ic.inputid : "custom";
        ic.saveFileCls.saveFile(file_pref + postfix + '.stl', 'binary', text);
        // assemblies
        if(ic.biomtMatrices !== undefined && ic.biomtMatrices.length > 1 && ic.bAssembly
          && Object.keys(ic.dAtoms).length * ic.biomtMatrices.length > ic.maxAtoms3DMultiFile ) {
             alert(ic.biomtMatrices.length + " files will be generated for this assembly. Please merge these files using some software and 3D print the merged file.");
-            var identity = new THREE.Matrix4();
+            let identity = new THREE.Matrix4();
             identity.identity();
-            var index = 1;
-            for(var i = 0; i < ic.biomtMatrices.length; i++) {  // skip itself
-              var mat = ic.biomtMatrices[i];
+            let index = 1;
+            for(let i = 0; i < ic.biomtMatrices.length; i++) {  // skip itself
+              let mat = ic.biomtMatrices[i];
               if(mat === undefined) continue;
               // skip itself
               if(mat.equals(identity)) continue;
-              var time =(i + 1) * 100;
+              let time =(i + 1) * 100;
               //https://stackoverflow.com/questions/1190642/how-can-i-pass-a-parameter-to-a-settimeout-callback
               setTimeout(function(mat, index){
                   text = this.saveStlFile(mat);
@@ -56,7 +56,7 @@ class Export3D {
        }
     }
 
-    exportVrmlFile(postfix) { var ic = this.icn3d, me = ic.icn3dui;
+    exportVrmlFile(postfix) { let ic = this.icn3d, me = ic.icn3dui;
        // assemblies
        if(ic.biomtMatrices !== undefined && ic.biomtMatrices.length > 1 && ic.bAssembly) {
             // use a smaller grid to build the surface for assembly
@@ -68,23 +68,23 @@ class Export3D {
             ic.applyMapCls.removeEmmaps();
             ic.applyMapCls.applyEmmapOptions();
        }
-       var text = this.saveVrmlFile();
-       var file_pref =(ic.inputid) ? ic.inputid : "custom";
+       let text = this.saveVrmlFile();
+       let file_pref =(ic.inputid) ? ic.inputid : "custom";
        ic.saveFileCls.saveFile(file_pref + postfix + '.wrl', 'text', text);
        //ic.saveFileCls.saveFile(file_pref + postfix + '.vrml', 'text', text);
        // assemblies
        if(ic.biomtMatrices !== undefined && ic.biomtMatrices.length > 1 && ic.bAssembly
          && Object.keys(ic.dAtoms).length * ic.biomtMatrices.length > ic.maxAtoms3DMultiFile ) {
             alert(ic.biomtMatrices.length + " files will be generated for this assembly. Please merge these files using some software and 3D print the merged file.");
-            var identity = new THREE.Matrix4();
+            let identity = new THREE.Matrix4();
             identity.identity();
-            var index = 1;
-            for(var i = 0; i < ic.biomtMatrices.length; i++) {  // skip itself
-              var mat = ic.biomtMatrices[i];
+            let index = 1;
+            for(let i = 0; i < ic.biomtMatrices.length; i++) {  // skip itself
+              let mat = ic.biomtMatrices[i];
               if(mat === undefined) continue;
               // skip itself
               if(mat.equals(identity)) continue;
-              var time =(i + 1) * 100;
+              let time =(i + 1) * 100;
               //https://stackoverflow.com/questions/1190642/how-can-i-pass-a-parameter-to-a-settimeout-callback
               setTimeout(function(mat, index){
                   text = this.saveVrmlFile(mat);
@@ -114,22 +114,22 @@ class Export3D {
     end
     */
 
-    getFaceCnt( mdl ){ var ic = this.icn3d, me = ic.icn3dui;
-        var cntFaces = 0;
-        for(var i = 0, il = mdl.children.length; i < il; ++i) {
-             var mesh = mdl.children[i];
+    getFaceCnt( mdl ){ let ic = this.icn3d, me = ic.icn3dui;
+        let cntFaces = 0;
+        for(let i = 0, il = mdl.children.length; i < il; ++i) {
+             let mesh = mdl.children[i];
              if(mesh.type === 'Sprite') continue;
 
-             var geometry = mesh.geometry;
+             let geometry = mesh.geometry;
 
-//             var faces = geometry.faces;
+//             let faces = geometry.faces;
 //             if(faces !== undefined) {
-//                 for(var j = 0, jl = faces.length; j < jl; ++j) {
+//                 for(let j = 0, jl = faces.length; j < jl; ++j) {
 //                     ++cntFaces;
 //                 }
 //             }
 
-             var indexArray = geometry.getIndex().array;
+             let indexArray = geometry.getIndex().array;
              cntFaces += indexArray.length / 3;
 
         }
@@ -138,7 +138,7 @@ class Export3D {
     }
 
     //Save the binary STL file for 3D monocolor printing.
-    saveStlFile( mat ){ var ic = this.icn3d, me = ic.icn3dui;
+    saveStlFile( mat ){ let ic = this.icn3d, me = ic.icn3dui;
         if(Object.keys(ic.dAtoms).length > 70000) {
             alert('Please display a subset of the structure to export 3D files. Then merge the files for 3D printing...');
             return [''];
@@ -146,26 +146,26 @@ class Export3D {
 
         ic.threeDPrintCls.prepareFor3Dprint();
 
-        var cntFaces = 0;
+        let cntFaces = 0;
 
         cntFaces += this.getFaceCnt(ic.mdl);
         cntFaces += this.getFaceCnt(ic.mdl_ghost);
 
-        var blobArray = []; // hold blobs
+        let blobArray = []; // hold blobs
 
-        var stlArray = new Uint8Array(84);
+        let stlArray = new Uint8Array(84);
 
         // UINT8[80] – Header
-        var title = 'STL file for the structure(s) ';
-        var structureArray = Object.keys(ic.structures);
-        for(var i = 0, il = structureArray.length; i < il; ++i) {
+        let title = 'STL file for the structure(s) ';
+        let structureArray = Object.keys(ic.structures);
+        for(let i = 0, il = structureArray.length; i < il; ++i) {
             title += structureArray[i];
             if(i < il - 1) title += ', ';
         }
 
         if(title.length > 80) title = title.substr(0, 80);
 
-        for(var i = 0; i < 80; ++i) {
+        for(let i = 0; i < 80; ++i) {
             if(i < title.length) {
                 stlArray[i] = me.convertTypeCls.passInt8([title.charCodeAt(i)])[0];
             }
@@ -192,11 +192,11 @@ class Export3D {
        // assemblies
        if(ic.biomtMatrices !== undefined && ic.biomtMatrices.length > 1 && ic.bAssembly
          && Object.keys(ic.dAtoms).length * ic.biomtMatrices.length <= ic.maxAtoms3DMultiFile ) {
-            var identity = new THREE.Matrix4();
+            let identity = new THREE.Matrix4();
             identity.identity();
 
-            for(var i = 0; i < ic.biomtMatrices.length; i++) {  // skip itself
-              var mat1 = ic.biomtMatrices[i];
+            for(let i = 0; i < ic.biomtMatrices.length; i++) {  // skip itself
+              let mat1 = ic.biomtMatrices[i];
               if(mat1 === undefined) continue;
 
               // skip itself
@@ -213,56 +213,56 @@ class Export3D {
         return blobArray;
     }
 
-    updateArray( array, inArray, indexBase ){ var ic = this.icn3d, me = ic.icn3dui;
-        for( var i = 0, il = inArray.length; i < il; ++i ){
+    updateArray( array, inArray, indexBase ){ let ic = this.icn3d, me = ic.icn3dui;
+        for( let i = 0, il = inArray.length; i < il; ++i ){
             array[indexBase + i] = inArray[i];
         }
         return array;
     }
 
-    processStlMeshGroup( mdl, blobArray, mat ){ var ic = this.icn3d, me = ic.icn3dui;
-        for(var i = 0, il = mdl.children.length; i < il; ++i) {
-             var mesh = mdl.children[i];
+    processStlMeshGroup( mdl, blobArray, mat ){ let ic = this.icn3d, me = ic.icn3dui;
+        for(let i = 0, il = mdl.children.length; i < il; ++i) {
+             let mesh = mdl.children[i];
              if(mesh.type === 'Sprite') continue;
 
-             var geometry = mesh.geometry;
+             let geometry = mesh.geometry;
 
-//             var vertices = geometry.vertices;
-//             var faces = geometry.faces;
+//             let vertices = geometry.vertices;
+//             let faces = geometry.faces;
 
 //             if(faces === undefined) continue;
 
-             var positionArray = geometry.getAttribute('position').array;
-             var indexArray = geometry.getIndex().array;
+             let positionArray = geometry.getAttribute('position').array;
+             let indexArray = geometry.getIndex().array;
 
-             var position = mesh.position;
-             var scale = mesh.scale;
+             let position = mesh.position;
+             let scale = mesh.scale;
 
-             var matrix = mesh.matrix;
+             let matrix = mesh.matrix;
 
-//             var stlArray = new Uint8Array(faces.length * 50);
-             var stlArray = new Uint8Array(indexArray.length / 3 * 50);
+//             let stlArray = new Uint8Array(faces.length * 50);
+             let stlArray = new Uint8Array(indexArray.length / 3 * 50);
 
-             var index = 0;
+             let index = 0;
 
-//             for(var j = 0, jl = faces.length; j < jl; ++j) {
-             for(var j = 0, jl = indexArray.length; j < jl; j += 3) {
-//                 var a = faces[j].a;
-//                 var b = faces[j].b;
-//                 var c = faces[j].c;
-//                 var normal = faces[j].normal;
+//             for(let j = 0, jl = faces.length; j < jl; ++j) {
+             for(let j = 0, jl = indexArray.length; j < jl; j += 3) {
+//                 let a = faces[j].a;
+//                 let b = faces[j].b;
+//                 let c = faces[j].c;
+//                 let normal = faces[j].normal;
 
-                 var a = indexArray[j];
-                 var b = indexArray[j+1];
-                 var c = indexArray[j+2];
+                 let a = indexArray[j];
+                 let b = indexArray[j+1];
+                 let c = indexArray[j+2];
 
-                 var normal;
+                 let normal;
 
-                 var va = new THREE.Vector3(positionArray[3*a], positionArray[3*a+1], positionArray[3*a+2]);
-                 var vb = new THREE.Vector3(positionArray[3*b], positionArray[3*b+1], positionArray[3*b+2]);
-                 var vc = new THREE.Vector3(positionArray[3*c], positionArray[3*c+1], positionArray[3*c+2]);
+                 let va = new THREE.Vector3(positionArray[3*a], positionArray[3*a+1], positionArray[3*a+2]);
+                 let vb = new THREE.Vector3(positionArray[3*b], positionArray[3*b+1], positionArray[3*b+2]);
+                 let vc = new THREE.Vector3(positionArray[3*c], positionArray[3*c+1], positionArray[3*c+2]);
 
-                 var v1, v2, v3;
+                 let v1, v2, v3;
 
                  if(geometry.type == 'SphereGeometry' || geometry.type == 'BoxGeometry') {
 //                     v1 = vertices[a].clone().multiply(scale).add(position);
@@ -334,7 +334,7 @@ class Export3D {
 
     //http://gun.teipir.gr/VRML-amgem/spec/part1/examples.html
     //Save the VRML file for 3D color printing.
-    saveVrmlFile( mat ){ var ic = this.icn3d, me = ic.icn3dui;
+    saveVrmlFile( mat ){ let ic = this.icn3d, me = ic.icn3dui;
         if(Object.keys(ic.dAtoms).length > 50000) {
             alert('Please display a subset of the structure to export 3D files. Then merge the files for 3D printing...');
             return [''];
@@ -342,11 +342,11 @@ class Export3D {
 
         ic.threeDPrintCls.prepareFor3Dprint();
 
-        var vrmlStrArray = [];
+        let vrmlStrArray = [];
         vrmlStrArray.push('#VRML V2.0 utf8\n');
 
-        var vertexCnt = 0;
-        var result = this.processVrmlMeshGroup( ic.mdl, vrmlStrArray, vertexCnt, mat );
+        let vertexCnt = 0;
+        let result = this.processVrmlMeshGroup( ic.mdl, vrmlStrArray, vertexCnt, mat );
         vrmlStrArray = result.vrmlStrArray;
         vertexCnt = result.vertexCnt;
 
@@ -357,11 +357,11 @@ class Export3D {
        // assemblies
        if(ic.biomtMatrices !== undefined && ic.biomtMatrices.length > 1 && ic.bAssembly
          && Object.keys(ic.dAtoms).length * ic.biomtMatrices.length <= ic.maxAtoms3DMultiFile ) {
-            var identity = new THREE.Matrix4();
+            let identity = new THREE.Matrix4();
             identity.identity();
 
-            for(var i = 0; i < ic.biomtMatrices.length; i++) {  // skip itself
-              var mat1 = ic.biomtMatrices[i];
+            for(let i = 0; i < ic.biomtMatrices.length; i++) {  // skip itself
+              let mat1 = ic.biomtMatrices[i];
               if(mat1 === undefined) continue;
 
               // skip itself
@@ -382,33 +382,33 @@ class Export3D {
 
     // The file lost face color after being repaired by https://service.netfabb.com/. It only works with vertex color
     // convert face color to vertex color
-    processVrmlMeshGroup( mdl, vrmlStrArray, vertexCnt, mat ){ var ic = this.icn3d, me = ic.icn3dui;
-        for(var i = 0, il = mdl.children.length; i < il; ++i) {
-             var mesh = mdl.children[i];
+    processVrmlMeshGroup( mdl, vrmlStrArray, vertexCnt, mat ){ let ic = this.icn3d, me = ic.icn3dui;
+        for(let i = 0, il = mdl.children.length; i < il; ++i) {
+             let mesh = mdl.children[i];
              if(mesh.type === 'Sprite') continue;
 
-             var geometry = mesh.geometry;
+             let geometry = mesh.geometry;
 
-             var materialType = mesh.material.type;
-             var bSurfaceVertex =(geometry.type == 'Surface') ? true : false;
+             let materialType = mesh.material.type;
+             let bSurfaceVertex =(geometry.type == 'Surface') ? true : false;
 
-//             var vertices = geometry.vertices;
+//             let vertices = geometry.vertices;
 
 //             if(vertices === undefined) continue;
 //             vertexCnt += vertices.length;
 
-//             var faces = geometry.faces;
+//             let faces = geometry.faces;
 
-             var positionArray = geometry.getAttribute('position').array;
-             var colorArray = (geometry.getAttribute('color')) ? geometry.getAttribute('color').array : [];
-             var indexArray = geometry.getIndex().array;
+             let positionArray = geometry.getAttribute('position').array;
+             let colorArray = (geometry.getAttribute('color')) ? geometry.getAttribute('color').array : [];
+             let indexArray = geometry.getIndex().array;
 
-             var position = mesh.position;
-             var scale = mesh.scale;
+             let position = mesh.position;
+             let scale = mesh.scale;
 
-             var matrix = mesh.matrix;
+             let matrix = mesh.matrix;
 
-             var meshColor = me.parasCls.thr(1, 1, 1);
+             let meshColor = me.parasCls.thr(1, 1, 1);
              if(geometry.type == 'SphereGeometry' || geometry.type == 'BoxGeometry' || geometry.type == 'CylinderGeometry') {
                  if(mesh.material !== undefined) meshColor = mesh.material.color;
              }
@@ -418,12 +418,12 @@ class Export3D {
 
              vrmlStrArray.push('coord Coordinate { point [ ');
 
-             var vertexColorStrArray = [];
-//             for(var j = 0, jl = vertices.length; j < jl; ++j) {
-             for(var j = 0, jl = positionArray.length; j < jl; j += 3) {
-                 var va = new THREE.Vector3(positionArray[j], positionArray[j+1], positionArray[j+2]);
+             let vertexColorStrArray = [];
+//             for(let j = 0, jl = vertices.length; j < jl; ++j) {
+             for(let j = 0, jl = positionArray.length; j < jl; j += 3) {
+                 let va = new THREE.Vector3(positionArray[j], positionArray[j+1], positionArray[j+2]);
 
-                 var vertex;
+                 let vertex;
                  if(geometry.type == 'SphereGeometry' || geometry.type == 'BoxGeometry') {
 //                     vertex = vertices[j].clone().multiply(scale).add(position);
                      vertex = va.clone().multiply(scale).add(position);
@@ -449,13 +449,13 @@ class Export3D {
              }
              vrmlStrArray.push(' ] }\n');
 
-             var coordIndexStr = '', colorStr = '', colorIndexStr = '';
+             let coordIndexStr = '', colorStr = '', colorIndexStr = '';
 /*
              if(bSurfaceVertex) {
-                 for(var j = 0, jl = faces.length; j < jl; ++j) {
-                     var a = faces[j].a;
-                     var b = faces[j].b;
-                     var c = faces[j].c;
+                 for(let j = 0, jl = faces.length; j < jl; ++j) {
+                     let a = faces[j].a;
+                     let b = faces[j].b;
+                     let c = faces[j].c;
 
                      coordIndexStr += a + ' ' + b + ' ' + c;
                      // http://www.lighthouse3d.com/vrml/tutorial/index.shtml?indfs
@@ -468,8 +468,8 @@ class Export3D {
                      vertexColorStrArray[c] = faces[j].vertexColors[2];
                  }
 
-                 for(var j = 0, jl = vertexColorStrArray.length; j < jl; ++j) {
-                     var color = vertexColorStrArray[j];
+                 for(let j = 0, jl = vertexColorStrArray.length; j < jl; ++j) {
+                     let color = vertexColorStrArray[j];
                      colorStr += color.r.toPrecision(3) + ' ' + color.g.toPrecision(3) + ' ' + color.b.toPrecision(3);
                      if(j < jl - 1) colorStr += ', ';
                  }
@@ -479,16 +479,16 @@ class Export3D {
              }
              else {
 */
-//                 for(var j = 0, jl = faces.length; j < jl; ++j) {
-                 for(var j = 0, jl = indexArray.length; j < jl; j += 3) {
-//                     var a = faces[j].a;
-//                     var b = faces[j].b;
-//                     var c = faces[j].c;
-                     var a = indexArray[j];
-                     var b = indexArray[j+1];
-                     var c = indexArray[j+2];
+//                 for(let j = 0, jl = faces.length; j < jl; ++j) {
+                 for(let j = 0, jl = indexArray.length; j < jl; j += 3) {
+//                     let a = faces[j].a;
+//                     let b = faces[j].b;
+//                     let c = faces[j].c;
+                     let a = indexArray[j];
+                     let b = indexArray[j+1];
+                     let c = indexArray[j+2];
 
-                     var color;
+                     let color;
                      if(geometry.type == 'SphereGeometry' || geometry.type == 'BoxGeometry' || geometry.type == 'CylinderGeometry') {
                          color = meshColor;
                      }
@@ -509,8 +509,8 @@ class Export3D {
                      vertexColorStrArray[c] = color;
                  }
 
-                 for(var j = 0, jl = vertexColorStrArray.length; j < jl; ++j) {
-                     var color = vertexColorStrArray[j];
+                 for(let j = 0, jl = vertexColorStrArray.length; j < jl; ++j) {
+                     let color = vertexColorStrArray[j];
                      colorStr += color.r.toPrecision(3) + ' ' + color.g.toPrecision(3) + ' ' + color.b.toPrecision(3);
                      if(j < jl - 1) colorStr += ', ';
                  }

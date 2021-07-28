@@ -148,6 +148,7 @@ import {Symd} from './icn3d/analysis/symd.js';
 
 import {Analysis} from './icn3d/analysis/analysis.js';
 import {Diagram2d} from './icn3d/analysis/diagram2d.js';
+import {Cartoon2d} from './icn3d/analysis/cartoon2d.js';
 
 import {ResizeCanvas} from './icn3d/transform/resizeCanvas.js';
 import {Transform} from './icn3d/transform/transform.js';
@@ -169,7 +170,7 @@ class iCn3DUI {
     //even when multiple iCn3D viewers are shown together.
     this.pre = this.cfg.divid + "_";
 
-    this.REVISION = '3.3.3';
+    this.REVISION = '3.3.4';
 
     // In nodejs, iCn3D defines "window = {navigator: {}}"
     this.bNode = (Object.keys(window).length < 2) ? true : false;
@@ -212,8 +213,8 @@ class iCn3DUI {
 }
 
 // show3DStructure is the main function to show 3D structure
-iCn3DUI.prototype.show3DStructure = function() { var me = this;
-  var thisClass = this;
+iCn3DUI.prototype.show3DStructure = function() { let me = this;
+  let thisClass = this;
   me.deferred = $.Deferred(function() {
     if(me.cfg.menumode == 1) {
         me.htmlCls.wifiStr = '<i class="icn3d-wifi" title="requires internet">&nbsp;</i>';
@@ -225,7 +226,7 @@ iCn3DUI.prototype.show3DStructure = function() { var me = this;
     }
 
     me.setIcn3d();
-    var ic = me.icn3d;
+    let ic = me.icn3d;
 
     //ic.initUI();
     //ic.modifyIcn3d();
@@ -234,15 +235,15 @@ iCn3DUI.prototype.show3DStructure = function() { var me = this;
 
     if(me.utilsCls.isSessionStorageSupported()) ic.setStyleCls.getCommandsBeforeCrash();
 
-    var width = me.htmlCls.WIDTH; // - me.htmlCls.LESSWIDTH_RESIZE;
-    var height = me.htmlCls.HEIGHT; // - me.htmlCls.LESSHEIGHT - me.htmlCls.EXTRAHEIGHT;
+    let width = me.htmlCls.WIDTH; // - me.htmlCls.LESSWIDTH_RESIZE;
+    let height = me.htmlCls.HEIGHT; // - me.htmlCls.LESSHEIGHT - me.htmlCls.EXTRAHEIGHT;
     me.oriWidth = width;
     me.oriHeight = height;
 
     me.htmlCls.eventsCls.allEventFunctions();
     thisClass.allCustomEvents();
 
-    var extraHeight = 0;
+    let extraHeight = 0;
     if(me.cfg.showmenu == undefined || me.cfg.showmenu) {
         //extraHeight += 2*me.htmlCls.MENU_HEIGHT;
         extraHeight += me.htmlCls.MENU_HEIGHT;
@@ -323,8 +324,8 @@ iCn3DUI.prototype.show3DStructure = function() { var me = this;
     // If previously crashed, recover it
     if(me.utilsCls.isSessionStorageSupported() && ic.bCrashed) {
         ic.bCrashed = false;
-        var loadCommand = ic.commandsBeforeCrash.split('|||')[0];
-        var id = loadCommand.substr(loadCommand.lastIndexOf(' ') + 1);
+        let loadCommand = ic.commandsBeforeCrash.split('|||')[0];
+        let id = loadCommand.substr(loadCommand.lastIndexOf(' ') + 1);
         // reload only if viewing the same structure
         if(id === me.cfg.mmtfid || id === me.cfg.pdbid || id === me.cfg.opmid || id === me.cfg.mmdbid || id === me.cfg.gi  || id === me.cfg.blast_rep_id
           || id === me.cfg.cid || id === me.cfg.mmcifid || id === me.cfg.align || id === me.cfg.chainalign) {
@@ -335,9 +336,9 @@ iCn3DUI.prototype.show3DStructure = function() { var me = this;
     ic.molTitle = '';
     ic.loadCmd;
     if(me.cfg.url !== undefined) {
-        var type_url = me.cfg.url.split('|');
-        var type = type_url[0];
-        var url = type_url[1];
+        let type_url = me.cfg.url.split('|');
+        let type = type_url[0];
+        let url = type_url[1];
         ic.molTitle = "";
         ic.inputid = url;
         ic.loadCmd = 'load url ' + url + ' | type ' + type;
@@ -387,22 +388,22 @@ iCn3DUI.prototype.show3DStructure = function() { var me = this;
            ic.mmdbParserCls.downloadBlast_rep_id(me.cfg.query_id + ',' + me.cfg.blast_rep_id);
        }
        else if(me.cfg.rid !== undefined) {
-           var url = "https://blast.ncbi.nlm.nih.gov/Blast.cgi?RESULTS_FILE=on&FORMAT_TYPE=JSON2_S&FORMAT_OBJECT=Alignment&CMD=Get&RID=" + me.cfg.rid; // e.g., RID=EFTRU3W5014
+           let url = "https://blast.ncbi.nlm.nih.gov/Blast.cgi?RESULTS_FILE=on&FORMAT_TYPE=JSON2_S&FORMAT_OBJECT=Alignment&CMD=Get&RID=" + me.cfg.rid; // e.g., RID=EFTRU3W5014
            $.ajax({
               url: url,
               dataType: 'json',
               tryCount : 0,
               retryLimit : 1,
               success: function(data) {
-                for(var q = 0, ql = data.BlastOutput2.length; q < ql; ++q) {
+                for(let q = 0, ql = data.BlastOutput2.length; q < ql; ++q) {
                   if(data.BlastOutput2[q].report.results.search.query_id != me.cfg.query_id) continue;
-                  var hitArray = data.BlastOutput2[q].report.results.search.hits;
-                  var qseq = undefined;
-                  for(var i = 0, il = hitArray.length; i < il; ++i) {
-                    var hit = hitArray[i];
-                    var bFound = false;
-                    for(var j = 0, jl = hit.description.length; j < jl; ++j) {
-                      var acc = hit.description[j].accession;
+                  let hitArray = data.BlastOutput2[q].report.results.search.hits;
+                  let qseq = undefined;
+                  for(let i = 0, il = hitArray.length; i < il; ++i) {
+                    let hit = hitArray[i];
+                    let bFound = false;
+                    for(let j = 0, jl = hit.description.length; j < jl; ++j) {
+                      let acc = hit.description[j].accession;
                       if(acc == me.cfg.blast_rep_id) {
                         bFound = true;
                         break;
@@ -443,7 +444,7 @@ iCn3DUI.prototype.show3DStructure = function() { var me = this;
     }
     else if(me.cfg.cid !== undefined) {
        ic.inputid = me.cfg.cid;
-       var url = "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/cid/" + ic.inputid + "/description/jsonp";
+       let url = "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/cid/" + ic.inputid + "/description/jsonp";
        $.ajax({
           url: url,
           dataType: 'jsonp',
@@ -473,7 +474,7 @@ iCn3DUI.prototype.show3DStructure = function() { var me = this;
         ic.mmcifParserCls.downloadMmcif(me.cfg.mmcifid);
     }
     else if(me.cfg.align !== undefined) {
-        var alignArray = me.cfg.align.split(','); // e.g., 6 IDs: 103701,1,4,68563,1,167 [mmdbid1,biounit,molecule,mmdbid2,biounit,molecule], or 2IDs: 103701,68563 [mmdbid1,mmdbid2]
+        let alignArray = me.cfg.align.split(','); // e.g., 6 IDs: 103701,1,4,68563,1,167 [mmdbid1,biounit,molecule,mmdbid2,biounit,molecule], or 2IDs: 103701,68563 [mmdbid1,mmdbid2]
         if(alignArray.length === 6) {
             ic.inputid = alignArray[0] + "_" + alignArray[3];
         }
@@ -504,7 +505,7 @@ iCn3DUI.prototype.show3DStructure = function() { var me = this;
 };
 
 /*
-iCn3DUI.prototype.initUI = function() { var me = this;
+iCn3DUI.prototype.initUI = function() { let me = this;
     ic.bSelectResidue = false;
     ic.bSelectAlignResidue = false;
     ic.selectedResidues = {}
@@ -522,9 +523,9 @@ iCn3DUI.prototype.initUI = function() { var me = this;
 };
 */
 
-iCn3DUI.prototype.setIcn3d = function() { var me = this;
-    var str1 = "<label class='icn3d-switch'><input id='" + me.pre + "modeswitch' type='checkbox'><div class='icn3d-slider icn3d-round' style='width:34px; height:18px; margin: 6px 0px 0px 3px;' title='Left(\"All atoms\"): Style and color menu options will be applied to all atoms in the structure&#13;Right(\"Selection\"): Style and color menu options will be applied only to selected atoms'></div></label>";
-    var str2 = "<span id='" + me.pre + "modeall' title='Style and color menu options will be applied to all atoms in the structure'>All atoms&nbsp;&nbsp;</span><span id='" + me.pre + "modeselection' class='icn3d-modeselection' style='display:none;' title='Style and color menu options will be applied only to selected atoms'>Selection&nbsp;&nbsp;</span></div></div></td>";
+iCn3DUI.prototype.setIcn3d = function() { let me = this;
+    let str1 = "<label class='icn3d-switch'><input id='" + me.pre + "modeswitch' type='checkbox'><div class='icn3d-slider icn3d-round' style='width:34px; height:18px; margin: 6px 0px 0px 3px;' title='Left(\"All atoms\"): Style and color menu options will be applied to all atoms in the structure&#13;Right(\"Selection\"): Style and color menu options will be applied only to selected atoms'></div></label>";
+    let str2 = "<span id='" + me.pre + "modeall' title='Style and color menu options will be applied to all atoms in the structure'>All atoms&nbsp;&nbsp;</span><span id='" + me.pre + "modeselection' class='icn3d-modeselection' style='display:none;' title='Style and color menu options will be applied only to selected atoms'>Selection&nbsp;&nbsp;</span></div></div></td>";
 
     //me.htmlCls.WIDTH = $( window ).width() - me.htmlCls.LESSWIDTH;
     //me.htmlCls.HEIGHT = $( window ).height() - me.htmlCls.EXTRAHEIGHT - me.htmlCls.LESSHEIGHT;
@@ -545,7 +546,7 @@ iCn3DUI.prototype.setIcn3d = function() { var me = this;
     me.setDialogAjax();
 };
 
-iCn3DUI.prototype.setDialogAjax = function() { var me = this;
+iCn3DUI.prototype.setDialogAjax = function() { let me = this;
     // make dialog movable outside of the window
     // http://stackoverflow.com/questions/6696461/jquery-ui-dialog-drag-question
     if(!me.bNode && !$.ui.dialog.prototype._makeDraggableBase) {
@@ -564,7 +565,7 @@ iCn3DUI.prototype.setDialogAjax = function() { var me = this;
                 // create new XMLHttpRequest
                 send: function(headers, callback) {
                     // setup all variables
-                    var xhr = new XMLHttpRequest(),
+                    let xhr = new XMLHttpRequest(),
                         url = options.url,
                         type = options.type,
                         async = options.async || true,
@@ -573,7 +574,7 @@ iCn3DUI.prototype.setDialogAjax = function() { var me = this;
                         data = options.data || null;
 
                     xhr.addEventListener('load', function() {
-                        var data = {}
+                        let data = {}
                         data[options.dataType] = xhr.response;
                         // make callback and send data
                         callback(xhr.status, xhr.statusText, data, xhr.getAllResponseHeaders());
@@ -582,7 +583,7 @@ iCn3DUI.prototype.setDialogAjax = function() { var me = this;
                     xhr.open(type, url, async);
 
                     // setup custom headers
-                    for(var i in headers) {
+                    for(let i in headers) {
                         xhr.setRequestHeader(i, headers[i]);
                     }
 
@@ -598,8 +599,8 @@ iCn3DUI.prototype.setDialogAjax = function() { var me = this;
 };
 
 /*
-iCn3DUI.prototype.setIcn3dui = function(id) { var me = this;
-    var idArray = id.split('_'); // id: div0_reload_pdbfile
+iCn3DUI.prototype.setIcn3dui = function(id) { let me = this;
+    let idArray = id.split('_'); // id: div0_reload_pdbfile
     ic.pre = idArray[0] + "_";
     if(window.icn3duiHash !== undefined && window.icn3duiHash.hasOwnProperty(idArray[0])) { // for multiple 3D display
        me = window.icn3duiHash[idArray[0]];

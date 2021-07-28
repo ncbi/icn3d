@@ -9,12 +9,12 @@ class Brick {
         this.icn3d = icn3d;
     }
 
-    createBrick(p0, p1, radius, color) { var ic = this.icn3d, me = ic.icn3dui;
+    createBrick(p0, p1, radius, color) { let ic = this.icn3d, me = ic.icn3dui;
         if(ic.icn3dui.bNode) return;
 
-        var cylinderGeometry = new THREE.CylinderGeometry(1, 1, 1, 4, 1);
+        let cylinderGeometry = new THREE.CylinderGeometry(1, 1, 1, 4, 1);
 
-        var mesh = new THREE.Mesh(cylinderGeometry, new THREE.MeshPhongMaterial(
+        let mesh = new THREE.Mesh(cylinderGeometry, new THREE.MeshPhongMaterial(
             { specular: ic.frac, shininess: ic.shininess, emissive: ic.emissive, color: color }));
 
         mesh.position.copy(p0).add(p1).multiplyScalar(0.5);

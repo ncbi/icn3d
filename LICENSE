@@ -3,11 +3,6 @@ electrostatic potential map. The DelPhi code is licensed by Columbia
 University, which does not permit commercial use without contacting the 
 DelPhi project for permission.  
 
-iCn3D also incorporates the scap/Jackal code to dynamically show the side  
-chain prediction for SNPs/ClinVars. The scap/Jackal code is licensed by  
-Columbia University, which does not permit commercial use without  
-contacting the scap/Jackal project for permission.  
-
 The remaining code is a "United States Government Work" and is provided 
 by the terms described below:
 

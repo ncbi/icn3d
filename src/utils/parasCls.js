@@ -342,7 +342,7 @@ class ParasCls {
         ];
     }
 
-    thr(color) { var me = this.icn3dui;
+    thr(color) { let me = this.icn3dui;
         return new THREE.Color(color);
     }
 }

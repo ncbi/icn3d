@@ -19,7 +19,7 @@ class MmdbParser {
         this.icn3d = icn3d;
     }
 
-    parseMmdbDataPart1(data, type) { var ic = this.icn3d, me = ic.icn3dui;
+    parseMmdbDataPart1(data, type) { let  ic = this.icn3d, me = ic.icn3dui;
         // if type is defined, always process target before query
         if(data.atoms === undefined && data.molid2rescount === undefined) {
             alert('invalid MMDB data.');
@@ -48,7 +48,7 @@ class MmdbParser {
             ic.mmdb_data = data;
         }
 
-        var id =(data.pdbId !== undefined) ? data.pdbId : data.mmdbId;
+        let  id =(data.pdbId !== undefined) ? data.pdbId : data.mmdbId;
         if(type === 'query') {
             ic.inputid2 = id;
         }
@@ -57,20 +57,20 @@ class MmdbParser {
         }
 
         // get molid2color = {}, chain2molid = {}, molid2chain = {}
-        var labelsize = 40;
+        let  labelsize = 40;
 
-        var molid2rescount = data.moleculeInfor;
-        var molid2color = {}, chain2molid = {}, molid2chain = {}
+        let  molid2rescount = data.moleculeInfor;
+        let  molid2color = {}, chain2molid = {}, molid2chain = {}
 
         //var html = "<table width='100%'><tr><td></td><th>#</th><th align='center'>Chain</th><th align='center'>Residue Count</th></tr>";
 
-        var index = 1;
-        var chainNameHash = {}
-        for(var i in molid2rescount) {
+        let  index = 1;
+        let  chainNameHash = {}
+        for(let i in molid2rescount) {
           if(Object.keys(molid2rescount[i]).length === 0) continue;
 
-          var color =(molid2rescount[i].color === undefined) ? '#CCCCCC' : '#' +( '000000' + molid2rescount[i].color.toString( 16 ) ).slice( - 6 );
-          var chainName =(molid2rescount[i].chain === undefined) ? '' : molid2rescount[i].chain.trim();
+          let  color =(molid2rescount[i].color === undefined) ? '#CCCCCC' : '#' +( '000000' + molid2rescount[i].color.toString( 16 ) ).slice( - 6 );
+          let  chainName =(molid2rescount[i].chain === undefined) ? '' : molid2rescount[i].chain.trim();
           if(chainNameHash[chainName] === undefined) {
               chainNameHash[chainName] = 1;
           }
@@ -78,8 +78,8 @@ class MmdbParser {
               ++chainNameHash[chainName];
           }
 
-          var chainNameFinal =(chainNameHash[chainName] === 1) ? chainName : chainName + chainNameHash[chainName].toString();
-          var chain = id + '_' + chainNameFinal;
+          let  chainNameFinal =(chainNameHash[chainName] === 1) ? chainName : chainName + chainNameHash[chainName].toString();
+          let  chain = id + '_' + chainNameFinal;
 
           molid2color[i] = color;
           chain2molid[chain] = i;
@@ -87,9 +87,9 @@ class MmdbParser {
 
           ic.chainsColor[chain] =(type !== undefined) ? me.parasCls.thr(ic.icn3dui.htmlCls.GREY8) : me.parasCls.thr(color);
 
-          var geneId =(molid2rescount[i].geneId === undefined) ? '' : molid2rescount[i].geneId;
-          var geneSymbol =(molid2rescount[i].geneSymbol === undefined) ? '' : molid2rescount[i].geneSymbol;
-          var geneDesc =(molid2rescount[i].geneDesc === undefined) ? '' : molid2rescount[i].geneDesc;
+          let  geneId =(molid2rescount[i].geneId === undefined) ? '' : molid2rescount[i].geneId;
+          let  geneSymbol =(molid2rescount[i].geneSymbol === undefined) ? '' : molid2rescount[i].geneSymbol;
+          let  geneDesc =(molid2rescount[i].geneDesc === undefined) ? '' : molid2rescount[i].geneDesc;
           ic.chainsGene[chain] = {'geneId': geneId, 'geneSymbol': geneSymbol, 'geneDesc': geneDesc}
           ++index;
         }
@@ -105,10 +105,10 @@ class MmdbParser {
         //ic.loadAtomDataCls.loadAtomDataIn(data, id, 'mmdbid', undefined, type);
     }
 
-    parseMmdbData(data, type, chainid, chainIndex, bLastQuery) { var ic = this.icn3d, me = ic.icn3dui;
+    parseMmdbData(data, type, chainid, chainIndex, bLastQuery) { let  ic = this.icn3d, me = ic.icn3dui;
         if(type === undefined) {
             //ic.deferredOpm = $.Deferred(function() {
-                  var id =(data.pdbId !== undefined) ? data.pdbId : data.mmdbId;
+                  let  id =(data.pdbId !== undefined) ? data.pdbId : data.mmdbId;
 
                   this.loadMmdbOpmData(data, id, type);
             //});
@@ -120,9 +120,9 @@ class MmdbParser {
         else {
             this.parseMmdbDataPart1(data, type);
 
-            var id =(data.pdbId !== undefined) ? data.pdbId : data.mmdbId;
+            let  id =(data.pdbId !== undefined) ? data.pdbId : data.mmdbId;
 
-            var hAtoms = ic.loadAtomDataCls.loadAtomDataIn(data, id, 'mmdbid', undefined, type, chainid, chainIndex, bLastQuery);
+            let  hAtoms = ic.loadAtomDataCls.loadAtomDataIn(data, id, 'mmdbid', undefined, type, chainid, chainIndex, bLastQuery);
 
             this.loadMmdbOpmDataPart2(data, id, type);
 
@@ -136,10 +136,10 @@ class MmdbParser {
 
     //Atom "data" from MMDB file was parsed to set up parameters for the 3D viewer by calling the function
     //loadAtomDataIn. The deferred parameter was resolved after the parsing so that other javascript code can be executed.
-    downloadMmdb(mmdbid, bGi) { var ic = this.icn3d, me = ic.icn3dui;
-       var thisClass = this;
+    downloadMmdb(mmdbid, bGi) { let  ic = this.icn3d, me = ic.icn3dui;
+       let  thisClass = this;
 
-       var url;
+       let  url;
 
        // b: b-factor, s: water, ft: pdbsite
        //&ft=1
@@ -176,13 +176,13 @@ class MmdbParser {
           success: function(data) {
             if(Object.keys(data.atoms).length == 0) { // for large structures such as 3J3Q
                 // use mmtfid
-                var pdbid = data.pdbId;
+                let  pdbid = data.pdbId;
                 ic.mmtfParserCls.downloadMmtf(pdbid);
 
                 return;
             }
 
-            var bCalphaOnly = me.utilsCls.isCalphaPhosOnly(data.atoms); //, 'CA');
+            let  bCalphaOnly = me.utilsCls.isCalphaPhosOnly(data.atoms); //, 'CA');
 
             if(bCalphaOnly || data.atomCount <= ic.maxatomcnt) {
                 thisClass.parseMmdbData(data);
@@ -245,7 +245,7 @@ class MmdbParser {
         }); // ajax
     }
 
-    downloadMmdbPart2(type) { var ic = this.icn3d, me = ic.icn3dui;
+    downloadMmdbPart2(type) { let  ic = this.icn3d, me = ic.icn3dui;
         if(ic.bAssemblyUseAsu) { // set up symmetric matrices
             $("#" + ic.pre + "assemblyWrapper").show();
             ic.bAssembly = true;
@@ -305,9 +305,9 @@ class MmdbParser {
     //it can be chained together with other deferred functions for sequential execution. Note that
     //only one structure corresponding to the gi will be shown. If there is no structures available
     //for the gi, a warning message will be shown.
-    downloadGi(gi) { var ic = this.icn3d, me = ic.icn3dui;
+    downloadGi(gi) { let  ic = this.icn3d, me = ic.icn3dui;
         ic.bCid = undefined;
-        var bGi = true;
+        let  bGi = true;
         this.downloadMmdb(gi, bGi);
     }
 
@@ -316,19 +316,19 @@ class MmdbParser {
     //This function was deferred so that it can be chained together with other deferred functions for
     //sequential execution. Note that only one structure corresponding to the blast_rep_id will be shown.
     //If there is no structures available for the blast_rep_id, a warning message will be shown.
-    downloadBlast_rep_id(sequence_structure_ids) { var ic = this.icn3d, me = ic.icn3dui;
+    downloadBlast_rep_id(sequence_structure_ids) { let  ic = this.icn3d, me = ic.icn3dui;
         ic.bCid = undefined;
 
-        var idArray = sequence_structure_ids.split(',');
+        let  idArray = sequence_structure_ids.split(',');
         ic.icn3dui.cfg.query_id = idArray[0];
         ic.icn3dui.cfg.blast_rep_id = idArray[1];
 
-        var mmdbid = ic.icn3dui.cfg.blast_rep_id.split('_')[0];
+        let  mmdbid = ic.icn3dui.cfg.blast_rep_id.split('_')[0];
 
         this.downloadMmdb(mmdbid);
     }
 
-    loadMmdbOpmData(data, pdbid, type) { var ic = this.icn3d, me = ic.icn3dui;
+    loadMmdbOpmData(data, pdbid, type) { let  ic = this.icn3d, me = ic.icn3dui;
       if(data.opm !== undefined && data.opm.rot !== undefined) {
           ic.bOpm = true;
 
@@ -348,32 +348,32 @@ class MmdbParser {
       }
     }
 
-    loadMmdbOpmDataPart2(data, pdbid, type) { var ic = this.icn3d, me = ic.icn3dui;
-        var thisClass = this;
+    loadMmdbOpmDataPart2(data, pdbid, type) { let  ic = this.icn3d, me = ic.icn3dui;
+        let  thisClass = this;
 
         // set 3d domains
-        var structure = data.pdbId;
+        let  structure = data.pdbId;
 
         if(type === undefined) ic.ParserUtilsCls.setYourNote(structure.toUpperCase() + '(MMDB) in iCn3D');
 
-        for(var molid in data.domains) {
-            var chain = data.domains[molid].chain;
-            var domainArray = data.domains[molid].domains;
+        for(let molid in data.domains) {
+            let  chain = data.domains[molid].chain;
+            let  domainArray = data.domains[molid].domains;
 
-            for(var index = 0, indexl = domainArray.length; index < indexl; ++index) {
-                var domainName = structure + '_' + chain + '_3d_domain_' +(index+1).toString();
+            for(let index = 0, indexl = domainArray.length; index < indexl; ++index) {
+                let  domainName = structure + '_' + chain + '_3d_domain_' +(index+1).toString();
                 ic.tddomains[domainName] = {}
 
-                var subdomainArray = domainArray[index].intervals;
+                let  subdomainArray = domainArray[index].intervals;
 
                 // remove duplicate, e.g., at https://www.ncbi.nlm.nih.gov/Structure/mmdb/mmdb_strview.cgi?v=2&program=icn3d&domain&molinfor&uid=1itw
-                var domainFromHash = {}, domainToHash = {}
+                let  domainFromHash = {}, domainToHash = {}
 
                 //var fromArray = [], toArray = [];
                 //var resCnt = 0
-                for(var i = 0, il = subdomainArray.length; i < il; ++i) {
-                    var domainFrom = Math.round(subdomainArray[i][0]) - 1; // 1-based
-                    var domainTo = Math.round(subdomainArray[i][1]) - 1;
+                for(let i = 0, il = subdomainArray.length; i < il; ++i) {
+                    let  domainFrom = Math.round(subdomainArray[i][0]) - 1; // 1-based
+                    let  domainTo = Math.round(subdomainArray[i][1]) - 1;
 
                     if(domainFromHash.hasOwnProperty(domainFrom) || domainToHash.hasOwnProperty(domainTo)) {
                         continue; // do nothing for duplicated "from" or "to", e.g, PDBID 1ITW, 5FWI
@@ -387,8 +387,8 @@ class MmdbParser {
                     //toArray.push(domainTo + ic.baseResi[chnid]);
                     //resCnt += domainTo - domainFrom + 1;
 
-                    for(var j = domainFrom; j <= domainTo; ++j) {
-                        var resid = structure + '_' + chain + '_' +(j+1).toString();
+                    for(let j = domainFrom; j <= domainTo; ++j) {
+                        let  resid = structure + '_' + chain + '_' +(j+1).toString();
                         ic.tddomains[domainName][resid] = 1;
                     }
                 }
@@ -409,9 +409,9 @@ class MmdbParser {
         }
     }
 
-    downloadUniprotid(uniprotid) { var ic = this.icn3d, me = ic.icn3dui;
+    downloadUniprotid(uniprotid) { let  ic = this.icn3d, me = ic.icn3dui;
        // get gis
-       var url = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi?db=protein&retmode=json&id=" + uniprotid;
+       let  url = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi?db=protein&retmode=json&id=" + uniprotid;
 
        ic.bCid = undefined;
 
@@ -428,9 +428,9 @@ class MmdbParser {
               //ic.ParserUtilsCls.hideLoading();
           },
           success: function(data) {
-               var giArray = data.result.uids;
+               let  giArray = data.result.uids;
 
-               var redirectUrl = "https://www.ncbi.nlm.nih.gov/structure?linkname=protein_structure&from_uid=" + giArray.join(',');
+               let  redirectUrl = "https://www.ncbi.nlm.nih.gov/structure?linkname=protein_structure&from_uid=" + giArray.join(',');
                window.open(redirectUrl, '_self');
           },
           error : function(xhr, textStatus, errorThrown ) {

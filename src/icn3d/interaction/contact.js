@@ -11,24 +11,24 @@ class Contact {
      //This function returns atoms within a certain "distance" (in angstrom) from the "targetAtoms".
      //The returned atoms are stored in a hash with atom indices as keys and 1 as values.
      //Only those atoms in "allAtoms" are considered.
-     getAtomsWithinAtom(atomlist, atomlistTarget, distance, bGetPairs, bInteraction, bInternal, bIncludeTarget) { var ic = this.icn3d, me = ic.icn3dui;
-        var neighbors = this.getNeighboringAtoms(atomlist, atomlistTarget, distance, bIncludeTarget);
+     getAtomsWithinAtom(atomlist, atomlistTarget, distance, bGetPairs, bInteraction, bInternal, bIncludeTarget) { let ic = this.icn3d, me = ic.icn3dui;
+        let neighbors = this.getNeighboringAtoms(atomlist, atomlistTarget, distance, bIncludeTarget);
         if(bGetPairs) ic.resid2Residhash = {};
 
         //var maxDistSq = (radius + distance) * (radius + distance);
-        var maxDistSq = distance * distance;
+        let maxDistSq = distance * distance;
 
-        var ret = {};
-        for(var i in atomlistTarget) {
+        let ret = {};
+        for(let i in atomlistTarget) {
             //var oriAtom = atomlistTarget[i];
-            var oriAtom = ic.atoms[i];
+            let oriAtom = ic.atoms[i];
             //var radius = me.parasCls.vdwRadii[oriAtom.elem.toUpperCase()] || ic.defaultRadius;
             // The distance between atoms does not include the radius
-            var radius = 0;
+            let radius = 0;
 
-            var oriCalpha = undefined, oriResidName = undefined;
-            var oriResid = oriAtom.structure + '_' + oriAtom.chain + '_' + oriAtom.resi;
-            for(var serial in ic.residues[oriResid]) {
+            let oriCalpha = undefined, oriResidName = undefined;
+            let oriResid = oriAtom.structure + '_' + oriAtom.chain + '_' + oriAtom.resi;
+            for(let serial in ic.residues[oriResid]) {
                 if((ic.atoms[serial].name === 'CA' && ic.atoms[serial].elem === 'C') || ic.atoms[serial].name === "O3'" || ic.atoms[serial].name === "O3*") {
                     oriCalpha = ic.atoms[serial];
                     break;
@@ -42,10 +42,10 @@ class Contact {
                 if(ic.resid2Residhash[oriResidName] === undefined) ic.resid2Residhash[oriResidName] = {};
             }
 
-            var chain_resi = oriAtom.structure + '_' + oriAtom.chain + '_' + oriAtom.resi;
+            let chain_resi = oriAtom.structure + '_' + oriAtom.chain + '_' + oriAtom.resi;
 
-            for (var j in neighbors) {
-               var atom = neighbors[j];
+            for (let j in neighbors) {
+               let atom = neighbors[j];
 
                if(!ic.crossstrucinter && oriAtom.structure != atom.structure) continue;
 
@@ -54,18 +54,18 @@ class Contact {
                if(ic.bOpm && atom.resn === 'DUM') continue;
 
                //var atomDistSq = (atom.coord.x - oriAtom.coord.x) * (atom.coord.x - oriAtom.coord.x) + (atom.coord.y - oriAtom.coord.y) * (atom.coord.y - oriAtom.coord.y) + (atom.coord.z - oriAtom.coord.z) * (atom.coord.z - oriAtom.coord.z);
-               var atomDist = atom.coord.distanceTo(oriAtom.coord);
+               let atomDist = atom.coord.distanceTo(oriAtom.coord);
 
                //if(atomDistSq < maxDistSq) {
                if(atomDist < distance) {
                     ret[atom.serial] = atom;
-                    var calpha = undefined, residName = undefined;
+                    let calpha = undefined, residName = undefined;
                     if(bInteraction) {
                         ret[oriAtom.serial] = oriAtom;
                     }
 
-                    var resid = atom.structure + '_' + atom.chain + '_' + atom.resi;
-                    for(var serial in ic.residues[resid]) {
+                    let resid = atom.structure + '_' + atom.chain + '_' + atom.resi;
+                    for(let serial in ic.residues[resid]) {
                         if( (ic.atoms[serial].name === 'CA' && ic.atoms[serial].elem === 'C') || ic.atoms[serial].name === "O3'" || ic.atoms[serial].name === "O3*") {
                             calpha = ic.atoms[serial];
                             break;
@@ -81,15 +81,15 @@ class Contact {
                     }
 
                     if(bGetPairs) {
-        var chain_resi2 = atom.structure + '_' + atom.chain + '_' + atom.resi;
+        let chain_resi2 = atom.structure + '_' + atom.chain + '_' + atom.resi;
 
         residName = atom.resn + ' $' + atom.structure + '.' + atom.chain + ':' + atom.resi;
         //var dist = Math.sqrt(atomDistSq).toFixed(1);
-        var dist1 = atomDist.toFixed(1);
-        var dist2 = calpha.coord.distanceTo(oriCalpha.coord).toFixed(1);
+        let dist1 = atomDist.toFixed(1);
+        let dist2 = calpha.coord.distanceTo(oriCalpha.coord).toFixed(1);
 
-        var resids = chain_resi + '_' + oriAtom.resn + ',' + chain_resi2 + '_' + atom.resn;
-        var residNames = oriResidName + ',' + residName;
+        let resids = chain_resi + '_' + oriAtom.resn + ',' + chain_resi2 + '_' + atom.resn;
+        let residNames = oriResidName + ',' + residName;
         if(ic.resids2interAll[resids] === undefined
             || ic.resids2interAll[resids]['contact'] === undefined
             || !ic.resids2interAll[resids]['contact'].hasOwnProperty(residNames)
@@ -100,7 +100,7 @@ class Contact {
             || (ic.resids2interAll[resids]['pi-stacking'] !== undefined && !ic.resids2interAll[resids]['pi-stacking'].hasOwnProperty(residNames))
             ) {
               if(ic.resid2Residhash[oriResidName][residName] === undefined || dist1 < ic.resid2Residhash[oriResidName][residName].split('_')[0]) {
-                  var cnt = (ic.resid2Residhash[oriResidName][residName] === undefined) ? 1 : parseInt(ic.resid2Residhash[oriResidName][residName].split('_')[4]) + 1;
+                  let cnt = (ic.resid2Residhash[oriResidName][residName] === undefined) ? 1 : parseInt(ic.resid2Residhash[oriResidName][residName].split('_')[4]) + 1;
                   ic.resid2Residhash[oriResidName][residName] = dist1 + '_' + dist2 + '_' + oriAtom.name + '_' + atom.name + '_' + cnt;
 
                   if(!bInternal) {
@@ -122,20 +122,20 @@ class Contact {
         return ret;
      }
 
-     getNeighboringAtoms(atomlist, atomlistTarget, distance, bIncludeTarget) { var ic = this.icn3d, me = ic.icn3dui;
-        var extent = this.getExtent(atomlistTarget);
+     getNeighboringAtoms(atomlist, atomlistTarget, distance, bIncludeTarget) { let ic = this.icn3d, me = ic.icn3dui;
+        let extent = this.getExtent(atomlistTarget);
 
-        var targetRadiusSq1 = (extent[2][0] - extent[0][0]) * (extent[2][0] - extent[0][0]) + (extent[2][1] - extent[0][1]) * (extent[2][1] - extent[0][1]) + (extent[2][2] - extent[0][2]) * (extent[2][2] - extent[0][2]);
-        var targetRadiusSq2 = (extent[2][0] - extent[1][0]) * (extent[2][0] - extent[1][0]) + (extent[2][1] - extent[1][1]) * (extent[2][1] - extent[1][1]) + (extent[2][2] - extent[1][2]) * (extent[2][2] - extent[1][2]);
-        var targetRadiusSq = (targetRadiusSq1 > targetRadiusSq2) ? targetRadiusSq1 : targetRadiusSq2;
-        var targetRadius = Math.sqrt(targetRadiusSq);
+        let targetRadiusSq1 = (extent[2][0] - extent[0][0]) * (extent[2][0] - extent[0][0]) + (extent[2][1] - extent[0][1]) * (extent[2][1] - extent[0][1]) + (extent[2][2] - extent[0][2]) * (extent[2][2] - extent[0][2]);
+        let targetRadiusSq2 = (extent[2][0] - extent[1][0]) * (extent[2][0] - extent[1][0]) + (extent[2][1] - extent[1][1]) * (extent[2][1] - extent[1][1]) + (extent[2][2] - extent[1][2]) * (extent[2][2] - extent[1][2]);
+        let targetRadiusSq = (targetRadiusSq1 > targetRadiusSq2) ? targetRadiusSq1 : targetRadiusSq2;
+        let targetRadius = Math.sqrt(targetRadiusSq);
 
-        var maxDistSq = (targetRadius + distance) * (targetRadius + distance);
+        let maxDistSq = (targetRadius + distance) * (targetRadius + distance);
 
-        var neighbors = {};
-        for (var i in atomlist) {
+        let neighbors = {};
+        for (let i in atomlist) {
            //var atom = atomlist[i];
-           var atom = ic.atoms[i];
+           let atom = ic.atoms[i];
 
            // exclude the target atoms
            if(!bIncludeTarget && atomlistTarget.hasOwnProperty(atom.serial)) continue;
@@ -148,7 +148,7 @@ class Contact {
 
            // only show protein or DNA/RNA
            //if(atom.serial in this.proteins || atom.serial in this.nucleotides) {
-               var atomDistSq = (atom.coord.x - extent[2][0]) * (atom.coord.x - extent[2][0]) + (atom.coord.y - extent[2][1]) * (atom.coord.y - extent[2][1]) + (atom.coord.z - extent[2][2]) * (atom.coord.z - extent[2][2]);
+               let atomDistSq = (atom.coord.x - extent[2][0]) * (atom.coord.x - extent[2][0]) + (atom.coord.y - extent[2][1]) * (atom.coord.y - extent[2][1]) + (atom.coord.z - extent[2][2]) * (atom.coord.z - extent[2][2]);
 
                if(atomDistSq < maxDistSq) {
                    neighbors[atom.serial] = atom;
@@ -162,18 +162,18 @@ class Contact {
      // from iview (http://istar.cse.cuhk.edu.hk/iview/)
      //For a list of atoms, return an array containing three coordinates: minimum x- y- z- values,
      //maximum x- y- z- values, and average x- y- z- values.
-     getExtent(atomlist) { var ic = this.icn3d, me = ic.icn3dui;
-        var xmin, ymin, zmin;
-        var xmax, ymax, zmax;
-        var xsum, ysum, zsum, cnt;
+     getExtent(atomlist) { let ic = this.icn3d, me = ic.icn3dui;
+        let xmin, ymin, zmin;
+        let xmax, ymax, zmax;
+        let xsum, ysum, zsum, cnt;
 
         xmin = ymin = zmin = 9999;
         xmax = ymax = zmax = -9999;
         xsum = ysum = zsum = cnt = 0;
-        var i;
+        let i;
         for (i in atomlist) {
            //var atom = atomlist[i];
-           var atom = ic.atoms[i];
+           let atom = ic.atoms[i];
            cnt++;
            xsum += atom.coord.x; ysum += atom.coord.y; zsum += atom.coord.z;
 
@@ -190,23 +190,23 @@ class Contact {
         return [[xmin, ymin, zmin], [xmax, ymax, zmax], [xsum / cnt, ysum / cnt, zsum / cnt]];
      }
 
-    hideContact() { var ic = this.icn3d, me = ic.icn3dui;
+    hideContact() { let ic = this.icn3d, me = ic.icn3dui;
         ic.opts["contact"] = "no";
         if(ic.lines === undefined) ic.lines = { }
         ic.lines['contact'] = [];
         ic.contactpnts = [];
 
-        for(var i in ic.atoms) {
+        for(let i in ic.atoms) {
             ic.atoms[i].style2 = 'nothing';
         }
 
-        for(var i in ic.sidec) {
+        for(let i in ic.sidec) {
             if(ic.hAtoms.hasOwnProperty(i)) {
                 ic.atoms[i].style2 = ic.opts["sidec"];
             }
         }
 
-        for(var i in ic.water) {
+        for(let i in ic.water) {
             if(ic.hAtoms.hasOwnProperty(i)) {
                 ic.atoms[i].style = ic.opts["water"];
             }

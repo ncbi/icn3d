@@ -22,23 +22,23 @@ class Diagram2d {
     // draw 2D dgm for MMDB ID
     // Used as a reference the work at 2016 ISMB hackathon: https://github.com/NCBI-Hackathons/3D_2D_Rep_Structure
     // bUpdate: redraw 2Ddiagramfor the displayed structure
-    draw2Ddgm(data, mmdbid, structureIndex, bUpdate) { var ic = this.icn3d, me = ic.icn3dui;
+    draw2Ddgm(data, mmdbid, structureIndex, bUpdate) { let ic = this.icn3d, me = ic.icn3dui;
         // only show the 2D diagrams for displayed structures
 
         mmdbid = mmdbid.substr(0, 4);
 
         // reduce the size from 300 to 150
-        var factor = 0.5;
+        let factor = 0.5;
 
         // set molid2chain
-        var molid2chain = {}, molid2color = {}, molid2name = {}, chainid2molid = {}
-        var chainNameHash = {}
+        let molid2chain = {}, molid2color = {}, molid2name = {}, chainid2molid = {}
+        let chainNameHash = {}
 
         if(data === undefined) return '';
 
-        for(var molid in data.moleculeInfor) {
-              var color = '#' +( '000000' + data.moleculeInfor[molid].color.toString( 16 ) ).slice( - 6 );
-              var chainName = data.moleculeInfor[molid].chain.trim();
+        for(let molid in data.moleculeInfor) {
+              let color = '#' +( '000000' + data.moleculeInfor[molid].color.toString( 16 ) ).slice( - 6 );
+              let chainName = data.moleculeInfor[molid].chain.trim();
               if(chainNameHash[chainName] === undefined) {
                   chainNameHash[chainName] = 1;
               }
@@ -46,8 +46,8 @@ class Diagram2d {
                   ++chainNameHash[chainName];
               }
 
-              var chainNameFinal =(chainNameHash[chainName] === 1) ? chainName : chainName + chainNameHash[chainName].toString();
-              var chainid = mmdbid + '_' + chainNameFinal;
+              let chainNameFinal =(chainNameHash[chainName] === 1) ? chainName : chainName + chainNameHash[chainName].toString();
+              let chainid = mmdbid + '_' + chainNameFinal;
               if(ic.mmdbid_q !== undefined && ic.mmdbid_q === ic.mmdbid_t && structureIndex === 0) {
                   //chainid += ic.icn3dui.htmlCls.postfix;
                   chainid = mmdbid + ic.icn3dui.htmlCls.postfix + '_' + chainNameFinal;
@@ -62,16 +62,16 @@ class Diagram2d {
 
         // save the interacting residues
         if(bUpdate === undefined || !bUpdate) {
-            for(var i = 0, il = data['intracResidues'].length; i < il; ++i) {
-                var pair = data['intracResidues'][i];
+            for(let i = 0, il = data['intracResidues'].length; i < il; ++i) {
+                let pair = data['intracResidues'][i];
 
-                var index = 0;
-                var chainid1, chainid2;
+                let index = 0;
+                let chainid1, chainid2;
 
-                for(var molid in pair) {
+                for(let molid in pair) {
                     //molid = parseInt(molid);
 
-                    var chainid;
+                    let chainid;
 
                     chainid = molid2chain[molid];
                     if(index === 0) {
@@ -87,10 +87,10 @@ class Diagram2d {
                 if(chainid1 === undefined || chainid2 === undefined) continue;
 
                 index = 0;
-                for(var molid in pair) {
-                    var resArray = pair[molid];
+                for(let molid in pair) {
+                    let resArray = pair[molid];
 
-                    var fisrtChainid, secondChainid;
+                    let fisrtChainid, secondChainid;
                     if(index === 0) {
                         fisrtChainid = chainid1;
                         secondChainid = chainid2;
@@ -108,9 +108,9 @@ class Diagram2d {
                         ic.chainids2resids[fisrtChainid][secondChainid] = [];
                     }
 
-                    for(var j = 0, jl = resArray.length; j < jl; ++j) {
-                        var res = resArray[j];
-                        var resid = ic.mmdbMolidResid2mmdbChainResi[mmdbid.toUpperCase() + '_' + molid + '_' + res];
+                    for(let j = 0, jl = resArray.length; j < jl; ++j) {
+                        let res = resArray[j];
+                        let resid = ic.mmdbMolidResid2mmdbChainResi[mmdbid.toUpperCase() + '_' + molid + '_' + res];
 
                         ic.chainids2resids[fisrtChainid][secondChainid].push(resid);
                     }
@@ -122,10 +122,10 @@ class Diagram2d {
 
                     if(!ic.chains.hasOwnProperty(chainid2)) continue;
 
-                    var atom2 = ic.firstAtomObjCls.getFirstCalphaAtomObj(ic.chains[chainid2]);
+                    let atom2 = ic.firstAtomObjCls.getFirstCalphaAtomObj(ic.chains[chainid2]);
                     //if(ic.chainname2residues[chainid2] === undefined) ic.chainname2residues[chainid2] = {}
 
-                    var type2;
+                    let type2;
                     if(ic.chemicals.hasOwnProperty(atom2.serial)) { // 1. chemical interacting with proteins
                         type2 = 'chemical';
                     }
@@ -142,7 +142,7 @@ class Diagram2d {
                         type2 = 'water';
                     }
 
-                    var name = chainid2.substr(chainid2.indexOf('_') + 1) + "(" + type2 + ")";
+                    let name = chainid2.substr(chainid2.indexOf('_') + 1) + "(" + type2 + ")";
 
                     if(ic.chainname2residues[fisrtChainid] === undefined) ic.chainname2residues[fisrtChainid] = {}
 
@@ -154,53 +154,53 @@ class Diagram2d {
             }
         }
 
-        var html = "<div id='#" + ic.pre + mmdbid + "'>";
+        let html = "<div id='#" + ic.pre + mmdbid + "'>";
 
         html += "<b>" + mmdbid.toUpperCase() + "</b><br/>";
 
         html += "<svg viewBox='0,0,150,150'>";
-        var strokecolor = '#000000';
-        var strokewidth = '1';
-        var linestrokewidth = '2';
-        var textcolor = '#000000';
-        var fontsize = '10';
-        var smallfontsize = '8';
-        var adjustx = 0, adjusty = 4, smalladjustx = 1, smalladjusty = 2, halfLetHigh = 6;
+        let strokecolor = '#000000';
+        let strokewidth = '1';
+        let linestrokewidth = '2';
+        let textcolor = '#000000';
+        let fontsize = '10';
+        let smallfontsize = '8';
+        let adjustx = 0, adjusty = 4, smalladjustx = 1, smalladjusty = 2, halfLetHigh = 6;
 
-        var posHash = {}
-        var lines = [];
+        let posHash = {}
+        let lines = [];
 
-        var nodeHtml = "", chemNodeHtml = "";
+        let nodeHtml = "", chemNodeHtml = "";
 
-        var alignedAtomArray = [];
+        let alignedAtomArray = [];
 
-        var displayedMolids = {}
+        let displayedMolids = {}
         if(bUpdate) {
             // get all displayed chains
-            for(var i in ic.dAtoms) {
-                var atom = ic.atoms[i];
-                var chainid = atom.structure + '_' + atom.chain;
-                var molid = chainid2molid[chainid];
+            for(let i in ic.dAtoms) {
+                let atom = ic.atoms[i];
+                let chainid = atom.structure + '_' + atom.chain;
+                let molid = chainid2molid[chainid];
 
                 displayedMolids[molid] = 1;
             }
         }
 
-        var allMolidArray = Object.keys(data.moleculeInfor);
-        var intracMolidArray = Object.keys(data.intrac);
+        let allMolidArray = Object.keys(data.moleculeInfor);
+        let intracMolidArray = Object.keys(data.intrac);
 
-        var missingMolidArray = [];
-        for(var i = 0, il = allMolidArray.length; i < il; ++i) {
+        let missingMolidArray = [];
+        for(let i = 0, il = allMolidArray.length; i < il; ++i) {
             if(intracMolidArray.indexOf(allMolidArray[i]) === -1) missingMolidArray.push(allMolidArray[i]);
         }
 
-        var missingMolid2intrac = {} // biopolymer
+        let missingMolid2intrac = {} // biopolymer
 
         if(missingMolidArray.length > 0) {
-            for(var molid in data.intrac) {
-                var dgm = data.intrac[molid];
-                for(var i = 0, il = dgm.intrac.length; i < il; ++i) {
-                    var intracMolid = dgm.intrac[i].toString();
+            for(let molid in data.intrac) {
+                let dgm = data.intrac[molid];
+                for(let i = 0, il = dgm.intrac.length; i < il; ++i) {
+                    let intracMolid = dgm.intrac[i].toString();
                     if(missingMolidArray.indexOf(intracMolid) !== -1) {
                         if(missingMolid2intrac[intracMolid] === undefined) missingMolid2intrac[intracMolid] = [];
                         missingMolid2intrac[intracMolid].push(molid);
@@ -209,58 +209,58 @@ class Diagram2d {
                 }
 
                 if(dgm.shape === 'rect') {
-                    var x = dgm.coords[0] * factor;
-                    var y = dgm.coords[1] * factor;
-                    var width = dgm.coords[2] * factor - x;
-                    var height = dgm.coords[3] * factor - y;
+                    let x = dgm.coords[0] * factor;
+                    let y = dgm.coords[1] * factor;
+                    let width = dgm.coords[2] * factor - x;
+                    let height = dgm.coords[3] * factor - y;
 
                     posHash[molid] = [x + width/2, y + height/2];
                 }
                 else if(dgm.shape === 'circle') {
-                    var x = dgm.coords[0] * factor;
-                    var y = dgm.coords[1] * factor;
-                    var r = dgm.coords[2] * factor;
+                    let x = dgm.coords[0] * factor;
+                    let y = dgm.coords[1] * factor;
+                    let r = dgm.coords[2] * factor;
 
                     posHash[molid] = [x, y];
                 }
                 else if(dgm.shape === 'poly') {
-                    var x0 = dgm.coords[0] * factor;
-                    var y0 = dgm.coords[1] * factor;
-                    var x1 = dgm.coords[2] * factor;
-                    var y1 = dgm.coords[3] * factor;
-                    var x2 = dgm.coords[4] * factor;
-                    var y2 = dgm.coords[5] * factor;
-                    var x3 = dgm.coords[6] * factor;
-                    var y3 = dgm.coords[7] * factor;
+                    let x0 = dgm.coords[0] * factor;
+                    let y0 = dgm.coords[1] * factor;
+                    let x1 = dgm.coords[2] * factor;
+                    let y1 = dgm.coords[3] * factor;
+                    let x2 = dgm.coords[4] * factor;
+                    let y2 = dgm.coords[5] * factor;
+                    let x3 = dgm.coords[6] * factor;
+                    let y3 = dgm.coords[7] * factor;
 
-                    var x = x0, y = y1;
+                    let x = x0, y = y1;
 
                     posHash[molid] = [x0, y1];
                 }
             }
         }
 
-        var cntNointeraction = 0;
-        //for(var molid in data.intrac) {
-        for(var index = 0, indexl = allMolidArray.length; index < indexl; ++index) {
-            var molid = allMolidArray[index];
+        let cntNointeraction = 0;
+        //for(let molid in data.intrac) {
+        for(let index = 0, indexl = allMolidArray.length; index < indexl; ++index) {
+            let molid = allMolidArray[index];
 
-            var chainid = molid2chain[molid];
+            let chainid = molid2chain[molid];
 
             // if redraw2d diagram and the molid is not displayed, skip
             if(bUpdate && !displayedMolids.hasOwnProperty(molid)) continue;
 
-            var dgm = data.intrac[molid];
-            var color = "#FFFFFF";
-            var oricolor = molid2color[molid];
+            let dgm = data.intrac[molid];
+            let color = "#FFFFFF";
+            let oricolor = molid2color[molid];
             if(chainid !== undefined && ic.chains[chainid] !== undefined) {
-                var atomArray = Object.keys(ic.chains[chainid]);
+                let atomArray = Object.keys(ic.chains[chainid]);
                 if(atomArray.length > 0) {
                     oricolor = "#" + ic.atoms[atomArray[0]].color.getHexString().toUpperCase();
                 }
             }
 
-            var alignNum = "";
+            let alignNum = "";
             if(ic.bInitial && structureIndex !== undefined) {
                 if(ic.alignmolid2color !== undefined && ic.alignmolid2color[structureIndex].hasOwnProperty(molid)) {
                     alignNum = ic.alignmolid2color[structureIndex][molid];
@@ -271,11 +271,11 @@ class Diagram2d {
                 }
             }
 
-            var chainname = molid2name[molid];
+            let chainname = molid2name[molid];
 
-            var chain = ' ', oriChain = ' ';
+            let chain = ' ', oriChain = ' ';
             if(chainid !== undefined) {
-                var pos = chainid.indexOf('_');
+                let pos = chainid.indexOf('_');
                 oriChain = chainid.substr(pos + 1);
 
                 if(oriChain.length > 1) {
@@ -293,12 +293,12 @@ class Diagram2d {
                 oricolor = '#FFFFFF';
             }
 
-            var ratio = 1.0;
+            let ratio = 1.0;
             if(ic.bInitial && ic.alnChains[chainid] !== undefined) {
                 //ratio = 1.0 * Object.keys(ic.alnChains[chainid]).length / Object.keys(ic.chains[chainid]).length;
-                var alignedAtomCnt = 0;
-                for(var i in ic.alnChains[chainid]) {
-                    var colorStr = ic.atoms[i].color.getHexString().toUpperCase();
+                let alignedAtomCnt = 0;
+                for(let i in ic.alnChains[chainid]) {
+                    let colorStr = ic.atoms[i].color.getHexString().toUpperCase();
                     if(colorStr === 'FF0000' || colorStr === '00FF00') {
                         ++alignedAtomCnt;
                     }
@@ -308,42 +308,42 @@ class Diagram2d {
             if(ratio < 0.2) ratio = 0.2;
 
             if(missingMolidArray.indexOf(molid) === -1) {
-                for(var i = 0, il = dgm.intrac.length; i < il; ++i) {
+                for(let i = 0, il = dgm.intrac.length; i < il; ++i) {
                     // show the interactin line once
                     if(parseInt(molid) < parseInt(dgm.intrac[i])) lines.push([molid, dgm.intrac[i] ]);
                 }
 
                 if(dgm.shape === 'rect') {
-                    var x = dgm.coords[0] * factor;
-                    var y = dgm.coords[1] * factor;
-                    var width = dgm.coords[2] * factor - x;
-                    var height = dgm.coords[3] * factor - y;
+                    let x = dgm.coords[0] * factor;
+                    let y = dgm.coords[1] * factor;
+                    let width = dgm.coords[2] * factor - x;
+                    let height = dgm.coords[3] * factor - y;
 
                     nodeHtml += this.draw2DNucleotide(x + 0.5 * width, y + 0.5 * height, chainid, oriChain, chain, chainname, alignNum, color, oricolor, factor, ratio);
 
                     posHash[molid] = [x + width/2, y + height/2];
                 }
                 else if(dgm.shape === 'circle') {
-                    var x = dgm.coords[0] * factor;
-                    var y = dgm.coords[1] * factor;
+                    let x = dgm.coords[0] * factor;
+                    let y = dgm.coords[1] * factor;
 
                     nodeHtml += this.draw2DProtein(x, y, chainid, oriChain, chain, chainname, alignNum, color, oricolor, factor, ratio);
 
                     posHash[molid] = [x, y];
                 }
                 else if(dgm.shape === 'poly') {
-                  var x0 = dgm.coords[0] * factor;
-                  var y0 = dgm.coords[1] * factor;
-                  var x1 = dgm.coords[2] * factor;
-                  var y1 = dgm.coords[3] * factor;
-                  var x2 = dgm.coords[4] * factor;
-                  var y2 = dgm.coords[5] * factor;
-                  var x3 = dgm.coords[6] * factor;
-                  var y3 = dgm.coords[7] * factor;
+                  let x0 = dgm.coords[0] * factor;
+                  let y0 = dgm.coords[1] * factor;
+                  let x1 = dgm.coords[2] * factor;
+                  let y1 = dgm.coords[3] * factor;
+                  let x2 = dgm.coords[4] * factor;
+                  let y2 = dgm.coords[5] * factor;
+                  let x3 = dgm.coords[6] * factor;
+                  let y3 = dgm.coords[7] * factor;
 
-                  var x = x0, y = y1;
+                  let x = x0, y = y1;
 
-                  var atom = ic.firstAtomObjCls.getFirstAtomObj(ic.chains[chainid]);
+                  let atom = ic.firstAtomObjCls.getFirstAtomObj(ic.chains[chainid]);
 
                   chemNodeHtml += this.draw2DChemical(x, y, chainid, oriChain, chain, chainname, alignNum, color, oricolor, factor, ratio);
 
@@ -352,18 +352,18 @@ class Diagram2d {
             }
             else { // missing biopolymer
                 // max x and y value: 300
-                var maxSize = 300;
-                var step = 50;
+                let maxSize = 300;
+                let step = 50;
 
-                var xCenter, yCenter;
+                let xCenter, yCenter;
                 if(missingMolid2intrac[molid] !== undefined && missingMolid2intrac[molid].length > 1) { // has interactions
                     // find its position
-                    var xSum = 0, ySum = 0;
+                    let xSum = 0, ySum = 0;
 
-                    for(var j = 0, jl = missingMolid2intrac[molid].length; j < jl; ++j) {
-                        var intracMolid = missingMolid2intrac[molid][j];
+                    for(let j = 0, jl = missingMolid2intrac[molid].length; j < jl; ++j) {
+                        let intracMolid = missingMolid2intrac[molid][j];
                         if(posHash.hasOwnProperty(intracMolid)) {
-                            var node = posHash[intracMolid];
+                            let node = posHash[intracMolid];
                             xSum += node[0];
                             ySum += node[1];
                         }
@@ -373,7 +373,7 @@ class Diagram2d {
                     yCenter = ySum / missingMolid2intrac[molid].length;
                 }
                 else { // has NO interactions or just one interaction
-                    var nSteps = maxSize / step;
+                    let nSteps = maxSize / step;
 
                     if(cntNointeraction < nSteps - 1) {
                         xCenter =(cntNointeraction + 1) * step * factor;
@@ -392,40 +392,40 @@ class Diagram2d {
 
                 }
 
-                var x = xCenter, y = yCenter;
+                let x = xCenter, y = yCenter;
 
-                var atom = ic.firstAtomObjCls.getFirstAtomObj(ic.chains[chainid]);
+                let atom = ic.firstAtomObjCls.getFirstAtomObj(ic.chains[chainid]);
 
-                var bBiopolymer = true;
+                let bBiopolymer = true;
                 chemNodeHtml += this.draw2DChemical(x, y, chainid, oriChain, chain, chainname, alignNum, color, oricolor, factor, ratio, bBiopolymer);
 
                 posHash[molid] = [x, y];
             }
         }
 
-        for(var i = 0, il = lines.length; i < il; ++i) {
-            var pair = lines[i];
+        for(let i = 0, il = lines.length; i < il; ++i) {
+            let pair = lines[i];
 
             // if redraw2d diagram and the molid is not displayed, skip
             if(bUpdate &&(!displayedMolids.hasOwnProperty(pair[0]) || !displayedMolids.hasOwnProperty(pair[1])) ) continue;
 
-            var node1 = posHash[parseInt(pair[0])];
-            var node2 = posHash[parseInt(pair[1])];
+            let node1 = posHash[parseInt(pair[0])];
+            let node2 = posHash[parseInt(pair[1])];
 
             if(node1 === undefined || node2 === undefined) continue;
 
-            var chainid1, chainid2;
+            let chainid1, chainid2;
 
             chainid1 = molid2chain[pair[0]];
             chainid2 = molid2chain[pair[1]];
 
-            var pos1 = chainid1.indexOf('_');
-            var pos2 = chainid2.indexOf('_');
+            let pos1 = chainid1.indexOf('_');
+            let pos2 = chainid2.indexOf('_');
 
-            var chain1 = chainid1.substr(pos1 + 1);
-            var chain2 = chainid2.substr(pos2 + 1);
+            let chain1 = chainid1.substr(pos1 + 1);
+            let chain2 = chainid2.substr(pos2 + 1);
 
-            var x1 = node1[0], y1 = node1[1], x2 = node2[0], y2 = node2[1], xMiddle =(x1 + x2) * 0.5, yMiddle =(y1 + y2) * 0.5;
+            let x1 = node1[0], y1 = node1[1], x2 = node2[0], y2 = node2[1], xMiddle =(x1 + x2) * 0.5, yMiddle =(y1 + y2) * 0.5;
 
             html += "<g class='icn3d-interaction' chainid1='" + chainid1 + "' chainid2='" + chainid2 + "' >";
             html += "<title>Interaction of chain " + chain1 + " with chain " + chain2 + "</title>";
@@ -448,8 +448,8 @@ class Diagram2d {
         return html;
     }
 
-    set2DdgmNote(bAlign) { var ic = this.icn3d, me = ic.icn3dui;
-        var html = "<div style='width:150px'><b>Nodes</b>:<br>";
+    set2DdgmNote(bAlign) { let ic = this.icn3d, me = ic.icn3dui;
+        let html = "<div style='width:150px'><b>Nodes</b>:<br>";
 
         if(me.utilsCls.isMac()) {
             html += "<span style='margin-right:18px;'>&#9711;</span>Protein<br>";
@@ -471,18 +471,18 @@ class Diagram2d {
         return html;
     }
 
-    highlightNode(type, highlight, base, ratio) { var ic = this.icn3d, me = ic.icn3dui;
+    highlightNode(type, highlight, base, ratio) { let ic = this.icn3d, me = ic.icn3dui;
         if(ratio < 0.2) ratio = 0.2;
-        var strokeWidth = 3; // default 1
+        let strokeWidth = 3; // default 1
 
         if(type === 'rect') {
             $(highlight).attr('stroke', ic.icn3dui.htmlCls.ORANGE);
             $(highlight).attr('stroke-width', strokeWidth);
 
-            var x = Number($(base).attr('x'));
-            var y = Number($(base).attr('y'));
-            var width = Number($(base).attr('width'));
-            var height = Number($(base).attr('height'));
+            let x = Number($(base).attr('x'));
+            let y = Number($(base).attr('y'));
+            let width = Number($(base).attr('width'));
+            let height = Number($(base).attr('height'));
             $(highlight).attr('x', x + width / 2.0 *(1 - ratio));
             $(highlight).attr('y', y + height / 2.0 *(1 - ratio));
             $(highlight).attr('width', width * ratio);
@@ -498,23 +498,23 @@ class Diagram2d {
             $(highlight).attr('stroke', ic.icn3dui.htmlCls.ORANGE);
             $(highlight).attr('stroke-width', strokeWidth);
 
-            var x = Number($(base).attr('x'));
-            var y = Number($(base).attr('y'));
+            let x = Number($(base).attr('x'));
+            let y = Number($(base).attr('y'));
 
-            var x0diff = Number($(base).attr('x0d'));
-            var y0diff = Number($(base).attr('y0d'));
-            var x1diff = Number($(base).attr('x1d'));
-            var y1diff = Number($(base).attr('y1d'));
-            var x2diff = Number($(base).attr('x2d'));
-            var y2diff = Number($(base).attr('y2d'));
-            var x3diff = Number($(base).attr('x3d'));
-            var y3diff = Number($(base).attr('y3d'));
+            let x0diff = Number($(base).attr('x0d'));
+            let y0diff = Number($(base).attr('y0d'));
+            let x1diff = Number($(base).attr('x1d'));
+            let y1diff = Number($(base).attr('y1d'));
+            let x2diff = Number($(base).attr('x2d'));
+            let y2diff = Number($(base).attr('y2d'));
+            let x3diff = Number($(base).attr('x3d'));
+            let y3diff = Number($(base).attr('y3d'));
 
             $(highlight).attr('points',(x+x0diff*ratio).toString() + ", " +(y+y0diff*ratio).toString() + ", " +(x+x1diff*ratio).toString() + ", " +(y+y1diff*ratio).toString() + ", " +(x+x2diff*ratio).toString() + ", " +(y+y2diff*ratio).toString() + ", " +(x+x3diff*ratio).toString() + ", " +(y+y3diff*ratio).toString());
         }
     }
 
-    removeLineGraphSelection() { var ic = this.icn3d, me = ic.icn3dui;
+    removeLineGraphSelection() { let ic = this.icn3d, me = ic.icn3dui;
           $("#" + ic.pre + "dl_linegraph circle").attr('stroke', '#000000');
           $("#" + ic.pre + "dl_linegraph circle").attr('stroke-width', 1);
 
@@ -522,7 +522,7 @@ class Diagram2d {
           //$("#" + ic.pre + "dl_linegraph svg line .icn3d-hlline").attr('stroke-width', 1);
     }
 
-    removeScatterplotSelection() { var ic = this.icn3d, me = ic.icn3dui;
+    removeScatterplotSelection() { let ic = this.icn3d, me = ic.icn3dui;
           $("#" + ic.pre + "dl_scatterplot circle").attr('stroke', '#000000');
           $("#" + ic.pre + "dl_scatterplot circle").attr('stroke-width', 1);
 
@@ -530,17 +530,17 @@ class Diagram2d {
           $("#" + ic.pre + "dl_scatterplot rect").attr('stroke-width', 1);
     }
 
-    click2Ddgm() { var ic = this.icn3d, me = ic.icn3dui;
-        var thisClass = this;
+    click2Ddgm() { let ic = this.icn3d, me = ic.icn3dui;
+        let thisClass = this;
 
-        //$("#" + ic.pre + "dl_2ddgm .icn3d-node", "click", function(e) { var ic = this.icn3d, me = ic.icn3dui;
-        $(document).on("click", "#" + ic.pre + "dl_2ddgm .icn3d-node", function(e) { var ic = thisClass.icn3d;
+        //$("#" + ic.pre + "dl_2ddgm .icn3d-node", "click", function(e) { let ic = this.icn3d, me = ic.icn3dui;
+        $(document).on("click", "#" + ic.pre + "dl_2ddgm .icn3d-node", function(e) { let ic = thisClass.icn3d;
             e.stopImmediatePropagation();
             if(Object.keys(ic.hAtoms).length < Object.keys(ic.atoms).length) ic.definedSetsCls.setMode('selection');
 
             //ic.bClickInteraction = false;
 
-            var chainid = $(this).attr('chainid');
+            let chainid = $(this).attr('chainid');
 
             // clear all nodes
             if(!ic.bCtrl && !ic.bShift) {
@@ -550,11 +550,11 @@ class Diagram2d {
                 ic.lineArray2d = [];
             }
 
-            var ratio = 1.0;
+            let ratio = 1.0;
             if(ic.alnChains[chainid] !== undefined) ratio = 1.0 * Object.keys(ic.alnChains[chainid]).length / Object.keys(ic.chains[chainid]).length;
 
-            var target = $(this).find("rect[class='icn3d-hlnode']");
-            var base = $(this).find("rect[class='icn3d-basenode']");
+            let target = $(this).find("rect[class='icn3d-hlnode']");
+            let base = $(this).find("rect[class='icn3d-basenode']");
             thisClass.highlightNode('rect', target, base, ratio);
 
             target = $(this).find("circle[class='icn3d-hlnode']");
@@ -586,21 +586,21 @@ class Diagram2d {
             // show selected chains in annotation window
             ic.annotationCls.showAnnoSelectedChains();
 
-            var select = "select chain " + chainid;
+            let select = "select chain " + chainid;
             ic.icn3dui.htmlCls.clickMenuCls.setLogCmd(select, true);
 
             ic.bSelectResidue = false;
         });
 
-        //$("#" + ic.pre + "dl_2ddgm .icn3d-interaction", "click", function(e) { var ic = thisClass.icn3d;
-        $(document).on("click", "#" + ic.pre + "dl_2ddgm .icn3d-interaction", function(e) { var ic = thisClass.icn3d;
+        //$("#" + ic.pre + "dl_2ddgm .icn3d-interaction", "click", function(e) { let ic = thisClass.icn3d;
+        $(document).on("click", "#" + ic.pre + "dl_2ddgm .icn3d-interaction", function(e) { let ic = thisClass.icn3d;
             e.stopImmediatePropagation();
             if(Object.keys(ic.hAtoms).length < Object.keys(ic.atoms).length) ic.definedSetsCls.setMode('selection');
 
             ic.bClickInteraction = true;
 
-            var chainid1 = $(this).attr('chainid1');
-            var chainid2 = $(this).attr('chainid2');
+            let chainid1 = $(this).attr('chainid1');
+            let chainid2 = $(this).attr('chainid2');
 
             $(this).find('line').attr('stroke', ic.icn3dui.htmlCls.ORANGE);
 
@@ -610,18 +610,18 @@ class Diagram2d {
             // show selected chains in annotation window
             ic.annotationCls.showAnnoSelectedChains();
 
-            var select = "select interaction " + chainid1 + "," + chainid2;
+            let select = "select interaction " + chainid1 + "," + chainid2;
             ic.icn3dui.htmlCls.clickMenuCls.setLogCmd(select, true);
 
             ic.bClickInteraction = false;
         });
 
-        //$("#" + ic.pre + "dl_linegraph .icn3d-node", "click", function(e) { var ic = this.icn3d, me = ic.icn3dui;
-        $(document).on("click", "#" + ic.pre + "dl_linegraph .icn3d-node", function(e) { var ic = thisClass.icn3d;
+        //$("#" + ic.pre + "dl_linegraph .icn3d-node", "click", function(e) { let ic = this.icn3d, me = ic.icn3dui;
+        $(document).on("click", "#" + ic.pre + "dl_linegraph .icn3d-node", function(e) { let ic = thisClass.icn3d;
             e.stopImmediatePropagation();
             if(Object.keys(ic.hAtoms).length < Object.keys(ic.atoms).length) ic.definedSetsCls.setMode('selection');
 
-            var resid = $(this).attr('resid');
+            let resid = $(this).attr('resid');
 
             if(!ic.bCtrl && !ic.bShift) {
               ic.hAtoms = {}
@@ -629,13 +629,13 @@ class Diagram2d {
               thisClass.removeLineGraphSelection();
             }
 
-            var strokeWidth = 2;
+            let strokeWidth = 2;
             $(this).find('circle').attr('stroke', ic.icn3dui.htmlCls.ORANGE);
             $(this).find('circle').attr('stroke-width', strokeWidth);
 
             ic.hAtoms = me.hashUtilsCls.unionHash(ic.hAtoms, ic.residues[resid]);
 
-            var select = 'select ' + ic.resid2specCls.residueids2spec([resid]);
+            let select = 'select ' + ic.resid2specCls.residueids2spec([resid]);
 
             ic.hlUpdateCls.updateHlAll();
 
@@ -644,8 +644,8 @@ class Diagram2d {
             ic.bSelectResidue = false;
         });
 
-        //$("#" + ic.pre + "dl_scatterplot .icn3d-node", "click", function(e) { var ic = this.icn3d, me = ic.icn3dui;
-        $(document).on("click", "#" + ic.pre + "dl_scatterplot .icn3d-node", function(e) { var ic = thisClass.icn3d;
+        //$("#" + ic.pre + "dl_scatterplot .icn3d-node", "click", function(e) { let ic = this.icn3d, me = ic.icn3dui;
+        $(document).on("click", "#" + ic.pre + "dl_scatterplot .icn3d-node", function(e) { let ic = thisClass.icn3d;
             e.stopImmediatePropagation();
 
             thisClass.clickNode(this);
@@ -653,7 +653,7 @@ class Diagram2d {
 /*
             if(Object.keys(ic.hAtoms).length < Object.keys(ic.atoms).length) ic.definedSetsCls.setMode('selection');
 
-            var resid = $(this).attr('resid');
+            let resid = $(this).attr('resid');
 
             if(!ic.bCtrl && !ic.bShift) {
               ic.hAtoms = {}
@@ -661,13 +661,13 @@ class Diagram2d {
               thisClass.removeScatterplotSelection();
             }
 
-            var strokeWidth = 2;
+            let strokeWidth = 2;
             $(this).find('circle').attr('stroke', ic.icn3dui.htmlCls.ORANGE);
             $(this).find('circle').attr('stroke-width', strokeWidth);
 
             ic.hAtoms = me.hashUtilsCls.unionHash(ic.hAtoms, ic.residues[resid]);
 
-            var select = 'select ' + ic.resid2specCls.residueids2spec([resid]);
+            let select = 'select ' + ic.resid2specCls.residueids2spec([resid]);
 
             ic.hlUpdateCls.updateHlAll();
 
@@ -677,13 +677,13 @@ class Diagram2d {
 */
         });
 
-        //$("#" + ic.pre + "dl_linegraph .icn3d-interaction", "click", function(e) { var ic = this.icn3d, me = ic.icn3dui;
-        $(document).on("click", "#" + ic.pre + "dl_linegraph .icn3d-interaction", function(e) { var ic = thisClass.icn3d;
+        //$("#" + ic.pre + "dl_linegraph .icn3d-interaction", "click", function(e) { let ic = this.icn3d, me = ic.icn3dui;
+        $(document).on("click", "#" + ic.pre + "dl_linegraph .icn3d-interaction", function(e) { let ic = thisClass.icn3d;
               e.stopImmediatePropagation();
             if(Object.keys(ic.hAtoms).length < Object.keys(ic.atoms).length) ic.definedSetsCls.setMode('selection');
 
-            var resid1 = $(this).attr('resid1');
-            var resid2 = $(this).attr('resid2');
+            let resid1 = $(this).attr('resid1');
+            let resid2 = $(this).attr('resid2');
 
             if(!ic.bCtrl && !ic.bShift) {
               ic.hAtoms = {}
@@ -696,15 +696,15 @@ class Diagram2d {
             ic.hAtoms = me.hashUtilsCls.unionHash(ic.hAtoms, ic.residues[resid1]);
             ic.hAtoms = me.hashUtilsCls.unionHash(ic.hAtoms, ic.residues[resid2]);
 
-            var select = 'select ' + ic.resid2specCls.residueids2spec([resid1, resid2]);
+            let select = 'select ' + ic.resid2specCls.residueids2spec([resid1, resid2]);
 
             ic.hlUpdateCls.updateHlAll();
 
             ic.icn3dui.htmlCls.clickMenuCls.setLogCmd(select, true);
         });
 
-        //$("#" + ic.pre + "dl_scatterplot .icn3d-interaction", "click", function(e) { var ic = this.icn3d, me = ic.icn3dui;
-        $(document).on("click", "#" + ic.pre + "dl_scatterplot .icn3d-interaction", function(e) { var ic = thisClass.icn3d;
+        //$("#" + ic.pre + "dl_scatterplot .icn3d-interaction", "click", function(e) { let ic = this.icn3d, me = ic.icn3dui;
+        $(document).on("click", "#" + ic.pre + "dl_scatterplot .icn3d-interaction", function(e) { let ic = thisClass.icn3d;
             e.stopImmediatePropagation();
 
             thisClass.clickInteraction(this);
@@ -712,8 +712,8 @@ class Diagram2d {
 /*
             if(Object.keys(ic.hAtoms).length < Object.keys(ic.atoms).length) ic.definedSetsCls.setMode('selection');
 
-            var resid1 = $(this).attr('resid1');
-            var resid2 = $(this).attr('resid2');
+            let resid1 = $(this).attr('resid1');
+            let resid2 = $(this).attr('resid2');
 
             if(!ic.bCtrl && !ic.bShift) {
               ic.hAtoms = {}
@@ -721,14 +721,14 @@ class Diagram2d {
               thisClass.removeScatterplotSelection();
             }
 
-            var strokeWidth = 2;
+            let strokeWidth = 2;
             $(this).find('rect').attr('stroke', ic.icn3dui.htmlCls.ORANGE);
             $(this).find('rect').attr('stroke-width', strokeWidth);
 
             ic.hAtoms = me.hashUtilsCls.unionHash(ic.hAtoms, ic.residues[resid1]);
             ic.hAtoms = me.hashUtilsCls.unionHash(ic.hAtoms, ic.residues[resid2]);
 
-            var select = 'select ' + ic.resid2specCls.residueids2spec([resid1, resid2]);
+            let select = 'select ' + ic.resid2specCls.residueids2spec([resid1, resid2]);
 
             ic.hlUpdateCls.updateHlAll();
 
@@ -736,15 +736,15 @@ class Diagram2d {
 */
         });
 
-        $(document).on("click", "#" + ic.pre + "dl_contactmap .icn3d-interaction", function(e) { var ic = thisClass.icn3d;
+        $(document).on("click", "#" + ic.pre + "dl_contactmap .icn3d-interaction", function(e) { let ic = thisClass.icn3d;
             e.stopImmediatePropagation();
 
             thisClass.clickInteraction(this);
 /*
             if(Object.keys(ic.hAtoms).length < Object.keys(ic.atoms).length) ic.definedSetsCls.setMode('selection');
 
-            var resid1 = $(this).attr('resid1');
-            var resid2 = $(this).attr('resid2');
+            let resid1 = $(this).attr('resid1');
+            let resid2 = $(this).attr('resid2');
 
             if(!ic.bCtrl && !ic.bShift) {
               ic.hAtoms = {}
@@ -752,14 +752,14 @@ class Diagram2d {
               thisClass.removeScatterplotSelection();
             }
 
-            var strokeWidth = 2;
+            let strokeWidth = 2;
             $(this).find('rect').attr('stroke', ic.icn3dui.htmlCls.ORANGE);
             $(this).find('rect').attr('stroke-width', strokeWidth);
 
             ic.hAtoms = me.hashUtilsCls.unionHash(ic.hAtoms, ic.residues[resid1]);
             ic.hAtoms = me.hashUtilsCls.unionHash(ic.hAtoms, ic.residues[resid2]);
 
-            var select = 'select ' + ic.resid2specCls.residueids2spec([resid1, resid2]);
+            let select = 'select ' + ic.resid2specCls.residueids2spec([resid1, resid2]);
 
             ic.hlUpdateCls.updateHlAll();
 
@@ -767,14 +767,14 @@ class Diagram2d {
 */
         });
 
-        $(document).on("click", "#" + ic.pre + "dl_contactmap .icn3d-node", function(e) { var ic = thisClass.icn3d;
+        $(document).on("click", "#" + ic.pre + "dl_contactmap .icn3d-node", function(e) { let ic = thisClass.icn3d;
             e.stopImmediatePropagation();
 
             thisClass.clickNode(this);
 /*
             if(Object.keys(ic.hAtoms).length < Object.keys(ic.atoms).length) ic.definedSetsCls.setMode('selection');
 
-            var resid = $(this).attr('resid');
+            let resid = $(this).attr('resid');
 
             if(!ic.bCtrl && !ic.bShift) {
               ic.hAtoms = {}
@@ -782,13 +782,13 @@ class Diagram2d {
               thisClass.removeScatterplotSelection();
             }
 
-            var strokeWidth = 2;
+            let strokeWidth = 2;
             $(this).find('circle').attr('stroke', ic.icn3dui.htmlCls.ORANGE);
             $(this).find('circle').attr('stroke-width', strokeWidth);
 
             ic.hAtoms = me.hashUtilsCls.unionHash(ic.hAtoms, ic.residues[resid]);
 
-            var select = 'select ' + ic.resid2specCls.residueids2spec([resid]);
+            let select = 'select ' + ic.resid2specCls.residueids2spec([resid]);
 
             ic.hlUpdateCls.updateHlAll();
 
@@ -799,10 +799,10 @@ class Diagram2d {
         });
     }
 
-    clickNode(node) {  var ic = this.icn3d, me = ic.icn3dui;
+    clickNode(node) {  let ic = this.icn3d, me = ic.icn3dui;
         if(Object.keys(ic.hAtoms).length < Object.keys(ic.atoms).length) ic.definedSetsCls.setMode('selection');
 
-        var resid = $(node).attr('resid');
+        let resid = $(node).attr('resid');
 
         if(!ic.bCtrl && !ic.bShift) {
           ic.hAtoms = {}
@@ -810,13 +810,13 @@ class Diagram2d {
           this.removeScatterplotSelection();
         }
 
-        var strokeWidth = 2;
+        let strokeWidth = 2;
         $(node).find('circle').attr('stroke', ic.icn3dui.htmlCls.ORANGE);
         $(node).find('circle').attr('stroke-width', strokeWidth);
 
         ic.hAtoms = me.hashUtilsCls.unionHash(ic.hAtoms, ic.residues[resid]);
 
-        var select = 'select ' + ic.resid2specCls.residueids2spec([resid]);
+        let select = 'select ' + ic.resid2specCls.residueids2spec([resid]);
 
         ic.hlUpdateCls.updateHlAll();
 
@@ -825,11 +825,11 @@ class Diagram2d {
         ic.bSelectResidue = false;
     }
 
-    clickInteraction(node) {  var ic = this.icn3d, me = ic.icn3dui;
+    clickInteraction(node) {  let ic = this.icn3d, me = ic.icn3dui;
         if(Object.keys(ic.hAtoms).length < Object.keys(ic.atoms).length) ic.definedSetsCls.setMode('selection');
 
-        var resid1 = $(node).attr('resid1');
-        var resid2 = $(node).attr('resid2');
+        let resid1 = $(node).attr('resid1');
+        let resid2 = $(node).attr('resid2');
 
         if(!ic.bCtrl && !ic.bShift) {
           ic.hAtoms = {}
@@ -837,21 +837,21 @@ class Diagram2d {
           this.removeScatterplotSelection();
         }
 
-        var strokeWidth = 2;
+        let strokeWidth = 2;
         $(node).find('rect').attr('stroke', ic.icn3dui.htmlCls.ORANGE);
         $(node).find('rect').attr('stroke-width', strokeWidth);
 
         ic.hAtoms = me.hashUtilsCls.unionHash(ic.hAtoms, ic.residues[resid1]);
         ic.hAtoms = me.hashUtilsCls.unionHash(ic.hAtoms, ic.residues[resid2]);
 
-        var select = 'select ' + ic.resid2specCls.residueids2spec([resid1, resid2]);
+        let select = 'select ' + ic.resid2specCls.residueids2spec([resid1, resid2]);
 
         ic.hlUpdateCls.updateHlAll();
 
         ic.icn3dui.htmlCls.clickMenuCls.setLogCmd(select, true);
     }
 
-    selectInteraction(chainid1, chainid2) {  var ic = this.icn3d, me = ic.icn3dui;
+    selectInteraction(chainid1, chainid2) {  let ic = this.icn3d, me = ic.icn3dui;
             ic.hlUpdateCls.removeHl2D();
             ic.hlObjectsCls.removeHlObjects();
 
@@ -872,50 +872,50 @@ class Diagram2d {
             ic.hlUpdateCls.updateHlAll();
     }
 
-    selectInteractionAtoms(chainid1, chainid2) {  var ic = this.icn3d, me = ic.icn3dui;  // ic.pAtom is set already
-        var radius = 4;
+    selectInteractionAtoms(chainid1, chainid2) {  let ic = this.icn3d, me = ic.icn3dui;  // ic.pAtom is set already
+        let radius = 4;
 
         // method 2. Retrieved from the cgi(This previously had problems in sharelink where the data from ajax is async. Now the data is from the same cgi as the atom data and there is no problem.)
-        var residueArray = ic.chainids2resids[chainid1][chainid2];
+        let residueArray = ic.chainids2resids[chainid1][chainid2];
 
         if(!ic.bCtrl && !ic.bShift) ic.hAtoms = {}
 
-        for(var i = 0, il = residueArray.length; i < il; ++i) {
+        for(let i = 0, il = residueArray.length; i < il; ++i) {
             ic.hAtoms = me.hashUtilsCls.unionHash(ic.hAtoms, ic.residues[residueArray[i]]);
         }
 
-        var commandname, commanddesc;
+        let commandname, commanddesc;
         if(Object.keys(ic.structures).length > 1) {
             commandname = "inter_" + chainid1 + "_" + chainid2;
         }
         else {
-            var pos1 = chainid1.indexOf('_');
-            var pos2 = chainid2.indexOf('_');
+            let pos1 = chainid1.indexOf('_');
+            let pos2 = chainid2.indexOf('_');
 
             commandname = "inter_" + chainid1.substr(pos1 + 1) + "_" + chainid2.substr(pos2 + 1);
         }
 
         commanddesc = "select the atoms in chain " + chainid1 + " interacting with chain " + chainid2 + " in a distance of " + radius + " angstrom";
 
-        var select = "select interaction " + chainid1 + "," + chainid2;
+        let select = "select interaction " + chainid1 + "," + chainid2;
 
         ic.selectionCls.addCustomSelection(residueArray, commandname, commanddesc, select, true);
 
-        var nameArray = [commandname];
+        let nameArray = [commandname];
     }
 
-    draw2DProtein(x, y, chainid, oriChain, chain, chainname, alignNum, color, oricolor, factor, ratio) { var ic = this.icn3d, me = ic.icn3dui;
-        var strokecolor = '#000000';
-        var strokewidth = '1';
-        var linestrokewidth = '2';
-        var textcolor = '#000000';
-        var fontsize = '10';
-        var smallfontsize = '8';
-        var adjustx = 0, adjusty = 4, smalladjustx = 1, smalladjusty = 2, halfLetHigh = 6;
+    draw2DProtein(x, y, chainid, oriChain, chain, chainname, alignNum, color, oricolor, factor, ratio) { let ic = this.icn3d, me = ic.icn3dui;
+        let strokecolor = '#000000';
+        let strokewidth = '1';
+        let linestrokewidth = '2';
+        let textcolor = '#000000';
+        let fontsize = '10';
+        let smallfontsize = '8';
+        let adjustx = 0, adjusty = 4, smalladjustx = 1, smalladjusty = 2, halfLetHigh = 6;
 
-        var r = 20 * factor;
+        let r = 20 * factor;
 
-        var html = "<g class='icn3d-node' chainid='" + chainid + "' >";
+        let html = "<g class='icn3d-node' chainid='" + chainid + "' >";
         html += "<title>Chain " + oriChain + ": " + chainname + "</title>";
         html += "<circle class='icn3d-basenode' cx='" + x + "' cy='" + y + "' r='" + r + "' fill='" + color + "' stroke-width='" + strokewidth + "' stroke='" + strokecolor + "' class='icn3d-node' chainid='" + chainid + "' />";
 
@@ -930,22 +930,22 @@ class Diagram2d {
         return html;
     }
 
-    draw2DNucleotide(x, y, chainid, oriChain, chain, chainname, alignNum, color, oricolor, factor, ratio) { var ic = this.icn3d, me = ic.icn3dui;
-        var strokecolor = '#000000';
-        var strokewidth = '1';
-        var linestrokewidth = '2';
-        var textcolor = '#000000';
-        var fontsize = '10';
-        var smallfontsize = '8';
-        var adjustx = 0, adjusty = 4, smalladjustx = 1, smalladjusty = 2, halfLetHigh = 6;
+    draw2DNucleotide(x, y, chainid, oriChain, chain, chainname, alignNum, color, oricolor, factor, ratio) { let ic = this.icn3d, me = ic.icn3dui;
+        let strokecolor = '#000000';
+        let strokewidth = '1';
+        let linestrokewidth = '2';
+        let textcolor = '#000000';
+        let fontsize = '10';
+        let smallfontsize = '8';
+        let adjustx = 0, adjusty = 4, smalladjustx = 1, smalladjusty = 2, halfLetHigh = 6;
 
-        var width = 30 * factor;
-        var height = 30 * factor;
+        let width = 30 * factor;
+        let height = 30 * factor;
 
         x -= 0.5 * width;
         y -= 0.5 * height;
 
-        var html = "<g class='icn3d-node' chainid='" + chainid + "' >";
+        let html = "<g class='icn3d-node' chainid='" + chainid + "' >";
         html += "<title>Chain " + oriChain + ": " + chainname + "</title>";
         // place holder
         html += "<rect class='icn3d-basenode' x='" + x + "' y='" + y + "' width='" + width + "' height='" + height + "' fill='" + color + "' stroke-width='" + strokewidth + "' stroke='" + strokecolor + "' />";
@@ -961,22 +961,22 @@ class Diagram2d {
         return html;
     }
 
-    draw2DChemical(x, y, chainid, oriChain, chain, chainname, alignNum, color, oricolor, factor, ratio, bBiopolymer) { var ic = this.icn3d, me = ic.icn3dui;
-        var strokecolor = '#000000';
-        var strokewidth = '1';
-        var linestrokewidth = '2';
-        var textcolor = '#000000';
-        var fontsize = '10';
-        var smallfontsize = '8';
-        var adjustx = 0, adjusty = 4, smalladjustx = 1, smalladjusty = 2, halfLetHigh = 6;
+    draw2DChemical(x, y, chainid, oriChain, chain, chainname, alignNum, color, oricolor, factor, ratio, bBiopolymer) { let ic = this.icn3d, me = ic.icn3dui;
+        let strokecolor = '#000000';
+        let strokewidth = '1';
+        let linestrokewidth = '2';
+        let textcolor = '#000000';
+        let fontsize = '10';
+        let smallfontsize = '8';
+        let adjustx = 0, adjusty = 4, smalladjustx = 1, smalladjusty = 2, halfLetHigh = 6;
 
-        var bpsize = 30 * factor;
+        let bpsize = 30 * factor;
 
-        var x0, y0, x1, y1, x2, y2, x3, y3;
+        let x0, y0, x1, y1, x2, y2, x3, y3;
         if(bBiopolymer) {
             // biopolymer
-            var xOffset = 0.5 * bpsize / Math.sqrt(3);
-            var yOffset = 0.5 * bpsize;
+            let xOffset = 0.5 * bpsize / Math.sqrt(3);
+            let yOffset = 0.5 * bpsize;
 
             x0 = x - xOffset;
             y0 = y - yOffset;
@@ -989,8 +989,8 @@ class Diagram2d {
         }
         else {
             // diamond
-            var xOffset = 0.5 * bpsize;
-            var yOffset = 0.5 * bpsize;
+            let xOffset = 0.5 * bpsize;
+            let yOffset = 0.5 * bpsize;
 
             x0 = x - xOffset;
             y0 = y;
@@ -1002,16 +1002,16 @@ class Diagram2d {
             y3 = y - yOffset;
         }
 
-        var x0diff = x0 - x;
-        var y0diff = y0 - y;
-        var x1diff = x1 - x;
-        var y1diff = y1 - y;
-        var x2diff = x2 - x;
-        var y2diff = y2 - y;
-        var x3diff = x3 - x;
-        var y3diff = y3 - y;
+        let x0diff = x0 - x;
+        let y0diff = y0 - y;
+        let x1diff = x1 - x;
+        let y1diff = y1 - y;
+        let x2diff = x2 - x;
+        let y2diff = y2 - y;
+        let x3diff = x3 - x;
+        let y3diff = y3 - y;
 
-        var html = "<g class='icn3d-node' chainid='" + chainid + "' >";
+        let html = "<g class='icn3d-node' chainid='" + chainid + "' >";
         html += "<title>Chain " + oriChain + ": " + chainname + "</title>";
         html += "<polygon class='icn3d-basenode' points='" + x0 + ", " + y0 + "," + x1 + ", " + y1 + "," + x2 + ", " + y2 + "," + x3 + ", " + y3 + "' x='" + x + "' y='" + y + "' x0d='" + x0diff + "' y0d='" + y0diff + "' x1d='" + x1diff + "' y1d='" + y1diff + "' x2d='" + x2diff + "' y2d='" + y2diff + "' x3d='" + x3diff + "' y3d='" + y3diff + "' fill='" + color + "' stroke-width='" + strokewidth + "' stroke='" + strokecolor + "' />";
 

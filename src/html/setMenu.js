@@ -13,10 +13,10 @@ class SetMenu {
     }
 
     //Set the HTML code for the menus shown at the top of the viewer.
-    setTopMenusHtml(id, str1, str2) { var me = this.icn3dui;
+    setTopMenusHtml(id, str1, str2) { let me = this.icn3dui;
         if(me.bNode) return '';
 
-        var html = "";
+        let html = "";
 
         html += "<div style='position:relative;'>";
 
@@ -28,7 +28,7 @@ class SetMenu {
         html += me.htmlCls.divStr + "mnlist' style='position:absolute; z-index:999; float:left; display:table-row; margin-top: -2px;'>";
         html += "<table border='0' cellpadding='0' cellspacing='0' width='100'><tr>";
 
-        var tdStr = '<td valign="top">';
+        let tdStr = '<td valign="top">';
         html += tdStr + this.setMenu1() + '</td>';
 
         if(!me.cfg.simplemenu) {
@@ -73,7 +73,7 @@ class SetMenu {
 
         if(me.cfg.mmtfid === undefined) {
             //var tmpStr =(ic.realHeight < 300) ? 'top:100px; font-size: 1.2em;' : 'top:180px; font-size: 1.8em;';
-            var tmpStr = 'top:180px; font-size: 1.8em;';
+            let tmpStr = 'top:180px; font-size: 1.8em;';
             html += me.htmlCls.divStr + "wait' style='position:absolute; left:50px; " + tmpStr + " color: #444444;'>Loading data...</div>";
         }
         html += "<canvas id='" + me.pre + "canvas' style='width:100%; height: 100%; background-color: #000;'>Your browser does not support WebGL.</canvas>";
@@ -109,10 +109,10 @@ class SetMenu {
         $("#" + me.pre + "accordion6").hover( function(){ $("#" + me.pre + "accordion6 div").css("display", "block"); }, function(){ $("#" + me.pre + "accordion6 div").css("display", "none"); } );
     }
 
-    setTopMenusHtmlMobile(id, str1, str2) { var me = this.icn3dui;
+    setTopMenusHtmlMobile(id, str1, str2) { let me = this.icn3dui;
         if(me.bNode) return '';
 
-        var html = "";
+        let html = "";
 
         html += "<div style='position:relative;'>";
 
@@ -121,7 +121,7 @@ class SetMenu {
         html += this.setReplayHtml();
 
         if(!me.utilsCls.isMobile()) {
-            var marginLeft = me.htmlCls.WIDTH - 40 + 5;
+            let marginLeft = me.htmlCls.WIDTH - 40 + 5;
 
             html += me.htmlCls.buttonStr + "fullscreen' style='position:absolute; z-index:1999; display:block; padding:0px; margin: 7px 0px 0px " + marginLeft + "px; width:30px; height:34px; border-radius:4px; border:none; background-color:#f6f6f6;' title='Full screen'>";
             html += "<svg fill='#1c94c4' viewBox='0 0 24 24' width='24' height='24'>";
@@ -145,7 +145,7 @@ class SetMenu {
         }
         html += "<div>";
 
-        var liStr = "<li><span class='icn3d-menu-color'";
+        let liStr = "<li><span class='icn3d-menu-color'";
 
         html += "<ul class='icn3d-mn-item'>";
         html += liStr + ">File</span>";
@@ -181,7 +181,7 @@ class SetMenu {
         //html += me.htmlCls.setMenuCls.setTools();
 
         // show title at the top left corner
-        var titleColor =(me.htmlCls.opts['background'] == 'white' || me.htmlCls.opts['background'] == 'grey') ? 'black' : me.htmlCls.GREYD;
+        let titleColor =(me.htmlCls.opts['background'] == 'white' || me.htmlCls.opts['background'] == 'grey') ? 'black' : me.htmlCls.GREYD;
 
         html += me.htmlCls.divStr + "title' class='icn3d-commandTitle' style='font-size:1.2em; font-weight:normal; position:absolute; z-index:1; float:left; display:block; margin: 12px 0px 0px 40px; color:" + titleColor + "; width:" +(me.htmlCls.WIDTH - 40).toString() + "px'></div>";
         html += me.htmlCls.divStr + "viewer' style='position:relative; width:100%; height:100%; background-color: " + me.htmlCls.GREYD + ";'>";
@@ -191,7 +191,7 @@ class SetMenu {
 
         if(me.cfg.mmtfid === undefined) {
             //var tmpStr =(ic.realHeight < 300) ? 'top:100px; font-size: 1.2em;' : 'top:180px; font-size: 1.8em;';
-            var tmpStr = 'top:180px; font-size: 1.8em;';
+            let tmpStr = 'top:180px; font-size: 1.8em;';
             html += me.htmlCls.divStr + "wait' style='position:absolute; left:50px; " + tmpStr + " color: #444444;'>Loading data...</div>";
         }
         html += "<canvas id='" + me.pre + "canvas' style='width:100%; height: 100%; background-color: #000;'>Your browser does not support WebGL.</canvas>";
@@ -221,10 +221,10 @@ class SetMenu {
         $("#" + me.pre + "accordion0").hover( function(){ $("#" + me.pre + "accordion0 div").css("display", "block"); }, function(){ $("#" + me.pre + "accordion0 div").css("display", "none"); } );
     }
 
-    setReplayHtml(id) { var me = this.icn3dui;
+    setReplayHtml(id) { let me = this.icn3dui;
         if(me.bNode) return '';
 
-        var html = '';
+        let html = '';
 
         html += me.htmlCls.divStr + "replay' style='display:none; position:absolute; z-index:9999; top:" + parseInt(me.htmlCls.HEIGHT - 100).toString() + "px; left:20px;'>";
         html += "<div title='Click to replay one step'><svg style='cursor:pointer;' fill='#f8b84e' viewBox='0 0 60 60' width='40' height='40'>";
@@ -242,10 +242,10 @@ class SetMenu {
     }
 
     //Set the HTML code for the tools section. It includes several buttons, and is the second line at the top of the viewer.
-    setTools() { var me = this.icn3dui;
+    setTools() { let me = this.icn3dui;
         if(me.bNode) return '';
 
-        var html = "";
+        let html = "";
 
         html += me.htmlCls.divStr + "selection' style='display:none;'><div style='position:absolute; z-index:555; float:left; display:table-row; margin: 32px 0px 0px 3px;'>";
         html += "<table style='margin-top: 3px; width:100px;'><tr valign='center'>";
@@ -261,22 +261,22 @@ class SetMenu {
         return html;
     }
 
-    setButton(buttonStyle, id, title, text, color) { var me = this.icn3dui;
+    setButton(buttonStyle, id, title, text, color) { let me = this.icn3dui;
         if(me.bNode) return '';
 
         color =(color !== undefined) ? 'color:' + color : '';
-        var bkgdColor = me.utilsCls.isMobile() ? ' background-color:#DDDDDD;' : '';
+        let bkgdColor = me.utilsCls.isMobile() ? ' background-color:#DDDDDD;' : '';
         return "<div style='margin:3px 0px 0px 10px;'><button style='-webkit-appearance:" + buttonStyle + "; height:36px;" + bkgdColor + "' id='" + me.pre + id + "'><span style='white-space:nowrap;" + color + "' class='icn3d-commandTitle' title='" + title + "'>" + text + "</span></button></div>";
     }
 
-    setTools_base() { var me = this.icn3dui;
+    setTools_base() { let me = this.icn3dui;
         if(me.bNode) return '';
 
         // second row
-        var html = "";
+        let html = "";
 
-        var buttonStyle = me.utilsCls.isMobile() ? 'none' : 'button';
-        var tdStr = "<td valign='top'>";
+        let buttonStyle = me.utilsCls.isMobile() ? 'none' : 'button';
+        let tdStr = "<td valign='top'>";
 
         //if(me.cfg.align !== undefined || me.cfg.chainalign !== undefined) {
             html += tdStr + this.setButton(buttonStyle, 'alternate', 'Alternate the structures', 'Alternate<br/>(Key \"a\")', me.htmlCls.ORANGE) + "</td>";
@@ -299,10 +299,10 @@ class SetMenu {
         return html;
     }
 
-    setTheme(color) { var me = this.icn3dui;
+    setTheme(color) { let me = this.icn3dui;
         if(me.bNode) return '';
 
-        var borderColor, bkgdColor, bkgdImg, iconImg, activeTabColor;
+        let borderColor, bkgdColor, bkgdImg, iconImg, activeTabColor;
 
         me.htmlCls.themecolor = color;
 
@@ -346,10 +346,10 @@ class SetMenu {
     }
 
     //Set the textarea for the log output.
-    setLogWindow() { var me = this.icn3dui;
+    setLogWindow() { let me = this.icn3dui;
         if(me.bNode) return '';
 
-        var html = "";
+        let html = "";
 
         html += me.htmlCls.divStr + "cmdlog' style='float:left; margin-top: -5px; width: 100%;'>";
 
@@ -360,10 +360,10 @@ class SetMenu {
     }
 
     //Set the menu "File" at the top of the viewer.
-    setMenu1() { var me = this.icn3dui;
+    setMenu1() { let me = this.icn3dui;
         if(me.bNode) return '';
 
-        var html = "";
+        let html = "";
 
         html += "<div class='icn3d-menu'>";
 
@@ -380,10 +380,10 @@ class SetMenu {
         return html;
     }
 
-    setMenu1_base() { var me = this.icn3dui;
+    setMenu1_base() { let me = this.icn3dui;
         if(me.bNode) return '';
 
-        var html = "";
+        let html = "";
 
         html += "<ul class='icn3d-mn-item'>";
         html += "<li><span>Retrieve by ID</span>";
@@ -511,10 +511,10 @@ class SetMenu {
     }
 
     //Set the menu "Select" at the top of the viewer.
-    setMenu2() { var me = this.icn3dui;
+    setMenu2() { let me = this.icn3dui;
         if(me.bNode) return '';
 
-        var html = "";
+        let html = "";
 
         html += "<div class='icn3d-menu'>";
         html += "<accordion id='" + me.pre + "accordion2' class='icn3d-accordion'>";
@@ -530,10 +530,10 @@ class SetMenu {
         return html;
     }
 
-    setMenu2_base() { var me = this.icn3dui;
+    setMenu2_base() { let me = this.icn3dui;
         if(me.bNode) return '';
 
-        var html = "";
+        let html = "";
 
         html += "<ul class='icn3d-mn-item'>";
 
@@ -622,10 +622,10 @@ class SetMenu {
         return html;
     }
 
-    setMenu2b() { var me = this.icn3dui;
+    setMenu2b() { let me = this.icn3dui;
         if(me.bNode) return '';
 
-        var html = "";
+        let html = "";
 
         html += "<div class='icn3d-menu'>";
         html += "<accordion id='" + me.pre + "accordion2b' class='icn3d-accordion'>";
@@ -641,10 +641,10 @@ class SetMenu {
         return html;
     }
 
-    setMenu2b_base() { var me = this.icn3dui;
+    setMenu2b_base() { let me = this.icn3dui;
         if(me.bNode) return '';
 
-        var html = "";
+        let html = "";
         html += "<ul class='icn3d-mn-item'>";
 
         html += me.htmlCls.setHtmlCls.getLink('mn2_show_selected', 'View Selection');
@@ -740,10 +740,10 @@ class SetMenu {
     }
 
     //Set the menu "Style" at the top of the viewer.
-    setMenu3() { var me = this.icn3dui;
+    setMenu3() { let me = this.icn3dui;
         if(me.bNode) return '';
 
-        var html = "";
+        let html = "";
 
         html += "<div class='icn3d-menu'>";
         html += "<accordion id='" + me.pre + "accordion3' class='icn3d-accordion'>";
@@ -759,10 +759,10 @@ class SetMenu {
         return html;
     }
 
-    setMenu3_base() { var me = this.icn3dui;
+    setMenu3_base() { let me = this.icn3dui;
         if(me.bNode) return '';
 
-        var html = "";
+        let html = "";
 
         html += "<ul class='icn3d-mn-item'>";
 
@@ -899,7 +899,7 @@ class SetMenu {
         html += "<ul>";
         html += me.htmlCls.setHtmlCls.getRadio('mn5_opacity', 'mn5_opacity10', '1.0', true);
 
-        for(var i = 9; i > 0; --i) {
+        for(let i = 9; i > 0; --i) {
             html += me.htmlCls.setHtmlCls.getRadio('mn5_opacity', 'mn5_opacity0' + i, '0.' + i);
         }
         html += "</ul>";
@@ -980,10 +980,10 @@ class SetMenu {
     }
 
     //Set the menu "Color" at the top of the viewer.
-    setMenu4() { var me = this.icn3dui;
+    setMenu4() { let me = this.icn3dui;
         if(me.bNode) return '';
 
-        var html = "";
+        let html = "";
 
         html += "<div class='icn3d-menu'>";
         html += "<accordion id='" + me.pre + "accordion4' class='icn3d-accordion'>";
@@ -999,10 +999,10 @@ class SetMenu {
         return html;
     }
 
-    setMenu4_base() { var me = this.icn3dui;
+    setMenu4_base() { let me = this.icn3dui;
         if(me.bNode) return '';
 
-        var html = "";
+        let html = "";
 
         html += "<ul class='icn3d-mn-item'>";
 
@@ -1281,10 +1281,10 @@ class SetMenu {
     }
 
     //Set the menu "Surface" at the top of the viewer.
-    setMenu5() { var me = this.icn3dui;
+    setMenu5() { let me = this.icn3dui;
         if(me.bNode) return '';
 
-        var html = "";
+        let html = "";
 
         html += "<div class='icn3d-menu'>";
         html += "<accordion id='" + me.pre + "accordion5' class='icn3d-accordion'>";
@@ -1300,10 +1300,10 @@ class SetMenu {
         return html;
     }
 
-    setMenu5_base() { var me = this.icn3dui;
+    setMenu5_base() { let me = this.icn3dui;
         if(me.bNode) return '';
 
-        var html = "";
+        let html = "";
 
         html += "<ul class='icn3d-mn-item'>";
 
@@ -1314,11 +1314,18 @@ class SetMenu {
                 html += me.htmlCls.setHtmlCls.getLink('mn2_alignment', 'Aligned Seq. ' + me.htmlCls.wifiStr);
             //}
 
-            //html += me.htmlCls.setHtmlCls.getLink('mn2_selectresidues', 'View Sequences');
             if(me.cfg.mmdbid !== undefined || me.cfg.gi !== undefined || me.cfg.blast_rep_id !== undefined || me.cfg.align !== undefined || me.cfg.chainalign !== undefined) {
               html += me.htmlCls.setHtmlCls.getLink('mn2_2ddgm', '2D Diagram ' + me.htmlCls.wifiStr);
             }
-
+/*
+            html += "<li><span>2D Cartoon</span>";
+            html += "<ul>";
+            html += me.htmlCls.setHtmlCls.getLink('2ddgm_chain', 'Chain Level');
+            html += me.htmlCls.setHtmlCls.getLink('2ddgm_domain', 'Domain Level');
+            html += me.htmlCls.setHtmlCls.getLink('2ddgm_secondary', 'Helix/Sheet Level');
+            html += "</ul>";
+            html += "</li>";
+*/
             html += me.htmlCls.setHtmlCls.getLink('definedsets2', 'Defined Sets');
 
             html += "<li>-</li>";
@@ -1338,7 +1345,7 @@ class SetMenu {
             html += "</li>";
 
             if(!me.cfg.notebook && !me.cfg.hidelicense) {
-                html += me.htmlCls.setHtmlCls.getLink('mn1_mutation', 'Mutation ' + me.htmlCls.licenseStr);
+                html += me.htmlCls.setHtmlCls.getLink('mn1_mutation', 'Mutation ' + me.htmlCls.wifiStr);
             }
 
             html += "<li>-</li>";
@@ -1384,12 +1391,12 @@ class SetMenu {
         html += "<li><span>Label Scale</span>";
         html += "<ul>";
 
-        for(var i = 1; i <= 4; ++i) {
-            var twoi = 2 * i;
+        for(let i = 1; i <= 4; ++i) {
+            let twoi = 2 * i;
             html += me.htmlCls.setHtmlCls.getRadio('mn6_labelscale', 'mn6_labelscale0' + twoi, '0.' + twoi);
         }
 
-        for(var i = 1; i <= 5; ++i) {
+        for(let i = 1; i <= 5; ++i) {
             if(i == 1) {
                 html += me.htmlCls.setHtmlCls.getRadio('mn6_labelscale', 'mn6_labelscale' + i + '0', i + '.0', true);
             }
@@ -1427,7 +1434,7 @@ class SetMenu {
             html += "</ul>";
             html += "</li>";
 
-            var bOnePdb = me.cfg.mmtfid !== undefined || me.cfg.pdbid !== undefined || me.cfg.opmid !== undefined || me.cfg.mmcifid !== undefined || me.cfg.mmdbid !== undefined || me.cfg.gi !== undefined || me.cfg.blast_rep_id !== undefined;
+            let bOnePdb = me.cfg.mmtfid !== undefined || me.cfg.pdbid !== undefined || me.cfg.opmid !== undefined || me.cfg.mmcifid !== undefined || me.cfg.mmdbid !== undefined || me.cfg.gi !== undefined || me.cfg.blast_rep_id !== undefined;
             if(bOnePdb) {
               html += "<li id='" + me.pre + "assemblyWrapper'><span>Assembly</span>";
               html += "<ul>";
@@ -1484,10 +1491,10 @@ class SetMenu {
     }
 
     //Set the menu "Other" at the top of the viewer.
-    setMenu6() { var me = this.icn3dui;
+    setMenu6() { let me = this.icn3dui;
         if(me.bNode) return '';
 
-        var html = "";
+        let html = "";
 
         html += "<div class='icn3d-menu'>";
         html += "<accordion id='" + me.pre + "accordion6' class='icn3d-accordion'>";
@@ -1503,12 +1510,12 @@ class SetMenu {
         return html;
     }
 
-    setMenu6_base() { var me = this.icn3dui;
+    setMenu6_base() { let me = this.icn3dui;
         if(me.bNode) return '';
 
-        var html = "";
+        let html = "";
 
-        var liStr = "<li><a href='";
+        let liStr = "<li><a href='";
 
         html += "<ul class='icn3d-mn-item'>";
 
@@ -1589,7 +1596,7 @@ class SetMenu {
     }
 
     //Hide the menu at the top and just show the canvas. "width" and "height" are the width and height of the canvas.
-    hideMenu() { var me = this.icn3dui;
+    hideMenu() { let me = this.icn3dui;
       if(me.bNode) return;
 
       if($("#" + me.pre + "mnlist")[0] !== undefined) $("#" + me.pre + "mnlist")[0].style.display = "none";
@@ -1599,7 +1606,7 @@ class SetMenu {
     }
 
     //Show the menu at the top and the canvas. "width" and "height" are the width and height of the canvas.
-    showMenu() { var me = this.icn3dui;
+    showMenu() { let me = this.icn3dui;
       if(me.bNode) return;
 
       if($("#" + me.pre + "mnlist")[0] !== undefined) $("#" + me.pre + "mnlist")[0].style.display = "block";

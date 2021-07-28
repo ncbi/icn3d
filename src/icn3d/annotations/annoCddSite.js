@@ -14,13 +14,18 @@ class AnnoCddSite {
     }
 
     //Show the annotations of CDD domains and binding sites.
-    showCddSiteAll() { var ic = this.icn3d, me = ic.icn3dui;
-        var thisClass = this;
+    showCddSiteAll() { let ic = this.icn3d, me = ic.icn3dui;
+        let thisClass = this;
 
-        var chnidBaseArray = $.map(ic.protein_chainid, function(v) { return v; });
-        var chnidArray = Object.keys(ic.protein_chainid);
+        ic.chainid2pssmid = {};
+
+        let chnidBaseArray = $.map(ic.protein_chainid, function(v) { return v; });
+        let chnidArray = Object.keys(ic.protein_chainid);
         // show conserved domains and binding sites
-        var url = ic.icn3dui.htmlCls.baseUrl + "cdannots/cdannots.fcgi?fmt&live=lcl&queries=" + chnidBaseArray;
+        // live search
+//        let url = ic.icn3dui.htmlCls.baseUrl + "cdannots/cdannots.fcgi?fmt&live=lcl&queries=" + chnidBaseArray;
+        // precalculated
+        let url = ic.icn3dui.htmlCls.baseUrl + "cdannots/cdannots.fcgi?fmt&queries=" + chnidBaseArray;
         $.ajax({
           url: url,
           dataType: 'jsonp',
@@ -28,21 +33,23 @@ class AnnoCddSite {
           tryCount : 0,
           retryLimit : 1,
           success: function(data) {
-              var chainWithData = {}
-              for(var chainI = 0, chainLen = data.data.length; chainI < chainLen; ++chainI) {
-                var cddData = data.data[chainI];
-                var chnidBase = cddData._id;
+              let chainWithData = {}
+              for(let chainI = 0, chainLen = data.data.length; chainI < chainLen; ++chainI) {
+                let cddData = data.data[chainI];
+                let chnidBase = cddData._id;
                 //var pos = chnidBaseArray.indexOf(chnidBase);
                 //var chnid = chnidArray[pos];
-                var chnid = chnidArray[chainI];
+                let chnid = chnidArray[chainI];
                 chainWithData[chnid] = 1;
-                var html = '<div id="' + ic.pre + chnid + '_cddseq_sequence" class="icn3d-cdd icn3d-dl_sequence">';
-                var html2 = html;
-                var html3 = html;
-                var domainArray = cddData.doms;
-                var result = thisClass.setDomainFeature(domainArray, chnid, true, html, html2, html3);
+                let html = '<div id="' + ic.pre + chnid + '_cddseq_sequence" class="icn3d-cdd icn3d-dl_sequence">';
+                let html2 = html;
+                let html3 = html;
+                let domainArray = cddData.doms;
+                let result = thisClass.setDomainFeature(domainArray, chnid, true, html, html2, html3);
 
-                var acc2domain = result.acc2domain;
+                ic.chainid2pssmid[chnid] = {pssmid2name: result.pssmid2name, pssmid2fromArray: result.pssmid2fromArray, pssmid2toArray: result.pssmid2toArray};
+
+                let acc2domain = result.acc2domain;
                 html = result.html + '</div>';
                 html2 = result.html2 + '</div>';
                 html3 = result.html3 + '</div>';
@@ -55,56 +62,56 @@ class AnnoCddSite {
                 html3 = html;
 
                 // features
-                var featuteArray = cddData.motifs;
-                var result = thisClass.setDomainFeature(featuteArray, chnid, false, html, html2, html3, acc2domain);
+                let featuteArray = cddData.motifs;
+                result = thisClass.setDomainFeature(featuteArray, chnid, false, html, html2, html3, acc2domain);
 
                 html = result.html; // + '</div>';
                 html2 = result.html2; // + '</div>';
                 html3 = result.html3; // + '</div>';
 
-                var siteArray = data.data[chainI].sites;
-                var indexl =(siteArray !== undefined) ? siteArray.length : 0;
-                for(var index = 0; index < indexl; ++index) {
-                    var domain = siteArray[index].srcdom;
-                    var type = siteArray[index].type;
-                    var resCnt = siteArray[index].sz;
-                    var title = 'site: ' + siteArray[index].title;
+                let siteArray = data.data[chainI].sites;
+                let indexl =(siteArray !== undefined) ? siteArray.length : 0;
+                for(let index = 0; index < indexl; ++index) {
+                    let domain = siteArray[index].srcdom;
+                    let type = siteArray[index].type;
+                    let resCnt = siteArray[index].sz;
+                    let title = 'site: ' + siteArray[index].title;
                     if(title.length > 17) title = title.substr(0, 17) + '...';
                     //var fulltitle = "site: " + siteArray[index].title + "(domain: " + domain + ")";
-                    var fulltitle = siteArray[index].title;
-                    var resPosArray, adjustedResPosArray = [];
-                    for(var i = 0, il = siteArray[index].locs.length; i < il; ++i) {
+                    let fulltitle = siteArray[index].title;
+                    let resPosArray, adjustedResPosArray = [];
+                    for(let i = 0, il = siteArray[index].locs.length; i < il; ++i) {
                         resPosArray = siteArray[index].locs[i].coords;
-                        for(var j = 0, jl = resPosArray.length; j < jl; ++j) {
+                        for(let j = 0, jl = resPosArray.length; j < jl; ++j) {
                             //adjustedResPosArray.push(Math.round(resPosArray[j]) + ic.baseResi[chnid]);
                             adjustedResPosArray.push(thisClass.getAdjustedResi(Math.round(resPosArray[j]), chnid, ic.matchedPos, ic.chainsSeq, ic.baseResi) - 1);
                         }
                     }
-                    var htmlTmp2 = '<div class="icn3d-seqTitle icn3d-link icn3d-blue" site="site" posarray="' + adjustedResPosArray.toString() + '" shorttitle="' + title + '" setname="' + chnid + '_site_' + index + '" anno="sequence" chain="' + chnid + '" title="' + fulltitle + '">' + title + ' </div>';
-                    var htmlTmp3 = '<span class="icn3d-residueNum" title="residue count">' + resCnt.toString() + ' Res</span>';
-                    var htmlTmp = '<span class="icn3d-seqLine">';
+                    let htmlTmp2 = '<div class="icn3d-seqTitle icn3d-link icn3d-blue" site="site" posarray="' + adjustedResPosArray.toString() + '" shorttitle="' + title + '" setname="' + chnid + '_site_' + index + '" anno="sequence" chain="' + chnid + '" title="' + fulltitle + '">' + title + ' </div>';
+                    let htmlTmp3 = '<span class="icn3d-residueNum" title="residue count">' + resCnt.toString() + ' Res</span>';
+                    let htmlTmp = '<span class="icn3d-seqLine">';
                     html3 += htmlTmp2 + htmlTmp3 + '<br>';
                     html += htmlTmp2 + htmlTmp3 + htmlTmp;
                     html2 += htmlTmp2 + htmlTmp3 + htmlTmp;
-                    var pre = 'site' + index.toString();
+                    let pre = 'site' + index.toString();
                     //var widthPerRes = ic.seqAnnWidth / ic.maxAnnoLength;
-                    var prevEmptyWidth = 0;
-                    var prevLineWidth = 0;
-                    var widthPerRes = 1;
-                    for(var i = 0, il = ic.giSeq[chnid].length; i < il; ++i) {
+                    let prevEmptyWidth = 0;
+                    let prevLineWidth = 0;
+                    let widthPerRes = 1;
+                    for(let i = 0, il = ic.giSeq[chnid].length; i < il; ++i) {
                       html += ic.showSeqCls.insertGap(chnid, i, '-');
                       if(resPosArray.indexOf(i) != -1) {
-                          var cFull = ic.giSeq[chnid][i];
-                          var c = cFull;
+                          let cFull = ic.giSeq[chnid][i];
+                          let c = cFull;
                           if(cFull.length > 1) {
                               c = cFull[0] + '..';
                           }
                           //var pos =(i >= ic.matchedPos[chnid] && i - ic.matchedPos[chnid] < ic.chainsSeq[chnid].length) ? ic.chainsSeq[chnid][i - ic.matchedPos[chnid]].resi : ic.baseResi[chnid] + 1 + i;
-                          var pos = thisClass.getAdjustedResi(i, chnid, ic.matchedPos, ic.chainsSeq, ic.baseResi);
+                          let pos = thisClass.getAdjustedResi(i, chnid, ic.matchedPos, ic.chainsSeq, ic.baseResi);
 
                         html += '<span id="' + pre + '_' + ic.pre + chnid + '_' + pos + '" title="' + c + pos + '" class="icn3d-residue">' + cFull + '</span>';
                         html2 += ic.showSeqCls.insertGapOverview(chnid, i);
-                        var emptyWidth =(ic.icn3dui.cfg.blast_rep_id == chnid) ? Math.round(ic.seqAnnWidth * i /(ic.maxAnnoLength + ic.nTotalGap) - prevEmptyWidth - prevLineWidth) : Math.round(ic.seqAnnWidth * i / ic.maxAnnoLength - prevEmptyWidth - prevLineWidth);
+                        let emptyWidth =(ic.icn3dui.cfg.blast_rep_id == chnid) ? Math.round(ic.seqAnnWidth * i /(ic.maxAnnoLength + ic.nTotalGap) - prevEmptyWidth - prevLineWidth) : Math.round(ic.seqAnnWidth * i / ic.maxAnnoLength - prevEmptyWidth - prevLineWidth);
                         //if(emptyWidth < 0) emptyWidth = 0;
                         if(emptyWidth >= 0) {
                         html2 += '<div style="display:inline-block; width:' + emptyWidth + 'px;">&nbsp;</div>';
@@ -131,7 +138,7 @@ class AnnoCddSite {
                 $("#" + ic.pre + "tt_site_" + chnid).html(html3);
             } // outer for loop
             // missing CDD data
-            for(var chnid in ic.protein_chainid) {
+            for(let chnid in ic.protein_chainid) {
                 if(!chainWithData.hasOwnProperty(chnid)) {
                     $("#" + ic.pre + "dt_cdd_" + chnid).html('');
                     $("#" + ic.pre + "ov_cdd_" + chnid).html('');
@@ -154,7 +161,7 @@ class AnnoCddSite {
                 return;
             }
             console.log( "No CDD data were found for the protein " + chnidBaseArray + "..." );
-            for(var chnid in ic.protein_chainid) {
+            for(let chnid in ic.protein_chainid) {
                 $("#" + ic.pre + "dt_cdd_" + chnid).html('');
                 $("#" + ic.pre + "ov_cdd_" + chnid).html('');
                 $("#" + ic.pre + "tt_cdd_" + chnid).html('');
@@ -171,19 +178,27 @@ class AnnoCddSite {
         });
     }
 
-    setDomainFeature(domainArray, chnid, bDomain, html, html2, html3, acc2domain) { var ic = this.icn3d, me = ic.icn3dui;
-        var thisClass = this;
+    setDomainFeature(domainArray, chnid, bDomain, html, html2, html3, acc2domain) { let ic = this.icn3d, me = ic.icn3dui;
+        let thisClass = this;
 
-        if(bDomain) acc2domain = {};
+        let pssmid2name, pssmid2fromArray, pssmid2toArray;
+        if(bDomain) {
+            acc2domain = {};
+            pssmid2name = {};
+            pssmid2fromArray = {};
+            pssmid2toArray = {};
+        }
 
-        var indexl =(domainArray !== undefined) ? domainArray.length : 0;
-        var maxTextLen =(bDomain) ? 14 : 19;
-        var titleSpace =(bDomain) ? 100 : 120;
-        for(var index = 0; index < indexl; ++index) {
-            var acc =(bDomain) ? domainArray[index].acc : domainArray[index].srcdom;
-            var type = domainArray[index].type;
+        let indexl =(domainArray !== undefined) ? domainArray.length : 0;
+        let maxTextLen =(bDomain) ? 14 : 19;
+        let titleSpace =(bDomain) ? 100 : 120;
+        for(let index = 0; index < indexl; ++index) {
+            let pssmid = (bDomain) ? domainArray[index].pssmid : 0;
+
+            let acc =(bDomain) ? domainArray[index].acc : domainArray[index].srcdom;
+            let type = domainArray[index].type;
             type =(bDomain) ? 'domain' : 'feat';
-            var domain =(bDomain) ? domainArray[index].title.split(':')[0] : domainArray[index].title;
+            let domain =(bDomain) ? domainArray[index].title.split(':')[0] : domainArray[index].title;
             // convert double quote
             domain = domain.replace(/\"/g, "``");
             // convert singe quote
@@ -191,81 +206,87 @@ class AnnoCddSite {
 
             if(bDomain) acc2domain[acc] = domain;
 
-            var defline =(bDomain) ? domainArray[index].defline : '';
-            var title = type + ': ' + domain;
+            let defline =(bDomain) ? domainArray[index].defline : '';
+            let title = type + ': ' + domain;
 
             if(title.length > maxTextLen) title = title.substr(0, maxTextLen) + '...';
-            var fulltitle = type + ": " + domain;
+            let fulltitle = type + ": " + domain;
+
+            if(bDomain) pssmid2name[pssmid] = domain;
+
             // each domain may have several repeat. Treat each repeat as a domain
-            var domainRepeatArray = domainArray[index].locs;
+            let domainRepeatArray = domainArray[index].locs;
 
             if(!domainRepeatArray) continue;
 
-            for(var r = 0, rl = domainRepeatArray.length; r < rl; ++r) {
+            for(let r = 0, rl = domainRepeatArray.length; r < rl; ++r) {
                 // each domain repeat or domain may have several segments, i.e., a domain may not be continous
-                var fromArray = [], toArray = [];
-                var resiHash = {}
-                var resCnt = 0;
-                var segArray =(bDomain) ? domainRepeatArray[r].segs : [domainRepeatArray[r]];
-                for(var s = 0, sl = segArray.length; s < sl; ++s) {
-                    var domainFrom = Math.round(segArray[s].from);
-                    var domainTo = Math.round(segArray[s].to);
+                let fromArray = [], toArray = [];
+                let resiHash = {}
+                let resCnt = 0;
+                let segArray =(bDomain) ? domainRepeatArray[r].segs : [domainRepeatArray[r]];
+                for(let s = 0, sl = segArray.length; s < sl; ++s) {
+                    let domainFrom = Math.round(segArray[s].from);
+                    let domainTo = Math.round(segArray[s].to);
                     //fromArray.push(domainFrom + ic.baseResi[chnid]);
                     //toArray.push(domainTo + ic.baseResi[chnid]);
                     fromArray.push(thisClass.getAdjustedResi(domainFrom, chnid, ic.matchedPos, ic.chainsSeq, ic.baseResi) - 1);
                     toArray.push(thisClass.getAdjustedResi(domainTo, chnid, ic.matchedPos, ic.chainsSeq, ic.baseResi) - 1);
-                    for(var i = domainFrom; i <= domainTo; ++i) {
+                    for(let i = domainFrom; i <= domainTo; ++i) {
                         resiHash[i] = 1;
                     }
                     resCnt += domainTo - domainFrom + 1;
                 }
 
                 //var setname = chnid + "_" + domain + "_" + index + "_" + r; //chnid + "_" + type + "_" + index + "_" + r;
-                var setname = chnid + "_" + domain;
+                let setname = chnid + "_" + domain;
                 if(!bDomain) setname += "_" + index + "_" + r; // + acc2domain[acc];
 
-                var htmlTmp2 = '<div class="icn3d-seqTitle icn3d-link icn3d-blue" ' + type + '="' + acc + '" from="' + fromArray + '" to="' + toArray + '" shorttitle="' + title + '" setname="' + setname + '" anno="sequence" chain="' + chnid + '" title="' + fulltitle + '">' + title + ' </div>';
-                var htmlTmp3 = '<span class="icn3d-residueNum" title="residue count">' + resCnt.toString() + ' Res</span>';
+                if(bDomain) pssmid2fromArray[pssmid] = fromArray;
+                if(bDomain) pssmid2toArray[pssmid] = toArray;
+
+                let htmlTmp2 = '<div class="icn3d-seqTitle icn3d-link icn3d-blue" ' + type + '="' + acc + '" from="' + fromArray + '" to="' + toArray + '" shorttitle="' + title + '" setname="' + setname + '" anno="sequence" chain="' + chnid + '" title="' + fulltitle + '">' + title + ' </div>';
+                let htmlTmp3 = '<span class="icn3d-residueNum" title="residue count">' + resCnt.toString() + ' Res</span>';
                 html3 += htmlTmp2 + htmlTmp3 + '<br>';
-                var htmlTmp = '<span class="icn3d-seqLine">';
+                let htmlTmp = '<span class="icn3d-seqLine">';
                 html += htmlTmp2 + htmlTmp3 + htmlTmp;
                 if(bDomain) {
                     html2 += '<div style="width:20px; display:inline-block;"><span id="' + ic.pre + chnid + '_' + acc + '_' + r + '_cddseq_expand" class="ui-icon ui-icon-plus icn3d-expand icn3d-link" style="width:15px;" title="Expand"></span><span id="' + ic.pre + chnid + '_' + acc + '_' + r + '_cddseq_shrink" class="ui-icon ui-icon-minus icn3d-shrink icn3d-link" style="display:none; width:15px;" title="Shrink"></span></div>';
                 }
                 html2 += '<div style="width:' + titleSpace + 'px!important;" class="icn3d-seqTitle icn3d-link icn3d-blue" ' + type + '="' + acc + '" from="' + fromArray + '" to="' + toArray + '" shorttitle="' + title + '" index="' + index + '" setname="' + setname + '" anno="sequence" chain="' + chnid + '" title="' + fulltitle + '">' + title + ' </div>';
                 html2 += htmlTmp3 + htmlTmp;
-                var pre = type + index.toString();
-                for(var i = 0, il = ic.giSeq[chnid].length; i < il; ++i) {
+                let pre = type + index.toString();
+                for(let i = 0, il = ic.giSeq[chnid].length; i < il; ++i) {
                   html += ic.showSeqCls.insertGap(chnid, i, '-');
                   if(resiHash.hasOwnProperty(i)) {
-                      var cFull = ic.giSeq[chnid][i];
-                      var c = cFull;
+                      let cFull = ic.giSeq[chnid][i];
+                      let c = cFull;
                       if(cFull.length > 1) {
                           c = cFull[0] + '..';
                       }
                       //var pos =(i >= ic.matchedPos[chnid] && i - ic.matchedPos[chnid] < ic.chainsSeq[chnid].length) ? ic.chainsSeq[chnid][i - ic.matchedPos[chnid]].resi : ic.baseResi[chnid] + 1 + i;
-                      var pos = thisClass.getAdjustedResi(i, chnid, ic.matchedPos, ic.chainsSeq, ic.baseResi);
+                      let pos = thisClass.getAdjustedResi(i, chnid, ic.matchedPos, ic.chainsSeq, ic.baseResi);
                       html += '<span id="' + pre + '_' + ic.pre + chnid + '_' + pos + '" title="' + c + pos + '" class="icn3d-residue">' + cFull + '</span>';
                   }
                   else {
                       html += '<span>-</span>'; //'<span>-</span>';
                   }
                 }
-                var atom = ic.firstAtomObjCls.getFirstCalphaAtomObj(ic.chains[chnid]);
-                var colorStr =(atom.color === undefined || atom.color.getHexString() === 'FFFFFF') ? 'DDDDDD' : atom.color.getHexString();
-                var color =(atom.color !== undefined) ? colorStr : "CCCCCC";
+                let atom = ic.firstAtomObjCls.getFirstCalphaAtomObj(ic.chains[chnid]);
+                let colorStr =(atom.color === undefined || atom.color.getHexString() === 'FFFFFF') ? 'DDDDDD' : atom.color.getHexString();
+                let color =(atom.color !== undefined) ? colorStr : "CCCCCC";
                 if(ic.icn3dui.cfg.blast_rep_id != chnid) { // regular
-                    for(var i = 0, il = fromArray.length; i < il; ++i) {
-                        var emptyWidth =(i == 0) ? Math.round(ic.seqAnnWidth *(fromArray[i] - ic.baseResi[chnid] - 1) / ic.maxAnnoLength) : Math.round(ic.seqAnnWidth *(fromArray[i] - toArray[i-1] - 1) / ic.maxAnnoLength);
+                    for(let i = 0, il = fromArray.length; i < il; ++i) {
+                        let emptyWidth =(i == 0) ? Math.round(ic.seqAnnWidth *(fromArray[i] - ic.baseResi[chnid] - 1) / ic.maxAnnoLength) : Math.round(ic.seqAnnWidth *(fromArray[i] - toArray[i-1] - 1) / ic.maxAnnoLength);
                         html2 += '<div style="display:inline-block; width:' + emptyWidth + 'px;">&nbsp;</div>';
                         html2 += '<div style="display:inline-block; color:white!important; font-weight:bold; background-color:#' + color + '; width:' + Math.round(ic.seqAnnWidth *(toArray[i] - fromArray[i] + 1) / ic.maxAnnoLength) + 'px;" class="icn3d-seqTitle icn3d-link icn3d-blue" domain="' +(index+1).toString() + '" from="' + fromArray + '" to="' + toArray + '" shorttitle="' + title + '" index="' + index + '" setname="' + setname + '" id="' + chnid + '_domain_' + index + '_' + r + '" anno="sequence" chain="' + chnid + '" title="' + fulltitle + '">' + domain + ' </div>';
                     }
                 }
                 else { // with potential gaps
-                    var fromArray2 = [], toArray2 = [];
-                    for(var i = 0, il = fromArray.length; i < il; ++i) {
+                    let fromArray2 = [], toArray2 = [];
+                    for(let i = 0, il = fromArray.length; i < il; ++i) {
                         fromArray2.push(fromArray[i]);
-                        for(var j = fromArray[i]; j <= toArray[i]; ++j) {
+                        for(let j = fromArray[i]; j <= toArray[i]; ++j) {
                             if(ic.targetGapHash !== undefined && ic.targetGapHash.hasOwnProperty(j)) {
                                 toArray2.push(j - 1);
                                 fromArray2.push(j);
@@ -273,9 +294,9 @@ class AnnoCddSite {
                         }
                         toArray2.push(toArray[i]);
                     }
-                    for(var i = 0, il = fromArray2.length; i < il; ++i) {
+                    for(let i = 0, il = fromArray2.length; i < il; ++i) {
                         html2 += ic.showSeqCls.insertGapOverview(chnid, fromArray2[i]);
-                        var emptyWidth =(i == 0) ? Math.round(ic.seqAnnWidth *(fromArray2[i] - ic.baseResi[chnid] - 1) /(ic.maxAnnoLength + ic.nTotalGap)) : Math.round(ic.seqAnnWidth *(fromArray2[i] - toArray2[i-1] - 1) /(ic.maxAnnoLength + ic.nTotalGap));
+                        let emptyWidth =(i == 0) ? Math.round(ic.seqAnnWidth *(fromArray2[i] - ic.baseResi[chnid] - 1) /(ic.maxAnnoLength + ic.nTotalGap)) : Math.round(ic.seqAnnWidth *(fromArray2[i] - toArray2[i-1] - 1) /(ic.maxAnnoLength + ic.nTotalGap));
                         html2 += '<div style="display:inline-block; width:' + emptyWidth + 'px;">&nbsp;</div>';
                         html2 += '<div style="display:inline-block; color:white!important; font-weight:bold; background-color:#' + color + '; width:' + Math.round(ic.seqAnnWidth *(toArray2[i] - fromArray2[i] + 1) /(ic.maxAnnoLength + ic.nTotalGap)) + 'px;" class="icn3d-seqTitle icn3d-link icn3d-blue" domain="' +(index+1).toString() + '" from="' + fromArray2 + '" to="' + toArray2 + '" shorttitle="' + title + '" index="' + index + '" setname="' + setname + '" id="' + chnid + '_domain_' + index + '_' + r + '" anno="sequence" chain="' + chnid + '" title="' + fulltitle + '">' + domain + ' </div>';
                     }
@@ -288,61 +309,62 @@ class AnnoCddSite {
                 if(bDomain) {
                     html2 += '<div id="' + ic.pre + chnid + '_' + acc + '_' + r + '_cddseq" style="display:none; white-space:normal;" class="icn3d-box">' + defline + '(<a href="' + ic.icn3dui.htmlCls.baseUrl + 'cdd/cddsrv.cgi?uid=' + acc + '" target="_blank" class="icn3d-blue">open details view...</a>)</div>';
                 }
-            } // for(var r = 0,
+            } // for(let r = 0,
         }
 
-        return {html: html, html2: html2, html3: html3, acc2domain: acc2domain}
+        return {html: html, html2: html2, html3: html3, acc2domain: acc2domain,
+          pssmid2name: pssmid2name, pssmid2fromArray: pssmid2fromArray, pssmid2toArray: pssmid2toArray}
     }
 
-    getAdjustedResi(resi, chnid, matchedPos, chainsSeq, baseResi) { var ic = this.icn3d, me = ic.icn3dui;
+    getAdjustedResi(resi, chnid, matchedPos, chainsSeq, baseResi) { let ic = this.icn3d, me = ic.icn3dui;
         return(resi >= matchedPos[chnid] && resi - matchedPos[chnid] < ic.chainsSeq[chnid].length) ? ic.chainsSeq[chnid][resi - matchedPos[chnid]].resi : baseResi[chnid] + 1 + resi;
     }
 
-    showAnnoType(chnid, chnidBase, type, title, residueArray, resid2resids) { var ic = this.icn3d, me = ic.icn3dui;
-        var html = '<div id="' + ic.pre + chnid + '_' + type + 'seq_sequence" class="icn3d-dl_sequence">';
-        var html2 = html;
-        var html3 = html;
+    showAnnoType(chnid, chnidBase, type, title, residueArray, resid2resids) { let ic = this.icn3d, me = ic.icn3dui;
+        let html = '<div id="' + ic.pre + chnid + '_' + type + 'seq_sequence" class="icn3d-dl_sequence">';
+        let html2 = html;
+        let html3 = html;
         if(residueArray.length == 0) {
             $("#" + ic.pre + "dt_" + type + "_" + chnid).html('');
             $("#" + ic.pre + "ov_" + type + "_" + chnid).html('');
             $("#" + ic.pre + "tt_" + type + "_" + chnid).html('');
             return;
         }
-        var fulltitle = title;
+        let fulltitle = title;
         if(title.length > 17) title = title.substr(0, 17) + '...';
-        var resPosArray = [];
-        for(var i = 0, il = residueArray.length; i < il; ++i) {
-            var resid = residueArray[i];
-            var resi = Math.round(resid.substr(residueArray[i].lastIndexOf('_') + 1) );
+        let resPosArray = [];
+        for(let i = 0, il = residueArray.length; i < il; ++i) {
+            let resid = residueArray[i];
+            let resi = Math.round(resid.substr(residueArray[i].lastIndexOf('_') + 1) );
             resPosArray.push( resi );
         }
-        var resCnt = resPosArray.length;
-        var chainnameNospace = type;
-        var htmlTmp2 = '<div class="icn3d-seqTitle icn3d-link icn3d-blue" ' + type + '="" posarray="' + resPosArray.toString() + '" shorttitle="' + title + '" setname="' + chnid + '_' + chainnameNospace + '" anno="sequence" chain="' + chnid + '" title="' + fulltitle + '">' + title + ' </div>';
-        var htmlTmp3 = '<span class="icn3d-residueNum" title="residue count">' + resCnt.toString() + ' Res</span>';
+        let resCnt = resPosArray.length;
+        let chainnameNospace = type;
+        let htmlTmp2 = '<div class="icn3d-seqTitle icn3d-link icn3d-blue" ' + type + '="" posarray="' + resPosArray.toString() + '" shorttitle="' + title + '" setname="' + chnid + '_' + chainnameNospace + '" anno="sequence" chain="' + chnid + '" title="' + fulltitle + '">' + title + ' </div>';
+        let htmlTmp3 = '<span class="icn3d-residueNum" title="residue count">' + resCnt.toString() + ' Res</span>';
         html3 += htmlTmp2 + htmlTmp3 + '<br>';
-        var htmlTmp = '<span class="icn3d-seqLine">';
+        let htmlTmp = '<span class="icn3d-seqLine">';
         html += htmlTmp2 + htmlTmp3 + htmlTmp;
         html2 += htmlTmp2 + htmlTmp3 + htmlTmp;
-        var pre = type;
-        var prevEmptyWidth = 0;
-        var prevLineWidth = 0;
-        var widthPerRes = 1;
-        for(var i = 0, il = ic.giSeq[chnid].length; i < il; ++i) {
+        let pre = type;
+        let prevEmptyWidth = 0;
+        let prevLineWidth = 0;
+        let widthPerRes = 1;
+        for(let i = 0, il = ic.giSeq[chnid].length; i < il; ++i) {
           html += ic.showSeqCls.insertGap(chnid, i, '-');
           if(resPosArray.indexOf(i+1 + ic.baseResi[chnid]) != -1) {
-              var cFull = ic.giSeq[chnid][i];
-              var c = cFull;
+              let cFull = ic.giSeq[chnid][i];
+              let c = cFull;
               if(cFull.length > 1) {
                   c = cFull[0] + '..';
               }
-              var pos =(i >= ic.matchedPos[chnid] && i - ic.matchedPos[chnid] < ic.chainsSeq[chnid].length) ? ic.chainsSeq[chnid][i - ic.matchedPos[chnid]].resi : ic.baseResi[chnid] + 1 + i;
-              var resid = chnid + '_' +(i+1 + ic.baseResi[chnid]).toString();
-              var title = cFull +(i+1 + ic.baseResi[chnid]).toString();
+              let pos =(i >= ic.matchedPos[chnid] && i - ic.matchedPos[chnid] < ic.chainsSeq[chnid].length) ? ic.chainsSeq[chnid][i - ic.matchedPos[chnid]].resi : ic.baseResi[chnid] + 1 + i;
+              let resid = chnid + '_' +(i+1 + ic.baseResi[chnid]).toString();
+              let title = cFull +(i+1 + ic.baseResi[chnid]).toString();
               if(type == 'ssbond') {
                   title = 'Residue ' + resid + ' has disulfide bond with';
                   if(resid2resids[resid] !== undefined) {
-                      for(var j = 0, jl = resid2resids[resid].length; j < jl; ++j) {
+                      for(let j = 0, jl = resid2resids[resid].length; j < jl; ++j) {
                           title += ' residue ' + resid2resids[resid][j];
                       }
                   }
@@ -350,14 +372,14 @@ class AnnoCddSite {
               else if(type == 'crosslink') {
                   title = 'Residue ' + resid + ' has cross-linkage with';
                   if(resid2resids[resid] !== undefined) {
-                      for(var j = 0, jl = resid2resids[resid].length; j < jl; ++j) {
+                      for(let j = 0, jl = resid2resids[resid].length; j < jl; ++j) {
                           title += ' residue ' + resid2resids[resid][j];
                       }
                   }
               }
               html += '<span id="' + pre + '_' + ic.pre + chnid + '_' + pos + '" title="' + title + '" class="icn3d-residue">' + c + '</span>';
               html2 += ic.showSeqCls.insertGapOverview(chnid, i);
-              var emptyWidth =(ic.icn3dui.cfg.blast_rep_id == chnid) ? Math.round(ic.seqAnnWidth * i /(ic.maxAnnoLength + ic.nTotalGap) - prevEmptyWidth - prevLineWidth) : Math.round(ic.seqAnnWidth * i / ic.maxAnnoLength - prevEmptyWidth - prevLineWidth);
+              let emptyWidth =(ic.icn3dui.cfg.blast_rep_id == chnid) ? Math.round(ic.seqAnnWidth * i /(ic.maxAnnoLength + ic.nTotalGap) - prevEmptyWidth - prevLineWidth) : Math.round(ic.seqAnnWidth * i / ic.maxAnnoLength - prevEmptyWidth - prevLineWidth);
                 //if(emptyWidth < 0) emptyWidth = 0;
                 if(emptyWidth >= 0) {
                 html2 += '<div style="display:inline-block; width:' + emptyWidth + 'px;">&nbsp;</div>';
@@ -385,7 +407,7 @@ class AnnoCddSite {
 
     // jquery tooltip
     //https://stackoverflow.com/questions/18231315/jquery-ui-tooltip-html-with-links
-    setToolTip() {  var ic = this.icn3d, me = ic.icn3dui;
+    setToolTip() {  let ic = this.icn3d, me = ic.icn3dui;
       $("[id^=" + ic.pre + "snp]").add("[id^=" + ic.pre + "clinvar]").add("[id^=" + ic.pre + "ssbond]").add("[id^=" + ic.pre + "crosslink]").tooltip({
         content: function() {
             return $(this).prop('title');

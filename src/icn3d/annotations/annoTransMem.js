@@ -9,8 +9,8 @@ class AnnoTransMem {
         this.icn3d = icn3d;
     }
 
-    showTransmem(chnid, chnidBase) { var ic = this.icn3d, me = ic.icn3dui;
-        var thisClass = this;
+    showTransmem(chnid, chnidBase) { let ic = this.icn3d, me = ic.icn3dui;
+        let thisClass = this;
         if(ic.ssbondpnts === undefined) {
             // didn't finish loading atom data yet
             setTimeout(function(){
@@ -21,17 +21,17 @@ class AnnoTransMem {
             this.showTransmem_base(chnid, chnidBase);
         }
     }
-    showTransmem_base(chnid, chnidBase) { var ic = this.icn3d, me = ic.icn3dui;
-        var residHash = {}
-        for(var serial in ic.chains[chnidBase]) {
-            var atom = ic.atoms[serial];
+    showTransmem_base(chnid, chnidBase) { let ic = this.icn3d, me = ic.icn3dui;
+        let residHash = {}
+        for(let serial in ic.chains[chnidBase]) {
+            let atom = ic.atoms[serial];
             if(atom.coord.z < ic.halfBilayerSize && atom.coord.z > -ic.halfBilayerSize) {
-                var resid = atom.structure + '_' + atom.chain + '_' + atom.resi;
+                let resid = atom.structure + '_' + atom.chain + '_' + atom.resi;
                 residHash[resid] = 1;
             }
         }
-        var residueArray = Object.keys(residHash);
-        var title = "Transmembrane domain";
+        let residueArray = Object.keys(residHash);
+        let title = "Transmembrane domain";
         ic.annoCddSiteCls.showAnnoType(chnid, chnidBase, 'transmem', title, residueArray);
     }
 

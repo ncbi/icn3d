@@ -12,8 +12,8 @@ class Impostor {
     }
 
     onBeforeRender(renderer, scene, camera, geometry, material, group) {
-      var u = material.uniforms;
-      var updateList = [];
+      let u = material.uniforms;
+      let updateList = [];
 
       if (u.objectId) {
         u.objectId.value = SupportsReadPixelsFloat ? this.id : this.id / 255
@@ -58,7 +58,7 @@ class Impostor {
       }
 
       if (u.modelViewProjectionMatrixInverse) {
-        var tmpMatrix = new THREE.Matrix4();
+        let tmpMatrix = new THREE.Matrix4();
         if (u.modelViewProjectionMatrix) {
           tmpMatrix.copy(
             u.modelViewProjectionMatrix.value
@@ -94,13 +94,13 @@ class Impostor {
       }
 
       if (updateList.length) {
-        var materialProperties = renderer.properties.get(material);
+        let materialProperties = renderer.properties.get(material);
 
         if (materialProperties.program) {
-          var gl = renderer.getContext();
-          var p = materialProperties.program;
+          let gl = renderer.getContext();
+          let p = materialProperties.program;
           gl.useProgram(p.program);
-          var pu = p.getUniforms();
+          let pu = p.getUniforms();
 
           updateList.forEach(function (name) {
             pu.setValue(gl, name, u[ name ].value)
@@ -109,15 +109,15 @@ class Impostor {
       }
     }
 
-    setParametersForShader (opacity) { var ic = this.icn3d, me = ic.icn3dui;
-        var background = me.parasCls.backgroundColors[ic.opts.background.toLowerCase()];
+    setParametersForShader (opacity) { let ic = this.icn3d, me = ic.icn3dui;
+        let background = me.parasCls.backgroundColors[ic.opts.background.toLowerCase()];
 
-        var near = 2.5*ic.maxD;
-        var far = 4*ic.maxD;
+        let near = 2.5*ic.maxD;
+        let far = 4*ic.maxD;
 
-        var bInstance = (ic.biomtMatrices !== undefined && ic.biomtMatrices.length * ic.cnt > ic.maxatomcnt) ? true : false;
+        let bInstance = (ic.biomtMatrices !== undefined && ic.biomtMatrices.length * ic.cnt > ic.maxatomcnt) ? true : false;
 
-        var nearClip;
+        let nearClip;
         if(ic.opts['slab'] === 'yes') {
             if(bInstance) {
                 nearClip = 0.1;
@@ -135,9 +135,9 @@ class Impostor {
             nearClip = 0.1;
         }
 
-        var opacityValue = (opacity !== undefined) ? opacity : 1.0;
+        let opacityValue = (opacity !== undefined) ? opacity : 1.0;
 
-        var shiness = ic.shininess / 100.0 * 0.5;
+        let shiness = ic.shininess / 100.0 * 0.5;
 
         ic.uniforms = THREE.UniformsUtils.merge([
           THREE.UniformsLib.common,
@@ -188,7 +188,7 @@ class Impostor {
         }
     }
 
-    drawImpostorShader () { var ic = this.icn3d, me = ic.icn3dui;
+    drawImpostorShader () { let ic = this.icn3d, me = ic.icn3dui;
         if(ic.icn3dui.bNode) return;
 
         this.setParametersForShader();
@@ -198,13 +198,13 @@ class Impostor {
         //this.createImpostorShaderCylinder("HyperballStickImpostor");
     }
 
-    getShader (name) { var ic = this.icn3d, me = ic.icn3dui;
-      var shaderText = $NGL_shaderTextHash[name];
-      var reInclude = /#include\s+(\S+)/gmi;
+    getShader (name) { let ic = this.icn3d, me = ic.icn3dui;
+      let shaderText = $NGL_shaderTextHash[name];
+      let reInclude = /#include\s+(\S+)/gmi;
 
       shaderText = shaderText.replace( reInclude, function( match, p1 ){
 
-            var chunk;
+            let chunk;
             if(THREE.ShaderChunk.hasOwnProperty(p1)) {
                 chunk = THREE.ShaderChunk[ p1 ];
             }
@@ -216,8 +216,8 @@ class Impostor {
       return shaderText;
     }
 
-    createImpostorShaderBase(shaderName, mapping, mappingIndices, data, attributeData, count, mappingSize, mappingIndicesSize, mappingItemSize) { var ic = this.icn3d, me = ic.icn3dui;
-      var shaderMaterial =
+    createImpostorShaderBase(shaderName, mapping, mappingIndices, data, attributeData, count, mappingSize, mappingIndicesSize, mappingItemSize) { let ic = this.icn3d, me = ic.icn3dui;
+      let shaderMaterial =
         new THREE.ShaderMaterial({
           defines: ic.defines,
           uniforms:  ic.uniforms,
@@ -239,31 +239,31 @@ class Impostor {
       }
 
         //MappedBuffer
-        var attributeSize = count * mappingSize;
+        let attributeSize = count * mappingSize;
 
-        var n = count * mappingIndicesSize;
-        var TypedArray = attributeSize > 65535 ? Uint32Array : Uint16Array;
-        var index = new TypedArray( n );
+        let n = count * mappingIndicesSize;
+        let TypedArray = attributeSize > 65535 ? Uint32Array : Uint16Array;
+        let index = new TypedArray( n );
 
             //makeIndex();
-        var ix, it;
+        let ix, it;
 
-        for( var v = 0; v < count; v++ ) {
+        for( let v = 0; v < count; v++ ) {
             ix = v * mappingIndicesSize;
             it = v * mappingSize;
 
             index.set( mappingIndices, ix );
 
-            for( var s = 0; s < mappingIndicesSize; ++s ){
+            for( let s = 0; s < mappingIndicesSize; ++s ){
                 index[ ix + s ] += it;
             }
         }
 
 
-        var geometry = new THREE.BufferGeometry();
+        let geometry = new THREE.BufferGeometry();
 
         // buffer.js
-        var dynamic = true;
+        let dynamic = true;
 
         if( index ){
             geometry.setIndex(
@@ -274,14 +274,14 @@ class Impostor {
         }
 
         // add attributes from buffer.js
-        var itemSize = {
+        let itemSize = {
             "f": 1, "v2": 2, "v3": 3, "c": 3
         };
 
-        for( var name in attributeData ){
+        for( let name in attributeData ){
 
-            var buf;
-            var a = attributeData[ name ];
+            let buf;
+            let a = attributeData[ name ];
 
                 buf = new Float32Array(
                     attributeSize * itemSize[ a.type ]
@@ -296,27 +296,27 @@ class Impostor {
         }
 
         // set attributes from mapped-buffer.js
-        var attributes = geometry.attributes;
+        let attributes = geometry.attributes;
 
-        var a, d, itemSize2, array, i, j;
+        let a, d, itemSize2, array, i, j;
 
-        for( var name in data ){
+        for( let name in data ){
 
             d = data[ name ];
             a = attributes[ name ];
             itemSize2 = a.itemSize;
             array = a.array;
 
-            for( var k = 0; k < count; ++k ) {
+            for( let k = 0; k < count; ++k ) {
 
                 n = k * itemSize2;
                 i = n * mappingSize;
 
-                for( var l = 0; l < mappingSize; ++l ) {
+                for( let l = 0; l < mappingSize; ++l ) {
 
                     j = i + ( itemSize2 * l );
 
-                    for( var m = 0; m < itemSize2; ++m ) {
+                    for( let m = 0; m < itemSize2; ++m ) {
 
                         array[ j + m ] = d[ n + m ];
 
@@ -331,13 +331,13 @@ class Impostor {
         }
 
         // makemapping
-        var aMapping = geometry.attributes.mapping.array;
+        let aMapping = geometry.attributes.mapping.array;
 
-        for( var v = 0; v < count; v++ ) {
+        for( let v = 0; v < count; v++ ) {
             aMapping.set( mapping, v * mappingItemSize * mappingSize );
         }
 
-        var mesh = new THREE.Mesh(geometry, shaderMaterial);
+        let mesh = new THREE.Mesh(geometry, shaderMaterial);
 
         // important: https://stackoverflow.com/questions/21184061/mesh-suddenly-disappears-in-three-js-clipping
         // You are moving the camera in the CPU. You are moving the vertices of the plane in the GPU
@@ -360,15 +360,15 @@ class Impostor {
         //ic.objects.push(mesh);
     }
 
-    createImpostorShaderCylinder(shaderName) { var ic = this.icn3d, me = ic.icn3dui;
-        var positions = new Float32Array( ic.posArray );
-        var colors = new Float32Array( ic.colorArray );
-        var positions2 = new Float32Array( ic.pos2Array );
-        var colors2 = new Float32Array( ic.color2Array );
-        var radii = new Float32Array( ic.radiusArray );
+    createImpostorShaderCylinder(shaderName) { let ic = this.icn3d, me = ic.icn3dui;
+        let positions = new Float32Array( ic.posArray );
+        let colors = new Float32Array( ic.colorArray );
+        let positions2 = new Float32Array( ic.pos2Array );
+        let colors2 = new Float32Array( ic.color2Array );
+        let radii = new Float32Array( ic.radiusArray );
 
         // cylinder
-        var mapping = new Float32Array([
+        let mapping = new Float32Array([
             -1.0,  1.0, -1.0,
             -1.0, -1.0, -1.0,
              1.0,  1.0, -1.0,
@@ -377,22 +377,22 @@ class Impostor {
              1.0, -1.0,  1.0
         ]);
 
-        var mappingIndices = new Uint16Array([
+        let mappingIndices = new Uint16Array([
             0, 1, 2,
             1, 4, 2,
             2, 4, 3,
             4, 5, 3
         ]);
 
-        var mappingIndicesSize = 12;
-        var mappingType = "v3";
-        var mappingSize = 6;
-        var mappingItemSize = 3;
+        let mappingIndicesSize = 12;
+        let mappingType = "v3";
+        let mappingSize = 6;
+        let mappingItemSize = 3;
 
 
-        var count = positions.length / 3;
+        let count = positions.length / 3;
 
-        var data = {
+        let data = {
             "position1": positions,
             "color": colors,
             "position2": positions2,
@@ -400,7 +400,7 @@ class Impostor {
             "radius": radii
         };
 
-        var attributeData = {
+        let attributeData = {
             "position1": { type: "v3", value: null },
             "color": { type: "v3", value: null },
             "position2": { type: "v3", value: null },
@@ -425,38 +425,38 @@ class Impostor {
       ic.radiusArray = [];
     }
 
-    createImpostorShaderSphere(shaderName) { var ic = this.icn3d, me = ic.icn3dui;
-        var positions = new Float32Array( ic.posArraySphere );
-        var colors = new Float32Array( ic.colorArraySphere );
-        var radii = new Float32Array( ic.radiusArraySphere );
+    createImpostorShaderSphere(shaderName) { let ic = this.icn3d, me = ic.icn3dui;
+        let positions = new Float32Array( ic.posArraySphere );
+        let colors = new Float32Array( ic.colorArraySphere );
+        let radii = new Float32Array( ic.radiusArraySphere );
 
         // sphere
-        var mapping = new Float32Array([
+        let mapping = new Float32Array([
             -1.0,  1.0,
             -1.0, -1.0,
              1.0,  1.0,
              1.0, -1.0
         ]);
 
-        var mappingIndices = new Uint16Array([
+        let mappingIndices = new Uint16Array([
             0, 1, 2,
             1, 3, 2
         ]);
 
-        var mappingIndicesSize = 6;
-        var mappingType = "v2";
-        var mappingSize = 4;
-        var mappingItemSize = 2;
+        let mappingIndicesSize = 6;
+        let mappingType = "v2";
+        let mappingSize = 4;
+        let mappingItemSize = 2;
 
-        var count = positions.length / 3;
+        let count = positions.length / 3;
 
-        var data = {
+        let data = {
             "position": positions,
             "color": colors,
             "radius": radii
         };
 
-        var attributeData = {
+        let attributeData = {
             "position": { type: "v3", value: null },
             "color": { type: "v3", value: null },
             "radius": { type: "f", value: null },
@@ -475,7 +475,7 @@ class Impostor {
       ic.radiusArraySphere = [];
     }
 
-    clearImpostors() { var ic = this.icn3d, me = ic.icn3dui;
+    clearImpostors() { let ic = this.icn3d, me = ic.icn3dui;
         ic.posArray = [];
         ic.colorArray = [];
         ic.pos2Array = [];

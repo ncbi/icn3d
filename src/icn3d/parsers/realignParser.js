@@ -21,19 +21,19 @@ class RealignParser {
         this.icn3d = icn3d;
     }
 
-    realign() { var ic = this.icn3d, me = ic.icn3dui;
+    realign() { let  ic = this.icn3d, me = ic.icn3dui;
         ic.selectionCls.saveSelectionPrep();
 
-        var index = Object.keys(ic.defNames2Atoms).length;
-        var name = 'alseq_' + index;
+        let  index = Object.keys(ic.defNames2Atoms).length;
+        let  name = 'alseq_' + index;
 
         ic.selectionCls.saveSelection(name, name);
 
-        var structHash = {}
+        let  structHash = {}
         ic.realignResid = {}
-        var lastStruResi = '';
-        for(var serial in ic.hAtoms) {
-            var atom = ic.atoms[serial];
+        let  lastStruResi = '';
+        for(let serial in ic.hAtoms) {
+            let  atom = ic.atoms[serial];
             if((ic.proteins.hasOwnProperty(serial) && atom.name == "CA")
               ||(ic.nucleotides.hasOwnProperty(serial) &&(atom.name == "O3'" || atom.name == "O3*")) ) {
                 if(atom.structure + '_' + atom.resi == lastStruResi) continue; // e.g., Alt A and B
@@ -53,81 +53,81 @@ class RealignParser {
             }
         }
 
-        var structArray = Object.keys(structHash);
+        let  structArray = Object.keys(structHash);
 
-        var toStruct = structArray[0];
-        var fromStruct = structArray[1];
+        let  toStruct = structArray[0];
+        let  fromStruct = structArray[1];
 
         // transform from the second structure to the first structure
-        var coordsFrom = structHash[fromStruct];
-        var coordsTo = structHash[toStruct];
+        let  coordsFrom = structHash[fromStruct];
+        let  coordsTo = structHash[toStruct];
 
-        var bKeepSeq = true;
+        let  bKeepSeq = true;
         ic.ParserUtilsCls.alignCoords(coordsFrom, coordsTo, fromStruct, bKeepSeq);
 
         ic.hlUpdateCls.updateHlAll();
     }
 
-    parseChainRealignPredefined(chainidArray, struct2SeqHash, struct2CoorHash, struct2resid) { var ic = this.icn3d, me = ic.icn3dui;
-      var bRealign = undefined;
+    parseChainRealignPredefined(chainidArray, struct2SeqHash, struct2CoorHash, struct2resid) { let  ic = this.icn3d, me = ic.icn3dui;
+      let  bRealign = undefined;
 
-      var toStruct = chainidArray[0].substr(0, chainidArray[0].indexOf('_')); //.toUpperCase();
+      let  toStruct = chainidArray[0].substr(0, chainidArray[0].indexOf('_')); //.toUpperCase();
       if(!bRealign) toStruct = toStruct.toUpperCase();
 
-      var hAtoms = {}
+      let  hAtoms = {}
 
       ic.realignResid = {}
 
       ic.opts['color'] = 'grey';
       ic.setColorCls.setColorByOptions(ic.opts, ic.dAtoms);
 
-      for(var index = 0, indexl = chainidArray.length - 1; index < indexl; ++index) {
-          var fromStruct = chainidArray[index + 1].substr(0, chainidArray[index + 1].indexOf('_')); //.toUpperCase();
+      for(let index = 0, indexl = chainidArray.length - 1; index < indexl; ++index) {
+          let  fromStruct = chainidArray[index + 1].substr(0, chainidArray[index + 1].indexOf('_')); //.toUpperCase();
           if(!bRealign) fromStruct = fromStruct.toUpperCase();
 
           if(toStruct == fromStruct) fromStruct += ic.icn3dui.htmlCls.postfix;
 
-          var seq1 = struct2SeqHash[toStruct];
-          var seq2 = struct2SeqHash[fromStruct];
+          let  seq1 = struct2SeqHash[toStruct];
+          let  seq2 = struct2SeqHash[fromStruct];
 
-          var coord1 = struct2CoorHash[toStruct];
-          var coord2 = struct2CoorHash[fromStruct];
+          let  coord1 = struct2CoorHash[toStruct];
+          let  coord2 = struct2CoorHash[fromStruct];
 
-          var residArray1 = struct2resid[toStruct];
-          var residArray2 = struct2resid[fromStruct];
+          let  residArray1 = struct2resid[toStruct];
+          let  residArray2 = struct2resid[fromStruct];
 
           // transform from the second structure to the first structure
-          var coordsTo = [];
-          var coordsFrom = [];
+          let  coordsTo = [];
+          let  coordsFrom = [];
 
-          var seqto = '', seqfrom = ''
+          let  seqto = '', seqfrom = ''
 
           ic.realignResid[toStruct] = [];
           ic.realignResid[fromStruct] = [];
 
-          for(var i = 0, il = seq1.length; i < il; ++i) {
+          for(let i = 0, il = seq1.length; i < il; ++i) {
               ic.realignResid[toStruct].push({'resid':residArray1[i], 'resn':seq1[i]});
               ic.realignResid[fromStruct].push({'resid':residArray2[i], 'resn':seq2[i]});
           }
 
-          var chainTo = chainidArray[0];
-          var chainFrom = chainidArray[index + 1];
+          let  chainTo = chainidArray[0];
+          let  chainFrom = chainidArray[index + 1];
 
-          var bChainAlign = true;
-          var hAtomsTmp = ic.ParserUtilsCls.alignCoords(coord2, coord1, fromStruct, undefined, chainTo, chainFrom, index + 1, bChainAlign);
+          let  bChainAlign = true;
+          let  hAtomsTmp = ic.ParserUtilsCls.alignCoords(coord2, coord1, fromStruct, undefined, chainTo, chainFrom, index + 1, bChainAlign);
           hAtoms = me.hashUtilsCls.unionHash(hAtoms, hAtomsTmp);
       }
 
       ic.chainalignParserCls.downloadChainalignmentPart3(undefined, chainidArray, hAtoms);
     }
 
-    parseChainRealignData(dataArray, chainresiCalphaHash2, chainidArray, struct2SeqHash, struct2CoorHash, struct2resid, bRealign) { var ic = this.icn3d, me = ic.icn3dui;
+    parseChainRealignData(dataArray, chainresiCalphaHash2, chainidArray, struct2SeqHash, struct2CoorHash, struct2resid, bRealign) { let  ic = this.icn3d, me = ic.icn3dui;
       //var dataArray =(chainidArray.length == 2) ? [ajaxData] : ajaxData;
 
-      var toStruct = chainidArray[0].substr(0, chainidArray[0].indexOf('_')); //.toUpperCase();
+      let  toStruct = chainidArray[0].substr(0, chainidArray[0].indexOf('_')); //.toUpperCase();
       if(!bRealign) toStruct = toStruct.toUpperCase();
 
-      var hAtoms = {}
+      let  hAtoms = {}
 
       ic.realignResid = {}
 
@@ -136,29 +136,29 @@ class RealignParser {
 
       // Each argument is an array with the following structure: [ data, statusText, jqXHR ]
       //var data2 = v2[0];
-      for(var index = 0, indexl = dataArray.length; index < indexl; ++index) {
-    //  for(var index = 1, indexl = dataArray.length; index < indexl; ++index) {
-          var data = dataArray[index][0];
+      for(let index = 0, indexl = dataArray.length; index < indexl; ++index) {
+    //  for(let index = 1, indexl = dataArray.length; index < indexl; ++index) {
+          let  data = dataArray[index][0];
 
-          var fromStruct = chainidArray[index + 1].substr(0, chainidArray[index + 1].indexOf('_')); //.toUpperCase();
+          let  fromStruct = chainidArray[index + 1].substr(0, chainidArray[index + 1].indexOf('_')); //.toUpperCase();
           if(!bRealign) fromStruct = fromStruct.toUpperCase();
 
           if(toStruct == fromStruct) fromStruct += ic.icn3dui.htmlCls.postfix;
 
-          var seq1 = struct2SeqHash[toStruct];
-          var seq2 = struct2SeqHash[fromStruct];
+          let  seq1 = struct2SeqHash[toStruct];
+          let  seq2 = struct2SeqHash[fromStruct];
 
-          var coord1 = struct2CoorHash[toStruct];
-          var coord2 = struct2CoorHash[fromStruct];
+          let  coord1 = struct2CoorHash[toStruct];
+          let  coord2 = struct2CoorHash[fromStruct];
 
-          var residArray1 = struct2resid[toStruct];
-          var residArray2 = struct2resid[fromStruct];
+          let  residArray1 = struct2resid[toStruct];
+          let  residArray2 = struct2resid[fromStruct];
 
-          var query, target;
+          let  query, target;
 
           if(data.data !== undefined) {
               query = data.data[0].query;
-              var targetName = Object.keys(data.data[0].targets)[0];
+              let  targetName = Object.keys(data.data[0].targets)[0];
               target = data.data[0].targets[targetName];
 
               target = target.hsps[0];
@@ -166,21 +166,21 @@ class RealignParser {
 
           if(query !== undefined && target !== undefined) {
               // transform from the second structure to the first structure
-              var coordsTo = [];
-              var coordsFrom = [];
+              let  coordsTo = [];
+              let  coordsFrom = [];
 
-              var seqto = '', seqfrom = ''
+              let  seqto = '', seqfrom = ''
 
               ic.realignResid[toStruct] = [];
               ic.realignResid[fromStruct] = [];
 
-              var segArray = target.segs;
-              for(var i = 0, il = segArray.length; i < il; ++i) {
-                  var seg = segArray[i];
-                  var prevChain1 = '', prevChain2 = '';
-                  for(var j = 0; j <= seg.orito - seg.orifrom; ++j) {
-                      var chainid1 = residArray1[j + seg.orifrom].substr(0, residArray1[j + seg.orifrom].lastIndexOf('_'));
-                      var chainid2 = residArray2[j + seg.from].substr(0, residArray2[j + seg.from].lastIndexOf('_'));
+              let  segArray = target.segs;
+              for(let i = 0, il = segArray.length; i < il; ++i) {
+                  let  seg = segArray[i];
+                  let  prevChain1 = '', prevChain2 = '';
+                  for(let j = 0; j <= seg.orito - seg.orifrom; ++j) {
+                      let  chainid1 = residArray1[j + seg.orifrom].substr(0, residArray1[j + seg.orifrom].lastIndexOf('_'));
+                      let  chainid2 = residArray2[j + seg.from].substr(0, residArray2[j + seg.from].lastIndexOf('_'));
 
                       if(!coord1[j + seg.orifrom] || !coord2[j + seg.from]) continue;
 
@@ -201,11 +201,11 @@ class RealignParser {
                   }
               }
 
-              var chainTo = chainidArray[0];
-              var chainFrom = chainidArray[index + 1];
+              let  chainTo = chainidArray[0];
+              let  chainFrom = chainidArray[index + 1];
 
-              var bChainAlign = true;
-              var hAtomsTmp = ic.ParserUtilsCls.alignCoords(coordsFrom, coordsTo, fromStruct, undefined, chainTo, chainFrom, index + 1, bChainAlign);
+              let  bChainAlign = true;
+              let  hAtomsTmp = ic.ParserUtilsCls.alignCoords(coordsFrom, coordsTo, fromStruct, undefined, chainTo, chainFrom, index + 1, bChainAlign);
               hAtoms = me.hashUtilsCls.unionHash(hAtoms, hAtomsTmp);
 
     //          ic.opts['color'] = 'identity';
@@ -247,38 +247,38 @@ class RealignParser {
       }
     }
 
-    realignOnSeqAlign() { var ic = this.icn3d, me = ic.icn3dui;
-        var chainidHash = ic.firstAtomObjCls.getChainsFromAtoms(ic.hAtoms);
+    realignOnSeqAlign() { let  ic = this.icn3d, me = ic.icn3dui;
+        let  chainidHash = ic.firstAtomObjCls.getChainsFromAtoms(ic.hAtoms);
 
-        var chainidArrayTmp = Object.keys(chainidHash);
-        var chainidArray = [];
+        let  chainidArrayTmp = Object.keys(chainidHash);
+        let  chainidArray = [];
 
-        var prevChainid = '';
-        for(var i = 0, il = chainidArrayTmp.length; i < il; ++i) {
+        let  prevChainid = '';
+        for(let i = 0, il = chainidArrayTmp.length; i < il; ++i) {
             if(chainidArrayTmp[i] != prevChainid) chainidArray.push(chainidArrayTmp[i]);
             prevChainid = chainidArrayTmp[i];
         }
 
-        var bRealign = true;
+        let  bRealign = true;
         this.realignChainOnSeqAlign(undefined, chainidArray, bRealign);
     }
 
-    realignChainOnSeqAlign(chainresiCalphaHash2, chainidArray, bRealign, bPredefined) { var ic = this.icn3d, me = ic.icn3dui;
-        var thisClass = this;
+    realignChainOnSeqAlign(chainresiCalphaHash2, chainidArray, bRealign, bPredefined) { let  ic = this.icn3d, me = ic.icn3dui;
+        let  thisClass = this;
 
         //bRealign: realign based on seq alignment
         //bPredefined: chain alignment with predefined matching residues
 
-        var struct2SeqHash = {}
-        var struct2CoorHash = {}
-        var struct2resid = {}
-        var lastStruResi = '';
+        let  struct2SeqHash = {}
+        let  struct2CoorHash = {}
+        let  struct2resid = {}
+        let  lastStruResi = '';
 
-        var mmdbid_t;
-        var ajaxArray = [];
-        var url = 'https://www.ncbi.nlm.nih.gov/Structure/pwaln/pwaln.fcgi?from=chainalign';
+        let  mmdbid_t;
+        let  ajaxArray = [];
+        let  url = 'https://www.ncbi.nlm.nih.gov/Structure/pwaln/pwaln.fcgi?from=chainalign';
 
-        var predefinedResArray, predefinedRes;
+        let  predefinedResArray, predefinedRes;
 
         if(bPredefined) {
             predefinedResArray = me.cfg.resdef.trim().replace(/\+/gi, ' ').split(' | ');
@@ -289,11 +289,11 @@ class RealignParser {
             }
         }
 
-        for(var i = 0, il = chainidArray.length; i < il; ++i) {
+        for(let i = 0, il = chainidArray.length; i < il; ++i) {
             if(bPredefined) predefinedRes = predefinedResArray[i].trim();
 
-            var pos = chainidArray[i].indexOf('_');
-            var mmdbid = chainidArray[i].substr(0, pos); //.toUpperCase();
+            let  pos = chainidArray[i].indexOf('_');
+            let  mmdbid = chainidArray[i].substr(0, pos); //.toUpperCase();
             if(!bRealign) mmdbid =  mmdbid.toUpperCase();
 
             if(i == 0) {
@@ -303,7 +303,7 @@ class RealignParser {
                 mmdbid += ic.icn3dui.htmlCls.postfix;
             }
 
-            var chainid = mmdbid + chainidArray[i].substr(pos);
+            let  chainid = mmdbid + chainidArray[i].substr(pos);
 
             if(!ic.chainsSeq[chainid]) {
                 alert("Please select one chain per structure and try it again...");
@@ -317,16 +317,16 @@ class RealignParser {
             }
 
             if(i == 0 || bPredefined) { // master
-                var base = parseInt(ic.chainsSeq[chainid][0].resi);
+                let  base = parseInt(ic.chainsSeq[chainid][0].resi);
 
-                var resRange;
+                let  resRange;
                 if(bRealign) {
-                    var seqLen = ic.chainsSeq[chainid].length;
-                    var lastResi = ic.chainsSeq[chainid][seqLen - 1].resi;
+                    let  seqLen = ic.chainsSeq[chainid].length;
+                    let  lastResi = ic.chainsSeq[chainid][seqLen - 1].resi;
                     resRange = base.toString() + '-' + lastResi.toString();
                 }
 
-                var resiArray;
+                let  resiArray;
                 if(bRealign) {
                     resiArray = [resRange];
                 }
@@ -337,18 +337,18 @@ class RealignParser {
                     resiArray = ic.icn3dui.cfg.resnum.split(",");
                 }
 
-                for(var j = 0, jl = resiArray.length; j < jl; ++j) {
+                for(let j = 0, jl = resiArray.length; j < jl; ++j) {
                     if(resiArray[j].indexOf('-') != -1) {
-                        var startEnd = resiArray[j].split('-');
+                        let  startEnd = resiArray[j].split('-');
 
-                        for(var k = parseInt(startEnd[0]); k <= parseInt(startEnd[1]); ++k) {
+                        for(let k = parseInt(startEnd[0]); k <= parseInt(startEnd[1]); ++k) {
                             // don't align solvent or chemicals
                             if(!ic.chainsSeq[chainid][k - base] || me.parasCls.b62ResArray.indexOf(ic.chainsSeq[chainid][k - base].name.toUpperCase()) == -1) continue;
 
                             struct2SeqHash[mmdbid] += ic.chainsSeq[chainid][k - base].name;
-                            var bFound = false;
-                            for(var serial in ic.residues[chainid + '_' + k]) {
-                                var atom = ic.atoms[serial];
+                            let  bFound = false;
+                            for(let serial in ic.residues[chainid + '_' + k]) {
+                                let  atom = ic.atoms[serial];
                                 if((ic.proteins.hasOwnProperty(serial) && atom.name == "CA" && atom.elem == "C")
                                   ||(ic.nucleotides.hasOwnProperty(serial) &&(atom.name == "O3'" || atom.name == "O3*") && atom.elem == "O") ) {
                                     struct2CoorHash[mmdbid].push(atom.coord.clone());
@@ -362,11 +362,11 @@ class RealignParser {
                         }
                     }
                     else { // one residue
-                        var k = parseInt(resiArray[j]);
+                        let  k = parseInt(resiArray[j]);
                         struct2SeqHash[mmdbid] += ic.chainsSeq[chainid][k - base].name;
-                        var bFound = false;
-                        for(var serial in ic.residues[chainid + '_' + k]) {
-                            var atom = ic.atoms[serial];
+                        let  bFound = false;
+                        for(let serial in ic.residues[chainid + '_' + k]) {
+                            let  atom = ic.atoms[serial];
                             if((ic.proteins.hasOwnProperty(serial) && atom.name == "CA" && atom.elem == "C")
                               ||(ic.nucleotides.hasOwnProperty(serial) &&(atom.name == "O3'" || atom.name == "O3*") && atom.elem == "O") ) {
                                 struct2CoorHash[mmdbid].push(atom.coord.clone());
@@ -380,12 +380,12 @@ class RealignParser {
                 }
             }
             else {
-                for(var j = 0, jl = ic.chainsSeq[chainid].length; j < jl; ++j) {
+                for(let j = 0, jl = ic.chainsSeq[chainid].length; j < jl; ++j) {
                     struct2SeqHash[mmdbid] += ic.chainsSeq[chainid][j].name;
-                    var resid = chainid + '_' + ic.chainsSeq[chainid][j].resi;
-                    var bFound = false;
-                    for(var serial in ic.residues[resid]) {
-                        var atom = ic.atoms[serial];
+                    let  resid = chainid + '_' + ic.chainsSeq[chainid][j].resi;
+                    let  bFound = false;
+                    for(let serial in ic.residues[resid]) {
+                        let  atom = ic.atoms[serial];
                         if((ic.proteins.hasOwnProperty(serial) && atom.name == "CA" && atom.elem == "C")
                           ||(ic.nucleotides.hasOwnProperty(serial) &&(atom.name == "O3'" || atom.name == "O3*") && atom.elem == "O") ) {
                             struct2CoorHash[mmdbid].push(atom.coord.clone());
@@ -400,13 +400,13 @@ class RealignParser {
             }
 
             if(i > 0 && !bPredefined) {
-                var toStruct = mmdbid_t;
-                var fromStruct = mmdbid;
+                let  toStruct = mmdbid_t;
+                let  fromStruct = mmdbid;
 
-                var seq1 = struct2SeqHash[toStruct];
-                var seq2 = struct2SeqHash[fromStruct];
+                let  seq1 = struct2SeqHash[toStruct];
+                let  seq2 = struct2SeqHash[fromStruct];
 
-                var queryAjax = $.ajax({
+                let  queryAjax = $.ajax({
                    url: url,
                    type: 'POST',
                    data : {'targets': seq1, 'queries': seq2},
@@ -425,7 +425,7 @@ class RealignParser {
             //https://stackoverflow.com/questions/14352139/multiple-ajax-calls-from-array-and-handle-callback-when-completed
             //https://stackoverflow.com/questions/5518181/jquery-deferreds-when-and-the-fail-callback-arguments
             $.when.apply(undefined, ajaxArray).then(function() {
-               var dataArray =(chainidArray.length == 2) ? [arguments] : Array.from(arguments);
+               let  dataArray =(chainidArray.length == 2) ? [arguments] : Array.from(arguments);
                thisClass.parseChainRealignData(Array.from(dataArray), chainresiCalphaHash2, chainidArray, struct2SeqHash, struct2CoorHash, struct2resid, bRealign);
             })
             .fail(function() {

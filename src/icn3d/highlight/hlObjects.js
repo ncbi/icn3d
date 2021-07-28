@@ -13,7 +13,7 @@ class HlObjects {
     }
 
     //Show the highlight for the selected atoms: hAtoms.
-    addHlObjects(color, bRender, atomsHash) { var ic = this.icn3d, me = ic.icn3dui;
+    addHlObjects(color, bRender, atomsHash) { let ic = this.icn3d, me = ic.icn3dui;
        if(color === undefined) color = ic.hColor;
        if(atomsHash === undefined) atomsHash = ic.hAtoms;
 
@@ -23,16 +23,16 @@ class HlObjects {
     };
 
     //Remove the highlight. The atom selection does not change.
-    removeHlObjects() { var ic = this.icn3d, me = ic.icn3dui;
+    removeHlObjects() { let ic = this.icn3d, me = ic.icn3dui;
        // remove prevous highlight
-       for(var i in ic.prevHighlightObjects) {
+       for(let i in ic.prevHighlightObjects) {
            ic.mdl.remove(ic.prevHighlightObjects[i]);
        }
 
        ic.prevHighlightObjects = [];
 
        // remove prevous highlight
-       for(var i in ic.prevHighlightObjects_ghost) {
+       for(let i in ic.prevHighlightObjects_ghost) {
            ic.mdl.remove(ic.prevHighlightObjects_ghost[i]);
        }
 

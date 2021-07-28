@@ -27,7 +27,7 @@ class SetOption {
       if(id === 'color') {
           ic.setColorCls.setColorByOptions(ic.opts, ic.hAtoms);
           ic.drawCls.draw();
-          var residueHash = ic.firstAtomObjCls.getResiduesFromCalphaAtoms(ic.hAtoms);
+          let residueHash = ic.firstAtomObjCls.getResiduesFromCalphaAtoms(ic.hAtoms);
           ic.hlUpdateCls.changeSeqColor(Object.keys(residueHash));
           // change graph color
           ic.getGraphCls.updateGraphColor();
@@ -80,8 +80,8 @@ class SetOption {
 
     //Set the styles of predefined "protein", "nucleotides", etc.
     setStyle(selectionType, style) {var ic = this.icn3d, me = ic.icn3dui;
-      var atoms = {}
-      var bAll = true;
+      let atoms = {}
+      let bAll = true;
       switch(selectionType) {
           case 'proteins':
               atoms = me.hashUtilsCls.intHash(ic.hAtoms, ic.proteins);
@@ -109,12 +109,12 @@ class SetOption {
       }
       // draw sidec separatedly
       if(selectionType === 'sidec') {
-          for(var i in atoms) {
+          for(let i in atoms) {
             ic.atoms[i].style2 = style;
           }
       }
       else {
-          for(var i in atoms) {
+          for(let i in atoms) {
             ic.atoms[i].style = style;
           }
       }
@@ -125,8 +125,8 @@ class SetOption {
 
     //Save the current style setting so that these styles can be restored later by clicking "Apply Saved Style" in the Style menu.
     saveStyle() {var ic = this.icn3d, me = ic.icn3dui;
-       for(var i in ic.atoms) {
-           var atom = ic.atoms[i];
+       for(let i in ic.atoms) {
+           let atom = ic.atoms[i];
            atom.styleSave = atom.style;
            if(atom.style2 !== undefined) atom.style2Save = atom.style2;
        }
@@ -134,8 +134,8 @@ class SetOption {
 
     //Restore the previously saved style.
     applySavedStyle() {var ic = this.icn3d, me = ic.icn3dui;
-       for(var i in ic.atoms) {
-           var atom = ic.atoms[i];
+       for(let i in ic.atoms) {
+           let atom = ic.atoms[i];
            if(atom.styleSave !== undefined) {
                atom.style = atom.styleSave;
            }
@@ -148,16 +148,16 @@ class SetOption {
 
     //Save the current color setting so that these colors can be restored later by clicking "Apply Saved Color" in the Color menu.
     saveColor() {var ic = this.icn3d, me = ic.icn3dui;
-       for(var i in ic.atoms) {
-           var atom = ic.atoms[i];
+       for(let i in ic.atoms) {
+           let atom = ic.atoms[i];
            atom.colorSave = atom.color.clone();
        }
     }
 
     //Restore the previously saved color.
     applySavedColor() {var ic = this.icn3d, me = ic.icn3dui;
-       for(var i in ic.atoms) {
-           var atom = ic.atoms[i];
+       for(let i in ic.atoms) {
+           let atom = ic.atoms[i];
            if(atom.colorSave !== undefined) {
                atom.color = atom.colorSave.clone();
            }

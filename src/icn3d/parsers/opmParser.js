@@ -18,8 +18,8 @@ class OpmParser {
         this.icn3d = icn3d;
     }
 
-    downloadOpm(opmid) { var ic = this.icn3d, me = ic.icn3dui;
-       var url, dataType;
+    downloadOpm(opmid) { let  ic = this.icn3d, me = ic.icn3dui;
+       let  url, dataType;
 
        url = "https://opm-assets.storage.googleapis.com/pdb/" + opmid.toLowerCase()+ ".pdb";
 
@@ -67,9 +67,9 @@ class OpmParser {
        });
     }
 
-    loadOpmData(data, pdbid, bFull, type, pdbid2) { var ic = this.icn3d, me = ic.icn3dui;
-        var thisClass = this;
-        var url, dataType;
+    loadOpmData(data, pdbid, bFull, type, pdbid2) { let  ic = this.icn3d, me = ic.icn3dui;
+        let  thisClass = this;
+        let  url, dataType;
 
         if(!pdbid) pdbid = 'stru';
 
@@ -111,7 +111,7 @@ class OpmParser {
         });
     }
 
-    setOpmData(data) { var ic = this.icn3d, me = ic.icn3dui;
+    setOpmData(data) { let  ic = this.icn3d, me = ic.icn3dui;
         if(data.opm !== undefined && data.opm.rot !== undefined) {
             ic.bOpm = true;
 
@@ -133,7 +133,7 @@ class OpmParser {
         }
     }
 
-    parseAtomData(data, pdbid, bFull, type, pdbid2) { var ic = this.icn3d, me = ic.icn3dui;
+    parseAtomData(data, pdbid, bFull, type, pdbid2) { let  ic = this.icn3d, me = ic.icn3dui;
           if(type === 'mmtf') {
               ic.mmtfParserCls.parseMmtfData(data, pdbid, bFull);
 

@@ -15,22 +15,22 @@ class RmsdSuprCls {
         this.icn3dui = icn3dui;
     }
 
-    getRmsdSuprCls(co1, co2, n) { var me = this.icn3dui;
-    //    var TINY0 = 1.0e-10;
-        var supr;
-        var rot = new Array(9);
+    getRmsdSuprCls(co1, co2, n) { let me = this.icn3dui;
+    //    let TINY0 = 1.0e-10;
+        let supr;
+        let rot = new Array(9);
 
-        var i, k, flag;
+        let i, k, flag;
         //double cp[3], cq[3];
-        var cp = new THREE.Vector3(), cq = new THREE.Vector3();
+        let cp = new THREE.Vector3(), cq = new THREE.Vector3();
 
-        var da, ra, rb, dU, d1, d2, d3, e, s, v, over_n;
+        let da, ra, rb, dU, d1, d2, d3, e, s, v, over_n;
         //double ap[MAX_RES][3], bp[MAX_RES][3], mat[9];
-        var ap = [], bp = [];
-    //    var mat = new Array(9);
+        let ap = [], bp = [];
+    //    let mat = new Array(9);
 
         //double h1[3], h2[3], h3[3], k1[3], k2[3], k3[3];
-        var h1 = new Array(3), h2 = new Array(3), h3 = new Array(3), k1 = new Array(3), k2 = new Array(3), k3 = new Array(3);
+        let h1 = new Array(3), h2 = new Array(3), h3 = new Array(3), k1 = new Array(3), k2 = new Array(3), k3 = new Array(3);
 
         supr = 0.0;
 
@@ -50,8 +50,8 @@ class RmsdSuprCls {
         cq.multiplyScalar(1.0 / n);
 
         // save the translation vectors
-        var xc1 = cp;
-        var xc2 = cq;
+        let xc1 = cp;
+        let xc2 = cq;
 
         // translate coordinates
         for (i = 0; i < n; i++) {
@@ -68,7 +68,7 @@ class RmsdSuprCls {
         ra /= n;
         rb /= n;
 
-        var u = new Array(9); //var u00, u01, u02, u10, u11, u12, u20, u21, u22;
+        let u = new Array(9); //var u00, u01, u02, u10, u11, u12, u20, u21, u22;
 
         // correlation matrix U
         for (i = 0; i < 9; ++i) {
@@ -91,7 +91,7 @@ class RmsdSuprCls {
             u[i] /= n;
         }
 
-        var eigenRet = me.rmsdSuprCls.getEigenVectors(u);
+        let eigenRet = me.rmsdSuprCls.getEigenVectors(u);
         k = eigenRet.k;
         h1 = eigenRet.h1;
         h2 = eigenRet.h2;
@@ -208,9 +208,9 @@ class RmsdSuprCls {
     }; // end rmsd_supr
 
 
-    eigen_values(a0) { var me = this.icn3dui;
-        var v00, v01, v02, v10, v11, v12, v20, v21, v22;
-        var a, b, c, p, q, t, u, v, d1, d2, d3;
+    eigen_values(a0) { let me = this.icn3dui;
+        let v00, v01, v02, v10, v11, v12, v20, v21, v22;
+        let a, b, c, p, q, t, u, v, d1, d2, d3;
 
         // initialization
         v00 = a0[0]; v01 = a0[1]; v02 = a0[2];
@@ -232,7 +232,7 @@ class RmsdSuprCls {
         t = 0.25*q*q + p*p*p/27.0;
 
         if (t < 0.0) {
-            var r, theta;
+            let r, theta;
 
             // things are a bit more complicated
             r = Math.sqrt(0.25*q*q - t);
@@ -277,11 +277,11 @@ class RmsdSuprCls {
     }; // end eigen_values
 
     // Return the basis for the null space of the input matrix.
-    null_basis(a0, v1, v2, v3, epsi) { var me = this.icn3dui;
-        var k, k0, spec;
-        var a11, a12, a13, a21, a22, a23, a31, a32, a33;
-        var b22, b23, b32, b33;
-        var q, t, mx0;
+    null_basis(a0, v1, v2, v3, epsi) { let me = this.icn3dui;
+        let k, k0, spec;
+        let a11, a12, a13, a21, a22, a23, a31, a32, a33;
+        let b22, b23, b32, b33;
+        let q, t, mx0;
 
         // initialization
         a11 = a0[0]; a12 = a0[1]; a13 = a0[2];
@@ -311,17 +311,17 @@ class RmsdSuprCls {
         a31 /= mx0; a32 /= mx0; a33 /= mx0;
 
         if ((Math.abs(a11) < epsi) && (Math.abs(a21) < epsi) && (Math.abs(a31) < epsi)) {
-            // var x1 is independent
+            // let x1 is independent
             k = 1;
             v1[0] = 1.0; v1[1] = 0.0; v1[2] = 0.0;
 
             if ((Math.abs(a12) < epsi) && (Math.abs(a22) < epsi) && (Math.abs(a32) < epsi)) {
-                // var x2 is independent
+                // let x2 is independent
                 k = 2;
                 v2[0] = 0.0; v2[1] = 1.0; v2[2] = 0.0;
 
                 if ((Math.abs(a13) < epsi) && (Math.abs(a23) < epsi) && (Math.abs(a33) < epsi)) {
-                    // var x3 is independent
+                    // let x3 is independent
                     k = 3;
                     v3[0] = 0.0; v3[1] = 0.0; v3[2] = 1.0;
                 }
@@ -347,12 +347,12 @@ class RmsdSuprCls {
                     t = a13; a13 = a33; a33 = t;
                 }
 
-                // var x2 is dependent, x2 = -a13/a12*x3
+                // let x2 is dependent, x2 = -a13/a12*x3
                 b32 = a23 - a22*a13/a12;
                 b33 = a33 - a32*a13/a12;
 
                 if ((Math.abs(b32) < epsi) && (Math.abs(b33) < epsi)) {
-                    //* var x3 is independent
+                    //* let x3 is independent
                     k = 2;
                     v2[0] = 0.0; v2[1] = -a13/a12; v2[2] = 1.0;
                     spec = 1;
@@ -380,19 +380,19 @@ class RmsdSuprCls {
                 t = a13; a13 = a33; a33 = t;
             }
 
-            // var x1 is dependent, x1 = -a12/a11*x2 - a13/a11*x3
+            // let x1 is dependent, x1 = -a12/a11*x2 - a13/a11*x3
             b22 = a22 - a21*a12/a11;
             b23 = a23 - a21*a13/a11;
             b32 = a32 - a31*a12/a11;
             b33 = a33 - a31*a13/a11;
 
             if ((Math.abs(b22) < epsi) && (Math.abs(b32) < epsi)) {
-                // var x2 is independent
+                // let x2 is independent
                 k = 1;
                 v1[0] = -a12/a11; v1[1] = 1.0; v1[2] = 0.0;
 
                 if ((Math.abs(b23) < epsi) && (Math.abs(b33) < epsi)) {
-                    // var x3 is independent
+                    // let x3 is independent
                     k = 2;
                     v2[0] = -a13/a11; v2[1] = 0.0; v2[2] = 1.0;
                     spec = 2;
@@ -407,9 +407,9 @@ class RmsdSuprCls {
                     t = b23; b23 = b33; b33 = t;
                 }
 
-                // var x2 is dependent, x2 = -b23/b22*x3
+                // let x2 is dependent, x2 = -b23/b22*x3
                 if (Math.abs(b33 - b23*b32/b22) < epsi) {
-                    // var x3 is independent
+                    // let x3 is independent
                     k = 1;
                     v1[0] = (a12/a11)*(b23/b22) - a13/a11;
                     v1[1] = -b23/b22; v1[2] = 1.0;
@@ -467,10 +467,10 @@ class RmsdSuprCls {
     }; // end null_basis
 
 
-    getEigenForSelection(coord, n) { var me = this.icn3dui;
-        var i;
-        var cp = new THREE.Vector3();
-        var ap = [];
+    getEigenForSelection(coord, n) { let me = this.icn3dui;
+        let i;
+        let cp = new THREE.Vector3();
+        let ap = [];
 
         // read in and reformat the coordinates
         // calculate the centroids
@@ -487,7 +487,7 @@ class RmsdSuprCls {
             ap[i].sub(cp);
         }
 
-        var u = new Array(9); //var u00, u01, u02, u10, u11, u12, u20, u21, u22;
+        let u = new Array(9); //var u00, u01, u02, u10, u11, u12, u20, u21, u22;
 
         for (i = 0; i < 9; ++i) {
             u[i] = 0;
@@ -514,15 +514,15 @@ class RmsdSuprCls {
         return me.rmsdSuprCls.getEigenVectors(u);
     };
 
-    getEigenVectors(u, bJustPc1) { var me = this.icn3dui;
-    //    var TINY0 = 1.0e-10;
-        var TINY0 = 1.0e-8;
-        var k, flag;
-        var mat = new Array(9);
+    getEigenVectors(u, bJustPc1) { let me = this.icn3dui;
+    //    let TINY0 = 1.0e-10;
+        let TINY0 = 1.0e-8;
+        let k, flag;
+        let mat = new Array(9);
 
-        var h1 = new Array(3), h2 = new Array(3), h3 = new Array(3), k1 = new Array(3), k2 = new Array(3), k3 = new Array(3);
+        let h1 = new Array(3), h2 = new Array(3), h3 = new Array(3), k1 = new Array(3), k2 = new Array(3), k3 = new Array(3);
 
-        var da, ra, rb, dU, d1, d2, d3, e, s, v, over_n;
+        let da, ra, rb, dU, d1, d2, d3, e, s, v, over_n;
 
         // determinant of U
         dU = u[0]*(u[4]*u[8] - u[5]*u[7]);
@@ -530,8 +530,8 @@ class RmsdSuprCls {
         dU += u[2]*(u[3]*u[7] - u[4]*u[6]);
         s = (dU < 0.0) ? -1.0 : 1.0;
 
-        var v1 = new Array(3), v2 = new Array(3);
-        for(var i = 0; i < 3; ++i) {
+        let v1 = new Array(3), v2 = new Array(3);
+        for(let i = 0; i < 3; ++i) {
             v1[i] = new THREE.Vector3();
             v2[i] = new THREE.Vector3();
         }
@@ -563,7 +563,7 @@ class RmsdSuprCls {
         mat[3] = v1[1].x; mat[4] = v1[1].y; mat[5] = v1[1].z;
         mat[6] = v1[2].x; mat[7] = v1[2].y; mat[8] = v1[2].z;
 
-        var eigen = me.rmsdSuprCls.eigen_values(mat);
+        let eigen = me.rmsdSuprCls.eigen_values(mat);
 
         d1 = eigen.d1;
         d2 = eigen.d2;
@@ -574,7 +574,7 @@ class RmsdSuprCls {
         mat[0] -= d1;
         mat[4] -= d1;
         mat[8] -= d1;
-        var basis = me.rmsdSuprCls.null_basis(mat, h1, h2, h3, TINY0);
+        let basis = me.rmsdSuprCls.null_basis(mat, h1, h2, h3, TINY0);
         k = basis.k;
         h1 = basis.v1;
         h2 = basis.v2;

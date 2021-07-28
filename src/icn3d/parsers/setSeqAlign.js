@@ -15,11 +15,11 @@ class SetSeqAlign {
         this.icn3d = icn3d;
     }
 
-    setSeqAlign(seqalign, alignedStructures) { var ic = this.icn3d, me = ic.icn3dui;
+    setSeqAlign(seqalign, alignedStructures) { let  ic = this.icn3d, me = ic.icn3dui;
           //loadSeqAlignment
-          var alignedAtoms = {}
-          var mmdbid1 = alignedStructures[0][0].pdbId;
-          var mmdbid2 = alignedStructures[0][1].pdbId;
+          let  alignedAtoms = {}
+          let  mmdbid1 = alignedStructures[0][0].pdbId;
+          let  mmdbid2 = alignedStructures[0][1].pdbId;
 
           ic.conservedName1 = mmdbid1 + '_cons';
           ic.nonConservedName1 = mmdbid1 + '_ncons';
@@ -37,27 +37,27 @@ class SetSeqAlign {
           ic.nconsHash2 = {}
           ic.nalignHash2 = {}
 
-          for(var i = 0, il = seqalign.length; i < il; ++i) {
+          for(let i = 0, il = seqalign.length; i < il; ++i) {
               // first sequence
-              var alignData = seqalign[i][0];
-              var molid1 = alignData.moleculeId;
+              let  alignData = seqalign[i][0];
+              let  molid1 = alignData.moleculeId;
 
-              var chain1 = ic.pdbid_molid2chain[mmdbid1 + '_' + molid1];
-              var chainid1 = mmdbid1 + '_' + chain1;
+              let  chain1 = ic.pdbid_molid2chain[mmdbid1 + '_' + molid1];
+              let  chainid1 = mmdbid1 + '_' + chain1;
 
-              var id2aligninfo = {}
-              var start = alignData.sequence.length, end = -1;
-              var bStart = false;
-              for(var j = 0, jl = alignData.sequence.length; j < jl; ++j) {
+              let  id2aligninfo = {}
+              let  start = alignData.sequence.length, end = -1;
+              let  bStart = false;
+              for(let j = 0, jl = alignData.sequence.length; j < jl; ++j) {
                   // 0: internal resi id, 1: pdb resi id, 2: resn, 3: aligned or not
                   //var resi = alignData.sequence[j][1];
-                  var offset =(ic.chainid2offset[chainid1]) ? ic.chainid2offset[chainid1] : 0;
-                  var resi =(ic.bUsePdbNum) ? alignData.sequence[j][0] + offset : alignData.sequence[j][0];
-                  var resn =(alignData.sequence[j][2] === '~') ? '-' : alignData.sequence[j][2];
+                  let  offset =(ic.chainid2offset[chainid1]) ? ic.chainid2offset[chainid1] : 0;
+                  let  resi =(ic.bUsePdbNum) ? alignData.sequence[j][0] + offset : alignData.sequence[j][0];
+                  let  resn =(alignData.sequence[j][2] === '~') ? '-' : alignData.sequence[j][2];
                   resn =(resn === ' ' || resn === '') ? 'X' : resn;
                   //resn = resn.toUpperCase();
 
-                  var aligned =(alignData.sequence[j][3]) ? 1 : 0; // alignData.sequence[j][3]: 0, false, 1, true
+                  let  aligned =(alignData.sequence[j][3]) ? 1 : 0; // alignData.sequence[j][3]: 0, false, 1, true
 
                   if(aligned == 1) {
                       if(j < start && !bStart) {
@@ -72,10 +72,10 @@ class SetSeqAlign {
 
               // second sequence
               alignData = seqalign[i][1];
-              var molid2 = alignData.moleculeId;
+              let  molid2 = alignData.moleculeId;
 
-              var chain2 = ic.pdbid_molid2chain[mmdbid2 + '_' + molid2];
-              var chainid2 = mmdbid2 + '_' + chain2;
+              let  chain2 = ic.pdbid_molid2chain[mmdbid2 + '_' + molid2];
+              let  chainid2 = mmdbid2 + '_' + chain2;
 
               // annoation title for the master seq only
               if(ic.alnChainsAnTtl[chainid1] === undefined ) ic.alnChainsAnTtl[chainid1] = [];
@@ -100,22 +100,22 @@ class SetSeqAlign {
               // empty line
               ic.alnChainsAnTtl[chainid1][6].push("");
 
-              var alignIndex = 1;
-              //for(var j = 0, jl = alignData.sseq.length; j < jl; ++j) {
-              for(var j = start; j <= end; ++j) {
+              let  alignIndex = 1;
+              //for(let j = 0, jl = alignData.sseq.length; j < jl; ++j) {
+              for(let j = start; j <= end; ++j) {
                   // 0: internal resi id, 1: pdb resi id, 2: resn, 3: aligned or not
                   //var resi = alignData.sequence[j][1];
                   //var resi = alignData.sequence[j][0];
-                  var offset =(ic.chainid2offset[chainid2]) ? ic.chainid2offset[chainid2] : 0;
-                  var resi =(ic.bUsePdbNum) ? alignData.sequence[j][0] + offset : alignData.sequence[j][0];
-                  var resn =(alignData.sequence[j][2] === '~') ? '-' : alignData.sequence[j][2];
+                  let  offset =(ic.chainid2offset[chainid2]) ? ic.chainid2offset[chainid2] : 0;
+                  let  resi =(ic.bUsePdbNum) ? alignData.sequence[j][0] + offset : alignData.sequence[j][0];
+                  let  resn =(alignData.sequence[j][2] === '~') ? '-' : alignData.sequence[j][2];
                   //resn = resn.toUpperCase();
 
-                  var alignedTmp =(alignData.sequence[j][3]) ? 1 : 0; // alignData.sequence[j][3]: 0, false, 1, true
+                  let  alignedTmp =(alignData.sequence[j][3]) ? 1 : 0; // alignData.sequence[j][3]: 0, false, 1, true
 
-                  var aligned = id2aligninfo[j].aligned + alignedTmp; // 0 or 2
+                  let  aligned = id2aligninfo[j].aligned + alignedTmp; // 0 or 2
 
-                  var color, color2, classname;
+                  let  color, color2, classname;
                   if(aligned === 2) { // aligned
                       if(id2aligninfo[j].resn === resn) {
                           color = '#FF0000';
@@ -149,7 +149,7 @@ class SetSeqAlign {
                   // chain1
                   if(ic.alnChainsSeq[chainid1] === undefined) ic.alnChainsSeq[chainid1] = [];
 
-                  var resObject = {}
+                  let  resObject = {}
                   resObject.mmdbid = mmdbid1;
                   resObject.chain = chain1;
                   resObject.resi = id2aligninfo[j].resi;
@@ -210,10 +210,10 @@ class SetSeqAlign {
                       ic.alnChainsAnno[chainid1][6].push('');
                   }
 
-                  var residueid1 = chainid1 + '_' + id2aligninfo[j].resi;
-                  var residueid2 = chainid2 + '_' + resi;
-                  var ss1 = ic.secondaries[residueid1];
-                  var ss2 = ic.secondaries[residueid2];
+                  let  residueid1 = chainid1 + '_' + id2aligninfo[j].resi;
+                  let  residueid2 = chainid2 + '_' + resi;
+                  let  ss1 = ic.secondaries[residueid1];
+                  let  ss2 = ic.secondaries[residueid2];
                   if(ss2 !== undefined) {
                       ic.alnChainsAnno[chainid1][0].push(ss2);
                   }
@@ -228,43 +228,43 @@ class SetSeqAlign {
                       ic.alnChainsAnno[chainid1][1].push('-');
                   }
 
-                  var symbol = '.';
+                  let  symbol = '.';
                   if(alignIndex % 5 === 0) symbol = '*';
                   if(alignIndex % 10 === 0) symbol = '|';
                   ic.alnChainsAnno[chainid1][2].push(symbol); // symbol: | for 10th, * for 5th, . for rest
 
-                  var numberStr = '';
+                  let  numberStr = '';
                   if(alignIndex % 10 === 0) numberStr = alignIndex.toString();
                   ic.alnChainsAnno[chainid1][3].push(numberStr); // symbol: 10, 20, etc, empty for rest
 
                   ++alignIndex;
-              } // end for(var j
-          } // end for(var i
+              } // end for(let j
+          } // end for(let i
 
           seqalign = {}
     }
 
-    setSeqAlignChain(chainid, chainIndex) { var ic = this.icn3d, me = ic.icn3dui;
+    setSeqAlignChain(chainid, chainIndex) { let  ic = this.icn3d, me = ic.icn3dui;
           //loadSeqAlignment
-          var alignedAtoms = {}
+          let  alignedAtoms = {}
 
           //var chainidArray = ic.icn3dui.cfg.chainalign.split(',');
-          var pos1 = ic.chainidArray[0].indexOf('_');
-          var pos2 = chainid.indexOf('_');
+          let  pos1 = ic.chainidArray[0].indexOf('_');
+          let  pos2 = chainid.indexOf('_');
 
-          var mmdbid1 = ic.mmdbid_t; //ic.chainidArray[0].substr(0, pos1).toUpperCase();
-          var mmdbid2 = chainid.substr(0, pos2).toUpperCase();
+          let  mmdbid1 = ic.mmdbid_t; //ic.chainidArray[0].substr(0, pos1).toUpperCase();
+          let  mmdbid2 = chainid.substr(0, pos2).toUpperCase();
 
-          var chain1 = ic.chainidArray[0].substr(pos1 + 1);
-          var chain2 = chainid.substr(pos2 + 1);
+          let  chain1 = ic.chainidArray[0].substr(pos1 + 1);
+          let  chain2 = chainid.substr(pos2 + 1);
 
           if(mmdbid1 == mmdbid2 && chain1 == chain2) {
-            var chainLen = ic.chainsSeq[ic.mmdbid_q + '_' + ic.chain_q].length;
+            let  chainLen = ic.chainsSeq[ic.mmdbid_q + '_' + ic.chain_q].length;
             ic.qt_start_end[chainIndex] =  {"q_start":1, "q_end": chainLen, "t_start":1, "t_end": chainLen}
           }
 
-          var chainid1 = mmdbid1 + "_" + chain1;
-          var chainid2 = mmdbid2 + "_" + chain2;
+          let  chainid1 = mmdbid1 + "_" + chain1;
+          let  chainid2 = mmdbid2 + "_" + chain2;
 
           if(mmdbid2 !== undefined && mmdbid2 === ic.mmdbid_t) {
               //chainid1 += ic.icn3dui.htmlCls.postfix;
@@ -295,7 +295,7 @@ class SetSeqAlign {
           ic.alnChainsAnTtl[chainid1] = [];
 
           if(ic.alnChainsAnTtl[chainid1] === undefined ) ic.alnChainsAnTtl[chainid1] = [];
-          for(var i = 0; i < 7; ++i) {
+          for(let i = 0; i < 7; ++i) {
               if(ic.alnChainsAnTtl[chainid1][i] === undefined ) ic.alnChainsAnTtl[chainid1][i] = [];
           }
 
@@ -312,31 +312,31 @@ class SetSeqAlign {
           // empty line
           ic.alnChainsAnTtl[chainid1][6].push("");
 
-          var color, color2, classname;
-          var firstIndex1 = 0;
-          var firstIndex2 = 0;
-          var prevIndex1, prevIndex2;
+          let  color, color2, classname;
+          let  firstIndex1 = 0;
+          let  firstIndex2 = 0;
+          let  prevIndex1, prevIndex2;
 
           if(ic.qt_start_end[chainIndex] === undefined) return;
 
-          var alignIndex = 1;
-          for(var i = 0, il = ic.qt_start_end[chainIndex].length; i < il; ++i) {
+          let  alignIndex = 1;
+          for(let i = 0, il = ic.qt_start_end[chainIndex].length; i < il; ++i) {
               //var start1 = ic.qt_start_end[chainIndex][i].q_start - 1;
               //var start2 = ic.qt_start_end[chainIndex][i].t_start - 1;
               //var end1 = ic.qt_start_end[chainIndex][i].q_end - 1;
               //var end2 = ic.qt_start_end[chainIndex][i].t_end - 1;
 
-              var start1 = ic.qt_start_end[chainIndex][i].t_start - 1;
-              var start2 = ic.qt_start_end[chainIndex][i].q_start - 1;
-              var end1 = ic.qt_start_end[chainIndex][i].t_end - 1;
-              var end2 = ic.qt_start_end[chainIndex][i].q_end - 1;
+              let  start1 = ic.qt_start_end[chainIndex][i].t_start - 1;
+              let  start2 = ic.qt_start_end[chainIndex][i].q_start - 1;
+              let  end1 = ic.qt_start_end[chainIndex][i].t_end - 1;
+              let  end2 = ic.qt_start_end[chainIndex][i].q_end - 1;
 
               if(i > 0) {
-                  var index1 = alignIndex;
-                  for(var j = prevIndex1 + 1, jl = start1; j < jl; ++j) {
+                  let  index1 = alignIndex;
+                  for(let j = prevIndex1 + 1, jl = start1; j < jl; ++j) {
                       if(ic.chainsSeq[chainid1] === undefined) break;
-                      var resi = ic.chainsSeq[chainid1][j].resi;
-                      var resn = ic.chainsSeq[chainid1][j].name.toLowerCase();
+                      let  resi = ic.chainsSeq[chainid1][j].resi;
+                      let  resn = ic.chainsSeq[chainid1][j].name.toLowerCase();
                       color = ic.icn3dui.htmlCls.GREY8;
                       classname = 'icn3d-nalign';
 
@@ -345,11 +345,11 @@ class SetSeqAlign {
                       ++index1;
                   }
 
-                  var index2 = alignIndex;
-                  for(var j = prevIndex2 + 1, jl = start2; j < jl; ++j) {
+                  let  index2 = alignIndex;
+                  for(let j = prevIndex2 + 1, jl = start2; j < jl; ++j) {
                       if(ic.chainsSeq[chainid2] === undefined) break;
-                      var resi = ic.chainsSeq[chainid2][j].resi;
-                      var resn = ic.chainsSeq[chainid2][j].name.toLowerCase();
+                      let  resi = ic.chainsSeq[chainid2][j].resi;
+                      let  resn = ic.chainsSeq[chainid2][j].name.toLowerCase();
 
                       color = ic.icn3dui.htmlCls.GREY8;
                       classname = 'icn3d-nalign';
@@ -362,9 +362,9 @@ class SetSeqAlign {
                   if(index1 < index2) {
                       alignIndex = index2;
 
-                      for(var j = 0; j < index2 - index1; ++j) {
-                          var resi = '';
-                          var resn = '-';
+                      for(let j = 0; j < index2 - index1; ++j) {
+                          let  resi = '';
+                          let  resn = '-';
 
                           color = ic.icn3dui.htmlCls.GREY8;
                           classname = 'icn3d-nalign';
@@ -375,9 +375,9 @@ class SetSeqAlign {
                   else {
                       alignIndex = index1;
 
-                      for(var j = 0; j < index1 - index2; ++j) {
-                          var resi = '';
-                          var resn = '-';
+                      for(let j = 0; j < index1 - index2; ++j) {
+                          let  resi = '';
+                          let  resn = '-';
 
                           color = ic.icn3dui.htmlCls.GREY8;
                           classname = 'icn3d-nalign';
@@ -388,15 +388,15 @@ class SetSeqAlign {
               }
 
 
-              for(var j = 0; j <= end1 - start1; ++j) {
+              for(let j = 0; j <= end1 - start1; ++j) {
                   if(ic.chainsSeq[chainid1] === undefined || ic.chainsSeq[chainid2] === undefined) break;
 
                   if(ic.chainsSeq[chainid1][j + start1] === undefined || ic.chainsSeq[chainid2][j + start2] === undefined) continue;
 
-                  var resi1 = ic.chainsSeq[chainid1][j + start1].resi;
-                  var resi2 = ic.chainsSeq[chainid2][j + start2].resi;
-                  var resn1 = ic.chainsSeq[chainid1][j + start1].name.toUpperCase();
-                  var resn2 = ic.chainsSeq[chainid2][j + start2].name.toUpperCase();
+                  let  resi1 = ic.chainsSeq[chainid1][j + start1].resi;
+                  let  resi2 = ic.chainsSeq[chainid2][j + start2].resi;
+                  let  resn1 = ic.chainsSeq[chainid1][j + start1].name.toUpperCase();
+                  let  resn2 = ic.chainsSeq[chainid2][j + start2].name.toUpperCase();
 
                   if(resn1 === resn2) {
                       color = '#FF0000';
@@ -415,27 +415,27 @@ class SetSeqAlign {
 
                   color2 = '#' + ic.showAnnoCls.getColorhexFromBlosum62(resn1, resn2);
 
-                  var bFirstResi =(i === 0 && j === 0) ? true : false;
+                  let  bFirstResi =(i === 0 && j === 0) ? true : false;
                   this.setSeqPerResi(chainid1, chainid1, chainid2, resi1, resn1, true, color, color2, classname, true, bFirstResi, alignIndex);
                   this.setSeqPerResi(chainid2, chainid1, chainid2, resi2, resn2, true, color, color2, classname, false, bFirstResi, alignIndex);
 
                   ++alignIndex;
-              } // end for(var j
+              } // end for(let j
 
               prevIndex1 = end1;
               prevIndex2 = end2;
-          } // end for(var i
+          } // end for(let i
     }
 
-    setSeqAlignForRealign(chainid_t, chainid, chainIndex) { var ic = this.icn3d, me = ic.icn3dui;
+    setSeqAlignForRealign(chainid_t, chainid, chainIndex) { let  ic = this.icn3d, me = ic.icn3dui;
           //loadSeqAlignment
-          var alignedAtoms = {}
+          let  alignedAtoms = {}
 
           //var chainid_t = ic.chainidArray[0];
 
-    //      var structureArray = Object.keys(ic.structures);
-          var structure1 = chainid_t.substr(0, chainid_t.indexOf('_')); //structureArray[0];
-          var structure2 = chainid.substr(0, chainid.indexOf('_')); //structureArray[1];
+    //      let  structureArray = Object.keys(ic.structures);
+          let  structure1 = chainid_t.substr(0, chainid_t.indexOf('_')); //structureArray[0];
+          let  structure2 = chainid.substr(0, chainid.indexOf('_')); //structureArray[1];
 
           if(structure1 == structure2) structure2 += ic.icn3dui.htmlCls.postfix;
 
@@ -456,38 +456,38 @@ class SetSeqAlign {
           ic.alnChainsAnno[chainid_t] = [];
           ic.alnChainsAnTtl[chainid_t] = [];
 
-    //      var emptyResObject = {resid: '', resn:'', resi: 0, aligned: false}
+    //      let  emptyResObject = {resid: '', resn:'', resi: 0, aligned: false}
 
-    //      var prevChainid1 = '', prevChainid2 = '', cnt1 = 0, cnt2 = 0;
+    //      let  prevChainid1 = '', prevChainid2 = '', cnt1 = 0, cnt2 = 0;
 
-          var residuesHash = {}
+          let  residuesHash = {}
 
-          for(var i = 0, il = ic.realignResid[structure1].length; i < il; ++i) {
-              var resObject1 = ic.realignResid[structure1][i];
-              var pos1 = resObject1.resid.lastIndexOf('_');
-              var chainid1 = resObject1.resid.substr(0, pos1);
-              var resi1 = resObject1.resid.substr(pos1 + 1);
+          for(let i = 0, il = ic.realignResid[structure1].length; i < il; ++i) {
+              let  resObject1 = ic.realignResid[structure1][i];
+              let  pos1 = resObject1.resid.lastIndexOf('_');
+              let  chainid1 = resObject1.resid.substr(0, pos1);
+              let  resi1 = resObject1.resid.substr(pos1 + 1);
               resObject1.resi = resi1;
               resObject1.aligned = true;
 
-              var resObject2 = ic.realignResid[structure2][i];
-              var pos2 = resObject2.resid.lastIndexOf('_');
-              var chainid2 = resObject2.resid.substr(0, pos2);
-              var resi2 = resObject2.resid.substr(pos2 + 1);
+              let  resObject2 = ic.realignResid[structure2][i];
+              let  pos2 = resObject2.resid.lastIndexOf('_');
+              let  chainid2 = resObject2.resid.substr(0, pos2);
+              let  resi2 = resObject2.resid.substr(pos2 + 1);
               resObject2.resi = resi2;
               resObject2.aligned = true;
 
               residuesHash[resObject1.resid] = 1;
               residuesHash[resObject2.resid] = 1;
 
-              var color;
+              let  color;
               if(resObject1.resn == resObject2.resn) {
                   color = "#FF0000";
               }
               else {
                   color = "#0000FF";
               }
-              var color2 = '#' + ic.showAnnoCls.getColorhexFromBlosum62(resObject1.resn, resObject2.resn);
+              let  color2 = '#' + ic.showAnnoCls.getColorhexFromBlosum62(resObject1.resn, resObject2.resn);
 
               resObject1.color = color;
               resObject2.color = color;
@@ -495,22 +495,22 @@ class SetSeqAlign {
               resObject1.color2 = color2;
               resObject2.color2 = color2;
 
-              for(var j in ic.residues[resObject1.resid]) {
+              for(let j in ic.residues[resObject1.resid]) {
                   ic.atoms[j].color = me.parasCls.thr(color);
               }
-              for(var j in ic.residues[resObject2.resid]) {
+              for(let j in ic.residues[resObject2.resid]) {
                   ic.atoms[j].color = me.parasCls.thr(color);
               }
 
               // annoation title for the master seq only
               if(ic.alnChainsAnTtl[chainid1] === undefined ) ic.alnChainsAnTtl[chainid1] = [];
 
-              for(var j = 0; j < 3; ++j) {
+              for(let j = 0; j < 3; ++j) {
                   if(ic.alnChainsAnTtl[chainid1][j] === undefined ) ic.alnChainsAnTtl[chainid1][j] = [];
               }
 
               // two annotations without titles
-              for(var j = 0; j < 3; ++j) {
+              for(let j = 0; j < 3; ++j) {
                   ic.alnChainsAnTtl[chainid1][j].push("");
               }
 
@@ -532,31 +532,31 @@ class SetSeqAlign {
               if(ic.alnChainsAnno[chainid1] === undefined ) ic.alnChainsAnno[chainid1] = [];
               //if(ic.alnChainsAnno[chainid2] === undefined ) ic.alnChainsAnno[chainid2] = [];
 
-              for(var j = 0; j < 3; ++j) {
+              for(let j = 0; j < 3; ++j) {
                   if(ic.alnChainsAnno[chainid1][j] === undefined ) ic.alnChainsAnno[chainid1][j] = [];
               }
 
-              var symbol = '.';
+              let  symbol = '.';
               if(i % 5 === 0) symbol = '*';
               if(i % 10 === 0) symbol = '|';
               ic.alnChainsAnno[chainid1][0].push(symbol); // symbol: | for 10th, * for 5th, . for rest
 
-              var numberStr = '';
+              let  numberStr = '';
               if(i % 10 === 0) numberStr = i.toString();
               ic.alnChainsAnno[chainid1][1].push(numberStr); // symbol: 10, 20, etc, empty for rest
           }
 
-            var commandname = 'protein_aligned';
-            var commanddescr = 'protein aligned';
-            var select = "select " + ic.resid2specCls.residueids2spec(Object.keys(residuesHash));
+            let  commandname = 'protein_aligned';
+            let  commanddescr = 'protein aligned';
+            let  select = "select " + ic.resid2specCls.residueids2spec(Object.keys(residuesHash));
             ic.selectionCls.addCustomSelection(Object.keys(residuesHash), commandname, commanddescr, select, true);
     }
 
-    setSeqPerResi(chainid, chainid1, chainid2, resi, resn, bAligned, color, color2, classname, bFirstChain, bFirstResi, alignIndex) { var ic = this.icn3d, me = ic.icn3dui;
+    setSeqPerResi(chainid, chainid1, chainid2, resi, resn, bAligned, color, color2, classname, bFirstChain, bFirstResi, alignIndex) { let  ic = this.icn3d, me = ic.icn3dui;
           if(ic.alnChainsSeq[chainid] === undefined) ic.alnChainsSeq[chainid] = [];
 
-          var resObject = {}
-          var pos = chainid.indexOf('_');
+          let  resObject = {}
+          let  pos = chainid.indexOf('_');
           resObject.mmdbid = chainid.substr(0, pos);
           resObject.chain = chainid.substr(pos+1);
           resObject.resi = resi;
@@ -591,24 +591,24 @@ class SetSeqAlign {
                   // empty line
                   if(ic.alnChainsAnno[chainid][6] === undefined ) ic.alnChainsAnno[chainid][6] = [];
 
-                  var title1 = ic.pdbid_chain2title && ic.pdbid_chain2title.hasOwnProperty(chainid2) ? ic.pdbid_chain2title[chainid2] : ""
-                  var title2 = ic.pdbid_chain2title && ic.pdbid_chain2title.hasOwnProperty(chainid) ? ic.pdbid_chain2title[chainid] : ""
+                  let  title1 = ic.pdbid_chain2title && ic.pdbid_chain2title.hasOwnProperty(chainid2) ? ic.pdbid_chain2title[chainid2] : ""
+                  let  title2 = ic.pdbid_chain2title && ic.pdbid_chain2title.hasOwnProperty(chainid) ? ic.pdbid_chain2title[chainid] : ""
                   ic.alnChainsAnno[chainid][4].push(title1);
                   ic.alnChainsAnno[chainid][5].push(title2);
                   ic.alnChainsAnno[chainid][6].push('');
               }
 
-              var symbol = '.';
+              let  symbol = '.';
               if(alignIndex % 5 === 0) symbol = '*';
               if(alignIndex % 10 === 0) symbol = '|';
               ic.alnChainsAnno[chainid][2].push(symbol); // symbol: | for 10th, * for 5th, . for rest
 
-              var numberStr = '';
+              let  numberStr = '';
               if(alignIndex % 10 === 0) numberStr = alignIndex.toString();
               ic.alnChainsAnno[chainid][3].push(numberStr); // symbol: 10, 20, etc, empty for rest
 
-              var residueid = chainid + '_' + resi;
-              var ss = ic.secondaries[residueid];
+              let  residueid = chainid + '_' + resi;
+              let  ss = ic.secondaries[residueid];
 
               if(ss !== undefined) {
                   ic.alnChainsAnno[chainid][1].push(ss);
@@ -618,8 +618,8 @@ class SetSeqAlign {
               }
           }
           else {
-              var residueid = chainid + '_' + resi;
-              var ss = ic.secondaries[residueid];
+              let  residueid = chainid + '_' + resi;
+              let  ss = ic.secondaries[residueid];
 
               if(ic.alnChainsAnno.hasOwnProperty(chainid1) && ic.alnChainsAnno[chainid1].length > 0) {
                   if(ss !== undefined) {

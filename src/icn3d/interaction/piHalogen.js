@@ -15,22 +15,22 @@ class PiHalogen {
     }
 
     // get halogen, pi-cation,and pi-stacking
-    calculateHalogenPiInteractions(startAtoms, targetAtoms, threshold, type, interactionType, bInternal) { var ic = this.icn3d, me = ic.icn3dui;
+    calculateHalogenPiInteractions(startAtoms, targetAtoms, threshold, type, interactionType, bInternal) { let ic = this.icn3d, me = ic.icn3dui;
         if(Object.keys(startAtoms).length === 0 || Object.keys(targetAtoms).length === 0) return;
 
-        var chain_resi, chain_resi_atom;
+        let chain_resi, chain_resi_atom;
 
-        var atoms1a = {}, atoms1b = {}, atoms2a = {}, atoms2b = {}
+        let atoms1a = {}, atoms1b = {}, atoms2a = {}, atoms2b = {}
         if(interactionType == 'halogen') {
-            for (var i in startAtoms) {
-              var atom = startAtoms[i];
+            for (let i in startAtoms) {
+              let atom = startAtoms[i];
 
               atoms1a = me.hashUtilsCls.unionHash(atoms1a, this.getHalogenDonar(atom));
               atoms2a = me.hashUtilsCls.unionHash(atoms2a, this.getHalogenAcceptor(atom));
             }
 
-            for (var i in targetAtoms) {
-              var atom = targetAtoms[i];
+            for (let i in targetAtoms) {
+              let atom = targetAtoms[i];
 
               atoms2b = me.hashUtilsCls.unionHash(atoms2b, this.getHalogenDonar(atom));
               atoms1b = me.hashUtilsCls.unionHash(atoms1b, this.getHalogenAcceptor(atom));
@@ -38,16 +38,16 @@ class PiHalogen {
         }
         else if(interactionType == 'pi-cation') {
             ic.processedRes = {}
-            for (var i in startAtoms) {
-              var atom = startAtoms[i];
+            for (let i in startAtoms) {
+              let atom = startAtoms[i];
 
               atoms1a = me.hashUtilsCls.unionHash(atoms1a, this.getPi(atom, false));
               atoms2a = me.hashUtilsCls.unionHash(atoms2a, this.getCation(atom));
             }
 
             ic.processedRes = {}
-            for (var i in targetAtoms) {
-              var atom = targetAtoms[i];
+            for (let i in targetAtoms) {
+              let atom = targetAtoms[i];
 
               atoms2b = me.hashUtilsCls.unionHash(atoms2b, this.getPi(atom, false));
               atoms1b = me.hashUtilsCls.unionHash(atoms1b, this.getCation(atom));
@@ -55,33 +55,33 @@ class PiHalogen {
         }
         else if(interactionType == 'pi-stacking') {
             ic.processedRes = {}
-            for (var i in startAtoms) {
-              var atom = startAtoms[i];
+            for (let i in startAtoms) {
+              let atom = startAtoms[i];
               atoms1a = me.hashUtilsCls.unionHash(atoms1a, this.getPi(atom, true));
             }
 
             ic.processedRes = {}
-            for (var i in targetAtoms) {
-              var atom = targetAtoms[i];
+            for (let i in targetAtoms) {
+              let atom = targetAtoms[i];
 
               atoms1b = me.hashUtilsCls.unionHash(atoms1b, this.getPi(atom, true));
             } // for
         }
 
-        var hbondsAtoms = {}
-        var residueHash = {}
+        let hbondsAtoms = {}
+        let residueHash = {}
 
         ic.resid2Residhash = {}
 
-        var maxlengthSq = threshold * threshold;
+        let maxlengthSq = threshold * threshold;
 
-        for (var i in atoms1a) {
-            var atom1 = atoms1a[i];
-            var oriResidName = atom1.resn + ' $' + atom1.structure + '.' + atom1.chain + ':' + atom1.resi + '@' + atom1.name;
+        for (let i in atoms1a) {
+            let atom1 = atoms1a[i];
+            let oriResidName = atom1.resn + ' $' + atom1.structure + '.' + atom1.chain + ':' + atom1.resi + '@' + atom1.name;
             if(ic.resid2Residhash[oriResidName] === undefined) ic.resid2Residhash[oriResidName] = {}
 
-            for (var j in atoms1b) {
-              var atom2 = atoms1b[j];
+            for (let j in atoms1b) {
+              let atom2 = atoms1b[j];
 
               if(!ic.crossstrucinter && atom1.structure != atom2.structure) continue;
 
@@ -90,10 +90,10 @@ class PiHalogen {
 
               // available in 1b and 2a
               if(interactionType == 'pi-cation' && atom2.resn === 'ARG' && atom2.name === "NH1") {
-                var resid2 = atom2.structure + '_' + atom2.chain + '_' + atom2.resi;
-                var otherAtom = ic.firstAtomObjCls.getFirstAtomObjByName(ic.residues[resid2], 'NH2');
+                let resid2 = atom2.structure + '_' + atom2.chain + '_' + atom2.resi;
+                let otherAtom = ic.firstAtomObjCls.getFirstAtomObjByName(ic.residues[resid2], 'NH2');
 
-                var coord = atom2.coord.clone().add(otherAtom.coord).multiplyScalar(0.5);
+                let coord = atom2.coord.clone().add(otherAtom.coord).multiplyScalar(0.5);
                 atom2 = me.hashUtilsCls.cloneHash(atom2);
                 atom2.coord = coord;
               }
@@ -101,12 +101,12 @@ class PiHalogen {
               // available in 1a and 1b
               // only parallel or perpendicular
               if(interactionType == 'pi-stacking' && atom1.normal !== undefined && atom2.normal !== undefined) {
-                  var dotResult = Math.abs(atom1.normal.dot(atom2.normal));
+                  let dotResult = Math.abs(atom1.normal.dot(atom2.normal));
                   // perpendicular 30 degree || parellel, 30 degree
                   if(dotResult > 0.5 && dotResult < 0.866) continue;
               }
 
-              var bResult = this.getHalogenPiInteractions(atom1, atom2, type, interactionType, threshold, maxlengthSq, oriResidName, bInternal);
+              let bResult = this.getHalogenPiInteractions(atom1, atom2, type, interactionType, threshold, maxlengthSq, oriResidName, bInternal);
 
               if(bResult) {
                   hbondsAtoms = me.hashUtilsCls.unionHash(hbondsAtoms, ic.residues[atom1.structure + "_" + atom1.chain + "_" + atom1.resi]);
@@ -118,30 +118,30 @@ class PiHalogen {
             }
         }
 
-        for (var i in atoms2a) {
-            var atom1 = atoms2a[i];
-            var oriResidName = atom1.resn + ' $' + atom1.structure + '.' + atom1.chain + ':' + atom1.resi + '@' + atom1.name;
+        for (let i in atoms2a) {
+            let atom1 = atoms2a[i];
+            let oriResidName = atom1.resn + ' $' + atom1.structure + '.' + atom1.chain + ':' + atom1.resi + '@' + atom1.name;
             if(ic.resid2Residhash[oriResidName] === undefined) ic.resid2Residhash[oriResidName] = {}
 
             // available in 1b and 2a
             if(interactionType == 'pi-cation' && atom1.resn === 'ARG' && atom1.name === "NH1") {
-                var resid1 = atom1.structure + '_' + atom1.chain + '_' + atom1.resi;
-                var otherAtom = ic.firstAtomObjCls.getFirstAtomObjByName(ic.residues[resid1], 'NH2');
+                let resid1 = atom1.structure + '_' + atom1.chain + '_' + atom1.resi;
+                let otherAtom = ic.firstAtomObjCls.getFirstAtomObjByName(ic.residues[resid1], 'NH2');
 
-                var coord = atom1.coord.clone().add(otherAtom.coord).multiplyScalar(0.5);
+                let coord = atom1.coord.clone().add(otherAtom.coord).multiplyScalar(0.5);
                 atom1 = me.hashUtilsCls.cloneHash(atom1);
                 atom1.coord = coord;
             }
 
-            for (var j in atoms2b) {
-              var atom2 = atoms2b[j];
+            for (let j in atoms2b) {
+              let atom2 = atoms2b[j];
 
               if(!ic.crossstrucinter && atom1.structure != atom2.structure) continue;
 
               // skip same residue
               if(i.substr(0, i.lastIndexOf('_')) == j.substr(0, j.lastIndexOf('_')) ) continue;
 
-              var bResult = this.getHalogenPiInteractions(atom1, atom2, type, interactionType, threshold, maxlengthSq, oriResidName, bInternal);
+              let bResult = this.getHalogenPiInteractions(atom1, atom2, type, interactionType, threshold, maxlengthSq, oriResidName, bInternal);
 
               if(bResult) {
                   hbondsAtoms = me.hashUtilsCls.unionHash(hbondsAtoms, ic.residues[atom1.structure + "_" + atom1.chain + "_" + atom1.resi]);
@@ -153,12 +153,12 @@ class PiHalogen {
             }
         }
 
-        var residueArray = Object.keys(residueHash);
+        let residueArray = Object.keys(residueHash);
 
         // draw sidec for these residues
         if(type !== 'graph') {
-            for(var i = 0, il = residueArray.length; i < il; ++i) {
-                for(var j in ic.residues[residueArray[i]]) {
+            for(let i = 0, il = residueArray.length; i < il; ++i) {
+                for(let j in ic.residues[residueArray[i]]) {
                     // all atoms should be shown for hbonds
                     ic.atoms[j].style2 = 'stick';
                     if(ic.ions.hasOwnProperty(j)) ic.atoms[j].style2 = 'sphere';
@@ -169,35 +169,35 @@ class PiHalogen {
         return hbondsAtoms;
     }
 
-    getHalogenDonar(atom) { var ic = this.icn3d, me = ic.icn3dui;
-          var name2atom = {}
+    getHalogenDonar(atom) { let ic = this.icn3d, me = ic.icn3dui;
+          let name2atom = {}
           //if(atom.elem === "F" || atom.elem === "CL" || atom.elem === "BR" || atom.elem === "I") {
           if(atom.elem === "CL" || atom.elem === "BR" || atom.elem === "I") {
-              var chain_resi_atom = atom.structure + "_" + atom.chain + "_" + atom.resi + "_" + atom.name;
+              let chain_resi_atom = atom.structure + "_" + atom.chain + "_" + atom.resi + "_" + atom.name;
               name2atom[chain_resi_atom] = atom;
           }
 
           return name2atom;
     }
 
-    getHalogenAcceptor(atom) { var ic = this.icn3d, me = ic.icn3dui;
-          var name2atom = {}
-          var bAtomCond = (atom.elem === "N" || atom.elem === "O" || atom.elem === "S");
+    getHalogenAcceptor(atom) { let ic = this.icn3d, me = ic.icn3dui;
+          let name2atom = {}
+          let bAtomCond = (atom.elem === "N" || atom.elem === "O" || atom.elem === "S");
           bAtomCond = (ic.bOpm) ? bAtomCond && atom.resn !== 'DUM' : bAtomCond;
           if(bAtomCond) {
-              var chain_resi_atom = atom.structure + "_" + atom.chain + "_" + atom.resi + "_" + atom.name;
+              let chain_resi_atom = atom.structure + "_" + atom.chain + "_" + atom.resi + "_" + atom.name;
               name2atom[chain_resi_atom] = atom;
           }
 
           return name2atom;
     }
 
-    getPi(atom, bStacking) { var ic = this.icn3d, me = ic.icn3dui;
-          var name2atom = {}
+    getPi(atom, bStacking) { let ic = this.icn3d, me = ic.icn3dui;
+          let name2atom = {}
 
-          var chain_resi = atom.structure + "_" + atom.chain + "_" + atom.resi;
+          let chain_resi = atom.structure + "_" + atom.chain + "_" + atom.resi;
 
-          var bAromatic = atom.het || ic.nucleotides.hasOwnProperty(atom.serial) || atom.resn === "PHE"
+          let bAromatic = atom.het || ic.nucleotides.hasOwnProperty(atom.serial) || atom.resn === "PHE"
             || atom.resn === "TYR" || atom.resn === "TRP";
           if(bStacking) bAromatic = bAromatic || atom.resn === "HIS";
 
@@ -205,11 +205,11 @@ class PiHalogen {
               if(!ic.processedRes.hasOwnProperty(chain_resi)) {
 
                   if(atom.het) { // get aromatic for ligands
-                      var currName2atom = this.getAromaticPisLigand(chain_resi);
+                      let currName2atom = this.getAromaticPisLigand(chain_resi);
                       name2atom = me.hashUtilsCls.unionHash(name2atom, currName2atom);
                   }
                   else {
-                      var piPosArray = undefined, normalArray = undefined, result = undefined;
+                      let piPosArray = undefined, normalArray = undefined, result = undefined;
                       if(ic.nucleotides.hasOwnProperty(atom.serial)) {
                           result = this.getAromaticRings(atom.resn, chain_resi, 'nucleotide');
                       }
@@ -222,7 +222,7 @@ class PiHalogen {
                           normalArray = result.normalArray;
                       }
 
-                      for(var i = 0, il = piPosArray.length; i < il; ++i) {
+                      for(let i = 0, il = piPosArray.length; i < il; ++i) {
                         name2atom[chain_resi + '_pi' + i] = {resn: atom.resn, name: 'pi' + i, coord: piPosArray[i], serial: atom.serial,
                         structure: atom.structure, chain: atom.chain, resi: atom.resi, normal: normalArray[i]}
                       }
@@ -235,38 +235,38 @@ class PiHalogen {
           return name2atom;
     }
 
-    getCation(atom) { var ic = this.icn3d, me = ic.icn3dui;
-          var name2atom = {}
+    getCation(atom) { let ic = this.icn3d, me = ic.icn3dui;
+          let name2atom = {}
 
           // use of the two atoms
           if( atom.resn === 'ARG' && atom.name === "NH2") return;
 
           // remove HIS:  || atom.resn === 'HIS'
           // For ligands, "N" with one single bond only may be positively charged. => to be improved
-          var bAtomCond = ( atom.resn === 'LYS' && atom.elem === "N" && atom.name !== "N")
+          let bAtomCond = ( atom.resn === 'LYS' && atom.elem === "N" && atom.name !== "N")
             || ( atom.resn === 'ARG' && (atom.name === "NH1" || atom.name === "NH2"))
             || (atom.het && me.parasCls.cationsTrimArray.indexOf(atom.elem) !== -1)
             || (atom.het && atom.elem === "N" && atom.bonds.length == 1);
           bAtomCond = (ic.bOpm) ? bAtomCond && atom.resn !== 'DUM' : bAtomCond;
           if(bAtomCond) {
-              var chain_resi_atom = atom.structure + "_" + atom.chain + "_" + atom.resi + "_" + atom.name;
+              let chain_resi_atom = atom.structure + "_" + atom.chain + "_" + atom.resi + "_" + atom.name;
               name2atom[chain_resi_atom] = atom;
           }
 
           return name2atom;
     }
 
-    getHalogenPiInteractions(atom1, atom2, type, interactionType, threshold, maxlengthSq, oriResidName, bInternal) { var ic = this.icn3d, me = ic.icn3dui;
-          var xdiff = Math.abs(atom1.coord.x - atom2.coord.x);
+    getHalogenPiInteractions(atom1, atom2, type, interactionType, threshold, maxlengthSq, oriResidName, bInternal) { let ic = this.icn3d, me = ic.icn3dui;
+          let xdiff = Math.abs(atom1.coord.x - atom2.coord.x);
           if(xdiff > threshold) return false;
 
-          var ydiff = Math.abs(atom1.coord.y - atom2.coord.y);
+          let ydiff = Math.abs(atom1.coord.y - atom2.coord.y);
           if(ydiff > threshold) return false;
 
-          var zdiff = Math.abs(atom1.coord.z - atom2.coord.z);
+          let zdiff = Math.abs(atom1.coord.z - atom2.coord.z);
           if(zdiff > threshold) return false;
 
-          var dist = xdiff * xdiff + ydiff * ydiff + zdiff * zdiff;
+          let dist = xdiff * xdiff + ydiff * ydiff + zdiff * zdiff;
           if(dist > maxlengthSq) return false;
 
           // output salt bridge
@@ -285,13 +285,13 @@ class PiHalogen {
               }
           }
 
-          var residName = atom2.resn + ' $' + atom2.structure + '.' + atom2.chain + ':' + atom2.resi + '@' + atom2.name;
+          let residName = atom2.resn + ' $' + atom2.structure + '.' + atom2.chain + ':' + atom2.resi + '@' + atom2.name;
 
           //if(ic.resid2Residhash[oriResidName][residName] === undefined || ic.resid2Residhash[oriResidName][residName] > dist) {
               ic.resid2Residhash[oriResidName][residName] = dist.toFixed(1);
           //}
 
-          var resids = atom1.structure + "_" + atom1.chain + "_" + atom1.resi + "_" + atom1.resn
+          let resids = atom1.structure + "_" + atom1.chain + "_" + atom1.resi + "_" + atom1.resn
             + ',' + atom2.structure + "_" + atom2.chain + "_" + atom2.resi + "_" + atom2.resn;
 
           if(!bInternal) {
@@ -307,28 +307,28 @@ class PiHalogen {
           return true;
     }
 
-    getRingNormal(coordArray) { var ic = this.icn3d, me = ic.icn3dui;
+    getRingNormal(coordArray) { let ic = this.icn3d, me = ic.icn3dui;
         if(coordArray.length < 3) return undefined;
 
-        var v1 = coordArray[0].clone().sub(coordArray[1]);
-        var v2 = coordArray[1].clone().sub(coordArray[2]);
+        let v1 = coordArray[0].clone().sub(coordArray[1]);
+        let v2 = coordArray[1].clone().sub(coordArray[2]);
 
         return v1.cross(v2).normalize();
     }
 
-    getAromaticRings(resn, resid, type) { var ic = this.icn3d, me = ic.icn3dui;
-        var piPosArray = [];
-        var normalArray = [];
+    getAromaticRings(resn, resid, type) { let ic = this.icn3d, me = ic.icn3dui;
+        let piPosArray = [];
+        let normalArray = [];
 
-        var coordArray1 = [];
-        var coordArray2 = [];
+        let coordArray1 = [];
+        let coordArray2 = [];
 
         if(type == 'nucleotide') {
-            var pos1 = new THREE.Vector3(), pos2 = new THREE.Vector3();
+            let pos1 = new THREE.Vector3(), pos2 = new THREE.Vector3();
             if(resn.trim().toUpperCase() == 'A' || resn.trim().toUpperCase() == 'DA'
               || resn.trim().toUpperCase() == 'G' || resn.trim().toUpperCase() == 'DG') {
-                for(var i in ic.residues[resid]) {
-                    var atom = ic.atoms[i];
+                for(let i in ic.residues[resid]) {
+                    let atom = ic.atoms[i];
                     if(atom.name == 'N1' || atom.name == 'C2' || atom.name == 'N3' || atom.name == 'C6') {
                         pos1.add(atom.coord);
 
@@ -363,8 +363,8 @@ class PiHalogen {
             else if(resn.trim().toUpperCase() == 'C' || resn.trim().toUpperCase() == 'DC'
               || resn.trim().toUpperCase() == 'T' || resn.trim().toUpperCase() == 'DT'
               || resn.trim().toUpperCase() == 'U' || resn.trim().toUpperCase() == 'DU') {
-                for(var i in ic.residues[resid]) {
-                    var atom = ic.atoms[i];
+                for(let i in ic.residues[resid]) {
+                    let atom = ic.atoms[i];
                     if(atom.name == 'N1' || atom.name == 'C2' || atom.name == 'N3' || atom.name == 'C6') {
                         pos1.add(atom.coord);
 
@@ -387,11 +387,11 @@ class PiHalogen {
             }
         }
         else if(type == 'protein') {
-            var pos1 = new THREE.Vector3(), pos2 = new THREE.Vector3();
+            let pos1 = new THREE.Vector3(), pos2 = new THREE.Vector3();
 
             if(resn.toUpperCase() == 'PHE' || resn.toUpperCase() == 'TYR') {
-                for(var i in ic.residues[resid]) {
-                    var atom = ic.atoms[i];
+                for(let i in ic.residues[resid]) {
+                    let atom = ic.atoms[i];
                     if(atom.name == 'CG' || atom.name == 'CD1' || atom.name == 'CE1'
                       || atom.name == 'CZ' || atom.name == 'CE2' || atom.name == 'CD2') {
                         pos1.add(atom.coord);
@@ -407,8 +407,8 @@ class PiHalogen {
                 }
             }
             else if(resn.toUpperCase() == 'HIS') {
-                for(var i in ic.residues[resid]) {
-                    var atom = ic.atoms[i];
+                for(let i in ic.residues[resid]) {
+                    let atom = ic.atoms[i];
                     if(atom.name == 'CG' || atom.name == 'ND1' || atom.name == 'CE1'
                       || atom.name == 'NE2' || atom.name == 'CD2') {
                         pos1.add(atom.coord);
@@ -424,8 +424,8 @@ class PiHalogen {
                 }
             }
             else if(resn.toUpperCase() == 'TRP') {
-                for(var i in ic.residues[resid]) {
-                    var atom = ic.atoms[i];
+                for(let i in ic.residues[resid]) {
+                    let atom = ic.atoms[i];
                     if(atom.name == 'CZ2' || atom.name == 'CH2' || atom.name == 'CZ3' || atom.name == 'CE3') {
                         pos1.add(atom.coord);
                         coordArray1.push(atom.coord);
@@ -463,7 +463,7 @@ class PiHalogen {
 
     // Function to mark the vertex with
     // different colors for different cycles
-    dfs_cycle(u, p, cyclenumber) { var ic = this.icn3d, me = ic.icn3dui;
+    dfs_cycle(u, p, cyclenumber) { let ic = this.icn3d, me = ic.icn3dui;
         // already (completely) visited vertex.
         if (ic.ring_color[u] == 2) {
             return cyclenumber;
@@ -474,7 +474,7 @@ class PiHalogen {
         if (ic.ring_color[u] == 1) {
 
             cyclenumber++;
-            var cur = p;
+            let cur = p;
             ic.ring_mark[cur] = cyclenumber;
 
             // backtrack the vertex which are
@@ -492,8 +492,8 @@ class PiHalogen {
 
         // simple dfs on graph
         if(ic.atoms[u] !== undefined) {
-            for(var k = 0, kl = ic.atoms[u].bonds.length; k < kl; ++k) {
-                var v = ic.atoms[u].bonds[k];
+            for(let k = 0, kl = ic.atoms[u].bonds.length; k < kl; ++k) {
+                let v = ic.atoms[u].bonds[k];
 
                 // if it has not been visited previously
                 if (v == ic.ring_par[u]) {
@@ -509,11 +509,11 @@ class PiHalogen {
         return cyclenumber;
     }
 
-    getAromaticPisLigand(resid) { var ic = this.icn3d, me = ic.icn3dui;
-        var name2atom = {}
+    getAromaticPisLigand(resid) { let ic = this.icn3d, me = ic.icn3dui;
+        let name2atom = {}
 
-        var serialArray = Object.keys(ic.residues[resid]);
-        var n = serialArray.length;
+        let serialArray = Object.keys(ic.residues[resid]);
+        let n = serialArray.length;
 
         // arrays required to color the
         // graph, store the parent of node
@@ -524,19 +524,19 @@ class PiHalogen {
         ic.ring_mark = {}
 
         // store the numbers of cycle
-        var cyclenumber = 0;
+        let cyclenumber = 0;
         //var edges = 13;
 
         // call DFS to mark the cycles
         //cyclenumber = this.dfs_cycle(1, 0, cyclenumber);
         cyclenumber = this.dfs_cycle(serialArray[1], serialArray[0], cyclenumber);
 
-        var cycles = {}
+        let cycles = {}
 
         // push the edges that into the
         // cycle adjacency list
-        for (var i = 0; i < n; i++) {
-            var serial = serialArray[i];
+        for (let i = 0; i < n; i++) {
+            let serial = serialArray[i];
             if (ic.ring_mark[serial] != 0) {
                 if(cycles[ic.ring_mark[serial]] === undefined) cycles[ic.ring_mark[serial]] = [];
                 cycles[ic.ring_mark[serial]].push(serial);
@@ -544,13 +544,13 @@ class PiHalogen {
         }
 
         // print all the vertex with same cycle
-        for (var i = 1; i <= cyclenumber; i++) {
+        for (let i = 1; i <= cyclenumber; i++) {
             // Print the i-th cycle
-            var coord = new THREE.Vector3();
-            var cnt = 0, serial;
-            var coordArray = [];
+            let coord = new THREE.Vector3();
+            let cnt = 0, serial;
+            let coordArray = [];
             if(cycles.hasOwnProperty(i)) {
-                for (var j = 0, jl = cycles[i].length; j < jl; ++j) {
+                for (let j = 0, jl = cycles[i].length; j < jl; ++j) {
                     serial = cycles[i][j];
                     coord.add(ic.atoms[serial].coord);
                     coordArray.push(ic.atoms[serial].coord);
@@ -559,18 +559,18 @@ class PiHalogen {
             }
 
             if(cnt == 5 || cnt == 6) {
-                var v1 = coordArray[0].clone().sub(coordArray[1]).normalize();
-                var v2 = coordArray[1].clone().sub(coordArray[2]).normalize();
-                var v3 = coordArray[2].clone().sub(coordArray[3]).normalize();
+                let v1 = coordArray[0].clone().sub(coordArray[1]).normalize();
+                let v2 = coordArray[1].clone().sub(coordArray[2]).normalize();
+                let v3 = coordArray[2].clone().sub(coordArray[3]).normalize();
 
-                var normal = v1.cross(v2).normalize();
-                var bPlane = normal.dot(v3);
+                let normal = v1.cross(v2).normalize();
+                let bPlane = normal.dot(v3);
 
                 //if(Math.abs(bPlane) < 0.017) { // same plane, 89-90 degree
                 if(Math.abs(bPlane) < 0.052) { // same plane, 87-90 degree
                     coord.multiplyScalar(1.0 / cnt);
 
-                    var atom = ic.atoms[serial];
+                    let atom = ic.atoms[serial];
                     name2atom[resid + '_pi' + serial] = {resn: atom.resn, name: 'pi' + serial, coord: coord, serial: atom.serial,
                       structure: atom.structure, chain: atom.chain, resi: atom.resi, normal: normal}
                 }
@@ -580,7 +580,7 @@ class PiHalogen {
         return name2atom;
     }
 
-    hideHalogenPi() { var ic = this.icn3d, me = ic.icn3dui;
+    hideHalogenPi() { let ic = this.icn3d, me = ic.icn3dui;
         ic.opts["halogen"] = "no";
         ic.opts["pi-cation"] = "no";
         ic.opts["pi-stacking"] = "no";
@@ -592,17 +592,17 @@ class PiHalogen {
         ic.picationpnts = [];
         ic.pistackingpnts = [];
 
-        for(var i in ic.atoms) {
+        for(let i in ic.atoms) {
             ic.atoms[i].style2 = 'nothing';
         }
 
-        for(var i in ic.sidec) {
+        for(let i in ic.sidec) {
             if(ic.hAtoms.hasOwnProperty(i)) {
                 ic.atoms[i].style2 = ic.opts["sidec"];
             }
         }
 
-        for(var i in ic.water) {
+        for(let i in ic.water) {
             if(ic.hAtoms.hasOwnProperty(i)) {
                 ic.atoms[i].style = ic.opts["water"];
             }

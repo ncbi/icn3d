@@ -14,15 +14,15 @@ class ApplySsbonds {
     }
 
     //Apply the disulfide bond options.
-    applySsbondsOptions(options) { var ic = this.icn3d, me = ic.icn3dui;
+    applySsbondsOptions(options) { let ic = this.icn3d, me = ic.icn3dui;
         if(options === undefined) options = ic.opts;
 
         if (options.ssbonds.toLowerCase() === 'yes' && ic.ssbondpnts !== undefined) {
-          var color = '#FFFF00';
-          var colorObj = me.parasCls.thr(0xFFFF00);
+          let color = '#FFFF00';
+          let colorObj = me.parasCls.thr(0xFFFF00);
 
-          var structureArray = Object.keys(ic.structures);
-          var start, end;
+          let structureArray = Object.keys(ic.structures);
+          let start, end;
 
           if(ic.bAlternate) {
               start = ic.ALTERNATE_STRUCTURE;
@@ -35,26 +35,26 @@ class ApplySsbonds {
 
           ic.lines['ssbond'] = [];
 
-          for(var s = start, sl = end; s < sl; ++s) {
-              var structure = structureArray[s];
+          for(let s = start, sl = end; s < sl; ++s) {
+              let structure = structureArray[s];
 
               if(ic.ssbondpnts[structure] === undefined) continue;
 
-              //for(var i = 0, lim = Math.floor(ic.ssbondpnts[structure].length / 2); i < lim; i++) {
-              for(var i = Math.floor(ic.ssbondpnts[structure].length / 2) - 1; i >= 0; i--) {
-                var res1 = ic.ssbondpnts[structure][2 * i], res2 = ic.ssbondpnts[structure][2 * i + 1];
-                var serial1, serial2;
+              //for(let i = 0, lim = Math.floor(ic.ssbondpnts[structure].length / 2); i < lim; i++) {
+              for(let i = Math.floor(ic.ssbondpnts[structure].length / 2) - 1; i >= 0; i--) {
+                let res1 = ic.ssbondpnts[structure][2 * i], res2 = ic.ssbondpnts[structure][2 * i + 1];
+                let serial1, serial2;
 
-                var line = {};
+                let line = {};
                 line.color = color;
                 line.dashed = true;
 
                 // each Cys has two S atoms
-                var serial1Array = [], serial2Array = [];
-                var position1Array = [], position2Array = [];
+                let serial1Array = [], serial2Array = [];
+                let position1Array = [], position2Array = [];
 
-                var bFound = false, bCalpha = false;
-                for(var j in ic.residues[res1]) {
+                let bFound = false, bCalpha = false;
+                for(let j in ic.residues[res1]) {
                     if(ic.atoms[j].name === 'SG') {
                         position1Array.push(ic.atoms[j].coord);
                         serial1Array.push(ic.atoms[j].serial);
@@ -63,7 +63,7 @@ class ApplySsbonds {
                 }
 
                 if(!bFound) {
-                    for(var j in ic.residues[res1]) {
+                    for(let j in ic.residues[res1]) {
                         if(ic.atoms[j].name === 'CA') {
                             position1Array.push(ic.atoms[j].coord);
                             serial1Array.push(ic.atoms[j].serial);
@@ -75,7 +75,7 @@ class ApplySsbonds {
                 }
 
                 bFound = false;
-                for(var j in ic.residues[res2]) {
+                for(let j in ic.residues[res2]) {
                     if(ic.atoms[j].name === 'SG') {
                         position2Array.push(ic.atoms[j].coord);
                         serial2Array.push(ic.atoms[j].serial);
@@ -84,7 +84,7 @@ class ApplySsbonds {
                 }
 
                 if(!bFound) {
-                    for(var j in ic.residues[res2]) {
+                    for(let j in ic.residues[res2]) {
                         if(ic.atoms[j].name === 'CA') {
                             position2Array.push(ic.atoms[j].coord);
                             serial2Array.push(ic.atoms[j].serial);
@@ -97,11 +97,11 @@ class ApplySsbonds {
 
                 // determine whether it's true disulfide bonds
                 // disulfide bond is about 2.05 angstrom
-                var distMax = (bCalpha) ? 7.0 : 3.0;
+                let distMax = (bCalpha) ? 7.0 : 3.0;
 
-                var bSsbond = false;
-                for(var m = 0, ml = position1Array.length; m < ml; ++m) {
-                    for(var n = 0, nl = position2Array.length; n < nl; ++n) {
+                let bSsbond = false;
+                for(let m = 0, ml = position1Array.length; m < ml; ++m) {
+                    for(let n = 0, nl = position2Array.length; n < nl; ++n) {
                         if(position1Array[m].distanceTo(position2Array[n]) < distMax) {
                             bSsbond = true;
 
@@ -127,8 +127,8 @@ class ApplySsbonds {
 
                 //if(ic.atoms[serial1].ids !== undefined) { // mmdb id as input
                     // remove the original disulfide bonds
-                    var pos = ic.atoms[line.serial1].bonds.indexOf(line.serial2);
-                    var array1, array2;
+                    let pos = ic.atoms[line.serial1].bonds.indexOf(line.serial2);
+                    let array1, array2;
                     if(pos != -1) {
                         array1 = ic.atoms[line.serial1].bonds.slice(0, pos);
                         array2 = ic.atoms[line.serial1].bonds.slice(pos + 1);
@@ -152,22 +152,22 @@ class ApplySsbonds {
                 ic.cylinderCls.createCylinder(line.position1, line.position2, ic.cylinderRadius, colorObj);
 
                 // show ball and stick for these two residues
-                var residueAtoms;
+                let residueAtoms;
                 residueAtoms = me.hashUtilsCls.unionHash(residueAtoms, ic.residues[res1]);
                 residueAtoms = me.hashUtilsCls.unionHash(residueAtoms, ic.residues[res2]);
 
                 // show side chains for the selected atoms
-                var atoms = me.hashUtilsCls.intHash(residueAtoms, ic.sidec);
-    //            var calpha_atoms = me.hashUtilsCls.intHash(residueAtoms, ic.calphas);
+                let atoms = me.hashUtilsCls.intHash(residueAtoms, ic.sidec);
+    //            let calpha_atoms = me.hashUtilsCls.intHash(residueAtoms, ic.calphas);
                 // include calphas
     //            atoms = me.hashUtilsCls.unionHash(atoms, calpha_atoms);
 
                 // draw sidec separatedly
-                for(var j in atoms) {
+                for(let j in atoms) {
                   ic.atoms[j].style2 = 'stick';
                 }
-              } // for(var i = 0,
-          } // for(var s = 0,
+              } // for(let i = 0,
+          } // for(let s = 0,
         } // if (options.ssbonds.toLowerCase() === 'yes'
     }
 }

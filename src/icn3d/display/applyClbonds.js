@@ -13,7 +13,7 @@ class ApplyClbonds {
         this.icn3d = icn3d;
     }
 
-    applyClbondsOptions(options) { var ic = this.icn3d, me = ic.icn3dui;
+    applyClbondsOptions(options) { let ic = this.icn3d, me = ic.icn3dui;
        if(options === undefined) options = ic.opts;
 
        if(!ic.bCalcCrossLink) {
@@ -31,23 +31,23 @@ class ApplyClbonds {
        }
 
        if (options.clbonds.toLowerCase() === 'yes' && options.chemicals !== 'nothing') {
-         var color = '#006400';
-         var colorObj = me.parasCls.thr(0x006400);
+         let color = '#006400';
+         let colorObj = me.parasCls.thr(0x006400);
 
          ic.lines['clbond'] = [];
          ic.residuesHashClbonds = {};
 
          if(ic.structures) {
-             var strucArray = Object.keys(ic.structures);
-             for(var i = 0, il = strucArray.length; i < il; ++i) {
-                 var struc = strucArray[i];
+             let strucArray = Object.keys(ic.structures);
+             for(let i = 0, il = strucArray.length; i < il; ++i) {
+                 let struc = strucArray[i];
                  if(!ic.clbondpnts[struc]) continue;
 
-                 for(var j = 0, jl = ic.clbondpnts[struc].length; j < jl; j += 2) {
-                    var resid0 = ic.clbondpnts[struc][j];
-                    var resid1 = ic.clbondpnts[struc][j+1];
+                 for(let j = 0, jl = ic.clbondpnts[struc].length; j < jl; j += 2) {
+                    let resid0 = ic.clbondpnts[struc][j];
+                    let resid1 = ic.clbondpnts[struc][j+1];
 
-                    var line = {};
+                    let line = {};
                     line.color = color;
                     line.dashed = false;
 
@@ -63,15 +63,15 @@ class ApplyClbonds {
                     ic.cylinderCls.createCylinder(line.position1, line.position2, ic.cylinderRadius, colorObj);
 
                     // show stick for these two residues
-                    var residueAtoms = {};
+                    let residueAtoms = {};
                     residueAtoms = me.hashUtilsCls.unionHash(residueAtoms, ic.residues[resid0]);
                     residueAtoms = me.hashUtilsCls.unionHash(residueAtoms, ic.residues[resid1]);
 
                     // show side chains for the selected atoms
-                    var atoms = me.hashUtilsCls.intHash(residueAtoms, ic.sidec);
+                    let atoms = me.hashUtilsCls.intHash(residueAtoms, ic.sidec);
 
                     // draw sidec separatedly
-                    for(var k in atoms) {
+                    for(let k in atoms) {
                       ic.atoms[k].style2 = 'stick';
                     }
 
@@ -86,23 +86,23 @@ class ApplyClbonds {
       return ic.residuesHashClbonds;
     }
 
-    applyClbondsOptions_base(type) { var ic = this.icn3d, me = ic.icn3dui;
+    applyClbondsOptions_base(type) { let ic = this.icn3d, me = ic.icn3dui;
          // chemical to chemical first
-         for (var i in ic.chemicals) {
-            var atom0 = ic.atoms[i];
+         for (let i in ic.chemicals) {
+            let atom0 = ic.atoms[i];
 
-            var chain0 = atom0.structure + '_' + atom0.chain;
-            var resid0 = chain0 + '_' + atom0.resi;
+            let chain0 = atom0.structure + '_' + atom0.chain;
+            let resid0 = chain0 + '_' + atom0.resi;
 
-            for (var j in atom0.bonds) {
-                var atom1 = ic.atoms[atom0.bonds[j]];
+            for (let j in atom0.bonds) {
+                let atom1 = ic.atoms[atom0.bonds[j]];
 
                 if (atom1 === undefined) continue;
                 if (atom1.chain !== atom0.chain || atom1.resi !== atom0.resi) {
-                    var chain1 = atom1.structure + '_' + atom1.chain;
-                    var resid1 = chain1 + '_' + atom1.resi;
+                    let chain1 = atom1.structure + '_' + atom1.chain;
+                    let resid1 = chain1 + '_' + atom1.resi;
 
-                    var bType = (type == 'chemical') ? atom1.het : true; //(ic.proteins.hasOwnProperty(atom1.serial) || ic.nucleotides.hasOwnProperty(atom1.serial));
+                    let bType = (type == 'chemical') ? atom1.het : true; //(ic.proteins.hasOwnProperty(atom1.serial) || ic.nucleotides.hasOwnProperty(atom1.serial));
 
                     if(bType ) {
                         if(type == 'chemical') continue; // just connect checmicals together

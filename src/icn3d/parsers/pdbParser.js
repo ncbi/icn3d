@@ -26,8 +26,8 @@ class PdbParser {
     //Ajax call was used to get the atom data from the "pdbid". This function was deferred so that
     //it can be chained together with other deferred functions for sequential execution. A wrapper
     //was added to support both http and https.
-    downloadPdb(pdbid) { var ic = this.icn3d, me = ic.icn3dui;
-       var url, dataType;
+    downloadPdb(pdbid) { let  ic = this.icn3d, me = ic.icn3dui;
+       let  url, dataType;
 
        url = "https://files.rcsb.org/view/" + pdbid + ".pdb";
 
@@ -72,10 +72,10 @@ class PdbParser {
 
     //Load structures from a "URL". Due to the same domain policy of Ajax call, the URL should be in the same
     //domain. "type" could be "pdb", "mol2", "sdf", or "xyz" for pdb file, mol2file, sdf file, and xyz file, respectively.
-    downloadUrl(url, type) { var ic = this.icn3d, me = ic.icn3dui;
-       var thisClass = this;
+    downloadUrl(url, type) { let  ic = this.icn3d, me = ic.icn3dui;
+       let  thisClass = this;
 
-       var dataType = "text";
+       let  dataType = "text";
 
        ic.bCid = undefined;
 
@@ -131,7 +131,7 @@ class PdbParser {
 
     //Atom "data" from PDB file was parsed to set up parameters for the 3D viewer. The deferred parameter
     //was resolved after the parsing so that other javascript code can be executed.
-    loadPdbData(data, pdbid, bOpm) { var ic = this.icn3d, me = ic.icn3dui;
+    loadPdbData(data, pdbid, bOpm) { let  ic = this.icn3d, me = ic.icn3dui;
         ic.loadPDBCls.loadPDB(data, pdbid, bOpm); // defined in the core library
 
         if(ic.icn3dui.cfg.opmid === undefined) ic.ParserUtilsCls.transformToOpmOri(pdbid);
@@ -162,7 +162,7 @@ class PdbParser {
 
         if(!ic.bSecondaryStructure && Object.keys(ic.proteins).length > 0) {
           ic.deferredSecondary = $.Deferred(function() {
-              var bCalphaOnly = me.utilsCls.isCalphaPhosOnly(me.hashUtilsCls.hash2Atoms(ic.proteins, ic.atoms));//, 'CA');
+              let  bCalphaOnly = me.utilsCls.isCalphaPhosOnly(me.hashUtilsCls.hash2Atoms(ic.proteins, ic.atoms));//, 'CA');
               ic.dsspCls.applyDssp(bCalphaOnly);
           }); // end of ic.icn3dui.deferred = $.Deferred(function() {
 
@@ -173,7 +173,7 @@ class PdbParser {
         }
     }
 
-    loadPdbDataRender() { var ic = this.icn3d, me = ic.icn3dui;
+    loadPdbDataRender() { let  ic = this.icn3d, me = ic.icn3dui;
         ic.pmid = ic.pmid;
 
         if(ic.icn3dui.cfg.align === undefined && Object.keys(ic.structures).length == 1) {

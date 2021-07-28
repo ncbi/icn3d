@@ -15,25 +15,25 @@ class SelectByCommand {
     }
 
     //Set a custom selection with the "command", its name "commandname" and its description "commanddesc".
-    selectByCommand(select, commandname, commanddesc) { var ic = this.icn3d, me = ic.icn3dui;
+    selectByCommand(select, commandname, commanddesc) { let  ic = this.icn3d, me = ic.icn3dui;
            if(select.indexOf('saved atoms') === 0) {
-                var pos = 12; // 'saved atoms '
-                var strSets = select.substr(pos);
+                let  pos = 12; // 'saved atoms '
+                let  strSets = select.substr(pos);
 
                 ic.definedSetsCls.selectCombinedSets(strSets, commandname);
            }
            else {
-               var selectTmp = select.replace(/ AND /g, ' and ').replace(/ OR /g, ' or ').replace(/ or and /g, ' and ').replace(/ and /g, ' or and ').replace(/ or not /g, ' not ').replace(/ not /g, ' or not ');
+               let  selectTmp = select.replace(/ AND /g, ' and ').replace(/ OR /g, ' or ').replace(/ or and /g, ' and ').replace(/ and /g, ' or and ').replace(/ or not /g, ' not ').replace(/ not /g, ' or not ');
 
-               var commandStr =(selectTmp.trim().substr(0, 6) === 'select') ? selectTmp.trim().substr(7) : selectTmp.trim();
+               let  commandStr =(selectTmp.trim().substr(0, 6) === 'select') ? selectTmp.trim().substr(7) : selectTmp.trim();
 
                // each select command may have several commands separated by ' or '
-               var commandArray = commandStr.split(' or ');
-               var allHighlightAtoms = {}
+               let  commandArray = commandStr.split(' or ');
+               let  allHighlightAtoms = {}
 
-               for(var i = 0, il = commandArray.length; i < il; ++i) {
-                   var command = commandArray[i].trim().replace(/\s+/g, ' ');
-                   var pos = command.indexOf(' ');
+               for(let i = 0, il = commandArray.length; i < il; ++i) {
+                   let  command = commandArray[i].trim().replace(/\s+/g, ' ');
+                   let  pos = command.indexOf(' ');
 
                    ic.hAtoms = {}
 
@@ -56,13 +56,13 @@ class SelectByCommand {
 
                ic.hAtoms = me.hashUtilsCls.cloneHash(allHighlightAtoms);
 
-               var atomArray = Object.keys(ic.hAtoms);
-               var residueArray = undefined;
+               let  atomArray = Object.keys(ic.hAtoms);
+               let  residueArray = undefined;
 
                if(commandname !== "") {
                    ic.selectionCls.addCustomSelection(atomArray, commandname, commanddesc, select, false);
 
-                   var nameArray = [commandname];
+                   let  nameArray = [commandname];
                    //ic.changeCustomResidues(nameArray);
 
                    ic.definedSetsCls.changeCustomAtoms(nameArray);
@@ -70,7 +70,7 @@ class SelectByCommand {
            }
     }
 
-    selectBySpec(select, commandname, commanddesc, bDisplay) { var ic = this.icn3d, me = ic.icn3dui;
+    selectBySpec(select, commandname, commanddesc, bDisplay) { let  ic = this.icn3d, me = ic.icn3dui;
        select =(select.trim().substr(0, 6) === 'select') ? select.trim().substr(7) : select.trim();
 
        ic.hAtoms = {}
@@ -78,13 +78,13 @@ class SelectByCommand {
        // selection definition is similar to Chimera: https://www.cgl.ucsf.edu/chimera/docs/UsersGuide/midas/frameatom_spec.html
        // There will be no ' or ' in the spec. It's already separated in selectByCommand()
        // There could be ' and ' in the spec.
-       var commandArray = select.replace(/\s+/g, ' ').replace(/ AND /g, ' and ').split(' and ');
+       let  commandArray = select.replace(/\s+/g, ' ').replace(/ AND /g, ' and ').split(' and ');
 
-       var residueHash = {}
-       var atomHash = {}
+       let  residueHash = {}
+       let  atomHash = {}
 
-       var bSelectResidues = true;
-       for(var i = 0, il=commandArray.length; i < il; ++i) {
+       let  bSelectResidues = true;
+       for(let i = 0, il=commandArray.length; i < il; ++i) {
            //$1,2,3.A,B,C:5-10,LYS,chemicals@CA,C
            // $1,2,3: Structure
            // .A,B,C: chain
@@ -93,13 +93,13 @@ class SelectByCommand {
            // wild card * can be used to select all
            //var currHighlightAtoms = {}
 
-           var dollarPos = commandArray[i].indexOf('$');
-           var periodPos = commandArray[i].indexOf('.');
-           var colonPos = commandArray[i].indexOf(':');
-           var atPos = commandArray[i].indexOf('@');
+           let  dollarPos = commandArray[i].indexOf('$');
+           let  periodPos = commandArray[i].indexOf('.');
+           let  colonPos = commandArray[i].indexOf(':');
+           let  atPos = commandArray[i].indexOf('@');
 
-           var moleculeStr, chainStr, residueStr, atomStrArray;
-           var testStr = commandArray[i];
+           let  moleculeStr, chainStr, residueStr, atomStrArray;
+           let  testStr = commandArray[i];
 
            if(atPos === -1) {
              atomStrArray = ["*"];
@@ -137,7 +137,7 @@ class SelectByCommand {
              bSelectResidues = false; // selected atoms
            }
 
-           var molecule, chain, molecule_chain, moleculeArray=[], Molecule_ChainArray=[], start, end;
+           let  molecule, chain, molecule_chain, moleculeArray=[], Molecule_ChainArray=[], start, end;
 
            if(moleculeStr === '*') {
              moleculeArray = Object.keys(ic.structures);
@@ -147,41 +147,41 @@ class SelectByCommand {
            }
 
            if(chainStr === '*') {
-             var tmpArray = Object.keys(ic.chains);  // 1_A(molecule_chain)
+             let  tmpArray = Object.keys(ic.chains);  // 1_A(molecule_chain)
 
-             for(var j = 0, jl = tmpArray.length; j < jl; ++j) {
+             for(let j = 0, jl = tmpArray.length; j < jl; ++j) {
                molecule_chain = tmpArray[j];
 
                molecule = molecule_chain.substr(0, molecule_chain.indexOf('_'));
                //if(moleculeArray.toString().toLowerCase().indexOf(molecule.toLowerCase()) !== -1) {
-               var moleculeArrayLower = moleculeArray.map(function(x){ return x.toLowerCase(); });
+               let  moleculeArrayLower = moleculeArray.map(function(x){ return x.toLowerCase(); });
                if(moleculeArrayLower.indexOf(molecule.toLowerCase()) !== -1 ) {
                  Molecule_ChainArray.push(molecule_chain);
                }
              }
            }
            else {
-             for(var j = 0, jl = moleculeArray.length; j < jl; ++j) {
+             for(let j = 0, jl = moleculeArray.length; j < jl; ++j) {
                molecule = moleculeArray[j];
 
-               var chainArray = chainStr.split(",");
-               for(var k in chainArray) {
+               let  chainArray = chainStr.split(",");
+               for(let k in chainArray) {
                  Molecule_ChainArray.push(molecule + '_' + chainArray[k]);
                }
              }
            }
 
-           var residueStrArray = residueStr.split(',');
-           for(var j = 0, jl = residueStrArray.length; j < jl; ++j) {
-               var bResidueId = false;
+           let  residueStrArray = residueStr.split(',');
+           for(let j = 0, jl = residueStrArray.length; j < jl; ++j) {
+               let  bResidueId = false;
 
                //var hyphenPos = residueStrArray[j].indexOf('-');
-               var hyphenPos = residueStrArray[j].lastIndexOf('-');
+               let  hyphenPos = residueStrArray[j].lastIndexOf('-');
 
-               var oneLetterResidueStr = undefined, threeLetterResidueStr = undefined;
-               var bAllResidues = false;
-               var bResidueArray = false;
-               var bResidueArrayThree = false; // three letter residues
+               let  oneLetterResidueStr = undefined, threeLetterResidueStr = undefined;
+               let  bAllResidues = false;
+               let  bResidueArray = false;
+               let  bResidueArrayThree = false; // three letter residues
 
                if(hyphenPos !== -1) {
                  start = residueStrArray[j].substr(0, hyphenPos);
@@ -198,24 +198,24 @@ class SelectByCommand {
                    bAllResidues = true;
                  }
                  else if(residueStrArray[j][0] === '3' &&(residueStrArray[j].length - 1) % 3 === 0) { // three letter residue string, such as :3LysArg
-                   var tmpStr = residueStrArray[j].toUpperCase();
+                   let  tmpStr = residueStrArray[j].toUpperCase();
                    threeLetterResidueStr = tmpStr.substr(1);
                    bResidueArrayThree = true;
                  }
                  else if(residueStrArray[j] !== 'proteins' && residueStrArray[j] !== 'nucleotides' && residueStrArray[j] !== 'chemicals' && residueStrArray[j] !== 'ions' && residueStrArray[j] !== 'water') { // residue name
-                   var tmpStr = residueStrArray[j].toUpperCase();
+                   let  tmpStr = residueStrArray[j].toUpperCase();
                    //oneLetterResidue =(residueStrArray[j].length === 1) ? tmpStr : me.utilsCls.residueName2Abbr(tmpStr);
                    oneLetterResidueStr = tmpStr;
                    bResidueArray = true;
                  }
                }
 
-               for(var mc = 0, mcl = Molecule_ChainArray.length; mc < mcl; ++mc) {
+               for(let mc = 0, mcl = Molecule_ChainArray.length; mc < mcl; ++mc) {
                  molecule_chain = Molecule_ChainArray[mc];
 
                  if(bResidueId) {
-                   for(var k = parseInt(start); k <= parseInt(end); ++k) {
-                     var residueId = molecule_chain + '_' + k;
+                   for(let k = parseInt(start); k <= parseInt(end); ++k) {
+                     let  residueId = molecule_chain + '_' + k;
                      if(i === 0) {
                           residueHash[residueId] = 1;
                      }
@@ -225,9 +225,9 @@ class SelectByCommand {
                          if(!residueHash.hasOwnProperty(residueId)) delete residueHash[residueId];
                      }
 
-                     for(var m in ic.residues[residueId]) {
-                       for(var n = 0, nl = atomStrArray.length; n < nl; ++n) {
-                           var atomStr = atomStrArray[n];
+                     for(let m in ic.residues[residueId]) {
+                       for(let n = 0, nl = atomStrArray.length; n < nl; ++n) {
+                           let  atomStr = atomStrArray[n];
                            if(atomStr === '*' || atomStr === ic.atoms[m].name) {
                              if(i === 0) {
                                  //currHighlightAtoms[m] = 1;
@@ -245,10 +245,10 @@ class SelectByCommand {
                  }
                  else {
                    if(molecule_chain in ic.chains) {
-                     var chainAtomHash = ic.chains[molecule_chain];
-                     for(var m in chainAtomHash) {
+                     let  chainAtomHash = ic.chains[molecule_chain];
+                     for(let m in chainAtomHash) {
                        // residue could also be 'proteins', 'nucleotides', 'chemicals', 'ions', and 'water'
-                       var tmpStr = ic.atoms[m].resn.substr(0,3).toUpperCase();
+                       let  tmpStr = ic.atoms[m].resn.substr(0,3).toUpperCase();
                        if(bAllResidues
                            //|| me.utilsCls.residueName2Abbr(tmpStr) === oneLetterResidue
                            ||(residueStrArray[j] === 'proteins' && m in ic.proteins)
@@ -262,13 +262,13 @@ class SelectByCommand {
                              residueHash[molecule_chain + '_' + ic.atoms[m].resi] = 1;
                          }
                          else {
-                             var residTmp = molecule_chain + '_' + ic.atoms[m].resi;
+                             let  residTmp = molecule_chain + '_' + ic.atoms[m].resi;
                              //if(!residueHash.hasOwnProperty(residTmp)) residueHash[residTmp] = undefined;
                              if(!residueHash.hasOwnProperty(residTmp)) delete residueHash[residTmp];
                          }
 
-                         for(var n = 0, nl = atomStrArray.length; n < nl; ++n) {
-                             var atomStr = atomStrArray[n];
+                         for(let n = 0, nl = atomStrArray.length; n < nl; ++n) {
+                             let  atomStr = atomStrArray[n];
 
                              if(atomStr === '*' || atomStr === ic.atoms[m].name) {
                                  if(i === 0) {
@@ -284,19 +284,19 @@ class SelectByCommand {
                          }
 
                        }
-                     } // end for(var m in atomHash) {
+                     } // end for(let m in atomHash) {
 
                      if(bResidueArray || bResidueArrayThree) {
-                       var n =(bResidueArray) ? 1 : 3;
-                       var residueStrTmp =(bResidueArray) ? oneLetterResidueStr : threeLetterResidueStr;
+                       let  n =(bResidueArray) ? 1 : 3;
+                       let  residueStrTmp =(bResidueArray) ? oneLetterResidueStr : threeLetterResidueStr;
 
-                       var chainSeq = '', resiArray = [];
-                       for(var s = 0, sl = ic.chainsSeq[molecule_chain].length; s < sl;  ++s) {
+                       let  chainSeq = '', resiArray = [];
+                       for(let s = 0, sl = ic.chainsSeq[molecule_chain].length; s < sl;  ++s) {
                            if(bResidueArray) {
                                chainSeq +=(ic.chainsSeq[molecule_chain][s].name.length == 1) ? ic.chainsSeq[molecule_chain][s].name : ' ';
                            }
                            else if(bResidueArrayThree) {
-                               var threeLetter = me.utilsCls.residueAbbr2Name(ic.chainsSeq[molecule_chain][s].name);
+                               let  threeLetter = me.utilsCls.residueAbbr2Name(ic.chainsSeq[molecule_chain][s].name);
                                chainSeq +=(threeLetter.length == 3) ? threeLetter : '   ';
                            }
                            resiArray.push(ic.chainsSeq[molecule_chain][s].resi);
@@ -304,14 +304,14 @@ class SelectByCommand {
 
                        chainSeq = chainSeq.toUpperCase();
 
-                       var seqReg = residueStrTmp.replace(/x/gi, ".");
-                       var posArray = [];
+                       let  seqReg = residueStrTmp.replace(/x/gi, ".");
+                       let  posArray = [];
 
-                       var searchReg = new RegExp(seqReg, 'i');
+                       let  searchReg = new RegExp(seqReg, 'i');
 
-                       var targetStr = chainSeq;
-                       var pos = targetStr.search(searchReg);
-                       var sumPos = pos / n;
+                       let  targetStr = chainSeq;
+                       let  pos = targetStr.search(searchReg);
+                       let  sumPos = pos / n;
                        while(pos !== -1) {
                            posArray.push(sumPos);
                            targetStr = targetStr.substr(pos + n);
@@ -319,11 +319,11 @@ class SelectByCommand {
                            sumPos += pos / n + 1;
                        }
 
-                       for(var s = 0, sl = posArray.length; s < sl; ++s) {
-                           var pos = posArray[s];
+                       for(let s = 0, sl = posArray.length; s < sl; ++s) {
+                           let  pos = posArray[s];
 
-                           for(var t = 0, tl = residueStrTmp.length / n; t < tl;  t += n) {
-                             var residueId = molecule_chain + '_' + resiArray[t/n + pos];
+                           for(let t = 0, tl = residueStrTmp.length / n; t < tl;  t += n) {
+                             let  residueId = molecule_chain + '_' + resiArray[t/n + pos];
                              if(i === 0) {
                                  residueHash[residueId] = 1;
                              }
@@ -332,9 +332,9 @@ class SelectByCommand {
                                  if(!residueHash.hasOwnProperty(residueId)) delete residueHash[residueId];
                              }
 
-                             for(var m in ic.residues[residueId]) {
-                               for(var n = 0, nl = atomStrArray.length; n < nl; ++n) {
-                                   var atomStr = atomStrArray[n];
+                             for(let m in ic.residues[residueId]) {
+                               for(let n = 0, nl = atomStrArray.length; n < nl; ++n) {
+                                   let  atomStr = atomStrArray[n];
                                    if(atomStr === '*' || atomStr === ic.atoms[m].name) {
                                      if(i === 0) {
                                          //currHighlightAtoms[m] = 1;
@@ -354,7 +354,7 @@ class SelectByCommand {
 
                    } // end if(molecule_chain
                  } // end else
-               } // end for(var mc = 0
+               } // end for(let mc = 0
            } // for(j
        }  // for(i
 
@@ -366,7 +366,7 @@ class SelectByCommand {
 
        if(bDisplay === undefined || bDisplay) ic.hlUpdateCls.updateHlAll();
 
-       var residueAtomArray;
+       let  residueAtomArray;
        if(bSelectResidues) {
            residueAtomArray = Object.keys(residueHash);
        }
@@ -377,7 +377,7 @@ class SelectByCommand {
        if(commandname != "") {
            ic.selectionCls.addCustomSelection(residueAtomArray, commandname, commanddesc, select, bSelectResidues);
 
-           var nameArray = [commandname];
+           let  nameArray = [commandname];
            ic.definedSetsCls.changeCustomAtoms(nameArray);
        }
     }

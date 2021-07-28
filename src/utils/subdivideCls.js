@@ -11,18 +11,18 @@ class SubdivideCls {
 
     // cubic splines for four points: http://thalestriangles.blogspot.com/2014/02/a-bit-of-ex-spline-ation.html
     // https://math.stackexchange.com/questions/577641/how-to-calculate-interpolating-splines-in-3d-space
-    subdivide(_pnts, _clrs, DIV, bShowArray, bHighlight, prevone, nexttwo, bExtendLastRes) { var me = this.icn3dui;
+    subdivide(_pnts, _clrs, DIV, bShowArray, bHighlight, prevone, nexttwo, bExtendLastRes) { let me = this.icn3dui;
 
-        var ret = [];
-        var pos = [];
-        var color = [];
+        let ret = [];
+        let pos = [];
+        let color = [];
 
-        var pnts = new Array(); // Smoothing test
+        let pnts = new Array(); // Smoothing test
 
-        var prevoneLen = (prevone !== undefined) ? prevone.length : 0;
-        var nexttwoLenOri = (nexttwo !== undefined) ? nexttwo.length : 0;
+        let prevoneLen = (prevone !== undefined) ? prevone.length : 0;
+        let nexttwoLenOri = (nexttwo !== undefined) ? nexttwo.length : 0;
 
-        var maxDist = 6.0;
+        let maxDist = 6.0;
 
         if(prevoneLen > 0
             && Math.abs(prevone[0].x - _pnts[0].x) <= maxDist
@@ -37,13 +37,13 @@ class SubdivideCls {
         }
 
         pnts.push(_pnts[0]);
-        for (var i = 1, lim = _pnts.length - 1; i < lim; ++i) {
-            var p0 = _pnts[i], p1 = _pnts[i + 1];
+        for (let i = 1, lim = _pnts.length - 1; i < lim; ++i) {
+            let p0 = _pnts[i], p1 = _pnts[i + 1];
             pnts.push(p0.smoothen ? p0.clone().add(p1).multiplyScalar(0.5) : p0);
         }
         pnts.push(_pnts[_pnts.length - 1]);
 
-        var nexttwoLen = 0
+        let nexttwoLen = 0
         if(nexttwoLenOri > 0
             && Math.abs(nexttwo[0].x - _pnts[_pnts.length - 1].x) <= maxDist
             && Math.abs(nexttwo[0].y - _pnts[_pnts.length - 1].y) <= maxDist
@@ -62,28 +62,28 @@ class SubdivideCls {
           ++nexttwoLen;
         }
 
-        var savedPoints = [];
-        var savedPos = [];
-        var savedColor = [];
+        let savedPoints = [];
+        let savedPos = [];
+        let savedColor = [];
 
         //var nexttwoLen = nexttwoLenOri;
         if(bExtendLastRes) {
             nexttwoLen = (nexttwoLenOri > 0) ? nexttwoLenOri - 1 : 0;
         }
 
-        var alpha = 1, newI;
+        let alpha = 1, newI;
 
-        for (var i = -1, size = pnts.length, DIVINV = 1 / DIV; i <= size - 3; ++i) {
+        for (let i = -1, size = pnts.length, DIVINV = 1 / DIV; i <= size - 3; ++i) {
             newI = i - prevoneLen;
-            var p0 = pnts[i === -1 ? 0 : i];
-            var p1 = pnts[i + 1];
-            var p2 = pnts[i + 2];
-            var p3 = pnts[i === size - 3 ? size - 1 : i + 3];
+            let p0 = pnts[i === -1 ? 0 : i];
+            let p1 = pnts[i + 1];
+            let p2 = pnts[i + 2];
+            let p3 = pnts[i === size - 3 ? size - 1 : i + 3];
 
-            var t0 = 0;
-            var t1 = me.subdivideCls.getKnot(alpha, t0, p0, p1);
-            var t2 = me.subdivideCls.getKnot(alpha, t1, p1, p2);
-            var t3 = me.subdivideCls.getKnot(alpha, t2, p2, p3);
+            let t0 = 0;
+            let t1 = me.subdivideCls.getKnot(alpha, t0, p0, p1);
+            let t2 = me.subdivideCls.getKnot(alpha, t1, p1, p2);
+            let t3 = me.subdivideCls.getKnot(alpha, t2, p2, p3);
 
             if(t1 - t0 < 1e-4) t1 = t0 + 1;
             if(t2 - t1 < 1e-4) t2 = t1 + 1;
@@ -103,12 +103,12 @@ class SubdivideCls {
             savedPos = [];
             savedColor = [];
 
-            var step = (t2 - t1) * DIVINV;
-            for (var j = 0; j < DIV; ++j) {
-                var t = t1 + step * j;
-                var x = me.subdivideCls.getValueFromKnot(t, t0, t1, t2, t3, p0.x, p1.x, p2.x, p3.x);
-                var y = me.subdivideCls.getValueFromKnot(t, t0, t1, t2, t3, p0.y, p1.y, p2.y, p3.y);
-                var z = me.subdivideCls.getValueFromKnot(t, t0, t1, t2, t3, p0.z, p1.z, p2.z, p3.z);
+            let step = (t2 - t1) * DIVINV;
+            for (let j = 0; j < DIV; ++j) {
+                let t = t1 + step * j;
+                let x = me.subdivideCls.getValueFromKnot(t, t0, t1, t2, t3, p0.x, p1.x, p2.x, p3.x);
+                let y = me.subdivideCls.getValueFromKnot(t, t0, t1, t2, t3, p0.y, p1.y, p2.y, p3.y);
+                let z = me.subdivideCls.getValueFromKnot(t, t0, t1, t2, t3, p0.z, p1.z, p2.z, p3.z);
 
                 if(!bShowArray) {
                     if(i >= -1 + prevoneLen && i <= size - 3 - nexttwoLen) {
@@ -139,8 +139,8 @@ class SubdivideCls {
                     }
                 } // end else
 
-            } // end for (var j = 0;
-        } // end for (var i = -1;
+            } // end for (let j = 0;
+        } // end for (let i = -1;
 
         if(!bShowArray || bShowArray[newI + 1]) {
             //if(bHighlight) {
@@ -159,7 +159,7 @@ class SubdivideCls {
         savedColor = [];
         pnts = [];
 
-        var pnts_positions = [];
+        let pnts_positions = [];
 
         pnts_positions.push(ret);
         pnts_positions.push(pos);
@@ -169,30 +169,30 @@ class SubdivideCls {
     };
 
 
-    getKnot(alpha, ti, Pi, Pj) { var me = this.icn3dui;
+    getKnot(alpha, ti, Pi, Pj) { let me = this.icn3dui;
         //var alpha = 1;
 
         //return Math.pow(Pi.distanceTo(Pj), alpha) + ti;
         return Pi.distanceTo(Pj) + ti;
     }
 
-    getValueFromKnot(t, t0, t1, t2, t3, y0, y1, y2, y3) { var me = this.icn3dui;
-        var inf = 9999;
+    getValueFromKnot(t, t0, t1, t2, t3, y0, y1, y2, y3) { let me = this.icn3dui;
+        let inf = 9999;
 
         // m(i) = ( t(i+1) - t(i) == 0 ) ? 0 : ( y(i+1) - y(i) ) / ( t(i+1) - t(i) )
-        var m0 = (y1 - y0) / (t1 - t0);
-        var m1 = (y2 - y1) / (t2 - t1);
-        var m2 = (y3 - y2) / (t3 - t2);
+        let m0 = (y1 - y0) / (t1 - t0);
+        let m1 = (y2 - y1) / (t2 - t1);
+        let m2 = (y3 - y2) / (t3 - t2);
 
         // L(i) = m(i) * (t - t(i)) + y(i)
         //var L0 = m0 * (t - t0) + y0;
-        var L1 = m1 * (t - t1) + y1;
+        let L1 = m1 * (t - t1) + y1;
         //var L2 = m2 * (t - t2) + y2;
 
-        var denom = (t1 + t2) * (t1 + t2) - 4*(t0*t1 + t2*t3 - t0*t3);
-        var d0 = 0;
-        var d3 = 0;
-        var d1, d2;
+        let denom = (t1 + t2) * (t1 + t2) - 4*(t0*t1 + t2*t3 - t0*t3);
+        let d0 = 0;
+        let d3 = 0;
+        let d1, d2;
 
         if(denom == 0) {
             d1 = inf;
@@ -206,19 +206,19 @@ class SubdivideCls {
         // a(i) = ( 2*d(i) + d(i+1) ) / 6 / (t(i) - t(i+1))
         // b(i) = ( 2*d(i+1) + d(i) ) / 6 / (t(i+1) - t(i))
         //var a0 = ( 2*d0 + d1 ) / 6 / (t0 - t1);
-        var a1 = ( 2*d1 + d2 ) / 6 / (t1 - t2);
+        let a1 = ( 2*d1 + d2 ) / 6 / (t1 - t2);
         //var a2 = ( 2*d2 + d3 ) / 6 / (t2 - t3);
 
         //var b0 = ( 2*d1 + d0 ) / 6 / (t1 - t0);
-        var b1 = ( 2*d2 + d1 ) / 6 / (t2 - t1);
+        let b1 = ( 2*d2 + d1 ) / 6 / (t2 - t1);
         //var b2 = ( 2*d3 + d2 ) / 6 / (t3 - t2);
 
         // C(i) = a(i)*(t - t(i))*(t - t(i+1))*(t - t(i+1)) + b(i)*(t - t(i))*(t - t(i))*(t - t(i+1))
         //var C0 = a0*(t - t0)*(t - t1)*(t - t1) + b0*(t - t0)*(t - t0)*(t - t1);
-        var C1 = a1*(t - t1)*(t - t2)*(t - t2) + b1*(t - t1)*(t - t1)*(t - t2);
+        let C1 = a1*(t - t1)*(t - t2)*(t - t2) + b1*(t - t1)*(t - t1)*(t - t2);
         //var C2 = a2*(t - t2)*(t - t3)*(t - t3) + b2*(t - t2)*(t - t2)*(t - t3);
 
-        var F1 = L1 + C1;
+        let F1 = L1 + C1;
 
         return F1;
     }

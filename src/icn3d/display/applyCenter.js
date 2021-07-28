@@ -13,10 +13,10 @@ class ApplyCenter {
         this.icn3d = icn3d;
     }
 
-    applyCenterOptions(options) { var ic = this.icn3d, me = ic.icn3dui;
+    applyCenterOptions(options) { let ic = this.icn3d, me = ic.icn3dui;
         if(options === undefined) options = ic.opts;
 
-        var center;
+        let center;
         switch (options.rotationcenter.toLowerCase()) {
             case 'molecule center':
                 // move the molecule to the origin
@@ -41,11 +41,11 @@ class ApplyCenter {
     }
 
     //Set the center at the position with coordinated "coord".
-    setRotationCenter(coord) { var ic = this.icn3d, me = ic.icn3dui;
+    setRotationCenter(coord) { let ic = this.icn3d, me = ic.icn3dui;
        this.setCenter(coord);
     }
 
-    setCenter(center) { var ic = this.icn3d, me = ic.icn3dui;
+    setCenter(center) { let ic = this.icn3d, me = ic.icn3dui;
        //if(!ic.bChainAlign) {
            ic.mdl.position.set(0,0,0);
            ic.mdlImpostor.position.set(0,0,0);
@@ -59,7 +59,7 @@ class ApplyCenter {
     }
 
     //Center on the selected atoms.
-    centerSelection(atoms) { var ic = this.icn3d, me = ic.icn3dui;
+    centerSelection(atoms) { let ic = this.icn3d, me = ic.icn3dui;
        //ic.transformCls.resetOrientation();
 
        ic.opts['rotationcenter'] = 'highlight center';
@@ -75,7 +75,7 @@ class ApplyCenter {
 
        // center on the hAtoms if more than one residue is selected
        if(Object.keys(atoms).length > 1) {
-               var centerAtomsResults = this.centerAtoms(atoms);
+               let centerAtomsResults = this.centerAtoms(atoms);
 
                ic.center = centerAtomsResults.center;
                this.setCenter(ic.center);
@@ -88,29 +88,29 @@ class ApplyCenter {
     //Return an object {"center": center, "maxD": maxD}, where "center" is the center of
     //a set of "atoms" with a value of THREE.Vector3(), and "maxD" is the maximum distance
     //between any two atoms in the set.
-    centerAtoms(atoms) { var ic = this.icn3d, me = ic.icn3dui;
-        var pmin = new THREE.Vector3( 9999, 9999, 9999);
-        var pmax = new THREE.Vector3(-9999,-9999,-9999);
-        var psum = new THREE.Vector3();
-        var cnt = 0;
+    centerAtoms(atoms) { let ic = this.icn3d, me = ic.icn3dui;
+        let pmin = new THREE.Vector3( 9999, 9999, 9999);
+        let pmax = new THREE.Vector3(-9999,-9999,-9999);
+        let psum = new THREE.Vector3();
+        let cnt = 0;
 
-        for (var i in atoms) {
-            var atom = ic.atoms[i];
-            var coord = atom.coord;
+        for (let i in atoms) {
+            let atom = ic.atoms[i];
+            let coord = atom.coord;
             psum.add(coord);
             pmin.min(coord);
             pmax.max(coord);
             ++cnt;
         }
 
-        var maxD = pmax.distanceTo(pmin);
+        let maxD = pmax.distanceTo(pmin);
 
         return {"center": psum.multiplyScalar(1.0 / cnt), "maxD": maxD, "pmin": pmin, "pmax": pmax};
     }
 
     // modified from iview (http://istar.cse.cuhk.edu.hk/iview/)
     //Set the width and height of the canvas.
-    setWidthHeight(width, height) { var ic = this.icn3d, me = ic.icn3dui;
+    setWidthHeight(width, height) { let ic = this.icn3d, me = ic.icn3dui;
         //ic.renderer.setSize(width, height);
         if(ic.scaleFactor === undefined) ic.scaleFactor = 1.0;
 
