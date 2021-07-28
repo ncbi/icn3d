@@ -15,18 +15,18 @@ class Alternate {
 
     // change the display atom when alternating
     //Show structures one by one.
-    alternateStructures() { var ic = this.icn3d, me = ic.icn3dui;
-        var hAtomsCount = Object.keys(ic.hAtoms).length;
-        var allAtomsCount = Object.keys(ic.atoms).length;
+    alternateStructures() { let ic = this.icn3d, me = ic.icn3dui;
+        let hAtomsCount = Object.keys(ic.hAtoms).length;
+        let allAtomsCount = Object.keys(ic.atoms).length;
 
         ic.dAtoms = {};
 
-        var moleculeArray = Object.keys(ic.structures);
-        for(var i = 0, il = moleculeArray.length; i < il; ++i) {
-            var structure = moleculeArray[i];
+        let moleculeArray = Object.keys(ic.structures);
+        for(let i = 0, il = moleculeArray.length; i < il; ++i) {
+            let structure = moleculeArray[i];
             if(i > ic.ALTERNATE_STRUCTURE || (ic.ALTERNATE_STRUCTURE === il - 1 && i === 0) ) {
-                for(var k in ic.structures[structure]) {
-                    var chain = ic.structures[structure][k];
+                for(let k in ic.structures[structure]) {
+                    let chain = ic.structures[structure][k];
                     ic.dAtoms = me.hashUtilsCls.unionHash(ic.dAtoms, ic.chains[chain]);
                 }
 
@@ -80,7 +80,7 @@ class Alternate {
         ic.opts['rotationcenter'] = 'molecule center';
     }
 
-    alternateWrapper() { var ic = this.icn3d, me = ic.icn3dui;
+    alternateWrapper() { let ic = this.icn3d, me = ic.icn3dui;
        ic.bAlternate = true;
        this.alternateStructures();
        ic.bAlternate = false;

@@ -13,7 +13,7 @@ import {AlignSeq} from '../html/alignSeq.js';
 import {SetHtml} from '../html/setHtml.js';
 
 class Html {
-  constructor(icn3dui) { var me = icn3dui;
+  constructor(icn3dui) { let me = icn3dui;
     this.icn3dui = icn3dui;
 
     this.cfg = this.icn3dui.cfg;
@@ -59,6 +59,7 @@ class Html {
     this.themecolor = 'blue';
 
     // used in graph
+    this.defaultValue = 1;
     this.ssValue = 3;
     this.coilValue = 3;
     this.contactValue = 11;

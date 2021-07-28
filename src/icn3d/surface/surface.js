@@ -23,10 +23,10 @@ class Surface {
     //and 3 (solvent accessible surface). "wireframe" is a boolean to determine whether to show
     //the surface as a mesh. "opacity" is a value between 0 and 1. "1" means not transparent at all.
     //"0" means 100% transparent.
-    createSurfaceRepresentation(atoms, type, wireframe, opacity) { var ic = this.icn3d, me = ic.icn3dui;
-        if(ic.icn3dui.bNode) return;
+    createSurfaceRepresentation(atoms, type, wireframe, opacity) { let  ic = this.icn3d, me = ic.icn3dui;
+        //if(ic.icn3dui.bNode) return;
 
-        var thisClass = this;
+        let  thisClass = this;
 
         if(Object.keys(atoms).length == 0) return;
 
@@ -34,17 +34,17 @@ class Surface {
 
         ic.opacity = opacity;
 
-        var geo;
+        let  geo;
 
-        var extent = ic.contactCls.getExtent(atoms);
+        let  extent = ic.contactCls.getExtent(atoms);
 
         // surface from 3Dmol
-        var distance = 5; // consider atom 5 angstrom from the selected atoms
+        let  distance = 5; // consider atom 5 angstrom from the selected atoms
 
-        var extendedAtoms = [];
+        let  extendedAtoms = [];
 
         if(ic.bConsiderNeighbors) {
-            var unionAtoms;
+            let  unionAtoms;
             unionAtoms = me.hashUtilsCls.unionHash(unionAtoms, atoms)
             unionAtoms = me.hashUtilsCls.unionHash(unionAtoms, ic.contactCls.getAtomsWithinAtom(ic.atoms, atoms, distance))
 
@@ -56,13 +56,13 @@ class Surface {
 
         //var sigma2fofc = 1.5;
         //var sigmafofc = 3.0;
-        var maxdist = 1; // maximum distance to show electron density map, set it between 1 AND 2
+        let  maxdist = 1; // maximum distance to show electron density map, set it between 1 AND 2
 
-        var bTransparent = (parseInt(10*opacity) != 10 && !wireframe && !(ic.bInstanced && Object.keys(ic.atoms).length * ic.biomtMatrices.length > ic.maxatomcnt) ) ? true : false;
+        let  bTransparent = (parseInt(10*opacity) != 10 && !wireframe && !(ic.bInstanced && Object.keys(ic.atoms).length * ic.biomtMatrices.length > ic.maxatomcnt) ) ? true : false;
 
-        var ps;
+        let  ps;
 
-        var cfg = {
+        let  cfg = {
                 allatoms: ic.atoms,
                 atomsToShow: Object.keys(atoms),
                 extendedAtoms: extendedAtoms,
@@ -138,11 +138,11 @@ class Surface {
             //1: van der waals surface, 2: molecular surface, 3: solvent accessible surface
 
             //exclude water
-            var atomsToShow = me.hashUtilsCls.exclHash(atoms, ic.water);
+            let  atomsToShow = me.hashUtilsCls.exclHash(atoms, ic.water);
             //extendedAtoms = Object.keys(atomsToShow);
             extendedAtoms = me.hashUtilsCls.exclHash(extendedAtoms, ic.water);
 
-            var realType = type;
+            let  realType = type;
             if(realType == 21) realType = 1;
             else if(realType == 22) realType = 2;
             else if(realType == 23) realType = 3;
@@ -172,14 +172,14 @@ class Surface {
 
         if(ic.bCalcArea) {
             ic.areavalue = ps.area.toFixed(2);
-            var serial2area = ps.serial2area;
-            var scaleFactorSq = ps.scaleFactor * ps.scaleFactor;
+            let  serial2area = ps.serial2area;
+            let  scaleFactorSq = ps.scaleFactor * ps.scaleFactor;
 
             ic.resid2area = {};
-            var structureHash = {}, chainHash = {};
-            for(var i in serial2area) {
-                var atom = ic.atoms[i];
-                var resid = atom.structure + '_' + atom.chain + '_' + atom.resi + '_' + atom.resn;
+            let  structureHash = {}, chainHash = {};
+            for(let i in serial2area) {
+                let  atom = ic.atoms[i];
+                let  resid = atom.structure + '_' + atom.chain + '_' + atom.resi + '_' + atom.resn;
                 structureHash[atom.structure] = 1;
                 chainHash[atom.structure + '_' + atom.chain] = 1;
 
@@ -187,24 +187,24 @@ class Surface {
                 else ic.resid2area[resid] += serial2area[i];
             }
 
-            var html = '<table border="1" cellpadding="10" cellspacing="0">';
-            var structureStr = (Object.keys(structureHash).length > 1) ? '<th>Structure</th>' : '';
-            var chainStr = (Object.keys(chainHash).length > 1) ? '<th>Chain</th>' : '';
+            let  html = '<table border="1" cellpadding="10" cellspacing="0">';
+            let  structureStr = (Object.keys(structureHash).length > 1) ? '<th>Structure</th>' : '';
+            let  chainStr = (Object.keys(chainHash).length > 1) ? '<th>Chain</th>' : '';
             html += '<tr>' + structureStr + chainStr + '<th>Residue</th><th>Number</th><th>SASA (&#8491;<sup>2</sup>)</th><th>Percent Out</th><th>In/Out</th></tr>';
-            for(var resid in ic.resid2area) {
+            for(let resid in ic.resid2area) {
                 //var idArray = resid.split('_');
-                var pos = resid.lastIndexOf('_');
-                var resn = resid.substr(pos + 1);
+                let  pos = resid.lastIndexOf('_');
+                let  resn = resid.substr(pos + 1);
 
-                var idArray = me.utilsCls.getIdArray(resid.substr(0, pos));
+                let  idArray = me.utilsCls.getIdArray(resid.substr(0, pos));
 
                 structureStr = (Object.keys(structureHash).length > 1) ? '<td>' + idArray[0] + '</td>' : '';
                 chainStr = (Object.keys(chainHash).length > 1) ? '<td>' + idArray[1] + '</td>' : '';
                 // outside: >= 50%; Inside: < 20%; middle: 35
-                var inoutStr = '', percent = '';
+                let  inoutStr = '', percent = '';
                 ic.resid2area[resid] = (ic.resid2area[resid] / scaleFactorSq).toFixed(2);
                 if(me.parasCls.residueArea.hasOwnProperty(resn)) {
-                    var middle = 35;
+                    let  middle = 35;
                     percent = parseInt(ic.resid2area[resid] / me.parasCls.residueArea[resn] * 100);
                     if(percent > 100) percent = 100;
 
@@ -223,19 +223,19 @@ class Surface {
             return;
         }
 
-        var verts = ps.vertices;
-        var faces = ps.faces;
+        let  verts = ps.vertices;
+        let  faces = ps.faces;
 
-        var colorFor2fofc = me.parasCls.thr('#00FFFF');
-        var colorForfofcPos = me.parasCls.thr('#00FF00');
+        let  colorFor2fofc = me.parasCls.thr('#00FFFF');
+        let  colorForfofcPos = me.parasCls.thr('#00FF00');
         //var colorForfofcNeg = me.parasCls.thr('#ff3300');
-        var colorForfofcNeg = me.parasCls.thr('#ff0000');
-        var colorForEm = me.parasCls.thr('#00FFFF');
+        let  colorForfofcNeg = me.parasCls.thr('#ff0000');
+        let  colorForEm = me.parasCls.thr('#00FFFF');
 
-        var colorForPhiPos = me.parasCls.thr('#0000FF');
-        var colorForPhiNeg = me.parasCls.thr('#FF0000');
+        let  colorForPhiPos = me.parasCls.thr('#0000FF');
+        let  colorForPhiNeg = me.parasCls.thr('#FF0000');
 
-        var rot, centerFrom, centerTo;
+        let  rot, centerFrom, centerTo;
         if((type == 11 || type == 12 || type == 13 || type == 14 ) && ic.rmsd_supr !== undefined && ic.rmsd_supr.rot !== undefined) {
           rot = ic.rmsd_supr.rot;
           centerFrom = ic.rmsd_supr.trans1;
@@ -243,19 +243,19 @@ class Surface {
         }
 
         // Direct "delphi" calculation uses the transformed PDB file, not the original PDB
-        var bTrans = (type == 11 || type == 12 || type == 13 || (type == 14 && ic.loadPhiFrom != 'delphi') )
+        let  bTrans = (type == 11 || type == 12 || type == 13 || (type == 14 && ic.loadPhiFrom != 'delphi') )
           && ic.rmsd_supr !== undefined && ic.rmsd_supr.rot !== undefined;
 
         //geo = new THREE.Geometry();
         geo = new THREE.BufferGeometry();
-        var verticeArray = [], colorArray = [], indexArray = [], color;
+        let  verticeArray = [], colorArray = [], indexArray = [], color;
 
         //var geoVertices = verts.map(function (v) {
-        var offset = 0;
-        for(var i = 0, il = verts.length; i < il; ++i, offset += 3) {
-            var v = verts[i];
+        let  offset = 0;
+        for(let i = 0, il = verts.length; i < il; ++i, offset += 3) {
+            let  v = verts[i];
 
-            var r = new THREE.Vector3(v.x, v.y, v.z);
+            let  r = new THREE.Vector3(v.x, v.y, v.z);
             if(bTrans) {
                r = thisClass.transformMemPro(r, rot, centerFrom, centerTo);
             }
@@ -279,9 +279,12 @@ class Surface {
             }
             else if(type == 21 || type == 22 || type == 23) { // potential on surface
                 color = v.color;
+
+                let  atomid = v.atomid;
+                ic.atoms[atomid].pot = v.pot; // unit kt/e (25.6 mV)
             }
             else {
-                var atomid = v.atomid;
+                let  atomid = v.atomid;
                 color = ic.atoms[atomid].color;
             }
 
@@ -296,10 +299,12 @@ class Surface {
         }
         //});
 
+        if(ic.icn3dui.bNode) return;
+
 /*
-        var geoFaces = faces.map(function (f) {
+        let  geoFaces = faces.map(function (f) {
             //return new THREE.Face3(f.a, f.b, f.c);
-            var vertexColors = ['a', 'b', 'c' ].map(function (d) {
+            let  vertexColors = ['a', 'b', 'c' ].map(function (d) {
                 if(type == 11) { // 2fofc
                     return colorFor2fofc;
                 }
@@ -316,7 +321,7 @@ class Surface {
                     return geoVertices[f[d]].color;
                 }
                 else {
-                    var atomid = geoVertices[f[d]].atomid;
+                    let  atomid = geoVertices[f[d]].atomid;
                     return ic.atoms[atomid].color;
                 }
             });
@@ -326,8 +331,8 @@ class Surface {
 */
 
         offset = 0;
-        for(var i = 0, il = faces.length; i < il; ++i, offset += 3) {
-            var f = faces[i];
+        for(let i = 0, il = faces.length; i < il; ++i, offset += 3) {
+            let  f = faces[i];
 
             //indexArray = indexArray.concat(f.a, f.b, f.c);
             indexArray[offset] = f.a;
@@ -335,7 +340,7 @@ class Surface {
             indexArray[offset + 2] = f.c;
         }
 
-        var nComp = 3;
+        let  nComp = 3;
         geo.setAttribute('position', new THREE.BufferAttribute(new Float32Array(verticeArray), nComp));
         geo.setAttribute('color', new THREE.BufferAttribute(new Float32Array(colorArray), nComp));
 
@@ -358,12 +363,12 @@ class Surface {
           //var normalArrayIn = geo.getAttribute('normal').array;
 
           // the following method minimize the number of objects by a factor of 3
-          var va2faces = {};
+          let  va2faces = {};
 
-          for(var i = 0, il = faces.length; i < il; ++i) {
-            var va = faces[i].a;
-            var vb = faces[i].b;
-            var vc = faces[i].c;
+          for(let i = 0, il = faces.length; i < il; ++i) {
+            let  va = faces[i].a;
+            let  vb = faces[i].b;
+            let  vc = faces[i].c;
 
             // It produces less objects using va as the key
             if(va2faces[va] === undefined) va2faces[va] = [];
@@ -372,22 +377,22 @@ class Surface {
             va2faces[va].push(vc);
           }
 
-          for(var va in va2faces) {
+          for(let va in va2faces) {
             //this.geometry = new THREE.Geometry();
             this.geometry = new THREE.BufferGeometry();
             //this.geometry.vertices = [];
             //this.geometry.faces = [];
-            var verticeArray = [], colorArray = [], indexArray = [], normalArray = [];
-            var offset = 0, offset2 = 0, offset3 = 0, offsetNorm = 0;
+            let  verticeArray = [], colorArray = [], indexArray = [], normalArray = [];
+            let  offset = 0, offset2 = 0, offset3 = 0, offsetNorm = 0;
 
-            var faceVertices = va2faces[va];
-            var sum = new THREE.Vector3(0,0,0);
-            var nComp = 3;
+            let  faceVertices = va2faces[va];
+            let  sum = new THREE.Vector3(0,0,0);
+            let  nComp = 3;
 
-            var verticesLen = 0;
-            for(var i = 0, il = faceVertices.length; i < il; i += 2) {
-                var vb = faceVertices[i];
-                var vc = faceVertices[i + 1];
+            let  verticesLen = 0;
+            for(let i = 0, il = faceVertices.length; i < il; i += 2) {
+                let  vb = faceVertices[i];
+                let  vc = faceVertices[i + 1];
 
                 //this.geometry.vertices.push(new THREE.Vector3(verts[va].x, verts[va].y, verts[va].z));
                 //this.geometry.vertices.push(new THREE.Vector3(verts[vb].x, verts[vb].y, verts[vb].z));
@@ -427,7 +432,7 @@ class Surface {
                 //normals.push(normalArrayIn[vb]);
                 //normals.push(normalArrayIn[vc]);
 
-                var initPos = i / 2 * 3;
+                let  initPos = i / 2 * 3;
                 //this.geometry.faces.push(new THREE.Face3(initPos, initPos + 1, initPos + 2, normals, vertexColors));
 
                 indexArray[offset3++] = initPos;
@@ -453,7 +458,7 @@ class Surface {
 
             this.geometry.type = 'Surface'; // to be recognized in vrml.js for 3D printing
 
-            var mesh = new THREE.Mesh(this.geometry, new THREE.MeshBasicMaterial({ //new THREE.MeshPhongMaterial({
+            let  mesh = new THREE.Mesh(this.geometry, new THREE.MeshBasicMaterial({ //new THREE.MeshPhongMaterial({
                 specular: ic.frac,
                 shininess: 0, //10, //30,
                 emissive: ic.emissive,
@@ -467,11 +472,11 @@ class Surface {
             //http://www.html5gamedevs.com/topic/7288-threejs-transparency-bug-or-limitation-or-what/
             //mesh.renderOrder = 0; // default 0
             //var sum = new THREE.Vector3(0,0,0);
-            //for(var i = 0, il = mesh.geometry.vertices.length; i < il; ++i) {
+            //for(let i = 0, il = mesh.geometry.vertices.length; i < il; ++i) {
             //    sum = sum.add(mesh.geometry.vertices[i]);
             //}
 
-            var realPos;
+            let  realPos;
             if(ic.bControlGl && !ic.icn3dui.bNode) {
                 //realPos = sum.multiplyScalar(1.0 / mesh.geometry.vertices.length).sub(ic.oriCenter).applyMatrix4(window.cam.matrixWorldInverse);
                 realPos = sum.multiplyScalar(1.0 / verticesLen).sub(ic.oriCenter).applyMatrix4(window.cam.matrixWorldInverse);
@@ -484,13 +489,13 @@ class Surface {
 
             mesh.onBeforeRender = function(renderer, scene, camera, geometry, material, group) {
                 //https://juejin.im/post/5a0872d4f265da43062a4156
-                var sum = new THREE.Vector3(0,0,0);
-                var vertices = geometry.getAttribute('position').array;
-                for(var i = 0, il = vertices.length; i < il; i += 3) {
+                let  sum = new THREE.Vector3(0,0,0);
+                let  vertices = geometry.getAttribute('position').array;
+                for(let i = 0, il = vertices.length; i < il; i += 3) {
                     sum = sum.add(new THREE.Vector3(vertices[i], vertices[i+1], vertices[i+2]));
                 }
 
-                var realPos;
+                let  realPos;
                 if(ic.bControlGl && !ic.icn3dui.bNode) {
                     //realPos = sum.multiplyScalar(1.0 / this.geometry.vertices.length).sub(ic.oriCenter).applyMatrix4(window.cam.matrixWorldInverse);
                     realPos = sum.multiplyScalar(3.0 / vertices.length).sub(ic.oriCenter).applyMatrix4(window.cam.matrixWorldInverse);
@@ -517,10 +522,10 @@ class Surface {
             else {
                 ic.prevSurfaces.push(mesh);
             }
-          } // for(var va
+          } // for(let va
         }
         else {
-            var mesh = new THREE.Mesh(geo, new THREE.MeshPhongMaterial({
+            let  mesh = new THREE.Mesh(geo, new THREE.MeshPhongMaterial({
                 specular: ic.frac,
                 shininess: 20, //10, //30,
                 emissive: ic.emissive,
@@ -562,15 +567,15 @@ class Surface {
         // do not add surface to raycasting objects for pk
     }
 
-    transformMemPro(inCoord, rot, centerFrom, centerTo, bOut) { var ic = this.icn3d, me = ic.icn3dui;
-        var coord = inCoord.clone();
+    transformMemPro(inCoord, rot, centerFrom, centerTo, bOut) { let  ic = this.icn3d, me = ic.icn3dui;
+        let  coord = inCoord.clone();
 
         coord.sub(centerFrom);
     if(bOut) console.log("sub coord: " + JSON.stringify(coord));
 
-        var x = coord.x*rot[0] + coord.y*rot[1] + coord.z*rot[2] + centerTo.x;
-        var y = coord.x*rot[3] + coord.y*rot[4] + coord.z*rot[5] + centerTo.y;
-        var z = coord.x*rot[6] + coord.y*rot[7] + coord.z*rot[8] + centerTo.z;
+        let  x = coord.x*rot[0] + coord.y*rot[1] + coord.z*rot[2] + centerTo.x;
+        let  y = coord.x*rot[3] + coord.y*rot[4] + coord.z*rot[5] + centerTo.y;
+        let  z = coord.x*rot[6] + coord.y*rot[7] + coord.z*rot[8] + centerTo.z;
 
         coord.x = x;
         coord.y = y;
@@ -580,15 +585,15 @@ class Surface {
         return coord;
     }
 
-    SetupSurface(data) { var ic = this.icn3d, me = ic.icn3dui;
+    SetupSurface(data) { let  ic = this.icn3d, me = ic.icn3dui;
         //var $3Dmol = $3Dmol || {};
 
         //var vol = $3Dmol.volume(data.extent);
-        var vol = undefined;
+        let  vol = undefined;
 
-        var threshbox = data.threshbox; // maximum possible boxsize, default 180
+        let  threshbox = data.threshbox; // maximum possible boxsize, default 180
 
-        var ps = new ProteinSurface(ic, threshbox);
+        let  ps = new ProteinSurface(ic, threshbox);
         ps.initparm(data.extent,(data.type === 1) ? false : true, data.bCalcArea, data.atomsToShow
           , data.header, data.data, data.matrix, data.isovalue, data.loadPhiFrom);
 
@@ -604,13 +609,13 @@ class Surface {
         }
 
         //ps.marchingcube(data.type);
-        var area_serial2area = ps.marchingcube();
+        let  area_serial2area = ps.marchingcube();
 
         ps.vpBits = null; // uint8 array of bitmasks
         ps.vpDistance = null; // floatarray of _squared_ distances
         ps.vpAtomID = null; // intarray
 
-        var result = ps.getFacesAndVertices(data.atomsToShow);
+        let  result = ps.getFacesAndVertices(data.atomsToShow);
         result.area = area_serial2area.area;
         result.serial2area = area_serial2area.serial2area;
         result.scaleFactor = area_serial2area.scaleFactor;
@@ -621,8 +626,8 @@ class Surface {
         return result;
     }
 
-    SetupMap(data) { var ic = this.icn3d, me = ic.icn3dui;
-        var ps = new ElectronMap(ic);
+    SetupMap(data) { let  ic = this.icn3d, me = ic.icn3dui;
+        let  ps = new ElectronMap(ic);
 
         ps.initparm(data.header, data.data, data.matrix, data.isovalue, data.center, data.maxdist,
           data.pmin, data.pmax, data.water, data.type, data.rmsd_supr, data.loadPhiFrom, data.icn3d);
@@ -637,7 +642,7 @@ class Surface {
         //ps.vpDistance = null; // floatarray of _squared_ distances
         ps.vpAtomID = null; // intarray
 
-        var result;
+        let  result;
 
         if(!data.header.bSurface) result = ps.getFacesAndVertices(data.allatoms, data.atomsToShow);
 

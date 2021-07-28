@@ -18,10 +18,10 @@ class SetStyle {
     }
 
     //For a list of atoms, set the hash with style as key and atom serial as value.
-    setStyle2Atoms(atoms) { var ic = this.icn3d, me = ic.icn3dui;
+    setStyle2Atoms(atoms) { let ic = this.icn3d, me = ic.icn3dui;
           ic.style2atoms = {};
 
-          for(var i in atoms) {
+          for(let i in atoms) {
             // do not show water in assemly
             //if(ic.bAssembly && ic.water.hasOwnProperty(i)) {
             //    ic.atoms[i].style = 'nothing';
@@ -42,14 +42,14 @@ class SetStyle {
 
     // set atom style when loading a structure
     //Set atom style according to the definition in options (options.secondaryStructure, etc).
-    setAtomStyleByOptions(options) { var ic = this.icn3d, me = ic.icn3dui;
+    setAtomStyleByOptions(options) { let ic = this.icn3d, me = ic.icn3dui;
         if(options === undefined) options = ic.opts;
 
-        var selectedAtoms;
+        let selectedAtoms;
 
         if (options.proteins !== undefined) {
             selectedAtoms = me.hashUtilsCls.intHash(ic.hAtoms, ic.proteins);
-            for(var i in selectedAtoms) {
+            for(let i in selectedAtoms) {
               ic.atoms[i].style = options.proteins.toLowerCase();
             }
         }
@@ -60,35 +60,35 @@ class SetStyle {
             //var sidec_calpha = me.hashUtilsCls.unionHash(ic.calphas, ic.sidec);
             //selectedAtoms = me.hashUtilsCls.intHash(ic.hAtoms, sidec_calpha);
 
-            for(var i in selectedAtoms) {
+            for(let i in selectedAtoms) {
               ic.atoms[i].style2 = options.sidec.toLowerCase();
             }
         }
 
         if (options.chemicals !== undefined) {
             selectedAtoms = me.hashUtilsCls.intHash(ic.hAtoms, ic.chemicals);
-            for(var i in selectedAtoms) {
+            for(let i in selectedAtoms) {
               ic.atoms[i].style = options.chemicals.toLowerCase();
             }
         }
 
         if (options.ions !== undefined) {
             selectedAtoms = me.hashUtilsCls.intHash(ic.hAtoms, ic.ions);
-            for(var i in selectedAtoms) {
+            for(let i in selectedAtoms) {
               ic.atoms[i].style = options.ions.toLowerCase();
             }
         }
 
         if (options.water !== undefined) {
             selectedAtoms = me.hashUtilsCls.intHash(ic.hAtoms, ic.water);
-            for(var i in selectedAtoms) {
+            for(let i in selectedAtoms) {
               ic.atoms[i].style = options.water.toLowerCase();
             }
         }
 
         if (options.nucleotides !== undefined) {
             selectedAtoms = me.hashUtilsCls.intHash(ic.hAtoms, ic.nucleotides);
-            for(var i in selectedAtoms) {
+            for(let i in selectedAtoms) {
               ic.atoms[i].style = options.nucleotides.toLowerCase();
             }
         }
@@ -97,15 +97,15 @@ class SetStyle {
     setBackground(color) {var ic = this.icn3d, me = ic.icn3dui;
        ic.setOptionCls.setOption('background', color);
        ic.icn3dui.htmlCls.clickMenuCls.setLogCmd('set background ' + color, true);
-       var titleColor =(color == 'black' || color == 'transparent') ? ic.icn3dui.htmlCls.GREYD : 'black';
+       let titleColor =(color == 'black' || color == 'transparent') ? ic.icn3dui.htmlCls.GREYD : 'black';
        $("#" + ic.pre + "title").css("color", titleColor);
        $("#" + ic.pre + "titlelink").css("color", titleColor);
     }
 
     //Save the command history to session storage so that the viewer can show the previous state when refreshing the same page.
     saveCommandsToSession() {var ic = this.icn3d, me = ic.icn3dui;
-        var dataStr = ic.commands.join('\n');
-        var data = decodeURIComponent(dataStr);
+        let dataStr = ic.commands.join('\n');
+        let data = decodeURIComponent(dataStr);
         sessionStorage.setItem('commands', data);
     }
 
@@ -131,7 +131,7 @@ class SetStyle {
         //https://www.khronos.org/webgl/wiki/HandlingContextLost
         // 1 add a lost context handler and tell it to prevent the default behavior
 
-        var canvas = $("#" + ic.pre + "canvas")[0];
+        let canvas = $("#" + ic.pre + "canvas")[0];
         canvas.addEventListener("webglcontextlost", function(event) {
             event.preventDefault();
         }, false);

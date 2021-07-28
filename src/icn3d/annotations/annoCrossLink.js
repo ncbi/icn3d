@@ -9,8 +9,8 @@ class AnnoCrossLink {
         this.icn3d = icn3d;
     }
 
-    showCrosslink(chnid, chnidBase) { var ic = this.icn3d, me = ic.icn3dui;
-        var thisClass = this;
+    showCrosslink(chnid, chnidBase) { let ic = this.icn3d, me = ic.icn3dui;
+        let thisClass = this;
         if(ic.clbondpnts === undefined) {
             // didn't finish loading atom data yet
             setTimeout(function(){
@@ -21,22 +21,22 @@ class AnnoCrossLink {
             this.showCrosslink_base(chnid, chnidBase);
         }
     }
-    showCrosslink_base(chnid, chnidBase) { var ic = this.icn3d, me = ic.icn3dui;
-        var chainid = chnidBase;
-        var resid2resids = {}
-        var structure = chainid.substr(0, chainid.indexOf('_'));
-        var clbondArray = ic.clbondpnts[structure];
+    showCrosslink_base(chnid, chnidBase) { let ic = this.icn3d, me = ic.icn3dui;
+        let chainid = chnidBase;
+        let resid2resids = {}
+        let structure = chainid.substr(0, chainid.indexOf('_'));
+        let clbondArray = ic.clbondpnts[structure];
         if(clbondArray === undefined) {
             $("#" + ic.pre + "dt_crosslink_" + chnid).html('');
             $("#" + ic.pre + "ov_crosslink_" + chnid).html('');
             $("#" + ic.pre + "tt_crosslink_" + chnid).html('');
             return;
         }
-        for(var i = 0, il = clbondArray.length; i < il; i = i + 2) {
-            var resid1 = clbondArray[i]; // chemical
-            var resid2 = clbondArray[i+1]; // protein or chemical
-            var chainid1 = resid1.substr(0, resid1.lastIndexOf('_'));
-            var chainid2 = resid2.substr(0, resid2.lastIndexOf('_'));
+        for(let i = 0, il = clbondArray.length; i < il; i = i + 2) {
+            let resid1 = clbondArray[i]; // chemical
+            let resid2 = clbondArray[i+1]; // protein or chemical
+            let chainid1 = resid1.substr(0, resid1.lastIndexOf('_'));
+            let chainid2 = resid2.substr(0, resid2.lastIndexOf('_'));
             //if(chainid === chainid1) {
             //    if(resid2resids[resid1] === undefined) resid2resids[resid1] = [];
             //    resid2resids[resid1].push(resid2);
@@ -46,8 +46,8 @@ class AnnoCrossLink {
                 resid2resids[resid2].push(resid1);
             }
         }
-        var residueArray = Object.keys(resid2resids);
-        var title = "Cross-Linkages";
+        let residueArray = Object.keys(resid2resids);
+        let title = "Cross-Linkages";
         ic.annoCddSiteCls.showAnnoType(chnid, chnidBase, 'crosslink', title, residueArray, resid2resids);
     }
 

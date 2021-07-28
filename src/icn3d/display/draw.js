@@ -19,7 +19,7 @@ class Draw {
     }
 
     //Draw the 3D structure. It rebuilds scene, applies previous color, applies the transformation, and renders the image.
-    draw() { var ic = this.icn3d, me = ic.icn3dui;
+    draw() { let ic = this.icn3d, me = ic.icn3dui;
         if(ic.bRender && (!ic.hAtoms || Object.keys(ic.hAtoms) == 0)) ic.hAtoms = me.hashUtilsCls.cloneHash(ic.atoms);
 
         ic.sceneCls.rebuildScene();
@@ -41,7 +41,7 @@ class Draw {
         }
 
         // show the hAtoms
-        var hAtomsLen = (ic.hAtoms !== undefined) ? Object.keys(ic.hAtoms).length : 0;
+        let hAtomsLen = (ic.hAtoms !== undefined) ? Object.keys(ic.hAtoms).length : 0;
 
         if(hAtomsLen > 0 && hAtomsLen < Object.keys(ic.dAtoms).length) {
             ic.hlObjectsCls.removeHlObjects();
@@ -63,10 +63,10 @@ class Draw {
     }
 
     //Update the rotation, translation, and zooming before rendering. Typically used before the function render().
-    applyTransformation(_zoomFactor, mouseChange, quaternion) { var ic = this.icn3d, me = ic.icn3dui;
+    applyTransformation(_zoomFactor, mouseChange, quaternion) { let ic = this.icn3d, me = ic.icn3dui;
         if(ic.icn3dui.bNode) return;
 
-        var para = {};
+        let para = {};
         para.update = false;
 
         // zoom
@@ -89,14 +89,14 @@ class Draw {
     }
 
     //Render the scene and objects into pixels.
-    render() { var ic = this.icn3d, me = ic.icn3dui;
+    render() { let ic = this.icn3d, me = ic.icn3dui;
         if(ic.icn3dui.bNode) return;
 
-        var cam = (ic.bControlGl && !ic.icn3dui.bNode) ? window.cam : ic.cam;
+        let cam = (ic.bControlGl && !ic.icn3dui.bNode) ? window.cam : ic.cam;
 
     //    if(ic.bShade) {
         if(ic.directionalLight) {
-            var quaternion = new THREE.Quaternion();
+            let quaternion = new THREE.Quaternion();
             quaternion.setFromUnitVectors( new THREE.Vector3(0, 0, ic.cam_z).normalize(), cam.position.clone().normalize() );
 
             ic.directionalLight.position.copy(ic.lightPos.clone().applyQuaternion( quaternion ).normalize());

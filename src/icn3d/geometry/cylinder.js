@@ -19,10 +19,10 @@ class Cylinder {
     }
 
     // modified from iview (http://istar.cse.cuhk.edu.hk/iview/)
-    createCylinder(p0, p1, radius, color, bHighlight, color2, bPicking, bGlycan) { var ic = this.icn3d, me = ic.icn3dui;
+    createCylinder(p0, p1, radius, color, bHighlight, color2, bPicking, bGlycan) { let ic = this.icn3d, me = ic.icn3dui;
         if(ic.icn3dui.bNode) return;
 
-        var mesh;
+        let mesh;
         if(bHighlight === 1) {
             mesh = new THREE.Mesh(ic.cylinderGeometryOutline, ic.matShader);
 
@@ -115,10 +115,10 @@ class Cylinder {
         }
     }
 
-    createCylinder_base(p0, p1, radius, color, bHighlight, color2, bPicking) { var ic = this.icn3d, me = ic.icn3dui;
+    createCylinder_base(p0, p1, radius, color, bHighlight, color2, bPicking) { let ic = this.icn3d, me = ic.icn3dui;
         if(ic.icn3dui.bNode) return;
 
-        var mesh = new THREE.Mesh(ic.cylinderGeometry, new THREE.MeshPhongMaterial(
+        let mesh = new THREE.Mesh(ic.cylinderGeometry, new THREE.MeshPhongMaterial(
             { specular: ic.frac, shininess: ic.shininess, emissive: ic.emissive, color: color }));
 
         mesh.position.copy(p0).add(p1).multiplyScalar(0.5);
@@ -136,15 +136,15 @@ class Cylinder {
     //Create cylinders for alpha helices and ribbons for beta strands in "atoms".
     //"radius" is radius of the cylinders. "bHighlight" is an option to draw the highlight for these atoms.
     //The highlight could be outlines with bHighlight=1 and 3D objects with bHighlight=2 as mentioned above.
-    createCylinderHelix(atoms, radius, bHighlight) { var ic = this.icn3d, me = ic.icn3dui;
+    createCylinderHelix(atoms, radius, bHighlight) { let ic = this.icn3d, me = ic.icn3dui;
         if(ic.icn3dui.bNode) return;
 
-        var start = null;
-        var currentChain, currentResi;
-        var others = {}, beta = {};
-        var i;
+        let start = null;
+        let currentChain, currentResi;
+        let others = {}, beta = {};
+        let i;
         for (i in atoms) {
-            var atom = atoms[i];
+            let atom = atoms[i];
             if (atom.het) continue;
             if ((atom.ss !== 'helix' && atom.ss !== 'sheet') || atom.ssend || atom.ssbegin) others[atom.serial] = atom;
             if (atom.ss === 'sheet') beta[atom.serial] = atom;
@@ -187,15 +187,15 @@ class Cylinder {
     //"radius" is radius of the small cylinders. "bLine" is an option to show the cylinders as lines.
     //"bHighlight" is an option to draw the highlight for these atoms. The highlight could be outlines
     //with bHighlight=1 and 3D objects with bHighlight=2 as mentioned above.
-    createCylinderCurve(atoms, atomNameArray, radius, bLines, bHighlight) { var ic = this.icn3d, me = ic.icn3dui;
+    createCylinderCurve(atoms, atomNameArray, radius, bLines, bHighlight) { let ic = this.icn3d, me = ic.icn3dui;
         if(ic.icn3dui.bNode) return;
 
-        var start = null;
-        var currentChain, currentResi;
-        var i;
-        var pnts = [], colors = [], radii = [];
+        let start = null;
+        let currentChain, currentResi;
+        let i;
+        let pnts = [], colors = [], radii = [];
 
-        var atom, maxDistance = 8.0; // max residue-residue (or nucleitide-nucleitide) distance allowed
+        let atom, maxDistance = 8.0; // max residue-residue (or nucleitide-nucleitide) distance allowed
 
         for (i in atoms) {
             atom = atoms[i];
@@ -208,11 +208,11 @@ class Cylinder {
                 && Math.abs(start.coord.x - atom.coord.x) < maxDistance
                 && Math.abs(start.coord.y - atom.coord.y) < maxDistance
                 && Math.abs(start.coord.z - atom.coord.z) < maxDistance ) {
-                var middleCoord = start.coord.clone().add(atom.coord).multiplyScalar(0.5);
+                let middleCoord = start.coord.clone().add(atom.coord).multiplyScalar(0.5);
 
                 if(!bHighlight) {
                     if(bLines) {
-                        var line = ic.lineCls.createSingleLine( start.coord, middleCoord, start.color, false);
+                        let line = ic.lineCls.createSingleLine( start.coord, middleCoord, start.color, false);
                         ic.mdl.add(line);
                         ic.objects.push(line);
                         line = ic.lineCls.createSingleLine( middleCoord, atom.coord, atom.color, false);
@@ -245,10 +245,10 @@ class Cylinder {
             && Math.abs(start.coord.x - atom.coord.x) < maxDistance
             && Math.abs(start.coord.y - atom.coord.y) < maxDistance
             && Math.abs(start.coord.z - atom.coord.z) < maxDistance ) {
-            var middleCoord = start.coord.add(atom.coord).multiplyScalar(0.5);
+            let middleCoord = start.coord.add(atom.coord).multiplyScalar(0.5);
             if(!bHighlight) {
                 if(bLines) {
-                    var line = ic.lineCls.createSingleLine( start.coord, middleCoord, start.color, false);
+                    let line = ic.lineCls.createSingleLine( start.coord, middleCoord, start.color, false);
                     ic.mdl.add(line);
                     ic.objects.push(line);
                     line = ic.lineCls.createSingleLine( middleCoord, atom.coord, atom.color, false);

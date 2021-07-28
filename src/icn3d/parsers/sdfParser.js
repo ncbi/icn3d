@@ -17,10 +17,10 @@ class SdfParser {
 
     //Ajax call was used to get the atom data from the PubChem "cid". This function was
     //deferred so that it can be chained together with other deferred functions for sequential execution.
-    downloadCid(cid) { var ic = this.icn3d, me = ic.icn3dui;
-        var thisClass = this;
+    downloadCid(cid) { let  ic = this.icn3d, me = ic.icn3dui;
+        let  thisClass = this;
 
-        var uri = "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/cid/" + cid + "/record/SDF/?record_type=3d&response_type=display";
+        let  uri = "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/cid/" + cid + "/record/SDF/?record_type=3d&response_type=display";
 
         ic.ParserUtilsCls.setYourNote('PubChem CID ' + cid + ' in iCn3D');
 
@@ -39,7 +39,7 @@ class SdfParser {
               //ic.ParserUtilsCls.hideLoading();
           },
           success: function(data) {
-            var bResult = thisClass.loadSdfAtomData(data, cid);
+            let  bResult = thisClass.loadSdfAtomData(data, cid);
 
 //            ic.opts['pk'] = 'atom';
 //            ic.opts['chemicals'] = 'ball and stick';
@@ -77,8 +77,8 @@ class SdfParser {
         });
     }
 
-    loadSdfData(data) { var ic = this.icn3d, me = ic.icn3dui;
-        var bResult = this.loadSdfAtomData(data);
+    loadSdfData(data) { let  ic = this.icn3d, me = ic.icn3dui;
+        let  bResult = this.loadSdfAtomData(data);
 
         if(ic.icn3dui.cfg.align === undefined && Object.keys(ic.structures).length == 1) {
             $("#" + ic.pre + "alternateWrapper").hide();
@@ -101,51 +101,51 @@ class SdfParser {
 
     //Atom "data" from SDF file was parsed to set up parameters for the 3D viewer.
     //The deferred parameter was resolved after the parsing so that other javascript code can be executed.
-    loadSdfAtomData(data, cid) { var ic = this.icn3d, me = ic.icn3dui;
-        var lines = data.split(/\r?\n|\r/);
+    loadSdfAtomData(data, cid) { let  ic = this.icn3d, me = ic.icn3dui;
+        let  lines = data.split(/\r?\n|\r/);
         if(lines.length < 4) return false;
 
         ic.init();
 
-        var structure = cid ? cid : 1;
-        var chain = 'A';
-        var resi = 1;
-        var resn = 'LIG';
+        let  structure = cid ? cid : 1;
+        let  chain = 'A';
+        let  resi = 1;
+        let  resn = 'LIG';
 
-        var moleculeNum = structure;
-        var chainNum = structure + '_' + chain;
-        var residueNum = chainNum + '_' + resi;
+        let  moleculeNum = structure;
+        let  chainNum = structure + '_' + chain;
+        let  residueNum = chainNum + '_' + resi;
 
-        var atomCount = parseInt(lines[3].substr(0, 3));
+        let  atomCount = parseInt(lines[3].substr(0, 3));
         if(isNaN(atomCount) || atomCount <= 0) return false;
 
-        var bondCount = parseInt(lines[3].substr(3, 3));
-        var offset = 4;
+        let  bondCount = parseInt(lines[3].substr(3, 3));
+        let  offset = 4;
         if(lines.length < offset + atomCount + bondCount) return false;
 
-        var start = 0;
-        var end = atomCount;
-        var i, line;
+        let  start = 0;
+        let  end = atomCount;
+        let  i, line;
 
-        var atomid2serial = {}
-        var HAtomids = {}
+        let  atomid2serial = {}
+        let  HAtomids = {}
 
-        var AtomHash = {}
-        var serial = 1;
+        let  AtomHash = {}
+        let  serial = 1;
         for(i = start; i < end; i++) {
             line = lines[offset];
             offset++;
 
             //var name = line.substr(31, 3).replace(/ /g, "");
-            var name = line.substr(31, 3).trim();
+            let  name = line.substr(31, 3).trim();
 
             //if(name !== 'H') {
-                var x = parseFloat(line.substr(0, 10));
-                var y = parseFloat(line.substr(10, 10));
-                var z = parseFloat(line.substr(20, 10));
-                var coord = new THREE.Vector3(x, y, z);
+                let  x = parseFloat(line.substr(0, 10));
+                let  y = parseFloat(line.substr(10, 10));
+                let  z = parseFloat(line.substr(20, 10));
+                let  coord = new THREE.Vector3(x, y, z);
 
-                var atomDetails = {
+                let  atomDetails = {
                     het: true,              // optional, used to determine chemicals, water, ions, etc
                     serial: serial,         // required, unique atom id
                     name: name,             // required, atom name
@@ -186,7 +186,7 @@ class SdfParser {
 
         if(ic.chainsSeq[chainNum] === undefined) ic.chainsSeq[chainNum] = [];
 
-        var resObject = {}
+        let  resObject = {}
         resObject.resi = resi;
         resObject.name = resn;
 
@@ -195,14 +195,14 @@ class SdfParser {
         for(i = 0; i < bondCount; i++) {
             line = lines[offset];
             offset++;
-            var fromAtomid = parseInt(line.substr(0, 3)) - 1 + start;
-            var toAtomid = parseInt(line.substr(3, 3)) - 1 + start;
+            let  fromAtomid = parseInt(line.substr(0, 3)) - 1 + start;
+            let  toAtomid = parseInt(line.substr(3, 3)) - 1 + start;
             //var order = parseInt(line.substr(6, 3));
-            var order = line.substr(6, 3).trim();
+            let  order = line.substr(6, 3).trim();
 
             //if(!HAtomids.hasOwnProperty(fromAtomid) && !HAtomids.hasOwnProperty(toAtomid)) {
-                var from = atomid2serial[fromAtomid];
-                var to = atomid2serial[toAtomid];
+                let  from = atomid2serial[fromAtomid];
+                let  to = atomid2serial[toAtomid];
 
                 ic.atoms[from].bonds.push(to);
                 ic.atoms[from].bondOrder.push(order);
@@ -222,8 +222,8 @@ class SdfParser {
         }
 
         // read partial charge
-        var bCrg = false;
-        for(var il = lines.length; offset < il; ++offset) {
+        let  bCrg = false;
+        for(let il = lines.length; offset < il; ++offset) {
             if(lines[offset].indexOf('PARTIAL_CHARGES') != -1) {
                 bCrg = true;
                 break;
@@ -235,14 +235,14 @@ class SdfParser {
 
         if(bCrg) {
             ++offset;
-            var crgCnt = parseInt(lines[offset]);
+            let  crgCnt = parseInt(lines[offset]);
 
             ++offset;
             for(i = 0; i < crgCnt; ++i, ++offset) {
                 line = lines[offset];
-                var serial_charge = line.split(' ');
-                var sTmp = parseInt(serial_charge[0]);
-                var crg = parseFloat(serial_charge[1]);
+                let  serial_charge = line.split(' ');
+                let  sTmp = parseInt(serial_charge[0]);
+                let  crg = parseFloat(serial_charge[1]);
                 ic.atoms[sTmp].crg = crg;
             }
         }

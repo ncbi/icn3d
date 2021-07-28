@@ -24,19 +24,19 @@ class ApplyDisplay {
     }
 
     //Apply style and label options to a certain set of atoms.
-    applyDisplayOptions(options, atoms, bHighlight) { var ic = this.icn3d, me = ic.icn3dui;
+    applyDisplayOptions(options, atoms, bHighlight) { let ic = this.icn3d, me = ic.icn3dui;
         if(options === undefined) options = ic.opts;
 
         // get parameters from cookies
         if(!me.bNode && me.htmlCls.setHtmlCls.getCookie('lineRadius') != '') {
-            var lineRadius = parseFloat(me.htmlCls.setHtmlCls.getCookie('lineRadius'));
-            var coilWidth = parseFloat(me.htmlCls.setHtmlCls.getCookie('coilWidth'));
-            var cylinderRadius = parseFloat(me.htmlCls.setHtmlCls.getCookie('cylinderRadius'));
-            var traceRadius = parseFloat(me.htmlCls.setHtmlCls.getCookie('traceRadius'));
-            var dotSphereScale = parseFloat(me.htmlCls.setHtmlCls.getCookie('dotSphereScale'));
-            var ribbonthickness = parseFloat(me.htmlCls.setHtmlCls.getCookie('ribbonthickness'));
-            var helixSheetWidth = parseFloat(me.htmlCls.setHtmlCls.getCookie('helixSheetWidth'));
-            var nucleicAcidWidth = parseFloat(me.htmlCls.setHtmlCls.getCookie('nucleicAcidWidth'));
+            let lineRadius = parseFloat(me.htmlCls.setHtmlCls.getCookie('lineRadius'));
+            let coilWidth = parseFloat(me.htmlCls.setHtmlCls.getCookie('coilWidth'));
+            let cylinderRadius = parseFloat(me.htmlCls.setHtmlCls.getCookie('cylinderRadius'));
+            let traceRadius = parseFloat(me.htmlCls.setHtmlCls.getCookie('traceRadius'));
+            let dotSphereScale = parseFloat(me.htmlCls.setHtmlCls.getCookie('dotSphereScale'));
+            let ribbonthickness = parseFloat(me.htmlCls.setHtmlCls.getCookie('ribbonthickness'));
+            let helixSheetWidth = parseFloat(me.htmlCls.setHtmlCls.getCookie('helixSheetWidth'));
+            let nucleicAcidWidth = parseFloat(me.htmlCls.setHtmlCls.getCookie('nucleicAcidWidth'));
 
             if(ic.lineRadius != lineRadius || ic.coilWidth != coilWidth || ic.cylinderRadius != cylinderRadius || ic.traceRadius != traceRadius || ic.dotSphereScale != dotSphereScale || ic.ribbonthickness != ribbonthickness || ic.helixSheetWidth != helixSheetWidth || ic.nucleicAcidWidth != nucleicAcidWidth) {
                 me.htmlCls.clickMenuCls.setLogCmd('set thickness | linerad ' + lineRadius + ' | coilrad ' + coilWidth + ' | stickrad ' + cylinderRadius + ' | tracerad ' + traceRadius + ' | ribbonthick ' + ribbonthickness + ' | proteinwidth ' + helixSheetWidth + ' | nucleotidewidth ' + nucleicAcidWidth  + ' | ballscale ' + dotSphereScale, true);
@@ -52,10 +52,10 @@ class ApplyDisplay {
             ic.nucleicAcidWidth = nucleicAcidWidth;
         }
 
-        var residueHash = {};
-        var singletonResidueHash = {};
-        var atomsObj = {};
-        var residueid;
+        let residueHash = {};
+        let singletonResidueHash = {};
+        let atomsObj = {};
+        let residueid;
 
         if(bHighlight === 1 && Object.keys(atoms).length < Object.keys(ic.atoms).length) {
             atomsObj = me.hashUtilsCls.hash2Atoms(atoms, ic.atoms);
@@ -63,18 +63,18 @@ class ApplyDisplay {
             residueHash = ic.firstAtomObjCls.getResiduesFromAtoms(atoms, ic.atoms);
 
             // find singleton residues
-            for(var i in residueHash) {
+            for(let i in residueHash) {
                 residueid = i;
 
-                var last = i.lastIndexOf('_');
-                var base = i.substr(0, last + 1);
-                var lastResiStr = i.substr(last + 1);
+                let last = i.lastIndexOf('_');
+                let base = i.substr(0, last + 1);
+                let lastResiStr = i.substr(last + 1);
                 if(isNaN(lastResiStr)) continue;
 
-                var lastResi = parseInt(lastResiStr);
+                let lastResi = parseInt(lastResiStr);
 
-                var prevResidueid = base + (lastResi - 1).toString();
-                var nextResidueid = base + (lastResi + 1).toString();
+                let prevResidueid = base + (lastResi - 1).toString();
+                let nextResidueid = base + (lastResi + 1).toString();
 
                 if(!residueHash.hasOwnProperty(prevResidueid) && !residueHash.hasOwnProperty(prevResidueid)) {
                     singletonResidueHash[i] = 1;
@@ -85,29 +85,29 @@ class ApplyDisplay {
             if(Object.keys(atomsObj).length === 1 && Object.keys(ic.residues[residueid]).length > 1
                   && atomsObj[Object.keys(atomsObj)[0]].style !== 'sphere' && atomsObj[Object.keys(atomsObj)[0]].style !== 'dot') {
                 if(ic.bCid === undefined || !ic.bCid) {
-                    for(var i in atomsObj) {
-                        var atom = atomsObj[i];
-                        var scale = 1.0;
+                    for(let i in atomsObj) {
+                        let atom = atomsObj[i];
+                        let scale = 1.0;
                         ic.boxCls.createBox(atom, undefined, undefined, scale, undefined, bHighlight);
                     }
                 }
             }
             else {
                 // if only one residue, add the next residue in order to show highlight
-                for(var residueid in singletonResidueHash) {
+                for(let residueid in singletonResidueHash) {
                     // get calpha
-                    var calpha = ic.firstAtomObjCls.getFirstCalphaAtomObj(ic.residues[residueid]);
-                    var atom = calpha;
+                    let calpha = ic.firstAtomObjCls.getFirstCalphaAtomObj(ic.residues[residueid]);
+                    let atom = calpha;
 
-                    var prevResidueid = atom.structure + '_' + atom.chain + '_' + (parseInt(atom.resi) - 1).toString();
-                    var nextResidueid = atom.structure + '_' + atom.chain + '_' + (parseInt(atom.resi) + 1).toString();
+                    let prevResidueid = atom.structure + '_' + atom.chain + '_' + (parseInt(atom.resi) - 1).toString();
+                    let nextResidueid = atom.structure + '_' + atom.chain + '_' + (parseInt(atom.resi) + 1).toString();
 
                     //ribbon, strand, cylinder and plate, nucleotide cartoon, o3 trace, schematic, c alpha trace, b factor tube, lines, stick, ball and stick, sphere, dot
 
                     if(atom.style === 'cylinder and plate' && atom.ss === 'helix') { // no way to highlight part of cylinder
-                        for(var i in ic.residues[residueid]) {
-                            var atom = ic.atoms[i];
-                            var scale = 1.0;
+                        for(let i in ic.residues[residueid]) {
+                            let atom = ic.atoms[i];
+                            let scale = 1.0;
                             ic.boxCls.createBox(atom, undefined, undefined, scale, undefined, bHighlight);
                         }
                     }
@@ -115,20 +115,20 @@ class ApplyDisplay {
                         // do not add extra residue if the side chain is shown
                         if(calpha !== undefined && calpha.style2 !== undefined && calpha.style2 !== 'nothing') continue;
 
-                        var bAddResidue = false;
+                        let bAddResidue = false;
                         // add the next residue with same style
                         if(!isNaN(atom.resi) && !bAddResidue && ic.residues.hasOwnProperty(nextResidueid)) {
-                            var index2 = Object.keys(ic.residues[nextResidueid])[0];
-                            var atom2 = me.hashUtilsCls.hash2Atoms(ic.residues[nextResidueid], ic.atoms)[index2];
+                            let index2 = Object.keys(ic.residues[nextResidueid])[0];
+                            let atom2 = me.hashUtilsCls.hash2Atoms(ic.residues[nextResidueid], ic.atoms)[index2];
                             if( (atom.style === atom2.style && !atom2.ssbegin) || atom2.ssbegin) {
-                                var residueAtoms = ic.residues[nextResidueid];
+                                let residueAtoms = ic.residues[nextResidueid];
                                 atoms = me.hashUtilsCls.unionHash(atoms, residueAtoms);
 
                                 bAddResidue = true;
 
                                 // record the highlight style for the artificial residue
                                 if(atom2.ssbegin) {
-                                    for(var i in residueAtoms) {
+                                    for(let i in residueAtoms) {
                                         ic.atoms[i].notshow = true;
                                     }
                                 }
@@ -137,8 +137,8 @@ class ApplyDisplay {
 
                         // add the previous residue with same style
                         if(!isNaN(atom.resi) && !bAddResidue && ic.residues.hasOwnProperty(prevResidueid)) {
-                            var index2 = Object.keys(ic.residues[prevResidueid])[0];
-                            var atom2 = me.hashUtilsCls.hash2Atoms(ic.residues[prevResidueid], ic.atoms)[index2];
+                            let index2 = Object.keys(ic.residues[prevResidueid])[0];
+                            let atom2 = me.hashUtilsCls.hash2Atoms(ic.residues[prevResidueid], ic.atoms)[index2];
                             if(atom.style === atom2.style) {
                                 atoms = me.hashUtilsCls.unionHash(atoms, ic.residues[prevResidueid]);
 
@@ -150,11 +150,11 @@ class ApplyDisplay {
                         // do not add extra residue if the side chain is shown
                         if(calpha !== undefined && calpha.style2 !== undefined && calpha.style2 !== 'nothing') continue;
 
-                        var bAddResidue = false;
+                        let bAddResidue = false;
                         // add the next residue with same style
                         if(!isNaN(atom.resi) && !bAddResidue && ic.residues.hasOwnProperty(nextResidueid)) {
-                            var index2 = Object.keys(ic.residues[nextResidueid])[0];
-                            var atom2 = me.hashUtilsCls.hash2Atoms(ic.residues[nextResidueid], ic.atoms)[index2];
+                            let index2 = Object.keys(ic.residues[nextResidueid])[0];
+                            let atom2 = me.hashUtilsCls.hash2Atoms(ic.residues[nextResidueid], ic.atoms)[index2];
                             //if(atom.style === atom2.style && !atom2.ssbegin) {
                                 atoms = me.hashUtilsCls.unionHash(atoms, ic.residues[nextResidueid]);
 
@@ -176,30 +176,30 @@ class ApplyDisplay {
             ic.bAllAtoms = (Object.keys(atoms).length === Object.keys(ic.atoms).length);
         }
 
-        var chemicalSchematicRadius = ic.cylinderRadius * 0.5;
+        let chemicalSchematicRadius = ic.cylinderRadius * 0.5;
 
         // remove schematic labels
         //if(ic.labels !== undefined) ic.labels['schematic'] = undefined;
         if(ic.labels !== undefined) delete ic.labels['schematic'];
 
-        var bOnlySideChains = false;
+        let bOnlySideChains = false;
 
         if(bHighlight) {
-            var residueHashCalpha = ic.firstAtomObjCls.getResiduesFromCalphaAtoms(ic.hAtoms);
+            let residueHashCalpha = ic.firstAtomObjCls.getResiduesFromCalphaAtoms(ic.hAtoms);
 
-            var proteinAtoms = me.hashUtilsCls.intHash(ic.hAtoms, ic.proteins);
-            var residueHash = ic.firstAtomObjCls.getResiduesFromAtoms(proteinAtoms);
+            let proteinAtoms = me.hashUtilsCls.intHash(ic.hAtoms, ic.proteins);
+            let residueHash = ic.firstAtomObjCls.getResiduesFromAtoms(proteinAtoms);
 
             if(Object.keys(residueHash) > Object.keys(residueHashCalpha)) { // some residues have only side chains
                 bOnlySideChains = true;
             }
         }
 
-        for(var style in ic.style2atoms) {
+        for(let style in ic.style2atoms) {
           // 14 styles: ribbon, strand, cylinder and plate, nucleotide cartoon, o3 trace, schematic, c alpha trace, b factor tube, lines, stick, ball and stick, sphere, dot, nothing
-          var atomHash = ic.style2atoms[style];
+          let atomHash = ic.style2atoms[style];
           //var bPhosphorusOnly = me.utilsCls.isCalphaPhosOnly(me.hashUtilsCls.hash2Atoms(atomHash), "O3'", "O3*") || me.utilsCls.isCalphaPhosOnly(me.hashUtilsCls.hash2Atoms(atomHash), "P");
-          var bPhosphorusOnly = me.utilsCls.isCalphaPhosOnly(me.hashUtilsCls.hash2Atoms(atomHash, ic.atoms));
+          let bPhosphorusOnly = me.utilsCls.isCalphaPhosOnly(me.hashUtilsCls.hash2Atoms(atomHash, ic.atoms));
 
           //if(style === 'ribbon') {
           if(style === 'ribbon' && (!bHighlight || (bHighlight && !bOnlySideChains))) {
@@ -233,7 +233,7 @@ class ApplyDisplay {
           }
           else if(style === 'schematic') {
             // either proteins, nucleotides, or chemicals
-            var firstAtom = ic.firstAtomObjCls.getFirstAtomObj(atomHash);
+            let firstAtom = ic.firstAtomObjCls.getFirstAtomObj(atomHash);
 
             //if(firstAtom.het) { // chemicals
             if(ic.chemicals.hasOwnProperty(firstAtom.serial)) { // chemicals
@@ -306,11 +306,11 @@ class ApplyDisplay {
         }
     }
 
-    selectMainChainSubset(atoms) { var ic = this.icn3d, me = ic.icn3dui;
-        var nuclMainArray = ["C1'", "C1*", "C2'", "C2*", "C3'", "C3*", "C4'", "C4*", "C5'", "C5*", "O3'", "O3*", "O4'", "O4*", "O5'", "O5*", "P", "OP1", "O1P", "OP2", "O2P"];
+    selectMainChainSubset(atoms) { let ic = this.icn3d, me = ic.icn3dui;
+        let nuclMainArray = ["C1'", "C1*", "C2'", "C2*", "C3'", "C3*", "C4'", "C4*", "C5'", "C5*", "O3'", "O3*", "O4'", "O4*", "O5'", "O5*", "P", "OP1", "O1P", "OP2", "O2P"];
 
-        var atomHash = {}
-        for(var i in atoms) {
+        let atomHash = {}
+        for(let i in atoms) {
             if( (ic.proteins.hasOwnProperty(i) && (ic.atoms[i].name === "N" || ic.atoms[i].name === "C" || ic.atoms[i].name === "O"
               || (ic.atoms[i].name === "CA" && ic.atoms[i].elem === "C") ) )
               || (ic.nucleotides.hasOwnProperty(i) && nuclMainArray.indexOf(ic.atoms[i].name) !== -1) ) {

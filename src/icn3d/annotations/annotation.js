@@ -22,17 +22,17 @@ class Annotation {
         this.icn3d = icn3d;
     }
 
-    hideAllAnno() { var ic = this.icn3d, me = ic.icn3dui;
+    hideAllAnno() { let ic = this.icn3d, me = ic.icn3dui;
             this.hideAllAnnoBase();
             $("[id^=" + ic.pre + "custom]").hide();
     }
-    hideAllAnnoBase() { var ic = this.icn3d, me = ic.icn3dui;
+    hideAllAnnoBase() { let ic = this.icn3d, me = ic.icn3dui;
         this.setAnnoSeqBase(false);
     }
-    setAnnoSeqBase(bShow) {  var ic = this.icn3d, me = ic.icn3dui;
-        var itemArray = ['site', 'snp', 'clinvar', 'cdd', 'domain', 'interaction', 'ssbond', 'crosslink', 'transmem'];
-        for(var i in itemArray) {
-            var item = itemArray[i];
+    setAnnoSeqBase(bShow) {  let ic = this.icn3d, me = ic.icn3dui;
+        let itemArray = ['site', 'snp', 'clinvar', 'cdd', 'domain', 'interaction', 'ssbond', 'crosslink', 'transmem'];
+        for(let i in itemArray) {
+            let item = itemArray[i];
             if(bShow) {
                 $("[id^=" + ic.pre + item + "]").show();
             }
@@ -41,14 +41,14 @@ class Annotation {
             }
         }
     }
-    setAnnoTabBase(bChecked) {  var ic = this.icn3d, me = ic.icn3dui;
-        var itemArray = ['all', 'binding', 'snp', 'clinvar', 'cdd', '3dd', 'interact', 'custom', 'ssbond', 'crosslink', 'transmem'];
-        for(var i in itemArray) {
-            var item = itemArray[i];
+    setAnnoTabBase(bChecked) {  let ic = this.icn3d, me = ic.icn3dui;
+        let itemArray = ['all', 'binding', 'snp', 'clinvar', 'cdd', '3dd', 'interact', 'custom', 'ssbond', 'crosslink', 'transmem'];
+        for(let i in itemArray) {
+            let item = itemArray[i];
             if($("#" + ic.pre + "anno_" + item).length) $("#" + ic.pre + "anno_" + item)[0].checked = bChecked;
         }
     }
-    setAnnoTabAll() {  var ic = this.icn3d, me = ic.icn3dui;
+    setAnnoTabAll() {  let ic = this.icn3d, me = ic.icn3dui;
         this.setAnnoTabBase(true);
         this.setAnnoSeqBase(true);
         this.updateClinvar();
@@ -59,11 +59,11 @@ class Annotation {
         this.updateCrosslink();
         this.updateTransmem();
     }
-    hideAnnoTabAll() {  var ic = this.icn3d, me = ic.icn3dui;
+    hideAnnoTabAll() {  let ic = this.icn3d, me = ic.icn3dui;
         this.setAnnoTabBase(false);
         this.hideAllAnno();
     }
-    resetAnnoAll() {  var ic = this.icn3d, me = ic.icn3dui;
+    resetAnnoAll() {  let ic = this.icn3d, me = ic.icn3dui;
        // reset annotations
        //$("#" + ic.pre + "dl_annotations").html("");
        //ic.bAnnoShown = false;
@@ -83,7 +83,7 @@ class Annotation {
        this.resetAnnoTabAll();
     }
 
-    resetAnnoTabAll() {  var ic = this.icn3d, me = ic.icn3dui;
+    resetAnnoTabAll() {  let ic = this.icn3d, me = ic.icn3dui;
         if($("#" + ic.pre + "anno_binding").length && $("#" + ic.pre + "anno_binding")[0].checked) {
             $("[id^=" + ic.pre + "site]").show();
         }
@@ -129,97 +129,97 @@ class Annotation {
             this.updateTransmem();
         }
     }
-    setAnnoTabCustom() {  var ic = this.icn3d, me = ic.icn3dui;
+    setAnnoTabCustom() {  let ic = this.icn3d, me = ic.icn3dui;
         $("[id^=" + ic.pre + "custom]").show();
         if($("#" + ic.pre + "anno_custom").length) $("#" + ic.pre + "anno_custom")[0].checked = true;
     }
-    hideAnnoTabCustom() {  var ic = this.icn3d, me = ic.icn3dui;
+    hideAnnoTabCustom() {  let ic = this.icn3d, me = ic.icn3dui;
         $("[id^=" + ic.pre + "custom]").hide();
         if($("#" + ic.pre + "anno_custom").length) $("#" + ic.pre + "anno_custom")[0].checked = false;
     }
-    setAnnoTabClinvar() {  var ic = this.icn3d, me = ic.icn3dui;
+    setAnnoTabClinvar() {  let ic = this.icn3d, me = ic.icn3dui;
         $("[id^=" + ic.pre + "clinvar]").show();
         if($("#" + ic.pre + "anno_clinvar").length) $("#" + ic.pre + "anno_clinvar")[0].checked = true;
         this.updateClinvar();
     }
-    hideAnnoTabClinvar() {  var ic = this.icn3d, me = ic.icn3dui;
+    hideAnnoTabClinvar() {  let ic = this.icn3d, me = ic.icn3dui;
         $("[id^=" + ic.pre + "clinvar]").hide();
         if($("#" + ic.pre + "anno_clinvar").length) $("#" + ic.pre + "anno_clinvar")[0].checked = false;
     }
-    setAnnoTabSnp() {  var ic = this.icn3d, me = ic.icn3dui;
+    setAnnoTabSnp() {  let ic = this.icn3d, me = ic.icn3dui;
         $("[id^=" + ic.pre + "snp]").show();
         if($("#" + ic.pre + "anno_snp").length) $("#" + ic.pre + "anno_snp")[0].checked = true;
         this.updateSnp();
     }
-    hideAnnoTabSnp() {  var ic = this.icn3d, me = ic.icn3dui;
+    hideAnnoTabSnp() {  let ic = this.icn3d, me = ic.icn3dui;
         $("[id^=" + ic.pre + "snp]").hide();
         if($("#" + ic.pre + "anno_snp").length) $("#" + ic.pre + "anno_snp")[0].checked = false;
     }
-    setAnnoTabCdd() {  var ic = this.icn3d, me = ic.icn3dui;
+    setAnnoTabCdd() {  let ic = this.icn3d, me = ic.icn3dui;
         $("[id^=" + ic.pre + "cdd]").show();
         if($("#" + ic.pre + "anno_cdd").length) $("#" + ic.pre + "anno_cdd")[0].checked = true;
     }
-    hideAnnoTabCdd() {  var ic = this.icn3d, me = ic.icn3dui;
+    hideAnnoTabCdd() {  let ic = this.icn3d, me = ic.icn3dui;
         $("[id^=" + ic.pre + "cdd]").hide();
         if($("#" + ic.pre + "anno_cdd").length) $("#" + ic.pre + "anno_cdd")[0].checked = false;
     }
-    setAnnoTab3ddomain() {  var ic = this.icn3d, me = ic.icn3dui;
+    setAnnoTab3ddomain() {  let ic = this.icn3d, me = ic.icn3dui;
         $("[id^=" + ic.pre + "domain]").show();
         if($("#" + ic.pre + "anno_3dd").length) $("#" + ic.pre + "anno_3dd")[0].checked = true;
         this.updateDomain();
     }
-    hideAnnoTab3ddomain() {  var ic = this.icn3d, me = ic.icn3dui;
+    hideAnnoTab3ddomain() {  let ic = this.icn3d, me = ic.icn3dui;
         $("[id^=" + ic.pre + "domain]").hide();
         if($("#" + ic.pre + "anno_3dd").length) $("#" + ic.pre + "anno_3dd")[0].checked = false;
     }
-    setAnnoTabSite() {  var ic = this.icn3d, me = ic.icn3dui;
+    setAnnoTabSite() {  let ic = this.icn3d, me = ic.icn3dui;
         $("[id^=" + ic.pre + "site]").show();
         $("[id^=" + ic.pre + "feat]").show();
         if($("#" + ic.pre + "anno_binding").length) $("#" + ic.pre + "anno_binding")[0].checked = true;
     }
-    hideAnnoTabSite() {  var ic = this.icn3d, me = ic.icn3dui;
+    hideAnnoTabSite() {  let ic = this.icn3d, me = ic.icn3dui;
         $("[id^=" + ic.pre + "site]").hide();
         $("[id^=" + ic.pre + "feat]").hide();
         if($("#" + ic.pre + "anno_binding").length) $("#" + ic.pre + "anno_binding")[0].checked = false;
     }
-    setAnnoTabInteraction() {  var ic = this.icn3d, me = ic.icn3dui;
+    setAnnoTabInteraction() {  let ic = this.icn3d, me = ic.icn3dui;
         $("[id^=" + ic.pre + "interaction]").show();
         if($("#" + ic.pre + "anno_interact").length) $("#" + ic.pre + "anno_interact")[0].checked = true;
         this.updateInteraction();
     }
-    hideAnnoTabInteraction() {  var ic = this.icn3d, me = ic.icn3dui;
+    hideAnnoTabInteraction() {  let ic = this.icn3d, me = ic.icn3dui;
         $("[id^=" + ic.pre + "interaction]").hide();
         if($("#" + ic.pre + "anno_interact").length) $("#" + ic.pre + "anno_interact")[0].checked = false;
     }
-    setAnnoTabSsbond() {  var ic = this.icn3d, me = ic.icn3dui;
+    setAnnoTabSsbond() {  let ic = this.icn3d, me = ic.icn3dui;
         $("[id^=" + ic.pre + "ssbond]").show();
         if($("#" + ic.pre + "anno_ssbond").length) $("#" + ic.pre + "anno_ssbond")[0].checked = true;
         this.updateSsbond();
     }
-    hideAnnoTabSsbond() {  var ic = this.icn3d, me = ic.icn3dui;
+    hideAnnoTabSsbond() {  let ic = this.icn3d, me = ic.icn3dui;
         $("[id^=" + ic.pre + "ssbond]").hide();
         if($("#" + ic.pre + "anno_ssbond").length) $("#" + ic.pre + "anno_ssbond")[0].checked = false;
     }
-    setAnnoTabCrosslink() {  var ic = this.icn3d, me = ic.icn3dui;
+    setAnnoTabCrosslink() {  let ic = this.icn3d, me = ic.icn3dui;
         $("[id^=" + ic.pre + "crosslink]").show();
         if($("#" + ic.pre + "anno_crosslink").length) $("#" + ic.pre + "anno_crosslink")[0].checked = true;
         this.updateCrosslink();
     }
-    hideAnnoTabCrosslink() {  var ic = this.icn3d, me = ic.icn3dui;
+    hideAnnoTabCrosslink() {  let ic = this.icn3d, me = ic.icn3dui;
         $("[id^=" + ic.pre + "crosslink]").hide();
         if($("#" + ic.pre + "anno_crosslink").length) $("#" + ic.pre + "anno_crosslink")[0].checked = false;
     }
-    setAnnoTabTransmem() {  var ic = this.icn3d, me = ic.icn3dui;
+    setAnnoTabTransmem() {  let ic = this.icn3d, me = ic.icn3dui;
         $("[id^=" + ic.pre + "transmem]").show();
         if($("#" + ic.pre + "anno_transmem").length) $("#" + ic.pre + "anno_transmem")[0].checked = true;
         this.updateTransmem();
     }
-    hideAnnoTabTransmem() {  var ic = this.icn3d, me = ic.icn3dui;
+    hideAnnoTabTransmem() {  let ic = this.icn3d, me = ic.icn3dui;
         $("[id^=" + ic.pre + "transmem]").hide();
         if($("#" + ic.pre + "anno_transmem").length) $("#" + ic.pre + "anno_transmem")[0].checked = false;
     }
-    setTabs() {  var ic = this.icn3d, me = ic.icn3dui;
-        var thisClass = this;
+    setTabs() {  let ic = this.icn3d, me = ic.icn3dui;
+        let thisClass = this;
 
     //        $("#" + ic.pre + "dl_annotations_tabs").tabs();
         $("#" + ic.pre + "dl_addtrack_tabs").tabs();
@@ -350,7 +350,7 @@ class Annotation {
         }
         });
     }
-    clickCdd() { var ic = this.icn3d, me = ic.icn3dui;
+    clickCdd() { let ic = this.icn3d, me = ic.icn3dui;
       if($("[id^=" + ic.pre + "cdd]").length > 0) {
         if($("#" + ic.pre + "anno_cdd")[0].checked) {
             this.setAnnoTabCdd();
@@ -363,30 +363,30 @@ class Annotation {
       }
     }
 
-    showAnnoSelectedChains() {   var ic = this.icn3d, me = ic.icn3dui;
+    showAnnoSelectedChains() {   let ic = this.icn3d, me = ic.icn3dui;
         // show selected chains in annotation window
-        var chainHash = {}
-        for(var i in ic.hAtoms) {
-            var atom = ic.atoms[i];
-            var chainid = atom.structure + '_' + atom.chain;
+        let chainHash = {}
+        for(let i in ic.hAtoms) {
+            let atom = ic.atoms[i];
+            let chainid = atom.structure + '_' + atom.chain;
             chainHash[chainid] = 1;
         }
         $("#" + ic.pre + "dl_annotations > .icn3d-annotation").hide();
-        for(var chainid in chainHash) {
+        for(let chainid in chainHash) {
             if($("#" + ic.pre + "anno_" + chainid).length) {
                 $("#" + ic.pre + "anno_" + chainid).show();
             }
-            var atom = ic.firstAtomObjCls.getFirstCalphaAtomObj(ic.chains[chainid]);
+            let atom = ic.firstAtomObjCls.getFirstCalphaAtomObj(ic.chains[chainid]);
             if(atom.resn !== undefined) {
-                var oneLetterRes = me.utilsCls.residueName2Abbr(atom.resn.substr(0, 3));
+                let oneLetterRes = me.utilsCls.residueName2Abbr(atom.resn.substr(0, 3));
                 $("#" + ic.pre + "anno_" + oneLetterRes).show();
             }
         }
     }
-    showAnnoAllChains() {   var ic = this.icn3d, me = ic.icn3dui;
+    showAnnoAllChains() {   let ic = this.icn3d, me = ic.icn3dui;
         $("#" + ic.pre + "dl_annotations > .icn3d-annotation").show();
     }
-    setAnnoView(view) { var ic = this.icn3d, me = ic.icn3dui;
+    setAnnoView(view) { let ic = this.icn3d, me = ic.icn3dui;
         if(view === 'detailed view') {
             ic.view = 'detailed view';
             $( "#" + ic.pre + "dl_anno_view_tabs" ).tabs( "option", "active", 1 );
@@ -396,25 +396,25 @@ class Annotation {
             $( "#" + ic.pre + "dl_anno_view_tabs" ).tabs( "option", "active", 0 );
         }
     }
-    setAnnoDisplay(display, prefix) { var ic = this.icn3d, me = ic.icn3dui;
-        var itemArray = ['giseq', 'custom', 'site', 'snp', 'clinvar', 'cdd', 'domain', 'interaction', 'ssbond', 'crosslink', 'transmem'];
-        for(var i in itemArray) {
-            var item = itemArray[i];
+    setAnnoDisplay(display, prefix) { let ic = this.icn3d, me = ic.icn3dui;
+        let itemArray = ['giseq', 'custom', 'site', 'snp', 'clinvar', 'cdd', 'domain', 'interaction', 'ssbond', 'crosslink', 'transmem'];
+        for(let i in itemArray) {
+            let item = itemArray[i];
             $("[id^=" + ic.pre + prefix + "_" + item + "]").attr('style', display);
         }
     }
-    showFixedTitle() { var ic = this.icn3d, me = ic.icn3dui;
-            var style = 'display:block;'
+    showFixedTitle() { let ic = this.icn3d, me = ic.icn3dui;
+            let style = 'display:block;'
             this.setAnnoDisplay(style, 'tt');
     }
-    hideFixedTitle() { var ic = this.icn3d, me = ic.icn3dui;
-            var style = 'display:none!important;'
+    hideFixedTitle() { let ic = this.icn3d, me = ic.icn3dui;
+            let style = 'display:none!important;'
             this.setAnnoDisplay(style, 'tt');
     }
-    setAnnoViewAndDisplay(view) { var ic = this.icn3d, me = ic.icn3dui;
+    setAnnoViewAndDisplay(view) { let ic = this.icn3d, me = ic.icn3dui;
         if(view === 'detailed view') {
             this.setAnnoView('detailed view');
-            var style = 'display:block;'
+            let style = 'display:block;'
             this.setAnnoDisplay(style, 'dt');
             $("#" + ic.pre + "seqguide_wrapper").attr('style', style);
             style = 'display:none;'
@@ -423,7 +423,7 @@ class Annotation {
         else { // overview
             this.setAnnoView('overview');
             this.hideFixedTitle();
-            var style = 'display:none;'
+            let style = 'display:none;'
             this.setAnnoDisplay(style, 'dt');
             $("#" + ic.pre + "seqguide_wrapper").attr('style', style);
             style = 'display:block;'
@@ -435,61 +435,61 @@ class Annotation {
     // the following will be called only when the annotation is selected: showSnpClinvar, showDomain, showInteraction
     // showSnpClinvar and showDomain will loop through ic.protein_chainid
     // showInteraction will loop through ic.interactChainbase
-    updateClinvar() { var ic = this.icn3d, me = ic.icn3dui;
+    updateClinvar() { let ic = this.icn3d, me = ic.icn3dui;
         if(ic.bClinvarShown === undefined || !ic.bClinvarShown) {
-            for(var chainid in ic.protein_chainid) {
-                var chainidBase = ic.protein_chainid[chainid];
+            for(let chainid in ic.protein_chainid) {
+                let chainidBase = ic.protein_chainid[chainid];
                 ic.annoSnpClinVarCls.showClinvar(chainid, chainidBase);
             }
         }
         ic.bClinvarShown = true;
     }
-    updateSnp() { var ic = this.icn3d, me = ic.icn3dui;
+    updateSnp() { let ic = this.icn3d, me = ic.icn3dui;
         if(ic.bSnpShown === undefined || !ic.bSnpShown) {
-            for(var chainid in ic.protein_chainid) {
-                var chainidBase = ic.protein_chainid[chainid];
+            for(let chainid in ic.protein_chainid) {
+                let chainidBase = ic.protein_chainid[chainid];
                 ic.annoSnpClinVarCls.showSnp(chainid, chainidBase);
             }
         }
         ic.bSnpShown = true;
     }
-    updateDomain() { var ic = this.icn3d, me = ic.icn3dui;
+    updateDomain() { let ic = this.icn3d, me = ic.icn3dui;
         if(ic.bDomainShown === undefined || !ic.bDomainShown) {
             ic.annoDomainCls.showDomainAll();
         }
         ic.bDomainShown = true;
     }
-    updateInteraction() { var ic = this.icn3d, me = ic.icn3dui;
+    updateInteraction() { let ic = this.icn3d, me = ic.icn3dui;
         if(ic.bInteractionShown === undefined || !ic.bInteractionShown) {
-            for(var chainid in ic.interactChainbase) {
-                var chainidBase = ic.interactChainbase[chainid];
+            for(let chainid in ic.interactChainbase) {
+                let chainidBase = ic.interactChainbase[chainid];
                 ic.annoContactCls.showInteraction(chainid, chainidBase);
             }
         }
         ic.bInteractionShown = true;
     }
-    updateSsbond() { var ic = this.icn3d, me = ic.icn3dui;
+    updateSsbond() { let ic = this.icn3d, me = ic.icn3dui;
         if(ic.bSSbondShown === undefined || !ic.bSSbondShown) {
-            for(var chainid in ic.ssbondChainbase) {
-                var chainidBase = ic.ssbondChainbase[chainid];
+            for(let chainid in ic.ssbondChainbase) {
+                let chainidBase = ic.ssbondChainbase[chainid];
                 ic.annoSsbondCls.showSsbond(chainid, chainidBase);
             }
         }
         ic.bSSbondShown = true;
     }
-    updateCrosslink() { var ic = this.icn3d, me = ic.icn3dui;
+    updateCrosslink() { let ic = this.icn3d, me = ic.icn3dui;
         if(ic.bCrosslinkShown === undefined || !ic.bCrosslinkShown) {
-            for(var chainid in ic.crosslinkChainbase) {
-                var chainidBase = ic.crosslinkChainbase[chainid];
+            for(let chainid in ic.crosslinkChainbase) {
+                let chainidBase = ic.crosslinkChainbase[chainid];
                 ic.annoCrossLinkCls.showCrosslink(chainid, chainidBase);
             }
         }
         ic.bCrosslinkShown = true;
     }
-    updateTransmem() { var ic = this.icn3d, me = ic.icn3dui;
+    updateTransmem() { let ic = this.icn3d, me = ic.icn3dui;
         if(ic.bTranememShown === undefined || !ic.bTranememShown) {
-            for(var chainid in ic.protein_chainid) {
-                var chainidBase = ic.protein_chainid[chainid];
+            for(let chainid in ic.protein_chainid) {
+                let chainidBase = ic.protein_chainid[chainid];
                 ic.annoTransMemCls.showTransmem(chainid, chainidBase);
             }
         }

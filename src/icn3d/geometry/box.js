@@ -16,7 +16,7 @@ class Box {
     //Create a cube for "atom" with the "defaultRadius". "forceDefault" means to use the default radius.
     //"scale" means scale on the radius. "color" means the color of the cube. "bHighlight" is an option
     //to draw the highlight for the atom.
-    createBox(atom, defaultRadius, forceDefault, scale, color, bHighlight) { var ic = this.icn3d, me = ic.icn3dui;
+    createBox(atom, defaultRadius, forceDefault, scale, color, bHighlight) { let ic = this.icn3d, me = ic.icn3dui;
         if(ic.icn3dui.bNode) return;
 
         if(defaultRadius === undefined) defaultRadius = 0.8;
@@ -30,18 +30,18 @@ class Box {
             if(color === undefined) color = atom.color;
         }
 
-        var radius = forceDefault ? defaultRadius
+        let radius = forceDefault ? defaultRadius
           : (me.parasCls.vdwRadii[atom.elem.toUpperCase()] || defaultRadius) * (scale ? scale : 1);
 
         this.createBox_base(atom.coord, radius, color, bHighlight);
     }
 
-    createBox_base(coord, radius, color, bHighlight, bOther, bGlycan) { var ic = this.icn3d, me = ic.icn3dui;
+    createBox_base(coord, radius, color, bHighlight, bOther, bGlycan) { let ic = this.icn3d, me = ic.icn3dui;
         if(ic.icn3dui.bNode) return;
 
-        var mesh;
+        let mesh;
 
-        var boxGeometry = new THREE.BoxGeometry(1, 1, 1);
+        let boxGeometry = new THREE.BoxGeometry(1, 1, 1);
 
         if(bHighlight || bGlycan) {
           mesh = new THREE.Mesh(ic.boxGeometry, new THREE.MeshPhongMaterial({ transparent: true, opacity: 0.5,
@@ -68,10 +68,10 @@ class Box {
         }
     }
 
-    createBoxRepresentation_P_CA(atoms, scale, bHighlight) { var ic = this.icn3d, me = ic.icn3dui;
+    createBoxRepresentation_P_CA(atoms, scale, bHighlight) { let ic = this.icn3d, me = ic.icn3dui;
         if(ic.icn3dui.bNode) return;
 
-        var thisClass = this;
+        let thisClass = this;
         ic.reprSubCls.createRepresentationSub(atoms, function (atom0) {
             if(atom0.name === 'CA' || atom0.name === "O3'" || atom0.name === "O3*") {
                 thisClass.createBox(atom0, undefined, undefined, scale, undefined, bHighlight);

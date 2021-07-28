@@ -21,7 +21,7 @@ class ResizeCanvas {
     resizeCanvas(width, height, bForceResize, bDraw) {var ic = this.icn3d, me = ic.icn3dui;
       if( bForceResize || ic.icn3dui.cfg.resize ) {
         //var heightTmp = parseInt(height) - ic.icn3dui.htmlCls.EXTRAHEIGHT;
-        var heightTmp = height;
+        let  heightTmp = height;
         $("#" + ic.pre + "canvas").width(width).height(heightTmp);
         $("#" + ic.pre + "viewer").width(width).height(height);
 
@@ -36,17 +36,17 @@ class ResizeCanvas {
       }
     }
 
-    windowResize() { var ic = this.icn3d, me = ic.icn3dui;
-        var thisClass = this;
+    windowResize() { let  ic = this.icn3d, me = ic.icn3dui;
+        let  thisClass = this;
 
         if(ic.icn3dui.cfg.resize && !me.utilsCls.isMobile() ) {
-            $(window).resize(function() { var ic = thisClass.icn3d;
+            $(window).resize(function() { let  ic = thisClass.icn3d;
                 //ic.icn3dui.htmlCls.WIDTH = $( window ).width();
                 //ic.icn3dui.htmlCls.HEIGHT = $( window ).height();
                 me.utilsCls.setViewerWidthHeight(ic.icn3dui);
 
-                var width = ic.icn3dui.htmlCls.WIDTH; // - ic.icn3dui.htmlCls.LESSWIDTH_RESIZE;
-                var height = ic.icn3dui.htmlCls.HEIGHT; // - ic.icn3dui.htmlCls.LESSHEIGHT - ic.icn3dui.htmlCls.EXTRAHEIGHT;
+                let  width = ic.icn3dui.htmlCls.WIDTH; // - ic.icn3dui.htmlCls.LESSWIDTH_RESIZE;
+                let  height = ic.icn3dui.htmlCls.HEIGHT; // - ic.icn3dui.htmlCls.LESSHEIGHT - ic.icn3dui.htmlCls.EXTRAHEIGHT;
 
                 if(ic !== undefined && !ic.bFullscreen) thisClass.resizeCanvas(width, height);
             });
@@ -72,7 +72,7 @@ class ResizeCanvas {
 
     //Rotate the structure in one of the directions: "left", "right", "up", and "down".
     rotStruc(direction, bInitial) {var ic = this.icn3d, me = ic.icn3dui;
-        var thisClass = this;
+        let  thisClass = this;
 
         if(ic.bStopRotate) return false;
         if(ic.transformCls.rotateCount > ic.transformCls.rotateCountMax) {
@@ -178,11 +178,11 @@ class ResizeCanvas {
     }
 
     closeDialogs() {var ic = this.icn3d, me = ic.icn3dui;
-        var itemArray = ['dl_selectannotations', 'dl_alignment', 'dl_2ddgm', 'dl_definedsets', 'dl_graph',
+        let  itemArray = ['dl_selectannotations', 'dl_alignment', 'dl_2ddgm', 'dl_definedsets', 'dl_graph',
             'dl_linegraph', 'dl_scatterplot', 'dl_contactmap', 'dl_allinteraction', 'dl_copyurl',
             'dl_symmetry', 'dl_symd'];
-        for(var i in itemArray) {
-            var item = itemArray[i];
+        for(let i in itemArray) {
+            let  item = itemArray[i];
             if(!ic.icn3dui.cfg.notebook) {
                 if($('#' + ic.pre + item).hasClass('ui-dialog-content') && $('#' + ic.pre + item).dialog( 'isOpen' )) {
                     $('#' + ic.pre + item).dialog( 'close' );

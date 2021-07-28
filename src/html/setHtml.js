@@ -26,33 +26,33 @@ class SetHtml {
         this.icn3dui = icn3dui;
     }
 
-    getLink(id, text) { var me = this.icn3dui, ic = me.icn3d;
+    getLink(id, text) { let me = this.icn3dui, ic = me.icn3d;
         return "<li><span id='" + me.pre + id + "' class='icn3d-link'>" + text + "</span></li>";
     }
 
-    getLinkWrapper(id, text, wrapper) { var me = this.icn3dui, ic = me.icn3d;
+    getLinkWrapper(id, text, wrapper) { let me = this.icn3dui, ic = me.icn3d;
         return "<li id='" + me.pre + wrapper + "'><span id='" + me.pre + id + "' class='icn3d-link'>" + text + "</span></li>";
     }
 
-    getRadio(radioid, id, text, bChecked) { var me = this.icn3dui, ic = me.icn3d;
-        var checkedStr =(bChecked) ? ' checked' : '';
+    getRadio(radioid, id, text, bChecked) { let me = this.icn3dui, ic = me.icn3d;
+        let checkedStr =(bChecked) ? ' checked' : '';
 
         //https://stackoverflow.com/questions/17541614/use-images-instead-of-radio-buttons/17541916
         return "<li><label for='" + me.pre + id + "' class='icn3d-rad'>" + me.htmlCls.inputRadioStr + "name='" + me.pre + radioid + "' " + "class='" + me.pre + radioid + "' " + "v='" + text + "' id='" + me.pre + id + "'" + checkedStr + "><span class='ui-icon ui-icon-blank'></span> <span class='icn3d-rad-text'>" + text + "</span></label></li>";
     }
 
-    getRadioColor(radioid, id, text, color, bChecked) { var me = this.icn3dui, ic = me.icn3d;
-        var checkedStr =(bChecked) ? ' checked' : '';
+    getRadioColor(radioid, id, text, color, bChecked) { let me = this.icn3dui, ic = me.icn3d;
+        let checkedStr =(bChecked) ? ' checked' : '';
 
         //https://stackoverflow.com/questions/17541614/use-images-instead-of-radio-buttons/17541916
         return "<li><label for='" + me.pre + id + "' class='icn3d-rad'>" + me.htmlCls.inputRadioStr + "name='" + me.pre + radioid + "' id='" + me.pre + id + "'" + checkedStr + "><span class='ui-icon ui-icon-blank'></span> <span class='icn3d-color-rad-text' color='" + color + "'><span style='background-color:#" + color + "'>" + me.htmlCls.space3 + "</span> " + text + "</span></label></li>";
     }
 
-    setAdvanced(index) { var me = this.icn3dui, ic = me.icn3d;
-        var indexStr =(index === undefined) ? '' : index;
+    setAdvanced(index) { let me = this.icn3dui, ic = me.icn3d;
+        let indexStr =(index === undefined) ? '' : index;
 
-        var dialogClass =(me.cfg.notebook) ? 'icn3d-hidden' : '';
-        var html = me.htmlCls.divStr + "dl_advanced" + indexStr + "' class='" + dialogClass + "'>";
+        let dialogClass =(me.cfg.notebook) ? 'icn3d-hidden' : '';
+        let html = me.htmlCls.divStr + "dl_advanced" + indexStr + "' class='" + dialogClass + "'>";
 
         html += "<table width='500'><tr><td valign='top'><table cellspacing='0'>";
         html += "<tr><td><b>Select:</b></td><td>" + me.htmlCls.inputTextStr + "id='" + me.pre + "command" + indexStr + "' placeholder='$[structures].[chains]:[residues]@[atoms]' size='60'></td></tr>";
@@ -93,11 +93,11 @@ class SetHtml {
         return html;
     }
 
-    getOptionHtml(optArray, selIndex) { var me = this.icn3dui, ic = me.icn3d;
-        var html = '';
+    getOptionHtml(optArray, selIndex) { let me = this.icn3dui, ic = me.icn3d;
+        let html = '';
 
-        for(var i = 0, il = optArray.length; i < il; ++i) {
-            var iStr = optArray[i];
+        for(let i = 0, il = optArray.length; i < il; ++i) {
+            let iStr = optArray[i];
 
             if(i == selIndex) {
                 html += me.htmlCls.optionStr + "'" + iStr + "' selected>" + iStr + "</option>";
@@ -110,8 +110,8 @@ class SetHtml {
         return html;
     }
 
-    setColorHints() { var me = this.icn3dui, ic = me.icn3d;
-        var html = '';
+    setColorHints() { let me = this.icn3dui, ic = me.icn3d;
+        let html = '';
 
         html += me.htmlCls.divNowrapStr + '<span style="margin-left:33px; color:#00FF00; font-weight:bold">Green</span>: H-Bonds; ';
         html += '<span style="color:#00FFFF; font-weight:bold">Cyan</span>: Salt Bridge/Ionic; ';
@@ -123,24 +123,24 @@ class SetHtml {
         return html;
     }
 
-    setThicknessHtml(type) { var me = this.icn3dui, ic = me.icn3d;
-        var html = '';
+    setThicknessHtml(type) { let me = this.icn3dui, ic = me.icn3d;
+        let html = '';
 
         // type == '3dprint' or 'style'
-        var linerad =(type == '3dprint') ? '1' : '0.1';
-        var coilrad =(type == '3dprint') ? '1.2' : '0.3';
-        var stickrad =(type == '3dprint') ? '0.8' : '0.4';
-        var tracerad =(type == '3dprint') ? '1' : '0.2';
-        var ballscale =(type == '3dprint') ? '0.6' : '0.3';
-        var ribbonthick =(type == '3dprint') ? '1' : '0.2';
-        var prtribbonwidth =(type == '3dprint') ? '2' : '1.3';
-        var nucleotideribbonwidth =(type == '3dprint') ? '1.4' : '0.8';
+        let linerad =(type == '3dprint') ? '1' : '0.1';
+        let coilrad =(type == '3dprint') ? '1.2' : '0.3';
+        let stickrad =(type == '3dprint') ? '0.8' : '0.4';
+        let tracerad =(type == '3dprint') ? '1' : '0.2';
+        let ballscale =(type == '3dprint') ? '0.6' : '0.3';
+        let ribbonthick =(type == '3dprint') ? '1' : '0.2';
+        let prtribbonwidth =(type == '3dprint') ? '2' : '1.3';
+        let nucleotideribbonwidth =(type == '3dprint') ? '1.4' : '0.8';
 
-        var shininess = 40;
-        var light1 = 0.6;
-        var light2 = 0.4;
-        var light3 = 0.2;
-        var bGlycansCartoon = 0;
+        let shininess = 40;
+        let light1 = 0.6;
+        let light2 = 0.4;
+        let light3 = 0.2;
+        let bGlycansCartoon = 0;
 
         // retrieve from cache
         if(type == 'style') {
@@ -202,11 +202,11 @@ class SetHtml {
     }
 
     getCookie(cname) {
-      var name = cname + "=";
-      var decodedCookie = decodeURIComponent(document.cookie);
-      var ca = decodedCookie.split(';');
-      for(var i = 0; i <ca.length; i++) {
-        var c = ca[i];
+      let name = cname + "=";
+      let decodedCookie = decodeURIComponent(document.cookie);
+      let ca = decodedCookie.split(';');
+      for(let i = 0; i <ca.length; i++) {
+        let c = ca[i];
         while (c.charAt(0) == ' ') {
           c = c.substring(1);
         }
@@ -217,10 +217,10 @@ class SetHtml {
       return "";
     }
 
-    setSequenceGuide(suffix, bShown) { var me = this.icn3dui, ic = me.icn3d;
-      var sequencesHtml = '';
+    setSequenceGuide(suffix, bShown) { let me = this.icn3dui, ic = me.icn3d;
+      let sequencesHtml = '';
 
-      var index =(ic && ic.defNames2Atoms) ? Object.keys(ic.defNames2Atoms).length : 1;
+      let index =(ic && ic.defNames2Atoms) ? Object.keys(ic.defNames2Atoms).length : 1;
 
       if(bShown) {
          sequencesHtml += me.htmlCls.divStr + "seqguide" + suffix + "'>";
@@ -235,19 +235,19 @@ class SetHtml {
 
       sequencesHtml += this.getSelectionHints();
 
-      var resCategories = "<b>Residue labeling:</b> standard residue with coordinates: UPPER case letter; nonstandard residue with coordinates: the first UPPER case letter plus a period except that water residue uses the letter 'O'; residue missing coordinates: lower case letter.";
-      var scroll =(me.utilsCls.isMac() && !me.utilsCls.isMobile()) ? "<br/><br/><b>Turn on scroll bar:</b> System preferences -> General -> show scroll bars -> check Always" : "";
+      let resCategories = "<b>Residue labeling:</b> standard residue with coordinates: UPPER case letter; nonstandard residue with coordinates: the first UPPER case letter plus a period except that water residue uses the letter 'O'; residue missing coordinates: lower case letter.";
+      let scroll =(me.utilsCls.isMac() && !me.utilsCls.isMobile()) ? "<br/><br/><b>Turn on scroll bar:</b> System preferences -> General -> show scroll bars -> check Always" : "";
 
       sequencesHtml += resCategories + scroll + "<br/></div>";
 
       return sequencesHtml;
     }
 
-    setAlignSequenceGuide(suffix, bShown) { var me = this.icn3dui, ic = me.icn3d;
-      var sequencesHtml = '';
+    setAlignSequenceGuide(suffix, bShown) { let me = this.icn3dui, ic = me.icn3d;
+      let sequencesHtml = '';
       suffix = '';
 
-      var index =(ic && ic.defNames2Atoms) ? Object.keys(ic.defNames2Atoms).length : 1;
+      let index =(ic && ic.defNames2Atoms) ? Object.keys(ic.defNames2Atoms).length : 1;
 
       sequencesHtml += '<div style="width:20px; margin-left:3px; display:inline-block;"><span id="' + me.pre + 'alignseqguide' + suffix + '_expand" class="ui-icon ui-icon-plus icn3d-expand icn3d-link" style="width:15px;" title="Expand"></span><span id="' + me.pre + 'alignseqguide' + suffix + '_shrink" class="ui-icon ui-icon-minus icn3d-shrink icn3d-link" style="display:none; width:15px;" title="Shrink"></span></div> ';
 
@@ -257,23 +257,23 @@ class SetHtml {
 
       sequencesHtml += this.getSelectionHints();
 
-      var resCategories = "<b>Residue labeling:</b> aligned residue with coordinates: UPPER case letter; non-aligned residue with coordinates: lower case letter which can be highlighted; residue missing coordinates: lower case letter which can NOT be highlighted.";
-      var scroll =(me.utilsCls.isMac() && !me.utilsCls.isMobile()) ? "<br/><br/><b>Turn on scroll bar:</b> System preferences -> General -> show scroll bars -> check Always" : "";
+      let resCategories = "<b>Residue labeling:</b> aligned residue with coordinates: UPPER case letter; non-aligned residue with coordinates: lower case letter which can be highlighted; residue missing coordinates: lower case letter which can NOT be highlighted.";
+      let scroll =(me.utilsCls.isMac() && !me.utilsCls.isMobile()) ? "<br/><br/><b>Turn on scroll bar:</b> System preferences -> General -> show scroll bars -> check Always" : "";
 
       sequencesHtml += resCategories + scroll + "<br/></div>";
 
       return sequencesHtml;
     }
 
-    getSelectionHints() { var me = this.icn3dui, ic = me.icn3d;
-      var sequencesHtml = '';
+    getSelectionHints() { let me = this.icn3dui, ic = me.icn3d;
+      let sequencesHtml = '';
 
       if(!me.utilsCls.isMobile()) {
           sequencesHtml += "<b>Select on 1D sequences:</b> drag to select, drag again to deselect, multiple selection is allowed without Ctrl key, click \"Save Selection\" to save the current selection.<br/><br/>";
 
           sequencesHtml += "<b>Select on 2D interaction diagram:</b> click on the nodes or lines. The nodes are chains and can be united with the Ctrl key. The lines are interactions and can NOT be united. Each click on the lines selects half of the lines, i.e., select the interacting residues in one of the two chains.<br/><br/>";
 
-          var tmpStr = me.utilsCls.isMobile() ? 'use finger to pick' : 'hold "Alt" and use mouse to pick';
+          let tmpStr = me.utilsCls.isMobile() ? 'use finger to pick' : 'hold "Alt" and use mouse to pick';
           sequencesHtml += "<b>Select on 3D structures:</b> " + tmpStr + ", click the second time to deselect, hold \"Ctrl\" to union selection, hold \"Shift\" to select a range, press the up/down arrow to switch among atom/residue/strand/chain/structure, click \"Save Selection\" to save the current selection.<br/><br/>";
 
           sequencesHtml += "<b>Save the current selection</b>(either on 3D structure, 2D interactions, or 1D sequence): open the menu \"Select -> Save Selection\", specify the name and description for the selection, and click \"Save\".<br/><br/>";
@@ -285,19 +285,19 @@ class SetHtml {
       return sequencesHtml;
     }
 
-    addGsizeSalt(name) { var me = this.icn3dui, ic = me.icn3d;
-        var html = "";
+    addGsizeSalt(name) { let me = this.icn3dui, ic = me.icn3d;
+        let html = "";
 
         html += "<span style='white-space:nowrap;font-weight:bold;'>Grid Size: <select id='" + me.pre + name + "gsize'>";
 
-        var optArray1c = ['65', '97', '129'];
+        let optArray1c = ['65', '97', '129'];
         html += this.getOptionHtml(optArray1c, 0);
 
         html += "</select></span>";
 
         html += "<span style='white-space:nowrap;font-weight:bold;margin-left:30px;'>Salt Concentration: <select id='" + me.pre + name + "salt'>";
 
-        var optArray1d = ['0', '0.15'];
+        let optArray1d = ['0', '0.15'];
         html += this.getOptionHtml(optArray1d, 1);
 
         html += "</select> M</span><br/>";
@@ -305,8 +305,8 @@ class SetHtml {
         return html;
     }
 
-    getFootHtml(type, tabName) { var me = this.icn3dui, ic = me.icn3d;
-        var footHtml = "<div style='width:500px;'>";
+    getFootHtml(type, tabName) { let me = this.icn3dui, ic = me.icn3d;
+        let footHtml = "<div style='width:500px;'>";
 
         if(type == 'delphi') {
             if(me.cfg.cid) {
@@ -348,11 +348,11 @@ class SetHtml {
         return footHtml;
     }
 
-    getPotentialHtml(type, dialogClass) { var me = this.icn3dui, ic = me.icn3d;
-        var html = '';
+    getPotentialHtml(type, dialogClass) { let me = this.icn3dui, ic = me.icn3d;
+        let html = '';
 
-        var name0, name1, name2;
-        var tab1, tab2, tab3;
+        let name0, name1, name2;
+        let tab1, tab2, tab3;
         tab1 = 'Equipotential Map';
         tab2 = 'Surface with Potential';
         //tab3 = 'Download PQR';
@@ -384,12 +384,12 @@ class SetHtml {
 
         html += "<span style='white-space:nowrap;font-weight:bold;'>Potential contour at: <select id='" + me.pre + name1 + "contour'>";
 
-        var optArray1b = ['0.5', '1', '2', '4', '6', '8', '10'];
+        let optArray1b = ['0.5', '1', '2', '4', '6', '8', '10'];
         html += this.getOptionHtml(optArray1b, 1);
 
         html += "</select> kT/e(25.6mV at 298K)</span><br/><br/>";
 
-        var htmlTmp;
+        let htmlTmp;
 
         // tab1: equipotential map
         if(type == 'delphi') {
@@ -449,7 +449,7 @@ class SetHtml {
 
         html += "<span style='white-space:nowrap;font-weight:bold;'>Surface with max potential at: <select id='" + me.pre + name1 + "contour2'>";
 
-        var optArray1c = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10'];
+        let optArray1c = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10'];
         html += this.getOptionHtml(optArray1c, 2);
 
         html += "</select> kT/e(25.6mV at 298K)</span><br/><br/>";
@@ -461,7 +461,7 @@ class SetHtml {
         html += "</select>";
 
         html += "<span style='margin-left:20px'><b>Opacity</b>: <select id='" + me.pre + name1 + "surfop'>";
-        var surfOp = ['1.0', '0.9', '0.8', '0.7', '0.6', '0.5', '0.4', '0.3', '0.2', '0.1'];
+        let surfOp = ['1.0', '0.9', '0.8', '0.7', '0.6', '0.5', '0.4', '0.3', '0.2', '0.1'];
         html += this.getOptionHtml(surfOp, 0);
         html += "</select></span>";
 
@@ -539,12 +539,12 @@ class SetHtml {
         return html;
     }
 
-    exportPqr() { var me = this.icn3dui, ic = me.icn3d;
-       var chainHash = {}, ionHash = {}
-       var atomHash = {}
+    exportPqr() { let me = this.icn3dui, ic = me.icn3d;
+       let chainHash = {}, ionHash = {}
+       let atomHash = {}
     /*
-       for(var i in ic.hAtoms) {
-           var atom = ic.atoms[i];
+       for(let i in ic.hAtoms) {
+           let atom = ic.atoms[i];
 
            if(ic.ions.hasOwnProperty(i)) {
              ionHash[i] = 1;
@@ -554,14 +554,14 @@ class SetHtml {
            }
        }
 
-       for(var chainid in chainHash) {
+       for(let chainid in chainHash) {
            atomHash = me.hashUtilsCls.unionHash(atomHash, ic.chains[chainid]);
        }
     */
 
-       var atoms = me.hashUtilsCls.intHash(ic.dAtoms, ic.hAtoms);
-       for(var i in atoms) {
-           var atom = ic.atoms[i];
+       let atoms = me.hashUtilsCls.intHash(ic.dAtoms, ic.hAtoms);
+       for(let i in atoms) {
+           let atom = ic.atoms[i];
 
            if(ic.ions.hasOwnProperty(i)) {
              ionHash[i] = 1;
@@ -572,29 +572,29 @@ class SetHtml {
        }
 
        if(me.cfg.cid) {
-          var pqrStr = '';
+          let pqrStr = '';
           pqrStr += ic.saveFileCls.getPDBHeader();
           pqrStr += ic.saveFileCls.getAtomPDB(atomHash, true) + ic.saveFileCls.getAtomPDB(ionHash, true);
 
-          var file_pref =(ic.inputid) ? ic.inputid : "custom";
+          let file_pref =(ic.inputid) ? ic.inputid : "custom";
           ic.saveFileCls.saveFile(file_pref + '_icn3d.pqr', 'text', [pqrStr]);
        }
        else {
-           var bCalphaOnly = me.utilsCls.isCalphaPhosOnly(me.hashUtilsCls.hash2Atoms(atomHash, ic.atoms));
+           let bCalphaOnly = me.utilsCls.isCalphaPhosOnly(me.hashUtilsCls.hash2Atoms(atomHash, ic.atoms));
            if(bCalphaOnly) {
                alert("The potential will not be shown because the side chains are missing in the structure...");
                return;
            }
 
-           var pdbstr = '';
+           let pdbstr = '';
            pdbstr += ic.saveFileCls.getPDBHeader();
 
            pdbstr += ic.saveFileCls.getAtomPDB(atomHash);
            pdbstr += ic.saveFileCls.getAtomPDB(ionHash, true);
 
-           var url = "https://www.ncbi.nlm.nih.gov/Structure/delphi/delphi.fcgi";
+           let url = "https://www.ncbi.nlm.nih.gov/Structure/delphi/delphi.fcgi";
 
-           var pdbid =(me.cfg.cid) ? me.cfg.cid : Object.keys(ic.structures).toString();
+           let pdbid =(me.cfg.cid) ? me.cfg.cid : Object.keys(ic.structures).toString();
 
            $.ajax({
               url: url,
@@ -611,9 +611,9 @@ class SetHtml {
                   ic.ParserUtilsCls.hideLoading();
               },
               success: function(data) {
-                  var pqrStr = data;
+                  let pqrStr = data;
 
-                  var file_pref =(ic.inputid) ? ic.inputid : "custom";
+                  let file_pref =(ic.inputid) ? ic.inputid : "custom";
                   ic.saveFileCls.saveFile(file_pref + '_icn3d_residues.pqr', 'text', [pqrStr]);
               },
               error : function(xhr, textStatus, errorThrown ) {
@@ -629,11 +629,11 @@ class SetHtml {
        }
     }
 
-    clickReload_pngimage() { var me = this.icn3dui, ic = me.icn3d;
+    clickReload_pngimage() { let me = this.icn3dui, ic = me.icn3d;
         if(me.bNode) return;
 
-        var thisClass = this;
-        me.myEventCls.onIds("#" + me.pre + "reload_pngimage", "click", function(e) { var ic = me.icn3d;
+        let thisClass = this;
+        me.myEventCls.onIds("#" + me.pre + "reload_pngimage", "click", function(e) { let ic = me.icn3d;
            e.preventDefault();
            if(!me.cfg.notebook) dialog.dialog( "close" );
            //close all dialog
@@ -646,48 +646,48 @@ class SetHtml {
            // initialize icn3dui
            //me.initUI();
            ic.init();
-           var file = $("#" + me.pre + "pngimage")[0].files[0];
+           let file = $("#" + me.pre + "pngimage")[0].files[0];
            if(!file) {
              alert("Please select a file before clicking 'Load'");
            }
            else {
              thisClass.fileSupport();
-             var reader = new FileReader();
+             let reader = new FileReader();
              reader.onload = function(e) {
-               var imageStr = e.target.result; // or = reader.result;
+               let imageStr = e.target.result; // or = reader.result;
                thisClass.loadPng(imageStr);
 /*
-               var matchedStr = 'Share Link: ';
-               var pos = imageStr.indexOf(matchedStr);
-               var matchedStrState = "Start of state file======\n";
-               var posState = imageStr.indexOf(matchedStrState);
+               let matchedStr = 'Share Link: ';
+               let pos = imageStr.indexOf(matchedStr);
+               let matchedStrState = "Start of state file======\n";
+               let posState = imageStr.indexOf(matchedStrState);
                if(pos == -1 && posState == -1) {
                    alert('Please load a PNG image saved by clicking "Save Datas > PNG Image" in the Data menu...');
                }
                else if(pos != -1) {
-                   var url = imageStr.substr(pos + matchedStr.length);
+                   let url = imageStr.substr(pos + matchedStr.length);
                    me.htmlCls.clickMenuCls.setLogCmd('load iCn3D PNG image ' + $("#" + me.pre + "pngimage").val(), false);
                    window.open(url);
                }
                else if(posState != -1) {
-                   var matchedStrData = "Start of data file======\n";
-                   var posData = imageStr.indexOf(matchedStrData);
+                   let matchedStrData = "Start of data file======\n";
+                   let posData = imageStr.indexOf(matchedStrData);
                    ic.bInputfile =(posData == -1) ? false : true;
                    if(ic.bInputfile) {
-                       var posDataEnd = imageStr.indexOf("End of data file======\n");
-                       var data = imageStr.substr(posData + matchedStrData.length, posDataEnd - posData - matchedStrData.length);
+                       let posDataEnd = imageStr.indexOf("End of data file======\n");
+                       let data = imageStr.substr(posData + matchedStrData.length, posDataEnd - posData - matchedStrData.length);
                        ic.InputfileData = data;
 
-                       var matchedStrType = "Start of type file======\n";
-                       var posType = imageStr.indexOf(matchedStrType);
-                       var posTypeEnd = imageStr.indexOf("End of type file======\n");
-                       var type = imageStr.substr(posType + matchedStrType.length, posTypeEnd - posType - matchedStrType.length - 1); // remove the new line char
+                       let matchedStrType = "Start of type file======\n";
+                       let posType = imageStr.indexOf(matchedStrType);
+                       let posTypeEnd = imageStr.indexOf("End of type file======\n");
+                       let type = imageStr.substr(posType + matchedStrType.length, posTypeEnd - posType - matchedStrType.length - 1); // remove the new line char
                        ic.InputfileType = type;
 
                        //var matchedStrState = "Start of state file======\n";
                        //var posState = imageStr.indexOf(matchedStrState);
-                       var posStateEnd = imageStr.indexOf("End of state file======\n");
-                       var statefile = imageStr.substr(posState + matchedStrState.length, posStateEnd - posState- matchedStrState.length);
+                       let posStateEnd = imageStr.indexOf("End of state file======\n");
+                       let statefile = imageStr.substr(posState + matchedStrState.length, posStateEnd - posState- matchedStrState.length);
                        statefile = decodeURIComponent(statefile);
                         if(type === 'pdb') {
                             $.when( ic.pdbParserCls.loadPdbData(data))
@@ -718,8 +718,8 @@ class SetHtml {
                    else { // url length > 4000
                        //var matchedStrState = "Start of state file======\n";
                        //var posState = imageStr.indexOf(matchedStrState);
-                       var posStateEnd = imageStr.indexOf("End of state file======\n");
-                       var statefile = imageStr.substr(posState + matchedStrState.length, posStateEnd - posState- matchedStrState.length);
+                       let posStateEnd = imageStr.indexOf("End of state file======\n");
+                       let statefile = imageStr.substr(posState + matchedStrState.length, posStateEnd - posState- matchedStrState.length);
                        statefile = decodeURIComponent(statefile);
                        ic.commands = [];
                        ic.optsHistory = [];
@@ -734,38 +734,38 @@ class SetHtml {
         });
     }
 
-    loadPng(imageStr) { var me = this.icn3dui, ic = me.icn3d;
-       var matchedStr = 'Share Link: ';
-       var pos = imageStr.indexOf(matchedStr);
-       var matchedStrState = "Start of state file======\n";
-       var posState = imageStr.indexOf(matchedStrState);
+    loadPng(imageStr) { let me = this.icn3dui, ic = me.icn3d;
+       let matchedStr = 'Share Link: ';
+       let pos = imageStr.indexOf(matchedStr);
+       let matchedStrState = "Start of state file======\n";
+       let posState = imageStr.indexOf(matchedStrState);
        if(pos == -1 && posState == -1) {
            alert('Please load a PNG image saved by clicking "Save Datas > PNG Image" in the Data menu...');
        }
        else if(pos != -1) {
-           var url = imageStr.substr(pos + matchedStr.length);
+           let url = imageStr.substr(pos + matchedStr.length);
            me.htmlCls.clickMenuCls.setLogCmd('load iCn3D PNG image ' + $("#" + me.pre + "pngimage").val(), false);
            window.open(url);
        }
        else if(posState != -1) {
-           var matchedStrData = "Start of data file======\n";
-           var posData = imageStr.indexOf(matchedStrData);
+           let matchedStrData = "Start of data file======\n";
+           let posData = imageStr.indexOf(matchedStrData);
            ic.bInputfile =(posData == -1) ? false : true;
            if(ic.bInputfile) {
-               var posDataEnd = imageStr.indexOf("End of data file======\n");
-               var data = imageStr.substr(posData + matchedStrData.length, posDataEnd - posData - matchedStrData.length);
+               let posDataEnd = imageStr.indexOf("End of data file======\n");
+               let data = imageStr.substr(posData + matchedStrData.length, posDataEnd - posData - matchedStrData.length);
                ic.InputfileData = data;
 
-               var matchedStrType = "Start of type file======\n";
-               var posType = imageStr.indexOf(matchedStrType);
-               var posTypeEnd = imageStr.indexOf("End of type file======\n");
-               var type = imageStr.substr(posType + matchedStrType.length, posTypeEnd - posType - matchedStrType.length - 1); // remove the new line char
+               let matchedStrType = "Start of type file======\n";
+               let posType = imageStr.indexOf(matchedStrType);
+               let posTypeEnd = imageStr.indexOf("End of type file======\n");
+               let type = imageStr.substr(posType + matchedStrType.length, posTypeEnd - posType - matchedStrType.length - 1); // remove the new line char
                ic.InputfileType = type;
 
                //var matchedStrState = "Start of state file======\n";
                //var posState = imageStr.indexOf(matchedStrState);
-               var posStateEnd = imageStr.indexOf("End of state file======\n");
-               var statefile = imageStr.substr(posState + matchedStrState.length, posStateEnd - posState- matchedStrState.length);
+               let posStateEnd = imageStr.indexOf("End of state file======\n");
+               let statefile = imageStr.substr(posState + matchedStrState.length, posStateEnd - posState- matchedStrState.length);
                statefile = decodeURIComponent(statefile);
                 if(type === 'pdb') {
                     $.when( ic.pdbParserCls.loadPdbData(data))
@@ -796,8 +796,8 @@ class SetHtml {
            else { // url length > 4000
                //var matchedStrState = "Start of state file======\n";
                //var posState = imageStr.indexOf(matchedStrState);
-               var posStateEnd = imageStr.indexOf("End of state file======\n");
-               var statefile = imageStr.substr(posState + matchedStrState.length, posStateEnd - posState- matchedStrState.length);
+               let posStateEnd = imageStr.indexOf("End of state file======\n");
+               let statefile = imageStr.substr(posState + matchedStrState.length, posStateEnd - posState- matchedStrState.length);
                statefile = decodeURIComponent(statefile);
                ic.commands = [];
                ic.optsHistory = [];
@@ -814,7 +814,7 @@ class SetHtml {
     }
 
     getLinkColor() {
-        var graphStr2 = '';
+        let graphStr2 = '';
         graphStr2 += ', linkmap: {\n';
         graphStr2 += '3: {"type": "peptidebond", "c":""},\n';
         graphStr2 += '4: {"type": "ssbond", "c":"FFA500"},\n';
@@ -836,9 +836,9 @@ class SetHtml {
         return graphStr2;
     }
 
-    setCookieForThickness() { var me = this.icn3dui, ic = me.icn3d;
+    setCookieForThickness() { let me = this.icn3dui, ic = me.icn3d;
         if(!me.bNode) { // && postfix == 'style') {
-            var exdays = 3650; // 10 years
+            let exdays = 3650; // 10 years
 
             this.setCookie('lineRadius', ic.lineRadius, exdays);
             this.setCookie('coilWidth', ic.coilWidth, exdays);
@@ -851,7 +851,7 @@ class SetHtml {
         }
     }
 
-    setLineThickness(postfix, bReset) { var me = this.icn3dui, ic = me.icn3d;
+    setLineThickness(postfix, bReset) { let me = this.icn3dui, ic = me.icn3d;
         ic.bSetThickness = true;
 
         if(postfix == 'style') {
@@ -892,7 +892,7 @@ class SetHtml {
 
         // save to cache
         if(!me.bNode) { // && postfix == 'style') {
-            var exdays = 3650; // 10 years
+            let exdays = 3650; // 10 years
             this.setCookie('shininess', ic.shininess, exdays);
             this.setCookie('light1', ic.light1, exdays);
             this.setCookie('light2', ic.light2, exdays);
@@ -903,7 +903,7 @@ class SetHtml {
         this.setCookieForThickness();
 
         if(postfix = '3dprint' && bReset) {
-           var select = "reset thickness";
+           let select = "reset thickness";
            me.htmlCls.clickMenuCls.setLogCmd(select, true);
            ic.bSetThickness = false;
            ic.threeDPrintCls.resetAfter3Dprint();
@@ -916,26 +916,26 @@ class SetHtml {
     }
 
     setCookie(cname, cvalue, exdays) {
-      var d = new Date();
+      let d = new Date();
       d.setTime(d.getTime() + (exdays*24*60*60*1000));
-      var expires = "expires="+ d.toUTCString();
+      let expires = "expires="+ d.toUTCString();
       document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
     }
 
-    updateSurfPara(type) { var me = this.icn3dui, ic = me.icn3d;
+    updateSurfPara(type) { let me = this.icn3dui, ic = me.icn3d;
        ic.phisurftype = $("#" + me.pre + type + "surftype").val();
        ic.phisurfop = $("#" + me.pre + type + "surfop").val();
        ic.phisurfwf = $("#" + me.pre + type + "surfwf").val();
     }
 
-    exportPdb() { var me = this.icn3dui, ic = me.icn3d;
-       var pdbStr = '';
+    exportPdb() { let me = this.icn3dui, ic = me.icn3d;
+       let pdbStr = '';
        pdbStr += ic.saveFileCls.getPDBHeader();
-       var atoms = me.hashUtilsCls.intHash(ic.dAtoms, ic.hAtoms);
+       let atoms = me.hashUtilsCls.intHash(ic.dAtoms, ic.hAtoms);
        //pdbStr += ic.saveFileCls.getAtomPDB(atoms, undefined, true);
        pdbStr += ic.saveFileCls.getAtomPDB(atoms);
 
-       var file_pref =(ic.inputid) ? ic.inputid : "custom";
+       let file_pref =(ic.inputid) ? ic.inputid : "custom";
        ic.saveFileCls.saveFile(file_pref + '_icn3d.pdb', 'text', [pdbStr]);
     }
 }

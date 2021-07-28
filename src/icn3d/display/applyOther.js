@@ -20,7 +20,7 @@ class ApplyOther {
     }
 
     //Apply the rest options (e.g., hydrogen bonds, center, etc).
-    applyOtherOptions(options) { var ic = this.icn3d, me = ic.icn3dui;
+    applyOtherOptions(options) { let ic = this.icn3d, me = ic.icn3dui;
             if(options === undefined) options = ic.opts;
 
     //    if(ic.lines !== undefined) {
@@ -41,11 +41,11 @@ class ApplyOther {
             if (ic.pairArray !== undefined && ic.pairArray.length > 0) {
                 this.updateStabilizer(); // to update ic.stabilizerpnts
 
-                var color = '#FFFFFF';
-                var pnts = ic.stabilizerpnts;
+                let color = '#FFFFFF';
+                let pnts = ic.stabilizerpnts;
                 ic.lines['stabilizer'] = []; // reset
-                for (var i = 0, lim = Math.floor(pnts.length / 2); i < lim; i++) {
-                    var line = {};
+                for (let i = 0, lim = Math.floor(pnts.length / 2); i < lim; i++) {
+                    let line = {};
                     line.position1 = pnts[2 * i];
                     line.position2 = pnts[2 * i + 1];
                     line.color = color;
@@ -60,34 +60,34 @@ class ApplyOther {
 
         // distance sets
         if(ic.distPnts && ic.distPnts.length > 0) {
-            for(var i = 0, il = ic.distPnts.length; i < il; ++i) {
+            for(let i = 0, il = ic.distPnts.length; i < il; ++i) {
                ic.boxCls.createBox_base(ic.distPnts[i], ic.originSize, ic.hColor, false);
             }
         }
 
         // maps
         if(ic.prevMaps !== undefined) {
-            for(var i = 0, il = ic.prevMaps.length; i < il; ++i) {
+            for(let i = 0, il = ic.prevMaps.length; i < il; ++i) {
                 ic.mdl.add(ic.prevMaps[i]);
             }
         }
 
         // EM map
         if(ic.prevEmmaps !== undefined) {
-            for(var i = 0, il = ic.prevEmmaps.length; i < il; ++i) {
+            for(let i = 0, il = ic.prevEmmaps.length; i < il; ++i) {
                 ic.mdl.add(ic.prevEmmaps[i]);
             }
         }
 
         if(ic.prevPhimaps !== undefined) {
-            for(var i = 0, il = ic.prevPhimaps.length; i < il; ++i) {
+            for(let i = 0, il = ic.prevPhimaps.length; i < il; ++i) {
                 ic.mdl.add(ic.prevPhimaps[i]);
             }
         }
 
         // surfaces
         if(ic.prevSurfaces !== undefined) {
-            for(var i = 0, il = ic.prevSurfaces.length; i < il; ++i) {
+            for(let i = 0, il = ic.prevSurfaces.length; i < il; ++i) {
                 ic.mdl.add(ic.prevSurfaces[i]);
             }
         }
@@ -105,13 +105,13 @@ class ApplyOther {
 
         // other meshes
         if(ic.prevOtherMesh !== undefined) {
-            for(var i = 0, il = ic.prevOtherMesh.length; i < il; ++i) {
+            for(let i = 0, il = ic.prevOtherMesh.length; i < il; ++i) {
                 ic.mdl.add(ic.prevOtherMesh[i]);
             }
         }
 
         if(me.htmlCls.setHtmlCls.getCookie('glycan') != '') {
-            var bGlycansCartoon = parseInt(me.htmlCls.setHtmlCls.getCookie('glycan'));
+            let bGlycansCartoon = parseInt(me.htmlCls.setHtmlCls.getCookie('glycan'));
 
             if(ic.bGlycansCartoon != bGlycansCartoon) {
                 me.htmlCls.clickMenuCls.setLogCmd('set glycan ' + bGlycansCartoon, true);
@@ -155,24 +155,24 @@ class ApplyOther {
         }
     }
 
-    applyChemicalbindingOptions(options) { var ic = this.icn3d, me = ic.icn3dui;
+    applyChemicalbindingOptions(options) { let ic = this.icn3d, me = ic.icn3dui;
         if(options === undefined) options = ic.opts;
 
         // display mode
         if (options.chemicalbinding === 'show') {
-            var startAtoms;
+            let startAtoms;
             if(ic.chemicals !== undefined && Object.keys(ic.chemicals).length > 0) { // show chemical-protein interaction
                 startAtoms = me.hashUtilsCls.hash2Atoms(ic.chemicals, ic.atoms);
             }
 
             // find atoms in chainid1, which interact with chainid2
-            var radius = 4;
+            let radius = 4;
 
             if(startAtoms !== undefined) {
-                var targetAtoms = ic.contactCls.getAtomsWithinAtom(ic.atoms, startAtoms, radius);
+                let targetAtoms = ic.contactCls.getAtomsWithinAtom(ic.atoms, startAtoms, radius);
 
                 // show hydrogens
-                var threshold = 3.5;
+                let threshold = 3.5;
                 ic.opts["hbonds"] = "yes";
 
                 if(Object.keys(targetAtoms).length > 0) {
@@ -192,13 +192,13 @@ class ApplyOther {
         }
     }
 
-    updateStabilizer() { var ic = this.icn3d, me = ic.icn3dui;
+    updateStabilizer() { let ic = this.icn3d, me = ic.icn3dui;
         ic.stabilizerpnts = [];
 
         if(ic.pairArray !== undefined) {
-            for(var i = 0, il = ic.pairArray.length; i < il; i += 2) {
-                var coordI = this.getResidueRepPos(ic.pairArray[i]);
-                var coordJ = this.getResidueRepPos(ic.pairArray[i + 1]);
+            for(let i = 0, il = ic.pairArray.length; i < il; i += 2) {
+                let coordI = this.getResidueRepPos(ic.pairArray[i]);
+                let coordJ = this.getResidueRepPos(ic.pairArray[i + 1]);
 
                 ic.stabilizerpnts.push(coordI);
                 ic.stabilizerpnts.push(coordJ);
@@ -206,17 +206,17 @@ class ApplyOther {
         }
     }
 
-    getResidueRepPos(serial) { var ic = this.icn3d, me = ic.icn3dui;
-        var atomIn = ic.atoms[serial];
-        var residueid = atomIn.structure + "_" + atomIn.chain + "_" + atomIn.resi;
+    getResidueRepPos(serial) { let ic = this.icn3d, me = ic.icn3dui;
+        let atomIn = ic.atoms[serial];
+        let residueid = atomIn.structure + "_" + atomIn.chain + "_" + atomIn.resi;
 
-        var pos;
+        let pos;
         if(!ic.proteins.hasOwnProperty(serial) && !ic.nucleotides.hasOwnProperty(serial)) { // chemicals or ions
             pos = atomIn.coord;
         }
         else {
-            for(var i in ic.residues[residueid]) {
-                var atom = ic.atoms[i];
+            for(let i in ic.residues[residueid]) {
+                let atom = ic.atoms[i];
                 if(atom.name === 'N3') { // nucleotide: N3
                     pos = ic.atoms[i].coord;
                     break;

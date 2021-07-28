@@ -12,10 +12,10 @@ class UtilsCls {
     }
 
     //Determine whether the current browser is Internet Explorer.
-    isIE() { var me = this.icn3dui;
+    isIE() { let me = this.icn3dui;
         //http://stackoverflow.com/questions/19999388/check-if-user-is-using-ie-with-jquery
-        var ua = window.navigator.userAgent;
-        var msie = ua.indexOf("MSIE ");
+        let ua = window.navigator.userAgent;
+        let msie = ua.indexOf("MSIE ");
 
         if (msie > 0 || !!window.navigator.userAgent.match(/Trident.*rv\:11\./))      // If Internet Explorer
             return true;
@@ -24,23 +24,23 @@ class UtilsCls {
     }
 
     //Determine whether it is a mobile device.
-    isMobile() { var me = this.icn3dui;
+    isMobile() { let me = this.icn3dui;
         return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(window.navigator.userAgent);
     }
 
     //Determine whether it is a Mac.
-    isMac() { var me = this.icn3dui;
+    isMac() { let me = this.icn3dui;
         return /Mac/i.test(window.navigator.userAgent);
     }
 
     //Determine whether Session Storage is supported in your browser. Session Storage is not supported in Safari.
-    isSessionStorageSupported() { var me = this.icn3dui;
+    isSessionStorageSupported() { let me = this.icn3dui;
         return window.sessionStorage;
     }
 
     // http://stackoverflow.com/questions/5623838/rgb-to-hex-and-hex-to-rgb
-    hexToRgb(hex, a) { var me = this.icn3dui;
-         var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+    hexToRgb(hex, a) { let me = this.icn3dui;
+         let result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
          return result ? {
              r: parseInt(result[1], 16),
              g: parseInt(result[2], 16),
@@ -50,13 +50,13 @@ class UtilsCls {
     }
 
     //isCalphaPhosOnly(atomlist, atomname1, atomname2) {
-    isCalphaPhosOnly(atomlist) { var me = this.icn3dui;
-          var bCalphaPhosOnly = false;
+    isCalphaPhosOnly(atomlist) { let me = this.icn3dui;
+          let bCalphaPhosOnly = false;
 
-          var index = 0, testLength = 50; //30
+          let index = 0, testLength = 50; //30
           //var bOtherAtoms = false;
-          var nOtherAtoms = 0;
-          for(var i in atomlist) {
+          let nOtherAtoms = 0;
+          for(let i in atomlist) {
             if(index < testLength) {
               if(atomlist[i].name !== "CA" && atomlist[i].name !== "P" && atomlist[i].name !== "O3'" && atomlist[i].name !== "O3*") {
                 //bOtherAtoms = true;
@@ -81,21 +81,21 @@ class UtilsCls {
 
     // from iview (http://istar.cse.cuhk.edu.hk/iview/)
     //Determine whether atom1 and atom2 have covalent bond.
-    hasCovalentBond(atom0, atom1) { var me = this.icn3dui;
-        var r = me.parasCls.covalentRadii[atom0.elem.toUpperCase()] + me.parasCls.covalentRadii[atom1.elem.toUpperCase()];
+    hasCovalentBond(atom0, atom1) { let me = this.icn3dui;
+        let r = me.parasCls.covalentRadii[atom0.elem.toUpperCase()] + me.parasCls.covalentRadii[atom1.elem.toUpperCase()];
 
         //return atom0.coord.distanceToSquared(atom1.coord) < 1.3 * r * r;
-        var dx = atom0.coord.x - atom1.coord.x;
-        var dy = atom0.coord.y - atom1.coord.y;
-        var dz = atom0.coord.z - atom1.coord.z;
-        var distSq = dx*dx + dy*dy + dz*dz;
+        let dx = atom0.coord.x - atom1.coord.x;
+        let dy = atom0.coord.y - atom1.coord.y;
+        let dz = atom0.coord.z - atom1.coord.z;
+        let distSq = dx*dx + dy*dy + dz*dz;
 
         return distSq < 1.3 * r * r;
     }
 
     //Convert a three-letter residue name to a one-letter residue abbreviation, e.g., 'LYS' to 'K', or ' A' to 'A' for nucleotides.
-    residueName2Abbr(residueName) { var me = this.icn3dui;
-      var pos = residueName.indexOf(' ');
+    residueName2Abbr(residueName) { let me = this.icn3dui;
+      let pos = residueName.indexOf(' ');
       if(pos > 0) {
           residueName = residueName.substr(0, pos);
       }
@@ -234,7 +234,7 @@ class UtilsCls {
       }
     }
 
-    residueAbbr2Name(residueAbbr) { var me = this.icn3dui;
+    residueAbbr2Name(residueAbbr) { let me = this.icn3dui;
       if(residueAbbr.length > 1) {
           return residueAbbr;
       }
@@ -309,28 +309,28 @@ class UtilsCls {
       }
     }
 
-    getJSONFromArray(inArray) { var me = this.icn3dui;
-        var jsonStr = '';
-        for(var i = 0, il= inArray.length; i < il; ++i) {
+    getJSONFromArray(inArray) { let me = this.icn3dui;
+        let jsonStr = '';
+        for(let i = 0, il= inArray.length; i < il; ++i) {
             jsonStr += JSON.stringify(inArray[i]);
             if(i != il - 1) jsonStr += ', ';
         }
         return jsonStr;
     }
 
-    checkFileAPI() { var me = this.icn3dui;
+    checkFileAPI() { let me = this.icn3dui;
          if(!window.File || !window.FileReader || !window.FileList || !window.Blob) {
             alert('The File APIs are not fully supported in this browser.');
          }
     }
 
-    getIdArray(resid) { var me = this.icn3dui;
+    getIdArray(resid) { let me = this.icn3dui;
         //var idArray = resid.split('_');
-        var idArray = [];
+        let idArray = [];
 
         if(resid) {
-            var pos1 = resid.indexOf('_');
-            var pos2 = resid.lastIndexOf('_');
+            let pos1 = resid.indexOf('_');
+            let pos2 = resid.lastIndexOf('_');
             idArray.push(resid.substr(0, pos1));
             idArray.push(resid.substr(pos1 + 1, pos2 - pos1 - 1));
             idArray.push(resid.substr(pos2 + 1));
@@ -339,10 +339,10 @@ class UtilsCls {
         return idArray;
     }
 
-    compResid(a, b, type) { var me = this.icn3dui;
-      var aArray = a.split(',');
-      var bArray = b.split(',');
-      var aIdArray, bIdArray;
+    compResid(a, b, type) { let me = this.icn3dui;
+      let aArray = a.split(',');
+      let bArray = b.split(',');
+      let aIdArray, bIdArray;
       if(type == 'save1') {
         aIdArray = me.utilsCls.getIdArray(aArray[0]); //aArray[0].split('_');
         bIdArray = me.utilsCls.getIdArray(bArray[0]); //bArray[0].split('_');
@@ -351,10 +351,10 @@ class UtilsCls {
         aIdArray = me.utilsCls.getIdArray(aArray[1]); //aArray[1].split('_');
         bIdArray = me.utilsCls.getIdArray(bArray[1]); //bArray[1].split('_');
       }
-      var aChainid = aIdArray[0] + '_' + aIdArray[1];
-      var bChainid = bIdArray[0] + '_' + bIdArray[1];
-      var aResi = parseInt(aIdArray[2]);
-      var bResi = parseInt(bIdArray[2]);
+      let aChainid = aIdArray[0] + '_' + aIdArray[1];
+      let bChainid = bIdArray[0] + '_' + bIdArray[1];
+      let aResi = parseInt(aIdArray[2]);
+      let bResi = parseInt(bIdArray[2]);
       if(aChainid > bChainid){
         return 1;
       }
@@ -366,23 +366,23 @@ class UtilsCls {
       }
     }
 
-    toggle(id1, id2, id3, id4) { var me = this.icn3dui;
-      var itemArray = [id1, id2];
-      for(var i in itemArray) {
-          var item = itemArray[i];
+    toggle(id1, id2, id3, id4) { let me = this.icn3dui;
+      let itemArray = [id1, id2];
+      for(let i in itemArray) {
+          let item = itemArray[i];
           $("#" + item).toggleClass('ui-icon-plus');
           $("#" + item).toggleClass('ui-icon-minus');
       }
 
       itemArray = [id1, id2, id3, id4];
-      for(var i in itemArray) {
-          var item = itemArray[i];
+      for(let i in itemArray) {
+          let item = itemArray[i];
           $("#" + item).toggleClass('icn3d-shown');
           $("#" + item).toggleClass('icn3d-hidden');
       }
     }
 
-    setViewerWidthHeight(me) { var me = this.icn3dui;
+    setViewerWidthHeight(me) { //let me = this.icn3dui;
         if(me.bNode) {
             me.htmlCls.WIDTH = 400;
             me.htmlCls.HEIGHT = 400;
@@ -393,7 +393,7 @@ class UtilsCls {
         me.htmlCls.HEIGHT = $( window ).height() - me.htmlCls.EXTRAHEIGHT - me.htmlCls.LESSHEIGHT;
 
         // width from css
-        var viewer_width, viewer_height;
+        let viewer_width, viewer_height;
 
         if(me.oriWidth !== undefined && me.cfg.width.toString().indexOf('%') === -1) {
             viewer_width = me.oriWidth;

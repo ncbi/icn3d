@@ -20,12 +20,12 @@ class Symd {
         this.icn3d = icn3d;
     }
 
-    applyCommandSymdBase(command) { var ic = this.icn3d, me = ic.icn3dui;
+    applyCommandSymdBase(command) { let ic = this.icn3d, me = ic.icn3dui;
         this.retrieveSymd()
     }
 
-    applyCommandSymd(command) { var ic = this.icn3d, me = ic.icn3dui;
-      var thisClass = this;
+    applyCommandSymd(command) { let ic = this.icn3d, me = ic.icn3dui;
+      let thisClass = this;
       // chain functions together
       ic.deferredSymd = $.Deferred(function() {
          thisClass.applyCommandSymdBase(command);
@@ -34,13 +34,13 @@ class Symd {
       return ic.deferredSymd.promise();
     }
 
-    retrieveSymd() { var ic = this.icn3d, me = ic.icn3dui;
-       var thisClass = this;
+    retrieveSymd() { let ic = this.icn3d, me = ic.icn3dui;
+       let thisClass = this;
 
        //var url = "https://data.rcsb.org/rest/v1/core/assembly/" + pdbid + "/1";
-       var url = "https://www.ncbi.nlm.nih.gov/Structure/symd/symd.cgi";
+       let url = "https://www.ncbi.nlm.nih.gov/Structure/symd/symd.cgi";
 
-       var atomHash = me.hashUtilsCls.intHash(ic.dAtoms, ic.hAtoms);
+       let atomHash = me.hashUtilsCls.intHash(ic.dAtoms, ic.hAtoms);
 
        // just output C-alpha atoms
        // the number of residues matters
@@ -48,12 +48,12 @@ class Symd {
        // just output proteins
        atomHash = me.hashUtilsCls.intHash(atomHash, ic.proteins);
 
-       var atomCnt = Object.keys(atomHash).length;
+       let atomCnt = Object.keys(atomHash).length;
 
-       var residHash = {}
-       for(var serial in atomHash) {
-           var atom = ic.atoms[serial];
-           var resid = atom.structure + '_' + atom.chain + '_' + atom.resi;
+       let residHash = {}
+       for(let serial in atomHash) {
+           let atom = ic.atoms[serial];
+           let resid = atom.structure + '_' + atom.chain + '_' + atom.resi;
            residHash[resid] = 1;
        }
 
@@ -63,11 +63,11 @@ class Symd {
            return;
        }
 
-       var pdbstr = '';
+       let pdbstr = '';
        pdbstr += ic.saveFileCls.getPDBHeader();
        pdbstr += ic.saveFileCls.getAtomPDB(atomHash);
 
-       var dataObj = {'pdb': pdbstr, 'pdbid': Object.keys(ic.structures).toString()}
+       let dataObj = {'pdb': pdbstr, 'pdbid': Object.keys(ic.structures).toString()}
 
        $.ajax({
           url: url,
@@ -84,10 +84,10 @@ class Symd {
               //ic.ParserUtilsCls.hideLoading();
           },
           success: function(data) {
-              var symmetryArray = data.rcsb_struct_symmetry;
-              var rot, centerFrom, centerTo;
+              let symmetryArray = data.rcsb_struct_symmetry;
+              let rot, centerFrom, centerTo;
 
-              var title = 'none';
+              let title = 'none';
 
               if(symmetryArray !== undefined) {
                   if(ic.rmsd_supr !== undefined && ic.rmsd_supr.rot !== undefined) {
@@ -98,8 +98,8 @@ class Symd {
 
                   //ic.symdHash = {}
                   if(ic.symdArray === undefined) ic.symdArray = [];
-                  var order;
-                  for(var i = 0, il = symmetryArray.length; i < il; ++i) {
+                  let order;
+                  for(let i = 0, il = symmetryArray.length; i < il; ++i) {
                       if(symmetryArray[i].symbol == 'C1') continue;
                       title = symmetryArray[i].symbol + " ";
                       if(symmetryArray[i].kind == "Pseudo Symmetry") {
@@ -112,12 +112,12 @@ class Symd {
                           title = symmetryArray[i].symbol + ' (local)';
                       }
 
-                      var rotation_axes = symmetryArray[i].rotation_axes;
-                      var axesArray = [];
-                      for(var j = 0, jl = rotation_axes.length; j < jl; ++j) {
-                          var tmpArray = [];
-                          var start = new THREE.Vector3(rotation_axes[j].start[0], rotation_axes[j].start[1], rotation_axes[j].start[2]);
-                          var end = new THREE.Vector3(rotation_axes[j].end[0], rotation_axes[j].end[1], rotation_axes[j].end[2]);
+                      let rotation_axes = symmetryArray[i].rotation_axes;
+                      let axesArray = [];
+                      for(let j = 0, jl = rotation_axes.length; j < jl; ++j) {
+                          let tmpArray = [];
+                          let start = new THREE.Vector3(rotation_axes[j].start[0], rotation_axes[j].start[1], rotation_axes[j].start[2]);
+                          let end = new THREE.Vector3(rotation_axes[j].end[0], rotation_axes[j].end[1], rotation_axes[j].end[2]);
 
                           order = rotation_axes[j].order;
 
@@ -131,8 +131,8 @@ class Symd {
                           tmpArray.push(end);
 
                           // https://www.rcsb.org/pages/help/viewers/jmol_symmetry_view
-                          var colorAxis = thisClass.getAxisColor(symmetryArray[i].symbol, rotation_axes[j].order);
-                          var colorPolygon = thisClass.getPolygonColor(symmetryArray[i].symbol);
+                          let colorAxis = thisClass.getAxisColor(symmetryArray[i].symbol, rotation_axes[j].order);
+                          let colorPolygon = thisClass.getPolygonColor(symmetryArray[i].symbol);
                           tmpArray.push(colorAxis);
                           tmpArray.push(colorPolygon);
 
@@ -143,7 +143,7 @@ class Symd {
 
                           axesArray.push(tmpArray);
                       }
-                      var symdHash = {}
+                      let symdHash = {}
                       symdHash[title] = axesArray;
                       ic.symdArray.push(symdHash);
                   }
@@ -153,28 +153,28 @@ class Symd {
                       ic.icn3dui.htmlCls.dialogCls.openDlg('dl_symd', 'Dynamically Calculated Symmetry Using SymD');
                   }
                   else {
-                      var ori_permSeq = data.seqalign.replace(/ /g, '').split(','); //oriSeq,permSeq
-                      var nres = data.nres;
-                      var shift = data.shift;
-                      var rmsd = data.rmsd;
+                      let ori_permSeq = data.seqalign.replace(/ /g, '').split(','); //oriSeq,permSeq
+                      let nres = data.nres;
+                      let shift = data.shift;
+                      let rmsd = data.rmsd;
 
-                      var oriResidArray = Object.keys(residHash);
-                      var residArrayHash1 = {}, residArrayHash2 = {}
-                      var residArray1 = [], residArray2 = [];
-                      var index1 = 0, index2 = 0;
-                      var chainCntHash = {}
-                      for(var i = 0, il = ori_permSeq[0].length; i < il; ++i) {
-                          var resn1 = ori_permSeq[0][i];
-                          var resn2 = ori_permSeq[1][i];
+                      let oriResidArray = Object.keys(residHash);
+                      let residArrayHash1 = {}, residArrayHash2 = {}
+                      let residArray1 = [], residArray2 = [];
+                      let index1 = 0, index2 = 0;
+                      let chainCntHash = {}
+                      for(let i = 0, il = ori_permSeq[0].length; i < il; ++i) {
+                          let resn1 = ori_permSeq[0][i];
+                          let resn2 = ori_permSeq[1][i];
 
                           if(resn1 != '-') {
                               if(resn1 == resn1.toUpperCase()) { // aligned
                                  residArrayHash1[oriResidArray[index1]] = 1;
 
-                                 var idArray1 = me.utilsCls.getIdArray(oriResidArray[index1]);
+                                 let idArray1 = me.utilsCls.getIdArray(oriResidArray[index1]);
                                  residArray1.push(resn1 + ' $' + idArray1[0] + '.' + idArray1[1] + ':' + idArray1[2]);
 
-                                 var chainid = idArray1[0] + '_' + idArray1[1];
+                                 let chainid = idArray1[0] + '_' + idArray1[1];
                                  if(!chainCntHash.hasOwnProperty(chainid)) {
                                      chainCntHash[chainid] = [];
                                  }
@@ -186,25 +186,25 @@ class Symd {
 
                           if(resn2 != '-') {
                               if(resn2 == resn2.toUpperCase()) { // aligned
-                                 var oriIndex =(index2 + shift + nres) % nres;
+                                 let oriIndex =(index2 + shift + nres) % nres;
                                  residArrayHash2[oriResidArray[oriIndex]] = 1;
 
-                                 var idArray2 = me.utilsCls.getIdArray(oriResidArray[oriIndex]);
+                                 let idArray2 = me.utilsCls.getIdArray(oriResidArray[oriIndex]);
                                  residArray2.push(resn2 + ' $' + idArray2[0] + '.' + idArray2[1] + ':' + idArray2[2]);
                               }
                               ++index2;
                           }
                       }
 
-                      var residArrayHashFinal1 = {}, residArrayHashFinal2 = {}
-                      var residArrayFinal1 = [], residArrayFinal2 = [];
+                      let residArrayHashFinal1 = {}, residArrayHashFinal2 = {}
+                      let residArrayFinal1 = [], residArrayFinal2 = [];
 
-                      var bOnechain = false;
+                      let bOnechain = false;
                       if(Object.keys(chainCntHash).length == 1) {
                           bOnechain = true;
-                          var nResUnit = parseInt(residArray1.length / order + 0.5);
-                          var residArrayFromHash1 = Object.keys(residArrayHash1), residArrayFromHash2 = Object.keys(residArrayHash2);
-                          for(var i = 0; i < nResUnit; ++i) {
+                          let nResUnit = parseInt(residArray1.length / order + 0.5);
+                          let residArrayFromHash1 = Object.keys(residArrayHash1), residArrayFromHash2 = Object.keys(residArrayHash2);
+                          for(let i = 0; i < nResUnit; ++i) {
                             if(!residArrayHashFinal1.hasOwnProperty(residArrayFromHash2[i])) { // do not appear in both original and permuted
                               residArrayFinal1.push(residArray1[i]);
                               residArrayFinal2.push(residArray2[i]);
@@ -214,17 +214,17 @@ class Symd {
                           }
                       }
                       else {
-                          var selChainid, selCnt = 0;
-                          for(var chainid in chainCntHash) {
+                          let selChainid, selCnt = 0;
+                          for(let chainid in chainCntHash) {
                               if(chainCntHash[chainid].length > selCnt) {
                                   selCnt = chainCntHash[chainid].length;
                                   selChainid = chainid;
                               }
                           }
 
-                          var residArrayFromHash1 = Object.keys(residArrayHash1), residArrayFromHash2 = Object.keys(residArrayHash2);
-                          for(var i = 0, il = chainCntHash[selChainid].length; i < il; ++i) {
-                            var pos = chainCntHash[selChainid][i];
+                          let residArrayFromHash1 = Object.keys(residArrayHash1), residArrayFromHash2 = Object.keys(residArrayHash2);
+                          for(let i = 0, il = chainCntHash[selChainid].length; i < il; ++i) {
+                            let pos = chainCntHash[selChainid][i];
                             if(!residArrayHashFinal1.hasOwnProperty(residArrayFromHash2[pos])) { // do not appear in both original and permuted
                               residArrayFinal1.push(residArray1[pos]);
                               residArrayFinal2.push(residArray2[pos]);
@@ -234,26 +234,26 @@ class Symd {
                           }
                       }
 
-                      var html = '<br>';
+                      let html = '<br>';
                       html += "The symmetry " + symmetryArray[0].symbol + " was calculated dynamically using the program <a href='https://symd.nci.nih.gov/' target='_blank'>SymD</a>. The Z score " + data.zscore + " is greater than the threshold Z score 8. The RMSD is " + rmsd + " angstrom. <br><br>The following sequence alignment shows the residue mapping of the best aligned sets: \"symOri\" and \"symPerm\", which are also available in the menu \"Analysis > Defined Sets\".<br>";
 
                       $("#" + ic.pre + "symd_info").html(html);
 
                       thisClass.setSeqAlignForSymmetry(residArrayFinal1, residArrayFinal2, bOnechain);
 
-                      var bShowHighlight = false;
-                      var seqObj = ic.icn3dui.htmlCls.alignSeqCls.getAlignSequencesAnnotations(Object.keys(ic.alnChains), undefined, undefined, bShowHighlight, bOnechain);
+                      let bShowHighlight = false;
+                      let seqObj = ic.icn3dui.htmlCls.alignSeqCls.getAlignSequencesAnnotations(Object.keys(ic.alnChains), undefined, undefined, bShowHighlight, bOnechain);
 
-                      var html = $("#" + ic.pre + "dl_sequence2").html() + seqObj.sequencesHtml;
+                      html = $("#" + ic.pre + "dl_sequence2").html() + seqObj.sequencesHtml;
 
                       $("#" + ic.pre + "dl_sequence2").html(html);
                       $("#" + ic.pre + "dl_sequence2").width(ic.icn3dui.htmlCls.RESIDUE_WIDTH * seqObj.maxSeqCnt + 200);
 
                       ic.icn3dui.htmlCls.dialogCls.openDlg('dl_alignment', 'Select residues in aligned sequences from SymD');
 
-                      var numDef = Object.keys(ic.defNames2Residues).length + Object.keys(ic.defNames2Atoms).length;
+                      let numDef = Object.keys(ic.defNames2Residues).length + Object.keys(ic.defNames2Atoms).length;
 
-                      var name = 'symOri' + numDef;
+                      let name = 'symOri' + numDef;
                       ic.selectionCls.selectResidueList(residArrayHashFinal1, name, name);
                       ic.selectionCls.updateSelectionNameDesc();
                       ic.icn3dui.htmlCls.clickMenuCls.setLogCmd('select ' + ic.resid2specCls.residueids2spec(Object.keys(residArrayHashFinal1)) + ' | name ' + name, false);
@@ -264,7 +264,7 @@ class Symd {
                       ic.icn3dui.htmlCls.clickMenuCls.setLogCmd('select ' + ic.resid2specCls.residueids2spec(Object.keys(residArrayHashFinal2)) + ' | name ' + name, false);
 
                       name = 'symBoth' + numDef;
-                      var residArrayHashFinal1 = me.hashUtilsCls.unionHash(residArrayHashFinal1, residArrayHashFinal2);
+                      residArrayHashFinal1 = me.hashUtilsCls.unionHash(residArrayHashFinal1, residArrayHashFinal2);
                       ic.selectionCls.selectResidueList(residArrayHashFinal1, name, name);
                       ic.selectionCls.updateSelectionNameDesc();
                       ic.icn3dui.htmlCls.clickMenuCls.setLogCmd('select ' + ic.resid2specCls.residueids2spec(Object.keys(residArrayHashFinal1)) + ' | name ' + name, false);
@@ -302,27 +302,27 @@ class Symd {
        });
     }
 
-    getResObj(resn_resid) { var ic = this.icn3d, me = ic.icn3dui;
+    getResObj(resn_resid) { let ic = this.icn3d, me = ic.icn3dui;
         // K $1KQ2.A:2
 
-        var resn = resn_resid.substr(0, resn_resid.indexOf(' '));
-        var pos1 = resn_resid.indexOf('$');
-        var pos2 = resn_resid.indexOf('.');
-        var pos3 = resn_resid.indexOf(':');
+        let resn = resn_resid.substr(0, resn_resid.indexOf(' '));
+        let pos1 = resn_resid.indexOf('$');
+        let pos2 = resn_resid.indexOf('.');
+        let pos3 = resn_resid.indexOf(':');
 
-        var structure = resn_resid.substr(pos1 + 1, pos2 - pos1 - 1);
-        var chain = resn_resid.substr(pos2 + 1, pos3 - pos2 - 1);
-        var resi = resn_resid.substr(pos3 + 1);
-        var resid = structure + '_' + chain + '_' + resi;
+        let structure = resn_resid.substr(pos1 + 1, pos2 - pos1 - 1);
+        let chain = resn_resid.substr(pos2 + 1, pos3 - pos2 - 1);
+        let resi = resn_resid.substr(pos3 + 1);
+        let resid = structure + '_' + chain + '_' + resi;
 
-        var resObject = {'resn': resn, 'resid': resid, 'resi': resi, 'aligned': true}
+        let resObject = {'resn': resn, 'resid': resid, 'resi': resi, 'aligned': true}
 
         return resObject;
     }
 
-    setSeqAlignForSymmetry(residArray1, residArray2, bOnechain) { var ic = this.icn3d, me = ic.icn3dui;
+    setSeqAlignForSymmetry(residArray1, residArray2, bOnechain) { let ic = this.icn3d, me = ic.icn3dui;
           //loadSeqAlignment
-          var alignedAtoms = {}
+          let alignedAtoms = {}
           //var structureArray = Object.keys(ic.structures);
           //var structure1 = structureArray[0];
           //var structure2 = structureArray[1];
@@ -341,32 +341,32 @@ class Symd {
 
           ic.alnChainsSeq = {}
 
-          var residuesHash = {}
+          let residuesHash = {}
 
-          for(var i = 0, il = residArray1.length; i < il; ++i) { // K $1KQ2.A:2
-              var resObject1 = this.getResObj(residArray1[i]);
-              var resObject2 = this.getResObj(residArray2[i]);
+          for(let i = 0, il = residArray1.length; i < il; ++i) { // K $1KQ2.A:2
+              let resObject1 = this.getResObj(residArray1[i]);
+              let resObject2 = this.getResObj(residArray2[i]);
 
-              var chainid1 = resObject1.resid.substr(0, resObject1.resid.lastIndexOf('_'));
-              var chainid2Ori = resObject2.resid.substr(0, resObject2.resid.lastIndexOf('_'));
-              var chainid2 = chainid2Ori;
+              let chainid1 = resObject1.resid.substr(0, resObject1.resid.lastIndexOf('_'));
+              let chainid2Ori = resObject2.resid.substr(0, resObject2.resid.lastIndexOf('_'));
+              let chainid2 = chainid2Ori;
               // if one chain, separate it into two chains to show seq alignment
               if(bOnechain) {
-                  var stucture = chainid2Ori.substr(0, chainid2Ori.indexOf('_'));
+                  let stucture = chainid2Ori.substr(0, chainid2Ori.indexOf('_'));
                   chainid2 = stucture + '2' + chainid2Ori.substr(chainid2Ori.indexOf('_'));
               }
 
               residuesHash[resObject1.resid] = 1;
               residuesHash[resObject2.resid] = 1;
 
-              var color;
+              let color;
               if(resObject1.resn == resObject2.resn) {
                   color = "#FF0000";
               }
               else {
                   color = "#0000FF";
               }
-              var color2 = '#' + ic.showAnnoCls.getColorhexFromBlosum62(resObject1.resn, resObject2.resn);
+              let color2 = '#' + ic.showAnnoCls.getColorhexFromBlosum62(resObject1.resn, resObject2.resn);
 
               resObject1.color = color;
               resObject2.color = color;
@@ -374,11 +374,11 @@ class Symd {
               resObject1.color2 = color2;
               resObject2.color2 = color2;
 
-              for(var j in ic.residues[resObject1.resid]) {
+              for(let j in ic.residues[resObject1.resid]) {
                   ic.atoms[j].color = me.parasCls.thr(color);
                   ic.atomPrevColors[j] = me.parasCls.thr(color);
               }
-              for(var j in ic.residues[resObject2.resid]) {
+              for(let j in ic.residues[resObject2.resid]) {
                   ic.atoms[j].color = me.parasCls.thr(color);
                   ic.atomPrevColors[j] = me.parasCls.thr(color);
               }
@@ -386,12 +386,12 @@ class Symd {
               // annoation title for the master seq only
               if(ic.alnChainsAnTtl[chainid1] === undefined ) ic.alnChainsAnTtl[chainid1] = [];
 
-              for(var j = 0; j < 3; ++j) {
+              for(let j = 0; j < 3; ++j) {
                   if(ic.alnChainsAnTtl[chainid1][j] === undefined ) ic.alnChainsAnTtl[chainid1][j] = [];
               }
 
               // two annotations without titles
-              for(var j = 0; j < 3; ++j) {
+              for(let j = 0; j < 3; ++j) {
                   ic.alnChainsAnTtl[chainid1][j].push("");
               }
 
@@ -413,33 +413,33 @@ class Symd {
               if(ic.alnChainsAnno[chainid1] === undefined ) ic.alnChainsAnno[chainid1] = [];
               //if(ic.alnChainsAnno[chainid2] === undefined ) ic.alnChainsAnno[chainid2] = [];
 
-              for(var j = 0; j < 3; ++j) {
+              for(let j = 0; j < 3; ++j) {
                   if(ic.alnChainsAnno[chainid1][j] === undefined ) ic.alnChainsAnno[chainid1][j] = [];
               }
 
-              var symbol = '.';
+              let symbol = '.';
               if(i % 5 === 0) symbol = '*';
               if(i % 10 === 0) symbol = '|';
               ic.alnChainsAnno[chainid1][0].push(symbol); // symbol: | for 10th, * for 5th, . for rest
 
-              var numberStr = '';
+              let numberStr = '';
               if(i % 10 === 0) numberStr = i.toString();
               ic.alnChainsAnno[chainid1][1].push(numberStr); // symbol: 10, 20, etc, empty for rest
           }
 
     /*
-            var commandname = 'symBoth_aligned'; //'protein_aligned';
-            var commanddescr = 'symBoth aligned'; //'protein aligned';
-            var select = "select " + ic.resid2specCls.residueids2spec(Object.keys(residuesHash));
+            let commandname = 'symBoth_aligned'; //'protein_aligned';
+            let commanddescr = 'symBoth aligned'; //'protein aligned';
+            let select = "select " + ic.resid2specCls.residueids2spec(Object.keys(residuesHash));
 
             ic.selectionCls.addCustomSelection(Object.keys(residuesHash), commandname, commanddescr, select, true);
     */
     }
 
-    retrieveSymmetry(pdbid) { var ic = this.icn3d, me = ic.icn3dui;
-       var thisClass =this;
+    retrieveSymmetry(pdbid) { let ic = this.icn3d, me = ic.icn3dui;
+       let thisClass =this;
 
-       var url = "https://data.rcsb.org/rest/v1/core/assembly/" + pdbid + "/1";
+       let url = "https://data.rcsb.org/rest/v1/core/assembly/" + pdbid + "/1";
 
        $.ajax({
           url: url,
@@ -448,8 +448,8 @@ class Symd {
           tryCount : 0,
           retryLimit : 1,
           success: function(data) {
-              var symmetryArray = data.rcsb_struct_symmetry;
-              var rot, centerFrom, centerTo;
+              let symmetryArray = data.rcsb_struct_symmetry;
+              let rot, centerFrom, centerTo;
 
               if(symmetryArray !== undefined) {
                   if(ic.rmsd_supr !== undefined && ic.rmsd_supr.rot !== undefined) {
@@ -459,9 +459,9 @@ class Symd {
                   }
 
                   ic.symmetryHash = {}
-                  for(var i = 0, il = symmetryArray.length; i < il; ++i) {
+                  for(let i = 0, il = symmetryArray.length; i < il; ++i) {
                       if(symmetryArray[i].symbol == 'C1') continue;
-                      var title = 'no title';
+                      let title = 'no title';
                       if(symmetryArray[i].kind == "Pseudo Symmetry") {
                           title = symmetryArray[i].symbol + ' (pseudo)';
                       }
@@ -472,12 +472,12 @@ class Symd {
                           title = symmetryArray[i].symbol + ' (local)';
                       }
 
-                      var rotation_axes = symmetryArray[i].rotation_axes;
-                      var axesArray = [];
-                      for(var j = 0, jl = rotation_axes.length; j < jl; ++j) {
-                          var tmpArray = [];
-                          var start = new THREE.Vector3(rotation_axes[j].start[0], rotation_axes[j].start[1], rotation_axes[j].start[2]);
-                          var end = new THREE.Vector3(rotation_axes[j].end[0], rotation_axes[j].end[1], rotation_axes[j].end[2]);
+                      let rotation_axes = symmetryArray[i].rotation_axes;
+                      let axesArray = [];
+                      for(let j = 0, jl = rotation_axes.length; j < jl; ++j) {
+                          let tmpArray = [];
+                          let start = new THREE.Vector3(rotation_axes[j].start[0], rotation_axes[j].start[1], rotation_axes[j].start[2]);
+                          let end = new THREE.Vector3(rotation_axes[j].end[0], rotation_axes[j].end[1], rotation_axes[j].end[2]);
 
                           // apply matrix for each atom
                           if(ic.rmsd_supr !== undefined && ic.rmsd_supr.rot !== undefined) {
@@ -489,8 +489,8 @@ class Symd {
                           tmpArray.push(end);
 
                           // https://www.rcsb.org/pages/help/viewers/jmol_symmetry_view
-                          var colorAxis = thisClass.getAxisColor(symmetryArray[i].symbol, rotation_axes[j].order);
-                          var colorPolygon = thisClass.getPolygonColor(symmetryArray[i].symbol);
+                          let colorAxis = thisClass.getAxisColor(symmetryArray[i].symbol, rotation_axes[j].order);
+                          let colorPolygon = thisClass.getPolygonColor(symmetryArray[i].symbol);
                           tmpArray.push(colorAxis);
                           tmpArray.push(colorPolygon);
 
@@ -509,9 +509,9 @@ class Symd {
                       $("#" + ic.pre + "dl_symmetry").html("<br>This structure has no symmetry.");
                   }
                   else {
-                      var html = "<option value='none'>None</option>", index = 0;
-                      for(var title in ic.symmetryHash) {
-                          var selected =(index == 0) ? 'selected' : '';
+                      let html = "<option value='none'>None</option>", index = 0;
+                      for(let title in ic.symmetryHash) {
+                          let selected =(index == 0) ? 'selected' : '';
                           html += "<option value=" + "'" + title + "' " + selected + ">" + title + "</option>";
                           ++index;
                       }
@@ -544,8 +544,8 @@ class Symd {
        });
     }
 
-    getPolygonColor(symbol) { var ic = this.icn3d, me = ic.icn3dui;
-        var type = symbol.substr(0, 1);
+    getPolygonColor(symbol) { let ic = this.icn3d, me = ic.icn3dui;
+        let type = symbol.substr(0, 1);
 
         //https://www.rcsb.org/pages/help/viewers/jmol_symmetry_view
         if(type == 'C') { // Cyclic Cn
@@ -568,8 +568,8 @@ class Symd {
         }
     }
 
-    getAxisColor(symbol, order) { var ic = this.icn3d, me = ic.icn3dui;
-        var type = symbol.substr(0, 1);
+    getAxisColor(symbol, order) { let ic = this.icn3d, me = ic.icn3dui;
+        let type = symbol.substr(0, 1);
 
         //https://www.rcsb.org/pages/help/viewers/jmol_symmetry_view
         if(type == 'C') { // Cyclic Cn

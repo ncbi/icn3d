@@ -29,11 +29,11 @@ class ParserUtils {
         this.icn3d = icn3d;
     }
 
-    alignCoords(coordsFrom, coordsTo, secondStruct, bKeepSeq, chainid_t, chainid, chainIndex, bChainAlign) { var ic = this.icn3d, me = ic.icn3dui;
+    alignCoords(coordsFrom, coordsTo, secondStruct, bKeepSeq, chainid_t, chainid, chainIndex, bChainAlign) { let  ic = this.icn3d, me = ic.icn3dui;
       //var n = coordsFrom.length;
-      var n =(coordsFrom.length < coordsTo.length) ? coordsFrom.length : coordsTo.length;
+      let  n =(coordsFrom.length < coordsTo.length) ? coordsFrom.length : coordsTo.length;
 
-      var hAtoms = {}
+      let  hAtoms = {}
 
       if(n < 4) alert("Please select at least four residues in each structure...");
       if(n >= 4) {
@@ -41,12 +41,12 @@ class ParserUtils {
 
           // apply matrix for each atom
           if(ic.rmsd_suprTmp.rot !== undefined) {
-              var rot = ic.rmsd_suprTmp.rot;
+              let  rot = ic.rmsd_suprTmp.rot;
               if(rot[0] === null) alert("Please select more residues in each structure...");
 
-              var centerFrom = ic.rmsd_suprTmp.trans1;
-              var centerTo = ic.rmsd_suprTmp.trans2;
-              var rmsd = ic.rmsd_suprTmp.rmsd;
+              let  centerFrom = ic.rmsd_suprTmp.trans1;
+              let  centerTo = ic.rmsd_suprTmp.trans2;
+              let  rmsd = ic.rmsd_suprTmp.rmsd;
 
               if(rmsd) {
                   ic.icn3dui.htmlCls.clickMenuCls.setLogCmd("realignment RMSD: " + rmsd.toPrecision(4), false);
@@ -54,11 +54,11 @@ class ParserUtils {
                   if(!ic.icn3dui.cfg.bSidebyside) ic.icn3dui.htmlCls.dialogCls.openDlg('dl_rmsd', 'Realignment RMSD');
               }
 
-              for(var i = 0, il = ic.structures[secondStruct].length; i < il; ++i) {
-                  var chainidTmp = ic.structures[secondStruct][i];
+              for(let i = 0, il = ic.structures[secondStruct].length; i < il; ++i) {
+                  let  chainidTmp = ic.structures[secondStruct][i];
 
-                  for(var j in ic.chains[chainidTmp]) {
-                    var atom = ic.atoms[j];
+                  for(let j in ic.chains[chainidTmp]) {
+                    let  atom = ic.atoms[j];
                     atom.coord = ic.surfaceCls.transformMemPro(atom.coord, rot, centerFrom, centerTo);
                   }
               }
@@ -67,10 +67,10 @@ class ParserUtils {
 
               if(!bKeepSeq) ic.setSeqAlignCls.setSeqAlignForRealign(chainid_t, chainid, chainIndex);
 
-              var bShowHighlight = false;
-              var seqObj = ic.icn3dui.htmlCls.alignSeqCls.getAlignSequencesAnnotations(Object.keys(ic.alnChains), undefined, undefined, bShowHighlight);
+              let  bShowHighlight = false;
+              let  seqObj = ic.icn3dui.htmlCls.alignSeqCls.getAlignSequencesAnnotations(Object.keys(ic.alnChains), undefined, undefined, bShowHighlight);
 
-              var oriHtml =(chainIndex === 1) ? '' : $("#" + ic.pre + "dl_sequence2").html();
+              let  oriHtml =(chainIndex === 1) ? '' : $("#" + ic.pre + "dl_sequence2").html();
               $("#" + ic.pre + "dl_sequence2").html(oriHtml + seqObj.sequencesHtml);
               $("#" + ic.pre + "dl_sequence2").width(ic.icn3dui.htmlCls.RESIDUE_WIDTH * seqObj.maxSeqCnt + 200);
 
@@ -90,10 +90,10 @@ class ParserUtils {
       return hAtoms;
     }
 
-    getMissingResidues(seqArray, type, chainid) { var ic = this.icn3d, me = ic.icn3dui;
+    getMissingResidues(seqArray, type, chainid) { let  ic = this.icn3d, me = ic.icn3dui;
         ic.chainsSeq[chainid] = [];
-        for(var i = 0, il = seqArray.length; i < il; ++i) {
-            var seqName, resiPos;
+        for(let i = 0, il = seqArray.length; i < il; ++i) {
+            let  seqName, resiPos;
             // mmdbid: ["0","R","ARG"],["502","V","VAL"]; mmcifid: [1, "ARG"]; align: ["0","R","ARG"] //align: [1, "0","R","ARG"]
             if(type === 'mmdbid') {
                 seqName = seqArray[i][1];
@@ -115,13 +115,13 @@ class ParserUtils {
                 seqName = 'x';
             }
 
-            var resObject = {}
+            let  resObject = {}
 
             if(!ic.bUsePdbNum) {
                 resObject.resi = i + 1;
             }
             else {
-                var offset =(ic.chainid2offset[chainid]) ? ic.chainid2offset[chainid] : 0;
+                let  offset =(ic.chainid2offset[chainid]) ? ic.chainid2offset[chainid] : 0;
                 resObject.resi =(seqArray[i][resiPos] == '0') ? i + 1 + offset : seqArray[i][resiPos];
             }
 
@@ -133,27 +133,27 @@ class ParserUtils {
 
     //Generate the 2D interaction diagram for the structure "mmdbid", which could be PDB ID. The 2D
     //interaction diagram is only available when the input is NCBI MMDB ID, i.e., the URL is something like "&mmdbid=...".
-    set2DDiagramsForAlign(mmdbid1, mmdbid2) { var ic = this.icn3d, me = ic.icn3dui;
+    set2DDiagramsForAlign(mmdbid1, mmdbid2) { let  ic = this.icn3d, me = ic.icn3dui;
        ic.icn3dui.htmlCls.dialogCls.openDlg('dl_2ddgm', 'Interactions');
 
        mmdbid1 = mmdbid1.substr(0, 4);
        mmdbid2 = mmdbid2.substr(0, 4);
 
-       var url1 = ic.icn3dui.htmlCls.baseUrl + "mmdb/mmdb_strview.cgi?v=2&program=icn3d&uid="+mmdbid1+"&intrac=1";
-       var url2 = ic.icn3dui.htmlCls.baseUrl + "mmdb/mmdb_strview.cgi?v=2&program=icn3d&uid="+mmdbid2+"&intrac=1";
+       let  url1 = ic.icn3dui.htmlCls.baseUrl + "mmdb/mmdb_strview.cgi?v=2&program=icn3d&uid="+mmdbid1+"&intrac=1";
+       let  url2 = ic.icn3dui.htmlCls.baseUrl + "mmdb/mmdb_strview.cgi?v=2&program=icn3d&uid="+mmdbid2+"&intrac=1";
 
        if(ic.icn3dui.cfg.inpara !== undefined) {
           url1 += ic.icn3dui.cfg.inpara;
           url2 += ic.icn3dui.cfg.inpara;
        }
 
-       var request1 = $.ajax({
+       let  request1 = $.ajax({
             url: url1,
             dataType: 'jsonp',
             cache: true
        });
 
-       var request2 = request1.then(function( data ) {
+       let  request2 = request1.then(function( data ) {
             ic.interactionData1 = data;
 
             ic.html2ddgm = '';
@@ -183,21 +183,21 @@ class ParserUtils {
        });
     }
 
-    set2DDiagramsForChainalign(chainidArray) { var ic = this.icn3d, me = ic.icn3dui;
-        var thisClass = this;
+    set2DDiagramsForChainalign(chainidArray) { let  ic = this.icn3d, me = ic.icn3dui;
+        let  thisClass = this;
 
         ic.icn3dui.htmlCls.dialogCls.openDlg('dl_2ddgm', 'Interactions');
 
-        var ajaxArray = [];
-        for(var index = 0, indexLen = chainidArray.length; index < indexLen; ++index) {
-           var pos = chainidArray[index].indexOf('_');
-           var mmdbid = chainidArray[index].substr(0, pos).toUpperCase();
+        let  ajaxArray = [];
+        for(let index = 0, indexLen = chainidArray.length; index < indexLen; ++index) {
+           let  pos = chainidArray[index].indexOf('_');
+           let  mmdbid = chainidArray[index].substr(0, pos).toUpperCase();
 
-           var url = ic.icn3dui.htmlCls.baseUrl + "mmdb/mmdb_strview.cgi?v=2&program=icn3d&uid="+mmdbid+"&intrac=1";
+           let  url = ic.icn3dui.htmlCls.baseUrl + "mmdb/mmdb_strview.cgi?v=2&program=icn3d&uid="+mmdbid+"&intrac=1";
 
            if(ic.icn3dui.cfg.inpara !== undefined) url += ic.icn3dui.cfg.inpara;
 
-           var twodAjax = $.ajax({
+           let  twodAjax = $.ajax({
                 url: url,
                 dataType: 'jsonp',
                 cache: true
@@ -209,7 +209,7 @@ class ParserUtils {
         //https://stackoverflow.com/questions/14352139/multiple-ajax-calls-from-array-and-handle-callback-when-completed
         //https://stackoverflow.com/questions/5518181/jquery-deferreds-when-and-the-fail-callback-arguments
         $.when.apply(undefined, ajaxArray).then(function() {
-          var dataArray =(chainidArray.length == 1) ? [arguments] : Array.from(arguments);
+          let  dataArray =(chainidArray.length == 1) ? [arguments] : Array.from(arguments);
           thisClass.parse2DDiagramsData(dataArray, chainidArray);
         })
         .fail(function() {
@@ -217,16 +217,16 @@ class ParserUtils {
         });
     }
 
-    parse2DDiagramsData(dataArray, chainidArray) { var ic = this.icn3d, me = ic.icn3dui;
+    parse2DDiagramsData(dataArray, chainidArray) { let  ic = this.icn3d, me = ic.icn3dui;
         //var dataArray =(chainidArray.length == 1) ? [dataInput] : dataInput;
 
         ic.html2ddgm = '';
 
         // Each argument is an array with the following structure: [ data, statusText, jqXHR ]
         //var data2 = v2[0];
-        for(var index = 0, indexl = chainidArray.length; index < indexl; ++index) {
-            var data = dataArray[index][0];
-            var mmdbid = chainidArray[index].substr(0, chainidArray[index].indexOf('_'));
+        for(let index = 0, indexl = chainidArray.length; index < indexl; ++index) {
+            let  data = dataArray[index][0];
+            let  mmdbid = chainidArray[index].substr(0, chainidArray[index].indexOf('_'));
 
             ic.diagram2dCls.draw2Ddgm(data, mmdbid, 0);
         }
@@ -240,11 +240,11 @@ class ParserUtils {
         if(ic.deferredViewinteraction !== undefined) ic.deferredViewinteraction.resolve();
     }
 
-    download2Ddgm(mmdbid, structureIndex) { var  me = this; "use strict";
+    download2Ddgm(mmdbid, structureIndex) { let   me = this; "use strict";
         this.set2DDiagrams(mmdbid);
     }
 
-    set2DDiagrams(mmdbid) { var ic = this.icn3d, me = ic.icn3dui;
+    set2DDiagrams(mmdbid) { let  ic = this.icn3d, me = ic.icn3dui;
         ic.icn3dui.htmlCls.dialogCls.openDlg('dl_2ddgm', 'Interactions');
 
         if(ic.b2DShown === undefined || !ic.b2DShown) {
@@ -259,13 +259,13 @@ class ParserUtils {
         ic.b2DShown = true;
     }
 
-    showLoading() { var ic = this.icn3d, me = ic.icn3dui;
+    showLoading() { let  ic = this.icn3d, me = ic.icn3dui;
           if($("#" + ic.pre + "wait")) $("#" + ic.pre + "wait").show();
           if($("#" + ic.pre + "canvas")) $("#" + ic.pre + "canvas").hide();
           if($("#" + ic.pre + "cmdlog")) $("#" + ic.pre + "cmdlog").hide();
     }
 
-    hideLoading() { var ic = this.icn3d, me = ic.icn3dui;
+    hideLoading() { let  ic = this.icn3d, me = ic.icn3dui;
         //if(ic.bCommandLoad === undefined || !ic.bCommandLoad) {
           if($("#" + ic.pre + "wait")) $("#" + ic.pre + "wait").hide();
           if($("#" + ic.pre + "canvas")) $("#" + ic.pre + "canvas").show();
@@ -273,26 +273,26 @@ class ParserUtils {
         //}
     }
 
-    setYourNote(yournote) { var ic = this.icn3d, me = ic.icn3dui;
+    setYourNote(yournote) { let  ic = this.icn3d, me = ic.icn3dui;
         ic.yournote = yournote;
         $("#" + ic.pre + "yournote").val(ic.yournote);
         if(ic.icn3dui.cfg.shownote) document.title = ic.yournote;
     }
 
-    transformToOpmOri(pdbid) { var ic = this.icn3d, me = ic.icn3dui;
+    transformToOpmOri(pdbid) { let  ic = this.icn3d, me = ic.icn3dui;
       // apply matrix for each atom
       if(ic.rmsd_supr !== undefined && ic.rmsd_supr.rot !== undefined) {
-          var rot = ic.rmsd_supr.rot;
-          var centerFrom = ic.rmsd_supr.trans1;
-          var centerTo = ic.rmsd_supr.trans2;
-          var rmsd = ic.rmsd_supr.rmsd;
+          let  rot = ic.rmsd_supr.rot;
+          let  centerFrom = ic.rmsd_supr.trans1;
+          let  centerTo = ic.rmsd_supr.trans2;
+          let  rmsd = ic.rmsd_supr.rmsd;
 
-          var dxymaxsq = 0;
-          for(var i in ic.atoms) {
-            var atom = ic.atoms[i];
+          let  dxymaxsq = 0;
+          for(let i in ic.atoms) {
+            let  atom = ic.atoms[i];
 
             atom.coord = ic.surfaceCls.transformMemPro(atom.coord, rot, centerFrom, centerTo);
-            var xysq = atom.coord.x * atom.coord.x + atom.coord.y * atom.coord.y;
+            let  xysq = atom.coord.x * atom.coord.x + atom.coord.y * atom.coord.y;
             if(Math.abs(atom.coord.z) <= 25 && xysq > dxymaxsq) {
                 dxymaxsq = xysq;
             }
@@ -321,17 +321,17 @@ class ParserUtils {
       }
     }
 
-    transformToOpmOriForAlign(pdbid, chainresiCalphaHash2, bResi_ori) { var ic = this.icn3d, me = ic.icn3dui;
+    transformToOpmOriForAlign(pdbid, chainresiCalphaHash2, bResi_ori) { let  ic = this.icn3d, me = ic.icn3dui;
       if(chainresiCalphaHash2 !== undefined) {
-          var chainresiCalphaHash1 = ic.loadPDBCls.getChainCalpha(ic.chains, ic.atoms, bResi_ori, pdbid);
+          let  chainresiCalphaHash1 = ic.loadPDBCls.getChainCalpha(ic.chains, ic.atoms, bResi_ori, pdbid);
 
-          var bOneChain =(Object.keys(chainresiCalphaHash1.chainresiCalphaHash).length == 1 || Object.keys(chainresiCalphaHash2.chainresiCalphaHash).length == 1) ? true : false;
+          let  bOneChain =(Object.keys(chainresiCalphaHash1.chainresiCalphaHash).length == 1 || Object.keys(chainresiCalphaHash2.chainresiCalphaHash).length == 1) ? true : false;
 
-          var coordsFrom = [], coordsTo = [];
-          for(var chain in chainresiCalphaHash1.chainresiCalphaHash) {
+          let  coordsFrom = [], coordsTo = [];
+          for(let chain in chainresiCalphaHash1.chainresiCalphaHash) {
               if(chainresiCalphaHash2.chainresiCalphaHash.hasOwnProperty(chain)) {
-                  var coord1 = chainresiCalphaHash1.chainresiCalphaHash[chain];
-                  var coord2 = chainresiCalphaHash2.chainresiCalphaHash[chain];
+                  let  coord1 = chainresiCalphaHash1.chainresiCalphaHash[chain];
+                  let  coord2 = chainresiCalphaHash2.chainresiCalphaHash[chain];
 
                   if(coord1.length == coord2.length || bOneChain) {
                       coordsFrom = coordsFrom.concat(coord1);
@@ -343,28 +343,28 @@ class ParserUtils {
           }
 
           //var n = coordsFrom.length;
-          var n =(coordsFrom.length < coordsTo.length) ? coordsFrom.length : coordsTo.length;
+          let  n =(coordsFrom.length < coordsTo.length) ? coordsFrom.length : coordsTo.length;
 
           if(n >= 4) {
               ic.rmsd_supr = me.rmsdSuprCls.getRmsdSuprCls(coordsFrom, coordsTo, n);
 
               // apply matrix for each atom
               if(ic.rmsd_supr.rot !== undefined && ic.rmsd_supr.rmsd < 0.1) {
-                  var rot = ic.rmsd_supr.rot;
-                  var centerFrom = ic.rmsd_supr.trans1;
-                  var centerTo = ic.rmsd_supr.trans2;
-                  var rmsd = ic.rmsd_supr.rmsd;
+                  let  rot = ic.rmsd_supr.rot;
+                  let  centerFrom = ic.rmsd_supr.trans1;
+                  let  centerTo = ic.rmsd_supr.trans2;
+                  let  rmsd = ic.rmsd_supr.rmsd;
 
                   ic.icn3dui.htmlCls.clickMenuCls.setLogCmd("RMSD of alignment to OPM: " + rmsd.toPrecision(4), false);
                   $("#" + ic.pre + "realignrmsd").val(rmsd.toPrecision(4));
                   if(!ic.icn3dui.cfg.bSidebyside) ic.icn3dui.htmlCls.dialogCls.openDlg('dl_rmsd', 'RMSD of alignment to OPM');
 
-                  var dxymaxsq = 0;
-                  for(var i in ic.atoms) {
-                    var atom = ic.atoms[i];
+                  let  dxymaxsq = 0;
+                  for(let i in ic.atoms) {
+                    let  atom = ic.atoms[i];
 
                     atom.coord = ic.surfaceCls.transformMemPro(atom.coord, rot, centerFrom, centerTo);
-                    var xysq = atom.coord.x * atom.coord.x + atom.coord.y * atom.coord.y;
+                    let  xysq = atom.coord.x * atom.coord.x + atom.coord.y * atom.coord.y;
                     if(Math.abs(atom.coord.z) <= 25 && xysq > dxymaxsq) {
                         dxymaxsq = xysq;
                     }
@@ -397,13 +397,13 @@ class ParserUtils {
       }
     }
 
-    addOneDumAtom(pdbid, atomName, x, y, z, lastSerial) { var ic = this.icn3d, me = ic.icn3dui;
-      var resn = 'DUM';
-      var chain = 'MEM';
-      var resi = 1;
-      var coord = new THREE.Vector3(x, y, z);
+    addOneDumAtom(pdbid, atomName, x, y, z, lastSerial) { let  ic = this.icn3d, me = ic.icn3dui;
+      let  resn = 'DUM';
+      let  chain = 'MEM';
+      let  resi = 1;
+      let  coord = new THREE.Vector3(x, y, z);
 
-      var atomDetails = {
+      let  atomDetails = {
           het: true, // optional, used to determine chemicals, water, ions, etc
           serial: ++lastSerial,         // required, unique atom id
           name: atomName,             // required, atom name
@@ -434,11 +434,11 @@ class ParserUtils {
       return lastSerial;
     }
 
-    addMemAtoms(dmem, pdbid, dxymax) { var ic = this.icn3d, me = ic.icn3dui;
-      var npoint=40; // points in radius
-      var step = 2;
-      var maxpnt=2*npoint+1; // points in diameter
-      var fn=step*npoint; // center point
+    addMemAtoms(dmem, pdbid, dxymax) { let  ic = this.icn3d, me = ic.icn3dui;
+      let  npoint=40; // points in radius
+      let  step = 2;
+      let  maxpnt=2*npoint+1; // points in diameter
+      let  fn=step*npoint; // center point
 
       //var dxymax = npoint / 2.0 * step;
 
@@ -450,23 +450,23 @@ class ParserUtils {
 
       ic.chainsSeq[pdbid + '_MEM'] = [{'name':'DUM', 'resi': 1}];
 
-      var m=0;
-      var lastSerial = Object.keys(ic.atoms).length;
-      for(var i = 0; i < 1000; ++i) {
+      let  m=0;
+      let  lastSerial = Object.keys(ic.atoms).length;
+      for(let i = 0; i < 1000; ++i) {
           if(!ic.atoms.hasOwnProperty(lastSerial + i)) {
               lastSerial = lastSerial + i - 1;
               break;
           }
       }
 
-      for(var i=0; i < maxpnt; ++i) {
-         for(var j=0; j < maxpnt; ++j) {
+      for(let i=0; i < maxpnt; ++i) {
+         for(let j=0; j < maxpnt; ++j) {
             ++m;
-            var a=step*i-fn;
-            var b=step*j-fn;
-            var dxy=Math.sqrt(a*a+b*b);
+            let  a=step*i-fn;
+            let  b=step*j-fn;
+            let  dxy=Math.sqrt(a*a+b*b);
             if(dxy < dxymax) {
-                  var c=-dmem-0.4;
+                  let  c=-dmem-0.4;
                   // Resn: DUM, name: N, a,b,c
                   lastSerial = this.addOneDumAtom(pdbid, 'N', a, b, c, lastSerial);
 
@@ -478,15 +478,15 @@ class ParserUtils {
       }
     }
 
-    setMaxD() { var ic = this.icn3d, me = ic.icn3dui;
-        var pmin = new THREE.Vector3( 9999, 9999, 9999);
-        var pmax = new THREE.Vector3(-9999,-9999,-9999);
-        var psum = new THREE.Vector3();
-        var cnt = 0;
+    setMaxD() { let  ic = this.icn3d, me = ic.icn3dui;
+        let  pmin = new THREE.Vector3( 9999, 9999, 9999);
+        let  pmax = new THREE.Vector3(-9999,-9999,-9999);
+        let  psum = new THREE.Vector3();
+        let  cnt = 0;
         // assign atoms
-        for(var i in ic.atoms) {
-            var atom = ic.atoms[i];
-            var coord = atom.coord;
+        for(let i in ic.atoms) {
+            let  atom = ic.atoms[i];
+            let  coord = atom.coord;
             psum.add(coord);
             pmin.min(coord);
             pmax.max(coord);
@@ -518,13 +518,13 @@ class ParserUtils {
     }
 
     //Update the dropdown menu and show the structure by calling the function "draw()".
-    renderStructure() { var ic = this.icn3d, me = ic.icn3dui;
+    renderStructure() { let  ic = this.icn3d, me = ic.icn3dui;
       if(ic.bInitial) {
           //$.extend(ic.opts, ic.opts);
           if(ic.bOpm &&(ic.icn3dui.cfg.align !== undefined || ic.icn3dui.cfg.chainalign !== undefined)) { // show membrane
-              var resid = ic.selectedPdbid + '_MEM_1';
-              for(var i in ic.residues[resid]) {
-                  var atom = ic.atoms[i];
+              let  resid = ic.selectedPdbid + '_MEM_1';
+              for(let i in ic.residues[resid]) {
+                  let  atom = ic.atoms[i];
                   atom.style = 'stick';
                   atom.color = me.parasCls.atomColors[atom.name];
                   ic.atomPrevColors[i] = atom.color;
@@ -540,8 +540,8 @@ class ParserUtils {
               ic.drawCls.draw();
           }
           if(ic.bOpm) {
-              var axis = new THREE.Vector3(1,0,0);
-              var angle = -0.5 * Math.PI;
+              let  axis = new THREE.Vector3(1,0,0);
+              let  angle = -0.5 * Math.PI;
               ic.transformCls.setRotation(axis, angle);
           }
           //if(Object.keys(ic.structures).length > 1) {
@@ -560,7 +560,7 @@ class ParserUtils {
 
       if(ic.bInitial && ic.icn3dui.cfg.command !== undefined && ic.icn3dui.cfg.command !== '') {
           if(Object.keys(ic.structures).length == 1) {
-              var id = Object.keys(ic.structures)[0];
+              let  id = Object.keys(ic.structures)[0];
               ic.icn3dui.cfg.command = ic.icn3dui.cfg.command.replace(new RegExp('!','g'), id + '_');
           }
           // final step resolved ic.deferred
@@ -586,21 +586,21 @@ class ParserUtils {
               }
               if(ic.icn3dui.cfg.align !== undefined || ic.icn3dui.cfg.chainalign !== undefined) {
                   // expand the toolbar
-                  var id = ic.pre + 'selection';
+                  let  id = ic.pre + 'selection';
                   $("#" + id).show();
                   $("#" + id + "_expand").hide();
                   $("#" + id + "_shrink").show();
 
                   if(ic.icn3dui.cfg.align !== undefined) {
-                      var bShowHighlight = false;
-                      var seqObj = ic.icn3dui.htmlCls.alignSeqCls.getAlignSequencesAnnotations(Object.keys(ic.alnChains), undefined, undefined, bShowHighlight);
+                      let  bShowHighlight = false;
+                      let  seqObj = ic.icn3dui.htmlCls.alignSeqCls.getAlignSequencesAnnotations(Object.keys(ic.alnChains), undefined, undefined, bShowHighlight);
                       $("#" + ic.pre + "dl_sequence2").html(seqObj.sequencesHtml);
                       $("#" + ic.pre + "dl_sequence2").width(ic.icn3dui.htmlCls.RESIDUE_WIDTH * seqObj.maxSeqCnt + 200);
                   }
               }
               //ic.definedSetsCls.setProtNuclLigInMenu();
               if(ic.icn3dui.cfg.showanno) {
-                   var cmd = "view annotations";
+                   let  cmd = "view annotations";
                    ic.icn3dui.htmlCls.clickMenuCls.setLogCmd(cmd, true);
                    ic.showAnnoCls.showAnnotations();
               }

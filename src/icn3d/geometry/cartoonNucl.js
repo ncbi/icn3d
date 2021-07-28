@@ -22,7 +22,7 @@ class CartoonNucl {
     }
 
     // modified from GLmol (http://webglmol.osdn.jp/index-en.html)
-    drawStrandNucleicAcid(atomlist, num, div, fill, nucleicAcidWidth, thickness, bHighlight) { var ic = this.icn3d, me = ic.icn3dui;
+    drawStrandNucleicAcid(atomlist, num, div, fill, nucleicAcidWidth, thickness, bHighlight) { let ic = this.icn3d, me = ic.icn3dui;
        if(ic.icn3dui.bNode) return;
 
        if(bHighlight === 2) {
@@ -33,14 +33,14 @@ class CartoonNucl {
        nucleicAcidWidth = nucleicAcidWidth || ic.nucleicAcidWidth;
        div = div || ic.axisDIV;
        num = num || ic.nucleicAcidStrandDIV;
-       var i, j, k;
-       var pnts = []; for (k = 0; k < num; k++) pnts[k] = [];
-       var colors = [];
-       var currentChain, currentResi, currentO3;
-       var prevOO = null;
+       let i, j, k;
+       let pnts = []; for (k = 0; k < num; k++) pnts[k] = [];
+       let colors = [];
+       let currentChain, currentResi, currentO3;
+       let prevOO = null;
 
        for (i in atomlist) {
-          var atom = atomlist[i];
+          let atom = atomlist[i];
           if (atom === undefined) continue;
 
           if ((atom.name === 'O3\'' || atom.name === 'OP2' || atom.name === 'O3*' || atom.name === 'O2P') && !atom.het) {
@@ -49,7 +49,7 @@ class CartoonNucl {
     //            if (currentChain !== atom.chain) {
                    if (currentO3 && prevOO) {
                       for (j = 0; j < num; j++) {
-                         var delta = -1 + 2 / (num - 1) * j;
+                         let delta = -1 + 2 / (num - 1) * j;
                          pnts[j].push(new THREE.Vector3(currentO3.x + prevOO.x * delta,
                           currentO3.y + prevOO.y * delta, currentO3.z + prevOO.z * delta));
                       }
@@ -74,7 +74,7 @@ class CartoonNucl {
              }
              else if (atom.name === 'OP2' || atom.name === 'O2P') {
                 if (!currentO3) {prevOO = null; continue;} // for 5' phosphate (e.g. 3QX3)
-                var O = new THREE.Vector3(atom.coord.x, atom.coord.y, atom.coord.z);
+                let O = new THREE.Vector3(atom.coord.x, atom.coord.y, atom.coord.z);
                 O.sub(currentO3);
                 O.normalize().multiplyScalar(nucleicAcidWidth);  // TODO: refactor
                 //if (prevOO !== undefined && O.dot(prevOO) < 0) {
@@ -83,7 +83,7 @@ class CartoonNucl {
                 }
                 prevOO = O;
                 for (j = 0; j < num; j++) {
-                   var delta = -1 + 2 / (num - 1) * j;
+                   let delta = -1 + 2 / (num - 1) * j;
                    pnts[j].push(new THREE.Vector3(currentO3.x + prevOO.x * delta,
                      currentO3.y + prevOO.y * delta, currentO3.z + prevOO.z * delta));
                 }
@@ -94,7 +94,7 @@ class CartoonNucl {
 
        if (currentO3 && prevOO) {
           for (j = 0; j < num; j++) {
-             var delta = -1 + 2 / (num - 1) * j;
+             let delta = -1 + 2 / (num - 1) * j;
              pnts[j].push(new THREE.Vector3(currentO3.x + prevOO.x * delta,
                currentO3.y + prevOO.y * delta, currentO3.z + prevOO.z * delta));
           }
@@ -107,14 +107,14 @@ class CartoonNucl {
     // modified from GLmol (http://webglmol.osdn.jp/index-en.html)
     //Create sticks between two nucleotide curves for nucleotide "atoms". "bHighlight" is an option to
     //draw the highlight for these atoms. The highlight could be outlines with bHighlight=1 and 3D objects with bHighlight=2.
-    drawNucleicAcidStick(atomlist, bHighlight) { var ic = this.icn3d, me = ic.icn3dui;
+    drawNucleicAcidStick(atomlist, bHighlight) { let ic = this.icn3d, me = ic.icn3dui;
        if(ic.icn3dui.bNode) return;
 
-       var currentChain, currentResi, start = null, end = null;
-       var i;
+       let currentChain, currentResi, start = null, end = null;
+       let i;
 
        for (i in atomlist) {
-          var atom = atomlist[i];
+          let atom = atomlist[i];
           if (atom === undefined || atom.het) continue;
 
           if (atom.resi !== currentResi || atom.chain !== currentChain) {

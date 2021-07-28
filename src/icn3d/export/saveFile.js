@@ -27,18 +27,18 @@ class SaveFile {
     //The type "png" is used to save the current canvas image. The type "html" is used to save html file with the
     //"data". This can be used to save any text. The type "text" is used to save an array of text, where "data" is
     //actually an array. The type "binary" is used to save an array of binary, where "data" is actually an array.
-    saveFile(filename, type, text) { var ic = this.icn3d, me = ic.icn3dui;
+    saveFile(filename, type, text) { let ic = this.icn3d, me = ic.icn3dui;
         //Save file
-        var blob;
+        let blob;
 
         if(type === 'command') {
-            var dataStr =(ic.loadCmd) ? ic.loadCmd + '\n' : '';
-            for(var i = 0, il = ic.commands.length; i < il; ++i) {
-                var command = ic.commands[i].trim();
+            let dataStr =(ic.loadCmd) ? ic.loadCmd + '\n' : '';
+            for(let i = 0, il = ic.commands.length; i < il; ++i) {
+                let command = ic.commands[i].trim();
                 if(i == il - 1) {
-                   var command_tf = command.split('|||');
+                   let command_tf = command.split('|||');
 
-                   var transformation = {}
+                   let transformation = {}
                    transformation.factor = ic._zoomFactor;
                    transformation.mouseChange = ic.mouseChange;
                    transformation.quaternion = ic.quaternion;
@@ -48,19 +48,19 @@ class SaveFile {
 
                 dataStr += command + '\n';
             }
-            var data = decodeURIComponent(dataStr);
+            let data = decodeURIComponent(dataStr);
 
             blob = new Blob([data],{ type: "text;charset=utf-8;"});
         }
         else if(type === 'png') {
             //ic.scaleFactor = 1.0;
-            var width = $("#" + ic.pre + "canvas").width();
-            var height = $("#" + ic.pre + "canvas").height();
+            let width = $("#" + ic.pre + "canvas").width();
+            let height = $("#" + ic.pre + "canvas").height();
             ic.applyCenterCls.setWidthHeight(width, height);
 
             if(ic.bRender) ic.drawCls.render();
 
-            var bAddURL = true;
+            let bAddURL = true;
             if(!window.File || !window.FileReader || !window.FileList || !window.Blob) {
                 bAddURL = false;
             }
@@ -69,11 +69,11 @@ class SaveFile {
                 blob = ic.renderer.domElement.msToBlob();
 
                 if(bAddURL) {
-                    var reader = new FileReader();
+                    let reader = new FileReader();
                     reader.onload = function(e) {
-                        var arrayBuffer = e.target.result; // or = reader.result;
+                        let arrayBuffer = e.target.result; // or = reader.result;
 
-                        var text = ic.shareLinkCls.getPngText();
+                        let text = ic.shareLinkCls.getPngText();
 
                         blob = me.convertTypeCls.getBlobFromBufferAndText(arrayBuffer, text);
 
@@ -95,11 +95,11 @@ class SaveFile {
             else {
                 ic.renderer.domElement.toBlob(function(data) {
                     if(bAddURL) {
-                        var reader = new FileReader();
+                        let reader = new FileReader();
                         reader.onload = function(e) {
-                            var arrayBuffer = e.target.result; // or = reader.result;
+                            let arrayBuffer = e.target.result; // or = reader.result;
 
-                            var text = ic.shareLinkCls.getPngText();
+                            let text = ic.shareLinkCls.getPngText();
 
                             blob = me.convertTypeCls.getBlobFromBufferAndText(arrayBuffer, text);
 
@@ -129,8 +129,8 @@ class SaveFile {
             if(ic.bRender) ic.drawCls.render();
         }
         else if(type === 'html') {
-            var dataStr = text;
-            var data = decodeURIComponent(dataStr);
+            let dataStr = text;
+            let data = decodeURIComponent(dataStr);
 
             blob = new Blob([data],{ type: "text/html;charset=utf-8;"});
         }
@@ -140,12 +140,12 @@ class SaveFile {
 
             //blob = new Blob([data],{ type: "text;charset=utf-8;"});
 
-            var data = text; // here text is an array of text
+            let data = text; // here text is an array of text
 
             blob = new Blob(data,{ type: "text;charset=utf-8;"});
         }
         else if(type === 'binary') {
-            var data = text; // here text is an array of blobs
+            let data = text; // here text is an array of blobs
 
             //blob = new Blob([data],{ type: "application/octet-stream"});
             blob = new Blob(data,{ type: "application/octet-stream"});
@@ -157,50 +157,50 @@ class SaveFile {
         }
     }
 
-    saveSvg(id, filename) { var ic = this.icn3d, me = ic.icn3dui;
-        var svg = this.getSvgXml(id);
+    saveSvg(id, filename) { let ic = this.icn3d, me = ic.icn3dui;
+        let svg = this.getSvgXml(id);
 
-        var blob = new Blob([svg], {type: "image/svg+xml"});
+        let blob = new Blob([svg], {type: "image/svg+xml"});
         saveAs(blob, filename);
     }
 
-    getSvgXml(id) { var ic = this.icn3d, me = ic.icn3dui;
+    getSvgXml(id) { let ic = this.icn3d, me = ic.icn3dui;
         if(ic.icn3dui.bNode) return '';
 
         // font is not good
-        var svg_data = document.getElementById(id).innerHTML; //put id of your svg element here
+        let svg_data = document.getElementById(id).innerHTML; //put id of your svg element here
 
-        var head = "<svg title=\"graph\" version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\">";
+        let head = "<svg title=\"graph\" version=\"1.1\" xmlns:xl=\"http://www.w3.org/1999/xlink\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:dc=\"http://purl.org/dc/elements/1.1/\">";
 
         //if you have some additional styling like graph edges put them inside <style> tag
-        var style = "<style>text {font-family: sans-serif; font-weight: bold; font-size: 18px;}</style>";
+        let style = "<style>text {font-family: sans-serif; font-weight: bold; font-size: 18px;}</style>";
 
-        var full_svg = head +  style + svg_data + "</svg>"
+        let full_svg = head +  style + svg_data + "</svg>"
 
         return full_svg;
     }
 
-    savePng(id, filename, width, height) { var ic = this.icn3d, me = ic.icn3dui;
+    savePng(id, filename, width, height) { let ic = this.icn3d, me = ic.icn3dui;
         if(ic.icn3dui.bNode) return '';
 
         // https://stackoverflow.com/questions/3975499/convert-svg-to-image-jpeg-png-etc-in-the-browser
-        var svg = document.getElementById(id);
-        var bbox = svg.getBBox();
+        let svg = document.getElementById(id);
+        let bbox = svg.getBBox();
 
-        var copy = svg.cloneNode(true);
+        let copy = svg.cloneNode(true);
         ic.lineGraphCls.copyStylesInline(copy, svg);
-        var canvas = document.createElement("CANVAS");
+        let canvas = document.createElement("CANVAS");
         canvas.width = width;
         canvas.height = height;
 
-        var ctx = canvas.getContext("2d");
+        let ctx = canvas.getContext("2d");
         ctx.clearRect(0, 0, bbox.width, bbox.height);
 
-        var data = this.getSvgXml(id); //(new XMLSerializer()).serializeToString(copy); //ic.saveFileCls.getSvgXml();
-        var DOMURL = window.URL || window.webkitURL || window;
-        var svgBlob = new Blob([data], {type: "image/svg+xml;charset=utf-8"});
+        let data = this.getSvgXml(id); //(new XMLSerializer()).serializeToString(copy); //ic.saveFileCls.getSvgXml();
+        let DOMURL = window.URL || window.webkitURL || window;
+        let svgBlob = new Blob([data], {type: "image/svg+xml;charset=utf-8"});
 
-        var img = new Image();
+        let img = new Image();
         img.src = DOMURL.createObjectURL(svgBlob);
 
         img.onload = function() {
@@ -208,7 +208,7 @@ class SaveFile {
             DOMURL.revokeObjectURL(this.src);
 
             if(me.utilsCls.isIE()) {
-                var blob = canvas.msToBlob();
+                let blob = canvas.msToBlob();
 
                 saveAs(blob, filename);
 
@@ -218,7 +218,7 @@ class SaveFile {
             }
             else {
                 canvas.toBlob(function(data) {
-                    var blob = data;
+                    let blob = data;
                     saveAs(blob, filename);
 
                     canvas.remove();
@@ -230,26 +230,26 @@ class SaveFile {
     }
 
     exportCustomAtoms() {var ic = this.icn3d, me = ic.icn3dui;
-       var html = "";
-       var nameArray =(ic.defNames2Residues !== undefined) ? Object.keys(ic.defNames2Residues).sort() : [];
-       for(var i = 0, il = nameArray.length; i < il; ++i) {
-         var name = nameArray[i];
-         var residueArray = ic.defNames2Residues[name];
-         var description = ic.defNames2Descr[name];
-         var command = ic.defNames2Command[name];
+       let html = "";
+       let nameArray =(ic.defNames2Residues !== undefined) ? Object.keys(ic.defNames2Residues).sort() : [];
+       for(let i = 0, il = nameArray.length; i < il; ++i) {
+         let name = nameArray[i];
+         let residueArray = ic.defNames2Residues[name];
+         let description = ic.defNames2Descr[name];
+         let command = ic.defNames2Command[name];
          command = command.replace(/,/g, ', ');
          html += name + "\tselect ";
          html += ic.resid2specCls.residueids2spec(residueArray);
          html += "\n";
        } // outer for
        nameArray =(ic.defNames2Atoms !== undefined) ? Object.keys(ic.defNames2Atoms).sort() : [];
-       for(var i = 0, il = nameArray.length; i < il; ++i) {
-         var name = nameArray[i];
-         var atomArray = ic.defNames2Atoms[name];
-         var description = ic.defNames2Descr[name];
-         var command = ic.defNames2Command[name];
+       for(let i = 0, il = nameArray.length; i < il; ++i) {
+         let name = nameArray[i];
+         let atomArray = ic.defNames2Atoms[name];
+         let description = ic.defNames2Descr[name];
+         let command = ic.defNames2Command[name];
          command = command.replace(/,/g, ', ');
-         var residueArray = ic.resid2specCls.atoms2residues(atomArray);
+         let residueArray = ic.resid2specCls.atoms2residues(atomArray);
          if(residueArray.length > 0) {
              html += name + "\tselect ";
              html += ic.resid2specCls.residueids2spec(residueArray);
@@ -259,19 +259,19 @@ class SaveFile {
        return html;
     }
 
-    //getAtomPDB: function(atomHash, bPqr, bPdb, bNoChem) { var ic = this.icn3d, me = ic.icn3dui;
-    getAtomPDB(atomHash, bPqr, bNoChem) { var ic = this.icn3d, me = ic.icn3dui;
-        var pdbStr = '';
+    //getAtomPDB: function(atomHash, bPqr, bPdb, bNoChem) { let ic = this.icn3d, me = ic.icn3dui;
+    getAtomPDB(atomHash, bPqr, bNoChem) { let ic = this.icn3d, me = ic.icn3dui;
+        let pdbStr = '';
 
         // get all phosphate groups in lipids
-        var phosPHash = {}, phosOHash = {}
-        for(var i in ic.chemicals) {
-            var atom = ic.atoms[i];
+        let phosPHash = {}, phosOHash = {}
+        for(let i in ic.chemicals) {
+            let atom = ic.atoms[i];
             if(atom.elem == 'P') {
                 phosPHash[i] = 1;
 
-                for(var j = 0, jl = atom.bonds.length; j < jl; ++j) {
-                    var serial = atom.bonds[j];
+                for(let j = 0, jl = atom.bonds.length; j < jl; ++j) {
+                    let serial = atom.bonds[j];
                     if(serial && ic.atoms[serial].elem == 'O') { // could be null
                         phosOHash[serial] = 1;
                     }
@@ -280,22 +280,22 @@ class SaveFile {
         }
     /*
     HELIX    1  NT MET A    3  ALA A   12  1                                  10
-            var startChain =(line.substr(19, 1) == ' ') ? 'A' : line.substr(19, 1);
-            var startResi = parseInt(line.substr(21, 4));
-            var endResi = parseInt(line.substr(33, 4));
+            let startChain =(line.substr(19, 1) == ' ') ? 'A' : line.substr(19, 1);
+            let startResi = parseInt(line.substr(21, 4));
+            let endResi = parseInt(line.substr(33, 4));
     SHEET    1  B1 2 GLY A  35  THR A  39  0
-            var startChain =(line.substr(21, 1) == ' ') ? 'A' : line.substr(21, 1);
-            var startResi = parseInt(line.substr(22, 4));
-            var endResi = parseInt(line.substr(33, 4));
+            let startChain =(line.substr(21, 1) == ' ') ? 'A' : line.substr(21, 1);
+            let startResi = parseInt(line.substr(22, 4));
+            let endResi = parseInt(line.substr(33, 4));
     */
 
-        var calphaHash = me.hashUtilsCls.intHash(atomHash, ic.calphas);
-        var helixStr = 'HELIX', sheetStr = 'SHEET';
-        var bHelixBegin = false, bHelixEnd = true;
-        var bSheetBegin = false, bSheetEnd = true;
+        let calphaHash = me.hashUtilsCls.intHash(atomHash, ic.calphas);
+        let helixStr = 'HELIX', sheetStr = 'SHEET';
+        let bHelixBegin = false, bHelixEnd = true;
+        let bSheetBegin = false, bSheetEnd = true;
 
-        for(var i in calphaHash) {
-            var atom = ic.atoms[i];
+        for(let i in calphaHash) {
+            let atom = ic.atoms[i];
 
             if(atom.ssbegin) {
                 if(atom.ss == 'helix') {
@@ -328,14 +328,14 @@ class SaveFile {
             }
         }
 
-        var connStr = '';
-        var struArray = Object.keys(ic.structures);
-        var bMulStruc =(struArray.length > 1) ? true : false;
+        let connStr = '';
+        let struArray = Object.keys(ic.structures);
+        let bMulStruc =(struArray.length > 1) ? true : false;
 
-        var molNum = 1, prevStru = '';
+        let molNum = 1, prevStru = '';
         pdbStr += '\n';
-        for(var i in atomHash) {
-            var atom = ic.atoms[i];
+        for(let i in atomHash) {
+            let atom = ic.atoms[i];
 
             // remove chemicals
             if(bNoChem && atom.het) continue;
@@ -350,7 +350,7 @@ class SaveFile {
                 ++molNum;
             }
 
-            var line = '';
+            let line = '';
     /*
     1 - 6 Record name "ATOM "
     7 - 11 Integer serial Atom serial number.
@@ -376,7 +376,7 @@ class SaveFile {
             line += i.toString().padStart(5, ' ');
             line += ' ';
 
-            var atomName = atom.name.trim();
+            let atomName = atom.name.trim();
             if(!isNaN(atomName.substr(0, 1)) ) atomName = atomName.substr(1) + atomName.substr(0, 1);
 
             if(atomName.length == 4) {
@@ -392,7 +392,7 @@ class SaveFile {
             }
 
             line += ' ';
-            var resn = atom.resn;
+            let resn = atom.resn;
     /*
             // add "D" in front of nucleotide residue names
             if(resn == 'A') resn = 'DA';
@@ -405,7 +405,7 @@ class SaveFile {
             line +=(resn.length <= 3) ? resn.padStart(3, ' ') : resn.substr(0, 3);
             line += ' ';
             line +=(atom.chain.length <= 1) ? atom.chain.padStart(1, ' ') : atom.chain.substr(0, 1);
-            var resi = atom.resi;
+            let resi = atom.resi;
             if(!isNaN(resi) && atom.chain.length > 3 && !isNaN(atom.chain.substr(3)) ) { // such as: chain = NAG2, resi=1 => chain = NAG, resi=2
                 resi = resi - 1 + parseInt(atom.chain.substr(3));
             }
@@ -417,7 +417,7 @@ class SaveFile {
 
             //if((bPqr && atom.het) ||(phosPHash.hasOwnProperty(i) && !bPdb) ||(phosOHash.hasOwnProperty(i) && !bPdb) ) {
             if((bPqr && atom.het) ||(phosPHash.hasOwnProperty(i)) ||(phosOHash.hasOwnProperty(i)) ) {
-                var size = 1.5, charge = 0;
+                let size = 1.5, charge = 0;
 
     /*
                 // use antechamber atom size
@@ -470,8 +470,8 @@ class SaveFile {
             // connection info
             if(atom.het && atom.bonds.length > 0) {
                 connStr += 'CONECT' + i.toString().padStart(5, ' ');
-                var bondHash = {}
-                for(var j = 0, jl = atom.bonds.length; j < jl; ++j) {
+                let bondHash = {}
+                for(let j = 0, jl = atom.bonds.length; j < jl; ++j) {
                     if(atom.bonds[j] && !bondHash.hasOwnProperty(atom.bonds[j])) { // could be null
                         connStr += atom.bonds[j].toString().padStart(5, ' ');
                         bondHash[atom.bonds[j]] = 1;
@@ -490,21 +490,21 @@ class SaveFile {
         return pdbStr;
     }
 
-    getSelectedResiduePDB() { var ic = this.icn3d, me = ic.icn3dui;
-       var pdbStr = '';
+    getSelectedResiduePDB() { let ic = this.icn3d, me = ic.icn3dui;
+       let pdbStr = '';
        pdbStr += this.getPDBHeader();
 
-       var atoms = me.hashUtilsCls.intHash(ic.dAtoms, ic.hAtoms);
+       let atoms = me.hashUtilsCls.intHash(ic.dAtoms, ic.hAtoms);
        pdbStr += this.getAtomPDB(atoms);
 
        return pdbStr;
     }
-    getPDBHeader(struNum) { var ic = this.icn3d, me = ic.icn3dui;
+    getPDBHeader(struNum) { let ic = this.icn3d, me = ic.icn3dui;
        if(struNum === undefined) struNum = 0;
 
-       var pdbStr = '';
+       let pdbStr = '';
        pdbStr += 'HEADER    PDB From iCn3D'.padEnd(62, ' ') + Object.keys(ic.structures)[struNum] + '\n';
-       var title =(ic.molTitle.length > 50) ? ic.molTitle.substr(0,47) + '...' : ic.molTitle;
+       let title =(ic.molTitle.length > 50) ? ic.molTitle.substr(0,47) + '...' : ic.molTitle;
        // remove quotes
        if(title.indexOf('"') != -1) title = '';
        pdbStr += 'TITLE     ' + title + '\n';
@@ -515,9 +515,9 @@ class SaveFile {
     //Show the title and PDB ID of the PDB structure at the beginning of the viewer.
     showTitle() {var ic = this.icn3d, me = ic.icn3dui;
         if(ic.molTitle !== undefined && ic.molTitle !== '') {
-            var title = ic.molTitle;
+            let title = ic.molTitle;
 
-            var titlelinkColor =(ic.opts['background'] == 'white' || ic.opts['background'] == 'grey') ? 'black' : ic.icn3dui.htmlCls.GREYD;
+            let titlelinkColor =(ic.opts['background'] == 'white' || ic.opts['background'] == 'grey') ? 'black' : ic.icn3dui.htmlCls.GREYD;
 
             if(ic.inputid === undefined) {
                 if(ic.molTitle.length > 40) title = ic.molTitle.substr(0, 40) + "...";
@@ -525,7 +525,7 @@ class SaveFile {
                 $("#" + ic.pre + "title").html(title);
             }
             else if(ic.icn3dui.cfg.cid !== undefined) {
-                var url = this.getLinkToStructureSummary();
+                let url = this.getLinkToStructureSummary();
 
                 $("#" + ic.pre + "title").html("PubChem CID <a id='" + ic.pre + "titlelink' href='" + url + "' style='color:" + titlelinkColor + "' target='_blank'>" + ic.inputid.toUpperCase() + "</a>: " + title);
             }
@@ -533,18 +533,18 @@ class SaveFile {
                 $("#" + ic.pre + "title").html(title);
             }
             else if(ic.icn3dui.cfg.chainalign !== undefined) {
-                var chainidArray = ic.icn3dui.cfg.chainalign.split(',');
+                let chainidArray = ic.icn3dui.cfg.chainalign.split(',');
                 title = 'Dynamic Structure Alignment of Chain ' + chainidArray[0] + ' to Chain ' + chainidArray[1];
 
                 $("#" + ic.pre + "title").html(title);
             }
             else {
-                var url = this.getLinkToStructureSummary();
+                let url = this.getLinkToStructureSummary();
 
                 if(ic.molTitle.length > 40) title = ic.molTitle.substr(0, 40) + "...";
 
                 //var asymmetricStr =(ic.bAssemblyUseAsu) ? "(Asymmetric Unit)" : "";
-                var asymmetricStr = "";
+                let asymmetricStr = "";
 
                 $("#" + ic.pre + "title").html("PDB ID <a id='" + ic.pre + "titlelink' href='" + url + "' style='color:" + titlelinkColor + "' target='_blank'>" + ic.inputid.toUpperCase() + "</a>" + asymmetricStr + ": " + title);
             }
@@ -555,7 +555,7 @@ class SaveFile {
     }
 
     getLinkToStructureSummary(bLog) {var ic = this.icn3d, me = ic.icn3dui;
-       var url = "https://www.ncbi.nlm.nih.gov/structure/?term=";
+       let url = "https://www.ncbi.nlm.nih.gov/structure/?term=";
 
        if(ic.icn3dui.cfg.cid !== undefined) {
            url = "https://www.ncbi.nlm.nih.gov/pccompound/?term=";
@@ -575,7 +575,7 @@ class SaveFile {
            url = "https://www.ncbi.nlm.nih.gov/pccompound/?term=" + ic.molTitle;
        }
        else {
-           var idArray = ic.inputid.split('_');
+           let idArray = ic.inputid.split('_');
 
            if(idArray.length === 1) {
                url += ic.inputid;
@@ -591,8 +591,8 @@ class SaveFile {
     }
 
     setEntrezLinks(db) {var ic = this.icn3d, me = ic.icn3dui;
-      var structArray = Object.keys(ic.structures);
-      var url;
+      let structArray = Object.keys(ic.structures);
+      let url;
       if(structArray.length === 1) {
           url = "https://www.ncbi.nlm.nih.gov/" + db + "/?term=" + structArray[0];
           ic.icn3dui.htmlCls.clickMenuCls.setLogCmd("Entrez " + db + " about PDB " + structArray[0] + ": " + url, false);

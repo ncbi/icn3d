@@ -17,23 +17,23 @@ class Ray {
         this.rayCasterBase(e, bClick);
     }
 
-    rayCasterBase(e, bClick) { var ic = this.icn3d, me = ic.icn3dui;
+    rayCasterBase(e, bClick) { let  ic = this.icn3d, me = ic.icn3dui;
     // if(ic.bChainAlign) return; // no picking for chain alignment
 
-        var x = e.pageX, y = e.pageY;
+        let  x = e.pageX, y = e.pageY;
         if (e.originalEvent.targetTouches && e.originalEvent.targetTouches[0]) {
             x = e.originalEvent.targetTouches[0].pageX;
             y = e.originalEvent.targetTouches[0].pageY;
         }
 
-        var left = ic.oriContainer.offset().left;
-        var top = ic.oriContainer.offset().top;
+        let  left = ic.oriContainer.offset().left;
+        let  top = ic.oriContainer.offset().top;
 
-        var containerWidth = ic.oriContainer.width();
-        var containerHeight = ic.oriContainer.height();
+        let  containerWidth = ic.oriContainer.width();
+        let  containerHeight = ic.oriContainer.height();
 
-        var popupX = x - left;
-        var popupY = y - top;
+        let  popupX = x - left;
+        let  popupY = y - top;
 
         //ic.isDragging = true;
 
@@ -44,7 +44,7 @@ class Ray {
             ic.mouse.x = ( popupX / containerWidth ) * 2 - 1;
             ic.mouse.y = - ( popupY / containerHeight ) * 2 + 1;
 
-            var mouse3 = new THREE.Vector3();
+            let  mouse3 = new THREE.Vector3();
             mouse3.x = ic.mouse.x;
             mouse3.y = ic.mouse.y;
             //mouse3.z = 0.5;
@@ -81,7 +81,7 @@ class Ray {
                 ic.raycaster.set(mouse3, new THREE.Vector3(0,0,-1).transformDirection( ic.cam.matrixWorld )); // works for all versions
             }
 
-            var bFound = this.isIntersect(ic.objects, ic.mdl, bClick, popupX, popupY);
+            let  bFound = this.isIntersect(ic.objects, ic.mdl, bClick, popupX, popupY);
 
             if(!bFound) {
                 bFound = this.isIntersect(ic.objects_ghost, ic.mdl_ghost, bClick, popupX, popupY);
@@ -89,18 +89,18 @@ class Ray {
         //}
     }
 
-    isIntersect(objects, mdl, bClick, popupX, popupY) { var ic = this.icn3d, me = ic.icn3dui;
-        var intersects = ic.raycaster.intersectObjects( objects ); // not all "mdl" group will be used for pk
+    isIntersect(objects, mdl, bClick, popupX, popupY) { let  ic = this.icn3d, me = ic.icn3dui;
+        let  intersects = ic.raycaster.intersectObjects( objects ); // not all "mdl" group will be used for pk
 
-        var bFound = false;
+        let  bFound = false;
 
-        var position = mdl.position;
+        let  position = mdl.position;
         if ( intersects.length > 0 ) {
             // the intersections are sorted so that the closest point is the first one.
             intersects[ 0 ].point.sub(position); // mdl.position was moved to the original (0,0,0) after reading the molecule coordinates. The raycasting was done based on the original. The position of the original should be substracted.
 
-            var threshold = 0.5;
-            var atom = this.getAtomsFromPosition(intersects[ 0 ].point, threshold); // the second parameter is the distance threshold. The first matched atom will be returned. Use 1 angstrom, not 2 angstrom. If it's 2 angstrom, other atom will be returned.
+            let  threshold = 0.5;
+            let  atom = this.getAtomsFromPosition(intersects[ 0 ].point, threshold); // the second parameter is the distance threshold. The first matched atom will be returned. Use 1 angstrom, not 2 angstrom. If it's 2 angstrom, other atom will be returned.
 
             while(!atom && threshold < 10) {
                 threshold = threshold + 0.5;
@@ -141,8 +141,8 @@ class Ray {
     }
 
      // from iview (http://istar.cse.cuhk.edu.hk/iview/)
-     getAtomsFromPosition(point, threshold) { var ic = this.icn3d, me = ic.icn3dui;
-        var i, atom;
+     getAtomsFromPosition(point, threshold) { let  ic = this.icn3d, me = ic.icn3dui;
+        let  i, atom;
 
         if(threshold === undefined || threshold === null) {
           threshold = 1;
@@ -150,10 +150,10 @@ class Ray {
 
         //for (i in ic.atoms) {
         for (i in ic.dAtoms) {
-           var atom = ic.atoms[i];
+           let  atom = ic.atoms[i];
 
            if(ic.ions.hasOwnProperty(i) && ic.opts['ions'] === 'sphere') {
-               var adjust = me.parasCls.vdwRadii[atom.elem.toUpperCase()];
+               let  adjust = me.parasCls.vdwRadii[atom.elem.toUpperCase()];
 
                if(Math.abs(atom.coord.x - point.x) - adjust > threshold) continue;
                if(Math.abs(atom.coord.y - point.y) - adjust > threshold) continue;

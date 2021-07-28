@@ -15,11 +15,11 @@ class ShareLink {
     //Generate a URL to capture the current state and open it in a new window. Basically the state
     //file (the comand history) is concatenated in the URL to show the current state.
     shareLink(bPngHtml) {var ic = this.icn3d, me = ic.icn3dui;
-           var url = this.shareLinkUrl();
-           var bTooLong =(url.length > 4000 || url.indexOf('http') !== 0) ? true : false;
+           let url = this.shareLinkUrl();
+           let bTooLong =(url.length > 4000 || url.indexOf('http') !== 0) ? true : false;
            if(bPngHtml) url += "&random=" + parseInt(Math.random() * 1000); // generate a new shorten URL and thus image name everytime
            //var inputid =(ic.inputid) ? ic.inputid : "custom";
-           var inputid = Object.keys(ic.structures).join('_');
+           let inputid = Object.keys(ic.structures).join('_');
            if(!bPngHtml) {
                if(ic.bInputfile && !ic.bInputUrlfile) {
                    alert("Share Link does NOT work when the data is from custom files. Please save 'iCn3D PNG Image' in the File menu and open it in iCn3D.");
@@ -39,7 +39,7 @@ class ShareLink {
            }
            //https://firebase.google.com/docs/dynamic-links/rest
            //Web API Key: AIzaSyBxl9CgM0dY5lagHL4UOhEpLWE1fuwdnvc
-           var fdlUrl = "https://firebasedynamiclinks.googleapis.com/v1/shortLinks?key=AIzaSyBxl9CgM0dY5lagHL4UOhEpLWE1fuwdnvc";
+           let fdlUrl = "https://firebasedynamiclinks.googleapis.com/v1/shortLinks?key=AIzaSyBxl9CgM0dY5lagHL4UOhEpLWE1fuwdnvc";
            $.ajax({
               url: fdlUrl,
               type: 'POST',
@@ -48,18 +48,18 @@ class ShareLink {
               data : {'longDynamicLink': 'https://icn3d.page.link/?link=' + encodeURIComponent(url)},
               dataType: 'json',
               success: function(data) {
-                var shorturl = 'Problem in getting shortened URL';
+                let shorturl = 'Problem in getting shortened URL';
                 if(data.shortLink !== undefined) {
                     shorturl = data.shortLink;
                     if(bPngHtml) { // save png and corresponding html
-                        var strArray = shorturl.split("/");
-                        var shortName = strArray[strArray.length - 1];
+                        let strArray = shorturl.split("/");
+                        let shortName = strArray[strArray.length - 1];
                         ic.saveFileCls.saveFile(inputid + '-' + shortName + '.png', 'png');
-                        var text = '<div style="float:left; border: solid 1px #0000ff; padding: 5px; margin: 10px; text-align:center;">';
+                        let text = '<div style="float:left; border: solid 1px #0000ff; padding: 5px; margin: 10px; text-align:center;">';
                         text += '<a href="https://structure.ncbi.nlm.nih.gov/icn3d/share.html?' + shortName + '" target="_blank">';
                         text += '<img style="height:300px" src ="' + inputid + '-' + shortName + '.png"><br>\n';
                         text += '<!--Start of your comments==================-->\n';
-                        var yournote =(ic.yournote) ? ': ' + ic.yournote.replace(/\n/g, "<br>").replace(/; /g, ", ") : '';
+                        let yournote =(ic.yournote) ? ': ' + ic.yournote.replace(/\n/g, "<br>").replace(/; /g, ", ") : '';
                         text += 'PDB ' + inputid.toUpperCase() + yournote + '\n';
                         text += '<!--End of your comments====================-->\n';
                         text += '</a>';
@@ -71,7 +71,7 @@ class ShareLink {
                     ic.saveFileCls.saveFile(inputid + '_image_icn3d_loadable.png', 'png');
                 }
                 //shorturl: https://icn3d.page.link/NvbAh1Vmiwc4bgX87
-                var urlArray = shorturl.split('page.link/');
+                let urlArray = shorturl.split('page.link/');
                 //if(urlArray.length == 2) shorturl = ic.icn3dui.htmlCls.baseUrl + 'icn3d/share.html?' + urlArray[1];
                 // When the baseURL is structure.ncbi.nlm.nih.gov, mmcifparser.cgi has a problem to past posted data in Mac/iphone
                 // So the base URL is still www.ncbi.nlm.nih.gov/Structure,just use short URL here
@@ -82,7 +82,7 @@ class ShareLink {
                 if(!bPngHtml) ic.icn3dui.htmlCls.dialogCls.openDlg('dl_copyurl', 'Copy a Share Link URL');
               },
               error : function(xhr, textStatus, errorThrown ) {
-                var shorturl = 'Problem in getting shortened URL';
+                let shorturl = 'Problem in getting shortened URL';
                 $("#" + ic.pre + "ori_url").val(url);
                 $("#" + ic.pre + "short_url").val(shorturl);
                 $("#" + ic.pre + "short_url_title").val(shorturl + '&t=' + ic.yournote);
@@ -92,17 +92,17 @@ class ShareLink {
     }
 
     shareLinkUrl(bAllCommands) {var ic = this.icn3d, me = ic.icn3dui;
-           var url = ic.icn3dui.htmlCls.baseUrl + "icn3d/full.html?";
+           let url = ic.icn3dui.htmlCls.baseUrl + "icn3d/full.html?";
            if(ic.icn3dui.cfg.bSidebyside) url = ic.icn3dui.htmlCls.baseUrl + "icn3d/full2.html?";
 
            if(ic.bInputUrlfile) {
-               var urlArray = window.location.href.split('?');
+               let urlArray = window.location.href.split('?');
                url = urlArray[0] + '?' + ic.inputurl + '&';
            }
 
-           var paraHash = {}
-           for(var key in ic.cfg) {
-               var value = ic.cfg[key];
+           let paraHash = {}
+           for(let key in ic.cfg) {
+               let value = ic.cfg[key];
                //if(key === 'inpara' || ic.key === 'command' || value === undefined) continue;
                if(key === 'inpara' || key === 'command' || key === 'usepdbnum'
                  || key === 'date' || key === 'v' || value === undefined) continue;
@@ -129,7 +129,7 @@ class ShareLink {
 
                 if(key === 'rotate' && value === 'right') continue;
 
-                // commands will be added in the for loop below: for(var il = ic.commands...
+                // commands will be added in the for loop below: for(let il = ic.commands...
                 if(key === 'command') continue;
 
                if(key === 'options') {
@@ -152,20 +152,20 @@ class ShareLink {
                }
            }
 
-           var inparaWithoutCommand;
-           var pos = -1;
+           let inparaWithoutCommand;
+           let pos = -1;
            if(ic.icn3dui.cfg.inpara !== undefined) pos = ic.icn3dui.cfg.inpara.indexOf('&command=');
            inparaWithoutCommand =(pos !== -1 ) ? ic.icn3dui.cfg.inpara.substr(0, pos) : ic.icn3dui.cfg.inpara;
 
-           var bPrevDate = false;
+           let bPrevDate = false;
            if(!ic.bInputUrlfile) {
-               var inparaArray =(inparaWithoutCommand && inparaWithoutCommand.substr(1)) ? inparaWithoutCommand.substr(1).split('&') : [];
-               for(var i = 0, il = inparaArray.length; i < il; ++i) {
-                   var key_value = inparaArray[i].split('=');
+               let inparaArray =(inparaWithoutCommand && inparaWithoutCommand.substr(1)) ? inparaWithoutCommand.substr(1).split('&') : [];
+               for(let i = 0, il = inparaArray.length; i < il; ++i) {
+                   let key_value = inparaArray[i].split('=');
                    if(key_value.length == 2) paraHash[key_value[0]] = key_value[1];
                }
 
-               for(var key in paraHash) {
+               for(let key in paraHash) {
                    if(key === 'v') continue;
 
                    if(key === 'date') bPrevDate = true;
@@ -174,38 +174,38 @@ class ShareLink {
            }
 
            // add time stamp
-           var date = new Date();
-           var monthStr =(date.getMonth() + 1).toString();
+           let date = new Date();
+           let monthStr =(date.getMonth() + 1).toString();
            if(date.getMonth() + 1 < 10) monthStr = '0' + monthStr;
 
-           var dateStr = date.getDate().toString();
+           let dateStr = date.getDate().toString();
            if(date.getDate() < 10) dateStr = '0' + dateStr;
 
-           var dateAllStr = date.getFullYear().toString() + monthStr + dateStr;
+           let dateAllStr = date.getFullYear().toString() + monthStr + dateStr;
            if(!bPrevDate) url += 'date=' + dateAllStr + '&';
            url += 'v=' + ic.icn3dui.REVISION + '&';
 
            url += 'command=';
 
            //var start =(inparaWithoutCommand !== undefined) ? 1 : 0;
-           var start = 0;
+           let start = 0;
 
            if(bAllCommands || ic.bInputUrlfile) start = 0;
 
-           var transformation = {}
+           let transformation = {}
            transformation.factor = ic._zoomFactor;
            transformation.mouseChange = ic.mouseChange;
            transformation.quaternion = ic.quaternion;
 
-           var bCommands = false;
-           var statefile = "";
-           var prevCommandStr = undefined;
+           let bCommands = false;
+           let statefile = "";
+           let prevCommandStr = undefined;
 
-           var toggleStr = 'toggle highlight';
-           var cntToggle = 0;
+           let toggleStr = 'toggle highlight';
+           let cntToggle = 0;
 
            if(ic.commands.length > start) {
-               var command_tf = ic.commands[start].split('|||');
+               let command_tf = ic.commands[start].split('|||');
                prevCommandStr = command_tf[0].trim();
 
                //statefile += ic.commands[start] + "\n";
@@ -213,13 +213,13 @@ class ShareLink {
                if(prevCommandStr.indexOf(toggleStr) !== -1) ++cntToggle;
            }
 
-           var i = start + 1;
-           var selectChainHash = {}
-           for(var il = ic.commands.length; i < il; ++i) {
+           let i = start + 1;
+           let selectChainHash = {}
+           for(let il = ic.commands.length; i < il; ++i) {
                bCommands = true;
 
-               var command_tf = ic.commands[i].split('|||');
-               var commandStr = command_tf[0].trim();
+               let command_tf = ic.commands[i].split('|||');
+               let commandStr = command_tf[0].trim();
 
                //statefile += ic.commands[i] + "\n";
 
@@ -264,7 +264,7 @@ class ShareLink {
 
            statefile = statefile.replace(/!/g, Object.keys(ic.structures)[0] + '_');
            if((ic.bInputfile && !ic.bInputUrlfile) || url.length > 4000) url = statefile;
-           var id;
+           let id;
            if(ic.structures !== undefined && Object.keys(ic.structures).length == 1 && ic.inputid !== undefined) {
                id = Object.keys(ic.structures)[0];
                url = url.replace(new RegExp(id + '_','g'), '!');
@@ -278,10 +278,10 @@ class ShareLink {
     }
 
     getPngText() {var ic = this.icn3d, me = ic.icn3dui;
-        var url; // output state file if ic.bInputfile is true or the URL is mor than 4000 chars
-        var bAllCommands = true;
+        let url; // output state file if ic.bInputfile is true or the URL is mor than 4000 chars
+        let bAllCommands = true;
 
-        var text = "";
+        let text = "";
         if(ic.bInputfile) {
             url = this.shareLinkUrl(bAllCommands); // output state file if ic.bInputfile is true or the URL is mor than 4000 chars
 
@@ -299,7 +299,7 @@ class ShareLink {
         }
         else {
             url = this.shareLinkUrl();
-            var bTooLong =(url.length > 4000 || url.indexOf('http') !== 0) ? true : false;
+            let bTooLong =(url.length > 4000 || url.indexOf('http') !== 0) ? true : false;
             if(bTooLong) {
                 url = this.shareLinkUrl(bAllCommands); // output state file if ic.bInputfile is true or the URL is mor than 4000 chars
 

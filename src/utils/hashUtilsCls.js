@@ -10,12 +10,12 @@ class HashUtilsCls {
     }
 
     //Clone the "fromHash" and return the cloned hash.
-    cloneHash(from) { var me = this.icn3dui;
-      var to = {};
+    cloneHash(from) { let me = this.icn3dui;
+      let to = {};
 
       if(from === undefined) from = {};
 
-      for(var i in from) {
+      for(let i in from) {
         to[i] = from[i];
       }
 
@@ -23,21 +23,21 @@ class HashUtilsCls {
     }
 
     //Get the intersection of two hashes "atoms1" and "atoms2". The returned hash has atom index as key and 1 as value.
-    intHash(atoms1, atoms2) { var me = this.icn3dui;
-        var results = {};
+    intHash(atoms1, atoms2) { let me = this.icn3dui;
+        let results = {};
 
         if(atoms1 === undefined) atoms1 = {};
         if(atoms2 === undefined) atoms2 = {};
 
         if(Object.keys(atoms1).length < Object.keys(atoms2).length) {
-            for (var i in atoms1) {
+            for (let i in atoms1) {
                 if (atoms2 !== undefined && atoms2[i]) {
                     results[i] = atoms1[i];
                 }
             }
         }
         else {
-            for (var i in atoms2) {
+            for (let i in atoms2) {
                 if (atoms1 !== undefined && atoms1[i]) {
                     results[i] = atoms2[i];
                 }
@@ -49,13 +49,13 @@ class HashUtilsCls {
 
     // get atoms in allAtoms, but not in "atoms"
     //Get atoms in "includeAtoms", but not in "excludeAtoms". The returned hash has atom index as key and 1 as value.
-    exclHash(includeAtomsInput, excludeAtoms) { var me = this.icn3dui;
+    exclHash(includeAtomsInput, excludeAtoms) { let me = this.icn3dui;
         if(includeAtomsInput === undefined) includeAtomsInput = {};
         if(excludeAtoms === undefined) excludeAtoms = {};
 
-        var includeAtoms = me.hashUtilsCls.cloneHash(includeAtomsInput);
+        let includeAtoms = me.hashUtilsCls.cloneHash(includeAtomsInput);
 
-        for (var i in includeAtoms) {
+        for (let i in includeAtoms) {
             if (excludeAtoms !== undefined && excludeAtoms[i]) {
                 delete includeAtoms[i];
             }
@@ -65,7 +65,7 @@ class HashUtilsCls {
     }
 
     //Get the union of two hashes "atoms1" and "atoms2". The returned hash has atom index as key and 1 as value.
-    unionHash(atoms1, atoms2) { var me = this.icn3dui;
+    unionHash(atoms1, atoms2) { let me = this.icn3dui;
         // much slower
         //return me.hashUtilsCls.unionHashNotInPlace(atoms1, atoms2);
 
@@ -73,7 +73,7 @@ class HashUtilsCls {
         return me.hashUtilsCls.unionHashInPlace(atoms1, atoms2);
     }
 
-    unionHashInPlace(atoms1, atoms2) { var me = this.icn3dui;
+    unionHashInPlace(atoms1, atoms2) { let me = this.icn3dui;
         if(atoms1 === undefined) atoms1 = {};
         if(atoms2 === undefined) atoms2 = {};
 
@@ -82,43 +82,43 @@ class HashUtilsCls {
         return atoms1;
     }
 
-    unionHashNotInPlace(atoms1, atoms2) { var me = this.icn3dui;
-        var results = $.extend({}, atoms1, atoms2);
+    unionHashNotInPlace(atoms1, atoms2) { let me = this.icn3dui;
+        let results = $.extend({}, atoms1, atoms2);
 
         return results;
     }
 
     //Get the intersection of two hashes "atoms1" and "atoms2". The returned hash has atom index as key and atom object as value.
-    intHash2Atoms(atoms1, atoms2, allAtoms) { var me = this.icn3dui;
+    intHash2Atoms(atoms1, atoms2, allAtoms) { let me = this.icn3dui;
         return me.hashUtilsCls.hash2Atoms(me.hashUtilsCls.intHash(atoms1, atoms2), allAtoms);
     }
 
     // get atoms in allAtoms, but not in "atoms"
     //Get atoms in "includeAtoms", but not in "excludeAtoms". The returned hash has atom index as key and atom object as value.
-    exclHash2Atoms(includeAtoms, excludeAtoms, allAtoms) { var me = this.icn3dui;
+    exclHash2Atoms(includeAtoms, excludeAtoms, allAtoms) { let me = this.icn3dui;
         return me.hashUtilsCls.hash2Atoms(me.hashUtilsCls.exclHash(includeAtoms, excludeAtoms), allAtoms);
     }
 
     //Get the union of two hashes "atoms1" and "atoms2". The returned hash has atom index as key and atom object as value.
-    unionHash2Atoms(atoms1, atoms2, allAtoms) { var me = this.icn3dui;
+    unionHash2Atoms(atoms1, atoms2, allAtoms) { let me = this.icn3dui;
         return me.hashUtilsCls.hash2Atoms(me.hashUtilsCls.unionHash(atoms1, atoms2), allAtoms);
     }
 
     //The input "hash" has atom index as key and 1 as value. The returned hash has atom index as key and atom object as value.
-    hash2Atoms(hash, allAtoms) { var me = this.icn3dui;
-        var atoms = {};
-        for(var i in hash) {
+    hash2Atoms(hash, allAtoms) { let me = this.icn3dui;
+        let atoms = {};
+        for(let i in hash) {
           atoms[i] = allAtoms[i];
         }
 
         return atoms;
     }
 
-    hashvalue2array(hash) { var me = this.icn3dui;
+    hashvalue2array(hash) { let me = this.icn3dui;
         //return $.map(hash, function(v) { return v; });
 
-        var array = [];
-        for(var i in hash) {
+        let array = [];
+        for(let i in hash) {
             array.push(hash[i]);
         }
 

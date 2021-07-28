@@ -19,14 +19,14 @@ class HlSeq {
         this.icn3d = icn3d;
     }
 
-    selectSequenceNonMobile() { var ic = this.icn3d, me = ic.icn3dui;
+    selectSequenceNonMobile() { let ic = this.icn3d, me = ic.icn3dui;
       if(ic.icn3dui.bNode) return;
 
-      var thisClass = this;
+      let thisClass = this;
       $("#" + ic.pre + "dl_sequence2").add("[id^=" + ic.pre + "dt_giseq]").add("[id^=" + ic.pre + "dt_custom]").add("[id^=" + ic.pre + "dt_site]").add("[id^=" + ic.pre + "dt_snp]").add("[id^=" + ic.pre + "dt_clinvar]").add("[id^=" + ic.pre + "dt_cdd]").add("[id^=" + ic.pre + "dt_domain]").add("[id^=" + ic.pre + "dt_interaction]").add("[id^=" + ic.pre + "dt_ssbond]").add("[id^=" + ic.pre + "dt_crosslink]").add("[id^=" + ic.pre + "dt_transmem]")
       .add("[id^=" + ic.pre + "tt_giseq]").add("[id^=" + ic.pre + "tt_custom]").add("[id^=" + ic.pre + "tt_site]").add("[id^=" + ic.pre + "tt_snp]").add("[id^=" + ic.pre + "tt_clinvar]").add("[id^=" + ic.pre + "tt_cdd]").add("[id^=" + ic.pre + "tt_domain]").add("[id^=" + ic.pre + "tt_interaction]").add("[id^=" + ic.pre + "tt_ssbond]").add("[id^=" + ic.pre + "tt_crosslink]").add("[id^=" + ic.pre + "tt_transmem]")
       .selectable({
-          stop: function() { var ic = thisClass.icn3d;
+          stop: function() { let ic = thisClass.icn3d;
               if($(this).attr('id') === ic.pre + "dl_sequence2") {
                   ic.bAlignSeq = true;
                   ic.bAnnotations = false;
@@ -43,7 +43,7 @@ class HlSeq {
 
               // select residues
               $("span.ui-selected", this).each(function() {
-                  var id = $(this).attr('id');
+                  let id = $(this).attr('id');
 
                   if(id !== undefined) {
                      thisClass.selectResidues(id, this);
@@ -54,16 +54,16 @@ class HlSeq {
               ic.hlObjectsCls.addHlObjects();  // render() is called
 
               // get all chainid in the selected residues
-              var chainHash = {}
-              for(var residueid in ic.selectedResidues) {
-                  var pos = residueid.lastIndexOf('_');
-                  var chainid = residueid.substr(0, pos);
+              let chainHash = {}
+              for(let residueid in ic.selectedResidues) {
+                  let pos = residueid.lastIndexOf('_');
+                  let chainid = residueid.substr(0, pos);
 
                   chainHash[chainid] = 1;
               }
 
               // highlight the nodes
-              var chainArray2d = Object.keys(chainHash);
+              let chainArray2d = Object.keys(chainHash);
               ic.hlUpdateCls.updateHl2D(chainArray2d);
 
               // select annotation title
@@ -79,7 +79,7 @@ class HlSeq {
 
       $("[id^=" + ic.pre + "ov_giseq]").add("[id^=" + ic.pre + "ov_custom]").add("[id^=" + ic.pre + "ov_site]").add("[id^=" + ic.pre + "ov_snp]").add("[id^=" + ic.pre + "ov_clinvar]").add("[id^=" + ic.pre + "ov_cdd]").add("[id^=" + ic.pre + "ov_domain]").add("[id^=" + ic.pre + "ov_interaction]").add("[id^=" + ic.pre + "ov_ssbond]").add("[id^=" + ic.pre + "ov_crosslink]").add("[id^=" + ic.pre + "ov_transmem]")
       .add("[id^=" + ic.pre + "tt_giseq]").add("[id^=" + ic.pre + "tt_custom]").add("[id^=" + ic.pre + "tt_site]").add("[id^=" + ic.pre + "tt_snp]").add("[id^=" + ic.pre + "tt_clinvar]").add("[id^=" + ic.pre + "tt_cdd]").add("[id^=" + ic.pre + "tt_domain]").add("[id^=" + ic.pre + "tt_interaction]").add("[id^=" + ic.pre + "tt_ssbond]").add("[id^=" + ic.pre + "tt_crosslink]").add("[id^=" + ic.pre + "tt_transmem]")
-      .on('click', '.icn3d-seqTitle', function(e) { var ic = thisClass.icn3d;
+      .on('click', '.icn3d-seqTitle', function(e) { let ic = thisClass.icn3d;
           e.stopImmediatePropagation();
 
           ic.bAlignSeq = false;
@@ -105,12 +105,12 @@ class HlSeq {
       });
     }
 
-    selectSequenceMobile() { var ic = this.icn3d, me = ic.icn3dui;
+    selectSequenceMobile() { let ic = this.icn3d, me = ic.icn3dui;
       if(ic.icn3dui.bNode) return;
 
-      var thisClass = this;
+      let thisClass = this;
 
-      $("#" + ic.pre + "dl_sequence2").add("[id^=" + ic.pre + "giseq]").add("[id^=" + ic.pre + "custom]").add("[id^=" + ic.pre + "site]").add("[id^=" + ic.pre + "clinvar]").add("[id^=" + ic.pre + "snp]").add("[id^=" + ic.pre + "cdd]").add("[id^=" + ic.pre + "domain]").add("[id^=" + ic.pre + "interaction]").add("[id^=" + ic.pre + "ssbond]").add("[id^=" + ic.pre + "crosslink]").add("[id^=" + ic.pre + "transmem]").on('click', '.icn3d-residue', function(e) { var ic = thisClass.icn3d;
+      $("#" + ic.pre + "dl_sequence2").add("[id^=" + ic.pre + "giseq]").add("[id^=" + ic.pre + "custom]").add("[id^=" + ic.pre + "site]").add("[id^=" + ic.pre + "clinvar]").add("[id^=" + ic.pre + "snp]").add("[id^=" + ic.pre + "cdd]").add("[id^=" + ic.pre + "domain]").add("[id^=" + ic.pre + "interaction]").add("[id^=" + ic.pre + "ssbond]").add("[id^=" + ic.pre + "crosslink]").add("[id^=" + ic.pre + "transmem]").on('click', '.icn3d-residue', function(e) { let ic = thisClass.icn3d;
           e.stopImmediatePropagation();
 
           if($(this).attr('id') === ic.pre + "dl_sequence2") {
@@ -125,7 +125,7 @@ class HlSeq {
 
           // select residues
           //$("span.ui-selected", this).each(function() {
-              var id = $(this).attr('id');
+              let id = $(this).attr('id');
 
               if(id !== undefined) {
                    thisClass.selectResidues(id, this);
@@ -136,10 +136,10 @@ class HlSeq {
            ic.hlObjectsCls.addHlObjects();  // render() is called
 
           // get all chainid in the selected residues
-          var chainHash = {}
-          for(var residueid in ic.selectedResidues) {
-              var pos = residueid.lastIndexOf('_');
-              var chainid = residueid.substr(0, pos);
+          let chainHash = {}
+          for(let residueid in ic.selectedResidues) {
+              let pos = residueid.lastIndexOf('_');
+              let chainid = residueid.substr(0, pos);
 
               chainHash[chainid] = 1;
           }
@@ -148,17 +148,17 @@ class HlSeq {
           ic.hlUpdateCls.removeHl2D();
 
           // highlight the nodes
-          var chainArray2d = Object.keys(chainHash);
+          let chainArray2d = Object.keys(chainHash);
           ic.hlUpdateCls.updateHl2D(chainArray2d);
       });
     }
 
-    selectChainMobile() { var ic = this.icn3d, me = ic.icn3dui;
+    selectChainMobile() { let ic = this.icn3d, me = ic.icn3dui;
       if(ic.icn3dui.bNode) return;
 
-      var thisClass = this;
+      let thisClass = this;
 
-      $("#" + ic.pre + "dl_sequence2").add("[id^=" + ic.pre + "giseq]").add("[id^=" + ic.pre + "custom]").add("[id^=" + ic.pre + "site]").add("[id^=" + ic.pre + "feat]").add("[id^=" + ic.pre + "clinvar]").add("[id^=" + ic.pre + "snp]").add("[id^=" + ic.pre + "cdd]").add("[id^=" + ic.pre + "domain]").add("[id^=" + ic.pre + "interaction]").add("[id^=" + ic.pre + "ssbond]").add("[id^=" + ic.pre + "crosslink]").add("[id^=" + ic.pre + "transmem]").on('click', '.icn3d-seqTitle', function(e) { var ic = thisClass.icn3d;
+      $("#" + ic.pre + "dl_sequence2").add("[id^=" + ic.pre + "giseq]").add("[id^=" + ic.pre + "custom]").add("[id^=" + ic.pre + "site]").add("[id^=" + ic.pre + "feat]").add("[id^=" + ic.pre + "clinvar]").add("[id^=" + ic.pre + "snp]").add("[id^=" + ic.pre + "cdd]").add("[id^=" + ic.pre + "domain]").add("[id^=" + ic.pre + "interaction]").add("[id^=" + ic.pre + "ssbond]").add("[id^=" + ic.pre + "crosslink]").add("[id^=" + ic.pre + "transmem]").on('click', '.icn3d-seqTitle', function(e) { let ic = thisClass.icn3d;
           e.stopImmediatePropagation();
 
           if($(this).attr('id') === ic.pre + "dl_sequence2") {
@@ -180,11 +180,11 @@ class HlSeq {
       });
     }
 
-    selectTitle(that) { var ic = this.icn3d, me = ic.icn3dui;
+    selectTitle(that) { let ic = this.icn3d, me = ic.icn3dui;
       if(ic.icn3dui.bNode) return;
 
       if($(that).hasClass('icn3d-seqTitle')) {
-        var chainid = $(that).attr('chain');
+        let chainid = $(that).attr('chain');
 
         if(ic.bAlignSeq) {
             ic.bSelectAlignResidue = false;
@@ -210,7 +210,7 @@ class HlSeq {
 
         $(that).toggleClass('icn3d-highlightSeq');
 
-        var commandname, commanddescr, position;
+        let commandname, commanddescr, position;
         if(!ic.bAnnotations) {
             if(ic.bAlignSeq) {
                 commandname = "align_" + chainid;
@@ -242,7 +242,7 @@ class HlSeq {
                     ic.icn3dui.htmlCls.clickMenuCls.setLogCmd('select chain ' + chainid, true);
                 }
 
-                var setNames = ic.currSelectedSets.join(' or ');
+                let setNames = ic.currSelectedSets.join(' or ');
                 //if(ic.currSelectedSets.length > 1) ic.icn3dui.htmlCls.clickMenuCls.setLogCmd('select saved atoms ' + setNames, true);
                 if(ic.currSelectedSets.length > 1) ic.icn3dui.htmlCls.clickMenuCls.setLogCmd('select sets ' + setNames, true);
             }
@@ -262,25 +262,25 @@ class HlSeq {
 
                         ic.icn3dui.htmlCls.clickMenuCls.setLogCmd('select chain ' + chainid, true);
 
-                        var setNames = ic.currSelectedSets.join(' or ');
+                        let setNames = ic.currSelectedSets.join(' or ');
                         //if(ic.currSelectedSets.length > 1) ic.icn3dui.htmlCls.clickMenuCls.setLogCmd('select saved atoms ' + setNames, true);
                         if(ic.currSelectedSets.length > 1) ic.icn3dui.htmlCls.clickMenuCls.setLogCmd('select sets ' + setNames, true);
                     }
                     else {
-                        var residueidHash = {}
+                        let residueidHash = {}
                         if($(that).attr('domain') !== undefined || $(that).attr('feat') !== undefined || $(that).attr('3ddomain') !== undefined || $(that).attr('custom') !== undefined) {
                             ic.hlUpdateCls.hlSummaryDomain3ddomain(that);
 
-                            var fromArray = $(that).attr('from').split(',');
-                            var toArray = $(that).attr('to').split(',');
+                            let fromArray = $(that).attr('from').split(',');
+                            let toArray = $(that).attr('to').split(',');
 
                             // protein chains
-                            var residueid;
-                            for(var i = 0, il = fromArray.length; i < il; ++i) {
-                                var from = parseInt(fromArray[i]);
-                                var to = parseInt(toArray[i]);
+                            let residueid;
+                            for(let i = 0, il = fromArray.length; i < il; ++i) {
+                                let from = parseInt(fromArray[i]);
+                                let to = parseInt(toArray[i]);
 
-                                for(var j = from; j <= to; ++j) {
+                                for(let j = from; j <= to; ++j) {
                                     residueid = chainid + '_' +(j+1).toString();
                                     residueidHash[residueid] = 1;
 
@@ -303,14 +303,14 @@ class HlSeq {
                         }
                         //else if($(that).attr('site') !== undefined || $(that).attr('clinvar') !== undefined) {
                         else if($(that).attr('posarray') !== undefined) {
-                            var posArray = $(that).attr('posarray').split(',');
+                            let posArray = $(that).attr('posarray').split(',');
                             //ic.hAtoms = {}
 
                             //removeAllLabels();
 
                             //var  atomHash = {}, residueidHash = {}
-                            var residueid;
-                            for(var i = 0, il = posArray.length; i < il; ++i) {
+                            let residueid;
+                            for(let i = 0, il = posArray.length; i < il; ++i) {
                                 if($(that).attr('site') !== undefined) {
                                     residueid = chainid + '_' +(parseInt(posArray[i])+1).toString();
                                 }
@@ -336,15 +336,15 @@ class HlSeq {
                         }
 
                         //removeAllLabels
-                        for(var name in ic.labels) {
+                        for(let name in ic.labels) {
                             if(name !== 'schematic' && name !== 'distance') {
                                ic.labels[name] = [];
                             }
                         }
 
                         //var size = parseInt(ic.LABELSIZE * 10 / commandname.length);
-                        var size = ic.LABELSIZE;
-                        var color = "FFFF00";
+                        let size = ic.LABELSIZE;
+                        let color = "FFFF00";
                         if(position !== undefined) ic.analysisCls.addLabel(commanddescr, position.center.x, position.center.y, position.center.z, size, color, undefined, 'custom');
 
                         ic.drawCls.draw();
@@ -358,7 +358,7 @@ class HlSeq {
                             ic.currSelectedSets = [commandname];
                         }
 
-                        var setNames = ic.currSelectedSets.join(' or ');
+                        let setNames = ic.currSelectedSets.join(' or ');
                         //if(ic.currSelectedSets.length > 1) ic.icn3dui.htmlCls.clickMenuCls.setLogCmd('select saved atoms ' + setNames, true);
                         if(ic.currSelectedSets.length > 1) ic.icn3dui.htmlCls.clickMenuCls.setLogCmd('select sets ' + setNames, true);
                     } // if($(that).attr('gi') !== undefined) {
@@ -375,7 +375,7 @@ class HlSeq {
       }
     }
 
-    selectResidues(id, that) { var ic = this.icn3d, me = ic.icn3dui;
+    selectResidues(id, that) { let ic = this.icn3d, me = ic.icn3dui;
       if(ic.icn3dui.bNode) return;
 
       if(id !== undefined && id !== '') {
@@ -389,33 +389,33 @@ class HlSeq {
 
         $(that).toggleClass('icn3d-highlightSeq');
 
-        var residueid = id.substr(id.indexOf('_') + 1);
+        let residueid = id.substr(id.indexOf('_') + 1);
 
         if(ic.residues.hasOwnProperty(residueid)) {
             if($(that).hasClass('icn3d-highlightSeq')) {
-              for(var j in ic.residues[residueid]) {
+              for(let j in ic.residues[residueid]) {
                 ic.hAtoms[j] = 1;
               }
 
               ic.selectedResidues[residueid] = 1;
 
               if(ic.bAnnotations && $(that).attr('disease') !== undefined) {
-                  var label = $(that).attr('disease');
+                  let label = $(that).attr('disease');
 
-                  var position = ic.applyCenterCls.centerAtoms(me.hashUtilsCls.hash2Atoms(ic.residues[residueid], ic.atoms));
+                  let position = ic.applyCenterCls.centerAtoms(me.hashUtilsCls.hash2Atoms(ic.residues[residueid], ic.atoms));
                   //position.center.add(new THREE.Vector3(3.0, 3.0, 3.0)); // shift a little bit
 
-                  var maxlen = 15;
+                  let maxlen = 15;
                   if(label.length > maxlen) label = label.substr(0, maxlen) + '...';
 
                   //var size = parseInt(ic.LABELSIZE * 10 / label.length);
-                  var size = ic.LABELSIZE;
-                  var color = ic.icn3dui.htmlCls.GREYD;
+                  let size = ic.LABELSIZE;
+                  let color = ic.icn3dui.htmlCls.GREYD;
                   ic.analysisCls.addLabel(label, position.center.x, position.center.y, position.center.z, size, color, undefined, 'custom');
               }
             }
             else {
-                for(var i in ic.residues[residueid]) {
+                for(let i in ic.residues[residueid]) {
                   //ic.hAtoms[i] = undefined;
                   delete ic.hAtoms[i];
                 }

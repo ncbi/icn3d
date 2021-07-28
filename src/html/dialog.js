@@ -15,7 +15,7 @@ class Dialog {
 
     //Open a dialog to input parameters. "id" is the id of the div section holding the html content.
     //"title" is the title of the dialog. The dialog can be out of the viewing area.
-    openDlg(id, title) {  var me = this.icn3dui, ic = me.icn3d;
+    openDlg(id, title) {  let me = this.icn3dui, ic = me.icn3d;
         if(me.bNode) return;
 
         id = me.pre + id;
@@ -32,7 +32,7 @@ class Dialog {
         me.htmlCls.setMenuCls.setTheme(me.htmlCls.themecolor);
     }
 
-    addSaveButton(id) {  var me = this.icn3dui, ic = me.icn3d;
+    addSaveButton(id) {  let me = this.icn3dui, ic = me.icn3d;
         if(me.bNode) return;
 
         // adda save button
@@ -44,7 +44,7 @@ class Dialog {
         }
     }
 
-    addHideButton(id) {  var me = this.icn3dui, ic = me.icn3d;
+    addHideButton(id) {  let me = this.icn3dui, ic = me.icn3d;
         if(me.bNode) return;
 
         // adda save button
@@ -56,21 +56,21 @@ class Dialog {
         }
     }
 
-    getDialogStatus() {  var me = this.icn3dui, ic = me.icn3d;
+    getDialogStatus() {  let me = this.icn3dui, ic = me.icn3d;
         if(me.bNode) return;
 
-        var status = {}
+        let status = {}
 
         // determine whether dialogs initilaized
-        var bSelectannotationsInit = $('#' + me.pre + 'dl_selectannotations').hasClass('ui-dialog-content'); // initialized
-        var bGraph = $('#' + me.pre + 'dl_graph').hasClass('ui-dialog-content'); // initialized
-        var bLineGraph = $('#' + me.pre + 'dl_linegraph').hasClass('ui-dialog-content'); // initialized
-        var bScatterplot = $('#' + me.pre + 'dl_scatterplot').hasClass('ui-dialog-content'); // initialized
-        var bContactmap = $('#' + me.pre + 'dl_contactmap').hasClass('ui-dialog-content'); // initialized
-        var bTable = $('#' + me.pre + 'dl_interactionsorted').hasClass('ui-dialog-content'); // initialized
-        var bAlignmentInit = $('#' + me.pre + 'dl_alignment').hasClass('ui-dialog-content'); // initialized
-        var bTwoddgmInit = $('#' + me.pre + 'dl_2ddgm').hasClass('ui-dialog-content'); // initialized
-        var bSetsInit = $('#' + me.pre + 'dl_definedsets').hasClass('ui-dialog-content'); // initialized
+        let bSelectannotationsInit = $('#' + me.pre + 'dl_selectannotations').hasClass('ui-dialog-content'); // initialized
+        let bGraph = $('#' + me.pre + 'dl_graph').hasClass('ui-dialog-content'); // initialized
+        let bLineGraph = $('#' + me.pre + 'dl_linegraph').hasClass('ui-dialog-content'); // initialized
+        let bScatterplot = $('#' + me.pre + 'dl_scatterplot').hasClass('ui-dialog-content'); // initialized
+        let bContactmap = $('#' + me.pre + 'dl_contactmap').hasClass('ui-dialog-content'); // initialized
+        let bTable = $('#' + me.pre + 'dl_interactionsorted').hasClass('ui-dialog-content'); // initialized
+        let bAlignmentInit = $('#' + me.pre + 'dl_alignment').hasClass('ui-dialog-content'); // initialized
+        let bTwoddgmInit = $('#' + me.pre + 'dl_2ddgm').hasClass('ui-dialog-content'); // initialized
+        let bSetsInit = $('#' + me.pre + 'dl_definedsets').hasClass('ui-dialog-content'); // initialized
 
         status.bSelectannotationsInit2 = false, status.bGraph2 = false, status.bLineGraph2 = false;
         status.bScatterplot2 = false, status.bTable2 = false, status.bAlignmentInit2 = false;
@@ -89,21 +89,21 @@ class Dialog {
         return status;
     }
 
-    openDlgHalfWindow(id, title, dialogWidth, bForceResize) {  var me = this.icn3dui, ic = me.icn3d;
+    openDlgHalfWindow(id, title, dialogWidth, bForceResize) {  let me = this.icn3dui, ic = me.icn3d;
         if(me.bNode) return;
 
-        var thisClass = this;
+        let thisClass = this;
 
-        var twoddgmWidth = 170;
+        let twoddgmWidth = 170;
 
         //ic.resizeCanvasCls.resizeCanvas(me.htmlCls.WIDTH - dialogWidth - me.htmlCls.LESSWIDTH, me.htmlCls.HEIGHT - me.htmlCls.LESSHEIGHT - me.htmlCls.EXTRAHEIGHT, bForceResize);
         ic.resizeCanvasCls.resizeCanvas(me.htmlCls.WIDTH - dialogWidth, me.htmlCls.HEIGHT, bForceResize);
 
         //height = me.htmlCls.HEIGHT - me.htmlCls.LESSHEIGHT - me.htmlCls.EXTRAHEIGHT;
-        var height = me.htmlCls.HEIGHT;
-        var width = dialogWidth;
+        let height = me.htmlCls.HEIGHT;
+        let width = dialogWidth;
 
-        var position;
+        let position;
         if(me.cfg.showmenu && !me.utilsCls.isMobile() && !me.cfg.mobilemenu) {
             position ={ my: "left top", at: "right top+40", of: "#" + me.pre + "viewer", collision: "none" }
         }
@@ -122,7 +122,7 @@ class Dialog {
           modal: false,
           position: position,
           close: function(e) {
-              var status = thisClass.getDialogStatus();
+              let status = thisClass.getDialogStatus();
 
               if((id === me.pre + 'dl_selectannotations' &&(!status.bAlignmentInit2) && !status.bGraph2 && !status.bTable2 && !status.bLineGraph2 && !status.bScatterplot2 && !status.bContactmap2)
                 ||(id === me.pre + 'dl_graph' &&(!status.bSelectannotationsInit2) &&(!status.bAlignmentInit2) && !status.bTable2 && !status.bLineGraph2  && !status.bScatterplot2 && !status.bContactmap2)
@@ -134,7 +134,7 @@ class Dialog {
                 ) {
                   if(status.bTwoddgmInit2 || status.bSetsInit2) {
                       //ic.resizeCanvasCls.resizeCanvas(me.htmlCls.WIDTH - me.htmlCls.LESSWIDTH - twoddgmWidth, me.htmlCls.HEIGHT - me.htmlCls.LESSHEIGHT - me.htmlCls.EXTRAHEIGHT, true);
-                      var canvasWidth = me.utilsCls.isMobile() ? me.htmlCls.WIDTH : me.htmlCls.WIDTH - twoddgmWidth;
+                      let canvasWidth = me.utilsCls.isMobile() ? me.htmlCls.WIDTH : me.htmlCls.WIDTH - twoddgmWidth;
                       ic.resizeCanvasCls.resizeCanvas(canvasWidth, me.htmlCls.HEIGHT, true);
 
                       if(status.bTwoddgmInit2) thisClass.openDlg2Ddgm(me.pre + 'dl_2ddgm', undefined, status.bSetsInit2);
@@ -151,8 +151,8 @@ class Dialog {
                   ic.annotationCls.hideFixedTitle();
               }
               else if(id == me.pre + 'dl_graph') {
-                  var width = $("#" + id).width();
-                  var height = $("#" + id).height();
+                  let width = $("#" + id).width();
+                  let height = $("#" + id).height();
 
                   d3.select("#" + me.svgid).attr("width", width).attr("height", height);
               }
@@ -164,19 +164,19 @@ class Dialog {
                     //if(bTwoddgmInit) bTwoddgmInit2 = $('#' + me.pre + 'dl_2ddgm').dialog( 'isOpen' );
                     //if(bSetsInit) bSetsInit2 = $('#' + me.pre + 'dl_definedsets').dialog( 'isOpen' );
 
-                  var oriWidth =(status.bTwoddgmInit2 || status.bSetsInit2) ?(me.htmlCls.WIDTH - twoddgmWidth)/2 : me.htmlCls.WIDTH / 2;
-                  var ratio = $("#" + id).width() / oriWidth;
+                  let oriWidth =(status.bTwoddgmInit2 || status.bSetsInit2) ?(me.htmlCls.WIDTH - twoddgmWidth)/2 : me.htmlCls.WIDTH / 2;
+                  let ratio = $("#" + id).width() / oriWidth;
 
                   if(id == me.pre + 'dl_linegraph') {
-                      var width = ic.linegraphWidth * ratio;
+                      let width = ic.linegraphWidth * ratio;
                       $("#" + me.linegraphid).attr("width", width);
                   }
                   else if(id == me.pre + 'dl_scatterplot') {
-                      var width = ic.scatterplotWidth * ratio;
+                      let width = ic.scatterplotWidth * ratio;
                       $("#" + me.scatterplotid).attr("width", width);
                   }
                   else if(id == me.pre + 'dl_contactmap') {
-                      var width = ic.contactmapWidth * ratio;
+                      let width = ic.contactmapWidth * ratio;
                       $("#" + me.contactmapid).attr("width", width);
                   }
               }
@@ -187,13 +187,13 @@ class Dialog {
         this.addHideButton(id);
     }
 
-    openDlg2Ddgm(id, inHeight, bDefinedSets) {  var me = this.icn3dui, ic = me.icn3d;
+    openDlg2Ddgm(id, inHeight, bDefinedSets) {  let me = this.icn3dui, ic = me.icn3d;
         if(me.bNode) return;
 
-        var thisClass = this;
+        let thisClass = this;
 
-        var twoddgmWidth = 170;
-        var at, title;
+        let twoddgmWidth = 170;
+        let at, title;
         if(id === me.pre + 'dl_definedsets') {
             at = "right top";
             title = 'Select sets';
@@ -210,9 +210,9 @@ class Dialog {
         }
 
         //var position ={ my: "left top", at: at, of: "#" + me.pre + "canvas", collision: "none" }
-        var position ={ my: "left top+" + me.htmlCls.MENU_HEIGHT, at: at, of: "#" + me.pre + "viewer", collision: "none" }
+        let position ={ my: "left top+" + me.htmlCls.MENU_HEIGHT, at: at, of: "#" + me.pre + "viewer", collision: "none" }
 
-        var height = 'auto';
+        let height = 'auto';
 
         window.dialog = $( '#' + id ).dialog({
           autoOpen: true,
@@ -222,7 +222,7 @@ class Dialog {
           modal: false,
           position: position,
           close: function(e) {
-              var status = thisClass.getDialogStatus();
+              let status = thisClass.getDialogStatus();
 
               if((!status.bSelectannotationsInit2) &&(!status.bGraph2) &&(!status.bLineGraph2) &&(!status.bScatterplot2) &&(!status.bTable2) &&(!status.bAlignmentInit2) ) {
                     //ic.resizeCanvasCls.resizeCanvas(me.htmlCls.WIDTH - me.htmlCls.LESSWIDTH, me.htmlCls.HEIGHT - me.htmlCls.LESSHEIGHT - me.htmlCls.EXTRAHEIGHT, true);
@@ -235,17 +235,17 @@ class Dialog {
         this.addHideButton(id);
     }
 
-    openDlgRegular(id, title) {  var me = this.icn3dui, ic = me.icn3d;
+    openDlgRegular(id, title) {  let me = this.icn3dui, ic = me.icn3d;
         if(me.bNode) return;
 
-        var width = 400, height = 150;
-        var twoddgmWidth = 170;
+        let width = 400, height = 150;
+        let twoddgmWidth = 170;
 
-        var status = this.getDialogStatus();
+        let status = this.getDialogStatus();
 
         if(id === me.pre + 'dl_selectannotations' || id === me.pre + 'dl_graph' || id === me.pre + 'dl_linegraph' || id === me.pre + 'dl_scatterplot' || id === me.pre + 'dl_contactmap' || id === me.pre + 'dl_interactionsorted' || id === me.pre + 'dl_alignment') {
             //var dialogWidth = 0.5 *(me.htmlCls.WIDTH - me.htmlCls.LESSWIDTH) - twoddgmWidth * 0.5;
-            var dialogWidth = 0.5 *(me.htmlCls.WIDTH) - twoddgmWidth * 0.5;
+            let dialogWidth = 0.5 *(me.htmlCls.WIDTH) - twoddgmWidth * 0.5;
 
             //if(me.htmlCls.WIDTH - me.htmlCls.LESSWIDTH >= me.htmlCls.HEIGHT - me.htmlCls.LESSHEIGHT - me.htmlCls.EXTRAHEIGHT) {
             if(me.htmlCls.WIDTH >= me.htmlCls.HEIGHT) {
@@ -268,7 +268,7 @@ class Dialog {
                 //width = me.htmlCls.WIDTH - me.htmlCls.LESSWIDTH;
                 width = me.htmlCls.WIDTH;
 
-                var position ={ my: "left top", at: "left bottom+32", of: "#" + me.pre + "canvas", collision: "none" }
+                let position ={ my: "left top", at: "left bottom+32", of: "#" + me.pre + "canvas", collision: "none" }
 
                 window.dialog = $( "#" + id ).dialog({
                   autoOpen: true,
@@ -287,7 +287,7 @@ class Dialog {
                         ||(id === me.pre + 'dl_contactmap' &&(!status.bSelectannotationsInit2) &&(!status.bGraph2) &&(!status.bAlignmentInit2) &&(!status.bTable2) &&(!status.bLineGraph2) &&(!status.bScatterplot2))
                         ) {
                           if(status.bTwoddgmInit2 || status.bSetsInit2) {
-                              var canvasWidth = me.utilsCls.isMobile() ? me.htmlCls.WIDTH : me.htmlCls.WIDTH - twoddgmWidth;
+                              let canvasWidth = me.utilsCls.isMobile() ? me.htmlCls.WIDTH : me.htmlCls.WIDTH - twoddgmWidth;
                               ic.resizeCanvasCls.resizeCanvas(canvasWidth, me.htmlCls.HEIGHT, true);
 
                               if(status.bTwoddgmInit2) thisClass.openDlg2Ddgm(me.pre + 'dl_2ddgm', undefined, status.bSetsInit2);
@@ -304,8 +304,8 @@ class Dialog {
                           ic.annotationCls.hideFixedTitle();
                       }
                       else if(id == me.pre + 'dl_graph') {
-                          var width = $("#" + id).width();
-                          var height = $("#" + id).height();
+                          let width = $("#" + id).width();
+                          let height = $("#" + id).height();
 
                           d3.select("#" + me.svgid).attr("width", width).attr("height", height);
                       }
@@ -317,19 +317,19 @@ class Dialog {
                             //if(bTwoddgmInit) bTwoddgmInit2 = $('#' + me.pre + 'dl_2ddgm').dialog( 'isOpen' );
                             //if(bSetsInit) bSetsInit2 = $('#' + me.pre + 'dl_definedsets').dialog( 'isOpen' );
 
-                          var oriWidth =(status.bTwoddgmInit2 || status.bSetsInit2) ?(me.htmlCls.WIDTH - twoddgmWidth)/2 : me.htmlCls.WIDTH / 2;
-                          var ratio = $("#" + id).width() / oriWidth;
+                          let oriWidth =(status.bTwoddgmInit2 || status.bSetsInit2) ?(me.htmlCls.WIDTH - twoddgmWidth)/2 : me.htmlCls.WIDTH / 2;
+                          let ratio = $("#" + id).width() / oriWidth;
 
                           if(id == me.pre + 'dl_linegraph') {
-                              var width = ic.linegraphWidth * ratio;
+                              let width = ic.linegraphWidth * ratio;
                               $("#" + me.linegraphid).attr("width", width);
                           }
                           else if(id == me.pre + 'dl_scatterplot') {
-                              var width = ic.scatterplotWidth * ratio;
+                              let width = ic.scatterplotWidth * ratio;
                               $("#" + me.scatterplotid).attr("width", width);
                           }
                           else if(id == me.pre + 'dl_contactmap') {
-                              var width = ic.contactmapWidth * ratio;
+                              let width = ic.contactmapWidth * ratio;
                               $("#" + me.contactmapid).attr("width", width);
                           }
                       }
@@ -341,7 +341,7 @@ class Dialog {
             }
         }
         else if(id === me.pre + 'dl_2ddgm') {
-            var tmpWidth = 0;
+            let tmpWidth = 0;
 
             //if(me.htmlCls.WIDTH - me.htmlCls.LESSWIDTH >= me.htmlCls.HEIGHT - me.htmlCls.LESSHEIGHT - me.htmlCls.EXTRAHEIGHT) {
             if(me.htmlCls.WIDTH >= me.htmlCls.HEIGHT) {
@@ -356,7 +356,7 @@ class Dialog {
             }
             else {
                 //ic.resizeCanvasCls.resizeCanvas(me.htmlCls.WIDTH - me.htmlCls.LESSWIDTH - tmpWidth - twoddgmWidth,(me.htmlCls.HEIGHT - me.htmlCls.LESSHEIGHT - me.htmlCls.EXTRAHEIGHT)*0.5, true);
-                var canvasWidth = me.utilsCls.isMobile() ? me.htmlCls.WIDTH : me.htmlCls.WIDTH - twoddgmWidth;
+                let canvasWidth = me.utilsCls.isMobile() ? me.htmlCls.WIDTH : me.htmlCls.WIDTH - twoddgmWidth;
                 ic.resizeCanvasCls.resizeCanvas(canvasWidth,(me.htmlCls.HEIGHT)*0.5, true);
                 //this.openDlg2Ddgm(id,(me.htmlCls.HEIGHT - me.htmlCls.LESSHEIGHT - me.htmlCls.EXTRAHEIGHT)*0.5);
                 this.openDlg2Ddgm(id,(me.htmlCls.HEIGHT)*0.5);
@@ -373,10 +373,10 @@ class Dialog {
                 width='50%';
             }
 
-            var position;
+            let position;
 
             if(id === me.pre + 'dl_definedsets') {
-                var tmpWidth = 0;
+                let tmpWidth = 0;
 
                 //if(me.htmlCls.WIDTH - me.htmlCls.LESSWIDTH >= me.htmlCls.HEIGHT - me.htmlCls.LESSHEIGHT - me.htmlCls.EXTRAHEIGHT) {
                 if(me.htmlCls.WIDTH >= me.htmlCls.HEIGHT) {
@@ -392,7 +392,7 @@ class Dialog {
                 }
                 else {
                     //ic.resizeCanvasCls.resizeCanvas(me.htmlCls.WIDTH - me.htmlCls.LESSWIDTH - tmpWidth - twoddgmWidth,(me.htmlCls.HEIGHT - me.htmlCls.LESSHEIGHT - me.htmlCls.EXTRAHEIGHT)*0.5, true);
-                    var canvasWidth = me.utilsCls.isMobile() ? me.htmlCls.WIDTH : me.htmlCls.WIDTH - twoddgmWidth;
+                    let canvasWidth = me.utilsCls.isMobile() ? me.htmlCls.WIDTH : me.htmlCls.WIDTH - twoddgmWidth;
                     ic.resizeCanvasCls.resizeCanvas(canvasWidth,(me.htmlCls.HEIGHT)*0.5, true);
                     //this.openDlg2Ddgm(id,(me.htmlCls.HEIGHT - me.htmlCls.LESSHEIGHT - me.htmlCls.EXTRAHEIGHT)*0.5);
                     this.openDlg2Ddgm(id,(me.htmlCls.HEIGHT)*0.5);
@@ -446,11 +446,11 @@ class Dialog {
           .addClass("ui-icon-close");
     }
 
-    openDlgNotebook(id, title) {  var me = this.icn3dui, ic = me.icn3d;
+    openDlgNotebook(id, title) {  let me = this.icn3dui, ic = me.icn3d;
         if(me.bNode) return;
 
-        var width = 400, height = 150;
-        var twoddgmWidth = 170;
+        let width = 400, height = 150;
+        let twoddgmWidth = 170;
 
         if(id === me.pre + 'dl_selectannotations' || id === me.pre + 'dl_graph' || id === me.pre + 'dl_linegraph' || id === me.pre + 'dl_scatterplot' || id === me.pre + 'dl_contactmap' || id === me.pre + 'dl_interactionsorted' || id === me.pre + 'dl_alignment') {
             $( "#" + id ).show();
@@ -463,30 +463,30 @@ class Dialog {
             $( "#" + id ).height(height);
 
             $( "#" + id ).resize(function(e) {
-                  var oriWidth = me.htmlCls.WIDTH / 2;
-                  var ratio = $("#" + id).width() / oriWidth;
+                  let oriWidth = me.htmlCls.WIDTH / 2;
+                  let ratio = $("#" + id).width() / oriWidth;
 
                   if(id == me.pre + 'dl_selectannotations') {
                       ic.annotationCls.hideFixedTitle();
                   }
                   else if(id == me.pre + 'dl_graph') {
-                      var width = $("#" + id).width();
-                      var height = $("#" + id).height();
+                      let width = $("#" + id).width();
+                      let height = $("#" + id).height();
 
                       d3.select("#" + me.svgid).attr("width", width).attr("height", height);
                   }
                   else if(id == me.pre + 'dl_linegraph') {
-                      var width = ic.linegraphWidth * ratio;
+                      let width = ic.linegraphWidth * ratio;
 
                       $("#" + me.linegraphid).attr("width", width);
                   }
                   else if(id == me.pre + 'dl_scatterplot') {
-                      var width = ic.scatterplotWidth * ratio;
+                      let width = ic.scatterplotWidth * ratio;
 
                       $("#" + me.scatterplotid).attr("width", width);
                   }
                   else if(id == me.pre + 'dl_contactmap') {
-                      var width = ic.contactmapWidth * ratio;
+                      let width = ic.contactmapWidth * ratio;
 
                       $("#" + me.contactmapid).attr("width", width);
                   }

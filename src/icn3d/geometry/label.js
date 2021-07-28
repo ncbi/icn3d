@@ -14,25 +14,25 @@ class TextSprite {
     // modified from 3Dmol (http://3dmol.csb.pitt.edu/)
     // new: http://stackoverflow.com/questions/23514274/three-js-2d-text-sprite-labels
     // old: http://stemkoski.github.io/Three.js/Sprite-Text-Labels.html
-    makeTextSprite( message, parameters ) { var ic = this.icn3d, me = ic.icn3dui;
+    makeTextSprite( message, parameters ) { let ic = this.icn3d, me = ic.icn3dui;
         if(ic.icn3dui.bNode) return;
 
         if ( parameters === undefined ) parameters = {};
-        var fontface = parameters.hasOwnProperty("fontface") ? parameters["fontface"] : "Arial";
-        var fontsize = parameters.hasOwnProperty("fontsize") ? parameters["fontsize"] : 18;
-        var factor = parameters.hasOwnProperty("factor") ? parameters["factor"] : 1;
+        let fontface = parameters.hasOwnProperty("fontface") ? parameters["fontface"] : "Arial";
+        let fontsize = parameters.hasOwnProperty("fontsize") ? parameters["fontsize"] : 18;
+        let factor = parameters.hasOwnProperty("factor") ? parameters["factor"] : 1;
 
-        var a = parameters.hasOwnProperty("alpha") ? parameters["alpha"] : 1.0;
+        let a = parameters.hasOwnProperty("alpha") ? parameters["alpha"] : 1.0;
 
-        var bBkgd = true;
-        var bSchematic = false;
+        let bBkgd = true;
+        let bSchematic = false;
         if(parameters.hasOwnProperty("bSchematic") &&  parameters["bSchematic"]) {
             bSchematic = true;
 
             fontsize = 40;
         }
 
-        var backgroundColor, borderColor, borderThickness;
+        let backgroundColor, borderColor, borderThickness;
         if(parameters.hasOwnProperty("backgroundColor") &&  parameters["backgroundColor"] !== undefined) {
             backgroundColor = me.utilsCls.hexToRgb(parameters["backgroundColor"], a);
 
@@ -46,21 +46,21 @@ class TextSprite {
             borderThickness = 0;
         }
 
-        var textAlpha = 1.0;
-        var textColor = parameters.hasOwnProperty("textColor") &&  parameters["textColor"] !== undefined ? me.utilsCls.hexToRgb(parameters["textColor"], textAlpha) : { r:255, g:255, b:0, a:1.0 };
+        let textAlpha = 1.0;
+        let textColor = parameters.hasOwnProperty("textColor") &&  parameters["textColor"] !== undefined ? me.utilsCls.hexToRgb(parameters["textColor"], textAlpha) : { r:255, g:255, b:0, a:1.0 };
 
-        var canvas = document.createElement('canvas');
+        let canvas = document.createElement('canvas');
 
-        var context = canvas.getContext('2d');
+        let context = canvas.getContext('2d');
 
         context.font = "Bold " + fontsize + "px " + fontface;
 
-        var metrics = context.measureText( message );
+        let metrics = context.measureText( message );
 
-        var textWidth = metrics.width;
+        let textWidth = metrics.width;
 
-        var width = textWidth + 2*borderThickness;
-        var height = fontsize + 2*borderThickness;
+        let width = textWidth + 2*borderThickness;
+        let height = fontsize + 2*borderThickness;
 
         if(bSchematic) {
             if(width > height) {
@@ -71,7 +71,7 @@ class TextSprite {
             }
         }
 
-        var expandWidthFactor = 0.8 * textWidth / height;
+        let expandWidthFactor = 0.8 * textWidth / height;
 
         canvas.width = width;
         canvas.height = height;
@@ -89,13 +89,13 @@ class TextSprite {
             context.lineWidth = borderThickness;
 
             if(bSchematic) {
-                var r = width * 0.35;
+                let r = width * 0.35;
                 this.circle(context, 0, 0, width, height, r);
             }
             else {
                 //var r = (message.length <= textLengthThreshold) ? height * 0.5 : 0;
                 //var r = height * 0.8;
-                var r = 0;
+                let r = 0;
                 this.roundRect(context, 0, 0, width, height, r);
             }
         }
@@ -112,12 +112,12 @@ class TextSprite {
         context.fillText( message, width * 0.5, height * 0.5);
 
         // canvas contents will be used for a texture
-        var texture = new THREE.Texture(canvas)
+        let texture = new THREE.Texture(canvas)
         texture.needsUpdate = true;
 
-        var frontOfTarget = true;
+        let frontOfTarget = true;
         //var spriteMaterial = new THREE.SpriteMaterial( { map: texture, useScreenCoordinates: false } );
-        var spriteMaterial = new THREE.SpriteMaterial( {
+        let spriteMaterial = new THREE.SpriteMaterial( {
             map: texture,
             //useScreenCoordinates: false,
             depthTest: !frontOfTarget,
@@ -127,7 +127,7 @@ class TextSprite {
         //https://stackoverflow.com/questions/29421702/threejs-texture
         spriteMaterial.map.minFilter = THREE.LinearFilter;
 
-        var sprite = new THREE.Sprite( spriteMaterial );
+        let sprite = new THREE.Sprite( spriteMaterial );
 
         if(bSchematic) {
             //sprite.scale.set(factor, factor, 1.0);
@@ -176,24 +176,24 @@ class Label {
     // modified from iview (http://istar.cse.cuhk.edu.hk/iview/)
     //Create labels for a list of "labels", each of which has the properties 'position',
     //'text', 'size', 'color', and 'background'.
-    createLabelRepresentation(labels) { var ic = this.icn3d, me = ic.icn3dui;
-        var oriFactor = 3 * ic.oriMaxD / 100 * ic.labelScale;
+    createLabelRepresentation(labels) { let ic = this.icn3d, me = ic.icn3dui;
+        let oriFactor = 3 * ic.oriMaxD / 100 * ic.labelScale;
 
-        for(var name in labels) {
-            var labelArray = (labels[name] !== undefined) ? labels[name] : [];
+        for(let name in labels) {
+            let labelArray = (labels[name] !== undefined) ? labels[name] : [];
 
-            for (var i = 0, il = labelArray.length; i < il; ++i) {
-                var label = labelArray[i];
+            for (let i = 0, il = labelArray.length; i < il; ++i) {
+                let label = labelArray[i];
                 // make sure fontsize is a number
 
                 if(label.size == 0) label.size = undefined;
                 if(label.color == 0) label.color = undefined;
                 if(label.background == 0) label.background = undefined;
 
-                var labelsize = (label.size !== undefined) ? label.size : ic.LABELSIZE;
-                var labelcolor = (label.color !== undefined) ? label.color : '#ffff00';
-                var labelbackground = (label.background !== undefined) ? label.background : '#cccccc';
-                var labelalpha = (label.alpha !== undefined) ? label.alpha : 1.0;
+                let labelsize = (label.size !== undefined) ? label.size : ic.LABELSIZE;
+                let labelcolor = (label.color !== undefined) ? label.color : '#ffff00';
+                let labelbackground = (label.background !== undefined) ? label.background : '#cccccc';
+                let labelalpha = (label.alpha !== undefined) ? label.alpha : 1.0;
 
                 // if label.background is undefined, no background will be drawn
                 labelbackground = label.background;
@@ -202,7 +202,7 @@ class Label {
                     labelcolor = "#888888";
                 }
 
-                var bb;
+                let bb;
                 if(label.bSchematic !== undefined && label.bSchematic) {
 
                     bb = this.textSpriteCls.makeTextSprite(label.text, {fontsize: parseInt(labelsize), textColor: labelcolor, borderColor: labelbackground, backgroundColor: labelbackground, alpha: labelalpha, bSchematic: 1, factor: oriFactor});
@@ -212,7 +212,7 @@ class Label {
                         bb = this.textSpriteCls.makeTextSprite(label.text, {fontsize: parseInt(labelsize), textColor: labelcolor, borderColor: labelbackground, backgroundColor: labelbackground, alpha: labelalpha, bSchematic: 1, factor: oriFactor});
                     }
                     else {
-                        var factor = (label.factor) ? oriFactor * label.factor : oriFactor;
+                        let factor = (label.factor) ? oriFactor * label.factor : oriFactor;
 
                         bb = this.textSpriteCls.makeTextSprite(label.text, {fontsize: parseInt(labelsize), textColor: labelcolor, borderColor: labelbackground, backgroundColor: labelbackground, alpha: labelalpha, bSchematic: 0, factor: factor});
                     }
@@ -225,11 +225,11 @@ class Label {
         }
     }
 
-    hideLabels() { var ic = this.icn3d, me = ic.icn3dui;
+    hideLabels() { let ic = this.icn3d, me = ic.icn3dui;
         // remove previous labels
         if(ic.mdl !== undefined) {
-            for(var i = 0, il = ic.mdl.children.length; i < il; ++i) {
-                 var mesh = ic.mdl.children[i];
+            for(let i = 0, il = ic.mdl.children.length; i < il; ++i) {
+                 let mesh = ic.mdl.children[i];
                  if(mesh !== undefined && mesh.type === 'Sprite') {
                      ic.mdl.remove(mesh); // somehow didn't work
                  }

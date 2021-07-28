@@ -10,14 +10,14 @@ class Camera {
     }
 
     //Set the camera according to the size of the structure.
-    setCamera() { var ic = this.icn3d, me = ic.icn3dui;
+    setCamera() { let ic = this.icn3d, me = ic.icn3dui;
         if(ic.bControlGl && !ic.icn3dui.bNode) {
             window.cam = ic.cams[ic.opts.camera.toLowerCase()];
 
-            var maxD = ic.maxD;
+            let maxD = ic.maxD;
 
             if(window.cam === ic.perspectiveCamera) {
-                var bInstance = (ic.biomtMatrices !== undefined && ic.biomtMatrices.length * ic.cnt > ic.maxatomcnt) ? true : false;
+                let bInstance = (ic.biomtMatrices !== undefined && ic.biomtMatrices.length * ic.cnt > ic.maxatomcnt) ? true : false;
                 //var factor = (ic.biomtMatrices !== undefined && ic.biomtMatrices.length * ic.cnt > 10 * ic.maxatomcnt) ? 1 : 2;
                 //var factor = (ic.biomtMatrices !== undefined && ic.biomtMatrices.length * ic.cnt > 10 * ic.maxatomcnt) ? 1 : 3;
                 if(bInstance) {
@@ -106,10 +106,10 @@ class Camera {
 
             ic.cam = ic.cams[ic.opts.camera.toLowerCase()];
 
-            var maxD = ic.maxD;
+            let maxD = ic.maxD;
 
             if(ic.cam === ic.perspectiveCamera) {
-                var bInstance = (ic.biomtMatrices !== undefined && ic.biomtMatrices.length * ic.cnt > ic.maxatomcnt) ? true : false;
+                let bInstance = (ic.biomtMatrices !== undefined && ic.biomtMatrices.length * ic.cnt > ic.maxatomcnt) ? true : false;
                 //var factor = (ic.biomtMatrices !== undefined && ic.biomtMatrices.length * ic.cnt > 10 * ic.maxatomcnt) ? 1 : 2;
                 //var factor = (ic.biomtMatrices !== undefined && ic.biomtMatrices.length * ic.cnt > 10 * ic.maxatomcnt) ? 1 : 3;
                 if(bInstance) {

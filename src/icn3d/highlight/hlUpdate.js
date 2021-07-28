@@ -18,9 +18,9 @@ class HlUpdate {
 
     //The 2D diagram only shows the currently displayed chains when users click the option "View Only Selection".
     //This method is called to dynamically update the content of the 2D interaction diagram.
-    update2DdgmContent() { var ic = this.icn3d, me = ic.icn3dui;
+    update2DdgmContent() { let ic = this.icn3d, me = ic.icn3dui;
        // update 2D diagram to show just the displayed parts
-       var html2ddgm = '';
+       let html2ddgm = '';
        if(ic.icn3dui.cfg.mmdbid !== undefined || ic.icn3dui.cfg.gi !== undefined) {
           html2ddgm += ic.diagram2dCls.draw2Ddgm(ic.interactionData, ic.inputid, undefined, true);
           html2ddgm += ic.diagram2dCls.set2DdgmNote();
@@ -42,14 +42,14 @@ class HlUpdate {
     }
 
     //Change the residue color in the annotation window for the residues in the array "residueArray".
-    changeSeqColor(residueArray) { var ic = this.icn3d, me = ic.icn3dui;
-       for(var i = 0, il = residueArray.length; i < il; ++i) {
-           var pickedResidue = residueArray[i];
+    changeSeqColor(residueArray) { let ic = this.icn3d, me = ic.icn3dui;
+       for(let i = 0, il = residueArray.length; i < il; ++i) {
+           let pickedResidue = residueArray[i];
            //[id$= is expensive
            //if($("[id$=" + ic.pre + pickedResidue + "]").length !== 0) {
-             var atom = ic.firstAtomObjCls.getFirstCalphaAtomObj(ic.residues[pickedResidue]);
-             var colorStr =(atom.color === undefined || atom.color.getHexString().toUpperCase() === 'FFFFFF') ? 'DDDDDD' : atom.color.getHexString();
-             var color =(atom.color !== undefined) ? colorStr : "CCCCCC";
+             let atom = ic.firstAtomObjCls.getFirstCalphaAtomObj(ic.residues[pickedResidue]);
+             let colorStr =(atom.color === undefined || atom.color.getHexString().toUpperCase() === 'FFFFFF') ? 'DDDDDD' : atom.color.getHexString();
+             let color =(atom.color !== undefined) ? colorStr : "CCCCCC";
              // annotations will have their own color, only the chain will have the changed color
              $("[id=giseq_" + ic.pre + pickedResidue + "]").attr('style', 'color:#' + color);
              $("[id=align_" + ic.pre + pickedResidue + "]").attr('style', 'color:#' + color);
@@ -59,7 +59,7 @@ class HlUpdate {
     }
 
     //Remove the highlight in 3D structure, 2D interaction, 1D sequence, and the menu of defined sets.
-    removeHlAll() { var ic = this.icn3d, me = ic.icn3dui;
+    removeHlAll() { let ic = this.icn3d, me = ic.icn3dui;
            this.removeHlObjects();
            this.removeHlSeq();
            this.removeHl2D();
@@ -67,18 +67,18 @@ class HlUpdate {
     }
 
     //Remove the highlight in the 3D structure display.
-    removeHlObjects() { var ic = this.icn3d, me = ic.icn3dui;
+    removeHlObjects() { let ic = this.icn3d, me = ic.icn3dui;
            ic.hlObjectsCls.removeHlObjects();
     }
 
     //Remove the highlight in the sequence display of the annotation window.
-    removeHlSeq() { var ic = this.icn3d, me = ic.icn3dui;
+    removeHlSeq() { let ic = this.icn3d, me = ic.icn3dui;
     //       this.removeSeqChainBkgd();
            this.removeSeqResidueBkgd();
     }
 
     //Remove the highlight in the 2D interaction diagram.
-    removeHl2D() { var ic = this.icn3d, me = ic.icn3dui;
+    removeHl2D() { let ic = this.icn3d, me = ic.icn3dui;
           // clear nodes in 2d dgm
           $("#" + ic.pre + "dl_2ddgm rect").attr('stroke', '#000000');
           $("#" + ic.pre + "dl_2ddgm circle").attr('stroke', '#000000');
@@ -94,12 +94,12 @@ class HlUpdate {
     }
 
     //Remove the selection in the menu of defined sets.
-    removeHlMenus() { var ic = this.icn3d, me = ic.icn3dui;
+    removeHlMenus() { let ic = this.icn3d, me = ic.icn3dui;
         $("#" + ic.pre + "atomsCustom").val("");
         $("#" + ic.pre + "atomsCustom")[0].blur();
     }
 
-    updateHlAll(commandnameArray, bSetMenu, bUnion, bForceHighlight) { var ic = this.icn3d, me = ic.icn3dui;
+    updateHlAll(commandnameArray, bSetMenu, bUnion, bForceHighlight) { let ic = this.icn3d, me = ic.icn3dui;
            // update the previously highlisghted atoms for switching between all and selection
            ic.prevHighlightAtoms = me.hashUtilsCls.cloneHash(ic.hAtoms);
 
@@ -119,7 +119,7 @@ class HlUpdate {
     }
 
     //Update the highlight of 3D structure display according to the current highlighted atoms.
-    updateHlObjects(bForceHighlight) { var ic = this.icn3d, me = ic.icn3dui;
+    updateHlObjects(bForceHighlight) { let ic = this.icn3d, me = ic.icn3dui;
            ic.hlObjectsCls.removeHlObjects();
 
            if((ic.hAtoms && Object.keys(ic.hAtoms).length < Object.keys(ic.atoms).length) || bForceHighlight) {
@@ -130,7 +130,7 @@ class HlUpdate {
 
     // update highlight in sequence, slow if sequence is long
     //Update the highlight of sequences in the annotation window according to the current highlighted atoms.
-    updateHlSeq(bShowHighlight, residueHash, bUnion) { var ic = this.icn3d, me = ic.icn3dui;
+    updateHlSeq(bShowHighlight, residueHash, bUnion) { let ic = this.icn3d, me = ic.icn3dui;
            if(bUnion === undefined || !bUnion) {
                this.removeHlSeq();
            }
@@ -141,7 +141,7 @@ class HlUpdate {
            this.changeSeqColor(Object.keys(residueHash));
     }
 
-    updateHlSeqInChain(commandnameArray, bUnion) { var ic = this.icn3d, me = ic.icn3dui;
+    updateHlSeqInChain(commandnameArray, bUnion) { let ic = this.icn3d, me = ic.icn3dui;
            if(bUnion === undefined || !bUnion) {
                this.removeHlSeq();
            }
@@ -151,24 +151,24 @@ class HlUpdate {
 
            //this.hlSequence(Object.keys(residueHash));
            // speed up with chain highlight
-           for(var i = 0, il = commandnameArray.length; i < il; ++i) {
-               var commandname = commandnameArray[i];
+           for(let i = 0, il = commandnameArray.length; i < il; ++i) {
+               let commandname = commandnameArray[i];
                if(Object.keys(ic.chains).indexOf(commandname) !== -1) {
                    this.hlSeqInChain(commandname);
                }
                else {
-                   var residueArray = [];
+                   let residueArray = [];
 
                    if(ic.defNames2Residues[commandname] !== undefined && ic.defNames2Residues[commandname].length > 0) {
                        residueArray = ic.defNames2Residues[commandname];
                    }
 
-                   var residueHash = {}
+                   let residueHash = {}
                    if(ic.defNames2Atoms[commandname] !== undefined && ic.defNames2Atoms[commandname].length > 0) {
-                       for(var j = 0, jl = ic.defNames2Atoms[commandname].length; j < jl; ++j) {
-                           var serial = ic.defNames2Atoms[commandname][j];
-                           var atom = ic.atoms[serial];
-                           var resid = atom.structure + '_' + atom.chain + '_' + atom.resi;
+                       for(let j = 0, jl = ic.defNames2Atoms[commandname].length; j < jl; ++j) {
+                           let serial = ic.defNames2Atoms[commandname][j];
+                           let atom = ic.atoms[serial];
+                           let resid = atom.structure + '_' + atom.chain + '_' + atom.resi;
 
                            residueHash[resid] = 1;
                        }
@@ -185,30 +185,30 @@ class HlUpdate {
 
     // update highlight in 2D window
     //Update the highlight of 2D interaction diagram according to the current highlighted atoms.
-    updateHl2D(chainArray2d) { var ic = this.icn3d, me = ic.icn3dui;
+    updateHl2D(chainArray2d) { let ic = this.icn3d, me = ic.icn3dui;
       this.removeHl2D();
 
       if(ic.hAtoms && Object.keys(ic.hAtoms).length == Object.keys(ic.atoms).length) return;
 
       if(chainArray2d === undefined) {
-          var chainHash = ic.firstAtomObjCls.getChainsFromAtoms(ic.hAtoms);
+          let chainHash = ic.firstAtomObjCls.getChainsFromAtoms(ic.hAtoms);
           chainArray2d = Object.keys(chainHash);
       }
 
       if(chainArray2d !== undefined) {
-          for(var i = 0, il = chainArray2d.length; i < il; ++i) {
-              var hlatoms = me.hashUtilsCls.intHash(ic.chains[chainArray2d[i]], ic.hAtoms);
-              var ratio = 1.0 * Object.keys(hlatoms).length / Object.keys(ic.chains[chainArray2d[i]]).length;
+          for(let i = 0, il = chainArray2d.length; i < il; ++i) {
+              let hlatoms = me.hashUtilsCls.intHash(ic.chains[chainArray2d[i]], ic.hAtoms);
+              let ratio = 1.0 * Object.keys(hlatoms).length / Object.keys(ic.chains[chainArray2d[i]]).length;
 
-              var firstAtom = ic.firstAtomObjCls.getFirstCalphaAtomObj(hlatoms);
+              let firstAtom = ic.firstAtomObjCls.getFirstCalphaAtomObj(hlatoms);
               if(ic.alnChains[chainArray2d[i]] !== undefined) {
-                    var alignedAtoms = me.hashUtilsCls.intHash(ic.alnChains[chainArray2d[i]], hlatoms);
+                    let alignedAtoms = me.hashUtilsCls.intHash(ic.alnChains[chainArray2d[i]], hlatoms);
                     if(Object.keys(alignedAtoms).length > 0) firstAtom = ic.firstAtomObjCls.getFirstCalphaAtomObj(alignedAtoms);
                 }
-              var color =(firstAtom !== undefined && firstAtom.color !== undefined) ? '#' + firstAtom.color.getHexString() : '#FFFFFF';
+              let color =(firstAtom !== undefined && firstAtom.color !== undefined) ? '#' + firstAtom.color.getHexString() : '#FFFFFF';
 
-              var target = $("#" + ic.pre + "dl_2ddgm g[chainid=" + chainArray2d[i] + "] rect[class='icn3d-hlnode']");
-              var base = $("#" + ic.pre + "dl_2ddgm g[chainid=" + chainArray2d[i] + "] rect[class='icn3d-basenode']");
+              let target = $("#" + ic.pre + "dl_2ddgm g[chainid=" + chainArray2d[i] + "] rect[class='icn3d-hlnode']");
+              let base = $("#" + ic.pre + "dl_2ddgm g[chainid=" + chainArray2d[i] + "] rect[class='icn3d-basenode']");
               if(target !== undefined) {
                   ic.diagram2dCls.highlightNode('rect', target, base, ratio);
                   $(target).attr('fill', color);
@@ -232,7 +232,7 @@ class HlUpdate {
       }
 
       if(ic.lineArray2d !== undefined) {
-          for(var i = 0, il = ic.lineArray2d.length; i < il; i += 2) {
+          for(let i = 0, il = ic.lineArray2d.length; i < il; i += 2) {
               $("#" + ic.pre + "dl_2ddgm g[chainid1=" + ic.lineArray2d[i] + "][chainid2=" + ic.lineArray2d[i + 1] + "] line").attr('stroke', ic.icn3dui.htmlCls.ORANGE);
           }
       }
@@ -245,10 +245,10 @@ class HlUpdate {
 
     // update highlight in the menu of defined sets
     //Update the selection in the menu of defined sets according to the current highlighted atoms.
-    updateHlMenus(commandnameArray) { var ic = this.icn3d, me = ic.icn3dui;
+    updateHlMenus(commandnameArray) { let ic = this.icn3d, me = ic.icn3dui;
         if(commandnameArray === undefined) commandnameArray = [];
 
-        var definedAtomsHtml = ic.definedSetsCls.setAtomMenu(commandnameArray);
+        let definedAtomsHtml = ic.definedSetsCls.setAtomMenu(commandnameArray);
 
         if($("#" + ic.pre + "atomsCustom").length) {
             $("#" + ic.pre + "atomsCustom").html(definedAtomsHtml);
@@ -256,14 +256,14 @@ class HlUpdate {
         }
     }
 
-    hlSequence(residueArray) { var ic = this.icn3d, me = ic.icn3dui;
+    hlSequence(residueArray) { let ic = this.icn3d, me = ic.icn3dui;
        // update annotation windows and alignment sequences
-       var chainHash = {}
-       for(var i = 0, il = residueArray.length; i < il; ++i) {
-           var pickedResidue = residueArray[i];
+       let chainHash = {}
+       for(let i = 0, il = residueArray.length; i < il; ++i) {
+           let pickedResidue = residueArray[i];
            //[id$= is expensive to search id ending with
            //var resElem = $("[id$=" + ic.pre + pickedResidue + "]");
-           var resElem = $("[id=giseq_" + ic.pre + pickedResidue + "]");
+           let resElem = $("[id=giseq_" + ic.pre + pickedResidue + "]");
            if(resElem.length !== 0) {
              resElem.addClass('icn3d-highlightSeq');
            }
@@ -273,24 +273,24 @@ class HlUpdate {
              resElem.addClass('icn3d-highlightSeq');
            }
 
-           var pos = pickedResidue.lastIndexOf('_');
-           var chainid = pickedResidue.substr(0, pos);
+           let pos = pickedResidue.lastIndexOf('_');
+           let chainid = pickedResidue.substr(0, pos);
 
            chainHash[chainid] = 1;
        }
 
-       for(var chainid in chainHash) {
+       for(let chainid in chainHash) {
            if($("#giseq_summary_" + ic.pre + chainid).length !== 0) {
              $("#giseq_summary_" + ic.pre + chainid).addClass('icn3d-highlightSeqBox');
            }
        }
     }
 
-    hlSeqInChain(chainid) { var ic = this.icn3d, me = ic.icn3dui;
+    hlSeqInChain(chainid) { let ic = this.icn3d, me = ic.icn3dui;
        // update annotation windows and alignment sequences
-       for(var i = 0, il = ic.chainsSeq[chainid].length; i < il; ++i) {
-           var resi = ic.chainsSeq[chainid][i].resi;
-           var pickedResidue = chainid + '_' + resi;
+       for(let i = 0, il = ic.chainsSeq[chainid].length; i < il; ++i) {
+           let resi = ic.chainsSeq[chainid][i].resi;
+           let pickedResidue = chainid + '_' + resi;
 
            //if($("[id$=" + ic.pre + pickedResidue + "]").length !== 0) {
            //  $("[id$=" + ic.pre + pickedResidue + "]").addClass('icn3d-highlightSeq');
@@ -309,7 +309,7 @@ class HlUpdate {
        }
     }
 
-    toggleHighlight() { var ic = this.icn3d, me = ic.icn3dui;
+    toggleHighlight() { let ic = this.icn3d, me = ic.icn3dui;
         //ic.icn3dui.htmlCls.clickMenuCls.setLogCmd("toggle highlight", true);
 
         //if(ic.prevHighlightObjects.length > 0 || ic.prevHighlightObjects_ghost.length > 0) { // remove
@@ -325,7 +325,7 @@ class HlUpdate {
         //ic.icn3dui.htmlCls.clickMenuCls.setLogCmd("toggle highlight", true);
     }
 
-    clearHighlight() { var ic = this.icn3d, me = ic.icn3dui;
+    clearHighlight() { let ic = this.icn3d, me = ic.icn3dui;
         ic.labels['picking']=[];
         ic.drawCls.draw();
 
@@ -339,25 +339,25 @@ class HlUpdate {
         ic.bSelectResidue = false;
     }
 
-    showHighlight() { var ic = this.icn3d, me = ic.icn3dui;
+    showHighlight() { let ic = this.icn3d, me = ic.icn3dui;
         ic.hlObjectsCls.addHlObjects();
         this.updateHlAll();
         //ic.bSelectResidue = true;
     }
 
-    highlightChains(chainArray) { var ic = this.icn3d, me = ic.icn3dui;
+    highlightChains(chainArray) { let ic = this.icn3d, me = ic.icn3dui;
         ic.hlObjectsCls.removeHlObjects();
         this.removeHl2D();
 
         ic.hlObjectsCls.addHlObjects();
         this.updateHl2D(chainArray);
 
-        var residueHash = {}
-        for(var c = 0, cl = chainArray.length; c < cl; ++c) {
-            var chainid = chainArray[c];
-            for(var i in ic.chainsSeq[chainid]) { // get residue number
-                var resObj = ic.chainsSeq[chainid][i];
-                var residueid = chainid + "_" + resObj.resi;
+        let residueHash = {}
+        for(let c = 0, cl = chainArray.length; c < cl; ++c) {
+            let chainid = chainArray[c];
+            for(let i in ic.chainsSeq[chainid]) { // get residue number
+                let resObj = ic.chainsSeq[chainid][i];
+                let residueid = chainid + "_" + resObj.resi;
 
                 if(resObj.name !== '' && resObj.name !== '-') {
                   residueHash[residueid] = 1;
@@ -368,10 +368,10 @@ class HlUpdate {
         this.hlSequence(Object.keys(residueHash));
     }
 
-    hlSummaryDomain3ddomain(that) { var ic = this.icn3d, me = ic.icn3dui;
+    hlSummaryDomain3ddomain(that) { let ic = this.icn3d, me = ic.icn3dui;
       if($(that).attr('domain') !== undefined) { // domain
-        var index = $(that).attr('index');
-        var chainid = $(that).attr('chain');
+        let index = $(that).attr('index');
+        let chainid = $(that).attr('chain');
 
         if($("[id^=" + chainid + "_domain_" + index + "]").length !== 0) {
             $("[id^=" + chainid + "_domain_" + index + "]").addClass('icn3d-highlightSeqBox');
@@ -379,8 +379,8 @@ class HlUpdate {
       }
 
       if($(that).attr('3ddomain') !== undefined) { // 3d domain
-        var index = $(that).attr('index');
-        var chainid = $(that).attr('chain');
+        let index = $(that).attr('index');
+        let chainid = $(that).attr('chain');
 
         if($("[id^=" + chainid + "_3d_domain_" + index + "]").length !== 0) {
             $("[id^=" + chainid + "_3d_domain_" + index + "]").addClass('icn3d-highlightSeqBox');
@@ -415,7 +415,7 @@ class HlUpdate {
 
     //Update the highlight of 3D structure, 2D interaction, sequences, and the menu of defined sets
     //according to the current highlighted atoms.
-    updateHlAll(commandnameArray, bSetMenu, bUnion, bForceHighlight) { var ic = this.icn3d, me = ic.icn3dui;
+    updateHlAll(commandnameArray, bSetMenu, bUnion, bForceHighlight) { let ic = this.icn3d, me = ic.icn3dui;
        // update the previously highlisghted atoms for switching between all and selection
        ic.prevHighlightAtoms = me.hashUtilsCls.cloneHash(ic.hAtoms);
 

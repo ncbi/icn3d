@@ -25,14 +25,14 @@ class Strand {
     //"doNotSmoothen" is a flag to smooth the curve or not. "thickness" is the thickness of the curve.
     //"bHighlight" is an option to draw the highlight for these atoms. The highlight could be outlines
     //with bHighlight=1 and 3D objects with bHighlight=2.
-    createStrand(atoms, num, div, fill, coilWidth, helixSheetWidth, doNotSmoothen, thickness, bHighlight) { var ic = this.icn3d, me = ic.icn3dui;
+    createStrand(atoms, num, div, fill, coilWidth, helixSheetWidth, doNotSmoothen, thickness, bHighlight) { let ic = this.icn3d, me = ic.icn3dui;
         if(ic.icn3dui.bNode) return;
 
-        var bRibbon = fill ? true: false;
+        let bRibbon = fill ? true: false;
 
         // when highlight, the input atoms may only include part of sheet or helix
         // include the whole sheet or helix when highlighting
-        var atomsAdjust = {};
+        let atomsAdjust = {};
 
         //if( (bHighlight === 1 || bHighlight === 2) && !ic.bAllAtoms) {
         if( !ic.bAllAtoms) {
@@ -66,40 +66,40 @@ class Strand {
         coilWidth = coilWidth || ic.coilWidth;
         doNotSmoothen = doNotSmoothen || false;
         helixSheetWidth = helixSheetWidth || ic.helixSheetWidth;
-        var pnts = {}; for (var k = 0; k < num; ++k) pnts[k] = [];
-        var pntsCA = [];
-        var prevCOArray = [];
-        var bShowArray = [];
-        var calphaIdArray = []; // used to store one of the final positions drawn in 3D
-        var colors = [];
-        var currentChain, currentResi, currentCA = null, currentO = null, currentColor = null, prevCoorCA = null, prevCoorO = null, prevColor = null;
-        var prevCO = null, ss = null, ssend = false, atomid = null, prevAtomid = null, prevResi = null, calphaid = null, prevCalphaid = null;
-        var strandWidth, bSheetSegment = false, bHelixSegment = false;
-        var atom, tubeAtoms = {};
+        let pnts = {}; for (let k = 0; k < num; ++k) pnts[k] = [];
+        let pntsCA = [];
+        let prevCOArray = [];
+        let bShowArray = [];
+        let calphaIdArray = []; // used to store one of the final positions drawn in 3D
+        let colors = [];
+        let currentChain, currentResi, currentCA = null, currentO = null, currentColor = null, prevCoorCA = null, prevCoorO = null, prevColor = null;
+        let prevCO = null, ss = null, ssend = false, atomid = null, prevAtomid = null, prevResi = null, calphaid = null, prevCalphaid = null;
+        let strandWidth, bSheetSegment = false, bHelixSegment = false;
+        let atom, tubeAtoms = {};
 
         // test the first 30 atoms to see whether only C-alpha is available
         ic.bCalphaOnly = me.utilsCls.isCalphaPhosOnly(atomsAdjust); //, 'CA');
 
         // when highlight, draw whole beta sheet and use bShowArray to show the highlight part
-        var residueHash = {};
-        for(var i in atomsAdjust) {
-            var atom = atomsAdjust[i];
+        let residueHash = {};
+        for(let i in atomsAdjust) {
+            let atom = atomsAdjust[i];
 
-            var residueid = atom.structure + '_' + atom.chain + '_' + atom.resi;
+            let residueid = atom.structure + '_' + atom.chain + '_' + atom.resi;
             residueHash[residueid] = 1;
         }
-        var totalResidueCount = Object.keys(residueHash).length;
+        let totalResidueCount = Object.keys(residueHash).length;
 
-        var drawnResidueCount = 0;
-        var highlightResiduesCount = 0;
+        let drawnResidueCount = 0;
+        let highlightResiduesCount = 0;
 
-        var bFullAtom = (Object.keys(ic.hAtoms).length == Object.keys(ic.atoms).length) ? true : false;
+        let bFullAtom = (Object.keys(ic.hAtoms).length == Object.keys(ic.atoms).length) ? true : false;
 
-        var caArray = []; // record all C-alpha atoms to predict the helix
+        let caArray = []; // record all C-alpha atoms to predict the helix
 
-        for (var i in atomsAdjust) {
+        for (let i in atomsAdjust) {
           atom = atomsAdjust[i];
-          var atomOxygen = undefined;
+          let atomOxygen = undefined;
           if ((atom.name === 'O' || atom.name === 'CA') && !atom.het) {
             // "CA" has to appear before "O"
 
@@ -126,7 +126,7 @@ class Strand {
                     currentO = atom.coord;
                 }
                 // smoothen each coil, helix and sheet separately. The joint residue has to be included both in the previous and next segment
-                var bSameChain = true;
+                let bSameChain = true;
 //                    if (currentChain !== atom.chain || currentResi + 1 !== atom.resi) {
                 if (currentChain !== atom.chain) {
                     bSameChain = false;
@@ -158,7 +158,7 @@ class Strand {
                         strandWidth = (ss === 'coil') ? coilWidth : helixSheetWidth;
                     }
 
-                    var O, oldCA, resSpan = 4;
+                    let O, oldCA, resSpan = 4;
                     if(atom.name === 'O') {
                         O = prevCoorO.clone();
                         if(prevCoorCA !== null && prevCoorCA !== undefined) {
@@ -194,9 +194,9 @@ class Strand {
                     if (prevCO !== null && O.dot(prevCO) < 0) O.negate();
                     prevCO = O;
 
-                    for (var j = 0, numM1Inv2 = 2 / (num - 1); j < num; ++j) {
-                        var delta = -1 + numM1Inv2 * j;
-                        var v = new THREE.Vector3(prevCoorCA.x + prevCO.x * delta, prevCoorCA.y + prevCO.y * delta, prevCoorCA.z + prevCO.z * delta);
+                    for (let j = 0, numM1Inv2 = 2 / (num - 1); j < num; ++j) {
+                        let delta = -1 + numM1Inv2 * j;
+                        let v = new THREE.Vector3(prevCoorCA.x + prevCO.x * delta, prevCoorCA.y + prevCO.y * delta, prevCoorCA.z + prevCO.z * delta);
                         if (!doNotSmoothen && ss === 'sheet') v.smoothen = true;
                         pnts[j].push(v);
                     }
@@ -218,32 +218,32 @@ class Strand {
                     ++drawnResidueCount;
                 }
 
-                var maxDist = 6.0;
-                var bBrokenSs = (prevCoorCA && Math.abs(currentCA.x - prevCoorCA.x) > maxDist) || (prevCoorCA && Math.abs(currentCA.y - prevCoorCA.y) > maxDist) || (prevCoorCA && Math.abs(currentCA.z - prevCoorCA.z) > maxDist);
+                let maxDist = 6.0;
+                let bBrokenSs = (prevCoorCA && Math.abs(currentCA.x - prevCoorCA.x) > maxDist) || (prevCoorCA && Math.abs(currentCA.y - prevCoorCA.y) > maxDist) || (prevCoorCA && Math.abs(currentCA.z - prevCoorCA.z) > maxDist);
 
                 if ((atom.ssbegin || atom.ssend || (drawnResidueCount === totalResidueCount - 1) || bBrokenSs) && pnts[0].length > 0 && bSameChain) {
-                    var atomName = 'CA';
+                    let atomName = 'CA';
 
-                    var prevone = [], nexttwo = [];
+                    let prevone = [], nexttwo = [];
 
                     if(isNaN(ic.atoms[prevAtomid].resi)) {
                         prevone = [];
                     }
                     else {
-                        var prevoneResid = ic.atoms[prevAtomid].structure + '_' + ic.atoms[prevAtomid].chain + '_' + (parseInt(ic.atoms[prevAtomid].resi) - 1).toString();
-                        var prevoneCoord = ic.firstAtomObjCls.getAtomCoordFromResi(prevoneResid, atomName);
+                        let prevoneResid = ic.atoms[prevAtomid].structure + '_' + ic.atoms[prevAtomid].chain + '_' + (parseInt(ic.atoms[prevAtomid].resi) - 1).toString();
+                        let prevoneCoord = ic.firstAtomObjCls.getAtomCoordFromResi(prevoneResid, atomName);
                         prevone = (prevoneCoord !== undefined) ? [prevoneCoord] : [];
                     }
 
                     if(!isNaN(ic.atoms[prevAtomid].resi)) {
-                        var nextoneResid = ic.atoms[prevAtomid].structure + '_' + ic.atoms[prevAtomid].chain + '_' + (parseInt(ic.atoms[prevAtomid].resi) + 1).toString();
-                        var nextoneCoord = ic.firstAtomObjCls.getAtomCoordFromResi(nextoneResid, atomName);
+                        let nextoneResid = ic.atoms[prevAtomid].structure + '_' + ic.atoms[prevAtomid].chain + '_' + (parseInt(ic.atoms[prevAtomid].resi) + 1).toString();
+                        let nextoneCoord = ic.firstAtomObjCls.getAtomCoordFromResi(nextoneResid, atomName);
                         if(nextoneCoord !== undefined) {
                             nexttwo.push(nextoneCoord);
                         }
 
-                        var nexttwoResid = ic.atoms[prevAtomid].structure + '_' + ic.atoms[prevAtomid].chain + '_' + (parseInt(ic.atoms[prevAtomid].resi) + 2).toString();
-                        var nexttwoCoord = ic.firstAtomObjCls.getAtomCoordFromResi(nexttwoResid, atomName);
+                        let nexttwoResid = ic.atoms[prevAtomid].structure + '_' + ic.atoms[prevAtomid].chain + '_' + (parseInt(ic.atoms[prevAtomid].resi) + 2).toString();
+                        let nexttwoCoord = ic.firstAtomObjCls.getAtomCoordFromResi(nexttwoResid, atomName);
                         if(nexttwoCoord !== undefined) {
                             nexttwo.push(nexttwoCoord);
                         }
@@ -272,7 +272,7 @@ class Strand {
                             strandWidth = (atom.ss === 'coil') ? coilWidth : helixSheetWidth;
                         }
 
-                        var O, oldCA, resSpan = 4;
+                        let O, oldCA, resSpan = 4;
                         if(atom.name === 'O') {
                             O = currentO.clone();
                             O.sub(currentCA);
@@ -294,9 +294,9 @@ class Strand {
                         if (prevCO !== null && O.dot(prevCO) < 0) O.negate();
                         prevCO = O;
 
-                        for (var j = 0, numM1Inv2 = 2 / (num - 1); j < num; ++j) {
-                            var delta = -1 + numM1Inv2 * j;
-                            var v = new THREE.Vector3(currentCA.x + prevCO.x * delta, currentCA.y + prevCO.y * delta, currentCA.z + prevCO.z * delta);
+                        for (let j = 0, numM1Inv2 = 2 / (num - 1); j < num; ++j) {
+                            let delta = -1 + numM1Inv2 * j;
+                            let v = new THREE.Vector3(currentCA.x + prevCO.x * delta, currentCA.y + prevCO.y * delta, currentCA.z + prevCO.z * delta);
                             if (!doNotSmoothen && ss === 'sheet') v.smoothen = true;
                             pnts[j].push(v);
                         }
@@ -319,7 +319,7 @@ class Strand {
                     }
 
                     // draw the current segment
-                    for (var j = 0; !fill && j < num; ++j) {
+                    for (let j = 0; !fill && j < num; ++j) {
                         if(bSheetSegment) {
                             ic.curveStripArrowCls.createCurveSubArrow(pnts[j], 1, colors, div, bHighlight, bRibbon, num, j, pntsCA, prevCOArray, bShowArray, calphaIdArray, true, prevone, nexttwo);
                         }
@@ -334,7 +334,7 @@ class Strand {
                     }
                     if (fill) {
                         if(bSheetSegment) {
-                            var start = 0, end = num - 1;
+                            let start = 0, end = num - 1;
                             ic.curveStripArrowCls.createStripArrow(pnts[0], pnts[num - 1], colors, div, thickness, bHighlight, num, start, end, pntsCA, prevCOArray, bShowArray, calphaIdArray, true, prevone, nexttwo);
                         }
                         else if(bHelixSegment) {
@@ -342,7 +342,7 @@ class Strand {
                                 ic.stripCls.createStrip(pnts[0], pnts[num - 1], colors, div, thickness, bHighlight, false, bShowArray, calphaIdArray, undefined, prevone, nexttwo, pntsCA, prevCOArray);
                             }
                             else {
-                                var start = 0, end = num - 1;
+                                let start = 0, end = num - 1;
                                 ic.curveStripArrowCls.createStripArrow(pnts[0], pnts[num - 1], colors, div, thickness, bHighlight, num, start, end, pntsCA, prevCOArray, bShowArray, calphaIdArray, false, prevone, nexttwo);
                             }
                         }
@@ -352,7 +352,7 @@ class Strand {
                             }
                         }
                     }
-                    for (var k = 0; k < num; ++k) pnts[k] = [];
+                    for (let k = 0; k < num; ++k) pnts[k] = [];
 
                     colors = [];
                     pntsCA = [];
@@ -367,19 +367,19 @@ class Strand {
 //                    if ((currentChain !== atom.chain || currentResi + 1 !== atom.resi) && pnts[0].length > 0) {
                 if ((currentChain !== atom.chain) && pnts[0].length > 0) {
 
-                    var atomName = 'CA';
+                    let atomName = 'CA';
 
-                    var prevone = [], nexttwo = [];
+                    let prevone = [], nexttwo = [];
                     if(isNaN(ic.atoms[prevAtomid].resi)) {
                         prevone = [];
                     }
                     else {
-                        var prevoneResid = ic.atoms[prevAtomid].structure + '_' + ic.atoms[prevAtomid].chain + '_' + (parseInt(ic.atoms[prevAtomid].resi) - 1).toString();
-                        var prevoneCoord = ic.firstAtomObjCls.getAtomCoordFromResi(prevoneResid, atomName);
-                        var prevone = (prevoneCoord !== undefined) ? [prevoneCoord] : [];
+                        let prevoneResid = ic.atoms[prevAtomid].structure + '_' + ic.atoms[prevAtomid].chain + '_' + (parseInt(ic.atoms[prevAtomid].resi) - 1).toString();
+                        let prevoneCoord = ic.firstAtomObjCls.getAtomCoordFromResi(prevoneResid, atomName);
+                        let prevone = (prevoneCoord !== undefined) ? [prevoneCoord] : [];
                     }
 
-                    for (var j = 0; !fill && j < num; ++j) {
+                    for (let j = 0; !fill && j < num; ++j) {
                         if(bSheetSegment) {
                             ic.curveStripArrowCls.createCurveSubArrow(pnts[j], 1, colors, div, bHighlight, bRibbon, num, j, pntsCA, prevCOArray, bShowArray, calphaIdArray, true, prevone, nexttwo);
                         }
@@ -394,7 +394,7 @@ class Strand {
                     }
                     if (fill) {
                         if(bSheetSegment) {
-                            var start = 0, end = num - 1;
+                            let start = 0, end = num - 1;
                             ic.curveStripArrowCls.createStripArrow(pnts[0], pnts[num - 1], colors, div, thickness, bHighlight, num, start, end, pntsCA, prevCOArray, bShowArray, calphaIdArray, true, prevone, nexttwo);
                         }
                         else if(bHelixSegment) {
@@ -402,13 +402,13 @@ class Strand {
                                 ic.stripCls.createStrip(pnts[0], pnts[num - 1], colors, div, thickness, bHighlight, false, bShowArray, calphaIdArray, undefined, prevone, nexttwo, pntsCA, prevCOArray);
                             }
                             else {
-                                var start = 0, end = num - 1;
+                                let start = 0, end = num - 1;
                                 ic.curveStripArrowCls.createStripArrow(pnts[0], pnts[num - 1], colors, div, thickness, bHighlight, num, start, end, pntsCA, prevCOArray, bShowArray, calphaIdArray, false, prevone, nexttwo);
                             }
                         }
                     }
 
-                    for (var k = 0; k < num; ++k) pnts[k] = [];
+                    for (let k = 0; k < num; ++k) pnts[k] = [];
                     colors = [];
                     pntsCA = [];
                     prevCOArray = [];
@@ -443,13 +443,13 @@ class Strand {
         pnts = {};
     }
 
-    getSSExpandedAtoms(atoms, bHighlight) { var ic = this.icn3d, me = ic.icn3dui;
-        var currChain, currResi, currAtom, prevChain, prevResi, prevAtom;
-        var firstAtom, lastAtom;
-        var index = 0, length = Object.keys(atoms).length;
+    getSSExpandedAtoms(atoms, bHighlight) { let ic = this.icn3d, me = ic.icn3dui;
+        let currChain, currResi, currAtom, prevChain, prevResi, prevAtom;
+        let firstAtom, lastAtom;
+        let index = 0, length = Object.keys(atoms).length;
 
-        var atomsAdjust = me.hashUtilsCls.cloneHash(atoms);
-        for(var serial in atoms) {
+        let atomsAdjust = me.hashUtilsCls.cloneHash(atoms);
+        for(let serial in atoms) {
           currChain = atoms[serial].structure + '_' + atoms[serial].chain;
           currResi = atoms[serial].resi; //parseInt(atoms[serial].resi);
           currAtom = atoms[serial];
@@ -467,13 +467,13 @@ class Strand {
             }
 
             // fill the beginning
-            var beginResi = firstAtom.resi;
+            let beginResi = firstAtom.resi;
             if(!isNaN(firstAtom.resi) && firstAtom.ss !== 'coil' && !(firstAtom.ssbegin) ) {
-                for(var i = parseInt(firstAtom.resi) - 1; i > 0; --i) {
-                    var residueid = firstAtom.structure + '_' + firstAtom.chain + '_' + i;
+                for(let i = parseInt(firstAtom.resi) - 1; i > 0; --i) {
+                    let residueid = firstAtom.structure + '_' + firstAtom.chain + '_' + i;
                     if(!ic.residues.hasOwnProperty(residueid)) break;
 
-                    var atom = ic.firstAtomObjCls.getFirstCalphaAtomObj(ic.residues[residueid]);
+                    let atom = ic.firstAtomObjCls.getFirstCalphaAtomObj(ic.residues[residueid]);
 
                     if(atom.ss === firstAtom.ss && atom.ssbegin) {
                         beginResi = atom.resi;
@@ -481,8 +481,8 @@ class Strand {
                     }
                 }
 
-                for(var i = beginResi; i < firstAtom.resi; ++i) {
-                    var residueid = firstAtom.structure + '_' + firstAtom.chain + '_' + i;
+                for(let i = beginResi; i < firstAtom.resi; ++i) {
+                    let residueid = firstAtom.structure + '_' + firstAtom.chain + '_' + i;
                     atomsAdjust = me.hashUtilsCls.unionHash(atomsAdjust, me.hashUtilsCls.hash2Atoms(ic.residues[residueid],
                       ic.atoms));
                 }
@@ -490,7 +490,7 @@ class Strand {
 
             // add one extra residue for coils between strands/helix
             if(!isNaN(firstAtom.resi) && ic.pk === 3 && bHighlight === 1 && firstAtom.ss === 'coil') {
-                    var residueid = firstAtom.structure + '_' + firstAtom.chain + '_' + (parseInt(firstAtom.resi) - 1).toString();
+                    let residueid = firstAtom.structure + '_' + firstAtom.chain + '_' + (parseInt(firstAtom.resi) - 1).toString();
                     if(ic.residues.hasOwnProperty(residueid)) {
                         atomsAdjust = me.hashUtilsCls.unionHash(atomsAdjust, me.hashUtilsCls.hash2Atoms(ic.residues[residueid],
                           ic.atoms));
@@ -499,17 +499,17 @@ class Strand {
             }
 
             // fill the end
-            var endResi = lastAtom.resi;
+            let endResi = lastAtom.resi;
             // when a coil connects to a sheet and the last residue of coil is highlighted, the first sheet residue is set as atom.notshow. This residue should not be shown.
 
             if(lastAtom.ss !== undefined && lastAtom.ss !== 'coil' && !(lastAtom.ssend) && !(lastAtom.notshow)) {
 
-                var endChainResi = ic.firstAtomObjCls.getLastAtomObj(ic.chains[lastAtom.structure + '_' + lastAtom.chain]).resi;
-                for(var i = parseInt(lastAtom.resi) + 1; i <= parseInt(endChainResi); ++i) {
-                    var residueid = lastAtom.structure + '_' + lastAtom.chain + '_' + i;
+                let endChainResi = ic.firstAtomObjCls.getLastAtomObj(ic.chains[lastAtom.structure + '_' + lastAtom.chain]).resi;
+                for(let i = parseInt(lastAtom.resi) + 1; i <= parseInt(endChainResi); ++i) {
+                    let residueid = lastAtom.structure + '_' + lastAtom.chain + '_' + i;
                     if(!ic.residues.hasOwnProperty(residueid)) break;
 
-                    var atom = ic.firstAtomObjCls.getFirstCalphaAtomObj(ic.residues[residueid]);
+                    let atom = ic.firstAtomObjCls.getFirstCalphaAtomObj(ic.residues[residueid]);
 
                     if(atom.ss === lastAtom.ss && atom.ssend) {
                         endResi = atom.resi;
@@ -517,8 +517,8 @@ class Strand {
                     }
                 }
 
-                for(var i = parseInt(lastAtom.resi) + 1; i <= parseInt(endResi); ++i) {
-                    var residueid = lastAtom.structure + '_' + lastAtom.chain + '_' + i;
+                for(let i = parseInt(lastAtom.resi) + 1; i <= parseInt(endResi); ++i) {
+                    let residueid = lastAtom.structure + '_' + lastAtom.chain + '_' + i;
                     atomsAdjust = me.hashUtilsCls.unionHash(atomsAdjust, me.hashUtilsCls.hash2Atoms(ic.residues[residueid],
                       ic.atoms));
                 }
@@ -526,7 +526,7 @@ class Strand {
 
             // add one extra residue for coils between strands/helix
             if(ic.pk === 3 && bHighlight === 1 && lastAtom.ss === 'coil') {
-                    var residueid = lastAtom.structure + '_' + lastAtom.chain + '_' + (parseInt(lastAtom.resi) + 1).toString();
+                    let residueid = lastAtom.structure + '_' + lastAtom.chain + '_' + (parseInt(lastAtom.resi) + 1).toString();
                     if(ic.residues.hasOwnProperty(residueid)) {
                         atomsAdjust = me.hashUtilsCls.unionHash(atomsAdjust, me.hashUtilsCls.hash2Atoms(ic.residues[residueid],
                           ic.atoms));

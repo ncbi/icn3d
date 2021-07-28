@@ -19,20 +19,20 @@ class Dsn6Parser {
         this.icn3d = icn3d;
     }
 
-    dsn6Parser(pdbid, type, sigma) { var ic = this.icn3d, me = ic.icn3dui;
+    dsn6Parser(pdbid, type, sigma) { let  ic = this.icn3d, me = ic.icn3dui;
         // https://edmaps.rcsb.org/maps/1kq2_2fofc.dsn6
         // https://edmaps.rcsb.org/maps/1kq2_fofc.dsn6
 
-        var url = "https://edmaps.rcsb.org/maps/" + pdbid.toLowerCase() + "_" + type + ".dsn6";
+        let  url = "https://edmaps.rcsb.org/maps/" + pdbid.toLowerCase() + "_" + type + ".dsn6";
         this.dsn6ParserBase(url, type, sigma);
     }
 
-    dsn6ParserBase(url, type, sigma) { var ic = this.icn3d, me = ic.icn3dui;
-        var thisClass = this;
+    dsn6ParserBase(url, type, sigma) { let  ic = this.icn3d, me = ic.icn3dui;
+        let  thisClass = this;
 
-        var dataType;
+        let  dataType;
 
-        var bCid = undefined;
+        let  bCid = undefined;
 
         //https://stackoverflow.com/questions/33902299/using-jquery-ajax-to-download-a-binary-file
         if(type == '2fofc' && ic.bAjax2fofc) {
@@ -44,7 +44,7 @@ class Dsn6Parser {
             ic.setOptionCls.setOption('map', type);
         }
         else {
-            var oReq = new XMLHttpRequest();
+            let  oReq = new XMLHttpRequest();
             oReq.open("GET", url, true);
             oReq.responseType = "arraybuffer";
 
@@ -53,7 +53,7 @@ class Dsn6Parser {
                    //ic.ParserUtilsCls.hideLoading();
 
                    if(this.status == 200) {
-                       var arrayBuffer = oReq.response;
+                       let  arrayBuffer = oReq.response;
                        thisClass.loadDsn6Data(arrayBuffer, type, sigma);
 
                        if(type == '2fofc') {
@@ -80,19 +80,19 @@ class Dsn6Parser {
         }
     }
 
-    loadDsn6Data(dsn6data, type, sigma) { var ic = this.icn3d, me = ic.icn3dui;
+    loadDsn6Data(dsn6data, type, sigma) { let  ic = this.icn3d, me = ic.icn3dui;
         // DSN6 http://www.uoxray.uoregon.edu/tnt/manual/node104.html
         // BRIX http://svn.cgl.ucsf.edu/svn/chimera/trunk/libs/VolumeData/dsn6/brix-1.html
 
-        var voxelSize = 1;
+        let  voxelSize = 1;
 
-        var header = {}
-        var divisor, summand;
+        let  header = {}
+        let  divisor, summand;
 
-        var bin =(dsn6data.buffer && dsn6data.buffer instanceof ArrayBuffer) ? dsn6data.buffer : dsn6data;
-        var intView = new Int16Array(bin);
-        var byteView = new Uint8Array(bin);
-        var brixStr = String.fromCharCode.apply(null, byteView.subarray(0, 512));
+        let  bin =(dsn6data.buffer && dsn6data.buffer instanceof ArrayBuffer) ? dsn6data.buffer : dsn6data;
+        let  intView = new Int16Array(bin);
+        let  byteView = new Uint8Array(bin);
+        let  brixStr = String.fromCharCode.apply(null, byteView.subarray(0, 512));
 
         if(brixStr.indexOf(':-)') == 0) {
           header.xStart = parseInt(brixStr.substr(10, 5)); // NXSTART
@@ -122,8 +122,8 @@ class Dsn6Parser {
         } else {
           // swap byte order when big endian
           if(intView[ 18 ] !== 100) { // true
-            for(var i = 0, n = intView.length; i < n; ++i) {
-              var val = intView[ i ];
+            for(let i = 0, n = intView.length; i < n; ++i) {
+              let  val = intView[ i ];
 
               intView[ i ] =((val & 0xff) << 8) |((val >> 8) & 0xff);
             }
@@ -141,8 +141,8 @@ class Dsn6Parser {
           header.yRate = intView[ 7 ];
           header.zRate = intView[ 8 ];
 
-          var factor = 1 / intView[ 17 ];
-          var scalingFactor = factor * voxelSize;
+          let  factor = 1 / intView[ 17 ];
+          let  scalingFactor = factor * voxelSize;
 
           header.xlen = intView[ 9 ] * scalingFactor;
           header.ylen = intView[ 10 ] * scalingFactor;
@@ -157,30 +157,30 @@ class Dsn6Parser {
           summand = intView[ 16 ];
         }
 
-        var data = new Float32Array(
+        let  data = new Float32Array(
           header.xExtent * header.yExtent * header.zExtent
         );
 
-        var offset = 512;
-        var xBlocks = Math.ceil(header.xExtent / 8);
-        var yBlocks = Math.ceil(header.yExtent / 8);
-        var zBlocks = Math.ceil(header.zExtent / 8);
+        let  offset = 512;
+        let  xBlocks = Math.ceil(header.xExtent / 8);
+        let  yBlocks = Math.ceil(header.yExtent / 8);
+        let  zBlocks = Math.ceil(header.zExtent / 8);
 
         // loop over blocks
-        for(var zz = 0; zz < zBlocks; ++zz) {
-          for(var yy = 0; yy < yBlocks; ++yy) {
-            for(var xx = 0; xx < xBlocks; ++xx) {
+        for(let zz = 0; zz < zBlocks; ++zz) {
+          for(let yy = 0; yy < yBlocks; ++yy) {
+            for(let xx = 0; xx < xBlocks; ++xx) {
               // loop inside block
-              for(var k = 0; k < 8; ++k) {
-                var z = 8 * zz + k;
-                for(var j = 0; j < 8; ++j) {
-                  var y = 8 * yy + j;
-                  for(var i = 0; i < 8; ++i) {
-                    var x = 8 * xx + i;
+              for(let k = 0; k < 8; ++k) {
+                let  z = 8 * zz + k;
+                for(let j = 0; j < 8; ++j) {
+                  let  y = 8 * yy + j;
+                  for(let i = 0; i < 8; ++i) {
+                    let  x = 8 * xx + i;
 
                     // check if remaining slice-part contains data
                     if(x < header.xExtent && y < header.yExtent && z < header.zExtent) {
-                      var idx =((((x * header.yExtent) + y) * header.zExtent) + z);
+                      let  idx =((((x * header.yExtent) + y) * header.zExtent) + z);
                       data[ idx ] =(byteView[ offset ] - summand) / divisor;
                       ++offset;
                     } else {
@@ -210,22 +210,22 @@ class Dsn6Parser {
         }
     }
 
-    getMatrix(header) { var ic = this.icn3d, me = ic.icn3dui;
-        var h = header;
+    getMatrix(header) { let  ic = this.icn3d, me = ic.icn3dui;
+        let  h = header;
 
-        var basisX = [
+        let  basisX = [
           h.xlen,
           0,
           0
         ];
 
-        var basisY = [
+        let  basisY = [
           h.ylen * Math.cos(Math.PI / 180.0 * h.gamma),
           h.ylen * Math.sin(Math.PI / 180.0 * h.gamma),
           0
         ];
 
-        var basisZ = [
+        let  basisZ = [
           h.zlen * Math.cos(Math.PI / 180.0 * h.beta),
           h.zlen *(
             Math.cos(Math.PI / 180.0 * h.alpha) -
@@ -239,11 +239,11 @@ class Dsn6Parser {
           Math.sin(Math.PI / 180.0 * h.beta) - basisZ[ 1 ] * basisZ[ 1 ]
         );
 
-        var basis = [ [], basisX, basisY, basisZ ];
-        var nxyz = [ 0, h.xRate, h.yRate, h.zRate ];
-        var mapcrs = [ 0, 1, 2, 3 ];
+        let  basis = [ [], basisX, basisY, basisZ ];
+        let  nxyz = [ 0, h.xRate, h.yRate, h.zRate ];
+        let  mapcrs = [ 0, 1, 2, 3 ];
 
-        var matrix = new THREE.Matrix4();
+        let  matrix = new THREE.Matrix4();
 
         matrix.set(
           basis[ mapcrs[1] ][0] / nxyz[ mapcrs[1] ],
@@ -269,18 +269,18 @@ class Dsn6Parser {
     }
 
     loadDsn6File(type) {var ic = this.icn3d, me = ic.icn3dui;
-       var thisClass = this;
+       let  thisClass = this;
 
-       var file = $("#" + ic.pre + "dsn6file" + type)[0].files[0];
-       var sigma = $("#" + ic.pre + "dsn6sigma" + type).val();
+       let  file = $("#" + ic.pre + "dsn6file" + type)[0].files[0];
+       let  sigma = $("#" + ic.pre + "dsn6sigma" + type).val();
        if(!file) {
          alert("Please select a file before clicking 'Load'");
        }
        else {
          me.utilsCls.checkFileAPI();
-         var reader = new FileReader();
-         reader.onload = function(e) { var ic = thisClass.icn3d;
-           var arrayBuffer = e.target.result; // or = reader.result;
+         let  reader = new FileReader();
+         reader.onload = function(e) { let  ic = thisClass.icn3d;
+           let  arrayBuffer = e.target.result; // or = reader.result;
            thisClass.loadDsn6Data(arrayBuffer, type, sigma);
            if(type == '2fofc') {
                ic.bAjax2fofc = true;
@@ -296,8 +296,8 @@ class Dsn6Parser {
     }
 
     loadDsn6FileUrl(type) {var ic = this.icn3d, me = ic.icn3dui;
-       var url = $("#" + ic.pre + "dsn6fileurl" + type).val();
-       var sigma = $("#" + ic.pre + "dsn6sigmaurl" + type).val();
+       let  url = $("#" + ic.pre + "dsn6fileurl" + type).val();
+       let  sigma = $("#" + ic.pre + "dsn6sigmaurl" + type).val();
        if(!url) {
             alert("Please input the file URL before clicking 'Load'");
        }

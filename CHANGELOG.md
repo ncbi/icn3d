@@ -1,5 +1,5 @@
 ## Change Log
-[icn3d-3.3.3](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.3.3.zip) was release on July 21, 2021. Changed the default view of glycan cartoons as hidden. Users can change the default at "Style > Prefereces > Show Glycan Cartoon" for your browser.
+[icn3d-3.3.4](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.3.4.zip) was release on July 28, 2021. The license of scap for side chain prediction was waived by Dr. Barry Honig. Replaced 'var' with 'let' in iCn3D JavaScript files.
 
 [icn3d-3.3.2](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.3.2.zip) was release on July 14, 2021. Now users can choose the color gradient and show the color legend for the "Custom Color" button in the Sequences & Annotations window.
 

@@ -21,7 +21,7 @@ class Scene {
 
     //This core function sets up the scene and display the structure according to the input
     //options (shown above), which is a hash containing values for different keys.
-    rebuildScene(options) { var ic = this.icn3d, me = ic.icn3dui;
+    rebuildScene(options) { let ic = this.icn3d, me = ic.icn3dui;
         if(options === undefined) options = ic.opts;
 
         this.rebuildSceneBase(options);
@@ -58,15 +58,15 @@ class Scene {
         ic.scene_ghost.updateMatrixWorld(true);
     }
 
-    rebuildSceneBase(options) { var ic = this.icn3d, me = ic.icn3dui;
+    rebuildSceneBase(options) { let ic = this.icn3d, me = ic.icn3dui;
         $.extend(ic.opts, options);
 
         ic.cam_z = ic.maxD * 2;
         //ic.cam_z = -ic.maxD * 2;
 
         if(ic.scene !== undefined) {
-            for(var i = ic.scene.children.length - 1; i >= 0; i--) {
-                 var obj = ic.scene.children[i];
+            for(let i = ic.scene.children.length - 1; i >= 0; i--) {
+                 let obj = ic.scene.children[i];
                  ic.scene.remove(obj);
             }
         }
@@ -75,8 +75,8 @@ class Scene {
         }
 
         if(ic.scene_ghost !== undefined) {
-            for(var i = ic.scene_ghost.children.length - 1; i >= 0; i--) {
-                 var obj = ic.scene_ghost.children[i];
+            for(let i = ic.scene_ghost.children.length - 1; i >= 0; i--) {
+                 let obj = ic.scene_ghost.children[i];
                  ic.scene_ghost.remove(obj);
             }
         }
@@ -86,7 +86,7 @@ class Scene {
 
         // get parameters from cookies
         if(me.htmlCls.setHtmlCls.getCookie('shininess') != '') {
-            var shininess = parseFloat(me.htmlCls.setHtmlCls.getCookie('shininess'));
+            let shininess = parseFloat(me.htmlCls.setHtmlCls.getCookie('shininess'));
 
             if(ic.shininess != shininess) {
                 me.htmlCls.clickMenuCls.setLogCmd('set shininess ' + shininess, true);
@@ -96,9 +96,9 @@ class Scene {
         }
 
         if(!me.bNode && me.htmlCls.setHtmlCls.getCookie('light1') != '') {
-            var light1 = parseFloat(me.htmlCls.setHtmlCls.getCookie('light1'));
-            var light2 = parseFloat(me.htmlCls.setHtmlCls.getCookie('light2'));
-            var light3 = parseFloat(me.htmlCls.setHtmlCls.getCookie('light3'));
+            let light1 = parseFloat(me.htmlCls.setHtmlCls.getCookie('light1'));
+            let light2 = parseFloat(me.htmlCls.setHtmlCls.getCookie('light2'));
+            let light3 = parseFloat(me.htmlCls.setHtmlCls.getCookie('light3'));
 
             if(ic.light1 != light1 || ic.light2 != light2 || ic.light3 != light3) {
                 me.htmlCls.clickMenuCls.setLogCmd('set light | light1 ' + light1 + ' | light2 ' + light2 + ' | light3 ' + light3, true);
@@ -132,14 +132,14 @@ class Scene {
           ic.lightPos3 = new THREE.Vector3(1, 1, 1); //(0, 1, 1);
         }
 
-        var ambientLight = new THREE.AmbientLight(0x888888); //(0x404040);
+        let ambientLight = new THREE.AmbientLight(0x888888); //(0x404040);
 
         ic.scene.add(ic.directionalLight);
         ic.scene.add(ambientLight);
 
         if(ic.mdl !== undefined) {
-            for(var i = ic.mdl.children.length - 1; i >= 0; i--) {
-                 var obj = ic.mdl.children[i];
+            for(let i = ic.mdl.children.length - 1; i >= 0; i--) {
+                 let obj = ic.mdl.children[i];
                  if(obj.geometry) obj.geometry.dispose();
                  if(obj.material) obj.material.dispose();
                  ic.mdl.remove(obj);
@@ -147,8 +147,8 @@ class Scene {
         }
 
         if(ic.mdlImpostor !== undefined) {
-            for(var i = ic.mdlImpostor.children.length - 1; i >= 0; i--) {
-                 var obj = ic.mdlImpostor.children[i];
+            for(let i = ic.mdlImpostor.children.length - 1; i >= 0; i--) {
+                 let obj = ic.mdlImpostor.children[i];
                  if(obj.geometry) obj.geometry.dispose();
                  if(obj.material) obj.material.dispose();
                  ic.mdlImpostor.remove(obj);
@@ -179,7 +179,7 @@ class Scene {
         ic.projector = new THREE.Projector();
         ic.mouse = new THREE.Vector2();
 
-        var background = me.parasCls.backgroundColors[ic.opts.background.toLowerCase()];
+        let background = me.parasCls.backgroundColors[ic.opts.background.toLowerCase()];
 
         if(!ic.icn3dui.bNode) {
             if(ic.opts.background.toLowerCase() === 'transparent') {

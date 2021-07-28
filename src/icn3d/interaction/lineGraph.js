@@ -13,20 +13,20 @@ class LineGraph {
         this.icn3d = icn3d;
     }
 
-    drawLineGraph(lineGraphStr, bScatterplot) { var ic = this.icn3d, me = ic.icn3dui;
-        var html, graph = JSON.parse(lineGraphStr);
-        var linkArray = [],
+    drawLineGraph(lineGraphStr, bScatterplot) { let  ic = this.icn3d, me = ic.icn3dui;
+        let  html, graph = JSON.parse(lineGraphStr);
+        let  linkArray = [],
             nodeArray1 = [],
             nodeArray2 = [];
-        var name2node = {}
-        for(var i = 0, il = graph.nodes.length; i < il; ++i) {
-            var node = graph.nodes[i];
+        let  name2node = {}
+        for(let i = 0, il = graph.nodes.length; i < il; ++i) {
+            let  node = graph.nodes[i];
             name2node[node.id] = node;
         }
         // only get interaction links
-        var nameHash = {}
-        for(var i = 0, il = graph.links.length; i < il; ++i) {
-            var link = graph.links[i];
+        let  nameHash = {}
+        for(let i = 0, il = graph.links.length; i < il; ++i) {
+            let  link = graph.links[i];
             if(link.v == ic.icn3dui.htmlCls.hbondValue || link.v == ic.icn3dui.htmlCls.ionicValue || link.v == ic.icn3dui.htmlCls.halogenValue ||
                 link.v == ic.icn3dui.htmlCls.picationValue || link.v == ic.icn3dui.htmlCls.pistackingValue || link.v == ic.icn3dui.htmlCls.contactValue) {
                 linkArray.push(link);
@@ -34,48 +34,48 @@ class LineGraph {
                 nameHash[link.target] = 1;
             }
         }
-        var nodeArrays = ic.getGraphCls.getNodeTopBottom(nameHash, name2node);
+        let  nodeArrays = ic.getGraphCls.getNodeTopBottom(nameHash, name2node);
         nodeArray1 = nodeArrays.nodeArray1;
         nodeArray2 = nodeArrays.nodeArray2;
         ic.lineGraphStr = '{\n';
         if(Object.keys(ic.structures).length > 1) {
-            var nodeArray1a = [],
+            let  nodeArray1a = [],
                 nodeArray1b = [],
                 nodeArray2a = [],
                 nodeArray2b = [],
                 nodeArray3a = [],
                 nodeArray3b = [];
-            var nodeArray1aTmp = [],
+            let  nodeArray1aTmp = [],
                 nodeArray1bTmp = [],
                 nodeArray2aTmp = [],
                 nodeArray2bTmp = [];
-            var struc1 = Object.keys(ic.structures)[0],
+            let  struc1 = Object.keys(ic.structures)[0],
                 struc2 = Object.keys(ic.structures)[1];
-            var linkArrayA = [],
+            let  linkArrayA = [],
                 linkArrayB = [],
                 linkArrayAB = [];
-            var nameHashA = {},
+            let  nameHashA = {},
                 nameHashB = {},
                 nameHashAB = {}
-            for(var i = 0, il = linkArray.length; i < il; ++i) {
-                var link = linkArray[i];
-                var nodeA = name2node[link.source];
-                var nodeB = name2node[link.target];
+            for(let i = 0, il = linkArray.length; i < il; ++i) {
+                let  link = linkArray[i];
+                let  nodeA = name2node[link.source];
+                let  nodeB = name2node[link.target];
 
                 if(!nodeA || !nodeB || !nodeA.r || !nodeB.r) {
                     continue;
                 }
 
                 //var idArrayA = nodeA.r.split('_'); // 1_1_1KQ2_A_1
-                var idArrayA = [];
+                let  idArrayA = [];
                 idArrayA.push('');
                 idArrayA.push('');
 
-                var tmpStr = nodeA.r.substr(4);
+                let  tmpStr = nodeA.r.substr(4);
                 idArrayA = idArrayA.concat(me.utilsCls.getIdArray(tmpStr));
 
                 //var idArrayB = nodeB.r.split('_'); // 1_1_1KQ2_A_1
-                var idArrayB = [];
+                let  idArrayB = [];
                 idArrayB.push('');
                 idArrayB.push('');
 
@@ -96,31 +96,31 @@ class LineGraph {
                     nameHashAB[link.target] = 1;
                 }
             }
-            var nodeArraysA = ic.getGraphCls.getNodeTopBottom(nameHashA, name2node);
+            let  nodeArraysA = ic.getGraphCls.getNodeTopBottom(nameHashA, name2node);
             nodeArray1a = nodeArraysA.nodeArray1;
             nodeArray1b = nodeArraysA.nodeArray2;
-            var nodeArraysB = ic.getGraphCls.getNodeTopBottom(nameHashB, name2node);
+            let  nodeArraysB = ic.getGraphCls.getNodeTopBottom(nameHashB, name2node);
             nodeArray2a = nodeArraysB.nodeArray1;
             nodeArray2b = nodeArraysB.nodeArray2;
-            var nodeArraysAB = ic.getGraphCls.getNodeTopBottom(nameHashAB, name2node, true);
+            let  nodeArraysAB = ic.getGraphCls.getNodeTopBottom(nameHashAB, name2node, true);
             nodeArray3a = nodeArraysAB.nodeArray1;
             nodeArray3b = nodeArraysAB.nodeArray2;
-            var len1a = nodeArray1a.length,
+            let  len1a = nodeArray1a.length,
                 len1b = nodeArray1b.length;
-            var len2a = nodeArray2a.length,
+            let  len2a = nodeArray2a.length,
                 len2b = nodeArray2b.length;
-            var len3a = nodeArray3a.length,
+            let  len3a = nodeArray3a.length,
                 len3b = nodeArray3b.length;
-            var maxLen = Math.max(len1a, len1b, len2a, len2b, len3a, len3b);
-            var strucArray = [];
+            let  maxLen = Math.max(len1a, len1b, len2a, len2b, len3a, len3b);
+            let  strucArray = [];
             if(linkArrayA.length > 0) strucArray.push(struc1);
             if(linkArrayB.length > 0) strucArray.push(struc2);
             if(linkArrayAB.length > 0) strucArray.push(struc1 + '_' + struc2);
-            var factor = 1;
-            var r = 3 * factor;
-            var gap = 7 * factor;
-            var height, width, heightAll;
-            var marginX = 10,
+            let  factor = 1;
+            let  r = 3 * factor;
+            let  gap = 7 * factor;
+            let  height, width, heightAll;
+            let  marginX = 10,
                 marginY = 10,
                 legendWidth = 30;
             if(bScatterplot) {
@@ -131,7 +131,7 @@ class LineGraph {
                 heightAll = height * strucArray.length;
                 width = maxLen *(r + gap) + 2 * marginX;
             }
-            var id, graphWidth;
+            let  id, graphWidth;
             if(bScatterplot) {
                 ic.scatterplotWidth = 2 * width;
                 graphWidth = ic.scatterplotWidth;
@@ -144,7 +144,7 @@ class LineGraph {
             html =(strucArray.length == 0) ? "No interactions found for each structure<br><br>" :
                 "2D integration graph for structure(s) <b>" + strucArray + "</b><br><br>";
             html += "<svg id='" + id + "' viewBox='0,0," + width + "," + heightAll + "' width='" + graphWidth + "px'>";
-            var heightFinal = 0;
+            let  heightFinal = 0;
             if(linkArrayA.length > 0) {
                 if(bScatterplot) {
                     heightFinal -= 15;
@@ -182,15 +182,15 @@ class LineGraph {
             html += "</svg>";
         } else {
             if(!bScatterplot) {
-                var struc1 = Object.keys(ic.structures)[0];
-                var len1 = nodeArray1.length,
+                let  struc1 = Object.keys(ic.structures)[0];
+                let  len1 = nodeArray1.length,
                     len2 = nodeArray2.length;
-                var factor = 1;
-                var r = 3 * factor;
-                var gap = 7 * factor;
-                var height = 110;
-                var margin = 10;
-                var width =(len1 > len2) ? len1 *(r + gap) + 2 * margin : len2 *(r + gap) + 2 * margin;
+                let  factor = 1;
+                let  r = 3 * factor;
+                let  gap = 7 * factor;
+                let  height = 110;
+                let  margin = 10;
+                let  width =(len1 > len2) ? len1 *(r + gap) + 2 * margin : len2 *(r + gap) + 2 * margin;
                 ic.linegraphWidth = 2 * width;
                 html =(linkArray.length > 0) ? "" : "No interactions found for these two sets<br><br>";
                 html += "<svg id='" + me.linegraphid + "' viewBox='0,0," + width + "," + height + "' width='" + ic.linegraphWidth + "px'>";
@@ -198,20 +198,20 @@ class LineGraph {
                 ic.lineGraphStr += ic.getGraphCls.updateGraphJson(struc1, 1, nodeArray1, nodeArray2, linkArray);
                 html += "</svg>";
             } else {
-                var struc1 = Object.keys(ic.structures)[0];
-                var len1 = nodeArray1.length,
+                let  struc1 = Object.keys(ic.structures)[0];
+                let  len1 = nodeArray1.length,
                     len2 = nodeArray2.length;
-                var factor = 1;
-                var r = 3 * factor;
-                var gap = 7 * factor;
-                var height, width, heightAll;
-                var marginX = 10,
+                let  factor = 1;
+                let  r = 3 * factor;
+                let  gap = 7 * factor;
+                let  height, width, heightAll;
+                let  marginX = 10,
                     marginY = 10,
                     legendWidth = 30;
                 heightAll =(len1 + 2) *(r + gap) + 2 * marginY + legendWidth;
                 width =(len2 + 2) *(r + gap) + 2 * marginX + legendWidth;
 
-                var id, graphWidth;
+                let  id, graphWidth;
                 ic.scatterplotWidth = 2 * width;
                 graphWidth = ic.scatterplotWidth;
                 id = me.scatterplotid;
@@ -232,16 +232,16 @@ class LineGraph {
         return html;
     }
 
-    drawLineGraph_base(nodeArray1, nodeArray2, linkArray, name2node, height) { var ic = this.icn3d, me = ic.icn3dui;
-        var html = '';
-        var len1 = nodeArray1.length,
+    drawLineGraph_base(nodeArray1, nodeArray2, linkArray, name2node, height) { let  ic = this.icn3d, me = ic.icn3dui;
+        let  html = '';
+        let  len1 = nodeArray1.length,
             len2 = nodeArray2.length;
-        var factor = 1;
-        var r = 3 * factor;
-        var gap = 7 * factor;
-        var margin = 10;
+        let  factor = 1;
+        let  r = 3 * factor;
+        let  gap = 7 * factor;
+        let  margin = 10;
         // draw nodes
-        var margin1, margin2;
+        let  margin1, margin2;
         if(len1 > len2) {
             margin1 = margin;
             margin2 = Math.abs(len1 - len2) *(r + gap) * 0.5 + margin;
@@ -249,39 +249,39 @@ class LineGraph {
             margin2 = margin;
             margin1 = Math.abs(len1 - len2) *(r + gap) * 0.5 + margin;
         }
-        var h1 = 30 + height,
+        let  h1 = 30 + height,
             h2 = 80 + height;
-        var nodeHtml = '';
-        var node2posSet1 = {},
+        let  nodeHtml = '';
+        let  node2posSet1 = {},
             node2posSet2 = {}
-        for(var i = 0; i < len1; ++i) {
+        for(let i = 0; i < len1; ++i) {
             nodeHtml += ic.getGraphCls.drawResNode(nodeArray1[i], i, r, gap, margin1, h1, 'a');
             node2posSet1[nodeArray1[i].id] = { x: margin1 + i *(r + gap), y: h1 }
         }
-        for(var i = 0; i < len2; ++i) {
+        for(let i = 0; i < len2; ++i) {
             nodeHtml += ic.getGraphCls.drawResNode(nodeArray2[i], i, r, gap, margin2, h2, 'b');
             node2posSet2[nodeArray2[i].id] = { x: margin2 + i *(r + gap), y: h2 }
         }
         // draw lines
-        for(var i = 0, il = linkArray.length; i < il; ++i) {
-            var link = linkArray[i];
-            var node1 = name2node[link.source];
-            var node2 = name2node[link.target];
+        for(let i = 0, il = linkArray.length; i < il; ++i) {
+            let  link = linkArray[i];
+            let  node1 = name2node[link.source];
+            let  node2 = name2node[link.target];
 
             if(node1 === undefined || node2 === undefined) continue;
 
-            var resid1 = node1.r.substr(4);
-            var resid2 = node2.r.substr(4);
-            var pos1 = node2posSet1[node1.id];
-            var pos2 = node2posSet2[node2.id];
+            let  resid1 = node1.r.substr(4);
+            let  resid2 = node2.r.substr(4);
+            let  pos1 = node2posSet1[node1.id];
+            let  pos2 = node2posSet2[node2.id];
             if(pos1 === undefined || pos2 === undefined) continue;
-            var linestrokewidth;
+            let  linestrokewidth;
             if(link.v == ic.icn3dui.htmlCls.contactValue) {
                 linestrokewidth = 1;
             } else {
                 linestrokewidth = 2;
             }
-            var strokecolor;
+            let  strokecolor;
             if(link.v == ic.icn3dui.htmlCls.hbondValue) {
                 strokecolor = "#" + ic.icn3dui.htmlCls.hbondColor;
             } else if(link.v == ic.icn3dui.htmlCls.ionicValue) {
@@ -304,45 +304,45 @@ class LineGraph {
         return html;
     }
 
-    drawScatterplot_base(nodeArray1, nodeArray2, linkArray, name2node, height, bContactMap) { var ic = this.icn3d, me = ic.icn3dui;
-        var html = '';
-        var len1 = nodeArray1.length,
+    drawScatterplot_base(nodeArray1, nodeArray2, linkArray, name2node, height, bContactMap) { let  ic = this.icn3d, me = ic.icn3dui;
+        let  html = '';
+        let  len1 = nodeArray1.length,
             len2 = nodeArray2.length;
-        var factor = 1;
-        var r = 3 * factor;
-        var gap = (bContactMap) ? r : 7 * factor;
-        var legendWidth = 30;
-        var marginX = 10,
+        let  factor = 1;
+        let  r = 3 * factor;
+        let  gap = (bContactMap) ? r : 7 * factor;
+        let  legendWidth = 30;
+        let  marginX = 10,
             marginY = 20;
-        var heightTotal =(len1 + 1) *(r + gap) + legendWidth + 2 * marginY;
-        var margin1 = height + heightTotal -(legendWidth + marginY +(r + gap)); // y-axis
-        var margin2 = legendWidth + marginX +(r + gap); // x-axis
-        var x = legendWidth + marginX;
-        var nodeHtml = '';
-        var node2posSet1 = {},
+        let  heightTotal =(len1 + 1) *(r + gap) + legendWidth + 2 * marginY;
+        let  margin1 = height + heightTotal -(legendWidth + marginY +(r + gap)); // y-axis
+        let  margin2 = legendWidth + marginX +(r + gap); // x-axis
+        let  x = legendWidth + marginX;
+        let  nodeHtml = '';
+        let  node2posSet1 = {},
             node2posSet2 = {}
-        for(var i = 0; i < len1; ++i) {
+        for(let i = 0; i < len1; ++i) {
             nodeHtml += ic.getGraphCls.drawResNode(nodeArray1[i], i, r, gap, margin1, x, 'a', true);
             node2posSet1[nodeArray1[i].id] = { x: x, y: margin1 - i *(r + gap) }
         }
-        var y = height + heightTotal -(legendWidth + marginY);
-        for(var i = 0; i < len2; ++i) {
+        let  y = height + heightTotal -(legendWidth + marginY);
+        for(let i = 0; i < len2; ++i) {
             nodeHtml += ic.getGraphCls.drawResNode(nodeArray2[i], i, r, gap, margin2, y, 'b', false, bContactMap);
             node2posSet2[nodeArray2[i].id] = { x: margin2 + i *(r + gap), y: y }
         }
         // draw rect
-        var rectSize = (bContactMap) ? 2 * r : 1.5 * r;
-        var halfSize = 0.5 * rectSize;
-        for(var i = 0, il = linkArray.length; i < il; ++i) {
-            var link = linkArray[i];
-            var node1 = name2node[link.source];
-            var node2 = name2node[link.target];
-            var resid1 = node1.r.substr(4);
-            var resid2 = node2.r.substr(4);
-            var pos1 = node2posSet1[node1.id];
-            var pos2 = node2posSet2[node2.id];
+        let  rectSize = (bContactMap) ? 2 * r : 1.5 * r;
+        let  halfSize = 0.5 * rectSize;
+        for(let i = 0, il = linkArray.length; i < il; ++i) {
+            let  link = linkArray[i];
+            let  node1 = name2node[link.source];
+            let  node2 = name2node[link.target];
+            let  resid1 = node1.r.substr(4);
+            let  resid2 = node2.r.substr(4);
+            let  pos1 = node2posSet1[node1.id];
+            let  pos2 = node2posSet2[node2.id];
             if(pos1 === undefined || pos2 === undefined) continue;
-            var strokecolor;
+            let  strokecolor;
             if(link.v == ic.icn3dui.htmlCls.hbondValue) {
                 strokecolor = "#" + ic.icn3dui.htmlCls.hbondColor;
             } else if(link.v == ic.icn3dui.htmlCls.ionicValue) {
@@ -356,7 +356,7 @@ class LineGraph {
             } else if(link.v == ic.icn3dui.htmlCls.contactValue) {
                 strokecolor = "#" + ic.icn3dui.htmlCls.contactColor;
             }
-            var linestrokewidth;
+            let  linestrokewidth;
             if(link.v == ic.icn3dui.htmlCls.contactValue) {
                 linestrokewidth = 1;
             } else {
@@ -377,17 +377,17 @@ class LineGraph {
         return html;
     }
 
-    copyStylesInline(destinationNode, sourceNode) { var ic = this.icn3d, me = ic.icn3dui;
-        var containerElements = ["svg", "g"];
-        for(var cd = 0; cd < destinationNode.childNodes.length; cd++) {
-            var child = destinationNode.childNodes[cd];
+    copyStylesInline(destinationNode, sourceNode) { let  ic = this.icn3d, me = ic.icn3dui;
+        let  containerElements = ["svg", "g"];
+        for(let cd = 0; cd < destinationNode.childNodes.length; cd++) {
+            let  child = destinationNode.childNodes[cd];
             if(containerElements.indexOf(child.tagName) != -1) {
                 this.copyStylesInline(child, sourceNode.childNodes[cd]);
                 continue;
             }
-            var style = sourceNode.childNodes[cd].currentStyle || window.getComputedStyle(sourceNode.childNodes[cd]);
+            let  style = sourceNode.childNodes[cd].currentStyle || window.getComputedStyle(sourceNode.childNodes[cd]);
             if(style == "undefined" || style == null) continue;
-            for(var st = 0; st < style.length; st++) {
+            for(let st = 0; st < style.length; st++) {
                 child.style.setProperty(style[st], style.getPropertyValue(style[st]));
             }
         }

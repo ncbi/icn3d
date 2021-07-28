@@ -14,14 +14,14 @@ class ResidueLabels {
 
     //Add labels for all residues containing the input "atoms". The labels are one-letter residue abbreviations.
     //If "bSchematic" is true, the labels are in circles. Otherwise, they are in round-corner rectangles.
-    addResidueLabels(atoms, bSchematic, alpha, bNumber) { var ic = this.icn3d, me = ic.icn3dui;
+    addResidueLabels(atoms, bSchematic, alpha, bNumber) { let ic = this.icn3d, me = ic.icn3dui;
         if(ic.icn3dui.bNode) return;
 
-        var size = 18;
-        var background = "#CCCCCC";
+        let size = 18;
+        let background = "#CCCCCC";
         if(alpha === undefined) alpha = 1.0;
 
-        var atomsHash = me.hashUtilsCls.intHash(ic.hAtoms, atoms);
+        let atomsHash = me.hashUtilsCls.intHash(ic.hAtoms, atoms);
 
         if(bSchematic) {
             if(ic.labels['schematic'] === undefined) ic.labels['schematic'] = [];
@@ -30,16 +30,16 @@ class ResidueLabels {
             if(ic.labels['residue'] === undefined) ic.labels['residue'] = [];
         }
 
-        var prevReidueID = '';
-        for(var i in atomsHash) {
-            var atom = ic.atoms[i];
+        let prevReidueID = '';
+        for(let i in atomsHash) {
+            let atom = ic.atoms[i];
 
             // allow chemicals
             //if(atom.het) continue;
 
-            var label = {}; // Each label contains 'position', 'text', 'color', 'background'
+            let label = {}; // Each label contains 'position', 'text', 'color', 'background'
 
-            var currReidueID = atom.structure + '_' + atom.chain + '_' + atom.resi;
+            let currReidueID = atom.structure + '_' + atom.chain + '_' + atom.resi;
 
             if( (!atom.het && (atom.name === 'CA' || atom.name === "O3'" || atom.name === "O3*") )
               || ic.water.hasOwnProperty(atom.serial)
@@ -58,7 +58,7 @@ class ResidueLabels {
                 label.size = size;
                 label.factor = 0.3;
 
-                var atomColorStr = atom.color.getHexString().toUpperCase();
+                let atomColorStr = atom.color.getHexString().toUpperCase();
                 label.color = (atomColorStr === "CCCCCC" || atomColorStr === "C8C8C8") ? "#888888" : "#" + atomColorStr;
                 label.background = background;
                 //label.alpha = alpha; // ic.labelCls.hideLabels() didn't work. Remove this line for now
@@ -77,24 +77,24 @@ class ResidueLabels {
         ic.hlObjectsCls.removeHlObjects();
     }
 
-    addNonCarbonAtomLabels(atoms) { var ic = this.icn3d, me = ic.icn3dui;
+    addNonCarbonAtomLabels(atoms) { let ic = this.icn3d, me = ic.icn3dui;
         if(ic.icn3dui.bNode) return;
 
-        var size = 18;
-        var background = "#FFFFFF";
+        let size = 18;
+        let background = "#FFFFFF";
 
-        var atomsHash = me.hashUtilsCls.intHash(ic.hAtoms, atoms);
+        let atomsHash = me.hashUtilsCls.intHash(ic.hAtoms, atoms);
 
         if(ic.labels['schematic'] === undefined) ic.labels['schematic'] = [];
 
-        for(var i in atomsHash) {
-            var atom = ic.atoms[i];
+        for(let i in atomsHash) {
+            let atom = ic.atoms[i];
 
             //if(!atom.het) continue;
             if(!ic.residues.hasOwnProperty(atom.structure + '_' + atom.chain + '_' + atom.resi)) continue;
             if(atom.elem === 'C') continue;
 
-            var label = {}; // Each label contains 'position', 'text', 'color', 'background'
+            let label = {}; // Each label contains 'position', 'text', 'color', 'background'
 
             label.position = atom.coord;
 
@@ -112,21 +112,21 @@ class ResidueLabels {
         ic.hlObjectsCls.removeHlObjects();
     };
 
-    addAtomLabels(atoms) { var ic = this.icn3d, me = ic.icn3dui;
+    addAtomLabels(atoms) { let ic = this.icn3d, me = ic.icn3dui;
         if(ic.icn3dui.bNode) return;
 
-        var size = 18;
-        var background = "#CCCCCC";
+        let size = 18;
+        let background = "#CCCCCC";
 
-        var atomsHash = me.hashUtilsCls.intHash(ic.hAtoms, atoms);
+        let atomsHash = me.hashUtilsCls.intHash(ic.hAtoms, atoms);
         atomsHash = me.hashUtilsCls.intHash(ic.dAtoms, atomsHash);
 
         if(ic.labels['residue'] === undefined) ic.labels['residue'] = [];
 
-        for(var i in atomsHash) {
-            var atom = ic.atoms[i];
+        for(let i in atomsHash) {
+            let atom = ic.atoms[i];
 
-            var label = {}; // Each label contains 'position', 'text', 'color', 'background'
+            let label = {}; // Each label contains 'position', 'text', 'color', 'background'
 
             label.position = atom.coord;
 
@@ -135,7 +135,7 @@ class ResidueLabels {
             label.text = atom.name;
             label.size = size;
 
-            var atomColorStr = atom.color.getHexString().toUpperCase();
+            let atomColorStr = atom.color.getHexString().toUpperCase();
             label.color = (atomColorStr === "CCCCCC" || atomColorStr === "C8C8C8") ? "#888888" : "#" + atomColorStr;
             label.background = background;
 

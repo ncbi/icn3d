@@ -33,29 +33,29 @@ class Analysis {
            alert("Please select the first set");
        }
        else {
-           var prevHAtoms = me.hashUtilsCls.cloneHash(ic.hAtoms);
-           var atomSet2 = ic.definedSetsCls.getAtomsFromNameArray(nameArray2);
-           var atomSet1 = ic.definedSetsCls.getAtomsFromNameArray(nameArray);
+           let prevHAtoms = me.hashUtilsCls.cloneHash(ic.hAtoms);
+           let atomSet2 = ic.definedSetsCls.getAtomsFromNameArray(nameArray2);
+           let atomSet1 = ic.definedSetsCls.getAtomsFromNameArray(nameArray);
            ic.bCalcArea = true;
            ic.opts.surface = 'solvent accessible surface';
            ic.hAtoms = me.hashUtilsCls.cloneHash(atomSet2);
            ic.applyMapCls.applySurfaceOptions();
-           var area2 = ic.areavalue;
-           var resid2area2 = me.hashUtilsCls.cloneHash(ic.resid2area);
+           let area2 = ic.areavalue;
+           let resid2area2 = me.hashUtilsCls.cloneHash(ic.resid2area);
            ic.hAtoms = me.hashUtilsCls.cloneHash(atomSet1);
            ic.applyMapCls.applySurfaceOptions();
-           var area1 = ic.areavalue;
-           var resid2area1 = me.hashUtilsCls.cloneHash(ic.resid2area);
+           let area1 = ic.areavalue;
+           let resid2area1 = me.hashUtilsCls.cloneHash(ic.resid2area);
 
            ic.hAtoms = me.hashUtilsCls.unionHash(ic.hAtoms, atomSet2);
            ic.applyMapCls.applySurfaceOptions();
-           var areaTotal = ic.areavalue;
-           var resid2areaTotal = me.hashUtilsCls.cloneHash(ic.resid2area);
+           let areaTotal = ic.areavalue;
+           let resid2areaTotal = me.hashUtilsCls.cloneHash(ic.resid2area);
 
-           var buriedArea1 = 0, buriedArea2 = 0;
-           var areaSum1 = 0, areaSum2 = 0;
+           let buriedArea1 = 0, buriedArea2 = 0;
+           let areaSum1 = 0, areaSum2 = 0;
            // set 1 buried
-           for(var resid in resid2area2) {
+           for(let resid in resid2area2) {
                if(resid2areaTotal.hasOwnProperty(resid)) {
                    areaSum2 += parseFloat(resid2areaTotal[resid]);
                }
@@ -63,7 +63,7 @@ class Analysis {
            buriedArea2 = (area2 - areaSum2).toFixed(2);
 
            // set 2 buried
-           for(var resid in resid2area1) {
+           for(let resid in resid2area1) {
                if(resid2areaTotal.hasOwnProperty(resid)) {
                    areaSum1 += parseFloat(resid2areaTotal[resid]);
                }
@@ -72,8 +72,8 @@ class Analysis {
 
            ic.bCalcArea = false;
            ic.hAtoms = me.hashUtilsCls.cloneHash(prevHAtoms);
-           var buriedArea =(parseFloat(area1) + parseFloat(area2) - parseFloat(areaTotal)).toFixed(2);
-           var html = '<br>Calculate solvent accessible surface area in the interface:<br><br>';
+           let buriedArea =(parseFloat(area1) + parseFloat(area2) - parseFloat(areaTotal)).toFixed(2);
+           let html = '<br>Calculate solvent accessible surface area in the interface:<br><br>';
            html += 'Set 1: ' + nameArray2 + ', Surface: ' +  area2 + ' &#8491;<sup>2</sup><br>';
            html += 'Set 2: ' + nameArray + ', Surface: ' +  area1 + ' &#8491;<sup>2</sup><br>';
            html += 'Total Surface: ' +  areaTotal + ' &#8491;<sup>2</sup><br>';
@@ -91,15 +91,15 @@ class Analysis {
            alert("Please select two sets");
        }
        else {
-           var prevHAtoms = me.hashUtilsCls.cloneHash(ic.hAtoms);
-           var atomSet1 = ic.definedSetsCls.getAtomsFromNameArray(nameArray);
-           var atomSet2 = ic.definedSetsCls.getAtomsFromNameArray(nameArray2);
+           let prevHAtoms = me.hashUtilsCls.cloneHash(ic.hAtoms);
+           let atomSet1 = ic.definedSetsCls.getAtomsFromNameArray(nameArray);
+           let atomSet2 = ic.definedSetsCls.getAtomsFromNameArray(nameArray2);
 
-           var posArray1 = ic.contactCls.getExtent(atomSet1);
-           var posArray2 = ic.contactCls.getExtent(atomSet2);
+           let posArray1 = ic.contactCls.getExtent(atomSet1);
+           let posArray2 = ic.contactCls.getExtent(atomSet2);
 
-           var pos1 = new THREE.Vector3(posArray1[2][0], posArray1[2][1], posArray1[2][2]);
-           var pos2 = new THREE.Vector3(posArray2[2][0], posArray2[2][1], posArray2[2][2]);
+           let pos1 = new THREE.Vector3(posArray1[2][0], posArray1[2][1], posArray1[2][2]);
+           let pos2 = new THREE.Vector3(posArray2[2][0], posArray2[2][1], posArray2[2][2]);
 
            ic.hAtoms = me.hashUtilsCls.cloneHash(prevHAtoms);
 
@@ -111,14 +111,14 @@ class Analysis {
            //ic.boxCls.createBox_base(pos1, ic.originSize, ic.hColor, false, bOther);
            //ic.boxCls.createBox_base(pos2, ic.originSize, ic.hColor, false, bOther);
 
-           var color = $("#" + ic.pre + "distancecolor2" ).val();
+           let color = $("#" + ic.pre + "distancecolor2" ).val();
 
            this.addLine(pos1.x, pos1.y, pos1.z, pos2.x, pos2.y, pos2.z, color, true, 'distance');
 
-           var size = 0, background = 0;
-           var labelPos = pos1.clone().add(pos2).multiplyScalar(0.5);
-           var distance = parseInt(pos1.distanceTo(pos2) * 10) / 10;
-           var text = distance.toString() + " A";
+           let size = 0, background = 0;
+           let labelPos = pos1.clone().add(pos2).multiplyScalar(0.5);
+           let distance = parseInt(pos1.distanceTo(pos2) * 10) / 10;
+           let text = distance.toString() + " A";
            this.addLabel(text, labelPos.x, labelPos.y, labelPos.z, size, color, background, 'distance');
            ic.drawCls.draw();
        }
@@ -127,7 +127,7 @@ class Analysis {
     //Add a line between the position (x1, y1, z1) and the position (x2, y2, z2) with the input "color".
     //The line can be dashed if "dashed" is set true.
     addLine(x1, y1, z1, x2, y2, z2, color, dashed, type) {var ic = this.icn3d, me = ic.icn3dui;
-        var line = {} // Each line contains 'position1', 'position2', 'color', and a boolean of 'dashed'
+        let line = {} // Each line contains 'position1', 'position2', 'color', and a boolean of 'dashed'
         line.position1 = new THREE.Vector3(x1, y1, z1);
         line.position2 = new THREE.Vector3(x2, y2, z2);
         line.color = color;
@@ -144,12 +144,12 @@ class Analysis {
     }
 
     addLineFromPicking(type) {var ic = this.icn3d, me = ic.icn3dui;
-        var size = 0, background = 0;
-        var color = $("#" + ic.pre + type + "color" ).val();
-        var x =(ic.pAtom.coord.x + ic.pAtom2.coord.x) / 2;
-        var y =(ic.pAtom.coord.y + ic.pAtom2.coord.y) / 2;
-        var z =(ic.pAtom.coord.z + ic.pAtom2.coord.z) / 2;
-        var dashed =(type == 'stabilizer') ? false : true;
+        let size = 0, background = 0;
+        let color = $("#" + ic.pre + type + "color" ).val();
+        let x =(ic.pAtom.coord.x + ic.pAtom2.coord.x) / 2;
+        let y =(ic.pAtom.coord.y + ic.pAtom2.coord.y) / 2;
+        let z =(ic.pAtom.coord.z + ic.pAtom2.coord.z) / 2;
+        let dashed =(type == 'stabilizer') ? false : true;
         ic.icn3dui.htmlCls.clickMenuCls.setLogCmd('add line | x1 ' + ic.pAtom.coord.x.toPrecision(4)  + ' y1 ' + ic.pAtom.coord.y.toPrecision(4) + ' z1 ' + ic.pAtom.coord.z.toPrecision(4) + ' | x2 ' + ic.pAtom2.coord.x.toPrecision(4)  + ' y2 ' + ic.pAtom2.coord.y.toPrecision(4) + ' z2 ' + ic.pAtom2.coord.z.toPrecision(4) + ' | color ' + color + ' | dashed ' + dashed + ' | type ' + type, true);
         this.addLine(ic.pAtom.coord.x, ic.pAtom.coord.y, ic.pAtom.coord.z, ic.pAtom2.coord.x, ic.pAtom2.coord.y, ic.pAtom2.coord.z, color, dashed, type);
         ic.pickpair = false;
@@ -157,13 +157,13 @@ class Analysis {
 
     //Add a "text" at the position (x, y, z) with the input "size", "color", and "background".
     addLabel(text, x, y, z, size, color, background, type) {var ic = this.icn3d, me = ic.icn3dui;
-        var label = {} // Each label contains 'position', 'text', 'color', 'background'
+        let label = {} // Each label contains 'position', 'text', 'color', 'background'
 
         if(size === '0' || size === '' || size === 'undefined') size = undefined;
         if(color === '0' || color === '' || color === 'undefined') color = undefined;
         if(background === '0' || background === '' || background === 'undefined') background = undefined;
 
-        var position = new THREE.Vector3();
+        let position = new THREE.Vector3();
         position.x = x;
         position.y = y;
         position.z = z;
@@ -191,21 +191,21 @@ class Analysis {
 
     //Display chain name in the 3D structure display for the chains intersecting with the atoms in "atomHash".
     addChainLabels(atoms) {var ic = this.icn3d, me = ic.icn3dui;
-        var size = 18;
-        var background = "#CCCCCC";
-        var atomsHash = me.hashUtilsCls.intHash(ic.hAtoms, atoms);
+        let size = 18;
+        let background = "#CCCCCC";
+        let atomsHash = me.hashUtilsCls.intHash(ic.hAtoms, atoms);
         if(ic.labels['chain'] === undefined) ic.labels['chain'] = [];
-        var chainHash = ic.firstAtomObjCls.getChainsFromAtoms(atomsHash);
-        for(var chainid in chainHash) {
-            var label = {}
+        let chainHash = ic.firstAtomObjCls.getChainsFromAtoms(atomsHash);
+        for(let chainid in chainHash) {
+            let label = {}
             label.position = ic.applyCenterCls.centerAtoms(ic.chains[chainid]).center;
-            var pos = chainid.indexOf('_');
-            var chainName = chainid.substr(pos + 1);
-            var proteinName = ic.showSeqCls.getProteinName(chainid);
+            let pos = chainid.indexOf('_');
+            let chainName = chainid.substr(pos + 1);
+            let proteinName = ic.showSeqCls.getProteinName(chainid);
             if(proteinName.length > 20) proteinName = proteinName.substr(0, 20) + '...';
             label.text = 'Chain ' + chainName + ': ' + proteinName;
             label.size = size;
-            var atomColorStr = ic.firstAtomObjCls.getFirstCalphaAtomObj(ic.chains[chainid]).color.getHexString().toUpperCase();
+            let atomColorStr = ic.firstAtomObjCls.getFirstCalphaAtomObj(ic.chains[chainid]).color.getHexString().toUpperCase();
             label.color =(atomColorStr === "CCCCCC" || atomColorStr === "C8C8C8") ? "#888888" : "#" + atomColorStr;
             label.background = background;
             ic.labels['chain'].push(label);
@@ -215,21 +215,21 @@ class Analysis {
     //Display the terminal labels for the atoms in "atomHash". The termini of proteins are labeld
     //as "N-" and "C-". The termini of nucleotides are labeled as "5'" and "3'".
     addTerminiLabels(atoms) {var ic = this.icn3d, me = ic.icn3dui;
-        var size = 18;
-        var background = "#CCCCCC";
-        var protNucl;
+        let size = 18;
+        let background = "#CCCCCC";
+        let protNucl;
         protNucl = me.hashUtilsCls.unionHash(protNucl, ic.proteins);
         protNucl = me.hashUtilsCls.unionHash(protNucl, ic.nucleotides);
-        var hlProtNucl = me.hashUtilsCls.intHash(ic.dAtoms, protNucl);
-        var atomsHash = me.hashUtilsCls.intHash(hlProtNucl, atoms);
+        let hlProtNucl = me.hashUtilsCls.intHash(ic.dAtoms, protNucl);
+        let atomsHash = me.hashUtilsCls.intHash(hlProtNucl, atoms);
         if(ic.labels['chain'] === undefined) ic.labels['chain'] = [];
-        var chainHash = ic.firstAtomObjCls.getChainsFromAtoms(atomsHash);
-        for(var chainid in chainHash) {
-            var chainAtomsHash = me.hashUtilsCls.intHash(hlProtNucl, ic.chains[chainid]);
-            var serialArray = Object.keys(chainAtomsHash);
-            var firstAtom = ic.atoms[serialArray[0]];
-            var lastAtom = ic.atoms[serialArray[serialArray.length - 1]];
-            var labelN = {}, labelC = {}
+        let chainHash = ic.firstAtomObjCls.getChainsFromAtoms(atomsHash);
+        for(let chainid in chainHash) {
+            let chainAtomsHash = me.hashUtilsCls.intHash(hlProtNucl, ic.chains[chainid]);
+            let serialArray = Object.keys(chainAtomsHash);
+            let firstAtom = ic.atoms[serialArray[0]];
+            let lastAtom = ic.atoms[serialArray[serialArray.length - 1]];
+            let labelN = {}, labelC = {}
             labelN.position = firstAtom.coord;
             labelC.position = lastAtom.coord;
             labelN.text = 'N-';
@@ -240,8 +240,8 @@ class Analysis {
             }
             labelN.size = size;
             labelC.size = size;
-            var atomNColorStr = firstAtom.color.getHexString().toUpperCase();
-            var atomCColorStr = lastAtom.color.getHexString().toUpperCase();
+            let atomNColorStr = firstAtom.color.getHexString().toUpperCase();
+            let atomCColorStr = lastAtom.color.getHexString().toUpperCase();
             labelN.color =(atomNColorStr === "CCCCCC" || atomNColorStr === "C8C8C8") ? "#888888" : "#" + atomNColorStr;
             labelC.color =(atomCColorStr === "CCCCCC" || atomCColorStr === "C8C8C8") ? "#888888" : "#" + atomCColorStr;
             labelN.background = background;

@@ -17,21 +17,21 @@ class Instancing {
         this.icn3d = icn3d;
     }
 
-    positionFromGeometry( mesh ){ var ic = this.icn3d, me = ic.icn3dui;
-        var geometry = mesh.geometry;
+    positionFromGeometry( mesh ){ let ic = this.icn3d, me = ic.icn3dui;
+        let geometry = mesh.geometry;
 
-        var vertices = geometry.vertices;
+        let vertices = geometry.vertices;
 
-        var meshPosition = mesh.position;
-        var scale = mesh.scale;
-        var matrix = mesh.matrix;
+        let meshPosition = mesh.position;
+        let scale = mesh.scale;
+        let matrix = mesh.matrix;
 
-        var j, v3;
-        var n = vertices.length;
+        let j, v3;
+        let n = vertices.length;
         //var position = new Float32Array( n * 3 );
-        var position = [];
+        let position = [];
 
-        for( var v = 0; v < n; v++ ){
+        for( let v = 0; v < n; v++ ){
 
             j = v * 3;
 
@@ -53,25 +53,25 @@ class Instancing {
         return position;
     }
 
-    colorFromGeometry( mesh ){ var ic = this.icn3d, me = ic.icn3dui;
-        var geometry = mesh.geometry;
+    colorFromGeometry( mesh ){ let ic = this.icn3d, me = ic.icn3dui;
+        let geometry = mesh.geometry;
 
-        var meshColor = me.parasCls.thr(1, 1, 1);
+        let meshColor = me.parasCls.thr(1, 1, 1);
         if(geometry.type == 'SphereGeometry' || geometry.type == 'BoxGeometry' || geometry.type == 'CylinderGeometry') {
              if(mesh.material !== undefined) meshColor = mesh.material.color;
         }
 
-        var faces = geometry.faces;
-        var vn = geometry.vertices.length;
+        let faces = geometry.faces;
+        let vn = geometry.vertices.length;
 
-        var bSurfaceVertex = (geometry.type == 'Surface') ? true : false;
+        let bSurfaceVertex = (geometry.type == 'Surface') ? true : false;
 
-        var j, f, c1, c2, c3;
-        var n = faces.length;
+        let j, f, c1, c2, c3;
+        let n = faces.length;
         //var color = new Float32Array( vn * 3 );
-        var color = [];
+        let color = [];
 
-        for( var v = 0; v < n; v++ ){
+        for( let v = 0; v < n; v++ ){
 
             f = faces[ v ];
 
@@ -111,18 +111,18 @@ class Instancing {
         return color;
     }
 
-    indexFromGeometry( mesh ){  var ic = this.icn3d, me = ic.icn3dui;
-        var geometry = mesh.geometry;
+    indexFromGeometry( mesh ){  let ic = this.icn3d, me = ic.icn3dui;
+        let geometry = mesh.geometry;
 
-        var faces = geometry.faces;
+        let faces = geometry.faces;
 
-        var j, f;
-        var n = faces.length;
+        let j, f;
+        let n = faces.length;
         //var TypedArray = n * 3 > 65535 ? Uint32Array : Uint16Array;
         //var index = new TypedArray( n * 3 );
-        var index = [];
+        let index = [];
 
-        for( var v = 0; v < n; v++ ){
+        for( let v = 0; v < n; v++ ){
 
             j = v * 3;
             f = faces[ v ];
@@ -136,18 +136,18 @@ class Instancing {
         return index;
     }
 
-    normalFromGeometry( mesh ){  var ic = this.icn3d, me = ic.icn3dui;
-        var geometry = mesh.geometry;
+    normalFromGeometry( mesh ){  let ic = this.icn3d, me = ic.icn3dui;
+        let geometry = mesh.geometry;
 
-        var faces = geometry.faces;
-        var vn = geometry.vertices.length;
+        let faces = geometry.faces;
+        let vn = geometry.vertices.length;
 
-        var j, f, nn, n1, n2, n3;
-        var n = faces.length;
+        let j, f, nn, n1, n2, n3;
+        let n = faces.length;
         //var normal = new Float32Array( vn * 3 );
-        var normal = [];
+        let normal = [];
 
-        for( var v = 0; v < n; v++ ){
+        for( let v = 0; v < n; v++ ){
 
             f = faces[ v ];
             nn = f.vertexNormals;
@@ -176,7 +176,7 @@ class Instancing {
     }
 
     //Draw the biological unit assembly using the matrix.
-    drawSymmetryMates() {  var ic = this.icn3d, me = ic.icn3dui;
+    drawSymmetryMates() {  let ic = this.icn3d, me = ic.icn3dui;
         if(ic.icn3dui.bNode) return;
 
 //        if(ic.bInstanced && Object.keys(ic.atoms).length * ic.biomtMatrices.length > ic.maxatomcnt) {
@@ -188,7 +188,7 @@ class Instancing {
         }
     }
 
-    applyMat(obj, mat, bVector3) {  var ic = this.icn3d, me = ic.icn3dui;
+    applyMat(obj, mat, bVector3) {  let ic = this.icn3d, me = ic.icn3dui;
         // applyMatrix was renamed to applyMatrix4
         if(ic.rmsd_supr === undefined) {
 /*
@@ -202,20 +202,20 @@ class Instancing {
           obj.applyMatrix4(mat);
         }
         else {
-          var rot = ic.rmsd_supr.rot;
-          var centerFrom = ic.rmsd_supr.trans1;
-          var centerTo = ic.rmsd_supr.trans2;
+          let rot = ic.rmsd_supr.rot;
+          let centerFrom = ic.rmsd_supr.trans1;
+          let centerTo = ic.rmsd_supr.trans2;
 
-          var rotationM4 = new THREE.Matrix4();
+          let rotationM4 = new THREE.Matrix4();
           rotationM4.set(rot[0], rot[1], rot[2], 0, rot[3], rot[4], rot[5], 0, rot[6], rot[7], rot[8], 0, 0, 0, 0, 1);
 
-          var rotationM4Inv = new THREE.Matrix4();
+          let rotationM4Inv = new THREE.Matrix4();
           //rotationM4Inv.getInverse(rotationM4);
           rotationM4Inv.copy( rotationM4 ).invert();
 
           //modifiedMat.makeTranslation(-centerTo.x, -centerTo.y, -centerTo.z).multiply(rotationM4Inv).makeTranslation(centerFrom.x, centerFrom.y, centerFrom.z).multiply(mat).makeTranslation(-centerFrom.x, -centerFrom.y, -centerFrom.z).multiply(rotationM4).makeTranslation(centerTo.x, centerTo.y, centerTo.z);
 
-          var tmpMat = new THREE.Matrix4();
+          let tmpMat = new THREE.Matrix4();
 
 /*
           if(bVector3 === undefined) {
@@ -260,26 +260,26 @@ class Instancing {
         }
     }
 
-    drawSymmetryMatesNoInstancing() {  var ic = this.icn3d, me = ic.icn3dui;
+    drawSymmetryMatesNoInstancing() {  let ic = this.icn3d, me = ic.icn3dui;
        if (ic.biomtMatrices === undefined || ic.biomtMatrices.length == 0) return;
-       var cnt = 1; // itself
-       var centerSum = ic.center.clone();
+       let cnt = 1; // itself
+       let centerSum = ic.center.clone();
 
-       var identity = new THREE.Matrix4();
+       let identity = new THREE.Matrix4();
        identity.identity();
 
-       var mdlTmp = new THREE.Object3D();
-       var mdlImpostorTmp = new THREE.Object3D();
-       var mdl_ghostTmp = new THREE.Object3D();
+       let mdlTmp = new THREE.Object3D();
+       let mdlImpostorTmp = new THREE.Object3D();
+       let mdl_ghostTmp = new THREE.Object3D();
 
-       for (var i = 0; i < ic.biomtMatrices.length; i++) {  // skip itself
-          var mat = ic.biomtMatrices[i];
+       for (let i = 0; i < ic.biomtMatrices.length; i++) {  // skip itself
+          let mat = ic.biomtMatrices[i];
           if (mat === undefined) continue;
 
           // skip itself
           if(mat.equals(identity)) continue;
 
-          var symmetryMate;
+          let symmetryMate;
 
           if(ic.mdl !== undefined) {
               symmetryMate = ic.mdl.clone();
@@ -296,8 +296,8 @@ class Instancing {
               this.applyMat(symmetryMate, mat);
 
               //symmetryMate.onBeforeRender = ic.impostorCls.onBeforeRender;
-              for(var j = symmetryMate.children.length - 1; j >= 0; j--) {
-                   var mesh = symmetryMate.children[j];
+              for(let j = symmetryMate.children.length - 1; j >= 0; j--) {
+                   let mesh = symmetryMate.children[j];
                    mesh.onBeforeRender = ic.impostorCls.onBeforeRender;
                    //mesh.onBeforeRender = this.onBeforeRender;
 
@@ -315,7 +315,7 @@ class Instancing {
               mdl_ghostTmp.add(symmetryMate);
           }
 
-          var center = ic.center.clone();
+          let center = ic.center.clone();
           //center.applyMatrix4(mat);
           this.applyMat(center, mat, true);
 
@@ -358,8 +358,8 @@ class Instancing {
 
 /*
     onBeforeRender(renderer, scene, camera, geometry, material) {
-      var u = material.uniforms;
-      var updateList = [];
+      let u = material.uniforms;
+      let updateList = [];
 
       if (u.objectId) {
         u.objectId.value = SupportsReadPixelsFloat ? this.id : this.id / 255
@@ -404,7 +404,7 @@ class Instancing {
       }
 
       if (u.modelViewProjectionMatrixInverse) {
-        var tmpMatrix = new THREE.Matrix4();
+        let tmpMatrix = new THREE.Matrix4();
         if (u.modelViewProjectionMatrix) {
           tmpMatrix.copy(
             u.modelViewProjectionMatrix.value
@@ -440,13 +440,13 @@ class Instancing {
       }
 
       if (updateList.length) {
-        var materialProperties = renderer.properties.get(material);
+        let materialProperties = renderer.properties.get(material);
 
         if (materialProperties.program) {
-          var gl = renderer.getContext();
-          var p = materialProperties.program;
+          let gl = renderer.getContext();
+          let p = materialProperties.program;
           gl.useProgram(p.program);
-          var pu = p.getUniforms();
+          let pu = p.getUniforms();
 
           updateList.forEach(function (name) {
             pu.setValue(gl, name, u[ name ].value)
@@ -456,34 +456,34 @@ class Instancing {
     }
 */
 
-    createInstancedGeometry(mesh) {  var ic = this.icn3d, me = ic.icn3dui;
-       var baseGeometry = mesh.geometry;
+    createInstancedGeometry(mesh) {  let ic = this.icn3d, me = ic.icn3dui;
+       let baseGeometry = mesh.geometry;
 
-       var geometry = new THREE.InstancedBufferGeometry();
+       let geometry = new THREE.InstancedBufferGeometry();
 
-       var positionArray = [];
-       var normalArray = [];
-       var colorArray = [];
-       var indexArray = [];
+       let positionArray = [];
+       let normalArray = [];
+       let colorArray = [];
+       let indexArray = [];
 
-       var radiusArray = [];
-       var mappingArray = [];
-       var position2Array = [];
-       var color2Array = [];
+       let radiusArray = [];
+       let mappingArray = [];
+       let position2Array = [];
+       let color2Array = [];
 
        //else if(ic.bImpo && baseGeometry.attributes.color2 !== undefined) { // cylinder
        if(ic.bImpo && (mesh.type == 'Cylinder')) { // cylinder
            ic.instancedMaterial = this.getInstancedMaterial('CylinderInstancing');
 
-           var positionArray2 = me.hashUtilsCls.hashvalue2array(baseGeometry.attributes.position1.array);
-           var colorArray2 = me.hashUtilsCls.hashvalue2array(baseGeometry.attributes.color.array);
+           let positionArray2 = me.hashUtilsCls.hashvalue2array(baseGeometry.attributes.position1.array);
+           let colorArray2 = me.hashUtilsCls.hashvalue2array(baseGeometry.attributes.color.array);
 
-           var positionArray2b = me.hashUtilsCls.hashvalue2array(baseGeometry.attributes.position2.array);
-           var colorArray2b = me.hashUtilsCls.hashvalue2array(baseGeometry.attributes.color2.array);
+           let positionArray2b = me.hashUtilsCls.hashvalue2array(baseGeometry.attributes.position2.array);
+           let colorArray2b = me.hashUtilsCls.hashvalue2array(baseGeometry.attributes.color2.array);
 
-           var indexArray2 = me.hashUtilsCls.hashvalue2array(baseGeometry.index.array);
-           var radiusArray2 = me.hashUtilsCls.hashvalue2array(baseGeometry.attributes.radius.array);
-           var mappingArray2 = me.hashUtilsCls.hashvalue2array(baseGeometry.attributes.mapping.array);
+           let indexArray2 = me.hashUtilsCls.hashvalue2array(baseGeometry.index.array);
+           let radiusArray2 = me.hashUtilsCls.hashvalue2array(baseGeometry.attributes.radius.array);
+           let mappingArray2 = me.hashUtilsCls.hashvalue2array(baseGeometry.attributes.mapping.array);
 
            positionArray = positionArray.concat(positionArray2);
            colorArray = colorArray.concat(colorArray2);
@@ -517,11 +517,11 @@ class Instancing {
        else if(ic.bImpo && (mesh.type == 'Sphere')) { // sphere
            ic.instancedMaterial = this.getInstancedMaterial('SphereInstancing');
 
-           var positionArray2 = me.hashUtilsCls.hashvalue2array(baseGeometry.attributes.position.array);
-           var colorArray2 = me.hashUtilsCls.hashvalue2array(baseGeometry.attributes.color.array);
-           var indexArray2 = me.hashUtilsCls.hashvalue2array(baseGeometry.index.array);
-           var radiusArray2 = me.hashUtilsCls.hashvalue2array(baseGeometry.attributes.radius.array);
-           var mappingArray2 = me.hashUtilsCls.hashvalue2array(baseGeometry.attributes.mapping.array);
+           let positionArray2 = me.hashUtilsCls.hashvalue2array(baseGeometry.attributes.position.array);
+           let colorArray2 = me.hashUtilsCls.hashvalue2array(baseGeometry.attributes.color.array);
+           let indexArray2 = me.hashUtilsCls.hashvalue2array(baseGeometry.index.array);
+           let radiusArray2 = me.hashUtilsCls.hashvalue2array(baseGeometry.attributes.radius.array);
+           let mappingArray2 = me.hashUtilsCls.hashvalue2array(baseGeometry.attributes.mapping.array);
 
            positionArray = positionArray.concat(positionArray2);
            colorArray = colorArray.concat(colorArray2);
@@ -550,19 +550,19 @@ class Instancing {
            //var colorArray2 = this.colorFromGeometry( mesh );
            //var indexArray2 = this.indexFromGeometry( mesh );
 
-           var positionArray2 = (baseGeometry.attributes.position) ? me.hashUtilsCls.hashvalue2array(baseGeometry.attributes.position.array) : [];
-           var normalArray2 = (baseGeometry.attributes.normal) ? me.hashUtilsCls.hashvalue2array(baseGeometry.attributes.normal.array) : [];
-           var colorArray2 = (baseGeometry.attributes.color) ? me.hashUtilsCls.hashvalue2array(baseGeometry.attributes.color.array) : [];
-           var indexArray2 = (baseGeometry.index) ? me.hashUtilsCls.hashvalue2array(baseGeometry.index.array) : [];
+           let positionArray2 = (baseGeometry.attributes.position) ? me.hashUtilsCls.hashvalue2array(baseGeometry.attributes.position.array) : [];
+           let normalArray2 = (baseGeometry.attributes.normal) ? me.hashUtilsCls.hashvalue2array(baseGeometry.attributes.normal.array) : [];
+           let colorArray2 = (baseGeometry.attributes.color) ? me.hashUtilsCls.hashvalue2array(baseGeometry.attributes.color.array) : [];
+           let indexArray2 = (baseGeometry.index) ? me.hashUtilsCls.hashvalue2array(baseGeometry.index.array) : [];
 
            positionArray = positionArray.concat(positionArray2);
            normalArray = normalArray.concat(normalArray2);
            colorArray = colorArray.concat(colorArray2);
            indexArray = indexArray.concat(indexArray2);
 
-           var bCylinderArray = [];
-           var bCylinder = (baseGeometry.type == 'CylinderGeometry') ? 1.0 : 0.0;
-           for(var i = 0, il = positionArray.length / 3; i < il; ++i) {
+           let bCylinderArray = [];
+           let bCylinder = (baseGeometry.type == 'CylinderGeometry') ? 1.0 : 0.0;
+           for(let i = 0, il = positionArray.length / 3; i < il; ++i) {
                bCylinderArray.push(bCylinder);
            }
 
@@ -590,10 +590,10 @@ class Instancing {
        position2Array = null;
        color2Array = null;
 
-       var matricesAttribute1 = new THREE.InstancedBufferAttribute( new Float32Array( ic.matricesElements1 ), 4 );
-       var matricesAttribute2 = new THREE.InstancedBufferAttribute( new Float32Array( ic.matricesElements2 ), 4 );
-       var matricesAttribute3 = new THREE.InstancedBufferAttribute( new Float32Array( ic.matricesElements3 ), 4 );
-       var matricesAttribute4 = new THREE.InstancedBufferAttribute( new Float32Array( ic.matricesElements4 ), 4 );
+       let matricesAttribute1 = new THREE.InstancedBufferAttribute( new Float32Array( ic.matricesElements1 ), 4 );
+       let matricesAttribute2 = new THREE.InstancedBufferAttribute( new Float32Array( ic.matricesElements2 ), 4 );
+       let matricesAttribute3 = new THREE.InstancedBufferAttribute( new Float32Array( ic.matricesElements3 ), 4 );
+       let matricesAttribute4 = new THREE.InstancedBufferAttribute( new Float32Array( ic.matricesElements4 ), 4 );
 
        geometry.setAttribute( 'matrix1', matricesAttribute1 );
        geometry.setAttribute( 'matrix2', matricesAttribute2 );
@@ -603,9 +603,9 @@ class Instancing {
        return geometry;
     }
 
-    getInstancedMaterial(name) {  var ic = this.icn3d, me = ic.icn3dui;
+    getInstancedMaterial(name) {  let ic = this.icn3d, me = ic.icn3dui;
        //var material = new THREE.RawShaderMaterial({
-       var material = new THREE.ShaderMaterial({
+       let material = new THREE.ShaderMaterial({
           defines: ic.defines,
           uniforms:  ic.uniforms,
           vertexShader:   ic.impostorCls.getShader(name + ".vert"),
@@ -623,15 +623,15 @@ class Instancing {
        return material;
     }
 
-    createInstancedMesh(mdl) { var ic = this.icn3d, me = ic.icn3dui;
-       for(var i = 0, il = mdl.children.length; i < il; ++i) {
-           var mesh = mdl.children[i];
+    createInstancedMesh(mdl) { let ic = this.icn3d, me = ic.icn3dui;
+       for(let i = 0, il = mdl.children.length; i < il; ++i) {
+           let mesh = mdl.children[i];
 
            if(mesh.type === 'Sprite') continue;
 
-           var geometry = this.createInstancedGeometry(mesh);
+           let geometry = this.createInstancedGeometry(mesh);
 
-           var mesh2 = new THREE.Mesh(geometry, ic.instancedMaterial);
+           let mesh2 = new THREE.Mesh(geometry, ic.instancedMaterial);
 
            mesh2.onBeforeRender = ic.impostorCls.onBeforeRender;
            //mesh2.onBeforeRender = this.onBeforeRender;
@@ -649,10 +649,10 @@ class Instancing {
        }
     }
 
-    drawSymmetryMatesInstancing() { var ic = this.icn3d, me = ic.icn3dui;
+    drawSymmetryMatesInstancing() { let ic = this.icn3d, me = ic.icn3dui;
        if (ic.biomtMatrices === undefined || ic.biomtMatrices.length == 0) return;
-       var cnt = 1; // itself
-       var centerSum = ic.center.clone();
+       let cnt = 1; // itself
+       let centerSum = ic.center.clone();
 
        ic.impostorCls.setParametersForShader();
 
@@ -664,14 +664,14 @@ class Instancing {
            ic.matricesElements3 = [];
            ic.matricesElements4 = [];
 
-           var identity = new THREE.Matrix4();
+           let identity = new THREE.Matrix4();
            identity.identity();
 
-           for (var i = 0; i < ic.biomtMatrices.length; i++) {  // skip itself
-              var mat = ic.biomtMatrices[i];
+           for (let i = 0; i < ic.biomtMatrices.length; i++) {  // skip itself
+              let mat = ic.biomtMatrices[i];
               if (mat === undefined) continue;
 
-              var matArray = mat.toArray();
+              let matArray = mat.toArray();
 
               // skip itself
               if(mat.equals(identity)) continue;
@@ -681,7 +681,7 @@ class Instancing {
               ic.matricesElements3.push(matArray[8], matArray[9], matArray[10], matArray[11]);
               ic.matricesElements4.push(matArray[12], matArray[13], matArray[14], matArray[15]);
 
-              var center = ic.center.clone();
+              let center = ic.center.clone();
               center.applyMatrix4(mat);
               centerSum.add(center);
 

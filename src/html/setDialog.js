@@ -15,22 +15,22 @@ class SetDialog {
     setCustomDialogs() {var me = this.icn3dui, ic = me.icn3d;
         if(me.bNode) return '';
 
-        var html = "";
+        let html = "";
         return html;
     }
 
     //Set the html for all popup dialogs.
-    setDialogs() { var me = this.icn3dui, ic = me.icn3d;
+    setDialogs() { let me = this.icn3dui, ic = me.icn3d;
         if(me.bNode) return '';
 
-        var html = "";
+        let html = "";
 
         me.htmlCls.optionStr = "<option value=";
 
         html += "<!-- dialog will not be part of the form -->";
 
-        var divClass =(me.cfg.notebook) ? '' : 'icn3d-hidden';
-        var dialogClass =(me.cfg.notebook) ? 'icn3d-hidden' : '';
+        let divClass =(me.cfg.notebook) ? '' : 'icn3d-hidden';
+        let dialogClass =(me.cfg.notebook) ? 'icn3d-hidden' : '';
         html += me.htmlCls.divStr + "alldialogs' class='" + divClass + " icn3d-dialog'>";
 
         html += me.htmlCls.divStr + "dl_2ddgm' class='" + dialogClass + " icn3d-dl_2ddgm'>";
@@ -251,7 +251,7 @@ class SetDialog {
 
         html += "<span style='white-space:nowrap;font-weight:bold;'>2fofc contour at: <select id='" + me.pre + "dsn6sigma2fofc'>";
 
-        var optArray1 = ['0', '0.5', '1', '1.5', '2', '3', '4', '5', '6', '7', '8', '9', '10'];
+        let optArray1 = ['0', '0.5', '1', '1.5', '2', '3', '4', '5', '6', '7', '8', '9', '10'];
         html += me.htmlCls.setHtmlCls.getOptionHtml(optArray1, 3);
 
         html += "</select> &sigma;</span><br/>";
@@ -336,7 +336,7 @@ class SetDialog {
         html += "<td>";
         html += me.htmlCls.divNowrapStr + " <select id='" + me.pre + "hbondthreshold'>";
 
-        var optArray2 = ['3.2', '3.3', '3.4', '3.5', '3.6', '3.7', '3.8', '3.9', '4.0', '4.1', '4.2'];
+        let optArray2 = ['3.2', '3.3', '3.4', '3.5', '3.6', '3.7', '3.8', '3.9', '4.0', '4.1', '4.2'];
         html += me.htmlCls.setHtmlCls.getOptionHtml(optArray2, 6);
 
         html += "</select> &#197;" + me.htmlCls.space3 + "</div></td>";
@@ -344,7 +344,7 @@ class SetDialog {
         html += "<td>";
         html += me.htmlCls.divNowrapStr + " <select id='" + me.pre + "saltbridgethreshold'>";
 
-        var optArray3 = ['3', '4', '5', '6', '7', '8'];
+        let optArray3 = ['3', '4', '5', '6', '7', '8'];
         html += me.htmlCls.setHtmlCls.getOptionHtml(optArray3, 3);
 
         html += "</select> &#197;" + me.htmlCls.space3 + "</div></td>";
@@ -416,7 +416,7 @@ class SetDialog {
 
         html += "<div style='text-indent:1.1em'>" + me.htmlCls.buttonStr + "hbondScatterplot'>2D Interaction Map</button> to show interactions as map</div><br>";
 
-        var tmpStr = ': </td><td><input style="margin-left:-12px" type="text" id="';
+        let tmpStr = ': </td><td><input style="margin-left:-12px" type="text" id="';
 
         html += "<div style='text-indent:1.1em'>" + me.htmlCls.buttonStr + "hbondGraph'>2D Graph(Force-Directed)</button> to show interactions with strength parameters in 0-200:</div>";
         html += '<div style="text-indent:1.1em"><table><tr><td>Helix or Sheet' + tmpStr + me.pre + 'dist_ss" size="4" value="100"></td>';
@@ -465,7 +465,7 @@ class SetDialog {
 
         html += "</div><br>";
 
-        var buttonStrTmp = '<button class="icn3d-commandTitle" style="-webkit-appearance:button; height:24px;background-color:#DDD;" id="';
+        let buttonStrTmp = '<button class="icn3d-commandTitle" style="-webkit-appearance:button; height:24px;background-color:#DDD;" id="';
 
         me.linegraphid = me.pre + 'linegraph';
         html += me.htmlCls.divNowrapStr + buttonStrTmp + me.linegraphid + '_svg">SVG</button>' + me.htmlCls.space2;
@@ -473,7 +473,7 @@ class SetDialog {
         html += buttonStrTmp + me.linegraphid + '_json">JSON</button>' + me.htmlCls.space4;
         html += "<b>Scale</b>: <select id='" + me.linegraphid + "_scale'>";
 
-        var optArray4 = ['0.1', '0.2', '0.4', '0.6', '0.8', '1', '2', '4', '6', '8', '10'];
+        let optArray4 = ['0.1', '0.2', '0.4', '0.6', '0.8', '1', '2', '4', '6', '8', '10'];
         html += me.htmlCls.setHtmlCls.getOptionHtml(optArray4, 5);
 
         html += "</select></div><br>";
@@ -517,7 +517,7 @@ class SetDialog {
         html += buttonStrTmp + me.contactmapid + '_json">JSON</button>' + me.htmlCls.space4;
         html += "<b>Scale</b>: <select id='" + me.contactmapid + "_scale'>";
 
-        var optArray5 = ['0.01', '0.02', '0.04', '0.06', '0.08', '0.1', '0.2', '0.4', '0.6', '0.8', '1'];
+        let optArray5 = ['0.01', '0.02', '0.04', '0.06', '0.08', '0.1', '0.2', '0.4', '0.6', '0.8', '1'];
         html += me.htmlCls.setHtmlCls.getOptionHtml(optArray5, 10);
 
         html += "</select></div><br>";
@@ -715,8 +715,8 @@ class SetDialog {
         html += "</div>";
 
         html += me.htmlCls.divStr + "dl_saveselection' class='" + dialogClass + "'>";
-        var index =(ic && ic.defNames2Atoms) ? Object.keys(ic.defNames2Atoms).length : 1;
-        var suffix = '';
+        let index =(ic && ic.defNames2Atoms) ? Object.keys(ic.defNames2Atoms).length : 1;
+        let suffix = '';
         html += "Name: " + me.htmlCls.inputTextStr + "id='" + me.pre + "seq_command_name" + suffix + "' value='seq_" + index + "' size='5'> <br>";
         //html += "Description: " + me.htmlCls.inputTextStr + "id='" + me.pre + "seq_command_desc" + suffix + "' value='seq_desc_" + index + "' size='10'> <br>";
         html += "<button style='white-space:nowrap;' id='" + me.pre + "seq_saveselection" + suffix + "'>Save</button> <button style='white-space:nowrap; margin-left:20px;' id='" + me.pre + "seq_clearselection" + suffix + "'>Clear</button><br/><br/>";
@@ -746,8 +746,8 @@ class SetDialog {
         html += "</div>";
 
         html += "<div class='icn3d-box' style='width:520px;'><b>Annotations:&nbsp;</b><br><table border=0><tr>";
-        var tmpStr1 = "<td style='min-width:110px;'><span style='white-space:nowrap'>";
-        var tmpStr2 = "<td style='min-width:130px;'><span style='white-space:nowrap'>";
+        let tmpStr1 = "<td style='min-width:110px;'><span style='white-space:nowrap'>";
+        let tmpStr2 = "<td style='min-width:130px;'><span style='white-space:nowrap'>";
 
         html += tmpStr1 + me.htmlCls.inputCheckStr + "id='" + me.pre + "anno_all'>All" + me.htmlCls.space2 + "</span></td>";
         html += tmpStr2 + me.htmlCls.inputCheckStr + "id='" + me.pre + "anno_cdd' checked>Conserved Domains" + me.htmlCls.space2 + "</span></td>";
@@ -796,7 +796,7 @@ class SetDialog {
         html += '</style>';
 
         html += me.htmlCls.divNowrapStr + '<b>Zoom</b>: mouse wheel; ' + me.htmlCls.space3 + ' <b>Move</b>: left button; ' + me.htmlCls.space3 + ' <b>Select Multiple Nodes</b>: Ctrl Key and drag an Area' + me.htmlCls.space3;
-        html += '<div style="width:20px; margin-top:6px; display:inline-block;"><span id="'
+        html += '<div id="' + me.pre + 'interactionDesc" style="width:20px; margin-top:6px; display:inline-block;"><span id="'
           + me.pre + 'dl_svgcolor_expand" class="ui-icon ui-icon-plus icn3d-expand icn3d-link" style="width:15px;" title="Expand"></span><span id="'
           + me.pre + 'dl_svgcolor_shrink" class="ui-icon ui-icon-minus icn3d-shrink icn3d-link" style="display:none; width:15px;" title="Shrink"></span></div></div>';
         html += me.htmlCls.divStr + "dl_svgcolor' style='display:none;'>";
@@ -813,13 +813,13 @@ class SetDialog {
         html += me.htmlCls.divNowrapStr + buttonStrTmp + me.svgid + '_svg">SVG</button>' + me.htmlCls.space2;
         html += buttonStrTmp + me.svgid + '_png">PNG</button>' + me.htmlCls.space2;
         html += buttonStrTmp + me.svgid + '_json">JSON</button>';
-        html += me.htmlCls.space3 + "<b>Force on Nodes</b>: <select id='" + me.svgid + "_force'>";
+        html += me.htmlCls.space3 + "<div id='" + me.pre + "force' style='display:inline-block;'><b>Force on Nodes</b>: <select id='" + me.svgid + "_force'>";
         html += me.htmlCls.optionStr + "'0'>No</option>";
         html += me.htmlCls.optionStr + "'1'>X-axis</option>";
         html += me.htmlCls.optionStr + "'2'>Y-axis</option>";
         html += me.htmlCls.optionStr + "'3'>Circle</option>";
         html += me.htmlCls.optionStr + "'4' selected>Random</option>";
-        html += "</select>";
+        html += "</select></div>";
         html += me.htmlCls.space3 + "<b>Label Size</b>: <select id='" + me.svgid + "_label'>";
         tmpStr = 'icn3d-node-text';
         html += me.htmlCls.optionStr + "'" + tmpStr + "0'>No</option>";
@@ -830,10 +830,10 @@ class SetDialog {
         html += me.htmlCls.optionStr + "'" + tmpStr + "24'>24px</option>";
         html += me.htmlCls.optionStr + "'" + tmpStr + "32'>32px</option>";
         html += "</select>";
-        html += me.htmlCls.space3 + "<b>Internal Edges</b>: <select id='" + me.svgid + "_hideedges'>";
+        html += me.htmlCls.space3 + "<div id='" + me.pre + "internalEdges' style='display:inline-block;'><b>Internal Edges</b>: <select id='" + me.svgid + "_hideedges'>";
         html += me.htmlCls.optionStr + "'1' selected>Hide</option>";
         html += me.htmlCls.optionStr + "'0'>Show</option>";
-        html += "</select>";
+        html += "</select></div>";
         html += "</div>";
 
         html += '<svg id="' + me.svgid + '" style="margin-top:6px;"></svg>';

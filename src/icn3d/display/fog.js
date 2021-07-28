@@ -14,16 +14,16 @@ class Fog {
         this.icn3d = icn3d;
     }
 
-    setFog(bZoomin) { var ic = this.icn3d, me = ic.icn3dui;
-        var background = me.parasCls.backgroundColors[ic.opts.background.toLowerCase()];
+    setFog(bZoomin) { let ic = this.icn3d, me = ic.icn3dui;
+        let background = me.parasCls.backgroundColors[ic.opts.background.toLowerCase()];
 
         if(bZoomin) {
-            var centerAtomsResults = ic.applyCenterCls.centerAtoms(ic.hAtoms);
+            let centerAtomsResults = ic.applyCenterCls.centerAtoms(ic.hAtoms);
             ic.maxD = centerAtomsResults.maxD;
             if (ic.maxD < 5) ic.maxD = 5;
         }
 
-        var bInstance = (ic.biomtMatrices !== undefined && ic.biomtMatrices.length * ic.cnt > ic.maxatomcnt) ? true : false;
+        let bInstance = (ic.biomtMatrices !== undefined && ic.biomtMatrices.length * ic.cnt > ic.maxatomcnt) ? true : false;
 
         // apply fog
         if(ic.opts['fog'] === 'yes') {

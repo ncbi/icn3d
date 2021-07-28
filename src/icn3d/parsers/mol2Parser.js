@@ -15,8 +15,8 @@ class Mol2Parser {
         this.icn3d = icn3d;
     }
 
-    loadMol2Data(data) { var ic = this.icn3d, me = ic.icn3dui;
-        var bResult = this.loadMol2AtomData(data);
+    loadMol2Data(data) { let  ic = this.icn3d, me = ic.icn3dui;
+        let  bResult = this.loadMol2AtomData(data);
 
         if(ic.icn3dui.cfg.align === undefined && Object.keys(ic.structures).length == 1) {
             $("#" + ic.pre + "alternateWrapper").hide();
@@ -37,37 +37,37 @@ class Mol2Parser {
         }
     }
 
-    loadMol2AtomData(data) { var ic = this.icn3d, me = ic.icn3dui;
-        var lines = data.split(/\r?\n|\r/);
+    loadMol2AtomData(data) { let  ic = this.icn3d, me = ic.icn3dui;
+        let  lines = data.split(/\r?\n|\r/);
         if(lines.length < 4) return false;
 
         ic.init();
 
-        var structure = 1;
-        var chain = 'A';
-        var resn = 'LIG';
-        var resi = 1;
+        let  structure = 1;
+        let  chain = 'A';
+        let  resn = 'LIG';
+        let  resi = 1;
 
-        var AtomHash = {}
-        var moleculeNum = 1, chainNum = '1_A', residueNum = '1_A_1';
-        var atomCount, bondCount, atomIndex = 0, bondIndex = 0;
-        var serial=1;
+        let  AtomHash = {}
+        let  moleculeNum = 1, chainNum = '1_A', residueNum = '1_A_1';
+        let  atomCount, bondCount, atomIndex = 0, bondIndex = 0;
+        let  serial=1;
 
-        var bAtomSection = false, bBondSection = false;
+        let  bAtomSection = false, bBondSection = false;
 
-        var atomid2serial = {}
-        var skipAtomids = {}
+        let  atomid2serial = {}
+        let  skipAtomids = {}
 
-        var prevBondType = '', contiArrBondCnt = 0;
+        let  prevBondType = '', contiArrBondCnt = 0;
 
-        for(var i = 0, il = lines.length; i < il; ++i) {
-            var line = lines[i].trim();
+        for(let i = 0, il = lines.length; i < il; ++i) {
+            let  line = lines[i].trim();
             if(line === '') continue;
             if(line.substr(0, 1) === '#') continue;
 
             if(line == '@<TRIPOS>MOLECULE') {
                 ic.molTitle = lines[i + 1].trim();
-                var atomCnt_bondCnt = lines[i + 2].trim().replace(/\s+/g, " ").split(" ");
+                let  atomCnt_bondCnt = lines[i + 2].trim().replace(/\s+/g, " ").split(" ");
                 atomCount = atomCnt_bondCnt[0];
                 bondCount = atomCnt_bondCnt[1];
                 i = i + 4;
@@ -97,21 +97,21 @@ class Mol2Parser {
 
             if(bAtomSection && atomIndex < atomCount) {
                 // 1    C1    1.207    2.091    0.000    C.ar    1    BENZENE    0.000
-                var atomArray = line.replace(/\s+/g, " ").split(" ");
+                let  atomArray = line.replace(/\s+/g, " ").split(" ");
 
-                var atomid = parseInt(atomArray[0]);
+                let  atomid = parseInt(atomArray[0]);
                 atomid2serial[atomid] = serial;
 
-                var name = atomArray[1];
-                var x = parseFloat(atomArray[2]);
-                var y = parseFloat(atomArray[3]);
-                var z = parseFloat(atomArray[4]);
-                var coord = new THREE.Vector3(x, y, z);
+                let  name = atomArray[1];
+                let  x = parseFloat(atomArray[2]);
+                let  y = parseFloat(atomArray[3]);
+                let  z = parseFloat(atomArray[4]);
+                let  coord = new THREE.Vector3(x, y, z);
 
-                var elemFull = atomArray[5];
-                var pos = elemFull.indexOf('.');
+                let  elemFull = atomArray[5];
+                let  pos = elemFull.indexOf('.');
 
-                var elem;
+                let  elem;
                 if(pos === -1) {
                     elem = elemFull;
                 }
@@ -124,7 +124,7 @@ class Mol2Parser {
                     skipAtomids[atomid] = 1;
                 }
                 else {
-                    var atomDetails = {
+                    let  atomDetails = {
                         het: true,              // optional, used to determine chemicals, water, ions, etc
                         serial: serial,         // required, unique atom id
                         name: name,             // required, atom name
@@ -154,11 +154,11 @@ class Mol2Parser {
 
             if(bBondSection && bondIndex < bondCount) {
                 // 1    1    2    ar
-                var bondArray = line.replace(/\s+/g, " ").split(" ");
-                var fromAtomid = parseInt(bondArray[1]);
-                var toAtomid = parseInt(bondArray[2]);
-                var bondType = bondArray[3];
-                var finalBondType = bondType;
+                let  bondArray = line.replace(/\s+/g, " ").split(" ");
+                let  fromAtomid = parseInt(bondArray[1]);
+                let  toAtomid = parseInt(bondArray[2]);
+                let  bondType = bondArray[3];
+                let  finalBondType = bondType;
 
                 //• 1 = single • 2 = double • 3 = triple • am = amide • ar = aromatic • du = dummy • un = unknown(cannot be determined from the parameter tables) • nc = not connected
                 if(bondType === 'am') {
@@ -170,9 +170,9 @@ class Mol2Parser {
                 }
 
                 if(!skipAtomids.hasOwnProperty(fromAtomid) && !skipAtomids.hasOwnProperty(toAtomid) &&(finalBondType === '1' || finalBondType === '2' || finalBondType === '3' || finalBondType === '1.5') ) {
-                    var order = finalBondType;
-                    var from = atomid2serial[fromAtomid];
-                    var to = atomid2serial[toAtomid];
+                    let  order = finalBondType;
+                    let  from = atomid2serial[fromAtomid];
+                    let  to = atomid2serial[toAtomid];
 
                     // skip all bonds between H and C
                     //if( !(ic.atoms[from].elem === 'H' && ic.atoms[to].elem === 'C') && !(ic.atoms[from].elem === 'C' && ic.atoms[to].elem === 'H') ) {
@@ -211,7 +211,7 @@ class Mol2Parser {
 
         if(ic.chainsSeq[chainNum] === undefined) ic.chainsSeq[chainNum] = [];
 
-        var resObject = {}
+        let  resObject = {}
         resObject.resi = resi;
         resObject.name = resn;
 
