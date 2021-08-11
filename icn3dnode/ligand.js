@@ -22,7 +22,7 @@ let https = require('https');
 let axios = require('axios');
 let qs = require('querystring');
 
-let utils = require('./utils.js');
+//let utils = require('./utils.js');
 
 let myArgs = process.argv.slice(2);
 if(myArgs.length != 2) {

@@ -2,7 +2,7 @@
 
 let http = require('http');
 let https = require('https');
-let utils = require('./utils.js');
+//let utils = require('./utils.js');
 
 let axios = require('axios');
 let qs = require('querystring');
@@ -87,7 +87,8 @@ https.get(urlSeq, function(resSeq) {
       g_seqArray = allSeq.split('');
   });
 }).on('error', function(e) {
-  utils.dumpError(e);
+  //utils.dumpError(e);
+  console.log(e.stack);
 });
 
 // smode=auto: retrieve pre-computed results from CDART

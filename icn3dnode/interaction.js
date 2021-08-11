@@ -23,7 +23,7 @@ let https = require('https');
 let axios = require('axios');
 let qs = require('querystring');
 
-let utils = require('./utils.js');
+//let utils = require('./utils.js');
 
 let myArgs = process.argv.slice(2);
 if(myArgs.length != 4) {
@@ -121,7 +121,8 @@ https.get(urlMmdb, function(res1) {
               showInteractionChange(ic, mutantPDB, pdbid, chain, resi);
           })
           .catch(function(err) {
-              utils.dumpError(err);
+              //utils.dumpError(err);
+              console.log(err.stack);
           });
       }
     });

@@ -55,6 +55,22 @@ class SetColor {
                     ic.atomPrevColors[i] = atom.color;
                 }
                 break;
+            case 'rainbow':
+                idx = 0;
+                cnt = 0;
+                for (let i in atoms) {
+                    let atom = ic.atoms[i];
+                    if(!atom.het) ++cnt;
+                }
+
+                lastTerSerialInv = (cnt > 1) ? 1 / (cnt - 1) : 1;
+                for (let i in atoms) {
+                    let atom = ic.atoms[i];
+                    atom.color = atom.het ? me.parasCls.atomColors[atom.elem] || me.parasCls.defaultAtomColor : me.parasCls.thr().setHSL(3 / 4 *  idx++ * lastTerSerialInv, 1, 0.45);
+
+                    ic.atomPrevColors[i] = atom.color;
+                }
+                break;
             case 'chain':
                 if(ic.chainsColor !== undefined && Object.keys(ic.chainsColor).length > 0) { // mmdb input
                     this.setMmdbChainColor();

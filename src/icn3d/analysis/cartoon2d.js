@@ -102,7 +102,7 @@ class Cartoon2d {
        let thickness = ic.icn3dui.htmlCls.defaultValue; // 1
 
        let prevChain = '', prevResName = '', prevResi = 0, prevAtom, lastChain = '';
-       let x, y, z, length = 0, prevX, prevY, prevZ;
+       let x, y, z, length = 0, prevX, prevY, prevZ, angle;
        let bBegin = false, bEnd = true;
        let resName, residLabel;
 
@@ -125,19 +125,32 @@ class Cartoon2d {
            }
 
            for(let chainid in chainidHash) {
-               let extent = ic.contactCls.getExtent(chainidHash[chainid]);
+               ic.hAtom = {};
+               ic.hAtoms = me.hashUtilsCls.cloneHash(ic.chains[chainid]);
 
-               let radiusSq = (extent[1][0] - extent[0][0]) * (extent[1][0] - extent[0][0]) + (extent[1][1] - extent[0][1]) * (extent[1][1] - extent[0][1]) + (extent[1][2] - extent[0][2]) * (extent[1][2] - extent[0][2]);
-               let radius = Math.sqrt(radiusSq);
+               let center_x_y_z = ic.axesCls.setPc1Axes();
+               let center = center_x_y_z[0];
+               let rx = center_x_y_z[1].distanceTo(center_x_y_z[0]);
+               let ry = center_x_y_z[2].distanceTo(center_x_y_z[0]);
+               let angle = new THREE.Vector2(center_x_y_z[1].x - center_x_y_z[0].x, center_x_y_z[1].y - center_x_y_z[0].y).angle() * 180 / Math.PI;
+               if(angle > 180) angle -= 180;
 
-               let serial = Object.keys(chainidHash[chainid])[0];
+               let serial = Object.keys(ic.hAtoms)[0];
                let atom = ic.atoms[serial];
 
-               residLabel = chainid;
+               residLabel = chainid.substr(chainid.lastIndexOf('_') + 1); //chainid;
+               let shapeid = 0;
 
-               nodeArray.push('{"id": "' + chainid + '", "r": "' + residLabel + '", "s": "' + setName + '", "x": ' + extent[2][0].toFixed(0)
-                   + ', "y": ' + extent[2][1].toFixed(0) + ', "c": "' + atom.color.getHexString().toUpperCase() + '"}');
+               nodeArray.push('{"id": "' + chainid + '", "r": "' + residLabel + '", "s": "' + setName
+                   + '", "x": ' + center.x.toFixed(0) + ', "y": ' + center.y.toFixed(0)
+                   + ', "rx": ' + rx.toFixed(0) + ', "ry": ' + ry.toFixed(0)
+                   + ', "ang": ' + angle.toFixed(0) + ', "shape": ' + shapeid
+                   + ', "c": "' + atom.color.getHexString().toUpperCase() + '"}');
            }
+
+           ic.hAtoms = me.hashUtilsCls.cloneHash(ic.dAtoms);
+
+           ic.node_link = {"node": nodeArray, "link":linkArray, "level": "chain"};
        }
        else if(type == 'domain') {
            if(!ic.chainid2pssmid) { // mmtf data do NOT have the missing residues
@@ -170,7 +183,9 @@ class Cartoon2d {
 
                        prevAtom = atom;
 
-                       resName = me.utilsCls.residueName2Abbr(atom.resn) + atom.resi
+                       let ss = (atom.ss == 'helix') ? 'H' : 'S';
+
+                       resName = ss + atom.resi
                        // add 1_1_ to match other conventionssuch as seq_div0_1KQ2_A_50
                        residLabel = '1_1_' + resid;
 
@@ -190,7 +205,23 @@ class Cartoon2d {
                        y = 0.5 * (prevY + atom.coord.y);
                        z = 0.5 * (prevZ + atom.coord.z);
 
+                       angle = new THREE.Vector2(prevX - atom.coord.x, prevY - atom.coord.y).angle() * 180 / Math.PI;
+                       if(angle > 180) angle -= 180;
+
+//                       angle = parseInt(angle / 45) * 45; // adjust the angleslightly to make them align better
+
                        length = atom.coord.distanceTo(prevAtom.coord);
+/*
+                       let angleRad = angle / 180.0 * Math.PI;
+                       let x1 = length * 0.5 * Math.cos(angleRad) + x;
+                       let y1 = length * 0.5 * Math.sin(angleRad) + y;
+                       let x2 = 2 * x - x1;
+                       let y2 = 2 * y - y1;
+*/
+                       let x1 = prevX;
+                       let y1 = prevY;
+                       let x2 = atom.coord.x;
+                       let y2 = atom.coord.y;
 
                        bBegin = false;
                        bEnd = true;
@@ -211,8 +242,12 @@ class Cartoon2d {
                            linkArray.push('{"source": "' + prevResName + '", "target": "' + resName
                                + '", "v": ' + thickness + ', "c": "' + prevAtom.color.getHexString().toUpperCase() + '"}');
                        }
-                       nodeArray.push('{"id": "' + resName + '", "r": "' + residLabel + '", "s": "' + setName + '", "x": ' + x.toFixed(0)
-                           + ', "y": ' + y.toFixed(0) + ', "c": "' + atom.color.getHexString().toUpperCase() + '"}');
+                       nodeArray.push('{"id": "' + resName + '", "r": "' + residLabel + '", "s": "' + setName
+                            + '", "x": ' + x.toFixed(0) + ', "y": ' + y.toFixed(0)
+                            + ', "x1": ' + x1.toFixed(0) + ', "y1": ' + y1.toFixed(0)
+                            + ', "x2": ' + x2.toFixed(0) + ', "y2": ' + y2.toFixed(0)
+                            + ', "len": ' + length.toFixed(0) + ', "ang": ' + angle
+                            + ', "c": "' + atom.color.getHexString().toUpperCase() + '"}');
 
                        prevChain = atom.chain;
                        prevResName = resName;
@@ -220,9 +255,9 @@ class Cartoon2d {
                    }
                }
            } //end for
-       }
 
-       ic.node_link = {"node": nodeArray, "link":linkArray};
+           ic.node_link = {"node": nodeArray, "link":linkArray, "level": "secondary"};
+       }
     }
 
     getNodesLinksForDomains(chainid2pssmid) { let ic = this.icn3d, me = ic.icn3dui;
@@ -302,14 +337,14 @@ class Cartoon2d {
                let center = center_x_y_z[0];
                let rx = center_x_y_z[1].distanceTo(center_x_y_z[0]);
                let ry = center_x_y_z[2].distanceTo(center_x_y_z[0]);
-               let angle = new THREE.Vector2(center_x_y_z[1].x - center_x_y_z[0].x, center_x_y_z[1].y - center_x_y_z[0].y).angle() * 180 / 3.1416;
+               let angle = new THREE.Vector2(center_x_y_z[1].x - center_x_y_z[0].x, center_x_y_z[1].y - center_x_y_z[0].y).angle() * 180 / Math.PI;
                if(angle > 180) angle -= 180;
 
                let serial = Object.keys(ic.hAtoms)[0];
                let atom = ic.atoms[serial];
 
                residLabel = chainid;
-               let shapeid = 0;
+               //let shapeid = 0;
 
                if(prevDomainName !== undefined) {
                    linkArray.push('{"source": "' + prevDomainName + '", "target": "' + domainName
@@ -321,13 +356,15 @@ class Cartoon2d {
                nodeArray.push('{"id": "' + domainName + '", "r": "' + residLabel + '", "s": "' + setName
                    + '", "x": ' + center.x.toFixed(0) + ', "y": ' + center.y.toFixed(0)
                    + ', "rx": ' + rx.toFixed(0) + ', "ry": ' + ry.toFixed(0)
-                   + ', "ang": ' + angle.toFixed(0) + ', "shape": ' + shapeid
+                   + ', "ang": ' + angle.toFixed(0) //+ ', "shape": ' + shapeid
                    + ', "c": "' + atom.color.getHexString().toUpperCase() + '"}');
 
                prevDomainName = domainName;
                prevAtom = atom;
            }
        }
+
+       ic.hAtoms = me.hashUtilsCls.cloneHash(ic.dAtoms);
 
        ic.node_link = {"node": nodeArray, "link":linkArray, "level": "domain"};
 

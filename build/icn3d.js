@@ -15533,7 +15533,7 @@ var icn3d = (function (exports) {
               let bAtomCond = ( atom.resn === 'LYS' && atom.elem === "N" && atom.name !== "N")
                 || ( atom.resn === 'ARG' && (atom.name === "NH1" || atom.name === "NH2"))
                 || (atom.het && me.parasCls.cationsTrimArray.indexOf(atom.elem) !== -1)
-                || (atom.het && atom.elem === "N" && atom.bonds.length == 1);
+                || (atom.het && atom.elem === "N" && (atom.bonds.length == 1 || atom.bonds.length == 4) ); // ligand in PDB 2ACE
               bAtomCond = (ic.bOpm) ? bAtomCond && atom.resn !== 'DUM' : bAtomCond;
               if(bAtomCond) {
                   let chain_resi_atom = atom.structure + "_" + atom.chain + "_" + atom.resi + "_" + atom.name;
@@ -16239,6 +16239,7 @@ var icn3d = (function (exports) {
                resStr += linkStr + html + disulfideLinkStr + crossLinkStr + contactLinkStr + hBondLinkStr + ionicLinkStr + halogenpiLinkStr;
            }
            resStr += ']}';
+
            return resStr;
         }
 
@@ -16920,6 +16921,9 @@ var icn3d = (function (exports) {
                 let  link = linkArray[i];
                 let  node1 = name2node[link.source];
                 let  node2 = name2node[link.target];
+
+                if(!node1 || !node2) continue;
+
                 let  resid1 = node1.r.substr(4);
                 let  resid2 = node2.r.substr(4);
                 let  pos1 = node2posSet1[node1.id];
@@ -18231,6 +18235,22 @@ var icn3d = (function (exports) {
                         let atom = ic.atoms[i];
                         //atom.color = atom.het ? me.parasCls.atomColors[atom.elem] || me.parasCls.defaultAtomColor : me.parasCls.thr().setHSL(2 / 3 * (1 - idx++ * lastTerSerialInv), 1, 0.45);
                         atom.color = atom.het ? me.parasCls.atomColors[atom.elem] || me.parasCls.defaultAtomColor : me.parasCls.thr().setHSL(3 / 4 * (1 - idx++ * lastTerSerialInv), 1, 0.45);
+
+                        ic.atomPrevColors[i] = atom.color;
+                    }
+                    break;
+                case 'rainbow':
+                    idx = 0;
+                    cnt = 0;
+                    for (let i in atoms) {
+                        let atom = ic.atoms[i];
+                        if(!atom.het) ++cnt;
+                    }
+
+                    lastTerSerialInv = (cnt > 1) ? 1 / (cnt - 1) : 1;
+                    for (let i in atoms) {
+                        let atom = ic.atoms[i];
+                        atom.color = atom.het ? me.parasCls.atomColors[atom.elem] || me.parasCls.defaultAtomColor : me.parasCls.thr().setHSL(3 / 4 *  idx++ * lastTerSerialInv, 1, 0.45);
 
                         ic.atomPrevColors[i] = atom.color;
                     }
@@ -33482,10 +33502,10 @@ var icn3d = (function (exports) {
                                 let toArray = $(that).attr('to').split(',');
 
                                 // protein chains
-                                let residueid;
+                                let residueid, from, to;
                                 for(let i = 0, il = fromArray.length; i < il; ++i) {
-                                    let from = parseInt(fromArray[i]);
-                                    let to = parseInt(toArray[i]);
+                                    from = parseInt(fromArray[i]);
+                                    to = parseInt(toArray[i]);
 
                                     for(let j = from; j <= to; ++j) {
                                         residueid = chainid + '_' +(j+1).toString();
@@ -43280,6 +43300,10 @@ var icn3d = (function (exports) {
                ic.setOptionCls.setOption('color', 'spectrum');
                thisClass.setLogCmd('color spectrum', true);
             });
+            me.myEventCls.onIds("#" + me.pre + "mn4_clrRainbow", "click", function(e) { let ic = me.icn3d;
+               ic.setOptionCls.setOption('color', 'rainbow');
+               thisClass.setLogCmd('color rainbow', true);
+            });
         //    },
         //    clkMn4_clrChain: function() {
             me.myEventCls.onIds("#" + me.pre + "mn4_clrChain", "click", function(e) { let ic = me.icn3d;
@@ -45496,7 +45520,8 @@ var icn3d = (function (exports) {
             html += "<li>-</li>";
 
             if(me.cfg.cid === undefined) {
-                html += me.htmlCls.setHtmlCls.getRadio('mn4_clr', 'mn4_clrSpectrum', 'Spectrum');
+                html += me.htmlCls.setHtmlCls.getRadio('mn4_clr', 'mn4_clrSpectrum', 'Spectrum (V-R)');
+                html += me.htmlCls.setHtmlCls.getRadio('mn4_clr', 'mn4_clrRainbow', 'Rainbow (R-V)');
                 html += "<li><span style='padding-left:2.3em;'>Secondary</span>";
                 html += "<ul>";
                 html += me.htmlCls.setHtmlCls.getRadio('mn4_clr', 'mn4_clrSSGreen', 'Sheet in Green');
@@ -45603,6 +45628,7 @@ var icn3d = (function (exports) {
                 if(me.cfg.mmdbid !== undefined || me.cfg.gi !== undefined || me.cfg.blast_rep_id !== undefined || me.cfg.align !== undefined || me.cfg.chainalign !== undefined) {
                   html += me.htmlCls.setHtmlCls.getLink('mn2_2ddgm', '2D Diagram ' + me.htmlCls.wifiStr);
                 }
+
     /*
                 html += "<li><span>2D Cartoon</span>";
                 html += "<ul>";
@@ -45612,6 +45638,7 @@ var icn3d = (function (exports) {
                 html += "</ul>";
                 html += "</li>";
     */
+
                 html += me.htmlCls.setHtmlCls.getLink('definedsets2', 'Defined Sets');
 
                 html += "<li>-</li>";
@@ -50600,10 +50627,11 @@ var icn3d = (function (exports) {
             let allNodes = gDraw.append("g")
                 .attr("class", "node");
 
-            let bCartoon = (graph.level) ? true : false;
+            let bChainDomain = (graph.level) ? true : false;
+            let bSecondary = (graph.level == 'secondary') ? true : false;
 
             // append gradient
-            if(bCartoon) {
+            if(bChainDomain) {
                 for(let i = 0, il = graph.nodes.length; i < il; ++i) {
                   let gradient = "";
 
@@ -50636,22 +50664,38 @@ var icn3d = (function (exports) {
             }
 
             let scaleFactor = 0.5;
+            let node;
 
-            let node = allNodes.selectAll("ellipse")
+            if(bSecondary) {
+              node = allNodes.selectAll("path")
                 .data(graph.nodes)
-                //.attr("cx", function(d){return d.x})
-                //.attr("cy", function(d){return d.y})
-                .enter().append("ellipse")
-                .attr("rx", function(d) { return (bCartoon) ? d.rx * scaleFactor : 3; })
-                .attr("ry", function(d) { return (bCartoon) ? d.ry * scaleFactor : 3; })
-                .attr("fill", function(d) { return (bCartoon) ? "url(#" + d.id + "_g_obj)" : "#" + d.c; })
-                .attr("stroke", function(d) { return (bCartoon) ? "none" : "#" + d.c; })
+                .enter().append("path")
+                .attr("fill", function(d) { return "transparent"; })
+                .attr("stroke", function(d) { return "#" + d.c; })
                 .attr("res", function(d) { return d.r; })
                 .attr("class", "icn3d-node")
                 .call(d3v4.drag()
                     .on("start", dragstarted)
                     .on("drag", dragged)
                     .on("end", dragended));
+            }
+            else {
+              node = allNodes.selectAll("ellipse")
+                .data(graph.nodes)
+                //.attr("cx", function(d){return d.x})
+                //.attr("cy", function(d){return d.y})
+                .enter().append("ellipse")
+                .attr("rx", function(d) { return (bChainDomain) ? d.rx * scaleFactor : 3; })
+                .attr("ry", function(d) { return (bChainDomain) ? d.ry * scaleFactor : 3; })
+                .attr("fill", function(d) { return (bChainDomain) ? "url(#" + d.id + "_g_obj)" : "#" + d.c; })
+                .attr("stroke", function(d) { return (bChainDomain) ? "none" : "#" + d.c; })
+                .attr("res", function(d) { return d.r; })
+                .attr("class", "icn3d-node")
+                .call(d3v4.drag()
+                    .on("start", dragstarted)
+                    .on("drag", dragged)
+                    .on("end", dragended));
+            }
 
             let label = allNodes.selectAll("text")
                 .data(graph.nodes)
@@ -50661,12 +50705,12 @@ var icn3d = (function (exports) {
                     let pos = idStr.indexOf('.');
                     if (pos !== -1) idStr = idStr.substr(0, pos);
 
-                    if(bCartoon) idStr = idStr.substr(idStr.lastIndexOf('_') + 1);
+                    if(bChainDomain) idStr = idStr.substr(idStr.lastIndexOf('_') + 1);
 
                     return idStr;
                 })
                 //.style("stroke", function(d) { return "#" + d.c; })
-                .attr("fill", function(d) { return (bCartoon) ? "#000" : "#" + d.c; })
+                .attr("fill", function(d) { return (bChainDomain) ? "#000" : "#" + d.c; })
                 .attr("stroke", "none")
                 .attr("class", "icn3d-node-text8");
             //.style("font-size", "8px")
@@ -50778,20 +50822,60 @@ var icn3d = (function (exports) {
             //    ic.simulation.stop();
             //    ic.simulation.restart();
 
+            function getPos(d) {
+               let angleRad = d.ang / 180.0 * Math.PI;
+               let x1 = d.len * 0.5 * Math.cos(angleRad) + d.x;
+               let y1 = d.len * 0.5 * Math.sin(angleRad) + d.y;
+               let x2 = 2 * d.x - x1;
+               let y2 = 2 * d.y - y1;
+
+               return {"x1": x1, "y1": y1, "x2": x2, "y2": y2};
+           }
+
             function ticked() {
                 // update node and line positions at every step of
                 // the force ic.simulation
-                link.attr("x1", function(d) { let ret = d.source.x; return !isNaN(ret) ? ret : 0; })
-                    .attr("y1", function(d) { let ret = parentHeight - d.source.y; return !isNaN(ret) ? ret : 0; })
-                    .attr("x2", function(d) { let ret = d.target.x; return !isNaN(ret) ? ret : 0; })
-                    .attr("y2", function(d) { let ret = parentHeight - d.target.y; return !isNaN(ret) ? ret : 0; });
 
-                node.attr("cx", function(d) { let ret = d.x.toFixed(0); return !isNaN(ret) ? ret : 0; })
-                    .attr("cy", function(d) { let ret = (parentHeight - d.y).toFixed(0); return !isNaN(ret) ? ret : 0; })
-                    .attr("transform", function(d) { return (bCartoon) ? "rotate(" + d.ang + "," + d.x.toFixed(0) + "," + (parentHeight - d.y).toFixed(0) + ")" : ""; });
+                if(bSecondary) {
+                    link.attr("x1", function(d) { return getPos(d.source).x2})
+                        .attr("y1", function(d) { return parentHeight - getPos(d.source).y2})
+                        .attr("x2", function(d) { return getPos(d.target).x1})
+                        .attr("y2", function(d) { return parentHeight - getPos(d.target).y2});
 
-                label.attr("x", function(d) { let ret = (bCartoon) ? d.x : d.x + 6; return !isNaN(ret) ? ret : 0; })
-                    .attr("y", function(d) { let ret = (bCartoon) ?  parentHeight - d.y : parentHeight - (d.y + 3); return !isNaN(ret) ? ret : 0; });
+                    node.attr("d", function(d) {
+                            //Ma b+h C a+0.35*w b, a+0.65*w b, a+w b+h S a+w+0.65*w b+h*2, a+2*w b+h S a+2w+0.65*w b, a+3*w b+h
+                            //a=0,b=0
+                            //w=100,h=100
+                            //<path d="M0 100  C 35 0, 65 0, 100 100 S 165 200, 200 100 S 265 0 300 100" stroke="black" fill="transparent"/>
+
+                            let a = d.x - 0.5 * d.len, b = d.y;
+                            let w = 10, h = w;
+                            let pathStr = "M" + a + " " + parseInt(parentHeight-b-h).toString() + " C " + parseInt(a+0.35*w).toString() + " " + parseInt(parentHeight-b).toString() + ", " + parseInt(a+0.65*w).toString() + " " + parseInt(parentHeight-b).toString() + ", " + (a+w).toString() + " " + parseInt(parentHeight-b-h).toString();
+
+                            for(let i = 1, il = parseInt(d.len) / w; i < il; ++i) {
+                                let h1 = (i % 2) ? parseInt(parentHeight - (b + 2 * h)) : parseInt(parentHeight - b);
+                                let h2 = parseInt(parentHeight - (b + h));
+
+                                pathStr += " S " + parseInt(a+(i+0.65)*w).toString() + " " + h1 + ", " + parseInt(a+(i+1)*w).toString() + " " + h2;
+                            }
+
+                            return pathStr;
+                        })
+                        .attr("transform", function(d) { return "rotate(" + d.ang + "," + d.x.toFixed(0) + "," + (parentHeight - d.y).toFixed(0) + ")"; });
+                }
+                else {
+                    link.attr("x1", function(d) { let ret = d.source.x; return !isNaN(ret) ? ret : 0; })
+                        .attr("y1", function(d) { let ret = parentHeight - d.source.y; return !isNaN(ret) ? ret : 0; })
+                        .attr("x2", function(d) { let ret = d.target.x; return !isNaN(ret) ? ret : 0; })
+                        .attr("y2", function(d) { let ret = parentHeight - d.target.y; return !isNaN(ret) ? ret : 0; });
+
+                    node.attr("cx", function(d) { let ret = d.x.toFixed(0); return !isNaN(ret) ? ret : 0; })
+                        .attr("cy", function(d) { let ret = (parentHeight - d.y).toFixed(0); return !isNaN(ret) ? ret : 0; })
+                        .attr("transform", function(d) { return (bChainDomain) ? "rotate(" + d.ang + "," + d.x.toFixed(0) + "," + (parentHeight - d.y).toFixed(0) + ")" : ""; });
+                }
+
+                label.attr("x", function(d) { let ret = (bChainDomain) ? d.x : d.x + 6; return !isNaN(ret) ? ret : 0; })
+                    .attr("y", function(d) { let ret = (bChainDomain) ?  parentHeight - d.y : parentHeight - (d.y + 3); return !isNaN(ret) ? ret : 0; });
 
             }
 
@@ -52124,7 +52208,7 @@ var icn3d = (function (exports) {
            let thickness = ic.icn3dui.htmlCls.defaultValue; // 1
 
            let prevChain = '', prevResName = '', prevAtom, lastChain = '';
-           let x, y, prevX, prevY, prevZ;
+           let x, y, length = 0, prevX, prevY, prevZ, angle;
            let bBegin = false, bEnd = true;
            let resName, residLabel;
 
@@ -52147,18 +52231,32 @@ var icn3d = (function (exports) {
                }
 
                for(let chainid in chainidHash) {
-                   let extent = ic.contactCls.getExtent(chainidHash[chainid]);
+                   ic.hAtom = {};
+                   ic.hAtoms = me.hashUtilsCls.cloneHash(ic.chains[chainid]);
 
-                   (extent[1][0] - extent[0][0]) * (extent[1][0] - extent[0][0]) + (extent[1][1] - extent[0][1]) * (extent[1][1] - extent[0][1]) + (extent[1][2] - extent[0][2]) * (extent[1][2] - extent[0][2]);
+                   let center_x_y_z = ic.axesCls.setPc1Axes();
+                   let center = center_x_y_z[0];
+                   let rx = center_x_y_z[1].distanceTo(center_x_y_z[0]);
+                   let ry = center_x_y_z[2].distanceTo(center_x_y_z[0]);
+                   let angle = new THREE.Vector2(center_x_y_z[1].x - center_x_y_z[0].x, center_x_y_z[1].y - center_x_y_z[0].y).angle() * 180 / Math.PI;
+                   if(angle > 180) angle -= 180;
 
-                   let serial = Object.keys(chainidHash[chainid])[0];
+                   let serial = Object.keys(ic.hAtoms)[0];
                    let atom = ic.atoms[serial];
 
-                   residLabel = chainid;
+                   residLabel = chainid.substr(chainid.lastIndexOf('_') + 1); //chainid;
+                   let shapeid = 0;
 
-                   nodeArray.push('{"id": "' + chainid + '", "r": "' + residLabel + '", "s": "' + setName + '", "x": ' + extent[2][0].toFixed(0)
-                       + ', "y": ' + extent[2][1].toFixed(0) + ', "c": "' + atom.color.getHexString().toUpperCase() + '"}');
+                   nodeArray.push('{"id": "' + chainid + '", "r": "' + residLabel + '", "s": "' + setName
+                       + '", "x": ' + center.x.toFixed(0) + ', "y": ' + center.y.toFixed(0)
+                       + ', "rx": ' + rx.toFixed(0) + ', "ry": ' + ry.toFixed(0)
+                       + ', "ang": ' + angle.toFixed(0) + ', "shape": ' + shapeid
+                       + ', "c": "' + atom.color.getHexString().toUpperCase() + '"}');
                }
+
+               ic.hAtoms = me.hashUtilsCls.cloneHash(ic.dAtoms);
+
+               ic.node_link = {"node": nodeArray, "link":linkArray, "level": "chain"};
            }
            else if(type == 'domain') {
                if(!ic.chainid2pssmid) { // mmtf data do NOT have the missing residues
@@ -52191,7 +52289,9 @@ var icn3d = (function (exports) {
 
                            prevAtom = atom;
 
-                           resName = me.utilsCls.residueName2Abbr(atom.resn) + atom.resi;
+                           let ss = (atom.ss == 'helix') ? 'H' : 'S';
+
+                           resName = ss + atom.resi;
                            // add 1_1_ to match other conventionssuch as seq_div0_1KQ2_A_50
                            residLabel = '1_1_' + resid;
 
@@ -52211,7 +52311,23 @@ var icn3d = (function (exports) {
                            y = 0.5 * (prevY + atom.coord.y);
                            0.5 * (prevZ + atom.coord.z);
 
-                           atom.coord.distanceTo(prevAtom.coord);
+                           angle = new THREE.Vector2(prevX - atom.coord.x, prevY - atom.coord.y).angle() * 180 / Math.PI;
+                           if(angle > 180) angle -= 180;
+
+    //                       angle = parseInt(angle / 45) * 45; // adjust the angleslightly to make them align better
+
+                           length = atom.coord.distanceTo(prevAtom.coord);
+    /*
+                           let angleRad = angle / 180.0 * Math.PI;
+                           let x1 = length * 0.5 * Math.cos(angleRad) + x;
+                           let y1 = length * 0.5 * Math.sin(angleRad) + y;
+                           let x2 = 2 * x - x1;
+                           let y2 = 2 * y - y1;
+    */
+                           let x1 = prevX;
+                           let y1 = prevY;
+                           let x2 = atom.coord.x;
+                           let y2 = atom.coord.y;
 
                            bBegin = false;
                            bEnd = true;
@@ -52232,8 +52348,12 @@ var icn3d = (function (exports) {
                                linkArray.push('{"source": "' + prevResName + '", "target": "' + resName
                                    + '", "v": ' + thickness + ', "c": "' + prevAtom.color.getHexString().toUpperCase() + '"}');
                            }
-                           nodeArray.push('{"id": "' + resName + '", "r": "' + residLabel + '", "s": "' + setName + '", "x": ' + x.toFixed(0)
-                               + ', "y": ' + y.toFixed(0) + ', "c": "' + atom.color.getHexString().toUpperCase() + '"}');
+                           nodeArray.push('{"id": "' + resName + '", "r": "' + residLabel + '", "s": "' + setName
+                                + '", "x": ' + x.toFixed(0) + ', "y": ' + y.toFixed(0)
+                                + ', "x1": ' + x1.toFixed(0) + ', "y1": ' + y1.toFixed(0)
+                                + ', "x2": ' + x2.toFixed(0) + ', "y2": ' + y2.toFixed(0)
+                                + ', "len": ' + length.toFixed(0) + ', "ang": ' + angle
+                                + ', "c": "' + atom.color.getHexString().toUpperCase() + '"}');
 
                            prevChain = atom.chain;
                            prevResName = resName;
@@ -52241,9 +52361,9 @@ var icn3d = (function (exports) {
                        }
                    }
                } //end for
-           }
 
-           ic.node_link = {"node": nodeArray, "link":linkArray};
+               ic.node_link = {"node": nodeArray, "link":linkArray, "level": "secondary"};
+           }
         }
 
         getNodesLinksForDomains(chainid2pssmid) { let ic = this.icn3d, me = ic.icn3dui;
@@ -52316,14 +52436,14 @@ var icn3d = (function (exports) {
                    let center = center_x_y_z[0];
                    let rx = center_x_y_z[1].distanceTo(center_x_y_z[0]);
                    let ry = center_x_y_z[2].distanceTo(center_x_y_z[0]);
-                   let angle = new THREE.Vector2(center_x_y_z[1].x - center_x_y_z[0].x, center_x_y_z[1].y - center_x_y_z[0].y).angle() * 180 / 3.1416;
+                   let angle = new THREE.Vector2(center_x_y_z[1].x - center_x_y_z[0].x, center_x_y_z[1].y - center_x_y_z[0].y).angle() * 180 / Math.PI;
                    if(angle > 180) angle -= 180;
 
                    let serial = Object.keys(ic.hAtoms)[0];
                    let atom = ic.atoms[serial];
 
                    residLabel = chainid;
-                   let shapeid = 0;
+                   //let shapeid = 0;
 
                    if(prevDomainName !== undefined) {
                        linkArray.push('{"source": "' + prevDomainName + '", "target": "' + domainName
@@ -52335,13 +52455,15 @@ var icn3d = (function (exports) {
                    nodeArray.push('{"id": "' + domainName + '", "r": "' + residLabel + '", "s": "' + setName
                        + '", "x": ' + center.x.toFixed(0) + ', "y": ' + center.y.toFixed(0)
                        + ', "rx": ' + rx.toFixed(0) + ', "ry": ' + ry.toFixed(0)
-                       + ', "ang": ' + angle.toFixed(0) + ', "shape": ' + shapeid
+                       + ', "ang": ' + angle.toFixed(0) //+ ', "shape": ' + shapeid
                        + ', "c": "' + atom.color.getHexString().toUpperCase() + '"}');
 
                    prevDomainName = domainName;
                    prevAtom = atom;
                }
            }
+
+           ic.hAtoms = me.hashUtilsCls.cloneHash(ic.dAtoms);
 
            ic.node_link = {"node": nodeArray, "link":linkArray, "level": "domain"};
 
@@ -53504,7 +53626,7 @@ var icn3d = (function (exports) {
         //even when multiple iCn3D viewers are shown together.
         this.pre = this.cfg.divid + "_";
 
-        this.REVISION = '3.3.4';
+        this.REVISION = '3.3.5';
 
         // In nodejs, iCn3D defines "window = {navigator: {}}"
         this.bNode = (Object.keys(window).length < 2) ? true : false;

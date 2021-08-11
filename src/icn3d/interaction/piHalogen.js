@@ -246,7 +246,7 @@ class PiHalogen {
           let bAtomCond = ( atom.resn === 'LYS' && atom.elem === "N" && atom.name !== "N")
             || ( atom.resn === 'ARG' && (atom.name === "NH1" || atom.name === "NH2"))
             || (atom.het && me.parasCls.cationsTrimArray.indexOf(atom.elem) !== -1)
-            || (atom.het && atom.elem === "N" && atom.bonds.length == 1);
+            || (atom.het && atom.elem === "N" && (atom.bonds.length == 1 || atom.bonds.length == 4) ); // ligand in PDB 2ACE
           bAtomCond = (ic.bOpm) ? bAtomCond && atom.resn !== 'DUM' : bAtomCond;
           if(bAtomCond) {
               let chain_resi_atom = atom.structure + "_" + atom.chain + "_" + atom.resi + "_" + atom.name;

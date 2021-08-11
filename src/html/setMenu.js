@@ -1210,7 +1210,8 @@ class SetMenu {
         html += "<li>-</li>";
 
         if(me.cfg.cid === undefined) {
-            html += me.htmlCls.setHtmlCls.getRadio('mn4_clr', 'mn4_clrSpectrum', 'Spectrum');
+            html += me.htmlCls.setHtmlCls.getRadio('mn4_clr', 'mn4_clrSpectrum', 'Spectrum (V-R)');
+            html += me.htmlCls.setHtmlCls.getRadio('mn4_clr', 'mn4_clrRainbow', 'Rainbow (R-V)');
             html += "<li><span style='padding-left:2.3em;'>Secondary</span>";
             html += "<ul>";
             html += me.htmlCls.setHtmlCls.getRadio('mn4_clr', 'mn4_clrSSGreen', 'Sheet in Green');
@@ -1317,6 +1318,7 @@ class SetMenu {
             if(me.cfg.mmdbid !== undefined || me.cfg.gi !== undefined || me.cfg.blast_rep_id !== undefined || me.cfg.align !== undefined || me.cfg.chainalign !== undefined) {
               html += me.htmlCls.setHtmlCls.getLink('mn2_2ddgm', '2D Diagram ' + me.htmlCls.wifiStr);
             }
+
 /*
             html += "<li><span>2D Cartoon</span>";
             html += "<ul>";
@@ -1326,6 +1328,7 @@ class SetMenu {
             html += "</ul>";
             html += "</li>";
 */
+
             html += me.htmlCls.setHtmlCls.getLink('definedsets2', 'Defined Sets');
 
             html += "<li>-</li>";

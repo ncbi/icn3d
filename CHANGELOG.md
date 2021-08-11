@@ -1,4 +1,6 @@
 ## Change Log
+[icn3d-3.3.5](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.3.5.zip) was release on August 11, 2021. Added a new color method "Rainbow" to show colors ranging from red to violet. This is different from the previous "Spectrum" method, which shows colors ranging from violet to red.
+
 [icn3d-3.3.4](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.3.4.zip) was release on July 28, 2021. The license of scap for side chain prediction was waived by Dr. Barry Honig. Replaced 'var' with 'let' in iCn3D JavaScript files.
 
 [icn3d-3.3.2](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.3.2.zip) was release on July 14, 2021. Now users can choose the color gradient and show the color legend for the "Custom Color" button in the Sequences & Annotations window.
