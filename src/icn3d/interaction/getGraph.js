@@ -128,6 +128,7 @@ class GetGraph {
            resStr += linkStr + html + disulfideLinkStr + crossLinkStr + contactLinkStr + hBondLinkStr + ionicLinkStr + halogenpiLinkStr;
        }
        resStr += ']}';
+
        return resStr;
     }
 

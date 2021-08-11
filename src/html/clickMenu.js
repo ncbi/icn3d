@@ -996,6 +996,10 @@ class ClickMenu {
            ic.setOptionCls.setOption('color', 'spectrum');
            thisClass.setLogCmd('color spectrum', true);
         });
+        me.myEventCls.onIds("#" + me.pre + "mn4_clrRainbow", "click", function(e) { let ic = me.icn3d;
+           ic.setOptionCls.setOption('color', 'rainbow');
+           thisClass.setLogCmd('color rainbow', true);
+        });
     //    },
     //    clkMn4_clrChain: function() {
         me.myEventCls.onIds("#" + me.pre + "mn4_clrChain", "click", function(e) { let ic = me.icn3d;

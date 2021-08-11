@@ -337,6 +337,9 @@ class LineGraph {
             let  link = linkArray[i];
             let  node1 = name2node[link.source];
             let  node2 = name2node[link.target];
+
+            if(!node1 || !node2) continue;
+
             let  resid1 = node1.r.substr(4);
             let  resid2 = node2.r.substr(4);
             let  pos1 = node2posSet1[node1.id];

@@ -169,10 +169,11 @@ class DrawGraph {
         let allNodes = gDraw.append("g")
             .attr("class", "node");
 
-        let bCartoon = (graph.level) ? true : false;
+        let bChainDomain = (graph.level) ? true : false;
+        let bSecondary = (graph.level == 'secondary') ? true : false;
 
         // append gradient
-        if(bCartoon) {
+        if(bChainDomain) {
             for(let i = 0, il = graph.nodes.length; i < il; ++i) {
               let gradient = "";
 
@@ -207,22 +208,38 @@ class DrawGraph {
         }
 
         let scaleFactor = 0.5;
+        let node;
 
-        let node = allNodes.selectAll("ellipse")
+        if(bSecondary) {
+          node = allNodes.selectAll("path")
             .data(graph.nodes)
-            //.attr("cx", function(d){return d.x})
-            //.attr("cy", function(d){return d.y})
-            .enter().append("ellipse")
-            .attr("rx", function(d) { return (bCartoon) ? d.rx * scaleFactor : 3; })
-            .attr("ry", function(d) { return (bCartoon) ? d.ry * scaleFactor : 3; })
-            .attr("fill", function(d) { return (bCartoon) ? "url(#" + d.id + "_g_obj)" : "#" + d.c; })
-            .attr("stroke", function(d) { return (bCartoon) ? "none" : "#" + d.c; })
+            .enter().append("path")
+            .attr("fill", function(d) { return "transparent"; })
+            .attr("stroke", function(d) { return "#" + d.c; })
             .attr("res", function(d) { return d.r; })
             .attr("class", "icn3d-node")
             .call(d3v4.drag()
                 .on("start", dragstarted)
                 .on("drag", dragged)
                 .on("end", dragended));
+        }
+        else {
+          node = allNodes.selectAll("ellipse")
+            .data(graph.nodes)
+            //.attr("cx", function(d){return d.x})
+            //.attr("cy", function(d){return d.y})
+            .enter().append("ellipse")
+            .attr("rx", function(d) { return (bChainDomain) ? d.rx * scaleFactor : 3; })
+            .attr("ry", function(d) { return (bChainDomain) ? d.ry * scaleFactor : 3; })
+            .attr("fill", function(d) { return (bChainDomain) ? "url(#" + d.id + "_g_obj)" : "#" + d.c; })
+            .attr("stroke", function(d) { return (bChainDomain) ? "none" : "#" + d.c; })
+            .attr("res", function(d) { return d.r; })
+            .attr("class", "icn3d-node")
+            .call(d3v4.drag()
+                .on("start", dragstarted)
+                .on("drag", dragged)
+                .on("end", dragended));
+        }
 
         let label = allNodes.selectAll("text")
             .data(graph.nodes)
@@ -232,12 +249,12 @@ class DrawGraph {
                 let pos = idStr.indexOf('.');
                 if (pos !== -1) idStr = idStr.substr(0, pos);
 
-                if(bCartoon) idStr = idStr.substr(idStr.lastIndexOf('_') + 1);
+                if(bChainDomain) idStr = idStr.substr(idStr.lastIndexOf('_') + 1);
 
                 return idStr;
             })
             //.style("stroke", function(d) { return "#" + d.c; })
-            .attr("fill", function(d) { return (bCartoon) ? "#000" : "#" + d.c; })
+            .attr("fill", function(d) { return (bChainDomain) ? "#000" : "#" + d.c; })
             .attr("stroke", "none")
             .attr("class", "icn3d-node-text8");
         //.style("font-size", "8px")
@@ -351,20 +368,60 @@ class DrawGraph {
         //    ic.simulation.stop();
         //    ic.simulation.restart();
 
+        function getPos(d) {
+           let angleRad = d.ang / 180.0 * Math.PI;
+           let x1 = d.len * 0.5 * Math.cos(angleRad) + d.x;
+           let y1 = d.len * 0.5 * Math.sin(angleRad) + d.y;
+           let x2 = 2 * d.x - x1;
+           let y2 = 2 * d.y - y1;
+
+           return {"x1": x1, "y1": y1, "x2": x2, "y2": y2};
+       }
+
         function ticked() {
             // update node and line positions at every step of
             // the force ic.simulation
-            link.attr("x1", function(d) { let ret = d.source.x; return !isNaN(ret) ? ret : 0; })
-                .attr("y1", function(d) { let ret = parentHeight - d.source.y; return !isNaN(ret) ? ret : 0; })
-                .attr("x2", function(d) { let ret = d.target.x; return !isNaN(ret) ? ret : 0; })
-                .attr("y2", function(d) { let ret = parentHeight - d.target.y; return !isNaN(ret) ? ret : 0; });
 
-            node.attr("cx", function(d) { let ret = d.x.toFixed(0); return !isNaN(ret) ? ret : 0; })
-                .attr("cy", function(d) { let ret = (parentHeight - d.y).toFixed(0); return !isNaN(ret) ? ret : 0; })
-                .attr("transform", function(d) { return (bCartoon) ? "rotate(" + d.ang + "," + d.x.toFixed(0) + "," + (parentHeight - d.y).toFixed(0) + ")" : ""; })
+            if(bSecondary) {
+                link.attr("x1", function(d) { return getPos(d.source).x2})
+                    .attr("y1", function(d) { return parentHeight - getPos(d.source).y2})
+                    .attr("x2", function(d) { return getPos(d.target).x1})
+                    .attr("y2", function(d) { return parentHeight - getPos(d.target).y2});
 
-            label.attr("x", function(d) { let ret = (bCartoon) ? d.x : d.x + 6; return !isNaN(ret) ? ret : 0; })
-                .attr("y", function(d) { let ret = (bCartoon) ?  parentHeight - d.y : parentHeight - (d.y + 3); return !isNaN(ret) ? ret : 0; });
+                node.attr("d", function(d) {
+                        //Ma b+h C a+0.35*w b, a+0.65*w b, a+w b+h S a+w+0.65*w b+h*2, a+2*w b+h S a+2w+0.65*w b, a+3*w b+h
+                        //a=0,b=0
+                        //w=100,h=100
+                        //<path d="M0 100  C 35 0, 65 0, 100 100 S 165 200, 200 100 S 265 0 300 100" stroke="black" fill="transparent"/>
+
+                        let a = d.x - 0.5 * d.len, b = d.y;
+                        let w = 10, h = w;
+                        let pathStr = "M" + a + " " + parseInt(parentHeight-b-h).toString() + " C " + parseInt(a+0.35*w).toString() + " " + parseInt(parentHeight-b).toString() + ", " + parseInt(a+0.65*w).toString() + " " + parseInt(parentHeight-b).toString() + ", " + (a+w).toString() + " " + parseInt(parentHeight-b-h).toString();
+
+                        for(let i = 1, il = parseInt(d.len) / w; i < il; ++i) {
+                            let h1 = (i % 2) ? parseInt(parentHeight - (b + 2 * h)) : parseInt(parentHeight - b);
+                            let h2 = parseInt(parentHeight - (b + h));
+
+                            pathStr += " S " + parseInt(a+(i+0.65)*w).toString() + " " + h1 + ", " + parseInt(a+(i+1)*w).toString() + " " + h2;
+                        }
+
+                        return pathStr;
+                    })
+                    .attr("transform", function(d) { return "rotate(" + d.ang + "," + d.x.toFixed(0) + "," + (parentHeight - d.y).toFixed(0) + ")"; })
+            }
+            else {
+                link.attr("x1", function(d) { let ret = d.source.x; return !isNaN(ret) ? ret : 0; })
+                    .attr("y1", function(d) { let ret = parentHeight - d.source.y; return !isNaN(ret) ? ret : 0; })
+                    .attr("x2", function(d) { let ret = d.target.x; return !isNaN(ret) ? ret : 0; })
+                    .attr("y2", function(d) { let ret = parentHeight - d.target.y; return !isNaN(ret) ? ret : 0; });
+
+                node.attr("cx", function(d) { let ret = d.x.toFixed(0); return !isNaN(ret) ? ret : 0; })
+                    .attr("cy", function(d) { let ret = (parentHeight - d.y).toFixed(0); return !isNaN(ret) ? ret : 0; })
+                    .attr("transform", function(d) { return (bChainDomain) ? "rotate(" + d.ang + "," + d.x.toFixed(0) + "," + (parentHeight - d.y).toFixed(0) + ")" : ""; })
+            }
+
+            label.attr("x", function(d) { let ret = (bChainDomain) ? d.x : d.x + 6; return !isNaN(ret) ? ret : 0; })
+                .attr("y", function(d) { let ret = (bChainDomain) ?  parentHeight - d.y : parentHeight - (d.y + 3); return !isNaN(ret) ? ret : 0; });
 
         }
 

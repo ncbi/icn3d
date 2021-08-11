@@ -275,10 +275,10 @@ class HlSeq {
                             let toArray = $(that).attr('to').split(',');
 
                             // protein chains
-                            let residueid;
+                            let residueid, from, to;
                             for(let i = 0, il = fromArray.length; i < il; ++i) {
-                                let from = parseInt(fromArray[i]);
-                                let to = parseInt(toArray[i]);
+                                from = parseInt(fromArray[i]);
+                                to = parseInt(toArray[i]);
 
                                 for(let j = from; j <= to; ++j) {
                                     residueid = chainid + '_' +(j+1).toString();

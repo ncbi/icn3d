@@ -1,6 +1,3 @@
-// Exclude the interaction in the same chain
-// usage: node interaction2.js 6M0J E 501 Y
-
 /*
 Please install the following three packages in your directory with the file interaction.js
 npm install three
@@ -23,7 +20,7 @@ let https = require('https');
 let axios = require('axios');
 let qs = require('querystring');
 
-let utils = require('./utils.js');
+//let utils = require('./utils.js');
 
 let myArgs = process.argv.slice(2);
 if(myArgs.length != 2) {
@@ -86,7 +83,7 @@ https.get(urlMmdb, function(res1) {
           let data = res.data.data.replace(/\\n/g, '\n');
 
           // somehow one extra space was added at the beginning
-          data = data.substr(1);
+          //data = data.substr(1);
           //console.log(data);
 
           ic.delphiCls.loadCubeData(data, contour, bSurface);
@@ -94,14 +91,25 @@ https.get(urlMmdb, function(res1) {
           ic.bAjaxPhi = true;
           ic.setOptionCls.setOption('phisurface', 'phi');
 
+          // calculate surface area
+          ic.analysisCls.calculateArea();
+
           ic.drawCls.draw();
 
+          console.log("Electrostatic potential: (kt/e)");
           for(var i in ic.atoms) {
               if(i < 10) console.log(i + ': ' + ic.atoms[i].pot);
           }
+
+          console.log("Solvent accessible surface area: (angstrom square)");
+          for(var resid in ic.resid2area) {
+              console.log("resid: " + resid + ' area: ' + ic.resid2area[resid]);
+          }
+
       })
       .catch(function(err) {
-          utils.dumpError(err);
+          //utils.dumpError(err);
+          console.log(err.stack);
       });
     });
 }).on('error', function(e) {
