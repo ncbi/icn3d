@@ -15,7 +15,7 @@ class LoadPDB {
 
     // modified from iview (http://istar.cse.cuhk.edu.hk/iview/)
     //This PDB parser feeds the viewer with the content of a PDB file, pdbData.
-    loadPDB(src, pdbid, bOpm, bVector, bAddition) { let  ic = this.icn3d, me = ic.icn3dui;
+    loadPDB(src, pdbid, bOpm, bVector, bMutation, bAppend) { let  ic = this.icn3d, me = ic.icn3dui;
         let  helices = [], sheets = [];
         //ic.atoms = {}
         let  lines = src.split('\n');
@@ -24,7 +24,7 @@ class LoadPDB {
         let  residuesTmp = {} // serial -> atom
 
         let  serial, moleculeNum;
-        if(!bAddition) {
+        if(!bMutation && !bAppend) {
             ic.init();
             moleculeNum = 1;
             serial = 0;
@@ -240,7 +240,7 @@ class LoadPDB {
                 //}
 
                 let  structure = id;
-                if(id == 'stru' || bAddition) { // bAddition: side chain prediction
+                if(id == 'stru' || bMutation || bAppend) { // bMutation: side chain prediction
                     structure = (moleculeNum === 1) ? id : id + moleculeNum.toString();
                 }
 
@@ -393,7 +393,7 @@ class LoadPDB {
 
                     ic.residueId2Name[residueNum] = residue;
 
-                    if(serial !== 1) ic.residues[prevResidueNum] = residuesTmp;
+                    if(serial !== 1 && prevResidueNum !== '') ic.residues[prevResidueNum] = residuesTmp;
 
                     if(residueNum !== prevResidueNum) {
                         residuesTmp = {}
@@ -405,7 +405,7 @@ class LoadPDB {
                         prevOSerial = undefined;
 
                         // a chain could be separated in two sections
-                        if(serial !== 1) {
+                        if(serial !== 1 && prevChainNum !== '') {
                             if(ic.chains[prevChainNum] === undefined) ic.chains[prevChainNum] = {}
                             ic.chains[prevChainNum] = me.hashUtilsCls.unionHash(ic.chains[prevChainNum], chainsTmp);
                         }
@@ -463,7 +463,7 @@ class LoadPDB {
         if(ic.chains[chainNum] === undefined) ic.chains[chainNum] = {}
         ic.chains[chainNum] = me.hashUtilsCls.unionHash2Atoms(ic.chains[chainNum], chainsTmp, ic.atoms);
 
-        if(!bAddition) this.adjustSeq(chainMissingResidueArray);
+        if(!bMutation) this.adjustSeq(chainMissingResidueArray);
 
     //    ic.missingResidues = [];
     //    for(let chainid in chainMissingResidueArray) {

@@ -141,8 +141,8 @@ class PdbParser {
 
     //Atom "data" from PDB file was parsed to set up parameters for the 3D viewer. The deferred parameter
     //was resolved after the parsing so that other javascript code can be executed.
-    loadPdbData(data, pdbid, bOpm) { let  ic = this.icn3d, me = ic.icn3dui;
-        ic.loadPDBCls.loadPDB(data, pdbid, bOpm); // defined in the core library
+    loadPdbData(data, pdbid, bOpm, bAppend) { let  ic = this.icn3d, me = ic.icn3dui;
+        ic.loadPDBCls.loadPDB(data, pdbid, bOpm, undefined, undefined, bAppend); // defined in the core library
 
         if(ic.icn3dui.cfg.opmid === undefined) ic.ParserUtilsCls.transformToOpmOri(pdbid);
 

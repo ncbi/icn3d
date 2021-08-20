@@ -115,6 +115,11 @@ class SetDialog {
         html += me.htmlCls.buttonStr + "reload_pdbfile'>Load</button>";
         html += "</div>";
 
+        html += me.htmlCls.divStr + "dl_pdbfile_app' class='" + dialogClass + "'>";
+        html += "PDB File: " + me.htmlCls.inputFileStr + " id='" + me.pre + "pdbfile_app' size=8> ";
+        html += me.htmlCls.buttonStr + "reload_pdbfile_app'>Append</button>";
+        html += "</div>";
+
         html += me.htmlCls.divStr + "dl_rescolorfile' class='" + dialogClass + "'>";
         html += '<div style="width:450px;">The custom JSON file on residue colors has the following format for proteins("ALA" and "ARG") and nucleotides("G" and "A"):<br>';
         html += '{"ALA":"#C8C8C8", "ARG":"#145AFF", ..., "G":"#008000", "A":"#6080FF", ...}</div><br>';

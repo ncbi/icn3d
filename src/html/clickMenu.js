@@ -101,6 +101,10 @@ class ClickMenu {
            //me = me.setIcn3dui($(this).attr('id'));
            me.htmlCls.dialogCls.openDlg('dl_pdbfile', 'Please input PDB File');
         });
+        me.myEventCls.onIds("#" + me.pre + "mn1_pdbfile_app", "click", function(e) { let ic = me.icn3d;
+           //me = me.setIcn3dui($(this).attr('id'));
+           me.htmlCls.dialogCls.openDlg('dl_pdbfile_app', 'Please append PDB File');
+        });
     //    },
     //    clkMn1_mol2file: function() {
         me.myEventCls.onIds("#" + me.pre + "mn1_mol2file", "click", function(e) { let ic = me.icn3d;
@@ -121,6 +125,7 @@ class ClickMenu {
         me.myEventCls.onIds("#" + me.pre + "mn1_urlfile", "click", function(e) { let ic = me.icn3d;
            me.htmlCls.dialogCls.openDlg('dl_urlfile', 'Load data by URL');
         });
+
     //    },
     //    clkMn1_fixedversion: function() {
         me.myEventCls.onIds("#" + me.pre + "mn1_fixedversion", "click", function(e) { let ic = me.icn3d;
@@ -328,8 +333,11 @@ class ClickMenu {
            text += '</table><br/>';
            text += '<b>Counts by Chain for atoms with coordinates</b>:<br/><table align=center border=1 cellpadding=10 cellspacing=0><tr><th>Structure</th><th>Chain</th><th>Residue Count</th><th>Atom Count</th></tr>';
            let chainArray = Object.keys(ic.chains);
+
            for(let i = 0, il = chainArray.length; i < il; ++i) {
                let chainid = chainArray[i];
+               //if(!chainid) continue;
+
                let pos = chainid.indexOf('_');
                let structure = chainid.substr(0, pos);
                let chain = chainid.substr(pos + 1);

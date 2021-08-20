@@ -20612,7 +20612,7 @@ var icn3d = (function (exports) {
 
         // modified from iview (http://istar.cse.cuhk.edu.hk/iview/)
         //This PDB parser feeds the viewer with the content of a PDB file, pdbData.
-        loadPDB(src, pdbid, bOpm, bVector, bAddition) { let  ic = this.icn3d, me = ic.icn3dui;
+        loadPDB(src, pdbid, bOpm, bVector, bMutation, bAppend) { let  ic = this.icn3d, me = ic.icn3dui;
             let  helices = [], sheets = [];
             //ic.atoms = {}
             let  lines = src.split('\n');
@@ -20621,7 +20621,7 @@ var icn3d = (function (exports) {
             let  residuesTmp = {}; // serial -> atom
 
             let  serial, moleculeNum;
-            if(!bAddition) {
+            if(!bMutation && !bAppend) {
                 ic.init();
                 moleculeNum = 1;
                 serial = 0;
@@ -20835,7 +20835,7 @@ var icn3d = (function (exports) {
                     //}
 
                     let  structure = id;
-                    if(id == 'stru' || bAddition) { // bAddition: side chain prediction
+                    if(id == 'stru' || bMutation || bAppend) { // bMutation: side chain prediction
                         structure = (moleculeNum === 1) ? id : id + moleculeNum.toString();
                     }
 
@@ -20980,7 +20980,7 @@ var icn3d = (function (exports) {
 
                         ic.residueId2Name[residueNum] = residue;
 
-                        if(serial !== 1) ic.residues[prevResidueNum] = residuesTmp;
+                        if(serial !== 1 && prevResidueNum !== '') ic.residues[prevResidueNum] = residuesTmp;
 
                         if(residueNum !== prevResidueNum) {
                             residuesTmp = {};
@@ -20992,7 +20992,7 @@ var icn3d = (function (exports) {
                             prevOSerial = undefined;
 
                             // a chain could be separated in two sections
-                            if(serial !== 1) {
+                            if(serial !== 1 && prevChainNum !== '') {
                                 if(ic.chains[prevChainNum] === undefined) ic.chains[prevChainNum] = {};
                                 ic.chains[prevChainNum] = me.hashUtilsCls.unionHash(ic.chains[prevChainNum], chainsTmp);
                             }
@@ -21048,7 +21048,7 @@ var icn3d = (function (exports) {
             if(ic.chains[chainNum] === undefined) ic.chains[chainNum] = {};
             ic.chains[chainNum] = me.hashUtilsCls.unionHash2Atoms(ic.chains[chainNum], chainsTmp, ic.atoms);
 
-            if(!bAddition) this.adjustSeq(chainMissingResidueArray);
+            if(!bMutation) this.adjustSeq(chainMissingResidueArray);
 
         //    ic.missingResidues = [];
         //    for(let chainid in chainMissingResidueArray) {
@@ -23084,8 +23084,8 @@ var icn3d = (function (exports) {
 
         //Atom "data" from PDB file was parsed to set up parameters for the 3D viewer. The deferred parameter
         //was resolved after the parsing so that other javascript code can be executed.
-        loadPdbData(data, pdbid, bOpm) { let  ic = this.icn3d, me = ic.icn3dui;
-            ic.loadPDBCls.loadPDB(data, pdbid, bOpm); // defined in the core library
+        loadPdbData(data, pdbid, bOpm, bAppend) { let  ic = this.icn3d, me = ic.icn3dui;
+            ic.loadPDBCls.loadPDB(data, pdbid, bOpm, undefined, undefined, bAppend); // defined in the core library
 
             if(ic.icn3dui.cfg.opmid === undefined) ic.ParserUtilsCls.transformToOpmOri(pdbid);
 
@@ -43381,6 +43381,10 @@ var icn3d = (function (exports) {
                //me = me.setIcn3dui($(this).attr('id'));
                me.htmlCls.dialogCls.openDlg('dl_pdbfile', 'Please input PDB File');
             });
+            me.myEventCls.onIds("#" + me.pre + "mn1_pdbfile_app", "click", function(e) { me.icn3d;
+               //me = me.setIcn3dui($(this).attr('id'));
+               me.htmlCls.dialogCls.openDlg('dl_pdbfile_app', 'Please append PDB File');
+            });
         //    },
         //    clkMn1_mol2file: function() {
             me.myEventCls.onIds("#" + me.pre + "mn1_mol2file", "click", function(e) { me.icn3d;
@@ -43401,6 +43405,7 @@ var icn3d = (function (exports) {
             me.myEventCls.onIds("#" + me.pre + "mn1_urlfile", "click", function(e) { me.icn3d;
                me.htmlCls.dialogCls.openDlg('dl_urlfile', 'Load data by URL');
             });
+
         //    },
         //    clkMn1_fixedversion: function() {
             me.myEventCls.onIds("#" + me.pre + "mn1_fixedversion", "click", function(e) { me.icn3d;
@@ -43608,8 +43613,11 @@ var icn3d = (function (exports) {
                text += '</table><br/>';
                text += '<b>Counts by Chain for atoms with coordinates</b>:<br/><table align=center border=1 cellpadding=10 cellspacing=0><tr><th>Structure</th><th>Chain</th><th>Residue Count</th><th>Atom Count</th></tr>';
                let chainArray = Object.keys(ic.chains);
+
                for(let i = 0, il = chainArray.length; i < il; ++i) {
                    let chainid = chainArray[i];
+                   //if(!chainid) continue;
+
                    let pos = chainid.indexOf('_');
                    let structure = chainid.substr(0, pos);
                    let chain = chainid.substr(pos + 1);
@@ -45691,6 +45699,7 @@ var icn3d = (function (exports) {
             html += "<li><span>Open File</span>";
             html += "<ul>";
             html += me.htmlCls.setHtmlCls.getLink('mn1_pdbfile', 'PDB File');
+            html += me.htmlCls.setHtmlCls.getLink('mn1_pdbfile_app', 'PDB File (append)');
             html += me.htmlCls.setHtmlCls.getLink('mn1_mmciffile', 'mmCIF File');
             html += me.htmlCls.setHtmlCls.getLink('mn1_mol2file', 'Mol2 File');
             html += me.htmlCls.setHtmlCls.getLink('mn1_sdffile', 'SDF File');
@@ -47545,6 +47554,11 @@ var icn3d = (function (exports) {
             html += me.htmlCls.buttonStr + "reload_pdbfile'>Load</button>";
             html += "</div>";
 
+            html += me.htmlCls.divStr + "dl_pdbfile_app' class='" + dialogClass + "'>";
+            html += "PDB File: " + me.htmlCls.inputFileStr + " id='" + me.pre + "pdbfile_app' size=8> ";
+            html += me.htmlCls.buttonStr + "reload_pdbfile_app'>Append</button>";
+            html += "</div>";
+
             html += me.htmlCls.divStr + "dl_rescolorfile' class='" + dialogClass + "'>";
             html += '<div style="width:450px;">The custom JSON file on residue colors has the following format for proteins("ALA" and "ARG") and nucleotides("G" and "A"):<br>';
             html += '{"ALA":"#C8C8C8", "ARG":"#145AFF", ..., "G":"#008000", "A":"#6080FF", ...}</div><br>';
@@ -48371,6 +48385,42 @@ var icn3d = (function (exports) {
            me.htmlCls.clickMenuCls.setLogCmd('select ' + select + ' | name ' + commandname, true);
         }
 
+        loadPdbFile(bAppend) { let me = this.icn3dui, ic = me.icn3d;
+           let fileId = (bAppend) ? 'pdbfile_app' : 'pdbfile';
+           let commandName = (bAppend) ? 'append': 'load';
+
+           //me = ic.setIcn3dui(this.id);
+           ic.bInitial = true;
+           if(!me.cfg.notebook) dialog.dialog( "close" );
+           //close all dialog
+           if(!me.cfg.notebook) {
+               $(".ui-dialog-content").dialog("close");
+           }
+           else {
+               ic.resizeCanvasCls.closeDialogs();
+           }
+           let file = $("#" + me.pre + fileId)[0].files[0];
+           if(!file) {
+             alert("Please select a file before clicking 'Load'");
+           }
+           else {
+             me.htmlCls.setHtmlCls.fileSupport();
+             let reader = new FileReader();
+             reader.onload = function(e) {
+               let dataStr = e.target.result; // or = reader.result;
+               me.htmlCls.clickMenuCls.setLogCmd(commandName + ' pdb file ' + $("#" + me.pre + fileId).val(), false);
+               ic.molTitle = "";
+               //ic.initUI();
+               if(!bAppend) ic.init();
+               ic.bInputfile = true;
+               ic.InputfileData = dataStr;
+               ic.InputfileType = 'pdb';
+               ic.pdbParserCls.loadPdbData(dataStr, undefined, undefined, bAppend);
+             };
+             reader.readAsText(file);
+           }
+        }
+
         //Hold all functions related to click events.
         allEventFunctions() { let me = this.icn3dui, ic = me.icn3d;
             let thisClass = this;
@@ -49031,39 +49081,20 @@ var icn3d = (function (exports) {
             });
         //    },
         //    clickReload_pdbfile: function() {
-            me.myEventCls.onIds("#" + me.pre + "reload_pdbfile", "click", function(e) { let ic = me.icn3d;
+            me.myEventCls.onIds("#" + me.pre + "reload_pdbfile", "click", function(e) { me.icn3d;
                e.preventDefault();
-               //me = ic.setIcn3dui(this.id);
-               ic.bInitial = true;
-               if(!me.cfg.notebook) dialog.dialog( "close" );
-               //close all dialog
-               if(!me.cfg.notebook) {
-                   $(".ui-dialog-content").dialog("close");
-               }
-               else {
-                   ic.resizeCanvasCls.closeDialogs();
-               }
-               let file = $("#" + me.pre + "pdbfile")[0].files[0];
-               if(!file) {
-                 alert("Please select a file before clicking 'Load'");
-               }
-               else {
-                 me.htmlCls.setHtmlCls.fileSupport();
-                 let reader = new FileReader();
-                 reader.onload = function(e) {
-                   let dataStr = e.target.result; // or = reader.result;
-                   me.htmlCls.clickMenuCls.setLogCmd('load pdb file ' + $("#" + me.pre + "pdbfile").val(), false);
-                   ic.molTitle = "";
-                   //ic.initUI();
-                   ic.init();
-                   ic.bInputfile = true;
-                   ic.InputfileData = dataStr;
-                   ic.InputfileType = 'pdb';
-                   ic.pdbParserCls.loadPdbData(dataStr);
-                 };
-                 reader.readAsText(file);
-               }
+
+               let bAppend = false;
+               thisClass.loadPdbFile(bAppend);
             });
+
+            me.myEventCls.onIds("#" + me.pre + "reload_pdbfile_app", "click", function(e) { me.icn3d;
+               e.preventDefault();
+
+               let bAppend = true;
+               thisClass.loadPdbFile(bAppend);
+            });
+
         //    },
         //    clickReload_mol2file: function() {
             me.myEventCls.onIds("#" + me.pre + "reload_mol2file", "click", function(e) { let ic = me.icn3d;
