@@ -226,6 +226,9 @@ class iCn3D {
     // scale all labels
     this.labelScale = 1.0; //0.3; //1.0;
 
+    this.resizeRatioX = 1;
+    this.resizeRatioY = 1;
+
     // Impostor shaders
     // This is a flag to turn on the rendering of spheres and cylinders using shaders instead of geometries.
     // It's true by default if the browser supports the EXT_frag_depth extension.

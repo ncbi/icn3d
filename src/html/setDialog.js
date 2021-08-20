@@ -33,7 +33,33 @@ class SetDialog {
         let dialogClass =(me.cfg.notebook) ? 'icn3d-hidden' : '';
         html += me.htmlCls.divStr + "alldialogs' class='" + divClass + " icn3d-dialog'>";
 
-        html += me.htmlCls.divStr + "dl_2ddgm' class='" + dialogClass + " icn3d-dl_2ddgm'>";
+        html += me.htmlCls.divStr + "dl_2ddgm' class='" + dialogClass + " icn3d-dl_2ddgm' style='background-color:white'>";
+        html += "</div>";
+
+        html += me.htmlCls.divStr + "dl_2dctn' class='" + dialogClass + " icn3d-dl_2dctn' style='background-color:white'>";
+
+        me.svgid_ct = me.pre + "icn3d_cartoon";
+
+        let buttonStrTmp = '<button class="icn3d-commandTitle" style="-webkit-appearance:button; height:24px;background-color:#DDD;" id="';
+        let tmpStr = 'icn3d-node-text';
+        html += me.htmlCls.divNowrapStr + "Dynamically generated for selected residues. <br>Nodes can be dragged or clicked.</div>";
+        html += me.htmlCls.divNowrapStr + buttonStrTmp + me.svgid_ct + '_svg">SVG</button>' + me.htmlCls.space2;
+        html += buttonStrTmp + me.svgid_ct + '_png">PNG</button>' + me.htmlCls.space2;
+        html += buttonStrTmp + me.svgid_ct + '_json">JSON</button><br>';
+        html += "<b>Label</b>: <select id='" + me.svgid_ct + "_label'>";
+        html += me.htmlCls.optionStr + "'" + tmpStr + "0'>No</option>";
+        html += me.htmlCls.optionStr + "'" + tmpStr + "4'>4px</option>";
+        html += me.htmlCls.optionStr + "'" + tmpStr + "8' selected>8px</option>";
+        html += me.htmlCls.optionStr + "'" + tmpStr + "12'>12px</option>";
+        html += me.htmlCls.optionStr + "'" + tmpStr + "16'>16px</option>";
+        html += me.htmlCls.optionStr + "'" + tmpStr + "24'>24px</option>";
+        html += me.htmlCls.optionStr + "'" + tmpStr + "32'>32px</option>";
+        html += "</select>";
+        html += "</div>";
+
+        html += "<svg id='" + me.svgid_ct + "' viewBox='" + "0,0," + me.htmlCls.width2d + "," + me.htmlCls.width2d + "'>";
+        html += "</svg>";
+
         html += "</div>";
 
     //    if(me.cfg.align !== undefined || me.cfg.chainalign !== undefined || ic.bRealign || ic.bSymd) {
@@ -416,7 +442,7 @@ class SetDialog {
 
         html += "<div style='text-indent:1.1em'>" + me.htmlCls.buttonStr + "hbondScatterplot'>2D Interaction Map</button> to show interactions as map</div><br>";
 
-        let tmpStr = ': </td><td><input style="margin-left:-12px" type="text" id="';
+        tmpStr = ': </td><td><input style="margin-left:-12px" type="text" id="';
 
         html += "<div style='text-indent:1.1em'>" + me.htmlCls.buttonStr + "hbondGraph'>2D Graph(Force-Directed)</button> to show interactions with strength parameters in 0-200:</div>";
         html += '<div style="text-indent:1.1em"><table><tr><td>Helix or Sheet' + tmpStr + me.pre + 'dist_ss" size="4" value="100"></td>';
@@ -465,7 +491,7 @@ class SetDialog {
 
         html += "</div><br>";
 
-        let buttonStrTmp = '<button class="icn3d-commandTitle" style="-webkit-appearance:button; height:24px;background-color:#DDD;" id="';
+        //let buttonStrTmp = '<button class="icn3d-commandTitle" style="-webkit-appearance:button; height:24px;background-color:#DDD;" id="';
 
         me.linegraphid = me.pre + 'linegraph';
         html += me.htmlCls.divNowrapStr + buttonStrTmp + me.linegraphid + '_svg">SVG</button>' + me.htmlCls.space2;

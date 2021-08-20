@@ -509,8 +509,11 @@ class ParserUtils {
 
         ic.cnt = cnt;
 
-        ic.maxD = ic.pmax.distanceTo(ic.pmin);
-        ic.center = psum.multiplyScalar(1.0 / ic.cnt);
+        //ic.maxD = ic.pmax.distanceTo(ic.pmin);
+        //ic.center = psum.multiplyScalar(1.0 / ic.cnt);
+        ic.center = this.getGeoCenter(ic.pmin, ic.pmax);
+
+        ic.maxD = this.getStructureSize(ic.atoms, ic.pmin, ic.pmax, ic.center);
 
         if(ic.maxD < 5) ic.maxD = 5;
         ic.oriMaxD = ic.maxD;
@@ -518,7 +521,7 @@ class ParserUtils {
     }
 
     //Update the dropdown menu and show the structure by calling the function "draw()".
-    renderStructure() { let  ic = this.icn3d, me = ic.icn3dui;
+    renderStructure() { let ic = this.icn3d, me = ic.icn3dui;
       if(ic.bInitial) {
           //$.extend(ic.opts, ic.opts);
           if(ic.bOpm &&(ic.icn3dui.cfg.align !== undefined || ic.icn3dui.cfg.chainalign !== undefined)) { // show membrane
@@ -614,6 +617,31 @@ class ParserUtils {
           if($("#" + ic.pre + "atomsCustom").length > 0) $("#" + ic.pre + "atomsCustom")[0].blur();
           ic.bInitial = false;
       }, 0);
+    }
+
+    getMassCenter(psum, cnt) { let ic = this.icn3d, me = ic.icn3dui;
+        return psum.multiplyScalar(1.0 / cnt);
+    }
+
+    getGeoCenter(pmin, pmax) { let ic = this.icn3d, me = ic.icn3dui;
+        return pmin.clone().add(pmax).multiplyScalar(0.5);
+    }
+
+    getStructureSize(atoms, pmin, pmax, center) { let ic = this.icn3d, me = ic.icn3dui;
+        let maxD = 0;
+        for(let i in atoms) {
+            let coord = ic.atoms[i].coord;
+            if(Math.round(pmin.x) == Math.round(coord.x) || Math.round(pmin.y) == Math.round(coord.y)
+              || Math.round(pmin.z) == Math.round(coord.z) || Math.round(pmax.x) == Math.round(coord.x)
+              || Math.round(pmax.y) == Math.round(coord.y) || Math.round(pmax.z) == Math.round(coord.z)) {
+                let dist = coord.distanceTo(center) * 2;
+                if(dist > maxD) {
+                    maxD = dist;
+                }
+            }
+        }
+
+        return maxD;
     }
 }
 

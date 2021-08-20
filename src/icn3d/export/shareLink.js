@@ -14,12 +14,14 @@ class ShareLink {
 
     //Generate a URL to capture the current state and open it in a new window. Basically the state
     //file (the comand history) is concatenated in the URL to show the current state.
-    shareLink(bPngHtml) {var ic = this.icn3d, me = ic.icn3dui;
+    shareLink(bPngHtml, bPngOnly) {var ic = this.icn3d, me = ic.icn3dui;
            let url = this.shareLinkUrl();
            let bTooLong =(url.length > 4000 || url.indexOf('http') !== 0) ? true : false;
            if(bPngHtml) url += "&random=" + parseInt(Math.random() * 1000); // generate a new shorten URL and thus image name everytime
            //var inputid =(ic.inputid) ? ic.inputid : "custom";
            let inputid = Object.keys(ic.structures).join('_');
+           if(inputid == 'stru' && ic.filename) inputid = ic.filename;
+
            if(!bPngHtml) {
                if(ic.bInputfile && !ic.bInputUrlfile) {
                    alert("Share Link does NOT work when the data is from custom files. Please save 'iCn3D PNG Image' in the File menu and open it in iCn3D.");
@@ -32,8 +34,8 @@ class ShareLink {
                ic.icn3dui.htmlCls.clickMenuCls.setLogCmd("share link: " + url, false);
            }
            else {
-               if(ic.bInputfile || bTooLong) {
-                   ic.saveFileCls.saveFile(inputid + '_image_icn3d_loadable.png', 'png');
+               if(bPngOnly || ic.bInputfile || bTooLong) {
+                   ic.saveFileCls.saveFile(inputid + '_icn3d_loadable.png', 'png');
                    return;
                }
            }
@@ -68,7 +70,7 @@ class ShareLink {
                     }
                 }
                 if(bPngHtml && data.shortLink === undefined) {
-                    ic.saveFileCls.saveFile(inputid + '_image_icn3d_loadable.png', 'png');
+                    ic.saveFileCls.saveFile(inputid + '_icn3d_loadable.png', 'png');
                 }
                 //shorturl: https://icn3d.page.link/NvbAh1Vmiwc4bgX87
                 let urlArray = shorturl.split('page.link/');

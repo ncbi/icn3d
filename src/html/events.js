@@ -1139,6 +1139,35 @@ class Events {
 
             ic.saveFileCls.saveFile(ic.inputid + "_force_directed_graph.json", "text", [graphStr2]);
         });
+
+        $(document).on("click", "#" + me.svgid_ct + "_svg", function(e) { let ic = me.icn3d;
+           e.preventDefault();
+           //if(!me.cfg.notebook) dialog.dialog( "close" );
+           ic.saveFileCls.saveSvg(me.svgid_ct, ic.inputid + "_cartoon.svg");
+        });
+        $(document).on("click", "#" + me.svgid_ct + "_png", function(e) { let ic = me.icn3d;
+           e.preventDefault();
+           //if(!me.cfg.notebook) dialog.dialog( "close" );
+           let width = $("#" + me.pre + "dl_2dctn").width();
+           let height = $("#" + me.pre + "dl_2dctn").height();
+           ic.saveFileCls.savePng(me.svgid_ct, ic.inputid + "_cartoon.png", width, height);
+        });
+        $(document).on("click", "#" + me.svgid_ct + "_json", function(e) { let ic = me.icn3d;
+            e.preventDefault();
+            //if(!me.cfg.notebook) dialog.dialog( "close" );
+            //let graphStr2 = ic.graphStr.substr(0, ic.graphStr.lastIndexOf('}'));
+
+            ic.saveFileCls.saveFile(ic.inputid + "_cartoon.json", "text", [ic.graphStr]);
+        });
+        $(document).on("change", "#" + me.svgid_ct + "_label", function(e) { let ic = me.icn3d;
+           e.preventDefault();
+           //if(!me.cfg.notebook) dialog.dialog( "close" );
+           let className = $("#" + me.svgid_ct + "_label").val();
+           $("#" + me.svgid_ct + " text").removeClass();
+           $("#" + me.svgid_ct + " text").addClass(className);
+           me.htmlCls.clickMenuCls.setLogCmd("cartoon label " + className, true);
+        });
+
         me.myEventCls.onIds("#" + me.linegraphid + "_svg", "click", function(e) { let ic = me.icn3d;
            e.preventDefault();
            //if(!me.cfg.notebook) dialog.dialog( "close" );

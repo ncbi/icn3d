@@ -91,21 +91,12 @@ https.get(urlMmdb, function(res1) {
           ic.bAjaxPhi = true;
           ic.setOptionCls.setOption('phisurface', 'phi');
 
-          // calculate surface area
-          ic.analysisCls.calculateArea();
-
           ic.drawCls.draw();
 
           console.log("Electrostatic potential: (kt/e)");
           for(var i in ic.atoms) {
               if(i < 10) console.log(i + ': ' + ic.atoms[i].pot);
           }
-
-          console.log("Solvent accessible surface area: (angstrom square)");
-          for(var resid in ic.resid2area) {
-              console.log("resid: " + resid + ' area: ' + ic.resid2area[resid]);
-          }
-
       })
       .catch(function(err) {
           //utils.dumpError(err);

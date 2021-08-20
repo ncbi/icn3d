@@ -27,8 +27,8 @@ class Diagram2d {
 
         mmdbid = mmdbid.substr(0, 4);
 
-        // reduce the size from 300 to 150
-        let factor = 0.5;
+        // reduce the size from 300 to 200 (150)
+        let factor = 0.667;
 
         // set molid2chain
         let molid2chain = {}, molid2color = {}, molid2name = {}, chainid2molid = {}
@@ -158,7 +158,7 @@ class Diagram2d {
 
         html += "<b>" + mmdbid.toUpperCase() + "</b><br/>";
 
-        html += "<svg viewBox='0,0,150,150'>";
+        html += "<svg viewBox='0,0," + me.htmlCls.width2d + "," + me.htmlCls.width2d + "'>";
         let strokecolor = '#000000';
         let strokewidth = '1';
         let linestrokewidth = '2';

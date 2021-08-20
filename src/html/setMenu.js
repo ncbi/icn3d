@@ -472,7 +472,8 @@ class SetMenu {
 
         html += "<li><span>iCn3D PNG Image</span>";
         html += "<ul>";
-        html += me.htmlCls.setHtmlCls.getLink('mn1_exportCanvas', 'Original Size');
+        html += me.htmlCls.setHtmlCls.getLink('mn1_exportCanvas', 'Original Size & HTML');
+        html += me.htmlCls.setHtmlCls.getLink('mn1_exportCanvas1', 'Original Size');
         html += me.htmlCls.setHtmlCls.getLink('mn1_exportCanvas2', '2X Large');
         html += me.htmlCls.setHtmlCls.getLink('mn1_exportCanvas4', '4X Large');
         html += me.htmlCls.setHtmlCls.getLink('mn1_exportCanvas8', '8X Large');
@@ -1006,7 +1007,7 @@ class SetMenu {
 
         html += "<ul class='icn3d-mn-item'>";
 
-        html += "<li><span style='padding-left:2.3em;'>Unicolor</span>";
+        html += "<li><span style='padding-left:1.5em;'>Unicolor</span>";
         html += "<ul>";
 
         html += "<li><span>Red</span>";
@@ -1212,7 +1213,7 @@ class SetMenu {
         if(me.cfg.cid === undefined) {
             html += me.htmlCls.setHtmlCls.getRadio('mn4_clr', 'mn4_clrSpectrum', 'Spectrum (V-R)');
             html += me.htmlCls.setHtmlCls.getRadio('mn4_clr', 'mn4_clrRainbow', 'Rainbow (R-V)');
-            html += "<li><span style='padding-left:2.3em;'>Secondary</span>";
+            html += "<li><span style='padding-left:1.5em;'>Secondary</span>";
             html += "<ul>";
             html += me.htmlCls.setHtmlCls.getRadio('mn4_clr', 'mn4_clrSSGreen', 'Sheet in Green');
             html += me.htmlCls.setHtmlCls.getRadio('mn4_clr', 'mn4_clrSSYellow', 'Sheet in Yellow');
@@ -1227,7 +1228,7 @@ class SetMenu {
 
             html += me.htmlCls.setHtmlCls.getRadio('mn4_clr', 'mn4_clrHydrophobic', 'Wimley-White<br><span style="padding-left:1.5em;">Hydrophobicity</span>');
 
-            html += "<li><span style='padding-left:2.3em;'>B-factor</span>";
+            html += "<li><span style='padding-left:1.5em;'>B-factor</span>";
             html += "<ul>";
             html += me.htmlCls.setHtmlCls.getRadio('mn4_clr', 'mn4_clrBfactor', 'Original');
             html += me.htmlCls.setHtmlCls.getRadio('mn4_clr', 'mn4_clrBfactorNorm', 'Percentile');
@@ -1248,7 +1249,7 @@ class SetMenu {
 
             //html += me.htmlCls.setHtmlCls.getRadio('mn4_clr', 'mn4_clrResidue', 'Residue');
 
-            html += "<li><span style='padding-left:2.3em;'>Residue</span>";
+            html += "<li><span style='padding-left:1.5em;'>Residue</span>";
             html += "<ul>";
             html += me.htmlCls.setHtmlCls.getRadio('mn4_clr', 'mn4_clrResidue', 'Default');
             html += me.htmlCls.setHtmlCls.getRadio('mn4_clr', 'mn4_clrResidueCustom', 'Custom');
@@ -1319,15 +1320,13 @@ class SetMenu {
               html += me.htmlCls.setHtmlCls.getLink('mn2_2ddgm', '2D Diagram ' + me.htmlCls.wifiStr);
             }
 
-/*
             html += "<li><span>2D Cartoon</span>";
             html += "<ul>";
-            html += me.htmlCls.setHtmlCls.getLink('2ddgm_chain', 'Chain Level');
-            html += me.htmlCls.setHtmlCls.getLink('2ddgm_domain', 'Domain Level');
-            html += me.htmlCls.setHtmlCls.getLink('2ddgm_secondary', 'Helix/Sheet Level');
+            html += me.htmlCls.setHtmlCls.getLink('2dctn_chain', 'Chain Level');
+            html += me.htmlCls.setHtmlCls.getLink('2dctn_domain', 'Domain Level');
+            html += me.htmlCls.setHtmlCls.getLink('2dctn_secondary', 'Helix/Sheet Level');
             html += "</ul>";
             html += "</li>";
-*/
 
             html += me.htmlCls.setHtmlCls.getLink('definedsets2', 'Defined Sets');
 

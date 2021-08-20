@@ -30,6 +30,8 @@ import {ShowAnno} from '../annotations/showAnno.js';
 import {HlUpdate} from '../highlight/hlUpdate.js';
 import {ResizeCanvas} from '../transform/resizeCanvas.js';
 
+import {Cartoon2d} from '../analysis/cartoon2d.js';
+
 class LoadScript {
     constructor(icn3d) {
         this.icn3d = icn3d;
@@ -497,11 +499,11 @@ class LoadScript {
 
             return;
           }
-          else if(ic.commands[i].trim().indexOf('cartoon 2d') == 0) {
+          else if(ic.commands[i].trim().indexOf('cartoon 2d domain') == 0) {
             let  strArray = ic.commands[i].split("|||");
             let  command = strArray[0].trim();
 
-            if(ic.bD3 === undefined) {
+            if(!ic.chainid2pssmid) {
                 $.when(thisClass.applyCommandCartoon2d(command)).then(function() {
                     thisClass.execCommandsBase(i + 1, end, steps);
                 });

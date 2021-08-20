@@ -78,6 +78,7 @@ class LoadPDB {
                 // if(bOpm === undefined || !bOpm) ic.bSecondaryStructure = true;
 
                 id = line.substr(62, 4).trim();
+                if(id == '') id = "stru"; //ic.filename.substr(0, 4);
 
                 ic.molTitle = '';
 
@@ -626,8 +627,11 @@ class LoadPDB {
 
         ic.cnt = cnt;
 
-        ic.maxD = ic.pmax.distanceTo(ic.pmin);
-        ic.center = psum.multiplyScalar(1.0 / ic.cnt);
+        //ic.maxD = ic.pmax.distanceTo(ic.pmin);
+        //ic.center = psum.multiplyScalar(1.0 / ic.cnt);
+        ic.center = ic.ParserUtilsCls.getGeoCenter(ic.pmin, ic.pmax);
+
+        ic.maxD = ic.ParserUtilsCls.getStructureSize(ic.atoms, ic.pmin, ic.pmax, ic.center);
 
         if (ic.maxD < 5) ic.maxD = 5;
 

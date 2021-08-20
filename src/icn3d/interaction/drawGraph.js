@@ -9,58 +9,55 @@ class DrawGraph {
         this.icn3d = icn3d;
     }
 
-    drawGraph(jsonStr, divid) { let ic = this.icn3d, me = ic.icn3dui;
+    drawGraph(jsonStr, divid) { var ic = this.icn3d, me = ic.icn3dui;
         //function createV4SelectableForceDirectedGraph(svg, graph) {
         // if both d3v3 and d3v4 are loaded, we'll assume
         // that d3v4 is called d3v4, otherwise we'll assume
         // that d3v4 is the default (d3)
-        //if (typeof d3v4 == 'undefined') {
-            let d3v4 = d3;
-        //}
+        if (typeof d3v4 == 'undefined')
+            var d3v4 = d3;
 
         //if(ic.bRender !== true) return;
 
-        let graph = JSON.parse(jsonStr);
+        var graph = JSON.parse(jsonStr);
 
         //var width = +svg.attr("width"),
         //    height = +svg.attr("height");
 
-        let width = $("#" + divid).width();
-        let height = $("#" + divid).height();
+        var width = $("#" + divid).width();
+        var height = $("#" + divid).height();
 
-        let widthView = (!isNaN(width)) ? width * 1.0 : 300;
-        let heightView = (!isNaN(height)) ? height * 1.0 : 300;
+        var widthView = (!isNaN(width)) ? width * 1.0 : 300;
+        var heightView = (!isNaN(height)) ? height * 1.0 : 300;
 
-        let parentWidth = width;
-        let parentHeight = height;
+        var parentWidth = width;
+        var parentHeight = height;
 
-        //    let svg = d3v4.select('svg')
+        //    var svg = d3v4.select('svg')
         //    .attr('width', parentWidth)
         //    .attr('height', parentHeight)
 
-        let svg = d3.select("#" + me.svgid)
-            .attr("xmlns:xl", "http://www.w3.org/1999/xlink")
-            .attr("xmlns", "http://www.w3.org/2000/svg")
-            .attr("xmlns:dc", "http://purl.org/dc/elements/1.1/")
+        var svg = d3.select("#" + me.svgid)
             .attr("width", width)
             .attr("height", height)
             .attr("viewBox", "0,0," + widthView + "," + heightView);
 
+        // remove any previous graphs
         svg.selectAll('.g-main').remove();
         // added
         //$("#" + ic.icn3dui.svgid).empty();
 
-        let gMain = svg.append('g')
+        var gMain = svg.append('g')
             .classed('g-main', true);
 
-        let rect = gMain.append('rect')
+        var rect = gMain.append('rect')
             .attr('width', parentWidth)
             .attr('height', parentHeight)
             .style('fill', '#FFF')
 
-        let gDraw = gMain.append('g');
+        var gDraw = gMain.append('g');
 
-        let zoom = d3v4.zoom()
+        var zoom = d3v4.zoom()
             .on('zoom', zoomed)
 
         gMain.call(zoom);
@@ -78,17 +75,17 @@ class DrawGraph {
         }
 
         // clean graph.links
-        let linkArray = [];
+        var linkArray = [];
 
-        let nodeHash = {};
-        for (let i = 0, il = graph.nodes.length; i < il; ++i) {
-            let node = graph.nodes[i];
+        var nodeHash = {};
+        for (var i = 0, il = graph.nodes.length; i < il; ++i) {
+            var node = graph.nodes[i];
             nodeHash[node.id] = 1;
         }
 
-        let bError = false;
-        for (let i = 0, il = graph.links.length; i < il; ++i) {
-            let link = graph.links[i];
+        var bError = false;
+        for (var i = 0, il = graph.links.length; i < il; ++i) {
+            var link = graph.links[i];
 
             if (nodeHash.hasOwnProperty(link.source) && nodeHash.hasOwnProperty(link.target)) {
                 linkArray.push(link);
@@ -108,9 +105,8 @@ class DrawGraph {
 
         graph.links = linkArray;
 
-        let nodes = {};
-        let i;
-
+        var nodes = {};
+        var i;
         for (i = 0; i < graph.nodes.length; i++) {
             // enlarge the distance when no force
             if (!me.htmlCls.force) {
@@ -123,7 +119,7 @@ class DrawGraph {
 
         // remove the internal edges when no force
         if (me.htmlCls.hideedges && !me.htmlCls.force) {
-            let links2 = [];
+            var links2 = [];
             for (i = 0; i < graph.links.length; i++) {
                 if (graph.links[i].c != 'FFF') {
                     links2.push(graph.links[i]);
@@ -135,10 +131,10 @@ class DrawGraph {
 
         // the brush needs to go before the nodes so that it doesn't
         // get called when the mouse is over a node
-        let gBrushHolder = gDraw.append('g');
-        let gBrush = null;
+        var gBrushHolder = gDraw.append('g');
+        var gBrush = null;
 
-        let link = gDraw.append("g")
+        var link = gDraw.append("g")
             .attr("class", "link")
             .selectAll("line")
             .data(graph.links)
@@ -162,59 +158,19 @@ class DrawGraph {
                     d.v == me.htmlCls.halogenValue || d.v == me.htmlCls.picationValue ||
                     d.v == me.htmlCls.pistackingValue) return "2px";
                 else if (d.v == me.htmlCls.ssbondValue || d.v == me.htmlCls.clbondValue) return "3px";
-                //else return d.v + "px";
-                else return "2px"; // default width
+                else return d.v + "px";
             });
 
-        let allNodes = gDraw.append("g")
+        var allNodes = gDraw.append("g")
             .attr("class", "node");
 
-        let bChainDomain = (graph.level) ? true : false;
-        let bSecondary = (graph.level == 'secondary') ? true : false;
-
-        // append gradient
-        if(bChainDomain) {
-            for(let i = 0, il = graph.nodes.length; i < il; ++i) {
-              let gradient = "";
-
-              let node = graph.nodes[i];
-
-              let cx = node.x, cy = parentHeight - node.y;
-              let rx = node.rx, ry = node.ry;
-              let tx = cx + 0.3 * rx, ty = cy - 0.3 * ry;
-              let scale = 1.7 * (rx + ry) * 0.5;
-
-/*
-              //gradient += "<defs>";
-              gradient += "<radialGradient cx='0' cy='0' r='1' id='" + node.id + "_g' gradientUnits='userSpaceOnUse'>";
-              gradient += "  <stop offset='0' stop-color='#FFFFFF'/>";
-              gradient += "  <stop offset='.5' stop-color='#" + node.c + "'/>";
-              gradient += "  <stop offset='1' stop-color='black'/>";
-              gradient += "</radialGradient>";
-              gradient += "<radialGradient id='" + node.id + "_g_obj' xl:href='#" + node.id
-                + "_g' gradientTransform='translate(" + tx.toFixed(0) + " " + ty.toFixed(0)
-                + ") scale(" + scale.toFixed(0) + ")'/>";
-              //gradient += "</defs>\n";
-*/
-
-              gradient += "<linearGradient id='" + node.id + "_g_obj' x1='0%' y1='0%' x2='100%' y2='0%'>";
-              gradient += "  <stop offset='0%' style='stop-color:rgb(255,255,255);stop-opacity:1' />";
-              gradient += "  <stop offset='100%' style='stop-color:#" + node.c + ";stop-opacity:1' />";
-              gradient += "</linearGradient>";
-
-              //allNodes.appendHTML(gradient);
-              allNodes.append("defs").html(gradient);
-            }
-        }
-
-        let scaleFactor = 0.5;
-        let node;
-
-        if(bSecondary) {
-          node = allNodes.selectAll("path")
+        var node = allNodes.selectAll("circle")
             .data(graph.nodes)
-            .enter().append("path")
-            .attr("fill", function(d) { return "transparent"; })
+            //.attr("cx", function(d){return d.x})
+            //.attr("cy", function(d){return d.y})
+            .enter().append("circle")
+            .attr("r", 3) //5)
+            .attr("fill", function(d) { return "#" + d.c; })
             .attr("stroke", function(d) { return "#" + d.c; })
             .attr("res", function(d) { return d.r; })
             .attr("class", "icn3d-node")
@@ -222,39 +178,18 @@ class DrawGraph {
                 .on("start", dragstarted)
                 .on("drag", dragged)
                 .on("end", dragended));
-        }
-        else {
-          node = allNodes.selectAll("ellipse")
-            .data(graph.nodes)
-            //.attr("cx", function(d){return d.x})
-            //.attr("cy", function(d){return d.y})
-            .enter().append("ellipse")
-            .attr("rx", function(d) { return (bChainDomain) ? d.rx * scaleFactor : 3; })
-            .attr("ry", function(d) { return (bChainDomain) ? d.ry * scaleFactor : 3; })
-            .attr("fill", function(d) { return (bChainDomain) ? "url(#" + d.id + "_g_obj)" : "#" + d.c; })
-            .attr("stroke", function(d) { return (bChainDomain) ? "none" : "#" + d.c; })
-            .attr("res", function(d) { return d.r; })
-            .attr("class", "icn3d-node")
-            .call(d3v4.drag()
-                .on("start", dragstarted)
-                .on("drag", dragged)
-                .on("end", dragended));
-        }
 
-        let label = allNodes.selectAll("text")
+        var label = allNodes.selectAll("text")
             .data(graph.nodes)
             .enter().append("text")
             .text(function(d) {
-                let idStr = d.id;
-                let pos = idStr.indexOf('.');
+                var idStr = d.id;
+                var pos = idStr.indexOf('.');
                 if (pos !== -1) idStr = idStr.substr(0, pos);
-
-                if(bChainDomain) idStr = idStr.substr(idStr.lastIndexOf('_') + 1);
-
                 return idStr;
             })
             //.style("stroke", function(d) { return "#" + d.c; })
-            .attr("fill", function(d) { return (bChainDomain) ? "#000" : "#" + d.c; })
+            .attr("fill", function(d) { return "#" + d.c; })
             .attr("stroke", "none")
             .attr("class", "icn3d-node-text8");
         //.style("font-size", "8px")
@@ -266,18 +201,18 @@ class DrawGraph {
         node.append("title")
             .text(function(d) { return d.id; });
 
-        let dist_ss = parseInt($("#" + ic.pre + "dist_ss").val());
-        let dist_coil = parseInt($("#" + ic.pre + "dist_coil").val());
-        let dist_hbond = parseInt($("#" + ic.pre + "dist_hbond").val());
-        let dist_inter = parseInt($("#" + ic.pre + "dist_inter").val());
-        let dist_ssbond = parseInt($("#" + ic.pre + "dist_ssbond").val());
-        let dist_ionic = parseInt($("#" + ic.pre + "dist_ionic").val());
+        var dist_ss = parseInt($("#" + ic.pre + "dist_ss").val());
+        var dist_coil = parseInt($("#" + ic.pre + "dist_coil").val());
+        var dist_hbond = parseInt($("#" + ic.pre + "dist_hbond").val());
+        var dist_inter = parseInt($("#" + ic.pre + "dist_inter").val());
+        var dist_ssbond = parseInt($("#" + ic.pre + "dist_ssbond").val());
+        var dist_ionic = parseInt($("#" + ic.pre + "dist_ionic").val());
 
-        let dist_halogen = parseInt($("#" + ic.pre + "dist_halogen").val());
-        let dist_pication = parseInt($("#" + ic.pre + "dist_pication").val());
-        let dist_pistacking = parseInt($("#" + ic.pre + "dist_pistacking").val());
+        var dist_halogen = parseInt($("#" + ic.pre + "dist_halogen").val());
+        var dist_pication = parseInt($("#" + ic.pre + "dist_pication").val());
+        var dist_pistacking = parseInt($("#" + ic.pre + "dist_pistacking").val());
 
-        ic.simulation = d3v4.forceSimulation()
+        me.htmlCls.simulation = d3v4.forceSimulation()
             .force("link", d3v4.forceLink()
                 .id(function(d) { return d.id; })
                 .distance(function(d) {
@@ -320,14 +255,14 @@ class DrawGraph {
             .force("center", d3v4.forceCenter(parentWidth / 2, parentHeight / 2));
 
         if (me.htmlCls.force) {
-            ic.simulation.force("charge", d3v4.forceManyBody());
+            me.htmlCls.simulation.force("charge", d3v4.forceManyBody());
         }
 
-        //ic.simulation.force("x", d3v4.forceX(parentWidth/2))
+        //me.htmlCls.simulation.force("x", d3v4.forceX(parentWidth/2))
         //    .force("y", d3v4.forceY(parentHeight/2));
 
         if (me.htmlCls.force == 1) { // x-axis
-            ic.simulation.force("x", d3v4.forceX(function(d) {
+            me.htmlCls.simulation.force("x", d3v4.forceX(function(d) {
                     if (d.s == 'a') {
                         return parentWidth / 4;
                     } else {
@@ -337,7 +272,7 @@ class DrawGraph {
                 .force("y", d3v4.forceY(parentHeight / 2).strength(function(d) { return 0.02; }));
 
         } else if (me.htmlCls.force == 2) { // y-axis
-            ic.simulation.force("y", d3v4.forceY(function(d) {
+            me.htmlCls.simulation.force("y", d3v4.forceY(function(d) {
                     if (d.s == 'a') {
                         return parentHeight * 0.75;
                     } else {
@@ -346,7 +281,7 @@ class DrawGraph {
                 }).strength(function(d) { return 0.4; }))
                 .force("x", d3v4.forceX(parentWidth / 2).strength(function(d) { return 0.02; }));
         } else if (me.htmlCls.force == 3) { // circle
-            ic.simulation.force("r", d3v4.forceRadial(function(d) {
+            me.htmlCls.simulation.force("r", d3v4.forceRadial(function(d) {
                 if (d.s == 'a') {
                     return 200;
                 } else {
@@ -358,77 +293,36 @@ class DrawGraph {
             // do nothing
         }
 
-        ic.simulation
+        me.htmlCls.simulation
             .nodes(graph.nodes)
             .on("tick", ticked);
 
-        ic.simulation.force("link")
+        me.htmlCls.simulation.force("link")
             .links(graph.links);
 
-        //    ic.simulation.stop();
-        //    ic.simulation.restart();
-
-        function getPos(d) {
-           let angleRad = d.ang / 180.0 * Math.PI;
-           let x1 = d.len * 0.5 * Math.cos(angleRad) + d.x;
-           let y1 = d.len * 0.5 * Math.sin(angleRad) + d.y;
-           let x2 = 2 * d.x - x1;
-           let y2 = 2 * d.y - y1;
-
-           return {"x1": x1, "y1": y1, "x2": x2, "y2": y2};
-       }
+        //    me.htmlCls.simulation.stop();
+        //    me.htmlCls.simulation.restart();
 
         function ticked() {
             // update node and line positions at every step of
-            // the force ic.simulation
+            // the force me.htmlCls.simulation
+            link.attr("x1", function(d) { var ret = d.source.x; return !isNaN(ret) ? ret : 0; })
+                .attr("y1", function(d) { var ret = parentHeight - d.source.y; return !isNaN(ret) ? ret : 0; })
+                .attr("x2", function(d) { var ret = d.target.x; return !isNaN(ret) ? ret : 0; })
+                .attr("y2", function(d) { var ret = parentHeight - d.target.y; return !isNaN(ret) ? ret : 0; });
 
-            if(bSecondary) {
-                link.attr("x1", function(d) { return getPos(d.source).x2})
-                    .attr("y1", function(d) { return parentHeight - getPos(d.source).y2})
-                    .attr("x2", function(d) { return getPos(d.target).x1})
-                    .attr("y2", function(d) { return parentHeight - getPos(d.target).y2});
+            node.attr("cx", function(d) { var ret = d.x; return !isNaN(ret) ? ret : 0; })
+                .attr("cy", function(d) { var ret = parentHeight - d.y; return !isNaN(ret) ? ret : 0; });
 
-                node.attr("d", function(d) {
-                        //Ma b+h C a+0.35*w b, a+0.65*w b, a+w b+h S a+w+0.65*w b+h*2, a+2*w b+h S a+2w+0.65*w b, a+3*w b+h
-                        //a=0,b=0
-                        //w=100,h=100
-                        //<path d="M0 100  C 35 0, 65 0, 100 100 S 165 200, 200 100 S 265 0 300 100" stroke="black" fill="transparent"/>
-
-                        let a = d.x - 0.5 * d.len, b = d.y;
-                        let w = 10, h = w;
-                        let pathStr = "M" + a + " " + parseInt(parentHeight-b-h).toString() + " C " + parseInt(a+0.35*w).toString() + " " + parseInt(parentHeight-b).toString() + ", " + parseInt(a+0.65*w).toString() + " " + parseInt(parentHeight-b).toString() + ", " + (a+w).toString() + " " + parseInt(parentHeight-b-h).toString();
-
-                        for(let i = 1, il = parseInt(d.len) / w; i < il; ++i) {
-                            let h1 = (i % 2) ? parseInt(parentHeight - (b + 2 * h)) : parseInt(parentHeight - b);
-                            let h2 = parseInt(parentHeight - (b + h));
-
-                            pathStr += " S " + parseInt(a+(i+0.65)*w).toString() + " " + h1 + ", " + parseInt(a+(i+1)*w).toString() + " " + h2;
-                        }
-
-                        return pathStr;
-                    })
-                    .attr("transform", function(d) { return "rotate(" + d.ang + "," + d.x.toFixed(0) + "," + (parentHeight - d.y).toFixed(0) + ")"; })
-            }
-            else {
-                link.attr("x1", function(d) { let ret = d.source.x; return !isNaN(ret) ? ret : 0; })
-                    .attr("y1", function(d) { let ret = parentHeight - d.source.y; return !isNaN(ret) ? ret : 0; })
-                    .attr("x2", function(d) { let ret = d.target.x; return !isNaN(ret) ? ret : 0; })
-                    .attr("y2", function(d) { let ret = parentHeight - d.target.y; return !isNaN(ret) ? ret : 0; });
-
-                node.attr("cx", function(d) { let ret = d.x.toFixed(0); return !isNaN(ret) ? ret : 0; })
-                    .attr("cy", function(d) { let ret = (parentHeight - d.y).toFixed(0); return !isNaN(ret) ? ret : 0; })
-                    .attr("transform", function(d) { return (bChainDomain) ? "rotate(" + d.ang + "," + d.x.toFixed(0) + "," + (parentHeight - d.y).toFixed(0) + ")" : ""; })
-            }
-
-            label.attr("x", function(d) { let ret = (bChainDomain) ? d.x : d.x + 6; return !isNaN(ret) ? ret : 0; })
-                .attr("y", function(d) { let ret = (bChainDomain) ?  parentHeight - d.y : parentHeight - (d.y + 3); return !isNaN(ret) ? ret : 0; });
+            label.attr("x", function(d) { var ret = d.x + 6; return !isNaN(ret) ? ret : 0; })
+                .attr("y", function(d) { var ret = parentHeight - (d.y + 3); return !isNaN(ret) ? ret : 0; });
 
         }
 
-        let brushMode = false;
-        let brushing = false;
+        var brushMode = false;
+        var brushing = false;
 
-        let brush = d3v4.brush()
+        var brush = d3v4.brush()
             .on("start", brushstarted)
             .on("brush", brushed)
             .on("end", brushended);
@@ -455,7 +349,7 @@ class DrawGraph {
             if (!d3v4.event.sourceEvent) return;
             if (!d3v4.event.selection) return;
 
-            let extent = d3v4.event.selection;
+            var extent = d3v4.event.selection;
 
             node.classed("selected", function(d) {
                 return d.selected = d.previouslySelected ^
@@ -483,7 +377,7 @@ class DrawGraph {
         d3v4.select('body').on('keydown', keydown);
         d3v4.select('body').on('keyup', keyup);
 
-        let ctrlKey;
+        var ctrlKey;
 
         function keydown() {
             ctrlKey = d3v4.event.ctrlKey;
@@ -518,7 +412,7 @@ class DrawGraph {
         }
 
         function dragstarted(d) {
-            if (!d3v4.event.active) ic.simulation.alphaTarget(0.9).restart();
+            if (!d3v4.event.active) me.htmlCls.simulation.alphaTarget(0.9).restart();
 
             if (!d.selected && !ctrlKey) {
                 // if this node isn't selected, then we have to unselect every other node
@@ -548,7 +442,7 @@ class DrawGraph {
         }
 
         function dragended(d) {
-            if (!d3v4.event.active) ic.simulation.alphaTarget(0);
+            if (!d3v4.event.active) me.htmlCls.simulation.alphaTarget(0);
             d.fx = null;
             d.fy = null;
             node.filter(function(d) { return d.selected; })

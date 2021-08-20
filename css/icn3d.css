@@ -83,7 +83,7 @@ button, select, input { font-size: 10px; }
 .icn3d-ncons {}
 .icn3d-nalign {} 
 
-.icn3d-node {cursor:pointer!important; } 
+.icn3d-node, .icn3d-ctnode {cursor:pointer!important; } 
 .icn3d-interaction {cursor:pointer!important; } 
 
 /* force-directed graph node text */
@@ -236,7 +236,7 @@ input:checked + .icn3d-slider:before {
 }
 
 .icn3d-rad-text, .icn3d-color-rad-text {
-    padding-left: 2em;
+    padding-left: 1.2em;
 }
 
 .icn3d-popup {display:none; position:absolute; z-index:9999; top:-1000px; left:-1000px; background-color:#DDDDDD; text-align:center; width:80px; height:18px; padding:3px;}

@@ -210,18 +210,23 @@ class SaveFile {
             if(me.utilsCls.isIE()) {
                 let blob = canvas.msToBlob();
 
-                saveAs(blob, filename);
+                if(blob) {
+                    saveAs(blob, filename);
 
-                canvas.remove();
+                    canvas.remove();
+                }
 
                 return;
             }
             else {
                 canvas.toBlob(function(data) {
                     let blob = data;
-                    saveAs(blob, filename);
 
-                    canvas.remove();
+                    if(blob) {
+                        saveAs(blob, filename);
+
+                        canvas.remove();
+                    }
 
                     return;
                 });

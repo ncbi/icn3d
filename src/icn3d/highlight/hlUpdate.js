@@ -84,13 +84,14 @@ class HlUpdate {
           $("#" + ic.pre + "dl_2ddgm circle").attr('stroke', '#000000');
           $("#" + ic.pre + "dl_2ddgm polygon").attr('stroke', '#000000');
 
-          $("#" + ic.pre + "dl_2ddgm svg line").attr('stroke', '#000000');
-
           $("#" + ic.pre + "dl_2ddgm rect").attr('stroke-width', 1);
           $("#" + ic.pre + "dl_2ddgm circle").attr('stroke-width', 1);
           $("#" + ic.pre + "dl_2ddgm polygon").attr('stroke-width', 1);
 
-          $("#" + ic.pre + "dl_2ddgm line").attr('stroke-width', 1);
+          if($("#" + ic.pre + "dl_2ddgm circle").length > 0) {
+              $("#" + ic.pre + "dl_2ddgm svg line").attr('stroke', '#000000');
+              $("#" + ic.pre + "dl_2ddgm line").attr('stroke-width', 1);
+          }
     }
 
     //Remove the selection in the menu of defined sets.
@@ -219,6 +220,13 @@ class HlUpdate {
               if(target !== undefined) {
                     ic.diagram2dCls.highlightNode('circle', target, base, ratio);
                     $(target).attr('fill', color);
+              }
+
+              target = $("#" + ic.pre + "dl_2ddgm g[chainid=" + chainArray2d[i] + "] ellipse[class='icn3d-hlnode']");
+              //base = $("#" + ic.pre + "dl_2ddgm g[chainid=" + chainArray2d[i] + "] ellipse[class='icn3d-basenode']");
+              if(target !== undefined) {
+                    ic.diagram2dCls.highlightNode('ellipse', target, undefined, ratio);
+                    //$(target).attr('fill', color);
               }
 
               target = $("#" + ic.pre + "dl_2ddgm g[chainid=" + chainArray2d[i] + "] polygon[class='icn3d-hlnode']");
