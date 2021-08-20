@@ -401,6 +401,7 @@ class SetMenu {
         html += "<li><span>Open File</span>";
         html += "<ul>";
         html += me.htmlCls.setHtmlCls.getLink('mn1_pdbfile', 'PDB File');
+        html += me.htmlCls.setHtmlCls.getLink('mn1_pdbfile_app', 'PDB File (append)');
         html += me.htmlCls.setHtmlCls.getLink('mn1_mmciffile', 'mmCIF File');
         html += me.htmlCls.setHtmlCls.getLink('mn1_mol2file', 'Mol2 File');
         html += me.htmlCls.setHtmlCls.getLink('mn1_sdffile', 'SDF File');

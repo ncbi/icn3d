@@ -77,6 +77,42 @@ class Events {
        me.htmlCls.clickMenuCls.setLogCmd('select ' + select + ' | name ' + commandname, true);
     }
 
+    loadPdbFile(bAppend) { let me = this.icn3dui, ic = me.icn3d;
+       let fileId = (bAppend) ? 'pdbfile_app' : 'pdbfile';
+       let commandName = (bAppend) ? 'append': 'load';
+
+       //me = ic.setIcn3dui(this.id);
+       ic.bInitial = true;
+       if(!me.cfg.notebook) dialog.dialog( "close" );
+       //close all dialog
+       if(!me.cfg.notebook) {
+           $(".ui-dialog-content").dialog("close");
+       }
+       else {
+           ic.resizeCanvasCls.closeDialogs();
+       }
+       let file = $("#" + me.pre + fileId)[0].files[0];
+       if(!file) {
+         alert("Please select a file before clicking 'Load'");
+       }
+       else {
+         me.htmlCls.setHtmlCls.fileSupport();
+         let reader = new FileReader();
+         reader.onload = function(e) {
+           let dataStr = e.target.result; // or = reader.result;
+           me.htmlCls.clickMenuCls.setLogCmd(commandName + ' pdb file ' + $("#" + me.pre + fileId).val(), false);
+           ic.molTitle = "";
+           //ic.initUI();
+           if(!bAppend) ic.init();
+           ic.bInputfile = true;
+           ic.InputfileData = dataStr;
+           ic.InputfileType = 'pdb';
+           ic.pdbParserCls.loadPdbData(dataStr, undefined, undefined, bAppend);
+         }
+         reader.readAsText(file);
+       }
+    }
+
     //Hold all functions related to click events.
     allEventFunctions() { let me = this.icn3dui, ic = me.icn3d;
         let thisClass = this;
@@ -739,37 +775,18 @@ class Events {
     //    clickReload_pdbfile: function() {
         me.myEventCls.onIds("#" + me.pre + "reload_pdbfile", "click", function(e) { let ic = me.icn3d;
            e.preventDefault();
-           //me = ic.setIcn3dui(this.id);
-           ic.bInitial = true;
-           if(!me.cfg.notebook) dialog.dialog( "close" );
-           //close all dialog
-           if(!me.cfg.notebook) {
-               $(".ui-dialog-content").dialog("close");
-           }
-           else {
-               ic.resizeCanvasCls.closeDialogs();
-           }
-           let file = $("#" + me.pre + "pdbfile")[0].files[0];
-           if(!file) {
-             alert("Please select a file before clicking 'Load'");
-           }
-           else {
-             me.htmlCls.setHtmlCls.fileSupport();
-             let reader = new FileReader();
-             reader.onload = function(e) {
-               let dataStr = e.target.result; // or = reader.result;
-               me.htmlCls.clickMenuCls.setLogCmd('load pdb file ' + $("#" + me.pre + "pdbfile").val(), false);
-               ic.molTitle = "";
-               //ic.initUI();
-               ic.init();
-               ic.bInputfile = true;
-               ic.InputfileData = dataStr;
-               ic.InputfileType = 'pdb';
-               ic.pdbParserCls.loadPdbData(dataStr);
-             }
-             reader.readAsText(file);
-           }
+
+           let bAppend = false;
+           thisClass.loadPdbFile(bAppend);
         });
+
+        me.myEventCls.onIds("#" + me.pre + "reload_pdbfile_app", "click", function(e) { let ic = me.icn3d;
+           e.preventDefault();
+
+           let bAppend = true;
+           thisClass.loadPdbFile(bAppend);
+        });
+
     //    },
     //    clickReload_mol2file: function() {
         me.myEventCls.onIds("#" + me.pre + "reload_mol2file", "click", function(e) { let ic = me.icn3d;
