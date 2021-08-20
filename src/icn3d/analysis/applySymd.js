@@ -150,7 +150,8 @@ class ApplySymd {
                     ++cnt;
                 }
 
-                let center = psum.multiplyScalar(1.0 / cnt);
+                //let center = psum.multiplyScalar(1.0 / cnt);
+                let center = ic.ParserUtilsCls.getMassCenter(psum, cnt);
 
                 let line = new THREE.Line3(start, end);
 

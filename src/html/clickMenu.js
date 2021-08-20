@@ -293,26 +293,31 @@ class ClickMenu {
     //    },
     //    clkMn1_exportCanvas: function() {
         me.myEventCls.onIds(["#" + me.pre + "mn1_exportCanvas", "#" + me.pre + "saveimage"], "click", function(e) { let ic = me.icn3d;
-           thisClass.setLogCmd("export canvas", false);
+           thisClass.setLogCmd("export canvas", true);
            //var file_pref =(ic.inputid) ? ic.inputid : "custom";
            //ic.saveFileCls.saveFile(file_pref + '_image_icn3d_loadable.png', 'png');
            let bPngHtml = true;
            ic.shareLinkCls.shareLink(bPngHtml);
         });
+        me.myEventCls.onIds("#" + me.pre + "mn1_exportCanvas1", "click", function(e) { let ic = me.icn3d;
+           thisClass.setLogCmd("export canvas 1", true);
+           ic.scaleFactor = 1;
+           ic.shareLinkCls.shareLink(true, true);
+        });
         me.myEventCls.onIds("#" + me.pre + "mn1_exportCanvas2", "click", function(e) { let ic = me.icn3d;
-           thisClass.setLogCmd("export canvas 2", false);
+           thisClass.setLogCmd("export canvas 2", true);
            ic.scaleFactor = 2;
-           ic.shareLinkCls.shareLink(true);
+           ic.shareLinkCls.shareLink(true, true);
         });
         me.myEventCls.onIds("#" + me.pre + "mn1_exportCanvas4", "click", function(e) { let ic = me.icn3d;
-           thisClass.setLogCmd("export canvas 4", false);
+           thisClass.setLogCmd("export canvas 4", true);
            ic.scaleFactor = 4;
-           ic.shareLinkCls.shareLink(true);
+           ic.shareLinkCls.shareLink(true, true);
         });
         me.myEventCls.onIds("#" + me.pre + "mn1_exportCanvas8", "click", function(e) { let ic = me.icn3d;
-           thisClass.setLogCmd("export canvas 8", false);
+           thisClass.setLogCmd("export canvas 8", true);
            ic.scaleFactor = 8;
-           ic.shareLinkCls.shareLink(true);
+           ic.shareLinkCls.shareLink(true, true);
         });
     //    },
     //    clkMn1_exportCounts: function() {

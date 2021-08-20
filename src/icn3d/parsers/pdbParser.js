@@ -75,6 +75,16 @@ class PdbParser {
     downloadUrl(url, type) { let  ic = this.icn3d, me = ic.icn3dui;
        let  thisClass = this;
 
+       let pos = url.lastIndexOf('/');
+       if(pos != -1) {
+           let posDot = url.lastIndexOf('.');
+           ic.filename = url.substr(pos + 1, posDot - pos - 1);
+       }
+       else {
+           let posDot = url.lastIndexOf('.');
+           ic.filename = url.substr(0, posDot);
+       }
+
        let  dataType = "text";
 
        ic.bCid = undefined;

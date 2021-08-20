@@ -103,9 +103,13 @@ class ApplyCenter {
             ++cnt;
         }
 
-        let maxD = pmax.distanceTo(pmin);
+        //let maxD = pmax.distanceTo(pmin);
 
-        return {"center": psum.multiplyScalar(1.0 / cnt), "maxD": maxD, "pmin": pmin, "pmax": pmax};
+        //let center = psum.multiplyScalar(1.0 / cnt);
+        let center = ic.ParserUtilsCls.getGeoCenter(pmin, pmax);
+        let maxD = ic.ParserUtilsCls.getStructureSize(atoms, pmin, pmax, center);
+
+        return {"center": center, "maxD": maxD, "pmin": pmin, "pmax": pmax};
     }
 
     // modified from iview (http://istar.cse.cuhk.edu.hk/iview/)

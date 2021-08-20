@@ -357,7 +357,7 @@ class ViewInterPairs {
            $("#" + me.pre + "force").hide();
        }
 
-       if(ic.bD3 === undefined) {
+       if(ic.bD3 === undefined && !bCartoon2d) {
            //var url = "https://d3js.org/d3.v4.min.js";
            let  url = "https://www.ncbi.nlm.nih.gov/Structure/icn3d/script/d3v4-force-all.min.js";
            $.ajax({
@@ -371,9 +371,15 @@ class ViewInterPairs {
 
                    $("#" + ic.icn3dui.svgid).empty();
                    ic.icn3dui.htmlCls.dialogCls.openDlg('dl_graph', 'Force-directed graph');
-                   ic.drawGraphCls.drawGraph(graphStr, ic.pre + 'dl_graph');
 
-                   if(bCartoon2d) thisClass.removeForce();
+                   if(bCartoon2d) {
+                       //ic.drawGraphCls.drawGraphCartoon(graphStr, ic.pre + 'dl_graph');
+                   }
+                   else {
+                       ic.drawGraphCls.drawGraph(graphStr, ic.pre + 'dl_graph');
+                   }
+
+                   //if(bCartoon2d) thisClass.removeForce();
 
                    if(deferred !== undefined) deferred.resolve();
               },
@@ -392,12 +398,19 @@ class ViewInterPairs {
        else {
            $("#" + ic.icn3dui.svgid).empty();
            ic.icn3dui.htmlCls.dialogCls.openDlg('dl_graph', 'Force-directed graph');
-           ic.drawGraphCls.drawGraph(graphStr, ic.pre + 'dl_graph');
 
-           if(bCartoon2d) this.removeForce();
+           if(bCartoon2d) {
+               //ic.drawGraphCls.drawGraphCartoon(graphStr, ic.pre + 'dl_graph');
+           }
+           else {
+               ic.drawGraphCls.drawGraph(graphStr, ic.pre + 'dl_graph');
+           }
+
+           //if(bCartoon2d) this.removeForce();
        }
     }
 
+/*
     removeForce() { let  ic = this.icn3d, me = ic.icn3dui;
        setTimeout(function(){
            me.htmlCls.force = 0;
@@ -405,6 +418,7 @@ class ViewInterPairs {
            ic.getGraphCls.handleForce();
        }, 300);
     }
+*/
 
     clearInteractions() { let  ic = this.icn3d, me = ic.icn3dui;
         ic.lines['hbond'] = [];

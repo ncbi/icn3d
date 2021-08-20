@@ -24,7 +24,7 @@ let qs = require('querystring');
 
 let myArgs = process.argv.slice(2);
 if(myArgs.length != 2) {
-    console.log("Usage: node delphipot.js [PDB ID] [comma-separated Chain IDs]");
+    console.log("Usage: node surfacearea.js [PDB ID] [comma-separated Chain IDs]");
     return;
 }
 
@@ -58,50 +58,15 @@ https.get(urlMmdb, function(res1) {
           ic.hAtoms = me.hashUtilsCls.unionHash(ic.hAtoms, ic.chains[chainid]);
       }
 
-      let pdbstr = ic.delphiCls.getPdbStr(true);
+      // calculate surface area
+      ic.analysisCls.calculateArea();
 
-      ic.loadPhiFrom = 'delphi';
+      ic.drawCls.draw();
 
-      let url = "https://www.ncbi.nlm.nih.gov/Structure/delphi/delphi.fcgi";
-      let gsize = 65;
-      let salt = 0.15;
-      let contour = 3;
-      let bSurface = true;
-
-      ic.phisurftype = 22;
-
-      let dataObj = {'pdb2phi': pdbstr, 'gsize': gsize, 'salt': salt, 'pdbid': pdbid, 'cube': 1, 'json': 1}
-
-      //https://attacomsian.com/blog/node-http-post-request
-      // 'https' didn't work for posting PDB data, use 'application/x-www-form-urlencoded'
-      const config = { headers: { 'Content-Type': 'application/x-www-form-urlencoded' } };
-
-      axios.post(url, qs.stringify(dataObj), config)
-      .then(function(res) {
-          //console.log(`Status: ${res.status}`);
-          //console.log('Body: ', res.data);
-          let data = res.data.data.replace(/\\n/g, '\n');
-
-          // somehow one extra space was added at the beginning
-          //data = data.substr(1);
-          //console.log(data);
-
-          ic.delphiCls.loadCubeData(data, contour, bSurface);
-
-          ic.bAjaxPhi = true;
-          ic.setOptionCls.setOption('phisurface', 'phi');
-
-          ic.drawCls.draw();
-
-          console.log("Electrostatic potential: (kt/e)");
-          for(var i in ic.atoms) {
-              if(i < 10) console.log(i + ': ' + ic.atoms[i].pot);
-          }
-      })
-      .catch(function(err) {
-          //utils.dumpError(err);
-          console.log(err.stack);
-      });
+      console.log("Solvent accessible surface area: (angstrom square)");
+      for(var resid in ic.resid2area) {
+          console.log("resid: " + resid + ' area: ' + ic.resid2area[resid]);
+      }
     });
 }).on('error', function(e) {
     console.error("Error: " + pdbid + " has no MMDB data...");

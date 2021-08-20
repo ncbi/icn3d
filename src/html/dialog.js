@@ -70,11 +70,12 @@ class Dialog {
         let bTable = $('#' + me.pre + 'dl_interactionsorted').hasClass('ui-dialog-content'); // initialized
         let bAlignmentInit = $('#' + me.pre + 'dl_alignment').hasClass('ui-dialog-content'); // initialized
         let bTwoddgmInit = $('#' + me.pre + 'dl_2ddgm').hasClass('ui-dialog-content'); // initialized
+        let bTwodctnInit = $('#' + me.pre + 'dl_2dctn').hasClass('ui-dialog-content'); // initialized
         let bSetsInit = $('#' + me.pre + 'dl_definedsets').hasClass('ui-dialog-content'); // initialized
 
         status.bSelectannotationsInit2 = false, status.bGraph2 = false, status.bLineGraph2 = false;
         status.bScatterplot2 = false, status.bTable2 = false, status.bAlignmentInit2 = false;
-        status.bTwoddgmInit2 = false, status.bSetsInit2 = false;
+        status.bTwoddgmInit2 = false, status.bTwodctnInit2 = false, status.bSetsInit2 = false;
 
         if(bSelectannotationsInit) status.bSelectannotationsInit2 = $('#' + me.pre + 'dl_selectannotations').dialog( 'isOpen' );
         if(bGraph) status.bGraph2 = $('#' + me.pre + 'dl_graph').dialog( 'isOpen' );
@@ -84,6 +85,7 @@ class Dialog {
         if(bTable) status.bTable2 = $('#' + me.pre + 'dl_interactionsorted').dialog( 'isOpen' );
         if(bAlignmentInit) status.bAlignmentInit2 = $('#' + me.pre + 'dl_alignment').dialog( 'isOpen' );
         if(bTwoddgmInit) status.bTwoddgmInit2 = $('#' + me.pre + 'dl_2ddgm').dialog( 'isOpen' );
+        if(bTwodctnInit) status.bTwodctnInit2 = $('#' + me.pre + 'dl_2dctn').dialog( 'isOpen' );
         if(bSetsInit) status.bSetsInit2 = $('#' + me.pre + 'dl_definedsets').dialog( 'isOpen' );
 
         return status;
@@ -94,7 +96,7 @@ class Dialog {
 
         let thisClass = this;
 
-        let twoddgmWidth = 170;
+        let twoddgmWidth = me.htmlCls.width2d + 20;
 
         //ic.resizeCanvasCls.resizeCanvas(me.htmlCls.WIDTH - dialogWidth - me.htmlCls.LESSWIDTH, me.htmlCls.HEIGHT - me.htmlCls.LESSHEIGHT - me.htmlCls.EXTRAHEIGHT, bForceResize);
         ic.resizeCanvasCls.resizeCanvas(me.htmlCls.WIDTH - dialogWidth, me.htmlCls.HEIGHT, bForceResize);
@@ -132,12 +134,13 @@ class Dialog {
                 ||(id === me.pre + 'dl_scatterplot' &&(!status.bSelectannotationsInit2) && !status.bGraph2 && !status.bAlignmentInit2 && !status.bTable2 && !status.bLineGraph2 && !status.bContactmap2)
                 ||(id === me.pre + 'dl_contactmap' &&(!status.bSelectannotationsInit2) && !status.bGraph2 && !status.bAlignmentInit2 && !status.bTable2 && !status.bLineGraph2 && !status.bScatterplot2)
                 ) {
-                  if(status.bTwoddgmInit2 || status.bSetsInit2) {
+                  if(status.bTwoddgmInit2 || status.bTwodctnInit2 || status.bSetsInit2) {
                       //ic.resizeCanvasCls.resizeCanvas(me.htmlCls.WIDTH - me.htmlCls.LESSWIDTH - twoddgmWidth, me.htmlCls.HEIGHT - me.htmlCls.LESSHEIGHT - me.htmlCls.EXTRAHEIGHT, true);
                       let canvasWidth = me.utilsCls.isMobile() ? me.htmlCls.WIDTH : me.htmlCls.WIDTH - twoddgmWidth;
                       ic.resizeCanvasCls.resizeCanvas(canvasWidth, me.htmlCls.HEIGHT, true);
 
                       if(status.bTwoddgmInit2) thisClass.openDlg2Ddgm(me.pre + 'dl_2ddgm', undefined, status.bSetsInit2);
+                      if(status.bTwodctnInit2) thisClass.openDlg2Ddgm(me.pre + 'dl_2dctn', undefined, status.bSetsInit2);
                       if(status.bSetsInit2) thisClass.openDlg2Ddgm(me.pre + 'dl_definedsets');
                   }
                   else {
@@ -192,13 +195,13 @@ class Dialog {
 
         let thisClass = this;
 
-        let twoddgmWidth = 170;
+        let twoddgmWidth = me.htmlCls.width2d + 20;
         let at, title;
         if(id === me.pre + 'dl_definedsets') {
             at = "right top";
             title = 'Select sets';
         }
-        else if(id === me.pre + 'dl_2ddgm') {
+        else if(id === me.pre + 'dl_2ddgm' || id === me.pre + 'dl_2dctn') {
             if(bDefinedSets) {
                 at = "right top+240";
             }
@@ -206,7 +209,7 @@ class Dialog {
                 at = "right top";
             }
 
-            title = '2D Diagram';
+            title = (id === me.pre + 'dl_2ddgm') ? '2D Diagram' : '2D Cartoon';
         }
 
         //var position ={ my: "left top", at: at, of: "#" + me.pre + "canvas", collision: "none" }
@@ -228,6 +231,12 @@ class Dialog {
                     //ic.resizeCanvasCls.resizeCanvas(me.htmlCls.WIDTH - me.htmlCls.LESSWIDTH, me.htmlCls.HEIGHT - me.htmlCls.LESSHEIGHT - me.htmlCls.EXTRAHEIGHT, true);
                     ic.resizeCanvasCls.resizeCanvas(me.htmlCls.WIDTH, me.htmlCls.HEIGHT, true);
               }
+          },
+          resize: function(e, ui) {
+              if(id == me.pre + 'dl_2ddgm' || id == me.pre + 'dl_2dctn') {
+                ic.resizeRatioX = ui.size.width / ui.originalSize.width;
+                ic.resizeRatioY = ui.size.height / ui.originalSize.height;
+              }
           }
         });
 
@@ -239,7 +248,7 @@ class Dialog {
         if(me.bNode) return;
 
         let width = 400, height = 150;
-        let twoddgmWidth = 170;
+        let twoddgmWidth = me.htmlCls.width2d + 20;
 
         let status = this.getDialogStatus();
 
@@ -251,10 +260,11 @@ class Dialog {
             if(me.htmlCls.WIDTH >= me.htmlCls.HEIGHT) {
                 this.openDlgHalfWindow(id, title, dialogWidth, true);
 
-                if(status.bTwoddgmInit2 || status.bSetsInit2) {
+                if(status.bTwoddgmInit2 || status.bTwodctnInit2 || status.bSetsInit2) {
                     ic.resizeCanvasCls.resizeCanvas(me.htmlCls.WIDTH - dialogWidth - twoddgmWidth, me.htmlCls.HEIGHT, true);
 
                     if(status.bTwoddgmInit2) this.openDlg2Ddgm(me.pre + 'dl_2ddgm', undefined, status.bSetsInit2);
+                    if(status.bTwodctnInit2) this.openDlg2Ddgm(me.pre + 'dl_2dctn', undefined, status.bSetsInit2);
                     if(status.bSetsInit2) this.openDlg2Ddgm(me.pre + 'dl_definedsets');
                 }
             }
@@ -286,11 +296,12 @@ class Dialog {
                         ||(id === me.pre + 'dl_scatterplot' &&(!status.bSelectannotationsInit2) &&(!status.bGraph2) &&(!status.bAlignmentInit2) &&(!status.bTable2) &&(!status.bLineGraph2) &&(!status.bContactmap2))
                         ||(id === me.pre + 'dl_contactmap' &&(!status.bSelectannotationsInit2) &&(!status.bGraph2) &&(!status.bAlignmentInit2) &&(!status.bTable2) &&(!status.bLineGraph2) &&(!status.bScatterplot2))
                         ) {
-                          if(status.bTwoddgmInit2 || status.bSetsInit2) {
+                          if(status.bTwoddgmInit2 || status.bTwodctnInit2 || status.bSetsInit2) {
                               let canvasWidth = me.utilsCls.isMobile() ? me.htmlCls.WIDTH : me.htmlCls.WIDTH - twoddgmWidth;
                               ic.resizeCanvasCls.resizeCanvas(canvasWidth, me.htmlCls.HEIGHT, true);
 
                               if(status.bTwoddgmInit2) thisClass.openDlg2Ddgm(me.pre + 'dl_2ddgm', undefined, status.bSetsInit2);
+                              if(status.bTwodctnInit2) thisClass.openDlg2Ddgm(me.pre + 'dl_2dctn', undefined, status.bSetsInit2);
                               if(status.bSetsInit2) thisClass.openDlg2Ddgm(me.pre + 'dl_definedsets');
                           }
                           else {
@@ -340,7 +351,7 @@ class Dialog {
                 this.addHideButton(id);
             }
         }
-        else if(id === me.pre + 'dl_2ddgm') {
+        else if(id === me.pre + 'dl_2ddgm' || id === me.pre + 'dl_2dctn') {
             let tmpWidth = 0;
 
             //if(me.htmlCls.WIDTH - me.htmlCls.LESSWIDTH >= me.htmlCls.HEIGHT - me.htmlCls.LESSHEIGHT - me.htmlCls.EXTRAHEIGHT) {
@@ -389,6 +400,7 @@ class Dialog {
                     this.openDlg2Ddgm(id);
 
                     if(status.bTwoddgmInit2) this.openDlg2Ddgm(me.pre + 'dl_2ddgm', undefined, true);
+                    if(status.bTwodctnInit2) this.openDlg2Ddgm(me.pre + 'dl_2dctn', undefined, true);
                 }
                 else {
                     //ic.resizeCanvasCls.resizeCanvas(me.htmlCls.WIDTH - me.htmlCls.LESSWIDTH - tmpWidth - twoddgmWidth,(me.htmlCls.HEIGHT - me.htmlCls.LESSHEIGHT - me.htmlCls.EXTRAHEIGHT)*0.5, true);
@@ -399,6 +411,7 @@ class Dialog {
 
                     //if(bTwoddgmInit2) this.openDlg2Ddgm(me.pre + 'dl_2ddgm',(me.htmlCls.HEIGHT - me.htmlCls.LESSHEIGHT - me.htmlCls.EXTRAHEIGHT)*0.5, true);
                     if(status.bTwoddgmInit2) this.openDlg2Ddgm(me.pre + 'dl_2ddgm',(me.htmlCls.HEIGHT)*0.5, true);
+                    if(status.bTwodctnInit2) this.openDlg2Ddgm(me.pre + 'dl_2dctn',(me.htmlCls.HEIGHT)*0.5, true);
                 }
             }
             else {
@@ -450,7 +463,7 @@ class Dialog {
         if(me.bNode) return;
 
         let width = 400, height = 150;
-        let twoddgmWidth = 170;
+        let twoddgmWidth = me.htmlCls.width2d + 20;
 
         if(id === me.pre + 'dl_selectannotations' || id === me.pre + 'dl_graph' || id === me.pre + 'dl_linegraph' || id === me.pre + 'dl_scatterplot' || id === me.pre + 'dl_contactmap' || id === me.pre + 'dl_interactionsorted' || id === me.pre + 'dl_alignment') {
             $( "#" + id ).show();
@@ -501,7 +514,7 @@ class Dialog {
             if(id === me.pre + 'dl_addtrack') {
                 width='50%';
             }
-            else if(id === me.pre + 'dl_2ddgm' || id === me.pre + 'dl_definedsets') {
+            else if(id === me.pre + 'dl_2ddgm' || id === me.pre + 'dl_2dctn' || id === me.pre + 'dl_definedsets') {
                 width=twoddgmWidth;
             }
             else if(id === me.pre + 'dl_allinteraction' || id === me.pre + 'dl_buriedarea') {

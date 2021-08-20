@@ -46,6 +46,8 @@ import {Picking} from '../picking/picking.js';
 import {Scap} from '../analysis/scap.js';
 import {SelectByCommand} from '../selection/selectByCommand.js';
 
+import {Cartoon2d} from '../analysis/cartoon2d.js';
+
 class ApplyCommand {
     constructor(icn3d) {
         this.icn3d = icn3d;
@@ -75,8 +77,9 @@ class ApplyCommand {
         setTimeout(function(){
                //ic.saveFileCls.saveFile(file_pref + '_icn3d_loadable.png', 'png');
                let  scaleStr = command.substr(13).trim();
-               ic.scaleFactor =(scaleStr === '') ? 1: parseInt(scaleStr);
-               ic.shareLinkCls.shareLink(true);
+               ic.scaleFactor = (scaleStr === '') ? 1 : parseInt(scaleStr);
+               let bPngOnly = (scaleStr === '') ? false : true;
+               ic.shareLinkCls.shareLink(true, bPngOnly);
             }, 500);
       }
       else if(command == 'export interactions') {
@@ -994,6 +997,21 @@ class ApplyCommand {
 
         $("#" + me.svgid + " text").removeClass();
         $("#" + me.svgid + " text").addClass(className);
+      }
+      else if(command.indexOf('cartoon label') == 0) {
+        let  pos = command.lastIndexOf(' ');
+        let  className = command.substr(pos + 1);
+
+        $("#" + me.svgid_ct + "_label").val(className);
+
+        $("#" + me.svgid_ct + " text").removeClass();
+        $("#" + me.svgid_ct + " text").addClass(className);
+      }
+      else if(command.indexOf('cartoon 2d chain') == 0 || command.indexOf('cartoon 2d secondary') == 0) {
+        let  pos = command.lastIndexOf(' ');
+        let  type = command.substr(pos + 1);
+
+        ic.cartoon2dCls.draw2Dcartoon(type);
       }
       else if(command.indexOf('line graph scale') == 0) {
         let  pos = command.lastIndexOf(' ');

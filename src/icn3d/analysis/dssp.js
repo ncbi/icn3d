@@ -24,7 +24,8 @@ class Dssp {
 
       let ajaxArray = [];
 
-      let url = ic.icn3dui.htmlCls.baseUrl + "mmcifparser/mmcifparser.cgi";
+      //let url = ic.icn3dui.htmlCls.baseUrl + "mmcifparser/mmcifparser.cgi";
+      let url = "../mmcifparser/mmcifparser.cgi";
       for(let i = 0, il = struArray.length; i < il; ++i) {
            let pdbStr = '';
            pdbStr += ic.saveFileCls.getPDBHeader(i);

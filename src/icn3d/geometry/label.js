@@ -198,7 +198,7 @@ class Label {
                 // if label.background is undefined, no background will be drawn
                 labelbackground = label.background;
 
-                if(labelcolor !== undefined && labelbackground !== undefined && labelcolor.toLowerCase() === labelbackground.toLowerCase()) {
+                if(labelcolor !== undefined && labelbackground !== undefined && labelcolor.toLowerCase() === labelbackground.toString().toLowerCase()) {
                     labelcolor = "#888888";
                 }
 

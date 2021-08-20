@@ -27,14 +27,14 @@ class Camera {
                     window.camMaxDFactor = window.camMaxDFactorFog; // 3
                 }
                 else {
-                    window.camMaxDFactor = 2;
+                    window.camMaxDFactor = 3; //2;
                 }
 
                 if(window.cam_z > 0) {
-                  window.cam.position.z = maxD * window.camMaxDFactor; // forperspective, the z positionshould be large enough to see the whole molecule
+                  window.cam.position.z = maxD * window.camMaxDFactor; // for perspective, the z position should be large enough to see the whole molecule
                 }
                 else {
-                  window.cam.position.z = -maxD * window.camMaxDFactor; // forperspective, the z positionshould be large enough to see the whole molecule
+                  window.cam.position.z = -maxD * window.camMaxDFactor; // for perspective, the z position should be large enough to see the whole molecule
                 }
 
                 if(ic.opts['slab'] === 'yes') {
@@ -119,7 +119,7 @@ class Camera {
                     ic.camMaxDFactor = ic.camMaxDFactorFog; // 3
                 }
                 else {
-                    ic.camMaxDFactor = 2;
+                    ic.camMaxDFactor = 3; //2;
                 }
 
                 if(ic.cam_z > 0) {

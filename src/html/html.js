@@ -39,6 +39,9 @@ class Html {
     //The height (in px) that was left empty by the 3D viewer. The default is 20px.
     this.LESSHEIGHT = 20;
 
+    // size of 2D cartoons
+    this.width2d = 200;
+
     this.CMD_HEIGHT = 0.8*this.LOG_HEIGHT;
     //this.EXTRAHEIGHT = 2*this.MENU_HEIGHT + this.CMD_HEIGHT;
     this.EXTRAHEIGHT = this.MENU_HEIGHT + this.CMD_HEIGHT;

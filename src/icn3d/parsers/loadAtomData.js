@@ -637,8 +637,11 @@ class LoadAtomData {
             ic.opts['nucleotides'] = 'o3 trace'; //nucleotide cartoon, o3 trace, schematic, lines, stick,
         }
 
-        ic.maxD = ic.pmax.distanceTo(ic.pmin);
-        ic.center = ic.psum.multiplyScalar(1.0 / ic.cnt);
+        //ic.maxD = ic.pmax.distanceTo(ic.pmin);
+        //ic.center = ic.psum.multiplyScalar(1.0 / ic.cnt);
+        ic.center = ic.ParserUtilsCls.getGeoCenter(ic.pmin, ic.pmax);
+        ic.maxD = ic.ParserUtilsCls.getStructureSize(ic.atoms, ic.pmin, ic.pmax, ic.center);
+
         if(ic.maxD < 5) ic.maxD = 5;
 
         ic.oriMaxD = ic.maxD;
