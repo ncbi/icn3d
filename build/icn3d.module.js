@@ -25834,11 +25834,11 @@ class Cartoon2d {
                     for(let i = 0, il = ic.nodeid2lineid[id].length; i < il; ++i) {
                         let idpair = ic.nodeid2lineid[id][i];
 
-                        updateEdges(idpair, id);
+                        updateEdges(idpair, id, angle);
                     }
                 }
 
-                function updateEdges(idpair, id) {
+                function updateEdges(idpair, id, angle) {
                     if(idpair && idpair.indexOf(id) != -1) {
                         let idArray = idpair.split('--');
                         if(idArray.length == 2) {
@@ -25847,14 +25847,20 @@ class Cartoon2d {
                             id1 = idArray[1];
                             id2 = idArray[0];
 
-                            let x1 = $("#" + id1).attr('x1');
-                            let y1 = $("#" + id1).attr('y1');
+                            let posX1 = (angle) ? 'cx' : 'x1';
+                            let posY1 = (angle) ? 'cy' : 'y1';
+
+                            let x1 = $("#" + id1).attr(posX1);
+                            let y1 = $("#" + id1).attr(posY1);
 
                             $("#" + idpair).attr('x1', x1);
                             $("#" + idpair).attr('y1', y1);
 
-                            let x2 = $("#" + id2).attr('x2');
-                            let y2 = $("#" + id2).attr('y2');
+                            let posX2 = (angle) ? 'cx' : 'x2';
+                            let posY2 = (angle) ? 'cy' : 'y2';
+
+                            let x2 = $("#" + id2).attr(posX2);
+                            let y2 = $("#" + id2).attr(posY2);
 
                             $("#" + idpair).attr('x2', x2);
                             $("#" + idpair).attr('y2', y2);
