@@ -195,7 +195,7 @@ pre span {color: red;}
 <a name="about"></a>
 
 <h3>What is iCn3D Structure Viewer?</h3>
-"I see in 3D" (iCn3D) Structure Viewer is a WebGL-based 3D viewer using Three.js and jQuery. iCn3D synchronizes the display of 3D structure, 2D interaction, and 1D sequences and annotations. Users' custom display can be saved in a short URL or a PNG image. Some features are listed below.<br/>
+"I see in 3D" (iCn3D) Structure Viewer is not only a web-based 3D viewer, but also a structure analysis tool interactively or in the batch mode using Node.js scripts based on the npm package icn3d. iCn3D synchronizes the display of 3D structure, 2D interaction, and 1D sequences and annotations. Users' custom display can be saved in a short URL or a PNG image. Some features are listed below.<br/>
 <br/>
 <br/>
 <div id="icn3dwrap" style="font-size: 0.8em; width:420px"></div>
@@ -230,15 +230,19 @@ You can download <a href="https://www.npmjs.com/package/icn3d">npm "icn3d" packa
 You can <a href="https://structure.ncbi.nlm.nih.gov/icn3d/share.html?fNpzDuUE287SBFtz8">alternate in 3D wild type and mutant of SNPs</a> by clicking the menu "Analysis > Sequences & Annotations", the tab "Details", the checkbox "SNP", and mouseover on SNPs.<br/>
 <br/>
 
-<li><b>DelPhi Electrostatic Potential</b>:
+<li><b>DelPhi Electrostatic Potential</b><br/>
 You can view the <a href="https://structure.ncbi.nlm.nih.gov/icn3d/share.html?31DFceJiYw7SfStQA">DelPhi Electrostatic Potential</a> in the menu "Analysis > DelPhi Potential".<br/>
 <br/>
 
 <li><b>Use iCn3D in Jupyter Notebook</b><br/>
-You can use iCn3D in Jupyter Notebook with the widget "icn3dpy". The instructions are at <a href="https://pypi.org/project/icn3dpy">pypi.org/project/icn3dpy</a><br/>
+You can use iCn3D in Jupyter Notebook with the widget "icn3dpy". The instructions are at <a href="https://pypi.org/project/icn3dpy">pypi.org/project/icn3dpy</a>.<br/>
 <br/>
 
-<li><b>Show Contact Map for any Selected Residues</b><br/>
+<li><b>2D Cartoons in the chain, domain, and secondary structure levels</b><br/>
+You can use click "Analysis > 2D Cartoon" to show 2D Cartoons in the <a href="https://structure.ncbi.nlm.nih.gov/icn3d/share.html?pzmT7EMTAxXKVbZu7">chain</a>, <a href="https://structure.ncbi.nlm.nih.gov/icn3d/share.html?Arh4H9VTMuHQURY5A">domain</a>, and <a href="https://structure.ncbi.nlm.nih.gov/icn3d/share.html?5iZSHNbXcJisp7gQ6">secondary structure</a> levels.<br/>
+<br/>
+
+<li><b>Contact Map for any Selected Residues</b><br/>
 You can click the menu "Analysis > Contact Map" to show the interactive <a href="https://structure.ncbi.nlm.nih.gov/icn3d/share.html?rnMbe26tNsAjJLGK9">contact map</a> for any selected residues. You can export the map in PNG or SVG. <br/>
 <br/>
 
@@ -396,6 +400,24 @@ You can color structures with SASA, or show the SASA for each residue.<br/>
 <div class="gallery">
 <a href="https://structure.ncbi.nlm.nih.gov/icn3d/share.html?gVnT" target="_blank">
 <img style="height:300px" src ="https://www.ncbi.nlm.nih.gov/Structure/icn3d/gallery/1TUP-mobilemenu-gVnT.png"><br>Mobile-style Menus (PDB 1TUP)
+</a>
+</div>
+
+<div class="gallery">
+<a href="https://structure.ncbi.nlm.nih.gov/icn3d/share.html?pzmT7EMTAxXKVbZu7" target="_blank">
+<img style="height:300px" src ="https://www.ncbi.nlm.nih.gov/Structure/icn3d/gallery/1KQ2_cartoon_chain.png"><br>2D Cartoon in the chain level (PDB 1KQ2)
+</a>
+</div>
+
+<div class="gallery">
+<a href="https://structure.ncbi.nlm.nih.gov/icn3d/share.html?Arh4H9VTMuHQURY5A" target="_blank">
+<img style="height:300px" src ="https://www.ncbi.nlm.nih.gov/Structure/icn3d/gallery/6VXX_cartoon_chain.png"><br>2D Cartoon in the domain level (PDB 6VXX)
+</a>
+</div>
+
+<div class="gallery">
+<a href="https://structure.ncbi.nlm.nih.gov/icn3d/share.html?5iZSHNbXcJisp7gQ6" target="_blank">
+<img style="height:300px" src ="https://www.ncbi.nlm.nih.gov/Structure/icn3d/gallery/1TOP_carton_secondary.png"><br>2D Cartoon in the secondary structure level (PDB 1TOP)
 </a>
 </div>
 

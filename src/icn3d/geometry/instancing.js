@@ -332,7 +332,7 @@ class Instancing {
            ic.maxD *= Math.sqrt(cnt);
 
            //ic.center = centerSum.multiplyScalar(1.0 / cnt);
-           ic.center = me.utilsCls.getMassCenter(centerSum, cnt);
+           ic.center = ic.ParserUtilsCls.getMassCenter(centerSum, cnt);
 
            ic.maxDAssembly = ic.maxD;
 
@@ -697,7 +697,7 @@ class Instancing {
            ic.maxD *= Math.sqrt(cnt);
 
            //ic.center = centerSum.multiplyScalar(1.0 / cnt);
-           ic.center = me.utilsCls.getMassCenter(centerSum, cnt);
+           ic.center = ic.ParserUtilsCls.getMassCenter(centerSum, cnt);
 
            ic.maxDAssembly = ic.maxD;
 

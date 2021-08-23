@@ -1,4 +1,6 @@
 ## Change Log
+[icn3d-3.4.1](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.4.1.zip) was release on August 23, 2021. Added a Python script to export PNG images for any structures in the batch mode. The script is in the directory icn3dnode.
+
 [icn3d-3.4.0](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.4.0.zip) was release on August 19, 2021. Dynamically generate "2D Cartoon" in the chain, domain, or secondary structure levels for selected residues in the menu "Analysis". The cartoons are draggable and clickable.
 
 [icn3d-3.3.5](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.3.5.zip) was release on August 11, 2021. Added a new color method "Rainbow" to show colors ranging from red to violet. This is different from the previous "Spectrum" method, which shows colors ranging from violet to red.
