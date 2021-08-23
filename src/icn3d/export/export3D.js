@@ -208,7 +208,7 @@ class Export3D {
             }
         }
 
-        //ic.threeDPrintCls.resetAfter3Dprint();
+        ic.threeDPrintCls.resetAfter3Dprint();
 
         return blobArray;
     }

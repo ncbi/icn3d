@@ -532,7 +532,7 @@ class AnnoSnpClinVar {
         }
         else {
         //if(!bSnpOnly && ic.bClinvarCnt) {
-            bClinvar = true;
+            let bClinvar = true;
             htmlClinvar += this.getSnpLine(1, 2, resi2snp, resi2rsnum, resi2clinAllele, resi2disease, resi2index, resi2sig, posarray, posClinArray, 1, chnid, false, bClinvar, undefined, bSnpOnly);
             htmlClinvar += this.getSnpLine(2, 2, resi2snp, resi2rsnum, resi2clinAllele, resi2disease, resi2index, resi2sig, posarray, posClinArray, 0, chnid, false, bClinvar, undefined, bSnpOnly);
             //htmlClinvar += this.getSnpLine(3, 3, resi2snp, resi2rsnum, resi2clinAllele, resi2disease, resi2index, resi2sig, posarray, posClinArray, 0, chnid, false, bClinvar, undefined, bSnpOnly);

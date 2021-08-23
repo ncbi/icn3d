@@ -343,71 +343,42 @@ class ViewInterPairs {
                ic.graphStr = ic.getGraphCls.getGraphDataForDisplayed();
            }
 
-           this.drawGraphWrapper(ic.graphStr, ic.deferredGraphinteraction);
-       }
-       return {interactionTypes: interactionTypes.toString(), bondCnt: bondCnt};
-    }
+           if(ic.bD3 === undefined) {
+               //var url = "https://d3js.org/d3.v4.min.js";
+               var url = "https://www.ncbi.nlm.nih.gov/Structure/icn3d/script/d3v4-force-all.min.js";
+               $.ajax({
+                  url: url,
+                  dataType: "script",
+                  cache: true,
+                  tryCount : 0,
+                  retryLimit : 1,
+                  success: function(data) {
+                       ic.bD3 = true;
 
-    drawGraphWrapper(graphStr, deferred, bCartoon2d) { let  ic = this.icn3d, me = ic.icn3dui;
-       let  thisClass = this;
-
-       if(!ic.bGraph) {
-           $("#" + me.pre + "interactionDesc").hide();
-           $("#" + me.pre + "internalEdges").hide();
-           $("#" + me.pre + "force").hide();
-       }
-
-       if(ic.bD3 === undefined && !bCartoon2d) {
-           //var url = "https://d3js.org/d3.v4.min.js";
-           let  url = "https://www.ncbi.nlm.nih.gov/Structure/icn3d/script/d3v4-force-all.min.js";
-           $.ajax({
-              url: url,
-              dataType: "script",
-              cache: true,
-              tryCount : 0,
-              retryLimit : 1,
-              success: function(data) {
-                   ic.bD3 = true;
-
-                   $("#" + ic.icn3dui.svgid).empty();
-                   ic.icn3dui.htmlCls.dialogCls.openDlg('dl_graph', 'Force-directed graph');
-
-                   if(bCartoon2d) {
-                       //ic.drawGraphCls.drawGraphCartoon(graphStr, ic.pre + 'dl_graph');
-                   }
-                   else {
-                       ic.drawGraphCls.drawGraph(graphStr, ic.pre + 'dl_graph');
-                   }
-
-                   //if(bCartoon2d) thisClass.removeForce();
-
-                   if(deferred !== undefined) deferred.resolve();
-              },
-              error : function(xhr, textStatus, errorThrown ) {
-                this.tryCount++;
-                if(this.tryCount <= this.retryLimit) {
-                    //try again
-                    $.ajax(this);
+                       $("#" + ic.icn3dui.svgid).empty();
+                       ic.icn3dui.htmlCls.dialogCls.openDlg('dl_graph', 'Force-directed graph');
+                       ic.drawGraphCls.drawGraph(ic.graphStr, ic.pre + 'dl_graph');
+                       if(ic.deferredGraphinteraction !== undefined) ic.deferredGraphinteraction.resolve();
+                  },
+                  error : function(xhr, textStatus, errorThrown ) {
+                    this.tryCount++;
+                    if(this.tryCount <= this.retryLimit) {
+                        //try again
+                        $.ajax(this);
+                        return;
+                    }
+                    if(ic.deferredGraphinteraction !== undefined) ic.deferredGraphinteraction.resolve();
                     return;
-                }
-                if(deferred !== undefined) deferred.resolve();
-                return;
-              }
-           });
-       }
-       else {
-           $("#" + ic.icn3dui.svgid).empty();
-           ic.icn3dui.htmlCls.dialogCls.openDlg('dl_graph', 'Force-directed graph');
-
-           if(bCartoon2d) {
-               //ic.drawGraphCls.drawGraphCartoon(graphStr, ic.pre + 'dl_graph');
+                  }
+               });
            }
            else {
-               ic.drawGraphCls.drawGraph(graphStr, ic.pre + 'dl_graph');
+               $("#" + ic.icn3dui.svgid).empty();
+               ic.icn3dui.htmlCls.dialogCls.openDlg('dl_graph', 'Force-directed graph');
+               ic.drawGraphCls.drawGraph(ic.graphStr, ic.pre + 'dl_graph');
            }
-
-           //if(bCartoon2d) this.removeForce();
        }
+       return {interactionTypes: interactionTypes.toString(), bondCnt: bondCnt};
     }
 
 /*

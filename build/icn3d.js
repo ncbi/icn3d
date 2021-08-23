@@ -12929,7 +12929,7 @@ var icn3d = (function (exports) {
               ic.lineRadius = 0.1; // hbonds, distance lines
               ic.coilWidth = 0.3; // style cartoon-coil
               ic.cylinderRadius = 0.4; // style stick
-              ic.traceRadius = 0.4; //0.2; // style c alpha trace, nucleotide stick
+              ic.traceRadius = 0.2; // style c alpha trace, nucleotide stick
               ic.dotSphereScale = 0.3; // style ball and stick, dot
               ic.sphereRadius = 1.5; // style sphere
               ic.cylinderHelixRadius = 1.6; // style sylinder and plate
@@ -13710,7 +13710,7 @@ var icn3d = (function (exports) {
                 }
             }
 
-            //ic.threeDPrintCls.resetAfter3Dprint();
+            ic.threeDPrintCls.resetAfter3Dprint();
 
             return blobArray;
         }
@@ -17324,66 +17324,42 @@ var icn3d = (function (exports) {
                    ic.graphStr = ic.getGraphCls.getGraphDataForDisplayed();
                }
 
-               this.drawGraphWrapper(ic.graphStr, ic.deferredGraphinteraction);
+               if(ic.bD3 === undefined) {
+                   //var url = "https://d3js.org/d3.v4.min.js";
+                   var url = "https://www.ncbi.nlm.nih.gov/Structure/icn3d/script/d3v4-force-all.min.js";
+                   $.ajax({
+                      url: url,
+                      dataType: "script",
+                      cache: true,
+                      tryCount : 0,
+                      retryLimit : 1,
+                      success: function(data) {
+                           ic.bD3 = true;
+
+                           $("#" + ic.icn3dui.svgid).empty();
+                           ic.icn3dui.htmlCls.dialogCls.openDlg('dl_graph', 'Force-directed graph');
+                           ic.drawGraphCls.drawGraph(ic.graphStr, ic.pre + 'dl_graph');
+                           if(ic.deferredGraphinteraction !== undefined) ic.deferredGraphinteraction.resolve();
+                      },
+                      error : function(xhr, textStatus, errorThrown ) {
+                        this.tryCount++;
+                        if(this.tryCount <= this.retryLimit) {
+                            //try again
+                            $.ajax(this);
+                            return;
+                        }
+                        if(ic.deferredGraphinteraction !== undefined) ic.deferredGraphinteraction.resolve();
+                        return;
+                      }
+                   });
+               }
+               else {
+                   $("#" + ic.icn3dui.svgid).empty();
+                   ic.icn3dui.htmlCls.dialogCls.openDlg('dl_graph', 'Force-directed graph');
+                   ic.drawGraphCls.drawGraph(ic.graphStr, ic.pre + 'dl_graph');
+               }
            }
            return {interactionTypes: interactionTypes.toString(), bondCnt: bondCnt};
-        }
-
-        drawGraphWrapper(graphStr, deferred, bCartoon2d) { let  ic = this.icn3d, me = ic.icn3dui;
-
-           if(!ic.bGraph) {
-               $("#" + me.pre + "interactionDesc").hide();
-               $("#" + me.pre + "internalEdges").hide();
-               $("#" + me.pre + "force").hide();
-           }
-
-           if(ic.bD3 === undefined && !bCartoon2d) {
-               //var url = "https://d3js.org/d3.v4.min.js";
-               let  url = "https://www.ncbi.nlm.nih.gov/Structure/icn3d/script/d3v4-force-all.min.js";
-               $.ajax({
-                  url: url,
-                  dataType: "script",
-                  cache: true,
-                  tryCount : 0,
-                  retryLimit : 1,
-                  success: function(data) {
-                       ic.bD3 = true;
-
-                       $("#" + ic.icn3dui.svgid).empty();
-                       ic.icn3dui.htmlCls.dialogCls.openDlg('dl_graph', 'Force-directed graph');
-
-                       if(bCartoon2d) ;
-                       else {
-                           ic.drawGraphCls.drawGraph(graphStr, ic.pre + 'dl_graph');
-                       }
-
-                       //if(bCartoon2d) thisClass.removeForce();
-
-                       if(deferred !== undefined) deferred.resolve();
-                  },
-                  error : function(xhr, textStatus, errorThrown ) {
-                    this.tryCount++;
-                    if(this.tryCount <= this.retryLimit) {
-                        //try again
-                        $.ajax(this);
-                        return;
-                    }
-                    if(deferred !== undefined) deferred.resolve();
-                    return;
-                  }
-               });
-           }
-           else {
-               $("#" + ic.icn3dui.svgid).empty();
-               ic.icn3dui.htmlCls.dialogCls.openDlg('dl_graph', 'Force-directed graph');
-
-               if(bCartoon2d) ;
-               else {
-                   ic.drawGraphCls.drawGraph(graphStr, ic.pre + 'dl_graph');
-               }
-
-               //if(bCartoon2d) this.removeForce();
-           }
         }
 
     /*
@@ -36176,7 +36152,7 @@ var icn3d = (function (exports) {
             }
             else {
             //if(!bSnpOnly && ic.bClinvarCnt) {
-                bClinvar = true;
+                let bClinvar = true;
                 htmlClinvar += this.getSnpLine(1, 2, resi2snp, resi2rsnum, resi2clinAllele, resi2disease, resi2index, resi2sig, posarray, posClinArray, 1, chnid, false, bClinvar, undefined, bSnpOnly);
                 htmlClinvar += this.getSnpLine(2, 2, resi2snp, resi2rsnum, resi2clinAllele, resi2disease, resi2index, resi2sig, posarray, posClinArray, 0, chnid, false, bClinvar, undefined, bSnpOnly);
                 //htmlClinvar += this.getSnpLine(3, 3, resi2snp, resi2rsnum, resi2clinAllele, resi2disease, resi2index, resi2sig, posarray, posClinArray, 0, chnid, false, bClinvar, undefined, bSnpOnly);
@@ -50543,7 +50519,7 @@ var icn3d = (function (exports) {
             let linerad =(type == '3dprint') ? '1' : '0.1';
             let coilrad =(type == '3dprint') ? '1.2' : '0.3';
             let stickrad =(type == '3dprint') ? '0.8' : '0.4';
-            let tracerad =(type == '3dprint') ? '1' : '0.2';
+            let tracerad =(type == '3dprint') ? '1' : '0.4';
             let ballscale =(type == '3dprint') ? '0.6' : '0.3';
             let ribbonthick =(type == '3dprint') ? '1' : '0.2';
             let prtribbonwidth =(type == '3dprint') ? '2' : '1.3';
@@ -51285,11 +51261,11 @@ var icn3d = (function (exports) {
 
             if(bReset) {
                 $("#" + me.pre + "linerad_" + postfix ).val(0.1); //0.1; // hbonds, distance lines
-                $("#" + me.pre + "coilrad_" + postfix ).val(0.4); //0.4; // style cartoon-coil
+                $("#" + me.pre + "coilrad_" + postfix ).val(0.3); //0.3; // style cartoon-coil
                 $("#" + me.pre + "stickrad_" + postfix ).val(0.4); //0.4; // style stick
-                $("#" + me.pre + "stickrad_" + postfix ).val(0.2); //0.2; // style c alpha trace, nucleotide stick
+                $("#" + me.pre + "tracerad_" + postfix ).val(0.2); //0.2; // style c alpha trace, nucleotide stick
                 $("#" + me.pre + "ballscale_" + postfix ).val(0.3); //0.3; // style ball and stick, dot
-                $("#" + me.pre + "ribbonthick_" + postfix ).val(0.4); //0.4; // style ribbon, nucleotide cartoon, stand thickness
+                $("#" + me.pre + "ribbonthick_" + postfix ).val(0.2); //0.2; // style ribbon, nucleotide cartoon, stand thickness
                 $("#" + me.pre + "prtribbonwidth_" + postfix ).val(1.3); //1.3; // style ribbon, stand thickness
                 $("#" + me.pre + "nucleotideribbonwidth_" + postfix ).val(0.8); //0.8; // nucleotide cartoon
             }
@@ -51297,7 +51273,7 @@ var icn3d = (function (exports) {
             ic.lineRadius = parseFloat($("#" + me.pre + "linerad_" + postfix ).val()); //0.1; // hbonds, distance lines
             ic.coilWidth = parseFloat($("#" + me.pre + "coilrad_" + postfix ).val()); //0.4; // style cartoon-coil
             ic.cylinderRadius = parseFloat($("#" + me.pre + "stickrad_" + postfix ).val()); //0.4; // style stick
-            ic.traceRadius = parseFloat($("#" + me.pre + "stickrad_" + postfix ).val()); //0.2; // style c alpha trace, nucleotide stick
+            ic.traceRadius = parseFloat($("#" + me.pre + "tracerad_" + postfix ).val()); //0.2; // style c alpha trace, nucleotide stick
             ic.dotSphereScale = parseFloat($("#" + me.pre + "ballscale_" + postfix ).val()); //0.3; // style ball and stick, dot
             ic.ribbonthickness = parseFloat($("#" + me.pre + "ribbonthick_" + postfix ).val()); //0.4; // style ribbon, nucleotide cartoon, stand thickness
             ic.helixSheetWidth = parseFloat($("#" + me.pre + "prtribbonwidth_" + postfix ).val()); //1.3; // style ribbon, stand thickness
@@ -53705,7 +53681,7 @@ var icn3d = (function (exports) {
         this.coilWidth = 0.3; //0.4; // style cartoon-coil
         this.cylinderRadius = 0.4; // style stick
         //This is the stick radius for C alpha trace and O3' trace. It's 0.4 by default.
-        this.traceRadius = 0.4; //0.2; // c alpha trace, nucleotide stick
+        this.traceRadius = 0.2; //0.2; // c alpha trace, nucleotide stick
         //This is the ball scale for styles 'Ball and Stick' and 'Dot'. It's 0.3 by default.
         this.dotSphereScale = 0.3; // style ball and stick, dot
         //This is the sphere radius for the style 'Sphere'. It's 1.5 by default.

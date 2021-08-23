@@ -130,7 +130,7 @@ class SetHtml {
         let linerad =(type == '3dprint') ? '1' : '0.1';
         let coilrad =(type == '3dprint') ? '1.2' : '0.3';
         let stickrad =(type == '3dprint') ? '0.8' : '0.4';
-        let tracerad =(type == '3dprint') ? '1' : '0.2';
+        let tracerad =(type == '3dprint') ? '1' : '0.4';
         let ballscale =(type == '3dprint') ? '0.6' : '0.3';
         let ribbonthick =(type == '3dprint') ? '1' : '0.2';
         let prtribbonwidth =(type == '3dprint') ? '2' : '1.3';
@@ -872,11 +872,11 @@ class SetHtml {
 
         if(bReset) {
             $("#" + me.pre + "linerad_" + postfix ).val(0.1); //0.1; // hbonds, distance lines
-            $("#" + me.pre + "coilrad_" + postfix ).val(0.4); //0.4; // style cartoon-coil
+            $("#" + me.pre + "coilrad_" + postfix ).val(0.3); //0.3; // style cartoon-coil
             $("#" + me.pre + "stickrad_" + postfix ).val(0.4); //0.4; // style stick
-            $("#" + me.pre + "stickrad_" + postfix ).val(0.2); //0.2; // style c alpha trace, nucleotide stick
+            $("#" + me.pre + "tracerad_" + postfix ).val(0.2); //0.2; // style c alpha trace, nucleotide stick
             $("#" + me.pre + "ballscale_" + postfix ).val(0.3); //0.3; // style ball and stick, dot
-            $("#" + me.pre + "ribbonthick_" + postfix ).val(0.4); //0.4; // style ribbon, nucleotide cartoon, stand thickness
+            $("#" + me.pre + "ribbonthick_" + postfix ).val(0.2); //0.2; // style ribbon, nucleotide cartoon, stand thickness
             $("#" + me.pre + "prtribbonwidth_" + postfix ).val(1.3); //1.3; // style ribbon, stand thickness
             $("#" + me.pre + "nucleotideribbonwidth_" + postfix ).val(0.8); //0.8; // nucleotide cartoon
         }
@@ -884,7 +884,7 @@ class SetHtml {
         ic.lineRadius = parseFloat($("#" + me.pre + "linerad_" + postfix ).val()); //0.1; // hbonds, distance lines
         ic.coilWidth = parseFloat($("#" + me.pre + "coilrad_" + postfix ).val()); //0.4; // style cartoon-coil
         ic.cylinderRadius = parseFloat($("#" + me.pre + "stickrad_" + postfix ).val()); //0.4; // style stick
-        ic.traceRadius = parseFloat($("#" + me.pre + "stickrad_" + postfix ).val()); //0.2; // style c alpha trace, nucleotide stick
+        ic.traceRadius = parseFloat($("#" + me.pre + "tracerad_" + postfix ).val()); //0.2; // style c alpha trace, nucleotide stick
         ic.dotSphereScale = parseFloat($("#" + me.pre + "ballscale_" + postfix ).val()); //0.3; // style ball and stick, dot
         ic.ribbonthickness = parseFloat($("#" + me.pre + "ribbonthick_" + postfix ).val()); //0.4; // style ribbon, nucleotide cartoon, stand thickness
         ic.helixSheetWidth = parseFloat($("#" + me.pre + "prtribbonwidth_" + postfix ).val()); //1.3; // style ribbon, stand thickness
