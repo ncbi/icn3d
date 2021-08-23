@@ -37,7 +37,7 @@ options.binary_location = "/path/to/chrome" # chrome binary location (required i
 
 # start a broser
 browser = webdriver.Chrome(executable_path='/path/to/chromedriver', options=options)
-pdbfile = "1GPK.pdb" // use upper case if it's a PDB ID
+pdbfile = "1GPK.pdb" # use upper case if it's a PDB ID
 pngfile = Path(f"{downdir}/{Path(pdbfile).stem}_icn3d_loadable.png")
 
 try:
