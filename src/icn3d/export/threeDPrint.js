@@ -86,7 +86,7 @@ class ThreeDPrint {
           ic.lineRadius = 0.1; // hbonds, distance lines
           ic.coilWidth = 0.3; // style cartoon-coil
           ic.cylinderRadius = 0.4; // style stick
-          ic.traceRadius = 0.4; //0.2; // style c alpha trace, nucleotide stick
+          ic.traceRadius = 0.2; // style c alpha trace, nucleotide stick
           ic.dotSphereScale = 0.3; // style ball and stick, dot
           ic.sphereRadius = 1.5; // style sphere
           ic.cylinderHelixRadius = 1.6; // style sylinder and plate
