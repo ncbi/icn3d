@@ -163,15 +163,15 @@ class Cartoon2d {
 
                 //let cx = ui.position.left - offsetX;
                 //let cy = ui.position.top - offsetY;
-                let cx = (e.clientX - offsetX) / ic.resizeRatioX;
-                let cy = (e.clientY - offsetY) / ic.resizeRatioY;
+                let cx = (e.clientX - offsetX);
+                let cy = (e.clientY - offsetY);
 
                 let oriCx = parseFloat(e.target.getAttribute('cx'));
                 let oriCy = parseFloat(e.target.getAttribute('cy'));
 
                 // change for each step
-                let dx = cx - oriCx;
-                let dy = cy - oriCy;
+                let dx = (cx - oriCx) / ic.resizeRatioX;
+                let dy = (cy - oriCy) / ic.resizeRatioY;
 
                 // move the text label
                 let oriX = parseFloat($("#" + id + "_text").attr('x'));
@@ -283,9 +283,9 @@ class Cartoon2d {
 
         let idStr = this.getLabelFromId(id, type);
         let oriY = y;
-        y = me.htmlCls.width2d  / ic.resizeRatioY - y; // flip
-        y1 = me.htmlCls.width2d  / ic.resizeRatioY - y1; // flip
-        y2 = me.htmlCls.width2d  / ic.resizeRatioY - y2; // flip
+        y = me.htmlCls.width2d - y; // flip
+        y1 = me.htmlCls.width2d - y1; // flip
+        y2 = me.htmlCls.width2d - y2; // flip
         angle = 180 - angle; // flip
 
         let range = idStr.substr(1);
@@ -318,7 +318,7 @@ class Cartoon2d {
         let adjustx = 0, adjusty = 4, smalladjustx = 1, smalladjusty = 2, halfLetHigh = 6;
 
         let idStr = this.getLabelFromId(id, type);
-        y = me.htmlCls.width2d / ic.resizeRatioY - y; // flip
+        y = me.htmlCls.width2d - y; // flip
         angle = 180 - angle; // flip
 
         let html = (type == 'chain') ? "<g chainid='" + id + "' >"
@@ -798,7 +798,9 @@ class Cartoon2d {
         let chainidTmp = (idArray.length >= 2) ? structure + '_' + idArray[1] : Object.keys(ic.chains)[0];
 
         for(let i = 0, il = fromArray.length; i < il; ++i) {
-            for(let j = fromArray[i]; j <= toArray[i]; ++j) {
+            let from = parseInt(fromArray[i]) + 1
+            let to = parseInt(toArray[i]) + 1
+            for(let j = from; j <= to; ++j) {
                 let resid = chainidTmp + '_' + j;
                 atomSet = me.hashUtilsCls.unionHash(atomSet, ic.residues[resid]);
                 residArray.push(resid);

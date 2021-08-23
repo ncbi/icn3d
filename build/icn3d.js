@@ -16918,9 +16918,6 @@ var icn3d = (function (exports) {
                 nodeHtml += ic.getGraphCls.drawResNode(nodeArray2[i], i, r, gap, margin2, y, 'b', false, bContactMap);
                 node2posSet2[nodeArray2[i].id] = { x: margin2 + i *(r + gap), y: y };
             }
-            // draw rect
-            let  rectSize = (bContactMap) ? 2 * r : 1.5 * r;
-            let  halfSize = 0.5 * rectSize;
             for(let i = 0, il = linkArray.length; i < il; ++i) {
                 let  link = linkArray[i];
                 let  node1 = name2node[link.source];
@@ -16928,43 +16925,63 @@ var icn3d = (function (exports) {
 
                 if(!node1 || !node2) continue;
 
-                let  resid1 = node1.r.substr(4);
-                let  resid2 = node2.r.substr(4);
-                let  pos1 = node2posSet1[node1.id];
-                let  pos2 = node2posSet2[node2.id];
-                if(pos1 === undefined || pos2 === undefined) continue;
-                let  strokecolor;
-                if(link.v == ic.icn3dui.htmlCls.hbondValue) {
-                    strokecolor = "#" + ic.icn3dui.htmlCls.hbondColor;
-                } else if(link.v == ic.icn3dui.htmlCls.ionicValue) {
-                    strokecolor = "#" + ic.icn3dui.htmlCls.ionicColor;
-                } else if(link.v == ic.icn3dui.htmlCls.halogenValue) {
-                    strokecolor = "#" + ic.icn3dui.htmlCls.halogenColor;
-                } else if(link.v == ic.icn3dui.htmlCls.picationValue) {
-                    strokecolor = "#" + ic.icn3dui.htmlCls.picationColor;
-                } else if(link.v == ic.icn3dui.htmlCls.pistackingValue) {
-                    strokecolor = "#" + ic.icn3dui.htmlCls.pistackingColor;
-                } else if(link.v == ic.icn3dui.htmlCls.contactValue) {
-                    strokecolor = "#" + ic.icn3dui.htmlCls.contactColor;
+                html += this.drawOnePairNode(link, node1, node2, node2posSet1, node2posSet2, bContactMap);
+
+                if(bContactMap) { // draw symmetric contact map
+                    html += this.drawOnePairNode(link, node2, node1, node2posSet1, node2posSet2, bContactMap);
                 }
-                let  linestrokewidth;
-                if(link.v == ic.icn3dui.htmlCls.contactValue) {
-                    linestrokewidth = 1;
-                } else {
-                    linestrokewidth = 2;
-                }
-                html += "<g class='icn3d-interaction' resid1='" + resid1 + "' resid2='" + resid2 + "' >";
-                html += "<title>Interaction of residue " + node1.id + " with residue " + node2.id + "</title>";
-                if(bContactMap) {
-                    html += "<rect x='" +(pos2.x - halfSize).toString() + "' y='" +(pos1.y - halfSize).toString() + "' width='" + rectSize + "' height='" + rectSize + "' fill='" + strokecolor + "' stroke-width='" + linestrokewidth + "' stroke='" + strokecolor + "' />";
-                }
-                else {
-                    html += "<rect x='" +(pos2.x - halfSize).toString() + "' y='" +(pos1.y - halfSize).toString() + "' width='" + rectSize + "' height='" + rectSize + "' fill='" + strokecolor + "' fill-opacity='0.6' stroke-width='" + linestrokewidth + "' stroke='" + strokecolor + "' />";
-                }
-                html += "</g>";
             }
             // show nodes later
             html += nodeHtml;
+            return html;
+        }
+
+        drawOnePairNode(link, node1, node2, node2posSet1, node2posSet2, bContactMap) { let ic = this.icn3d; ic.icn3dui;
+            let html = '';
+
+            let  factor = 1;
+            let  r = 3 * factor;
+            // draw rect
+            let  rectSize = (bContactMap) ? 2 * r : 1.5 * r;
+            let  halfSize = 0.5 * rectSize;
+
+            let  resid1 = node1.r.substr(4);
+            let  resid2 = node2.r.substr(4);
+            let  pos1 = node2posSet1[node1.id];
+            let  pos2 = node2posSet2[node2.id];
+            if(pos1 === undefined || pos2 === undefined) return html;
+
+            let  strokecolor;
+            if(link.v == ic.icn3dui.htmlCls.hbondValue) {
+                strokecolor = "#" + ic.icn3dui.htmlCls.hbondColor;
+            } else if(link.v == ic.icn3dui.htmlCls.ionicValue) {
+                strokecolor = "#" + ic.icn3dui.htmlCls.ionicColor;
+            } else if(link.v == ic.icn3dui.htmlCls.halogenValue) {
+                strokecolor = "#" + ic.icn3dui.htmlCls.halogenColor;
+            } else if(link.v == ic.icn3dui.htmlCls.picationValue) {
+                strokecolor = "#" + ic.icn3dui.htmlCls.picationColor;
+            } else if(link.v == ic.icn3dui.htmlCls.pistackingValue) {
+                strokecolor = "#" + ic.icn3dui.htmlCls.pistackingColor;
+            } else if(link.v == ic.icn3dui.htmlCls.contactValue) {
+                strokecolor = "#" + ic.icn3dui.htmlCls.contactColor;
+            }
+
+            let  linestrokewidth;
+            if(link.v == ic.icn3dui.htmlCls.contactValue) {
+                linestrokewidth = 1;
+            } else {
+                linestrokewidth = 2;
+            }
+            html += "<g class='icn3d-interaction' resid1='" + resid1 + "' resid2='" + resid2 + "' >";
+            html += "<title>Interaction of residue " + node1.id + " with residue " + node2.id + "</title>";
+            if(bContactMap) {
+                html += "<rect x='" +(pos2.x - halfSize).toString() + "' y='" +(pos1.y - halfSize).toString() + "' width='" + rectSize + "' height='" + rectSize + "' fill='" + strokecolor + "' stroke-width='" + linestrokewidth + "' stroke='" + strokecolor + "' />";
+            }
+            else {
+                html += "<rect x='" +(pos2.x - halfSize).toString() + "' y='" +(pos1.y - halfSize).toString() + "' width='" + rectSize + "' height='" + rectSize + "' fill='" + strokecolor + "' fill-opacity='0.6' stroke-width='" + linestrokewidth + "' stroke='" + strokecolor + "' />";
+            }
+            html += "</g>";
+
             return html;
         }
 
@@ -25781,15 +25798,15 @@ var icn3d = (function (exports) {
 
                     //let cx = ui.position.left - offsetX;
                     //let cy = ui.position.top - offsetY;
-                    let cx = (e.clientX - offsetX) / ic.resizeRatioX;
-                    let cy = (e.clientY - offsetY) / ic.resizeRatioY;
+                    let cx = (e.clientX - offsetX);
+                    let cy = (e.clientY - offsetY);
 
                     let oriCx = parseFloat(e.target.getAttribute('cx'));
                     let oriCy = parseFloat(e.target.getAttribute('cy'));
 
                     // change for each step
-                    let dx = cx - oriCx;
-                    let dy = cy - oriCy;
+                    let dx = (cx - oriCx) / ic.resizeRatioX;
+                    let dy = (cy - oriCy) / ic.resizeRatioY;
 
                     // move the text label
                     let oriX = parseFloat($("#" + id + "_text").attr('x'));
@@ -25895,9 +25912,9 @@ var icn3d = (function (exports) {
             let adjustx = 0, adjusty = 4;
 
             let idStr = this.getLabelFromId(id, type);
-            y = me.htmlCls.width2d  / ic.resizeRatioY - y; // flip
-            y1 = me.htmlCls.width2d  / ic.resizeRatioY - y1; // flip
-            y2 = me.htmlCls.width2d  / ic.resizeRatioY - y2; // flip
+            y = me.htmlCls.width2d - y; // flip
+            y1 = me.htmlCls.width2d - y1; // flip
+            y2 = me.htmlCls.width2d - y2; // flip
 
             let range = idStr.substr(1);
             //let html = "<g class='icn3d-node' range='" + range + "' >";
@@ -25926,7 +25943,7 @@ var icn3d = (function (exports) {
             let adjustx = 0, adjusty = 4;
 
             let idStr = this.getLabelFromId(id, type);
-            y = me.htmlCls.width2d / ic.resizeRatioY - y; // flip
+            y = me.htmlCls.width2d - y; // flip
             angle = 180 - angle; // flip
 
             let html = (type == 'chain') ? "<g chainid='" + id + "' >"
@@ -26392,7 +26409,9 @@ var icn3d = (function (exports) {
             let chainidTmp = (idArray.length >= 2) ? structure + '_' + idArray[1] : Object.keys(ic.chains)[0];
 
             for(let i = 0, il = fromArray.length; i < il; ++i) {
-                for(let j = fromArray[i]; j <= toArray[i]; ++j) {
+                let from = parseInt(fromArray[i]) + 1;
+                let to = parseInt(toArray[i]) + 1;
+                for(let j = from; j <= to; ++j) {
                     let resid = chainidTmp + '_' + j;
                     atomSet = me.hashUtilsCls.unionHash(atomSet, ic.residues[resid]);
                     residArray.push(resid);
@@ -41853,7 +41872,7 @@ var icn3d = (function (exports) {
             }
         }
 
-        drawSymmetryMatesNoInstancing() {  let ic = this.icn3d, me = ic.icn3dui;
+        drawSymmetryMatesNoInstancing() {  let ic = this.icn3d; ic.icn3dui;
            if (ic.biomtMatrices === undefined || ic.biomtMatrices.length == 0) return;
            let cnt = 1; // itself
            let centerSum = ic.center.clone();
@@ -41925,7 +41944,7 @@ var icn3d = (function (exports) {
                ic.maxD *= Math.sqrt(cnt);
 
                //ic.center = centerSum.multiplyScalar(1.0 / cnt);
-               ic.center = me.utilsCls.getMassCenter(centerSum, cnt);
+               ic.center = ic.ParserUtilsCls.getMassCenter(centerSum, cnt);
 
                ic.maxDAssembly = ic.maxD;
 
@@ -42243,7 +42262,7 @@ var icn3d = (function (exports) {
            }
         }
 
-        drawSymmetryMatesInstancing() { let ic = this.icn3d, me = ic.icn3dui;
+        drawSymmetryMatesInstancing() { let ic = this.icn3d; ic.icn3dui;
            if (ic.biomtMatrices === undefined || ic.biomtMatrices.length == 0) return;
            let cnt = 1; // itself
            let centerSum = ic.center.clone();
@@ -42290,7 +42309,7 @@ var icn3d = (function (exports) {
                ic.maxD *= Math.sqrt(cnt);
 
                //ic.center = centerSum.multiplyScalar(1.0 / cnt);
-               ic.center = me.utilsCls.getMassCenter(centerSum, cnt);
+               ic.center = ic.ParserUtilsCls.getMassCenter(centerSum, cnt);
 
                ic.maxDAssembly = ic.maxD;
 
@@ -54225,7 +54244,7 @@ var icn3d = (function (exports) {
         //even when multiple iCn3D viewers are shown together.
         this.pre = this.cfg.divid + "_";
 
-        this.REVISION = '3.4.0';
+        this.REVISION = '3.4.1';
 
         // In nodejs, iCn3D defines "window = {navigator: {}}"
         this.bNode = (Object.keys(window).length < 2) ? true : false;

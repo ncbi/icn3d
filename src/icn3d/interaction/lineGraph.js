@@ -340,43 +340,63 @@ class LineGraph {
 
             if(!node1 || !node2) continue;
 
-            let  resid1 = node1.r.substr(4);
-            let  resid2 = node2.r.substr(4);
-            let  pos1 = node2posSet1[node1.id];
-            let  pos2 = node2posSet2[node2.id];
-            if(pos1 === undefined || pos2 === undefined) continue;
-            let  strokecolor;
-            if(link.v == ic.icn3dui.htmlCls.hbondValue) {
-                strokecolor = "#" + ic.icn3dui.htmlCls.hbondColor;
-            } else if(link.v == ic.icn3dui.htmlCls.ionicValue) {
-                strokecolor = "#" + ic.icn3dui.htmlCls.ionicColor;
-            } else if(link.v == ic.icn3dui.htmlCls.halogenValue) {
-                strokecolor = "#" + ic.icn3dui.htmlCls.halogenColor;
-            } else if(link.v == ic.icn3dui.htmlCls.picationValue) {
-                strokecolor = "#" + ic.icn3dui.htmlCls.picationColor;
-            } else if(link.v == ic.icn3dui.htmlCls.pistackingValue) {
-                strokecolor = "#" + ic.icn3dui.htmlCls.pistackingColor;
-            } else if(link.v == ic.icn3dui.htmlCls.contactValue) {
-                strokecolor = "#" + ic.icn3dui.htmlCls.contactColor;
+            html += this.drawOnePairNode(link, node1, node2, node2posSet1, node2posSet2, bContactMap);
+
+            if(bContactMap) { // draw symmetric contact map
+                html += this.drawOnePairNode(link, node2, node1, node2posSet1, node2posSet2, bContactMap);
             }
-            let  linestrokewidth;
-            if(link.v == ic.icn3dui.htmlCls.contactValue) {
-                linestrokewidth = 1;
-            } else {
-                linestrokewidth = 2;
-            }
-            html += "<g class='icn3d-interaction' resid1='" + resid1 + "' resid2='" + resid2 + "' >";
-            html += "<title>Interaction of residue " + node1.id + " with residue " + node2.id + "</title>";
-            if(bContactMap) {
-                html += "<rect x='" +(pos2.x - halfSize).toString() + "' y='" +(pos1.y - halfSize).toString() + "' width='" + rectSize + "' height='" + rectSize + "' fill='" + strokecolor + "' stroke-width='" + linestrokewidth + "' stroke='" + strokecolor + "' />";
-            }
-            else {
-                html += "<rect x='" +(pos2.x - halfSize).toString() + "' y='" +(pos1.y - halfSize).toString() + "' width='" + rectSize + "' height='" + rectSize + "' fill='" + strokecolor + "' fill-opacity='0.6' stroke-width='" + linestrokewidth + "' stroke='" + strokecolor + "' />";
-            }
-            html += "</g>";
         }
         // show nodes later
         html += nodeHtml;
+        return html;
+    }
+
+    drawOnePairNode(link, node1, node2, node2posSet1, node2posSet2, bContactMap) { let  ic = this.icn3d, me = ic.icn3dui;
+        let html = '';
+
+        let  factor = 1;
+        let  r = 3 * factor;
+        // draw rect
+        let  rectSize = (bContactMap) ? 2 * r : 1.5 * r;
+        let  halfSize = 0.5 * rectSize;
+
+        let  resid1 = node1.r.substr(4);
+        let  resid2 = node2.r.substr(4);
+        let  pos1 = node2posSet1[node1.id];
+        let  pos2 = node2posSet2[node2.id];
+        if(pos1 === undefined || pos2 === undefined) return html;
+
+        let  strokecolor;
+        if(link.v == ic.icn3dui.htmlCls.hbondValue) {
+            strokecolor = "#" + ic.icn3dui.htmlCls.hbondColor;
+        } else if(link.v == ic.icn3dui.htmlCls.ionicValue) {
+            strokecolor = "#" + ic.icn3dui.htmlCls.ionicColor;
+        } else if(link.v == ic.icn3dui.htmlCls.halogenValue) {
+            strokecolor = "#" + ic.icn3dui.htmlCls.halogenColor;
+        } else if(link.v == ic.icn3dui.htmlCls.picationValue) {
+            strokecolor = "#" + ic.icn3dui.htmlCls.picationColor;
+        } else if(link.v == ic.icn3dui.htmlCls.pistackingValue) {
+            strokecolor = "#" + ic.icn3dui.htmlCls.pistackingColor;
+        } else if(link.v == ic.icn3dui.htmlCls.contactValue) {
+            strokecolor = "#" + ic.icn3dui.htmlCls.contactColor;
+        }
+
+        let  linestrokewidth;
+        if(link.v == ic.icn3dui.htmlCls.contactValue) {
+            linestrokewidth = 1;
+        } else {
+            linestrokewidth = 2;
+        }
+        html += "<g class='icn3d-interaction' resid1='" + resid1 + "' resid2='" + resid2 + "' >";
+        html += "<title>Interaction of residue " + node1.id + " with residue " + node2.id + "</title>";
+        if(bContactMap) {
+            html += "<rect x='" +(pos2.x - halfSize).toString() + "' y='" +(pos1.y - halfSize).toString() + "' width='" + rectSize + "' height='" + rectSize + "' fill='" + strokecolor + "' stroke-width='" + linestrokewidth + "' stroke='" + strokecolor + "' />";
+        }
+        else {
+            html += "<rect x='" +(pos2.x - halfSize).toString() + "' y='" +(pos1.y - halfSize).toString() + "' width='" + rectSize + "' height='" + rectSize + "' fill='" + strokecolor + "' fill-opacity='0.6' stroke-width='" + linestrokewidth + "' stroke='" + strokecolor + "' />";
+        }
+        html += "</g>";
+
         return html;
     }
 
