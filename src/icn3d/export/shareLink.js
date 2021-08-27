@@ -20,7 +20,14 @@ class ShareLink {
            if(bPngHtml) url += "&random=" + parseInt(Math.random() * 1000); // generate a new shorten URL and thus image name everytime
            //var inputid =(ic.inputid) ? ic.inputid : "custom";
            let inputid = Object.keys(ic.structures).join('_');
-           if(inputid == 'stru' && ic.filename) inputid = ic.filename;
+           if(inputid == 'stru') {
+               if(ic.filename) {
+                   inputid = ic.filename;
+               }
+               else if(ic.inputid) {
+                   inputid = ic.inputid;
+               }
+           }
 
            if(!bPngHtml) {
                if(ic.bInputfile && !ic.bInputUrlfile) {

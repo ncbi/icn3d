@@ -26,6 +26,11 @@ class AnnoCddSite {
 //        let url = me.htmlCls.baseUrl + "cdannots/cdannots.fcgi?fmt&live=lcl&queries=" + chnidBaseArray;
         // precalculated
         let url = me.htmlCls.baseUrl + "cdannots/cdannots.fcgi?fmt&queries=" + chnidBaseArray;
+        // live search for AlphaFold structures
+        if(me.cfg.afid) {
+            url = me.htmlCls.baseUrl + "cdannots/cdannots.fcgi?fmt&live=lcl&queries=" + ic.giSeq[chnidArray[0]].join('');
+        }
+
         $.ajax({
           url: url,
           dataType: 'jsonp',

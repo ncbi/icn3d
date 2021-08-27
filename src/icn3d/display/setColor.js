@@ -37,6 +37,13 @@ class SetColor {
         let idx, cnt, lastTerSerialInv;
         let minB, maxB;
 
+        if(options.color.toLowerCase() == 'confidence') {
+            $("#" + me.pre + "legend").show();
+        }
+        else {
+            $("#" + me.pre + "legend").hide();
+        }
+
         switch (options.color.toLowerCase()) {
             case 'spectrum':
                 idx = 0;

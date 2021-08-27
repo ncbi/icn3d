@@ -78,7 +78,9 @@ class LoadPDB {
                 // if(bOpm === undefined || !bOpm) ic.bSecondaryStructure = true;
 
                 id = line.substr(62, 4).trim();
-                if(id == '') id = "stru"; //ic.filename.substr(0, 4);
+                if(id == '') {
+                    id = (ic.inputid.indexOf('/') == -1) ? ic.inputid.substr(0, 10) : "stru"; //ic.filename.substr(0, 4);
+                }
 
                 ic.molTitle = '';
 

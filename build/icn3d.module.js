@@ -12511,7 +12511,14 @@ class ShareLink {
            if(bPngHtml) url += "&random=" + parseInt(Math.random() * 1000); // generate a new shorten URL and thus image name everytime
            //var inputid =(ic.inputid) ? ic.inputid : "custom";
            let inputid = Object.keys(ic.structures).join('_');
-           if(inputid == 'stru' && ic.filename) inputid = ic.filename;
+           if(inputid == 'stru') {
+               if(ic.filename) {
+                   inputid = ic.filename;
+               }
+               else if(ic.inputid) {
+                   inputid = ic.inputid;
+               }
+           }
 
            if(!bPngHtml) {
                if(ic.bInputfile && !ic.bInputUrlfile) {
@@ -18224,6 +18231,13 @@ class SetColor {
         let idx, cnt, lastTerSerialInv;
         let minB, maxB;
 
+        if(options.color.toLowerCase() == 'confidence') {
+            $("#" + me.pre + "legend").show();
+        }
+        else {
+            $("#" + me.pre + "legend").hide();
+        }
+
         switch (options.color.toLowerCase()) {
             case 'spectrum':
                 idx = 0;
@@ -20690,7 +20704,9 @@ class LoadPDB {
                 // if(bOpm === undefined || !bOpm) ic.bSecondaryStructure = true;
 
                 id = line.substr(62, 4).trim();
-                if(id == '') id = "stru"; //ic.filename.substr(0, 4);
+                if(id == '') {
+                    id = (ic.inputid.indexOf('/') == -1) ? ic.inputid.substr(0, 10) : "stru"; //ic.filename.substr(0, 4);
+                }
 
                 ic.molTitle = '';
 
@@ -29593,6 +29609,11 @@ class AnnoCddSite {
 //        let url = me.htmlCls.baseUrl + "cdannots/cdannots.fcgi?fmt&live=lcl&queries=" + chnidBaseArray;
         // precalculated
         let url = me.htmlCls.baseUrl + "cdannots/cdannots.fcgi?fmt&queries=" + chnidBaseArray;
+        // live search for AlphaFold structures
+        if(me.cfg.afid) {
+            url = me.htmlCls.baseUrl + "cdannots/cdannots.fcgi?fmt&live=lcl&queries=" + ic.giSeq[chnidArray[0]].join('');
+        }
+
         $.ajax({
           url: url,
           dataType: 'jsonp',
@@ -43337,7 +43358,9 @@ class SaveFile {
                 //var asymmetricStr =(ic.bAssemblyUseAsu) ? "(Asymmetric Unit)" : "";
                 let asymmetricStr = "";
 
-                $("#" + ic.pre + "title").html("PDB ID <a id='" + ic.pre + "titlelink' href='" + url + "' style='color:" + titlelinkColor + "' target='_blank'>" + ic.inputid.toUpperCase() + "</a>" + asymmetricStr + ": " + title);
+                let idName = (me.cfg.afid) ? "AlphaFold UniProt ID" : "PDB ID";
+
+                $("#" + ic.pre + "title").html(idName + " <a id='" + ic.pre + "titlelink' href='" + url + "' style='color:" + titlelinkColor + "' target='_blank'>" + ic.inputid.toUpperCase() + "</a>" + asymmetricStr + ": " + title);
             }
         }
         else {
@@ -47675,7 +47698,7 @@ class SetDialog {
         html += me.htmlCls.space3 + '<span class="icn3d-square" style="background-color: rgb(255, 209, 19);">&nbsp;</span> <span>Low (70 &gt; pLDDT &gt; 50)</span><br>';
         html += me.htmlCls.space3 + '<span class="icn3d-square" style="background-color: rgb(255, 125, 69);">&nbsp;</span> <span>Very low (pLDDT &lt; 50)</span><br><br>';
 
-        html += "AlphaFold Uniprot ID: " + me.htmlCls.inputTextStr + "id='" + me.pre + "afid' value='A0A061AD48' size=8> ";
+        html += "<a href='https://alphafold.ebi.ac.uk/' target='_blank'>AlphaFold Uniprot</a> ID: " + me.htmlCls.inputTextStr + "id='" + me.pre + "afid' value='A0A061AD48' size=10> ";
         html += me.htmlCls.buttonStr + "reload_af'>Load</button>";
         html += "</div>";
 

@@ -1,5 +1,5 @@
 ## Change Log
-[icn3d-3.4.2](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.4.2.zip) was release on August 26, 2021. AlphaFold predicted structures can be viewed at iCn3D with the menu "File > Retrieve by ID > AlphaFold UniProt ID". 
+[icn3d-3.4.2](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.4.2.zip) was release on August 26, 2021. AlphaFold predicted structures can be viewed at iCn3D with the menu "File > Retrieve by ID > AlphaFold UniProt ID". The domain annotation can be displayed by clicking the menu "Analysis > Seq. & Annotations".
 
 [icn3d-3.4.1](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.4.1.zip) was release on August 23, 2021. Added a Python script to export PNG images for any structures in the batch mode. The script is in the directory icn3dnode.
 
