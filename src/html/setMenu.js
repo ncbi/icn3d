@@ -1349,7 +1349,7 @@ class SetMenu {
             html += "</ul>";
             html += "</li>";
 
-            if(!me.cfg.notebook && !me.cfg.hidelicense) {
+            if(!me.cfg.notebook) {
                 html += me.htmlCls.setHtmlCls.getLink('mn1_mutation', 'Mutation ' + me.htmlCls.wifiStr);
             }
 
