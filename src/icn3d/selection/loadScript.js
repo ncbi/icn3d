@@ -380,7 +380,7 @@ class LoadScript {
 
               return;
           }
-          else if(ic.commands[i].trim().indexOf('view interactions') == 0 && ic.icn3dui.cfg.align !== undefined) { // the command may have "|||{"factor"...
+          else if(ic.commands[i].trim().indexOf('view interactions') == 0 && me.cfg.align !== undefined) { // the command may have "|||{"factor"...
               let  strArray = ic.commands[i].split("|||");
 
               if(ic.b2DShown === undefined || !ic.b2DShown) {
@@ -406,7 +406,7 @@ class LoadScript {
             if(title !== 'none') {
                 if(ic.symmetryHash === undefined) {
                     $.when(thisClass.applyCommandSymmetry(command)).then(function() {
-                       //if(!ic.icn3dui.cfg.notebook && dialog && dialog.hasClass("ui-dialog-content")) dialog.dialog( "close" );
+                       //if(!me.cfg.notebook && dialog && dialog.hasClass("ui-dialog-content")) dialog.dialog( "close" );
 
                        ic.drawCls.draw();
                        thisClass.execCommandsBase(i + 1, end, steps);
@@ -436,7 +436,7 @@ class LoadScript {
             //if(title !== 'none') {
     //            if(ic.symdHash === undefined) {
                     $.when(ic.symdCls.applyCommandSymd(command)).then(function() {
-                       //if(!ic.icn3dui.cfg.notebook && dialog && dialog.hasClass("ui-dialog-content")) dialog.dialog( "close" );
+                       //if(!me.cfg.notebook && dialog && dialog.hasClass("ui-dialog-content")) dialog.dialog( "close" );
 
                        ic.drawCls.draw();
                        thisClass.execCommandsBase(i + 1, end, steps);
@@ -459,7 +459,7 @@ class LoadScript {
             let  command = strArray[0].trim();
 
             $.when(ic.scapCls.applyCommandScap(command)).then(function() {
-               //if(!ic.icn3dui.cfg.notebook && dialog && dialog.hasClass("ui-dialog-content")) dialog.dialog( "close" );
+               //if(!me.cfg.notebook && dialog && dialog.hasClass("ui-dialog-content")) dialog.dialog( "close" );
 
                //ic.drawCls.draw();
                thisClass.execCommandsBase(i + 1, end, steps);
@@ -604,7 +604,7 @@ class LoadScript {
                             .then(thisClass.applyCommand3ddomain(lastCommand));
                         ic.annotationCls.setAnnoTabAll();
                     }
-                    else if(lastCommand.indexOf('view interactions') == 0 && ic.icn3dui.cfg.align !== undefined) {
+                    else if(lastCommand.indexOf('view interactions') == 0 && me.cfg.align !== undefined) {
                         thisClass.applyCommandViewinteraction(lastCommand);
                     }
                     else if(lastCommand.indexOf('symmetry') == 0) {
@@ -679,9 +679,9 @@ class LoadScript {
         let  loadStr = load_parameters[0];
         if(load_parameters.length > 1) {
             let  firstSpacePos = load_parameters[load_parameters.length - 1].indexOf(' ');
-            ic.icn3dui.cfg.inpara = load_parameters[load_parameters.length - 1].substr(firstSpacePos + 1);
-            if(ic.icn3dui.cfg.inpara === 'undefined') {
-                ic.icn3dui.cfg.inpara = '';
+            me.cfg.inpara = load_parameters[load_parameters.length - 1].substr(firstSpacePos + 1);
+            if(me.cfg.inpara === 'undefined') {
+                me.cfg.inpara = '';
             }
         }
 
@@ -689,50 +689,54 @@ class LoadScript {
         let  id = loadStr.substr(loadStr.lastIndexOf(' ') + 1);
         ic.inputid = id;
         if(command.indexOf('load mmtf') !== -1) {
-          ic.icn3dui.cfg.mmtfid = id;
+          me.cfg.mmtfid = id;
           ic.mmtfParserCls.downloadMmtf(id);
         }
         else if(command.indexOf('load pdb') !== -1) {
-          ic.icn3dui.cfg.pdbid = id;
+          me.cfg.pdbid = id;
           ic.pdbParserCls.downloadPdb(id);
         }
+        else if(command.indexOf('load af') !== -1) {
+          me.cfg.afid = id;
+          ic.pdbParserCls.downloadPdb(id, true);
+        }
         else if(command.indexOf('load opm') !== -1) {
-          ic.icn3dui.cfg.opmid = id;
+          me.cfg.opmid = id;
           ic.opmParserCls.downloadOpm(id);
         }
         else if(command.indexOf('load mmcif') !== -1) {
-          ic.icn3dui.cfg.mmcifid = id;
+          me.cfg.mmcifid = id;
           ic.mmcifParserCls.downloadMmcif(id);
         }
         else if(command.indexOf('load mmdb') !== -1) {
-          ic.icn3dui.cfg.mmdbid = id;
+          me.cfg.mmdbid = id;
 
           ic.mmdbParserCls.downloadMmdb(id);
         }
         else if(command.indexOf('load gi') !== -1) {
-          ic.icn3dui.cfg.gi = id;
+          me.cfg.gi = id;
           ic.mmdbParserCls.downloadGi(id);
         }
-        else if(command.indexOf('load seq_struc_ids') !== -1) {
+        else if(command.indexOf('load seq_struct_ids') !== -1) {
           ic.mmdbParserCls.downloadBlast_rep_id(id);
         }
         else if(command.indexOf('load cid') !== -1) {
-          ic.icn3dui.cfg.cid = id;
+          me.cfg.cid = id;
           ic.sdfParserCls.downloadCid(id);
         }
         else if(command.indexOf('load alignment') !== -1) {
-          ic.icn3dui.cfg.align = id;
+          me.cfg.align = id;
           ic.alignParserCls.downloadAlignment(id);
         }
         else if(command.indexOf('load chainalignment') !== -1) {
           //load chainalignment [id] | resnum [resnum] | parameters [inpara]
           let  urlArray = command.split(" | ");
           if(urlArray[1].indexOf('resnum') != -1) {
-              ic.icn3dui.cfg.resnum = urlArray[1].substr(urlArray[1].indexOf('resnum') + 7);
+              me.cfg.resnum = urlArray[1].substr(urlArray[1].indexOf('resnum') + 7);
           }
 
-          ic.icn3dui.cfg.chainalign = id;
-          ic.chainalignParserCls.downloadChainalignment(id, ic.icn3dui.cfg.resnum);
+          me.cfg.chainalign = id;
+          ic.chainalignParserCls.downloadChainalignment(id, me.cfg.resnum);
         }
         else if(command.indexOf('load url') !== -1) {
             let  typeStr = load_parameters[1]; // type pdb
@@ -743,13 +747,13 @@ class LoadScript {
                 type = typeStr.substr(pos + 5);
             }
 
-            ic.icn3dui.cfg.url = id;
+            me.cfg.url = id;
             ic.pdbParserCls.downloadUrl(id, type);
         }
       }
 
       ic.bAddCommands = true;
-      }); // end of ic.icn3dui.deferred = $.Deferred(function() {
+      }); // end of me.deferred = $.Deferred(function() {
 
       return ic.deferred2.promise();
     }
@@ -778,7 +782,7 @@ class LoadScript {
                   ic.dsn6ParserCls.dsn6Parser(ic.inputid, type, sigma);
               }
           }
-      }); // end of ic.icn3dui.deferred = $.Deferred(function() {
+      }); // end of me.deferred = $.Deferred(function() {
 
       return ic.deferredMap.promise();
     }
@@ -798,7 +802,7 @@ class LoadScript {
 
               ic.densityCifParserCls.densityCifParser(ic.inputid, type, percentage, ic.emd);
           }
-      }); // end of ic.icn3dui.deferred = $.Deferred(function() {
+      }); // end of me.deferred = $.Deferred(function() {
 
       return ic.deferredEmmap.promise();
     }
@@ -813,7 +817,7 @@ class LoadScript {
       // chain functions together
       ic.deferredSymmetry = $.Deferred(function() {
          thisClass.applyCommandSymmetryBase(command);
-      }); // end of ic.icn3dui.deferred = $.Deferred(function() {
+      }); // end of me.deferred = $.Deferred(function() {
 
       return ic.deferredSymmetry.promise();
     }
@@ -828,7 +832,7 @@ class LoadScript {
       // chain functions together
       ic.deferredRealign = new $.Deferred(function() {
          thisClass.applyCommandRealignBase(command);
-      }); // end of ic.icn3dui.deferred = $.Deferred(function() {
+      }); // end of me.deferred = $.Deferred(function() {
 
       return ic.deferredRealign.promise();
     }
@@ -866,7 +870,7 @@ class LoadScript {
       // chain functions together
       ic.deferredGraphinteraction = $.Deferred(function() {
          thisClass.applyCommandGraphinteractionBase(command);
-      }); // end of ic.icn3dui.deferred = $.Deferred(function() {
+      }); // end of me.deferred = $.Deferred(function() {
 
       return ic.deferredGraphinteraction.promise();
     }
@@ -882,7 +886,7 @@ class LoadScript {
       // chain functions together
       ic.deferredCartoon2d = $.Deferred(function() {
          thisClass.applyCommandCartoon2dBase(command);
-      }); // end of ic.icn3dui.deferred = $.Deferred(function() {
+      }); // end of me.deferred = $.Deferred(function() {
 
       return ic.deferredCartoon2d.promise();
     }
@@ -890,7 +894,7 @@ class LoadScript {
     applyCommandAnnotationsAndCddSiteBase(command) { let  ic = this.icn3d, me = ic.icn3dui;
       // chain functions together
       if(command == "view annotations") {
-          //if(ic.icn3dui.cfg.showanno === undefined || !ic.icn3dui.cfg.showanno) {
+          //if(me.cfg.showanno === undefined || !me.cfg.showanno) {
               ic.showAnnoCls.showAnnotations();
           //}
       }
@@ -905,7 +909,7 @@ class LoadScript {
       // chain functions together
       ic.deferredAnnoCddSite = $.Deferred(function() {
           thisClass.applyCommandAnnotationsAndCddSiteBase(command);
-      }); // end of ic.icn3dui.deferred = $.Deferred(function() {
+      }); // end of me.deferred = $.Deferred(function() {
 
       return ic.deferredAnnoCddSite.promise();
     }
@@ -932,7 +936,7 @@ class LoadScript {
       // chain functions together
       ic.deferredClinvar = $.Deferred(function() {
           thisClass.applyCommandClinvarBase(command);
-      }); // end of ic.icn3dui.deferred = $.Deferred(function() {
+      }); // end of me.deferred = $.Deferred(function() {
 
       return ic.deferredClinvar.promise();
     }
@@ -943,7 +947,7 @@ class LoadScript {
       // chain functions together
       ic.deferredSnp = $.Deferred(function() {
           thisClass.applyCommandSnpBase(command);
-      }); // end of ic.icn3dui.deferred = $.Deferred(function() {
+      }); // end of me.deferred = $.Deferred(function() {
 
       return ic.deferredSnp.promise();
     }
@@ -964,14 +968,14 @@ class LoadScript {
       // chain functions together
       ic.deferred3ddomain = $.Deferred(function() {
           thisClass.applyCommand3ddomainBase(command);
-      }); // end of ic.icn3dui.deferred = $.Deferred(function() {
+      }); // end of me.deferred = $.Deferred(function() {
 
       return ic.deferred3ddomain.promise();
     }
 
     applyCommandViewinteractionBase(command) { let  ic = this.icn3d, me = ic.icn3dui;
       // chain functions together
-         if(ic.icn3dui.cfg.align !== undefined || ic.icn3dui.cfg.chainalign !== undefined) {
+         if(me.cfg.align !== undefined || me.cfg.chainalign !== undefined) {
              let  structureArray = Object.keys(ic.structures);
              ic.ParserUtilsCls.set2DDiagramsForAlign(structureArray[0].toUpperCase(), structureArray[1].toUpperCase());
          }
@@ -982,7 +986,7 @@ class LoadScript {
       // chain functions together
       ic.deferredViewinteraction = $.Deferred(function() {
          thisClass.applyCommandViewinteractionBase(command);
-      }); // end of ic.icn3dui.deferred = $.Deferred(function() {
+      }); // end of me.deferred = $.Deferred(function() {
 
       return ic.deferredViewinteraction.promise();
     }
@@ -1022,7 +1026,7 @@ class LoadScript {
         ic.selectionCls.oneStructurePerWindow();
 
         // simple if all atoms are modified
-        //if( ic.icn3dui.cfg.command === undefined &&(steps === 1 ||(Object.keys(ic.hAtoms).length === Object.keys(ic.atoms).length) ||(ic.optsHistory[steps - 1] !== undefined && ic.optsHistory[steps - 1].hasOwnProperty('hlatomcount') && ic.optsHistory[steps - 1].hlatomcount === Object.keys(ic.atoms).length) ) ) {
+        //if( me.cfg.command === undefined &&(steps === 1 ||(Object.keys(ic.hAtoms).length === Object.keys(ic.atoms).length) ||(ic.optsHistory[steps - 1] !== undefined && ic.optsHistory[steps - 1].hasOwnProperty('hlatomcount') && ic.optsHistory[steps - 1].hlatomcount === Object.keys(ic.atoms).length) ) ) {
         if(steps === 1
           ||(Object.keys(ic.hAtoms).length === Object.keys(ic.atoms).length)
           ||(ic.optsHistory[steps - 1] !== undefined && ic.optsHistory[steps - 1].hasOwnProperty('hlatomcount') && ic.optsHistory[steps - 1].hlatomcount === Object.keys(ic.atoms).length) ) {
@@ -1071,18 +1075,18 @@ class LoadScript {
             ic.drawCls.draw();
         }
 
-        if(ic.icn3dui.cfg.closepopup) {
+        if(me.cfg.closepopup) {
             setTimeout(function(){
                 ic.resizeCanvasCls.closeDialogs();
             }, 100);
 
-            ic.resizeCanvasCls.resizeCanvas(ic.icn3dui.htmlCls.WIDTH, ic.icn3dui.htmlCls.HEIGHT, true);
+            ic.resizeCanvasCls.resizeCanvas(me.htmlCls.WIDTH, me.htmlCls.HEIGHT, true);
         }
 
         // an extra render to remove artifacts in transparent surface
         if(ic.bTransparentSurface && ic.bRender) ic.drawCls.render();
 
-        if(ic.icn3dui.deferred !== undefined) ic.icn3dui.deferred.resolve(); if(ic.deferred2 !== undefined) ic.deferred2.resolve();
+        if(me.deferred !== undefined) me.deferred.resolve(); if(ic.deferred2 !== undefined) ic.deferred2.resolve();
     }
 
     replayFirstStep(currentNumber) { let  ic = this.icn3d, me = ic.icn3dui;

@@ -20,34 +20,47 @@ class Cartoon2d {
     }
 
     draw2Dcartoon(type) { let ic = this.icn3d, me = ic.icn3dui;
+        me.htmlCls.clickMenuCls.setLogCmd("cartoon 2d " + type, true);
+        this.draw2Dcartoon_base(type);
+    }
+
+    draw2Dcartoon_base(type, bResize) { let ic = this.icn3d, me = ic.icn3dui;
         let thisClass = this;
 
-        ic.icn3dui.htmlCls.clickMenuCls.setLogCmd("cartoon 2d " + type, true);
+        ic.cartoon2dType = type;
+
         //ic.bGraph = false; // differentiate from force-directed graph for interactions
 
-        if(type == 'domain' && !ic.chainid2pssmid) {
-            $.when(thisClass.getNodesLinksForSetCartoon(type)).then(function() {
-               ic.graphStr = thisClass.getCartoonData(type, ic.node_link);
-               //ic.viewInterPairsCls.drawGraphWrapper(ic.graphStr, ic.deferredCartoon2d, true);
-               let html = thisClass.getCartoonSvg(type, ic.graphStr);
-               $("#" + me.svgid_ct).html(html);
-               thisClass.setEventsForCartoon2d();
-
-               ic.icn3dui.htmlCls.dialogCls.openDlg('dl_2dctn', '2D Cartoon');
-
-               if(ic.deferredCartoon2d !== undefined) ic.deferredCartoon2d.resolve();
-            });
+        if(bResize) {
+            let html = thisClass.getCartoonSvg(type, ic.graphStr);
+            $("#" + me.svgid_ct).html(html);
         }
         else {
-            this.getNodesLinksForSetCartoonBase(type);
-            ic.graphStr = thisClass.getCartoonData(type, ic.node_link);
-            //ic.viewInterPairsCls.drawGraphWrapper(ic.graphStr, ic.deferredCartoon2d, true);
-            let html = thisClass.getCartoonSvg(type, ic.graphStr);
+            if(type == 'domain' && !ic.chainid2pssmid) {
+                $.when(thisClass.getNodesLinksForSetCartoon(type)).then(function() {
+                   ic.graphStr = thisClass.getCartoonData(type, ic.node_link);
+                   //ic.viewInterPairsCls.drawGraphWrapper(ic.graphStr, ic.deferredCartoon2d, true);
+                   let html = thisClass.getCartoonSvg(type, ic.graphStr);
+                   $("#" + me.svgid_ct).html(html);
+                   thisClass.setEventsForCartoon2d();
 
-            $("#" + me.svgid_ct).html(html);
-            thisClass.setEventsForCartoon2d();
+                   me.htmlCls.dialogCls.openDlg('dl_2dctn', '2D Cartoon');
 
-            ic.icn3dui.htmlCls.dialogCls.openDlg('dl_2dctn', '2D Cartoon');
+                   if(ic.deferredCartoon2d !== undefined) ic.deferredCartoon2d.resolve();
+                });
+            }
+            else {
+                this.getNodesLinksForSetCartoonBase(type);
+                ic.graphStr = thisClass.getCartoonData(type, ic.node_link);
+
+                //ic.viewInterPairsCls.drawGraphWrapper(ic.graphStr, ic.deferredCartoon2d, true);
+                let html = thisClass.getCartoonSvg(type, ic.graphStr);
+
+                $("#" + me.svgid_ct).html(html);
+                thisClass.setEventsForCartoon2d();
+
+                me.htmlCls.dialogCls.openDlg('dl_2dctn', '2D Cartoon');
+            }
         }
     }
 
@@ -274,8 +287,8 @@ class Cartoon2d {
         let strokecolor = 'none';
         let strokewidth = '1';
         let linestrokewidth = '1';
-        let helixstrokewidth = '4';
-        let helixstrokewidth2 = '2';
+        let helixstrokewidth = '3';
+        let helixstrokewidth2 = '1';
         let textcolor = '#000000';
         let fontsize = '10';
         let smallfontsize = '8';
@@ -422,7 +435,7 @@ class Cartoon2d {
 
        let nodeArray = [], linkArray = [];
        let cnt = 0;
-       let thickness = ic.icn3dui.htmlCls.defaultValue; // 1
+       let thickness = me.htmlCls.defaultValue; // 1
 
        let prevChain = '', prevResName = '', prevResi = 0, prevAtom, lastChain = '';
        let x, y, z, length = 0, angle;
@@ -574,6 +587,15 @@ class Cartoon2d {
                        let x2 = v2b.x;
                        let y2 = v2b.y;
 
+                       x = 0.5 * (x1 + x2);
+                       y = 0.5 * (y1 + y2);
+
+                       // use half length of the helix or sheet to make the display clear
+                       x1 = 0.5 * (x + x1);
+                       y1 = 0.5 * (y + y1);
+                       x2 = 0.5 * (x + x2);
+                       y2 = 0.5 * (y + y2);
+
                        if(x1 < minX) minX = x1;
                        if(x1 > maxX) maxX = x1;
                        if(y1 < minY) minY = y1;
@@ -583,9 +605,6 @@ class Cartoon2d {
                        if(x2 > maxX) maxX = x2;
                        if(y2 < minY) minY = y2;
                        if(y2 > maxY) maxY = y2;
-
-                       x = 0.5 * (x1 + x2);
-                       y = 0.5 * (y1 + y2);
 
                        bBegin = false;
                        bEnd = true;
@@ -645,7 +664,7 @@ class Cartoon2d {
     getNodesLinksForDomains(chainid2pssmid) { let ic = this.icn3d, me = ic.icn3dui;
        let nodeArray = [], linkArray = [];
        let cnt = 0;
-       let thickness = ic.icn3dui.htmlCls.defaultValue; // 1
+       let thickness = me.htmlCls.defaultValue; // 1
 
        let prevChain = '', prevResName = '', prevResi = 0, prevAtom, lastChain = '';
        let x, y, z, length = 0, prevX, prevY, prevZ;
@@ -913,7 +932,7 @@ class Cartoon2d {
             ic.annotationCls.showAnnoSelectedChains();
 
             let select = (type == 'chain') ? "select chain " + chainid : "select " + ic.resid2specCls.residueids2spec(residArray);
-            ic.icn3dui.htmlCls.clickMenuCls.setLogCmd(select, true);
+            me.htmlCls.clickMenuCls.setLogCmd(select, true);
 
             ic.bSelectResidue = false;
         });

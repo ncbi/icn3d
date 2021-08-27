@@ -91,7 +91,7 @@ class Delphi {
        let pdbstr = '';
        pdbstr += ic.saveFileCls.getPDBHeader();
 
-       pdbstr +=(ic.icn3dui.cfg.cid) ? ic.saveFileCls.getAtomPDB(atomHash, true) : ic.saveFileCls.getAtomPDB(atomHash);
+       pdbstr +=(me.cfg.cid) ? ic.saveFileCls.getAtomPDB(atomHash, true) : ic.saveFileCls.getAtomPDB(atomHash);
        pdbstr += ic.saveFileCls.getAtomPDB(ionHash, true);
 
        return pdbstr;
@@ -103,7 +103,7 @@ class Delphi {
        ic.loadPhiFrom = 'delphi';
 
        let url = "https://www.ncbi.nlm.nih.gov/Structure/delphi/delphi.fcgi";
-       let pdbid =(ic.icn3dui.cfg.cid) ? ic.icn3dui.cfg.cid : Object.keys(ic.structures).toString();
+       let pdbid =(me.cfg.cid) ? me.cfg.cid : Object.keys(ic.structures).toString();
        let dataObj = {}
 
        if(data) {
@@ -356,10 +356,10 @@ class Delphi {
       let thisClass = this;
       // chain functions together
       ic.deferredPhi = $.Deferred(function() { let ic = thisClass.icn3d;
-          //ic.icn3dui.htmlCls.clickMenuCls.setLogCmd('set phi phiurl2/cubeurl2 | contour ' + contour + ' | url ' + encodeURIComponent(url)
+          //me.htmlCls.clickMenuCls.setLogCmd('set phi phiurl2/cubeurl2 | contour ' + contour + ' | url ' + encodeURIComponent(url)
           //       + ' | gsize ' + gsize + ' | salt ' + salt
           //       + ' | surface ' + ic.phisurftype + ' | opacity ' + ic.phisurfop + ' | wireframe ' + ic.phisurfwf, true);
-          //ic.icn3dui.htmlCls.clickMenuCls.setLogCmd('set phi phiurl/cubeurl | contour ' + contour + ' | url ' + encodeURIComponent(url)
+          //me.htmlCls.clickMenuCls.setLogCmd('set phi phiurl/cubeurl | contour ' + contour + ' | url ' + encodeURIComponent(url)
           //       + ' | gsize ' + gsize + ' | salt ' + salt, true);
           let paraArray = command.split(" | ");
 
@@ -400,7 +400,7 @@ class Delphi {
           else {
               thisClass.PhiParser(url, type, contour, bSurface);
           }
-      }); // end of ic.icn3dui.deferred = $.Deferred(function() {
+      }); // end of me.deferred = $.Deferred(function() {
 
       return ic.deferredPhi.promise();
     }
@@ -410,10 +410,10 @@ class Delphi {
 
       // chain functions together
       ic.deferredDelphi = $.Deferred(function() { let ic = thisClass.icn3d;
-           //ic.icn3dui.htmlCls.clickMenuCls.setLogCmd('set delphi surface | contour ' + contour + ' | gsize ' + gsize + ' | salt ' + salt
+           //me.htmlCls.clickMenuCls.setLogCmd('set delphi surface | contour ' + contour + ' | gsize ' + gsize + ' | salt ' + salt
            //  + ' | surface ' + ic.phisurftype + ' | opacity ' + ic.phisurfop + ' | wireframe ' + ic.phisurfwf, true);
 
-           //ic.icn3dui.htmlCls.clickMenuCls.setLogCmd('set delphi map | contour ' + contour + ' | gsize ' + gsize + ' | salt ' + salt, true);
+           //me.htmlCls.clickMenuCls.setLogCmd('set delphi map | contour ' + contour + ' | gsize ' + gsize + ' | salt ' + salt, true);
 
           let paraArray = command.split(" | ");
 
@@ -448,7 +448,7 @@ class Delphi {
           let bSurface =(type == 'surface') ? true : false;
 
           thisClass.CalcPhi(gsize, salt, contour, bSurface);
-      }); // end of ic.icn3dui.deferred = $.Deferred(function() {
+      }); // end of me.deferred = $.Deferred(function() {
 
       return ic.deferredDelphi.promise();
     }
@@ -465,11 +465,11 @@ class Delphi {
        let displayType =(type == 'delphi2') ? 'surface' : 'map';
 
        if(bSurface) {
-           ic.icn3dui.htmlCls.clickMenuCls.setLogCmd('set delphi ' + displayType + ' | contour ' + contour + ' | gsize ' + gsize + ' | salt ' + salt
+           me.htmlCls.clickMenuCls.setLogCmd('set delphi ' + displayType + ' | contour ' + contour + ' | gsize ' + gsize + ' | salt ' + salt
              + ' | surface ' + ic.phisurftype + ' | opacity ' + ic.phisurfop + ' | wireframe ' + ic.phisurfwf, true);
        }
        else {
-           ic.icn3dui.htmlCls.clickMenuCls.setLogCmd('set delphi ' + displayType + ' | contour ' + contour + ' | gsize ' + gsize + ' | salt ' + salt, true);
+           me.htmlCls.clickMenuCls.setLogCmd('set delphi ' + displayType + ' | contour ' + contour + ' | gsize ' + gsize + ' | salt ' + salt, true);
        }
     }
 
@@ -527,12 +527,12 @@ class Delphi {
            }
 
            if(bSurface) {
-               ic.icn3dui.htmlCls.clickMenuCls.setLogCmd('load phi ' + type + ' | contour ' + contour + ' | file ' + $("#" + ic.pre + type + "file").val()
+               me.htmlCls.clickMenuCls.setLogCmd('load phi ' + type + ' | contour ' + contour + ' | file ' + $("#" + ic.pre + type + "file").val()
                  + ' | gsize ' + gsize + ' | salt ' + salt
                  + ' | surface ' + ic.phisurftype + ' | opacity ' + ic.phisurfop + ' | wireframe ' + ic.phisurfwf, false);
            }
            else {
-               ic.icn3dui.htmlCls.clickMenuCls.setLogCmd('load phi ' + type + ' | contour ' + contour + ' | file ' + $("#" + ic.pre + type + "file").val()
+               me.htmlCls.clickMenuCls.setLogCmd('load phi ' + type + ' | contour ' + contour + ' | file ' + $("#" + ic.pre + type + "file").val()
                  + ' | gsize ' + gsize + ' | salt ' + salt, false);
            }
          }
@@ -578,12 +578,12 @@ class Delphi {
            }
 
            if(bSurface) {
-               ic.icn3dui.htmlCls.clickMenuCls.setLogCmd('set phi ' + type + ' | contour ' + contour + ' | url ' + encodeURIComponent(url)
+               me.htmlCls.clickMenuCls.setLogCmd('set phi ' + type + ' | contour ' + contour + ' | url ' + encodeURIComponent(url)
                  + ' | gsize ' + gsize + ' | salt ' + salt
                  + ' | surface ' + ic.phisurftype + ' | opacity ' + ic.phisurfop + ' | wireframe ' + ic.phisurfwf, true);
            }
            else {
-               ic.icn3dui.htmlCls.clickMenuCls.setLogCmd('set phi ' + type + ' | contour ' + contour + ' | url ' + encodeURIComponent(url)
+               me.htmlCls.clickMenuCls.setLogCmd('set phi ' + type + ' | contour ' + contour + ' | url ' + encodeURIComponent(url)
                  + ' | gsize ' + gsize + ' | salt ' + salt, true);
            }
        }

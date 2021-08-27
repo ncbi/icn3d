@@ -11,7 +11,7 @@ class Camera {
 
     //Set the camera according to the size of the structure.
     setCamera() { let ic = this.icn3d, me = ic.icn3dui;
-        if(ic.bControlGl && !ic.icn3dui.bNode) {
+        if(ic.bControlGl && !me.bNode) {
             window.cam = ic.cams[ic.opts.camera.toLowerCase()];
 
             let maxD = ic.maxD;
@@ -53,11 +53,11 @@ class Camera {
                 }
                 window.cam.far = 10000;
 
-                if(ic.bControlGl && !ic.icn3dui.bNode) {
+                if(ic.bControlGl && !me.bNode) {
                     window.controls = new THREE.TrackballControls( window.cam, undefined, ic );
                 }
                 else {
-                    if(!ic.icn3dui.bNode) {
+                    if(!me.bNode) {
                         ic.controls = new THREE.TrackballControls( ic.cam, document.getElementById(ic.id), ic );
                     }
                     else {
@@ -86,11 +86,11 @@ class Camera {
 
                   window.cam.far = 10000;
 
-                if(ic.bControlGl && !ic.icn3dui.bNode) {
+                if(ic.bControlGl && !me.bNode) {
                     window.controls = new THREE.OrthographicTrackballControls( window.cam, undefined, ic );
                 }
                 else {
-                    if(!ic.icn3dui.bNode) {
+                    if(!me.bNode) {
                         ic.controls = new THREE.OrthographicTrackballControls( ic.cam, document.getElementById(ic.id), ic );
                     }
                     else {
@@ -145,11 +145,11 @@ class Camera {
                 }
                 ic.cam.far = 10000;
 
-                if(ic.bControlGl && !ic.icn3dui.bNode) {
+                if(ic.bControlGl && !me.bNode) {
                     window.controls = new THREE.TrackballControls( ic.cam, undefined, ic );
                 }
                 else {
-                    if(!ic.icn3dui.bNode) {
+                    if(!me.bNode) {
                         ic.controls = new THREE.TrackballControls( ic.cam, document.getElementById(ic.id), ic );
                     }
                     else {
@@ -178,11 +178,11 @@ class Camera {
 
                   ic.cam.far = 10000;
 
-                if(ic.bControlGl && !ic.icn3dui.bNode) {
+                if(ic.bControlGl && !me.bNode) {
                     window.controls = new THREE.OrthographicTrackballControls( ic.cam, undefined, ic );
                 }
                 else {
-                    if(!ic.icn3dui.bNode) {
+                    if(!me.bNode) {
                         ic.controls = new THREE.OrthographicTrackballControls( ic.cam, document.getElementById(ic.id), ic );
                     }
                     else {

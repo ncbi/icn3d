@@ -159,7 +159,7 @@ class Scene {
 
         // https://discourse.threejs.org/t/correctly-remove-mesh-from-scene-and-dispose-material-and-geometry/5448/2
         // clear memory
-        if(!ic.icn3dui.bNode) ic.renderer.renderLists.dispose();
+        if(!me.bNode) ic.renderer.renderLists.dispose();
 
         ic.mdl = new THREE.Object3D();  // regular display
         ic.mdlImpostor = new THREE.Object3D();  // Impostor display
@@ -181,7 +181,7 @@ class Scene {
 
         let background = me.parasCls.backgroundColors[ic.opts.background.toLowerCase()];
 
-        if(!ic.icn3dui.bNode) {
+        if(!me.bNode) {
             if(ic.opts.background.toLowerCase() === 'transparent') {
                 ic.renderer.setClearColor(background, 0);
             }

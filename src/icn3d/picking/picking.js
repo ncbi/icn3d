@@ -20,7 +20,7 @@ class Picking {
     //($[structure id].[chain id]:[residue number]@[atom name]) is displayed.
     showPicking(atom, x, y) { let  ic = this.icn3d, me = ic.icn3dui;
       //me = ic.setIcn3dui(ic.id);
-      if(ic.icn3dui.cfg.cid !== undefined && ic.pk != 0) {
+      if(me.cfg.cid !== undefined && ic.pk != 0) {
           ic.pk = 1; // atom
       }
       else {
@@ -31,8 +31,8 @@ class Picking {
 
       if(ic.pk != 0) {
           if(x !== undefined && y !== undefined) { // mouse over
-            if(ic.icn3dui.cfg.showmenu != undefined && ic.icn3dui.cfg.showmenu == true) {
-                y += ic.icn3dui.htmlCls.MENU_HEIGHT;
+            if(me.cfg.showmenu != undefined && me.cfg.showmenu == true) {
+                y += me.htmlCls.MENU_HEIGHT;
             }
             let  text =(ic.pk == 1) ? atom.resn + atom.resi + '@' + atom.name : atom.resn + atom.resi;
             if(ic.structures !== undefined && Object.keys(ic.structures).length > 1) {
@@ -70,9 +70,9 @@ class Picking {
               }
               // update the interaction flag
               ic.bSphereCalc = false;
-              //ic.icn3dui.htmlCls.clickMenuCls.setLogCmd('set calculate sphere false', true);
+              //me.htmlCls.clickMenuCls.setLogCmd('set calculate sphere false', true);
               ic.bHbondCalc = false;
-              //ic.icn3dui.htmlCls.clickMenuCls.setLogCmd('set calculate hbond false', true);
+              //me.htmlCls.clickMenuCls.setLogCmd('set calculate hbond false', true);
           }
       }
     }

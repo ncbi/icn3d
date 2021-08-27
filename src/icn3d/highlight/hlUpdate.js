@@ -21,13 +21,13 @@ class HlUpdate {
     update2DdgmContent() { let ic = this.icn3d, me = ic.icn3dui;
        // update 2D diagram to show just the displayed parts
        let html2ddgm = '';
-       if(ic.icn3dui.cfg.mmdbid !== undefined || ic.icn3dui.cfg.gi !== undefined) {
+       if(me.cfg.mmdbid !== undefined || me.cfg.gi !== undefined) {
           html2ddgm += ic.diagram2dCls.draw2Ddgm(ic.interactionData, ic.inputid, undefined, true);
           html2ddgm += ic.diagram2dCls.set2DdgmNote();
 
           $("#" + ic.pre + "dl_2ddgm").html(html2ddgm);
        }
-       else if(ic.mmdbidArray &&(ic.icn3dui.cfg.align !== undefined || ic.icn3dui.cfg.chainalign !== undefined || ic.bRealign)) {
+       else if(ic.mmdbidArray &&(me.cfg.align !== undefined || me.cfg.chainalign !== undefined || ic.bRealign)) {
           html2ddgm += ic.diagram2dCls.draw2Ddgm(ic.interactionData1, ic.mmdbidArray[0].toUpperCase(), 0, true);
           if(ic.mmdbid_q !== undefined && ic.mmdbid_q === ic.mmdbid_t) {
               html2ddgm += ic.diagram2dCls.draw2Ddgm(ic.interactionData2, ic.mmdbidArray[0].toUpperCase(), 1, true);
@@ -53,7 +53,7 @@ class HlUpdate {
              // annotations will have their own color, only the chain will have the changed color
              $("[id=giseq_" + ic.pre + pickedResidue + "]").attr('style', 'color:#' + color);
              $("[id=align_" + ic.pre + pickedResidue + "]").attr('style', 'color:#' + color);
-             if(ic.icn3dui.cfg.align !== undefined || ic.icn3dui.cfg.chainalign !== undefined || ic.bRealign || ic.bSymd) $("[id=align_" + ic.pre + pickedResidue + "]").attr('style', 'color:#' + color);
+             if(me.cfg.align !== undefined || me.cfg.chainalign !== undefined || ic.bRealign || ic.bSymd) $("[id=align_" + ic.pre + pickedResidue + "]").attr('style', 'color:#' + color);
            //}
        }
     }
@@ -241,7 +241,7 @@ class HlUpdate {
 
       if(ic.lineArray2d !== undefined) {
           for(let i = 0, il = ic.lineArray2d.length; i < il; i += 2) {
-              $("#" + ic.pre + "dl_2ddgm g[chainid1=" + ic.lineArray2d[i] + "][chainid2=" + ic.lineArray2d[i + 1] + "] line").attr('stroke', ic.icn3dui.htmlCls.ORANGE);
+              $("#" + ic.pre + "dl_2ddgm g[chainid1=" + ic.lineArray2d[i] + "][chainid2=" + ic.lineArray2d[i + 1] + "] line").attr('stroke', me.htmlCls.ORANGE);
           }
       }
 
@@ -318,7 +318,7 @@ class HlUpdate {
     }
 
     toggleHighlight() { let ic = this.icn3d, me = ic.icn3dui;
-        //ic.icn3dui.htmlCls.clickMenuCls.setLogCmd("toggle highlight", true);
+        //me.htmlCls.clickMenuCls.setLogCmd("toggle highlight", true);
 
         //if(ic.prevHighlightObjects.length > 0 || ic.prevHighlightObjects_ghost.length > 0) { // remove
         if(ic.bShowHighlight) { // remove
@@ -330,7 +330,7 @@ class HlUpdate {
             ic.bShowHighlight = true;
         }
 
-        //ic.icn3dui.htmlCls.clickMenuCls.setLogCmd("toggle highlight", true);
+        //me.htmlCls.clickMenuCls.setLogCmd("toggle highlight", true);
     }
 
     clearHighlight() { let ic = this.icn3d, me = ic.icn3dui;

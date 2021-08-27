@@ -16,7 +16,7 @@ class CurveStripArrow {
 
     createCurveSubArrow(p, width, colors, div, bHighlight, bRibbon, num, positionIndex,
       pntsCA, prevCOArray, bShowArray, calphaIdArray, bShowArrow, prevone, nexttwo) { let ic = this.icn3d, me = ic.icn3dui;
-        if(ic.icn3dui.bNode) return;
+        if(me.bNode) return;
 
         let divPoints = [], positions = [];
 
@@ -32,7 +32,7 @@ class CurveStripArrow {
 
     createStripArrow(p0, p1, colors, div, thickness, bHighlight, num, start, end,
       pntsCA, prevCOArray, bShowArray, calphaIdArray, bShowArrow, prevone, nexttwo) { let ic = this.icn3d, me = ic.icn3dui;
-        if(ic.icn3dui.bNode) return;
+        if(me.bNode) return;
 
         let divPoints = [], positions = [];
 

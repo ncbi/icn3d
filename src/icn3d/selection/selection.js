@@ -204,10 +204,10 @@ class Selection {
     clickShow_selected() { let  ic = this.icn3d, me = ic.icn3dui;
         let  thisClass = this;
         me.myEventCls.onIds(["#" + ic.pre + "show_selected", "#" + ic.pre + "mn2_show_selected"], "click", function(e) { let  ic = thisClass.icn3d;
-           //ic.icn3dui.htmlCls.clickMenuCls.setLogCmd("show selection", true);
+           //me.htmlCls.clickMenuCls.setLogCmd("show selection", true);
 
            thisClass.showSelection();
-           ic.icn3dui.htmlCls.clickMenuCls.setLogCmd("show selection", true);
+           me.htmlCls.clickMenuCls.setLogCmd("show selection", true);
         });
     }
 
@@ -215,7 +215,7 @@ class Selection {
         let  thisClass = this;
         me.myEventCls.onIds("#" + ic.pre + "mn2_hide_selected", "click", function(e) { let  ic = thisClass.icn3d;
            thisClass.hideSelection();
-           ic.icn3dui.htmlCls.clickMenuCls.setLogCmd("hide selection", true);
+           me.htmlCls.clickMenuCls.setLogCmd("hide selection", true);
         });
     }
 
@@ -354,7 +354,7 @@ class Selection {
 
                 this.updateSelectionNameDesc();
 
-                ic.icn3dui.htmlCls.clickMenuCls.setLogCmd('select ' + ic.resid2specCls.atoms2spec(ic.hAtoms) + ' | name ' + name, true);
+                me.htmlCls.clickMenuCls.setLogCmd('select ' + ic.resid2specCls.atoms2spec(ic.hAtoms) + ' | name ' + name, true);
             }
             else {
                 this.selectResidueList(ic.selectedResidues, name, description);
@@ -362,7 +362,7 @@ class Selection {
 
                 this.updateSelectionNameDesc();
 
-                ic.icn3dui.htmlCls.clickMenuCls.setLogCmd('select ' + ic.resid2specCls.residueids2spec(Object.keys(ic.selectedResidues)) + ' | name ' + name, true);
+                me.htmlCls.clickMenuCls.setLogCmd('select ' + ic.resid2specCls.residueids2spec(Object.keys(ic.selectedResidues)) + ' | name ' + name, true);
             }
         }
     }
@@ -396,7 +396,7 @@ class Selection {
 
         ic.loadScriptCls.renderFinalStep(1);
         ic.definedSetsCls.setMode('all');
-        ic.icn3dui.htmlCls.clickMenuCls.setLogCmd("reset", true);
+        me.htmlCls.clickMenuCls.setLogCmd("reset", true);
 
         ic.hlUpdateCls.removeSeqChainBkgd();
         ic.hlUpdateCls.removeSeqResidueBkgd();
@@ -416,14 +416,14 @@ class Selection {
 
           ic.selByCommCls.selectByCommand(command.substr(pos + 1), name, name);
 
-          ic.icn3dui.htmlCls.clickMenuCls.setLogCmd('select ' + command.substr(pos + 1) + ' | name ' + name, true);
+          me.htmlCls.clickMenuCls.setLogCmd('select ' + command.substr(pos + 1) + ' | name ' + name, true);
       }
     }
 
     oneStructurePerWindow() { let  ic = this.icn3d, me = ic.icn3dui;
         // only display one of the two aligned structures
         let  structureArray = Object.keys(ic.structures);
-        if(ic.icn3dui.cfg.bSidebyside && structureArray.length == 2) {
+        if(me.cfg.bSidebyside && structureArray.length == 2) {
             let  dividArray = Object.keys(window.icn3duiHash);
             let  pos = dividArray.indexOf(ic.divid);
 
@@ -460,9 +460,9 @@ class Selection {
     }
 
     saveSelectionPrep() {var ic = this.icn3d, me = ic.icn3dui;
-           if(!ic.icn3dui.cfg.notebook) {
+           if(!me.cfg.notebook) {
                if(!$('#' + ic.pre + 'dl_definedsets').hasClass('ui-dialog-content') || !$('#' + ic.pre + 'dl_definedsets').dialog( 'isOpen' )) {
-                 ic.icn3dui.htmlCls.dialogCls.openDlg('dl_definedsets', 'Select sets');
+                 me.htmlCls.dialogCls.openDlg('dl_definedsets', 'Select sets');
                  $("#" + ic.pre + "atomsCustom").resizable();
                }
            }

@@ -16,7 +16,7 @@ class Control {
     }
 
     setControl() { let  ic = this.icn3d, me = ic.icn3dui;
-        if(ic.icn3dui.bNode) return;
+        if(me.bNode) return;
 
         let  thisClass = this;
 
@@ -75,7 +75,7 @@ class Control {
             if(e.keyCode === 90 ) { // Z
               let  para = {};
 
-              if(ic.bControlGl && !ic.icn3dui.bNode) {
+              if(ic.bControlGl && !me.bNode) {
                   if(window.cam === ic.perspectiveCamera) { // perspective
                     para._zoomFactor = 0.9;
                   }
@@ -109,7 +109,7 @@ class Control {
               }
 
               para.update = true;
-              if(ic.bControlGl && !ic.icn3dui.bNode) {
+              if(ic.bControlGl && !me.bNode) {
                   window.controls.update(para);
               }
               else {
@@ -120,7 +120,7 @@ class Control {
             else if(e.keyCode === 88 ) { // X
               let  para = {};
 
-              if(ic.bControlGl && !ic.icn3dui.bNode) {
+              if(ic.bControlGl && !me.bNode) {
                   if(window.cam === ic.perspectiveCamera) { // perspective
                     //para._zoomFactor = 1.1;
                     para._zoomFactor = 1.03;
@@ -156,7 +156,7 @@ class Control {
               }
 
               para.update = true;
-              if(ic.bControlGl && !ic.icn3dui.bNode) {
+              if(ic.bControlGl && !me.bNode) {
                   window.controls.update(para);
               }
               else {
@@ -225,7 +225,7 @@ class Control {
                 ic.rayCls.rayCaster(e, bClick);
             }
 
-            if(ic.bControlGl && !ic.icn3dui.bNode) {
+            if(ic.bControlGl && !me.bNode) {
               window.controls.handleResize();
               window.controls.update();
             }
@@ -254,7 +254,7 @@ class Control {
             let  bClick = true;
             ic.rayCls.rayCaster(e, bClick);
 
-            if(ic.bControlGl && !ic.icn3dui.bNode) {
+            if(ic.bControlGl && !me.bNode) {
               window.controls.handleResize();
               window.controls.update();
             }
@@ -285,7 +285,7 @@ class Control {
 
             ic.bStopRotate = true;
 
-            if(ic.bControlGl && !ic.icn3dui.bNode) {
+            if(ic.bControlGl && !me.bNode) {
               window.controls.handleResize();
               window.controls.update();
             }
@@ -304,7 +304,7 @@ class Control {
 
             ic.bStopRotate = true;
 
-            if(ic.bControlGl && !ic.icn3dui.bNode) {
+            if(ic.bControlGl && !me.bNode) {
               window.controls.handleResize();
               window.controls.update();
             }
@@ -318,7 +318,7 @@ class Control {
     }
 
     mouseMove(e) { let  ic = this.icn3d, me = ic.icn3dui;
-        if(ic.icn3dui.bNode) return;
+        if(me.bNode) return;
 
         //e.preventDefault();
         e.preventDefault();
@@ -332,7 +332,7 @@ class Control {
         let  bClick = false;
         ic.rayCls.rayCaster(e, bClick);
 
-        if(ic.bControlGl && !ic.icn3dui.bNode) {
+        if(ic.bControlGl && !me.bNode) {
           window.controls.handleResize();
           window.controls.update();
 

@@ -18,7 +18,7 @@ class Mol2Parser {
     loadMol2Data(data) { let  ic = this.icn3d, me = ic.icn3dui;
         let  bResult = this.loadMol2AtomData(data);
 
-        if(ic.icn3dui.cfg.align === undefined && Object.keys(ic.structures).length == 1) {
+        if(me.cfg.align === undefined && Object.keys(ic.structures).length == 1) {
             $("#" + ic.pre + "alternateWrapper").hide();
         }
 
@@ -31,9 +31,9 @@ class Mol2Parser {
 
           ic.ParserUtilsCls.renderStructure();
 
-          if(ic.icn3dui.cfg.rotate !== undefined) ic.resizeCanvasCls.rotStruc(ic.icn3dui.cfg.rotate, true);
+          if(me.cfg.rotate !== undefined) ic.resizeCanvasCls.rotStruc(me.cfg.rotate, true);
 
-          //if(ic.icn3dui.deferred !== undefined) ic.icn3dui.deferred.resolve(); if(ic.deferred2 !== undefined) ic.deferred2.resolve();
+          //if(me.deferred !== undefined) me.deferred.resolve(); if(ic.deferred2 !== undefined) ic.deferred2.resolve();
         }
     }
 

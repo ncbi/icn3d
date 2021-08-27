@@ -36,10 +36,10 @@ class ChainalignParser {
             hAtoms = me.hashUtilsCls.unionHash(hAtoms, hAtomsTmp);
         }
 
-        if(ic.icn3dui.cfg.resnum) {
+        if(me.cfg.resnum) {
             ic.realignParserCls.realignChainOnSeqAlign(chainresiCalphaHash2, chainidArray);
         }
-        else if(ic.icn3dui.cfg.resdef) {
+        else if(me.cfg.resdef) {
             ic.realignParserCls.realignChainOnSeqAlign(chainresiCalphaHash2, chainidArray, undefined, true);
         }
         else {
@@ -87,18 +87,18 @@ class ChainalignParser {
 
         ic.hlUpdateCls.updateHlAll();
 
-        if(ic.icn3dui.cfg.rotate !== undefined) ic.resizeCanvasCls.rotStruc(ic.icn3dui.cfg.rotate, true);
+        if(me.cfg.rotate !== undefined) ic.resizeCanvasCls.rotStruc(me.cfg.rotate, true);
 
         ic.html2ddgm = '';
 
         // by default, open the seq alignment window
-        //if(ic.icn3dui.cfg.show2d !== undefined && ic.icn3dui.cfg.show2d) ic.icn3dui.htmlCls.dialogCls.openDlg('dl_2ddgm', 'Interactions');
-        if(ic.icn3dui.cfg.showalignseq) {
-            ic.icn3dui.htmlCls.dialogCls.openDlg('dl_alignment', 'Select residues in aligned sequences');
+        //if(me.cfg.show2d !== undefined && me.cfg.show2d) me.htmlCls.dialogCls.openDlg('dl_2ddgm', 'Interactions');
+        if(me.cfg.showalignseq) {
+            me.htmlCls.dialogCls.openDlg('dl_alignment', 'Select residues in aligned sequences');
         }
 
-        if(ic.icn3dui.cfg.show2d && ic.bFullUi) {
-            ic.icn3dui.htmlCls.dialogCls.openDlg('dl_2ddgm', 'Interactions');
+        if(me.cfg.show2d && ic.bFullUi) {
+            me.htmlCls.dialogCls.openDlg('dl_2ddgm', 'Interactions');
             if(ic.bFullUi) {
                 if(!ic.bChainAlign) {
                     ic.ParserUtilsCls.download2Ddgm(ic.inputid.toUpperCase());
@@ -110,7 +110,7 @@ class ChainalignParser {
             }
         }
 
-        //if(ic.icn3dui.deferred !== undefined) ic.icn3dui.deferred.resolve(); if(ic.deferred2 !== undefined) ic.deferred2.resolve();
+        //if(me.deferred !== undefined) me.deferred.resolve(); if(ic.deferred2 !== undefined) ic.deferred2.resolve();
     }
 
     downloadChainalignment(chainalign, resnum, resdef) { let  ic = this.icn3d, me = ic.icn3dui;
@@ -131,8 +131,8 @@ class ChainalignParser {
         let  pos1 = alignArray[0].indexOf('_');
         ic.mmdbid_t = alignArray[0].substr(0, pos1).toUpperCase();
         ic.chain_t = alignArray[0].substr(pos1+1);
-        let  url_t = ic.icn3dui.htmlCls.baseUrl + "mmdb/mmdb_strview.cgi?v=2&program=icn3d&b=1&s=1&ft=1&uid=" + ic.mmdbid_t;
-        if(ic.icn3dui.cfg.inpara !== undefined) url_t += ic.icn3dui.cfg.inpara;
+        let  url_t = me.htmlCls.baseUrl + "mmdb/mmdb_strview.cgi?v=2&program=icn3d&b=1&s=1&ft=1&uid=" + ic.mmdbid_t;
+        if(me.cfg.inpara !== undefined) url_t += me.cfg.inpara;
 
         let  ajaxArray = [];
         let  targetAjax = $.ajax({
@@ -156,10 +156,10 @@ class ChainalignParser {
 
             let  chainalignFinal = ic.mmdbid_q + "_" + ic.chain_q + "," + ic.mmdbid_t + "_" + ic.chain_t;
 
-            let  urlalign = ic.icn3dui.htmlCls.baseUrl + "vastdyn/vastdyn.cgi?chainpairs=" + chainalignFinal;
-            let  url_q = ic.icn3dui.htmlCls.baseUrl + "mmdb/mmdb_strview.cgi?v=2&program=icn3d&b=1&s=1&ft=1&uid=" + ic.mmdbid_q;
+            let  urlalign = me.htmlCls.baseUrl + "vastdyn/vastdyn.cgi?chainpairs=" + chainalignFinal;
+            let  url_q = me.htmlCls.baseUrl + "mmdb/mmdb_strview.cgi?v=2&program=icn3d&b=1&s=1&ft=1&uid=" + ic.mmdbid_q;
 
-            if(ic.icn3dui.cfg.inpara !== undefined) url_q += ic.icn3dui.cfg.inpara;
+            if(me.cfg.inpara !== undefined) url_q += me.cfg.inpara;
 
             let  queryAjax = $.ajax({
               url: url_q,
@@ -169,7 +169,7 @@ class ChainalignParser {
 
             ajaxArray.push(queryAjax);
 
-            if(!ic.icn3dui.cfg.resnum && !ic.icn3dui.cfg.resdef) {
+            if(!me.cfg.resnum && !me.cfg.resdef) {
                 let  alignAjax = $.ajax({
                   url: urlalign,
                   dataType: 'jsonp',
@@ -212,7 +212,7 @@ class ChainalignParser {
 
         let  queryDataArray = [];
 
-        let  step =(ic.icn3dui.cfg.resnum || ic.icn3dui.cfg.resdef) ? 1 : 2;
+        let  step =(me.cfg.resnum || me.cfg.resdef) ? 1 : 2;
 
         for(let index = 1, indexl = dataArray.length; index < indexl; index += step) {
             let  queryData = dataArray[index][0];
@@ -222,7 +222,7 @@ class ChainalignParser {
             let  mmdbid_q = chainidArray[index2].substr(0, pos2).toUpperCase();
             let  chain_q = chainidArray[index2].substr(pos2+1);
 
-            if(ic.icn3dui.cfg.resnum || ic.icn3dui.cfg.resdef) {
+            if(me.cfg.resnum || me.cfg.resdef) {
                 if(queryData !== undefined && JSON.stringify(queryData).indexOf('Oops there was a problem') === -1
                   ) {
                     ic.mmdbidArray.push(mmdbid_q);
@@ -247,10 +247,10 @@ class ChainalignParser {
                         ic.qt_start_end.push(undefined);
                     }
                     else if(align === undefined || align.length == 0) {
-                        if(!ic.icn3dui.cfg.command) alert('These two chains ' + chainidArray[index2] + ' can not align to each other. ' + 'Please select sequences from these two chains in the "Sequences & Annotations" window, ' + 'and click "Realign Selection" in the "File" menu to align your selection.');
+                        if(!me.cfg.command) alert('These two chains ' + chainidArray[index2] + ' can not align to each other. ' + 'Please select sequences from these two chains in the "Sequences & Annotations" window, ' + 'and click "Realign Selection" in the "File" menu to align your selection.');
 
-                        ic.icn3dui.cfg.showanno = 1;
-                        ic.icn3dui.cfg.showalignseq = 0;
+                        me.cfg.showanno = 1;
+                        me.cfg.showalignseq = 0;
                     }
                     else {
                         ic.t_trans_add.push(align[0].t_trans_add);
@@ -274,14 +274,14 @@ class ChainalignParser {
     loadOpmDataForChainalign(data1, data2, chainidArray, mmdbidArray) { let  ic = this.icn3d, me = ic.icn3dui;
         let  thisClass = this;
 
-        if(ic.icn3dui.cfg.resnum || ic.icn3dui.cfg.resdef) {
+        if(me.cfg.resnum || me.cfg.resdef) {
             if(!ic.bCommandLoad) ic.init(); // remove all previously loaded data
             this.downloadChainalignmentPart2(data1, data2, undefined, chainidArray);
 
             if(ic.deferredOpm !== undefined) ic.deferredOpm.resolve();
         }
         else {
-            let  url = ic.icn3dui.htmlCls.baseUrl + "vastdyn/vastdyn.cgi?mmdbids2opm=" + mmdbidArray.join("','");
+            let  url = me.htmlCls.baseUrl + "vastdyn/vastdyn.cgi?mmdbids2opm=" + mmdbidArray.join("','");
 
             $.ajax({
               url: url,

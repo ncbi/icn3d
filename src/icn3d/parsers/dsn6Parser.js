@@ -289,7 +289,7 @@ class Dsn6Parser {
                ic.bAjaxfofc = true;
            }
            ic.setOptionCls.setOption('map', type);
-           ic.icn3dui.htmlCls.clickMenuCls.setLogCmd('load dsn6 file ' + $("#" + ic.pre + "dsn6file" + type).val(), false);
+           me.htmlCls.clickMenuCls.setLogCmd('load dsn6 file ' + $("#" + ic.pre + "dsn6file" + type).val(), false);
          }
          reader.readAsArrayBuffer(file);
        }
@@ -303,7 +303,7 @@ class Dsn6Parser {
        }
        else {
            this.dsn6ParserBase(url, type, sigma);
-           ic.icn3dui.htmlCls.clickMenuCls.setLogCmd('set map ' + type + ' sigma ' + sigma + ' | ' + encodeURIComponent(url), true);
+           me.htmlCls.clickMenuCls.setLogCmd('set map ' + type + ' sigma ' + sigma + ' | ' + encodeURIComponent(url), true);
        }
     }
 

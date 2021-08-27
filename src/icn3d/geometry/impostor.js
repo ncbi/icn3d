@@ -189,7 +189,7 @@ class Impostor {
     }
 
     drawImpostorShader () { let ic = this.icn3d, me = ic.icn3dui;
-        if(ic.icn3dui.bNode) return;
+        if(me.bNode) return;
 
         this.setParametersForShader();
 

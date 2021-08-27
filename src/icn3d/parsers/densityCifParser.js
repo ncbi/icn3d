@@ -18,7 +18,7 @@ class DensityCifParser {
        let  thisClass = this;
 
        let  url;
-       let  detail = (me.utilsCls.isMobile() || ic.icn3dui.cfg.notebook) ? 0 : 4; //4;
+       let  detail = (me.utilsCls.isMobile() || me.cfg.notebook) ? 0 : 4; //4;
 
        //https://www.ebi.ac.uk/pdbe/densities/doc.html
        if(type == '2fofc' || type == 'fofc') {

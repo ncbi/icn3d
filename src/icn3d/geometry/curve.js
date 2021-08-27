@@ -17,7 +17,7 @@ class Curve {
 
     // modified from iview (http://star.cse.cuhk.edu.hk/iview/)
     createCurveSub(_pnts, width, colors, div, bHighlight, bRibbon, bNoSmoothen, bShowArray, calphaIdArray, positions, prevone, nexttwo) { let ic = this.icn3d, me = ic.icn3dui;
-        if(ic.icn3dui.bNode) return;
+        if(me.bNode) return;
 
         if (_pnts.length === 0) return;
         div = div || 5;

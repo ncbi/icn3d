@@ -24,7 +24,7 @@ class Analysis {
        ic.applyMapCls.applySurfaceOptions();
        $("#" + ic.pre + "areavalue").val(ic.areavalue);
        $("#" + ic.pre + "areatable").html(ic.areahtml);
-       ic.icn3dui.htmlCls.dialogCls.openDlg('dl_area', 'Surface area calculation');
+       me.htmlCls.dialogCls.openDlg('dl_area', 'Surface area calculation');
        ic.bCalcArea = false;
     }
 
@@ -81,8 +81,8 @@ class Analysis {
            html += '<b>Buried Surface for Set 1</b>: ' +  buriedArea2 + ' &#8491;<sup>2</sup><br>';
            html += '<b>Buried Surface for Set 2</b>: ' +  buriedArea1 + ' &#8491;<sup>2</sup><br><br>';
            $("#" + ic.pre + "dl_buriedarea").html(html);
-           ic.icn3dui.htmlCls.dialogCls.openDlg('dl_buriedarea', 'Buried solvent accessible surface area in the interface');
-           ic.icn3dui.htmlCls.clickMenuCls.setLogCmd('buried surface ' + buriedArea, false);
+           me.htmlCls.dialogCls.openDlg('dl_buriedarea', 'Buried solvent accessible surface area in the interface');
+           me.htmlCls.clickMenuCls.setLogCmd('buried surface ' + buriedArea, false);
        }
     }
 
@@ -150,7 +150,7 @@ class Analysis {
         let y =(ic.pAtom.coord.y + ic.pAtom2.coord.y) / 2;
         let z =(ic.pAtom.coord.z + ic.pAtom2.coord.z) / 2;
         let dashed =(type == 'stabilizer') ? false : true;
-        ic.icn3dui.htmlCls.clickMenuCls.setLogCmd('add line | x1 ' + ic.pAtom.coord.x.toPrecision(4)  + ' y1 ' + ic.pAtom.coord.y.toPrecision(4) + ' z1 ' + ic.pAtom.coord.z.toPrecision(4) + ' | x2 ' + ic.pAtom2.coord.x.toPrecision(4)  + ' y2 ' + ic.pAtom2.coord.y.toPrecision(4) + ' z2 ' + ic.pAtom2.coord.z.toPrecision(4) + ' | color ' + color + ' | dashed ' + dashed + ' | type ' + type, true);
+        me.htmlCls.clickMenuCls.setLogCmd('add line | x1 ' + ic.pAtom.coord.x.toPrecision(4)  + ' y1 ' + ic.pAtom.coord.y.toPrecision(4) + ' z1 ' + ic.pAtom.coord.z.toPrecision(4) + ' | x2 ' + ic.pAtom2.coord.x.toPrecision(4)  + ' y2 ' + ic.pAtom2.coord.y.toPrecision(4) + ' z2 ' + ic.pAtom2.coord.z.toPrecision(4) + ' | color ' + color + ' | dashed ' + dashed + ' | type ' + type, true);
         this.addLine(ic.pAtom.coord.x, ic.pAtom.coord.y, ic.pAtom.coord.z, ic.pAtom2.coord.x, ic.pAtom2.coord.y, ic.pAtom2.coord.z, color, dashed, type);
         ic.pickpair = false;
     }

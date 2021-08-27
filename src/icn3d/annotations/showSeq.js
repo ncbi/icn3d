@@ -16,7 +16,7 @@ class ShowSeq {
     showSeq(chnid, chnidBase, type, queryTitle, compTitle, queryText, compText) {  let ic = this.icn3d, me = ic.icn3dui;
         let bNonMmdb = false;
         let giSeq;
-        if(ic.icn3dui.cfg.mmdbid === undefined && ic.icn3dui.cfg.gi === undefined && ic.icn3dui.cfg.blast_rep_id === undefined && ic.icn3dui.cfg.align === undefined && ic.icn3dui.cfg.chainalign === undefined) {
+        if(me.cfg.mmdbid === undefined && me.cfg.gi === undefined && me.cfg.blast_rep_id === undefined && me.cfg.align === undefined && me.cfg.chainalign === undefined) {
             bNonMmdb = true;
             giSeq = [];
             for(let i = 0; i < ic.giSeq[chnid].length; ++i) {
@@ -35,7 +35,7 @@ class ShowSeq {
             }
         }
         giSeq = giSeqTmp;
-        let divLength = ic.icn3dui.htmlCls.RESIDUE_WIDTH * ic.giSeq[chnid].length + 200;
+        let divLength = me.htmlCls.RESIDUE_WIDTH * ic.giSeq[chnid].length + 200;
         let seqLength = ic.giSeq[chnid].length
         if(seqLength > ic.maxAnnoLength) {
             ic.maxAnnoLength = seqLength;
@@ -54,8 +54,8 @@ class ShowSeq {
         if(ic.giSeq[chnid].length > 10) {
             htmlTmp = '<div class="icn3d-residueLine" style="white-space:nowrap;">';
             let atom = ic.firstAtomObjCls.getFirstCalphaAtomObj(ic.chains[chnid]);
-            //if(ic.baseResi[chnid] != 0 &&(ic.icn3dui.cfg.mmdbid !== undefined || ic.icn3dui.cfg.gi !== undefined || ic.icn3dui.cfg.align !== undefined)) {
-            if((ic.icn3dui.cfg.mmdbid !== undefined || ic.icn3dui.cfg.gi !== undefined || ic.icn3dui.cfg.blast_rep_id !== undefined || ic.icn3dui.cfg.align !== undefined || ic.icn3dui.cfg.chainalign !== undefined) && atom.resi_ori !== undefined && atom.resi_ori != atom.resi && chnid.indexOf('Misc') == -1 ) {
+            //if(ic.baseResi[chnid] != 0 &&(me.cfg.mmdbid !== undefined || me.cfg.gi !== undefined || me.cfg.align !== undefined)) {
+            if((me.cfg.mmdbid !== undefined || me.cfg.gi !== undefined || me.cfg.blast_rep_id !== undefined || me.cfg.align !== undefined || me.cfg.chainalign !== undefined) && atom.resi_ori !== undefined && atom.resi_ori != atom.resi && chnid.indexOf('Misc') == -1 ) {
                 htmlTmp += '<div class="icn3d-annoTitle" anno="0" title="NCBI Residue Numbers">NCBI Residue Numbers</div>';
             }
             else {
@@ -187,7 +187,7 @@ class ShowSeq {
         html += '</div>';
         html += '</div>'; // corresponds to above: html += '<div class="icn3d-dl_sequence">';
         html3 += '</div></div>';
-        if(ic.icn3dui.cfg.blast_rep_id === chnid) {
+        if(me.cfg.blast_rep_id === chnid) {
             htmlTmp = '<div id="' + ic.pre + 'giseq_sequence" class="icn3d-dl_sequence" style="border: solid 1px #000;">';
         }
         else {
@@ -230,7 +230,7 @@ class ShowSeq {
           }
           else {
               let color = '333333';
-              if(ic.icn3dui.cfg.blast_rep_id == chnid && ic.fullpos2ConsTargetpos !== undefined && ic.fullpos2ConsTargetpos[i + nGap] !== undefined) {
+              if(me.cfg.blast_rep_id == chnid && ic.fullpos2ConsTargetpos !== undefined && ic.fullpos2ConsTargetpos[i + nGap] !== undefined) {
                   color = ic.fullpos2ConsTargetpos[i + nGap].color;
               }
               else {
@@ -241,7 +241,7 @@ class ShowSeq {
               html += '<span id="giseq_' + ic.pre + chnid + '_' + pos + '" title="' + cFull + pos + '" class="icn3d-residue" style="color:#' + color + '">' + c + '</span>';
           }
         }
-        if(ic.icn3dui.cfg.blast_rep_id == chnid) {
+        if(me.cfg.blast_rep_id == chnid) {
           // change color in 3D
           ic.opts['color'] = 'conservation';
           ic.setColorCls.setColorByOptions(ic.opts, ic.atoms);
@@ -253,7 +253,7 @@ class ShowSeq {
         let color =(atom.color) ? atom.color.getHexString() : "CCCCCC";
         let width = Math.round(ic.seqAnnWidth * giSeq.length / ic.maxAnnoLength);
         if(width < 1) width = 1;
-        if(ic.icn3dui.cfg.blast_rep_id != chnid) { // regular
+        if(me.cfg.blast_rep_id != chnid) { // regular
             html2 += '<div id="giseq_summary_' + ic.pre + chnid + '" class="icn3d-seqTitle icn3d-link" gi chain="' + chnid + '" style="display:inline-block; color:white; font-weight:bold; background-color:#' + color + '; width:' + width + 'px;">' + chnid + '</div>';
         }
         else { // with potential gaps
@@ -278,7 +278,7 @@ class ShowSeq {
         htmlTmp += '<br>';
         html += htmlTmp;
         html2 += htmlTmp;
-        if(ic.icn3dui.cfg.blast_rep_id == chnid) {
+        if(me.cfg.blast_rep_id == chnid) {
             // 1. residue conservation
             if(compText !== undefined && compText !== '') {
             // conservation, detailed view
@@ -390,8 +390,8 @@ class ShowSeq {
         //if(Object.keys(ic.chains[chnid]).length > 10) {
         if(ic.giSeq[chnid].length > 10) {
             let atom = ic.firstAtomObjCls.getFirstCalphaAtomObj(ic.chains[chnid]);
-            //if(ic.baseResi[chnid] != 0 &&(ic.icn3dui.cfg.mmdbid !== undefined || ic.icn3dui.cfg.gi !== undefined || ic.icn3dui.cfg.align !== undefined)) {
-            if((ic.icn3dui.cfg.mmdbid !== undefined || ic.icn3dui.cfg.gi !== undefined || ic.icn3dui.cfg.blast_rep_id !== undefined || ic.icn3dui.cfg.align !== undefined || ic.icn3dui.cfg.chainalign !== undefined) && atom.resi_ori !== undefined && atom.resi_ori != atom.resi && chnid.indexOf('Misc') == -1 ) {
+            //if(ic.baseResi[chnid] != 0 &&(me.cfg.mmdbid !== undefined || me.cfg.gi !== undefined || me.cfg.align !== undefined)) {
+            if((me.cfg.mmdbid !== undefined || me.cfg.gi !== undefined || me.cfg.blast_rep_id !== undefined || me.cfg.align !== undefined || me.cfg.chainalign !== undefined) && atom.resi_ori !== undefined && atom.resi_ori != atom.resi && chnid.indexOf('Misc') == -1 ) {
                 htmlTmp = '<div class="icn3d-dl_sequence">';
                 htmlTmp += '<div class="icn3d-residueLine" style="white-space:nowrap;">';
                 htmlTmp += '<div class="icn3d-annoTitle" anno="0" title="PDB Residue Numbers">PDB Residue Numbers</div>';
@@ -435,7 +435,7 @@ class ShowSeq {
 
     insertGap(chnid, seqIndex, text, bNohtml) {  let ic = this.icn3d, me = ic.icn3dui;
       let html = '';
-      //if(ic.icn3dui.cfg.blast_rep_id == chnid && ic.targetGapHash!== undefined && ic.targetGapHash.hasOwnProperty(seqIndex)) {
+      //if(me.cfg.blast_rep_id == chnid && ic.targetGapHash!== undefined && ic.targetGapHash.hasOwnProperty(seqIndex)) {
       if(ic.targetGapHash!== undefined && ic.targetGapHash.hasOwnProperty(seqIndex)) {
           for(let j = 0; j <(ic.targetGapHash[seqIndex].to - ic.targetGapHash[seqIndex].from + 1); ++j) {
               if(bNohtml) {
@@ -450,7 +450,7 @@ class ShowSeq {
     }
     insertGapOverview(chnid, seqIndex) {  let ic = this.icn3d, me = ic.icn3dui;
       let html2 = '';
-      if(ic.icn3dui.cfg.blast_rep_id == chnid && ic.targetGapHash!== undefined && ic.targetGapHash.hasOwnProperty(seqIndex)) {
+      if(me.cfg.blast_rep_id == chnid && ic.targetGapHash!== undefined && ic.targetGapHash.hasOwnProperty(seqIndex)) {
           let width = ic.seqAnnWidth *(ic.targetGapHash[seqIndex].to - ic.targetGapHash[seqIndex].from + 1) /(ic.maxAnnoLength + ic.nTotalGap);
           html2 += '<div style="display:inline-block; background-color:#333; width:' + width + 'px; height:3px;">&nbsp;</div>';
       }
@@ -470,7 +470,7 @@ class ShowSeq {
     }
     getProteinName(chnid) { let ic = this.icn3d, me = ic.icn3dui;
         let fullProteinName = '';
-        if((ic.icn3dui.cfg.mmdbid !== undefined || ic.icn3dui.cfg.gi !== undefined || ic.icn3dui.cfg.blast_rep_id !== undefined) && ic.mmdb_data !== undefined) {
+        if((me.cfg.mmdbid !== undefined || me.cfg.gi !== undefined || me.cfg.blast_rep_id !== undefined) && ic.mmdb_data !== undefined) {
             let moleculeInfor = ic.mmdb_data.moleculeInfor;
             let chain = chnid.substr(chnid.indexOf('_') + 1);
             for(let i in moleculeInfor) {
@@ -482,7 +482,7 @@ class ShowSeq {
                 }
             }
         }
-        else if((ic.icn3dui.cfg.align !== undefined || ic.icn3dui.cfg.chainalign !== undefined || ic.bRealign || ic.bSymd) && ic.chainid2title !== undefined) {
+        else if((me.cfg.align !== undefined || me.cfg.chainalign !== undefined || ic.bRealign || ic.bSymd) && ic.chainid2title !== undefined) {
             if(ic.chainid2title[chnid] !== undefined) {
                 fullProteinName = ic.chainid2title[chnid];
             }

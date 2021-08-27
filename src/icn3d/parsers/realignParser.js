@@ -85,7 +85,7 @@ class RealignParser {
           let  fromStruct = chainidArray[index + 1].substr(0, chainidArray[index + 1].indexOf('_')); //.toUpperCase();
           if(!bRealign) fromStruct = fromStruct.toUpperCase();
 
-          if(toStruct == fromStruct) fromStruct += ic.icn3dui.htmlCls.postfix;
+          if(toStruct == fromStruct) fromStruct += me.htmlCls.postfix;
 
           let  seq1 = struct2SeqHash[toStruct];
           let  seq2 = struct2SeqHash[fromStruct];
@@ -143,7 +143,7 @@ class RealignParser {
           let  fromStruct = chainidArray[index + 1].substr(0, chainidArray[index + 1].indexOf('_')); //.toUpperCase();
           if(!bRealign) fromStruct = fromStruct.toUpperCase();
 
-          if(toStruct == fromStruct) fromStruct += ic.icn3dui.htmlCls.postfix;
+          if(toStruct == fromStruct) fromStruct += me.htmlCls.postfix;
 
           let  seq1 = struct2SeqHash[toStruct];
           let  seq2 = struct2SeqHash[fromStruct];
@@ -214,13 +214,13 @@ class RealignParser {
               //ic.hlUpdateCls.updateHlAll();
           }
           else {
-              if(fromStruct === undefined && !ic.icn3dui.cfg.command) {
+              if(fromStruct === undefined && !me.cfg.command) {
                  alert('Please do not align residues in the same structure');
               }
-              else if((seq1.length < 6 || seq2.length < 6) && !ic.icn3dui.cfg.command) {
+              else if((seq1.length < 6 || seq2.length < 6) && !me.cfg.command) {
                  alert('These sequences are too short for alignment');
               }
-              else if(seq1.length >= 6 && seq2.length >= 6 && !ic.icn3dui.cfg.command) {
+              else if(seq1.length >= 6 && seq2.length >= 6 && !me.cfg.command) {
                  alert('These sequences can not be aligned to each other');
               }
           }
@@ -300,7 +300,7 @@ class RealignParser {
                 mmdbid_t = mmdbid;
             }
             else if(mmdbid_t == mmdbid) {
-                mmdbid += ic.icn3dui.htmlCls.postfix;
+                mmdbid += me.htmlCls.postfix;
             }
 
             let  chainid = mmdbid + chainidArray[i].substr(pos);
@@ -334,7 +334,7 @@ class RealignParser {
                     resiArray = predefinedRes.split(",");
                 }
                 else {
-                    resiArray = ic.icn3dui.cfg.resnum.split(",");
+                    resiArray = me.cfg.resnum.split(",");
                 }
 
                 for(let j = 0, jl = resiArray.length; j < jl; ++j) {

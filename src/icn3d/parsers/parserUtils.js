@@ -49,9 +49,9 @@ class ParserUtils {
               let  rmsd = ic.rmsd_suprTmp.rmsd;
 
               if(rmsd) {
-                  ic.icn3dui.htmlCls.clickMenuCls.setLogCmd("realignment RMSD: " + rmsd.toPrecision(4), false);
+                  me.htmlCls.clickMenuCls.setLogCmd("realignment RMSD: " + rmsd.toPrecision(4), false);
                   $("#" + ic.pre + "realignrmsd").val(rmsd.toPrecision(4));
-                  if(!ic.icn3dui.cfg.bSidebyside) ic.icn3dui.htmlCls.dialogCls.openDlg('dl_rmsd', 'Realignment RMSD');
+                  if(!me.cfg.bSidebyside) me.htmlCls.dialogCls.openDlg('dl_rmsd', 'Realignment RMSD');
               }
 
               for(let i = 0, il = ic.structures[secondStruct].length; i < il; ++i) {
@@ -68,13 +68,13 @@ class ParserUtils {
               if(!bKeepSeq) ic.setSeqAlignCls.setSeqAlignForRealign(chainid_t, chainid, chainIndex);
 
               let  bShowHighlight = false;
-              let  seqObj = ic.icn3dui.htmlCls.alignSeqCls.getAlignSequencesAnnotations(Object.keys(ic.alnChains), undefined, undefined, bShowHighlight);
+              let  seqObj = me.htmlCls.alignSeqCls.getAlignSequencesAnnotations(Object.keys(ic.alnChains), undefined, undefined, bShowHighlight);
 
               let  oriHtml =(chainIndex === 1) ? '' : $("#" + ic.pre + "dl_sequence2").html();
               $("#" + ic.pre + "dl_sequence2").html(oriHtml + seqObj.sequencesHtml);
-              $("#" + ic.pre + "dl_sequence2").width(ic.icn3dui.htmlCls.RESIDUE_WIDTH * seqObj.maxSeqCnt + 200);
+              $("#" + ic.pre + "dl_sequence2").width(me.htmlCls.RESIDUE_WIDTH * seqObj.maxSeqCnt + 200);
 
-              ic.icn3dui.htmlCls.dialogCls.openDlg('dl_alignment', 'Select residues in aligned sequences');
+              me.htmlCls.dialogCls.openDlg('dl_alignment', 'Select residues in aligned sequences');
 
               if(!bChainAlign) {
                   ic.opts['color'] = 'identity';
@@ -134,17 +134,17 @@ class ParserUtils {
     //Generate the 2D interaction diagram for the structure "mmdbid", which could be PDB ID. The 2D
     //interaction diagram is only available when the input is NCBI MMDB ID, i.e., the URL is something like "&mmdbid=...".
     set2DDiagramsForAlign(mmdbid1, mmdbid2) { let  ic = this.icn3d, me = ic.icn3dui;
-       ic.icn3dui.htmlCls.dialogCls.openDlg('dl_2ddgm', 'Interactions');
+       me.htmlCls.dialogCls.openDlg('dl_2ddgm', 'Interactions');
 
        mmdbid1 = mmdbid1.substr(0, 4);
        mmdbid2 = mmdbid2.substr(0, 4);
 
-       let  url1 = ic.icn3dui.htmlCls.baseUrl + "mmdb/mmdb_strview.cgi?v=2&program=icn3d&uid="+mmdbid1+"&intrac=1";
-       let  url2 = ic.icn3dui.htmlCls.baseUrl + "mmdb/mmdb_strview.cgi?v=2&program=icn3d&uid="+mmdbid2+"&intrac=1";
+       let  url1 = me.htmlCls.baseUrl + "mmdb/mmdb_strview.cgi?v=2&program=icn3d&uid="+mmdbid1+"&intrac=1";
+       let  url2 = me.htmlCls.baseUrl + "mmdb/mmdb_strview.cgi?v=2&program=icn3d&uid="+mmdbid2+"&intrac=1";
 
-       if(ic.icn3dui.cfg.inpara !== undefined) {
-          url1 += ic.icn3dui.cfg.inpara;
-          url2 += ic.icn3dui.cfg.inpara;
+       if(me.cfg.inpara !== undefined) {
+          url1 += me.cfg.inpara;
+          url2 += me.cfg.inpara;
        }
 
        let  request1 = $.ajax({
@@ -159,7 +159,7 @@ class ParserUtils {
             ic.html2ddgm = '';
 
             ic.diagram2dCls.draw2Ddgm(data, mmdbid1, 0);
-            if(ic.icn3dui.cfg.show2d) ic.icn3dui.htmlCls.dialogCls.openDlg('dl_2ddgm', 'Interactions');
+            if(me.cfg.show2d) me.htmlCls.dialogCls.openDlg('dl_2ddgm', 'Interactions');
 
             return $.ajax({
               url: url2,
@@ -177,7 +177,7 @@ class ParserUtils {
             $("#" + ic.pre + "dl_2ddgm").html(ic.html2ddgm);
 
             ic.b2DShown = true;
-            //if(ic.icn3dui.cfg.show2d !== undefined && ic.icn3dui.cfg.show2d) ic.icn3dui.htmlCls.dialogCls.openDlg('dl_2ddgm', 'Interactions');
+            //if(me.cfg.show2d !== undefined && me.cfg.show2d) me.htmlCls.dialogCls.openDlg('dl_2ddgm', 'Interactions');
 
             if(ic.deferredViewinteraction !== undefined) ic.deferredViewinteraction.resolve();
        });
@@ -186,16 +186,16 @@ class ParserUtils {
     set2DDiagramsForChainalign(chainidArray) { let  ic = this.icn3d, me = ic.icn3dui;
         let  thisClass = this;
 
-        ic.icn3dui.htmlCls.dialogCls.openDlg('dl_2ddgm', 'Interactions');
+        me.htmlCls.dialogCls.openDlg('dl_2ddgm', 'Interactions');
 
         let  ajaxArray = [];
         for(let index = 0, indexLen = chainidArray.length; index < indexLen; ++index) {
            let  pos = chainidArray[index].indexOf('_');
            let  mmdbid = chainidArray[index].substr(0, pos).toUpperCase();
 
-           let  url = ic.icn3dui.htmlCls.baseUrl + "mmdb/mmdb_strview.cgi?v=2&program=icn3d&uid="+mmdbid+"&intrac=1";
+           let  url = me.htmlCls.baseUrl + "mmdb/mmdb_strview.cgi?v=2&program=icn3d&uid="+mmdbid+"&intrac=1";
 
-           if(ic.icn3dui.cfg.inpara !== undefined) url += ic.icn3dui.cfg.inpara;
+           if(me.cfg.inpara !== undefined) url += me.cfg.inpara;
 
            let  twodAjax = $.ajax({
                 url: url,
@@ -235,7 +235,7 @@ class ParserUtils {
 
         ic.b2DShown = true;
         $("#" + ic.pre + "dl_2ddgm").html(ic.html2ddgm);
-        if(ic.icn3dui.cfg.show2d) ic.icn3dui.htmlCls.dialogCls.openDlg('dl_2ddgm', 'Interactions');
+        if(me.cfg.show2d) me.htmlCls.dialogCls.openDlg('dl_2ddgm', 'Interactions');
 
         if(ic.deferredViewinteraction !== undefined) ic.deferredViewinteraction.resolve();
     }
@@ -245,7 +245,7 @@ class ParserUtils {
     }
 
     set2DDiagrams(mmdbid) { let  ic = this.icn3d, me = ic.icn3dui;
-        ic.icn3dui.htmlCls.dialogCls.openDlg('dl_2ddgm', 'Interactions');
+        me.htmlCls.dialogCls.openDlg('dl_2ddgm', 'Interactions');
 
         if(ic.b2DShown === undefined || !ic.b2DShown) {
             ic.html2ddgm = '';
@@ -276,7 +276,7 @@ class ParserUtils {
     setYourNote(yournote) { let  ic = this.icn3d, me = ic.icn3dui;
         ic.yournote = yournote;
         $("#" + ic.pre + "yournote").val(ic.yournote);
-        if(ic.icn3dui.cfg.shownote) document.title = ic.yournote;
+        if(me.cfg.shownote) document.title = ic.yournote;
     }
 
     transformToOpmOri(pdbid) { let  ic = this.icn3d, me = ic.icn3dui;
@@ -355,9 +355,9 @@ class ParserUtils {
                   let  centerTo = ic.rmsd_supr.trans2;
                   let  rmsd = ic.rmsd_supr.rmsd;
 
-                  ic.icn3dui.htmlCls.clickMenuCls.setLogCmd("RMSD of alignment to OPM: " + rmsd.toPrecision(4), false);
+                  me.htmlCls.clickMenuCls.setLogCmd("RMSD of alignment to OPM: " + rmsd.toPrecision(4), false);
                   $("#" + ic.pre + "realignrmsd").val(rmsd.toPrecision(4));
-                  if(!ic.icn3dui.cfg.bSidebyside) ic.icn3dui.htmlCls.dialogCls.openDlg('dl_rmsd', 'RMSD of alignment to OPM');
+                  if(!me.cfg.bSidebyside) me.htmlCls.dialogCls.openDlg('dl_rmsd', 'RMSD of alignment to OPM');
 
                   let  dxymaxsq = 0;
                   for(let i in ic.atoms) {
@@ -524,7 +524,7 @@ class ParserUtils {
     renderStructure() { let ic = this.icn3d, me = ic.icn3dui;
       if(ic.bInitial) {
           //$.extend(ic.opts, ic.opts);
-          if(ic.bOpm &&(ic.icn3dui.cfg.align !== undefined || ic.icn3dui.cfg.chainalign !== undefined)) { // show membrane
+          if(ic.bOpm &&(me.cfg.align !== undefined || me.cfg.chainalign !== undefined)) { // show membrane
               let  resid = ic.selectedPdbid + '_MEM_1';
               for(let i in ic.residues[resid]) {
                   let  atom = ic.atoms[i];
@@ -534,7 +534,7 @@ class ParserUtils {
                   ic.dAtoms[i] = 1;
               }
           }
-          if(ic.icn3dui.cfg.command !== undefined && ic.icn3dui.cfg.command !== '') {
+          if(me.cfg.command !== undefined && me.cfg.command !== '') {
               ic.bRender = false;
               ic.drawCls.draw();
           }
@@ -561,18 +561,18 @@ class ParserUtils {
           ic.drawCls.draw();
       }
 
-      if(ic.bInitial && ic.icn3dui.cfg.command !== undefined && ic.icn3dui.cfg.command !== '') {
+      if(ic.bInitial && me.cfg.command !== undefined && me.cfg.command !== '') {
           if(Object.keys(ic.structures).length == 1) {
               let  id = Object.keys(ic.structures)[0];
-              ic.icn3dui.cfg.command = ic.icn3dui.cfg.command.replace(new RegExp('!','g'), id + '_');
+              me.cfg.command = me.cfg.command.replace(new RegExp('!','g'), id + '_');
           }
           // final step resolved ic.deferred
-          ic.loadScriptCls.loadScript(ic.icn3dui.cfg.command);
+          ic.loadScriptCls.loadScript(me.cfg.command);
       }
       else {
-          if(ic.icn3dui.deferred !== undefined) ic.icn3dui.deferred.resolve(); if(ic.deferred2 !== undefined) ic.deferred2.resolve();
+          if(me.deferred !== undefined) me.deferred.resolve(); if(ic.deferred2 !== undefined) ic.deferred2.resolve();
       }
-      //if(ic.icn3dui.cfg.align !== undefined || ic.icn3dui.cfg.chainalign !== undefined || ic.bRealign ||( ic.bInputfile && ic.InputfileType == 'pdb' && Object.keys(ic.structures).length >= 2) ) {
+      //if(me.cfg.align !== undefined || me.cfg.chainalign !== undefined || ic.bRealign ||( ic.bInputfile && ic.InputfileType == 'pdb' && Object.keys(ic.structures).length >= 2) ) {
       if(Object.keys(ic.structures).length >= 2) {
           $("#" + ic.pre + "mn2_alternateWrap").show();
           $("#" + ic.pre + "mn2_realignWrap").show();
@@ -584,30 +584,30 @@ class ParserUtils {
       // display the structure right away. load the mns and sequences later
       setTimeout(function(){
           if(ic.bInitial) {
-              if(ic.icn3dui.cfg.showsets) {
+              if(me.cfg.showsets) {
                    ic.definedSetsCls.showSets();
               }
-              if(ic.icn3dui.cfg.align !== undefined || ic.icn3dui.cfg.chainalign !== undefined) {
+              if(me.cfg.align !== undefined || me.cfg.chainalign !== undefined) {
                   // expand the toolbar
                   let  id = ic.pre + 'selection';
                   $("#" + id).show();
                   $("#" + id + "_expand").hide();
                   $("#" + id + "_shrink").show();
 
-                  if(ic.icn3dui.cfg.align !== undefined) {
+                  if(me.cfg.align !== undefined) {
                       let  bShowHighlight = false;
-                      let  seqObj = ic.icn3dui.htmlCls.alignSeqCls.getAlignSequencesAnnotations(Object.keys(ic.alnChains), undefined, undefined, bShowHighlight);
+                      let  seqObj = me.htmlCls.alignSeqCls.getAlignSequencesAnnotations(Object.keys(ic.alnChains), undefined, undefined, bShowHighlight);
                       $("#" + ic.pre + "dl_sequence2").html(seqObj.sequencesHtml);
-                      $("#" + ic.pre + "dl_sequence2").width(ic.icn3dui.htmlCls.RESIDUE_WIDTH * seqObj.maxSeqCnt + 200);
+                      $("#" + ic.pre + "dl_sequence2").width(me.htmlCls.RESIDUE_WIDTH * seqObj.maxSeqCnt + 200);
                   }
               }
               //ic.definedSetsCls.setProtNuclLigInMenu();
-              if(ic.icn3dui.cfg.showanno) {
+              if(me.cfg.showanno) {
                    let  cmd = "view annotations";
-                   ic.icn3dui.htmlCls.clickMenuCls.setLogCmd(cmd, true);
+                   me.htmlCls.clickMenuCls.setLogCmd(cmd, true);
                    ic.showAnnoCls.showAnnotations();
               }
-              if(ic.icn3dui.cfg.closepopup) {
+              if(me.cfg.closepopup) {
                   ic.resizeCanvasCls.closeDialogs();
               }
           }

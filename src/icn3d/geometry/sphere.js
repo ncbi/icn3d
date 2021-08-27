@@ -15,7 +15,7 @@ class Sphere {
 
     // modified from iview (http://istar.cse.cuhk.edu.hk/iview/)
     createSphere(atom, defaultRadius, forceDefault, scale, bHighlight) { let ic = this.icn3d, me = ic.icn3dui;
-        if(ic.icn3dui.bNode) return;
+        if(me.bNode) return;
 
         if(defaultRadius === undefined) defaultRadius = 0.8;
         if(forceDefault === undefined) forceDefault = false;
@@ -30,7 +30,7 @@ class Sphere {
     }
 
     createSphereBase(pos, color, radius, scale, bHighlight, bGlycan) { let ic = this.icn3d, me = ic.icn3dui;
-        if(ic.icn3dui.bNode) return;
+        if(me.bNode) return;
 
         let mesh;
 
@@ -113,7 +113,7 @@ class Sphere {
     //"scale" means scale on the radius. "bHighlight" is an option to draw the highlight for these atoms.
     //The highlight could be outlines with bHighlight=1 and 3D objects with bHighlight=2.
     createSphereRepresentation(atoms, defaultRadius, forceDefault, scale, bHighlight) { let ic = this.icn3d, me = ic.icn3dui;
-        if(ic.icn3dui.bNode) return;
+        if(me.bNode) return;
 
         let thisClass = this;
 

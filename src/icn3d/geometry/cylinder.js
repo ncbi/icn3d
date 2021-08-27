@@ -20,7 +20,7 @@ class Cylinder {
 
     // modified from iview (http://istar.cse.cuhk.edu.hk/iview/)
     createCylinder(p0, p1, radius, color, bHighlight, color2, bPicking, bGlycan) { let ic = this.icn3d, me = ic.icn3dui;
-        if(ic.icn3dui.bNode) return;
+        if(me.bNode) return;
 
         let mesh;
         if(bHighlight === 1) {
@@ -116,7 +116,7 @@ class Cylinder {
     }
 
     createCylinder_base(p0, p1, radius, color, bHighlight, color2, bPicking) { let ic = this.icn3d, me = ic.icn3dui;
-        if(ic.icn3dui.bNode) return;
+        if(me.bNode) return;
 
         let mesh = new THREE.Mesh(ic.cylinderGeometry, new THREE.MeshPhongMaterial(
             { specular: ic.frac, shininess: ic.shininess, emissive: ic.emissive, color: color }));
@@ -137,7 +137,7 @@ class Cylinder {
     //"radius" is radius of the cylinders. "bHighlight" is an option to draw the highlight for these atoms.
     //The highlight could be outlines with bHighlight=1 and 3D objects with bHighlight=2 as mentioned above.
     createCylinderHelix(atoms, radius, bHighlight) { let ic = this.icn3d, me = ic.icn3dui;
-        if(ic.icn3dui.bNode) return;
+        if(me.bNode) return;
 
         let start = null;
         let currentChain, currentResi;
@@ -188,7 +188,7 @@ class Cylinder {
     //"bHighlight" is an option to draw the highlight for these atoms. The highlight could be outlines
     //with bHighlight=1 and 3D objects with bHighlight=2 as mentioned above.
     createCylinderCurve(atoms, atomNameArray, radius, bLines, bHighlight) { let ic = this.icn3d, me = ic.icn3dui;
-        if(ic.icn3dui.bNode) return;
+        if(me.bNode) return;
 
         let start = null;
         let currentChain, currentResi;

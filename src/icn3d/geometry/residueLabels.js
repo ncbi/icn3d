@@ -15,7 +15,7 @@ class ResidueLabels {
     //Add labels for all residues containing the input "atoms". The labels are one-letter residue abbreviations.
     //If "bSchematic" is true, the labels are in circles. Otherwise, they are in round-corner rectangles.
     addResidueLabels(atoms, bSchematic, alpha, bNumber) { let ic = this.icn3d, me = ic.icn3dui;
-        if(ic.icn3dui.bNode) return;
+        if(me.bNode) return;
 
         let size = 18;
         let background = "#CCCCCC";
@@ -78,7 +78,7 @@ class ResidueLabels {
     }
 
     addNonCarbonAtomLabels(atoms) { let ic = this.icn3d, me = ic.icn3dui;
-        if(ic.icn3dui.bNode) return;
+        if(me.bNode) return;
 
         let size = 18;
         let background = "#FFFFFF";
@@ -113,7 +113,7 @@ class ResidueLabels {
     };
 
     addAtomLabels(atoms) { let ic = this.icn3d, me = ic.icn3dui;
-        if(ic.icn3dui.bNode) return;
+        if(me.bNode) return;
 
         let size = 18;
         let background = "#CCCCCC";

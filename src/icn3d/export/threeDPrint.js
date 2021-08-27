@@ -39,7 +39,7 @@ class ThreeDPrint {
 
         ic.bDashedLines = false;
 
-        if(!ic.bSetThickness && ic.icn3dui.cfg.cid === undefined) {
+        if(!ic.bSetThickness && me.cfg.cid === undefined) {
             this.setThichknessFor3Dprint();
         }
 

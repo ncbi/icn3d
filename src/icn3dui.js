@@ -170,7 +170,7 @@ class iCn3DUI {
     //even when multiple iCn3D viewers are shown together.
     this.pre = this.cfg.divid + "_";
 
-    this.REVISION = '3.4.1';
+    this.REVISION = '3.4.2';
 
     // In nodejs, iCn3D defines "window = {navigator: {}}"
     this.bNode = (Object.keys(window).length < 2) ? true : false;
@@ -312,7 +312,7 @@ iCn3DUI.prototype.show3DStructure = function() { let me = this;
     if(me.utilsCls.isMobile()) ic.threshbox = 60;
     if(me.cfg.controlGl) {
         ic.bControlGl = true;
-        ic.container =(ic.bControlGl && !ic.icn3dui.bNode) ? $(document) : $('#' + ic.id);
+        ic.container =(ic.bControlGl && !me.bNode) ? $(document) : $('#' + ic.id);
     }
     //ic.controlCls.setControl(); // rotation, translation, zoom, etc
     ic.setStyleCls.handleContextLost();
@@ -356,6 +356,13 @@ iCn3DUI.prototype.show3DStructure = function() { let me = this;
        ic.loadCmd = 'load pdb ' + me.cfg.pdbid;
        me.htmlCls.clickMenuCls.setLogCmd(ic.loadCmd, true);
        ic.pdbParserCls.downloadPdb(me.cfg.pdbid);
+    }
+    else if(me.cfg.afid !== undefined) {
+       ic.inputid = me.cfg.afid;
+       ic.loadCmd = 'load af ' + me.cfg.afid;
+       me.htmlCls.clickMenuCls.setLogCmd(ic.loadCmd, true);
+       let bAf = true;
+       ic.pdbParserCls.downloadPdb(me.cfg.afid, bAf);
     }
     else if(me.cfg.opmid !== undefined) {
        ic.inputid = me.cfg.opmid;

@@ -17,7 +17,7 @@ class Box {
     //"scale" means scale on the radius. "color" means the color of the cube. "bHighlight" is an option
     //to draw the highlight for the atom.
     createBox(atom, defaultRadius, forceDefault, scale, color, bHighlight) { let ic = this.icn3d, me = ic.icn3dui;
-        if(ic.icn3dui.bNode) return;
+        if(me.bNode) return;
 
         if(defaultRadius === undefined) defaultRadius = 0.8;
         if(forceDefault === undefined) forceDefault = false;
@@ -37,7 +37,7 @@ class Box {
     }
 
     createBox_base(coord, radius, color, bHighlight, bOther, bGlycan) { let ic = this.icn3d, me = ic.icn3dui;
-        if(ic.icn3dui.bNode) return;
+        if(me.bNode) return;
 
         let mesh;
 
@@ -69,7 +69,7 @@ class Box {
     }
 
     createBoxRepresentation_P_CA(atoms, scale, bHighlight) { let ic = this.icn3d, me = ic.icn3dui;
-        if(ic.icn3dui.bNode) return;
+        if(me.bNode) return;
 
         let thisClass = this;
         ic.reprSubCls.createRepresentationSub(atoms, function (atom0) {

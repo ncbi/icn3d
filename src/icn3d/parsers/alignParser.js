@@ -29,16 +29,16 @@ class AlignParser {
         //var ids_str =(alignArray.length === 2? 'uids=' : 'ids=') + align;
         let  ids_str = 'ids=' + align;
 
-    //    let  url2 = ic.icn3dui.htmlCls.baseUrl + 'vastplus/vastplus.cgi?v=2&cmd=c&b=1&s=1&w3d&' + ids_str;
-    //    let  url2 = ic.icn3dui.htmlCls.baseUrl + 'vastplus/vastplus.cgi?v=2&cmd=c&b=1&s=1&w3d&' + ids_str;
-    //    let  url1 = ic.icn3dui.htmlCls.baseUrl + 'vastplus/vastplus.cgi?v=2&cmd=c1&b=1&s=1&d=1&' + ids_str;
+    //    let  url2 = me.htmlCls.baseUrl + 'vastplus/vastplus.cgi?v=2&cmd=c&b=1&s=1&w3d&' + ids_str;
+    //    let  url2 = me.htmlCls.baseUrl + 'vastplus/vastplus.cgi?v=2&cmd=c&b=1&s=1&w3d&' + ids_str;
+    //    let  url1 = me.htmlCls.baseUrl + 'vastplus/vastplus.cgi?v=2&cmd=c1&b=1&s=1&d=1&' + ids_str;
 
         // combined url1 and url2
-        let  url2 = ic.icn3dui.htmlCls.baseUrl + 'vastplus/vastplus.cgi?v=3&cmd=c&b=1&s=1&w3d&' + ids_str;
+        let  url2 = me.htmlCls.baseUrl + 'vastplus/vastplus.cgi?v=3&cmd=c&b=1&s=1&w3d&' + ids_str;
 
-        if(ic.icn3dui.cfg.inpara !== undefined) {
-          //url1 += ic.icn3dui.cfg.inpara;
-          url2 += ic.icn3dui.cfg.inpara;
+        if(me.cfg.inpara !== undefined) {
+          //url1 += me.cfg.inpara;
+          url2 += me.cfg.inpara;
         }
 
         ic.bCid = undefined;
@@ -106,7 +106,7 @@ class AlignParser {
                   ic.pdbid_molid2chain[pdbid + '_' + molid] = finalChain;
 
                   if(molecule.kind === 'p' || molecule.kind === 'n') {
-                      ic.chainsColor[pdbid + '_' + finalChain] = me.parasCls.thr(ic.icn3dui.htmlCls.GREY8);
+                      ic.chainsColor[pdbid + '_' + finalChain] = me.parasCls.thr(me.htmlCls.GREY8);
                   }
                 }
             }
@@ -153,11 +153,11 @@ class AlignParser {
                 ic.alignmolid2color.push(tmpHash);
             }
 
-            //var url3 = ic.icn3dui.htmlCls.baseUrl + 'mmdb/mmdb_strview.cgi?v=2&program=icn3d&b=1&s=1&ft=1&atomonly=1&uid=' + ic.mmdbidArray[0];
-            //var url4 = ic.icn3dui.htmlCls.baseUrl + 'mmdb/mmdb_strview.cgi?v=2&program=icn3d&b=1&s=1&ft=1&atomonly=1&uid=' + ic.mmdbidArray[1];
+            //var url3 = me.htmlCls.baseUrl + 'mmdb/mmdb_strview.cgi?v=2&program=icn3d&b=1&s=1&ft=1&atomonly=1&uid=' + ic.mmdbidArray[0];
+            //var url4 = me.htmlCls.baseUrl + 'mmdb/mmdb_strview.cgi?v=2&program=icn3d&b=1&s=1&ft=1&atomonly=1&uid=' + ic.mmdbidArray[1];
             // need the parameter moleculeInfor
-            let  url3 = ic.icn3dui.htmlCls.baseUrl + 'mmdb/mmdb_strview.cgi?v=2&program=icn3d&b=1&s=1&ft=1&uid=' + ic.mmdbidArray[0];
-            let  url4 = ic.icn3dui.htmlCls.baseUrl + 'mmdb/mmdb_strview.cgi?v=2&program=icn3d&b=1&s=1&ft=1&uid=' + ic.mmdbidArray[1];
+            let  url3 = me.htmlCls.baseUrl + 'mmdb/mmdb_strview.cgi?v=2&program=icn3d&b=1&s=1&ft=1&uid=' + ic.mmdbidArray[0];
+            let  url4 = me.htmlCls.baseUrl + 'mmdb/mmdb_strview.cgi?v=2&program=icn3d&b=1&s=1&ft=1&uid=' + ic.mmdbidArray[1];
 
             let  d3 = $.ajax({
               url: url3,
@@ -299,7 +299,7 @@ class AlignParser {
         //ic.init();
         ic.loadAtomDataCls.loadAtomDataIn(data, undefined, 'align', seqalign);
 
-        if(ic.icn3dui.cfg.align === undefined && Object.keys(ic.structures).length == 1) {
+        if(me.cfg.align === undefined && Object.keys(ic.structures).length == 1) {
             $("#" + ic.pre + "alternateWrapper").hide();
         }
 
@@ -320,21 +320,21 @@ class AlignParser {
 
         ic.ParserUtilsCls.renderStructure();
 
-        if(ic.icn3dui.cfg.rotate !== undefined) ic.resizeCanvasCls.rotStruc(ic.icn3dui.cfg.rotate, true);
+        if(me.cfg.rotate !== undefined) ic.resizeCanvasCls.rotStruc(me.cfg.rotate, true);
 
         ic.html2ddgm = '';
 
         // by default, open the seq alignment window
-        //if(ic.icn3dui.cfg.show2d !== undefined && ic.icn3dui.cfg.show2d) ic.icn3dui.htmlCls.dialogCls.openDlg('dl_2ddgm', 'Interactions');
-        if(ic.icn3dui.cfg.showalignseq) {
-            ic.icn3dui.htmlCls.dialogCls.openDlg('dl_alignment', 'Select residues in aligned sequences');
+        //if(me.cfg.show2d !== undefined && me.cfg.show2d) me.htmlCls.dialogCls.openDlg('dl_2ddgm', 'Interactions');
+        if(me.cfg.showalignseq) {
+            me.htmlCls.dialogCls.openDlg('dl_alignment', 'Select residues in aligned sequences');
         }
 
-        if(ic.icn3dui.cfg.show2d && ic.bFullUi) {
+        if(me.cfg.show2d && ic.bFullUi) {
             ic.ParserUtilsCls.set2DDiagramsForAlign(ic.mmdbidArray[0].toUpperCase(), ic.mmdbidArray[1].toUpperCase());
         }
 
-        //if(ic.icn3dui.deferred !== undefined) ic.icn3dui.deferred.resolve(); if(ic.deferred2 !== undefined) ic.deferred2.resolve();
+        //if(me.deferred !== undefined) me.deferred.resolve(); if(ic.deferred2 !== undefined) ic.deferred2.resolve();
     }
 
     loadOpmDataForAlign(data, seqalign, mmdbidArray) { let  ic = this.icn3d, me = ic.icn3dui;

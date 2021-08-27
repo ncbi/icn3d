@@ -8,6 +8,8 @@ import {UtilsCls} from '../utils/utilsCls.js';
 import {ResizeCanvas} from '../icn3d/transform/resizeCanvas.js';
 import {Annotation} from '../icn3d/annotations/annotation.js';
 
+import {Cartoon2d} from '../icn3d/analysis/cartoon2d.js';
+
 class Dialog {
     constructor(icn3dui) {
         this.icn3dui = icn3dui;
@@ -233,11 +235,36 @@ class Dialog {
               }
           },
           resize: function(e, ui) {
-              if(id == me.pre + 'dl_2ddgm' || id == me.pre + 'dl_2dctn') {
-                ic.resizeRatioX = ui.size.width / ui.originalSize.width;
-                ic.resizeRatioY = ui.size.height / ui.originalSize.height;
+              if(id == me.pre + 'dl_2dctn') {
+                ic.resizeRatioX = ui.size.width / me.htmlCls.width2d; //ui.originalSize.width;
+                ic.resizeRatioY = ui.size.height / (me.htmlCls.width2d + 70); //ui.originalSize.height;
+              }
+          },
+          resizeStop: function(e, ui) {
+            ic.resizeRatioX = ui.size.width / me.htmlCls.width2d; //ui.originalSize.width;
+            ic.resizeRatioY = ui.size.height / (me.htmlCls.width2d + 70); //ui.originalSize.height;
+/*
+            $("#" + me.svgid_ct).empty();
+            let bResize = true;
+            ic.cartoon2dCls.draw2Dcartoon_base(ic.cartoon2dType, bResize);
+            ic.cartoon2dCls.setEventsForCartoon2d();
+*/
+          }
+/*
+          resizeStop: function(e, ui) {
+              if(id == me.pre + 'dl_2dctn') {
+                // redraw 2D
+                let widthDialog = ui.size.width;
+                let heightDialog = ui.size.height;
+                me.htmlCls.width2d = (widthDialog > heightDialog) ? heightDialog : widthDialog;
+
+                ic.cartoon2dCls.initCartoonSvg();
+                let bResize = true;
+                ic.cartoon2dCls.draw2Dcartoon_base(ic.cartoon2dType, bResize);
+                ic.cartoon2dCls.setEventsForCartoon2d();
               }
           }
+*/
         });
 
         this.addSaveButton(id);

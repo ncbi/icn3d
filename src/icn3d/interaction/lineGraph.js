@@ -27,8 +27,8 @@ class LineGraph {
         let  nameHash = {}
         for(let i = 0, il = graph.links.length; i < il; ++i) {
             let  link = graph.links[i];
-            if(link.v == ic.icn3dui.htmlCls.hbondValue || link.v == ic.icn3dui.htmlCls.ionicValue || link.v == ic.icn3dui.htmlCls.halogenValue ||
-                link.v == ic.icn3dui.htmlCls.picationValue || link.v == ic.icn3dui.htmlCls.pistackingValue || link.v == ic.icn3dui.htmlCls.contactValue) {
+            if(link.v == me.htmlCls.hbondValue || link.v == me.htmlCls.ionicValue || link.v == me.htmlCls.halogenValue ||
+                link.v == me.htmlCls.picationValue || link.v == me.htmlCls.pistackingValue || link.v == me.htmlCls.contactValue) {
                 linkArray.push(link);
                 nameHash[link.source] = 1;
                 nameHash[link.target] = 1;
@@ -276,24 +276,24 @@ class LineGraph {
             let  pos2 = node2posSet2[node2.id];
             if(pos1 === undefined || pos2 === undefined) continue;
             let  linestrokewidth;
-            if(link.v == ic.icn3dui.htmlCls.contactValue) {
+            if(link.v == me.htmlCls.contactValue) {
                 linestrokewidth = 1;
             } else {
                 linestrokewidth = 2;
             }
             let  strokecolor;
-            if(link.v == ic.icn3dui.htmlCls.hbondValue) {
-                strokecolor = "#" + ic.icn3dui.htmlCls.hbondColor;
-            } else if(link.v == ic.icn3dui.htmlCls.ionicValue) {
-                strokecolor = "#" + ic.icn3dui.htmlCls.ionicColor;
-            } else if(link.v == ic.icn3dui.htmlCls.halogenValue) {
-                strokecolor = "#" + ic.icn3dui.htmlCls.halogenColor;
-            } else if(link.v == ic.icn3dui.htmlCls.picationValue) {
-                strokecolor = "#" + ic.icn3dui.htmlCls.picationColor;
-            } else if(link.v == ic.icn3dui.htmlCls.pistackingValue) {
-                strokecolor = "#" + ic.icn3dui.htmlCls.pistackingColor;
-            } else if(link.v == ic.icn3dui.htmlCls.contactValue) {
-                strokecolor = "#" + ic.icn3dui.htmlCls.contactColor;
+            if(link.v == me.htmlCls.hbondValue) {
+                strokecolor = "#" + me.htmlCls.hbondColor;
+            } else if(link.v == me.htmlCls.ionicValue) {
+                strokecolor = "#" + me.htmlCls.ionicColor;
+            } else if(link.v == me.htmlCls.halogenValue) {
+                strokecolor = "#" + me.htmlCls.halogenColor;
+            } else if(link.v == me.htmlCls.picationValue) {
+                strokecolor = "#" + me.htmlCls.picationColor;
+            } else if(link.v == me.htmlCls.pistackingValue) {
+                strokecolor = "#" + me.htmlCls.pistackingColor;
+            } else if(link.v == me.htmlCls.contactValue) {
+                strokecolor = "#" + me.htmlCls.contactColor;
             }
             html += "<g class='icn3d-interaction' resid1='" + resid1 + "' resid2='" + resid2 + "' >";
             html += "<title>Interaction of residue " + node1.id + " with residue " + node2.id + "</title>";
@@ -367,22 +367,22 @@ class LineGraph {
         if(pos1 === undefined || pos2 === undefined) return html;
 
         let  strokecolor;
-        if(link.v == ic.icn3dui.htmlCls.hbondValue) {
-            strokecolor = "#" + ic.icn3dui.htmlCls.hbondColor;
-        } else if(link.v == ic.icn3dui.htmlCls.ionicValue) {
-            strokecolor = "#" + ic.icn3dui.htmlCls.ionicColor;
-        } else if(link.v == ic.icn3dui.htmlCls.halogenValue) {
-            strokecolor = "#" + ic.icn3dui.htmlCls.halogenColor;
-        } else if(link.v == ic.icn3dui.htmlCls.picationValue) {
-            strokecolor = "#" + ic.icn3dui.htmlCls.picationColor;
-        } else if(link.v == ic.icn3dui.htmlCls.pistackingValue) {
-            strokecolor = "#" + ic.icn3dui.htmlCls.pistackingColor;
-        } else if(link.v == ic.icn3dui.htmlCls.contactValue) {
-            strokecolor = "#" + ic.icn3dui.htmlCls.contactColor;
+        if(link.v == me.htmlCls.hbondValue) {
+            strokecolor = "#" + me.htmlCls.hbondColor;
+        } else if(link.v == me.htmlCls.ionicValue) {
+            strokecolor = "#" + me.htmlCls.ionicColor;
+        } else if(link.v == me.htmlCls.halogenValue) {
+            strokecolor = "#" + me.htmlCls.halogenColor;
+        } else if(link.v == me.htmlCls.picationValue) {
+            strokecolor = "#" + me.htmlCls.picationColor;
+        } else if(link.v == me.htmlCls.pistackingValue) {
+            strokecolor = "#" + me.htmlCls.pistackingColor;
+        } else if(link.v == me.htmlCls.contactValue) {
+            strokecolor = "#" + me.htmlCls.contactColor;
         }
 
         let  linestrokewidth;
-        if(link.v == ic.icn3dui.htmlCls.contactValue) {
+        if(link.v == me.htmlCls.contactValue) {
             linestrokewidth = 1;
         } else {
             linestrokewidth = 2;

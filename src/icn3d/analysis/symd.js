@@ -29,7 +29,7 @@ class Symd {
       // chain functions together
       ic.deferredSymd = $.Deferred(function() {
          thisClass.applyCommandSymdBase(command);
-      }); // end of ic.icn3dui.deferred = $.Deferred(function() {
+      }); // end of me.deferred = $.Deferred(function() {
 
       return ic.deferredSymd.promise();
     }
@@ -150,7 +150,7 @@ class Symd {
 
                   if(ic.symdArray.length == 0) {
                       $("#" + ic.pre + "dl_symd").html("<br>The selected residues have no detected symmetry with a Z score of " + data.zscore + " from the program <a href='https://symd.nci.nih.gov/' target='_blank'>SymD</a>.");
-                      ic.icn3dui.htmlCls.dialogCls.openDlg('dl_symd', 'Dynamically Calculated Symmetry Using SymD');
+                      me.htmlCls.dialogCls.openDlg('dl_symd', 'Dynamically Calculated Symmetry Using SymD');
                   }
                   else {
                       let ori_permSeq = data.seqalign.replace(/ /g, '').split(','); //oriSeq,permSeq
@@ -242,39 +242,39 @@ class Symd {
                       thisClass.setSeqAlignForSymmetry(residArrayFinal1, residArrayFinal2, bOnechain);
 
                       let bShowHighlight = false;
-                      let seqObj = ic.icn3dui.htmlCls.alignSeqCls.getAlignSequencesAnnotations(Object.keys(ic.alnChains), undefined, undefined, bShowHighlight, bOnechain);
+                      let seqObj = me.htmlCls.alignSeqCls.getAlignSequencesAnnotations(Object.keys(ic.alnChains), undefined, undefined, bShowHighlight, bOnechain);
 
                       html = $("#" + ic.pre + "dl_sequence2").html() + seqObj.sequencesHtml;
 
                       $("#" + ic.pre + "dl_sequence2").html(html);
-                      $("#" + ic.pre + "dl_sequence2").width(ic.icn3dui.htmlCls.RESIDUE_WIDTH * seqObj.maxSeqCnt + 200);
+                      $("#" + ic.pre + "dl_sequence2").width(me.htmlCls.RESIDUE_WIDTH * seqObj.maxSeqCnt + 200);
 
-                      ic.icn3dui.htmlCls.dialogCls.openDlg('dl_alignment', 'Select residues in aligned sequences from SymD');
+                      me.htmlCls.dialogCls.openDlg('dl_alignment', 'Select residues in aligned sequences from SymD');
 
                       let numDef = Object.keys(ic.defNames2Residues).length + Object.keys(ic.defNames2Atoms).length;
 
                       let name = 'symOri' + numDef;
                       ic.selectionCls.selectResidueList(residArrayHashFinal1, name, name);
                       ic.selectionCls.updateSelectionNameDesc();
-                      ic.icn3dui.htmlCls.clickMenuCls.setLogCmd('select ' + ic.resid2specCls.residueids2spec(Object.keys(residArrayHashFinal1)) + ' | name ' + name, false);
+                      me.htmlCls.clickMenuCls.setLogCmd('select ' + ic.resid2specCls.residueids2spec(Object.keys(residArrayHashFinal1)) + ' | name ' + name, false);
 
                       name = 'symPerm' + numDef;
                       ic.selectionCls.selectResidueList(residArrayHashFinal2, name, name);
                       ic.selectionCls.updateSelectionNameDesc();
-                      ic.icn3dui.htmlCls.clickMenuCls.setLogCmd('select ' + ic.resid2specCls.residueids2spec(Object.keys(residArrayHashFinal2)) + ' | name ' + name, false);
+                      me.htmlCls.clickMenuCls.setLogCmd('select ' + ic.resid2specCls.residueids2spec(Object.keys(residArrayHashFinal2)) + ' | name ' + name, false);
 
                       name = 'symBoth' + numDef;
                       residArrayHashFinal1 = me.hashUtilsCls.unionHash(residArrayHashFinal1, residArrayHashFinal2);
                       ic.selectionCls.selectResidueList(residArrayHashFinal1, name, name);
                       ic.selectionCls.updateSelectionNameDesc();
-                      ic.icn3dui.htmlCls.clickMenuCls.setLogCmd('select ' + ic.resid2specCls.residueids2spec(Object.keys(residArrayHashFinal1)) + ' | name ' + name, false);
+                      me.htmlCls.clickMenuCls.setLogCmd('select ' + ic.resid2specCls.residueids2spec(Object.keys(residArrayHashFinal1)) + ' | name ' + name, false);
 
                       //ic.hlUpdateCls.toggleHighlight();
                   }
               }
               else {
                   $("#" + ic.pre + "dl_symd").html("<br>The selected residues have no detected symmetry with a Z score of " + data.zscore + " from the program <a href='https://symd.nci.nih.gov/' target='_blank'>SymD</a>.");
-                  ic.icn3dui.htmlCls.dialogCls.openDlg('dl_symd', 'Dynamically Calculated Symmetry Using SymD');
+                  me.htmlCls.dialogCls.openDlg('dl_symd', 'Dynamically Calculated Symmetry Using SymD');
               }
 
                //var title = $("#" + ic.pre + "selectSymd" ).val();
@@ -292,7 +292,7 @@ class Symd {
             }
             $("#" + ic.pre + "dl_symd").html("<br>The web service can not determine the symmetry of the input set.");
 
-            ic.icn3dui.htmlCls.dialogCls.openDlg('dl_symd', 'Dynamically Calculated Symmetry Using SymD');
+            me.htmlCls.dialogCls.openDlg('dl_symd', 'Dynamically Calculated Symmetry Using SymD');
 
             ic.ParserUtilsCls.hideLoading();
 
@@ -523,7 +523,7 @@ class Symd {
                   $("#" + ic.pre + "dl_symmetry").html("<br>This structure has no symmetry.");
               }
 
-              ic.icn3dui.htmlCls.dialogCls.openDlg('dl_symmetry', 'Symmetry');
+              me.htmlCls.dialogCls.openDlg('dl_symmetry', 'Symmetry');
 
               if(ic.deferredSymmetry !== undefined) ic.deferredSymmetry.resolve();
           },
@@ -536,7 +536,7 @@ class Symd {
             }
             $("#" + ic.pre + "dl_symmetry").html("<br>This structure has no symmetry.");
 
-            ic.icn3dui.htmlCls.dialogCls.openDlg('dl_symmetry', 'Symmetry');
+            me.htmlCls.dialogCls.openDlg('dl_symmetry', 'Symmetry');
 
             if(ic.deferredSymmetry !== undefined) ic.deferredSymmetry.resolve();
             return;
