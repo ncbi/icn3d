@@ -111,7 +111,7 @@ class SetDialog {
         html += me.htmlCls.space3 + '<span class="icn3d-square" style="background-color: rgb(255, 209, 19);">&nbsp;</span> <span>Low (70 &gt; pLDDT &gt; 50)</span><br>';
         html += me.htmlCls.space3 + '<span class="icn3d-square" style="background-color: rgb(255, 125, 69);">&nbsp;</span> <span>Very low (pLDDT &lt; 50)</span><br><br>';
 
-        html += "AlphaFold Uniprot ID: " + me.htmlCls.inputTextStr + "id='" + me.pre + "afid' value='A0A061AD48' size=8> ";
+        html += "<a href='https://alphafold.ebi.ac.uk/' target='_blank'>AlphaFold Uniprot</a> ID: " + me.htmlCls.inputTextStr + "id='" + me.pre + "afid' value='A0A061AD48' size=10> ";
         html += me.htmlCls.buttonStr + "reload_af'>Load</button>";
         html += "</div>";
 
