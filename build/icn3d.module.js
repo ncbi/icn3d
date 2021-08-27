@@ -46768,7 +46768,7 @@ class SetMenu {
             html += "</ul>";
             html += "</li>";
 
-            if(!me.cfg.notebook && !me.cfg.hidelicense) {
+            if(!me.cfg.notebook) {
                 html += me.htmlCls.setHtmlCls.getLink('mn1_mutation', 'Mutation ' + me.htmlCls.wifiStr);
             }
 
@@ -54497,9 +54497,9 @@ iCn3DUI.prototype.show3DStructure = function() { let me = this;
     $("#" + ic.pre + "canvas").width(width).height(parseInt(height));
     $("#" + ic.pre + "canvas").resizable({
       resize: function( event, ui ) {
-        me.htmlCls.WIDTH = $("#" + ic.pre + "canvas").width();
-        me.htmlCls.HEIGHT = $("#" + ic.pre + "canvas").height();
-        if(ic.icn3d !== undefined && !me.icn3d.bFullscreen) {
+        me.htmlCls.WIDTH = ui.size.width; //$("#" + ic.pre + "canvas").width();
+        me.htmlCls.HEIGHT = ui.size.height; //$("#" + ic.pre + "canvas").height();
+        if(ic !== undefined && !me.icn3d.bFullscreen) {
             ic.resizeCanvasCls.resizeCanvas(me.htmlCls.WIDTH, me.htmlCls.HEIGHT, true);
         }
       }
