@@ -19,8 +19,8 @@ class ResizeCanvas {
 
     //Resize the canvas with the defined "width" and "height".
     resizeCanvas(width, height, bForceResize, bDraw) {var ic = this.icn3d, me = ic.icn3dui;
-      if( bForceResize || ic.icn3dui.cfg.resize ) {
-        //var heightTmp = parseInt(height) - ic.icn3dui.htmlCls.EXTRAHEIGHT;
+      if( bForceResize || me.cfg.resize ) {
+        //var heightTmp = parseInt(height) - me.htmlCls.EXTRAHEIGHT;
         let  heightTmp = height;
         $("#" + ic.pre + "canvas").width(width).height(heightTmp);
         $("#" + ic.pre + "viewer").width(width).height(height);
@@ -39,14 +39,14 @@ class ResizeCanvas {
     windowResize() { let  ic = this.icn3d, me = ic.icn3dui;
         let  thisClass = this;
 
-        if(ic.icn3dui.cfg.resize && !me.utilsCls.isMobile() ) {
+        if(me.cfg.resize && !me.utilsCls.isMobile() ) {
             $(window).resize(function() { let  ic = thisClass.icn3d;
-                //ic.icn3dui.htmlCls.WIDTH = $( window ).width();
-                //ic.icn3dui.htmlCls.HEIGHT = $( window ).height();
+                //me.htmlCls.WIDTH = $( window ).width();
+                //me.htmlCls.HEIGHT = $( window ).height();
                 me.utilsCls.setViewerWidthHeight(ic.icn3dui);
 
-                let  width = ic.icn3dui.htmlCls.WIDTH; // - ic.icn3dui.htmlCls.LESSWIDTH_RESIZE;
-                let  height = ic.icn3dui.htmlCls.HEIGHT; // - ic.icn3dui.htmlCls.LESSHEIGHT - ic.icn3dui.htmlCls.EXTRAHEIGHT;
+                let  width = me.htmlCls.WIDTH; // - me.htmlCls.LESSWIDTH_RESIZE;
+                let  height = me.htmlCls.HEIGHT; // - me.htmlCls.LESSHEIGHT - me.htmlCls.EXTRAHEIGHT;
 
                 if(ic !== undefined && !ic.bFullscreen) thisClass.resizeCanvas(width, height);
             });
@@ -54,7 +54,7 @@ class ResizeCanvas {
     }
 
     openFullscreen(elem) {var ic = this.icn3d, me = ic.icn3dui;
-      if(ic.icn3dui.bNode) return;
+      if(me.bNode) return;
 
       if(!document.fullscreenElement && !document.mozFullScreenElement &&
         !document.webkitFullscreenElement && !document.msFullscreenElement) {
@@ -183,7 +183,7 @@ class ResizeCanvas {
             'dl_symmetry', 'dl_symd'];
         for(let i in itemArray) {
             let  item = itemArray[i];
-            if(!ic.icn3dui.cfg.notebook) {
+            if(!me.cfg.notebook) {
                 if($('#' + ic.pre + item).hasClass('ui-dialog-content') && $('#' + ic.pre + item).dialog( 'isOpen' )) {
                     $('#' + ic.pre + item).dialog( 'close' );
                 }
@@ -192,7 +192,7 @@ class ResizeCanvas {
                 $('#' + ic.pre + item).hide();
             }
         }
-        if(!ic.icn3dui.cfg.notebook) this.resizeCanvas(ic.icn3dui.htmlCls.WIDTH, ic.icn3dui.htmlCls.HEIGHT, true);
+        if(!me.cfg.notebook) this.resizeCanvas(me.htmlCls.WIDTH, me.htmlCls.HEIGHT, true);
     }
 }
 

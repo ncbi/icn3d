@@ -31,7 +31,7 @@ class ShareLink {
                    alert("The url is more than 4000 characters and may not work. Please save 'iCn3D PNG Image' or 'State File' and open them in iCn3D.");
                    return;
                }
-               ic.icn3dui.htmlCls.clickMenuCls.setLogCmd("share link: " + url, false);
+               me.htmlCls.clickMenuCls.setLogCmd("share link: " + url, false);
            }
            else {
                if(bPngOnly || ic.bInputfile || bTooLong) {
@@ -74,28 +74,28 @@ class ShareLink {
                 }
                 //shorturl: https://icn3d.page.link/NvbAh1Vmiwc4bgX87
                 let urlArray = shorturl.split('page.link/');
-                //if(urlArray.length == 2) shorturl = ic.icn3dui.htmlCls.baseUrl + 'icn3d/share.html?' + urlArray[1];
+                //if(urlArray.length == 2) shorturl = me.htmlCls.baseUrl + 'icn3d/share.html?' + urlArray[1];
                 // When the baseURL is structure.ncbi.nlm.nih.gov, mmcifparser.cgi has a problem to past posted data in Mac/iphone
                 // So the base URL is still www.ncbi.nlm.nih.gov/Structure,just use short URL here
                 if(urlArray.length == 2) shorturl = 'https://structure.ncbi.nlm.nih.gov/icn3d/share.html?' + urlArray[1];
                 $("#" + ic.pre + "ori_url").val(url);
                 $("#" + ic.pre + "short_url").val(shorturl);
                 $("#" + ic.pre + "short_url_title").val(shorturl + '&t=' + ic.yournote);
-                if(!bPngHtml) ic.icn3dui.htmlCls.dialogCls.openDlg('dl_copyurl', 'Copy a Share Link URL');
+                if(!bPngHtml) me.htmlCls.dialogCls.openDlg('dl_copyurl', 'Copy a Share Link URL');
               },
               error : function(xhr, textStatus, errorThrown ) {
                 let shorturl = 'Problem in getting shortened URL';
                 $("#" + ic.pre + "ori_url").val(url);
                 $("#" + ic.pre + "short_url").val(shorturl);
                 $("#" + ic.pre + "short_url_title").val(shorturl + '&t=' + ic.yournote);
-                if(!bPngHtml) ic.icn3dui.htmlCls.dialogCls.openDlg('dl_copyurl', 'Copy a Share Link URL');
+                if(!bPngHtml) me.htmlCls.dialogCls.openDlg('dl_copyurl', 'Copy a Share Link URL');
               }
            });
     }
 
     shareLinkUrl(bAllCommands) {var ic = this.icn3d, me = ic.icn3dui;
-           let url = ic.icn3dui.htmlCls.baseUrl + "icn3d/full.html?";
-           if(ic.icn3dui.cfg.bSidebyside) url = ic.icn3dui.htmlCls.baseUrl + "icn3d/full2.html?";
+           let url = me.htmlCls.baseUrl + "icn3d/full.html?";
+           if(me.cfg.bSidebyside) url = me.htmlCls.baseUrl + "icn3d/full2.html?";
 
            if(ic.bInputUrlfile) {
                let urlArray = window.location.href.split('?');
@@ -156,8 +156,8 @@ class ShareLink {
 
            let inparaWithoutCommand;
            let pos = -1;
-           if(ic.icn3dui.cfg.inpara !== undefined) pos = ic.icn3dui.cfg.inpara.indexOf('&command=');
-           inparaWithoutCommand =(pos !== -1 ) ? ic.icn3dui.cfg.inpara.substr(0, pos) : ic.icn3dui.cfg.inpara;
+           if(me.cfg.inpara !== undefined) pos = me.cfg.inpara.indexOf('&command=');
+           inparaWithoutCommand =(pos !== -1 ) ? me.cfg.inpara.substr(0, pos) : me.cfg.inpara;
 
            let bPrevDate = false;
            if(!ic.bInputUrlfile) {
@@ -185,7 +185,7 @@ class ShareLink {
 
            let dateAllStr = date.getFullYear().toString() + monthStr + dateStr;
            if(!bPrevDate) url += 'date=' + dateAllStr + '&';
-           url += 'v=' + ic.icn3dui.REVISION + '&';
+           url += 'v=' + me.REVISION + '&';
 
            url += 'command=';
 
@@ -272,7 +272,7 @@ class ShareLink {
                url = url.replace(new RegExp(id + '_','g'), '!');
            }
 
-           if(ic.icn3dui.cfg.blast_rep_id !== undefined) {
+           if(me.cfg.blast_rep_id !== undefined) {
                url = url.replace(new RegExp('blast_rep_id=!','g'), 'blast_rep_id=' + id + '_');
            }
 

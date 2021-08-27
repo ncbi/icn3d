@@ -53,7 +53,7 @@ class LoadAtomData {
         if(type === 'align') {
           //serial2structure
           ic.pmid = "";
-          let  refinedStr =(ic.icn3dui.cfg.inpara && ic.icn3dui.cfg.inpara.indexOf('atype=1') !== -1) ? 'Invariant Core ' : '';
+          let  refinedStr =(me.cfg.inpara && me.cfg.inpara.indexOf('atype=1') !== -1) ? 'Invariant Core ' : '';
           ic.molTitle = refinedStr + 'Structure Alignment of ';
 
           for(let i = 0, il = data.alignedStructures[0].length; i < il; ++i) {
@@ -87,7 +87,7 @@ class LoadAtomData {
                   if(sid !== undefined) ic.chainid2sid[chainid] = sid;
               }
 
-              ic.molTitle +=  "<a href=\"" + ic.icn3dui.htmlCls.baseUrl + "mmdb/mmdbsrv.cgi?uid=" + structure.pdbId.toUpperCase() + "\" target=\"_blank\">" + structure.pdbId.toUpperCase() + "</a>";
+              ic.molTitle +=  "<a href=\"" + me.htmlCls.baseUrl + "mmdb/mmdbsrv.cgi?uid=" + structure.pdbId.toUpperCase() + "\" target=\"_blank\">" + structure.pdbId.toUpperCase() + "</a>";
 
               if(structure.descr !== undefined) ic.pmid += structure.descr.pubmedid;
               if(i === 0) {
@@ -128,8 +128,8 @@ class LoadAtomData {
                   }
 
                   if(((ic.mmdbid_q !== undefined && ic.mmdbid_q === ic.mmdbid_t)) && alignType === 'query') {
-                      //chainid += ic.icn3dui.htmlCls.postfix;
-                      chainid = pdbidTmp + ic.icn3dui.htmlCls.postfix + '_' + chain;
+                      //chainid += me.htmlCls.postfix;
+                      chainid = pdbidTmp + me.htmlCls.postfix + '_' + chain;
                   }
 
                   let  kind = data.moleculeInfor[molid].kind;
@@ -231,7 +231,7 @@ class LoadAtomData {
                   }
 
                   //if(ic.mmdbid_q !== undefined && ic.mmdbid_q === ic.mmdbid_t && alignType === 'query') {
-                      //atm.chain += ic.icn3dui.htmlCls.postfix;
+                      //atm.chain += me.htmlCls.postfix;
                   //}
                 }
                 else if(type === 'align') {
@@ -271,14 +271,14 @@ class LoadAtomData {
 
                 if(type === 'mmdbid' &&((ic.mmdbid_q !== undefined && ic.mmdbid_q === ic.mmdbid_t))
                   && alignType === 'query') {
-                    atm.structure += ic.icn3dui.htmlCls.postfix;
+                    atm.structure += me.htmlCls.postfix;
                 }
             }
 
             structureNum = atm.structure;
 
             chainNum = structureNum + '_' + atm.chain;
-            //if(ic.mmdbid_q !== undefined && ic.mmdbid_q === ic.mmdbid_t && alignType === 'query') chainNum += ic.icn3dui.htmlCls.postfix;
+            //if(ic.mmdbid_q !== undefined && ic.mmdbid_q === ic.mmdbid_t && alignType === 'query') chainNum += me.htmlCls.postfix;
 
             //var resiCorrection = 0;
             if(type === 'mmdbid' || type === 'align') {
@@ -323,7 +323,7 @@ class LoadAtomData {
 
             if(type === 'mmdbid') {
                 atm.coord = new THREE.Vector3(atm.coord[0], atm.coord[1], atm.coord[2]);
-                if(ic.q_rotation !== undefined && ic.t_trans_add.length > 0 && !ic.icn3dui.cfg.resnum && !ic.icn3dui.cfg.resdef) {
+                if(ic.q_rotation !== undefined && ic.t_trans_add.length > 0 && !me.cfg.resnum && !me.cfg.resdef) {
                     if(alignType === 'target') {
                         atm.coord.x += ic.t_trans_add[chainIndex].x;
                         atm.coord.y += ic.t_trans_add[chainIndex].y;
@@ -360,15 +360,15 @@ class LoadAtomData {
             ic.pmax.max(atm.coord);
             ic.psum.add(atm.coord);
 
-            let  bProtein =(ic.icn3dui.cfg.mmcifid === undefined && ic.InputfileType != 'mmcif') ? chainid2kind[chainNum] === 'protein' : atm.mt === 'p';
-            let  bNucleotide =(ic.icn3dui.cfg.mmcifid === undefined && ic.InputfileType != 'mmcif') ? chainid2kind[chainNum] === 'nucleotide' : atm.mt === 'n';
-            let  bSolvent =(ic.icn3dui.cfg.mmcifid === undefined && ic.InputfileType != 'mmcif') ? chainid2kind[chainNum] === 'solvent' : atm.mt === 's';
+            let  bProtein =(me.cfg.mmcifid === undefined && ic.InputfileType != 'mmcif') ? chainid2kind[chainNum] === 'protein' : atm.mt === 'p';
+            let  bNucleotide =(me.cfg.mmcifid === undefined && ic.InputfileType != 'mmcif') ? chainid2kind[chainNum] === 'nucleotide' : atm.mt === 'n';
+            let  bSolvent =(me.cfg.mmcifid === undefined && ic.InputfileType != 'mmcif') ? chainid2kind[chainNum] === 'solvent' : atm.mt === 's';
             // in vastplus.cgi, ions arenotlisted in alignedStructures...molecules, thus chainid2kind[chainNum] === undefined is used.
             // ions will be separated from chemicals later.
             // here "ligand" is used in the cgi output
-            //var bChemicalIons =(ic.icn3dui.cfg.mmcifid === undefined) ?(chainid2kind[chainNum] === 'ligand' || chainid2kind[chainNum] === 'otherPolymer' || chainid2kind[chainNum] === undefined) : atm.mt === 'l';
+            //var bChemicalIons =(me.cfg.mmcifid === undefined) ?(chainid2kind[chainNum] === 'ligand' || chainid2kind[chainNum] === 'otherPolymer' || chainid2kind[chainNum] === undefined) : atm.mt === 'l';
             // kind: other, otherPolymer, etc
-            let  bChemicalIons =(ic.icn3dui.cfg.mmcifid === undefined && ic.InputfileType != 'mmcif') ?(chainid2kind[chainNum] === 'ligand' ||(chainid2kind[chainNum] !== undefined && chainid2kind[chainNum].indexOf('other') !== -1) || chainid2kind[chainNum] === undefined) : atm.mt === 'l';
+            let  bChemicalIons =(me.cfg.mmcifid === undefined && ic.InputfileType != 'mmcif') ?(chainid2kind[chainNum] === 'ligand' ||(chainid2kind[chainNum] !== undefined && chainid2kind[chainNum].indexOf('other') !== -1) || chainid2kind[chainNum] === undefined) : atm.mt === 'l';
 
             if((atm.chain === 'Misc' || chainid2kind[chainNum] === 'other') && biopolymerChainsHash[chainNum] !== 'protein' && biopolymerChainsHash[chainNum] !== 'nucleotide') { // biopolymer, could be protein or nucleotide
                 if(atm.name === 'CA' && atm.elem === 'C') {
@@ -464,7 +464,7 @@ class LoadAtomData {
 
             // chain level
             let  chainid = atm.structure + '_' + atm.chain;
-            //if(ic.mmdbid_q !== undefined && ic.mmdbid_q === ic.mmdbid_t && alignType === 'query') chainid += ic.icn3dui.htmlCls.postfix;
+            //if(ic.mmdbid_q !== undefined && ic.mmdbid_q === ic.mmdbid_t && alignType === 'query') chainid += me.htmlCls.postfix;
 
             if(ic.chains[chainid] === undefined) ic.chains[chainid] = {}
             ic.chains[chainid][serial] = 1;
@@ -595,8 +595,8 @@ class LoadAtomData {
                     let  chainid = id + '_' + chain;
 
                     if(((ic.mmdbid_q !== undefined && ic.mmdbid_q === ic.mmdbid_t)) && alignType === 'query') {
-                        //chainid += ic.icn3dui.htmlCls.postfix;
-                        chainid = id + ic.icn3dui.htmlCls.postfix + '_' + chain;
+                        //chainid += me.htmlCls.postfix;
+                        chainid = id + me.htmlCls.postfix + '_' + chain;
                     }
 
                     ic.ParserUtilsCls.getMissingResidues(seqArray, type, chainid); // assign ic.chainsSeq
@@ -739,17 +739,17 @@ class LoadAtomData {
         if(type === 'align' && seqalign !== undefined && ic.bFullUi) {
             ic.setSeqAlignCls.setSeqAlign(seqalign, data.alignedStructures);
         } // if(align
-        else if(type === 'mmdbid' && alignType === 'query' && ic.bFullUi && ic.q_rotation !== undefined && !ic.icn3dui.cfg.resnum && !ic.icn3dui.cfg.resdef) {
+        else if(type === 'mmdbid' && alignType === 'query' && ic.bFullUi && ic.q_rotation !== undefined && !me.cfg.resnum && !me.cfg.resdef) {
             ic.setSeqAlignCls.setSeqAlignChain(chainidInput, chainIndex);
 
             let  bReverse = false;
-            let  seqObj = ic.icn3dui.htmlCls.alignSeqCls.getAlignSequencesAnnotations(Object.keys(ic.alnChains), undefined, undefined, false, undefined, bReverse);
+            let  seqObj = me.htmlCls.alignSeqCls.getAlignSequencesAnnotations(Object.keys(ic.alnChains), undefined, undefined, false, undefined, bReverse);
             let  oriHtml = $("#" + ic.pre + "dl_sequence2").html();
 
             hAtoms = ic.hAtoms;
 
             $("#" + ic.pre + "dl_sequence2").html(oriHtml + seqObj.sequencesHtml);
-            $("#" + ic.pre + "dl_sequence2").width(ic.icn3dui.htmlCls.RESIDUE_WIDTH * seqObj.maxSeqCnt + 200);
+            $("#" + ic.pre + "dl_sequence2").width(me.htmlCls.RESIDUE_WIDTH * seqObj.maxSeqCnt + 200);
         }
 
         if(type === 'mmdbid' &&(alignType === 'target' || alignType === 'query') && ic.q_rotation === undefined) {

@@ -48,7 +48,7 @@ class MmcifParser {
               //ic.ParserUtilsCls.hideLoading();
           },
           success: function(data) {
-               url = ic.icn3dui.htmlCls.baseUrl + "mmcifparser/mmcifparser.cgi";
+               url = me.htmlCls.baseUrl + "mmcifparser/mmcifparser.cgi";
                $.ajax({
                   url: url,
                   type: 'POST',
@@ -95,7 +95,7 @@ class MmcifParser {
       // chain functions together
       ic.deferredSymmetry = $.Deferred(function() {
           thisClass.downloadMmcifSymmetryBase(mmcifid, type);
-      }); // end of ic.icn3dui.deferred = $.Deferred(function() {
+      }); // end of me.deferred = $.Deferred(function() {
 
       return ic.deferredSymmetry.promise();
     }
@@ -124,7 +124,7 @@ class MmcifParser {
           retryLimit : 1,
           success: function(data) {
               // notebook has a problem in posting data to mmcifparser.cgi
-              if(ic.icn3dui.cfg.notebook) {
+              if(me.cfg.notebook) {
                 let  lines = data.split('\n');
 
                 let  bEmd = false;
@@ -270,8 +270,8 @@ class MmcifParser {
 
                 if(ic.deferredSymmetry !== undefined) ic.deferredSymmetry.resolve();
             }
-            else { // if(!ic.icn3dui.cfg.notebook) {
-               url = ic.icn3dui.htmlCls.baseUrl + "mmcifparser/mmcifparser.cgi";
+            else { // if(!me.cfg.notebook) {
+               url = me.htmlCls.baseUrl + "mmcifparser/mmcifparser.cgi";
 
                $.ajax({
                   url: url,
@@ -334,7 +334,7 @@ class MmcifParser {
                     return;
                   }
                 });
-            } // if(!ic.icn3dui.cfg.notebook
+            } // if(!me.cfg.notebook
           },
           error : function(xhr, textStatus, errorThrown ) {
             this.tryCount++;
@@ -431,9 +431,9 @@ class MmcifParser {
 
         ic.ParserUtilsCls.renderStructure();
 
-        if(ic.icn3dui.cfg.rotate !== undefined) ic.resizeCanvasCls.rotStruc(ic.icn3dui.cfg.rotate, true);
+        if(me.cfg.rotate !== undefined) ic.resizeCanvasCls.rotStruc(me.cfg.rotate, true);
 
-        //if(ic.icn3dui.deferred !== undefined) ic.icn3dui.deferred.resolve(); if(ic.deferred2 !== undefined) ic.deferred2.resolve();
+        //if(me.deferred !== undefined) me.deferred.resolve(); if(ic.deferred2 !== undefined) ic.deferred2.resolve();
     }
 }
 

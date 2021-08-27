@@ -6375,8 +6375,8 @@ class Camera {
     }
 
     //Set the camera according to the size of the structure.
-    setCamera() { let ic = this.icn3d; ic.icn3dui;
-        if(ic.bControlGl && !ic.icn3dui.bNode) {
+    setCamera() { let ic = this.icn3d, me = ic.icn3dui;
+        if(ic.bControlGl && !me.bNode) {
             window.cam = ic.cams[ic.opts.camera.toLowerCase()];
 
             let maxD = ic.maxD;
@@ -6418,11 +6418,11 @@ class Camera {
                 }
                 window.cam.far = 10000;
 
-                if(ic.bControlGl && !ic.icn3dui.bNode) {
+                if(ic.bControlGl && !me.bNode) {
                     window.controls = new THREE.TrackballControls( window.cam, undefined, ic );
                 }
                 else {
-                    if(!ic.icn3dui.bNode) {
+                    if(!me.bNode) {
                         ic.controls = new THREE.TrackballControls( ic.cam, document.getElementById(ic.id), ic );
                     }
                     else {
@@ -6451,11 +6451,11 @@ class Camera {
 
                   window.cam.far = 10000;
 
-                if(ic.bControlGl && !ic.icn3dui.bNode) {
+                if(ic.bControlGl && !me.bNode) {
                     window.controls = new THREE.OrthographicTrackballControls( window.cam, undefined, ic );
                 }
                 else {
-                    if(!ic.icn3dui.bNode) {
+                    if(!me.bNode) {
                         ic.controls = new THREE.OrthographicTrackballControls( ic.cam, document.getElementById(ic.id), ic );
                     }
                     else {
@@ -6510,11 +6510,11 @@ class Camera {
                 }
                 ic.cam.far = 10000;
 
-                if(ic.bControlGl && !ic.icn3dui.bNode) {
+                if(ic.bControlGl && !me.bNode) {
                     window.controls = new THREE.TrackballControls( ic.cam, undefined, ic );
                 }
                 else {
-                    if(!ic.icn3dui.bNode) {
+                    if(!me.bNode) {
                         ic.controls = new THREE.TrackballControls( ic.cam, document.getElementById(ic.id), ic );
                     }
                     else {
@@ -6543,11 +6543,11 @@ class Camera {
 
                   ic.cam.far = 10000;
 
-                if(ic.bControlGl && !ic.icn3dui.bNode) {
+                if(ic.bControlGl && !me.bNode) {
                     window.controls = new THREE.OrthographicTrackballControls( ic.cam, undefined, ic );
                 }
                 else {
-                    if(!ic.icn3dui.bNode) {
+                    if(!me.bNode) {
                         ic.controls = new THREE.OrthographicTrackballControls( ic.cam, document.getElementById(ic.id), ic );
                     }
                     else {
@@ -6884,7 +6884,7 @@ class Strip {
     // modified from iview (http://istar.cse.cuhk.edu.hk/iview/)
     createStrip(p0, p1, colors, div, thickness, bHighlight, bNoSmoothen, bShowArray,
       calphaIdArray, positions, prevone, nexttwo, pntsCA, prevCOArray) { let ic = this.icn3d, me = ic.icn3dui;
-        if(ic.icn3dui.bNode) return;
+        if(me.bNode) return;
 
         if (p0.length < 2) return;
         div = div || ic.axisDIV;
@@ -7210,7 +7210,7 @@ class Curve {
 
     // modified from iview (http://star.cse.cuhk.edu.hk/iview/)
     createCurveSub(_pnts, width, colors, div, bHighlight, bRibbon, bNoSmoothen, bShowArray, calphaIdArray, positions, prevone, nexttwo) { let ic = this.icn3d, me = ic.icn3dui;
-        if(ic.icn3dui.bNode) return;
+        if(me.bNode) return;
 
         if (_pnts.length === 0) return;
         div = div || 5;
@@ -7367,8 +7367,8 @@ class CurveStripArrow {
     }
 
     createCurveSubArrow(p, width, colors, div, bHighlight, bRibbon, num, positionIndex,
-      pntsCA, prevCOArray, bShowArray, calphaIdArray, bShowArrow, prevone, nexttwo) { let ic = this.icn3d; ic.icn3dui;
-        if(ic.icn3dui.bNode) return;
+      pntsCA, prevCOArray, bShowArray, calphaIdArray, bShowArrow, prevone, nexttwo) { let ic = this.icn3d, me = ic.icn3dui;
+        if(me.bNode) return;
 
         let divPoints = [], positions = [];
 
@@ -7383,8 +7383,8 @@ class CurveStripArrow {
     }
 
     createStripArrow(p0, p1, colors, div, thickness, bHighlight, num, start, end,
-      pntsCA, prevCOArray, bShowArray, calphaIdArray, bShowArrow, prevone, nexttwo) { let ic = this.icn3d; ic.icn3dui;
-        if(ic.icn3dui.bNode) return;
+      pntsCA, prevCOArray, bShowArray, calphaIdArray, bShowArrow, prevone, nexttwo) { let ic = this.icn3d, me = ic.icn3dui;
+        if(me.bNode) return;
 
         let divPoints = [], positions = [];
 
@@ -7572,8 +7572,8 @@ class ReprSub {
     }
 
     // from iview (http://istar.cse.cuhk.edu.hk/iview/)
-    createRepresentationSub(atoms, f0, f01) { let ic = this.icn3d; ic.icn3dui;
-        if(ic.icn3dui.bNode) return;
+    createRepresentationSub(atoms, f0, f01) { let ic = this.icn3d, me = ic.icn3dui;
+        if(me.bNode) return;
         for (let i in atoms) {
             let atom0 = atoms[i];
             f0 && f0(atom0);
@@ -7604,7 +7604,7 @@ class Box {
     //"scale" means scale on the radius. "color" means the color of the cube. "bHighlight" is an option
     //to draw the highlight for the atom.
     createBox(atom, defaultRadius, forceDefault, scale, color, bHighlight) { let ic = this.icn3d, me = ic.icn3dui;
-        if(ic.icn3dui.bNode) return;
+        if(me.bNode) return;
 
         if(defaultRadius === undefined) defaultRadius = 0.8;
         if(forceDefault === undefined) forceDefault = false;
@@ -7623,8 +7623,8 @@ class Box {
         this.createBox_base(atom.coord, radius, color, bHighlight);
     }
 
-    createBox_base(coord, radius, color, bHighlight, bOther, bGlycan) { let ic = this.icn3d; ic.icn3dui;
-        if(ic.icn3dui.bNode) return;
+    createBox_base(coord, radius, color, bHighlight, bOther, bGlycan) { let ic = this.icn3d, me = ic.icn3dui;
+        if(me.bNode) return;
 
         let mesh;
 
@@ -7655,8 +7655,8 @@ class Box {
         }
     }
 
-    createBoxRepresentation_P_CA(atoms, scale, bHighlight) { let ic = this.icn3d; ic.icn3dui;
-        if(ic.icn3dui.bNode) return;
+    createBoxRepresentation_P_CA(atoms, scale, bHighlight) { let ic = this.icn3d, me = ic.icn3dui;
+        if(me.bNode) return;
 
         let thisClass = this;
         ic.reprSubCls.createRepresentationSub(atoms, function (atom0) {
@@ -7681,8 +7681,8 @@ class Tube {
     //Create tubes for "atoms" with certain "atomName". "radius" is the radius of the tubes.
     //"bHighlight" is an option to draw the highlight for these atoms. The highlight could be
     //outlines with bHighlight=1 and 3D objects with bHighlight=2.
-    createTube(atoms, atomName, radius, bHighlight, bCustom, bRadiusArray) { let ic = this.icn3d; ic.icn3dui;
-        if(ic.icn3dui.bNode) return;
+    createTube(atoms, atomName, radius, bHighlight, bCustom, bRadiusArray) { let ic = this.icn3d, me = ic.icn3dui;
+        if(me.bNode) return;
 
         let pnts = [], colors = [], radii = [], prevone = [], nexttwo = [];
         let currentChain, currentResi;
@@ -7847,7 +7847,7 @@ class Tube {
 
     // modified from iview (http://istar.cse.cuhk.edu.hk/iview/)
     createTubeSub(_pnts, colors, radii, bHighlight, prevone, nexttwo, bRadiusArray) { let ic = this.icn3d, me = ic.icn3dui;
-        if(ic.icn3dui.bNode) return;
+        if(me.bNode) return;
 
         if (_pnts.length < 2) return;
 
@@ -8071,7 +8071,7 @@ class Strand {
     //"bHighlight" is an option to draw the highlight for these atoms. The highlight could be outlines
     //with bHighlight=1 and 3D objects with bHighlight=2.
     createStrand(atoms, num, div, fill, coilWidth, helixSheetWidth, doNotSmoothen, thickness, bHighlight) { let ic = this.icn3d, me = ic.icn3dui;
-        if(ic.icn3dui.bNode) return;
+        if(me.bNode) return;
 
         let bRibbon = fill ? true: false;
 
@@ -8602,8 +8602,8 @@ class Brick {
         this.icn3d = icn3d;
     }
 
-    createBrick(p0, p1, radius, color) { let ic = this.icn3d; ic.icn3dui;
-        if(ic.icn3dui.bNode) return;
+    createBrick(p0, p1, radius, color) { let ic = this.icn3d, me = ic.icn3dui;
+        if(me.bNode) return;
 
         let cylinderGeometry = new THREE.CylinderGeometry(1, 1, 1, 4, 1);
 
@@ -8634,8 +8634,8 @@ class Line {
     // modified from iview (http://istar.cse.cuhk.edu.hk/iview/)
     //Create lines for "atoms". "bHighlight" is an option to draw the highlight for these atoms.
     //The highlight could be outlines with bHighlight=1 and 3D objects with bHighlight=2.
-    createLineRepresentation(atoms, bHighlight) { let ic = this.icn3d; ic.icn3dui;
-        if(ic.icn3dui.bNode) return;
+    createLineRepresentation(atoms, bHighlight) { let ic = this.icn3d, me = ic.icn3dui;
+        if(me.bNode) return;
 
         //var geo = new THREE.Geometry();
         let geo = new THREE.BufferGeometry();
@@ -8713,8 +8713,8 @@ class Line {
         }
     }
 
-    createConnCalphSidechain(atoms, style) { let ic = this.icn3d; ic.icn3dui;
-        if(ic.icn3dui.bNode) return;
+    createConnCalphSidechain(atoms, style) { let ic = this.icn3d, me = ic.icn3dui;
+        if(me.bNode) return;
 
         // find all residues with style2 as 'nothing' or undefined
         let residueHash = {};
@@ -8776,8 +8776,8 @@ class Line {
         }
     }
 
-    createSingleLine( src, dst, colorHex, dashed, dashSize ) { let ic = this.icn3d; ic.icn3dui;
-        if(ic.icn3dui.bNode) return;
+    createSingleLine( src, dst, colorHex, dashed, dashSize ) { let ic = this.icn3d, me = ic.icn3dui;
+        if(me.bNode) return;
 
         //var geom = new THREE.Geometry();
         let geo = new THREE.BufferGeometry();
@@ -8814,7 +8814,7 @@ class Line {
     //Create lines for a list of "lines", each of which has the properties 'position1', 'position2',
     //'color', and a boolean of 'dashed'.
     createLines(lines) {  let ic = this.icn3d, me = ic.icn3dui;
-       if(ic.icn3dui.bNode) return;
+       if(me.bNode) return;
 
        if(lines !== undefined) {
          for(let name in lines) {
@@ -8884,7 +8884,7 @@ class Sphere {
 
     // modified from iview (http://istar.cse.cuhk.edu.hk/iview/)
     createSphere(atom, defaultRadius, forceDefault, scale, bHighlight) { let ic = this.icn3d, me = ic.icn3dui;
-        if(ic.icn3dui.bNode) return;
+        if(me.bNode) return;
 
         if(defaultRadius === undefined) defaultRadius = 0.8;
         if(forceDefault === undefined) forceDefault = false;
@@ -8899,7 +8899,7 @@ class Sphere {
     }
 
     createSphereBase(pos, color, radius, scale, bHighlight, bGlycan) { let ic = this.icn3d, me = ic.icn3dui;
-        if(ic.icn3dui.bNode) return;
+        if(me.bNode) return;
 
         let mesh;
 
@@ -8981,8 +8981,8 @@ class Sphere {
     //Create spheres for "atoms" with the "radius". "forceDefault" means to use the default radius.
     //"scale" means scale on the radius. "bHighlight" is an option to draw the highlight for these atoms.
     //The highlight could be outlines with bHighlight=1 and 3D objects with bHighlight=2.
-    createSphereRepresentation(atoms, defaultRadius, forceDefault, scale, bHighlight) { let ic = this.icn3d; ic.icn3dui;
-        if(ic.icn3dui.bNode) return;
+    createSphereRepresentation(atoms, defaultRadius, forceDefault, scale, bHighlight) { let ic = this.icn3d, me = ic.icn3dui;
+        if(me.bNode) return;
 
         let thisClass = this;
 
@@ -9003,7 +9003,7 @@ class Cylinder {
 
     // modified from iview (http://istar.cse.cuhk.edu.hk/iview/)
     createCylinder(p0, p1, radius, color, bHighlight, color2, bPicking, bGlycan) { let ic = this.icn3d, me = ic.icn3dui;
-        if(ic.icn3dui.bNode) return;
+        if(me.bNode) return;
 
         let mesh;
         if(bHighlight === 1) {
@@ -9098,8 +9098,8 @@ class Cylinder {
         }
     }
 
-    createCylinder_base(p0, p1, radius, color, bHighlight, color2, bPicking) { let ic = this.icn3d; ic.icn3dui;
-        if(ic.icn3dui.bNode) return;
+    createCylinder_base(p0, p1, radius, color, bHighlight, color2, bPicking) { let ic = this.icn3d, me = ic.icn3dui;
+        if(me.bNode) return;
 
         let mesh = new THREE.Mesh(ic.cylinderGeometry, new THREE.MeshPhongMaterial(
             { specular: ic.frac, shininess: ic.shininess, emissive: ic.emissive, color: color }));
@@ -9119,8 +9119,8 @@ class Cylinder {
     //Create cylinders for alpha helices and ribbons for beta strands in "atoms".
     //"radius" is radius of the cylinders. "bHighlight" is an option to draw the highlight for these atoms.
     //The highlight could be outlines with bHighlight=1 and 3D objects with bHighlight=2 as mentioned above.
-    createCylinderHelix(atoms, radius, bHighlight) { let ic = this.icn3d; ic.icn3dui;
-        if(ic.icn3dui.bNode) return;
+    createCylinderHelix(atoms, radius, bHighlight) { let ic = this.icn3d, me = ic.icn3dui;
+        if(me.bNode) return;
 
         let start = null;
         let currentChain, currentResi;
@@ -9170,8 +9170,8 @@ class Cylinder {
     //"radius" is radius of the small cylinders. "bLine" is an option to show the cylinders as lines.
     //"bHighlight" is an option to draw the highlight for these atoms. The highlight could be outlines
     //with bHighlight=1 and 3D objects with bHighlight=2 as mentioned above.
-    createCylinderCurve(atoms, atomNameArray, radius, bLines, bHighlight) { let ic = this.icn3d; ic.icn3dui;
-        if(ic.icn3dui.bNode) return;
+    createCylinderCurve(atoms, atomNameArray, radius, bLines, bHighlight) { let ic = this.icn3d, me = ic.icn3dui;
+        if(me.bNode) return;
 
         let start = null;
         let currentChain, currentResi;
@@ -11870,7 +11870,7 @@ class Surface {
     //the surface as a mesh. "opacity" is a value between 0 and 1. "1" means not transparent at all.
     //"0" means 100% transparent.
     createSurfaceRepresentation(atoms, type, wireframe, opacity) { let  ic = this.icn3d, me = ic.icn3dui;
-        //if(ic.icn3dui.bNode) return;
+        //if(me.bNode) return;
 
         let  thisClass = this;
 
@@ -12144,7 +12144,7 @@ class Surface {
         }
         //});
 
-        if(ic.icn3dui.bNode) return;
+        if(me.bNode) return;
 
 /*
         let  geoFaces = faces.map(function (f) {
@@ -12322,7 +12322,7 @@ class Surface {
             //}
 
             let  realPos;
-            if(ic.bControlGl && !ic.icn3dui.bNode) {
+            if(ic.bControlGl && !me.bNode) {
                 //realPos = sum.multiplyScalar(1.0 / mesh.geometry.vertices.length).sub(ic.oriCenter).applyMatrix4(window.cam.matrixWorldInverse);
                 realPos = sum.multiplyScalar(1.0 / verticesLen).sub(ic.oriCenter).applyMatrix4(window.cam.matrixWorldInverse);
             }
@@ -12341,7 +12341,7 @@ class Surface {
                 }
 
                 let  realPos;
-                if(ic.bControlGl && !ic.icn3dui.bNode) {
+                if(ic.bControlGl && !me.bNode) {
                     //realPos = sum.multiplyScalar(1.0 / this.geometry.vertices.length).sub(ic.oriCenter).applyMatrix4(window.cam.matrixWorldInverse);
                     realPos = sum.multiplyScalar(3.0 / vertices.length).sub(ic.oriCenter).applyMatrix4(window.cam.matrixWorldInverse);
                 }
@@ -12505,7 +12505,7 @@ class ShareLink {
 
     //Generate a URL to capture the current state and open it in a new window. Basically the state
     //file (the comand history) is concatenated in the URL to show the current state.
-    shareLink(bPngHtml, bPngOnly) {var ic = this.icn3d; ic.icn3dui;
+    shareLink(bPngHtml, bPngOnly) {var ic = this.icn3d, me = ic.icn3dui;
            let url = this.shareLinkUrl();
            let bTooLong =(url.length > 4000 || url.indexOf('http') !== 0) ? true : false;
            if(bPngHtml) url += "&random=" + parseInt(Math.random() * 1000); // generate a new shorten URL and thus image name everytime
@@ -12522,7 +12522,7 @@ class ShareLink {
                    alert("The url is more than 4000 characters and may not work. Please save 'iCn3D PNG Image' or 'State File' and open them in iCn3D.");
                    return;
                }
-               ic.icn3dui.htmlCls.clickMenuCls.setLogCmd("share link: " + url, false);
+               me.htmlCls.clickMenuCls.setLogCmd("share link: " + url, false);
            }
            else {
                if(bPngOnly || ic.bInputfile || bTooLong) {
@@ -12565,28 +12565,28 @@ class ShareLink {
                 }
                 //shorturl: https://icn3d.page.link/NvbAh1Vmiwc4bgX87
                 let urlArray = shorturl.split('page.link/');
-                //if(urlArray.length == 2) shorturl = ic.icn3dui.htmlCls.baseUrl + 'icn3d/share.html?' + urlArray[1];
+                //if(urlArray.length == 2) shorturl = me.htmlCls.baseUrl + 'icn3d/share.html?' + urlArray[1];
                 // When the baseURL is structure.ncbi.nlm.nih.gov, mmcifparser.cgi has a problem to past posted data in Mac/iphone
                 // So the base URL is still www.ncbi.nlm.nih.gov/Structure,just use short URL here
                 if(urlArray.length == 2) shorturl = 'https://structure.ncbi.nlm.nih.gov/icn3d/share.html?' + urlArray[1];
                 $("#" + ic.pre + "ori_url").val(url);
                 $("#" + ic.pre + "short_url").val(shorturl);
                 $("#" + ic.pre + "short_url_title").val(shorturl + '&t=' + ic.yournote);
-                if(!bPngHtml) ic.icn3dui.htmlCls.dialogCls.openDlg('dl_copyurl', 'Copy a Share Link URL');
+                if(!bPngHtml) me.htmlCls.dialogCls.openDlg('dl_copyurl', 'Copy a Share Link URL');
               },
               error : function(xhr, textStatus, errorThrown ) {
                 let shorturl = 'Problem in getting shortened URL';
                 $("#" + ic.pre + "ori_url").val(url);
                 $("#" + ic.pre + "short_url").val(shorturl);
                 $("#" + ic.pre + "short_url_title").val(shorturl + '&t=' + ic.yournote);
-                if(!bPngHtml) ic.icn3dui.htmlCls.dialogCls.openDlg('dl_copyurl', 'Copy a Share Link URL');
+                if(!bPngHtml) me.htmlCls.dialogCls.openDlg('dl_copyurl', 'Copy a Share Link URL');
               }
            });
     }
 
-    shareLinkUrl(bAllCommands) {var ic = this.icn3d; ic.icn3dui;
-           let url = ic.icn3dui.htmlCls.baseUrl + "icn3d/full.html?";
-           if(ic.icn3dui.cfg.bSidebyside) url = ic.icn3dui.htmlCls.baseUrl + "icn3d/full2.html?";
+    shareLinkUrl(bAllCommands) {var ic = this.icn3d, me = ic.icn3dui;
+           let url = me.htmlCls.baseUrl + "icn3d/full.html?";
+           if(me.cfg.bSidebyside) url = me.htmlCls.baseUrl + "icn3d/full2.html?";
 
            if(ic.bInputUrlfile) {
                let urlArray = window.location.href.split('?');
@@ -12647,8 +12647,8 @@ class ShareLink {
 
            let inparaWithoutCommand;
            let pos = -1;
-           if(ic.icn3dui.cfg.inpara !== undefined) pos = ic.icn3dui.cfg.inpara.indexOf('&command=');
-           inparaWithoutCommand =(pos !== -1 ) ? ic.icn3dui.cfg.inpara.substr(0, pos) : ic.icn3dui.cfg.inpara;
+           if(me.cfg.inpara !== undefined) pos = me.cfg.inpara.indexOf('&command=');
+           inparaWithoutCommand =(pos !== -1 ) ? me.cfg.inpara.substr(0, pos) : me.cfg.inpara;
 
            let bPrevDate = false;
            if(!ic.bInputUrlfile) {
@@ -12676,7 +12676,7 @@ class ShareLink {
 
            let dateAllStr = date.getFullYear().toString() + monthStr + dateStr;
            if(!bPrevDate) url += 'date=' + dateAllStr + '&';
-           url += 'v=' + ic.icn3dui.REVISION + '&';
+           url += 'v=' + me.REVISION + '&';
 
            url += 'command=';
 
@@ -12758,7 +12758,7 @@ class ShareLink {
                url = url.replace(new RegExp(id + '_','g'), '!');
            }
 
-           if(ic.icn3dui.cfg.blast_rep_id !== undefined) {
+           if(me.cfg.blast_rep_id !== undefined) {
                url = url.replace(new RegExp('blast_rep_id=!','g'), 'blast_rep_id=' + id + '_');
            }
 
@@ -12872,14 +12872,14 @@ class ThreeDPrint {
     }
 
     //Prepare for 3D printing by changing dashed lines to solid lines, changing the thickness of the model.
-    prepareFor3Dprint(  ){ let ic = this.icn3d; ic.icn3dui;
+    prepareFor3Dprint(  ){ let ic = this.icn3d, me = ic.icn3dui;
         // turn off hilight
         ic.bShowHighlight = false;
         ic.hlObjectsCls.removeHlObjects();
 
         ic.bDashedLines = false;
 
-        if(!ic.bSetThickness && ic.icn3dui.cfg.cid === undefined) {
+        if(!ic.bSetThickness && me.cfg.cid === undefined) {
             this.setThichknessFor3Dprint();
         }
 
@@ -14102,15 +14102,15 @@ class DefinedSets {
           this.setProtNuclLigInMenu();
 
           // show 3d domains for mmdbid
-          if(ic.icn3dui.cfg.mmdbid !== undefined || ic.icn3dui.cfg.gi !== undefined || ic.icn3dui.cfg.chainalign !== undefined) {
+          if(me.cfg.mmdbid !== undefined || me.cfg.gi !== undefined || me.cfg.chainalign !== undefined) {
               for(let tddomainName in ic.tddomains) {
                   ic.selectionCls.selectResidueList(ic.tddomains[tddomainName], tddomainName, tddomainName, false, false);
               }
           }
 
-          //if((ic.icn3dui.cfg.align !== undefined || ic.icn3dui.cfg.chainalign !== undefined) && ic.bFullUi) {
+          //if((me.cfg.align !== undefined || me.cfg.chainalign !== undefined) && ic.bFullUi) {
           // deal with multiple chain align separately
-          if((ic.icn3dui.cfg.align !== undefined ||(ic.icn3dui.cfg.chainalign !== undefined && ic.chainidArray.length == 2) ) && ic.bFullUi) {
+          if((me.cfg.align !== undefined ||(me.cfg.chainalign !== undefined && ic.chainidArray.length == 2) ) && ic.bFullUi) {
             ic.selectionCls.selectResidueList(ic.consHash1, ic.conservedName1, ic.conservedName1, false, false);
             ic.selectionCls.selectResidueList(ic.consHash2, ic.conservedName2, ic.conservedName2, false, false);
 
@@ -14288,8 +14288,8 @@ class DefinedSets {
     //Display the menu of defined sets. All chains and defined custom sets are listed in the menu.
     //All new custom sets will be displayed in the menu.
     showSets() { let  ic = this.icn3d, me = ic.icn3dui;
-        if(!ic.icn3dui.bNode) {
-            ic.icn3dui.htmlCls.dialogCls.openDlg('dl_definedsets', 'Select sets');
+        if(!me.bNode) {
+            me.htmlCls.dialogCls.openDlg('dl_definedsets', 'Select sets');
             $("#" + ic.pre + "dl_setsmenu").show();
             $("#" + ic.pre + "dl_setoperations").show();
 
@@ -14321,12 +14321,12 @@ class DefinedSets {
 
            if(nameArray !== null) {
              // log the selection
-             //ic.icn3dui.htmlCls.clickMenuCls.setLogCmd('select saved atoms ' + nameArray.toString(), true);
+             //me.htmlCls.clickMenuCls.setLogCmd('select saved atoms ' + nameArray.toString(), true);
 
              let  bUpdateHlMenus = false;
              thisClass.changeCustomAtoms(nameArray, bUpdateHlMenus);
-             //ic.icn3dui.htmlCls.clickMenuCls.setLogCmd('select saved atoms ' + nameArray.join(' ' + ic.setOperation + ' '), true);
-             ic.icn3dui.htmlCls.clickMenuCls.setLogCmd('select sets ' + nameArray.join(' ' + ic.setOperation + ' '), true);
+             //me.htmlCls.clickMenuCls.setLogCmd('select saved atoms ' + nameArray.join(' ' + ic.setOperation + ' '), true);
+             me.htmlCls.clickMenuCls.setLogCmd('select sets ' + nameArray.join(' ' + ic.setOperation + ' '), true);
 
              ic.bSelectResidue = false;
            }
@@ -14528,14 +14528,14 @@ class DefinedSets {
        }
     }
 
-    commandSelect(postfix) { let ic = this.icn3d; ic.icn3dui;
+    commandSelect(postfix) { let  ic = this.icn3d, me = ic.icn3dui;
            let  select = $("#" + ic.pre + "command" + postfix).val();
 
            let  commandname = $("#" + ic.pre + "command_name" + postfix).val().replace(/;/g, '_').replace(/\s+/g, '_');
 
            if(select) {
                ic.selByCommCls.selectByCommand(select, commandname, commandname);
-               ic.icn3dui.htmlCls.clickMenuCls.setLogCmd('select ' + select + ' | name ' + commandname, true);
+               me.htmlCls.clickMenuCls.setLogCmd('select ' + select + ' | name ' + commandname, true);
            }
     }
 
@@ -14601,7 +14601,7 @@ class DefinedSets {
             ic.prevHighlightAtoms = me.hashUtilsCls.cloneHash(ic.hAtoms);
 
            // select all
-           ic.icn3dui.htmlCls.clickMenuCls.setLogCmd("set mode all", true);
+           me.htmlCls.clickMenuCls.setLogCmd("set mode all", true);
 
            ic.selectionCls.selectAll();
 
@@ -14618,7 +14618,7 @@ class DefinedSets {
                 ic.selectionCls.selectAll();
             }
 
-            ic.icn3dui.htmlCls.clickMenuCls.setLogCmd("set mode selection", true);
+            me.htmlCls.clickMenuCls.setLogCmd("set mode selection", true);
 
             ic.hlUpdateCls.updateHlAll();
         }
@@ -16208,7 +16208,7 @@ class GetGraph {
                        if(labelType == 'chain' || labelType == 'structure') resName2 += '.' + atom2.chain;
                        if(labelType == 'structure') resName2 += '.' + atom2.structure;
                        disulfideLinkStr += ', {"source": "' + resName1 + '", "target": "' + resName2
-                           + '", "v": ' + ic.icn3dui.htmlCls.ssbondValue + ', "c": "' + ic.icn3dui.htmlCls.ssbondColor + '"}';
+                           + '", "v": ' + me.htmlCls.ssbondValue + ', "c": "' + me.htmlCls.ssbondColor + '"}';
                    }
                }
            }
@@ -16227,7 +16227,7 @@ class GetGraph {
                        if(labelType == 'chain' || labelType == 'structure') resName2 += '.' + atom2.chain;
                        if(labelType == 'structure') resName2 += '.' + atom2.structure;
                        crossLinkStr += ', {"source": "' + resName1 + '", "target": "' + resName2
-                           + '", "v": ' + ic.icn3dui.htmlCls.clbondValue + ', "c": "' + ic.icn3dui.htmlCls.clbondColor + '"}';
+                           + '", "v": ' + me.htmlCls.clbondValue + ', "c": "' + me.htmlCls.clbondColor + '"}';
                    }
                }
            }
@@ -16349,7 +16349,7 @@ class GetGraph {
           }
           for(let i = 0, il = graphJson.links.length; i < il; ++i) {
               let  link = graphJson.links[i];
-              if(link.v == ic.icn3dui.htmlCls.ssValue || link.v == ic.icn3dui.htmlCls.coilValue) {
+              if(link.v == me.htmlCls.ssValue || link.v == me.htmlCls.coilValue) {
                   let  resid = target2resid[link.target];
                   link.c = resid2color[resid];
               }
@@ -16379,7 +16379,7 @@ class GetGraph {
        //var nodeStr = '', linkStr = '';
        let  nodeArray = [], linkArray = [];
        let cnt = 0;
-       let  thickness = ic.icn3dui.htmlCls.coilValue;
+       let  thickness = me.htmlCls.coilValue;
        let prevChain = '', prevResName = '', prevResi = 0;
        // add chemicals as well
        let  residHash = {};
@@ -16408,8 +16408,8 @@ class GetGraph {
                    //if(linkCnt > 0) linkStr += ', ';
                    linkArray.push('{"source": "' + prevResName + '", "target": "' + resName
                        + '", "v": ' + thickness + ', "c": "' + atom.color.getHexString().toUpperCase() + '"}');
-                   if(atom.ssbegin) thickness = ic.icn3dui.htmlCls.ssValue;
-                   if(atom.ssend) thickness = ic.icn3dui.htmlCls.coilValue;
+                   if(atom.ssbegin) thickness = me.htmlCls.ssValue;
+                   if(atom.ssend) thickness = me.htmlCls.coilValue;
                }
                prevChain = atom.chain;
                prevResName = resName;
@@ -16431,7 +16431,7 @@ class GetGraph {
             ic.hBondCls.calculateChemicalHbonds(me.hashUtilsCls.intHash2Atoms(ic.dAtoms, complement, ic.atoms), me.hashUtilsCls.intHash2Atoms(ic.dAtoms, firstSetAtoms, ic.atoms), parseFloat(threshold), bSaltbridge, 'graph', true );
             resid2ResidhashHbond = me.hashUtilsCls.cloneHash(ic.resid2Residhash);
         }
-        let  hbondStr = this.getGraphLinks(resid2ResidhashHbond, resid2ResidhashHbond, ic.icn3dui.htmlCls.hbondInsideColor, labelType, ic.icn3dui.htmlCls.hbondValuehbondInsideValue);
+        let  hbondStr = this.getGraphLinks(resid2ResidhashHbond, resid2ResidhashHbond, me.htmlCls.hbondInsideColor, labelType, me.htmlCls.hbondValuehbondInsideValue);
         return hbondStr;
     }
     getIonicLinksForSet(atoms, labelType) { let  ic = this.icn3d, me = ic.icn3dui;
@@ -16445,7 +16445,7 @@ class GetGraph {
             ic.saltbridgeCls.calculateIonicInteractions(me.hashUtilsCls.intHash2Atoms(ic.dAtoms, complement, ic.atoms), me.hashUtilsCls.intHash2Atoms(ic.dAtoms, firstSetAtoms, ic.atoms), parseFloat(threshold), bSaltbridge, 'graph', true );
             resid2Residhash = me.hashUtilsCls.cloneHash(ic.resid2Residhash);
         }
-        let  ionicStr = this.getGraphLinks(resid2Residhash, resid2Residhash, ic.icn3dui.htmlCls.ionicInsideColor, labelType, ic.icn3dui.htmlCls.ionicInsideValue);
+        let  ionicStr = this.getGraphLinks(resid2Residhash, resid2Residhash, me.htmlCls.ionicInsideColor, labelType, me.htmlCls.ionicInsideValue);
         return ionicStr;
     }
     getHalogenPiLinksForSet(atoms, labelType) { let  ic = this.icn3d, me = ic.icn3dui;
@@ -16458,19 +16458,19 @@ class GetGraph {
             ic.piHalogenCls.calculateHalogenPiInteractions(me.hashUtilsCls.intHash2Atoms(ic.dAtoms, firstSetAtoms, ic.atoms), me.hashUtilsCls.intHash2Atoms(ic.dAtoms, complement, ic.atoms), parseFloat(threshold), 'graph', 'halogen', true );
             resid2Residhash = me.hashUtilsCls.cloneHash(ic.resid2Residhash);
         }
-        halogenpiStr += this.getGraphLinks(resid2Residhash, resid2Residhash, ic.icn3dui.htmlCls.halogenInsideColor, labelType, ic.icn3dui.htmlCls.halogenInsideValue);
+        halogenpiStr += this.getGraphLinks(resid2Residhash, resid2Residhash, me.htmlCls.halogenInsideColor, labelType, me.htmlCls.halogenInsideValue);
         threshold = parseFloat($("#" + ic.pre + "picationthreshold" ).val());
         if(Object.keys(complement).length > 0 && Object.keys(firstSetAtoms).length > 0) {
             ic.piHalogenCls.calculateHalogenPiInteractions(me.hashUtilsCls.intHash2Atoms(ic.dAtoms, firstSetAtoms, ic.atoms), me.hashUtilsCls.intHash2Atoms(ic.dAtoms, complement, ic.atoms), parseFloat(threshold), 'graph', 'pi-cation', true );
             resid2Residhash = me.hashUtilsCls.cloneHash(ic.resid2Residhash);
         }
-        halogenpiStr += this.getGraphLinks(resid2Residhash, resid2Residhash, ic.icn3dui.htmlCls.picationInsideColor, labelType, ic.icn3dui.htmlCls.picationInsideValue);
+        halogenpiStr += this.getGraphLinks(resid2Residhash, resid2Residhash, me.htmlCls.picationInsideColor, labelType, me.htmlCls.picationInsideValue);
         threshold = parseFloat($("#" + ic.pre + "pistackingthreshold" ).val());
         if(Object.keys(complement).length > 0 && Object.keys(firstSetAtoms).length > 0) {
             ic.piHalogenCls.calculateHalogenPiInteractions(me.hashUtilsCls.intHash2Atoms(ic.dAtoms, firstSetAtoms, ic.atoms), me.hashUtilsCls.intHash2Atoms(ic.dAtoms, complement, ic.atoms), parseFloat(threshold), 'graph', 'pi-stacking', true );
             resid2Residhash = me.hashUtilsCls.cloneHash(ic.resid2Residhash);
         }
-        halogenpiStr += this.getGraphLinks(resid2Residhash, resid2Residhash, ic.icn3dui.htmlCls.pistackingInsideColor, labelType, ic.icn3dui.htmlCls.pistackingInsideValue);
+        halogenpiStr += this.getGraphLinks(resid2Residhash, resid2Residhash, me.htmlCls.pistackingInsideColor, labelType, me.htmlCls.pistackingInsideValue);
         return halogenpiStr;
     }
     getContactLinksForSet(atoms, labelType, bCartoon2d) { let ic = this.icn3d; ic.icn3dui;
@@ -16503,7 +16503,7 @@ class GetGraph {
         let  bGetPairs = true, bInteraction = false;
         ic.contactCls.getAtomsWithinAtom(otherAtoms, atomlistTarget, parseFloat(radius), bGetPairs, bInteraction, bInternal);
         let  residHash = me.hashUtilsCls.cloneHash(ic.resid2Residhash);
-        let  interStr = this.getGraphLinks(residHash, residHash, ic.icn3dui.htmlCls.contactInsideColor, labelType, ic.icn3dui.htmlCls.contactInsideValue, bCartoon2d);
+        let  interStr = this.getGraphLinks(residHash, residHash, me.htmlCls.contactInsideColor, labelType, me.htmlCls.contactInsideValue, bCartoon2d);
         return interStr;
     }
     compNode(a, b, bReverseChain) { let  ic = this.icn3d, me = ic.icn3dui;
@@ -16616,8 +16616,8 @@ class LineGraph {
         let  nameHash = {};
         for(let i = 0, il = graph.links.length; i < il; ++i) {
             let  link = graph.links[i];
-            if(link.v == ic.icn3dui.htmlCls.hbondValue || link.v == ic.icn3dui.htmlCls.ionicValue || link.v == ic.icn3dui.htmlCls.halogenValue ||
-                link.v == ic.icn3dui.htmlCls.picationValue || link.v == ic.icn3dui.htmlCls.pistackingValue || link.v == ic.icn3dui.htmlCls.contactValue) {
+            if(link.v == me.htmlCls.hbondValue || link.v == me.htmlCls.ionicValue || link.v == me.htmlCls.halogenValue ||
+                link.v == me.htmlCls.picationValue || link.v == me.htmlCls.pistackingValue || link.v == me.htmlCls.contactValue) {
                 linkArray.push(link);
                 nameHash[link.source] = 1;
                 nameHash[link.target] = 1;
@@ -16817,7 +16817,7 @@ class LineGraph {
         return html;
     }
 
-    drawLineGraph_base(nodeArray1, nodeArray2, linkArray, name2node, height) { let ic = this.icn3d; ic.icn3dui;
+    drawLineGraph_base(nodeArray1, nodeArray2, linkArray, name2node, height) { let  ic = this.icn3d, me = ic.icn3dui;
         let  html = '';
         let  len1 = nodeArray1.length,
             len2 = nodeArray2.length;
@@ -16861,24 +16861,24 @@ class LineGraph {
             let  pos2 = node2posSet2[node2.id];
             if(pos1 === undefined || pos2 === undefined) continue;
             let  linestrokewidth;
-            if(link.v == ic.icn3dui.htmlCls.contactValue) {
+            if(link.v == me.htmlCls.contactValue) {
                 linestrokewidth = 1;
             } else {
                 linestrokewidth = 2;
             }
             let  strokecolor;
-            if(link.v == ic.icn3dui.htmlCls.hbondValue) {
-                strokecolor = "#" + ic.icn3dui.htmlCls.hbondColor;
-            } else if(link.v == ic.icn3dui.htmlCls.ionicValue) {
-                strokecolor = "#" + ic.icn3dui.htmlCls.ionicColor;
-            } else if(link.v == ic.icn3dui.htmlCls.halogenValue) {
-                strokecolor = "#" + ic.icn3dui.htmlCls.halogenColor;
-            } else if(link.v == ic.icn3dui.htmlCls.picationValue) {
-                strokecolor = "#" + ic.icn3dui.htmlCls.picationColor;
-            } else if(link.v == ic.icn3dui.htmlCls.pistackingValue) {
-                strokecolor = "#" + ic.icn3dui.htmlCls.pistackingColor;
-            } else if(link.v == ic.icn3dui.htmlCls.contactValue) {
-                strokecolor = "#" + ic.icn3dui.htmlCls.contactColor;
+            if(link.v == me.htmlCls.hbondValue) {
+                strokecolor = "#" + me.htmlCls.hbondColor;
+            } else if(link.v == me.htmlCls.ionicValue) {
+                strokecolor = "#" + me.htmlCls.ionicColor;
+            } else if(link.v == me.htmlCls.halogenValue) {
+                strokecolor = "#" + me.htmlCls.halogenColor;
+            } else if(link.v == me.htmlCls.picationValue) {
+                strokecolor = "#" + me.htmlCls.picationColor;
+            } else if(link.v == me.htmlCls.pistackingValue) {
+                strokecolor = "#" + me.htmlCls.pistackingColor;
+            } else if(link.v == me.htmlCls.contactValue) {
+                strokecolor = "#" + me.htmlCls.contactColor;
             }
             html += "<g class='icn3d-interaction' resid1='" + resid1 + "' resid2='" + resid2 + "' >";
             html += "<title>Interaction of residue " + node1.id + " with residue " + node2.id + "</title>";
@@ -16933,7 +16933,7 @@ class LineGraph {
         return html;
     }
 
-    drawOnePairNode(link, node1, node2, node2posSet1, node2posSet2, bContactMap) { let ic = this.icn3d; ic.icn3dui;
+    drawOnePairNode(link, node1, node2, node2posSet1, node2posSet2, bContactMap) { let  ic = this.icn3d, me = ic.icn3dui;
         let html = '';
 
         let  factor = 1;
@@ -16949,22 +16949,22 @@ class LineGraph {
         if(pos1 === undefined || pos2 === undefined) return html;
 
         let  strokecolor;
-        if(link.v == ic.icn3dui.htmlCls.hbondValue) {
-            strokecolor = "#" + ic.icn3dui.htmlCls.hbondColor;
-        } else if(link.v == ic.icn3dui.htmlCls.ionicValue) {
-            strokecolor = "#" + ic.icn3dui.htmlCls.ionicColor;
-        } else if(link.v == ic.icn3dui.htmlCls.halogenValue) {
-            strokecolor = "#" + ic.icn3dui.htmlCls.halogenColor;
-        } else if(link.v == ic.icn3dui.htmlCls.picationValue) {
-            strokecolor = "#" + ic.icn3dui.htmlCls.picationColor;
-        } else if(link.v == ic.icn3dui.htmlCls.pistackingValue) {
-            strokecolor = "#" + ic.icn3dui.htmlCls.pistackingColor;
-        } else if(link.v == ic.icn3dui.htmlCls.contactValue) {
-            strokecolor = "#" + ic.icn3dui.htmlCls.contactColor;
+        if(link.v == me.htmlCls.hbondValue) {
+            strokecolor = "#" + me.htmlCls.hbondColor;
+        } else if(link.v == me.htmlCls.ionicValue) {
+            strokecolor = "#" + me.htmlCls.ionicColor;
+        } else if(link.v == me.htmlCls.halogenValue) {
+            strokecolor = "#" + me.htmlCls.halogenColor;
+        } else if(link.v == me.htmlCls.picationValue) {
+            strokecolor = "#" + me.htmlCls.picationColor;
+        } else if(link.v == me.htmlCls.pistackingValue) {
+            strokecolor = "#" + me.htmlCls.pistackingColor;
+        } else if(link.v == me.htmlCls.contactValue) {
+            strokecolor = "#" + me.htmlCls.contactColor;
         }
 
         let  linestrokewidth;
-        if(link.v == ic.icn3dui.htmlCls.contactValue) {
+        if(link.v == me.htmlCls.contactValue) {
             linestrokewidth = 1;
         } else {
             linestrokewidth = 2;
@@ -17281,14 +17281,14 @@ class ViewInterPairs {
            bondCnt = this.getAllInteractionTable(type).bondCnt;
 
            $("#" + ic.pre + "dl_interactionsorted").html(html);
-           ic.icn3dui.htmlCls.dialogCls.openDlg('dl_interactionsorted', 'Show sorted interactions');
+           me.htmlCls.dialogCls.openDlg('dl_interactionsorted', 'Show sorted interactions');
        }
        else if(type == 'view') {
            $("#" + ic.pre + "dl_allinteraction").html(html);
-           ic.icn3dui.htmlCls.dialogCls.openDlg('dl_allinteraction', 'Show interactions');
+           me.htmlCls.dialogCls.openDlg('dl_allinteraction', 'Show interactions');
        }
        else if(type == 'linegraph') {
-           ic.icn3dui.htmlCls.dialogCls.openDlg('dl_linegraph', 'Show interactions between two lines of residue nodes');
+           me.htmlCls.dialogCls.openDlg('dl_linegraph', 'Show interactions between two lines of residue nodes');
            ic.graphStr = ic.getGraphCls.getGraphData(atomSet1, atomSet2, nameArray2, nameArray, html, labelType);
            ic.bLinegraph = true;
            // draw SVG
@@ -17296,7 +17296,7 @@ class ViewInterPairs {
            $("#" + ic.pre + "linegraphDiv").html(svgHtml);
        }
        else if(type == 'scatterplot') {
-           ic.icn3dui.htmlCls.dialogCls.openDlg('dl_scatterplot', 'Show interactions as scatterplot');
+           me.htmlCls.dialogCls.openDlg('dl_scatterplot', 'Show interactions as scatterplot');
            ic.graphStr = ic.getGraphCls.getGraphData(atomSet1, atomSet2, nameArray2, nameArray, html, labelType);
            ic.bScatterplot = true;
            // draw SVG
@@ -17304,7 +17304,7 @@ class ViewInterPairs {
            $("#" + ic.pre + "scatterplotDiv").html(svgHtml);
        }
        else if(bContactMapLocal) {
-           ic.icn3dui.htmlCls.dialogCls.openDlg('dl_contactmap', 'Show contact map');
+           me.htmlCls.dialogCls.openDlg('dl_contactmap', 'Show contact map');
            let  bAnyAtom = true;
            let  graphStr = ic.getGraphCls.getGraphData(atomSet1, atomSet2, nameArray2, nameArray, html, labelType, bAnyAtom);
            ic.bContactMap = true;
@@ -17333,8 +17333,8 @@ class ViewInterPairs {
                   success: function(data) {
                        ic.bD3 = true;
 
-                       $("#" + ic.icn3dui.svgid).empty();
-                       ic.icn3dui.htmlCls.dialogCls.openDlg('dl_graph', 'Force-directed graph');
+                       $("#" + me.svgid).empty();
+                       me.htmlCls.dialogCls.openDlg('dl_graph', 'Force-directed graph');
                        ic.drawGraphCls.drawGraph(ic.graphStr, ic.pre + 'dl_graph');
                        if(ic.deferredGraphinteraction !== undefined) ic.deferredGraphinteraction.resolve();
                   },
@@ -17351,8 +17351,8 @@ class ViewInterPairs {
                });
            }
            else {
-               $("#" + ic.icn3dui.svgid).empty();
-               ic.icn3dui.htmlCls.dialogCls.openDlg('dl_graph', 'Force-directed graph');
+               $("#" + me.svgid).empty();
+               me.htmlCls.dialogCls.openDlg('dl_graph', 'Force-directed graph');
                ic.drawGraphCls.drawGraph(ic.graphStr, ic.pre + 'dl_graph');
            }
        }
@@ -17387,7 +17387,7 @@ class ViewInterPairs {
 
     resetInteractionPairs() { let ic = this.icn3d; ic.icn3dui;
        ic.bHbondCalc = false;
-       //ic.icn3dui.htmlCls.clickMenuCls.setLogCmd('set calculate hbond false', true);
+       //me.htmlCls.clickMenuCls.setLogCmd('set calculate hbond false', true);
        ic.showInterCls.hideHbondsContacts();
        ic.hlUpdateCls.clearHighlight();
        // reset the interaction pairs
@@ -17395,13 +17395,13 @@ class ViewInterPairs {
        ic.resids2interAll = {};
     }
 
-    retrieveInteractionData() { let ic = this.icn3d; ic.icn3dui;
+    retrieveInteractionData() { let  ic = this.icn3d, me = ic.icn3dui;
          if(!ic.b2DShown) {
-             if(ic.icn3dui.cfg.align !== undefined) {
+             if(me.cfg.align !== undefined) {
                  let  structureArray = Object.keys(ic.structures);
                  ic.ParserUtilsCls.set2DDiagramsForAlign(structureArray[0].toUpperCase(), structureArray[1].toUpperCase());
              }
-             else if(ic.icn3dui.cfg.chainalign !== undefined) {
+             else if(me.cfg.chainalign !== undefined) {
                  Object.keys(ic.structures);
                  //if(structureArray.length == 2) {
                  //   ic.ParserUtilsCls.set2DDiagramsForAlign(structureArray[1].toUpperCase(), structureArray[0].toUpperCase());
@@ -17636,7 +17636,7 @@ class ViewInterPairs {
         let  file_pref =(ic.inputid) ? ic.inputid : "custom";
         ic.saveFileCls.saveFile(file_pref + '_crosslinkage_pairs.html', 'html', text);
     }
-    exportHbondPairs(type, labelType) {var ic = this.icn3d; ic.icn3dui;
+    exportHbondPairs(type, labelType) {var ic = this.icn3d, me = ic.icn3dui;
         let  tmpText = '';
         let  cnt = 0;
         let  colorText1 = ' <span style="background-color:#';
@@ -17667,14 +17667,14 @@ class ViewInterPairs {
             text += '</table><br/>';
         }
         if(type == 'graph' || type == 'linegraph' || type == 'scatterplot') {
-            let  hbondStr = ic.getGraphCls.getGraphLinks(ic.resid2ResidhashHbond, ic.resid2ResidhashHbond, ic.icn3dui.htmlCls.hbondColor, labelType, ic.icn3dui.htmlCls.hbondValue);
+            let  hbondStr = ic.getGraphCls.getGraphLinks(ic.resid2ResidhashHbond, ic.resid2ResidhashHbond, me.htmlCls.hbondColor, labelType, me.htmlCls.hbondValue);
             return hbondStr;
         }
         else {
             return text;
         }
     }
-    exportSaltbridgePairs(type, labelType) {var ic = this.icn3d; ic.icn3dui;
+    exportSaltbridgePairs(type, labelType) {var ic = this.icn3d, me = ic.icn3dui;
         let  tmpText = '';
         let  cnt = 0;
         let  colorText1 = ' <span style="background-color:#';
@@ -17705,14 +17705,14 @@ class ViewInterPairs {
             text += '</table><br/>';
         }
         if(type == 'graph' || type == 'linegraph' || type == 'scatterplot') {
-            let  hbondStr = ic.getGraphCls.getGraphLinks(ic.resid2ResidhashSaltbridge, ic.resid2ResidhashSaltbridge, ic.icn3dui.htmlCls.ionicColor, labelType, ic.icn3dui.htmlCls.ionicValue);
+            let  hbondStr = ic.getGraphCls.getGraphLinks(ic.resid2ResidhashSaltbridge, ic.resid2ResidhashSaltbridge, me.htmlCls.ionicColor, labelType, me.htmlCls.ionicValue);
             return hbondStr;
         }
         else {
             return text;
         }
     }
-    exportHalogenPiPairs(type, labelType, interactionType) {var ic = this.icn3d; ic.icn3dui;
+    exportHalogenPiPairs(type, labelType, interactionType) {var ic = this.icn3d, me = ic.icn3dui;
         let  tmpText = '';
         let  cnt = 0;
         let  colorText1 = ' <span style="background-color:#';
@@ -17720,18 +17720,18 @@ class ViewInterPairs {
         let  resid2Residhash, color, value;
         if(interactionType == 'halogen') {
             resid2Residhash = ic.resid2ResidhashHalogen;
-            color = ic.icn3dui.htmlCls.halogenColor;
-            value = ic.icn3dui.htmlCls.halogenValue;
+            color = me.htmlCls.halogenColor;
+            value = me.htmlCls.halogenValue;
         }
         else if(interactionType == 'pi-cation') {
             resid2Residhash = ic.resid2ResidhashPication;
-            color = ic.icn3dui.htmlCls.picationColor;
-            value = ic.icn3dui.htmlCls.picationValue;
+            color = me.htmlCls.picationColor;
+            value = me.htmlCls.picationValue;
         }
         else if(interactionType == 'pi-stacking') {
             resid2Residhash = ic.resid2ResidhashPistacking;
-            color = ic.icn3dui.htmlCls.pistackingColor;
-            value = ic.icn3dui.htmlCls.pistackingValue;
+            color = me.htmlCls.pistackingColor;
+            value = me.htmlCls.pistackingValue;
         }
         for(let resid1 in resid2Residhash) {
             let  resid1Real = ic.getGraphCls.convertLabel2Resid(resid1);
@@ -17766,7 +17766,7 @@ class ViewInterPairs {
             return text;
         }
     }
-    exportSpherePairs(bInteraction, type, labelType) {var ic = this.icn3d; ic.icn3dui;
+    exportSpherePairs(bInteraction, type, labelType) {var ic = this.icn3d, me = ic.icn3dui;
         let  tmpText = '';
         let  cnt = 0;
         let  residHash =(bInteraction) ? ic.resid2ResidhashInteractions : ic.resid2ResidhashSphere;
@@ -17816,7 +17816,7 @@ class ViewInterPairs {
         }
         if(type == 'graph' || type == 'linegraph' || type == 'scatterplot'
           || type == 'calpha' || type == 'cbeta' || type == 'heavyatoms') {
-            let  interStr = ic.getGraphCls.getGraphLinks(residHash, residHash, ic.icn3dui.htmlCls.contactColor, labelType, ic.icn3dui.htmlCls.contactValue);
+            let  interStr = ic.getGraphCls.getGraphLinks(residHash, residHash, me.htmlCls.contactColor, labelType, me.htmlCls.contactValue);
             return interStr;
         }
         else {
@@ -17835,7 +17835,7 @@ class ShowInter {
         this.icn3d = icn3d;
     }
 
-    showInteractions(type) { let ic = this.icn3d; ic.icn3dui;
+    showInteractions(type) { let ic = this.icn3d, me = ic.icn3dui;
        let nameArray = $("#" + ic.pre + "atomsCustomHbond").val();
        let nameArray2 = $("#" + ic.pre + "atomsCustomHbond2").val();
        if(nameArray2.length == 0) {
@@ -17864,22 +17864,22 @@ class ShowInter {
            let bHbondCalcStr =(ic.bHbondCalc) ? "true" : "false";
            let tmpStr = nameArray2 + " " + nameArray + " | " + interactionTypes + " | " + bHbondCalcStr + " | " + thresholdStr;
            if(type == '3d') {
-               ic.icn3dui.htmlCls.clickMenuCls.setLogCmd("display interaction 3d | " + tmpStr, true);
+               me.htmlCls.clickMenuCls.setLogCmd("display interaction 3d | " + tmpStr, true);
            }
            else if(type == 'view') {
-               ic.icn3dui.htmlCls.clickMenuCls.setLogCmd("view interaction pairs | " + tmpStr, true);
+               me.htmlCls.clickMenuCls.setLogCmd("view interaction pairs | " + tmpStr, true);
            }
            else if(type == 'save1') {
-               ic.icn3dui.htmlCls.clickMenuCls.setLogCmd("save1 interaction pairs | " + tmpStr, true);
+               me.htmlCls.clickMenuCls.setLogCmd("save1 interaction pairs | " + tmpStr, true);
            }
            else if(type == 'save2') {
-               ic.icn3dui.htmlCls.clickMenuCls.setLogCmd("save2 interaction pairs | " + tmpStr, true);
+               me.htmlCls.clickMenuCls.setLogCmd("save2 interaction pairs | " + tmpStr, true);
            }
            else if(type == 'linegraph') {
-               ic.icn3dui.htmlCls.clickMenuCls.setLogCmd("line graph interaction pairs | " + tmpStr, true);
+               me.htmlCls.clickMenuCls.setLogCmd("line graph interaction pairs | " + tmpStr, true);
            }
            else if(type == 'scatterplot') {
-               ic.icn3dui.htmlCls.clickMenuCls.setLogCmd("scatterplot interaction pairs | " + tmpStr, true);
+               me.htmlCls.clickMenuCls.setLogCmd("scatterplot interaction pairs | " + tmpStr, true);
            }
            else if(type == 'graph') { // force-directed graph
                 let dist_ss = parseInt($("#" + ic.pre + "dist_ss").val());
@@ -17891,7 +17891,7 @@ class ShowInter {
                 let dist_halogen = parseInt($("#" + ic.pre + "dist_halogen").val());
                 let dist_pication = parseInt($("#" + ic.pre + "dist_pication").val());
                 let dist_pistacking = parseInt($("#" + ic.pre + "dist_pistacking").val());
-                ic.icn3dui.htmlCls.clickMenuCls.setLogCmd("graph interaction pairs | " + nameArray2 + " " + nameArray + " | " + interactionTypes
+                me.htmlCls.clickMenuCls.setLogCmd("graph interaction pairs | " + nameArray2 + " " + nameArray + " | " + interactionTypes
                     + " | " + bHbondCalcStr + " | " + thresholdStr + " | " + dist_ss + " " + dist_coil
                     + " " + dist_hbond + " " + dist_inter + " " + dist_ssbond + " " + dist_ionic
                     + " " + dist_halogen + " " + dist_pication + " " + dist_pistacking, true);
@@ -17989,19 +17989,19 @@ class ShowInter {
        }
     }
 
-    hideHbondsContacts() { let ic = this.icn3d; ic.icn3dui;
+    hideHbondsContacts() { let ic = this.icn3d, me = ic.icn3dui;
            let select = "set hbonds off";
-           ic.icn3dui.htmlCls.clickMenuCls.setLogCmd(select, true);
+           me.htmlCls.clickMenuCls.setLogCmd(select, true);
            ic.hBondCls.hideHbonds();
            //ic.drawCls.draw();
            select = "set salt bridge off";
-           ic.icn3dui.htmlCls.clickMenuCls.setLogCmd(select, true);
+           me.htmlCls.clickMenuCls.setLogCmd(select, true);
            ic.saltbridgeCls.hideSaltbridge();
            select = "set contact off";
-           ic.icn3dui.htmlCls.clickMenuCls.setLogCmd(select, true);
+           me.htmlCls.clickMenuCls.setLogCmd(select, true);
            ic.contactCls.hideContact();
            select = "set halogen pi off";
-           ic.icn3dui.htmlCls.clickMenuCls.setLogCmd(select, true);
+           me.htmlCls.clickMenuCls.setLogCmd(select, true);
            ic.piHalogenCls.hideHalogenPi();
     }
 
@@ -18502,6 +18502,33 @@ class SetColor {
                 }
                 break;
 
+            case 'confidence':
+                for (let i in atoms) {
+                    let atom = ic.atoms[i];
+                    if(atom.b === undefined || parseInt(atom.b * 1000) == 0) { // invalid b-factor
+                        atom.color =  me.parasCls.thr().setRGB(0, 1, 0);
+                    }
+                    else {
+                        let b = atom.b;
+
+                        if(b >= 90) {
+                            atom.color = me.parasCls.thr().setRGB(0, 0.325, 0.839);
+                        }
+                        else if(b >= 70 && b < 90) {
+                            atom.color = me.parasCls.thr().setRGB(0.396, 0.572, 0.953);
+                        }
+                        else if(b >= 50 && b < 70) {
+                            atom.color = me.parasCls.thr().setRGB(1, 0.859, 0.075);
+                        }
+                        else if(b < 50) {
+                            atom.color = me.parasCls.thr().setRGB(1, 0.490, 0.271);
+                        }
+                    }
+
+                    ic.atomPrevColors[i] = atom.color;
+                }
+                break;
+
             case 'b factor':
                 // http://proteopedia.org/wiki/index.php/Temperature_color_schemes
                 // Fixed: Middle (white): 50, red: >= 100, blue: 0
@@ -18819,7 +18846,7 @@ class Axes {
     // http://soledadpenades.com/articles/three-js-tutorials/drawing-the-coordinate-axes/
     //Build the xyz-axes from the center of atoms. The maximum axes length is equal to "radius" in angstrom.
     buildAxes(radius, center, positionX, positionY, positionZ, bSelection) { let ic = this.icn3d, me = ic.icn3dui;
-        if(ic.icn3dui.bNode) return;
+        if(me.bNode) return;
 
         new THREE.Object3D();
 
@@ -18891,8 +18918,8 @@ class Axes {
         ic.mdl.add( arrowZ );
     }
 
-    buildAllAxes(radius, bSelection) { let ic = this.icn3d; ic.icn3dui;
-        if(ic.icn3dui.bNode) return;
+    buildAllAxes(radius, bSelection) { let ic = this.icn3d, me = ic.icn3dui;
+        if(me.bNode) return;
 
         if(ic.pc1) {
             for(let i = 0, il = ic.axes.length; i < il; ++i) {
@@ -18906,8 +18933,8 @@ class Axes {
         }
     }
 
-    createArrow(dir, origin, axisLen, color, headLength, headWidth, bGlycan) {  let ic = this.icn3d; ic.icn3dui;
-        if(ic.icn3dui.bNode) return;
+    createArrow(dir, origin, axisLen, color, headLength, headWidth, bGlycan) {  let ic = this.icn3d, me = ic.icn3dui;
+        if(me.bNode) return;
 
         let coneGeometry = new THREE.CylinderBufferGeometry( 0, 0.5, 1, 32, 1 );
         //coneGeometry.translate( 0, - 0.5, 0 );
@@ -18946,7 +18973,7 @@ class Axes {
     }
 
     setPc1Axes() { let ic = this.icn3d, me = ic.icn3dui;
-       if(ic.icn3dui.bNode) return;
+       if(me.bNode) return;
 
        let atomHash = me.hashUtilsCls.intHash(ic.hAtoms, ic.dAtoms);
 
@@ -19055,7 +19082,7 @@ class ResidueLabels {
     //Add labels for all residues containing the input "atoms". The labels are one-letter residue abbreviations.
     //If "bSchematic" is true, the labels are in circles. Otherwise, they are in round-corner rectangles.
     addResidueLabels(atoms, bSchematic, alpha, bNumber) { let ic = this.icn3d, me = ic.icn3dui;
-        if(ic.icn3dui.bNode) return;
+        if(me.bNode) return;
 
         let size = 18;
         let background = "#CCCCCC";
@@ -19117,7 +19144,7 @@ class ResidueLabels {
     }
 
     addNonCarbonAtomLabels(atoms) { let ic = this.icn3d, me = ic.icn3dui;
-        if(ic.icn3dui.bNode) return;
+        if(me.bNode) return;
 
         let size = 18;
         let background = "#FFFFFF";
@@ -19152,7 +19179,7 @@ class ResidueLabels {
     };
 
     addAtomLabels(atoms) { let ic = this.icn3d, me = ic.icn3dui;
-        if(ic.icn3dui.bNode) return;
+        if(me.bNode) return;
 
         let size = 18;
         let background = "#CCCCCC";
@@ -19268,19 +19295,19 @@ class Delphi {
        let pdbstr = '';
        pdbstr += ic.saveFileCls.getPDBHeader();
 
-       pdbstr +=(ic.icn3dui.cfg.cid) ? ic.saveFileCls.getAtomPDB(atomHash, true) : ic.saveFileCls.getAtomPDB(atomHash);
+       pdbstr +=(me.cfg.cid) ? ic.saveFileCls.getAtomPDB(atomHash, true) : ic.saveFileCls.getAtomPDB(atomHash);
        pdbstr += ic.saveFileCls.getAtomPDB(ionHash, true);
 
        return pdbstr;
     }
 
-    CalcPhi(gsize, salt, contour, bSurface, data) { let ic = this.icn3d; ic.icn3dui;
+    CalcPhi(gsize, salt, contour, bSurface, data) { let ic = this.icn3d, me = ic.icn3dui;
        let thisClass = this;
 
        ic.loadPhiFrom = 'delphi';
 
        let url = "https://www.ncbi.nlm.nih.gov/Structure/delphi/delphi.fcgi";
-       let pdbid =(ic.icn3dui.cfg.cid) ? ic.icn3dui.cfg.cid : Object.keys(ic.structures).toString();
+       let pdbid =(me.cfg.cid) ? me.cfg.cid : Object.keys(ic.structures).toString();
        let dataObj = {};
 
        if(data) {
@@ -19533,10 +19560,10 @@ class Delphi {
       let thisClass = this;
       // chain functions together
       ic.deferredPhi = $.Deferred(function() { let ic = thisClass.icn3d;
-          //ic.icn3dui.htmlCls.clickMenuCls.setLogCmd('set phi phiurl2/cubeurl2 | contour ' + contour + ' | url ' + encodeURIComponent(url)
+          //me.htmlCls.clickMenuCls.setLogCmd('set phi phiurl2/cubeurl2 | contour ' + contour + ' | url ' + encodeURIComponent(url)
           //       + ' | gsize ' + gsize + ' | salt ' + salt
           //       + ' | surface ' + ic.phisurftype + ' | opacity ' + ic.phisurfop + ' | wireframe ' + ic.phisurfwf, true);
-          //ic.icn3dui.htmlCls.clickMenuCls.setLogCmd('set phi phiurl/cubeurl | contour ' + contour + ' | url ' + encodeURIComponent(url)
+          //me.htmlCls.clickMenuCls.setLogCmd('set phi phiurl/cubeurl | contour ' + contour + ' | url ' + encodeURIComponent(url)
           //       + ' | gsize ' + gsize + ' | salt ' + salt, true);
           let paraArray = command.split(" | ");
 
@@ -19577,7 +19604,7 @@ class Delphi {
           else {
               thisClass.PhiParser(url, type, contour, bSurface);
           }
-      }); // end of ic.icn3dui.deferred = $.Deferred(function() {
+      }); // end of me.deferred = $.Deferred(function() {
 
       return ic.deferredPhi.promise();
     }
@@ -19587,10 +19614,10 @@ class Delphi {
 
       // chain functions together
       ic.deferredDelphi = $.Deferred(function() { let ic = thisClass.icn3d;
-           //ic.icn3dui.htmlCls.clickMenuCls.setLogCmd('set delphi surface | contour ' + contour + ' | gsize ' + gsize + ' | salt ' + salt
+           //me.htmlCls.clickMenuCls.setLogCmd('set delphi surface | contour ' + contour + ' | gsize ' + gsize + ' | salt ' + salt
            //  + ' | surface ' + ic.phisurftype + ' | opacity ' + ic.phisurfop + ' | wireframe ' + ic.phisurfwf, true);
 
-           //ic.icn3dui.htmlCls.clickMenuCls.setLogCmd('set delphi map | contour ' + contour + ' | gsize ' + gsize + ' | salt ' + salt, true);
+           //me.htmlCls.clickMenuCls.setLogCmd('set delphi map | contour ' + contour + ' | gsize ' + gsize + ' | salt ' + salt, true);
 
           let paraArray = command.split(" | ");
 
@@ -19625,12 +19652,12 @@ class Delphi {
           let bSurface =(type == 'surface') ? true : false;
 
           thisClass.CalcPhi(gsize, salt, contour, bSurface);
-      }); // end of ic.icn3dui.deferred = $.Deferred(function() {
+      }); // end of me.deferred = $.Deferred(function() {
 
       return ic.deferredDelphi.promise();
     }
 
-    loadDelphiFile(type) { let ic = this.icn3d; ic.icn3dui;
+    loadDelphiFile(type) { let ic = this.icn3d, me = ic.icn3dui;
        let gsize = $("#" + ic.pre + "delphigsize").val();
        let salt = $("#" + ic.pre + "delphisalt").val();
        let contour =(type == 'delphi2') ? $("#" + ic.pre + "delphicontour2").val() : $("#" + ic.pre + "delphicontour").val();
@@ -19642,11 +19669,11 @@ class Delphi {
        let displayType =(type == 'delphi2') ? 'surface' : 'map';
 
        if(bSurface) {
-           ic.icn3dui.htmlCls.clickMenuCls.setLogCmd('set delphi ' + displayType + ' | contour ' + contour + ' | gsize ' + gsize + ' | salt ' + salt
+           me.htmlCls.clickMenuCls.setLogCmd('set delphi ' + displayType + ' | contour ' + contour + ' | gsize ' + gsize + ' | salt ' + salt
              + ' | surface ' + ic.phisurftype + ' | opacity ' + ic.phisurfop + ' | wireframe ' + ic.phisurfwf, true);
        }
        else {
-           ic.icn3dui.htmlCls.clickMenuCls.setLogCmd('set delphi ' + displayType + ' | contour ' + contour + ' | gsize ' + gsize + ' | salt ' + salt, true);
+           me.htmlCls.clickMenuCls.setLogCmd('set delphi ' + displayType + ' | contour ' + contour + ' | gsize ' + gsize + ' | salt ' + salt, true);
        }
     }
 
@@ -19704,12 +19731,12 @@ class Delphi {
            }
 
            if(bSurface) {
-               ic.icn3dui.htmlCls.clickMenuCls.setLogCmd('load phi ' + type + ' | contour ' + contour + ' | file ' + $("#" + ic.pre + type + "file").val()
+               me.htmlCls.clickMenuCls.setLogCmd('load phi ' + type + ' | contour ' + contour + ' | file ' + $("#" + ic.pre + type + "file").val()
                  + ' | gsize ' + gsize + ' | salt ' + salt
                  + ' | surface ' + ic.phisurftype + ' | opacity ' + ic.phisurfop + ' | wireframe ' + ic.phisurfwf, false);
            }
            else {
-               ic.icn3dui.htmlCls.clickMenuCls.setLogCmd('load phi ' + type + ' | contour ' + contour + ' | file ' + $("#" + ic.pre + type + "file").val()
+               me.htmlCls.clickMenuCls.setLogCmd('load phi ' + type + ' | contour ' + contour + ' | file ' + $("#" + ic.pre + type + "file").val()
                  + ' | gsize ' + gsize + ' | salt ' + salt, false);
            }
          };
@@ -19721,7 +19748,7 @@ class Delphi {
          }
        }
     }
-    loadPhiFileUrl(type) { let ic = this.icn3d; ic.icn3dui;
+    loadPhiFileUrl(type) { let ic = this.icn3d, me = ic.icn3dui;
        let url;
        if(type == 'pqrurl' || type == 'phiurl' || type == 'cubeurl') {
            url = $("#" + ic.pre + type + "file").val();
@@ -19755,12 +19782,12 @@ class Delphi {
            }
 
            if(bSurface) {
-               ic.icn3dui.htmlCls.clickMenuCls.setLogCmd('set phi ' + type + ' | contour ' + contour + ' | url ' + encodeURIComponent(url)
+               me.htmlCls.clickMenuCls.setLogCmd('set phi ' + type + ' | contour ' + contour + ' | url ' + encodeURIComponent(url)
                  + ' | gsize ' + gsize + ' | salt ' + salt
                  + ' | surface ' + ic.phisurftype + ' | opacity ' + ic.phisurfop + ' | wireframe ' + ic.phisurfwf, true);
            }
            else {
-               ic.icn3dui.htmlCls.clickMenuCls.setLogCmd('set phi ' + type + ' | contour ' + contour + ' | url ' + encodeURIComponent(url)
+               me.htmlCls.clickMenuCls.setLogCmd('set phi ' + type + ' | contour ' + contour + ' | url ' + encodeURIComponent(url)
                  + ' | gsize ' + gsize + ' | salt ' + salt, true);
            }
        }
@@ -19796,21 +19823,21 @@ class Scap {
       // chain functions together
       ic.deferredScap = $.Deferred(function() {
          thisClass.applyCommandScapBase(command);
-      }); // end of ic.icn3dui.deferred = $.Deferred(function() {
+      }); // end of me.deferred = $.Deferred(function() {
 
       return ic.deferredScap.promise();
     }
 
-    adjust2DWidth(id) { let ic = this.icn3d; ic.icn3dui;
+    adjust2DWidth(id) { let ic = this.icn3d, me = ic.icn3dui;
         let halfWidth = 125;
         id = ic.pre + id;
 
-        let height =($("#" + ic.pre + 'dl_selectannotations').hasClass("ui-dialog-content")) ? $("#" + ic.pre + 'dl_selectannotations').dialog( "option", "height") : ic.icn3dui.htmlCls.HEIGHT;
-        let width =($("#" + ic.pre + 'dl_selectannotations').hasClass("ui-dialog-content")) ? halfWidth * 2 : ic.icn3dui.htmlCls.WIDTH * 0.5;
+        let height =($("#" + ic.pre + 'dl_selectannotations').hasClass("ui-dialog-content")) ? $("#" + ic.pre + 'dl_selectannotations').dialog( "option", "height") : me.htmlCls.HEIGHT;
+        let width =($("#" + ic.pre + 'dl_selectannotations').hasClass("ui-dialog-content")) ? halfWidth * 2 : me.htmlCls.WIDTH * 0.5;
 
         $("#" + id).dialog( "option", "width", width );
         $("#" + id).dialog( "option", "height", height);
-        let position = { my: "left-" + halfWidth + " top+" + ic.icn3dui.htmlCls.MENU_HEIGHT, at: "right top", of: "#" + ic.pre + "viewer", collision: "none" };
+        let position = { my: "left-" + halfWidth + " top+" + me.htmlCls.MENU_HEIGHT, at: "right top", of: "#" + ic.pre + "viewer", collision: "none" };
 
          $("#" + id).dialog( "option", "position", position );
     }
@@ -19938,17 +19965,17 @@ class Scap {
                   ic.viewInterPairsCls.clearInteractions();
 
                   if(bInteraction) {
-                    //ic.icn3dui.htmlCls.clickMenuCls.setLogCmd("select " + select + " | name " + name, true);
+                    //me.htmlCls.clickMenuCls.setLogCmd("select " + select + " | name " + name, true);
 
                     let type = 'linegraph';
                     ic.viewInterPairsCls.viewInteractionPairs(['selected'], ['non-selected'], false, type, true, true, true, true, true, true);
-                    //ic.icn3dui.htmlCls.clickMenuCls.setLogCmd("line graph interaction pairs | selected non-selected | hbonds,salt bridge,interactions,halogen,pi-cation,pi-stacking | false | threshold 3.8 6 4 3.8 6 5.5", true);
+                    //me.htmlCls.clickMenuCls.setLogCmd("line graph interaction pairs | selected non-selected | hbonds,salt bridge,interactions,halogen,pi-cation,pi-stacking | false | threshold 3.8 6 4 3.8 6 5.5", true);
 
                     thisClass.adjust2DWidth('dl_linegraph');
                   }
 
                   ic.hAtoms = ic.dAtoms;
-                  //ic.icn3dui.htmlCls.clickMenuCls.setLogCmd("select displayed set", true);
+                  //me.htmlCls.clickMenuCls.setLogCmd("select displayed set", true);
 
                   ic.drawCls.draw();
 
@@ -20004,7 +20031,7 @@ class Symd {
       // chain functions together
       ic.deferredSymd = $.Deferred(function() {
          thisClass.applyCommandSymdBase(command);
-      }); // end of ic.icn3dui.deferred = $.Deferred(function() {
+      }); // end of me.deferred = $.Deferred(function() {
 
       return ic.deferredSymd.promise();
     }
@@ -20124,7 +20151,7 @@ class Symd {
 
                   if(ic.symdArray.length == 0) {
                       $("#" + ic.pre + "dl_symd").html("<br>The selected residues have no detected symmetry with a Z score of " + data.zscore + " from the program <a href='https://symd.nci.nih.gov/' target='_blank'>SymD</a>.");
-                      ic.icn3dui.htmlCls.dialogCls.openDlg('dl_symd', 'Dynamically Calculated Symmetry Using SymD');
+                      me.htmlCls.dialogCls.openDlg('dl_symd', 'Dynamically Calculated Symmetry Using SymD');
                   }
                   else {
                       let ori_permSeq = data.seqalign.replace(/ /g, '').split(','); //oriSeq,permSeq
@@ -20216,39 +20243,39 @@ class Symd {
                       thisClass.setSeqAlignForSymmetry(residArrayFinal1, residArrayFinal2, bOnechain);
 
                       let bShowHighlight = false;
-                      let seqObj = ic.icn3dui.htmlCls.alignSeqCls.getAlignSequencesAnnotations(Object.keys(ic.alnChains), undefined, undefined, bShowHighlight, bOnechain);
+                      let seqObj = me.htmlCls.alignSeqCls.getAlignSequencesAnnotations(Object.keys(ic.alnChains), undefined, undefined, bShowHighlight, bOnechain);
 
                       html = $("#" + ic.pre + "dl_sequence2").html() + seqObj.sequencesHtml;
 
                       $("#" + ic.pre + "dl_sequence2").html(html);
-                      $("#" + ic.pre + "dl_sequence2").width(ic.icn3dui.htmlCls.RESIDUE_WIDTH * seqObj.maxSeqCnt + 200);
+                      $("#" + ic.pre + "dl_sequence2").width(me.htmlCls.RESIDUE_WIDTH * seqObj.maxSeqCnt + 200);
 
-                      ic.icn3dui.htmlCls.dialogCls.openDlg('dl_alignment', 'Select residues in aligned sequences from SymD');
+                      me.htmlCls.dialogCls.openDlg('dl_alignment', 'Select residues in aligned sequences from SymD');
 
                       let numDef = Object.keys(ic.defNames2Residues).length + Object.keys(ic.defNames2Atoms).length;
 
                       let name = 'symOri' + numDef;
                       ic.selectionCls.selectResidueList(residArrayHashFinal1, name, name);
                       ic.selectionCls.updateSelectionNameDesc();
-                      ic.icn3dui.htmlCls.clickMenuCls.setLogCmd('select ' + ic.resid2specCls.residueids2spec(Object.keys(residArrayHashFinal1)) + ' | name ' + name, false);
+                      me.htmlCls.clickMenuCls.setLogCmd('select ' + ic.resid2specCls.residueids2spec(Object.keys(residArrayHashFinal1)) + ' | name ' + name, false);
 
                       name = 'symPerm' + numDef;
                       ic.selectionCls.selectResidueList(residArrayHashFinal2, name, name);
                       ic.selectionCls.updateSelectionNameDesc();
-                      ic.icn3dui.htmlCls.clickMenuCls.setLogCmd('select ' + ic.resid2specCls.residueids2spec(Object.keys(residArrayHashFinal2)) + ' | name ' + name, false);
+                      me.htmlCls.clickMenuCls.setLogCmd('select ' + ic.resid2specCls.residueids2spec(Object.keys(residArrayHashFinal2)) + ' | name ' + name, false);
 
                       name = 'symBoth' + numDef;
                       residArrayHashFinal1 = me.hashUtilsCls.unionHash(residArrayHashFinal1, residArrayHashFinal2);
                       ic.selectionCls.selectResidueList(residArrayHashFinal1, name, name);
                       ic.selectionCls.updateSelectionNameDesc();
-                      ic.icn3dui.htmlCls.clickMenuCls.setLogCmd('select ' + ic.resid2specCls.residueids2spec(Object.keys(residArrayHashFinal1)) + ' | name ' + name, false);
+                      me.htmlCls.clickMenuCls.setLogCmd('select ' + ic.resid2specCls.residueids2spec(Object.keys(residArrayHashFinal1)) + ' | name ' + name, false);
 
                       //ic.hlUpdateCls.toggleHighlight();
                   }
               }
               else {
                   $("#" + ic.pre + "dl_symd").html("<br>The selected residues have no detected symmetry with a Z score of " + data.zscore + " from the program <a href='https://symd.nci.nih.gov/' target='_blank'>SymD</a>.");
-                  ic.icn3dui.htmlCls.dialogCls.openDlg('dl_symd', 'Dynamically Calculated Symmetry Using SymD');
+                  me.htmlCls.dialogCls.openDlg('dl_symd', 'Dynamically Calculated Symmetry Using SymD');
               }
 
                //var title = $("#" + ic.pre + "selectSymd" ).val();
@@ -20266,7 +20293,7 @@ class Symd {
             }
             $("#" + ic.pre + "dl_symd").html("<br>The web service can not determine the symmetry of the input set.");
 
-            ic.icn3dui.htmlCls.dialogCls.openDlg('dl_symd', 'Dynamically Calculated Symmetry Using SymD');
+            me.htmlCls.dialogCls.openDlg('dl_symd', 'Dynamically Calculated Symmetry Using SymD');
 
             ic.ParserUtilsCls.hideLoading();
 
@@ -20408,7 +20435,7 @@ class Symd {
     */
     }
 
-    retrieveSymmetry(pdbid) { let ic = this.icn3d; ic.icn3dui;
+    retrieveSymmetry(pdbid) { let ic = this.icn3d, me = ic.icn3dui;
        let thisClass =this;
 
        let url = "https://data.rcsb.org/rest/v1/core/assembly/" + pdbid + "/1";
@@ -20495,7 +20522,7 @@ class Symd {
                   $("#" + ic.pre + "dl_symmetry").html("<br>This structure has no symmetry.");
               }
 
-              ic.icn3dui.htmlCls.dialogCls.openDlg('dl_symmetry', 'Symmetry');
+              me.htmlCls.dialogCls.openDlg('dl_symmetry', 'Symmetry');
 
               if(ic.deferredSymmetry !== undefined) ic.deferredSymmetry.resolve();
           },
@@ -20508,7 +20535,7 @@ class Symd {
             }
             $("#" + ic.pre + "dl_symmetry").html("<br>This structure has no symmetry.");
 
-            ic.icn3dui.htmlCls.dialogCls.openDlg('dl_symmetry', 'Symmetry');
+            me.htmlCls.dialogCls.openDlg('dl_symmetry', 'Symmetry');
 
             if(ic.deferredSymmetry !== undefined) ic.deferredSymmetry.resolve();
             return;
@@ -21424,7 +21451,7 @@ class LoadAtomData {
         if(type === 'align') {
           //serial2structure
           ic.pmid = "";
-          let  refinedStr =(ic.icn3dui.cfg.inpara && ic.icn3dui.cfg.inpara.indexOf('atype=1') !== -1) ? 'Invariant Core ' : '';
+          let  refinedStr =(me.cfg.inpara && me.cfg.inpara.indexOf('atype=1') !== -1) ? 'Invariant Core ' : '';
           ic.molTitle = refinedStr + 'Structure Alignment of ';
 
           for(let i = 0, il = data.alignedStructures[0].length; i < il; ++i) {
@@ -21457,7 +21484,7 @@ class LoadAtomData {
                   if(sid !== undefined) ic.chainid2sid[chainid] = sid;
               }
 
-              ic.molTitle +=  "<a href=\"" + ic.icn3dui.htmlCls.baseUrl + "mmdb/mmdbsrv.cgi?uid=" + structure.pdbId.toUpperCase() + "\" target=\"_blank\">" + structure.pdbId.toUpperCase() + "</a>";
+              ic.molTitle +=  "<a href=\"" + me.htmlCls.baseUrl + "mmdb/mmdbsrv.cgi?uid=" + structure.pdbId.toUpperCase() + "\" target=\"_blank\">" + structure.pdbId.toUpperCase() + "</a>";
 
               if(structure.descr !== undefined) ic.pmid += structure.descr.pubmedid;
               if(i === 0) {
@@ -21498,8 +21525,8 @@ class LoadAtomData {
                   }
 
                   if(((ic.mmdbid_q !== undefined && ic.mmdbid_q === ic.mmdbid_t)) && alignType === 'query') {
-                      //chainid += ic.icn3dui.htmlCls.postfix;
-                      chainid = pdbidTmp + ic.icn3dui.htmlCls.postfix + '_' + chain;
+                      //chainid += me.htmlCls.postfix;
+                      chainid = pdbidTmp + me.htmlCls.postfix + '_' + chain;
                   }
 
                   let  kind = data.moleculeInfor[molid].kind;
@@ -21595,7 +21622,7 @@ class LoadAtomData {
                   }
 
                   //if(ic.mmdbid_q !== undefined && ic.mmdbid_q === ic.mmdbid_t && alignType === 'query') {
-                      //atm.chain += ic.icn3dui.htmlCls.postfix;
+                      //atm.chain += me.htmlCls.postfix;
                   //}
                 }
                 else if(type === 'align') {
@@ -21635,14 +21662,14 @@ class LoadAtomData {
 
                 if(type === 'mmdbid' &&((ic.mmdbid_q !== undefined && ic.mmdbid_q === ic.mmdbid_t))
                   && alignType === 'query') {
-                    atm.structure += ic.icn3dui.htmlCls.postfix;
+                    atm.structure += me.htmlCls.postfix;
                 }
             }
 
             structureNum = atm.structure;
 
             chainNum = structureNum + '_' + atm.chain;
-            //if(ic.mmdbid_q !== undefined && ic.mmdbid_q === ic.mmdbid_t && alignType === 'query') chainNum += ic.icn3dui.htmlCls.postfix;
+            //if(ic.mmdbid_q !== undefined && ic.mmdbid_q === ic.mmdbid_t && alignType === 'query') chainNum += me.htmlCls.postfix;
 
             //var resiCorrection = 0;
             if(type === 'mmdbid' || type === 'align') {
@@ -21681,7 +21708,7 @@ class LoadAtomData {
 
             if(type === 'mmdbid') {
                 atm.coord = new THREE.Vector3(atm.coord[0], atm.coord[1], atm.coord[2]);
-                if(ic.q_rotation !== undefined && ic.t_trans_add.length > 0 && !ic.icn3dui.cfg.resnum && !ic.icn3dui.cfg.resdef) {
+                if(ic.q_rotation !== undefined && ic.t_trans_add.length > 0 && !me.cfg.resnum && !me.cfg.resdef) {
                     if(alignType === 'target') {
                         atm.coord.x += ic.t_trans_add[chainIndex].x;
                         atm.coord.y += ic.t_trans_add[chainIndex].y;
@@ -21718,15 +21745,15 @@ class LoadAtomData {
             ic.pmax.max(atm.coord);
             ic.psum.add(atm.coord);
 
-            let  bProtein =(ic.icn3dui.cfg.mmcifid === undefined && ic.InputfileType != 'mmcif') ? chainid2kind[chainNum] === 'protein' : atm.mt === 'p';
-            let  bNucleotide =(ic.icn3dui.cfg.mmcifid === undefined && ic.InputfileType != 'mmcif') ? chainid2kind[chainNum] === 'nucleotide' : atm.mt === 'n';
-            let  bSolvent =(ic.icn3dui.cfg.mmcifid === undefined && ic.InputfileType != 'mmcif') ? chainid2kind[chainNum] === 'solvent' : atm.mt === 's';
+            let  bProtein =(me.cfg.mmcifid === undefined && ic.InputfileType != 'mmcif') ? chainid2kind[chainNum] === 'protein' : atm.mt === 'p';
+            let  bNucleotide =(me.cfg.mmcifid === undefined && ic.InputfileType != 'mmcif') ? chainid2kind[chainNum] === 'nucleotide' : atm.mt === 'n';
+            let  bSolvent =(me.cfg.mmcifid === undefined && ic.InputfileType != 'mmcif') ? chainid2kind[chainNum] === 'solvent' : atm.mt === 's';
             // in vastplus.cgi, ions arenotlisted in alignedStructures...molecules, thus chainid2kind[chainNum] === undefined is used.
             // ions will be separated from chemicals later.
             // here "ligand" is used in the cgi output
-            //var bChemicalIons =(ic.icn3dui.cfg.mmcifid === undefined) ?(chainid2kind[chainNum] === 'ligand' || chainid2kind[chainNum] === 'otherPolymer' || chainid2kind[chainNum] === undefined) : atm.mt === 'l';
+            //var bChemicalIons =(me.cfg.mmcifid === undefined) ?(chainid2kind[chainNum] === 'ligand' || chainid2kind[chainNum] === 'otherPolymer' || chainid2kind[chainNum] === undefined) : atm.mt === 'l';
             // kind: other, otherPolymer, etc
-            let  bChemicalIons =(ic.icn3dui.cfg.mmcifid === undefined && ic.InputfileType != 'mmcif') ?(chainid2kind[chainNum] === 'ligand' ||(chainid2kind[chainNum] !== undefined && chainid2kind[chainNum].indexOf('other') !== -1) || chainid2kind[chainNum] === undefined) : atm.mt === 'l';
+            let  bChemicalIons =(me.cfg.mmcifid === undefined && ic.InputfileType != 'mmcif') ?(chainid2kind[chainNum] === 'ligand' ||(chainid2kind[chainNum] !== undefined && chainid2kind[chainNum].indexOf('other') !== -1) || chainid2kind[chainNum] === undefined) : atm.mt === 'l';
 
             if((atm.chain === 'Misc' || chainid2kind[chainNum] === 'other') && biopolymerChainsHash[chainNum] !== 'protein' && biopolymerChainsHash[chainNum] !== 'nucleotide') { // biopolymer, could be protein or nucleotide
                 if(atm.name === 'CA' && atm.elem === 'C') {
@@ -21822,7 +21849,7 @@ class LoadAtomData {
 
             // chain level
             let  chainid = atm.structure + '_' + atm.chain;
-            //if(ic.mmdbid_q !== undefined && ic.mmdbid_q === ic.mmdbid_t && alignType === 'query') chainid += ic.icn3dui.htmlCls.postfix;
+            //if(ic.mmdbid_q !== undefined && ic.mmdbid_q === ic.mmdbid_t && alignType === 'query') chainid += me.htmlCls.postfix;
 
             if(ic.chains[chainid] === undefined) ic.chains[chainid] = {};
             ic.chains[chainid][serial] = 1;
@@ -21951,8 +21978,8 @@ class LoadAtomData {
                     let  chainid = id + '_' + chain;
 
                     if(((ic.mmdbid_q !== undefined && ic.mmdbid_q === ic.mmdbid_t)) && alignType === 'query') {
-                        //chainid += ic.icn3dui.htmlCls.postfix;
-                        chainid = id + ic.icn3dui.htmlCls.postfix + '_' + chain;
+                        //chainid += me.htmlCls.postfix;
+                        chainid = id + me.htmlCls.postfix + '_' + chain;
                     }
 
                     ic.ParserUtilsCls.getMissingResidues(seqArray, type, chainid); // assign ic.chainsSeq
@@ -22095,17 +22122,17 @@ class LoadAtomData {
         if(type === 'align' && seqalign !== undefined && ic.bFullUi) {
             ic.setSeqAlignCls.setSeqAlign(seqalign, data.alignedStructures);
         } // if(align
-        else if(type === 'mmdbid' && alignType === 'query' && ic.bFullUi && ic.q_rotation !== undefined && !ic.icn3dui.cfg.resnum && !ic.icn3dui.cfg.resdef) {
+        else if(type === 'mmdbid' && alignType === 'query' && ic.bFullUi && ic.q_rotation !== undefined && !me.cfg.resnum && !me.cfg.resdef) {
             ic.setSeqAlignCls.setSeqAlignChain(chainidInput, chainIndex);
 
             let  bReverse = false;
-            let  seqObj = ic.icn3dui.htmlCls.alignSeqCls.getAlignSequencesAnnotations(Object.keys(ic.alnChains), undefined, undefined, false, undefined, bReverse);
+            let  seqObj = me.htmlCls.alignSeqCls.getAlignSequencesAnnotations(Object.keys(ic.alnChains), undefined, undefined, false, undefined, bReverse);
             let  oriHtml = $("#" + ic.pre + "dl_sequence2").html();
 
             hAtoms = ic.hAtoms;
 
             $("#" + ic.pre + "dl_sequence2").html(oriHtml + seqObj.sequencesHtml);
-            $("#" + ic.pre + "dl_sequence2").width(ic.icn3dui.htmlCls.RESIDUE_WIDTH * seqObj.maxSeqCnt + 200);
+            $("#" + ic.pre + "dl_sequence2").width(me.htmlCls.RESIDUE_WIDTH * seqObj.maxSeqCnt + 200);
         }
 
         if(type === 'mmdbid' &&(alignType === 'target' || alignType === 'query') && ic.q_rotation === undefined) {
@@ -22155,7 +22182,7 @@ class SdfParser {
 
     //Ajax call was used to get the atom data from the PubChem "cid". This function was
     //deferred so that it can be chained together with other deferred functions for sequential execution.
-    downloadCid(cid) { let ic = this.icn3d; ic.icn3dui;
+    downloadCid(cid) { let  ic = this.icn3d, me = ic.icn3dui;
         let  thisClass = this;
 
         let  uri = "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/cid/" + cid + "/record/SDF/?record_type=3d&response_type=display";
@@ -22182,7 +22209,7 @@ class SdfParser {
 //            ic.opts['pk'] = 'atom';
 //            ic.opts['chemicals'] = 'ball and stick';
 
-            if(ic.icn3dui.cfg.align === undefined && Object.keys(ic.structures).length == 1) {
+            if(me.cfg.align === undefined && Object.keys(ic.structures).length == 1) {
                 $("#" + ic.pre + "alternateWrapper").hide();
             }
 
@@ -22195,9 +22222,9 @@ class SdfParser {
 
               ic.ParserUtilsCls.renderStructure();
 
-              if(ic.icn3dui.cfg.rotate !== undefined) ic.resizeCanvasCls.rotStruc(ic.icn3dui.cfg.rotate, true);
+              if(me.cfg.rotate !== undefined) ic.resizeCanvasCls.rotStruc(me.cfg.rotate, true);
 
-              //if(ic.icn3dui.deferred !== undefined) ic.icn3dui.deferred.resolve(); if(ic.deferred2 !== undefined) ic.deferred2.resolve();
+              //if(me.deferred !== undefined) me.deferred.resolve(); if(ic.deferred2 !== undefined) ic.deferred2.resolve();
             }
           },
           error : function(xhr, textStatus, errorThrown ) {
@@ -22215,10 +22242,10 @@ class SdfParser {
         });
     }
 
-    loadSdfData(data) { let ic = this.icn3d; ic.icn3dui;
+    loadSdfData(data) { let  ic = this.icn3d, me = ic.icn3dui;
         let  bResult = this.loadSdfAtomData(data);
 
-        if(ic.icn3dui.cfg.align === undefined && Object.keys(ic.structures).length == 1) {
+        if(me.cfg.align === undefined && Object.keys(ic.structures).length == 1) {
             $("#" + ic.pre + "alternateWrapper").hide();
         }
 
@@ -22231,9 +22258,9 @@ class SdfParser {
 
           ic.ParserUtilsCls.renderStructure();
 
-          if(ic.icn3dui.cfg.rotate !== undefined) ic.resizeCanvasCls.rotStruc(ic.icn3dui.cfg.rotate, true);
+          if(me.cfg.rotate !== undefined) ic.resizeCanvasCls.rotStruc(me.cfg.rotate, true);
 
-          //if(ic.icn3dui.deferred !== undefined) ic.icn3dui.deferred.resolve(); if(ic.deferred2 !== undefined) ic.deferred2.resolve();
+          //if(me.deferred !== undefined) me.deferred.resolve(); if(ic.deferred2 !== undefined) ic.deferred2.resolve();
         }
     }
 
@@ -22410,10 +22437,10 @@ class XyzParser {
         this.icn3d = icn3d;
     }
 
-    loadXyzData(data) { let ic = this.icn3d; ic.icn3dui;
+    loadXyzData(data) { let  ic = this.icn3d, me = ic.icn3dui;
         let  bResult = this.loadXyzAtomData(data);
 
-        if(ic.icn3dui.cfg.align === undefined && Object.keys(ic.structures).length == 1) {
+        if(me.cfg.align === undefined && Object.keys(ic.structures).length == 1) {
             $("#" + ic.pre + "alternateWrapper").hide();
         }
 
@@ -22426,9 +22453,9 @@ class XyzParser {
 
           ic.ParserUtilsCls.renderStructure();
 
-          if(ic.icn3dui.cfg.rotate !== undefined) ic.resizeCanvasCls.rotStruc(ic.icn3dui.cfg.rotate, true);
+          if(me.cfg.rotate !== undefined) ic.resizeCanvasCls.rotStruc(me.cfg.rotate, true);
 
-          //if(ic.icn3dui.deferred !== undefined) ic.icn3dui.deferred.resolve(); if(ic.deferred2 !== undefined) ic.deferred2.resolve();
+          //if(me.deferred !== undefined) me.deferred.resolve(); if(ic.deferred2 !== undefined) ic.deferred2.resolve();
         }
     }
 
@@ -22564,10 +22591,10 @@ class Mol2Parser {
         this.icn3d = icn3d;
     }
 
-    loadMol2Data(data) { let ic = this.icn3d; ic.icn3dui;
+    loadMol2Data(data) { let  ic = this.icn3d, me = ic.icn3dui;
         let  bResult = this.loadMol2AtomData(data);
 
-        if(ic.icn3dui.cfg.align === undefined && Object.keys(ic.structures).length == 1) {
+        if(me.cfg.align === undefined && Object.keys(ic.structures).length == 1) {
             $("#" + ic.pre + "alternateWrapper").hide();
         }
 
@@ -22580,9 +22607,9 @@ class Mol2Parser {
 
           ic.ParserUtilsCls.renderStructure();
 
-          if(ic.icn3dui.cfg.rotate !== undefined) ic.resizeCanvasCls.rotStruc(ic.icn3dui.cfg.rotate, true);
+          if(me.cfg.rotate !== undefined) ic.resizeCanvasCls.rotStruc(me.cfg.rotate, true);
 
-          //if(ic.icn3dui.deferred !== undefined) ic.icn3dui.deferred.resolve(); if(ic.deferred2 !== undefined) ic.deferred2.resolve();
+          //if(me.deferred !== undefined) me.deferred.resolve(); if(ic.deferred2 !== undefined) ic.deferred2.resolve();
         }
     }
 
@@ -22790,7 +22817,7 @@ class Dssp {
 
       let ajaxArray = [];
 
-      //let url = ic.icn3dui.htmlCls.baseUrl + "mmcifparser/mmcifparser.cgi";
+      //let url = me.htmlCls.baseUrl + "mmcifparser/mmcifparser.cgi";
       let url = "../mmcifparser/mmcifparser.cgi";
       for(let i = 0, il = struArray.length; i < il; ++i) {
            let pdbStr = '';
@@ -22959,16 +22986,21 @@ class PdbParser {
     //Ajax call was used to get the atom data from the "pdbid". This function was deferred so that
     //it can be chained together with other deferred functions for sequential execution. A wrapper
     //was added to support both http and https.
-    downloadPdb(pdbid) { let ic = this.icn3d; ic.icn3dui;
+    downloadPdb(pdbid, bAf) { let ic = this.icn3d; ic.icn3dui;
        let  url, dataType;
 
-       url = "https://files.rcsb.org/view/" + pdbid + ".pdb";
+       if(bAf) {
+           url = "https://alphafold.ebi.ac.uk/files/AF-" + pdbid + "-F1-model_v1.pdb";
+           ic.ParserUtilsCls.setYourNote(pdbid.toUpperCase() + '(AlphaFold) in iCn3D');
+       }
+       else {
+           url = "https://files.rcsb.org/view/" + pdbid + ".pdb";
+           ic.ParserUtilsCls.setYourNote(pdbid.toUpperCase() + '(PDB) in iCn3D');
+       }
 
        dataType = "text";
 
        ic.bCid = undefined;
-
-       ic.ParserUtilsCls.setYourNote(pdbid.toUpperCase() + '(PDB) in iCn3D');
 
        $.ajax({
           url: url,
@@ -22986,7 +23018,12 @@ class PdbParser {
               //ic.pdbParserCls.loadPdbData(data, pdbid);
               ic.deferredOpm = $.Deferred(function() {
                   //ic.loadPdbOpmData(data, pdbid);
-                  ic.opmParserCls.loadOpmData(data, pdbid, undefined, 'pdb');
+                  if(bAf) {
+                      ic.opmParserCls.parseAtomData(data, pdbid, undefined, 'pdb', undefined);
+                  }
+                  else {
+                      ic.opmParserCls.loadOpmData(data, pdbid, undefined, 'pdb');
+                  }
               });
 
               return ic.deferredOpm.promise();
@@ -23077,7 +23114,7 @@ class PdbParser {
     loadPdbData(data, pdbid, bOpm, bAppend) { let  ic = this.icn3d, me = ic.icn3dui;
         ic.loadPDBCls.loadPDB(data, pdbid, bOpm, undefined, undefined, bAppend); // defined in the core library
 
-        if(ic.icn3dui.cfg.opmid === undefined) ic.ParserUtilsCls.transformToOpmOri(pdbid);
+        if(me.cfg.opmid === undefined) ic.ParserUtilsCls.transformToOpmOri(pdbid);
 
         if(ic.biomtMatrices !== undefined && ic.biomtMatrices.length > 1) {
           $("#" + ic.pre + "assemblyWrapper").show();
@@ -23107,7 +23144,7 @@ class PdbParser {
           ic.deferredSecondary = $.Deferred(function() {
               let  bCalphaOnly = me.utilsCls.isCalphaPhosOnly(me.hashUtilsCls.hash2Atoms(ic.proteins, ic.atoms));//, 'CA');
               ic.dsspCls.applyDssp(bCalphaOnly);
-          }); // end of ic.icn3dui.deferred = $.Deferred(function() {
+          }); // end of me.deferred = $.Deferred(function() {
 
           return ic.deferredSecondary.promise();
         }
@@ -23116,11 +23153,20 @@ class PdbParser {
         }
     }
 
-    loadPdbDataRender() { let ic = this.icn3d; ic.icn3dui;
+    loadPdbDataRender() { let  ic = this.icn3d, me = ic.icn3dui;
         ic.pmid = ic.pmid;
 
-        if(ic.icn3dui.cfg.align === undefined && Object.keys(ic.structures).length == 1) {
+        if(me.cfg.align === undefined && Object.keys(ic.structures).length == 1) {
             $("#" + ic.pre + "alternateWrapper").hide();
+        }
+
+        if(me.cfg.afid) {
+            ic.opts['color'] = 'confidence';
+
+            let  legendHtml = me.htmlCls.clickMenuCls.setLegendHtml(true);
+            $("#" + me.pre + "legend").removeClass('icn3d-legend');
+            $("#" + me.pre + "legend").addClass('icn3d-legend2');
+            $("#" + me.pre + "legend").html(legendHtml).show();
         }
 
         ic.setStyleCls.setAtomStyleByOptions(ic.opts);
@@ -23130,9 +23176,9 @@ class PdbParser {
 
         ic.saveFileCls.showTitle();
 
-        if(ic.icn3dui.cfg.rotate !== undefined) ic.resizeCanvasCls.rotStruc(ic.icn3dui.cfg.rotate, true);
+        if(me.cfg.rotate !== undefined) ic.resizeCanvasCls.rotStruc(me.cfg.rotate, true);
 
-    //    if(ic.icn3dui.deferred !== undefined) ic.icn3dui.deferred.resolve(); if(ic.deferred2 !== undefined) ic.deferred2.resolve();
+    //    if(me.deferred !== undefined) me.deferred.resolve(); if(ic.deferred2 !== undefined) ic.deferred2.resolve();
     }
 }
 
@@ -23579,7 +23625,7 @@ class MmtfParser {
 
         ic.ParserUtilsCls.transformToOpmOri(mmtfid);
 
-        if(ic.icn3dui.cfg.align === undefined && Object.keys(ic.structures).length == 1) {
+        if(me.cfg.align === undefined && Object.keys(ic.structures).length == 1) {
             $("#" + ic.pre + "alternateWrapper").hide();
         }
 
@@ -23590,9 +23636,9 @@ class MmtfParser {
 
         ic.saveFileCls.showTitle();
 
-        if(ic.icn3dui.cfg.rotate !== undefined) ic.resizeCanvasCls.rotStruc(ic.icn3dui.cfg.rotate, true);
+        if(me.cfg.rotate !== undefined) ic.resizeCanvasCls.rotStruc(me.cfg.rotate, true);
 
-        //if(ic.icn3dui.deferred !== undefined) ic.icn3dui.deferred.resolve(); if(ic.deferred2 !== undefined) ic.deferred2.resolve();
+        //if(me.deferred !== undefined) me.deferred.resolve(); if(ic.deferred2 !== undefined) ic.deferred2.resolve();
     }
 }
 
@@ -23615,16 +23661,16 @@ class AlignParser {
         //var ids_str =(alignArray.length === 2? 'uids=' : 'ids=') + align;
         let  ids_str = 'ids=' + align;
 
-    //    let  url2 = ic.icn3dui.htmlCls.baseUrl + 'vastplus/vastplus.cgi?v=2&cmd=c&b=1&s=1&w3d&' + ids_str;
-    //    let  url2 = ic.icn3dui.htmlCls.baseUrl + 'vastplus/vastplus.cgi?v=2&cmd=c&b=1&s=1&w3d&' + ids_str;
-    //    let  url1 = ic.icn3dui.htmlCls.baseUrl + 'vastplus/vastplus.cgi?v=2&cmd=c1&b=1&s=1&d=1&' + ids_str;
+    //    let  url2 = me.htmlCls.baseUrl + 'vastplus/vastplus.cgi?v=2&cmd=c&b=1&s=1&w3d&' + ids_str;
+    //    let  url2 = me.htmlCls.baseUrl + 'vastplus/vastplus.cgi?v=2&cmd=c&b=1&s=1&w3d&' + ids_str;
+    //    let  url1 = me.htmlCls.baseUrl + 'vastplus/vastplus.cgi?v=2&cmd=c1&b=1&s=1&d=1&' + ids_str;
 
         // combined url1 and url2
-        let  url2 = ic.icn3dui.htmlCls.baseUrl + 'vastplus/vastplus.cgi?v=3&cmd=c&b=1&s=1&w3d&' + ids_str;
+        let  url2 = me.htmlCls.baseUrl + 'vastplus/vastplus.cgi?v=3&cmd=c&b=1&s=1&w3d&' + ids_str;
 
-        if(ic.icn3dui.cfg.inpara !== undefined) {
-          //url1 += ic.icn3dui.cfg.inpara;
-          url2 += ic.icn3dui.cfg.inpara;
+        if(me.cfg.inpara !== undefined) {
+          //url1 += me.cfg.inpara;
+          url2 += me.cfg.inpara;
         }
 
         ic.bCid = undefined;
@@ -23692,7 +23738,7 @@ class AlignParser {
                   ic.pdbid_molid2chain[pdbid + '_' + molid] = finalChain;
 
                   if(molecule.kind === 'p' || molecule.kind === 'n') {
-                      ic.chainsColor[pdbid + '_' + finalChain] = me.parasCls.thr(ic.icn3dui.htmlCls.GREY8);
+                      ic.chainsColor[pdbid + '_' + finalChain] = me.parasCls.thr(me.htmlCls.GREY8);
                   }
                 }
             }
@@ -23739,11 +23785,11 @@ class AlignParser {
                 ic.alignmolid2color.push(tmpHash);
             }
 
-            //var url3 = ic.icn3dui.htmlCls.baseUrl + 'mmdb/mmdb_strview.cgi?v=2&program=icn3d&b=1&s=1&ft=1&atomonly=1&uid=' + ic.mmdbidArray[0];
-            //var url4 = ic.icn3dui.htmlCls.baseUrl + 'mmdb/mmdb_strview.cgi?v=2&program=icn3d&b=1&s=1&ft=1&atomonly=1&uid=' + ic.mmdbidArray[1];
+            //var url3 = me.htmlCls.baseUrl + 'mmdb/mmdb_strview.cgi?v=2&program=icn3d&b=1&s=1&ft=1&atomonly=1&uid=' + ic.mmdbidArray[0];
+            //var url4 = me.htmlCls.baseUrl + 'mmdb/mmdb_strview.cgi?v=2&program=icn3d&b=1&s=1&ft=1&atomonly=1&uid=' + ic.mmdbidArray[1];
             // need the parameter moleculeInfor
-            let  url3 = ic.icn3dui.htmlCls.baseUrl + 'mmdb/mmdb_strview.cgi?v=2&program=icn3d&b=1&s=1&ft=1&uid=' + ic.mmdbidArray[0];
-            let  url4 = ic.icn3dui.htmlCls.baseUrl + 'mmdb/mmdb_strview.cgi?v=2&program=icn3d&b=1&s=1&ft=1&uid=' + ic.mmdbidArray[1];
+            let  url3 = me.htmlCls.baseUrl + 'mmdb/mmdb_strview.cgi?v=2&program=icn3d&b=1&s=1&ft=1&uid=' + ic.mmdbidArray[0];
+            let  url4 = me.htmlCls.baseUrl + 'mmdb/mmdb_strview.cgi?v=2&program=icn3d&b=1&s=1&ft=1&uid=' + ic.mmdbidArray[1];
 
             let  d3 = $.ajax({
               url: url3,
@@ -23881,11 +23927,11 @@ class AlignParser {
         });
     }
 
-    downloadAlignmentPart2(data, seqalign, chainresiCalphaHash2) { let ic = this.icn3d; ic.icn3dui;
+    downloadAlignmentPart2(data, seqalign, chainresiCalphaHash2) { let  ic = this.icn3d, me = ic.icn3dui;
         //ic.init();
         ic.loadAtomDataCls.loadAtomDataIn(data, undefined, 'align', seqalign);
 
-        if(ic.icn3dui.cfg.align === undefined && Object.keys(ic.structures).length == 1) {
+        if(me.cfg.align === undefined && Object.keys(ic.structures).length == 1) {
             $("#" + ic.pre + "alternateWrapper").hide();
         }
 
@@ -23906,21 +23952,21 @@ class AlignParser {
 
         ic.ParserUtilsCls.renderStructure();
 
-        if(ic.icn3dui.cfg.rotate !== undefined) ic.resizeCanvasCls.rotStruc(ic.icn3dui.cfg.rotate, true);
+        if(me.cfg.rotate !== undefined) ic.resizeCanvasCls.rotStruc(me.cfg.rotate, true);
 
         ic.html2ddgm = '';
 
         // by default, open the seq alignment window
-        //if(ic.icn3dui.cfg.show2d !== undefined && ic.icn3dui.cfg.show2d) ic.icn3dui.htmlCls.dialogCls.openDlg('dl_2ddgm', 'Interactions');
-        if(ic.icn3dui.cfg.showalignseq) {
-            ic.icn3dui.htmlCls.dialogCls.openDlg('dl_alignment', 'Select residues in aligned sequences');
+        //if(me.cfg.show2d !== undefined && me.cfg.show2d) me.htmlCls.dialogCls.openDlg('dl_2ddgm', 'Interactions');
+        if(me.cfg.showalignseq) {
+            me.htmlCls.dialogCls.openDlg('dl_alignment', 'Select residues in aligned sequences');
         }
 
-        if(ic.icn3dui.cfg.show2d && ic.bFullUi) {
+        if(me.cfg.show2d && ic.bFullUi) {
             ic.ParserUtilsCls.set2DDiagramsForAlign(ic.mmdbidArray[0].toUpperCase(), ic.mmdbidArray[1].toUpperCase());
         }
 
-        //if(ic.icn3dui.deferred !== undefined) ic.icn3dui.deferred.resolve(); if(ic.deferred2 !== undefined) ic.deferred2.resolve();
+        //if(me.deferred !== undefined) me.deferred.resolve(); if(ic.deferred2 !== undefined) ic.deferred2.resolve();
     }
 
     loadOpmDataForAlign(data, seqalign, mmdbidArray) { let ic = this.icn3d; ic.icn3dui;
@@ -24218,7 +24264,7 @@ class MmdbParser {
           let  chain = id + '_' + chainNameFinal;
           molid2chain[i] = chain;
 
-          ic.chainsColor[chain] =(type !== undefined) ? me.parasCls.thr(ic.icn3dui.htmlCls.GREY8) : me.parasCls.thr(color);
+          ic.chainsColor[chain] =(type !== undefined) ? me.parasCls.thr(me.htmlCls.GREY8) : me.parasCls.thr(color);
 
           let  geneId =(molid2rescount[i].geneId === undefined) ? '' : molid2rescount[i].geneId;
           let  geneSymbol =(molid2rescount[i].geneSymbol === undefined) ? '' : molid2rescount[i].geneSymbol;
@@ -24276,19 +24322,19 @@ class MmdbParser {
        // b: b-factor, s: water, ft: pdbsite
        //&ft=1
        if(bGi) {
-           url = ic.icn3dui.htmlCls.baseUrl + "mmdb/mmdb_strview.cgi?v=2&program=icn3d&b=1&s=1&ft=1&simple=1&gi=" + mmdbid;
+           url = me.htmlCls.baseUrl + "mmdb/mmdb_strview.cgi?v=2&program=icn3d&b=1&s=1&ft=1&simple=1&gi=" + mmdbid;
        }
        else {
-           url = ic.icn3dui.htmlCls.baseUrl + "mmdb/mmdb_strview.cgi?v=2&program=icn3d&b=1&s=1&ft=1&simple=1&uid=" + mmdbid;
+           url = me.htmlCls.baseUrl + "mmdb/mmdb_strview.cgi?v=2&program=icn3d&b=1&s=1&ft=1&simple=1&uid=" + mmdbid;
        }
 
        // use asymmetric unit for BLAST search, e.g., https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?from=blast&blast_rep_id=5XZC_B&query_id=1TUP_A&command=view+annotations;set+annotation+cdd;set+annotation+site;set+view+detailed+view;select+chain+5XZC_B;show+selection&log$=align&blast_rank=1&RID=EPUCYNVV014&buidx=0
-       if(ic.icn3dui.cfg.blast_rep_id !== undefined) url += '&buidx=0';
+       if(me.cfg.blast_rep_id !== undefined) url += '&buidx=0';
 
        ic.bCid = undefined;
 
-       if(ic.icn3dui.cfg.inpara !== undefined) {
-         url += ic.icn3dui.cfg.inpara;
+       if(me.cfg.inpara !== undefined) {
+         url += me.cfg.inpara;
        }
 
        if(ic.chainids2resids === undefined) ic.chainids2resids = {}; // ic.chainids2resids[chainid1][chainid2] = [resid, resid]
@@ -24349,7 +24395,7 @@ class MmdbParser {
                       alert("This gi " + mmdbid + " has no corresponding 3D structure...");
                     }
                     else {
-                      alert("This mmdbid " + mmdbid + " with the parameters " + ic.icn3dui.cfg.inpara + " may not have 3D structure data. Please visit the summary page for details: " + ic.icn3dui.htmlCls.baseUrl + "pdb/" + mmdbid);
+                      alert("This mmdbid " + mmdbid + " with the parameters " + me.cfg.inpara + " may not have 3D structure data. Please visit the summary page for details: " + me.htmlCls.baseUrl + "pdb/" + mmdbid);
                     }
 
                     return;
@@ -24369,7 +24415,7 @@ class MmdbParser {
               alert("This gi " + mmdbid + " has no corresponding 3D structure...");
             }
             else {
-              alert("This mmdbid " + mmdbid + " with the parameters " + ic.icn3dui.cfg.inpara + " may not have 3D structure data. Please visit the summary page for details: " + ic.icn3dui.htmlCls.baseUrl + "pdb/" + mmdbid);
+              alert("This mmdbid " + mmdbid + " with the parameters " + me.cfg.inpara + " may not have 3D structure data. Please visit the summary page for details: " + me.htmlCls.baseUrl + "pdb/" + mmdbid);
             }
 
             return;
@@ -24377,7 +24423,7 @@ class MmdbParser {
         }); // ajax
     }
 
-    downloadMmdbPart2(type) { let ic = this.icn3d; ic.icn3dui;
+    downloadMmdbPart2(type) { let  ic = this.icn3d, me = ic.icn3dui;
         if(ic.bAssemblyUseAsu) { // set up symmetric matrices
             $("#" + ic.pre + "assemblyWrapper").show();
             ic.bAssembly = true;
@@ -24400,7 +24446,7 @@ class MmdbParser {
 
         ic.setStyleCls.setAtomStyleByOptions(ic.opts);
         // use the original color from cgi output
-        if(ic.icn3dui.cfg.blast_rep_id !== undefined) {
+        if(me.cfg.blast_rep_id !== undefined) {
           ic.setColorCls.setColorByOptions(ic.opts, ic.atoms);
         }
         else {
@@ -24409,11 +24455,11 @@ class MmdbParser {
 
         if(type === undefined) {
             ic.ParserUtilsCls.renderStructure();
-            if(ic.icn3dui.cfg.rotate !== undefined) ic.resizeCanvasCls.rotStruc(ic.icn3dui.cfg.rotate, true);
+            if(me.cfg.rotate !== undefined) ic.resizeCanvasCls.rotStruc(me.cfg.rotate, true);
 
             ic.html2ddgm = '';
-            if(ic.icn3dui.cfg.show2d) {
-                ic.icn3dui.htmlCls.dialogCls.openDlg('dl_2ddgm', 'Interactions');
+            if(me.cfg.show2d) {
+                me.htmlCls.dialogCls.openDlg('dl_2ddgm', 'Interactions');
                 if(ic.bFullUi) {
                     //if(type === undefined) {
                         ic.ParserUtilsCls.download2Ddgm(ic.inputid.toUpperCase());
@@ -24426,11 +24472,11 @@ class MmdbParser {
             }
         }
 
-        if((ic.icn3dui.cfg.align === undefined || ic.icn3dui.cfg.chainalign === undefined) && Object.keys(ic.structures).length == 1) {
+        if((me.cfg.align === undefined || me.cfg.chainalign === undefined) && Object.keys(ic.structures).length == 1) {
             if($("#" + ic.pre + "alternateWrapper") !== null) $("#" + ic.pre + "alternateWrapper").hide();
         }
 
-        //if(ic.icn3dui.deferred !== undefined) ic.icn3dui.deferred.resolve(); if(ic.deferred2 !== undefined) ic.deferred2.resolve();
+        //if(me.deferred !== undefined) me.deferred.resolve(); if(ic.deferred2 !== undefined) ic.deferred2.resolve();
     }
 
     //Ajax call was used to get the atom data from the NCBI "gi". This function was deferred so that
@@ -24448,14 +24494,14 @@ class MmdbParser {
     //This function was deferred so that it can be chained together with other deferred functions for
     //sequential execution. Note that only one structure corresponding to the blast_rep_id will be shown.
     //If there is no structures available for the blast_rep_id, a warning message will be shown.
-    downloadBlast_rep_id(sequence_structure_ids) { let ic = this.icn3d; ic.icn3dui;
+    downloadBlast_rep_id(sequence_structure_ids) { let  ic = this.icn3d, me = ic.icn3dui;
         ic.bCid = undefined;
 
         let  idArray = sequence_structure_ids.split(',');
-        ic.icn3dui.cfg.query_id = idArray[0];
-        ic.icn3dui.cfg.blast_rep_id = idArray[1];
+        me.cfg.query_id = idArray[0];
+        me.cfg.blast_rep_id = idArray[1];
 
-        let  mmdbid = ic.icn3dui.cfg.blast_rep_id.split('_')[0];
+        let  mmdbid = me.cfg.blast_rep_id.split('_')[0];
 
         this.downloadMmdb(mmdbid);
     }
@@ -24650,7 +24696,7 @@ class RealignParser {
           let  fromStruct = chainidArray[index + 1].substr(0, chainidArray[index + 1].indexOf('_')); //.toUpperCase();
           fromStruct = fromStruct.toUpperCase();
 
-          if(toStruct == fromStruct) fromStruct += ic.icn3dui.htmlCls.postfix;
+          if(toStruct == fromStruct) fromStruct += me.htmlCls.postfix;
 
           let  seq1 = struct2SeqHash[toStruct];
           let  seq2 = struct2SeqHash[fromStruct];
@@ -24702,7 +24748,7 @@ class RealignParser {
           let  fromStruct = chainidArray[index + 1].substr(0, chainidArray[index + 1].indexOf('_')); //.toUpperCase();
           if(!bRealign) fromStruct = fromStruct.toUpperCase();
 
-          if(toStruct == fromStruct) fromStruct += ic.icn3dui.htmlCls.postfix;
+          if(toStruct == fromStruct) fromStruct += me.htmlCls.postfix;
 
           let  seq1 = struct2SeqHash[toStruct];
           let  seq2 = struct2SeqHash[fromStruct];
@@ -24773,13 +24819,13 @@ class RealignParser {
               //ic.hlUpdateCls.updateHlAll();
           }
           else {
-              if(fromStruct === undefined && !ic.icn3dui.cfg.command) {
+              if(fromStruct === undefined && !me.cfg.command) {
                  alert('Please do not align residues in the same structure');
               }
-              else if((seq1.length < 6 || seq2.length < 6) && !ic.icn3dui.cfg.command) {
+              else if((seq1.length < 6 || seq2.length < 6) && !me.cfg.command) {
                  alert('These sequences are too short for alignment');
               }
-              else if(seq1.length >= 6 && seq2.length >= 6 && !ic.icn3dui.cfg.command) {
+              else if(seq1.length >= 6 && seq2.length >= 6 && !me.cfg.command) {
                  alert('These sequences can not be aligned to each other');
               }
           }
@@ -24858,7 +24904,7 @@ class RealignParser {
                 mmdbid_t = mmdbid;
             }
             else if(mmdbid_t == mmdbid) {
-                mmdbid += ic.icn3dui.htmlCls.postfix;
+                mmdbid += me.htmlCls.postfix;
             }
 
             let  chainid = mmdbid + chainidArray[i].substr(pos);
@@ -24892,7 +24938,7 @@ class RealignParser {
                     resiArray = predefinedRes.split(",");
                 }
                 else {
-                    resiArray = ic.icn3dui.cfg.resnum.split(",");
+                    resiArray = me.cfg.resnum.split(",");
                 }
 
                 for(let j = 0, jl = resiArray.length; j < jl; ++j) {
@@ -25018,10 +25064,10 @@ class ChainalignParser {
             hAtoms = me.hashUtilsCls.unionHash(hAtoms, hAtomsTmp);
         }
 
-        if(ic.icn3dui.cfg.resnum) {
+        if(me.cfg.resnum) {
             ic.realignParserCls.realignChainOnSeqAlign(chainresiCalphaHash2, chainidArray);
         }
-        else if(ic.icn3dui.cfg.resdef) {
+        else if(me.cfg.resdef) {
             ic.realignParserCls.realignChainOnSeqAlign(chainresiCalphaHash2, chainidArray, undefined, true);
         }
         else {
@@ -25029,7 +25075,7 @@ class ChainalignParser {
         }
     }
 
-    downloadChainalignmentPart3(chainresiCalphaHash2, chainidArray, hAtoms) { let ic = this.icn3d; ic.icn3dui;
+    downloadChainalignmentPart3(chainresiCalphaHash2, chainidArray, hAtoms) { let  ic = this.icn3d, me = ic.icn3dui;
         // select all
         let  allAtoms = {};
         for(let i in ic.atoms) {
@@ -25069,18 +25115,18 @@ class ChainalignParser {
 
         ic.hlUpdateCls.updateHlAll();
 
-        if(ic.icn3dui.cfg.rotate !== undefined) ic.resizeCanvasCls.rotStruc(ic.icn3dui.cfg.rotate, true);
+        if(me.cfg.rotate !== undefined) ic.resizeCanvasCls.rotStruc(me.cfg.rotate, true);
 
         ic.html2ddgm = '';
 
         // by default, open the seq alignment window
-        //if(ic.icn3dui.cfg.show2d !== undefined && ic.icn3dui.cfg.show2d) ic.icn3dui.htmlCls.dialogCls.openDlg('dl_2ddgm', 'Interactions');
-        if(ic.icn3dui.cfg.showalignseq) {
-            ic.icn3dui.htmlCls.dialogCls.openDlg('dl_alignment', 'Select residues in aligned sequences');
+        //if(me.cfg.show2d !== undefined && me.cfg.show2d) me.htmlCls.dialogCls.openDlg('dl_2ddgm', 'Interactions');
+        if(me.cfg.showalignseq) {
+            me.htmlCls.dialogCls.openDlg('dl_alignment', 'Select residues in aligned sequences');
         }
 
-        if(ic.icn3dui.cfg.show2d && ic.bFullUi) {
-            ic.icn3dui.htmlCls.dialogCls.openDlg('dl_2ddgm', 'Interactions');
+        if(me.cfg.show2d && ic.bFullUi) {
+            me.htmlCls.dialogCls.openDlg('dl_2ddgm', 'Interactions');
             if(ic.bFullUi) {
                 if(!ic.bChainAlign) {
                     ic.ParserUtilsCls.download2Ddgm(ic.inputid.toUpperCase());
@@ -25092,10 +25138,10 @@ class ChainalignParser {
             }
         }
 
-        //if(ic.icn3dui.deferred !== undefined) ic.icn3dui.deferred.resolve(); if(ic.deferred2 !== undefined) ic.deferred2.resolve();
+        //if(me.deferred !== undefined) me.deferred.resolve(); if(ic.deferred2 !== undefined) ic.deferred2.resolve();
     }
 
-    downloadChainalignment(chainalign, resnum, resdef) { let ic = this.icn3d; ic.icn3dui;
+    downloadChainalignment(chainalign, resnum, resdef) { let  ic = this.icn3d, me = ic.icn3dui;
         let  thisClass = this;
 
         ic.opts['proteins'] = 'c alpha trace';
@@ -25113,8 +25159,8 @@ class ChainalignParser {
         let  pos1 = alignArray[0].indexOf('_');
         ic.mmdbid_t = alignArray[0].substr(0, pos1).toUpperCase();
         ic.chain_t = alignArray[0].substr(pos1+1);
-        let  url_t = ic.icn3dui.htmlCls.baseUrl + "mmdb/mmdb_strview.cgi?v=2&program=icn3d&b=1&s=1&ft=1&uid=" + ic.mmdbid_t;
-        if(ic.icn3dui.cfg.inpara !== undefined) url_t += ic.icn3dui.cfg.inpara;
+        let  url_t = me.htmlCls.baseUrl + "mmdb/mmdb_strview.cgi?v=2&program=icn3d&b=1&s=1&ft=1&uid=" + ic.mmdbid_t;
+        if(me.cfg.inpara !== undefined) url_t += me.cfg.inpara;
 
         let  ajaxArray = [];
         let  targetAjax = $.ajax({
@@ -25138,10 +25184,10 @@ class ChainalignParser {
 
             let  chainalignFinal = ic.mmdbid_q + "_" + ic.chain_q + "," + ic.mmdbid_t + "_" + ic.chain_t;
 
-            let  urlalign = ic.icn3dui.htmlCls.baseUrl + "vastdyn/vastdyn.cgi?chainpairs=" + chainalignFinal;
-            let  url_q = ic.icn3dui.htmlCls.baseUrl + "mmdb/mmdb_strview.cgi?v=2&program=icn3d&b=1&s=1&ft=1&uid=" + ic.mmdbid_q;
+            let  urlalign = me.htmlCls.baseUrl + "vastdyn/vastdyn.cgi?chainpairs=" + chainalignFinal;
+            let  url_q = me.htmlCls.baseUrl + "mmdb/mmdb_strview.cgi?v=2&program=icn3d&b=1&s=1&ft=1&uid=" + ic.mmdbid_q;
 
-            if(ic.icn3dui.cfg.inpara !== undefined) url_q += ic.icn3dui.cfg.inpara;
+            if(me.cfg.inpara !== undefined) url_q += me.cfg.inpara;
 
             let  queryAjax = $.ajax({
               url: url_q,
@@ -25151,7 +25197,7 @@ class ChainalignParser {
 
             ajaxArray.push(queryAjax);
 
-            if(!ic.icn3dui.cfg.resnum && !ic.icn3dui.cfg.resdef) {
+            if(!me.cfg.resnum && !me.cfg.resdef) {
                 let  alignAjax = $.ajax({
                   url: urlalign,
                   dataType: 'jsonp',
@@ -25174,7 +25220,7 @@ class ChainalignParser {
         });
     }
 
-    parseChainAlignData(dataArray, chainidArray, mmdbid_t, chain_t) { let ic = this.icn3d; ic.icn3dui;
+    parseChainAlignData(dataArray, chainidArray, mmdbid_t, chain_t) { let  ic = this.icn3d, me = ic.icn3dui;
 
         //var dataArray =(chainidArray.length == 1) ? [data] : data;
 
@@ -25193,7 +25239,7 @@ class ChainalignParser {
 
         let  queryDataArray = [];
 
-        let  step =(ic.icn3dui.cfg.resnum || ic.icn3dui.cfg.resdef) ? 1 : 2;
+        let  step =(me.cfg.resnum || me.cfg.resdef) ? 1 : 2;
 
         for(let index = 1, indexl = dataArray.length; index < indexl; index += step) {
             let  queryData = dataArray[index][0];
@@ -25203,7 +25249,7 @@ class ChainalignParser {
             let  mmdbid_q = chainidArray[index2].substr(0, pos2).toUpperCase();
             let  chain_q = chainidArray[index2].substr(pos2+1);
 
-            if(ic.icn3dui.cfg.resnum || ic.icn3dui.cfg.resdef) {
+            if(me.cfg.resnum || me.cfg.resdef) {
                 if(queryData !== undefined && JSON.stringify(queryData).indexOf('Oops there was a problem') === -1
                   ) {
                     ic.mmdbidArray.push(mmdbid_q);
@@ -25228,10 +25274,10 @@ class ChainalignParser {
                         ic.qt_start_end.push(undefined);
                     }
                     else if(align === undefined || align.length == 0) {
-                        if(!ic.icn3dui.cfg.command) alert('These two chains ' + chainidArray[index2] + ' can not align to each other. ' + 'Please select sequences from these two chains in the "Sequences & Annotations" window, ' + 'and click "Realign Selection" in the "File" menu to align your selection.');
+                        if(!me.cfg.command) alert('These two chains ' + chainidArray[index2] + ' can not align to each other. ' + 'Please select sequences from these two chains in the "Sequences & Annotations" window, ' + 'and click "Realign Selection" in the "File" menu to align your selection.');
 
-                        ic.icn3dui.cfg.showanno = 1;
-                        ic.icn3dui.cfg.showalignseq = 0;
+                        me.cfg.showanno = 1;
+                        me.cfg.showalignseq = 0;
                     }
                     else {
                         ic.t_trans_add.push(align[0].t_trans_add);
@@ -25252,17 +25298,17 @@ class ChainalignParser {
         this.loadOpmDataForChainalign(targetData, queryDataArray, chainidArray, ic.mmdbidArray);
     }
 
-    loadOpmDataForChainalign(data1, data2, chainidArray, mmdbidArray) { let ic = this.icn3d; ic.icn3dui;
+    loadOpmDataForChainalign(data1, data2, chainidArray, mmdbidArray) { let  ic = this.icn3d, me = ic.icn3dui;
         let  thisClass = this;
 
-        if(ic.icn3dui.cfg.resnum || ic.icn3dui.cfg.resdef) {
+        if(me.cfg.resnum || me.cfg.resdef) {
             if(!ic.bCommandLoad) ic.init(); // remove all previously loaded data
             this.downloadChainalignmentPart2(data1, data2, undefined, chainidArray);
 
             if(ic.deferredOpm !== undefined) ic.deferredOpm.resolve();
         }
         else {
-            let  url = ic.icn3dui.htmlCls.baseUrl + "vastdyn/vastdyn.cgi?mmdbids2opm=" + mmdbidArray.join("','");
+            let  url = me.htmlCls.baseUrl + "vastdyn/vastdyn.cgi?mmdbids2opm=" + mmdbidArray.join("','");
 
             $.ajax({
               url: url,
@@ -25604,13 +25650,13 @@ class Dsn6Parser {
                ic.bAjaxfofc = true;
            }
            ic.setOptionCls.setOption('map', type);
-           ic.icn3dui.htmlCls.clickMenuCls.setLogCmd('load dsn6 file ' + $("#" + ic.pre + "dsn6file" + type).val(), false);
+           me.htmlCls.clickMenuCls.setLogCmd('load dsn6 file ' + $("#" + ic.pre + "dsn6file" + type).val(), false);
          };
          reader.readAsArrayBuffer(file);
        }
     }
 
-    loadDsn6FileUrl(type) {var ic = this.icn3d; ic.icn3dui;
+    loadDsn6FileUrl(type) {var ic = this.icn3d, me = ic.icn3dui;
        let  url = $("#" + ic.pre + "dsn6fileurl" + type).val();
        let  sigma = $("#" + ic.pre + "dsn6sigmaurl" + type).val();
        if(!url) {
@@ -25618,7 +25664,7 @@ class Dsn6Parser {
        }
        else {
            this.dsn6ParserBase(url, type, sigma);
-           ic.icn3dui.htmlCls.clickMenuCls.setLogCmd('set map ' + type + ' sigma ' + sigma + ' | ' + encodeURIComponent(url), true);
+           me.htmlCls.clickMenuCls.setLogCmd('set map ' + type + ' sigma ' + sigma + ' | ' + encodeURIComponent(url), true);
        }
     }
 
@@ -25634,34 +25680,47 @@ class Cartoon2d {
     }
 
     draw2Dcartoon(type) { let ic = this.icn3d, me = ic.icn3dui;
+        me.htmlCls.clickMenuCls.setLogCmd("cartoon 2d " + type, true);
+        this.draw2Dcartoon_base(type);
+    }
+
+    draw2Dcartoon_base(type, bResize) { let ic = this.icn3d, me = ic.icn3dui;
         let thisClass = this;
 
-        ic.icn3dui.htmlCls.clickMenuCls.setLogCmd("cartoon 2d " + type, true);
+        ic.cartoon2dType = type;
+
         //ic.bGraph = false; // differentiate from force-directed graph for interactions
 
-        if(type == 'domain' && !ic.chainid2pssmid) {
-            $.when(thisClass.getNodesLinksForSetCartoon(type)).then(function() {
-               ic.graphStr = thisClass.getCartoonData(type, ic.node_link);
-               //ic.viewInterPairsCls.drawGraphWrapper(ic.graphStr, ic.deferredCartoon2d, true);
-               let html = thisClass.getCartoonSvg(type, ic.graphStr);
-               $("#" + me.svgid_ct).html(html);
-               thisClass.setEventsForCartoon2d();
-
-               ic.icn3dui.htmlCls.dialogCls.openDlg('dl_2dctn', '2D Cartoon');
-
-               if(ic.deferredCartoon2d !== undefined) ic.deferredCartoon2d.resolve();
-            });
+        if(bResize) {
+            let html = thisClass.getCartoonSvg(type, ic.graphStr);
+            $("#" + me.svgid_ct).html(html);
         }
         else {
-            this.getNodesLinksForSetCartoonBase(type);
-            ic.graphStr = thisClass.getCartoonData(type, ic.node_link);
-            //ic.viewInterPairsCls.drawGraphWrapper(ic.graphStr, ic.deferredCartoon2d, true);
-            let html = thisClass.getCartoonSvg(type, ic.graphStr);
+            if(type == 'domain' && !ic.chainid2pssmid) {
+                $.when(thisClass.getNodesLinksForSetCartoon(type)).then(function() {
+                   ic.graphStr = thisClass.getCartoonData(type, ic.node_link);
+                   //ic.viewInterPairsCls.drawGraphWrapper(ic.graphStr, ic.deferredCartoon2d, true);
+                   let html = thisClass.getCartoonSvg(type, ic.graphStr);
+                   $("#" + me.svgid_ct).html(html);
+                   thisClass.setEventsForCartoon2d();
 
-            $("#" + me.svgid_ct).html(html);
-            thisClass.setEventsForCartoon2d();
+                   me.htmlCls.dialogCls.openDlg('dl_2dctn', '2D Cartoon');
 
-            ic.icn3dui.htmlCls.dialogCls.openDlg('dl_2dctn', '2D Cartoon');
+                   if(ic.deferredCartoon2d !== undefined) ic.deferredCartoon2d.resolve();
+                });
+            }
+            else {
+                this.getNodesLinksForSetCartoonBase(type);
+                ic.graphStr = thisClass.getCartoonData(type, ic.node_link);
+
+                //ic.viewInterPairsCls.drawGraphWrapper(ic.graphStr, ic.deferredCartoon2d, true);
+                let html = thisClass.getCartoonSvg(type, ic.graphStr);
+
+                $("#" + me.svgid_ct).html(html);
+                thisClass.setEventsForCartoon2d();
+
+                me.htmlCls.dialogCls.openDlg('dl_2dctn', '2D Cartoon');
+            }
         }
     }
 
@@ -25879,8 +25938,8 @@ class Cartoon2d {
     }
 
     drawHelix(type, id, ss, x, y, x1, y1, x2, y2, length, angle, color) { let ic = this.icn3d, me = ic.icn3dui;
-        let helixstrokewidth = '4';
-        let helixstrokewidth2 = '2';
+        let helixstrokewidth = '3';
+        let helixstrokewidth2 = '1';
         let textcolor = '#000000';
         let adjustx = 0, adjusty = 4;
 
@@ -26020,7 +26079,7 @@ class Cartoon2d {
 
        let nodeArray = [], linkArray = [];
        let cnt = 0;
-       let thickness = ic.icn3dui.htmlCls.defaultValue; // 1
+       let thickness = me.htmlCls.defaultValue; // 1
 
        let prevChain = '', prevResName = '', prevAtom, lastChain = '';
        let x, y;
@@ -26170,6 +26229,15 @@ class Cartoon2d {
                        let x2 = v2b.x;
                        let y2 = v2b.y;
 
+                       x = 0.5 * (x1 + x2);
+                       y = 0.5 * (y1 + y2);
+
+                       // use half length of the helix or sheet to make the display clear
+                       x1 = 0.5 * (x + x1);
+                       y1 = 0.5 * (y + y1);
+                       x2 = 0.5 * (x + x2);
+                       y2 = 0.5 * (y + y2);
+
                        if(x1 < minX) minX = x1;
                        if(x1 > maxX) maxX = x1;
                        if(y1 < minY) minY = y1;
@@ -26179,9 +26247,6 @@ class Cartoon2d {
                        if(x2 > maxX) maxX = x2;
                        if(y2 < minY) minY = y2;
                        if(y2 > maxY) maxY = y2;
-
-                       x = 0.5 * (x1 + x2);
-                       y = 0.5 * (y1 + y2);
 
                        bBegin = false;
                        bEnd = true;
@@ -26240,7 +26305,7 @@ class Cartoon2d {
 
     getNodesLinksForDomains(chainid2pssmid) { let ic = this.icn3d, me = ic.icn3dui;
        let nodeArray = [], linkArray = [];
-       let thickness = ic.icn3dui.htmlCls.defaultValue; // 1
+       let thickness = me.htmlCls.defaultValue; // 1
 
        ic.resi2resirange = {};
 
@@ -26495,7 +26560,7 @@ class Cartoon2d {
             ic.annotationCls.showAnnoSelectedChains();
 
             let select = (type == 'chain') ? "select chain " + chainid : "select " + ic.resid2specCls.residueids2spec(residArray);
-            ic.icn3dui.htmlCls.clickMenuCls.setLogCmd(select, true);
+            me.htmlCls.clickMenuCls.setLogCmd(select, true);
 
             ic.bSelectResidue = false;
         });
@@ -26860,7 +26925,7 @@ class LoadScript {
 
               return;
           }
-          else if(ic.commands[i].trim().indexOf('view interactions') == 0 && ic.icn3dui.cfg.align !== undefined) { // the command may have "|||{"factor"...
+          else if(ic.commands[i].trim().indexOf('view interactions') == 0 && me.cfg.align !== undefined) { // the command may have "|||{"factor"...
               let  strArray = ic.commands[i].split("|||");
 
               if(ic.b2DShown === undefined || !ic.b2DShown) {
@@ -26886,7 +26951,7 @@ class LoadScript {
             if(title !== 'none') {
                 if(ic.symmetryHash === undefined) {
                     $.when(thisClass.applyCommandSymmetry(command)).then(function() {
-                       //if(!ic.icn3dui.cfg.notebook && dialog && dialog.hasClass("ui-dialog-content")) dialog.dialog( "close" );
+                       //if(!me.cfg.notebook && dialog && dialog.hasClass("ui-dialog-content")) dialog.dialog( "close" );
 
                        ic.drawCls.draw();
                        thisClass.execCommandsBase(i + 1, end, steps);
@@ -26916,7 +26981,7 @@ class LoadScript {
             //if(title !== 'none') {
     //            if(ic.symdHash === undefined) {
                     $.when(ic.symdCls.applyCommandSymd(command)).then(function() {
-                       //if(!ic.icn3dui.cfg.notebook && dialog && dialog.hasClass("ui-dialog-content")) dialog.dialog( "close" );
+                       //if(!me.cfg.notebook && dialog && dialog.hasClass("ui-dialog-content")) dialog.dialog( "close" );
 
                        ic.drawCls.draw();
                        thisClass.execCommandsBase(i + 1, end, steps);
@@ -26939,7 +27004,7 @@ class LoadScript {
             let  command = strArray[0].trim();
 
             $.when(ic.scapCls.applyCommandScap(command)).then(function() {
-               //if(!ic.icn3dui.cfg.notebook && dialog && dialog.hasClass("ui-dialog-content")) dialog.dialog( "close" );
+               //if(!me.cfg.notebook && dialog && dialog.hasClass("ui-dialog-content")) dialog.dialog( "close" );
 
                //ic.drawCls.draw();
                thisClass.execCommandsBase(i + 1, end, steps);
@@ -27084,7 +27149,7 @@ class LoadScript {
                             .then(thisClass.applyCommand3ddomain(lastCommand));
                         ic.annotationCls.setAnnoTabAll();
                     }
-                    else if(lastCommand.indexOf('view interactions') == 0 && ic.icn3dui.cfg.align !== undefined) {
+                    else if(lastCommand.indexOf('view interactions') == 0 && me.cfg.align !== undefined) {
                         thisClass.applyCommandViewinteraction(lastCommand);
                     }
                     else if(lastCommand.indexOf('symmetry') == 0) {
@@ -27138,7 +27203,7 @@ class LoadScript {
 
     //Execute the command to load a structure. This step is different from the rest steps since
     //it has to finish before the rest steps start.
-    applyCommandLoad(commandStr) { let ic = this.icn3d; ic.icn3dui;
+    applyCommandLoad(commandStr) { let  ic = this.icn3d, me = ic.icn3dui;
 
       //ic.bCommandLoad = true;
 
@@ -27158,9 +27223,9 @@ class LoadScript {
         let  loadStr = load_parameters[0];
         if(load_parameters.length > 1) {
             let  firstSpacePos = load_parameters[load_parameters.length - 1].indexOf(' ');
-            ic.icn3dui.cfg.inpara = load_parameters[load_parameters.length - 1].substr(firstSpacePos + 1);
-            if(ic.icn3dui.cfg.inpara === 'undefined') {
-                ic.icn3dui.cfg.inpara = '';
+            me.cfg.inpara = load_parameters[load_parameters.length - 1].substr(firstSpacePos + 1);
+            if(me.cfg.inpara === 'undefined') {
+                me.cfg.inpara = '';
             }
         }
 
@@ -27168,50 +27233,54 @@ class LoadScript {
         let  id = loadStr.substr(loadStr.lastIndexOf(' ') + 1);
         ic.inputid = id;
         if(command.indexOf('load mmtf') !== -1) {
-          ic.icn3dui.cfg.mmtfid = id;
+          me.cfg.mmtfid = id;
           ic.mmtfParserCls.downloadMmtf(id);
         }
         else if(command.indexOf('load pdb') !== -1) {
-          ic.icn3dui.cfg.pdbid = id;
+          me.cfg.pdbid = id;
           ic.pdbParserCls.downloadPdb(id);
         }
+        else if(command.indexOf('load af') !== -1) {
+          me.cfg.afid = id;
+          ic.pdbParserCls.downloadPdb(id, true);
+        }
         else if(command.indexOf('load opm') !== -1) {
-          ic.icn3dui.cfg.opmid = id;
+          me.cfg.opmid = id;
           ic.opmParserCls.downloadOpm(id);
         }
         else if(command.indexOf('load mmcif') !== -1) {
-          ic.icn3dui.cfg.mmcifid = id;
+          me.cfg.mmcifid = id;
           ic.mmcifParserCls.downloadMmcif(id);
         }
         else if(command.indexOf('load mmdb') !== -1) {
-          ic.icn3dui.cfg.mmdbid = id;
+          me.cfg.mmdbid = id;
 
           ic.mmdbParserCls.downloadMmdb(id);
         }
         else if(command.indexOf('load gi') !== -1) {
-          ic.icn3dui.cfg.gi = id;
+          me.cfg.gi = id;
           ic.mmdbParserCls.downloadGi(id);
         }
-        else if(command.indexOf('load seq_struc_ids') !== -1) {
+        else if(command.indexOf('load seq_struct_ids') !== -1) {
           ic.mmdbParserCls.downloadBlast_rep_id(id);
         }
         else if(command.indexOf('load cid') !== -1) {
-          ic.icn3dui.cfg.cid = id;
+          me.cfg.cid = id;
           ic.sdfParserCls.downloadCid(id);
         }
         else if(command.indexOf('load alignment') !== -1) {
-          ic.icn3dui.cfg.align = id;
+          me.cfg.align = id;
           ic.alignParserCls.downloadAlignment(id);
         }
         else if(command.indexOf('load chainalignment') !== -1) {
           //load chainalignment [id] | resnum [resnum] | parameters [inpara]
           let  urlArray = command.split(" | ");
           if(urlArray[1].indexOf('resnum') != -1) {
-              ic.icn3dui.cfg.resnum = urlArray[1].substr(urlArray[1].indexOf('resnum') + 7);
+              me.cfg.resnum = urlArray[1].substr(urlArray[1].indexOf('resnum') + 7);
           }
 
-          ic.icn3dui.cfg.chainalign = id;
-          ic.chainalignParserCls.downloadChainalignment(id, ic.icn3dui.cfg.resnum);
+          me.cfg.chainalign = id;
+          ic.chainalignParserCls.downloadChainalignment(id, me.cfg.resnum);
         }
         else if(command.indexOf('load url') !== -1) {
             let  typeStr = load_parameters[1]; // type pdb
@@ -27222,13 +27291,13 @@ class LoadScript {
                 type = typeStr.substr(pos + 5);
             }
 
-            ic.icn3dui.cfg.url = id;
+            me.cfg.url = id;
             ic.pdbParserCls.downloadUrl(id, type);
         }
       }
 
       ic.bAddCommands = true;
-      }); // end of ic.icn3dui.deferred = $.Deferred(function() {
+      }); // end of me.deferred = $.Deferred(function() {
 
       return ic.deferred2.promise();
     }
@@ -27257,7 +27326,7 @@ class LoadScript {
                   ic.dsn6ParserCls.dsn6Parser(ic.inputid, type, sigma);
               }
           }
-      }); // end of ic.icn3dui.deferred = $.Deferred(function() {
+      }); // end of me.deferred = $.Deferred(function() {
 
       return ic.deferredMap.promise();
     }
@@ -27277,7 +27346,7 @@ class LoadScript {
 
               ic.densityCifParserCls.densityCifParser(ic.inputid, type, percentage, ic.emd);
           }
-      }); // end of ic.icn3dui.deferred = $.Deferred(function() {
+      }); // end of me.deferred = $.Deferred(function() {
 
       return ic.deferredEmmap.promise();
     }
@@ -27292,7 +27361,7 @@ class LoadScript {
       // chain functions together
       ic.deferredSymmetry = $.Deferred(function() {
          thisClass.applyCommandSymmetryBase(command);
-      }); // end of ic.icn3dui.deferred = $.Deferred(function() {
+      }); // end of me.deferred = $.Deferred(function() {
 
       return ic.deferredSymmetry.promise();
     }
@@ -27307,7 +27376,7 @@ class LoadScript {
       // chain functions together
       ic.deferredRealign = new $.Deferred(function() {
          thisClass.applyCommandRealignBase(command);
-      }); // end of ic.icn3dui.deferred = $.Deferred(function() {
+      }); // end of me.deferred = $.Deferred(function() {
 
       return ic.deferredRealign.promise();
     }
@@ -27345,7 +27414,7 @@ class LoadScript {
       // chain functions together
       ic.deferredGraphinteraction = $.Deferred(function() {
          thisClass.applyCommandGraphinteractionBase(command);
-      }); // end of ic.icn3dui.deferred = $.Deferred(function() {
+      }); // end of me.deferred = $.Deferred(function() {
 
       return ic.deferredGraphinteraction.promise();
     }
@@ -27361,7 +27430,7 @@ class LoadScript {
       // chain functions together
       ic.deferredCartoon2d = $.Deferred(function() {
          thisClass.applyCommandCartoon2dBase(command);
-      }); // end of ic.icn3dui.deferred = $.Deferred(function() {
+      }); // end of me.deferred = $.Deferred(function() {
 
       return ic.deferredCartoon2d.promise();
     }
@@ -27369,7 +27438,7 @@ class LoadScript {
     applyCommandAnnotationsAndCddSiteBase(command) { let ic = this.icn3d; ic.icn3dui;
       // chain functions together
       if(command == "view annotations") {
-          //if(ic.icn3dui.cfg.showanno === undefined || !ic.icn3dui.cfg.showanno) {
+          //if(me.cfg.showanno === undefined || !me.cfg.showanno) {
               ic.showAnnoCls.showAnnotations();
           //}
       }
@@ -27384,7 +27453,7 @@ class LoadScript {
       // chain functions together
       ic.deferredAnnoCddSite = $.Deferred(function() {
           thisClass.applyCommandAnnotationsAndCddSiteBase(command);
-      }); // end of ic.icn3dui.deferred = $.Deferred(function() {
+      }); // end of me.deferred = $.Deferred(function() {
 
       return ic.deferredAnnoCddSite.promise();
     }
@@ -27411,7 +27480,7 @@ class LoadScript {
       // chain functions together
       ic.deferredClinvar = $.Deferred(function() {
           thisClass.applyCommandClinvarBase(command);
-      }); // end of ic.icn3dui.deferred = $.Deferred(function() {
+      }); // end of me.deferred = $.Deferred(function() {
 
       return ic.deferredClinvar.promise();
     }
@@ -27422,7 +27491,7 @@ class LoadScript {
       // chain functions together
       ic.deferredSnp = $.Deferred(function() {
           thisClass.applyCommandSnpBase(command);
-      }); // end of ic.icn3dui.deferred = $.Deferred(function() {
+      }); // end of me.deferred = $.Deferred(function() {
 
       return ic.deferredSnp.promise();
     }
@@ -27443,14 +27512,14 @@ class LoadScript {
       // chain functions together
       ic.deferred3ddomain = $.Deferred(function() {
           thisClass.applyCommand3ddomainBase(command);
-      }); // end of ic.icn3dui.deferred = $.Deferred(function() {
+      }); // end of me.deferred = $.Deferred(function() {
 
       return ic.deferred3ddomain.promise();
     }
 
-    applyCommandViewinteractionBase(command) { let ic = this.icn3d; ic.icn3dui;
+    applyCommandViewinteractionBase(command) { let  ic = this.icn3d, me = ic.icn3dui;
       // chain functions together
-         if(ic.icn3dui.cfg.align !== undefined || ic.icn3dui.cfg.chainalign !== undefined) {
+         if(me.cfg.align !== undefined || me.cfg.chainalign !== undefined) {
              let  structureArray = Object.keys(ic.structures);
              ic.ParserUtilsCls.set2DDiagramsForAlign(structureArray[0].toUpperCase(), structureArray[1].toUpperCase());
          }
@@ -27461,13 +27530,13 @@ class LoadScript {
       // chain functions together
       ic.deferredViewinteraction = $.Deferred(function() {
          thisClass.applyCommandViewinteractionBase(command);
-      }); // end of ic.icn3dui.deferred = $.Deferred(function() {
+      }); // end of me.deferred = $.Deferred(function() {
 
       return ic.deferredViewinteraction.promise();
     }
 
     //When reading a list of commands, apply transformation at the last step.
-    renderFinalStep(steps) { let ic = this.icn3d; ic.icn3dui;
+    renderFinalStep(steps) { let  ic = this.icn3d, me = ic.icn3dui;
         // enable ic.ParserUtilsCls.hideLoading
         ic.bCommandLoad = false;
 
@@ -27501,7 +27570,7 @@ class LoadScript {
         ic.selectionCls.oneStructurePerWindow();
 
         // simple if all atoms are modified
-        //if( ic.icn3dui.cfg.command === undefined &&(steps === 1 ||(Object.keys(ic.hAtoms).length === Object.keys(ic.atoms).length) ||(ic.optsHistory[steps - 1] !== undefined && ic.optsHistory[steps - 1].hasOwnProperty('hlatomcount') && ic.optsHistory[steps - 1].hlatomcount === Object.keys(ic.atoms).length) ) ) {
+        //if( me.cfg.command === undefined &&(steps === 1 ||(Object.keys(ic.hAtoms).length === Object.keys(ic.atoms).length) ||(ic.optsHistory[steps - 1] !== undefined && ic.optsHistory[steps - 1].hasOwnProperty('hlatomcount') && ic.optsHistory[steps - 1].hlatomcount === Object.keys(ic.atoms).length) ) ) {
         if(steps === 1
           ||(Object.keys(ic.hAtoms).length === Object.keys(ic.atoms).length)
           ||(ic.optsHistory[steps - 1] !== undefined && ic.optsHistory[steps - 1].hasOwnProperty('hlatomcount') && ic.optsHistory[steps - 1].hlatomcount === Object.keys(ic.atoms).length) ) {
@@ -27550,18 +27619,18 @@ class LoadScript {
             ic.drawCls.draw();
         }
 
-        if(ic.icn3dui.cfg.closepopup) {
+        if(me.cfg.closepopup) {
             setTimeout(function(){
                 ic.resizeCanvasCls.closeDialogs();
             }, 100);
 
-            ic.resizeCanvasCls.resizeCanvas(ic.icn3dui.htmlCls.WIDTH, ic.icn3dui.htmlCls.HEIGHT, true);
+            ic.resizeCanvasCls.resizeCanvas(me.htmlCls.WIDTH, me.htmlCls.HEIGHT, true);
         }
 
         // an extra render to remove artifacts in transparent surface
         if(ic.bTransparentSurface && ic.bRender) ic.drawCls.render();
 
-        if(ic.icn3dui.deferred !== undefined) ic.icn3dui.deferred.resolve(); if(ic.deferred2 !== undefined) ic.deferred2.resolve();
+        if(me.deferred !== undefined) me.deferred.resolve(); if(ic.deferred2 !== undefined) ic.deferred2.resolve();
     }
 
     replayFirstStep(currentNumber) { let ic = this.icn3d; ic.icn3dui;
@@ -27606,9 +27675,9 @@ class ResizeCanvas {
     }
 
     //Resize the canvas with the defined "width" and "height".
-    resizeCanvas(width, height, bForceResize, bDraw) {var ic = this.icn3d; ic.icn3dui;
-      if( bForceResize || ic.icn3dui.cfg.resize ) {
-        //var heightTmp = parseInt(height) - ic.icn3dui.htmlCls.EXTRAHEIGHT;
+    resizeCanvas(width, height, bForceResize, bDraw) {var ic = this.icn3d, me = ic.icn3dui;
+      if( bForceResize || me.cfg.resize ) {
+        //var heightTmp = parseInt(height) - me.htmlCls.EXTRAHEIGHT;
         let  heightTmp = height;
         $("#" + ic.pre + "canvas").width(width).height(heightTmp);
         $("#" + ic.pre + "viewer").width(width).height(height);
@@ -27627,22 +27696,22 @@ class ResizeCanvas {
     windowResize() { let  ic = this.icn3d, me = ic.icn3dui;
         let  thisClass = this;
 
-        if(ic.icn3dui.cfg.resize && !me.utilsCls.isMobile() ) {
+        if(me.cfg.resize && !me.utilsCls.isMobile() ) {
             $(window).resize(function() { let  ic = thisClass.icn3d;
-                //ic.icn3dui.htmlCls.WIDTH = $( window ).width();
-                //ic.icn3dui.htmlCls.HEIGHT = $( window ).height();
+                //me.htmlCls.WIDTH = $( window ).width();
+                //me.htmlCls.HEIGHT = $( window ).height();
                 me.utilsCls.setViewerWidthHeight(ic.icn3dui);
 
-                let  width = ic.icn3dui.htmlCls.WIDTH; // - ic.icn3dui.htmlCls.LESSWIDTH_RESIZE;
-                let  height = ic.icn3dui.htmlCls.HEIGHT; // - ic.icn3dui.htmlCls.LESSHEIGHT - ic.icn3dui.htmlCls.EXTRAHEIGHT;
+                let  width = me.htmlCls.WIDTH; // - me.htmlCls.LESSWIDTH_RESIZE;
+                let  height = me.htmlCls.HEIGHT; // - me.htmlCls.LESSHEIGHT - me.htmlCls.EXTRAHEIGHT;
 
                 if(ic !== undefined && !ic.bFullscreen) thisClass.resizeCanvas(width, height);
             });
         }
     }
 
-    openFullscreen(elem) {var ic = this.icn3d; ic.icn3dui;
-      if(ic.icn3dui.bNode) return;
+    openFullscreen(elem) {var ic = this.icn3d, me = ic.icn3dui;
+      if(me.bNode) return;
 
       if(!document.fullscreenElement && !document.mozFullScreenElement &&
         !document.webkitFullscreenElement && !document.msFullscreenElement) {
@@ -27765,13 +27834,13 @@ class ResizeCanvas {
         ic.loadScriptCls.execCommands(ic.CURRENTNUMBER, ic.STATENUMBER-1, ic.STATENUMBER);
     }
 
-    closeDialogs() {var ic = this.icn3d; ic.icn3dui;
+    closeDialogs() {var ic = this.icn3d, me = ic.icn3dui;
         let  itemArray = ['dl_selectannotations', 'dl_alignment', 'dl_2ddgm', 'dl_definedsets', 'dl_graph',
             'dl_linegraph', 'dl_scatterplot', 'dl_contactmap', 'dl_allinteraction', 'dl_copyurl',
             'dl_symmetry', 'dl_symd'];
         for(let i in itemArray) {
             let  item = itemArray[i];
-            if(!ic.icn3dui.cfg.notebook) {
+            if(!me.cfg.notebook) {
                 if($('#' + ic.pre + item).hasClass('ui-dialog-content') && $('#' + ic.pre + item).dialog( 'isOpen' )) {
                     $('#' + ic.pre + item).dialog( 'close' );
                 }
@@ -27780,7 +27849,7 @@ class ResizeCanvas {
                 $('#' + ic.pre + item).hide();
             }
         }
-        if(!ic.icn3dui.cfg.notebook) this.resizeCanvas(ic.icn3dui.htmlCls.WIDTH, ic.icn3dui.htmlCls.HEIGHT, true);
+        if(!me.cfg.notebook) this.resizeCanvas(me.htmlCls.WIDTH, me.htmlCls.HEIGHT, true);
     }
 }
 
@@ -27794,10 +27863,10 @@ class ShowSeq {
     }
 
     //Show the sequences and secondary structures.
-    showSeq(chnid, chnidBase, type, queryTitle, compTitle, queryText, compText) {  let ic = this.icn3d; ic.icn3dui;
+    showSeq(chnid, chnidBase, type, queryTitle, compTitle, queryText, compText) {  let ic = this.icn3d, me = ic.icn3dui;
         let bNonMmdb = false;
         let giSeq;
-        if(ic.icn3dui.cfg.mmdbid === undefined && ic.icn3dui.cfg.gi === undefined && ic.icn3dui.cfg.blast_rep_id === undefined && ic.icn3dui.cfg.align === undefined && ic.icn3dui.cfg.chainalign === undefined) {
+        if(me.cfg.mmdbid === undefined && me.cfg.gi === undefined && me.cfg.blast_rep_id === undefined && me.cfg.align === undefined && me.cfg.chainalign === undefined) {
             bNonMmdb = true;
             giSeq = [];
             for(let i = 0; i < ic.giSeq[chnid].length; ++i) {
@@ -27816,7 +27885,7 @@ class ShowSeq {
             }
         }
         giSeq = giSeqTmp;
-        let divLength = ic.icn3dui.htmlCls.RESIDUE_WIDTH * ic.giSeq[chnid].length + 200;
+        let divLength = me.htmlCls.RESIDUE_WIDTH * ic.giSeq[chnid].length + 200;
         let seqLength = ic.giSeq[chnid].length;
         if(seqLength > ic.maxAnnoLength) {
             ic.maxAnnoLength = seqLength;
@@ -27835,8 +27904,8 @@ class ShowSeq {
         if(ic.giSeq[chnid].length > 10) {
             htmlTmp = '<div class="icn3d-residueLine" style="white-space:nowrap;">';
             let atom = ic.firstAtomObjCls.getFirstCalphaAtomObj(ic.chains[chnid]);
-            //if(ic.baseResi[chnid] != 0 &&(ic.icn3dui.cfg.mmdbid !== undefined || ic.icn3dui.cfg.gi !== undefined || ic.icn3dui.cfg.align !== undefined)) {
-            if((ic.icn3dui.cfg.mmdbid !== undefined || ic.icn3dui.cfg.gi !== undefined || ic.icn3dui.cfg.blast_rep_id !== undefined || ic.icn3dui.cfg.align !== undefined || ic.icn3dui.cfg.chainalign !== undefined) && atom.resi_ori !== undefined && atom.resi_ori != atom.resi && chnid.indexOf('Misc') == -1 ) {
+            //if(ic.baseResi[chnid] != 0 &&(me.cfg.mmdbid !== undefined || me.cfg.gi !== undefined || me.cfg.align !== undefined)) {
+            if((me.cfg.mmdbid !== undefined || me.cfg.gi !== undefined || me.cfg.blast_rep_id !== undefined || me.cfg.align !== undefined || me.cfg.chainalign !== undefined) && atom.resi_ori !== undefined && atom.resi_ori != atom.resi && chnid.indexOf('Misc') == -1 ) {
                 htmlTmp += '<div class="icn3d-annoTitle" anno="0" title="NCBI Residue Numbers">NCBI Residue Numbers</div>';
             }
             else {
@@ -27968,7 +28037,7 @@ class ShowSeq {
         html += '</div>';
         html += '</div>'; // corresponds to above: html += '<div class="icn3d-dl_sequence">';
         html3 += '</div></div>';
-        if(ic.icn3dui.cfg.blast_rep_id === chnid) {
+        if(me.cfg.blast_rep_id === chnid) {
             htmlTmp = '<div id="' + ic.pre + 'giseq_sequence" class="icn3d-dl_sequence" style="border: solid 1px #000;">';
         }
         else {
@@ -28011,7 +28080,7 @@ class ShowSeq {
           }
           else {
               let color = '333333';
-              if(ic.icn3dui.cfg.blast_rep_id == chnid && ic.fullpos2ConsTargetpos !== undefined && ic.fullpos2ConsTargetpos[i + nGap] !== undefined) {
+              if(me.cfg.blast_rep_id == chnid && ic.fullpos2ConsTargetpos !== undefined && ic.fullpos2ConsTargetpos[i + nGap] !== undefined) {
                   color = ic.fullpos2ConsTargetpos[i + nGap].color;
               }
               else {
@@ -28022,7 +28091,7 @@ class ShowSeq {
               html += '<span id="giseq_' + ic.pre + chnid + '_' + pos + '" title="' + cFull + pos + '" class="icn3d-residue" style="color:#' + color + '">' + c + '</span>';
           }
         }
-        if(ic.icn3dui.cfg.blast_rep_id == chnid) {
+        if(me.cfg.blast_rep_id == chnid) {
           // change color in 3D
           ic.opts['color'] = 'conservation';
           ic.setColorCls.setColorByOptions(ic.opts, ic.atoms);
@@ -28034,7 +28103,7 @@ class ShowSeq {
         let color =(atom.color) ? atom.color.getHexString() : "CCCCCC";
         let width = Math.round(ic.seqAnnWidth * giSeq.length / ic.maxAnnoLength);
         if(width < 1) width = 1;
-        if(ic.icn3dui.cfg.blast_rep_id != chnid) { // regular
+        if(me.cfg.blast_rep_id != chnid) { // regular
             html2 += '<div id="giseq_summary_' + ic.pre + chnid + '" class="icn3d-seqTitle icn3d-link" gi chain="' + chnid + '" style="display:inline-block; color:white; font-weight:bold; background-color:#' + color + '; width:' + width + 'px;">' + chnid + '</div>';
         }
         else { // with potential gaps
@@ -28059,7 +28128,7 @@ class ShowSeq {
         htmlTmp += '<br>';
         html += htmlTmp;
         html2 += htmlTmp;
-        if(ic.icn3dui.cfg.blast_rep_id == chnid) {
+        if(me.cfg.blast_rep_id == chnid) {
             // 1. residue conservation
             if(compText !== undefined && compText !== '') {
             // conservation, detailed view
@@ -28170,8 +28239,8 @@ class ShowSeq {
         //if(Object.keys(ic.chains[chnid]).length > 10) {
         if(ic.giSeq[chnid].length > 10) {
             let atom = ic.firstAtomObjCls.getFirstCalphaAtomObj(ic.chains[chnid]);
-            //if(ic.baseResi[chnid] != 0 &&(ic.icn3dui.cfg.mmdbid !== undefined || ic.icn3dui.cfg.gi !== undefined || ic.icn3dui.cfg.align !== undefined)) {
-            if((ic.icn3dui.cfg.mmdbid !== undefined || ic.icn3dui.cfg.gi !== undefined || ic.icn3dui.cfg.blast_rep_id !== undefined || ic.icn3dui.cfg.align !== undefined || ic.icn3dui.cfg.chainalign !== undefined) && atom.resi_ori !== undefined && atom.resi_ori != atom.resi && chnid.indexOf('Misc') == -1 ) {
+            //if(ic.baseResi[chnid] != 0 &&(me.cfg.mmdbid !== undefined || me.cfg.gi !== undefined || me.cfg.align !== undefined)) {
+            if((me.cfg.mmdbid !== undefined || me.cfg.gi !== undefined || me.cfg.blast_rep_id !== undefined || me.cfg.align !== undefined || me.cfg.chainalign !== undefined) && atom.resi_ori !== undefined && atom.resi_ori != atom.resi && chnid.indexOf('Misc') == -1 ) {
                 htmlTmp = '<div class="icn3d-dl_sequence">';
                 htmlTmp += '<div class="icn3d-residueLine" style="white-space:nowrap;">';
                 htmlTmp += '<div class="icn3d-annoTitle" anno="0" title="PDB Residue Numbers">PDB Residue Numbers</div>';
@@ -28215,7 +28284,7 @@ class ShowSeq {
 
     insertGap(chnid, seqIndex, text, bNohtml) {  let ic = this.icn3d; ic.icn3dui;
       let html = '';
-      //if(ic.icn3dui.cfg.blast_rep_id == chnid && ic.targetGapHash!== undefined && ic.targetGapHash.hasOwnProperty(seqIndex)) {
+      //if(me.cfg.blast_rep_id == chnid && ic.targetGapHash!== undefined && ic.targetGapHash.hasOwnProperty(seqIndex)) {
       if(ic.targetGapHash!== undefined && ic.targetGapHash.hasOwnProperty(seqIndex)) {
           for(let j = 0; j <(ic.targetGapHash[seqIndex].to - ic.targetGapHash[seqIndex].from + 1); ++j) {
               if(bNohtml) {
@@ -28228,9 +28297,9 @@ class ShowSeq {
       }
       return html;
     }
-    insertGapOverview(chnid, seqIndex) {  let ic = this.icn3d; ic.icn3dui;
+    insertGapOverview(chnid, seqIndex) {  let ic = this.icn3d, me = ic.icn3dui;
       let html2 = '';
-      if(ic.icn3dui.cfg.blast_rep_id == chnid && ic.targetGapHash!== undefined && ic.targetGapHash.hasOwnProperty(seqIndex)) {
+      if(me.cfg.blast_rep_id == chnid && ic.targetGapHash!== undefined && ic.targetGapHash.hasOwnProperty(seqIndex)) {
           let width = ic.seqAnnWidth *(ic.targetGapHash[seqIndex].to - ic.targetGapHash[seqIndex].from + 1) /(ic.maxAnnoLength + ic.nTotalGap);
           html2 += '<div style="display:inline-block; background-color:#333; width:' + width + 'px; height:3px;">&nbsp;</div>';
       }
@@ -28248,9 +28317,9 @@ class ShowSeq {
         ic.matchedPos[chnid] = 0;
         ic.baseResi[chnid] = ic.chainsSeq[chnid][0].resi - ic.matchedPos[chnid] - 1;
     }
-    getProteinName(chnid) { let ic = this.icn3d; ic.icn3dui;
+    getProteinName(chnid) { let ic = this.icn3d, me = ic.icn3dui;
         let fullProteinName = '';
-        if((ic.icn3dui.cfg.mmdbid !== undefined || ic.icn3dui.cfg.gi !== undefined || ic.icn3dui.cfg.blast_rep_id !== undefined) && ic.mmdb_data !== undefined) {
+        if((me.cfg.mmdbid !== undefined || me.cfg.gi !== undefined || me.cfg.blast_rep_id !== undefined) && ic.mmdb_data !== undefined) {
             let moleculeInfor = ic.mmdb_data.moleculeInfor;
             let chain = chnid.substr(chnid.indexOf('_') + 1);
             for(let i in moleculeInfor) {
@@ -28261,7 +28330,7 @@ class ShowSeq {
                 }
             }
         }
-        else if((ic.icn3dui.cfg.align !== undefined || ic.icn3dui.cfg.chainalign !== undefined || ic.bRealign || ic.bSymd) && ic.chainid2title !== undefined) {
+        else if((me.cfg.align !== undefined || me.cfg.chainalign !== undefined || ic.bRealign || ic.bSymd) && ic.chainid2title !== undefined) {
             if(ic.chainid2title[chnid] !== undefined) {
                 fullProteinName = ic.chainid2title[chnid];
             }
@@ -28445,7 +28514,7 @@ class AddTrack {
                ++cntTmp;
            }
 
-           ic.icn3dui.htmlCls.clickMenuCls.setLogCmd("msa | " + targetGapHashStr, true);
+           me.htmlCls.clickMenuCls.setLogCmd("msa | " + targetGapHashStr, true);
 
            // add tracks
            let resi2cntSameRes = {}; // count of same residue at each position
@@ -28479,7 +28548,7 @@ class AddTrack {
                let bMsa = true;
                thisClass.showNewTrack(chainid, title, text, undefined, undefined, type, undefined, bMsa);
 
-               ic.icn3dui.htmlCls.clickMenuCls.setLogCmd("add track | chainid " + chainid + " | title " + title + " | text " + thisClass.simplifyText(text)
+               me.htmlCls.clickMenuCls.setLogCmd("add track | chainid " + chainid + " | title " + title + " | text " + thisClass.simplifyText(text)
                 + " | type " + type + " | color 0 | msa 1", true);
            }
 
@@ -28515,7 +28584,7 @@ class AddTrack {
 
                 ic.drawCls.draw();
 
-                ic.icn3dui.htmlCls.clickMenuCls.setLogCmd('color align custom | ' + chainid + ' | range ' + start + '_' + end + ' | ' + resiScoreStr, true);
+                me.htmlCls.clickMenuCls.setLogCmd('color align custom | ' + chainid + ' | range ' + start + '_' + end + ' | ' + resiScoreStr, true);
            }
         });
 
@@ -28626,7 +28695,7 @@ class AddTrack {
 
                        thisClass.showNewTrack(chainid, title, text, cssColorArray, undefined, undefined, rgbColor);
 
-                       ic.icn3dui.htmlCls.clickMenuCls.setLogCmd("add track | chainid " + chainid + " | title " + title + " | text " + thisClass.simplifyText(text) + " | type bed | color " + rgbColor, true);
+                       me.htmlCls.clickMenuCls.setLogCmd("add track | chainid " + chainid + " | title " + title + " | text " + thisClass.simplifyText(text) + " | type bed | color " + rgbColor, true);
                    }
                }
              };
@@ -28646,12 +28715,12 @@ class AddTrack {
            let text = $("#" + ic.pre + "track_text").val(); // input simplifyText
 
            //this.showNewTrack(chainid, title, text);
-           //ic.icn3dui.htmlCls.clickMenuCls.setLogCmd("add track | chainid " + chainid + " | title " + title + " | text " + this.simplifyText(text), true);
+           //me.htmlCls.clickMenuCls.setLogCmd("add track | chainid " + chainid + " | title " + title + " | text " + this.simplifyText(text), true);
            let result = this.getFullText(text);
 
            thisClass.showNewTrack(chainid, title,  result.text, undefined, undefined, 'custom', undefined, undefined, result.fromArray, result.toArray);
 
-           ic.icn3dui.htmlCls.clickMenuCls.setLogCmd("add track | chainid " + chainid + " | title " + title + " | text " + text + " | type custom", true);
+           me.htmlCls.clickMenuCls.setLogCmd("add track | chainid " + chainid + " | title " + title + " | text " + text + " | type custom", true);
         });
 
         // current selection
@@ -28696,12 +28765,12 @@ class AddTrack {
 
            thisClass.showNewTrack(chainid, title, text, cssColorArray, undefined, 'selection', undefined);
 
-           ic.icn3dui.htmlCls.clickMenuCls.setLogCmd("add track | chainid " + chainid + " | title " + title + " | text " + thisClass.simplifyText(text) + " | type selection", true);
+           me.htmlCls.clickMenuCls.setLogCmd("add track | chainid " + chainid + " | title " + title + " | text " + thisClass.simplifyText(text) + " | type selection", true);
         });
 
     }
 
-    showNewTrack(chnid, title, text, cssColorArray, inTarget2queryHash, type, color, bMsa, fromArray, toArray) {  let ic = this.icn3d; ic.icn3dui;
+    showNewTrack(chnid, title, text, cssColorArray, inTarget2queryHash, type, color, bMsa, fromArray, toArray) {  let ic = this.icn3d, me = ic.icn3dui;
         //if(ic.customTracks[chnid] === undefined) {
         //    ic.customTracks[chnid] = {}
         //}
@@ -28738,7 +28807,7 @@ class AddTrack {
 
         //ic.customTracks[chnid][simpTitle] = text;
 
-        let divLength = ic.icn3dui.htmlCls.RESIDUE_WIDTH * text.length + 200;
+        let divLength = me.htmlCls.RESIDUE_WIDTH * text.length + 200;
 
         $("#" + ic.pre + "dt_custom_" + chnid).append("<div id='" + ic.pre + "dt_custom_" + chnid + "_" + simpTitle + "'></div>");
         $("#" + ic.pre + "dt_custom_" + chnid + "_" + simpTitle).width(divLength);
@@ -28804,9 +28873,9 @@ class AddTrack {
               let identityColorStr =(c == resName) ? 'FF0000' : '0000FF';
 
               //var pos =(resNum >= ic.matchedPos[chnid] && resNum - ic.matchedPos[chnid] < ic.chainsSeq[chnid].length) ? ic.chainsSeq[chnid][resNum - ic.matchedPos[chnid]].resi : ic.baseResi[chnid] + 1 + resNum;
-              let pos = currResi;
+              let pos = ic.baseResi[chnid] + currResi;
 
-              if(inTarget2queryHash !== undefined) pos = inTarget2queryHash[i] + 1; // 0-based
+              if(inTarget2queryHash !== undefined) pos = ic.baseResi[chnid] + inTarget2queryHash[i] + 1; // 0-based
 
               let tmpStr;
               if(cssColorArray !== undefined && cssColorArray[i] != '') {
@@ -28815,8 +28884,16 @@ class AddTrack {
               else if(color) {
                   tmpStr = 'style="color:rgb(' + color + ')"';
               }
-              else if(bAlignColor) {
+              else if(bAlignColor || type == 'seq') {
                   tmpStr = 'style="color:#' + colorHexStr + '"';
+
+                  if(type == 'seq') { // reset the color of atoms
+                      for(let serial in ic.residues[chnid + '_' + pos]) {
+                          let color2 = me.parasCls.thr("#" + colorHexStr);
+                          ic.atoms[serial].color = color2;
+                          ic.atomPrevColors[serial] = color2;
+                      }
+                  }
               }
               else if(bIdentityColor) {
                   tmpStr = 'style="color:#' + identityColorStr + '"';
@@ -28829,7 +28906,7 @@ class AddTrack {
 
               htmlTmp2 += ic.showSeqCls.insertGapOverview(chnid, i);
 
-              let emptyWidth =(ic.icn3dui.cfg.blast_rep_id == chnid) ? Math.round(ic.seqAnnWidth * i /(ic.maxAnnoLength + ic.nTotalGap) - prevEmptyWidth - prevLineWidth) : Math.round(ic.seqAnnWidth * i / ic.maxAnnoLength - prevEmptyWidth - prevLineWidth);
+              let emptyWidth =(me.cfg.blast_rep_id == chnid) ? Math.round(ic.seqAnnWidth * i /(ic.maxAnnoLength + ic.nTotalGap) - prevEmptyWidth - prevLineWidth) : Math.round(ic.seqAnnWidth * i / ic.maxAnnoLength - prevEmptyWidth - prevLineWidth);
               if(emptyWidth < 0) emptyWidth = 0;
 
               htmlTmp2 += '<div style="display:inline-block; width:' + emptyWidth + 'px;">&nbsp;</div>';
@@ -28927,6 +29004,8 @@ class AddTrack {
 
       let text = '';
 
+      let cssColorArray = [];
+      let target2queryHash = {};
       if(query !== undefined && target !== undefined) {
           let evalue = target.scores.e_value.toPrecision(2);
           if(evalue > 1e-200) evalue = parseFloat(evalue).toExponential();
@@ -28938,21 +29017,22 @@ class AddTrack {
           let querySeq = query.seqdata;
 
           let segArray = target.segs;
-          let target2queryHash = {};
           for(let i = 0, il = segArray.length; i < il; ++i) {
               let seg = segArray[i];
               for(let j = 0; j <= seg.orito - seg.orifrom; ++j) {
                   target2queryHash[j + seg.orifrom] = j + seg.from;
               }
           }
-          // the missing residuesatthe end ofthe seq will be filled up in the API showNewTrack()
+
+          // the missing residues at the end of the seq will be filled up in the API showNewTrack()
           for(let i = 0, il = targetSeq.length; i < il; ++i) {
               if(target2queryHash.hasOwnProperty(i)) {
                   text += querySeq[target2queryHash[i]];
 
                   let colorHexStr = ic.showAnnoCls.getColorhexFromBlosum62(targetSeq[i], querySeq[target2queryHash[i]]);
+                  cssColorArray.push("#" + colorHexStr);
 
-                  let resi = i + 1;
+                  let resi =  ic.baseResi[chainid] + 1 + i; //i + 1;
                   for(let serial in ic.residues[chainid + '_' + resi]) {
                       let color = me.parasCls.thr("#" + colorHexStr);
                       ic.atoms[serial].color = color;
@@ -28961,6 +29041,7 @@ class AddTrack {
               }
               else {
                   text += '-';
+                  cssColorArray.push("");
               }
           }
 
@@ -28975,12 +29056,12 @@ class AddTrack {
       ic.hlUpdateCls.updateHlAll();
       ic.drawCls.draw();
 
-      ic.icn3dui.htmlCls.clickMenuCls.setLogCmd("add track | chainid " + chainid + " | title " + title + " | text " + this.simplifyText(text) + " | type seq", true);
+      me.htmlCls.clickMenuCls.setLogCmd("add track | chainid " + chainid + " | title " + title + " | text " + this.simplifyText(text) + " | type seq", true);
     }
 
-    defineSecondary(chainid, type) { let ic = this.icn3d; ic.icn3dui;
+    defineSecondary(chainid, type) { let ic = this.icn3d, me = ic.icn3dui;
         if(!$('#' + ic.pre + 'dl_definedsets').hasClass('ui-dialog-content') || !$('#' + ic.pre + 'dl_definedsets').dialog( 'isOpen' )) {
-            ic.icn3dui.htmlCls.dialogCls.openDlg('dl_definedsets', 'Select sets');
+            me.htmlCls.dialogCls.openDlg('dl_definedsets', 'Select sets');
             $("#" + ic.pre + "atomsCustom").resizable();
         }
 
@@ -29229,7 +29310,7 @@ class AddTrack {
 
                 ic.setColorCls.setColorByOptions(ic.opts, ic.hAtoms);
                 ic.hlUpdateCls.updateHlAll();
-                ic.icn3dui.htmlCls.clickMenuCls.setLogCmd('color align custom | ' + chainid + ' | range ' + start + '_' + end + ' | ' + resiScoreStr + ' | colorrange ' + startColor + ' ' + midColor + ' ' + endColor, true);
+                me.htmlCls.clickMenuCls.setLogCmd('color align custom | ' + chainid + ' | range ' + start + '_' + end + ' | ' + resiScoreStr + ' | colorrange ' + startColor + ' ' + midColor + ' ' + endColor, true);
 
                 let legendHtml = me.htmlCls.clickMenuCls.setLegendHtml();
 
@@ -29237,7 +29318,7 @@ class AddTrack {
             }
             else if(type == 'tube') {
                 ic.setOptionCls.setStyle('proteins', 'custom tube');
-                ic.icn3dui.htmlCls.clickMenuCls.setLogCmd('color tube | ' + chainid + ' | range ' + start + '_' + end + ' | ' + resiScoreStr, true);
+                me.htmlCls.clickMenuCls.setLogCmd('color tube | ' + chainid + ' | range ' + start + '_' + end + ' | ' + resiScoreStr, true);
             }
             ic.drawCls.draw();
          };
@@ -29256,13 +29337,13 @@ class Analysis {
         this.icn3d = icn3d;
     }
 
-    calculateArea() {var ic = this.icn3d; ic.icn3dui;
+    calculateArea() {var ic = this.icn3d, me = ic.icn3dui;
        ic.bCalcArea = true;
        ic.opts.surface = 'solvent accessible surface';
        ic.applyMapCls.applySurfaceOptions();
        $("#" + ic.pre + "areavalue").val(ic.areavalue);
        $("#" + ic.pre + "areatable").html(ic.areahtml);
-       ic.icn3dui.htmlCls.dialogCls.openDlg('dl_area', 'Surface area calculation');
+       me.htmlCls.dialogCls.openDlg('dl_area', 'Surface area calculation');
        ic.bCalcArea = false;
     }
 
@@ -29319,8 +29400,8 @@ class Analysis {
            html += '<b>Buried Surface for Set 1</b>: ' +  buriedArea2 + ' &#8491;<sup>2</sup><br>';
            html += '<b>Buried Surface for Set 2</b>: ' +  buriedArea1 + ' &#8491;<sup>2</sup><br><br>';
            $("#" + ic.pre + "dl_buriedarea").html(html);
-           ic.icn3dui.htmlCls.dialogCls.openDlg('dl_buriedarea', 'Buried solvent accessible surface area in the interface');
-           ic.icn3dui.htmlCls.clickMenuCls.setLogCmd('buried surface ' + buriedArea, false);
+           me.htmlCls.dialogCls.openDlg('dl_buriedarea', 'Buried solvent accessible surface area in the interface');
+           me.htmlCls.clickMenuCls.setLogCmd('buried surface ' + buriedArea, false);
        }
     }
 
@@ -29381,13 +29462,13 @@ class Analysis {
         //ic.drawCls.draw();
     }
 
-    addLineFromPicking(type) {var ic = this.icn3d; ic.icn3dui;
+    addLineFromPicking(type) {var ic = this.icn3d, me = ic.icn3dui;
         let color = $("#" + ic.pre + type + "color" ).val();
         (ic.pAtom.coord.x + ic.pAtom2.coord.x) / 2;
         (ic.pAtom.coord.y + ic.pAtom2.coord.y) / 2;
         (ic.pAtom.coord.z + ic.pAtom2.coord.z) / 2;
         let dashed =(type == 'stabilizer') ? false : true;
-        ic.icn3dui.htmlCls.clickMenuCls.setLogCmd('add line | x1 ' + ic.pAtom.coord.x.toPrecision(4)  + ' y1 ' + ic.pAtom.coord.y.toPrecision(4) + ' z1 ' + ic.pAtom.coord.z.toPrecision(4) + ' | x2 ' + ic.pAtom2.coord.x.toPrecision(4)  + ' y2 ' + ic.pAtom2.coord.y.toPrecision(4) + ' z2 ' + ic.pAtom2.coord.z.toPrecision(4) + ' | color ' + color + ' | dashed ' + dashed + ' | type ' + type, true);
+        me.htmlCls.clickMenuCls.setLogCmd('add line | x1 ' + ic.pAtom.coord.x.toPrecision(4)  + ' y1 ' + ic.pAtom.coord.y.toPrecision(4) + ' z1 ' + ic.pAtom.coord.z.toPrecision(4) + ' | x2 ' + ic.pAtom2.coord.x.toPrecision(4)  + ' y2 ' + ic.pAtom2.coord.y.toPrecision(4) + ' z2 ' + ic.pAtom2.coord.z.toPrecision(4) + ' | color ' + color + ' | dashed ' + dashed + ' | type ' + type, true);
         this.addLine(ic.pAtom.coord.x, ic.pAtom.coord.y, ic.pAtom.coord.z, ic.pAtom2.coord.x, ic.pAtom2.coord.y, ic.pAtom2.coord.z, color, dashed, type);
         ic.pickpair = false;
     }
@@ -29500,7 +29581,7 @@ class AnnoCddSite {
     }
 
     //Show the annotations of CDD domains and binding sites.
-    showCddSiteAll() { let ic = this.icn3d; ic.icn3dui;
+    showCddSiteAll() { let ic = this.icn3d, me = ic.icn3dui;
         let thisClass = this;
 
         ic.chainid2pssmid = {};
@@ -29509,9 +29590,9 @@ class AnnoCddSite {
         let chnidArray = Object.keys(ic.protein_chainid);
         // show conserved domains and binding sites
         // live search
-//        let url = ic.icn3dui.htmlCls.baseUrl + "cdannots/cdannots.fcgi?fmt&live=lcl&queries=" + chnidBaseArray;
+//        let url = me.htmlCls.baseUrl + "cdannots/cdannots.fcgi?fmt&live=lcl&queries=" + chnidBaseArray;
         // precalculated
-        let url = ic.icn3dui.htmlCls.baseUrl + "cdannots/cdannots.fcgi?fmt&queries=" + chnidBaseArray;
+        let url = me.htmlCls.baseUrl + "cdannots/cdannots.fcgi?fmt&queries=" + chnidBaseArray;
         $.ajax({
           url: url,
           dataType: 'jsonp',
@@ -29597,7 +29678,7 @@ class AnnoCddSite {
 
                         html += '<span id="' + pre + '_' + ic.pre + chnid + '_' + pos + '" title="' + c + pos + '" class="icn3d-residue">' + cFull + '</span>';
                         html2 += ic.showSeqCls.insertGapOverview(chnid, i);
-                        let emptyWidth =(ic.icn3dui.cfg.blast_rep_id == chnid) ? Math.round(ic.seqAnnWidth * i /(ic.maxAnnoLength + ic.nTotalGap) - prevEmptyWidth - prevLineWidth) : Math.round(ic.seqAnnWidth * i / ic.maxAnnoLength - prevEmptyWidth - prevLineWidth);
+                        let emptyWidth =(me.cfg.blast_rep_id == chnid) ? Math.round(ic.seqAnnWidth * i /(ic.maxAnnoLength + ic.nTotalGap) - prevEmptyWidth - prevLineWidth) : Math.round(ic.seqAnnWidth * i / ic.maxAnnoLength - prevEmptyWidth - prevLineWidth);
                         //if(emptyWidth < 0) emptyWidth = 0;
                         if(emptyWidth >= 0) {
                         html2 += '<div style="display:inline-block; width:' + emptyWidth + 'px;">&nbsp;</div>';
@@ -29664,7 +29745,7 @@ class AnnoCddSite {
         });
     }
 
-    setDomainFeature(domainArray, chnid, bDomain, html, html2, html3, acc2domain) { let ic = this.icn3d; ic.icn3dui;
+    setDomainFeature(domainArray, chnid, bDomain, html, html2, html3, acc2domain) { let ic = this.icn3d, me = ic.icn3dui;
         let thisClass = this;
 
         let pssmid2name, pssmid2fromArray, pssmid2toArray;
@@ -29761,7 +29842,7 @@ class AnnoCddSite {
                 let atom = ic.firstAtomObjCls.getFirstCalphaAtomObj(ic.chains[chnid]);
                 let colorStr =(atom.color === undefined || atom.color.getHexString() === 'FFFFFF') ? 'DDDDDD' : atom.color.getHexString();
                 let color =(atom.color !== undefined) ? colorStr : "CCCCCC";
-                if(ic.icn3dui.cfg.blast_rep_id != chnid) { // regular
+                if(me.cfg.blast_rep_id != chnid) { // regular
                     for(let i = 0, il = fromArray.length; i < il; ++i) {
                         let emptyWidth =(i == 0) ? Math.round(ic.seqAnnWidth *(fromArray[i] - ic.baseResi[chnid] - 1) / ic.maxAnnoLength) : Math.round(ic.seqAnnWidth *(fromArray[i] - toArray[i-1] - 1) / ic.maxAnnoLength);
                         html2 += '<div style="display:inline-block; width:' + emptyWidth + 'px;">&nbsp;</div>';
@@ -29793,7 +29874,7 @@ class AnnoCddSite {
                 html += htmlTmp;
                 html2 += htmlTmp;
                 if(bDomain) {
-                    html2 += '<div id="' + ic.pre + chnid + '_' + acc + '_' + r + '_cddseq" style="display:none; white-space:normal;" class="icn3d-box">' + defline + '(<a href="' + ic.icn3dui.htmlCls.baseUrl + 'cdd/cddsrv.cgi?uid=' + acc + '" target="_blank" class="icn3d-blue">open details view...</a>)</div>';
+                    html2 += '<div id="' + ic.pre + chnid + '_' + acc + '_' + r + '_cddseq" style="display:none; white-space:normal;" class="icn3d-box">' + defline + '(<a href="' + me.htmlCls.baseUrl + 'cdd/cddsrv.cgi?uid=' + acc + '" target="_blank" class="icn3d-blue">open details view...</a>)</div>';
                 }
             } // for(let r = 0,
         }
@@ -29806,7 +29887,7 @@ class AnnoCddSite {
         return (resi >= matchedPos[chnid] && resi - matchedPos[chnid] < ic.chainsSeq[chnid].length) ? ic.chainsSeq[chnid][resi - matchedPos[chnid]].resi : baseResi[chnid] + 1 + resi;
     }
 
-    showAnnoType(chnid, chnidBase, type, title, residueArray, resid2resids) { let ic = this.icn3d; ic.icn3dui;
+    showAnnoType(chnid, chnidBase, type, title, residueArray, resid2resids) { let ic = this.icn3d, me = ic.icn3dui;
         let html = '<div id="' + ic.pre + chnid + '_' + type + 'seq_sequence" class="icn3d-dl_sequence">';
         let html2 = html;
         let html3 = html;
@@ -29865,7 +29946,7 @@ class AnnoCddSite {
               }
               html += '<span id="' + pre + '_' + ic.pre + chnid + '_' + pos + '" title="' + title + '" class="icn3d-residue">' + c + '</span>';
               html2 += ic.showSeqCls.insertGapOverview(chnid, i);
-              let emptyWidth =(ic.icn3dui.cfg.blast_rep_id == chnid) ? Math.round(ic.seqAnnWidth * i /(ic.maxAnnoLength + ic.nTotalGap) - prevEmptyWidth - prevLineWidth) : Math.round(ic.seqAnnWidth * i / ic.maxAnnoLength - prevEmptyWidth - prevLineWidth);
+              let emptyWidth =(me.cfg.blast_rep_id == chnid) ? Math.round(ic.seqAnnWidth * i /(ic.maxAnnoLength + ic.nTotalGap) - prevEmptyWidth - prevLineWidth) : Math.round(ic.seqAnnWidth * i / ic.maxAnnoLength - prevEmptyWidth - prevLineWidth);
                 //if(emptyWidth < 0) emptyWidth = 0;
                 if(emptyWidth >= 0) {
                 html2 += '<div style="display:inline-block; width:' + emptyWidth + 'px;">&nbsp;</div>';
@@ -29982,7 +30063,7 @@ class Picking {
     //($[structure id].[chain id]:[residue number]@[atom name]) is displayed.
     showPicking(atom, x, y) { let  ic = this.icn3d, me = ic.icn3dui;
       //me = ic.setIcn3dui(ic.id);
-      if(ic.icn3dui.cfg.cid !== undefined && ic.pk != 0) {
+      if(me.cfg.cid !== undefined && ic.pk != 0) {
           ic.pk = 1; // atom
       }
       ic.highlightlevel = ic.pk;
@@ -29990,8 +30071,8 @@ class Picking {
 
       if(ic.pk != 0) {
           if(x !== undefined && y !== undefined) { // mouse over
-            if(ic.icn3dui.cfg.showmenu != undefined && ic.icn3dui.cfg.showmenu == true) {
-                y += ic.icn3dui.htmlCls.MENU_HEIGHT;
+            if(me.cfg.showmenu != undefined && me.cfg.showmenu == true) {
+                y += me.htmlCls.MENU_HEIGHT;
             }
             let  text =(ic.pk == 1) ? atom.resn + atom.resi + '@' + atom.name : atom.resn + atom.resi;
             if(ic.structures !== undefined && Object.keys(ic.structures).length > 1) {
@@ -30029,9 +30110,9 @@ class Picking {
               }
               // update the interaction flag
               ic.bSphereCalc = false;
-              //ic.icn3dui.htmlCls.clickMenuCls.setLogCmd('set calculate sphere false', true);
+              //me.htmlCls.clickMenuCls.setLogCmd('set calculate sphere false', true);
               ic.bHbondCalc = false;
-              //ic.icn3dui.htmlCls.clickMenuCls.setLogCmd('set calculate hbond false', true);
+              //me.htmlCls.clickMenuCls.setLogCmd('set calculate hbond false', true);
           }
       }
     }
@@ -32329,7 +32410,7 @@ class Resid2spec {
     }
 
     switchHighlightLevel() {var ic = this.icn3d, me = ic.icn3dui;
-      if(ic.icn3dui.bNode) return;
+      if(me.bNode) return;
 
       let  thisClass = this;
 
@@ -32342,7 +32423,7 @@ class Resid2spec {
               //ic.pk = 2;
           }
           thisClass.switchHighlightLevelUp();
-          ic.icn3dui.htmlCls.clickMenuCls.setLogCmd("highlight level up", true);
+          me.htmlCls.clickMenuCls.setLogCmd("highlight level up", true);
         }
         else if(e.keyCode === 40) { // arrow down, select down level of atoms
           e.preventDefault();
@@ -32351,7 +32432,7 @@ class Resid2spec {
               //ic.pk = 2;
           }
           thisClass.switchHighlightLevelDown();
-          ic.icn3dui.htmlCls.clickMenuCls.setLogCmd("highlight level down", true);
+          me.htmlCls.clickMenuCls.setLogCmd("highlight level down", true);
         }
       });
     }
@@ -32360,7 +32441,7 @@ class Resid2spec {
     //to increase the highlight level by one, or use down arrow to decrease the highlight level by one. This
     //function switchHighlightLevelUp() increases the highlight level by one.
     switchHighlightLevelUp() {var ic = this.icn3d, me = ic.icn3dui;
-      if(ic.icn3dui.bNode) return;
+      if(me.bNode) return;
 
       if(!ic.bShift && !ic.bCtrl) ic.hlObjectsCls.removeHlObjects();
       if(ic.pickedAtomList === undefined || Object.keys(ic.pickedAtomList).length === 0) {
@@ -32391,7 +32472,7 @@ class Resid2spec {
       }
       else if(ic.highlightlevel === 3) {
           let  atomLevel4;
-          if(ic.icn3dui.cfg.mmdbid !== undefined || ic.icn3dui.cfg.gi !== undefined) { // strand -> domain
+          if(me.cfg.mmdbid !== undefined || me.cfg.gi !== undefined) { // strand -> domain
               ic.highlightlevel = 4;
               let  firstAtom = ic.firstAtomObjCls.getFirstAtomObj(ic.pickedAtomList);
               atomLevel4 = ic.pickingCls.select3ddomainFromAtom(firstAtom);
@@ -32402,7 +32483,7 @@ class Resid2spec {
                 ic.hAtoms = me.hashUtilsCls.unionHash(ic.hAtoms, atomLevel4);
               }
           }
-          if((ic.icn3dui.cfg.mmdbid === undefined && ic.icn3dui.cfg.gi === undefined) || Object.keys(atomLevel4).length == 0) { // strand -> chain
+          if((me.cfg.mmdbid === undefined && me.cfg.gi === undefined) || Object.keys(atomLevel4).length == 0) { // strand -> chain
               ic.highlightlevel = 5;
               let  firstAtom = ic.firstAtomObjCls.getFirstAtomObj(ic.pickedAtomList);
               if(!ic.bShift && !ic.bCtrl) {
@@ -32440,7 +32521,7 @@ class Resid2spec {
     //arrow to increase the highlight level by one, or use down arrow to decrease the highlight level
     //by one. This function switchHighlightLevelDown() decreases the highlight level by one.
     switchHighlightLevelDown() {var ic = this.icn3d, me = ic.icn3dui;
-      if(ic.icn3dui.bNode) return;
+      if(me.bNode) return;
 
       ic.hlObjectsCls.removeHlObjects();
       if(ic.pickedAtomList === undefined || Object.keys(ic.pickedAtomList).length === 0) {
@@ -32485,7 +32566,7 @@ class Resid2spec {
       }
       else if(ic.highlightlevel === 5) {
           let  atomLevel4;
-          if(ic.icn3dui.cfg.mmdbid !== undefined || ic.icn3dui.cfg.gi !== undefined) { // chain -> domain
+          if(me.cfg.mmdbid !== undefined || me.cfg.gi !== undefined) { // chain -> domain
               ic.highlightlevel = 4;
               let  firstAtom = ic.firstAtomObjCls.getFirstAtomObj(ic.pickedAtomList);
               atomLevel4 = ic.pickingCls.select3ddomainFromAtom(firstAtom);
@@ -32496,7 +32577,7 @@ class Resid2spec {
                   ic.hAtoms = me.hashUtilsCls.unionHash(ic.hAtoms, atomLevel4);
               }
           }
-          if((ic.icn3dui.cfg.mmdbid === undefined && ic.icn3dui.cfg.gi === undefined) || Object.keys(atomLevel4).length == 0) { // chain -> strand
+          if((me.cfg.mmdbid === undefined && me.cfg.gi === undefined) || Object.keys(atomLevel4).length == 0) { // chain -> strand
               ic.highlightlevel = 3;
               let  firstAtom = ic.firstAtomObjCls.getFirstAtomObj(ic.pickedAtomList);
               if(!ic.bShift && !ic.bCtrl) {
@@ -32531,7 +32612,7 @@ class SetSeqAlign {
         this.icn3d = icn3d;
     }
 
-    setSeqAlign(seqalign, alignedStructures) { let ic = this.icn3d; ic.icn3dui;
+    setSeqAlign(seqalign, alignedStructures) { let  ic = this.icn3d, me = ic.icn3dui;
           let  mmdbid1 = alignedStructures[0][0].pdbId;
           let  mmdbid2 = alignedStructures[0][1].pdbId;
 
@@ -32653,7 +32734,7 @@ class SetSeqAlign {
                       //alignedAtoms = me.hashUtilsCls.unionHash(alignedAtoms, ic.residues[chainid2 + '_' + resi]);
                   }
                   else {
-                      color = ic.icn3dui.htmlCls.GREY8;
+                      color = me.htmlCls.GREY8;
                       classname = 'icn3d-nalign';
 
                       ic.nalignHash1[chainid1 + '_' + id2aligninfo[j].resi] = 1;
@@ -32671,8 +32752,8 @@ class SetSeqAlign {
                   resObject.resn =(resObject.resi === '' || classname === 'icn3d-nalign') ? id2aligninfo[j].resn.toLowerCase() : id2aligninfo[j].resn;
                   resObject.aligned = aligned;
                   // resi will be empty if there is no coordinates
-                  resObject.color =(resObject.resi === '') ? ic.icn3dui.htmlCls.GREYC : color; // color by identity
-                  resObject.color2 =(resObject.resi === '') ? ic.icn3dui.htmlCls.GREYC : color2; // color by conservation
+                  resObject.color =(resObject.resi === '') ? me.htmlCls.GREYC : color; // color by identity
+                  resObject.color2 =(resObject.resi === '') ? me.htmlCls.GREYC : color2; // color by conservation
                   resObject.class = classname;
 
                   ic.alnChainsSeq[chainid1].push(resObject);
@@ -32693,8 +32774,8 @@ class SetSeqAlign {
                   resObject.resn =(resObject.resi === '' || classname === 'icn3d-nalign') ? resn.toLowerCase() : resn;
                   resObject.aligned = aligned;
                   // resi will be empty if there is no coordinates
-                  resObject.color =(resObject.resi === '') ? ic.icn3dui.htmlCls.GREYC : color; // color by identity
-                  resObject.color2 =(resObject.resi === '') ? ic.icn3dui.htmlCls.GREYC : color2; // color by conservation
+                  resObject.color =(resObject.resi === '') ? me.htmlCls.GREYC : color; // color by identity
+                  resObject.color2 =(resObject.resi === '') ? me.htmlCls.GREYC : color2; // color by conservation
                   resObject.class = classname;
 
                   ic.alnChainsSeq[chainid2].push(resObject);
@@ -32758,9 +32839,9 @@ class SetSeqAlign {
           seqalign = {};
     }
 
-    setSeqAlignChain(chainid, chainIndex) { let ic = this.icn3d; ic.icn3dui;
+    setSeqAlignChain(chainid, chainIndex) { let  ic = this.icn3d, me = ic.icn3dui;
 
-          //var chainidArray = ic.icn3dui.cfg.chainalign.split(',');
+          //var chainidArray = me.cfg.chainalign.split(',');
           let  pos1 = ic.chainidArray[0].indexOf('_');
           let  pos2 = chainid.indexOf('_');
 
@@ -32779,8 +32860,8 @@ class SetSeqAlign {
           let  chainid2 = mmdbid2 + "_" + chain2;
 
           if(mmdbid2 !== undefined && mmdbid2 === ic.mmdbid_t) {
-              //chainid1 += ic.icn3dui.htmlCls.postfix;
-              chainid2 = mmdbid2 + ic.icn3dui.htmlCls.postfix + "_" + chain2;
+              //chainid1 += me.htmlCls.postfix;
+              chainid2 = mmdbid2 + me.htmlCls.postfix + "_" + chain2;
           }
 
           ic.conservedName1 = chainid1 + '_cons';
@@ -32847,7 +32928,7 @@ class SetSeqAlign {
                       if(ic.chainsSeq[chainid1] === undefined) break;
                       let  resi = ic.chainsSeq[chainid1][j].resi;
                       let  resn = ic.chainsSeq[chainid1][j].name.toLowerCase();
-                      color = ic.icn3dui.htmlCls.GREY8;
+                      color = me.htmlCls.GREY8;
                       classname = 'icn3d-nalign';
 
                       ic.nalignHash1[chainid1 + '_' + resi] = 1;
@@ -32861,7 +32942,7 @@ class SetSeqAlign {
                       let  resi = ic.chainsSeq[chainid2][j].resi;
                       let  resn = ic.chainsSeq[chainid2][j].name.toLowerCase();
 
-                      color = ic.icn3dui.htmlCls.GREY8;
+                      color = me.htmlCls.GREY8;
                       classname = 'icn3d-nalign';
 
                       ic.nalignHash2[chainid2 + '_' + resi] = 1;
@@ -32876,7 +32957,7 @@ class SetSeqAlign {
                           let  resi = '';
                           let  resn = '-';
 
-                          color = ic.icn3dui.htmlCls.GREY8;
+                          color = me.htmlCls.GREY8;
                           classname = 'icn3d-nalign';
 
                           this.setSeqPerResi(chainid1, chainid1, chainid2, resi, resn, false, color, undefined, classname, true, false, index1 + j);
@@ -32889,7 +32970,7 @@ class SetSeqAlign {
                           let  resi = '';
                           let  resn = '-';
 
-                          color = ic.icn3dui.htmlCls.GREY8;
+                          color = me.htmlCls.GREY8;
                           classname = 'icn3d-nalign';
 
                           this.setSeqPerResi(chainid2, chainid1, chainid2, resi, resn, false, color, undefined, classname, false, false, index2 + j);
@@ -32945,7 +33026,7 @@ class SetSeqAlign {
           let  structure1 = chainid_t.substr(0, chainid_t.indexOf('_')); //structureArray[0];
           let  structure2 = chainid.substr(0, chainid.indexOf('_')); //structureArray[1];
 
-          if(structure1 == structure2) structure2 += ic.icn3dui.htmlCls.postfix;
+          if(structure1 == structure2) structure2 += me.htmlCls.postfix;
 
           ic.conservedName1 = structure1 + '_cons';
           ic.conservedName2 = structure2 + '_cons';
@@ -33060,7 +33141,7 @@ class SetSeqAlign {
             ic.selectionCls.addCustomSelection(Object.keys(residuesHash), commandname, commanddescr, select, true);
     }
 
-    setSeqPerResi(chainid, chainid1, chainid2, resi, resn, bAligned, color, color2, classname, bFirstChain, bFirstResi, alignIndex) { let ic = this.icn3d; ic.icn3dui;
+    setSeqPerResi(chainid, chainid1, chainid2, resi, resn, bAligned, color, color2, classname, bFirstChain, bFirstResi, alignIndex) { let  ic = this.icn3d, me = ic.icn3dui;
           if(ic.alnChainsSeq[chainid] === undefined) ic.alnChainsSeq[chainid] = [];
 
           let  resObject = {};
@@ -33072,8 +33153,8 @@ class SetSeqAlign {
           resObject.resn =(resObject.resi === '' || classname === 'icn3d-nalign') ? resn.toLowerCase() : resn;
           resObject.aligned = bAligned;
           // resi will be empty if there is no coordinates
-          resObject.color =(resObject.resi === '') ? ic.icn3dui.htmlCls.GREYC : color; // color by identity
-          resObject.color2 =(resObject.resi === '') ? ic.icn3dui.htmlCls.GREYC : color2; // color by conservation
+          resObject.color =(resObject.resi === '') ? me.htmlCls.GREYC : color; // color by identity
+          resObject.color2 =(resObject.resi === '') ? me.htmlCls.GREYC : color2; // color by conservation
           resObject.class = classname;
 
           ic.alnChainsSeq[chainid].push(resObject);
@@ -33173,9 +33254,9 @@ class ParserUtils {
               let  rmsd = ic.rmsd_suprTmp.rmsd;
 
               if(rmsd) {
-                  ic.icn3dui.htmlCls.clickMenuCls.setLogCmd("realignment RMSD: " + rmsd.toPrecision(4), false);
+                  me.htmlCls.clickMenuCls.setLogCmd("realignment RMSD: " + rmsd.toPrecision(4), false);
                   $("#" + ic.pre + "realignrmsd").val(rmsd.toPrecision(4));
-                  if(!ic.icn3dui.cfg.bSidebyside) ic.icn3dui.htmlCls.dialogCls.openDlg('dl_rmsd', 'Realignment RMSD');
+                  if(!me.cfg.bSidebyside) me.htmlCls.dialogCls.openDlg('dl_rmsd', 'Realignment RMSD');
               }
 
               for(let i = 0, il = ic.structures[secondStruct].length; i < il; ++i) {
@@ -33192,13 +33273,13 @@ class ParserUtils {
               if(!bKeepSeq) ic.setSeqAlignCls.setSeqAlignForRealign(chainid_t, chainid, chainIndex);
 
               let  bShowHighlight = false;
-              let  seqObj = ic.icn3dui.htmlCls.alignSeqCls.getAlignSequencesAnnotations(Object.keys(ic.alnChains), undefined, undefined, bShowHighlight);
+              let  seqObj = me.htmlCls.alignSeqCls.getAlignSequencesAnnotations(Object.keys(ic.alnChains), undefined, undefined, bShowHighlight);
 
               let  oriHtml =(chainIndex === 1) ? '' : $("#" + ic.pre + "dl_sequence2").html();
               $("#" + ic.pre + "dl_sequence2").html(oriHtml + seqObj.sequencesHtml);
-              $("#" + ic.pre + "dl_sequence2").width(ic.icn3dui.htmlCls.RESIDUE_WIDTH * seqObj.maxSeqCnt + 200);
+              $("#" + ic.pre + "dl_sequence2").width(me.htmlCls.RESIDUE_WIDTH * seqObj.maxSeqCnt + 200);
 
-              ic.icn3dui.htmlCls.dialogCls.openDlg('dl_alignment', 'Select residues in aligned sequences');
+              me.htmlCls.dialogCls.openDlg('dl_alignment', 'Select residues in aligned sequences');
 
               if(!bChainAlign) {
                   ic.opts['color'] = 'identity';
@@ -33257,18 +33338,18 @@ class ParserUtils {
 
     //Generate the 2D interaction diagram for the structure "mmdbid", which could be PDB ID. The 2D
     //interaction diagram is only available when the input is NCBI MMDB ID, i.e., the URL is something like "&mmdbid=...".
-    set2DDiagramsForAlign(mmdbid1, mmdbid2) { let ic = this.icn3d; ic.icn3dui;
-       ic.icn3dui.htmlCls.dialogCls.openDlg('dl_2ddgm', 'Interactions');
+    set2DDiagramsForAlign(mmdbid1, mmdbid2) { let  ic = this.icn3d, me = ic.icn3dui;
+       me.htmlCls.dialogCls.openDlg('dl_2ddgm', 'Interactions');
 
        mmdbid1 = mmdbid1.substr(0, 4);
        mmdbid2 = mmdbid2.substr(0, 4);
 
-       let  url1 = ic.icn3dui.htmlCls.baseUrl + "mmdb/mmdb_strview.cgi?v=2&program=icn3d&uid="+mmdbid1+"&intrac=1";
-       let  url2 = ic.icn3dui.htmlCls.baseUrl + "mmdb/mmdb_strview.cgi?v=2&program=icn3d&uid="+mmdbid2+"&intrac=1";
+       let  url1 = me.htmlCls.baseUrl + "mmdb/mmdb_strview.cgi?v=2&program=icn3d&uid="+mmdbid1+"&intrac=1";
+       let  url2 = me.htmlCls.baseUrl + "mmdb/mmdb_strview.cgi?v=2&program=icn3d&uid="+mmdbid2+"&intrac=1";
 
-       if(ic.icn3dui.cfg.inpara !== undefined) {
-          url1 += ic.icn3dui.cfg.inpara;
-          url2 += ic.icn3dui.cfg.inpara;
+       if(me.cfg.inpara !== undefined) {
+          url1 += me.cfg.inpara;
+          url2 += me.cfg.inpara;
        }
 
        let  request1 = $.ajax({
@@ -33283,7 +33364,7 @@ class ParserUtils {
             ic.html2ddgm = '';
 
             ic.diagram2dCls.draw2Ddgm(data, mmdbid1, 0);
-            if(ic.icn3dui.cfg.show2d) ic.icn3dui.htmlCls.dialogCls.openDlg('dl_2ddgm', 'Interactions');
+            if(me.cfg.show2d) me.htmlCls.dialogCls.openDlg('dl_2ddgm', 'Interactions');
 
             return $.ajax({
               url: url2,
@@ -33301,25 +33382,25 @@ class ParserUtils {
             $("#" + ic.pre + "dl_2ddgm").html(ic.html2ddgm);
 
             ic.b2DShown = true;
-            //if(ic.icn3dui.cfg.show2d !== undefined && ic.icn3dui.cfg.show2d) ic.icn3dui.htmlCls.dialogCls.openDlg('dl_2ddgm', 'Interactions');
+            //if(me.cfg.show2d !== undefined && me.cfg.show2d) me.htmlCls.dialogCls.openDlg('dl_2ddgm', 'Interactions');
 
             if(ic.deferredViewinteraction !== undefined) ic.deferredViewinteraction.resolve();
        });
     }
 
-    set2DDiagramsForChainalign(chainidArray) { let ic = this.icn3d; ic.icn3dui;
+    set2DDiagramsForChainalign(chainidArray) { let  ic = this.icn3d, me = ic.icn3dui;
         let  thisClass = this;
 
-        ic.icn3dui.htmlCls.dialogCls.openDlg('dl_2ddgm', 'Interactions');
+        me.htmlCls.dialogCls.openDlg('dl_2ddgm', 'Interactions');
 
         let  ajaxArray = [];
         for(let index = 0, indexLen = chainidArray.length; index < indexLen; ++index) {
            let  pos = chainidArray[index].indexOf('_');
            let  mmdbid = chainidArray[index].substr(0, pos).toUpperCase();
 
-           let  url = ic.icn3dui.htmlCls.baseUrl + "mmdb/mmdb_strview.cgi?v=2&program=icn3d&uid="+mmdbid+"&intrac=1";
+           let  url = me.htmlCls.baseUrl + "mmdb/mmdb_strview.cgi?v=2&program=icn3d&uid="+mmdbid+"&intrac=1";
 
-           if(ic.icn3dui.cfg.inpara !== undefined) url += ic.icn3dui.cfg.inpara;
+           if(me.cfg.inpara !== undefined) url += me.cfg.inpara;
 
            let  twodAjax = $.ajax({
                 url: url,
@@ -33341,7 +33422,7 @@ class ParserUtils {
         });
     }
 
-    parse2DDiagramsData(dataArray, chainidArray) { let ic = this.icn3d; ic.icn3dui;
+    parse2DDiagramsData(dataArray, chainidArray) { let  ic = this.icn3d, me = ic.icn3dui;
         //var dataArray =(chainidArray.length == 1) ? [dataInput] : dataInput;
 
         ic.html2ddgm = '';
@@ -33359,7 +33440,7 @@ class ParserUtils {
 
         ic.b2DShown = true;
         $("#" + ic.pre + "dl_2ddgm").html(ic.html2ddgm);
-        if(ic.icn3dui.cfg.show2d) ic.icn3dui.htmlCls.dialogCls.openDlg('dl_2ddgm', 'Interactions');
+        if(me.cfg.show2d) me.htmlCls.dialogCls.openDlg('dl_2ddgm', 'Interactions');
 
         if(ic.deferredViewinteraction !== undefined) ic.deferredViewinteraction.resolve();
     }
@@ -33367,8 +33448,8 @@ class ParserUtils {
     download2Ddgm(mmdbid, structureIndex) {        this.set2DDiagrams(mmdbid);
     }
 
-    set2DDiagrams(mmdbid) { let ic = this.icn3d; ic.icn3dui;
-        ic.icn3dui.htmlCls.dialogCls.openDlg('dl_2ddgm', 'Interactions');
+    set2DDiagrams(mmdbid) { let  ic = this.icn3d, me = ic.icn3dui;
+        me.htmlCls.dialogCls.openDlg('dl_2ddgm', 'Interactions');
 
         if(ic.b2DShown === undefined || !ic.b2DShown) {
             ic.html2ddgm = '';
@@ -33396,10 +33477,10 @@ class ParserUtils {
         //}
     }
 
-    setYourNote(yournote) { let ic = this.icn3d; ic.icn3dui;
+    setYourNote(yournote) { let  ic = this.icn3d, me = ic.icn3dui;
         ic.yournote = yournote;
         $("#" + ic.pre + "yournote").val(ic.yournote);
-        if(ic.icn3dui.cfg.shownote) document.title = ic.yournote;
+        if(me.cfg.shownote) document.title = ic.yournote;
     }
 
     transformToOpmOri(pdbid) { let ic = this.icn3d; ic.icn3dui;
@@ -33478,9 +33559,9 @@ class ParserUtils {
                   let  centerTo = ic.rmsd_supr.trans2;
                   let  rmsd = ic.rmsd_supr.rmsd;
 
-                  ic.icn3dui.htmlCls.clickMenuCls.setLogCmd("RMSD of alignment to OPM: " + rmsd.toPrecision(4), false);
+                  me.htmlCls.clickMenuCls.setLogCmd("RMSD of alignment to OPM: " + rmsd.toPrecision(4), false);
                   $("#" + ic.pre + "realignrmsd").val(rmsd.toPrecision(4));
-                  if(!ic.icn3dui.cfg.bSidebyside) ic.icn3dui.htmlCls.dialogCls.openDlg('dl_rmsd', 'RMSD of alignment to OPM');
+                  if(!me.cfg.bSidebyside) me.htmlCls.dialogCls.openDlg('dl_rmsd', 'RMSD of alignment to OPM');
 
                   let  dxymaxsq = 0;
                   for(let i in ic.atoms) {
@@ -33644,7 +33725,7 @@ class ParserUtils {
     renderStructure() { let ic = this.icn3d, me = ic.icn3dui;
       if(ic.bInitial) {
           //$.extend(ic.opts, ic.opts);
-          if(ic.bOpm &&(ic.icn3dui.cfg.align !== undefined || ic.icn3dui.cfg.chainalign !== undefined)) { // show membrane
+          if(ic.bOpm &&(me.cfg.align !== undefined || me.cfg.chainalign !== undefined)) { // show membrane
               let  resid = ic.selectedPdbid + '_MEM_1';
               for(let i in ic.residues[resid]) {
                   let  atom = ic.atoms[i];
@@ -33654,7 +33735,7 @@ class ParserUtils {
                   ic.dAtoms[i] = 1;
               }
           }
-          if(ic.icn3dui.cfg.command !== undefined && ic.icn3dui.cfg.command !== '') {
+          if(me.cfg.command !== undefined && me.cfg.command !== '') {
               ic.bRender = false;
               ic.drawCls.draw();
           }
@@ -33681,18 +33762,18 @@ class ParserUtils {
           ic.drawCls.draw();
       }
 
-      if(ic.bInitial && ic.icn3dui.cfg.command !== undefined && ic.icn3dui.cfg.command !== '') {
+      if(ic.bInitial && me.cfg.command !== undefined && me.cfg.command !== '') {
           if(Object.keys(ic.structures).length == 1) {
               let  id = Object.keys(ic.structures)[0];
-              ic.icn3dui.cfg.command = ic.icn3dui.cfg.command.replace(new RegExp('!','g'), id + '_');
+              me.cfg.command = me.cfg.command.replace(new RegExp('!','g'), id + '_');
           }
           // final step resolved ic.deferred
-          ic.loadScriptCls.loadScript(ic.icn3dui.cfg.command);
+          ic.loadScriptCls.loadScript(me.cfg.command);
       }
       else {
-          if(ic.icn3dui.deferred !== undefined) ic.icn3dui.deferred.resolve(); if(ic.deferred2 !== undefined) ic.deferred2.resolve();
+          if(me.deferred !== undefined) me.deferred.resolve(); if(ic.deferred2 !== undefined) ic.deferred2.resolve();
       }
-      //if(ic.icn3dui.cfg.align !== undefined || ic.icn3dui.cfg.chainalign !== undefined || ic.bRealign ||( ic.bInputfile && ic.InputfileType == 'pdb' && Object.keys(ic.structures).length >= 2) ) {
+      //if(me.cfg.align !== undefined || me.cfg.chainalign !== undefined || ic.bRealign ||( ic.bInputfile && ic.InputfileType == 'pdb' && Object.keys(ic.structures).length >= 2) ) {
       if(Object.keys(ic.structures).length >= 2) {
           $("#" + ic.pre + "mn2_alternateWrap").show();
           $("#" + ic.pre + "mn2_realignWrap").show();
@@ -33704,30 +33785,30 @@ class ParserUtils {
       // display the structure right away. load the mns and sequences later
       setTimeout(function(){
           if(ic.bInitial) {
-              if(ic.icn3dui.cfg.showsets) {
+              if(me.cfg.showsets) {
                    ic.definedSetsCls.showSets();
               }
-              if(ic.icn3dui.cfg.align !== undefined || ic.icn3dui.cfg.chainalign !== undefined) {
+              if(me.cfg.align !== undefined || me.cfg.chainalign !== undefined) {
                   // expand the toolbar
                   let  id = ic.pre + 'selection';
                   $("#" + id).show();
                   $("#" + id + "_expand").hide();
                   $("#" + id + "_shrink").show();
 
-                  if(ic.icn3dui.cfg.align !== undefined) {
+                  if(me.cfg.align !== undefined) {
                       let  bShowHighlight = false;
-                      let  seqObj = ic.icn3dui.htmlCls.alignSeqCls.getAlignSequencesAnnotations(Object.keys(ic.alnChains), undefined, undefined, bShowHighlight);
+                      let  seqObj = me.htmlCls.alignSeqCls.getAlignSequencesAnnotations(Object.keys(ic.alnChains), undefined, undefined, bShowHighlight);
                       $("#" + ic.pre + "dl_sequence2").html(seqObj.sequencesHtml);
-                      $("#" + ic.pre + "dl_sequence2").width(ic.icn3dui.htmlCls.RESIDUE_WIDTH * seqObj.maxSeqCnt + 200);
+                      $("#" + ic.pre + "dl_sequence2").width(me.htmlCls.RESIDUE_WIDTH * seqObj.maxSeqCnt + 200);
                   }
               }
               //ic.definedSetsCls.setProtNuclLigInMenu();
-              if(ic.icn3dui.cfg.showanno) {
+              if(me.cfg.showanno) {
                    let  cmd = "view annotations";
-                   ic.icn3dui.htmlCls.clickMenuCls.setLogCmd(cmd, true);
+                   me.htmlCls.clickMenuCls.setLogCmd(cmd, true);
                    ic.showAnnoCls.showAnnotations();
               }
-              if(ic.icn3dui.cfg.closepopup) {
+              if(me.cfg.closepopup) {
                   ic.resizeCanvasCls.closeDialogs();
               }
           }
@@ -33776,7 +33857,7 @@ class MmcifParser {
 
     //Ajax call was used to get the atom data from the "mmcifid". This function was deferred
     //so that it can be chained together with other deferred functions for sequential execution.
-    downloadMmcif(mmcifid) { let ic = this.icn3d; ic.icn3dui;
+    downloadMmcif(mmcifid) { let  ic = this.icn3d, me = ic.icn3dui;
        let  thisClass = this;
 
        let  url, dataType;
@@ -33802,7 +33883,7 @@ class MmcifParser {
               //ic.ParserUtilsCls.hideLoading();
           },
           success: function(data) {
-               url = ic.icn3dui.htmlCls.baseUrl + "mmcifparser/mmcifparser.cgi";
+               url = me.htmlCls.baseUrl + "mmcifparser/mmcifparser.cgi";
                $.ajax({
                   url: url,
                   type: 'POST',
@@ -33849,7 +33930,7 @@ class MmcifParser {
       // chain functions together
       ic.deferredSymmetry = $.Deferred(function() {
           thisClass.downloadMmcifSymmetryBase(mmcifid, type);
-      }); // end of ic.icn3dui.deferred = $.Deferred(function() {
+      }); // end of me.deferred = $.Deferred(function() {
 
       return ic.deferredSymmetry.promise();
     }
@@ -33878,7 +33959,7 @@ class MmcifParser {
           retryLimit : 1,
           success: function(data) {
               // notebook has a problem in posting data to mmcifparser.cgi
-              if(ic.icn3dui.cfg.notebook) {
+              if(me.cfg.notebook) {
                 let  lines = data.split('\n');
                 let  bOrganism = false, bStartOrganism = false;
                 let  bMatrix = false, bStartMatrix = false, matrixLineCnt = 0, matrixStr = '', comLine = '';
@@ -34021,8 +34102,8 @@ class MmcifParser {
 
                 if(ic.deferredSymmetry !== undefined) ic.deferredSymmetry.resolve();
             }
-            else { // if(!ic.icn3dui.cfg.notebook) {
-               url = ic.icn3dui.htmlCls.baseUrl + "mmcifparser/mmcifparser.cgi";
+            else { // if(!me.cfg.notebook) {
+               url = me.htmlCls.baseUrl + "mmcifparser/mmcifparser.cgi";
 
                $.ajax({
                   url: url,
@@ -34085,7 +34166,7 @@ class MmcifParser {
                     return;
                   }
                 });
-            } // if(!ic.icn3dui.cfg.notebook
+            } // if(!me.cfg.notebook
           },
           error : function(xhr, textStatus, errorThrown ) {
             this.tryCount++;
@@ -34153,7 +34234,7 @@ class MmcifParser {
         ic.asuCnt = ic.biomtMatrices.length;
     }
 
-    loadMmcifOpmDataPart2(data, pdbid) { let ic = this.icn3d; ic.icn3dui;
+    loadMmcifOpmDataPart2(data, pdbid) { let  ic = this.icn3d, me = ic.icn3dui;
         if(Object.keys(ic.structures).length == 1) {
             $("#" + ic.pre + "alternateWrapper").hide();
         }
@@ -34182,9 +34263,9 @@ class MmcifParser {
 
         ic.ParserUtilsCls.renderStructure();
 
-        if(ic.icn3dui.cfg.rotate !== undefined) ic.resizeCanvasCls.rotStruc(ic.icn3dui.cfg.rotate, true);
+        if(me.cfg.rotate !== undefined) ic.resizeCanvasCls.rotStruc(me.cfg.rotate, true);
 
-        //if(ic.icn3dui.deferred !== undefined) ic.icn3dui.deferred.resolve(); if(ic.deferred2 !== undefined) ic.deferred2.resolve();
+        //if(me.deferred !== undefined) me.deferred.resolve(); if(ic.deferred2 !== undefined) ic.deferred2.resolve();
     }
 }
 
@@ -34197,8 +34278,8 @@ class HlSeq {
         this.icn3d = icn3d;
     }
 
-    selectSequenceNonMobile() { let ic = this.icn3d; ic.icn3dui;
-      if(ic.icn3dui.bNode) return;
+    selectSequenceNonMobile() { let ic = this.icn3d, me = ic.icn3dui;
+      if(me.bNode) return;
 
       let thisClass = this;
       $("#" + ic.pre + "dl_sequence2").add("[id^=" + ic.pre + "dt_giseq]").add("[id^=" + ic.pre + "dt_custom]").add("[id^=" + ic.pre + "dt_site]").add("[id^=" + ic.pre + "dt_snp]").add("[id^=" + ic.pre + "dt_clinvar]").add("[id^=" + ic.pre + "dt_cdd]").add("[id^=" + ic.pre + "dt_domain]").add("[id^=" + ic.pre + "dt_interaction]").add("[id^=" + ic.pre + "dt_ssbond]").add("[id^=" + ic.pre + "dt_crosslink]").add("[id^=" + ic.pre + "dt_transmem]")
@@ -34283,8 +34364,8 @@ class HlSeq {
       });
     }
 
-    selectSequenceMobile() { let ic = this.icn3d; ic.icn3dui;
-      if(ic.icn3dui.bNode) return;
+    selectSequenceMobile() { let ic = this.icn3d, me = ic.icn3dui;
+      if(me.bNode) return;
 
       let thisClass = this;
 
@@ -34331,8 +34412,8 @@ class HlSeq {
       });
     }
 
-    selectChainMobile() { let ic = this.icn3d; ic.icn3dui;
-      if(ic.icn3dui.bNode) return;
+    selectChainMobile() { let ic = this.icn3d, me = ic.icn3dui;
+      if(me.bNode) return;
 
       let thisClass = this;
 
@@ -34359,7 +34440,7 @@ class HlSeq {
     }
 
     selectTitle(that) { let ic = this.icn3d, me = ic.icn3dui;
-      if(ic.icn3dui.bNode) return;
+      if(me.bNode) return;
 
       if($(that).hasClass('icn3d-seqTitle')) {
         let chainid = $(that).attr('chain');
@@ -34414,15 +34495,15 @@ class HlSeq {
                 }
 
                 if(ic.bAlignSeq) {
-                    ic.icn3dui.htmlCls.clickMenuCls.setLogCmd('select alignChain ' + chainid, true);
+                    me.htmlCls.clickMenuCls.setLogCmd('select alignChain ' + chainid, true);
                 }
                 else {
-                    ic.icn3dui.htmlCls.clickMenuCls.setLogCmd('select chain ' + chainid, true);
+                    me.htmlCls.clickMenuCls.setLogCmd('select chain ' + chainid, true);
                 }
 
                 let setNames = ic.currSelectedSets.join(' or ');
-                //if(ic.currSelectedSets.length > 1) ic.icn3dui.htmlCls.clickMenuCls.setLogCmd('select saved atoms ' + setNames, true);
-                if(ic.currSelectedSets.length > 1) ic.icn3dui.htmlCls.clickMenuCls.setLogCmd('select sets ' + setNames, true);
+                //if(ic.currSelectedSets.length > 1) me.htmlCls.clickMenuCls.setLogCmd('select saved atoms ' + setNames, true);
+                if(ic.currSelectedSets.length > 1) me.htmlCls.clickMenuCls.setLogCmd('select sets ' + setNames, true);
             }
             else {
                 if($(that).hasClass('icn3d-highlightSeq')) {
@@ -34438,11 +34519,11 @@ class HlSeq {
                             ic.selectionCls.selectAChain(chainid, chainid, false);
                         }
 
-                        ic.icn3dui.htmlCls.clickMenuCls.setLogCmd('select chain ' + chainid, true);
+                        me.htmlCls.clickMenuCls.setLogCmd('select chain ' + chainid, true);
 
                         let setNames = ic.currSelectedSets.join(' or ');
-                        //if(ic.currSelectedSets.length > 1) ic.icn3dui.htmlCls.clickMenuCls.setLogCmd('select saved atoms ' + setNames, true);
-                        if(ic.currSelectedSets.length > 1) ic.icn3dui.htmlCls.clickMenuCls.setLogCmd('select sets ' + setNames, true);
+                        //if(ic.currSelectedSets.length > 1) me.htmlCls.clickMenuCls.setLogCmd('select saved atoms ' + setNames, true);
+                        if(ic.currSelectedSets.length > 1) me.htmlCls.clickMenuCls.setLogCmd('select sets ' + setNames, true);
                     }
                     else {
                         let residueidHash = {};
@@ -34527,7 +34608,7 @@ class HlSeq {
 
                         ic.drawCls.draw();
 
-                        ic.icn3dui.htmlCls.clickMenuCls.setLogCmd('select ' + ic.resid2specCls.residueids2spec(Object.keys(residueidHash)) + ' | name ' + commandname, true);
+                        me.htmlCls.clickMenuCls.setLogCmd('select ' + ic.resid2specCls.residueids2spec(Object.keys(residueidHash)) + ' | name ' + commandname, true);
 
                         if(ic.bCtrl || ic.bShift) {
                             ic.currSelectedSets.push(commandname);
@@ -34537,8 +34618,8 @@ class HlSeq {
                         }
 
                         let setNames = ic.currSelectedSets.join(' or ');
-                        //if(ic.currSelectedSets.length > 1) ic.icn3dui.htmlCls.clickMenuCls.setLogCmd('select saved atoms ' + setNames, true);
-                        if(ic.currSelectedSets.length > 1) ic.icn3dui.htmlCls.clickMenuCls.setLogCmd('select sets ' + setNames, true);
+                        //if(ic.currSelectedSets.length > 1) me.htmlCls.clickMenuCls.setLogCmd('select saved atoms ' + setNames, true);
+                        if(ic.currSelectedSets.length > 1) me.htmlCls.clickMenuCls.setLogCmd('select sets ' + setNames, true);
                     } // if($(that).attr('gi') !== undefined) {
                 } // if($(that).hasClass('icn3d-highlightSeq')) {
             } // if(!ic.bAnnotations) {
@@ -34554,7 +34635,7 @@ class HlSeq {
     }
 
     selectResidues(id, that) { let ic = this.icn3d, me = ic.icn3dui;
-      if(ic.icn3dui.bNode) return;
+      if(me.bNode) return;
 
       if(id !== undefined && id !== '') {
         // add "align_" in front of id so that full sequence and aligned sequence will not conflict
@@ -34588,7 +34669,7 @@ class HlSeq {
 
                   //var size = parseInt(ic.LABELSIZE * 10 / label.length);
                   let size = ic.LABELSIZE;
-                  let color = ic.icn3dui.htmlCls.GREYD;
+                  let color = me.htmlCls.GREYD;
                   ic.analysisCls.addLabel(label, position.center.x, position.center.y, position.center.z, size, color, undefined, 'custom');
               }
             }
@@ -34617,9 +34698,9 @@ class ShowAnno {
     }
 
     //show annotations such as SNPs, ClinVar, domains, binding sites, etc.
-    showAnnotations() { let ic = this.icn3d; ic.icn3dui;
+    showAnnotations() { let ic = this.icn3d, me = ic.icn3dui;
         let thisClass = this;
-        ic.icn3dui.htmlCls.dialogCls.openDlg('dl_selectannotations', 'Sequences and Annotations');
+        me.htmlCls.dialogCls.openDlg('dl_selectannotations', 'Sequences and Annotations');
         // add note about assembly
         if((ic.bAssemblyNote === undefined || !ic.bAssemblyNote) && ic.asuCnt !== undefined ) {
             let html = "     <br><div id='" + ic.pre + "assembly_note' style='margin-left:5px;'><span class='icn3d-annoLargeTitle'>Assembly Tips:</span> Only the asymmetric unit is shown in the sequence window.<br>Click \"Assembly\" in the menu \"View\" to switch between asymmetric unit and biological assembly(<b>" + ic.asuCnt + "</b> asymmetric unit).</div>";
@@ -34633,7 +34714,7 @@ class ShowAnno {
             if(ic.resi2disease_nonempty === undefined) ic.resi2disease_nonempty = {};
             if(ic.baseResi === undefined) ic.baseResi = {};
             if(ic.matchedPos === undefined) ic.matchedPos = {};
-            let dialogWidth =(ic.icn3dui.cfg.notebook) ? ic.icn3dui.htmlCls.WIDTH / 2 : $("#" + ic.pre + "dl_selectannotations").dialog( "option", "width" );
+            let dialogWidth =(me.cfg.notebook) ? me.htmlCls.WIDTH / 2 : $("#" + ic.pre + "dl_selectannotations").dialog( "option", "width" );
             ic.seqAnnWidth = dialogWidth - 120 - 30*2 - 50; // title: 120px, start and end resi: 30px, extra space on the left and right: 50px
             ic.maxAnnoLength = 1;
             for(let chainid in ic.chainsSeq) {
@@ -34660,7 +34741,7 @@ class ShowAnno {
                 else {
                     chainidBase = chainArray[i];
                 }
-                //if(ic.icn3dui.cfg.mmdbid !== undefined) { // protein and chemicals/ions are in different chains
+                //if(me.cfg.mmdbid !== undefined) { // protein and chemicals/ions are in different chains
                 if(ic.proteins.hasOwnProperty(atom.serial) && ic.chainsSeq[chainArray[i]].length > 1) {
                     ic.protein_chainid[chainArray[i]] = chainidBase;
                 }
@@ -34680,7 +34761,7 @@ class ShowAnno {
                 }
                 //}
                 // protein and nucleotide chain may have chemicals/ions attached at the end
-                if((ic.icn3dui.cfg.pdbid !== undefined || ic.icn3dui.cfg.opmid !== undefined || ic.icn3dui.cfg.mmcifid !== undefined || ic.icn3dui.cfg.mmtfid !== undefined)
+                if((me.cfg.pdbid !== undefined || me.cfg.opmid !== undefined || me.cfg.mmcifid !== undefined || me.cfg.mmtfid !== undefined)
                   &&(ic.proteins.hasOwnProperty(atom.serial) || ic.nucleotides.hasOwnProperty(atom.serial)) ) {
                     for(let r = 0, rl = ic.chainsSeq[chainArray[i]].length; r < rl; ++r) {
                         let resObj = ic.chainsSeq[chainArray[i]][r];
@@ -34698,11 +34779,11 @@ class ShowAnno {
                             }
                         } // if(resObj.name !== ''
                     } // for(let r = 0
-                } // if(ic.icn3dui.cfg.mmdbid
+                } // if(me.cfg.mmdbid
             } // for(let i = 0
-            if(ic.icn3dui.cfg.blast_rep_id === undefined) {
+            if(me.cfg.blast_rep_id === undefined) {
                if(ic.bFullUi) {
-                   if(ic.icn3dui.cfg.mmtfid !== undefined) { // mmtf data do NOT have the missing residues
+                   if(me.cfg.mmtfid !== undefined) { // mmtf data do NOT have the missing residues
                        let id = chainArray[0].substr(0, chainArray[0].indexOf('_'));
                        $.when(ic.mmcifParserCls.downloadMmcifSymmetry(id, 'mmtfid')).then(function() {
                            thisClass.showAnnoSeqData(nucleotide_chainid, chemical_chainid, chemical_set);
@@ -34713,24 +34794,24 @@ class ShowAnno {
                    }
                }
             }
-            else if(ic.icn3dui.cfg.blast_rep_id !== undefined) { // align sequence to structure
-               let url = ic.icn3dui.htmlCls.baseUrl + 'pwaln/pwaln.fcgi?from=querytarget';
-               let dataObj = {'targets': ic.icn3dui.cfg.blast_rep_id, 'queries': ic.icn3dui.cfg.query_id};
-               if(ic.icn3dui.cfg.query_from_to !== undefined ) {
+            else if(me.cfg.blast_rep_id !== undefined) { // align sequence to structure
+               let url = me.htmlCls.baseUrl + 'pwaln/pwaln.fcgi?from=querytarget';
+               let dataObj = {'targets': me.cfg.blast_rep_id, 'queries': me.cfg.query_id};
+               if(me.cfg.query_from_to !== undefined ) {
                    // convert from 1-based to 0-based
-                   let query_from_to_array = ic.icn3dui.cfg.query_from_to.split(':');
+                   let query_from_to_array = me.cfg.query_from_to.split(':');
                    for(let i = 0, il = query_from_to_array.length; i < il; ++i) {
                        query_from_to_array[i] = parseInt(query_from_to_array[i]) - 1;
                    }
-                   dataObj['queries'] = ic.icn3dui.cfg.query_id + ':' + query_from_to_array.join(':');
+                   dataObj['queries'] = me.cfg.query_id + ':' + query_from_to_array.join(':');
                }
-               if(ic.icn3dui.cfg.target_from_to !== undefined) {
+               if(me.cfg.target_from_to !== undefined) {
                    // convert from 1-based to 0-based
-                   let target_from_to_array = ic.icn3dui.cfg.target_from_to.split(':');
+                   let target_from_to_array = me.cfg.target_from_to.split(':');
                    for(let i = 0, il = target_from_to_array.length; i < il; ++i) {
                        target_from_to_array[i] = parseInt(target_from_to_array[i]) - 1;
                    }
-                   dataObj['targets'] = ic.icn3dui.cfg.blast_rep_id + ':' + target_from_to_array.join(':');
+                   dataObj['targets'] = me.cfg.blast_rep_id + ':' + target_from_to_array.join(':');
                }
                $.ajax({
                   url: url,
@@ -34808,7 +34889,7 @@ class ShowAnno {
                 + geneLink + "&nbsp;&nbsp;&nbsp;"
                 + this.addButton(chnid, "icn3d-addtrack", "Add Track", "Add a custom track", 60, buttonStyle)
                 + "&nbsp;&nbsp;&nbsp;";
-            //if(ic.icn3dui.cfg.blast_rep_id !== undefined && ic.icn3dui.cfg.blast_rep_id == chnid) {
+            //if(me.cfg.blast_rep_id !== undefined && me.cfg.blast_rep_id == chnid) {
                 chainHtml += this.addButton(chnid, "icn3d-customcolor", "Custom Color/Tube", "Use a custom file to define the colors or tubes in 3D structure", 110, buttonStyle) + "&nbsp;&nbsp;&nbsp;";
             //}
                 chainHtml += this.addButton(chnid, "icn3d-helixsets", "Helix Sets", "Define sets for each helix in this chain and add them to the menu of \"Defined Sets\"", 60, buttonStyle) + "&nbsp;"
@@ -34827,7 +34908,7 @@ class ShowAnno {
         ic.annoCddSiteCls.setToolTip();
         // show the sequence and 3D structure
         //var url = "https://eme.utilsCls.ncbi.nlm.nih.gov/entrez/eUtilsCls/efetch.fcgi?db=protein&retmode=json&rettype=fasta&id=" + chnidBaseArray;
-        let url = ic.icn3dui.htmlCls.baseUrl + "/vastdyn/vastdyn.cgi?chainlist=" + chnidBaseArray;
+        let url = me.htmlCls.baseUrl + "/vastdyn/vastdyn.cgi?chainlist=" + chnidBaseArray;
 
         if(ic.chainid_seq !== undefined) {
             this.processSeqData(ic.chainid_seq);
@@ -34900,12 +34981,12 @@ class ShowAnno {
         ic.showSeqCls.showSeq(chnid, chnidBase, type);
         //ic.annoContactCls.showInteraction(chnid, chnidBase);
     }
-    getCombinedSequenceData(name, residArray, index) { let ic = this.icn3d; ic.icn3dui;
+    getCombinedSequenceData(name, residArray, index) { let ic = this.icn3d, me = ic.icn3dui;
         let categoryStr =(index == 0) ? "<span class='icn3d-annoLargeTitle'><b>Chemicals/Ions/Water</b>: </span><br><br>" : "";
         let chemName;
         let pos = residArray[0].lastIndexOf('_');
         let firstChainid = residArray[0].substr(0, pos);
-        let sid =(ic.icn3dui.cfg.mmdbid !== undefined && ic.chainid2sid !== undefined) ? ic.chainid2sid[firstChainid] : undefined;
+        let sid =(me.cfg.mmdbid !== undefined && ic.chainid2sid !== undefined) ? ic.chainid2sid[firstChainid] : undefined;
         if(sid !== undefined) {
             chemName = "<b><a class='icn3d-blue' href='https://pubchem.ncbi.nlm.nih.gov/substance/" + sid + "#section=2D-Structure' target='_blank'>" + name + " <img src='https://pubchem.ncbi.nlm.nih.gov/image/imgsrv.fcgi?sid=" + sid + "'></a></b>";
         }
@@ -34936,7 +35017,7 @@ class ShowAnno {
           let resi = resid.substr(resid.lastIndexOf('_') + 1);
           html += '<span id="giseq_' + ic.pre + resid + '" title="' + cFull + resi + '" class="icn3d-residue icn3d-chemical">' + c + '</span>';
         }
-        let color = ic.icn3dui.htmlCls.GREY8;
+        let color = me.htmlCls.GREY8;
         //html2 += '<div class="icn3d-seqTitle" style="display:inline-block; color:white; font-weight:bold; background-color:' + color + '; width:' + Math.round(ic.seqAnnWidth * residArray.length / ic.maxAnnoLength) + 'px;">' + name + '</div>';
         let width = Math.round(ic.seqAnnWidth * residArray.length / ic.maxAnnoLength);
         if(width < 1) width = 1;
@@ -34979,16 +35060,16 @@ class ShowAnno {
                 console.log( "No data were found for the protein " + chnid + "..." );
                 ic.showSeqCls.setAlternativeSeq(chnid, chnidBase);
             }
-            if(ic.icn3dui.cfg.blast_rep_id != chnid) {
+            if(me.cfg.blast_rep_id != chnid) {
                 ic.showSeqCls.showSeq(chnid, chnidBase);
             }
-            else if(ic.icn3dui.cfg.blast_rep_id == chnid && ic.seqStructAlignData.data === undefined) {
+            else if(me.cfg.blast_rep_id == chnid && ic.seqStructAlignData.data === undefined) {
               let title;
-              if(ic.icn3dui.cfg.query_id.length > 14) {
-                  title = 'Query: ' + ic.icn3dui.cfg.query_id.substr(0, 6) + '...';
+              if(me.cfg.query_id.length > 14) {
+                  title = 'Query: ' + me.cfg.query_id.substr(0, 6) + '...';
               }
               else {
-                  title =(isNaN(ic.icn3dui.cfg.query_id)) ? 'Query: ' + ic.icn3dui.cfg.query_id : 'Query: gi ' + ic.icn3dui.cfg.query_id;
+                  title =(isNaN(me.cfg.query_id)) ? 'Query: ' + me.cfg.query_id : 'Query: gi ' + me.cfg.query_id;
               }
               compTitle = undefined;
               compText = undefined;
@@ -34998,14 +35079,14 @@ class ShowAnno {
               alert('The sequence can NOT be aligned to the structure');
               ic.showSeqCls.showSeq(chnid, chnidBase, undefined, title, compTitle, text, compText);
             }
-            else if(ic.icn3dui.cfg.blast_rep_id == chnid && ic.seqStructAlignData.data !== undefined) { // align sequence to structure
-              //var title = 'Query: ' + ic.icn3dui.cfg.query_id.substr(0, 6);
+            else if(me.cfg.blast_rep_id == chnid && ic.seqStructAlignData.data !== undefined) { // align sequence to structure
+              //var title = 'Query: ' + me.cfg.query_id.substr(0, 6);
               let title;
-              if(ic.icn3dui.cfg.query_id.length > 14) {
-                  title = 'Query: ' + ic.icn3dui.cfg.query_id.substr(0, 6) + '...';
+              if(me.cfg.query_id.length > 14) {
+                  title = 'Query: ' + me.cfg.query_id.substr(0, 6) + '...';
               }
               else {
-                  title =(isNaN(ic.icn3dui.cfg.query_id)) ? 'Query: ' + ic.icn3dui.cfg.query_id : 'Query: gi ' + ic.icn3dui.cfg.query_id;
+                  title =(isNaN(me.cfg.query_id)) ? 'Query: ' + me.cfg.query_id : 'Query: gi ' + me.cfg.query_id;
               }
               let data = ic.seqStructAlignData;
 
@@ -35087,7 +35168,7 @@ class ShowAnno {
                           else {
                               compText += ' ';
                               ic.fullpos2ConsTargetpos[i + nGap] = {'same': -1, 'pos': pos, 'res': targetSeq[i], 'color': colorHexStr};
-                              ic.alnChainsSeq[chnid].push({'resi': pos, 'color': ic.icn3dui.htmlCls.GREYC, 'color2': '#' + colorHexStr});
+                              ic.alnChainsSeq[chnid].push({'resi': pos, 'color': me.htmlCls.GREYC, 'color2': '#' + colorHexStr});
                           }
                       }
                       else {
@@ -35165,6 +35246,9 @@ class ShowAnno {
         }
     }
     getColorhexFromBlosum62(resA, resB) { let ic = this.icn3d, me = ic.icn3dui;
+        resA = resA.toUpperCase();
+        resB = resB.toUpperCase();
+
         let iA =(me.parasCls.b62ResArray.indexOf(resA) !== -1) ? me.parasCls.b62ResArray.indexOf(resA) : me.parasCls.b62ResArray.length - 1; // or the last one "*"
         let iB =(me.parasCls.b62ResArray.indexOf(resB) !== -1) ? me.parasCls.b62ResArray.indexOf(resB) : me.parasCls.b62ResArray.length - 1; // or the last one "*"
         let matrixValue = me.parasCls.b62Matrix[iA][iB];
@@ -35197,9 +35281,9 @@ class AnnoContact {
     }
 
     //Show the residues interacting with the chain.
-    showInteraction(chnid, chnidBase) { let ic = this.icn3d; ic.icn3dui;
+    showInteraction(chnid, chnidBase) { let ic = this.icn3d, me = ic.icn3dui;
         let thisClass = this;
-        if(ic.chainname2residues === undefined &&(ic.icn3dui.cfg.mmdbid !== undefined || ic.icn3dui.cfg.gi !== undefined || ic.icn3dui.cfg.blast_rep_id !== undefined || ic.icn3dui.cfg.align !== undefined || ic.icn3dui.cfg.chainalign !== undefined) ) {
+        if(ic.chainname2residues === undefined &&(me.cfg.mmdbid !== undefined || me.cfg.gi !== undefined || me.cfg.blast_rep_id !== undefined || me.cfg.align !== undefined || me.cfg.chainalign !== undefined) ) {
             // 2d interaction didn't finish loading data yet
             setTimeout(function(){
               thisClass.showInteraction_base(chnid, chnidBase);
@@ -35221,7 +35305,7 @@ class AnnoContact {
         if(ic.chainname2residues[chainid] === undefined) {
             ic.chainname2residues[chainid] = {};
             let jl = chainArray.length;
-            if(jl > 100 && ic.icn3dui.cfg.mmdbid === undefined && ic.icn3dui.cfg.gi === undefined && ic.icn3dui.cfg.blast_rep_id === undefined && ic.icn3dui.cfg.align === undefined && ic.icn3dui.cfg.chainalign === undefined) {
+            if(jl > 100 && me.cfg.mmdbid === undefined && me.cfg.gi === undefined && me.cfg.blast_rep_id === undefined && me.cfg.align === undefined && me.cfg.chainalign === undefined) {
             //if(jl > 100) {
                 //console.log("Do not show interactions if there are more than 100 chains");
                 $("#" + ic.pre + "dt_interaction_" + chnid).html("");
@@ -35311,7 +35395,7 @@ class AnnoContact {
                   let pos =(i >= ic.matchedPos[chnid] && i - ic.matchedPos[chnid] < ic.chainsSeq[chnid].length) ? ic.chainsSeq[chnid][i - ic.matchedPos[chnid]].resi : ic.baseResi[chnid] + 1 + i;
                   html += '<span id="' + pre + '_' + ic.pre + chnid + '_' + pos + '" title="' + cFull + pos + '" class="icn3d-residue">' + c + '</span>';
                   html2 += ic.showSeqCls.insertGapOverview(chnid, i);
-                  let emptyWidth =(ic.icn3dui.cfg.blast_rep_id == chnid) ? Math.round(ic.seqAnnWidth * i /(ic.maxAnnoLength + ic.nTotalGap) - prevEmptyWidth - prevLineWidth) : Math.round(ic.seqAnnWidth * i / ic.maxAnnoLength - prevEmptyWidth - prevLineWidth);
+                  let emptyWidth =(me.cfg.blast_rep_id == chnid) ? Math.round(ic.seqAnnWidth * i /(ic.maxAnnoLength + ic.nTotalGap) - prevEmptyWidth - prevLineWidth) : Math.round(ic.seqAnnWidth * i / ic.maxAnnoLength - prevEmptyWidth - prevLineWidth);
                     //if(emptyWidth < 0) emptyWidth = 0;
                     if(emptyWidth >= 0) {
                     html2 += '<div style="display:inline-block; width:' + emptyWidth + 'px;">&nbsp;</div>';
@@ -35411,14 +35495,14 @@ class AnnoDomain {
         this.icn3d = icn3d;
     }
 
-    showDomainPerStructure(index) { let ic = this.icn3d; ic.icn3dui;
+    showDomainPerStructure(index) { let ic = this.icn3d, me = ic.icn3dui;
         let thisClass = this;
         //var chnid = Object.keys(ic.protein_chainid)[0];
         //var pdbid = chnid.substr(0, chnid.indexOf('_'));
         let pdbArray = Object.keys(ic.structures);
         // show 3D domains
         let pdbid = pdbArray[index];
-        let url = ic.icn3dui.htmlCls.baseUrl + "mmdb/mmdb_strview.cgi?v=2&program=icn3d&domain&molinfor&uid=" + pdbid;
+        let url = me.htmlCls.baseUrl + "mmdb/mmdb_strview.cgi?v=2&program=icn3d&domain&molinfor&uid=" + pdbid;
         if(index == 0 && ic.mmdb_data !== undefined) {
             for(let chnid in ic.protein_chainid) {
                 if(chnid.indexOf(pdbid) !== -1) {
@@ -35452,7 +35536,7 @@ class AnnoDomain {
                 ic.bAjax3ddomain = true;
                 ic.bAjaxDoneArray[index] = true;
                 if(ic.deferred3ddomain !== undefined) {
-                    if(ic.icn3dui.cfg.align === undefined || ic.icn3dui.cfg.chainalign === undefined || ic.bRealign) {
+                    if(me.cfg.align === undefined || me.cfg.chainalign === undefined || ic.bRealign) {
                         ic.deferred3ddomain.resolve();
                     }
                     else {
@@ -35483,7 +35567,7 @@ class AnnoDomain {
                 ic.bAjax3ddomain = true;
                 bAjaxDone1 = true;
                 if(ic.deferred3ddomain !== undefined) {
-                    if(ic.icn3dui.cfg.align === undefined || ic.icn3dui.cfg.chainalign === undefined) {
+                    if(me.cfg.align === undefined || me.cfg.chainalign === undefined) {
                         ic.deferred3ddomain.resolve();
                     }
                     else {
@@ -35515,7 +35599,7 @@ class AnnoDomain {
             this.showDomainPerStructure(i);
         }
     }
-    showDomainWithData(chnid, data) { let ic = this.icn3d; ic.icn3dui;
+    showDomainWithData(chnid, data) { let ic = this.icn3d, me = ic.icn3dui;
             let html = '<div id="' + ic.pre + chnid + '_domainseq_sequence" class="icn3d-dl_sequence">';
             let html2 = html;
             let html3 = html;
@@ -35592,7 +35676,7 @@ class AnnoDomain {
                 let atom = ic.firstAtomObjCls.getFirstCalphaAtomObj(ic.chains[chnid]);
                 let colorStr =(atom.color === undefined || atom.color.getHexString() === 'FFFFFF') ? 'DDDDDD' : atom.color.getHexString();
                 let color =(atom.color !== undefined) ? colorStr : "CCCCCC";
-                if(ic.icn3dui.cfg.blast_rep_id != chnid) { // regular
+                if(me.cfg.blast_rep_id != chnid) { // regular
                     for(let i = 0, il = fromArray.length; i < il; ++i) {
                         let emptyWidth =(i == 0) ? Math.round(ic.seqAnnWidth *(fromArray[i] - ic.baseResi[chnid] - 1) / ic.maxAnnoLength) : Math.round(ic.seqAnnWidth *(fromArray[i] - toArray[i-1] - 1) / ic.maxAnnoLength);
                         html2 += '<div style="display:inline-block; width:' + emptyWidth + 'px;">&nbsp;</div>';
@@ -35823,7 +35907,7 @@ class AnnoSnpClinVar {
                         }
                     }
                     html += ic.showSeqCls.insertGapOverview(chnid, i-1);
-                    let emptyWidth =(ic.icn3dui.cfg.blast_rep_id == chnid) ? Math.round(ic.seqAnnWidth *(i-1) /(ic.maxAnnoLength + ic.nTotalGap) - prevEmptyWidth - prevLineWidth) : Math.round(ic.seqAnnWidth *(i-1) / ic.maxAnnoLength - prevEmptyWidth - prevLineWidth);
+                    let emptyWidth =(me.cfg.blast_rep_id == chnid) ? Math.round(ic.seqAnnWidth *(i-1) /(ic.maxAnnoLength + ic.nTotalGap) - prevEmptyWidth - prevLineWidth) : Math.round(ic.seqAnnWidth *(i-1) / ic.maxAnnoLength - prevEmptyWidth - prevLineWidth);
                     //if(emptyWidth < 0) emptyWidth = 0;
                     if(bClinvar) {
                         if(snpTypeHash[i] == 'icn3d-clinvar' || snpTypeHash[i] == 'icn3d-clinvar-path') {
@@ -36219,12 +36303,12 @@ class AnnoSnpClinVar {
     }
 
     //Show the annotations of SNPs and ClinVar.
-    showSnpClinvar(chnid, chnidBase, bSnpOnly) { let ic = this.icn3d; ic.icn3dui;
+    showSnpClinvar(chnid, chnidBase, bSnpOnly) { let ic = this.icn3d, me = ic.icn3dui;
        let thisClass = this;
 
        // get gi from acc
        //var url2 = "https://www.ncbi.nlm.nih.gov/Structure/icn3d/chainid2repgi.txt";
-       let url2 = ic.icn3dui.htmlCls.baseUrl + "vastdyn/vastdyn.cgi?chainid=" + chnidBase;
+       let url2 = me.htmlCls.baseUrl + "vastdyn/vastdyn.cgi?chainid=" + chnidBase;
        $.ajax({
           url: url2,
           dataType: 'jsonp', //'text',
@@ -36603,11 +36687,11 @@ class Annotation {
 
         if($("#" + ic.pre + "anno_all")[0].checked) {
             thisClass.setAnnoTabAll();
-            ic.icn3dui.htmlCls.clickMenuCls.setLogCmd("set annotation all", true);
+            me.htmlCls.clickMenuCls.setLogCmd("set annotation all", true);
         }
         else {
             thisClass.hideAnnoTabAll();
-            ic.icn3dui.htmlCls.clickMenuCls.setLogCmd("hide annotation all", true);
+            me.htmlCls.clickMenuCls.setLogCmd("hide annotation all", true);
         }
         });
 
@@ -36615,11 +36699,11 @@ class Annotation {
         me.myEventCls.onIds("#" + ic.pre + "anno_binding", "click", function(e) {
         if($("#" + ic.pre + "anno_binding")[0].checked) {
             thisClass.setAnnoTabSite();
-            ic.icn3dui.htmlCls.clickMenuCls.setLogCmd("set annotation site", true);
+            me.htmlCls.clickMenuCls.setLogCmd("set annotation site", true);
         }
         else {
             thisClass.hideAnnoTabSite();
-            ic.icn3dui.htmlCls.clickMenuCls.setLogCmd("hide annotation site", true);
+            me.htmlCls.clickMenuCls.setLogCmd("hide annotation site", true);
         }
         });
 
@@ -36627,11 +36711,11 @@ class Annotation {
         me.myEventCls.onIds("#" + ic.pre + "anno_snp", "click", function(e) {
         if($("#" + ic.pre + "anno_snp")[0].checked) {
             thisClass.setAnnoTabSnp();
-            ic.icn3dui.htmlCls.clickMenuCls.setLogCmd("set annotation snp", true);
+            me.htmlCls.clickMenuCls.setLogCmd("set annotation snp", true);
         }
         else {
             thisClass.hideAnnoTabSnp();
-            ic.icn3dui.htmlCls.clickMenuCls.setLogCmd("hide annotation snp", true);
+            me.htmlCls.clickMenuCls.setLogCmd("hide annotation snp", true);
         }
         });
 
@@ -36639,11 +36723,11 @@ class Annotation {
         me.myEventCls.onIds("#" + ic.pre + "anno_clinvar", "click", function(e) {
         if($("#" + ic.pre + "anno_clinvar")[0].checked) {
             thisClass.setAnnoTabClinvar();
-            ic.icn3dui.htmlCls.clickMenuCls.setLogCmd("set annotation clinvar", true);
+            me.htmlCls.clickMenuCls.setLogCmd("set annotation clinvar", true);
         }
         else {
             thisClass.hideAnnoTabClinvar();
-            ic.icn3dui.htmlCls.clickMenuCls.setLogCmd("hide annotation clinvar", true);
+            me.htmlCls.clickMenuCls.setLogCmd("hide annotation clinvar", true);
         }
         });
 
@@ -36656,11 +36740,11 @@ class Annotation {
         me.myEventCls.onIds("#" + ic.pre + "anno_3dd", "click", function(e) {
         if($("#" + ic.pre + "anno_3dd")[0].checked) {
             thisClass.setAnnoTab3ddomain();
-            ic.icn3dui.htmlCls.clickMenuCls.setLogCmd("set annotation 3ddomain", true);
+            me.htmlCls.clickMenuCls.setLogCmd("set annotation 3ddomain", true);
         }
         else {
             thisClass.hideAnnoTab3ddomain();
-            ic.icn3dui.htmlCls.clickMenuCls.setLogCmd("hide annotation 3ddomain", true);
+            me.htmlCls.clickMenuCls.setLogCmd("hide annotation 3ddomain", true);
         }
         });
 
@@ -36668,11 +36752,11 @@ class Annotation {
         me.myEventCls.onIds("#" + ic.pre + "anno_interact", "click", function(e) {
         if($("#" + ic.pre + "anno_interact")[0].checked) {
             thisClass.setAnnoTabInteraction();
-            ic.icn3dui.htmlCls.clickMenuCls.setLogCmd("set annotation interaction", true);
+            me.htmlCls.clickMenuCls.setLogCmd("set annotation interaction", true);
         }
         else {
             thisClass.hideAnnoTabInteraction();
-            ic.icn3dui.htmlCls.clickMenuCls.setLogCmd("hide annotation interaction", true);
+            me.htmlCls.clickMenuCls.setLogCmd("hide annotation interaction", true);
         }
         });
 
@@ -36680,11 +36764,11 @@ class Annotation {
         me.myEventCls.onIds("#" + ic.pre + "anno_custom", "click", function(e) {
         if($("#" + ic.pre + "anno_custom")[0].checked) {
             thisClass.setAnnoTabCustom();
-            ic.icn3dui.htmlCls.clickMenuCls.setLogCmd("set annotation custom", true);
+            me.htmlCls.clickMenuCls.setLogCmd("set annotation custom", true);
         }
         else {
             thisClass.hideAnnoTabCustom();
-            ic.icn3dui.htmlCls.clickMenuCls.setLogCmd("hide annotation custom", true);
+            me.htmlCls.clickMenuCls.setLogCmd("hide annotation custom", true);
         }
         });
 
@@ -36692,11 +36776,11 @@ class Annotation {
         me.myEventCls.onIds("#" + ic.pre + "anno_ssbond", "click", function(e) {
         if($("#" + ic.pre + "anno_ssbond")[0].checked) {
             thisClass.setAnnoTabSsbond();
-            ic.icn3dui.htmlCls.clickMenuCls.setLogCmd("set annotation ssbond", true);
+            me.htmlCls.clickMenuCls.setLogCmd("set annotation ssbond", true);
         }
         else {
             thisClass.hideAnnoTabSsbond();
-            ic.icn3dui.htmlCls.clickMenuCls.setLogCmd("hide annotation ssbond", true);
+            me.htmlCls.clickMenuCls.setLogCmd("hide annotation ssbond", true);
         }
         });
 
@@ -36704,11 +36788,11 @@ class Annotation {
         me.myEventCls.onIds("#" + ic.pre + "anno_crosslink", "click", function(e) {
         if($("#" + ic.pre + "anno_crosslink")[0].checked) {
             thisClass.setAnnoTabCrosslink();
-            ic.icn3dui.htmlCls.clickMenuCls.setLogCmd("set annotation crosslink", true);
+            me.htmlCls.clickMenuCls.setLogCmd("set annotation crosslink", true);
         }
         else {
             thisClass.hideAnnoTabCrosslink();
-            ic.icn3dui.htmlCls.clickMenuCls.setLogCmd("hide annotation crosslink", true);
+            me.htmlCls.clickMenuCls.setLogCmd("hide annotation crosslink", true);
         }
         });
 
@@ -36716,23 +36800,23 @@ class Annotation {
         me.myEventCls.onIds("#" + ic.pre + "anno_transmem", "click", function(e) {
         if($("#" + ic.pre + "anno_transmem").length && $("#" + ic.pre + "anno_transmem")[0].checked) {
             thisClass.setAnnoTabTransmem();
-            ic.icn3dui.htmlCls.clickMenuCls.setLogCmd("set annotation transmembrane", true);
+            me.htmlCls.clickMenuCls.setLogCmd("set annotation transmembrane", true);
         }
         else {
             thisClass.hideAnnoTabTransmem();
-            ic.icn3dui.htmlCls.clickMenuCls.setLogCmd("hide annotation transmembrane", true);
+            me.htmlCls.clickMenuCls.setLogCmd("hide annotation transmembrane", true);
         }
         });
     }
-    clickCdd() { let ic = this.icn3d; ic.icn3dui;
+    clickCdd() { let ic = this.icn3d, me = ic.icn3dui;
       if($("[id^=" + ic.pre + "cdd]").length > 0) {
         if($("#" + ic.pre + "anno_cdd")[0].checked) {
             this.setAnnoTabCdd();
-            ic.icn3dui.htmlCls.clickMenuCls.setLogCmd("set annotation cdd", true);
+            me.htmlCls.clickMenuCls.setLogCmd("set annotation cdd", true);
         }
         else {
             this.hideAnnoTabCdd();
-            ic.icn3dui.htmlCls.clickMenuCls.setLogCmd("hide annotation cdd", true);
+            me.htmlCls.clickMenuCls.setLogCmd("hide annotation cdd", true);
         }
       }
     }
@@ -36910,8 +36994,8 @@ class Diagram2d {
               let chainNameFinal =(chainNameHash[chainName] === 1) ? chainName : chainName + chainNameHash[chainName].toString();
               let chainid = mmdbid + '_' + chainNameFinal;
               if(ic.mmdbid_q !== undefined && ic.mmdbid_q === ic.mmdbid_t && structureIndex === 0) {
-                  //chainid += ic.icn3dui.htmlCls.postfix;
-                  chainid = mmdbid + ic.icn3dui.htmlCls.postfix + '_' + chainNameFinal;
+                  //chainid += me.htmlCls.postfix;
+                  chainid = mmdbid + me.htmlCls.postfix + '_' + chainNameFinal;
               }
 
               molid2chain[molid] = chainid;
@@ -37323,12 +37407,12 @@ class Diagram2d {
         return html;
     }
 
-    highlightNode(type, highlight, base, ratio) { let ic = this.icn3d; ic.icn3dui;
+    highlightNode(type, highlight, base, ratio) { let ic = this.icn3d, me = ic.icn3dui;
         if(ratio < 0.2) ratio = 0.2;
         let strokeWidth = 3; // default 1
 
         if(type === 'rect') {
-            $(highlight).attr('stroke', ic.icn3dui.htmlCls.ORANGE);
+            $(highlight).attr('stroke', me.htmlCls.ORANGE);
             $(highlight).attr('stroke-width', strokeWidth);
 
             let x = Number($(base).attr('x'));
@@ -37341,13 +37425,13 @@ class Diagram2d {
             $(highlight).attr('height', height * ratio);
         }
         else if(type === 'circle') {
-            $(highlight).attr('stroke', ic.icn3dui.htmlCls.ORANGE);
+            $(highlight).attr('stroke', me.htmlCls.ORANGE);
             $(highlight).attr('stroke-width', strokeWidth);
 
             $(highlight).attr('r', Number($(base).attr('r')) * ratio);
         }
         else if(type === 'polygon') {
-            $(highlight).attr('stroke', ic.icn3dui.htmlCls.ORANGE);
+            $(highlight).attr('stroke', me.htmlCls.ORANGE);
             $(highlight).attr('stroke-width', strokeWidth);
 
             let x = Number($(base).attr('x'));
@@ -37439,7 +37523,7 @@ class Diagram2d {
             ic.annotationCls.showAnnoSelectedChains();
 
             let select = "select chain " + chainid;
-            ic.icn3dui.htmlCls.clickMenuCls.setLogCmd(select, true);
+            me.htmlCls.clickMenuCls.setLogCmd(select, true);
 
             ic.bSelectResidue = false;
         });
@@ -37454,7 +37538,7 @@ class Diagram2d {
             let chainid1 = $(this).attr('chainid1');
             let chainid2 = $(this).attr('chainid2');
 
-            $(this).find('line').attr('stroke', ic.icn3dui.htmlCls.ORANGE);
+            $(this).find('line').attr('stroke', me.htmlCls.ORANGE);
 
             // interaction of chain1 with chain2, only show the part of chain1 interacting with chain2
             thisClass.selectInteraction(chainid1, chainid2);
@@ -37463,7 +37547,7 @@ class Diagram2d {
             ic.annotationCls.showAnnoSelectedChains();
 
             let select = "select interaction " + chainid1 + "," + chainid2;
-            ic.icn3dui.htmlCls.clickMenuCls.setLogCmd(select, true);
+            me.htmlCls.clickMenuCls.setLogCmd(select, true);
 
             ic.bClickInteraction = false;
         });
@@ -37482,7 +37566,7 @@ class Diagram2d {
             }
 
             let strokeWidth = 2;
-            $(this).find('circle').attr('stroke', ic.icn3dui.htmlCls.ORANGE);
+            $(this).find('circle').attr('stroke', me.htmlCls.ORANGE);
             $(this).find('circle').attr('stroke-width', strokeWidth);
 
             ic.hAtoms = me.hashUtilsCls.unionHash(ic.hAtoms, ic.residues[resid]);
@@ -37491,7 +37575,7 @@ class Diagram2d {
 
             ic.hlUpdateCls.updateHlAll();
 
-            ic.icn3dui.htmlCls.clickMenuCls.setLogCmd(select, true);
+            me.htmlCls.clickMenuCls.setLogCmd(select, true);
 
             ic.bSelectResidue = false;
         });
@@ -37514,7 +37598,7 @@ class Diagram2d {
             }
 
             let strokeWidth = 2;
-            $(this).find('circle').attr('stroke', ic.icn3dui.htmlCls.ORANGE);
+            $(this).find('circle').attr('stroke', me.htmlCls.ORANGE);
             $(this).find('circle').attr('stroke-width', strokeWidth);
 
             ic.hAtoms = me.hashUtilsCls.unionHash(ic.hAtoms, ic.residues[resid]);
@@ -37523,7 +37607,7 @@ class Diagram2d {
 
             ic.hlUpdateCls.updateHlAll();
 
-            ic.icn3dui.htmlCls.clickMenuCls.setLogCmd(select, true);
+            me.htmlCls.clickMenuCls.setLogCmd(select, true);
 
             ic.bSelectResidue = false;
 */
@@ -37543,7 +37627,7 @@ class Diagram2d {
               thisClass.removeLineGraphSelection();
             }
 
-            $(this).find('line.icn3d-hlline').attr('stroke', ic.icn3dui.htmlCls.ORANGE);
+            $(this).find('line.icn3d-hlline').attr('stroke', me.htmlCls.ORANGE);
 
             ic.hAtoms = me.hashUtilsCls.unionHash(ic.hAtoms, ic.residues[resid1]);
             ic.hAtoms = me.hashUtilsCls.unionHash(ic.hAtoms, ic.residues[resid2]);
@@ -37552,7 +37636,7 @@ class Diagram2d {
 
             ic.hlUpdateCls.updateHlAll();
 
-            ic.icn3dui.htmlCls.clickMenuCls.setLogCmd(select, true);
+            me.htmlCls.clickMenuCls.setLogCmd(select, true);
         });
 
         //$("#" + ic.pre + "dl_scatterplot .icn3d-interaction", "click", function(e) { let ic = this.icn3d, me = ic.icn3dui;
@@ -37574,7 +37658,7 @@ class Diagram2d {
             }
 
             let strokeWidth = 2;
-            $(this).find('rect').attr('stroke', ic.icn3dui.htmlCls.ORANGE);
+            $(this).find('rect').attr('stroke', me.htmlCls.ORANGE);
             $(this).find('rect').attr('stroke-width', strokeWidth);
 
             ic.hAtoms = me.hashUtilsCls.unionHash(ic.hAtoms, ic.residues[resid1]);
@@ -37584,7 +37668,7 @@ class Diagram2d {
 
             ic.hlUpdateCls.updateHlAll();
 
-            ic.icn3dui.htmlCls.clickMenuCls.setLogCmd(select, true);
+            me.htmlCls.clickMenuCls.setLogCmd(select, true);
 */
         });
 
@@ -37605,7 +37689,7 @@ class Diagram2d {
             }
 
             let strokeWidth = 2;
-            $(this).find('rect').attr('stroke', ic.icn3dui.htmlCls.ORANGE);
+            $(this).find('rect').attr('stroke', me.htmlCls.ORANGE);
             $(this).find('rect').attr('stroke-width', strokeWidth);
 
             ic.hAtoms = me.hashUtilsCls.unionHash(ic.hAtoms, ic.residues[resid1]);
@@ -37615,7 +37699,7 @@ class Diagram2d {
 
             ic.hlUpdateCls.updateHlAll();
 
-            ic.icn3dui.htmlCls.clickMenuCls.setLogCmd(select, true);
+            me.htmlCls.clickMenuCls.setLogCmd(select, true);
 */
         });
 
@@ -37635,7 +37719,7 @@ class Diagram2d {
             }
 
             let strokeWidth = 2;
-            $(this).find('circle').attr('stroke', ic.icn3dui.htmlCls.ORANGE);
+            $(this).find('circle').attr('stroke', me.htmlCls.ORANGE);
             $(this).find('circle').attr('stroke-width', strokeWidth);
 
             ic.hAtoms = me.hashUtilsCls.unionHash(ic.hAtoms, ic.residues[resid]);
@@ -37644,7 +37728,7 @@ class Diagram2d {
 
             ic.hlUpdateCls.updateHlAll();
 
-            ic.icn3dui.htmlCls.clickMenuCls.setLogCmd(select, true);
+            me.htmlCls.clickMenuCls.setLogCmd(select, true);
 
             ic.bSelectResidue = false;
 */
@@ -37663,7 +37747,7 @@ class Diagram2d {
         }
 
         let strokeWidth = 2;
-        $(node).find('circle').attr('stroke', ic.icn3dui.htmlCls.ORANGE);
+        $(node).find('circle').attr('stroke', me.htmlCls.ORANGE);
         $(node).find('circle').attr('stroke-width', strokeWidth);
 
         ic.hAtoms = me.hashUtilsCls.unionHash(ic.hAtoms, ic.residues[resid]);
@@ -37672,7 +37756,7 @@ class Diagram2d {
 
         ic.hlUpdateCls.updateHlAll();
 
-        ic.icn3dui.htmlCls.clickMenuCls.setLogCmd(select, true);
+        me.htmlCls.clickMenuCls.setLogCmd(select, true);
 
         ic.bSelectResidue = false;
     }
@@ -37690,7 +37774,7 @@ class Diagram2d {
         }
 
         let strokeWidth = 2;
-        $(node).find('rect').attr('stroke', ic.icn3dui.htmlCls.ORANGE);
+        $(node).find('rect').attr('stroke', me.htmlCls.ORANGE);
         $(node).find('rect').attr('stroke-width', strokeWidth);
 
         ic.hAtoms = me.hashUtilsCls.unionHash(ic.hAtoms, ic.residues[resid1]);
@@ -37700,7 +37784,7 @@ class Diagram2d {
 
         ic.hlUpdateCls.updateHlAll();
 
-        ic.icn3dui.htmlCls.clickMenuCls.setLogCmd(select, true);
+        me.htmlCls.clickMenuCls.setLogCmd(select, true);
     }
 
     selectInteraction(chainid1, chainid2) {  let ic = this.icn3d; ic.icn3dui;
@@ -37884,16 +37968,16 @@ class HlUpdate {
 
     //The 2D diagram only shows the currently displayed chains when users click the option "View Only Selection".
     //This method is called to dynamically update the content of the 2D interaction diagram.
-    update2DdgmContent() { let ic = this.icn3d; ic.icn3dui;
+    update2DdgmContent() { let ic = this.icn3d, me = ic.icn3dui;
        // update 2D diagram to show just the displayed parts
        let html2ddgm = '';
-       if(ic.icn3dui.cfg.mmdbid !== undefined || ic.icn3dui.cfg.gi !== undefined) {
+       if(me.cfg.mmdbid !== undefined || me.cfg.gi !== undefined) {
           html2ddgm += ic.diagram2dCls.draw2Ddgm(ic.interactionData, ic.inputid, undefined, true);
           html2ddgm += ic.diagram2dCls.set2DdgmNote();
 
           $("#" + ic.pre + "dl_2ddgm").html(html2ddgm);
        }
-       else if(ic.mmdbidArray &&(ic.icn3dui.cfg.align !== undefined || ic.icn3dui.cfg.chainalign !== undefined || ic.bRealign)) {
+       else if(ic.mmdbidArray &&(me.cfg.align !== undefined || me.cfg.chainalign !== undefined || ic.bRealign)) {
           html2ddgm += ic.diagram2dCls.draw2Ddgm(ic.interactionData1, ic.mmdbidArray[0].toUpperCase(), 0, true);
           if(ic.mmdbid_q !== undefined && ic.mmdbid_q === ic.mmdbid_t) {
               html2ddgm += ic.diagram2dCls.draw2Ddgm(ic.interactionData2, ic.mmdbidArray[0].toUpperCase(), 1, true);
@@ -37908,7 +37992,7 @@ class HlUpdate {
     }
 
     //Change the residue color in the annotation window for the residues in the array "residueArray".
-    changeSeqColor(residueArray) { let ic = this.icn3d; ic.icn3dui;
+    changeSeqColor(residueArray) { let ic = this.icn3d, me = ic.icn3dui;
        for(let i = 0, il = residueArray.length; i < il; ++i) {
            let pickedResidue = residueArray[i];
            //[id$= is expensive
@@ -37919,7 +38003,7 @@ class HlUpdate {
              // annotations will have their own color, only the chain will have the changed color
              $("[id=giseq_" + ic.pre + pickedResidue + "]").attr('style', 'color:#' + color);
              $("[id=align_" + ic.pre + pickedResidue + "]").attr('style', 'color:#' + color);
-             if(ic.icn3dui.cfg.align !== undefined || ic.icn3dui.cfg.chainalign !== undefined || ic.bRealign || ic.bSymd) $("[id=align_" + ic.pre + pickedResidue + "]").attr('style', 'color:#' + color);
+             if(me.cfg.align !== undefined || me.cfg.chainalign !== undefined || ic.bRealign || ic.bSymd) $("[id=align_" + ic.pre + pickedResidue + "]").attr('style', 'color:#' + color);
            //}
        }
     }
@@ -38107,7 +38191,7 @@ class HlUpdate {
 
       if(ic.lineArray2d !== undefined) {
           for(let i = 0, il = ic.lineArray2d.length; i < il; i += 2) {
-              $("#" + ic.pre + "dl_2ddgm g[chainid1=" + ic.lineArray2d[i] + "][chainid2=" + ic.lineArray2d[i + 1] + "] line").attr('stroke', ic.icn3dui.htmlCls.ORANGE);
+              $("#" + ic.pre + "dl_2ddgm g[chainid1=" + ic.lineArray2d[i] + "][chainid2=" + ic.lineArray2d[i + 1] + "] line").attr('stroke', me.htmlCls.ORANGE);
           }
       }
 
@@ -38184,7 +38268,7 @@ class HlUpdate {
     }
 
     toggleHighlight() { let ic = this.icn3d; ic.icn3dui;
-        //ic.icn3dui.htmlCls.clickMenuCls.setLogCmd("toggle highlight", true);
+        //me.htmlCls.clickMenuCls.setLogCmd("toggle highlight", true);
 
         //if(ic.prevHighlightObjects.length > 0 || ic.prevHighlightObjects_ghost.length > 0) { // remove
         if(ic.bShowHighlight) { // remove
@@ -38196,7 +38280,7 @@ class HlUpdate {
             ic.bShowHighlight = true;
         }
 
-        //ic.icn3dui.htmlCls.clickMenuCls.setLogCmd("toggle highlight", true);
+        //me.htmlCls.clickMenuCls.setLogCmd("toggle highlight", true);
     }
 
     clearHighlight() { let ic = this.icn3d; ic.icn3dui;
@@ -38496,19 +38580,19 @@ class Selection {
 
     clickShow_selected() { let  ic = this.icn3d, me = ic.icn3dui;
         let  thisClass = this;
-        me.myEventCls.onIds(["#" + ic.pre + "show_selected", "#" + ic.pre + "mn2_show_selected"], "click", function(e) { let  ic = thisClass.icn3d;
-           //ic.icn3dui.htmlCls.clickMenuCls.setLogCmd("show selection", true);
+        me.myEventCls.onIds(["#" + ic.pre + "show_selected", "#" + ic.pre + "mn2_show_selected"], "click", function(e) { thisClass.icn3d;
+           //me.htmlCls.clickMenuCls.setLogCmd("show selection", true);
 
            thisClass.showSelection();
-           ic.icn3dui.htmlCls.clickMenuCls.setLogCmd("show selection", true);
+           me.htmlCls.clickMenuCls.setLogCmd("show selection", true);
         });
     }
 
     clickHide_selected() { let  ic = this.icn3d, me = ic.icn3dui;
         let  thisClass = this;
-        me.myEventCls.onIds("#" + ic.pre + "mn2_hide_selected", "click", function(e) { let  ic = thisClass.icn3d;
+        me.myEventCls.onIds("#" + ic.pre + "mn2_hide_selected", "click", function(e) { thisClass.icn3d;
            thisClass.hideSelection();
-           ic.icn3dui.htmlCls.clickMenuCls.setLogCmd("hide selection", true);
+           me.htmlCls.clickMenuCls.setLogCmd("hide selection", true);
         });
     }
 
@@ -38634,7 +38718,7 @@ class Selection {
         ic.annotationCls.showAnnoSelectedChains();
     }
 
-    saveSelection(name, description) { let ic = this.icn3d; ic.icn3dui;
+    saveSelection(name, description) { let  ic = this.icn3d, me = ic.icn3dui;
         ic.selectedResidues = {};
 
         ic.selectedResidues = ic.firstAtomObjCls.getResiduesFromCalphaAtoms(ic.hAtoms);
@@ -38647,7 +38731,7 @@ class Selection {
 
                 this.updateSelectionNameDesc();
 
-                ic.icn3dui.htmlCls.clickMenuCls.setLogCmd('select ' + ic.resid2specCls.atoms2spec(ic.hAtoms) + ' | name ' + name, true);
+                me.htmlCls.clickMenuCls.setLogCmd('select ' + ic.resid2specCls.atoms2spec(ic.hAtoms) + ' | name ' + name, true);
             }
             else {
                 this.selectResidueList(ic.selectedResidues, name, description);
@@ -38655,7 +38739,7 @@ class Selection {
 
                 this.updateSelectionNameDesc();
 
-                ic.icn3dui.htmlCls.clickMenuCls.setLogCmd('select ' + ic.resid2specCls.residueids2spec(Object.keys(ic.selectedResidues)) + ' | name ' + name, true);
+                me.htmlCls.clickMenuCls.setLogCmd('select ' + ic.resid2specCls.residueids2spec(Object.keys(ic.selectedResidues)) + ' | name ' + name, true);
             }
         }
     }
@@ -38681,7 +38765,7 @@ class Selection {
           ic.hlUpdateCls.removeHl2D();
     }
 
-    resetAll() { let ic = this.icn3d; ic.icn3dui;
+    resetAll() { let  ic = this.icn3d, me = ic.icn3dui;
         ic.maxD = ic.oriMaxD;
         ic.center = ic.oriCenter.clone();
 
@@ -38689,7 +38773,7 @@ class Selection {
 
         ic.loadScriptCls.renderFinalStep(1);
         ic.definedSetsCls.setMode('all');
-        ic.icn3dui.htmlCls.clickMenuCls.setLogCmd("reset", true);
+        me.htmlCls.clickMenuCls.setLogCmd("reset", true);
 
         ic.hlUpdateCls.removeSeqChainBkgd();
         ic.hlUpdateCls.removeSeqResidueBkgd();
@@ -38697,7 +38781,7 @@ class Selection {
         ic.hlUpdateCls.removeHlMenus();
     }
 
-    loadSelection(dataStr) { let ic = this.icn3d; ic.icn3dui;
+    loadSelection(dataStr) { let  ic = this.icn3d, me = ic.icn3dui;
       let  nameCommandArray = dataStr.trim().split('\n');
 
       for(let i = 0, il = nameCommandArray.length; i < il; ++i) {
@@ -38709,14 +38793,14 @@ class Selection {
 
           ic.selByCommCls.selectByCommand(command.substr(pos + 1), name, name);
 
-          ic.icn3dui.htmlCls.clickMenuCls.setLogCmd('select ' + command.substr(pos + 1) + ' | name ' + name, true);
+          me.htmlCls.clickMenuCls.setLogCmd('select ' + command.substr(pos + 1) + ' | name ' + name, true);
       }
     }
 
     oneStructurePerWindow() { let  ic = this.icn3d, me = ic.icn3dui;
         // only display one of the two aligned structures
         let  structureArray = Object.keys(ic.structures);
-        if(ic.icn3dui.cfg.bSidebyside && structureArray.length == 2) {
+        if(me.cfg.bSidebyside && structureArray.length == 2) {
             let  dividArray = Object.keys(window.icn3duiHash);
             let  pos = dividArray.indexOf(ic.divid);
 
@@ -38752,10 +38836,10 @@ class Selection {
       }
     }
 
-    saveSelectionPrep() {var ic = this.icn3d; ic.icn3dui;
-           if(!ic.icn3dui.cfg.notebook) {
+    saveSelectionPrep() {var ic = this.icn3d, me = ic.icn3dui;
+           if(!me.cfg.notebook) {
                if(!$('#' + ic.pre + 'dl_definedsets').hasClass('ui-dialog-content') || !$('#' + ic.pre + 'dl_definedsets').dialog( 'isOpen' )) {
-                 ic.icn3dui.htmlCls.dialogCls.openDlg('dl_definedsets', 'Select sets');
+                 me.htmlCls.dialogCls.openDlg('dl_definedsets', 'Select sets');
                  $("#" + ic.pre + "atomsCustom").resizable();
                }
            }
@@ -39121,10 +39205,10 @@ class SetStyle {
         }
     }
 
-    setBackground(color) {var ic = this.icn3d; ic.icn3dui;
+    setBackground(color) {var ic = this.icn3d, me = ic.icn3dui;
        ic.setOptionCls.setOption('background', color);
-       ic.icn3dui.htmlCls.clickMenuCls.setLogCmd('set background ' + color, true);
-       let titleColor =(color == 'black' || color == 'transparent') ? ic.icn3dui.htmlCls.GREYD : 'black';
+       me.htmlCls.clickMenuCls.setLogCmd('set background ' + color, true);
+       let titleColor =(color == 'black' || color == 'transparent') ? me.htmlCls.GREYD : 'black';
        $("#" + ic.pre + "title").css("color", titleColor);
        $("#" + ic.pre + "titlelink").css("color", titleColor);
     }
@@ -39221,8 +39305,8 @@ class Stick {
     //Create sticks for "atoms". "bondR" is the radius of the sticks. "atomR" is the radius of the spheres in the joints.
     //"scale" means scale on the radius. "bHighlight" is an option to draw the highlight for these atoms.
     //The highlight could be outlines with bHighlight=1 and 3D objects with bHighlight=2.
-    createStickRepresentation(atoms, atomR, bondR, scale, bHighlight, bSchematic) { let ic = this.icn3d; ic.icn3dui;
-        if(ic.icn3dui.bNode) return;
+    createStickRepresentation(atoms, atomR, bondR, scale, bHighlight, bSchematic) { let ic = this.icn3d, me = ic.icn3dui;
+        if(me.bNode) return;
 
         let factor = (bSchematic !== undefined && bSchematic) ? atomR / ic.cylinderRadius : 1;
 
@@ -39507,8 +39591,8 @@ class CartoonNucl {
     }
 
     // modified from GLmol (http://webglmol.osdn.jp/index-en.html)
-    drawStrandNucleicAcid(atomlist, num, div, fill, nucleicAcidWidth, thickness, bHighlight) { let ic = this.icn3d; ic.icn3dui;
-       if(ic.icn3dui.bNode) return;
+    drawStrandNucleicAcid(atomlist, num, div, fill, nucleicAcidWidth, thickness, bHighlight) { let ic = this.icn3d, me = ic.icn3dui;
+       if(me.bNode) return;
 
        if(bHighlight === 2) {
            num = undefined;
@@ -39592,8 +39676,8 @@ class CartoonNucl {
     // modified from GLmol (http://webglmol.osdn.jp/index-en.html)
     //Create sticks between two nucleotide curves for nucleotide "atoms". "bHighlight" is an option to
     //draw the highlight for these atoms. The highlight could be outlines with bHighlight=1 and 3D objects with bHighlight=2.
-    drawNucleicAcidStick(atomlist, bHighlight) { let ic = this.icn3d; ic.icn3dui;
-       if(ic.icn3dui.bNode) return;
+    drawNucleicAcidStick(atomlist, bHighlight) { let ic = this.icn3d, me = ic.icn3dui;
+       if(me.bNode) return;
 
        let currentChain, currentResi, start = null, end = null;
        let i;
@@ -39636,7 +39720,7 @@ class TextSprite {
     // new: http://stackoverflow.com/questions/23514274/three-js-2d-text-sprite-labels
     // old: http://stemkoski.github.io/Three.js/Sprite-Text-Labels.html
     makeTextSprite( message, parameters ) { let ic = this.icn3d, me = ic.icn3dui;
-        if(ic.icn3dui.bNode) return;
+        if(me.bNode) return;
 
         if ( parameters === undefined ) parameters = {};
         let fontface = parameters.hasOwnProperty("fontface") ? parameters["fontface"] : "Arial";
@@ -40178,7 +40262,7 @@ class Glycan {
     }
 
     showGlycans() { let ic = this.icn3d, me = ic.icn3dui;
-        if(ic.icn3dui.bNode) return;
+        if(me.bNode) return;
 
         let glycan2resids = {};
         //var atomHash = me.hashUtilsCls.intHash(ic.hAtoms, ic.dAtoms);
@@ -41063,7 +41147,7 @@ class Scene {
 
         // https://discourse.threejs.org/t/correctly-remove-mesh-from-scene-and-dispose-material-and-geometry/5448/2
         // clear memory
-        if(!ic.icn3dui.bNode) ic.renderer.renderLists.dispose();
+        if(!me.bNode) ic.renderer.renderLists.dispose();
 
         ic.mdl = new THREE.Object3D();  // regular display
         ic.mdlImpostor = new THREE.Object3D();  // Impostor display
@@ -41085,7 +41169,7 @@ class Scene {
 
         let background = me.parasCls.backgroundColors[ic.opts.background.toLowerCase()];
 
-        if(!ic.icn3dui.bNode) {
+        if(!me.bNode) {
             if(ic.opts.background.toLowerCase() === 'transparent') {
                 ic.renderer.setClearColor(background, 0);
             }
@@ -41295,8 +41379,8 @@ class Impostor {
         }
     }
 
-    drawImpostorShader () { let ic = this.icn3d; ic.icn3dui;
-        if(ic.icn3dui.bNode) return;
+    drawImpostorShader () { let ic = this.icn3d, me = ic.icn3dui;
+        if(me.bNode) return;
 
         this.setParametersForShader();
 
@@ -41761,8 +41845,8 @@ class Instancing {
     }
 
     //Draw the biological unit assembly using the matrix.
-    drawSymmetryMates() {  let ic = this.icn3d; ic.icn3dui;
-        if(ic.icn3dui.bNode) return;
+    drawSymmetryMates() {  let ic = this.icn3d, me = ic.icn3dui;
+        if(me.bNode) return;
 
 //        if(ic.bInstanced && Object.keys(ic.atoms).length * ic.biomtMatrices.length > ic.maxatomcnt) {
         if(ic.bInstanced) {
@@ -42363,8 +42447,8 @@ class Draw {
     }
 
     //Update the rotation, translation, and zooming before rendering. Typically used before the function render().
-    applyTransformation(_zoomFactor, mouseChange, quaternion) { let ic = this.icn3d; ic.icn3dui;
-        if(ic.icn3dui.bNode) return;
+    applyTransformation(_zoomFactor, mouseChange, quaternion) { let ic = this.icn3d, me = ic.icn3dui;
+        if(me.bNode) return;
 
         let para = {};
         para.update = false;
@@ -42380,7 +42464,7 @@ class Draw {
         para.quaternion = new THREE.Quaternion();
         para.quaternion.copy(quaternion);
 
-        if(ic.bControlGl && !ic.icn3dui.bNode) {
+        if(ic.bControlGl && !me.bNode) {
             window.controls.update(para);
         }
         else {
@@ -42389,10 +42473,10 @@ class Draw {
     }
 
     //Render the scene and objects into pixels.
-    render() { let ic = this.icn3d; ic.icn3dui;
-        if(ic.icn3dui.bNode) return;
+    render() { let ic = this.icn3d, me = ic.icn3dui;
+        if(me.bNode) return;
 
-        let cam = (ic.bControlGl && !ic.icn3dui.bNode) ? window.cam : ic.cam;
+        let cam = (ic.bControlGl && !me.bNode) ? window.cam : ic.cam;
 
     //    if(ic.bShade) {
         if(ic.directionalLight) {
@@ -42468,11 +42552,11 @@ class Transform {
     }
 
     //Rotate the structure certain degree to the left, e.g., 5 degree.
-    rotateLeft (degree) { let ic = this.icn3d; ic.icn3dui;
+    rotateLeft (degree) { let  ic = this.icn3d, me = ic.icn3dui;
       let  axis = new THREE.Vector3(0,1,0);
       let  angle = -degree / 180.0 * Math.PI;
 
-      if(ic.bControlGl && !ic.icn3dui.bNode) {
+      if(ic.bControlGl && !me.bNode) {
           axis.applyQuaternion( window.cam.quaternion ).normalize();
       }
       else {
@@ -42486,7 +42570,7 @@ class Transform {
       para.quaternion = quaternion;
       para.update = true;
 
-      if(ic.bControlGl && !ic.icn3dui.bNode) {
+      if(ic.bControlGl && !me.bNode) {
           window.controls.update(para);
       }
       else {
@@ -42497,11 +42581,11 @@ class Transform {
     }
 
     //Rotate the structure certain degree to the right, e.g., 5 degree.
-    rotateRight (degree) { let ic = this.icn3d; ic.icn3dui;
+    rotateRight (degree) { let  ic = this.icn3d, me = ic.icn3dui;
       let  axis = new THREE.Vector3(0,1,0);
       let  angle = degree / 180.0 * Math.PI;
 
-      if(ic.bControlGl && !ic.icn3dui.bNode) {
+      if(ic.bControlGl && !me.bNode) {
           axis.applyQuaternion( window.cam.quaternion ).normalize();
       }
       else {
@@ -42515,7 +42599,7 @@ class Transform {
       para.quaternion = quaternion;
       para.update = true;
 
-      if(ic.bControlGl && !ic.icn3dui.bNode) {
+      if(ic.bControlGl && !me.bNode) {
           window.controls.update(para);
       }
       else {
@@ -42535,11 +42619,11 @@ class Transform {
     }
 
     //Rotate the structure certain degree to the top, e.g., 5 degree.
-    rotate_base (degree) { let ic = this.icn3d; ic.icn3dui;
+    rotate_base (degree) { let  ic = this.icn3d, me = ic.icn3dui;
       let  axis = new THREE.Vector3(1,0,0);
       let  angle = degree / 180.0 * Math.PI;
 
-      if(ic.bControlGl && !ic.icn3dui.bNode) {
+      if(ic.bControlGl && !me.bNode) {
           axis.applyQuaternion( window.cam.quaternion ).normalize();
       }
       else {
@@ -42553,7 +42637,7 @@ class Transform {
       para.quaternion = quaternion;
       para.update = true;
 
-      if(ic.bControlGl && !ic.icn3dui.bNode) {
+      if(ic.bControlGl && !me.bNode) {
           window.controls.update(para);
       }
       else {
@@ -42563,8 +42647,8 @@ class Transform {
       if(ic.bRender) ic.drawCls.render();
     }
 
-    setRotation(axis, angle) { let ic = this.icn3d; ic.icn3dui;
-      if(ic.bControlGl && !ic.icn3dui.bNode) {
+    setRotation(axis, angle) { let  ic = this.icn3d, me = ic.icn3dui;
+      if(ic.bControlGl && !me.bNode) {
           axis.applyQuaternion( window.cam.quaternion ).normalize();
       }
       else {
@@ -42578,7 +42662,7 @@ class Transform {
       para.quaternion = quaternion;
       para.update = true;
 
-      if(ic.bControlGl && !ic.icn3dui.bNode) {
+      if(ic.bControlGl && !me.bNode) {
           window.controls.update(para);
       }
       else {
@@ -42608,7 +42692,7 @@ class Transform {
         this.translate_base(0, percentScreenSize);
     }
 
-    translate_base(x, y) {  let ic = this.icn3d; ic.icn3dui;
+    translate_base(x, y) {  let  ic = this.icn3d, me = ic.icn3dui;
       let  mouseChange = new THREE.Vector2(0,0);
 
       mouseChange.x += x / 100.0;
@@ -42618,7 +42702,7 @@ class Transform {
       para.mouseChange = mouseChange;
       para.update = true;
 
-      if(ic.bControlGl && !ic.icn3dui.bNode) {
+      if(ic.bControlGl && !me.bNode) {
           window.controls.update(para);
       }
       else {
@@ -42629,11 +42713,11 @@ class Transform {
     }
 
     //Zoom in the structure at certain ratio, e.g., 0.1 is a reasonable value.
-    zoomIn(normalizedFactor) {  let ic = this.icn3d; ic.icn3dui;
+    zoomIn(normalizedFactor) {  let  ic = this.icn3d, me = ic.icn3dui;
       let  para = {};
       para._zoomFactor = 1 - normalizedFactor;
       para.update = true;
-      if(ic.bControlGl && !ic.icn3dui.bNode) {
+      if(ic.bControlGl && !me.bNode) {
           window.controls.update(para);
       }
       else {
@@ -42644,12 +42728,12 @@ class Transform {
     }
 
     //Zoom out the structure at certain ratio, e.g., 0.1 is a reasonable value.
-    zoomOut(normalizedFactor) {  let ic = this.icn3d; ic.icn3dui;
+    zoomOut(normalizedFactor) {  let  ic = this.icn3d, me = ic.icn3dui;
       let  para = {};
       para._zoomFactor = 1 + normalizedFactor;
       para.update = true;
 
-      if(ic.bControlGl && !ic.icn3dui.bNode) {
+      if(ic.bControlGl && !me.bNode) {
           window.controls.update(para);
       }
       else {
@@ -42665,7 +42749,7 @@ class Transform {
        para._zoomFactor = 1.0 / ic._zoomFactor;
        para.update = true;
 
-       if(ic.bControlGl && !ic.icn3dui.bNode) {
+       if(ic.bControlGl && !me.bNode) {
           window.controls.update(para);
        }
        else {
@@ -42866,8 +42950,8 @@ class SaveFile {
         saveAs(blob, filename);
     }
 
-    getSvgXml(id) { let ic = this.icn3d; ic.icn3dui;
-        if(ic.icn3dui.bNode) return '';
+    getSvgXml(id) { let ic = this.icn3d, me = ic.icn3dui;
+        if(me.bNode) return '';
 
         // font is not good
         let svg_data = document.getElementById(id).innerHTML; //put id of your svg element here
@@ -42883,7 +42967,7 @@ class SaveFile {
     }
 
     savePng(id, filename, width, height) { let ic = this.icn3d, me = ic.icn3dui;
-        if(ic.icn3dui.bNode) return '';
+        if(me.bNode) return '';
 
         // https://stackoverflow.com/questions/3975499/convert-svg-to-image-jpeg-png-etc-in-the-browser
         let svg = document.getElementById(id);
@@ -43150,7 +43234,7 @@ class SaveFile {
                     size = me.parasCls.vdwRadii[atom.elem];
                 }
 
-                if(ic.icn3dui.cfg.cid !== undefined && atom.crg !== undefined) {
+                if(me.cfg.cid !== undefined && atom.crg !== undefined) {
                     charge = atom.crg;
                 }
                 else if(phosPHash.hasOwnProperty(i)) {
@@ -43220,27 +43304,27 @@ class SaveFile {
     }
 
     //Show the title and PDB ID of the PDB structure at the beginning of the viewer.
-    showTitle() {var ic = this.icn3d; ic.icn3dui;
+    showTitle() {var ic = this.icn3d, me = ic.icn3dui;
         if(ic.molTitle !== undefined && ic.molTitle !== '') {
             let title = ic.molTitle;
 
-            let titlelinkColor =(ic.opts['background'] == 'white' || ic.opts['background'] == 'grey') ? 'black' : ic.icn3dui.htmlCls.GREYD;
+            let titlelinkColor =(ic.opts['background'] == 'white' || ic.opts['background'] == 'grey') ? 'black' : me.htmlCls.GREYD;
 
             if(ic.inputid === undefined) {
                 if(ic.molTitle.length > 40) title = ic.molTitle.substr(0, 40) + "...";
 
                 $("#" + ic.pre + "title").html(title);
             }
-            else if(ic.icn3dui.cfg.cid !== undefined) {
+            else if(me.cfg.cid !== undefined) {
                 let url = this.getLinkToStructureSummary();
 
                 $("#" + ic.pre + "title").html("PubChem CID <a id='" + ic.pre + "titlelink' href='" + url + "' style='color:" + titlelinkColor + "' target='_blank'>" + ic.inputid.toUpperCase() + "</a>: " + title);
             }
-            else if(ic.icn3dui.cfg.align !== undefined) {
+            else if(me.cfg.align !== undefined) {
                 $("#" + ic.pre + "title").html(title);
             }
-            else if(ic.icn3dui.cfg.chainalign !== undefined) {
-                let chainidArray = ic.icn3dui.cfg.chainalign.split(',');
+            else if(me.cfg.chainalign !== undefined) {
+                let chainidArray = me.cfg.chainalign.split(',');
                 title = 'Dynamic Structure Alignment of Chain ' + chainidArray[0] + ' to Chain ' + chainidArray[1];
 
                 $("#" + ic.pre + "title").html(title);
@@ -43261,10 +43345,10 @@ class SaveFile {
         }
     }
 
-    getLinkToStructureSummary(bLog) {var ic = this.icn3d; ic.icn3dui;
+    getLinkToStructureSummary(bLog) {var ic = this.icn3d, me = ic.icn3dui;
        let url = "https://www.ncbi.nlm.nih.gov/structure/?term=";
 
-       if(ic.icn3dui.cfg.cid !== undefined) {
+       if(me.cfg.cid !== undefined) {
            url = "https://www.ncbi.nlm.nih.gov/pccompound/?term=";
        }
        else {
@@ -43274,7 +43358,7 @@ class SaveFile {
            }
            else {
                //url = "https://www.ncbi.nlm.nih.gov/Structure/mmdb/mmdbsrv.cgi?uid=";
-               url = ic.icn3dui.htmlCls.baseUrl + "pdb/";
+               url = me.htmlCls.baseUrl + "pdb/";
            }
        }
 
@@ -43286,28 +43370,28 @@ class SaveFile {
 
            if(idArray.length === 1) {
                url += ic.inputid;
-               if(bLog) ic.icn3dui.htmlCls.clickMenuCls.setLogCmd("link to Structure Summary " + ic.inputid + ": " + url, false);
+               if(bLog) me.htmlCls.clickMenuCls.setLogCmd("link to Structure Summary " + ic.inputid + ": " + url, false);
            }
            else if(idArray.length === 2) {
                url += idArray[0] + " OR " + idArray[1];
-               if(bLog) ic.icn3dui.htmlCls.clickMenuCls.setLogCmd("link to structures " + idArray[0] + " and " + idArray[1] + ": " + url, false);
+               if(bLog) me.htmlCls.clickMenuCls.setLogCmd("link to structures " + idArray[0] + " and " + idArray[1] + ": " + url, false);
            }
        }
 
        return url;
     }
 
-    setEntrezLinks(db) {var ic = this.icn3d; ic.icn3dui;
+    setEntrezLinks(db) {var ic = this.icn3d, me = ic.icn3dui;
       let structArray = Object.keys(ic.structures);
       let url;
       if(structArray.length === 1) {
           url = "https://www.ncbi.nlm.nih.gov/" + db + "/?term=" + structArray[0];
-          ic.icn3dui.htmlCls.clickMenuCls.setLogCmd("Entrez " + db + " about PDB " + structArray[0] + ": " + url, false);
+          me.htmlCls.clickMenuCls.setLogCmd("Entrez " + db + " about PDB " + structArray[0] + ": " + url, false);
           window.open(url, '_blank');
       }
       else if(structArray.length === 2) {
           url = "https://www.ncbi.nlm.nih.gov/" + db + "/?term=" + structArray[0] + " OR " + structArray[1];
-          ic.icn3dui.htmlCls.clickMenuCls.setLogCmd("Entrez " + db + " about PDB " + structArray[0] + " OR " + structArray[1] + ": " + url, false);
+          me.htmlCls.clickMenuCls.setLogCmd("Entrez " + db + " about PDB " + structArray[0] + " OR " + structArray[1] + ": " + url, false);
           window.open(url, '_blank');
       }
     }
@@ -43322,13 +43406,24 @@ class ClickMenu {
         this.icn3dui = icn3dui;
     }
 
-    setLegendHtml() { let me = this.icn3dui, ic = me.icn3d;
-        let startColorStr = (ic.startColor == 'red') ? '#F00' : (ic.startColor == 'green') ? '#0F0' : '#00F';
-        let midColorStr = (ic.midColor == 'white') ? '#FFF' : '#000';
-        let endColorStr = (ic.endColor == 'red') ? '#F00' : (ic.endColor == 'green') ? '#0F0' : '#00F';
-        let rangeStr = startColorStr + ' 0%, ' + midColorStr + ' 50%, ' + endColorStr + ' 100%';
+    setLegendHtml(bAf) { let me = this.icn3dui, ic = me.icn3d;
+        let legendHtml;
+        if(bAf) {
+            legendHtml = '<div>';
+            legendHtml += '<span class="icn3d-square" style="background-color: rgb(0, 83, 204);">&nbsp;</span> <span>Very high (pLDDT &gt; 90)</span><br>';
+            legendHtml += '<span class="icn3d-square" style="background-color: rgb(101, 203, 243);">&nbsp;</span> <span>Confident (90 &gt; pLDDT &gt; 70)</span><br>';
+            legendHtml += '<span class="icn3d-square" style="background-color: rgb(255, 209, 19);">&nbsp;</span> <span>Low (70 &gt; pLDDT &gt; 50)</span><br>';
+            legendHtml += '<span class="icn3d-square" style="background-color: rgb(255, 125, 69);">&nbsp;</span> <span>Very low (pLDDT &lt; 50)</span><br>';
+            legendHtml += '</div">';
+        }
+        else {
+            let startColorStr = (ic.startColor == 'red') ? '#F00' : (ic.startColor == 'green') ? '#0F0' : '#00F';
+            let midColorStr = (ic.midColor == 'white') ? '#FFF' : '#000';
+            let endColorStr = (ic.endColor == 'red') ? '#F00' : (ic.endColor == 'green') ? '#0F0' : '#00F';
+            let rangeStr = startColorStr + ' 0%, ' + midColorStr + ' 50%, ' + endColorStr + ' 100%';
 
-        let legendHtml = "<div style='height: 20px; background: linear-gradient(to right, " + rangeStr + ");'></div><table width='100%' border='0' cellspacing='0' cellpadding='0'><tr><td width='33%'>" + ic.startValue + "</td><td width='33%' align='center'>" + ic.midValue + "</td><td width='33%' align='right'>" + ic.endValue + "</td></tr></table>";
+            legendHtml = "<div style='height: 20px; background: linear-gradient(to right, " + rangeStr + ");'></div><table width='100%' border='0' cellspacing='0' cellpadding='0'><tr><td width='33%'>" + ic.startValue + "</td><td width='33%' align='center'>" + ic.midValue + "</td><td width='33%' align='right'>" + ic.endValue + "</td></tr></table>";
+        }
 
         return legendHtml;
     }
@@ -43347,6 +43442,11 @@ class ClickMenu {
         me.myEventCls.onIds("#" + me.pre + "mn1_pdbid", "click", function(e) { me.icn3d;
            me.htmlCls.dialogCls.openDlg('dl_pdbid', 'Please input PDB ID');
         });
+
+        me.myEventCls.onIds("#" + me.pre + "mn1_afid", "click", function(e) { me.icn3d;
+           me.htmlCls.dialogCls.openDlg('dl_afid', 'Please input AlphaFold UniProt ID');
+        });
+
     //    },
     //    clkMn1_opmid: function() {
         me.myEventCls.onIds("#" + me.pre + "mn1_opmid", "click", function(e) { me.icn3d;
@@ -43893,7 +43993,7 @@ class ClickMenu {
     //    clkApplyYournote: function() {
         me.myEventCls.onIds("#" + me.pre + "applyyournote", "click", function(e) { let ic = me.icn3d;
            ic.yournote = $("#" + me.pre + "yournote").val();
-           if(ic.icn3dui.cfg.shownote) document.title = ic.yournote;
+           if(me.cfg.shownote) document.title = ic.yournote;
            if(!me.cfg.notebook) dialog.dialog( "close" );
            thisClass.setLogCmd('your note | ' + ic.yournote, true);
         });
@@ -44401,6 +44501,12 @@ class ClickMenu {
            ic.setOptionCls.setOption('color', 'b factor');
            thisClass.setLogCmd('color b factor', true);
         });
+
+        me.myEventCls.onIds("#" + me.pre + "mn4_clrConfidence", "click", function(e) { let ic = me.icn3d;
+           ic.setOptionCls.setOption('color', 'confidence');
+           thisClass.setLogCmd('color confidence', true);
+        });
+
     //    },
     //    clkMn4_clrArea: function() {
         me.myEventCls.onIds("#" + me.pre + "mn4_clrArea", "click", function(e) { me.icn3d;
@@ -45681,6 +45787,7 @@ class SetMenu {
         html += me.htmlCls.setHtmlCls.getLink('mn1_mmdbid', 'MMDB ID ' + me.htmlCls.wifiStr);
         html += me.htmlCls.setHtmlCls.getLink('mn1_mmtfid', 'MMTF ID ' + me.htmlCls.wifiStr);
         html += me.htmlCls.setHtmlCls.getLink('mn1_pdbid', 'PDB ID ' + me.htmlCls.wifiStr);
+        html += me.htmlCls.setHtmlCls.getLink('mn1_afid', 'AlphaFold UniProt ID ' + me.htmlCls.wifiStr);
         html += me.htmlCls.setHtmlCls.getLink('mn1_opmid', 'OPM PDB ID ' + me.htmlCls.wifiStr);
         html += me.htmlCls.setHtmlCls.getLink('mn1_mmcifid', 'mmCIF ID ' + me.htmlCls.wifiStr);
         html += me.htmlCls.setHtmlCls.getLink('mn1_gi', 'NCBI gi ' + me.htmlCls.wifiStr);
@@ -46502,6 +46609,7 @@ class SetMenu {
         html += "<li>-</li>";
 
         if(me.cfg.cid === undefined) {
+            if(me.cfg.afid) html += me.htmlCls.setHtmlCls.getRadio('mn4_clr', 'mn4_clrConfidence', 'AF Confidence');
             html += me.htmlCls.setHtmlCls.getRadio('mn4_clr', 'mn4_clrSpectrum', 'Spectrum (V-R)');
             html += me.htmlCls.setHtmlCls.getRadio('mn4_clr', 'mn4_clrRainbow', 'Rainbow (R-V)');
             html += "<li><span style='padding-left:1.5em;'>Secondary</span>";
@@ -47138,11 +47246,36 @@ class Dialog {
               }
           },
           resize: function(e, ui) {
-              if(id == me.pre + 'dl_2ddgm' || id == me.pre + 'dl_2dctn') {
-                ic.resizeRatioX = ui.size.width / ui.originalSize.width;
-                ic.resizeRatioY = ui.size.height / ui.originalSize.height;
+              if(id == me.pre + 'dl_2dctn') {
+                ic.resizeRatioX = ui.size.width / me.htmlCls.width2d; //ui.originalSize.width;
+                ic.resizeRatioY = ui.size.height / (me.htmlCls.width2d + 70); //ui.originalSize.height;
+              }
+          },
+          resizeStop: function(e, ui) {
+            ic.resizeRatioX = ui.size.width / me.htmlCls.width2d; //ui.originalSize.width;
+            ic.resizeRatioY = ui.size.height / (me.htmlCls.width2d + 70); //ui.originalSize.height;
+/*
+            $("#" + me.svgid_ct).empty();
+            let bResize = true;
+            ic.cartoon2dCls.draw2Dcartoon_base(ic.cartoon2dType, bResize);
+            ic.cartoon2dCls.setEventsForCartoon2d();
+*/
+          }
+/*
+          resizeStop: function(e, ui) {
+              if(id == me.pre + 'dl_2dctn') {
+                // redraw 2D
+                let widthDialog = ui.size.width;
+                let heightDialog = ui.size.height;
+                me.htmlCls.width2d = (widthDialog > heightDialog) ? heightDialog : widthDialog;
+
+                ic.cartoon2dCls.initCartoonSvg();
+                let bResize = true;
+                ic.cartoon2dCls.draw2Dcartoon_base(ic.cartoon2dType, bResize);
+                ic.cartoon2dCls.setEventsForCartoon2d();
               }
           }
+*/
         });
 
         this.addSaveButton(id);
@@ -47533,6 +47666,17 @@ class SetDialog {
         html += me.htmlCls.divStr + "dl_pdbid' class='" + dialogClass + "'>";
         html += "PDB ID: " + me.htmlCls.inputTextStr + "id='" + me.pre + "pdbid' value='1TUP' size=8> ";
         html += me.htmlCls.buttonStr + "reload_pdb'>Load</button>";
+        html += "</div>";
+
+        html += me.htmlCls.divStr + "dl_afid' class='" + dialogClass + "'>";
+        html += "Note: AlphaFold produces a per-residue confidence score (pLDDT) between 0 and 100:<br>";
+        html += me.htmlCls.space3 + '<span class="icn3d-square" style="background-color: rgb(0, 83, 204);">&nbsp;</span> <span>Very high (pLDDT &gt; 90)</span><br>';
+        html += me.htmlCls.space3 + '<span class="icn3d-square" style="background-color: rgb(101, 203, 243);">&nbsp;</span> <span>Confident (90 &gt; pLDDT &gt; 70)</span><br>';
+        html += me.htmlCls.space3 + '<span class="icn3d-square" style="background-color: rgb(255, 209, 19);">&nbsp;</span> <span>Low (70 &gt; pLDDT &gt; 50)</span><br>';
+        html += me.htmlCls.space3 + '<span class="icn3d-square" style="background-color: rgb(255, 125, 69);">&nbsp;</span> <span>Very low (pLDDT &lt; 50)</span><br><br>';
+
+        html += "AlphaFold Uniprot ID: " + me.htmlCls.inputTextStr + "id='" + me.pre + "afid' value='A0A061AD48' size=8> ";
+        html += me.htmlCls.buttonStr + "reload_af'>Load</button>";
         html += "</div>";
 
         html += me.htmlCls.divStr + "dl_opmid' class='" + dialogClass + "'>";
@@ -48679,6 +48823,22 @@ class Events {
            }
         });
 
+        me.myEventCls.onIds("#" + me.pre + "reload_af", "click", function(e) { me.icn3d;
+           e.preventDefault();
+           if(!me.cfg.notebook) dialog.dialog( "close" );
+           me.htmlCls.clickMenuCls.setLogCmd("load af " + $("#" + me.pre + "afid").val(), false);
+           window.open(me.htmlCls.baseUrl + 'icn3d/full.html?afid=' + $("#" + me.pre + "afid").val(), '_blank');
+        });
+
+        me.myEventCls.onIds("#" + me.pre + "afid", "keyup", function(e) { me.icn3d;
+           if (e.keyCode === 13) {
+               e.preventDefault();
+               if(!me.cfg.notebook) dialog.dialog( "close" );
+               me.htmlCls.clickMenuCls.setLogCmd("load af " + $("#" + me.pre + "afid").val(), false);
+               window.open(me.htmlCls.baseUrl + 'icn3d/full.html?afid=' + $("#" + me.pre + "afid").val(), '_blank');
+           }
+        });
+
     //    },
     //    clickReload_opm: function() {
         me.myEventCls.onIds("#" + me.pre + "reload_opm", "click", function(e) { me.icn3d;
@@ -48840,7 +49000,7 @@ class Events {
            let query_id = $("#" + me.pre + "query_id").val();
            let query_fasta = encodeURIComponent($("#" + me.pre + "query_fasta").val());
            let blast_rep_id = $("#" + me.pre + "blast_rep_id").val();
-           me.htmlCls.clickMenuCls.setLogCmd("load seq_struc_ids " + query_id + "," + blast_rep_id, false);
+           me.htmlCls.clickMenuCls.setLogCmd("load seq_struct_ids " + query_id + "," + blast_rep_id, false);
            query_id =(query_id !== '' && query_id !== undefined) ? query_id : query_fasta;
            window.open(me.htmlCls.baseUrl + 'icn3d/full.html?from=icn3d&blast_rep_id=' + blast_rep_id
              + '&query_id=' + query_id
@@ -50049,7 +50209,7 @@ class Events {
     //    },
     //    bindMouseup: function() {
         $(document).on('mouseup touchend', "accordion", function(e) { let ic = me.icn3d;
-          if(ic.bControlGl && !ic.icn3dui.bNode) {
+          if(ic.bControlGl && !me.bNode) {
               if(window.controls) {
                 window.controls.noRotate = false;
                 window.controls.noZoom = false;
@@ -50067,7 +50227,7 @@ class Events {
     //    },
     //    bindMousedown: function() {
        $(document).on('mousedown touchstart', "accordion", function(e) { let ic = me.icn3d;
-          if(ic.bControlGl && !ic.icn3dui.bNode) {
+          if(ic.bControlGl && !me.bNode) {
               if(window.controls) {
                 window.controls.noRotate = true;
                 window.controls.noZoom = true;
@@ -51576,7 +51736,7 @@ class DrawGraph {
         // remove any previous graphs
         svg.selectAll('.g-main').remove();
         // added
-        //$("#" + ic.icn3dui.svgid).empty();
+        //$("#" + me.svgid).empty();
 
         var gMain = svg.append('g')
             .classed('g-main', true);
@@ -52094,7 +52254,7 @@ class DensityCifParser {
        let  thisClass = this;
 
        let  url;
-       let  detail = (me.utilsCls.isMobile() || ic.icn3dui.cfg.notebook) ? 0 : 4; //4;
+       let  detail = (me.utilsCls.isMobile() || me.cfg.notebook) ? 0 : 4; //4;
 
        //https://www.ebi.ac.uk/pdbe/densities/doc.html
        if(type == '2fofc' || type == 'fofc') {
@@ -53262,8 +53422,8 @@ class Control {
         this.icn3d = icn3d;
     }
 
-    setControl() { let ic = this.icn3d; ic.icn3dui;
-        if(ic.icn3dui.bNode) return;
+    setControl() { let  ic = this.icn3d, me = ic.icn3dui;
+        if(me.bNode) return;
 
         let  thisClass = this;
 
@@ -53322,7 +53482,7 @@ class Control {
             if(e.keyCode === 90 ) { // Z
               let  para = {};
 
-              if(ic.bControlGl && !ic.icn3dui.bNode) {
+              if(ic.bControlGl && !me.bNode) {
                   if(window.cam === ic.perspectiveCamera) { // perspective
                     para._zoomFactor = 0.9;
                   }
@@ -53356,7 +53516,7 @@ class Control {
               }
 
               para.update = true;
-              if(ic.bControlGl && !ic.icn3dui.bNode) {
+              if(ic.bControlGl && !me.bNode) {
                   window.controls.update(para);
               }
               else {
@@ -53367,7 +53527,7 @@ class Control {
             else if(e.keyCode === 88 ) { // X
               let  para = {};
 
-              if(ic.bControlGl && !ic.icn3dui.bNode) {
+              if(ic.bControlGl && !me.bNode) {
                   if(window.cam === ic.perspectiveCamera) { // perspective
                     //para._zoomFactor = 1.1;
                     para._zoomFactor = 1.03;
@@ -53403,7 +53563,7 @@ class Control {
               }
 
               para.update = true;
-              if(ic.bControlGl && !ic.icn3dui.bNode) {
+              if(ic.bControlGl && !me.bNode) {
                   window.controls.update(para);
               }
               else {
@@ -53472,7 +53632,7 @@ class Control {
                 ic.rayCls.rayCaster(e, bClick);
             }
 
-            if(ic.bControlGl && !ic.icn3dui.bNode) {
+            if(ic.bControlGl && !me.bNode) {
               window.controls.handleResize();
               window.controls.update();
             }
@@ -53501,7 +53661,7 @@ class Control {
             let  bClick = true;
             ic.rayCls.rayCaster(e, bClick);
 
-            if(ic.bControlGl && !ic.icn3dui.bNode) {
+            if(ic.bControlGl && !me.bNode) {
               window.controls.handleResize();
               window.controls.update();
             }
@@ -53532,7 +53692,7 @@ class Control {
 
             ic.bStopRotate = true;
 
-            if(ic.bControlGl && !ic.icn3dui.bNode) {
+            if(ic.bControlGl && !me.bNode) {
               window.controls.handleResize();
               window.controls.update();
             }
@@ -53551,7 +53711,7 @@ class Control {
 
             ic.bStopRotate = true;
 
-            if(ic.bControlGl && !ic.icn3dui.bNode) {
+            if(ic.bControlGl && !me.bNode) {
               window.controls.handleResize();
               window.controls.update();
             }
@@ -53564,8 +53724,8 @@ class Control {
         });
     }
 
-    mouseMove(e) { let ic = this.icn3d; ic.icn3dui;
-        if(ic.icn3dui.bNode) return;
+    mouseMove(e) { let  ic = this.icn3d, me = ic.icn3dui;
+        if(me.bNode) return;
 
         //e.preventDefault();
         e.preventDefault();
@@ -53579,7 +53739,7 @@ class Control {
         let  bClick = false;
         ic.rayCls.rayCaster(e, bClick);
 
-        if(ic.bControlGl && !ic.icn3dui.bNode) {
+        if(ic.bControlGl && !me.bNode) {
           window.controls.handleResize();
           window.controls.update();
 
@@ -54217,7 +54377,7 @@ class iCn3DUI {
     //even when multiple iCn3D viewers are shown together.
     this.pre = this.cfg.divid + "_";
 
-    this.REVISION = '3.4.1';
+    this.REVISION = '3.4.2';
 
     // In nodejs, iCn3D defines "window = {navigator: {}}"
     this.bNode = (Object.keys(window).length < 2) ? true : false;
@@ -54359,7 +54519,7 @@ iCn3DUI.prototype.show3DStructure = function() { let me = this;
     if(me.utilsCls.isMobile()) ic.threshbox = 60;
     if(me.cfg.controlGl) {
         ic.bControlGl = true;
-        ic.container =(ic.bControlGl && !ic.icn3dui.bNode) ? $(document) : $('#' + ic.id);
+        ic.container =(ic.bControlGl && !me.bNode) ? $(document) : $('#' + ic.id);
     }
     //ic.controlCls.setControl(); // rotation, translation, zoom, etc
     ic.setStyleCls.handleContextLost();
@@ -54403,6 +54563,13 @@ iCn3DUI.prototype.show3DStructure = function() { let me = this;
        ic.loadCmd = 'load pdb ' + me.cfg.pdbid;
        me.htmlCls.clickMenuCls.setLogCmd(ic.loadCmd, true);
        ic.pdbParserCls.downloadPdb(me.cfg.pdbid);
+    }
+    else if(me.cfg.afid !== undefined) {
+       ic.inputid = me.cfg.afid;
+       ic.loadCmd = 'load af ' + me.cfg.afid;
+       me.htmlCls.clickMenuCls.setLogCmd(ic.loadCmd, true);
+       let bAf = true;
+       ic.pdbParserCls.downloadPdb(me.cfg.afid, bAf);
     }
     else if(me.cfg.opmid !== undefined) {
        ic.inputid = me.cfg.opmid;

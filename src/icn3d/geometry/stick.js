@@ -18,7 +18,7 @@ class Stick {
     //"scale" means scale on the radius. "bHighlight" is an option to draw the highlight for these atoms.
     //The highlight could be outlines with bHighlight=1 and 3D objects with bHighlight=2.
     createStickRepresentation(atoms, atomR, bondR, scale, bHighlight, bSchematic) { let ic = this.icn3d, me = ic.icn3dui;
-        if(ic.icn3dui.bNode) return;
+        if(me.bNode) return;
 
         let factor = (bSchematic !== undefined && bSchematic) ? atomR / ic.cylinderRadius : 1;
 

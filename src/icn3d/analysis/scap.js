@@ -42,7 +42,7 @@ class Scap {
       // chain functions together
       ic.deferredScap = $.Deferred(function() {
          thisClass.applyCommandScapBase(command);
-      }); // end of ic.icn3dui.deferred = $.Deferred(function() {
+      }); // end of me.deferred = $.Deferred(function() {
 
       return ic.deferredScap.promise();
     }
@@ -51,12 +51,12 @@ class Scap {
         let halfWidth = 125;
         id = ic.pre + id;
 
-        let height =($("#" + ic.pre + 'dl_selectannotations').hasClass("ui-dialog-content")) ? $("#" + ic.pre + 'dl_selectannotations').dialog( "option", "height") : ic.icn3dui.htmlCls.HEIGHT;
-        let width =($("#" + ic.pre + 'dl_selectannotations').hasClass("ui-dialog-content")) ? halfWidth * 2 : ic.icn3dui.htmlCls.WIDTH * 0.5;
+        let height =($("#" + ic.pre + 'dl_selectannotations').hasClass("ui-dialog-content")) ? $("#" + ic.pre + 'dl_selectannotations').dialog( "option", "height") : me.htmlCls.HEIGHT;
+        let width =($("#" + ic.pre + 'dl_selectannotations').hasClass("ui-dialog-content")) ? halfWidth * 2 : me.htmlCls.WIDTH * 0.5;
 
         $("#" + id).dialog( "option", "width", width );
         $("#" + id).dialog( "option", "height", height);
-        let position = { my: "left-" + halfWidth + " top+" + ic.icn3dui.htmlCls.MENU_HEIGHT, at: "right top", of: "#" + ic.pre + "viewer", collision: "none" }
+        let position = { my: "left-" + halfWidth + " top+" + me.htmlCls.MENU_HEIGHT, at: "right top", of: "#" + ic.pre + "viewer", collision: "none" }
 
          $("#" + id).dialog( "option", "position", position );
     }
@@ -184,17 +184,17 @@ class Scap {
                   ic.viewInterPairsCls.clearInteractions();
 
                   if(bInteraction) {
-                    //ic.icn3dui.htmlCls.clickMenuCls.setLogCmd("select " + select + " | name " + name, true);
+                    //me.htmlCls.clickMenuCls.setLogCmd("select " + select + " | name " + name, true);
 
                     let type = 'linegraph';
                     ic.viewInterPairsCls.viewInteractionPairs(['selected'], ['non-selected'], false, type, true, true, true, true, true, true);
-                    //ic.icn3dui.htmlCls.clickMenuCls.setLogCmd("line graph interaction pairs | selected non-selected | hbonds,salt bridge,interactions,halogen,pi-cation,pi-stacking | false | threshold 3.8 6 4 3.8 6 5.5", true);
+                    //me.htmlCls.clickMenuCls.setLogCmd("line graph interaction pairs | selected non-selected | hbonds,salt bridge,interactions,halogen,pi-cation,pi-stacking | false | threshold 3.8 6 4 3.8 6 5.5", true);
 
                     thisClass.adjust2DWidth('dl_linegraph');
                   }
 
                   ic.hAtoms = ic.dAtoms;
-                  //ic.icn3dui.htmlCls.clickMenuCls.setLogCmd("select displayed set", true);
+                  //me.htmlCls.clickMenuCls.setLogCmd("select displayed set", true);
 
                   ic.drawCls.draw();
 

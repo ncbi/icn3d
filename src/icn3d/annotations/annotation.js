@@ -229,11 +229,11 @@ class Annotation {
 
         if($("#" + ic.pre + "anno_all")[0].checked) {
             thisClass.setAnnoTabAll();
-            ic.icn3dui.htmlCls.clickMenuCls.setLogCmd("set annotation all", true);
+            me.htmlCls.clickMenuCls.setLogCmd("set annotation all", true);
         }
         else{
             thisClass.hideAnnoTabAll();
-            ic.icn3dui.htmlCls.clickMenuCls.setLogCmd("hide annotation all", true);
+            me.htmlCls.clickMenuCls.setLogCmd("hide annotation all", true);
         }
         });
 
@@ -241,11 +241,11 @@ class Annotation {
         me.myEventCls.onIds("#" + ic.pre + "anno_binding", "click", function(e) {
         if($("#" + ic.pre + "anno_binding")[0].checked) {
             thisClass.setAnnoTabSite();
-            ic.icn3dui.htmlCls.clickMenuCls.setLogCmd("set annotation site", true);
+            me.htmlCls.clickMenuCls.setLogCmd("set annotation site", true);
         }
         else{
             thisClass.hideAnnoTabSite();
-            ic.icn3dui.htmlCls.clickMenuCls.setLogCmd("hide annotation site", true);
+            me.htmlCls.clickMenuCls.setLogCmd("hide annotation site", true);
         }
         });
 
@@ -253,11 +253,11 @@ class Annotation {
         me.myEventCls.onIds("#" + ic.pre + "anno_snp", "click", function(e) {
         if($("#" + ic.pre + "anno_snp")[0].checked) {
             thisClass.setAnnoTabSnp();
-            ic.icn3dui.htmlCls.clickMenuCls.setLogCmd("set annotation snp", true);
+            me.htmlCls.clickMenuCls.setLogCmd("set annotation snp", true);
         }
         else{
             thisClass.hideAnnoTabSnp();
-            ic.icn3dui.htmlCls.clickMenuCls.setLogCmd("hide annotation snp", true);
+            me.htmlCls.clickMenuCls.setLogCmd("hide annotation snp", true);
         }
         });
 
@@ -265,11 +265,11 @@ class Annotation {
         me.myEventCls.onIds("#" + ic.pre + "anno_clinvar", "click", function(e) {
         if($("#" + ic.pre + "anno_clinvar")[0].checked) {
             thisClass.setAnnoTabClinvar();
-            ic.icn3dui.htmlCls.clickMenuCls.setLogCmd("set annotation clinvar", true);
+            me.htmlCls.clickMenuCls.setLogCmd("set annotation clinvar", true);
         }
         else{
             thisClass.hideAnnoTabClinvar();
-            ic.icn3dui.htmlCls.clickMenuCls.setLogCmd("hide annotation clinvar", true);
+            me.htmlCls.clickMenuCls.setLogCmd("hide annotation clinvar", true);
         }
         });
 
@@ -282,11 +282,11 @@ class Annotation {
         me.myEventCls.onIds("#" + ic.pre + "anno_3dd", "click", function(e) {
         if($("#" + ic.pre + "anno_3dd")[0].checked) {
             thisClass.setAnnoTab3ddomain();
-            ic.icn3dui.htmlCls.clickMenuCls.setLogCmd("set annotation 3ddomain", true);
+            me.htmlCls.clickMenuCls.setLogCmd("set annotation 3ddomain", true);
         }
         else{
             thisClass.hideAnnoTab3ddomain();
-            ic.icn3dui.htmlCls.clickMenuCls.setLogCmd("hide annotation 3ddomain", true);
+            me.htmlCls.clickMenuCls.setLogCmd("hide annotation 3ddomain", true);
         }
         });
 
@@ -294,11 +294,11 @@ class Annotation {
         me.myEventCls.onIds("#" + ic.pre + "anno_interact", "click", function(e) {
         if($("#" + ic.pre + "anno_interact")[0].checked) {
             thisClass.setAnnoTabInteraction();
-            ic.icn3dui.htmlCls.clickMenuCls.setLogCmd("set annotation interaction", true);
+            me.htmlCls.clickMenuCls.setLogCmd("set annotation interaction", true);
         }
         else{
             thisClass.hideAnnoTabInteraction();
-            ic.icn3dui.htmlCls.clickMenuCls.setLogCmd("hide annotation interaction", true);
+            me.htmlCls.clickMenuCls.setLogCmd("hide annotation interaction", true);
         }
         });
 
@@ -306,11 +306,11 @@ class Annotation {
         me.myEventCls.onIds("#" + ic.pre + "anno_custom", "click", function(e) {
         if($("#" + ic.pre + "anno_custom")[0].checked) {
             thisClass.setAnnoTabCustom();
-            ic.icn3dui.htmlCls.clickMenuCls.setLogCmd("set annotation custom", true);
+            me.htmlCls.clickMenuCls.setLogCmd("set annotation custom", true);
         }
         else{
             thisClass.hideAnnoTabCustom();
-            ic.icn3dui.htmlCls.clickMenuCls.setLogCmd("hide annotation custom", true);
+            me.htmlCls.clickMenuCls.setLogCmd("hide annotation custom", true);
         }
         });
 
@@ -318,11 +318,11 @@ class Annotation {
         me.myEventCls.onIds("#" + ic.pre + "anno_ssbond", "click", function(e) {
         if($("#" + ic.pre + "anno_ssbond")[0].checked) {
             thisClass.setAnnoTabSsbond();
-            ic.icn3dui.htmlCls.clickMenuCls.setLogCmd("set annotation ssbond", true);
+            me.htmlCls.clickMenuCls.setLogCmd("set annotation ssbond", true);
         }
         else{
             thisClass.hideAnnoTabSsbond();
-            ic.icn3dui.htmlCls.clickMenuCls.setLogCmd("hide annotation ssbond", true);
+            me.htmlCls.clickMenuCls.setLogCmd("hide annotation ssbond", true);
         }
         });
 
@@ -330,11 +330,11 @@ class Annotation {
         me.myEventCls.onIds("#" + ic.pre + "anno_crosslink", "click", function(e) {
         if($("#" + ic.pre + "anno_crosslink")[0].checked) {
             thisClass.setAnnoTabCrosslink();
-            ic.icn3dui.htmlCls.clickMenuCls.setLogCmd("set annotation crosslink", true);
+            me.htmlCls.clickMenuCls.setLogCmd("set annotation crosslink", true);
         }
         else{
             thisClass.hideAnnoTabCrosslink();
-            ic.icn3dui.htmlCls.clickMenuCls.setLogCmd("hide annotation crosslink", true);
+            me.htmlCls.clickMenuCls.setLogCmd("hide annotation crosslink", true);
         }
         });
 
@@ -342,11 +342,11 @@ class Annotation {
         me.myEventCls.onIds("#" + ic.pre + "anno_transmem", "click", function(e) {
         if($("#" + ic.pre + "anno_transmem").length && $("#" + ic.pre + "anno_transmem")[0].checked) {
             thisClass.setAnnoTabTransmem();
-            ic.icn3dui.htmlCls.clickMenuCls.setLogCmd("set annotation transmembrane", true);
+            me.htmlCls.clickMenuCls.setLogCmd("set annotation transmembrane", true);
         }
         else{
             thisClass.hideAnnoTabTransmem();
-            ic.icn3dui.htmlCls.clickMenuCls.setLogCmd("hide annotation transmembrane", true);
+            me.htmlCls.clickMenuCls.setLogCmd("hide annotation transmembrane", true);
         }
         });
     }
@@ -354,11 +354,11 @@ class Annotation {
       if($("[id^=" + ic.pre + "cdd]").length > 0) {
         if($("#" + ic.pre + "anno_cdd")[0].checked) {
             this.setAnnoTabCdd();
-            ic.icn3dui.htmlCls.clickMenuCls.setLogCmd("set annotation cdd", true);
+            me.htmlCls.clickMenuCls.setLogCmd("set annotation cdd", true);
         }
         else{
             this.hideAnnoTabCdd();
-            ic.icn3dui.htmlCls.clickMenuCls.setLogCmd("hide annotation cdd", true);
+            me.htmlCls.clickMenuCls.setLogCmd("hide annotation cdd", true);
         }
       }
     }

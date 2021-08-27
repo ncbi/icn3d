@@ -61,7 +61,7 @@ class Transform {
       let  axis = new THREE.Vector3(0,1,0);
       let  angle = -degree / 180.0 * Math.PI;
 
-      if(ic.bControlGl && !ic.icn3dui.bNode) {
+      if(ic.bControlGl && !me.bNode) {
           axis.applyQuaternion( window.cam.quaternion ).normalize();
       }
       else {
@@ -75,7 +75,7 @@ class Transform {
       para.quaternion = quaternion;
       para.update = true;
 
-      if(ic.bControlGl && !ic.icn3dui.bNode) {
+      if(ic.bControlGl && !me.bNode) {
           window.controls.update(para);
       }
       else {
@@ -90,7 +90,7 @@ class Transform {
       let  axis = new THREE.Vector3(0,1,0);
       let  angle = degree / 180.0 * Math.PI;
 
-      if(ic.bControlGl && !ic.icn3dui.bNode) {
+      if(ic.bControlGl && !me.bNode) {
           axis.applyQuaternion( window.cam.quaternion ).normalize();
       }
       else {
@@ -104,7 +104,7 @@ class Transform {
       para.quaternion = quaternion;
       para.update = true;
 
-      if(ic.bControlGl && !ic.icn3dui.bNode) {
+      if(ic.bControlGl && !me.bNode) {
           window.controls.update(para);
       }
       else {
@@ -128,7 +128,7 @@ class Transform {
       let  axis = new THREE.Vector3(1,0,0);
       let  angle = degree / 180.0 * Math.PI;
 
-      if(ic.bControlGl && !ic.icn3dui.bNode) {
+      if(ic.bControlGl && !me.bNode) {
           axis.applyQuaternion( window.cam.quaternion ).normalize();
       }
       else {
@@ -142,7 +142,7 @@ class Transform {
       para.quaternion = quaternion;
       para.update = true;
 
-      if(ic.bControlGl && !ic.icn3dui.bNode) {
+      if(ic.bControlGl && !me.bNode) {
           window.controls.update(para);
       }
       else {
@@ -153,7 +153,7 @@ class Transform {
     }
 
     setRotation(axis, angle) { let  ic = this.icn3d, me = ic.icn3dui;
-      if(ic.bControlGl && !ic.icn3dui.bNode) {
+      if(ic.bControlGl && !me.bNode) {
           axis.applyQuaternion( window.cam.quaternion ).normalize();
       }
       else {
@@ -167,7 +167,7 @@ class Transform {
       para.quaternion = quaternion;
       para.update = true;
 
-      if(ic.bControlGl && !ic.icn3dui.bNode) {
+      if(ic.bControlGl && !me.bNode) {
           window.controls.update(para);
       }
       else {
@@ -207,7 +207,7 @@ class Transform {
       para.mouseChange = mouseChange;
       para.update = true;
 
-      if(ic.bControlGl && !ic.icn3dui.bNode) {
+      if(ic.bControlGl && !me.bNode) {
           window.controls.update(para);
       }
       else {
@@ -222,7 +222,7 @@ class Transform {
       let  para = {}
       para._zoomFactor = 1 - normalizedFactor;
       para.update = true;
-      if(ic.bControlGl && !ic.icn3dui.bNode) {
+      if(ic.bControlGl && !me.bNode) {
           window.controls.update(para);
       }
       else {
@@ -238,7 +238,7 @@ class Transform {
       para._zoomFactor = 1 + normalizedFactor;
       para.update = true;
 
-      if(ic.bControlGl && !ic.icn3dui.bNode) {
+      if(ic.bControlGl && !me.bNode) {
           window.controls.update(para);
       }
       else {
@@ -254,7 +254,7 @@ class Transform {
        para._zoomFactor = 1.0 / ic._zoomFactor;
        para.update = true;
 
-       if(ic.bControlGl && !ic.icn3dui.bNode) {
+       if(ic.bControlGl && !me.bNode) {
           window.controls.update(para);
        }
        else {

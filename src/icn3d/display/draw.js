@@ -64,7 +64,7 @@ class Draw {
 
     //Update the rotation, translation, and zooming before rendering. Typically used before the function render().
     applyTransformation(_zoomFactor, mouseChange, quaternion) { let ic = this.icn3d, me = ic.icn3dui;
-        if(ic.icn3dui.bNode) return;
+        if(me.bNode) return;
 
         let para = {};
         para.update = false;
@@ -80,7 +80,7 @@ class Draw {
         para.quaternion = new THREE.Quaternion();
         para.quaternion.copy(quaternion);
 
-        if(ic.bControlGl && !ic.icn3dui.bNode) {
+        if(ic.bControlGl && !me.bNode) {
             window.controls.update(para);
         }
         else {
@@ -90,9 +90,9 @@ class Draw {
 
     //Render the scene and objects into pixels.
     render() { let ic = this.icn3d, me = ic.icn3dui;
-        if(ic.icn3dui.bNode) return;
+        if(me.bNode) return;
 
-        let cam = (ic.bControlGl && !ic.icn3dui.bNode) ? window.cam : ic.cam;
+        let cam = (ic.bControlGl && !me.bNode) ? window.cam : ic.cam;
 
     //    if(ic.bShade) {
         if(ic.directionalLight) {

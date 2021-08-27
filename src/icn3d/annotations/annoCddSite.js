@@ -23,9 +23,9 @@ class AnnoCddSite {
         let chnidArray = Object.keys(ic.protein_chainid);
         // show conserved domains and binding sites
         // live search
-//        let url = ic.icn3dui.htmlCls.baseUrl + "cdannots/cdannots.fcgi?fmt&live=lcl&queries=" + chnidBaseArray;
+//        let url = me.htmlCls.baseUrl + "cdannots/cdannots.fcgi?fmt&live=lcl&queries=" + chnidBaseArray;
         // precalculated
-        let url = ic.icn3dui.htmlCls.baseUrl + "cdannots/cdannots.fcgi?fmt&queries=" + chnidBaseArray;
+        let url = me.htmlCls.baseUrl + "cdannots/cdannots.fcgi?fmt&queries=" + chnidBaseArray;
         $.ajax({
           url: url,
           dataType: 'jsonp',
@@ -111,7 +111,7 @@ class AnnoCddSite {
 
                         html += '<span id="' + pre + '_' + ic.pre + chnid + '_' + pos + '" title="' + c + pos + '" class="icn3d-residue">' + cFull + '</span>';
                         html2 += ic.showSeqCls.insertGapOverview(chnid, i);
-                        let emptyWidth =(ic.icn3dui.cfg.blast_rep_id == chnid) ? Math.round(ic.seqAnnWidth * i /(ic.maxAnnoLength + ic.nTotalGap) - prevEmptyWidth - prevLineWidth) : Math.round(ic.seqAnnWidth * i / ic.maxAnnoLength - prevEmptyWidth - prevLineWidth);
+                        let emptyWidth =(me.cfg.blast_rep_id == chnid) ? Math.round(ic.seqAnnWidth * i /(ic.maxAnnoLength + ic.nTotalGap) - prevEmptyWidth - prevLineWidth) : Math.round(ic.seqAnnWidth * i / ic.maxAnnoLength - prevEmptyWidth - prevLineWidth);
                         //if(emptyWidth < 0) emptyWidth = 0;
                         if(emptyWidth >= 0) {
                         html2 += '<div style="display:inline-block; width:' + emptyWidth + 'px;">&nbsp;</div>';
@@ -275,7 +275,7 @@ class AnnoCddSite {
                 let atom = ic.firstAtomObjCls.getFirstCalphaAtomObj(ic.chains[chnid]);
                 let colorStr =(atom.color === undefined || atom.color.getHexString() === 'FFFFFF') ? 'DDDDDD' : atom.color.getHexString();
                 let color =(atom.color !== undefined) ? colorStr : "CCCCCC";
-                if(ic.icn3dui.cfg.blast_rep_id != chnid) { // regular
+                if(me.cfg.blast_rep_id != chnid) { // regular
                     for(let i = 0, il = fromArray.length; i < il; ++i) {
                         let emptyWidth =(i == 0) ? Math.round(ic.seqAnnWidth *(fromArray[i] - ic.baseResi[chnid] - 1) / ic.maxAnnoLength) : Math.round(ic.seqAnnWidth *(fromArray[i] - toArray[i-1] - 1) / ic.maxAnnoLength);
                         html2 += '<div style="display:inline-block; width:' + emptyWidth + 'px;">&nbsp;</div>';
@@ -307,7 +307,7 @@ class AnnoCddSite {
                 html += htmlTmp;
                 html2 += htmlTmp;
                 if(bDomain) {
-                    html2 += '<div id="' + ic.pre + chnid + '_' + acc + '_' + r + '_cddseq" style="display:none; white-space:normal;" class="icn3d-box">' + defline + '(<a href="' + ic.icn3dui.htmlCls.baseUrl + 'cdd/cddsrv.cgi?uid=' + acc + '" target="_blank" class="icn3d-blue">open details view...</a>)</div>';
+                    html2 += '<div id="' + ic.pre + chnid + '_' + acc + '_' + r + '_cddseq" style="display:none; white-space:normal;" class="icn3d-box">' + defline + '(<a href="' + me.htmlCls.baseUrl + 'cdd/cddsrv.cgi?uid=' + acc + '" target="_blank" class="icn3d-blue">open details view...</a>)</div>';
                 }
             } // for(let r = 0,
         }
@@ -379,7 +379,7 @@ class AnnoCddSite {
               }
               html += '<span id="' + pre + '_' + ic.pre + chnid + '_' + pos + '" title="' + title + '" class="icn3d-residue">' + c + '</span>';
               html2 += ic.showSeqCls.insertGapOverview(chnid, i);
-              let emptyWidth =(ic.icn3dui.cfg.blast_rep_id == chnid) ? Math.round(ic.seqAnnWidth * i /(ic.maxAnnoLength + ic.nTotalGap) - prevEmptyWidth - prevLineWidth) : Math.round(ic.seqAnnWidth * i / ic.maxAnnoLength - prevEmptyWidth - prevLineWidth);
+              let emptyWidth =(me.cfg.blast_rep_id == chnid) ? Math.round(ic.seqAnnWidth * i /(ic.maxAnnoLength + ic.nTotalGap) - prevEmptyWidth - prevLineWidth) : Math.round(ic.seqAnnWidth * i / ic.maxAnnoLength - prevEmptyWidth - prevLineWidth);
                 //if(emptyWidth < 0) emptyWidth = 0;
                 if(emptyWidth >= 0) {
                 html2 += '<div style="display:inline-block; width:' + emptyWidth + 'px;">&nbsp;</div>';

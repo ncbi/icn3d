@@ -49,8 +49,8 @@ class Diagram2d {
               let chainNameFinal =(chainNameHash[chainName] === 1) ? chainName : chainName + chainNameHash[chainName].toString();
               let chainid = mmdbid + '_' + chainNameFinal;
               if(ic.mmdbid_q !== undefined && ic.mmdbid_q === ic.mmdbid_t && structureIndex === 0) {
-                  //chainid += ic.icn3dui.htmlCls.postfix;
-                  chainid = mmdbid + ic.icn3dui.htmlCls.postfix + '_' + chainNameFinal;
+                  //chainid += me.htmlCls.postfix;
+                  chainid = mmdbid + me.htmlCls.postfix + '_' + chainNameFinal;
               }
 
               molid2chain[molid] = chainid;
@@ -476,7 +476,7 @@ class Diagram2d {
         let strokeWidth = 3; // default 1
 
         if(type === 'rect') {
-            $(highlight).attr('stroke', ic.icn3dui.htmlCls.ORANGE);
+            $(highlight).attr('stroke', me.htmlCls.ORANGE);
             $(highlight).attr('stroke-width', strokeWidth);
 
             let x = Number($(base).attr('x'));
@@ -489,13 +489,13 @@ class Diagram2d {
             $(highlight).attr('height', height * ratio);
         }
         else if(type === 'circle') {
-            $(highlight).attr('stroke', ic.icn3dui.htmlCls.ORANGE);
+            $(highlight).attr('stroke', me.htmlCls.ORANGE);
             $(highlight).attr('stroke-width', strokeWidth);
 
             $(highlight).attr('r', Number($(base).attr('r')) * ratio);
         }
         else if(type === 'polygon') {
-            $(highlight).attr('stroke', ic.icn3dui.htmlCls.ORANGE);
+            $(highlight).attr('stroke', me.htmlCls.ORANGE);
             $(highlight).attr('stroke-width', strokeWidth);
 
             let x = Number($(base).attr('x'));
@@ -587,7 +587,7 @@ class Diagram2d {
             ic.annotationCls.showAnnoSelectedChains();
 
             let select = "select chain " + chainid;
-            ic.icn3dui.htmlCls.clickMenuCls.setLogCmd(select, true);
+            me.htmlCls.clickMenuCls.setLogCmd(select, true);
 
             ic.bSelectResidue = false;
         });
@@ -602,7 +602,7 @@ class Diagram2d {
             let chainid1 = $(this).attr('chainid1');
             let chainid2 = $(this).attr('chainid2');
 
-            $(this).find('line').attr('stroke', ic.icn3dui.htmlCls.ORANGE);
+            $(this).find('line').attr('stroke', me.htmlCls.ORANGE);
 
             // interaction of chain1 with chain2, only show the part of chain1 interacting with chain2
             thisClass.selectInteraction(chainid1, chainid2);
@@ -611,7 +611,7 @@ class Diagram2d {
             ic.annotationCls.showAnnoSelectedChains();
 
             let select = "select interaction " + chainid1 + "," + chainid2;
-            ic.icn3dui.htmlCls.clickMenuCls.setLogCmd(select, true);
+            me.htmlCls.clickMenuCls.setLogCmd(select, true);
 
             ic.bClickInteraction = false;
         });
@@ -630,7 +630,7 @@ class Diagram2d {
             }
 
             let strokeWidth = 2;
-            $(this).find('circle').attr('stroke', ic.icn3dui.htmlCls.ORANGE);
+            $(this).find('circle').attr('stroke', me.htmlCls.ORANGE);
             $(this).find('circle').attr('stroke-width', strokeWidth);
 
             ic.hAtoms = me.hashUtilsCls.unionHash(ic.hAtoms, ic.residues[resid]);
@@ -639,7 +639,7 @@ class Diagram2d {
 
             ic.hlUpdateCls.updateHlAll();
 
-            ic.icn3dui.htmlCls.clickMenuCls.setLogCmd(select, true);
+            me.htmlCls.clickMenuCls.setLogCmd(select, true);
 
             ic.bSelectResidue = false;
         });
@@ -662,7 +662,7 @@ class Diagram2d {
             }
 
             let strokeWidth = 2;
-            $(this).find('circle').attr('stroke', ic.icn3dui.htmlCls.ORANGE);
+            $(this).find('circle').attr('stroke', me.htmlCls.ORANGE);
             $(this).find('circle').attr('stroke-width', strokeWidth);
 
             ic.hAtoms = me.hashUtilsCls.unionHash(ic.hAtoms, ic.residues[resid]);
@@ -671,7 +671,7 @@ class Diagram2d {
 
             ic.hlUpdateCls.updateHlAll();
 
-            ic.icn3dui.htmlCls.clickMenuCls.setLogCmd(select, true);
+            me.htmlCls.clickMenuCls.setLogCmd(select, true);
 
             ic.bSelectResidue = false;
 */
@@ -691,7 +691,7 @@ class Diagram2d {
               thisClass.removeLineGraphSelection();
             }
 
-            $(this).find('line.icn3d-hlline').attr('stroke', ic.icn3dui.htmlCls.ORANGE);
+            $(this).find('line.icn3d-hlline').attr('stroke', me.htmlCls.ORANGE);
 
             ic.hAtoms = me.hashUtilsCls.unionHash(ic.hAtoms, ic.residues[resid1]);
             ic.hAtoms = me.hashUtilsCls.unionHash(ic.hAtoms, ic.residues[resid2]);
@@ -700,7 +700,7 @@ class Diagram2d {
 
             ic.hlUpdateCls.updateHlAll();
 
-            ic.icn3dui.htmlCls.clickMenuCls.setLogCmd(select, true);
+            me.htmlCls.clickMenuCls.setLogCmd(select, true);
         });
 
         //$("#" + ic.pre + "dl_scatterplot .icn3d-interaction", "click", function(e) { let ic = this.icn3d, me = ic.icn3dui;
@@ -722,7 +722,7 @@ class Diagram2d {
             }
 
             let strokeWidth = 2;
-            $(this).find('rect').attr('stroke', ic.icn3dui.htmlCls.ORANGE);
+            $(this).find('rect').attr('stroke', me.htmlCls.ORANGE);
             $(this).find('rect').attr('stroke-width', strokeWidth);
 
             ic.hAtoms = me.hashUtilsCls.unionHash(ic.hAtoms, ic.residues[resid1]);
@@ -732,7 +732,7 @@ class Diagram2d {
 
             ic.hlUpdateCls.updateHlAll();
 
-            ic.icn3dui.htmlCls.clickMenuCls.setLogCmd(select, true);
+            me.htmlCls.clickMenuCls.setLogCmd(select, true);
 */
         });
 
@@ -753,7 +753,7 @@ class Diagram2d {
             }
 
             let strokeWidth = 2;
-            $(this).find('rect').attr('stroke', ic.icn3dui.htmlCls.ORANGE);
+            $(this).find('rect').attr('stroke', me.htmlCls.ORANGE);
             $(this).find('rect').attr('stroke-width', strokeWidth);
 
             ic.hAtoms = me.hashUtilsCls.unionHash(ic.hAtoms, ic.residues[resid1]);
@@ -763,7 +763,7 @@ class Diagram2d {
 
             ic.hlUpdateCls.updateHlAll();
 
-            ic.icn3dui.htmlCls.clickMenuCls.setLogCmd(select, true);
+            me.htmlCls.clickMenuCls.setLogCmd(select, true);
 */
         });
 
@@ -783,7 +783,7 @@ class Diagram2d {
             }
 
             let strokeWidth = 2;
-            $(this).find('circle').attr('stroke', ic.icn3dui.htmlCls.ORANGE);
+            $(this).find('circle').attr('stroke', me.htmlCls.ORANGE);
             $(this).find('circle').attr('stroke-width', strokeWidth);
 
             ic.hAtoms = me.hashUtilsCls.unionHash(ic.hAtoms, ic.residues[resid]);
@@ -792,7 +792,7 @@ class Diagram2d {
 
             ic.hlUpdateCls.updateHlAll();
 
-            ic.icn3dui.htmlCls.clickMenuCls.setLogCmd(select, true);
+            me.htmlCls.clickMenuCls.setLogCmd(select, true);
 
             ic.bSelectResidue = false;
 */
@@ -811,7 +811,7 @@ class Diagram2d {
         }
 
         let strokeWidth = 2;
-        $(node).find('circle').attr('stroke', ic.icn3dui.htmlCls.ORANGE);
+        $(node).find('circle').attr('stroke', me.htmlCls.ORANGE);
         $(node).find('circle').attr('stroke-width', strokeWidth);
 
         ic.hAtoms = me.hashUtilsCls.unionHash(ic.hAtoms, ic.residues[resid]);
@@ -820,7 +820,7 @@ class Diagram2d {
 
         ic.hlUpdateCls.updateHlAll();
 
-        ic.icn3dui.htmlCls.clickMenuCls.setLogCmd(select, true);
+        me.htmlCls.clickMenuCls.setLogCmd(select, true);
 
         ic.bSelectResidue = false;
     }
@@ -838,7 +838,7 @@ class Diagram2d {
         }
 
         let strokeWidth = 2;
-        $(node).find('rect').attr('stroke', ic.icn3dui.htmlCls.ORANGE);
+        $(node).find('rect').attr('stroke', me.htmlCls.ORANGE);
         $(node).find('rect').attr('stroke-width', strokeWidth);
 
         ic.hAtoms = me.hashUtilsCls.unionHash(ic.hAtoms, ic.residues[resid1]);
@@ -848,7 +848,7 @@ class Diagram2d {
 
         ic.hlUpdateCls.updateHlAll();
 
-        ic.icn3dui.htmlCls.clickMenuCls.setLogCmd(select, true);
+        me.htmlCls.clickMenuCls.setLogCmd(select, true);
     }
 
     selectInteraction(chainid1, chainid2) {  let ic = this.icn3d, me = ic.icn3dui;

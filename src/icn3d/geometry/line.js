@@ -22,7 +22,7 @@ class Line {
     //Create lines for "atoms". "bHighlight" is an option to draw the highlight for these atoms.
     //The highlight could be outlines with bHighlight=1 and 3D objects with bHighlight=2.
     createLineRepresentation(atoms, bHighlight) { let ic = this.icn3d, me = ic.icn3dui;
-        if(ic.icn3dui.bNode) return;
+        if(me.bNode) return;
 
         //var geo = new THREE.Geometry();
         let geo = new THREE.BufferGeometry();
@@ -104,7 +104,7 @@ class Line {
     }
 
     createConnCalphSidechain(atoms, style) { let ic = this.icn3d, me = ic.icn3dui;
-        if(ic.icn3dui.bNode) return;
+        if(me.bNode) return;
 
         // find all residues with style2 as 'nothing' or undefined
         let residueHash = {};
@@ -167,7 +167,7 @@ class Line {
     }
 
     createSingleLine( src, dst, colorHex, dashed, dashSize ) { let ic = this.icn3d, me = ic.icn3dui;
-        if(ic.icn3dui.bNode) return;
+        if(me.bNode) return;
 
         //var geom = new THREE.Geometry();
         let geo = new THREE.BufferGeometry();
@@ -204,7 +204,7 @@ class Line {
     //Create lines for a list of "lines", each of which has the properties 'position1', 'position2',
     //'color', and a boolean of 'dashed'.
     createLines(lines) {  let ic = this.icn3d, me = ic.icn3dui;
-       if(ic.icn3dui.bNode) return;
+       if(me.bNode) return;
 
        if(lines !== undefined) {
          for(let name in lines) {

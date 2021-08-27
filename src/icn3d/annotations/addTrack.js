@@ -189,7 +189,7 @@ class AddTrack {
                ++cntTmp;
            }
 
-           ic.icn3dui.htmlCls.clickMenuCls.setLogCmd("msa | " + targetGapHashStr, true);
+           me.htmlCls.clickMenuCls.setLogCmd("msa | " + targetGapHashStr, true);
 
            // add tracks
            let resi2cntSameRes = {} // count of same residue at each position
@@ -223,7 +223,7 @@ class AddTrack {
                let bMsa = true;
                thisClass.showNewTrack(chainid, title, text, undefined, undefined, type, undefined, bMsa);
 
-               ic.icn3dui.htmlCls.clickMenuCls.setLogCmd("add track | chainid " + chainid + " | title " + title + " | text " + thisClass.simplifyText(text)
+               me.htmlCls.clickMenuCls.setLogCmd("add track | chainid " + chainid + " | title " + title + " | text " + thisClass.simplifyText(text)
                 + " | type " + type + " | color 0 | msa 1", true);
            }
 
@@ -259,7 +259,7 @@ class AddTrack {
 
                 ic.drawCls.draw();
 
-                ic.icn3dui.htmlCls.clickMenuCls.setLogCmd('color align custom | ' + chainid + ' | range ' + start + '_' + end + ' | ' + resiScoreStr, true);
+                me.htmlCls.clickMenuCls.setLogCmd('color align custom | ' + chainid + ' | range ' + start + '_' + end + ' | ' + resiScoreStr, true);
            }
         });
 
@@ -370,7 +370,7 @@ class AddTrack {
 
                        thisClass.showNewTrack(chainid, title, text, cssColorArray, undefined, undefined, rgbColor);
 
-                       ic.icn3dui.htmlCls.clickMenuCls.setLogCmd("add track | chainid " + chainid + " | title " + title + " | text " + thisClass.simplifyText(text) + " | type bed | color " + rgbColor, true);
+                       me.htmlCls.clickMenuCls.setLogCmd("add track | chainid " + chainid + " | title " + title + " | text " + thisClass.simplifyText(text) + " | type bed | color " + rgbColor, true);
                    }
                }
              };
@@ -390,12 +390,12 @@ class AddTrack {
            let text = $("#" + ic.pre + "track_text").val(); // input simplifyText
 
            //this.showNewTrack(chainid, title, text);
-           //ic.icn3dui.htmlCls.clickMenuCls.setLogCmd("add track | chainid " + chainid + " | title " + title + " | text " + this.simplifyText(text), true);
+           //me.htmlCls.clickMenuCls.setLogCmd("add track | chainid " + chainid + " | title " + title + " | text " + this.simplifyText(text), true);
            let result = this.getFullText(text);
 
            thisClass.showNewTrack(chainid, title,  result.text, undefined, undefined, 'custom', undefined, undefined, result.fromArray, result.toArray);
 
-           ic.icn3dui.htmlCls.clickMenuCls.setLogCmd("add track | chainid " + chainid + " | title " + title + " | text " + text + " | type custom", true);
+           me.htmlCls.clickMenuCls.setLogCmd("add track | chainid " + chainid + " | title " + title + " | text " + text + " | type custom", true);
         });
 
         // current selection
@@ -440,7 +440,7 @@ class AddTrack {
 
            thisClass.showNewTrack(chainid, title, text, cssColorArray, undefined, 'selection', undefined);
 
-           ic.icn3dui.htmlCls.clickMenuCls.setLogCmd("add track | chainid " + chainid + " | title " + title + " | text " + thisClass.simplifyText(text) + " | type selection", true);
+           me.htmlCls.clickMenuCls.setLogCmd("add track | chainid " + chainid + " | title " + title + " | text " + thisClass.simplifyText(text) + " | type selection", true);
         });
 
     }
@@ -482,7 +482,7 @@ class AddTrack {
 
         //ic.customTracks[chnid][simpTitle] = text;
 
-        let divLength = ic.icn3dui.htmlCls.RESIDUE_WIDTH * text.length + 200;
+        let divLength = me.htmlCls.RESIDUE_WIDTH * text.length + 200;
 
         $("#" + ic.pre + "dt_custom_" + chnid).append("<div id='" + ic.pre + "dt_custom_" + chnid + "_" + simpTitle + "'></div>");
         $("#" + ic.pre + "dt_custom_" + chnid + "_" + simpTitle).width(divLength);
@@ -548,9 +548,9 @@ class AddTrack {
               let identityColorStr =(c == resName) ? 'FF0000' : '0000FF';
 
               //var pos =(resNum >= ic.matchedPos[chnid] && resNum - ic.matchedPos[chnid] < ic.chainsSeq[chnid].length) ? ic.chainsSeq[chnid][resNum - ic.matchedPos[chnid]].resi : ic.baseResi[chnid] + 1 + resNum;
-              let pos = currResi;
+              let pos = ic.baseResi[chnid] + currResi;
 
-              if(inTarget2queryHash !== undefined) pos = inTarget2queryHash[i] + 1; // 0-based
+              if(inTarget2queryHash !== undefined) pos = ic.baseResi[chnid] + inTarget2queryHash[i] + 1; // 0-based
 
               let tmpStr;
               if(cssColorArray !== undefined && cssColorArray[i] != '') {
@@ -559,8 +559,16 @@ class AddTrack {
               else if(color) {
                   tmpStr = 'style="color:rgb(' + color + ')"';
               }
-              else if(bAlignColor) {
+              else if(bAlignColor || type == 'seq') {
                   tmpStr = 'style="color:#' + colorHexStr + '"';
+
+                  if(type == 'seq') { // reset the color of atoms
+                      for(let serial in ic.residues[chnid + '_' + pos]) {
+                          let color2 = me.parasCls.thr("#" + colorHexStr);
+                          ic.atoms[serial].color = color2;
+                          ic.atomPrevColors[serial] = color2;
+                      }
+                  }
               }
               else if(bIdentityColor) {
                   tmpStr = 'style="color:#' + identityColorStr + '"';
@@ -573,7 +581,7 @@ class AddTrack {
 
               htmlTmp2 += ic.showSeqCls.insertGapOverview(chnid, i);
 
-              let emptyWidth =(ic.icn3dui.cfg.blast_rep_id == chnid) ? Math.round(ic.seqAnnWidth * i /(ic.maxAnnoLength + ic.nTotalGap) - prevEmptyWidth - prevLineWidth) : Math.round(ic.seqAnnWidth * i / ic.maxAnnoLength - prevEmptyWidth - prevLineWidth);
+              let emptyWidth =(me.cfg.blast_rep_id == chnid) ? Math.round(ic.seqAnnWidth * i /(ic.maxAnnoLength + ic.nTotalGap) - prevEmptyWidth - prevLineWidth) : Math.round(ic.seqAnnWidth * i / ic.maxAnnoLength - prevEmptyWidth - prevLineWidth);
               if(emptyWidth < 0) emptyWidth = 0;
 
               htmlTmp2 += '<div style="display:inline-block; width:' + emptyWidth + 'px;">&nbsp;</div>';
@@ -671,6 +679,8 @@ class AddTrack {
 
       let text = '';
 
+      let cssColorArray = [];
+      let target2queryHash = {}
       if(query !== undefined && target !== undefined) {
           let evalue = target.scores.e_value.toPrecision(2);
           if(evalue > 1e-200) evalue = parseFloat(evalue).toExponential();
@@ -682,7 +692,6 @@ class AddTrack {
           let querySeq = query.seqdata;
 
           let segArray = target.segs;
-          let target2queryHash = {}
           for(let i = 0, il = segArray.length; i < il; ++i) {
               let seg = segArray[i];
               for(let j = 0; j <= seg.orito - seg.orifrom; ++j) {
@@ -690,8 +699,7 @@ class AddTrack {
               }
           }
 
-          let cssColorArray = [];
-          // the missing residuesatthe end ofthe seq will be filled up in the API showNewTrack()
+          // the missing residues at the end of the seq will be filled up in the API showNewTrack()
           for(let i = 0, il = targetSeq.length; i < il; ++i) {
               if(target2queryHash.hasOwnProperty(i)) {
                   text += querySeq[target2queryHash[i]];
@@ -699,7 +707,7 @@ class AddTrack {
                   let colorHexStr = ic.showAnnoCls.getColorhexFromBlosum62(targetSeq[i], querySeq[target2queryHash[i]]);
                   cssColorArray.push("#" + colorHexStr);
 
-                  let resi = i + 1;
+                  let resi =  ic.baseResi[chainid] + 1 + i; //i + 1;
                   for(let serial in ic.residues[chainid + '_' + resi]) {
                       let color = me.parasCls.thr("#" + colorHexStr);
                       ic.atoms[serial].color = color;
@@ -723,12 +731,12 @@ class AddTrack {
       ic.hlUpdateCls.updateHlAll();
       ic.drawCls.draw();
 
-      ic.icn3dui.htmlCls.clickMenuCls.setLogCmd("add track | chainid " + chainid + " | title " + title + " | text " + this.simplifyText(text) + " | type seq", true);
+      me.htmlCls.clickMenuCls.setLogCmd("add track | chainid " + chainid + " | title " + title + " | text " + this.simplifyText(text) + " | type seq", true);
     }
 
     defineSecondary(chainid, type) { let ic = this.icn3d, me = ic.icn3dui;
         if(!$('#' + ic.pre + 'dl_definedsets').hasClass('ui-dialog-content') || !$('#' + ic.pre + 'dl_definedsets').dialog( 'isOpen' )) {
-            ic.icn3dui.htmlCls.dialogCls.openDlg('dl_definedsets', 'Select sets');
+            me.htmlCls.dialogCls.openDlg('dl_definedsets', 'Select sets');
             $("#" + ic.pre + "atomsCustom").resizable();
         }
 
@@ -985,7 +993,7 @@ class AddTrack {
 
                 ic.setColorCls.setColorByOptions(ic.opts, ic.hAtoms);
                 ic.hlUpdateCls.updateHlAll();
-                ic.icn3dui.htmlCls.clickMenuCls.setLogCmd('color align custom | ' + chainid + ' | range ' + start + '_' + end + ' | ' + resiScoreStr + ' | colorrange ' + startColor + ' ' + midColor + ' ' + endColor, true);
+                me.htmlCls.clickMenuCls.setLogCmd('color align custom | ' + chainid + ' | range ' + start + '_' + end + ' | ' + resiScoreStr + ' | colorrange ' + startColor + ' ' + midColor + ' ' + endColor, true);
 
                 let legendHtml = me.htmlCls.clickMenuCls.setLegendHtml();
 
@@ -993,7 +1001,7 @@ class AddTrack {
             }
             else if(type == 'tube') {
                 ic.setOptionCls.setStyle('proteins', 'custom tube');
-                ic.icn3dui.htmlCls.clickMenuCls.setLogCmd('color tube | ' + chainid + ' | range ' + start + '_' + end + ' | ' + resiScoreStr, true);
+                me.htmlCls.clickMenuCls.setLogCmd('color tube | ' + chainid + ' | range ' + start + '_' + end + ' | ' + resiScoreStr, true);
             }
             ic.drawCls.draw();
          }

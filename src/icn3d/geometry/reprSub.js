@@ -9,7 +9,7 @@ class ReprSub {
 
     // from iview (http://istar.cse.cuhk.edu.hk/iview/)
     createRepresentationSub(atoms, f0, f01) { let ic = this.icn3d, me = ic.icn3dui;
-        if(ic.icn3dui.bNode) return;
+        if(me.bNode) return;
 
         //var clbondArray = [];
         let resiAtoms = {};

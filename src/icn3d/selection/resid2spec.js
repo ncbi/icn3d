@@ -239,7 +239,7 @@ class Resid2spec {
     }
 
     switchHighlightLevel() {var ic = this.icn3d, me = ic.icn3dui;
-      if(ic.icn3dui.bNode) return;
+      if(me.bNode) return;
 
       let  thisClass = this;
 
@@ -252,7 +252,7 @@ class Resid2spec {
               //ic.pk = 2;
           }
           thisClass.switchHighlightLevelUp();
-          ic.icn3dui.htmlCls.clickMenuCls.setLogCmd("highlight level up", true);
+          me.htmlCls.clickMenuCls.setLogCmd("highlight level up", true);
         }
         else if(e.keyCode === 40) { // arrow down, select down level of atoms
           e.preventDefault();
@@ -261,7 +261,7 @@ class Resid2spec {
               //ic.pk = 2;
           }
           thisClass.switchHighlightLevelDown();
-          ic.icn3dui.htmlCls.clickMenuCls.setLogCmd("highlight level down", true);
+          me.htmlCls.clickMenuCls.setLogCmd("highlight level down", true);
         }
       });
     }
@@ -270,7 +270,7 @@ class Resid2spec {
     //to increase the highlight level by one, or use down arrow to decrease the highlight level by one. This
     //function switchHighlightLevelUp() increases the highlight level by one.
     switchHighlightLevelUp() {var ic = this.icn3d, me = ic.icn3dui;
-      if(ic.icn3dui.bNode) return;
+      if(me.bNode) return;
 
       if(!ic.bShift && !ic.bCtrl) ic.hlObjectsCls.removeHlObjects();
       if(ic.pickedAtomList === undefined || Object.keys(ic.pickedAtomList).length === 0) {
@@ -301,7 +301,7 @@ class Resid2spec {
       }
       else if(ic.highlightlevel === 3) {
           let  atomLevel4;
-          if(ic.icn3dui.cfg.mmdbid !== undefined || ic.icn3dui.cfg.gi !== undefined) { // strand -> domain
+          if(me.cfg.mmdbid !== undefined || me.cfg.gi !== undefined) { // strand -> domain
               ic.highlightlevel = 4;
               let  firstAtom = ic.firstAtomObjCls.getFirstAtomObj(ic.pickedAtomList);
               atomLevel4 = ic.pickingCls.select3ddomainFromAtom(firstAtom);
@@ -312,7 +312,7 @@ class Resid2spec {
                 ic.hAtoms = me.hashUtilsCls.unionHash(ic.hAtoms, atomLevel4);
               }
           }
-          if((ic.icn3dui.cfg.mmdbid === undefined && ic.icn3dui.cfg.gi === undefined) || Object.keys(atomLevel4).length == 0) { // strand -> chain
+          if((me.cfg.mmdbid === undefined && me.cfg.gi === undefined) || Object.keys(atomLevel4).length == 0) { // strand -> chain
               ic.highlightlevel = 5;
               let  firstAtom = ic.firstAtomObjCls.getFirstAtomObj(ic.pickedAtomList);
               if(!ic.bShift && !ic.bCtrl) {
@@ -350,7 +350,7 @@ class Resid2spec {
     //arrow to increase the highlight level by one, or use down arrow to decrease the highlight level
     //by one. This function switchHighlightLevelDown() decreases the highlight level by one.
     switchHighlightLevelDown() {var ic = this.icn3d, me = ic.icn3dui;
-      if(ic.icn3dui.bNode) return;
+      if(me.bNode) return;
 
       ic.hlObjectsCls.removeHlObjects();
       if(ic.pickedAtomList === undefined || Object.keys(ic.pickedAtomList).length === 0) {
@@ -395,7 +395,7 @@ class Resid2spec {
       }
       else if(ic.highlightlevel === 5) {
           let  atomLevel4;
-          if(ic.icn3dui.cfg.mmdbid !== undefined || ic.icn3dui.cfg.gi !== undefined) { // chain -> domain
+          if(me.cfg.mmdbid !== undefined || me.cfg.gi !== undefined) { // chain -> domain
               ic.highlightlevel = 4;
               let  firstAtom = ic.firstAtomObjCls.getFirstAtomObj(ic.pickedAtomList);
               atomLevel4 = ic.pickingCls.select3ddomainFromAtom(firstAtom);
@@ -406,7 +406,7 @@ class Resid2spec {
                   ic.hAtoms = me.hashUtilsCls.unionHash(ic.hAtoms, atomLevel4);
               }
           }
-          if((ic.icn3dui.cfg.mmdbid === undefined && ic.icn3dui.cfg.gi === undefined) || Object.keys(atomLevel4).length == 0) { // chain -> strand
+          if((me.cfg.mmdbid === undefined && me.cfg.gi === undefined) || Object.keys(atomLevel4).length == 0) { // chain -> strand
               ic.highlightlevel = 3;
               let  firstAtom = ic.firstAtomObjCls.getFirstAtomObj(ic.pickedAtomList);
               if(!ic.bShift && !ic.bCtrl) {

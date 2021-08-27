@@ -50,13 +50,24 @@ class ClickMenu {
         this.icn3dui = icn3dui;
     }
 
-    setLegendHtml() { let me = this.icn3dui, ic = me.icn3d;
-        let startColorStr = (ic.startColor == 'red') ? '#F00' : (ic.startColor == 'green') ? '#0F0' : '#00F';
-        let midColorStr = (ic.midColor == 'white') ? '#FFF' : '#000';
-        let endColorStr = (ic.endColor == 'red') ? '#F00' : (ic.endColor == 'green') ? '#0F0' : '#00F';
-        let rangeStr = startColorStr + ' 0%, ' + midColorStr + ' 50%, ' + endColorStr + ' 100%';
+    setLegendHtml(bAf) { let me = this.icn3dui, ic = me.icn3d;
+        let legendHtml;
+        if(bAf) {
+            legendHtml = '<div>';
+            legendHtml += '<span class="icn3d-square" style="background-color: rgb(0, 83, 204);">&nbsp;</span> <span>Very high (pLDDT &gt; 90)</span><br>';
+            legendHtml += '<span class="icn3d-square" style="background-color: rgb(101, 203, 243);">&nbsp;</span> <span>Confident (90 &gt; pLDDT &gt; 70)</span><br>';
+            legendHtml += '<span class="icn3d-square" style="background-color: rgb(255, 209, 19);">&nbsp;</span> <span>Low (70 &gt; pLDDT &gt; 50)</span><br>';
+            legendHtml += '<span class="icn3d-square" style="background-color: rgb(255, 125, 69);">&nbsp;</span> <span>Very low (pLDDT &lt; 50)</span><br>';
+            legendHtml += '</div">';
+        }
+        else {
+            let startColorStr = (ic.startColor == 'red') ? '#F00' : (ic.startColor == 'green') ? '#0F0' : '#00F';
+            let midColorStr = (ic.midColor == 'white') ? '#FFF' : '#000';
+            let endColorStr = (ic.endColor == 'red') ? '#F00' : (ic.endColor == 'green') ? '#0F0' : '#00F';
+            let rangeStr = startColorStr + ' 0%, ' + midColorStr + ' 50%, ' + endColorStr + ' 100%';
 
-        let legendHtml = "<div style='height: 20px; background: linear-gradient(to right, " + rangeStr + ");'></div><table width='100%' border='0' cellspacing='0' cellpadding='0'><tr><td width='33%'>" + ic.startValue + "</td><td width='33%' align='center'>" + ic.midValue + "</td><td width='33%' align='right'>" + ic.endValue + "</td></tr></table>";
+            legendHtml = "<div style='height: 20px; background: linear-gradient(to right, " + rangeStr + ");'></div><table width='100%' border='0' cellspacing='0' cellpadding='0'><tr><td width='33%'>" + ic.startValue + "</td><td width='33%' align='center'>" + ic.midValue + "</td><td width='33%' align='right'>" + ic.endValue + "</td></tr></table>";
+        }
 
         return legendHtml;
     }
@@ -75,6 +86,11 @@ class ClickMenu {
         me.myEventCls.onIds("#" + me.pre + "mn1_pdbid", "click", function(e) { let ic = me.icn3d;
            me.htmlCls.dialogCls.openDlg('dl_pdbid', 'Please input PDB ID');
         });
+
+        me.myEventCls.onIds("#" + me.pre + "mn1_afid", "click", function(e) { let ic = me.icn3d;
+           me.htmlCls.dialogCls.openDlg('dl_afid', 'Please input AlphaFold UniProt ID');
+        });
+
     //    },
     //    clkMn1_opmid: function() {
         me.myEventCls.onIds("#" + me.pre + "mn1_opmid", "click", function(e) { let ic = me.icn3d;
@@ -622,7 +638,7 @@ class ClickMenu {
     //    clkApplyYournote: function() {
         me.myEventCls.onIds("#" + me.pre + "applyyournote", "click", function(e) { let ic = me.icn3d;
            ic.yournote = $("#" + me.pre + "yournote").val();
-           if(ic.icn3dui.cfg.shownote) document.title = ic.yournote;
+           if(me.cfg.shownote) document.title = ic.yournote;
            if(!me.cfg.notebook) dialog.dialog( "close" );
            thisClass.setLogCmd('your note | ' + ic.yournote, true);
         });
@@ -1130,6 +1146,12 @@ class ClickMenu {
            ic.setOptionCls.setOption('color', 'b factor');
            thisClass.setLogCmd('color b factor', true);
         });
+
+        me.myEventCls.onIds("#" + me.pre + "mn4_clrConfidence", "click", function(e) { let ic = me.icn3d;
+           ic.setOptionCls.setOption('color', 'confidence');
+           thisClass.setLogCmd('color confidence', true);
+        });
+
     //    },
     //    clkMn4_clrArea: function() {
         me.myEventCls.onIds("#" + me.pre + "mn4_clrArea", "click", function(e) { let ic = me.icn3d;

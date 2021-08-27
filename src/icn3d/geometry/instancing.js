@@ -177,7 +177,7 @@ class Instancing {
 
     //Draw the biological unit assembly using the matrix.
     drawSymmetryMates() {  let ic = this.icn3d, me = ic.icn3dui;
-        if(ic.icn3dui.bNode) return;
+        if(me.bNode) return;
 
 //        if(ic.bInstanced && Object.keys(ic.atoms).length * ic.biomtMatrices.length > ic.maxatomcnt) {
         if(ic.bInstanced) {

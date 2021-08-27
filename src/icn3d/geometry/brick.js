@@ -10,7 +10,7 @@ class Brick {
     }
 
     createBrick(p0, p1, radius, color) { let ic = this.icn3d, me = ic.icn3dui;
-        if(ic.icn3dui.bNode) return;
+        if(me.bNode) return;
 
         let cylinderGeometry = new THREE.CylinderGeometry(1, 1, 1, 4, 1);
 

@@ -26,7 +26,7 @@ class Strand {
     //"bHighlight" is an option to draw the highlight for these atoms. The highlight could be outlines
     //with bHighlight=1 and 3D objects with bHighlight=2.
     createStrand(atoms, num, div, fill, coilWidth, helixSheetWidth, doNotSmoothen, thickness, bHighlight) { let ic = this.icn3d, me = ic.icn3dui;
-        if(ic.icn3dui.bNode) return;
+        if(me.bNode) return;
 
         let bRibbon = fill ? true: false;
 

@@ -15,7 +15,7 @@ class TextSprite {
     // new: http://stackoverflow.com/questions/23514274/three-js-2d-text-sprite-labels
     // old: http://stemkoski.github.io/Three.js/Sprite-Text-Labels.html
     makeTextSprite( message, parameters ) { let ic = this.icn3d, me = ic.icn3dui;
-        if(ic.icn3dui.bNode) return;
+        if(me.bNode) return;
 
         if ( parameters === undefined ) parameters = {};
         let fontface = parameters.hasOwnProperty("fontface") ? parameters["fontface"] : "Arial";

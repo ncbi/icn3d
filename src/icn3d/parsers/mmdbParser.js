@@ -85,7 +85,7 @@ class MmdbParser {
           chain2molid[chain] = i;
           molid2chain[i] = chain;
 
-          ic.chainsColor[chain] =(type !== undefined) ? me.parasCls.thr(ic.icn3dui.htmlCls.GREY8) : me.parasCls.thr(color);
+          ic.chainsColor[chain] =(type !== undefined) ? me.parasCls.thr(me.htmlCls.GREY8) : me.parasCls.thr(color);
 
           let  geneId =(molid2rescount[i].geneId === undefined) ? '' : molid2rescount[i].geneId;
           let  geneSymbol =(molid2rescount[i].geneSymbol === undefined) ? '' : molid2rescount[i].geneSymbol;
@@ -144,19 +144,19 @@ class MmdbParser {
        // b: b-factor, s: water, ft: pdbsite
        //&ft=1
        if(bGi) {
-           url = ic.icn3dui.htmlCls.baseUrl + "mmdb/mmdb_strview.cgi?v=2&program=icn3d&b=1&s=1&ft=1&simple=1&gi=" + mmdbid;
+           url = me.htmlCls.baseUrl + "mmdb/mmdb_strview.cgi?v=2&program=icn3d&b=1&s=1&ft=1&simple=1&gi=" + mmdbid;
        }
        else {
-           url = ic.icn3dui.htmlCls.baseUrl + "mmdb/mmdb_strview.cgi?v=2&program=icn3d&b=1&s=1&ft=1&simple=1&uid=" + mmdbid;
+           url = me.htmlCls.baseUrl + "mmdb/mmdb_strview.cgi?v=2&program=icn3d&b=1&s=1&ft=1&simple=1&uid=" + mmdbid;
        }
 
        // use asymmetric unit for BLAST search, e.g., https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?from=blast&blast_rep_id=5XZC_B&query_id=1TUP_A&command=view+annotations;set+annotation+cdd;set+annotation+site;set+view+detailed+view;select+chain+5XZC_B;show+selection&log$=align&blast_rank=1&RID=EPUCYNVV014&buidx=0
-       if(ic.icn3dui.cfg.blast_rep_id !== undefined) url += '&buidx=0';
+       if(me.cfg.blast_rep_id !== undefined) url += '&buidx=0';
 
        ic.bCid = undefined;
 
-       if(ic.icn3dui.cfg.inpara !== undefined) {
-         url += ic.icn3dui.cfg.inpara;
+       if(me.cfg.inpara !== undefined) {
+         url += me.cfg.inpara;
        }
 
        if(ic.chainids2resids === undefined) ic.chainids2resids = {} // ic.chainids2resids[chainid1][chainid2] = [resid, resid]
@@ -217,7 +217,7 @@ class MmdbParser {
                       alert("This gi " + mmdbid + " has no corresponding 3D structure...");
                     }
                     else {
-                      alert("This mmdbid " + mmdbid + " with the parameters " + ic.icn3dui.cfg.inpara + " may not have 3D structure data. Please visit the summary page for details: " + ic.icn3dui.htmlCls.baseUrl + "pdb/" + mmdbid);
+                      alert("This mmdbid " + mmdbid + " with the parameters " + me.cfg.inpara + " may not have 3D structure data. Please visit the summary page for details: " + me.htmlCls.baseUrl + "pdb/" + mmdbid);
                     }
 
                     return;
@@ -237,7 +237,7 @@ class MmdbParser {
               alert("This gi " + mmdbid + " has no corresponding 3D structure...");
             }
             else {
-              alert("This mmdbid " + mmdbid + " with the parameters " + ic.icn3dui.cfg.inpara + " may not have 3D structure data. Please visit the summary page for details: " + ic.icn3dui.htmlCls.baseUrl + "pdb/" + mmdbid);
+              alert("This mmdbid " + mmdbid + " with the parameters " + me.cfg.inpara + " may not have 3D structure data. Please visit the summary page for details: " + me.htmlCls.baseUrl + "pdb/" + mmdbid);
             }
 
             return;
@@ -268,7 +268,7 @@ class MmdbParser {
 
         ic.setStyleCls.setAtomStyleByOptions(ic.opts);
         // use the original color from cgi output
-        if(ic.icn3dui.cfg.blast_rep_id !== undefined) {
+        if(me.cfg.blast_rep_id !== undefined) {
           ic.setColorCls.setColorByOptions(ic.opts, ic.atoms);
         }
         else {
@@ -277,11 +277,11 @@ class MmdbParser {
 
         if(type === undefined) {
             ic.ParserUtilsCls.renderStructure();
-            if(ic.icn3dui.cfg.rotate !== undefined) ic.resizeCanvasCls.rotStruc(ic.icn3dui.cfg.rotate, true);
+            if(me.cfg.rotate !== undefined) ic.resizeCanvasCls.rotStruc(me.cfg.rotate, true);
 
             ic.html2ddgm = '';
-            if(ic.icn3dui.cfg.show2d) {
-                ic.icn3dui.htmlCls.dialogCls.openDlg('dl_2ddgm', 'Interactions');
+            if(me.cfg.show2d) {
+                me.htmlCls.dialogCls.openDlg('dl_2ddgm', 'Interactions');
                 if(ic.bFullUi) {
                     //if(type === undefined) {
                         ic.ParserUtilsCls.download2Ddgm(ic.inputid.toUpperCase());
@@ -294,11 +294,11 @@ class MmdbParser {
             }
         }
 
-        if((ic.icn3dui.cfg.align === undefined || ic.icn3dui.cfg.chainalign === undefined) && Object.keys(ic.structures).length == 1) {
+        if((me.cfg.align === undefined || me.cfg.chainalign === undefined) && Object.keys(ic.structures).length == 1) {
             if($("#" + ic.pre + "alternateWrapper") !== null) $("#" + ic.pre + "alternateWrapper").hide();
         }
 
-        //if(ic.icn3dui.deferred !== undefined) ic.icn3dui.deferred.resolve(); if(ic.deferred2 !== undefined) ic.deferred2.resolve();
+        //if(me.deferred !== undefined) me.deferred.resolve(); if(ic.deferred2 !== undefined) ic.deferred2.resolve();
     }
 
     //Ajax call was used to get the atom data from the NCBI "gi". This function was deferred so that
@@ -320,10 +320,10 @@ class MmdbParser {
         ic.bCid = undefined;
 
         let  idArray = sequence_structure_ids.split(',');
-        ic.icn3dui.cfg.query_id = idArray[0];
-        ic.icn3dui.cfg.blast_rep_id = idArray[1];
+        me.cfg.query_id = idArray[0];
+        me.cfg.blast_rep_id = idArray[1];
 
-        let  mmdbid = ic.icn3dui.cfg.blast_rep_id.split('_')[0];
+        let  mmdbid = me.cfg.blast_rep_id.split('_')[0];
 
         this.downloadMmdb(mmdbid);
     }

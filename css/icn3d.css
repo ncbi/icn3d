@@ -243,6 +243,8 @@ input:checked + .icn3d-slider:before {
 
 .icn3d-legend {display:none; position:absolute; z-index:9999; bottom:-20px; right:20px; background-color:#DDDDDD; width:100px; height:35px; padding:6px;}
 
+.icn3d-legend2 {display:none; position:absolute; z-index:9999; bottom:50px; right:20px; background-color:#DDDDDD; width:200px; height:60px; padding:6px;}
+
 .icn3d-saveicon, .icn3d-hideicon {cursor:pointer; position:absolute; top:8px; right:20px;}
 .icn3d-hideicon {cursor:pointer; position:absolute; top:8px; right:40px;}
 
@@ -266,3 +268,5 @@ input:checked + .icn3d-slider:before {
 
 .icn3d-wifi {width:16px; display:inline-block; background-image: url("https://www.ncbi.nlm.nih.gov/Structure/icn3d/ssimages/wifi.png"); background-size: contain; background-repeat: no-repeat;}
 .icn3d-license {width:16px; display:inline-block; background-image: url("https://www.ncbi.nlm.nih.gov/Structure/icn3d/ssimages/license.png"); background-size: contain; background-repeat: no-repeat;}
+
+.icn3d-square { display:inline-block; width:15px;}

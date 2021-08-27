@@ -319,6 +319,33 @@ class SetColor {
                 }
                 break;
 
+            case 'confidence':
+                for (let i in atoms) {
+                    let atom = ic.atoms[i];
+                    if(atom.b === undefined || parseInt(atom.b * 1000) == 0) { // invalid b-factor
+                        atom.color =  me.parasCls.thr().setRGB(0, 1, 0);
+                    }
+                    else {
+                        let b = atom.b;
+
+                        if(b >= 90) {
+                            atom.color = me.parasCls.thr().setRGB(0, 0.325, 0.839);
+                        }
+                        else if(b >= 70 && b < 90) {
+                            atom.color = me.parasCls.thr().setRGB(0.396, 0.572, 0.953);
+                        }
+                        else if(b >= 50 && b < 70) {
+                            atom.color = me.parasCls.thr().setRGB(1, 0.859, 0.075);
+                        }
+                        else if(b < 50) {
+                            atom.color = me.parasCls.thr().setRGB(1, 0.490, 0.271);
+                        }
+                    }
+
+                    ic.atomPrevColors[i] = atom.color;
+                }
+                break;
+
             case 'b factor':
                 // http://proteopedia.org/wiki/index.php/Temperature_color_schemes
                 // Fixed: Middle (white): 50, red: >= 100, blue: 0

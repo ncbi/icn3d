@@ -379,6 +379,22 @@ class Events {
            }
         });
 
+        me.myEventCls.onIds("#" + me.pre + "reload_af", "click", function(e) { let ic = me.icn3d;
+           e.preventDefault();
+           if(!me.cfg.notebook) dialog.dialog( "close" );
+           me.htmlCls.clickMenuCls.setLogCmd("load af " + $("#" + me.pre + "afid").val(), false);
+           window.open(me.htmlCls.baseUrl + 'icn3d/full.html?afid=' + $("#" + me.pre + "afid").val(), '_blank');
+        });
+
+        me.myEventCls.onIds("#" + me.pre + "afid", "keyup", function(e) { let ic = me.icn3d;
+           if (e.keyCode === 13) {
+               e.preventDefault();
+               if(!me.cfg.notebook) dialog.dialog( "close" );
+               me.htmlCls.clickMenuCls.setLogCmd("load af " + $("#" + me.pre + "afid").val(), false);
+               window.open(me.htmlCls.baseUrl + 'icn3d/full.html?afid=' + $("#" + me.pre + "afid").val(), '_blank');
+           }
+        });
+
     //    },
     //    clickReload_opm: function() {
         me.myEventCls.onIds("#" + me.pre + "reload_opm", "click", function(e) { let ic = me.icn3d;
@@ -540,7 +556,7 @@ class Events {
            let query_id = $("#" + me.pre + "query_id").val();
            let query_fasta = encodeURIComponent($("#" + me.pre + "query_fasta").val());
            let blast_rep_id = $("#" + me.pre + "blast_rep_id").val();
-           me.htmlCls.clickMenuCls.setLogCmd("load seq_struc_ids " + query_id + "," + blast_rep_id, false);
+           me.htmlCls.clickMenuCls.setLogCmd("load seq_struct_ids " + query_id + "," + blast_rep_id, false);
            query_id =(query_id !== '' && query_id !== undefined) ? query_id : query_fasta;
            window.open(me.htmlCls.baseUrl + 'icn3d/full.html?from=icn3d&blast_rep_id=' + blast_rep_id
              + '&query_id=' + query_id
@@ -1751,7 +1767,7 @@ class Events {
     //    },
     //    bindMouseup: function() {
         $(document).on('mouseup touchend', "accordion", function(e) { let ic = me.icn3d;
-          if(ic.bControlGl && !ic.icn3dui.bNode) {
+          if(ic.bControlGl && !me.bNode) {
               if(window.controls) {
                 window.controls.noRotate = false;
                 window.controls.noZoom = false;
@@ -1769,7 +1785,7 @@ class Events {
     //    },
     //    bindMousedown: function() {
        $(document).on('mousedown touchstart', "accordion", function(e) { let ic = me.icn3d;
-          if(ic.bControlGl && !ic.icn3dui.bNode) {
+          if(ic.bControlGl && !me.bNode) {
               if(window.controls) {
                 window.controls.noRotate = true;
                 window.controls.noZoom = true;

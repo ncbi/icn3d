@@ -20,7 +20,7 @@ class AnnoDomain {
         let pdbArray = Object.keys(ic.structures);
         // show 3D domains
         let pdbid = pdbArray[index];
-        let url = ic.icn3dui.htmlCls.baseUrl + "mmdb/mmdb_strview.cgi?v=2&program=icn3d&domain&molinfor&uid=" + pdbid;
+        let url = me.htmlCls.baseUrl + "mmdb/mmdb_strview.cgi?v=2&program=icn3d&domain&molinfor&uid=" + pdbid;
         if(index == 0 && ic.mmdb_data !== undefined) {
             for(let chnid in ic.protein_chainid) {
                 if(chnid.indexOf(pdbid) !== -1) {
@@ -54,7 +54,7 @@ class AnnoDomain {
                 ic.bAjax3ddomain = true;
                 ic.bAjaxDoneArray[index] = true;
                 if(ic.deferred3ddomain !== undefined) {
-                    if(ic.icn3dui.cfg.align === undefined || ic.icn3dui.cfg.chainalign === undefined || ic.bRealign) {
+                    if(me.cfg.align === undefined || me.cfg.chainalign === undefined || ic.bRealign) {
                         ic.deferred3ddomain.resolve();
                     }
                     else {
@@ -85,7 +85,7 @@ class AnnoDomain {
                 ic.bAjax3ddomain = true;
                 bAjaxDone1 = true;
                 if(ic.deferred3ddomain !== undefined) {
-                    if(ic.icn3dui.cfg.align === undefined || ic.icn3dui.cfg.chainalign === undefined) {
+                    if(me.cfg.align === undefined || me.cfg.chainalign === undefined) {
                         ic.deferred3ddomain.resolve();
                     }
                     else {
@@ -194,7 +194,7 @@ class AnnoDomain {
                 let atom = ic.firstAtomObjCls.getFirstCalphaAtomObj(ic.chains[chnid]);
                 let colorStr =(atom.color === undefined || atom.color.getHexString() === 'FFFFFF') ? 'DDDDDD' : atom.color.getHexString();
                 let color =(atom.color !== undefined) ? colorStr : "CCCCCC";
-                if(ic.icn3dui.cfg.blast_rep_id != chnid) { // regular
+                if(me.cfg.blast_rep_id != chnid) { // regular
                     for(let i = 0, il = fromArray.length; i < il; ++i) {
                         let emptyWidth =(i == 0) ? Math.round(ic.seqAnnWidth *(fromArray[i] - ic.baseResi[chnid] - 1) / ic.maxAnnoLength) : Math.round(ic.seqAnnWidth *(fromArray[i] - toArray[i-1] - 1) / ic.maxAnnoLength);
                         html2 += '<div style="display:inline-block; width:' + emptyWidth + 'px;">&nbsp;</div>';

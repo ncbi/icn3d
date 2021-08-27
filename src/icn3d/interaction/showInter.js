@@ -53,22 +53,22 @@ class ShowInter {
            let bHbondCalcStr =(ic.bHbondCalc) ? "true" : "false";
            let tmpStr = nameArray2 + " " + nameArray + " | " + interactionTypes + " | " + bHbondCalcStr + " | " + thresholdStr;
            if(type == '3d') {
-               ic.icn3dui.htmlCls.clickMenuCls.setLogCmd("display interaction 3d | " + tmpStr, true);
+               me.htmlCls.clickMenuCls.setLogCmd("display interaction 3d | " + tmpStr, true);
            }
            else if(type == 'view') {
-               ic.icn3dui.htmlCls.clickMenuCls.setLogCmd("view interaction pairs | " + tmpStr, true);
+               me.htmlCls.clickMenuCls.setLogCmd("view interaction pairs | " + tmpStr, true);
            }
            else if(type == 'save1') {
-               ic.icn3dui.htmlCls.clickMenuCls.setLogCmd("save1 interaction pairs | " + tmpStr, true);
+               me.htmlCls.clickMenuCls.setLogCmd("save1 interaction pairs | " + tmpStr, true);
            }
            else if(type == 'save2') {
-               ic.icn3dui.htmlCls.clickMenuCls.setLogCmd("save2 interaction pairs | " + tmpStr, true);
+               me.htmlCls.clickMenuCls.setLogCmd("save2 interaction pairs | " + tmpStr, true);
            }
            else if(type == 'linegraph') {
-               ic.icn3dui.htmlCls.clickMenuCls.setLogCmd("line graph interaction pairs | " + tmpStr, true);
+               me.htmlCls.clickMenuCls.setLogCmd("line graph interaction pairs | " + tmpStr, true);
            }
            else if(type == 'scatterplot') {
-               ic.icn3dui.htmlCls.clickMenuCls.setLogCmd("scatterplot interaction pairs | " + tmpStr, true);
+               me.htmlCls.clickMenuCls.setLogCmd("scatterplot interaction pairs | " + tmpStr, true);
            }
            else if(type == 'graph') { // force-directed graph
                 let dist_ss = parseInt($("#" + ic.pre + "dist_ss").val());
@@ -80,7 +80,7 @@ class ShowInter {
                 let dist_halogen = parseInt($("#" + ic.pre + "dist_halogen").val());
                 let dist_pication = parseInt($("#" + ic.pre + "dist_pication").val());
                 let dist_pistacking = parseInt($("#" + ic.pre + "dist_pistacking").val());
-                ic.icn3dui.htmlCls.clickMenuCls.setLogCmd("graph interaction pairs | " + nameArray2 + " " + nameArray + " | " + interactionTypes
+                me.htmlCls.clickMenuCls.setLogCmd("graph interaction pairs | " + nameArray2 + " " + nameArray + " | " + interactionTypes
                     + " | " + bHbondCalcStr + " | " + thresholdStr + " | " + dist_ss + " " + dist_coil
                     + " " + dist_hbond + " " + dist_inter + " " + dist_ssbond + " " + dist_ionic
                     + " " + dist_halogen + " " + dist_pication + " " + dist_pistacking, true);
@@ -181,17 +181,17 @@ class ShowInter {
 
     hideHbondsContacts() { let ic = this.icn3d, me = ic.icn3dui;
            let select = "set hbonds off";
-           ic.icn3dui.htmlCls.clickMenuCls.setLogCmd(select, true);
+           me.htmlCls.clickMenuCls.setLogCmd(select, true);
            ic.hBondCls.hideHbonds();
            //ic.drawCls.draw();
            select = "set salt bridge off";
-           ic.icn3dui.htmlCls.clickMenuCls.setLogCmd(select, true);
+           me.htmlCls.clickMenuCls.setLogCmd(select, true);
            ic.saltbridgeCls.hideSaltbridge();
            select = "set contact off";
-           ic.icn3dui.htmlCls.clickMenuCls.setLogCmd(select, true);
+           me.htmlCls.clickMenuCls.setLogCmd(select, true);
            ic.contactCls.hideContact();
            select = "set halogen pi off";
-           ic.icn3dui.htmlCls.clickMenuCls.setLogCmd(select, true);
+           me.htmlCls.clickMenuCls.setLogCmd(select, true);
            ic.piHalogenCls.hideHalogenPi();
     }
 

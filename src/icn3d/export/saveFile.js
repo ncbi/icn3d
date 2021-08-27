@@ -165,7 +165,7 @@ class SaveFile {
     }
 
     getSvgXml(id) { let ic = this.icn3d, me = ic.icn3dui;
-        if(ic.icn3dui.bNode) return '';
+        if(me.bNode) return '';
 
         // font is not good
         let svg_data = document.getElementById(id).innerHTML; //put id of your svg element here
@@ -181,7 +181,7 @@ class SaveFile {
     }
 
     savePng(id, filename, width, height) { let ic = this.icn3d, me = ic.icn3dui;
-        if(ic.icn3dui.bNode) return '';
+        if(me.bNode) return '';
 
         // https://stackoverflow.com/questions/3975499/convert-svg-to-image-jpeg-png-etc-in-the-browser
         let svg = document.getElementById(id);
@@ -448,7 +448,7 @@ class SaveFile {
                     size = me.parasCls.vdwRadii[atom.elem];
                 }
 
-                if(ic.icn3dui.cfg.cid !== undefined && atom.crg !== undefined) {
+                if(me.cfg.cid !== undefined && atom.crg !== undefined) {
                     charge = atom.crg;
                 }
                 else if(phosPHash.hasOwnProperty(i)) {
@@ -522,23 +522,23 @@ class SaveFile {
         if(ic.molTitle !== undefined && ic.molTitle !== '') {
             let title = ic.molTitle;
 
-            let titlelinkColor =(ic.opts['background'] == 'white' || ic.opts['background'] == 'grey') ? 'black' : ic.icn3dui.htmlCls.GREYD;
+            let titlelinkColor =(ic.opts['background'] == 'white' || ic.opts['background'] == 'grey') ? 'black' : me.htmlCls.GREYD;
 
             if(ic.inputid === undefined) {
                 if(ic.molTitle.length > 40) title = ic.molTitle.substr(0, 40) + "...";
 
                 $("#" + ic.pre + "title").html(title);
             }
-            else if(ic.icn3dui.cfg.cid !== undefined) {
+            else if(me.cfg.cid !== undefined) {
                 let url = this.getLinkToStructureSummary();
 
                 $("#" + ic.pre + "title").html("PubChem CID <a id='" + ic.pre + "titlelink' href='" + url + "' style='color:" + titlelinkColor + "' target='_blank'>" + ic.inputid.toUpperCase() + "</a>: " + title);
             }
-            else if(ic.icn3dui.cfg.align !== undefined) {
+            else if(me.cfg.align !== undefined) {
                 $("#" + ic.pre + "title").html(title);
             }
-            else if(ic.icn3dui.cfg.chainalign !== undefined) {
-                let chainidArray = ic.icn3dui.cfg.chainalign.split(',');
+            else if(me.cfg.chainalign !== undefined) {
+                let chainidArray = me.cfg.chainalign.split(',');
                 title = 'Dynamic Structure Alignment of Chain ' + chainidArray[0] + ' to Chain ' + chainidArray[1];
 
                 $("#" + ic.pre + "title").html(title);
@@ -562,7 +562,7 @@ class SaveFile {
     getLinkToStructureSummary(bLog) {var ic = this.icn3d, me = ic.icn3dui;
        let url = "https://www.ncbi.nlm.nih.gov/structure/?term=";
 
-       if(ic.icn3dui.cfg.cid !== undefined) {
+       if(me.cfg.cid !== undefined) {
            url = "https://www.ncbi.nlm.nih.gov/pccompound/?term=";
        }
        else {
@@ -572,7 +572,7 @@ class SaveFile {
            }
            else {
                //url = "https://www.ncbi.nlm.nih.gov/Structure/mmdb/mmdbsrv.cgi?uid=";
-               url = ic.icn3dui.htmlCls.baseUrl + "pdb/";
+               url = me.htmlCls.baseUrl + "pdb/";
            }
        }
 
@@ -584,11 +584,11 @@ class SaveFile {
 
            if(idArray.length === 1) {
                url += ic.inputid;
-               if(bLog) ic.icn3dui.htmlCls.clickMenuCls.setLogCmd("link to Structure Summary " + ic.inputid + ": " + url, false);
+               if(bLog) me.htmlCls.clickMenuCls.setLogCmd("link to Structure Summary " + ic.inputid + ": " + url, false);
            }
            else if(idArray.length === 2) {
                url += idArray[0] + " OR " + idArray[1];
-               if(bLog) ic.icn3dui.htmlCls.clickMenuCls.setLogCmd("link to structures " + idArray[0] + " and " + idArray[1] + ": " + url, false);
+               if(bLog) me.htmlCls.clickMenuCls.setLogCmd("link to structures " + idArray[0] + " and " + idArray[1] + ": " + url, false);
            }
        }
 
@@ -600,12 +600,12 @@ class SaveFile {
       let url;
       if(structArray.length === 1) {
           url = "https://www.ncbi.nlm.nih.gov/" + db + "/?term=" + structArray[0];
-          ic.icn3dui.htmlCls.clickMenuCls.setLogCmd("Entrez " + db + " about PDB " + structArray[0] + ": " + url, false);
+          me.htmlCls.clickMenuCls.setLogCmd("Entrez " + db + " about PDB " + structArray[0] + ": " + url, false);
           window.open(url, '_blank');
       }
       else if(structArray.length === 2) {
           url = "https://www.ncbi.nlm.nih.gov/" + db + "/?term=" + structArray[0] + " OR " + structArray[1];
-          ic.icn3dui.htmlCls.clickMenuCls.setLogCmd("Entrez " + db + " about PDB " + structArray[0] + " OR " + structArray[1] + ": " + url, false);
+          me.htmlCls.clickMenuCls.setLogCmd("Entrez " + db + " about PDB " + structArray[0] + " OR " + structArray[1] + ": " + url, false);
           window.open(url, '_blank');
       }
     }

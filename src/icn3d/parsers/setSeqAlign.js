@@ -139,7 +139,7 @@ class SetSeqAlign {
                       //alignedAtoms = me.hashUtilsCls.unionHash(alignedAtoms, ic.residues[chainid2 + '_' + resi]);
                   }
                   else {
-                      color = ic.icn3dui.htmlCls.GREY8;
+                      color = me.htmlCls.GREY8;
                       classname = 'icn3d-nalign';
 
                       ic.nalignHash1[chainid1 + '_' + id2aligninfo[j].resi] = 1;
@@ -157,8 +157,8 @@ class SetSeqAlign {
                   resObject.resn =(resObject.resi === '' || classname === 'icn3d-nalign') ? id2aligninfo[j].resn.toLowerCase() : id2aligninfo[j].resn;
                   resObject.aligned = aligned;
                   // resi will be empty if there is no coordinates
-                  resObject.color =(resObject.resi === '') ? ic.icn3dui.htmlCls.GREYC : color; // color by identity
-                  resObject.color2 =(resObject.resi === '') ? ic.icn3dui.htmlCls.GREYC : color2; // color by conservation
+                  resObject.color =(resObject.resi === '') ? me.htmlCls.GREYC : color; // color by identity
+                  resObject.color2 =(resObject.resi === '') ? me.htmlCls.GREYC : color2; // color by conservation
                   resObject.class = classname;
 
                   ic.alnChainsSeq[chainid1].push(resObject);
@@ -179,8 +179,8 @@ class SetSeqAlign {
                   resObject.resn =(resObject.resi === '' || classname === 'icn3d-nalign') ? resn.toLowerCase() : resn;
                   resObject.aligned = aligned;
                   // resi will be empty if there is no coordinates
-                  resObject.color =(resObject.resi === '') ? ic.icn3dui.htmlCls.GREYC : color; // color by identity
-                  resObject.color2 =(resObject.resi === '') ? ic.icn3dui.htmlCls.GREYC : color2; // color by conservation
+                  resObject.color =(resObject.resi === '') ? me.htmlCls.GREYC : color; // color by identity
+                  resObject.color2 =(resObject.resi === '') ? me.htmlCls.GREYC : color2; // color by conservation
                   resObject.class = classname;
 
                   ic.alnChainsSeq[chainid2].push(resObject);
@@ -248,7 +248,7 @@ class SetSeqAlign {
           //loadSeqAlignment
           let  alignedAtoms = {}
 
-          //var chainidArray = ic.icn3dui.cfg.chainalign.split(',');
+          //var chainidArray = me.cfg.chainalign.split(',');
           let  pos1 = ic.chainidArray[0].indexOf('_');
           let  pos2 = chainid.indexOf('_');
 
@@ -267,8 +267,8 @@ class SetSeqAlign {
           let  chainid2 = mmdbid2 + "_" + chain2;
 
           if(mmdbid2 !== undefined && mmdbid2 === ic.mmdbid_t) {
-              //chainid1 += ic.icn3dui.htmlCls.postfix;
-              chainid2 = mmdbid2 + ic.icn3dui.htmlCls.postfix + "_" + chain2;
+              //chainid1 += me.htmlCls.postfix;
+              chainid2 = mmdbid2 + me.htmlCls.postfix + "_" + chain2;
           }
 
           ic.conservedName1 = chainid1 + '_cons';
@@ -337,7 +337,7 @@ class SetSeqAlign {
                       if(ic.chainsSeq[chainid1] === undefined) break;
                       let  resi = ic.chainsSeq[chainid1][j].resi;
                       let  resn = ic.chainsSeq[chainid1][j].name.toLowerCase();
-                      color = ic.icn3dui.htmlCls.GREY8;
+                      color = me.htmlCls.GREY8;
                       classname = 'icn3d-nalign';
 
                       ic.nalignHash1[chainid1 + '_' + resi] = 1;
@@ -351,7 +351,7 @@ class SetSeqAlign {
                       let  resi = ic.chainsSeq[chainid2][j].resi;
                       let  resn = ic.chainsSeq[chainid2][j].name.toLowerCase();
 
-                      color = ic.icn3dui.htmlCls.GREY8;
+                      color = me.htmlCls.GREY8;
                       classname = 'icn3d-nalign';
 
                       ic.nalignHash2[chainid2 + '_' + resi] = 1;
@@ -366,7 +366,7 @@ class SetSeqAlign {
                           let  resi = '';
                           let  resn = '-';
 
-                          color = ic.icn3dui.htmlCls.GREY8;
+                          color = me.htmlCls.GREY8;
                           classname = 'icn3d-nalign';
 
                           this.setSeqPerResi(chainid1, chainid1, chainid2, resi, resn, false, color, undefined, classname, true, false, index1 + j);
@@ -379,7 +379,7 @@ class SetSeqAlign {
                           let  resi = '';
                           let  resn = '-';
 
-                          color = ic.icn3dui.htmlCls.GREY8;
+                          color = me.htmlCls.GREY8;
                           classname = 'icn3d-nalign';
 
                           this.setSeqPerResi(chainid2, chainid1, chainid2, resi, resn, false, color, undefined, classname, false, false, index2 + j);
@@ -437,7 +437,7 @@ class SetSeqAlign {
           let  structure1 = chainid_t.substr(0, chainid_t.indexOf('_')); //structureArray[0];
           let  structure2 = chainid.substr(0, chainid.indexOf('_')); //structureArray[1];
 
-          if(structure1 == structure2) structure2 += ic.icn3dui.htmlCls.postfix;
+          if(structure1 == structure2) structure2 += me.htmlCls.postfix;
 
           ic.conservedName1 = structure1 + '_cons';
           ic.conservedName2 = structure2 + '_cons';
@@ -564,8 +564,8 @@ class SetSeqAlign {
           resObject.resn =(resObject.resi === '' || classname === 'icn3d-nalign') ? resn.toLowerCase() : resn;
           resObject.aligned = bAligned;
           // resi will be empty if there is no coordinates
-          resObject.color =(resObject.resi === '') ? ic.icn3dui.htmlCls.GREYC : color; // color by identity
-          resObject.color2 =(resObject.resi === '') ? ic.icn3dui.htmlCls.GREYC : color2; // color by conservation
+          resObject.color =(resObject.resi === '') ? me.htmlCls.GREYC : color; // color by identity
+          resObject.color2 =(resObject.resi === '') ? me.htmlCls.GREYC : color2; // color by conservation
           resObject.class = classname;
 
           ic.alnChainsSeq[chainid].push(resObject);

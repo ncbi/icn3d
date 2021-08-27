@@ -26,16 +26,21 @@ class PdbParser {
     //Ajax call was used to get the atom data from the "pdbid". This function was deferred so that
     //it can be chained together with other deferred functions for sequential execution. A wrapper
     //was added to support both http and https.
-    downloadPdb(pdbid) { let  ic = this.icn3d, me = ic.icn3dui;
+    downloadPdb(pdbid, bAf) { let  ic = this.icn3d, me = ic.icn3dui;
        let  url, dataType;
 
-       url = "https://files.rcsb.org/view/" + pdbid + ".pdb";
+       if(bAf) {
+           url = "https://alphafold.ebi.ac.uk/files/AF-" + pdbid + "-F1-model_v1.pdb";
+           ic.ParserUtilsCls.setYourNote(pdbid.toUpperCase() + '(AlphaFold) in iCn3D');
+       }
+       else {
+           url = "https://files.rcsb.org/view/" + pdbid + ".pdb";
+           ic.ParserUtilsCls.setYourNote(pdbid.toUpperCase() + '(PDB) in iCn3D');
+       }
 
        dataType = "text";
 
        ic.bCid = undefined;
-
-       ic.ParserUtilsCls.setYourNote(pdbid.toUpperCase() + '(PDB) in iCn3D');
 
        $.ajax({
           url: url,
@@ -53,7 +58,12 @@ class PdbParser {
               //ic.pdbParserCls.loadPdbData(data, pdbid);
               ic.deferredOpm = $.Deferred(function() {
                   //ic.loadPdbOpmData(data, pdbid);
-                  ic.opmParserCls.loadOpmData(data, pdbid, undefined, 'pdb');
+                  if(bAf) {
+                      ic.opmParserCls.parseAtomData(data, pdbid, undefined, 'pdb', undefined);
+                  }
+                  else {
+                      ic.opmParserCls.loadOpmData(data, pdbid, undefined, 'pdb');
+                  }
               });
 
               return ic.deferredOpm.promise();
@@ -144,7 +154,7 @@ class PdbParser {
     loadPdbData(data, pdbid, bOpm, bAppend) { let  ic = this.icn3d, me = ic.icn3dui;
         ic.loadPDBCls.loadPDB(data, pdbid, bOpm, undefined, undefined, bAppend); // defined in the core library
 
-        if(ic.icn3dui.cfg.opmid === undefined) ic.ParserUtilsCls.transformToOpmOri(pdbid);
+        if(me.cfg.opmid === undefined) ic.ParserUtilsCls.transformToOpmOri(pdbid);
 
         if(ic.biomtMatrices !== undefined && ic.biomtMatrices.length > 1) {
           $("#" + ic.pre + "assemblyWrapper").show();
@@ -174,7 +184,7 @@ class PdbParser {
           ic.deferredSecondary = $.Deferred(function() {
               let  bCalphaOnly = me.utilsCls.isCalphaPhosOnly(me.hashUtilsCls.hash2Atoms(ic.proteins, ic.atoms));//, 'CA');
               ic.dsspCls.applyDssp(bCalphaOnly);
-          }); // end of ic.icn3dui.deferred = $.Deferred(function() {
+          }); // end of me.deferred = $.Deferred(function() {
 
           return ic.deferredSecondary.promise();
         }
@@ -186,8 +196,17 @@ class PdbParser {
     loadPdbDataRender() { let  ic = this.icn3d, me = ic.icn3dui;
         ic.pmid = ic.pmid;
 
-        if(ic.icn3dui.cfg.align === undefined && Object.keys(ic.structures).length == 1) {
+        if(me.cfg.align === undefined && Object.keys(ic.structures).length == 1) {
             $("#" + ic.pre + "alternateWrapper").hide();
+        }
+
+        if(me.cfg.afid) {
+            ic.opts['color'] = 'confidence';
+
+            let  legendHtml = me.htmlCls.clickMenuCls.setLegendHtml(true);
+            $("#" + me.pre + "legend").removeClass('icn3d-legend');
+            $("#" + me.pre + "legend").addClass('icn3d-legend2');
+            $("#" + me.pre + "legend").html(legendHtml).show();
         }
 
         ic.setStyleCls.setAtomStyleByOptions(ic.opts);
@@ -197,9 +216,9 @@ class PdbParser {
 
         ic.saveFileCls.showTitle();
 
-        if(ic.icn3dui.cfg.rotate !== undefined) ic.resizeCanvasCls.rotStruc(ic.icn3dui.cfg.rotate, true);
+        if(me.cfg.rotate !== undefined) ic.resizeCanvasCls.rotStruc(me.cfg.rotate, true);
 
-    //    if(ic.icn3dui.deferred !== undefined) ic.icn3dui.deferred.resolve(); if(ic.deferred2 !== undefined) ic.deferred2.resolve();
+    //    if(me.deferred !== undefined) me.deferred.resolve(); if(ic.deferred2 !== undefined) ic.deferred2.resolve();
     }
 }
 

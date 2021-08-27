@@ -18,7 +18,7 @@ class Glycan {
     }
 
     showGlycans() { let ic = this.icn3d, me = ic.icn3dui;
-        if(ic.icn3dui.bNode) return;
+        if(me.bNode) return;
 
         let glycan2resids = {}
         //var atomHash = me.hashUtilsCls.intHash(ic.hAtoms, ic.dAtoms);

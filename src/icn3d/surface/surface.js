@@ -24,7 +24,7 @@ class Surface {
     //the surface as a mesh. "opacity" is a value between 0 and 1. "1" means not transparent at all.
     //"0" means 100% transparent.
     createSurfaceRepresentation(atoms, type, wireframe, opacity) { let  ic = this.icn3d, me = ic.icn3dui;
-        //if(ic.icn3dui.bNode) return;
+        //if(me.bNode) return;
 
         let  thisClass = this;
 
@@ -299,7 +299,7 @@ class Surface {
         }
         //});
 
-        if(ic.icn3dui.bNode) return;
+        if(me.bNode) return;
 
 /*
         let  geoFaces = faces.map(function (f) {
@@ -477,7 +477,7 @@ class Surface {
             //}
 
             let  realPos;
-            if(ic.bControlGl && !ic.icn3dui.bNode) {
+            if(ic.bControlGl && !me.bNode) {
                 //realPos = sum.multiplyScalar(1.0 / mesh.geometry.vertices.length).sub(ic.oriCenter).applyMatrix4(window.cam.matrixWorldInverse);
                 realPos = sum.multiplyScalar(1.0 / verticesLen).sub(ic.oriCenter).applyMatrix4(window.cam.matrixWorldInverse);
             }
@@ -496,7 +496,7 @@ class Surface {
                 }
 
                 let  realPos;
-                if(ic.bControlGl && !ic.icn3dui.bNode) {
+                if(ic.bControlGl && !me.bNode) {
                     //realPos = sum.multiplyScalar(1.0 / this.geometry.vertices.length).sub(ic.oriCenter).applyMatrix4(window.cam.matrixWorldInverse);
                     realPos = sum.multiplyScalar(3.0 / vertices.length).sub(ic.oriCenter).applyMatrix4(window.cam.matrixWorldInverse);
                 }

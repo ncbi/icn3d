@@ -16,7 +16,7 @@ class Strip {
     // modified from iview (http://istar.cse.cuhk.edu.hk/iview/)
     createStrip(p0, p1, colors, div, thickness, bHighlight, bNoSmoothen, bShowArray,
       calphaIdArray, positions, prevone, nexttwo, pntsCA, prevCOArray) { let ic = this.icn3d, me = ic.icn3dui;
-        if(ic.icn3dui.bNode) return;
+        if(me.bNode) return;
 
         if (p0.length < 2) return;
         div = div || ic.axisDIV;

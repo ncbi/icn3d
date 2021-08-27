@@ -21,7 +21,7 @@ class Tube {
     //"bHighlight" is an option to draw the highlight for these atoms. The highlight could be
     //outlines with bHighlight=1 and 3D objects with bHighlight=2.
     createTube(atoms, atomName, radius, bHighlight, bCustom, bRadiusArray) { let ic = this.icn3d, me = ic.icn3dui;
-        if(ic.icn3dui.bNode) return;
+        if(me.bNode) return;
 
         let pnts = [], colors = [], radii = [], prevone = [], nexttwo = [];
         let currentChain, currentResi;
@@ -186,7 +186,7 @@ class Tube {
 
     // modified from iview (http://istar.cse.cuhk.edu.hk/iview/)
     createTubeSub(_pnts, colors, radii, bHighlight, prevone, nexttwo, bRadiusArray) { let ic = this.icn3d, me = ic.icn3dui;
-        if(ic.icn3dui.bNode) return;
+        if(me.bNode) return;
 
         if (_pnts.length < 2) return;
 

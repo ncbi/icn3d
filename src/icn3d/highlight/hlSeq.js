@@ -20,7 +20,7 @@ class HlSeq {
     }
 
     selectSequenceNonMobile() { let ic = this.icn3d, me = ic.icn3dui;
-      if(ic.icn3dui.bNode) return;
+      if(me.bNode) return;
 
       let thisClass = this;
       $("#" + ic.pre + "dl_sequence2").add("[id^=" + ic.pre + "dt_giseq]").add("[id^=" + ic.pre + "dt_custom]").add("[id^=" + ic.pre + "dt_site]").add("[id^=" + ic.pre + "dt_snp]").add("[id^=" + ic.pre + "dt_clinvar]").add("[id^=" + ic.pre + "dt_cdd]").add("[id^=" + ic.pre + "dt_domain]").add("[id^=" + ic.pre + "dt_interaction]").add("[id^=" + ic.pre + "dt_ssbond]").add("[id^=" + ic.pre + "dt_crosslink]").add("[id^=" + ic.pre + "dt_transmem]")
@@ -106,7 +106,7 @@ class HlSeq {
     }
 
     selectSequenceMobile() { let ic = this.icn3d, me = ic.icn3dui;
-      if(ic.icn3dui.bNode) return;
+      if(me.bNode) return;
 
       let thisClass = this;
 
@@ -154,7 +154,7 @@ class HlSeq {
     }
 
     selectChainMobile() { let ic = this.icn3d, me = ic.icn3dui;
-      if(ic.icn3dui.bNode) return;
+      if(me.bNode) return;
 
       let thisClass = this;
 
@@ -181,7 +181,7 @@ class HlSeq {
     }
 
     selectTitle(that) { let ic = this.icn3d, me = ic.icn3dui;
-      if(ic.icn3dui.bNode) return;
+      if(me.bNode) return;
 
       if($(that).hasClass('icn3d-seqTitle')) {
         let chainid = $(that).attr('chain');
@@ -236,15 +236,15 @@ class HlSeq {
                 }
 
                 if(ic.bAlignSeq) {
-                    ic.icn3dui.htmlCls.clickMenuCls.setLogCmd('select alignChain ' + chainid, true);
+                    me.htmlCls.clickMenuCls.setLogCmd('select alignChain ' + chainid, true);
                 }
                 else {
-                    ic.icn3dui.htmlCls.clickMenuCls.setLogCmd('select chain ' + chainid, true);
+                    me.htmlCls.clickMenuCls.setLogCmd('select chain ' + chainid, true);
                 }
 
                 let setNames = ic.currSelectedSets.join(' or ');
-                //if(ic.currSelectedSets.length > 1) ic.icn3dui.htmlCls.clickMenuCls.setLogCmd('select saved atoms ' + setNames, true);
-                if(ic.currSelectedSets.length > 1) ic.icn3dui.htmlCls.clickMenuCls.setLogCmd('select sets ' + setNames, true);
+                //if(ic.currSelectedSets.length > 1) me.htmlCls.clickMenuCls.setLogCmd('select saved atoms ' + setNames, true);
+                if(ic.currSelectedSets.length > 1) me.htmlCls.clickMenuCls.setLogCmd('select sets ' + setNames, true);
             }
             else {
                 if($(that).hasClass('icn3d-highlightSeq')) {
@@ -260,11 +260,11 @@ class HlSeq {
                             ic.selectionCls.selectAChain(chainid, chainid, false);
                         }
 
-                        ic.icn3dui.htmlCls.clickMenuCls.setLogCmd('select chain ' + chainid, true);
+                        me.htmlCls.clickMenuCls.setLogCmd('select chain ' + chainid, true);
 
                         let setNames = ic.currSelectedSets.join(' or ');
-                        //if(ic.currSelectedSets.length > 1) ic.icn3dui.htmlCls.clickMenuCls.setLogCmd('select saved atoms ' + setNames, true);
-                        if(ic.currSelectedSets.length > 1) ic.icn3dui.htmlCls.clickMenuCls.setLogCmd('select sets ' + setNames, true);
+                        //if(ic.currSelectedSets.length > 1) me.htmlCls.clickMenuCls.setLogCmd('select saved atoms ' + setNames, true);
+                        if(ic.currSelectedSets.length > 1) me.htmlCls.clickMenuCls.setLogCmd('select sets ' + setNames, true);
                     }
                     else {
                         let residueidHash = {}
@@ -349,7 +349,7 @@ class HlSeq {
 
                         ic.drawCls.draw();
 
-                        ic.icn3dui.htmlCls.clickMenuCls.setLogCmd('select ' + ic.resid2specCls.residueids2spec(Object.keys(residueidHash)) + ' | name ' + commandname, true);
+                        me.htmlCls.clickMenuCls.setLogCmd('select ' + ic.resid2specCls.residueids2spec(Object.keys(residueidHash)) + ' | name ' + commandname, true);
 
                         if(ic.bCtrl || ic.bShift) {
                             ic.currSelectedSets.push(commandname);
@@ -359,8 +359,8 @@ class HlSeq {
                         }
 
                         let setNames = ic.currSelectedSets.join(' or ');
-                        //if(ic.currSelectedSets.length > 1) ic.icn3dui.htmlCls.clickMenuCls.setLogCmd('select saved atoms ' + setNames, true);
-                        if(ic.currSelectedSets.length > 1) ic.icn3dui.htmlCls.clickMenuCls.setLogCmd('select sets ' + setNames, true);
+                        //if(ic.currSelectedSets.length > 1) me.htmlCls.clickMenuCls.setLogCmd('select saved atoms ' + setNames, true);
+                        if(ic.currSelectedSets.length > 1) me.htmlCls.clickMenuCls.setLogCmd('select sets ' + setNames, true);
                     } // if($(that).attr('gi') !== undefined) {
                 } // if($(that).hasClass('icn3d-highlightSeq')) {
             } // if(!ic.bAnnotations) {
@@ -376,7 +376,7 @@ class HlSeq {
     }
 
     selectResidues(id, that) { let ic = this.icn3d, me = ic.icn3dui;
-      if(ic.icn3dui.bNode) return;
+      if(me.bNode) return;
 
       if(id !== undefined && id !== '') {
         // add "align_" in front of id so that full sequence and aligned sequence will not conflict
@@ -410,7 +410,7 @@ class HlSeq {
 
                   //var size = parseInt(ic.LABELSIZE * 10 / label.length);
                   let size = ic.LABELSIZE;
-                  let color = ic.icn3dui.htmlCls.GREYD;
+                  let color = me.htmlCls.GREYD;
                   ic.analysisCls.addLabel(label, position.center.x, position.center.y, position.center.z, size, color, undefined, 'custom');
               }
             }

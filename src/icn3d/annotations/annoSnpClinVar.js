@@ -203,7 +203,7 @@ class AnnoSnpClinVar {
                         }
                     }
                     html += ic.showSeqCls.insertGapOverview(chnid, i-1);
-                    let emptyWidth =(ic.icn3dui.cfg.blast_rep_id == chnid) ? Math.round(ic.seqAnnWidth *(i-1) /(ic.maxAnnoLength + ic.nTotalGap) - prevEmptyWidth - prevLineWidth) : Math.round(ic.seqAnnWidth *(i-1) / ic.maxAnnoLength - prevEmptyWidth - prevLineWidth);
+                    let emptyWidth =(me.cfg.blast_rep_id == chnid) ? Math.round(ic.seqAnnWidth *(i-1) /(ic.maxAnnoLength + ic.nTotalGap) - prevEmptyWidth - prevLineWidth) : Math.round(ic.seqAnnWidth *(i-1) / ic.maxAnnoLength - prevEmptyWidth - prevLineWidth);
                     //if(emptyWidth < 0) emptyWidth = 0;
                     if(bClinvar) {
                         if(snpTypeHash[i] == 'icn3d-clinvar' || snpTypeHash[i] == 'icn3d-clinvar-path') {
@@ -607,7 +607,7 @@ class AnnoSnpClinVar {
 
        // get gi from acc
        //var url2 = "https://www.ncbi.nlm.nih.gov/Structure/icn3d/chainid2repgi.txt";
-       let url2 = ic.icn3dui.htmlCls.baseUrl + "vastdyn/vastdyn.cgi?chainid=" + chnidBase;
+       let url2 = me.htmlCls.baseUrl + "vastdyn/vastdyn.cgi?chainid=" + chnidBase;
        $.ajax({
           url: url2,
           dataType: 'jsonp', //'text',

@@ -20,7 +20,7 @@ class Axes {
     // http://soledadpenades.com/articles/three-js-tutorials/drawing-the-coordinate-axes/
     //Build the xyz-axes from the center of atoms. The maximum axes length is equal to "radius" in angstrom.
     buildAxes(radius, center, positionX, positionY, positionZ, bSelection) { let ic = this.icn3d, me = ic.icn3dui;
-        if(ic.icn3dui.bNode) return;
+        if(me.bNode) return;
 
         let axes = new THREE.Object3D();
 
@@ -93,7 +93,7 @@ class Axes {
     }
 
     buildAllAxes(radius, bSelection) { let ic = this.icn3d, me = ic.icn3dui;
-        if(ic.icn3dui.bNode) return;
+        if(me.bNode) return;
 
         if(ic.pc1) {
             for(let i = 0, il = ic.axes.length; i < il; ++i) {
@@ -108,7 +108,7 @@ class Axes {
     }
 
     createArrow(dir, origin, axisLen, color, headLength, headWidth, bGlycan) {  let ic = this.icn3d, me = ic.icn3dui;
-        if(ic.icn3dui.bNode) return;
+        if(me.bNode) return;
 
         let coneGeometry = new THREE.CylinderBufferGeometry( 0, 0.5, 1, 32, 1 );
         //coneGeometry.translate( 0, - 0.5, 0 );
@@ -147,7 +147,7 @@ class Axes {
     }
 
     setPc1Axes() { let ic = this.icn3d, me = ic.icn3dui;
-       if(ic.icn3dui.bNode) return;
+       if(me.bNode) return;
 
        let atomHash = me.hashUtilsCls.intHash(ic.hAtoms, ic.dAtoms);
 

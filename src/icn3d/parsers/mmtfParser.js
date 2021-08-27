@@ -457,7 +457,7 @@ class MmtfParser {
 
         ic.ParserUtilsCls.transformToOpmOri(mmtfid);
 
-        if(ic.icn3dui.cfg.align === undefined && Object.keys(ic.structures).length == 1) {
+        if(me.cfg.align === undefined && Object.keys(ic.structures).length == 1) {
             $("#" + ic.pre + "alternateWrapper").hide();
         }
 
@@ -468,9 +468,9 @@ class MmtfParser {
 
         ic.saveFileCls.showTitle();
 
-        if(ic.icn3dui.cfg.rotate !== undefined) ic.resizeCanvasCls.rotStruc(ic.icn3dui.cfg.rotate, true);
+        if(me.cfg.rotate !== undefined) ic.resizeCanvasCls.rotStruc(me.cfg.rotate, true);
 
-        //if(ic.icn3dui.deferred !== undefined) ic.icn3dui.deferred.resolve(); if(ic.deferred2 !== undefined) ic.deferred2.resolve();
+        //if(me.deferred !== undefined) me.deferred.resolve(); if(ic.deferred2 !== undefined) ic.deferred2.resolve();
     }
 }
 

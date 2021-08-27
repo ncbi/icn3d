@@ -92,15 +92,15 @@ class DefinedSets {
           this.setProtNuclLigInMenu();
 
           // show 3d domains for mmdbid
-          if(ic.icn3dui.cfg.mmdbid !== undefined || ic.icn3dui.cfg.gi !== undefined || ic.icn3dui.cfg.chainalign !== undefined) {
+          if(me.cfg.mmdbid !== undefined || me.cfg.gi !== undefined || me.cfg.chainalign !== undefined) {
               for(let tddomainName in ic.tddomains) {
                   ic.selectionCls.selectResidueList(ic.tddomains[tddomainName], tddomainName, tddomainName, false, false);
               }
           }
 
-          //if((ic.icn3dui.cfg.align !== undefined || ic.icn3dui.cfg.chainalign !== undefined) && ic.bFullUi) {
+          //if((me.cfg.align !== undefined || me.cfg.chainalign !== undefined) && ic.bFullUi) {
           // deal with multiple chain align separately
-          if((ic.icn3dui.cfg.align !== undefined ||(ic.icn3dui.cfg.chainalign !== undefined && ic.chainidArray.length == 2) ) && ic.bFullUi) {
+          if((me.cfg.align !== undefined ||(me.cfg.chainalign !== undefined && ic.chainidArray.length == 2) ) && ic.bFullUi) {
             ic.selectionCls.selectResidueList(ic.consHash1, ic.conservedName1, ic.conservedName1, false, false);
             ic.selectionCls.selectResidueList(ic.consHash2, ic.conservedName2, ic.conservedName2, false, false);
 
@@ -279,8 +279,8 @@ class DefinedSets {
     //Display the menu of defined sets. All chains and defined custom sets are listed in the menu.
     //All new custom sets will be displayed in the menu.
     showSets() { let  ic = this.icn3d, me = ic.icn3dui;
-        if(!ic.icn3dui.bNode) {
-            ic.icn3dui.htmlCls.dialogCls.openDlg('dl_definedsets', 'Select sets');
+        if(!me.bNode) {
+            me.htmlCls.dialogCls.openDlg('dl_definedsets', 'Select sets');
             $("#" + ic.pre + "dl_setsmenu").show();
             $("#" + ic.pre + "dl_setoperations").show();
 
@@ -312,12 +312,12 @@ class DefinedSets {
 
            if(nameArray !== null) {
              // log the selection
-             //ic.icn3dui.htmlCls.clickMenuCls.setLogCmd('select saved atoms ' + nameArray.toString(), true);
+             //me.htmlCls.clickMenuCls.setLogCmd('select saved atoms ' + nameArray.toString(), true);
 
              let  bUpdateHlMenus = false;
              thisClass.changeCustomAtoms(nameArray, bUpdateHlMenus);
-             //ic.icn3dui.htmlCls.clickMenuCls.setLogCmd('select saved atoms ' + nameArray.join(' ' + ic.setOperation + ' '), true);
-             ic.icn3dui.htmlCls.clickMenuCls.setLogCmd('select sets ' + nameArray.join(' ' + ic.setOperation + ' '), true);
+             //me.htmlCls.clickMenuCls.setLogCmd('select saved atoms ' + nameArray.join(' ' + ic.setOperation + ' '), true);
+             me.htmlCls.clickMenuCls.setLogCmd('select sets ' + nameArray.join(' ' + ic.setOperation + ' '), true);
 
              ic.bSelectResidue = false;
            }
@@ -526,7 +526,7 @@ class DefinedSets {
 
            if(select) {
                ic.selByCommCls.selectByCommand(select, commandname, commandname);
-               ic.icn3dui.htmlCls.clickMenuCls.setLogCmd('select ' + select + ' | name ' + commandname, true);
+               me.htmlCls.clickMenuCls.setLogCmd('select ' + select + ' | name ' + commandname, true);
            }
     }
 
@@ -592,7 +592,7 @@ class DefinedSets {
             ic.prevHighlightAtoms = me.hashUtilsCls.cloneHash(ic.hAtoms);
 
            // select all
-           ic.icn3dui.htmlCls.clickMenuCls.setLogCmd("set mode all", true);
+           me.htmlCls.clickMenuCls.setLogCmd("set mode all", true);
 
            ic.selectionCls.selectAll();
 
@@ -609,7 +609,7 @@ class DefinedSets {
                 ic.selectionCls.selectAll();
             }
 
-            ic.icn3dui.htmlCls.clickMenuCls.setLogCmd("set mode selection", true);
+            me.htmlCls.clickMenuCls.setLogCmd("set mode selection", true);
 
             ic.hlUpdateCls.updateHlAll();
         }

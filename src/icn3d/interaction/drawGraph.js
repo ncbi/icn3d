@@ -45,7 +45,7 @@ class DrawGraph {
         // remove any previous graphs
         svg.selectAll('.g-main').remove();
         // added
-        //$("#" + ic.icn3dui.svgid).empty();
+        //$("#" + me.svgid).empty();
 
         var gMain = svg.append('g')
             .classed('g-main', true);

@@ -300,14 +300,14 @@ class ViewInterPairs {
            bondCnt = this.getAllInteractionTable(type).bondCnt;
 
            $("#" + ic.pre + "dl_interactionsorted").html(html);
-           ic.icn3dui.htmlCls.dialogCls.openDlg('dl_interactionsorted', 'Show sorted interactions');
+           me.htmlCls.dialogCls.openDlg('dl_interactionsorted', 'Show sorted interactions');
        }
        else if(type == 'view') {
            $("#" + ic.pre + "dl_allinteraction").html(html);
-           ic.icn3dui.htmlCls.dialogCls.openDlg('dl_allinteraction', 'Show interactions');
+           me.htmlCls.dialogCls.openDlg('dl_allinteraction', 'Show interactions');
        }
        else if(type == 'linegraph') {
-           ic.icn3dui.htmlCls.dialogCls.openDlg('dl_linegraph', 'Show interactions between two lines of residue nodes');
+           me.htmlCls.dialogCls.openDlg('dl_linegraph', 'Show interactions between two lines of residue nodes');
            let  bLine = true;
            ic.graphStr = ic.getGraphCls.getGraphData(atomSet1, atomSet2, nameArray2, nameArray, html, labelType);
            ic.bLinegraph = true;
@@ -316,7 +316,7 @@ class ViewInterPairs {
            $("#" + ic.pre + "linegraphDiv").html(svgHtml);
        }
        else if(type == 'scatterplot') {
-           ic.icn3dui.htmlCls.dialogCls.openDlg('dl_scatterplot', 'Show interactions as scatterplot');
+           me.htmlCls.dialogCls.openDlg('dl_scatterplot', 'Show interactions as scatterplot');
            let  bLine = true;
            ic.graphStr = ic.getGraphCls.getGraphData(atomSet1, atomSet2, nameArray2, nameArray, html, labelType);
            ic.bScatterplot = true;
@@ -325,7 +325,7 @@ class ViewInterPairs {
            $("#" + ic.pre + "scatterplotDiv").html(svgHtml);
        }
        else if(bContactMapLocal) {
-           ic.icn3dui.htmlCls.dialogCls.openDlg('dl_contactmap', 'Show contact map');
+           me.htmlCls.dialogCls.openDlg('dl_contactmap', 'Show contact map');
            let  bLine = true;
            let  bAnyAtom = true;
            let  graphStr = ic.getGraphCls.getGraphData(atomSet1, atomSet2, nameArray2, nameArray, html, labelType, bAnyAtom);
@@ -355,8 +355,8 @@ class ViewInterPairs {
                   success: function(data) {
                        ic.bD3 = true;
 
-                       $("#" + ic.icn3dui.svgid).empty();
-                       ic.icn3dui.htmlCls.dialogCls.openDlg('dl_graph', 'Force-directed graph');
+                       $("#" + me.svgid).empty();
+                       me.htmlCls.dialogCls.openDlg('dl_graph', 'Force-directed graph');
                        ic.drawGraphCls.drawGraph(ic.graphStr, ic.pre + 'dl_graph');
                        if(ic.deferredGraphinteraction !== undefined) ic.deferredGraphinteraction.resolve();
                   },
@@ -373,8 +373,8 @@ class ViewInterPairs {
                });
            }
            else {
-               $("#" + ic.icn3dui.svgid).empty();
-               ic.icn3dui.htmlCls.dialogCls.openDlg('dl_graph', 'Force-directed graph');
+               $("#" + me.svgid).empty();
+               me.htmlCls.dialogCls.openDlg('dl_graph', 'Force-directed graph');
                ic.drawGraphCls.drawGraph(ic.graphStr, ic.pre + 'dl_graph');
            }
        }
@@ -409,7 +409,7 @@ class ViewInterPairs {
 
     resetInteractionPairs() { let  ic = this.icn3d, me = ic.icn3dui;
        ic.bHbondCalc = false;
-       //ic.icn3dui.htmlCls.clickMenuCls.setLogCmd('set calculate hbond false', true);
+       //me.htmlCls.clickMenuCls.setLogCmd('set calculate hbond false', true);
        ic.showInterCls.hideHbondsContacts();
        ic.hlUpdateCls.clearHighlight();
        // reset the interaction pairs
@@ -419,11 +419,11 @@ class ViewInterPairs {
 
     retrieveInteractionData() { let  ic = this.icn3d, me = ic.icn3dui;
          if(!ic.b2DShown) {
-             if(ic.icn3dui.cfg.align !== undefined) {
+             if(me.cfg.align !== undefined) {
                  let  structureArray = Object.keys(ic.structures);
                  ic.ParserUtilsCls.set2DDiagramsForAlign(structureArray[0].toUpperCase(), structureArray[1].toUpperCase());
              }
-             else if(ic.icn3dui.cfg.chainalign !== undefined) {
+             else if(me.cfg.chainalign !== undefined) {
                  let  structureArray = Object.keys(ic.structures);
                  //if(structureArray.length == 2) {
                  //   ic.ParserUtilsCls.set2DDiagramsForAlign(structureArray[1].toUpperCase(), structureArray[0].toUpperCase());
@@ -689,7 +689,7 @@ class ViewInterPairs {
             text += '</table><br/>';
         }
         if(type == 'graph' || type == 'linegraph' || type == 'scatterplot') {
-            let  hbondStr = ic.getGraphCls.getGraphLinks(ic.resid2ResidhashHbond, ic.resid2ResidhashHbond, ic.icn3dui.htmlCls.hbondColor, labelType, ic.icn3dui.htmlCls.hbondValue);
+            let  hbondStr = ic.getGraphCls.getGraphLinks(ic.resid2ResidhashHbond, ic.resid2ResidhashHbond, me.htmlCls.hbondColor, labelType, me.htmlCls.hbondValue);
             return hbondStr;
         }
         else {
@@ -727,7 +727,7 @@ class ViewInterPairs {
             text += '</table><br/>';
         }
         if(type == 'graph' || type == 'linegraph' || type == 'scatterplot') {
-            let  hbondStr = ic.getGraphCls.getGraphLinks(ic.resid2ResidhashSaltbridge, ic.resid2ResidhashSaltbridge, ic.icn3dui.htmlCls.ionicColor, labelType, ic.icn3dui.htmlCls.ionicValue);
+            let  hbondStr = ic.getGraphCls.getGraphLinks(ic.resid2ResidhashSaltbridge, ic.resid2ResidhashSaltbridge, me.htmlCls.ionicColor, labelType, me.htmlCls.ionicValue);
             return hbondStr;
         }
         else {
@@ -742,18 +742,18 @@ class ViewInterPairs {
         let  resid2Residhash, color, value;
         if(interactionType == 'halogen') {
             resid2Residhash = ic.resid2ResidhashHalogen;
-            color = ic.icn3dui.htmlCls.halogenColor;
-            value = ic.icn3dui.htmlCls.halogenValue;
+            color = me.htmlCls.halogenColor;
+            value = me.htmlCls.halogenValue;
         }
         else if(interactionType == 'pi-cation') {
             resid2Residhash = ic.resid2ResidhashPication;
-            color = ic.icn3dui.htmlCls.picationColor;
-            value = ic.icn3dui.htmlCls.picationValue;
+            color = me.htmlCls.picationColor;
+            value = me.htmlCls.picationValue;
         }
         else if(interactionType == 'pi-stacking') {
             resid2Residhash = ic.resid2ResidhashPistacking;
-            color = ic.icn3dui.htmlCls.pistackingColor;
-            value = ic.icn3dui.htmlCls.pistackingValue;
+            color = me.htmlCls.pistackingColor;
+            value = me.htmlCls.pistackingValue;
         }
         for(let resid1 in resid2Residhash) {
             let  resid1Real = ic.getGraphCls.convertLabel2Resid(resid1);
@@ -838,7 +838,7 @@ class ViewInterPairs {
         }
         if(type == 'graph' || type == 'linegraph' || type == 'scatterplot'
           || type == 'calpha' || type == 'cbeta' || type == 'heavyatoms') {
-            let  interStr = ic.getGraphCls.getGraphLinks(residHash, residHash, ic.icn3dui.htmlCls.contactColor, labelType, ic.icn3dui.htmlCls.contactValue);
+            let  interStr = ic.getGraphCls.getGraphLinks(residHash, residHash, me.htmlCls.contactColor, labelType, me.htmlCls.contactValue);
             return interStr;
         }
         else {

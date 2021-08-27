@@ -18,7 +18,7 @@ class AnnoContact {
     //Show the residues interacting with the chain.
     showInteraction(chnid, chnidBase) { let ic = this.icn3d, me = ic.icn3dui;
         let thisClass = this;
-        if(ic.chainname2residues === undefined &&(ic.icn3dui.cfg.mmdbid !== undefined || ic.icn3dui.cfg.gi !== undefined || ic.icn3dui.cfg.blast_rep_id !== undefined || ic.icn3dui.cfg.align !== undefined || ic.icn3dui.cfg.chainalign !== undefined) ) {
+        if(ic.chainname2residues === undefined &&(me.cfg.mmdbid !== undefined || me.cfg.gi !== undefined || me.cfg.blast_rep_id !== undefined || me.cfg.align !== undefined || me.cfg.chainalign !== undefined) ) {
             // 2d interaction didn't finish loading data yet
             setTimeout(function(){
               thisClass.showInteraction_base(chnid, chnidBase);
@@ -40,7 +40,7 @@ class AnnoContact {
         if(ic.chainname2residues[chainid] === undefined) {
             ic.chainname2residues[chainid] = {}
             let jl = chainArray.length;
-            if(jl > 100 && ic.icn3dui.cfg.mmdbid === undefined && ic.icn3dui.cfg.gi === undefined && ic.icn3dui.cfg.blast_rep_id === undefined && ic.icn3dui.cfg.align === undefined && ic.icn3dui.cfg.chainalign === undefined) {
+            if(jl > 100 && me.cfg.mmdbid === undefined && me.cfg.gi === undefined && me.cfg.blast_rep_id === undefined && me.cfg.align === undefined && me.cfg.chainalign === undefined) {
             //if(jl > 100) {
                 //console.log("Do not show interactions if there are more than 100 chains");
                 $("#" + ic.pre + "dt_interaction_" + chnid).html("");
@@ -130,7 +130,7 @@ class AnnoContact {
                   let pos =(i >= ic.matchedPos[chnid] && i - ic.matchedPos[chnid] < ic.chainsSeq[chnid].length) ? ic.chainsSeq[chnid][i - ic.matchedPos[chnid]].resi : ic.baseResi[chnid] + 1 + i;
                   html += '<span id="' + pre + '_' + ic.pre + chnid + '_' + pos + '" title="' + cFull + pos + '" class="icn3d-residue">' + c + '</span>';
                   html2 += ic.showSeqCls.insertGapOverview(chnid, i);
-                  let emptyWidth =(ic.icn3dui.cfg.blast_rep_id == chnid) ? Math.round(ic.seqAnnWidth * i /(ic.maxAnnoLength + ic.nTotalGap) - prevEmptyWidth - prevLineWidth) : Math.round(ic.seqAnnWidth * i / ic.maxAnnoLength - prevEmptyWidth - prevLineWidth);
+                  let emptyWidth =(me.cfg.blast_rep_id == chnid) ? Math.round(ic.seqAnnWidth * i /(ic.maxAnnoLength + ic.nTotalGap) - prevEmptyWidth - prevLineWidth) : Math.round(ic.seqAnnWidth * i / ic.maxAnnoLength - prevEmptyWidth - prevLineWidth);
                     //if(emptyWidth < 0) emptyWidth = 0;
                     if(emptyWidth >= 0) {
                     html2 += '<div style="display:inline-block; width:' + emptyWidth + 'px;">&nbsp;</div>';

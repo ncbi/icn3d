@@ -96,7 +96,7 @@ class GetGraph {
                        if(labelType == 'chain' || labelType == 'structure') resName2 += '.' + atom2.chain;
                        if(labelType == 'structure') resName2 += '.' + atom2.structure;
                        disulfideLinkStr += ', {"source": "' + resName1 + '", "target": "' + resName2
-                           + '", "v": ' + ic.icn3dui.htmlCls.ssbondValue + ', "c": "' + ic.icn3dui.htmlCls.ssbondColor + '"}';
+                           + '", "v": ' + me.htmlCls.ssbondValue + ', "c": "' + me.htmlCls.ssbondColor + '"}';
                    }
                }
            }
@@ -115,7 +115,7 @@ class GetGraph {
                        if(labelType == 'chain' || labelType == 'structure') resName2 += '.' + atom2.chain;
                        if(labelType == 'structure') resName2 += '.' + atom2.structure;
                        crossLinkStr += ', {"source": "' + resName1 + '", "target": "' + resName2
-                           + '", "v": ' + ic.icn3dui.htmlCls.clbondValue + ', "c": "' + ic.icn3dui.htmlCls.clbondColor + '"}';
+                           + '", "v": ' + me.htmlCls.clbondValue + ', "c": "' + me.htmlCls.clbondColor + '"}';
                    }
                }
            }
@@ -237,7 +237,7 @@ class GetGraph {
           }
           for(let i = 0, il = graphJson.links.length; i < il; ++i) {
               let  link = graphJson.links[i];
-              if(link.v == ic.icn3dui.htmlCls.ssValue || link.v == ic.icn3dui.htmlCls.coilValue) {
+              if(link.v == me.htmlCls.ssValue || link.v == me.htmlCls.coilValue) {
                   let  resid = target2resid[link.target];
                   link.c = resid2color[resid];
               }
@@ -267,7 +267,7 @@ class GetGraph {
        //var nodeStr = '', linkStr = '';
        let  nodeArray = [], linkArray = [];
        let  cnt = 0, linkCnt = 0;
-       let  thickness = ic.icn3dui.htmlCls.coilValue;
+       let  thickness = me.htmlCls.coilValue;
        let  prevChain = '', prevResName = '', prevResi = 0, prevAtom;
        // add chemicals as well
        let  residHash = {}
@@ -296,8 +296,8 @@ class GetGraph {
                    //if(linkCnt > 0) linkStr += ', ';
                    linkArray.push('{"source": "' + prevResName + '", "target": "' + resName
                        + '", "v": ' + thickness + ', "c": "' + atom.color.getHexString().toUpperCase() + '"}');
-                   if(atom.ssbegin) thickness = ic.icn3dui.htmlCls.ssValue;
-                   if(atom.ssend) thickness = ic.icn3dui.htmlCls.coilValue;
+                   if(atom.ssbegin) thickness = me.htmlCls.ssValue;
+                   if(atom.ssend) thickness = me.htmlCls.coilValue;
                    ++linkCnt;
                }
                prevChain = atom.chain;
@@ -320,7 +320,7 @@ class GetGraph {
             let  selectedAtoms = ic.hBondCls.calculateChemicalHbonds(me.hashUtilsCls.intHash2Atoms(ic.dAtoms, complement, ic.atoms), me.hashUtilsCls.intHash2Atoms(ic.dAtoms, firstSetAtoms, ic.atoms), parseFloat(threshold), bSaltbridge, 'graph', true );
             resid2ResidhashHbond = me.hashUtilsCls.cloneHash(ic.resid2Residhash);
         }
-        let  hbondStr = this.getGraphLinks(resid2ResidhashHbond, resid2ResidhashHbond, ic.icn3dui.htmlCls.hbondInsideColor, labelType, ic.icn3dui.htmlCls.hbondValuehbondInsideValue);
+        let  hbondStr = this.getGraphLinks(resid2ResidhashHbond, resid2ResidhashHbond, me.htmlCls.hbondInsideColor, labelType, me.htmlCls.hbondValuehbondInsideValue);
         return hbondStr;
     }
     getIonicLinksForSet(atoms, labelType) { let  ic = this.icn3d, me = ic.icn3dui;
@@ -334,7 +334,7 @@ class GetGraph {
             let  selectedAtoms = ic.saltbridgeCls.calculateIonicInteractions(me.hashUtilsCls.intHash2Atoms(ic.dAtoms, complement, ic.atoms), me.hashUtilsCls.intHash2Atoms(ic.dAtoms, firstSetAtoms, ic.atoms), parseFloat(threshold), bSaltbridge, 'graph', true );
             resid2Residhash = me.hashUtilsCls.cloneHash(ic.resid2Residhash);
         }
-        let  ionicStr = this.getGraphLinks(resid2Residhash, resid2Residhash, ic.icn3dui.htmlCls.ionicInsideColor, labelType, ic.icn3dui.htmlCls.ionicInsideValue);
+        let  ionicStr = this.getGraphLinks(resid2Residhash, resid2Residhash, me.htmlCls.ionicInsideColor, labelType, me.htmlCls.ionicInsideValue);
         return ionicStr;
     }
     getHalogenPiLinksForSet(atoms, labelType) { let  ic = this.icn3d, me = ic.icn3dui;
@@ -347,19 +347,19 @@ class GetGraph {
             let  selectedAtoms = ic.piHalogenCls.calculateHalogenPiInteractions(me.hashUtilsCls.intHash2Atoms(ic.dAtoms, firstSetAtoms, ic.atoms), me.hashUtilsCls.intHash2Atoms(ic.dAtoms, complement, ic.atoms), parseFloat(threshold), 'graph', 'halogen', true );
             resid2Residhash = me.hashUtilsCls.cloneHash(ic.resid2Residhash);
         }
-        halogenpiStr += this.getGraphLinks(resid2Residhash, resid2Residhash, ic.icn3dui.htmlCls.halogenInsideColor, labelType, ic.icn3dui.htmlCls.halogenInsideValue);
+        halogenpiStr += this.getGraphLinks(resid2Residhash, resid2Residhash, me.htmlCls.halogenInsideColor, labelType, me.htmlCls.halogenInsideValue);
         threshold = parseFloat($("#" + ic.pre + "picationthreshold" ).val());
         if(Object.keys(complement).length > 0 && Object.keys(firstSetAtoms).length > 0) {
             let  selectedAtoms = ic.piHalogenCls.calculateHalogenPiInteractions(me.hashUtilsCls.intHash2Atoms(ic.dAtoms, firstSetAtoms, ic.atoms), me.hashUtilsCls.intHash2Atoms(ic.dAtoms, complement, ic.atoms), parseFloat(threshold), 'graph', 'pi-cation', true );
             resid2Residhash = me.hashUtilsCls.cloneHash(ic.resid2Residhash);
         }
-        halogenpiStr += this.getGraphLinks(resid2Residhash, resid2Residhash, ic.icn3dui.htmlCls.picationInsideColor, labelType, ic.icn3dui.htmlCls.picationInsideValue);
+        halogenpiStr += this.getGraphLinks(resid2Residhash, resid2Residhash, me.htmlCls.picationInsideColor, labelType, me.htmlCls.picationInsideValue);
         threshold = parseFloat($("#" + ic.pre + "pistackingthreshold" ).val());
         if(Object.keys(complement).length > 0 && Object.keys(firstSetAtoms).length > 0) {
             let  selectedAtoms = ic.piHalogenCls.calculateHalogenPiInteractions(me.hashUtilsCls.intHash2Atoms(ic.dAtoms, firstSetAtoms, ic.atoms), me.hashUtilsCls.intHash2Atoms(ic.dAtoms, complement, ic.atoms), parseFloat(threshold), 'graph', 'pi-stacking', true );
             resid2Residhash = me.hashUtilsCls.cloneHash(ic.resid2Residhash);
         }
-        halogenpiStr += this.getGraphLinks(resid2Residhash, resid2Residhash, ic.icn3dui.htmlCls.pistackingInsideColor, labelType, ic.icn3dui.htmlCls.pistackingInsideValue);
+        halogenpiStr += this.getGraphLinks(resid2Residhash, resid2Residhash, me.htmlCls.pistackingInsideColor, labelType, me.htmlCls.pistackingInsideValue);
         return halogenpiStr;
     }
     getContactLinksForSet(atoms, labelType, bCartoon2d) { let  ic = this.icn3d, me = ic.icn3dui;
@@ -392,7 +392,7 @@ class GetGraph {
         let  bGetPairs = true, bInteraction = false;
         let  atoms = ic.contactCls.getAtomsWithinAtom(otherAtoms, atomlistTarget, parseFloat(radius), bGetPairs, bInteraction, bInternal);
         let  residHash = me.hashUtilsCls.cloneHash(ic.resid2Residhash);
-        let  interStr = this.getGraphLinks(residHash, residHash, ic.icn3dui.htmlCls.contactInsideColor, labelType, ic.icn3dui.htmlCls.contactInsideValue, bCartoon2d);
+        let  interStr = this.getGraphLinks(residHash, residHash, me.htmlCls.contactInsideColor, labelType, me.htmlCls.contactInsideValue, bCartoon2d);
         return interStr;
     }
     compNode(a, b, bReverseChain) { let  ic = this.icn3d, me = ic.icn3dui;

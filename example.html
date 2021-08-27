@@ -42,7 +42,7 @@ body {font-family: Verdana, Arial, Helvetica, sans-serif;}
       // e.g., add the b-factor information in the mouseover
       icn3d.Picking.prototype.showPicking = function(atom, x, y) { var ic = this.icn3d, me = ic.icn3dui;
           //me = ic.setIcn3dui(ic.id);
-          if(ic.icn3dui.cfg.cid !== undefined && ic.pk != 0) {
+          if(me.cfg.cid !== undefined && ic.pk != 0) {
               ic.pk = 1; // atom
           }
           else {
@@ -53,8 +53,8 @@ body {font-family: Verdana, Arial, Helvetica, sans-serif;}
 
           if(ic.pk != 0) {
               if(x !== undefined && y !== undefined) { // mouse over
-                if(ic.icn3dui.cfg.showmenu != undefined && ic.icn3dui.cfg.showmenu == true) {
-                    y += ic.icn3dui.htmlCls.MENU_HEIGHT;
+                if(me.cfg.showmenu != undefined && me.cfg.showmenu == true) {
+                    y += me.htmlCls.MENU_HEIGHT;
                 }
                 var text =(ic.pk == 1) ? atom.resn + atom.resi + '@' + atom.name : atom.resn + atom.resi;
                 text += ', b: ' + atom.b;
@@ -93,9 +93,9 @@ body {font-family: Verdana, Arial, Helvetica, sans-serif;}
                   }
                   // update the interaction flag
                   ic.bSphereCalc = false;
-                  //ic.icn3dui.htmlCls.clickMenuCls.setLogCmd('set calculate sphere false', true);
+                  //me.htmlCls.clickMenuCls.setLogCmd('set calculate sphere false', true);
                   ic.bHbondCalc = false;
-                  //ic.icn3dui.htmlCls.clickMenuCls.setLogCmd('set calculate hbond false', true);
+                  //me.htmlCls.clickMenuCls.setLogCmd('set calculate hbond false', true);
               }
           }
       }
