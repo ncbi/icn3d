@@ -105,7 +105,7 @@ class Events {
            //ic.initUI();
            if(!bAppend) ic.init();
            ic.bInputfile = true;
-           ic.InputfileData = dataStr;
+           ic.InputfileData = (ic.InputfileData) ? ic.InputfileData + 'ENDMDL\n' + dataStr : dataStr;
            ic.InputfileType = 'pdb';
            ic.pdbParserCls.loadPdbData(dataStr, undefined, undefined, bAppend);
          }
@@ -799,7 +799,7 @@ class Events {
         me.myEventCls.onIds("#" + me.pre + "reload_pdbfile_app", "click", function(e) { let ic = me.icn3d;
            e.preventDefault();
 
-           let bAppend = true;
+           var bAppend = true;
            thisClass.loadPdbFile(bAppend);
         });
 
@@ -831,7 +831,7 @@ class Events {
                //ic.initUI();
                ic.init();
                ic.bInputfile = true;
-               ic.InputfileData = dataStr;
+               ic.InputfileData = (ic.InputfileData) ? ic.InputfileData + 'ENDMDL\n' + dataStr : dataStr;
                ic.InputfileType = 'mol2';
                ic.mol2ParserCls.loadMol2Data(dataStr);
              }
@@ -866,7 +866,7 @@ class Events {
                //ic.initUI();
                ic.init();
                ic.bInputfile = true;
-               ic.InputfileData = dataStr;
+               ic.InputfileData = (ic.InputfileData) ? ic.InputfileData + 'ENDMDL\n' + dataStr : dataStr;
                ic.InputfileType = 'sdf';
                ic.sdfParserCls.loadSdfData(dataStr);
              }
@@ -901,7 +901,7 @@ class Events {
                //ic.initUI();
                ic.init();
                ic.bInputfile = true;
-               ic.InputfileData = dataStr;
+               ic.InputfileData = (ic.InputfileData) ? ic.InputfileData + 'ENDMDL\n' + dataStr : dataStr;
                ic.InputfileType = 'xyz';
                ic.xyzParserCls.loadXyzData(dataStr);
              }
@@ -974,7 +974,7 @@ class Events {
                       //ic.initUI();
                       ic.init();
                       ic.bInputfile = true;
-                      ic.InputfileData = data;
+                      ic.InputfileData = (ic.InputfileData) ? ic.InputfileData + 'ENDMDL\n' + data : data;
                       ic.InputfileType = 'mmcif';
                       ic.mmcifParserCls.loadMmcifData(data);
                   },

@@ -102,7 +102,7 @@ class Delphi {
 
        ic.loadPhiFrom = 'delphi';
 
-       let url = "https://www.ncbi.nlm.nih.gov/Structure/delphi/delphi.fcgi";
+       let url = "https://www.ncbi.nlm.nih.gov/Structure/delphi/delphi.cgi";
        let pdbid =(me.cfg.cid) ? me.cfg.cid : Object.keys(ic.structures).toString();
        let dataObj = {}
 

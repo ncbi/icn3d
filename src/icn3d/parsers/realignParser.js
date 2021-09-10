@@ -319,16 +319,21 @@ class RealignParser {
             if(i == 0 || bPredefined) { // master
                 let  base = parseInt(ic.chainsSeq[chainid][0].resi);
 
-                let  resRange;
-                if(bRealign) {
-                    let  seqLen = ic.chainsSeq[chainid].length;
-                    let  lastResi = ic.chainsSeq[chainid][seqLen - 1].resi;
-                    resRange = base.toString() + '-' + lastResi.toString();
-                }
+                //let  resRange;
+                //if(bRealign) {
+                //    let  seqLen = ic.chainsSeq[chainid].length;
+                //    let  lastResi = ic.chainsSeq[chainid][seqLen - 1].resi;
+                //    resRange = base.toString() + '-' + lastResi.toString();
+                //}
 
-                let  resiArray;
+                let resiArray = [];
                 if(bRealign) {
-                    resiArray = [resRange];
+                    //resiArray = [resRange];
+                    let residHash = ic.firstAtomObjCls.getResiduesFromAtoms(ic.hAtoms);
+                    for(var resid in residHash) {
+                        let resi = resid.substr(resid.lastIndexOf('_') + 1);
+                        resiArray.push(resi);
+                    }
                 }
                 else if(bPredefined) {
                     resiArray = predefinedRes.split(",");

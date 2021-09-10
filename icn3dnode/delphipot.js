@@ -62,7 +62,7 @@ https.get(urlMmdb, function(res1) {
 
       ic.loadPhiFrom = 'delphi';
 
-      let url = "https://www.ncbi.nlm.nih.gov/Structure/delphi/delphi.fcgi";
+      let url = "https://www.ncbi.nlm.nih.gov/Structure/delphi/delphi.cgi";
       let gsize = 65;
       let salt = 0.15;
       let contour = 3;

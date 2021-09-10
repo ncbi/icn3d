@@ -114,7 +114,7 @@ class PdbParser {
               //ic.ParserUtilsCls.hideLoading();
           },
           success: function(data) {
-            ic.InputfileData = data;
+            ic.InputfileData = (ic.InputfileData) ? ic.InputfileData + 'ENDMDL\n' + data : data;
             ic.InputfileType = type;
 
             if(type === 'pdb') {
@@ -179,8 +179,13 @@ class PdbParser {
         // calculate secondary structures if not available
         // DSSP only works for structures with all atoms. The Calpha only strucutres didn't work
         //if(!ic.bSecondaryStructure && !bCalphaOnly) {
+        let bCalcSecondary = false;
+        if(!me.cfg.mmtfid && !me.cfg.pdbid && !me.cfg.opmid && !me.cfg.mmdbid && !me.cfg.gi && !me.cfg.uniprotid && !me.cfg.blast_rep_id && !me.cfg.cid && !me.cfg.mmcifid && !me.cfg.align && !me.cfg.chainalign) {
+            bCalcSecondary = true;
+        }
 
-        if(!ic.bSecondaryStructure && Object.keys(ic.proteins).length > 0) {
+//        if(!ic.bSecondaryStructure && Object.keys(ic.proteins).length > 0) {
+        if((!ic.bSecondaryStructure || bCalcSecondary) && Object.keys(ic.proteins).length > 0) {
           ic.deferredSecondary = $.Deferred(function() {
               let  bCalphaOnly = me.utilsCls.isCalphaPhosOnly(me.hashUtilsCls.hash2Atoms(ic.proteins, ic.atoms));//, 'CA');
               ic.dsspCls.applyDssp(bCalphaOnly);
@@ -202,11 +207,6 @@ class PdbParser {
 
         if(me.cfg.afid) {
             ic.opts['color'] = 'confidence';
-
-            let  legendHtml = me.htmlCls.clickMenuCls.setLegendHtml(true);
-            $("#" + me.pre + "legend").removeClass('icn3d-legend');
-            $("#" + me.pre + "legend").addClass('icn3d-legend2');
-            $("#" + me.pre + "legend").html(legendHtml).show();
         }
 
         ic.setStyleCls.setAtomStyleByOptions(ic.opts);

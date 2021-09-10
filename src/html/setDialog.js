@@ -106,10 +106,7 @@ class SetDialog {
 
         html += me.htmlCls.divStr + "dl_afid' class='" + dialogClass + "'>";
         html += "Note: AlphaFold produces a per-residue confidence score (pLDDT) between 0 and 100:<br>";
-        html += me.htmlCls.space3 + '<span class="icn3d-square" style="background-color: rgb(0, 83, 204);">&nbsp;</span> <span>Very high (pLDDT &gt; 90)</span><br>';
-        html += me.htmlCls.space3 + '<span class="icn3d-square" style="background-color: rgb(101, 203, 243);">&nbsp;</span> <span>Confident (90 &gt; pLDDT &gt; 70)</span><br>';
-        html += me.htmlCls.space3 + '<span class="icn3d-square" style="background-color: rgb(255, 209, 19);">&nbsp;</span> <span>Low (70 &gt; pLDDT &gt; 50)</span><br>';
-        html += me.htmlCls.space3 + '<span class="icn3d-square" style="background-color: rgb(255, 125, 69);">&nbsp;</span> <span>Very low (pLDDT &lt; 50)</span><br><br>';
+        html += me.htmlCls.clickMenuCls.setAlphaFoldLegend() + "<br>";
 
         html += "<a href='https://alphafold.ebi.ac.uk/' target='_blank'>AlphaFold Uniprot</a> ID: " + me.htmlCls.inputTextStr + "id='" + me.pre + "afid' value='A0A061AD48' size=10> ";
         html += me.htmlCls.buttonStr + "reload_af'>Load</button>";

@@ -29,6 +29,8 @@ class Contact {
             let oriCalpha = undefined, oriResidName = undefined;
             let oriResid = oriAtom.structure + '_' + oriAtom.chain + '_' + oriAtom.resi;
             for(let serial in ic.residues[oriResid]) {
+                if(!ic.atoms[serial]) continue;
+
                 if((ic.atoms[serial].name === 'CA' && ic.atoms[serial].elem === 'C') || ic.atoms[serial].name === "O3'" || ic.atoms[serial].name === "O3*") {
                     oriCalpha = ic.atoms[serial];
                     break;
