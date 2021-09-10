@@ -15,6 +15,23 @@ class SetColor {
         this.icn3d = icn3d;
     }
 
+    colorRainbow(atoms) { let ic = this.icn3d, me = ic.icn3dui;
+        let idx = 0;
+        let cnt = 0;
+        for (let i in atoms) {
+            let atom = ic.atoms[i];
+            if(!atom.het) ++cnt;
+        }
+
+        let lastTerSerialInv = (cnt > 1) ? 1 / (cnt - 1) : 1;
+        for (let i in atoms) {
+            let atom = ic.atoms[i];
+            atom.color = atom.het ? me.parasCls.atomColors[atom.elem] || me.parasCls.defaultAtomColor : me.parasCls.thr().setHSL(3 / 4 *  idx++ * lastTerSerialInv, 1, 0.45);
+
+            ic.atomPrevColors[i] = atom.color;
+        }
+    }
+
     //Set atom color according to the definition in options (options.color).
     setColorByOptions(options, atoms, bUseInputColor) { let ic = this.icn3d, me = ic.icn3dui;
      if(options !== undefined) {
@@ -63,19 +80,11 @@ class SetColor {
                 }
                 break;
             case 'rainbow':
-                idx = 0;
-                cnt = 0;
-                for (let i in atoms) {
-                    let atom = ic.atoms[i];
-                    if(!atom.het) ++cnt;
-                }
-
-                lastTerSerialInv = (cnt > 1) ? 1 / (cnt - 1) : 1;
-                for (let i in atoms) {
-                    let atom = ic.atoms[i];
-                    atom.color = atom.het ? me.parasCls.atomColors[atom.elem] || me.parasCls.defaultAtomColor : me.parasCls.thr().setHSL(3 / 4 *  idx++ * lastTerSerialInv, 1, 0.45);
-
-                    ic.atomPrevColors[i] = atom.color;
+                this.colorRainbow(atoms);
+                break;
+            case 'rainbow for chains':
+                for(let chainid in ic.chains) {
+                    this.colorRainbow(ic.chains[chainid]);
                 }
                 break;
             case 'chain':
@@ -351,6 +360,12 @@ class SetColor {
 
                     ic.atomPrevColors[i] = atom.color;
                 }
+
+                let  legendHtml = me.htmlCls.clickMenuCls.setLegendHtml(true);
+                $("#" + me.pre + "legend").removeClass('icn3d-legend');
+                $("#" + me.pre + "legend").addClass('icn3d-legend2');
+                $("#" + me.pre + "legend").html(legendHtml).show();
+
                 break;
 
             case 'b factor':

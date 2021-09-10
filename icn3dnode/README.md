@@ -1,7 +1,7 @@
 icn3dnode
 =========
 
-iCn3D JavaScript functions can be directly called in Node.js scripts to run from the command line. Here show a few examples. A Python script to export PNG images for any structures in the batch mode is also attached at the end.
+iCn3D JavaScript functions in [icn3d npm package](https://www.npmjs.com/package/icn3d) can be directly called in Node.js scripts to run from the command line. Here show a few examples. A Python script to export PNG images for any structures in the batch mode is also attached at the end.
 
 Installation
 ------------

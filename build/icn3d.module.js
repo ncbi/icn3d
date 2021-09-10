@@ -9393,6 +9393,8 @@ class Contact {
             let oriCalpha = undefined, oriResidName = undefined;
             let oriResid = oriAtom.structure + '_' + oriAtom.chain + '_' + oriAtom.resi;
             for(let serial in ic.residues[oriResid]) {
+                if(!ic.atoms[serial]) continue;
+
                 if((ic.atoms[serial].name === 'CA' && ic.atoms[serial].elem === 'C') || ic.atoms[serial].name === "O3'" || ic.atoms[serial].name === "O3*") {
                     oriCalpha = ic.atoms[serial];
                     break;
@@ -18209,6 +18211,23 @@ class SetColor {
         this.icn3d = icn3d;
     }
 
+    colorRainbow(atoms) { let ic = this.icn3d, me = ic.icn3dui;
+        let idx = 0;
+        let cnt = 0;
+        for (let i in atoms) {
+            let atom = ic.atoms[i];
+            if(!atom.het) ++cnt;
+        }
+
+        let lastTerSerialInv = (cnt > 1) ? 1 / (cnt - 1) : 1;
+        for (let i in atoms) {
+            let atom = ic.atoms[i];
+            atom.color = atom.het ? me.parasCls.atomColors[atom.elem] || me.parasCls.defaultAtomColor : me.parasCls.thr().setHSL(3 / 4 *  idx++ * lastTerSerialInv, 1, 0.45);
+
+            ic.atomPrevColors[i] = atom.color;
+        }
+    }
+
     //Set atom color according to the definition in options (options.color).
     setColorByOptions(options, atoms, bUseInputColor) { let ic = this.icn3d, me = ic.icn3dui;
      if(options !== undefined) {
@@ -18257,19 +18276,11 @@ class SetColor {
                 }
                 break;
             case 'rainbow':
-                idx = 0;
-                cnt = 0;
-                for (let i in atoms) {
-                    let atom = ic.atoms[i];
-                    if(!atom.het) ++cnt;
-                }
-
-                lastTerSerialInv = (cnt > 1) ? 1 / (cnt - 1) : 1;
-                for (let i in atoms) {
-                    let atom = ic.atoms[i];
-                    atom.color = atom.het ? me.parasCls.atomColors[atom.elem] || me.parasCls.defaultAtomColor : me.parasCls.thr().setHSL(3 / 4 *  idx++ * lastTerSerialInv, 1, 0.45);
-
-                    ic.atomPrevColors[i] = atom.color;
+                this.colorRainbow(atoms);
+                break;
+            case 'rainbow for chains':
+                for(let chainid in ic.chains) {
+                    this.colorRainbow(ic.chains[chainid]);
                 }
                 break;
             case 'chain':
@@ -18541,6 +18552,12 @@ class SetColor {
 
                     ic.atomPrevColors[i] = atom.color;
                 }
+
+                let  legendHtml = me.htmlCls.clickMenuCls.setLegendHtml(true);
+                $("#" + me.pre + "legend").removeClass('icn3d-legend');
+                $("#" + me.pre + "legend").addClass('icn3d-legend2');
+                $("#" + me.pre + "legend").html(legendHtml).show();
+
                 break;
 
             case 'b factor':
@@ -19320,7 +19337,7 @@ class Delphi {
 
        ic.loadPhiFrom = 'delphi';
 
-       let url = "https://www.ncbi.nlm.nih.gov/Structure/delphi/delphi.fcgi";
+       let url = "https://www.ncbi.nlm.nih.gov/Structure/delphi/delphi.cgi";
        let pdbid =(me.cfg.cid) ? me.cfg.cid : Object.keys(ic.structures).toString();
        let dataObj = {};
 
@@ -23090,7 +23107,7 @@ class PdbParser {
               //ic.ParserUtilsCls.hideLoading();
           },
           success: function(data) {
-            ic.InputfileData = data;
+            ic.InputfileData = (ic.InputfileData) ? ic.InputfileData + 'ENDMDL\n' + data : data;
             ic.InputfileType = type;
 
             if(type === 'pdb') {
@@ -23155,8 +23172,13 @@ class PdbParser {
         // calculate secondary structures if not available
         // DSSP only works for structures with all atoms. The Calpha only strucutres didn't work
         //if(!ic.bSecondaryStructure && !bCalphaOnly) {
+        let bCalcSecondary = false;
+        if(!me.cfg.mmtfid && !me.cfg.pdbid && !me.cfg.opmid && !me.cfg.mmdbid && !me.cfg.gi && !me.cfg.uniprotid && !me.cfg.blast_rep_id && !me.cfg.cid && !me.cfg.mmcifid && !me.cfg.align && !me.cfg.chainalign) {
+            bCalcSecondary = true;
+        }
 
-        if(!ic.bSecondaryStructure && Object.keys(ic.proteins).length > 0) {
+//        if(!ic.bSecondaryStructure && Object.keys(ic.proteins).length > 0) {
+        if((!ic.bSecondaryStructure || bCalcSecondary) && Object.keys(ic.proteins).length > 0) {
           ic.deferredSecondary = $.Deferred(function() {
               let  bCalphaOnly = me.utilsCls.isCalphaPhosOnly(me.hashUtilsCls.hash2Atoms(ic.proteins, ic.atoms));//, 'CA');
               ic.dsspCls.applyDssp(bCalphaOnly);
@@ -23178,11 +23200,6 @@ class PdbParser {
 
         if(me.cfg.afid) {
             ic.opts['color'] = 'confidence';
-
-            let  legendHtml = me.htmlCls.clickMenuCls.setLegendHtml(true);
-            $("#" + me.pre + "legend").removeClass('icn3d-legend');
-            $("#" + me.pre + "legend").addClass('icn3d-legend2');
-            $("#" + me.pre + "legend").html(legendHtml).show();
         }
 
         ic.setStyleCls.setAtomStyleByOptions(ic.opts);
@@ -24939,16 +24956,21 @@ class RealignParser {
             if(i == 0 || bPredefined) { // master
                 let  base = parseInt(ic.chainsSeq[chainid][0].resi);
 
-                let  resRange;
-                if(bRealign) {
-                    let  seqLen = ic.chainsSeq[chainid].length;
-                    let  lastResi = ic.chainsSeq[chainid][seqLen - 1].resi;
-                    resRange = base.toString() + '-' + lastResi.toString();
-                }
+                //let  resRange;
+                //if(bRealign) {
+                //    let  seqLen = ic.chainsSeq[chainid].length;
+                //    let  lastResi = ic.chainsSeq[chainid][seqLen - 1].resi;
+                //    resRange = base.toString() + '-' + lastResi.toString();
+                //}
 
-                let  resiArray;
+                let resiArray = [];
                 if(bRealign) {
-                    resiArray = [resRange];
+                    //resiArray = [resRange];
+                    let residHash = ic.firstAtomObjCls.getResiduesFromAtoms(ic.hAtoms);
+                    for(var resid in residHash) {
+                        let resi = resid.substr(resid.lastIndexOf('_') + 1);
+                        resiArray.push(resi);
+                    }
                 }
                 else if(bPredefined) {
                     resiArray = predefinedRes.split(",");
@@ -26662,6 +26684,7 @@ class LoadScript {
     execCommandsBase(start, end, steps, bFinalStep) { let  ic = this.icn3d, me = ic.icn3dui;
       let  thisClass = this;
       let  i;
+
       for(i=start; i <= end; ++i) {
           let  bFinalStep =(i === steps - 1) ? true : false;
 
@@ -29610,7 +29633,8 @@ class AnnoCddSite {
         // precalculated
         let url = me.htmlCls.baseUrl + "cdannots/cdannots.fcgi?fmt&queries=" + chnidBaseArray;
         // live search for AlphaFold structures
-        if(me.cfg.afid) {
+        //if(me.cfg.afid) {
+        if(!me.cfg.mmtfid && !me.cfg.pdbid && !me.cfg.opmid && !me.cfg.mmdbid && !me.cfg.gi && !me.cfg.uniprotid && !me.cfg.blast_rep_id && !me.cfg.cid && !me.cfg.mmcifid && !me.cfg.align && !me.cfg.chainalign) {
             url = me.htmlCls.baseUrl + "cdannots/cdannots.fcgi?fmt&live=lcl&queries=" + ic.giSeq[chnidArray[0]].join('');
         }
 
@@ -43429,15 +43453,22 @@ class ClickMenu {
         this.icn3dui = icn3dui;
     }
 
+    setAlphaFoldLegend() { let me = this.icn3dui; me.icn3d;
+        let legendHtml;
+        legendHtml = '<div>';
+        legendHtml += '<span class="icn3d-square" style="background-color: rgb(0, 83, 204);">&nbsp;</span> <span>Very high (pLDDT &gt; 90)</span><br>';
+        legendHtml += '<span class="icn3d-square" style="background-color: rgb(101, 203, 243);">&nbsp;</span> <span>Confident (90 &gt; pLDDT &gt; 70)</span><br>';
+        legendHtml += '<span class="icn3d-square" style="background-color: rgb(255, 209, 19);">&nbsp;</span> <span>Low (70 &gt; pLDDT &gt; 50)</span><br>';
+        legendHtml += '<span class="icn3d-square" style="background-color: rgb(255, 125, 69);">&nbsp;</span> <span>Very low (pLDDT &lt; 50)</span><br>';
+        legendHtml += '</div>';
+
+        return legendHtml;
+    }
+
     setLegendHtml(bAf) { let me = this.icn3dui, ic = me.icn3d;
         let legendHtml;
         if(bAf) {
-            legendHtml = '<div>';
-            legendHtml += '<span class="icn3d-square" style="background-color: rgb(0, 83, 204);">&nbsp;</span> <span>Very high (pLDDT &gt; 90)</span><br>';
-            legendHtml += '<span class="icn3d-square" style="background-color: rgb(101, 203, 243);">&nbsp;</span> <span>Confident (90 &gt; pLDDT &gt; 70)</span><br>';
-            legendHtml += '<span class="icn3d-square" style="background-color: rgb(255, 209, 19);">&nbsp;</span> <span>Low (70 &gt; pLDDT &gt; 50)</span><br>';
-            legendHtml += '<span class="icn3d-square" style="background-color: rgb(255, 125, 69);">&nbsp;</span> <span>Very low (pLDDT &lt; 50)</span><br>';
-            legendHtml += '</div">';
+            legendHtml = this.setAlphaFoldLegend();
         }
         else {
             let startColorStr = (ic.startColor == 'red') ? '#F00' : (ic.startColor == 'green') ? '#0F0' : '#00F';
@@ -44406,6 +44437,10 @@ class ClickMenu {
         me.myEventCls.onIds("#" + me.pre + "mn4_clrRainbow", "click", function(e) { let ic = me.icn3d;
            ic.setOptionCls.setOption('color', 'rainbow');
            thisClass.setLogCmd('color rainbow', true);
+        });
+        me.myEventCls.onIds("#" + me.pre + "mn4_clrRainbowChain", "click", function(e) { let ic = me.icn3d;
+           ic.setOptionCls.setOption('color', 'rainbow for chains');
+           thisClass.setLogCmd('color rainbow for chains', true);
         });
     //    },
     //    clkMn4_clrChain: function() {
@@ -46373,7 +46408,7 @@ class SetMenu {
         html += "<ul>";
         html += me.htmlCls.setHtmlCls.getRadio('mn6_bkgd', 'mn6_bkgdTransparent', 'Transparent', true);
         html += me.htmlCls.setHtmlCls.getRadio('mn6_bkgd', 'mn6_bkgdBlack', 'Black');
-        html += me.htmlCls.setHtmlCls.getRadio('mn6_bkgd', 'mn6_bkgdGrey', 'Grey');
+        html += me.htmlCls.setHtmlCls.getRadio('mn6_bkgd', 'mn6_bkgdGrey', 'Gray');
         html += me.htmlCls.setHtmlCls.getRadio('mn6_bkgd', 'mn6_bkgdWhite', 'White');
         html += "</ul>";
         html += "</li>";
@@ -46611,7 +46646,7 @@ class SetMenu {
         html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'mn4_clrWhite17', 'Misty Rose', 'FFE4E1');
         html += "</ul>";
 
-        html += "<li><span>Grey</span>";
+        html += "<li><span>Gray</span>";
         html += "<ul>";
         //html += me.htmlCls.setHtmlCls.getRadio('mn4_clr', 'mn4_clrGray', 'Gray');
         html += me.htmlCls.setHtmlCls.getRadioColor('mn4_clr', 'mn4_clrGray1', 'Gray', '808080');
@@ -46632,9 +46667,14 @@ class SetMenu {
         html += "<li>-</li>";
 
         if(me.cfg.cid === undefined) {
-            if(me.cfg.afid) html += me.htmlCls.setHtmlCls.getRadio('mn4_clr', 'mn4_clrConfidence', 'AF Confidence');
             html += me.htmlCls.setHtmlCls.getRadio('mn4_clr', 'mn4_clrSpectrum', 'Spectrum (V-R)');
-            html += me.htmlCls.setHtmlCls.getRadio('mn4_clr', 'mn4_clrRainbow', 'Rainbow (R-V)');
+            //html += me.htmlCls.setHtmlCls.getRadio('mn4_clr', 'mn4_clrRainbow', 'Rainbow (R-V)');
+            html += "<li><span style='padding-left:1.5em;'>Rainbow (R-V)</span>";
+            html += "<ul>";
+            html += me.htmlCls.setHtmlCls.getRadio('mn4_clr', 'mn4_clrRainbow', 'for Selection');
+            html += me.htmlCls.setHtmlCls.getRadio('mn4_clr', 'mn4_clrRainbowChain', 'for Chains');
+            html += "</ul>";
+
             html += "<li><span style='padding-left:1.5em;'>Secondary</span>";
             html += "<ul>";
             html += me.htmlCls.setHtmlCls.getRadio('mn4_clr', 'mn4_clrSSGreen', 'Sheet in Green');
@@ -46687,9 +46727,12 @@ class SetMenu {
               html += me.htmlCls.setHtmlCls.getRadio('mn4_clr', 'mn4_clrIdentity', 'Identity');
               html += me.htmlCls.setHtmlCls.getRadio('mn4_clr', 'mn4_clrConserved', 'Conservation', true);
             }
+
+            //if(me.cfg.afid) html += me.htmlCls.setHtmlCls.getRadio('mn4_clr', 'mn4_clrConfidence', 'AF Confidence');
+            if(!me.cfg.mmtfid && !me.cfg.pdbid && !me.cfg.opmid && !me.cfg.mmdbid && !me.cfg.gi && !me.cfg.uniprotid && !me.cfg.blast_rep_id && !me.cfg.cid && !me.cfg.mmcifid && !me.cfg.align && !me.cfg.chainalign) html += me.htmlCls.setHtmlCls.getRadio('mn4_clr', 'mn4_clrConfidence', 'AlphaFold<br><span style="padding-left:1.5em;">Confidence</span>');
         }
         else {
-            if(!me.cfg.hidelicense) html += me.htmlCls.setHtmlCls.getRadio('mn4_clr', 'mn1_delphi2', 'DelPhi<br><span style="padding-left:1.5em;">Potential ' + me.htmlCls.licenseStr + '</span>');
+            //if(!me.cfg.hidelicense) html += me.htmlCls.setHtmlCls.getRadio('mn4_clr', 'mn1_delphi2', 'DelPhi<br><span style="padding-left:1.5em;">Potential ' + me.htmlCls.licenseStr + '</span>');
             html += me.htmlCls.setHtmlCls.getRadio('mn4_clr', 'mn4_clrAtom', 'Atom', true);
         }
 
@@ -47693,10 +47736,7 @@ class SetDialog {
 
         html += me.htmlCls.divStr + "dl_afid' class='" + dialogClass + "'>";
         html += "Note: AlphaFold produces a per-residue confidence score (pLDDT) between 0 and 100:<br>";
-        html += me.htmlCls.space3 + '<span class="icn3d-square" style="background-color: rgb(0, 83, 204);">&nbsp;</span> <span>Very high (pLDDT &gt; 90)</span><br>';
-        html += me.htmlCls.space3 + '<span class="icn3d-square" style="background-color: rgb(101, 203, 243);">&nbsp;</span> <span>Confident (90 &gt; pLDDT &gt; 70)</span><br>';
-        html += me.htmlCls.space3 + '<span class="icn3d-square" style="background-color: rgb(255, 209, 19);">&nbsp;</span> <span>Low (70 &gt; pLDDT &gt; 50)</span><br>';
-        html += me.htmlCls.space3 + '<span class="icn3d-square" style="background-color: rgb(255, 125, 69);">&nbsp;</span> <span>Very low (pLDDT &lt; 50)</span><br><br>';
+        html += me.htmlCls.clickMenuCls.setAlphaFoldLegend() + "<br>";
 
         html += "<a href='https://alphafold.ebi.ac.uk/' target='_blank'>AlphaFold Uniprot</a> ID: " + me.htmlCls.inputTextStr + "id='" + me.pre + "afid' value='A0A061AD48' size=10> ";
         html += me.htmlCls.buttonStr + "reload_af'>Load</button>";
@@ -48572,7 +48612,7 @@ class Events {
            //ic.initUI();
            if(!bAppend) ic.init();
            ic.bInputfile = true;
-           ic.InputfileData = dataStr;
+           ic.InputfileData = (ic.InputfileData) ? ic.InputfileData + 'ENDMDL\n' + dataStr : dataStr;
            ic.InputfileType = 'pdb';
            ic.pdbParserCls.loadPdbData(dataStr, undefined, undefined, bAppend);
          };
@@ -49266,7 +49306,7 @@ class Events {
         me.myEventCls.onIds("#" + me.pre + "reload_pdbfile_app", "click", function(e) { me.icn3d;
            e.preventDefault();
 
-           let bAppend = true;
+           var bAppend = true;
            thisClass.loadPdbFile(bAppend);
         });
 
@@ -49298,7 +49338,7 @@ class Events {
                //ic.initUI();
                ic.init();
                ic.bInputfile = true;
-               ic.InputfileData = dataStr;
+               ic.InputfileData = (ic.InputfileData) ? ic.InputfileData + 'ENDMDL\n' + dataStr : dataStr;
                ic.InputfileType = 'mol2';
                ic.mol2ParserCls.loadMol2Data(dataStr);
              };
@@ -49333,7 +49373,7 @@ class Events {
                //ic.initUI();
                ic.init();
                ic.bInputfile = true;
-               ic.InputfileData = dataStr;
+               ic.InputfileData = (ic.InputfileData) ? ic.InputfileData + 'ENDMDL\n' + dataStr : dataStr;
                ic.InputfileType = 'sdf';
                ic.sdfParserCls.loadSdfData(dataStr);
              };
@@ -49368,7 +49408,7 @@ class Events {
                //ic.initUI();
                ic.init();
                ic.bInputfile = true;
-               ic.InputfileData = dataStr;
+               ic.InputfileData = (ic.InputfileData) ? ic.InputfileData + 'ENDMDL\n' + dataStr : dataStr;
                ic.InputfileType = 'xyz';
                ic.xyzParserCls.loadXyzData(dataStr);
              };
@@ -49441,7 +49481,7 @@ class Events {
                       //ic.initUI();
                       ic.init();
                       ic.bInputfile = true;
-                      ic.InputfileData = data;
+                      ic.InputfileData = (ic.InputfileData) ? ic.InputfileData + 'ENDMDL\n' + data : data;
                       ic.InputfileType = 'mmcif';
                       ic.mmcifParserCls.loadMmcifData(data);
                   },
@@ -51225,78 +51265,6 @@ class SetHtml {
              reader.onload = function(e) {
                let imageStr = e.target.result; // or = reader.result;
                thisClass.loadPng(imageStr);
-/*
-               let matchedStr = 'Share Link: ';
-               let pos = imageStr.indexOf(matchedStr);
-               let matchedStrState = "Start of state file======\n";
-               let posState = imageStr.indexOf(matchedStrState);
-               if(pos == -1 && posState == -1) {
-                   alert('Please load a PNG image saved by clicking "Save Datas > PNG Image" in the Data menu...');
-               }
-               else if(pos != -1) {
-                   let url = imageStr.substr(pos + matchedStr.length);
-                   me.htmlCls.clickMenuCls.setLogCmd('load iCn3D PNG image ' + $("#" + me.pre + "pngimage").val(), false);
-                   window.open(url);
-               }
-               else if(posState != -1) {
-                   let matchedStrData = "Start of data file======\n";
-                   let posData = imageStr.indexOf(matchedStrData);
-                   ic.bInputfile =(posData == -1) ? false : true;
-                   if(ic.bInputfile) {
-                       let posDataEnd = imageStr.indexOf("End of data file======\n");
-                       let data = imageStr.substr(posData + matchedStrData.length, posDataEnd - posData - matchedStrData.length);
-                       ic.InputfileData = data;
-
-                       let matchedStrType = "Start of type file======\n";
-                       let posType = imageStr.indexOf(matchedStrType);
-                       let posTypeEnd = imageStr.indexOf("End of type file======\n");
-                       let type = imageStr.substr(posType + matchedStrType.length, posTypeEnd - posType - matchedStrType.length - 1); // remove the new line char
-                       ic.InputfileType = type;
-
-                       //var matchedStrState = "Start of state file======\n";
-                       //var posState = imageStr.indexOf(matchedStrState);
-                       let posStateEnd = imageStr.indexOf("End of state file======\n");
-                       let statefile = imageStr.substr(posState + matchedStrState.length, posStateEnd - posState- matchedStrState.length);
-                       statefile = decodeURIComponent(statefile);
-                        if(type === 'pdb') {
-                            $.when( ic.pdbParserCls.loadPdbData(data))
-                             .then(function() {
-                                 ic.commands = [];
-                                 ic.optsHistory = [];
-                                 ic.loadScriptCls.loadScript(statefile, true);
-                             });
-                        }
-                        else {
-                            if(type === 'mol2') {
-                                ic.mol2ParserCls.loadMol2Data(data);
-                            }
-                            else if(type === 'sdf') {
-                                ic.sdfParserCls.loadSdfData(data);
-                            }
-                            else if(type === 'xyz') {
-                                ic.xyzParserCls.loadXyzData(data);
-                            }
-                            else if(type === 'mmcif') {
-                                ic.mmcifParserCls.loadMmcifData(data);
-                            }
-                           ic.commands = [];
-                           ic.optsHistory = [];
-                           ic.loadScriptCls.loadScript(statefile, true);
-                       }
-                   }
-                   else { // url length > 4000
-                       //var matchedStrState = "Start of state file======\n";
-                       //var posState = imageStr.indexOf(matchedStrState);
-                       let posStateEnd = imageStr.indexOf("End of state file======\n");
-                       let statefile = imageStr.substr(posState + matchedStrState.length, posStateEnd - posState- matchedStrState.length);
-                       statefile = decodeURIComponent(statefile);
-                       ic.commands = [];
-                       ic.optsHistory = [];
-                       ic.loadScriptCls.loadScript(statefile, true);
-                   }
-                   me.htmlCls.clickMenuCls.setLogCmd('load iCn3D PNG image ' + $("#" + me.pre + "pngimage").val(), false);
-               }
-*/
              };
              reader.readAsText(file);
            }
@@ -51323,7 +51291,7 @@ class SetHtml {
            if(ic.bInputfile) {
                let posDataEnd = imageStr.indexOf("End of data file======\n");
                let data = imageStr.substr(posData + matchedStrData.length, posDataEnd - posData - matchedStrData.length);
-               ic.InputfileData = data;
+               ic.InputfileData = (ic.InputfileData) ? ic.InputfileData + 'ENDMDL\n' + data : data;
 
                let matchedStrType = "Start of type file======\n";
                let posType = imageStr.indexOf(matchedStrType);
@@ -54088,6 +54056,8 @@ class iCn3D {
     //it is true so that the coordinates of the structure will not be loaded again.
     this.bNotLoadStructure = false;
 
+    this.InputfileData = '';
+
     // default color range for Add Custom Color button in the Sequence & Annotation window
     this.startColor = 'blue';
     this.midColor = 'white';
@@ -54384,6 +54354,10 @@ iCn3D.prototype.resetConfig = function () { let ic = this, me = ic.icn3dui;
         this.opts['chemicals'] = 'ball and stick';
     }
 
+    if(me.cfg.afid !== undefined) {
+        this.opts['color'] = 'confidence';
+    }
+
     if(me.cfg.blast_rep_id !== undefined) this.opts['color'] = 'conservation';
     if(me.cfg.options !== undefined) $.extend(this.opts, me.cfg.options);
 };
@@ -54400,7 +54374,7 @@ class iCn3DUI {
     //even when multiple iCn3D viewers are shown together.
     this.pre = this.cfg.divid + "_";
 
-    this.REVISION = '3.4.2';
+    this.REVISION = '3.4.3';
 
     // In nodejs, iCn3D defines "window = {navigator: {}}"
     this.bNode = (Object.keys(window).length < 2) ? true : false;

@@ -101,6 +101,7 @@ class LoadScript {
     execCommandsBase(start, end, steps, bFinalStep) { let  ic = this.icn3d, me = ic.icn3dui;
       let  thisClass = this;
       let  i;
+
       for(i=start; i <= end; ++i) {
           let  bFinalStep =(i === steps - 1) ? true : false;
 

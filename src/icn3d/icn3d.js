@@ -431,6 +431,8 @@ class iCn3D {
     //it is true so that the coordinates of the structure will not be loaded again.
     this.bNotLoadStructure = false;
 
+    this.InputfileData = '';
+
     // default color range for Add Custom Color button in the Sequence & Annotation window
     this.startColor = 'blue';
     this.midColor = 'white';
@@ -726,6 +728,10 @@ iCn3D.prototype.resetConfig = function () { let ic = this, me = ic.icn3dui;
 
         this.opts['pk'] = 'atom';
         this.opts['chemicals'] = 'ball and stick';
+    }
+
+    if(me.cfg.afid !== undefined) {
+        this.opts['color'] = 'confidence';
     }
 
     if(me.cfg.blast_rep_id !== undefined) this.opts['color'] = 'conservation';

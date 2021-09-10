@@ -50,15 +50,22 @@ class ClickMenu {
         this.icn3dui = icn3dui;
     }
 
+    setAlphaFoldLegend() { let me = this.icn3dui, ic = me.icn3d;
+        let legendHtml;
+        legendHtml = '<div>';
+        legendHtml += '<span class="icn3d-square" style="background-color: rgb(0, 83, 204);">&nbsp;</span> <span>Very high (pLDDT &gt; 90)</span><br>';
+        legendHtml += '<span class="icn3d-square" style="background-color: rgb(101, 203, 243);">&nbsp;</span> <span>Confident (90 &gt; pLDDT &gt; 70)</span><br>';
+        legendHtml += '<span class="icn3d-square" style="background-color: rgb(255, 209, 19);">&nbsp;</span> <span>Low (70 &gt; pLDDT &gt; 50)</span><br>';
+        legendHtml += '<span class="icn3d-square" style="background-color: rgb(255, 125, 69);">&nbsp;</span> <span>Very low (pLDDT &lt; 50)</span><br>';
+        legendHtml += '</div>';
+
+        return legendHtml;
+    }
+
     setLegendHtml(bAf) { let me = this.icn3dui, ic = me.icn3d;
         let legendHtml;
         if(bAf) {
-            legendHtml = '<div>';
-            legendHtml += '<span class="icn3d-square" style="background-color: rgb(0, 83, 204);">&nbsp;</span> <span>Very high (pLDDT &gt; 90)</span><br>';
-            legendHtml += '<span class="icn3d-square" style="background-color: rgb(101, 203, 243);">&nbsp;</span> <span>Confident (90 &gt; pLDDT &gt; 70)</span><br>';
-            legendHtml += '<span class="icn3d-square" style="background-color: rgb(255, 209, 19);">&nbsp;</span> <span>Low (70 &gt; pLDDT &gt; 50)</span><br>';
-            legendHtml += '<span class="icn3d-square" style="background-color: rgb(255, 125, 69);">&nbsp;</span> <span>Very low (pLDDT &lt; 50)</span><br>';
-            legendHtml += '</div">';
+            legendHtml = this.setAlphaFoldLegend();
         }
         else {
             let startColorStr = (ic.startColor == 'red') ? '#F00' : (ic.startColor == 'green') ? '#0F0' : '#00F';
@@ -1028,6 +1035,10 @@ class ClickMenu {
         me.myEventCls.onIds("#" + me.pre + "mn4_clrRainbow", "click", function(e) { let ic = me.icn3d;
            ic.setOptionCls.setOption('color', 'rainbow');
            thisClass.setLogCmd('color rainbow', true);
+        });
+        me.myEventCls.onIds("#" + me.pre + "mn4_clrRainbowChain", "click", function(e) { let ic = me.icn3d;
+           ic.setOptionCls.setOption('color', 'rainbow for chains');
+           thisClass.setLogCmd('color rainbow for chains', true);
         });
     //    },
     //    clkMn4_clrChain: function() {
