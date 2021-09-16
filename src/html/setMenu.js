@@ -401,8 +401,9 @@ class SetMenu {
         html += "</li>";
         html += "<li><span>Open File</span>";
         html += "<ul>";
-        html += me.htmlCls.setHtmlCls.getLink('mn1_pdbfile', 'PDB File');
-        html += me.htmlCls.setHtmlCls.getLink('mn1_pdbfile_app', 'PDB File (append)');
+//        html += me.htmlCls.setHtmlCls.getLink('mn1_pdbfile', 'PDB File');
+//        html += me.htmlCls.setHtmlCls.getLink('mn1_pdbfile_app', 'PDB File (append)');
+        html += me.htmlCls.setHtmlCls.getLink('mn1_pdbfile_app', 'PDB File (appendable)');
         html += me.htmlCls.setHtmlCls.getLink('mn1_mmciffile', 'mmCIF File');
         html += me.htmlCls.setHtmlCls.getLink('mn1_mol2file', 'Mol2 File');
         html += me.htmlCls.setHtmlCls.getLink('mn1_sdffile', 'SDF File');
@@ -1234,7 +1235,13 @@ class SetMenu {
 //                html += me.htmlCls.setHtmlCls.getRadio('mn4_clr', 'mn1_delphi2', 'DelPhi<br><span style="padding-left:1.5em;">Potential ' + me.htmlCls.licenseStr + '</span>');
 //            }
 
-            html += me.htmlCls.setHtmlCls.getRadio('mn4_clr', 'mn4_clrHydrophobic', 'Wimley-White<br><span style="padding-left:1.5em;">Hydrophobicity</span>');
+            //html += me.htmlCls.setHtmlCls.getRadio('mn4_clr', 'mn4_clrHydrophobic', 'Wimley-White<br><span style="padding-left:1.5em;">Hydrophobicity</span>');
+
+            html += "<li><span style='padding-left:1.5em;'>Hydrophobicity</span>";
+            html += "<ul>";
+            html += me.htmlCls.setHtmlCls.getRadio('mn4_clr', 'mn4_clrNormalizedHP', 'Normalized');
+            html += me.htmlCls.setHtmlCls.getRadio('mn4_clr', 'mn4_clrHydrophobic', 'Wimley-White');
+            html += "</ul>";
 
             html += "<li><span style='padding-left:1.5em;'>B-factor</span>";
             html += "<ul>";
@@ -1563,6 +1570,7 @@ class SetMenu {
         html += liStr + me.htmlCls.baseUrl + "icn3d/icn3d.html#classstructure' target='_blank'>Class Structure</a></li>";
         html += liStr + me.htmlCls.baseUrl + "icn3d/icn3d.html#addclass' target='_blank'>Add New Classes</a></li>";
         html += liStr + me.htmlCls.baseUrl + "icn3d/icn3d.html#modifyfunction' target='_blank'>Modify Functions</a></li>";
+        html += liStr + me.htmlCls.baseUrl + "icn3d/icn3d.html#restfulapi' target='_blank'>RESTful APIs</a></li>";
         html += "</ul>";
         html += "</li>";
 

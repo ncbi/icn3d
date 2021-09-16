@@ -299,6 +299,41 @@ class ParasCls {
             'GLN': this.thr().setHSL(1/6.0, 1, 0.5 + 0.5 * (-0.58 + 0.58)/(0 + 0.58))
         };
 
+        this.normalizedHPColors = {
+            // charged residues
+            '  G': this.thr(0xFFFFFF),     '  A': this.thr(0xFFFFFF),     '  T': this.thr(0xFFFFFF),
+            '  C': this.thr(0xFFFFFF),     '  U': this.thr(0xFFFFFF),     ' DG': this.thr(0xFFFFFF),
+            ' DA': this.thr(0xFFFFFF),     ' DT': this.thr(0xFFFFFF),     ' DC': this.thr(0xFFFFFF),
+            ' DU': this.thr(0xFFFFFF),       'G': this.thr(0xFFFFFF),       'A': this.thr(0xFFFFFF),
+            'T': this.thr(0xFFFFFF),         'C': this.thr(0xFFFFFF),       'U': this.thr(0xFFFFFF),
+            'DG': this.thr(0xFFFFFF),       'DA': this.thr(0xFFFFFF),      'DT': this.thr(0xFFFFFF),
+            'DC': this.thr(0xFFFFFF),       'DU': this.thr(0xFFFFFF),     'ARG': this.thr(0xFFFFFF),
+            'LYS': this.thr(0xFFFFFF),     'ASP': this.thr(0xFFFFFF),     'GLU': this.thr(0xFFFFFF),
+            'HIS': this.thr(0xFFFFFF),
+
+            //this.thr().setHSL(1/3.0, 1, 0.5 + 0.5 * ( + 0.81)/(1.14 + 0.81)),
+            // hydrophobic
+            // https://en.m.wikipedia.org/wiki/Hydrophobicity_scales#Wimley%E2%80%93White_whole_residue_hydrophobicity_scales
+            // 0.65 ~ -1.85: white ~ green
+            'TRP': this.thr().setHSL(1/3.0, 1, 0.5 + 0.5 * (-1.85 + 1.85)/2.5),
+            'PHE': this.thr().setHSL(1/3.0, 1, 0.5 + 0.5 * (-1.13 + 1.85)/2.5),
+            'TYR': this.thr().setHSL(1/3.0, 1, 0.5 + 0.5 * (-0.94 + 1.85)/2.5),
+            'LEU': this.thr().setHSL(1/3.0, 1, 0.5 + 0.5 * (-0.56 + 1.85)/2.5),
+            'ILE': this.thr().setHSL(1/3.0, 1, 0.5 + 0.5 * (-0.31 + 1.85)/2.5),
+            'CYS': this.thr().setHSL(1/3.0, 1, 0.5 + 0.5 * (-0.24 + 1.85)/2.5),
+            'MET': this.thr().setHSL(1/3.0, 1, 0.5 + 0.5 * (-0.23 + 1.85)/2.5),
+
+            // polar
+            'GLY': this.thr().setHSL(1/3.0, 1, 0.5 + 0.5 * (0.01 + 1.85)/2.5),
+            'VAL': this.thr().setHSL(1/3.0, 1, 0.5 + 0.5 * (0.07 + 1.85)/2.5),
+            'SER': this.thr().setHSL(1/3.0, 1, 0.5 + 0.5 * (0.13 + 1.85)/2.5),
+            'THR': this.thr().setHSL(1/3.0, 1, 0.5 + 0.5 * (0.14 + 1.85)/2.5),
+            'ALA': this.thr().setHSL(1/3.0, 1, 0.5 + 0.5 * (0.17 + 1.85)/2.5),
+            'ASN': this.thr().setHSL(1/3.0, 1, 0.5 + 0.5 * (0.42 + 1.85)/2.5),
+            'PRO': this.thr().setHSL(1/3.0, 1, 0.5 + 0.5 * (0.45 + 1.85)/2.5),
+            'GLN': this.thr().setHSL(1/3.0, 1, 0.5 + 0.5 * (0.58 + 1.85)/2.5)
+        };
+
         this.ssColors = {
             helix: this.thr(0xFF0000),
             sheet: this.thr(0x008000),

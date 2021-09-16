@@ -125,7 +125,7 @@ class ParserUtils {
                 resObject.resi =(seqArray[i][resiPos] == '0') ? i + 1 + offset : seqArray[i][resiPos];
             }
 
-            resObject.name = seqName.toLowerCase();
+            resObject.name = (type === 'align') ? seqName.toLowerCase() : seqName;
 
             ic.chainsSeq[chainid].push(resObject);
         }

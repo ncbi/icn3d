@@ -114,7 +114,7 @@ class PdbParser {
               //ic.ParserUtilsCls.hideLoading();
           },
           success: function(data) {
-            ic.InputfileData = (ic.InputfileData) ? ic.InputfileData + 'ENDMDL\n' + data : data;
+            ic.InputfileData = (ic.InputfileData) ? ic.InputfileData + '\nENDMDL\n' + data : data;
             ic.InputfileType = type;
 
             if(type === 'pdb') {
@@ -180,7 +180,10 @@ class PdbParser {
         // DSSP only works for structures with all atoms. The Calpha only strucutres didn't work
         //if(!ic.bSecondaryStructure && !bCalphaOnly) {
         let bCalcSecondary = false;
-        if(!me.cfg.mmtfid && !me.cfg.pdbid && !me.cfg.opmid && !me.cfg.mmdbid && !me.cfg.gi && !me.cfg.uniprotid && !me.cfg.blast_rep_id && !me.cfg.cid && !me.cfg.mmcifid && !me.cfg.align && !me.cfg.chainalign) {
+        if(ic.bSecondaryStructure && Object.keys(ic.structures).length == 1) {
+            bCalcSecondary = false;
+        }
+        else if(!me.cfg.mmtfid && !me.cfg.pdbid && !me.cfg.opmid && !me.cfg.mmdbid && !me.cfg.gi && !me.cfg.uniprotid && !me.cfg.blast_rep_id && !me.cfg.cid && !me.cfg.mmcifid && !me.cfg.align && !me.cfg.chainalign) {
             bCalcSecondary = true;
         }
 

@@ -305,13 +305,13 @@ class SaveFile {
             if(atom.ssbegin) {
                 if(atom.ss == 'helix') {
                     bHelixBegin = true;
-                    if(bHelixEnd) pdbStr += helixStr.padEnd(15, ' ') + atom.resn.padStart(3, ' ') + atom.chain.padStart(2, ' ')
+                    if(bHelixEnd) pdbStr += helixStr.padEnd(15, ' ') + atom.resn.padStart(3, ' ') + atom.chain.replace(/_/gi, '').substr(0, 2).padStart(2, ' ')
                         + atom.resi.toString().padStart(5, ' ');
                     bHelixEnd = false;
                 }
                 else if(atom.ss == 'sheet') {
                     bSheetBegin = true;
-                    if(bSheetEnd) pdbStr += sheetStr.padEnd(17, ' ') + atom.resn.padStart(3, ' ') + atom.chain.padStart(2, ' ')
+                    if(bSheetEnd) pdbStr += sheetStr.padEnd(17, ' ') + atom.resn.padStart(3, ' ') + atom.chain.replace(/_/gi, '').substr(0, 2).padStart(2, ' ')
                         + atom.resi.toString().padStart(4, ' ');
                     bSheetEnd = false;
                 }
@@ -320,13 +320,13 @@ class SaveFile {
             if(atom.ssend) {
                 if(atom.ss == 'helix') {
                     bHelixEnd = true;
-                    if(bHelixBegin) pdbStr += atom.resn.padStart(5, ' ') + atom.chain.padStart(2, ' ')
+                    if(bHelixBegin) pdbStr += atom.resn.padStart(5, ' ') + atom.chain.replace(/_/gi, '').substr(0, 2).padStart(2, ' ')
                         + atom.resi.toString().padStart(5, ' ') + '\n';
                     bHelixBegin = false;
                 }
                 else if(atom.ss == 'sheet') {
                     bSheetEnd = true;
-                    if(bSheetBegin) pdbStr += atom.resn.padStart(5, ' ') + atom.chain.padStart(2, ' ')
+                    if(bSheetBegin) pdbStr += atom.resn.padStart(5, ' ') + atom.chain.replace(/_/gi, '').substr(0, 2).padStart(2, ' ')
                         + atom.resi.toString().padStart(4, ' ') + '\n';
                     bSheetBegin = false;
                 }
@@ -349,7 +349,7 @@ class SaveFile {
                 pdbStr += connStr;
                 connStr = '';
 
-                if(molNum > 1)  pdbStr += 'ENDMDL\n';
+                if(molNum > 1)  pdbStr += '\nENDMDL\n';
                 pdbStr += 'MODEL        ' + molNum + '\n';
                 prevStru = atom.structure;
                 ++molNum;
@@ -408,8 +408,19 @@ class SaveFile {
     */
 
             line +=(resn.length <= 3) ? resn.padStart(3, ' ') : resn.substr(0, 3);
-            line += ' ';
-            line +=(atom.chain.length <= 1) ? atom.chain.padStart(1, ' ') : atom.chain.substr(0, 1);
+            //line += ' ';
+            //line +=(atom.chain.length <= 1) ? atom.chain.padStart(1, ' ') : atom.chain.substr(0, 1);
+            if(atom.chain.length >= 2) {
+                let chainTmp = atom.chain.replace(/_/gi, '').substr(0, 2);
+                line += chainTmp;
+            }
+            else if(atom.chain.length == 1) {
+                line += ' ' + atom.chain.substr(0, 1);
+            }
+            else if(atom.chain.length == 0) {
+                line += ' A';
+            }
+
             let resi = atom.resi;
             if(!isNaN(resi) && atom.chain.length > 3 && !isNaN(atom.chain.substr(3)) ) { // such as: chain = NAG2, resi=1 => chain = NAG, resi=2
                 resi = resi - 1 + parseInt(atom.chain.substr(3));
@@ -490,7 +501,7 @@ class SaveFile {
 
         pdbStr += connStr;
 
-        if(bMulStruc) pdbStr += 'ENDMDL\n';
+        if(bMulStruc) pdbStr += '\nENDMDL\n';
 
         return pdbStr;
     }

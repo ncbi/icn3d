@@ -1145,6 +1145,12 @@ class ClickMenu {
            ic.setOptionCls.setOption('color', 'hydrophobic');
            thisClass.setLogCmd('color hydrophobic', true);
         });
+
+        me.myEventCls.onIds("#" + me.pre + "mn4_clrNormalizedHP", "click", function(e) { let ic = me.icn3d;
+           ic.setOptionCls.setOption('color', 'normalized hydrophobic');
+           thisClass.setLogCmd('color normalized hydrophobic', true);
+        });
+
     //    },
     //    clkMn4_clrAtom: function() {
         me.myEventCls.onIds("#" + me.pre + "mn4_clrAtom", "click", function(e) { let ic = me.icn3d;

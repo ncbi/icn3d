@@ -139,6 +139,7 @@ class RealignParser {
       for(let index = 0, indexl = dataArray.length; index < indexl; ++index) {
     //  for(let index = 1, indexl = dataArray.length; index < indexl; ++index) {
           let  data = dataArray[index][0];
+          if(!data) continue;
 
           let  fromStruct = chainidArray[index + 1].substr(0, chainidArray[index + 1].indexOf('_')); //.toUpperCase();
           if(!bRealign) fromStruct = fromStruct.toUpperCase();
@@ -306,8 +307,10 @@ class RealignParser {
             let  chainid = mmdbid + chainidArray[i].substr(pos);
 
             if(!ic.chainsSeq[chainid]) {
-                alert("Please select one chain per structure and try it again...");
-                return;
+                //alert("Please select one chain per structure and try it again...");
+                //return;
+
+                continue;
             }
 
             if(!struct2SeqHash.hasOwnProperty(mmdbid)) {
@@ -332,7 +335,8 @@ class RealignParser {
                     let residHash = ic.firstAtomObjCls.getResiduesFromAtoms(ic.hAtoms);
                     for(var resid in residHash) {
                         let resi = resid.substr(resid.lastIndexOf('_') + 1);
-                        resiArray.push(resi);
+                        let chainidTmp = resid.substr(0, resid.lastIndexOf('_'));
+                        if(chainidTmp == chainid) resiArray.push(resi);
                     }
                 }
                 else if(bPredefined) {
@@ -351,56 +355,55 @@ class RealignParser {
                             if(!ic.chainsSeq[chainid][k - base] || me.parasCls.b62ResArray.indexOf(ic.chainsSeq[chainid][k - base].name.toUpperCase()) == -1) continue;
 
                             struct2SeqHash[mmdbid] += ic.chainsSeq[chainid][k - base].name;
-                            let  bFound = false;
-                            for(let serial in ic.residues[chainid + '_' + k]) {
-                                let  atom = ic.atoms[serial];
-                                if((ic.proteins.hasOwnProperty(serial) && atom.name == "CA" && atom.elem == "C")
-                                  ||(ic.nucleotides.hasOwnProperty(serial) &&(atom.name == "O3'" || atom.name == "O3*") && atom.elem == "O") ) {
-                                    struct2CoorHash[mmdbid].push(atom.coord.clone());
-                                    bFound = true;
-                                    break;
-                                }
-                            }
-                            if(!bFound) struct2CoorHash[mmdbid].push(undefined);
+
+                            struct2CoorHash[mmdbid] = struct2CoorHash[mmdbid].concat(this.getResCoorArray(chainid + '_' + k));
 
                             struct2resid[mmdbid].push(chainid + '_' + k);
                         }
                     }
                     else { // one residue
                         let  k = parseInt(resiArray[j]);
+                        if(!ic.chainsSeq[chainid][k - base]) continue;
+
                         struct2SeqHash[mmdbid] += ic.chainsSeq[chainid][k - base].name;
-                        let  bFound = false;
-                        for(let serial in ic.residues[chainid + '_' + k]) {
-                            let  atom = ic.atoms[serial];
-                            if((ic.proteins.hasOwnProperty(serial) && atom.name == "CA" && atom.elem == "C")
-                              ||(ic.nucleotides.hasOwnProperty(serial) &&(atom.name == "O3'" || atom.name == "O3*") && atom.elem == "O") ) {
-                                struct2CoorHash[mmdbid].push(atom.coord.clone());
-                                bFound = true;
-                                break;
-                            }
-                        }
-                        if(!bFound) struct2CoorHash[mmdbid].push(undefined);
+
+                        struct2CoorHash[mmdbid] = struct2CoorHash[mmdbid].concat(this.getResCoorArray(chainid + '_' + k));
+
                         struct2resid[mmdbid].push(chainid + '_' + k);
                     }
                 }
             }
             else {
-                for(let j = 0, jl = ic.chainsSeq[chainid].length; j < jl; ++j) {
-                    struct2SeqHash[mmdbid] += ic.chainsSeq[chainid][j].name;
-                    let  resid = chainid + '_' + ic.chainsSeq[chainid][j].resi;
-                    let  bFound = false;
-                    for(let serial in ic.residues[resid]) {
-                        let  atom = ic.atoms[serial];
-                        if((ic.proteins.hasOwnProperty(serial) && atom.name == "CA" && atom.elem == "C")
-                          ||(ic.nucleotides.hasOwnProperty(serial) &&(atom.name == "O3'" || atom.name == "O3*") && atom.elem == "O") ) {
-                            struct2CoorHash[mmdbid].push(atom.coord.clone());
-                            bFound = true;
-                            break;
+                // if selected both chains
+                let bSelectedBoth = false;
+                if(bRealign) {
+                    //resiArray = [resRange];
+                    let residHash = ic.firstAtomObjCls.getResiduesFromAtoms(ic.hAtoms);
+                    for(var resid in residHash) {
+                        let resi = resid.substr(resid.lastIndexOf('_') + 1);
+                        let chainidTmp = resid.substr(0, resid.lastIndexOf('_'));
+                        if(chainidTmp == chainid) {
+                            bSelectedBoth = true;
+
+                            let resn = ic.firstAtomObjCls.getFirstAtomObj(ic.residues[resid]).resn;
+                            struct2SeqHash[mmdbid] += me.utilsCls.residueName2Abbr(resn);
+
+                            struct2CoorHash[mmdbid] = struct2CoorHash[mmdbid].concat(this.getResCoorArray(resid));
+
+                            struct2resid[mmdbid].push(resid);
                         }
                     }
-                    if(!bFound) struct2CoorHash[mmdbid].push(undefined);
+                }
 
-                    struct2resid[mmdbid].push(resid);
+                if(!bSelectedBoth) {
+                    for(let j = 0, jl = ic.chainsSeq[chainid].length; j < jl; ++j) {
+                        struct2SeqHash[mmdbid] += ic.chainsSeq[chainid][j].name;
+                        let  resid = chainid + '_' + ic.chainsSeq[chainid][j].resi;
+
+                        struct2CoorHash[mmdbid] = struct2CoorHash[mmdbid].concat(this.getResCoorArray(resid));
+
+                        struct2resid[mmdbid].push(resid);
+                    }
                 }
             }
 
@@ -438,6 +441,24 @@ class RealignParser {
                //thisClass.parseChainRealignData(arguments, chainresiCalphaHash2, chainidArray, struct2SeqHash, struct2CoorHash, struct2resid, bRealign);
             });
         }
+    }
+
+    getResCoorArray(resid) { let  ic = this.icn3d, me = ic.icn3dui;
+        let struct2CoorArray = [];
+
+        let  bFound = false;
+        for(let serial in ic.residues[resid]) {
+            let  atom = ic.atoms[serial];
+            if((ic.proteins.hasOwnProperty(serial) && atom.name == "CA" && atom.elem == "C")
+              ||(ic.nucleotides.hasOwnProperty(serial) &&(atom.name == "O3'" || atom.name == "O3*") && atom.elem == "O") ) {
+                struct2CoorArray.push(atom.coord.clone());
+                bFound = true;
+                break;
+            }
+        }
+        if(!bFound) struct2CoorArray.push(undefined);
+
+        return struct2CoorArray;
     }
 }
 

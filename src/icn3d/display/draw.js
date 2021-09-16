@@ -32,7 +32,7 @@ class Draw {
         ic.setColorCls.applyPrevColor();
 
         if(ic.biomtMatrices !== undefined && ic.biomtMatrices.length > 1) {
-            if(ic.bAssembly) {
+            if(ic.bAssembly && Object.keys(ic.structures).length == 1) {
                 ic.instancingCls.drawSymmetryMates();
             }
             else {

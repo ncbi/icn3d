@@ -129,7 +129,8 @@ class SelectByCommand {
              moleculeStr = "*";
            }
            else {
-             moleculeStr = testStr.substr(dollarPos + 1).toUpperCase();
+             //moleculeStr = testStr.substr(dollarPos + 1).toUpperCase();
+             moleculeStr = testStr.substr(dollarPos + 1);
              testStr = testStr.substr(0, dollarPos);
            }
 
