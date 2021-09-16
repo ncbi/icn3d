@@ -299,7 +299,10 @@ class ShareLink {
             text += "End of type file======\n";
 
             text += "Start of data file======\n";
-            text += ic.InputfileData;
+            //text += ic.InputfileData;
+            text += ic.saveFileCls.getPDBHeader();
+            text += ic.saveFileCls.getAtomPDB(ic.atoms);
+
             text += "End of data file======\n";
 
             text += "Start of state file======\n";

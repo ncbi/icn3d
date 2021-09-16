@@ -456,6 +456,9 @@ class SetSeqAlign {
           ic.alnChainsAnno[chainid_t] = [];
           ic.alnChainsAnTtl[chainid_t] = [];
 
+          ic.alnChainsSeq[chainid] = [];
+          ic.alnChains[chainid] = {}
+
     //      let  emptyResObject = {resid: '', resn:'', resi: 0, aligned: false}
 
     //      let  prevChainid1 = '', prevChainid2 = '', cnt1 = 0, cnt2 = 0;
@@ -481,7 +484,7 @@ class SetSeqAlign {
               residuesHash[resObject2.resid] = 1;
 
               let  color;
-              if(resObject1.resn == resObject2.resn) {
+              if(resObject1.resn.toUpperCase() == resObject2.resn.toUpperCase()) {
                   color = "#FF0000";
               }
               else {

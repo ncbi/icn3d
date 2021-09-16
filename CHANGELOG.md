@@ -1,4 +1,6 @@
 ## Change Log
+[icn3d-3.4.4](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.4.4.zip) was release on September 16, 2021. Users can load multiple structures by appending PDB files with the menu "File > Open File > PDB File (appendable)" to othe PDB files or other structures, which are retrieved by IDs such as "mmdbid" or "mmmtfid". A new color method "Color > Hydrophobicity > Normalized" was added to show hydrophobicity for any residues with different green color.
+
 [icn3d-3.4.3](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.4.3.zip) was release on September 10, 2021. Replaced delphi.fcgi with delphi.cgi.
 
 [icn3d-3.4.2](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.4.2.zip) was release on August 26, 2021. AlphaFold predicted structures can be viewed at iCn3D with the menu "File > Retrieve by ID > AlphaFold UniProt ID". The domain annotation can be displayed by clicking the menu "Analysis > Seq. & Annotations".

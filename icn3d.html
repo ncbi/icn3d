@@ -172,6 +172,7 @@ pre span {color: red;}
     <li><a href="#classstructure"><span>Class Structure</span></a></li>
     <li><a href="#addclass"><span>Add New Classes</span></a></li>
     <li><a href="#modifyfunction"><span>Modify Functions</span></a></li>
+    <li><a href="#restfulapi"><span>RESTful APIs</span></a></li>
   </ul></li>
 <li><a href="https://www.ncbi.nlm.nih.gov/Structure/icn3d/docs/icn3d_help.html"><span>Help Doc</span></a></li>
 </ul>
@@ -2429,14 +2430,14 @@ Each function in classes in the directory "html" has a variable "me" to represen
 
 <table border='1' cellpadding='5' cellspacing='0'>
 <tr><th>Global</th><th>Class (directory)</th><th>Class (directory)</th><th>Class (directory)</th><th>Functions</th></tr>
-<tr><td><b>icn3d</b></td><td><b>icn3dui (src)</b></td><td><b>UtilsCls (utils)</b></td><td></td><td>setIcn3d, setDialogAjax</td></tr>
-<tr><td>icn3d</td><td>icn3dui</td><td>UtilsCls (utils)</td><td></td><td>isIE, isMobile, isMac, isSessionStorageSupported, hexToRgb, isCalphaPhosOnly, hasCovalentBond, residueName2Abbr, residueAbbr2Name, getJSONFromArray, checkFileAPI, getIdArray, compResid, toggle, setViewerWidthHeight</td></tr>
-<tr><td>icn3d</td><td>icn3dui</td><td>HashUtilsCls (utils)</td><td></td><td>cloneHash, intHash, exclHash, unionHash, unionHashInPlace, unionHashNotInPlace, intHash2Atoms, exclHash2Atoms, unionHash2Atoms, hash2Atoms, hashvalue2array</td></tr>
-<tr><td>icn3d</td><td>icn3dui</td><td>ParasCls (utils)</td><td></td><td>Parameters: glycanHash, nucleotidesArray, ionsArray, cationsTrimArray, anionsTrimArray, ionCharges, vdwRadii, covalentRadii, surfaces, atomColors, defaultAtomColor, stdChainColors, backgroundColors, residueColors, residueArea, defaultResidueColor, chargeColors, hydrophobicColors, ssColors, ssColors2, b62ResArray, b62Matrix<br>Functions: thr</td></tr>
-<tr><td>icn3d</td><td>icn3dui</td><td>MyEventCls (utils)</td><td></td><td>onId, onIds</td></tr>
-<tr><td>icn3d</td><td>icn3dui</td><td>SubdivideCls (utils)</td><td></td><td>subdivide, getKnot, getValueFromKnot</td></tr>
-<tr><td>icn3d</td><td>icn3dui</td><td>RmsdSuprCls (utils)</td><td></td><td>getRmsdSuprCls, eigen_values, null_basis, getEigenForSelection, getEigenVectors</td></tr>
-<tr><td>icn3d</td><td>icn3dui</td><td>ConvertTypeCls (utils)</td><td></td><td>passFloat32, passInt8, passInt16, passInt32, getUint8View, getDataView, getView, getBlobFromBufferAndText</td></tr>
+<tr><td><b>icn3d</b></td><td><b>icn3dui (src)</b></td><td><b>utilsCls (utils)</b></td><td></td><td>setIcn3d, setDialogAjax</td></tr>
+<tr><td>icn3d</td><td>icn3dui</td><td>utilsCls (utils)</td><td></td><td>isIE, isMobile, isMac, isSessionStorageSupported, hexToRgb, isCalphaPhosOnly, hasCovalentBond, residueName2Abbr, residueAbbr2Name, getJSONFromArray, checkFileAPI, getIdArray, compResid, toggle, setViewerWidthHeight</td></tr>
+<tr><td>icn3d</td><td>icn3dui</td><td>hashUtilsCls (utils)</td><td></td><td>cloneHash, intHash, exclHash, unionHash, unionHashInPlace, unionHashNotInPlace, intHash2Atoms, exclHash2Atoms, unionHash2Atoms, hash2Atoms, hashvalue2array</td></tr>
+<tr><td>icn3d</td><td>icn3dui</td><td>parasCls (utils)</td><td></td><td>Parameters: glycanHash, nucleotidesArray, ionsArray, cationsTrimArray, anionsTrimArray, ionCharges, vdwRadii, covalentRadii, surfaces, atomColors, defaultAtomColor, stdChainColors, backgroundColors, residueColors, residueArea, defaultResidueColor, chargeColors, hydrophobicColors, ssColors, ssColors2, b62ResArray, b62Matrix<br>Functions: thr</td></tr>
+<tr><td>icn3d</td><td>icn3dui</td><td>myEventCls (utils)</td><td></td><td>onId, onIds</td></tr>
+<tr><td>icn3d</td><td>icn3dui</td><td>subdivideCls (utils)</td><td></td><td>subdivide, getKnot, getValueFromKnot</td></tr>
+<tr><td>icn3d</td><td>icn3dui</td><td>rmsdSuprCls (utils)</td><td></td><td>getRmsdSuprCls, eigen_values, null_basis, getEigenForSelection, getEigenVectors</td></tr>
+<tr><td>icn3d</td><td>icn3dui</td><td>convertTypeCls (utils)</td><td></td><td>passFloat32, passInt8, passInt16, passInt32, getUint8View, getDataView, getView, getBlobFromBufferAndText</td></tr>
 <tr><td><b>icn3d</b></td><td><b>icn3dui (src)</b></td><td><b>htmlCls (html)</b></td><td></td><td>N/A</td></tr>
 <tr><td>icn3d</td><td>icn3dui</td><td>htmlCls</td><td>alignSeqCls (html)</td><td>getAlignSequencesAnnotations</td></tr>
 <tr><td>icn3d</td><td>icn3dui</td><td>htmlCls</td><td>clickMenuCls (html)</td><td>clickMenu1, clickMenu2, clickMenu3, clickMenu4, clickMenu5, clickMenu6, setLogCmd</td></tr>
@@ -2531,7 +2532,7 @@ Each function in classes in the directory "html" has a variable "me" to represen
 <tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>mmtfParserCls (parsers)</td><td>downloadMmtf, parseMmtfData</td></tr>
 <tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>mol2ParserCls (parsers)</td><td>loadMol2Data, loadMol2AtomData</td></tr>
 <tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>opmParserCls (parsers)</td><td>downloadOpm, loadOpmData, setOpmData, parseAtomData</td></tr>
-<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>parserUtilsCls (parsers)</td><td>alignCoords, getMissingResidues, set2DDiagramsForAlign, set2DDiagramsForChainalign, parse2DDiagramsData, set2DDiagrams, showLoading, hideLoading, setYourNote, transformToOpmOri, transformToOpmOriForAlign, addOneDumAtom, addMemAtoms, setMaxD, renderStructure</td></tr>
+<tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>ParserUtilsCls (parsers)</td><td>alignCoords, getMissingResidues, set2DDiagramsForAlign, set2DDiagramsForChainalign, parse2DDiagramsData, set2DDiagrams, showLoading, hideLoading, setYourNote, transformToOpmOri, transformToOpmOriForAlign, addOneDumAtom, addMemAtoms, setMaxD, renderStructure</td></tr>
 <tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>pdbParserCls (parsers)</td><td>downloadPdb, downloadUrl, loadPdbData, loadPdbDataRender</td></tr>
 <tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>realignParserCls (parsers)</td><td>realign, parseChainRealignData, realignOnSeqAlign, realignChainOnSeqAlign</td></tr>
 <tr><td>icn3d</td><td>icn3dui</td><td>icn3d</td><td>sdfParserCls (parsers)</td><td>downloadCid, loadSdfData, loadSdfAtomData</td></tr>
@@ -2621,6 +2622,23 @@ To modify functions in some classes of iCn3D, you can follow the example of <a h
         // 2. Modify the function as if it is in the class "Picking"
     }
 </pre>
+<br>
+
+<span class="anchor" id="restfulapi"></span>
+<a name="restfulapi"></a>
+
+<h3>RESTful APIs<img src="https://www.ncbi.nlm.nih.gov/Structure/IMG/spacer.gif" width="25" height="1" border="0"><a href="#Top"><img src="https://www.ncbi.nlm.nih.gov/Structure/IMG/arrowup_blue.gif" width="12" height="12" border="0" alt="back to top"></a></h3>
+<b>delphi.cgi</b><br>
+The "DelPhi" program calculates electrostatic potentials. A typical use of the API https://www.ncbi.nlm.nih.gov/Structure/delphi/delphi.cgi is to post data to this API with a few parameters. The parameter "pdb2pqr" inputs the Protein Data Bank (PDB) string and outputs the PQR string with atom partial charge and atom size. The parameters "pdb2phi" and "pqr2phi" input the PDB string or PQR string, respectively, and both output the calculated potential. The parameters "gsize" and "salt" are used to define the grid size and salt concentration (M), respectively. The parameter "cube" is used to output the potential in the text format, not the default binary format.<br>
+<br>
+
+<b>scap.cgi</b><br>
+The "scap" program predicts side chains due to mutations. A typical use of the API https://www.ncbi.nlm.nih.gov/Structure/scap/scap.cgi is to post data to this API with a few parameters. The parameters "pdb" and "snp" input the PDB string and the SNP in the format "[chain ID],[residue number],[mutant]". For example, "A,10,K" means that the residue with a residue number 10 in the chain A will be mutated to Lys. The parameter "json=1" outputs the mutant's PDB string in the JSON format. <br>
+<br>
+
+<b>symd.cgi</b><br>
+The "SymD" program determines symmetries in structures. A typical use of the API https://www.ncbi.nlm.nih.gov/Structure/symd/symd.cgi is to post a PDB string to this API with the parameter "pdb". The output is a JSON blob describing the symmetry.<br>
+<br>
 <br>
 
 <span class="anchor" id="helpdoc"></span>

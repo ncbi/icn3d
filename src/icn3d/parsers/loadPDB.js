@@ -23,6 +23,8 @@ class LoadPDB {
         let  chainsTmp = {} // serial -> atom
         let  residuesTmp = {} // serial -> atom
 
+        if(!ic.atoms) bAppend = false;
+
         let  serial, moleculeNum;
         if(!bMutation && !bAppend) {
             ic.init();
@@ -46,12 +48,12 @@ class LoadPDB {
                 delete ic.structures[nStru - 1];
             }
             else {
-                ic.oriNStru = Object.keys(ic.structures).length;
+                ic.oriNStru = (ic.structures) ? Object.keys(ic.structures).length : 0;
             }
 
             moleculeNum = ic.oriNStru + 1; //Object.keys(ic.structures).length + 1;
             // Concatenation of two pdbs will have several atoms for the same serial
-            serial = Object.keys(ic.atoms).length;
+            serial = (ic.atoms) ? Object.keys(ic.atoms).length : 0;
         }
 
         let  sheetArray = [], sheetStart = [], sheetEnd = [], helixArray = [], helixStart = [], helixEnd = [];
@@ -78,7 +80,9 @@ class LoadPDB {
                 // if(bOpm === undefined || !bOpm) ic.bSecondaryStructure = true;
 
                 id = line.substr(62, 4).trim();
+
                 if(id == '') {
+                    if(!ic.inputid) ic.inputid = 'stru';
                     id = (ic.inputid.indexOf('/') == -1) ? ic.inputid.substr(0, 10) : "stru"; //ic.filename.substr(0, 4);
                 }
 
@@ -91,7 +95,8 @@ class LoadPDB {
             } else if (record === 'HELIX ') {
                 ic.bSecondaryStructure = true;
 
-                let  startChain = (line.substr(19, 1) == ' ') ? 'A' : line.substr(19, 1);
+                //let  startChain = (line.substr(19, 1) == ' ') ? 'A' : line.substr(19, 1);
+                let  startChain = (line.substr(18, 2).trim() == '') ? 'A' : line.substr(18, 2).trim();
                 let  startResi = parseInt(line.substr(21, 4));
                 let  endResi = parseInt(line.substr(33, 4));
 
@@ -115,7 +120,8 @@ class LoadPDB {
                 //ic.bSecondaryStructure = true;
                 if(bOpm === undefined || !bOpm) ic.bSecondaryStructure = true;
 
-                let  startChain = (line.substr(21, 1) == ' ') ? 'A' : line.substr(21, 1);
+                //let  startChain = (line.substr(21, 1) == ' ') ? 'A' : line.substr(21, 1);
+                let  startChain = (line.substr(20, 2).trim() == '') ? 'A' : line.substr(20, 2).trim();
                 let  startResi = parseInt(line.substr(22, 4));
                 let  endResi = parseInt(line.substr(33, 4));
 
@@ -134,7 +140,6 @@ class LoadPDB {
                     terminalResidue: endResi,
                     terminalInscode: line.substr(37, 1),
                 });
-
             } else if (record === 'HBOND ') {
                 if(bOpm === undefined || !bOpm) ic.bSecondaryStructure = true;
     /*
@@ -242,7 +247,7 @@ class LoadPDB {
                 //}
 
                 let  structure = id;
-                if(id == 'stru' || bMutation || bAppend) { // bMutation: side chain prediction
+                if(id == 'stru' || bMutation || (bAppend && id == 'stru')) { // bMutation: side chain prediction
                     structure = (moleculeNum === 1) ? id : id + moleculeNum.toString();
                 }
 
@@ -263,8 +268,10 @@ class LoadPDB {
                 let  atom = line.substr(12, 4).trim();
                 let  resn = line.substr(17, 3);
 
-                let  chain = line.substr(21, 1);
-                if(chain === ' ') chain = 'A';
+                //let  chain = line.substr(21, 1);
+                //if(chain === ' ') chain = 'A';
+                let  chain = line.substr(20, 2).trim();
+                if(chain === '') chain = 'A';
 
                 //var oriResi = line.substr(22, 4).trim();
                 let  oriResi = line.substr(22, 5).trim();
@@ -392,7 +399,6 @@ class LoadPDB {
                 //if(residueNum !== prevResidueNum) {
                 if(oriResidueNum !== prevOriResidueNum) {
                     let  residue = me.utilsCls.residueName2Abbr(resn);
-
                     ic.residueId2Name[residueNum] = residue;
 
                     if(serial !== 1 && prevResidueNum !== '') ic.residues[prevResidueNum] = residuesTmp;

@@ -326,6 +326,16 @@ class SetColor {
                     ic.atomPrevColors[i] = atom.color;
                 }
                 break;
+            case 'normalized hydrophobic':
+                for (let i in atoms) {
+                    let atom = ic.atoms[i];
+
+                    //atom.color = atom.het ? me.parasCls.atomColors[atom.elem] || me.parasCls.defaultAtomColor : me.parasCls.chargeColors[atom.resn] || me.parasCls.defaultResidueColor;
+                    atom.color = atom.het ? me.parasCls.defaultAtomColor : me.parasCls.normalizedHPColors[atom.resn] || me.parasCls.defaultResidueColor;
+
+                    ic.atomPrevColors[i] = atom.color;
+                }
+                break;
             case 'atom':
                 for (let i in atoms) {
                     let atom = ic.atoms[i];

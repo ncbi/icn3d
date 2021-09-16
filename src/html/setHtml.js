@@ -682,7 +682,7 @@ class SetHtml {
            if(ic.bInputfile) {
                let posDataEnd = imageStr.indexOf("End of data file======\n");
                let data = imageStr.substr(posData + matchedStrData.length, posDataEnd - posData - matchedStrData.length);
-               ic.InputfileData = (ic.InputfileData) ? ic.InputfileData + 'ENDMDL\n' + data : data;
+               ic.InputfileData = (ic.InputfileData) ? ic.InputfileData + '\nENDMDL\n' + data : data;
 
                let matchedStrType = "Start of type file======\n";
                let posType = imageStr.indexOf(matchedStrType);
