@@ -1640,15 +1640,15 @@ class ClickMenu {
         me.myEventCls.onIds("#" + me.pre + "mn6_sidebyside", "click", function(e) { let ic = me.icn3d;
            let bSidebyside = true;
            let url = ic.shareLinkCls.shareLinkUrl(undefined);
-           if(url.indexOf('http') !== 0) {
-               alert("The url is more than 4000 characters and may not work.");
-           }
-           else {
+           //if(url.indexOf('http') !== 0) {
+           //    alert("The url is more than 4000 characters and may not work.");
+           //}
+           //else {
                url = url.replace("full.html", "full2.html");
                url += '&closepopup=1';
                window.open(url, '_blank');
                thisClass.setLogCmd('side by side | ' + url, true);
-           }
+           //}
         });
     //    },
     /*

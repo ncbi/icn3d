@@ -336,11 +336,15 @@ iCn3DUI.prototype.show3DStructure = function() { let me = this;
     ic.molTitle = '';
     ic.loadCmd;
     if(me.cfg.url !== undefined) {
+        ic.bInputUrlfile = true;
+
         let type_url = me.cfg.url.split('|');
         let type = type_url[0];
         let url = type_url[1];
         ic.molTitle = "";
         ic.inputid = url;
+        ic.inputurl = 'type=' + type + '&url=' + encodeURIComponent(url);
+
         ic.loadCmd = 'load url ' + url + ' | type ' + type;
         me.htmlCls.clickMenuCls.setLogCmd(ic.loadCmd, true);
         ic.pdbParserCls.downloadUrl(url, type);

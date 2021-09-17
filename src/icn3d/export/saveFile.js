@@ -333,6 +333,21 @@ class SaveFile {
             }
         }
 
+        // export assembly symmetry matrix "BIOMT"
+        if(ic.biomtMatrices) {
+            for(let m = 0, ml = ic.biomtMatrices.length; m < ml; ++m) {
+                let mNum = m + 1;
+                for(let n = 0; n < 3; ++n) {
+                    let nNum = n + 1;
+                    pdbStr += "REMARK 350   BIOMT" + nNum.toString() + "  " + mNum.toString().padStart(2, ' ')
+                        + " " + ic.biomtMatrices[m].elements[n + 0].toString().padStart(9, ' ')
+                        + " " + ic.biomtMatrices[m].elements[n + 4].toString().padStart(9, ' ')
+                        + " " + ic.biomtMatrices[m].elements[n + 8].toString().padStart(9, ' ')
+                        + " " + ic.biomtMatrices[m].elements[n + 12].toString().padStart(14, ' ') + "\n";
+                }
+            }
+        }
+
         let connStr = '';
         let struArray = Object.keys(ic.structures);
         let bMulStruc =(struArray.length > 1) ? true : false;

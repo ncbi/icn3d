@@ -86,7 +86,7 @@
               setupViewer('blast_rep_id', cfg.blast_rep_id, cfg);
           }
           else if(cfg.urlname !== undefined) {
-              var urlname = decodeURIComponent(urlname);
+              var urlname = decodeURIComponent(cfg.urlname);
               setupViewer('url', cfg.urltype + '|' + urlname, cfg);
           }
           // e.g., align=103701,1,4,68563,1,167 [mmdbid1,biounit,molecule,mmdbid2,biounit,molecule]
@@ -143,14 +143,14 @@
 
         var idArray = idValue.replace(/\s/g, '').split(',');
 
-        if(idArray.length > 1) {
+        //if(idArray.length > 1) {
           cfg.resize = false;
 
           if(cfg.width && cfg.width.indexOf('%') != -1) {
             cfg.width = 400;
             cfg.height = 400;
           }
-        }
+        //}
 
         //for(var i = 0, il = idArray.length; i < il && i < maxStructure; ++i) {
           var i = 0;
