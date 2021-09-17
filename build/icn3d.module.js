@@ -20885,7 +20885,8 @@ class LoadPDB {
                     ic.biomtMatrices[m].elements[n] = parseFloat(line.substr(24, 9));
                     ic.biomtMatrices[m].elements[n + 4] = parseFloat(line.substr(34, 9));
                     ic.biomtMatrices[m].elements[n + 8] = parseFloat(line.substr(44, 9));
-                    ic.biomtMatrices[m].elements[n + 12] = parseFloat(line.substr(54, 10));
+                    //ic.biomtMatrices[m].elements[n + 12] = parseFloat(line.substr(54, 10));
+                    ic.biomtMatrices[m].elements[n + 12] = parseFloat(line.substr(54, 14));
                  }
                  // missing residues
                  else if (type == 465 && line.substr(18, 1) == ' ' && line.substr(20, 1) == ' ' && line.substr(21, 1) != 'S') {
@@ -43252,6 +43253,21 @@ class SaveFile {
             }
         }
 
+        // export assembly symmetry matrix "BIOMT"
+        if(ic.biomtMatrices) {
+            for(let m = 0, ml = ic.biomtMatrices.length; m < ml; ++m) {
+                let mNum = m + 1;
+                for(let n = 0; n < 3; ++n) {
+                    let nNum = n + 1;
+                    pdbStr += "REMARK 350   BIOMT" + nNum.toString() + "  " + mNum.toString().padStart(2, ' ')
+                        + " " + ic.biomtMatrices[m].elements[n + 0].toString().padStart(9, ' ')
+                        + " " + ic.biomtMatrices[m].elements[n + 4].toString().padStart(9, ' ')
+                        + " " + ic.biomtMatrices[m].elements[n + 8].toString().padStart(9, ' ')
+                        + " " + ic.biomtMatrices[m].elements[n + 12].toString().padStart(14, ' ') + "\n";
+                }
+            }
+        }
+
         let connStr = '';
         let struArray = Object.keys(ic.structures);
         let bMulStruc =(struArray.length > 1) ? true : false;
@@ -45140,15 +45156,15 @@ class ClickMenu {
     //    clkMn6_sidebyside: function() {
         me.myEventCls.onIds("#" + me.pre + "mn6_sidebyside", "click", function(e) { let ic = me.icn3d;
            let url = ic.shareLinkCls.shareLinkUrl(undefined);
-           if(url.indexOf('http') !== 0) {
-               alert("The url is more than 4000 characters and may not work.");
-           }
-           else {
+           //if(url.indexOf('http') !== 0) {
+           //    alert("The url is more than 4000 characters and may not work.");
+           //}
+           //else {
                url = url.replace("full.html", "full2.html");
                url += '&closepopup=1';
                window.open(url, '_blank');
                thisClass.setLogCmd('side by side | ' + url, true);
-           }
+           //}
         });
     //    },
     /*
@@ -54659,11 +54675,15 @@ iCn3DUI.prototype.show3DStructure = function() { let me = this;
     ic.molTitle = '';
     ic.loadCmd;
     if(me.cfg.url !== undefined) {
+        ic.bInputUrlfile = true;
+
         let type_url = me.cfg.url.split('|');
         let type = type_url[0];
         let url = type_url[1];
         ic.molTitle = "";
         ic.inputid = url;
+        ic.inputurl = 'type=' + type + '&url=' + encodeURIComponent(url);
+
         ic.loadCmd = 'load url ' + url + ' | type ' + type;
         me.htmlCls.clickMenuCls.setLogCmd(ic.loadCmd, true);
         ic.pdbParserCls.downloadUrl(url, type);

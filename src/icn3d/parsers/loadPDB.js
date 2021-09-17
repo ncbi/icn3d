@@ -194,7 +194,8 @@ class LoadPDB {
                     ic.biomtMatrices[m].elements[n] = parseFloat(line.substr(24, 9));
                     ic.biomtMatrices[m].elements[n + 4] = parseFloat(line.substr(34, 9));
                     ic.biomtMatrices[m].elements[n + 8] = parseFloat(line.substr(44, 9));
-                    ic.biomtMatrices[m].elements[n + 12] = parseFloat(line.substr(54, 10));
+                    //ic.biomtMatrices[m].elements[n + 12] = parseFloat(line.substr(54, 10));
+                    ic.biomtMatrices[m].elements[n + 12] = parseFloat(line.substr(54, 14));
                  }
                  // missing residues
                  else if (type == 465 && line.substr(18, 1) == ' ' && line.substr(20, 1) == ' ' && line.substr(21, 1) != 'S') {
