@@ -105,7 +105,8 @@ class LoadScript {
       for(i=start; i <= end; ++i) {
           let  bFinalStep =(i === steps - 1) ? true : false;
 
-          if(!ic.commands[i]) continue;
+          if(!ic.commands[i].trim()) continue;
+          if(!ic.atoms && ic.commands[i].indexOf('load') == -1) continue;
 
           if(ic.commands[i].indexOf('load') !== -1) {
               if(end === 0 && start === end) {

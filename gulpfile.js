@@ -112,7 +112,8 @@ gulp.task('copy',
   //gulp.series('clean'),
   function() {
     return gulp.src([
-            'LICENSE',
+            'LICENSE.md',
+            'CHANGELOG.md',
             'README.md'
         ])
         .pipe(gulp.dest(dist));

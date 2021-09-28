@@ -121,12 +121,12 @@ class HlUpdate {
 
     //Update the highlight of 3D structure display according to the current highlighted atoms.
     updateHlObjects(bForceHighlight) { let ic = this.icn3d, me = ic.icn3dui;
-           ic.hlObjectsCls.removeHlObjects();
+       ic.hlObjectsCls.removeHlObjects();
 
-           if((ic.hAtoms && Object.keys(ic.hAtoms).length < Object.keys(ic.atoms).length) || bForceHighlight) {
-              ic.hlObjectsCls.addHlObjects();
-              ic.definedSetsCls.setMode('selection');
-           }
+       if((ic.hAtoms && Object.keys(ic.hAtoms).length < Object.keys(ic.atoms).length) || bForceHighlight) {
+          ic.hlObjectsCls.addHlObjects();
+          ic.definedSetsCls.setMode('selection');
+       }
     }
 
     // update highlight in sequence, slow if sequence is long

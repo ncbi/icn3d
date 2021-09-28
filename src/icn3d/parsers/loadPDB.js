@@ -200,7 +200,8 @@ class LoadPDB {
                  // missing residues
                  else if (type == 465 && line.substr(18, 1) == ' ' && line.substr(20, 1) == ' ' && line.substr(21, 1) != 'S') {
                     let  resn = line.substr(15, 3);
-                    let  chain = line.substr(19, 1);
+                    //let  chain = line.substr(19, 1);
+                    let  chain = line.substr(18, 2).trim();
                     let  resi = parseInt(line.substr(21, 5));
 
                     //var structure = parseInt(line.substr(13, 1));
@@ -248,7 +249,8 @@ class LoadPDB {
                 //}
 
                 let  structure = id;
-                if(id == 'stru' || bMutation || (bAppend && id == 'stru')) { // bMutation: side chain prediction
+                //if(id == 'stru' || bMutation || (bAppend && id == 'stru')) { // bMutation: side chain prediction
+                if(id == 'stru' || bMutation || (bAppend)) { // bMutation: side chain prediction
                     structure = (moleculeNum === 1) ? id : id + moleculeNum.toString();
                 }
 

@@ -223,10 +223,21 @@
                     }
                 }
                 else {
-                    var tmpPos = cfg.command.indexOf('&');
-                    if(tmpPos != -1) {
-                      decodeSearch += cfg.command.substr(tmpPos);
-                      cfg.command = cfg.command.substr(0, tmpPos);
+                    var paraPos = cfg.command.indexOf(' | parameters ');
+
+                    if(paraPos != -1) { //"&command=load mmdb 7DDD | parameters &mmdbid=7DDD; select..." the commands ends with '}}'.
+                        var tmpPos = cfg.command.indexOf('}}&');
+                        if(tmpPos != -1) { // more parameters after the command
+                          decodeSearch += cfg.command.substr(tmpPos + 2);
+                          cfg.command = cfg.command.substr(0, tmpPos + 2);
+                        }
+                    }
+                    else {
+                        var tmpPos = cfg.command.indexOf('&');
+                        if(tmpPos != -1) {
+                          decodeSearch += cfg.command.substr(tmpPos);
+                          cfg.command = cfg.command.substr(0, tmpPos);
+                        }
                     }
                 }
             }

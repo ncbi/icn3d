@@ -290,7 +290,7 @@ class LoadAtomData {
                     else {
                         // make MMDB residue number consistent with PDB residue number
                         atm.resi = atm.resi_ori; // corrected for residue insertion code
-                        if(!ic.chainid2offset[chainNum]) ic.chainid2offset[chainNum] = atm.resi_ori - atm.ids.r;
+                        if(ic.chainid2offset && !ic.chainid2offset[chainNum]) ic.chainid2offset[chainNum] = atm.resi_ori - atm.ids.r;
                     }
                 }
 

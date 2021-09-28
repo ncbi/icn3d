@@ -27,8 +27,10 @@ class SetOption {
       if(id === 'color') {
           ic.setColorCls.setColorByOptions(ic.opts, ic.hAtoms);
           ic.drawCls.draw();
-          let residueHash = ic.firstAtomObjCls.getResiduesFromCalphaAtoms(ic.hAtoms);
-          ic.hlUpdateCls.changeSeqColor(Object.keys(residueHash));
+          //let residueHash = ic.firstAtomObjCls.getResiduesFromCalphaAtoms(ic.hAtoms);
+          //ic.hlUpdateCls.changeSeqColor(Object.keys(residueHash));
+          ic.hlUpdateCls.updateHlAll(ic.nameArray);
+
           // change graph color
           ic.getGraphCls.updateGraphColor();
       }

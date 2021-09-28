@@ -235,6 +235,8 @@ class UtilsCls {
     }
 
     residueAbbr2Name(residueAbbr) { let me = this.icn3dui;
+      residueAbbr = residueAbbr.toUpperCase();
+
       if(residueAbbr.length > 1) {
           return residueAbbr;
       }
@@ -382,7 +384,7 @@ class UtilsCls {
       }
     }
 
-    setViewerWidthHeight(me) { //let me = this.icn3dui;
+    setViewerWidthHeight(me, bRealSize) { //let me = this.icn3dui;
         if(me.bNode) {
             me.htmlCls.WIDTH = 400;
             me.htmlCls.HEIGHT = 400;
@@ -395,31 +397,33 @@ class UtilsCls {
         // width from css
         let viewer_width, viewer_height;
 
-        if(me.oriWidth !== undefined && me.cfg.width.toString().indexOf('%') === -1) {
+        if(!bRealSize && me.oriWidth !== undefined && me.cfg.width.toString().indexOf('%') === -1) {
             viewer_width = me.oriWidth;
             viewer_height = me.oriHeight;
         }
         else {
-            // css width and height
+            // css width and height with the unit "px"
             viewer_width = $( "#" + me.pre + "viewer" ).css('width');
-            viewer_height = $( "#" + me.pre + "viewer" ).css('height'); // + me.htmlCls.MENU_HEIGHT;
+            viewer_height = $( "#" + me.pre + "viewer" ).css('height');
 
-            if(viewer_width === undefined) viewer_width = me.htmlCls.WIDTH;
-            if(viewer_height === undefined) viewer_height = me.htmlCls.HEIGHT;
+            viewer_width = (viewer_width) ? viewer_width.replace(/px/g, '') : me.htmlCls.WIDTH;
+            viewer_height = (viewer_height) ? viewer_height.replace(/px/g, '') : me.htmlCls.HEIGHT;
 
-            // width and height from input parameter
-            if(me.cfg.width.toString().indexOf('%') !== -1) {
-              viewer_width = $( window ).width() * me.cfg.width.substr(0, me.cfg.width.toString().indexOf('%')) / 100.0 - me.htmlCls.LESSWIDTH;
-            }
-            else {
-              viewer_width = parseInt(me.cfg.width);
-            }
+            if(!bRealSize) {
+                // width and height from input parameter
+                if(me.cfg.width.toString().indexOf('%') !== -1) {
+                  viewer_width = $( window ).width() * me.cfg.width.substr(0, me.cfg.width.toString().indexOf('%')) / 100.0 - me.htmlCls.LESSWIDTH;
+                }
+                else if(me.cfg.width) {
+                  viewer_width = parseInt(me.cfg.width);
+                }
 
-            if(me.cfg.height.toString().indexOf('%') !== -1) {
-              viewer_height = $( window ).height() * me.cfg.height.substr(0, me.cfg.height.toString().indexOf('%')) / 100.0 - me.htmlCls.EXTRAHEIGHT - me.htmlCls.LESSHEIGHT;
-            }
-            else {
-              viewer_height = parseInt(me.cfg.height);
+                if(me.cfg.height.toString().indexOf('%') !== -1) {
+                  viewer_height = $( window ).height() * me.cfg.height.substr(0, me.cfg.height.toString().indexOf('%')) / 100.0 - me.htmlCls.EXTRAHEIGHT - me.htmlCls.LESSHEIGHT;
+                }
+                else if(me.cfg.height) {
+                  viewer_height = parseInt(me.cfg.height);
+                }
             }
         }
 

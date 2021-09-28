@@ -204,7 +204,7 @@ class iCn3D {
     this.coilWidth = 0.3; //0.4; // style cartoon-coil
     this.cylinderRadius = 0.4; // style stick
     //This is the stick radius for C alpha trace and O3' trace. It's 0.4 by default.
-    this.traceRadius = 0.2; //0.2; // c alpha trace, nucleotide stick
+    this.traceRadius = 0.4; //0.4; // c alpha trace, nucleotide stick
     //This is the ball scale for styles 'Ball and Stick' and 'Dot'. It's 0.3 by default.
     this.dotSphereScale = 0.3; // style ball and stick, dot
     //This is the sphere radius for the style 'Sphere'. It's 1.5 by default.
@@ -568,7 +568,7 @@ class iCn3D {
 };
 
 //When users first load a structure, call this function to empty previous settings.
-iCn3D.prototype.init = function () {
+iCn3D.prototype.init = function (bKeepCmd) {
     this.init_base();
 
     this.molTitle = "";
@@ -589,7 +589,7 @@ iCn3D.prototype.init = function () {
     this.axes = [];
 };
 
-iCn3D.prototype.init_base = function () {
+iCn3D.prototype.init_base = function (bKeepCmd) {
     this.resetConfig();
 
     this.structures = {}; // structure name -> array of chains
@@ -677,7 +677,7 @@ iCn3D.prototype.init_base = function () {
     this.transformCls.rotateCount = 0;
     this.transformCls.rotateCountMax = 20;
 
-    this.commands = [];
+    if(bKeepCmd) this.commands = [];
 
     this.axes = [];
 

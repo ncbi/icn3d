@@ -182,7 +182,7 @@ class SetHtml {
         html += "<b>Line Radius</b>: " + me.htmlCls.inputTextStr + "id='" + me.pre + "linerad_" + type + "' value='" + linerad + "' size=4>" + me.htmlCls.space3 + "(for stabilizers, hydrogen bonds, distance lines, default 0.1)<br/>";
         html += "<b>Coil Radius</b>: " + me.htmlCls.inputTextStr + "id='" + me.pre + "coilrad_" + type + "' value='" + coilrad + "' size=4>" + me.htmlCls.space3 + "(for coils, default 0.3)<br/>";
         html += "<b>Stick Radius</b>: " + me.htmlCls.inputTextStr + "id='" + me.pre + "stickrad_" + type + "' value='" + stickrad + "' size=4>" + me.htmlCls.space3 + "(for sticks, default 0.4)<br/>";
-        html += "<b>Trace Radius</b>: " + me.htmlCls.inputTextStr + "id='" + me.pre + "tracerad_" + type + "' value='" + tracerad + "' size=4>" + me.htmlCls.space3 + "(for C alpha trace, O3' trace, default 0.2)<br/>";
+        html += "<b>Trace Radius</b>: " + me.htmlCls.inputTextStr + "id='" + me.pre + "tracerad_" + type + "' value='" + tracerad + "' size=4>" + me.htmlCls.space3 + "(for C alpha trace, O3' trace, default 0.4)<br/>";
 
         html += "<b>Ribbon Thickness</b>: " + me.htmlCls.inputTextStr + "id='" + me.pre + "ribbonthick_" + type + "' value='" + ribbonthick + "' size=4>" + me.htmlCls.space3 + "(for helix and sheet ribbons, nucleotide ribbons, default 0.2)<br/>";
         html += "<b>Protein Ribbon Width</b>: " + me.htmlCls.inputTextStr + "id='" + me.pre + "prtribbonwidth_" + type + "' value='" + prtribbonwidth + "' size=4>" + me.htmlCls.space3 + "(for helix and sheet ribbons, default 1.3)<br/>";
@@ -802,7 +802,7 @@ class SetHtml {
             $("#" + me.pre + "linerad_" + postfix ).val(0.1); //0.1; // hbonds, distance lines
             $("#" + me.pre + "coilrad_" + postfix ).val(0.3); //0.3; // style cartoon-coil
             $("#" + me.pre + "stickrad_" + postfix ).val(0.4); //0.4; // style stick
-            $("#" + me.pre + "tracerad_" + postfix ).val(0.2); //0.2; // style c alpha trace, nucleotide stick
+            $("#" + me.pre + "tracerad_" + postfix ).val(0.4); //0.4; // style c alpha trace, nucleotide stick
             $("#" + me.pre + "ballscale_" + postfix ).val(0.3); //0.3; // style ball and stick, dot
             $("#" + me.pre + "ribbonthick_" + postfix ).val(0.2); //0.2; // style ribbon, nucleotide cartoon, stand thickness
             $("#" + me.pre + "prtribbonwidth_" + postfix ).val(1.3); //1.3; // style ribbon, stand thickness
@@ -812,7 +812,7 @@ class SetHtml {
         ic.lineRadius = parseFloat($("#" + me.pre + "linerad_" + postfix ).val()); //0.1; // hbonds, distance lines
         ic.coilWidth = parseFloat($("#" + me.pre + "coilrad_" + postfix ).val()); //0.4; // style cartoon-coil
         ic.cylinderRadius = parseFloat($("#" + me.pre + "stickrad_" + postfix ).val()); //0.4; // style stick
-        ic.traceRadius = parseFloat($("#" + me.pre + "tracerad_" + postfix ).val()); //0.2; // style c alpha trace, nucleotide stick
+        ic.traceRadius = parseFloat($("#" + me.pre + "tracerad_" + postfix ).val()); //0.4; // style c alpha trace, nucleotide stick
         ic.dotSphereScale = parseFloat($("#" + me.pre + "ballscale_" + postfix ).val()); //0.3; // style ball and stick, dot
         ic.ribbonthickness = parseFloat($("#" + me.pre + "ribbonthick_" + postfix ).val()); //0.4; // style ribbon, nucleotide cartoon, stand thickness
         ic.helixSheetWidth = parseFloat($("#" + me.pre + "prtribbonwidth_" + postfix ).val()); //1.3; // style ribbon, stand thickness
