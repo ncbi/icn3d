@@ -348,6 +348,37 @@ class SaveFile {
             }
         }
 
+        // get missing residues
+        let chainid2missingResi = {};
+        for(let chainid in ic.chainsSeq) {
+            let pos = chainid.indexOf('_');
+            let chain = chainid.substr(0, pos);
+
+            for(let i = 0, il = ic.chainsSeq[chainid].length; i < il; ++i) {
+                let resi = ic.chainsSeq[chainid][i].resi;
+                let resid = chainid + '_' + resi;
+                if(!ic.firstAtomObjCls.getFirstAtomObj(ic.residues[resid])) { // mising coordinate
+                    if(chainid2missingResi[chainid] === undefined) chainid2missingResi[chainid] = [];
+                    let seq = me.utilsCls.residueAbbr2Name(ic.chainsSeq[chainid][i].name);
+                    let resiObj = {'resi': resi, 'seq': seq};
+                    chainid2missingResi[chainid].push(resiObj);
+                }
+            }
+        }
+
+        // add missing residues "REMARK 465..."
+        for(let chainid in chainid2missingResi) {
+            let pos = chainid.indexOf('_');
+            let chain = chainid.substr(pos + 1, 2);
+
+            for(let i = 0, il = chainid2missingResi[chainid].length; i < il; ++i) {
+                let resi = chainid2missingResi[chainid][i].resi;
+                let seq = chainid2missingResi[chainid][i].seq;
+
+                pdbStr += "REMARK 465     " + seq.padStart(3, " ") + chain.padStart(2, " ") + " " + resi.toString().padStart(5, " ") + "\n";
+            }
+        }
+
         let connStr = '';
         let struArray = Object.keys(ic.structures);
         let bMulStruc =(struArray.length > 1) ? true : false;

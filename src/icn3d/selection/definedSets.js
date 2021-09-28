@@ -309,6 +309,7 @@ class DefinedSets {
         //me.myEventCls.onIds("#" + ic.pre + "atomsCustom", "change", function(e) { let  ic = thisClass.icn3d;
         $("#" + ic.pre + "atomsCustom").change(function(e) { let  ic = thisClass.icn3d;
            let  nameArray = $(this).val();
+           ic.nameArray = nameArray;
 
            if(nameArray !== null) {
              // log the selection

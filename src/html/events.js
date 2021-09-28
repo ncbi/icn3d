@@ -60,7 +60,7 @@ class Events {
         if(!fullscreenElement) {
             me.htmlCls.clickMenuCls.setLogCmd("exit full screen", false);
             ic.bFullscreen = false;
-            me.utilsCls.setViewerWidthHeight(me);
+            me.utilsCls.setViewerWidthHeight(me, true);
             ic.applyCenterCls.setWidthHeight(me.htmlCls.WIDTH, me.htmlCls.HEIGHT);
             ic.drawCls.draw();
         }

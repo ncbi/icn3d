@@ -30,25 +30,79 @@ class AnnoCddSite {
         //if(me.cfg.afid) {
 
         if(!me.cfg.mmtfid && !me.cfg.pdbid && !me.cfg.opmid && !me.cfg.mmdbid && !me.cfg.gi && !me.cfg.uniprotid && !me.cfg.blast_rep_id && !me.cfg.cid && !me.cfg.mmcifid && !me.cfg.align && !me.cfg.chainalign) {
-            let seq = Array.isArray(ic.giSeq[chnidArray[0]]) ? ic.giSeq[chnidArray[0]].join('') : ic.giSeq[chnidArray[0]];
-            //url = me.htmlCls.baseUrl + "cdannots/cdannots.fcgi?fmt&live=lcl&queries=" + ic.giSeq[chnidArray[0]].join('');
-            url = me.htmlCls.baseUrl + "cdannots/cdannots.fcgi?fmt&live=lcl&queries=" + seq;
-        }
+          let ajaxArray = [];
 
-        $.ajax({
-          url: url,
-          dataType: 'jsonp',
-          cache: true,
-          tryCount : 0,
-          retryLimit : 1,
-          success: function(data) {
-              let chainWithData = {}
-              for(let chainI = 0, chainLen = data.data.length; chainI < chainLen; ++chainI) {
+          for(let i = 0, il = chnidArray.length; i < il; ++i) {
+               let seq = Array.isArray(ic.giSeq[chnidArray[i]]) ? ic.giSeq[chnidArray[i]].join('') : ic.giSeq[chnidArray[i]];
+               //url = me.htmlCls.baseUrl + "cdannots/cdannots.fcgi?fmt&live=lcl&queries=" + ic.giSeq[chnidArray[0]].join('');
+               url = me.htmlCls.baseUrl + "cdannots/cdannots.fcgi?fmt&live=lcl&queries=" + seq;
+
+               let cdd = $.ajax({
+                  url: url,
+                  dataType: 'jsonp',
+                  cache: true
+               });
+
+               ajaxArray.push(cdd);
+          }
+
+          //https://stackoverflow.com/questions/14352139/multiple-ajax-calls-from-array-and-handle-callback-when-completed
+          //https://stackoverflow.com/questions/5518181/jquery-deferreds-when-and-the-fail-callback-arguments
+          $.when.apply(undefined, ajaxArray).then(function() {
+              let dataArray =(chnidArray.length == 1) ? [arguments] : Array.from(arguments);
+              thisClass.parseCddData(dataArray, chnidArray, true);
+              if(ic.deferredAnnoCddSite !== undefined) ic.deferredAnnoCddSite.resolve();
+          })
+          .fail(function() {
+              thisClass.getNoCdd(chnidBaseArray);
+              if(ic.deferredAnnoCddSite !== undefined) ic.deferredAnnoCddSite.resolve();
+
+              return;
+          });
+        }
+        else {
+            $.ajax({
+              url: url,
+              dataType: 'jsonp',
+              cache: true,
+              tryCount : 0,
+              retryLimit : 1,
+              success: function(data) {
+                thisClass.parseCddData([data], chnidArray);
+                if(ic.deferredAnnoCddSite !== undefined) ic.deferredAnnoCddSite.resolve();
+              },
+              error : function(xhr, textStatus, errorThrown ) {
+                this.tryCount++;
+                if(this.tryCount <= this.retryLimit) {
+                    //try again
+                    $.ajax(this);
+                    return;
+                }
+
+                thisClass.getNoCdd(chnidBaseArray);
+                if(ic.deferredAnnoCddSite !== undefined) ic.deferredAnnoCddSite.resolve();
+
+                return;
+              }
+            });
+        }
+    }
+
+    parseCddData(dataArray, chnidArray, bSeq) { let ic = this.icn3d, me = ic.icn3dui;
+        let thisClass = this;
+
+        let chainWithData = {};
+
+        for(let i = 0, il = dataArray.length; i < il; ++i) {
+            let data = (bSeq) ? dataArray[i][0] : dataArray[i];
+
+            for(let chainI = 0, chainLen = data.data.length; chainI < chainLen; ++chainI) {
                 let cddData = data.data[chainI];
                 let chnidBase = cddData._id;
                 //var pos = chnidBaseArray.indexOf(chnidBase);
                 //var chnid = chnidArray[pos];
-                let chnid = chnidArray[chainI];
+                //let chnid = chnidArray[chainI];
+                let chnid = (bSeq) ? chnidArray[i] : chnidArray[chainI];
                 chainWithData[chnid] = 1;
                 let html = '<div id="' + ic.pre + chnid + '_cddseq_sequence" class="icn3d-cdd icn3d-dl_sequence">';
                 let html2 = html;
@@ -145,32 +199,12 @@ class AnnoCddSite {
                 $("#" + ic.pre + "dt_site_" + chnid).html(html);
                 $("#" + ic.pre + "ov_site_" + chnid).html(html2);
                 $("#" + ic.pre + "tt_site_" + chnid).html(html3);
-            } // outer for loop
-            // missing CDD data
-            for(let chnid in ic.protein_chainid) {
-                if(!chainWithData.hasOwnProperty(chnid)) {
-                    $("#" + ic.pre + "dt_cdd_" + chnid).html('');
-                    $("#" + ic.pre + "ov_cdd_" + chnid).html('');
-                    $("#" + ic.pre + "tt_cdd_" + chnid).html('');
-                    $("#" + ic.pre + "dt_site_" + chnid).html('');
-                    $("#" + ic.pre + "ov_site_" + chnid).html('');
-                    $("#" + ic.pre + "tt_site_" + chnid).html('');
-                }
             }
-            // add here after the ajax call
-            ic.showAnnoCls.enableHlSeq();
-            ic.bAjaxCddSite = true;
-            if(ic.deferredAnnoCddSite !== undefined) ic.deferredAnnoCddSite.resolve();
-          },
-          error : function(xhr, textStatus, errorThrown ) {
-            this.tryCount++;
-            if(this.tryCount <= this.retryLimit) {
-                //try again
-                $.ajax(this);
-                return;
-            }
-            console.log( "No CDD data were found for the protein " + chnidBaseArray + "..." );
-            for(let chnid in ic.protein_chainid) {
+        } // outer for loop
+
+        // missing CDD data
+        for(let chnid in ic.protein_chainid) {
+            if(!chainWithData.hasOwnProperty(chnid)) {
                 $("#" + ic.pre + "dt_cdd_" + chnid).html('');
                 $("#" + ic.pre + "ov_cdd_" + chnid).html('');
                 $("#" + ic.pre + "tt_cdd_" + chnid).html('');
@@ -178,13 +212,25 @@ class AnnoCddSite {
                 $("#" + ic.pre + "ov_site_" + chnid).html('');
                 $("#" + ic.pre + "tt_site_" + chnid).html('');
             }
-            // add here after the ajax call
-            ic.showAnnoCls.enableHlSeq();
-            ic.bAjaxCddSite = true;
-            if(ic.deferredAnnoCddSite !== undefined) ic.deferredAnnoCddSite.resolve();
-            return;
-          }
-        });
+        }
+        // add here after the ajax call
+        ic.showAnnoCls.enableHlSeq();
+        ic.bAjaxCddSite = true;
+    }
+
+    getNoCdd(chnidBaseArray) { let ic = this.icn3d, me = ic.icn3dui;
+        console.log( "No CDD data were found for the protein " + chnidBaseArray + "..." );
+        for(let chnid in ic.protein_chainid) {
+            $("#" + ic.pre + "dt_cdd_" + chnid).html('');
+            $("#" + ic.pre + "ov_cdd_" + chnid).html('');
+            $("#" + ic.pre + "tt_cdd_" + chnid).html('');
+            $("#" + ic.pre + "dt_site_" + chnid).html('');
+            $("#" + ic.pre + "ov_site_" + chnid).html('');
+            $("#" + ic.pre + "tt_site_" + chnid).html('');
+        }
+        // add here after the ajax call
+        ic.showAnnoCls.enableHlSeq();
+        ic.bAjaxCddSite = true;
     }
 
     setDomainFeature(domainArray, chnid, bDomain, html, html2, html3, acc2domain) { let ic = this.icn3d, me = ic.icn3dui;

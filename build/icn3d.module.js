@@ -5208,6 +5208,8 @@ class UtilsCls {
     }
 
     residueAbbr2Name(residueAbbr) { this.icn3dui;
+      residueAbbr = residueAbbr.toUpperCase();
+
       if(residueAbbr.length > 1) {
           return residueAbbr;
       }
@@ -5334,7 +5336,7 @@ class UtilsCls {
       }
     }
 
-    setViewerWidthHeight(me) { //let me = this.icn3dui;
+    setViewerWidthHeight(me, bRealSize) { //let me = this.icn3dui;
         if(me.bNode) {
             me.htmlCls.WIDTH = 400;
             me.htmlCls.HEIGHT = 400;
@@ -5347,31 +5349,33 @@ class UtilsCls {
         // width from css
         let viewer_width, viewer_height;
 
-        if(me.oriWidth !== undefined && me.cfg.width.toString().indexOf('%') === -1) {
+        if(!bRealSize && me.oriWidth !== undefined && me.cfg.width.toString().indexOf('%') === -1) {
             viewer_width = me.oriWidth;
             viewer_height = me.oriHeight;
         }
         else {
-            // css width and height
+            // css width and height with the unit "px"
             viewer_width = $( "#" + me.pre + "viewer" ).css('width');
-            viewer_height = $( "#" + me.pre + "viewer" ).css('height'); // + me.htmlCls.MENU_HEIGHT;
+            viewer_height = $( "#" + me.pre + "viewer" ).css('height');
 
-            if(viewer_width === undefined) viewer_width = me.htmlCls.WIDTH;
-            if(viewer_height === undefined) viewer_height = me.htmlCls.HEIGHT;
+            viewer_width = (viewer_width) ? viewer_width.replace(/px/g, '') : me.htmlCls.WIDTH;
+            viewer_height = (viewer_height) ? viewer_height.replace(/px/g, '') : me.htmlCls.HEIGHT;
 
-            // width and height from input parameter
-            if(me.cfg.width.toString().indexOf('%') !== -1) {
-              viewer_width = $( window ).width() * me.cfg.width.substr(0, me.cfg.width.toString().indexOf('%')) / 100.0 - me.htmlCls.LESSWIDTH;
-            }
-            else {
-              viewer_width = parseInt(me.cfg.width);
-            }
+            if(!bRealSize) {
+                // width and height from input parameter
+                if(me.cfg.width.toString().indexOf('%') !== -1) {
+                  viewer_width = $( window ).width() * me.cfg.width.substr(0, me.cfg.width.toString().indexOf('%')) / 100.0 - me.htmlCls.LESSWIDTH;
+                }
+                else if(me.cfg.width) {
+                  viewer_width = parseInt(me.cfg.width);
+                }
 
-            if(me.cfg.height.toString().indexOf('%') !== -1) {
-              viewer_height = $( window ).height() * me.cfg.height.substr(0, me.cfg.height.toString().indexOf('%')) / 100.0 - me.htmlCls.EXTRAHEIGHT - me.htmlCls.LESSHEIGHT;
-            }
-            else {
-              viewer_height = parseInt(me.cfg.height);
+                if(me.cfg.height.toString().indexOf('%') !== -1) {
+                  viewer_height = $( window ).height() * me.cfg.height.substr(0, me.cfg.height.toString().indexOf('%')) / 100.0 - me.htmlCls.EXTRAHEIGHT - me.htmlCls.LESSHEIGHT;
+                }
+                else if(me.cfg.height) {
+                  viewer_height = parseInt(me.cfg.height);
+                }
             }
         }
 
@@ -12973,7 +12977,7 @@ class ThreeDPrint {
           ic.lineRadius = 0.1; // hbonds, distance lines
           ic.coilWidth = 0.3; // style cartoon-coil
           ic.cylinderRadius = 0.4; // style stick
-          ic.traceRadius = 0.2; // style c alpha trace, nucleotide stick
+          ic.traceRadius = 0.4; // style c alpha trace, nucleotide stick
           ic.dotSphereScale = 0.3; // style ball and stick, dot
           ic.sphereRadius = 1.5; // style sphere
           ic.cylinderHelixRadius = 1.6; // style sylinder and plate
@@ -14365,6 +14369,7 @@ class DefinedSets {
         //me.myEventCls.onIds("#" + ic.pre + "atomsCustom", "change", function(e) { let  ic = thisClass.icn3d;
         $("#" + ic.pre + "atomsCustom").change(function(e) { let  ic = thisClass.icn3d;
            let  nameArray = $(this).val();
+           ic.nameArray = nameArray;
 
            if(nameArray !== null) {
              // log the selection
@@ -20891,7 +20896,8 @@ class LoadPDB {
                  // missing residues
                  else if (type == 465 && line.substr(18, 1) == ' ' && line.substr(20, 1) == ' ' && line.substr(21, 1) != 'S') {
                     let  resn = line.substr(15, 3);
-                    let  chain = line.substr(19, 1);
+                    //let  chain = line.substr(19, 1);
+                    let  chain = line.substr(18, 2).trim();
                     let  resi = parseInt(line.substr(21, 5));
 
                     //var structure = parseInt(line.substr(13, 1));
@@ -20939,7 +20945,8 @@ class LoadPDB {
                 //}
 
                 let  structure = id;
-                if(id == 'stru' || bMutation || (bAppend && id == 'stru')) { // bMutation: side chain prediction
+                //if(id == 'stru' || bMutation || (bAppend && id == 'stru')) { // bMutation: side chain prediction
+                if(id == 'stru' || bMutation || (bAppend)) { // bMutation: side chain prediction
                     structure = (moleculeNum === 1) ? id : id + moleculeNum.toString();
                 }
 
@@ -21769,7 +21776,7 @@ class LoadAtomData {
                     else {
                         // make MMDB residue number consistent with PDB residue number
                         atm.resi = atm.resi_ori; // corrected for residue insertion code
-                        if(!ic.chainid2offset[chainNum]) ic.chainid2offset[chainNum] = atm.resi_ori - atm.ids.r;
+                        if(ic.chainid2offset && !ic.chainid2offset[chainNum]) ic.chainid2offset[chainNum] = atm.resi_ori - atm.ids.r;
                     }
                 }
 
@@ -24311,7 +24318,9 @@ class MmdbParser {
         }
 
         if(type === undefined || type === 'target') {
-            if(!ic.bStatefile) ic.init();
+            // if a command contains "load...", the commands should not be cleared with init()
+            let bKeepCmd = (ic.bCommandLoad) ? true : false;
+            if(!ic.bStatefile) ic.init(bKeepCmd);
 
             ic.chainsColor = {};
             ic.chainsGene = {};
@@ -26767,7 +26776,8 @@ class LoadScript {
       for(i=start; i <= end; ++i) {
           let  bFinalStep =(i === steps - 1) ? true : false;
 
-          if(!ic.commands[i]) continue;
+          if(!ic.commands[i].trim()) continue;
+          if(!ic.atoms && ic.commands[i].indexOf('load') == -1) continue;
 
           if(ic.commands[i].indexOf('load') !== -1) {
               if(end === 0 && start === end) {
@@ -29715,25 +29725,79 @@ class AnnoCddSite {
         //if(me.cfg.afid) {
 
         if(!me.cfg.mmtfid && !me.cfg.pdbid && !me.cfg.opmid && !me.cfg.mmdbid && !me.cfg.gi && !me.cfg.uniprotid && !me.cfg.blast_rep_id && !me.cfg.cid && !me.cfg.mmcifid && !me.cfg.align && !me.cfg.chainalign) {
-            let seq = Array.isArray(ic.giSeq[chnidArray[0]]) ? ic.giSeq[chnidArray[0]].join('') : ic.giSeq[chnidArray[0]];
-            //url = me.htmlCls.baseUrl + "cdannots/cdannots.fcgi?fmt&live=lcl&queries=" + ic.giSeq[chnidArray[0]].join('');
-            url = me.htmlCls.baseUrl + "cdannots/cdannots.fcgi?fmt&live=lcl&queries=" + seq;
-        }
+          let ajaxArray = [];
 
-        $.ajax({
-          url: url,
-          dataType: 'jsonp',
-          cache: true,
-          tryCount : 0,
-          retryLimit : 1,
-          success: function(data) {
-              let chainWithData = {};
-              for(let chainI = 0, chainLen = data.data.length; chainI < chainLen; ++chainI) {
+          for(let i = 0, il = chnidArray.length; i < il; ++i) {
+               let seq = Array.isArray(ic.giSeq[chnidArray[i]]) ? ic.giSeq[chnidArray[i]].join('') : ic.giSeq[chnidArray[i]];
+               //url = me.htmlCls.baseUrl + "cdannots/cdannots.fcgi?fmt&live=lcl&queries=" + ic.giSeq[chnidArray[0]].join('');
+               url = me.htmlCls.baseUrl + "cdannots/cdannots.fcgi?fmt&live=lcl&queries=" + seq;
+
+               let cdd = $.ajax({
+                  url: url,
+                  dataType: 'jsonp',
+                  cache: true
+               });
+
+               ajaxArray.push(cdd);
+          }
+
+          //https://stackoverflow.com/questions/14352139/multiple-ajax-calls-from-array-and-handle-callback-when-completed
+          //https://stackoverflow.com/questions/5518181/jquery-deferreds-when-and-the-fail-callback-arguments
+          $.when.apply(undefined, ajaxArray).then(function() {
+              let dataArray =(chnidArray.length == 1) ? [arguments] : Array.from(arguments);
+              thisClass.parseCddData(dataArray, chnidArray, true);
+              if(ic.deferredAnnoCddSite !== undefined) ic.deferredAnnoCddSite.resolve();
+          })
+          .fail(function() {
+              thisClass.getNoCdd(chnidBaseArray);
+              if(ic.deferredAnnoCddSite !== undefined) ic.deferredAnnoCddSite.resolve();
+
+              return;
+          });
+        }
+        else {
+            $.ajax({
+              url: url,
+              dataType: 'jsonp',
+              cache: true,
+              tryCount : 0,
+              retryLimit : 1,
+              success: function(data) {
+                thisClass.parseCddData([data], chnidArray);
+                if(ic.deferredAnnoCddSite !== undefined) ic.deferredAnnoCddSite.resolve();
+              },
+              error : function(xhr, textStatus, errorThrown ) {
+                this.tryCount++;
+                if(this.tryCount <= this.retryLimit) {
+                    //try again
+                    $.ajax(this);
+                    return;
+                }
+
+                thisClass.getNoCdd(chnidBaseArray);
+                if(ic.deferredAnnoCddSite !== undefined) ic.deferredAnnoCddSite.resolve();
+
+                return;
+              }
+            });
+        }
+    }
+
+    parseCddData(dataArray, chnidArray, bSeq) { let ic = this.icn3d, me = ic.icn3dui;
+        let thisClass = this;
+
+        let chainWithData = {};
+
+        for(let i = 0, il = dataArray.length; i < il; ++i) {
+            let data = (bSeq) ? dataArray[i][0] : dataArray[i];
+
+            for(let chainI = 0, chainLen = data.data.length; chainI < chainLen; ++chainI) {
                 let cddData = data.data[chainI];
                 cddData._id;
                 //var pos = chnidBaseArray.indexOf(chnidBase);
                 //var chnid = chnidArray[pos];
-                let chnid = chnidArray[chainI];
+                //let chnid = chnidArray[chainI];
+                let chnid = (bSeq) ? chnidArray[i] : chnidArray[chainI];
                 chainWithData[chnid] = 1;
                 let html = '<div id="' + ic.pre + chnid + '_cddseq_sequence" class="icn3d-cdd icn3d-dl_sequence">';
                 let html2 = html;
@@ -29830,32 +29894,12 @@ class AnnoCddSite {
                 $("#" + ic.pre + "dt_site_" + chnid).html(html);
                 $("#" + ic.pre + "ov_site_" + chnid).html(html2);
                 $("#" + ic.pre + "tt_site_" + chnid).html(html3);
-            } // outer for loop
-            // missing CDD data
-            for(let chnid in ic.protein_chainid) {
-                if(!chainWithData.hasOwnProperty(chnid)) {
-                    $("#" + ic.pre + "dt_cdd_" + chnid).html('');
-                    $("#" + ic.pre + "ov_cdd_" + chnid).html('');
-                    $("#" + ic.pre + "tt_cdd_" + chnid).html('');
-                    $("#" + ic.pre + "dt_site_" + chnid).html('');
-                    $("#" + ic.pre + "ov_site_" + chnid).html('');
-                    $("#" + ic.pre + "tt_site_" + chnid).html('');
-                }
             }
-            // add here after the ajax call
-            ic.showAnnoCls.enableHlSeq();
-            ic.bAjaxCddSite = true;
-            if(ic.deferredAnnoCddSite !== undefined) ic.deferredAnnoCddSite.resolve();
-          },
-          error : function(xhr, textStatus, errorThrown ) {
-            this.tryCount++;
-            if(this.tryCount <= this.retryLimit) {
-                //try again
-                $.ajax(this);
-                return;
-            }
-            console.log( "No CDD data were found for the protein " + chnidBaseArray + "..." );
-            for(let chnid in ic.protein_chainid) {
+        } // outer for loop
+
+        // missing CDD data
+        for(let chnid in ic.protein_chainid) {
+            if(!chainWithData.hasOwnProperty(chnid)) {
                 $("#" + ic.pre + "dt_cdd_" + chnid).html('');
                 $("#" + ic.pre + "ov_cdd_" + chnid).html('');
                 $("#" + ic.pre + "tt_cdd_" + chnid).html('');
@@ -29863,13 +29907,25 @@ class AnnoCddSite {
                 $("#" + ic.pre + "ov_site_" + chnid).html('');
                 $("#" + ic.pre + "tt_site_" + chnid).html('');
             }
-            // add here after the ajax call
-            ic.showAnnoCls.enableHlSeq();
-            ic.bAjaxCddSite = true;
-            if(ic.deferredAnnoCddSite !== undefined) ic.deferredAnnoCddSite.resolve();
-            return;
-          }
-        });
+        }
+        // add here after the ajax call
+        ic.showAnnoCls.enableHlSeq();
+        ic.bAjaxCddSite = true;
+    }
+
+    getNoCdd(chnidBaseArray) { let ic = this.icn3d; ic.icn3dui;
+        console.log( "No CDD data were found for the protein " + chnidBaseArray + "..." );
+        for(let chnid in ic.protein_chainid) {
+            $("#" + ic.pre + "dt_cdd_" + chnid).html('');
+            $("#" + ic.pre + "ov_cdd_" + chnid).html('');
+            $("#" + ic.pre + "tt_cdd_" + chnid).html('');
+            $("#" + ic.pre + "dt_site_" + chnid).html('');
+            $("#" + ic.pre + "ov_site_" + chnid).html('');
+            $("#" + ic.pre + "tt_site_" + chnid).html('');
+        }
+        // add here after the ajax call
+        ic.showAnnoCls.enableHlSeq();
+        ic.bAjaxCddSite = true;
     }
 
     setDomainFeature(domainArray, chnid, bDomain, html, html2, html3, acc2domain) { let ic = this.icn3d, me = ic.icn3dui;
@@ -33893,7 +33949,8 @@ class ParserUtils {
           ic.drawCls.draw();
       }
 
-      if(ic.bInitial && me.cfg.command !== undefined && me.cfg.command !== '') {
+//      if(ic.bInitial && me.cfg.command !== undefined && me.cfg.command !== '') {
+      if(!ic.bCommandLoad && ic.bInitial && me.cfg.command !== undefined && me.cfg.command !== '') {
           if(Object.keys(ic.structures).length == 1) {
               let  id = Object.keys(ic.structures)[0];
               me.cfg.command = me.cfg.command.replace(new RegExp('!','g'), id + '_');
@@ -34912,6 +34969,7 @@ class ShowAnno {
                     } // for(let r = 0
                 } // if(me.cfg.mmdbid
             } // for(let i = 0
+
             if(me.cfg.blast_rep_id === undefined) {
                if(ic.bFullUi) {
                    if(me.cfg.mmtfid !== undefined) { // mmtf data do NOT have the missing residues
@@ -38202,12 +38260,12 @@ class HlUpdate {
 
     //Update the highlight of 3D structure display according to the current highlighted atoms.
     updateHlObjects(bForceHighlight) { let ic = this.icn3d; ic.icn3dui;
-           ic.hlObjectsCls.removeHlObjects();
+       ic.hlObjectsCls.removeHlObjects();
 
-           if((ic.hAtoms && Object.keys(ic.hAtoms).length < Object.keys(ic.atoms).length) || bForceHighlight) {
-              ic.hlObjectsCls.addHlObjects();
-              ic.definedSetsCls.setMode('selection');
-           }
+       if((ic.hAtoms && Object.keys(ic.hAtoms).length < Object.keys(ic.atoms).length) || bForceHighlight) {
+          ic.hlObjectsCls.addHlObjects();
+          ic.definedSetsCls.setMode('selection');
+       }
     }
 
     // update highlight in sequence, slow if sequence is long
@@ -38575,15 +38633,15 @@ class Selection {
 
         if(bUnion === undefined || !bUnion) {
             ic.hAtoms = {};
-            ic.menuHlHash = {};
+            ic.nameArray = [];
         }
         else {
             ic.hAtoms = me.hashUtilsCls.unionHash(ic.hAtoms, ic.chains[chainid]);
 
-            if(ic.menuHlHash === undefined) ic.menuHlHash = {};
+            if(ic.nameArray === undefined) ic.nameArray = [];
         }
 
-        ic.menuHlHash[chainid] = 1;
+        ic.nameArray.push(chainid);
 
         //chainHash[chainid] = 1;
 
@@ -38617,7 +38675,7 @@ class Selection {
             ic.hlUpdateCls.updateHlAll(undefined, undefined, bUnion, bForceHighlight);
         }
         else {
-            ic.hlUpdateCls.updateHlAll(Object.keys(ic.menuHlHash), undefined, bUnion, bForceHighlight);
+            ic.hlUpdateCls.updateHlAll(ic.nameArray, undefined, bUnion, bForceHighlight);
         }
     }
 
@@ -38625,10 +38683,10 @@ class Selection {
       if(residueHash !== undefined && Object.keys(residueHash).length > 0) {
         if(bUnion === undefined || !bUnion) {
             ic.hAtoms = {};
-            ic.menuHlHash = {};
+            ic.nameArray = [];
         }
         else {
-            if(ic.menuHlHash === undefined) ic.menuHlHash = {};
+            if(ic.nameArray === undefined) ic.nameArray = [];
         }
 
         if(bAtom) {
@@ -38646,7 +38704,7 @@ class Selection {
 
         commandname = commandname.replace(/\s/g, '');
 
-        ic.menuHlHash[commandname] = 1;
+        ic.nameArray.push(commandname);
 
         let  select, bSelectResidues;
 
@@ -38665,7 +38723,7 @@ class Selection {
             this.addCustomSelection(residueAtomArray, commandname, commanddescr, select, bSelectResidues);
         //}
 
-        if(bUpdateHighlight === undefined || bUpdateHighlight) ic.hlUpdateCls.updateHlAll(Object.keys(ic.menuHlHash), undefined, bUnion);
+        if(bUpdateHighlight === undefined || bUpdateHighlight) ic.hlUpdateCls.updateHlAll(ic.nameArray, undefined, bUnion);
       }
     }
 
@@ -38930,7 +38988,8 @@ class Selection {
 
     oneStructurePerWindow() { let  ic = this.icn3d, me = ic.icn3dui;
         // only display one of the two aligned structures
-        let  structureArray = Object.keys(ic.structures);
+
+        let  structureArray = (ic.structures) ? Object.keys(ic.structures) : [];
         if(me.cfg.bSidebyside && structureArray.length == 2) {
             let  dividArray = Object.keys(window.icn3duiHash);
             let  pos = dividArray.indexOf(ic.divid);
@@ -39111,8 +39170,10 @@ class SetOption {
       if(id === 'color') {
           ic.setColorCls.setColorByOptions(ic.opts, ic.hAtoms);
           ic.drawCls.draw();
-          let residueHash = ic.firstAtomObjCls.getResiduesFromCalphaAtoms(ic.hAtoms);
-          ic.hlUpdateCls.changeSeqColor(Object.keys(residueHash));
+          //let residueHash = ic.firstAtomObjCls.getResiduesFromCalphaAtoms(ic.hAtoms);
+          //ic.hlUpdateCls.changeSeqColor(Object.keys(residueHash));
+          ic.hlUpdateCls.updateHlAll(ic.nameArray);
+
           // change graph color
           ic.getGraphCls.updateGraphColor();
       }
@@ -43268,6 +43329,37 @@ class SaveFile {
             }
         }
 
+        // get missing residues
+        let chainid2missingResi = {};
+        for(let chainid in ic.chainsSeq) {
+            let pos = chainid.indexOf('_');
+            chainid.substr(0, pos);
+
+            for(let i = 0, il = ic.chainsSeq[chainid].length; i < il; ++i) {
+                let resi = ic.chainsSeq[chainid][i].resi;
+                let resid = chainid + '_' + resi;
+                if(!ic.firstAtomObjCls.getFirstAtomObj(ic.residues[resid])) { // mising coordinate
+                    if(chainid2missingResi[chainid] === undefined) chainid2missingResi[chainid] = [];
+                    let seq = me.utilsCls.residueAbbr2Name(ic.chainsSeq[chainid][i].name);
+                    let resiObj = {'resi': resi, 'seq': seq};
+                    chainid2missingResi[chainid].push(resiObj);
+                }
+            }
+        }
+
+        // add missing residues "REMARK 465..."
+        for(let chainid in chainid2missingResi) {
+            let pos = chainid.indexOf('_');
+            let chain = chainid.substr(pos + 1, 2);
+
+            for(let i = 0, il = chainid2missingResi[chainid].length; i < il; ++i) {
+                let resi = chainid2missingResi[chainid][i].resi;
+                let seq = chainid2missingResi[chainid][i].seq;
+
+                pdbStr += "REMARK 465     " + seq.padStart(3, " ") + chain.padStart(2, " ") + " " + resi.toString().padStart(5, " ") + "\n";
+            }
+        }
+
         let connStr = '';
         let struArray = Object.keys(ic.structures);
         let bMulStruc =(struArray.length > 1) ? true : false;
@@ -45698,7 +45790,7 @@ class SetMenu {
         if(!me.utilsCls.isMobile()) {
             let marginLeft = me.htmlCls.WIDTH - 40 + 5;
 
-            html += me.htmlCls.buttonStr + "fullscreen' style='position:absolute; z-index:1999; display:block; padding:0px; margin: 7px 0px 0px " + marginLeft + "px; width:30px; height:34px; border-radius:4px; border:none; background-color:#f6f6f6;' title='Full screen'>";
+            html += me.htmlCls.buttonStr + "fullscreen' style='position:absolute; z-index:1999; display:block; padding:0px; margin: 12px 0px 0px " + marginLeft + "px; width:30px; height:34px; border-radius:4px; border:none; background-color:#f6f6f6;' title='Full screen'>";
             html += "<svg fill='#1c94c4' viewBox='0 0 24 24' width='24' height='24'>";
             html += "<path d='M0 0h24v24H0z' fill='none'></path>";
             html += "<path d='M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z'></path>";
@@ -48696,7 +48788,7 @@ class Events {
         if(!fullscreenElement) {
             me.htmlCls.clickMenuCls.setLogCmd("exit full screen", false);
             ic.bFullscreen = false;
-            me.utilsCls.setViewerWidthHeight(me);
+            me.utilsCls.setViewerWidthHeight(me, true);
             ic.applyCenterCls.setWidthHeight(me.htmlCls.WIDTH, me.htmlCls.HEIGHT);
             ic.drawCls.draw();
         }
@@ -50926,7 +51018,7 @@ class SetHtml {
         html += "<b>Line Radius</b>: " + me.htmlCls.inputTextStr + "id='" + me.pre + "linerad_" + type + "' value='" + linerad + "' size=4>" + me.htmlCls.space3 + "(for stabilizers, hydrogen bonds, distance lines, default 0.1)<br/>";
         html += "<b>Coil Radius</b>: " + me.htmlCls.inputTextStr + "id='" + me.pre + "coilrad_" + type + "' value='" + coilrad + "' size=4>" + me.htmlCls.space3 + "(for coils, default 0.3)<br/>";
         html += "<b>Stick Radius</b>: " + me.htmlCls.inputTextStr + "id='" + me.pre + "stickrad_" + type + "' value='" + stickrad + "' size=4>" + me.htmlCls.space3 + "(for sticks, default 0.4)<br/>";
-        html += "<b>Trace Radius</b>: " + me.htmlCls.inputTextStr + "id='" + me.pre + "tracerad_" + type + "' value='" + tracerad + "' size=4>" + me.htmlCls.space3 + "(for C alpha trace, O3' trace, default 0.2)<br/>";
+        html += "<b>Trace Radius</b>: " + me.htmlCls.inputTextStr + "id='" + me.pre + "tracerad_" + type + "' value='" + tracerad + "' size=4>" + me.htmlCls.space3 + "(for C alpha trace, O3' trace, default 0.4)<br/>";
 
         html += "<b>Ribbon Thickness</b>: " + me.htmlCls.inputTextStr + "id='" + me.pre + "ribbonthick_" + type + "' value='" + ribbonthick + "' size=4>" + me.htmlCls.space3 + "(for helix and sheet ribbons, nucleotide ribbons, default 0.2)<br/>";
         html += "<b>Protein Ribbon Width</b>: " + me.htmlCls.inputTextStr + "id='" + me.pre + "prtribbonwidth_" + type + "' value='" + prtribbonwidth + "' size=4>" + me.htmlCls.space3 + "(for helix and sheet ribbons, default 1.3)<br/>";
@@ -51546,7 +51638,7 @@ class SetHtml {
             $("#" + me.pre + "linerad_" + postfix ).val(0.1); //0.1; // hbonds, distance lines
             $("#" + me.pre + "coilrad_" + postfix ).val(0.3); //0.3; // style cartoon-coil
             $("#" + me.pre + "stickrad_" + postfix ).val(0.4); //0.4; // style stick
-            $("#" + me.pre + "tracerad_" + postfix ).val(0.2); //0.2; // style c alpha trace, nucleotide stick
+            $("#" + me.pre + "tracerad_" + postfix ).val(0.4); //0.4; // style c alpha trace, nucleotide stick
             $("#" + me.pre + "ballscale_" + postfix ).val(0.3); //0.3; // style ball and stick, dot
             $("#" + me.pre + "ribbonthick_" + postfix ).val(0.2); //0.2; // style ribbon, nucleotide cartoon, stand thickness
             $("#" + me.pre + "prtribbonwidth_" + postfix ).val(1.3); //1.3; // style ribbon, stand thickness
@@ -51556,7 +51648,7 @@ class SetHtml {
         ic.lineRadius = parseFloat($("#" + me.pre + "linerad_" + postfix ).val()); //0.1; // hbonds, distance lines
         ic.coilWidth = parseFloat($("#" + me.pre + "coilrad_" + postfix ).val()); //0.4; // style cartoon-coil
         ic.cylinderRadius = parseFloat($("#" + me.pre + "stickrad_" + postfix ).val()); //0.4; // style stick
-        ic.traceRadius = parseFloat($("#" + me.pre + "tracerad_" + postfix ).val()); //0.2; // style c alpha trace, nucleotide stick
+        ic.traceRadius = parseFloat($("#" + me.pre + "tracerad_" + postfix ).val()); //0.4; // style c alpha trace, nucleotide stick
         ic.dotSphereScale = parseFloat($("#" + me.pre + "ballscale_" + postfix ).val()); //0.3; // style ball and stick, dot
         ic.ribbonthickness = parseFloat($("#" + me.pre + "ribbonthick_" + postfix ).val()); //0.4; // style ribbon, nucleotide cartoon, stand thickness
         ic.helixSheetWidth = parseFloat($("#" + me.pre + "prtribbonwidth_" + postfix ).val()); //1.3; // style ribbon, stand thickness
@@ -51634,7 +51726,7 @@ class Html {
     else {
         this.MENU_HEIGHT = 40;
     }
-    this.LOG_HEIGHT = 40;
+    this.LOG_HEIGHT = 65; //40;
     // used to set the position for the log/command textarea
     this.MENU_WIDTH = 750;
     //The width (in px) that was left empty by the 3D viewer. The default is 20px.
@@ -53964,7 +54056,7 @@ class iCn3D {
     this.coilWidth = 0.3; //0.4; // style cartoon-coil
     this.cylinderRadius = 0.4; // style stick
     //This is the stick radius for C alpha trace and O3' trace. It's 0.4 by default.
-    this.traceRadius = 0.2; //0.2; // c alpha trace, nucleotide stick
+    this.traceRadius = 0.4; //0.4; // c alpha trace, nucleotide stick
     //This is the ball scale for styles 'Ball and Stick' and 'Dot'. It's 0.3 by default.
     this.dotSphereScale = 0.3; // style ball and stick, dot
     //This is the sphere radius for the style 'Sphere'. It's 1.5 by default.
@@ -54327,7 +54419,7 @@ class iCn3D {
   }
 }
 //When users first load a structure, call this function to empty previous settings.
-iCn3D.prototype.init = function () {
+iCn3D.prototype.init = function (bKeepCmd) {
     this.init_base();
 
     this.molTitle = "";
@@ -54348,7 +54440,7 @@ iCn3D.prototype.init = function () {
     this.axes = [];
 };
 
-iCn3D.prototype.init_base = function () {
+iCn3D.prototype.init_base = function (bKeepCmd) {
     this.resetConfig();
 
     this.structures = {}; // structure name -> array of chains
@@ -54436,7 +54528,7 @@ iCn3D.prototype.init_base = function () {
     this.transformCls.rotateCount = 0;
     this.transformCls.rotateCountMax = 20;
 
-    this.commands = [];
+    if(bKeepCmd) this.commands = [];
 
     this.axes = [];
 
@@ -54509,7 +54601,7 @@ class iCn3DUI {
     //even when multiple iCn3D viewers are shown together.
     this.pre = this.cfg.divid + "_";
 
-    this.REVISION = '3.4.4';
+    this.REVISION = '3.4.5';
 
     // In nodejs, iCn3D defines "window = {navigator: {}}"
     this.bNode = (Object.keys(window).length < 2) ? true : false;

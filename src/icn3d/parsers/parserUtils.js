@@ -561,7 +561,8 @@ class ParserUtils {
           ic.drawCls.draw();
       }
 
-      if(ic.bInitial && me.cfg.command !== undefined && me.cfg.command !== '') {
+//      if(ic.bInitial && me.cfg.command !== undefined && me.cfg.command !== '') {
+      if(!ic.bCommandLoad && ic.bInitial && me.cfg.command !== undefined && me.cfg.command !== '') {
           if(Object.keys(ic.structures).length == 1) {
               let  id = Object.keys(ic.structures)[0];
               me.cfg.command = me.cfg.command.replace(new RegExp('!','g'), id + '_');

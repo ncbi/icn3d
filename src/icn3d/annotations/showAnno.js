@@ -105,6 +105,7 @@ class ShowAnno {
                     } // for(let r = 0
                 } // if(me.cfg.mmdbid
             } // for(let i = 0
+
             if(me.cfg.blast_rep_id === undefined) {
                if(ic.bFullUi) {
                    if(me.cfg.mmtfid !== undefined) { // mmtf data do NOT have the missing residues

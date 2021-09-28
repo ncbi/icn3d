@@ -67,15 +67,15 @@ class Selection {
 
         if(bUnion === undefined || !bUnion) {
             ic.hAtoms = {}
-            ic.menuHlHash = {}
+            ic.nameArray = [];
         }
         else {
             ic.hAtoms = me.hashUtilsCls.unionHash(ic.hAtoms, ic.chains[chainid]);
 
-            if(ic.menuHlHash === undefined) ic.menuHlHash = {}
+            if(ic.nameArray === undefined) ic.nameArray = [];
         }
 
-        ic.menuHlHash[chainid] = 1;
+        ic.nameArray.push(chainid);
 
         //chainHash[chainid] = 1;
 
@@ -109,18 +109,18 @@ class Selection {
             ic.hlUpdateCls.updateHlAll(undefined, undefined, bUnion, bForceHighlight);
         }
         else {
-            ic.hlUpdateCls.updateHlAll(Object.keys(ic.menuHlHash), undefined, bUnion, bForceHighlight);
+            ic.hlUpdateCls.updateHlAll(ic.nameArray, undefined, bUnion, bForceHighlight);
         }
     }
 
     selectResidueList(residueHash, commandname, commanddescr, bUnion, bUpdateHighlight, bAtom) { let  ic = this.icn3d, me = ic.icn3dui;
       if(residueHash !== undefined && Object.keys(residueHash).length > 0) {
         if(bUnion === undefined || !bUnion) {
-            ic.hAtoms = {}
-            ic.menuHlHash = {}
+            ic.hAtoms = {};
+            ic.nameArray = [];
         }
         else {
-            if(ic.menuHlHash === undefined) ic.menuHlHash = {}
+            if(ic.nameArray === undefined) ic.nameArray = [];
         }
 
         if(bAtom) {
@@ -138,7 +138,7 @@ class Selection {
 
         commandname = commandname.replace(/\s/g, '');
 
-        ic.menuHlHash[commandname] = 1;
+        ic.nameArray.push(commandname);
 
         let  select, bSelectResidues;
 
@@ -157,7 +157,7 @@ class Selection {
             this.addCustomSelection(residueAtomArray, commandname, commanddescr, select, bSelectResidues);
         //}
 
-        if(bUpdateHighlight === undefined || bUpdateHighlight) ic.hlUpdateCls.updateHlAll(Object.keys(ic.menuHlHash), undefined, bUnion);
+        if(bUpdateHighlight === undefined || bUpdateHighlight) ic.hlUpdateCls.updateHlAll(ic.nameArray, undefined, bUnion);
       }
     }
 
@@ -422,7 +422,8 @@ class Selection {
 
     oneStructurePerWindow() { let  ic = this.icn3d, me = ic.icn3dui;
         // only display one of the two aligned structures
-        let  structureArray = Object.keys(ic.structures);
+
+        let  structureArray = (ic.structures) ? Object.keys(ic.structures) : [];
         if(me.cfg.bSidebyside && structureArray.length == 2) {
             let  dividArray = Object.keys(window.icn3duiHash);
             let  pos = dividArray.indexOf(ic.divid);

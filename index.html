@@ -25,6 +25,7 @@
   <script src="icn3d.min.js"></script>
 
   <script type="text/javascript">
+
     $( document ).ready(function() {
       if (navigator.userAgent.indexOf("MSIE ") > 0 || !!navigator.userAgent.match(/Trident.*rv\:11\./)) { // If Internet Explorer
           // iCn3D version 2.24.7 doesn't work with three_0.128.0.min.js
@@ -53,6 +54,9 @@
           }
           else if(cfg.pdbid !== undefined) {
               setupViewer('pdbid', cfg.pdbid, cfg);
+          }
+          else if(cfg.afid !== undefined) {
+              setupViewer('afid', cfg.afid, cfg);
           }
           else if(cfg.opmid !== undefined) {
               setupViewer('opmid', cfg.opmid, cfg);
@@ -176,10 +180,21 @@
                     }
                 }
                 else {
-                    var tmpPos = cfg.command.indexOf('&');
-                    if(tmpPos != -1) {
-                      decodeSearch += cfg.command.substr(tmpPos);
-                      cfg.command = cfg.command.substr(0, tmpPos);
+                    var paraPos = cfg.command.indexOf(' | parameters ');
+
+                    if(paraPos != -1) { //"&command=load mmdb 7DDD | parameters &mmdbid=7DDD; select..." the commands ends with '}}'.
+                        var tmpPos = cfg.command.indexOf('}}&');
+                        if(tmpPos != -1) { // more parameters after the command
+                          decodeSearch += cfg.command.substr(tmpPos + 2);
+                          cfg.command = cfg.command.substr(0, tmpPos + 2);
+                        }
+                    }
+                    else {
+                        var tmpPos = cfg.command.indexOf('&');
+                        if(tmpPos != -1) {
+                          decodeSearch += cfg.command.substr(tmpPos);
+                          cfg.command = cfg.command.substr(0, tmpPos);
+                        }
                     }
                 }
             }
