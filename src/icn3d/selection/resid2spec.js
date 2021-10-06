@@ -22,6 +22,7 @@ class Resid2spec {
 
     residueids2spec(residueArray) {var ic = this.icn3d, me = ic.icn3dui;
          let  spec = "";
+
          if(residueArray !== undefined){
              let  residueArraySorted = residueArray.sort(function(a, b) {
                 if(a !== '' && !isNaN(a)) {
@@ -46,7 +47,9 @@ class Resid2spec {
                  let  residueid = residueArraySorted[j];
                  lastDashPos = residueid.lastIndexOf('_');
                  chain = residueid.substr(0, lastDashPos);
-                 resi = parseInt(residueid.substr(lastDashPos+1));
+                 // allow resi such as 35A
+                 //resi = parseInt(residueid.substr(lastDashPos+1));
+                 resi = residueid.substr(lastDashPos+1);
                  firstDashPos = prevChain.indexOf('_');
                  struturePart = prevChain.substr(0, firstDashPos);
                  chainPart = prevChain.substr(firstDashPos + 1);
@@ -72,7 +75,10 @@ class Resid2spec {
                      startResi = resi;
                  }
                  else if(prevChain === chain) {
-                     if(resi != parseInt(prevResi) + 1) {
+                     // some residue number could be "35A"
+                     let tmpPrevResi = !isNaN(prevResi) ? parseInt(prevResi) : prevResi;
+                     //if(resi != parseInt(prevResi) + 1) {
+                     if(resi != tmpPrevResi + 1) {
                          if(prevResi === startResi) {
                              if(bMultipleStructures) {
                                  spec += '$' + struturePart + '.' + chainPart + ':' + startResi + ' or ';
@@ -116,6 +122,7 @@ class Resid2spec {
                  }
              }
          }
+
          return spec;
     }
 

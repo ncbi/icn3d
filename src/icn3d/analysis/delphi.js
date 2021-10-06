@@ -89,10 +89,10 @@ class Delphi {
        }
 
        let pdbstr = '';
-       pdbstr += ic.saveFileCls.getPDBHeader();
+///       pdbstr += ic.saveFileCls.getPDBHeader();
 
        pdbstr +=(me.cfg.cid) ? ic.saveFileCls.getAtomPDB(atomHash, true) : ic.saveFileCls.getAtomPDB(atomHash);
-       pdbstr += ic.saveFileCls.getAtomPDB(ionHash, true);
+       pdbstr += ic.saveFileCls.getAtomPDB(ionHash, true, undefined, true);
 
        return pdbstr;
     }

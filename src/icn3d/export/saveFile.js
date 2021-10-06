@@ -265,7 +265,7 @@ class SaveFile {
     }
 
     //getAtomPDB: function(atomHash, bPqr, bPdb, bNoChem) { let ic = this.icn3d, me = ic.icn3dui;
-    getAtomPDB(atomHash, bPqr, bNoChem) { let ic = this.icn3d, me = ic.icn3dui;
+    getAtomPDB(atomHash, bPqr, bNoChem, bNoHeader) { let ic = this.icn3d, me = ic.icn3dui;
         let pdbStr = '';
 
         // get all phosphate groups in lipids
@@ -299,19 +299,25 @@ class SaveFile {
         let bHelixBegin = false, bHelixEnd = true;
         let bSheetBegin = false, bSheetEnd = true;
 
+        let stru2header = {};
+        for(let stru in ic.structures) {
+            stru2header[stru] = '';
+        }
+
         for(let i in calphaHash) {
             let atom = ic.atoms[i];
+            let stru = atom.structure;
 
             if(atom.ssbegin) {
                 if(atom.ss == 'helix') {
                     bHelixBegin = true;
-                    if(bHelixEnd) pdbStr += helixStr.padEnd(15, ' ') + atom.resn.padStart(3, ' ') + atom.chain.replace(/_/gi, '').substr(0, 2).padStart(2, ' ')
+                    if(bHelixEnd) stru2header[stru] += helixStr.padEnd(15, ' ') + atom.resn.padStart(3, ' ') + atom.chain.replace(/_/gi, '').substr(0, 2).padStart(2, ' ')
                         + atom.resi.toString().padStart(5, ' ');
                     bHelixEnd = false;
                 }
                 else if(atom.ss == 'sheet') {
                     bSheetBegin = true;
-                    if(bSheetEnd) pdbStr += sheetStr.padEnd(17, ' ') + atom.resn.padStart(3, ' ') + atom.chain.replace(/_/gi, '').substr(0, 2).padStart(2, ' ')
+                    if(bSheetEnd) stru2header[stru] += sheetStr.padEnd(17, ' ') + atom.resn.padStart(3, ' ') + atom.chain.replace(/_/gi, '').substr(0, 2).padStart(2, ' ')
                         + atom.resi.toString().padStart(4, ' ');
                     bSheetEnd = false;
                 }
@@ -320,13 +326,13 @@ class SaveFile {
             if(atom.ssend) {
                 if(atom.ss == 'helix') {
                     bHelixEnd = true;
-                    if(bHelixBegin) pdbStr += atom.resn.padStart(5, ' ') + atom.chain.replace(/_/gi, '').substr(0, 2).padStart(2, ' ')
+                    if(bHelixBegin) stru2header[stru] += atom.resn.padStart(5, ' ') + atom.chain.replace(/_/gi, '').substr(0, 2).padStart(2, ' ')
                         + atom.resi.toString().padStart(5, ' ') + '\n';
                     bHelixBegin = false;
                 }
                 else if(atom.ss == 'sheet') {
                     bSheetEnd = true;
-                    if(bSheetBegin) pdbStr += atom.resn.padStart(5, ' ') + atom.chain.replace(/_/gi, '').substr(0, 2).padStart(2, ' ')
+                    if(bSheetBegin) stru2header[stru] += atom.resn.padStart(5, ' ') + atom.chain.replace(/_/gi, '').substr(0, 2).padStart(2, ' ')
                         + atom.resi.toString().padStart(4, ' ') + '\n';
                     bSheetBegin = false;
                 }
@@ -370,12 +376,13 @@ class SaveFile {
         for(let chainid in chainid2missingResi) {
             let pos = chainid.indexOf('_');
             let chain = chainid.substr(pos + 1, 2);
+            let stru = chainid.substr(0, pos);
 
             for(let i = 0, il = chainid2missingResi[chainid].length; i < il; ++i) {
                 let resi = chainid2missingResi[chainid][i].resi;
                 let seq = chainid2missingResi[chainid][i].seq;
 
-                pdbStr += "REMARK 465     " + seq.padStart(3, " ") + chain.padStart(2, " ") + " " + resi.toString().padStart(5, " ") + "\n";
+                stru2header[stru] += "REMARK 465     " + seq.padStart(3, " ") + chain.padStart(2, " ") + " " + resi.toString().padStart(5, " ") + "\n";
             }
         }
 
@@ -384,7 +391,8 @@ class SaveFile {
         let bMulStruc =(struArray.length > 1) ? true : false;
 
         let molNum = 1, prevStru = '';
-        pdbStr += '\n';
+        //pdbStr += '\n';
+
         for(let i in atomHash) {
             let atom = ic.atoms[i];
 
@@ -396,7 +404,12 @@ class SaveFile {
                 connStr = '';
 
                 if(molNum > 1)  pdbStr += '\nENDMDL\n';
+
                 pdbStr += 'MODEL        ' + molNum + '\n';
+
+                // add header
+                if(!bNoHeader) pdbStr += this.getPDBHeader(molNum - 1, stru2header);
+
                 prevStru = atom.structure;
                 ++molNum;
             }
@@ -554,22 +567,30 @@ class SaveFile {
 
     getSelectedResiduePDB() { let ic = this.icn3d, me = ic.icn3dui;
        let pdbStr = '';
-       pdbStr += this.getPDBHeader();
+///       pdbStr += this.getPDBHeader();
 
        let atoms = me.hashUtilsCls.intHash(ic.dAtoms, ic.hAtoms);
        pdbStr += this.getAtomPDB(atoms);
 
        return pdbStr;
     }
-    getPDBHeader(struNum) { let ic = this.icn3d, me = ic.icn3dui;
+    getPDBHeader(struNum, stru2header) { let ic = this.icn3d, me = ic.icn3dui;
        if(struNum === undefined) struNum = 0;
 
        let pdbStr = '';
-       pdbStr += 'HEADER    PDB From iCn3D'.padEnd(62, ' ') + Object.keys(ic.structures)[struNum] + '\n';
-       let title =(ic.molTitle.length > 50) ? ic.molTitle.substr(0,47) + '...' : ic.molTitle;
-       // remove quotes
-       if(title.indexOf('"') != -1) title = '';
-       pdbStr += 'TITLE     ' + title + '\n';
+       let stru = Object.keys(ic.structures)[struNum];
+       pdbStr += 'HEADER    PDB From iCn3D'.padEnd(62, ' ') + stru + '\n';
+
+       if(stru2header) {
+           pdbStr += stru2header[stru];
+       }
+
+       if(struNum == 0) {
+           let title =(ic.molTitle.length > 50) ? ic.molTitle.substr(0,47) + '...' : ic.molTitle;
+           // remove quotes
+           if(title.indexOf('"') != -1) title = '';
+           pdbStr += 'TITLE     ' + title + '\n';
+       }
 
        return pdbStr;
     }

@@ -573,7 +573,7 @@ class SetHtml {
 
        if(me.cfg.cid) {
           let pqrStr = '';
-          pqrStr += ic.saveFileCls.getPDBHeader();
+///          pqrStr += ic.saveFileCls.getPDBHeader();
           pqrStr += ic.saveFileCls.getAtomPDB(atomHash, true) + ic.saveFileCls.getAtomPDB(ionHash, true);
 
           let file_pref =(ic.inputid) ? ic.inputid : "custom";
@@ -587,10 +587,10 @@ class SetHtml {
            }
 
            let pdbstr = '';
-           pdbstr += ic.saveFileCls.getPDBHeader();
+///           pdbstr += ic.saveFileCls.getPDBHeader();
 
            pdbstr += ic.saveFileCls.getAtomPDB(atomHash);
-           pdbstr += ic.saveFileCls.getAtomPDB(ionHash, true);
+           pdbstr += ic.saveFileCls.getAtomPDB(ionHash, true, undefined, true);
 
            let url = "https://www.ncbi.nlm.nih.gov/Structure/delphi/delphi.fcgi";
 
@@ -858,9 +858,8 @@ class SetHtml {
 
     exportPdb() { let me = this.icn3dui, ic = me.icn3d;
        let pdbStr = '';
-       pdbStr += ic.saveFileCls.getPDBHeader();
+///       pdbStr += ic.saveFileCls.getPDBHeader();
        let atoms = me.hashUtilsCls.intHash(ic.dAtoms, ic.hAtoms);
-       //pdbStr += ic.saveFileCls.getAtomPDB(atoms, undefined, true);
        pdbStr += ic.saveFileCls.getAtomPDB(atoms);
 
        let file_pref =(ic.inputid) ? ic.inputid : "custom";

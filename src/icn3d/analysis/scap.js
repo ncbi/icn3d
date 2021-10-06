@@ -104,7 +104,8 @@ class Scap {
         // the displayed atoms are for each SNP only
         //var atomHash = me.hashUtilsCls.intHash(ic.dAtoms, ic.hAtoms);
 
-        let pdbStr = ic.saveFileCls.getPDBHeader() + ic.saveFileCls.getAtomPDB(ic.hAtoms);
+///        let pdbStr = ic.saveFileCls.getPDBHeader() + ic.saveFileCls.getAtomPDB(ic.hAtoms);
+        let pdbStr = ic.saveFileCls.getAtomPDB(ic.hAtoms);
 
         let url = "https://www.ncbi.nlm.nih.gov/Structure/scap/scap.cgi";
 
@@ -153,7 +154,8 @@ class Scap {
                       //ic.atoms[serial].color = me.parasCls.thr(0xA52A2A); // brown
                       //ic.atomPrevColors[serial] = me.parasCls.thr(0xA52A2A); // brown
                       // use the same color as the wild type
-                      let resid = atom.structure.substr(0, 4) + '_' + atom.chain + '_' + atom.resi;
+///                      let resid = atom.structure.substr(0, 4) + '_' + atom.chain + '_' + atom.resi;
+                      let resid = atom.structure + '_' + atom.chain + '_' + atom.resi;
                       let atomWT = ic.firstAtomObjCls.getFirstAtomObj(ic.residues[resid]);
                       ic.atoms[serial].color = atomWT.color;
                       ic.atomPrevColors[serial] = atomWT.color;
@@ -162,8 +164,7 @@ class Scap {
 
               if(bPdb) {
                  let pdbStr = '';
-                 pdbStr += ic.saveFileCls.getPDBHeader();
-                 //pdbStr += ic.saveFileCls.getAtomPDB(ic.hAtoms, undefined, true);
+///                 pdbStr += ic.saveFileCls.getPDBHeader();
                  pdbStr += ic.saveFileCls.getAtomPDB(ic.hAtoms);
 
                  let file_pref =(ic.inputid) ? ic.inputid : "custom";

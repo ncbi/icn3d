@@ -79,11 +79,17 @@ class LoadPDB {
             if (record === 'HEADER') {
                 // if(bOpm === undefined || !bOpm) ic.bSecondaryStructure = true;
 
-                id = line.substr(62, 4).trim();
+                ///id = line.substr(62, 4).trim();
+                id = line.substr(62).trim();
 
                 if(id == '') {
-                    if(!ic.inputid) ic.inputid = 'stru';
-                    id = (ic.inputid.indexOf('/') == -1) ? ic.inputid.substr(0, 10) : "stru"; //ic.filename.substr(0, 4);
+                    if(bAppend) {
+                        id = "stru";
+                    }
+                    else {
+                        if(!ic.inputid) ic.inputid = 'stru';
+                        id = (ic.inputid.indexOf('/') == -1) ? ic.inputid.substr(0, 10) : "stru"; //ic.filename.substr(0, 4);
+                    }
                 }
 
                 ic.molTitle = '';

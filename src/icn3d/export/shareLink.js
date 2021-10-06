@@ -196,7 +196,7 @@ class ShareLink {
 
            url += 'command=';
 
-           //var start =(inparaWithoutCommand !== undefined) ? 1 : 0;
+           //let start =(inparaWithoutCommand !== undefined) ? 1 : 0;
            let start = 0;
 
            if(bAllCommands || ic.bInputUrlfile) start = 0;
@@ -206,7 +206,6 @@ class ShareLink {
            transformation.mouseChange = ic.mouseChange;
            transformation.quaternion = ic.quaternion;
 
-           let bCommands = false;
            let statefile = "";
            let prevCommandStr = undefined;
 
@@ -224,9 +223,8 @@ class ShareLink {
 
            let i = start + 1;
            let selectChainHash = {}
+           let tmpUrl = '';
            for(let il = ic.commands.length; i < il; ++i) {
-               bCommands = true;
-
                let command_tf = ic.commands[i].split('|||');
                let commandStr = command_tf[0].trim();
 
@@ -248,11 +246,16 @@ class ShareLink {
                    ++cntToggle;
                }
                else if(i === start + 1) {
-                   url += prevCommandStr;
+                   //tmpUrl += prevCommandStr;
+                   if(!(inparaWithoutCommand !== undefined &&
+                     (inparaWithoutCommand.indexOf('id=') != -1 || inparaWithoutCommand.indexOf('url=') != -1)) ) {
+                       tmpUrl += prevCommandStr;
+                   }
+
                    //statefile += prevCommandStr + "\n";
                }
                else {
-                   url += '; ' + prevCommandStr;
+                   tmpUrl += (tmpUrl) ? '; ' + prevCommandStr : prevCommandStr;
                    //statefile += prevCommandStr + "\n";
                }
 
@@ -262,9 +265,11 @@ class ShareLink {
                prevCommandStr = commandStr;
            }
 
+           url += tmpUrl;
+
            // last command
            if(prevCommandStr) {
-               if(bCommands) url += '; ';
+               if(tmpUrl) url += '; ';
                if(cntToggle > 0 && cntToggle %2 == 0 && prevCommandStr !== toggleStr) url += toggleStr + '; ';
 
                url += prevCommandStr + '|||' + ic.transformCls.getTransformationStr(transformation);
@@ -300,7 +305,7 @@ class ShareLink {
 
             text += "Start of data file======\n";
             //text += ic.InputfileData;
-            text += ic.saveFileCls.getPDBHeader();
+///            text += ic.saveFileCls.getPDBHeader();
             text += ic.saveFileCls.getAtomPDB(ic.atoms);
 
             text += "End of data file======\n";

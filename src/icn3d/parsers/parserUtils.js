@@ -136,8 +136,8 @@ class ParserUtils {
     set2DDiagramsForAlign(mmdbid1, mmdbid2) { let  ic = this.icn3d, me = ic.icn3dui;
        me.htmlCls.dialogCls.openDlg('dl_2ddgm', 'Interactions');
 
-       mmdbid1 = mmdbid1.substr(0, 4);
-       mmdbid2 = mmdbid2.substr(0, 4);
+///       mmdbid1 = mmdbid1.substr(0, 4);
+///       mmdbid2 = mmdbid2.substr(0, 4);
 
        let  url1 = me.htmlCls.baseUrl + "mmdb/mmdb_strview.cgi?v=2&program=icn3d&uid="+mmdbid1+"&intrac=1";
        let  url2 = me.htmlCls.baseUrl + "mmdb/mmdb_strview.cgi?v=2&program=icn3d&uid="+mmdbid2+"&intrac=1";
@@ -435,6 +435,8 @@ class ParserUtils {
     }
 
     addMemAtoms(dmem, pdbid, dxymax) { let  ic = this.icn3d, me = ic.icn3dui;
+      if(!pdbid) return;
+
       let  npoint=40; // points in radius
       let  step = 2;
       let  maxpnt=2*npoint+1; // points in diameter

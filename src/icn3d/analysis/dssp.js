@@ -28,7 +28,7 @@ class Dssp {
       let url = "../mmcifparser/mmcifparser.cgi";
       for(let i = 0, il = struArray.length; i < il; ++i) {
            let pdbStr = '';
-           pdbStr += ic.saveFileCls.getPDBHeader(i);
+///           pdbStr += ic.saveFileCls.getPDBHeader(i);
 
            let atomHash = {}
            let chainidArray = ic.structures[struArray[i]];
