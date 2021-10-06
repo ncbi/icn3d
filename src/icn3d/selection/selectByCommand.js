@@ -190,18 +190,20 @@ class SelectByCommand {
                  bResidueId = true;
                }
                else {
-                 if(residueStrArray[j] !== '' && !isNaN(residueStrArray[j])) { // residue id
+                 if(residueStrArray[j][0] === '3' &&(residueStrArray[j].length - 1) % 3 === 0) { // three letter residue string, such as :3LysArg
+                   let  tmpStr = residueStrArray[j].toUpperCase();
+                   threeLetterResidueStr = tmpStr.substr(1);
+                   bResidueArrayThree = true;
+                 }
+                 // some residue ID could be "35A"
+                 //else if(residueStrArray[j] !== '' && !isNaN(residueStrArray[j])) { // residue id
+                 else if(residueStrArray[j] !== '' && !isNaN(parseInt(residueStrArray[j]))) { // residue id
                    start = residueStrArray[j];
                    end = start;
                    bResidueId = true;
                  }
                  else if(residueStrArray[j] === '*') { // all resiues
                    bAllResidues = true;
-                 }
-                 else if(residueStrArray[j][0] === '3' &&(residueStrArray[j].length - 1) % 3 === 0) { // three letter residue string, such as :3LysArg
-                   let  tmpStr = residueStrArray[j].toUpperCase();
-                   threeLetterResidueStr = tmpStr.substr(1);
-                   bResidueArrayThree = true;
                  }
                  else if(residueStrArray[j] !== 'proteins' && residueStrArray[j] !== 'nucleotides' && residueStrArray[j] !== 'chemicals' && residueStrArray[j] !== 'ions' && residueStrArray[j] !== 'water') { // residue name
                    let  tmpStr = residueStrArray[j].toUpperCase();
@@ -215,7 +217,11 @@ class SelectByCommand {
                  molecule_chain = Molecule_ChainArray[mc];
 
                  if(bResidueId) {
-                   for(let k = parseInt(start); k <= parseInt(end); ++k) {
+                   // start and end could be a string such as 35A
+                   //for(let k = parseInt(start); k <= parseInt(end); ++k) {
+                   start = !isNaN(start) ? parseInt(start) : start;
+                   end = !isNaN(end) ? parseInt(end) : end;
+                   for(let k = start; k <= end; ++k) {
                      let  residueId = molecule_chain + '_' + k;
                      if(i === 0) {
                           residueHash[residueId] = 1;
@@ -242,7 +248,9 @@ class SelectByCommand {
                            }
                        }
                      }
-                   }
+                   } // end for
+
+
                  }
                  else {
                    if(molecule_chain in ic.chains) {

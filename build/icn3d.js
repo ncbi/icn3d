@@ -12731,7 +12731,7 @@ var icn3d = (function (exports) {
 
                url += 'command=';
 
-               //var start =(inparaWithoutCommand !== undefined) ? 1 : 0;
+               //let start =(inparaWithoutCommand !== undefined) ? 1 : 0;
                let start = 0;
 
                if(bAllCommands || ic.bInputUrlfile) start = 0;
@@ -12741,7 +12741,6 @@ var icn3d = (function (exports) {
                transformation.mouseChange = ic.mouseChange;
                transformation.quaternion = ic.quaternion;
 
-               let bCommands = false;
                let statefile = "";
                let prevCommandStr = undefined;
 
@@ -12758,9 +12757,8 @@ var icn3d = (function (exports) {
                }
 
                let i = start + 1;
+               let tmpUrl = '';
                for(let il = ic.commands.length; i < il; ++i) {
-                   bCommands = true;
-
                    let command_tf = ic.commands[i].split('|||');
                    let commandStr = command_tf[0].trim();
 
@@ -12778,11 +12776,16 @@ var icn3d = (function (exports) {
                        ++cntToggle;
                    }
                    else if(i === start + 1) {
-                       url += prevCommandStr;
+                       //tmpUrl += prevCommandStr;
+                       if(!(inparaWithoutCommand !== undefined &&
+                         (inparaWithoutCommand.indexOf('id=') != -1 || inparaWithoutCommand.indexOf('url=') != -1)) ) {
+                           tmpUrl += prevCommandStr;
+                       }
+
                        //statefile += prevCommandStr + "\n";
                    }
                    else {
-                       url += '; ' + prevCommandStr;
+                       tmpUrl += (tmpUrl) ? '; ' + prevCommandStr : prevCommandStr;
                        //statefile += prevCommandStr + "\n";
                    }
 
@@ -12792,9 +12795,11 @@ var icn3d = (function (exports) {
                    prevCommandStr = commandStr;
                }
 
+               url += tmpUrl;
+
                // last command
                if(prevCommandStr) {
-                   if(bCommands) url += '; ';
+                   if(tmpUrl) url += '; ';
                    if(cntToggle > 0 && cntToggle %2 == 0 && prevCommandStr !== toggleStr) url += toggleStr + '; ';
 
                    url += prevCommandStr + '|||' + ic.transformCls.getTransformationStr(transformation);
@@ -12830,7 +12835,7 @@ var icn3d = (function (exports) {
 
                 text += "Start of data file======\n";
                 //text += ic.InputfileData;
-                text += ic.saveFileCls.getPDBHeader();
+    ///            text += ic.saveFileCls.getPDBHeader();
                 text += ic.saveFileCls.getAtomPDB(ic.atoms);
 
                 text += "End of data file======\n";
@@ -19380,10 +19385,10 @@ var icn3d = (function (exports) {
            }
 
            let pdbstr = '';
-           pdbstr += ic.saveFileCls.getPDBHeader();
+    ///       pdbstr += ic.saveFileCls.getPDBHeader();
 
            pdbstr +=(me.cfg.cid) ? ic.saveFileCls.getAtomPDB(atomHash, true) : ic.saveFileCls.getAtomPDB(atomHash);
-           pdbstr += ic.saveFileCls.getAtomPDB(ionHash, true);
+           pdbstr += ic.saveFileCls.getAtomPDB(ionHash, true, undefined, true);
 
            return pdbstr;
         }
@@ -19972,7 +19977,8 @@ var icn3d = (function (exports) {
             // the displayed atoms are for each SNP only
             //var atomHash = me.hashUtilsCls.intHash(ic.dAtoms, ic.hAtoms);
 
-            let pdbStr = ic.saveFileCls.getPDBHeader() + ic.saveFileCls.getAtomPDB(ic.hAtoms);
+    ///        let pdbStr = ic.saveFileCls.getPDBHeader() + ic.saveFileCls.getAtomPDB(ic.hAtoms);
+            let pdbStr = ic.saveFileCls.getAtomPDB(ic.hAtoms);
 
             let url = "https://www.ncbi.nlm.nih.gov/Structure/scap/scap.cgi";
 
@@ -20021,7 +20027,8 @@ var icn3d = (function (exports) {
                           //ic.atoms[serial].color = me.parasCls.thr(0xA52A2A); // brown
                           //ic.atomPrevColors[serial] = me.parasCls.thr(0xA52A2A); // brown
                           // use the same color as the wild type
-                          let resid = atom.structure.substr(0, 4) + '_' + atom.chain + '_' + atom.resi;
+    ///                      let resid = atom.structure.substr(0, 4) + '_' + atom.chain + '_' + atom.resi;
+                          let resid = atom.structure + '_' + atom.chain + '_' + atom.resi;
                           let atomWT = ic.firstAtomObjCls.getFirstAtomObj(ic.residues[resid]);
                           ic.atoms[serial].color = atomWT.color;
                           ic.atomPrevColors[serial] = atomWT.color;
@@ -20030,8 +20037,7 @@ var icn3d = (function (exports) {
 
                   if(bPdb) {
                      let pdbStr = '';
-                     pdbStr += ic.saveFileCls.getPDBHeader();
-                     //pdbStr += ic.saveFileCls.getAtomPDB(ic.hAtoms, undefined, true);
+    ///                 pdbStr += ic.saveFileCls.getPDBHeader();
                      pdbStr += ic.saveFileCls.getAtomPDB(ic.hAtoms);
 
                      let file_pref =(ic.inputid) ? ic.inputid : "custom";
@@ -20153,7 +20159,7 @@ var icn3d = (function (exports) {
            }
 
            let pdbstr = '';
-           pdbstr += ic.saveFileCls.getPDBHeader();
+    ///       pdbstr += ic.saveFileCls.getPDBHeader();
            pdbstr += ic.saveFileCls.getAtomPDB(atomHash);
 
            let dataObj = {'pdb': pdbstr, 'pdbid': Object.keys(ic.structures).toString()};
@@ -20778,11 +20784,17 @@ var icn3d = (function (exports) {
                 if (record === 'HEADER') {
                     // if(bOpm === undefined || !bOpm) ic.bSecondaryStructure = true;
 
-                    id = line.substr(62, 4).trim();
+                    ///id = line.substr(62, 4).trim();
+                    id = line.substr(62).trim();
 
                     if(id == '') {
-                        if(!ic.inputid) ic.inputid = 'stru';
-                        id = (ic.inputid.indexOf('/') == -1) ? ic.inputid.substr(0, 10) : "stru"; //ic.filename.substr(0, 4);
+                        if(bAppend) {
+                            id = "stru";
+                        }
+                        else {
+                            if(!ic.inputid) ic.inputid = 'stru';
+                            id = (ic.inputid.indexOf('/') == -1) ? ic.inputid.substr(0, 10) : "stru"; //ic.filename.substr(0, 4);
+                        }
                     }
 
                     ic.molTitle = '';
@@ -22919,7 +22931,7 @@ var icn3d = (function (exports) {
           let url = "../mmcifparser/mmcifparser.cgi";
           for(let i = 0, il = struArray.length; i < il; ++i) {
                let pdbStr = '';
-               pdbStr += ic.saveFileCls.getPDBHeader(i);
+    ///           pdbStr += ic.saveFileCls.getPDBHeader(i);
 
                let atomHash = {};
                let chainidArray = ic.structures[struArray[i]];
@@ -32175,18 +32187,20 @@ var icn3d = (function (exports) {
                      bResidueId = true;
                    }
                    else {
-                     if(residueStrArray[j] !== '' && !isNaN(residueStrArray[j])) { // residue id
+                     if(residueStrArray[j][0] === '3' &&(residueStrArray[j].length - 1) % 3 === 0) { // three letter residue string, such as :3LysArg
+                       let  tmpStr = residueStrArray[j].toUpperCase();
+                       threeLetterResidueStr = tmpStr.substr(1);
+                       bResidueArrayThree = true;
+                     }
+                     // some residue ID could be "35A"
+                     //else if(residueStrArray[j] !== '' && !isNaN(residueStrArray[j])) { // residue id
+                     else if(residueStrArray[j] !== '' && !isNaN(parseInt(residueStrArray[j]))) { // residue id
                        start = residueStrArray[j];
                        end = start;
                        bResidueId = true;
                      }
                      else if(residueStrArray[j] === '*') { // all resiues
                        bAllResidues = true;
-                     }
-                     else if(residueStrArray[j][0] === '3' &&(residueStrArray[j].length - 1) % 3 === 0) { // three letter residue string, such as :3LysArg
-                       let  tmpStr = residueStrArray[j].toUpperCase();
-                       threeLetterResidueStr = tmpStr.substr(1);
-                       bResidueArrayThree = true;
                      }
                      else if(residueStrArray[j] !== 'proteins' && residueStrArray[j] !== 'nucleotides' && residueStrArray[j] !== 'chemicals' && residueStrArray[j] !== 'ions' && residueStrArray[j] !== 'water') { // residue name
                        let  tmpStr = residueStrArray[j].toUpperCase();
@@ -32200,7 +32214,11 @@ var icn3d = (function (exports) {
                      molecule_chain = Molecule_ChainArray[mc];
 
                      if(bResidueId) {
-                       for(let k = parseInt(start); k <= parseInt(end); ++k) {
+                       // start and end could be a string such as 35A
+                       //for(let k = parseInt(start); k <= parseInt(end); ++k) {
+                       start = !isNaN(start) ? parseInt(start) : start;
+                       end = !isNaN(end) ? parseInt(end) : end;
+                       for(let k = start; k <= end; ++k) {
                          let  residueId = molecule_chain + '_' + k;
                          if(i === 0) {
                               residueHash[residueId] = 1;
@@ -32227,7 +32245,9 @@ var icn3d = (function (exports) {
                                }
                            }
                          }
-                       }
+                       } // end for
+
+
                      }
                      else {
                        if(molecule_chain in ic.chains) {
@@ -32380,6 +32400,7 @@ var icn3d = (function (exports) {
 
         residueids2spec(residueArray) {var ic = this.icn3d; ic.icn3dui;
              let  spec = "";
+
              if(residueArray !== undefined){
                  let  residueArraySorted = residueArray.sort(function(a, b) {
                     if(a !== '' && !isNaN(a)) {
@@ -32404,7 +32425,9 @@ var icn3d = (function (exports) {
                      let  residueid = residueArraySorted[j];
                      lastDashPos = residueid.lastIndexOf('_');
                      chain = residueid.substr(0, lastDashPos);
-                     resi = parseInt(residueid.substr(lastDashPos+1));
+                     // allow resi such as 35A
+                     //resi = parseInt(residueid.substr(lastDashPos+1));
+                     resi = residueid.substr(lastDashPos+1);
                      firstDashPos = prevChain.indexOf('_');
                      struturePart = prevChain.substr(0, firstDashPos);
                      chainPart = prevChain.substr(firstDashPos + 1);
@@ -32430,7 +32453,10 @@ var icn3d = (function (exports) {
                          startResi = resi;
                      }
                      else if(prevChain === chain) {
-                         if(resi != parseInt(prevResi) + 1) {
+                         // some residue number could be "35A"
+                         let tmpPrevResi = !isNaN(prevResi) ? parseInt(prevResi) : prevResi;
+                         //if(resi != parseInt(prevResi) + 1) {
+                         if(resi != tmpPrevResi + 1) {
                              if(prevResi === startResi) {
                                  if(bMultipleStructures) {
                                      spec += '$' + struturePart + '.' + chainPart + ':' + startResi + ' or ';
@@ -32474,6 +32500,7 @@ var icn3d = (function (exports) {
                      }
                  }
              }
+
              return spec;
         }
 
@@ -33531,8 +33558,8 @@ var icn3d = (function (exports) {
         set2DDiagramsForAlign(mmdbid1, mmdbid2) { let  ic = this.icn3d, me = ic.icn3dui;
            me.htmlCls.dialogCls.openDlg('dl_2ddgm', 'Interactions');
 
-           mmdbid1 = mmdbid1.substr(0, 4);
-           mmdbid2 = mmdbid2.substr(0, 4);
+    ///       mmdbid1 = mmdbid1.substr(0, 4);
+    ///       mmdbid2 = mmdbid2.substr(0, 4);
 
            let  url1 = me.htmlCls.baseUrl + "mmdb/mmdb_strview.cgi?v=2&program=icn3d&uid="+mmdbid1+"&intrac=1";
            let  url2 = me.htmlCls.baseUrl + "mmdb/mmdb_strview.cgi?v=2&program=icn3d&uid="+mmdbid2+"&intrac=1";
@@ -33829,6 +33856,8 @@ var icn3d = (function (exports) {
         }
 
         addMemAtoms(dmem, pdbid, dxymax) { let ic = this.icn3d; ic.icn3dui;
+          if(!pdbid) return;
+
           let  npoint=40; // points in radius
           let  step = 2;
           let  maxpnt=2*npoint+1; // points in diameter
@@ -37162,7 +37191,7 @@ var icn3d = (function (exports) {
         draw2Ddgm(data, mmdbid, structureIndex, bUpdate) { let ic = this.icn3d, me = ic.icn3dui;
             // only show the 2D diagrams for displayed structures
 
-            mmdbid = mmdbid.substr(0, 4);
+    ///        mmdbid = mmdbid.substr(0, 4);
 
             // reduce the size from 300 to 200 (150)
             let factor = 0.667;
@@ -43249,7 +43278,7 @@ var icn3d = (function (exports) {
         }
 
         //getAtomPDB: function(atomHash, bPqr, bPdb, bNoChem) { let ic = this.icn3d, me = ic.icn3dui;
-        getAtomPDB(atomHash, bPqr, bNoChem) { let ic = this.icn3d, me = ic.icn3dui;
+        getAtomPDB(atomHash, bPqr, bNoChem, bNoHeader) { let ic = this.icn3d, me = ic.icn3dui;
             let pdbStr = '';
 
             // get all phosphate groups in lipids
@@ -43283,19 +43312,25 @@ var icn3d = (function (exports) {
             let bHelixBegin = false, bHelixEnd = true;
             let bSheetBegin = false, bSheetEnd = true;
 
+            let stru2header = {};
+            for(let stru in ic.structures) {
+                stru2header[stru] = '';
+            }
+
             for(let i in calphaHash) {
                 let atom = ic.atoms[i];
+                let stru = atom.structure;
 
                 if(atom.ssbegin) {
                     if(atom.ss == 'helix') {
                         bHelixBegin = true;
-                        if(bHelixEnd) pdbStr += helixStr.padEnd(15, ' ') + atom.resn.padStart(3, ' ') + atom.chain.replace(/_/gi, '').substr(0, 2).padStart(2, ' ')
+                        if(bHelixEnd) stru2header[stru] += helixStr.padEnd(15, ' ') + atom.resn.padStart(3, ' ') + atom.chain.replace(/_/gi, '').substr(0, 2).padStart(2, ' ')
                             + atom.resi.toString().padStart(5, ' ');
                         bHelixEnd = false;
                     }
                     else if(atom.ss == 'sheet') {
                         bSheetBegin = true;
-                        if(bSheetEnd) pdbStr += sheetStr.padEnd(17, ' ') + atom.resn.padStart(3, ' ') + atom.chain.replace(/_/gi, '').substr(0, 2).padStart(2, ' ')
+                        if(bSheetEnd) stru2header[stru] += sheetStr.padEnd(17, ' ') + atom.resn.padStart(3, ' ') + atom.chain.replace(/_/gi, '').substr(0, 2).padStart(2, ' ')
                             + atom.resi.toString().padStart(4, ' ');
                         bSheetEnd = false;
                     }
@@ -43304,13 +43339,13 @@ var icn3d = (function (exports) {
                 if(atom.ssend) {
                     if(atom.ss == 'helix') {
                         bHelixEnd = true;
-                        if(bHelixBegin) pdbStr += atom.resn.padStart(5, ' ') + atom.chain.replace(/_/gi, '').substr(0, 2).padStart(2, ' ')
+                        if(bHelixBegin) stru2header[stru] += atom.resn.padStart(5, ' ') + atom.chain.replace(/_/gi, '').substr(0, 2).padStart(2, ' ')
                             + atom.resi.toString().padStart(5, ' ') + '\n';
                         bHelixBegin = false;
                     }
                     else if(atom.ss == 'sheet') {
                         bSheetEnd = true;
-                        if(bSheetBegin) pdbStr += atom.resn.padStart(5, ' ') + atom.chain.replace(/_/gi, '').substr(0, 2).padStart(2, ' ')
+                        if(bSheetBegin) stru2header[stru] += atom.resn.padStart(5, ' ') + atom.chain.replace(/_/gi, '').substr(0, 2).padStart(2, ' ')
                             + atom.resi.toString().padStart(4, ' ') + '\n';
                         bSheetBegin = false;
                     }
@@ -43354,12 +43389,13 @@ var icn3d = (function (exports) {
             for(let chainid in chainid2missingResi) {
                 let pos = chainid.indexOf('_');
                 let chain = chainid.substr(pos + 1, 2);
+                let stru = chainid.substr(0, pos);
 
                 for(let i = 0, il = chainid2missingResi[chainid].length; i < il; ++i) {
                     let resi = chainid2missingResi[chainid][i].resi;
                     let seq = chainid2missingResi[chainid][i].seq;
 
-                    pdbStr += "REMARK 465     " + seq.padStart(3, " ") + chain.padStart(2, " ") + " " + resi.toString().padStart(5, " ") + "\n";
+                    stru2header[stru] += "REMARK 465     " + seq.padStart(3, " ") + chain.padStart(2, " ") + " " + resi.toString().padStart(5, " ") + "\n";
                 }
             }
 
@@ -43368,7 +43404,8 @@ var icn3d = (function (exports) {
             let bMulStruc =(struArray.length > 1) ? true : false;
 
             let molNum = 1, prevStru = '';
-            pdbStr += '\n';
+            //pdbStr += '\n';
+
             for(let i in atomHash) {
                 let atom = ic.atoms[i];
 
@@ -43380,7 +43417,12 @@ var icn3d = (function (exports) {
                     connStr = '';
 
                     if(molNum > 1)  pdbStr += '\nENDMDL\n';
+
                     pdbStr += 'MODEL        ' + molNum + '\n';
+
+                    // add header
+                    if(!bNoHeader) pdbStr += this.getPDBHeader(molNum - 1, stru2header);
+
                     prevStru = atom.structure;
                     ++molNum;
                 }
@@ -43538,22 +43580,30 @@ var icn3d = (function (exports) {
 
         getSelectedResiduePDB() { let ic = this.icn3d, me = ic.icn3dui;
            let pdbStr = '';
-           pdbStr += this.getPDBHeader();
+    ///       pdbStr += this.getPDBHeader();
 
            let atoms = me.hashUtilsCls.intHash(ic.dAtoms, ic.hAtoms);
            pdbStr += this.getAtomPDB(atoms);
 
            return pdbStr;
         }
-        getPDBHeader(struNum) { let ic = this.icn3d; ic.icn3dui;
+        getPDBHeader(struNum, stru2header) { let ic = this.icn3d; ic.icn3dui;
            if(struNum === undefined) struNum = 0;
 
            let pdbStr = '';
-           pdbStr += 'HEADER    PDB From iCn3D'.padEnd(62, ' ') + Object.keys(ic.structures)[struNum] + '\n';
-           let title =(ic.molTitle.length > 50) ? ic.molTitle.substr(0,47) + '...' : ic.molTitle;
-           // remove quotes
-           if(title.indexOf('"') != -1) title = '';
-           pdbStr += 'TITLE     ' + title + '\n';
+           let stru = Object.keys(ic.structures)[struNum];
+           pdbStr += 'HEADER    PDB From iCn3D'.padEnd(62, ' ') + stru + '\n';
+
+           if(stru2header) {
+               pdbStr += stru2header[stru];
+           }
+
+           if(struNum == 0) {
+               let title =(ic.molTitle.length > 50) ? ic.molTitle.substr(0,47) + '...' : ic.molTitle;
+               // remove quotes
+               if(title.indexOf('"') != -1) title = '';
+               pdbStr += 'TITLE     ' + title + '\n';
+           }
 
            return pdbStr;
         }
@@ -51412,7 +51462,7 @@ var icn3d = (function (exports) {
 
            if(me.cfg.cid) {
               let pqrStr = '';
-              pqrStr += ic.saveFileCls.getPDBHeader();
+    ///          pqrStr += ic.saveFileCls.getPDBHeader();
               pqrStr += ic.saveFileCls.getAtomPDB(atomHash, true) + ic.saveFileCls.getAtomPDB(ionHash, true);
 
               let file_pref =(ic.inputid) ? ic.inputid : "custom";
@@ -51426,10 +51476,10 @@ var icn3d = (function (exports) {
                }
 
                let pdbstr = '';
-               pdbstr += ic.saveFileCls.getPDBHeader();
+    ///           pdbstr += ic.saveFileCls.getPDBHeader();
 
                pdbstr += ic.saveFileCls.getAtomPDB(atomHash);
-               pdbstr += ic.saveFileCls.getAtomPDB(ionHash, true);
+               pdbstr += ic.saveFileCls.getAtomPDB(ionHash, true, undefined, true);
 
                let url = "https://www.ncbi.nlm.nih.gov/Structure/delphi/delphi.fcgi";
 
@@ -51697,9 +51747,8 @@ var icn3d = (function (exports) {
 
         exportPdb() { let me = this.icn3dui, ic = me.icn3d;
            let pdbStr = '';
-           pdbStr += ic.saveFileCls.getPDBHeader();
+    ///       pdbStr += ic.saveFileCls.getPDBHeader();
            let atoms = me.hashUtilsCls.intHash(ic.dAtoms, ic.hAtoms);
-           //pdbStr += ic.saveFileCls.getAtomPDB(atoms, undefined, true);
            pdbStr += ic.saveFileCls.getAtomPDB(atoms);
 
            let file_pref =(ic.inputid) ? ic.inputid : "custom";
@@ -54604,7 +54653,7 @@ var icn3d = (function (exports) {
         //even when multiple iCn3D viewers are shown together.
         this.pre = this.cfg.divid + "_";
 
-        this.REVISION = '3.4.5';
+        this.REVISION = '3.4.6';
 
         // In nodejs, iCn3D defines "window = {navigator: {}}"
         this.bNode = (Object.keys(window).length < 2) ? true : false;

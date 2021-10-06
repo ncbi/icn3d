@@ -25,7 +25,7 @@ class Diagram2d {
     draw2Ddgm(data, mmdbid, structureIndex, bUpdate) { let ic = this.icn3d, me = ic.icn3dui;
         // only show the 2D diagrams for displayed structures
 
-        mmdbid = mmdbid.substr(0, 4);
+///        mmdbid = mmdbid.substr(0, 4);
 
         // reduce the size from 300 to 200 (150)
         let factor = 0.667;

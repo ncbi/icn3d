@@ -64,7 +64,7 @@ class Symd {
        }
 
        let pdbstr = '';
-       pdbstr += ic.saveFileCls.getPDBHeader();
+///       pdbstr += ic.saveFileCls.getPDBHeader();
        pdbstr += ic.saveFileCls.getAtomPDB(atomHash);
 
        let dataObj = {'pdb': pdbstr, 'pdbid': Object.keys(ic.structures).toString()}
