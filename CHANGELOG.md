@@ -1,5 +1,5 @@
 ## Change Log
-[icn3d-3.4.7](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.4.7.zip) was release on October 15, 2021. Fixed the 3D display of a single residue without any secondary structure, and fixed the selection of a chain in the sequence winodw.
+[icn3d-3.4.7](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.4.7.zip) was release on October 15, 2021. Fixed the 3D display of a single residue without any secondary structure, and fixed the selection of a chain in the sequence window.
 
 [icn3d-3.4.6](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.4.6.zip) was release on October 6, 2021. Fixed the PDB file export for multiple structures.
 
