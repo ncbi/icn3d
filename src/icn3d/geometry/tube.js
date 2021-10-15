@@ -31,7 +31,25 @@ class Tube {
 
         let pnts_colors_radii_prevone_nexttwo = [];
         let firstAtom, atom, prevAtom;
+/*
+        // add one extra residue if only one residue is shown
+        let resCnt = 0;
+        for (let i in atoms) {
+            atom = atoms[i];
+            if ((atom.name === atomName) && !atom.het) {
+                ++resCnt;
+            }
 
+            if(resCnt > 1) break;
+        }
+
+        if(resCnt == 1) {
+            let resid = atom.structure + '_' + atom.chain + '_' + (parseInt(atom.resi) + 1).toString();
+            if(ic.residues.hasOwnProperty(resid)) {
+                atoms = me.hashUtilsCls.unionHash(atoms, me.hashUtilsCls.hash2Atoms(ic.residues[resid], ic.atoms));
+            }
+        }
+*/
         for (let i in atoms) {
             atom = atoms[i];
             if ((atom.name === atomName) && !atom.het) {
@@ -52,6 +70,7 @@ class Tube {
 
                             let nextoneResid = prevAtom.structure + '_' + prevAtom.chain + '_' + (parseInt(prevAtom.resi) + 1).toString();
                             let nexttwoResid = prevAtom.structure + '_' + prevAtom.chain + '_' + (parseInt(prevAtom.resi) + 2).toString();
+                            let nextthreeResid = prevAtom.structure + '_' + prevAtom.chain + '_' + (parseInt(prevAtom.resi) + 3).toString();
 
                             if(ic.residues.hasOwnProperty(nextoneResid)) {
                                 let nextAtom = ic.firstAtomObjCls.getAtomFromResi(nextoneResid, atomName);
@@ -69,6 +88,20 @@ class Tube {
                                     colors.push(nextAtom.color);
                                 }
                             }
+
+                // add one more residue if only one residue is available
+                if(pnts.length == 1 && ic.residues.hasOwnProperty(nextoneResid)) {
+                    let nextAtom = ic.firstAtomObjCls.getAtomFromResi(nextoneResid, atomName);
+                    pnts.push(nextAtom.coord);
+                    colors.push(nextAtom.color);
+
+                    let radiusFinal = this.getRadius(radius, atom);
+                    radii.push(radiusFinal);
+
+                    nextoneResid = nexttwoResid;
+                    nexttwoResid = nextthreeResid;
+                }
+
 
                             let nextoneCoord = ic.firstAtomObjCls.getAtomCoordFromResi(nextoneResid, atomName);
                             if(nextoneCoord !== undefined) {
@@ -135,6 +168,7 @@ class Tube {
                 prevAtom = atom;
             }
         }
+
         if(bHighlight !== 2) {
             prevone = [];
             if(firstAtom !== undefined && !isNaN(firstAtom.resi)) {
@@ -146,12 +180,28 @@ class Tube {
             nexttwo = [];
             if(atom !== undefined && !isNaN(atom.resi)) {
                 let nextoneResid = atom.structure + '_' + atom.chain + '_' + (parseInt(atom.resi) + 1).toString();
+                let nexttwoResid = atom.structure + '_' + atom.chain + '_' + (parseInt(atom.resi) + 2).toString();
+                let nextthreeResid = atom.structure + '_' + atom.chain + '_' + (parseInt(atom.resi) + 3).toString();
+
+                // add one more residue if only one residue is available
+                //if(pnts.length == 1 && ic.residues.hasOwnProperty(nextoneResid)) {
+                if(ic.residues.hasOwnProperty(nextoneResid)) {
+                    let nextAtom = ic.firstAtomObjCls.getAtomFromResi(nextoneResid, atomName);
+                    pnts.push(nextAtom.coord);
+                    colors.push(nextAtom.color);
+
+                    let radiusFinal = this.getRadius(radius, atom);
+                    radii.push(radiusFinal);
+
+                    nextoneResid = nexttwoResid;
+                    nexttwoResid = nextthreeResid;
+                }
+
                 let nextoneCoord = ic.firstAtomObjCls.getAtomCoordFromResi(nextoneResid, atomName);
                 if(nextoneCoord !== undefined) {
                     nexttwo.push(nextoneCoord);
                 }
 
-                let nexttwoResid = atom.structure + '_' + atom.chain + '_' + (parseInt(atom.resi) + 2).toString();
                 let nexttwoCoord = ic.firstAtomObjCls.getAtomCoordFromResi(nexttwoResid, atomName);
                 if(nexttwoCoord !== undefined) {
                     nexttwo.push(nexttwoCoord);

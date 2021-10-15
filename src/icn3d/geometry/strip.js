@@ -171,6 +171,8 @@ class Strip {
                 p0v = p0[i];
                 p1v = p1[i];
 
+                if(!p0v || !p1v) continue;
+
                 //vs = vs.concat((p0v).toArray()); // 0
                 //vs = vs.concat((p0v).toArray()); // 1
                 //vs = vs.concat((p1v).toArray()); // 2

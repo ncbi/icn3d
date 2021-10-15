@@ -97,11 +97,16 @@ class AnnoContact {
             let resPosArray = [];
             for(let i = 0, il = residueArray.length; i < il; ++i) {
                 let resid = residueArray[i];
-                let resi = Math.round(resid.substr(residueArray[i].lastIndexOf('_') + 1) );
+                let resiNcbi = Math.round(resid.substr(residueArray[i].lastIndexOf('_') + 1) );
+
+                resid = chnid + '_' + (resiNcbi + ic.baseResi[chnid]).toString();
+
                 // exclude chemical, water and ions
-                let serial = Object.keys(ic.residues[resid])[0];
-                if(ic.proteins.hasOwnProperty(serial) || ic.nucleotides.hasOwnProperty(serial)) {
-                    resPosArray.push( resi );
+                if(ic.residues[resid]) {
+                    let serial = Object.keys(ic.residues[resid])[0];
+                    if(ic.proteins.hasOwnProperty(serial) || ic.nucleotides.hasOwnProperty(serial)) {
+                        resPosArray.push( resiNcbi );
+                    }
                 }
             }
             let resCnt = resPosArray.length;
@@ -119,12 +124,14 @@ class AnnoContact {
             let widthPerRes = 1;
             for(let i = 0, il = ic.giSeq[chnid].length; i < il; ++i) {
               html += ic.showSeqCls.insertGap(chnid, i, '-');
-              if(resPosArray.indexOf(i+1 + ic.baseResi[chnid]) != -1) {
+//              if(resPosArray.indexOf(i+1 + ic.baseResi[chnid]) != -1) {
+              if(resPosArray.indexOf(i+1) != -1) {
                   let cFull = ic.giSeq[chnid][i];
                   let c = cFull;
                   if(cFull.length > 1) {
                       c = cFull[0] + '..';
                   }
+
     //            let pos =(ic.baseResi[chnid] + i+1).toString();
     //            let pos = ic.chainsSeq[chnid][i - ic.matchedPos[chnid] ].resi;
                   let pos =(i >= ic.matchedPos[chnid] && i - ic.matchedPos[chnid] < ic.chainsSeq[chnid].length) ? ic.chainsSeq[chnid][i - ic.matchedPos[chnid]].resi : ic.baseResi[chnid] + 1 + i;

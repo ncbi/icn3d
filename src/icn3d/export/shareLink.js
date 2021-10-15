@@ -247,8 +247,12 @@ class ShareLink {
                }
                else if(i === start + 1) {
                    //tmpUrl += prevCommandStr;
-                   if(!(inparaWithoutCommand !== undefined &&
-                     (inparaWithoutCommand.indexOf('id=') != -1 || inparaWithoutCommand.indexOf('url=') != -1)) ) {
+
+                   if(!(inparaWithoutCommand !== undefined && ic.inputid)) {
+                   //if(!(inparaWithoutCommand !== undefined &&
+                   //  (inparaWithoutCommand.indexOf('id=') != -1 || inparaWithoutCommand.indexOf('url=') != -1
+                   //   || inparaWithoutCommand.indexOf('gi=') != -1 || inparaWithoutCommand.indexOf('align=') != -1)
+                   //   ) ) {
                        tmpUrl += prevCommandStr;
                    }
 

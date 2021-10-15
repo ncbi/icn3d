@@ -87,8 +87,8 @@ class LoadPDB {
                         id = "stru";
                     }
                     else {
-                        if(!ic.inputid) ic.inputid = 'stru';
-                        id = (ic.inputid.indexOf('/') == -1) ? ic.inputid.substr(0, 10) : "stru"; //ic.filename.substr(0, 4);
+                        //if(!ic.inputid) ic.inputid = 'stru';
+                        id = (ic.inputid && ic.inputid.indexOf('/') == -1) ? ic.inputid.substr(0, 10) : "stru"; //ic.filename.substr(0, 4);
                     }
                 }
 
