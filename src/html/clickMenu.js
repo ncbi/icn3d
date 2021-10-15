@@ -321,7 +321,9 @@ class ClickMenu {
     //    },
     //    clkMn1_exportCanvas: function() {
         me.myEventCls.onIds(["#" + me.pre + "mn1_exportCanvas", "#" + me.pre + "saveimage"], "click", function(e) { let ic = me.icn3d;
-           thisClass.setLogCmd("export canvas", true);
+           // do not record the export command
+           //thisClass.setLogCmd("export canvas", true);
+           thisClass.setLogCmd("export canvas", false);
            //var file_pref =(ic.inputid) ? ic.inputid : "custom";
            //ic.saveFileCls.saveFile(file_pref + '_image_icn3d_loadable.png', 'png');
            let bPngHtml = true;

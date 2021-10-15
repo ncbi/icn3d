@@ -92,6 +92,8 @@ class ParserUtils {
 
     getMissingResidues(seqArray, type, chainid) { let  ic = this.icn3d, me = ic.icn3dui;
         ic.chainsSeq[chainid] = [];
+
+        let prevResi = 0;
         for(let i = 0, il = seqArray.length; i < il; ++i) {
             let  seqName, resiPos;
             // mmdbid: ["0","R","ARG"],["502","V","VAL"]; mmcifid: [1, "ARG"]; align: ["0","R","ARG"] //align: [1, "0","R","ARG"]
@@ -121,13 +123,16 @@ class ParserUtils {
                 resObject.resi = i + 1;
             }
             else {
-                let  offset =(ic.chainid2offset[chainid]) ? ic.chainid2offset[chainid] : 0;
-                resObject.resi =(seqArray[i][resiPos] == '0') ? i + 1 + offset : seqArray[i][resiPos];
+                let offset =(ic.chainid2offset[chainid]) ? ic.chainid2offset[chainid] : 0;
+                //resObject.resi =(seqArray[i][resiPos] == '0') ? i + 1 + offset : seqArray[i][resiPos]; ?? problem with PDB PS0D
+                resObject.resi =(seqArray[i][resiPos] == '0') ? parseInt(prevResi) + 1 : seqArray[i][resiPos];
             }
 
             resObject.name = (type === 'align') ? seqName.toLowerCase() : seqName;
 
             ic.chainsSeq[chainid].push(resObject);
+
+            prevResi = resObject.resi;
         }
     }
 

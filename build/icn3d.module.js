@@ -4812,10 +4812,11 @@ class ParasCls {
         };
     */
 
+        //'C': this.thr(0xC8C8C8),
         this.atomColors = {
             'H': this.thr(0xFFFFFF),       'He': this.thr(0xFFC0CB),      'HE': this.thr(0xFFC0CB),
             'Li': this.thr(0xB22222),      'LI': this.thr(0xB22222),      'B': this.thr(0x00FF00),
-            'C': this.thr(0xC8C8C8),       'N': this.thr(0x0000FF),       'O': this.thr(0xF00000),
+            'C': this.thr(0xAAAAAA),       'N': this.thr(0x0000FF),       'O': this.thr(0xF00000),
             'F': this.thr(0xDAA520),       'Na': this.thr(0x0000FF),      'NA': this.thr(0x0000FF),
             'Mg': this.thr(0x228B22),      'MG': this.thr(0x228B22),      'Al': this.thr(0x808090),
             'AL': this.thr(0x808090),      'Si': this.thr(0xDAA520),      'SI': this.thr(0xDAA520),
@@ -7078,6 +7079,8 @@ class Strip {
                 p0v = p0[i];
                 p1v = p1[i];
 
+                if(!p0v || !p1v) continue;
+
                 //vs = vs.concat((p0v).toArray()); // 0
                 //vs = vs.concat((p0v).toArray()); // 1
                 //vs = vs.concat((p1v).toArray()); // 2
@@ -7731,7 +7734,25 @@ class Tube {
 
         let pnts_colors_radii_prevone_nexttwo = [];
         let firstAtom, atom, prevAtom;
+/*
+        // add one extra residue if only one residue is shown
+        let resCnt = 0;
+        for (let i in atoms) {
+            atom = atoms[i];
+            if ((atom.name === atomName) && !atom.het) {
+                ++resCnt;
+            }
 
+            if(resCnt > 1) break;
+        }
+
+        if(resCnt == 1) {
+            let resid = atom.structure + '_' + atom.chain + '_' + (parseInt(atom.resi) + 1).toString();
+            if(ic.residues.hasOwnProperty(resid)) {
+                atoms = me.hashUtilsCls.unionHash(atoms, me.hashUtilsCls.hash2Atoms(ic.residues[resid], ic.atoms));
+            }
+        }
+*/
         for (let i in atoms) {
             atom = atoms[i];
             if ((atom.name === atomName) && !atom.het) {
@@ -7752,6 +7773,7 @@ class Tube {
 
                             let nextoneResid = prevAtom.structure + '_' + prevAtom.chain + '_' + (parseInt(prevAtom.resi) + 1).toString();
                             let nexttwoResid = prevAtom.structure + '_' + prevAtom.chain + '_' + (parseInt(prevAtom.resi) + 2).toString();
+                            let nextthreeResid = prevAtom.structure + '_' + prevAtom.chain + '_' + (parseInt(prevAtom.resi) + 3).toString();
 
                             if(ic.residues.hasOwnProperty(nextoneResid)) {
                                 let nextAtom = ic.firstAtomObjCls.getAtomFromResi(nextoneResid, atomName);
@@ -7769,6 +7791,20 @@ class Tube {
                                     colors.push(nextAtom.color);
                                 }
                             }
+
+                // add one more residue if only one residue is available
+                if(pnts.length == 1 && ic.residues.hasOwnProperty(nextoneResid)) {
+                    let nextAtom = ic.firstAtomObjCls.getAtomFromResi(nextoneResid, atomName);
+                    pnts.push(nextAtom.coord);
+                    colors.push(nextAtom.color);
+
+                    let radiusFinal = this.getRadius(radius, atom);
+                    radii.push(radiusFinal);
+
+                    nextoneResid = nexttwoResid;
+                    nexttwoResid = nextthreeResid;
+                }
+
 
                             let nextoneCoord = ic.firstAtomObjCls.getAtomCoordFromResi(nextoneResid, atomName);
                             if(nextoneCoord !== undefined) {
@@ -7835,6 +7871,7 @@ class Tube {
                 prevAtom = atom;
             }
         }
+
         if(bHighlight !== 2) {
             prevone = [];
             if(firstAtom !== undefined && !isNaN(firstAtom.resi)) {
@@ -7846,12 +7883,28 @@ class Tube {
             nexttwo = [];
             if(atom !== undefined && !isNaN(atom.resi)) {
                 let nextoneResid = atom.structure + '_' + atom.chain + '_' + (parseInt(atom.resi) + 1).toString();
+                let nexttwoResid = atom.structure + '_' + atom.chain + '_' + (parseInt(atom.resi) + 2).toString();
+                let nextthreeResid = atom.structure + '_' + atom.chain + '_' + (parseInt(atom.resi) + 3).toString();
+
+                // add one more residue if only one residue is available
+                //if(pnts.length == 1 && ic.residues.hasOwnProperty(nextoneResid)) {
+                if(ic.residues.hasOwnProperty(nextoneResid)) {
+                    let nextAtom = ic.firstAtomObjCls.getAtomFromResi(nextoneResid, atomName);
+                    pnts.push(nextAtom.coord);
+                    colors.push(nextAtom.color);
+
+                    let radiusFinal = this.getRadius(radius, atom);
+                    radii.push(radiusFinal);
+
+                    nextoneResid = nexttwoResid;
+                    nexttwoResid = nextthreeResid;
+                }
+
                 let nextoneCoord = ic.firstAtomObjCls.getAtomCoordFromResi(nextoneResid, atomName);
                 if(nextoneCoord !== undefined) {
                     nexttwo.push(nextoneCoord);
                 }
 
-                let nexttwoResid = atom.structure + '_' + atom.chain + '_' + (parseInt(atom.resi) + 2).toString();
                 let nexttwoCoord = ic.firstAtomObjCls.getAtomCoordFromResi(nexttwoResid, atomName);
                 if(nexttwoCoord !== undefined) {
                     nexttwo.push(nexttwoCoord);
@@ -12774,8 +12827,12 @@ class ShareLink {
                }
                else if(i === start + 1) {
                    //tmpUrl += prevCommandStr;
-                   if(!(inparaWithoutCommand !== undefined &&
-                     (inparaWithoutCommand.indexOf('id=') != -1 || inparaWithoutCommand.indexOf('url=') != -1)) ) {
+
+                   if(!(inparaWithoutCommand !== undefined && ic.inputid)) {
+                   //if(!(inparaWithoutCommand !== undefined &&
+                   //  (inparaWithoutCommand.indexOf('id=') != -1 || inparaWithoutCommand.indexOf('url=') != -1
+                   //   || inparaWithoutCommand.indexOf('gi=') != -1 || inparaWithoutCommand.indexOf('align=') != -1)
+                   //   ) ) {
                        tmpUrl += prevCommandStr;
                    }
 
@@ -20789,8 +20846,8 @@ class LoadPDB {
                         id = "stru";
                     }
                     else {
-                        if(!ic.inputid) ic.inputid = 'stru';
-                        id = (ic.inputid.indexOf('/') == -1) ? ic.inputid.substr(0, 10) : "stru"; //ic.filename.substr(0, 4);
+                        //if(!ic.inputid) ic.inputid = 'stru';
+                        id = (ic.inputid && ic.inputid.indexOf('/') == -1) ? ic.inputid.substr(0, 10) : "stru"; //ic.filename.substr(0, 4);
                     }
                 }
 
@@ -33511,6 +33568,8 @@ class ParserUtils {
 
     getMissingResidues(seqArray, type, chainid) { let  ic = this.icn3d, me = ic.icn3dui;
         ic.chainsSeq[chainid] = [];
+
+        let prevResi = 0;
         for(let i = 0, il = seqArray.length; i < il; ++i) {
             let  seqName, resiPos;
             // mmdbid: ["0","R","ARG"],["502","V","VAL"]; mmcifid: [1, "ARG"]; align: ["0","R","ARG"] //align: [1, "0","R","ARG"]
@@ -33540,13 +33599,16 @@ class ParserUtils {
                 resObject.resi = i + 1;
             }
             else {
-                let  offset =(ic.chainid2offset[chainid]) ? ic.chainid2offset[chainid] : 0;
-                resObject.resi =(seqArray[i][resiPos] == '0') ? i + 1 + offset : seqArray[i][resiPos];
+                (ic.chainid2offset[chainid]) ? ic.chainid2offset[chainid] : 0;
+                //resObject.resi =(seqArray[i][resiPos] == '0') ? i + 1 + offset : seqArray[i][resiPos]; ?? problem with PDB PS0D
+                resObject.resi =(seqArray[i][resiPos] == '0') ? parseInt(prevResi) + 1 : seqArray[i][resiPos];
             }
 
             resObject.name = (type === 'align') ? seqName.toLowerCase() : seqName;
 
             ic.chainsSeq[chainid].push(resObject);
+
+            prevResi = resObject.resi;
         }
     }
 
@@ -34502,6 +34564,7 @@ class HlSeq {
       $("#" + ic.pre + "dl_sequence2").add("[id^=" + ic.pre + "dt_giseq]").add("[id^=" + ic.pre + "dt_custom]").add("[id^=" + ic.pre + "dt_site]").add("[id^=" + ic.pre + "dt_snp]").add("[id^=" + ic.pre + "dt_clinvar]").add("[id^=" + ic.pre + "dt_cdd]").add("[id^=" + ic.pre + "dt_domain]").add("[id^=" + ic.pre + "dt_interaction]").add("[id^=" + ic.pre + "dt_ssbond]").add("[id^=" + ic.pre + "dt_crosslink]").add("[id^=" + ic.pre + "dt_transmem]")
       .add("[id^=" + ic.pre + "tt_giseq]").add("[id^=" + ic.pre + "tt_custom]").add("[id^=" + ic.pre + "tt_site]").add("[id^=" + ic.pre + "tt_snp]").add("[id^=" + ic.pre + "tt_clinvar]").add("[id^=" + ic.pre + "tt_cdd]").add("[id^=" + ic.pre + "tt_domain]").add("[id^=" + ic.pre + "tt_interaction]").add("[id^=" + ic.pre + "tt_ssbond]").add("[id^=" + ic.pre + "tt_crosslink]").add("[id^=" + ic.pre + "tt_transmem]")
       .selectable({
+          distance: 1, //Tolerance, in pixels, for when selecting should start. If specified, selecting will not start until the mouse has been dragged beyond the specified distance.
           stop: function() { let ic = thisClass.icn3d;
               if($(this).attr('id') === ic.pre + "dl_sequence2") {
                   ic.bAlignSeq = true;
@@ -34546,7 +34609,6 @@ class HlSeq {
               //$("#" + ic.pre + "dl_selectannotations div.ui-selected", this).each(function() {
               $("div.ui-selected", this).each(function() {
                   if($(this).attr('chain') !== undefined) {
-
                       thisClass.selectTitle(this);
                   }
               });
@@ -34555,6 +34617,10 @@ class HlSeq {
 
       $("[id^=" + ic.pre + "ov_giseq]").add("[id^=" + ic.pre + "ov_custom]").add("[id^=" + ic.pre + "ov_site]").add("[id^=" + ic.pre + "ov_snp]").add("[id^=" + ic.pre + "ov_clinvar]").add("[id^=" + ic.pre + "ov_cdd]").add("[id^=" + ic.pre + "ov_domain]").add("[id^=" + ic.pre + "ov_interaction]").add("[id^=" + ic.pre + "ov_ssbond]").add("[id^=" + ic.pre + "ov_crosslink]").add("[id^=" + ic.pre + "ov_transmem]")
       .add("[id^=" + ic.pre + "tt_giseq]").add("[id^=" + ic.pre + "tt_custom]").add("[id^=" + ic.pre + "tt_site]").add("[id^=" + ic.pre + "tt_snp]").add("[id^=" + ic.pre + "tt_clinvar]").add("[id^=" + ic.pre + "tt_cdd]").add("[id^=" + ic.pre + "tt_domain]").add("[id^=" + ic.pre + "tt_interaction]").add("[id^=" + ic.pre + "tt_ssbond]").add("[id^=" + ic.pre + "tt_crosslink]").add("[id^=" + ic.pre + "tt_transmem]")
+
+      .add("#" + ic.pre + "dl_sequence2").add("[id^=" + ic.pre + "dt_giseq]").add("[id^=" + ic.pre + "dt_custom]").add("[id^=" + ic.pre + "dt_site]").add("[id^=" + ic.pre + "dt_snp]").add("[id^=" + ic.pre + "dt_clinvar]").add("[id^=" + ic.pre + "dt_cdd]").add("[id^=" + ic.pre + "dt_domain]").add("[id^=" + ic.pre + "dt_interaction]").add("[id^=" + ic.pre + "dt_ssbond]").add("[id^=" + ic.pre + "dt_crosslink]").add("[id^=" + ic.pre + "dt_transmem]")
+      .add("[id^=" + ic.pre + "tt_giseq]").add("[id^=" + ic.pre + "tt_custom]").add("[id^=" + ic.pre + "tt_site]").add("[id^=" + ic.pre + "tt_snp]").add("[id^=" + ic.pre + "tt_clinvar]").add("[id^=" + ic.pre + "tt_cdd]").add("[id^=" + ic.pre + "tt_domain]").add("[id^=" + ic.pre + "tt_interaction]").add("[id^=" + ic.pre + "tt_ssbond]").add("[id^=" + ic.pre + "tt_crosslink]").add("[id^=" + ic.pre + "tt_transmem]")
+
       .on('click', '.icn3d-seqTitle', function(e) { let ic = thisClass.icn3d;
           e.stopImmediatePropagation();
 
@@ -34708,7 +34774,8 @@ class HlSeq {
                 }
                 else {
                     ic.currSelectedSets = [commandname];
-                    ic.selectionCls.selectAChain(chainid, commandname, true);
+                    //ic.selectionCls.selectAChain(chainid, commandname, true);
+                    ic.selectionCls.selectAChain(chainid, commandname, ic.bAlignSeq);
                 }
 
                 if(ic.bAlignSeq) {
@@ -35580,11 +35647,16 @@ class AnnoContact {
             let resPosArray = [];
             for(let i = 0, il = residueArray.length; i < il; ++i) {
                 let resid = residueArray[i];
-                let resi = Math.round(resid.substr(residueArray[i].lastIndexOf('_') + 1) );
+                let resiNcbi = Math.round(resid.substr(residueArray[i].lastIndexOf('_') + 1) );
+
+                resid = chnid + '_' + (resiNcbi + ic.baseResi[chnid]).toString();
+
                 // exclude chemical, water and ions
-                let serial = Object.keys(ic.residues[resid])[0];
-                if(ic.proteins.hasOwnProperty(serial) || ic.nucleotides.hasOwnProperty(serial)) {
-                    resPosArray.push( resi );
+                if(ic.residues[resid]) {
+                    let serial = Object.keys(ic.residues[resid])[0];
+                    if(ic.proteins.hasOwnProperty(serial) || ic.nucleotides.hasOwnProperty(serial)) {
+                        resPosArray.push( resiNcbi );
+                    }
                 }
             }
             let resCnt = resPosArray.length;
@@ -35602,12 +35674,14 @@ class AnnoContact {
             let widthPerRes = 1;
             for(let i = 0, il = ic.giSeq[chnid].length; i < il; ++i) {
               html += ic.showSeqCls.insertGap(chnid, i, '-');
-              if(resPosArray.indexOf(i+1 + ic.baseResi[chnid]) != -1) {
+//              if(resPosArray.indexOf(i+1 + ic.baseResi[chnid]) != -1) {
+              if(resPosArray.indexOf(i+1) != -1) {
                   let cFull = ic.giSeq[chnid][i];
                   let c = cFull;
                   if(cFull.length > 1) {
                       c = cFull[0] + '..';
                   }
+
     //            let pos =(ic.baseResi[chnid] + i+1).toString();
     //            let pos = ic.chainsSeq[chnid][i - ic.matchedPos[chnid] ].resi;
                   let pos =(i >= ic.matchedPos[chnid] && i - ic.matchedPos[chnid] < ic.chainsSeq[chnid].length) ? ic.chainsSeq[chnid][i - ic.matchedPos[chnid]].resi : ic.baseResi[chnid] + 1 + i;
@@ -39201,7 +39275,9 @@ class SetOption {
           ic.drawCls.draw();
           //let residueHash = ic.firstAtomObjCls.getResiduesFromCalphaAtoms(ic.hAtoms);
           //ic.hlUpdateCls.changeSeqColor(Object.keys(residueHash));
-          ic.hlUpdateCls.updateHlAll(ic.nameArray);
+
+          //ic.hlUpdateCls.updateHlAll(ic.nameArray);
+          ic.hlUpdateCls.updateHlAll();
 
           // change graph color
           ic.getGraphCls.updateGraphColor();
@@ -43981,7 +44057,9 @@ class ClickMenu {
     //    },
     //    clkMn1_exportCanvas: function() {
         me.myEventCls.onIds(["#" + me.pre + "mn1_exportCanvas", "#" + me.pre + "saveimage"], "click", function(e) { let ic = me.icn3d;
-           thisClass.setLogCmd("export canvas", true);
+           // do not record the export command
+           //thisClass.setLogCmd("export canvas", true);
+           thisClass.setLogCmd("export canvas", false);
            //var file_pref =(ic.inputid) ? ic.inputid : "custom";
            //ic.saveFileCls.saveFile(file_pref + '_image_icn3d_loadable.png', 'png');
            let bPngHtml = true;
@@ -54650,7 +54728,7 @@ class iCn3DUI {
     //even when multiple iCn3D viewers are shown together.
     this.pre = this.cfg.divid + "_";
 
-    this.REVISION = '3.4.6';
+    this.REVISION = '3.4.7';
 
     // In nodejs, iCn3D defines "window = {navigator: {}}"
     this.bNode = (Object.keys(window).length < 2) ? true : false;

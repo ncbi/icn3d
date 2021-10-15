@@ -178,10 +178,11 @@ class ParasCls {
         };
     */
 
+        //'C': this.thr(0xC8C8C8),
         this.atomColors = {
             'H': this.thr(0xFFFFFF),       'He': this.thr(0xFFC0CB),      'HE': this.thr(0xFFC0CB),
             'Li': this.thr(0xB22222),      'LI': this.thr(0xB22222),      'B': this.thr(0x00FF00),
-            'C': this.thr(0xC8C8C8),       'N': this.thr(0x0000FF),       'O': this.thr(0xF00000),
+            'C': this.thr(0xAAAAAA),       'N': this.thr(0x0000FF),       'O': this.thr(0xF00000),
             'F': this.thr(0xDAA520),       'Na': this.thr(0x0000FF),      'NA': this.thr(0x0000FF),
             'Mg': this.thr(0x228B22),      'MG': this.thr(0x228B22),      'Al': this.thr(0x808090),
             'AL': this.thr(0x808090),      'Si': this.thr(0xDAA520),      'SI': this.thr(0xDAA520),
