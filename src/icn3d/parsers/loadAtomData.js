@@ -298,6 +298,10 @@ class LoadAtomData {
 
                 let  pos = atm.resn.indexOf(' ');
                 if(pos !== -1 && pos != 0) atm.resn = atm.resn.substr(0, pos);
+
+                // remember NCBI residue number
+                atm.resiNCBI = atm.ids.r;
+                ic.residNCBI2resid[chainNum + '_' + atm.resiNCBI] = chainNum + '_' + atm.resi;
             }
             else {
                 if(!bSetResi) {

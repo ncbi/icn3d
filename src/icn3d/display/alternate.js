@@ -21,7 +21,15 @@ class Alternate {
 
         ic.dAtoms = {};
 
-        let moleculeArray = Object.keys(ic.structures);
+        // only alternate selected structures
+        //let moleculeArray = Object.keys(ic.structures);
+        let structureHash = {};
+        for(let i in ic.hAtoms) {
+            let structure = ic.atoms[i].structure;
+            structureHash[structure] = 1;
+        }
+        let moleculeArray = Object.keys(structureHash);
+
         for(let i = 0, il = moleculeArray.length; i < il; ++i) {
             let structure = moleculeArray[i];
             if(i > ic.ALTERNATE_STRUCTURE || (ic.ALTERNATE_STRUCTURE === il - 1 && i === 0) ) {

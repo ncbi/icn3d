@@ -1469,6 +1469,14 @@ class ClickMenu {
            thisClass.setLogCmd('add atom labels', true);
            ic.drawCls.draw();
         });
+
+        me.myEventCls.onIds("#" + me.pre + "mn6_addlabelElements", "click", function(e) { let ic = me.icn3d;
+           ic.residueLabelsCls.addAtomLabels(ic.hAtoms, true);
+           ic.selectionCls.saveSelectionIfSelected();
+           thisClass.setLogCmd('add element labels', true);
+           ic.drawCls.draw();
+        });
+
     //    },
     //    clkMn6_addlabelResidues: function() {
         me.myEventCls.onIds("#" + me.pre + "mn6_addlabelResidues", "click", function(e) { let ic = me.icn3d;

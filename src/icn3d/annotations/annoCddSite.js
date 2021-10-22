@@ -147,7 +147,12 @@ class AnnoCddSite {
                         resPosArray = siteArray[index].locs[i].coords;
                         for(let j = 0, jl = resPosArray.length; j < jl; ++j) {
                             //adjustedResPosArray.push(Math.round(resPosArray[j]) + ic.baseResi[chnid]);
-                            adjustedResPosArray.push(thisClass.getAdjustedResi(Math.round(resPosArray[j]), chnid, ic.matchedPos, ic.chainsSeq, ic.baseResi) - 1);
+                            if(ic.bNCBI) {
+                                adjustedResPosArray.push(Math.round(resPosArray[j]));
+                            }
+                            else {
+                                adjustedResPosArray.push(thisClass.getAdjustedResi(Math.round(resPosArray[j]), chnid, ic.matchedPos, ic.chainsSeq, ic.baseResi) - 1);
+                            }
                         }
                     }
                     let htmlTmp2 = '<div class="icn3d-seqTitle icn3d-link icn3d-blue" site="site" posarray="' + adjustedResPosArray.toString() + '" shorttitle="' + title + '" setname="' + chnid + '_site_' + index + '" anno="sequence" chain="' + chnid + '" title="' + fulltitle + '">' + title + ' </div>';
@@ -285,8 +290,14 @@ class AnnoCddSite {
                     let domainTo = Math.round(segArray[s].to);
                     //fromArray.push(domainFrom + ic.baseResi[chnid]);
                     //toArray.push(domainTo + ic.baseResi[chnid]);
-                    fromArray.push(thisClass.getAdjustedResi(domainFrom, chnid, ic.matchedPos, ic.chainsSeq, ic.baseResi) - 1);
-                    toArray.push(thisClass.getAdjustedResi(domainTo, chnid, ic.matchedPos, ic.chainsSeq, ic.baseResi) - 1);
+                    if(ic.bNCBI) {
+                        fromArray.push(domainFrom);
+                        toArray.push(domainTo);
+                    }
+                    else {
+                        fromArray.push(thisClass.getAdjustedResi(domainFrom, chnid, ic.matchedPos, ic.chainsSeq, ic.baseResi) - 1);
+                        toArray.push(thisClass.getAdjustedResi(domainTo, chnid, ic.matchedPos, ic.chainsSeq, ic.baseResi) - 1);
+                    }
                     for(let i = domainFrom; i <= domainTo; ++i) {
                         resiHash[i] = 1;
                     }
@@ -372,7 +383,7 @@ class AnnoCddSite {
     }
 
     getAdjustedResi(resi, chnid, matchedPos, chainsSeq, baseResi) { let ic = this.icn3d, me = ic.icn3dui;
-        return(resi >= matchedPos[chnid] && resi - matchedPos[chnid] < ic.chainsSeq[chnid].length) ? ic.chainsSeq[chnid][resi - matchedPos[chnid]].resi : baseResi[chnid] + 1 + resi;
+        return (resi >= matchedPos[chnid] && resi - matchedPos[chnid] < ic.chainsSeq[chnid].length) ? ic.chainsSeq[chnid][resi - matchedPos[chnid]].resi : baseResi[chnid] + 1 + resi;
     }
 
     showAnnoType(chnid, chnidBase, type, title, residueArray, resid2resids) { let ic = this.icn3d, me = ic.icn3dui;

@@ -14,7 +14,7 @@ class Dssp {
         this.icn3d = icn3d;
     }
 
-    applyDssp(bCalphaOnly) { let ic = this.icn3d, me = ic.icn3dui;
+    applyDssp(bCalphaOnly, bAppend) { let ic = this.icn3d, me = ic.icn3dui;
       let thisClass = this;
 
       let calphaonly =(bCalphaOnly) ? '1' : '0';
@@ -54,16 +54,16 @@ class Dssp {
       //https://stackoverflow.com/questions/5518181/jquery-deferreds-when-and-the-fail-callback-arguments
       $.when.apply(undefined, ajaxArray).then(function() {
           let dataArray =(struArray.length == 1) ? [arguments] : Array.from(arguments);
-          thisClass.parseDsspData(dataArray, struArray);
+          thisClass.parseDsspData(dataArray, struArray, bAppend);
       })
       .fail(function() {
-          ic.pdbParserCls.loadPdbDataRender();
+          ic.pdbParserCls.loadPdbDataRender(bAppend);
 
           if(ic.deferredSecondary !== undefined) ic.deferredSecondary.resolve();
       });
     }
 
-    parseDsspData(dataArray, struArray) { let ic = this.icn3d, me = ic.icn3dui;
+    parseDsspData(dataArray, struArray, bAppend) { let ic = this.icn3d, me = ic.icn3dui;
         //var dataArray =(struArray.length == 1) ? [data] : data;
 
         // Each argument is an array with the following structure: [ data, statusText, jqXHR ]
@@ -175,7 +175,7 @@ class Dssp {
             }
         }
 
-        ic.pdbParserCls.loadPdbDataRender();
+        ic.pdbParserCls.loadPdbDataRender(bAppend);
 
         if(ic.deferredSecondary !== undefined) ic.deferredSecondary.resolve();
     }

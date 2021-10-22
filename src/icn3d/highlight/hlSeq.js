@@ -286,7 +286,14 @@ class HlSeq {
                                 to = parseInt(toArray[i]);
 
                                 for(let j = from; j <= to; ++j) {
-                                    residueid = chainid + '_' +(j+1).toString();
+                                    if(ic.bNCBI && ($(that).attr('domain') !== undefined || $(that).attr('feat') !== undefined || $(that).attr('3ddomain') !== undefined) ) {
+                                        let residNCBI = chainid + '_' + (j+1).toString();
+                                        residueid = ic.residNCBI2resid[residNCBI];
+                                    }
+                                    else {
+                                        residueid = chainid + '_' + (j+1).toString();
+                                    }
+
                                     residueidHash[residueid] = 1;
 
                                     //atomHash = me.hashUtilsCls.unionHash(atomHash, ic.residues[residueid]);
@@ -317,7 +324,13 @@ class HlSeq {
                             let residueid;
                             for(let i = 0, il = posArray.length; i < il; ++i) {
                                 if($(that).attr('site') !== undefined) {
-                                    residueid = chainid + '_' +(parseInt(posArray[i])+1).toString();
+                                    if(ic.bNCBI) {
+                                        let residNCBI = chainid + '_' +(parseInt(posArray[i])+1).toString();
+                                        residueid = ic.residNCBI2resid[residNCBI];
+                                    }
+                                    else {
+                                        residueid = chainid + '_' +(parseInt(posArray[i])+1).toString();
+                                    }
                                 }
                                 //else if($(that).attr('clinvar') !== undefined) {
                                 else {

@@ -182,16 +182,22 @@ class Resid2spec {
             let  select = ':d,e';
             ic.hAtoms = {}
             ic.selByCommCls.selectBySpec(select, select, select);
+            // add nucleotides
+            ic.hAtoms = me.hashUtilsCls.unionHash(ic.hAtoms, ic.nucleotides);
         }
         else if(property == 'hydrophobic') {
             let  select = ':w,f,y,l,i,c,m';
             ic.hAtoms = {}
             ic.selByCommCls.selectBySpec(select, select, select);
+            // only proteins
+            ic.hAtoms = me.hashUtilsCls.intHash(ic.hAtoms, ic.proteins);
         }
         else if(property == 'polar') {
             let  select = ':g,v,s,t,a,n,p,q';
             ic.hAtoms = {}
             ic.selByCommCls.selectBySpec(select, select, select);
+            // only proteins
+            ic.hAtoms = me.hashUtilsCls.intHash(ic.hAtoms, ic.proteins);
         }
         else if(property == 'b factor') {
             let  atoms = me.hashUtilsCls.cloneHash(ic.calphas);

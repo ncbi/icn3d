@@ -292,7 +292,7 @@ class DefinedSets {
         let  prevHAtoms = me.hashUtilsCls.cloneHash(ic.hAtoms);
         let  prevDAtoms = me.hashUtilsCls.cloneHash(ic.dAtoms);
 
-        if(ic.bSetChainsAdvancedMenu === undefined || !ic.bSetChainsAdvancedMenu) {
+        if(ic.bSetChainsAdvancedMenu === undefined || !ic.bSetChainsAdvancedMenu || ic.bResetSets) {
            this.setPredefinedInMenu();
 
            ic.bSetChainsAdvancedMenu = true;

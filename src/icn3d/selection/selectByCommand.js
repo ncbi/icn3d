@@ -190,7 +190,7 @@ class SelectByCommand {
                  bResidueId = true;
                }
                else {
-                 if(residueStrArray[j][0] === '3' &&(residueStrArray[j].length - 1) % 3 === 0) { // three letter residue string, such as :3LysArg
+                 if(residueStrArray[j][0] === '3' && residueStrArray[j].length > 1 &&(residueStrArray[j].length - 1) % 3 === 0) { // three letter residue string, such as :3LysArg
                    let  tmpStr = residueStrArray[j].toUpperCase();
                    threeLetterResidueStr = tmpStr.substr(1);
                    bResidueArrayThree = true;

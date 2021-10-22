@@ -117,7 +117,7 @@
       function setupViewer(idName, idValue, cfg) {
         var maxStructure = 5; // show max 5 structures
 
-        var idArray = idValue.replace(/\s/g, '').split(',');
+        var idArray = idValue.toString().replace(/\s/g, '').split(',');
 
         if(idArray.length > 1) {
           resize = false;
