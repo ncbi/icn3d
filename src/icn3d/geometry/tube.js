@@ -31,25 +31,7 @@ class Tube {
 
         let pnts_colors_radii_prevone_nexttwo = [];
         let firstAtom, atom, prevAtom;
-/*
-        // add one extra residue if only one residue is shown
-        let resCnt = 0;
-        for (let i in atoms) {
-            atom = atoms[i];
-            if ((atom.name === atomName) && !atom.het) {
-                ++resCnt;
-            }
 
-            if(resCnt > 1) break;
-        }
-
-        if(resCnt == 1) {
-            let resid = atom.structure + '_' + atom.chain + '_' + (parseInt(atom.resi) + 1).toString();
-            if(ic.residues.hasOwnProperty(resid)) {
-                atoms = me.hashUtilsCls.unionHash(atoms, me.hashUtilsCls.hash2Atoms(ic.residues[resid], ic.atoms));
-            }
-        }
-*/
         for (let i in atoms) {
             atom = atoms[i];
             if ((atom.name === atomName) && !atom.het) {
@@ -89,19 +71,18 @@ class Tube {
                                 }
                             }
 
-                // add one more residue if only one residue is available
-                if(pnts.length == 1 && ic.residues.hasOwnProperty(nextoneResid)) {
-                    let nextAtom = ic.firstAtomObjCls.getAtomFromResi(nextoneResid, atomName);
-                    pnts.push(nextAtom.coord);
-                    colors.push(nextAtom.color);
+                            // add one more residue if only one residue is available
+                            if(pnts.length == 1 && ic.residues.hasOwnProperty(nextoneResid)) {
+                                let nextAtom = ic.firstAtomObjCls.getAtomFromResi(nextoneResid, atomName);
+                                pnts.push(nextAtom.coord);
+                                colors.push(nextAtom.color);
 
-                    let radiusFinal = this.getRadius(radius, atom);
-                    radii.push(radiusFinal);
+                                let radiusFinal = this.getRadius(radius, atom);
+                                radii.push(radiusFinal);
 
-                    nextoneResid = nexttwoResid;
-                    nexttwoResid = nextthreeResid;
-                }
-
+                                nextoneResid = nexttwoResid;
+                                nexttwoResid = nextthreeResid;
+                            }
 
                             let nextoneCoord = ic.firstAtomObjCls.getAtomCoordFromResi(nextoneResid, atomName);
                             if(nextoneCoord !== undefined) {
@@ -184,8 +165,7 @@ class Tube {
                 let nextthreeResid = atom.structure + '_' + atom.chain + '_' + (parseInt(atom.resi) + 3).toString();
 
                 // add one more residue if only one residue is available
-                //if(pnts.length == 1 && ic.residues.hasOwnProperty(nextoneResid)) {
-                if(ic.residues.hasOwnProperty(nextoneResid)) {
+                if(pnts.length == 1 && ic.residues.hasOwnProperty(nextoneResid)) {
                     let nextAtom = ic.firstAtomObjCls.getAtomFromResi(nextoneResid, atomName);
                     pnts.push(nextAtom.coord);
                     colors.push(nextAtom.color);

@@ -411,7 +411,9 @@ class iCn3D {
     this.ROT_DIR = 'right';
     //this.prevCommands = "";
     this.currSelectedSets = []; // for selecting multiple sets in sequence & annotations
-    this.selectedResidues = {}
+    this.selectedResidues = {};
+
+    this.residNCBI2resid = {}; // convert from NCBI residue ID (structure_chain_resi) to PDB residue ID (structure_chain_resi)
 
     this.bHideSelection = true;
     this.bSelectResidue = false;

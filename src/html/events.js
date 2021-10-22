@@ -103,11 +103,26 @@ class Events {
            me.htmlCls.clickMenuCls.setLogCmd(commandName + ' pdb file ' + $("#" + me.pre + fileId).val(), false);
            ic.molTitle = "";
            //ic.initUI();
-           if(!bAppend) ic.init();
+           if(!bAppend) {
+               ic.init();
+           }
+           else {
+               ic.resetConfig();
+               ic.hAtoms = {};
+               ic.dAtoms = {};
+               ic.bResetAnno = true;
+               ic.bResetSets = true;
+           }
+
            ic.bInputfile = true;
            ic.InputfileData = (ic.InputfileData) ? ic.InputfileData + '\nENDMDL\n' + dataStr : dataStr;
            ic.InputfileType = 'pdb';
            ic.pdbParserCls.loadPdbData(dataStr, undefined, undefined, bAppend);
+
+           if(bAppend) {
+               if(ic.bSetChainsAdvancedMenu) ic.definedSetsCls.showSets();
+               if(ic.bAnnoShown) ic.showAnnoCls.showAnnotations();
+           }
          }
          reader.readAsText(file);
        }

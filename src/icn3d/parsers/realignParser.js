@@ -320,7 +320,7 @@ class RealignParser {
             }
 
             if(i == 0 || bPredefined) { // master
-                let  base = parseInt(ic.chainsSeq[chainid][0].resi);
+                let base = parseInt(ic.chainsSeq[chainid][0].resi);
 
                 //let  resRange;
                 //if(bRealign) {
@@ -335,6 +335,7 @@ class RealignParser {
                     let residHash = ic.firstAtomObjCls.getResiduesFromAtoms(ic.hAtoms);
                     for(var resid in residHash) {
                         let resi = resid.substr(resid.lastIndexOf('_') + 1);
+
                         let chainidTmp = resid.substr(0, resid.lastIndexOf('_'));
                         if(chainidTmp == chainid) resiArray.push(resi);
                     }
@@ -351,10 +352,16 @@ class RealignParser {
                         let  startEnd = resiArray[j].split('-');
 
                         for(let k = parseInt(startEnd[0]); k <= parseInt(startEnd[1]); ++k) {
-                            // don't align solvent or chemicals
-                            if(!ic.chainsSeq[chainid][k - base] || me.parasCls.b62ResArray.indexOf(ic.chainsSeq[chainid][k - base].name.toUpperCase()) == -1) continue;
+                            let seqIndex = k - base;
+                            if(ic.bNCBI) {
+                                let atom = ic.firstAtomObjCls.getFirstAtomObj(ic.residues[chainid + '_' + k]);
+                                if(atom && atom.resiNCBI) seqIndex = atom.resiNCBI - 1;
+                            }
 
-                            struct2SeqHash[mmdbid] += ic.chainsSeq[chainid][k - base].name;
+                            // don't align solvent or chemicals
+                            if(!ic.chainsSeq[chainid][seqIndex] || me.parasCls.b62ResArray.indexOf(ic.chainsSeq[chainid][seqIndex].name.toUpperCase()) == -1) continue;
+
+                            struct2SeqHash[mmdbid] += ic.chainsSeq[chainid][seqIndex].name.toUpperCase();
 
                             struct2CoorHash[mmdbid] = struct2CoorHash[mmdbid].concat(this.getResCoorArray(chainid + '_' + k));
 
@@ -363,9 +370,16 @@ class RealignParser {
                     }
                     else { // one residue
                         let  k = parseInt(resiArray[j]);
-                        if(!ic.chainsSeq[chainid][k - base]) continue;
 
-                        struct2SeqHash[mmdbid] += ic.chainsSeq[chainid][k - base].name;
+                        let seqIndex = k - base;
+                        if(ic.bNCBI) {
+                            let atom = ic.firstAtomObjCls.getFirstAtomObj(ic.residues[chainid + '_' + k]);
+                            if(atom && atom.resiNCBI) seqIndex = atom.resiNCBI - 1;
+                        }
+
+                        if(!ic.chainsSeq[chainid][seqIndex]) continue;
+
+                        struct2SeqHash[mmdbid] += ic.chainsSeq[chainid][seqIndex].name.toUpperCase();
 
                         struct2CoorHash[mmdbid] = struct2CoorHash[mmdbid].concat(this.getResCoorArray(chainid + '_' + k));
 
@@ -380,7 +394,7 @@ class RealignParser {
                     //resiArray = [resRange];
                     let residHash = ic.firstAtomObjCls.getResiduesFromAtoms(ic.hAtoms);
                     for(var resid in residHash) {
-                        let resi = resid.substr(resid.lastIndexOf('_') + 1);
+                        //let resi = resid.substr(resid.lastIndexOf('_') + 1);
                         let chainidTmp = resid.substr(0, resid.lastIndexOf('_'));
                         if(chainidTmp == chainid) {
                             bSelectedBoth = true;

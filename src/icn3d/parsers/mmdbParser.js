@@ -358,9 +358,12 @@ class MmdbParser {
 
         if(type === undefined) ic.ParserUtilsCls.setYourNote(structure.toUpperCase() + '(MMDB) in iCn3D');
 
+        let bNCBI = (me.cfg.mmdbid || me.cfg.gi || me.cfg.align || me.cfg.chainalign || me.cfg.blast_rep_id);
+
         for(let molid in data.domains) {
-            let  chain = data.domains[molid].chain;
-            let  domainArray = data.domains[molid].domains;
+            let chain = data.domains[molid].chain;
+            let chainid = structure + '_' + chain;
+            let domainArray = data.domains[molid].domains;
 
             for(let index = 0, indexl = domainArray.length; index < indexl; ++index) {
                 let  domainName = structure + '_' + chain + '_3d_domain_' +(index+1).toString();
@@ -390,8 +393,17 @@ class MmdbParser {
                     //resCnt += domainTo - domainFrom + 1;
 
                     for(let j = domainFrom; j <= domainTo; ++j) {
-                        let  resid = structure + '_' + chain + '_' +(j+1).toString();
-                        ic.tddomains[domainName][resid] = 1;
+                        let resid;
+
+                        if(bNCBI) {
+                            let residNCBI = chainid + '_' +(j+1).toString();
+                            resid = ic.residNCBI2resid[residNCBI];
+                        }
+                        else {
+                            resid = chainid + '_' +(j+1 + ic.chainid2offset[chainid]).toString();
+                        }
+
+                        if(resid) ic.tddomains[domainName][resid] = 1;
                     }
                 }
             } // for each domainArray

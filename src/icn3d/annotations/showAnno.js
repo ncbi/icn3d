@@ -31,7 +31,21 @@ class ShowAnno {
             $("#" + ic.pre + "dl_annotations_tabs").append(html);
             ic.bAssemblyNote = true;
         }
-        if(ic.bAnnoShown === undefined || !ic.bAnnoShown) {
+
+        if(ic.bResetAnno) {
+            //reset Anno when loading another structure
+            ic.giSeq = {}
+            ic.currClin = {}
+            ic.resi2disease_nonempty = {}
+            ic.baseResi = {}
+            ic.matchedPos = {}
+
+            $("#" + me.pre + "dl_annotations").empty();
+            //ic.annotationCls.setAnnoViewAndDisplay('overview');
+            ic.annotationCls.setAnnoView('overview');
+        }
+
+        if(ic.bAnnoShown === undefined || !ic.bAnnoShown || ic.bResetAnno) { // ic.bResetAnno when loading another structure
             let chainArray = Object.keys(ic.chains);
             if(ic.giSeq === undefined) ic.giSeq = {}
             if(ic.currClin === undefined) ic.currClin = {}

@@ -177,7 +177,10 @@ class Label {
     //Create labels for a list of "labels", each of which has the properties 'position',
     //'text', 'size', 'color', and 'background'.
     createLabelRepresentation(labels) { let ic = this.icn3d, me = ic.icn3dui;
-        let oriFactor = 3 * ic.oriMaxD / 100 * ic.labelScale;
+        let dimFactor = ic.oriMaxD / 100;
+        if(dimFactor < 0.4) dimFactor = 0.4;
+
+        let oriFactor = 3 * dimFactor * ic.labelScale;
 
         for(let name in labels) {
             let labelArray = (labels[name] !== undefined) ? labels[name] : [];
@@ -204,7 +207,6 @@ class Label {
 
                 let bb;
                 if(label.bSchematic !== undefined && label.bSchematic) {
-
                     bb = this.textSpriteCls.makeTextSprite(label.text, {fontsize: parseInt(labelsize), textColor: labelcolor, borderColor: labelbackground, backgroundColor: labelbackground, alpha: labelalpha, bSchematic: 1, factor: oriFactor});
                 }
                 else {

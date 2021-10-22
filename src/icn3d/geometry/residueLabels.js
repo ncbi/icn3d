@@ -112,11 +112,12 @@ class ResidueLabels {
         ic.hlObjectsCls.removeHlObjects();
     };
 
-    addAtomLabels(atoms) { let ic = this.icn3d, me = ic.icn3dui;
+    addAtomLabels(atoms, bElement) { let ic = this.icn3d, me = ic.icn3dui;
         if(me.bNode) return;
 
         let size = 18;
-        let background = "#CCCCCC";
+        //let background = (bElement) ? "#FFFFFF" : "#CCCCCC";
+        let background = "#FFFFFF";
 
         let atomsHash = me.hashUtilsCls.intHash(ic.hAtoms, atoms);
         atomsHash = me.hashUtilsCls.intHash(ic.dAtoms, atomsHash);
@@ -132,7 +133,7 @@ class ResidueLabels {
 
             label.bSchematic = 0;
 
-            label.text = atom.name;
+            label.text = (bElement) ? atom.elem : atom.name.padEnd(2, ' ');
             label.size = size;
 
             let atomColorStr = atom.color.getHexString().toUpperCase();

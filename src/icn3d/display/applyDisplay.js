@@ -239,7 +239,7 @@ class ApplyDisplay {
             if(ic.chemicals.hasOwnProperty(firstAtom.serial)) { // chemicals
                 ic.residueLabelsCls.addNonCarbonAtomLabels(me.hashUtilsCls.hash2Atoms(atomHash, ic.atoms));
 
-                bSchematic = true;
+                let bSchematic = true;
                 ic.stickCls.createStickRepresentation(me.hashUtilsCls.hash2Atoms(atomHash, ic.atoms), chemicalSchematicRadius, chemicalSchematicRadius, undefined, bHighlight, bSchematic);
             }
             else { // nucleotides or proteins

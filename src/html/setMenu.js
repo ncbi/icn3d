@@ -166,9 +166,9 @@ class SetMenu {
         html += "<li><div style='position:relative; margin-top:-6px;'>" + str1;
         html += "<div class='icn3d-commandTitle' style='margin-top: 3px; white-space: nowrap;'>" + str2;
 
-        if(me.cfg.align !== undefined) {
+        //if(me.cfg.align !== undefined) {
             html += "<li><span id='" + me.pre + "alternate2' class='icn3d-menu-color' title='Alternate the structures'>Alternate</span>";
-        }
+        //}
 
         html += "</ul>";
 
@@ -1398,12 +1398,14 @@ class SetMenu {
         html += me.htmlCls.setHtmlCls.getRadio('mn6_addlabel', 'mn6_addlabelYes', 'by Picking Atoms');
         html += me.htmlCls.setHtmlCls.getRadio('mn6_addlabel', 'mn6_addlabelSelection', 'per Selection');
         html += me.htmlCls.setHtmlCls.getRadio('mn6_addlabel', 'mn6_addlabelAtoms', 'per Atom');
+        html += me.htmlCls.setHtmlCls.getRadio('mn6_addlabel', 'mn6_addlabelElements', 'per Atom Element');
         if(me.cfg.cid === undefined) {
             html += me.htmlCls.setHtmlCls.getRadio('mn6_addlabel', 'mn6_addlabelResidues', 'per Residue');
             html += me.htmlCls.setHtmlCls.getRadio('mn6_addlabel', 'mn6_addlabelResnum', 'per Residue & Number');
             html += me.htmlCls.setHtmlCls.getRadio('mn6_addlabel', 'mn6_addlabelChains', 'per Chain');
             html += me.htmlCls.setHtmlCls.getRadio('mn6_addlabel', 'mn6_addlabelTermini', 'N- & C-Termini');
         }
+
         html += me.htmlCls.setHtmlCls.getRadio('mn6_addlabel', 'mn6_addlabelNo', 'Remove', true);
         html += "</ul>";
         html += "</li>";

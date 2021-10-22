@@ -191,17 +191,17 @@ class PdbParser {
         if((!ic.bSecondaryStructure || bCalcSecondary) && Object.keys(ic.proteins).length > 0) {
           ic.deferredSecondary = $.Deferred(function() {
               let  bCalphaOnly = me.utilsCls.isCalphaPhosOnly(me.hashUtilsCls.hash2Atoms(ic.proteins, ic.atoms));//, 'CA');
-              ic.dsspCls.applyDssp(bCalphaOnly);
+              ic.dsspCls.applyDssp(bCalphaOnly, bAppend);
           }); // end of me.deferred = $.Deferred(function() {
 
           return ic.deferredSecondary.promise();
         }
         else {
-            this.loadPdbDataRender();
+            this.loadPdbDataRender(bAppend);
         }
     }
 
-    loadPdbDataRender() { let  ic = this.icn3d, me = ic.icn3dui;
+    loadPdbDataRender(bAppend) { let  ic = this.icn3d, me = ic.icn3dui;
         ic.pmid = ic.pmid;
 
         if(me.cfg.align === undefined && Object.keys(ic.structures).length == 1) {
@@ -213,13 +213,19 @@ class PdbParser {
         }
 
         ic.setStyleCls.setAtomStyleByOptions(ic.opts);
-        ic.setColorCls.setColorByOptions(ic.opts, ic.atoms);
+//        ic.setColorCls.setColorByOptions(ic.opts, ic.atoms);
+        ic.setColorCls.setColorByOptions(ic.opts, ic.hAtoms);
 
         ic.ParserUtilsCls.renderStructure();
 
         ic.saveFileCls.showTitle();
 
         if(me.cfg.rotate !== undefined) ic.resizeCanvasCls.rotStruc(me.cfg.rotate, true);
+
+        if(bAppend) {
+            // show all
+            ic.definedSetsCls.setModeAndDisplay('all');
+        }
 
     //    if(me.deferred !== undefined) me.deferred.resolve(); if(ic.deferred2 !== undefined) ic.deferred2.resolve();
     }

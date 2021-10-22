@@ -170,7 +170,7 @@ class iCn3DUI {
     //even when multiple iCn3D viewers are shown together.
     this.pre = this.cfg.divid + "_";
 
-    this.REVISION = '3.4.7';
+    this.REVISION = '3.4.8';
 
     // In nodejs, iCn3D defines "window = {navigator: {}}"
     this.bNode = (Object.keys(window).length < 2) ? true : false;
@@ -376,11 +376,13 @@ iCn3DUI.prototype.show3DStructure = function() { let me = this;
     }
     else if(me.cfg.mmdbid !== undefined) {
        ic.inputid = me.cfg.mmdbid;
+       ic.bNCBI = true;
        ic.loadCmd = 'load mmdb ' + me.cfg.mmdbid + ' | parameters ' + me.cfg.inpara;
        me.htmlCls.clickMenuCls.setLogCmd(ic.loadCmd, true);
        ic.mmdbParserCls.downloadMmdb(me.cfg.mmdbid);
     }
     else if(me.cfg.gi !== undefined) {
+       ic.bNCBI = true;
        ic.loadCmd = 'load gi ' + me.cfg.gi;
        me.htmlCls.clickMenuCls.setLogCmd(ic.loadCmd, true);
        ic.mmdbParserCls.downloadGi(me.cfg.gi);
@@ -391,6 +393,8 @@ iCn3DUI.prototype.show3DStructure = function() { let me = this;
        ic.mmdbParserCls.downloadUniprotid(me.cfg.uniprotid);
     }
     else if(me.cfg.blast_rep_id !== undefined) {
+       ic.bNCBI = true;
+
        // custom seqeunce has query_id such as "Query_78989" in BLAST
        if(me.cfg.query_id.substr(0,5) !== 'Query' && me.cfg.rid === undefined) {
            ic.inputid = me.cfg.query_id + '_' + me.cfg.blast_rep_id;
@@ -485,6 +489,8 @@ iCn3DUI.prototype.show3DStructure = function() { let me = this;
         ic.mmcifParserCls.downloadMmcif(me.cfg.mmcifid);
     }
     else if(me.cfg.align !== undefined) {
+        ic.bNCBI = true;
+
         let alignArray = me.cfg.align.split(','); // e.g., 6 IDs: 103701,1,4,68563,1,167 [mmdbid1,biounit,molecule,mmdbid2,biounit,molecule], or 2IDs: 103701,68563 [mmdbid1,mmdbid2]
         if(alignArray.length === 6) {
             ic.inputid = alignArray[0] + "_" + alignArray[3];
@@ -497,6 +503,8 @@ iCn3DUI.prototype.show3DStructure = function() { let me = this;
         ic.alignParserCls.downloadAlignment(me.cfg.align);
     }
     else if(me.cfg.chainalign !== undefined) {
+        ic.bNCBI = true;
+
         ic.bChainAlign = true;
         ic.inputid = me.cfg.chainalign;
         ic.loadCmd = 'load chainalignment ' + me.cfg.chainalign + ' | resnum ' + me.cfg.resnum + ' | resdef ' + me.cfg.resdef + ' | parameters ' + me.cfg.inpara;

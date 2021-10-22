@@ -374,6 +374,11 @@ class ApplyCommand {
 
         ic.drawCls.draw();
       }
+      else if(command == 'add element labels') {
+        ic.residueLabelsCls.addAtomLabels(ic.hAtoms, true);
+
+        ic.drawCls.draw();
+      }
       else if(command == 'add chain labels') {
         ic.analysisCls.addChainLabels(ic.hAtoms);
 
