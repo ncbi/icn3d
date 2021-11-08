@@ -257,6 +257,12 @@ class ClickMenu {
            thisClass.setLogCmd("export pdb", true);
         });
 
+        me.myEventCls.onIds("#" + me.pre + "mn1_exportSecondary", "click", function(e) { let ic = me.icn3d;
+           me.htmlCls.setHtmlCls.exportSecondary();
+
+           thisClass.setLogCmd("export secondary structure", true);
+        });
+
         me.myEventCls.onIds(["#" + me.pre + "delphipdb", "#" + me.pre + "phipdb"], "click", function(e) { let ic = me.icn3d;
            let pdbStr = ic.saveFileCls.getSelectedResiduePDB();
 
@@ -1033,6 +1039,10 @@ class ClickMenu {
         me.myEventCls.onIds("#" + me.pre + "mn4_clrSpectrum", "click", function(e) { let ic = me.icn3d;
            ic.setOptionCls.setOption('color', 'spectrum');
            thisClass.setLogCmd('color spectrum', true);
+        });
+        me.myEventCls.onIds("#" + me.pre + "mn4_clrSpectrumChain", "click", function(e) { let ic = me.icn3d;
+           ic.setOptionCls.setOption('color', 'spectrum for chains');
+           thisClass.setLogCmd('color spectrum for chains', true);
         });
         me.myEventCls.onIds("#" + me.pre + "mn4_clrRainbow", "click", function(e) { let ic = me.icn3d;
            ic.setOptionCls.setOption('color', 'rainbow');

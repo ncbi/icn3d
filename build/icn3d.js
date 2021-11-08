@@ -7780,14 +7780,17 @@ var icn3d = (function (exports) {
                                 // add one more residue if only one residue is available
                                 if(pnts.length == 1 && ic.residues.hasOwnProperty(nextoneResid)) {
                                     let nextAtom = ic.firstAtomObjCls.getAtomFromResi(nextoneResid, atomName);
-                                    pnts.push(nextAtom.coord);
-                                    colors.push(nextAtom.color);
 
-                                    let radiusFinal = this.getRadius(radius, atom);
-                                    radii.push(radiusFinal);
+                                    if(nextAtom) {
+                                        pnts.push(nextAtom.coord);
+                                        colors.push(nextAtom.color);
 
-                                    nextoneResid = nexttwoResid;
-                                    nexttwoResid = nextthreeResid;
+                                        let radiusFinal = this.getRadius(radius, atom);
+                                        radii.push(radiusFinal);
+
+                                        nextoneResid = nexttwoResid;
+                                        nexttwoResid = nextthreeResid;
+                                    }
                                 }
 
                                 let nextoneCoord = ic.firstAtomObjCls.getAtomCoordFromResi(nextoneResid, atomName);
@@ -7873,14 +7876,17 @@ var icn3d = (function (exports) {
                     // add one more residue if only one residue is available
                     if(pnts.length == 1 && ic.residues.hasOwnProperty(nextoneResid)) {
                         let nextAtom = ic.firstAtomObjCls.getAtomFromResi(nextoneResid, atomName);
-                        pnts.push(nextAtom.coord);
-                        colors.push(nextAtom.color);
 
-                        let radiusFinal = this.getRadius(radius, atom);
-                        radii.push(radiusFinal);
+                        if(nextAtom) {
+                            pnts.push(nextAtom.coord);
+                            colors.push(nextAtom.color);
 
-                        nextoneResid = nexttwoResid;
-                        nexttwoResid = nextthreeResid;
+                            let radiusFinal = this.getRadius(radius, atom);
+                            radii.push(radiusFinal);
+
+                            nextoneResid = nexttwoResid;
+                            nexttwoResid = nextthreeResid;
+                        }
                     }
 
                     let nextoneCoord = ic.firstAtomObjCls.getAtomCoordFromResi(nextoneResid, atomName);
@@ -16724,15 +16730,20 @@ var icn3d = (function (exports) {
             nodeArray1 = nodeArrays.nodeArray1;
             nodeArray2 = nodeArrays.nodeArray2;
             ic.lineGraphStr = '{\n';
-            if(Object.keys(ic.structures).length > 1) {
+
+            let structureArray = ic.resid2specCls.atoms2structureArray(ic.hAtoms);
+            //if(Object.keys(ic.structures).length > 1) {
+            if(structureArray.length > 1) {
                 let  nodeArray1a = [],
                     nodeArray1b = [],
                     nodeArray2a = [],
                     nodeArray2b = [],
                     nodeArray3a = [],
                     nodeArray3b = [];
-                let  struc1 = Object.keys(ic.structures)[0],
-                    struc2 = Object.keys(ic.structures)[1];
+                //let  struc1 = Object.keys(ic.structures)[0],
+                //    struc2 = Object.keys(ic.structures)[1];
+                let  struc1 = structureArray[0],
+                    struc2 = structureArray[1];
                 let  linkArrayA = [],
                     linkArrayB = [],
                     linkArrayAB = [];
@@ -16864,7 +16875,9 @@ var icn3d = (function (exports) {
                 html += "</svg>";
             } else {
                 if(!bScatterplot) {
-                    let  struc1 = Object.keys(ic.structures)[0];
+                    //let  struc1 = Object.keys(ic.structures)[0];
+                    let  struc1 = structureArray[0];
+
                     let  len1 = nodeArray1.length,
                         len2 = nodeArray2.length;
                     let  factor = 1;
@@ -16880,7 +16893,9 @@ var icn3d = (function (exports) {
                     ic.lineGraphStr += ic.getGraphCls.updateGraphJson(struc1, 1, nodeArray1, nodeArray2, linkArray);
                     html += "</svg>";
                 } else {
-                    let  struc1 = Object.keys(ic.structures)[0];
+                    //let  struc1 = Object.keys(ic.structures)[0];
+                    let  struc1 = structureArray[0];
+
                     let  len1 = nodeArray1.length,
                         len2 = nodeArray2.length;
                     let  factor = 1;
@@ -18299,6 +18314,24 @@ var icn3d = (function (exports) {
             this.icn3d = icn3d;
         }
 
+        colorSpectrum(atoms) { let ic = this.icn3d, me = ic.icn3dui;
+            let idx = 0;
+            let cnt = 0;
+            for (let i in atoms) {
+                let atom = ic.atoms[i];
+                if(!atom.het) ++cnt;
+            }
+
+            let lastTerSerialInv = (cnt > 1) ? 1 / (cnt - 1) : 1;
+            for (let i in atoms) {
+                let atom = ic.atoms[i];
+                //atom.color = atom.het ? me.parasCls.atomColors[atom.elem] || me.parasCls.defaultAtomColor : me.parasCls.thr().setHSL(2 / 3 * (1 - idx++ * lastTerSerialInv), 1, 0.45);
+                atom.color = atom.het ? me.parasCls.atomColors[atom.elem] || me.parasCls.defaultAtomColor : me.parasCls.thr().setHSL(3 / 4 * (1 - idx++ * lastTerSerialInv), 1, 0.45);
+
+                ic.atomPrevColors[i] = atom.color;
+            }
+        }
+
         colorRainbow(atoms) { let ic = this.icn3d, me = ic.icn3dui;
             let idx = 0;
             let cnt = 0;
@@ -18347,20 +18380,11 @@ var icn3d = (function (exports) {
 
             switch (options.color.toLowerCase()) {
                 case 'spectrum':
-                    idx = 0;
-                    cnt = 0;
-                    for (let i in atoms) {
-                        let atom = ic.atoms[i];
-                        if(!atom.het) ++cnt;
-                    }
-
-                    lastTerSerialInv = (cnt > 1) ? 1 / (cnt - 1) : 1;
-                    for (let i in atoms) {
-                        let atom = ic.atoms[i];
-                        //atom.color = atom.het ? me.parasCls.atomColors[atom.elem] || me.parasCls.defaultAtomColor : me.parasCls.thr().setHSL(2 / 3 * (1 - idx++ * lastTerSerialInv), 1, 0.45);
-                        atom.color = atom.het ? me.parasCls.atomColors[atom.elem] || me.parasCls.defaultAtomColor : me.parasCls.thr().setHSL(3 / 4 * (1 - idx++ * lastTerSerialInv), 1, 0.45);
-
-                        ic.atomPrevColors[i] = atom.color;
+                    this.colorSpectrum(atoms);
+                    break;
+                case 'spectrum for chains':
+                    for(let chainid in ic.chains) {
+                        this.colorSpectrum(ic.chains[chainid]);
                     }
                     break;
                 case 'rainbow':
@@ -19330,6 +19354,10 @@ var icn3d = (function (exports) {
 
                 label.text = (bElement) ? atom.elem : atom.name.padEnd(2, ' ');
                 label.size = size;
+
+                if(bElement) {
+                    label.bSchematic = true;
+                }
 
                 let atomColorStr = atom.color.getHexString().toUpperCase();
                 label.color = (atomColorStr === "CCCCCC" || atomColorStr === "C8C8C8") ? "#888888" : "#" + atomColorStr;
@@ -30305,6 +30333,7 @@ var icn3d = (function (exports) {
             let chainid = chnidBase;
             let resid2resids = {};
             let structure = chainid.substr(0, chainid.indexOf('_'));
+
             let ssbondArray = ic.ssbondpnts[structure];
             if(ssbondArray === undefined) {
                 $("#" + ic.pre + "dt_ssbond_" + chnid).html('');
@@ -30330,7 +30359,6 @@ var icn3d = (function (exports) {
             let title = "Disulfide Bonds";
             ic.annoCddSiteCls.showAnnoType(chnid, chnidBase, 'ssbond', title, residueArray, resid2resids);
         }
-
     }
 
     /**
@@ -30641,6 +30669,9 @@ var icn3d = (function (exports) {
           }
           else if(command == 'export pdb') {
              me.htmlCls.setHtmlCls.exportPdb();
+          }
+          else if(command == 'export secondary structure') {
+             me.htmlCls.setHtmlCls.exportSecondary();
           }
           else if(command == 'select all') {
              ic.selectionCls.selectAll();
@@ -32639,6 +32670,15 @@ var icn3d = (function (exports) {
              return Object.keys(residueHash);
         }
 
+        atoms2structureArray(atoms) {var ic = this.icn3d; ic.icn3dui;
+             let  structures = {};
+             for(let i in atoms) {
+                 let atom = ic.atoms[i];
+                 structures[atom.structure] = 1;
+             }
+             return Object.keys(structures);
+        }
+
         selectProperty(property, from, to) {var ic = this.icn3d, me = ic.icn3dui;
             let  prevHAtoms = me.hashUtilsCls.cloneHash(ic.hAtoms);
             if(property == 'positive') {
@@ -33610,6 +33650,14 @@ var icn3d = (function (exports) {
 
         getMissingResidues(seqArray, type, chainid) { let  ic = this.icn3d, me = ic.icn3dui;
             ic.chainsSeq[chainid] = [];
+            if(type === 'mmdbid' || type === 'align') {
+                for(let i = 0, il = seqArray.length; i < il; ++i) {
+                    if(seqArray[i][0] != 0) {
+                        seqArray[i][0] - (i + 1);
+                        break;
+                    }
+                }
+            }
 
             let prevResi = 0;
             for(let i = 0, il = seqArray.length; i < il; ++i) {
@@ -33641,9 +33689,14 @@ var icn3d = (function (exports) {
                     resObject.resi = i + 1;
                 }
                 else {
-                    (ic.chainid2offset[chainid]) ? ic.chainid2offset[chainid] : 0;
-                    //resObject.resi =(seqArray[i][resiPos] == '0') ? i + 1 + offset : seqArray[i][resiPos]; ?? problem with PDB PS0D
-                    resObject.resi =(seqArray[i][resiPos] == '0') ? parseInt(prevResi) + 1 : seqArray[i][resiPos];
+                    let offset =(ic.chainid2offset[chainid]) ? ic.chainid2offset[chainid] : 0;
+                    //resObject.resi =(seqArray[i][resiPos] == '0') ? i + 1 + offset : seqArray[i][resiPos]; //?? problem with PDB PS0D
+                    if(type === 'mmdbid' || type === 'align') {
+                        resObject.resi =(seqArray[i][resiPos] == '0') ? i + 1 + offset : seqArray[i][resiPos];
+                    }
+                    else {
+                        resObject.resi =(seqArray[i][resiPos] == '0') ? parseInt(prevResi) + 1 : seqArray[i][resiPos];
+                    }
                 }
 
                 resObject.name = (type === 'align') ? seqName.toLowerCase() : seqName;
@@ -43731,6 +43784,68 @@ var icn3d = (function (exports) {
             return pdbStr;
         }
 
+        getSecondary(atomHash) { let ic = this.icn3d, me = ic.icn3dui;
+            let json = '{"data": [\n';
+
+            let prevChainid = '', prevResi = '';
+            let data = {};
+            for(let i in atomHash) {
+                let atom = ic.atoms[i];
+
+                let chainid = atom.structure + '_' + atom.chain;
+                let resi = atom.resi;
+                let resn = me.utilsCls.residueName2Abbr(atom.resn);
+                let ss = this.secondary2Abbr(atom.ss);
+
+                if(chainid != prevChainid) {
+                    data[chainid] = {"resi": [], "resn": [], "secondary": []};
+                }
+
+                if(chainid != prevChainid || resi != prevResi) {
+                    data[chainid]["resi"].push(resi);
+                    data[chainid]["resn"].push(resn);
+                    data[chainid]["secondary"].push(ss);
+                }
+
+                prevChainid = chainid;
+                prevResi = resi;
+            }
+
+            let chainidArray = Object.keys(data);
+            let cnt = chainidArray.length;
+            for(let i = 0; i < cnt; ++i) {
+                let chainid = chainidArray[i];
+                json += '{"chain": "' + chainid + '",\n';
+
+                json += '"resi": "' + data[chainid]["resi"].join(',') + '",\n';
+                json += '"resn": "' + data[chainid]["resn"].join('') + '",\n';
+                json += '"secondary": "' + data[chainid]["secondary"].join('') + '"';
+
+                if(i < cnt - 1) {
+                    json += '},\n';
+                }
+                else {
+                    json += '}\n';
+                }
+            }
+
+            json += ']}\n';
+
+            return json;
+        }
+
+        secondary2Abbr(ss) { let ic = this.icn3d; ic.icn3dui;
+            if(ss == 'helix') {
+                return 'H';
+            }
+            else if(ss == 'sheet') {
+                return 'E';
+            }
+            else {
+                return 'c';
+            }
+        }
+
         getSelectedResiduePDB() { let ic = this.icn3d, me = ic.icn3dui;
            let pdbStr = '';
     ///       pdbStr += this.getPDBHeader();
@@ -44071,6 +44186,12 @@ var icn3d = (function (exports) {
                me.htmlCls.setHtmlCls.exportPdb();
 
                thisClass.setLogCmd("export pdb", true);
+            });
+
+            me.myEventCls.onIds("#" + me.pre + "mn1_exportSecondary", "click", function(e) { me.icn3d;
+               me.htmlCls.setHtmlCls.exportSecondary();
+
+               thisClass.setLogCmd("export secondary structure", true);
             });
 
             me.myEventCls.onIds(["#" + me.pre + "delphipdb", "#" + me.pre + "phipdb"], "click", function(e) { let ic = me.icn3d;
@@ -44848,6 +44969,10 @@ var icn3d = (function (exports) {
             me.myEventCls.onIds("#" + me.pre + "mn4_clrSpectrum", "click", function(e) { let ic = me.icn3d;
                ic.setOptionCls.setOption('color', 'spectrum');
                thisClass.setLogCmd('color spectrum', true);
+            });
+            me.myEventCls.onIds("#" + me.pre + "mn4_clrSpectrumChain", "click", function(e) { let ic = me.icn3d;
+               ic.setOptionCls.setOption('color', 'spectrum for chains');
+               thisClass.setLogCmd('color spectrum for chains', true);
             });
             me.myEventCls.onIds("#" + me.pre + "mn4_clrRainbow", "click", function(e) { let ic = me.icn3d;
                ic.setOptionCls.setOption('color', 'rainbow');
@@ -46381,6 +46506,11 @@ var icn3d = (function (exports) {
         */
 
             html += me.htmlCls.setHtmlCls.getLink('mn1_exportPdbRes', 'PDB');
+
+            if(me.cfg.cid === undefined) {
+                html += me.htmlCls.setHtmlCls.getLink('mn1_exportSecondary', 'Secondary Structure');
+            }
+
             html += "<li><br/></li>";
 
             html += "</ul>";
@@ -47097,7 +47227,13 @@ var icn3d = (function (exports) {
             html += "<li>-</li>";
 
             if(me.cfg.cid === undefined) {
-                html += me.htmlCls.setHtmlCls.getRadio('mn4_clr', 'mn4_clrSpectrum', 'Spectrum (V-R)');
+                //html += me.htmlCls.setHtmlCls.getRadio('mn4_clr', 'mn4_clrSpectrum', 'Spectrum (V-R)');
+                html += "<li><span style='padding-left:1.5em;'>Spectrum (V-R)</span>";
+                html += "<ul>";
+                html += me.htmlCls.setHtmlCls.getRadio('mn4_clr', 'mn4_clrSpectrum', 'for Selection');
+                html += me.htmlCls.setHtmlCls.getRadio('mn4_clr', 'mn4_clrSpectrumChain', 'for Chains');
+                html += "</ul>";
+
                 //html += me.htmlCls.setHtmlCls.getRadio('mn4_clr', 'mn4_clrRainbow', 'Rainbow (R-V)');
                 html += "<li><span style='padding-left:1.5em;'>Rainbow (R-V)</span>";
                 html += "<ul>";
@@ -51934,6 +52070,15 @@ var icn3d = (function (exports) {
            let file_pref =(ic.inputid) ? ic.inputid : "custom";
            ic.saveFileCls.saveFile(file_pref + '_icn3d.pdb', 'text', [pdbStr]);
         }
+
+        exportSecondary() { let me = this.icn3dui, ic = me.icn3d;
+           let secondaryStr = '';
+           let atoms = me.hashUtilsCls.intHash(ic.dAtoms, ic.hAtoms);
+           secondaryStr += ic.saveFileCls.getSecondary(atoms);
+
+           let file_pref =(ic.inputid) ? ic.inputid : "custom";
+           ic.saveFileCls.saveFile(file_pref + '_icn3d_ss.txt', 'text', [secondaryStr]);
+        }
     }
 
     /**
@@ -54843,7 +54988,7 @@ var icn3d = (function (exports) {
         //even when multiple iCn3D viewers are shown together.
         this.pre = this.cfg.divid + "_";
 
-        this.REVISION = '3.4.8';
+        this.REVISION = '3.4.9';
 
         // In nodejs, iCn3D defines "window = {navigator: {}}"
         this.bNode = (Object.keys(window).length < 2) ? true : false;

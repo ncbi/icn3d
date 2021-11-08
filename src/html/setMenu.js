@@ -498,6 +498,11 @@ class SetMenu {
     */
 
         html += me.htmlCls.setHtmlCls.getLink('mn1_exportPdbRes', 'PDB');
+
+        if(me.cfg.cid === undefined) {
+            html += me.htmlCls.setHtmlCls.getLink('mn1_exportSecondary', 'Secondary Structure');
+        }
+
         html += "<li><br/></li>";
 
         html += "</ul>";
@@ -1214,7 +1219,13 @@ class SetMenu {
         html += "<li>-</li>";
 
         if(me.cfg.cid === undefined) {
-            html += me.htmlCls.setHtmlCls.getRadio('mn4_clr', 'mn4_clrSpectrum', 'Spectrum (V-R)');
+            //html += me.htmlCls.setHtmlCls.getRadio('mn4_clr', 'mn4_clrSpectrum', 'Spectrum (V-R)');
+            html += "<li><span style='padding-left:1.5em;'>Spectrum (V-R)</span>";
+            html += "<ul>";
+            html += me.htmlCls.setHtmlCls.getRadio('mn4_clr', 'mn4_clrSpectrum', 'for Selection');
+            html += me.htmlCls.setHtmlCls.getRadio('mn4_clr', 'mn4_clrSpectrumChain', 'for Chains');
+            html += "</ul>";
+
             //html += me.htmlCls.setHtmlCls.getRadio('mn4_clr', 'mn4_clrRainbow', 'Rainbow (R-V)');
             html += "<li><span style='padding-left:1.5em;'>Rainbow (R-V)</span>";
             html += "<ul>";

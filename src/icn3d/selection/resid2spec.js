@@ -162,7 +162,7 @@ class Resid2spec {
     }
 
     atoms2residues(atomArray) {var ic = this.icn3d, me = ic.icn3dui;
-         let  atoms = {}
+         let  atoms = {};
          for(let j = 0, jl = atomArray.length; j < jl; ++j) {
              atoms[atomArray[j]] = 1;
          }
@@ -171,11 +171,20 @@ class Resid2spec {
          return Object.keys(residueHash);
     }
 
+    atoms2structureArray(atoms) {var ic = this.icn3d, me = ic.icn3dui;
+         let  structures = {};
+         for(let i in atoms) {
+             let atom = ic.atoms[i];
+             structures[atom.structure] = 1;
+         }
+         return Object.keys(structures);
+    }
+
     selectProperty(property, from, to) {var ic = this.icn3d, me = ic.icn3dui;
         let  prevHAtoms = me.hashUtilsCls.cloneHash(ic.hAtoms);
         if(property == 'positive') {
             let  select = ':r,k,h';
-            ic.hAtoms = {}
+            ic.hAtoms = {};
             ic.selByCommCls.selectBySpec(select, select, select);
         }
         else if(property == 'negative') {

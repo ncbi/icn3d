@@ -74,14 +74,17 @@ class Tube {
                             // add one more residue if only one residue is available
                             if(pnts.length == 1 && ic.residues.hasOwnProperty(nextoneResid)) {
                                 let nextAtom = ic.firstAtomObjCls.getAtomFromResi(nextoneResid, atomName);
-                                pnts.push(nextAtom.coord);
-                                colors.push(nextAtom.color);
 
-                                let radiusFinal = this.getRadius(radius, atom);
-                                radii.push(radiusFinal);
+                                if(nextAtom) {
+                                    pnts.push(nextAtom.coord);
+                                    colors.push(nextAtom.color);
 
-                                nextoneResid = nexttwoResid;
-                                nexttwoResid = nextthreeResid;
+                                    let radiusFinal = this.getRadius(radius, atom);
+                                    radii.push(radiusFinal);
+
+                                    nextoneResid = nexttwoResid;
+                                    nexttwoResid = nextthreeResid;
+                                }
                             }
 
                             let nextoneCoord = ic.firstAtomObjCls.getAtomCoordFromResi(nextoneResid, atomName);
@@ -167,14 +170,17 @@ class Tube {
                 // add one more residue if only one residue is available
                 if(pnts.length == 1 && ic.residues.hasOwnProperty(nextoneResid)) {
                     let nextAtom = ic.firstAtomObjCls.getAtomFromResi(nextoneResid, atomName);
-                    pnts.push(nextAtom.coord);
-                    colors.push(nextAtom.color);
 
-                    let radiusFinal = this.getRadius(radius, atom);
-                    radii.push(radiusFinal);
+                    if(nextAtom) {
+                        pnts.push(nextAtom.coord);
+                        colors.push(nextAtom.color);
 
-                    nextoneResid = nexttwoResid;
-                    nexttwoResid = nextthreeResid;
+                        let radiusFinal = this.getRadius(radius, atom);
+                        radii.push(radiusFinal);
+
+                        nextoneResid = nexttwoResid;
+                        nexttwoResid = nextthreeResid;
+                    }
                 }
 
                 let nextoneCoord = ic.firstAtomObjCls.getAtomCoordFromResi(nextoneResid, atomName);

@@ -865,6 +865,15 @@ class SetHtml {
        let file_pref =(ic.inputid) ? ic.inputid : "custom";
        ic.saveFileCls.saveFile(file_pref + '_icn3d.pdb', 'text', [pdbStr]);
     }
+
+    exportSecondary() { let me = this.icn3dui, ic = me.icn3d;
+       let secondaryStr = '';
+       let atoms = me.hashUtilsCls.intHash(ic.dAtoms, ic.hAtoms);
+       secondaryStr += ic.saveFileCls.getSecondary(atoms);
+
+       let file_pref =(ic.inputid) ? ic.inputid : "custom";
+       ic.saveFileCls.saveFile(file_pref + '_icn3d_ss.txt', 'text', [secondaryStr]);
+    }
 }
 
 export {SetHtml}
