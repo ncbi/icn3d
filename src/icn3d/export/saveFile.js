@@ -565,6 +565,68 @@ class SaveFile {
         return pdbStr;
     }
 
+    getSecondary(atomHash) { let ic = this.icn3d, me = ic.icn3dui;
+        let json = '{"data": [\n';
+
+        let prevChainid = '', prevResi = '';
+        let data = {};
+        for(let i in atomHash) {
+            let atom = ic.atoms[i];
+
+            let chainid = atom.structure + '_' + atom.chain;
+            let resi = atom.resi;
+            let resn = me.utilsCls.residueName2Abbr(atom.resn);
+            let ss = this.secondary2Abbr(atom.ss);
+
+            if(chainid != prevChainid) {
+                data[chainid] = {"resi": [], "resn": [], "secondary": []};
+            }
+
+            if(chainid != prevChainid || resi != prevResi) {
+                data[chainid]["resi"].push(resi);
+                data[chainid]["resn"].push(resn);
+                data[chainid]["secondary"].push(ss);
+            }
+
+            prevChainid = chainid;
+            prevResi = resi;
+        }
+
+        let chainidArray = Object.keys(data);
+        let cnt = chainidArray.length;
+        for(let i = 0; i < cnt; ++i) {
+            let chainid = chainidArray[i];
+            json += '{"chain": "' + chainid + '",\n';
+
+            json += '"resi": "' + data[chainid]["resi"].join(',') + '",\n';
+            json += '"resn": "' + data[chainid]["resn"].join('') + '",\n';
+            json += '"secondary": "' + data[chainid]["secondary"].join('') + '"';
+
+            if(i < cnt - 1) {
+                json += '},\n';
+            }
+            else {
+                json += '}\n';
+            }
+        }
+
+        json += ']}\n';
+
+        return json;
+    }
+
+    secondary2Abbr(ss) { let ic = this.icn3d, me = ic.icn3dui;
+        if(ss == 'helix') {
+            return 'H';
+        }
+        else if(ss == 'sheet') {
+            return 'E';
+        }
+        else {
+            return 'c';
+        }
+    }
+
     getSelectedResiduePDB() { let ic = this.icn3d, me = ic.icn3dui;
        let pdbStr = '';
 ///       pdbStr += this.getPDBHeader();

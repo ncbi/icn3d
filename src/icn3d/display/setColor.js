@@ -15,6 +15,24 @@ class SetColor {
         this.icn3d = icn3d;
     }
 
+    colorSpectrum(atoms) { let ic = this.icn3d, me = ic.icn3dui;
+        let idx = 0;
+        let cnt = 0;
+        for (let i in atoms) {
+            let atom = ic.atoms[i];
+            if(!atom.het) ++cnt;
+        }
+
+        let lastTerSerialInv = (cnt > 1) ? 1 / (cnt - 1) : 1;
+        for (let i in atoms) {
+            let atom = ic.atoms[i];
+            //atom.color = atom.het ? me.parasCls.atomColors[atom.elem] || me.parasCls.defaultAtomColor : me.parasCls.thr().setHSL(2 / 3 * (1 - idx++ * lastTerSerialInv), 1, 0.45);
+            atom.color = atom.het ? me.parasCls.atomColors[atom.elem] || me.parasCls.defaultAtomColor : me.parasCls.thr().setHSL(3 / 4 * (1 - idx++ * lastTerSerialInv), 1, 0.45);
+
+            ic.atomPrevColors[i] = atom.color;
+        }
+    }
+
     colorRainbow(atoms) { let ic = this.icn3d, me = ic.icn3dui;
         let idx = 0;
         let cnt = 0;
@@ -63,20 +81,11 @@ class SetColor {
 
         switch (options.color.toLowerCase()) {
             case 'spectrum':
-                idx = 0;
-                cnt = 0;
-                for (let i in atoms) {
-                    let atom = ic.atoms[i];
-                    if(!atom.het) ++cnt;
-                }
-
-                lastTerSerialInv = (cnt > 1) ? 1 / (cnt - 1) : 1;
-                for (let i in atoms) {
-                    let atom = ic.atoms[i];
-                    //atom.color = atom.het ? me.parasCls.atomColors[atom.elem] || me.parasCls.defaultAtomColor : me.parasCls.thr().setHSL(2 / 3 * (1 - idx++ * lastTerSerialInv), 1, 0.45);
-                    atom.color = atom.het ? me.parasCls.atomColors[atom.elem] || me.parasCls.defaultAtomColor : me.parasCls.thr().setHSL(3 / 4 * (1 - idx++ * lastTerSerialInv), 1, 0.45);
-
-                    ic.atomPrevColors[i] = atom.color;
+                this.colorSpectrum(atoms);
+                break;
+            case 'spectrum for chains':
+                for(let chainid in ic.chains) {
+                    this.colorSpectrum(ic.chains[chainid]);
                 }
                 break;
             case 'rainbow':

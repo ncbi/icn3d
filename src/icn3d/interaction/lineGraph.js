@@ -38,7 +38,10 @@ class LineGraph {
         nodeArray1 = nodeArrays.nodeArray1;
         nodeArray2 = nodeArrays.nodeArray2;
         ic.lineGraphStr = '{\n';
-        if(Object.keys(ic.structures).length > 1) {
+
+        let structureArray = ic.resid2specCls.atoms2structureArray(ic.hAtoms);
+        //if(Object.keys(ic.structures).length > 1) {
+        if(structureArray.length > 1) {
             let  nodeArray1a = [],
                 nodeArray1b = [],
                 nodeArray2a = [],
@@ -49,8 +52,10 @@ class LineGraph {
                 nodeArray1bTmp = [],
                 nodeArray2aTmp = [],
                 nodeArray2bTmp = [];
-            let  struc1 = Object.keys(ic.structures)[0],
-                struc2 = Object.keys(ic.structures)[1];
+            //let  struc1 = Object.keys(ic.structures)[0],
+            //    struc2 = Object.keys(ic.structures)[1];
+            let  struc1 = structureArray[0],
+                struc2 = structureArray[1];
             let  linkArrayA = [],
                 linkArrayB = [],
                 linkArrayAB = [];
@@ -182,7 +187,9 @@ class LineGraph {
             html += "</svg>";
         } else {
             if(!bScatterplot) {
-                let  struc1 = Object.keys(ic.structures)[0];
+                //let  struc1 = Object.keys(ic.structures)[0];
+                let  struc1 = structureArray[0];
+
                 let  len1 = nodeArray1.length,
                     len2 = nodeArray2.length;
                 let  factor = 1;
@@ -198,7 +205,9 @@ class LineGraph {
                 ic.lineGraphStr += ic.getGraphCls.updateGraphJson(struc1, 1, nodeArray1, nodeArray2, linkArray);
                 html += "</svg>";
             } else {
-                let  struc1 = Object.keys(ic.structures)[0];
+                //let  struc1 = Object.keys(ic.structures)[0];
+                let  struc1 = structureArray[0];
+
                 let  len1 = nodeArray1.length,
                     len2 = nodeArray2.length;
                 let  factor = 1;

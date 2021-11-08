@@ -93,6 +93,17 @@ class ParserUtils {
     getMissingResidues(seqArray, type, chainid) { let  ic = this.icn3d, me = ic.icn3dui;
         ic.chainsSeq[chainid] = [];
 
+        // find the offset of MMDB sequence
+        let offset = 0;
+        if(type === 'mmdbid' || type === 'align') {
+            for(let i = 0, il = seqArray.length; i < il; ++i) {
+                if(seqArray[i][0] != 0) {
+                    offset = seqArray[i][0] - (i + 1);
+                    break;
+                }
+            }
+        }
+
         let prevResi = 0;
         for(let i = 0, il = seqArray.length; i < il; ++i) {
             let  seqName, resiPos;
@@ -124,8 +135,13 @@ class ParserUtils {
             }
             else {
                 let offset =(ic.chainid2offset[chainid]) ? ic.chainid2offset[chainid] : 0;
-                //resObject.resi =(seqArray[i][resiPos] == '0') ? i + 1 + offset : seqArray[i][resiPos]; ?? problem with PDB PS0D
-                resObject.resi =(seqArray[i][resiPos] == '0') ? parseInt(prevResi) + 1 : seqArray[i][resiPos];
+                //resObject.resi =(seqArray[i][resiPos] == '0') ? i + 1 + offset : seqArray[i][resiPos]; //?? problem with PDB PS0D
+                if(type === 'mmdbid' || type === 'align') {
+                    resObject.resi =(seqArray[i][resiPos] == '0') ? i + 1 + offset : seqArray[i][resiPos];
+                }
+                else {
+                    resObject.resi =(seqArray[i][resiPos] == '0') ? parseInt(prevResi) + 1 : seqArray[i][resiPos];
+                }
             }
 
             resObject.name = (type === 'align') ? seqName.toLowerCase() : seqName;

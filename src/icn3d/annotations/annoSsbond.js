@@ -26,6 +26,7 @@ class AnnoSsbond {
         let chainid = chnidBase;
         let resid2resids = {}
         let structure = chainid.substr(0, chainid.indexOf('_'));
+
         let ssbondArray = ic.ssbondpnts[structure];
         if(ssbondArray === undefined) {
             $("#" + ic.pre + "dt_ssbond_" + chnid).html('');
@@ -51,7 +52,6 @@ class AnnoSsbond {
         let title = "Disulfide Bonds";
         ic.annoCddSiteCls.showAnnoType(chnid, chnidBase, 'ssbond', title, residueArray, resid2resids);
     }
-
 }
 
 export {AnnoSsbond}

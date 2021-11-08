@@ -136,6 +136,10 @@ class ResidueLabels {
             label.text = (bElement) ? atom.elem : atom.name.padEnd(2, ' ');
             label.size = size;
 
+            if(bElement) {
+                label.bSchematic = true;
+            }
+
             let atomColorStr = atom.color.getHexString().toUpperCase();
             label.color = (atomColorStr === "CCCCCC" || atomColorStr === "C8C8C8") ? "#888888" : "#" + atomColorStr;
             label.background = background;

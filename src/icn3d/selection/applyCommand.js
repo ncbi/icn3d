@@ -116,6 +116,9 @@ class ApplyCommand {
       else if(command == 'export pdb') {
          me.htmlCls.setHtmlCls.exportPdb();
       }
+      else if(command == 'export secondary structure') {
+         me.htmlCls.setHtmlCls.exportSecondary();
+      }
       else if(command == 'select all') {
          ic.selectionCls.selectAll();
          //ic.hlObjectsCls.addHlObjects();
