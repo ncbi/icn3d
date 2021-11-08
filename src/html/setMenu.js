@@ -1219,18 +1219,18 @@ class SetMenu {
         html += "<li>-</li>";
 
         if(me.cfg.cid === undefined) {
-            //html += me.htmlCls.setHtmlCls.getRadio('mn4_clr', 'mn4_clrSpectrum', 'Spectrum (V-R)');
-            html += "<li><span style='padding-left:1.5em;'>Spectrum (V-R)</span>";
-            html += "<ul>";
-            html += me.htmlCls.setHtmlCls.getRadio('mn4_clr', 'mn4_clrSpectrum', 'for Selection');
-            html += me.htmlCls.setHtmlCls.getRadio('mn4_clr', 'mn4_clrSpectrumChain', 'for Chains');
-            html += "</ul>";
-
             //html += me.htmlCls.setHtmlCls.getRadio('mn4_clr', 'mn4_clrRainbow', 'Rainbow (R-V)');
             html += "<li><span style='padding-left:1.5em;'>Rainbow (R-V)</span>";
             html += "<ul>";
             html += me.htmlCls.setHtmlCls.getRadio('mn4_clr', 'mn4_clrRainbow', 'for Selection');
             html += me.htmlCls.setHtmlCls.getRadio('mn4_clr', 'mn4_clrRainbowChain', 'for Chains');
+            html += "</ul>";
+
+            //html += me.htmlCls.setHtmlCls.getRadio('mn4_clr', 'mn4_clrSpectrum', 'Spectrum (V-R)');
+            html += "<li><span style='padding-left:1.5em;'>Spectrum (V-R)</span>";
+            html += "<ul>";
+            html += me.htmlCls.setHtmlCls.getRadio('mn4_clr', 'mn4_clrSpectrum', 'for Selection');
+            html += me.htmlCls.setHtmlCls.getRadio('mn4_clr', 'mn4_clrSpectrumChain', 'for Chains');
             html += "</ul>";
 
             html += "<li><span style='padding-left:1.5em;'>Secondary</span>";
@@ -1271,6 +1271,13 @@ class SetMenu {
 
             if(me.cfg.mmdbid !== undefined || me.cfg.gi !== undefined) {
               html += me.htmlCls.setHtmlCls.getRadio('mn4_clr', 'mn4_clrdomain', '3D Domain');
+            }
+
+            if(me.cfg.cid === undefined) {
+                html += "<li><span style='padding-left:1.5em;'>Defined Sets</span>";
+                html += "<ul>";
+                html += me.htmlCls.setHtmlCls.getRadio('mn4_clr', 'mn4_clrsets', 'Rainbow for Selected Sets<br>in "Analysis > Defined Sets"');
+                html += "</ul>";
             }
 
             //html += me.htmlCls.setHtmlCls.getRadio('mn4_clr', 'mn4_clrResidue', 'Residue');

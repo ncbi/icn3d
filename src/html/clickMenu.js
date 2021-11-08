@@ -1064,6 +1064,12 @@ class ClickMenu {
            ic.setOptionCls.setOption('color', 'domain');
            thisClass.setLogCmd('color domain', true);
         });
+
+        me.myEventCls.onIds("#" + me.pre + "mn4_clrsets", "click", function(e) { let ic = me.icn3d;
+           ic.setOptionCls.setOption('color', 'defined sets');
+           thisClass.setLogCmd('color defined sets', true);
+        });
+
     //    },
     //    clkMn4_clrSSGreen: function() {
         me.myEventCls.onIds("#" + me.pre + "mn4_clrSSGreen", "click", function(e) { let ic = me.icn3d;
