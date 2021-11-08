@@ -80,20 +80,20 @@ class SetColor {
         }
 
         switch (options.color.toLowerCase()) {
-            case 'spectrum':
-                this.colorSpectrum(atoms);
-                break;
-            case 'spectrum for chains':
-                for(let chainid in ic.chains) {
-                    this.colorSpectrum(ic.chains[chainid]);
-                }
-                break;
             case 'rainbow':
                 this.colorRainbow(atoms);
                 break;
             case 'rainbow for chains':
                 for(let chainid in ic.chains) {
                     this.colorRainbow(ic.chains[chainid]);
+                }
+                break;
+            case 'spectrum':
+                this.colorSpectrum(atoms);
+                break;
+            case 'spectrum for chains':
+                for(let chainid in ic.chains) {
+                    this.colorSpectrum(ic.chains[chainid]);
                 }
                 break;
             case 'chain':
@@ -145,6 +145,31 @@ class SetColor {
                         }
                     }
                 }
+                break;
+
+            case 'defined sets':
+                idx = 0;
+
+                if(!ic.nameArray || ic.nameArray.length == 0) {
+                    alert('Please first select sets in "Analysis > Defined Sets", and try it again.');
+                }
+                else {
+                    cnt = ic.nameArray.length;
+                    lastTerSerialInv = (cnt > 1) ? 1 / (cnt - 1) : 1;
+                    for (let i = 0; i < cnt; ++i) {
+                        let definedSetName = ic.nameArray[i];
+                        let definedSet = ic.definedSetsCls.getAtomsFromNameArray([definedSetName]);
+
+                        let color = me.parasCls.thr().setHSL(3 / 4 * idx++ * lastTerSerialInv, 1, 0.45);
+
+                        for(let serial in definedSet) {
+                            let atom = ic.atoms[serial];
+                            atom.color = color;
+                            ic.atomPrevColors[serial] = atom.color;
+                        }
+                    }
+                }
+
                 break;
 
             case 'secondary structure green':

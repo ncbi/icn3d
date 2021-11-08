@@ -18379,20 +18379,20 @@ var icn3d = (function (exports) {
             }
 
             switch (options.color.toLowerCase()) {
-                case 'spectrum':
-                    this.colorSpectrum(atoms);
-                    break;
-                case 'spectrum for chains':
-                    for(let chainid in ic.chains) {
-                        this.colorSpectrum(ic.chains[chainid]);
-                    }
-                    break;
                 case 'rainbow':
                     this.colorRainbow(atoms);
                     break;
                 case 'rainbow for chains':
                     for(let chainid in ic.chains) {
                         this.colorRainbow(ic.chains[chainid]);
+                    }
+                    break;
+                case 'spectrum':
+                    this.colorSpectrum(atoms);
+                    break;
+                case 'spectrum for chains':
+                    for(let chainid in ic.chains) {
+                        this.colorSpectrum(ic.chains[chainid]);
                     }
                     break;
                 case 'chain':
@@ -18444,6 +18444,31 @@ var icn3d = (function (exports) {
                             }
                         }
                     }
+                    break;
+
+                case 'defined sets':
+                    idx = 0;
+
+                    if(!ic.nameArray || ic.nameArray.length == 0) {
+                        alert('Please first select sets in "Analysis > Defined Sets", and try it again.');
+                    }
+                    else {
+                        cnt = ic.nameArray.length;
+                        lastTerSerialInv = (cnt > 1) ? 1 / (cnt - 1) : 1;
+                        for (let i = 0; i < cnt; ++i) {
+                            let definedSetName = ic.nameArray[i];
+                            let definedSet = ic.definedSetsCls.getAtomsFromNameArray([definedSetName]);
+
+                            let color = me.parasCls.thr().setHSL(3 / 4 * idx++ * lastTerSerialInv, 1, 0.45);
+
+                            for(let serial in definedSet) {
+                                let atom = ic.atoms[serial];
+                                atom.color = color;
+                                ic.atomPrevColors[serial] = atom.color;
+                            }
+                        }
+                    }
+
                     break;
 
                 case 'secondary structure green':
@@ -44994,6 +45019,12 @@ var icn3d = (function (exports) {
                ic.setOptionCls.setOption('color', 'domain');
                thisClass.setLogCmd('color domain', true);
             });
+
+            me.myEventCls.onIds("#" + me.pre + "mn4_clrsets", "click", function(e) { let ic = me.icn3d;
+               ic.setOptionCls.setOption('color', 'defined sets');
+               thisClass.setLogCmd('color defined sets', true);
+            });
+
         //    },
         //    clkMn4_clrSSGreen: function() {
             me.myEventCls.onIds("#" + me.pre + "mn4_clrSSGreen", "click", function(e) { let ic = me.icn3d;
@@ -47227,18 +47258,18 @@ var icn3d = (function (exports) {
             html += "<li>-</li>";
 
             if(me.cfg.cid === undefined) {
-                //html += me.htmlCls.setHtmlCls.getRadio('mn4_clr', 'mn4_clrSpectrum', 'Spectrum (V-R)');
-                html += "<li><span style='padding-left:1.5em;'>Spectrum (V-R)</span>";
-                html += "<ul>";
-                html += me.htmlCls.setHtmlCls.getRadio('mn4_clr', 'mn4_clrSpectrum', 'for Selection');
-                html += me.htmlCls.setHtmlCls.getRadio('mn4_clr', 'mn4_clrSpectrumChain', 'for Chains');
-                html += "</ul>";
-
                 //html += me.htmlCls.setHtmlCls.getRadio('mn4_clr', 'mn4_clrRainbow', 'Rainbow (R-V)');
                 html += "<li><span style='padding-left:1.5em;'>Rainbow (R-V)</span>";
                 html += "<ul>";
                 html += me.htmlCls.setHtmlCls.getRadio('mn4_clr', 'mn4_clrRainbow', 'for Selection');
                 html += me.htmlCls.setHtmlCls.getRadio('mn4_clr', 'mn4_clrRainbowChain', 'for Chains');
+                html += "</ul>";
+
+                //html += me.htmlCls.setHtmlCls.getRadio('mn4_clr', 'mn4_clrSpectrum', 'Spectrum (V-R)');
+                html += "<li><span style='padding-left:1.5em;'>Spectrum (V-R)</span>";
+                html += "<ul>";
+                html += me.htmlCls.setHtmlCls.getRadio('mn4_clr', 'mn4_clrSpectrum', 'for Selection');
+                html += me.htmlCls.setHtmlCls.getRadio('mn4_clr', 'mn4_clrSpectrumChain', 'for Chains');
                 html += "</ul>";
 
                 html += "<li><span style='padding-left:1.5em;'>Secondary</span>";
@@ -47279,6 +47310,13 @@ var icn3d = (function (exports) {
 
                 if(me.cfg.mmdbid !== undefined || me.cfg.gi !== undefined) {
                   html += me.htmlCls.setHtmlCls.getRadio('mn4_clr', 'mn4_clrdomain', '3D Domain');
+                }
+
+                if(me.cfg.cid === undefined) {
+                    html += "<li><span style='padding-left:1.5em;'>Defined Sets</span>";
+                    html += "<ul>";
+                    html += me.htmlCls.setHtmlCls.getRadio('mn4_clr', 'mn4_clrsets', 'Rainbow for Selected Sets<br>in "Analysis > Defined Sets"');
+                    html += "</ul>";
                 }
 
                 //html += me.htmlCls.setHtmlCls.getRadio('mn4_clr', 'mn4_clrResidue', 'Residue');
