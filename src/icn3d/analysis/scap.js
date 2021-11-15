@@ -151,11 +151,9 @@ class Scap {
               for(let serial in hAtom2) {
                   let atom = ic.atoms[serial];
                   if(!atom.het) {
-                      //ic.atoms[serial].color = me.parasCls.thr(0xA52A2A); // brown
-                      //ic.atomPrevColors[serial] = me.parasCls.thr(0xA52A2A); // brown
                       // use the same color as the wild type
-///                      let resid = atom.structure.substr(0, 4) + '_' + atom.chain + '_' + atom.resi;
-                      let resid = atom.structure + '_' + atom.chain + '_' + atom.resi;
+                      let resid = atom.structure.substr(0, 4) + '_' + atom.chain + '_' + atom.resi;
+
                       let atomWT = ic.firstAtomObjCls.getFirstAtomObj(ic.residues[resid]);
                       ic.atoms[serial].color = atomWT.color;
                       ic.atomPrevColors[serial] = atomWT.color;

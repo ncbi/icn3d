@@ -47,7 +47,9 @@ class TextSprite {
         }
 
         let textAlpha = 1.0;
+
         let textColor = parameters.hasOwnProperty("textColor") &&  parameters["textColor"] !== undefined ? me.utilsCls.hexToRgb(parameters["textColor"], textAlpha) : { r:255, g:255, b:0, a:1.0 };
+        if(!textColor) textColor = { r:255, g:255, b:0, a:1.0 };
 
         let canvas = document.createElement('canvas');
 

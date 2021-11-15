@@ -67,7 +67,7 @@ class LoadPDB {
 
         let  chainMissingResidueArray = {}
 
-        let  id = 'stru';
+        let  id = (pdbid) ? pdbid : 'stru';
 
         let  maxMissingResi = 0, prevMissingChain = '';
         let  CSerial, prevCSerial, OSerial, prevOSerial;

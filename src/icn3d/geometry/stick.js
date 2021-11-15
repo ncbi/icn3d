@@ -21,6 +21,8 @@ class Stick {
         if(me.bNode) return;
 
         let factor = (bSchematic !== undefined && bSchematic) ? atomR / ic.cylinderRadius : 1;
+        let doubleBondRadius = ic.cylinderRadius * factor * 0.4; // 0.3
+        let triBondRadius = ic.cylinderRadius * factor * 0.3; // 0.2
 
             ic.reprSubCls.createRepresentationSub(atoms, function (atom0) {
                     ic.sphereCls.createSphere(atom0, atomR, !scale, scale, bHighlight);
@@ -86,23 +88,23 @@ class Stick {
 
                     if (atom0.color === atom1.color) {
                         if(ic.dAtoms.hasOwnProperty(atom0.serial) && ic.dAtoms.hasOwnProperty(atom1.serial)) {
-                            ic.cylinderCls.createCylinder(atom0.coord.clone().add(v0), atom1.coord.clone().add(v0), ic.cylinderRadius * factor * 0.3, atom0.color, bHighlight);
-                            ic.cylinderCls.createCylinder(atom0.coord.clone().sub(v0), atom1.coord.clone().sub(v0), ic.cylinderRadius * factor * 0.3, atom0.color, bHighlight);
+                            ic.cylinderCls.createCylinder(atom0.coord.clone().add(v0), atom1.coord.clone().add(v0), doubleBondRadius, atom0.color, bHighlight);
+                            ic.cylinderCls.createCylinder(atom0.coord.clone().sub(v0), atom1.coord.clone().sub(v0), doubleBondRadius, atom0.color, bHighlight);
                         }
                     } else {
                         if(ic.bImpo) {
                             if(ic.dAtoms.hasOwnProperty(atom0.serial) && ic.dAtoms.hasOwnProperty(atom1.serial)) {
-                                ic.cylinderCls.createCylinder(atom0.coord.clone().add(v0), atom1.coord.clone().add(v0), ic.cylinderRadius * factor * 0.3, atom0.color, bHighlight, atom1.color);
-                                ic.cylinderCls.createCylinder(atom0.coord.clone().sub(v0), atom1.coord.clone().sub(v0), ic.cylinderRadius * factor * 0.3, atom0.color, bHighlight, atom1.color);
+                                ic.cylinderCls.createCylinder(atom0.coord.clone().add(v0), atom1.coord.clone().add(v0), doubleBondRadius, atom0.color, bHighlight, atom1.color);
+                                ic.cylinderCls.createCylinder(atom0.coord.clone().sub(v0), atom1.coord.clone().sub(v0), doubleBondRadius, atom0.color, bHighlight, atom1.color);
                             }
                         }
                         else {
                             if(ic.dAtoms.hasOwnProperty(atom0.serial) && ic.dAtoms.hasOwnProperty(atom1.serial)) {
-                                ic.cylinderCls.createCylinder(atom0.coord.clone().add(v0), mp.clone().add(v0), ic.cylinderRadius * factor * 0.3, atom0.color, bHighlight);
-                                ic.cylinderCls.createCylinder(atom1.coord.clone().add(v0), mp.clone().add(v0), ic.cylinderRadius * factor * 0.3, atom1.color, bHighlight);
+                                ic.cylinderCls.createCylinder(atom0.coord.clone().add(v0), mp.clone().add(v0), doubleBondRadius, atom0.color, bHighlight);
+                                ic.cylinderCls.createCylinder(atom1.coord.clone().add(v0), mp.clone().add(v0), doubleBondRadius, atom1.color, bHighlight);
 
-                                ic.cylinderCls.createCylinder(atom0.coord.clone().sub(v0), mp.clone().sub(v0), ic.cylinderRadius * factor * 0.3, atom0.color, bHighlight);
-                                ic.cylinderCls.createCylinder(atom1.coord.clone().sub(v0), mp.clone().sub(v0), ic.cylinderRadius * factor * 0.3, atom1.color, bHighlight);
+                                ic.cylinderCls.createCylinder(atom0.coord.clone().sub(v0), mp.clone().sub(v0), doubleBondRadius, atom0.color, bHighlight);
+                                ic.cylinderCls.createCylinder(atom1.coord.clone().sub(v0), mp.clone().sub(v0), doubleBondRadius, atom1.color, bHighlight);
                             }
                         }
                     }
@@ -172,13 +174,13 @@ class Stick {
                     if (atom0.color === atom1.color) {
                         let base, step;
                         if(dashed === 'add') {
-                            ic.cylinderCls.createCylinder(atom0.coord.clone().sub(v0), atom1.coord.clone().sub(v0), ic.cylinderRadius * factor * 0.3, atom0.color, bHighlight);
+                            ic.cylinderCls.createCylinder(atom0.coord.clone().sub(v0), atom1.coord.clone().sub(v0), doubleBondRadius, atom0.color, bHighlight);
 
                             base = atom0.coord.clone().add(v0);
                             step = atom1.coord.clone().add(v0).sub(base).multiplyScalar(1.0/11);
                         }
                         else {
-                            ic.cylinderCls.createCylinder(atom0.coord.clone().add(v0), atom1.coord.clone().add(v0), ic.cylinderRadius * factor * 0.3, atom0.color, bHighlight);
+                            ic.cylinderCls.createCylinder(atom0.coord.clone().add(v0), atom1.coord.clone().add(v0), doubleBondRadius, atom0.color, bHighlight);
 
                             base = atom0.coord.clone().sub(v0);
                             step = atom1.coord.clone().sub(v0).sub(base).multiplyScalar(1.0/11);
@@ -188,7 +190,7 @@ class Stick {
                             if(i % 2 == 0) {
                                 let pos1 = base.clone().add(step.clone().multiplyScalar(i));
                                 let pos2 = base.clone().add(step.clone().multiplyScalar(i + 1));
-                                ic.cylinderCls.createCylinder(pos1, pos2, ic.cylinderRadius * factor * 0.3, atom0.color, bHighlight);
+                                ic.cylinderCls.createCylinder(pos1, pos2, doubleBondRadius, atom0.color, bHighlight);
                             }
                         }
 
@@ -196,8 +198,8 @@ class Stick {
                         let base, step;
                         if(dashed === 'add') {
                             if(ic.dAtoms.hasOwnProperty(atom0.serial) && ic.dAtoms.hasOwnProperty(atom1.serial)) {
-                                ic.cylinderCls.createCylinder(atom0.coord.clone().sub(v0), mp.clone().sub(v0), ic.cylinderRadius * factor * 0.3, atom0.color, bHighlight);
-                                ic.cylinderCls.createCylinder(atom1.coord.clone().sub(v0), mp.clone().sub(v0), ic.cylinderRadius * factor * 0.3, atom1.color, bHighlight);
+                                ic.cylinderCls.createCylinder(atom0.coord.clone().sub(v0), mp.clone().sub(v0), doubleBondRadius, atom0.color, bHighlight);
+                                ic.cylinderCls.createCylinder(atom1.coord.clone().sub(v0), mp.clone().sub(v0), doubleBondRadius, atom1.color, bHighlight);
                             }
 
                             base = atom0.coord.clone().add(v0);
@@ -205,8 +207,8 @@ class Stick {
                         }
                         else {
                             if(ic.dAtoms.hasOwnProperty(atom0.serial) && ic.dAtoms.hasOwnProperty(atom1.serial)) {
-                                ic.cylinderCls.createCylinder(atom0.coord.clone().add(v0), mp.clone().add(v0), ic.cylinderRadius * factor * 0.3, atom0.color, bHighlight);
-                                ic.cylinderCls.createCylinder(atom1.coord.clone().add(v0), mp.clone().add(v0), ic.cylinderRadius * factor * 0.3, atom1.color, bHighlight);
+                                ic.cylinderCls.createCylinder(atom0.coord.clone().add(v0), mp.clone().add(v0), doubleBondRadius, atom0.color, bHighlight);
+                                ic.cylinderCls.createCylinder(atom1.coord.clone().add(v0), mp.clone().add(v0), doubleBondRadius, atom1.color, bHighlight);
                             }
 
                             base = atom0.coord.clone().sub(v0);
@@ -218,10 +220,10 @@ class Stick {
                                 let pos1 = base.clone().add(step.clone().multiplyScalar(i));
                                 let pos2 = base.clone().add(step.clone().multiplyScalar(i + 1));
                                 if(i < 5) {
-                                    ic.cylinderCls.createCylinder(pos1, pos2, ic.cylinderRadius * factor * 0.3, atom0.color, bHighlight);
+                                    ic.cylinderCls.createCylinder(pos1, pos2, doubleBondRadius, atom0.color, bHighlight);
                                 }
                                 else {
-                                    ic.cylinderCls.createCylinder(pos1, pos2, ic.cylinderRadius * factor * 0.3, atom1.color, bHighlight);
+                                    ic.cylinderCls.createCylinder(pos1, pos2, doubleBondRadius, atom1.color, bHighlight);
                                 }
                             }
                         }
@@ -237,28 +239,28 @@ class Stick {
 
                     if (atom0.color === atom1.color) {
                         if(ic.dAtoms.hasOwnProperty(atom0.serial) && ic.dAtoms.hasOwnProperty(atom1.serial)) {
-                            ic.cylinderCls.createCylinder(atom0.coord, atom1.coord, ic.cylinderRadius * factor * 0.2, atom0.color, bHighlight);
-                            ic.cylinderCls.createCylinder(atom0.coord.clone().add(c), atom1.coord.clone().add(c), ic.cylinderRadius * factor * 0.2, atom0.color, bHighlight);
-                            ic.cylinderCls.createCylinder(atom0.coord.clone().sub(c), atom1.coord.clone().sub(c), ic.cylinderRadius * factor * 0.2, atom0.color, bHighlight);
+                            ic.cylinderCls.createCylinder(atom0.coord, atom1.coord, triBondRadius, atom0.color, bHighlight);
+                            ic.cylinderCls.createCylinder(atom0.coord.clone().add(c), atom1.coord.clone().add(c), triBondRadius, atom0.color, bHighlight);
+                            ic.cylinderCls.createCylinder(atom0.coord.clone().sub(c), atom1.coord.clone().sub(c), ic.triBondRadius, atom0.color, bHighlight);
                         }
                     } else {
                         if(ic.bImpo) {
                             if(ic.dAtoms.hasOwnProperty(atom0.serial) && ic.dAtoms.hasOwnProperty(atom1.serial)) {
-                                ic.cylinderCls.createCylinder(atom0.coord, atom1.coord, ic.cylinderRadius * factor * 0.2, atom0.color, bHighlight, atom1.color);
-                                ic.cylinderCls.createCylinder(atom0.coord.clone().add(c), atom1.coord.clone().add(c), ic.cylinderRadius * factor * 0.2, atom0.color, bHighlight, atom1.color);
-                                ic.cylinderCls.createCylinder(atom0.coord.clone().sub(c), atom1.coord.clone().sub(c), ic.cylinderRadius * factor * 0.2, atom0.color, bHighlight, atom1.color);
+                                ic.cylinderCls.createCylinder(atom0.coord, atom1.coord, triBondRadius, atom0.color, bHighlight, atom1.color);
+                                ic.cylinderCls.createCylinder(atom0.coord.clone().add(c), atom1.coord.clone().add(c), triBondRadius, atom0.color, bHighlight, atom1.color);
+                                ic.cylinderCls.createCylinder(atom0.coord.clone().sub(c), atom1.coord.clone().sub(c), triBondRadius, atom0.color, bHighlight, atom1.color);
                             }
                         }
                         else {
                             if(ic.dAtoms.hasOwnProperty(atom0.serial) && ic.dAtoms.hasOwnProperty(atom1.serial)) {
-                                ic.cylinderCls.createCylinder(atom0.coord, mp, ic.cylinderRadius * factor * 0.2, atom0.color, bHighlight);
-                                ic.cylinderCls.createCylinder(atom1.coord, mp, ic.cylinderRadius * factor * 0.2, atom1.color, bHighlight);
+                                ic.cylinderCls.createCylinder(atom0.coord, mp, triBondRadius, atom0.color, bHighlight);
+                                ic.cylinderCls.createCylinder(atom1.coord, mp, triBondRadius, atom1.color, bHighlight);
 
-                                ic.cylinderCls.createCylinder(atom0.coord.clone().add(c), mp.clone().add(c), ic.cylinderRadius * factor * 0.2, atom0.color, bHighlight);
-                                ic.cylinderCls.createCylinder(atom1.coord.clone().add(c), mp.clone().add(c), ic.cylinderRadius * factor * 0.2, atom1.color, bHighlight);
+                                ic.cylinderCls.createCylinder(atom0.coord.clone().add(c), mp.clone().add(c), triBondRadius, atom0.color, bHighlight);
+                                ic.cylinderCls.createCylinder(atom1.coord.clone().add(c), mp.clone().add(c), triBondRadius, atom1.color, bHighlight);
 
-                                ic.cylinderCls.createCylinder(atom0.coord.clone().sub(c), mp.clone().sub(c), ic.cylinderRadius * factor * 0.2, atom0.color, bHighlight);
-                                ic.cylinderCls.createCylinder(atom1.coord.clone().sub(c), mp.clone().sub(c), ic.cylinderRadius * factor * 0.2, atom1.color, bHighlight);
+                                ic.cylinderCls.createCylinder(atom0.coord.clone().sub(c), mp.clone().sub(c), triBondRadius, atom0.color, bHighlight);
+                                ic.cylinderCls.createCylinder(atom1.coord.clone().sub(c), mp.clone().sub(c), triBondRadius, atom1.color, bHighlight);
                             }
                         }
                     }
