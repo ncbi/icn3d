@@ -137,6 +137,7 @@ class Analysis {
             ic.lines[type].push(line);
         }
         else {
+            if(ic.lines['custom'] === undefined) ic.lines['custom'] = [];
             ic.lines['custom'].push(line);
         }
         ic.hlObjectsCls.removeHlObjects();
@@ -181,6 +182,7 @@ class Analysis {
             ic.labels[type].push(label);
         }
         else {
+            if(ic.labels['custom'] === undefined) ic.labels['custom'] = [];
             ic.labels['custom'].push(label);
         }
 

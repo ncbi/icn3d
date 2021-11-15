@@ -20112,11 +20112,9 @@ class Scap {
               for(let serial in hAtom2) {
                   let atom = ic.atoms[serial];
                   if(!atom.het) {
-                      //ic.atoms[serial].color = me.parasCls.thr(0xA52A2A); // brown
-                      //ic.atomPrevColors[serial] = me.parasCls.thr(0xA52A2A); // brown
                       // use the same color as the wild type
-///                      let resid = atom.structure.substr(0, 4) + '_' + atom.chain + '_' + atom.resi;
-                      let resid = atom.structure + '_' + atom.chain + '_' + atom.resi;
+                      let resid = atom.structure.substr(0, 4) + '_' + atom.chain + '_' + atom.resi;
+
                       let atomWT = ic.firstAtomObjCls.getFirstAtomObj(ic.residues[resid]);
                       ic.atoms[serial].color = atomWT.color;
                       ic.atomPrevColors[serial] = atomWT.color;
@@ -20860,7 +20858,7 @@ class LoadPDB {
 
         let  chainMissingResidueArray = {};
 
-        let  id = 'stru';
+        let  id = (pdbid) ? pdbid : 'stru';
 
         let  maxMissingResi = 0, prevMissingChain = '';
         let  CSerial, prevCSerial, OSerial, prevOSerial;
@@ -29723,6 +29721,7 @@ class Analysis {
             ic.lines[type].push(line);
         }
         else {
+            if(ic.lines['custom'] === undefined) ic.lines['custom'] = [];
             ic.lines['custom'].push(line);
         }
         ic.hlObjectsCls.removeHlObjects();
@@ -29766,6 +29765,7 @@ class Analysis {
             ic.labels[type].push(label);
         }
         else {
+            if(ic.labels['custom'] === undefined) ic.labels['custom'] = [];
             ic.labels['custom'].push(label);
         }
 
@@ -39759,6 +39759,8 @@ class Stick {
         if(me.bNode) return;
 
         let factor = (bSchematic !== undefined && bSchematic) ? atomR / ic.cylinderRadius : 1;
+        let doubleBondRadius = ic.cylinderRadius * factor * 0.4; // 0.3
+        let triBondRadius = ic.cylinderRadius * factor * 0.3; // 0.2
 
             ic.reprSubCls.createRepresentationSub(atoms, function (atom0) {
                     ic.sphereCls.createSphere(atom0, atomR, !scale, scale, bHighlight);
@@ -39824,23 +39826,23 @@ class Stick {
 
                     if (atom0.color === atom1.color) {
                         if(ic.dAtoms.hasOwnProperty(atom0.serial) && ic.dAtoms.hasOwnProperty(atom1.serial)) {
-                            ic.cylinderCls.createCylinder(atom0.coord.clone().add(v0), atom1.coord.clone().add(v0), ic.cylinderRadius * factor * 0.3, atom0.color, bHighlight);
-                            ic.cylinderCls.createCylinder(atom0.coord.clone().sub(v0), atom1.coord.clone().sub(v0), ic.cylinderRadius * factor * 0.3, atom0.color, bHighlight);
+                            ic.cylinderCls.createCylinder(atom0.coord.clone().add(v0), atom1.coord.clone().add(v0), doubleBondRadius, atom0.color, bHighlight);
+                            ic.cylinderCls.createCylinder(atom0.coord.clone().sub(v0), atom1.coord.clone().sub(v0), doubleBondRadius, atom0.color, bHighlight);
                         }
                     } else {
                         if(ic.bImpo) {
                             if(ic.dAtoms.hasOwnProperty(atom0.serial) && ic.dAtoms.hasOwnProperty(atom1.serial)) {
-                                ic.cylinderCls.createCylinder(atom0.coord.clone().add(v0), atom1.coord.clone().add(v0), ic.cylinderRadius * factor * 0.3, atom0.color, bHighlight, atom1.color);
-                                ic.cylinderCls.createCylinder(atom0.coord.clone().sub(v0), atom1.coord.clone().sub(v0), ic.cylinderRadius * factor * 0.3, atom0.color, bHighlight, atom1.color);
+                                ic.cylinderCls.createCylinder(atom0.coord.clone().add(v0), atom1.coord.clone().add(v0), doubleBondRadius, atom0.color, bHighlight, atom1.color);
+                                ic.cylinderCls.createCylinder(atom0.coord.clone().sub(v0), atom1.coord.clone().sub(v0), doubleBondRadius, atom0.color, bHighlight, atom1.color);
                             }
                         }
                         else {
                             if(ic.dAtoms.hasOwnProperty(atom0.serial) && ic.dAtoms.hasOwnProperty(atom1.serial)) {
-                                ic.cylinderCls.createCylinder(atom0.coord.clone().add(v0), mp.clone().add(v0), ic.cylinderRadius * factor * 0.3, atom0.color, bHighlight);
-                                ic.cylinderCls.createCylinder(atom1.coord.clone().add(v0), mp.clone().add(v0), ic.cylinderRadius * factor * 0.3, atom1.color, bHighlight);
+                                ic.cylinderCls.createCylinder(atom0.coord.clone().add(v0), mp.clone().add(v0), doubleBondRadius, atom0.color, bHighlight);
+                                ic.cylinderCls.createCylinder(atom1.coord.clone().add(v0), mp.clone().add(v0), doubleBondRadius, atom1.color, bHighlight);
 
-                                ic.cylinderCls.createCylinder(atom0.coord.clone().sub(v0), mp.clone().sub(v0), ic.cylinderRadius * factor * 0.3, atom0.color, bHighlight);
-                                ic.cylinderCls.createCylinder(atom1.coord.clone().sub(v0), mp.clone().sub(v0), ic.cylinderRadius * factor * 0.3, atom1.color, bHighlight);
+                                ic.cylinderCls.createCylinder(atom0.coord.clone().sub(v0), mp.clone().sub(v0), doubleBondRadius, atom0.color, bHighlight);
+                                ic.cylinderCls.createCylinder(atom1.coord.clone().sub(v0), mp.clone().sub(v0), doubleBondRadius, atom1.color, bHighlight);
                             }
                         }
                     }
@@ -39910,13 +39912,13 @@ class Stick {
                     if (atom0.color === atom1.color) {
                         let base, step;
                         if(dashed === 'add') {
-                            ic.cylinderCls.createCylinder(atom0.coord.clone().sub(v0), atom1.coord.clone().sub(v0), ic.cylinderRadius * factor * 0.3, atom0.color, bHighlight);
+                            ic.cylinderCls.createCylinder(atom0.coord.clone().sub(v0), atom1.coord.clone().sub(v0), doubleBondRadius, atom0.color, bHighlight);
 
                             base = atom0.coord.clone().add(v0);
                             step = atom1.coord.clone().add(v0).sub(base).multiplyScalar(1.0/11);
                         }
                         else {
-                            ic.cylinderCls.createCylinder(atom0.coord.clone().add(v0), atom1.coord.clone().add(v0), ic.cylinderRadius * factor * 0.3, atom0.color, bHighlight);
+                            ic.cylinderCls.createCylinder(atom0.coord.clone().add(v0), atom1.coord.clone().add(v0), doubleBondRadius, atom0.color, bHighlight);
 
                             base = atom0.coord.clone().sub(v0);
                             step = atom1.coord.clone().sub(v0).sub(base).multiplyScalar(1.0/11);
@@ -39926,7 +39928,7 @@ class Stick {
                             if(i % 2 == 0) {
                                 let pos1 = base.clone().add(step.clone().multiplyScalar(i));
                                 let pos2 = base.clone().add(step.clone().multiplyScalar(i + 1));
-                                ic.cylinderCls.createCylinder(pos1, pos2, ic.cylinderRadius * factor * 0.3, atom0.color, bHighlight);
+                                ic.cylinderCls.createCylinder(pos1, pos2, doubleBondRadius, atom0.color, bHighlight);
                             }
                         }
 
@@ -39934,8 +39936,8 @@ class Stick {
                         let base, step;
                         if(dashed === 'add') {
                             if(ic.dAtoms.hasOwnProperty(atom0.serial) && ic.dAtoms.hasOwnProperty(atom1.serial)) {
-                                ic.cylinderCls.createCylinder(atom0.coord.clone().sub(v0), mp.clone().sub(v0), ic.cylinderRadius * factor * 0.3, atom0.color, bHighlight);
-                                ic.cylinderCls.createCylinder(atom1.coord.clone().sub(v0), mp.clone().sub(v0), ic.cylinderRadius * factor * 0.3, atom1.color, bHighlight);
+                                ic.cylinderCls.createCylinder(atom0.coord.clone().sub(v0), mp.clone().sub(v0), doubleBondRadius, atom0.color, bHighlight);
+                                ic.cylinderCls.createCylinder(atom1.coord.clone().sub(v0), mp.clone().sub(v0), doubleBondRadius, atom1.color, bHighlight);
                             }
 
                             base = atom0.coord.clone().add(v0);
@@ -39943,8 +39945,8 @@ class Stick {
                         }
                         else {
                             if(ic.dAtoms.hasOwnProperty(atom0.serial) && ic.dAtoms.hasOwnProperty(atom1.serial)) {
-                                ic.cylinderCls.createCylinder(atom0.coord.clone().add(v0), mp.clone().add(v0), ic.cylinderRadius * factor * 0.3, atom0.color, bHighlight);
-                                ic.cylinderCls.createCylinder(atom1.coord.clone().add(v0), mp.clone().add(v0), ic.cylinderRadius * factor * 0.3, atom1.color, bHighlight);
+                                ic.cylinderCls.createCylinder(atom0.coord.clone().add(v0), mp.clone().add(v0), doubleBondRadius, atom0.color, bHighlight);
+                                ic.cylinderCls.createCylinder(atom1.coord.clone().add(v0), mp.clone().add(v0), doubleBondRadius, atom1.color, bHighlight);
                             }
 
                             base = atom0.coord.clone().sub(v0);
@@ -39956,10 +39958,10 @@ class Stick {
                                 let pos1 = base.clone().add(step.clone().multiplyScalar(i));
                                 let pos2 = base.clone().add(step.clone().multiplyScalar(i + 1));
                                 if(i < 5) {
-                                    ic.cylinderCls.createCylinder(pos1, pos2, ic.cylinderRadius * factor * 0.3, atom0.color, bHighlight);
+                                    ic.cylinderCls.createCylinder(pos1, pos2, doubleBondRadius, atom0.color, bHighlight);
                                 }
                                 else {
-                                    ic.cylinderCls.createCylinder(pos1, pos2, ic.cylinderRadius * factor * 0.3, atom1.color, bHighlight);
+                                    ic.cylinderCls.createCylinder(pos1, pos2, doubleBondRadius, atom1.color, bHighlight);
                                 }
                             }
                         }
@@ -39975,28 +39977,28 @@ class Stick {
 
                     if (atom0.color === atom1.color) {
                         if(ic.dAtoms.hasOwnProperty(atom0.serial) && ic.dAtoms.hasOwnProperty(atom1.serial)) {
-                            ic.cylinderCls.createCylinder(atom0.coord, atom1.coord, ic.cylinderRadius * factor * 0.2, atom0.color, bHighlight);
-                            ic.cylinderCls.createCylinder(atom0.coord.clone().add(c), atom1.coord.clone().add(c), ic.cylinderRadius * factor * 0.2, atom0.color, bHighlight);
-                            ic.cylinderCls.createCylinder(atom0.coord.clone().sub(c), atom1.coord.clone().sub(c), ic.cylinderRadius * factor * 0.2, atom0.color, bHighlight);
+                            ic.cylinderCls.createCylinder(atom0.coord, atom1.coord, triBondRadius, atom0.color, bHighlight);
+                            ic.cylinderCls.createCylinder(atom0.coord.clone().add(c), atom1.coord.clone().add(c), triBondRadius, atom0.color, bHighlight);
+                            ic.cylinderCls.createCylinder(atom0.coord.clone().sub(c), atom1.coord.clone().sub(c), ic.triBondRadius, atom0.color, bHighlight);
                         }
                     } else {
                         if(ic.bImpo) {
                             if(ic.dAtoms.hasOwnProperty(atom0.serial) && ic.dAtoms.hasOwnProperty(atom1.serial)) {
-                                ic.cylinderCls.createCylinder(atom0.coord, atom1.coord, ic.cylinderRadius * factor * 0.2, atom0.color, bHighlight, atom1.color);
-                                ic.cylinderCls.createCylinder(atom0.coord.clone().add(c), atom1.coord.clone().add(c), ic.cylinderRadius * factor * 0.2, atom0.color, bHighlight, atom1.color);
-                                ic.cylinderCls.createCylinder(atom0.coord.clone().sub(c), atom1.coord.clone().sub(c), ic.cylinderRadius * factor * 0.2, atom0.color, bHighlight, atom1.color);
+                                ic.cylinderCls.createCylinder(atom0.coord, atom1.coord, triBondRadius, atom0.color, bHighlight, atom1.color);
+                                ic.cylinderCls.createCylinder(atom0.coord.clone().add(c), atom1.coord.clone().add(c), triBondRadius, atom0.color, bHighlight, atom1.color);
+                                ic.cylinderCls.createCylinder(atom0.coord.clone().sub(c), atom1.coord.clone().sub(c), triBondRadius, atom0.color, bHighlight, atom1.color);
                             }
                         }
                         else {
                             if(ic.dAtoms.hasOwnProperty(atom0.serial) && ic.dAtoms.hasOwnProperty(atom1.serial)) {
-                                ic.cylinderCls.createCylinder(atom0.coord, mp, ic.cylinderRadius * factor * 0.2, atom0.color, bHighlight);
-                                ic.cylinderCls.createCylinder(atom1.coord, mp, ic.cylinderRadius * factor * 0.2, atom1.color, bHighlight);
+                                ic.cylinderCls.createCylinder(atom0.coord, mp, triBondRadius, atom0.color, bHighlight);
+                                ic.cylinderCls.createCylinder(atom1.coord, mp, triBondRadius, atom1.color, bHighlight);
 
-                                ic.cylinderCls.createCylinder(atom0.coord.clone().add(c), mp.clone().add(c), ic.cylinderRadius * factor * 0.2, atom0.color, bHighlight);
-                                ic.cylinderCls.createCylinder(atom1.coord.clone().add(c), mp.clone().add(c), ic.cylinderRadius * factor * 0.2, atom1.color, bHighlight);
+                                ic.cylinderCls.createCylinder(atom0.coord.clone().add(c), mp.clone().add(c), triBondRadius, atom0.color, bHighlight);
+                                ic.cylinderCls.createCylinder(atom1.coord.clone().add(c), mp.clone().add(c), triBondRadius, atom1.color, bHighlight);
 
-                                ic.cylinderCls.createCylinder(atom0.coord.clone().sub(c), mp.clone().sub(c), ic.cylinderRadius * factor * 0.2, atom0.color, bHighlight);
-                                ic.cylinderCls.createCylinder(atom1.coord.clone().sub(c), mp.clone().sub(c), ic.cylinderRadius * factor * 0.2, atom1.color, bHighlight);
+                                ic.cylinderCls.createCylinder(atom0.coord.clone().sub(c), mp.clone().sub(c), triBondRadius, atom0.color, bHighlight);
+                                ic.cylinderCls.createCylinder(atom1.coord.clone().sub(c), mp.clone().sub(c), triBondRadius, atom1.color, bHighlight);
                             }
                         }
                     }
@@ -40202,7 +40204,9 @@ class TextSprite {
         }
 
         let textAlpha = 1.0;
+
         let textColor = parameters.hasOwnProperty("textColor") &&  parameters["textColor"] !== undefined ? me.utilsCls.hexToRgb(parameters["textColor"], textAlpha) : { r:255, g:255, b:0, a:1.0 };
+        if(!textColor) textColor = { r:255, g:255, b:0, a:1.0 };
 
         let canvas = document.createElement('canvas');
 
@@ -49251,6 +49255,10 @@ class Events {
 
         if(me.bNode) return;
 
+        let hostUrl = document.URL;
+        let pos = hostUrl.indexOf("?");
+        hostUrl = (pos == -1) ? hostUrl : hostUrl.substr(0, pos);
+
         ic.definedSetsCls.clickCustomAtoms();
         ic.definedSetsCls.clickCommand_apply();
         ic.definedSetsCls.clickModeswitch();
@@ -49487,7 +49495,8 @@ class Events {
            e.preventDefault();
            if(!me.cfg.notebook) dialog.dialog( "close" );
            me.htmlCls.clickMenuCls.setLogCmd("load mmtf " + $("#" + me.pre + "mmtfid").val(), false);
-           window.open(me.htmlCls.baseUrl + 'icn3d/full.html?mmtfid=' + $("#" + me.pre + "mmtfid").val(), '_blank');
+           //window.open(me.htmlCls.baseUrl + 'icn3d/full.html?mmtfid=' + $("#" + me.pre + "mmtfid").val(), '_blank');
+           window.open(hostUrl + '?mmtfid=' + $("#" + me.pre + "mmtfid").val(), '_blank');
         });
 
         me.myEventCls.onIds("#" + me.pre + "mmtfid", "keyup", function(e) { me.icn3d;
@@ -49495,7 +49504,8 @@ class Events {
                e.preventDefault();
                if(!me.cfg.notebook) dialog.dialog( "close" );
                me.htmlCls.clickMenuCls.setLogCmd("load mmtf " + $("#" + me.pre + "mmtfid").val(), false);
-               window.open(me.htmlCls.baseUrl + 'icn3d/full.html?mmtfid=' + $("#" + me.pre + "mmtfid").val(), '_blank');
+               //window.open(me.htmlCls.baseUrl + 'icn3d/full.html?mmtfid=' + $("#" + me.pre + "mmtfid").val(), '_blank');
+               window.open(hostUrl + '?mmtfid=' + $("#" + me.pre + "mmtfid").val(), '_blank');
            }
         });
 
@@ -49505,7 +49515,8 @@ class Events {
            e.preventDefault();
            if(!me.cfg.notebook) dialog.dialog( "close" );
            me.htmlCls.clickMenuCls.setLogCmd("load pdb " + $("#" + me.pre + "pdbid").val(), false);
-           window.open(me.htmlCls.baseUrl + 'icn3d/full.html?pdbid=' + $("#" + me.pre + "pdbid").val(), '_blank');
+           //window.open(me.htmlCls.baseUrl + 'icn3d/full.html?pdbid=' + $("#" + me.pre + "pdbid").val(), '_blank');
+           window.open(hostUrl + '?pdbid=' + $("#" + me.pre + "pdbid").val(), '_blank');
         });
 
         me.myEventCls.onIds("#" + me.pre + "pdbid", "keyup", function(e) { me.icn3d;
@@ -49513,7 +49524,8 @@ class Events {
                e.preventDefault();
                if(!me.cfg.notebook) dialog.dialog( "close" );
                me.htmlCls.clickMenuCls.setLogCmd("load pdb " + $("#" + me.pre + "pdbid").val(), false);
-               window.open(me.htmlCls.baseUrl + 'icn3d/full.html?pdbid=' + $("#" + me.pre + "pdbid").val(), '_blank');
+               //window.open(me.htmlCls.baseUrl + 'icn3d/full.html?pdbid=' + $("#" + me.pre + "pdbid").val(), '_blank');
+               window.open(hostUrl + '?pdbid=' + $("#" + me.pre + "pdbid").val(), '_blank');
            }
         });
 
@@ -49521,7 +49533,8 @@ class Events {
            e.preventDefault();
            if(!me.cfg.notebook) dialog.dialog( "close" );
            me.htmlCls.clickMenuCls.setLogCmd("load af " + $("#" + me.pre + "afid").val(), false);
-           window.open(me.htmlCls.baseUrl + 'icn3d/full.html?afid=' + $("#" + me.pre + "afid").val(), '_blank');
+           //window.open(me.htmlCls.baseUrl + 'icn3d/full.html?afid=' + $("#" + me.pre + "afid").val(), '_blank');
+           window.open(hostUrl + '?afid=' + $("#" + me.pre + "afid").val(), '_blank');
         });
 
         me.myEventCls.onIds("#" + me.pre + "afid", "keyup", function(e) { me.icn3d;
@@ -49529,7 +49542,8 @@ class Events {
                e.preventDefault();
                if(!me.cfg.notebook) dialog.dialog( "close" );
                me.htmlCls.clickMenuCls.setLogCmd("load af " + $("#" + me.pre + "afid").val(), false);
-               window.open(me.htmlCls.baseUrl + 'icn3d/full.html?afid=' + $("#" + me.pre + "afid").val(), '_blank');
+               //window.open(me.htmlCls.baseUrl + 'icn3d/full.html?afid=' + $("#" + me.pre + "afid").val(), '_blank');
+               window.open(hostUrl + '?afid=' + $("#" + me.pre + "afid").val(), '_blank');
            }
         });
 
@@ -49539,7 +49553,8 @@ class Events {
            e.preventDefault();
            if(!me.cfg.notebook) dialog.dialog( "close" );
            me.htmlCls.clickMenuCls.setLogCmd("load opm " + $("#" + me.pre + "opmid").val(), false);
-           window.open(me.htmlCls.baseUrl + 'icn3d/full.html?opmid=' + $("#" + me.pre + "opmid").val(), '_blank');
+           //window.open(me.htmlCls.baseUrl + 'icn3d/full.html?opmid=' + $("#" + me.pre + "opmid").val(), '_blank');
+           window.open(hostUrl + '?opmid=' + $("#" + me.pre + "opmid").val(), '_blank');
         });
 
         me.myEventCls.onIds("#" + me.pre + "opmid", "keyup", function(e) { me.icn3d;
@@ -49547,7 +49562,8 @@ class Events {
                e.preventDefault();
                if(!me.cfg.notebook) dialog.dialog( "close" );
                me.htmlCls.clickMenuCls.setLogCmd("load opm " + $("#" + me.pre + "opmid").val(), false);
-               window.open(me.htmlCls.baseUrl + 'icn3d/full.html?opmid=' + $("#" + me.pre + "opmid").val(), '_blank');
+               //window.open(me.htmlCls.baseUrl + 'icn3d/full.html?opmid=' + $("#" + me.pre + "opmid").val(), '_blank');
+               window.open(hostUrl + '?opmid=' + $("#" + me.pre + "opmid").val(), '_blank');
            }
         });
 
@@ -49558,7 +49574,8 @@ class Events {
            if(!me.cfg.notebook) dialog.dialog( "close" );
            let alignment = $("#" + me.pre + "alignid1").val() + "," + $("#" + me.pre + "alignid2").val();
            me.htmlCls.clickMenuCls.setLogCmd("load alignment " + alignment + ' | parameters &atype=1', false);
-           window.open(me.htmlCls.baseUrl + 'icn3d/full.html?align=' + alignment + '&showalignseq=1&atype=1', '_blank');
+           //window.open(me.htmlCls.baseUrl + 'icn3d/full.html?align=' + alignment + '&showalignseq=1&atype=1', '_blank');
+           window.open(hostUrl + '?align=' + alignment + '&showalignseq=1&atype=1', '_blank');
         });
     //    },
     //    clickReload_align_ori: function() {
@@ -49567,7 +49584,8 @@ class Events {
            if(!me.cfg.notebook) dialog.dialog( "close" );
            let alignment = $("#" + me.pre + "alignid1").val() + "," + $("#" + me.pre + "alignid2").val();
            me.htmlCls.clickMenuCls.setLogCmd("load alignment " + alignment + ' | parameters &atype=0', false);
-           window.open( me.htmlCls.baseUrl + 'icn3d/full.html?align=' + alignment + '&showalignseq=1&atype=0', '_blank');
+           //window.open( me.htmlCls.baseUrl + 'icn3d/full.html?align=' + alignment + '&showalignseq=1&atype=0', '_blank');
+           window.open( baseUrl + '?align=' + alignment + '&showalignseq=1&atype=0', '_blank');
         });
     //    },
     //    clickReload_chainalign: function() {
@@ -49585,7 +49603,8 @@ class Events {
            }
 
            me.htmlCls.clickMenuCls.setLogCmd("load chains " + alignment + " | residues " + resalign + " | resdef " + predefinedres, false);
-           window.open(me.htmlCls.baseUrl + 'icn3d/full.html?chainalign=' + alignment + '&resnum=' + resalign + '&resdef=' + predefinedres + '&showalignseq=1', '_blank');
+           //window.open(me.htmlCls.baseUrl + 'icn3d/full.html?chainalign=' + alignment + '&resnum=' + resalign + '&resdef=' + predefinedres + '&showalignseq=1', '_blank');
+           window.open(hostUrl + '?chainalign=' + alignment + '&resnum=' + resalign + '&resdef=' + predefinedres + '&showalignseq=1', '_blank');
         });
 
         me.myEventCls.onIds("#" + me.pre + "reload_chainalign_asym", "click", function(e) { me.icn3d;
@@ -49601,7 +49620,8 @@ class Events {
            }
 
            me.htmlCls.clickMenuCls.setLogCmd("load chains " + alignment + " on asymmetric unit | residues " + resalign + " | resdef " + predefinedres, false);
-           window.open(me.htmlCls.baseUrl + 'icn3d/full.html?chainalign=' + alignment + '&resnum=' + resalign + '&resdef=' + predefinedres + '&showalignseq=1&buidx=0', '_blank');
+           //window.open(me.htmlCls.baseUrl + 'icn3d/full.html?chainalign=' + alignment + '&resnum=' + resalign + '&resdef=' + predefinedres + '&showalignseq=1&buidx=0', '_blank');
+           window.open(hostUrl + '?chainalign=' + alignment + '&resnum=' + resalign + '&resdef=' + predefinedres + '&showalignseq=1&buidx=0', '_blank');
         });
 
         me.myEventCls.onIds("#" + me.pre + "reload_mutation_3d", "click", function(e) { me.icn3d;
@@ -49610,7 +49630,8 @@ class Events {
            let mutationids = $("#" + me.pre + "mutationids").val();
            let mmdbid = mutationids.substr(0, mutationids.indexOf('_'));
            me.htmlCls.clickMenuCls.setLogCmd("3d of mutation " + mutationids, false);
-           window.open(me.htmlCls.baseUrl + 'icn3d/full.html?mmdbid=' + mmdbid + '&command=scap 3d ' + mutationids + '; select displayed set', '_blank');
+           //window.open(me.htmlCls.baseUrl + 'icn3d/full.html?mmdbid=' + mmdbid + '&command=scap 3d ' + mutationids + '; select displayed set', '_blank');
+           window.open(hostUrl + '?mmdbid=' + mmdbid + '&command=scap 3d ' + mutationids + '; select displayed set', '_blank');
         });
 
         me.myEventCls.onIds("#" + me.pre + "reload_mutation_pdb", "click", function(e) { me.icn3d;
@@ -49619,7 +49640,8 @@ class Events {
            let mutationids = $("#" + me.pre + "mutationids").val();
            let mmdbid = mutationids.substr(0, mutationids.indexOf('_'));
            me.htmlCls.clickMenuCls.setLogCmd("pdb of mutation " + mutationids, false);
-           window.open(me.htmlCls.baseUrl + 'icn3d/full.html?mmdbid=' + mmdbid + '&command=scap pdb ' + mutationids + '; select displayed set', '_blank');
+           //window.open(me.htmlCls.baseUrl + 'icn3d/full.html?mmdbid=' + mmdbid + '&command=scap pdb ' + mutationids + '; select displayed set', '_blank');
+           window.open(hostUrl + '?mmdbid=' + mmdbid + '&command=scap pdb ' + mutationids + '; select displayed set', '_blank');
         });
 
         me.myEventCls.onIds("#" + me.pre + "reload_mutation_inter", "click", function(e) { let ic = me.icn3d;
@@ -49646,7 +49668,8 @@ class Events {
 
            me.htmlCls.clickMenuCls.setLogCmd("interaction change of mutation " + mutationids, false);
            //window.open(me.htmlCls.baseUrl + 'icn3d/full.html?mmdbid=' + mmdbid + '&command=scap interaction ' + mutationids + '; select ' + selectSpec + ' | name test; line graph interaction pairs | selected non-selected | hbonds,salt bridge,interactions,halogen,pi-cation,pi-stacking | false | threshold 3.8 6 4 3.8 6 5.5; adjust dialog dl_linegraph; select displayed set', '_blank');
-           window.open(me.htmlCls.baseUrl + 'icn3d/full.html?mmdbid=' + mmdbid + '&command=scap interaction ' + mutationids, '_blank');
+           //window.open(me.htmlCls.baseUrl + 'icn3d/full.html?mmdbid=' + mmdbid + '&command=scap interaction ' + mutationids, '_blank');
+           window.open(hostUrl + '?mmdbid=' + mmdbid + '&command=scap interaction ' + mutationids, '_blank');
         });
 
     //    },
@@ -49655,7 +49678,8 @@ class Events {
            e.preventDefault();
            if(!me.cfg.notebook) dialog.dialog( "close" );
            me.htmlCls.clickMenuCls.setLogCmd("load mmcif " + $("#" + me.pre + "mmcifid").val(), false);
-           window.open(me.htmlCls.baseUrl + 'icn3d/full.html?mmcifid=' + $("#" + me.pre + "mmcifid").val(), '_blank');
+           //window.open(me.htmlCls.baseUrl + 'icn3d/full.html?mmcifid=' + $("#" + me.pre + "mmcifid").val(), '_blank');
+           window.open(hostUrl + '?mmcifid=' + $("#" + me.pre + "mmcifid").val(), '_blank');
         });
 
         me.myEventCls.onIds("#" + me.pre + "mmcifid", "keyup", function(e) { me.icn3d;
@@ -49663,7 +49687,8 @@ class Events {
                e.preventDefault();
                if(!me.cfg.notebook) dialog.dialog( "close" );
                me.htmlCls.clickMenuCls.setLogCmd("load mmcif " + $("#" + me.pre + "mmcifid").val(), false);
-               window.open(me.htmlCls.baseUrl + 'icn3d/full.html?mmcifid=' + $("#" + me.pre + "mmcifid").val(), '_blank');
+               //window.open(me.htmlCls.baseUrl + 'icn3d/full.html?mmcifid=' + $("#" + me.pre + "mmcifid").val(), '_blank');
+               window.open(hostUrl + '?mmcifid=' + $("#" + me.pre + "mmcifid").val(), '_blank');
            }
         });
 
@@ -49674,7 +49699,8 @@ class Events {
            if(!me.cfg.notebook) dialog.dialog( "close" );
            me.htmlCls.clickMenuCls.setLogCmd("load mmdb " + $("#" + me.pre + "mmdbid").val(), false);
            //ic.mmdbParserCls.downloadMmdb($("#" + me.pre + "mmdbid").val());
-           window.open(me.htmlCls.baseUrl + 'icn3d/full.html?mmdbid=' + $("#" + me.pre + "mmdbid").val(), '_blank');
+           //window.open(me.htmlCls.baseUrl + 'icn3d/full.html?mmdbid=' + $("#" + me.pre + "mmdbid").val(), '_blank');
+           window.open(hostUrl + '?mmdbid=' + $("#" + me.pre + "mmdbid").val(), '_blank');
         });
 
         me.myEventCls.onIds("#" + me.pre + "mmdbid", "keyup", function(e) { me.icn3d;
@@ -49682,7 +49708,8 @@ class Events {
                e.preventDefault();
                if(!me.cfg.notebook) dialog.dialog( "close" );
                me.htmlCls.clickMenuCls.setLogCmd("load mmdb " + $("#" + me.pre + "mmdbid").val(), false);
-               window.open(me.htmlCls.baseUrl + 'icn3d/full.html?mmdbid=' + $("#" + me.pre + "mmdbid").val(), '_blank');
+               //window.open(me.htmlCls.baseUrl + 'icn3d/full.html?mmdbid=' + $("#" + me.pre + "mmdbid").val(), '_blank');
+               window.open(hostUrl + '?mmdbid=' + $("#" + me.pre + "mmdbid").val(), '_blank');
            }
         });
 
@@ -49696,7 +49723,8 @@ class Events {
            let blast_rep_id = $("#" + me.pre + "blast_rep_id").val();
            me.htmlCls.clickMenuCls.setLogCmd("load seq_struct_ids " + query_id + "," + blast_rep_id, false);
            query_id =(query_id !== '' && query_id !== undefined) ? query_id : query_fasta;
-           window.open(me.htmlCls.baseUrl + 'icn3d/full.html?from=icn3d&blast_rep_id=' + blast_rep_id
+           //window.open(me.htmlCls.baseUrl + 'icn3d/full.html?from=icn3d&blast_rep_id=' + blast_rep_id
+           window.open(hostUrl + '?from=icn3d&blast_rep_id=' + blast_rep_id
              + '&query_id=' + query_id
              + '&command=view annotations; set annotation cdd; set annotation site; set view detailed view; select chain '
              + blast_rep_id + '; show selection', '_blank');
@@ -49708,7 +49736,8 @@ class Events {
            e.preventDefault();
            if(!me.cfg.notebook) dialog.dialog( "close" );
            me.htmlCls.clickMenuCls.setLogCmd("load gi " + $("#" + me.pre + "gi").val(), false);
-           window.open(me.htmlCls.baseUrl + 'icn3d/full.html?gi=' + $("#" + me.pre + "gi").val(), '_blank');
+           //window.open(me.htmlCls.baseUrl + 'icn3d/full.html?gi=' + $("#" + me.pre + "gi").val(), '_blank');
+           window.open(hostUrl + '?gi=' + $("#" + me.pre + "gi").val(), '_blank');
         });
 
         me.myEventCls.onIds("#" + me.pre + "gi", "keyup", function(e) { me.icn3d;
@@ -49716,7 +49745,8 @@ class Events {
                e.preventDefault();
                if(!me.cfg.notebook) dialog.dialog( "close" );
                me.htmlCls.clickMenuCls.setLogCmd("load gi " + $("#" + me.pre + "gi").val(), false);
-               window.open(me.htmlCls.baseUrl + 'icn3d/full.html?gi=' + $("#" + me.pre + "gi").val(), '_blank');
+               //window.open(me.htmlCls.baseUrl + 'icn3d/full.html?gi=' + $("#" + me.pre + "gi").val(), '_blank');
+               window.open(hostUrl + '?gi=' + $("#" + me.pre + "gi").val(), '_blank');
            }
         });
 
@@ -49724,7 +49754,8 @@ class Events {
            e.preventDefault();
            if(!me.cfg.notebook) dialog.dialog( "close" );
            me.htmlCls.clickMenuCls.setLogCmd("load uniprotid " + $("#" + me.pre + "uniprotid").val(), false);
-           window.open(me.htmlCls.baseUrl + 'icn3d/full.html?uniprotid=' + $("#" + me.pre + "uniprotid").val(), '_blank');
+           //window.open(me.htmlCls.baseUrl + 'icn3d/full.html?uniprotid=' + $("#" + me.pre + "uniprotid").val(), '_blank');
+           window.open(hostUrl + '?uniprotid=' + $("#" + me.pre + "uniprotid").val(), '_blank');
         });
 
         me.myEventCls.onIds("#" + me.pre + "uniprotid", "keyup", function(e) { me.icn3d;
@@ -49732,7 +49763,8 @@ class Events {
                e.preventDefault();
                if(!me.cfg.notebook) dialog.dialog( "close" );
                me.htmlCls.clickMenuCls.setLogCmd("load uniprotid " + $("#" + me.pre + "uniprotid").val(), false);
-               window.open(me.htmlCls.baseUrl + 'icn3d/full.html?uniprotid=' + $("#" + me.pre + "uniprotid").val(), '_blank');
+               //window.open(me.htmlCls.baseUrl + 'icn3d/full.html?uniprotid=' + $("#" + me.pre + "uniprotid").val(), '_blank');
+               window.open(hostUrl + '?uniprotid=' + $("#" + me.pre + "uniprotid").val(), '_blank');
            }
         });
 
@@ -49742,7 +49774,8 @@ class Events {
            e.preventDefault();
            if(!me.cfg.notebook) dialog.dialog( "close" );
            me.htmlCls.clickMenuCls.setLogCmd("load cid " + $("#" + me.pre + "cid").val(), false);
-           window.open(me.htmlCls.baseUrl + 'icn3d/full.html?cid=' + $("#" + me.pre + "cid").val(), '_blank');
+           //window.open(me.htmlCls.baseUrl + 'icn3d/full.html?cid=' + $("#" + me.pre + "cid").val(), '_blank');
+           window.open(hostUrl + '?cid=' + $("#" + me.pre + "cid").val(), '_blank');
         });
 
         me.myEventCls.onIds("#" + me.pre + "cid", "keyup", function(e) { me.icn3d;
@@ -49750,7 +49783,8 @@ class Events {
                e.preventDefault();
                if(!me.cfg.notebook) dialog.dialog( "close" );
                me.htmlCls.clickMenuCls.setLogCmd("load cid " + $("#" + me.pre + "cid").val(), false);
-               window.open(me.htmlCls.baseUrl + 'icn3d/full.html?cid=' + $("#" + me.pre + "cid").val(), '_blank');
+               //window.open(me.htmlCls.baseUrl + 'icn3d/full.html?cid=' + $("#" + me.pre + "cid").val(), '_blank');
+               window.open(hostUrl + '?cid=' + $("#" + me.pre + "cid").val(), '_blank');
            }
         });
 
@@ -55023,7 +55057,7 @@ class iCn3DUI {
     //even when multiple iCn3D viewers are shown together.
     this.pre = this.cfg.divid + "_";
 
-    this.REVISION = '3.4.9';
+    this.REVISION = '3.4.10';
 
     // In nodejs, iCn3D defines "window = {navigator: {}}"
     this.bNode = (Object.keys(window).length < 2) ? true : false;
