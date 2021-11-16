@@ -464,7 +464,7 @@ class Events {
            let alignment = $("#" + me.pre + "alignid1").val() + "," + $("#" + me.pre + "alignid2").val();
            me.htmlCls.clickMenuCls.setLogCmd("load alignment " + alignment + ' | parameters &atype=0', false);
            //window.open( me.htmlCls.baseUrl + 'icn3d/full.html?align=' + alignment + '&showalignseq=1&atype=0', '_blank');
-           window.open( baseUrl + '?align=' + alignment + '&showalignseq=1&atype=0', '_blank');
+           window.open(hostUrl + '?align=' + alignment + '&showalignseq=1&atype=0', '_blank');
         });
     //    },
     //    clickReload_chainalign: function() {
