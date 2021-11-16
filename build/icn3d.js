@@ -43589,11 +43589,12 @@ var icn3d = (function (exports) {
 
             // export assembly symmetry matrix "BIOMT"
             if(ic.biomtMatrices) {
+                let stru = Object.keys(ic.structures)[0];
                 for(let m = 0, ml = ic.biomtMatrices.length; m < ml; ++m) {
                     let mNum = m + 1;
                     for(let n = 0; n < 3; ++n) {
                         let nNum = n + 1;
-                        pdbStr += "REMARK 350   BIOMT" + nNum.toString() + "  " + mNum.toString().padStart(2, ' ')
+                        stru2header[stru] += "REMARK 350   BIOMT" + nNum.toString() + "  " + mNum.toString().padStart(2, ' ')
                             + " " + ic.biomtMatrices[m].elements[n + 0].toString().padStart(9, ' ')
                             + " " + ic.biomtMatrices[m].elements[n + 4].toString().padStart(9, ' ')
                             + " " + ic.biomtMatrices[m].elements[n + 8].toString().padStart(9, ' ')
@@ -43647,13 +43648,14 @@ var icn3d = (function (exports) {
                 // remove chemicals
                 if(bNoChem && atom.het) continue;
 
-                if(bMulStruc && atom.structure != prevStru) {
+                //if(bMulStruc && atom.structure != prevStru) {
+                if(atom.structure != prevStru) {
                     pdbStr += connStr;
                     connStr = '';
 
                     if(molNum > 1)  pdbStr += '\nENDMDL\n';
 
-                    pdbStr += 'MODEL        ' + molNum + '\n';
+                    if(bMulStruc) pdbStr += 'MODEL        ' + molNum + '\n';
 
                     // add header
                     if(!bNoHeader) pdbStr += this.getPDBHeader(molNum - 1, stru2header);
@@ -43891,15 +43893,15 @@ var icn3d = (function (exports) {
            let stru = Object.keys(ic.structures)[struNum];
            pdbStr += 'HEADER    PDB From iCn3D'.padEnd(62, ' ') + stru + '\n';
 
-           if(stru2header) {
-               pdbStr += stru2header[stru];
-           }
-
            if(struNum == 0) {
                let title =(ic.molTitle.length > 50) ? ic.molTitle.substr(0,47) + '...' : ic.molTitle;
                // remove quotes
                if(title.indexOf('"') != -1) title = '';
                pdbStr += 'TITLE     ' + title + '\n';
+           }
+
+           if(stru2header) {
+               pdbStr += stru2header[stru];
            }
 
            return pdbStr;
@@ -49588,7 +49590,7 @@ var icn3d = (function (exports) {
                let alignment = $("#" + me.pre + "alignid1").val() + "," + $("#" + me.pre + "alignid2").val();
                me.htmlCls.clickMenuCls.setLogCmd("load alignment " + alignment + ' | parameters &atype=0', false);
                //window.open( me.htmlCls.baseUrl + 'icn3d/full.html?align=' + alignment + '&showalignseq=1&atype=0', '_blank');
-               window.open( baseUrl + '?align=' + alignment + '&showalignseq=1&atype=0', '_blank');
+               window.open(hostUrl + '?align=' + alignment + '&showalignseq=1&atype=0', '_blank');
             });
         //    },
         //    clickReload_chainalign: function() {
