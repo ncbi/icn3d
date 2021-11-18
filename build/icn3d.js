@@ -35794,15 +35794,17 @@ var icn3d = (function (exports) {
                 let resPosArray = [];
                 for(let i = 0, il = residueArray.length; i < il; ++i) {
                     let resid = residueArray[i];
-                    let resiNcbi = Math.round(resid.substr(residueArray[i].lastIndexOf('_') + 1) );
+    //                let resiNcbi = Math.round(resid.substr(residueArray[i].lastIndexOf('_') + 1) );
+                    let resi = Math.round(resid.substr(residueArray[i].lastIndexOf('_') + 1) );
 
-                    resid = chnid + '_' + (resiNcbi + ic.baseResi[chnid]).toString();
+    //                resid = chnid + '_' + (resiNcbi + ic.baseResi[chnid]).toString();
 
                     // exclude chemical, water and ions
                     if(ic.residues[resid]) {
                         let serial = Object.keys(ic.residues[resid])[0];
                         if(ic.proteins.hasOwnProperty(serial) || ic.nucleotides.hasOwnProperty(serial)) {
-                            resPosArray.push( resiNcbi );
+    //                        resPosArray.push( resiNcbi );
+                            resPosArray.push( resi );
                         }
                     }
                 }
@@ -35821,8 +35823,8 @@ var icn3d = (function (exports) {
                 let widthPerRes = 1;
                 for(let i = 0, il = ic.giSeq[chnid].length; i < il; ++i) {
                   html += ic.showSeqCls.insertGap(chnid, i, '-');
-    //              if(resPosArray.indexOf(i+1 + ic.baseResi[chnid]) != -1) {
-                  if(resPosArray.indexOf(i+1) != -1) {
+                  if(resPosArray.indexOf(i+1 + ic.baseResi[chnid]) != -1) {
+    //              if(resPosArray.indexOf(i+1) != -1) {
                       let cFull = ic.giSeq[chnid][i];
                       let c = cFull;
                       if(cFull.length > 1) {
