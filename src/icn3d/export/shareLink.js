@@ -303,20 +303,25 @@ class ShareLink {
         if(ic.bInputfile) {
             url = this.shareLinkUrl(bAllCommands); // output state file if ic.bInputfile is true or the URL is mor than 4000 chars
 
-            text += "\nStart of type file======\n";
-            text += ic.InputfileType + "\n";
-            text += "End of type file======\n";
+            if(url.substr(0,4) == 'http') {
+                text += "\nShare Link: " + url;
+            }
+            else {
+                text += "\nStart of type file======\n";
+                text += ic.InputfileType + "\n";
+                text += "End of type file======\n";
 
-            text += "Start of data file======\n";
-            //text += ic.InputfileData;
-///            text += ic.saveFileCls.getPDBHeader();
-            text += ic.saveFileCls.getAtomPDB(ic.atoms);
+                text += "Start of data file======\n";
+                //text += ic.InputfileData;
+    ///            text += ic.saveFileCls.getPDBHeader();
+                text += ic.saveFileCls.getAtomPDB(ic.atoms);
 
-            text += "End of data file======\n";
+                text += "End of data file======\n";
 
-            text += "Start of state file======\n";
-            text += url;
-            text += "End of state file======\n";
+                text += "Start of state file======\n";
+                text += url + "\n";
+                text += "End of state file======\n";
+            }
         }
         else {
             url = this.shareLinkUrl();
@@ -326,7 +331,7 @@ class ShareLink {
 
                 text += "\nStart of state file======\n";
 
-                text += url;
+                text += url + "\n";
                 text += "End of state file======\n";
             }
             else {

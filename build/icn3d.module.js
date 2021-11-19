@@ -12869,20 +12869,25 @@ class ShareLink {
         if(ic.bInputfile) {
             url = this.shareLinkUrl(bAllCommands); // output state file if ic.bInputfile is true or the URL is mor than 4000 chars
 
-            text += "\nStart of type file======\n";
-            text += ic.InputfileType + "\n";
-            text += "End of type file======\n";
+            if(url.substr(0,4) == 'http') {
+                text += "\nShare Link: " + url;
+            }
+            else {
+                text += "\nStart of type file======\n";
+                text += ic.InputfileType + "\n";
+                text += "End of type file======\n";
 
-            text += "Start of data file======\n";
-            //text += ic.InputfileData;
-///            text += ic.saveFileCls.getPDBHeader();
-            text += ic.saveFileCls.getAtomPDB(ic.atoms);
+                text += "Start of data file======\n";
+                //text += ic.InputfileData;
+    ///            text += ic.saveFileCls.getPDBHeader();
+                text += ic.saveFileCls.getAtomPDB(ic.atoms);
 
-            text += "End of data file======\n";
+                text += "End of data file======\n";
 
-            text += "Start of state file======\n";
-            text += url;
-            text += "End of state file======\n";
+                text += "Start of state file======\n";
+                text += url + "\n";
+                text += "End of state file======\n";
+            }
         }
         else {
             url = this.shareLinkUrl();
@@ -12892,7 +12897,7 @@ class ShareLink {
 
                 text += "\nStart of state file======\n";
 
-                text += url;
+                text += url + "\n";
                 text += "End of state file======\n";
             }
             else {
@@ -23241,7 +23246,7 @@ class PdbParser {
 
     //Load structures from a "URL". Due to the same domain policy of Ajax call, the URL should be in the same
     //domain. "type" could be "pdb", "mol2", "sdf", or "xyz" for pdb file, mol2file, sdf file, and xyz file, respectively.
-    downloadUrl(url, type) { let  ic = this.icn3d, me = ic.icn3dui;
+    downloadUrl(url, type, command) { let  ic = this.icn3d, me = ic.icn3dui;
        let  thisClass = this;
 
        let pos = url.lastIndexOf('/');
@@ -23278,6 +23283,7 @@ class PdbParser {
 
             if(type === 'pdb') {
                 thisClass.loadPdbData(data);
+                ic.loadScriptCls.loadScript(command);
             }
             else if(type === 'mol2') {
                 ic.mol2ParserCls.loadMol2Data(data);
@@ -23293,7 +23299,7 @@ class PdbParser {
             }
             else if(type === 'icn3dpng') {
                 ic.mmcifParserCls.loadMmcifData(data);
-                me.htmlCls.setHtmlCls.loadPng(data);
+                me.htmlCls.setHtmlCls.loadPng(data, command);
             }
           },
           error : function(xhr, textStatus, errorThrown ) {
@@ -42398,7 +42404,6 @@ class Instancing {
        let mdlImpostorTmp = new THREE.Object3D();
        let mdl_ghostTmp = new THREE.Object3D();
 
-console.log("no instancing, Object.keys(ic.structures).length: " + Object.keys(ic.structures).length);
 //       for (let i = 0; i < ic.biomtMatrices.length; i++) {  // skip itself
        for (let i = 0; i < ic.biomtMatrices.length && Object.keys(ic.structures).length == 1; i++) {  // skip itself
           let mat = ic.biomtMatrices[i];
@@ -42796,7 +42801,6 @@ console.log("no instancing, Object.keys(ic.structures).length: " + Object.keys(i
            let identity = new THREE.Matrix4();
            identity.identity();
 
-console.log("instancing, Object.keys(ic.structures).length: " + Object.keys(ic.structures).length);
            for (let i = 0; i < ic.biomtMatrices.length && Object.keys(ic.structures).length == 1; i++) {  // skip itself
               let mat = ic.biomtMatrices[i];
               if (mat === undefined) continue;
@@ -51939,7 +51943,7 @@ class SetHtml {
         });
     }
 
-    loadPng(imageStr) { let me = this.icn3dui, ic = me.icn3d;
+    loadPng(imageStr, command) { let me = this.icn3dui, ic = me.icn3d;
        let matchedStr = 'Share Link: ';
        let pos = imageStr.indexOf(matchedStr);
        let matchedStrState = "Start of state file======\n";
@@ -51956,6 +51960,8 @@ class SetHtml {
            let matchedStrData = "Start of data file======\n";
            let posData = imageStr.indexOf(matchedStrData);
            ic.bInputfile =(posData == -1) ? false : true;
+           let commandStr = (command) ? command.replace(/;/g, "\n") : '';
+
            if(ic.bInputfile) {
                let posDataEnd = imageStr.indexOf("End of data file======\n");
                let data = imageStr.substr(posData + matchedStrData.length, posDataEnd - posData - matchedStrData.length);
@@ -51971,7 +51977,9 @@ class SetHtml {
                //var posState = imageStr.indexOf(matchedStrState);
                let posStateEnd = imageStr.indexOf("End of state file======\n");
                let statefile = imageStr.substr(posState + matchedStrState.length, posStateEnd - posState- matchedStrState.length);
-               statefile = decodeURIComponent(statefile);
+               //statefile = decodeURIComponent(statefile);
+               statefile = decodeURIComponent(statefile + "\n" + commandStr);
+
                 if(type === 'pdb') {
                     $.when( ic.pdbParserCls.loadPdbData(data))
                      .then(function() {
@@ -52003,7 +52011,9 @@ class SetHtml {
                //var posState = imageStr.indexOf(matchedStrState);
                let posStateEnd = imageStr.indexOf("End of state file======\n");
                let statefile = imageStr.substr(posState + matchedStrState.length, posStateEnd - posState- matchedStrState.length);
-               statefile = decodeURIComponent(statefile);
+               //statefile = decodeURIComponent(statefile);
+               statefile = decodeURIComponent(statefile + "\n" + commandStr);
+
                ic.commands = [];
                ic.optsHistory = [];
                ic.loadScriptCls.loadScript(statefile, true);
@@ -55237,7 +55247,7 @@ iCn3DUI.prototype.show3DStructure = function() { let me = this;
 
         ic.loadCmd = 'load url ' + url + ' | type ' + type;
         me.htmlCls.clickMenuCls.setLogCmd(ic.loadCmd, true);
-        ic.pdbParserCls.downloadUrl(url, type);
+        ic.pdbParserCls.downloadUrl(url, type, me.cfg.command);
     }
     else if(me.cfg.mmtfid !== undefined) {
        ic.inputid = me.cfg.mmtfid;
