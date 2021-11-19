@@ -1,4 +1,6 @@
 ## Change Log
+[icn3d-3.4.11](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.4.11.zip) was release on November 19, 2021. Relaxed the angle restriction on hydrogen bonds.
+
 [icn3d-3.4.10](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.4.10.zip) was release on November 15, 2021. Fixed the base URL when launching iCn3D from a non-NCBI server.
 
 [icn3d-3.4.9](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.4.9.zip) was release on November 8, 2021. Enabled to export secondary structure information for any subset of any structure, including AlphaFold UniProt structures. The feature is available in the menu "File > Save Files > Secondary Structure".

@@ -15061,9 +15061,7 @@ class HBond {
           let donorAngles = this.calcAngles(donorAtom, acceptorAtom);
           let idealDonorAngle = 90 * Math.PI / 180; // 90 for sp2, 60 for sp3
           for(let i = 0, il = donorAngles.length; i < il; ++i) {
-              if(Math.abs(idealDonorAngle - donorAngles[i]) > maxHbondDonAngle) {
-                  return false;
-              }
+              if(Math.abs(idealDonorAngle - donorAngles[i]) > maxHbondDonAngle) ;
           }
 
           //if (idealGeometry[donor.index] === AtomGeometry.Trigonal){ // 120
@@ -15077,9 +15075,7 @@ class HBond {
           let acceptorAngles = this.calcAngles(acceptorAtom, donorAtom);
           let idealAcceptorAngle = 90 * Math.PI / 180;
           for(let i = 0, il = acceptorAngles.length; i < il; ++i) {
-              if(Math.abs(idealAcceptorAngle - acceptorAngles[i]) > maxHbondAccAngle) {
-                  return false;
-              }
+              if(Math.abs(idealAcceptorAngle - acceptorAngles[i]) > maxHbondAccAngle) ;
           }
 
           //if (idealGeometry[acceptor.index] === AtomGeometry.Trigonal){ // 120
@@ -15925,7 +15921,8 @@ class PiHalogen {
         // cycle adjacency list
         for (let i = 0; i < n; i++) {
             let serial = serialArray[i];
-            if (ic.ring_mark[serial] != 0) {
+            //if (ic.ring_mark[serial] != 0) {
+            if (ic.ring_mark[serial]) {
                 if(cycles[ic.ring_mark[serial]] === undefined) cycles[ic.ring_mark[serial]] = [];
                 cycles[ic.ring_mark[serial]].push(serial);
             }
@@ -15946,7 +15943,8 @@ class PiHalogen {
                 }
             }
 
-            if(cnt == 5 || cnt == 6) {
+            //if(cnt == 5 || cnt == 6) {
+            if(cnt >= 3 && cnt <= 6) { // two neighboring cycles 5 and 6 in caffeine (CID 2519) will get reported as 5 and 4 atoms. The shared two atoms are reported only once.
                 let v1 = coordArray[0].clone().sub(coordArray[1]).normalize();
                 let v2 = coordArray[1].clone().sub(coordArray[2]).normalize();
                 let v3 = coordArray[2].clone().sub(coordArray[3]).normalize();
@@ -55061,7 +55059,7 @@ class iCn3DUI {
     //even when multiple iCn3D viewers are shown together.
     this.pre = this.cfg.divid + "_";
 
-    this.REVISION = '3.4.10';
+    this.REVISION = '3.4.11';
 
     // In nodejs, iCn3D defines "window = {navigator: {}}"
     this.bNode = (Object.keys(window).length < 2) ? true : false;

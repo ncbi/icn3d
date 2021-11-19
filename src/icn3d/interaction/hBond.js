@@ -249,7 +249,7 @@ class HBond {
           let idealDonorAngle = 90 * Math.PI / 180; // 90 for sp2, 60 for sp3
           for(let i = 0, il = donorAngles.length; i < il; ++i) {
               if(Math.abs(idealDonorAngle - donorAngles[i]) > maxHbondDonAngle) {
-                  return false;
+///                  return false;
               }
           }
 
@@ -265,7 +265,7 @@ class HBond {
           let idealAcceptorAngle = 90 * Math.PI / 180;
           for(let i = 0, il = acceptorAngles.length; i < il; ++i) {
               if(Math.abs(idealAcceptorAngle - acceptorAngles[i]) > maxHbondAccAngle) {
-                  return false;
+///                  return false;
               }
           }
 
