@@ -15488,9 +15488,10 @@ var icn3d = (function (exports) {
                   // available in 1a and 1b
                   // only parallel or perpendicular
                   if(interactionType == 'pi-stacking' && atom1.normal !== undefined && atom2.normal !== undefined) {
-                      let dotResult = Math.abs(atom1.normal.dot(atom2.normal));
+                      Math.abs(atom1.normal.dot(atom2.normal));
                       // perpendicular 30 degree || parellel, 30 degree
-                      if(dotResult > 0.5 && dotResult < 0.866) continue;
+                      // remove this condition on Nov 19, 2021
+                      //if(dotResult > 0.5 && dotResult < 0.866) continue;
                   }
 
                   let bResult = this.getHalogenPiInteractions(atom1, atom2, type, interactionType, threshold, maxlengthSq, oriResidName, bInternal);
