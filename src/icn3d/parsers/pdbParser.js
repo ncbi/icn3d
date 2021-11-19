@@ -82,7 +82,7 @@ class PdbParser {
 
     //Load structures from a "URL". Due to the same domain policy of Ajax call, the URL should be in the same
     //domain. "type" could be "pdb", "mol2", "sdf", or "xyz" for pdb file, mol2file, sdf file, and xyz file, respectively.
-    downloadUrl(url, type) { let  ic = this.icn3d, me = ic.icn3dui;
+    downloadUrl(url, type, command) { let  ic = this.icn3d, me = ic.icn3dui;
        let  thisClass = this;
 
        let pos = url.lastIndexOf('/');
@@ -119,6 +119,7 @@ class PdbParser {
 
             if(type === 'pdb') {
                 thisClass.loadPdbData(data);
+                ic.loadScriptCls.loadScript(command);
             }
             else if(type === 'mol2') {
                 ic.mol2ParserCls.loadMol2Data(data);
@@ -134,7 +135,7 @@ class PdbParser {
             }
             else if(type === 'icn3dpng') {
                 ic.mmcifParserCls.loadMmcifData(data);
-                me.htmlCls.setHtmlCls.loadPng(data);
+                me.htmlCls.setHtmlCls.loadPng(data, command);
             }
           },
           error : function(xhr, textStatus, errorThrown ) {

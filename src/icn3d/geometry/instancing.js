@@ -272,7 +272,6 @@ class Instancing {
        let mdlImpostorTmp = new THREE.Object3D();
        let mdl_ghostTmp = new THREE.Object3D();
 
-console.log("no instancing, Object.keys(ic.structures).length: " + Object.keys(ic.structures).length);
 //       for (let i = 0; i < ic.biomtMatrices.length; i++) {  // skip itself
        for (let i = 0; i < ic.biomtMatrices.length && Object.keys(ic.structures).length == 1; i++) {  // skip itself
           let mat = ic.biomtMatrices[i];
@@ -670,7 +669,6 @@ console.log("no instancing, Object.keys(ic.structures).length: " + Object.keys(i
            let identity = new THREE.Matrix4();
            identity.identity();
 
-console.log("instancing, Object.keys(ic.structures).length: " + Object.keys(ic.structures).length);
            for (let i = 0; i < ic.biomtMatrices.length && Object.keys(ic.structures).length == 1; i++) {  // skip itself
               let mat = ic.biomtMatrices[i];
               if (mat === undefined) continue;

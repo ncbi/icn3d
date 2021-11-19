@@ -347,7 +347,7 @@ iCn3DUI.prototype.show3DStructure = function() { let me = this;
 
         ic.loadCmd = 'load url ' + url + ' | type ' + type;
         me.htmlCls.clickMenuCls.setLogCmd(ic.loadCmd, true);
-        ic.pdbParserCls.downloadUrl(url, type);
+        ic.pdbParserCls.downloadUrl(url, type, me.cfg.command);
     }
     else if(me.cfg.mmtfid !== undefined) {
        ic.inputid = me.cfg.mmtfid;

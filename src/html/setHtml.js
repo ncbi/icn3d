@@ -662,7 +662,7 @@ class SetHtml {
         });
     }
 
-    loadPng(imageStr) { let me = this.icn3dui, ic = me.icn3d;
+    loadPng(imageStr, command) { let me = this.icn3dui, ic = me.icn3d;
        let matchedStr = 'Share Link: ';
        let pos = imageStr.indexOf(matchedStr);
        let matchedStrState = "Start of state file======\n";
@@ -679,6 +679,8 @@ class SetHtml {
            let matchedStrData = "Start of data file======\n";
            let posData = imageStr.indexOf(matchedStrData);
            ic.bInputfile =(posData == -1) ? false : true;
+           let commandStr = (command) ? command.replace(/;/g, "\n") : '';
+
            if(ic.bInputfile) {
                let posDataEnd = imageStr.indexOf("End of data file======\n");
                let data = imageStr.substr(posData + matchedStrData.length, posDataEnd - posData - matchedStrData.length);
@@ -694,7 +696,9 @@ class SetHtml {
                //var posState = imageStr.indexOf(matchedStrState);
                let posStateEnd = imageStr.indexOf("End of state file======\n");
                let statefile = imageStr.substr(posState + matchedStrState.length, posStateEnd - posState- matchedStrState.length);
-               statefile = decodeURIComponent(statefile);
+               //statefile = decodeURIComponent(statefile);
+               statefile = decodeURIComponent(statefile + "\n" + commandStr);
+
                 if(type === 'pdb') {
                     $.when( ic.pdbParserCls.loadPdbData(data))
                      .then(function() {
@@ -726,7 +730,9 @@ class SetHtml {
                //var posState = imageStr.indexOf(matchedStrState);
                let posStateEnd = imageStr.indexOf("End of state file======\n");
                let statefile = imageStr.substr(posState + matchedStrState.length, posStateEnd - posState- matchedStrState.length);
-               statefile = decodeURIComponent(statefile);
+               //statefile = decodeURIComponent(statefile);
+               statefile = decodeURIComponent(statefile + "\n" + commandStr);
+
                ic.commands = [];
                ic.optsHistory = [];
                ic.loadScriptCls.loadScript(statefile, true);
