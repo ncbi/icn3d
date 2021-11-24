@@ -384,8 +384,8 @@ class SetHtml {
 
         html += "<span style='white-space:nowrap;font-weight:bold;'>Potential contour at: <select id='" + me.pre + name1 + "contour'>";
 
-        let optArray1b = ['0.5', '1', '2', '4', '6', '8', '10'];
-        html += this.getOptionHtml(optArray1b, 1);
+        let optArray1b = ['0.5', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10'];
+        html += this.getOptionHtml(optArray1b, 2);
 
         html += "</select> kT/e(25.6mV at 298K)</span><br/><br/>";
 
@@ -449,7 +449,7 @@ class SetHtml {
 
         html += "<span style='white-space:nowrap;font-weight:bold;'>Surface with max potential at: <select id='" + me.pre + name1 + "contour2'>";
 
-        let optArray1c = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10'];
+        let optArray1c = ['0.5', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10'];
         html += this.getOptionHtml(optArray1c, 2);
 
         html += "</select> kT/e(25.6mV at 298K)</span><br/><br/>";

@@ -411,6 +411,9 @@ class HBond {
                             break;
                         }
                     }
+
+                    if(!C_atom) continue;
+
                     let inAcceptorC = C_atom.coord;
                     let inAcceptorO = inAcceptor.coord;
 

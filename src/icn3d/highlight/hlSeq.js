@@ -86,8 +86,16 @@ class HlSeq {
       .on('click', '.icn3d-seqTitle', function(e) { let ic = thisClass.icn3d;
           e.stopImmediatePropagation();
 
-          ic.bAlignSeq = false;
-          ic.bAnnotations = true;
+          //if($(this).attr('id') === ic.pre + "dl_sequence2") {
+          if($(this).parents('div').attr('id') === ic.pre + "dl_sequence2") {
+              ic.bAlignSeq = true;
+              ic.bAnnotations = false;
+          }
+          //else if($(this).attr('id') === ic.pre + "dl_annotations") {
+          else {
+              ic.bAlignSeq = false;
+              ic.bAnnotations = true;
+          }
 
           // select annotation title
           //$("div .ui-selected", this).each(function() {
@@ -116,8 +124,9 @@ class HlSeq {
 
       $("#" + ic.pre + "dl_sequence2").add("[id^=" + ic.pre + "giseq]").add("[id^=" + ic.pre + "custom]").add("[id^=" + ic.pre + "site]").add("[id^=" + ic.pre + "clinvar]").add("[id^=" + ic.pre + "snp]").add("[id^=" + ic.pre + "cdd]").add("[id^=" + ic.pre + "domain]").add("[id^=" + ic.pre + "interaction]").add("[id^=" + ic.pre + "ssbond]").add("[id^=" + ic.pre + "crosslink]").add("[id^=" + ic.pre + "transmem]").on('click', '.icn3d-residue', function(e) { let ic = thisClass.icn3d;
           e.stopImmediatePropagation();
-
-          if($(this).attr('id') === ic.pre + "dl_sequence2") {
+/*
+          //if($(this).attr('id') === ic.pre + "dl_sequence2") {
+          if($(this).parents('span').parents('div').attr('id') === ic.pre + "dl_sequence2") {
               ic.bAlignSeq = true;
               ic.bAnnotations = false;
           }
@@ -126,7 +135,7 @@ class HlSeq {
               ic.bAlignSeq = false;
               ic.bAnnotations = true;
           }
-
+*/
           // select residues
           //$("span.ui-selected", this).each(function() {
               let id = $(this).attr('id');
@@ -165,7 +174,8 @@ class HlSeq {
       $("#" + ic.pre + "dl_sequence2").add("[id^=" + ic.pre + "giseq]").add("[id^=" + ic.pre + "custom]").add("[id^=" + ic.pre + "site]").add("[id^=" + ic.pre + "feat]").add("[id^=" + ic.pre + "clinvar]").add("[id^=" + ic.pre + "snp]").add("[id^=" + ic.pre + "cdd]").add("[id^=" + ic.pre + "domain]").add("[id^=" + ic.pre + "interaction]").add("[id^=" + ic.pre + "ssbond]").add("[id^=" + ic.pre + "crosslink]").add("[id^=" + ic.pre + "transmem]").on('click', '.icn3d-seqTitle', function(e) { let ic = thisClass.icn3d;
           e.stopImmediatePropagation();
 
-          if($(this).attr('id') === ic.pre + "dl_sequence2") {
+          //if($(this).attr('id') === ic.pre + "dl_sequence2") {
+          if($(this).parents('div').attr('id') === ic.pre + "dl_sequence2") {
               ic.bAlignSeq = true;
               ic.bAnnotations = false;
           }
@@ -395,6 +405,10 @@ class HlSeq {
 
     selectResidues(id, that) { let ic = this.icn3d, me = ic.icn3dui;
       if(me.bNode) return;
+
+      if(ic.bSelectResidue === false && !ic.bShift && !ic.bCtrl) {
+          ic.selectionCls.removeSelection();
+      }
 
       if(id !== undefined && id !== '') {
         // add "align_" in front of id so that full sequence and aligned sequence will not conflict

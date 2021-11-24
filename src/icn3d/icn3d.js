@@ -294,7 +294,7 @@ class iCn3D {
     this.bCalphaOnly = false; // by default the input has both Calpha and O, used for drawing strands. If atoms have Calpha only, the orientation of the strands is random
 //    this.bSSOnly = false; // a flag to turn on when only helix and bricks are available to draw 3D dgm
 
-    this.bAllAtoms = true; // no need to adjust atom for strand style
+//    this.bAllAtoms = true; // no need to adjust atom for strand style
 
     this.bConsiderNeighbors = false; // a flag to show surface considering the neighboring atoms or not
 

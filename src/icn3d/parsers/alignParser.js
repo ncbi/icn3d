@@ -64,13 +64,13 @@ class AlignParser {
 
         let  chained = request
         .fail(function() {
-            alert("These two MMDB IDs " + alignArray + " do not have 3D alignment data.");
+            alert("These two MMDB IDs " + alignArray + " do not have 3D alignment data in the VAST+ database. You can try the VAST alignment by visiting the VAST+ page https://www.ncbi.nlm.nih.gov/Structure/vastplus/vastplus.cgi?uid=[PDB ID] (e.g., uid=1KQ2), and clicking \"Original VAST\"");
             return false;
         })
         .then(function( data ) {
             seqalign = data.seqalign;
             if(seqalign === undefined) {
-                alert("These two MMDB IDs " + alignArray + " do not have 3D alignment data.");
+                alert("These two MMDB IDs " + alignArray + " do not have 3D alignment data in the VAST+ database. You can try the VAST alignment by visiting the VAST+ page https://www.ncbi.nlm.nih.gov/Structure/vastplus/vastplus.cgi?uid=[PDB ID] (e.g., uid=1KQ2), and clicking \"Original VAST\"");
                 return false;
             }
 

@@ -15,11 +15,14 @@ class HlObjects {
     //Show the highlight for the selected atoms: hAtoms.
     addHlObjects(color, bRender, atomsHash) { let ic = this.icn3d, me = ic.icn3dui;
        if(color === undefined) color = ic.hColor;
-       if(atomsHash === undefined) atomsHash = ic.hAtoms;
+       //if(atomsHash === undefined) atomsHash = ic.hAtoms;
+       let atomsHashDisplay = (atomsHash) ? me.hashUtilsCls.intHash(atomsHash, ic.dAtoms) : me.hashUtilsCls.intHash(ic.hAtoms, ic.dAtoms);
 
-       ic.applyDisplayCls.applyDisplayOptions(ic.opts, me.hashUtilsCls.intHash(atomsHash, ic.dAtoms), ic.bHighlight);
+       ic.applyDisplayCls.applyDisplayOptions(ic.opts, atomsHashDisplay, ic.bHighlight);
 
-       if( (bRender) || (ic.bRender) ) ic.drawCls.render();
+       if( (bRender) || (ic.bRender) ) {
+           ic.drawCls.render();
+       }
     };
 
     //Remove the highlight. The atom selection does not change.
