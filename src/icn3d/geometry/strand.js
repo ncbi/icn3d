@@ -35,7 +35,8 @@ class Strand {
         let atomsAdjust = {};
 
         //if( (bHighlight === 1 || bHighlight === 2) && !ic.bAllAtoms) {
-        if( !ic.bAllAtoms) {
+        //if( !ic.bAllAtoms) {
+        if( Object.keys(atoms).length < Object.keys(ic.atoms).length) {
             atomsAdjust = this.getSSExpandedAtoms(atoms);
         }
         else {

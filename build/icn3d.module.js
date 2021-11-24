@@ -8158,7 +8158,8 @@ class Strand {
         let atomsAdjust = {};
 
         //if( (bHighlight === 1 || bHighlight === 2) && !ic.bAllAtoms) {
-        if( !ic.bAllAtoms) {
+        //if( !ic.bAllAtoms) {
+        if( Object.keys(atoms).length < Object.keys(ic.atoms).length) {
             atomsAdjust = this.getSSExpandedAtoms(atoms);
         }
         else {
@@ -12923,11 +12924,14 @@ class HlObjects {
     //Show the highlight for the selected atoms: hAtoms.
     addHlObjects(color, bRender, atomsHash) { let ic = this.icn3d, me = ic.icn3dui;
        if(color === undefined) color = ic.hColor;
-       if(atomsHash === undefined) atomsHash = ic.hAtoms;
+       //if(atomsHash === undefined) atomsHash = ic.hAtoms;
+       let atomsHashDisplay = (atomsHash) ? me.hashUtilsCls.intHash(atomsHash, ic.dAtoms) : me.hashUtilsCls.intHash(ic.hAtoms, ic.dAtoms);
 
-       ic.applyDisplayCls.applyDisplayOptions(ic.opts, me.hashUtilsCls.intHash(atomsHash, ic.dAtoms), ic.bHighlight);
+       ic.applyDisplayCls.applyDisplayOptions(ic.opts, atomsHashDisplay, ic.bHighlight);
 
-       if( (bRender) || (ic.bRender) ) ic.drawCls.render();
+       if( (bRender) || (ic.bRender) ) {
+           ic.drawCls.render();
+       }
     };
 
     //Remove the highlight. The atom selection does not change.
@@ -15216,6 +15220,9 @@ class HBond {
                             break;
                         }
                     }
+
+                    if(!C_atom) continue;
+
                     let inAcceptorC = C_atom.coord;
                     let inAcceptorO = inAcceptor.coord;
 
@@ -16373,7 +16380,7 @@ class GetGraph {
         let  strokecolor = '#000';
         let  strokewidth = '1';
         let  textcolor = '#000';
-        let  fontsize = '6';
+        let  fontsize = '6px'; // '6';
         let  html = "<g class='icn3d-node' resid='" + resid + "' >";
         html += "<title>" + node.id + "</title>";
         if(bVertical) {
@@ -23910,13 +23917,13 @@ class AlignParser {
 
         request
         .fail(function() {
-            alert("These two MMDB IDs " + alignArray + " do not have 3D alignment data.");
+            alert("These two MMDB IDs " + alignArray + " do not have 3D alignment data in the VAST+ database. You can try the VAST alignment by visiting the VAST+ page https://www.ncbi.nlm.nih.gov/Structure/vastplus/vastplus.cgi?uid=[PDB ID] (e.g., uid=1KQ2), and clicking \"Original VAST\"");
             return false;
         })
         .then(function( data ) {
             seqalign = data.seqalign;
             if(seqalign === undefined) {
-                alert("These two MMDB IDs " + alignArray + " do not have 3D alignment data.");
+                alert("These two MMDB IDs " + alignArray + " do not have 3D alignment data in the VAST+ database. You can try the VAST alignment by visiting the VAST+ page https://www.ncbi.nlm.nih.gov/Structure/vastplus/vastplus.cgi?uid=[PDB ID] (e.g., uid=1KQ2), and clicking \"Original VAST\"");
                 return false;
             }
 
@@ -34746,8 +34753,16 @@ class HlSeq {
       .on('click', '.icn3d-seqTitle', function(e) { let ic = thisClass.icn3d;
           e.stopImmediatePropagation();
 
-          ic.bAlignSeq = false;
-          ic.bAnnotations = true;
+          //if($(this).attr('id') === ic.pre + "dl_sequence2") {
+          if($(this).parents('div').attr('id') === ic.pre + "dl_sequence2") {
+              ic.bAlignSeq = true;
+              ic.bAnnotations = false;
+          }
+          //else if($(this).attr('id') === ic.pre + "dl_annotations") {
+          else {
+              ic.bAlignSeq = false;
+              ic.bAnnotations = true;
+          }
 
           // select annotation title
           //$("div .ui-selected", this).each(function() {
@@ -34776,8 +34791,9 @@ class HlSeq {
 
       $("#" + ic.pre + "dl_sequence2").add("[id^=" + ic.pre + "giseq]").add("[id^=" + ic.pre + "custom]").add("[id^=" + ic.pre + "site]").add("[id^=" + ic.pre + "clinvar]").add("[id^=" + ic.pre + "snp]").add("[id^=" + ic.pre + "cdd]").add("[id^=" + ic.pre + "domain]").add("[id^=" + ic.pre + "interaction]").add("[id^=" + ic.pre + "ssbond]").add("[id^=" + ic.pre + "crosslink]").add("[id^=" + ic.pre + "transmem]").on('click', '.icn3d-residue', function(e) { let ic = thisClass.icn3d;
           e.stopImmediatePropagation();
-
-          if($(this).attr('id') === ic.pre + "dl_sequence2") {
+/*
+          //if($(this).attr('id') === ic.pre + "dl_sequence2") {
+          if($(this).parents('span').parents('div').attr('id') === ic.pre + "dl_sequence2") {
               ic.bAlignSeq = true;
               ic.bAnnotations = false;
           }
@@ -34786,7 +34802,7 @@ class HlSeq {
               ic.bAlignSeq = false;
               ic.bAnnotations = true;
           }
-
+*/
           // select residues
           //$("span.ui-selected", this).each(function() {
               let id = $(this).attr('id');
@@ -34825,7 +34841,8 @@ class HlSeq {
       $("#" + ic.pre + "dl_sequence2").add("[id^=" + ic.pre + "giseq]").add("[id^=" + ic.pre + "custom]").add("[id^=" + ic.pre + "site]").add("[id^=" + ic.pre + "feat]").add("[id^=" + ic.pre + "clinvar]").add("[id^=" + ic.pre + "snp]").add("[id^=" + ic.pre + "cdd]").add("[id^=" + ic.pre + "domain]").add("[id^=" + ic.pre + "interaction]").add("[id^=" + ic.pre + "ssbond]").add("[id^=" + ic.pre + "crosslink]").add("[id^=" + ic.pre + "transmem]").on('click', '.icn3d-seqTitle', function(e) { let ic = thisClass.icn3d;
           e.stopImmediatePropagation();
 
-          if($(this).attr('id') === ic.pre + "dl_sequence2") {
+          //if($(this).attr('id') === ic.pre + "dl_sequence2") {
+          if($(this).parents('div').attr('id') === ic.pre + "dl_sequence2") {
               ic.bAlignSeq = true;
               ic.bAnnotations = false;
           }
@@ -35055,6 +35072,10 @@ class HlSeq {
 
     selectResidues(id, that) { let ic = this.icn3d, me = ic.icn3dui;
       if(me.bNode) return;
+
+      if(ic.bSelectResidue === false && !ic.bShift && !ic.bCtrl) {
+          ic.selectionCls.removeSelection();
+      }
 
       if(id !== undefined && id !== '') {
         // add "align_" in front of id so that full sequence and aligned sequence will not conflict
@@ -38502,23 +38523,25 @@ class HlUpdate {
         $("#" + ic.pre + "atomsCustom")[0].blur();
     }
 
+    //Update the highlight of 3D structure, 2D interaction, sequences, and the menu of defined sets
+    //according to the current highlighted atoms.
     updateHlAll(commandnameArray, bSetMenu, bUnion, bForceHighlight) { let ic = this.icn3d, me = ic.icn3dui;
-           // update the previously highlisghted atoms for switching between all and selection
-           ic.prevHighlightAtoms = me.hashUtilsCls.cloneHash(ic.hAtoms);
+       // update the previously highlisghted atoms for switching between all and selection
+       ic.prevHighlightAtoms = me.hashUtilsCls.cloneHash(ic.hAtoms);
 
-           this.updateHlObjects(bForceHighlight);
+       this.updateHlObjects(bForceHighlight);
 
-           if(commandnameArray !== undefined) {
-               this.updateHlSeqInChain(commandnameArray, bUnion);
-           }
-           else {
-               this.updateHlSeq(undefined, undefined, bUnion);
-           }
+       if(commandnameArray !== undefined) {
+           this.updateHlSeqInChain(commandnameArray, bUnion);
+       }
+       else {
+           this.updateHlSeq(undefined, undefined, bUnion);
+       }
 
-           this.updateHl2D();
-           if(bSetMenu === undefined || bSetMenu) this.updateHlMenus(commandnameArray);
+       this.updateHl2D();
+       if(bSetMenu === undefined || bSetMenu) this.updateHlMenus(commandnameArray);
 
-           //ic.annotationCls.showAnnoSelectedChains();
+       //ic.annotationCls.showAnnoSelectedChains();
     }
 
     //Update the highlight of 3D structure display according to the current highlighted atoms.
@@ -38821,27 +38844,6 @@ class HlUpdate {
         $( ".icn3d-residue" ).each(function( index ) {
           $( this ).removeClass('icn3d-highlightSeq');
         });
-    }
-
-    //Update the highlight of 3D structure, 2D interaction, sequences, and the menu of defined sets
-    //according to the current highlighted atoms.
-    updateHlAll(commandnameArray, bSetMenu, bUnion, bForceHighlight) { let ic = this.icn3d, me = ic.icn3dui;
-       // update the previously highlisghted atoms for switching between all and selection
-       ic.prevHighlightAtoms = me.hashUtilsCls.cloneHash(ic.hAtoms);
-
-       this.updateHlObjects(bForceHighlight);
-
-       if(commandnameArray !== undefined) {
-           this.updateHlSeqInChain(commandnameArray, bUnion);
-       }
-       else {
-           this.updateHlSeq(undefined, undefined, bUnion);
-       }
-
-       this.updateHl2D();
-       if(bSetMenu === undefined || bSetMenu) this.updateHlMenus(commandnameArray);
-
-       //ic.annotationCls.showAnnoSelectedChains();
     }
 }
 
@@ -40563,47 +40565,46 @@ class ApplyDisplay {
 
         ic.setStyleCls.setStyle2Atoms(atoms);
 
-        //ic.bAllAtoms = (Object.keys(atoms).length === Object.keys(ic.atoms).length);
-        ic.bAllAtoms = false;
-        if(atoms && atoms !== undefined ) {
-            ic.bAllAtoms = (Object.keys(atoms).length === Object.keys(ic.atoms).length);
-        }
+        //ic.bAllAtoms = false;
+        //if(atoms && atoms !== undefined ) {
+        //    ic.bAllAtoms = (Object.keys(atoms).length === Object.keys(ic.atoms).length);
+        //}
 
         let chemicalSchematicRadius = ic.cylinderRadius * 0.5;
 
         // remove schematic labels
         //if(ic.labels !== undefined) ic.labels['schematic'] = undefined;
         if(ic.labels !== undefined) delete ic.labels['schematic'];
-
-        let bOnlySideChains = false;
-
+/*
         if(bHighlight) {
-            let residueHashCalpha = ic.firstAtomObjCls.getResiduesFromCalphaAtoms(ic.hAtoms);
+            //let residueHashCalpha = ic.firstAtomObjCls.getResiduesFromCalphaAtoms(ic.hAtoms);
 
             let proteinAtoms = me.hashUtilsCls.intHash(ic.hAtoms, ic.proteins);
-            let residueHash = ic.firstAtomObjCls.getResiduesFromAtoms(proteinAtoms);
 
-            if(Object.keys(residueHash) > Object.keys(residueHashCalpha)) { // some residues have only side chains
+            let residueHash = ic.firstAtomObjCls.getResiduesFromAtoms(proteinAtoms);
+            let residueHashCalpha = ic.firstAtomObjCls.getResiduesFromCalphaAtoms(proteinAtoms);
+
+            if(Object.keys(residueHash).length > Object.keys(residueHashCalpha).length) { // some residues have only side chains
                 bOnlySideChains = true;
             }
         }
-
+*/
         for(let style in ic.style2atoms) {
           // 14 styles: ribbon, strand, cylinder and plate, nucleotide cartoon, o3 trace, schematic, c alpha trace, b factor tube, lines, stick, ball and stick, sphere, dot, nothing
           let atomHash = ic.style2atoms[style];
           //var bPhosphorusOnly = me.utilsCls.isCalphaPhosOnly(me.hashUtilsCls.hash2Atoms(atomHash), "O3'", "O3*") || me.utilsCls.isCalphaPhosOnly(me.hashUtilsCls.hash2Atoms(atomHash), "P");
           let bPhosphorusOnly = me.utilsCls.isCalphaPhosOnly(me.hashUtilsCls.hash2Atoms(atomHash, ic.atoms));
 
-          //if(style === 'ribbon') {
-          if(style === 'ribbon' && (!bHighlight || (bHighlight && !bOnlySideChains))) {
+          if(style === 'ribbon') {
+          //if(style === 'ribbon' && (!bHighlight || (bHighlight && !bOnlySideChains))) {
               ic.strandCls.createStrand(me.hashUtilsCls.hash2Atoms(atomHash, ic.atoms), 2, undefined, true, undefined, undefined, false, ic.ribbonthickness, bHighlight);
           }
-          //else if(style === 'strand') {
-          else if(style === 'strand' && (!bHighlight || (bHighlight && !bOnlySideChains))) {
+          else if(style === 'strand') {
+          //else if(style === 'strand' && (!bHighlight || (bHighlight && !bOnlySideChains))) {
               ic.strandCls.createStrand(me.hashUtilsCls.hash2Atoms(atomHash, ic.atoms), null, null, null, null, null, false, undefined, bHighlight);
           }
-          //else if(style === 'cylinder and plate') {
-          else if(style === 'cylinder and plate' && (!bHighlight || (bHighlight && !bOnlySideChains))) {
+          else if(style === 'cylinder and plate') {
+          //else if(style === 'cylinder and plate' && (!bHighlight || (bHighlight && !bOnlySideChains))) {
             ic.cylinderCls.createCylinderHelix(me.hashUtilsCls.hash2Atoms(atomHash, ic.atoms), ic.cylinderHelixRadius, bHighlight);
           }
           else if(style === 'nucleotide cartoon') {
@@ -42960,7 +42961,9 @@ class Draw {
 //        ic.renderer.gammaOutput = true
 
         ic.renderer.setPixelRatio( window.devicePixelRatio ); // r71
-        if(ic.scene) ic.renderer.render(ic.scene, cam);
+        if(ic.scene) {
+            ic.renderer.render(ic.scene, cam);
+        }
     }
 
 }
@@ -51665,8 +51668,8 @@ class SetHtml {
 
         html += "<span style='white-space:nowrap;font-weight:bold;'>Potential contour at: <select id='" + me.pre + name1 + "contour'>";
 
-        let optArray1b = ['0.5', '1', '2', '4', '6', '8', '10'];
-        html += this.getOptionHtml(optArray1b, 1);
+        let optArray1b = ['0.5', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10'];
+        html += this.getOptionHtml(optArray1b, 2);
 
         html += "</select> kT/e(25.6mV at 298K)</span><br/><br/>";
 
@@ -51730,7 +51733,7 @@ class SetHtml {
 
         html += "<span style='white-space:nowrap;font-weight:bold;'>Surface with max potential at: <select id='" + me.pre + name1 + "contour2'>";
 
-        let optArray1c = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10'];
+        let optArray1c = ['0.5', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10'];
         html += this.getOptionHtml(optArray1c, 2);
 
         html += "</select> kT/e(25.6mV at 298K)</span><br/><br/>";
@@ -54613,7 +54616,7 @@ class iCn3D {
     this.bCalphaOnly = false; // by default the input has both Calpha and O, used for drawing strands. If atoms have Calpha only, the orientation of the strands is random
 //    this.bSSOnly = false; // a flag to turn on when only helix and bricks are available to draw 3D dgm
 
-    this.bAllAtoms = true; // no need to adjust atom for strand style
+//    this.bAllAtoms = true; // no need to adjust atom for strand style
 
     this.bConsiderNeighbors = false; // a flag to show surface considering the neighboring atoms or not
 
@@ -55070,7 +55073,7 @@ class iCn3DUI {
     //even when multiple iCn3D viewers are shown together.
     this.pre = this.cfg.divid + "_";
 
-    this.REVISION = '3.4.11';
+    this.REVISION = '3.4.12';
 
     // In nodejs, iCn3D defines "window = {navigator: {}}"
     this.bNode = (Object.keys(window).length < 2) ? true : false;

@@ -157,7 +157,7 @@ class GetGraph {
         let  strokecolor = '#000';
         let  strokewidth = '1';
         let  textcolor = '#000';
-        let  fontsize = '6';
+        let  fontsize = '6px'; // '6';
         let  html = "<g class='icn3d-node' resid='" + resid + "' >";
         html += "<title>" + node.id + "</title>";
         if(bVertical) {

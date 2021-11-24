@@ -100,23 +100,25 @@ class HlUpdate {
         $("#" + ic.pre + "atomsCustom")[0].blur();
     }
 
+    //Update the highlight of 3D structure, 2D interaction, sequences, and the menu of defined sets
+    //according to the current highlighted atoms.
     updateHlAll(commandnameArray, bSetMenu, bUnion, bForceHighlight) { let ic = this.icn3d, me = ic.icn3dui;
-           // update the previously highlisghted atoms for switching between all and selection
-           ic.prevHighlightAtoms = me.hashUtilsCls.cloneHash(ic.hAtoms);
+       // update the previously highlisghted atoms for switching between all and selection
+       ic.prevHighlightAtoms = me.hashUtilsCls.cloneHash(ic.hAtoms);
 
-           this.updateHlObjects(bForceHighlight);
+       this.updateHlObjects(bForceHighlight);
 
-           if(commandnameArray !== undefined) {
-               this.updateHlSeqInChain(commandnameArray, bUnion);
-           }
-           else {
-               this.updateHlSeq(undefined, undefined, bUnion);
-           }
+       if(commandnameArray !== undefined) {
+           this.updateHlSeqInChain(commandnameArray, bUnion);
+       }
+       else {
+           this.updateHlSeq(undefined, undefined, bUnion);
+       }
 
-           this.updateHl2D();
-           if(bSetMenu === undefined || bSetMenu) this.updateHlMenus(commandnameArray);
+       this.updateHl2D();
+       if(bSetMenu === undefined || bSetMenu) this.updateHlMenus(commandnameArray);
 
-           //ic.annotationCls.showAnnoSelectedChains();
+       //ic.annotationCls.showAnnoSelectedChains();
     }
 
     //Update the highlight of 3D structure display according to the current highlighted atoms.
@@ -419,27 +421,6 @@ class HlUpdate {
         $( ".icn3d-residue" ).each(function( index ) {
           $( this ).removeClass('icn3d-highlightSeq');
         });
-    }
-
-    //Update the highlight of 3D structure, 2D interaction, sequences, and the menu of defined sets
-    //according to the current highlighted atoms.
-    updateHlAll(commandnameArray, bSetMenu, bUnion, bForceHighlight) { let ic = this.icn3d, me = ic.icn3dui;
-       // update the previously highlisghted atoms for switching between all and selection
-       ic.prevHighlightAtoms = me.hashUtilsCls.cloneHash(ic.hAtoms);
-
-       this.updateHlObjects(bForceHighlight);
-
-       if(commandnameArray !== undefined) {
-           this.updateHlSeqInChain(commandnameArray, bUnion);
-       }
-       else {
-           this.updateHlSeq(undefined, undefined, bUnion);
-       }
-
-       this.updateHl2D();
-       if(bSetMenu === undefined || bSetMenu) this.updateHlMenus(commandnameArray);
-
-       //ic.annotationCls.showAnnoSelectedChains();
     }
 }
 

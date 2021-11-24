@@ -170,11 +170,10 @@ class ApplyDisplay {
 
         ic.setStyleCls.setStyle2Atoms(atoms);
 
-        //ic.bAllAtoms = (Object.keys(atoms).length === Object.keys(ic.atoms).length);
-        ic.bAllAtoms = false;
-        if(atoms && atoms !== undefined ) {
-            ic.bAllAtoms = (Object.keys(atoms).length === Object.keys(ic.atoms).length);
-        }
+        //ic.bAllAtoms = false;
+        //if(atoms && atoms !== undefined ) {
+        //    ic.bAllAtoms = (Object.keys(atoms).length === Object.keys(ic.atoms).length);
+        //}
 
         let chemicalSchematicRadius = ic.cylinderRadius * 0.5;
 
@@ -183,34 +182,36 @@ class ApplyDisplay {
         if(ic.labels !== undefined) delete ic.labels['schematic'];
 
         let bOnlySideChains = false;
-
+/*
         if(bHighlight) {
-            let residueHashCalpha = ic.firstAtomObjCls.getResiduesFromCalphaAtoms(ic.hAtoms);
+            //let residueHashCalpha = ic.firstAtomObjCls.getResiduesFromCalphaAtoms(ic.hAtoms);
 
             let proteinAtoms = me.hashUtilsCls.intHash(ic.hAtoms, ic.proteins);
-            let residueHash = ic.firstAtomObjCls.getResiduesFromAtoms(proteinAtoms);
 
-            if(Object.keys(residueHash) > Object.keys(residueHashCalpha)) { // some residues have only side chains
+            let residueHash = ic.firstAtomObjCls.getResiduesFromAtoms(proteinAtoms);
+            let residueHashCalpha = ic.firstAtomObjCls.getResiduesFromCalphaAtoms(proteinAtoms);
+
+            if(Object.keys(residueHash).length > Object.keys(residueHashCalpha).length) { // some residues have only side chains
                 bOnlySideChains = true;
             }
         }
-
+*/
         for(let style in ic.style2atoms) {
           // 14 styles: ribbon, strand, cylinder and plate, nucleotide cartoon, o3 trace, schematic, c alpha trace, b factor tube, lines, stick, ball and stick, sphere, dot, nothing
           let atomHash = ic.style2atoms[style];
           //var bPhosphorusOnly = me.utilsCls.isCalphaPhosOnly(me.hashUtilsCls.hash2Atoms(atomHash), "O3'", "O3*") || me.utilsCls.isCalphaPhosOnly(me.hashUtilsCls.hash2Atoms(atomHash), "P");
           let bPhosphorusOnly = me.utilsCls.isCalphaPhosOnly(me.hashUtilsCls.hash2Atoms(atomHash, ic.atoms));
 
-          //if(style === 'ribbon') {
-          if(style === 'ribbon' && (!bHighlight || (bHighlight && !bOnlySideChains))) {
+          if(style === 'ribbon') {
+          //if(style === 'ribbon' && (!bHighlight || (bHighlight && !bOnlySideChains))) {
               ic.strandCls.createStrand(me.hashUtilsCls.hash2Atoms(atomHash, ic.atoms), 2, undefined, true, undefined, undefined, false, ic.ribbonthickness, bHighlight);
           }
-          //else if(style === 'strand') {
-          else if(style === 'strand' && (!bHighlight || (bHighlight && !bOnlySideChains))) {
+          else if(style === 'strand') {
+          //else if(style === 'strand' && (!bHighlight || (bHighlight && !bOnlySideChains))) {
               ic.strandCls.createStrand(me.hashUtilsCls.hash2Atoms(atomHash, ic.atoms), null, null, null, null, null, false, undefined, bHighlight);
           }
-          //else if(style === 'cylinder and plate') {
-          else if(style === 'cylinder and plate' && (!bHighlight || (bHighlight && !bOnlySideChains))) {
+          else if(style === 'cylinder and plate') {
+          //else if(style === 'cylinder and plate' && (!bHighlight || (bHighlight && !bOnlySideChains))) {
             ic.cylinderCls.createCylinderHelix(me.hashUtilsCls.hash2Atoms(atomHash, ic.atoms), ic.cylinderHelixRadius, bHighlight);
           }
           else if(style === 'nucleotide cartoon') {

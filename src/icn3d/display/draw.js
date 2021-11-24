@@ -112,7 +112,9 @@ class Draw {
 //        ic.renderer.gammaOutput = true
 
         ic.renderer.setPixelRatio( window.devicePixelRatio ); // r71
-        if(ic.scene) ic.renderer.render(ic.scene, cam);
+        if(ic.scene) {
+            ic.renderer.render(ic.scene, cam);
+        }
     }
 
 }
