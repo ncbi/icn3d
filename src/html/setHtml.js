@@ -141,6 +141,7 @@ class SetHtml {
         let light2 = 0.4;
         let light3 = 0.2;
         let bGlycansCartoon = 0;
+        let bMembrane = 1;
 
         // retrieve from cache
         if(type == 'style') {
@@ -169,6 +170,10 @@ class SetHtml {
                 bGlycansCartoon = parseFloat(this.getCookie('glycan'));
             }
 
+            if(this.getCookie('membrane') != '') {
+                bMembrane = parseFloat(this.getCookie('membrane'));
+            }
+
             html += "<b>Note</b>: The following parameters will be saved in cache. You just need to set them once. <br><br>";
 
             html += "<b>1. Shininess</b>: " + me.htmlCls.inputTextStr + "id='" + me.pre + "shininess' value='" + shininess + "' size=4>" + me.htmlCls.space3 + "(for the shininess of the 3D objects, default 40)<br/><br/>";
@@ -191,7 +196,9 @@ class SetHtml {
         html += "<b>Ball Scale</b>: " + me.htmlCls.inputTextStr + "id='" + me.pre + "ballscale_" + type + "' value='" + ballscale + "' size=4>" + me.htmlCls.space3 + "(for styles 'Ball and Stick' and 'Dot', default 0.3)<br/>";
 
         if(type == 'style') {
-            html += "<br><b>4. Show Glycan Cartoon</b>: " + me.htmlCls.inputTextStr + "id='" + me.pre + "glycan' value='" + bGlycansCartoon + "' size=4>" + me.htmlCls.space3 + "(0: hide, 1: show, default 0)<br/><br/>";
+            html += "<br><b>4. Show Glycan Cartoon</b>: " + me.htmlCls.inputTextStr + "id='" + me.pre + "glycan' value='" + bGlycansCartoon + "' size=4>" + me.htmlCls.space3 + "(0: hide, 1: show, default 0)<br/>";
+
+            html += "<br><b>5. Show Membrane</b>: " + me.htmlCls.inputTextStr + "id='" + me.pre + "membrane' value='" + bMembrane + "' size=4>" + me.htmlCls.space3 + "(0: hide, 1: show, default 1)<br/><br/>";
         }
 
         html += me.htmlCls.spanNowrapStr + "" + me.htmlCls.buttonStr + "apply_thickness_" + type + "'>Apply</button></span>&nbsp;&nbsp;&nbsp;";
@@ -795,6 +802,7 @@ class SetHtml {
                 $("#" + me.pre + "light2").val('0.4');
                 $("#" + me.pre + "light3").val('0.2');
                 $("#" + me.pre + "glycan").val('0');
+                $("#" + me.pre + "membrane").val('1');
             }
 
             ic.shininess = parseFloat($("#" + me.pre + "shininess").val()); //40;
@@ -802,6 +810,7 @@ class SetHtml {
             ic.light2 = parseFloat($("#" + me.pre + "light2").val()); //0.4;
             ic.light3 = parseFloat($("#" + me.pre + "light3").val()); //0.2;
             ic.bGlycansCartoon = parseInt($("#" + me.pre + "glycan").val()); //0;
+            ic.bMembrane = parseInt($("#" + me.pre + "membrane").val()); //1;
         }
 
         if(bReset) {
@@ -832,6 +841,7 @@ class SetHtml {
             this.setCookie('light2', ic.light2, exdays);
             this.setCookie('light3', ic.light3, exdays);
             this.setCookie('glycan', ic.bGlycansCartoon, exdays);
+            this.setCookie('membrane', ic.bMembrane, exdays);
         }
 
         this.setCookieForThickness();
@@ -844,6 +854,9 @@ class SetHtml {
         }
         else {
             me.htmlCls.clickMenuCls.setLogCmd('set thickness | linerad ' + ic.lineRadius + ' | coilrad ' + ic.coilWidth + ' | stickrad ' + ic.cylinderRadius + ' | tracerad ' + ic.traceRadius + ' | ribbonthick ' + ic.ribbonthickness + ' | proteinwidth ' + ic.helixSheetWidth + ' | nucleotidewidth ' + ic.nucleicAcidWidth  + ' | ballscale ' + ic.dotSphereScale, true);
+
+            me.htmlCls.clickMenuCls.setLogCmd('set glycan ' + ic.bGlycansCartoon, true);
+            me.htmlCls.clickMenuCls.setLogCmd('set membrane ' + ic.bMembrane, true);
         }
 
         ic.drawCls.draw();

@@ -722,6 +722,13 @@ class ApplyCommand {
 
         ic.drawCls.draw();
       }
+      else if(commandOri.indexOf('set membrane') == 0) {
+        let  pos = command.lastIndexOf(' ');
+
+        ic.bMembrane = parseInt(command.substr(pos + 1));
+
+        ic.drawCls.draw();
+      }
       else if(command.indexOf('set highlight color') == 0) {
            let  color = command.substr(20);
            if(color === 'yellow') {
