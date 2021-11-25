@@ -519,7 +519,7 @@ class Selection {
         ic.drawCls.draw();
     }
 
-    toggleMembrane() {var ic = this.icn3d, me = ic.icn3dui;
+    toggleMembrane(bShowMembrane) {var ic = this.icn3d, me = ic.icn3dui;
         let  structureArray = Object.keys(ic.structures);
 
         for(let i = 0, il = structureArray.length; i < il; ++i) {
@@ -536,16 +536,23 @@ class Selection {
             }
             for(let j in atomsHash) {
                 let  atom = ic.atoms[j];
-                if(oriStyle !== 'nothing') {
-                    atom.style = 'nothing';
+                if(oriStyle == 'nothing' || bShowMembrane) {
+                    atom.style = 'stick';
                 }
                 else {
+                    atom.style = 'nothing';
+                }
+
+                if(bShowMembrane) {
                     atom.style = 'stick';
+                }
+                else {
+                    atom.style = 'nothing';
                 }
             }
         }
 
-        ic.drawCls.draw();
+        if(bShowMembrane === undefined) ic.drawCls.draw();
     }
 
     adjustMembrane(extra_mem_z, intra_mem_z) {var ic = this.icn3d, me = ic.icn3dui;

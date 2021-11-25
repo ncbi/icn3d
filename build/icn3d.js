@@ -31313,6 +31313,13 @@ var icn3d = (function (exports) {
 
             ic.drawCls.draw();
           }
+          else if(commandOri.indexOf('set membrane') == 0) {
+            let  pos = command.lastIndexOf(' ');
+
+            ic.bMembrane = parseInt(command.substr(pos + 1));
+
+            ic.drawCls.draw();
+          }
           else if(command.indexOf('set highlight color') == 0) {
                let  color = command.substr(20);
                if(color === 'yellow') {
@@ -39353,7 +39360,7 @@ var icn3d = (function (exports) {
             ic.drawCls.draw();
         }
 
-        toggleMembrane() {var ic = this.icn3d, me = ic.icn3dui;
+        toggleMembrane(bShowMembrane) {var ic = this.icn3d, me = ic.icn3dui;
             let  structureArray = Object.keys(ic.structures);
 
             for(let i = 0, il = structureArray.length; i < il; ++i) {
@@ -39370,16 +39377,23 @@ var icn3d = (function (exports) {
                 }
                 for(let j in atomsHash) {
                     let  atom = ic.atoms[j];
-                    if(oriStyle !== 'nothing') {
-                        atom.style = 'nothing';
+                    if(oriStyle == 'nothing' || bShowMembrane) {
+                        atom.style = 'stick';
                     }
                     else {
+                        atom.style = 'nothing';
+                    }
+
+                    if(bShowMembrane) {
                         atom.style = 'stick';
+                    }
+                    else {
+                        atom.style = 'nothing';
                     }
                 }
             }
 
-            ic.drawCls.draw();
+            if(bShowMembrane === undefined) ic.drawCls.draw();
         }
 
         adjustMembrane(extra_mem_z, intra_mem_z) {var ic = this.icn3d; ic.icn3dui;
@@ -40565,6 +40579,24 @@ var icn3d = (function (exports) {
 
                 atomsObj = {};
             } // end if(bHighlight === 1)
+
+            if(me.htmlCls.setHtmlCls.getCookie('membrane') != '') {
+                let bMembrane = parseInt(me.htmlCls.setHtmlCls.getCookie('membrane'));
+
+                if(ic.bMembrane != bMembrane) {
+                    me.htmlCls.clickMenuCls.setLogCmd('set membrane ' + bMembrane, true);
+                }
+
+                ic.bMembrane = bMembrane;
+            }
+
+            // show membrane
+            if(ic.bMembrane) {
+                ic.selectionCls.toggleMembrane(true);
+            }
+            else {
+                ic.selectionCls.toggleMembrane(false);
+            }
 
             ic.setStyleCls.setStyle2Atoms(atoms);
 
@@ -51428,6 +51460,7 @@ var icn3d = (function (exports) {
             let light2 = 0.4;
             let light3 = 0.2;
             let bGlycansCartoon = 0;
+            let bMembrane = 1;
 
             // retrieve from cache
             if(type == 'style') {
@@ -51456,6 +51489,10 @@ var icn3d = (function (exports) {
                     bGlycansCartoon = parseFloat(this.getCookie('glycan'));
                 }
 
+                if(this.getCookie('membrane') != '') {
+                    bMembrane = parseFloat(this.getCookie('membrane'));
+                }
+
                 html += "<b>Note</b>: The following parameters will be saved in cache. You just need to set them once. <br><br>";
 
                 html += "<b>1. Shininess</b>: " + me.htmlCls.inputTextStr + "id='" + me.pre + "shininess' value='" + shininess + "' size=4>" + me.htmlCls.space3 + "(for the shininess of the 3D objects, default 40)<br/><br/>";
@@ -51478,7 +51515,9 @@ var icn3d = (function (exports) {
             html += "<b>Ball Scale</b>: " + me.htmlCls.inputTextStr + "id='" + me.pre + "ballscale_" + type + "' value='" + ballscale + "' size=4>" + me.htmlCls.space3 + "(for styles 'Ball and Stick' and 'Dot', default 0.3)<br/>";
 
             if(type == 'style') {
-                html += "<br><b>4. Show Glycan Cartoon</b>: " + me.htmlCls.inputTextStr + "id='" + me.pre + "glycan' value='" + bGlycansCartoon + "' size=4>" + me.htmlCls.space3 + "(0: hide, 1: show, default 0)<br/><br/>";
+                html += "<br><b>4. Show Glycan Cartoon</b>: " + me.htmlCls.inputTextStr + "id='" + me.pre + "glycan' value='" + bGlycansCartoon + "' size=4>" + me.htmlCls.space3 + "(0: hide, 1: show, default 0)<br/>";
+
+                html += "<br><b>5. Show Membrane</b>: " + me.htmlCls.inputTextStr + "id='" + me.pre + "membrane' value='" + bMembrane + "' size=4>" + me.htmlCls.space3 + "(0: hide, 1: show, default 1)<br/><br/>";
             }
 
             html += me.htmlCls.spanNowrapStr + "" + me.htmlCls.buttonStr + "apply_thickness_" + type + "'>Apply</button></span>&nbsp;&nbsp;&nbsp;";
@@ -52082,6 +52121,7 @@ var icn3d = (function (exports) {
                     $("#" + me.pre + "light2").val('0.4');
                     $("#" + me.pre + "light3").val('0.2');
                     $("#" + me.pre + "glycan").val('0');
+                    $("#" + me.pre + "membrane").val('1');
                 }
 
                 ic.shininess = parseFloat($("#" + me.pre + "shininess").val()); //40;
@@ -52089,6 +52129,7 @@ var icn3d = (function (exports) {
                 ic.light2 = parseFloat($("#" + me.pre + "light2").val()); //0.4;
                 ic.light3 = parseFloat($("#" + me.pre + "light3").val()); //0.2;
                 ic.bGlycansCartoon = parseInt($("#" + me.pre + "glycan").val()); //0;
+                ic.bMembrane = parseInt($("#" + me.pre + "membrane").val()); //1;
             }
 
             if(bReset) {
@@ -52119,6 +52160,7 @@ var icn3d = (function (exports) {
                 this.setCookie('light2', ic.light2, exdays);
                 this.setCookie('light3', ic.light3, exdays);
                 this.setCookie('glycan', ic.bGlycansCartoon, exdays);
+                this.setCookie('membrane', ic.bMembrane, exdays);
             }
 
             this.setCookieForThickness();
@@ -52131,6 +52173,9 @@ var icn3d = (function (exports) {
             }
             else {
                 me.htmlCls.clickMenuCls.setLogCmd('set thickness | linerad ' + ic.lineRadius + ' | coilrad ' + ic.coilWidth + ' | stickrad ' + ic.cylinderRadius + ' | tracerad ' + ic.traceRadius + ' | ribbonthick ' + ic.ribbonthickness + ' | proteinwidth ' + ic.helixSheetWidth + ' | nucleotidewidth ' + ic.nucleicAcidWidth  + ' | ballscale ' + ic.dotSphereScale, true);
+
+                me.htmlCls.clickMenuCls.setLogCmd('set glycan ' + ic.bGlycansCartoon, true);
+                me.htmlCls.clickMenuCls.setLogCmd('set membrane ' + ic.bMembrane, true);
             }
 
             ic.drawCls.draw();
@@ -55007,7 +55052,8 @@ var icn3d = (function (exports) {
 
         this.axes = [];
 
-        this.bGlycansCartoon = false;
+        this.bGlycansCartoon = 0;
+        this.bMembrane = 1;
 
         this.chainid2offset = {};
     };

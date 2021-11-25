@@ -168,6 +168,24 @@ class ApplyDisplay {
             atomsObj = {};
         } // end if(bHighlight === 1)
 
+        if(me.htmlCls.setHtmlCls.getCookie('membrane') != '') {
+            let bMembrane = parseInt(me.htmlCls.setHtmlCls.getCookie('membrane'));
+
+            if(ic.bMembrane != bMembrane) {
+                me.htmlCls.clickMenuCls.setLogCmd('set membrane ' + bMembrane, true);
+            }
+
+            ic.bMembrane = bMembrane;
+        }
+
+        // show membrane
+        if(ic.bMembrane) {
+            ic.selectionCls.toggleMembrane(true);
+        }
+        else {
+            ic.selectionCls.toggleMembrane(false);
+        }
+
         ic.setStyleCls.setStyle2Atoms(atoms);
 
         //ic.bAllAtoms = false;
