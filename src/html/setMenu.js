@@ -485,6 +485,7 @@ class SetMenu {
 
         html += me.htmlCls.setHtmlCls.getLink('mn1_exportState', 'State File');
         html += me.htmlCls.setHtmlCls.getLink('mn1_exportSelections', 'Selection File');
+        html += me.htmlCls.setHtmlCls.getLink('mn1_exportSelDetails', 'Selection Details');
         html += me.htmlCls.setHtmlCls.getLink('mn1_exportCounts', 'Residue Counts');
 
     /*
@@ -1602,7 +1603,7 @@ class SetMenu {
         html += "<ul>";
         html += "<li><span>Rotate</span>";
         html += "<ul>";
-        html += "<li>Left Mouse</li>";
+        html += "<li>Left Mouse (Click & Drag)</li>";
         html += "<li>Key l: Left</li>";
         html += "<li>Key j: Right</li>";
         html += "<li>Key i: Up</li>";
@@ -1615,14 +1616,14 @@ class SetMenu {
         html += "</li>";
         html += "<li><span>Zoom</span>";
         html += "<ul>";
-        html += "<li>Middle Mouse</li>";
+        html += "<li>Middle Mouse <br>(Pinch & Spread)</li>";
         html += "<li>Key z: Zoom in</li>";
         html += "<li>Key x: Zoom out</li>";
         html += "</ul>";
         html += "</li>";
         html += "<li><span>Translate</span>";
         html += "<ul>";
-        html += "<li>Right Mouse</li>";
+        html += "<li>Right Mouse <br>(Two Finger Click & Drag)</li>";
         html += "</ul>";
         html += "</li>";
         html += "</ul>";

@@ -850,8 +850,8 @@ class Events {
         me.myEventCls.onIds("#" + me.pre + "reload_pdbfile_app", "click", function(e) { let ic = me.icn3d;
            e.preventDefault();
 
-           var bAppend = true;
-           thisClass.loadPdbFile(bAppend);
+           ic.bAppend = true;
+           thisClass.loadPdbFile(ic.bAppend);
         });
 
     //    },

@@ -234,7 +234,7 @@ class SaveFile {
         }
     }
 
-    exportCustomAtoms() {var ic = this.icn3d, me = ic.icn3dui;
+    exportCustomAtoms(bDetails) {var ic = this.icn3d, me = ic.icn3dui;
        let html = "";
        let nameArray =(ic.defNames2Residues !== undefined) ? Object.keys(ic.defNames2Residues).sort() : [];
        for(let i = 0, il = nameArray.length; i < il; ++i) {
@@ -243,9 +243,8 @@ class SaveFile {
          let description = ic.defNames2Descr[name];
          let command = ic.defNames2Command[name];
          command = command.replace(/,/g, ', ');
-         html += name + "\tselect ";
-         html += ic.resid2specCls.residueids2spec(residueArray);
-         html += "\n";
+
+         html += this.exportResidues(name, residueArray, bDetails);
        } // outer for
        nameArray =(ic.defNames2Atoms !== undefined) ? Object.keys(ic.defNames2Atoms).sort() : [];
        for(let i = 0, il = nameArray.length; i < il; ++i) {
@@ -255,13 +254,48 @@ class SaveFile {
          let command = ic.defNames2Command[name];
          command = command.replace(/,/g, ', ');
          let residueArray = ic.resid2specCls.atoms2residues(atomArray);
-         if(residueArray.length > 0) {
-             html += name + "\tselect ";
-             html += ic.resid2specCls.residueids2spec(residueArray);
-             html += "\n";
-         }
+
+         html += this.exportResidues(name, residueArray, bDetails);
        } // outer for
        return html;
+    }
+
+    exportResidues(name, residueArray, bDetails) {var ic = this.icn3d, me = ic.icn3dui;
+         let html = '';
+
+         if(residueArray.length > 0) {
+             if(bDetails) {
+                 let chainidHash = {};
+                 for(let i = 0, il = residueArray.length; i < il; ++i) {
+                     let resid = residueArray[i];
+                     let atom = ic.firstAtomObjCls.getFirstAtomObj(ic.residues[resid]);
+                     let chainid = atom.structure + '_' + atom.chain;
+                     let resnAbbr = me.utilsCls.residueName2Abbr(atom.resn);
+                     let resName = resnAbbr + atom.resi;
+
+                     if(!chainidHash.hasOwnProperty(chainid)) {
+                         chainidHash[chainid] = [];
+                     }
+
+                     chainidHash[chainid].push(resName);
+                 }
+
+                 html += name + ":\n";
+                 for(let chainid in chainidHash) {
+                     html += chainid + ": ";
+                     html += chainidHash[chainid].join(", ");
+                     html += "\n";
+                 }
+                 html += "\n";
+             }
+             else {
+                 html += name + "\tselect ";
+                 html += ic.resid2specCls.residueids2spec(residueArray);
+                 html += "\n";
+             }
+         }
+
+         return html;
     }
 
     //getAtomPDB: function(atomHash, bPqr, bPdb, bNoChem) { let ic = this.icn3d, me = ic.icn3dui;

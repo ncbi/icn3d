@@ -397,6 +397,21 @@ class ClickMenu {
            let file_pref =(ic.inputid) ? ic.inputid : "custom";
            ic.saveFileCls.saveFile(file_pref + '_selections.txt', 'text', [text]);
         });
+
+        me.myEventCls.onIds("#" + me.pre + "mn1_exportSelDetails", "click", function(e) { let ic = me.icn3d;
+           thisClass.setLogCmd("export all selections with details", false);
+          if(ic.bSetChainsAdvancedMenu === undefined || !ic.bSetChainsAdvancedMenu) {
+               let prevHAtoms = me.hashUtilsCls.cloneHash(ic.hAtoms);
+               ic.definedSetsCls.setPredefinedInMenu();
+               ic.bSetChainsAdvancedMenu = true;
+               ic.hAtoms = me.hashUtilsCls.cloneHash(prevHAtoms);
+          }
+           let bDetails = true;
+           let text = ic.saveFileCls.exportCustomAtoms(bDetails);
+           let file_pref =(ic.inputid) ? ic.inputid : "custom";
+           ic.saveFileCls.saveFile(file_pref + '_sel_details.txt', 'text', [text]);
+        });
+
     //    },
     //    clkMn1_sharelink: function() {
         me.myEventCls.onIds("#" + me.pre + "mn1_sharelink", "click", function(e) { let ic = me.icn3d;
