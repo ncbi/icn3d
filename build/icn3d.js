@@ -12851,7 +12851,7 @@ var icn3d = (function (exports) {
                }
 
                statefile = statefile.replace(/!/g, Object.keys(ic.structures)[0] + '_');
-               if((ic.bInputfile && !ic.bInputUrlfile) || url.length > 4000) url = statefile;
+               if((ic.bInputfile && !ic.bInputUrlfile) || (ic.bInputUrlfile && ic.bAppend) || url.length > 4000) url = statefile;
                let id;
                if(ic.structures !== undefined && Object.keys(ic.structures).length == 1 && ic.inputid !== undefined) {
                    id = Object.keys(ic.structures)[0];
@@ -12871,7 +12871,7 @@ var icn3d = (function (exports) {
 
             let text = "";
             if(ic.bInputfile) {
-                url = this.shareLinkUrl(bAllCommands); // output state file if ic.bInputfile is true or the URL is mor than 4000 chars
+                url = this.shareLinkUrl(bAllCommands); // output state file if ic.bInputfile is true or the URL is more than 4000 chars
 
                 if(url.substr(0,4) == 'http') {
                     text += "\nShare Link: " + url;
@@ -21061,7 +21061,8 @@ var icn3d = (function (exports) {
 
                     let  structure = id;
                     //if(id == 'stru' || bMutation || (bAppend && id == 'stru')) { // bMutation: side chain prediction
-                    if(id == 'stru' || bMutation || (bAppend)) { // bMutation: side chain prediction
+                    //if(id == 'stru' || bMutation || (bAppend)) { // bMutation: side chain prediction
+                    if(id == 'stru' || bMutation || (bAppend && id.length != 4)) { // bMutation: side chain prediction
                         structure = (moleculeNum === 1) ? id : id + moleculeNum.toString();
                     }
 
@@ -29878,11 +29879,44 @@ var icn3d = (function (exports) {
             // live search for AlphaFold structures
             //if(me.cfg.afid) {
 
-            if(!me.cfg.mmtfid && !me.cfg.pdbid && !me.cfg.opmid && !me.cfg.mmdbid && !me.cfg.gi && !me.cfg.uniprotid && !me.cfg.blast_rep_id && !me.cfg.cid && !me.cfg.mmcifid && !me.cfg.align && !me.cfg.chainalign) {
+            // use precalculated CDD annotation if
+            if( (Object.keys(ic.structures).length == 1 && (me.cfg.mmtfid || me.cfg.pdbid || me.cfg.opmid || me.cfg.mmdbid || me.cfg.gi || me.cfg.uniprotid || me.cfg.blast_rep_id || me.cfg.cid || me.cfg.mmcifid))
+                || (Object.keys(ic.structures).length == 2 && me.cfg.align) ) {
+                $.ajax({
+                  url: url,
+                  dataType: 'jsonp',
+                  cache: true,
+                  tryCount : 0,
+                  retryLimit : 1,
+                  success: function(data) {
+                    thisClass.parseCddData([data], chnidArray);
+                    if(ic.deferredAnnoCddSite !== undefined) ic.deferredAnnoCddSite.resolve();
+                  },
+                  error : function(xhr, textStatus, errorThrown ) {
+                    this.tryCount++;
+                    if(this.tryCount <= this.retryLimit) {
+                        //try again
+                        $.ajax(this);
+                        return;
+                    }
+
+                    thisClass.getNoCdd(chnidBaseArray);
+                    if(ic.deferredAnnoCddSite !== undefined) ic.deferredAnnoCddSite.resolve();
+
+                    return;
+                  }
+                });
+            }
+            else {
               let ajaxArray = [];
 
               for(let i = 0, il = chnidArray.length; i < il; ++i) {
-                   let seq = Array.isArray(ic.giSeq[chnidArray[i]]) ? ic.giSeq[chnidArray[i]].join('') : ic.giSeq[chnidArray[i]];
+                   //let seq = Array.isArray(ic.giSeq[chnidArray[i]]) ? ic.giSeq[chnidArray[i]].join('') : ic.giSeq[chnidArray[i]];
+                   let seq = Array.isArray(ic.giSeq[chnidArray[i]]) ? ic.giSeq[chnidArray[i]].join('').toUpperCase() : ic.giSeq[chnidArray[i]].toUpperCase();
+
+                   // remove water molecules
+                   seq = seq.replace(/O/g, '');
+
                    //url = me.htmlCls.baseUrl + "cdannots/cdannots.fcgi?fmt&live=lcl&queries=" + ic.giSeq[chnidArray[0]].join('');
                    url = me.htmlCls.baseUrl + "cdannots/cdannots.fcgi?fmt&live=lcl&queries=" + seq;
 
@@ -29908,32 +29942,6 @@ var icn3d = (function (exports) {
 
                   return;
               });
-            }
-            else {
-                $.ajax({
-                  url: url,
-                  dataType: 'jsonp',
-                  cache: true,
-                  tryCount : 0,
-                  retryLimit : 1,
-                  success: function(data) {
-                    thisClass.parseCddData([data], chnidArray);
-                    if(ic.deferredAnnoCddSite !== undefined) ic.deferredAnnoCddSite.resolve();
-                  },
-                  error : function(xhr, textStatus, errorThrown ) {
-                    this.tryCount++;
-                    if(this.tryCount <= this.retryLimit) {
-                        //try again
-                        $.ajax(this);
-                        return;
-                    }
-
-                    thisClass.getNoCdd(chnidBaseArray);
-                    if(ic.deferredAnnoCddSite !== undefined) ic.deferredAnnoCddSite.resolve();
-
-                    return;
-                  }
-                });
             }
         }
 
@@ -39237,6 +39245,9 @@ var icn3d = (function (exports) {
 
             ic.loadScriptCls.renderFinalStep(1);
             ic.definedSetsCls.setMode('all');
+
+            ic.selectionCls.selectAll();
+
             me.htmlCls.clickMenuCls.setLogCmd("reset", true);
 
             ic.hlUpdateCls.removeSeqChainBkgd();
@@ -39375,20 +39386,18 @@ var icn3d = (function (exports) {
                     ic.dAtoms = me.hashUtilsCls.unionHash(ic.dAtoms, atomsHash);
                     oriStyle = 'nothing';
                 }
+
                 for(let j in atomsHash) {
                     let  atom = ic.atoms[j];
-                    if(oriStyle == 'nothing' || bShowMembrane) {
-                        atom.style = 'stick';
+                    if(oriStyle !== 'nothing') {
+                        atom.style = 'nothing';
                     }
                     else {
-                        atom.style = 'nothing';
+                        atom.style = 'stick';
                     }
 
-                    if(bShowMembrane) {
-                        atom.style = 'stick';
-                    }
-                    else {
-                        atom.style = 'nothing';
+                    if(bShowMembrane !== undefined) {
+                        atom.style = (bShowMembrane) ? 'stick' : 'nothing';
                     }
                 }
             }
@@ -40580,22 +40589,24 @@ var icn3d = (function (exports) {
                 atomsObj = {};
             } // end if(bHighlight === 1)
 
-            if(me.htmlCls.setHtmlCls.getCookie('membrane') != '') {
-                let bMembrane = parseInt(me.htmlCls.setHtmlCls.getCookie('membrane'));
+            if(ic.bInitial) {
+                if(me.htmlCls.setHtmlCls.getCookie('membrane') != '') {
+                    let bMembrane = parseInt(me.htmlCls.setHtmlCls.getCookie('membrane'));
 
-                if(ic.bMembrane != bMembrane) {
-                    me.htmlCls.clickMenuCls.setLogCmd('set membrane ' + bMembrane, true);
+                    if(ic.bMembrane != bMembrane) {
+                        me.htmlCls.clickMenuCls.setLogCmd('set membrane ' + bMembrane, true);
+                    }
+
+                    ic.bMembrane = (!isNaN(bMembrane)) ? parseInt(bMembrane) : 0;
                 }
 
-                ic.bMembrane = bMembrane;
-            }
-
-            // show membrane
-            if(ic.bMembrane) {
-                ic.selectionCls.toggleMembrane(true);
-            }
-            else {
-                ic.selectionCls.toggleMembrane(false);
+                // show membrane
+                if(ic.bMembrane) {
+                    ic.selectionCls.toggleMembrane(true);
+                }
+                else {
+                    ic.selectionCls.toggleMembrane(false);
+                }
             }
 
             ic.setStyleCls.setStyle2Atoms(atoms);
@@ -41202,14 +41213,16 @@ var icn3d = (function (exports) {
                 }
             }
 
-            if(me.htmlCls.setHtmlCls.getCookie('glycan') != '') {
-                let bGlycansCartoon = parseInt(me.htmlCls.setHtmlCls.getCookie('glycan'));
+            if(ic.bInitial) {
+                if(me.htmlCls.setHtmlCls.getCookie('glycan') != '') {
+                    let bGlycansCartoon = parseInt(me.htmlCls.setHtmlCls.getCookie('glycan'));
 
-                if(ic.bGlycansCartoon != bGlycansCartoon) {
-                    me.htmlCls.clickMenuCls.setLogCmd('set glycan ' + bGlycansCartoon, true);
+                    if(ic.bGlycansCartoon != bGlycansCartoon) {
+                        me.htmlCls.clickMenuCls.setLogCmd('set glycan ' + bGlycansCartoon, true);
+                    }
+
+                    ic.bGlycansCartoon = bGlycansCartoon;
                 }
-
-                ic.bGlycansCartoon = bGlycansCartoon;
             }
 
             // add cartoon for glycans
@@ -43522,7 +43535,7 @@ var icn3d = (function (exports) {
             };
         }
 
-        exportCustomAtoms() {var ic = this.icn3d; ic.icn3dui;
+        exportCustomAtoms(bDetails) {var ic = this.icn3d; ic.icn3dui;
            let html = "";
            let nameArray =(ic.defNames2Residues !== undefined) ? Object.keys(ic.defNames2Residues).sort() : [];
            for(let i = 0, il = nameArray.length; i < il; ++i) {
@@ -43531,9 +43544,8 @@ var icn3d = (function (exports) {
              ic.defNames2Descr[name];
              let command = ic.defNames2Command[name];
              command = command.replace(/,/g, ', ');
-             html += name + "\tselect ";
-             html += ic.resid2specCls.residueids2spec(residueArray);
-             html += "\n";
+
+             html += this.exportResidues(name, residueArray, bDetails);
            } // outer for
            nameArray =(ic.defNames2Atoms !== undefined) ? Object.keys(ic.defNames2Atoms).sort() : [];
            for(let i = 0, il = nameArray.length; i < il; ++i) {
@@ -43543,13 +43555,48 @@ var icn3d = (function (exports) {
              let command = ic.defNames2Command[name];
              command = command.replace(/,/g, ', ');
              let residueArray = ic.resid2specCls.atoms2residues(atomArray);
-             if(residueArray.length > 0) {
-                 html += name + "\tselect ";
-                 html += ic.resid2specCls.residueids2spec(residueArray);
-                 html += "\n";
-             }
+
+             html += this.exportResidues(name, residueArray, bDetails);
            } // outer for
            return html;
+        }
+
+        exportResidues(name, residueArray, bDetails) {var ic = this.icn3d, me = ic.icn3dui;
+             let html = '';
+
+             if(residueArray.length > 0) {
+                 if(bDetails) {
+                     let chainidHash = {};
+                     for(let i = 0, il = residueArray.length; i < il; ++i) {
+                         let resid = residueArray[i];
+                         let atom = ic.firstAtomObjCls.getFirstAtomObj(ic.residues[resid]);
+                         let chainid = atom.structure + '_' + atom.chain;
+                         let resnAbbr = me.utilsCls.residueName2Abbr(atom.resn);
+                         let resName = resnAbbr + atom.resi;
+
+                         if(!chainidHash.hasOwnProperty(chainid)) {
+                             chainidHash[chainid] = [];
+                         }
+
+                         chainidHash[chainid].push(resName);
+                     }
+
+                     html += name + ":\n";
+                     for(let chainid in chainidHash) {
+                         html += chainid + ": ";
+                         html += chainidHash[chainid].join(", ");
+                         html += "\n";
+                     }
+                     html += "\n";
+                 }
+                 else {
+                     html += name + "\tselect ";
+                     html += ic.resid2specCls.residueids2spec(residueArray);
+                     html += "\n";
+                 }
+             }
+
+             return html;
         }
 
         //getAtomPDB: function(atomHash, bPqr, bPdb, bNoChem) { let ic = this.icn3d, me = ic.icn3dui;
@@ -44399,6 +44446,21 @@ var icn3d = (function (exports) {
                let file_pref =(ic.inputid) ? ic.inputid : "custom";
                ic.saveFileCls.saveFile(file_pref + '_selections.txt', 'text', [text]);
             });
+
+            me.myEventCls.onIds("#" + me.pre + "mn1_exportSelDetails", "click", function(e) { let ic = me.icn3d;
+               thisClass.setLogCmd("export all selections with details", false);
+              if(ic.bSetChainsAdvancedMenu === undefined || !ic.bSetChainsAdvancedMenu) {
+                   let prevHAtoms = me.hashUtilsCls.cloneHash(ic.hAtoms);
+                   ic.definedSetsCls.setPredefinedInMenu();
+                   ic.bSetChainsAdvancedMenu = true;
+                   ic.hAtoms = me.hashUtilsCls.cloneHash(prevHAtoms);
+              }
+               let bDetails = true;
+               let text = ic.saveFileCls.exportCustomAtoms(bDetails);
+               let file_pref =(ic.inputid) ? ic.inputid : "custom";
+               ic.saveFileCls.saveFile(file_pref + '_sel_details.txt', 'text', [text]);
+            });
+
         //    },
         //    clkMn1_sharelink: function() {
             me.myEventCls.onIds("#" + me.pre + "mn1_sharelink", "click", function(e) { let ic = me.icn3d;
@@ -46570,6 +46632,7 @@ var icn3d = (function (exports) {
 
             html += me.htmlCls.setHtmlCls.getLink('mn1_exportState', 'State File');
             html += me.htmlCls.setHtmlCls.getLink('mn1_exportSelections', 'Selection File');
+            html += me.htmlCls.setHtmlCls.getLink('mn1_exportSelDetails', 'Selection Details');
             html += me.htmlCls.setHtmlCls.getLink('mn1_exportCounts', 'Residue Counts');
 
         /*
@@ -47687,7 +47750,7 @@ var icn3d = (function (exports) {
             html += "<ul>";
             html += "<li><span>Rotate</span>";
             html += "<ul>";
-            html += "<li>Left Mouse</li>";
+            html += "<li>Left Mouse (Click & Drag)</li>";
             html += "<li>Key l: Left</li>";
             html += "<li>Key j: Right</li>";
             html += "<li>Key i: Up</li>";
@@ -47700,14 +47763,14 @@ var icn3d = (function (exports) {
             html += "</li>";
             html += "<li><span>Zoom</span>";
             html += "<ul>";
-            html += "<li>Middle Mouse</li>";
+            html += "<li>Middle Mouse <br>(Pinch & Spread)</li>";
             html += "<li>Key z: Zoom in</li>";
             html += "<li>Key x: Zoom out</li>";
             html += "</ul>";
             html += "</li>";
             html += "<li><span>Translate</span>";
             html += "<ul>";
-            html += "<li>Right Mouse</li>";
+            html += "<li>Right Mouse <br>(Two Finger Click & Drag)</li>";
             html += "</ul>";
             html += "</li>";
             html += "</ul>";
@@ -50013,11 +50076,11 @@ var icn3d = (function (exports) {
                thisClass.loadPdbFile(bAppend);
             });
 
-            me.myEventCls.onIds("#" + me.pre + "reload_pdbfile_app", "click", function(e) { me.icn3d;
+            me.myEventCls.onIds("#" + me.pre + "reload_pdbfile_app", "click", function(e) { let ic = me.icn3d;
                e.preventDefault();
 
-               var bAppend = true;
-               thisClass.loadPdbFile(bAppend);
+               ic.bAppend = true;
+               thisClass.loadPdbFile(ic.bAppend);
             });
 
         //    },
@@ -54076,7 +54139,7 @@ var icn3d = (function (exports) {
                 // the intersections are sorted so that the closest point is the first one.
                 intersects[ 0 ].point.sub(position); // mdl.position was moved to the original (0,0,0) after reading the molecule coordinates. The raycasting was done based on the original. The position of the original should be substracted.
 
-                let  threshold = 0.5;
+                let  threshold = ic.rayThreshold; //0.5;
                 let  atom = this.getAtomsFromPosition(intersects[ 0 ].point, threshold); // the second parameter is the distance threshold. The first matched atom will be returned. Use 1 angstrom, not 2 angstrom. If it's 2 angstrom, other atom will be returned.
 
                 while(!atom && threshold < 10) {
@@ -54725,6 +54788,8 @@ var icn3d = (function (exports) {
 
         this.LABELSIZE = 30;
 
+        this.rayThreshold = 0.5; // threadshold for raycast
+
         //The default display options
         this.optsOri = {};
         this.optsOri['camera']             = 'perspective';        //perspective, orthographic
@@ -55122,7 +55187,7 @@ var icn3d = (function (exports) {
         //even when multiple iCn3D viewers are shown together.
         this.pre = this.cfg.divid + "_";
 
-        this.REVISION = '3.4.12';
+        this.REVISION = '3.4.13';
 
         // In nodejs, iCn3D defines "window = {navigator: {}}"
         this.bNode = (Object.keys(window).length < 2) ? true : false;

@@ -99,7 +99,7 @@ class Ray {
             // the intersections are sorted so that the closest point is the first one.
             intersects[ 0 ].point.sub(position); // mdl.position was moved to the original (0,0,0) after reading the molecule coordinates. The raycasting was done based on the original. The position of the original should be substracted.
 
-            let  threshold = 0.5;
+            let  threshold = ic.rayThreshold; //0.5;
             let  atom = this.getAtomsFromPosition(intersects[ 0 ].point, threshold); // the second parameter is the distance threshold. The first matched atom will be returned. Use 1 angstrom, not 2 angstrom. If it's 2 angstrom, other atom will be returned.
 
             while(!atom && threshold < 10) {

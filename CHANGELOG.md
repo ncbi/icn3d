@@ -1,4 +1,6 @@
 ## Change Log
+[icn3d-3.4.13](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.4.13.zip) was release on December 13, 2021. Added the menu "File > Save Files > Selection Details" to export selected residues in a human readable format.
+
 [icn3d-3.4.12](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.4.12.zip) was release on November 24, 2021. Fixed some bugs including the selection on 1D sequences in mobile devices.
 
 [icn3d-3.4.11](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.4.11.zip) was release on November 19, 2021. Relaxed the angle restriction on hydrogen bonds and pi-stacking.

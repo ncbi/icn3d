@@ -29,11 +29,44 @@ class AnnoCddSite {
         // live search for AlphaFold structures
         //if(me.cfg.afid) {
 
-        if(!me.cfg.mmtfid && !me.cfg.pdbid && !me.cfg.opmid && !me.cfg.mmdbid && !me.cfg.gi && !me.cfg.uniprotid && !me.cfg.blast_rep_id && !me.cfg.cid && !me.cfg.mmcifid && !me.cfg.align && !me.cfg.chainalign) {
+        // use precalculated CDD annotation if
+        if( (Object.keys(ic.structures).length == 1 && (me.cfg.mmtfid || me.cfg.pdbid || me.cfg.opmid || me.cfg.mmdbid || me.cfg.gi || me.cfg.uniprotid || me.cfg.blast_rep_id || me.cfg.cid || me.cfg.mmcifid))
+            || (Object.keys(ic.structures).length == 2 && me.cfg.align) ) {
+            $.ajax({
+              url: url,
+              dataType: 'jsonp',
+              cache: true,
+              tryCount : 0,
+              retryLimit : 1,
+              success: function(data) {
+                thisClass.parseCddData([data], chnidArray);
+                if(ic.deferredAnnoCddSite !== undefined) ic.deferredAnnoCddSite.resolve();
+              },
+              error : function(xhr, textStatus, errorThrown ) {
+                this.tryCount++;
+                if(this.tryCount <= this.retryLimit) {
+                    //try again
+                    $.ajax(this);
+                    return;
+                }
+
+                thisClass.getNoCdd(chnidBaseArray);
+                if(ic.deferredAnnoCddSite !== undefined) ic.deferredAnnoCddSite.resolve();
+
+                return;
+              }
+            });
+        }
+        else {
           let ajaxArray = [];
 
           for(let i = 0, il = chnidArray.length; i < il; ++i) {
-               let seq = Array.isArray(ic.giSeq[chnidArray[i]]) ? ic.giSeq[chnidArray[i]].join('') : ic.giSeq[chnidArray[i]];
+               //let seq = Array.isArray(ic.giSeq[chnidArray[i]]) ? ic.giSeq[chnidArray[i]].join('') : ic.giSeq[chnidArray[i]];
+               let seq = Array.isArray(ic.giSeq[chnidArray[i]]) ? ic.giSeq[chnidArray[i]].join('').toUpperCase() : ic.giSeq[chnidArray[i]].toUpperCase();
+
+               // remove water molecules
+               seq = seq.replace(/O/g, '');
+
                //url = me.htmlCls.baseUrl + "cdannots/cdannots.fcgi?fmt&live=lcl&queries=" + ic.giSeq[chnidArray[0]].join('');
                url = me.htmlCls.baseUrl + "cdannots/cdannots.fcgi?fmt&live=lcl&queries=" + seq;
 
@@ -59,32 +92,6 @@ class AnnoCddSite {
 
               return;
           });
-        }
-        else {
-            $.ajax({
-              url: url,
-              dataType: 'jsonp',
-              cache: true,
-              tryCount : 0,
-              retryLimit : 1,
-              success: function(data) {
-                thisClass.parseCddData([data], chnidArray);
-                if(ic.deferredAnnoCddSite !== undefined) ic.deferredAnnoCddSite.resolve();
-              },
-              error : function(xhr, textStatus, errorThrown ) {
-                this.tryCount++;
-                if(this.tryCount <= this.retryLimit) {
-                    //try again
-                    $.ajax(this);
-                    return;
-                }
-
-                thisClass.getNoCdd(chnidBaseArray);
-                if(ic.deferredAnnoCddSite !== undefined) ic.deferredAnnoCddSite.resolve();
-
-                return;
-              }
-            });
         }
     }
 

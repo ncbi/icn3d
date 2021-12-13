@@ -110,14 +110,16 @@ class ApplyOther {
             }
         }
 
-        if(me.htmlCls.setHtmlCls.getCookie('glycan') != '') {
-            let bGlycansCartoon = parseInt(me.htmlCls.setHtmlCls.getCookie('glycan'));
+        if(ic.bInitial) {
+            if(me.htmlCls.setHtmlCls.getCookie('glycan') != '') {
+                let bGlycansCartoon = parseInt(me.htmlCls.setHtmlCls.getCookie('glycan'));
 
-            if(ic.bGlycansCartoon != bGlycansCartoon) {
-                me.htmlCls.clickMenuCls.setLogCmd('set glycan ' + bGlycansCartoon, true);
+                if(ic.bGlycansCartoon != bGlycansCartoon) {
+                    me.htmlCls.clickMenuCls.setLogCmd('set glycan ' + bGlycansCartoon, true);
+                }
+
+                ic.bGlycansCartoon = bGlycansCartoon;
             }
-
-            ic.bGlycansCartoon = bGlycansCartoon;
         }
 
         // add cartoon for glycans

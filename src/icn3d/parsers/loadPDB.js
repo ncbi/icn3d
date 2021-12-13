@@ -256,7 +256,8 @@ class LoadPDB {
 
                 let  structure = id;
                 //if(id == 'stru' || bMutation || (bAppend && id == 'stru')) { // bMutation: side chain prediction
-                if(id == 'stru' || bMutation || (bAppend)) { // bMutation: side chain prediction
+                //if(id == 'stru' || bMutation || (bAppend)) { // bMutation: side chain prediction
+                if(id == 'stru' || bMutation || (bAppend && id.length != 4)) { // bMutation: side chain prediction
                     structure = (moleculeNum === 1) ? id : id + moleculeNum.toString();
                 }
 

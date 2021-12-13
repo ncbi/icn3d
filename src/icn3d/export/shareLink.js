@@ -281,7 +281,7 @@ class ShareLink {
            }
 
            statefile = statefile.replace(/!/g, Object.keys(ic.structures)[0] + '_');
-           if((ic.bInputfile && !ic.bInputUrlfile) || url.length > 4000) url = statefile;
+           if((ic.bInputfile && !ic.bInputUrlfile) || (ic.bInputUrlfile && ic.bAppend) || url.length > 4000) url = statefile;
            let id;
            if(ic.structures !== undefined && Object.keys(ic.structures).length == 1 && ic.inputid !== undefined) {
                id = Object.keys(ic.structures)[0];
@@ -301,7 +301,7 @@ class ShareLink {
 
         let text = "";
         if(ic.bInputfile) {
-            url = this.shareLinkUrl(bAllCommands); // output state file if ic.bInputfile is true or the URL is mor than 4000 chars
+            url = this.shareLinkUrl(bAllCommands); // output state file if ic.bInputfile is true or the URL is more than 4000 chars
 
             if(url.substr(0,4) == 'http') {
                 text += "\nShare Link: " + url;

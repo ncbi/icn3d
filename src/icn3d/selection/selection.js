@@ -396,6 +396,9 @@ class Selection {
 
         ic.loadScriptCls.renderFinalStep(1);
         ic.definedSetsCls.setMode('all');
+
+        ic.selectionCls.selectAll();
+
         me.htmlCls.clickMenuCls.setLogCmd("reset", true);
 
         ic.hlUpdateCls.removeSeqChainBkgd();
@@ -534,20 +537,18 @@ class Selection {
                 ic.dAtoms = me.hashUtilsCls.unionHash(ic.dAtoms, atomsHash);
                 oriStyle = 'nothing';
             }
+
             for(let j in atomsHash) {
                 let  atom = ic.atoms[j];
-                if(oriStyle == 'nothing' || bShowMembrane) {
-                    atom.style = 'stick';
+                if(oriStyle !== 'nothing') {
+                    atom.style = 'nothing';
                 }
                 else {
-                    atom.style = 'nothing';
+                    atom.style = 'stick';
                 }
 
-                if(bShowMembrane) {
-                    atom.style = 'stick';
-                }
-                else {
-                    atom.style = 'nothing';
+                if(bShowMembrane !== undefined) {
+                    atom.style = (bShowMembrane) ? 'stick' : 'nothing';
                 }
             }
         }

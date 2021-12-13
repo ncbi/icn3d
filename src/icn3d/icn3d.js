@@ -355,6 +355,8 @@ class iCn3D {
 
     this.LABELSIZE = 30;
 
+    this.rayThreshold = 0.5; // threadshold for raycast
+
     //The default display options
     this.optsOri = {}
     this.optsOri['camera']             = 'perspective';        //perspective, orthographic
