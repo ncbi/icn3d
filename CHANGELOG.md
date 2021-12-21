@@ -1,5 +1,5 @@
 ## Change Log
-[icn3d-3.5.0](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.5.0.zip) was release on December 21, 2021. Enabled to use the global Smith Waterman algorithm to align a sequence to a strutcure in the menu "File > Align > Sequence to Structure". Improved the labels by removing the background boxes and adjusting the text color when switching the canvas background color. Simplified the menus when the URL parameter "simplemenu=1" is used.
+[icn3d-3.5.0](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.5.0.zip) was release on December 21, 2021. Enabled to use the global Smith Waterman algorithm to align a sequence to a structure in the menu "File > Align > Sequence to Structure". Improved the labels by removing the background boxes and adjusting the text color when switching the canvas background color. Simplified the menus when the URL parameter "simplemenu=1" is used.
 
 [icn3d-3.4.13](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.4.13.zip) was release on December 13, 2021. Added the menu "File > Save Files > Selection Details" to export selected residues in a human readable format.
 
