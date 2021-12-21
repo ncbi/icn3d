@@ -158,7 +158,7 @@ class Analysis {
 
     //Add a "text" at the position (x, y, z) with the input "size", "color", and "background".
     addLabel(text, x, y, z, size, color, background, type) {var ic = this.icn3d, me = ic.icn3dui;
-        let label = {} // Each label contains 'position', 'text', 'color', 'background'
+        let label = {}; // Each label contains 'position', 'text', 'color', 'background'
 
         if(size === '0' || size === '' || size === 'undefined') size = undefined;
         if(color === '0' || color === '' || color === 'undefined') color = undefined;
@@ -194,7 +194,7 @@ class Analysis {
     //Display chain name in the 3D structure display for the chains intersecting with the atoms in "atomHash".
     addChainLabels(atoms) {var ic = this.icn3d, me = ic.icn3dui;
         let size = 18;
-        let background = "#CCCCCC";
+        let background = "#FFFFFF"; //"#CCCCCC";
         let atomsHash = me.hashUtilsCls.intHash(ic.hAtoms, atoms);
         if(ic.labels['chain'] === undefined) ic.labels['chain'] = [];
         let chainHash = ic.firstAtomObjCls.getChainsFromAtoms(atomsHash);
@@ -208,7 +208,7 @@ class Analysis {
             label.text = 'Chain ' + chainName + ': ' + proteinName;
             label.size = size;
             let atomColorStr = ic.firstAtomObjCls.getFirstCalphaAtomObj(ic.chains[chainid]).color.getHexString().toUpperCase();
-            label.color =(atomColorStr === "CCCCCC" || atomColorStr === "C8C8C8") ? "#888888" : "#" + atomColorStr;
+            label.color = (ic.opts.background == 'white' || ic.opts.background == 'gray') ? ic.colorWhitebkgd : ic.colorBlackbkgd; //(atomColorStr === "CCCCCC" || atomColorStr === "C8C8C8") ? "#888888" : "#" + atomColorStr;
             label.background = background;
             ic.labels['chain'].push(label);
         }
@@ -218,7 +218,7 @@ class Analysis {
     //as "N-" and "C-". The termini of nucleotides are labeled as "5'" and "3'".
     addTerminiLabels(atoms) {var ic = this.icn3d, me = ic.icn3dui;
         let size = 18;
-        let background = "#CCCCCC";
+        let background = "#FFFFFF"; //"#CCCCCC";
         let protNucl;
         protNucl = me.hashUtilsCls.unionHash(protNucl, ic.proteins);
         protNucl = me.hashUtilsCls.unionHash(protNucl, ic.nucleotides);
@@ -244,8 +244,8 @@ class Analysis {
             labelC.size = size;
             let atomNColorStr = firstAtom.color.getHexString().toUpperCase();
             let atomCColorStr = lastAtom.color.getHexString().toUpperCase();
-            labelN.color =(atomNColorStr === "CCCCCC" || atomNColorStr === "C8C8C8") ? "#888888" : "#" + atomNColorStr;
-            labelC.color =(atomCColorStr === "CCCCCC" || atomCColorStr === "C8C8C8") ? "#888888" : "#" + atomCColorStr;
+            labelN.color = (ic.opts.background == 'white' || ic.opts.background == 'gray') ? ic.colorWhitebkgd : (atomNColorStr === "CCCCCC" || atomNColorStr === "C8C8C8") ? "#888888" : "#" + atomNColorStr;
+            labelC.color = (ic.opts.background == 'white' || ic.opts.background == 'gray') ? ic.colorWhitebkgd : (atomCColorStr === "CCCCCC" || atomCColorStr === "C8C8C8") ? "#888888" : "#" + atomCColorStr;
             labelN.background = background;
             labelC.background = background;
             ic.labels['chain'].push(labelN);

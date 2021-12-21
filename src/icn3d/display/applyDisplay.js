@@ -322,8 +322,27 @@ class ApplyDisplay {
         if(ic.labels !== undefined && Object.keys(ic.labels).length > 0) {
             ic.labelCls.hideLabels();
 
+            // change label color
+            for(let labeltype in ic.labels) {
+                if(labeltype != 'schematic') this.changeLabelColor(ic.labels[labeltype]);
+            }
+
             // labels
             ic.labelCls.createLabelRepresentation(ic.labels);
+        }
+    }
+
+    changeLabelColor(labelArray) { let ic = this.icn3d, me = ic.icn3dui;
+        if(labelArray) {
+            for(let i = 0, il = labelArray.length; i < il; ++i) {
+                let label = labelArray[i];
+                if((ic.opts.background == 'white' || ic.opts.background == 'grey') && label.color == ic.colorBlackbkgd) {
+                    label.color = ic.colorWhitebkgd;
+                }
+                else if((ic.opts.background == 'black' || ic.opts.background == 'transparent') && label.color == ic.colorWhitebkgd) {
+                    label.color = ic.colorBlackbkgd;
+                }
+            }
         }
     }
 

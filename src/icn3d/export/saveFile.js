@@ -282,7 +282,8 @@ class SaveFile {
 
                  html += name + ":\n";
                  for(let chainid in chainidHash) {
-                     html += chainid + ": ";
+                     let resStr = (chainidHash[chainid].length == 1) ? "residue" : "residues";
+                     html += chainid + " (" + chainidHash[chainid].length + " " + resStr + "): ";
                      html += chainidHash[chainid].join(", ");
                      html += "\n";
                  }
@@ -389,8 +390,9 @@ class SaveFile {
             }
         }
 
+ /*
         // get missing residues
-        let chainid2missingResi = {};
+        let ic.chainMissingResidueArray = {};
         for(let chainid in ic.chainsSeq) {
             let pos = chainid.indexOf('_');
             let chain = chainid.substr(0, pos);
@@ -399,25 +401,40 @@ class SaveFile {
                 let resi = ic.chainsSeq[chainid][i].resi;
                 let resid = chainid + '_' + resi;
                 if(!ic.firstAtomObjCls.getFirstAtomObj(ic.residues[resid])) { // mising coordinate
-                    if(chainid2missingResi[chainid] === undefined) chainid2missingResi[chainid] = [];
+                    if(ic.chainMissingResidueArray[chainid] === undefined) ic.chainMissingResidueArray[chainid] = [];
                     let seq = me.utilsCls.residueAbbr2Name(ic.chainsSeq[chainid][i].name);
                     let resiObj = {'resi': resi, 'seq': seq};
-                    chainid2missingResi[chainid].push(resiObj);
+                    ic.chainMissingResidueArray[chainid].push(resiObj);
                 }
             }
         }
 
         // add missing residues "REMARK 465..."
-        for(let chainid in chainid2missingResi) {
+        for(let chainid in ic.chainMissingResidueArray) {
             let pos = chainid.indexOf('_');
             let chain = chainid.substr(pos + 1, 2);
             let stru = chainid.substr(0, pos);
 
-            for(let i = 0, il = chainid2missingResi[chainid].length; i < il; ++i) {
-                let resi = chainid2missingResi[chainid][i].resi;
-                let seq = chainid2missingResi[chainid][i].seq;
+            for(let i = 0, il = ic.chainMissingResidueArray[chainid].length; i < il; ++i) {
+                let resi = ic.chainMissingResidueArray[chainid][i].resi;
+                let seq = ic.chainMissingResidueArray[chainid][i].seq;
 
                 stru2header[stru] += "REMARK 465     " + seq.padStart(3, " ") + chain.padStart(2, " ") + " " + resi.toString().padStart(5, " ") + "\n";
+            }
+        }
+*/
+
+        // add missing residues "REMARK 465..."
+        for(let chainid in ic.chainMissingResidueArray) {
+            let pos = chainid.indexOf('_');
+            let chain = chainid.substr(pos + 1, 2);
+            let stru = chainid.substr(0, pos);
+
+            for(let i = 0, il = ic.chainMissingResidueArray[chainid].length; i < il; ++i) {
+                let resi = ic.chainMissingResidueArray[chainid][i].resi;
+                let resn = me.utilsCls.residueAbbr2Name(ic.chainMissingResidueArray[chainid][i].name);
+
+                stru2header[stru] += "REMARK 465     " + resn.padStart(3, " ") + chain.padStart(2, " ") + " " + resi.toString().padStart(5, " ") + "\n";
             }
         }
 

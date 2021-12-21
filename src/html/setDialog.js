@@ -25,6 +25,8 @@ class SetDialog {
 
         let html = "";
 
+        let defaultColor = "#ffff00"; //ic.colorBlackbkgd; 
+ 
         me.htmlCls.optionStr = "<option value=";
 
         html += "<!-- dialog will not be part of the form -->";
@@ -234,11 +236,13 @@ class SetDialog {
         html += "</div>";
 
         html += me.htmlCls.divStr + "dl_blast_rep_id' style='max-width:500px;' class='" + dialogClass + "'>";
-        html += "Enter a Sequence ID(or FASTA sequence) and the aligned Structure ID, which can be found using the <a href='https://blast.ncbi.nlm.nih.gov/Blast.cgi?PROGRAM=blastp&PAGE_TYPE=BlastSearch&DATABASE=pdb' target='_blank'>BLAST</a> search against the pdb database with the Sequence ID or FASTA sequence as input.<br><br> ";
+        html += "Enter a Sequence ID (or FASTA sequence) and the aligned Structure ID, which can be found using the <a href='https://blast.ncbi.nlm.nih.gov/Blast.cgi?PROGRAM=blastp&PAGE_TYPE=BlastSearch&DATABASE=pdb' target='_blank'>BLAST</a> search against the pdb database with the Sequence ID or FASTA sequence as input.<br><br> ";
         html += "<b>Sequence ID</b>(NCBI protein accession of a sequence): " + me.htmlCls.inputTextStr + "id='" + me.pre + "query_id' value='NP_001108451.1' size=8><br> ";
         html += "or FASTA sequence: <br><textarea id='" + me.pre + "query_fasta' rows='5' style='width: 100%; height: " +(me.htmlCls.LOG_HEIGHT) + "px; padding: 0px; border: 0px;'></textarea><br><br>";
         html += "<b>Structure ID</b>(NCBI protein accession of a chain of a 3D structure): " + me.htmlCls.inputTextStr + "id='" + me.pre + "blast_rep_id' value='1TSR_A' size=8><br> ";
-        html += me.htmlCls.buttonStr + "reload_blast_rep_id'>Load</button>";
+        //html += me.htmlCls.buttonStr + "reload_blast_rep_id'>Load</button>";
+        html += me.htmlCls.buttonStr + "reload_blast_rep_id'>Align with BLAST</button> " + me.htmlCls.wifiStr
+            + me.htmlCls.buttonStr + "reload_alignsw' style='margin-left:30px'>Align with Smith-Waterman</button>";
         html += "</div>";
 
         html += me.htmlCls.divStr + "dl_yournote' class='" + dialogClass + "'>";
@@ -619,8 +623,8 @@ class SetDialog {
         html += me.htmlCls.divStr + "dl_addlabel' class='" + dialogClass + "'>";
         html += "1. Text: " + me.htmlCls.inputTextStr + "id='" + me.pre + "labeltext' value='Text' size=4><br/>";
         html += "2. Size: " + me.htmlCls.inputTextStr + "id='" + me.pre + "labelsize' value='18' size=4 maxlength=2><br/>";
-        html += "3. Color: " + me.htmlCls.inputTextStr + "id='" + me.pre + "labelcolor' value='ffff00' size=4><br/>";
-        html += "4. Background: " + me.htmlCls.inputTextStr + "id='" + me.pre + "labelbkgd' value='cccccc' size=4><br/>";
+        html += "3. Color: " + me.htmlCls.inputTextStr + "id='" + me.pre + "labelcolor' value='" + defaultColor + "' size=4><br/>";
+        html += "4. Background: " + me.htmlCls.inputTextStr + "id='" + me.pre + "labelbkgd' value='' size=4><br/>";
         if(me.utilsCls.isMobile()) {
             html += me.htmlCls.spanNowrapStr + "5. Touch TWO atoms</span><br/>";
         }
@@ -633,8 +637,8 @@ class SetDialog {
         html += me.htmlCls.divStr + "dl_addlabelselection' class='" + dialogClass + "'>";
         html += "1. Text: " + me.htmlCls.inputTextStr + "id='" + me.pre + "labeltext2' value='Text' size=4><br/>";
         html += "2. Size: " + me.htmlCls.inputTextStr + "id='" + me.pre + "labelsize2' value='18' size=4 maxlength=2><br/>";
-        html += "3. Color: " + me.htmlCls.inputTextStr + "id='" + me.pre + "labelcolor2' value='ffff00' size=4><br/>";
-        html += "4. Background: " + me.htmlCls.inputTextStr + "id='" + me.pre + "labelbkgd2' value='cccccc' size=4><br/>";
+        html += "3. Color: " + me.htmlCls.inputTextStr + "id='" + me.pre + "labelcolor2' value='" + defaultColor + "' size=4><br/>";
+        html += "4. Background: " + me.htmlCls.inputTextStr + "id='" + me.pre + "labelbkgd2' value='' size=4><br/>";
         html += me.htmlCls.spanNowrapStr + "5. " + me.htmlCls.buttonStr + "applyselection_labels'>Display</button></span>";
         html += "</div>";
 
@@ -645,7 +649,7 @@ class SetDialog {
         else {
             html += me.htmlCls.spanNowrapStr + "1. Pick TWO atoms while holding \"Alt\" key</span><br/>";
         }
-        html += me.htmlCls.spanNowrapStr + "2. Color: " + me.htmlCls.inputTextStr + "id='" + me.pre + "distancecolor' value='ffff00' size=4><br/>";
+        html += me.htmlCls.spanNowrapStr + "2. Line Color: " + me.htmlCls.inputTextStr + "id='" + me.pre + "distancecolor' value='" + defaultColor + "' size=4><br/>";
         html += me.htmlCls.spanNowrapStr + "3. " + me.htmlCls.buttonStr + "applypick_measuredistance'>Display</button></span>";
         html += "</div>";
 
@@ -676,7 +680,7 @@ class SetDialog {
 
         html += "</td></tr></table>";
 
-        html += me.htmlCls.spanNowrapStr + "2. Color: " + me.htmlCls.inputTextStr + "id='" + me.pre + "distancecolor2' value='ffff00' size=4><br/><br/>";
+        html += me.htmlCls.spanNowrapStr + "2. Color: " + me.htmlCls.inputTextStr + "id='" + me.pre + "distancecolor2' value='" + defaultColor + "' size=4><br/><br/>";
         html += me.htmlCls.spanNowrapStr + "3. " + me.htmlCls.buttonStr + "applydist2'>Display</button></span>";
         html += "</div>";
 

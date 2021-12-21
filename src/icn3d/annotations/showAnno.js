@@ -133,7 +133,7 @@ class ShowAnno {
                    }
                }
             }
-            else if(me.cfg.blast_rep_id !== undefined) { // align sequence to structure
+            else if(me.cfg.blast_rep_id !== undefined && !ic.bSmithwm) { // align sequence to structure
                let url = me.htmlCls.baseUrl + 'pwaln/pwaln.fcgi?from=querytarget';
                let dataObj = {'targets': me.cfg.blast_rep_id, 'queries': me.cfg.query_id}
                if(me.cfg.query_from_to !== undefined ) {
@@ -175,6 +175,63 @@ class ShowAnno {
                   }
                 });
             } // align seq to structure
+            else if(me.cfg.blast_rep_id !== undefined && ic.bSmithwm) { // align sequence to structure
+                //{'targets': me.cfg.blast_rep_id, 'queries': me.cfg.query_id}
+                let idArray = [me.cfg.blast_rep_id];
+
+                let target, query;
+                if(me.cfg.query_id.indexOf('>') != -1) { //FASTA with header
+                    query = me.cfg.query_id.substr(me.cfg.query_id.indexOf('\n') + 1);
+                }
+                else if(!(/\d/.test(me.cfg.query_id)) || me.cfg.query_id.length > 50) { //FASTA
+                    query = me.cfg.query_id;
+                }
+                else { // accession
+                    idArray.push(me.cfg.query_id);
+                }
+
+                // show the sequence and 3D structure
+                //var url = "https://eme.utilsCls.ncbi.nlm.nih.gov/entrez/eUtilsCls/efetch.fcgi?db=protein&retmode=json&rettype=fasta&id=" + chnidBaseArray;
+                let url = me.htmlCls.baseUrl + "/vastdyn/vastdyn.cgi?chainlist=" + idArray;
+
+                $.ajax({
+                    url: url,
+                    dataType: 'jsonp', //'text',
+                    cache: true,
+                    tryCount : 0,
+                    retryLimit : 1,
+                    success: function(chainid_seq) {
+                        let index = 0;
+                        for(let acc in chainid_seq) {
+                            if(index == 0) {
+                                target = chainid_seq[acc];
+                            }
+                            else if(!query) {
+                                query = chainid_seq[acc];
+                            }
+
+                            ++index;
+                        }
+
+                        let match_score = 1, mismatch = -1, gap = -1, extension = -1;
+                        ic.seqStructAlignDataSmithwm = ic.alignSWCls.alignSW(target, query, match_score, mismatch, gap, extension);
+
+                        thisClass.showAnnoSeqData(nucleotide_chainid, chemical_chainid, chemical_set);
+                    },
+                    error : function(xhr, textStatus, errorThrown ) {
+                        this.tryCount++;
+                        if(this.tryCount <= this.retryLimit) {
+                            //try again
+                            $.ajax(this);
+                            return;
+                        }
+
+                        alert("Can not retrieve the sequence of the accession(s) " + idArray.join(", "));
+
+                        return;
+                    }
+                });
+             } // align seq to structure
         }
         ic.bAnnoShown = true;
     }
@@ -402,7 +459,7 @@ class ShowAnno {
             if(me.cfg.blast_rep_id != chnid) {
                 ic.showSeqCls.showSeq(chnid, chnidBase);
             }
-            else if(me.cfg.blast_rep_id == chnid && ic.seqStructAlignData.data === undefined) {
+            else if(me.cfg.blast_rep_id == chnid && ic.seqStructAlignData === undefined && ic.seqStructAlignDataSmithwm === undefined) {
               let title;
               if(me.cfg.query_id.length > 14) {
                   title = 'Query: ' + me.cfg.query_id.substr(0, 6) + '...';
@@ -418,7 +475,7 @@ class ShowAnno {
               alert('The sequence can NOT be aligned to the structure');
               ic.showSeqCls.showSeq(chnid, chnidBase, undefined, title, compTitle, text, compText);
             }
-            else if(me.cfg.blast_rep_id == chnid && ic.seqStructAlignData.data !== undefined) { // align sequence to structure
+            else if(me.cfg.blast_rep_id == chnid && (ic.seqStructAlignData !== undefined || ic.seqStructAlignDataSmithwm !== undefined) ) { // align sequence to structure
               //var title = 'Query: ' + me.cfg.query_id.substr(0, 6);
               let title;
               if(me.cfg.query_id.length > 14) {
@@ -427,28 +484,73 @@ class ShowAnno {
               else {
                   title =(isNaN(me.cfg.query_id)) ? 'Query: ' + me.cfg.query_id : 'Query: gi ' + me.cfg.query_id;
               }
-              let data = ic.seqStructAlignData;
 
-              let query, target;
-              if(data.data !== undefined) {
-                  query = data.data[0].query;
-                  //target = data.data[0].targets[chnid.replace(/_/g, '')];
-                  target = data.data[0].targets[chnid];
-                  target =(target !== undefined && target.hsps.length > 0) ? target.hsps[0] : undefined;
+              
+              let evalue, targetSeq, querySeq, segArray;
+
+              if(ic.seqStructAlignData !== undefined) {
+                let query, target;
+                let data = ic.seqStructAlignData;
+                if(data.data !== undefined) {
+                    query = data.data[0].query;
+                    //target = data.data[0].targets[chnid.replace(/_/g, '')];
+                    target = data.data[0].targets[chnid];
+                    target =(target !== undefined && target.hsps.length > 0) ? target.hsps[0] : undefined;
+                }
+
+                if(query !== undefined && target !== undefined) {
+                    evalue = target.scores.e_value.toPrecision(2);
+                    if(evalue > 1e-200) evalue = parseFloat(evalue).toExponential();
+                    let bitscore = target.scores.bit_score;
+                    //var targetSeq = data.targets[chnid.replace(/_/g, '')].seqdata;
+                    targetSeq = data.targets[chnid].seqdata;
+                    querySeq = query.seqdata;
+                    segArray = target.segs;
+                }               
               }
+              else { // mimic the output of the cgi pwaln.fcgi
+                let data = ic.seqStructAlignDataSmithwm;
+                evalue = data.score;
+                targetSeq = data.target.replace(/-/g, '');
+                querySeq = data.query.replace(/-/g, '');
+                segArray = [];
+                // target, 0-based: orifrom, orito
+                // query, 0-based: from, to
+
+                let targetCnt = -1, queryCnt = -1;
+                let bAlign = false, seg = {};
+                for(let i = 0, il = data.target.length; i < il; ++i) {
+                    if(data.target[i] != '-')  ++targetCnt;
+                    if(data.query[i] != '-')  ++queryCnt;
+                    if(!bAlign && data.target[i] != '-' && data.query[i] != '-') {
+                        bAlign = true;
+                        seg.orifrom = targetCnt;
+                        seg.from = queryCnt;
+                    }
+                    else if(bAlign && (data.target[i] == '-' || data.query[i] == '-') ) {
+                        bAlign = false;
+                        seg.orito = (data.target[i] == '-') ? targetCnt : targetCnt - 1;
+                        seg.to = (data.query[i] == '-') ? queryCnt : queryCnt - 1;
+                        segArray.push(seg);
+                        seg = {};
+                    }
+                }
+
+                // end condition
+                if(data.target[data.target.length - 1] != '-' && data.query[data.target.length - 1] != '-') {
+                    seg.orito = targetCnt;
+                    seg.to = queryCnt;
+
+                    segArray.push(seg);
+                }
+              }
+
               let text = '', compText = '';
               ic.queryStart = '';
               ic.queryEnd = '';
-              let evalue;
-              if(query !== undefined && target !== undefined) {
-                  evalue = target.scores.e_value.toPrecision(2);
-                  if(evalue > 1e-200) evalue = parseFloat(evalue).toExponential();
-                  let bitscore = target.scores.bit_score;
-                  //var targetSeq = data.targets[chnid.replace(/_/g, '')].seqdata;
-                  let targetSeq = data.targets[chnid].seqdata;
-                  let querySeq = query.seqdata;
-                  let segArray = target.segs;
-                  let target2queryHash = {}
+              
+              if(segArray !== undefined) {
+                  let target2queryHash = {};
                   if(ic.targetGapHash === undefined) ic.targetGapHash = {}
                   ic.fullpos2ConsTargetpos = {}
                   ic.consrvResPosArray = [];
@@ -475,6 +577,7 @@ class ShowAnno {
                       prevTargetTo = seg.orito;
                       prevQueryTo = seg.to;
                   }
+
                   // the missing residues at the end of the seq will be filled up in the API showNewTrack()
                   let nGap = 0;
                   ic.alnChainsSeq[chnid] = [];
@@ -515,13 +618,14 @@ class ShowAnno {
                           compText += ' ';
                       }
                   }
+
                   //title += ', E: ' + evalue;
               }
               else {
                   text += "cannot be aligned";
                   alert('The sequence can NOT be aligned to the structure');
               }
-              let compTitle = 'BLAST, E: ' + evalue;
+              let compTitle = (ic.seqStructAlignData !== undefined) ? 'BLAST, E: ' + evalue : 'Score: ' + evalue;
               ic.showSeqCls.showSeq(chnid, chnidBase, undefined, title, compTitle, text, compText);
               let residueidHash = {}
               let residueid;

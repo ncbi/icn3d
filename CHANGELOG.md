@@ -1,4 +1,6 @@
 ## Change Log
+[icn3d-3.5.0](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.5.0.zip) was release on December 21, 2021. Enabled to use the global Smith Waterman algorithm to align a sequence to a strutcure in the menu "File > Align > Sequence to Structure". Improved the labels by removing the background boxes and adjusting the text color when switching the canvas background color. Simplified the menus when the URL parameter "simplemenu=1" is used.
+
 [icn3d-3.4.13](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.4.13.zip) was release on December 13, 2021. Added the menu "File > Save Files > Selection Details" to export selected residues in a human readable format.
 
 [icn3d-3.4.12](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.4.12.zip) was release on November 24, 2021. Fixed some bugs including the selection on 1D sequences in mobile devices.
@@ -37,7 +39,7 @@
 
 [icn3d-3.3.0](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.3.0.zip) was release on June 30, 2021. Added the feature to show contact map for any selected residues in the menu "Analysis > Contact Map".
 
-[icn3d-3.2.3](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.2.3.zip) was release on June 25, 2021. Enabled to set the URL parameter "menumode" to "1" to show icons for those menus requiring internet access or license.
+[icn3d-3.2.3](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.2.3.zip) was release on June 25, 2021. Enabled to set the URL parameter "menuicon" to 1 to show icons for those menus requiring internet access or license.
 
 [icn3d-3.2.2](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.2.2.zip) was release on June 20, 2021. Skipped the secondary structure calculation when the input is a PDB file of nucleotides.
 

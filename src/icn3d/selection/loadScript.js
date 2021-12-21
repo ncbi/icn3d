@@ -719,8 +719,13 @@ class LoadScript {
           me.cfg.gi = id;
           ic.mmdbParserCls.downloadGi(id);
         }
-        else if(command.indexOf('load seq_struct_ids') !== -1) {
+        else if(command.indexOf('load seq_struct_ids ') !== -1) {
+          ic.bSmithwm = false;
           ic.mmdbParserCls.downloadBlast_rep_id(id);
+        }
+        else if(command.indexOf('load seq_struct_ids_smithwm ') !== -1) {
+            ic.bSmithwm = true;
+            ic.mmdbParserCls.downloadBlast_rep_id(id);
         }
         else if(command.indexOf('load cid') !== -1) {
           me.cfg.cid = id;

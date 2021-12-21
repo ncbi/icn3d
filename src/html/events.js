@@ -603,11 +603,26 @@ class Events {
            me.htmlCls.clickMenuCls.setLogCmd("load seq_struct_ids " + query_id + "," + blast_rep_id, false);
            query_id =(query_id !== '' && query_id !== undefined) ? query_id : query_fasta;
            //window.open(me.htmlCls.baseUrl + 'icn3d/full.html?from=icn3d&blast_rep_id=' + blast_rep_id
-           window.open(hostUrl + '?from=icn3d&blast_rep_id=' + blast_rep_id
+           window.open(hostUrl + '?from=icn3d&alg=blast&blast_rep_id=' + blast_rep_id
              + '&query_id=' + query_id
              + '&command=view annotations; set annotation cdd; set annotation site; set view detailed view; select chain '
              + blast_rep_id + '; show selection', '_blank');
         });
+
+        me.myEventCls.onIds("#" + me.pre + "reload_alignsw", "click", function(e) { let ic = me.icn3d;
+            e.preventDefault();
+            if(!me.cfg.notebook) dialog.dialog( "close" );
+            let query_id = $("#" + me.pre + "query_id").val();
+            let query_fasta = encodeURIComponent($("#" + me.pre + "query_fasta").val());
+            let blast_rep_id = $("#" + me.pre + "blast_rep_id").val();
+            me.htmlCls.clickMenuCls.setLogCmd("load seq_struct_ids_smithwm " + query_id + "," + blast_rep_id, false);
+            query_id =(query_id !== '' && query_id !== undefined) ? query_id : query_fasta;
+            
+            window.open(hostUrl + '?from=icn3d&alg=smithwm&blast_rep_id=' + blast_rep_id
+              + '&query_id=' + query_id
+              + '&command=view annotations; set annotation cdd; set annotation site; set view detailed view; select chain '
+              + blast_rep_id + '; show selection', '_blank');
+         });
 
     //    },
     //    clickReload_gi: function() {

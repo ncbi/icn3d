@@ -18,7 +18,7 @@ class ResidueLabels {
         if(me.bNode) return;
 
         let size = 18;
-        let background = "#CCCCCC";
+        let background = "#FFFFFF"; //"#CCCCCC";
         if(alpha === undefined) alpha = 1.0;
 
         let atomsHash = me.hashUtilsCls.intHash(ic.hAtoms, atoms);
@@ -59,7 +59,8 @@ class ResidueLabels {
                 label.factor = 0.3;
 
                 let atomColorStr = atom.color.getHexString().toUpperCase();
-                label.color = (atomColorStr === "CCCCCC" || atomColorStr === "C8C8C8") ? "#888888" : "#" + atomColorStr;
+                label.color = (ic.opts.background == 'white' || ic.opts.background == 'gray') ? ic.colorWhitebkgd : ic.colorBlackbkgd; //(atomColorStr === "CCCCCC" || atomColorStr === "C8C8C8") ? "#888888" : "#" + atomColorStr;
+                if(bSchematic) label.color = (atomColorStr === "CCCCCC" || atomColorStr === "C8C8C8") ? "#888888" : "#" + atomColorStr;
                 label.background = background;
                 //label.alpha = alpha; // ic.labelCls.hideLabels() didn't work. Remove this line for now
 
@@ -103,7 +104,7 @@ class ResidueLabels {
             label.text = atom.elem;
             label.size = size;
 
-            label.color = "#" + atom.color.getHexString();
+            label.color = (ic.opts.background == 'white' || ic.opts.background == 'gray') ? ic.colorWhitebkgd : atom.color.getHexString();
             label.background = background;
 
             ic.labels['schematic'].push(label);
@@ -141,7 +142,8 @@ class ResidueLabels {
             }
 
             let atomColorStr = atom.color.getHexString().toUpperCase();
-            label.color = (atomColorStr === "CCCCCC" || atomColorStr === "C8C8C8") ? "#888888" : "#" + atomColorStr;
+            label.color = (ic.opts.background == 'white' || ic.opts.background == 'gray') ? ic.colorWhitebkgd : ic.colorBlackbkgd; //(atomColorStr === "CCCCCC" || atomColorStr === "C8C8C8") ? "#888888" : "#" + atomColorStr; 
+            if(bElement) label.color = (atomColorStr === "CCCCCC" || atomColorStr === "C8C8C8") ? "#888888" : "#" + atomColorStr;
             label.background = background;
 
             ic.labels['residue'].push(label);

@@ -63,7 +63,7 @@ class AnnoSnpClinVar {
           ic.labels['clinvar'] = [];
           //var size = Math.round(ic.LABELSIZE * 10 / label.length);
           let size = ic.LABELSIZE;
-          let color = "#FFFF00";
+          let color = (ic.opts.background == 'white' || ic.opts.background == 'gray') ? ic.colorWhitebkgd : ic.colorBlackbkgd; //"#FFFF00";
           ic.analysisCls.addLabel(label, position.center.x + 1, position.center.y + 1, position.center.z + 1, size, color, undefined, 'clinvar');
           ic.hAtoms = {}
           for(let j in ic.residues[residueid]) {

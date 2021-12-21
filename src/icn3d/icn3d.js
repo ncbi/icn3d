@@ -111,6 +111,7 @@ import {Delphi} from './analysis/delphi.js';
 import {Dssp} from './analysis/dssp.js';
 import {Scap} from './analysis/scap.js';
 import {Symd} from './analysis/symd.js';
+import {AlignSW} from './analysis/alignSW.js';
 
 import {Analysis} from './analysis/analysis.js';
 import {Diagram2d} from './analysis/diagram2d.js';
@@ -235,6 +236,8 @@ class iCn3D {
     this.bImpo = true;
     this.bInstanced = true;
 
+    this.chainMissingResidueArray = {}
+
     if(!this.icn3dui.bNode) {
         this.bExtFragDepth = this.renderer.extensions.get( "EXT_frag_depth" );
         if(!this.bExtFragDepth) {
@@ -356,6 +359,8 @@ class iCn3D {
     this.LABELSIZE = 30;
 
     this.rayThreshold = 0.5; // threadshold for raycast
+    this.colorBlackbkgd = '#ffff00';
+    this.colorWhitebkgd = '#000000';
 
     //The default display options
     this.optsOri = {}
@@ -552,6 +557,7 @@ class iCn3D {
     this.dsspCls = new Dssp(this);
     this.scapCls = new Scap(this);
     this.symdCls = new Symd(this);
+    this.alignSWCls = new AlignSW(this);
 
     this.analysisCls = new Analysis(this);
     this.resizeCanvasCls = new ResizeCanvas(this);
@@ -689,6 +695,9 @@ iCn3D.prototype.init_base = function (bKeepCmd) {
     this.bMembrane = 1;
 
     this.chainid2offset = {};
+
+    this.chainMissingResidueArray = {};
+    this.nTotalGap = 0;
 };
 
 //Reset parameters for displaying the loaded structure.
