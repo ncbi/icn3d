@@ -35,7 +35,9 @@ class ShowSeq {
             }
         }
         giSeq = giSeqTmp;
-        let divLength = me.htmlCls.RESIDUE_WIDTH * ic.giSeq[chnid].length + 200;
+        //let divLength = me.htmlCls.RESIDUE_WIDTH * ic.giSeq[chnid].length + 200;
+        let divLength = me.htmlCls.RESIDUE_WIDTH * (ic.giSeq[chnid].length + ic.nTotalGap) + 200;
+
         let seqLength = ic.giSeq[chnid].length
         if(seqLength > ic.maxAnnoLength) {
             ic.maxAnnoLength = seqLength;
@@ -188,7 +190,7 @@ class ShowSeq {
         html += '</div>'; // corresponds to above: html += '<div class="icn3d-dl_sequence">';
         html3 += '</div></div>';
         if(me.cfg.blast_rep_id === chnid) {
-            htmlTmp = '<div id="' + ic.pre + 'giseq_sequence" class="icn3d-dl_sequence" style="border: solid 1px #000;">';
+            htmlTmp = '<div id="' + ic.pre + 'giseq_sequence" class="icn3d-dl_sequence" style="border: solid 1px #000">';
         }
         else {
             htmlTmp = '<div id="' + ic.pre + 'giseq_sequence" class="icn3d-dl_sequence">';

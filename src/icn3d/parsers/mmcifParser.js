@@ -104,13 +104,16 @@ class MmcifParser {
        let  thisClass = this;
 
        let  url, dataType;
-
+/*
        if(me.utilsCls.isMac()) { // safari has a problem in getting data from https://files.rcsb.org/header/
            url = "https://files.rcsb.org/view/" + mmcifid + ".cif";
        }
        else {
            url = "https://files.rcsb.org/header/" + mmcifid + ".cif";
        }
+*/
+
+       url = "https://files.rcsb.org/header/" + mmcifid + ".cif";
 
        dataType = "text";
 
@@ -238,7 +241,7 @@ class MmcifParser {
                 if(type === 'mmtfid' && missingseq !== undefined) {
                     // adjust missing residues
                     let  maxMissingResi = 0, prevMissingChain = '';
-                    let  chainMissingResidueArray = {}
+                    //let  chainMissingResidueArray = {}
                     for(let i = 0, il = missingseq.length; i < il; ++i) {
 
                         let  resn = missingseq[i].resn;
@@ -247,7 +250,7 @@ class MmcifParser {
 
                         let  chainNum = mmcifid + '_' + chain;
 
-                        if(chainMissingResidueArray[chainNum] === undefined) chainMissingResidueArray[chainNum] = [];
+                        if(ic.chainMissingResidueArray[chainNum] === undefined) ic.chainMissingResidueArray[chainNum] = [];
                         let  resObject = {}
                         resObject.resi = resi;
                         resObject.name = me.utilsCls.residueName2Abbr(resn).toLowerCase();
@@ -258,14 +261,14 @@ class MmcifParser {
 
                         // not all listed residues are considered missing, e.g., PDB ID 4OR2, only the firts four residues are considered missing
                         if(!isNaN(resi) &&(prevMissingChain == '' ||(chain != prevMissingChain) ||(chain == prevMissingChain && resi > maxMissingResi)) ) {
-                            chainMissingResidueArray[chainNum].push(resObject);
+                            ic.chainMissingResidueArray[chainNum].push(resObject);
 
                             maxMissingResi = resi;
                             prevMissingChain = chain;
                         }
                     }
 
-                    ic.loadPDBCls.adjustSeq(chainMissingResidueArray);
+                    ic.loadPDBCls.adjustSeq(ic.chainMissingResidueArray);
                 }
 
                 if(ic.deferredSymmetry !== undefined) ic.deferredSymmetry.resolve();
@@ -290,7 +293,7 @@ class MmcifParser {
                       if(type === 'mmtfid' && data.missingseq !== undefined) {
                             // adjust missing residues
                             let  maxMissingResi = 0, prevMissingChain = '';
-                            let  chainMissingResidueArray = {}
+                            //let  chainMissingResidueArray = {}
                             for(let i = 0, il = data.missingseq.length; i < il; ++i) {
 
                                 let  resn = data.missingseq[i].resn;
@@ -299,7 +302,7 @@ class MmcifParser {
 
                                 let  chainNum = mmcifid + '_' + chain;
 
-                                if(chainMissingResidueArray[chainNum] === undefined) chainMissingResidueArray[chainNum] = [];
+                                if(ic.chainMissingResidueArray[chainNum] === undefined) ic.chainMissingResidueArray[chainNum] = [];
                                 let  resObject = {}
                                 resObject.resi = resi;
                                 resObject.name = me.utilsCls.residueName2Abbr(resn).toLowerCase();
@@ -317,7 +320,7 @@ class MmcifParser {
                                 }
                             }
 
-                            ic.loadPDBCls.adjustSeq(chainMissingResidueArray);
+                            ic.loadPDBCls.adjustSeq(ic.chainMissingResidueArray);
                       }
 
                       if(ic.deferredSymmetry !== undefined) ic.deferredSymmetry.resolve();

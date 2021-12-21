@@ -16,7 +16,6 @@ class LoadPDB {
     // modified from iview (http://istar.cse.cuhk.edu.hk/iview/)
     //This PDB parser feeds the viewer with the content of a PDB file, pdbData.
     loadPDB(src, pdbid, bOpm, bVector, bMutation, bAppend) { let  ic = this.icn3d, me = ic.icn3dui;
-        let  helices = [], sheets = [];
         //ic.atoms = {}
         let  lines = src.split('\n');
 
@@ -56,7 +55,8 @@ class LoadPDB {
             serial = (ic.atoms) ? Object.keys(ic.atoms).length : 0;
         }
 
-        let  sheetArray = [], sheetStart = [], sheetEnd = [], helixArray = [], helixStart = [], helixEnd = [];
+        //let helices = [], sheets = [];
+        let sheetArray = [], sheetStart = [], sheetEnd = [], helixArray = [], helixStart = [], helixEnd = [];
 
         let  chainNum, residueNum, oriResidueNum;
         let  prevChainNum = '', prevResidueNum = '', prevOriResidueNum = '', prevResi = 0;
@@ -65,12 +65,14 @@ class LoadPDB {
 
         let  oriSerial2NewSerial = {}
 
-        let  chainMissingResidueArray = {}
+        //let  chainMissingResidueArray = {}
 
         let  id = (pdbid) ? pdbid : 'stru';
 
         let  maxMissingResi = 0, prevMissingChain = '';
         let  CSerial, prevCSerial, OSerial, prevOSerial;
+
+        let  structure = "stru";
 
         for (let i in lines) {
             let  line = lines[i];
@@ -92,6 +94,12 @@ class LoadPDB {
                     }
                 }
 
+                structure = id;
+
+                if(id == 'stru' || bMutation || (bAppend && id.length != 4)) { // bMutation: side chain prediction
+                    structure = (moleculeNum === 1) ? id : id + moleculeNum.toString();
+                }
+
                 ic.molTitle = '';
 
             } else if (record === 'TITLE ') {
@@ -106,22 +114,23 @@ class LoadPDB {
                 let  startResi = parseInt(line.substr(21, 4));
                 let  endResi = parseInt(line.substr(33, 4));
 
-                let  chain_resi;
                 for(let j = startResi; j <= endResi; ++j) {
-                  chain_resi = startChain + "_" + j;
-                  helixArray.push(chain_resi);
+                  let resid = structure + "_" + startChain + "_" + j;
+                  helixArray.push(resid);
 
-                  if(j === startResi) helixStart.push(chain_resi);
-                  if(j === endResi) helixEnd.push(chain_resi);
+                  if(j === startResi) helixStart.push(resid);
+                  if(j === endResi) helixEnd.push(resid);
                 }
-
+/*
                 helices.push({
+                    structure: structure,
                     chain: startChain,
                     initialResidue: startResi,
                     initialInscode: line.substr(25, 1),
                     terminalResidue: endResi,
                     terminalInscode: line.substr(37, 1),
                 });
+*/                
             } else if (record === 'SHEET ') {
                 //ic.bSecondaryStructure = true;
                 if(bOpm === undefined || !bOpm) ic.bSecondaryStructure = true;
@@ -132,20 +141,22 @@ class LoadPDB {
                 let  endResi = parseInt(line.substr(33, 4));
 
                 for(let j = startResi; j <= endResi; ++j) {
-                  let  chain_resi = startChain + "_" + j;
-                  sheetArray.push(chain_resi);
+                  let  resid = structure + "_" + startChain + "_" + j;
+                  sheetArray.push(resid);
 
-                  if(j === startResi) sheetStart.push(chain_resi);
-                  if(j === endResi) sheetEnd.push(chain_resi);
+                  if(j === startResi) sheetStart.push(resid);
+                  if(j === endResi) sheetEnd.push(resid);
                 }
-
+/*
                 sheets.push({
+                    structure: structure,
                     chain: startChain,
                     initialResidue: startResi,
                     initialInscode: line.substr(26, 1),
                     terminalResidue: endResi,
                     terminalInscode: line.substr(37, 1),
                 });
+*/                
             } else if (record === 'HBOND ') {
                 if(bOpm === undefined || !bOpm) ic.bSecondaryStructure = true;
     /*
@@ -208,7 +219,8 @@ class LoadPDB {
                     let  resn = line.substr(15, 3);
                     //let  chain = line.substr(19, 1);
                     let  chain = line.substr(18, 2).trim();
-                    let  resi = parseInt(line.substr(21, 5));
+                    //let  resi = parseInt(line.substr(21, 5));
+                    let  resi = line.substr(21, 5);
 
                     //var structure = parseInt(line.substr(13, 1));
                     //if(line.substr(13, 1) == ' ') structure = 1;
@@ -216,7 +228,7 @@ class LoadPDB {
                     //var chainNum = structure + '_' + chain;
                     let  chainNum = id + '_' + chain;
 
-                    if(chainMissingResidueArray[chainNum] === undefined) chainMissingResidueArray[chainNum] = [];
+                    if(ic.chainMissingResidueArray[chainNum] === undefined) ic.chainMissingResidueArray[chainNum] = [];
                     let  resObject = {}
                     resObject.resi = resi;
                     resObject.name = me.utilsCls.residueName2Abbr(resn).toLowerCase();
@@ -226,9 +238,9 @@ class LoadPDB {
                     }
 
                     // not all listed residues are considered missing, e.g., PDB ID 4OR2, only the firts four residues are considered missing
-                    if(!isNaN(resi) && (prevMissingChain == '' || (chain != prevMissingChain) || (chain == prevMissingChain && resi > maxMissingResi)) ) {
-                        chainMissingResidueArray[chainNum].push(resObject);
-
+                    //if(!isNaN(resi) && (prevMissingChain == '' || (chain != prevMissingChain) || (chain == prevMissingChain && resi > maxMissingResi)) ) {
+                    if(prevMissingChain == '' || (chain != prevMissingChain) || (chain == prevMissingChain) ) {
+                        ic.chainMissingResidueArray[chainNum].push(resObject);
                         maxMissingResi = resi;
                         prevMissingChain = chain;
                     }
@@ -245,22 +257,25 @@ class LoadPDB {
             } else if (record === 'ENDMDL') {
                 ++moleculeNum;
                 id = 'stru';
+
+                structure = id;
+                if(id == 'stru' || bMutation || (bAppend && id.length != 4)) { // bMutation: side chain prediction
+                    structure = (moleculeNum === 1) ? id : id + moleculeNum.toString();
+                }
+
+                //helices = [];
+                //sheets = [];
+                sheetArray = [];
+                sheetStart = [];
+                sheetEnd = [];
+                helixArray = [];
+                helixStart = [];
+                helixEnd = [];
             } else if (record === 'JRNL  ') {
                 if(line.substr(12, 4) === 'PMID') {
                     ic.pmid = line.substr(19).trim();
                 }
             } else if (record === 'ATOM  ' || record === 'HETATM') {
-                //if(id == 'stru' && bOpm) {
-                //    id = pdbid;
-                //}
-
-                let  structure = id;
-                //if(id == 'stru' || bMutation || (bAppend && id == 'stru')) { // bMutation: side chain prediction
-                //if(id == 'stru' || bMutation || (bAppend)) { // bMutation: side chain prediction
-                if(id == 'stru' || bMutation || (bAppend && id.length != 4)) { // bMutation: side chain prediction
-                    structure = (moleculeNum === 1) ? id : id + moleculeNum.toString();
-                }
-
                 let  alt = line.substr(16, 1);
                 //if (alt !== " " && alt !== "A") continue;
 
@@ -310,7 +325,7 @@ class LoadPDB {
 
                 residueNum = chainNum + "_" + resi;
 
-                let  chain_resi = chain + "_" + resi;
+                //let  chain_resi = chain + "_" + resi;
 
                 let  x = parseFloat(line.substr(30, 8));
                 let  y = parseFloat(line.substr(38, 8));
@@ -361,27 +376,27 @@ class LoadPDB {
 
                 // Assign secondary structures from the input
                 // if a residue is assigned both sheet and helix, it is assigned as sheet
-                if($.inArray(chain_resi, sheetArray) !== -1) {
+                if($.inArray(residueNum, sheetArray) !== -1) {
                   ic.atoms[serial].ss = 'sheet';
 
-                  if($.inArray(chain_resi, sheetStart) !== -1) {
+                  if($.inArray(residueNum, sheetStart) !== -1) {
                     ic.atoms[serial].ssbegin = true;
                   }
 
                   // do not use else if. Some residues are both start and end of secondary structure
-                  if($.inArray(chain_resi, sheetEnd) !== -1) {
+                  if($.inArray(residueNum, sheetEnd) !== -1) {
                     ic.atoms[serial].ssend = true;
                   }
                 }
-                else if($.inArray(chain_resi, helixArray) !== -1) {
+                else if($.inArray(residueNum, helixArray) !== -1) {
                   ic.atoms[serial].ss = 'helix';
 
-                  if($.inArray(chain_resi, helixStart) !== -1) {
+                  if($.inArray(residueNum, helixStart) !== -1) {
                     ic.atoms[serial].ssbegin = true;
                   }
 
                   // do not use else if. Some residues are both start and end of secondary structure
-                  if($.inArray(chain_resi, helixEnd) !== -1) {
+                  if($.inArray(residueNum, helixEnd) !== -1) {
                     ic.atoms[serial].ssend = true;
                   }
                 }
@@ -481,7 +496,7 @@ class LoadPDB {
         if(ic.chains[chainNum] === undefined) ic.chains[chainNum] = {}
         ic.chains[chainNum] = me.hashUtilsCls.unionHash2Atoms(ic.chains[chainNum], chainsTmp, ic.atoms);
 
-        if(!bMutation) this.adjustSeq(chainMissingResidueArray);
+        if(!bMutation) this.adjustSeq(ic.chainMissingResidueArray);
 
     //    ic.missingResidues = [];
     //    for(let chainid in chainMissingResidueArray) {
@@ -666,10 +681,11 @@ class LoadPDB {
         for(let chainNum in ic.chainsSeq) {
             if(chainMissingResidueArray[chainNum] === undefined) continue;
 
-            let  A = ic.chainsSeq[chainNum];
-            //var A2 = ic.chainsAn[chainNum][0];
-            //var A3 = ic.chainsAn[chainNum][1];
-            let  B = chainMissingResidueArray[chainNum];
+            //let  A = ic.chainsSeq[chainNum];
+            //let  B = chainMissingResidueArray[chainNum];
+
+            let  A = chainMissingResidueArray[chainNum];
+            let  B = ic.chainsSeq[chainNum];
 
             let  m = A.length;
             let  n = B.length;
@@ -687,7 +703,7 @@ class LoadPDB {
               j = 0;
               k = 0;
               while (i < m && j < n) {
-                    if (A[i].resi <= B[j].resi) {
+                    if (parseInt(A[i].resi) <= parseInt(B[j].resi)) {
                           C[k] = A[i];
                           //C2[k] = A2[i];
                           //C3[k] = A3[i];

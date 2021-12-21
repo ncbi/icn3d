@@ -379,6 +379,7 @@ class ParasCls {
     }
 
     thr(color) { let me = this.icn3dui;
+        if(color == '#0') color = '#000';
         return new THREE.Color(color);
     }
 }

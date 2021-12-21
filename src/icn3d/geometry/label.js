@@ -24,10 +24,11 @@ class TextSprite {
 
         let a = parameters.hasOwnProperty("alpha") ? parameters["alpha"] : 1.0;
 
-        let bBkgd = true;
+        let bBkgd = false; //true;
         let bSchematic = false;
         if(parameters.hasOwnProperty("bSchematic") &&  parameters["bSchematic"]) {
             bSchematic = true;
+            bBkgd = true;
 
             fontsize = 40;
         }
@@ -47,9 +48,13 @@ class TextSprite {
         }
 
         let textAlpha = 1.0;
-
-        let textColor = parameters.hasOwnProperty("textColor") &&  parameters["textColor"] !== undefined ? me.utilsCls.hexToRgb(parameters["textColor"], textAlpha) : { r:255, g:255, b:0, a:1.0 };
-        if(!textColor) textColor = { r:255, g:255, b:0, a:1.0 };
+        // default yellow
+        //let textColor = parameters.hasOwnProperty("textColor") &&  parameters["textColor"] !== undefined ? me.utilsCls.hexToRgb(parameters["textColor"], textAlpha) : { r:255, g:255, b:0, a:1.0 };
+        // default black or white
+        let defaultColor = ( ic.opts.background == 'white' || ic.opts.background == 'gray' ) ? { r:0, g:0, b:0, a:1.0 } : { r:255, g:255, b:0, a:1.0 };
+        let textColor = parameters.hasOwnProperty("textColor") &&  parameters["textColor"] !== undefined ? me.utilsCls.hexToRgb(parameters["textColor"], textAlpha) 
+            : defaultColor;
+        if(!textColor) textColor = defaultColor;
 
         let canvas = document.createElement('canvas');
 
@@ -186,6 +191,7 @@ class Label {
 
         for(let name in labels) {
             let labelArray = (labels[name] !== undefined) ? labels[name] : [];
+            let defaultColor = (ic.opts.background == 'white' || ic.opts.background == 'gray') ? ic.colorWhitebkgd : ic.colorBlackbkgd;
 
             for (let i = 0, il = labelArray.length; i < il; ++i) {
                 let label = labelArray[i];
@@ -196,7 +202,7 @@ class Label {
                 if(label.background == 0) label.background = undefined;
 
                 let labelsize = (label.size !== undefined) ? label.size : ic.LABELSIZE;
-                let labelcolor = (label.color !== undefined) ? label.color : '#ffff00';
+                let labelcolor = (label.color !== undefined) ? label.color : defaultColor;
                 let labelbackground = (label.background !== undefined) ? label.background : '#cccccc';
                 let labelalpha = (label.alpha !== undefined) ? label.alpha : 1.0;
 
