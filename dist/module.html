@@ -1,0 +1,335 @@
+<!DOCTYPE html><html lang="en"><head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+<meta name="description" content="iCn3D Structure Viewer">
+<meta name="keywords" content="NCBI, Structure, JavaScript, iCn3D, 3D, Viewer, WebGL, three.js, sequence, chemical">
+<meta name="robots" content="index,follow,noarchive">
+<meta name="ncbi_app" content="structure">
+<meta name="ncbi_pdid" content="icn3d">
+<meta name="ncbi_page" content="full">
+<meta name="ncbi_pinger_xml_http_request_override" content="false"/>
+<title>iCn3D: Web-based 3D Structure Viewer</title>
+<script type="text/javascript">
+    window.ncbi_startTime = new Date();
+</script>
+</head>
+<body>
+  <div id="div0"></div>
+
+  <link rel="stylesheet" href="lib/jquery-ui-1.12.1.min.css">
+  <link rel="stylesheet" href="icn3d.css">
+  <script src="lib/jquery-3.5.0.min.js"></script>
+  <script src="lib/jquery-ui-1.12.1.min.js"></script>
+  <script src="lib/three_0.128.0.min.js"></script>
+  <!--script src="icn3d.min.js"></script-->
+
+  <script type="module">
+    import * as icn3d from './icn3d.module.js';
+    // add new classes
+    import {LoadStateFile} from './loadStateFile.js';
+
+    //$( document ).ready(function() {
+      if (navigator.userAgent.indexOf("MSIE ") > 0 || !!navigator.userAgent.match(/Trident.*rv\:11\./)) { // If Internet Explorer
+          $.getScript('icn3d_full_ui_2.24.7.min.js', function() {
+            var version = 2;
+            launchIcn3d(version);
+          });
+          alert("iCn3D version 3 (since May 2021) works in all browsers except IE. The old iCn3D version 2 is used instead.");
+      }
+      else {
+          //$.getScript('icn3d.min.js', function() {
+            var version = 3;
+            launchIcn3d(version);
+          //});
+      }
+      function launchIcn3d(version) {
+          var cfg_params = getConfig();
+          var cfg = cfg_params.cfg;
+          var params = (cfg_params.params) ? cfg_params.params : {};
+          params.version = version;
+
+          if(params.mmtfid !== undefined) {
+              setupViewer('mmtfid', params.mmtfid, cfg, params);
+          }
+          else if(params.pdbid !== undefined) {
+              setupViewer('pdbid', params.pdbid, cfg, params);
+          }
+          else if(params.opmid !== undefined) {
+              setupViewer('opmid', params.opmid, cfg, params);
+          }
+          else if(params.cid !== undefined) {
+              setupViewer('cid', params.cid, cfg, params);
+          }
+          else if(params.mmcifid !== undefined) {
+              setupViewer('mmcifid', params.mmcifid, cfg, params);
+          }
+          else if(params.mmdbid !== undefined) {
+              setupViewer('mmdbid', params.mmdbid, cfg, params);
+          }
+          else if(params.gi !== undefined) {
+              setupViewer('gi', params.gi, cfg, params);
+          }
+          else if(params.blast_rep_id !== undefined) {
+              if( (params.from === 'blast' || params.from === 'icn3d') && params.command == '') {
+                command = 'view+annotations;+set+annotation+cdd;+set+annotation+site;+set+view+detailed+view;+select+chain+'
+                  + params.blast_rep_id + ';+show+selection';
+              }
+
+              setupViewer('blast_rep_id', params.blast_rep_id, cfg, params);
+          }
+          else if(params.urlname !== undefined) {
+              var urlname = decodeURIComponent(params.urlname);
+
+              setupViewer('url', params.urltype + '|' + urlname, cfg, params);
+          }
+          // e.g., align=103701,1,4,68563,1,167 [mmdbid1,biounit,molecule,mmdbid2,biounit,molecule]
+          else if(params.align !== undefined) {
+              cfg.divid = 'div0';
+              cfg.align = params.align;
+              cfg.showalignseq = params.showalignseq;
+
+              var icn3dui = (params.version == 2) ? new iCn3DUI(cfg) : new icn3d.iCn3DUI(cfg);
+
+              icn3dui.show3DStructure();
+          }
+          else if(params.chainalign !== undefined) {
+              cfg.divid = 'div0';
+              cfg.chainalign = params.chainalign;
+              cfg.resnum = params.resnum;
+              cfg.showalignseq = params.showalignseq;
+
+              var icn3dui = (params.version == 2) ? new iCn3DUI(cfg) : new icn3d.iCn3DUI(cfg);
+
+              icn3dui.show3DStructure();
+          }
+          else {
+              setupViewer('', '', cfg, params);
+          }
+      }
+
+      function setupViewer(idName, idValue, cfg, params) {
+        var maxStructure = 5; // show max 5 structures
+
+        var idArray = idValue.replace(/\s/g, '').split(',');
+
+        if(idArray.length > 1) {
+          resize = false;
+
+          if(cfg.width && cfg.width.indexOf('%') != -1) {
+            cfg.width = 400;
+            cfg.height = 400;
+          }
+        }
+
+        if(cfg.options === undefined || cfg.options === 'undefined') cfg.options = {};
+
+        //Options are available at: https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d.html#DisplayOptions
+        //cfg.options['chemicalbinding'] = 'show';
+
+        for(var i = 0, il = idArray.length; i < il && i < maxStructure; ++i) {
+          cfg.divid = 'div' + i;
+
+          if(params) {
+              cfg.blast_rep_id = params.blast_rep_id;
+              cfg.query_id = params.query_id;
+              cfg.rid = params.rid;
+          }
+
+          if(idName !== '') cfg[idName] = idArray[i];
+
+          var icn3dui = (params.version == 2) ? new iCn3DUI(cfg) : new icn3d.iCn3DUI(cfg);
+
+          $.when(icn3dui.show3DStructure()).then(function() {
+               // call classes here
+               var loadStateFileCls = new LoadStateFile(icn3dui.icn3d);
+               loadStateFileCls.loadStateFile('color spectrum');
+          });
+
+          if(idName === '') $("#div" + i + "_wait").hide();
+        }
+      }
+
+      function getConfig() {
+        // separating the GET parameters from the current URL
+        // repalce "color #" with "color " in the url
+        var url = document.URL.replace(/\#/g, '');
+
+        var bNopara = false;
+        var ampPos = url.indexOf("?");
+        if(ampPos === -1) {
+        //  alert("Please include '?pdbid=1GPK,2POR,...' in your url");
+            bNopara = true;
+        }
+
+        var getParams = url.split("?");
+        // transforming the GET parameters into a dictionnary
+        var search = getParams[getParams.length - 1];
+        var params = {};
+        var inpara = "";
+
+        var command;
+        if(!bNopara) {
+            var decodeSearch = decodeURIComponent(search);
+
+            // command could contains '&', for example when loading statefile 'load mmdb 1kq2 | parameters &atype=1'
+            var commandPos = decodeSearch.indexOf('&command=');
+            if(commandPos != -1) {
+                command = decodeSearch.substr(commandPos + 9); // ";" separated commands
+                decodeSearch = decodeSearch.substr(0, commandPos);
+
+                var paraPos = decodeSearch.indexOf(' | parameters ');
+
+                if(paraPos != -1) { //When loading statefile (e.g., 'load mmdb 1kq2 | parameters &atype=1'), the commands ends with '}}'.
+                    var tmpPos = command.indexOf('}}&');
+                    if(tmpPos != -1) { // more parameters after the command
+                      decodeSearch += command.substr(tmpPos + 2);
+                      command = command.substr(0, tmpPos + 2);
+                    }
+                }
+                else {
+                    var tmpPos = command.indexOf('&');
+                    if(tmpPos != -1) {
+                      decodeSearch += command.substr(tmpPos);
+                      command = command.substr(0, tmpPos);
+                    }
+                }
+            }
+            else {
+                command = '';
+            }
+
+            var hashes = decodeSearch.split('&');
+            for (var i = 0; i < hashes.length; i++) {
+                var hash = hashes[i].split('=');
+                params[hash[0].trim()] = (hash[1] !== undefined) ? hash[1].trim() : undefined;
+            }
+
+            // for mmdb structures, pass the parameters after the first "&" sign
+            inpara = "&" + url.substr(ampPos + 1);
+        }
+
+        var gi = params.gi;
+        var blast_rep_id = params.blast_rep_id;
+        var query_id = params.query_id;
+        var rid = params.RID;
+
+        var mmdbid = params.mmdbid;
+        var mmtfid = params.mmtfid;
+        var pdbid = params.pdbid;
+        var opmid = params.opmid;
+        var cid = params.cid;
+        var mmcifid = params.mmcifid;
+        var urlname = params.url;
+        if(urlname && urlname.indexOf('%3A%2F%2F') === -1) { // decoded URL
+            // should encode it
+            urlname = encodeURIComponent(urlname);
+        }
+        var urltype = (params.type === undefined) ? 'pdb' : params.type;
+
+        var align = params.align;
+        var chainalign = params.chainalign;
+        var resnum = params.resnum;
+
+        var width = params.width;
+        var height = params.height;
+
+        var from = params.from;
+
+        var date = getValue(params.date);
+        var version = getValue(params.v);
+
+        if(version !== undefined && window.localStorage && localStorage.getItem('fixedversion')) {
+            //var version = getVersion(date);
+            var fixedUrl = url.replace('full.html', 'full_' + version + '.html');
+            window.open(fixedUrl, '_self');
+
+            localStorage.removeItem('fixedversion');
+        }
+
+        // use PDB residue number in MMDB input
+        var usepdbnum = getValue(params.usepdbnum);
+        //if(usepdbnum === undefined) usepdbnum = (date !== undefined && date >= '20201222') ? true : false;
+
+        var resize = getValue(params.resize);
+
+        var showmenu = getValue(params.showmenu);
+
+        var showtitle = getValue(params.showtitle);
+
+        var showcommand = getValue(params.showcommand);
+
+        var simplemenu = getValue(params.simplemenu);
+
+        var mobilemenu = getValue(params.mobilemenu);
+
+        var closepopup = getValue(params.closepopup);
+
+        var showanno = getValue(params.showanno);
+
+        var showseq = getValue(params.showseq);
+
+        // backward compatible with showseq
+        showanno = showanno || showseq;
+
+        // for alignment
+        var showalignseq = getValue(params.showalignseq);
+
+        var show2d = getValue(params.show2d);
+
+        var showsets = getValue(params.showsets);
+
+        var replay = getValue(params.replay);
+
+        var notebook = getValue(params.notebook);
+
+        var rotate = params.rotate;
+
+        var shownote = 1; //params.shownote;
+
+        var options = (params.options !== undefined) ? JSON.parse(params.options) : undefined;
+
+        var cfg = {
+          inpara: inpara,
+          width: width,
+          height: height,
+          resize: resize,
+          rotate: rotate,
+          showmenu: showmenu,
+          showtitle: showtitle,
+          showcommand: showcommand,
+          showanno: showanno,
+          show2d: show2d,
+          showsets: showsets,
+          simplemenu: simplemenu,
+          mobilemenu: mobilemenu,
+          closepopup: closepopup,
+          replay: replay,
+          notebook: notebook,
+          shownote: shownote,
+          options: options,
+          usepdbnum: usepdbnum,
+          date: date,
+          command: command
+        };
+
+        return {cfg: cfg, params: params};
+      }
+
+      function getValue(input) {
+        if(input == 'true' || input == '1') {
+          input = true;
+        }
+        else if(input == 'false' || input == '0') {
+          input = false;
+        }
+
+        return input;
+      }
+    //}); // document ready
+  </script>
+
+  <!-- log & Google Analytics -->
+  <script type="text/javascript" src="https://www.ncbi.nlm.nih.gov/core/pinger/pinger.js"></script>
+</body></html>
+

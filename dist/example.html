@@ -1,0 +1,160 @@
+<!DOCTYPE html><html lang="en"><head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+<meta name="description" content="iCn3D Structure Viewer">
+<meta name="keywords" content="NCBI, Structure, JavaScript, iCn3D, 3D, Viewer, WebGL, three.js, sequence, chemical">
+<meta name="robots" content="index,follow,noarchive">
+<meta name="ncbi_app" content="structure">
+<meta name="ncbi_pdid" content="icn3d">
+<meta name="ncbi_page" content="example">
+<meta name="ncbi_pinger_xml_http_request_override" content="false"/>
+<title>iCn3D: Web-based 3D Structure Viewer</title>
+<script type="text/javascript">
+    window.ncbi_startTime = new Date();
+</script>
+
+<style type="text/css">
+.gallery {float:left; padding: 5px; margin: 10px;}
+
+body {font-family: Verdana, Arial, Helvetica, sans-serif;}
+</style>
+
+</head>
+<body>
+<h3 style="text-align:center">Embed Multiple iCn3D Viewers in One Page</h3>
+  <div id="div0" class="gallery"></div>
+  <div id="div1" class="gallery"></div>
+  <div id="div2" class="gallery"></div>
+  <div id="div3" class="gallery"></div>
+  <div id="div4" class="gallery"></div>
+  <div id="div5" class="gallery"></div>
+
+<link rel="stylesheet" href="lib/jquery-ui.min.css">
+<link rel="stylesheet" href="icn3d.css">
+<script src="lib/jquery.min.js"></script>
+<script src="lib/jquery-ui.min.js"></script>
+<script src="lib/threeClass.min.js"></script>
+<script src="icn3d.min.js"></script>
+
+  <script type="text/javascript">
+      //============ modify default functions =========
+      // e.g., add the b-factor information in the mouseover
+      icn3d.Picking.prototype.showPicking = function(atom, x, y) { var ic = this.icn3d, me = ic.icn3dui;
+          //me = ic.setIcn3dui(ic.id);
+          if(me.cfg.cid !== undefined && ic.pk != 0) {
+              ic.pk = 1; // atom
+          }
+          else {
+              // do not change the picking option
+          }
+          ic.highlightlevel = ic.pk;
+          this.showPickingBase(atom, x, y);
+
+          if(ic.pk != 0) {
+              if(x !== undefined && y !== undefined) { // mouse over
+                if(me.cfg.showmenu != undefined && me.cfg.showmenu == true) {
+                    y += me.htmlCls.MENU_HEIGHT;
+                }
+                var text =(ic.pk == 1) ? atom.resn + atom.resi + '@' + atom.name : atom.resn + atom.resi;
+                text += ', b: ' + atom.b;
+                if(ic.structures !== undefined && Object.keys(ic.structures).length > 1) {
+                    text = atom.structure + '_' + atom.chain + ' ' + text;
+                    $("#" + ic.pre + "popup").css("width", "190px");
+                }
+                else {
+                    $("#" + ic.pre + "popup").css("width", "130px");
+                }
+                $("#" + ic.pre + "popup").html(text);
+                $("#" + ic.pre + "popup").css("top", y).css("left", x+20).show();
+              }
+              else {
+                  // highlight the sequence background
+                  ic.hlUpdateCls.updateHlAll();
+                  var transformation = {}
+                  transformation.factor = ic._zoomFactor;
+                  transformation.mouseChange = ic.mouseChange;
+                  //transformation.quaternion = ic.quaternion;
+                  transformation.quaternion = {}
+                  transformation.quaternion._x = parseFloat(ic.quaternion._x).toPrecision(5);
+                  transformation.quaternion._y = parseFloat(ic.quaternion._y).toPrecision(5);
+                  transformation.quaternion._z = parseFloat(ic.quaternion._z).toPrecision(5);
+                  transformation.quaternion._w = parseFloat(ic.quaternion._w).toPrecision(5);
+                  if(ic.bAddCommands) {
+                      ic.commands.push('pickatom ' + atom.serial + '|||' + ic.transformCls.getTransformationStr(transformation));
+                      ic.optsHistory.push(me.hashUtilsCls.cloneHash(ic.opts));
+                      ic.optsHistory[ic.optsHistory.length - 1].hlatomcount = Object.keys(ic.hAtoms).length;
+                      if(me.utilsCls.isSessionStorageSupported()) ic.setStyleCls.saveCommandsToSession();
+                      ic.STATENUMBER = ic.commands.length;
+                  }
+                  ic.logs.push('pickatom ' + atom.serial + '(chain: ' + atom.structure + '_' + atom.chain + ', residue: ' + atom.resn + ', number: ' + atom.resi + ', atom: ' + atom.name + ')');
+                  if( $( "#" + ic.pre + "logtext" ).length )  {
+                    $("#" + ic.pre + "logtext").val("> " + ic.logs.join("\n> ") + "\n> ").scrollTop($("#" + ic.pre + "logtext")[0].scrollHeight);
+                  }
+                  // update the interaction flag
+                  ic.bSphereCalc = false;
+                  //me.htmlCls.clickMenuCls.setLogCmd('set calculate sphere false', true);
+                  ic.bHbondCalc = false;
+                  //me.htmlCls.clickMenuCls.setLogCmd('set calculate hbond false', true);
+              }
+          }
+      }
+      //============ End of: modify default functions =========
+  </script>
+
+  <script type="text/javascript">
+    $( document ).ready(function() {
+      function setupViewer(idName, idValue, divid, command) {
+        var options = {};
+
+        // --Modify iCn3D --: add commands, e.g., 'color spectrum'
+        command = (command) ? command : '';
+
+        var cfg = {
+          divid: divid,
+          width: 300,
+          height: 300,
+          mobilemenu: true,
+          showcommand: false,
+          showtitle: false,
+          command: command,
+          options: options
+        };
+        if(idName !== '') cfg[idName] = idValue;
+
+        var icn3dui = new icn3d.iCn3DUI(cfg);
+        //icn3dui.show3DStructure();
+
+        //communicate with the 3D viewer with chained functions
+        $.when(icn3dui.show3DStructure()).then(function() {
+            // add functions here
+            //icn3dui.updateHlAll();
+        });
+      }
+
+      setupViewer('mmdbid', '1tup', 'div0');
+
+      setupViewer('mmdbid', '1kq2', 'div1');
+
+      setupViewer('mmdbid', '1gpk', 'div2');
+
+      setupViewer('mmdbid', '1top', 'div3');
+
+      // load pdb from URL at the same host
+      var urlname = 'https://www.ncbi.nlm.nih.gov/Structure/icn3d/pdb/1GPK_sim.pdb';
+      var urltype = 'pdb';
+      urlname = decodeURIComponent(urlname);
+      setupViewer('url', urltype + '|' + urlname, 'div4');
+
+      var command = "defined sets; select sets 4L03_A; color 87CEEB; style proteins cylinder and plate; select sets 6KDY_A; color FA8072; style proteins cylinder and plate; select sets 4L03_A or 6KDY_A; show selection; set background white; close popup";
+
+      setupViewer('align', '4L03,6KDY', 'div5', command);
+    }); // document ready
+
+  </script>
+
+  <!-- log & Google Analytics -->
+  <script type="text/javascript" src="https://www.ncbi.nlm.nih.gov/core/pinger/pinger.js"></script>
+
+</body></html>
+
