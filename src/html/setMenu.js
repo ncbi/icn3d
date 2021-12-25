@@ -59,7 +59,7 @@ class SetMenu {
         html += this.setTools();
 
         // show title at the top left corner
-        html += me.htmlCls.divStr + "title' class='icn3d-commandTitle' style='font-size:1.2em; font-weight:normal; position:absolute; z-index:1; float:left; display:table-row; margin: 85px 0px 0px 5px; color:" + me.htmlCls.GREYD + "; width:" + me.htmlCls.WIDTH + "px'></div>";
+        html += me.htmlCls.divStr + "title' class='icn3d-commandTitle' style='font-size:1.2em; font-weight:normal; position:absolute; z-index:1; float:left; display:table-row; margin: 85px 0px 0px 5px; color:black; width:" + me.htmlCls.WIDTH + "px'></div>";
 
         html += me.htmlCls.divStr + "viewer' style='position:relative; width:100%; height:100%; background-color: " + me.htmlCls.GREYD + ";'>";
 
@@ -76,7 +76,7 @@ class SetMenu {
             let tmpStr = 'top:180px; font-size: 1.8em;';
             html += me.htmlCls.divStr + "wait' style='position:absolute; left:50px; " + tmpStr + " color: #444444;'>Loading data...</div>";
         }
-        html += "<canvas id='" + me.pre + "canvas' style='width:100%; height: 100%; background-color: #000;'>Your browser does not support WebGL.</canvas>";
+        html += "<canvas id='" + me.pre + "canvas' style='width:100%; height: 100%; background-color: #FFF;'>Your browser does not support WebGL.</canvas>";
 
         // separate for the log box
         if(me.cfg.showcommand === undefined || me.cfg.showcommand) {
@@ -181,7 +181,7 @@ class SetMenu {
         //html += me.htmlCls.setMenuCls.setTools();
 
         // show title at the top left corner
-        let titleColor =(me.htmlCls.opts['background'] == 'white' || me.htmlCls.opts['background'] == 'grey') ? 'black' : me.htmlCls.GREYD;
+        let titleColor =(me.htmlCls.opts['background'] == 'black') ? me.htmlCls.GREYD : 'black';
 
         html += me.htmlCls.divStr + "title' class='icn3d-commandTitle' style='font-size:1.2em; font-weight:normal; position:absolute; z-index:1; float:left; display:block; margin: 12px 0px 0px 40px; color:" + titleColor + "; width:" +(me.htmlCls.WIDTH - 40).toString() + "px'></div>";
         html += me.htmlCls.divStr + "viewer' style='position:relative; width:100%; height:100%; background-color: " + me.htmlCls.GREYD + ";'>";
@@ -194,7 +194,7 @@ class SetMenu {
             let tmpStr = 'top:180px; font-size: 1.8em;';
             html += me.htmlCls.divStr + "wait' style='position:absolute; left:50px; " + tmpStr + " color: #444444;'>Loading data...</div>";
         }
-        html += "<canvas id='" + me.pre + "canvas' style='width:100%; height: 100%; background-color: #000;'>Your browser does not support WebGL.</canvas>";
+        html += "<canvas id='" + me.pre + "canvas' style='width:100%; height: 100%; background-color: #FFF;'>Your browser does not support WebGL.</canvas>";
 
         // separate for the log box
         if(me.cfg.showcommand === undefined || me.cfg.showcommand) {

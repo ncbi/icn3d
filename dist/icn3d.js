@@ -4855,7 +4855,7 @@ var icn3d = (function (exports) {
                 black: this.thr(0x000000),
                  grey: this.thr(0xCCCCCC),
                 white: this.thr(0xFFFFFF),
-                transparent: this.thr(0x000000)
+                transparent: this.thr(0xFFFFFF) //this.thr(0x000000)
             };
 
             this.residueColors = {
@@ -31281,13 +31281,13 @@ var icn3d = (function (exports) {
             let  value = command.substr(command.lastIndexOf(' ') + 1);
             ic.opts['background'] = value;
 
-            if(value == 'white' || value == 'grey') {
-                $("#" + ic.pre + "title").css("color", "black");
-                $("#" + ic.pre + "titlelink").css("color", "black");
+            if(value == 'black') {
+              $("#" + ic.pre + "title").css("color", me.htmlCls.GREYD);
+              $("#" + ic.pre + "titlelink").css("color", me.htmlCls.GREYD);
             }
             else {
-                $("#" + ic.pre + "title").css("color", me.htmlCls.GREYD);
-                $("#" + ic.pre + "titlelink").css("color", me.htmlCls.GREYD);
+              $("#" + ic.pre + "title").css("color", "black");
+              $("#" + ic.pre + "titlelink").css("color", "black");
             }
           }
           else if(commandOri.indexOf('set thickness') == 0) {
@@ -39823,7 +39823,8 @@ var icn3d = (function (exports) {
         setBackground(color) {var ic = this.icn3d, me = ic.icn3dui;
            ic.setOptionCls.setOption('background', color);
            me.htmlCls.clickMenuCls.setLogCmd('set background ' + color, true);
-           let titleColor =(color == 'black' || color == 'transparent') ? me.htmlCls.GREYD : 'black';
+           //let titleColor =(color == 'black' || color == 'transparent') ? me.htmlCls.GREYD : 'black';
+           let titleColor = (color == 'black') ? me.htmlCls.GREYD : 'black';
            $("#" + ic.pre + "title").css("color", titleColor);
            $("#" + ic.pre + "titlelink").css("color", titleColor);
         }
@@ -44171,7 +44172,7 @@ var icn3d = (function (exports) {
             if(ic.molTitle !== undefined && ic.molTitle !== '') {
                 let title = ic.molTitle;
 
-                let titlelinkColor =(ic.opts['background'] == 'white' || ic.opts['background'] == 'grey') ? 'black' : me.htmlCls.GREYD;
+                let titlelinkColor =(ic.opts['background'] == 'black') ?  me.htmlCls.GREYD : 'black';
 
                 if(ic.inputid === undefined) {
                     if(ic.molTitle.length > 40) title = ic.molTitle.substr(0, 40) + "...";
@@ -46378,7 +46379,7 @@ var icn3d = (function (exports) {
             html += this.setTools();
 
             // show title at the top left corner
-            html += me.htmlCls.divStr + "title' class='icn3d-commandTitle' style='font-size:1.2em; font-weight:normal; position:absolute; z-index:1; float:left; display:table-row; margin: 85px 0px 0px 5px; color:" + me.htmlCls.GREYD + "; width:" + me.htmlCls.WIDTH + "px'></div>";
+            html += me.htmlCls.divStr + "title' class='icn3d-commandTitle' style='font-size:1.2em; font-weight:normal; position:absolute; z-index:1; float:left; display:table-row; margin: 85px 0px 0px 5px; color:black; width:" + me.htmlCls.WIDTH + "px'></div>";
 
             html += me.htmlCls.divStr + "viewer' style='position:relative; width:100%; height:100%; background-color: " + me.htmlCls.GREYD + ";'>";
 
@@ -46395,7 +46396,7 @@ var icn3d = (function (exports) {
                 let tmpStr = 'top:180px; font-size: 1.8em;';
                 html += me.htmlCls.divStr + "wait' style='position:absolute; left:50px; " + tmpStr + " color: #444444;'>Loading data...</div>";
             }
-            html += "<canvas id='" + me.pre + "canvas' style='width:100%; height: 100%; background-color: #000;'>Your browser does not support WebGL.</canvas>";
+            html += "<canvas id='" + me.pre + "canvas' style='width:100%; height: 100%; background-color: #FFF;'>Your browser does not support WebGL.</canvas>";
 
             // separate for the log box
             if(me.cfg.showcommand === undefined || me.cfg.showcommand) {
@@ -46500,7 +46501,7 @@ var icn3d = (function (exports) {
             //html += me.htmlCls.setMenuCls.setTools();
 
             // show title at the top left corner
-            let titleColor =(me.htmlCls.opts['background'] == 'white' || me.htmlCls.opts['background'] == 'grey') ? 'black' : me.htmlCls.GREYD;
+            let titleColor =(me.htmlCls.opts['background'] == 'black') ? me.htmlCls.GREYD : 'black';
 
             html += me.htmlCls.divStr + "title' class='icn3d-commandTitle' style='font-size:1.2em; font-weight:normal; position:absolute; z-index:1; float:left; display:block; margin: 12px 0px 0px 40px; color:" + titleColor + "; width:" +(me.htmlCls.WIDTH - 40).toString() + "px'></div>";
             html += me.htmlCls.divStr + "viewer' style='position:relative; width:100%; height:100%; background-color: " + me.htmlCls.GREYD + ";'>";
@@ -46513,7 +46514,7 @@ var icn3d = (function (exports) {
                 let tmpStr = 'top:180px; font-size: 1.8em;';
                 html += me.htmlCls.divStr + "wait' style='position:absolute; left:50px; " + tmpStr + " color: #444444;'>Loading data...</div>";
             }
-            html += "<canvas id='" + me.pre + "canvas' style='width:100%; height: 100%; background-color: #000;'>Your browser does not support WebGL.</canvas>";
+            html += "<canvas id='" + me.pre + "canvas' style='width:100%; height: 100%; background-color: #FFF;'>Your browser does not support WebGL.</canvas>";
 
             // separate for the log box
             if(me.cfg.showcommand === undefined || me.cfg.showcommand) {

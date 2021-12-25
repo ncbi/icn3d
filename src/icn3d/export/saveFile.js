@@ -715,7 +715,7 @@ class SaveFile {
         if(ic.molTitle !== undefined && ic.molTitle !== '') {
             let title = ic.molTitle;
 
-            let titlelinkColor =(ic.opts['background'] == 'white' || ic.opts['background'] == 'grey') ? 'black' : me.htmlCls.GREYD;
+            let titlelinkColor =(ic.opts['background'] == 'black') ?  me.htmlCls.GREYD : 'black';
 
             if(ic.inputid === undefined) {
                 if(ic.molTitle.length > 40) title = ic.molTitle.substr(0, 40) + "...";

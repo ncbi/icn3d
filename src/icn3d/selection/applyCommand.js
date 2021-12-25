@@ -659,13 +659,13 @@ class ApplyCommand {
         let  value = command.substr(command.lastIndexOf(' ') + 1);
         ic.opts['background'] = value;
 
-        if(value == 'white' || value == 'grey') {
-            $("#" + ic.pre + "title").css("color", "black");
-            $("#" + ic.pre + "titlelink").css("color", "black");
+        if(value == 'black') {
+          $("#" + ic.pre + "title").css("color", me.htmlCls.GREYD);
+          $("#" + ic.pre + "titlelink").css("color", me.htmlCls.GREYD);
         }
         else {
-            $("#" + ic.pre + "title").css("color", me.htmlCls.GREYD);
-            $("#" + ic.pre + "titlelink").css("color", me.htmlCls.GREYD);
+          $("#" + ic.pre + "title").css("color", "black");
+          $("#" + ic.pre + "titlelink").css("color", "black");
         }
       }
       else if(commandOri.indexOf('set thickness') == 0) {
