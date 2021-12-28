@@ -208,7 +208,7 @@ class Analysis {
             label.text = 'Chain ' + chainName + ': ' + proteinName;
             label.size = size;
             let atomColorStr = ic.firstAtomObjCls.getFirstCalphaAtomObj(ic.chains[chainid]).color.getHexString().toUpperCase();
-            label.color = (ic.opts.background == 'white' || ic.opts.background == 'gray') ? ic.colorWhitebkgd : ic.colorBlackbkgd; //(atomColorStr === "CCCCCC" || atomColorStr === "C8C8C8") ? "#888888" : "#" + atomColorStr;
+            label.color = (ic.opts.background != 'black') ? ic.colorWhitebkgd : ic.colorBlackbkgd; //(atomColorStr === "CCCCCC" || atomColorStr === "C8C8C8") ? "#888888" : "#" + atomColorStr;
             label.background = background;
             ic.labels['chain'].push(label);
         }
@@ -244,8 +244,8 @@ class Analysis {
             labelC.size = size;
             let atomNColorStr = firstAtom.color.getHexString().toUpperCase();
             let atomCColorStr = lastAtom.color.getHexString().toUpperCase();
-            labelN.color = (ic.opts.background == 'white' || ic.opts.background == 'gray') ? ic.colorWhitebkgd : (atomNColorStr === "CCCCCC" || atomNColorStr === "C8C8C8") ? "#888888" : "#" + atomNColorStr;
-            labelC.color = (ic.opts.background == 'white' || ic.opts.background == 'gray') ? ic.colorWhitebkgd : (atomCColorStr === "CCCCCC" || atomCColorStr === "C8C8C8") ? "#888888" : "#" + atomCColorStr;
+            labelN.color = (ic.opts.background != 'black') ? ic.colorWhitebkgd : ic.colorBlackbkgd; //(atomNColorStr === "CCCCCC" || atomNColorStr === "C8C8C8") ? "#888888" : "#" + atomNColorStr;
+            labelC.color = (ic.opts.background != 'black') ? ic.colorWhitebkgd : ic.colorBlackbkgd; //(atomCColorStr === "CCCCCC" || atomCColorStr === "C8C8C8") ? "#888888" : "#" + atomCColorStr;
             labelN.background = background;
             labelC.background = background;
             ic.labels['chain'].push(labelN);

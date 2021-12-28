@@ -336,10 +336,10 @@ class ApplyDisplay {
         if(labelArray) {
             for(let i = 0, il = labelArray.length; i < il; ++i) {
                 let label = labelArray[i];
-                if((ic.opts.background == 'white' || ic.opts.background == 'grey') && label.color == ic.colorBlackbkgd) {
+                if((ic.opts.background != 'black') && label.color == ic.colorBlackbkgd) {
                     label.color = ic.colorWhitebkgd;
                 }
-                else if((ic.opts.background == 'black' || ic.opts.background == 'transparent') && label.color == ic.colorWhitebkgd) {
+                else if((ic.opts.background == 'black') && label.color == ic.colorWhitebkgd) {
                     label.color = ic.colorBlackbkgd;
                 }
             }

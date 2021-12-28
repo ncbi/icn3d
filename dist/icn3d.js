@@ -19315,10 +19315,15 @@ var icn3d = (function (exports) {
                     label.factor = 0.3;
 
                     let atomColorStr = atom.color.getHexString().toUpperCase();
-                    //label.color = (ic.opts.background == 'white' || ic.opts.background == 'gray') ? ic.colorWhitebkgd : ic.colorBlackbkgd; //(atomColorStr === "CCCCCC" || atomColorStr === "C8C8C8") ? "#888888" : "#" + atomColorStr;
+                    //label.color = (ic.opts.background != 'black') ? ic.colorWhitebkgd : ic.colorBlackbkgd; //(atomColorStr === "CCCCCC" || atomColorStr === "C8C8C8") ? "#888888" : "#" + atomColorStr;
                     //if(bSchematic) label.color = (atomColorStr === "CCCCCC" || atomColorStr === "C8C8C8") ? "#888888" : "#" + atomColorStr;
                     // don't change residue labels
-                    label.color = (atomColorStr === "CCCCCC" || atomColorStr === "C8C8C8") ? "#888888" : "#" + atomColorStr;
+                    if(bNumber) {
+                        label.color = (ic.opts.background != 'black') ? ic.colorWhitebkgd : ic.colorBlackbkgd;
+                    }
+                    else {
+                        label.color = (atomColorStr === "CCCCCC" || atomColorStr === "C8C8C8") ? "#888888" : "#" + atomColorStr;
+                    }
                     label.background = background;
                     //label.alpha = alpha; // ic.labelCls.hideLabels() didn't work. Remove this line for now
 
@@ -19362,7 +19367,7 @@ var icn3d = (function (exports) {
                 label.text = atom.elem;
                 label.size = size;
 
-                label.color = (ic.opts.background == 'white' || ic.opts.background == 'gray') ? ic.colorWhitebkgd : atom.color.getHexString();
+                label.color = (ic.opts.background != 'black') ? ic.colorWhitebkgd : atom.color.getHexString();
                 label.background = background;
 
                 ic.labels['schematic'].push(label);
@@ -19400,7 +19405,7 @@ var icn3d = (function (exports) {
                 }
 
                 let atomColorStr = atom.color.getHexString().toUpperCase();
-                label.color = (ic.opts.background == 'white' || ic.opts.background == 'gray') ? ic.colorWhitebkgd : ic.colorBlackbkgd; //(atomColorStr === "CCCCCC" || atomColorStr === "C8C8C8") ? "#888888" : "#" + atomColorStr; 
+                label.color = (ic.opts.background != 'black') ? ic.colorWhitebkgd : ic.colorBlackbkgd; //(atomColorStr === "CCCCCC" || atomColorStr === "C8C8C8") ? "#888888" : "#" + atomColorStr; 
                 if(bElement) label.color = (atomColorStr === "CCCCCC" || atomColorStr === "C8C8C8") ? "#888888" : "#" + atomColorStr;
                 label.background = background;
 
@@ -29830,7 +29835,7 @@ var icn3d = (function (exports) {
                 label.text = 'Chain ' + chainName + ': ' + proteinName;
                 label.size = size;
                 ic.firstAtomObjCls.getFirstCalphaAtomObj(ic.chains[chainid]).color.getHexString().toUpperCase();
-                label.color = (ic.opts.background == 'white' || ic.opts.background == 'gray') ? ic.colorWhitebkgd : ic.colorBlackbkgd; //(atomColorStr === "CCCCCC" || atomColorStr === "C8C8C8") ? "#888888" : "#" + atomColorStr;
+                label.color = (ic.opts.background != 'black') ? ic.colorWhitebkgd : ic.colorBlackbkgd; //(atomColorStr === "CCCCCC" || atomColorStr === "C8C8C8") ? "#888888" : "#" + atomColorStr;
                 label.background = background;
                 ic.labels['chain'].push(label);
             }
@@ -29864,10 +29869,10 @@ var icn3d = (function (exports) {
                 }
                 labelN.size = size;
                 labelC.size = size;
-                let atomNColorStr = firstAtom.color.getHexString().toUpperCase();
-                let atomCColorStr = lastAtom.color.getHexString().toUpperCase();
-                labelN.color = (ic.opts.background == 'white' || ic.opts.background == 'gray') ? ic.colorWhitebkgd : (atomNColorStr === "CCCCCC" || atomNColorStr === "C8C8C8") ? "#888888" : "#" + atomNColorStr;
-                labelC.color = (ic.opts.background == 'white' || ic.opts.background == 'gray') ? ic.colorWhitebkgd : (atomCColorStr === "CCCCCC" || atomCColorStr === "C8C8C8") ? "#888888" : "#" + atomCColorStr;
+                firstAtom.color.getHexString().toUpperCase();
+                lastAtom.color.getHexString().toUpperCase();
+                labelN.color = (ic.opts.background != 'black') ? ic.colorWhitebkgd : ic.colorBlackbkgd; //(atomNColorStr === "CCCCCC" || atomNColorStr === "C8C8C8") ? "#888888" : "#" + atomNColorStr;
+                labelC.color = (ic.opts.background != 'black') ? ic.colorWhitebkgd : ic.colorBlackbkgd; //(atomCColorStr === "CCCCCC" || atomCColorStr === "C8C8C8") ? "#888888" : "#" + atomCColorStr;
                 labelN.background = background;
                 labelC.background = background;
                 ic.labels['chain'].push(labelN);
@@ -35083,7 +35088,7 @@ var icn3d = (function (exports) {
 
                             //var size = parseInt(ic.LABELSIZE * 10 / commandname.length);
                             let size = ic.LABELSIZE;
-                            let color = (ic.opts.background == 'white' || ic.opts.background == 'gray') ? ic.colorWhitebkgd : ic.colorBlackbkgd; //"FFFF00";
+                            let color = (ic.opts.background != 'black') ? ic.colorWhitebkgd : ic.colorBlackbkgd; //"FFFF00";
                             if(position !== undefined) ic.analysisCls.addLabel(commanddescr, position.center.x, position.center.y, position.center.z, size, color, undefined, 'custom');
 
                             ic.drawCls.draw();
@@ -36390,7 +36395,7 @@ var icn3d = (function (exports) {
               ic.labels['clinvar'] = [];
               //var size = Math.round(ic.LABELSIZE * 10 / label.length);
               let size = ic.LABELSIZE;
-              let color = (ic.opts.background == 'white' || ic.opts.background == 'gray') ? ic.colorWhitebkgd : ic.colorBlackbkgd; //"#FFFF00";
+              let color = (ic.opts.background != 'black') ? ic.colorWhitebkgd : ic.colorBlackbkgd; //"#FFFF00";
               ic.analysisCls.addLabel(label, position.center.x + 1, position.center.y + 1, position.center.z + 1, size, color, undefined, 'clinvar');
               ic.hAtoms = {};
               for(let j in ic.residues[residueid]) {
@@ -40374,7 +40379,7 @@ var icn3d = (function (exports) {
             // default yellow
             //let textColor = parameters.hasOwnProperty("textColor") &&  parameters["textColor"] !== undefined ? me.utilsCls.hexToRgb(parameters["textColor"], textAlpha) : { r:255, g:255, b:0, a:1.0 };
             // default black or white
-            let defaultColor = ( ic.opts.background == 'white' || ic.opts.background == 'gray' ) ? { r:0, g:0, b:0, a:1.0 } : { r:255, g:255, b:0, a:1.0 };
+            let defaultColor = (ic.opts.background != 'black') ? { r:0, g:0, b:0, a:1.0 } : { r:255, g:255, b:0, a:1.0 };
             let textColor = parameters.hasOwnProperty("textColor") &&  parameters["textColor"] !== undefined ? me.utilsCls.hexToRgb(parameters["textColor"], textAlpha) 
                 : defaultColor;
             if(!textColor) textColor = defaultColor;
@@ -40514,7 +40519,7 @@ var icn3d = (function (exports) {
 
             for(let name in labels) {
                 let labelArray = (labels[name] !== undefined) ? labels[name] : [];
-                let defaultColor = (ic.opts.background == 'white' || ic.opts.background == 'gray') ? ic.colorWhitebkgd : ic.colorBlackbkgd;
+                let defaultColor = (ic.opts.background != 'black') ? ic.colorWhitebkgd : ic.colorBlackbkgd;
 
                 for (let i = 0, il = labelArray.length; i < il; ++i) {
                     let label = labelArray[i];
@@ -40892,10 +40897,10 @@ var icn3d = (function (exports) {
             if(labelArray) {
                 for(let i = 0, il = labelArray.length; i < il; ++i) {
                     let label = labelArray[i];
-                    if((ic.opts.background == 'white' || ic.opts.background == 'grey') && label.color == ic.colorBlackbkgd) {
+                    if((ic.opts.background != 'black') && label.color == ic.colorBlackbkgd) {
                         label.color = ic.colorWhitebkgd;
                     }
-                    else if((ic.opts.background == 'black' || ic.opts.background == 'transparent') && label.color == ic.colorWhitebkgd) {
+                    else if((ic.opts.background == 'black') && label.color == ic.colorWhitebkgd) {
                         label.color = ic.colorBlackbkgd;
                     }
                 }
@@ -49191,23 +49196,23 @@ var icn3d = (function (exports) {
             html += me.htmlCls.divStr + "dl_addlabel' class='" + dialogClass + "'>";
             html += "1. Text: " + me.htmlCls.inputTextStr + "id='" + me.pre + "labeltext' value='Text' size=4><br/>";
             html += "2. Size: " + me.htmlCls.inputTextStr + "id='" + me.pre + "labelsize' value='18' size=4 maxlength=2><br/>";
-            html += "3. Color: " + me.htmlCls.inputTextStr + "id='" + me.pre + "labelcolor' value='" + defaultColor + "' size=4><br/>";
-            html += "4. Background: " + me.htmlCls.inputTextStr + "id='" + me.pre + "labelbkgd' value='' size=4><br/>";
+            //html += "3. Color: " + me.htmlCls.inputTextStr + "id='" + me.pre + "labelcolor' value='" + defaultColor + "' size=4><br/>";
+            //html += "4. Background: " + me.htmlCls.inputTextStr + "id='" + me.pre + "labelbkgd' value='' size=4><br/>";
             if(me.utilsCls.isMobile()) {
-                html += me.htmlCls.spanNowrapStr + "5. Touch TWO atoms</span><br/>";
+                html += me.htmlCls.spanNowrapStr + "3. Touch TWO atoms</span><br/>";
             }
             else {
-                html += me.htmlCls.spanNowrapStr + "5. Pick TWO atoms while holding \"Alt\" key</span><br/>";
+                html += me.htmlCls.spanNowrapStr + "3. Pick TWO atoms while holding \"Alt\" key</span><br/>";
             }
-            html += me.htmlCls.spanNowrapStr + "6. " + me.htmlCls.buttonStr + "applypick_labels'>Display</button></span>";
+            html += me.htmlCls.spanNowrapStr + "4. " + me.htmlCls.buttonStr + "applypick_labels'>Display</button></span>";
             html += "</div>";
 
             html += me.htmlCls.divStr + "dl_addlabelselection' class='" + dialogClass + "'>";
             html += "1. Text: " + me.htmlCls.inputTextStr + "id='" + me.pre + "labeltext2' value='Text' size=4><br/>";
             html += "2. Size: " + me.htmlCls.inputTextStr + "id='" + me.pre + "labelsize2' value='18' size=4 maxlength=2><br/>";
-            html += "3. Color: " + me.htmlCls.inputTextStr + "id='" + me.pre + "labelcolor2' value='" + defaultColor + "' size=4><br/>";
-            html += "4. Background: " + me.htmlCls.inputTextStr + "id='" + me.pre + "labelbkgd2' value='' size=4><br/>";
-            html += me.htmlCls.spanNowrapStr + "5. " + me.htmlCls.buttonStr + "applyselection_labels'>Display</button></span>";
+            //html += "3. Color: " + me.htmlCls.inputTextStr + "id='" + me.pre + "labelcolor2' value='" + defaultColor + "' size=4><br/>";
+            //html += "4. Background: " + me.htmlCls.inputTextStr + "id='" + me.pre + "labelbkgd2' value='' size=4><br/>";
+            html += me.htmlCls.spanNowrapStr + "3. " + me.htmlCls.buttonStr + "applyselection_labels'>Display</button></span>";
             html += "</div>";
 
             html += me.htmlCls.divStr + "dl_distance' class='" + dialogClass + "'>";

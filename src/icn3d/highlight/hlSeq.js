@@ -372,7 +372,7 @@ class HlSeq {
 
                         //var size = parseInt(ic.LABELSIZE * 10 / commandname.length);
                         let size = ic.LABELSIZE;
-                        let color = (ic.opts.background == 'white' || ic.opts.background == 'gray') ? ic.colorWhitebkgd : ic.colorBlackbkgd; //"FFFF00";
+                        let color = (ic.opts.background != 'black') ? ic.colorWhitebkgd : ic.colorBlackbkgd; //"FFFF00";
                         if(position !== undefined) ic.analysisCls.addLabel(commanddescr, position.center.x, position.center.y, position.center.z, size, color, undefined, 'custom');
 
                         ic.drawCls.draw();
