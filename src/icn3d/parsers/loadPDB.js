@@ -16,7 +16,7 @@ class LoadPDB {
     // modified from iview (http://istar.cse.cuhk.edu.hk/iview/)
     //This PDB parser feeds the viewer with the content of a PDB file, pdbData.
     loadPDB(src, pdbid, bOpm, bVector, bMutation, bAppend) { let  ic = this.icn3d, me = ic.icn3dui;
-        //ic.atoms = {}
+        let bNMR = false;
         let  lines = src.split('\n');
 
         let  chainsTmp = {} // serial -> atom
@@ -203,6 +203,11 @@ class LoadPDB {
                  if(line.indexOf('1/2 of bilayer thickness:') !== -1) { // OPM transmembrane protein
                     ic.halfBilayerSize = parseFloat(line.substr(line.indexOf(':') + 1).trim());
                  }
+                 else if (type == 210) {
+                     if((line.substr(11, 32).trim() == 'EXPERIMENT TYPE') && line.substr(45).trim() == 'NMR') {
+                        bNMR = true;
+                     }
+                 }
                  else if (type == 350 && line.substr(13, 5) == 'BIOMT') {
                     let  n = parseInt(line[18]) - 1;
                     //var m = parseInt(line.substr(21, 2));
@@ -265,12 +270,14 @@ class LoadPDB {
 
                 //helices = [];
                 //sheets = [];
-                sheetArray = [];
-                sheetStart = [];
-                sheetEnd = [];
-                helixArray = [];
-                helixStart = [];
-                helixEnd = [];
+                if(!bNMR) {
+                    sheetArray = [];
+                    sheetStart = [];
+                    sheetEnd = [];
+                    helixArray = [];
+                    helixStart = [];
+                    helixEnd = [];
+                }
             } else if (record === 'JRNL  ') {
                 if(line.substr(12, 4) === 'PMID') {
                     ic.pmid = line.substr(19).trim();
@@ -376,27 +383,26 @@ class LoadPDB {
 
                 // Assign secondary structures from the input
                 // if a residue is assigned both sheet and helix, it is assigned as sheet
-                if($.inArray(residueNum, sheetArray) !== -1) {
+                if(this.isSecondary(residueNum, sheetArray, bNMR)) {
                   ic.atoms[serial].ss = 'sheet';
-
-                  if($.inArray(residueNum, sheetStart) !== -1) {
+                  if(this.isSecondary(residueNum, sheetStart, bNMR)) {
                     ic.atoms[serial].ssbegin = true;
                   }
 
                   // do not use else if. Some residues are both start and end of secondary structure
-                  if($.inArray(residueNum, sheetEnd) !== -1) {
+                  if(this.isSecondary(residueNum, sheetEnd, bNMR)) {
                     ic.atoms[serial].ssend = true;
                   }
                 }
-                else if($.inArray(residueNum, helixArray) !== -1) {
+                else if(this.isSecondary(residueNum, helixArray, bNMR)) {
                   ic.atoms[serial].ss = 'helix';
 
-                  if($.inArray(residueNum, helixStart) !== -1) {
+                  if(this.isSecondary(residueNum, helixStart, bNMR)) {
                     ic.atoms[serial].ssbegin = true;
                   }
 
                   // do not use else if. Some residues are both start and end of secondary structure
-                  if($.inArray(residueNum, helixEnd) !== -1) {
+                  if(this.isSecondary(residueNum, helixEnd, bNMR)) {
                     ic.atoms[serial].ssend = true;
                   }
                 }
@@ -845,6 +851,24 @@ class LoadPDB {
         return {'chainresiCalphaHash': chainCalphaHash, 'center': ic.center.clone()}
     }
 
+    isSecondary(resid, residArray, bNMR) { let  ic = this.icn3d, me = ic.icn3dui;
+        if(!bNMR) {
+            return $.inArray(resid, residArray) != -1;
+        }
+        else {
+            let chain_resi = resid.substr(resid.indexOf('_') + 1);
+
+            let bFound = false;
+            for(let i = 0, il = residArray.length; i < il; ++i) {
+                if(chain_resi == residArray[i].substr(residArray[i].indexOf('_') + 1)) {
+                    bFound = true;
+                    break;
+                }
+            }
+
+            return bFound;
+        }
+    }
 }
 
 export {LoadPDB}
