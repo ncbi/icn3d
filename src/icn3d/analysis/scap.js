@@ -200,7 +200,8 @@ class Scap {
                   if(!ic.alertAlt) {
                     ic.alertAlt = true;
 
-                    if(ic.bRender) alert('Please press the letter "a" to alternate between wild type and mutant.');
+                    //if(ic.bRender) alert('Please press the letter "a" to alternate between wild type and mutant.');
+                    alert('Please press the letter "a" to alternate between wild type and mutant.');
                   }
               }
 

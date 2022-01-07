@@ -19,7 +19,7 @@ class Html {
     this.cfg = this.icn3dui.cfg;
 
     this.opts = {};
-    this.opts['background']         = 'transparent';        //transparent, black, grey, white
+    this.opts['background']         = 'black';        //transparent, black, grey, white
 
     this.WIDTH = 400; // total width of view area
     this.HEIGHT = 400; // total height of view area

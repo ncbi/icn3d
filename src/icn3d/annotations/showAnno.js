@@ -327,7 +327,7 @@ class ShowAnno {
                     $.ajax(this);
                     return;
                 }
-                this.enableHlSeq();
+                thisClass.enableHlSeq();
                 console.log( "No data were found for the protein " + chnidBaseArray + "..." );
                 for(let chnid in ic.protein_chainid) {
                     let chnidBase = ic.protein_chainid[chnid];

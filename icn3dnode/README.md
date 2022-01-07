@@ -1,7 +1,9 @@
-icn3dnode
-=========
+Node.js Scripts based on iCn3D
+==============================
 
-iCn3D JavaScript functions in [icn3d npm package](https://www.npmjs.com/package/icn3d) can be directly called in Node.js scripts to run from the command line. Here show a few examples. A Python script to export PNG images for any structures in the batch mode is also attached at the end.
+Either Python scripts in the directory "icn3dpython" or Node.js scripts in the directory "icn3dnode" can be used to analyze structures in command line.
+
+In your Node.js scripts, you can call iCn3D JavaScript functions in [icn3d npm package](https://www.npmjs.com/package/icn3d). You can then run these scripts in command line. Here show a few examples. 
 
 Installation
 ------------
@@ -73,14 +75,4 @@ Examples
         ...
         
     where "62" is the residue position, "V" is the residue name, "pfam01601" is the domain ID, "Corona_S2" is the domain name, "1" is the index, "superfamily" is the domain type, "6XR8,7CWL" is the example PDB IDs.
-
-* <b> Export PNG images for any structures in the batch mode:
-
-    First, install selenium, chrome, and chromedriver.
-    
-    Second, specify the directories and PDB file name as described in the script batch_export_png.py.
-    
-    Then run the script:
-    
-        python batch_export_png.py
         

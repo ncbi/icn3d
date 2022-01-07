@@ -365,7 +365,7 @@ class iCn3D {
     //The default display options
     this.optsOri = {}
     this.optsOri['camera']             = 'perspective';        //perspective, orthographic
-    this.optsOri['background']         = 'transparent';        //transparent, black, grey, white
+    this.optsOri['background']         = 'black';              //transparent, black, grey, white
     this.optsOri['color']              = 'chain';              //spectrum, secondary structure, charge, hydrophobic, conserved, chain, residue, atom, b factor, red, green, blue, magenta, yellow, cyan, white, grey, custom
     this.optsOri['proteins']           = 'ribbon';             //ribbon, strand, cylinder and plate, schematic, c alpha trace, backbone, b factor tube, lines, stick, ball and stick, sphere, nothing
     this.optsOri['sidec']              = 'nothing';            //lines, stick, ball and stick, sphere, nothing

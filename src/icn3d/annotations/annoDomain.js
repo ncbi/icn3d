@@ -83,7 +83,7 @@ class AnnoDomain {
                 }
                 ic.showAnnoCls.enableHlSeq();
                 ic.bAjax3ddomain = true;
-                bAjaxDone1 = true;
+                //bAjaxDone1 = true;
                 if(ic.deferred3ddomain !== undefined) {
                     if(me.cfg.align === undefined || me.cfg.chainalign === undefined) {
                         ic.deferred3ddomain.resolve();

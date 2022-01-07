@@ -214,7 +214,8 @@ class ShareLink {
 
            if(ic.commands.length > start) {
                let command_tf = ic.commands[start].split('|||');
-               prevCommandStr = command_tf[0].trim();
+               let command_tf2 = command_tf[0].split('&command=');
+               prevCommandStr = command_tf2[0].trim();
 
                //statefile += ic.commands[start] + "\n";
 
@@ -226,7 +227,8 @@ class ShareLink {
            let tmpUrl = '';
            for(let il = ic.commands.length; i < il; ++i) {
                let command_tf = ic.commands[i].split('|||');
-               let commandStr = command_tf[0].trim();
+               let command_tf2 = command_tf[0].split('&command=');
+               let commandStr = command_tf2[0].trim();
 
                //statefile += ic.commands[i] + "\n";
 
