@@ -12790,7 +12790,8 @@ var icn3d = (function (exports) {
 
                if(ic.commands.length > start) {
                    let command_tf = ic.commands[start].split('|||');
-                   prevCommandStr = command_tf[0].trim();
+                   let command_tf2 = command_tf[0].split('&command=');
+                   prevCommandStr = command_tf2[0].trim();
 
                    //statefile += ic.commands[start] + "\n";
 
@@ -12801,7 +12802,8 @@ var icn3d = (function (exports) {
                let tmpUrl = '';
                for(let il = ic.commands.length; i < il; ++i) {
                    let command_tf = ic.commands[i].split('|||');
-                   let commandStr = command_tf[0].trim();
+                   let command_tf2 = command_tf[0].split('&command=');
+                   let commandStr = command_tf2[0].trim();
 
                    //statefile += ic.commands[i] + "\n";
 
@@ -20185,7 +20187,8 @@ var icn3d = (function (exports) {
                       if(!ic.alertAlt) {
                         ic.alertAlt = true;
 
-                        if(ic.bRender) alert('Please press the letter "a" to alternate between wild type and mutant.');
+                        //if(ic.bRender) alert('Please press the letter "a" to alternate between wild type and mutant.');
+                        alert('Please press the letter "a" to alternate between wild type and mutant.');
                       }
                   }
 
@@ -30713,8 +30716,9 @@ var icn3d = (function (exports) {
           ic.bAddCommands = false;
 
           let  commandTransformation = commandStr.split('|||');
+          let commandTransformation2 = commandTransformation[0].split('%7C%7C%7C'); // sometimes encoded transformation is also included
 
-          let  commandOri = commandTransformation[0].replace(/\s+/g, ' ').trim();
+          let  commandOri = commandTransformation2[0].replace(/\s+/g, ' ').trim();
           let  command = commandOri.toLowerCase();
 
         // exact match =============
@@ -35516,7 +35520,7 @@ var icn3d = (function (exports) {
                         $.ajax(this);
                         return;
                     }
-                    this.enableHlSeq();
+                    thisClass.enableHlSeq();
                     console.log( "No data were found for the protein " + chnidBaseArray + "..." );
                     for(let chnid in ic.protein_chainid) {
                         let chnidBase = ic.protein_chainid[chnid];
@@ -36206,7 +36210,7 @@ var icn3d = (function (exports) {
                     }
                     ic.showAnnoCls.enableHlSeq();
                     ic.bAjax3ddomain = true;
-                    bAjaxDone1 = true;
+                    //bAjaxDone1 = true;
                     if(ic.deferred3ddomain !== undefined) {
                         if(me.cfg.align === undefined || me.cfg.chainalign === undefined) {
                             ic.deferred3ddomain.resolve();
@@ -46365,6 +46369,8 @@ var icn3d = (function (exports) {
         setTopMenusHtml(id, str1, str2) { let me = this.icn3dui;
             if(me.bNode) return '';
 
+            let titleColor =(me.htmlCls.opts['background'] == 'black') ? me.htmlCls.GREYD : 'black';
+
             let html = "";
 
             html += "<div style='position:relative;'>";
@@ -46408,7 +46414,7 @@ var icn3d = (function (exports) {
             html += this.setTools();
 
             // show title at the top left corner
-            html += me.htmlCls.divStr + "title' class='icn3d-commandTitle' style='font-size:1.2em; font-weight:normal; position:absolute; z-index:1; float:left; display:table-row; margin: 85px 0px 0px 5px; color:black; width:" + me.htmlCls.WIDTH + "px'></div>";
+            html += me.htmlCls.divStr + "title' class='icn3d-commandTitle' style='font-size:1.2em; font-weight:normal; position:absolute; z-index:1; float:left; display:table-row; margin: 85px 0px 0px 5px; color:" + titleColor + "; width:" + me.htmlCls.WIDTH + "px'></div>";
 
             html += me.htmlCls.divStr + "viewer' style='position:relative; width:100%; height:100%; background-color: " + me.htmlCls.GREYD + ";'>";
 
@@ -46460,6 +46466,8 @@ var icn3d = (function (exports) {
 
         setTopMenusHtmlMobile(id, str1, str2) { let me = this.icn3dui;
             if(me.bNode) return '';
+
+            let titleColor =(me.htmlCls.opts['background'] == 'black') ? me.htmlCls.GREYD : 'black';
 
             let html = "";
 
@@ -46530,8 +46538,6 @@ var icn3d = (function (exports) {
             //html += me.htmlCls.setMenuCls.setTools();
 
             // show title at the top left corner
-            let titleColor =(me.htmlCls.opts['background'] == 'black') ? me.htmlCls.GREYD : 'black';
-
             html += me.htmlCls.divStr + "title' class='icn3d-commandTitle' style='font-size:1.2em; font-weight:normal; position:absolute; z-index:1; float:left; display:block; margin: 12px 0px 0px 40px; color:" + titleColor + "; width:" +(me.htmlCls.WIDTH - 40).toString() + "px'></div>";
             html += me.htmlCls.divStr + "viewer' style='position:relative; width:100%; height:100%; background-color: " + me.htmlCls.GREYD + ";'>";
             html += me.htmlCls.divStr + "mnLogSection'>";
@@ -47327,8 +47333,8 @@ var icn3d = (function (exports) {
 
             html += "<li><span>Background</span>";
             html += "<ul>";
-            html += me.htmlCls.setHtmlCls.getRadio('mn6_bkgd', 'mn6_bkgdTransparent', 'Transparent', true);
-            html += me.htmlCls.setHtmlCls.getRadio('mn6_bkgd', 'mn6_bkgdBlack', 'Black');
+            html += me.htmlCls.setHtmlCls.getRadio('mn6_bkgd', 'mn6_bkgdTransparent', 'Transparent');
+            html += me.htmlCls.setHtmlCls.getRadio('mn6_bkgd', 'mn6_bkgdBlack', 'Black', true);
             html += me.htmlCls.setHtmlCls.getRadio('mn6_bkgd', 'mn6_bkgdGrey', 'Gray');
             html += me.htmlCls.setHtmlCls.getRadio('mn6_bkgd', 'mn6_bkgdWhite', 'White');
             html += "</ul>";
@@ -52552,7 +52558,7 @@ var icn3d = (function (exports) {
         this.cfg = this.icn3dui.cfg;
 
         this.opts = {};
-        this.opts['background']         = 'transparent';        //transparent, black, grey, white
+        this.opts['background']         = 'black';        //transparent, black, grey, white
 
         this.WIDTH = 400; // total width of view area
         this.HEIGHT = 400; // total height of view area
@@ -55453,7 +55459,7 @@ var icn3d = (function (exports) {
         //The default display options
         this.optsOri = {};
         this.optsOri['camera']             = 'perspective';        //perspective, orthographic
-        this.optsOri['background']         = 'transparent';        //transparent, black, grey, white
+        this.optsOri['background']         = 'black';              //transparent, black, grey, white
         this.optsOri['color']              = 'chain';              //spectrum, secondary structure, charge, hydrophobic, conserved, chain, residue, atom, b factor, red, green, blue, magenta, yellow, cyan, white, grey, custom
         this.optsOri['proteins']           = 'ribbon';             //ribbon, strand, cylinder and plate, schematic, c alpha trace, backbone, b factor tube, lines, stick, ball and stick, sphere, nothing
         this.optsOri['sidec']              = 'nothing';            //lines, stick, ball and stick, sphere, nothing
@@ -55851,7 +55857,7 @@ var icn3d = (function (exports) {
         //even when multiple iCn3D viewers are shown together.
         this.pre = this.cfg.divid + "_";
 
-        this.REVISION = '3.5.1';
+        this.REVISION = '3.6.0';
 
         // In nodejs, iCn3D defines "window = {navigator: {}}"
         this.bNode = (Object.keys(window).length < 2) ? true : false;

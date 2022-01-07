@@ -58,8 +58,9 @@ class ApplyCommand {
       ic.bAddCommands = false;
 
       let  commandTransformation = commandStr.split('|||');
+      let commandTransformation2 = commandTransformation[0].split('%7C%7C%7C'); // sometimes encoded transformation is also included
 
-      let  commandOri = commandTransformation[0].replace(/\s+/g, ' ').trim();
+      let  commandOri = commandTransformation2[0].replace(/\s+/g, ' ').trim();
       let  command = commandOri.toLowerCase();
 
       let  bShowLog = true;

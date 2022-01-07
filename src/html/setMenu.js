@@ -16,6 +16,8 @@ class SetMenu {
     setTopMenusHtml(id, str1, str2) { let me = this.icn3dui;
         if(me.bNode) return '';
 
+        let titleColor =(me.htmlCls.opts['background'] == 'black') ? me.htmlCls.GREYD : 'black';
+
         let html = "";
 
         html += "<div style='position:relative;'>";
@@ -59,7 +61,7 @@ class SetMenu {
         html += this.setTools();
 
         // show title at the top left corner
-        html += me.htmlCls.divStr + "title' class='icn3d-commandTitle' style='font-size:1.2em; font-weight:normal; position:absolute; z-index:1; float:left; display:table-row; margin: 85px 0px 0px 5px; color:black; width:" + me.htmlCls.WIDTH + "px'></div>";
+        html += me.htmlCls.divStr + "title' class='icn3d-commandTitle' style='font-size:1.2em; font-weight:normal; position:absolute; z-index:1; float:left; display:table-row; margin: 85px 0px 0px 5px; color:" + titleColor + "; width:" + me.htmlCls.WIDTH + "px'></div>";
 
         html += me.htmlCls.divStr + "viewer' style='position:relative; width:100%; height:100%; background-color: " + me.htmlCls.GREYD + ";'>";
 
@@ -111,6 +113,8 @@ class SetMenu {
 
     setTopMenusHtmlMobile(id, str1, str2) { let me = this.icn3dui;
         if(me.bNode) return '';
+
+        let titleColor =(me.htmlCls.opts['background'] == 'black') ? me.htmlCls.GREYD : 'black';
 
         let html = "";
 
@@ -181,8 +185,6 @@ class SetMenu {
         //html += me.htmlCls.setMenuCls.setTools();
 
         // show title at the top left corner
-        let titleColor =(me.htmlCls.opts['background'] == 'black') ? me.htmlCls.GREYD : 'black';
-
         html += me.htmlCls.divStr + "title' class='icn3d-commandTitle' style='font-size:1.2em; font-weight:normal; position:absolute; z-index:1; float:left; display:block; margin: 12px 0px 0px 40px; color:" + titleColor + "; width:" +(me.htmlCls.WIDTH - 40).toString() + "px'></div>";
         html += me.htmlCls.divStr + "viewer' style='position:relative; width:100%; height:100%; background-color: " + me.htmlCls.GREYD + ";'>";
         html += me.htmlCls.divStr + "mnLogSection'>";
@@ -978,8 +980,8 @@ class SetMenu {
 
         html += "<li><span>Background</span>";
         html += "<ul>";
-        html += me.htmlCls.setHtmlCls.getRadio('mn6_bkgd', 'mn6_bkgdTransparent', 'Transparent', true);
-        html += me.htmlCls.setHtmlCls.getRadio('mn6_bkgd', 'mn6_bkgdBlack', 'Black');
+        html += me.htmlCls.setHtmlCls.getRadio('mn6_bkgd', 'mn6_bkgdTransparent', 'Transparent');
+        html += me.htmlCls.setHtmlCls.getRadio('mn6_bkgd', 'mn6_bkgdBlack', 'Black', true);
         html += me.htmlCls.setHtmlCls.getRadio('mn6_bkgd', 'mn6_bkgdGrey', 'Gray');
         html += me.htmlCls.setHtmlCls.getRadio('mn6_bkgd', 'mn6_bkgdWhite', 'White');
         html += "</ul>";

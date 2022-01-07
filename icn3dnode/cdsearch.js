@@ -223,16 +223,19 @@ https.get(url, function(res1) {
                           } // end for
                       });
                   }).on('error', function(e) {
-                      utils.dumpError(e);
+                      //utils.dumpError(e);
+                      console.log(err.stack);
                   }); // end of 3rd https
               });
           }).on('error', function(e) {
-              utils.dumpError(e);
+              //utils.dumpError(e);
+              console.log(err.stack);
           }); // end of 2nd https
       }, 30000);
     });
 }).on('error', function(e) {
-    utils.dumpError(e);
+    //utils.dumpError(e);
+    console.log(err.stack);
 });
 
 /*
@@ -251,6 +254,7 @@ axios.post(url, qs.stringify(dataObj), config)
 })
 .catch(function(err) {
   //console.error("scap.cgi error..." + err);
-  utils.dumpError(err);
+  //utils.dumpError(err);
+  console.log(err.stack);
 });
 */

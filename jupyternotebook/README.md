@@ -2,7 +2,7 @@ icn3dpy
 =======
 
 icn3dpy is a simple [IPython/Jupyter](http://jupyter.org/) widget to
-embed an interactive [iCn3D](https://github.com/ncbi/icn3d) viewer in a notebook. Its source code is at [PyPI](https://pypi.org/project/icn3dpy/), and is also included at [iCn3D GitHub](https://github.com/ncbi/icn3d).
+embed an interactive [iCn3D](https://github.com/ncbi/icn3d) viewer in a notebook. Its source code is at [PyPI](https://pypi.org/project/icn3dpy/), and is also included at [iCn3D GitHub](https://github.com/ncbi/icn3d/tree/master/jupyternotebook).
 
 The 3D view of icn3dpy in Jupyter Notebook is interactive, just like in any browser. The popup windows will appear under the 3D view. If you have a predefined cutom view, you can use the predefined commands in icn3dpy as shown below.
 
@@ -16,7 +16,15 @@ Install icn3dpy:
 
     pip install icn3dpy
 
-Install the extension:
+Install node if node is unavailable. One way in Mac is to use "brew":
+
+    brew update
+
+    brew install node 
+
+Install Jupyter Lab and the extension "jupyterlab_3dmol":
+
+    pip install jupyterlab
 
     jupyter labextension install jupyterlab_3dmol
 
