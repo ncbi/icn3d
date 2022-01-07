@@ -39,12 +39,14 @@ options.binary_location = "/usr/local/chrome/89.0.4389.90/bin/chrome" # chrome b
 
 # start a broser
 browser = webdriver.Chrome(executable_path='/usr/local/chromedriver/89.0.4389.23/bin/chromedriver', options=options)
-pdbid = "1KQ2" # use upper case if it's a PDB ID
+#pdbid = "1KQ2" # use upper case if it's a PDB ID
+pdbid = "A0A061AD48" # AlphaFold UniProt ID
 ssfile = Path(f"{downdir}/{Path(pdbid).stem}_icn3d_ss.txt")
 
 try:
     # send web request to icn3d
-    url = f"https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?mmdbid={pdbid}&command=export secondary structure"
+    #url = f"https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?mmdbid={pdbid}&command=export secondary structure"
+    url = f"https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?afid={pdbid}&command=export secondary structure"
     browser.get(url)
 
     ok = False
