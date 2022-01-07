@@ -223,7 +223,11 @@ You can also save "Share Link" in "File" menu to share with your colleagues. The
 All "Share Link" URLs can show the original view using the archived version of iCn3D by clicking "Open File > Share Link in Archived Ver." in "File" menu.<br/>
 <br/>
 
-<li><b>Node.js scripts using npm "icn3d"</b>:
+<li><b>Python scripts" to batch process structures</b>:
+Python scripts can be used to process 3D structures (e.g., export secondary structures or PNG images) in batch mode. The example scripts are at <a href="https://github.com/ncbi/icn3d/tree/master/icn3dpython">icn3dpython</a>.<br/>
+<br/>
+
+<li><b>Node.js scripts using npm "icn3d" to batch process structures</b>:
 You can download <a href="https://www.npmjs.com/package/icn3d">npm "icn3d" package</a> to write Node.js scripts by calling iCn3D functions. These scripts can be used to process 3D structures (e.g., calculate interactions) in batch mode. The example scripts are at <a href="https://github.com/ncbi/icn3d/tree/master/icn3dnode">icn3dnode</a>.<br/>
 <br/>
 
@@ -717,7 +721,7 @@ You can color structures with SASA, or show the SASA for each residue.<br/>
 <tr valign='top'><td><a name="commandsUrl"></a>command</td><td>Besides the "Script/Log" section at the bottom of the canvas, commands can also be attached to the url parameter "command". The easy way to generate the commands is to operate manually to get your custom display and then click "File > Share Link" to find the URL with full commands or just the short URL.</td></tr>
 <tr valign='top'><td>replay</td><td>Set "true" or "1" to replay each step of a custom display.</td></tr>
 <tr valign='top'><td>usepdbnum</td><td>Set "true" or "1" to use PDB residue numbers instead of NCBI residue numbers when the input is MMDB ID and the residue numbers are different. The default is "true".</td></tr>
-<tr valign='top'><td>hidelicense</td><td>Set "true" or "1" to hide the features requiring licenses, such as "Analysis > DelPhi Potential" and "Analysis > Mutaion". The default is "false".</td></tr>
+<tr valign='top'><td>hidelicense</td><td>Set "true" or "1" to hide the features requiring licenses, such as "Analysis > DelPhi Potential". The default is "false".</td></tr>
 <tr valign='top'><td>shownote</td><td>Set "true" or "1" to show the content in "Analysis > Window Title" as the window title. The default is "false".</td></tr>
 <tr valign='top'><td>menuicon</td><td>Set "true" or "1" to show icons for those menus requiring internet or license. The default is "false".</td></tr>
 </table>
