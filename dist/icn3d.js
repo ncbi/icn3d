@@ -31323,6 +31323,9 @@ var icn3d = (function (exports) {
               $("#" + ic.pre + "titlelink").css("color", "black");
             }
           }
+          else if(command.indexOf('set label color') == 0) {
+            ic.labelcolor = command.substr(command.lastIndexOf(' ') + 1);
+          }
           else if(commandOri.indexOf('set thickness') == 0) {
             let  paraArray = command.split(' | ');
 
@@ -40559,6 +40562,8 @@ var icn3d = (function (exports) {
 
                     let labelsize = (label.size !== undefined) ? label.size : ic.LABELSIZE;
                     let labelcolor = (label.color !== undefined) ? label.color : defaultColor;
+                    if(ic.labelcolor) labelcolor = ic.labelcolor;
+                    
                     let labelbackground = (label.background !== undefined) ? label.background : '#cccccc';
                     let labelalpha = (label.alpha !== undefined) ? label.alpha : 1.0;
 
@@ -40584,7 +40589,8 @@ var icn3d = (function (exports) {
                         }
                     }
 
-                    bb.position.set(label.position.x, label.position.y, label.position.z);
+                    let labelOffset = (name == 'schematic' || name == 'residue') ? 0 : ic.coilWidth; // 0.3
+                    bb.position.set(label.position.x + labelOffset, label.position.y + labelOffset, label.position.z + labelOffset);
                     ic.mdl.add(bb);
                     // do not add labels to objects for pk
                 }
@@ -45808,6 +45814,10 @@ var icn3d = (function (exports) {
             me.myEventCls.onIds("#" + me.pre + "mn6_addlabelSelection", "click", function(e) { me.icn3d;
                me.htmlCls.dialogCls.openDlg('dl_addlabelselection', 'Add custom labels by the selected');
             });
+
+             me.myEventCls.onIds("#" + me.pre + "mn6_labelColor", "click", function(e) { me.icn3d;
+               me.htmlCls.dialogCls.openDlg('dl_labelColor', 'Change color for all labels');
+            });
         //    },
         //    clkMn2_saveselection: function() {
             me.myEventCls.onIds("#" + me.pre + "mn2_saveselection", "click", function(e) { me.icn3d;
@@ -45816,7 +45826,8 @@ var icn3d = (function (exports) {
         //    },
         //    clkMn6_addlabelNo: function() {
             me.myEventCls.onIds(["#" + me.pre + "mn6_addlabelNo", "#" + me.pre + "removeLabels"], "click", function(e) { let ic = me.icn3d;
-               ic.pickpair = false;
+               ic.labelcolor = undefined;
+                ic.pickpair = false;
                //ic.labels['residue'] = [];
                //ic.labels['custom'] = [];
                let select = "set labels off";
@@ -47815,6 +47826,7 @@ var icn3d = (function (exports) {
                 html += me.htmlCls.setHtmlCls.getRadio('mn6_addlabel', 'mn6_addlabelTermini', 'N- & C-Termini');
             }
 
+            html += me.htmlCls.setHtmlCls.getRadio('mn6_addlabel', 'mn6_labelColor', 'Change Label Color', true);
             html += me.htmlCls.setHtmlCls.getRadio('mn6_addlabel', 'mn6_addlabelNo', 'Remove', true);
             html += "</ul>";
             html += "</li>";
@@ -49226,23 +49238,28 @@ var icn3d = (function (exports) {
             html += me.htmlCls.divStr + "dl_addlabel' class='" + dialogClass + "'>";
             html += "1. Text: " + me.htmlCls.inputTextStr + "id='" + me.pre + "labeltext' value='Text' size=4><br/>";
             html += "2. Size: " + me.htmlCls.inputTextStr + "id='" + me.pre + "labelsize' value='18' size=4 maxlength=2><br/>";
-            //html += "3. Color: " + me.htmlCls.inputTextStr + "id='" + me.pre + "labelcolor' value='" + defaultColor + "' size=4><br/>";
+            html += "3. Color: " + me.htmlCls.inputTextStr + "id='" + me.pre + "labelcolor' value='" + defaultColor + "' size=4><br/>";
             //html += "4. Background: " + me.htmlCls.inputTextStr + "id='" + me.pre + "labelbkgd' value='' size=4><br/>";
             if(me.utilsCls.isMobile()) {
-                html += me.htmlCls.spanNowrapStr + "3. Touch TWO atoms</span><br/>";
+                html += me.htmlCls.spanNowrapStr + "4. Touch TWO atoms</span><br/>";
             }
             else {
-                html += me.htmlCls.spanNowrapStr + "3. Pick TWO atoms while holding \"Alt\" key</span><br/>";
+                html += me.htmlCls.spanNowrapStr + "4. Pick TWO atoms while holding \"Alt\" key</span><br/>";
             }
-            html += me.htmlCls.spanNowrapStr + "4. " + me.htmlCls.buttonStr + "applypick_labels'>Display</button></span>";
+            html += me.htmlCls.spanNowrapStr + "5. " + me.htmlCls.buttonStr + "applypick_labels'>Display</button></span>";
             html += "</div>";
 
             html += me.htmlCls.divStr + "dl_addlabelselection' class='" + dialogClass + "'>";
             html += "1. Text: " + me.htmlCls.inputTextStr + "id='" + me.pre + "labeltext2' value='Text' size=4><br/>";
             html += "2. Size: " + me.htmlCls.inputTextStr + "id='" + me.pre + "labelsize2' value='18' size=4 maxlength=2><br/>";
-            //html += "3. Color: " + me.htmlCls.inputTextStr + "id='" + me.pre + "labelcolor2' value='" + defaultColor + "' size=4><br/>";
+            html += "3. Color: " + me.htmlCls.inputTextStr + "id='" + me.pre + "labelcolor2' value='" + defaultColor + "' size=4><br/>";
             //html += "4. Background: " + me.htmlCls.inputTextStr + "id='" + me.pre + "labelbkgd2' value='' size=4><br/>";
-            html += me.htmlCls.spanNowrapStr + "3. " + me.htmlCls.buttonStr + "applyselection_labels'>Display</button></span>";
+            html += me.htmlCls.spanNowrapStr + "4. " + me.htmlCls.buttonStr + "applyselection_labels'>Display</button></span>";
+            html += "</div>";
+
+            html += me.htmlCls.divStr + "dl_labelColor' class='" + dialogClass + "'>";
+            html += "Color for all labels: " + me.htmlCls.inputTextStr + "id='" + me.pre + "labelcolorall' value='" + defaultColor + "' size=4><br/><br/>";
+            html += me.htmlCls.spanNowrapStr + me.htmlCls.buttonStr + "applylabelcolor'>Display</button></span>";
             html += "</div>";
 
             html += me.htmlCls.divStr + "dl_distance' class='" + dialogClass + "'>";
@@ -50933,6 +50950,15 @@ var icn3d = (function (exports) {
                  if(background != 0) backgroundStr = ' | background ' + background;
                  me.htmlCls.clickMenuCls.setLogCmd('add label ' + text + ' | x ' + x.toPrecision(4)  + ' y ' + y.toPrecision(4) + ' z ' + z.toPrecision(4) + sizeStr + colorStr + backgroundStr + ' | type custom', true);
                  ic.drawCls.draw();
+            });
+
+            me.myEventCls.onIds("#" + me.pre + "applylabelcolor", "click", function(e) { let ic = me.icn3d;
+                e.preventDefault();
+                if(!me.cfg.notebook) dialog.dialog( "close" );
+                ic.labelcolor = $("#" + me.pre + "labelcolorall" ).val();
+
+                me.htmlCls.clickMenuCls.setLogCmd('set label color ' + ic.labelcolor, true);
+                ic.drawCls.draw();
             });
         //    },
         //    clickApplypick_stabilizer: function() {
@@ -55857,7 +55883,7 @@ var icn3d = (function (exports) {
         //even when multiple iCn3D viewers are shown together.
         this.pre = this.cfg.divid + "_";
 
-        this.REVISION = '3.6.0';
+        this.REVISION = '3.6.1';
 
         // In nodejs, iCn3D defines "window = {navigator: {}}"
         this.bNode = (Object.keys(window).length < 2) ? true : false;

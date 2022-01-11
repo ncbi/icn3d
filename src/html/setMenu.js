@@ -1462,6 +1462,7 @@ class SetMenu {
             html += me.htmlCls.setHtmlCls.getRadio('mn6_addlabel', 'mn6_addlabelTermini', 'N- & C-Termini');
         }
 
+        html += me.htmlCls.setHtmlCls.getRadio('mn6_addlabel', 'mn6_labelColor', 'Change Label Color', true);
         html += me.htmlCls.setHtmlCls.getRadio('mn6_addlabel', 'mn6_addlabelNo', 'Remove', true);
         html += "</ul>";
         html += "</li>";

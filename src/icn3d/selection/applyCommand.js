@@ -669,6 +669,9 @@ class ApplyCommand {
           $("#" + ic.pre + "titlelink").css("color", "black");
         }
       }
+      else if(command.indexOf('set label color') == 0) {
+        ic.labelcolor = command.substr(command.lastIndexOf(' ') + 1);
+      }
       else if(commandOri.indexOf('set thickness') == 0) {
         let  paraArray = command.split(' | ');
 
