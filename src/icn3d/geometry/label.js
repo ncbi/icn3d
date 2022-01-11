@@ -203,6 +203,8 @@ class Label {
 
                 let labelsize = (label.size !== undefined) ? label.size : ic.LABELSIZE;
                 let labelcolor = (label.color !== undefined) ? label.color : defaultColor;
+                if(ic.labelcolor) labelcolor = ic.labelcolor;
+                
                 let labelbackground = (label.background !== undefined) ? label.background : '#cccccc';
                 let labelalpha = (label.alpha !== undefined) ? label.alpha : 1.0;
 
@@ -228,7 +230,8 @@ class Label {
                     }
                 }
 
-                bb.position.set(label.position.x, label.position.y, label.position.z);
+                let labelOffset = (name == 'schematic' || name == 'residue') ? 0 : ic.coilWidth; // 0.3
+                bb.position.set(label.position.x + labelOffset, label.position.y + labelOffset, label.position.z + labelOffset);
                 ic.mdl.add(bb);
                 // do not add labels to objects for pk
             }

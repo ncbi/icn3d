@@ -1,4 +1,6 @@
 ## Change Log
+[icn3d-3.6.1](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.6.1.zip) was release on January 11, 2022. Enabled users to change the color for all lables in the menu "Analysis > Label > Change Label Color".
+
 [icn3d-3.6.0](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.6.0.zip) was release on January 7, 2022. Added some example Python scripts in the directory "icn3dpython" to export secondary structures or PNG images. Changed the background color from "transparent/white" to "black".
 
 [icn3d-3.5.1](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.5.1.zip) was release on December 27, 2021. Changed the canvas background color from "black" to "white". The "Style > Background" is still "transparent", but the display will be white by default.

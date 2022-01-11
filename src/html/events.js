@@ -1450,6 +1450,15 @@ class Events {
              me.htmlCls.clickMenuCls.setLogCmd('add label ' + text + ' | x ' + x.toPrecision(4)  + ' y ' + y.toPrecision(4) + ' z ' + z.toPrecision(4) + sizeStr + colorStr + backgroundStr + ' | type custom', true);
              ic.drawCls.draw();
         });
+
+        me.myEventCls.onIds("#" + me.pre + "applylabelcolor", "click", function(e) { let ic = me.icn3d;
+            e.preventDefault();
+            if(!me.cfg.notebook) dialog.dialog( "close" );
+            ic.labelcolor = $("#" + me.pre + "labelcolorall" ).val();
+
+            me.htmlCls.clickMenuCls.setLogCmd('set label color ' + ic.labelcolor, true);
+            ic.drawCls.draw();
+        });
     //    },
     //    clickApplypick_stabilizer: function() {
         me.myEventCls.onIds("#" + me.pre + "applypick_stabilizer", "click", function(e) { let ic = me.icn3d;

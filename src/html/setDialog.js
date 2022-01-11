@@ -623,23 +623,28 @@ class SetDialog {
         html += me.htmlCls.divStr + "dl_addlabel' class='" + dialogClass + "'>";
         html += "1. Text: " + me.htmlCls.inputTextStr + "id='" + me.pre + "labeltext' value='Text' size=4><br/>";
         html += "2. Size: " + me.htmlCls.inputTextStr + "id='" + me.pre + "labelsize' value='18' size=4 maxlength=2><br/>";
-        //html += "3. Color: " + me.htmlCls.inputTextStr + "id='" + me.pre + "labelcolor' value='" + defaultColor + "' size=4><br/>";
+        html += "3. Color: " + me.htmlCls.inputTextStr + "id='" + me.pre + "labelcolor' value='" + defaultColor + "' size=4><br/>";
         //html += "4. Background: " + me.htmlCls.inputTextStr + "id='" + me.pre + "labelbkgd' value='' size=4><br/>";
         if(me.utilsCls.isMobile()) {
-            html += me.htmlCls.spanNowrapStr + "3. Touch TWO atoms</span><br/>";
+            html += me.htmlCls.spanNowrapStr + "4. Touch TWO atoms</span><br/>";
         }
         else {
-            html += me.htmlCls.spanNowrapStr + "3. Pick TWO atoms while holding \"Alt\" key</span><br/>";
+            html += me.htmlCls.spanNowrapStr + "4. Pick TWO atoms while holding \"Alt\" key</span><br/>";
         }
-        html += me.htmlCls.spanNowrapStr + "4. " + me.htmlCls.buttonStr + "applypick_labels'>Display</button></span>";
+        html += me.htmlCls.spanNowrapStr + "5. " + me.htmlCls.buttonStr + "applypick_labels'>Display</button></span>";
         html += "</div>";
 
         html += me.htmlCls.divStr + "dl_addlabelselection' class='" + dialogClass + "'>";
         html += "1. Text: " + me.htmlCls.inputTextStr + "id='" + me.pre + "labeltext2' value='Text' size=4><br/>";
         html += "2. Size: " + me.htmlCls.inputTextStr + "id='" + me.pre + "labelsize2' value='18' size=4 maxlength=2><br/>";
-        //html += "3. Color: " + me.htmlCls.inputTextStr + "id='" + me.pre + "labelcolor2' value='" + defaultColor + "' size=4><br/>";
+        html += "3. Color: " + me.htmlCls.inputTextStr + "id='" + me.pre + "labelcolor2' value='" + defaultColor + "' size=4><br/>";
         //html += "4. Background: " + me.htmlCls.inputTextStr + "id='" + me.pre + "labelbkgd2' value='' size=4><br/>";
-        html += me.htmlCls.spanNowrapStr + "3. " + me.htmlCls.buttonStr + "applyselection_labels'>Display</button></span>";
+        html += me.htmlCls.spanNowrapStr + "4. " + me.htmlCls.buttonStr + "applyselection_labels'>Display</button></span>";
+        html += "</div>";
+
+        html += me.htmlCls.divStr + "dl_labelColor' class='" + dialogClass + "'>";
+        html += "Color for all labels: " + me.htmlCls.inputTextStr + "id='" + me.pre + "labelcolorall' value='" + defaultColor + "' size=4><br/><br/>";
+        html += me.htmlCls.spanNowrapStr + me.htmlCls.buttonStr + "applylabelcolor'>Display</button></span>";
         html += "</div>";
 
         html += me.htmlCls.divStr + "dl_distance' class='" + dialogClass + "'>";

@@ -1554,6 +1554,10 @@ class ClickMenu {
         me.myEventCls.onIds("#" + me.pre + "mn6_addlabelSelection", "click", function(e) { let ic = me.icn3d;
            me.htmlCls.dialogCls.openDlg('dl_addlabelselection', 'Add custom labels by the selected');
         });
+
+         me.myEventCls.onIds("#" + me.pre + "mn6_labelColor", "click", function(e) { let ic = me.icn3d;
+           me.htmlCls.dialogCls.openDlg('dl_labelColor', 'Change color for all labels');
+        });
     //    },
     //    clkMn2_saveselection: function() {
         me.myEventCls.onIds("#" + me.pre + "mn2_saveselection", "click", function(e) { let ic = me.icn3d;
@@ -1562,7 +1566,8 @@ class ClickMenu {
     //    },
     //    clkMn6_addlabelNo: function() {
         me.myEventCls.onIds(["#" + me.pre + "mn6_addlabelNo", "#" + me.pre + "removeLabels"], "click", function(e) { let ic = me.icn3d;
-           ic.pickpair = false;
+           ic.labelcolor = undefined;
+            ic.pickpair = false;
            //ic.labels['residue'] = [];
            //ic.labels['custom'] = [];
            let select = "set labels off";
