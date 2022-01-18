@@ -285,18 +285,21 @@
         cfg.shownote = 1; //cfg.shownote;
         cfg.options = (cfg.options !== undefined) ? JSON.parse(cfg.options) : undefined;
 
+        // default to show asymmetric units
+        if(cfg.buidx === undefined) cfg.buidx = 0;
+
         return cfg;
       }
 
       function getValue(input) {
-           if(input == 'true' || input == '1') {
-             input = true;
-           }
-           else if(input == 'false' || input == '0') {
-             input = false;
-           }
+        if(input == 'true') { // || input == '1') {
+          input = true;
+        }
+        else if(input == 'false') { // || input == '0') {
+          input = false;
+        }
 
-           return input;
+        return input;
       }
     }); // document ready
 

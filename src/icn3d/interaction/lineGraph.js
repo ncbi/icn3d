@@ -42,26 +42,31 @@ class LineGraph {
         let structureArray = ic.resid2specCls.atoms2structureArray(ic.hAtoms);
         //if(Object.keys(ic.structures).length > 1) {
         if(structureArray.length > 1) {
-            let  nodeArray1a = [],
-                nodeArray1b = [],
-                nodeArray2a = [],
-                nodeArray2b = [],
-                nodeArray3a = [],
-                nodeArray3b = [];
-            let  nodeArray1aTmp = [],
-                nodeArray1bTmp = [],
-                nodeArray2aTmp = [],
-                nodeArray2bTmp = [];
-            //let  struc1 = Object.keys(ic.structures)[0],
-            //    struc2 = Object.keys(ic.structures)[1];
-            let  struc1 = structureArray[0],
-                struc2 = structureArray[1];
-            let  linkArrayA = [],
-                linkArrayB = [],
-                linkArrayAB = [];
-            let  nameHashA = {},
-                nameHashB = {},
-                nameHashAB = {}
+
+            let struc2index= {};
+            let nodeArray1Split = [], nodeArray2Split = [], linkArraySplit = [], nameHashSplit = [];
+
+            // show common interactions: nodes will be the same. The links/interactins are different.
+            // The mapped residue name and number are attached to "id".
+            // Original node: {id : "Q24.A.2AJF", r : "1_1_2AJF_A_24", s: "a", ...}
+            // Node for common interaction: {id : "Q24.A.2AJF|Q24", r : "1_1_2AJF_A_24", s: "a", ...}
+            let nodeArray1SplitCommon = [], nodeArray2SplitCommon = [], linkArraySplitCommon = [], nameHashSplitCommon = [];
+            let linkedNodeCnt = {};
+
+            for(let i = 0, il = structureArray.length; i < il; ++i) {   
+                nodeArray1Split[i] = [];
+                nodeArray2Split[i] = [];
+                linkArraySplit[i] = [];
+                nameHashSplit[i] = {};
+
+                nodeArray1SplitCommon[i] = [];
+                nodeArray2SplitCommon[i] = [];
+                linkArraySplitCommon[i] = [];
+                nameHashSplitCommon[i] = {};
+
+                struc2index[structureArray[i]] = i;
+            }
+
             for(let i = 0, il = linkArray.length; i < il; ++i) {
                 let  link = linkArray[i];
                 let  nodeA = name2node[link.source];
@@ -71,70 +76,131 @@ class LineGraph {
                     continue;
                 }
 
-                //var idArrayA = nodeA.r.split('_'); // 1_1_1KQ2_A_1
-                let  idArrayA = [];
-                idArrayA.push('');
-                idArrayA.push('');
+                let  idArrayA = this.getIdArrayFromNode(nodeA);
+                let  idArrayB = this.getIdArrayFromNode(nodeB);
 
-                let  tmpStr = nodeA.r.substr(4);
-                idArrayA = idArrayA.concat(me.utilsCls.getIdArray(tmpStr));
+                let index = struc2index[idArrayA[2]];
 
-                //var idArrayB = nodeB.r.split('_'); // 1_1_1KQ2_A_1
-                let  idArrayB = [];
-                idArrayB.push('');
-                idArrayB.push('');
+                if(idArrayA[2] == structureArray[index] && idArrayB[2] == structureArray[index]) {
+                    linkArraySplit[index].push(link);
+                    nameHashSplit[index][link.source] = 1;
+                    nameHashSplit[index][link.target] = 1;
 
-                tmpStr = nodeB.r.substr(4);
-                idArrayB = idArrayB.concat(me.utilsCls.getIdArray(tmpStr));
+                    let chainid1 = idArrayA[2] + '_' + idArrayA[3];
+                    let chainid2 = idArrayB[2] + '_' + idArrayB[3];
+                    let resid1 = chainid1 + '_' + idArrayA[4];
+                    let resid2 = chainid2 + '_' + idArrayB[4];
 
-                if(idArrayA[2] == struc1 && idArrayB[2] == struc1) {
-                    linkArrayA.push(link);
-                    nameHashA[link.source] = 1;
-                    nameHashA[link.target] = 1;
-                } else if(idArrayA[2] == struc2 && idArrayB[2] == struc2) {
-                    linkArrayB.push(link);
-                    nameHashB[link.source] = 1;
-                    nameHashB[link.target] = 1;
-                } else {
-                    linkArrayAB.push(link);
-                    nameHashAB[link.source] = 1;
-                    nameHashAB[link.target] = 1;
-                }
+                    let mapping1, mapping2;
+                    
+                    if(ic.chainsMapping[chainid1] && ic.chainsMapping[chainid1][resid1]
+                      && ic.chainsMapping[chainid2] && ic.chainsMapping[chainid2][resid2]) { 
+                        mapping1 = (nodeA.s == "a") ? ic.chainsMapping[chainid1][resid1] : ic.chainsMapping[chainid2][resid2];
+                        mapping2 = (nodeA.s == "a") ? ic.chainsMapping[chainid2][resid2] : ic.chainsMapping[chainid1][resid1];
+
+                        let mappingid = mapping1 + '_' + mapping2 + '_' + link.c; // link.c determines the interaction type
+                        if(!linkedNodeCnt.hasOwnProperty(mappingid)) {
+                            linkedNodeCnt[mappingid] = 1;
+                        }
+                        else {
+                            ++linkedNodeCnt[mappingid];
+                        }
+                    }
+                } 
             }
-            let  nodeArraysA = ic.getGraphCls.getNodeTopBottom(nameHashA, name2node);
-            nodeArray1a = nodeArraysA.nodeArray1;
-            nodeArray1b = nodeArraysA.nodeArray2;
-            let  nodeArraysB = ic.getGraphCls.getNodeTopBottom(nameHashB, name2node);
-            nodeArray2a = nodeArraysB.nodeArray1;
-            nodeArray2b = nodeArraysB.nodeArray2;
-            let  nodeArraysAB = ic.getGraphCls.getNodeTopBottom(nameHashAB, name2node, true);
-            nodeArray3a = nodeArraysAB.nodeArray1;
-            nodeArray3b = nodeArraysAB.nodeArray2;
-            let  len1a = nodeArray1a.length,
-                len1b = nodeArray1b.length;
-            let  len2a = nodeArray2a.length,
-                len2b = nodeArray2b.length;
-            let  len3a = nodeArray3a.length,
-                len3b = nodeArray3b.length;
-            let  maxLen = Math.max(len1a, len1b, len2a, len2b, len3a, len3b);
+            
+            // set linkArraySplitCommon and nameHashSplitCommon
+            for(let i = 0, il = linkArray.length; i < il; ++i) {
+                let  link = linkArray[i];
+                let  nodeA = name2node[link.source];
+                let  nodeB = name2node[link.target];
+
+                if(!nodeA || !nodeB || !nodeA.r || !nodeB.r) {
+                    continue;
+                }
+
+                let  idArrayA = this.getIdArrayFromNode(nodeA);
+                let  idArrayB = this.getIdArrayFromNode(nodeB);
+
+                let index = struc2index[idArrayA[2]];
+
+                if(idArrayA[2] == structureArray[index] && idArrayB[2] == structureArray[index]) {
+                    let chainid1 = idArrayA[2] + '_' + idArrayA[3];
+                    let chainid2 = idArrayB[2] + '_' + idArrayB[3];
+                    let resid1 = chainid1 + '_' + idArrayA[4];
+                    let resid2 = chainid2 + '_' + idArrayB[4];
+
+                    let mapping1, mapping2;
+                    
+                    if(ic.chainsMapping[chainid1] && ic.chainsMapping[chainid1][resid1]
+                      && ic.chainsMapping[chainid2] && ic.chainsMapping[chainid2][resid2]) { 
+                        mapping1 = (nodeA.s == "a") ? ic.chainsMapping[chainid1][resid1] : ic.chainsMapping[chainid2][resid2];
+                        mapping2 = (nodeA.s == "a") ? ic.chainsMapping[chainid2][resid2] : ic.chainsMapping[chainid1][resid1];
+
+                        let mappingid = mapping1 + '_' + mapping2 + '_' + link.c; // link.c determines the interaction type
+
+                        if(linkedNodeCnt[mappingid] == structureArray.length) {
+                            let linkCommon = me.hashUtilsCls.cloneHash(link);
+                            linkCommon.source += '>' + ic.chainsMapping[chainid1][resid1];
+                            linkCommon.target += '>' + ic.chainsMapping[chainid2][resid2];
+
+                            linkArraySplitCommon[index].push(linkCommon);
+                        }  
+
+                        nameHashSplitCommon[index][link.source] = ic.chainsMapping[chainid1][resid1];
+                        nameHashSplitCommon[index][link.target] = ic.chainsMapping[chainid2][resid2];
+                    }
+                } 
+            }
+
+            let len1Split = [], len2Split = [], maxWidth = 0;
             let  strucArray = [];
-            if(linkArrayA.length > 0) strucArray.push(struc1);
-            if(linkArrayB.length > 0) strucArray.push(struc2);
-            if(linkArrayAB.length > 0) strucArray.push(struc1 + '_' + struc2);
+            for(let i = 0, il = structureArray.length; i < il; ++i) {  
+                let  nodeArraysTmp = ic.getGraphCls.getNodeTopBottom(nameHashSplit[i], name2node);
+                nodeArray1Split[i] = nodeArraysTmp.nodeArray1;
+                nodeArray2Split[i] = nodeArraysTmp.nodeArray2;
+
+                let bCommon = true;
+                nodeArraysTmp = ic.getGraphCls.getNodeTopBottom(nameHashSplit[i], name2node, undefined, bCommon, nameHashSplitCommon[i]);
+                nodeArray1SplitCommon[i] = nodeArraysTmp.nodeArray1;
+                nodeArray2SplitCommon[i] = nodeArraysTmp.nodeArray2;
+                name2node = me.hashUtilsCls.unionHash(name2node, nodeArraysTmp.name2node);
+
+                len1Split[i] = nodeArray1Split[i].length;
+                len2Split[i] = nodeArray2Split[i].length;
+                
+                maxWidth = Math.max(maxWidth, len2Split[i]);
+
+                //if(linkArraySplit[i].length > 0) strucArray.push(structureArray[i]);
+                strucArray.push(structureArray[i]);
+            }
+
             let  factor = 1;
             let  r = 3 * factor;
             let  gap = 7 * factor;
             let  height, width, heightAll;
             let  marginX = 10,
                 marginY = 10,
-                legendWidth = 30;
+                legendWidth = 30,
+                textHeight = 20;
+            
             if(bScatterplot) {
-                heightAll =(len1a + 2 + len2a + 2) *(r + gap) + 4 * marginY + 2 * legendWidth;
-                width =(Math.max(len1b, len2b) + 2) *(r + gap) + 2 * marginX + legendWidth;
+                //heightAll =(len1a + 2 + len2a + 2) *(r + gap) + 4 * marginY + 2 * legendWidth;
+                //width =(Math.max(len1b, len2b) + 2) *(r + gap) + 2 * marginX + legendWidth;
+                heightAll =(me.utilsCls.sumArray(len1Split) + 2*strucArray.length) *(r + gap) + 4 * marginY 
+                  + 2 * legendWidth + textHeight*strucArray.length;
+                // show common interaction as well
+                heightAll *= 2;
+
+                width = (maxWidth + 2) * (r + gap) + 2 * marginX + legendWidth;
+                  
             } else {
-                height = 110;
+                height = 110 + textHeight;
                 heightAll = height * strucArray.length;
-                width = maxLen *(r + gap) + 2 * marginX;
+                // show common interaction as well
+                heightAll *= 2;
+
+                width = (maxWidth + 2) * (r + gap) + 2 * marginX;
             }
             let  id, graphWidth;
             if(bScatterplot) {
@@ -147,43 +213,42 @@ class LineGraph {
                 id = me.linegraphid;
             }
             html =(strucArray.length == 0) ? "No interactions found for each structure<br><br>" :
-                "2D integration graph for structure(s) <b>" + strucArray + "</b><br><br>";
+                "2D integration graph for " + strucArray.length + " structure(s) <b>" + strucArray + "</b>. Common interactions are shown in the last " + strucArray.length + " graphs.<br><br>";
             html += "<svg id='" + id + "' viewBox='0,0," + width + "," + heightAll + "' width='" + graphWidth + "px'>";
-            let  heightFinal = 0;
-            if(linkArrayA.length > 0) {
+
+            let  heightFinal = 0;            
+            for(let i = 0, il = structureArray.length; i < il; ++i) {  
                 if(bScatterplot) {
-                    heightFinal -= 15;
-                    html += this.drawScatterplot_base(nodeArray1a, nodeArray1b, linkArrayA, name2node, heightFinal);
-                    heightFinal = 15;
-                    height =(len1a + 1) *(r + gap) + 2 * marginY;
+                    //heightFinal -= 15;
+                    html += this.drawScatterplot_base(nodeArray1Split[i], nodeArray2Split[i], linkArraySplit[i], name2node, heightFinal, undefined, "Interactions in structure " + strucArray[i], textHeight);
+                    //heightFinal = 15;
+                    height =(len1Split[i] + 1) *(r + gap) + 2 * marginY + textHeight;
                 } else {
-                    html += this.drawLineGraph_base(nodeArray1a, nodeArray1b, linkArrayA, name2node, heightFinal);
+                    html += this.drawLineGraph_base(nodeArray1Split[i], nodeArray2Split[i], linkArraySplit[i], name2node, heightFinal, "Interactions in structure " + strucArray[i], textHeight);
                 }
                 heightFinal += height;
-                ic.lineGraphStr += ic.getGraphCls.updateGraphJson(struc1, 1, nodeArray1a, nodeArray1b, linkArrayA);
+
+                if(i > 0) ic.lineGraphStr += ', \n';
+                ic.lineGraphStr += ic.getGraphCls.updateGraphJson(strucArray[i], i, nodeArray1Split[i], nodeArray2Split[i], linkArraySplit[i]);
             }
-            if(linkArrayB.length > 0) {
+
+            // draw common interaction
+            for(let i = 0, il = structureArray.length; i < il; ++i) {  
                 if(bScatterplot) {
-                    html += this.drawScatterplot_base(nodeArray2a, nodeArray2b, linkArrayB, name2node, heightFinal);
-                    height =(len2a + 1) *(r + gap) + 2 * marginY;
+                    //heightFinal -= 15;
+                    html += this.drawScatterplot_base(nodeArray1SplitCommon[i], nodeArray2SplitCommon[i], linkArraySplitCommon[i], name2node, heightFinal, undefined, "Common interactions in structure " + strucArray[i], textHeight);
+                    //heightFinal = 15;
+                    height =(len1Split[i] + 1) *(r + gap) + 2 * marginY + textHeight;
                 } else {
-                    html += this.drawLineGraph_base(nodeArray2a, nodeArray2b, linkArrayB, name2node, heightFinal);
+                    html += this.drawLineGraph_base(nodeArray1SplitCommon[i], nodeArray2SplitCommon[i], linkArraySplitCommon[i], name2node, heightFinal, "Common interactions in structure " + strucArray[i], textHeight);
                 }
                 heightFinal += height;
-                if(linkArrayA.length > 0) ic.lineGraphStr += ', \n';
-                ic.lineGraphStr += ic.getGraphCls.updateGraphJson(struc2, 2, nodeArray2a, nodeArray2b, linkArrayB);
+
+                //if(i > 0) ic.lineGraphStr += ', \n';
+                ic.lineGraphStr += ', \n';
+                ic.lineGraphStr += ic.getGraphCls.updateGraphJson(strucArray[i], i + '_common', nodeArray1SplitCommon[i], nodeArray2SplitCommon[i], linkArraySplitCommon[i]);
             }
-            if(linkArrayAB.length > 0 && !bScatterplot) {
-                html += this.drawLineGraph_base(nodeArray3a, nodeArray3b, linkArrayAB, name2node, heightFinal);
-                if(linkArrayA.length > 0 || linkArrayB.length > 0) ic.lineGraphStr += ', \n';
-                ic.lineGraphStr += '"structure1_2": {"id1": "' + struc1 + '", "id2": "' + struc2 + '", "nodes1":[';
-                ic.lineGraphStr += me.utilsCls.getJSONFromArray(nodeArray3a);
-                ic.lineGraphStr += '], \n"nodes2":[';
-                ic.lineGraphStr += me.utilsCls.getJSONFromArray(nodeArray3b);
-                ic.lineGraphStr += '], \n"links":[';
-                ic.lineGraphStr += me.utilsCls.getJSONFromArray(linkArrayAB);
-                ic.lineGraphStr += ']}';
-            }
+
             html += "</svg>";
         } else {
             if(!bScatterplot) {
@@ -241,7 +306,18 @@ class LineGraph {
         return html;
     }
 
-    drawLineGraph_base(nodeArray1, nodeArray2, linkArray, name2node, height) { let  ic = this.icn3d, me = ic.icn3dui;
+    getIdArrayFromNode(node) { let  ic = this.icn3d, me = ic.icn3dui;
+        let  idArray = []; // 1_1_1KQ2_A_1
+        idArray.push('');
+        idArray.push('');
+
+        let  tmpStr = node.r.substr(4); 
+        idArray = idArray.concat(me.utilsCls.getIdArray(tmpStr));
+
+        return idArray;
+    }
+
+    drawLineGraph_base(nodeArray1, nodeArray2, linkArray, name2node, height, label, textHeight) { let  ic = this.icn3d, me = ic.icn3dui;
         let  html = '';
         let  len1 = nodeArray1.length,
             len2 = nodeArray2.length;
@@ -258,6 +334,11 @@ class LineGraph {
             margin2 = margin;
             margin1 = Math.abs(len1 - len2) *(r + gap) * 0.5 + margin;
         }
+
+        // draw label
+        height += textHeight;
+        html += "<text x='" + margin1 + "' y='" + height + "' style='font-size:8px; font-weight:bold'>" + label + "</text>";
+
         let  h1 = 30 + height,
             h2 = 80 + height;
         let  nodeHtml = '';
@@ -313,7 +394,7 @@ class LineGraph {
         return html;
     }
 
-    drawScatterplot_base(nodeArray1, nodeArray2, linkArray, name2node, height, bContactMap) { let  ic = this.icn3d, me = ic.icn3dui;
+    drawScatterplot_base(nodeArray1, nodeArray2, linkArray, name2node, height, bContactMap, label, textHeight) { let  ic = this.icn3d, me = ic.icn3dui;
         let  html = '';
         let  len1 = nodeArray1.length,
             len2 = nodeArray2.length;
@@ -324,12 +405,19 @@ class LineGraph {
         let  marginX = 10,
             marginY = 20;
         let  heightTotal =(len1 + 1) *(r + gap) + legendWidth + 2 * marginY;
+
+        // draw label
+        height += textHeight;
+
+        html += "<text x='" + marginX + "' y='" + (height + 15).toString() + "' style='font-size:8px; font-weight:bold'>" + label + "</text>";
+ 
         let  margin1 = height + heightTotal -(legendWidth + marginY +(r + gap)); // y-axis
         let  margin2 = legendWidth + marginX +(r + gap); // x-axis
-        let  x = legendWidth + marginX;
+
         let  nodeHtml = '';
         let  node2posSet1 = {},
             node2posSet2 = {}
+        let  x = legendWidth + marginX;
         for(let i = 0; i < len1; ++i) {
             nodeHtml += ic.getGraphCls.drawResNode(nodeArray1[i], i, r, gap, margin1, x, 'a', true);
             node2posSet1[nodeArray1[i].id] = { x: x, y: margin1 - i *(r + gap) }

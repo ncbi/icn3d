@@ -5384,6 +5384,16 @@ class UtilsCls {
         if(viewer_width && me.htmlCls.WIDTH > viewer_width) me.htmlCls.WIDTH = viewer_width;
         if(viewer_height && me.htmlCls.HEIGHT > viewer_height) me.htmlCls.HEIGHT = viewer_height;
     }
+
+    sumArray(numArray) {
+      let sum = 0;
+
+      for(let i = 0, il = numArray.length; i < il; ++i) {
+        sum += numArray[i];
+      }
+
+      return sum;
+    }
 }
 
 /**
@@ -16397,12 +16407,20 @@ class GetGraph {
         html += "</g>";
         return html;
     }
-    getNodeTopBottom(nameHash, name2node, bReverseNode) { let ic = this.icn3d; ic.icn3dui;
+    getNodeTopBottom(nameHash, name2node, bReverseNode, bCommon, nameHashCommon) { let  ic = this.icn3d, me = ic.icn3dui;
         let  thisClass = this;
-        let  nodeArray1 = [], nodeArray2 = [];
+        let  nodeArray1 = [], nodeArray2 = [], name2nodeCommon = {};
         for(let name in nameHash) {
             let  node = name2node[name];
             if(!node) continue;
+
+            if(bCommon) {
+                node = me.hashUtilsCls.cloneHash(node);
+
+                let mapping = (nameHashCommon[name]) ? nameHashCommon[name] : '-';
+                node.id += ">" + mapping;
+                name2nodeCommon[node.id] = node;
+            }
 
             if(node.s == 'a') {
                 nodeArray1.push(node);
@@ -16410,10 +16428,10 @@ class GetGraph {
             else if(node.s == 'b') {
                 nodeArray2.push(node);
             }
-            else if(node.s == 'ab') {
-                nodeArray1.push(node);
-                nodeArray2.push(node);
-            }
+            //else if(node.s == 'ab') {
+            //    nodeArray1.push(node);
+            //    nodeArray2.push(node);
+            //}
         }
         // sort array
         nodeArray1.sort(function(a,b) {
@@ -16422,7 +16440,7 @@ class GetGraph {
         nodeArray2.sort(function(a,b) {
           return thisClass.compNode(a, b, bReverseNode);
         });
-        return {"nodeArray1": nodeArray1, "nodeArray2": nodeArray2}
+        return {"nodeArray1": nodeArray1, "nodeArray2": nodeArray2, "name2node": name2nodeCommon};
     }
     updateGraphJson(struc, index, nodeArray1, nodeArray2, linkArray) { let  ic = this.icn3d, me = ic.icn3dui;
         let  lineGraphStr = '';
@@ -16745,22 +16763,31 @@ class LineGraph {
         let structureArray = ic.resid2specCls.atoms2structureArray(ic.hAtoms);
         //if(Object.keys(ic.structures).length > 1) {
         if(structureArray.length > 1) {
-            let  nodeArray1a = [],
-                nodeArray1b = [],
-                nodeArray2a = [],
-                nodeArray2b = [],
-                nodeArray3a = [],
-                nodeArray3b = [];
-            //let  struc1 = Object.keys(ic.structures)[0],
-            //    struc2 = Object.keys(ic.structures)[1];
-            let  struc1 = structureArray[0],
-                struc2 = structureArray[1];
-            let  linkArrayA = [],
-                linkArrayB = [],
-                linkArrayAB = [];
-            let  nameHashA = {},
-                nameHashB = {},
-                nameHashAB = {};
+
+            let struc2index= {};
+            let nodeArray1Split = [], nodeArray2Split = [], linkArraySplit = [], nameHashSplit = [];
+
+            // show common interactions: nodes will be the same. The links/interactins are different.
+            // The mapped residue name and number are attached to "id".
+            // Original node: {id : "Q24.A.2AJF", r : "1_1_2AJF_A_24", s: "a", ...}
+            // Node for common interaction: {id : "Q24.A.2AJF|Q24", r : "1_1_2AJF_A_24", s: "a", ...}
+            let nodeArray1SplitCommon = [], nodeArray2SplitCommon = [], linkArraySplitCommon = [], nameHashSplitCommon = [];
+            let linkedNodeCnt = {};
+
+            for(let i = 0, il = structureArray.length; i < il; ++i) {   
+                nodeArray1Split[i] = [];
+                nodeArray2Split[i] = [];
+                linkArraySplit[i] = [];
+                nameHashSplit[i] = {};
+
+                nodeArray1SplitCommon[i] = [];
+                nodeArray2SplitCommon[i] = [];
+                linkArraySplitCommon[i] = [];
+                nameHashSplitCommon[i] = {};
+
+                struc2index[structureArray[i]] = i;
+            }
+
             for(let i = 0, il = linkArray.length; i < il; ++i) {
                 let  link = linkArray[i];
                 let  nodeA = name2node[link.source];
@@ -16770,70 +16797,131 @@ class LineGraph {
                     continue;
                 }
 
-                //var idArrayA = nodeA.r.split('_'); // 1_1_1KQ2_A_1
-                let  idArrayA = [];
-                idArrayA.push('');
-                idArrayA.push('');
+                let  idArrayA = this.getIdArrayFromNode(nodeA);
+                let  idArrayB = this.getIdArrayFromNode(nodeB);
 
-                let  tmpStr = nodeA.r.substr(4);
-                idArrayA = idArrayA.concat(me.utilsCls.getIdArray(tmpStr));
+                let index = struc2index[idArrayA[2]];
 
-                //var idArrayB = nodeB.r.split('_'); // 1_1_1KQ2_A_1
-                let  idArrayB = [];
-                idArrayB.push('');
-                idArrayB.push('');
+                if(idArrayA[2] == structureArray[index] && idArrayB[2] == structureArray[index]) {
+                    linkArraySplit[index].push(link);
+                    nameHashSplit[index][link.source] = 1;
+                    nameHashSplit[index][link.target] = 1;
 
-                tmpStr = nodeB.r.substr(4);
-                idArrayB = idArrayB.concat(me.utilsCls.getIdArray(tmpStr));
+                    let chainid1 = idArrayA[2] + '_' + idArrayA[3];
+                    let chainid2 = idArrayB[2] + '_' + idArrayB[3];
+                    let resid1 = chainid1 + '_' + idArrayA[4];
+                    let resid2 = chainid2 + '_' + idArrayB[4];
 
-                if(idArrayA[2] == struc1 && idArrayB[2] == struc1) {
-                    linkArrayA.push(link);
-                    nameHashA[link.source] = 1;
-                    nameHashA[link.target] = 1;
-                } else if(idArrayA[2] == struc2 && idArrayB[2] == struc2) {
-                    linkArrayB.push(link);
-                    nameHashB[link.source] = 1;
-                    nameHashB[link.target] = 1;
-                } else {
-                    linkArrayAB.push(link);
-                    nameHashAB[link.source] = 1;
-                    nameHashAB[link.target] = 1;
-                }
+                    let mapping1, mapping2;
+                    
+                    if(ic.chainsMapping[chainid1] && ic.chainsMapping[chainid1][resid1]
+                      && ic.chainsMapping[chainid2] && ic.chainsMapping[chainid2][resid2]) { 
+                        mapping1 = (nodeA.s == "a") ? ic.chainsMapping[chainid1][resid1] : ic.chainsMapping[chainid2][resid2];
+                        mapping2 = (nodeA.s == "a") ? ic.chainsMapping[chainid2][resid2] : ic.chainsMapping[chainid1][resid1];
+
+                        let mappingid = mapping1 + '_' + mapping2 + '_' + link.c; // link.c determines the interaction type
+                        if(!linkedNodeCnt.hasOwnProperty(mappingid)) {
+                            linkedNodeCnt[mappingid] = 1;
+                        }
+                        else {
+                            ++linkedNodeCnt[mappingid];
+                        }
+                    }
+                } 
             }
-            let  nodeArraysA = ic.getGraphCls.getNodeTopBottom(nameHashA, name2node);
-            nodeArray1a = nodeArraysA.nodeArray1;
-            nodeArray1b = nodeArraysA.nodeArray2;
-            let  nodeArraysB = ic.getGraphCls.getNodeTopBottom(nameHashB, name2node);
-            nodeArray2a = nodeArraysB.nodeArray1;
-            nodeArray2b = nodeArraysB.nodeArray2;
-            let  nodeArraysAB = ic.getGraphCls.getNodeTopBottom(nameHashAB, name2node, true);
-            nodeArray3a = nodeArraysAB.nodeArray1;
-            nodeArray3b = nodeArraysAB.nodeArray2;
-            let  len1a = nodeArray1a.length,
-                len1b = nodeArray1b.length;
-            let  len2a = nodeArray2a.length,
-                len2b = nodeArray2b.length;
-            let  len3a = nodeArray3a.length,
-                len3b = nodeArray3b.length;
-            let  maxLen = Math.max(len1a, len1b, len2a, len2b, len3a, len3b);
+            
+            // set linkArraySplitCommon and nameHashSplitCommon
+            for(let i = 0, il = linkArray.length; i < il; ++i) {
+                let  link = linkArray[i];
+                let  nodeA = name2node[link.source];
+                let  nodeB = name2node[link.target];
+
+                if(!nodeA || !nodeB || !nodeA.r || !nodeB.r) {
+                    continue;
+                }
+
+                let  idArrayA = this.getIdArrayFromNode(nodeA);
+                let  idArrayB = this.getIdArrayFromNode(nodeB);
+
+                let index = struc2index[idArrayA[2]];
+
+                if(idArrayA[2] == structureArray[index] && idArrayB[2] == structureArray[index]) {
+                    let chainid1 = idArrayA[2] + '_' + idArrayA[3];
+                    let chainid2 = idArrayB[2] + '_' + idArrayB[3];
+                    let resid1 = chainid1 + '_' + idArrayA[4];
+                    let resid2 = chainid2 + '_' + idArrayB[4];
+
+                    let mapping1, mapping2;
+                    
+                    if(ic.chainsMapping[chainid1] && ic.chainsMapping[chainid1][resid1]
+                      && ic.chainsMapping[chainid2] && ic.chainsMapping[chainid2][resid2]) { 
+                        mapping1 = (nodeA.s == "a") ? ic.chainsMapping[chainid1][resid1] : ic.chainsMapping[chainid2][resid2];
+                        mapping2 = (nodeA.s == "a") ? ic.chainsMapping[chainid2][resid2] : ic.chainsMapping[chainid1][resid1];
+
+                        let mappingid = mapping1 + '_' + mapping2 + '_' + link.c; // link.c determines the interaction type
+
+                        if(linkedNodeCnt[mappingid] == structureArray.length) {
+                            let linkCommon = me.hashUtilsCls.cloneHash(link);
+                            linkCommon.source += '>' + ic.chainsMapping[chainid1][resid1];
+                            linkCommon.target += '>' + ic.chainsMapping[chainid2][resid2];
+
+                            linkArraySplitCommon[index].push(linkCommon);
+                        }  
+
+                        nameHashSplitCommon[index][link.source] = ic.chainsMapping[chainid1][resid1];
+                        nameHashSplitCommon[index][link.target] = ic.chainsMapping[chainid2][resid2];
+                    }
+                } 
+            }
+
+            let len1Split = [], len2Split = [], maxWidth = 0;
             let  strucArray = [];
-            if(linkArrayA.length > 0) strucArray.push(struc1);
-            if(linkArrayB.length > 0) strucArray.push(struc2);
-            if(linkArrayAB.length > 0) strucArray.push(struc1 + '_' + struc2);
+            for(let i = 0, il = structureArray.length; i < il; ++i) {  
+                let  nodeArraysTmp = ic.getGraphCls.getNodeTopBottom(nameHashSplit[i], name2node);
+                nodeArray1Split[i] = nodeArraysTmp.nodeArray1;
+                nodeArray2Split[i] = nodeArraysTmp.nodeArray2;
+
+                let bCommon = true;
+                nodeArraysTmp = ic.getGraphCls.getNodeTopBottom(nameHashSplit[i], name2node, undefined, bCommon, nameHashSplitCommon[i]);
+                nodeArray1SplitCommon[i] = nodeArraysTmp.nodeArray1;
+                nodeArray2SplitCommon[i] = nodeArraysTmp.nodeArray2;
+                name2node = me.hashUtilsCls.unionHash(name2node, nodeArraysTmp.name2node);
+
+                len1Split[i] = nodeArray1Split[i].length;
+                len2Split[i] = nodeArray2Split[i].length;
+                
+                maxWidth = Math.max(maxWidth, len2Split[i]);
+
+                //if(linkArraySplit[i].length > 0) strucArray.push(structureArray[i]);
+                strucArray.push(structureArray[i]);
+            }
+
             let  factor = 1;
             let  r = 3 * factor;
             let  gap = 7 * factor;
             let  height, width, heightAll;
             let  marginX = 10,
                 marginY = 10,
-                legendWidth = 30;
+                legendWidth = 30,
+                textHeight = 20;
+            
             if(bScatterplot) {
-                heightAll =(len1a + 2 + len2a + 2) *(r + gap) + 4 * marginY + 2 * legendWidth;
-                width =(Math.max(len1b, len2b) + 2) *(r + gap) + 2 * marginX + legendWidth;
+                //heightAll =(len1a + 2 + len2a + 2) *(r + gap) + 4 * marginY + 2 * legendWidth;
+                //width =(Math.max(len1b, len2b) + 2) *(r + gap) + 2 * marginX + legendWidth;
+                heightAll =(me.utilsCls.sumArray(len1Split) + 2*strucArray.length) *(r + gap) + 4 * marginY 
+                  + 2 * legendWidth + textHeight*strucArray.length;
+                // show common interaction as well
+                heightAll *= 2;
+
+                width = (maxWidth + 2) * (r + gap) + 2 * marginX + legendWidth;
+                  
             } else {
-                height = 110;
+                height = 110 + textHeight;
                 heightAll = height * strucArray.length;
-                width = maxLen *(r + gap) + 2 * marginX;
+                // show common interaction as well
+                heightAll *= 2;
+
+                width = (maxWidth + 2) * (r + gap) + 2 * marginX;
             }
             let  id, graphWidth;
             if(bScatterplot) {
@@ -16846,43 +16934,42 @@ class LineGraph {
                 id = me.linegraphid;
             }
             html =(strucArray.length == 0) ? "No interactions found for each structure<br><br>" :
-                "2D integration graph for structure(s) <b>" + strucArray + "</b><br><br>";
+                "2D integration graph for " + strucArray.length + " structure(s) <b>" + strucArray + "</b>. Common interactions are shown in the last " + strucArray.length + " graphs.<br><br>";
             html += "<svg id='" + id + "' viewBox='0,0," + width + "," + heightAll + "' width='" + graphWidth + "px'>";
-            let  heightFinal = 0;
-            if(linkArrayA.length > 0) {
+
+            let  heightFinal = 0;            
+            for(let i = 0, il = structureArray.length; i < il; ++i) {  
                 if(bScatterplot) {
-                    heightFinal -= 15;
-                    html += this.drawScatterplot_base(nodeArray1a, nodeArray1b, linkArrayA, name2node, heightFinal);
-                    heightFinal = 15;
-                    height =(len1a + 1) *(r + gap) + 2 * marginY;
+                    //heightFinal -= 15;
+                    html += this.drawScatterplot_base(nodeArray1Split[i], nodeArray2Split[i], linkArraySplit[i], name2node, heightFinal, undefined, "Interactions in structure " + strucArray[i], textHeight);
+                    //heightFinal = 15;
+                    height =(len1Split[i] + 1) *(r + gap) + 2 * marginY + textHeight;
                 } else {
-                    html += this.drawLineGraph_base(nodeArray1a, nodeArray1b, linkArrayA, name2node, heightFinal);
+                    html += this.drawLineGraph_base(nodeArray1Split[i], nodeArray2Split[i], linkArraySplit[i], name2node, heightFinal, "Interactions in structure " + strucArray[i], textHeight);
                 }
                 heightFinal += height;
-                ic.lineGraphStr += ic.getGraphCls.updateGraphJson(struc1, 1, nodeArray1a, nodeArray1b, linkArrayA);
+
+                if(i > 0) ic.lineGraphStr += ', \n';
+                ic.lineGraphStr += ic.getGraphCls.updateGraphJson(strucArray[i], i, nodeArray1Split[i], nodeArray2Split[i], linkArraySplit[i]);
             }
-            if(linkArrayB.length > 0) {
+
+            // draw common interaction
+            for(let i = 0, il = structureArray.length; i < il; ++i) {  
                 if(bScatterplot) {
-                    html += this.drawScatterplot_base(nodeArray2a, nodeArray2b, linkArrayB, name2node, heightFinal);
-                    height =(len2a + 1) *(r + gap) + 2 * marginY;
+                    //heightFinal -= 15;
+                    html += this.drawScatterplot_base(nodeArray1SplitCommon[i], nodeArray2SplitCommon[i], linkArraySplitCommon[i], name2node, heightFinal, undefined, "Common interactions in structure " + strucArray[i], textHeight);
+                    //heightFinal = 15;
+                    height =(len1Split[i] + 1) *(r + gap) + 2 * marginY + textHeight;
                 } else {
-                    html += this.drawLineGraph_base(nodeArray2a, nodeArray2b, linkArrayB, name2node, heightFinal);
+                    html += this.drawLineGraph_base(nodeArray1SplitCommon[i], nodeArray2SplitCommon[i], linkArraySplitCommon[i], name2node, heightFinal, "Common interactions in structure " + strucArray[i], textHeight);
                 }
                 heightFinal += height;
-                if(linkArrayA.length > 0) ic.lineGraphStr += ', \n';
-                ic.lineGraphStr += ic.getGraphCls.updateGraphJson(struc2, 2, nodeArray2a, nodeArray2b, linkArrayB);
+
+                //if(i > 0) ic.lineGraphStr += ', \n';
+                ic.lineGraphStr += ', \n';
+                ic.lineGraphStr += ic.getGraphCls.updateGraphJson(strucArray[i], i + '_common', nodeArray1SplitCommon[i], nodeArray2SplitCommon[i], linkArraySplitCommon[i]);
             }
-            if(linkArrayAB.length > 0 && !bScatterplot) {
-                html += this.drawLineGraph_base(nodeArray3a, nodeArray3b, linkArrayAB, name2node, heightFinal);
-                if(linkArrayA.length > 0 || linkArrayB.length > 0) ic.lineGraphStr += ', \n';
-                ic.lineGraphStr += '"structure1_2": {"id1": "' + struc1 + '", "id2": "' + struc2 + '", "nodes1":[';
-                ic.lineGraphStr += me.utilsCls.getJSONFromArray(nodeArray3a);
-                ic.lineGraphStr += '], \n"nodes2":[';
-                ic.lineGraphStr += me.utilsCls.getJSONFromArray(nodeArray3b);
-                ic.lineGraphStr += '], \n"links":[';
-                ic.lineGraphStr += me.utilsCls.getJSONFromArray(linkArrayAB);
-                ic.lineGraphStr += ']}';
-            }
+
             html += "</svg>";
         } else {
             if(!bScatterplot) {
@@ -16940,7 +17027,18 @@ class LineGraph {
         return html;
     }
 
-    drawLineGraph_base(nodeArray1, nodeArray2, linkArray, name2node, height) { let  ic = this.icn3d, me = ic.icn3dui;
+    getIdArrayFromNode(node) { let  ic = this.icn3d, me = ic.icn3dui;
+        let  idArray = []; // 1_1_1KQ2_A_1
+        idArray.push('');
+        idArray.push('');
+
+        let  tmpStr = node.r.substr(4); 
+        idArray = idArray.concat(me.utilsCls.getIdArray(tmpStr));
+
+        return idArray;
+    }
+
+    drawLineGraph_base(nodeArray1, nodeArray2, linkArray, name2node, height, label, textHeight) { let  ic = this.icn3d, me = ic.icn3dui;
         let  html = '';
         let  len1 = nodeArray1.length,
             len2 = nodeArray2.length;
@@ -16957,6 +17055,11 @@ class LineGraph {
             margin2 = margin;
             margin1 = Math.abs(len1 - len2) *(r + gap) * 0.5 + margin;
         }
+
+        // draw label
+        height += textHeight;
+        html += "<text x='" + margin1 + "' y='" + height + "' style='font-size:8px; font-weight:bold'>" + label + "</text>";
+
         let  h1 = 30 + height,
             h2 = 80 + height;
         let  nodeHtml = '';
@@ -17012,7 +17115,7 @@ class LineGraph {
         return html;
     }
 
-    drawScatterplot_base(nodeArray1, nodeArray2, linkArray, name2node, height, bContactMap) { let ic = this.icn3d; ic.icn3dui;
+    drawScatterplot_base(nodeArray1, nodeArray2, linkArray, name2node, height, bContactMap, label, textHeight) { let ic = this.icn3d; ic.icn3dui;
         let  html = '';
         let  len1 = nodeArray1.length,
             len2 = nodeArray2.length;
@@ -17023,12 +17126,19 @@ class LineGraph {
         let  marginX = 10,
             marginY = 20;
         let  heightTotal =(len1 + 1) *(r + gap) + legendWidth + 2 * marginY;
+
+        // draw label
+        height += textHeight;
+
+        html += "<text x='" + marginX + "' y='" + (height + 15).toString() + "' style='font-size:8px; font-weight:bold'>" + label + "</text>";
+ 
         let  margin1 = height + heightTotal -(legendWidth + marginY +(r + gap)); // y-axis
         let  margin2 = legendWidth + marginX +(r + gap); // x-axis
-        let  x = legendWidth + marginX;
+
         let  nodeHtml = '';
         let  node2posSet1 = {},
             node2posSet2 = {};
+        let  x = legendWidth + marginX;
         for(let i = 0; i < len1; ++i) {
             nodeHtml += ic.getGraphCls.drawResNode(nodeArray1[i], i, r, gap, margin1, x, 'a', true);
             node2posSet1[nodeArray1[i].id] = { x: x, y: margin1 - i *(r + gap) };
@@ -17400,8 +17510,9 @@ class ViewInterPairs {
                tmpText = 'Set 2';
            }
            html += '<div style="text-align:center"><br><b>Interactions Sorted on ' + tmpText + '</b>: <button class="' + ic.pre + 'showintercntonly" style="margin-left:20px">Show Count Only</button><button class="' + ic.pre + 'showinterdetails" style="margin-left:20px">Show Details</button></div>';
-           html += this.getAllInteractionTable(type).html;
-           bondCnt = this.getAllInteractionTable(type).bondCnt;
+           let result = this.getAllInteractionTable(type);
+           html += result.html;
+           bondCnt = result.bondCnt;
 
            $("#" + ic.pre + "dl_interactionsorted").html(html);
            me.htmlCls.dialogCls.openDlg('dl_interactionsorted', 'Show sorted interactions');
@@ -21710,6 +21821,7 @@ class LoadAtomData {
           let  refinedStr =(me.cfg.inpara && me.cfg.inpara.indexOf('atype=1') !== -1) ? 'Invariant Core ' : '';
           ic.molTitle = refinedStr + 'Structure Alignment of ';
 
+          let bTitle = false;
           for(let i = 0, il = data.alignedStructures[0].length; i < il; ++i) {
               let  structure = data.alignedStructures[0][i];
 
@@ -21747,10 +21859,13 @@ class LoadAtomData {
                   ic.molTitle += " and ";
                   if(structure.descr !== undefined) ic.pmid += "_";
               }
+
+              bTitle = true;
           }
 
           ic.molTitle += ' from VAST+';
 
+          if(!bTitle) ic.molTitle = '';
         }
         else { // mmdbid or mmcifid
             if(data.descr !== undefined) ic.molTitle += data.descr.name;
@@ -23250,7 +23365,7 @@ class PdbParser {
        let  url, dataType;
 
        if(bAf) {
-           url = "https://alphafold.ebi.ac.uk/files/AF-" + pdbid + "-F1-model_v1.pdb";
+           url = "https://alphafold.ebi.ac.uk/files/AF-" + pdbid + "-F1-model_v2.pdb";
            ic.ParserUtilsCls.setYourNote(pdbid.toUpperCase() + '(AlphaFold) in iCn3D');
        }
        else {
@@ -24055,11 +24170,11 @@ class AlignParser {
                 ic.alignmolid2color.push(tmpHash);
             }
 
-            //var url3 = me.htmlCls.baseUrl + 'mmdb/mmdb_strview.cgi?v=2&program=icn3d&b=1&s=1&ft=1&atomonly=1&uid=' + ic.mmdbidArray[0];
-            //var url4 = me.htmlCls.baseUrl + 'mmdb/mmdb_strview.cgi?v=2&program=icn3d&b=1&s=1&ft=1&atomonly=1&uid=' + ic.mmdbidArray[1];
+            //var url3 = me.htmlCls.baseUrl + "mmdb/mmdb_strview.cgi?v=2&program=icn3d&b=1&s=1&ft=1&buidx=" + me.cfg.buidx + "&atomonly=1&uid=" + ic.mmdbidArray[0];
+            //var url4 = me.htmlCls.baseUrl + "mmdb/mmdb_strview.cgi?v=2&program=icn3d&b=1&s=1&ft=1&buidx=" + me.cfg.buidx + "&atomonly=1&uid=" + ic.mmdbidArray[1];
             // need the parameter moleculeInfor
-            let  url3 = me.htmlCls.baseUrl + 'mmdb/mmdb_strview.cgi?v=2&program=icn3d&b=1&s=1&ft=1&uid=' + ic.mmdbidArray[0];
-            let  url4 = me.htmlCls.baseUrl + 'mmdb/mmdb_strview.cgi?v=2&program=icn3d&b=1&s=1&ft=1&uid=' + ic.mmdbidArray[1];
+            let  url3 = me.htmlCls.baseUrl + "mmdb/mmdb_strview.cgi?v=2&program=icn3d&b=1&s=1&ft=1&buidx=" + me.cfg.buidx + "&uid=" + ic.mmdbidArray[0];
+            let  url4 = me.htmlCls.baseUrl + "mmdb/mmdb_strview.cgi?v=2&program=icn3d&b=1&s=1&ft=1&buidx=" + me.cfg.buidx + "&uid=" + ic.mmdbidArray[1];
 
             let  d3 = $.ajax({
               url: url3,
@@ -24594,10 +24709,10 @@ class MmdbParser {
        // b: b-factor, s: water, ft: pdbsite
        //&ft=1
        if(bGi) {
-           url = me.htmlCls.baseUrl + "mmdb/mmdb_strview.cgi?v=2&program=icn3d&b=1&s=1&ft=1&simple=1&gi=" + mmdbid;
+           url = me.htmlCls.baseUrl + "mmdb/mmdb_strview.cgi?v=2&program=icn3d&b=1&s=1&ft=1&buidx=" + me.cfg.buidx + "&simple=1&gi=" + mmdbid;
        }
        else {
-           url = me.htmlCls.baseUrl + "mmdb/mmdb_strview.cgi?v=2&program=icn3d&b=1&s=1&ft=1&simple=1&uid=" + mmdbid;
+           url = me.htmlCls.baseUrl + "mmdb/mmdb_strview.cgi?v=2&program=icn3d&b=1&s=1&ft=1&buidx=" + me.cfg.buidx + "&simple=1&uid=" + mmdbid;
        }
 
        // use asymmetric unit for BLAST search, e.g., https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?from=blast&blast_rep_id=5XZC_B&query_id=1TUP_A&command=view+annotations;set+annotation+cdd;set+annotation+site;set+view+detailed+view;select+chain+5XZC_B;show+selection&log$=align&blast_rank=1&RID=EPUCYNVV014&buidx=0
@@ -25483,7 +25598,7 @@ class ChainalignParser {
         let  pos1 = alignArray[0].indexOf('_');
         ic.mmdbid_t = alignArray[0].substr(0, pos1).toUpperCase();
         ic.chain_t = alignArray[0].substr(pos1+1);
-        let  url_t = me.htmlCls.baseUrl + "mmdb/mmdb_strview.cgi?v=2&program=icn3d&b=1&s=1&ft=1&uid=" + ic.mmdbid_t;
+        let  url_t = me.htmlCls.baseUrl + "mmdb/mmdb_strview.cgi?v=2&program=icn3d&b=1&s=1&ft=1&buidx=" + me.cfg.buidx + "&uid=" + ic.mmdbid_t;
         if(me.cfg.inpara !== undefined) url_t += me.cfg.inpara;
 
         let  ajaxArray = [];
@@ -25509,7 +25624,7 @@ class ChainalignParser {
             let  chainalignFinal = ic.mmdbid_q + "_" + ic.chain_q + "," + ic.mmdbid_t + "_" + ic.chain_t;
 
             let  urlalign = me.htmlCls.baseUrl + "vastdyn/vastdyn.cgi?chainpairs=" + chainalignFinal;
-            let  url_q = me.htmlCls.baseUrl + "mmdb/mmdb_strview.cgi?v=2&program=icn3d&b=1&s=1&ft=1&uid=" + ic.mmdbid_q;
+            let  url_q = me.htmlCls.baseUrl + "mmdb/mmdb_strview.cgi?v=2&program=icn3d&b=1&s=1&ft=1&buidx=" + me.cfg.buidx + "&uid=" + ic.mmdbid_q;
 
             if(me.cfg.inpara !== undefined) url_q += me.cfg.inpara;
 
@@ -27578,10 +27693,17 @@ class LoadScript {
           me.cfg.mmcifid = id;
           ic.mmcifParserCls.downloadMmcif(id);
         }
-        else if(command.indexOf('load mmdb') !== -1) {
+        else if(command.indexOf('load mmdb') !== -1 || command.indexOf('load mmdb1') !== -1) {
           me.cfg.mmdbid = id;
+          me.cfg.buidx = 1;
 
           ic.mmdbParserCls.downloadMmdb(id);
+        }
+        else if(command.indexOf('load mmdb0') !== -1) {
+            me.cfg.mmdbid = id;
+            me.cfg.buidx = 0;
+  
+            ic.mmdbParserCls.downloadMmdb(id);
         }
         else if(command.indexOf('load gi') !== -1) {
           me.cfg.gi = id;
@@ -30485,7 +30607,7 @@ class Picking {
             let  text =(ic.pk == 1) ? atom.resn + atom.resi + '@' + atom.name : atom.resn + atom.resi;
             if(ic.structures !== undefined && Object.keys(ic.structures).length > 1) {
                 text = atom.structure + '_' + atom.chain + ' ' + text;
-                $("#" + ic.pre + "popup").css("width", "140px");
+                $("#" + ic.pre + "popup").css("width", "160px");
             }
             else {
                 $("#" + ic.pre + "popup").css("width", "80px");
@@ -33154,6 +33276,8 @@ class SetSeqAlign {
               ic.alnChainsAnTtl[chainid1][6].push("");
 
               let  alignIndex = 1;
+              if(!ic.chainsMapping[chainid1]) ic.chainsMapping[chainid1] = {};
+              if(!ic.chainsMapping[chainid2]) ic.chainsMapping[chainid2] = {};
               //for(let j = 0, jl = alignData.sseq.length; j < jl; ++j) {
               for(let j = start; j <= end; ++j) {
                   // 0: internal resi id, 1: pdb resi id, 2: resn, 3: aligned or not
@@ -33184,6 +33308,10 @@ class SetSeqAlign {
                           ic.nconsHash1[chainid1 + '_' + id2aligninfo[j].resi] = 1;
                           ic.nconsHash2[chainid2 + '_' + resi] = 1;
                       }
+
+                      // mapping, use the firstsequence as the reference structure
+                      ic.chainsMapping[chainid1][chainid1 + '_' + id2aligninfo[j].resi] = id2aligninfo[j].resn + id2aligninfo[j].resi;
+                      ic.chainsMapping[chainid2][chainid2 + '_' + resi] = id2aligninfo[j].resn + id2aligninfo[j].resi;
 
                       color2 = '#' + ic.showAnnoCls.getColorhexFromBlosum62(id2aligninfo[j].resn, resn);
 
@@ -33369,6 +33497,8 @@ class SetSeqAlign {
           if(ic.qt_start_end[chainIndex] === undefined) return;
 
           let  alignIndex = 1;
+          if(!ic.chainsMapping[chainid1]) ic.chainsMapping[chainid1] = {};
+          if(!ic.chainsMapping[chainid2]) ic.chainsMapping[chainid2] = {};
           for(let i = 0, il = ic.qt_start_end[chainIndex].length; i < il; ++i) {
               //var start1 = ic.qt_start_end[chainIndex][i].q_start - 1;
               //var start2 = ic.qt_start_end[chainIndex][i].t_start - 1;
@@ -33462,6 +33592,10 @@ class SetSeqAlign {
                       ic.nconsHash2[chainid2 + '_' + resi2] = 1;
                   }
 
+                  // mapping, use the firstsequence as the reference structure
+                  ic.chainsMapping[chainid1][chainid1 + '_' + resi1] = resn1 + resi1;
+                  ic.chainsMapping[chainid2][chainid2 + '_' + resi2] = resn1 + resi1;
+
                   color2 = '#' + ic.showAnnoCls.getColorhexFromBlosum62(resn1, resn2);
 
                   let  bFirstResi =(i === 0 && j === 0) ? true : false;
@@ -33511,6 +33645,8 @@ class SetSeqAlign {
     //      let  prevChainid1 = '', prevChainid2 = '', cnt1 = 0, cnt2 = 0;
 
           let  residuesHash = {};
+          if(!ic.chainsMapping[chainid_t]) ic.chainsMapping[chainid_t] = {};
+          if(!ic.chainsMapping[chainid]) ic.chainsMapping[chainid] = {};
 
           for(let i = 0, il = ic.realignResid[structure1].length; i < il; ++i) {
               let  resObject1 = ic.realignResid[structure1][i];
@@ -33537,6 +33673,11 @@ class SetSeqAlign {
               else {
                   color = "#0000FF";
               }
+
+              // mapping, use the firstsequence as the reference structure
+              ic.chainsMapping[chainid_t][chainid_t + '_' + resObject1.resi] = resObject1.resn + resObject1.resi;
+              ic.chainsMapping[chainid][chainid + '_' + resObject2.resi] = resObject1.resn + resObject1.resi;
+
               let  color2 = '#' + ic.showAnnoCls.getColorhexFromBlosum62(resObject1.resn, resObject2.resn);
 
               resObject1.color = color;
@@ -39325,9 +39466,12 @@ class Selection {
           ic.graphStr = this.getGraphDataForDisplayed();
         }
 
+        // don not redraw graphs after the selection changes
+        /*
         if(ic.bGraph) ic.drawGraphCls.drawGraph(ic.graphStr, ic.pre + 'dl_graph');
         if(ic.bLinegraph) ic.lineGraphCls.drawLineGraph(ic.graphStr);
         if(ic.bScatterplot) ic.lineGraphCls.drawLineGraph(ic.graphStr, true);
+        */
     }
 
     hideSelection() { let  ic = this.icn3d, me = ic.icn3dui;
@@ -46749,6 +46893,7 @@ class SetMenu {
         let html = "";
 
         html += "<ul class='icn3d-mn-item'>";
+        html += "<li><a href='https://www.ncbi.nlm.nih.gov/structure' target='_blank'>Search Structure " + me.htmlCls.wifiStr + "</a></li>";
         html += "<li><span>Retrieve by ID</span>";
         html += "<ul>";
         html += me.htmlCls.setHtmlCls.getLink('mn1_mmdbid', 'MMDB ID ' + me.htmlCls.wifiStr);
@@ -47823,6 +47968,7 @@ class SetMenu {
             html += me.htmlCls.setHtmlCls.getRadio('mn6_addlabel', 'mn6_addlabelTermini', 'N- & C-Termini');
         }
 
+        html += "<li>-</li>";
         html += me.htmlCls.setHtmlCls.getRadio('mn6_addlabel', 'mn6_labelColor', 'Change Label Color', true);
         html += me.htmlCls.setHtmlCls.getRadio('mn6_addlabel', 'mn6_addlabelNo', 'Remove', true);
         html += "</ul>";
@@ -47879,6 +48025,8 @@ class SetMenu {
             }
 
             let bOnePdb = me.cfg.mmtfid !== undefined || me.cfg.pdbid !== undefined || me.cfg.opmid !== undefined || me.cfg.mmcifid !== undefined || me.cfg.mmdbid !== undefined || me.cfg.gi !== undefined || me.cfg.blast_rep_id !== undefined;
+console.log("me.cfg.mmdbid: " + me.cfg.mmdbid + " bOnePdb: " + bOnePdb);
+
             if(bOnePdb) {
               html += "<li id='" + me.pre + "assemblyWrapper'><span>Assembly</span>";
               html += "<ul>";
@@ -48794,7 +48942,7 @@ class SetDialog {
         html += "<b>Optional 1</b>, full chains are used for structure alignment<br/><br/>";
         html += "<b>Optional 2</b>, sequence alignment (followed by structure alignemnt) based on residue numbers in the First/Master chain: <br>" + me.htmlCls.inputTextStr + "id='" + me.pre + "resalignids' placeholder='1,5,10-50' size=50><br/><br/>";
         html += "<b>Optional 3</b>, predefined alignment with residue numbers in each chain specified (one chain per line): <br><textarea id='" + me.pre + "predefinedres' rows='5' style='width: 100%; height: " +(me.htmlCls.LOG_HEIGHT) + "px; padding: 0px; border: 0px;' placeholder='1,5,10-50\n1,5,10-50\n1,5,10-50'></textarea><br/><br/>";
-        html += me.htmlCls.buttonStr + "reload_chainalign'>Align Biological Unit</button>" + me.htmlCls.buttonStr + "reload_chainalign_asym' style='margin-left:30px'>Align Asymmetric Unit</button><br/><br/>";
+        html += me.htmlCls.buttonStr + "reload_chainalign_asym'>Align Asymmetric Unit</button>" + me.htmlCls.buttonStr + "reload_chainalign' style='margin-left:30px'>Align Biological Unit</button><br/><br/>";
         html += "(Note: To align chains in custom PDB files, you could concatenate PDB files in a single PDB file with the separation line \"ENDMDL\". Then load it in \"Open File > PDB File\" in the \"File\" menu and click \"View Sequences & Annotations\" in the \"Window\" menu. Finally select multiple chains in the sequence window and click \"Realign Selection\" in the \"File\" menu.)<br><br>";
         html += "</div></div>";
 
@@ -48843,8 +48991,8 @@ class SetDialog {
         html += "</div>";
 
         html += me.htmlCls.divStr + "dl_mmdbid' class='" + dialogClass + "'>";
-        html += "MMDB or PDB ID: " + me.htmlCls.inputTextStr + "id='" + me.pre + "mmdbid' value='1TUP' size=8> ";
-        html += me.htmlCls.buttonStr + "reload_mmdb'>Load</button>";
+        html += "MMDB or PDB ID: " + me.htmlCls.inputTextStr + "id='" + me.pre + "mmdbid' value='1TUP' size=8> <br><br>";
+        html += me.htmlCls.buttonStr + "reload_mmdb_asym'>Load Asymmetric Unit (All Chains)</button>" + me.htmlCls.buttonStr + "reload_mmdb' style='margin-left:30px'>Load Biological Unit</button><br/><br/>";
         html += "</div>";
 
         html += me.htmlCls.divStr + "dl_blast_rep_id' style='max-width:500px;' class='" + dialogClass + "'>";
@@ -50074,20 +50222,24 @@ class Events {
         me.myEventCls.onIds("#" + me.pre + "reload_mmdb", "click", function(e) { me.icn3d;
            e.preventDefault();
            if(!me.cfg.notebook) dialog.dialog( "close" );
-           me.htmlCls.clickMenuCls.setLogCmd("load mmdb " + $("#" + me.pre + "mmdbid").val(), false);
-           //ic.mmdbParserCls.downloadMmdb($("#" + me.pre + "mmdbid").val());
-           //window.open(me.htmlCls.baseUrl + 'icn3d/full.html?mmdbid=' + $("#" + me.pre + "mmdbid").val(), '_blank');
-           window.open(hostUrl + '?mmdbid=' + $("#" + me.pre + "mmdbid").val(), '_blank');
+           me.htmlCls.clickMenuCls.setLogCmd("load mmdb1 " + $("#" + me.pre + "mmdbid").val(), false);
+           window.open(hostUrl + '?mmdbid=' + $("#" + me.pre + "mmdbid").val() + '&buidx=1', '_blank');
         });
+
+        me.myEventCls.onIds("#" + me.pre + "reload_mmdb_asym", "click", function(e) { me.icn3d;
+            e.preventDefault();
+            if(!me.cfg.notebook) dialog.dialog( "close" );
+            me.htmlCls.clickMenuCls.setLogCmd("load mmdb0 " + $("#" + me.pre + "mmdbid").val(), false);
+            window.open(hostUrl + '?mmdbid=' + $("#" + me.pre + "mmdbid").val() + '&buidx=0', '_blank');
+         });
 
         me.myEventCls.onIds("#" + me.pre + "mmdbid", "keyup", function(e) { me.icn3d;
            if (e.keyCode === 13) {
                e.preventDefault();
                if(!me.cfg.notebook) dialog.dialog( "close" );
-               me.htmlCls.clickMenuCls.setLogCmd("load mmdb " + $("#" + me.pre + "mmdbid").val(), false);
-               //window.open(me.htmlCls.baseUrl + 'icn3d/full.html?mmdbid=' + $("#" + me.pre + "mmdbid").val(), '_blank');
-               window.open(hostUrl + '?mmdbid=' + $("#" + me.pre + "mmdbid").val(), '_blank');
-           }
+               me.htmlCls.clickMenuCls.setLogCmd("load mmdb0 " + $("#" + me.pre + "mmdbid").val(), false);
+               window.open(hostUrl + '?mmdbid=' + $("#" + me.pre + "mmdbid").val() + '&buidx=0', '_blank');
+              }
         });
 
     //    },
@@ -55731,6 +55883,8 @@ iCn3D.prototype.init_base = function (bKeepCmd) {
     this.chainsAn = {}; // structure_chain name -> array of annotations, such as residue number
     this.chainsAnTitle = {}; // structure_chain name -> array of annotation title
 
+    this.chainsMapping = {}; // structure_chain name -> residue id hash such as {'structure_chain_resi1': 'reference residue such as K10', ...}
+
     this.alnChainsSeq = {}; // structure_chain name -> array of residue object: {mmdbid, chain, resi, resn, aligned}
     this.alnChainsAnno = {}; // structure_chain name -> array of annotations, such as residue number
     this.alnChainsAnTtl = {}; // structure_chain name -> array of annotation title
@@ -55880,7 +56034,7 @@ class iCn3DUI {
     //even when multiple iCn3D viewers are shown together.
     this.pre = this.cfg.divid + "_";
 
-    this.REVISION = '3.6.1';
+    this.REVISION = '3.7.0';
 
     // In nodejs, iCn3D defines "window = {navigator: {}}"
     this.bNode = (Object.keys(window).length < 2) ? true : false;

@@ -171,12 +171,20 @@ class GetGraph {
         html += "</g>";
         return html;
     }
-    getNodeTopBottom(nameHash, name2node, bReverseNode) { let  ic = this.icn3d, me = ic.icn3dui;
+    getNodeTopBottom(nameHash, name2node, bReverseNode, bCommon, nameHashCommon) { let  ic = this.icn3d, me = ic.icn3dui;
         let  thisClass = this;
-        let  nodeArray1 = [], nodeArray2 = [];
+        let  nodeArray1 = [], nodeArray2 = [], name2nodeCommon = {};
         for(let name in nameHash) {
             let  node = name2node[name];
             if(!node) continue;
+
+            if(bCommon) {
+                node = me.hashUtilsCls.cloneHash(node);
+
+                let mapping = (nameHashCommon[name]) ? nameHashCommon[name] : '-';
+                node.id += ">" + mapping;
+                name2nodeCommon[node.id] = node;
+            }
 
             if(node.s == 'a') {
                 nodeArray1.push(node);
@@ -184,10 +192,10 @@ class GetGraph {
             else if(node.s == 'b') {
                 nodeArray2.push(node);
             }
-            else if(node.s == 'ab') {
-                nodeArray1.push(node);
-                nodeArray2.push(node);
-            }
+            //else if(node.s == 'ab') {
+            //    nodeArray1.push(node);
+            //    nodeArray2.push(node);
+            //}
         }
         // sort array
         nodeArray1.sort(function(a,b) {
@@ -196,7 +204,7 @@ class GetGraph {
         nodeArray2.sort(function(a,b) {
           return thisClass.compNode(a, b, bReverseNode);
         });
-        return {"nodeArray1": nodeArray1, "nodeArray2": nodeArray2}
+        return {"nodeArray1": nodeArray1, "nodeArray2": nodeArray2, "name2node": name2nodeCommon};
     }
     updateGraphJson(struc, index, nodeArray1, nodeArray2, linkArray) { let  ic = this.icn3d, me = ic.icn3dui;
         let  lineGraphStr = '';

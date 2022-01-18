@@ -56,6 +56,7 @@ class LoadAtomData {
           let  refinedStr =(me.cfg.inpara && me.cfg.inpara.indexOf('atype=1') !== -1) ? 'Invariant Core ' : '';
           ic.molTitle = refinedStr + 'Structure Alignment of ';
 
+          let bTitle = false;
           for(let i = 0, il = data.alignedStructures[0].length; i < il; ++i) {
               let  structure = data.alignedStructures[0][i];
 
@@ -94,10 +95,13 @@ class LoadAtomData {
                   ic.molTitle += " and ";
                   if(structure.descr !== undefined) ic.pmid += "_";
               }
+
+              bTitle = true;
           }
 
           ic.molTitle += ' from VAST+';
 
+          if(!bTitle) ic.molTitle = '';
         }
         else { // mmdbid or mmcifid
             if(data.descr !== undefined) ic.molTitle += data.descr.name;

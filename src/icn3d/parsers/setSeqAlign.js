@@ -101,6 +101,8 @@ class SetSeqAlign {
               ic.alnChainsAnTtl[chainid1][6].push("");
 
               let  alignIndex = 1;
+              if(!ic.chainsMapping[chainid1]) ic.chainsMapping[chainid1] = {};
+              if(!ic.chainsMapping[chainid2]) ic.chainsMapping[chainid2] = {};
               //for(let j = 0, jl = alignData.sseq.length; j < jl; ++j) {
               for(let j = start; j <= end; ++j) {
                   // 0: internal resi id, 1: pdb resi id, 2: resn, 3: aligned or not
@@ -131,6 +133,10 @@ class SetSeqAlign {
                           ic.nconsHash1[chainid1 + '_' + id2aligninfo[j].resi] = 1;
                           ic.nconsHash2[chainid2 + '_' + resi] = 1;
                       }
+
+                      // mapping, use the firstsequence as the reference structure
+                      ic.chainsMapping[chainid1][chainid1 + '_' + id2aligninfo[j].resi] = id2aligninfo[j].resn + id2aligninfo[j].resi;
+                      ic.chainsMapping[chainid2][chainid2 + '_' + resi] = id2aligninfo[j].resn + id2aligninfo[j].resi;
 
                       color2 = '#' + ic.showAnnoCls.getColorhexFromBlosum62(id2aligninfo[j].resn, resn);
 
@@ -320,6 +326,8 @@ class SetSeqAlign {
           if(ic.qt_start_end[chainIndex] === undefined) return;
 
           let  alignIndex = 1;
+          if(!ic.chainsMapping[chainid1]) ic.chainsMapping[chainid1] = {};
+          if(!ic.chainsMapping[chainid2]) ic.chainsMapping[chainid2] = {};
           for(let i = 0, il = ic.qt_start_end[chainIndex].length; i < il; ++i) {
               //var start1 = ic.qt_start_end[chainIndex][i].q_start - 1;
               //var start2 = ic.qt_start_end[chainIndex][i].t_start - 1;
@@ -413,6 +421,10 @@ class SetSeqAlign {
                       ic.nconsHash2[chainid2 + '_' + resi2] = 1;
                   }
 
+                  // mapping, use the firstsequence as the reference structure
+                  ic.chainsMapping[chainid1][chainid1 + '_' + resi1] = resn1 + resi1;
+                  ic.chainsMapping[chainid2][chainid2 + '_' + resi2] = resn1 + resi1;
+
                   color2 = '#' + ic.showAnnoCls.getColorhexFromBlosum62(resn1, resn2);
 
                   let  bFirstResi =(i === 0 && j === 0) ? true : false;
@@ -464,6 +476,8 @@ class SetSeqAlign {
     //      let  prevChainid1 = '', prevChainid2 = '', cnt1 = 0, cnt2 = 0;
 
           let  residuesHash = {}
+          if(!ic.chainsMapping[chainid_t]) ic.chainsMapping[chainid_t] = {};
+          if(!ic.chainsMapping[chainid]) ic.chainsMapping[chainid] = {};
 
           for(let i = 0, il = ic.realignResid[structure1].length; i < il; ++i) {
               let  resObject1 = ic.realignResid[structure1][i];
@@ -490,6 +504,11 @@ class SetSeqAlign {
               else {
                   color = "#0000FF";
               }
+
+              // mapping, use the firstsequence as the reference structure
+              ic.chainsMapping[chainid_t][chainid_t + '_' + resObject1.resi] = resObject1.resn + resObject1.resi;
+              ic.chainsMapping[chainid][chainid + '_' + resObject2.resi] = resObject1.resn + resObject1.resi;
+
               let  color2 = '#' + ic.showAnnoCls.getColorhexFromBlosum62(resObject1.resn, resObject2.resn);
 
               resObject1.color = color;

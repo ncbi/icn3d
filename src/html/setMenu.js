@@ -388,6 +388,7 @@ class SetMenu {
         let html = "";
 
         html += "<ul class='icn3d-mn-item'>";
+        html += "<li><a href='https://www.ncbi.nlm.nih.gov/structure' target='_blank'>Search Structure " + me.htmlCls.wifiStr + "</a></li>";
         html += "<li><span>Retrieve by ID</span>";
         html += "<ul>";
         html += me.htmlCls.setHtmlCls.getLink('mn1_mmdbid', 'MMDB ID ' + me.htmlCls.wifiStr);
@@ -1462,6 +1463,7 @@ class SetMenu {
             html += me.htmlCls.setHtmlCls.getRadio('mn6_addlabel', 'mn6_addlabelTermini', 'N- & C-Termini');
         }
 
+        html += "<li>-</li>";
         html += me.htmlCls.setHtmlCls.getRadio('mn6_addlabel', 'mn6_labelColor', 'Change Label Color', true);
         html += me.htmlCls.setHtmlCls.getRadio('mn6_addlabel', 'mn6_addlabelNo', 'Remove', true);
         html += "</ul>";
@@ -1518,6 +1520,8 @@ class SetMenu {
             }
 
             let bOnePdb = me.cfg.mmtfid !== undefined || me.cfg.pdbid !== undefined || me.cfg.opmid !== undefined || me.cfg.mmcifid !== undefined || me.cfg.mmdbid !== undefined || me.cfg.gi !== undefined || me.cfg.blast_rep_id !== undefined;
+console.log("me.cfg.mmdbid: " + me.cfg.mmdbid + " bOnePdb: " + bOnePdb);
+
             if(bOnePdb) {
               html += "<li id='" + me.pre + "assemblyWrapper'><span>Assembly</span>";
               html += "<ul>";

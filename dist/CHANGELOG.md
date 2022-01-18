@@ -1,4 +1,6 @@
 ## Change Log
+[icn3d-3.7.0](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.7.0.zip) was release on January 18, 2022. Now users can see the common interactions in several structures when they are aligned and their interactions are shown. iCn3D now shows asymmetric unit instead of biological unit since asymmetri unit contains all chains. Added the menu "File > Search Structure".
+
 [icn3d-3.6.1](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.6.1.zip) was release on January 11, 2022. Enabled users to change the color for all lables in the menu "Analysis > Label > Change Label Color".
 
 [icn3d-3.6.0](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.6.0.zip) was release on January 7, 2022. Added some example Python scripts in the directory "icn3dpython" to export secondary structures or PNG images. Changed the background color from "transparent/white" to "black".
