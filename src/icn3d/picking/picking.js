@@ -37,7 +37,7 @@ class Picking {
             let  text =(ic.pk == 1) ? atom.resn + atom.resi + '@' + atom.name : atom.resn + atom.resi;
             if(ic.structures !== undefined && Object.keys(ic.structures).length > 1) {
                 text = atom.structure + '_' + atom.chain + ' ' + text;
-                $("#" + ic.pre + "popup").css("width", "140px");
+                $("#" + ic.pre + "popup").css("width", "160px");
             }
             else {
                 $("#" + ic.pre + "popup").css("width", "80px");

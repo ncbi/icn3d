@@ -146,10 +146,10 @@ class MmdbParser {
        // b: b-factor, s: water, ft: pdbsite
        //&ft=1
        if(bGi) {
-           url = me.htmlCls.baseUrl + "mmdb/mmdb_strview.cgi?v=2&program=icn3d&b=1&s=1&ft=1&simple=1&gi=" + mmdbid;
+           url = me.htmlCls.baseUrl + "mmdb/mmdb_strview.cgi?v=2&program=icn3d&b=1&s=1&ft=1&buidx=" + me.cfg.buidx + "&simple=1&gi=" + mmdbid;
        }
        else {
-           url = me.htmlCls.baseUrl + "mmdb/mmdb_strview.cgi?v=2&program=icn3d&b=1&s=1&ft=1&simple=1&uid=" + mmdbid;
+           url = me.htmlCls.baseUrl + "mmdb/mmdb_strview.cgi?v=2&program=icn3d&b=1&s=1&ft=1&buidx=" + me.cfg.buidx + "&simple=1&uid=" + mmdbid;
        }
 
        // use asymmetric unit for BLAST search, e.g., https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?from=blast&blast_rep_id=5XZC_B&query_id=1TUP_A&command=view+annotations;set+annotation+cdd;set+annotation+site;set+view+detailed+view;select+chain+5XZC_B;show+selection&log$=align&blast_rank=1&RID=EPUCYNVV014&buidx=0

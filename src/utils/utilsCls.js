@@ -430,6 +430,16 @@ class UtilsCls {
         if(viewer_width && me.htmlCls.WIDTH > viewer_width) me.htmlCls.WIDTH = viewer_width;
         if(viewer_height && me.htmlCls.HEIGHT > viewer_height) me.htmlCls.HEIGHT = viewer_height;
     }
+
+    sumArray(numArray) {
+      let sum = 0;
+
+      for(let i = 0, il = numArray.length; i < il; ++i) {
+        sum += numArray[i];
+      }
+
+      return sum;
+    }
 }
 
 export {UtilsCls}

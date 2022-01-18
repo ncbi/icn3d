@@ -30,7 +30,7 @@ class PdbParser {
        let  url, dataType;
 
        if(bAf) {
-           url = "https://alphafold.ebi.ac.uk/files/AF-" + pdbid + "-F1-model_v1.pdb";
+           url = "https://alphafold.ebi.ac.uk/files/AF-" + pdbid + "-F1-model_v2.pdb";
            ic.ParserUtilsCls.setYourNote(pdbid.toUpperCase() + '(AlphaFold) in iCn3D');
        }
        else {

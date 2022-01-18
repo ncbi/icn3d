@@ -296,8 +296,9 @@ class ViewInterPairs {
                tmpText = 'Set 2';
            }
            html += '<div style="text-align:center"><br><b>Interactions Sorted on ' + tmpText + '</b>: <button class="' + ic.pre + 'showintercntonly" style="margin-left:20px">Show Count Only</button><button class="' + ic.pre + 'showinterdetails" style="margin-left:20px">Show Details</button></div>';
-           html += this.getAllInteractionTable(type).html;
-           bondCnt = this.getAllInteractionTable(type).bondCnt;
+           let result = this.getAllInteractionTable(type);
+           html += result.html;
+           bondCnt = result.bondCnt;
 
            $("#" + ic.pre + "dl_interactionsorted").html(html);
            me.htmlCls.dialogCls.openDlg('dl_interactionsorted', 'Show sorted interactions');

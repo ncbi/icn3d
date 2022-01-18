@@ -576,20 +576,24 @@ class Events {
         me.myEventCls.onIds("#" + me.pre + "reload_mmdb", "click", function(e) { let ic = me.icn3d;
            e.preventDefault();
            if(!me.cfg.notebook) dialog.dialog( "close" );
-           me.htmlCls.clickMenuCls.setLogCmd("load mmdb " + $("#" + me.pre + "mmdbid").val(), false);
-           //ic.mmdbParserCls.downloadMmdb($("#" + me.pre + "mmdbid").val());
-           //window.open(me.htmlCls.baseUrl + 'icn3d/full.html?mmdbid=' + $("#" + me.pre + "mmdbid").val(), '_blank');
-           window.open(hostUrl + '?mmdbid=' + $("#" + me.pre + "mmdbid").val(), '_blank');
+           me.htmlCls.clickMenuCls.setLogCmd("load mmdb1 " + $("#" + me.pre + "mmdbid").val(), false);
+           window.open(hostUrl + '?mmdbid=' + $("#" + me.pre + "mmdbid").val() + '&buidx=1', '_blank');
         });
+
+        me.myEventCls.onIds("#" + me.pre + "reload_mmdb_asym", "click", function(e) { let ic = me.icn3d;
+            e.preventDefault();
+            if(!me.cfg.notebook) dialog.dialog( "close" );
+            me.htmlCls.clickMenuCls.setLogCmd("load mmdb0 " + $("#" + me.pre + "mmdbid").val(), false);
+            window.open(hostUrl + '?mmdbid=' + $("#" + me.pre + "mmdbid").val() + '&buidx=0', '_blank');
+         });
 
         me.myEventCls.onIds("#" + me.pre + "mmdbid", "keyup", function(e) { let ic = me.icn3d;
            if (e.keyCode === 13) {
                e.preventDefault();
                if(!me.cfg.notebook) dialog.dialog( "close" );
-               me.htmlCls.clickMenuCls.setLogCmd("load mmdb " + $("#" + me.pre + "mmdbid").val(), false);
-               //window.open(me.htmlCls.baseUrl + 'icn3d/full.html?mmdbid=' + $("#" + me.pre + "mmdbid").val(), '_blank');
-               window.open(hostUrl + '?mmdbid=' + $("#" + me.pre + "mmdbid").val(), '_blank');
-           }
+               me.htmlCls.clickMenuCls.setLogCmd("load mmdb0 " + $("#" + me.pre + "mmdbid").val(), false);
+               window.open(hostUrl + '?mmdbid=' + $("#" + me.pre + "mmdbid").val() + '&buidx=0', '_blank');
+              }
         });
 
     //    },
