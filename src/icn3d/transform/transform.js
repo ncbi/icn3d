@@ -216,7 +216,7 @@ class Transform {
 
       if(ic.bRender) ic.drawCls.render();
     }
-
+/*
     //Zoom in the structure at certain ratio, e.g., 0.1 is a reasonable value.
     zoomIn(normalizedFactor) {  let  ic = this.icn3d, me = ic.icn3dui;
       let  para = {}
@@ -229,7 +229,9 @@ class Transform {
           ic.controls.update(para);
       }
 
-      if(ic.bRender) ic.drawCls.render();
+      if(ic.bRender) {
+          ic.drawCls.render();
+      }
     }
 
     //Zoom out the structure at certain ratio, e.g., 0.1 is a reasonable value.
@@ -244,8 +246,11 @@ class Transform {
       else {
           ic.controls.update(para);
       }
-      if(ic.bRender) ic.drawCls.render();
+      if(ic.bRender) {
+          ic.drawCls.render();
+      }
     }
+*/
 
     //Center on the selected atoms and zoom in.
     zoominSelection(atoms) { let  ic = this.icn3d, me = ic.icn3dui;

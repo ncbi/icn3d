@@ -20,7 +20,8 @@ class Fog {
         if(bZoomin) {
             let centerAtomsResults = ic.applyCenterCls.centerAtoms(ic.hAtoms);
             ic.maxD = centerAtomsResults.maxD;
-            if (ic.maxD < 5) ic.maxD = 5;
+            //if (ic.maxD < 5) ic.maxD = 5;
+            if (ic.maxD < 25) ic.maxD = 25;
         }
 
         let bInstance = (ic.biomtMatrices !== undefined && ic.biomtMatrices.length * ic.cnt > ic.maxatomcnt) ? true : false;
@@ -37,7 +38,9 @@ class Fog {
                     ic.bSetFog = false;
                 }
                 else {
-                    ic.scene.fog = new THREE.Fog(background, 2.5*ic.maxD, 4*ic.maxD);
+                    // adjust
+                    let zoomFactor = (ic._zoomFactor > 1) ? ic._zoomFactor * 1.0 : ic._zoomFactor;
+                    ic.scene.fog = new THREE.Fog(background, 2.5 * ic.maxD * zoomFactor, 4 * ic.maxD * zoomFactor);
                     ic.bSetFog = true;
                     ic.camMaxDFactorFog = 3;
                 }
@@ -56,9 +59,9 @@ class Fog {
             ic.bSetFog = false;
         }
 
-        if(bZoomin && !bInstance) {
-            ic.transformCls.zoominSelection();
-        }
+        //if(bZoomin && !bInstance) {
+        //    ic.transformCls.zoominSelection();
+        //}
     }
 }
 
