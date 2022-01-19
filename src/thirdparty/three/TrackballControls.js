@@ -247,7 +247,10 @@ THREE.TrackballControls = function ( object, domElement, icn3d ) {
 
             _eye.multiplyScalar( factor );
 
-            if(icn3d !== undefined && icn3d._zoomFactor !== undefined && (bUpdate === undefined || bUpdate === true)) icn3d._zoomFactor *= factor;
+            if(icn3d !== undefined && icn3d._zoomFactor !== undefined && (bUpdate === undefined || bUpdate === true)) {
+                icn3d._zoomFactor *= factor;
+                icn3d.fogCls.setFog();
+            }
 
         } else {
 
@@ -260,7 +263,10 @@ THREE.TrackballControls = function ( object, domElement, icn3d ) {
               factor = 1.0 + ( _this._zoomEnd.y - _this._zoomStart.y ) * _this.zoomSpeed;
             }
 
-            if(icn3d !== undefined && icn3d._zoomFactor !== undefined && (bUpdate === undefined || bUpdate === true)) icn3d._zoomFactor *= factor;
+            if(icn3d !== undefined && icn3d._zoomFactor !== undefined && (bUpdate === undefined || bUpdate === true)) {
+                icn3d._zoomFactor *= factor;
+                icn3d.fogCls.setFog();
+            }
 
             //if ( factor !== 1.0 && factor > 0.0 ) {
             if ( factor !== 1.0 ) {

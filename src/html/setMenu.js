@@ -1520,14 +1520,13 @@ class SetMenu {
             }
 
             let bOnePdb = me.cfg.mmtfid !== undefined || me.cfg.pdbid !== undefined || me.cfg.opmid !== undefined || me.cfg.mmcifid !== undefined || me.cfg.mmdbid !== undefined || me.cfg.gi !== undefined || me.cfg.blast_rep_id !== undefined;
-console.log("me.cfg.mmdbid: " + me.cfg.mmdbid + " bOnePdb: " + bOnePdb);
 
             if(bOnePdb) {
               html += "<li id='" + me.pre + "assemblyWrapper'><span>Assembly</span>";
               html += "<ul>";
 
-              html += me.htmlCls.setHtmlCls.getRadio('mn6_assembly', 'mn6_assemblyYes', 'Biological Assembly', true);
-              html += me.htmlCls.setHtmlCls.getRadio('mn6_assembly', 'mn6_assemblyNo', 'Asymmetric Unit');
+              html += me.htmlCls.setHtmlCls.getRadio('mn6_assembly', 'mn6_assemblyYes', 'Biological Assembly');
+              html += me.htmlCls.setHtmlCls.getRadio('mn6_assembly', 'mn6_assemblyNo', 'Asymmetric Unit', true);
 
               html += "</ul>";
               html += "</li>";

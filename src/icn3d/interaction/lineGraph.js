@@ -336,8 +336,10 @@ class LineGraph {
         }
 
         // draw label
-        height += textHeight;
-        html += "<text x='" + margin1 + "' y='" + height + "' style='font-size:8px; font-weight:bold'>" + label + "</text>";
+        if(label) {
+            height += textHeight;
+            html += "<text x='" + margin1 + "' y='" + height + "' style='font-size:8px; font-weight:bold'>" + label + "</text>";
+        }
 
         let  h1 = 30 + height,
             h2 = 80 + height;
@@ -407,10 +409,11 @@ class LineGraph {
         let  heightTotal =(len1 + 1) *(r + gap) + legendWidth + 2 * marginY;
 
         // draw label
-        height += textHeight;
+        if(label) {
+            height += textHeight;
+            html += "<text x='" + marginX + "' y='" + (height + 15).toString() + "' style='font-size:8px; font-weight:bold'>" + label + "</text>";
+        }
 
-        html += "<text x='" + marginX + "' y='" + (height + 15).toString() + "' style='font-size:8px; font-weight:bold'>" + label + "</text>";
- 
         let  margin1 = height + heightTotal -(legendWidth + marginY +(r + gap)); // y-axis
         let  margin2 = legendWidth + marginX +(r + gap); // x-axis
 

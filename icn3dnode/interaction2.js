@@ -36,7 +36,7 @@ let chain = myArgs[1];
 let resi = myArgs[2];
 let mutant = myArgs[3];
 
-let baseUrlMmdb = "https://www.ncbi.nlm.nih.gov/Structure/mmdb/mmdb_strview.cgi?v=2&program=icn3d&b=1&s=1&ft=1&complexity=2&uid=";
+let baseUrlMmdb = "https://www.ncbi.nlm.nih.gov/Structure/mmdb/mmdb_strview.cgi?v=2&program=icn3d&b=1&s=1&ft=1&buidx=0&complexity=2&uid=";
 
 let urlMmdb = baseUrlMmdb + pdbid;
 

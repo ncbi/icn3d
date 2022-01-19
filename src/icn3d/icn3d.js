@@ -236,7 +236,8 @@ class iCn3D {
     this.bImpo = true;
     this.bInstanced = true;
 
-    this.chainMissingResidueArray = {}
+    this.chainMissingResidueArray = {};
+    this._zoomFactor = 1.0;
 
     if(!this.icn3dui.bNode) {
         this.bExtFragDepth = this.renderer.extensions.get( "EXT_frag_depth" );

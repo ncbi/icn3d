@@ -2455,7 +2455,10 @@ THREE.TrackballControls = function ( object, domElement, icn3d ) {
 
             _eye.multiplyScalar( factor );
 
-            if(icn3d !== undefined && icn3d._zoomFactor !== undefined && (bUpdate === undefined || bUpdate === true)) icn3d._zoomFactor *= factor;
+            if(icn3d !== undefined && icn3d._zoomFactor !== undefined && (bUpdate === undefined || bUpdate === true)) {
+                icn3d._zoomFactor *= factor;
+                icn3d.fogCls.setFog();
+            }
 
         } else {
 
@@ -2468,7 +2471,10 @@ THREE.TrackballControls = function ( object, domElement, icn3d ) {
               factor = 1.0 + ( _this._zoomEnd.y - _this._zoomStart.y ) * _this.zoomSpeed;
             }
 
-            if(icn3d !== undefined && icn3d._zoomFactor !== undefined && (bUpdate === undefined || bUpdate === true)) icn3d._zoomFactor *= factor;
+            if(icn3d !== undefined && icn3d._zoomFactor !== undefined && (bUpdate === undefined || bUpdate === true)) {
+                icn3d._zoomFactor *= factor;
+                icn3d.fogCls.setFog();
+            }
 
             //if ( factor !== 1.0 && factor > 0.0 ) {
             if ( factor !== 1.0 ) {
@@ -6754,7 +6760,8 @@ class Fog {
         if(bZoomin) {
             let centerAtomsResults = ic.applyCenterCls.centerAtoms(ic.hAtoms);
             ic.maxD = centerAtomsResults.maxD;
-            if (ic.maxD < 5) ic.maxD = 5;
+            //if (ic.maxD < 5) ic.maxD = 5;
+            if (ic.maxD < 25) ic.maxD = 25;
         }
 
         let bInstance = (ic.biomtMatrices !== undefined && ic.biomtMatrices.length * ic.cnt > ic.maxatomcnt) ? true : false;
@@ -6771,7 +6778,9 @@ class Fog {
                     ic.bSetFog = false;
                 }
                 else {
-                    ic.scene.fog = new THREE.Fog(background, 2.5*ic.maxD, 4*ic.maxD);
+                    // adjust
+                    let zoomFactor = (ic._zoomFactor > 1) ? ic._zoomFactor * 1.0 : ic._zoomFactor;
+                    ic.scene.fog = new THREE.Fog(background, 2.5 * ic.maxD * zoomFactor, 4 * ic.maxD * zoomFactor);
                     ic.bSetFog = true;
                     ic.camMaxDFactorFog = 3;
                 }
@@ -6790,9 +6799,9 @@ class Fog {
             ic.bSetFog = false;
         }
 
-        if(bZoomin && !bInstance) {
-            ic.transformCls.zoominSelection();
-        }
+        //if(bZoomin && !bInstance) {
+        //    ic.transformCls.zoominSelection();
+        //}
     }
 }
 
@@ -17057,8 +17066,10 @@ class LineGraph {
         }
 
         // draw label
-        height += textHeight;
-        html += "<text x='" + margin1 + "' y='" + height + "' style='font-size:8px; font-weight:bold'>" + label + "</text>";
+        if(label) {
+            height += textHeight;
+            html += "<text x='" + margin1 + "' y='" + height + "' style='font-size:8px; font-weight:bold'>" + label + "</text>";
+        }
 
         let  h1 = 30 + height,
             h2 = 80 + height;
@@ -17128,10 +17139,11 @@ class LineGraph {
         let  heightTotal =(len1 + 1) *(r + gap) + legendWidth + 2 * marginY;
 
         // draw label
-        height += textHeight;
+        if(label) {
+            height += textHeight;
+            html += "<text x='" + marginX + "' y='" + (height + 15).toString() + "' style='font-size:8px; font-weight:bold'>" + label + "</text>";
+        }
 
-        html += "<text x='" + marginX + "' y='" + (height + 15).toString() + "' style='font-size:8px; font-weight:bold'>" + label + "</text>";
- 
         let  margin1 = height + heightTotal -(legendWidth + marginY +(r + gap)); // y-axis
         let  margin2 = legendWidth + marginX +(r + gap); // x-axis
 
@@ -43562,10 +43574,10 @@ class Transform {
 
       if(ic.bRender) ic.drawCls.render();
     }
-
+/*
     //Zoom in the structure at certain ratio, e.g., 0.1 is a reasonable value.
     zoomIn(normalizedFactor) {  let  ic = this.icn3d, me = ic.icn3dui;
-      let  para = {};
+      let  para = {}
       para._zoomFactor = 1 - normalizedFactor;
       para.update = true;
       if(ic.bControlGl && !me.bNode) {
@@ -43575,12 +43587,14 @@ class Transform {
           ic.controls.update(para);
       }
 
-      if(ic.bRender) ic.drawCls.render();
+      if(ic.bRender) {
+          ic.drawCls.render();
+      }
     }
 
     //Zoom out the structure at certain ratio, e.g., 0.1 is a reasonable value.
     zoomOut(normalizedFactor) {  let  ic = this.icn3d, me = ic.icn3dui;
-      let  para = {};
+      let  para = {}
       para._zoomFactor = 1 + normalizedFactor;
       para.update = true;
 
@@ -43590,8 +43604,11 @@ class Transform {
       else {
           ic.controls.update(para);
       }
-      if(ic.bRender) ic.drawCls.render();
+      if(ic.bRender) {
+          ic.drawCls.render();
+      }
     }
+*/
 
     //Center on the selected atoms and zoom in.
     zoominSelection(atoms) { let  ic = this.icn3d, me = ic.icn3dui;
@@ -48025,14 +48042,13 @@ class SetMenu {
             }
 
             let bOnePdb = me.cfg.mmtfid !== undefined || me.cfg.pdbid !== undefined || me.cfg.opmid !== undefined || me.cfg.mmcifid !== undefined || me.cfg.mmdbid !== undefined || me.cfg.gi !== undefined || me.cfg.blast_rep_id !== undefined;
-console.log("me.cfg.mmdbid: " + me.cfg.mmdbid + " bOnePdb: " + bOnePdb);
 
             if(bOnePdb) {
               html += "<li id='" + me.pre + "assemblyWrapper'><span>Assembly</span>";
               html += "<ul>";
 
-              html += me.htmlCls.setHtmlCls.getRadio('mn6_assembly', 'mn6_assemblyYes', 'Biological Assembly', true);
-              html += me.htmlCls.setHtmlCls.getRadio('mn6_assembly', 'mn6_assemblyNo', 'Asymmetric Unit');
+              html += me.htmlCls.setHtmlCls.getRadio('mn6_assembly', 'mn6_assemblyYes', 'Biological Assembly');
+              html += me.htmlCls.setHtmlCls.getRadio('mn6_assembly', 'mn6_assemblyNo', 'Asymmetric Unit', true);
 
               html += "</ul>";
               html += "</li>";
@@ -55506,6 +55522,7 @@ class iCn3D {
     this.bInstanced = true;
 
     this.chainMissingResidueArray = {};
+    this._zoomFactor = 1.0;
 
     if(!this.icn3dui.bNode) {
         this.bExtFragDepth = this.renderer.extensions.get( "EXT_frag_depth" );
@@ -56034,7 +56051,7 @@ class iCn3DUI {
     //even when multiple iCn3D viewers are shown together.
     this.pre = this.cfg.divid + "_";
 
-    this.REVISION = '3.7.0';
+    this.REVISION = '3.7.1';
 
     // In nodejs, iCn3D defines "window = {navigator: {}}"
     this.bNode = (Object.keys(window).length < 2) ? true : false;
