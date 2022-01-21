@@ -1,4 +1,6 @@
 ## Change Log
+[icn3d-3.7.2](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.7.2.zip) was release on January 21, 2022. Now users can see all interactions, common interactions, and different interactions when several structures are aligned and their interactions are shown, e.g., https://structure.ncbi.nlm.nih.gov/icn3d/share.html?9FD78C7YsE9zKyi18.
+
 [icn3d-3.7.1](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.7.1.zip) was release on January 19, 2022. Modified the Node.js example script to use the URL parameter "&buidx=0" to get the asymmetric unit data from MMDB. Fixed the fog view when zooming in or out.
 
 [icn3d-3.7.0](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.7.0.zip) was release on January 18, 2022. Now users can see the common interactions in several structures when they are aligned and their interactions are shown. iCn3D now shows asymmetric unit instead of biological unit since asymmetric unit contains all chains. Added the menu "File > Search Structure".

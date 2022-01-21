@@ -39,24 +39,7 @@ class Saltbridge {
             || (atom.het && me.parasCls.cationsTrimArray.indexOf(atom.elem) !== -1)
             || (atom.het && atom.elem === "N" && atom.bonds.length == 1);
 
-          // For ligand, "O" in carboxy group may be negatively charged. => to be improved
-          let bLigNeg = undefined;
-          if(atom.het && atom.elem === "O" && atom.bonds.length == 1) {
-               let cAtom = ic.atoms[atom.bonds[0]];
-               for(let j = 0; j < cAtom.bonds.length; ++j) {
-                   let serial = cAtom.bonds[j];
-                   if(ic.atoms[serial].elem == "O" && serial != atom.serial) {
-                       bLigNeg = true;
-                       break;
-                   }
-               }
-          }
-
-          let bAtomCondAnion = ( atom.resn === 'GLU' && (atom.name === "OE1" || atom.name === "OE2") )
-            || ( atom.resn === 'ASP' && (atom.name === "OD1" || atom.name === "OD2") )
-            || ( ic.nucleotides.hasOwnProperty(atom.serial) && (atom.name === "OP1" || atom.name === "OP2" || atom.name === "O1P" || atom.name === "O2P"))
-            || (atom.het && me.parasCls.anionsTrimArray.indexOf(atom.elem) !== -1)
-            || bLigNeg;
+          let bAtomCondAnion = this.isAnion(atom);
 
           bAtomCondCation = (ic.bOpm) ? bAtomCondCation && atom.resn !== 'DUM' : bAtomCondCation;
           bAtomCondAnion = (ic.bOpm) ? bAtomCondAnion && atom.resn !== 'DUM' : bAtomCondAnion;
@@ -87,10 +70,7 @@ class Saltbridge {
             || ( atom.resn === 'ARG' && (atom.name === "NH1" || atom.name === "NH2"))
             || (atom.het && me.parasCls.cationsTrimArray.indexOf(atom.elem) !== -1);
 
-          let bAtomCondAnion = ( atom.resn === 'GLU' && (atom.name === "OE1" || atom.name === "OE2") )
-            || ( atom.resn === 'ASP' && (atom.name === "OD1" || atom.name === "OD2") )
-            || ( ic.nucleotides.hasOwnProperty(atom.serial) && (atom.name === "OP1" || atom.name === "OP2" || atom.name === "O1P" || atom.name === "O2P"))
-            || (atom.het && me.parasCls.anionsTrimArray.indexOf(atom.elem) !== -1);
+          let bAtomCondAnion = this.isAnion(atom);
 
           bAtomCondCation = (ic.bOpm) ? bAtomCondCation && atom.resn !== 'DUM' : bAtomCondCation;
           bAtomCondAnion = (ic.bOpm) ? bAtomCondAnion && atom.resn !== 'DUM' : bAtomCondAnion;
@@ -203,6 +183,35 @@ class Saltbridge {
         return hbondsAtoms;
     }
 
+    isAnion(atom) { let ic = this.icn3d, me = ic.icn3dui;
+      // For ligand, "O" in carboxy group may be negatively charged. => to be improved
+      let bLigNeg = undefined;
+      if(atom.het && atom.elem === "O" && atom.bonds.length == 1) {
+            let cAtom = ic.atoms[atom.bonds[0]];
+            for(let j = 0; j < cAtom.bonds.length; ++j) {
+                let serial = cAtom.bonds[j];
+                if(ic.atoms[serial].elem == "O" && serial != atom.serial) {
+                    bLigNeg = true;
+                    break;
+                }
+            }
+      }
+
+      // "O" in phosphae or sulfate group is neagatively charged
+      if(atom.elem === "O" && atom.bonds.length == 1) {
+        let pAtom = ic.atoms[atom.bonds[0]];
+        if(pAtom.elem == "P" || pAtom.elem == "S") bLigNeg = true;      
+      }          
+
+      let bAtomCondAnion = ( atom.resn === 'GLU' && (atom.name === "OE1" || atom.name === "OE2") )
+        || ( atom.resn === 'ASP' && (atom.name === "OD1" || atom.name === "OD2") )
+        || ( ic.nucleotides.hasOwnProperty(atom.serial) && (atom.name === "OP1" || atom.name === "OP2" || atom.name === "O1P" || atom.name === "O2P"))
+        || (atom.het && me.parasCls.anionsTrimArray.indexOf(atom.elem) !== -1)
+        || bLigNeg;
+          
+      return bAtomCondAnion;
+    }
+    
     hideSaltbridge() { let ic = this.icn3d, me = ic.icn3dui;
         ic.opts["saltbridge"] = "no";
         if(ic.lines === undefined) ic.lines = { }

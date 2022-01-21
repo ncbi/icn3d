@@ -575,14 +575,14 @@ class Events {
     //    clickReload_mmdb: function() {
         me.myEventCls.onIds("#" + me.pre + "reload_mmdb", "click", function(e) { let ic = me.icn3d;
            e.preventDefault();
-           if(!me.cfg.notebook) dialog.dialog( "close" );
+           //if(!me.cfg.notebook) dialog.dialog( "close" );
            me.htmlCls.clickMenuCls.setLogCmd("load mmdb1 " + $("#" + me.pre + "mmdbid").val(), false);
            window.open(hostUrl + '?mmdbid=' + $("#" + me.pre + "mmdbid").val() + '&buidx=1', '_blank');
         });
 
         me.myEventCls.onIds("#" + me.pre + "reload_mmdb_asym", "click", function(e) { let ic = me.icn3d;
             e.preventDefault();
-            if(!me.cfg.notebook) dialog.dialog( "close" );
+            //if(!me.cfg.notebook) dialog.dialog( "close" );
             me.htmlCls.clickMenuCls.setLogCmd("load mmdb0 " + $("#" + me.pre + "mmdbid").val(), false);
             window.open(hostUrl + '?mmdbid=' + $("#" + me.pre + "mmdbid").val() + '&buidx=0', '_blank');
          });
@@ -590,7 +590,7 @@ class Events {
         me.myEventCls.onIds("#" + me.pre + "mmdbid", "keyup", function(e) { let ic = me.icn3d;
            if (e.keyCode === 13) {
                e.preventDefault();
-               if(!me.cfg.notebook) dialog.dialog( "close" );
+               //if(!me.cfg.notebook) dialog.dialog( "close" );
                me.htmlCls.clickMenuCls.setLogCmd("load mmdb0 " + $("#" + me.pre + "mmdbid").val(), false);
                window.open(hostUrl + '?mmdbid=' + $("#" + me.pre + "mmdbid").val() + '&buidx=0', '_blank');
               }
@@ -1230,9 +1230,7 @@ class Events {
         me.myEventCls.onIds("#" + me.svgid + "_png", "click", function(e) { let ic = me.icn3d;
            e.preventDefault();
            //if(!me.cfg.notebook) dialog.dialog( "close" );
-           let width = $("#" + me.pre + "dl_graph").width();
-           let height = $("#" + me.pre + "dl_graph").height();
-           ic.saveFileCls.savePng(me.svgid, ic.inputid + "_force_directed_graph.png", width, height);
+           ic.saveFileCls.savePng(me.svgid, ic.inputid + "_force_directed_graph.png");
         });
         me.myEventCls.onIds("#" + me.svgid + "_json", "click", function(e) { let ic = me.icn3d;
             e.preventDefault();
@@ -1251,9 +1249,7 @@ class Events {
         $(document).on("click", "#" + me.svgid_ct + "_png", function(e) { let ic = me.icn3d;
            e.preventDefault();
            //if(!me.cfg.notebook) dialog.dialog( "close" );
-           let width = $("#" + me.pre + "dl_2dctn").width();
-           let height = $("#" + me.pre + "dl_2dctn").height();
-           ic.saveFileCls.savePng(me.svgid_ct, ic.inputid + "_cartoon.png", width, height);
+           ic.saveFileCls.savePng(me.svgid_ct, ic.inputid + "_cartoon.png");
         });
         $(document).on("click", "#" + me.svgid_ct + "_json", function(e) { let ic = me.icn3d;
             e.preventDefault();
@@ -1279,9 +1275,7 @@ class Events {
         me.myEventCls.onIds("#" + me.linegraphid + "_png", "click", function(e) { let ic = me.icn3d;
            e.preventDefault();
            //if(!me.cfg.notebook) dialog.dialog( "close" );
-           let width = $("#" + me.pre + "dl_linegraph").width();
-           let height = $("#" + me.pre + "dl_linegraph").height();
-           ic.saveFileCls.savePng(me.linegraphid, ic.inputid + "_line_graph.png", width, height);
+           ic.saveFileCls.savePng(me.linegraphid, ic.inputid + "_line_graph.png");
         });
         me.myEventCls.onIds("#" + me.linegraphid + "_json", "click", function(e) { let ic = me.icn3d;
             e.preventDefault();
@@ -1307,9 +1301,7 @@ class Events {
         me.myEventCls.onIds("#" + me.scatterplotid + "_png", "click", function(e) { let ic = me.icn3d;
            e.preventDefault();
            //if(!me.cfg.notebook) dialog.dialog( "close" );
-           let width = $("#" + me.pre + "dl_scatterplot").width();
-           let height = $("#" + me.pre + "dl_scatterplot").height();
-           ic.saveFileCls.savePng(me.scatterplotid, ic.inputid + "_scatterplot.png", width, height);
+           ic.saveFileCls.savePng(me.scatterplotid, ic.inputid + "_scatterplot.png");
         });
         me.myEventCls.onIds("#" + me.scatterplotid + "_json", "click", function(e) { let ic = me.icn3d;
             e.preventDefault();
@@ -1336,9 +1328,7 @@ class Events {
         me.myEventCls.onIds("#" + me.contactmapid + "_png", "click", function(e) { let ic = me.icn3d;
            e.preventDefault();
            //if(!me.cfg.notebook) dialog.dialog( "close" );
-           let width = $("#" + me.pre + "dl_contactmap").width();
-           let height = $("#" + me.pre + "dl_contactmap").height();
-           ic.saveFileCls.savePng(me.contactmapid, ic.inputid + "_contactmap.png", width, height);
+           ic.saveFileCls.savePng(me.contactmapid, ic.inputid + "_contactmap.png");
         });
         me.myEventCls.onIds("#" + me.contactmapid + "_json", "click", function(e) { let ic = me.icn3d;
             e.preventDefault();

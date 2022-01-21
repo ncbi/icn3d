@@ -158,19 +158,27 @@ class SaveFile {
     }
 
     saveSvg(id, filename) { let ic = this.icn3d, me = ic.icn3dui;
-        let svg = this.getSvgXml(id);
+        if(me.bNode) return '';
+        
+        let width = $("#" + id).width();
+        let height = $("#" + id).height();
 
-        let blob = new Blob([svg], {type: "image/svg+xml"});
+        let svgXml = this.getSvgXml(id, width, height);
+
+        let blob = new Blob([svgXml], {type: "image/svg+xml"});
         saveAs(blob, filename);
     }
 
-    getSvgXml(id) { let ic = this.icn3d, me = ic.icn3dui;
+    getSvgXml(id, width, height) { let ic = this.icn3d, me = ic.icn3dui;
         if(me.bNode) return '';
+
+console.log("width: " + width + " height: " + height);
 
         // font is not good
         let svg_data = document.getElementById(id).innerHTML; //put id of your svg element here
 
-        let head = "<svg title=\"graph\" version=\"1.1\" xmlns:xl=\"http://www.w3.org/1999/xlink\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:dc=\"http://purl.org/dc/elements/1.1/\">";
+        let viewbox = (width && height) ? "<svg viewBox=\"0 0 " + width + " " + height + "\"" : "<svg";
+        let head = viewbox + " title=\"graph\" version=\"1.1\" xmlns:xl=\"http://www.w3.org/1999/xlink\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:dc=\"http://purl.org/dc/elements/1.1/\">";
 
         //if you have some additional styling like graph edges put them inside <style> tag
         let style = "<style>text {font-family: sans-serif; font-weight: bold; font-size: 18px;}</style>";
@@ -180,8 +188,11 @@ class SaveFile {
         return full_svg;
     }
 
-    savePng(id, filename, width, height) { let ic = this.icn3d, me = ic.icn3dui;
+    savePng(id, filename) { let ic = this.icn3d, me = ic.icn3dui;
         if(me.bNode) return '';
+
+        let width = $("#" + id).width();
+        let height = $("#" + id).height();
 
         // https://stackoverflow.com/questions/3975499/convert-svg-to-image-jpeg-png-etc-in-the-browser
         let svg = document.getElementById(id);
@@ -196,7 +207,7 @@ class SaveFile {
         let ctx = canvas.getContext("2d");
         ctx.clearRect(0, 0, bbox.width, bbox.height);
 
-        let data = this.getSvgXml(id); //(new XMLSerializer()).serializeToString(copy); //ic.saveFileCls.getSvgXml();
+        let data = this.getSvgXml(id, width, height); //(new XMLSerializer()).serializeToString(copy); //ic.saveFileCls.getSvgXml();
         let DOMURL = window.URL || window.webkitURL || window;
         let svgBlob = new Blob([data], {type: "image/svg+xml;charset=utf-8"});
 

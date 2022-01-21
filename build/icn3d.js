@@ -16071,24 +16071,7 @@ var icn3d = (function (exports) {
                 || (atom.het && me.parasCls.cationsTrimArray.indexOf(atom.elem) !== -1)
                 || (atom.het && atom.elem === "N" && atom.bonds.length == 1);
 
-              // For ligand, "O" in carboxy group may be negatively charged. => to be improved
-              let bLigNeg = undefined;
-              if(atom.het && atom.elem === "O" && atom.bonds.length == 1) {
-                   let cAtom = ic.atoms[atom.bonds[0]];
-                   for(let j = 0; j < cAtom.bonds.length; ++j) {
-                       let serial = cAtom.bonds[j];
-                       if(ic.atoms[serial].elem == "O" && serial != atom.serial) {
-                           bLigNeg = true;
-                           break;
-                       }
-                   }
-              }
-
-              let bAtomCondAnion = ( atom.resn === 'GLU' && (atom.name === "OE1" || atom.name === "OE2") )
-                || ( atom.resn === 'ASP' && (atom.name === "OD1" || atom.name === "OD2") )
-                || ( ic.nucleotides.hasOwnProperty(atom.serial) && (atom.name === "OP1" || atom.name === "OP2" || atom.name === "O1P" || atom.name === "O2P"))
-                || (atom.het && me.parasCls.anionsTrimArray.indexOf(atom.elem) !== -1)
-                || bLigNeg;
+              let bAtomCondAnion = this.isAnion(atom);
 
               bAtomCondCation = (ic.bOpm) ? bAtomCondCation && atom.resn !== 'DUM' : bAtomCondCation;
               bAtomCondAnion = (ic.bOpm) ? bAtomCondAnion && atom.resn !== 'DUM' : bAtomCondAnion;
@@ -16119,10 +16102,7 @@ var icn3d = (function (exports) {
                 || ( atom.resn === 'ARG' && (atom.name === "NH1" || atom.name === "NH2"))
                 || (atom.het && me.parasCls.cationsTrimArray.indexOf(atom.elem) !== -1);
 
-              let bAtomCondAnion = ( atom.resn === 'GLU' && (atom.name === "OE1" || atom.name === "OE2") )
-                || ( atom.resn === 'ASP' && (atom.name === "OD1" || atom.name === "OD2") )
-                || ( ic.nucleotides.hasOwnProperty(atom.serial) && (atom.name === "OP1" || atom.name === "OP2" || atom.name === "O1P" || atom.name === "O2P"))
-                || (atom.het && me.parasCls.anionsTrimArray.indexOf(atom.elem) !== -1);
+              let bAtomCondAnion = this.isAnion(atom);
 
               bAtomCondCation = (ic.bOpm) ? bAtomCondCation && atom.resn !== 'DUM' : bAtomCondCation;
               bAtomCondAnion = (ic.bOpm) ? bAtomCondAnion && atom.resn !== 'DUM' : bAtomCondAnion;
@@ -16233,6 +16213,35 @@ var icn3d = (function (exports) {
             return hbondsAtoms;
         }
 
+        isAnion(atom) { let ic = this.icn3d, me = ic.icn3dui;
+          // For ligand, "O" in carboxy group may be negatively charged. => to be improved
+          let bLigNeg = undefined;
+          if(atom.het && atom.elem === "O" && atom.bonds.length == 1) {
+                let cAtom = ic.atoms[atom.bonds[0]];
+                for(let j = 0; j < cAtom.bonds.length; ++j) {
+                    let serial = cAtom.bonds[j];
+                    if(ic.atoms[serial].elem == "O" && serial != atom.serial) {
+                        bLigNeg = true;
+                        break;
+                    }
+                }
+          }
+
+          // "O" in phosphae or sulfate group is neagatively charged
+          if(atom.elem === "O" && atom.bonds.length == 1) {
+            let pAtom = ic.atoms[atom.bonds[0]];
+            if(pAtom.elem == "P" || pAtom.elem == "S") bLigNeg = true;      
+          }          
+
+          let bAtomCondAnion = ( atom.resn === 'GLU' && (atom.name === "OE1" || atom.name === "OE2") )
+            || ( atom.resn === 'ASP' && (atom.name === "OD1" || atom.name === "OD2") )
+            || ( ic.nucleotides.hasOwnProperty(atom.serial) && (atom.name === "OP1" || atom.name === "OP2" || atom.name === "O1P" || atom.name === "O2P"))
+            || (atom.het && me.parasCls.anionsTrimArray.indexOf(atom.elem) !== -1)
+            || bLigNeg;
+              
+          return bAtomCondAnion;
+        }
+        
         hideSaltbridge() { let ic = this.icn3d; ic.icn3dui;
             ic.opts["saltbridge"] = "no";
             if(ic.lines === undefined) ic.lines = { };
@@ -16419,18 +16428,27 @@ var icn3d = (function (exports) {
             html += "</g>";
             return html;
         }
-        getNodeTopBottom(nameHash, name2node, bReverseNode, bCommon, nameHashCommon) { let  ic = this.icn3d, me = ic.icn3dui;
+        getNodeTopBottom(nameHash, name2node, bReverseNode, bCommonDiff, nameHashCommon) { let  ic = this.icn3d, me = ic.icn3dui;
             let  thisClass = this;
             let  nodeArray1 = [], nodeArray2 = [], name2nodeCommon = {};
+
+            let separatorCommon = "=>", separatorDiff = "==>", postCommon = "-", postDiff = "--";
             for(let name in nameHash) {
                 let  node = name2node[name];
                 if(!node) continue;
 
-                if(bCommon) {
+                if(bCommonDiff == 1 || bCommonDiff == 2) {
                     node = me.hashUtilsCls.cloneHash(node);
 
-                    let mapping = (nameHashCommon[name]) ? nameHashCommon[name] : '-';
-                    node.id += ">" + mapping;
+                    if(bCommonDiff == 1) {
+                        let mapping = (nameHashCommon[name]) ? nameHashCommon[name] : postCommon;
+                        node.id += separatorCommon + mapping;
+                    }
+                    else {
+                        let mapping = (nameHashCommon[name]) ? nameHashCommon[name] : postDiff;
+                        node.id += separatorDiff + mapping;
+                    }
+
                     name2nodeCommon[node.id] = node;
                 }
 
@@ -16784,6 +16802,7 @@ var icn3d = (function (exports) {
                 // Original node: {id : "Q24.A.2AJF", r : "1_1_2AJF_A_24", s: "a", ...}
                 // Node for common interaction: {id : "Q24.A.2AJF|Q24", r : "1_1_2AJF_A_24", s: "a", ...}
                 let nodeArray1SplitCommon = [], nodeArray2SplitCommon = [], linkArraySplitCommon = [], nameHashSplitCommon = [];
+                let nodeArray1SplitDiff = [], nodeArray2SplitDiff = [], linkArraySplitDiff = [], nameHashSplitDiff = [];
                 let linkedNodeCnt = {};
 
                 for(let i = 0, il = structureArray.length; i < il; ++i) {   
@@ -16796,6 +16815,11 @@ var icn3d = (function (exports) {
                     nodeArray2SplitCommon[i] = [];
                     linkArraySplitCommon[i] = [];
                     nameHashSplitCommon[i] = {};
+
+                    nodeArray1SplitDiff[i] = [];
+                    nodeArray2SplitDiff[i] = [];
+                    linkArraySplitDiff[i] = [];
+                    nameHashSplitDiff[i] = {};
 
                     struc2index[structureArray[i]] = i;
                 }
@@ -16843,6 +16867,8 @@ var icn3d = (function (exports) {
                 }
                 
                 // set linkArraySplitCommon and nameHashSplitCommon
+                // set linkArraySplitDiff and nameHashSplitDiff
+                let separatorCommon = "=>", separatorDiff = "==>", postCommon = "-", postDiff = "--";
                 for(let i = 0, il = linkArray.length; i < il; ++i) {
                     let  link = linkArray[i];
                     let  nodeA = name2node[link.source];
@@ -16872,33 +16898,53 @@ var icn3d = (function (exports) {
 
                             let mappingid = mapping1 + '_' + mapping2 + '_' + link.c; // link.c determines the interaction type
 
-                            if(linkedNodeCnt[mappingid] == structureArray.length) {
-                                let linkCommon = me.hashUtilsCls.cloneHash(link);
-                                linkCommon.source += '>' + ic.chainsMapping[chainid1][resid1];
-                                linkCommon.target += '>' + ic.chainsMapping[chainid2][resid2];
+                            let linkCommon = me.hashUtilsCls.cloneHash(link);
+                            linkCommon.source += (ic.chainsMapping[chainid1][resid1]) ? separatorCommon + ic.chainsMapping[chainid1][resid1] : separatorCommon + postCommon;
+                            linkCommon.target += (ic.chainsMapping[chainid2][resid2]) ? separatorCommon + ic.chainsMapping[chainid2][resid2] : separatorCommon + postCommon;
 
+                            let linkDiff = me.hashUtilsCls.cloneHash(link);
+                            linkDiff.source += (ic.chainsMapping[chainid1][resid1]) ? separatorDiff + ic.chainsMapping[chainid1][resid1] : separatorDiff + postDiff;
+                            linkDiff.target += (ic.chainsMapping[chainid2][resid2]) ? separatorDiff + ic.chainsMapping[chainid2][resid2] : separatorDiff + postDiff;
+                        
+                            if(linkedNodeCnt[mappingid] == structureArray.length) {
                                 linkArraySplitCommon[index].push(linkCommon);
                             }  
+                            else {
+                                linkArraySplitDiff[index].push(linkDiff);
+                            }
 
+                            // use the original node names and thus use the original link
                             nameHashSplitCommon[index][link.source] = ic.chainsMapping[chainid1][resid1];
                             nameHashSplitCommon[index][link.target] = ic.chainsMapping[chainid2][resid2];
+     
+                            nameHashSplitDiff[index][link.source] = ic.chainsMapping[chainid1][resid1];
+                            nameHashSplitDiff[index][link.target] = ic.chainsMapping[chainid2][resid2];
                         }
                     } 
                 }
 
                 let len1Split = [], len2Split = [], maxWidth = 0;
                 let  strucArray = [];
+                let bCommonDiff = 1;
                 for(let i = 0, il = structureArray.length; i < il; ++i) {  
                     let  nodeArraysTmp = ic.getGraphCls.getNodeTopBottom(nameHashSplit[i], name2node);
                     nodeArray1Split[i] = nodeArraysTmp.nodeArray1;
                     nodeArray2Split[i] = nodeArraysTmp.nodeArray2;
 
-                    let bCommon = true;
-                    nodeArraysTmp = ic.getGraphCls.getNodeTopBottom(nameHashSplit[i], name2node, undefined, bCommon, nameHashSplitCommon[i]);
+                    // common interactions
+                    bCommonDiff = 1;
+                    nodeArraysTmp = ic.getGraphCls.getNodeTopBottom(nameHashSplit[i], name2node, undefined, bCommonDiff, nameHashSplitCommon[i]);
                     nodeArray1SplitCommon[i] = nodeArraysTmp.nodeArray1;
                     nodeArray2SplitCommon[i] = nodeArraysTmp.nodeArray2;
                     name2node = me.hashUtilsCls.unionHash(name2node, nodeArraysTmp.name2node);
 
+                    // different interactions
+                    bCommonDiff = 2;
+                    nodeArraysTmp = ic.getGraphCls.getNodeTopBottom(nameHashSplit[i], name2node, undefined, bCommonDiff, nameHashSplitDiff[i]);
+                    nodeArray1SplitDiff[i] = nodeArraysTmp.nodeArray1;
+                    nodeArray2SplitDiff[i] = nodeArraysTmp.nodeArray2;
+                    name2node = me.hashUtilsCls.unionHash(name2node, nodeArraysTmp.name2node);
+                    
                     len1Split[i] = nodeArray1Split[i].length;
                     len2Split[i] = nodeArray2Split[i].length;
                     
@@ -16922,66 +16968,53 @@ var icn3d = (function (exports) {
                     //width =(Math.max(len1b, len2b) + 2) *(r + gap) + 2 * marginX + legendWidth;
                     heightAll =(me.utilsCls.sumArray(len1Split) + 2*strucArray.length) *(r + gap) + 4 * marginY 
                       + 2 * legendWidth + textHeight*strucArray.length;
-                    // show common interaction as well
-                    heightAll *= 2;
+                    // show common and diff interaction as well
+                    heightAll *= 3;
 
                     width = (maxWidth + 2) * (r + gap) + 2 * marginX + legendWidth;
                       
                 } else {
                     height = 110 + textHeight;
                     heightAll = height * strucArray.length;
-                    // show common interaction as well
-                    heightAll *= 2;
+                    // show common and diff interaction as well
+                    heightAll *= 3;
 
                     width = (maxWidth + 2) * (r + gap) + 2 * marginX;
                 }
-                let  id, graphWidth;
+                let id;
                 if(bScatterplot) {
                     ic.scatterplotWidth = 2 * width;
-                    graphWidth = ic.scatterplotWidth;
+                    ic.scatterplotWidth;
                     id = me.scatterplotid;
                 } else {
                     ic.linegraphWidth = 2 * width;
-                    graphWidth = ic.linegraphWidth;
+                    ic.linegraphWidth;
                     id = me.linegraphid;
                 }
                 html =(strucArray.length == 0) ? "No interactions found for each structure<br><br>" :
-                    "2D integration graph for " + strucArray.length + " structure(s) <b>" + strucArray + "</b>. Common interactions are shown in the last " + strucArray.length + " graphs.<br><br>";
-                html += "<svg id='" + id + "' viewBox='0,0," + width + "," + heightAll + "' width='" + graphWidth + "px'>";
+                    "2D integration graph for " + strucArray.length + " structure(s) <b>" + strucArray + "</b>. There are three sections: \"Interactions\", \"Common interactions\", and \"Different interactions\". Each section has " + strucArray.length + " graphs.<br><br>";
+                html += "<svg id='" + id + "' viewBox='0,0," + width + "," + heightAll + "'>";
 
-                let  heightFinal = 0;            
-                for(let i = 0, il = structureArray.length; i < il; ++i) {  
-                    if(bScatterplot) {
-                        //heightFinal -= 15;
-                        html += this.drawScatterplot_base(nodeArray1Split[i], nodeArray2Split[i], linkArraySplit[i], name2node, heightFinal, undefined, "Interactions in structure " + strucArray[i], textHeight);
-                        //heightFinal = 15;
-                        height =(len1Split[i] + 1) *(r + gap) + 2 * marginY + textHeight;
-                    } else {
-                        html += this.drawLineGraph_base(nodeArray1Split[i], nodeArray2Split[i], linkArraySplit[i], name2node, heightFinal, "Interactions in structure " + strucArray[i], textHeight);
-                    }
-                    heightFinal += height;
+                let  result, heightFinal = 0;            
+     
+                bCommonDiff = 0; // 0: all interactions, 1: common interactions, 2: different interactions
+                result = this.drawGraphPerType(bCommonDiff, structureArray, bScatterplot, nodeArray1Split, nodeArray2Split, linkArraySplit, name2node, heightFinal, height, textHeight, len1Split, r, gap, marginY);
 
-                    if(i > 0) ic.lineGraphStr += ', \n';
-                    ic.lineGraphStr += ic.getGraphCls.updateGraphJson(strucArray[i], i, nodeArray1Split[i], nodeArray2Split[i], linkArraySplit[i]);
-                }
+                heightFinal = result.heightFinal;
+                html += result.html;
 
-                // draw common interaction
-                for(let i = 0, il = structureArray.length; i < il; ++i) {  
-                    if(bScatterplot) {
-                        //heightFinal -= 15;
-                        html += this.drawScatterplot_base(nodeArray1SplitCommon[i], nodeArray2SplitCommon[i], linkArraySplitCommon[i], name2node, heightFinal, undefined, "Common interactions in structure " + strucArray[i], textHeight);
-                        //heightFinal = 15;
-                        height =(len1Split[i] + 1) *(r + gap) + 2 * marginY + textHeight;
-                    } else {
-                        html += this.drawLineGraph_base(nodeArray1SplitCommon[i], nodeArray2SplitCommon[i], linkArraySplitCommon[i], name2node, heightFinal, "Common interactions in structure " + strucArray[i], textHeight);
-                    }
-                    heightFinal += height;
+                bCommonDiff = 1;
+                result = this.drawGraphPerType(bCommonDiff, structureArray, bScatterplot, nodeArray1SplitCommon, nodeArray2SplitCommon, linkArraySplitCommon, name2node, heightFinal, height, textHeight, len1Split, r, gap, marginY);
 
-                    //if(i > 0) ic.lineGraphStr += ', \n';
-                    ic.lineGraphStr += ', \n';
-                    ic.lineGraphStr += ic.getGraphCls.updateGraphJson(strucArray[i], i + '_common', nodeArray1SplitCommon[i], nodeArray2SplitCommon[i], linkArraySplitCommon[i]);
-                }
+                heightFinal = result.heightFinal;
+                html += result.html;
 
+                bCommonDiff = 2;
+                result = this.drawGraphPerType(bCommonDiff, structureArray, bScatterplot, nodeArray1SplitDiff, nodeArray2SplitDiff, linkArraySplitDiff, name2node, heightFinal, height, textHeight, len1Split, r, gap, marginY);
+
+                heightFinal = result.heightFinal;
+                html += result.html;
+                
                 html += "</svg>";
             } else {
                 if(!bScatterplot) {
@@ -17037,6 +17070,45 @@ var icn3d = (function (exports) {
                 $("#" + ic.pre + "linegraphDiv").html(html);
             }
             return html;
+        }
+
+        drawGraphPerType(bCommonDiff, structureArray, bScatterplot, nodeArray1, nodeArray2, linkArray, name2node, heightFinal, height, textHeight, len1Split, r, gap, marginY) { let ic = this.icn3d; ic.icn3dui;
+            let html = "";
+
+            // draw common interaction
+            let label, postfix;
+            if(bCommonDiff == 0) {
+                label = "Interactions in structure ";
+                postfix = "";
+            }
+            else if(bCommonDiff == 1) {
+                label = "Common interactions in structure ";
+                postfix = "_common";
+            }
+            else if(bCommonDiff == 2) {
+                label = "Different interactions in structure ";
+                postfix = "_diff";
+            }
+
+            for(let i = 0, il = structureArray.length; i < il; ++i) {  
+                if(bScatterplot) {
+                    html += this.drawScatterplot_base(nodeArray1[i], nodeArray2[i], linkArray[i], name2node, heightFinal, undefined, label + structureArray[i], textHeight);
+                    height =(len1Split[i] + 1) *(r + gap) + 2 * marginY + textHeight;
+                } else {
+                    html += this.drawLineGraph_base(nodeArray1[i], nodeArray2[i], linkArray[i], name2node, heightFinal, label + structureArray[i], textHeight);
+                }
+                heightFinal += height;
+
+                if(bCommonDiff) { // very beginning
+                    if(i > 0) ic.lineGraphStr += ', \n';
+                }
+                else {
+                    ic.lineGraphStr += ', \n';
+                }
+                ic.lineGraphStr += ic.getGraphCls.updateGraphJson(structureArray[i], i + postfix, nodeArray1[i], nodeArray2[i], linkArray[i]);
+            }
+
+            return {"heightFinal": heightFinal, "html": html};
         }
 
         getIdArrayFromNode(node) { let  ic = this.icn3d, me = ic.icn3dui;
@@ -24728,7 +24800,7 @@ var icn3d = (function (exports) {
            }
            else {
                url = me.htmlCls.baseUrl + "mmdb/mmdb_strview.cgi?v=2&program=icn3d&b=1&s=1&ft=1&buidx=" + me.cfg.buidx + "&simple=1&uid=" + mmdbid;
-           }
+            }
 
            // use asymmetric unit for BLAST search, e.g., https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?from=blast&blast_rep_id=5XZC_B&query_id=1TUP_A&command=view+annotations;set+annotation+cdd;set+annotation+site;set+view+detailed+view;select+chain+5XZC_B;show+selection&log$=align&blast_rank=1&RID=EPUCYNVV014&buidx=0
            if(me.cfg.blast_rep_id !== undefined) url += '&buidx=0';
@@ -43814,20 +43886,28 @@ var icn3d = (function (exports) {
             }
         }
 
-        saveSvg(id, filename) { let ic = this.icn3d; ic.icn3dui;
-            let svg = this.getSvgXml(id);
+        saveSvg(id, filename) { let ic = this.icn3d, me = ic.icn3dui;
+            if(me.bNode) return '';
+            
+            let width = $("#" + id).width();
+            let height = $("#" + id).height();
 
-            let blob = new Blob([svg], {type: "image/svg+xml"});
+            let svgXml = this.getSvgXml(id, width, height);
+
+            let blob = new Blob([svgXml], {type: "image/svg+xml"});
             saveAs(blob, filename);
         }
 
-        getSvgXml(id) { let ic = this.icn3d, me = ic.icn3dui;
+        getSvgXml(id, width, height) { let ic = this.icn3d, me = ic.icn3dui;
             if(me.bNode) return '';
+
+    console.log("width: " + width + " height: " + height);
 
             // font is not good
             let svg_data = document.getElementById(id).innerHTML; //put id of your svg element here
 
-            let head = "<svg title=\"graph\" version=\"1.1\" xmlns:xl=\"http://www.w3.org/1999/xlink\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:dc=\"http://purl.org/dc/elements/1.1/\">";
+            let viewbox = (width && height) ? "<svg viewBox=\"0 0 " + width + " " + height + "\"" : "<svg";
+            let head = viewbox + " title=\"graph\" version=\"1.1\" xmlns:xl=\"http://www.w3.org/1999/xlink\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:dc=\"http://purl.org/dc/elements/1.1/\">";
 
             //if you have some additional styling like graph edges put them inside <style> tag
             let style = "<style>text {font-family: sans-serif; font-weight: bold; font-size: 18px;}</style>";
@@ -43837,8 +43917,11 @@ var icn3d = (function (exports) {
             return full_svg;
         }
 
-        savePng(id, filename, width, height) { let ic = this.icn3d, me = ic.icn3dui;
+        savePng(id, filename) { let ic = this.icn3d, me = ic.icn3dui;
             if(me.bNode) return '';
+
+            let width = $("#" + id).width();
+            let height = $("#" + id).height();
 
             // https://stackoverflow.com/questions/3975499/convert-svg-to-image-jpeg-png-etc-in-the-browser
             let svg = document.getElementById(id);
@@ -43853,7 +43936,7 @@ var icn3d = (function (exports) {
             let ctx = canvas.getContext("2d");
             ctx.clearRect(0, 0, bbox.width, bbox.height);
 
-            let data = this.getSvgXml(id); //(new XMLSerializer()).serializeToString(copy); //ic.saveFileCls.getSvgXml();
+            let data = this.getSvgXml(id, width, height); //(new XMLSerializer()).serializeToString(copy); //ic.saveFileCls.getSvgXml();
             let DOMURL = window.URL || window.webkitURL || window;
             let svgBlob = new Blob([data], {type: "image/svg+xml;charset=utf-8"});
 
@@ -49009,9 +49092,10 @@ var icn3d = (function (exports) {
             html += me.htmlCls.buttonStr + "reload_mmcif'>Load</button>";
             html += "</div>";
 
-            html += me.htmlCls.divStr + "dl_mmdbid' class='" + dialogClass + "'>";
+            html += me.htmlCls.divStr + "dl_mmdbid' class='" + dialogClass + "' style='max-width:500px'>";
             html += "MMDB or PDB ID: " + me.htmlCls.inputTextStr + "id='" + me.pre + "mmdbid' value='1TUP' size=8> <br><br>";
-            html += me.htmlCls.buttonStr + "reload_mmdb_asym'>Load Asymmetric Unit (All Chains)</button>" + me.htmlCls.buttonStr + "reload_mmdb' style='margin-left:30px'>Load Biological Unit</button><br/><br/>";
+            html += me.htmlCls.buttonStr + "reload_mmdb_asym'>Load Asymmetric Unit (All Chains)</button>" + me.htmlCls.buttonStr + "reload_mmdb' style='margin-left:30px'>Load Biological Unit</button><br/><br/><br>";
+            html += '<b>Note</b>: The "<b>biological unit</b>" is the <b>biochemically active form of a biomolecule</b>, which can range from a monomer (single protein molecule) to an oligomer of 100+ protein molecules.<br><br>The "<b>asymmetric unit</b>" is the raw 3D structure data resolved by X-ray crystallography, NMR, or Cryo-electron microscopy. The asymmetric unit is equivalent to the biological unit in approximately 60% of structure records. In the remaining 40% of the records, the asymmetric unit represents a portion of the biological unit that can be reconstructed using crystallographic symmetry, or it represents multiple copies of the biological unit.';
             html += "</div>";
 
             html += me.htmlCls.divStr + "dl_blast_rep_id' style='max-width:500px;' class='" + dialogClass + "'>";
@@ -50240,14 +50324,14 @@ var icn3d = (function (exports) {
         //    clickReload_mmdb: function() {
             me.myEventCls.onIds("#" + me.pre + "reload_mmdb", "click", function(e) { me.icn3d;
                e.preventDefault();
-               if(!me.cfg.notebook) dialog.dialog( "close" );
+               //if(!me.cfg.notebook) dialog.dialog( "close" );
                me.htmlCls.clickMenuCls.setLogCmd("load mmdb1 " + $("#" + me.pre + "mmdbid").val(), false);
                window.open(hostUrl + '?mmdbid=' + $("#" + me.pre + "mmdbid").val() + '&buidx=1', '_blank');
             });
 
             me.myEventCls.onIds("#" + me.pre + "reload_mmdb_asym", "click", function(e) { me.icn3d;
                 e.preventDefault();
-                if(!me.cfg.notebook) dialog.dialog( "close" );
+                //if(!me.cfg.notebook) dialog.dialog( "close" );
                 me.htmlCls.clickMenuCls.setLogCmd("load mmdb0 " + $("#" + me.pre + "mmdbid").val(), false);
                 window.open(hostUrl + '?mmdbid=' + $("#" + me.pre + "mmdbid").val() + '&buidx=0', '_blank');
              });
@@ -50255,7 +50339,7 @@ var icn3d = (function (exports) {
             me.myEventCls.onIds("#" + me.pre + "mmdbid", "keyup", function(e) { me.icn3d;
                if (e.keyCode === 13) {
                    e.preventDefault();
-                   if(!me.cfg.notebook) dialog.dialog( "close" );
+                   //if(!me.cfg.notebook) dialog.dialog( "close" );
                    me.htmlCls.clickMenuCls.setLogCmd("load mmdb0 " + $("#" + me.pre + "mmdbid").val(), false);
                    window.open(hostUrl + '?mmdbid=' + $("#" + me.pre + "mmdbid").val() + '&buidx=0', '_blank');
                   }
@@ -50895,9 +50979,7 @@ var icn3d = (function (exports) {
             me.myEventCls.onIds("#" + me.svgid + "_png", "click", function(e) { let ic = me.icn3d;
                e.preventDefault();
                //if(!me.cfg.notebook) dialog.dialog( "close" );
-               let width = $("#" + me.pre + "dl_graph").width();
-               let height = $("#" + me.pre + "dl_graph").height();
-               ic.saveFileCls.savePng(me.svgid, ic.inputid + "_force_directed_graph.png", width, height);
+               ic.saveFileCls.savePng(me.svgid, ic.inputid + "_force_directed_graph.png");
             });
             me.myEventCls.onIds("#" + me.svgid + "_json", "click", function(e) { let ic = me.icn3d;
                 e.preventDefault();
@@ -50916,9 +50998,7 @@ var icn3d = (function (exports) {
             $(document).on("click", "#" + me.svgid_ct + "_png", function(e) { let ic = me.icn3d;
                e.preventDefault();
                //if(!me.cfg.notebook) dialog.dialog( "close" );
-               let width = $("#" + me.pre + "dl_2dctn").width();
-               let height = $("#" + me.pre + "dl_2dctn").height();
-               ic.saveFileCls.savePng(me.svgid_ct, ic.inputid + "_cartoon.png", width, height);
+               ic.saveFileCls.savePng(me.svgid_ct, ic.inputid + "_cartoon.png");
             });
             $(document).on("click", "#" + me.svgid_ct + "_json", function(e) { let ic = me.icn3d;
                 e.preventDefault();
@@ -50944,9 +51024,7 @@ var icn3d = (function (exports) {
             me.myEventCls.onIds("#" + me.linegraphid + "_png", "click", function(e) { let ic = me.icn3d;
                e.preventDefault();
                //if(!me.cfg.notebook) dialog.dialog( "close" );
-               let width = $("#" + me.pre + "dl_linegraph").width();
-               let height = $("#" + me.pre + "dl_linegraph").height();
-               ic.saveFileCls.savePng(me.linegraphid, ic.inputid + "_line_graph.png", width, height);
+               ic.saveFileCls.savePng(me.linegraphid, ic.inputid + "_line_graph.png");
             });
             me.myEventCls.onIds("#" + me.linegraphid + "_json", "click", function(e) { let ic = me.icn3d;
                 e.preventDefault();
@@ -50972,9 +51050,7 @@ var icn3d = (function (exports) {
             me.myEventCls.onIds("#" + me.scatterplotid + "_png", "click", function(e) { let ic = me.icn3d;
                e.preventDefault();
                //if(!me.cfg.notebook) dialog.dialog( "close" );
-               let width = $("#" + me.pre + "dl_scatterplot").width();
-               let height = $("#" + me.pre + "dl_scatterplot").height();
-               ic.saveFileCls.savePng(me.scatterplotid, ic.inputid + "_scatterplot.png", width, height);
+               ic.saveFileCls.savePng(me.scatterplotid, ic.inputid + "_scatterplot.png");
             });
             me.myEventCls.onIds("#" + me.scatterplotid + "_json", "click", function(e) { let ic = me.icn3d;
                 e.preventDefault();
@@ -51001,9 +51077,7 @@ var icn3d = (function (exports) {
             me.myEventCls.onIds("#" + me.contactmapid + "_png", "click", function(e) { let ic = me.icn3d;
                e.preventDefault();
                //if(!me.cfg.notebook) dialog.dialog( "close" );
-               let width = $("#" + me.pre + "dl_contactmap").width();
-               let height = $("#" + me.pre + "dl_contactmap").height();
-               ic.saveFileCls.savePng(me.contactmapid, ic.inputid + "_contactmap.png", width, height);
+               ic.saveFileCls.savePng(me.contactmapid, ic.inputid + "_contactmap.png");
             });
             me.myEventCls.onIds("#" + me.contactmapid + "_json", "click", function(e) { let ic = me.icn3d;
                 e.preventDefault();
@@ -56054,7 +56128,7 @@ var icn3d = (function (exports) {
         //even when multiple iCn3D viewers are shown together.
         this.pre = this.cfg.divid + "_";
 
-        this.REVISION = '3.7.1';
+        this.REVISION = '3.7.2';
 
         // In nodejs, iCn3D defines "window = {navigator: {}}"
         this.bNode = (Object.keys(window).length < 2) ? true : false;
