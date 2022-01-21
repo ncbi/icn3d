@@ -171,18 +171,27 @@ class GetGraph {
         html += "</g>";
         return html;
     }
-    getNodeTopBottom(nameHash, name2node, bReverseNode, bCommon, nameHashCommon) { let  ic = this.icn3d, me = ic.icn3dui;
+    getNodeTopBottom(nameHash, name2node, bReverseNode, bCommonDiff, nameHashCommon) { let  ic = this.icn3d, me = ic.icn3dui;
         let  thisClass = this;
         let  nodeArray1 = [], nodeArray2 = [], name2nodeCommon = {};
+
+        let separatorCommon = "=>", separatorDiff = "==>", postCommon = "-", postDiff = "--";
         for(let name in nameHash) {
             let  node = name2node[name];
             if(!node) continue;
 
-            if(bCommon) {
+            if(bCommonDiff == 1 || bCommonDiff == 2) {
                 node = me.hashUtilsCls.cloneHash(node);
 
-                let mapping = (nameHashCommon[name]) ? nameHashCommon[name] : '-';
-                node.id += ">" + mapping;
+                if(bCommonDiff == 1) {
+                    let mapping = (nameHashCommon[name]) ? nameHashCommon[name] : postCommon;
+                    node.id += separatorCommon + mapping;
+                }
+                else {
+                    let mapping = (nameHashCommon[name]) ? nameHashCommon[name] : postDiff;
+                    node.id += separatorDiff + mapping;
+                }
+
                 name2nodeCommon[node.id] = node;
             }
 
