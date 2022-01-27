@@ -110,8 +110,11 @@ class SetDialog {
         html += "Note: AlphaFold produces a per-residue confidence score (pLDDT) between 0 and 100:<br>";
         html += me.htmlCls.clickMenuCls.setAlphaFoldLegend() + "<br>";
 
-        html += "<a href='https://alphafold.ebi.ac.uk/' target='_blank'>AlphaFold Uniprot</a> ID: " + me.htmlCls.inputTextStr + "id='" + me.pre + "afid' value='A0A061AD48' size=10> ";
-        html += me.htmlCls.buttonStr + "reload_af'>Load</button>";
+        let afid = (me.cfg.afid) ? me.cfg.afid : 'Q76EI6';
+
+        html += "<a href='https://alphafold.ebi.ac.uk/' target='_blank'>AlphaFold Uniprot</a> ID: " + me.htmlCls.inputTextStr + "id='" + me.pre + "afid' value='" + afid + "' size=10><br><br>";
+        html += me.htmlCls.buttonStr + "reload_af'>Load Structure</button>" 
+            + me.htmlCls.buttonStr + "reload_afmap' style='margin-left:30px'>Load Aligned Error Map (slow)</button>";
         html += "</div>";
 
         html += me.htmlCls.divStr + "dl_opmid' class='" + dialogClass + "'>";
@@ -207,6 +210,12 @@ class SetDialog {
         html += "XYZ File: " + me.htmlCls.inputFileStr + "id='" + me.pre + "xyzfile' size=8> ";
         html += me.htmlCls.buttonStr + "reload_xyzfile'>Load</button>";
         html += "</div>";
+
+        html += me.htmlCls.divStr + "dl_afmapfile' class='" + dialogClass + "'>";
+        html += "AlphaFold Aligned Error File: " + me.htmlCls.inputFileStr + "id='" + me.pre + "afmapfile' size=8> ";
+        html += me.htmlCls.buttonStr + "reload_afmapfile'>Load</button>";
+        html += "</div>";
+
         html += me.htmlCls.divStr + "dl_urlfile' class='" + dialogClass + "'>";
         html += "File type: ";
         html += "<select id='" + me.pre + "filetype'>";
@@ -233,7 +242,13 @@ class SetDialog {
         html += me.htmlCls.divStr + "dl_mmdbid' class='" + dialogClass + "' style='max-width:500px'>";
         html += "MMDB or PDB ID: " + me.htmlCls.inputTextStr + "id='" + me.pre + "mmdbid' value='1TUP' size=8> <br><br>";
         html += me.htmlCls.buttonStr + "reload_mmdb_asym'>Load Asymmetric Unit (All Chains)</button>" + me.htmlCls.buttonStr + "reload_mmdb' style='margin-left:30px'>Load Biological Unit</button><br/><br/><br>";
-        html += '<b>Note</b>: The "<b>biological unit</b>" is the <b>biochemically active form of a biomolecule</b>, which can range from a monomer (single protein molecule) to an oligomer of 100+ protein molecules.<br><br>The "<b>asymmetric unit</b>" is the raw 3D structure data resolved by X-ray crystallography, NMR, or Cryo-electron microscopy. The asymmetric unit is equivalent to the biological unit in approximately 60% of structure records. In the remaining 40% of the records, the asymmetric unit represents a portion of the biological unit that can be reconstructed using crystallographic symmetry, or it represents multiple copies of the biological unit.';
+        html += '<b>Note</b>: The "<b>biological unit</b>" is the <b>biochemically active form of a biomolecule</b>, <div style="width:20px; margin:6px 0 0 20px; display:inline-block;"><span id="'
+          + me.pre + 'asu_bu_expand" class="ui-icon ui-icon-plus icn3d-expand icn3d-link" style="width:15px;" title="Expand"></span><span id="'
+          + me.pre + 'asu_bu_shrink" class="ui-icon ui-icon-minus icn3d-shrink icn3d-link" style="display:none; width:15px;" title="Shrink"></span></div>';
+
+        html += me.htmlCls.divStr + "asu_bu' style='display:none;'>";
+        html += 'which can range from a monomer (single protein molecule) to an oligomer of 100+ protein molecules.<br><br>The "<b>asymmetric unit</b>" is the raw 3D structure data resolved by X-ray crystallography, NMR, or Cryo-electron microscopy. The asymmetric unit is equivalent to the biological unit in approximately 60% of structure records. In the remaining 40% of the records, the asymmetric unit represents a portion of the biological unit that can be reconstructed using crystallographic symmetry, or it represents multiple copies of the biological unit.</div>';
+
         html += "</div>";
 
         html += me.htmlCls.divStr + "dl_blast_rep_id' style='max-width:500px;' class='" + dialogClass + "'>";
@@ -566,6 +581,33 @@ class SetDialog {
 
         html += "</select></div><br>";
         html += '<div id="' + me.pre + 'contactmapDiv"></div>';
+
+        html += "</div>";
+
+        html += me.htmlCls.divStr + "dl_alignerrormap' style='background-color:white' class='" + dialogClass + "'>";
+
+        //html += me.htmlCls.divNowrapStr + "Hold Ctrl key to select multiple nodes." + me.htmlCls.space3 + "</div>";
+      
+        me.alignerrormapid = me.pre + 'alignerrormap';
+        html += me.htmlCls.divNowrapStr + buttonStrTmp + me.alignerrormapid + '_svg">SVG</button>' + me.htmlCls.space2;
+        html += buttonStrTmp + me.alignerrormapid + '_png">PNG (slow)</button>' + me.htmlCls.space2;
+        html += buttonStrTmp + me.alignerrormapid + '_json">JSON</button>' + me.htmlCls.space4;
+        html += "<b>Scale</b>: <select id='" + me.alignerrormapid + "_scale'>";
+
+        //let optArray5 = ['0.01', '0.02', '0.04', '0.06', '0.08', '0.1', '0.2', '0.4', '0.6', '0.8', '1'];
+        html += me.htmlCls.setHtmlCls.getOptionHtml(optArray5, 2);
+
+        html += "</select></div><br>";
+
+        //min: 004d00, max: FFFFFF
+        let startColorStr = '#004d00';
+        let endColorStr = '#FFFFFF';
+        let rangeStr = startColorStr + ' 0%, ' + endColorStr + ' 100%';
+
+        html += "<div style='width:200px'><div style='height: 12px; border: 1px solid #000; background: linear-gradient(to right, " + rangeStr + ");'></div>";
+        html += "<table width='100%' border='0' cellspacing='0' cellpadding='0'><tr><td width='15%'>0</td><td width='15%'>5</td><td width='15%'>10</td><td width='15%'>15</td><td width='15%'>20</td><td width='15%'>25</td><td>30</td></tr><tr><td colspan='7' align='center'>Expected position error (Angstroms)</td></tr></table></div><br>";
+  
+        html += '<div id="' + me.pre + 'alignerrormapDiv"></div>';
 
         html += "</div>";
 

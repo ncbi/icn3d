@@ -413,6 +413,7 @@ class SetMenu {
         html += me.htmlCls.setHtmlCls.getLink('mn1_mol2file', 'Mol2 File');
         html += me.htmlCls.setHtmlCls.getLink('mn1_sdffile', 'SDF File');
         html += me.htmlCls.setHtmlCls.getLink('mn1_xyzfile', 'XYZ File');
+        html += me.htmlCls.setHtmlCls.getLink('mn1_afmapfile', 'AlphaFold Aligned Error File');
         if(!me.cfg.simplemenu) html += me.htmlCls.setHtmlCls.getLink('mn1_urlfile', 'URL(Same Host) ' + me.htmlCls.wifiStr);
         html += "<li>-</li>";
         html += me.htmlCls.setHtmlCls.getLink('mn1_pngimage', 'iCn3D PNG Image');

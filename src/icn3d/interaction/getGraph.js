@@ -132,7 +132,7 @@ class GetGraph {
        return resStr;
     }
 
-    drawResNode(node, i, r, gap, margin, y, setName, bVertical, bContactMap) { let  ic = this.icn3d, me = ic.icn3dui;
+    drawResNode(node, i, r, gap, margin, y, setName, bVertical, bContactMap, bAfMap) { let  ic = this.icn3d, me = ic.icn3dui;
         let  x, resid = node.r.substr(4);
         if(bVertical) {
             x = margin - i *(r + gap);
@@ -158,7 +158,7 @@ class GetGraph {
         let  strokewidth = '1';
         let  textcolor = '#000';
         let  fontsize = '6px'; // '6';
-        let  html = "<g class='icn3d-node' resid='" + resid + "' >";
+        let  html = (bAfMap) ? "<g>" : "<g class='icn3d-node' resid='" + resid + "' >";
         html += "<title>" + node.id + "</title>";
         if(bVertical) {
             html += "<circle cx='" + y + "' cy='" + x + "' r='" + r + "' fill='" + color + "' stroke-width='" + strokewidth + "' stroke='" + strokecolor + "' resid='" + resid + "' />";
