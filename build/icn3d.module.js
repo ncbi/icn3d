@@ -27595,11 +27595,24 @@ class LoadScript {
 
             return;
           }
-          else if(ic.commands[i].trim().indexOf('set af align error map') == 0) {
+          else if(ic.commands[i].trim().indexOf('set half pae map') == 0) {
             let  strArray = ic.commands[i].split("|||");
             let  command = strArray[0].trim();
 
             $.when(thisClass.applyCommandAfmap(command)).then(function() {
+               //if(!me.cfg.notebook && dialog && dialog.hasClass("ui-dialog-content")) dialog.dialog( "close" );
+
+               //ic.drawCls.draw();
+               thisClass.execCommandsBase(i + 1, end, steps);
+            });
+
+            return;
+          }
+          else if(ic.commands[i].trim().indexOf('set full pae map') == 0) {
+            let  strArray = ic.commands[i].split("|||");
+            let  command = strArray[0].trim();
+
+            $.when(thisClass.applyCommandAfmap(command, true)).then(function() {
                //if(!me.cfg.notebook && dialog && dialog.hasClass("ui-dialog-content")) dialog.dialog( "close" );
 
                //ic.drawCls.draw();
@@ -27941,18 +27954,18 @@ class LoadScript {
       return ic.deferredRealign.promise();
     }
 
-    applyCommandAfmapBase(command) { let ic = this.icn3d; ic.icn3dui;
+    applyCommandAfmapBase(command, bFull) { let ic = this.icn3d; ic.icn3dui;
         let afid = command.substr(command.lastIndexOf(' ') + 1);
      
-        ic.contactMapCls.afErrorMap(afid);
+        ic.contactMapCls.afErrorMap(afid, bFull);
     }
 
-    applyCommandAfmap(command) { let ic = this.icn3d; ic.icn3dui;
+    applyCommandAfmap(command, bFull) { let ic = this.icn3d; ic.icn3dui;
       let  thisClass = this;
 
       // chain functions together
       ic.deferredAfmap = new $.Deferred(function() {
-         thisClass.applyCommandAfmapBase(command);
+         thisClass.applyCommandAfmapBase(command, bFull);
       }); // end of me.deferred = $.Deferred(function() {
 
       return ic.deferredAfmap.promise();
@@ -47073,7 +47086,8 @@ class SetMenu {
         html += me.htmlCls.setHtmlCls.getLink('mn1_mol2file', 'Mol2 File');
         html += me.htmlCls.setHtmlCls.getLink('mn1_sdffile', 'SDF File');
         html += me.htmlCls.setHtmlCls.getLink('mn1_xyzfile', 'XYZ File');
-        html += me.htmlCls.setHtmlCls.getLink('mn1_afmapfile', 'AlphaFold Aligned Error File');
+        html += me.htmlCls.setHtmlCls.getLink('mn1_afmapfile', 'AlphaFold PAE File');
+
         if(!me.cfg.simplemenu) html += me.htmlCls.setHtmlCls.getLink('mn1_urlfile', 'URL(Same Host) ' + me.htmlCls.wifiStr);
         html += "<li>-</li>";
         html += me.htmlCls.setHtmlCls.getLink('mn1_pngimage', 'iCn3D PNG Image');
@@ -49046,7 +49060,8 @@ class SetDialog {
 
         html += "<a href='https://alphafold.ebi.ac.uk/' target='_blank'>AlphaFold Uniprot</a> ID: " + me.htmlCls.inputTextStr + "id='" + me.pre + "afid' value='" + afid + "' size=10><br><br>";
         html += me.htmlCls.buttonStr + "reload_af'>Load Structure</button>" 
-            + me.htmlCls.buttonStr + "reload_afmap' style='margin-left:30px'>Load Aligned Error Map (slow)</button>";
+            + me.htmlCls.buttonStr + "reload_afmap' style='margin-left:30px'>Load Half PAE Map</button>"
+            + me.htmlCls.buttonStr + "reload_afmapfull' style='margin-left:30px'>Load Full PAE Map (slow)</button>";
         html += "</div>";
 
         html += me.htmlCls.divStr + "dl_opmid' class='" + dialogClass + "'>";
@@ -49144,8 +49159,9 @@ class SetDialog {
         html += "</div>";
 
         html += me.htmlCls.divStr + "dl_afmapfile' class='" + dialogClass + "'>";
-        html += "AlphaFold Aligned Error File: " + me.htmlCls.inputFileStr + "id='" + me.pre + "afmapfile' size=8> ";
-        html += me.htmlCls.buttonStr + "reload_afmapfile'>Load</button>";
+        html += "AlphaFold Aligned Error File: " + me.htmlCls.inputFileStr + "id='" + me.pre + "afmapfile' size=8> <br><br>";
+        html += me.htmlCls.buttonStr + "reload_afmapfile'>Load Half PAE Map</button>" 
+          + me.htmlCls.buttonStr + "reload_afmapfilefull' style='margin-left:30px'>Load Full PAE Map (slow)</button>";
         html += "</div>";
 
         html += me.htmlCls.divStr + "dl_urlfile' class='" + dialogClass + "'>";
@@ -49524,7 +49540,7 @@ class SetDialog {
         html += me.htmlCls.divNowrapStr + buttonStrTmp + me.alignerrormapid + '_svg">SVG</button>' + me.htmlCls.space2;
         html += buttonStrTmp + me.alignerrormapid + '_png">PNG (slow)</button>' + me.htmlCls.space2;
         html += buttonStrTmp + me.alignerrormapid + '_json">JSON</button>' + me.htmlCls.space4;
-        html += "<b>Scale</b>: <select id='" + me.alignerrormapid + "_scale'>";
+        html += '<b>Scale</b>: <select id="' + me.alignerrormapid + '_scale">';
 
         //let optArray5 = ['0.01', '0.02', '0.04', '0.06', '0.08', '0.1', '0.2', '0.4', '0.6', '0.8', '1'];
         html += me.htmlCls.setHtmlCls.getOptionHtml(optArray5, 2);
@@ -50282,9 +50298,18 @@ class Events {
             if(!me.cfg.notebook) dialog.dialog( "close" );
             let afid = me.cfg.afid ? me.cfg.afid : $("#" + me.pre + "afid").val();
 
-            me.htmlCls.clickMenuCls.setLogCmd("set af align error map " + afid, true);
+            me.htmlCls.clickMenuCls.setLogCmd("set half pae map " + afid, true);
             
             ic.contactMapCls.afErrorMap(afid);
+        });
+        me.myEventCls.onIds("#" + me.pre + "reload_afmapfull", "click", function(e) { let ic = me.icn3d;
+            e.preventDefault();
+            if(!me.cfg.notebook) dialog.dialog( "close" );
+            let afid = me.cfg.afid ? me.cfg.afid : $("#" + me.pre + "afid").val();
+
+            me.htmlCls.clickMenuCls.setLogCmd("set full pae map " + afid, true);
+            
+            ic.contactMapCls.afErrorMap(afid, true);
         });
 
         me.myEventCls.onIds("#" + me.pre + "afid", "keyup", function(e) { me.icn3d;
@@ -50878,6 +50903,35 @@ class Events {
               reader.readAsText(file);
             }
          });
+
+         me.myEventCls.onIds("#" + me.pre + "reload_afmapfilefull", "click", function(e) { let ic = me.icn3d;
+            e.preventDefault();
+            ic.bInitial = true;
+            if(!me.cfg.notebook) dialog.dialog( "close" );
+            //close all dialog
+            if(!me.cfg.notebook) {
+                $(".ui-dialog-content").dialog("close");
+            }
+            else {
+                ic.resizeCanvasCls.closeDialogs();
+            }
+            let file = $("#" + me.pre + "afmapfile")[0].files[0];
+            if(!file) {
+              alert("Please select a file before clicking 'Load'");
+            }
+            else {
+              me.htmlCls.setHtmlCls.fileSupport();
+              let reader = new FileReader();
+              reader.onload = function(e) {
+                let dataStr = e.target.result; // or = reader.result;
+                me.htmlCls.clickMenuCls.setLogCmd('load AlphaFold aligned error file ' + $("#" + me.pre + "afmapfile").val(), false);
+                
+                me.htmlCls.dialogCls.openDlg('dl_alignerrormap', 'Show predicted aligned error map');
+                ic.contactMapCls.processAfErrorMap(JSON.parse(dataStr), true);
+              };
+              reader.readAsText(file);
+            }
+         });
     //    },
     //    clickReload_urlfile: function() {
         me.myEventCls.onIds("#" + me.pre + "reload_urlfile", "click", function(e) { let ic = me.icn3d;
@@ -51257,8 +51311,16 @@ class Events {
             //if(!me.cfg.notebook) dialog.dialog( "close" );
             ic.saveFileCls.savePng(me.alignerrormapid, ic.inputid + "_alignerrormap.png", true);
          });
+         me.myEventCls.onIds("#" + me.alignerrormapid + "_full", "click", function(e) { let ic = me.icn3d;
+            e.preventDefault();
+            //if(!me.cfg.notebook) dialog.dialog( "close" );
+            ic.contactMapCls.afErrorMap(afid, true);
+
+            
+         });
          me.myEventCls.onIds("#" + me.alignerrormapid + "_json", "click", function(e) { let ic = me.icn3d;
              e.preventDefault();
+             
              //if(!me.cfg.notebook) dialog.dialog( "close" );
              let graphStr2 = ic.alignerrormapStr.substr(0, ic.alignerrormapStr.lastIndexOf('}'));
  
@@ -53689,7 +53751,7 @@ class ContactMap {
        }
     }
 
-    afErrorMap(afid) { let  ic = this.icn3d, me = ic.icn3dui;
+    afErrorMap(afid, bFull) { let  ic = this.icn3d, me = ic.icn3dui;
         let thisClass = this;
 
         me.htmlCls.dialogCls.openDlg('dl_alignerrormap', 'Show predicted aligned error map');
@@ -53707,7 +53769,7 @@ class ContactMap {
             tryCount : 0,
             retryLimit : 1,
             success: function(data) {
-                thisClass.processAfErrorMap(data);
+                thisClass.processAfErrorMap(data, bFull);
             },
             error : function(xhr, textStatus, errorThrown ) {
                 this.tryCount++;
@@ -53722,7 +53784,7 @@ class ContactMap {
         });      
     }
 
-    processAfErrorMap(dataJson) { let ic = this.icn3d, me = ic.icn3dui;
+    processAfErrorMap(dataJson, bFull) { let ic = this.icn3d, me = ic.icn3dui;
         // json format: [{"residue1": [1, ..., 1, ..., n, ..., n], "residue2": [1, 2, ..., n, ..., 1, 2, ..., n], 
         // "distance": [n*n matrix],"max_predicted_aligned_error":31.75}]
         let distMatrix = dataJson[0].distance;
@@ -53740,18 +53802,39 @@ class ContactMap {
         let postA = '', postB = '.';
 
         // initialize some parameters if no structure wasloaded yet
-        if(!ic.chains) ic.init_base();
+        let bStruData;
+        if(!ic.chains) {
+            bStruData = false;
+            ic.init_base();
+        }
+        else {
+            bStruData = true;
+        }
 
-        let chainidArray = Object.keys(ic.chains);
-        let chainid = (chainidArray.length == 1) ? chainidArray[0] : 'stru_A';
+        //let chainidArray = Object.keys(ic.chains);
+        //let chainid = (chainidArray.length == 1) ? chainidArray[0] : 'stru_A';
 
         let dim = parseInt(Math.sqrt(distMatrix.length));
 
+        // map index with residue number when the structure has multiple chains
+        let index = 0;
+        let index2resObj = {};
+        for(let chainid in ic.chains) {
+            for(let j = 0, jl = ic.chainsSeq[chainid].length; j < jl; ++j) {
+                index2resObj[index] = ic.chainsSeq[chainid][j];
+                index2resObj[index].chainid = chainid;
+                ++index;
+            }
+        }
+
         //for(let chainid in ic.chains) {
         //for(let i = 0, il = ic.chainsSeq[chainid].length; i < il; ++i) {
+        index = 0;
         for(let i = 0; i < dim; ++i) {
-            let resi = (ic.chainsSeq[chainid]) ? ic.chainsSeq[chainid][i].resi : i + 1;
-            let resn = (ic.chainsSeq[chainid]) ? ic.chainsSeq[chainid][i].name : '*';
+            let resi = (bStruData) ? index2resObj[i].resi : i + 1;
+            let resn = (bStruData) ? index2resObj[i].name : '*';
+            let chainid = (bStruData) ? index2resObj[i].chainid : 'stru_A';
+
             let resid = chainid + '_' + resi;
             let atom = (ic.residues[resid]) ? ic.firstAtomObjCls.getFirstAtomObj(ic.residues[resid]) 
                 : {color: me.parasCls.thr(0x888888)};
@@ -53764,13 +53847,19 @@ class ContactMap {
             nodeStr += ', {"id":"' + idStr + postB + '","r":"1_1_' + resid + '","s":"b","c":"' + color + '"}';
             bNode = true;
 
+            let start = (bFull) ? 0 : i; // full map, or half map
+
             //for(let j = 0, jl = ic.chainsSeq[chainid].length; j < jl; ++j) {
             //for(let j = 0; j < dim; ++j) {
-            for(let j = i; j < dim; ++j) { // half map
-                let resi2 = (ic.chainsSeq[chainid]) ? ic.chainsSeq[chainid][j].resi : j + 1;
-                let resn2 = (ic.chainsSeq[chainid]) ? ic.chainsSeq[chainid][j].name : '*';
-                let idStr2 = resn2 + resi2 + '.' + chain;
-                let index = i * dim + j;
+            for(let j = start; j < dim; ++j) { 
+                index = i * dim + j;
+                let resi2 = (bStruData) ? index2resObj[j].resi : j + 1;
+                let resn2 = (bStruData) ? index2resObj[j].name : '*';
+                let chainid2 = (bStruData) ? index2resObj[j].chainid : 'stru_A';
+                let chain2 = chainid2.substr(chainid2.indexOf('_') + 1);
+
+                let idStr2 = resn2 + resi2 + '.' + chain2;
+                
                 // max dark green color 004d00, 0x4d = 77, 77/255 = 0.302
                 // 0: 004d00, max: FFFFFF
                 let ratio = (distMatrix[index]) ? distMatrix[index] / max : 0;

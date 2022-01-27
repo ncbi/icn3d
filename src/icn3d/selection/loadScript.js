@@ -517,11 +517,24 @@ class LoadScript {
 
             return;
           }
-          else if(ic.commands[i].trim().indexOf('set af align error map') == 0) {
+          else if(ic.commands[i].trim().indexOf('set half pae map') == 0) {
             let  strArray = ic.commands[i].split("|||");
             let  command = strArray[0].trim();
 
             $.when(thisClass.applyCommandAfmap(command)).then(function() {
+               //if(!me.cfg.notebook && dialog && dialog.hasClass("ui-dialog-content")) dialog.dialog( "close" );
+
+               //ic.drawCls.draw();
+               thisClass.execCommandsBase(i + 1, end, steps);
+            });
+
+            return;
+          }
+          else if(ic.commands[i].trim().indexOf('set full pae map') == 0) {
+            let  strArray = ic.commands[i].split("|||");
+            let  command = strArray[0].trim();
+
+            $.when(thisClass.applyCommandAfmap(command, true)).then(function() {
                //if(!me.cfg.notebook && dialog && dialog.hasClass("ui-dialog-content")) dialog.dialog( "close" );
 
                //ic.drawCls.draw();
@@ -864,18 +877,18 @@ class LoadScript {
       return ic.deferredRealign.promise();
     }
 
-    applyCommandAfmapBase(command) { let  ic = this.icn3d, me = ic.icn3dui;
+    applyCommandAfmapBase(command, bFull) { let  ic = this.icn3d, me = ic.icn3dui;
         let afid = command.substr(command.lastIndexOf(' ') + 1);
      
-        ic.contactMapCls.afErrorMap(afid);
+        ic.contactMapCls.afErrorMap(afid, bFull);
     }
 
-    applyCommandAfmap(command) { let  ic = this.icn3d, me = ic.icn3dui;
+    applyCommandAfmap(command, bFull) { let  ic = this.icn3d, me = ic.icn3dui;
       let  thisClass = this;
 
       // chain functions together
       ic.deferredAfmap = new $.Deferred(function() {
-         thisClass.applyCommandAfmapBase(command);
+         thisClass.applyCommandAfmapBase(command, bFull);
       }); // end of me.deferred = $.Deferred(function() {
 
       return ic.deferredAfmap.promise();
