@@ -526,7 +526,7 @@ class Selection {
     }
 
     toggleMembrane(bShowMembrane) {var ic = this.icn3d, me = ic.icn3dui;
-        let  structureArray = Object.keys(ic.structures);
+        let  structureArray = (ic.structures) ? Object.keys(ic.structures) : [];
 
         for(let i = 0, il = structureArray.length; i < il; ++i) {
             let  structure = structureArray[i];

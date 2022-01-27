@@ -153,11 +153,11 @@ class AlignParser {
                 ic.alignmolid2color.push(tmpHash);
             }
 
-            //var url3 = me.htmlCls.baseUrl + "mmdb/mmdb_strview.cgi?v=2&program=icn3d&b=1&s=1&ft=1&buidx=" + me.cfg.buidx + "&atomonly=1&uid=" + ic.mmdbidArray[0];
-            //var url4 = me.htmlCls.baseUrl + "mmdb/mmdb_strview.cgi?v=2&program=icn3d&b=1&s=1&ft=1&buidx=" + me.cfg.buidx + "&atomonly=1&uid=" + ic.mmdbidArray[1];
+            //var url3 = me.htmlCls.baseUrl + "mmdb/mmdb_strview.cgi?v=2&program=icn3d&b=1&s=1&ft=1&bu=" + me.cfg.bu + "&atomonly=1&uid=" + ic.mmdbidArray[0];
+            //var url4 = me.htmlCls.baseUrl + "mmdb/mmdb_strview.cgi?v=2&program=icn3d&b=1&s=1&ft=1&bu=" + me.cfg.bu + "&atomonly=1&uid=" + ic.mmdbidArray[1];
             // need the parameter moleculeInfor
-            let  url3 = me.htmlCls.baseUrl + "mmdb/mmdb_strview.cgi?v=2&program=icn3d&b=1&s=1&ft=1&buidx=" + me.cfg.buidx + "&uid=" + ic.mmdbidArray[0];
-            let  url4 = me.htmlCls.baseUrl + "mmdb/mmdb_strview.cgi?v=2&program=icn3d&b=1&s=1&ft=1&buidx=" + me.cfg.buidx + "&uid=" + ic.mmdbidArray[1];
+            let  url3 = me.htmlCls.baseUrl + "mmdb/mmdb_strview.cgi?v=2&program=icn3d&b=1&s=1&ft=1&bu=" + me.cfg.bu + "&uid=" + ic.mmdbidArray[0];
+            let  url4 = me.htmlCls.baseUrl + "mmdb/mmdb_strview.cgi?v=2&program=icn3d&b=1&s=1&ft=1&bu=" + me.cfg.bu + "&uid=" + ic.mmdbidArray[1];
 
             let  d3 = $.ajax({
               url: url3,

@@ -1056,6 +1056,14 @@ class ApplyCommand {
 
         $("#" + me.contactmapid).attr("width",(ic.contactmapWidth * parseFloat(scale)).toString() + "px");
       }
+      else if(command.indexOf('alignerrormap scale') == 0) {
+        let  pos = command.lastIndexOf(' ');
+        let  scale = command.substr(pos + 1);
+
+        $("#" + me.alignerrormapid + "_scale").val(scale);
+
+        $("#" + me.alignerrormapid).attr("width",(ic.alignerrormapWidth * parseFloat(scale)).toString() + "px");
+      }
       else if(command.indexOf('graph force') == 0) {
         let  pos = command.lastIndexOf(' ');
         me.htmlCls.force = parseInt(command.substr(pos + 1));

@@ -243,7 +243,8 @@
         cfg.options = (cfg.options !== undefined) ? JSON.parse(cfg.options) : undefined;
 
         // default to show asymmetric units
-        if(cfg.buidx === undefined) cfg.buidx = 0;
+        if(cfg.bu === undefined) cfg.bu = 0;
+        if(cfg.buidx !== undefined) cfg.bu = cfg.buidx;
 
         return cfg;
       }

@@ -45,7 +45,115 @@ class ContactMap {
        }
     }
 
-    drawContactMap(lineGraphStr) { let ic = this.icn3d, me = ic.icn3dui;
+    afErrorMap(afid) { let  ic = this.icn3d, me = ic.icn3dui;
+        let thisClass = this;
+
+        me.htmlCls.dialogCls.openDlg('dl_alignerrormap', 'Show predicted aligned error map');
+
+        let  url, dataType;
+    
+        url = "https://alphafold.ebi.ac.uk/files/AF-" + afid + "-F1-predicted_aligned_error_v2.json";
+
+        dataType = "json";
+    
+        $.ajax({
+            url: url,
+            dataType: dataType,
+            cache: true,
+            tryCount : 0,
+            retryLimit : 1,
+            success: function(data) {
+                thisClass.processAfErrorMap(data);
+            },
+            error : function(xhr, textStatus, errorThrown ) {
+                this.tryCount++;
+                if(this.tryCount <= this.retryLimit) {
+                    //try again
+                    $.ajax(this);
+                    return;
+                }
+                alert("There are some problems in loading the predicted aligned error file...");
+                return;
+            }
+        });      
+    }
+
+    processAfErrorMap(dataJson) { let ic = this.icn3d, me = ic.icn3dui;
+        // json format: [{"residue1": [1, ..., 1, ..., n, ..., n], "residue2": [1, 2, ..., n, ..., 1, 2, ..., n], 
+        // "distance": [n*n matrix],"max_predicted_aligned_error":31.75}]
+        let distMatrix = dataJson[0].distance;
+        let max = dataJson[0].max_predicted_aligned_error;
+        if(!distMatrix || !max) {
+            alert("The predicted aligned error file didn't have the right format...");
+            return;
+        }
+
+        // generate lineGraphStr
+        // e.g.,  {"nodes": [{"id":"A1.A","r":"1_1_1TOP_A_1","s":"ab","x":1,"y":21,"c":"FF00FF"}, ...],
+        // "links": [{"source": "A1.A", "target": "S2.A", "v": 3, "c": "FF00FF"}, ...]}
+        let nodeStr = '"nodes": [', linkStr = '"links": [';
+        let bNode = false, bLink = false;
+        let postA = '', postB = '.';
+
+        // initialize some parameters if no structure wasloaded yet
+        if(!ic.chains) ic.init_base();
+
+        let chainidArray = Object.keys(ic.chains);
+        let chainid = (chainidArray.length == 1) ? chainidArray[0] : 'stru_A';
+
+        let dim = parseInt(Math.sqrt(distMatrix.length));
+
+        //for(let chainid in ic.chains) {
+        //for(let i = 0, il = ic.chainsSeq[chainid].length; i < il; ++i) {
+        for(let i = 0; i < dim; ++i) {
+            let resi = (ic.chainsSeq[chainid]) ? ic.chainsSeq[chainid][i].resi : i + 1;
+            let resn = (ic.chainsSeq[chainid]) ? ic.chainsSeq[chainid][i].name : '*';
+            let resid = chainid + '_' + resi;
+            let atom = (ic.residues[resid]) ? ic.firstAtomObjCls.getFirstAtomObj(ic.residues[resid]) 
+                : {color: me.parasCls.thr(0x888888)};
+            let chain = chainid.substr(chainid.indexOf('_') + 1);
+            let color = atom.color.getHexString();
+
+            if(bNode) nodeStr += ', ';
+            let idStr = resn + resi + '.' + chain;
+            nodeStr += '{"id":"' + idStr + postA + '","r":"1_1_' + resid + '","s":"a","c":"' + color + '"}\n';
+            nodeStr += ', {"id":"' + idStr + postB + '","r":"1_1_' + resid + '","s":"b","c":"' + color + '"}';
+            bNode = true;
+
+            //for(let j = 0, jl = ic.chainsSeq[chainid].length; j < jl; ++j) {
+            //for(let j = 0; j < dim; ++j) {
+            for(let j = i; j < dim; ++j) { // half map
+                let resi2 = (ic.chainsSeq[chainid]) ? ic.chainsSeq[chainid][j].resi : j + 1;
+                let resn2 = (ic.chainsSeq[chainid]) ? ic.chainsSeq[chainid][j].name : '*';
+                let idStr2 = resn2 + resi2 + '.' + chain;
+                let index = i * dim + j;
+                // max dark green color 004d00, 0x4d = 77, 77/255 = 0.302
+                // 0: 004d00, max: FFFFFF
+                let ratio = (distMatrix[index]) ? distMatrix[index] / max : 0;
+                let r = parseInt(ratio*255).toString(16);
+                let g = parseInt(((1.0 - 0.302)*ratio + 0.302) * 255).toString(16);
+                let rHex = (r.length == 1) ? '0' + r : r;
+                let gHex = (g.length == 1) ? '0' + g : g;
+                let bHex = rHex;
+                let color2 = rHex + gHex + bHex;
+
+                if(bLink) linkStr += ', ';
+                linkStr += '{"source": "' + idStr + postA + '", "target": "' + idStr2 + postB + '", "v": 11, "c": "' + color2 + '"}\n';
+                bLink = true;
+            }
+        }
+        //}
+
+        dataJson = {};
+
+        let lineGraphStr = '{' + nodeStr + '], ' + linkStr + ']}';
+        let bAfMap = true;
+        this.drawContactMap(lineGraphStr, bAfMap, max);    
+        
+        if(ic.deferredAfmap !== undefined) ic.deferredAfmap.resolve();
+    }
+
+    drawContactMap(lineGraphStr, bAfMap, max) { let ic = this.icn3d, me = ic.icn3dui;
         let html, graph = JSON.parse(lineGraphStr);
         let linkArray = graph.links;
 
@@ -79,7 +187,7 @@ class ContactMap {
 
         let graphStr = '{\n';
 
-        let struc1 = Object.keys(ic.structures)[0];
+        let struc1 = (ic.structures.length > 0) ? ic.structures[0] : 'stru';
         let len1 = nodeArray1.length,
             len2 = nodeArray2.length;
         let factor = 1;
@@ -93,20 +201,76 @@ class ContactMap {
         width =(len2 + 2) *(r + gap) + 2 * marginX + legendWidth;
 
         let id, graphWidth;
-        ic.contactmapWidth = 2 * width;
-        graphWidth = ic.contactmapWidth;
-        id = me.contactmapid;
+        if(bAfMap) {
+            ic.alignerrormapWidth = 2 * width;
+            graphWidth = ic.alignerrormapWidth;
+            id = me.alignerrormapid;
+        }
+        else {
+            ic.contactmapWidth = 2 * width;
+            graphWidth = ic.contactmapWidth;
+            id = me.contactmapid;
+        }
+
         html =(linkArray.length > 0) ? "" : "No interactions found for these two sets<br><br>";
-        html += "<svg id='" + id + "' viewBox='0,0," + width + "," + heightAll + "' width='" + graphWidth + "px'>";
+        html += "<svg xmlns='http://www.w3.org/2000/svg' id='" + id + "' viewBox='0,0," + width + "," + heightAll + "' width='" + graphWidth + "px'>";
         let bContactMap = true;
-        html += ic.lineGraphCls.drawScatterplot_base(nodeArray1, nodeArray2, linkArray, name2node, 0, bContactMap);
+
+        if(bAfMap) { // cleaned the code by using "use" in SVG, but didn't improve rendering
+            let  factor = 1;
+            let  r = 3 * factor;
+            let  rectSize = 2 * r;
+
+            ic.hex2id = {};
+            let threshold = 29.0 / max;
+            ic.hex2skip = {}; // do not display any error larger than 29 angstrom
+
+            html += "<defs>";
+
+            let linestrokewidth = 1;
+            let nRef = 1000;
+            for(let i = 0; i < nRef; ++i) {
+                let ratio = 1.0 * i / nRef;
+                let r = parseInt(ratio*255).toString(16);
+                let g = parseInt(((1.0 - 0.302)*ratio + 0.302) * 255).toString(16);
+                let rHex = (r.length == 1) ? '0' + r : r;
+                let gHex = (g.length == 1) ? '0' + g : g;
+                let bHex = rHex;
+                let color = rHex + gHex + bHex;
+                let strokecolor = "#" + color;
+
+                let idRect = me.pre + "afmap_" + i;
+
+                ic.hex2id[color] = idRect;
+                if(ratio > threshold) {
+                    ic.hex2skip[color] = idRect;
+                }
+                
+                //html += "<g id='" + id + "'>";
+                html += "<rect id='" + idRect + "' x='0' y='0' width='" + rectSize + "' height='" + rectSize + "' fill='" 
+                    + strokecolor + "' stroke-width='" + linestrokewidth + "' stroke='" + strokecolor + "' />";
+                //html += "</g>"
+            }
+            html += "</defs>";
+        }
+
+        html += ic.lineGraphCls.drawScatterplot_base(nodeArray1, nodeArray2, linkArray, name2node, 0, bContactMap, undefined, undefined, bAfMap);
         graphStr += ic.getGraphCls.updateGraphJson(struc1, 1, nodeArray1, nodeArray2, linkArray);
         html += "</svg>";
 
         graphStr += '}\n';
-        ic.contactmapStr = graphStr;
+        if(bAfMap) {
+            ic.alignerrormapStr = graphStr;
+            $("#" + ic.pre + "alignerrormapDiv").html(html);
+  
+            let scale = $("#" + me.alignerrormapid + "_scale").val();
+            $("#" + me.alignerrormapid).attr("width",(ic.alignerrormapWidth * parseFloat(scale)).toString() + "px");
+        }
+        else {
+            ic.contactmapStr = graphStr;
+            $("#" + ic.pre + "contactmapDiv").html(html);
+        }
 
-        $("#" + ic.pre + "contactmapDiv").html(html);
         return html;
     }
 }

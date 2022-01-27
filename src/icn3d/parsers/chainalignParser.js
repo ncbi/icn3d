@@ -131,7 +131,7 @@ class ChainalignParser {
         let  pos1 = alignArray[0].indexOf('_');
         ic.mmdbid_t = alignArray[0].substr(0, pos1).toUpperCase();
         ic.chain_t = alignArray[0].substr(pos1+1);
-        let  url_t = me.htmlCls.baseUrl + "mmdb/mmdb_strview.cgi?v=2&program=icn3d&b=1&s=1&ft=1&buidx=" + me.cfg.buidx + "&uid=" + ic.mmdbid_t;
+        let  url_t = me.htmlCls.baseUrl + "mmdb/mmdb_strview.cgi?v=2&program=icn3d&b=1&s=1&ft=1&bu=" + me.cfg.bu + "&uid=" + ic.mmdbid_t;
         if(me.cfg.inpara !== undefined) url_t += me.cfg.inpara;
 
         let  ajaxArray = [];
@@ -157,7 +157,7 @@ class ChainalignParser {
             let  chainalignFinal = ic.mmdbid_q + "_" + ic.chain_q + "," + ic.mmdbid_t + "_" + ic.chain_t;
 
             let  urlalign = me.htmlCls.baseUrl + "vastdyn/vastdyn.cgi?chainpairs=" + chainalignFinal;
-            let  url_q = me.htmlCls.baseUrl + "mmdb/mmdb_strview.cgi?v=2&program=icn3d&b=1&s=1&ft=1&buidx=" + me.cfg.buidx + "&uid=" + ic.mmdbid_q;
+            let  url_q = me.htmlCls.baseUrl + "mmdb/mmdb_strview.cgi?v=2&program=icn3d&b=1&s=1&ft=1&bu=" + me.cfg.bu + "&uid=" + ic.mmdbid_q;
 
             if(me.cfg.inpara !== undefined) url_q += me.cfg.inpara;
 

@@ -16389,7 +16389,7 @@ var icn3d = (function (exports) {
            return resStr;
         }
 
-        drawResNode(node, i, r, gap, margin, y, setName, bVertical, bContactMap) { let ic = this.icn3d; ic.icn3dui;
+        drawResNode(node, i, r, gap, margin, y, setName, bVertical, bContactMap, bAfMap) { let ic = this.icn3d; ic.icn3dui;
             let  x, resid = node.r.substr(4);
             if(bVertical) {
                 x = margin - i *(r + gap);
@@ -16415,7 +16415,7 @@ var icn3d = (function (exports) {
             let  strokewidth = '1';
             let  textcolor = '#000';
             let  fontsize = '6px'; // '6';
-            let  html = "<g class='icn3d-node' resid='" + resid + "' >";
+            let  html = (bAfMap) ? "<g>" : "<g class='icn3d-node' resid='" + resid + "' >";
             html += "<title>" + node.id + "</title>";
             if(bVertical) {
                 html += "<circle cx='" + y + "' cy='" + x + "' r='" + r + "' fill='" + color + "' stroke-width='" + strokewidth + "' stroke='" + strokecolor + "' resid='" + resid + "' />";
@@ -17201,7 +17201,7 @@ var icn3d = (function (exports) {
             return html;
         }
 
-        drawScatterplot_base(nodeArray1, nodeArray2, linkArray, name2node, height, bContactMap, label, textHeight) { let ic = this.icn3d; ic.icn3dui;
+        drawScatterplot_base(nodeArray1, nodeArray2, linkArray, name2node, height, bContactMap, label, textHeight, bAfMap) { let ic = this.icn3d; ic.icn3dui;
             let  html = '';
             let  len1 = nodeArray1.length,
                 len2 = nodeArray2.length;
@@ -17227,12 +17227,12 @@ var icn3d = (function (exports) {
                 node2posSet2 = {};
             let  x = legendWidth + marginX;
             for(let i = 0; i < len1; ++i) {
-                nodeHtml += ic.getGraphCls.drawResNode(nodeArray1[i], i, r, gap, margin1, x, 'a', true);
+                nodeHtml += ic.getGraphCls.drawResNode(nodeArray1[i], i, r, gap, margin1, x, 'a', true, undefined, bAfMap);
                 node2posSet1[nodeArray1[i].id] = { x: x, y: margin1 - i *(r + gap) };
             }
             let  y = height + heightTotal -(legendWidth + marginY);
             for(let i = 0; i < len2; ++i) {
-                nodeHtml += ic.getGraphCls.drawResNode(nodeArray2[i], i, r, gap, margin2, y, 'b', false, bContactMap);
+                nodeHtml += ic.getGraphCls.drawResNode(nodeArray2[i], i, r, gap, margin2, y, 'b', false, bContactMap, bAfMap);
                 node2posSet2[nodeArray2[i].id] = { x: margin2 + i *(r + gap), y: y };
             }
             for(let i = 0, il = linkArray.length; i < il; ++i) {
@@ -17242,10 +17242,10 @@ var icn3d = (function (exports) {
 
                 if(!node1 || !node2) continue;
 
-                html += this.drawOnePairNode(link, node1, node2, node2posSet1, node2posSet2, bContactMap);
+                html += this.drawOnePairNode(link, node1, node2, node2posSet1, node2posSet2, bContactMap, bAfMap);
 
-                if(bContactMap) { // draw symmetric contact map
-                    html += this.drawOnePairNode(link, node2, node1, node2posSet1, node2posSet2, bContactMap);
+                if(bContactMap && !bAfMap) { // draw symmetric contact map, bAfmap just need to draw once          
+                    html += this.drawOnePairNode(link, node2, node1, node2posSet1, node2posSet2, bContactMap, bAfMap);
                 }
             }
             // show nodes later
@@ -17253,7 +17253,7 @@ var icn3d = (function (exports) {
             return html;
         }
 
-        drawOnePairNode(link, node1, node2, node2posSet1, node2posSet2, bContactMap) { let  ic = this.icn3d, me = ic.icn3dui;
+        drawOnePairNode(link, node1, node2, node2posSet1, node2posSet2, bContactMap, bAfMap) { let  ic = this.icn3d, me = ic.icn3dui;
             let html = '';
 
             let  factor = 1;
@@ -17283,21 +17283,31 @@ var icn3d = (function (exports) {
                 strokecolor = "#" + me.htmlCls.contactColor;
             }
 
+            if(bContactMap) strokecolor = "#" + link.c;
+
             let  linestrokewidth;
             if(link.v == me.htmlCls.contactValue) {
                 linestrokewidth = 1;
             } else {
                 linestrokewidth = 2;
             }
-            html += "<g class='icn3d-interaction' resid1='" + resid1 + "' resid2='" + resid2 + "' >";
-            html += "<title>Interaction of residue " + node1.id + " with residue " + node2.id + "</title>";
-            if(bContactMap) {
-                html += "<rect x='" +(pos2.x - halfSize).toString() + "' y='" +(pos1.y - halfSize).toString() + "' width='" + rectSize + "' height='" + rectSize + "' fill='" + strokecolor + "' stroke-width='" + linestrokewidth + "' stroke='" + strokecolor + "' />";
+            
+            if(bAfMap && ic.hex2skip[link.c]) ;
+            else if(bAfMap && ic.hex2id[link.c]) {
+                let id = ic.hex2id[link.c];
+                html += "<use href='#" + id + "' x='" +(pos2.x - halfSize).toString() + "' y='" +(pos1.y - halfSize).toString() + "' />";
             }
             else {
-                html += "<rect x='" +(pos2.x - halfSize).toString() + "' y='" +(pos1.y - halfSize).toString() + "' width='" + rectSize + "' height='" + rectSize + "' fill='" + strokecolor + "' fill-opacity='0.6' stroke-width='" + linestrokewidth + "' stroke='" + strokecolor + "' />";
+                html += "<g class='icn3d-interaction' resid1='" + resid1 + "' resid2='" + resid2 + "' >";
+                html += "<title>Interaction of residue " + node1.id + " with residue " + node2.id + "</title>";
+                if(bContactMap) {
+                    html += "<rect x='" +(pos2.x - halfSize).toString() + "' y='" +(pos1.y - halfSize).toString() + "' width='" + rectSize + "' height='" + rectSize + "' fill='" + strokecolor + "' stroke-width='" + linestrokewidth + "' stroke='" + strokecolor + "' />";
+                }
+                else {
+                    html += "<rect x='" +(pos2.x - halfSize).toString() + "' y='" +(pos1.y - halfSize).toString() + "' width='" + rectSize + "' height='" + rectSize + "' fill='" + strokecolor + "' fill-opacity='0.6' stroke-width='" + linestrokewidth + "' stroke='" + strokecolor + "' />";
+                }
+                html += "</g>";
             }
-            html += "</g>";
 
             return html;
         }
@@ -24257,11 +24267,11 @@ var icn3d = (function (exports) {
                     ic.alignmolid2color.push(tmpHash);
                 }
 
-                //var url3 = me.htmlCls.baseUrl + "mmdb/mmdb_strview.cgi?v=2&program=icn3d&b=1&s=1&ft=1&buidx=" + me.cfg.buidx + "&atomonly=1&uid=" + ic.mmdbidArray[0];
-                //var url4 = me.htmlCls.baseUrl + "mmdb/mmdb_strview.cgi?v=2&program=icn3d&b=1&s=1&ft=1&buidx=" + me.cfg.buidx + "&atomonly=1&uid=" + ic.mmdbidArray[1];
+                //var url3 = me.htmlCls.baseUrl + "mmdb/mmdb_strview.cgi?v=2&program=icn3d&b=1&s=1&ft=1&bu=" + me.cfg.bu + "&atomonly=1&uid=" + ic.mmdbidArray[0];
+                //var url4 = me.htmlCls.baseUrl + "mmdb/mmdb_strview.cgi?v=2&program=icn3d&b=1&s=1&ft=1&bu=" + me.cfg.bu + "&atomonly=1&uid=" + ic.mmdbidArray[1];
                 // need the parameter moleculeInfor
-                let  url3 = me.htmlCls.baseUrl + "mmdb/mmdb_strview.cgi?v=2&program=icn3d&b=1&s=1&ft=1&buidx=" + me.cfg.buidx + "&uid=" + ic.mmdbidArray[0];
-                let  url4 = me.htmlCls.baseUrl + "mmdb/mmdb_strview.cgi?v=2&program=icn3d&b=1&s=1&ft=1&buidx=" + me.cfg.buidx + "&uid=" + ic.mmdbidArray[1];
+                let  url3 = me.htmlCls.baseUrl + "mmdb/mmdb_strview.cgi?v=2&program=icn3d&b=1&s=1&ft=1&bu=" + me.cfg.bu + "&uid=" + ic.mmdbidArray[0];
+                let  url4 = me.htmlCls.baseUrl + "mmdb/mmdb_strview.cgi?v=2&program=icn3d&b=1&s=1&ft=1&bu=" + me.cfg.bu + "&uid=" + ic.mmdbidArray[1];
 
                 let  d3 = $.ajax({
                   url: url3,
@@ -24796,14 +24806,14 @@ var icn3d = (function (exports) {
            // b: b-factor, s: water, ft: pdbsite
            //&ft=1
            if(bGi) {
-               url = me.htmlCls.baseUrl + "mmdb/mmdb_strview.cgi?v=2&program=icn3d&b=1&s=1&ft=1&buidx=" + me.cfg.buidx + "&simple=1&gi=" + mmdbid;
+               url = me.htmlCls.baseUrl + "mmdb/mmdb_strview.cgi?v=2&program=icn3d&b=1&s=1&ft=1&bu=" + me.cfg.bu + "&simple=1&gi=" + mmdbid;
            }
            else {
-               url = me.htmlCls.baseUrl + "mmdb/mmdb_strview.cgi?v=2&program=icn3d&b=1&s=1&ft=1&buidx=" + me.cfg.buidx + "&simple=1&uid=" + mmdbid;
+               url = me.htmlCls.baseUrl + "mmdb/mmdb_strview.cgi?v=2&program=icn3d&b=1&s=1&ft=1&bu=" + me.cfg.bu + "&simple=1&uid=" + mmdbid;
             }
 
-           // use asymmetric unit for BLAST search, e.g., https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?from=blast&blast_rep_id=5XZC_B&query_id=1TUP_A&command=view+annotations;set+annotation+cdd;set+annotation+site;set+view+detailed+view;select+chain+5XZC_B;show+selection&log$=align&blast_rank=1&RID=EPUCYNVV014&buidx=0
-           if(me.cfg.blast_rep_id !== undefined) url += '&buidx=0';
+           // use asymmetric unit for BLAST search, e.g., https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html?from=blast&blast_rep_id=5XZC_B&query_id=1TUP_A&command=view+annotations;set+annotation+cdd;set+annotation+site;set+view+detailed+view;select+chain+5XZC_B;show+selection&log$=align&blast_rank=1&RID=EPUCYNVV014&bu=0
+           if(me.cfg.blast_rep_id !== undefined) url += '&bu=0';
 
            ic.bCid = undefined;
 
@@ -25059,7 +25069,7 @@ var icn3d = (function (exports) {
                 } // for each domainArray
             } // for each molid
 
-            // "asuAtomCount" is defined when: 1) atom count is over the threshold 2) buidx=1 3) asu atom count is smaller than biological unit atom count
+            // "asuAtomCount" is defined when: 1) atom count is over the threshold 2) bu=1 3) asu atom count is smaller than biological unit atom count
             ic.bAssemblyUseAsu =(data.asuAtomCount !== undefined) ? true : false;
             if(type !== undefined) {
                 ic.bAssemblyUseAsu = false;
@@ -25685,7 +25695,7 @@ var icn3d = (function (exports) {
             let  pos1 = alignArray[0].indexOf('_');
             ic.mmdbid_t = alignArray[0].substr(0, pos1).toUpperCase();
             ic.chain_t = alignArray[0].substr(pos1+1);
-            let  url_t = me.htmlCls.baseUrl + "mmdb/mmdb_strview.cgi?v=2&program=icn3d&b=1&s=1&ft=1&buidx=" + me.cfg.buidx + "&uid=" + ic.mmdbid_t;
+            let  url_t = me.htmlCls.baseUrl + "mmdb/mmdb_strview.cgi?v=2&program=icn3d&b=1&s=1&ft=1&bu=" + me.cfg.bu + "&uid=" + ic.mmdbid_t;
             if(me.cfg.inpara !== undefined) url_t += me.cfg.inpara;
 
             let  ajaxArray = [];
@@ -25711,7 +25721,7 @@ var icn3d = (function (exports) {
                 let  chainalignFinal = ic.mmdbid_q + "_" + ic.chain_q + "," + ic.mmdbid_t + "_" + ic.chain_t;
 
                 let  urlalign = me.htmlCls.baseUrl + "vastdyn/vastdyn.cgi?chainpairs=" + chainalignFinal;
-                let  url_q = me.htmlCls.baseUrl + "mmdb/mmdb_strview.cgi?v=2&program=icn3d&b=1&s=1&ft=1&buidx=" + me.cfg.buidx + "&uid=" + ic.mmdbid_q;
+                let  url_q = me.htmlCls.baseUrl + "mmdb/mmdb_strview.cgi?v=2&program=icn3d&b=1&s=1&ft=1&bu=" + me.cfg.bu + "&uid=" + ic.mmdbid_q;
 
                 if(me.cfg.inpara !== undefined) url_q += me.cfg.inpara;
 
@@ -27588,6 +27598,19 @@ var icn3d = (function (exports) {
 
                 return;
               }
+              else if(ic.commands[i].trim().indexOf('set af align error map') == 0) {
+                let  strArray = ic.commands[i].split("|||");
+                let  command = strArray[0].trim();
+
+                $.when(thisClass.applyCommandAfmap(command)).then(function() {
+                   //if(!me.cfg.notebook && dialog && dialog.hasClass("ui-dialog-content")) dialog.dialog( "close" );
+
+                   //ic.drawCls.draw();
+                   thisClass.execCommandsBase(i + 1, end, steps);
+                });
+
+                return;
+              }
               else {
                   ic.applyCommandCls.applyCommand(ic.commands[i]);
               }
@@ -27782,13 +27805,13 @@ var icn3d = (function (exports) {
             }
             else if(command.indexOf('load mmdb') !== -1 || command.indexOf('load mmdb1') !== -1) {
               me.cfg.mmdbid = id;
-              me.cfg.buidx = 1;
+              me.cfg.bu = 1;
 
               ic.mmdbParserCls.downloadMmdb(id);
             }
             else if(command.indexOf('load mmdb0') !== -1) {
                 me.cfg.mmdbid = id;
-                me.cfg.buidx = 0;
+                me.cfg.bu = 0;
       
                 ic.mmdbParserCls.downloadMmdb(id);
             }
@@ -27919,6 +27942,23 @@ var icn3d = (function (exports) {
           }); // end of me.deferred = $.Deferred(function() {
 
           return ic.deferredRealign.promise();
+        }
+
+        applyCommandAfmapBase(command) { let ic = this.icn3d; ic.icn3dui;
+            let afid = command.substr(command.lastIndexOf(' ') + 1);
+         
+            ic.contactMapCls.afErrorMap(afid);
+        }
+
+        applyCommandAfmap(command) { let ic = this.icn3d; ic.icn3dui;
+          let  thisClass = this;
+
+          // chain functions together
+          ic.deferredAfmap = new $.Deferred(function() {
+             thisClass.applyCommandAfmapBase(command);
+          }); // end of me.deferred = $.Deferred(function() {
+
+          return ic.deferredAfmap.promise();
         }
 
         applyCommandGraphinteractionBase(command) { let ic = this.icn3d; ic.icn3dui;
@@ -31915,6 +31955,14 @@ var icn3d = (function (exports) {
             $("#" + me.contactmapid + "_scale").val(scale);
 
             $("#" + me.contactmapid).attr("width",(ic.contactmapWidth * parseFloat(scale)).toString() + "px");
+          }
+          else if(command.indexOf('alignerrormap scale') == 0) {
+            let  pos = command.lastIndexOf(' ');
+            let  scale = command.substr(pos + 1);
+
+            $("#" + me.alignerrormapid + "_scale").val(scale);
+
+            $("#" + me.alignerrormapid).attr("width",(ic.alignerrormapWidth * parseFloat(scale)).toString() + "px");
           }
           else if(command.indexOf('graph force') == 0) {
             let  pos = command.lastIndexOf(' ');
@@ -39766,7 +39814,7 @@ var icn3d = (function (exports) {
         }
 
         toggleMembrane(bShowMembrane) {var ic = this.icn3d, me = ic.icn3dui;
-            let  structureArray = Object.keys(ic.structures);
+            let  structureArray = (ic.structures) ? Object.keys(ic.structures) : [];
 
             for(let i = 0, il = structureArray.length; i < il; ++i) {
                 let  structure = structureArray[i];
@@ -43886,28 +43934,29 @@ var icn3d = (function (exports) {
             }
         }
 
-        saveSvg(id, filename) { let ic = this.icn3d, me = ic.icn3dui;
+        saveSvg(id, filename, bContactmap) { let ic = this.icn3d, me = ic.icn3dui;
             if(me.bNode) return '';
             
             let width = $("#" + id).width();
             let height = $("#" + id).height();
 
-            let svgXml = this.getSvgXml(id, width, height);
+            if(bContactmap) height = width;
+
+            let svgXml = this.getSvgXml(id, width, height, bContactmap);
 
             let blob = new Blob([svgXml], {type: "image/svg+xml"});
             saveAs(blob, filename);
         }
 
-        getSvgXml(id, width, height) { let ic = this.icn3d, me = ic.icn3dui;
+        getSvgXml(id, width, height, bContactmap) { let ic = this.icn3d, me = ic.icn3dui;
             if(me.bNode) return '';
-
-    console.log("width: " + width + " height: " + height);
 
             // font is not good
             let svg_data = document.getElementById(id).innerHTML; //put id of your svg element here
 
             let viewbox = (width && height) ? "<svg viewBox=\"0 0 " + width + " " + height + "\"" : "<svg";
-            let head = viewbox + " title=\"graph\" version=\"1.1\" xmlns:xl=\"http://www.w3.org/1999/xlink\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:dc=\"http://purl.org/dc/elements/1.1/\">";
+            //let head = viewbox + " title=\"graph\" version=\"1.1\" xmlns:xl=\"http://www.w3.org/1999/xlink\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:dc=\"http://purl.org/dc/elements/1.1/\">";
+            let head = viewbox + " title=\"graph\" xmlns:xl=\"http://www.w3.org/1999/xlink\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:dc=\"http://purl.org/dc/elements/1.1/\">";
 
             //if you have some additional styling like graph edges put them inside <style> tag
             let style = "<style>text {font-family: sans-serif; font-weight: bold; font-size: 18px;}</style>";
@@ -43917,11 +43966,13 @@ var icn3d = (function (exports) {
             return full_svg;
         }
 
-        savePng(id, filename) { let ic = this.icn3d, me = ic.icn3dui;
+        savePng(id, filename, bContactmap) { let ic = this.icn3d, me = ic.icn3dui;
             if(me.bNode) return '';
 
             let width = $("#" + id).width();
             let height = $("#" + id).height();
+
+            if(bContactmap) height = width;
 
             // https://stackoverflow.com/questions/3975499/convert-svg-to-image-jpeg-png-etc-in-the-browser
             let svg = document.getElementById(id);
@@ -43936,7 +43987,7 @@ var icn3d = (function (exports) {
             let ctx = canvas.getContext("2d");
             ctx.clearRect(0, 0, bbox.width, bbox.height);
 
-            let data = this.getSvgXml(id, width, height); //(new XMLSerializer()).serializeToString(copy); //ic.saveFileCls.getSvgXml();
+            let data = this.getSvgXml(id, width, height, bContactmap); //(new XMLSerializer()).serializeToString(copy); //ic.saveFileCls.getSvgXml();
             let DOMURL = window.URL || window.webkitURL || window;
             let svgBlob = new Blob([data], {type: "image/svg+xml;charset=utf-8"});
 
@@ -44648,6 +44699,10 @@ var icn3d = (function (exports) {
             me.myEventCls.onIds("#" + me.pre + "mn1_xyzfile", "click", function(e) { me.icn3d;
                me.htmlCls.dialogCls.openDlg('dl_xyzfile', 'Please input XYZ File');
             });
+
+            me.myEventCls.onIds("#" + me.pre + "mn1_afmapfile", "click", function(e) { me.icn3d;
+                me.htmlCls.dialogCls.openDlg('dl_afmapfile', 'Please input AlphaFold aligned error File');
+             });
         //    },
         //    clkMn1_urlfile: function() {
             me.myEventCls.onIds("#" + me.pre + "mn1_urlfile", "click", function(e) { me.icn3d;
@@ -47021,6 +47076,7 @@ var icn3d = (function (exports) {
             html += me.htmlCls.setHtmlCls.getLink('mn1_mol2file', 'Mol2 File');
             html += me.htmlCls.setHtmlCls.getLink('mn1_sdffile', 'SDF File');
             html += me.htmlCls.setHtmlCls.getLink('mn1_xyzfile', 'XYZ File');
+            html += me.htmlCls.setHtmlCls.getLink('mn1_afmapfile', 'AlphaFold Aligned Error File');
             if(!me.cfg.simplemenu) html += me.htmlCls.setHtmlCls.getLink('mn1_urlfile', 'URL(Same Host) ' + me.htmlCls.wifiStr);
             html += "<li>-</li>";
             html += me.htmlCls.setHtmlCls.getLink('mn1_pngimage', 'iCn3D PNG Image');
@@ -48378,6 +48434,7 @@ var icn3d = (function (exports) {
             let bLineGraph = $('#' + me.pre + 'dl_linegraph').hasClass('ui-dialog-content'); // initialized
             let bScatterplot = $('#' + me.pre + 'dl_scatterplot').hasClass('ui-dialog-content'); // initialized
             let bContactmap = $('#' + me.pre + 'dl_contactmap').hasClass('ui-dialog-content'); // initialized
+            let bAlignerrormap = $('#' + me.pre + 'dl_alignerrormap').hasClass('ui-dialog-content'); // initialized
             let bTable = $('#' + me.pre + 'dl_interactionsorted').hasClass('ui-dialog-content'); // initialized
             let bAlignmentInit = $('#' + me.pre + 'dl_alignment').hasClass('ui-dialog-content'); // initialized
             let bTwoddgmInit = $('#' + me.pre + 'dl_2ddgm').hasClass('ui-dialog-content'); // initialized
@@ -48393,6 +48450,7 @@ var icn3d = (function (exports) {
             if(bLineGraph) status.bLineGraph2 = $('#' + me.pre + 'dl_linegraph').dialog( 'isOpen' );
             if(bScatterplot) status.bScatterplot2 = $('#' + me.pre + 'dl_scatterplot').dialog( 'isOpen' );
             if(bContactmap) status.bContactmap2 = $('#' + me.pre + 'dl_contactmap').dialog( 'isOpen' );
+            if(bAlignerrormap) status.bAlignerror2 = $('#' + me.pre + 'dl_alignerrormap').dialog( 'isOpen' );
             if(bTable) status.bTable2 = $('#' + me.pre + 'dl_interactionsorted').dialog( 'isOpen' );
             if(bAlignmentInit) status.bAlignmentInit2 = $('#' + me.pre + 'dl_alignment').dialog( 'isOpen' );
             if(bTwoddgmInit) status.bTwoddgmInit2 = $('#' + me.pre + 'dl_2ddgm').dialog( 'isOpen' );
@@ -48437,13 +48495,14 @@ var icn3d = (function (exports) {
               close: function(e) {
                   let status = thisClass.getDialogStatus();
 
-                  if((id === me.pre + 'dl_selectannotations' &&(!status.bAlignmentInit2) && !status.bGraph2 && !status.bTable2 && !status.bLineGraph2 && !status.bScatterplot2 && !status.bContactmap2)
-                    ||(id === me.pre + 'dl_graph' &&(!status.bSelectannotationsInit2) &&(!status.bAlignmentInit2) && !status.bTable2 && !status.bLineGraph2  && !status.bScatterplot2 && !status.bContactmap2)
-                    ||(id === me.pre + 'dl_alignment' &&(!status.bSelectannotationsInit2) && !status.bGraph2 && !status.bTable2 && !status.bLineGraph2 && !status.bScatterplot2 && !status.bContactmap2)
-                    ||(id === me.pre + 'dl_interactionsorted' &&(!status.bSelectannotationsInit2) && !status.bGraph2 && !status.bAlignmentInit2 && !status.bLineGraph2 && !status.bScatterplot2 && !status.bContactmap2)
-                    ||(id === me.pre + 'dl_linegraph' &&(!status.bSelectannotationsInit2) && !status.bGraph2 && !status.bAlignmentInit2 && !status.bTable2 && !status.bScatterplot2 && !status.bContactmap2)
-                    ||(id === me.pre + 'dl_scatterplot' &&(!status.bSelectannotationsInit2) && !status.bGraph2 && !status.bAlignmentInit2 && !status.bTable2 && !status.bLineGraph2 && !status.bContactmap2)
-                    ||(id === me.pre + 'dl_contactmap' &&(!status.bSelectannotationsInit2) && !status.bGraph2 && !status.bAlignmentInit2 && !status.bTable2 && !status.bLineGraph2 && !status.bScatterplot2)
+                  if((id === me.pre + 'dl_selectannotations' &&(!status.bAlignmentInit2) && !status.bGraph2 && !status.bTable2 && !status.bLineGraph2 && !status.bScatterplot2 && !status.bContactmap2 && !status.bAlignerrormap2)
+                    ||(id === me.pre + 'dl_graph' &&(!status.bSelectannotationsInit2) &&(!status.bAlignmentInit2) && !status.bTable2 && !status.bLineGraph2  && !status.bScatterplot2 && !status.bContactmap2 && !status.bAlignerrormap2)
+                    ||(id === me.pre + 'dl_alignment' &&(!status.bSelectannotationsInit2) && !status.bGraph2 && !status.bTable2 && !status.bLineGraph2 && !status.bScatterplot2 && !status.bContactmap2 && !status.bAlignerrormap2)
+                    ||(id === me.pre + 'dl_interactionsorted' &&(!status.bSelectannotationsInit2) && !status.bGraph2 && !status.bAlignmentInit2 && !status.bLineGraph2 && !status.bScatterplot2 && !status.bContactmap2 && !status.bAlignerrormap2)
+                    ||(id === me.pre + 'dl_linegraph' &&(!status.bSelectannotationsInit2) && !status.bGraph2 && !status.bAlignmentInit2 && !status.bTable2 && !status.bScatterplot2 && !status.bContactmap2 && !status.bAlignerrormap2)
+                    ||(id === me.pre + 'dl_scatterplot' &&(!status.bSelectannotationsInit2) && !status.bGraph2 && !status.bAlignmentInit2 && !status.bTable2 && !status.bLineGraph2 && !status.bContactmap2 && !status.bAlignerrormap2)
+                    ||(id === me.pre + 'dl_contactmap' &&(!status.bSelectannotationsInit2) && !status.bGraph2 && !status.bAlignmentInit2 && !status.bTable2 && !status.bLineGraph2 && !status.bScatterplot2 && !status.bAlignerrormap2)
+                    ||(id === me.pre + 'dl_alignerrormap' &&(!status.bSelectannotationsInit2) && !status.bGraph2 && !status.bAlignmentInit2 && !status.bTable2 && !status.bLineGraph2 && !status.bScatterplot2 && !status.bContactmap2)
                     ) {
                       if(status.bTwoddgmInit2 || status.bTwodctnInit2 || status.bSetsInit2) {
                           //ic.resizeCanvasCls.resizeCanvas(me.htmlCls.WIDTH - me.htmlCls.LESSWIDTH - twoddgmWidth, me.htmlCls.HEIGHT - me.htmlCls.LESSHEIGHT - me.htmlCls.EXTRAHEIGHT, true);
@@ -48470,7 +48529,7 @@ var icn3d = (function (exports) {
 
                       d3.select("#" + me.svgid).attr("width", width).attr("height", height);
                   }
-                  else if(id == me.pre + 'dl_linegraph' || id == me.pre + 'dl_scatterplot' || id == me.pre + 'dl_contactmap') {
+                  else if(id == me.pre + 'dl_linegraph' || id == me.pre + 'dl_scatterplot' || id == me.pre + 'dl_contactmap' || id == me.pre + 'dl_alignerrormap') {
                         //var bTwoddgmInit = $('#' + me.pre + 'dl_2ddgm').hasClass('ui-dialog-content'); // initialized
                         //var bSetsInit = $('#' + me.pre + 'dl_definedsets').hasClass('ui-dialog-content'); // initialized
 
@@ -48493,6 +48552,10 @@ var icn3d = (function (exports) {
                           let width = ic.contactmapWidth * ratio;
                           $("#" + me.contactmapid).attr("width", width);
                       }
+                      else if(id == me.pre + 'dl_alignerrormap') {
+                        let width = ic.alignerrormapWidth * ratio;
+                        $("#" + me.alignerrormapid).attr("width", width);
+                    }
                   }
               }
             });
@@ -48588,7 +48651,7 @@ var icn3d = (function (exports) {
 
             let status = this.getDialogStatus();
 
-            if(id === me.pre + 'dl_selectannotations' || id === me.pre + 'dl_graph' || id === me.pre + 'dl_linegraph' || id === me.pre + 'dl_scatterplot' || id === me.pre + 'dl_contactmap' || id === me.pre + 'dl_interactionsorted' || id === me.pre + 'dl_alignment') {
+            if(id === me.pre + 'dl_selectannotations' || id === me.pre + 'dl_graph' || id === me.pre + 'dl_linegraph' || id === me.pre + 'dl_scatterplot' || id === me.pre + 'dl_contactmap'  || id === me.pre + 'dl_alignerrormap' || id === me.pre + 'dl_interactionsorted' || id === me.pre + 'dl_alignment') {
                 //var dialogWidth = 0.5 *(me.htmlCls.WIDTH - me.htmlCls.LESSWIDTH) - twoddgmWidth * 0.5;
                 let dialogWidth = 0.5 *(me.htmlCls.WIDTH) - twoddgmWidth * 0.5;
 
@@ -48624,13 +48687,14 @@ var icn3d = (function (exports) {
                       modal: false,
                       position: position,
                       close: function(e) {
-                          if((id === me.pre + 'dl_selectannotations' &&(!status.bAlignmentInit2) &&(!status.bGraph2) &&(!status.bTable2) &&(!status.bLineGraph2) &&(!status.bScatterplot2) &&(!status.bContactmap2))
-                            ||(id === me.pre + 'dl_graph' &&(!status.bSelectannotationsInit2) &&(!status.bAlignmentInit2) &&(!status.bTable2) &&(!status.bLineGraph2) &&(!status.bScatterplot2) &&(!status.bContactmap2))
-                            ||(id === me.pre + 'dl_alignment' &&(!status.bSelectannotationsInit2) &&(!status.bGraph2) &&(!status.bTable2) &&(!status.bLineGraph2) &&(!status.bScatterplot2) &&(!status.bContactmap2))
-                            ||(id === me.pre + 'dl_interactionsorted' &&(!status.bSelectannotationsInit2) &&(!status.bGraph2) &&(!status.bAlignmentInit2) &&(!status.bLineGraph2) &&(!status.bScatterplot2) &&(!status.bContactmap2))
-                            ||(id === me.pre + 'dl_linegraph' &&(!status.bSelectannotationsInit2) &&(!status.bGraph2) &&(!status.bAlignmentInit2) &&(!status.bTable2) &&(!status.bScatterplot2) &&(!status.bContactmap2))
-                            ||(id === me.pre + 'dl_scatterplot' &&(!status.bSelectannotationsInit2) &&(!status.bGraph2) &&(!status.bAlignmentInit2) &&(!status.bTable2) &&(!status.bLineGraph2) &&(!status.bContactmap2))
-                            ||(id === me.pre + 'dl_contactmap' &&(!status.bSelectannotationsInit2) &&(!status.bGraph2) &&(!status.bAlignmentInit2) &&(!status.bTable2) &&(!status.bLineGraph2) &&(!status.bScatterplot2))
+                          if((id === me.pre + 'dl_selectannotations' &&(!status.bAlignmentInit2) &&(!status.bGraph2) &&(!status.bTable2) &&(!status.bLineGraph2) &&(!status.bScatterplot2) &&(!status.bContactmap2) &&(!status.bAlignerrormap2))
+                            ||(id === me.pre + 'dl_graph' &&(!status.bSelectannotationsInit2) &&(!status.bAlignmentInit2) &&(!status.bTable2) &&(!status.bLineGraph2) &&(!status.bScatterplot2) &&(!status.bContactmap2) &&(!status.bAlignerrormap2))
+                            ||(id === me.pre + 'dl_alignment' &&(!status.bSelectannotationsInit2) &&(!status.bGraph2) &&(!status.bTable2) &&(!status.bLineGraph2) &&(!status.bScatterplot2) &&(!status.bContactmap2) &&(!status.bAlignerrormap2))
+                            ||(id === me.pre + 'dl_interactionsorted' &&(!status.bSelectannotationsInit2) &&(!status.bGraph2) &&(!status.bAlignmentInit2) &&(!status.bLineGraph2) &&(!status.bScatterplot2) &&(!status.bContactmap2) &&(!status.bAlignerrormap2))
+                            ||(id === me.pre + 'dl_linegraph' &&(!status.bSelectannotationsInit2) &&(!status.bGraph2) &&(!status.bAlignmentInit2) &&(!status.bTable2) &&(!status.bScatterplot2) &&(!status.bContactmap2) &&(!status.bAlignerrormap2))
+                            ||(id === me.pre + 'dl_scatterplot' &&(!status.bSelectannotationsInit2) &&(!status.bGraph2) &&(!status.bAlignmentInit2) &&(!status.bTable2) &&(!status.bLineGraph2) &&(!status.bContactmap2) &&(!status.bAlignerrormap2))
+                            ||(id === me.pre + 'dl_contactmap' &&(!status.bSelectannotationsInit2) &&(!status.bGraph2) &&(!status.bAlignmentInit2) &&(!status.bTable2) &&(!status.bLineGraph2) &&(!status.bScatterplot2) &&(!status.bAlignerrormap2))
+                            ||(id === me.pre + 'dl_alignerrormap' &&(!status.bSelectannotationsInit2) &&(!status.bGraph2) &&(!status.bAlignmentInit2) &&(!status.bTable2) &&(!status.bLineGraph2) &&(!status.bScatterplot2) &&(!status.bContactmap2))
                             ) {
                               if(status.bTwoddgmInit2 || status.bTwodctnInit2 || status.bSetsInit2) {
                                   let canvasWidth = me.utilsCls.isMobile() ? me.htmlCls.WIDTH : me.htmlCls.WIDTH - twoddgmWidth;
@@ -48656,7 +48720,7 @@ var icn3d = (function (exports) {
 
                               d3.select("#" + me.svgid).attr("width", width).attr("height", height);
                           }
-                          else if(id == me.pre + 'dl_linegraph' || id == me.pre + 'dl_scatterplot' || id == me.pre + 'dl_contactmap') {
+                          else if(id == me.pre + 'dl_linegraph' || id == me.pre + 'dl_scatterplot' || id == me.pre + 'dl_contactmap' || id == me.pre + 'dl_alignerrormap') {
                                 //var bTwoddgmInit = $('#' + me.pre + 'dl_2ddgm').hasClass('ui-dialog-content'); // initialized
                                 //var bSetsInit = $('#' + me.pre + 'dl_definedsets').hasClass('ui-dialog-content'); // initialized
 
@@ -48679,6 +48743,10 @@ var icn3d = (function (exports) {
                                   let width = ic.contactmapWidth * ratio;
                                   $("#" + me.contactmapid).attr("width", width);
                               }
+                              else if(id == me.pre + 'dl_alignerrormap') {
+                                let width = ic.alignerrormapWidth * ratio;
+                                $("#" + me.alignerrormapid).attr("width", width);
+                            }
                           }
                       }
                     });
@@ -48801,7 +48869,7 @@ var icn3d = (function (exports) {
             let width = 400, height = 150;
             let twoddgmWidth = me.htmlCls.width2d + 20;
 
-            if(id === me.pre + 'dl_selectannotations' || id === me.pre + 'dl_graph' || id === me.pre + 'dl_linegraph' || id === me.pre + 'dl_scatterplot' || id === me.pre + 'dl_contactmap' || id === me.pre + 'dl_interactionsorted' || id === me.pre + 'dl_alignment') {
+            if(id === me.pre + 'dl_selectannotations' || id === me.pre + 'dl_graph' || id === me.pre + 'dl_linegraph' || id === me.pre + 'dl_scatterplot' || id === me.pre + 'dl_contactmap'  || id === me.pre + 'dl_alignerrormap' || id === me.pre + 'dl_interactionsorted' || id === me.pre + 'dl_alignment') {
                 $( "#" + id ).show();
 
                 height =(me.htmlCls.HEIGHT) * 0.5;
@@ -48839,6 +48907,11 @@ var icn3d = (function (exports) {
 
                           $("#" + me.contactmapid).attr("width", width);
                       }
+                      else if(id == me.pre + 'dl_alignerrormap') {
+                        let width = ic.alignerrormapWidth * ratio;
+
+                        $("#" + me.alignerrormapid).attr("width", width);
+                    }
                 });
             }
             else {
@@ -48972,8 +49045,11 @@ var icn3d = (function (exports) {
             html += "Note: AlphaFold produces a per-residue confidence score (pLDDT) between 0 and 100:<br>";
             html += me.htmlCls.clickMenuCls.setAlphaFoldLegend() + "<br>";
 
-            html += "<a href='https://alphafold.ebi.ac.uk/' target='_blank'>AlphaFold Uniprot</a> ID: " + me.htmlCls.inputTextStr + "id='" + me.pre + "afid' value='A0A061AD48' size=10> ";
-            html += me.htmlCls.buttonStr + "reload_af'>Load</button>";
+            let afid = (me.cfg.afid) ? me.cfg.afid : 'Q76EI6';
+
+            html += "<a href='https://alphafold.ebi.ac.uk/' target='_blank'>AlphaFold Uniprot</a> ID: " + me.htmlCls.inputTextStr + "id='" + me.pre + "afid' value='" + afid + "' size=10><br><br>";
+            html += me.htmlCls.buttonStr + "reload_af'>Load Structure</button>" 
+                + me.htmlCls.buttonStr + "reload_afmap' style='margin-left:30px'>Load Aligned Error Map (slow)</button>";
             html += "</div>";
 
             html += me.htmlCls.divStr + "dl_opmid' class='" + dialogClass + "'>";
@@ -49069,6 +49145,12 @@ var icn3d = (function (exports) {
             html += "XYZ File: " + me.htmlCls.inputFileStr + "id='" + me.pre + "xyzfile' size=8> ";
             html += me.htmlCls.buttonStr + "reload_xyzfile'>Load</button>";
             html += "</div>";
+
+            html += me.htmlCls.divStr + "dl_afmapfile' class='" + dialogClass + "'>";
+            html += "AlphaFold Aligned Error File: " + me.htmlCls.inputFileStr + "id='" + me.pre + "afmapfile' size=8> ";
+            html += me.htmlCls.buttonStr + "reload_afmapfile'>Load</button>";
+            html += "</div>";
+
             html += me.htmlCls.divStr + "dl_urlfile' class='" + dialogClass + "'>";
             html += "File type: ";
             html += "<select id='" + me.pre + "filetype'>";
@@ -49095,7 +49177,13 @@ var icn3d = (function (exports) {
             html += me.htmlCls.divStr + "dl_mmdbid' class='" + dialogClass + "' style='max-width:500px'>";
             html += "MMDB or PDB ID: " + me.htmlCls.inputTextStr + "id='" + me.pre + "mmdbid' value='1TUP' size=8> <br><br>";
             html += me.htmlCls.buttonStr + "reload_mmdb_asym'>Load Asymmetric Unit (All Chains)</button>" + me.htmlCls.buttonStr + "reload_mmdb' style='margin-left:30px'>Load Biological Unit</button><br/><br/><br>";
-            html += '<b>Note</b>: The "<b>biological unit</b>" is the <b>biochemically active form of a biomolecule</b>, which can range from a monomer (single protein molecule) to an oligomer of 100+ protein molecules.<br><br>The "<b>asymmetric unit</b>" is the raw 3D structure data resolved by X-ray crystallography, NMR, or Cryo-electron microscopy. The asymmetric unit is equivalent to the biological unit in approximately 60% of structure records. In the remaining 40% of the records, the asymmetric unit represents a portion of the biological unit that can be reconstructed using crystallographic symmetry, or it represents multiple copies of the biological unit.';
+            html += '<b>Note</b>: The "<b>biological unit</b>" is the <b>biochemically active form of a biomolecule</b>, <div style="width:20px; margin:6px 0 0 20px; display:inline-block;"><span id="'
+              + me.pre + 'asu_bu_expand" class="ui-icon ui-icon-plus icn3d-expand icn3d-link" style="width:15px;" title="Expand"></span><span id="'
+              + me.pre + 'asu_bu_shrink" class="ui-icon ui-icon-minus icn3d-shrink icn3d-link" style="display:none; width:15px;" title="Shrink"></span></div>';
+
+            html += me.htmlCls.divStr + "asu_bu' style='display:none;'>";
+            html += 'which can range from a monomer (single protein molecule) to an oligomer of 100+ protein molecules.<br><br>The "<b>asymmetric unit</b>" is the raw 3D structure data resolved by X-ray crystallography, NMR, or Cryo-electron microscopy. The asymmetric unit is equivalent to the biological unit in approximately 60% of structure records. In the remaining 40% of the records, the asymmetric unit represents a portion of the biological unit that can be reconstructed using crystallographic symmetry, or it represents multiple copies of the biological unit.</div>';
+
             html += "</div>";
 
             html += me.htmlCls.divStr + "dl_blast_rep_id' style='max-width:500px;' class='" + dialogClass + "'>";
@@ -49428,6 +49516,33 @@ var icn3d = (function (exports) {
 
             html += "</select></div><br>";
             html += '<div id="' + me.pre + 'contactmapDiv"></div>';
+
+            html += "</div>";
+
+            html += me.htmlCls.divStr + "dl_alignerrormap' style='background-color:white' class='" + dialogClass + "'>";
+
+            //html += me.htmlCls.divNowrapStr + "Hold Ctrl key to select multiple nodes." + me.htmlCls.space3 + "</div>";
+          
+            me.alignerrormapid = me.pre + 'alignerrormap';
+            html += me.htmlCls.divNowrapStr + buttonStrTmp + me.alignerrormapid + '_svg">SVG</button>' + me.htmlCls.space2;
+            html += buttonStrTmp + me.alignerrormapid + '_png">PNG (slow)</button>' + me.htmlCls.space2;
+            html += buttonStrTmp + me.alignerrormapid + '_json">JSON</button>' + me.htmlCls.space4;
+            html += "<b>Scale</b>: <select id='" + me.alignerrormapid + "_scale'>";
+
+            //let optArray5 = ['0.01', '0.02', '0.04', '0.06', '0.08', '0.1', '0.2', '0.4', '0.6', '0.8', '1'];
+            html += me.htmlCls.setHtmlCls.getOptionHtml(optArray5, 2);
+
+            html += "</select></div><br>";
+
+            //min: 004d00, max: FFFFFF
+            let startColorStr = '#004d00';
+            let endColorStr = '#FFFFFF';
+            let rangeStr = startColorStr + ' 0%, ' + endColorStr + ' 100%';
+
+            html += "<div style='width:200px'><div style='height: 12px; border: 1px solid #000; background: linear-gradient(to right, " + rangeStr + ");'></div>";
+            html += "<table width='100%' border='0' cellspacing='0' cellpadding='0'><tr><td width='15%'>0</td><td width='15%'>5</td><td width='15%'>10</td><td width='15%'>15</td><td width='15%'>20</td><td width='15%'>25</td><td>30</td></tr><tr><td colspan='7' align='center'>Expected position error (Angstroms)</td></tr></table></div><br>";
+      
+            html += '<div id="' + me.pre + 'alignerrormapDiv"></div>';
 
             html += "</div>";
 
@@ -50165,6 +50280,16 @@ var icn3d = (function (exports) {
                window.open(hostUrl + '?afid=' + $("#" + me.pre + "afid").val(), '_blank');
             });
 
+            me.myEventCls.onIds("#" + me.pre + "reload_afmap", "click", function(e) { let ic = me.icn3d;
+                e.preventDefault();
+                if(!me.cfg.notebook) dialog.dialog( "close" );
+                let afid = me.cfg.afid ? me.cfg.afid : $("#" + me.pre + "afid").val();
+
+                me.htmlCls.clickMenuCls.setLogCmd("set af align error map " + afid, true);
+                
+                ic.contactMapCls.afErrorMap(afid);
+            });
+
             me.myEventCls.onIds("#" + me.pre + "afid", "keyup", function(e) { me.icn3d;
                if (e.keyCode === 13) {
                    e.preventDefault();
@@ -50248,8 +50373,8 @@ var icn3d = (function (exports) {
                }
 
                me.htmlCls.clickMenuCls.setLogCmd("load chains " + alignment + " on asymmetric unit | residues " + resalign + " | resdef " + predefinedres, false);
-               //window.open(me.htmlCls.baseUrl + 'icn3d/full.html?chainalign=' + alignment + '&resnum=' + resalign + '&resdef=' + predefinedres + '&showalignseq=1&buidx=0', '_blank');
-               window.open(hostUrl + '?chainalign=' + alignment + '&resnum=' + resalign + '&resdef=' + predefinedres + '&showalignseq=1&buidx=0', '_blank');
+               //window.open(me.htmlCls.baseUrl + 'icn3d/full.html?chainalign=' + alignment + '&resnum=' + resalign + '&resdef=' + predefinedres + '&showalignseq=1&bu=0', '_blank');
+               window.open(hostUrl + '?chainalign=' + alignment + '&resnum=' + resalign + '&resdef=' + predefinedres + '&showalignseq=1&bu=0', '_blank');
             });
 
             me.myEventCls.onIds("#" + me.pre + "reload_mutation_3d", "click", function(e) { me.icn3d;
@@ -50326,14 +50451,14 @@ var icn3d = (function (exports) {
                e.preventDefault();
                //if(!me.cfg.notebook) dialog.dialog( "close" );
                me.htmlCls.clickMenuCls.setLogCmd("load mmdb1 " + $("#" + me.pre + "mmdbid").val(), false);
-               window.open(hostUrl + '?mmdbid=' + $("#" + me.pre + "mmdbid").val() + '&buidx=1', '_blank');
+               window.open(hostUrl + '?mmdbid=' + $("#" + me.pre + "mmdbid").val() + '&bu=1', '_blank');
             });
 
             me.myEventCls.onIds("#" + me.pre + "reload_mmdb_asym", "click", function(e) { me.icn3d;
                 e.preventDefault();
                 //if(!me.cfg.notebook) dialog.dialog( "close" );
                 me.htmlCls.clickMenuCls.setLogCmd("load mmdb0 " + $("#" + me.pre + "mmdbid").val(), false);
-                window.open(hostUrl + '?mmdbid=' + $("#" + me.pre + "mmdbid").val() + '&buidx=0', '_blank');
+                window.open(hostUrl + '?mmdbid=' + $("#" + me.pre + "mmdbid").val() + '&bu=0', '_blank');
              });
 
             me.myEventCls.onIds("#" + me.pre + "mmdbid", "keyup", function(e) { me.icn3d;
@@ -50341,7 +50466,7 @@ var icn3d = (function (exports) {
                    e.preventDefault();
                    //if(!me.cfg.notebook) dialog.dialog( "close" );
                    me.htmlCls.clickMenuCls.setLogCmd("load mmdb0 " + $("#" + me.pre + "mmdbid").val(), false);
-                   window.open(hostUrl + '?mmdbid=' + $("#" + me.pre + "mmdbid").val() + '&buidx=0', '_blank');
+                   window.open(hostUrl + '?mmdbid=' + $("#" + me.pre + "mmdbid").val() + '&bu=0', '_blank');
                   }
             });
 
@@ -50727,6 +50852,35 @@ var icn3d = (function (exports) {
                  reader.readAsText(file);
                }
             });
+
+            me.myEventCls.onIds("#" + me.pre + "reload_afmapfile", "click", function(e) { let ic = me.icn3d;
+                e.preventDefault();
+                ic.bInitial = true;
+                if(!me.cfg.notebook) dialog.dialog( "close" );
+                //close all dialog
+                if(!me.cfg.notebook) {
+                    $(".ui-dialog-content").dialog("close");
+                }
+                else {
+                    ic.resizeCanvasCls.closeDialogs();
+                }
+                let file = $("#" + me.pre + "afmapfile")[0].files[0];
+                if(!file) {
+                  alert("Please select a file before clicking 'Load'");
+                }
+                else {
+                  me.htmlCls.setHtmlCls.fileSupport();
+                  let reader = new FileReader();
+                  reader.onload = function(e) {
+                    let dataStr = e.target.result; // or = reader.result;
+                    me.htmlCls.clickMenuCls.setLogCmd('load AlphaFold aligned error file ' + $("#" + me.pre + "afmapfile").val(), false);
+                    
+                    me.htmlCls.dialogCls.openDlg('dl_alignerrormap', 'Show predicted aligned error map');
+                    ic.contactMapCls.processAfErrorMap(JSON.parse(dataStr));
+                  };
+                  reader.readAsText(file);
+                }
+             });
         //    },
         //    clickReload_urlfile: function() {
             me.myEventCls.onIds("#" + me.pre + "reload_urlfile", "click", function(e) { let ic = me.icn3d;
@@ -51072,12 +51226,12 @@ var icn3d = (function (exports) {
             me.myEventCls.onIds("#" + me.contactmapid + "_svg", "click", function(e) { let ic = me.icn3d;
                e.preventDefault();
                //if(!me.cfg.notebook) dialog.dialog( "close" );
-               ic.saveFileCls.saveSvg(me.contactmapid, ic.inputid + "_contactmap.svg");
+               ic.saveFileCls.saveSvg(me.contactmapid, ic.inputid + "_contactmap.svg", true);
             });
             me.myEventCls.onIds("#" + me.contactmapid + "_png", "click", function(e) { let ic = me.icn3d;
                e.preventDefault();
                //if(!me.cfg.notebook) dialog.dialog( "close" );
-               ic.saveFileCls.savePng(me.contactmapid, ic.inputid + "_contactmap.png");
+               ic.saveFileCls.savePng(me.contactmapid, ic.inputid + "_contactmap.png", true);
             });
             me.myEventCls.onIds("#" + me.contactmapid + "_json", "click", function(e) { let ic = me.icn3d;
                 e.preventDefault();
@@ -51089,11 +51243,39 @@ var icn3d = (function (exports) {
                 ic.saveFileCls.saveFile(ic.inputid + "_contactmap.json", "text", [graphStr2]);
             });
             me.myEventCls.onIds("#" + me.contactmapid + "_scale", "change", function(e) { let ic = me.icn3d;
+                e.preventDefault();
+                //if(!me.cfg.notebook) dialog.dialog( "close" );
+                let scale = $("#" + me.contactmapid + "_scale").val();
+                $("#" + me.contactmapid).attr("width",(ic.contactmapWidth * parseFloat(scale)).toString() + "px");
+                me.htmlCls.clickMenuCls.setLogCmd("contactmap scale " + scale, true);
+             });
+
+            me.myEventCls.onIds("#" + me.alignerrormapid + "_svg", "click", function(e) { let ic = me.icn3d;
+                e.preventDefault();
+                //if(!me.cfg.notebook) dialog.dialog( "close" );
+                ic.saveFileCls.saveSvg(me.alignerrormapid, ic.inputid + "_alignerrormap.svg", true);
+             });
+             me.myEventCls.onIds("#" + me.alignerrormapid + "_png", "click", function(e) { let ic = me.icn3d;
+                e.preventDefault();
+                //if(!me.cfg.notebook) dialog.dialog( "close" );
+                ic.saveFileCls.savePng(me.alignerrormapid, ic.inputid + "_alignerrormap.png", true);
+             });
+             me.myEventCls.onIds("#" + me.alignerrormapid + "_json", "click", function(e) { let ic = me.icn3d;
+                 e.preventDefault();
+                 //if(!me.cfg.notebook) dialog.dialog( "close" );
+                 let graphStr2 = ic.alignerrormapStr.substr(0, ic.alignerrormapStr.lastIndexOf('}'));
+     
+                 graphStr2 += me.htmlCls.setHtmlCls.getLinkColor();
+     
+                 ic.saveFileCls.saveFile(ic.inputid + "_alignerrormap.json", "text", [graphStr2]);
+             });
+
+            me.myEventCls.onIds("#" + me.alignerrormapid + "_scale", "change", function(e) { let ic = me.icn3d;
                e.preventDefault();
                //if(!me.cfg.notebook) dialog.dialog( "close" );
-               let scale = $("#" + me.contactmapid + "_scale").val();
-               $("#" + me.contactmapid).attr("width",(ic.contactmapWidth * parseFloat(scale)).toString() + "px");
-               me.htmlCls.clickMenuCls.setLogCmd("contactmap scale " + scale, true);
+               let scale = $("#" + me.alignerrormapid + "_scale").val();
+               $("#" + me.alignerrormapid).attr("width",(ic.alignerrormapWidth * parseFloat(scale)).toString() + "px");
+               me.htmlCls.clickMenuCls.setLogCmd("alignerrormap scale " + scale, true);
             });
 
             me.myEventCls.onIds("#" + me.svgid + "_label", "change", function(e) { me.icn3d;
@@ -53510,7 +53692,115 @@ var icn3d = (function (exports) {
            }
         }
 
-        drawContactMap(lineGraphStr) { let ic = this.icn3d, me = ic.icn3dui;
+        afErrorMap(afid) { let  ic = this.icn3d, me = ic.icn3dui;
+            let thisClass = this;
+
+            me.htmlCls.dialogCls.openDlg('dl_alignerrormap', 'Show predicted aligned error map');
+
+            let  url, dataType;
+        
+            url = "https://alphafold.ebi.ac.uk/files/AF-" + afid + "-F1-predicted_aligned_error_v2.json";
+
+            dataType = "json";
+        
+            $.ajax({
+                url: url,
+                dataType: dataType,
+                cache: true,
+                tryCount : 0,
+                retryLimit : 1,
+                success: function(data) {
+                    thisClass.processAfErrorMap(data);
+                },
+                error : function(xhr, textStatus, errorThrown ) {
+                    this.tryCount++;
+                    if(this.tryCount <= this.retryLimit) {
+                        //try again
+                        $.ajax(this);
+                        return;
+                    }
+                    alert("There are some problems in loading the predicted aligned error file...");
+                    return;
+                }
+            });      
+        }
+
+        processAfErrorMap(dataJson) { let ic = this.icn3d, me = ic.icn3dui;
+            // json format: [{"residue1": [1, ..., 1, ..., n, ..., n], "residue2": [1, 2, ..., n, ..., 1, 2, ..., n], 
+            // "distance": [n*n matrix],"max_predicted_aligned_error":31.75}]
+            let distMatrix = dataJson[0].distance;
+            let max = dataJson[0].max_predicted_aligned_error;
+            if(!distMatrix || !max) {
+                alert("The predicted aligned error file didn't have the right format...");
+                return;
+            }
+
+            // generate lineGraphStr
+            // e.g.,  {"nodes": [{"id":"A1.A","r":"1_1_1TOP_A_1","s":"ab","x":1,"y":21,"c":"FF00FF"}, ...],
+            // "links": [{"source": "A1.A", "target": "S2.A", "v": 3, "c": "FF00FF"}, ...]}
+            let nodeStr = '"nodes": [', linkStr = '"links": [';
+            let bNode = false, bLink = false;
+            let postA = '', postB = '.';
+
+            // initialize some parameters if no structure wasloaded yet
+            if(!ic.chains) ic.init_base();
+
+            let chainidArray = Object.keys(ic.chains);
+            let chainid = (chainidArray.length == 1) ? chainidArray[0] : 'stru_A';
+
+            let dim = parseInt(Math.sqrt(distMatrix.length));
+
+            //for(let chainid in ic.chains) {
+            //for(let i = 0, il = ic.chainsSeq[chainid].length; i < il; ++i) {
+            for(let i = 0; i < dim; ++i) {
+                let resi = (ic.chainsSeq[chainid]) ? ic.chainsSeq[chainid][i].resi : i + 1;
+                let resn = (ic.chainsSeq[chainid]) ? ic.chainsSeq[chainid][i].name : '*';
+                let resid = chainid + '_' + resi;
+                let atom = (ic.residues[resid]) ? ic.firstAtomObjCls.getFirstAtomObj(ic.residues[resid]) 
+                    : {color: me.parasCls.thr(0x888888)};
+                let chain = chainid.substr(chainid.indexOf('_') + 1);
+                let color = atom.color.getHexString();
+
+                if(bNode) nodeStr += ', ';
+                let idStr = resn + resi + '.' + chain;
+                nodeStr += '{"id":"' + idStr + postA + '","r":"1_1_' + resid + '","s":"a","c":"' + color + '"}\n';
+                nodeStr += ', {"id":"' + idStr + postB + '","r":"1_1_' + resid + '","s":"b","c":"' + color + '"}';
+                bNode = true;
+
+                //for(let j = 0, jl = ic.chainsSeq[chainid].length; j < jl; ++j) {
+                //for(let j = 0; j < dim; ++j) {
+                for(let j = i; j < dim; ++j) { // half map
+                    let resi2 = (ic.chainsSeq[chainid]) ? ic.chainsSeq[chainid][j].resi : j + 1;
+                    let resn2 = (ic.chainsSeq[chainid]) ? ic.chainsSeq[chainid][j].name : '*';
+                    let idStr2 = resn2 + resi2 + '.' + chain;
+                    let index = i * dim + j;
+                    // max dark green color 004d00, 0x4d = 77, 77/255 = 0.302
+                    // 0: 004d00, max: FFFFFF
+                    let ratio = (distMatrix[index]) ? distMatrix[index] / max : 0;
+                    let r = parseInt(ratio*255).toString(16);
+                    let g = parseInt(((1.0 - 0.302)*ratio + 0.302) * 255).toString(16);
+                    let rHex = (r.length == 1) ? '0' + r : r;
+                    let gHex = (g.length == 1) ? '0' + g : g;
+                    let bHex = rHex;
+                    let color2 = rHex + gHex + bHex;
+
+                    if(bLink) linkStr += ', ';
+                    linkStr += '{"source": "' + idStr + postA + '", "target": "' + idStr2 + postB + '", "v": 11, "c": "' + color2 + '"}\n';
+                    bLink = true;
+                }
+            }
+            //}
+
+            dataJson = {};
+
+            let lineGraphStr = '{' + nodeStr + '], ' + linkStr + ']}';
+            let bAfMap = true;
+            this.drawContactMap(lineGraphStr, bAfMap, max);    
+            
+            if(ic.deferredAfmap !== undefined) ic.deferredAfmap.resolve();
+        }
+
+        drawContactMap(lineGraphStr, bAfMap, max) { let ic = this.icn3d, me = ic.icn3dui;
             let html, graph = JSON.parse(lineGraphStr);
             let linkArray = graph.links;
 
@@ -53544,7 +53834,7 @@ var icn3d = (function (exports) {
 
             let graphStr = '{\n';
 
-            let struc1 = Object.keys(ic.structures)[0];
+            let struc1 = (ic.structures.length > 0) ? ic.structures[0] : 'stru';
             let len1 = nodeArray1.length,
                 len2 = nodeArray2.length;
             let factor = 1;
@@ -53558,20 +53848,76 @@ var icn3d = (function (exports) {
             width =(len2 + 2) *(r + gap) + 2 * marginX + legendWidth;
 
             let id, graphWidth;
-            ic.contactmapWidth = 2 * width;
-            graphWidth = ic.contactmapWidth;
-            id = me.contactmapid;
+            if(bAfMap) {
+                ic.alignerrormapWidth = 2 * width;
+                graphWidth = ic.alignerrormapWidth;
+                id = me.alignerrormapid;
+            }
+            else {
+                ic.contactmapWidth = 2 * width;
+                graphWidth = ic.contactmapWidth;
+                id = me.contactmapid;
+            }
+
             html =(linkArray.length > 0) ? "" : "No interactions found for these two sets<br><br>";
-            html += "<svg id='" + id + "' viewBox='0,0," + width + "," + heightAll + "' width='" + graphWidth + "px'>";
+            html += "<svg xmlns='http://www.w3.org/2000/svg' id='" + id + "' viewBox='0,0," + width + "," + heightAll + "' width='" + graphWidth + "px'>";
             let bContactMap = true;
-            html += ic.lineGraphCls.drawScatterplot_base(nodeArray1, nodeArray2, linkArray, name2node, 0, bContactMap);
+
+            if(bAfMap) { // cleaned the code by using "use" in SVG, but didn't improve rendering
+                let  factor = 1;
+                let  r = 3 * factor;
+                let  rectSize = 2 * r;
+
+                ic.hex2id = {};
+                let threshold = 29.0 / max;
+                ic.hex2skip = {}; // do not display any error larger than 29 angstrom
+
+                html += "<defs>";
+
+                let linestrokewidth = 1;
+                let nRef = 1000;
+                for(let i = 0; i < nRef; ++i) {
+                    let ratio = 1.0 * i / nRef;
+                    let r = parseInt(ratio*255).toString(16);
+                    let g = parseInt(((1.0 - 0.302)*ratio + 0.302) * 255).toString(16);
+                    let rHex = (r.length == 1) ? '0' + r : r;
+                    let gHex = (g.length == 1) ? '0' + g : g;
+                    let bHex = rHex;
+                    let color = rHex + gHex + bHex;
+                    let strokecolor = "#" + color;
+
+                    let idRect = me.pre + "afmap_" + i;
+
+                    ic.hex2id[color] = idRect;
+                    if(ratio > threshold) {
+                        ic.hex2skip[color] = idRect;
+                    }
+                    
+                    //html += "<g id='" + id + "'>";
+                    html += "<rect id='" + idRect + "' x='0' y='0' width='" + rectSize + "' height='" + rectSize + "' fill='" 
+                        + strokecolor + "' stroke-width='" + linestrokewidth + "' stroke='" + strokecolor + "' />";
+                    //html += "</g>"
+                }
+                html += "</defs>";
+            }
+
+            html += ic.lineGraphCls.drawScatterplot_base(nodeArray1, nodeArray2, linkArray, name2node, 0, bContactMap, undefined, undefined, bAfMap);
             graphStr += ic.getGraphCls.updateGraphJson(struc1, 1, nodeArray1, nodeArray2, linkArray);
             html += "</svg>";
 
             graphStr += '}\n';
-            ic.contactmapStr = graphStr;
+            if(bAfMap) {
+                ic.alignerrormapStr = graphStr;
+                $("#" + ic.pre + "alignerrormapDiv").html(html);
+      
+                let scale = $("#" + me.alignerrormapid + "_scale").val();
+                $("#" + me.alignerrormapid).attr("width",(ic.alignerrormapWidth * parseFloat(scale)).toString() + "px");
+            }
+            else {
+                ic.contactmapStr = graphStr;
+                $("#" + ic.pre + "contactmapDiv").html(html);
+            }
 
-            $("#" + ic.pre + "contactmapDiv").html(html);
             return html;
         }
     }
@@ -56128,7 +56474,7 @@ var icn3d = (function (exports) {
         //even when multiple iCn3D viewers are shown together.
         this.pre = this.cfg.divid + "_";
 
-        this.REVISION = '3.7.2';
+        this.REVISION = '3.8.0';
 
         // In nodejs, iCn3D defines "window = {navigator: {}}"
         this.bNode = (Object.keys(window).length < 2) ? true : false;

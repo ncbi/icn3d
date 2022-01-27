@@ -143,6 +143,10 @@ class ClickMenu {
         me.myEventCls.onIds("#" + me.pre + "mn1_xyzfile", "click", function(e) { let ic = me.icn3d;
            me.htmlCls.dialogCls.openDlg('dl_xyzfile', 'Please input XYZ File');
         });
+
+        me.myEventCls.onIds("#" + me.pre + "mn1_afmapfile", "click", function(e) { let ic = me.icn3d;
+            me.htmlCls.dialogCls.openDlg('dl_afmapfile', 'Please input AlphaFold aligned error File');
+         });
     //    },
     //    clkMn1_urlfile: function() {
         me.myEventCls.onIds("#" + me.pre + "mn1_urlfile", "click", function(e) { let ic = me.icn3d;

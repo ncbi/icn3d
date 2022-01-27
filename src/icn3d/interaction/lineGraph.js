@@ -450,7 +450,7 @@ class LineGraph {
         return html;
     }
 
-    drawScatterplot_base(nodeArray1, nodeArray2, linkArray, name2node, height, bContactMap, label, textHeight) { let  ic = this.icn3d, me = ic.icn3dui;
+    drawScatterplot_base(nodeArray1, nodeArray2, linkArray, name2node, height, bContactMap, label, textHeight, bAfMap) { let  ic = this.icn3d, me = ic.icn3dui;
         let  html = '';
         let  len1 = nodeArray1.length,
             len2 = nodeArray2.length;
@@ -476,14 +476,15 @@ class LineGraph {
             node2posSet2 = {}
         let  x = legendWidth + marginX;
         for(let i = 0; i < len1; ++i) {
-            nodeHtml += ic.getGraphCls.drawResNode(nodeArray1[i], i, r, gap, margin1, x, 'a', true);
+            nodeHtml += ic.getGraphCls.drawResNode(nodeArray1[i], i, r, gap, margin1, x, 'a', true, undefined, bAfMap);
             node2posSet1[nodeArray1[i].id] = { x: x, y: margin1 - i *(r + gap) }
         }
         let  y = height + heightTotal -(legendWidth + marginY);
         for(let i = 0; i < len2; ++i) {
-            nodeHtml += ic.getGraphCls.drawResNode(nodeArray2[i], i, r, gap, margin2, y, 'b', false, bContactMap);
+            nodeHtml += ic.getGraphCls.drawResNode(nodeArray2[i], i, r, gap, margin2, y, 'b', false, bContactMap, bAfMap);
             node2posSet2[nodeArray2[i].id] = { x: margin2 + i *(r + gap), y: y }
         }
+ 
         // draw rect
         let  rectSize = (bContactMap) ? 2 * r : 1.5 * r;
         let  halfSize = 0.5 * rectSize;
@@ -494,10 +495,10 @@ class LineGraph {
 
             if(!node1 || !node2) continue;
 
-            html += this.drawOnePairNode(link, node1, node2, node2posSet1, node2posSet2, bContactMap);
+            html += this.drawOnePairNode(link, node1, node2, node2posSet1, node2posSet2, bContactMap, bAfMap);
 
-            if(bContactMap) { // draw symmetric contact map
-                html += this.drawOnePairNode(link, node2, node1, node2posSet1, node2posSet2, bContactMap);
+            if(bContactMap && !bAfMap) { // draw symmetric contact map, bAfmap just need to draw once          
+                html += this.drawOnePairNode(link, node2, node1, node2posSet1, node2posSet2, bContactMap, bAfMap);
             }
         }
         // show nodes later
@@ -505,7 +506,7 @@ class LineGraph {
         return html;
     }
 
-    drawOnePairNode(link, node1, node2, node2posSet1, node2posSet2, bContactMap) { let  ic = this.icn3d, me = ic.icn3dui;
+    drawOnePairNode(link, node1, node2, node2posSet1, node2posSet2, bContactMap, bAfMap) { let  ic = this.icn3d, me = ic.icn3dui;
         let html = '';
 
         let  factor = 1;
@@ -535,21 +536,33 @@ class LineGraph {
             strokecolor = "#" + me.htmlCls.contactColor;
         }
 
+        if(bContactMap) strokecolor = "#" + link.c;
+
         let  linestrokewidth;
         if(link.v == me.htmlCls.contactValue) {
             linestrokewidth = 1;
         } else {
             linestrokewidth = 2;
         }
-        html += "<g class='icn3d-interaction' resid1='" + resid1 + "' resid2='" + resid2 + "' >";
-        html += "<title>Interaction of residue " + node1.id + " with residue " + node2.id + "</title>";
-        if(bContactMap) {
-            html += "<rect x='" +(pos2.x - halfSize).toString() + "' y='" +(pos1.y - halfSize).toString() + "' width='" + rectSize + "' height='" + rectSize + "' fill='" + strokecolor + "' stroke-width='" + linestrokewidth + "' stroke='" + strokecolor + "' />";
+        
+        if(bAfMap && ic.hex2skip[link.c]) {
+            // to save memory, do not draw white rectangles
+        }
+        else if(bAfMap && ic.hex2id[link.c]) {
+            let id = ic.hex2id[link.c];
+            html += "<use href='#" + id + "' x='" +(pos2.x - halfSize).toString() + "' y='" +(pos1.y - halfSize).toString() + "' />";
         }
         else {
-            html += "<rect x='" +(pos2.x - halfSize).toString() + "' y='" +(pos1.y - halfSize).toString() + "' width='" + rectSize + "' height='" + rectSize + "' fill='" + strokecolor + "' fill-opacity='0.6' stroke-width='" + linestrokewidth + "' stroke='" + strokecolor + "' />";
+            html += "<g class='icn3d-interaction' resid1='" + resid1 + "' resid2='" + resid2 + "' >";
+            html += "<title>Interaction of residue " + node1.id + " with residue " + node2.id + "</title>";
+            if(bContactMap) {
+                html += "<rect x='" +(pos2.x - halfSize).toString() + "' y='" +(pos1.y - halfSize).toString() + "' width='" + rectSize + "' height='" + rectSize + "' fill='" + strokecolor + "' stroke-width='" + linestrokewidth + "' stroke='" + strokecolor + "' />";
+            }
+            else {
+                html += "<rect x='" +(pos2.x - halfSize).toString() + "' y='" +(pos1.y - halfSize).toString() + "' width='" + rectSize + "' height='" + rectSize + "' fill='" + strokecolor + "' fill-opacity='0.6' stroke-width='" + linestrokewidth + "' stroke='" + strokecolor + "' />";
+            }
+            html += "</g>";
         }
-        html += "</g>";
 
         return html;
     }

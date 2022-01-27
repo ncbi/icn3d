@@ -416,6 +416,16 @@ class Events {
            window.open(hostUrl + '?afid=' + $("#" + me.pre + "afid").val(), '_blank');
         });
 
+        me.myEventCls.onIds("#" + me.pre + "reload_afmap", "click", function(e) { let ic = me.icn3d;
+            e.preventDefault();
+            if(!me.cfg.notebook) dialog.dialog( "close" );
+            let afid = me.cfg.afid ? me.cfg.afid : $("#" + me.pre + "afid").val();
+
+            me.htmlCls.clickMenuCls.setLogCmd("set af align error map " + afid, true);
+            
+            ic.contactMapCls.afErrorMap(afid);
+        });
+
         me.myEventCls.onIds("#" + me.pre + "afid", "keyup", function(e) { let ic = me.icn3d;
            if (e.keyCode === 13) {
                e.preventDefault();
@@ -499,8 +509,8 @@ class Events {
            }
 
            me.htmlCls.clickMenuCls.setLogCmd("load chains " + alignment + " on asymmetric unit | residues " + resalign + " | resdef " + predefinedres, false);
-           //window.open(me.htmlCls.baseUrl + 'icn3d/full.html?chainalign=' + alignment + '&resnum=' + resalign + '&resdef=' + predefinedres + '&showalignseq=1&buidx=0', '_blank');
-           window.open(hostUrl + '?chainalign=' + alignment + '&resnum=' + resalign + '&resdef=' + predefinedres + '&showalignseq=1&buidx=0', '_blank');
+           //window.open(me.htmlCls.baseUrl + 'icn3d/full.html?chainalign=' + alignment + '&resnum=' + resalign + '&resdef=' + predefinedres + '&showalignseq=1&bu=0', '_blank');
+           window.open(hostUrl + '?chainalign=' + alignment + '&resnum=' + resalign + '&resdef=' + predefinedres + '&showalignseq=1&bu=0', '_blank');
         });
 
         me.myEventCls.onIds("#" + me.pre + "reload_mutation_3d", "click", function(e) { let ic = me.icn3d;
@@ -577,14 +587,14 @@ class Events {
            e.preventDefault();
            //if(!me.cfg.notebook) dialog.dialog( "close" );
            me.htmlCls.clickMenuCls.setLogCmd("load mmdb1 " + $("#" + me.pre + "mmdbid").val(), false);
-           window.open(hostUrl + '?mmdbid=' + $("#" + me.pre + "mmdbid").val() + '&buidx=1', '_blank');
+           window.open(hostUrl + '?mmdbid=' + $("#" + me.pre + "mmdbid").val() + '&bu=1', '_blank');
         });
 
         me.myEventCls.onIds("#" + me.pre + "reload_mmdb_asym", "click", function(e) { let ic = me.icn3d;
             e.preventDefault();
             //if(!me.cfg.notebook) dialog.dialog( "close" );
             me.htmlCls.clickMenuCls.setLogCmd("load mmdb0 " + $("#" + me.pre + "mmdbid").val(), false);
-            window.open(hostUrl + '?mmdbid=' + $("#" + me.pre + "mmdbid").val() + '&buidx=0', '_blank');
+            window.open(hostUrl + '?mmdbid=' + $("#" + me.pre + "mmdbid").val() + '&bu=0', '_blank');
          });
 
         me.myEventCls.onIds("#" + me.pre + "mmdbid", "keyup", function(e) { let ic = me.icn3d;
@@ -592,7 +602,7 @@ class Events {
                e.preventDefault();
                //if(!me.cfg.notebook) dialog.dialog( "close" );
                me.htmlCls.clickMenuCls.setLogCmd("load mmdb0 " + $("#" + me.pre + "mmdbid").val(), false);
-               window.open(hostUrl + '?mmdbid=' + $("#" + me.pre + "mmdbid").val() + '&buidx=0', '_blank');
+               window.open(hostUrl + '?mmdbid=' + $("#" + me.pre + "mmdbid").val() + '&bu=0', '_blank');
               }
         });
 
@@ -978,6 +988,35 @@ class Events {
              reader.readAsText(file);
            }
         });
+
+        me.myEventCls.onIds("#" + me.pre + "reload_afmapfile", "click", function(e) { let ic = me.icn3d;
+            e.preventDefault();
+            ic.bInitial = true;
+            if(!me.cfg.notebook) dialog.dialog( "close" );
+            //close all dialog
+            if(!me.cfg.notebook) {
+                $(".ui-dialog-content").dialog("close");
+            }
+            else {
+                ic.resizeCanvasCls.closeDialogs();
+            }
+            let file = $("#" + me.pre + "afmapfile")[0].files[0];
+            if(!file) {
+              alert("Please select a file before clicking 'Load'");
+            }
+            else {
+              me.htmlCls.setHtmlCls.fileSupport();
+              let reader = new FileReader();
+              reader.onload = function(e) {
+                let dataStr = e.target.result; // or = reader.result;
+                me.htmlCls.clickMenuCls.setLogCmd('load AlphaFold aligned error file ' + $("#" + me.pre + "afmapfile").val(), false);
+                
+                me.htmlCls.dialogCls.openDlg('dl_alignerrormap', 'Show predicted aligned error map');
+                ic.contactMapCls.processAfErrorMap(JSON.parse(dataStr));
+              }
+              reader.readAsText(file);
+            }
+         });
     //    },
     //    clickReload_urlfile: function() {
         me.myEventCls.onIds("#" + me.pre + "reload_urlfile", "click", function(e) { let ic = me.icn3d;
@@ -1323,12 +1362,12 @@ class Events {
         me.myEventCls.onIds("#" + me.contactmapid + "_svg", "click", function(e) { let ic = me.icn3d;
            e.preventDefault();
            //if(!me.cfg.notebook) dialog.dialog( "close" );
-           ic.saveFileCls.saveSvg(me.contactmapid, ic.inputid + "_contactmap.svg");
+           ic.saveFileCls.saveSvg(me.contactmapid, ic.inputid + "_contactmap.svg", true);
         });
         me.myEventCls.onIds("#" + me.contactmapid + "_png", "click", function(e) { let ic = me.icn3d;
            e.preventDefault();
            //if(!me.cfg.notebook) dialog.dialog( "close" );
-           ic.saveFileCls.savePng(me.contactmapid, ic.inputid + "_contactmap.png");
+           ic.saveFileCls.savePng(me.contactmapid, ic.inputid + "_contactmap.png", true);
         });
         me.myEventCls.onIds("#" + me.contactmapid + "_json", "click", function(e) { let ic = me.icn3d;
             e.preventDefault();
@@ -1340,11 +1379,39 @@ class Events {
             ic.saveFileCls.saveFile(ic.inputid + "_contactmap.json", "text", [graphStr2]);
         });
         me.myEventCls.onIds("#" + me.contactmapid + "_scale", "change", function(e) { let ic = me.icn3d;
+            e.preventDefault();
+            //if(!me.cfg.notebook) dialog.dialog( "close" );
+            let scale = $("#" + me.contactmapid + "_scale").val();
+            $("#" + me.contactmapid).attr("width",(ic.contactmapWidth * parseFloat(scale)).toString() + "px");
+            me.htmlCls.clickMenuCls.setLogCmd("contactmap scale " + scale, true);
+         });
+
+        me.myEventCls.onIds("#" + me.alignerrormapid + "_svg", "click", function(e) { let ic = me.icn3d;
+            e.preventDefault();
+            //if(!me.cfg.notebook) dialog.dialog( "close" );
+            ic.saveFileCls.saveSvg(me.alignerrormapid, ic.inputid + "_alignerrormap.svg", true);
+         });
+         me.myEventCls.onIds("#" + me.alignerrormapid + "_png", "click", function(e) { let ic = me.icn3d;
+            e.preventDefault();
+            //if(!me.cfg.notebook) dialog.dialog( "close" );
+            ic.saveFileCls.savePng(me.alignerrormapid, ic.inputid + "_alignerrormap.png", true);
+         });
+         me.myEventCls.onIds("#" + me.alignerrormapid + "_json", "click", function(e) { let ic = me.icn3d;
+             e.preventDefault();
+             //if(!me.cfg.notebook) dialog.dialog( "close" );
+             let graphStr2 = ic.alignerrormapStr.substr(0, ic.alignerrormapStr.lastIndexOf('}'));
+ 
+             graphStr2 += me.htmlCls.setHtmlCls.getLinkColor();
+ 
+             ic.saveFileCls.saveFile(ic.inputid + "_alignerrormap.json", "text", [graphStr2]);
+         });
+
+        me.myEventCls.onIds("#" + me.alignerrormapid + "_scale", "change", function(e) { let ic = me.icn3d;
            e.preventDefault();
            //if(!me.cfg.notebook) dialog.dialog( "close" );
-           let scale = $("#" + me.contactmapid + "_scale").val();
-           $("#" + me.contactmapid).attr("width",(ic.contactmapWidth * parseFloat(scale)).toString() + "px");
-           me.htmlCls.clickMenuCls.setLogCmd("contactmap scale " + scale, true);
+           let scale = $("#" + me.alignerrormapid + "_scale").val();
+           $("#" + me.alignerrormapid).attr("width",(ic.alignerrormapWidth * parseFloat(scale)).toString() + "px");
+           me.htmlCls.clickMenuCls.setLogCmd("alignerrormap scale " + scale, true);
         });
 
         me.myEventCls.onIds("#" + me.svgid + "_label", "change", function(e) { let ic = me.icn3d;
