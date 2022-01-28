@@ -145,7 +145,7 @@ class ClickMenu {
         });
 
         me.myEventCls.onIds("#" + me.pre + "mn1_afmapfile", "click", function(e) { let ic = me.icn3d;
-            me.htmlCls.dialogCls.openDlg('dl_afmapfile', 'Please input AlphaFold aligned error File');
+            me.htmlCls.dialogCls.openDlg('dl_afmapfile', 'Please input AlphaFold PAE File');
          });
     //    },
     //    clkMn1_urlfile: function() {

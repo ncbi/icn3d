@@ -1527,8 +1527,14 @@ class SetMenu {
               html += "<li id='" + me.pre + "assemblyWrapper'><span>Assembly</span>";
               html += "<ul>";
 
-              html += me.htmlCls.setHtmlCls.getRadio('mn6_assembly', 'mn6_assemblyYes', 'Biological Assembly');
-              html += me.htmlCls.setHtmlCls.getRadio('mn6_assembly', 'mn6_assemblyNo', 'Asymmetric Unit', true);
+              if(me.cfg.bu == 0) {
+                html += me.htmlCls.setHtmlCls.getRadio('mn6_assembly', 'mn6_assemblyYes', 'Biological Assembly');
+                html += me.htmlCls.setHtmlCls.getRadio('mn6_assembly', 'mn6_assemblyNo', 'Asymmetric Unit', true);
+              }
+              else {
+                html += me.htmlCls.setHtmlCls.getRadio('mn6_assembly', 'mn6_assemblyYes', 'Biological Assembly', true);
+                html += me.htmlCls.setHtmlCls.getRadio('mn6_assembly', 'mn6_assemblyNo', 'Asymmetric Unit');
+              }
 
               html += "</ul>";
               html += "</li>";

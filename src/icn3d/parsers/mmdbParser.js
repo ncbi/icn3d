@@ -248,13 +248,13 @@ class MmdbParser {
     }
 
     downloadMmdbPart2(type) { let  ic = this.icn3d, me = ic.icn3dui;
-        if(ic.bAssemblyUseAsu) { // set up symmetric matrices
+        if(ic.bAssemblyUseAsu) { 
             $("#" + ic.pre + "assemblyWrapper").show();
-            ic.bAssembly = true;
+            //ic.bAssembly = true;
         }
         else {
             $("#" + ic.pre + "assemblyWrapper").hide();
-            ic.bAssembly = false;
+            //ic.bAssembly = false;
         }
 
         if(ic.emd !== undefined) {

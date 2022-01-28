@@ -8561,7 +8561,6 @@ var icn3d = (function (exports) {
                     }
 
                     currentChain = atom.chain;
-                    atom.resi;
                     ss = atom.ss;
                     ssend = atom.ssend;
                     prevAtomid = atom.serial;
@@ -12948,7 +12947,6 @@ var icn3d = (function (exports) {
 
         //Show the highlight for the selected atoms: hAtoms.
         addHlObjects(color, bRender, atomsHash) { let ic = this.icn3d, me = ic.icn3dui;
-           if(color === undefined) color = ic.hColor;
            //if(atomsHash === undefined) atomsHash = ic.hAtoms;
            let atomsHashDisplay = (atomsHash) ? me.hashUtilsCls.intHash(atomsHash, ic.dAtoms) : me.hashUtilsCls.intHash(ic.hAtoms, ic.dAtoms);
 
@@ -14259,13 +14257,14 @@ var icn3d = (function (exports) {
                     dAtoms = me.hashUtilsCls.unionHash(dAtoms, ic.alnChains[alignChain]);
                 }
 
-                let residuesHash = {};
+                let  residuesHash = {}, chains = {};
                 for(let i in dAtoms) {
                     let  atom = ic.atoms[i];
 
                     let  chainid = atom.structure + '_' + atom.chain;
                     let  resid = chainid + '_' + atom.resi;
                     residuesHash[resid] = 1;
+                    chains[chainid] = 1;
                 }
 
                 let  commandname = 'protein_aligned';
@@ -16984,11 +16983,9 @@ var icn3d = (function (exports) {
                 let id;
                 if(bScatterplot) {
                     ic.scatterplotWidth = 2 * width;
-                    ic.scatterplotWidth;
                     id = me.scatterplotid;
                 } else {
                     ic.linegraphWidth = 2 * width;
-                    ic.linegraphWidth;
                     id = me.linegraphid;
                 }
                 html =(strucArray.length == 0) ? "No interactions found for each structure<br><br>" :
@@ -21899,6 +21896,7 @@ var icn3d = (function (exports) {
             let  serial = serialBase;
 
             let  serial2structure = {}; // for "align" only
+            let  mmdbid2pdbid = {}; // for "align" only
 
             if(alignType === undefined || alignType === 'target') {
                 ic.pmid = data.pubmedId;
@@ -21927,10 +21925,11 @@ var icn3d = (function (exports) {
                   }
 
                   let  pdbidTmp = structure.pdbId;
-                  structure.mmdbId;
+                  let  mmdbidTmp = structure.mmdbId;
 
                   for(let j = structure.serialInterval[0], jl = structure.serialInterval[1]; j <= jl; ++j) {
                       serial2structure[j] = pdbidTmp.toString();
+                      mmdbid2pdbid[mmdbidTmp] = pdbidTmp;
                   }
 
                   for(let j = 0, jl = structure.molecules.length; j < jl; ++j) {
@@ -24730,7 +24729,7 @@ var icn3d = (function (exports) {
             }
 
             let  molid2rescount = data.moleculeInfor;
-            let molid2chain = {};
+            let  molid2color = {}, chain2molid = {}, molid2chain = {};
             let  chainNameHash = {};
             for(let i in molid2rescount) {
               if(Object.keys(molid2rescount[i]).length === 0) continue;
@@ -24746,6 +24745,9 @@ var icn3d = (function (exports) {
 
               let  chainNameFinal =(chainNameHash[chainName] === 1) ? chainName : chainName + chainNameHash[chainName].toString();
               let  chain = id + '_' + chainNameFinal;
+
+              molid2color[i] = color;
+              chain2molid[chain] = i;
               molid2chain[i] = chain;
 
               ic.chainsColor[chain] =(type !== undefined) ? me.parasCls.thr(me.htmlCls.GREY8) : me.parasCls.thr(color);
@@ -24908,13 +24910,13 @@ var icn3d = (function (exports) {
         }
 
         downloadMmdbPart2(type) { let  ic = this.icn3d, me = ic.icn3dui;
-            if(ic.bAssemblyUseAsu) { // set up symmetric matrices
+            if(ic.bAssemblyUseAsu) { 
                 $("#" + ic.pre + "assemblyWrapper").show();
-                ic.bAssembly = true;
+                //ic.bAssembly = true;
             }
             else {
                 $("#" + ic.pre + "assemblyWrapper").hide();
-                ic.bAssembly = false;
+                //ic.bAssembly = false;
             }
 
             if(ic.emd !== undefined) {
@@ -29248,14 +29250,14 @@ var icn3d = (function (exports) {
 
                               let strand, itemRgb;
 
-                              if(fieldArray.length > 4) fieldArray[4];
+                              if(fieldArray.length > 4) ;
                               if(fieldArray.length > 5) strand = fieldArray[5]; // ., +, or -
-                              if(fieldArray.length > 6) fieldArray[6];
-                              if(fieldArray.length > 7) fieldArray[7];
+                              if(fieldArray.length > 6) ;
+                              if(fieldArray.length > 7) ;
                               if(fieldArray.length > 8) itemRgb = fieldArray[8];
-                              if(fieldArray.length > 9) fieldArray[9];
-                              if(fieldArray.length > 10) fieldArray[10];
-                              if(fieldArray.length > 11) fieldArray[11];
+                              if(fieldArray.length > 9) ;
+                              if(fieldArray.length > 10) ;
+                              if(fieldArray.length > 11) ;
 
                            let title = trackName;
 
@@ -34993,7 +34995,7 @@ var icn3d = (function (exports) {
             }
         }
 
-        loadMmcifSymmetry(assembly) { let ic = this.icn3d; ic.icn3dui;
+        loadMmcifSymmetry(assembly) { let  ic = this.icn3d, me = ic.icn3dui;
             // load assembly info
             //var assembly = data.assembly;
             //var pmatrix = data.pmatrix;
@@ -35006,6 +35008,11 @@ var icn3d = (function (exports) {
             }
 
             ic.asuCnt = ic.biomtMatrices.length;
+
+            // show bioassembly 
+            if(me.cfg.bu == 1 && Object.keys(ic.atoms).length * ic.asuCnt > ic.maxatomcnt) {
+                ic.bAssembly = true;
+            }
         }
 
         loadMmcifOpmDataPart2(data, pdbid) { let  ic = this.icn3d, me = ic.icn3dui;
@@ -40911,7 +40918,6 @@ var icn3d = (function (exports) {
 
         //Apply style and label options to a certain set of atoms.
         applyDisplayOptions(options, atoms, bHighlight) { let ic = this.icn3d, me = ic.icn3dui;
-            if(options === undefined) options = ic.opts;
 
             // get parameters from cookies
             if(!me.bNode && me.htmlCls.setHtmlCls.getCookie('lineRadius') != '') {
@@ -43413,7 +43419,12 @@ var icn3d = (function (exports) {
             ic.setColorCls.applyPrevColor();
 
             if(ic.biomtMatrices !== undefined && ic.biomtMatrices.length > 1) {
-                if(ic.bAssembly && Object.keys(ic.structures).length == 1) {
+                // show bioassembly in two cases
+                // 1. asymmetric unit: me.cfg.bu == 0
+                // 2. biological unit with less than ic.maxatomcnt atom: 
+                // me.cfg.bu == 1 && Object.keys(ic.atoms).length * ic.biomtMatrices.length < ic.maxatomcnt
+                if(ic.bAssembly && Object.keys(ic.structures).length == 1 && (me.cfg.bu == 0 
+                  || (me.cfg.bu == 1 && Object.keys(ic.atoms).length * ic.biomtMatrices.length > ic.maxatomcnt)) ) {
                     ic.instancingCls.drawSymmetryMates();
                 }
                 else {
@@ -44714,7 +44725,7 @@ var icn3d = (function (exports) {
             });
 
             me.myEventCls.onIds("#" + me.pre + "mn1_afmapfile", "click", function(e) { me.icn3d;
-                me.htmlCls.dialogCls.openDlg('dl_afmapfile', 'Please input AlphaFold aligned error File');
+                me.htmlCls.dialogCls.openDlg('dl_afmapfile', 'Please input AlphaFold PAE File');
              });
         //    },
         //    clkMn1_urlfile: function() {
@@ -48203,8 +48214,14 @@ var icn3d = (function (exports) {
                   html += "<li id='" + me.pre + "assemblyWrapper'><span>Assembly</span>";
                   html += "<ul>";
 
-                  html += me.htmlCls.setHtmlCls.getRadio('mn6_assembly', 'mn6_assemblyYes', 'Biological Assembly');
-                  html += me.htmlCls.setHtmlCls.getRadio('mn6_assembly', 'mn6_assemblyNo', 'Asymmetric Unit', true);
+                  if(me.cfg.bu == 0) {
+                    html += me.htmlCls.setHtmlCls.getRadio('mn6_assembly', 'mn6_assemblyYes', 'Biological Assembly');
+                    html += me.htmlCls.setHtmlCls.getRadio('mn6_assembly', 'mn6_assemblyNo', 'Asymmetric Unit', true);
+                  }
+                  else {
+                    html += me.htmlCls.setHtmlCls.getRadio('mn6_assembly', 'mn6_assemblyYes', 'Biological Assembly', true);
+                    html += me.htmlCls.setHtmlCls.getRadio('mn6_assembly', 'mn6_assemblyNo', 'Asymmetric Unit');
+                  }
 
                   html += "</ul>";
                   html += "</li>";
@@ -49162,7 +49179,7 @@ var icn3d = (function (exports) {
             html += "</div>";
 
             html += me.htmlCls.divStr + "dl_afmapfile' class='" + dialogClass + "'>";
-            html += "AlphaFold Aligned Error File: " + me.htmlCls.inputFileStr + "id='" + me.pre + "afmapfile' size=8> <br><br>";
+            html += "AlphaFold PAE File: " + me.htmlCls.inputFileStr + "id='" + me.pre + "afmapfile' size=8> <br><br>";
             html += me.htmlCls.buttonStr + "reload_afmapfile'>Load Half PAE Map</button>" 
               + me.htmlCls.buttonStr + "reload_afmapfilefull' style='margin-left:30px'>Load Full PAE Map (slow)</button>";
             html += "</div>";
@@ -50898,9 +50915,9 @@ var icn3d = (function (exports) {
                   let reader = new FileReader();
                   reader.onload = function(e) {
                     let dataStr = e.target.result; // or = reader.result;
-                    me.htmlCls.clickMenuCls.setLogCmd('load AlphaFold aligned error file ' + $("#" + me.pre + "afmapfile").val(), false);
+                    me.htmlCls.clickMenuCls.setLogCmd('load AlphaFold PAE file ' + $("#" + me.pre + "afmapfile").val(), false);
                     
-                    me.htmlCls.dialogCls.openDlg('dl_alignerrormap', 'Show predicted aligned error map');
+                    me.htmlCls.dialogCls.openDlg('dl_alignerrormap', 'Show Predicted Aligned Error (PAE) map');
                     ic.contactMapCls.processAfErrorMap(JSON.parse(dataStr));
                   };
                   reader.readAsText(file);
@@ -50927,9 +50944,9 @@ var icn3d = (function (exports) {
                   let reader = new FileReader();
                   reader.onload = function(e) {
                     let dataStr = e.target.result; // or = reader.result;
-                    me.htmlCls.clickMenuCls.setLogCmd('load AlphaFold aligned error file ' + $("#" + me.pre + "afmapfile").val(), false);
+                    me.htmlCls.clickMenuCls.setLogCmd('load AlphaFold PAE file ' + $("#" + me.pre + "afmapfile").val(), false);
                     
-                    me.htmlCls.dialogCls.openDlg('dl_alignerrormap', 'Show predicted aligned error map');
+                    me.htmlCls.dialogCls.openDlg('dl_alignerrormap', 'Show Predicted Aligned Error (PAE) map');
                     ic.contactMapCls.processAfErrorMap(JSON.parse(dataStr), true);
                   };
                   reader.readAsText(file);
@@ -53757,7 +53774,7 @@ var icn3d = (function (exports) {
         afErrorMap(afid, bFull) { let  ic = this.icn3d, me = ic.icn3dui;
             let thisClass = this;
 
-            me.htmlCls.dialogCls.openDlg('dl_alignerrormap', 'Show predicted aligned error map');
+            me.htmlCls.dialogCls.openDlg('dl_alignerrormap', 'Show Predicted Aligned Error (PAE) map');
 
             let  url, dataType;
         
@@ -53781,7 +53798,7 @@ var icn3d = (function (exports) {
                         $.ajax(this);
                         return;
                     }
-                    alert("There are some problems in loading the predicted aligned error file...");
+                    alert("There are some problems in loading the PAE file...");
                     return;
                 }
             });      
@@ -53793,7 +53810,7 @@ var icn3d = (function (exports) {
             let distMatrix = dataJson[0].distance;
             let max = dataJson[0].max_predicted_aligned_error;
             if(!distMatrix || !max) {
-                alert("The predicted aligned error file didn't have the right format...");
+                alert("The PAE file didn't have the right format...");
                 return;
             }
 
@@ -53806,7 +53823,7 @@ var icn3d = (function (exports) {
 
             // initialize some parameters if no structure wasloaded yet
             let bStruData;
-            if(!ic.chains) {
+            if(!ic.chains || Object.keys(ic.chains).length == 0) {
                 bStruData = false;
                 ic.init_base();
             }
@@ -56386,7 +56403,7 @@ var icn3d = (function (exports) {
         //this.inputid = {"idtype": undefined, "id":undefined}; // support pdbid, mmdbid
 
         this.biomtMatrices = [];
-        this.bAssembly = true;
+        this.bAssembly = false; //true;
 
         this.bDrawn = false;
         this.bSecondaryStructure = false;
@@ -56524,7 +56541,7 @@ var icn3d = (function (exports) {
         ic.lines = {};    // hash of name -> a list of solid or dashed lines. Each line contains 'position1', 'position2', 'color', and a boolean of 'dashed'
                             // line name could be custom, hbond, ssbond, distance
 
-        ic.bAssembly = true;
+        ic.bAssembly = false; //true;
     };
 
     iCn3D.prototype.resetConfig = function () { let ic = this, me = ic.icn3dui;
@@ -57162,4 +57179,4 @@ var icn3d = (function (exports) {
 
     return exports;
 
-}({}));
+})({});

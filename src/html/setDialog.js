@@ -213,7 +213,7 @@ class SetDialog {
         html += "</div>";
 
         html += me.htmlCls.divStr + "dl_afmapfile' class='" + dialogClass + "'>";
-        html += "AlphaFold Aligned Error File: " + me.htmlCls.inputFileStr + "id='" + me.pre + "afmapfile' size=8> <br><br>";
+        html += "AlphaFold PAE File: " + me.htmlCls.inputFileStr + "id='" + me.pre + "afmapfile' size=8> <br><br>";
         html += me.htmlCls.buttonStr + "reload_afmapfile'>Load Half PAE Map</button>" 
           + me.htmlCls.buttonStr + "reload_afmapfilefull' style='margin-left:30px'>Load Full PAE Map (slow)</button>";
         html += "</div>";

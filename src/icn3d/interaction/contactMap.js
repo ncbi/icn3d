@@ -48,7 +48,7 @@ class ContactMap {
     afErrorMap(afid, bFull) { let  ic = this.icn3d, me = ic.icn3dui;
         let thisClass = this;
 
-        me.htmlCls.dialogCls.openDlg('dl_alignerrormap', 'Show predicted aligned error map');
+        me.htmlCls.dialogCls.openDlg('dl_alignerrormap', 'Show Predicted Aligned Error (PAE) map');
 
         let  url, dataType;
     
@@ -72,7 +72,7 @@ class ContactMap {
                     $.ajax(this);
                     return;
                 }
-                alert("There are some problems in loading the predicted aligned error file...");
+                alert("There are some problems in loading the PAE file...");
                 return;
             }
         });      
@@ -84,7 +84,7 @@ class ContactMap {
         let distMatrix = dataJson[0].distance;
         let max = dataJson[0].max_predicted_aligned_error;
         if(!distMatrix || !max) {
-            alert("The predicted aligned error file didn't have the right format...");
+            alert("The PAE file didn't have the right format...");
             return;
         }
 
@@ -97,7 +97,7 @@ class ContactMap {
 
         // initialize some parameters if no structure wasloaded yet
         let bStruData;
-        if(!ic.chains) {
+        if(!ic.chains || Object.keys(ic.chains).length == 0) {
             bStruData = false;
             ic.init_base();
         }

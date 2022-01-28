@@ -1018,9 +1018,9 @@ class Events {
               let reader = new FileReader();
               reader.onload = function(e) {
                 let dataStr = e.target.result; // or = reader.result;
-                me.htmlCls.clickMenuCls.setLogCmd('load AlphaFold aligned error file ' + $("#" + me.pre + "afmapfile").val(), false);
+                me.htmlCls.clickMenuCls.setLogCmd('load AlphaFold PAE file ' + $("#" + me.pre + "afmapfile").val(), false);
                 
-                me.htmlCls.dialogCls.openDlg('dl_alignerrormap', 'Show predicted aligned error map');
+                me.htmlCls.dialogCls.openDlg('dl_alignerrormap', 'Show Predicted Aligned Error (PAE) map');
                 ic.contactMapCls.processAfErrorMap(JSON.parse(dataStr));
               }
               reader.readAsText(file);
@@ -1047,9 +1047,9 @@ class Events {
               let reader = new FileReader();
               reader.onload = function(e) {
                 let dataStr = e.target.result; // or = reader.result;
-                me.htmlCls.clickMenuCls.setLogCmd('load AlphaFold aligned error file ' + $("#" + me.pre + "afmapfile").val(), false);
+                me.htmlCls.clickMenuCls.setLogCmd('load AlphaFold PAE file ' + $("#" + me.pre + "afmapfile").val(), false);
                 
-                me.htmlCls.dialogCls.openDlg('dl_alignerrormap', 'Show predicted aligned error map');
+                me.htmlCls.dialogCls.openDlg('dl_alignerrormap', 'Show Predicted Aligned Error (PAE) map');
                 ic.contactMapCls.processAfErrorMap(JSON.parse(dataStr), true);
               }
               reader.readAsText(file);
