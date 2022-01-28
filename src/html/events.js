@@ -421,9 +421,18 @@ class Events {
             if(!me.cfg.notebook) dialog.dialog( "close" );
             let afid = me.cfg.afid ? me.cfg.afid : $("#" + me.pre + "afid").val();
 
-            me.htmlCls.clickMenuCls.setLogCmd("set af align error map " + afid, true);
+            me.htmlCls.clickMenuCls.setLogCmd("set half pae map " + afid, true);
             
             ic.contactMapCls.afErrorMap(afid);
+        });
+        me.myEventCls.onIds("#" + me.pre + "reload_afmapfull", "click", function(e) { let ic = me.icn3d;
+            e.preventDefault();
+            if(!me.cfg.notebook) dialog.dialog( "close" );
+            let afid = me.cfg.afid ? me.cfg.afid : $("#" + me.pre + "afid").val();
+
+            me.htmlCls.clickMenuCls.setLogCmd("set full pae map " + afid, true);
+            
+            ic.contactMapCls.afErrorMap(afid, true);
         });
 
         me.myEventCls.onIds("#" + me.pre + "afid", "keyup", function(e) { let ic = me.icn3d;
@@ -1009,10 +1018,39 @@ class Events {
               let reader = new FileReader();
               reader.onload = function(e) {
                 let dataStr = e.target.result; // or = reader.result;
-                me.htmlCls.clickMenuCls.setLogCmd('load AlphaFold aligned error file ' + $("#" + me.pre + "afmapfile").val(), false);
+                me.htmlCls.clickMenuCls.setLogCmd('load AlphaFold PAE file ' + $("#" + me.pre + "afmapfile").val(), false);
                 
-                me.htmlCls.dialogCls.openDlg('dl_alignerrormap', 'Show predicted aligned error map');
+                me.htmlCls.dialogCls.openDlg('dl_alignerrormap', 'Show Predicted Aligned Error (PAE) map');
                 ic.contactMapCls.processAfErrorMap(JSON.parse(dataStr));
+              }
+              reader.readAsText(file);
+            }
+         });
+
+         me.myEventCls.onIds("#" + me.pre + "reload_afmapfilefull", "click", function(e) { let ic = me.icn3d;
+            e.preventDefault();
+            ic.bInitial = true;
+            if(!me.cfg.notebook) dialog.dialog( "close" );
+            //close all dialog
+            if(!me.cfg.notebook) {
+                $(".ui-dialog-content").dialog("close");
+            }
+            else {
+                ic.resizeCanvasCls.closeDialogs();
+            }
+            let file = $("#" + me.pre + "afmapfile")[0].files[0];
+            if(!file) {
+              alert("Please select a file before clicking 'Load'");
+            }
+            else {
+              me.htmlCls.setHtmlCls.fileSupport();
+              let reader = new FileReader();
+              reader.onload = function(e) {
+                let dataStr = e.target.result; // or = reader.result;
+                me.htmlCls.clickMenuCls.setLogCmd('load AlphaFold PAE file ' + $("#" + me.pre + "afmapfile").val(), false);
+                
+                me.htmlCls.dialogCls.openDlg('dl_alignerrormap', 'Show Predicted Aligned Error (PAE) map');
+                ic.contactMapCls.processAfErrorMap(JSON.parse(dataStr), true);
               }
               reader.readAsText(file);
             }
@@ -1396,8 +1434,16 @@ class Events {
             //if(!me.cfg.notebook) dialog.dialog( "close" );
             ic.saveFileCls.savePng(me.alignerrormapid, ic.inputid + "_alignerrormap.png", true);
          });
+         me.myEventCls.onIds("#" + me.alignerrormapid + "_full", "click", function(e) { let ic = me.icn3d;
+            e.preventDefault();
+            //if(!me.cfg.notebook) dialog.dialog( "close" );
+            ic.contactMapCls.afErrorMap(afid, true);
+
+            
+         });
          me.myEventCls.onIds("#" + me.alignerrormapid + "_json", "click", function(e) { let ic = me.icn3d;
              e.preventDefault();
+             
              //if(!me.cfg.notebook) dialog.dialog( "close" );
              let graphStr2 = ic.alignerrormapStr.substr(0, ic.alignerrormapStr.lastIndexOf('}'));
  

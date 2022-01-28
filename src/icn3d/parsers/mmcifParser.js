@@ -403,6 +403,11 @@ class MmcifParser {
         }
 
         ic.asuCnt = ic.biomtMatrices.length;
+
+        // show bioassembly 
+        if(me.cfg.bu == 1 && Object.keys(ic.atoms).length * ic.asuCnt > ic.maxatomcnt) {
+            ic.bAssembly = true;
+        }
     }
 
     loadMmcifOpmDataPart2(data, pdbid) { let  ic = this.icn3d, me = ic.icn3dui;

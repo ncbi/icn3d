@@ -107,11 +107,13 @@ If you want to build your code easily, you'll need to install nodejs and npm.
 Next, clone this repository, and then perform the following setup steps in your working copy of icn3d. 
 
 ```
+npm config set -g production false
 npm install -g gulp
 npm install
+npm install uglify-js@3.3.9
 ```
 
-The first line installs the gulp build tool globally, making the `gulp` command available on the command line. The next two lines installs all of the dependences for this project. 
+The first line sets the npm default as dev so that all modules will be installed. The second line installs the gulp build tool globally, making the `gulp` command available on the command line. The third line install all modules. The fourth line changes the version of uglify-js to an old version, which does not compress class names. 
 
 You only have to perform the above steps once, to set up your working directory. From then on, to build, simply enter:
 

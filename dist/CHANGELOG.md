@@ -1,5 +1,5 @@
 ## Change Log
-[icn3d-3.8.0](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.8.0.zip) was release on January 27, 2022. Enabled to show the map of AlphaFold predicted aligned error on the fly in the menu "File > Retrieve by ID > AlphaFold UniProt ID", and load custom aligned error files in the menu "File > Open File > AlphaFold Aligned Error File". Switched the parameter "buidx" to "bu" for asymmetric units and biological units.
+[icn3d-3.8.0](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.8.0.zip) was release on January 27, 2022. Enabled to show the map of AlphaFold Predicted Aligned Error (PAE) on the fly in the menu "File > Retrieve by ID > AlphaFold UniProt ID", and load custom PAE files in the menu "File > Open File > AlphaFold PAE File". Switched the parameter "buidx" to "bu" for asymmetric units and biological units.
 
 [icn3d-3.7.2](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.7.2.zip) was release on January 21, 2022. Now users can see all interactions, common interactions, and different interactions when several structures are aligned and their interactions are shown, e.g., https://structure.ncbi.nlm.nih.gov/icn3d/share.html?9FD78C7YsE9zKyi18.
 

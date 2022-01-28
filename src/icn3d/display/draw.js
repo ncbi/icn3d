@@ -32,7 +32,12 @@ class Draw {
         ic.setColorCls.applyPrevColor();
 
         if(ic.biomtMatrices !== undefined && ic.biomtMatrices.length > 1) {
-            if(ic.bAssembly && Object.keys(ic.structures).length == 1) {
+            // show bioassembly in two cases
+            // 1. asymmetric unit: me.cfg.bu == 0
+            // 2. biological unit with less than ic.maxatomcnt atom: 
+            // me.cfg.bu == 1 && Object.keys(ic.atoms).length * ic.biomtMatrices.length < ic.maxatomcnt
+            if(ic.bAssembly && Object.keys(ic.structures).length == 1 && (me.cfg.bu == 0 
+              || (me.cfg.bu == 1 && Object.keys(ic.atoms).length * ic.biomtMatrices.length > ic.maxatomcnt)) ) {
                 ic.instancingCls.drawSymmetryMates();
             }
             else {

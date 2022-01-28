@@ -114,7 +114,8 @@ class SetDialog {
 
         html += "<a href='https://alphafold.ebi.ac.uk/' target='_blank'>AlphaFold Uniprot</a> ID: " + me.htmlCls.inputTextStr + "id='" + me.pre + "afid' value='" + afid + "' size=10><br><br>";
         html += me.htmlCls.buttonStr + "reload_af'>Load Structure</button>" 
-            + me.htmlCls.buttonStr + "reload_afmap' style='margin-left:30px'>Load Aligned Error Map (slow)</button>";
+            + me.htmlCls.buttonStr + "reload_afmap' style='margin-left:30px'>Load Half PAE Map</button>"
+            + me.htmlCls.buttonStr + "reload_afmapfull' style='margin-left:30px'>Load Full PAE Map (slow)</button>";
         html += "</div>";
 
         html += me.htmlCls.divStr + "dl_opmid' class='" + dialogClass + "'>";
@@ -212,8 +213,9 @@ class SetDialog {
         html += "</div>";
 
         html += me.htmlCls.divStr + "dl_afmapfile' class='" + dialogClass + "'>";
-        html += "AlphaFold Aligned Error File: " + me.htmlCls.inputFileStr + "id='" + me.pre + "afmapfile' size=8> ";
-        html += me.htmlCls.buttonStr + "reload_afmapfile'>Load</button>";
+        html += "AlphaFold PAE File: " + me.htmlCls.inputFileStr + "id='" + me.pre + "afmapfile' size=8> <br><br>";
+        html += me.htmlCls.buttonStr + "reload_afmapfile'>Load Half PAE Map</button>" 
+          + me.htmlCls.buttonStr + "reload_afmapfilefull' style='margin-left:30px'>Load Full PAE Map (slow)</button>";
         html += "</div>";
 
         html += me.htmlCls.divStr + "dl_urlfile' class='" + dialogClass + "'>";
@@ -592,7 +594,7 @@ class SetDialog {
         html += me.htmlCls.divNowrapStr + buttonStrTmp + me.alignerrormapid + '_svg">SVG</button>' + me.htmlCls.space2;
         html += buttonStrTmp + me.alignerrormapid + '_png">PNG (slow)</button>' + me.htmlCls.space2;
         html += buttonStrTmp + me.alignerrormapid + '_json">JSON</button>' + me.htmlCls.space4;
-        html += "<b>Scale</b>: <select id='" + me.alignerrormapid + "_scale'>";
+        html += '<b>Scale</b>: <select id="' + me.alignerrormapid + '_scale">';
 
         //let optArray5 = ['0.01', '0.02', '0.04', '0.06', '0.08', '0.1', '0.2', '0.4', '0.6', '0.8', '1'];
         html += me.htmlCls.setHtmlCls.getOptionHtml(optArray5, 2);

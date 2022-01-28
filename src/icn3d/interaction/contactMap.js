@@ -45,10 +45,10 @@ class ContactMap {
        }
     }
 
-    afErrorMap(afid) { let  ic = this.icn3d, me = ic.icn3dui;
+    afErrorMap(afid, bFull) { let  ic = this.icn3d, me = ic.icn3dui;
         let thisClass = this;
 
-        me.htmlCls.dialogCls.openDlg('dl_alignerrormap', 'Show predicted aligned error map');
+        me.htmlCls.dialogCls.openDlg('dl_alignerrormap', 'Show Predicted Aligned Error (PAE) map');
 
         let  url, dataType;
     
@@ -63,7 +63,7 @@ class ContactMap {
             tryCount : 0,
             retryLimit : 1,
             success: function(data) {
-                thisClass.processAfErrorMap(data);
+                thisClass.processAfErrorMap(data, bFull);
             },
             error : function(xhr, textStatus, errorThrown ) {
                 this.tryCount++;
@@ -72,19 +72,19 @@ class ContactMap {
                     $.ajax(this);
                     return;
                 }
-                alert("There are some problems in loading the predicted aligned error file...");
+                alert("There are some problems in loading the PAE file...");
                 return;
             }
         });      
     }
 
-    processAfErrorMap(dataJson) { let ic = this.icn3d, me = ic.icn3dui;
+    processAfErrorMap(dataJson, bFull) { let ic = this.icn3d, me = ic.icn3dui;
         // json format: [{"residue1": [1, ..., 1, ..., n, ..., n], "residue2": [1, 2, ..., n, ..., 1, 2, ..., n], 
         // "distance": [n*n matrix],"max_predicted_aligned_error":31.75}]
         let distMatrix = dataJson[0].distance;
         let max = dataJson[0].max_predicted_aligned_error;
         if(!distMatrix || !max) {
-            alert("The predicted aligned error file didn't have the right format...");
+            alert("The PAE file didn't have the right format...");
             return;
         }
 
@@ -96,18 +96,39 @@ class ContactMap {
         let postA = '', postB = '.';
 
         // initialize some parameters if no structure wasloaded yet
-        if(!ic.chains) ic.init_base();
+        let bStruData;
+        if(!ic.chains || Object.keys(ic.chains).length == 0) {
+            bStruData = false;
+            ic.init_base();
+        }
+        else {
+            bStruData = true;
+        }
 
-        let chainidArray = Object.keys(ic.chains);
-        let chainid = (chainidArray.length == 1) ? chainidArray[0] : 'stru_A';
+        //let chainidArray = Object.keys(ic.chains);
+        //let chainid = (chainidArray.length == 1) ? chainidArray[0] : 'stru_A';
 
         let dim = parseInt(Math.sqrt(distMatrix.length));
 
+        // map index with residue number when the structure has multiple chains
+        let index = 0;
+        let index2resObj = {};
+        for(let chainid in ic.chains) {
+            for(let j = 0, jl = ic.chainsSeq[chainid].length; j < jl; ++j) {
+                index2resObj[index] = ic.chainsSeq[chainid][j];
+                index2resObj[index].chainid = chainid;
+                ++index;
+            }
+        }
+
         //for(let chainid in ic.chains) {
         //for(let i = 0, il = ic.chainsSeq[chainid].length; i < il; ++i) {
+        index = 0;
         for(let i = 0; i < dim; ++i) {
-            let resi = (ic.chainsSeq[chainid]) ? ic.chainsSeq[chainid][i].resi : i + 1;
-            let resn = (ic.chainsSeq[chainid]) ? ic.chainsSeq[chainid][i].name : '*';
+            let resi = (bStruData) ? index2resObj[i].resi : i + 1;
+            let resn = (bStruData) ? index2resObj[i].name : '*';
+            let chainid = (bStruData) ? index2resObj[i].chainid : 'stru_A';
+
             let resid = chainid + '_' + resi;
             let atom = (ic.residues[resid]) ? ic.firstAtomObjCls.getFirstAtomObj(ic.residues[resid]) 
                 : {color: me.parasCls.thr(0x888888)};
@@ -120,13 +141,19 @@ class ContactMap {
             nodeStr += ', {"id":"' + idStr + postB + '","r":"1_1_' + resid + '","s":"b","c":"' + color + '"}';
             bNode = true;
 
+            let start = (bFull) ? 0 : i; // full map, or half map
+
             //for(let j = 0, jl = ic.chainsSeq[chainid].length; j < jl; ++j) {
             //for(let j = 0; j < dim; ++j) {
-            for(let j = i; j < dim; ++j) { // half map
-                let resi2 = (ic.chainsSeq[chainid]) ? ic.chainsSeq[chainid][j].resi : j + 1;
-                let resn2 = (ic.chainsSeq[chainid]) ? ic.chainsSeq[chainid][j].name : '*';
-                let idStr2 = resn2 + resi2 + '.' + chain;
-                let index = i * dim + j;
+            for(let j = start; j < dim; ++j) { 
+                index = i * dim + j;
+                let resi2 = (bStruData) ? index2resObj[j].resi : j + 1;
+                let resn2 = (bStruData) ? index2resObj[j].name : '*';
+                let chainid2 = (bStruData) ? index2resObj[j].chainid : 'stru_A';
+                let chain2 = chainid2.substr(chainid2.indexOf('_') + 1);
+
+                let idStr2 = resn2 + resi2 + '.' + chain2;
+                
                 // max dark green color 004d00, 0x4d = 77, 77/255 = 0.302
                 // 0: 004d00, max: FFFFFF
                 let ratio = (distMatrix[index]) ? distMatrix[index] / max : 0;
