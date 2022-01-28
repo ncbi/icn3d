@@ -1,0 +1,47 @@
+<!DOCTYPE html><html lang="en"><head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+<meta name="description" content="iCn3D Structure Viewer">
+<meta name="keywords" content="NCBI, Structure, JavaScript, iCn3D, 3D, Viewer, WebGL, three.js, sequence, chemical">
+<meta name="robots" content="index,follow,noarchive">
+<meta name="ncbi_app" content="structure">
+<meta name="ncbi_pdid" content="icn3d">
+<meta name="ncbi_page" content="share">
+<meta name="ncbi_pinger_xml_http_request_override" content="false"/>
+<title>iCn3D: Web-based 3D Structure Viewer</title>
+<script type="text/javascript">
+    window.ncbi_startTime = new Date();
+</script>
+</head>
+<body>
+  <script type="text/javascript">
+    (function() {
+       var pos = document.URL.indexOf('?');
+       var shareLink;
+       if(pos == -1 || pos == document.URL.length - 1) {
+           shareLink = 'https://www.ncbi.nlm.nih.gov/Structure/icn3d/full.html';
+       }
+       else {
+           var shortUrl = document.URL.substr(pos + 1);
+
+           // replace share link URLs
+           //if(shortUrl == 'abcd') shortUrl = 'efgh';
+
+           var pos2 = shortUrl.indexOf('&t=');
+           if(pos2 != -1) {
+               shortUrl = shortUrl.substr(0, pos2);
+           }
+
+           shareLink = 'https://icn3d.page.link/' + shortUrl;
+       }
+
+       window.open(shareLink, '_self');
+    })();
+  </script>
+
+  <!-- log & Google Analytics -->
+  <script type="text/javascript" src="https://www.ncbi.nlm.nih.gov/core/pinger/pinger.js"></script>
+
+</body></html>
+
