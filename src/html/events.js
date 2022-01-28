@@ -468,23 +468,23 @@ class Events {
     //    },
     //    clickReload_align_refined: function() {
         me.myEventCls.onIds("#" + me.pre + "reload_align_refined", "click", function(e) { let ic = me.icn3d;
-           e.preventDefault();
-           if(!me.cfg.notebook) dialog.dialog( "close" );
-           let alignment = $("#" + me.pre + "alignid1").val() + "," + $("#" + me.pre + "alignid2").val();
-           me.htmlCls.clickMenuCls.setLogCmd("load alignment " + alignment + ' | parameters &atype=1', false);
-           //window.open(me.htmlCls.baseUrl + 'icn3d/full.html?align=' + alignment + '&showalignseq=1&atype=1', '_blank');
-           window.open(hostUrl + '?align=' + alignment + '&showalignseq=1&atype=1', '_blank');
-        });
+            e.preventDefault();
+            if(!me.cfg.notebook) dialog.dialog( "close" );
+            let alignment = $("#" + me.pre + "alignid1").val() + "," + $("#" + me.pre + "alignid2").val();
+            me.htmlCls.clickMenuCls.setLogCmd("load alignment " + alignment + ' | parameters &atype=1&bu=1', false);
+            //window.open(me.htmlCls.baseUrl + 'icn3d/full.html?align=' + alignment + '&showalignseq=1&atype=1', '_blank');
+            window.open(hostUrl + '?align=' + alignment + '&showalignseq=1&atype=1&bu=1', '_blank');
+         });
     //    },
     //    clickReload_align_ori: function() {
         me.myEventCls.onIds("#" + me.pre + "reload_align_ori", "click", function(e) { let ic = me.icn3d;
-           e.preventDefault();
-           if(!me.cfg.notebook) dialog.dialog( "close" );
-           let alignment = $("#" + me.pre + "alignid1").val() + "," + $("#" + me.pre + "alignid2").val();
-           me.htmlCls.clickMenuCls.setLogCmd("load alignment " + alignment + ' | parameters &atype=0', false);
-           //window.open( me.htmlCls.baseUrl + 'icn3d/full.html?align=' + alignment + '&showalignseq=1&atype=0', '_blank');
-           window.open(hostUrl + '?align=' + alignment + '&showalignseq=1&atype=0', '_blank');
-        });
+            e.preventDefault();
+            if(!me.cfg.notebook) dialog.dialog( "close" );
+            let alignment = $("#" + me.pre + "alignid1").val() + "," + $("#" + me.pre + "alignid2").val();
+            me.htmlCls.clickMenuCls.setLogCmd("load alignment " + alignment + ' | parameters &atype=0&bu=1', false);
+            //window.open( me.htmlCls.baseUrl + 'icn3d/full.html?align=' + alignment + '&showalignseq=1&atype=0', '_blank');
+            window.open(hostUrl + '?align=' + alignment + '&showalignseq=1&atype=0&bu=1', '_blank');
+         });
     //    },
     //    clickReload_chainalign: function() {
         me.myEventCls.onIds("#" + me.pre + "reload_chainalign", "click", function(e) { let ic = me.icn3d;
