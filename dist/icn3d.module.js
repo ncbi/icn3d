@@ -50362,23 +50362,23 @@ class Events {
     //    },
     //    clickReload_align_refined: function() {
         me.myEventCls.onIds("#" + me.pre + "reload_align_refined", "click", function(e) { me.icn3d;
-           e.preventDefault();
-           if(!me.cfg.notebook) dialog.dialog( "close" );
-           let alignment = $("#" + me.pre + "alignid1").val() + "," + $("#" + me.pre + "alignid2").val();
-           me.htmlCls.clickMenuCls.setLogCmd("load alignment " + alignment + ' | parameters &atype=1', false);
-           //window.open(me.htmlCls.baseUrl + 'icn3d/full.html?align=' + alignment + '&showalignseq=1&atype=1', '_blank');
-           window.open(hostUrl + '?align=' + alignment + '&showalignseq=1&atype=1', '_blank');
-        });
+            e.preventDefault();
+            if(!me.cfg.notebook) dialog.dialog( "close" );
+            let alignment = $("#" + me.pre + "alignid1").val() + "," + $("#" + me.pre + "alignid2").val();
+            me.htmlCls.clickMenuCls.setLogCmd("load alignment " + alignment + ' | parameters &atype=1&bu=1', false);
+            //window.open(me.htmlCls.baseUrl + 'icn3d/full.html?align=' + alignment + '&showalignseq=1&atype=1', '_blank');
+            window.open(hostUrl + '?align=' + alignment + '&showalignseq=1&atype=1&bu=1', '_blank');
+         });
     //    },
     //    clickReload_align_ori: function() {
         me.myEventCls.onIds("#" + me.pre + "reload_align_ori", "click", function(e) { me.icn3d;
-           e.preventDefault();
-           if(!me.cfg.notebook) dialog.dialog( "close" );
-           let alignment = $("#" + me.pre + "alignid1").val() + "," + $("#" + me.pre + "alignid2").val();
-           me.htmlCls.clickMenuCls.setLogCmd("load alignment " + alignment + ' | parameters &atype=0', false);
-           //window.open( me.htmlCls.baseUrl + 'icn3d/full.html?align=' + alignment + '&showalignseq=1&atype=0', '_blank');
-           window.open(hostUrl + '?align=' + alignment + '&showalignseq=1&atype=0', '_blank');
-        });
+            e.preventDefault();
+            if(!me.cfg.notebook) dialog.dialog( "close" );
+            let alignment = $("#" + me.pre + "alignid1").val() + "," + $("#" + me.pre + "alignid2").val();
+            me.htmlCls.clickMenuCls.setLogCmd("load alignment " + alignment + ' | parameters &atype=0&bu=1', false);
+            //window.open( me.htmlCls.baseUrl + 'icn3d/full.html?align=' + alignment + '&showalignseq=1&atype=0', '_blank');
+            window.open(hostUrl + '?align=' + alignment + '&showalignseq=1&atype=0&bu=1', '_blank');
+         });
     //    },
     //    clickReload_chainalign: function() {
         me.myEventCls.onIds("#" + me.pre + "reload_chainalign", "click", function(e) { me.icn3d;
@@ -56577,7 +56577,7 @@ class iCn3DUI {
     //even when multiple iCn3D viewers are shown together.
     this.pre = this.cfg.divid + "_";
 
-    this.REVISION = '3.8.0';
+    this.REVISION = '3.8.1';
 
     // In nodejs, iCn3D defines "window = {navigator: {}}"
     this.bNode = (Object.keys(window).length < 2) ? true : false;
