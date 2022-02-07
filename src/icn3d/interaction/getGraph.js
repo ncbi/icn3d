@@ -158,7 +158,8 @@ class GetGraph {
         let  strokewidth = '1';
         let  textcolor = '#000';
         let  fontsize = '6px'; // '6';
-        let  html = (bAfMap) ? "<g>" : "<g class='icn3d-node' resid='" + resid + "' >";
+        //let  html = (bAfMap) ? "<g>" : "<g class='icn3d-node' resid='" + resid + "' >";
+        let  html = "<g class='icn3d-node' resid='" + resid + "' >";
         html += "<title>" + node.id + "</title>";
         if(bVertical) {
             html += "<circle cx='" + y + "' cy='" + x + "' r='" + r + "' fill='" + color + "' stroke-width='" + strokewidth + "' stroke='" + strokecolor + "' resid='" + resid + "' />";
@@ -201,10 +202,10 @@ class GetGraph {
             else if(node.s == 'b') {
                 nodeArray2.push(node);
             }
-            //else if(node.s == 'ab') {
-            //    nodeArray1.push(node);
-            //    nodeArray2.push(node);
-            //}
+            else if(node.s == 'ab') {
+                nodeArray1.push(node);
+                nodeArray2.push(node);
+            }
         }
         // sort array
         nodeArray1.sort(function(a,b) {
