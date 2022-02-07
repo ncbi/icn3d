@@ -98,7 +98,7 @@ class LineGraph {
                     let resid2 = chainid2 + '_' + idArrayB[4];
 
                     let mapping1, mapping2;
-                    
+
                     if(ic.chainsMapping[chainid1] && ic.chainsMapping[chainid1][resid1]
                       && ic.chainsMapping[chainid2] && ic.chainsMapping[chainid2][resid2]) { 
                         mapping1 = (nodeA.s == "a") ? ic.chainsMapping[chainid1][resid1] : ic.chainsMapping[chainid2][resid2];
@@ -114,7 +114,7 @@ class LineGraph {
                     }
                 } 
             }
-            
+
             // set linkArraySplitCommon and nameHashSplitCommon
             // set linkArraySplitDiff and nameHashSplitDiff
             let separatorCommon = "=>", separatorDiff = "==>", postCommon = "-", postDiff = "--";
@@ -242,7 +242,7 @@ class LineGraph {
             }
             html =(strucArray.length == 0) ? "No interactions found for each structure<br><br>" :
                 "2D integration graph for " + strucArray.length + " structure(s) <b>" + strucArray + "</b>. There are three sections: \"Interactions\", \"Common interactions\", and \"Different interactions\". Each section has " + strucArray.length + " graphs.<br><br>";
-            html += "<svg id='" + id + "' viewBox='0,0," + width + "," + heightAll + "'>";
+            html += "<svg id='" + id + "' viewBox='0,0," + width + "," + heightAll + "' width='" + graphWidth + "px'>";
 
             let  result, heightFinal = 0;            
  
@@ -327,15 +327,15 @@ class LineGraph {
         // draw common interaction
         let label, postfix;
         if(bCommonDiff == 0) {
-            label = "Interactions in structure ";
+            label = "Interactions in ";
             postfix = "";
         }
         else if(bCommonDiff == 1) {
-            label = "Common interactions in structure ";
+            label = "Common interactions in ";
             postfix = "_common";
         }
         else if(bCommonDiff == 2) {
-            label = "Different interactions in structure ";
+            label = "Different interactions in ";
             postfix = "_diff";
         }
 
@@ -392,7 +392,7 @@ class LineGraph {
         // draw label
         if(label) {
             height += textHeight;
-            html += "<text x='" + margin1 + "' y='" + height + "' style='font-size:8px; font-weight:bold'>" + label + "</text>";
+            html += "<text x='" + margin + "' y='" + height + "' style='font-size:8px; font-weight:bold'>" + label + "</text>";
         }
 
         let  h1 = 30 + height,
@@ -550,7 +550,12 @@ class LineGraph {
         }
         else if(bAfMap && ic.hex2id[link.c]) {
             let id = ic.hex2id[link.c];
-            html += "<use href='#" + id + "' x='" +(pos2.x - halfSize).toString() + "' y='" +(pos1.y - halfSize).toString() + "' />";
+//            html += "<use href='#" + id + "' x='" +(pos2.x - halfSize).toString() + "' y='" +(pos1.y - halfSize).toString() + "' />";
+
+            //html += "<g class='icn3d-interaction' resid1='" + resid1 + "' resid2='" + resid2 + "' >";
+            //html += "<title>Interaction of residue " + node1.id + " with residue " + node2.id + "</title>";
+            html += "<rect class='icn3d-interaction' resid1='" + resid1 + "' resid2='" + resid2 + "' x='" +(pos2.x - halfSize).toString() + "' y='" +(pos1.y - halfSize).toString() + "' width='" + rectSize + "' height='" + rectSize + "' fill='" + strokecolor + "' stroke-width='" + linestrokewidth + "' stroke='" + strokecolor + "' />";
+            //html += "</g>";
         }
         else {
             html += "<g class='icn3d-interaction' resid1='" + resid1 + "' resid2='" + resid2 + "' >";

@@ -67,19 +67,19 @@ class Scap {
         //snp: 6M0J_E_484_K,6M0J_E_501_Y,6M0J_E_417_N
         let snpStr = '';
         let snpArray = snp.split(','); //stru_chain_resi_snp
-        let atomHash = {}, residArray = [];
+        let atomHash = {}, snpResidArray = [];
         for(let i = 0, il = snpArray.length; i < il; ++i) {
             let idArray = snpArray[i].split('_'); //stru_chain_resi_snp
 
             let resid = idArray[0] + '_' + idArray[1] + '_' + idArray[2];
             atomHash = me.hashUtilsCls.unionHash(atomHash, ic.residues[resid]);
-            residArray.push(resid);
+            snpResidArray.push(resid);
 
             snpStr += idArray[1] + '_' + idArray[2] + '_' + idArray[3];
             if(i != il -1) snpStr += ',';
         }
 
-        let selectSpec = ic.resid2specCls.residueids2spec(residArray);
+        let selectSpec = ic.resid2specCls.residueids2spec(snpResidArray);
         let select = "select " + selectSpec;
 
         let bGetPairs = false;
@@ -88,7 +88,7 @@ class Scap {
         let result = ic.showInterCls.pickCustomSphere_base(radius, atomHash, ic.atoms, false, false, undefined, select, bGetPairs);
 
 
-        residArray = Object.keys(result.residues);
+        let residArray = Object.keys(result.residues);
         ic.hAtoms = {}
         for(let index = 0, indexl = residArray.length; index < indexl; ++index) {
           let residueid = residArray[index];
@@ -135,6 +135,18 @@ class Scap {
               let bAddition = true;
               let hAtom1 = me.hashUtilsCls.cloneHash(ic.hAtoms);
 
+              // the wild type is the reference
+              for(let serial in hAtom1) {
+                  let atom = ic.atoms[serial];
+                  let chainid = atom.structure + '_' + atom.chain;
+                  let resid = chainid + '_' + atom.resi;
+
+                  if(!ic.chainsMapping.hasOwnProperty(chainid)) {
+                    ic.chainsMapping[chainid] = {};
+                  }
+                  ic.chainsMapping[chainid][resid] = me.utilsCls.residueName2Abbr(atom.resn) + atom.resi;
+              }
+
               ic.hAtoms = {}
               ic.loadPDBCls.loadPDB(pdbData, pdbid, false, false, bAddition);
               let hAtom2 = me.hashUtilsCls.cloneHash(ic.hAtoms);
@@ -147,16 +159,30 @@ class Scap {
 
               ic.opts['color'] = 'chain';
               ic.setColorCls.setColorByOptions(ic.opts, ic.dAtoms);
-
               for(let serial in hAtom2) {
                   let atom = ic.atoms[serial];
                   if(!atom.het) {
                       // use the same color as the wild type
-                      let resid = atom.structure.substr(0, 4) + '_' + atom.chain + '_' + atom.resi;
+                      let resid = atom.structure.substr(0, atom.structure.length - 1) + '_' + atom.chain + '_' + atom.resi;
 
                       let atomWT = ic.firstAtomObjCls.getFirstAtomObj(ic.residues[resid]);
                       ic.atoms[serial].color = atomWT.color;
                       ic.atomPrevColors[serial] = atomWT.color;
+                  }
+
+                  let chainid = atom.structure + '_' + atom.chain;
+                  let resid = chainid + '_' + atom.resi;
+                  let residWT = atom.structure.substr(0, atom.structure.length - 1) + '_' + atom.chain + '_' + atom.resi;
+
+                  if(!ic.chainsMapping.hasOwnProperty(chainid)) {
+                    ic.chainsMapping[chainid] = {};
+                  }
+                  ic.chainsMapping[chainid][resid] = me.utilsCls.residueName2Abbr(atom.resn) + atom.resi;
+                  // use the wild type as reference
+
+                  if(snpResidArray.indexOf(residWT) != -1) {
+                      let atomWT = ic.firstAtomObjCls.getFirstAtomObj(ic.residues[residWT]);
+                      ic.chainsMapping[chainid][resid] = me.utilsCls.residueName2Abbr(atomWT.resn) + atomWT.resi;
                   }
               }
 

@@ -797,6 +797,18 @@ class Diagram2d {
             ic.bSelectResidue = false;
 */
         });
+
+        $(document).on("click", "#" + ic.pre + "dl_alignerrormap .icn3d-interaction", function(e) { let ic = thisClass.icn3d;
+            e.stopImmediatePropagation();
+
+            thisClass.clickInteraction(this);
+        });
+
+        $(document).on("click", "#" + ic.pre + "dl_alignerrormap .icn3d-node", function(e) { let ic = thisClass.icn3d;
+            e.stopImmediatePropagation();
+
+            thisClass.clickNode(this);
+        });
     }
 
     clickNode(node) {  let ic = this.icn3d, me = ic.icn3dui;

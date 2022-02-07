@@ -7765,10 +7765,12 @@ var icn3d = (function (exports) {
                         firstAtom = atom;
                     }
 
+                    let resid = atom.structure + '_' + atom.chain + '_' + (parseInt(atom.resi) - 1).toString();
+
                     //if (index > 0 && (currentChain !== atom.chain || Math.abs(atom.coord.x - prevAtom.coord.x) > maxDist || Math.abs(atom.coord.y - prevAtom.coord.y) > maxDist || Math.abs(atom.coord.z - prevAtom.coord.z) > maxDist
                     //  || (currentResi + 1 !== atom.resi && (Math.abs(atom.coord.x - prevAtom.coord.x) > maxDist2 || Math.abs(atom.coord.y - prevAtom.coord.y) > maxDist2 || Math.abs(atom.coord.z - prevAtom.coord.z) > maxDist2) )
                     if (index > 0 && (currentChain !== atom.chain || Math.abs(atom.coord.x - prevAtom.coord.x) > maxDist || Math.abs(atom.coord.y - prevAtom.coord.y) > maxDist || Math.abs(atom.coord.z - prevAtom.coord.z) > maxDist
-                      || (parseInt(currentResi) + 1 < parseInt(atom.resi) && (Math.abs(atom.coord.x - prevAtom.coord.x) > maxDist2 || Math.abs(atom.coord.y - prevAtom.coord.y) > maxDist2 || Math.abs(atom.coord.z - prevAtom.coord.z) > maxDist2) )
+                      || (parseInt(currentResi) + 1 < parseInt(atom.resi) && (Math.abs(atom.coord.x - prevAtom.coord.x) > maxDist2 || Math.abs(atom.coord.y - prevAtom.coord.y) > maxDist2 || Math.abs(atom.coord.z - prevAtom.coord.z) > maxDist2) && ic.firstAtomObjCls.getFirstCalphaAtomObj(ic.residues[resid]) && ic.firstAtomObjCls.getFirstCalphaAtomObj(ic.residues[resid]).ss == 'helix')
                       ) ) {
                         if(bHighlight !== 2) {
                             if(!isNaN(firstAtom.resi) && !isNaN(prevAtom.resi)) {
@@ -16414,7 +16416,8 @@ var icn3d = (function (exports) {
             let  strokewidth = '1';
             let  textcolor = '#000';
             let  fontsize = '6px'; // '6';
-            let  html = (bAfMap) ? "<g>" : "<g class='icn3d-node' resid='" + resid + "' >";
+            //let  html = (bAfMap) ? "<g>" : "<g class='icn3d-node' resid='" + resid + "' >";
+            let  html = "<g class='icn3d-node' resid='" + resid + "' >";
             html += "<title>" + node.id + "</title>";
             if(bVertical) {
                 html += "<circle cx='" + y + "' cy='" + x + "' r='" + r + "' fill='" + color + "' stroke-width='" + strokewidth + "' stroke='" + strokecolor + "' resid='" + resid + "' />";
@@ -16457,10 +16460,10 @@ var icn3d = (function (exports) {
                 else if(node.s == 'b') {
                     nodeArray2.push(node);
                 }
-                //else if(node.s == 'ab') {
-                //    nodeArray1.push(node);
-                //    nodeArray2.push(node);
-                //}
+                else if(node.s == 'ab') {
+                    nodeArray1.push(node);
+                    nodeArray2.push(node);
+                }
             }
             // sort array
             nodeArray1.sort(function(a,b) {
@@ -16848,7 +16851,7 @@ var icn3d = (function (exports) {
                         let resid2 = chainid2 + '_' + idArrayB[4];
 
                         let mapping1, mapping2;
-                        
+
                         if(ic.chainsMapping[chainid1] && ic.chainsMapping[chainid1][resid1]
                           && ic.chainsMapping[chainid2] && ic.chainsMapping[chainid2][resid2]) { 
                             mapping1 = (nodeA.s == "a") ? ic.chainsMapping[chainid1][resid1] : ic.chainsMapping[chainid2][resid2];
@@ -16864,7 +16867,7 @@ var icn3d = (function (exports) {
                         }
                     } 
                 }
-                
+
                 // set linkArraySplitCommon and nameHashSplitCommon
                 // set linkArraySplitDiff and nameHashSplitDiff
                 let separatorCommon = "=>", separatorDiff = "==>", postCommon = "-", postDiff = "--";
@@ -16980,17 +16983,19 @@ var icn3d = (function (exports) {
 
                     width = (maxWidth + 2) * (r + gap) + 2 * marginX;
                 }
-                let id;
+                let  id, graphWidth;
                 if(bScatterplot) {
                     ic.scatterplotWidth = 2 * width;
+                    graphWidth = ic.scatterplotWidth;
                     id = me.scatterplotid;
                 } else {
                     ic.linegraphWidth = 2 * width;
+                    graphWidth = ic.linegraphWidth;
                     id = me.linegraphid;
                 }
                 html =(strucArray.length == 0) ? "No interactions found for each structure<br><br>" :
                     "2D integration graph for " + strucArray.length + " structure(s) <b>" + strucArray + "</b>. There are three sections: \"Interactions\", \"Common interactions\", and \"Different interactions\". Each section has " + strucArray.length + " graphs.<br><br>";
-                html += "<svg id='" + id + "' viewBox='0,0," + width + "," + heightAll + "'>";
+                html += "<svg id='" + id + "' viewBox='0,0," + width + "," + heightAll + "' width='" + graphWidth + "px'>";
 
                 let  result, heightFinal = 0;            
      
@@ -17075,15 +17080,15 @@ var icn3d = (function (exports) {
             // draw common interaction
             let label, postfix;
             if(bCommonDiff == 0) {
-                label = "Interactions in structure ";
+                label = "Interactions in ";
                 postfix = "";
             }
             else if(bCommonDiff == 1) {
-                label = "Common interactions in structure ";
+                label = "Common interactions in ";
                 postfix = "_common";
             }
             else if(bCommonDiff == 2) {
-                label = "Different interactions in structure ";
+                label = "Different interactions in ";
                 postfix = "_diff";
             }
 
@@ -17140,7 +17145,7 @@ var icn3d = (function (exports) {
             // draw label
             if(label) {
                 height += textHeight;
-                html += "<text x='" + margin1 + "' y='" + height + "' style='font-size:8px; font-weight:bold'>" + label + "</text>";
+                html += "<text x='" + margin + "' y='" + height + "' style='font-size:8px; font-weight:bold'>" + label + "</text>";
             }
 
             let  h1 = 30 + height,
@@ -17291,8 +17296,13 @@ var icn3d = (function (exports) {
             
             if(bAfMap && ic.hex2skip[link.c]) ;
             else if(bAfMap && ic.hex2id[link.c]) {
-                let id = ic.hex2id[link.c];
-                html += "<use href='#" + id + "' x='" +(pos2.x - halfSize).toString() + "' y='" +(pos1.y - halfSize).toString() + "' />";
+                ic.hex2id[link.c];
+    //            html += "<use href='#" + id + "' x='" +(pos2.x - halfSize).toString() + "' y='" +(pos1.y - halfSize).toString() + "' />";
+
+                //html += "<g class='icn3d-interaction' resid1='" + resid1 + "' resid2='" + resid2 + "' >";
+                //html += "<title>Interaction of residue " + node1.id + " with residue " + node2.id + "</title>";
+                html += "<rect class='icn3d-interaction' resid1='" + resid1 + "' resid2='" + resid2 + "' x='" +(pos2.x - halfSize).toString() + "' y='" +(pos1.y - halfSize).toString() + "' width='" + rectSize + "' height='" + rectSize + "' fill='" + strokecolor + "' stroke-width='" + linestrokewidth + "' stroke='" + strokecolor + "' />";
+                //html += "</g>";
             }
             else {
                 html += "<g class='icn3d-interaction' resid1='" + resid1 + "' resid2='" + resid2 + "' >";
@@ -20256,19 +20266,19 @@ var icn3d = (function (exports) {
             //snp: 6M0J_E_484_K,6M0J_E_501_Y,6M0J_E_417_N
             let snpStr = '';
             let snpArray = snp.split(','); //stru_chain_resi_snp
-            let atomHash = {}, residArray = [];
+            let atomHash = {}, snpResidArray = [];
             for(let i = 0, il = snpArray.length; i < il; ++i) {
                 let idArray = snpArray[i].split('_'); //stru_chain_resi_snp
 
                 let resid = idArray[0] + '_' + idArray[1] + '_' + idArray[2];
                 atomHash = me.hashUtilsCls.unionHash(atomHash, ic.residues[resid]);
-                residArray.push(resid);
+                snpResidArray.push(resid);
 
                 snpStr += idArray[1] + '_' + idArray[2] + '_' + idArray[3];
                 if(i != il -1) snpStr += ',';
             }
 
-            let selectSpec = ic.resid2specCls.residueids2spec(residArray);
+            let selectSpec = ic.resid2specCls.residueids2spec(snpResidArray);
             let select = "select " + selectSpec;
 
             let bGetPairs = false;
@@ -20277,7 +20287,7 @@ var icn3d = (function (exports) {
             let result = ic.showInterCls.pickCustomSphere_base(radius, atomHash, ic.atoms, false, false, undefined, select, bGetPairs);
 
 
-            residArray = Object.keys(result.residues);
+            let residArray = Object.keys(result.residues);
             ic.hAtoms = {};
             for(let index = 0, indexl = residArray.length; index < indexl; ++index) {
               let residueid = residArray[index];
@@ -20324,6 +20334,18 @@ var icn3d = (function (exports) {
                   let bAddition = true;
                   let hAtom1 = me.hashUtilsCls.cloneHash(ic.hAtoms);
 
+                  // the wild type is the reference
+                  for(let serial in hAtom1) {
+                      let atom = ic.atoms[serial];
+                      let chainid = atom.structure + '_' + atom.chain;
+                      let resid = chainid + '_' + atom.resi;
+
+                      if(!ic.chainsMapping.hasOwnProperty(chainid)) {
+                        ic.chainsMapping[chainid] = {};
+                      }
+                      ic.chainsMapping[chainid][resid] = me.utilsCls.residueName2Abbr(atom.resn) + atom.resi;
+                  }
+
                   ic.hAtoms = {};
                   ic.loadPDBCls.loadPDB(pdbData, pdbid, false, false, bAddition);
                   let hAtom2 = me.hashUtilsCls.cloneHash(ic.hAtoms);
@@ -20336,16 +20358,30 @@ var icn3d = (function (exports) {
 
                   ic.opts['color'] = 'chain';
                   ic.setColorCls.setColorByOptions(ic.opts, ic.dAtoms);
-
                   for(let serial in hAtom2) {
                       let atom = ic.atoms[serial];
                       if(!atom.het) {
                           // use the same color as the wild type
-                          let resid = atom.structure.substr(0, 4) + '_' + atom.chain + '_' + atom.resi;
+                          let resid = atom.structure.substr(0, atom.structure.length - 1) + '_' + atom.chain + '_' + atom.resi;
 
                           let atomWT = ic.firstAtomObjCls.getFirstAtomObj(ic.residues[resid]);
                           ic.atoms[serial].color = atomWT.color;
                           ic.atomPrevColors[serial] = atomWT.color;
+                      }
+
+                      let chainid = atom.structure + '_' + atom.chain;
+                      let resid = chainid + '_' + atom.resi;
+                      let residWT = atom.structure.substr(0, atom.structure.length - 1) + '_' + atom.chain + '_' + atom.resi;
+
+                      if(!ic.chainsMapping.hasOwnProperty(chainid)) {
+                        ic.chainsMapping[chainid] = {};
+                      }
+                      ic.chainsMapping[chainid][resid] = me.utilsCls.residueName2Abbr(atom.resn) + atom.resi;
+                      // use the wild type as reference
+
+                      if(snpResidArray.indexOf(residWT) != -1) {
+                          let atomWT = ic.firstAtomObjCls.getFirstAtomObj(ic.residues[residWT]);
+                          ic.chainsMapping[chainid][resid] = me.utilsCls.residueName2Abbr(atomWT.resn) + atomWT.resi;
                       }
                   }
 
@@ -34918,7 +34954,7 @@ var icn3d = (function (exports) {
 
                                     // not all listed residues are considered missing, e.g., PDB ID 4OR2, only the firts four residues are considered missing
                                     if(!isNaN(resi) &&(prevMissingChain == '' ||(chain != prevMissingChain) ||(chain == prevMissingChain && resi > maxMissingResi)) ) {
-                                        chainMissingResidueArray[chainNum].push(resObject);
+                                        ic.chainMissingResidueArray[chainNum].push(resObject);
 
                                         maxMissingResi = resi;
                                         prevMissingChain = chain;
@@ -38682,6 +38718,18 @@ var icn3d = (function (exports) {
 
                 ic.bSelectResidue = false;
     */
+            });
+
+            $(document).on("click", "#" + ic.pre + "dl_alignerrormap .icn3d-interaction", function(e) { thisClass.icn3d;
+                e.stopImmediatePropagation();
+
+                thisClass.clickInteraction(this);
+            });
+
+            $(document).on("click", "#" + ic.pre + "dl_alignerrormap .icn3d-node", function(e) { thisClass.icn3d;
+                e.stopImmediatePropagation();
+
+                thisClass.clickNode(this);
             });
         }
 
@@ -49160,6 +49208,12 @@ var icn3d = (function (exports) {
             html += "<div style='width:500px'>";
             html += 'Please specify the mutations with a comma separated mutation list. Each mutation can be specified as "[PDB ID]_[Chain ID]_[Residue Number]_[One Letter Mutatnt Residue]". E.g., the mutation of N501Y in the E chain of PDB 6M0J can be specified as "6M0J_E_501_Y". <br/><br/>';
             html += "<div style='display:inline-block; width:110px'>Mutations: </div>" + me.htmlCls.inputTextStr + "id='" + me.pre + "mutationids' value='6M0J_E_484_K,6M0J_E_501_Y,6M0J_E_417_N' size=50><br/><br/>";
+
+            html += "<b>Data Source</b>: <select id='" + me.pre + "idsource'>";
+            html += "<option value='mmdbid' selected>PDB ID</option>";
+            html += "<option value='afid'>AlphaFold UniProt ID</option>";
+            html += "</select><br/><br/>";
+            
             html += me.htmlCls.buttonStr + "reload_mutation_3d' title='Show the mutations in 3D using the scap program'>3D with scap</button>";
             html += me.htmlCls.buttonStr + "reload_mutation_inter' style='margin-left:20px' title='Show the mutations in 3D and the change of interactions'>Interactions</button>";
             html += me.htmlCls.buttonStr + "reload_mutation_pdb' style='margin-left:20px' title='Show the mutations in 3D and export the PDB of the mutant within 10 angstrom'>PDB</button>";
@@ -49554,7 +49608,7 @@ var icn3d = (function (exports) {
 
             html += me.htmlCls.divStr + "dl_alignerrormap' style='background-color:white' class='" + dialogClass + "'>";
 
-            //html += me.htmlCls.divNowrapStr + "Hold Ctrl key to select multiple nodes." + me.htmlCls.space3 + "</div>";
+            html += me.htmlCls.divNowrapStr + "Hold Ctrl key to select multiple nodes." + me.htmlCls.space3 + "</div>";
           
             me.alignerrormapid = me.pre + 'alignerrormap';
             html += me.htmlCls.divNowrapStr + buttonStrTmp + me.alignerrormapid + '_svg">SVG</button>' + me.htmlCls.space2;
@@ -50423,26 +50477,29 @@ var icn3d = (function (exports) {
                e.preventDefault();
                if(!me.cfg.notebook) dialog.dialog( "close" );
                let mutationids = $("#" + me.pre + "mutationids").val();
-               let mmdbid = mutationids.substr(0, mutationids.indexOf('_'));
+               let idsource = $("#" + me.pre + "idsource").val();
+               let mmdbid = mutationids.substr(0, mutationids.indexOf('_'));           
                me.htmlCls.clickMenuCls.setLogCmd("3d of mutation " + mutationids, false);
                //window.open(me.htmlCls.baseUrl + 'icn3d/full.html?mmdbid=' + mmdbid + '&command=scap 3d ' + mutationids + '; select displayed set', '_blank');
-               window.open(hostUrl + '?mmdbid=' + mmdbid + '&command=scap 3d ' + mutationids + '; select displayed set', '_blank');
+               window.open(hostUrl + '?' + idsource + '=' + mmdbid + '&command=scap 3d ' + mutationids + '; select displayed set', '_blank');
             });
 
             me.myEventCls.onIds("#" + me.pre + "reload_mutation_pdb", "click", function(e) { me.icn3d;
                e.preventDefault();
                if(!me.cfg.notebook) dialog.dialog( "close" );
                let mutationids = $("#" + me.pre + "mutationids").val();
+               let idsource = $("#" + me.pre + "idsource").val();
                let mmdbid = mutationids.substr(0, mutationids.indexOf('_'));
                me.htmlCls.clickMenuCls.setLogCmd("pdb of mutation " + mutationids, false);
                //window.open(me.htmlCls.baseUrl + 'icn3d/full.html?mmdbid=' + mmdbid + '&command=scap pdb ' + mutationids + '; select displayed set', '_blank');
-               window.open(hostUrl + '?mmdbid=' + mmdbid + '&command=scap pdb ' + mutationids + '; select displayed set', '_blank');
+               window.open(hostUrl + '?' + idsource + '=' + mmdbid + '&command=scap pdb ' + mutationids + '; select displayed set', '_blank');
             });
 
             me.myEventCls.onIds("#" + me.pre + "reload_mutation_inter", "click", function(e) { let ic = me.icn3d;
                e.preventDefault();
                if(!me.cfg.notebook) dialog.dialog( "close" );
                let mutationids = $("#" + me.pre + "mutationids").val();
+               let idsource = $("#" + me.pre + "idsource").val();
 
                let mutationArray = mutationids.split(',');
                let residArray = [];
@@ -50464,7 +50521,7 @@ var icn3d = (function (exports) {
                me.htmlCls.clickMenuCls.setLogCmd("interaction change of mutation " + mutationids, false);
                //window.open(me.htmlCls.baseUrl + 'icn3d/full.html?mmdbid=' + mmdbid + '&command=scap interaction ' + mutationids + '; select ' + selectSpec + ' | name test; line graph interaction pairs | selected non-selected | hbonds,salt bridge,interactions,halogen,pi-cation,pi-stacking | false | threshold 3.8 6 4 3.8 6 5.5; adjust dialog dl_linegraph; select displayed set', '_blank');
                //window.open(me.htmlCls.baseUrl + 'icn3d/full.html?mmdbid=' + mmdbid + '&command=scap interaction ' + mutationids, '_blank');
-               window.open(hostUrl + '?mmdbid=' + mmdbid + '&command=scap interaction ' + mutationids, '_blank');
+               window.open(hostUrl + '?' + idsource + '=' + mmdbid + '&command=scap interaction ' + mutationids, '_blank');
             });
 
         //    },
@@ -53970,17 +54027,10 @@ var icn3d = (function (exports) {
             let bContactMap = true;
 
             if(bAfMap) { // cleaned the code by using "use" in SVG, but didn't improve rendering
-                let  factor = 1;
-                let  r = 3 * factor;
-                let  rectSize = 2 * r;
 
                 ic.hex2id = {};
                 let threshold = 29.0 / max;
                 ic.hex2skip = {}; // do not display any error larger than 29 angstrom
-
-                html += "<defs>";
-
-                let linestrokewidth = 1;
                 let nRef = 1000;
                 for(let i = 0; i < nRef; ++i) {
                     let ratio = 1.0 * i / nRef;
@@ -53990,7 +54040,6 @@ var icn3d = (function (exports) {
                     let gHex = (g.length == 1) ? '0' + g : g;
                     let bHex = rHex;
                     let color = rHex + gHex + bHex;
-                    let strokecolor = "#" + color;
 
                     let idRect = me.pre + "afmap_" + i;
 
@@ -54000,11 +54049,11 @@ var icn3d = (function (exports) {
                     }
                     
                     //html += "<g id='" + id + "'>";
-                    html += "<rect id='" + idRect + "' x='0' y='0' width='" + rectSize + "' height='" + rectSize + "' fill='" 
-                        + strokecolor + "' stroke-width='" + linestrokewidth + "' stroke='" + strokecolor + "' />";
+    //                html += "<rect id='" + idRect + "' x='0' y='0' width='" + rectSize + "' height='" + rectSize + "' fill='" 
+    //                    + strokecolor + "' stroke-width='" + linestrokewidth + "' stroke='" + strokecolor + "' />";
                     //html += "</g>"
                 }
-                html += "</defs>";
+    //            html += "</defs>";
             }
 
             html += ic.lineGraphCls.drawScatterplot_base(nodeArray1, nodeArray2, linkArray, name2node, 0, bContactMap, undefined, undefined, bAfMap);
@@ -56580,7 +56629,7 @@ var icn3d = (function (exports) {
         //even when multiple iCn3D viewers are shown together.
         this.pre = this.cfg.divid + "_";
 
-        this.REVISION = '3.8.1';
+        this.REVISION = '3.8.2';
 
         // In nodejs, iCn3D defines "window = {navigator: {}}"
         this.bNode = (Object.keys(window).length < 2) ? true : false;

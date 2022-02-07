@@ -252,7 +252,7 @@ class ContactMap {
             let threshold = 29.0 / max;
             ic.hex2skip = {}; // do not display any error larger than 29 angstrom
 
-            html += "<defs>";
+//            html += "<defs>";
 
             let linestrokewidth = 1;
             let nRef = 1000;
@@ -274,11 +274,11 @@ class ContactMap {
                 }
                 
                 //html += "<g id='" + id + "'>";
-                html += "<rect id='" + idRect + "' x='0' y='0' width='" + rectSize + "' height='" + rectSize + "' fill='" 
-                    + strokecolor + "' stroke-width='" + linestrokewidth + "' stroke='" + strokecolor + "' />";
+//                html += "<rect id='" + idRect + "' x='0' y='0' width='" + rectSize + "' height='" + rectSize + "' fill='" 
+//                    + strokecolor + "' stroke-width='" + linestrokewidth + "' stroke='" + strokecolor + "' />";
                 //html += "</g>"
             }
-            html += "</defs>";
+//            html += "</defs>";
         }
 
         html += ic.lineGraphCls.drawScatterplot_base(nodeArray1, nodeArray2, linkArray, name2node, 0, bContactMap, undefined, undefined, bAfMap);

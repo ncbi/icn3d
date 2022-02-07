@@ -313,7 +313,7 @@ class MmcifParser {
 
                                 // not all listed residues are considered missing, e.g., PDB ID 4OR2, only the firts four residues are considered missing
                                 if(!isNaN(resi) &&(prevMissingChain == '' ||(chain != prevMissingChain) ||(chain == prevMissingChain && resi > maxMissingResi)) ) {
-                                    chainMissingResidueArray[chainNum].push(resObject);
+                                    ic.chainMissingResidueArray[chainNum].push(resObject);
 
                                     maxMissingResi = resi;
                                     prevMissingChain = chain;
