@@ -7762,12 +7762,11 @@ class Tube {
                     firstAtom = atom;
                 }
 
-                let resid = atom.structure + '_' + atom.chain + '_' + (parseInt(atom.resi) - 1).toString();
+                atom.structure + '_' + atom.chain + '_' + (parseInt(atom.resi) - 1).toString();
 
-                //if (index > 0 && (currentChain !== atom.chain || Math.abs(atom.coord.x - prevAtom.coord.x) > maxDist || Math.abs(atom.coord.y - prevAtom.coord.y) > maxDist || Math.abs(atom.coord.z - prevAtom.coord.z) > maxDist
-                //  || (currentResi + 1 !== atom.resi && (Math.abs(atom.coord.x - prevAtom.coord.x) > maxDist2 || Math.abs(atom.coord.y - prevAtom.coord.y) > maxDist2 || Math.abs(atom.coord.z - prevAtom.coord.z) > maxDist2) )
                 if (index > 0 && (currentChain !== atom.chain || Math.abs(atom.coord.x - prevAtom.coord.x) > maxDist || Math.abs(atom.coord.y - prevAtom.coord.y) > maxDist || Math.abs(atom.coord.z - prevAtom.coord.z) > maxDist
-                  || (parseInt(currentResi) + 1 < parseInt(atom.resi) && (Math.abs(atom.coord.x - prevAtom.coord.x) > maxDist2 || Math.abs(atom.coord.y - prevAtom.coord.y) > maxDist2 || Math.abs(atom.coord.z - prevAtom.coord.z) > maxDist2) && ic.firstAtomObjCls.getFirstCalphaAtomObj(ic.residues[resid]) && ic.firstAtomObjCls.getFirstCalphaAtomObj(ic.residues[resid]).ss == 'helix')
+//                  || (parseInt(currentResi) + 1 < parseInt(atom.resi) && (Math.abs(atom.coord.x - prevAtom.coord.x) > maxDist2 || Math.abs(atom.coord.y - prevAtom.coord.y) > maxDist2 || Math.abs(atom.coord.z - prevAtom.coord.z) > maxDist2) && ic.firstAtomObjCls.getFirstCalphaAtomObj(ic.residues[resid]) && ic.firstAtomObjCls.getFirstCalphaAtomObj(ic.residues[resid]).ss == 'helix')
+                  || (parseInt(currentResi) + 1 < parseInt(atom.resi) && (Math.abs(atom.coord.x - prevAtom.coord.x) > maxDist2 || Math.abs(atom.coord.y - prevAtom.coord.y) > maxDist2 || Math.abs(atom.coord.z - prevAtom.coord.z) > maxDist2))
                   ) ) {
                     if(bHighlight !== 2) {
                         if(!isNaN(firstAtom.resi) && !isNaN(prevAtom.resi)) {
@@ -15262,9 +15261,7 @@ class HBond {
                     }
 
                     //if(result > kMaxHBondEnergy) {
-                    if(atom.ss == 'helix' && atomHbond[j].ss == 'helix' && result > kMaxHBondEnergy) {
-                        continue;
-                    }
+                    if(atom.ss == 'helix' && atomHbond[j].ss == 'helix' && result > kMaxHBondEnergy) ;
                 }
               }
               else {
@@ -16517,9 +16514,12 @@ class GetGraph {
           }
           ic.graphStr = JSON.stringify(graphJson);
       }
+
+      /*
       if(ic.bGraph) ic.drawGraphCls.drawGraph(ic.graphStr, ic.pre + 'dl_graph');
       if(ic.bLinegraph) ic.lineGraphCls.drawLineGraph(ic.graphStr);
       if(ic.bScatterplot) ic.lineGraphCls.drawLineGraph(ic.graphStr, true);
+      */
     }
 
     handleForce() { let  ic = this.icn3d, me = ic.icn3dui;

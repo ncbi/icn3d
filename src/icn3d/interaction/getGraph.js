@@ -262,9 +262,12 @@ class GetGraph {
           }
           ic.graphStr = JSON.stringify(graphJson);
       }
+
+      /*
       if(ic.bGraph) ic.drawGraphCls.drawGraph(ic.graphStr, ic.pre + 'dl_graph');
       if(ic.bLinegraph) ic.lineGraphCls.drawLineGraph(ic.graphStr);
       if(ic.bScatterplot) ic.lineGraphCls.drawLineGraph(ic.graphStr, true);
+      */
     }
 
     handleForce() { let  ic = this.icn3d, me = ic.icn3dui;
