@@ -431,7 +431,8 @@ class HBond {
 
                     //if(result > kMaxHBondEnergy) {
                     if(atom.ss == 'helix' && atomHbond[j].ss == 'helix' && result > kMaxHBondEnergy) {
-                        continue;
+// commented out on Feb 8, 2022                        
+///                        continue;
                     }
                 }
               }
