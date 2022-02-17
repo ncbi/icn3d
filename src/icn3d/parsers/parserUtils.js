@@ -128,7 +128,7 @@ class ParserUtils {
                 seqName = 'x';
             }
 
-            let  resObject = {}
+            let  resObject = {};
 
             if(!ic.bUsePdbNum) {
                 resObject.resi = i + 1;

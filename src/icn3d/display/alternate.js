@@ -16,38 +16,66 @@ class Alternate {
     // change the display atom when alternating
     //Show structures one by one.
     alternateStructures() { let ic = this.icn3d, me = ic.icn3dui;
-        let hAtomsCount = Object.keys(ic.hAtoms).length;
+        if(!ic.viewSelectionAtoms) {
+            ic.viewSelectionAtoms = me.hashUtilsCls.cloneHash(ic.dAtoms);
+        }
+
+        let viewSelectionAtomsCount = Object.keys(ic.viewSelectionAtoms).length;
         let allAtomsCount = Object.keys(ic.atoms).length;
 
         ic.dAtoms = {};
 
+        // alternate all displayed structures
+        let moleculeArray = Object.keys(ic.structures);
         // only alternate selected structures
-        //let moleculeArray = Object.keys(ic.structures);
-        let structureHash = {};
-        for(let i in ic.hAtoms) {
-            let structure = ic.atoms[i].structure;
-            structureHash[structure] = 1;
-        }
-        let moleculeArray = Object.keys(structureHash);
+        // let structureHash = {};
+        // for(let i in ic.hAtoms) {
+        //     let structure = ic.atoms[i].structure;
+        //     structureHash[structure] = 1;
+        // }
+        // let moleculeArray = Object.keys(structureHash);
 
         for(let i = 0, il = moleculeArray.length; i < il; ++i) {
             let structure = moleculeArray[i];
-            if(i > ic.ALTERNATE_STRUCTURE || (ic.ALTERNATE_STRUCTURE === il - 1 && i === 0) ) {
+            //if(i > ic.ALTERNATE_STRUCTURE || (ic.ALTERNATE_STRUCTURE === il - 1 && i === 0) ) {
+            let bChoose;
+            if(ic.bShift) {
+                // default ic.ALTERNATE_STRUCTURE = -1
+                if(ic.ALTERNATE_STRUCTURE < 0) ic.ALTERNATE_STRUCTURE = 1;
+
+                bChoose = (i == ic.ALTERNATE_STRUCTURE % il - 1) 
+                  || (ic.ALTERNATE_STRUCTURE % il === 0 && i === il - 1);
+            } 
+            else {
+                bChoose = (i == ic.ALTERNATE_STRUCTURE % il + 1) 
+                  || (ic.ALTERNATE_STRUCTURE % il === il - 1 && i === 0);
+            }
+
+            if(bChoose) {
                 for(let k in ic.structures[structure]) {
                     let chain = ic.structures[structure][k];
                     ic.dAtoms = me.hashUtilsCls.unionHash(ic.dAtoms, ic.chains[chain]);
                 }
 
-                ic.ALTERNATE_STRUCTURE = i;
+                //ic.ALTERNATE_STRUCTURE = i;
+                if(ic.bShift) {
+                    --ic.ALTERNATE_STRUCTURE;
+                }
+                else {
+                    ++ic.ALTERNATE_STRUCTURE;
+                }
+
+                if(ic.ALTERNATE_STRUCTURE < 0) ic.ALTERNATE_STRUCTURE += il;
 
                 $("#" + ic.pre + "title").html(structure);
 
                 break;
             }
-        }
+        } 
 
-        if(hAtomsCount < allAtomsCount) {
-            ic.dAtoms = me.hashUtilsCls.intHash(ic.dAtoms, ic.hAtoms);
+        if(viewSelectionAtomsCount < allAtomsCount) {
+            //ic.dAtoms = me.hashUtilsCls.intHash(ic.dAtoms, ic.hAtoms);
+            ic.dAtoms = me.hashUtilsCls.intHash(ic.dAtoms, ic.viewSelectionAtoms);
 
             ic.bShowHighlight = false;
             ic.opts['rotationcenter'] = 'highlight center';

@@ -1245,7 +1245,8 @@ class ApplyCommand {
     // special, select ==========
 
       else if(command.indexOf('select displayed set') !== -1) {
-        ic.hAtoms = me.hashUtilsCls.cloneHash(ic.dAtoms);
+        //ic.hAtoms = me.hashUtilsCls.cloneHash(ic.dAtoms);
+        ic.hAtoms = me.hashUtilsCls.cloneHash(ic.viewSelectionAtoms);
         ic.hlUpdateCls.updateHlAll();
       }
       else if(command.indexOf('select prop') !== -1) {

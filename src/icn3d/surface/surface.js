@@ -415,17 +415,32 @@ class Surface {
                 //vertexColors.push(ic.atoms[verts[vb].atomid].color);
                 //vertexColors.push(ic.atoms[verts[vc].atomid].color);
 
-                colorArray[offset2++] = ic.atoms[verts[va].atomid].color.r;
-                colorArray[offset2++] = ic.atoms[verts[va].atomid].color.g;
-                colorArray[offset2++] = ic.atoms[verts[va].atomid].color.b;
+                if(type == 21 || type == 22 || type == 23) { // potential on surface
+                    colorArray[offset2++] = verts[va].color.r;
+                    colorArray[offset2++] = verts[va].color.g;
+                    colorArray[offset2++] = verts[va].color.b;
 
-                colorArray[offset2++] = ic.atoms[verts[vb].atomid].color.r;
-                colorArray[offset2++] = ic.atoms[verts[vb].atomid].color.g;
-                colorArray[offset2++] = ic.atoms[verts[vb].atomid].color.b;
+                    colorArray[offset2++] = verts[vb].color.r;
+                    colorArray[offset2++] = verts[vb].color.g;
+                    colorArray[offset2++] = verts[vb].color.b;
 
-                colorArray[offset2++] = ic.atoms[verts[vc].atomid].color.r;
-                colorArray[offset2++] = ic.atoms[verts[vc].atomid].color.g;
-                colorArray[offset2++] = ic.atoms[verts[vc].atomid].color.b;
+                    colorArray[offset2++] = verts[vc].color.r;
+                    colorArray[offset2++] = verts[vc].color.g;
+                    colorArray[offset2++] = verts[vc].color.b;
+                }
+                else {
+                    colorArray[offset2++] = ic.atoms[verts[va].atomid].color.r;
+                    colorArray[offset2++] = ic.atoms[verts[va].atomid].color.g;
+                    colorArray[offset2++] = ic.atoms[verts[va].atomid].color.b;
+    
+                    colorArray[offset2++] = ic.atoms[verts[vb].atomid].color.r;
+                    colorArray[offset2++] = ic.atoms[verts[vb].atomid].color.g;
+                    colorArray[offset2++] = ic.atoms[verts[vb].atomid].color.b;
+    
+                    colorArray[offset2++] = ic.atoms[verts[vc].atomid].color.r;
+                    colorArray[offset2++] = ic.atoms[verts[vc].atomid].color.g;
+                    colorArray[offset2++] = ic.atoms[verts[vc].atomid].color.b;
+                }
 
                 //var normals = [];
                 //normals.push(normalArrayIn[va]);
