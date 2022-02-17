@@ -31,7 +31,7 @@ class ShareLink {
 
            if(!bPngHtml) {
                if(ic.bInputfile && !ic.bInputUrlfile) {
-                   alert("Share Link does NOT work when the data is from custom files. Please save 'iCn3D PNG Image' in the File menu and open it in iCn3D.");
+                   alert("Share Link does NOT work when the data are from custom files. Please save 'iCn3D PNG Image' in the File menu and open it in iCn3D.");
                    return;
                }
                if(bTooLong) {

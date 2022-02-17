@@ -8360,7 +8360,15 @@ class Strand {
                 }
 
                 let maxDist = 6.0;
-                let bBrokenSs = (prevCoorCA && Math.abs(currentCA.x - prevCoorCA.x) > maxDist) || (prevCoorCA && Math.abs(currentCA.y - prevCoorCA.y) > maxDist) || (prevCoorCA && Math.abs(currentCA.z - prevCoorCA.z) > maxDist);
+                //let bBrokenSs = (prevCoorCA && Math.abs(currentCA.x - prevCoorCA.x) > maxDist) || (prevCoorCA && Math.abs(currentCA.y - prevCoorCA.y) > maxDist) || (prevCoorCA && Math.abs(currentCA.z - prevCoorCA.z) > maxDist);
+                let bBrokenSs = !atoms.hasOwnProperty(atom.serial) || (prevCoorCA && Math.abs(currentCA.x - prevCoorCA.x) > maxDist) || (prevCoorCA && Math.abs(currentCA.y - prevCoorCA.y) > maxDist) || (prevCoorCA && Math.abs(currentCA.z - prevCoorCA.z) > maxDist);
+
+                if(bBrokenSs && atom.ss === 'sheet') {
+                    bSheetSegment = true;
+                }
+                else if(bBrokenSs && atom.ss === 'helix') {
+                    bHelixSegment = true;
+                }
 
                 if ((atom.ssbegin || atom.ssend || (drawnResidueCount === totalResidueCount - 1) || bBrokenSs) && pnts[0].length > 0 && bSameChain) {
                     let atomName = 'CA';
@@ -12361,17 +12369,32 @@ class Surface {
                 //vertexColors.push(ic.atoms[verts[vb].atomid].color);
                 //vertexColors.push(ic.atoms[verts[vc].atomid].color);
 
-                colorArray[offset2++] = ic.atoms[verts[va].atomid].color.r;
-                colorArray[offset2++] = ic.atoms[verts[va].atomid].color.g;
-                colorArray[offset2++] = ic.atoms[verts[va].atomid].color.b;
+                if(type == 21 || type == 22 || type == 23) { // potential on surface
+                    colorArray[offset2++] = verts[va].color.r;
+                    colorArray[offset2++] = verts[va].color.g;
+                    colorArray[offset2++] = verts[va].color.b;
 
-                colorArray[offset2++] = ic.atoms[verts[vb].atomid].color.r;
-                colorArray[offset2++] = ic.atoms[verts[vb].atomid].color.g;
-                colorArray[offset2++] = ic.atoms[verts[vb].atomid].color.b;
+                    colorArray[offset2++] = verts[vb].color.r;
+                    colorArray[offset2++] = verts[vb].color.g;
+                    colorArray[offset2++] = verts[vb].color.b;
 
-                colorArray[offset2++] = ic.atoms[verts[vc].atomid].color.r;
-                colorArray[offset2++] = ic.atoms[verts[vc].atomid].color.g;
-                colorArray[offset2++] = ic.atoms[verts[vc].atomid].color.b;
+                    colorArray[offset2++] = verts[vc].color.r;
+                    colorArray[offset2++] = verts[vc].color.g;
+                    colorArray[offset2++] = verts[vc].color.b;
+                }
+                else {
+                    colorArray[offset2++] = ic.atoms[verts[va].atomid].color.r;
+                    colorArray[offset2++] = ic.atoms[verts[va].atomid].color.g;
+                    colorArray[offset2++] = ic.atoms[verts[va].atomid].color.b;
+    
+                    colorArray[offset2++] = ic.atoms[verts[vb].atomid].color.r;
+                    colorArray[offset2++] = ic.atoms[verts[vb].atomid].color.g;
+                    colorArray[offset2++] = ic.atoms[verts[vb].atomid].color.b;
+    
+                    colorArray[offset2++] = ic.atoms[verts[vc].atomid].color.r;
+                    colorArray[offset2++] = ic.atoms[verts[vc].atomid].color.g;
+                    colorArray[offset2++] = ic.atoms[verts[vc].atomid].color.b;
+                }
 
                 //var normals = [];
                 //normals.push(normalArrayIn[va]);
@@ -12623,7 +12646,7 @@ class ShareLink {
 
            if(!bPngHtml) {
                if(ic.bInputfile && !ic.bInputUrlfile) {
-                   alert("Share Link does NOT work when the data is from custom files. Please save 'iCn3D PNG Image' in the File menu and open it in iCn3D.");
+                   alert("Share Link does NOT work when the data are from custom files. Please save 'iCn3D PNG Image' in the File menu and open it in iCn3D.");
                    return;
                }
                if(bTooLong) {
@@ -16489,6 +16512,7 @@ class GetGraph {
               let  atom = ic.firstAtomObjCls.getFirstAtomObj(ic.residues[resid]);
               resid2color[resid] = atom.color.getHexString().toUpperCase();
           }
+
           let  target2resid = {};
           for(let i = 0, il = graphJson.nodes.length; i < il; ++i) {
               let  node = graphJson.nodes[i];
@@ -16515,11 +16539,9 @@ class GetGraph {
           ic.graphStr = JSON.stringify(graphJson);
       }
 
-      /*
       if(ic.bGraph) ic.drawGraphCls.drawGraph(ic.graphStr, ic.pre + 'dl_graph');
       if(ic.bLinegraph) ic.lineGraphCls.drawLineGraph(ic.graphStr);
       if(ic.bScatterplot) ic.lineGraphCls.drawLineGraph(ic.graphStr, true);
-      */
     }
 
     handleForce() { let  ic = this.icn3d, me = ic.icn3dui;
@@ -32193,7 +32215,8 @@ class ApplyCommand {
     // special, select ==========
 
       else if(command.indexOf('select displayed set') !== -1) {
-        ic.hAtoms = me.hashUtilsCls.cloneHash(ic.dAtoms);
+        //ic.hAtoms = me.hashUtilsCls.cloneHash(ic.dAtoms);
+        ic.hAtoms = me.hashUtilsCls.cloneHash(ic.viewSelectionAtoms);
         ic.hlUpdateCls.updateHlAll();
       }
       else if(command.indexOf('select prop') !== -1) {
@@ -36103,7 +36126,7 @@ class ShowAnno {
                   // the missing residues at the end of the seq will be filled up in the API showNewTrack()
                   let nGap = 0;
                   ic.alnChainsSeq[chnid] = [];
-                  let offset =(ic.chainid2offset[chnid]) ? ic.chainid2offset[chnid] : 0;
+                  let offset =(ic.chainid2offset[chnid]) ? ic.chainid2offset[chnid] : 0;                
                   for(let i = 0, il = targetSeq.length; i < il; ++i) {
                       //text += ic.showSeqCls.insertGap(chnid, i, '-', true);
                       if(ic.targetGapHash.hasOwnProperty(i)) {
@@ -39407,8 +39430,11 @@ class Selection {
 
         for(let i in ic.chains) {
            ic.hAtoms = me.hashUtilsCls.unionHash(ic.hAtoms, ic.chains[i]);
-           ic.dAtoms = me.hashUtilsCls.unionHash(ic.dAtoms, ic.chains[i]);
+           //ic.dAtoms = me.hashUtilsCls.unionHash(ic.dAtoms, ic.chains[i]);
         }
+
+        ic.dAtoms = me.hashUtilsCls.cloneHash(ic.hAtoms);
+        ic.viewSelectionAtoms = me.hashUtilsCls.cloneHash(ic.hAtoms);
     }
 
     //Select a chain with the chain id "chainid" in the sequence dialog and save it as a custom selection with the name "commandname".
@@ -39643,6 +39669,7 @@ class Selection {
         if(Object.keys(ic.hAtoms).length == 0) this.selectAll_base();
 
         ic.dAtoms = me.hashUtilsCls.cloneHash(ic.hAtoms);
+        ic.viewSelectionAtoms = me.hashUtilsCls.cloneHash(ic.hAtoms);
 
         let  centerAtomsResults = ic.applyCenterCls.centerAtoms(me.hashUtilsCls.hash2Atoms(ic.dAtoms, ic.atoms));
         ic.maxD = centerAtomsResults.maxD;
@@ -41899,8 +41926,9 @@ class ApplySsbonds {
           let start, end;
 
           if(ic.bAlternate) {
-              start = ic.ALTERNATE_STRUCTURE;
-              end = ic.ALTERNATE_STRUCTURE + 1;
+              let nStructures = structureArray.length;
+              start = ic.ALTERNATE_STRUCTURE % nStructures;
+              end = ic.ALTERNATE_STRUCTURE % nStructures + 1;
           }
           else {
               start = 0;
@@ -45191,7 +45219,8 @@ class ClickMenu {
     //    clkMn2_selectdisplayed: function() {
         me.myEventCls.onIds("#" + me.pre + "mn2_selectdisplayed", "click", function(e) { let ic = me.icn3d;
            thisClass.setLogCmd("select displayed set", true);
-           ic.hAtoms = me.hashUtilsCls.cloneHash(ic.dAtoms);
+           //ic.hAtoms = me.hashUtilsCls.cloneHash(ic.dAtoms);
+           ic.hAtoms = me.hashUtilsCls.cloneHash(ic.viewSelectionAtoms);
            ic.hlUpdateCls.updateHlAll();
            //ic.drawCls.draw();
         });
@@ -46312,6 +46341,10 @@ class ClickMenu {
     //    },
     //    clkMn6_sidebyside: function() {
         me.myEventCls.onIds("#" + me.pre + "mn6_sidebyside", "click", function(e) { let ic = me.icn3d;
+           if(ic.bInputfile) {
+                alert("Side-by-Side does NOT work when the input is from a local file.");
+                return;
+           }
            let url = ic.shareLinkCls.shareLinkUrl(undefined);
            //if(url.indexOf('http') !== 0) {
            //    alert("The url is more than 4000 characters and may not work.");
@@ -46919,6 +46952,8 @@ class SetMenu {
         // show title at the top left corner
         html += me.htmlCls.divStr + "title' class='icn3d-commandTitle' style='font-size:1.2em; font-weight:normal; position:absolute; z-index:1; float:left; display:block; margin: 12px 0px 0px 40px; color:" + titleColor + "; width:" +(me.htmlCls.WIDTH - 40).toString() + "px'></div>";
         html += me.htmlCls.divStr + "viewer' style='position:relative; width:100%; height:100%; background-color: " + me.htmlCls.GREYD + ";'>";
+        // don't show legend in mobile
+        //html += me.htmlCls.divStr + "legend' class='icn3d-text icn3d-legend'></div>";
         html += me.htmlCls.divStr + "mnLogSection'>";
         html += "<div style='height: " + me.htmlCls.MENU_HEIGHT + "px;'></div>";
         html += "</div>";
@@ -53263,38 +53298,66 @@ class Alternate {
     // change the display atom when alternating
     //Show structures one by one.
     alternateStructures() { let ic = this.icn3d, me = ic.icn3dui;
-        let hAtomsCount = Object.keys(ic.hAtoms).length;
+        if(!ic.viewSelectionAtoms) {
+            ic.viewSelectionAtoms = me.hashUtilsCls.cloneHash(ic.dAtoms);
+        }
+
+        let viewSelectionAtomsCount = Object.keys(ic.viewSelectionAtoms).length;
         let allAtomsCount = Object.keys(ic.atoms).length;
 
         ic.dAtoms = {};
 
+        // alternate all displayed structures
+        let moleculeArray = Object.keys(ic.structures);
         // only alternate selected structures
-        //let moleculeArray = Object.keys(ic.structures);
-        let structureHash = {};
-        for(let i in ic.hAtoms) {
-            let structure = ic.atoms[i].structure;
-            structureHash[structure] = 1;
-        }
-        let moleculeArray = Object.keys(structureHash);
+        // let structureHash = {};
+        // for(let i in ic.hAtoms) {
+        //     let structure = ic.atoms[i].structure;
+        //     structureHash[structure] = 1;
+        // }
+        // let moleculeArray = Object.keys(structureHash);
 
         for(let i = 0, il = moleculeArray.length; i < il; ++i) {
             let structure = moleculeArray[i];
-            if(i > ic.ALTERNATE_STRUCTURE || (ic.ALTERNATE_STRUCTURE === il - 1 && i === 0) ) {
+            //if(i > ic.ALTERNATE_STRUCTURE || (ic.ALTERNATE_STRUCTURE === il - 1 && i === 0) ) {
+            let bChoose;
+            if(ic.bShift) {
+                // default ic.ALTERNATE_STRUCTURE = -1
+                if(ic.ALTERNATE_STRUCTURE < 0) ic.ALTERNATE_STRUCTURE = 1;
+
+                bChoose = (i == ic.ALTERNATE_STRUCTURE % il - 1) 
+                  || (ic.ALTERNATE_STRUCTURE % il === 0 && i === il - 1);
+            } 
+            else {
+                bChoose = (i == ic.ALTERNATE_STRUCTURE % il + 1) 
+                  || (ic.ALTERNATE_STRUCTURE % il === il - 1 && i === 0);
+            }
+
+            if(bChoose) {
                 for(let k in ic.structures[structure]) {
                     let chain = ic.structures[structure][k];
                     ic.dAtoms = me.hashUtilsCls.unionHash(ic.dAtoms, ic.chains[chain]);
                 }
 
-                ic.ALTERNATE_STRUCTURE = i;
+                //ic.ALTERNATE_STRUCTURE = i;
+                if(ic.bShift) {
+                    --ic.ALTERNATE_STRUCTURE;
+                }
+                else {
+                    ++ic.ALTERNATE_STRUCTURE;
+                }
+
+                if(ic.ALTERNATE_STRUCTURE < 0) ic.ALTERNATE_STRUCTURE += il;
 
                 $("#" + ic.pre + "title").html(structure);
 
                 break;
             }
-        }
+        } 
 
-        if(hAtomsCount < allAtomsCount) {
-            ic.dAtoms = me.hashUtilsCls.intHash(ic.dAtoms, ic.hAtoms);
+        if(viewSelectionAtomsCount < allAtomsCount) {
+            //ic.dAtoms = me.hashUtilsCls.intHash(ic.dAtoms, ic.hAtoms);
+            ic.dAtoms = me.hashUtilsCls.intHash(ic.dAtoms, ic.viewSelectionAtoms);
 
             ic.bShowHighlight = false;
             ic.opts['rotationcenter'] = 'highlight center';
@@ -55827,7 +55890,7 @@ class Control {
 
             else if(e.keyCode === 65 ) { // A, alternate
                if(Object.keys(ic.structures).length > 1) {
-                   ic.alternateCls.alternateWrapper();
+                 ic.alternateCls.alternateWrapper();
                }
             }
 
@@ -56626,7 +56689,7 @@ class iCn3DUI {
     //even when multiple iCn3D viewers are shown together.
     this.pre = this.cfg.divid + "_";
 
-    this.REVISION = '3.8.2';
+    this.REVISION = '3.8.3';
 
     // In nodejs, iCn3D defines "window = {navigator: {}}"
     this.bNode = (Object.keys(window).length < 2) ? true : false;

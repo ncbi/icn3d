@@ -581,7 +581,7 @@ class ShowAnno {
                   // the missing residues at the end of the seq will be filled up in the API showNewTrack()
                   let nGap = 0;
                   ic.alnChainsSeq[chnid] = [];
-                  let offset =(ic.chainid2offset[chnid]) ? ic.chainid2offset[chnid] : 0;
+                  let offset =(ic.chainid2offset[chnid]) ? ic.chainid2offset[chnid] : 0;                
                   for(let i = 0, il = targetSeq.length; i < il; ++i) {
                       //text += ic.showSeqCls.insertGap(chnid, i, '-', true);
                       if(ic.targetGapHash.hasOwnProperty(i)) {

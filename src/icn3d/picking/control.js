@@ -193,7 +193,7 @@ class Control {
 
             else if(e.keyCode === 65 ) { // A, alternate
                if(Object.keys(ic.structures).length > 1) {
-                   ic.alternateCls.alternateWrapper();
+                 ic.alternateCls.alternateWrapper();
                }
             }
 

@@ -54,8 +54,11 @@ class Selection {
 
         for(let i in ic.chains) {
            ic.hAtoms = me.hashUtilsCls.unionHash(ic.hAtoms, ic.chains[i]);
-           ic.dAtoms = me.hashUtilsCls.unionHash(ic.dAtoms, ic.chains[i]);
+           //ic.dAtoms = me.hashUtilsCls.unionHash(ic.dAtoms, ic.chains[i]);
         }
+
+        ic.dAtoms = me.hashUtilsCls.cloneHash(ic.hAtoms);
+        ic.viewSelectionAtoms = me.hashUtilsCls.cloneHash(ic.hAtoms);
     }
 
     //Select a chain with the chain id "chainid" in the sequence dialog and save it as a custom selection with the name "commandname".
@@ -290,6 +293,7 @@ class Selection {
         if(Object.keys(ic.hAtoms).length == 0) this.selectAll_base();
 
         ic.dAtoms = me.hashUtilsCls.cloneHash(ic.hAtoms);
+        ic.viewSelectionAtoms = me.hashUtilsCls.cloneHash(ic.hAtoms);
 
         let  centerAtomsResults = ic.applyCenterCls.centerAtoms(me.hashUtilsCls.hash2Atoms(ic.dAtoms, ic.atoms));
         ic.maxD = centerAtomsResults.maxD;

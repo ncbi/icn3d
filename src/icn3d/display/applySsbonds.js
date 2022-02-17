@@ -25,8 +25,9 @@ class ApplySsbonds {
           let start, end;
 
           if(ic.bAlternate) {
-              start = ic.ALTERNATE_STRUCTURE;
-              end = ic.ALTERNATE_STRUCTURE + 1;
+              let nStructures = structureArray.length;
+              start = ic.ALTERNATE_STRUCTURE % nStructures;
+              end = ic.ALTERNATE_STRUCTURE % nStructures + 1;
           }
           else {
               start = 0;

@@ -567,7 +567,8 @@ class ClickMenu {
     //    clkMn2_selectdisplayed: function() {
         me.myEventCls.onIds("#" + me.pre + "mn2_selectdisplayed", "click", function(e) { let ic = me.icn3d;
            thisClass.setLogCmd("select displayed set", true);
-           ic.hAtoms = me.hashUtilsCls.cloneHash(ic.dAtoms);
+           //ic.hAtoms = me.hashUtilsCls.cloneHash(ic.dAtoms);
+           ic.hAtoms = me.hashUtilsCls.cloneHash(ic.viewSelectionAtoms);
            ic.hlUpdateCls.updateHlAll();
            //ic.drawCls.draw();
         });
@@ -1688,6 +1689,11 @@ class ClickMenu {
     //    },
     //    clkMn6_sidebyside: function() {
         me.myEventCls.onIds("#" + me.pre + "mn6_sidebyside", "click", function(e) { let ic = me.icn3d;
+           if(ic.bInputfile) {
+                alert("Side-by-Side does NOT work when the input is from a local file.");
+                return;
+           }
+
            let bSidebyside = true;
            let url = ic.shareLinkCls.shareLinkUrl(undefined);
            //if(url.indexOf('http') !== 0) {
