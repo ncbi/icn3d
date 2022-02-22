@@ -128,6 +128,18 @@ class Events {
        }
     }
 
+    saveHtml(id) { let me = this.icn3dui, ic = me.icn3d;
+        let html = '';
+        html += '<link rel="stylesheet" href="https:///structure.ncbi.nlm.nih.gov/icn3d/lib/jquery-ui-1.12.1.min.css">\n';
+        html += '<link rel="stylesheet" href="https:///structure.ncbi.nlm.nih.gov/icn3d/icn3d_full_ui.css">\n';
+        html += $("#" + id).html();
+        let idArray = id.split('_');
+        let idStr =(idArray.length > 2) ? idArray[2] : id;
+        let structureStr = Object.keys(ic.structures)[0];
+        if(Object.keys(ic.structures).length > 1) structureStr += '-' + Object.keys(ic.structures)[1];
+        ic.saveFileCls.saveFile(structureStr + '-' + idStr + '.html', 'html', encodeURIComponent(html));
+    }
+
     //Hold all functions related to click events.
     allEventFunctions() { let me = this.icn3dui, ic = me.icn3d;
         let thisClass = this;
@@ -1794,15 +1806,9 @@ class Events {
         $(document).on("click", ".icn3d-saveicon", function(e) { let ic = me.icn3d;
            e.stopImmediatePropagation();
            let id = $(this).attr('pid');
-           let html = '';
-           html += '<link rel="stylesheet" href="https:///structure.ncbi.nlm.nih.gov/icn3d/lib/jquery-ui-1.12.1.min.css">\n';
-           html += '<link rel="stylesheet" href="https:///structure.ncbi.nlm.nih.gov/icn3d/icn3d_full_ui.css">\n';
-           html += $("#" + id).html();
-           let idArray = id.split('_');
-           let idStr =(idArray.length > 2) ? idArray[2] : id;
-           let structureStr = Object.keys(ic.structures)[0];
-           if(Object.keys(ic.structures).length > 1) structureStr += '-' + Object.keys(ic.structures)[1];
-           ic.saveFileCls.saveFile(structureStr + '-' + idStr + '.html', 'html', encodeURIComponent(html));
+
+           thisClass.saveHtml(id);
+           me.htmlCls.clickMenuCls.setLogCmd("save html " + id, true);
         });
     //    },
     //    clickHideDialog: function() {
