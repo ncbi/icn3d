@@ -25,7 +25,7 @@
     All "Share Link" URLs can show the original view using the archived version of iCn3D by clicking "Open File > Share Link in Archived Ver." in "File" menu.    
 
 * <b>Python scripts to batch process structures</b>: 
-    Python scripts can be used to process 3D structures (e.g., export secondary structures or PNG images) in batch mode. The example scripts are at [icn3dpython](https://github.com/ncbi/icn3d/tree/master/icn3dpython).
+    Python scripts can be used to process 3D structures (e.g., export secondary structures, PNG images, or analysis output) in batch mode. The example scripts are at [icn3dpython](https://github.com/ncbi/icn3d/tree/master/icn3dpython).
 
 * <b>Node.js scripts using npm "icn3d" to batch process structures</b>: 
     You can download [npm "icn3d" package](https://www.npmjs.com/package/icn3d) to write Node.js scripts by calling iCn3D functions. These scripts can be used to process 3D structures (e.g., calculate interactions) in batch mode. The example scripts are at [icn3dnode](https://github.com/ncbi/icn3d/tree/master/icn3dnode).
