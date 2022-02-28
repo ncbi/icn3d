@@ -128,11 +128,12 @@ class Resid2spec {
 
     atoms2spec(atomHash) {var ic = this.icn3d, me = ic.icn3dui;
         let  spec = "";
-
         let  i = 0;
-        let  structureHash = {}, chainHash = {}, resiHash = {}
+        let  structureHash = {}, chainHash = {}, resiHash = {};
+
+        let atom;
         for(let serial in atomHash) {
-            let  atom = ic.atoms[serial];
+            atom = ic.atoms[serial];
             if(i > 0) {
                 spec += ' or ';
             }

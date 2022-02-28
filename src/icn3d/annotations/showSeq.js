@@ -6,6 +6,7 @@ import {Html} from '../../html/html.js';
 
 import {FirstAtomObj} from '../selection/firstAtomObj.js';
 import {SetColor} from '../display/setColor.js';
+import {Domain3d} from '../annotations/domain3d.js';
 
 class ShowSeq {
     constructor(icn3d) {

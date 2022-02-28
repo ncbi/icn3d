@@ -21,6 +21,7 @@ class AnnoDomain {
         // show 3D domains
         let pdbid = pdbArray[index];
         let url = me.htmlCls.baseUrl + "mmdb/mmdb_strview.cgi?v=2&program=icn3d&domain&molinfor&uid=" + pdbid;
+
         if(index == 0 && ic.mmdb_data !== undefined) {
             for(let chnid in ic.protein_chainid) {
                 if(chnid.indexOf(pdbid) !== -1) {
@@ -36,6 +37,43 @@ class AnnoDomain {
             }
         }
         else {
+            // calculate 3D domains on-the-fly
+            //ic.protein_chainid[chainArray[i]] 
+            let data = {};
+            data.domains = {};
+            for(let chainid in ic.chains) {
+                let structure = chainid.substr(0, chainid.indexOf('_'));
+                if(pdbid == structure && ic.protein_chainid.hasOwnProperty(chainid)) {
+                    data.domains[chainid] = {};
+                    data.domains[chainid].domains = [];
+                    
+                    let subdomains = ic.domain3dCls.c2b_NewSplitChain(chainid);
+                    for(let i = 0, il = subdomains.length; i < il; ++i) {
+                        // domain item: {"sdid":1722375,"intervals":[[1,104],[269,323]]}
+                        let domain = {};
+                        domain.intervals = [];
+
+                        for(let j = 0, jl = subdomains[i].length; j < jl; j += 2) {
+                            domain.intervals.push([subdomains[i][j], subdomains[i][j+1]]);
+                        }
+
+                        data.domains[chainid].domains.push(domain);
+                    }
+                }
+            }
+
+            ic.mmdb_dataArray[index] = data;
+            let bCalcDirect = true;
+            for(let chnid in ic.protein_chainid) {
+                if(chnid.indexOf(pdbid) !== -1) {
+                    thisClass.showDomainWithData(chnid, ic.mmdb_dataArray[index], bCalcDirect);
+                }
+            }
+
+            ic.bAjax3ddomain = true;
+            ic.bAjaxDoneArray[index] = true;
+
+/*            
             $.ajax({
               url: url,
               dataType: 'json',
@@ -99,6 +137,7 @@ class AnnoDomain {
                 return;
               }
             });
+*/            
         }
     }
 
@@ -117,28 +156,36 @@ class AnnoDomain {
             this.showDomainPerStructure(i);
         }
     }
-    showDomainWithData(chnid, data) { let ic = this.icn3d, me = ic.icn3dui;
+    showDomainWithData(chnid, data, bCalcDirect) { let ic = this.icn3d, me = ic.icn3dui;
         let html = '<div id="' + ic.pre + chnid + '_domainseq_sequence" class="icn3d-dl_sequence">';
         let html2 = html;
         let html3 = html;
         let domainArray, proteinname;
         let pos = chnid.indexOf('_');
         let chain = chnid.substr(pos + 1);
-        let molinfo = data.moleculeInfor;
-        let currMolid;
-        for(let molid in molinfo) {
-        if(molinfo[molid].chain === chain) {
-          currMolid = molid;
-          proteinname = molinfo[molid].name;
-          break;
+
+        if(bCalcDirect) {
+            proteinname = chnid;
+            domainArray = data.domains[chnid].domains;
         }
+        else {
+            let molinfo = data.moleculeInfor;
+            let currMolid;
+            for(let molid in molinfo) {
+                if(molinfo[molid].chain === chain) {
+                currMolid = molid;
+                proteinname = molinfo[molid].name;
+                break;
+                }
+            }
+            if(currMolid !== undefined && data.domains[currMolid] !== undefined) {
+                domainArray = data.domains[currMolid].domains;
+            }
+            if(domainArray === undefined) {
+                domainArray = [];
+            }
         }
-        if(currMolid !== undefined && data.domains[currMolid] !== undefined) {
-          domainArray = data.domains[currMolid].domains;
-        }
-        if(domainArray === undefined) {
-          domainArray = [];
-        }
+
         for(let index = 0, indexl = domainArray.length; index < indexl; ++index) {
             //var fulltitle = '3D domain ' +(index+1).toString() + ' of ' + proteinname + '(PDB ID: ' + data.pdbId + ')';
             let fulltitle = '3D domain ' +(index+1).toString() + ' of ' + proteinname;
@@ -161,7 +208,7 @@ class AnnoDomain {
                 }
 
                 // use the NCBI residue number, and convert to PDB residue number during selection
-                if(ic.bNCBI) {
+                if(ic.bNCBI || bCalcDirect) {
                     fromArray.push(domainFrom);
                     toArray.push(domainTo);
                 }

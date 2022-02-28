@@ -64,6 +64,7 @@ import {AnnoDomain} from './annotations/annoDomain.js';
 import {AnnoSnpClinVar} from './annotations/annoSnpClinVar.js';
 import {AnnoSsbond} from './annotations/annoSsbond.js';
 import {AnnoTransMem} from './annotations/annoTransMem.js';
+import {Domain3d} from './annotations/domain3d.js';
 
 import {AddTrack} from './annotations/addTrack.js';
 import {Annotation} from './annotations/annotation.js';
@@ -514,6 +515,7 @@ class iCn3D {
     this.annoSnpClinVarCls = new AnnoSnpClinVar(this);
     this.annoSsbondCls = new AnnoSsbond(this);
     this.annoTransMemCls = new AnnoTransMem(this);
+    this.domain3dCls = new Domain3d(this);
 
     this.addTrackCls = new AddTrack(this);
     this.annotationCls = new Annotation(this);

@@ -275,9 +275,10 @@ class LoadScript {
               let  strArray = ic.commands[i].split("|||");
 
               if(Object.keys(ic.proteins).length > 0 && ic.mmdb_data === undefined &&(ic.bAjax3ddomain === undefined || !ic.bAjax3ddomain)) {
-                  $.when(thisClass.applyCommand3ddomain(strArray[0].trim())).then(function() {
-                      thisClass.execCommandsBase(i + 1, end, steps);
-                  });
+                  //$.when(thisClass.applyCommand3ddomain(strArray[0].trim())).then(function() {
+                    thisClass.applyCommand3ddomain(strArray[0].trim());    
+                    thisClass.execCommandsBase(i + 1, end, steps);
+                  //});
               }
               else {
                   if(Object.keys(ic.proteins).length > 0) {
@@ -299,8 +300,9 @@ class LoadScript {
                 &&(ic.bAjax3ddomain === undefined || !ic.bAjax3ddomain || ic.mmdb_data === undefined) ) {
                   $.when(thisClass.applyCommandClinvar(strArray[0].trim()))
                     .then(thisClass.applyCommandSnp(strArray[0].trim()))
-                    .then(thisClass.applyCommand3ddomain(strArray[0].trim()))
+                    //.then(thisClass.applyCommand3ddomain(strArray[0].trim()))
                     .then(function() {
+                      thisClass.applyCommand3ddomain(strArray[0].trim());
                       ic.annotationCls.setAnnoTabAll();
 
                       thisClass.execCommandsBase(i + 1, end, steps);
@@ -319,8 +321,9 @@ class LoadScript {
               else if(Object.keys(ic.proteins).length > 0 &&(ic.bAjaxClinvar === undefined || !ic.bAjaxClinvar)
                 &&(ic.bAjax3ddomain === undefined || !ic.bAjax3ddomain || ic.mmdb_data === undefined)) {
                   $.when(thisClass.applyCommandClinvar(strArray[0].trim()))
-                    .then(thisClass.applyCommand3ddomain(strArray[0].trim()))
+                    //.then(thisClass.applyCommand3ddomain(strArray[0].trim()))
                     .then(function() {
+                      thisClass.applyCommand3ddomain(strArray[0].trim());
                       ic.annotationCls.setAnnoTabAll();
 
                       thisClass.execCommandsBase(i + 1, end, steps);
@@ -328,10 +331,11 @@ class LoadScript {
               }
               else if(Object.keys(ic.proteins).length > 0 &&(ic.bAjax3ddomain === undefined || !ic.bAjax3ddomain || ic.mmdb_data === undefined)
                 &&(ic.bAjaxSnp === undefined || !ic.bAjaxSnp)) {
-                  $.when(thisClass.applyCommand3ddomain(strArray[0].trim()))
-                    .then(thisClass.applyCommandSnp(strArray[0].trim()))
+                  //$.when(thisClass.applyCommand3ddomain(strArray[0].trim()))
+                  $.when(thisClass.applyCommandSnp(strArray[0].trim()))
                     .then(function() {
-                      ic.annotationCls.setAnnoTabAll();
+                        thisClass.applyCommand3ddomain(strArray[0].trim());
+                        ic.annotationCls.setAnnoTabAll();
 
                       thisClass.execCommandsBase(i + 1, end, steps);
                   });
@@ -353,12 +357,14 @@ class LoadScript {
                   });
               }
               else if(Object.keys(ic.proteins).length > 0 &&(ic.bAjax3ddomain === undefined || !ic.bAjax3ddomain || ic.mmdb_data === undefined) ) {
-                  $.when(thisClass.applyCommand3ddomain(strArray[0].trim()))
-                    .then(function() {
+                  //$.when(thisClass.applyCommand3ddomain(strArray[0].trim()))
+                  // .then(function() {
+                      thisClass.applyCommand3ddomain(strArray[0].trim());
+
                       ic.annotationCls.setAnnoTabAll();
 
                       thisClass.execCommandsBase(i + 1, end, steps);
-                  });
+                  //});
               }
               else {
                   if(Object.keys(ic.proteins).length > 0) {
@@ -625,12 +631,13 @@ class LoadScript {
                         thisClass.applyCommand3ddomain(lastCommand);
                     }
                     else if(lastCommand.indexOf('set annotation all') == 0) {
-                        //$.when(thisClass.applyCommandAnnotationsAndCddSite(lastCommand))
-                        //    .then(thisClass.applyCommandSnpClinvar(lastCommand))
                         $.when(thisClass.applyCommandClinvar(lastCommand))
                             .then(thisClass.applyCommandSnp(lastCommand))
-                            .then(thisClass.applyCommand3ddomain(lastCommand));
-                        ic.annotationCls.setAnnoTabAll();
+                            //.then(thisClass.applyCommand3ddomain(lastCommand));
+                            .then(function() {
+                                thisClass.applyCommand3ddomain(lastCommand);
+                                ic.annotationCls.setAnnoTabAll();
+                            });
                     }
                     else if(lastCommand.indexOf('view interactions') == 0 && me.cfg.align !== undefined) {
                         thisClass.applyCommandViewinteraction(lastCommand);
@@ -1023,11 +1030,11 @@ class LoadScript {
       let  thisClass = this;
 
       // chain functions together
-      ic.deferred3ddomain = $.Deferred(function() {
+      //ic.deferred3ddomain = $.Deferred(function() {
           thisClass.applyCommand3ddomainBase(command);
-      }); // end of me.deferred = $.Deferred(function() {
+      //}); // end of me.deferred = $.Deferred(function() {
 
-      return ic.deferred3ddomain.promise();
+      //return ic.deferred3ddomain.promise();
     }
 
     applyCommandViewinteractionBase(command) { let  ic = this.icn3d, me = ic.icn3dui;
