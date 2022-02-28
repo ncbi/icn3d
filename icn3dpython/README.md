@@ -28,4 +28,9 @@ Examples
     After you specify the directories and PDB file name as described in the script "batch_export_png.py", you can run the following in the command line to export the PNG image for any structure.
 
         python3 batch_export_png.py
-        
+
+* <b>Export the HTML page of any iCn3D dialog/popup window </b>
+
+    When you interactively generate a dialog/popup window in iCn3D, you can click the "Save" icon, which is next to the "Close" icon, to export the HTML file of the page. You can then click "File > Share Link" to get the URL to reproduce the whole process. This URL can be used in the Python script "batch_export_panel.py" and run the following command to export your results in batch mode.
+
+        python3 batch_export_panel.py        

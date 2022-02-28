@@ -57,6 +57,8 @@ class Picking {
               transformation.quaternion._y = parseFloat(ic.quaternion._y).toPrecision(5);
               transformation.quaternion._z = parseFloat(ic.quaternion._z).toPrecision(5);
               transformation.quaternion._w = parseFloat(ic.quaternion._w).toPrecision(5);
+
+              /*
               if(ic.bAddCommands) {
                   ic.commands.push('pickatom ' + atom.serial + '|||' + ic.transformCls.getTransformationStr(transformation));
                   ic.optsHistory.push(me.hashUtilsCls.cloneHash(ic.opts));
@@ -68,6 +70,9 @@ class Picking {
               if( $( "#" + ic.pre + "logtext" ).length )  {
                 $("#" + ic.pre + "logtext").val("> " + ic.logs.join("\n> ") + "\n> ").scrollTop($("#" + ic.pre + "logtext")[0].scrollHeight);
               }
+              */
+              me.htmlCls.clickMenuCls.setLogCmd('pickatom ' + atom.serial, true);
+
               // update the interaction flag
               ic.bSphereCalc = false;
               //me.htmlCls.clickMenuCls.setLogCmd('set calculate sphere false', true);
