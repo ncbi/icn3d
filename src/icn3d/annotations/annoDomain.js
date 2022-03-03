@@ -166,7 +166,7 @@ class AnnoDomain {
 
         if(bCalcDirect) {
             proteinname = chnid;
-            domainArray = data.domains[chnid].domains;
+            domainArray = (data.domains[chnid]) ? data.domains[chnid].domains : [];
         }
         else {
             let molinfo = data.moleculeInfor;
