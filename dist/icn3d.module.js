@@ -37883,6 +37883,9 @@ class AnnoSnpClinVar {
           }
           ic.drawCls.draw();
     }
+
+   //getSnpLine(2, 2, resi2snp, resi2rsnum, resi2clinAllele, resi2disease, resi2index, resi2sig, posarray, posClinArray, 0, chnid, false, bClinvar, undefined, bSnpOnly);
+ 
     getSnpLine(line, totalLineNum, resi2snp, resi2rsnum, resi2clinAllele, resi2disease, resi2index, resi2sig, posarray, posClinArray, bStartEndRes, chnid, bOverview, bClinvar, bTitleOnly, bSnpOnly) { let ic = this.icn3d, me = ic.icn3dui;
         let html = '';
         let altName = bClinvar ? 'clinvar' : 'snp';
@@ -37918,22 +37921,25 @@ class AnnoSnpClinVar {
         else {
             html += '<div class="icn3d-seqTitle"></div>';
         }
+
         let pre = altName;
         let snpCnt = 0, clinvarCnt = 0;
         let snpTypeHash = {}, currSnpTypeHash = {};
         for(let i = 1, il = ic.giSeq[chnid].length; i <= il; ++i) {
-            if(resi2index[i] !== undefined) {
+            if(resi2index[i] !== undefined) {            
                 ++snpCnt;
                 let allDiseaseTitle = '';
                 for(let j = 0, jl = resi2snp[i].length; j < jl && !bSnpOnly; ++j) {
                     let diseaseArray = resi2disease[i][j].split('; ');
                     let sigArray = resi2sig[i][j].split('; ');
                     let diseaseTitle = '';
-                    for(let k = 0, kl = diseaseArray.length; k < kl; ++k) {
-                        if(diseaseArray[k] != '' && diseaseArray[k] != 'not specified' && diseaseArray[k] != 'not provided') {
+                    for(let k = 0, kl = diseaseArray.length; k < kl; ++k) {   
+                        // relax the restriction to show all clinvar    
+                        //if(diseaseArray[k] != '' && diseaseArray[k] != 'not specified' && diseaseArray[k] != 'not provided') {
                             diseaseTitle += diseaseArray[k] + '(' + sigArray[k] + '); ';
-                        }
+                        //}
                     }
+
                     if(diseaseTitle != '') {
                         snpTypeHash[i] = 'icn3d-clinvar';
                         if(j == line - 2) { // just check the current line, "line = 2" means the first SNP
@@ -37948,6 +37954,7 @@ class AnnoSnpClinVar {
                 if(allDiseaseTitle.indexOf('Pathogenic') != -1) {
                     snpTypeHash[i] = 'icn3d-clinvar-path';
                 }
+               
                 if(snpTypeHash[i] == 'icn3d-clinvar' || snpTypeHash[i] == 'icn3d-clinvar-path') {
                     ++clinvarCnt;
                 }
@@ -37962,6 +37969,7 @@ class AnnoSnpClinVar {
             $("#" + ic.pre + 'tt_snp_' + chnid).html('');
             return '';
         }
+            
         if(clinvarCnt == 0 && bClinvar) {
             $("#" + ic.pre + 'dt_clinvar_' + chnid).html('');
             $("#" + ic.pre + 'ov_clinvar_' + chnid).html('');
@@ -37979,6 +37987,7 @@ class AnnoSnpClinVar {
             return html + '<br>';
         }
         html += '<span class="icn3d-seqLine">';
+
         let diseaseStr = '';
         let prevEmptyWidth = 0;
         let prevLineWidth = 0;
@@ -38001,9 +38010,10 @@ class AnnoSnpClinVar {
                             let sigArray = resi2sig[i][j].split('; ');
                             let diseaseTitle = '';
                             for(let k = 0, kl = diseaseArray.length; k < kl; ++k) {
-                                if(diseaseArray[k] != '' && diseaseArray[k] != 'not specified' && diseaseArray[k] != 'not provided') {
+                                // relax the restriction to show all clinvar
+                                //if(diseaseArray[k] != '' && diseaseArray[k] != 'not specified' && diseaseArray[k] != 'not provided') {
                                     diseaseTitle += diseaseArray[k] + '(' + sigArray[k] + '); ';
-                                }
+                                //}
                             }
                         }
                     }
@@ -38032,6 +38042,7 @@ class AnnoSnpClinVar {
             }
             else { // detailed view
               html += ic.showSeqCls.insertGap(chnid, i-1, '-');
+
               if(resi2index[i] !== undefined) {
                   if(!bClinvar && line == 1) {
                       html += '<span>&dArr;</span>'; // or down triangle &#9660;
@@ -38079,7 +38090,8 @@ class AnnoSnpClinVar {
                                 let diseaseTitle = '';
                                 let index = 0;
                                 for(let k = 0, kl = diseaseArray.length; k < kl; ++k) {
-                                    if(diseaseArray[k] != '' && diseaseArray[k] != 'not specified' && diseaseArray[k] != 'not provided') {
+                                    // relax the restriction to show all clinvar
+                                    //if(diseaseArray[k] != '' && diseaseArray[k] != 'not specified' && diseaseArray[k] != 'not provided') {
                                         if(index > 0) {
                                             diseaseTitle += '; ';
                                         }
@@ -38088,7 +38100,7 @@ class AnnoSnpClinVar {
                                         }
                                         diseaseTitle += diseaseArray[k] + '(' + sigArray[k] + ')';
                                         ++index;
-                                    }
+                                    //}
                                 }
 
                                 //resi2rsnum, resi2clinAllele,
@@ -38158,7 +38170,8 @@ class AnnoSnpClinVar {
                             let diseaseTitle = '';
                             let index = 0;
                             for(let k = 0, kl = diseaseArray.length; k < kl; ++k) {
-                                if(diseaseArray[k] != '' && diseaseArray[k] != 'not specified' && diseaseArray[k] != 'not provided') {
+                                // relax the restriction to show all clinvar
+                                //if(diseaseArray[k] != '' && diseaseArray[k] != 'not specified' && diseaseArray[k] != 'not provided') {
                                     if(index > 0) {
                                         diseaseTitle += '; ';
                                     }
@@ -38167,7 +38180,7 @@ class AnnoSnpClinVar {
                                     }
                                     diseaseTitle += diseaseArray[k] + '(' + sigArray[k] + ')';
                                     ++index;
-                                }
+                                //}
                             }
                             if(diseaseTitle != '') {
                                 if(diseaseCnt < shownResCnt) snpStr += resi2snp[i][j];
@@ -38240,6 +38253,7 @@ class AnnoSnpClinVar {
         }
         html += '</span>';
         html += '<br>';
+
         return html;
     }
     processSnpClinvar(data, chnid, chnidBase, bSnpOnly, bVirus) { let ic = this.icn3d; ic.icn3dui;
@@ -38273,7 +38287,7 @@ class AnnoSnpClinVar {
           let resiStr = snpStr.substr(0, snpStr.length - 3);
           let resi = Math.round(resiStr);
           snpStr.substr(snpStr.length - 3, 1);
-          let snpRes = snpStr.substr(snpStr.length - 1, 1);
+          let snpRes = snpStr.substr(snpStr.indexOf('>') + 1); //snpStr.substr(snpStr.length - 1, 1);
           //var rsnum = bSnpOnly ? '' : fieldArray[4];
           let rsnum = fieldArray[4];
           let clinAllele = bSnpOnly ? '' : fieldArray[5];
@@ -38344,7 +38358,7 @@ class AnnoSnpClinVar {
             htmlClinvar2 += this.getSnpLine(1, 2, resi2snp, resi2rsnum, resi2clinAllele, resi2disease, resi2index, resi2sig, posarray, posClinArray, 1, chnid, true, bClinvar, undefined, bSnpOnly);
             htmlClinvar += '</div>';
             htmlClinvar2 += '</div>';
-            htmlClinvar3 += '</div>';
+            htmlClinvar3 += '</div>';          
             $("#" + ic.pre + 'dt_clinvar_' + chnid).html(htmlClinvar);
             $("#" + ic.pre + 'ov_clinvar_' + chnid).html(htmlClinvar2);
             $("#" + ic.pre + 'tt_clinvar_' + chnid).html(htmlClinvar3);
@@ -38375,7 +38389,7 @@ class AnnoSnpClinVar {
           success: function(indata) {
             if(indata && indata.data && indata.data.length > 0) {
                 let bSnpOnly = false;
-                let data = indata;
+                let data = indata;             
                 thisClass.processSnpClinvar(data, chnid, chnidBase, bSnpOnly);
             }
             else {
@@ -38451,6 +38465,7 @@ class AnnoSnpClinVar {
     showSnpPart2(chnid, chnidBase, gi) { let ic = this.icn3d; ic.icn3dui;
         let thisClass = this;
         if(gi !== undefined) {
+      /*      
             let url3 = "https://www.ncbi.nlm.nih.gov/projects/SNP/beVarSearch.cgi?appname=iCn3D&format=bed&report=pdb2bed&connect=MSSNPSUBMISSION1&gi=" + gi;
 
             $.ajax({
@@ -38465,6 +38480,7 @@ class AnnoSnpClinVar {
                     thisClass.processSnpClinvar(data3, chnid, chnidBase, bSnpOnly);
                 } //if(data3 != "") {
                 else {
+       */             
                     let url4 = "https://www.ncbi.nlm.nih.gov/Structure/vastdyn/vastdyn.cgi?chainid_snp=" + chnidBase;
                     $.ajax({
                       url: url4,
@@ -38495,6 +38511,7 @@ class AnnoSnpClinVar {
                         return;
                       }
                     });
+         /*           
                 }
                 //if(ic.deferredSnp !== undefined) ic.deferredSnp.resolve();
               },
@@ -38510,6 +38527,7 @@ class AnnoSnpClinVar {
                 return;
               }
             });
+        */    
         }
         else {
             this.processNoSnp(chnid);
@@ -49510,6 +49528,7 @@ class SetMenu {
             html += liStr + me.htmlCls.baseUrl + "icn3d/icn3d.html#addclass' target='_blank'>Add New Classes</a></li>";
             html += liStr + me.htmlCls.baseUrl + "icn3d/icn3d.html#modifyfunction' target='_blank'>Modify Functions</a></li>";
             html += liStr + me.htmlCls.baseUrl + "icn3d/icn3d.html#restfulapi' target='_blank'>RESTful APIs</a></li>";
+            html += liStr + me.htmlCls.baseUrl + "icn3d/icn3d.html#contributors' target='_blank'>Codeathon Contributors</a></li>";
             html += "</ul>";
             html += "</li>";
         }
@@ -57791,7 +57810,7 @@ class iCn3DUI {
     //even when multiple iCn3D viewers are shown together.
     this.pre = this.cfg.divid + "_";
 
-    this.REVISION = '3.9.0';
+    this.REVISION = '3.10.0';
 
     // In nodejs, iCn3D defines "window = {navigator: {}}"
     this.bNode = (Object.keys(window).length < 2) ? true : false;
