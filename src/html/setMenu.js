@@ -1650,6 +1650,7 @@ class SetMenu {
             html += liStr + me.htmlCls.baseUrl + "icn3d/icn3d.html#addclass' target='_blank'>Add New Classes</a></li>";
             html += liStr + me.htmlCls.baseUrl + "icn3d/icn3d.html#modifyfunction' target='_blank'>Modify Functions</a></li>";
             html += liStr + me.htmlCls.baseUrl + "icn3d/icn3d.html#restfulapi' target='_blank'>RESTful APIs</a></li>";
+            html += liStr + me.htmlCls.baseUrl + "icn3d/icn3d.html#contributors' target='_blank'>Codeathon Contributors</a></li>";
             html += "</ul>";
             html += "</li>";
         }

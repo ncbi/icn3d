@@ -1,4 +1,6 @@
 ## Change Log
+[icn3d-3.10.0](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.10.0.zip) was release on March 7, 2022. Showed SNP and ClinVar annotations for AlphaFold structures.
+
 [icn3d-3.9.0](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.9.0.zip) was release on February 28, 2022. Showed 3D domains for AlphaFold structures or any custom structures.
 
 [icn3d-3.8.4](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.8.4.zip) was release on February 22, 2022. Enabled to export the content of any iCn3D dialog/popup window using a Python script in the command line. One example is at https://github.com/ncbi/icn3d/blob/master/icn3dpython/batch_export_panel.py.
