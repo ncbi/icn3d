@@ -863,10 +863,6 @@ class ClickMenu {
         me.myEventCls.onIds("#" + me.pre + "mn3_proteinsNo", "click", function(e) { let ic = me.icn3d;
            ic.setOptionCls.setStyle('proteins', 'nothing');
            thisClass.setLogCmd('style proteins nothing', true);
-
-           // remove disulfide bonds
-           ic.lines['ssbond'] = [];
-           ic.setOptionCls.setStyle('sidec', 'nothing');
         });
     //    },
     //    clkMn3_sidecLines: function() {
@@ -2032,7 +2028,7 @@ class ClickMenu {
         me.myEventCls.onIds("#" + me.pre + "mn6_ssbondsYes", "click", function(e) { let ic = me.icn3d;
            let select = "disulfide bonds";
            thisClass.setLogCmd(select, true);
-           ic.annoSsbondCls.showSsbonds();
+           ic.showInterCls.showSsbonds();
         });
     //    },
     //    clkMn6_ssbondsExport: function() {

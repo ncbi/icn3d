@@ -483,7 +483,7 @@ class ApplyCommand {
         //ic.drawCls.draw();
       }
       else if(command == 'disulfide bonds') {
-        ic.annoSsbondCls.showSsbonds();
+        ic.showInterCls.showSsbonds();
       }
       else if(command == 'cross linkage') {
         ic.showInterCls.showClbonds();
