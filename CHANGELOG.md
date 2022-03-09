@@ -1,4 +1,6 @@
 ## Change Log
+[icn3d-3.10.1](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.10.1.zip) was release on March 9, 2022. Added the color option "Structure" and the style option "Hydrogens". Fixed some bugs on loading PDB files without headers.
+
 [icn3d-3.10.0](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.10.0.zip) was release on March 7, 2022. Showed SNP and ClinVar annotations for AlphaFold structures.
 
 [icn3d-3.9.0](https://www.ncbi.nlm.nih.gov/Structure/icn3d/icn3d-3.9.0.zip) was release on February 28, 2022. Showed 3D domains for AlphaFold structures or any custom structures.

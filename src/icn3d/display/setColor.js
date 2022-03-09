@@ -18,6 +18,10 @@ class SetColor {
     colorSpectrum(atoms) { let ic = this.icn3d, me = ic.icn3dui;
         let idx = 0;
         let cnt = 0;
+
+        // for selected atoms
+        atoms = me.hashUtilsCls.intHash(atoms, ic.hAtoms);
+
         for (let i in atoms) {
             let atom = ic.atoms[i];
             if(!atom.het) ++cnt;
@@ -36,6 +40,10 @@ class SetColor {
     colorRainbow(atoms) { let ic = this.icn3d, me = ic.icn3dui;
         let idx = 0;
         let cnt = 0;
+
+        // for selected atoms
+        atoms = me.hashUtilsCls.intHash(atoms, ic.hAtoms);
+
         for (let i in atoms) {
             let atom = ic.atoms[i];
             if(!atom.het) ++cnt;
@@ -96,6 +104,31 @@ class SetColor {
                     this.colorSpectrum(ic.chains[chainid]);
                 }
                 break;
+
+            case 'structure':
+                let index = -1, prevStructure = '', colorLength = me.parasCls.stdChainColors.length;
+                for (let i in atoms) {
+                    let atom = ic.atoms[i];
+
+                    if(atom.structure != prevStructure) {
+                        ++index;
+
+                        index = index % colorLength;
+                    }
+
+                    if(!atom.het) {
+                        atom.color = me.parasCls.stdChainColors[index];
+                        ic.atomPrevColors[i] = atom.color;
+                    }
+                    else{
+                        atom.color = me.parasCls.atomColors[atom.elem];
+                        ic.atomPrevColors[i] = atom.color;
+                    }
+
+                    prevStructure = atom.structure;
+                }
+                break;
+
             case 'chain':
                 if(ic.chainsColor !== undefined && Object.keys(ic.chainsColor).length > 0) { // mmdb input
                     this.setMmdbChainColor();

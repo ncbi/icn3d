@@ -24,7 +24,8 @@ class AnnoSnpClinVar {
     navClinVar(chnid) { let ic = this.icn3d, me = ic.icn3dui;
         let thisClass = this;
         ic.currClin[chnid] = - 1;
-        me.myEventCls.onIds("#" + ic.pre + chnid + "_prevclin", "click", function(e) { let ic = thisClass.icn3d;
+        //me.myEventCls.onIds("#" + ic.pre + chnid + "_prevclin", "click", function(e) { let ic = thisClass.icn3d;
+        $(document).on("click", "#" + ic.pre + chnid + "_prevclin", function(e) { let ic = thisClass.icn3d;
           e.stopImmediatePropagation();
           //e.preventDefault();
           let maxLen =(ic.resi2disease_nonempty[chnid] !== undefined) ? Object.keys(ic.resi2disease_nonempty[chnid]).length : 0;
@@ -32,20 +33,24 @@ class AnnoSnpClinVar {
           if(ic.currClin[chnid] < 0) ic.currClin[chnid] = maxLen - 1; // 0;
           thisClass.showClinVarLabelOn3D(chnid);
         });
-        me.myEventCls.onIds("#" + ic.pre + chnid + "_nextclin", "click", function(e) { let ic = thisClass.icn3d;
+        //me.myEventCls.onIds("#" + ic.pre + chnid + "_nextclin", "click", function(e) { let ic = thisClass.icn3d;
+        $(document).on("click", "#" + ic.pre + chnid + "_nextclin", function(e) { let ic = thisClass.icn3d;
           e.stopImmediatePropagation();
           //e.preventDefault();
           let maxLen =(ic.resi2disease_nonempty[chnid] !== undefined) ? Object.keys(ic.resi2disease_nonempty[chnid]).length : 0;
           ++ic.currClin[chnid];
+
           if(ic.currClin[chnid] > maxLen - 1) ic.currClin[chnid] = 0; // ic.resi2disease_nonempty[chnid].length - 1;
           thisClass.showClinVarLabelOn3D(chnid);
         });
     }
     showClinVarLabelOn3D(chnid) { let ic = this.icn3d, me = ic.icn3dui;
           let resiArray = Object.keys(ic.resi2disease_nonempty[chnid]);
+
           let chainid, residueid;
           chainid = chnid;
-          residueid = chainid + '_' + resiArray[ic.currClin[chnid]];
+          residueid = chainid + '_' + (parseInt(resiArray[ic.currClin[chnid]]) + ic.baseResi[chnid]).toString();
+ 
           let label = '';
           let diseaseArray = ic.resi2disease_nonempty[chnid][resiArray[ic.currClin[chnid]]];
           for(let k = 0, kl = diseaseArray.length; k < kl; ++k) {
@@ -54,6 +59,8 @@ class AnnoSnpClinVar {
                 break;
               }
           }
+          if(label == '') label = (diseaseArray.length > 0) ? diseaseArray[0] : "N/A";
+
           let position = ic.applyCenterCls.centerAtoms(me.hashUtilsCls.hash2Atoms(ic.residues[residueid], ic.atoms));
           //position.center.add(new THREE.Vector3(3.0, 3.0, 3.0)); // shift a little bit
           let maxlen = 30;

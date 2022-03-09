@@ -863,6 +863,10 @@ class ClickMenu {
         me.myEventCls.onIds("#" + me.pre + "mn3_proteinsNo", "click", function(e) { let ic = me.icn3d;
            ic.setOptionCls.setStyle('proteins', 'nothing');
            thisClass.setLogCmd('style proteins nothing', true);
+
+           // remove disulfide bonds
+           ic.lines['ssbond'] = [];
+           ic.setOptionCls.setStyle('sidec', 'nothing');
         });
     //    },
     //    clkMn3_sidecLines: function() {
@@ -1078,6 +1082,10 @@ class ClickMenu {
            ic.setOptionCls.setOption('color', 'chain');
            thisClass.setLogCmd('color chain', true);
         });
+        me.myEventCls.onIds("#" + me.pre + "mn4_clrStructure", "click", function(e) { let ic = me.icn3d;
+            ic.setOptionCls.setOption('color', 'structure');
+            thisClass.setLogCmd('color structure', true);
+         });
     //    },
     //    clkMn4_clrDomain: function() {
         me.myEventCls.onIds("#" + me.pre + "mn4_clrdomain", "click", function(e) { let ic = me.icn3d;

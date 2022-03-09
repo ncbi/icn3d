@@ -873,15 +873,16 @@ class SetMenu {
         html += "</ul>";
         html += "</li>";
 
-        if(me.cfg.cid !== undefined) {
+        //if(me.cfg.cid !== undefined) {
             html += "<li><span>Hydrogens</span>";
             html += "<ul>";
             html += me.htmlCls.setHtmlCls.getRadio('mn3_hydrogens', 'mn3_hydrogensYes', 'Show', true);
             html += me.htmlCls.setHtmlCls.getRadio('mn3_hydrogens', 'mn3_hydrogensNo', 'Hide');
             html += "</ul>";
             html += "</li>";
-        }
-        else {
+        //}
+
+        if(me.cfg.cid === undefined) {
             html += "<li><span>Glycans</span>";
             html += "<ul>";
             html += me.htmlCls.setHtmlCls.getRadio('mn3_glycansCart', 'mn3_glycansCartYes', 'Show Cartoon');
@@ -1295,6 +1296,8 @@ class SetMenu {
 
             if(!me.cfg.simplemenu) html += me.htmlCls.setHtmlCls.getRadio('mn4_clr', 'mn4_clrArea', 'Solvent<br><span style="padding-left:1.5em;">Accessibility</span>');
 
+            html += me.htmlCls.setHtmlCls.getRadio('mn4_clr', 'mn4_clrStructure', 'Structure');
+
             if(me.cfg.align !== undefined || me.cfg.chainalign !== undefined || me.cfg.blast_rep_id !== undefined) {
               html += me.htmlCls.setHtmlCls.getRadio('mn4_clr', 'mn4_clrChain', 'Chain');
             }
@@ -1302,9 +1305,9 @@ class SetMenu {
               html += me.htmlCls.setHtmlCls.getRadio('mn4_clr', 'mn4_clrChain', 'Chain', true);
             }
 
-            if(me.cfg.mmdbid !== undefined || me.cfg.gi !== undefined) {
+            //if(me.cfg.mmdbid !== undefined || me.cfg.gi !== undefined) {
               html += me.htmlCls.setHtmlCls.getRadio('mn4_clr', 'mn4_clrdomain', '3D Domain');
-            }
+            //}
 
             if(me.cfg.cid === undefined) {
                 if(!me.cfg.simplemenu) {

@@ -283,6 +283,11 @@ class LoadPDB {
                     ic.pmid = line.substr(19).trim();
                 }
             } else if (record === 'ATOM  ' || record === 'HETATM') {
+                structure = id;
+                if(id == 'stru' || bMutation || (bAppend && id.length != 4)) { // bMutation: side chain prediction
+                    structure = (moleculeNum === 1) ? id : id + moleculeNum.toString();
+                }
+
                 let  alt = line.substr(16, 1);
                 //if (alt !== " " && alt !== "A") continue;
 
