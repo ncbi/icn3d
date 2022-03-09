@@ -143,38 +143,51 @@ class ShowInter {
     }
 
     showHydrogens() { let ic = this.icn3d, me = ic.icn3dui;
-       // get hydrogen atoms for currently selected atoms
-       for(let i in ic.hAtoms) {
-           let atom = ic.atoms[i];
-           if(atom.name !== 'H') {
-               ic.atoms[atom.serial].bonds = ic.atoms[atom.serial].bonds2.concat();
-               ic.atoms[atom.serial].bondOrder = ic.atoms[atom.serial].bondOrder2.concat();
-               for(let j = 0, jl = ic.atoms[atom.serial].bonds.length; j < jl; ++j) {
-                   let serial = ic.atoms[atom.serial].bonds[j];
-                   if(ic.atoms[serial].name === 'H') {
-                       ic.dAtoms[serial] = 1;
-                       ic.hAtoms[serial] = 1;
-                   }
-               }
-           }
-       }
+        // get hydrogen atoms for currently selected atoms
+        if(me.cfg.cid !== undefined) {
+            for(let i in ic.hAtoms) {
+                    let atom = ic.atoms[i];
+            
+                    //if(atom.name !== 'H') {
+                    if(atom.elem.substr(0, 1) !== 'H') {
+                        ic.atoms[atom.serial].bonds = ic.atoms[atom.serial].bonds2.concat();
+                        ic.atoms[atom.serial].bondOrder = ic.atoms[atom.serial].bondOrder2.concat();
+                        for(let j = 0, jl = ic.atoms[atom.serial].bonds.length; j < jl; ++j) {
+                            let serial = ic.atoms[atom.serial].bonds[j];
+                            //if(ic.atoms[serial].name === 'H') {
+                            if(atom.elem.substr(0, 1) === 'H') {
+                                ic.dAtoms[serial] = 1;
+                                ic.hAtoms[serial] = 1;
+                            }
+                        }
+                    }
+            }
+        }
+        else {
+            for(let serial in ic.atoms) {
+                ic.dAtoms[serial] = 1;
+                ic.hAtoms[serial] = 1;
+            }            
+        }
     }
+
     hideHydrogens() { let ic = this.icn3d, me = ic.icn3dui;
        // remove hydrogen atoms for currently selected atoms
        for(let i in ic.hAtoms) {
            let atom = ic.atoms[i];
-           if(atom.name === 'H') {
+           //if(atom.name === 'H') {
+           if(atom.elem.substr(0, 1) === 'H') {
                if(ic.atoms[atom.serial].bonds.length > 0) {
                    let otherSerial = ic.atoms[atom.serial].bonds[0];
                    //ic.atoms[atom.serial].bonds = [];
-                   let pos = ic.atoms[otherSerial].bonds.indexOf(atom.serial);
+                   let pos = (ic.atoms[otherSerial].bonds) ? ic.atoms[otherSerial].bonds.indexOf(atom.serial) : -1;
                    if(pos !== -1) {
                        ic.atoms[otherSerial].bonds.splice(pos, 1);
-                       ic.atoms[otherSerial].bondOrder.splice(pos, 1);
+                       if(ic.atoms[otherSerial].bondOrder) ic.atoms[otherSerial].bondOrder.splice(pos, 1);
                    }
                }
                delete ic.dAtoms[atom.serial];
-               delete ic.hAtoms[atom.serial];
+               delete ic.hAtoms[atom.serial];            
            }
        }
     }

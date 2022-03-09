@@ -90,6 +90,19 @@ class SetOption {
           case 'proteins':
               atoms = me.hashUtilsCls.intHash(ic.hAtoms, ic.proteins);
               if(Object.keys(ic.hAtoms).length < Object.keys(ic.proteins).length) bAll = false;
+
+              // remove disulfide bonds
+              if(style == 'nothing') {
+                ic.opts["ssbonds"] = "no";
+                ic.lines['ssbond'] = [];
+                for(let i in atoms) {
+                    ic.atoms[i].style2 = 'nothing';
+                }
+              }
+              else {
+                ic.opts["ssbonds"] = "yes";
+              }
+
               break;
           case 'sidec':
               atoms = me.hashUtilsCls.intHash(ic.hAtoms, ic.sidec);

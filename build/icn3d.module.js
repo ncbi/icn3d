@@ -18309,39 +18309,52 @@ class ShowInter {
         }
     }
 
-    showHydrogens() { let ic = this.icn3d; ic.icn3dui;
-       // get hydrogen atoms for currently selected atoms
-       for(let i in ic.hAtoms) {
-           let atom = ic.atoms[i];
-           if(atom.name !== 'H') {
-               ic.atoms[atom.serial].bonds = ic.atoms[atom.serial].bonds2.concat();
-               ic.atoms[atom.serial].bondOrder = ic.atoms[atom.serial].bondOrder2.concat();
-               for(let j = 0, jl = ic.atoms[atom.serial].bonds.length; j < jl; ++j) {
-                   let serial = ic.atoms[atom.serial].bonds[j];
-                   if(ic.atoms[serial].name === 'H') {
-                       ic.dAtoms[serial] = 1;
-                       ic.hAtoms[serial] = 1;
-                   }
-               }
-           }
-       }
+    showHydrogens() { let ic = this.icn3d, me = ic.icn3dui;
+        // get hydrogen atoms for currently selected atoms
+        if(me.cfg.cid !== undefined) {
+            for(let i in ic.hAtoms) {
+                    let atom = ic.atoms[i];
+            
+                    //if(atom.name !== 'H') {
+                    if(atom.elem.substr(0, 1) !== 'H') {
+                        ic.atoms[atom.serial].bonds = ic.atoms[atom.serial].bonds2.concat();
+                        ic.atoms[atom.serial].bondOrder = ic.atoms[atom.serial].bondOrder2.concat();
+                        for(let j = 0, jl = ic.atoms[atom.serial].bonds.length; j < jl; ++j) {
+                            let serial = ic.atoms[atom.serial].bonds[j];
+                            //if(ic.atoms[serial].name === 'H') {
+                            if(atom.elem.substr(0, 1) === 'H') {
+                                ic.dAtoms[serial] = 1;
+                                ic.hAtoms[serial] = 1;
+                            }
+                        }
+                    }
+            }
+        }
+        else {
+            for(let serial in ic.atoms) {
+                ic.dAtoms[serial] = 1;
+                ic.hAtoms[serial] = 1;
+            }            
+        }
     }
+
     hideHydrogens() { let ic = this.icn3d; ic.icn3dui;
        // remove hydrogen atoms for currently selected atoms
        for(let i in ic.hAtoms) {
            let atom = ic.atoms[i];
-           if(atom.name === 'H') {
+           //if(atom.name === 'H') {
+           if(atom.elem.substr(0, 1) === 'H') {
                if(ic.atoms[atom.serial].bonds.length > 0) {
                    let otherSerial = ic.atoms[atom.serial].bonds[0];
                    //ic.atoms[atom.serial].bonds = [];
-                   let pos = ic.atoms[otherSerial].bonds.indexOf(atom.serial);
+                   let pos = (ic.atoms[otherSerial].bonds) ? ic.atoms[otherSerial].bonds.indexOf(atom.serial) : -1;
                    if(pos !== -1) {
                        ic.atoms[otherSerial].bonds.splice(pos, 1);
-                       ic.atoms[otherSerial].bondOrder.splice(pos, 1);
+                       if(ic.atoms[otherSerial].bondOrder) ic.atoms[otherSerial].bondOrder.splice(pos, 1);
                    }
                }
                delete ic.dAtoms[atom.serial];
-               delete ic.hAtoms[atom.serial];
+               delete ic.hAtoms[atom.serial];            
            }
        }
     }
@@ -18562,6 +18575,10 @@ class SetColor {
     colorSpectrum(atoms) { let ic = this.icn3d, me = ic.icn3dui;
         let idx = 0;
         let cnt = 0;
+
+        // for selected atoms
+        atoms = me.hashUtilsCls.intHash(atoms, ic.hAtoms);
+
         for (let i in atoms) {
             let atom = ic.atoms[i];
             if(!atom.het) ++cnt;
@@ -18580,6 +18597,10 @@ class SetColor {
     colorRainbow(atoms) { let ic = this.icn3d, me = ic.icn3dui;
         let idx = 0;
         let cnt = 0;
+
+        // for selected atoms
+        atoms = me.hashUtilsCls.intHash(atoms, ic.hAtoms);
+
         for (let i in atoms) {
             let atom = ic.atoms[i];
             if(!atom.het) ++cnt;
@@ -18640,6 +18661,31 @@ class SetColor {
                     this.colorSpectrum(ic.chains[chainid]);
                 }
                 break;
+
+            case 'structure':
+                let index = -1, prevStructure = '', colorLength = me.parasCls.stdChainColors.length;
+                for (let i in atoms) {
+                    let atom = ic.atoms[i];
+
+                    if(atom.structure != prevStructure) {
+                        ++index;
+
+                        index = index % colorLength;
+                    }
+
+                    if(!atom.het) {
+                        atom.color = me.parasCls.stdChainColors[index];
+                        ic.atomPrevColors[i] = atom.color;
+                    }
+                    else {
+                        atom.color = me.parasCls.atomColors[atom.elem];
+                        ic.atomPrevColors[i] = atom.color;
+                    }
+
+                    prevStructure = atom.structure;
+                }
+                break;
+
             case 'chain':
                 if(ic.chainsColor !== undefined && Object.keys(ic.chainsColor).length > 0) { // mmdb input
                     this.setMmdbChainColor();
@@ -21353,6 +21399,11 @@ class LoadPDB {
                     ic.pmid = line.substr(19).trim();
                 }
             } else if (record === 'ATOM  ' || record === 'HETATM') {
+                structure = id;
+                if(id == 'stru' || bMutation || (bAppend && id.length != 4)) { // bMutation: side chain prediction
+                    structure = (moleculeNum === 1) ? id : id + moleculeNum.toString();
+                }
+
                 let  alt = line.substr(16, 1);
                 //if (alt !== " " && alt !== "A") continue;
 
@@ -37828,10 +37879,11 @@ class AnnoSnpClinVar {
         this.icn3d = icn3d;
     }
 
-    navClinVar(chnid) { let ic = this.icn3d, me = ic.icn3dui;
+    navClinVar(chnid) { let ic = this.icn3d; ic.icn3dui;
         let thisClass = this;
         ic.currClin[chnid] = - 1;
-        me.myEventCls.onIds("#" + ic.pre + chnid + "_prevclin", "click", function(e) { let ic = thisClass.icn3d;
+        //me.myEventCls.onIds("#" + ic.pre + chnid + "_prevclin", "click", function(e) { let ic = thisClass.icn3d;
+        $(document).on("click", "#" + ic.pre + chnid + "_prevclin", function(e) { let ic = thisClass.icn3d;
           e.stopImmediatePropagation();
           //e.preventDefault();
           let maxLen =(ic.resi2disease_nonempty[chnid] !== undefined) ? Object.keys(ic.resi2disease_nonempty[chnid]).length : 0;
@@ -37839,20 +37891,24 @@ class AnnoSnpClinVar {
           if(ic.currClin[chnid] < 0) ic.currClin[chnid] = maxLen - 1; // 0;
           thisClass.showClinVarLabelOn3D(chnid);
         });
-        me.myEventCls.onIds("#" + ic.pre + chnid + "_nextclin", "click", function(e) { let ic = thisClass.icn3d;
+        //me.myEventCls.onIds("#" + ic.pre + chnid + "_nextclin", "click", function(e) { let ic = thisClass.icn3d;
+        $(document).on("click", "#" + ic.pre + chnid + "_nextclin", function(e) { let ic = thisClass.icn3d;
           e.stopImmediatePropagation();
           //e.preventDefault();
           let maxLen =(ic.resi2disease_nonempty[chnid] !== undefined) ? Object.keys(ic.resi2disease_nonempty[chnid]).length : 0;
           ++ic.currClin[chnid];
+
           if(ic.currClin[chnid] > maxLen - 1) ic.currClin[chnid] = 0; // ic.resi2disease_nonempty[chnid].length - 1;
           thisClass.showClinVarLabelOn3D(chnid);
         });
     }
     showClinVarLabelOn3D(chnid) { let ic = this.icn3d, me = ic.icn3dui;
           let resiArray = Object.keys(ic.resi2disease_nonempty[chnid]);
+
           let chainid, residueid;
           chainid = chnid;
-          residueid = chainid + '_' + resiArray[ic.currClin[chnid]];
+          residueid = chainid + '_' + (parseInt(resiArray[ic.currClin[chnid]]) + ic.baseResi[chnid]).toString();
+ 
           let label = '';
           let diseaseArray = ic.resi2disease_nonempty[chnid][resiArray[ic.currClin[chnid]]];
           for(let k = 0, kl = diseaseArray.length; k < kl; ++k) {
@@ -37861,6 +37917,8 @@ class AnnoSnpClinVar {
                 break;
               }
           }
+          if(label == '') label = (diseaseArray.length > 0) ? diseaseArray[0] : "N/A";
+
           let position = ic.applyCenterCls.centerAtoms(me.hashUtilsCls.hash2Atoms(ic.residues[residueid], ic.atoms));
           //position.center.add(new THREE.Vector3(3.0, 3.0, 3.0)); // shift a little bit
           let maxlen = 30;
@@ -41170,6 +41228,19 @@ class SetOption {
           case 'proteins':
               atoms = me.hashUtilsCls.intHash(ic.hAtoms, ic.proteins);
               if(Object.keys(ic.hAtoms).length < Object.keys(ic.proteins).length) ;
+
+              // remove disulfide bonds
+              if(style == 'nothing') {
+                ic.opts["ssbonds"] = "no";
+                ic.lines['ssbond'] = [];
+                for(let i in atoms) {
+                    ic.atoms[i].style2 = 'nothing';
+                }
+              }
+              else {
+                ic.opts["ssbonds"] = "yes";
+              }
+
               break;
           case 'sidec':
               atoms = me.hashUtilsCls.intHash(ic.hAtoms, ic.sidec);
@@ -46628,6 +46699,10 @@ class ClickMenu {
         me.myEventCls.onIds("#" + me.pre + "mn3_proteinsNo", "click", function(e) { let ic = me.icn3d;
            ic.setOptionCls.setStyle('proteins', 'nothing');
            thisClass.setLogCmd('style proteins nothing', true);
+
+           // remove disulfide bonds
+           ic.lines['ssbond'] = [];
+           ic.setOptionCls.setStyle('sidec', 'nothing');
         });
     //    },
     //    clkMn3_sidecLines: function() {
@@ -46843,6 +46918,10 @@ class ClickMenu {
            ic.setOptionCls.setOption('color', 'chain');
            thisClass.setLogCmd('color chain', true);
         });
+        me.myEventCls.onIds("#" + me.pre + "mn4_clrStructure", "click", function(e) { let ic = me.icn3d;
+            ic.setOptionCls.setOption('color', 'structure');
+            thisClass.setLogCmd('color structure', true);
+         });
     //    },
     //    clkMn4_clrDomain: function() {
         me.myEventCls.onIds("#" + me.pre + "mn4_clrdomain", "click", function(e) { let ic = me.icn3d;
@@ -48751,15 +48830,16 @@ class SetMenu {
         html += "</ul>";
         html += "</li>";
 
-        if(me.cfg.cid !== undefined) {
+        //if(me.cfg.cid !== undefined) {
             html += "<li><span>Hydrogens</span>";
             html += "<ul>";
             html += me.htmlCls.setHtmlCls.getRadio('mn3_hydrogens', 'mn3_hydrogensYes', 'Show', true);
             html += me.htmlCls.setHtmlCls.getRadio('mn3_hydrogens', 'mn3_hydrogensNo', 'Hide');
             html += "</ul>";
             html += "</li>";
-        }
-        else {
+        //}
+
+        if(me.cfg.cid === undefined) {
             html += "<li><span>Glycans</span>";
             html += "<ul>";
             html += me.htmlCls.setHtmlCls.getRadio('mn3_glycansCart', 'mn3_glycansCartYes', 'Show Cartoon');
@@ -49173,6 +49253,8 @@ class SetMenu {
 
             if(!me.cfg.simplemenu) html += me.htmlCls.setHtmlCls.getRadio('mn4_clr', 'mn4_clrArea', 'Solvent<br><span style="padding-left:1.5em;">Accessibility</span>');
 
+            html += me.htmlCls.setHtmlCls.getRadio('mn4_clr', 'mn4_clrStructure', 'Structure');
+
             if(me.cfg.align !== undefined || me.cfg.chainalign !== undefined || me.cfg.blast_rep_id !== undefined) {
               html += me.htmlCls.setHtmlCls.getRadio('mn4_clr', 'mn4_clrChain', 'Chain');
             }
@@ -49180,9 +49262,9 @@ class SetMenu {
               html += me.htmlCls.setHtmlCls.getRadio('mn4_clr', 'mn4_clrChain', 'Chain', true);
             }
 
-            if(me.cfg.mmdbid !== undefined || me.cfg.gi !== undefined) {
+            //if(me.cfg.mmdbid !== undefined || me.cfg.gi !== undefined) {
               html += me.htmlCls.setHtmlCls.getRadio('mn4_clr', 'mn4_clrdomain', '3D Domain');
-            }
+            //}
 
             if(me.cfg.cid === undefined) {
                 if(!me.cfg.simplemenu) {
@@ -57810,7 +57892,7 @@ class iCn3DUI {
     //even when multiple iCn3D viewers are shown together.
     this.pre = this.cfg.divid + "_";
 
-    this.REVISION = '3.10.0';
+    this.REVISION = '3.10.1';
 
     // In nodejs, iCn3D defines "window = {navigator: {}}"
     this.bNode = (Object.keys(window).length < 2) ? true : false;
