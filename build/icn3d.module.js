@@ -48287,13 +48287,13 @@ class SetMenu {
 
         $('.ui-widget-header').css({
             'border': '1px solid ' + borderColor,
-            'background': bkgdColor + ' url("lib/images/' + bkgdImg + '") 50% 50% repeat-x',
+            'background': bkgdColor + ' url("https://www.ncbi.nlm.nih.gov/Structure/icn3d/lib/images/' + bkgdImg + '") 50% 50% repeat-x',
             'color':'#fff',
             'font-weight':'bold'
         });
 
         $('.ui-button .ui-icon').css({
-            'background-image': 'url(lib/images/' + iconImg + ')'
+            'background-image': 'url(https://www.ncbi.nlm.nih.gov/Structure/icn3d/lib/images/' + iconImg + ')'
         });
 
         $('.ui-state-active a, .ui-state-active a:link, .ui-state-active a:visited').css({
@@ -49252,10 +49252,10 @@ class SetMenu {
             html += me.htmlCls.setHtmlCls.getRadio('mn4_clr', 'mn4_clrStructure', 'Structure');
 
             if(me.cfg.align !== undefined || me.cfg.chainalign !== undefined || me.cfg.blast_rep_id !== undefined) {
-              html += me.htmlCls.setHtmlCls.getRadio('mn4_clr', 'mn4_clrChain', 'Chain');
+                html += me.htmlCls.setHtmlCls.getRadio('mn4_clr', 'mn4_clrChain', 'Chain');
             }
             else {
-              html += me.htmlCls.setHtmlCls.getRadio('mn4_clr', 'mn4_clrChain', 'Chain', true);
+                html += me.htmlCls.setHtmlCls.getRadio('mn4_clr', 'mn4_clrChain', 'Chain', true);
             }
 
             //if(me.cfg.mmdbid !== undefined || me.cfg.gi !== undefined) {
