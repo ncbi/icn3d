@@ -350,7 +350,7 @@ class RealignParser {
 
         let  mmdbid_t;
         let  ajaxArray = [];
-        let  url = (bStructure) ? me.htmlCls.baseUrl + 'vastdyn/vastdyn.cgi' : me.htmlCls.baseUrl + 'pwaln/pwaln.fcgi?from=chainalign';
+        let  url = me.htmlCls.baseUrl + 'pwaln/pwaln.fcgi?from=chainalign';
 
         let  predefinedResArray, predefinedRes;
 
