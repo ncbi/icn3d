@@ -180,19 +180,21 @@ class LineGraph {
                 nodeArray1Split[i] = nodeArraysTmp.nodeArray1;
                 nodeArray2Split[i] = nodeArraysTmp.nodeArray2;
 
-                // common interactions
-                bCommonDiff = 1;
-                nodeArraysTmp = ic.getGraphCls.getNodeTopBottom(nameHashSplit[i], name2node, undefined, bCommonDiff, nameHashSplitCommon[i]);
-                nodeArray1SplitCommon[i] = nodeArraysTmp.nodeArray1;
-                nodeArray2SplitCommon[i] = nodeArraysTmp.nodeArray2;
-                name2node = me.hashUtilsCls.unionHash(name2node, nodeArraysTmp.name2node);
+                if(Object.keys(ic.chainsMapping).length > 0) { 
+                    // common interactions
+                    bCommonDiff = 1;
+                    nodeArraysTmp = ic.getGraphCls.getNodeTopBottom(nameHashSplit[i], name2node, undefined, bCommonDiff, nameHashSplitCommon[i]);
+                    nodeArray1SplitCommon[i] = nodeArraysTmp.nodeArray1;
+                    nodeArray2SplitCommon[i] = nodeArraysTmp.nodeArray2;
+                    name2node = me.hashUtilsCls.unionHash(name2node, nodeArraysTmp.name2node);
 
-                // different interactions
-                bCommonDiff = 2;
-                nodeArraysTmp = ic.getGraphCls.getNodeTopBottom(nameHashSplit[i], name2node, undefined, bCommonDiff, nameHashSplitDiff[i]);
-                nodeArray1SplitDiff[i] = nodeArraysTmp.nodeArray1;
-                nodeArray2SplitDiff[i] = nodeArraysTmp.nodeArray2;
-                name2node = me.hashUtilsCls.unionHash(name2node, nodeArraysTmp.name2node);
+                    // different interactions
+                    bCommonDiff = 2;
+                    nodeArraysTmp = ic.getGraphCls.getNodeTopBottom(nameHashSplit[i], name2node, undefined, bCommonDiff, nameHashSplitDiff[i]);
+                    nodeArray1SplitDiff[i] = nodeArraysTmp.nodeArray1;
+                    nodeArray2SplitDiff[i] = nodeArraysTmp.nodeArray2;
+                    name2node = me.hashUtilsCls.unionHash(name2node, nodeArraysTmp.name2node);
+                }
                 
                 len1Split[i] = nodeArray1Split[i].length;
                 len2Split[i] = nodeArray2Split[i].length;
@@ -217,19 +219,19 @@ class LineGraph {
                 //width =(Math.max(len1b, len2b) + 2) *(r + gap) + 2 * marginX + legendWidth;
                 heightAll =(me.utilsCls.sumArray(len1Split) + 2*strucArray.length) *(r + gap) + 4 * marginY 
                   + 2 * legendWidth + textHeight*strucArray.length;
-                // show common and diff interaction as well
-                heightAll *= 3;
 
                 width = (maxWidth + 2) * (r + gap) + 2 * marginX + legendWidth;
                   
             } else {
                 height = 110 + textHeight;
                 heightAll = height * strucArray.length;
-                // show common and diff interaction as well
-                heightAll *= 3;
 
                 width = (maxWidth + 2) * (r + gap) + 2 * marginX;
             }
+
+            // show common and diff interaction as well
+            if(Object.keys(ic.chainsMapping).length > 0) heightAll *= 3;
+
             let  id, graphWidth;
             if(bScatterplot) {
                 ic.scatterplotWidth = 2 * width;
@@ -252,17 +254,19 @@ class LineGraph {
             heightFinal = result.heightFinal;
             html += result.html;
 
-            bCommonDiff = 1;
-            result = this.drawGraphPerType(bCommonDiff, structureArray, bScatterplot, nodeArray1SplitCommon, nodeArray2SplitCommon, linkArraySplitCommon, name2node, heightFinal, height, textHeight, len1Split, r, gap, marginY);
+            if(Object.keys(ic.chainsMapping).length > 0) {
+                bCommonDiff = 1;
+                result = this.drawGraphPerType(bCommonDiff, structureArray, bScatterplot, nodeArray1SplitCommon, nodeArray2SplitCommon, linkArraySplitCommon, name2node, heightFinal, height, textHeight, len1Split, r, gap, marginY);
 
-            heightFinal = result.heightFinal;
-            html += result.html;
+                heightFinal = result.heightFinal;
+                html += result.html;
 
-            bCommonDiff = 2;
-            result = this.drawGraphPerType(bCommonDiff, structureArray, bScatterplot, nodeArray1SplitDiff, nodeArray2SplitDiff, linkArraySplitDiff, name2node, heightFinal, height, textHeight, len1Split, r, gap, marginY);
+                bCommonDiff = 2;
+                result = this.drawGraphPerType(bCommonDiff, structureArray, bScatterplot, nodeArray1SplitDiff, nodeArray2SplitDiff, linkArraySplitDiff, name2node, heightFinal, height, textHeight, len1Split, r, gap, marginY);
 
-            heightFinal = result.heightFinal;
-            html += result.html;
+                heightFinal = result.heightFinal;
+                html += result.html;
+            }
             
             html += "</svg>";
         } else {

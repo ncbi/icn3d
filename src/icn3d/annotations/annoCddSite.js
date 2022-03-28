@@ -37,7 +37,7 @@ class AnnoCddSite {
               dataType: 'jsonp',
               cache: true,
               tryCount : 0,
-              retryLimit : 1,
+              retryLimit : 0, //1
               success: function(data) {
                 thisClass.parseCddData([data], chnidArray);
                 if(ic.deferredAnnoCddSite !== undefined) ic.deferredAnnoCddSite.resolve();

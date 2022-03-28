@@ -439,18 +439,22 @@ class SetMenu {
         html += "<li><span>Align</span>";
         html += "<ul>";
         html += me.htmlCls.setHtmlCls.getLink('mn1_blast_rep_id', 'Sequence to Structure');
-        html += me.htmlCls.setHtmlCls.getLink('mn1_align', 'Structure to Structure ' + me.htmlCls.wifiStr);
-        //html += me.htmlCls.setHtmlCls.getLink('mn1_chainalign', 'Chain to Chain');
+        //html += me.htmlCls.setHtmlCls.getLink('mn1_align', 'Structure to Structure ' + me.htmlCls.wifiStr);
+        html += "<li><span>Structure to Structure</span>";
+        html += "<ul>";
+        html += me.htmlCls.setHtmlCls.getLink('mn1_align', 'Two PDB Structures ' + me.htmlCls.wifiStr);
+        html += me.htmlCls.setHtmlCls.getLink('mn1_alignaf', 'Two AlphaFold Structures ' + me.htmlCls.wifiStr);
+        html += "</ul>";
+
         html += me.htmlCls.setHtmlCls.getLink('mn1_chainalign', 'Multiple Chains ' + me.htmlCls.wifiStr);
 
         html += "</ul>";
         html += "</li>";
 
-        //html += me.htmlCls.setHtmlCls.getLink('mn2_realignonseqalign', 'Realign Selection');
-
         html += "<li id='" + me.pre + "mn2_realignWrap'><span>Realign Selection</span>";
         html += "<ul>";
-        html += me.htmlCls.setHtmlCls.getRadio('mn2_realign', 'mn2_realignonseqalign', 'on Sequence Alignment ' + me.htmlCls.wifiStr, true);
+        html += me.htmlCls.setHtmlCls.getRadio('mn2_realign', 'mn2_realignonstruct', 'by Structure Alignment ' + me.htmlCls.wifiStr, true);
+        html += me.htmlCls.setHtmlCls.getRadio('mn2_realign', 'mn2_realignonseqalign', 'by Sequence Alignment ' + me.htmlCls.wifiStr);
         html += me.htmlCls.setHtmlCls.getRadio('mn2_realign', 'mn2_realignresbyres', 'Residue by Residue');
         html += "</ul>";
         html += "</li>";

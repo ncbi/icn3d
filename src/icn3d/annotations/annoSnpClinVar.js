@@ -585,12 +585,15 @@ class AnnoSnpClinVar {
         //var url = "https://www.ncbi.nlm.nih.gov/projects/SNP/beVarSearch_mt.cgi?appname=iCn3D&format=bed&report=pdb2bed&acc=" + chnidBase;
         //var url = "https://www.ncbi.nlm.nih.gov/Structure/icn3d/clinvar.txt";
         let url = "https://www.ncbi.nlm.nih.gov/Structure/vastdyn/vastdyn.cgi?chainid_clinvar=" + chnidBase;
+        if(ic.chainsGene[chnid] && ic.chainsGene[chnid].geneSymbol) {
+            url += "&gene=" + ic.chainsGene[chnid].geneSymbol;
+        }
         $.ajax({
           url: url,
           dataType: 'jsonp',
           cache: true,
           tryCount : 0,
-          retryLimit : 1,
+          retryLimit : 0, //1
           success: function(indata) {
             if(indata && indata.data && indata.data.length > 0) {
                 let bSnpOnly = false;
@@ -634,7 +637,7 @@ class AnnoSnpClinVar {
           dataType: 'jsonp', //'text',
           cache: true,
           tryCount : 0,
-          retryLimit : 1,
+          retryLimit : 0, //1
           success: function(data2) {
             //ic.chainid2repgi = JSON.parse(data2);
             //var gi = ic.chainid2repgi[chnidBase];
@@ -678,7 +681,7 @@ class AnnoSnpClinVar {
               dataType: 'text',
               cache: true,
               tryCount : 0,
-              retryLimit : 1,
+              retryLimit : 0, //1
               success: function(data3) {
                 if(data3) {
                     let bSnpOnly = true;
@@ -687,12 +690,15 @@ class AnnoSnpClinVar {
                 else {
        */             
                     let url4 = "https://www.ncbi.nlm.nih.gov/Structure/vastdyn/vastdyn.cgi?chainid_snp=" + chnidBase;
+                    if(ic.chainsGene[chnid] && ic.chainsGene[chnid].geneSymbol) {
+                        url4 += "&gene=" + ic.chainsGene[chnid].geneSymbol;
+                    }
                     $.ajax({
                       url: url4,
                       dataType: 'jsonp', //'text',
                       cache: true,
                       tryCount : 0,
-                      retryLimit : 1,
+                      retryLimit : 0, //1
                       success: function(data4) {
                         if(data4 && data4.data && data4.data.length > 0) {
                             let bSnpOnly = true;

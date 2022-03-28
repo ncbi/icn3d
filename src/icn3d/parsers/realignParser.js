@@ -261,7 +261,78 @@ class RealignParser {
         }
 
         let  bRealign = true;
+
         this.realignChainOnSeqAlign(undefined, chainidArray, bRealign);
+    }
+
+    realignOnStructAlign() { let  ic = this.icn3d, me = ic.icn3dui;
+        // each 3D domain should have at least 3 secondary structures
+        let minSseCnt = 3;
+        let struct2domain = {};
+        for(let struct in ic.structures) {
+            struct2domain[struct] = {};
+            let chainidArray = ic.structures[struct];
+            for(let i = 0, il = chainidArray.length; i < il; ++i) {
+                let chainid = chainidArray[i];
+                let atoms = me.hashUtilsCls.intHash(ic.hAtoms, ic.chains[chainid]);               
+                let sseCnt = 0;
+                for(let serial in atoms) {
+                    if(ic.atoms[serial].ssbegin) ++sseCnt;
+                    if(sseCnt == minSseCnt) {
+                        struct2domain[struct][chainid] = atoms;
+                        break;
+                    }
+                }
+            }
+        }
+
+        let  ajaxArray = [], chainidPairArray = [], struArray = [];
+        let urlalign = me.htmlCls.baseUrl + "vastdyn/vastdyn.cgi";
+
+        let cnt = 0;
+        let structArray = Object.keys(struct2domain);
+        for(let s = 0, sl = structArray.length; s < sl; ++s) {
+            let struct1 = structArray[s];
+            let chainidArray1 = Object.keys(struct2domain[struct1]);
+            if(chainidArray1.length == 0) continue;
+            for(let t = s+1, tl = structArray.length; t < tl; ++t) {
+                let struct2 = structArray[t];
+                let chainidArray2 = Object.keys(struct2domain[struct2]);
+                if(chainidArray2.length == 0) continue;
+
+                for(let i = 0, il = chainidArray1.length; i < il; ++i) {
+                    let chainid1 = chainidArray1[i];
+                    for(let j = 0, jl = chainidArray2.length; j < jl; ++j) {
+                        let chainid2 = chainidArray2[j];
+
+                        let jsonStr_q = ic.domain3dCls.getDomainJsonForAlign(struct2domain[struct1][chainid1]);
+                        let jsonStr_t = ic.domain3dCls.getDomainJsonForAlign(struct2domain[struct2][chainid2]);
+                      
+                        let alignAjax = $.ajax({
+                            url: urlalign,
+                            type: 'POST',
+                            data: {'domains1': jsonStr_q, 'domains2': jsonStr_t},
+                            dataType: 'jsonp',
+                            cache: true
+                        });
+
+                        ajaxArray.push(alignAjax);
+                        chainidPairArray.push(chainid1 + ',' + chainid2); // chainid2 is target
+                        ++cnt;
+                    }
+                }
+            }
+        }
+
+        //https://stackoverflow.com/questions/14352139/multiple-ajax-calls-from-array-and-handle-callback-when-completed
+        //https://stackoverflow.com/questions/5518181/jquery-deferreds-when-and-the-fail-callback-arguments
+        $.when.apply(undefined, ajaxArray).then(function() {
+            let  dataArray =(chainidPairArray.length == 1) ? [arguments] : Array.from(arguments);
+            ic.chainalignParserCls.downloadChainalignmentPart2bRealign(dataArray, chainidPairArray);
+        })
+        .fail(function() {
+            alert("These structures can NOT be aligned to each other...");
+        });            
     }
 
     realignChainOnSeqAlign(chainresiCalphaHash2, chainidArray, bRealign, bPredefined) { let  ic = this.icn3d, me = ic.icn3dui;
@@ -275,9 +346,11 @@ class RealignParser {
         let  struct2resid = {}
         let  lastStruResi = '';
 
+        let jsonStr_q, jsonStr_t;
+
         let  mmdbid_t;
         let  ajaxArray = [];
-        let  url = 'https://www.ncbi.nlm.nih.gov/Structure/pwaln/pwaln.fcgi?from=chainalign';
+        let  url = (bStructure) ? me.htmlCls.baseUrl + 'vastdyn/vastdyn.cgi' : me.htmlCls.baseUrl + 'pwaln/pwaln.fcgi?from=chainalign';
 
         let  predefinedResArray, predefinedRes;
 
@@ -321,13 +394,6 @@ class RealignParser {
 
             if(i == 0 || bPredefined) { // master
                 let base = parseInt(ic.chainsSeq[chainid][0].resi);
-
-                //let  resRange;
-                //if(bRealign) {
-                //    let  seqLen = ic.chainsSeq[chainid].length;
-                //    let  lastResi = ic.chainsSeq[chainid][seqLen - 1].resi;
-                //    resRange = base.toString() + '-' + lastResi.toString();
-                //}
 
                 let resiArray = [];
                 if(bRealign) {
@@ -429,11 +495,11 @@ class RealignParser {
                 let  seq2 = struct2SeqHash[fromStruct];
 
                 let  queryAjax = $.ajax({
-                   url: url,
-                   type: 'POST',
-                   data : {'targets': seq1, 'queries': seq2},
-                   dataType: 'jsonp',
-                   cache: true
+                url: url,
+                type: 'POST',
+                data : {'targets': seq1, 'queries': seq2},
+                dataType: 'jsonp',
+                cache: true
                 });
 
                 ajaxArray.push(queryAjax);
@@ -447,8 +513,8 @@ class RealignParser {
             //https://stackoverflow.com/questions/14352139/multiple-ajax-calls-from-array-and-handle-callback-when-completed
             //https://stackoverflow.com/questions/5518181/jquery-deferreds-when-and-the-fail-callback-arguments
             $.when.apply(undefined, ajaxArray).then(function() {
-               let  dataArray =(chainidArray.length == 2) ? [arguments] : Array.from(arguments);
-               thisClass.parseChainRealignData(Array.from(dataArray), chainresiCalphaHash2, chainidArray, struct2SeqHash, struct2CoorHash, struct2resid, bRealign);
+                let  dataArray =(chainidArray.length == 2) ? [arguments] : Array.from(arguments);
+                thisClass.parseChainRealignData(Array.from(dataArray), chainresiCalphaHash2, chainidArray, struct2SeqHash, struct2CoorHash, struct2resid, bRealign);
             })
             .fail(function() {
                alert("The realignment did not work...");

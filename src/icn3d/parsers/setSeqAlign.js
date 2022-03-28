@@ -250,32 +250,62 @@ class SetSeqAlign {
           seqalign = {}
     }
 
-    setSeqAlignChain(chainid, chainIndex) { let  ic = this.icn3d, me = ic.icn3dui;
+    setSeqAlignChain(chainid, chainIndex, chainidArray) { let  ic = this.icn3d, me = ic.icn3dui;
           //loadSeqAlignment
-          let  alignedAtoms = {}
+          let  alignedAtoms = {};
+          let mmdbid1, mmdbid2, chain1, chain2, chainid1, chainid2, pos1, pos2;
 
-          //var chainidArray = me.cfg.chainalign.split(',');
-          let  pos1 = ic.chainidArray[0].indexOf('_');
-          let  pos2 = chainid.indexOf('_');
+          if(chainidArray) { 
+            // originally chainid2 is target,chainid1 is query
+            // switch them so that chainid1 is the target
+            chainid1 = chainidArray[1];
+            chainid2 = chainidArray[0];
 
-          let  mmdbid1 = ic.mmdbid_t; //ic.chainidArray[0].substr(0, pos1).toUpperCase();
-          let  mmdbid2 = chainid.substr(0, pos2).toUpperCase();
+            chainIndex = chainidArray[2];
 
-          let  chain1 = ic.chainidArray[0].substr(pos1 + 1);
-          let  chain2 = chainid.substr(pos2 + 1);
+            pos1 = chainid1.indexOf('_');
+            pos2 = chainid2.indexOf('_');
 
-          if(mmdbid1 == mmdbid2 && chain1 == chain2) {
-            let  chainLen = ic.chainsSeq[ic.mmdbid_q + '_' + ic.chain_q].length;
-            ic.qt_start_end[chainIndex] =  {"q_start":1, "q_end": chainLen, "t_start":1, "t_end": chainLen}
+            mmdbid1 = chainid1.substr(0, pos1).toUpperCase();
+            mmdbid2 = chainid2.substr(0, pos2).toUpperCase();
+
+            chain1 = chainid1.substr(pos1 + 1);
+            chain2 = chainid2.substr(pos1 + 1);
+
+            if(mmdbid1 == mmdbid2 && chain1 == chain2) {
+                let  chainLen = ic.chainsSeq[mmdbid2 + '_' + chain2].length;
+                ic.qt_start_end[chainIndex] =  {"q_start":1, "q_end": chainLen, "t_start":1, "t_end": chainLen}
+            }
+
+            if(mmdbid2 !== undefined && mmdbid2 === mmdbid1) {
+                //chainid1 += me.htmlCls.postfix;
+                chainid2 = mmdbid2 + me.htmlCls.postfix + "_" + chain2;
+            }
           }
+          else {
+            //var chainidArray = me.cfg.chainalign.split(',');
+            let  pos1 = ic.chainidArray[0].indexOf('_');
+            let  pos2 = chainid.indexOf('_');
 
-          let  chainid1 = mmdbid1 + "_" + chain1;
-          let  chainid2 = mmdbid2 + "_" + chain2;
+            mmdbid1 = ic.mmdbid_t; //ic.chainidArray[0].substr(0, pos1).toUpperCase();
+            mmdbid2 = chainid.substr(0, pos2).toUpperCase();
 
-          if(mmdbid2 !== undefined && mmdbid2 === ic.mmdbid_t) {
-              //chainid1 += me.htmlCls.postfix;
-              chainid2 = mmdbid2 + me.htmlCls.postfix + "_" + chain2;
-          }
+            chain1 = ic.chainidArray[0].substr(pos1 + 1);
+            chain2 = chainid.substr(pos2 + 1);
+
+            if(mmdbid1 == mmdbid2 && chain1 == chain2) {
+                let  chainLen = ic.chainsSeq[ic.mmdbid_q + '_' + ic.chain_q].length;
+                ic.qt_start_end[chainIndex] =  {"q_start":1, "q_end": chainLen, "t_start":1, "t_end": chainLen}
+            }
+
+            chainid1 = mmdbid1 + "_" + chain1;
+            chainid2 = mmdbid2 + "_" + chain2;
+
+            if(mmdbid2 !== undefined && mmdbid2 === ic.mmdbid_t) {
+                //chainid1 += me.htmlCls.postfix;
+                chainid2 = mmdbid2 + me.htmlCls.postfix + "_" + chain2;
+            }
+         }
 
           ic.conservedName1 = chainid1 + '_cons';
           ic.nonConservedName1 = chainid1 + '_ncons';

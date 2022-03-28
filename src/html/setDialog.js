@@ -173,6 +173,11 @@ class SetDialog {
         html += me.htmlCls.buttonStr + "reload_align_ori'>All Matching Molecules Superposed</button>" + me.htmlCls.space3 + me.htmlCls.buttonStr + "reload_align_refined'>Invariant Substructure Superposed</button>";
         html += "</div>";
 
+        html += me.htmlCls.divStr + "dl_alignaf' class='" + dialogClass + "'>";
+        html += "Enter two <a href='https://alphafold.ebi.ac.uk/' target='_blank'>AlphaFold Uniprot</a> IDs: <br/><br/>ID1: " + me.htmlCls.inputTextStr + "id='" + me.pre + "alignafid1' value='P41327' size=8>" + me.htmlCls.space3 + me.htmlCls.space3 + "ID2: " + me.htmlCls.inputTextStr + "id='" + me.pre + "alignafid2' value='P41331' size=8><br/><br/>";
+        html += me.htmlCls.buttonStr + "reload_alignaf'>Align</button>";
+        html += "</div>";
+
         html += me.htmlCls.divStr + "dl_chainalign' class='" + dialogClass + "'>";
     /*
         html += "Enter the PDB chain IDs in the form of pdbid_chain(e.g., 1HHO_A, case sensitive): <br/><br/>ID1: " + me.htmlCls.inputTextStr + "id='" + me.pre + "chainalignid1' value='1HHO_A' size=8>" + me.htmlCls.space3 + me.htmlCls.space3 + "ID2: " + me.htmlCls.inputTextStr + "id='" + me.pre + "chainalignid2' value='4N7N_A' size=8><br/><br/>";
@@ -181,7 +186,7 @@ class SetDialog {
         html += "</div>";
     */
         html += "<div style='width:550px'>";
-        html += "All chains will be aligned to the first chain in the comma-separated chain IDs. Each chain ID has the form of pdbid_chain(e.g., 1HHO_A, case sensitive).<br/><br/>";
+        html += "All chains will be aligned to the first chain in the comma-separated chain IDs. Each chain ID has the form of PDBID_chain (e.g., 1HHO_A, case sensitive) or UniprotID_chain (e.g., P69905_A for AlphaFold structures).<br/><br/>";
         html += "<b>Chain IDs</b>: " + me.htmlCls.inputTextStr + "id='" + me.pre + "chainalignids' value='1HHO_A,4N7N_A,2HCO_A' size=50><br/><br/>";
         html += "<b>Optional 1</b>, full chains are used for structure alignment<br/><br/>";
         html += "<b>Optional 2</b>, sequence alignment (followed by structure alignemnt) based on residue numbers in the First/Master chain: <br>" + me.htmlCls.inputTextStr + "id='" + me.pre + "resalignids' placeholder='1,5,10-50' size=50><br/><br/>";
@@ -509,7 +514,16 @@ class SetDialog {
         html += "<div style='text-indent:1.1em'><select id='" + me.pre + "atomsCustomRealign' multiple size='5' style='min-width:130px;'>";
         html += "</select></div>";
 
-        html += "<div>2. " + me.htmlCls.buttonStr + "applyRealign'>Realign</button></div><br>";
+        html += "<div>2. " + me.htmlCls.buttonStr + "applyRealign'>Realign by Sequence</button></div><br>";
+        html += "</div>";
+
+        html += me.htmlCls.divStr + "dl_realignbystruct' class='" + dialogClass + "'>";
+
+        html += me.htmlCls.divNowrapStr + "1. Select sets from two structures below <br>or use your current selection:</div><br>";
+        html += "<div style='text-indent:1.1em'><select id='" + me.pre + "atomsCustomRealignByStruct' multiple size='5' style='min-width:130px;'>";
+        html += "</select></div>";
+
+        html += "<div>2. " + me.htmlCls.buttonStr + "applyRealignByStruct'>Realign by Structure</button></div><br>";
         html += "</div>";
 
         html += me.htmlCls.divStr + "dl_allinteraction' style='background-color:white' class='" + dialogClass + "'>";

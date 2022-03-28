@@ -351,7 +351,7 @@ class AlignParser {
           dataType: dataType,
           cache: true,
           //tryCount : 0,
-          //retryLimit : 1,
+          //retryLimit : 0, //1
           success: function(opmdata) {
               ic.selectedPdbid = mmdbidArray[0];
 
@@ -378,7 +378,7 @@ class AlignParser {
               dataType: dataType,
               cache: true,
               //tryCount : 0,
-              //retryLimit : 1,
+              //retryLimit : 0, //1
               success: function(opmdata) {
                   ic.selectedPdbid = mmdbidArray[1];
 

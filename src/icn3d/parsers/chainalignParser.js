@@ -22,20 +22,142 @@ class ChainalignParser {
     }
 
     downloadChainalignmentPart2(data1, data2Array, chainresiCalphaHash2, chainidArray) { let  ic = this.icn3d, me = ic.icn3dui;
-        //ic.interactionData_q = [];
-        //ic.mmdb_data_q = [];
+        let thisClass = this;
 
-        let  hAtoms = {}
-        hAtoms = ic.mmdbParserCls.parseMmdbData(data1, 'target', chainidArray[0], 0);
-
+        let  hAtoms = {}, hAtomsTmp = {};
+        let mmdbid_t, mmdbid_q;
+        mmdbid_t = chainidArray[0].substr(0, chainidArray[0].indexOf('_'));
         let  bLastQuery = false;
+        if(mmdbid_t.length > 4) { 
+            let bAppend = false, bNoDssp = true;
+            hAtoms = ic.pdbParserCls.loadPdbData(data1, mmdbid_t, false, bAppend, 'target', bLastQuery, bNoDssp);
+        }
+        else {
+            let bNoSeqalign = true;
+            hAtoms = ic.mmdbParserCls.parseMmdbData(data1, 'target', chainidArray[0], 0, bLastQuery, bNoSeqalign);
+        }
+
         for(let i = 0, il = data2Array.length; i < il; ++i) {
             if(i == data2Array.length - 1) bLastQuery = true;
             // each alignment has a chainIndex i
-            let  hAtomsTmp = ic.mmdbParserCls.parseMmdbData(data2Array[i], 'query', chainidArray[i + 1], i, bLastQuery);
+            mmdbid_q = chainidArray[i + 1].substr(0, chainidArray[i + 1].indexOf('_'));
+            if(mmdbid_q.length > 4) {
+                let bAppend = true, bNoDssp = true;
+                hAtomsTmp = ic.pdbParserCls.loadPdbData(data2Array[i], mmdbid_q, false, bAppend, 'query', bLastQuery, bNoDssp);
+            }
+            else {
+                let bNoSeqalign = true;
+                hAtomsTmp = ic.mmdbParserCls.parseMmdbData(data2Array[i], 'query', chainidArray[i + 1], i, bLastQuery, bNoSeqalign);
+            }
             hAtoms = me.hashUtilsCls.unionHash(hAtoms, hAtomsTmp);
         }
 
+        // calculate secondary structures with applyCommandDssp
+        $.when(ic.pdbParserCls.applyCommandDssp(true)).then(function() {
+            // dynamicly align pairs in ic.afChainIndexHash
+            let  ajaxArray = [], indexArray = [], struArray = [];
+            let urlalign = me.htmlCls.baseUrl + "vastdyn/vastdyn.cgi";
+
+            for(let index in ic.afChainIndexHash) {
+                let idArray = ic.afChainIndexHash[index].split('_');
+                mmdbid_q = idArray[0];
+                let chain_q = idArray[1];
+                mmdbid_t = idArray[2];
+                let chain_t = idArray[3];
+
+                let jsonStr_q = ic.domain3dCls.getDomainJsonForAlign(ic.chains[mmdbid_q + '_' + chain_q]);
+
+                let jsonStr_t = ic.domain3dCls.getDomainJsonForAlign(ic.chains[mmdbid_t + '_' + chain_t]);
+                    
+                let alignAjax = $.ajax({
+                    url: urlalign,
+                    type: 'POST',
+                    data: {'domains1': jsonStr_q, 'domains2': jsonStr_t},
+                    dataType: 'jsonp',
+                    cache: true
+                });
+
+                ajaxArray.push(alignAjax);
+                indexArray.push(index - 1);
+                struArray.push(mmdbid_q);
+            }
+
+            //https://stackoverflow.com/questions/14352139/multiple-ajax-calls-from-array-and-handle-callback-when-completed
+            //https://stackoverflow.com/questions/5518181/jquery-deferreds-when-and-the-fail-callback-arguments
+            $.when.apply(undefined, ajaxArray).then(function() {
+                let  dataArray =(indexArray.length == 1) ? [arguments] : Array.from(arguments);
+                thisClass.downloadChainalignmentPart2b(chainresiCalphaHash2, chainidArray, hAtoms, dataArray, indexArray, mmdbid_t, struArray);
+            })
+            .fail(function() {
+                alert("These structures can NOT be aligned to each other...");
+            });    
+        });
+    }
+
+    downloadChainalignmentPart2b(chainresiCalphaHash2, chainidArray, hAtoms, dataArray, indexArray, mmdbid_t, struArray) { let  ic = this.icn3d, me = ic.icn3dui;
+        let bTargetTransformed = (ic.qt_start_end[0]) ? true : false;
+
+        // modify the previous trans and rotation matrix
+        for(let i = 0, il = dataArray.length; i < il; ++i) {
+            let align = dataArray[i][0];
+
+            let mmdbid_q = struArray[i];
+            let index = indexArray[i];
+
+            let bEqualMmdbid = (mmdbid_q == mmdbid_t);
+            let bEqualChain = false;
+
+            let queryData = {}; // check whether undefined
+
+            this.processAlign(align, index, queryData, bEqualMmdbid, bEqualChain);
+        }
+
+        // transform the target if not yet
+        if(!bTargetTransformed) {
+            this.transformStructure(mmdbid_t, indexArray[0], 'target');
+        }
+
+        // transform the rest
+        for(let i = 0, il = dataArray.length; i < il; ++i) {
+            let mmdbid_q = struArray[i];
+            let index = indexArray[i];
+
+            this.transformStructure(mmdbid_q, index, 'query');
+        }
+
+/*
+        // transform the target 
+        this.transformStructure(mmdbid_t, 0, 'target');
+
+        // transform the queries
+        for(let i = 1, il = chainidArray.length; i < il; ++i) {
+            let mmdbid_q = chainidArray[i].substr(0, chainidArray[i].indexOf('_'));
+
+            this.transformStructure(mmdbid_q, i - 1, 'query');
+        }
+*/
+
+        //let hAtomsTmp = {};
+        // set up the view of sequence alignment
+        for(let i = 1, il = chainidArray.length; i < il; ++i) {
+            if(ic.bFullUi && ic.q_rotation !== undefined && !me.cfg.resnum && !me.cfg.resdef) {
+                ic.setSeqAlignCls.setSeqAlignChain(chainidArray[i], i-1);
+
+                //hAtomsTmp = me.hashUtilsCls.unionHash(hAtomsTmp, ic.hAtoms);
+
+                let  bReverse = false;
+                let  seqObj = me.htmlCls.alignSeqCls.getAlignSequencesAnnotations(Object.keys(ic.alnChains), undefined, undefined, false, undefined, bReverse);
+                let  oriHtml = $("#" + ic.pre + "dl_sequence2").html();
+
+                $("#" + ic.pre + "dl_sequence2").html(oriHtml + seqObj.sequencesHtml);
+                $("#" + ic.pre + "dl_sequence2").width(me.htmlCls.RESIDUE_WIDTH * seqObj.maxSeqCnt + 200);
+            }
+        }
+
+        // highlight all aligned atoms
+        //ic.hAtoms = me.hashUtilsCls.cloneHash(hAtomsTmp);
+
+        // do the rest
         if(me.cfg.resnum) {
             ic.realignParserCls.realignChainOnSeqAlign(chainresiCalphaHash2, chainidArray);
         }
@@ -45,6 +167,152 @@ class ChainalignParser {
         else {
             this.downloadChainalignmentPart3(chainresiCalphaHash2, chainidArray, hAtoms);
         }
+    }
+
+    downloadChainalignmentPart2bRealign(dataArray, chainidPairArray) { let  ic = this.icn3d, me = ic.icn3dui;
+        // set trans and rotation matrix
+        ic.t_trans_add = [];
+        ic.q_trans_sub = [];
+        ic.q_rotation = [];
+        ic.qt_start_end = [];
+
+        let mmdbid2cnt = {}, mmdbidpairHash = {};
+             
+        for(let i = 0, il = dataArray.length; i < il; ++i) {
+            let align = dataArray[i][0];
+
+            let bEqualMmdbid = false;
+            let bEqualChain = false;
+
+            let queryData = {}; // check whether undefined
+
+            let bNoAlert = true;
+            let bAligned = this.processAlign(align, i, queryData, bEqualMmdbid, bEqualChain, bNoAlert);
+
+            if(bAligned) {
+                let chainpair = chainidPairArray[i].split(',');
+                let mmdbid1 = chainpair[0].substr(0, chainpair[0].indexOf('_'));
+                let mmdbid2 = chainpair[1].substr(0, chainpair[1].indexOf('_'));
+                if(mmdbidpairHash.hasOwnProperty(mmdbid1 + '_' + mmdbid2)) { // aligned already
+                    continue;
+                }
+                else {
+                    mmdbid2cnt[mmdbid1] = (mmdbid2cnt[mmdbid1] === undefined) ? 1 : ++mmdbid2cnt[mmdbid1];
+                    mmdbid2cnt[mmdbid2] = (mmdbid2cnt[mmdbid2] === undefined) ? 1 : ++mmdbid2cnt[mmdbid2];
+
+                    mmdbidpairHash[mmdbid1 + '_' + mmdbid2] = chainpair + ',' + i;
+                }
+            }
+        }
+/*
+        // find the max aligned mmdbid as mmdbid_t
+        let cnt = 0, mmdbid_t;
+        for(let mmdbidpair in mmdbidpairHash) {
+            let mmdbidArray = mmdbidpair.split('_');
+            if(mmdbid2cnt[mmdbidArray[0]] > cnt) {
+                cnt = mmdbid2cnt[mmdbidArray[0]];
+                mmdbid_t = mmdbidArray[0];
+            }
+            if(mmdbid2cnt[mmdbidArray[1]] > cnt) {
+                cnt = mmdbid2cnt[mmdbidArray[1]];
+                mmdbid_t = mmdbidArray[1];
+            }
+        }
+*/
+        let aligType;
+        // transform all pairs 
+        let allChainidHash = {}, hAtoms = {};
+        for(let mmdbidpair in mmdbidpairHash) {
+            let mmdbidArray = mmdbidpair.split('_');
+            let chainidArray = mmdbidpairHash[mmdbidpair].split(',');
+            let index = chainidArray[2];
+
+            // chainid2 is target
+            aligType = 'query';
+            this.transformStructure(mmdbidArray[0], index, aligType);
+
+            aligType = 'target';
+            this.transformStructure(mmdbidArray[1], index, aligType);
+
+            allChainidHash[chainidArray[0]] = 1;
+            allChainidHash[chainidArray[1]] = 1;
+
+            hAtoms = me.hashUtilsCls.unionHash(hAtoms, ic.chains[chainidArray[0]]);
+            hAtoms = me.hashUtilsCls.unionHash(hAtoms, ic.chains[chainidArray[1]]);
+        }
+
+        // set up the view of sequence alignment for each pair
+        for(let mmdbidpair in mmdbidpairHash) {           
+            if(ic.q_rotation !== undefined) {
+                let chainidArray = mmdbidpairHash[mmdbidpair].split(',');
+
+                ic.setSeqAlignCls.setSeqAlignChain(undefined, undefined, chainidArray);
+
+                let  bReverse = false;
+                let  seqObj = me.htmlCls.alignSeqCls.getAlignSequencesAnnotations(Object.keys(ic.alnChains), undefined, undefined, false, undefined, bReverse);
+                let  oriHtml = $("#" + ic.pre + "dl_sequence2").html();
+
+                $("#" + ic.pre + "dl_sequence2").html(oriHtml + seqObj.sequencesHtml);
+                $("#" + ic.pre + "dl_sequence2").width(me.htmlCls.RESIDUE_WIDTH * seqObj.maxSeqCnt + 200);
+            }
+        }
+
+        //this.downloadChainalignmentPart3(undefined, Object.keys(allChainidHash), hAtoms);
+
+        ic.dAtoms = hAtoms;
+        ic.hAtoms = hAtoms;
+
+        ic.opts['color'] = 'identity';
+        //ic.setColorCls.setColorByOptions(ic.opts, ic.atoms);
+        ic.setColorCls.setColorByOptions(ic.opts, ic.hAtoms);
+
+        me.htmlCls.dialogCls.openDlg('dl_alignment', 'Select residues in aligned sequences');
+
+        ic.drawCls.draw();
+        ic.hlUpdateCls.updateHlAll();
+
+        if(ic.deferredRealignByStruct !== undefined) ic.deferredRealignByStruct.resolve();
+    }
+
+    transformStructure(mmdbid, index, alignType) { let  ic = this.icn3d, me = ic.icn3dui;
+        let chainidArray = ic.structures[mmdbid];
+       
+        for(let i = 0, il = chainidArray.length; i < il; ++i) {
+            for(let serial in ic.chains[chainidArray[i]]) {
+                let atm = ic.atoms[serial];
+                //atm.coord = new THREE.Vector3(atm.coord[0], atm.coord[1], atm.coord[2]);
+                if(ic.q_rotation !== undefined && ic.t_trans_add.length > 0 && !me.cfg.resnum && !me.cfg.resdef) {
+                    atm = this.transformAtom(atm, index, alignType);
+                }
+            }
+        }
+    }
+
+    transformAtom(atm, index, alignType) { let  ic = this.icn3d, me = ic.icn3dui;
+        if(alignType === 'target') {
+            // atm.coord.x += ic.t_trans_add[index].x;
+            // atm.coord.y += ic.t_trans_add[index].y;
+            // atm.coord.z += ic.t_trans_add[index].z;
+        }
+        else if(alignType === 'query') {
+            atm.coord.x -= ic.q_trans_sub[index].x;
+            atm.coord.y -= ic.q_trans_sub[index].y;
+            atm.coord.z -= ic.q_trans_sub[index].z;
+
+            let  x = atm.coord.x * ic.q_rotation[index].x1 + atm.coord.y * ic.q_rotation[index].y1 + atm.coord.z * ic.q_rotation[index].z1;
+            let  y = atm.coord.x * ic.q_rotation[index].x2 + atm.coord.y * ic.q_rotation[index].y2 + atm.coord.z * ic.q_rotation[index].z2;
+            let  z = atm.coord.x * ic.q_rotation[index].x3 + atm.coord.y * ic.q_rotation[index].y3 + atm.coord.z * ic.q_rotation[index].z3;
+
+            x -= ic.t_trans_add[index].x;
+            y -= ic.t_trans_add[index].y;
+            z -= ic.t_trans_add[index].z;
+
+            atm.coord.x = x;
+            atm.coord.y = y;
+            atm.coord.z = z;
+        }
+
+        return atm;
     }
 
     downloadChainalignmentPart3(chainresiCalphaHash2, chainidArray, hAtoms) { let  ic = this.icn3d, me = ic.icn3dui;
@@ -70,7 +338,8 @@ class ChainalignParser {
 
         ic.ParserUtilsCls.renderStructure();
 
-        if(ic.chainidArray.length > 2) {
+        //if(ic.chainidArray.length > 2) {
+        if(chainidArray.length > 2) {
             let  residuesHash = {}
             for(let i in hAtoms) {
                 let  atom = ic.atoms[i];
@@ -92,10 +361,9 @@ class ChainalignParser {
         ic.html2ddgm = '';
 
         // by default, open the seq alignment window
-        //if(me.cfg.show2d !== undefined && me.cfg.show2d) me.htmlCls.dialogCls.openDlg('dl_2ddgm', 'Interactions');
-        if(me.cfg.showalignseq) {
+         //if(me.cfg.showalignseq) {
             me.htmlCls.dialogCls.openDlg('dl_alignment', 'Select residues in aligned sequences');
-        }
+        //}
 
         if(me.cfg.show2d && ic.bFullUi) {
             me.htmlCls.dialogCls.openDlg('dl_2ddgm', 'Interactions');
@@ -131,15 +399,30 @@ class ChainalignParser {
         let  pos1 = alignArray[0].indexOf('_');
         ic.mmdbid_t = alignArray[0].substr(0, pos1).toUpperCase();
         ic.chain_t = alignArray[0].substr(pos1+1);
-        let  url_t = me.htmlCls.baseUrl + "mmdb/mmdb_strview.cgi?v=2&program=icn3d&b=1&s=1&ft=1&bu=" + me.cfg.bu + "&uid=" + ic.mmdbid_t;
-        if(me.cfg.inpara !== undefined) url_t += me.cfg.inpara;
 
         let  ajaxArray = [];
-        let  targetAjax = $.ajax({
-          url: url_t,
-          dataType: 'jsonp',
-          cache: true
-        });
+        let  targetAjax;
+
+        let  url_t;
+        if(ic.mmdbid_t.length > 4) {
+            url_t = "https://alphafold.ebi.ac.uk/files/AF-" + ic.mmdbid_t + "-F1-model_v2.pdb";
+
+            targetAjax = $.ajax({
+                url: url_t,
+                dataType: 'text',
+                cache: true
+              });
+        }
+        else {
+            url_t = me.htmlCls.baseUrl + "mmdb/mmdb_strview.cgi?v=2&program=icn3d&b=1&s=1&ft=1&bu=" + me.cfg.bu + "&uid=" + ic.mmdbid_t;
+            if(me.cfg.inpara !== undefined) url_t += me.cfg.inpara;
+
+            targetAjax = $.ajax({
+                url: url_t,
+                dataType: 'jsonp',
+                cache: true
+              });
+        }
 
         ajaxArray.push(targetAjax);
 
@@ -149,34 +432,59 @@ class ChainalignParser {
         ic.pdbid_chain2title = {}
         if(ic.chainids2resids === undefined) ic.chainids2resids = {} // ic.chainids2resids[chainid1][chainid2] = [resid, resid]
 
+        ic.afChainIndexHash = {};
         for(let index = 1, indexLen = alignArray.length; index < indexLen; ++index) {
             let  pos2 = alignArray[index].indexOf('_');
             ic.mmdbid_q = alignArray[index].substr(0, pos2).toUpperCase();
             ic.chain_q = alignArray[index].substr(pos2+1);
 
-            let  chainalignFinal = ic.mmdbid_q + "_" + ic.chain_q + "," + ic.mmdbid_t + "_" + ic.chain_t;
+            let  url_q, queryAjax;
+            if(ic.mmdbid_q.length > 4) {
+                url_q = "https://alphafold.ebi.ac.uk/files/AF-" + ic.mmdbid_q + "-F1-model_v2.pdb";
 
-            let  urlalign = me.htmlCls.baseUrl + "vastdyn/vastdyn.cgi?chainpairs=" + chainalignFinal;
-            let  url_q = me.htmlCls.baseUrl + "mmdb/mmdb_strview.cgi?v=2&program=icn3d&b=1&s=1&ft=1&bu=" + me.cfg.bu + "&uid=" + ic.mmdbid_q;
+                queryAjax = $.ajax({
+                    url: url_q,
+                    dataType: 'text',
+                    cache: true
+                });
+            }
+            else {
+                url_q = me.htmlCls.baseUrl + "mmdb/mmdb_strview.cgi?v=2&program=icn3d&b=1&s=1&ft=1&bu=" + me.cfg.bu + "&uid=" + ic.mmdbid_q;
+                if(me.cfg.inpara !== undefined) url_q += me.cfg.inpara;
 
-            if(me.cfg.inpara !== undefined) url_q += me.cfg.inpara;
-
-            let  queryAjax = $.ajax({
-              url: url_q,
-              dataType: 'jsonp',
-              cache: true
-            });
+                queryAjax = $.ajax({
+                    url: url_q,
+                    dataType: 'jsonp',
+                    cache: true
+                });
+            }
 
             ajaxArray.push(queryAjax);
+        }
+        
+        for(let index = 1, indexLen = alignArray.length; index < indexLen; ++index) {
+            let  pos2 = alignArray[index].indexOf('_');
+            ic.mmdbid_q = alignArray[index].substr(0, pos2).toUpperCase();
+            ic.chain_q = alignArray[index].substr(pos2+1);
 
             if(!me.cfg.resnum && !me.cfg.resdef) {
-                let  alignAjax = $.ajax({
-                  url: urlalign,
-                  dataType: 'jsonp',
-                  cache: true
-                });
+                let  chainalignFinal = ic.mmdbid_q + "_" + ic.chain_q + "," + ic.mmdbid_t + "_" + ic.chain_t;
 
-                ajaxArray.push(alignAjax);
+                if(ic.mmdbid_t.length == 4 && ic.mmdbid_q.length == 4) {
+                    let  urlalign = me.htmlCls.baseUrl + "vastdyn/vastdyn.cgi?chainpairs=" + chainalignFinal;
+                    
+                    let  alignAjax = $.ajax({
+                        url: urlalign,
+                        dataType: 'jsonp',
+                        cache: true
+                    });
+
+                    ajaxArray.push(alignAjax);
+                }
+                else {
+                    // get the dynamic alignment after loading the structures
+                    ic.afChainIndexHash[index] = ic.mmdbid_q + "_" + ic.chain_q + "_" + ic.mmdbid_t + "_" + ic.chain_t;
+                }
             }
         }
 
@@ -201,6 +509,8 @@ class ChainalignParser {
         //var data2 = v2[0];
         // index = 0: the mmdb data of target
         let  targetData = dataArray[0][0];
+        let header = 'HEADER                                                        ' + mmdbid_t + '\n';
+        if(mmdbid_t.length > 4) targetData = header + targetData;
 
         ic.t_trans_add = [];
         ic.q_trans_sub = [];
@@ -212,56 +522,53 @@ class ChainalignParser {
 
         let  queryDataArray = [];
 
-        let  step =(me.cfg.resnum || me.cfg.resdef) ? 1 : 2;
-
-        for(let index = 1, indexl = dataArray.length; index < indexl; index += step) {
+        for(let index = 1, indexl = chainidArray.length; index < indexl; ++index) {
             let  queryData = dataArray[index][0];
 
-            let  index2 = parseInt(index / step);
-            let  pos2 = chainidArray[index2].indexOf('_');
-            let  mmdbid_q = chainidArray[index2].substr(0, pos2).toUpperCase();
-            let  chain_q = chainidArray[index2].substr(pos2+1);
+            let  pos = chainidArray[index].indexOf('_');
+            let  mmdbid_q = chainidArray[index].substr(0, pos).toUpperCase();
 
-            if(me.cfg.resnum || me.cfg.resdef) {
-                if(queryData !== undefined && JSON.stringify(queryData).indexOf('Oops there was a problem') === -1
-                  ) {
-                    ic.mmdbidArray.push(mmdbid_q);
+            let header = 'HEADER                                                        ' + mmdbid_q + '\n';
+            if(mmdbid_q.length > 4) queryData = header + queryData;
 
-                    queryDataArray.push(queryData);
-                }
+            if(queryData !== undefined && JSON.stringify(queryData).indexOf('Oops there was a problem') === -1
+                ) {
+                ic.mmdbidArray.push(mmdbid_q);
+                queryDataArray.push(queryData);
             }
             else {
-                let  align = dataArray[index + 1][0];
-                if(!align) {
-                    alert("These chains can not be aligned by VAST server. You can specify the residue range and try it again...");
-                    return;
+                alert("The coordinate data can NOT be retrieved for the structure " + mmdbid_q + "...");
+                return;
+            }
+        }
+
+        let missedChainCnt = 0;
+        //for(let index = chainidArray.length, indexl = dataArray.length; index < indexl; index += step) {
+        for(let index = 1, indexl = chainidArray.length; index < indexl; ++index) {
+            let  queryData = queryDataArray[index - 1]; 
+
+            let  pos = chainidArray[index].indexOf('_');
+            let  mmdbid_q = chainidArray[index].substr(0, pos).toUpperCase();
+            let  chain_q = chainidArray[index].substr(pos+1);
+
+            if(!me.cfg.resnum && !me.cfg.resdef) {
+                let  index2 = chainidArray.length + index - 1;
+                if(ic.afChainIndexHash.hasOwnProperty(index)) {
+                    ++missedChainCnt;
+
+                    // need to pass C-alpha coords and get transformation matrix from backend
+                    ic.t_trans_add[index-1] = {"x":0, "y":0, "z":0};
+                    ic.q_trans_sub[index-1] = {"x":0, "y":0, "z":0};
+                    ic.q_rotation[index-1] = {"x1":1, "y1":0, "z1":0, "x2":0, "y2":1, "z2":0, "x3":0, "y3":0, "z3":1};
+                    ic.qt_start_end[index-1] = undefined;
                 }
+                else {
+                    let align = dataArray[index2 - missedChainCnt][0];
 
-                if(queryData !== undefined && JSON.stringify(queryData).indexOf('Oops there was a problem') === -1
-                    && align !== undefined && JSON.stringify(align).indexOf('Oops there was a problem') === -1
-                  ) {
-                    if((align === undefined || align.length == 0) && mmdbid_q == mmdbid_t && chain_q == chain_t) {
-                        ic.t_trans_add.push({"x":0, "y":0, "z":0});
-                        ic.q_trans_sub.push({"x":0, "y":0, "z":0});
-                        ic.q_rotation.push({"x1":1, "y1":0, "z1":0, "x2":0, "y2":1, "z2":0, "x3":0, "y3":0, "z3":1});
-                        ic.qt_start_end.push(undefined);
-                    }
-                    else if(align === undefined || align.length == 0) {
-                        if(!me.cfg.command) alert('These two chains ' + chainidArray[index2] + ' can not align to each other. ' + 'Please select sequences from these two chains in the "Sequences & Annotations" window, ' + 'and click "Realign Selection" in the "File" menu to align your selection.');
+                    let bEqualMmdbid = (mmdbid_q == mmdbid_t);
+                    let bEqualChain = (chain_q == chain_t);
 
-                        me.cfg.showanno = 1;
-                        me.cfg.showalignseq = 0;
-                    }
-                    else {
-                        ic.t_trans_add.push(align[0].t_trans_add);
-                        ic.q_trans_sub.push(align[0].q_trans_sub);
-                        ic.q_rotation.push(align[0].q_rotation);
-                        ic.qt_start_end.push(align[0].segs);
-                    }
-
-                    ic.mmdbidArray.push(mmdbid_q);
-
-                    queryDataArray.push(queryData);
+                    this.processAlign(align, index-1, queryData, bEqualMmdbid, bEqualChain);
                 }
             }
         }
@@ -269,6 +576,52 @@ class ChainalignParser {
         ic.mmdb_data_q = queryDataArray;
 
         this.loadOpmDataForChainalign(targetData, queryDataArray, chainidArray, ic.mmdbidArray);
+    }
+
+    processAlign(align, index, queryData, bEqualMmdbid, bEqualChain, bNoAlert) { let  ic = this.icn3d, me = ic.icn3dui;
+        let bAligned = false;
+        if(!align && !bNoAlert) {
+            alert("These chains can not be aligned by VAST server. You can specify the residue range and try it again...");
+            return bAligned;
+        }
+
+        if(queryData !== undefined && JSON.stringify(queryData).indexOf('Oops there was a problem') === -1
+            && align !== undefined && JSON.stringify(align).indexOf('Oops there was a problem') === -1
+        ) {
+            if((align === undefined || align.length == 0) && bEqualMmdbid && bEqualChain) {
+                ic.t_trans_add[index] = {"x":0, "y":0, "z":0};
+                ic.q_trans_sub[index] = {"x":0, "y":0, "z":0};
+                ic.q_rotation[index] = {"x1":1, "y1":0, "z1":0, "x2":0, "y2":1, "z2":0, "x3":0, "y3":0, "z3":1};
+                ic.qt_start_end[index] = undefined;
+            }
+            else if(align === undefined || align.length == 0) {
+                if(!me.cfg.command && !bNoAlert) alert('These two chains can not align to each other. ' + 'Please select sequences from these two chains in the "Sequences & Annotations" window, ' + 'and click "Realign Selection" in the "File" menu to align your selection.');
+
+                ic.t_trans_add[index] = {"x":0, "y":0, "z":0};
+                ic.q_trans_sub[index] = {"x":0, "y":0, "z":0};
+                ic.q_rotation[index] = {"x1":1, "y1":0, "z1":0, "x2":0, "y2":1, "z2":0, "x3":0, "y3":0, "z3":1};
+                ic.qt_start_end[index] = undefined;
+
+                me.cfg.showanno = 1;
+                me.cfg.showalignseq = 0;
+            }
+            else {
+                /*
+                ic.t_trans_add.push(align[0].t_trans_add);
+                ic.q_trans_sub.push(align[0].q_trans_sub);
+                ic.q_rotation.push(align[0].q_rotation);
+                ic.qt_start_end.push(align[0].segs);
+                */
+                ic.t_trans_add[index] = align[0].t_trans_add;
+                ic.q_trans_sub[index] = align[0].q_trans_sub;
+                ic.q_rotation[index] = align[0].q_rotation;
+                ic.qt_start_end[index] = align[0].segs;
+
+                bAligned = true;
+            }
+        }
+
+        return bAligned;
     }
 
     loadOpmDataForChainalign(data1, data2, chainidArray, mmdbidArray) { let  ic = this.icn3d, me = ic.icn3dui;
@@ -288,7 +641,7 @@ class ChainalignParser {
               dataType: 'jsonp',
               cache: true,
               //tryCount : 0,
-              //retryLimit : 1,
+              //retryLimit : 0, //1
               success: function(data) {
                 let  mmdbid = data.mmdbid;
                 ic.selectedPdbid = mmdbid;
@@ -306,7 +659,7 @@ class ChainalignParser {
                       dataType: 'text',
                       cache: true,
                       //tryCount : 0,
-                      //retryLimit : 1,
+                      //retryLimit : 0, //1
                       success: function(opmdata) {
                           ic.bOpm = true;
                           let  bVector = true;

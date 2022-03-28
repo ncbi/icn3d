@@ -107,7 +107,7 @@ class MmdbParser {
         //ic.loadAtomDataCls.loadAtomDataIn(data, id, 'mmdbid', undefined, type);
     }
 
-    parseMmdbData(data, type, chainid, chainIndex, bLastQuery) { let  ic = this.icn3d, me = ic.icn3dui;
+    parseMmdbData(data, type, chainid, chainIndex, bLastQuery, bNoTransformNoSeqalign) { let  ic = this.icn3d, me = ic.icn3dui;
         if(type === undefined) {
             //ic.deferredOpm = $.Deferred(function() {
                   let  id =(data.pdbId !== undefined) ? data.pdbId : data.mmdbId;
@@ -124,7 +124,7 @@ class MmdbParser {
 
             let  id =(data.pdbId !== undefined) ? data.pdbId : data.mmdbId;
 
-            let  hAtoms = ic.loadAtomDataCls.loadAtomDataIn(data, id, 'mmdbid', undefined, type, chainid, chainIndex, bLastQuery);
+            let  hAtoms = ic.loadAtomDataCls.loadAtomDataIn(data, id, 'mmdbid', undefined, type, chainid, chainIndex, bLastQuery, bNoTransformNoSeqalign);
 
             this.loadMmdbOpmDataPart2(data, id, type);
 
@@ -168,7 +168,7 @@ class MmdbParser {
           dataType: 'jsonp',
           cache: true,
           tryCount : 0,
-          retryLimit : 1,
+          retryLimit : 0, //1
           beforeSend: function() {
               ic.ParserUtilsCls.showLoading();
           },
@@ -197,7 +197,7 @@ class MmdbParser {
                   dataType: 'jsonp',
                   cache: true,
                   tryCount : 0,
-                  retryLimit : 1,
+                  retryLimit : 0, //1
                   beforeSend: function() {
                       ic.ParserUtilsCls.showLoading();
                   },
@@ -434,7 +434,7 @@ class MmdbParser {
           dataType: 'json',
           cache: true,
           tryCount : 0,
-          retryLimit : 1,
+          retryLimit : 0, //1
           beforeSend: function() {
               //ic.ParserUtilsCls.showLoading();
           },

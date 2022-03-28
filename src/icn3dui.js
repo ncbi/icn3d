@@ -172,7 +172,7 @@ class iCn3DUI {
     //even when multiple iCn3D viewers are shown together.
     this.pre = this.cfg.divid + "_";
 
-    this.REVISION = '3.10.1';
+    this.REVISION = '3.11.0';
 
     // In nodejs, iCn3D defines "window = {navigator: {}}"
     this.bNode = (Object.keys(window).length < 2) ? true : false;
@@ -419,7 +419,7 @@ iCn3DUI.prototype.show3DStructure = function() { let me = this;
               url: url,
               dataType: 'json',
               tryCount : 0,
-              retryLimit : 1,
+              retryLimit : 0, //1
               success: function(data) {
                 for(let q = 0, ql = data.BlastOutput2.length; q < ql; ++q) {
                   if(data.BlastOutput2[q].report.results.search.query_id != me.cfg.query_id) continue;
@@ -475,7 +475,7 @@ iCn3DUI.prototype.show3DStructure = function() { let me = this;
           url: url,
           dataType: 'jsonp',
           tryCount : 0,
-          retryLimit : 1,
+          retryLimit : 0, //1
           success: function(data) {
               if(data.InformationList !== undefined && data.InformationList.Information !== undefined) ic.molTitle = data.InformationList.Information[0].Title;
           },

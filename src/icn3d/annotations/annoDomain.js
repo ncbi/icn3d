@@ -36,7 +36,7 @@ class AnnoDomain {
                 }
             }
         }
-        else {
+        else {                  
             // calculate 3D domains on-the-fly
             //ic.protein_chainid[chainArray[i]] 
             let data = {};
@@ -46,8 +46,15 @@ class AnnoDomain {
                 if(pdbid == structure && ic.protein_chainid.hasOwnProperty(chainid)) {
                     data.domains[chainid] = {};
                     data.domains[chainid].domains = [];
-                    
-                    let subdomains = ic.domain3dCls.c2b_NewSplitChain(chainid);
+
+                    let atoms = ic.chains[chainid];
+
+                    let result = ic.domain3dCls.c2b_NewSplitChain(atoms);
+                    let subdomains = result.subdomains;
+                    //let substruct = result.substruct;
+
+                    //let jsonStr = ic.domain3dCls.getDomainJsonForAlign(atoms);
+            
                     for(let i = 0, il = subdomains.length; i < il; ++i) {
                         // domain item: {"sdid":1722375,"intervals":[[1,104],[269,323]]}
                         let domain = {};
@@ -71,73 +78,7 @@ class AnnoDomain {
             }
 
             ic.bAjax3ddomain = true;
-            ic.bAjaxDoneArray[index] = true;
-
-/*            
-            $.ajax({
-              url: url,
-              dataType: 'json',
-              cache: true,
-              tryCount : 0,
-              retryLimit : 1,
-              success: function(data) {
-                ic.mmdb_dataArray[index] = data;
-                for(let chnid in ic.protein_chainid) {
-                    if(chnid.indexOf(pdbid) !== -1) {
-                        thisClass.showDomainWithData(chnid, ic.mmdb_dataArray[index]);
-                    }
-                }
-                // add here after the ajax call
-                ic.showAnnoCls.enableHlSeq();
-                ic.bAjax3ddomain = true;
-                ic.bAjaxDoneArray[index] = true;
-                if(ic.deferred3ddomain !== undefined) {
-                    if(me.cfg.align === undefined || me.cfg.chainalign === undefined || ic.bRealign) {
-                        ic.deferred3ddomain.resolve();
-                    }
-                    else {
-                        let bAjaxDoneAll = true;
-                        for(let i = 0, il = pdbArray.length; i < il; ++i) {
-                            bAjaxDoneAll = bAjaxDoneAll && ic.bAjaxDoneArray[i];
-                        }
-                        if(bAjaxDoneAll) ic.deferred3ddomain.resolve();
-                    }
-                }
-              },
-              error : function(xhr, textStatus, errorThrown ) {
-                this.tryCount++;
-                if(this.tryCount <= this.retryLimit) {
-                    //try again
-                    $.ajax(this);
-                    return;
-                }
-                console.log( "No 3D domain data were found for the protein " + pdbid + "..." );
-                for(let chnid in ic.protein_chainid) {
-                    if(chnid.indexOf(pdbid) !== -1) {
-                        $("#" + ic.pre + "dt_domain_" + chnid).html('');
-                        $("#" + ic.pre + "ov_domain_" + chnid).html('');
-                        $("#" + ic.pre + "tt_domain_" + chnid).html('');
-                    }
-                }
-                ic.showAnnoCls.enableHlSeq();
-                ic.bAjax3ddomain = true;
-                //bAjaxDone1 = true;
-                if(ic.deferred3ddomain !== undefined) {
-                    if(me.cfg.align === undefined || me.cfg.chainalign === undefined) {
-                        ic.deferred3ddomain.resolve();
-                    }
-                    else {
-                        let bAjaxDoneAll = true;
-                        for(let i = 0, il = pdbArray.length; i < il; ++i) {
-                            bAjaxDoneAll = bAjaxDoneAll && ic.bAjaxDoneArray[i];
-                        }
-                        if(bAjaxDoneAll) ic.deferred3ddomain.resolve();
-                    }
-                }
-                return;
-              }
-            });
-*/            
+            ic.bAjaxDoneArray[index] = true;          
         }
     }
 

@@ -491,6 +491,22 @@ class LoadScript {
 
             return;
           }
+          else if(ic.commands[i].trim().indexOf('realign on structure align') == 0) {
+            let  strArray = ic.commands[i].split("|||");
+            let  command = strArray[0].trim();
+
+            let  paraArray = command.split(' | ');
+            if(paraArray.length == 2) {
+                let  nameArray = paraArray[1].split(',');
+                ic.hAtoms = ic.definedSetsCls.getAtomsFromNameArray(nameArray);
+            }
+
+            $.when(thisClass.applyCommandRealignByStruct(command)).then(function() {
+               thisClass.execCommandsBase(i + 1, end, steps);
+            });
+
+            return;
+          }
           else if(ic.commands[i].trim().indexOf('graph interaction pairs') == 0) {
             let  strArray = ic.commands[i].split("|||");
             let  command = strArray[0].trim();
@@ -670,6 +686,14 @@ class LoadScript {
                             ic.hAtoms = ic.definedSetsCls.getAtomsFromNameArray(nameArray);
                         }
                         thisClass.applyCommandRealign(lastCommand);
+                    }
+                    else if(lastCommand.indexOf('realign on structure align') == 0) {
+                        let  paraArray = lastCommand.split(' | ');
+                        if(paraArray.length == 2) {
+                            let  nameArray = paraArray[1].split(',');
+                            ic.hAtoms = ic.definedSetsCls.getAtomsFromNameArray(nameArray);
+                        }
+                        thisClass.applyCommandRealignByStruct(lastCommand);
                     }
                     else if(lastCommand.indexOf('graph interaction pairs') == 0) {
                         thisClass.applyCommandGraphinteraction(lastCommand);
@@ -882,6 +906,21 @@ class LoadScript {
       }); // end of me.deferred = $.Deferred(function() {
 
       return ic.deferredRealign.promise();
+    }
+
+    applyCommandRealignByStructBase(command) { let  ic = this.icn3d, me = ic.icn3dui;
+        ic.realignParserCls.realignOnStructAlign();
+    }
+
+    applyCommandRealignByStruct(command) { let  ic = this.icn3d, me = ic.icn3dui;
+      let  thisClass = this;
+
+      // chain functions together
+      ic.deferredRealignByStruct = new $.Deferred(function() {
+         thisClass.applyCommandRealignByStructBase(command);
+      }); // end of me.deferred = $.Deferred(function() {
+
+      return ic.deferredRealignByStruct.promise();
     }
 
     applyCommandAfmapBase(command, bFull) { let  ic = this.icn3d, me = ic.icn3dui;

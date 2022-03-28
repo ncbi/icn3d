@@ -347,6 +347,10 @@ class ParasCls {
              coil: this.thr(0x6080FF) //this.thr(0xEEEEEE) //this.thr(0x6080FF)
         };
 
+        this.resn2restype = {
+            "ALA": 1, "ARG": 4, "ASN": 7, "ASP": 10, "CYS": 13, "GLN": 16, "GLU": 19, "GLY": 22, "HIS": 25, "ILE": 28, "LEU": 31, "LYS": 34, "MET": 37, "PHE": 40, "PRO": 43, "SER": 46, "THR": 49, "TRP": 52, "TYR": 55, "VAL": 58
+        };
+
         // https://www.ncbi.nlm.nih.gov/Class/FieldGuide/BLOSUM62.txt, range from -4 to 11
         this.b62ResArray = ['A', 'R', 'N', 'D', 'C', 'Q', 'E', 'G', 'H', 'I', 'L', 'K', 'M', 'F',
             'P', 'S', 'T', 'W', 'Y', 'V', 'B', 'Z', 'X', '*']; // length: 24

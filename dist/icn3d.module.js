@@ -4987,6 +4987,10 @@ class ParasCls {
              coil: this.thr(0x6080FF) //this.thr(0xEEEEEE) //this.thr(0x6080FF)
         };
 
+        this.resn2restype = {
+            "ALA": 1, "ARG": 4, "ASN": 7, "ASP": 10, "CYS": 13, "GLN": 16, "GLU": 19, "GLY": 22, "HIS": 25, "ILE": 28, "LEU": 31, "LYS": 34, "MET": 37, "PHE": 40, "PRO": 43, "SER": 46, "THR": 49, "TRP": 52, "TYR": 55, "VAL": 58
+        };
+
         // https://www.ncbi.nlm.nih.gov/Class/FieldGuide/BLOSUM62.txt, range from -4 to 11
         this.b62ResArray = ['A', 'R', 'N', 'D', 'C', 'Q', 'E', 'G', 'H', 'I', 'L', 'K', 'M', 'F',
             'P', 'S', 'T', 'W', 'Y', 'V', 'B', 'Z', 'X', '*']; // length: 24
@@ -16952,19 +16956,21 @@ class LineGraph {
                 nodeArray1Split[i] = nodeArraysTmp.nodeArray1;
                 nodeArray2Split[i] = nodeArraysTmp.nodeArray2;
 
-                // common interactions
-                bCommonDiff = 1;
-                nodeArraysTmp = ic.getGraphCls.getNodeTopBottom(nameHashSplit[i], name2node, undefined, bCommonDiff, nameHashSplitCommon[i]);
-                nodeArray1SplitCommon[i] = nodeArraysTmp.nodeArray1;
-                nodeArray2SplitCommon[i] = nodeArraysTmp.nodeArray2;
-                name2node = me.hashUtilsCls.unionHash(name2node, nodeArraysTmp.name2node);
+                if(Object.keys(ic.chainsMapping).length > 0) { 
+                    // common interactions
+                    bCommonDiff = 1;
+                    nodeArraysTmp = ic.getGraphCls.getNodeTopBottom(nameHashSplit[i], name2node, undefined, bCommonDiff, nameHashSplitCommon[i]);
+                    nodeArray1SplitCommon[i] = nodeArraysTmp.nodeArray1;
+                    nodeArray2SplitCommon[i] = nodeArraysTmp.nodeArray2;
+                    name2node = me.hashUtilsCls.unionHash(name2node, nodeArraysTmp.name2node);
 
-                // different interactions
-                bCommonDiff = 2;
-                nodeArraysTmp = ic.getGraphCls.getNodeTopBottom(nameHashSplit[i], name2node, undefined, bCommonDiff, nameHashSplitDiff[i]);
-                nodeArray1SplitDiff[i] = nodeArraysTmp.nodeArray1;
-                nodeArray2SplitDiff[i] = nodeArraysTmp.nodeArray2;
-                name2node = me.hashUtilsCls.unionHash(name2node, nodeArraysTmp.name2node);
+                    // different interactions
+                    bCommonDiff = 2;
+                    nodeArraysTmp = ic.getGraphCls.getNodeTopBottom(nameHashSplit[i], name2node, undefined, bCommonDiff, nameHashSplitDiff[i]);
+                    nodeArray1SplitDiff[i] = nodeArraysTmp.nodeArray1;
+                    nodeArray2SplitDiff[i] = nodeArraysTmp.nodeArray2;
+                    name2node = me.hashUtilsCls.unionHash(name2node, nodeArraysTmp.name2node);
+                }
                 
                 len1Split[i] = nodeArray1Split[i].length;
                 len2Split[i] = nodeArray2Split[i].length;
@@ -16989,19 +16995,19 @@ class LineGraph {
                 //width =(Math.max(len1b, len2b) + 2) *(r + gap) + 2 * marginX + legendWidth;
                 heightAll =(me.utilsCls.sumArray(len1Split) + 2*strucArray.length) *(r + gap) + 4 * marginY 
                   + 2 * legendWidth + textHeight*strucArray.length;
-                // show common and diff interaction as well
-                heightAll *= 3;
 
                 width = (maxWidth + 2) * (r + gap) + 2 * marginX + legendWidth;
                   
             } else {
                 height = 110 + textHeight;
                 heightAll = height * strucArray.length;
-                // show common and diff interaction as well
-                heightAll *= 3;
 
                 width = (maxWidth + 2) * (r + gap) + 2 * marginX;
             }
+
+            // show common and diff interaction as well
+            if(Object.keys(ic.chainsMapping).length > 0) heightAll *= 3;
+
             let  id, graphWidth;
             if(bScatterplot) {
                 ic.scatterplotWidth = 2 * width;
@@ -17024,17 +17030,19 @@ class LineGraph {
             heightFinal = result.heightFinal;
             html += result.html;
 
-            bCommonDiff = 1;
-            result = this.drawGraphPerType(bCommonDiff, structureArray, bScatterplot, nodeArray1SplitCommon, nodeArray2SplitCommon, linkArraySplitCommon, name2node, heightFinal, height, textHeight, len1Split, r, gap, marginY);
+            if(Object.keys(ic.chainsMapping).length > 0) {
+                bCommonDiff = 1;
+                result = this.drawGraphPerType(bCommonDiff, structureArray, bScatterplot, nodeArray1SplitCommon, nodeArray2SplitCommon, linkArraySplitCommon, name2node, heightFinal, height, textHeight, len1Split, r, gap, marginY);
 
-            heightFinal = result.heightFinal;
-            html += result.html;
+                heightFinal = result.heightFinal;
+                html += result.html;
 
-            bCommonDiff = 2;
-            result = this.drawGraphPerType(bCommonDiff, structureArray, bScatterplot, nodeArray1SplitDiff, nodeArray2SplitDiff, linkArraySplitDiff, name2node, heightFinal, height, textHeight, len1Split, r, gap, marginY);
+                bCommonDiff = 2;
+                result = this.drawGraphPerType(bCommonDiff, structureArray, bScatterplot, nodeArray1SplitDiff, nodeArray2SplitDiff, linkArraySplitDiff, name2node, heightFinal, height, textHeight, len1Split, r, gap, marginY);
 
-            heightFinal = result.heightFinal;
-            html += result.html;
+                heightFinal = result.heightFinal;
+                html += result.html;
+            }
             
             html += "</svg>";
         } else {
@@ -17686,7 +17694,7 @@ class ViewInterPairs {
                   dataType: "script",
                   cache: true,
                   tryCount : 0,
-                  retryLimit : 1,
+                  retryLimit : 0, //1
                   success: function(data) {
                        ic.bD3 = true;
 
@@ -20383,7 +20391,7 @@ class Scap {
           dataType: "text",
           cache: true,
           tryCount : 0,
-          retryLimit : 1,
+          retryLimit : 0, //1
           beforeSend: function() {
               ic.ParserUtilsCls.showLoading();
           },
@@ -20587,7 +20595,7 @@ class Symd {
           dataType: "jsonp",
           cache: true,
           tryCount : 0,
-          retryLimit : 1,
+          retryLimit : 0, //1
           beforeSend: function() {
               ic.ParserUtilsCls.showLoading();
           },
@@ -20954,7 +20962,7 @@ class Symd {
           dataType: "json",
           cache: true,
           tryCount : 0,
-          retryLimit : 1,
+          retryLimit : 0, //1
           success: function(data) {
               let symmetryArray = data.rcsb_struct_symmetry;
               let rot, centerFrom, centerTo;
@@ -21138,7 +21146,9 @@ class LoadPDB {
 
     // modified from iview (http://istar.cse.cuhk.edu.hk/iview/)
     //This PDB parser feeds the viewer with the content of a PDB file, pdbData.
-    loadPDB(src, pdbid, bOpm, bVector, bMutation, bAppend) { let  ic = this.icn3d, me = ic.icn3dui;
+    loadPDB(src, pdbid, bOpm, bVector, bMutation, bAppend, type, bLastQuery) { let  ic = this.icn3d, me = ic.icn3dui;
+        let hAtoms = {};
+
         let bNMR = false;
         let  lines = src.split('\n');
 
@@ -21195,11 +21205,13 @@ class LoadPDB {
 
         let  structure = "stru";
 
+        let bHeader = false;
+
         for (let i in lines) {
             let  line = lines[i];
             let  record = line.substr(0, 6);
 
-            if (record === 'HEADER') {
+            if (record === 'HEADER' && !bHeader) {              
                 // if(bOpm === undefined || !bOpm) ic.bSecondaryStructure = true;
 
                 ///id = line.substr(62, 4).trim();
@@ -21217,12 +21229,14 @@ class LoadPDB {
 
                 structure = id;
 
-                if(id == 'stru' || bMutation || (bAppend && id.length != 4)) { // bMutation: side chain prediction
-                    structure = (moleculeNum === 1) ? id : id + moleculeNum.toString();
+                //if(id == 'stru' || bMutation || (bAppend && id.length != 4)) { // bMutation: side chain prediction
+                if(id == 'stru' || bMutation) { // bMutation: side chain prediction
+                        structure = (moleculeNum === 1) ? id : id + moleculeNum.toString();
                 }
 
                 ic.molTitle = '';
 
+                bHeader = true; // read the header once only
             } else if (record === 'TITLE ') {
                 let  name = line.substr(10);
                 ic.molTitle += name.trim() + " ";
@@ -21267,42 +21281,9 @@ class LoadPDB {
 
                   if(j === startResi) sheetStart.push(resid);
                   if(j === endResi) sheetEnd.push(resid);
-                }
-/*
-                sheets.push({
-                    structure: structure,
-                    chain: startChain,
-                    initialResidue: startResi,
-                    initialInscode: line.substr(26, 1),
-                    terminalResidue: endResi,
-                    terminalInscode: line.substr(37, 1),
-                });
-*/                
+                }           
             } else if (record === 'HBOND ') {
                 if(bOpm === undefined || !bOpm) ic.bSecondaryStructure = true;
-    /*
-                //HBOND A 1536   N2 A   59  ND2  -19.130  83.151  52.266 -18.079  81.613  49.427    3.40
-                bCalculateHbond = false;
-
-                let  chemicalChain = line.substr(6, 1);
-                let  chemicalResi = line.substr(8, 4).trim();
-                let  chemicalAtom = line.substr(14, 4).trim();
-                let  proteinChain = line.substr(18, 1);
-                let  proteinResi = line.substr(20, 4).trim();
-                let  proteinAtom = line.substr(25, 4).trim();
-
-                let  chemical_x = parseFloat(line.substr(30, 8));
-                let  chemical_y = parseFloat(line.substr(38, 8));
-                let  chemical_z = parseFloat(line.substr(46, 8));
-                let  protein_x = parseFloat(line.substr(54, 8));
-                let  protein_y = parseFloat(line.substr(62, 8));
-                let  protein_z = parseFloat(line.substr(70, 8));
-
-                let  dist = line.substr(78, 8).trim();
-
-                ic.hbondpnts.push(new THREE.Vector3(chemical_x, chemical_y, chemical_z));
-                ic.hbondpnts.push(new THREE.Vector3(protein_x, protein_y, protein_z));
-    */
             } else if (record === 'SSBOND') {
                 ic.bSsbondProvided = true;
                 //SSBOND   1 CYS E   48    CYS E   51                          2555
@@ -21380,8 +21361,9 @@ class LoadPDB {
                 id = 'stru';
 
                 structure = id;
-                if(id == 'stru' || bMutation || (bAppend && id.length != 4)) { // bMutation: side chain prediction
-                    structure = (moleculeNum === 1) ? id : id + moleculeNum.toString();
+                //if(id == 'stru' || bMutation || (bAppend && id.length != 4)) { // bMutation: side chain prediction
+                if(id == 'stru' || bMutation) { // bMutation: side chain prediction
+                        structure = (moleculeNum === 1) ? id : id + moleculeNum.toString();
                 }
 
                 //helices = [];
@@ -21400,8 +21382,9 @@ class LoadPDB {
                 }
             } else if (record === 'ATOM  ' || record === 'HETATM') {
                 structure = id;
-                if(id == 'stru' || bMutation || (bAppend && id.length != 4)) { // bMutation: side chain prediction
-                    structure = (moleculeNum === 1) ? id : id + moleculeNum.toString();
+                //if(id == 'stru' || bMutation || (bAppend && id.length != 4)) { // bMutation: side chain prediction
+                if(id == 'stru' || bMutation) { // bMutation: side chain prediction
+                        structure = (moleculeNum === 1) ? id : id + moleculeNum.toString();
                 }
 
                 let  alt = line.substr(16, 1);
@@ -21493,6 +21476,7 @@ class LoadPDB {
 
                 ic.dAtoms[serial] = 1;
                 ic.hAtoms[serial] = 1;
+                hAtoms[serial] = 1;
 
                 // Assign secondary structures from the input
                 // if a residue is assigned both sheet and helix, it is assigned as sheet
@@ -21788,8 +21772,22 @@ class LoadPDB {
         ic.oriMaxD = ic.maxD;
         ic.oriCenter = ic.center.clone();
 
+        if(type === 'target') {
+            ic.oriMaxD = ic.maxD;
+            ic.center1 = ic.center;
+        }
+        else if(type === 'query') {
+            if(ic.oriMaxD < ic.maxD) ic.oriMaxD = ic.maxD;
+
+            ic.center2 = ic.center;
+            ic.center = new THREE.Vector3(0,0,0);
+        }
+
         if(bVector) { // just need to get the vector of the largest chain
             return this.getChainCalpha(ic.chains, ic.atoms);
+        }
+        else {
+            return hAtoms;
         }
     }
 
@@ -21990,7 +21988,7 @@ class LoadAtomData {
 
     //This function was used to parse atom "data" to set up parameters for the 3D viewer. "type" is mmcifid or mmdbid.
     //"id" is the MMDB ID or mmCIF ID.
-    loadAtomDataIn(data, id, type, seqalign, alignType, chainidInput, chainIndex, bLastQuery) { let  ic = this.icn3d, me = ic.icn3dui;
+    loadAtomDataIn(data, id, type, seqalign, alignType, chainidInput, chainIndex, bLastQuery, bNoSeqalign) { let  ic = this.icn3d, me = ic.icn3dui;
         //ic.init();
         ic.pmin = new THREE.Vector3( 9999, 9999, 9999);
         ic.pmax = new THREE.Vector3(-9999,-9999,-9999);
@@ -21998,12 +21996,14 @@ class LoadAtomData {
 
         let  atoms = data.atoms;
 
-        let  serialBase =(alignType === undefined || alignType === 'target') ? 0 : ic.lastTargetSerial;
+        //let  serialBase =(alignType === undefined || alignType === 'target') ? 0 : ic.lastTargetSerial;
+        let  serialBase = (ic.atoms) ? Object.keys(ic.atoms).length : 0;
+
         let  serial = serialBase;
 
         let  serial2structure = {}; // for "align" only
         let  mmdbid2pdbid = {}; // for "align" only
-
+/*
         if(alignType === undefined || alignType === 'target') {
             ic.pmid = data.pubmedId;
 
@@ -22013,6 +22013,12 @@ class LoadAtomData {
         else {
             ic.pmid2 = data.pubmedId;
         }
+*/
+
+        ic.pmid = data.pubmedId;
+
+        if(ic.chainid2title === undefined) ic.chainid2title = {};
+        if(ic.chainid2sid === undefined) ic.chainid2sid = {};
 
         let chainid2kind = {}, chainid2color = {};
 
@@ -22076,11 +22082,7 @@ class LoadAtomData {
               let  pdbidTmp = data.pdbId;
               let  chainHash = {};
 
-              if(alignType == 'target') {
-                ic.alignmolid2color = [];
-                //ic.alignmolid2color[0] = {}
-                //ic.alignmolid2color[1] = {}
-              }
+              if(ic.alignmolid2color === undefined) ic.alignmolid2color = [];
 
               let  molidCnt = 1;
               for(let molid in data.moleculeInfor) {
@@ -22147,7 +22149,6 @@ class LoadAtomData {
         let  CSerial, prevCSerial, OSerial, prevOSerial;
 
         let  biopolymerChainsHash = {};
-
         for(let i in atoms) {
             ++serial;
 
@@ -22286,24 +22287,7 @@ class LoadAtomData {
             if(type === 'mmdbid') {
                 atm.coord = new THREE.Vector3(atm.coord[0], atm.coord[1], atm.coord[2]);
                 if(ic.q_rotation !== undefined && ic.t_trans_add.length > 0 && !me.cfg.resnum && !me.cfg.resdef) {
-                    if(alignType === 'target') {
-                        atm.coord.x += ic.t_trans_add[chainIndex].x;
-                        atm.coord.y += ic.t_trans_add[chainIndex].y;
-                        atm.coord.z += ic.t_trans_add[chainIndex].z;
-                    }
-                    else if(alignType === 'query') {
-                        atm.coord.x -= ic.q_trans_sub[chainIndex].x;
-                        atm.coord.y -= ic.q_trans_sub[chainIndex].y;
-                        atm.coord.z -= ic.q_trans_sub[chainIndex].z;
-
-                        let  x = atm.coord.x * ic.q_rotation[chainIndex].x1 + atm.coord.y * ic.q_rotation[chainIndex].y1 + atm.coord.z * ic.q_rotation[chainIndex].z1;
-                        let  y = atm.coord.x * ic.q_rotation[chainIndex].x2 + atm.coord.y * ic.q_rotation[chainIndex].y2 + atm.coord.z * ic.q_rotation[chainIndex].z2;
-                        let  z = atm.coord.x * ic.q_rotation[chainIndex].x3 + atm.coord.y * ic.q_rotation[chainIndex].y3 + atm.coord.z * ic.q_rotation[chainIndex].z3;
-
-                        atm.coord.x = x;
-                        atm.coord.y = y;
-                        atm.coord.z = z;
-                    }
+                    atm = ic.chainalignParserCls.transformAtom(atm, chainIndex, alignType);
                 }
             }
             else {
@@ -22508,8 +22492,7 @@ class LoadAtomData {
             prevMolid = molid;
         }
 
-        //if(alignType === 'target') ic.lastTargetSerial = serial;
-        ic.lastTargetSerial = serial;
+        //ic.lastTargetSerial = serial;
 
         // adjust biopolymer type
         for(let chainid in biopolymerChainsHash) {
@@ -22699,7 +22682,7 @@ class LoadAtomData {
         if(type === 'align' && seqalign !== undefined && ic.bFullUi) {
             ic.setSeqAlignCls.setSeqAlign(seqalign, data.alignedStructures);
         } // if(align
-        else if(type === 'mmdbid' && alignType === 'query' && ic.bFullUi && ic.q_rotation !== undefined && !me.cfg.resnum && !me.cfg.resdef) {
+        else if(type === 'mmdbid' && alignType === 'query' && ic.bFullUi && ic.q_rotation !== undefined && !me.cfg.resnum && !me.cfg.resdef && !bNoSeqalign) {
             ic.setSeqAlignCls.setSeqAlignChain(chainidInput, chainIndex);
 
             let  bReverse = false;
@@ -22712,7 +22695,7 @@ class LoadAtomData {
             $("#" + ic.pre + "dl_sequence2").width(me.htmlCls.RESIDUE_WIDTH * seqObj.maxSeqCnt + 200);
         }
 
-        if(type === 'mmdbid' &&(alignType === 'target' || alignType === 'query') && ic.q_rotation === undefined) {
+        if(type === 'mmdbid' && (alignType === 'target' || alignType === 'query') && ic.q_rotation === undefined) {
             if(alignType === 'target' || alignType === 'query') {
                 for(let i in atoms) {
                     let  atom = atoms[i];
@@ -22773,7 +22756,7 @@ class SdfParser {
           dataType: 'text',
           cache: true,
           tryCount : 0,
-          retryLimit : 1,
+          retryLimit : 0, //1
           beforeSend: function() {
               ic.ParserUtilsCls.showLoading();
           },
@@ -23584,7 +23567,7 @@ class PdbParser {
           dataType: dataType,
           cache: true,
           tryCount : 0,
-          retryLimit : 1,
+          retryLimit : 0, //1
           beforeSend: function() {
               ic.ParserUtilsCls.showLoading();
           },
@@ -23596,6 +23579,9 @@ class PdbParser {
               ic.deferredOpm = $.Deferred(function() {
                   //ic.loadPdbOpmData(data, pdbid);
                   if(bAf) {
+                      // add UniProt ID into the header
+                      let header = 'HEADER                                                        ' + pdbid + '\n';
+                      data = header + data;
                       ic.opmParserCls.parseAtomData(data, pdbid, undefined, 'pdb', undefined);
                   }
                   else {
@@ -23643,7 +23629,7 @@ class PdbParser {
           dataType: dataType,
           cache: true,
           tryCount : 0,
-          retryLimit : 1,
+          retryLimit : 0, //1
           beforeSend: function() {
               ic.ParserUtilsCls.showLoading();
           },
@@ -23689,8 +23675,14 @@ class PdbParser {
 
     //Atom "data" from PDB file was parsed to set up parameters for the 3D viewer. The deferred parameter
     //was resolved after the parsing so that other javascript code can be executed.
-    loadPdbData(data, pdbid, bOpm, bAppend) { let  ic = this.icn3d, me = ic.icn3dui;
-        ic.loadPDBCls.loadPDB(data, pdbid, bOpm, undefined, undefined, bAppend); // defined in the core library
+    loadPdbData(data, pdbid, bOpm, bAppend, type, bLastQuery, bNoDssp) { let  ic = this.icn3d, me = ic.icn3dui;
+        if(!bAppend && (type === undefined || type === 'target')) {
+            // if a command contains "load...", the commands should not be cleared with init()
+            let bKeepCmd = (ic.bCommandLoad) ? true : false;
+            if(!ic.bStatefile) ic.init(bKeepCmd);
+        }
+
+        let hAtoms = ic.loadPDBCls.loadPDB(data, pdbid, bOpm, undefined, undefined, bAppend, type, bLastQuery); // defined in the core library
 
         if(me.cfg.opmid === undefined) ic.ParserUtilsCls.transformToOpmOri(pdbid);
 
@@ -23726,17 +23718,23 @@ class PdbParser {
         }
 
 //        if(!ic.bSecondaryStructure && Object.keys(ic.proteins).length > 0) {
-        if((!ic.bSecondaryStructure || bCalcSecondary) && Object.keys(ic.proteins).length > 0) {
-          ic.deferredSecondary = $.Deferred(function() {
-              let  bCalphaOnly = me.utilsCls.isCalphaPhosOnly(me.hashUtilsCls.hash2Atoms(ic.proteins, ic.atoms));//, 'CA');
-              ic.dsspCls.applyDssp(bCalphaOnly, bAppend);
-          }); // end of me.deferred = $.Deferred(function() {
-
-          return ic.deferredSecondary.promise();
+        if((!ic.bSecondaryStructure || bCalcSecondary) && Object.keys(ic.proteins).length > 0 && !bNoDssp) {
+            this.applyCommandDssp(bAppend);
         }
         else {
             this.loadPdbDataRender(bAppend);
         }
+
+        return hAtoms;
+    }
+
+    applyCommandDssp(bAppend) { let  ic = this.icn3d, me = ic.icn3dui;
+        ic.deferredSecondary = $.Deferred(function() {
+            let  bCalphaOnly = me.utilsCls.isCalphaPhosOnly(me.hashUtilsCls.hash2Atoms(ic.proteins, ic.atoms));//, 'CA');
+            ic.dsspCls.applyDssp(bCalphaOnly, bAppend);
+        }); // end of me.deferred = $.Deferred(function() {
+
+        return ic.deferredSecondary.promise();
     }
 
     loadPdbDataRender(bAppend) { let  ic = this.icn3d, me = ic.icn3dui;
@@ -24570,7 +24568,7 @@ class AlignParser {
           dataType: dataType,
           cache: true,
           //tryCount : 0,
-          //retryLimit : 1,
+          //retryLimit : 0, //1
           success: function(opmdata) {
               ic.selectedPdbid = mmdbidArray[0];
 
@@ -24597,7 +24595,7 @@ class AlignParser {
               dataType: dataType,
               cache: true,
               //tryCount : 0,
-              //retryLimit : 1,
+              //retryLimit : 0, //1
               success: function(opmdata) {
                   ic.selectedPdbid = mmdbidArray[1];
 
@@ -24659,7 +24657,7 @@ class OpmParser {
           dataType: dataType,
           cache: true,
           tryCount : 0,
-          retryLimit : 1,
+          retryLimit : 0, //1
           beforeSend: function() {
               ic.ParserUtilsCls.showLoading();
           },
@@ -24703,7 +24701,7 @@ class OpmParser {
           dataType: dataType,
           cache: true,
           tryCount : 0,
-          retryLimit : 1,
+          retryLimit : 0, //1
           success: function(opmdata) {
               thisClass.setOpmData(opmdata); // set ic.bOpm
 
@@ -24875,7 +24873,7 @@ class MmdbParser {
         //ic.loadAtomDataCls.loadAtomDataIn(data, id, 'mmdbid', undefined, type);
     }
 
-    parseMmdbData(data, type, chainid, chainIndex, bLastQuery) { let ic = this.icn3d; ic.icn3dui;
+    parseMmdbData(data, type, chainid, chainIndex, bLastQuery, bNoTransformNoSeqalign) { let ic = this.icn3d; ic.icn3dui;
         if(type === undefined) {
             //ic.deferredOpm = $.Deferred(function() {
                   let  id =(data.pdbId !== undefined) ? data.pdbId : data.mmdbId;
@@ -24892,7 +24890,7 @@ class MmdbParser {
 
             let  id =(data.pdbId !== undefined) ? data.pdbId : data.mmdbId;
 
-            let  hAtoms = ic.loadAtomDataCls.loadAtomDataIn(data, id, 'mmdbid', undefined, type, chainid, chainIndex, bLastQuery);
+            let  hAtoms = ic.loadAtomDataCls.loadAtomDataIn(data, id, 'mmdbid', undefined, type, chainid, chainIndex, bLastQuery, bNoTransformNoSeqalign);
 
             this.loadMmdbOpmDataPart2(data, id, type);
 
@@ -24936,7 +24934,7 @@ class MmdbParser {
           dataType: 'jsonp',
           cache: true,
           tryCount : 0,
-          retryLimit : 1,
+          retryLimit : 0, //1
           beforeSend: function() {
               ic.ParserUtilsCls.showLoading();
           },
@@ -24965,7 +24963,7 @@ class MmdbParser {
                   dataType: 'jsonp',
                   cache: true,
                   tryCount : 0,
-                  retryLimit : 1,
+                  retryLimit : 0, //1
                   beforeSend: function() {
                       ic.ParserUtilsCls.showLoading();
                   },
@@ -25202,7 +25200,7 @@ class MmdbParser {
           dataType: 'json',
           cache: true,
           tryCount : 0,
-          retryLimit : 1,
+          retryLimit : 0, //1
           beforeSend: function() {
               //ic.ParserUtilsCls.showLoading();
           },
@@ -25470,7 +25468,75 @@ class RealignParser {
         }
 
         let  bRealign = true;
+
         this.realignChainOnSeqAlign(undefined, chainidArray, bRealign);
+    }
+
+    realignOnStructAlign() { let  ic = this.icn3d, me = ic.icn3dui;
+        // each 3D domain should have at least 3 secondary structures
+        let minSseCnt = 3;
+        let struct2domain = {};
+        for(let struct in ic.structures) {
+            struct2domain[struct] = {};
+            let chainidArray = ic.structures[struct];
+            for(let i = 0, il = chainidArray.length; i < il; ++i) {
+                let chainid = chainidArray[i];
+                let atoms = me.hashUtilsCls.intHash(ic.hAtoms, ic.chains[chainid]);               
+                let sseCnt = 0;
+                for(let serial in atoms) {
+                    if(ic.atoms[serial].ssbegin) ++sseCnt;
+                    if(sseCnt == minSseCnt) {
+                        struct2domain[struct][chainid] = atoms;
+                        break;
+                    }
+                }
+            }
+        }
+
+        let ajaxArray = [], chainidPairArray = [];
+        let urlalign = me.htmlCls.baseUrl + "vastdyn/vastdyn.cgi";
+        let structArray = Object.keys(struct2domain);
+        for(let s = 0, sl = structArray.length; s < sl; ++s) {
+            let struct1 = structArray[s];
+            let chainidArray1 = Object.keys(struct2domain[struct1]);
+            if(chainidArray1.length == 0) continue;
+            for(let t = s+1, tl = structArray.length; t < tl; ++t) {
+                let struct2 = structArray[t];
+                let chainidArray2 = Object.keys(struct2domain[struct2]);
+                if(chainidArray2.length == 0) continue;
+
+                for(let i = 0, il = chainidArray1.length; i < il; ++i) {
+                    let chainid1 = chainidArray1[i];
+                    for(let j = 0, jl = chainidArray2.length; j < jl; ++j) {
+                        let chainid2 = chainidArray2[j];
+
+                        let jsonStr_q = ic.domain3dCls.getDomainJsonForAlign(struct2domain[struct1][chainid1]);
+                        let jsonStr_t = ic.domain3dCls.getDomainJsonForAlign(struct2domain[struct2][chainid2]);
+                      
+                        let alignAjax = $.ajax({
+                            url: urlalign,
+                            type: 'POST',
+                            data: {'domains1': jsonStr_q, 'domains2': jsonStr_t},
+                            dataType: 'jsonp',
+                            cache: true
+                        });
+
+                        ajaxArray.push(alignAjax);
+                        chainidPairArray.push(chainid1 + ',' + chainid2); // chainid2 is target
+                    }
+                }
+            }
+        }
+
+        //https://stackoverflow.com/questions/14352139/multiple-ajax-calls-from-array-and-handle-callback-when-completed
+        //https://stackoverflow.com/questions/5518181/jquery-deferreds-when-and-the-fail-callback-arguments
+        $.when.apply(undefined, ajaxArray).then(function() {
+            let  dataArray =(chainidPairArray.length == 1) ? [arguments] : Array.from(arguments);
+            ic.chainalignParserCls.downloadChainalignmentPart2bRealign(dataArray, chainidPairArray);
+        })
+        .fail(function() {
+            alert("These structures can NOT be aligned to each other...");
+        });            
     }
 
     realignChainOnSeqAlign(chainresiCalphaHash2, chainidArray, bRealign, bPredefined) { let  ic = this.icn3d, me = ic.icn3dui;
@@ -25485,7 +25551,7 @@ class RealignParser {
 
         let  mmdbid_t;
         let  ajaxArray = [];
-        let  url = 'https://www.ncbi.nlm.nih.gov/Structure/pwaln/pwaln.fcgi?from=chainalign';
+        let  url = (bStructure) ? me.htmlCls.baseUrl + 'vastdyn/vastdyn.cgi' : me.htmlCls.baseUrl + 'pwaln/pwaln.fcgi?from=chainalign';
 
         let  predefinedResArray, predefinedRes;
 
@@ -25529,13 +25595,6 @@ class RealignParser {
 
             if(i == 0 || bPredefined) { // master
                 let base = parseInt(ic.chainsSeq[chainid][0].resi);
-
-                //let  resRange;
-                //if(bRealign) {
-                //    let  seqLen = ic.chainsSeq[chainid].length;
-                //    let  lastResi = ic.chainsSeq[chainid][seqLen - 1].resi;
-                //    resRange = base.toString() + '-' + lastResi.toString();
-                //}
 
                 let resiArray = [];
                 if(bRealign) {
@@ -25637,11 +25696,11 @@ class RealignParser {
                 let  seq2 = struct2SeqHash[fromStruct];
 
                 let  queryAjax = $.ajax({
-                   url: url,
-                   type: 'POST',
-                   data : {'targets': seq1, 'queries': seq2},
-                   dataType: 'jsonp',
-                   cache: true
+                url: url,
+                type: 'POST',
+                data : {'targets': seq1, 'queries': seq2},
+                dataType: 'jsonp',
+                cache: true
                 });
 
                 ajaxArray.push(queryAjax);
@@ -25655,8 +25714,8 @@ class RealignParser {
             //https://stackoverflow.com/questions/14352139/multiple-ajax-calls-from-array-and-handle-callback-when-completed
             //https://stackoverflow.com/questions/5518181/jquery-deferreds-when-and-the-fail-callback-arguments
             $.when.apply(undefined, ajaxArray).then(function() {
-               let  dataArray =(chainidArray.length == 2) ? [arguments] : Array.from(arguments);
-               thisClass.parseChainRealignData(Array.from(dataArray), chainresiCalphaHash2, chainidArray, struct2SeqHash, struct2CoorHash, struct2resid, bRealign);
+                let  dataArray =(chainidArray.length == 2) ? [arguments] : Array.from(arguments);
+                thisClass.parseChainRealignData(Array.from(dataArray), chainresiCalphaHash2, chainidArray, struct2SeqHash, struct2CoorHash, struct2resid, bRealign);
             })
             .fail(function() {
                alert("The realignment did not work...");
@@ -25694,20 +25753,142 @@ class ChainalignParser {
     }
 
     downloadChainalignmentPart2(data1, data2Array, chainresiCalphaHash2, chainidArray) { let  ic = this.icn3d, me = ic.icn3dui;
-        //ic.interactionData_q = [];
-        //ic.mmdb_data_q = [];
+        let thisClass = this;
 
-        let  hAtoms = {};
-        hAtoms = ic.mmdbParserCls.parseMmdbData(data1, 'target', chainidArray[0], 0);
-
+        let  hAtoms = {}, hAtomsTmp = {};
+        let mmdbid_t, mmdbid_q;
+        mmdbid_t = chainidArray[0].substr(0, chainidArray[0].indexOf('_'));
         let  bLastQuery = false;
+        if(mmdbid_t.length > 4) { 
+            let bAppend = false, bNoDssp = true;
+            hAtoms = ic.pdbParserCls.loadPdbData(data1, mmdbid_t, false, bAppend, 'target', bLastQuery, bNoDssp);
+        }
+        else {
+            let bNoSeqalign = true;
+            hAtoms = ic.mmdbParserCls.parseMmdbData(data1, 'target', chainidArray[0], 0, bLastQuery, bNoSeqalign);
+        }
+
         for(let i = 0, il = data2Array.length; i < il; ++i) {
             if(i == data2Array.length - 1) bLastQuery = true;
             // each alignment has a chainIndex i
-            let  hAtomsTmp = ic.mmdbParserCls.parseMmdbData(data2Array[i], 'query', chainidArray[i + 1], i, bLastQuery);
+            mmdbid_q = chainidArray[i + 1].substr(0, chainidArray[i + 1].indexOf('_'));
+            if(mmdbid_q.length > 4) {
+                let bAppend = true, bNoDssp = true;
+                hAtomsTmp = ic.pdbParserCls.loadPdbData(data2Array[i], mmdbid_q, false, bAppend, 'query', bLastQuery, bNoDssp);
+            }
+            else {
+                let bNoSeqalign = true;
+                hAtomsTmp = ic.mmdbParserCls.parseMmdbData(data2Array[i], 'query', chainidArray[i + 1], i, bLastQuery, bNoSeqalign);
+            }
             hAtoms = me.hashUtilsCls.unionHash(hAtoms, hAtomsTmp);
         }
 
+        // calculate secondary structures with applyCommandDssp
+        $.when(ic.pdbParserCls.applyCommandDssp(true)).then(function() {
+            // dynamicly align pairs in ic.afChainIndexHash
+            let  ajaxArray = [], indexArray = [], struArray = [];
+            let urlalign = me.htmlCls.baseUrl + "vastdyn/vastdyn.cgi";
+
+            for(let index in ic.afChainIndexHash) {
+                let idArray = ic.afChainIndexHash[index].split('_');
+                mmdbid_q = idArray[0];
+                let chain_q = idArray[1];
+                mmdbid_t = idArray[2];
+                let chain_t = idArray[3];
+
+                let jsonStr_q = ic.domain3dCls.getDomainJsonForAlign(ic.chains[mmdbid_q + '_' + chain_q]);
+
+                let jsonStr_t = ic.domain3dCls.getDomainJsonForAlign(ic.chains[mmdbid_t + '_' + chain_t]);
+                    
+                let alignAjax = $.ajax({
+                    url: urlalign,
+                    type: 'POST',
+                    data: {'domains1': jsonStr_q, 'domains2': jsonStr_t},
+                    dataType: 'jsonp',
+                    cache: true
+                });
+
+                ajaxArray.push(alignAjax);
+                indexArray.push(index - 1);
+                struArray.push(mmdbid_q);
+            }
+
+            //https://stackoverflow.com/questions/14352139/multiple-ajax-calls-from-array-and-handle-callback-when-completed
+            //https://stackoverflow.com/questions/5518181/jquery-deferreds-when-and-the-fail-callback-arguments
+            $.when.apply(undefined, ajaxArray).then(function() {
+                let  dataArray =(indexArray.length == 1) ? [arguments] : Array.from(arguments);
+                thisClass.downloadChainalignmentPart2b(chainresiCalphaHash2, chainidArray, hAtoms, dataArray, indexArray, mmdbid_t, struArray);
+            })
+            .fail(function() {
+                alert("These structures can NOT be aligned to each other...");
+            });    
+        });
+    }
+
+    downloadChainalignmentPart2b(chainresiCalphaHash2, chainidArray, hAtoms, dataArray, indexArray, mmdbid_t, struArray) { let  ic = this.icn3d, me = ic.icn3dui;
+        let bTargetTransformed = (ic.qt_start_end[0]) ? true : false;
+
+        // modify the previous trans and rotation matrix
+        for(let i = 0, il = dataArray.length; i < il; ++i) {
+            let align = dataArray[i][0];
+
+            let mmdbid_q = struArray[i];
+            let index = indexArray[i];
+
+            let bEqualMmdbid = (mmdbid_q == mmdbid_t);
+            let bEqualChain = false;
+
+            let queryData = {}; // check whether undefined
+
+            this.processAlign(align, index, queryData, bEqualMmdbid, bEqualChain);
+        }
+
+        // transform the target if not yet
+        if(!bTargetTransformed) {
+            this.transformStructure(mmdbid_t, indexArray[0], 'target');
+        }
+
+        // transform the rest
+        for(let i = 0, il = dataArray.length; i < il; ++i) {
+            let mmdbid_q = struArray[i];
+            let index = indexArray[i];
+
+            this.transformStructure(mmdbid_q, index, 'query');
+        }
+
+/*
+        // transform the target 
+        this.transformStructure(mmdbid_t, 0, 'target');
+
+        // transform the queries
+        for(let i = 1, il = chainidArray.length; i < il; ++i) {
+            let mmdbid_q = chainidArray[i].substr(0, chainidArray[i].indexOf('_'));
+
+            this.transformStructure(mmdbid_q, i - 1, 'query');
+        }
+*/
+
+        //let hAtomsTmp = {};
+        // set up the view of sequence alignment
+        for(let i = 1, il = chainidArray.length; i < il; ++i) {
+            if(ic.bFullUi && ic.q_rotation !== undefined && !me.cfg.resnum && !me.cfg.resdef) {
+                ic.setSeqAlignCls.setSeqAlignChain(chainidArray[i], i-1);
+
+                //hAtomsTmp = me.hashUtilsCls.unionHash(hAtomsTmp, ic.hAtoms);
+
+                let  bReverse = false;
+                let  seqObj = me.htmlCls.alignSeqCls.getAlignSequencesAnnotations(Object.keys(ic.alnChains), undefined, undefined, false, undefined, bReverse);
+                let  oriHtml = $("#" + ic.pre + "dl_sequence2").html();
+
+                $("#" + ic.pre + "dl_sequence2").html(oriHtml + seqObj.sequencesHtml);
+                $("#" + ic.pre + "dl_sequence2").width(me.htmlCls.RESIDUE_WIDTH * seqObj.maxSeqCnt + 200);
+            }
+        }
+
+        // highlight all aligned atoms
+        //ic.hAtoms = me.hashUtilsCls.cloneHash(hAtomsTmp);
+
+        // do the rest
         if(me.cfg.resnum) {
             ic.realignParserCls.realignChainOnSeqAlign(chainresiCalphaHash2, chainidArray);
         }
@@ -25717,6 +25898,148 @@ class ChainalignParser {
         else {
             this.downloadChainalignmentPart3(chainresiCalphaHash2, chainidArray, hAtoms);
         }
+    }
+
+    downloadChainalignmentPart2bRealign(dataArray, chainidPairArray) { let  ic = this.icn3d, me = ic.icn3dui;
+        // set trans and rotation matrix
+        ic.t_trans_add = [];
+        ic.q_trans_sub = [];
+        ic.q_rotation = [];
+        ic.qt_start_end = [];
+
+        let mmdbid2cnt = {}, mmdbidpairHash = {};
+             
+        for(let i = 0, il = dataArray.length; i < il; ++i) {
+            let align = dataArray[i][0];
+
+            let bEqualMmdbid = false;
+            let bEqualChain = false;
+
+            let queryData = {}; // check whether undefined
+
+            let bNoAlert = true;
+            let bAligned = this.processAlign(align, i, queryData, bEqualMmdbid, bEqualChain, bNoAlert);
+
+            if(bAligned) {
+                let chainpair = chainidPairArray[i].split(',');
+                let mmdbid1 = chainpair[0].substr(0, chainpair[0].indexOf('_'));
+                let mmdbid2 = chainpair[1].substr(0, chainpair[1].indexOf('_'));
+                if(mmdbidpairHash.hasOwnProperty(mmdbid1 + '_' + mmdbid2)) { // aligned already
+                    continue;
+                }
+                else {
+                    mmdbid2cnt[mmdbid1] = (mmdbid2cnt[mmdbid1] === undefined) ? 1 : ++mmdbid2cnt[mmdbid1];
+                    mmdbid2cnt[mmdbid2] = (mmdbid2cnt[mmdbid2] === undefined) ? 1 : ++mmdbid2cnt[mmdbid2];
+
+                    mmdbidpairHash[mmdbid1 + '_' + mmdbid2] = chainpair + ',' + i;
+                }
+            }
+        }
+/*
+        // find the max aligned mmdbid as mmdbid_t
+        let cnt = 0, mmdbid_t;
+        for(let mmdbidpair in mmdbidpairHash) {
+            let mmdbidArray = mmdbidpair.split('_');
+            if(mmdbid2cnt[mmdbidArray[0]] > cnt) {
+                cnt = mmdbid2cnt[mmdbidArray[0]];
+                mmdbid_t = mmdbidArray[0];
+            }
+            if(mmdbid2cnt[mmdbidArray[1]] > cnt) {
+                cnt = mmdbid2cnt[mmdbidArray[1]];
+                mmdbid_t = mmdbidArray[1];
+            }
+        }
+*/
+        let aligType;
+        // transform all pairs 
+        let allChainidHash = {}, hAtoms = {};
+        for(let mmdbidpair in mmdbidpairHash) {
+            let mmdbidArray = mmdbidpair.split('_');
+            let chainidArray = mmdbidpairHash[mmdbidpair].split(',');
+            let index = chainidArray[2];
+
+            // chainid2 is target
+            aligType = 'query';
+            this.transformStructure(mmdbidArray[0], index, aligType);
+
+            aligType = 'target';
+            this.transformStructure(mmdbidArray[1], index, aligType);
+
+            allChainidHash[chainidArray[0]] = 1;
+            allChainidHash[chainidArray[1]] = 1;
+
+            hAtoms = me.hashUtilsCls.unionHash(hAtoms, ic.chains[chainidArray[0]]);
+            hAtoms = me.hashUtilsCls.unionHash(hAtoms, ic.chains[chainidArray[1]]);
+        }
+
+        // set up the view of sequence alignment for each pair
+        for(let mmdbidpair in mmdbidpairHash) {           
+            if(ic.q_rotation !== undefined) {
+                let chainidArray = mmdbidpairHash[mmdbidpair].split(',');
+
+                ic.setSeqAlignCls.setSeqAlignChain(undefined, undefined, chainidArray);
+
+                let  bReverse = false;
+                let  seqObj = me.htmlCls.alignSeqCls.getAlignSequencesAnnotations(Object.keys(ic.alnChains), undefined, undefined, false, undefined, bReverse);
+                let  oriHtml = $("#" + ic.pre + "dl_sequence2").html();
+
+                $("#" + ic.pre + "dl_sequence2").html(oriHtml + seqObj.sequencesHtml);
+                $("#" + ic.pre + "dl_sequence2").width(me.htmlCls.RESIDUE_WIDTH * seqObj.maxSeqCnt + 200);
+            }
+        }
+
+        //this.downloadChainalignmentPart3(undefined, Object.keys(allChainidHash), hAtoms);
+
+        ic.dAtoms = hAtoms;
+        ic.hAtoms = hAtoms;
+
+        ic.opts['color'] = 'identity';
+        //ic.setColorCls.setColorByOptions(ic.opts, ic.atoms);
+        ic.setColorCls.setColorByOptions(ic.opts, ic.hAtoms);
+
+        me.htmlCls.dialogCls.openDlg('dl_alignment', 'Select residues in aligned sequences');
+
+        ic.drawCls.draw();
+        ic.hlUpdateCls.updateHlAll();
+
+        if(ic.deferredRealignByStruct !== undefined) ic.deferredRealignByStruct.resolve();
+    }
+
+    transformStructure(mmdbid, index, alignType) { let  ic = this.icn3d, me = ic.icn3dui;
+        let chainidArray = ic.structures[mmdbid];
+       
+        for(let i = 0, il = chainidArray.length; i < il; ++i) {
+            for(let serial in ic.chains[chainidArray[i]]) {
+                let atm = ic.atoms[serial];
+                //atm.coord = new THREE.Vector3(atm.coord[0], atm.coord[1], atm.coord[2]);
+                if(ic.q_rotation !== undefined && ic.t_trans_add.length > 0 && !me.cfg.resnum && !me.cfg.resdef) {
+                    atm = this.transformAtom(atm, index, alignType);
+                }
+            }
+        }
+    }
+
+    transformAtom(atm, index, alignType) { let ic = this.icn3d; ic.icn3dui;
+        if(alignType === 'target') ;
+        else if(alignType === 'query') {
+            atm.coord.x -= ic.q_trans_sub[index].x;
+            atm.coord.y -= ic.q_trans_sub[index].y;
+            atm.coord.z -= ic.q_trans_sub[index].z;
+
+            let  x = atm.coord.x * ic.q_rotation[index].x1 + atm.coord.y * ic.q_rotation[index].y1 + atm.coord.z * ic.q_rotation[index].z1;
+            let  y = atm.coord.x * ic.q_rotation[index].x2 + atm.coord.y * ic.q_rotation[index].y2 + atm.coord.z * ic.q_rotation[index].z2;
+            let  z = atm.coord.x * ic.q_rotation[index].x3 + atm.coord.y * ic.q_rotation[index].y3 + atm.coord.z * ic.q_rotation[index].z3;
+
+            x -= ic.t_trans_add[index].x;
+            y -= ic.t_trans_add[index].y;
+            z -= ic.t_trans_add[index].z;
+
+            atm.coord.x = x;
+            atm.coord.y = y;
+            atm.coord.z = z;
+        }
+
+        return atm;
     }
 
     downloadChainalignmentPart3(chainresiCalphaHash2, chainidArray, hAtoms) { let  ic = this.icn3d, me = ic.icn3dui;
@@ -25742,7 +26065,8 @@ class ChainalignParser {
 
         ic.ParserUtilsCls.renderStructure();
 
-        if(ic.chainidArray.length > 2) {
+        //if(ic.chainidArray.length > 2) {
+        if(chainidArray.length > 2) {
             let  residuesHash = {};
             for(let i in hAtoms) {
                 let  atom = ic.atoms[i];
@@ -25764,10 +26088,9 @@ class ChainalignParser {
         ic.html2ddgm = '';
 
         // by default, open the seq alignment window
-        //if(me.cfg.show2d !== undefined && me.cfg.show2d) me.htmlCls.dialogCls.openDlg('dl_2ddgm', 'Interactions');
-        if(me.cfg.showalignseq) {
+         //if(me.cfg.showalignseq) {
             me.htmlCls.dialogCls.openDlg('dl_alignment', 'Select residues in aligned sequences');
-        }
+        //}
 
         if(me.cfg.show2d && ic.bFullUi) {
             me.htmlCls.dialogCls.openDlg('dl_2ddgm', 'Interactions');
@@ -25803,15 +26126,30 @@ class ChainalignParser {
         let  pos1 = alignArray[0].indexOf('_');
         ic.mmdbid_t = alignArray[0].substr(0, pos1).toUpperCase();
         ic.chain_t = alignArray[0].substr(pos1+1);
-        let  url_t = me.htmlCls.baseUrl + "mmdb/mmdb_strview.cgi?v=2&program=icn3d&b=1&s=1&ft=1&bu=" + me.cfg.bu + "&uid=" + ic.mmdbid_t;
-        if(me.cfg.inpara !== undefined) url_t += me.cfg.inpara;
 
         let  ajaxArray = [];
-        let  targetAjax = $.ajax({
-          url: url_t,
-          dataType: 'jsonp',
-          cache: true
-        });
+        let  targetAjax;
+
+        let  url_t;
+        if(ic.mmdbid_t.length > 4) {
+            url_t = "https://alphafold.ebi.ac.uk/files/AF-" + ic.mmdbid_t + "-F1-model_v2.pdb";
+
+            targetAjax = $.ajax({
+                url: url_t,
+                dataType: 'text',
+                cache: true
+              });
+        }
+        else {
+            url_t = me.htmlCls.baseUrl + "mmdb/mmdb_strview.cgi?v=2&program=icn3d&b=1&s=1&ft=1&bu=" + me.cfg.bu + "&uid=" + ic.mmdbid_t;
+            if(me.cfg.inpara !== undefined) url_t += me.cfg.inpara;
+
+            targetAjax = $.ajax({
+                url: url_t,
+                dataType: 'jsonp',
+                cache: true
+              });
+        }
 
         ajaxArray.push(targetAjax);
 
@@ -25821,34 +26159,59 @@ class ChainalignParser {
         ic.pdbid_chain2title = {};
         if(ic.chainids2resids === undefined) ic.chainids2resids = {}; // ic.chainids2resids[chainid1][chainid2] = [resid, resid]
 
+        ic.afChainIndexHash = {};
         for(let index = 1, indexLen = alignArray.length; index < indexLen; ++index) {
             let  pos2 = alignArray[index].indexOf('_');
             ic.mmdbid_q = alignArray[index].substr(0, pos2).toUpperCase();
             ic.chain_q = alignArray[index].substr(pos2+1);
 
-            let  chainalignFinal = ic.mmdbid_q + "_" + ic.chain_q + "," + ic.mmdbid_t + "_" + ic.chain_t;
+            let  url_q, queryAjax;
+            if(ic.mmdbid_q.length > 4) {
+                url_q = "https://alphafold.ebi.ac.uk/files/AF-" + ic.mmdbid_q + "-F1-model_v2.pdb";
 
-            let  urlalign = me.htmlCls.baseUrl + "vastdyn/vastdyn.cgi?chainpairs=" + chainalignFinal;
-            let  url_q = me.htmlCls.baseUrl + "mmdb/mmdb_strview.cgi?v=2&program=icn3d&b=1&s=1&ft=1&bu=" + me.cfg.bu + "&uid=" + ic.mmdbid_q;
+                queryAjax = $.ajax({
+                    url: url_q,
+                    dataType: 'text',
+                    cache: true
+                });
+            }
+            else {
+                url_q = me.htmlCls.baseUrl + "mmdb/mmdb_strview.cgi?v=2&program=icn3d&b=1&s=1&ft=1&bu=" + me.cfg.bu + "&uid=" + ic.mmdbid_q;
+                if(me.cfg.inpara !== undefined) url_q += me.cfg.inpara;
 
-            if(me.cfg.inpara !== undefined) url_q += me.cfg.inpara;
-
-            let  queryAjax = $.ajax({
-              url: url_q,
-              dataType: 'jsonp',
-              cache: true
-            });
+                queryAjax = $.ajax({
+                    url: url_q,
+                    dataType: 'jsonp',
+                    cache: true
+                });
+            }
 
             ajaxArray.push(queryAjax);
+        }
+        
+        for(let index = 1, indexLen = alignArray.length; index < indexLen; ++index) {
+            let  pos2 = alignArray[index].indexOf('_');
+            ic.mmdbid_q = alignArray[index].substr(0, pos2).toUpperCase();
+            ic.chain_q = alignArray[index].substr(pos2+1);
 
             if(!me.cfg.resnum && !me.cfg.resdef) {
-                let  alignAjax = $.ajax({
-                  url: urlalign,
-                  dataType: 'jsonp',
-                  cache: true
-                });
+                let  chainalignFinal = ic.mmdbid_q + "_" + ic.chain_q + "," + ic.mmdbid_t + "_" + ic.chain_t;
 
-                ajaxArray.push(alignAjax);
+                if(ic.mmdbid_t.length == 4 && ic.mmdbid_q.length == 4) {
+                    let  urlalign = me.htmlCls.baseUrl + "vastdyn/vastdyn.cgi?chainpairs=" + chainalignFinal;
+                    
+                    let  alignAjax = $.ajax({
+                        url: urlalign,
+                        dataType: 'jsonp',
+                        cache: true
+                    });
+
+                    ajaxArray.push(alignAjax);
+                }
+                else {
+                    // get the dynamic alignment after loading the structures
+                    ic.afChainIndexHash[index] = ic.mmdbid_q + "_" + ic.chain_q + "_" + ic.mmdbid_t + "_" + ic.chain_t;
+                }
             }
         }
 
@@ -25872,6 +26235,8 @@ class ChainalignParser {
         //var data2 = v2[0];
         // index = 0: the mmdb data of target
         let  targetData = dataArray[0][0];
+        let header = 'HEADER                                                        ' + mmdbid_t + '\n';
+        if(mmdbid_t.length > 4) targetData = header + targetData;
 
         ic.t_trans_add = [];
         ic.q_trans_sub = [];
@@ -25883,56 +26248,53 @@ class ChainalignParser {
 
         let  queryDataArray = [];
 
-        let  step =(me.cfg.resnum || me.cfg.resdef) ? 1 : 2;
-
-        for(let index = 1, indexl = dataArray.length; index < indexl; index += step) {
+        for(let index = 1, indexl = chainidArray.length; index < indexl; ++index) {
             let  queryData = dataArray[index][0];
 
-            let  index2 = parseInt(index / step);
-            let  pos2 = chainidArray[index2].indexOf('_');
-            let  mmdbid_q = chainidArray[index2].substr(0, pos2).toUpperCase();
-            let  chain_q = chainidArray[index2].substr(pos2+1);
+            let  pos = chainidArray[index].indexOf('_');
+            let  mmdbid_q = chainidArray[index].substr(0, pos).toUpperCase();
 
-            if(me.cfg.resnum || me.cfg.resdef) {
-                if(queryData !== undefined && JSON.stringify(queryData).indexOf('Oops there was a problem') === -1
-                  ) {
-                    ic.mmdbidArray.push(mmdbid_q);
+            let header = 'HEADER                                                        ' + mmdbid_q + '\n';
+            if(mmdbid_q.length > 4) queryData = header + queryData;
 
-                    queryDataArray.push(queryData);
-                }
+            if(queryData !== undefined && JSON.stringify(queryData).indexOf('Oops there was a problem') === -1
+                ) {
+                ic.mmdbidArray.push(mmdbid_q);
+                queryDataArray.push(queryData);
             }
             else {
-                let  align = dataArray[index + 1][0];
-                if(!align) {
-                    alert("These chains can not be aligned by VAST server. You can specify the residue range and try it again...");
-                    return;
+                alert("The coordinate data can NOT be retrieved for the structure " + mmdbid_q + "...");
+                return;
+            }
+        }
+
+        let missedChainCnt = 0;
+        //for(let index = chainidArray.length, indexl = dataArray.length; index < indexl; index += step) {
+        for(let index = 1, indexl = chainidArray.length; index < indexl; ++index) {
+            let  queryData = queryDataArray[index - 1]; 
+
+            let  pos = chainidArray[index].indexOf('_');
+            let  mmdbid_q = chainidArray[index].substr(0, pos).toUpperCase();
+            let  chain_q = chainidArray[index].substr(pos+1);
+
+            if(!me.cfg.resnum && !me.cfg.resdef) {
+                let  index2 = chainidArray.length + index - 1;
+                if(ic.afChainIndexHash.hasOwnProperty(index)) {
+                    ++missedChainCnt;
+
+                    // need to pass C-alpha coords and get transformation matrix from backend
+                    ic.t_trans_add[index-1] = {"x":0, "y":0, "z":0};
+                    ic.q_trans_sub[index-1] = {"x":0, "y":0, "z":0};
+                    ic.q_rotation[index-1] = {"x1":1, "y1":0, "z1":0, "x2":0, "y2":1, "z2":0, "x3":0, "y3":0, "z3":1};
+                    ic.qt_start_end[index-1] = undefined;
                 }
+                else {
+                    let align = dataArray[index2 - missedChainCnt][0];
 
-                if(queryData !== undefined && JSON.stringify(queryData).indexOf('Oops there was a problem') === -1
-                    && align !== undefined && JSON.stringify(align).indexOf('Oops there was a problem') === -1
-                  ) {
-                    if((align === undefined || align.length == 0) && mmdbid_q == mmdbid_t && chain_q == chain_t) {
-                        ic.t_trans_add.push({"x":0, "y":0, "z":0});
-                        ic.q_trans_sub.push({"x":0, "y":0, "z":0});
-                        ic.q_rotation.push({"x1":1, "y1":0, "z1":0, "x2":0, "y2":1, "z2":0, "x3":0, "y3":0, "z3":1});
-                        ic.qt_start_end.push(undefined);
-                    }
-                    else if(align === undefined || align.length == 0) {
-                        if(!me.cfg.command) alert('These two chains ' + chainidArray[index2] + ' can not align to each other. ' + 'Please select sequences from these two chains in the "Sequences & Annotations" window, ' + 'and click "Realign Selection" in the "File" menu to align your selection.');
+                    let bEqualMmdbid = (mmdbid_q == mmdbid_t);
+                    let bEqualChain = (chain_q == chain_t);
 
-                        me.cfg.showanno = 1;
-                        me.cfg.showalignseq = 0;
-                    }
-                    else {
-                        ic.t_trans_add.push(align[0].t_trans_add);
-                        ic.q_trans_sub.push(align[0].q_trans_sub);
-                        ic.q_rotation.push(align[0].q_rotation);
-                        ic.qt_start_end.push(align[0].segs);
-                    }
-
-                    ic.mmdbidArray.push(mmdbid_q);
-
-                    queryDataArray.push(queryData);
+                    this.processAlign(align, index-1, queryData, bEqualMmdbid, bEqualChain);
                 }
             }
         }
@@ -25940,6 +26302,52 @@ class ChainalignParser {
         ic.mmdb_data_q = queryDataArray;
 
         this.loadOpmDataForChainalign(targetData, queryDataArray, chainidArray, ic.mmdbidArray);
+    }
+
+    processAlign(align, index, queryData, bEqualMmdbid, bEqualChain, bNoAlert) { let  ic = this.icn3d, me = ic.icn3dui;
+        let bAligned = false;
+        if(!align && !bNoAlert) {
+            alert("These chains can not be aligned by VAST server. You can specify the residue range and try it again...");
+            return bAligned;
+        }
+
+        if(queryData !== undefined && JSON.stringify(queryData).indexOf('Oops there was a problem') === -1
+            && align !== undefined && JSON.stringify(align).indexOf('Oops there was a problem') === -1
+        ) {
+            if((align === undefined || align.length == 0) && bEqualMmdbid && bEqualChain) {
+                ic.t_trans_add[index] = {"x":0, "y":0, "z":0};
+                ic.q_trans_sub[index] = {"x":0, "y":0, "z":0};
+                ic.q_rotation[index] = {"x1":1, "y1":0, "z1":0, "x2":0, "y2":1, "z2":0, "x3":0, "y3":0, "z3":1};
+                ic.qt_start_end[index] = undefined;
+            }
+            else if(align === undefined || align.length == 0) {
+                if(!me.cfg.command && !bNoAlert) alert('These two chains can not align to each other. ' + 'Please select sequences from these two chains in the "Sequences & Annotations" window, ' + 'and click "Realign Selection" in the "File" menu to align your selection.');
+
+                ic.t_trans_add[index] = {"x":0, "y":0, "z":0};
+                ic.q_trans_sub[index] = {"x":0, "y":0, "z":0};
+                ic.q_rotation[index] = {"x1":1, "y1":0, "z1":0, "x2":0, "y2":1, "z2":0, "x3":0, "y3":0, "z3":1};
+                ic.qt_start_end[index] = undefined;
+
+                me.cfg.showanno = 1;
+                me.cfg.showalignseq = 0;
+            }
+            else {
+                /*
+                ic.t_trans_add.push(align[0].t_trans_add);
+                ic.q_trans_sub.push(align[0].q_trans_sub);
+                ic.q_rotation.push(align[0].q_rotation);
+                ic.qt_start_end.push(align[0].segs);
+                */
+                ic.t_trans_add[index] = align[0].t_trans_add;
+                ic.q_trans_sub[index] = align[0].q_trans_sub;
+                ic.q_rotation[index] = align[0].q_rotation;
+                ic.qt_start_end[index] = align[0].segs;
+
+                bAligned = true;
+            }
+        }
+
+        return bAligned;
     }
 
     loadOpmDataForChainalign(data1, data2, chainidArray, mmdbidArray) { let  ic = this.icn3d, me = ic.icn3dui;
@@ -25959,7 +26367,7 @@ class ChainalignParser {
               dataType: 'jsonp',
               cache: true,
               //tryCount : 0,
-              //retryLimit : 1,
+              //retryLimit : 0, //1
               success: function(data) {
                 let  mmdbid = data.mmdbid;
                 ic.selectedPdbid = mmdbid;
@@ -25977,7 +26385,7 @@ class ChainalignParser {
                       dataType: 'text',
                       cache: true,
                       //tryCount : 0,
-                      //retryLimit : 1,
+                      //retryLimit : 0, //1
                       success: function(opmdata) {
                           ic.bOpm = true;
                           let  bVector = true;
@@ -27680,6 +28088,22 @@ class LoadScript {
 
             return;
           }
+          else if(ic.commands[i].trim().indexOf('realign on structure align') == 0) {
+            let  strArray = ic.commands[i].split("|||");
+            let  command = strArray[0].trim();
+
+            let  paraArray = command.split(' | ');
+            if(paraArray.length == 2) {
+                let  nameArray = paraArray[1].split(',');
+                ic.hAtoms = ic.definedSetsCls.getAtomsFromNameArray(nameArray);
+            }
+
+            $.when(thisClass.applyCommandRealignByStruct(command)).then(function() {
+               thisClass.execCommandsBase(i + 1, end, steps);
+            });
+
+            return;
+          }
           else if(ic.commands[i].trim().indexOf('graph interaction pairs') == 0) {
             let  strArray = ic.commands[i].split("|||");
             let  command = strArray[0].trim();
@@ -27859,6 +28283,14 @@ class LoadScript {
                             ic.hAtoms = ic.definedSetsCls.getAtomsFromNameArray(nameArray);
                         }
                         thisClass.applyCommandRealign(lastCommand);
+                    }
+                    else if(lastCommand.indexOf('realign on structure align') == 0) {
+                        let  paraArray = lastCommand.split(' | ');
+                        if(paraArray.length == 2) {
+                            let  nameArray = paraArray[1].split(',');
+                            ic.hAtoms = ic.definedSetsCls.getAtomsFromNameArray(nameArray);
+                        }
+                        thisClass.applyCommandRealignByStruct(lastCommand);
                     }
                     else if(lastCommand.indexOf('graph interaction pairs') == 0) {
                         thisClass.applyCommandGraphinteraction(lastCommand);
@@ -28070,6 +28502,21 @@ class LoadScript {
       }); // end of me.deferred = $.Deferred(function() {
 
       return ic.deferredRealign.promise();
+    }
+
+    applyCommandRealignByStructBase(command) { let ic = this.icn3d; ic.icn3dui;
+        ic.realignParserCls.realignOnStructAlign();
+    }
+
+    applyCommandRealignByStruct(command) { let ic = this.icn3d; ic.icn3dui;
+      let  thisClass = this;
+
+      // chain functions together
+      ic.deferredRealignByStruct = new $.Deferred(function() {
+         thisClass.applyCommandRealignByStructBase(command);
+      }); // end of me.deferred = $.Deferred(function() {
+
+      return ic.deferredRealignByStruct.promise();
     }
 
     applyCommandAfmapBase(command, bFull) { let ic = this.icn3d; ic.icn3dui;
@@ -29170,18 +29617,28 @@ class Domain3d {
 	//
 	//c2b_NewSplitChain(string asymId, let seqLen, let* x0, let* y0, let* z0) { let ic = this.icn3d, me = ic.icn3dui;
 	// x0, y0, z0: array of x,y,z coordinates of C-alpha atoms
-	c2b_NewSplitChain(chnid, dcut) { let ic = this.icn3d; ic.icn3dui;
+	//c2b_NewSplitChain(chnid, dcut) { let ic = this.icn3d, me = ic.icn3dui;
+	c2b_NewSplitChain(atoms, dcut) { let ic = this.icn3d; ic.icn3dui;
 		let x0 = [], y0 = [], z0 = [];
 
-		//substruct: array of secondary structures, each of which has the keys: From (1-based), To (1-based), Sheet (0 or 1)
+		//substruct: array of secondary structures, each of which has the keys: From (1-based), To (1-based), Sheet (0 or 1), also add these paras: x1, y1, z1, x2, y2, z2
 		let substruct = [];
+		// determine residue ranges for each subdomain
+		let subdomains = [];
+
 		// sheets: array of sheets, each of which has the key: sheet_num (beta sandwich has two sheets, e.g., 0 and 1), adj_strand1 (not used), adj_strand2
 		let sheets = [];
 
+		let residueHash = ic.firstAtomObjCls.getResiduesFromAtoms(atoms);
+		let residueArray = Object.keys(residueHash);
+		residueArray[0].substr(0, residueArray[0].lastIndexOf('_'));
+
 		let substructItem = {};
 		let resiOffset = 0;
-		for(let i = 0; i < ic.chainsSeq[chnid].length; ++i) {
-            let resi = ic.chainsSeq[chnid][i].resi;
+		for(let i = 0; i < residueArray.length; ++i) {
+			let resid = residueArray[i];
+
+            let resi = resid.substr(resid.lastIndexOf('_') + 1);
 			if(i == 0) {
 				resiOffset = resi - 1;
 
@@ -29192,7 +29649,7 @@ class Domain3d {
 				}
 			}
 
-			let resid = chnid + "_" + resi;
+			//let resid = chnid + "_" + resi;
 			let atom = ic.firstAtomObjCls.getFirstCalphaAtomObj(ic.residues[resid]);
 
 			if(atom) {
@@ -29210,6 +29667,10 @@ class Domain3d {
 
 			if(atom.ssend) {
 				substructItem.To = parseInt(resi);
+				substructItem.x2 = atom.coord.x;
+				substructItem.y2 = atom.coord.y;
+				substructItem.z2 = atom.coord.z;
+
 				substructItem.Sheet = (atom.ss == 'sheet') ? true : false;
 				substruct.push(substructItem);
 				substructItem = {};				
@@ -29218,6 +29679,9 @@ class Domain3d {
 			// a residue could be both start and end. check ssend first, then check ssbegin 
 			if(atom.ssbegin) {
 				substructItem.From = parseInt(resi);
+				substructItem.x1 = atom.coord.x;
+				substructItem.y1 = atom.coord.y;
+				substructItem.z1 = atom.coord.z;
 			}
         }
 
@@ -29225,15 +29689,15 @@ class Domain3d {
 
 		if (nsse <= 3)
 			// too small, can't split or trim
-			return;
+			return {subdomains: subdomains, substruct: substruct};
 
 		if (nsse > this.MAX_SSE) {
 			// we have a problem...
 
-			return;
+			return {subdomains: subdomains, substruct: substruct};
 		}
 
-		let seqLen = ic.chainsSeq[chnid].length + resiOffset;
+		let seqLen = residueArray.length + resiOffset;
 
 		// get a list of Calpha-Calpha contacts
 		///list< pair< pair< int, let >, let > >
@@ -29477,9 +29941,6 @@ class Domain3d {
 				return v1[0] - v2[0];
 			});
 
-		// determine residue ranges for each subdomain
-		let subdomains = [];
-
 		//for (lplet = list_parts.begin(); lplet != list_parts.end(); lpint++) {
 		for (let index = 0, indexl = list_parts.length; index < indexl; ++index) {
 			//vector<int> prts = *lpint;
@@ -29498,7 +29959,7 @@ class Domain3d {
 				let k = prts[i] - 1;
 
 				if ((k < 0) || (k >= substruct.length)) {
-					return;
+					return {subdomains: subdomains, substruct: substruct};
 				}
 
 				//SSE_Rec sserec = substruct[k];
@@ -29511,13 +29972,23 @@ class Domain3d {
 
 				if ((k == 0) && (From > 1)) {
 					// residues with negative residue numbers will not be included
-					for (let j = 1; j < From; j++)
-						resflags[j - 1] = 1;
+					for (let j = 1; j < From; j++) {
+						//resflags[j - 1] = 1;
+						// include at most 10 residues
+						if(From - j <= 10) {
+							resflags[j - 1] = 1;
+						}
+					}
 				}
 
 				if ((k == substruct.length - 1) && (To < seqLen)) {
-					for (let j = To + 1; j <= seqLen; j++)
-						resflags[j - 1] = 1;
+					for (let j = To + 1; j <= seqLen; j++) {
+						//resflags[j - 1] = 1;
+						// include at most 10 residues
+						if(j - To <= 10) {
+							resflags[j - 1] = 1;
+						}
+					}
 				}
 
 				// left side
@@ -29586,10 +30057,96 @@ class Domain3d {
 			subdomains.push(segments);
 		}
 
-//console.log("subdomains: " + JSON.stringify(subdomains));
-
-		return subdomains;
+		return {subdomains: subdomains, substruct: substruct};
 	} // end c2b_NewSplitChain
+
+	getDomainJsonForAlign(atoms) { let ic = this.icn3d, me = ic.icn3dui;
+		let result = this.c2b_NewSplitChain(atoms);
+
+		let subdomains = result.subdomains;
+		let substruct = result.substruct;
+
+		let residueHash = ic.firstAtomObjCls.getResiduesFromAtoms(atoms);
+		let residueArray = Object.keys(residueHash);
+		let chnid = residueArray[0].substr(0, residueArray[0].lastIndexOf('_'));
+
+		//the whole structure is also considered as a large domain
+		//if(subdomains.length == 0) {
+			//subdomains.push([parseInt(ic.chainsSeq[chnid][0].resi), parseInt(ic.chainsSeq[chnid][ic.chainsSeq[chnid].length - 1].resi)]);
+			subdomains.push([parseInt(residueArray[0].substr(residueArray[0].lastIndexOf('_') + 1)), 
+			 	parseInt(residueArray[residueArray.length-1].substr(residueArray[residueArray.length-1].lastIndexOf('_') + 1))]);
+		//}
+
+		// m_domains1: {"data": [ {"ss": [[1,20,30,x,y,z,x,y,z], [2,50,60,x,y,z,x,y,z]], "domain": [[1,43,x,y,z],[2,58,x,y,z], ...]}, {"ss": [[1,20,30,x,y,z,x,y,z], [2,50,60,x,y,z,x,y,z]],"domain": [[1,43,x,y,z],[2,58,x,y,z], ...]} ] }
+		let jsonStr = '{"data": [';
+		for(let i = 0, il = subdomains.length; i < il; ++i) {
+			if(i > 0) jsonStr += ', ';
+			//secondary structure
+			jsonStr += '{"ss": [';
+			let ssCnt = 0;
+			for(let j = 0, jl = subdomains[i].length; j < jl; j += 2) {
+				let start = subdomains[i][j];
+				let end = subdomains[i][j + 1];
+			
+				for(let k = 0, kl = substruct.length; k < kl; ++k) {
+					//ss: sstype	ss_start	ss_end	x1	y1	z1	x2	y2	z2
+						//sstype: 1 (helix), 2 (sheet)
+					let sstype = (substruct[k].Sheet) ? 2 : 1;
+					let from = substruct[k].From;
+					let to = substruct[k].To;
+
+					let residFrom = chnid + "_" + from;
+					let atomFrom = ic.firstAtomObjCls.getFirstCalphaAtomObj(ic.residues[residFrom]);
+					if(!ic.hAtoms.hasOwnProperty(atomFrom.serial)) continue;
+
+					let residTo = chnid + "_" + to;
+					let atomTo = ic.firstAtomObjCls.getFirstCalphaAtomObj(ic.residues[residTo]);
+					if(!ic.hAtoms.hasOwnProperty(atomTo.serial)) continue;
+
+					if(from >= start && to <= end) {
+						if(ssCnt > 0) jsonStr += ', ';
+						jsonStr += '[' + sstype + ',' + from + ',' + to + ',' + substruct[k].x1.toFixed(2) + ',' + substruct[k].y1.toFixed(2) + ',' 
+							+ substruct[k].z1.toFixed(2) + ',' + substruct[k].x2.toFixed(2) + ',' + substruct[k].y2.toFixed(2) + ',' + substruct[k].z2.toFixed(2) + ']';
+						++ssCnt;
+					}
+				}				
+			}
+			jsonStr += ']';
+
+			// domain
+			jsonStr += ', "domain": [';
+			let domainCnt = 0;
+			for(let j = 0, jl = subdomains[i].length; j < jl; j += 2) {
+				let start = subdomains[i][j];
+				let end = subdomains[i][j + 1];
+
+				for(let k = 0, kl = residueArray.length; k < kl; ++k) {
+					let resid = residueArray[k];
+
+					let resi = resid.substr(resid.lastIndexOf('_') + 1);
+		
+					//let resid = chnid + "_" + resi;
+					let atom = ic.firstAtomObjCls.getFirstCalphaAtomObj(ic.residues[resid]);
+
+					if(!atom) continue;
+					if(!ic.hAtoms.hasOwnProperty(atom.serial)) continue;
+
+					//domain: resi, restype, x, y, z
+					let restype = me.parasCls.resn2restype[atom.resn];
+					if(restype !== undefined && resi >= start && resi <= end) {
+						if(domainCnt > 0) jsonStr += ', ';
+						jsonStr += '[' + resi + ',' + restype + ',' + atom.coord.x.toFixed(2) + ',' 
+							+ atom.coord.y.toFixed(2) + ',' + atom.coord.z.toFixed(2) + ']';
+						++domainCnt;
+					}
+				}			
+			}
+			jsonStr += ']}';
+		}
+		jsonStr += ']}';
+
+		return jsonStr;
+	} 
 }
 
 /**
@@ -30114,7 +30671,7 @@ class AddTrack {
               dataType: 'jsonp',
               //dataType: 'json',
               tryCount : 0,
-              retryLimit : 1,
+              retryLimit : 0, //1
               success: function(data) {
                   thisClass.alignSequenceToStructure(chainid, data, title);
               },
@@ -30151,7 +30708,7 @@ class AddTrack {
               dataType: 'jsonp',
               //dataType: 'json',
               tryCount : 0,
-              retryLimit : 1,
+              retryLimit : 0, //1
               success: function(data) {
                   thisClass.alignSequenceToStructure(chainid, data, title);
               },
@@ -31347,7 +31904,7 @@ class AnnoCddSite {
               dataType: 'jsonp',
               cache: true,
               tryCount : 0,
-              retryLimit : 1,
+              retryLimit : 0, //1
               success: function(data) {
                 thisClass.parseCddData([data], chnidArray);
                 if(ic.deferredAnnoCddSite !== undefined) ic.deferredAnnoCddSite.resolve();
@@ -34730,30 +35287,60 @@ class SetSeqAlign {
           seqalign = {};
     }
 
-    setSeqAlignChain(chainid, chainIndex) { let  ic = this.icn3d, me = ic.icn3dui;
+    setSeqAlignChain(chainid, chainIndex, chainidArray) { let  ic = this.icn3d, me = ic.icn3dui;
+          let mmdbid1, mmdbid2, chain1, chain2, chainid1, chainid2, pos1, pos2;
 
-          //var chainidArray = me.cfg.chainalign.split(',');
-          let  pos1 = ic.chainidArray[0].indexOf('_');
-          let  pos2 = chainid.indexOf('_');
+          if(chainidArray) { 
+            // originally chainid2 is target,chainid1 is query
+            // switch them so that chainid1 is the target
+            chainid1 = chainidArray[1];
+            chainid2 = chainidArray[0];
 
-          let  mmdbid1 = ic.mmdbid_t; //ic.chainidArray[0].substr(0, pos1).toUpperCase();
-          let  mmdbid2 = chainid.substr(0, pos2).toUpperCase();
+            chainIndex = chainidArray[2];
 
-          let  chain1 = ic.chainidArray[0].substr(pos1 + 1);
-          let  chain2 = chainid.substr(pos2 + 1);
+            pos1 = chainid1.indexOf('_');
+            pos2 = chainid2.indexOf('_');
 
-          if(mmdbid1 == mmdbid2 && chain1 == chain2) {
-            let  chainLen = ic.chainsSeq[ic.mmdbid_q + '_' + ic.chain_q].length;
-            ic.qt_start_end[chainIndex] =  {"q_start":1, "q_end": chainLen, "t_start":1, "t_end": chainLen};
+            mmdbid1 = chainid1.substr(0, pos1).toUpperCase();
+            mmdbid2 = chainid2.substr(0, pos2).toUpperCase();
+
+            chain1 = chainid1.substr(pos1 + 1);
+            chain2 = chainid2.substr(pos1 + 1);
+
+            if(mmdbid1 == mmdbid2 && chain1 == chain2) {
+                let  chainLen = ic.chainsSeq[mmdbid2 + '_' + chain2].length;
+                ic.qt_start_end[chainIndex] =  {"q_start":1, "q_end": chainLen, "t_start":1, "t_end": chainLen};
+            }
+
+            if(mmdbid2 !== undefined && mmdbid2 === mmdbid1) {
+                //chainid1 += me.htmlCls.postfix;
+                chainid2 = mmdbid2 + me.htmlCls.postfix + "_" + chain2;
+            }
           }
+          else {
+            //var chainidArray = me.cfg.chainalign.split(',');
+            let  pos1 = ic.chainidArray[0].indexOf('_');
+            let  pos2 = chainid.indexOf('_');
 
-          let  chainid1 = mmdbid1 + "_" + chain1;
-          let  chainid2 = mmdbid2 + "_" + chain2;
+            mmdbid1 = ic.mmdbid_t; //ic.chainidArray[0].substr(0, pos1).toUpperCase();
+            mmdbid2 = chainid.substr(0, pos2).toUpperCase();
 
-          if(mmdbid2 !== undefined && mmdbid2 === ic.mmdbid_t) {
-              //chainid1 += me.htmlCls.postfix;
-              chainid2 = mmdbid2 + me.htmlCls.postfix + "_" + chain2;
-          }
+            chain1 = ic.chainidArray[0].substr(pos1 + 1);
+            chain2 = chainid.substr(pos2 + 1);
+
+            if(mmdbid1 == mmdbid2 && chain1 == chain2) {
+                let  chainLen = ic.chainsSeq[ic.mmdbid_q + '_' + ic.chain_q].length;
+                ic.qt_start_end[chainIndex] =  {"q_start":1, "q_end": chainLen, "t_start":1, "t_end": chainLen};
+            }
+
+            chainid1 = mmdbid1 + "_" + chain1;
+            chainid2 = mmdbid2 + "_" + chain2;
+
+            if(mmdbid2 !== undefined && mmdbid2 === ic.mmdbid_t) {
+                //chainid1 += me.htmlCls.postfix;
+                chainid2 = mmdbid2 + me.htmlCls.postfix + "_" + chain2;
+            }
+         }
 
           ic.conservedName1 = chainid1 + '_cons';
           ic.nonConservedName1 = chainid1 + '_ncons';
@@ -35803,7 +36390,7 @@ class MmcifParser {
           dataType: dataType,
           cache: true,
           tryCount : 0,
-          retryLimit : 1,
+          retryLimit : 0, //1
           beforeSend: function() {
               ic.ParserUtilsCls.showLoading();
           },
@@ -35819,7 +36406,7 @@ class MmcifParser {
                   dataType: 'jsonp',
                   cache: true,
                   tryCount : 0,
-                  retryLimit : 1,
+                  retryLimit : 0, //1
                   beforeSend: function() {
                       ic.ParserUtilsCls.showLoading();
                   },
@@ -35887,7 +36474,7 @@ class MmcifParser {
           dataType: dataType,
           cache: true,
           tryCount : 0,
-          retryLimit : 1,
+          retryLimit : 0, //1
           success: function(data) {
               // notebook has a problem in posting data to mmcifparser.cgi
               if(me.cfg.notebook) {
@@ -36043,7 +36630,7 @@ class MmcifParser {
                   dataType: 'jsonp',
                   cache: true,
                   tryCount : 0,
-                  retryLimit : 1,
+                  retryLimit : 0, //1
                   success: function(data) {
                       if(data.emd !== undefined) ic.emd = data.emd;
                       if(data.organism !== undefined) ic.organism = data.organism;
@@ -36803,7 +37390,7 @@ class ShowAnno {
                   dataType: 'jsonp',
                   //dataType: 'json',
                   tryCount : 0,
-                  retryLimit : 1,
+                  retryLimit : 0, //1
                   success: function(data) {
                     ic.seqStructAlignData = data;
                     thisClass.showAnnoSeqData(nucleotide_chainid, chemical_chainid, chemical_set);
@@ -36843,7 +37430,7 @@ class ShowAnno {
                     dataType: 'jsonp', //'text',
                     cache: true,
                     tryCount : 0,
-                    retryLimit : 1,
+                    retryLimit : 0, //1
                     success: function(chainid_seq) {
                         let index = 0;
                         for(let acc in chainid_seq) {
@@ -37614,7 +38201,7 @@ class AnnoDomain {
                 }
             }
         }
-        else {
+        else {                  
             // calculate 3D domains on-the-fly
             //ic.protein_chainid[chainArray[i]] 
             let data = {};
@@ -37624,8 +38211,15 @@ class AnnoDomain {
                 if(pdbid == structure && ic.protein_chainid.hasOwnProperty(chainid)) {
                     data.domains[chainid] = {};
                     data.domains[chainid].domains = [];
-                    
-                    let subdomains = ic.domain3dCls.c2b_NewSplitChain(chainid);
+
+                    let atoms = ic.chains[chainid];
+
+                    let result = ic.domain3dCls.c2b_NewSplitChain(atoms);
+                    let subdomains = result.subdomains;
+                    //let substruct = result.substruct;
+
+                    //let jsonStr = ic.domain3dCls.getDomainJsonForAlign(atoms);
+            
                     for(let i = 0, il = subdomains.length; i < il; ++i) {
                         // domain item: {"sdid":1722375,"intervals":[[1,104],[269,323]]}
                         let domain = {};
@@ -37649,73 +38243,7 @@ class AnnoDomain {
             }
 
             ic.bAjax3ddomain = true;
-            ic.bAjaxDoneArray[index] = true;
-
-/*            
-            $.ajax({
-              url: url,
-              dataType: 'json',
-              cache: true,
-              tryCount : 0,
-              retryLimit : 1,
-              success: function(data) {
-                ic.mmdb_dataArray[index] = data;
-                for(let chnid in ic.protein_chainid) {
-                    if(chnid.indexOf(pdbid) !== -1) {
-                        thisClass.showDomainWithData(chnid, ic.mmdb_dataArray[index]);
-                    }
-                }
-                // add here after the ajax call
-                ic.showAnnoCls.enableHlSeq();
-                ic.bAjax3ddomain = true;
-                ic.bAjaxDoneArray[index] = true;
-                if(ic.deferred3ddomain !== undefined) {
-                    if(me.cfg.align === undefined || me.cfg.chainalign === undefined || ic.bRealign) {
-                        ic.deferred3ddomain.resolve();
-                    }
-                    else {
-                        let bAjaxDoneAll = true;
-                        for(let i = 0, il = pdbArray.length; i < il; ++i) {
-                            bAjaxDoneAll = bAjaxDoneAll && ic.bAjaxDoneArray[i];
-                        }
-                        if(bAjaxDoneAll) ic.deferred3ddomain.resolve();
-                    }
-                }
-              },
-              error : function(xhr, textStatus, errorThrown ) {
-                this.tryCount++;
-                if(this.tryCount <= this.retryLimit) {
-                    //try again
-                    $.ajax(this);
-                    return;
-                }
-                console.log( "No 3D domain data were found for the protein " + pdbid + "..." );
-                for(let chnid in ic.protein_chainid) {
-                    if(chnid.indexOf(pdbid) !== -1) {
-                        $("#" + ic.pre + "dt_domain_" + chnid).html('');
-                        $("#" + ic.pre + "ov_domain_" + chnid).html('');
-                        $("#" + ic.pre + "tt_domain_" + chnid).html('');
-                    }
-                }
-                ic.showAnnoCls.enableHlSeq();
-                ic.bAjax3ddomain = true;
-                //bAjaxDone1 = true;
-                if(ic.deferred3ddomain !== undefined) {
-                    if(me.cfg.align === undefined || me.cfg.chainalign === undefined) {
-                        ic.deferred3ddomain.resolve();
-                    }
-                    else {
-                        let bAjaxDoneAll = true;
-                        for(let i = 0, il = pdbArray.length; i < il; ++i) {
-                            bAjaxDoneAll = bAjaxDoneAll && ic.bAjaxDoneArray[i];
-                        }
-                        if(bAjaxDoneAll) ic.deferred3ddomain.resolve();
-                    }
-                }
-                return;
-              }
-            });
-*/            
+            ic.bAjaxDoneArray[index] = true;          
         }
     }
 
@@ -38438,12 +38966,15 @@ class AnnoSnpClinVar {
         //var url = "https://www.ncbi.nlm.nih.gov/projects/SNP/beVarSearch_mt.cgi?appname=iCn3D&format=bed&report=pdb2bed&acc=" + chnidBase;
         //var url = "https://www.ncbi.nlm.nih.gov/Structure/icn3d/clinvar.txt";
         let url = "https://www.ncbi.nlm.nih.gov/Structure/vastdyn/vastdyn.cgi?chainid_clinvar=" + chnidBase;
+        if(ic.chainsGene[chnid] && ic.chainsGene[chnid].geneSymbol) {
+            url += "&gene=" + ic.chainsGene[chnid].geneSymbol;
+        }
         $.ajax({
           url: url,
           dataType: 'jsonp',
           cache: true,
           tryCount : 0,
-          retryLimit : 1,
+          retryLimit : 0, //1
           success: function(indata) {
             if(indata && indata.data && indata.data.length > 0) {
                 let bSnpOnly = false;
@@ -38487,7 +39018,7 @@ class AnnoSnpClinVar {
           dataType: 'jsonp', //'text',
           cache: true,
           tryCount : 0,
-          retryLimit : 1,
+          retryLimit : 0, //1
           success: function(data2) {
             //ic.chainid2repgi = JSON.parse(data2);
             //var gi = ic.chainid2repgi[chnidBase];
@@ -38531,7 +39062,7 @@ class AnnoSnpClinVar {
               dataType: 'text',
               cache: true,
               tryCount : 0,
-              retryLimit : 1,
+              retryLimit : 0, //1
               success: function(data3) {
                 if(data3) {
                     let bSnpOnly = true;
@@ -38540,12 +39071,15 @@ class AnnoSnpClinVar {
                 else {
        */             
                     let url4 = "https://www.ncbi.nlm.nih.gov/Structure/vastdyn/vastdyn.cgi?chainid_snp=" + chnidBase;
+                    if(ic.chainsGene[chnid] && ic.chainsGene[chnid].geneSymbol) {
+                        url4 += "&gene=" + ic.chainsGene[chnid].geneSymbol;
+                    }
                     $.ajax({
                       url: url4,
                       dataType: 'jsonp', //'text',
                       cache: true,
                       tryCount : 0,
-                      retryLimit : 1,
+                      retryLimit : 0, //1
                       success: function(data4) {
                         if(data4 && data4.data && data4.data.length > 0) {
                             let bSnpOnly = true;
@@ -45943,8 +46477,12 @@ class ClickMenu {
     //    },
     //    clkMn1_align: function() {
         me.myEventCls.onIds("#" + me.pre + "mn1_align", "click", function(e) { me.icn3d;
-           me.htmlCls.dialogCls.openDlg('dl_align', 'Align two 3D structures');
+           me.htmlCls.dialogCls.openDlg('dl_align', 'Align two PDB structures');
         });
+
+        me.myEventCls.onIds("#" + me.pre + "mn1_alignaf", "click", function(e) { me.icn3d;
+            me.htmlCls.dialogCls.openDlg('dl_alignaf', 'Align two AlphaFold structures');
+         });
     //    },
     //    clkMn1_chainalign: function() {
         me.myEventCls.onIds("#" + me.pre + "mn1_chainalign", "click", function(e) { me.icn3d;
@@ -46289,13 +46827,14 @@ class ClickMenu {
                    thisClass.setLogCmd("link to compounds " + ic.molTitle + ": " + url, false);
            }
            else {
+               let url;
                if(me.cfg.cid !== undefined) {
                        url = "https://www.ncbi.nlm.nih.gov/pccompound?LinkName=pccompound_pccompound_3d&from_uid=" + ic.inputid;
                        thisClass.setLogCmd("link to compounds with structure similar to CID " + ic.inputid + ": " + url, false);
                }
                else {
                    let idArray = ic.inputid.split('_');
-                   let url;
+                   
                    if(idArray.length === 1) {
                        url = me.htmlCls.baseUrl + "vastplus/vastplus.cgi?uid=" + ic.inputid;
                        thisClass.setLogCmd("link to structures similar to " + ic.inputid + ": " + url, false);
@@ -48392,18 +48931,22 @@ class SetMenu {
         html += "<li><span>Align</span>";
         html += "<ul>";
         html += me.htmlCls.setHtmlCls.getLink('mn1_blast_rep_id', 'Sequence to Structure');
-        html += me.htmlCls.setHtmlCls.getLink('mn1_align', 'Structure to Structure ' + me.htmlCls.wifiStr);
-        //html += me.htmlCls.setHtmlCls.getLink('mn1_chainalign', 'Chain to Chain');
+        //html += me.htmlCls.setHtmlCls.getLink('mn1_align', 'Structure to Structure ' + me.htmlCls.wifiStr);
+        html += "<li><span>Structure to Structure</span>";
+        html += "<ul>";
+        html += me.htmlCls.setHtmlCls.getLink('mn1_align', 'Two PDB Structures ' + me.htmlCls.wifiStr);
+        html += me.htmlCls.setHtmlCls.getLink('mn1_alignaf', 'Two AlphaFold Structures ' + me.htmlCls.wifiStr);
+        html += "</ul>";
+
         html += me.htmlCls.setHtmlCls.getLink('mn1_chainalign', 'Multiple Chains ' + me.htmlCls.wifiStr);
 
         html += "</ul>";
         html += "</li>";
 
-        //html += me.htmlCls.setHtmlCls.getLink('mn2_realignonseqalign', 'Realign Selection');
-
         html += "<li id='" + me.pre + "mn2_realignWrap'><span>Realign Selection</span>";
         html += "<ul>";
-        html += me.htmlCls.setHtmlCls.getRadio('mn2_realign', 'mn2_realignonseqalign', 'on Sequence Alignment ' + me.htmlCls.wifiStr, true);
+        html += me.htmlCls.setHtmlCls.getRadio('mn2_realign', 'mn2_realignonstruct', 'by Structure Alignment ' + me.htmlCls.wifiStr, true);
+        html += me.htmlCls.setHtmlCls.getRadio('mn2_realign', 'mn2_realignonseqalign', 'by Sequence Alignment ' + me.htmlCls.wifiStr);
         html += me.htmlCls.setHtmlCls.getRadio('mn2_realign', 'mn2_realignresbyres', 'Residue by Residue');
         html += "</ul>";
         html += "</li>";
@@ -50411,6 +50954,11 @@ class SetDialog {
         html += me.htmlCls.buttonStr + "reload_align_ori'>All Matching Molecules Superposed</button>" + me.htmlCls.space3 + me.htmlCls.buttonStr + "reload_align_refined'>Invariant Substructure Superposed</button>";
         html += "</div>";
 
+        html += me.htmlCls.divStr + "dl_alignaf' class='" + dialogClass + "'>";
+        html += "Enter two <a href='https://alphafold.ebi.ac.uk/' target='_blank'>AlphaFold Uniprot</a> IDs: <br/><br/>ID1: " + me.htmlCls.inputTextStr + "id='" + me.pre + "alignafid1' value='P41327' size=8>" + me.htmlCls.space3 + me.htmlCls.space3 + "ID2: " + me.htmlCls.inputTextStr + "id='" + me.pre + "alignafid2' value='P41331' size=8><br/><br/>";
+        html += me.htmlCls.buttonStr + "reload_alignaf'>Align</button>";
+        html += "</div>";
+
         html += me.htmlCls.divStr + "dl_chainalign' class='" + dialogClass + "'>";
     /*
         html += "Enter the PDB chain IDs in the form of pdbid_chain(e.g., 1HHO_A, case sensitive): <br/><br/>ID1: " + me.htmlCls.inputTextStr + "id='" + me.pre + "chainalignid1' value='1HHO_A' size=8>" + me.htmlCls.space3 + me.htmlCls.space3 + "ID2: " + me.htmlCls.inputTextStr + "id='" + me.pre + "chainalignid2' value='4N7N_A' size=8><br/><br/>";
@@ -50419,7 +50967,7 @@ class SetDialog {
         html += "</div>";
     */
         html += "<div style='width:550px'>";
-        html += "All chains will be aligned to the first chain in the comma-separated chain IDs. Each chain ID has the form of pdbid_chain(e.g., 1HHO_A, case sensitive).<br/><br/>";
+        html += "All chains will be aligned to the first chain in the comma-separated chain IDs. Each chain ID has the form of PDBID_chain (e.g., 1HHO_A, case sensitive) or UniprotID_chain (e.g., P69905_A for AlphaFold structures).<br/><br/>";
         html += "<b>Chain IDs</b>: " + me.htmlCls.inputTextStr + "id='" + me.pre + "chainalignids' value='1HHO_A,4N7N_A,2HCO_A' size=50><br/><br/>";
         html += "<b>Optional 1</b>, full chains are used for structure alignment<br/><br/>";
         html += "<b>Optional 2</b>, sequence alignment (followed by structure alignemnt) based on residue numbers in the First/Master chain: <br>" + me.htmlCls.inputTextStr + "id='" + me.pre + "resalignids' placeholder='1,5,10-50' size=50><br/><br/>";
@@ -50747,7 +51295,16 @@ class SetDialog {
         html += "<div style='text-indent:1.1em'><select id='" + me.pre + "atomsCustomRealign' multiple size='5' style='min-width:130px;'>";
         html += "</select></div>";
 
-        html += "<div>2. " + me.htmlCls.buttonStr + "applyRealign'>Realign</button></div><br>";
+        html += "<div>2. " + me.htmlCls.buttonStr + "applyRealign'>Realign by Sequence</button></div><br>";
+        html += "</div>";
+
+        html += me.htmlCls.divStr + "dl_realignbystruct' class='" + dialogClass + "'>";
+
+        html += me.htmlCls.divNowrapStr + "1. Select sets from two structures below <br>or use your current selection:</div><br>";
+        html += "<div style='text-indent:1.1em'><select id='" + me.pre + "atomsCustomRealignByStruct' multiple size='5' style='min-width:130px;'>";
+        html += "</select></div>";
+
+        html += "<div>2. " + me.htmlCls.buttonStr + "applyRealignByStruct'>Realign by Structure</button></div><br>";
         html += "</div>";
 
         html += me.htmlCls.divStr + "dl_allinteraction' style='background-color:white' class='" + dialogClass + "'>";
@@ -51471,12 +52028,31 @@ class Events {
             if($("#" + me.pre + "atomsCustomRealign").length) {
                 $("#" + me.pre + "atomsCustomRealign").html(definedAtomsHtml);
             }
-            if($("#" + me.pre + "atomsCustomRealign2").length) {
-                $("#" + me.pre + "atomsCustomRealign2").html(definedAtomsHtml);
-            }
+            //if($("#" + me.pre + "atomsCustomRealign2").length) {
+            //    $("#" + me.pre + "atomsCustomRealign2").html(definedAtomsHtml);
+            //}
             if(ic.bRender) me.htmlCls.dialogCls.openDlg('dl_realign', 'Please select two sets to realign');
             $("#" + me.pre + "atomsCustomRealign").resizable();
-            $("#" + me.pre + "atomsCustomRealign2").resizable();
+            //$("#" + me.pre + "atomsCustomRealign2").resizable();
+        });
+
+        me.myEventCls.onIds("#" + me.pre + "mn2_realignonstruct", "click", function(e) { let ic = me.icn3d;
+            if(ic.bSetChainsAdvancedMenu === undefined || !ic.bSetChainsAdvancedMenu) {
+               let prevHAtoms = me.hashUtilsCls.cloneHash(ic.hAtoms);
+               ic.definedSetsCls.setPredefinedInMenu();
+               ic.bSetChainsAdvancedMenu = true;
+               ic.hAtoms = me.hashUtilsCls.cloneHash(prevHAtoms);
+            }
+            let definedAtomsHtml = ic.definedSetsCls.setAtomMenu(['protein']);
+            if($("#" + me.pre + "atomsCustomRealignByStruct").length) {
+                $("#" + me.pre + "atomsCustomRealignByStruct").html(definedAtomsHtml);
+            }
+            //if($("#" + me.pre + "atomsCustomRealign2").length) {
+            //    $("#" + me.pre + "atomsCustomRealign2").html(definedAtomsHtml);
+            //}
+            if(ic.bRender) me.htmlCls.dialogCls.openDlg('dl_realignbystruct', 'Please select two sets to realign');
+            $("#" + me.pre + "atomsCustomRealignByStruct").resizable();
+            //$("#" + me.pre + "atomsCustomRealign2").resizable();
         });
     //    },
     //    clickApplyRealign: function() {
@@ -51490,7 +52066,7 @@ class Events {
 
            // save the current selection
            ic.selectionCls.saveSelectionPrep();
-           let name = 'realignSets';
+           let name = 'realignSetsBySeq';
            ic.selectionCls.saveSelection(name, name);
 
            ic.realignParserCls.realignOnSeqAlign();
@@ -51501,6 +52077,28 @@ class Events {
                me.htmlCls.clickMenuCls.setLogCmd("realign on seq align", true);
            }
         });
+
+        me.myEventCls.onIds("#" + me.pre + "applyRealignByStruct", "click", function(e) { let ic = me.icn3d;
+            e.preventDefault();
+            if(!me.cfg.notebook) dialog.dialog( "close" );
+            let nameArray = $("#" + me.pre + "atomsCustomRealignByStruct").val();
+            if(nameArray.length > 0) {
+                ic.hAtoms = ic.definedSetsCls.getAtomsFromNameArray(nameArray);
+            }
+ 
+            // save the current selection
+            ic.selectionCls.saveSelectionPrep();
+            let name = 'realignSetsByStruct';
+            ic.selectionCls.saveSelection(name, name);
+ 
+            ic.realignParserCls.realignOnStructAlign();
+            if(nameArray.length > 0) {
+                me.htmlCls.clickMenuCls.setLogCmd("realign on structure align | " + nameArray, true);
+            }
+            else {
+                me.htmlCls.clickMenuCls.setLogCmd("realign on structure align", true);
+            }
+         });
     //    },
 
     // other
@@ -51672,6 +52270,14 @@ class Events {
             //window.open( me.htmlCls.baseUrl + 'icn3d/full.html?align=' + alignment + '&showalignseq=1&atype=0', '_blank');
             window.open(hostUrl + '?align=' + alignment + '&showalignseq=1&atype=0&bu=1', '_blank');
          });
+
+         me.myEventCls.onIds("#" + me.pre + "reload_alignaf", "click", function(e) { me.icn3d;
+            e.preventDefault();
+            if(!me.cfg.notebook) dialog.dialog( "close" );
+            let alignment = $("#" + me.pre + "alignafid1").val() + "_A," + $("#" + me.pre + "alignafid2").val() + "_A";
+            me.htmlCls.clickMenuCls.setLogCmd("load chains " + alignment + " | residues | resdef ", false);
+            window.open(hostUrl + '?chainalign=' + alignment + '&resnum=&resdef=&showalignseq=1', '_blank');
+          });
     //    },
     //    clickReload_chainalign: function() {
         me.myEventCls.onIds("#" + me.pre + "reload_chainalign", "click", function(e) { me.icn3d;
@@ -52300,7 +52906,7 @@ class Events {
                   dataType: 'jsonp',
                   cache: true,
                   tryCount : 0,
-                  retryLimit : 1,
+                  retryLimit : 0, //1
                   beforeSend: function() {
                       ic.ParserUtilsCls.showLoading();
                   },
@@ -55102,7 +55708,7 @@ class ContactMap {
             dataType: dataType,
             cache: true,
             tryCount : 0,
-            retryLimit : 1,
+            retryLimit : 0, //1
             success: function(data) {
                 thisClass.processAfErrorMap(data, bFull);
             },
@@ -57888,7 +58494,7 @@ class iCn3DUI {
     //even when multiple iCn3D viewers are shown together.
     this.pre = this.cfg.divid + "_";
 
-    this.REVISION = '3.10.1';
+    this.REVISION = '3.11.0';
 
     // In nodejs, iCn3D defines "window = {navigator: {}}"
     this.bNode = (Object.keys(window).length < 2) ? true : false;
@@ -58135,7 +58741,7 @@ iCn3DUI.prototype.show3DStructure = function() { let me = this;
               url: url,
               dataType: 'json',
               tryCount : 0,
-              retryLimit : 1,
+              retryLimit : 0, //1
               success: function(data) {
                 for(let q = 0, ql = data.BlastOutput2.length; q < ql; ++q) {
                   if(data.BlastOutput2[q].report.results.search.query_id != me.cfg.query_id) continue;
@@ -58191,7 +58797,7 @@ iCn3DUI.prototype.show3DStructure = function() { let me = this;
           url: url,
           dataType: 'jsonp',
           tryCount : 0,
-          retryLimit : 1,
+          retryLimit : 0, //1
           success: function(data) {
               if(data.InformationList !== undefined && data.InformationList.Information !== undefined) ic.molTitle = data.InformationList.Information[0].Title;
           },
